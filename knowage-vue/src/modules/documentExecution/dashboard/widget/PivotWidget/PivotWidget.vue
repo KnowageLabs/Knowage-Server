@@ -93,7 +93,8 @@ export default defineComponent({
 
                 // EVENTS
                 contentReady: this.onContentReady,
-                onCellPrepared: this.setCellConfiguration
+                onCellPrepared: this.setCellConfiguration,
+                onCellClick: this.onCellClicked
             }
         },
 
@@ -208,7 +209,8 @@ export default defineComponent({
             const styleConfig = getWidgetStyleByType(this.propWidget, totalType)
             if (styleConfig != '') {
                 //TODO: justify-content ne moze da radi u ovom slucaju, mora na style toolbar da se promeni u text-align
-                cellEvent.cellElement.style = styleConfig + 'text-align:left !important;'
+                // cellEvent.cellElement.style = styleConfig + 'text-align:left !important;'
+                cellEvent.cellElement.style = styleConfig
             }
         },
         //#endregion ===============================================================================================
@@ -217,11 +219,10 @@ export default defineComponent({
         //Tooltips - we cannot target custom headers if they are not in data fields...we have no way of knowing which field they belong.
 
         setTooltips(cellEvent, dataFields) {
-            // const parentField = pivotFields[pivotFields.findIndex((field: any) => cellEvent.area === 'data' && field.area === 'data' && field.areaIndex === cellEvent.cell.dataIndex)] as any
-            let cellTooltipConfig = null as unknown as IPivotTooltips
-
             const tooltipsConfig = this.propWidget.settings.tooltips as IPivotTooltips[]
             const parentField = dataFields[cellEvent.cell.dataIndex]
+
+            let cellTooltipConfig = null as unknown as IPivotTooltips
 
             if (parentField?.id && tooltipsConfig.length >= 1) {
                 for (let index = 1; index < tooltipsConfig.length; index++) {
@@ -257,23 +258,14 @@ export default defineComponent({
         //#region ===================== Field Styles  ====================================================
         setFieldStyles(cellEvent, dataFields) {
             let fieldStyles = null as unknown as ITableWidgetColumnStyles
-            // const fieldStyles = this.propWidget.settings.style.fields as ITableWidgetColumnStyles
-            // const fieldHeaderStyles = this.propWidget.settings.style.fieldHeaders as ITableWidgetColumnStyles
 
             const parentField = dataFields[cellEvent.cell.dataIndex]
             let fieldStyleString = null as any
-
-            // if (!fieldStyles.enabled || !parentField || cellEvent.area !== 'data' || this.isTotalCell(cellEvent)) return
 
             if (cellEvent.area == 'data') fieldStyles = this.propWidget.settings.style.fields
             else fieldStyles = this.propWidget.settings.style.fieldHeaders
 
             if (!fieldStyles.enabled || this.isTotalCell(cellEvent) || cellEvent.area == 'row' || !parentField) return
-            // if (cellEvent.area == 'column' && parentField && !this.isTotalCell(cellEvent)) {
-            //     console.group('cellPrep ---------------------', cellEvent.cellElement)
-            //     console.log('CELL EVENT', cellEvent)
-            //     console.groupEnd()
-            // }
 
             fieldStyleString = stringifyStyleProperties(fieldStyles.styles[0].properties)
             fieldStyles.styles.forEach((fieldStyle) => {
@@ -284,6 +276,15 @@ export default defineComponent({
         },
         isTotalCell(cellEvent) {
             return cellEvent.cell.type === 'GT' || cellEvent.cell.rowType === 'GT' || cellEvent.cell.columnType === 'GT' || cellEvent.cell.type === 'T' || cellEvent.cell.rowType === 'T' || cellEvent.cell.columnType === 'T'
+        },
+
+        //#endregion ===============================================================================================
+
+        //#region ===================== Cell Click Events  ====================================================
+        onCellClicked(cellEvent) {
+            console.group('CELL CLICKED ---------------------', cellEvent.cellElement)
+            console.log('event', cellEvent)
+            console.groupEnd()
         }
 
         //#endregion ===============================================================================================
