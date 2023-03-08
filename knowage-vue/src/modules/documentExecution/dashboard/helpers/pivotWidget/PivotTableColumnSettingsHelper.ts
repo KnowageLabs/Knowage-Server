@@ -1,5 +1,6 @@
 import { IWidget } from '../../Dashboard'
 import { IPivotTableWidgetConditionalStyle } from '../../interfaces/pivotTable/DashboardPivotTableWidget'
+import * as pivotTableDefaultValues from '../../widget/WidgetEditor/helpers/pivotTableWidget/PivotTableDefaultValues'
 
 export const getSettingsFromPivotTableWidgetColumns = (formattedWidget: IWidget, widget: any) => {
     getSettingsFromMeasureColumns(formattedWidget, widget)
@@ -126,22 +127,20 @@ const getSettingsFromMeasureColumns = (formattedWidget: IWidget, widget: any) =>
 
 const getConditionalStyleFromColumn = (formattedWidget: IWidget, tempColumn: any) => {
     if (!tempColumn.ranges || tempColumn.ranges.length === 0) return
+    const defaultConditionalStyle = pivotTableDefaultValues.getDefaultConditionalStyle()
     tempColumn.ranges.forEach((range: any) => {
         const tempConditionalStyle = {
-            target: tempColumn.name,
-            condition: {
-                operator: range.operator,
-                value: range.value
-            },
+            target: tempColumn.id,
+            condition: { operator: range.operator, value: range.value },
             properties: {
-                'text-align': '',
-                'font-family': '',
-                'font-size': '',
-                'font-style': '',
-                'font-weight': '',
-                color: range.color ?? '',
-                'background-color': range['background-color'] ?? '',
-                icon: range.icon ? range.icon.trim() : ''
+                'text-align': defaultConditionalStyle.properties['text-align'],
+                'font-family': defaultConditionalStyle.properties['font-family'],
+                'font-size': defaultConditionalStyle.properties['font-size'],
+                'font-style': defaultConditionalStyle.properties['font-style'],
+                'font-weight': defaultConditionalStyle.properties['font-weight'],
+                color: range.color ?? defaultConditionalStyle.properties.color,
+                'background-color': range['background-color'] ?? defaultConditionalStyle.properties['background-color'],
+                icon: range.icon ? range.icon.trim() : defaultConditionalStyle.properties.icon
             }
         } as IPivotTableWidgetConditionalStyle
         formattedWidget.settings.conditionalStyles.enabled = true

@@ -29,6 +29,23 @@
             }
         ]
     },
+    "defaultConditionalStyle": {
+        "condition": {
+            "operator": "",
+            "value": null
+        },
+        "properties": {
+            "background-color": "",
+            "color": "",
+            "font-family": "",
+            "font-size": "",
+            "font-style": "",
+            "font-weight": "",
+            "icon": "",
+            "text-align": ""
+        },
+        "target": ""
+    },
     "defaultFieldPanel": {
         "enabled": false
     },

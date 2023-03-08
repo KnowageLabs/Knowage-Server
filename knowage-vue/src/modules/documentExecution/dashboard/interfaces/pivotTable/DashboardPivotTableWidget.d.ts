@@ -19,7 +19,7 @@ export interface IPivotTableWidgetConditionalStyle {
     target: string
     condition: {
         operator: string
-        value: number
+        value: number | null
     }
     properties: {
         'text-align': string
