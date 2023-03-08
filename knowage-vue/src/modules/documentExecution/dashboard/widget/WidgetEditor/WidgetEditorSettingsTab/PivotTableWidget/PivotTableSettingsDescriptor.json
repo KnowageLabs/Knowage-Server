@@ -142,6 +142,11 @@
             "value": "Style"
         },
         {
+            "icon": "fa fa-toggle-on",
+            "label": "dashboard.widgetEditor.conditionalStyle",
+            "value": "ConditionalStyle"
+        },
+        {
             "icon": "fa fa-hand-pointer",
             "label": "dashboard.widgetEditor.interactions.title",
             "value": "Interactions"

@@ -13,7 +13,6 @@
                 <WidgetBordersStyle v-else-if="accordion.type === 'BordersStyle'" :widgetModel="widgetModel"></WidgetBordersStyle>
                 <WidgetPaddingStyle v-else-if="accordion.type === 'PaddingStyle'" :widgetModel="widgetModel"></WidgetPaddingStyle>
                 <WidgetShadowsStyle v-else-if="accordion.type === 'ShadowsStyle'" :widgetModel="widgetModel"></WidgetShadowsStyle>
-                <TableWidgetConditions v-else-if="accordion.type === 'Conditions'" :widgetModel="widgetModel" :variables="variables" :dashboardId="dashboardId"></TableWidgetConditions>
                 <WidgetResponsive v-else-if="accordion.type === 'Responsive'" :widgetModel="widgetModel"></WidgetResponsive>
                 <WidgetSelection v-else-if="accordion.type === 'Selection'" :widgetModel="widgetModel"></WidgetSelection>
                 <WidgetCrossNavigation v-else-if="accordion.type === 'CrossNavigation'" :widgetModel="widgetModel" :datasets="datasets" :selectedDatasets="selectedDatasets" :dashboardId="dashboardId"></WidgetCrossNavigation>
@@ -28,6 +27,7 @@
                 <PivotTableFieldsStyle v-else-if="accordion.type === 'FieldHeadersStyle'" :widgetModel="widgetModel" :fieldType="'fieldHeaders'" />
                 <PivotTableColumnHeadersStyle v-else-if="accordion.type === 'ColumnHeadersStyle'" :widgetModel="widgetModel" :toolbarStyleSettings="descriptor.columnHeadersToolbarStyleOptions" type="columns" />
                 <PivotTableColumnHeadersStyle v-else-if="accordion.type === 'RowsHeadersStyle'" :widgetModel="widgetModel" :toolbarStyleSettings="descriptor.columnHeadersToolbarStyleOptions" type="rows" />
+                <PivotTableConditionalStyle v-else-if="accordion.type === 'Conditions'" :widgetModel="widgetModel"></PivotTableConditionalStyle>
             </AccordionTab>
         </Accordion>
     </div>
@@ -44,7 +44,6 @@ import WidgetExport from '../common/configuration/WidgetExport.vue'
 import WidgetRowsStyle from '../common/style/WidgetRowsStyle.vue'
 import WidgetBordersStyle from '../common/style/WidgetBordersStyle.vue'
 import WidgetShadowsStyle from '../common/style/WidgetShadowsStyle.vue'
-import TableWidgetConditions from '../TableWidget/conditionalStyle/TableWidgetConditions.vue'
 import WidgetResponsive from '../common/responsive/WidgetResponsive.vue'
 import WidgetSelection from '../common/interactions/selection/WidgetSelection.vue'
 import WidgetCrossNavigation from '../common/interactions/crossNavigation/WidgetCrossNavigation.vue'
@@ -60,6 +59,7 @@ import PivotTableTooltips from './tooltips/PivotTableTooltips.vue'
 import PivotTableTotalsStyle from './style/PivotTableTotalsStyle.vue'
 import PivotTableFieldsStyle from './style/PivotTableFieldsStyle.vue'
 import PivotTableColumnHeadersStyle from './style/PivotTableColumnHeadersStyle.vue'
+import PivotTableConditionalStyle from './conditionalStyle/PivotTableConditionalStyle.vue'
 
 export default defineComponent({
     name: 'pivot-table-settings-accordion',
@@ -71,7 +71,6 @@ export default defineComponent({
         WidgetRowsStyle,
         WidgetBordersStyle,
         WidgetShadowsStyle,
-        TableWidgetConditions,
         WidgetResponsive,
         WidgetSelection,
         WidgetPaddingStyle,
@@ -85,7 +84,8 @@ export default defineComponent({
         PivotTableTooltips,
         PivotTableTotalsStyle,
         PivotTableFieldsStyle,
-        PivotTableColumnHeadersStyle
+        PivotTableColumnHeadersStyle,
+        PivotTableConditionalStyle
     },
     props: {
         widgetModel: { type: Object as PropType<IWidget>, required: true },

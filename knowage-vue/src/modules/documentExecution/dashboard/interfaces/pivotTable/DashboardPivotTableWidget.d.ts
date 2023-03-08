@@ -1,13 +1,36 @@
-import { ITableWidgetColumnStyles, ITableWidgetConditionalStyles, ITableWidgetHeadersStyle, IWidgetBackgroundStyle, IWidgetBordersStyle, IWidgetExports, IWidgetInteractions, IWidgetPaddingStyle, IWidgetResponsive, IWidgetRowsStyle, IWidgetShadowsStyle, IWidgetTitle, IWidgetColumn } from '../../Dashboard'
+import { ITableWidgetColumnStyles, ITableWidgetHeadersStyle, IWidgetBackgroundStyle, IWidgetBordersStyle, IWidgetExports, IWidgetInteractions, IWidgetPaddingStyle, IWidgetResponsive, IWidgetRowsStyle, IWidgetShadowsStyle, IWidgetTitle, IWidgetColumn } from '../../Dashboard'
 
 export interface IPivotTableSettings {
     updatable: boolean
     clickable: boolean
-    conditionalStyles: ITableWidgetConditionalStyles
+    conditionalStyles: IPivotTableWidgetConditionalStyles
     configuration: IPivotTableConfiguration
     interactions: IWidgetInteractions
     style: IPivotTableStyle
     responsive: IWidgetResponsive
+}
+
+export interface IPivotTableWidgetConditionalStyles {
+    enabled: boolean
+    conditions: IPivotTableWidgetConditionalStyle[]
+}
+
+export interface IPivotTableWidgetConditionalStyle {
+    target: string
+    condition: {
+        operator: string
+        value: number
+    }
+    properties: {
+        'text-align': string
+        'font-family': string
+        'font-size': string
+        'font-style': string
+        'font-weight': string
+        color: string
+        'background-color': string
+        icon: string
+    }
 }
 
 export interface IPivotTableConfiguration {
