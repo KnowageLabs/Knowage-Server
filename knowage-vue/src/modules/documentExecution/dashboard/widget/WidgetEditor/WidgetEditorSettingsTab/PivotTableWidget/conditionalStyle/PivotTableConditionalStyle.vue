@@ -34,7 +34,7 @@
                     </div>
 
                     <div class="p-col-12 p-grid p-ai-center">
-                        <WidgetEditorStyleToolbar :options="descriptor.columnHeadersToolbarStyleOptions" :prop-model="conditionalStyle.properties" :disabled="conditionalStylesDisabled" @change="onStyleToolbarChange($event, conditionalStyle)"> </WidgetEditorStyleToolbar>
+                        <WidgetEditorStyleToolbar :options="tableWidgetDescriptor.conditionsToolbarStyleOptions" :prop-model="conditionalStyle.properties" :disabled="conditionalStylesDisabled" @change="onStyleToolbarChange($event, conditionalStyle)"> </WidgetEditorStyleToolbar>
                     </div>
                 </div>
 
