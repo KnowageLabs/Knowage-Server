@@ -1,6 +1,6 @@
 <template>
     <div class="pivot-widget-container p-d-flex p-d-row kn-flex">
-        <DxPivotGrid id="pivotgrid" ref="grid" :data-source="dataSource" v-bind="pivotConfig">
+        <DxPivotGrid id="pivotgrid" ref="grid" :data-source="dataSource" v-bind="pivotConfig" @initialized="onGridInitialization">
             <DxFieldChooser v-bind="fieldPickerConfig" />
             <DxFieldPanel v-bind="fieldPanelConfig" />
         </DxPivotGrid>
@@ -47,7 +47,8 @@ export default defineComponent({
             tableData: [] as any,
             pivotConfig: {} as any,
             fieldPickerConfig: {} as any,
-            fieldPanelConfig: {} as any
+            fieldPanelConfig: {} as any,
+            gridInstance: null as any
         }
     },
     computed: {
@@ -55,7 +56,7 @@ export default defineComponent({
             return this.dataSource.fields().filter((field) => field.area == 'data')
         },
         pivotFields() {
-            return this.dataSource.fields()
+            return this.gridInstance.getDataSource()._descriptions
         }
     },
     watch: {
@@ -89,6 +90,7 @@ export default defineComponent({
             const widgetConfig = this.propWidget.settings.configuration
             this.pivotConfig = {
                 // PROPS
+                allowExpandAll: true,
                 allowSorting: true,
                 allowSortingBySummary: true,
                 allowFiltering: true,
@@ -105,7 +107,6 @@ export default defineComponent({
                 onCellClick: this.onCellClicked
             }
         },
-
         setFieldPickerConfiguration() {
             const fieldPickerConfig = this.propWidget.settings.configuration.fieldPicker
             this.fieldPickerConfig = {
@@ -114,14 +115,16 @@ export default defineComponent({
                 height: fieldPickerConfig.height
             }
         },
-
         setFieldPanelConfiguration() {
             const fieldPanelConfig = this.propWidget.settings.configuration.fieldPanel
             this.fieldPanelConfig = {
                 visible: fieldPanelConfig.enabled
             }
         },
-
+        onGridInitialization(event) {
+            console.log('INIT EVENT', event.component)
+            this.gridInstance = event.component
+        },
         onContentReady() {
             // console.log('CONTENT READY \n', this.dataSource.state())
         },
@@ -161,6 +164,8 @@ export default defineComponent({
                     return 'column'
                 case 'rows':
                     return 'row'
+                case 'filters':
+                    return 'filter'
                 default:
                     return fieldsName
             }
@@ -173,12 +178,9 @@ export default defineComponent({
 
         //#region ===================== Cell Config (Totals, Stlye, Conditionals) ====================================================
         setCellConfiguration(event) {
-            // const pivotFields = this.dataSource.fields()
-            // const dataFields = pivotFields.filter((field) => field.area == 'data')
-
             // if (event.cell.text == 'UNITS_ORDERED') {
             //     console.group('cellPrep ---------------------', event.cellElement)
-            // console.log('CELL EVENT', event)
+            //     console.log('CELL EVENT', event)
             //     console.log('CELL EVENT', pivotFields[event.cell.dataSourceIndex])
             //     console.groupEnd()
             // }
@@ -194,7 +196,7 @@ export default defineComponent({
             this.setTotals(event)
             this.setTooltips(event)
             this.setFieldStyles(event)
-            this.setHeaderStyles(event)
+            this.setHeaderStyles(event) //TODO: Does it need to exist now that we can target specific fields?
         },
         //#endregion ===============================================================================================
 
@@ -226,14 +228,12 @@ export default defineComponent({
         //#endregion ===============================================================================================
 
         //#region ===================== Tooltips Config  ====================================================
-        //Tooltips - we cannot target custom headers if they are not in data fields...we have no way of knowing which field they belong.
-
         setTooltips(cellEvent) {
             const tooltipsConfig = this.propWidget.settings.tooltips as IPivotTooltips[]
-            const parentField = this.dataFields[cellEvent.cell.dataIndex] as any
+            const parentField = this.getCellParent(cellEvent)
 
             let cellTooltipConfig = null as unknown as IPivotTooltips
-            if (parentField?.id && tooltipsConfig.length >= 1) cellTooltipConfig = tooltipsConfig.find((tooltipConfig) => tooltipConfig.target.includes(parentField.id)) as IPivotTooltips
+            if (parentField?.id && tooltipsConfig.length > 1) cellTooltipConfig = tooltipsConfig.find((tooltipConfig) => tooltipConfig.target.includes(parentField.id)) as IPivotTooltips
             else if (tooltipsConfig[0].enabled) cellTooltipConfig = tooltipsConfig[0] as IPivotTooltips
 
             if (cellTooltipConfig) this.createFieldTooltips(cellEvent, cellTooltipConfig)
@@ -262,7 +262,9 @@ export default defineComponent({
 
         //#region ===================== Field Styles: TODO: Possibly split methods? Maybe no need.  ====================================================
         setFieldStyles(cellEvent) {
-            const parentField = this.dataFields[cellEvent.cell.dataIndex] as any
+            if (this.isTotalCell(cellEvent)) return
+
+            const parentField = this.getCellParent(cellEvent)
             const conditionalStyles = this.propWidget.settings.conditionalStyles as ITableWidgetConditionalStyles
             let fieldStyles = null as unknown as ITableWidgetColumnStyles
             let fieldStyleString = null as any
@@ -270,7 +272,7 @@ export default defineComponent({
             if (cellEvent.area == 'data') fieldStyles = this.propWidget.settings.style.fields
             else fieldStyles = this.propWidget.settings.style.fieldHeaders
 
-            if (!fieldStyles.enabled || this.isTotalCell(cellEvent) || cellEvent.area == 'row' || !parentField) return
+            if (!fieldStyles.enabled || !parentField) return
 
             //All Field Styles
             fieldStyleString = stringifyStyleProperties(fieldStyles.styles[0].properties)
@@ -288,6 +290,20 @@ export default defineComponent({
 
             cellEvent.cellElement.style = fieldStyleString
         },
+        getCellParent(cellEvent) {
+            if (this.isTotalCell(cellEvent)) return undefined
+            if (cellEvent.area == 'data' || (cellEvent.area == 'column' && cellEvent.cell.dataIndex >= 0)) {
+                return this.pivotFields.values[cellEvent.cell.dataIndex]
+            }
+            if (cellEvent.area == 'column' && !cellEvent.cell.dataIndex) {
+                const fieldIndex = cellEvent.cell.path.findIndex((pathElement) => pathElement == cellEvent.cell.text)
+                return this.pivotFields.columns[fieldIndex]
+            }
+            if (cellEvent.area == 'row' && !cellEvent.cell.dataIndex) {
+                const fieldIndex = cellEvent.cell.path.findIndex((pathElement) => pathElement == cellEvent.cell.text)
+                return this.pivotFields.rows[fieldIndex]
+            }
+        },
         isTotalCell(cellEvent) {
             return cellEvent.cell.type === 'GT' || cellEvent.cell.rowType === 'GT' || cellEvent.cell.columnType === 'GT' || cellEvent.cell.type === 'T' || cellEvent.cell.rowType === 'T' || cellEvent.cell.columnType === 'T'
         },
@@ -298,13 +314,14 @@ export default defineComponent({
             // let headerStyles = null as unknown as IPivotTableColumnHeadersStyle
             let headerStyles = null as any
 
-            const parentField = this.dataFields[cellEvent.cell.dataIndex]
+            // const parentField = this.dataFields[cellEvent.cell.dataIndex]
+            const isDataColumn = cellEvent.area == 'data' || (cellEvent.area == 'column' && cellEvent.cell.dataIndex >= 0)
             let headerStylestring = null as any
 
             if (cellEvent.area == 'column') headerStyles = this.propWidget.settings.style.columnHeaders
             else if (cellEvent.area == 'row') headerStyles = this.propWidget.settings.style.rowHeaders
 
-            if (cellEvent.area == 'data' || this.isTotalCell(cellEvent) || parentField || !headerStyles.enabled) return
+            if (cellEvent.area == 'data' || this.isTotalCell(cellEvent) || isDataColumn || !headerStyles.enabled) return
 
             headerStylestring = stringifyStyleProperties(headerStyles.properties)
             cellEvent.cellElement.style = headerStylestring
@@ -317,9 +334,9 @@ export default defineComponent({
             console.log('event', cellEvent)
             console.log('pivotFields', this.pivotFields)
             console.log('this.dataFields[cellEvent.cell.dataIndex]', this.dataFields[cellEvent.cell.dataIndex])
+            console.log('this.gridInstance', this.gridInstance.getDataSource())
             console.groupEnd()
         }
-
         //#endregion ===============================================================================================
     }
 })
