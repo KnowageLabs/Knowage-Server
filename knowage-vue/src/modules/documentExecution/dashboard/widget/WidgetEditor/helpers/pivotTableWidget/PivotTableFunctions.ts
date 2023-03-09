@@ -39,6 +39,6 @@ export const createNewPivotTableWidgetSettings = () => {
 }
 
 export const removeColumnFromPivotTableWidgetModel = (widgetModel: IWidget, column: IWidgetColumn) => {
-    removeColumnFromSubmodel(column, widgetModel.settings.visualization.visualizationTypes.types, 'target', 'columnRemovedFromVisibilityTypes', true)
+    removeColumnFromSubmodel(column, widgetModel.settings.visualization.visualizationTypes.types, 'target', 'columnRemovedFromVisualizationTypes', true)
     removeColumnFromSubmodel(column, widgetModel.settings.tooltips, 'target', 'columnRemovedFromTooltips', true)
 }

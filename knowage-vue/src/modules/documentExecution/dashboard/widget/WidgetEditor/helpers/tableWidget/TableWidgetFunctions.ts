@@ -75,7 +75,6 @@ export const removeColumnFromSubmodel = (column: IWidgetColumn, array: any[], su
         if ((array[i][subProperty] as string[]).length === 0) array.splice(i, 1)
     }
     if (removed) emitter.emit(eventToEmit)
-    console.log("------- removed: ", removed)
 }
 
 const removeColumnFromCrossNavigation = (widgetModel: IWidget, column: IWidgetColumn) => {

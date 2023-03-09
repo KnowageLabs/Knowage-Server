@@ -179,7 +179,6 @@ export default defineComponent({
         onColumnsAddedFromMultiselect(tooltip: ITableWidgetTooltipStyle) {
             ;(tooltip.target as string[]).forEach((target: string) => {
                 const index = this.availableColumnOptions.findIndex((targetOption: IWidgetColumn | { id: string; alias: string }) => targetOption.id === target)
-                console.log('----- index: ', index)
                 if (index !== -1) this.availableColumnOptions.splice(index, 1)
             })
         },

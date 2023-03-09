@@ -92,7 +92,6 @@ export default defineComponent({
         onFieldDelete(column: IWidgetColumn) {
             if (column.id === this.selectedField?.id) this.selectedField = null
             this.removeColumnFromModel(column)
-            console.log('----- fafsafa: ', column)
             emitter.emit('columnRemoved', column)
         },
         removeColumnFromModel(column: IWidgetColumn) {
