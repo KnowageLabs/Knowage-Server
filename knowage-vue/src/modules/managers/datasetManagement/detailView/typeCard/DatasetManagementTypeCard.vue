@@ -12,9 +12,9 @@
                             v-model="v$.dataset.dsTypeCd.$model"
                             class="kn-material-input"
                             :style="typeTabDescriptor.style.maxWidth"
-                            :options="getAllowed"
-                            option-label="VALUE_CD"
-                            option-value="VALUE_CD"
+                            :options="getAllowed()"
+                            optionLabel="VALUE_CD"
+                            optionValue="VALUE_CD"
                             :class="{
                                 'p-invalid': v$.dataset.dsTypeCd.$invalid && v$.dataset.dsTypeCd.$dirty
                             }"
