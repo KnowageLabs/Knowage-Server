@@ -3,7 +3,7 @@
         {{ widgetModel.fields }}
         <!-- TODO: removed events: onFieldAdded, onFieldItemUpdate, onFieldDelete - check if everything is ok with model  -->
         <!-- we dont need to emit to reload widget because it wont be updated in runtime -->
-        <FieldTable v-for="(field, index) in widgetModel.fields" :key="index" class="p-col-12" :field-type="index" :widget-model="widgetModel" :items="field" :settings="descriptor[index]" @row-reorder="onFieldsReorder" @item-selected="setSelectedField" />
+        <FieldTable v-for="(field, index) in widgetModel.fields" :key="index" class="p-col-12" :field-type="index" :widget-model="widgetModel" :items="field" :settings="descriptor[index]" @row-reorder="onFieldsReorder" @item-selected="setSelectedField" @item-updated="onFieldItemUpdate" />
         <FieldForm :widget-model="widgetModel" :selected-column="selectedField" />
     </div>
 </template>
@@ -70,15 +70,8 @@ export default defineComponent({
                 console.log('AFTER', this.widgetModel.fields[payload.fieldType])
             }
         },
-        onFieldItemUpdate(column: IWidgetColumn) {
-            const index = this.widgetModel.columns.findIndex((tempColumn: IWidgetColumn) => tempColumn.id === column.id)
-            if (index !== -1) {
-                // eslint-disable-next-line vue/no-mutating-props
-                this.widgetModel.columns[index] = { ...column }
-                emitter.emit('collumnUpdated', { column: this.widgetModel.columns[index], columnIndex: index })
-                if (this.widgetModel.columns[index].id === this.selectedField?.id) this.selectedField = { ...this.widgetModel.columns[index] }
-            }
-            this.loadColumnTableItems()
+        onFieldItemUpdate(field: IWidgetColumn) {
+            if (this.selectedField?.id === field.id) this.setSelectedField(field)
         },
         setSelectedField(column: IWidgetColumn) {
             console.log('selected field', column)

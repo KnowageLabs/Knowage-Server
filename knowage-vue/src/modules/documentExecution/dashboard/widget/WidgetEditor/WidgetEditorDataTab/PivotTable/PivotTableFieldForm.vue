@@ -56,12 +56,7 @@ export default defineComponent({
             return this.widgetModel.type
         },
         isDataField() {
-            const index = this.widgetModel.fields?.data.findIndex((field: any) => {
-                console.log(field.columnName)
-                console.log(this.selectedColumn?.columnName)
-                return field.columnName === this.selectedColumn?.columnName
-            })
-
+            const index = this.widgetModel.fields?.data.findIndex((field: any) => field.columnName === this.selectedColumn?.columnName)
             return index != -1
         }
     },
