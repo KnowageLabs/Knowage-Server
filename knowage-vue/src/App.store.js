@@ -102,6 +102,9 @@ const store = defineStore('store', {
         },
         setDefaultTheme(defaultTheme) {
             this.defaultTheme = defaultTheme
+        },
+        getLocale() {
+            return this.locale
         }
     }
 })
