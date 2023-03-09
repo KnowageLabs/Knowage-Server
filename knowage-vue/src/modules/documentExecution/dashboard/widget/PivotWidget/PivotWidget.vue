@@ -11,7 +11,7 @@
 import { DxPivotGrid, DxFieldChooser, DxFieldPanel } from 'devextreme-vue/pivot-grid'
 import Tooltip from 'devextreme/ui/tooltip'
 import PivotGridDataSource from 'devextreme/ui/pivot_grid/data_source'
-import { IDashboardDataset, ISelection, IWidget, ITableWidgetColumnStyles, ITableWidgetConditionalStyles } from '../../Dashboard'
+import { IDataset, ISelection, IWidget, ITableWidgetColumnStyles, ITableWidgetConditionalStyles } from '../../Dashboard'
 import { defineComponent, PropType } from 'vue'
 import mainStore from '../../../../../App.store'
 import dashboardStore from '../../Dashboard.store'
@@ -19,6 +19,9 @@ import { getColumnConditionalStyles } from '../TableWidget/TableWidgetHelper'
 
 import { getWidgetStyleByType, stringifyStyleProperties } from '../TableWidget/TableWidgetHelper'
 import { IPivotTooltips } from '../../interfaces/pivotTable/DashboardPivotTableWidget'
+import { createPivotTableSelection } from './PivotWidgetHelpers'
+import { updateStoreSelections } from '../interactionsHelpers/InteractionHelper'
+import { mapActions } from 'pinia'
 
 export default defineComponent({
     name: 'table-widget',
@@ -26,7 +29,7 @@ export default defineComponent({
     props: {
         propWidget: { type: Object as PropType<IWidget>, required: true },
         editorMode: { type: Boolean, required: false },
-        datasets: { type: Array as PropType<IDashboardDataset[]>, required: true },
+        datasets: { type: Array as PropType<IDataset[]>, required: true },
         dataToShow: { type: Object as any, required: true },
         propActiveSelections: { type: Array as PropType<ISelection[]>, required: true },
         dashboardId: { type: String, required: true }
@@ -85,6 +88,7 @@ export default defineComponent({
     mounted() {},
 
     methods: {
+        ...mapActions(dashboardStore, ['setSelections']),
         setPivotConfiguration() {
             const widgetConfig = this.propWidget.settings.configuration
             this.pivotConfig = {
@@ -232,7 +236,7 @@ export default defineComponent({
             const tooltipsConfig = this.propWidget.settings.tooltips as IPivotTooltips[]
             const parentField = this.dataFields[cellEvent.cell.dataIndex] as any
 
-            let cellTooltipConfig = null as unknown as IPivotTooltips
+            let cellTooltipConfig = (null as unknown) as IPivotTooltips
             if (parentField?.id && tooltipsConfig.length >= 1) cellTooltipConfig = tooltipsConfig.find((tooltipConfig) => tooltipConfig.target.includes(parentField.id)) as IPivotTooltips
             else if (tooltipsConfig[0].enabled) cellTooltipConfig = tooltipsConfig[0] as IPivotTooltips
 
@@ -246,7 +250,7 @@ export default defineComponent({
                 visible: false,
                 showEvent: 'mouseenter',
                 hideEvent: 'mouseleave click',
-                contentTemplate: function (content) {
+                contentTemplate: function(content) {
                     const label = document.createElement('div')
                     if (cellEvent.area == 'data') {
                         label.innerHTML = `<b>${tooltipConfig.prefix} ${cellEvent.cell.text} ${tooltipConfig.suffix}</b>`
@@ -264,7 +268,7 @@ export default defineComponent({
         setFieldStyles(cellEvent) {
             const parentField = this.dataFields[cellEvent.cell.dataIndex] as any
             const conditionalStyles = this.propWidget.settings.conditionalStyles as ITableWidgetConditionalStyles
-            let fieldStyles = null as unknown as ITableWidgetColumnStyles
+            let fieldStyles = (null as unknown) as ITableWidgetColumnStyles
             let fieldStyleString = null as any
 
             if (cellEvent.area == 'data') fieldStyles = this.propWidget.settings.style.fields
@@ -313,11 +317,16 @@ export default defineComponent({
 
         //#region ===================== Cell Click Events  ====================================================
         onCellClicked(cellEvent) {
-            console.group('CELL CLICKED ---------------------', cellEvent.cellElement)
-            console.log('event', cellEvent)
-            console.log('pivotFields', this.pivotFields)
-            console.log('this.dataFields[cellEvent.cell.dataIndex]', this.dataFields[cellEvent.cell.dataIndex])
-            console.groupEnd()
+            if (this.editorMode) return
+            // if (this.propWidget.settings.interactions.crossNavigation.enabled) {
+            //     //const formattedClickedValue = getFormattedClickedValueForCrossNavigation(cellEvent, this.pivotFields, this.dataFields)
+            //     //executePivotTableWidgetCrossNavigation(formattedClickedValue, this.propWidget.settings.interactions.crossNavigation, this.dashboardId)
+            //     return
+            // } else if (this.propWidget.settings.interactions.selection.enabled) {
+            //     createPivotTableSelection(cellEvent, this.pivotFields, this.dataFields)
+            // }
+            const selection = createPivotTableSelection(cellEvent, this.propWidget, this.datasets)
+            if (selection) updateStoreSelections(selection, this.propActiveSelections, this.dashboardId, this.setSelections, this.$http)
         }
 
         //#endregion ===============================================================================================
