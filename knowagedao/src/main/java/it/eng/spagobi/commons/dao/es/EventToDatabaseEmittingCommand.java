@@ -31,6 +31,13 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 public class EventToDatabaseEmittingCommand implements UserEventsEmettingCommand, RoleEventsEmittingCommand {
 
+	private static final String DATA_KEY_PASSWORD_BLOCKED = "passwordBlocked";
+	private static final String DATA_KEY_FAILED_LOGIN_ATTEMPTS = "failedLoginAttempts";
+	private static final String DATA_KEY_PASSWORD = "password";
+	private static final String DATA_KEY_ROLES = "roles";
+	private static final String DATA_KEY_USER_ID = "userId";
+	private static final String DATA_KEY_IS_SUPER_ADMIN = "isSuperAdmin";
+
 	@Override
 	public void emitUserAttributeDeleted(Session aSession, SbiUserAttributes attribute) {
 
@@ -86,8 +93,12 @@ public class EventToDatabaseEmittingCommand implements UserEventsEmettingCommand
 
 		JsonObject data = createCommonDataForEvent()
 				.add("id", user.getId())
-				.add("userId", user.getUserId())
-				.add("roles", arrayBuilder)
+				.add(DATA_KEY_USER_ID, user.getUserId())
+				.add(DATA_KEY_ROLES, arrayBuilder)
+				.add(DATA_KEY_PASSWORD, Optional.ofNullable(user.getPassword()).orElse(""))
+				.add(DATA_KEY_FAILED_LOGIN_ATTEMPTS, user.getFailedLoginAttempts())
+				.add(DATA_KEY_PASSWORD_BLOCKED, Optional.ofNullable(user.getFlgPwdBlocked()).orElse(Boolean.FALSE))
+				.add(DATA_KEY_IS_SUPER_ADMIN, Optional.ofNullable(user.getIsSuperadmin()).orElse(Boolean.FALSE))
 				.build();
 
 		SbiEs event = createUserEvent(user)
@@ -115,8 +126,12 @@ public class EventToDatabaseEmittingCommand implements UserEventsEmettingCommand
 
 		JsonObject data = createCommonDataForEvent()
 				.add("id", user.getId())
-				.add("userId", user.getUserId())
-				.add("roles", arrayBuilder)
+				.add(DATA_KEY_USER_ID, user.getUserId())
+				.add(DATA_KEY_ROLES, arrayBuilder)
+				.add(DATA_KEY_PASSWORD, Optional.ofNullable(user.getPassword()).orElse(""))
+				.add(DATA_KEY_FAILED_LOGIN_ATTEMPTS, user.getFailedLoginAttempts())
+				.add(DATA_KEY_PASSWORD_BLOCKED, Optional.ofNullable(user.getFlgPwdBlocked()).orElse(Boolean.FALSE))
+				.add(DATA_KEY_IS_SUPER_ADMIN, Optional.ofNullable(user.getIsSuperadmin()).orElse(Boolean.FALSE))
 				.build();
 
 		SbiEs event = createUserEvent(user)
@@ -154,8 +169,12 @@ public class EventToDatabaseEmittingCommand implements UserEventsEmettingCommand
 
 		JsonObject data = createCommonDataForEvent()
 				.add("id", user.getId())
-				.add("userId", user.getUserId())
-				.add("roles", rolesArrayBuilder)
+				.add(DATA_KEY_USER_ID, user.getUserId())
+				.add(DATA_KEY_ROLES, rolesArrayBuilder)
+				.add(DATA_KEY_PASSWORD, Optional.ofNullable(user.getPassword()).orElse(""))
+				.add(DATA_KEY_FAILED_LOGIN_ATTEMPTS, user.getFailedLoginAttempts())
+				.add(DATA_KEY_PASSWORD_BLOCKED, Optional.ofNullable(user.getFlgPwdBlocked()).orElse(Boolean.FALSE))
+				.add(DATA_KEY_IS_SUPER_ADMIN, Optional.ofNullable(user.getIsSuperadmin()).orElse(Boolean.FALSE))
 				.build();
 
 		SbiEs event = createUserEvent(user)
@@ -511,6 +530,7 @@ public class EventToDatabaseEmittingCommand implements UserEventsEmettingCommand
 		JsonObject userProfileAsJson = Json.createObjectBuilder()
 				.add("id", Optional.ofNullable(userProfile.getUserId()).orElse("").toString())
 				.add("username", Optional.ofNullable(userProfile.getUserName()).orElse("").toString())
+				.add("isSuperAdmin", Optional.ofNullable(userProfile.getIsSuperadmin()).orElse(Boolean.FALSE).toString())
 				.build();
 
 		return Json.createObjectBuilder()
