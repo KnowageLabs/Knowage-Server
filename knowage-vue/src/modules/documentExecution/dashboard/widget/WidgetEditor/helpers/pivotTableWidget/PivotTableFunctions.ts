@@ -39,6 +39,15 @@ export const createNewPivotTableWidgetSettings = () => {
 }
 
 export const removeColumnFromPivotTableWidgetModel = (widgetModel: IWidget, column: IWidgetColumn) => {
+    removeColumnFromConditionalStyles(widgetModel, column)
     removeColumnFromSubmodel(column, widgetModel.settings.visualization.visualizationTypes.types, 'target', 'columnRemovedFromVisualizationTypes', true)
     removeColumnFromSubmodel(column, widgetModel.settings.tooltips, 'target', 'columnRemovedFromTooltips', true)
+}
+
+const removeColumnFromConditionalStyles = (widgetModel: IWidget, column: IWidgetColumn) => {
+    const conditionalStyles = widgetModel.settings.conditionalStyles.conditions
+    for (let i = conditionalStyles.length - 1; i >= 0; i--) {
+        console.log(conditionalStyles[i].target + ' ===  ' + column.id)
+        if (conditionalStyles[i].target === column.id) conditionalStyles.splice(i, 1)
+    }
 }

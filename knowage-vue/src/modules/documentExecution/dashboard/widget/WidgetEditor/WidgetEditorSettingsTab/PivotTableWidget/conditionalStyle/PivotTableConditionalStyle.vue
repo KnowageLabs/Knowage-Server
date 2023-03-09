@@ -59,6 +59,7 @@
 import { IWidget, IWidgetStyleToolbarModel } from '@/modules/documentExecution/dashboard/Dashboard'
 import { IPivotTableWidgetConditionalStyle, IPivotTableWidgetConditionalStyles } from '@/modules/documentExecution/dashboard/interfaces/pivotTable/DashboardPivotTableWidget'
 import { defineComponent, PropType } from 'vue'
+import { emitter } from '@/modules/documentExecution/dashboard/DashboardHelpers'
 import * as pivotTableDefaultValues from '../../../helpers/pivotTableWidget/PivotTableDefaultValues'
 import descriptor from '../PivotTableSettingsDescriptor.json'
 import Dropdown from 'primevue/dropdown'
@@ -85,9 +86,16 @@ export default defineComponent({
         }
     },
     created() {
+        this.setEventListeners()
         this.loadConditionalStyles()
     },
     methods: {
+        setEventListeners() {
+            emitter.on('columnRemoved', this.loadConditionalStyles)
+        },
+        removeEventListeners() {
+            emitter.off('columnRemoved', this.loadConditionalStyles)
+        },
         loadConditionalStyles() {
             if (this.widgetModel?.settings?.conditionalStyles) this.conditionalStylesModel = this.widgetModel.settings.conditionalStyles
         },
