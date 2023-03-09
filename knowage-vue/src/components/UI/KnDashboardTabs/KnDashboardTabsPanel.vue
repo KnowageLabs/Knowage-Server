@@ -187,8 +187,6 @@ export default defineComponent({
     flex-direction: column;
     .sheets-wrapper {
         width: 100%;
-        // TODO: fix for scroll, might be wrong, talk with Davide
-        // flex: 1;
         flex: 1 0 0;
         order: 1;
         overflow: hidden;
