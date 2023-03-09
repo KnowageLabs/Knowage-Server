@@ -1,4 +1,4 @@
-import { ITableWidgetColumnStyles, ITableWidgetHeadersStyle, IWidgetBackgroundStyle, IWidgetBordersStyle, IWidgetExports, IWidgetInteractions, IWidgetPaddingStyle, IWidgetResponsive, IWidgetRowsStyle, IWidgetShadowsStyle, IWidgetTitle, IWidgetColumn } from '../../Dashboard'
+import { ITableWidgetColumnStyles, IWidgetBackgroundStyle, IWidgetBordersStyle, IWidgetExports, IWidgetInteractions, IWidgetPaddingStyle, IWidgetResponsive, IWidgetShadowsStyle, IWidgetTitle, IWidgetColumn } from '../../Dashboard'
 
 export interface IPivotTableSettings {
     updatable: boolean
@@ -59,9 +59,7 @@ export interface IPivotTableConfiguration {
 
 export interface IPivotTableStyle {
     title: IWidgetTitle
-    headers: ITableWidgetHeadersStyle
     fields: ITableWidgetColumnStyles
-    rows: IWidgetRowsStyle
     background: IWidgetBackgroundStyle
     borders: IWidgetBordersStyle
     padding: IWidgetPaddingStyle

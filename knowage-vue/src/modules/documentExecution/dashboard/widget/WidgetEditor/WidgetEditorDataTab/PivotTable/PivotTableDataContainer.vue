@@ -3,7 +3,19 @@
         {{ widgetModel.fields }}
         <!-- TODO: removed events: onFieldAdded, onFieldItemUpdate, onFieldDelete - check if everything is ok with model  -->
         <!-- we dont need to emit to reload widget because it wont be updated in runtime -->
-        <FieldTable v-for="(field, index) in widgetModel.fields" :key="index" class="p-col-12" :field-type="index" :widget-model="widgetModel" :items="field" :settings="descriptor[index]" @row-reorder="onFieldsReorder" @item-selected="setSelectedField" />
+        <FieldTable
+            v-for="(field, index) in widgetModel.fields"
+            :key="index"
+            class="p-col-12"
+            :field-type="index"
+            :widget-model="widgetModel"
+            :items="field"
+            :settings="descriptor[index]"
+            @row-reorder="onFieldsReorder"
+            @item-selected="setSelectedField"
+            @item-updated="onFieldItemUpdate"
+            @item-deleted="onFieldDelete"
+        />
         <FieldForm :widget-model="widgetModel" :selected-column="selectedField" />
     </div>
 </template>
@@ -12,8 +24,8 @@
 import descriptor from './PivotTableDataContainerDescriptor.json'
 import { defineComponent, PropType } from 'vue'
 import { IWidget, IDataset, IWidgetColumn } from '@/modules/documentExecution/dashboard/Dashboard'
-import { removeColumnFromTableWidgetModel } from '../../helpers/tableWidget/TableWidgetFunctions'
 import { emitter } from '../../../../DashboardHelpers'
+import { removeColumnFromPivotTableWidgetModel } from '../../helpers/pivotTableWidget/PivotTableFunctions'
 import FieldTable from './PivotTableFieldsTable.vue'
 import FieldForm from './PivotTableFieldForm.vue'
 
@@ -42,9 +54,7 @@ export default defineComponent({
         }
     },
     async created() {
-        this.$watch('widgetModel.columns', () => this.loadColumnTableItems())
         this.loadColumnTableItems()
-
         console.log('widget model', this.widgetModel, this.widgetModel.columns)
     },
     methods: {
@@ -60,7 +70,6 @@ export default defineComponent({
                 // eslint-disable-next-line vue/no-mutating-props
                 this.widgetModel.fields[payload.fieldType] = payload.fields
                 emitter.emit('columnsReordered', this.widgetModel.columns)
-                emitter.emit('refreshWidgetWithData', this.widgetModel.id)
                 console.log('AFTER', this.widgetModel.fields[payload.fieldType])
             }
         },
@@ -70,20 +79,11 @@ export default defineComponent({
                 // eslint-disable-next-line vue/no-mutating-props
                 this.widgetModel.fields[payload.fieldType] = payload.rows
                 emitter.emit('columnAdded', payload.column)
-                emitter.emit('refreshWidgetWithData', this.widgetModel.id)
                 console.log('AFTER', this.widgetModel.fields[payload.fieldType])
             }
         },
-        onFieldItemUpdate(column: IWidgetColumn) {
-            const index = this.widgetModel.columns.findIndex((tempColumn: IWidgetColumn) => tempColumn.id === column.id)
-            if (index !== -1) {
-                // eslint-disable-next-line vue/no-mutating-props
-                this.widgetModel.columns[index] = { ...column }
-                emitter.emit('collumnUpdated', { column: this.widgetModel.columns[index], columnIndex: index })
-                emitter.emit('refreshWidgetWithData', this.widgetModel.id)
-                if (this.widgetModel.columns[index].id === this.selectedField?.id) this.selectedField = { ...this.widgetModel.columns[index] }
-            }
-            this.loadColumnTableItems()
+        onFieldItemUpdate(field: IWidgetColumn) {
+            if (this.selectedField?.id === field.id) this.setSelectedField(field)
         },
         setSelectedField(column: IWidgetColumn) {
             console.log('selected field', column)
@@ -93,25 +93,9 @@ export default defineComponent({
             if (column.id === this.selectedField?.id) this.selectedField = null
             this.removeColumnFromModel(column)
             emitter.emit('columnRemoved', column)
-            emitter.emit('refreshWidgetWithData', this.widgetModel.id)
         },
         removeColumnFromModel(column: IWidgetColumn) {
-            switch (this.widgetType) {
-                case 'table':
-                    removeColumnFromTableWidgetModel(this.widgetModel, column)
-                    break
-                case 'discovery':
-                    if (column.fieldType === 'MEASURE') this.clearDiscoveryWidgetAggregatedColumnValuesForSpecificColumn(column)
-                // removeColumnFromDiscoveryWidgetModel(this.widgetModel, column)
-            }
-        },
-        clearDiscoveryWidgetAggregatedColumnValuesForSpecificColumn(column: IWidgetColumn) {
-            this.widgetModel.columns.forEach((tempColumn: IWidgetColumn) => {
-                if (tempColumn.aggregationColumn === column?.columnName) {
-                    tempColumn.aggregation = 'COUNT'
-                    tempColumn.aggregationColumn = ''
-                }
-            })
+            removeColumnFromPivotTableWidgetModel(this.widgetModel, column)
         }
     }
 })

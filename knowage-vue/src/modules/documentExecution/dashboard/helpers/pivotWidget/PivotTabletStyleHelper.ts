@@ -1,5 +1,4 @@
 import { IPivotTableStyle } from '../../interfaces/pivotTable/DashboardPivotTableWidget'
-import { ITableWidgetHeadersStyle, IWidgetRowsStyle } from '../../Dashboard'
 import { getFormattedBorderStyle, getFormattedPaddingStyle, getFormattedShadowsStyle, getFormattedTitleStyle, getFormattedBackgroundStyle } from '../common/WidgetStyleHelper'
 import * as pivotTableDefaultValues from '../../widget/WidgetEditor/helpers/pivotTableWidget/PivotTableDefaultValues'
 
@@ -9,9 +8,7 @@ export const getFormattedStyle = (widget: any) => {
         borders: getFormattedBorderStyle(widget),
         fields: getFormattedFieldsStyle(widget, 'measures'),
         fieldHeaders: getFormattedFieldsStyle(widget, 'measuresHeaders'),
-        headers: getFormattedHeadersStyle(widget),
         padding: getFormattedPaddingStyle(widget),
-        rows: getFormattedRowsStyle(widget),
         shadows: getFormattedShadowsStyle(widget),
         background: getFormattedBackgroundStyle(widget),
         totals: getFormattedTotalsStyle(widget),
@@ -21,12 +18,6 @@ export const getFormattedStyle = (widget: any) => {
     } as IPivotTableStyle
 }
 
-const getFormattedHeadersStyle = (widget: any) => {
-    return {} as ITableWidgetHeadersStyle  // TODO
-}
-const getFormattedRowsStyle = (widget: any) => {
-    return {} as IWidgetRowsStyle // TODO
-}
 
 const getFormattedFieldsStyle = (widget: any, fieldType) => {
     const formattedStyles = pivotTableDefaultValues.getDefaultFields()

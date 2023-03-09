@@ -201,16 +201,12 @@ const getFormattedImageWidgetOutputParameters = (crossNavigationModel: IWidgetCr
     return formattedOutputParameters
 }
 
-// TODO
 export const executePivotTableWidgetCrossNavigation = (clickedValue: IClickedValue, crossNavigationModel: IWidgetCrossNavigation, dashboardId: string) => {
     const outputParameters = getFormattedPivotTableOutputParameters(clickedValue, crossNavigationModel, dashboardId)
-    console.log('---------- FORMATTED OUTPUT PARAMETERS: ', outputParameters)
-    // executeCrossNavigation(outputParameters, crossNavigationModel.name)
+    executeCrossNavigation(outputParameters, crossNavigationModel.name)
 }
 
-// TODO
 const getFormattedPivotTableOutputParameters = (clickedValue: IClickedValue, crossNavigationModel: IWidgetCrossNavigation, dashboardId: string) => {
-    console.log('---------- clickedValue: ', clickedValue)
     const formattedOutputParameters = [] as ICrossNavigationParameter[]
     for (let i = 0; i < crossNavigationModel.parameters.length; i++) {
         const crossNavigationParameter = crossNavigationModel.parameters[i] as IWidgetInteractionParameter
@@ -220,13 +216,24 @@ const getFormattedPivotTableOutputParameters = (clickedValue: IClickedValue, cro
                 formattedOutputParameters.push(getFormattedFixedOutputParameter(crossNavigationParameter))
                 break
             case 'dynamic':
-                // TODO
+                formattedOutputParameters.push(getFormattedPivotTableDynamicOutputParameter(clickedValue, crossNavigationParameter))
                 break
             case 'selection':
                 addSelectionTypeOutputParameter(crossNavigationParameter, formattedOutputParameters, dashboardId)
         }
     }
     return formattedOutputParameters
+}
+
+const getFormattedPivotTableDynamicOutputParameter = (clickedValue: IClickedValue, crossNavigationParameter: IWidgetInteractionParameter) => {
+    return {
+        targetDriverUrlName: '',
+        parameterValue: [{ value: clickedValue.value, description: clickedValue.value }],
+        multivalue: false,
+        type: 'fromSourceDocumentOutputParameter',
+        parameterType: getDriverParameterTypeFromOutputParameterType(crossNavigationParameter.dataType),
+        outputDriverName: crossNavigationParameter.name
+    } as ICrossNavigationParameter
 }
 
 

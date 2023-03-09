@@ -11,6 +11,7 @@ import { formatHighchartsWidgetForSave } from './chartWidget/highcharts/Highchar
 import { formatChartJSForSave } from './chartWidget/chartJS/ChartJSBackendSaveHelper'
 import { createNewImageWidgetSettings } from './imageWidget/ImageWidgetFunctions'
 import { createNewCustomChartSettings } from './customchart/CustomChartFunctions'
+import { createNewPivotTableWidgetSettings } from './pivotTableWidget/PivotTableFunctions'
 import cryptoRandomString from 'crypto-random-string'
 import deepcopy from 'deepcopy'
 import useStore from '@/App.store'
@@ -26,6 +27,7 @@ export function createNewWidget(type: string) {
         columns: [],
         settings: {}
     } as IWidget
+    if (widget.type === 'static-pivot-table') widget.fields = { columns: [], rows: [], data: [], filters: [] }
 
     createNewWidgetSettings(widget)
 
@@ -74,6 +76,9 @@ const createNewWidgetSettings = (widget: IWidget) => {
             break
         case 'customchart':
             widget.settings = createNewCustomChartSettings()
+            break
+        case 'static-pivot-table':
+            widget.settings = createNewPivotTableWidgetSettings()
             break
     }
 }

@@ -40,6 +40,7 @@
 import { defineComponent, PropType } from 'vue'
 import { IWidget, IWidgetColumn } from '@/modules/documentExecution/dashboard/Dashboard'
 import { IPivotTableWidgetVisualizationType, IPivotTableWidgetVisualizationTypes } from '@/modules/documentExecution/dashboard/interfaces/pivotTable/DashboardPivotTableWidget'
+import { emitter } from '@/modules/documentExecution/dashboard/DashboardHelpers'
 import descriptor from '../PivotTableSettingsDescriptor.json'
 import Dropdown from 'primevue/dropdown'
 import WidgetEditorColumnsMultiselect from '../../common/WidgetEditorColumnsMultiselect.vue'
@@ -62,21 +63,33 @@ export default defineComponent({
         }
     },
     created() {
+        this.setEventListeners()
         this.loadColumnOptions()
         this.loadVisualizationTypes()
         this.loadWidgetColumnMaps()
     },
+    unmounted() {
+        this.removeEventListeners()
+    },
     methods: {
+        setEventListeners() {
+            emitter.on('columnRemovedFromVisualizationTypes', this.onColumnRemoved)
+            emitter.on('columnRemoved', this.loadColumnOptions)
+        },
+        removeEventListeners() {
+            emitter.off('columnRemovedFromVisualizationTypes', this.onColumnRemoved)
+            emitter.off('columnRemoved', this.loadColumnOptions)
+        },
         loadVisualizationTypes() {
             if (this.widgetModel.settings?.visualization?.visualizationTypes) this.visualizationTypeModel = this.widgetModel.settings.visualization.visualizationTypes
             this.removeColumnsFromAvailableOptions()
         },
         loadColumnOptions() {
             this.availableColumnOptions = this.widgetModel.fields ? [...this.widgetModel.fields.data] : []
+            this.removeColumnsFromAvailableOptions()
         },
         loadWidgetColumnMaps() {
             this.widgetModel.fields?.data?.forEach((column: IWidgetColumn) => {
-                console.log(' !!!!!!!!!! COLUMN: ', column)
                 if (column.id) this.widgetColumnsAliasMap[column.id] = column.alias
             })
         },
@@ -112,6 +125,10 @@ export default defineComponent({
             if (!this.visualizationTypeModel || this.visualizationTypeDisabled) return
             ;(this.visualizationTypeModel.types[index].target as string[]).forEach((target: string) => this.availableColumnOptions.push({ id: target, alias: this.widgetColumnsAliasMap[target] }))
             this.visualizationTypeModel.types.splice(index, 1)
+        },
+        onColumnRemoved() {
+            this.loadColumnOptions()
+            this.loadVisualizationTypes()
         }
     }
 })

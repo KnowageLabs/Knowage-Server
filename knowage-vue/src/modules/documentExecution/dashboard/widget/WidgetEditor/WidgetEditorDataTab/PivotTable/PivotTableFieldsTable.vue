@@ -37,6 +37,7 @@
                     <template #body="slotProps">
                         <div>
                             <Button v-if="slotProps.data.formula" v-tooltip.top="$t('common.edit')" icon="fas fa-calculator" class="p-button-link" @click.stop="openCalculatedFieldDialog(slotProps.data)"></Button>
+                            <Button v-if="fieldType !== 'data' && slotProps.data.sort" v-tooltip.top="$t('common.sort')" :icon="slotProps.data.sort === 'ASC' ? 'pi pi-arrow-up' : 'pi pi-arrow-down'" class="p-button-link" @click.stop="changeColumnSort(slotProps.data)"></Button>
                             <Button v-tooltip.top="$t('common.edit')" icon="fas fa-cog" class="p-button-link" @click.stop="$emit('itemSelected', slotProps.data)"></Button>
                             <Button v-tooltip.top="$t('common.delete')" icon="pi pi-trash" class="p-button-link" @click.stop="deleteItem(slotProps.data, slotProps.index)"></Button>
                         </div>
@@ -159,6 +160,10 @@ export default defineComponent({
         onCalcFieldAdded(field) {
             this.rows.push(field as IWidgetColumn)
             this.$emit('itemAdded', field)
+        },
+        changeColumnSort(column: IWidgetColumn) {
+            column.sort = column.sort === 'ASC' ? 'DESC' : 'ASC'
+            this.$emit('itemUpdated', column)
         }
     }
 })
