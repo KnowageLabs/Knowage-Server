@@ -1,13 +1,16 @@
 import { IDataset, IWidget } from "../../Dashboard"
 
-export const getFormattedClickedValueForCrossNavigation = (cellEvent: any, pivotFields: any, dataFields: any) => {
-    console.group('CELL CLICKED ---------------------', cellEvent.cellElement)
-    console.log('event', cellEvent)
-    console.log('pivotFields', pivotFields)
-    console.log('this.dataFields[cellEvent.cell.dataIndex]', dataFields[cellEvent.cell.dataIndex])
-    console.groupEnd()
+export const getFormattedClickedValueForCrossNavigation = (cellEvent: any, dataFields: any) => {
+    if (['T', 'GT'].includes(cellEvent.cell.type)) return null
+    const value = cellEvent.area === 'data' ? cellEvent.cell.value : cellEvent.cell.text
+    const type = cellEvent.area === 'data' ? getDataCellType(cellEvent, dataFields) : 'string'
+    return { value: value, type: type }
+}
 
-    return {}
+const getDataCellType = (cellEvent: any, dataFields: any) => {
+    // TODO - see about date
+    const dataField = dataFields[cellEvent.cell.dataIndex]
+    return dataField ? dataField.dataType : 'string'
 }
 
 export const createPivotTableSelection = (cellEvent: any, widgetModel: IWidget, datasets: IDataset[]) => {

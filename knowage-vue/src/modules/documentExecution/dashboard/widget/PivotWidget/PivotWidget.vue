@@ -19,8 +19,8 @@ import { getColumnConditionalStyles } from '../TableWidget/TableWidgetHelper'
 
 import { getWidgetStyleByType, stringifyStyleProperties } from '../TableWidget/TableWidgetHelper'
 import { IPivotTooltips } from '../../interfaces/pivotTable/DashboardPivotTableWidget'
-import { createPivotTableSelection } from './PivotWidgetHelpers'
-import { updateStoreSelections } from '../interactionsHelpers/InteractionHelper'
+import { getFormattedClickedValueForCrossNavigation, createPivotTableSelection } from './PivotWidgetHelpers'
+import { updateStoreSelections, executePivotTableWidgetCrossNavigation } from '../interactionsHelpers/InteractionHelper'
 import { mapActions } from 'pinia'
 
 export default defineComponent({
@@ -318,17 +318,19 @@ export default defineComponent({
         //#region ===================== Cell Click Events  ====================================================
         onCellClicked(cellEvent) {
             if (this.editorMode) return
-            // if (this.propWidget.settings.interactions.crossNavigation.enabled) {
-            //     //const formattedClickedValue = getFormattedClickedValueForCrossNavigation(cellEvent, this.pivotFields, this.dataFields)
-            //     //executePivotTableWidgetCrossNavigation(formattedClickedValue, this.propWidget.settings.interactions.crossNavigation, this.dashboardId)
-            //     return
-            // } else if (this.propWidget.settings.interactions.selection.enabled) {
-            //     createPivotTableSelection(cellEvent, this.pivotFields, this.dataFields)
-            // }
-            const selection = createPivotTableSelection(cellEvent, this.propWidget, this.datasets)
-            if (selection) updateStoreSelections(selection, this.propActiveSelections, this.dashboardId, this.setSelections, this.$http)
+            // console.group('CELL CLICKED ---------------------', cellEvent.cellElement)
+            // console.log('event: ', cellEvent)
+            // console.log('pivotFields: ', this.pivotFields)
+            // console.log('dataFields[cellEvent.cell.dataIndex]: ', this.dataFields[cellEvent.cell.dataIndex])
+            // console.groupEnd()
+            if (this.propWidget.settings.interactions.crossNavigation.enabled) {
+                const formattedClickedValue = getFormattedClickedValueForCrossNavigation(cellEvent, this.dataFields)
+                if (formattedClickedValue) executePivotTableWidgetCrossNavigation(formattedClickedValue, this.propWidget.settings.interactions.crossNavigation, this.dashboardId)
+            } else if (this.propWidget.settings.interactions.selection.enabled) {
+                const selection = createPivotTableSelection(cellEvent, this.propWidget, this.datasets)
+                if (selection) updateStoreSelections(selection, this.propActiveSelections, this.dashboardId, this.setSelections, this.$http)
+            }
         }
-
         //#endregion ===============================================================================================
     }
 })
