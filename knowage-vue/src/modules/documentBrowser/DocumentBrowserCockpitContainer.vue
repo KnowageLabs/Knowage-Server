@@ -28,6 +28,7 @@
 import { defineComponent } from 'vue'
 import DocumentExecution from '@/modules/documentExecution/main/DocumentExecution.vue'
 import DocumentDetails from '@/modules/documentExecution/documentDetails/DocumentDetails.vue'
+import { mapGetters } from 'vuex'
 
 export default defineComponent({
     name: 'document-browser-cockpit-container',
@@ -71,11 +72,13 @@ export default defineComponent({
         this.mode = ''
     },
     methods: {
+        ...mapGetters(['getLocale']),
         createUrl() {
             const user = (this.$store.state as any).user
-            const language = user.locale.split('_')[0]
+            const locale = this.getLocale()
+            const language = locale.split('_')[0]
             const uniqueID = user.userUniqueIdentifier
-            const country = user.locale.split('_')[1]
+            const country = locale.split('_')[1]
 
             this.url = process.env.VUE_APP_HOST_URL + `/knowagecockpitengine/api/1.0/pages/edit?NEW_SESSION=TRUE&SBI_LANGUAGE=${language}&user_id=${uniqueID}&SBI_COUNTRY=${country}&SBI_ENVIRONMENT=DOCBROWSER&IS_TECHNICAL_USER=true&documentMode=EDIT&FUNCTIONALITY_ID=${this.functionalityId}`
         },

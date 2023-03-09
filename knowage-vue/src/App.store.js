@@ -159,6 +159,9 @@ const store = createStore({
                 if ((dsId && state.dataPreparation.avroDatasets.indexOf(dsId.toString()) >= 0) || (dsId && state.dataPreparation.avroDatasets.indexOf(dsId.toString())) >= 0) return true
                 else return false
             }
+        },
+        getLocale(state) {
+            return state.locale
         }
     }
 })
