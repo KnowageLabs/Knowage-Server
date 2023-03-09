@@ -86,7 +86,7 @@
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
 import { IWidget, ITableWidgetTooltipStyle, IWidgetColumn, IVariable } from '@/modules/documentExecution/dashboard/Dashboard'
-import { emitter } from '../../../../../DashboardHelpers'
+import { emitter } from '@/modules/documentExecution/dashboard/DashboardHelpers'
 import descriptor from './PivotTableTooltipsDescriptor.json'
 import Dropdown from 'primevue/dropdown'
 import InputSwitch from 'primevue/inputswitch'

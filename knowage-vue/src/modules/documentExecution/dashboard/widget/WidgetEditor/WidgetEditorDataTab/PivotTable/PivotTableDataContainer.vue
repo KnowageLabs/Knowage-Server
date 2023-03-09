@@ -12,8 +12,8 @@
 import descriptor from './PivotTableDataContainerDescriptor.json'
 import { defineComponent, PropType } from 'vue'
 import { IWidget, IDataset, IWidgetColumn } from '@/modules/documentExecution/dashboard/Dashboard'
-import { removeColumnFromTableWidgetModel } from '../../helpers/tableWidget/TableWidgetFunctions'
 import { emitter } from '../../../../DashboardHelpers'
+import { removeColumnFromPivotTableWidgetModel } from '../../helpers/pivotTableWidget/PivotTableFunctions'
 import FieldTable from './PivotTableFieldsTable.vue'
 import FieldForm from './PivotTableFieldForm.vue'
 
@@ -42,9 +42,7 @@ export default defineComponent({
         }
     },
     async created() {
-        this.$watch('widgetModel.columns', () => this.loadColumnTableItems())
         this.loadColumnTableItems()
-
         console.log('widget model', this.widgetModel, this.widgetModel.columns)
     },
     methods: {
@@ -60,7 +58,6 @@ export default defineComponent({
                 // eslint-disable-next-line vue/no-mutating-props
                 this.widgetModel.fields[payload.fieldType] = payload.fields
                 emitter.emit('columnsReordered', this.widgetModel.columns)
-                emitter.emit('refreshWidgetWithData', this.widgetModel.id)
                 console.log('AFTER', this.widgetModel.fields[payload.fieldType])
             }
         },
@@ -70,7 +67,6 @@ export default defineComponent({
                 // eslint-disable-next-line vue/no-mutating-props
                 this.widgetModel.fields[payload.fieldType] = payload.rows
                 emitter.emit('columnAdded', payload.column)
-                emitter.emit('refreshWidgetWithData', this.widgetModel.id)
                 console.log('AFTER', this.widgetModel.fields[payload.fieldType])
             }
         },
@@ -80,7 +76,6 @@ export default defineComponent({
                 // eslint-disable-next-line vue/no-mutating-props
                 this.widgetModel.columns[index] = { ...column }
                 emitter.emit('collumnUpdated', { column: this.widgetModel.columns[index], columnIndex: index })
-                emitter.emit('refreshWidgetWithData', this.widgetModel.id)
                 if (this.widgetModel.columns[index].id === this.selectedField?.id) this.selectedField = { ...this.widgetModel.columns[index] }
             }
             this.loadColumnTableItems()
@@ -93,25 +88,9 @@ export default defineComponent({
             if (column.id === this.selectedField?.id) this.selectedField = null
             this.removeColumnFromModel(column)
             emitter.emit('columnRemoved', column)
-            emitter.emit('refreshWidgetWithData', this.widgetModel.id)
         },
         removeColumnFromModel(column: IWidgetColumn) {
-            switch (this.widgetType) {
-                case 'table':
-                    removeColumnFromTableWidgetModel(this.widgetModel, column)
-                    break
-                case 'discovery':
-                    if (column.fieldType === 'MEASURE') this.clearDiscoveryWidgetAggregatedColumnValuesForSpecificColumn(column)
-                // removeColumnFromDiscoveryWidgetModel(this.widgetModel, column)
-            }
-        },
-        clearDiscoveryWidgetAggregatedColumnValuesForSpecificColumn(column: IWidgetColumn) {
-            this.widgetModel.columns.forEach((tempColumn: IWidgetColumn) => {
-                if (tempColumn.aggregationColumn === column?.columnName) {
-                    tempColumn.aggregation = 'COUNT'
-                    tempColumn.aggregationColumn = ''
-                }
-            })
+            removeColumnFromPivotTableWidgetModel(this.widgetModel, column)
         }
     }
 })

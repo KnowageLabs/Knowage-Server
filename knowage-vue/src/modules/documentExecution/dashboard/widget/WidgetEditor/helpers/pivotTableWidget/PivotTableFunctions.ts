@@ -1,5 +1,6 @@
-import { IWidgetResponsive } from "@/modules/documentExecution/dashboard/Dashboard"
+import { IWidget, IWidgetColumn, IWidgetResponsive } from "@/modules/documentExecution/dashboard/Dashboard"
 import { IPivotTableSettings, IPivotTableWidgetVisualization, IPivotTooltips } from "@/modules/documentExecution/dashboard/interfaces/pivotTable/DashboardPivotTableWidget"
+import { removeColumnFromSubmodel } from "../tableWidget/TableWidgetFunctions"
 import * as pivotTableDefaultValues from './PivotTableDefaultValues'
 import * as widgetCommonDefaultValues from '../common/WidgetCommonDefaultValues'
 
@@ -35,4 +36,9 @@ export const createNewPivotTableWidgetSettings = () => {
         responsive: widgetCommonDefaultValues.getDefaultResponsivnes() as IWidgetResponsive,
         tooltips: pivotTableDefaultValues.getDefaultTooltips() as IPivotTooltips[]
     } as IPivotTableSettings
+}
+
+export const removeColumnFromPivotTableWidgetModel = (widgetModel: IWidget, column: IWidgetColumn) => {
+    removeColumnFromSubmodel(column, widgetModel.settings.visualization.visualizationTypes.types, 'target', 'columnRemovedFromVisibilityTypes', true)
+    removeColumnFromSubmodel(column, widgetModel.settings.tooltips, 'target', 'columnRemovedFromTooltips', true)
 }

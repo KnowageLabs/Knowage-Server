@@ -53,3 +53,4 @@ const getFormattedWidgetSettings = (widget: any) => {
 export const getColumnId = (widgetColumnName: string) => {
     return columnNameIdMap[widgetColumnName]
 }
+
