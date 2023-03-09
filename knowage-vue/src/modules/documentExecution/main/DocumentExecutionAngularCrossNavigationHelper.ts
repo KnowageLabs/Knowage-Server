@@ -25,9 +25,7 @@ export function loadNavigationParamsInitialValue(vueComponent: any) {
                     if (!checkIfMultivalueDriverContainsCrossNavigationValue(tempParam, crossNavigationValue) || parameterDescription === 'NOT ADMISSIBLE') return
                     if (crossNavigationValue) tempParam.parameterValue[0] = { value: crossNavigationValue, description: parameterDescription }
                     if (tempParam.type === 'DATE' && tempParam.parameterValue[0] && tempParam.parameterValue[0].value) {
-                        const date = moment(deepcopy(tempParam.parameterValue[0].value, 'DD/MM/YYYY HH:mm:ss.SSS')) as any
-                        const isValidDate = date.isValid()
-                        tempParam.parameterValue[0].value = isValidDate ? date.toDate() : moment(tempParam.parameterValue[0].value, 'DD/MM/YYYY').toDate()
+                        tempParam.parameterValue[0].value = getValidDate(tempParam.parameterValue[0].value)
                     }
                 }
                 if (tempParam.selectionType === 'COMBOBOX') formatCrossNavigationComboParameterDescription(tempParam)
@@ -40,6 +38,17 @@ function checkIfMultivalueDriverContainsCrossNavigationValue(tempParam: any, cro
     if (!['LIST', 'COMBOBOX'].includes(tempParam.selectionType)) return true
     const index = tempParam.data.findIndex((option: { value: string; description: string }) => option.value == crossNavigationValue)
     return index !== -1
+}
+
+function getValidDate(value: string) {
+    let momentDate = moment(deepcopy(value))
+    if (momentDate.isValid()) return momentDate.toDate()
+    const validFormats = ['DD/MM/YYYY', 'DD/MM/YYYY HH:mm:ss.SSS']
+    for (let i = 0; i < validFormats.length; i++) {
+        momentDate = moment(deepcopy(value), validFormats[i])
+        if (momentDate.isValid()) return momentDate.toDate()
+    }
+    return ''
 }
 
 function formatCrossNavigationComboParameterDescription(tempParam: any) {
