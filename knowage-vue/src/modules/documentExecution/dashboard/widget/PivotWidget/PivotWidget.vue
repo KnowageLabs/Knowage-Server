@@ -8,6 +8,7 @@
 </template>
 
 <script lang="ts">
+import { emitter } from '../../DashboardHelpers'
 import { DxPivotGrid, DxFieldChooser, DxFieldPanel } from 'devextreme-vue/pivot-grid'
 import Tooltip from 'devextreme/ui/tooltip'
 import PivotGridDataSource from 'devextreme/ui/pivot_grid/data_source'
@@ -85,11 +86,26 @@ export default defineComponent({
         this.setFieldPickerConfiguration()
         this.setFieldPanelConfiguration()
     },
-    unmounted() {},
-    mounted() {},
+    mounted() {
+        this.setEventListeners()
+    },
+    unmounted() {
+        this.removeEventListeners()
+    },
 
     methods: {
         ...mapActions(dashboardStore, ['setSelections']),
+
+        setEventListeners() {
+            emitter.on('widgetResized', this.resizePivot)
+        },
+        removeEventListeners() {
+            emitter.on('widgetResized', this.resizePivot)
+        },
+        resizePivot() {
+            this.gridInstance.repaint()
+        },
+
         setPivotConfiguration() {
             const widgetConfig = this.propWidget.settings.configuration
             this.pivotConfig = {

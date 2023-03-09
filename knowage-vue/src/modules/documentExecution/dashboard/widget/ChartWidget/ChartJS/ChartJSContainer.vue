@@ -65,11 +65,11 @@ export default defineComponent({
         ...mapActions(store, ['setSelections', 'getDatasetLabel']),
         setEventListeners() {
             emitter.on('refreshChart', this.onRefreshChart)
-            emitter.on('chartWidgetResized', (newHeight) => this.onChartResize(newHeight as number))
+            emitter.on('widgetResized', (newHeight) => this.onChartResize(newHeight as number))
         },
         removeEventListeners() {
             emitter.off('refreshChart', this.onRefreshChart)
-            emitter.off('chartWidgetResized', (newHeight) => this.onChartResize(newHeight as number))
+            emitter.off('widgetResized', (newHeight) => this.onChartResize(newHeight as number))
         },
         onRefreshChart() {
             this.chartModel = this.widgetModel.settings.chartModel ? this.widgetModel.settings.chartModel.model : null
