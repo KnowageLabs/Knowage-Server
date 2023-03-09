@@ -163,6 +163,9 @@ export default defineComponent({
         },
         datasetToCloneId() {
             this.cloneDatasetConfirm(this.datasetToCloneId)
+        },
+        datasetTypes() {
+            this.filteredDatasetTypes = this.datasetTypes
         }
     },
     created() {
