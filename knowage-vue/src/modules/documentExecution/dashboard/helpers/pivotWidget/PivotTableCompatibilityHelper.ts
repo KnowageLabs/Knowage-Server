@@ -1,7 +1,4 @@
-import { IWidget, IWidgetInteractions, IWidgetResponsive } from '../../Dashboard'
-// import * as pivotTalbeDefaultValues from '../../widget/WidgetEditor/helpers/pivotTableWidget/PivotTableDefaultValues'
-import * as widgetCommonDefaultValues from '../../widget/WidgetEditor/helpers/common/WidgetCommonDefaultValues'
-// import { getFiltersForColumns } from '../DashboardBackwardCompatibilityHelper'
+import { IWidget, IWidgetColumn, IWidgetColumnFilter, IWidgetInteractions, IWidgetResponsive } from '../../Dashboard'
 import { getFormattedInteractions } from '../common/WidgetInteractionsHelper'
 import { getFormattedPivotFields } from './PivotTableColumnHelper'
 import { IPivotTableConfiguration, IPivotTableSettings, IPivotTableStyle, IPivotTableWidgetConditionalStyles, IPivotTableWidgetVisualization, IPivotTooltips } from '../../interfaces/pivotTable/DashboardPivotTableWidget'
@@ -9,6 +6,7 @@ import { getSettingsFromPivotTableWidgetColumns } from './PivotTableColumnSettin
 import { getFormattedConfiguration } from './PivotTableConfigurationHelper'
 import { getFormattedStyle } from './PivotTabletStyleHelper'
 import * as pivotTableDefaultValues from '../../widget/WidgetEditor/helpers/pivotTableWidget/PivotTableDefaultValues'
+import * as widgetCommonDefaultValues from '../../widget/WidgetEditor/helpers/common/WidgetCommonDefaultValues'
 
 const columnNameIdMap = {}
 
@@ -19,20 +17,36 @@ export const formatPivotTabletWidget = (widget: any) => {
         dataset: widget.dataset.dsId,
         type: widget.type,
         fields: getFormattedPivotFields(widget, columnNameIdMap),
-        columns: [], //Not used for pivot :/
+        columns: [],
         theme: '',
         style: {},
         settings: {} as IPivotTableSettings
     } as IWidget
     formattedWidget.settings = getFormattedWidgetSettings(widget)
 
-    //TODO: Rework this method
-    // getFiltersForColumns(formattedWidget, widget)
-
+    getFiltersForColumns(formattedWidget, widget)
     getSettingsFromPivotTableWidgetColumns(formattedWidget, widget)
 
     console.log('----------- FORMATTED WIDGET: ', formattedWidget)
     return formattedWidget
+}
+
+const getFiltersForColumns = (formattedWidget: IWidget, oldWidget: any) => {
+    if (!oldWidget.filters || oldWidget.filters.length === 0 || !formattedWidget.fields) return
+    const keys = ['columns', 'rows', 'data', 'filters']
+    for (let i = 0; i < oldWidget.filters.length; i++) {
+        const tempFilter = oldWidget.filters[i]
+        for (let j = 0; j < keys.length; j++) {
+            const fieldArray = formattedWidget.fields[keys[j]]
+            const index = fieldArray?.findIndex((column: IWidgetColumn) => column.columnName === tempFilter.colName)
+            if (index !== -1) {
+                fieldArray[index].filter = { enabled: true, operator: tempFilter.filterOperator, value: tempFilter.filterVal1 }
+                if (tempFilter.filterVal2 && fieldArray[index].filter) (fieldArray[index].filter as IWidgetColumnFilter).value2 = tempFilter.filterVal2
+                break
+            }
+
+        }
+    }
 }
 
 const getFormattedWidgetSettings = (widget: any) => {
