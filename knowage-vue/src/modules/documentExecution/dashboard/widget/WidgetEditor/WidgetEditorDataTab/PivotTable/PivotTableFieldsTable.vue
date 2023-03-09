@@ -162,7 +162,6 @@ export default defineComponent({
             this.$emit('itemAdded', field)
         },
         changeColumnSort(column: IWidgetColumn) {
-            console.log('--------- COLUMN: ', column)
             column.sort = column.sort === 'ASC' ? 'DESC' : 'ASC'
             this.$emit('itemUpdated', column)
         }

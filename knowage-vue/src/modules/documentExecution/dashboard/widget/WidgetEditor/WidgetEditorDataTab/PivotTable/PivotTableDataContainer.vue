@@ -3,7 +3,19 @@
         {{ widgetModel.fields }}
         <!-- TODO: removed events: onFieldAdded, onFieldItemUpdate, onFieldDelete - check if everything is ok with model  -->
         <!-- we dont need to emit to reload widget because it wont be updated in runtime -->
-        <FieldTable v-for="(field, index) in widgetModel.fields" :key="index" class="p-col-12" :field-type="index" :widget-model="widgetModel" :items="field" :settings="descriptor[index]" @row-reorder="onFieldsReorder" @item-selected="setSelectedField" @item-updated="onFieldItemUpdate" />
+        <FieldTable
+            v-for="(field, index) in widgetModel.fields"
+            :key="index"
+            class="p-col-12"
+            :field-type="index"
+            :widget-model="widgetModel"
+            :items="field"
+            :settings="descriptor[index]"
+            @row-reorder="onFieldsReorder"
+            @item-selected="setSelectedField"
+            @item-updated="onFieldItemUpdate"
+            @item-deleted="onFieldDelete"
+        />
         <FieldForm :widget-model="widgetModel" :selected-column="selectedField" />
     </div>
 </template>
@@ -80,6 +92,7 @@ export default defineComponent({
         onFieldDelete(column: IWidgetColumn) {
             if (column.id === this.selectedField?.id) this.selectedField = null
             this.removeColumnFromModel(column)
+            console.log('----- fafsafa: ', column)
             emitter.emit('columnRemoved', column)
         },
         removeColumnFromModel(column: IWidgetColumn) {

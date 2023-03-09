@@ -31,7 +31,7 @@
                         ></WidgetEditorColumnsMultiselect>
                     </div>
                     <div class="p-col-5 p-pt-4 p-px-4">
-                        <InputSwitch v-model="tooltip.enabled" @change="tooltipsChanged"></InputSwitch>
+                        <InputSwitch v-model="tooltip.enabled"></InputSwitch>
                         <label class="kn-material-input-label p-m-3">{{ $t('common.enabled') }}</label>
                     </div>
                     <div class="p-col-1 p-d-flex p-flex-column p-jc-center p-ai-center p-pl-2">
@@ -41,11 +41,11 @@
                 <div class="p-d-flex p-flex-row p-flex-wrap p-ai-center p-mt-3">
                     <div class="p-d-flex p-flex-column kn-flex p-mx-2">
                         <label class="kn-material-input-label">{{ $t('dashboard.widgetEditor.prefix') }}</label>
-                        <InputText v-model="tooltip.prefix" class="kn-material-input p-inputtext-sm" :disabled="!tooltip.enabled" @change="tooltipsChanged" />
+                        <InputText v-model="tooltip.prefix" class="kn-material-input p-inputtext-sm" :disabled="!tooltip.enabled" />
                     </div>
                     <div class="p-d-flex p-flex-column kn-flex p-mx-2">
                         <label class="kn-material-input-label">{{ $t('dashboard.widgetEditor.suffix') }}</label>
-                        <InputText v-model="tooltip.suffix" class="kn-material-input p-inputtext-sm" :disabled="!tooltip.enabled" @change="tooltipsChanged" />
+                        <InputText v-model="tooltip.suffix" class="kn-material-input p-inputtext-sm" :disabled="!tooltip.enabled" />
                     </div>
                     <!-- TODO: See if needs to be removed? -->
                     <!-- <div v-if="optionsContainMeasureColumn(tooltip)" class="p-d-flex p-flex-column p-mx-2">
@@ -58,12 +58,12 @@
                 <!-- <div v-if="tooltip.target == 'all'" class="p-grid p-ai-center p-pt-3"> -->
                 <div class="p-grid p-ai-center p-pt-3">
                     <div class="p-col-12 p-md-3 p-mt-4 p-px-4">
-                        <InputSwitch v-model="tooltip.header.enabled" :disabled="!tooltip.enabled" @change="tooltipsChanged"></InputSwitch>
+                        <InputSwitch v-model="tooltip.header.enabled" :disabled="!tooltip.enabled"></InputSwitch>
                         <label class="kn-material-input-label p-m-3">{{ $t('dashboard.widgetEditor.tooltips.customHeader') }}</label>
                     </div>
                     <div class="p-col-12 p-md-9 p-d-flex p-flex-column p-px-2">
                         <label class="kn-material-input-label">{{ $t('common.text') }}</label>
-                        <InputText v-model="tooltip.header.text" class="kn-material-input p-inputtext-sm" :disabled="!tooltip.enabled || !tooltip.header.enabled" @change="tooltipsChanged" />
+                        <InputText v-model="tooltip.header.text" class="kn-material-input p-inputtext-sm" :disabled="!tooltip.enabled || !tooltip.header.enabled" />
                     </div>
                 </div>
                 <!-- </div> -->
@@ -127,9 +127,11 @@ export default defineComponent({
     methods: {
         setEventListeners() {
             emitter.on('columnRemovedFromTooltips', this.onColumnRemovedFromTooltips)
+            emitter.on('columnRemoved', this.loadColumnOptions)
         },
         removeEventListeners() {
             emitter.off('columnRemovedFromTooltips', this.onColumnRemovedFromTooltips)
+            emitter.off('columnRemoved', this.loadColumnOptions)
         },
         onColumnRemovedFromTooltips() {
             this.onColumnRemoved()
@@ -138,7 +140,6 @@ export default defineComponent({
             if (this.widgetModel?.settings?.tooltips) this.tooltips = this.widgetModel.settings.tooltips
             this.removeColumnsFromAvailableOptions()
         },
-
         removeColumnsFromAvailableOptions() {
             for (let i = 1; i < this.widgetModel.settings.tooltips.length; i++) {
                 for (let j = 0; j < this.widgetModel.settings.tooltips[i].target.length; j++) {
@@ -162,15 +163,10 @@ export default defineComponent({
                 if (column.id && column.fieldType) this.widgetColumnsTypeMap[column.id] = column.fieldType
             })
         },
-        tooltipsChanged() {
-            emitter.emit('tooltipsChanged', this.tooltips)
-            emitter.emit('refreshTable', this.widgetModel.id)
-        },
         onColumnsSelected(event: any, tooltip: ITableWidgetTooltipStyle) {
             const intersection = (tooltip.target as string[]).filter((el: string) => !event.value.includes(el))
             tooltip.target = event.value
             intersection.length > 0 ? this.onColumnsRemovedFromMultiselect(intersection) : this.onColumnsAddedFromMultiselect(tooltip)
-            this.tooltipsChanged()
         },
         onColumnsRemovedFromMultiselect(intersection: string[]) {
             intersection.forEach((el: string) =>
@@ -183,6 +179,7 @@ export default defineComponent({
         onColumnsAddedFromMultiselect(tooltip: ITableWidgetTooltipStyle) {
             ;(tooltip.target as string[]).forEach((target: string) => {
                 const index = this.availableColumnOptions.findIndex((targetOption: IWidgetColumn | { id: string; alias: string }) => targetOption.id === target)
+                console.log('----- index: ', index)
                 if (index !== -1) this.availableColumnOptions.splice(index, 1)
             })
         },
@@ -217,7 +214,6 @@ export default defineComponent({
                 })
             )
             this.tooltips.splice(index, 1)
-            this.tooltipsChanged()
         },
         onDragStart(event: any, index: number) {
             event.dataTransfer.setData('text/plain', JSON.stringify(index))
@@ -234,7 +230,6 @@ export default defineComponent({
             if (sourceRowIndex === targetRowIndex) return
             const newIndex = sourceRowIndex > targetRowIndex && position === 'after' ? targetRowIndex + 1 : targetRowIndex
             this.tooltips.splice(newIndex, 0, this.tooltips.splice(sourceRowIndex, 1)[0])
-            this.tooltipsChanged()
         },
         displayDropzone(position: string, index: number) {
             if (position === 'top') {
