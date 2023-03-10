@@ -252,23 +252,21 @@ export default defineComponent({
         setFieldCellConfiguration(cellEvent) {
             if (this.isTotalCell(cellEvent)) return
 
-            const parentField = this.getCellParent(cellEvent)
             const conditionalStyles = this.propWidget.settings.conditionalStyles as ITableWidgetConditionalStyles
             const visualizationTypes = this.propWidget.settings.visualization.visualizationTypes as ITableWidgetVisualizationTypes
-            let fieldStyles = null as unknown as ITableWidgetColumnStyles
-            let fieldStyleString = null as any
 
-            if (cellEvent.area == 'data') fieldStyles = this.propWidget.settings.style.fields
-            else fieldStyles = this.propWidget.settings.style.fieldHeaders
+            const parentField = this.getCellParent(cellEvent)
+            if (!parentField) return
 
-            if (!fieldStyles.enabled || !parentField) return
+            const fieldStyles = this.getFieldStyles(cellEvent) as ITableWidgetColumnStyles
+            if (!fieldStyles.enabled) return
 
             //All Field Styles
-            fieldStyleString = stringifyStyleProperties(fieldStyles.styles[0].properties)
+            let cellStyleString = stringifyStyleProperties(fieldStyles.styles[0].properties) as any
 
             //Specific Field Styles
             const fieldStyle = fieldStyles.styles.find((fieldStyle) => fieldStyle.target.includes(parentField.id))
-            if (fieldStyle) fieldStyleString = stringifyStyleProperties(fieldStyle.properties)
+            if (fieldStyle) cellStyleString = stringifyStyleProperties(fieldStyle.properties)
 
             //Visualization
             if (cellEvent.area == 'data' && visualizationTypes.enabled) {
@@ -279,11 +277,15 @@ export default defineComponent({
             //Conditional Styles
             if (cellEvent.area == 'data' && conditionalStyles.enabled) {
                 const cellConditionalStyle = getColumnConditionalStyles(this.propWidget, parentField?.id, cellEvent.cell.text)
-                if (cellConditionalStyle) fieldStyleString = stringifyStyleProperties(cellConditionalStyle)
+                if (cellConditionalStyle) cellStyleString = stringifyStyleProperties(cellConditionalStyle)
                 if (cellConditionalStyle && cellConditionalStyle.icon) cellEvent.cellElement.innerHTML += `<i class="${cellConditionalStyle.icon} p-ml-1"/>`
             }
 
-            cellEvent.cellElement.style = fieldStyleString
+            cellEvent.cellElement.style = cellStyleString
+        },
+        getFieldStyles(cellEvent) {
+            if (cellEvent.area == 'data') return this.propWidget.settings.style.fields
+            else return this.propWidget.settings.style.fieldHeaders
         },
         getCellParent(cellEvent) {
             if (this.isTotalCell(cellEvent)) return undefined
