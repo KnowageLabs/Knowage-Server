@@ -459,6 +459,8 @@
         "main": {
             "addToWorkspace": "Add to my workspace",
             "addToWorkspaceError": "This document cannot be added to Workspace. It already exists in the root folder of the Organizer",
+            "closeDocumentConfirmMessage": "You are leaving edit mode. Continue?",
+            "closeDocumentConfirmTitle": "Close Document",
             "copyLink": "Copy link",
             "copyLinkAndShare": "Copy link and share it",
             "crossNavigationNoTargetError": "No cross navigation targets available",
@@ -1228,9 +1230,6 @@
             "dataPreparation": {
                 "datasetInvolvedIntoDataPrep": "Dataset is involved in a Data Preparation process, do you want to proceed?"
             },
-            "derived": {
-                "checkForExistingDerivedDatasets": "Dataset has active derived datasets, do you want to proceed?"
-            },
             "dataframeName": "Dataframe variable name",
             "decrypt": "Decrypt",
             "deleteAllParams": "Clear all dataset parameters",
@@ -1241,6 +1240,9 @@
             "deleteAllVersionsSuccess": "All dataset versions are deleted",
             "deleteAllVersionsTitle": "Delete all dataset versions",
             "deleteOneVersionMsg": "Do you want to delete selected version?",
+            "derived": {
+                "checkForExistingDerivedDatasets": "Dataset has active derived datasets, do you want to proceed?"
+            },
             "disablePersistence": "Disabling Persistence",
             "disablePersistenceMsg": "Persistence of Dataset is enabled. By adding the parameters, persistence will be automatically disabled. Do You want to proceed?",
             "documents": "Documents",
