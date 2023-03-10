@@ -1,9 +1,6 @@
 <template>
     <div v-if="conditionalStylesModel" class="p-grid p-jc-center p-ai-center p-p-4">
         <div v-for="(conditionalStyle, index) in conditionalStylesModel.conditions" :key="index" class="dynamic-form-item p-grid p-col-12 p-ai-center p-pt-2">
-            <div class="p-col-12">
-                {{ conditionalStyle }}
-            </div>
             <div v-show="dropzoneTopVisible[index]" class="p-col-12 form-list-item-dropzone-active" @drop.stop="onDropComplete($event, 'before', index)" @dragover.prevent @dragenter.prevent @dragleave.prevent></div>
             <div
                 class="p-col-12 form-list-item-dropzone p-p-0"

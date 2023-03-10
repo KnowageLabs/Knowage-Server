@@ -1,6 +1,5 @@
 <template>
     <div v-if="fieldStyles" class="p-grid p-p-4">
-        {{ fieldStyles }}
         <div v-for="(fieldStyle, index) in fieldStyles.styles" :key="index" class="dynamic-form-item p-col-12 p-grid p-ai-center">
             <div class="p-col-12 p-md-12 p-grid p-ai-center">
                 <div class="p-col-10 p-md-11 p-d-flex p-flex-column p-p-2">
