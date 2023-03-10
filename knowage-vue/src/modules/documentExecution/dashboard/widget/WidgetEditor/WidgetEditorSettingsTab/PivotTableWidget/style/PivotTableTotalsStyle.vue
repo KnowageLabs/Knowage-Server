@@ -1,6 +1,5 @@
 <template>
     <div v-if="titleStyleModel" class="p-grid p-ai-center kn-flex p-p-4">
-        {{ titleStyleModel }}
         <div class="p-col-12 p-py-4">
             <WidgetEditorStyleToolbar :options="toolbarStyleSettings" :prop-model="titleStyleModel.properties" :disabled="titleStyleDisabled" @change="onStyleToolbarChange"> </WidgetEditorStyleToolbar>
         </div>

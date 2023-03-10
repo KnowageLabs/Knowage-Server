@@ -115,10 +115,12 @@ export default defineComponent({
     methods: {
         setEventListeners() {
             emitter.on('columnRemovedFromTooltips', this.onColumnRemovedFromTooltips)
+            emitter.on('columnAdded', this.loadColumnOptions)
             emitter.on('columnRemoved', this.loadColumnOptions)
         },
         removeEventListeners() {
             emitter.off('columnRemovedFromTooltips', this.onColumnRemovedFromTooltips)
+            emitter.off('columnAdded', this.loadColumnOptions)
             emitter.off('columnRemoved', this.loadColumnOptions)
         },
         onColumnRemovedFromTooltips() {

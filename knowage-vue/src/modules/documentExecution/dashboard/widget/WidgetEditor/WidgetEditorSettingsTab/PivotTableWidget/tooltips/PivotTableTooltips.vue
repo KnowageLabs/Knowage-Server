@@ -118,17 +118,22 @@ export default defineComponent({
         this.loadTooltips()
         this.loadWidgetColumnMaps()
     },
+    mounted() {
+        this.loadColumnOptions()
+    },
     unmounted() {
         this.removeEventListeners()
     },
     methods: {
         setEventListeners() {
             emitter.on('columnRemovedFromTooltips', this.onColumnRemovedFromTooltips)
+            emitter.on('columnAdded', this.loadColumnOptions)
             emitter.on('columnRemoved', this.loadColumnOptions)
         },
         removeEventListeners() {
             emitter.off('columnRemovedFromTooltips', this.onColumnRemovedFromTooltips)
             emitter.off('columnRemoved', this.loadColumnOptions)
+            emitter.off('columnAdded', this.loadColumnOptions)
         },
         onColumnRemovedFromTooltips() {
             this.onColumnRemoved()
@@ -152,6 +157,7 @@ export default defineComponent({
             if (index !== -1) this.availableColumnOptions.splice(index, 1)
         },
         loadColumnOptions() {
+            console.log('------------- CAAAAAAAAAAAAAAAAAAAAAAALED')
             this.availableColumnOptions = [...this.combinedArray]
         },
         loadWidgetColumnMaps() {
