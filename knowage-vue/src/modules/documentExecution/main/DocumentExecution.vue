@@ -51,8 +51,6 @@
             </template>
         </Toolbar>
         <ProgressBar v-if="loading" class="kn-progress-bar" mode="indeterminate" />
-        {{ mode }}
-        {{ breadcrumbs }}
         <div ref="document-execution-view" class="p-d-flex p-flex-row document-execution-view myDivToPrint">
             <div v-if="parameterSidebarVisible" :class="propMode === 'document-execution-cross-navigation-popup' ? 'document-execution-backdrop-popup-dialog' : 'document-execution-backdrop'" @click="parameterSidebarVisible = false"></div>
             <div v-show="(filtersData && filtersData.isReadyForExecution && !loading && !schedulationsTableVisible) || newDashboardMode" class="kn-flex">
