@@ -1,8 +1,6 @@
 <template>
     <div v-if="widgetModel" class="p-grid">
         {{ widgetModel.fields }}
-        <!-- TODO: removed events: onFieldAdded, onFieldItemUpdate, onFieldDelete - check if everything is ok with model  -->
-        <!-- we dont need to emit to reload widget because it wont be updated in runtime -->
         <FieldTable
             v-for="(field, index) in widgetModel.fields"
             :key="index"
@@ -12,6 +10,7 @@
             :items="field"
             :settings="descriptor[index]"
             @row-reorder="onFieldsReorder"
+            @item-added="onFieldAdded"
             @item-selected="setSelectedField"
             @item-updated="onFieldItemUpdate"
             @item-deleted="onFieldDelete"
@@ -30,7 +29,7 @@ import FieldTable from './PivotTableFieldsTable.vue'
 import FieldForm from './PivotTableFieldForm.vue'
 
 export default defineComponent({
-    name: 'widget-editor-common-data-container',
+    name: 'pivot-table-data-container',
     components: { FieldTable, FieldForm },
     props: { widgetModel: { type: Object as PropType<IWidget>, required: true }, selectedDataset: { type: Object as PropType<IDataset | null> } },
     data() {
