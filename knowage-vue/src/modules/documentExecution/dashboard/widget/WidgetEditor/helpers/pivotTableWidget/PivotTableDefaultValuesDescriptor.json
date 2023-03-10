@@ -22,8 +22,7 @@
                     "font-size": "",
                     "font-style": "",
                     "font-weight": "",
-                    "justify-content": "",
-                    "width": ""
+                    "text-align": ""
                 },
                 "target": "all"
             }

@@ -5,12 +5,12 @@ import * as pivotTableDefaultValues from '../../widget/WidgetEditor/helpers/pivo
 export const getFormattedStyle = (widget: any) => {
     return {
         title: getFormattedTitleStyle(widget),
-        borders: getFormattedBorderStyle(widget),
         fields: getFormattedFieldsStyle(widget, 'measures'),
         fieldHeaders: getFormattedFieldsStyle(widget, 'measuresHeaders'),
+        borders: getFormattedBorderStyle(widget),
+        background: getFormattedBackgroundStyle(widget),
         padding: getFormattedPaddingStyle(widget),
         shadows: getFormattedShadowsStyle(widget),
-        background: getFormattedBackgroundStyle(widget),
         totals: getFormattedTotalsStyle(widget),
         subTotals: getFormattedSubTotalsStyle(widget),
         columnHeaders: getFormattedColumnHeadersStyle(widget),
@@ -28,7 +28,7 @@ const getFormattedFieldsStyle = (widget: any, fieldType) => {
             'font-style': widget.content.style[fieldType]['font-style'],
             'font-size': widget.content.style[fieldType]['font-size'],
             'font-family': widget.content.style[fieldType]['font-family'],
-            'justify-content': widget.content.style[fieldType]['text-align'],
+            'text-align': widget.content.style[fieldType]['text-align'],
             color: widget.content.style[fieldType].color,
             'background-color': widget.content.style[fieldType]['background-color']
         }

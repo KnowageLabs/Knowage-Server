@@ -28,6 +28,29 @@
             "type": "background-color"
         }
     ],
+    "defaultToolbarStyleOptions": [
+        {
+            "type": "font-weight"
+        },
+        {
+            "type": "font-style"
+        },
+        {
+            "type": "font-size"
+        },
+        {
+            "type": "text-align"
+        },
+        {
+            "type": "font-family"
+        },
+        {
+            "type": "color"
+        },
+        {
+            "type": "background-color"
+        }
+    ],
     "settings": {
         "ConditionalStyle": [
             {
