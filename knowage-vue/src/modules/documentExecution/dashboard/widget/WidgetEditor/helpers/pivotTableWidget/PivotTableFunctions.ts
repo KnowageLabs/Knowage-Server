@@ -1,5 +1,5 @@
-import { IWidget, IWidgetColumn, IWidgetResponsive } from "@/modules/documentExecution/dashboard/Dashboard"
-import { IPivotTableSettings, IPivotTableWidgetVisualization, IPivotTooltips } from "@/modules/documentExecution/dashboard/interfaces/pivotTable/DashboardPivotTableWidget"
+import { IWidget, IWidgetColumn } from "@/modules/documentExecution/dashboard/Dashboard"
+import { IPivotTableSettings } from "@/modules/documentExecution/dashboard/interfaces/pivotTable/DashboardPivotTableWidget"
 import { removeColumnFromSubmodel } from "../tableWidget/TableWidgetFunctions"
 import * as pivotTableDefaultValues from './PivotTableDefaultValues'
 import * as widgetCommonDefaultValues from '../common/WidgetCommonDefaultValues'
@@ -9,10 +9,10 @@ export const createNewPivotTableWidgetSettings = () => {
         updatable: true,
         clickable: true,
         conditionalStyles: pivotTableDefaultValues.getDefaultConditionalStyles(),
-        visualization: pivotTableDefaultValues.getDefaultVisualisationSettings() as IPivotTableWidgetVisualization,
+        visualization: pivotTableDefaultValues.getDefaultVisualisationSettings(),
         configuration: {
-            columns: { grandTotal: false, grandTotalLabel: "", subTotal: false, subTotalLabel: "" },
-            rows: { grandTotal: false, grandTotalLabel: "", subTotal: false, subTotalLabel: "" },
+            columns: pivotTableDefaultValues.getDefaultTotalValues(),
+            rows: pivotTableDefaultValues.getDefaultTotalValues(),
             fieldPicker: pivotTableDefaultValues.getDefaultFieldPicker(),
             fieldPanel: pivotTableDefaultValues.getDefaultFieldPanel(),
             exports: { showExcelExport: true, showScreenshot: true },
@@ -33,8 +33,8 @@ export const createNewPivotTableWidgetSettings = () => {
             columnHeaders: pivotTableDefaultValues.getDefaultColumnHeadersStyle(),
             rowHeaders: pivotTableDefaultValues.getDefaultColumnHeadersStyle()
         },
-        responsive: widgetCommonDefaultValues.getDefaultResponsivnes() as IWidgetResponsive,
-        tooltips: pivotTableDefaultValues.getDefaultTooltips() as IPivotTooltips[]
+        responsive: widgetCommonDefaultValues.getDefaultResponsivnes(),
+        tooltips: pivotTableDefaultValues.getDefaultTooltips()
     } as IPivotTableSettings
 }
 
