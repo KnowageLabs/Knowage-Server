@@ -2978,8 +2978,9 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 			}
 
 			Query hibQuery = session.createQuery("from SbiDataSet h where h.active = ? and h.configuration like :sourceLabel and type = :derivedType");
+
 			hibQuery.setBoolean(0, true);
-			hibQuery.setParameter("sourceLabel", "%" + sourceLabel + "%");
+			hibQuery.setParameter("sourceLabel", "%\"sourceDatasetLabel\":\"" + sourceLabel + "\"%");
 			hibQuery.setParameter("derivedType", DataSetConstants.DS_DERIVED);
 			List<SbiDataSet> sbiDataSet = hibQuery.list();
 			if (sbiDataSet != null) {
