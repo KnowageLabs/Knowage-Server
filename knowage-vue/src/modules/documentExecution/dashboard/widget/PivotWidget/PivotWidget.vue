@@ -8,10 +8,11 @@
 </template>
 
 <script lang="ts">
+import { emitter } from '../../DashboardHelpers'
 import { DxPivotGrid, DxFieldChooser, DxFieldPanel } from 'devextreme-vue/pivot-grid'
 import Tooltip from 'devextreme/ui/tooltip'
 import PivotGridDataSource from 'devextreme/ui/pivot_grid/data_source'
-import { IDataset, ISelection, IWidget, ITableWidgetColumnStyles, ITableWidgetConditionalStyles } from '../../Dashboard'
+import { IDataset, ISelection, IWidget, ITableWidgetColumnStyles, ITableWidgetConditionalStyles, ITableWidgetVisualizationTypes } from '../../Dashboard'
 import { defineComponent, PropType } from 'vue'
 import mainStore from '../../../../../App.store'
 import dashboardStore from '../../Dashboard.store'
@@ -85,11 +86,26 @@ export default defineComponent({
         this.setFieldPickerConfiguration()
         this.setFieldPanelConfiguration()
     },
-    unmounted() {},
-    mounted() {},
+    mounted() {
+        this.setEventListeners()
+    },
+    unmounted() {
+        this.removeEventListeners()
+    },
 
     methods: {
         ...mapActions(dashboardStore, ['setSelections']),
+
+        setEventListeners() {
+            emitter.on('widgetResized', this.resizePivot)
+        },
+        removeEventListeners() {
+            emitter.on('widgetResized', this.resizePivot)
+        },
+        resizePivot() {
+            this.gridInstance.repaint()
+        },
+
         setPivotConfiguration() {
             const widgetConfig = this.propWidget.settings.configuration
             this.pivotConfig = {
@@ -182,27 +198,11 @@ export default defineComponent({
 
         //#region ===================== Cell Config (Totals, Stlye, Conditionals) ====================================================
         setCellConfiguration(event) {
-            // if (event.cell.text == 'UNITS_ORDERED') {
-            //     console.group('cellPrep ---------------------', event.cellElement)
-            //     console.log('CELL EVENT', event)
-            //     console.log('CELL EVENT', pivotFields[event.cell.dataSourceIndex])
-            //     console.groupEnd()
-            // }
-
-            // if ((event.area == 'row' || event.area == 'data') && event.rowIndex % 2 === 0) {
-            //     event.cellElement.style = 'background-color: grey; color: orange'
-            // }
-
-            // if (event.area == 'row' || event.area == 'column' || !this.isTotalCell) {
-            //     event.cellElement.style = 'background-color: grey; color: orange'
-            // }
-
             this.setTotals(event)
-            this.setTooltips(event)
-            this.setFieldStyles(event)
+            this.setFieldCellConfiguration(event)
             this.setHeaderStyles(event) //TODO: Does it need to exist now that we can target specific fields?
+            this.setTooltips(event)
         },
-        //#endregion ===============================================================================================
 
         //#region ===================== Totals Config (Sub, Grand, Style) ====================================================
         setTotals(cellEvent) {
@@ -233,6 +233,7 @@ export default defineComponent({
 
         //#region ===================== Tooltips Config  ====================================================
         setTooltips(cellEvent) {
+            if (cellEvent.area == 'data' && !cellEvent.cell.text) return
             const tooltipsConfig = this.propWidget.settings.tooltips as IPivotTooltips[]
             const parentField = this.getCellParent(cellEvent)
 
@@ -265,11 +266,12 @@ export default defineComponent({
         //#endregion ===============================================================================================
 
         //#region ===================== Field Styles: TODO: Possibly split methods? Maybe no need.  ====================================================
-        setFieldStyles(cellEvent) {
+        setFieldCellConfiguration(cellEvent) {
             if (this.isTotalCell(cellEvent)) return
 
             const parentField = this.getCellParent(cellEvent)
             const conditionalStyles = this.propWidget.settings.conditionalStyles as ITableWidgetConditionalStyles
+            const visualizationTypes = this.propWidget.settings.visualization.visualizationTypes as ITableWidgetVisualizationTypes
             let fieldStyles = null as unknown as ITableWidgetColumnStyles
             let fieldStyleString = null as any
 
@@ -284,6 +286,12 @@ export default defineComponent({
             //Specific Field Styles
             const fieldStyle = fieldStyles.styles.find((fieldStyle) => fieldStyle.target.includes(parentField.id))
             if (fieldStyle) fieldStyleString = stringifyStyleProperties(fieldStyle.properties)
+
+            //Visualization
+            if (cellEvent.area == 'data' && visualizationTypes.enabled) {
+                const cellVisualization = visualizationTypes.types.find((visType) => visType.target.includes(parentField.id))
+                if (cellVisualization && cellEvent.cell.text) cellEvent.cellElement.textContent = `${cellVisualization.prefix ?? ''} ${cellEvent.cell.text} ${cellVisualization.suffix ?? ''}`
+            }
 
             //Conditional Styles
             if (cellEvent.area == 'data' && conditionalStyles.enabled) {
@@ -330,6 +338,8 @@ export default defineComponent({
             headerStylestring = stringifyStyleProperties(headerStyles.properties)
             cellEvent.cellElement.style = headerStylestring
         },
+        //#endregion ===============================================================================================
+
         //#endregion ===============================================================================================
 
         //#region ===================== Cell Click Events  ====================================================

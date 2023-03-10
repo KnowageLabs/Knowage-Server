@@ -68,11 +68,11 @@ export default defineComponent({
         ...mapActions(mainStore, ['setError']),
         setEventListeners() {
             emitter.on('refreshChart', this.onRefreshChart)
-            emitter.on('chartWidgetResized', this.resizeChart)
+            emitter.on('widgetResized', this.resizeChart)
         },
         removeEventListeners() {
             emitter.off('refreshChart', this.onRefreshChart)
-            emitter.off('chartWidgetResized', this.resizeChart)
+            emitter.off('widgetResized', this.resizeChart)
         },
         onRefreshChart(widgetId: any | null = null) {
             if (widgetId && widgetId !== this.widgetModel.id) return

@@ -277,8 +277,8 @@ export default defineComponent({
                 this.inFocus = false
             }
         },
-        resizedEvent: function(newHPx) {
-            emitter.emit('chartWidgetResized', newHPx)
+        resizedEvent: function (newHPx) {
+            emitter.emit('widgetResized', newHPx)
         }
     }
 })
