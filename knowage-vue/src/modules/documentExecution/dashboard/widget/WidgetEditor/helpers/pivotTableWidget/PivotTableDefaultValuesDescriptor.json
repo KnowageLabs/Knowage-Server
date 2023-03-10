@@ -83,6 +83,12 @@
             "target": "all"
         }
     ],
+    "defaultTotalValues": {
+        "grandTotal": false,
+        "grandTotalLabel": "",
+        "subTotal": false,
+        "subTotalLabel": ""
+    },
     "defaultTotals": {
         "enabled": false,
         "properties": {
@@ -100,6 +106,7 @@
             "enabled": false,
             "types": [
                 {
+                    "icon": "",
                     "prefix": "",
                     "suffix": "",
                     "target": "all"

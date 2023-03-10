@@ -37,7 +37,7 @@
                     <template #body="slotProps">
                         <div>
                             <Button v-if="slotProps.data.formula" v-tooltip.top="$t('common.edit')" icon="fas fa-calculator" class="p-button-link" @click.stop="openCalculatedFieldDialog(slotProps.data)"></Button>
-                            <Button v-if="fieldType !== 'data' && slotProps.data.sort" v-tooltip.top="$t('common.sort')" :icon="slotProps.data.sort === 'ASC' ? 'pi pi-arrow-up' : 'pi pi-arrow-down'" class="p-button-link" @click.stop="changeColumnSort(slotProps.data)"></Button>
+                            <Button v-if="fieldType !== 'data'" v-tooltip.top="$t('common.sort')" :icon="getColumnSortIcon(slotProps.data)" class="p-button-link" @click.stop="changeColumnSort(slotProps.data)"></Button>
                             <Button v-tooltip.top="$t('common.edit')" icon="fas fa-cog" class="p-button-link" @click.stop="$emit('itemSelected', slotProps.data)"></Button>
                             <Button v-tooltip.top="$t('common.delete')" icon="pi pi-trash" class="p-button-link" @click.stop="deleteItem(slotProps.data, slotProps.index)"></Button>
                         </div>
@@ -127,8 +127,6 @@ export default defineComponent({
             this.$emit('itemAdded', { column: tempColumn, rows: this.rows, settings: this.settings, fieldType: this.fieldType })
         },
         isFieldUsed(tempColumn: IWidgetColumn) {
-            console.log('widgetModel', this.widgetModel.fields)
-
             const colIndex = this.widgetModel.fields?.columns.findIndex((row: IWidgetColumn) => row.columnName === tempColumn.columnName)
             const rowIndex = this.widgetModel.fields?.rows.findIndex((row: IWidgetColumn) => row.columnName === tempColumn.columnName)
             const dataIndex = this.widgetModel.fields?.data.findIndex((row: IWidgetColumn) => row.columnName === tempColumn.columnName)
@@ -160,6 +158,16 @@ export default defineComponent({
         onCalcFieldAdded(field) {
             this.rows.push(field as IWidgetColumn)
             this.$emit('itemAdded', field)
+        },
+        getColumnSortIcon(column: IWidgetColumn) {
+            switch (column.sort) {
+                case 'ASC':
+                    return 'fa-solid fa-arrow-up-short-wide'
+                case 'DESC':
+                    return 'fa-solid fa-arrow-down-short-wide'
+                default:
+                    return 'fa-solid fa-bars'
+            }
         },
         changeColumnSort(column: IWidgetColumn) {
             column.sort = column.sort === 'ASC' ? 'DESC' : 'ASC'

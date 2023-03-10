@@ -5,7 +5,7 @@
                 {{ visualizationType }}
             </div>
             <div class="p-col-12 p-grid p-ai-center">
-                <div class="p-col-12 p-md-7 p-d-flex p-flex-column">
+                <div class="p-col-12 p-md-6 p-d-flex p-flex-column">
                     <label class="kn-material-input-label"> {{ $t('common.columns') }}</label>
                     <Dropdown v-if="index === 0" v-model="visualizationType.target" class="kn-material-input" :options="descriptor.allColumnOption" option-value="value" option-label="label" :disabled="true"> </Dropdown>
                     <WidgetEditorColumnsMultiselect
@@ -24,9 +24,12 @@
                     <label class="kn-material-input-label p-mr-2">{{ $t('dashboard.widgetEditor.prefix') }}</label>
                     <InputText v-model="visualizationType.prefix" class="kn-material-input p-inputtext-sm" :disabled="visualizationTypeDisabled" />
                 </div>
-                <div class="p-col-11 p-md-2 p-d-flex p-flex-column">
+                <div class="p-col-12 p-md-2 p-d-flex p-flex-column">
                     <label class="kn-material-input-label p-mr-2">{{ $t('dashboard.widgetEditor.suffix') }}</label>
                     <InputText v-model="visualizationType.suffix" class="kn-material-input p-inputtext-sm" :disabled="visualizationTypeDisabled" />
+                </div>
+                <div class="p-col-11 p-md-1 style-toolbar-container p-pt-4">
+                    <WidgetEditorStyleToolbar :options="descriptor.styleToolbarVisualizationTypeOptions" :prop-model="{ icon: visualizationType.icon }" :disabled="visualizationTypeDisabled" @change="onStyleToolbarChange($event, visualizationType)"></WidgetEditorStyleToolbar>
                 </div>
                 <div class="p-col-1 p-d-flex p-flex-column p-jc-center p-ai-center">
                     <i :class="[index === 0 ? 'pi pi-plus-circle' : 'pi pi-trash', visualizationTypeDisabled ? 'icon-disabled' : '']" class="kn-cursor-pointer p-ml-2" @click="index === 0 ? addVisualizationType() : removeVisualizationType(index)"></i>
@@ -38,16 +41,17 @@
 
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
-import { IWidget, IWidgetColumn } from '@/modules/documentExecution/dashboard/Dashboard'
+import { IWidget, IWidgetColumn, IWidgetStyleToolbarModel } from '@/modules/documentExecution/dashboard/Dashboard'
 import { IPivotTableWidgetVisualizationType, IPivotTableWidgetVisualizationTypes } from '@/modules/documentExecution/dashboard/interfaces/pivotTable/DashboardPivotTableWidget'
 import { emitter } from '@/modules/documentExecution/dashboard/DashboardHelpers'
 import descriptor from '../PivotTableSettingsDescriptor.json'
 import Dropdown from 'primevue/dropdown'
 import WidgetEditorColumnsMultiselect from '../../common/WidgetEditorColumnsMultiselect.vue'
+import WidgetEditorStyleToolbar from '../../common/styleToolbar/WidgetEditorStyleToolbar.vue'
 
 export default defineComponent({
     name: 'pivot-table-widget-visualization-type',
-    components: { Dropdown, WidgetEditorColumnsMultiselect },
+    components: { Dropdown, WidgetEditorColumnsMultiselect, WidgetEditorStyleToolbar },
     props: { widgetModel: { type: Object as PropType<IWidget>, required: true } },
     data() {
         return {
@@ -118,8 +122,11 @@ export default defineComponent({
                 if (index !== -1) this.availableColumnOptions.splice(index, 1)
             })
         },
+        onStyleToolbarChange(model: IWidgetStyleToolbarModel, visualizationType: IPivotTableWidgetVisualizationType) {
+            if (model && model.icon) visualizationType.icon = model.icon
+        },
         addVisualizationType() {
-            if (this.visualizationTypeModel && !this.visualizationTypeDisabled) this.visualizationTypeModel.types.push({ target: [], prefix: '', suffix: '' })
+            if (this.visualizationTypeModel && !this.visualizationTypeDisabled) this.visualizationTypeModel.types.push({ target: [], prefix: '', suffix: '', icon: '' })
         },
         removeVisualizationType(index: number) {
             if (!this.visualizationTypeModel || this.visualizationTypeDisabled) return
@@ -133,3 +140,9 @@ export default defineComponent({
     }
 })
 </script>
+
+<style lang="scss" scoped>
+.style-toolbar-container {
+    max-width: 120px;
+}
+</style>
