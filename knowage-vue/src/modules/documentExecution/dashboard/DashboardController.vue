@@ -45,9 +45,8 @@
  */
 import { defineComponent, PropType } from 'vue'
 import { AxiosResponse } from 'axios'
-import { v4 as uuidv4 } from 'uuid'
 import { iParameter } from '@/components/UI/KnParameterSidebar/KnParameterSidebar'
-import { IDashboardDataset, ISelection, IWidget, IGalleryItem, IDataset } from './Dashboard'
+import { IDashboardDataset, ISelection, IGalleryItem, IDataset } from './Dashboard'
 import { emitter, createNewDashboardModel, formatDashboardForSave, formatNewModel, loadDatasets, getFormattedOutputParameters } from './DashboardHelpers'
 import { mapActions, mapState } from 'pinia'
 import { formatModel } from './helpers/DashboardBackwardCompatibilityHelper'
@@ -67,24 +66,31 @@ import DashboardGeneralSettings from './generalSettings/DashboardGeneralSettings
 import deepcopy from 'deepcopy'
 
 export default defineComponent({
-    name: 'dashboard-manager',
-    components: { DashboardRenderer, WidgetPickerDialog, DatasetEditor, WidgetEditor, DashboardControllerSaveDialog, SelectionsListDialog, DashboardGeneralSettings },
-    provide() {
-        return {
-            dHash: uuidv4()
-        }
+    name: 'dashboard-controller',
+    components: {
+        DashboardRenderer,
+        WidgetPickerDialog,
+        DatasetEditor,
+        WidgetEditor,
+        DashboardControllerSaveDialog,
+        SelectionsListDialog,
+        DashboardGeneralSettings
     },
     props: {
         visible: { type: Boolean },
-        sbiExecutionId: { type: String },
         document: { type: Object },
         reloadTrigger: { type: Boolean },
         hiddenFormData: { type: Object },
-        filtersData: { type: Object as PropType<{ filterStatus: iParameter[]; isReadyForExecution: boolean }> },
+        filtersData: {
+            type: Object as PropType<{
+                filterStatus: iParameter[]
+                isReadyForExecution: boolean
+            }>
+        },
         newDashboardMode: { type: Boolean },
         mode: { type: Object as PropType<string | null>, required: true }
     },
-    emits: ['newDashboardSaved', 'executeCrossNavigation'],
+    emits: ['newDashboardSaved', 'executeCrossNavigation', 'dashboardIdSet'],
     setup() {
         const store = dashboardStore()
         const appStore = mainStore()
@@ -132,9 +138,26 @@ export default defineComponent({
     },
     methods: {
         ...mapActions(dashboardStore, ['removeSelections', 'setAllDatasets', 'getSelections', 'setInternationalization', 'getInternationalization', 'setDashboardDocument', 'setDashboardDrivers', 'setProfileAttributes', 'getCrossNavigations']),
+        setEventListeners() {
+            emitter.on('openNewWidgetPicker', this.openNewWidgetPicker)
+            emitter.on('openDatasetManagement', this.openDatasetManagementDialog)
+            emitter.on('openWidgetEditor', this.openWidgetEditor)
+            emitter.on('saveDashboard', this.onSaveDashboardClicked)
+            emitter.on('openDashboardGeneralSettings', this.openGeneralSettings)
+            emitter.on('executeCrossNavigation', this.executeCrossNavigation)
+        },
+        removeEventListeners() {
+            emitter.off('openNewWidgetPicker', this.openNewWidgetPicker)
+            emitter.off('openDatasetManagement', this.openDatasetManagementDialog)
+            emitter.off('openWidgetEditor', this.openWidgetEditor)
+            emitter.off('saveDashboard', this.onSaveDashboardClicked)
+            emitter.off('openDashboardGeneralSettings', this.openGeneralSettings)
+            emitter.off('executeCrossNavigation', this.executeCrossNavigation)
+        },
         async getData() {
             this.loading = true
             this.dashboardId = cryptoRandomString({ length: 16, type: 'base64' })
+            this.$emit('dashboardIdSet', this.dashboardId)
             if (this.filtersData) this.drivers = loadDrivers(this.filtersData, this.model)
             await Promise.all([this.loadProfileAttributes(), this.loadModel(), this.loadInternationalization()])
             this.setDashboardDrivers(this.dashboardId, this.drivers)
@@ -207,26 +230,25 @@ export default defineComponent({
             this.profileAttributes = []
             const user = this.appStore.getUser()
             if (user && user.attributes) {
-                Object.keys(user.attributes).forEach((key: string) => this.profileAttributes.push({ name: key, value: user.attributes[key] }))
+                Object.keys(user.attributes).forEach((key: string) =>
+                    this.profileAttributes.push({
+                        name: key,
+                        value: user.attributes[key]
+                    })
+                )
             }
             this.setProfileAttributes(this.profileAttributes)
         },
-        setEventListeners() {
-            emitter.on('openNewWidgetPicker', () => this.openNewWidgetPicker())
-            emitter.on('openDatasetManagement', () => this.openDatasetManagementDialog())
-            emitter.on('openWidgetEditor', (widget) => this.openWidgetEditor(widget as IWidget))
-            emitter.on('saveDashboard', () => this.onSaveDashboardClicked())
-            emitter.on('openDashboardGeneralSettings', () => this.openGeneralSettings())
-            emitter.on('executeCrossNavigation', this.executeCrossNavigation)
-        },
-        openNewWidgetPicker() {
+        openNewWidgetPicker(event: any) {
+            if (event !== this.dashboardId) return
             this.widgetPickerVisible = true
         },
-        openDatasetManagementDialog() {
+        openDatasetManagementDialog(event: any) {
+            if (event !== this.dashboardId) return
             this.datasetEditorVisible = true
             clearAllDatasetIntervals()
         },
-        openWidgetEditor(widget: IWidget) {
+        openWidgetEditor(widget: any) {
             this.selectedWidget = widget
             this.setWidgetEditorToVisible()
         },
