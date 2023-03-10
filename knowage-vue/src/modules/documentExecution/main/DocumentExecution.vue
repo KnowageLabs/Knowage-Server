@@ -15,7 +15,7 @@
                     <Button icon="fa fa-filter" class="p-button-text p-button-rounded p-button-plain p-mx-2" v-if="isParameterSidebarVisible" v-tooltip.left="$t('common.parameters')" @click="parameterSidebarVisible = !parameterSidebarVisible" data-test="parameter-sidebar-icon"></Button>
                     <Button icon="fa fa-ellipsis-v" class="p-button-text p-button-rounded p-button-plain p-mx-2" v-tooltip.left="$t('common.menu')" @click="toggle"></Button>
                     <TieredMenu ref="menu" :model="toolbarMenuItems" :popup="true" />
-                    <Button icon="fa fa-times" class="p-button-text p-button-rounded p-button-plain p-mx-2" v-tooltip.left="$t('common.close')" @click="closeDocument"></Button>
+                    <Button icon="fa fa-times" class="p-button-text p-button-rounded p-button-plain p-mx-2" v-tooltip.left="$t('common.close')" @click="closeDocumentConfirm"></Button>
                 </div>
             </template>
         </Toolbar>
@@ -556,6 +556,18 @@ export default defineComponent({
                 })
                 .catch(() => {})
             this.loading = false
+        },
+        closeDocumentConfirm() {
+            if (this.documentMode === 'EDIT') {
+                this.$confirm.require({
+                    message: this.$t('documentExecution.main.closeDocumentConfirmMessage'),
+                    header: this.$t('documentExecution.main.closeDocumentConfirmTitle'),
+                    icon: 'pi pi-exclamation-triangle',
+                    accept: () => this.closeDocument()
+                })
+            } else {
+                this.closeDocument()
+            }
         },
         closeDocument() {
             const link = this.$route.path.includes('workspace') ? '/workspace' : '/document-browser'
