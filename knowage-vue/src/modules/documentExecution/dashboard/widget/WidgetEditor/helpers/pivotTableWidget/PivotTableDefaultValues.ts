@@ -1,10 +1,10 @@
-import { ITableWidgetColumnStyles } from '@/modules/documentExecution/dashboard/Dashboard'
-import { IPivotColumnsConfiguration, IPivotFieldPanel, IPivotFieldPicker, IPivotTableColumnHeadersStyle, IPivotTableWidgetConditionalStyle, IPivotTableWidgetConditionalStyles, IPivotTableWidgetVisualization, IPivotTooltips, IPivotTotal } from '@/modules/documentExecution/dashboard/interfaces/pivotTable/DashboardPivotTableWidget'
+
+import { IPivotTableColumnStyles, IPivotColumnsConfiguration, IPivotFieldPanel, IPivotFieldPicker, IPivotTableColumnHeadersStyle, IPivotTableWidgetConditionalStyle, IPivotTableWidgetConditionalStyles, IPivotTableWidgetVisualization, IPivotTooltips, IPivotTotal } from '@/modules/documentExecution/dashboard/interfaces/pivotTable/DashboardPivotTableWidget'
 import deepcopy from 'deepcopy'
 import descriptor from './PivotTableDefaultValuesDescriptor.json'
 
 export const getDefaultColumnStyles = () => {
-    return deepcopy(descriptor.defaultColumnStyles) as ITableWidgetColumnStyles
+    return deepcopy(descriptor.defaultColumnStyles) as IPivotTableColumnStyles
 }
 
 export const getDefaultFieldPicker = () => {
@@ -24,7 +24,7 @@ export const getDefaultTotals = () => {
 }
 
 export const getDefaultFields = () => {
-    return deepcopy(descriptor.defaultColumnStyles) as ITableWidgetColumnStyles
+    return deepcopy(descriptor.defaultColumnStyles) as IPivotTableColumnStyles
 }
 
 export const getDefaultColumnHeadersStyle = () => {

@@ -1,6 +1,5 @@
 <template>
     <div v-if="headersStyleModel" class="p-grid p-ai-center kn-flex p-p-4">
-        {{ headersStyleModel }}
         <div class="p-col-12 p-py-4">
             <WidgetEditorStyleToolbar :options="toolbarStyleSettings" :prop-model="headersStyleModel.properties" :disabled="headersStyleDisabled" @change="onStyleToolbarChange"> </WidgetEditorStyleToolbar>
         </div>

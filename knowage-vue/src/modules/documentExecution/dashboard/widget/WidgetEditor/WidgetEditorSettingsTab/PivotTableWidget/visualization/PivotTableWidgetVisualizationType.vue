@@ -1,9 +1,6 @@
 <template>
     <div v-if="visualizationTypeModel" class="p-grid p-jc-center p-ai-center p-p-4">
         <div v-for="(visualizationType, index) in visualizationTypeModel.types" :key="index" class="dynamic-form-item p-grid p-col-12 p-ai-center">
-            <div class="p-col-12">
-                {{ visualizationType }}
-            </div>
             <div class="p-col-12 p-grid p-ai-center">
                 <div class="p-col-12 p-md-6 p-d-flex p-flex-column">
                     <label class="kn-material-input-label"> {{ $t('common.columns') }}</label>

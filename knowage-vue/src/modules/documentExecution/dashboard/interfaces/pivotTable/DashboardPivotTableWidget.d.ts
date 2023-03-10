@@ -1,4 +1,4 @@
-import { ITableWidgetColumnStyles, IWidgetBackgroundStyle, IWidgetBordersStyle, IWidgetExports, IWidgetInteractions, IWidgetPaddingStyle, IWidgetResponsive, IWidgetShadowsStyle, IWidgetTitle, IWidgetColumn } from '../../Dashboard'
+import { IWidgetBackgroundStyle, IWidgetBordersStyle, IWidgetExports, IWidgetInteractions, IWidgetPaddingStyle, IWidgetResponsive, IWidgetShadowsStyle, IWidgetTitle, IWidgetColumn } from '../../Dashboard'
 
 export interface IPivotTableSettings {
     updatable: boolean
@@ -60,9 +60,10 @@ export interface IPivotTableConfiguration {
 
 export interface IPivotTableStyle {
     title: IWidgetTitle
-    fields: ITableWidgetColumnStyles
-    background: IWidgetBackgroundStyle
+    fields: IPivotTableColumnStyles
+    fieldHeaders: IPivotTableColumnStyles
     borders: IWidgetBordersStyle
+    background: IWidgetBackgroundStyle
     padding: IWidgetPaddingStyle
     shadows: IWidgetShadowsStyle
     totals: IPivotTotal
@@ -135,5 +136,24 @@ export interface IPivotTotal {
         'text-align': string
         color: string
         'background-color': string
+    }
+}
+
+
+export interface IPivotTableColumnStyles {
+    enabled: boolean
+    styles: IPivotTableColumnStyle[]
+}
+
+export interface IPivotTableColumnStyle {
+    target: string | string[]
+    properties: {
+        'background-color': string
+        color: string
+        'text-align': string
+        'font-size': string
+        'font-family': string
+        'font-style': string
+        'font-weight': string
     }
 }
