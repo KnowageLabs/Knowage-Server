@@ -132,9 +132,13 @@ const addFiltersToPostData = (propWidget: IWidget, selectionsToSend: any, datase
         }
     })
 }
-
 const getFilters = (propWidget: IWidget, datasetLabel: string) => {
-    const columns = propWidget.columns
+    let columns = [] as any
+    if (propWidget.type === 'static-pivot-table') {
+        const modelFields = propWidget.fields
+        columns = modelFields?.columns.concat(modelFields.rows, modelFields.data, modelFields.filters)
+    } else columns = propWidget.columns
+
     const activeFilters = {} as any
 
     columns.forEach((column) => {
@@ -755,8 +759,7 @@ const formatPivotModelForGet = (dashboardId: any, propWidget: IWidget, dataset: 
         indexes: []
     } as any
 
-    //TODO: work in selections
-    // addSelectionsToData(dataToSend, propWidget, dataset.dsLabel, initialCall, selections, associativeResponseSelections)
+    addSelectionsToData(dataToSend, propWidget, dataset.dsLabel, initialCall, selections, associativeResponseSelections)
 
     dataToSend.aggregations.dataset = dataset.dsLabel
 
@@ -770,7 +773,7 @@ const formatPivotModelForGet = (dashboardId: any, propWidget: IWidget, dataset: 
             } else {
                 const attributeToPush = { id: field.alias, alias: field.alias, columnName: field.columnName, orderType: '', funct: 'NONE' } as any
 
-                //TODO: sort logic
+                //TODO: do we need sorting on BE???
                 // if (propWidget.type === 'table' || propWidget.type === 'html' || propWidget.type === 'text') field.id === propWidget.settings.sortingColumn ? (attributeToPush.orderType = propWidget.settings.sortingOrder) : ''
                 // else attributeToPush.orderType = propWidget.settings.sortingOrder
 

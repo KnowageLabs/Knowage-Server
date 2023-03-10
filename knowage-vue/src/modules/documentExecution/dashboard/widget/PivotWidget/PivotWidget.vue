@@ -64,18 +64,6 @@ export default defineComponent({
         }
     },
     watch: {
-        propWidget: {
-            handler() {
-                console.log('PROP WIDGET CHANGED', this.propWidget)
-            },
-            deep: true
-        },
-        dataToShow: {
-            handler() {
-                // this.tableData = this.dataToShow
-            },
-            deep: true
-        },
         propActiveSelections() {
             // this.loadActiveSelections()
         }
@@ -114,7 +102,7 @@ export default defineComponent({
                 allowSorting: true,
                 allowSortingBySummary: true,
                 allowFiltering: true,
-                showBorders: true,
+                showBorders: false,
                 showColumnGrandTotals: widgetConfig.columns.grandTotal,
                 showColumnTotals: widgetConfig.columns.subTotal,
                 showRowGrandTotals: widgetConfig.rows.grandTotal,
@@ -142,11 +130,7 @@ export default defineComponent({
             }
         },
         onGridInitialization(event) {
-            console.log('INIT EVENT', event.component)
             this.gridInstance = event.component
-        },
-        onContentReady() {
-            // console.log('CONTENT READY \n', this.dataSource.state())
         },
 
         //#region ===================== Pivot Datasource Config (Fields & Data) ====================================================
@@ -163,10 +147,11 @@ export default defineComponent({
                             if (typeof metaField == 'object') return metaField.header.toLowerCase() === modelField.alias.toLowerCase()
                         })
 
-                        tempField.id = modelField.id //ID FROM MODEL PASSED AS A PROPERTY
-                        //TODO: split tempField props to methods
+                        tempField.id = modelField.id
+                        tempField.summaryType = 'sum'
                         tempField.caption = modelField.alias
                         tempField.dataField = `column_${index}`
+                        tempField.area = this.getDataField(fieldsName)
                         tempField.area = this.getDataField(fieldsName)
                         if (modelField.sort) tempField.sortOrder = modelField.sort.toLowerCase()
 
@@ -175,7 +160,6 @@ export default defineComponent({
                 }
             }
 
-            // console.log('formattedFields', formattedFields)
             return formattedFields
         },
         getDataField(fieldsName) {
@@ -323,10 +307,8 @@ export default defineComponent({
 
         //#region ===================== Header Styles  ====================================================
         setHeaderStyles(cellEvent) {
-            // let headerStyles = null as unknown as IPivotTableColumnHeadersStyle
             let headerStyles = null as any
 
-            // const parentField = this.dataFields[cellEvent.cell.dataIndex]
             const isDataColumn = cellEvent.area == 'data' || (cellEvent.area == 'column' && cellEvent.cell.dataIndex >= 0)
             let headerStylestring = null as any
 
@@ -345,12 +327,6 @@ export default defineComponent({
         //#region ===================== Cell Click Events  ====================================================
         onCellClicked(cellEvent) {
             if (this.editorMode) return
-            // console.group('CELL CLICKED ---------------------', cellEvent.cellElement)
-            // console.log('event', cellEvent)
-            // console.log('pivotFields', this.pivotFields)
-            // console.log('this.dataFields[cellEvent.cell.dataIndex]', this.dataFields[cellEvent.cell.dataIndex])
-            // console.log('this.gridInstance', this.gridInstance.getDataSource())
-            // console.groupEnd()
             if (this.propWidget.settings.interactions.crossNavigation.enabled) {
                 const formattedClickedValue = getFormattedClickedValueForCrossNavigation(cellEvent, this.dataFields)
                 if (formattedClickedValue) executePivotTableWidgetCrossNavigation(formattedClickedValue, this.propWidget.settings.interactions.crossNavigation, this.dashboardId)
