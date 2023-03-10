@@ -172,5 +172,10 @@
             "label": "dashboard.widgetEditor.responsive.title",
             "value": "Responsive"
         }
+    ],
+    "styleToolbarVisualizationTypeOptions": [
+        {
+            "type": "icon"
+        }
     ]
 }
