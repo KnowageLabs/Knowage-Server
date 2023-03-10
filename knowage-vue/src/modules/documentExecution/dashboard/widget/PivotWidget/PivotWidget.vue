@@ -110,7 +110,6 @@ export default defineComponent({
                 texts: {},
 
                 // EVENTS
-                contentReady: this.onContentReady,
                 onCellPrepared: this.setCellConfiguration,
                 onCellClick: this.onCellClicked
             }
