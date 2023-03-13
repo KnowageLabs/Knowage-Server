@@ -107,8 +107,9 @@ export function getRGBColorFromString(color: string) {
         ?.substring(5, color.length - 1)
         ?.split(',')
 
+    const alpha = isNaN(+temp[3]) ? 0 : +temp[3]
     if (temp) {
-        return { r: +temp[0], g: +temp[1], b: +temp[2], a: +temp[3] }
+        return { r: +temp[0], g: +temp[1], b: +temp[2], a: alpha }
     } else return { r: 0, g: 0, b: 0, a: 0 }
 }
 
