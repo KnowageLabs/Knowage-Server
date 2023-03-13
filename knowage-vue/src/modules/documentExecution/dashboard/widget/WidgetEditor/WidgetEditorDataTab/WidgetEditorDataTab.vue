@@ -5,7 +5,7 @@
         <WidgetEditorHint v-if="!selectedDataset"></WidgetEditorHint>
         <WidgetEditorCommonDataContainer v-else-if="['table', 'html', 'text', 'discovery', 'customchart'].includes(propWidget.type)" class="kn-flex model-div kn-overflow p-mx-2 p-my-3" :widget-model="propWidget" :selected-dataset="selectedDataset"></WidgetEditorCommonDataContainer>
         <SelectorWidgetDataContainer v-else-if="propWidget.type === 'selector'" class="kn-flex model-div kn-overflow p-mx-2 p-my-3" :widget-model="propWidget" :selected-dataset="selectedDataset"></SelectorWidgetDataContainer>
-        <HighchartsDataContainer v-else-if="propWidget.type === 'highcharts' && user.isEnterprise" class="kn-flex model-div kn-overflow p-mx-2 p-my-3" :widget-model="propWidget" :selected-dataset="selectedDataset" @selectedChartTypeChanged="onChartTypeChanged"></HighchartsDataContainer>
+        <HighchartsDataContainer v-else-if="propWidget.type === 'highcharts' && isEnterprise" class="kn-flex model-div kn-overflow p-mx-2 p-my-3" :widget-model="propWidget" :selected-dataset="selectedDataset" @selectedChartTypeChanged="onChartTypeChanged"></HighchartsDataContainer>
         <ChartJSDataContainer v-else-if="propWidget.type === 'chartJS'" class="kn-flex model-div kn-overflow p-mx-2 p-my-3" :widget-model="propWidget" :selected-dataset="selectedDataset"></ChartJSDataContainer>
     </div>
 </template>
@@ -39,7 +39,7 @@ export default defineComponent({
     },
     computed: {
         ...mapState(mainStore, {
-            user: 'user'
+            isEnterprise: 'isEnterprise'
         }),
         chartPickerVisible() {
             let visible = false
@@ -57,10 +57,9 @@ export default defineComponent({
             this.selectedDataset = dataset as IDataset
         },
         onChartTypeChanged(chartType: string) {
-            if (!this.user) return
-            if (this.user.enterprise) updateWidgetModelColumnsAfterChartTypeChange(this.propWidget, chartType)
+            if (this.isEnterprise) updateWidgetModelColumnsAfterChartTypeChange(this.propWidget, chartType)
             // TODO widgetChange
-            this.propWidget.settings.chartModel = this.user.enterprise ? createNewHighchartsModel(chartType, this.propWidget.settings.chartModel?.model) : createChartJSModel(chartType)
+            this.propWidget.settings.chartModel = this.isEnterprise ? createNewHighchartsModel(chartType, this.propWidget.settings.chartModel?.model) : createChartJSModel(chartType)
             // this.propWidget.settings.chartModel = false ? createNewHighchartsModel(chartType) : createChartJSModel(chartType)
             emitter.emit('chartTypeChanged', this.propWidget.id)
             emitter.emit('refreshWidgetWithData', this.propWidget.id)
