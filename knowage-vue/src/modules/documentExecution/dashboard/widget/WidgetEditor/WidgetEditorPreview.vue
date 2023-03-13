@@ -24,7 +24,7 @@
                     :dashboard-id="dashboardId"
                     :variables="variables"
                 ></WebComponentContainer>
-                <HighchartsContainer v-if="propWidget.type === 'highcharts' && !loading && user.isEnterprise" :widget-model="propWidget" :data-to-show="widgetData" :prop-active-selections="activeSelections" :editor-mode="true" :dashboard-id="dashboardId"></HighchartsContainer>
+                <HighchartsContainer v-if="propWidget.type === 'highcharts' && !loading && isEnterprise" :widget-model="propWidget" :data-to-show="widgetData" :prop-active-selections="activeSelections" :editor-mode="true" :dashboard-id="dashboardId"></HighchartsContainer>
                 <ChartJSContainer v-if="propWidget.type === 'chartJS' && !loading" :widget-model="propWidget" :data-to-show="widgetData" :editor-mode="true" :dashboard-id="dashboardId" :prop-active-selections="activeSelections"></ChartJSContainer>
                 <ImageWidget v-if="propWidget.type === 'image'" :widget-model="propWidget" :dashboard-id="dashboardId" :editor-mode="true" />
                 <CustomChartWidget
@@ -89,7 +89,7 @@ export default defineComponent({
     },
     computed: {
         ...mapState(mainStore, {
-            user: 'user'
+            isEnterprise: 'isEnterprise'
         }),
         ...mapState(store, ['dashboards'])
     },
