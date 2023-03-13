@@ -154,6 +154,11 @@ export default defineComponent({
                         tempField.area = this.getDataField(fieldsName)
                         if (modelField.sort) tempField.sortOrder = modelField.sort.toLowerCase()
 
+                        // SIZING
+                        tempField.width = 1000
+                        tempField.wordWrapEnabled = true
+                        // if (tempField.area == 'column')
+
                         formattedFields.push(tempField)
                     })
                 }
@@ -263,8 +268,9 @@ export default defineComponent({
             //Visualization
             const visualizationTypes = this.propWidget.settings.visualization.visualizationTypes as ITableWidgetVisualizationTypes
             if (cellEvent.area == 'data' && visualizationTypes.enabled) {
-                const cellVisualization = visualizationTypes.types.find((visType) => visType.target.includes(parentField.id))
+                const cellVisualization = this.getFieldVisualization(parentField, visualizationTypes)
                 if (cellVisualization && cellEvent.cell.text) cellEvent.cellElement.textContent = `${cellVisualization.prefix ?? ''} ${cellEvent.cell.text} ${cellVisualization.suffix ?? ''}`
+                if (cellVisualization && cellVisualization.icon) cellEvent.cellElement.innerHTML += `<i class="${cellVisualization.icon} p-ml-1"/>`
             }
 
             //Conditional Styles
@@ -276,10 +282,17 @@ export default defineComponent({
             }
 
             cellEvent.cellElement.style = cellStyleString
+            // SIZING
+            // cellEvent.cellElement.style = cellStyleString += 'height: 450px !important'
         },
         getFieldStylesConfiguration(cellEvent) {
             if (cellEvent.area == 'data') return this.propWidget.settings.style.fields
             else return this.propWidget.settings.style.fieldHeaders
+        },
+        getFieldVisualization(parentField, visualizationTypes) {
+            const cellVisualization = visualizationTypes.types.find((visType) => visType.target.includes(parentField.id))
+            if (cellVisualization) return cellVisualization
+            else return visualizationTypes.types[0]
         },
         getFieldStyleStringById(parentField, fieldStyles) {
             const fieldStyle = fieldStyles.styles.find((fieldStyle) => fieldStyle.target.includes(parentField.id))
@@ -319,6 +332,10 @@ export default defineComponent({
 
             headerStylestring = stringifyStyleProperties(headerStyles.properties)
             cellEvent.cellElement.style = headerStylestring
+
+            // SIZING
+            // if (cellEvent.area == 'column') cellEvent.cellElement.style = headerStylestring += 'height: 1000px !important'
+            // else if (cellEvent.area == 'row') cellEvent.cellElement.style = headerStylestring
         },
         //#endregion ===============================================================================================
 
