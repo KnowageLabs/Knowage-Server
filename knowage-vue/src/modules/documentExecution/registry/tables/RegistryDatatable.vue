@@ -224,9 +224,13 @@ export default defineComponent({
                 el.cellEditorParams = {
                     comboColumnOptions: this.comboColumnOptions
                 }
+                if (el.color)
+                    el.cellStyle = () => {
+                        return { color: 'black', backgroundColor: el.color, opacity: 1 }
+                    }
             } else {
                 el.cellStyle = () => {
-                    return { color: 'black', backgroundColor: 'rgba(231, 231, 231, 0.8)', opacity: 0.8 }
+                    return { color: 'black', backgroundColor: el.color ? el.color : 'rgba(231, 231, 231, 0.8)', opacity: 0.6 }
                 }
             }
         },
