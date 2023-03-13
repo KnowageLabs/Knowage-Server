@@ -25,7 +25,7 @@
                     <Button v-tooltip.left="$t('common.menu')" icon="fa fa-ellipsis-v" class="p-button-text p-button-rounded p-button-plain p-mx-2" :class="{ 'dashboard-toolbar-icon': mode === 'dashboard' }" @click="toggle"></Button>
                     <TieredMenu ref="menu" :model="toolbarMenuItems" :popup="true" />
                     <Button v-if="mode == 'dashboard'" id="add-widget-button" class="p-button-sm" :label="$t('dashboard.widgetEditor.addWidget')" icon="pi pi-plus-circle" @click="addWidget" />
-                    <Button v-tooltip.left="$t('common.close')" icon="fa fa-times" class="p-button-text p-button-rounded p-button-plain p-mx-2" :class="{ 'dashboard-toolbar-icon': mode === 'dashboard' }" @click="closeDocument"></Button>
+                    <Button v-tooltip.left="$t('common.close')" icon="fa fa-times" class="p-button-text p-button-rounded p-button-plain p-mx-2" :class="{ 'dashboard-toolbar-icon': mode === 'dashboard' }" @click="closeDocumentConfirm"></Button>
                 </div>
             </template>
         </Toolbar>
@@ -484,6 +484,18 @@ export default defineComponent({
                 })
                 .catch(() => {})
             this.loading = false
+        },
+        closeDocumentConfirm() {
+            if (this.documentMode === 'EDIT') {
+                this.$confirm.require({
+                    message: this.$t('documentExecution.main.closeDocumentConfirmMessage'),
+                    header: this.$t('documentExecution.main.closeDocumentConfirmTitle'),
+                    icon: 'pi pi-exclamation-triangle',
+                    accept: () => this.closeDocument()
+                })
+            } else {
+                this.closeDocument()
+            }
         },
         closeDocument() {
             const link = this.$route.path.includes('workspace') ? '/workspace' : '/document-browser'
