@@ -38,7 +38,7 @@ export const getFormattedWidgetColumns = (widget: any, chartLibrary: 'chartJS' |
 
 export const getMaximumNumberOfSeries = (chartLibrary: 'chartJS' | 'highcharts', chartType: string, widget: any) => {
     if (chartLibrary === 'chartJS') return 1
-    if (chartLibrary === 'highcharts' && store.user.isEnterprise && chartType === 'PIE') return 1
+    if (chartLibrary === 'highcharts' && store.user.enterprise && chartType === 'PIE') return 1
     if (chartType === 'GAUGE') {
         const chartSubtype = widget.content.chartTemplate.CHART.subtype
         switch (chartSubtype) {
@@ -73,7 +73,7 @@ const chartCanHaveOnlyOneAttribute = (widget: any, chartLibrary: 'chartJS' | 'hi
 }
 
 const chartHasDrilldown = (widget: any, chartLibrary: 'chartJS' | 'highcharts') => {
-    return chartLibrary === 'highcharts' && store.user.isEnterprise && widget.content.chartTemplate.CHART.type === 'PIE'
+    return chartLibrary === 'highcharts' && store.user.enterprise && widget.content.chartTemplate.CHART.type === 'PIE'
 }
 
 const addDrillColumnsFromCategory = (category: IOldModelCategory, widgetColumNameMap: any, formattedColumns: IWidgetColumn[]) => {
