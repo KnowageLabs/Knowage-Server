@@ -154,6 +154,11 @@ export default defineComponent({
                         tempField.area = this.getDataField(fieldsName)
                         if (modelField.sort) tempField.sortOrder = modelField.sort.toLowerCase()
 
+                        // SIZING
+                        tempField.width = 1000
+                        tempField.wordWrapEnabled = true
+                        // if (tempField.area == 'column')
+
                         formattedFields.push(tempField)
                     })
                 }
@@ -248,33 +253,28 @@ export default defineComponent({
         },
         //#endregion ===============================================================================================
 
-        //#region ===================== Field Styles: TODO: Possibly split methods? Maybe no need.  ====================================================
+        //#region ===================== Field Styles  ====================================================
         setFieldCellConfiguration(cellEvent) {
             if (this.isTotalCell(cellEvent)) return
-
-            const conditionalStyles = this.propWidget.settings.conditionalStyles as ITableWidgetConditionalStyles
-            const visualizationTypes = this.propWidget.settings.visualization.visualizationTypes as ITableWidgetVisualizationTypes
 
             const parentField = this.getCellParent(cellEvent)
             if (!parentField) return
 
-            const fieldStyles = this.getFieldStyles(cellEvent) as ITableWidgetColumnStyles
+            //Field Style
+            const fieldStyles = this.getFieldStylesConfiguration(cellEvent) as ITableWidgetColumnStyles
             if (!fieldStyles.enabled) return
-
-            //All Field Styles
-            let cellStyleString = stringifyStyleProperties(fieldStyles.styles[0].properties) as any
-
-            //Specific Field Styles
-            const fieldStyle = fieldStyles.styles.find((fieldStyle) => fieldStyle.target.includes(parentField.id))
-            if (fieldStyle) cellStyleString = stringifyStyleProperties(fieldStyle.properties)
+            let cellStyleString = this.getFieldStyleStringById(parentField, fieldStyles) as any
 
             //Visualization
+            const visualizationTypes = this.propWidget.settings.visualization.visualizationTypes as ITableWidgetVisualizationTypes
             if (cellEvent.area == 'data' && visualizationTypes.enabled) {
-                const cellVisualization = visualizationTypes.types.find((visType) => visType.target.includes(parentField.id))
+                const cellVisualization = this.getFieldVisualization(parentField, visualizationTypes)
                 if (cellVisualization && cellEvent.cell.text) cellEvent.cellElement.textContent = `${cellVisualization.prefix ?? ''} ${cellEvent.cell.text} ${cellVisualization.suffix ?? ''}`
+                if (cellVisualization && cellVisualization.icon) cellEvent.cellElement.innerHTML += `<i class="${cellVisualization.icon} p-ml-1"/>`
             }
 
             //Conditional Styles
+            const conditionalStyles = this.propWidget.settings.conditionalStyles as ITableWidgetConditionalStyles
             if (cellEvent.area == 'data' && conditionalStyles.enabled) {
                 const cellConditionalStyle = getColumnConditionalStyles(this.propWidget, parentField?.id, cellEvent.cell.text)
                 if (cellConditionalStyle) cellStyleString = stringifyStyleProperties(cellConditionalStyle)
@@ -282,10 +282,22 @@ export default defineComponent({
             }
 
             cellEvent.cellElement.style = cellStyleString
+            // SIZING
+            // cellEvent.cellElement.style = cellStyleString += 'height: 450px !important'
         },
-        getFieldStyles(cellEvent) {
+        getFieldStylesConfiguration(cellEvent) {
             if (cellEvent.area == 'data') return this.propWidget.settings.style.fields
             else return this.propWidget.settings.style.fieldHeaders
+        },
+        getFieldVisualization(parentField, visualizationTypes) {
+            const cellVisualization = visualizationTypes.types.find((visType) => visType.target.includes(parentField.id))
+            if (cellVisualization) return cellVisualization
+            else return visualizationTypes.types[0]
+        },
+        getFieldStyleStringById(parentField, fieldStyles) {
+            const fieldStyle = fieldStyles.styles.find((fieldStyle) => fieldStyle.target.includes(parentField.id))
+            if (fieldStyle) return stringifyStyleProperties(fieldStyle.properties)
+            else return stringifyStyleProperties(fieldStyles.styles[0].properties)
         },
         getCellParent(cellEvent) {
             if (this.isTotalCell(cellEvent)) return undefined
@@ -320,6 +332,10 @@ export default defineComponent({
 
             headerStylestring = stringifyStyleProperties(headerStyles.properties)
             cellEvent.cellElement.style = headerStylestring
+
+            // SIZING
+            // if (cellEvent.area == 'column') cellEvent.cellElement.style = headerStylestring += 'height: 1000px !important'
+            // else if (cellEvent.area == 'row') cellEvent.cellElement.style = headerStylestring
         },
         //#endregion ===============================================================================================
 
