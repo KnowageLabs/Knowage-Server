@@ -1,6 +1,12 @@
 <template>
     <div v-if="model" :id="`dashboard_${model.configuration.id}`" class="dashboard-container">
-        <Button icon="fas fa-square-check" class="p-m-3 p-button-rounded p-button-text p-button-plain" style="position: fixed; right: 0; z-index: 999; background-color: white; box-shadow: 0px 2px 3px #ccc" @click="selectionsDialogVisible = true" />
+        <Button
+            v-if="store.dashboards[dashboardId]?.selections?.length > 0"
+            icon="fas fa-square-check"
+            class="p-m-3 p-button-rounded p-button-text p-button-plain"
+            style="position: fixed; right: 0; z-index: 999; background-color: white; box-shadow: 0px 2px 3px #ccc"
+            @click="selectionsDialogVisible = true"
+        />
         <DashboardRenderer v-if="!loading" :document="document" :model="model" :datasets="datasets" :dashboard-id="dashboardId" :document-drivers="drivers" :variables="model ? model.configuration.variables : []" @add-widget="addWidget" @add-dataset="addDataset"></DashboardRenderer>
 
         <Transition name="editorEnter" appear>
