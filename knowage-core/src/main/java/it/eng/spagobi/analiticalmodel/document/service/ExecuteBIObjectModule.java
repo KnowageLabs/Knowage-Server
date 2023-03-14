@@ -65,6 +65,7 @@ import it.eng.spagobi.behaviouralmodel.lov.bo.ModalitiesValue;
 import it.eng.spagobi.commons.bo.Domain;
 import it.eng.spagobi.commons.bo.Subreport;
 import it.eng.spagobi.commons.bo.UserProfile;
+import it.eng.spagobi.commons.constants.CommunityFunctionalityConstants;
 import it.eng.spagobi.commons.constants.ObjectsTreeConstants;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
@@ -235,7 +236,7 @@ public class ExecuteBIObjectModule extends AbstractHttpModule {
 		logger.debug("IN");
 		UserProfile profile = (UserProfile) this.getUserProfile();
 		// only if user is administrator, he can erase snapshots
-		if (profile.isAbleToExecuteAction(SpagoBIConstants.DOCUMENT_MANAGEMENT_ADMIN)) {
+		if (profile.isAbleToExecuteAction(CommunityFunctionalityConstants.DOCUMENT_MANAGEMENT_ADMIN)) {
 			ISnapshotDAO snapdao = DAOFactory.getSnapshotDAO();
 			List snapshotIdsList = request.getAttributeAsList(SpagoBIConstants.SNAPSHOT_ID);
 			if (snapshotIdsList != null && !snapshotIdsList.isEmpty()) {
@@ -828,7 +829,7 @@ public class ExecuteBIObjectModule extends AbstractHttpModule {
 				// check if the user is able to erase the subobject
 				boolean canDelete = false;
 				// if user is administrator, he can delete it
-				if (profile.isAbleToExecuteAction(SpagoBIConstants.DOCUMENT_MANAGEMENT_ADMIN)) {
+				if (profile.isAbleToExecuteAction(CommunityFunctionalityConstants.DOCUMENT_MANAGEMENT_ADMIN)) {
 					canDelete = true;
 				} else {
 					// if user is not administrator, he can delete it only if he is the owner
@@ -1592,7 +1593,7 @@ public class ExecuteBIObjectModule extends AbstractHttpModule {
 				// check if the user is able to erase the viewpoint
 				boolean canDelete = false;
 				// if user is administrator, he can delete it
-				if (profile.isAbleToExecuteAction(SpagoBIConstants.DOCUMENT_MANAGEMENT_ADMIN)) {
+				if (profile.isAbleToExecuteAction(CommunityFunctionalityConstants.DOCUMENT_MANAGEMENT_ADMIN)) {
 					canDelete = true;
 				} else {
 					// if user is not administrator, he can delete it only if he is the owner

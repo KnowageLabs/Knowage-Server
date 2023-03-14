@@ -67,6 +67,7 @@ import it.eng.qbe.statement.hibernate.HQLDataSet;
 import it.eng.qbe.statement.jpa.JPQLDataSet;
 import it.eng.spago.base.SourceBean;
 import it.eng.spagobi.commons.bo.UserProfile;
+import it.eng.spagobi.commons.constants.CommunityFunctionalityConstants;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.engines.qbe.QbeEngineConfig;
 import it.eng.spagobi.services.common.SsoServiceInterface;
@@ -318,7 +319,7 @@ public class QbeQueryResource extends AbstractQbeEngineResource {
 
 	@POST
 	@Path("/export")
-	@UserConstraint(functionalities = { SpagoBIConstants.SELF_SERVICE_DATASET_MANAGEMENT })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.SELF_SERVICE_DATASET_MANAGEMENT })
 	public Response export(@javax.ws.rs.core.Context HttpServletRequest req, @QueryParam("outputType") @DefaultValue("csv") String outputType,
 			@QueryParam("currentQueryId") String id) {
 		JSONObject jsonEncodedReq = null;

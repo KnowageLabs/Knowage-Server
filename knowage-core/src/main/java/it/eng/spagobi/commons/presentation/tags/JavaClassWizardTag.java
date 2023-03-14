@@ -24,6 +24,7 @@ import it.eng.spago.base.SessionContainer;
 import it.eng.spago.error.EMFInternalError;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spago.tracing.TracerSingleton;
+import it.eng.spagobi.commons.constants.CommunityFunctionalityConstants;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.utilities.ChannelUtilities;
 import it.eng.spagobi.commons.utilities.messages.IMessageBuilder;
@@ -74,7 +75,7 @@ public class JavaClassWizardTag extends CommonWizardLovTag {
 		
 		boolean isable = false;
 		try {
-			isable = userProfile.isAbleToExecuteAction(SpagoBIConstants.LOVS_MANAGEMENT);
+			isable = userProfile.isAbleToExecuteAction(CommunityFunctionalityConstants.LOVS_MANAGEMENT);
 		} catch (EMFInternalError e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

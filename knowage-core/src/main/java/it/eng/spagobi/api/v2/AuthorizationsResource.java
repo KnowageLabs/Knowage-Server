@@ -29,7 +29,7 @@ import javax.ws.rs.core.Response;
 
 import it.eng.spagobi.api.AbstractSpagoBIResource;
 import it.eng.spagobi.commons.bo.RoleMetaModelCategory;
-import it.eng.spagobi.commons.constants.SpagoBIConstants;
+import it.eng.spagobi.commons.constants.CommunityFunctionalityConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.dao.IRoleDAO;
 import it.eng.spagobi.services.rest.annotations.UserConstraint;
@@ -40,7 +40,7 @@ public class AuthorizationsResource extends AbstractSpagoBIResource {
 	private final String charset = "; charset=UTF-8";
 
 	@GET
-	@UserConstraint(functionalities = { SpagoBIConstants.PROFILE_MANAGEMENT })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.PROFILE_MANAGEMENT })
 	@Path("/")
 	@Produces(MediaType.APPLICATION_JSON + charset)
 	public Response getAuthorizations() {
@@ -60,7 +60,7 @@ public class AuthorizationsResource extends AbstractSpagoBIResource {
 	}
 
 	@GET
-	@UserConstraint(functionalities = { SpagoBIConstants.PROFILE_MANAGEMENT })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.PROFILE_MANAGEMENT })
 	@Path("/metaCategories/{id}")
 	@Produces(MediaType.APPLICATION_JSON + charset)
 	public Response getMetaModelCat(@PathParam("id") Integer id) {

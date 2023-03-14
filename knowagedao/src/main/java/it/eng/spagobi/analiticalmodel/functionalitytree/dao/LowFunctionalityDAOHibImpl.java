@@ -17,6 +17,8 @@
  */
 package it.eng.spagobi.analiticalmodel.functionalitytree.dao;
 
+import static it.eng.spagobi.commons.constants.CommunityFunctionalityConstants.VIEW_MY_FOLDER_ADMIN;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -1125,7 +1127,7 @@ public class LowFunctionalityDAOHibImpl extends AbstractHibernateDAO implements 
 			} catch (Exception e) {
 				logger.error("Error while recovering user profile", e);
 			}
-			// user has admin functionality "ViewMyFolderAdmin" he can view all
+			// user has admin functionality it.eng.spagobi.commons.constants.CommunityFunctionalityConstants.VIEW_MY_FOLDER_ADMIN he can view all
 			// Low_func and all user func
 			// else he can view only his personal userFunc
 
@@ -1141,7 +1143,7 @@ public class LowFunctionalityDAOHibImpl extends AbstractHibernateDAO implements 
 			// end change
 
 			try {
-				if (profile != null && profile.isAbleToExecuteAction("ViewMyFolderAdmin")) {
+				if (profile != null && profile.isAbleToExecuteAction(VIEW_MY_FOLDER_ADMIN)) {
 					hibQuery = aSession.createQuery(
 							" from SbiFunctions s where s.functTypeCd = 'LOW_FUNCT' or s.functTypeCd = 'USER_FUNCT' order by s.parentFunct.functId, s.prog");
 				} else if (username == null) {
@@ -1203,7 +1205,7 @@ public class LowFunctionalityDAOHibImpl extends AbstractHibernateDAO implements 
 			String username = (String) ((UserProfile) profile).getUserId();
 			boolean isFinalUser = false;
 
-			if (profile != null && profile.isAbleToExecuteAction("ViewMyFolderAdmin")) {
+			if (profile != null && profile.isAbleToExecuteAction(VIEW_MY_FOLDER_ADMIN)) {
 				statement.append("where (f.functTypeCd = 'LOW_FUNCT' or f.functTypeCd = 'USER_FUNCT')");
 			} else if (username == null) {
 				statement.append("where f.functTypeCd = 'LOW_FUNCT'");

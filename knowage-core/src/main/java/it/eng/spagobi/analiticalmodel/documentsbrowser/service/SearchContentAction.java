@@ -17,6 +17,19 @@
  */
 package it.eng.spagobi.analiticalmodel.documentsbrowser.service;
 
+import static it.eng.spagobi.commons.constants.CommunityFunctionalityConstants.DOCUMENT_DETAIL_MANAGEMENT;
+import static it.eng.spagobi.commons.constants.CommunityFunctionalityConstants.SEE_METADATA_FUNCTIONALITY;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
+import org.apache.log4j.Logger;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 import it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO;
 import it.eng.spagobi.commons.bo.UserProfile;
@@ -29,16 +42,6 @@ import it.eng.spagobi.commons.utilities.ObjectsAccessVerifier;
 import it.eng.spagobi.commons.utilities.messages.MessageBuilder;
 import it.eng.spagobi.utilities.exceptions.SpagoBIException;
 import it.eng.spagobi.utilities.service.JSONSuccess;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-
-import org.apache.log4j.Logger;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 /**
  * @author Antonella Giachino (antonella.giachino@eng.it)
@@ -88,7 +91,7 @@ public class SearchContentAction extends AbstractSpagoBIAction {
 			JSONArray documentsJSON = (JSONArray) SerializerFactory.getSerializer("application/json").serialize(objects, null);
 
 			Collection func = profile.getFunctionalities();
-			if (func.contains("SeeMetadataFunctionality")) {
+			if (func.contains(SEE_METADATA_FUNCTIONALITY)) {
 				JSONObject showmetadataAction = new JSONObject();
 				showmetadataAction.put("name", "showmetadata");
 				showmetadataAction.put("description", "Show Metadata");
@@ -98,7 +101,7 @@ public class SearchContentAction extends AbstractSpagoBIAction {
 				}
 			}
 			// add detail functionality when user has
-			if (func.contains("DocumentDetailManagement")) {
+			if (func.contains(DOCUMENT_DETAIL_MANAGEMENT)) {
 				JSONObject detailAction = new JSONObject();
 				MessageBuilder msgBuild = new MessageBuilder();
 				detailAction.put("name", "detail");

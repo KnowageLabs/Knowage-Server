@@ -38,7 +38,7 @@ import com.mongodb.MongoClient;
 import com.mongodb.MongoClientURI;
 
 import it.eng.spago.security.IEngUserProfile;
-import it.eng.spagobi.commons.constants.SpagoBIConstants;
+import it.eng.spagobi.commons.constants.CommunityFunctionalityConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.services.rest.annotations.UserConstraint;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
@@ -58,7 +58,7 @@ public class TestConnection {
 	@POST
 	@Path("/test")
 	@Produces(MediaType.APPLICATION_JSON)
-	@UserConstraint(functionalities = { SpagoBIConstants.DATASOURCE_MANAGEMENT })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.DATASOURCE_MANAGEMENT })
 	public String testDataSource(@javax.ws.rs.core.Context HttpServletRequest req) throws Exception {
 
 		logger.debug("IN");
@@ -134,7 +134,7 @@ public class TestConnection {
 	@POST
 	@Path("/2.0/test")
 	@Produces(MediaType.APPLICATION_JSON)
-	@UserConstraint(functionalities = { SpagoBIConstants.DATASOURCE_MANAGEMENT })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.DATASOURCE_MANAGEMENT })
 	public String testDataSourceNew(@javax.ws.rs.core.Context HttpServletRequest req) throws Exception {
 
 		logger.debug("IN");

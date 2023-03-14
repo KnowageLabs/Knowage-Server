@@ -2,7 +2,7 @@ package it.eng.spagobi.api.v2;
 
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.api.AbstractSpagoBIResource;
-import it.eng.spagobi.commons.constants.SpagoBIConstants;
+import it.eng.spagobi.commons.constants.CommunityFunctionalityConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.metadata.dao.ISbiMetaDsTabRel;
 import it.eng.spagobi.metadata.dao.ISbiMetaTableDAO;
@@ -32,7 +32,7 @@ public class MetaDsRelationResource extends AbstractSpagoBIResource {
 			sbiMetaTableDao = DAOFactory.getSbiMetaTableDAO();
 	}
 
-	@UserConstraint(functionalities = { SpagoBIConstants.DATASET_MANAGEMENT })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.DATASET_MANAGEMENT })
 	@GET
 	@Path("/")
 	@Produces(MediaType.APPLICATION_JSON)
@@ -47,7 +47,7 @@ public class MetaDsRelationResource extends AbstractSpagoBIResource {
 		return relations;
 	}
 
-	@UserConstraint(functionalities = { SpagoBIConstants.DATASET_MANAGEMENT })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.DATASET_MANAGEMENT })
 	@GET
 	@Path("/dataset/{id}")
 	@Produces(MediaType.APPLICATION_JSON)
@@ -68,7 +68,7 @@ public class MetaDsRelationResource extends AbstractSpagoBIResource {
 		return tables;
 	}
 
-	@UserConstraint(functionalities = { SpagoBIConstants.DATASET_MANAGEMENT })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.DATASET_MANAGEMENT })
 	@POST
 	@Path("/{id}")
 	@Consumes(MediaType.APPLICATION_JSON)
@@ -83,7 +83,7 @@ public class MetaDsRelationResource extends AbstractSpagoBIResource {
 
 	}
 
-	@UserConstraint(functionalities = { SpagoBIConstants.DATASET_MANAGEMENT })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.DATASET_MANAGEMENT })
 	@DELETE
 	@Path("/{id}/{tableID}")
 	public void delete(@PathParam("id") Integer id, @PathParam("tableID") Integer tableID) {

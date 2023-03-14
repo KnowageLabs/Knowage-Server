@@ -17,6 +17,11 @@
  */
 package it.eng.spagobi.wapp.services;
 
+import static it.eng.spagobi.commons.constants.CommunityFunctionalityConstants.DOCUMENT_ADMINISTRATION;
+import static it.eng.spagobi.commons.constants.CommunityFunctionalityConstants.DOCUMENT_MANAGEMENT_ADMIN;
+import static it.eng.spagobi.commons.constants.CommunityFunctionalityConstants.DOCUMENT_MANAGEMENT_DEV;
+import static it.eng.spagobi.commons.constants.CommunityFunctionalityConstants.DOCUMENT_MANAGEMENT_TEST;
+
 import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
@@ -198,9 +203,9 @@ public class ChangeLanguage extends AbstractHttpAction {
 		boolean docDev = false;
 		boolean docTest = false;
 		if (functionalities != null && !functionalities.isEmpty()) {
-			docAdmin = functionalities.contains("DocumentAdministration") || functionalities.contains("DocumentAdminManagement");
-			docDev = functionalities.contains("DocumentDevManagement");
-			docTest = functionalities.contains("DocumentTestManagement");
+			docAdmin = functionalities.contains(DOCUMENT_ADMINISTRATION) || functionalities.contains(DOCUMENT_MANAGEMENT_ADMIN);
+			docDev = functionalities.contains(DOCUMENT_MANAGEMENT_DEV);
+			docTest = functionalities.contains(DOCUMENT_MANAGEMENT_TEST);
 		}
 
 		String url = "/themes/" + currTheme + "/jsp/";

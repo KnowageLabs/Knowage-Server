@@ -24,7 +24,7 @@ import it.eng.spagobi.analiticalmodel.document.bo.SubObject;
 import it.eng.spagobi.analiticalmodel.document.dao.ISubObjectDAO;
 import it.eng.spagobi.analiticalmodel.document.handlers.ExecutionInstance;
 import it.eng.spagobi.commons.bo.UserProfile;
-import it.eng.spagobi.commons.constants.SpagoBIConstants;
+import it.eng.spagobi.commons.constants.CommunityFunctionalityConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.services.AbstractSpagoBIAction;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
@@ -70,7 +70,7 @@ public class DeleteSubObjectsAction extends AbstractSpagoBIAction {
 				}
 				if (subObject.getBiobjId().equals(obj.getId())) {
 					boolean canDeleteSubObject = false;
-					if (userProfile.isAbleToExecuteAction(SpagoBIConstants.DOCUMENT_MANAGEMENT_ADMIN) 
+					if (userProfile.isAbleToExecuteAction(CommunityFunctionalityConstants.DOCUMENT_MANAGEMENT_ADMIN) 
 							|| subObject.getOwner().equals(userProfile.getUserId().toString())) {
 						canDeleteSubObject = true;
 					}

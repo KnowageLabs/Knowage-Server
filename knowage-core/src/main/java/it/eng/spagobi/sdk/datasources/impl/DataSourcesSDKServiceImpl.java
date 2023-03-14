@@ -17,7 +17,7 @@
  */
 package it.eng.spagobi.sdk.datasources.impl;
 
-import it.eng.spagobi.commons.constants.SpagoBIConstants;
+import it.eng.spagobi.commons.constants.CommunityFunctionalityConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.sdk.AbstractSDKService;
 import it.eng.spagobi.sdk.datasources.bo.SDKDataSource;
@@ -41,7 +41,7 @@ public class DataSourcesSDKServiceImpl extends AbstractSDKService implements it.
 		this.setTenant();
 
 		try {
-			super.checkUserPermissionForFunctionality(SpagoBIConstants.DATASOURCE_READ, "User cannot see datasource congifuration.");
+			super.checkUserPermissionForFunctionality(CommunityFunctionalityConstants.DATASOURCE_READ, "User cannot see datasource congifuration.");
 			if (dataSourceId == null) {
 				logger.warn("DataSource identifier in input is null!");
 				return null;
@@ -73,7 +73,7 @@ public class DataSourcesSDKServiceImpl extends AbstractSDKService implements it.
 		this.setTenant();
 
 		try {
-			super.checkUserPermissionForFunctionality(SpagoBIConstants.DATASOURCE_READ, "User cannot see datasources congifuration.");
+			super.checkUserPermissionForFunctionality(CommunityFunctionalityConstants.DATASOURCE_READ, "User cannot see datasources congifuration.");
 			List dataSourceList = DAOFactory.getDataSourceDAO().loadAllDataSources();
 			toReturn = new SDKDataSource[dataSourceList.size()];
 			for (int i = 0; i < dataSourceList.size(); i++) {

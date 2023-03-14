@@ -34,6 +34,7 @@ author: Andrea Gioia (andrea.gioia@eng.it)
 <%@page import="it.eng.spago.base.*"%>
 <%@page import="it.eng.spagobi.utilities.engines.EngineConstants"%>
 <%@page import="it.eng.spagobi.commons.constants.SpagoBIConstants"%>
+<%@page import="it.eng.spagobi.commons.constants.CommunityFunctionalityConstants"%>
 <%@page import="it.eng.spagobi.engines.commonj.*"%>
 <%@page import="java.util.Map"%>
 <%@page import="java.util.List"%>

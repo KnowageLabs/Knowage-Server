@@ -19,7 +19,7 @@ package it.eng.spagobi.api.v2;
 
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.api.AbstractSpagoBIResource;
-import it.eng.spagobi.commons.constants.SpagoBIConstants;
+import it.eng.spagobi.commons.constants.CommunityFunctionalityConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
 import it.eng.spagobi.services.rest.annotations.UserConstraint;
@@ -104,7 +104,7 @@ public class DocumentsOrganizerResource extends AbstractSpagoBIResource {
 
 	@POST
 	@Path("/{id}")
-	@UserConstraint(functionalities = { SpagoBIConstants.SAVE_INTO_FOLDER_FUNCTIONALITY })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.SAVE_INTO_FOLDER_FUNCTIONALITY })
 	public Response addDocumentToOrganizer(@PathParam("id") Integer documentId) throws EMFUserError {
 
 		logger.debug("IN");

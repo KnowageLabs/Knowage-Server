@@ -53,6 +53,7 @@ import it.eng.spagobi.commons.bo.Domain;
 import it.eng.spagobi.commons.bo.Role;
 import it.eng.spagobi.commons.bo.RoleMetaModelCategory;
 import it.eng.spagobi.commons.bo.UserProfile;
+import it.eng.spagobi.commons.constants.CommunityFunctionalityConstants;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOConfig;
 import it.eng.spagobi.commons.dao.DAOFactory;
@@ -659,7 +660,7 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 	}
 
 	private void filterDataSetType(List<Domain> domains) throws EMFInternalError {
-		if (!getUserProfile().getFunctionalities().contains(SpagoBIConstants.CKAN_FUNCTIONALITY)) {
+		if (!getUserProfile().getFunctionalities().contains(CommunityFunctionalityConstants.CKAN_FUNCTIONALITY)) {
 			Iterator<Domain> iterator = domains.iterator();
 			while (iterator.hasNext()) {
 				Domain domain = iterator.next();
@@ -1948,7 +1949,7 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 		boolean isAdmin = false;
 		try {
 			// Check if user is an admin
-			isAdmin = profile.isAbleToExecuteAction(SpagoBIConstants.DOCUMENT_MANAGEMENT_ADMIN);
+			isAdmin = profile.isAbleToExecuteAction(CommunityFunctionalityConstants.DOCUMENT_MANAGEMENT_ADMIN);
 		} catch (EMFInternalError e) {
 			logger.error("Error while filtering datasets");
 		}

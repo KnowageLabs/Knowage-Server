@@ -72,6 +72,7 @@ import it.eng.spagobi.analiticalmodel.execution.service.ExecuteAdHocUtility;
 import it.eng.spagobi.api.AbstractSpagoBIResource;
 import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.commons.bo.UserProfile;
+import it.eng.spagobi.commons.constants.CommunityFunctionalityConstants;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.serializer.SerializerFactory;
@@ -1008,7 +1009,7 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 			String dsType = datasetJSON.optString(DataSetConstants.DS_TYPE_CD);
 			if (dsType == null || !dsType.equals(DataSetFactory.FEDERATED_DS_TYPE)) {
 				if (qbeEngine != null && (typeDocWizard == null || typeDocWizard.equalsIgnoreCase("REPORT"))) {
-					if (profile.getFunctionalities() != null && profile.getFunctionalities().contains(SpagoBIConstants.BUILD_QBE_QUERIES_FUNCTIONALITY)) {
+					if (profile.getFunctionalities() != null && profile.getFunctionalities().contains(CommunityFunctionalityConstants.BUILD_QBE_QUERIES_FUNCTIONALITY)) {
 						actions.put(qbeAction);
 					}
 				}

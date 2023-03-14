@@ -45,7 +45,7 @@ import it.eng.spagobi.api.v2.documentdetails.subresources.OutputParametarsResour
 import it.eng.spagobi.api.v2.documentdetails.subresources.SubreportsDocumentResource;
 import it.eng.spagobi.api.v2.documentdetails.subresources.TemplateResource;
 import it.eng.spagobi.api.v2.documentdetails.subresources.VisualDependenciesResource;
-import it.eng.spagobi.commons.constants.SpagoBIConstants;
+import it.eng.spagobi.commons.constants.CommunityFunctionalityConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.dao.SpagoBIDAOException;
 import it.eng.spagobi.commons.utilities.HibernateSessionManager;
@@ -63,7 +63,7 @@ public class DocumentResource extends AbstractSpagoBIResource {
 	@GET
 	@Path("/")
 	@Produces("application/json")
-	@UserConstraint(functionalities = { SpagoBIConstants.DOCUMENT_MANAGEMENT_DEV })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.DOCUMENT_MANAGEMENT_DEV })
 	public List<BIObject> getDocuments() {
 		logger.debug("IN");
 		IBIObjectDAO documentsDao = null;
@@ -83,7 +83,7 @@ public class DocumentResource extends AbstractSpagoBIResource {
 	@Path("/")
 	@Consumes("application/json")
 	@Produces("application/json")
-	@UserConstraint(functionalities = { SpagoBIConstants.DOCUMENT_MANAGEMENT_DEV })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.DOCUMENT_MANAGEMENT_DEV })
 	public BIObject insertDocument(@Valid BIObject document) {
 		logger.debug("IN");
 		IBIObjectDAO documentDao = null;
@@ -120,7 +120,7 @@ public class DocumentResource extends AbstractSpagoBIResource {
 	@Path("/{id}")
 	@Consumes("application/json")
 	@Produces("application/json")
-	@UserConstraint(functionalities = { SpagoBIConstants.DOCUMENT_MANAGEMENT_DEV })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.DOCUMENT_MANAGEMENT_DEV })
 	public BIObject updateDocument(@PathParam("id") Integer id, @Valid BIObject document) {
 		logger.debug("IN");
 		IBIObjectDAO documentDao = null;
@@ -152,7 +152,7 @@ public class DocumentResource extends AbstractSpagoBIResource {
 	@GET
 	@Path("/{id}")
 	@Produces("application/json")
-	@UserConstraint(functionalities = { SpagoBIConstants.DOCUMENT_MANAGEMENT_DEV })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.DOCUMENT_MANAGEMENT_DEV })
 	public BIObject getDocumentById(@PathParam("id") Integer id) {
 		logger.debug("IN");
 		IBIObjectDAO documentDao = null;
@@ -172,7 +172,7 @@ public class DocumentResource extends AbstractSpagoBIResource {
 	@DELETE
 	@Path("/{id}")
 	@Produces("application/json")
-	@UserConstraint(functionalities = { SpagoBIConstants.DOCUMENT_MANAGEMENT_DEV })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.DOCUMENT_MANAGEMENT_DEV })
 	public Integer deleteDocument(@PathParam("id") Integer id) {
 		logger.debug("IN");
 		IBIObjectDAO documentDao = null;
@@ -246,7 +246,7 @@ public class DocumentResource extends AbstractSpagoBIResource {
 	@Path("/{id}/drivers")
 	@Consumes("application/json")
 	@Produces("application/json")
-	@UserConstraint(functionalities = { SpagoBIConstants.DOCUMENT_MANAGEMENT_DEV })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.DOCUMENT_MANAGEMENT_DEV })
 	public DriversResource getDocumentDrivers(@PathParam("id") Integer id) {
 		logger.debug("Getting DriversResource instance");
 		return new DriversResource();
@@ -255,7 +255,7 @@ public class DocumentResource extends AbstractSpagoBIResource {
 	@Path("/{id}/outputparameters")
 	@Consumes("application/json")
 	@Produces("application/json")
-	@UserConstraint(functionalities = { SpagoBIConstants.DOCUMENT_MANAGEMENT_DEV })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.DOCUMENT_MANAGEMENT_DEV })
 	public OutputParametarsResource getDocumentOutputParameters(@PathParam("id") Integer id) {
 		logger.debug("Getting OutputParametarsResource instance");
 		return new OutputParametarsResource();
@@ -263,7 +263,7 @@ public class DocumentResource extends AbstractSpagoBIResource {
 
 	@Path("/{id}/templates")
 
-	@UserConstraint(functionalities = { SpagoBIConstants.DOCUMENT_MANAGEMENT_DEV })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.DOCUMENT_MANAGEMENT_DEV })
 	public TemplateResource getDocumentTemplates(@PathParam("id") Integer id) {
 		logger.debug("Getting TemplateResource instance");
 		return new TemplateResource();
@@ -272,7 +272,7 @@ public class DocumentResource extends AbstractSpagoBIResource {
 	@Path("/{id}/datadependencies")
 	@Consumes("application/json")
 	@Produces("application/json")
-	@UserConstraint(functionalities = { SpagoBIConstants.DOCUMENT_MANAGEMENT_DEV })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.DOCUMENT_MANAGEMENT_DEV })
 	public DataDependenciesResource getDataDependecies(@PathParam("id") Integer id, @QueryParam("driverId") Integer driverId) {
 		logger.debug("Getting DataDependenciesResource instance");
 		return new DataDependenciesResource();
@@ -281,7 +281,7 @@ public class DocumentResource extends AbstractSpagoBIResource {
 	@Path("/{id}/visualdependencies")
 	@Consumes("application/json")
 	@Produces("application/json")
-	@UserConstraint(functionalities = { SpagoBIConstants.DOCUMENT_MANAGEMENT_DEV })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.DOCUMENT_MANAGEMENT_DEV })
 	public VisualDependenciesResource getVisualDependencies() {
 		logger.debug("Getting VisualDependenciesResource instance");
 		return new VisualDependenciesResource();
@@ -290,14 +290,14 @@ public class DocumentResource extends AbstractSpagoBIResource {
 	@Path("/{id}/subreports")
 	@Consumes("application/json")
 	@Produces("application/json")
-	@UserConstraint(functionalities = { SpagoBIConstants.DOCUMENT_MANAGEMENT_DEV })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.DOCUMENT_MANAGEMENT_DEV })
 	public SubreportsDocumentResource getSubreports(@PathParam("id") Integer id) {
 		logger.debug("Getting Subreport instance");
 		return new SubreportsDocumentResource();
 	}
 
 	@Path("/{id}/image")
-	@UserConstraint(functionalities = { SpagoBIConstants.DOCUMENT_MANAGEMENT_DEV })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.DOCUMENT_MANAGEMENT_DEV })
 	public DocumentImageResource getDocumentPreview(@PathParam("id") Integer id) {
 		logger.debug("Getting Document Image instance");
 		return new DocumentImageResource();

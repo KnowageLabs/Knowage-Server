@@ -20,6 +20,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <%@page import="it.eng.spagobi.commons.bo.UserProfile"%>
 <%@page import="it.eng.spago.security.IEngUserProfile"%>
 <%@page import="it.eng.spagobi.commons.constants.SpagoBIConstants"%>
+<%@page import="it.eng.spagobi.commons.constants.CommunityFunctionalityConstants"%>
 <%@page import="it.eng.spagobi.commons.dao.DAOFactory"%>
 <%@page import="it.eng.spagobi.tools.dataset.federation.FederationDefinition"%>
 <%@page language="java" contentType="text/html; charset=ISO-8859-1" pageEncoding="UTF-8"%>
@@ -161,7 +162,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					      				
 					      				<!-- ng-click="fileChange();checkChange()"  -->
 					      				<%
-										if (userProfile.isAbleToExecuteAction(SpagoBIConstants.META_MODEL_LIFECYCLE_MANAGEMENT)) {%>
+										if (userProfile.isAbleToExecuteAction(CommunityFunctionalityConstants.META_MODEL_LIFECYCLE_MANAGEMENT)) {%>
 					      				<md-input-container flex="50" class="noMargin">
 								          <md-switch class="lowMarginSwitch" ng-model="selectedBusinessModel.modelLocked" ng-change="businessModelLock()">{{ selectedBusinessModel.modelLocked ? translate.load("sbi.bm.unlockModel") : translate.load("sbi.bm.lockModel")}}</md-switch>
 								        </md-input-container>
@@ -215,7 +216,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			      
 			      <md-tab label='{{translate.load("sbi.catalogues.generic.title.metadata");}}'>		      
 			      
-			      <% if( (userProfile.isAbleToExecuteAction(SpagoBIConstants.META_MODEL_SAVING_TO_RDBMS)) || (userProfile.isAbleToExecuteAction(SpagoBIConstants.META_MODEL_CWM_EXPORTING)) ) {%>
+			      <% if( (userProfile.isAbleToExecuteAction(CommunityFunctionalityConstants.META_MODEL_SAVING_TO_RDBMS)) || (userProfile.isAbleToExecuteAction(CommunityFunctionalityConstants.META_MODEL_CWM_EXPORTING)) ) {%>
 			      
 			      <md-card ng-if="bmVersions!=undefined && bmVersions.length>0">
 			      	<md-toolbar class="secondaryToolbar">
@@ -229,10 +230,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			      <md-card-content>
 			      	<div layout="column" layout-margin>
 				      	<div  layout="row">
-				      		<% if (userProfile.isAbleToExecuteAction(SpagoBIConstants.META_MODEL_SAVING_TO_RDBMS)) {%>
+				      		<% if (userProfile.isAbleToExecuteAction(CommunityFunctionalityConstants.META_MODEL_SAVING_TO_RDBMS)) {%>
 								<md-button ng-click="importMetadata(selectedBusinessModel.id)"  ng-disabled="bmImportingShow" class="md-raised md-ExtraMini" style="min-width:15rem;">{{translate.load("sbi.tools.catalogue.metaModelsCatalogue.import.metadata");}}</md-button>
 							<%} %>
-							<%-- if (userProfile.isAbleToExecuteAction(SpagoBIConstants.META_MODEL_CWM_EXPORTING)) {%>	
+							<%-- if (userProfile.isAbleToExecuteAction(CommunityFunctionalityConstants.META_MODEL_CWM_EXPORTING)) {%>	
 								<md-button ng-click="downloadCWMFile(selectedBusinessModel.id)" ng-disabled="bmCWMProcessingShow" class="md-raised" >{{translate.load("sbi.metadata.cwm.export.button")}}</md-button></div>
 							<%} --%>
 						</div>
@@ -251,7 +252,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		      			</div>
 		      			--> 
 			      	</div>
-					<%-- if (userProfile.isAbleToExecuteAction(SpagoBIConstants.META_MODEL_CWM_EXPORTING)) {%>		      	 
+					<%-- if (userProfile.isAbleToExecuteAction(CommunityFunctionalityConstants.META_MODEL_CWM_EXPORTING)) {%>		      	 
 			      	<md-divider layout-margin></md-divider>
 			      	<div layout="row" layout-wrap layout-align="start center">
 						<label flex  class="buttonLabel">{{translate.load("sbi.metadata.cwm.import.file.upload")}}:</label>

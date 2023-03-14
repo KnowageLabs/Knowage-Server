@@ -43,7 +43,7 @@ import it.eng.spago.error.EMFInternalError;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.api.AbstractSpagoBIResource;
-import it.eng.spagobi.commons.constants.SpagoBIConstants;
+import it.eng.spagobi.commons.constants.CommunityFunctionalityConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.metadata.SbiExtRoles;
 import it.eng.spagobi.commons.utilities.UserUtilities;
@@ -70,7 +70,7 @@ public class UserResource extends AbstractSpagoBIResource {
 	private final String charset = "; charset=UTF-8";
 
 	@GET
-	@UserConstraint(functionalities = { SpagoBIConstants.PROFILE_MANAGEMENT, SpagoBIConstants.FINAL_USERS_MANAGEMENT })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.PROFILE_MANAGEMENT, CommunityFunctionalityConstants.FINAL_USERS_MANAGEMENT })
 	@Path("/")
 	@Produces(MediaType.APPLICATION_JSON + charset)
 	public Response getUserList(@QueryParam("dateFilter") String dateFilter) {
@@ -86,7 +86,7 @@ public class UserResource extends AbstractSpagoBIResource {
 			objDao = DAOFactory.getSbiAttributeDAO();
 			objDao.setUserProfile(getUserProfile());
 			attrList = objDao.loadSbiAttributes();
-			if (profile.isAbleToExecuteAction(SpagoBIConstants.PROFILE_MANAGEMENT)) {
+			if (profile.isAbleToExecuteAction(CommunityFunctionalityConstants.PROFILE_MANAGEMENT)) {
 				// administrator: he can see every user
 			} else {
 				// user with FINAL_USERS_MANAGEMENT (users with neither
@@ -120,7 +120,7 @@ public class UserResource extends AbstractSpagoBIResource {
 	}
 
 	@GET
-	@UserConstraint(functionalities = { SpagoBIConstants.PROFILE_MANAGEMENT, SpagoBIConstants.FINAL_USERS_MANAGEMENT })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.PROFILE_MANAGEMENT, CommunityFunctionalityConstants.FINAL_USERS_MANAGEMENT })
 	@Path("/{id}")
 	@Produces(MediaType.APPLICATION_JSON + charset)
 	public Response getUserById(@PathParam("id") Integer id) {
@@ -156,7 +156,7 @@ public class UserResource extends AbstractSpagoBIResource {
 
 	@POST
 	@Path("/")
-	@UserConstraint(functionalities = { SpagoBIConstants.PROFILE_MANAGEMENT, SpagoBIConstants.FINAL_USERS_MANAGEMENT })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.PROFILE_MANAGEMENT, CommunityFunctionalityConstants.FINAL_USERS_MANAGEMENT })
 	@Consumes(MediaType.APPLICATION_JSON)
 	public Response insertUser(@Valid UserBO requestDTO) {
 		ISbiUserDAO usersDao = null;
@@ -233,7 +233,7 @@ public class UserResource extends AbstractSpagoBIResource {
 
 	@PUT
 	@Path("/{id}")
-	@UserConstraint(functionalities = { SpagoBIConstants.PROFILE_MANAGEMENT, SpagoBIConstants.FINAL_USERS_MANAGEMENT })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.PROFILE_MANAGEMENT, CommunityFunctionalityConstants.FINAL_USERS_MANAGEMENT })
 	@Consumes(MediaType.APPLICATION_JSON)
 	public Response updateUser(@PathParam("id") Integer id, @Valid UserBO requestDTO) {
 
@@ -332,7 +332,7 @@ public class UserResource extends AbstractSpagoBIResource {
 
 	@DELETE
 	@Path("/{id}")
-	@UserConstraint(functionalities = { SpagoBIConstants.PROFILE_MANAGEMENT, SpagoBIConstants.FINAL_USERS_MANAGEMENT })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.PROFILE_MANAGEMENT, CommunityFunctionalityConstants.FINAL_USERS_MANAGEMENT })
 	public Response deleteCheck(@PathParam("id") Integer id) {
 
 		ISbiUserDAO usersDao = null;

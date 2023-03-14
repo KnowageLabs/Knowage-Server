@@ -29,10 +29,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
  
 <%
 boolean canSeeMasterHier=false, canSeeTechnicalHier=false,canSeeAdmin=false;
-if(UserUtilities.haveRoleAndAuthorization(userProfile, null, new String[]{SpagoBIConstants.HIERARCHIES_MANAGEMENT})){
+if(UserUtilities.haveRoleAndAuthorization(userProfile, null, new String[]{CommunityFunctionalityConstants.HIERARCHIES_MANAGEMENT})){
  canSeeMasterHier=true;
  canSeeTechnicalHier=true;
- canSeeAdmin=UserUtilities.haveRoleAndAuthorization(userProfile, SpagoBIConstants.ADMIN_ROLE_TYPE, new String[]{SpagoBIConstants.HIERARCHIES_MANAGEMENT});
+ canSeeAdmin=UserUtilities.haveRoleAndAuthorization(userProfile, SpagoBIConstants.ADMIN_ROLE_TYPE, new String[]{CommunityFunctionalityConstants.HIERARCHIES_MANAGEMENT});
 } 
 %>
  

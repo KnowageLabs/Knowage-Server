@@ -41,6 +41,7 @@ import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 import it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO;
 import it.eng.spagobi.analiticalmodel.functionalitytree.service.TreeObjectsModule;
 import it.eng.spagobi.commons.SingletonConfig;
+import it.eng.spagobi.commons.constants.CommunityFunctionalityConstants;
 import it.eng.spagobi.commons.constants.ObjectsTreeConstants;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
@@ -190,7 +191,7 @@ public class ListBIObjectsModule extends AbstractBasicListModule {
 
 			logger.debug("Loaded List of all LowFunctionalities related to the BIObject");
 
-			if ((profile.isAbleToExecuteAction(SpagoBIConstants.DOCUMENT_MANAGEMENT_ADMIN))) {
+			if ((profile.isAbleToExecuteAction(CommunityFunctionalityConstants.DOCUMENT_MANAGEMENT_ADMIN))) {
 				logger.debug("Profile logged in has ADMINISTRATOR RIGHTS");
 
 				canDev = true;
@@ -215,7 +216,7 @@ public class ListBIObjectsModule extends AbstractBasicListModule {
 				 */
 			}
 
-			else if (profile.isAbleToExecuteAction(SpagoBIConstants.DOCUMENT_MANAGEMENT_DEV)) {
+			else if (profile.isAbleToExecuteAction(CommunityFunctionalityConstants.DOCUMENT_MANAGEMENT_DEV)) {
 				logger.debug("Profile logged in has DEVELOPER RIGHTS");
 
 				canExec = ObjectsAccessVerifier.canExec(objectStateCD, lowFunct, profile);
@@ -241,7 +242,7 @@ public class ListBIObjectsModule extends AbstractBasicListModule {
 				}
 			}
 
-			else if (profile.isAbleToExecuteAction(SpagoBIConstants.DOCUMENT_MANAGEMENT_TEST)) {
+			else if (profile.isAbleToExecuteAction(CommunityFunctionalityConstants.DOCUMENT_MANAGEMENT_TEST)) {
 				logger.debug("Profile logged in has TESTING RIGHTS");
 
 				canExec = ObjectsAccessVerifier.canExec(objectStateCD, lowFunct, profile);
@@ -275,7 +276,7 @@ public class ListBIObjectsModule extends AbstractBasicListModule {
 				}
 			}
 
-			else if (profile.isAbleToExecuteAction(SpagoBIConstants.DOCUMENT_MANAGEMENT_USER)) {
+			else if (profile.isAbleToExecuteAction(CommunityFunctionalityConstants.DOCUMENT_MANAGEMENT_USER)) {
 				logger.debug("Profile logged in has EXECUTION RIGHTS");
 
 				canExec = ObjectsAccessVerifier.canExec(objectStateCD, lowFunct, profile);
@@ -343,10 +344,10 @@ public class ListBIObjectsModule extends AbstractBasicListModule {
 		moduleConfigStr += "	<QUERIES/>";
 		moduleConfigStr += "	<COLUMNS>";
 		moduleConfigStr += "		<COLUMN label=\"ID\" name=\"OBJECT_ID\" hidden=\"true\" />";
-		if (profile.isAbleToExecuteAction(SpagoBIConstants.DOCUMENT_MANAGEMENT_ADMIN)) {
+		if (profile.isAbleToExecuteAction(CommunityFunctionalityConstants.DOCUMENT_MANAGEMENT_ADMIN)) {
 			moduleConfigStr += "		<COLUMN label=\"canExec\" name=\"canExec\" hidden=\"true\" />";
 		}
-		if (profile.isAbleToExecuteAction(SpagoBIConstants.DOCUMENT_MANAGEMENT_DEV)) {
+		if (profile.isAbleToExecuteAction(CommunityFunctionalityConstants.DOCUMENT_MANAGEMENT_DEV)) {
 			moduleConfigStr += "		<COLUMN label=\"canDev\" name=\"canDev\" hidden=\"true\" />";
 		}
 		moduleConfigStr += "		<COLUMN label=\"SBISet.objects.columnLabel\" name=\"LABEL\" />";
@@ -380,7 +381,7 @@ public class ListBIObjectsModule extends AbstractBasicListModule {
 		 * "\" scope=\"LOCAL\" type=\"RELATIVE\" value=\"OBJECT_ID\"/> " + "		<PARAMETER name=\"" + LightNavigationManager.LIGHT_NAVIGATOR_DISABLED +
 		 * "\" scope=\"\" type=\"ABSOLUTE\" value=\"TRUE\"/> " + "	</METADATA_CAPTION>"; }
 		 */
-		if (profile.isAbleToExecuteAction(SpagoBIConstants.DOCUMENT_DETAIL_MANAGEMENT)) {
+		if (profile.isAbleToExecuteAction(CommunityFunctionalityConstants.DOCUMENT_DETAIL_MANAGEMENT)) {
 			moduleConfigStr += "	<DETAIL_CAPTION  confirm=\"FALSE\" image=\"/img/detail.gif\" label=\"SBISet.objects.captionDetail\">"
 					+ "		<PARAMETER name=\"" + ObjectsTreeConstants.PAGE + "\" scope=\"\" type=\"ABSOLUTE\" value=\"" + DetailBIObjectModule.MODULE_PAGE
 					+ "\"/> " + "		<PARAMETER name=\"" + ObjectsTreeConstants.MESSAGE_DETAIL + "\" scope=\"\" type=\"ABSOLUTE\" value=\""
@@ -388,7 +389,7 @@ public class ListBIObjectsModule extends AbstractBasicListModule {
 					+ "\" scope=\"LOCAL\" type=\"RELATIVE\" value=\"OBJECT_ID\"/> " + "		<CONDITIONS>"
 					+ "			<PARAMETER name=\"canDev\" scope='LOCAL' value='true' operator='EQUAL_TO' />" + "		</CONDITIONS>" + "	</DETAIL_CAPTION>";
 		}
-		if (profile.isAbleToExecuteAction(SpagoBIConstants.DOCUMENT_DELETE_MANAGEMENT)) {
+		if (profile.isAbleToExecuteAction(CommunityFunctionalityConstants.DOCUMENT_DELETE_MANAGEMENT)) {
 			moduleConfigStr += "	<DELETE_CAPTION  confirm=\"TRUE\" image=\"/img/erase.gif\" label=\"SBISet.objects.captionErase\">"
 					+ "		<PARAMETER name=\"" + ObjectsTreeConstants.PAGE + "\" scope=\"\" type=\"ABSOLUTE\" value=\"" + DetailBIObjectModule.MODULE_PAGE
 					+ "\"/> " + "		<PARAMETER name=\"" + ObjectsTreeConstants.MESSAGE_DETAIL + "\" scope=\"\" type=\"ABSOLUTE\" value=\""
@@ -396,7 +397,7 @@ public class ListBIObjectsModule extends AbstractBasicListModule {
 					+ "\" scope=\"LOCAL\" type=\"RELATIVE\" value=\"OBJECT_ID\"/> " + "		<CONDITIONS>"
 					+ "			<PARAMETER name=\"canDev\" scope='LOCAL' value='true' operator='EQUAL_TO' />" + "		</CONDITIONS>" + "	</DELETE_CAPTION>";
 		}
-		if (profile.isAbleToExecuteAction(SpagoBIConstants.DOCUMENT_MOVE_DOWN_STATE)) {
+		if (profile.isAbleToExecuteAction(CommunityFunctionalityConstants.DOCUMENT_MOVE_DOWN_STATE)) {
 			// if
 			// (profile.isAbleToExecuteAction(SpagoBIConstants.DOCUMENT_MANAGEMENT_ADMIN)){
 			moduleConfigStr += "	<MOVEDOWN_CAPTION  confirm=\"TRUE\" image=\"/img/ArrowDown1.gif\" label='SBISet.objects.captionMoveDown'>"
@@ -409,7 +410,7 @@ public class ListBIObjectsModule extends AbstractBasicListModule {
 					+ "	</MOVEDOWN_CAPTION>";
 
 		}
-		if (profile.isAbleToExecuteAction(SpagoBIConstants.DOCUMENT_MOVE_UP_STATE)) {
+		if (profile.isAbleToExecuteAction(CommunityFunctionalityConstants.DOCUMENT_MOVE_UP_STATE)) {
 
 			moduleConfigStr += "	<MOVEUP_CAPTION  confirm=\"TRUE\" image=\"/img/ArrowUp1.gif\" label='SBISet.objects.captionMoveUp'>"
 					+ "		<PARAMETER name=\"" + ObjectsTreeConstants.PAGE + "\" scope=\"\" type=\"ABSOLUTE\" value=\"UpdateBIObjectStatePage\"/> "
@@ -423,8 +424,8 @@ public class ListBIObjectsModule extends AbstractBasicListModule {
 		moduleConfigStr += "	</CAPTIONS>";
 		moduleConfigStr += "	<BUTTONS>";
 
-		if ((profile.isAbleToExecuteAction(SpagoBIConstants.DOCUMENT_MANAGEMENT_ADMIN) && ChannelUtilities.isWebRunning())
-				|| profile.isAbleToExecuteAction(SpagoBIConstants.DOCUMENT_MANAGEMENT_DEV)) {
+		if ((profile.isAbleToExecuteAction(CommunityFunctionalityConstants.DOCUMENT_MANAGEMENT_ADMIN) && ChannelUtilities.isWebRunning())
+				|| profile.isAbleToExecuteAction(CommunityFunctionalityConstants.DOCUMENT_MANAGEMENT_DEV)) {
 			moduleConfigStr += "		<INSERT_BUTTON confirm=\"FALSE\" image=\"/img/new.png\" label=\"SBISet.devObjects.newObjButt\"> "
 					+ "			<PARAMETER name=\"" + ObjectsTreeConstants.PAGE + "\" scope=\"\" type=\"ABSOLUTE\" value=\"" + DetailBIObjectModule.MODULE_PAGE
 					+ "\"/> " + "			<PARAMETER name=\"" + ObjectsTreeConstants.MESSAGE_DETAIL + "\" scope=\"\" type=\"ABSOLUTE\" value=\""

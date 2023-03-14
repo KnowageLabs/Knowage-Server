@@ -82,6 +82,7 @@ import it.eng.spagobi.behaviouralmodel.lov.bo.ScriptDetail;
 import it.eng.spagobi.commons.bo.CriteriaParameter;
 import it.eng.spagobi.commons.bo.CriteriaParameter.Match;
 import it.eng.spagobi.commons.bo.UserProfile;
+import it.eng.spagobi.commons.constants.CommunityFunctionalityConstants;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.utilities.GeneralUtilities;
@@ -450,7 +451,7 @@ public class DocumentResource extends AbstractDocumentResource {
 		// see all document of the organization
 		if (scope != null && scope.compareTo("GLOSSARY") == 0) {
 			if (UserUtilities.haveRoleAndAuthorization(profile, SpagoBIConstants.ADMIN_ROLE_TYPE,
-					new String[] { SpagoBIConstants.MANAGE_GLOSSARY_TECHNICAL })) {
+					new String[] { CommunityFunctionalityConstants.MANAGE_GLOSSARY_TECHNICAL })) {
 				UserFilter = null;
 			}
 		}
@@ -479,8 +480,8 @@ public class DocumentResource extends AbstractDocumentResource {
 		}
 
 		// hide if user is not admin or devel and visible is false
-		if (!forceVisibility && !profile.isAbleToExecuteAction(SpagoBIConstants.DOCUMENT_MANAGEMENT_ADMIN)
-				&& !profile.isAbleToExecuteAction(SpagoBIConstants.DOCUMENT_MANAGEMENT_DEV)) {
+		if (!forceVisibility && !profile.isAbleToExecuteAction(CommunityFunctionalityConstants.DOCUMENT_MANAGEMENT_ADMIN)
+				&& !profile.isAbleToExecuteAction(CommunityFunctionalityConstants.DOCUMENT_MANAGEMENT_DEV)) {
 			restritions.add(new CriteriaParameter("visible", Short.valueOf("1"), Match.EQ));
 		}
 		try {
@@ -556,8 +557,8 @@ public class DocumentResource extends AbstractDocumentResource {
 			for (BIObject obj : allObjects) {
 				try {
 					// hide if user is not admin or devel and visible is false
-					if (!obj.isVisible() && !profile.isAbleToExecuteAction(SpagoBIConstants.DOCUMENT_MANAGEMENT_ADMIN)
-							&& !profile.isAbleToExecuteAction(SpagoBIConstants.DOCUMENT_MANAGEMENT_DEV) || isDeprecated(obj)) {
+					if (!obj.isVisible() && !profile.isAbleToExecuteAction(CommunityFunctionalityConstants.DOCUMENT_MANAGEMENT_ADMIN)
+							&& !profile.isAbleToExecuteAction(CommunityFunctionalityConstants.DOCUMENT_MANAGEMENT_DEV) || isDeprecated(obj)) {
 						continue;
 					}
 					if (ObjectsAccessVerifier.canSee(obj, profile) && (!isTypeFilterValid || obj.getBiObjectTypeCode().equals(type))) {

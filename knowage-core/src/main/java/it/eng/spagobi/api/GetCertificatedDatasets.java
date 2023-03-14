@@ -43,7 +43,7 @@ import it.eng.spagobi.commons.bo.Domain;
 import it.eng.spagobi.commons.bo.Role;
 import it.eng.spagobi.commons.bo.RoleMetaModelCategory;
 import it.eng.spagobi.commons.bo.UserProfile;
-import it.eng.spagobi.commons.constants.SpagoBIConstants;
+import it.eng.spagobi.commons.constants.CommunityFunctionalityConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.dao.ICategoryDAO;
 import it.eng.spagobi.commons.dao.IDomainDAO;
@@ -77,7 +77,7 @@ public class GetCertificatedDatasets {
 
 	@GET
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
-	@UserConstraint(functionalities = { SpagoBIConstants.SELF_SERVICE_DATASET_MANAGEMENT })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.SELF_SERVICE_DATASET_MANAGEMENT })
 	public String getAllDataSet(@Context HttpServletRequest request) {
 		IDataSetDAO dataSetDao = null;
 		List<IDataSet> dataSets;
@@ -223,7 +223,7 @@ public class GetCertificatedDatasets {
 			String dsType = datasetJSON.optString(DataSetConstants.DS_TYPE_CD);
 			if (dsType == null || !dsType.equals(DataSetFactory.FEDERATED_DS_TYPE)) {
 				if (qbeEngine != null && (typeDocWizard == null || typeDocWizard.equalsIgnoreCase("REPORT"))) {
-					if (profile.getFunctionalities().contains(SpagoBIConstants.BUILD_QBE_QUERIES_FUNCTIONALITY)) {
+					if (profile.getFunctionalities().contains(CommunityFunctionalityConstants.BUILD_QBE_QUERIES_FUNCTIONALITY)) {
 						actions.put(qbeAction);
 					}
 				}
@@ -243,7 +243,7 @@ public class GetCertificatedDatasets {
 	@GET
 	@Path("/getflatdataset")
 	@Produces(MediaType.APPLICATION_JSON)
-	@UserConstraint(functionalities = { SpagoBIConstants.DOCUMENT_MANAGEMENT_DEV })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.DOCUMENT_MANAGEMENT_DEV })
 	public String getFlatDataSet(@Context HttpServletRequest req) {
 		IDataSetDAO dataSetDao = null;
 		List<IDataSet> dataSets;

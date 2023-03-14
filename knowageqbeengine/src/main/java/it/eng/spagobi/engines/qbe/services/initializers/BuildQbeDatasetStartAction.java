@@ -17,6 +17,8 @@
 */
 package it.eng.spagobi.engines.qbe.services.initializers;
 
+import static it.eng.spagobi.commons.constants.CommunityFunctionalityConstants.DATASET_MANAGEMENT;
+
 import java.io.File;
 import java.util.Locale;
 import java.util.Map;
@@ -151,7 +153,7 @@ public class BuildQbeDatasetStartAction extends AbstractEngineStartAction {
 		logger.debug("IN");
 		try {
 			UserProfile profile = this.getUserProfile();
-			if (!profile.isAbleToExecuteAction("DatasetManagement")) {
+			if (!profile.isAbleToExecuteAction(DATASET_MANAGEMENT)) {
 				throw new SecurityException("User [" + "unique identifier: " + profile.getUserUniqueIdentifier() + "user id : " + profile.getUserId() + "name: "
 						+ profile.getUserName() + "] cannot build dataset!!");
 			}

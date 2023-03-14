@@ -96,6 +96,7 @@ import it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail;
 import it.eng.spagobi.behaviouralmodel.lov.bo.LovResultHandler;
 import it.eng.spagobi.behaviouralmodel.lov.exceptions.MissingLOVDependencyException;
 import it.eng.spagobi.commons.bo.UserProfile;
+import it.eng.spagobi.commons.constants.CommunityFunctionalityConstants;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.serializer.SerializationException;
@@ -162,7 +163,7 @@ public class DataSetResource {
 	@GET
 	@Path("/")
 	@Produces(MediaType.APPLICATION_JSON)
-	@UserConstraint(functionalities = { SpagoBIConstants.SELF_SERVICE_DATASET_MANAGEMENT })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.SELF_SERVICE_DATASET_MANAGEMENT })
 	public Response getDataSets(@QueryParam("typeDoc") String typeDoc, @QueryParam("ids") List<Integer> ids) {
 
 		final UserProfile userProfile = getUserProfile();
@@ -195,7 +196,7 @@ public class DataSetResource {
 	@GET
 	@Path("/catalog/")
 	@Produces(MediaType.APPLICATION_JSON)
-	@UserConstraint(functionalities = { SpagoBIConstants.SELF_SERVICE_DATASET_MANAGEMENT })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.SELF_SERVICE_DATASET_MANAGEMENT })
 	public DataSetResourceResponseRoot<DataSetMainDTO> getDataSetsPaginationOption(@QueryParam("typeDoc") String typeDoc,
 			@QueryParam("callback") String callback, @DefaultValue("-1") @QueryParam("offset") int offset,
 			@DefaultValue("-1") @QueryParam("fetchSize") int fetchSize, @QueryParam("filters") String _filters, @QueryParam("ordering") JSONObject ordering,
@@ -246,7 +247,7 @@ public class DataSetResource {
 	@GET
 	@Path("/enterprise")
 	@Produces(MediaType.APPLICATION_JSON)
-	@UserConstraint(functionalities = { SpagoBIConstants.SELF_SERVICE_DATASET_MANAGEMENT })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.SELF_SERVICE_DATASET_MANAGEMENT })
 	public DataSetResourceResponseRoot<DataSetForWorkspaceDTO> getEnterpriseDataSet(@DefaultValue("-1") @QueryParam("offset") int offset,
 			@DefaultValue("-1") @QueryParam("fetchSize") int fetchSize, @QueryParam("typeDoc") String typeDoc) {
 
@@ -270,7 +271,7 @@ public class DataSetResource {
 	@GET
 	@Path("/owned")
 	@Produces(MediaType.APPLICATION_JSON)
-	@UserConstraint(functionalities = { SpagoBIConstants.SELF_SERVICE_DATASET_MANAGEMENT })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.SELF_SERVICE_DATASET_MANAGEMENT })
 	public DataSetResourceResponseRoot<DataSetForWorkspaceDTO> getOwnedDataSet(@DefaultValue("-1") @QueryParam("offset") int offset,
 			@DefaultValue("-1") @QueryParam("fetchSize") int fetchSize, @QueryParam("typeDoc") String typeDoc) {
 
@@ -296,7 +297,7 @@ public class DataSetResource {
 	@GET
 	@Path("/shared")
 	@Produces(MediaType.APPLICATION_JSON)
-	@UserConstraint(functionalities = { SpagoBIConstants.SELF_SERVICE_DATASET_MANAGEMENT })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.SELF_SERVICE_DATASET_MANAGEMENT })
 	public DataSetResourceResponseRoot<DataSetForWorkspaceDTO> getSharedDataSet(@DefaultValue("-1") @QueryParam("offset") int offset,
 			@DefaultValue("-1") @QueryParam("fetchSize") int fetchSize, @QueryParam("typeDoc") String typeDoc) {
 
@@ -321,7 +322,7 @@ public class DataSetResource {
 	@GET
 	@Path("/uncertified")
 	@Produces(MediaType.APPLICATION_JSON)
-	@UserConstraint(functionalities = { SpagoBIConstants.SELF_SERVICE_DATASET_MANAGEMENT })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.SELF_SERVICE_DATASET_MANAGEMENT })
 	public DataSetResourceResponseRoot<DataSetForWorkspaceDTO> getUncertifiedDataSet(@DefaultValue("-1") @QueryParam("offset") int offset,
 			@DefaultValue("-1") @QueryParam("fetchSize") int fetchSize, @QueryParam("typeDoc") String typeDoc) {
 
@@ -346,7 +347,7 @@ public class DataSetResource {
 	@GET
 	@Path("/mydata")
 	@Produces(MediaType.APPLICATION_JSON)
-	@UserConstraint(functionalities = { SpagoBIConstants.SELF_SERVICE_DATASET_MANAGEMENT })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.SELF_SERVICE_DATASET_MANAGEMENT })
 	public DataSetResourceResponseRoot<DataSetForWorkspaceDTO> getMyDataDataSet(@DefaultValue("-1") @QueryParam("offset") int offset,
 			@DefaultValue("-1") @QueryParam("fetchSize") int fetchSize, @QueryParam("typeDoc") String typeDoc) {
 
@@ -377,7 +378,7 @@ public class DataSetResource {
 	@GET
 	@Path("/advanced")
 	@Produces(MediaType.APPLICATION_JSON)
-	@UserConstraint(functionalities = { SpagoBIConstants.SELF_SERVICE_DATASET_MANAGEMENT })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.SELF_SERVICE_DATASET_MANAGEMENT })
 	public DataSetResourceResponseRoot<DataSetForWorkspaceDTO> getAdvancedDataSets(@DefaultValue("-1") @QueryParam("offset") int offset,
 			@DefaultValue("-1") @QueryParam("fetchSize") int fetchSize, @QueryParam("typeDoc") String typeDoc) {
 
@@ -407,7 +408,7 @@ public class DataSetResource {
 	@GET
 	@Path("/advanced/{dsId}")
 	@Produces(MediaType.APPLICATION_JSON)
-	@UserConstraint(functionalities = { SpagoBIConstants.SELF_SERVICE_DATASET_MANAGEMENT })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.SELF_SERVICE_DATASET_MANAGEMENT })
 	public SbiDataSet getAdvancedDataSet(@PathParam("dsId") int dsId) {
 
 		try {
@@ -428,7 +429,7 @@ public class DataSetResource {
 	@GET
 	@Path("/avro")
 	@Produces(MediaType.APPLICATION_JSON)
-	@UserConstraint(functionalities = { SpagoBIConstants.SELF_SERVICE_DATASET_MANAGEMENT })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.SELF_SERVICE_DATASET_MANAGEMENT })
 	public List<String> getAvroDataSets() {
 		List<String> avroDataSets = new ArrayList<String>();
 		try {
@@ -474,7 +475,7 @@ public class DataSetResource {
 	@GET
 	@Path("/for-dataprep")
 	@Produces(MediaType.APPLICATION_JSON)
-	@UserConstraint(functionalities = { SpagoBIConstants.SELF_SERVICE_DATASET_MANAGEMENT })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.SELF_SERVICE_DATASET_MANAGEMENT })
 	public DataSetResourceResponseRoot<DataSetForWorkspaceDTO> getDataSetsForDataPrep(@DefaultValue("-1") @QueryParam("offset") int offset,
 			@DefaultValue("-1") @QueryParam("fetchSize") int fetchSize) {
 		try {
@@ -493,7 +494,7 @@ public class DataSetResource {
 	@POST
 	@Path("/{dsLabel}/filters")
 	@Produces(MediaType.APPLICATION_JSON)
-	@UserConstraint(functionalities = { SpagoBIConstants.SELF_SERVICE_DATASET_MANAGEMENT })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.SELF_SERVICE_DATASET_MANAGEMENT })
 	public Response filters(@PathParam("dsLabel") String dsLabel) throws JSONException, IOException {
 
 		RequestContainer aRequestContainer = RequestContainerAccess.getRequestContainer(request);
@@ -1360,7 +1361,7 @@ public class DataSetResource {
 			if (currDataSetType == null || !currDataSetType.equals(DataSetFactory.FEDERATED_DS_TYPE)) {
 				if (isQBEEnginePresent && (typeDocWizard == null || typeDocWizard.equalsIgnoreCase("REPORT"))) {
 					if (userProfile.getFunctionalities() != null
-							&& userProfile.getFunctionalities().contains(SpagoBIConstants.BUILD_QBE_QUERIES_FUNCTIONALITY)) {
+							&& userProfile.getFunctionalities().contains(CommunityFunctionalityConstants.BUILD_QBE_QUERIES_FUNCTIONALITY)) {
 						actions.add(ACTION_QBE);
 					}
 				}

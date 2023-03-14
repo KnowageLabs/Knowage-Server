@@ -85,6 +85,7 @@ import it.eng.spagobi.commons.bo.CriteriaParameter;
 import it.eng.spagobi.commons.bo.Domain;
 import it.eng.spagobi.commons.bo.Role;
 import it.eng.spagobi.commons.bo.UserProfile;
+import it.eng.spagobi.commons.constants.CommunityFunctionalityConstants;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
 import it.eng.spagobi.commons.dao.DAOFactory;
@@ -2501,7 +2502,7 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 							+ " and fr.id.role.extRoleId IN (select extRoleId from SbiExtRoles e  where  e.name in (:ROLES)) "
 							+ " and fr.id.function.functId = f.functId " + " and f.functId = :FOLDER_ID  ");
 
-					if (profile.isAbleToExecuteAction(SpagoBIConstants.DOCUMENT_MANAGEMENT_ADMIN)) {
+					if (profile.isAbleToExecuteAction(CommunityFunctionalityConstants.DOCUMENT_MANAGEMENT_ADMIN)) {
 						buffer.append(" and (" + "(fr.id.state.valueCd = '" + SpagoBIConstants.PERMISSION_ON_FOLDER_TO_DEVELOP + "' AND o.state.valueCd = '"
 								+ SpagoBIConstants.DOC_STATE_DEV + "') OR" + "(fr.id.state.valueCd = '" + SpagoBIConstants.PERMISSION_ON_FOLDER_TO_TEST
 								+ "' AND o.state.valueCd = '" + SpagoBIConstants.DOC_STATE_TEST + "') OR " + "(fr.id.state.valueCd = '"
@@ -2515,8 +2516,8 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 								+ ") ");
 					}
 
-					if (!profile.isAbleToExecuteAction(SpagoBIConstants.DOCUMENT_MANAGEMENT_ADMIN)
-							&& !profile.isAbleToExecuteAction(SpagoBIConstants.DOCUMENT_MANAGEMENT_DEV)) {
+					if (!profile.isAbleToExecuteAction(CommunityFunctionalityConstants.DOCUMENT_MANAGEMENT_ADMIN)
+							&& !profile.isAbleToExecuteAction(CommunityFunctionalityConstants.DOCUMENT_MANAGEMENT_DEV)) {
 						// only visible objects (1 means true) and object
 						// created by the current user
 						buffer.append(" and ((o.visible = 0 and o.creationUser = '" + ((UserProfile) profile).getUserId() + "') OR (o.visible = 1)) ");
@@ -2530,8 +2531,8 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 					buffer.append("select distinct o from SbiObjects o, SbiObjFunc sof, SbiFunctions f "
 							+ "where sof.id.sbiFunctions.functId = f.functId and o.biobjId = sof.id.sbiObjects.biobjId  " + " and f.functId = :FOLDER_ID  ");
 
-					if (!profile.isAbleToExecuteAction(SpagoBIConstants.DOCUMENT_MANAGEMENT_ADMIN)
-							&& !profile.isAbleToExecuteAction(SpagoBIConstants.DOCUMENT_MANAGEMENT_DEV)) {
+					if (!profile.isAbleToExecuteAction(CommunityFunctionalityConstants.DOCUMENT_MANAGEMENT_ADMIN)
+							&& !profile.isAbleToExecuteAction(CommunityFunctionalityConstants.DOCUMENT_MANAGEMENT_DEV)) {
 						// only visible objects (1 means true) and object
 						// created by the current user
 						buffer.append(" and ((o.visible = 0 and o.creationUser = '" + ((UserProfile) profile).getUserId() + "') OR (o.visible = 1)) ");

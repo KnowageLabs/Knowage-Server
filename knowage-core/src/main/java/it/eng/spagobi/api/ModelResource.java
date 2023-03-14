@@ -36,6 +36,7 @@ import org.json.JSONObject;
 
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.commons.bo.UserProfile;
+import it.eng.spagobi.commons.constants.CommunityFunctionalityConstants;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.services.exceptions.ExceptionUtilities;
@@ -58,7 +59,7 @@ public class ModelResource extends AbstractSpagoBIResource {
 	 */
 	@POST
 	@Path("/{metaModelId}/lock")
-	@UserConstraint(functionalities = { SpagoBIConstants.META_MODELS_CATALOGUE_MANAGEMENT })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.META_MODELS_CATALOGUE_MANAGEMENT })
 	public String lockMetaModel(@PathParam("metaModelId") int metaModelId) {
 		logger.debug("IN");
 
@@ -118,7 +119,7 @@ public class ModelResource extends AbstractSpagoBIResource {
 	 */
 	@POST
 	@Path("/{metaModelId}/unlock")
-	@UserConstraint(functionalities = { SpagoBIConstants.META_MODELS_CATALOGUE_MANAGEMENT })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.META_MODELS_CATALOGUE_MANAGEMENT })
 	public String unlockMetaModel(@PathParam("metaModelId") int metaModelId) {
 		logger.debug("IN");
 

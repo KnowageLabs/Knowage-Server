@@ -18,7 +18,7 @@
 package it.eng.spagobi.api;
 
 import it.eng.spago.security.IEngUserProfile;
-import it.eng.spagobi.commons.constants.SpagoBIConstants;
+import it.eng.spagobi.commons.constants.CommunityFunctionalityConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
 import it.eng.spagobi.services.rest.annotations.UserConstraint;
@@ -50,7 +50,7 @@ public class UdpResource {
 
 	@GET
 	@Path("/loadUdp")
-	@UserConstraint(functionalities = { SpagoBIConstants.USER_DATA_PROPERTIES_MANAGEMENT })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.USER_DATA_PROPERTIES_MANAGEMENT })
 	@Produces(MediaType.APPLICATION_JSON)
 	public String loadUDPGlossaryLikeLabel(@Context HttpServletRequest req) {
 		try {

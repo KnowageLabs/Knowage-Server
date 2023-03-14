@@ -43,7 +43,7 @@ import it.eng.spagobi.api.common.AbstractDataSetResource;
 import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.constants.ConfigurationConstants;
-import it.eng.spagobi.commons.constants.SpagoBIConstants;
+import it.eng.spagobi.commons.constants.CommunityFunctionalityConstants;
 import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.services.rest.annotations.UserConstraint;
 import it.eng.spagobi.services.serialization.JsonConverter;
@@ -92,7 +92,7 @@ public class AssociativeSelectionsResource extends AbstractDataSetResource {
 
 	@POST
 	@Produces(MediaType.APPLICATION_JSON)
-	@UserConstraint(functionalities = { SpagoBIConstants.SELF_SERVICE_DATASET_MANAGEMENT })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.SELF_SERVICE_DATASET_MANAGEMENT })
 	public String getAssociativeSelections(String body) {
 		logger.debug("IN");
 		UserProfile userprofile = getUserProfile();

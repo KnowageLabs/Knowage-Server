@@ -18,6 +18,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <%@page import="it.eng.spago.security.IEngUserProfile"%>
 <%@page import="it.eng.spagobi.commons.constants.SpagoBIConstants"%>
+<%@page import="it.eng.spagobi.commons.constants.CommunityFunctionalityConstants"%>
 <%
 	IEngUserProfile profile = (IEngUserProfile) session.getAttribute(IEngUserProfile.ENG_USER_PROFILE);
 	;
@@ -103,8 +104,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 							{{translate.load("sbi.generic.document.add.traditional")}} 
 						</md-button> 
 					</md-menu-item> <%
-		 				if (UserUtilities.haveRoleAndAuthorization(profile, SpagoBIConstants.ADMIN_ROLE_TYPE, new String[] {SpagoBIConstants.CREATE_COCKPIT_FUNCTIONALITY})
-		 				|| UserUtilities.haveRoleAndAuthorization(profile, SpagoBIConstants.ROLE_TYPE_DEV, new String[] {SpagoBIConstants.CREATE_COCKPIT_FUNCTIONALITY})) {
+		 				if (UserUtilities.haveRoleAndAuthorization(profile, SpagoBIConstants.ADMIN_ROLE_TYPE, new String[] {CommunityFunctionalityConstants.CREATE_COCKPIT_FUNCTIONALITY})
+		 				|| UserUtilities.haveRoleAndAuthorization(profile, SpagoBIConstants.ROLE_TYPE_DEV, new String[] {CommunityFunctionalityConstants.CREATE_COCKPIT_FUNCTIONALITY})) {
 				 %> <md-menu-item> 
 				 <md-button	ng-click="newDocument('cockpit');">
 				 	<md-icon md-font-icon="fa fa-plus" md-menu-align-target>

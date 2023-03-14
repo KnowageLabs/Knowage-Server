@@ -62,6 +62,7 @@ import it.eng.spagobi.commons.bo.Domain;
 import it.eng.spagobi.commons.bo.Role;
 import it.eng.spagobi.commons.bo.RoleMetaModelCategory;
 import it.eng.spagobi.commons.bo.UserProfile;
+import it.eng.spagobi.commons.constants.CommunityFunctionalityConstants;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOConfig;
 import it.eng.spagobi.commons.dao.DAOFactory;
@@ -133,7 +134,14 @@ import it.eng.spagobi.utilities.sql.SqlUtils;
 
 public class ManageDataSetsForREST {
 
+	private static final ManageDataSetsForREST INSTANCE = new ManageDataSetsForREST();
 	private static final String PARAM_VALUE_NAME = "value";
+
+	// logger component
+	private static final Logger logger = Logger.getLogger(ManageDataSetsForREST.class);
+	private static final Logger auditlogger = Logger.getLogger("dataset.audit");
+
+
 	public static final String DEFAULT_VALUE_PARAM = "defaultValue";
 	public static final String JOB_GROUP = "PersistDatasetExecutions";
 	public static final String SERVICE_NAME = "ManageDatasets";
@@ -143,11 +151,13 @@ public class ManageDataSetsForREST {
 	public static final String MASKED = "masked";
 	public static final String DECRYPT = "decrypt";
 	public static final String SUBJECT_ID = "subjectId";
-	// logger component
-	public static Logger logger = Logger.getLogger(ManageDataSetsForREST.class);
-	public static Logger auditlogger = Logger.getLogger("dataset.audit");
 
-	protected IEngUserProfile profile;
+	public static ManageDataSetsForREST getInstance() {
+		return INSTANCE;
+	}
+
+	private ManageDataSetsForREST() {
+	}
 
 	public String previewDataset(String jsonString, UserProfile userProfile) {
 		JSONObject json = null;
@@ -647,7 +657,7 @@ public class ManageDataSetsForREST {
 	}
 
 	private void filterDataSetType(List<Domain> domains, UserProfile userProfile) throws EMFInternalError {
-		if (!userProfile.getFunctionalities().contains(SpagoBIConstants.CKAN_FUNCTIONALITY)) {
+		if (!userProfile.getFunctionalities().contains(CommunityFunctionalityConstants.CKAN_FUNCTIONALITY)) {
 			Iterator<Domain> iterator = domains.iterator();
 			while (iterator.hasNext()) {
 				Domain domain = iterator.next();
@@ -1780,7 +1790,7 @@ public class ManageDataSetsForREST {
 				if (id != null && !id.equals("") && !id.equals("0")) {
 					validateLabelAndName(id, dsName, dsLabel, existingByName, existingByLabel);
 					ds.setId(Integer.valueOf(id));
-					modifyPersistence(ds, logParam);
+					modifyPersistence(ds, logParam, userProfile);
 					dsDao.modifyDataSet(ds);
 					logger.debug("Resource " + id + " updated");
 					attributesResponseSuccessJSON.put("success", true);
@@ -1815,15 +1825,15 @@ public class ManageDataSetsForREST {
 					auditlogger.info("Metadata saved for dataset with id " + ds.getId() + "]");
 					auditlogger.info("[End persisting metadata for dataset with id " + ds.getId() + "]");
 				}
-				AuditLogUtilities.updateAudit(req, profile, operation, logParam, "OK");
+				AuditLogUtilities.updateAudit(req, userProfile, operation, logParam, "OK");
 				dsDao.updateDatasetOlderVersion(ds);
 				return attributesResponseSuccessJSON.toString();
 			} catch (Exception e) {
-				AuditLogUtilities.updateAudit(req, profile, "DATA_SET.ADD", logParam, "KO");
+				AuditLogUtilities.updateAudit(req, userProfile, "DATA_SET.ADD", logParam, "KO");
 				throw new SpagoBIServiceException(SERVICE_NAME, "sbi.ds.saveDsError", e);
 			}
 		} else {
-			AuditLogUtilities.updateAudit(req, profile, "DATA_SET.ADD/MODIFY", logParam, "ERR");
+			AuditLogUtilities.updateAudit(req, userProfile, "DATA_SET.ADD/MODIFY", logParam, "ERR");
 			logger.error("DataSet name, label or type are missing");
 			throw new SpagoBIServiceException(SERVICE_NAME, "sbi.ds.fillFieldsError");
 		}
@@ -1870,14 +1880,14 @@ public class ManageDataSetsForREST {
 		}
 	}
 
-	public void modifyPersistence(IDataSet ds, HashMap<String, String> logParam) throws Exception {
+	public void modifyPersistence(IDataSet ds, HashMap<String, String> logParam, UserProfile userProfile) throws Exception {
 		logger.debug("IN");
 		IDataSetDAO iDatasetDao = DAOFactory.getDataSetDAO();
-		iDatasetDao.setUserProfile(profile);
+		iDatasetDao.setUserProfile(userProfile);
 		IDataSet previousDataset = iDatasetDao.loadDataSetById(ds.getId());
 		if (previousDataset.isPersisted() && !ds.isPersisted()) {
 			logger.error("The dataset [" + previousDataset.getLabel() + "] has to be unpersisted");
-			PersistedTableManager ptm = new PersistedTableManager(profile);
+			PersistedTableManager ptm = new PersistedTableManager(userProfile);
 			ptm.dropTableIfExists(previousDataset.getDataSourceForWriting(), previousDataset.getTableNameForReading());
 		}
 		logger.debug("OUT");
@@ -1902,8 +1912,7 @@ public class ManageDataSetsForREST {
 			auditlogger.info("-------------");
 			IDataSetDAO iDatasetDao = DAOFactory.getDataSetDAO();
 
-			profile = userProfile;
-			iDatasetDao.setUserProfile(profile);
+			iDatasetDao.setUserProfile(userProfile);
 
 			IDataSet dataset = iDatasetDao.loadDataSetByLabel(ds.getLabel());
 			checkFileDataset(((VersionedDataSet) dataset).getWrappedDataset());
@@ -1927,7 +1936,7 @@ public class ManageDataSetsForREST {
 				throw new SpagoBIServiceException(SERVICE_NAME, "sbi.ds.dsCannotPersist");
 			}
 
-			IPersistedManager ptm = new PersistedTableManager(profile);
+			IPersistedManager ptm = new PersistedTableManager(userProfile);
 
 			ptm.persistDataSet(dataset);
 

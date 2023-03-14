@@ -81,7 +81,7 @@ public class ExportExcelDatasetAction extends AbstractSpagoBIAction {
 
 			JSONObject pars = new JSONObject();
 			pars.put(DataSetConstants.PARS, paramsJson);
-			ManageDataSetsForREST mdsr = new ManageDataSetsForREST();
+			ManageDataSetsForREST mdsr = ManageDataSetsForREST.getInstance();
 			parameters = mdsr.getDataSetParametersAsMap(pars);
 
 		} catch (Exception ex) {

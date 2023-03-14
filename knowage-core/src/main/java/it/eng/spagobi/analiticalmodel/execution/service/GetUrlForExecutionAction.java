@@ -26,7 +26,7 @@ import it.eng.spagobi.analiticalmodel.document.dao.ISnapshotDAO;
 import it.eng.spagobi.analiticalmodel.document.dao.ISubObjectDAO;
 import it.eng.spagobi.analiticalmodel.document.handlers.ExecutionInstance;
 import it.eng.spagobi.commons.bo.UserProfile;
-import it.eng.spagobi.commons.constants.SpagoBIConstants;
+import it.eng.spagobi.commons.constants.CommunityFunctionalityConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.services.AbstractSpagoBIAction;
 import it.eng.spagobi.commons.utilities.AuditLogUtilities;
@@ -248,7 +248,7 @@ public class GetUrlForExecutionAction extends AbstractSpagoBIAction {
 			} else {				
 				if (obj.getId().equals(subObject.getBiobjId())) {
 					boolean canExecuteSubObject = false;
-					if (userProfile.isAbleToExecuteAction(SpagoBIConstants.DOCUMENT_MANAGEMENT_ADMIN)) {
+					if (userProfile.isAbleToExecuteAction(CommunityFunctionalityConstants.DOCUMENT_MANAGEMENT_ADMIN)) {
 						canExecuteSubObject = true;
 					} else {
 						if (subObject.getIsPublic() || subObject.getOwner().equals(userProfile.getUserId().toString())) {

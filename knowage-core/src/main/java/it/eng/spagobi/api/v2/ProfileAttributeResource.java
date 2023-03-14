@@ -38,7 +38,7 @@ import org.apache.log4j.Logger;
 
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.api.AbstractSpagoBIResource;
-import it.eng.spagobi.commons.constants.SpagoBIConstants;
+import it.eng.spagobi.commons.constants.CommunityFunctionalityConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.utilities.UserUtilities;
 import it.eng.spagobi.profiling.bean.SbiAttribute;
@@ -57,8 +57,8 @@ public class ProfileAttributeResource extends AbstractSpagoBIResource {
 
 	@GET
 	@Path("/")
-	@UserConstraint(functionalities = { SpagoBIConstants.PROFILE_MANAGEMENT, SpagoBIConstants.FINAL_USERS_MANAGEMENT,
-			SpagoBIConstants.PROFILE_ATTRIBUTES_LIST })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.PROFILE_MANAGEMENT, CommunityFunctionalityConstants.FINAL_USERS_MANAGEMENT,
+			CommunityFunctionalityConstants.PROFILE_ATTRIBUTES_LIST })
 	@Produces(MediaType.APPLICATION_JSON)
 	public List<ProfileAttribute> getProfileAttributes() {
 		ISbiAttributeDAO objDao = null;
@@ -93,7 +93,7 @@ public class ProfileAttributeResource extends AbstractSpagoBIResource {
 
 	@PUT
 	@Path("/{id}")
-	@UserConstraint(functionalities = { SpagoBIConstants.PROFILE_MANAGEMENT })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.PROFILE_MANAGEMENT })
 	@Consumes(MediaType.APPLICATION_JSON)
 	public Response updateAttribute(@PathParam("id") Integer id, @Valid ProfileAttribute attr) {
 		ISbiAttributeDAO objDao = null;
@@ -125,7 +125,7 @@ public class ProfileAttributeResource extends AbstractSpagoBIResource {
 
 	@POST
 	@Path("/")
-	@UserConstraint(functionalities = { SpagoBIConstants.PROFILE_MANAGEMENT })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.PROFILE_MANAGEMENT })
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public ProfileAttribute insertAttribute(@Valid ProfileAttribute attr) {
@@ -156,7 +156,7 @@ public class ProfileAttributeResource extends AbstractSpagoBIResource {
 
 	@DELETE
 	@Path("/{id}")
-	@UserConstraint(functionalities = { SpagoBIConstants.PROFILE_MANAGEMENT })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.PROFILE_MANAGEMENT })
 	public Response removeAttribute(@PathParam("id") Integer id) {
 		ISbiAttributeDAO objDao = null;
 		try {
@@ -173,7 +173,7 @@ public class ProfileAttributeResource extends AbstractSpagoBIResource {
 
 	@DELETE
 	@Path("/")
-	@UserConstraint(functionalities = { SpagoBIConstants.PROFILE_MANAGEMENT })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.PROFILE_MANAGEMENT })
 	public Response deleteMultiple(@QueryParam("id") List<Integer> ids) {
 		ISbiAttributeDAO objDao = null;
 

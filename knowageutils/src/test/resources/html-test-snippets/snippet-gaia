@@ -1,0 +1,7 @@
+<div class="container"><div class="cardTitle"><b>TAT1</b> <font size="1">(CHECK - CHECKIN)</font></div><div class="cardValue"><div class="minMediaMax"><div> [kn-calc={Math.trunc([kn-column='TAT_1' aggregation='AVG' precision='0']/60)-
+          Math.trunc([kn-column='TAT_1' aggregation='AVG' precision='0']/60/24)*24}]h
+          [kn-calc={[kn-column='TAT_1' aggregation='AVG' precision='0']-Math.trunc([kn-column='TAT_1' aggregation='AVG' precision='0']/60)*60}]min</div><div class="minMediaMaxSize">MIN: [kn-calc={Math.trunc([kn-column='TAT_1' aggregation='MIN' precision='0']/60)-
+          Math.trunc([kn-column='TAT_1' aggregation='MIN' precision='0']/60/24)*24}]h
+          [kn-calc={[kn-column='TAT_1' aggregation='MIN' precision='0']-Math.trunc([kn-column='TAT_1' aggregation='MIN' precision='0']/60)*60}]min - MAX: [kn-calc={Math.trunc([kn-column='TAT_1' aggregation='MAX' precision='0']/60)-
+          Math.trunc([kn-column='TAT_1' aggregation='MAX' precision='0']/60/24)*24}]h
+          [kn-calc={[kn-column='TAT_1' aggregation='MAX' precision='0']-Math.trunc([kn-column='TAT_1' aggregation='MAX' precision='0']/60)*60}]min</div><div class="icon"><i kn-if="[kn-column='TAT_1' aggregation='AVG' format]>180" class="fas fa-exclamation-triangle fa-2x"></i></div></div></div>

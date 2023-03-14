@@ -15,7 +15,7 @@ import javax.ws.rs.core.MediaType;
 
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.api.AbstractSpagoBIResource;
-import it.eng.spagobi.commons.constants.SpagoBIConstants;
+import it.eng.spagobi.commons.constants.CommunityFunctionalityConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.dao.SpagoBIDAOException;
 import it.eng.spagobi.metadata.dao.ISbiMetaSourceDAO;
@@ -43,7 +43,7 @@ public class MetaSourceResource extends AbstractSpagoBIResource {
 		sbiMetaTableDAO = DAOFactory.getSbiMetaTableDAO();
 	}
 
-	@UserConstraint(functionalities = { SpagoBIConstants.DATASOURCE_MANAGEMENT, SpagoBIConstants.DATASOURCE_READ })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.DATASOURCE_MANAGEMENT, CommunityFunctionalityConstants.DATASOURCE_READ })
 	@GET
 	@Path("/")
 	@Produces(MediaType.APPLICATION_JSON)
@@ -57,7 +57,7 @@ public class MetaSourceResource extends AbstractSpagoBIResource {
 		return sources;
 	}
 
-	@UserConstraint(functionalities = { SpagoBIConstants.DATASOURCE_MANAGEMENT })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.DATASOURCE_MANAGEMENT })
 	@GET
 	@Path("/{sourceId}")
 	@Produces(MediaType.APPLICATION_JSON)
@@ -67,7 +67,7 @@ public class MetaSourceResource extends AbstractSpagoBIResource {
 		return sbiMetaSource;
 	}
 
-	@UserConstraint(functionalities = { SpagoBIConstants.DATASOURCE_MANAGEMENT })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.DATASOURCE_MANAGEMENT })
 	@GET
 	@Path("/{sourceId}/metatables")
 	@Produces(MediaType.APPLICATION_JSON)
@@ -84,7 +84,7 @@ public class MetaSourceResource extends AbstractSpagoBIResource {
 		return metaTables;
 	}
 
-	@UserConstraint(functionalities = { SpagoBIConstants.DATASOURCE_MANAGEMENT })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.DATASOURCE_MANAGEMENT })
 	@GET
 	@Path("/{sourceId}/metatables/{tableId}")
 	@Produces(MediaType.APPLICATION_JSON)
@@ -129,7 +129,7 @@ public class MetaSourceResource extends AbstractSpagoBIResource {
 		return metaTableId;
 	}
 
-	@UserConstraint(functionalities = { SpagoBIConstants.DATASOURCE_MANAGEMENT })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.DATASOURCE_MANAGEMENT })
 	@PUT
 	@Path("/{sourceId}")
 	@Produces(MediaType.APPLICATION_JSON)

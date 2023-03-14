@@ -23,6 +23,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
          session="true" %>
 <%@page import="it.eng.spagobi.commons.utilities.ChannelUtilities,
                 it.eng.spagobi.commons.constants.SpagoBIConstants,
+                it.eng.spagobi.commons.constants.CommunityFunctionalityConstants,
                 it.eng.spagobi.commons.SingletonConfig"%>
                 
 <% 

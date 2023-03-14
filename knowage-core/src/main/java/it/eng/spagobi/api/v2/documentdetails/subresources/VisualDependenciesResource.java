@@ -35,7 +35,7 @@ import org.hibernate.HibernateException;
 import it.eng.spagobi.api.AbstractSpagoBIResource;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.ObjParview;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IObjParviewDAO;
-import it.eng.spagobi.commons.constants.SpagoBIConstants;
+import it.eng.spagobi.commons.constants.CommunityFunctionalityConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.services.rest.annotations.UserConstraint;
 import it.eng.spagobi.utilities.assertion.Assert;
@@ -49,7 +49,7 @@ public class VisualDependenciesResource extends AbstractSpagoBIResource {
 	@SuppressWarnings("unchecked")
 	@GET
 	@Produces("application/json")
-	@UserConstraint(functionalities = { SpagoBIConstants.DOCUMENT_MANAGEMENT_DEV })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.DOCUMENT_MANAGEMENT_DEV })
 	public List<ObjParview> getVisualDependencies(@PathParam("id") Integer id, @QueryParam("driverId") Integer driverId) {
 		logger.debug("IN");
 		List<ObjParview> parameterViewObjects = null;
@@ -69,7 +69,7 @@ public class VisualDependenciesResource extends AbstractSpagoBIResource {
 	@POST
 	@Consumes("application/json")
 	@Produces("application/json")
-	@UserConstraint(functionalities = { SpagoBIConstants.DOCUMENT_MANAGEMENT_DEV })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.DOCUMENT_MANAGEMENT_DEV })
 	public ObjParview addVisualDependeciesForDocumentDriver(@PathParam("id") Integer id, ObjParview parameterViewObject) {
 		logger.debug("IN");
 		IObjParviewDAO parameterViewDAO;
@@ -90,7 +90,7 @@ public class VisualDependenciesResource extends AbstractSpagoBIResource {
 	@POST
 	@Path("delete")
 	@Consumes("application/json")
-	@UserConstraint(functionalities = { SpagoBIConstants.DOCUMENT_MANAGEMENT_DEV })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.DOCUMENT_MANAGEMENT_DEV })
 	public void deleteVisualDependeciesForDocumentDriverByPost(@PathParam("id") Integer id, ObjParview parameterViewObject) {
 		logger.debug("IN");
 		IObjParviewDAO parameterViewDAO;
@@ -107,7 +107,7 @@ public class VisualDependenciesResource extends AbstractSpagoBIResource {
 	@PUT
 	@Consumes("application/json")
 	@Produces("application/json")
-	@UserConstraint(functionalities = { SpagoBIConstants.DOCUMENT_MANAGEMENT_DEV })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.DOCUMENT_MANAGEMENT_DEV })
 	public void setVisualDependeciesForDocumentDriver(@PathParam("id") Integer id, ObjParview parameterViewObject) {
 		logger.debug("IN");
 		IObjParviewDAO parameterViewDAO;
@@ -125,7 +125,7 @@ public class VisualDependenciesResource extends AbstractSpagoBIResource {
 
 	@DELETE
 	@Consumes("application/json")
-	@UserConstraint(functionalities = { SpagoBIConstants.DOCUMENT_MANAGEMENT_DEV })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.DOCUMENT_MANAGEMENT_DEV })
 	public void deleteVisualDependeciesForDocumentDriver(ObjParview parameterViewObject) {
 		logger.debug("IN");
 		IObjParviewDAO parameterViewDAO;

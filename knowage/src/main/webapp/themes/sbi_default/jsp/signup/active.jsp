@@ -23,7 +23,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
          pageEncoding="UTF-8"
          session="true" 
          import="it.eng.spago.base.*,
-                 it.eng.spagobi.commons.constants.SpagoBIConstants"
+                 it.eng.spagobi.commons.constants.SpagoBIConstants,
+                 it.eng.spagobi.commons.constants.CommunityFunctionalityConstants"
 %>
 <%@page import="it.eng.spagobi.commons.utilities.urls.UrlBuilderFactory"%>
 <%@page import="it.eng.spagobi.commons.utilities.urls.IUrlBuilder"%>

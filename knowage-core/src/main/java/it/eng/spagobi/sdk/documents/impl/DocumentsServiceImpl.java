@@ -73,6 +73,7 @@ import it.eng.spagobi.behaviouralmodel.lov.bo.LovResultHandler;
 import it.eng.spagobi.behaviouralmodel.lov.bo.ModalitiesValue;
 import it.eng.spagobi.commons.bo.Domain;
 import it.eng.spagobi.commons.bo.UserProfile;
+import it.eng.spagobi.commons.constants.CommunityFunctionalityConstants;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.dao.ICategoryDAO;
@@ -349,8 +350,8 @@ public class DocumentsServiceImpl extends AbstractSDKService implements Document
 					BIObject obj = (BIObject) it.next();
 					if (ObjectsAccessVerifier.canSee(obj, profile)) {
 						SDKDocument aDoc = new SDKObjectsConverter().fromBIObjectToSDKDocument(obj);
-						if (!profile.isAbleToExecuteAction(SpagoBIConstants.DOCUMENT_MANAGEMENT_ADMIN)
-								&& !profile.isAbleToExecuteAction(SpagoBIConstants.DOCUMENT_MANAGEMENT_DEV) && obj.getVisible().equals(0)) {
+						if (!profile.isAbleToExecuteAction(CommunityFunctionalityConstants.DOCUMENT_MANAGEMENT_ADMIN)
+								&& !profile.isAbleToExecuteAction(CommunityFunctionalityConstants.DOCUMENT_MANAGEMENT_DEV) && obj.getVisible().equals(0)) {
 							logger.debug("Cannot view " + obj.getLabel() + " because user is not admin or dev and document is not visible");
 						} else {
 							toReturn.add(aDoc);
@@ -836,7 +837,7 @@ public class DocumentsServiceImpl extends AbstractSDKService implements Document
 		this.setTenant();
 
 		try {
-			super.checkUserPermissionForFunctionality(SpagoBIConstants.DOCUMENT_MANAGEMENT, "User cannot see documents congifuration.");
+			super.checkUserPermissionForFunctionality(CommunityFunctionalityConstants.DOCUMENT_MANAGEMENT, "User cannot see documents congifuration.");
 			if (id == null) {
 				logger.warn("Document identifier in input is null!");
 				return null;
@@ -864,7 +865,7 @@ public class DocumentsServiceImpl extends AbstractSDKService implements Document
 		this.setTenant();
 
 		try {
-			super.checkUserPermissionForFunctionality(SpagoBIConstants.DOCUMENT_MANAGEMENT, "User cannot see documents congifuration.");
+			super.checkUserPermissionForFunctionality(CommunityFunctionalityConstants.DOCUMENT_MANAGEMENT, "User cannot see documents congifuration.");
 			if (label == null) {
 				logger.warn("Document label in input is null!");
 				return null;
@@ -1371,7 +1372,7 @@ public class DocumentsServiceImpl extends AbstractSDKService implements Document
 
 		try {
 			// checks permission
-			super.checkUserPermissionForFunctionality(SpagoBIConstants.DOCUMENT_MANAGEMENT, "User cannot see documents configuration.");
+			super.checkUserPermissionForFunctionality(CommunityFunctionalityConstants.DOCUMENT_MANAGEMENT, "User cannot see documents configuration.");
 			if (schema.getSchemaName() == null) {
 				logger.error("Schema name in input is null!");
 				// throw new
@@ -1507,7 +1508,7 @@ public class DocumentsServiceImpl extends AbstractSDKService implements Document
 
 			// if user cannot develop the specified document, he cannot upload
 			// templates on it
-			super.checkUserPermissionForFunctionality(SpagoBIConstants.DOCUMENT_MANAGEMENT, "User cannot see documents congifuration.");
+			super.checkUserPermissionForFunctionality(CommunityFunctionalityConstants.DOCUMENT_MANAGEMENT, "User cannot see documents congifuration.");
 			if (sdkTemplate == null) {
 				logger.error("SDKTemplate in input is null!");
 				return;
@@ -1567,7 +1568,7 @@ public class DocumentsServiceImpl extends AbstractSDKService implements Document
 		try {
 			// if user cannot develop the specified document, he cannot upload
 			// templates on it
-			super.checkUserPermissionForFunctionality(SpagoBIConstants.DOCUMENT_MANAGEMENT, "User cannot see documents congifuration.");
+			super.checkUserPermissionForFunctionality(CommunityFunctionalityConstants.DOCUMENT_MANAGEMENT, "User cannot see documents congifuration.");
 
 			// retrieves template
 			String path = getResourcePath() + System.getProperty("file.separator") + folderName;
@@ -1767,7 +1768,7 @@ public class DocumentsServiceImpl extends AbstractSDKService implements Document
 			String previousLockerUser = biObj.getLockedByUser();
 			String currentUser = (String) ((UserProfile) getUserProfile()).getUserId();
 
-			boolean isUserAdmin = getUserProfile().isAbleToExecuteAction(SpagoBIConstants.DOCUMENT_MANAGEMENT_ADMIN);
+			boolean isUserAdmin = getUserProfile().isAbleToExecuteAction(CommunityFunctionalityConstants.DOCUMENT_MANAGEMENT_ADMIN);
 
 			boolean isLocked = false;
 			boolean isLockedByCurrentUser = false;

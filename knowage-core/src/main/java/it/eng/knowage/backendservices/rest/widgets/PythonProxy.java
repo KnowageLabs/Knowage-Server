@@ -35,7 +35,7 @@ import org.json.JSONObject;
 
 import it.eng.spagobi.api.common.AbstractDataSetResource;
 import it.eng.spagobi.commons.bo.UserProfile;
-import it.eng.spagobi.commons.constants.SpagoBIConstants;
+import it.eng.spagobi.commons.constants.CommunityFunctionalityConstants;
 import it.eng.spagobi.services.content.service.ContentServiceImplSupplier;
 import it.eng.spagobi.services.rest.annotations.UserConstraint;
 import it.eng.spagobi.user.UserProfileManager;
@@ -60,7 +60,7 @@ public class PythonProxy extends AbstractDataSetResource {
 	@Path("/edit/{output_type}")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
-	@UserConstraint(functionalities = { SpagoBIConstants.EDIT_PYTHON_SCRIPTS })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.EDIT_PYTHON_SCRIPTS })
 	public Response editWidget(@PathParam("output_type") String outputType, PythonWidgetDTO pythonWidgetDTO) {
 		return executeWidget(outputType, pythonWidgetDTO);
 	}
@@ -117,7 +117,7 @@ public class PythonProxy extends AbstractDataSetResource {
 	@GET
 	@Path("/libraries/{env_label}")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
-	@UserConstraint(functionalities = { SpagoBIConstants.EDIT_PYTHON_SCRIPTS })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.EDIT_PYTHON_SCRIPTS })
 	public Response libraries(@PathParam("env_label") String envLabel) {
 		logger.debug("IN");
 		it.eng.spagobi.utilities.rest.RestUtilities.Response response = null;

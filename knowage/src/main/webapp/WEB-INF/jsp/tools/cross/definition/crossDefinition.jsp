@@ -19,6 +19,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <%@ page language="java" pageEncoding="UTF-8" session="true"%>
 <%@ page import="it.eng.spagobi.commons.constants.SpagoBIConstants"%>
+<%@ page import="it.eng.spagobi.commons.constants.CommunityFunctionalityConstants"%>
 
 <%-- ---------------------------------------------------------------------- --%>
 <%-- JAVA IMPORTS															--%>
@@ -33,9 +34,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <%
 		//TODO check for user profile autorization
 		boolean canSee=false,canSeeAdmin=false;
-		if(UserUtilities.haveRoleAndAuthorization(userProfile, null, new String[]{SpagoBIConstants.MANAGE_CROSS_NAVIGATION})){
+		if(UserUtilities.haveRoleAndAuthorization(userProfile, null, new String[]{CommunityFunctionalityConstants.MANAGE_CROSS_NAVIGATION})){
 			canSee=true;
-		 canSeeAdmin=UserUtilities.haveRoleAndAuthorization(userProfile, SpagoBIConstants.ADMIN_ROLE_TYPE, new String[]{SpagoBIConstants.MANAGE_CROSS_NAVIGATION});
+		 canSeeAdmin=UserUtilities.haveRoleAndAuthorization(userProfile, SpagoBIConstants.ADMIN_ROLE_TYPE, new String[]{CommunityFunctionalityConstants.MANAGE_CROSS_NAVIGATION});
 		}
 %>
 

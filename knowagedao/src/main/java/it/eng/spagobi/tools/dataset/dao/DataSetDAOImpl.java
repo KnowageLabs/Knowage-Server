@@ -53,6 +53,7 @@ import it.eng.spagobi.commons.bo.Domain;
 import it.eng.spagobi.commons.bo.Role;
 import it.eng.spagobi.commons.bo.RoleMetaModelCategory;
 import it.eng.spagobi.commons.bo.UserProfile;
+import it.eng.spagobi.commons.constants.CommunityFunctionalityConstants;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
 import it.eng.spagobi.commons.dao.DAOFactory;
@@ -1471,7 +1472,7 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 		boolean reverseOrdering = false;
 		String columnOrdering = null;
 		try {
-			boolean isAdmin = getUserProfile().isAbleToExecuteAction(SpagoBIConstants.DOCUMENT_MANAGEMENT_ADMIN);
+			boolean isAdmin = getUserProfile().isAbleToExecuteAction(CommunityFunctionalityConstants.DOCUMENT_MANAGEMENT_ADMIN);
 
 			if (offset == null) {
 				logger.warn("Input parameter [offset] is null. It will be set to [0]");
@@ -1684,7 +1685,7 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 		transaction = null;
 		try {
 			toReturn = new ArrayList<IDataSet>();
-			boolean isAdmin = getUserProfile().isAbleToExecuteAction(SpagoBIConstants.DOCUMENT_MANAGEMENT_ADMIN);
+			boolean isAdmin = getUserProfile().isAbleToExecuteAction(CommunityFunctionalityConstants.DOCUMENT_MANAGEMENT_ADMIN);
 
 			int orderByPos = hsql.indexOf("order by");
 			String orderBy = "";
@@ -1772,7 +1773,7 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 		try {
 			StringBuffer statement = new StringBuffer("from SbiDataSet h where h.active = true");
 			toReturn = new ArrayList<IDataSet>();
-			boolean isAdmin = getUserProfile().isAbleToExecuteAction(SpagoBIConstants.DOCUMENT_MANAGEMENT_ADMIN);
+			boolean isAdmin = getUserProfile().isAbleToExecuteAction(CommunityFunctionalityConstants.DOCUMENT_MANAGEMENT_ADMIN);
 			try {
 				session = getSession();
 				Assert.assertNotNull(session, "session cannot be null");

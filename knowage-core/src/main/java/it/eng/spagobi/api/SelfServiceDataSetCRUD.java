@@ -70,6 +70,7 @@ import it.eng.spagobi.commons.bo.Domain;
 import it.eng.spagobi.commons.bo.Role;
 import it.eng.spagobi.commons.bo.RoleMetaModelCategory;
 import it.eng.spagobi.commons.bo.UserProfile;
+import it.eng.spagobi.commons.constants.CommunityFunctionalityConstants;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOConfig;
 import it.eng.spagobi.commons.dao.DAOFactory;
@@ -153,7 +154,7 @@ public class SelfServiceDataSetCRUD extends AbstractSpagoBIResource {
 
 	@GET
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
-	@UserConstraint(functionalities = { SpagoBIConstants.SELF_SERVICE_DATASET_MANAGEMENT })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.SELF_SERVICE_DATASET_MANAGEMENT })
 	public String getAllDataSet(@Context HttpServletRequest req) {
 		IDataSetDAO dataSetDao = null;
 		List<IDataSet> dataSets = new ArrayList<>();
@@ -268,7 +269,7 @@ public class SelfServiceDataSetCRUD extends AbstractSpagoBIResource {
 			String dsType = datasetJSON.optString(DataSetConstants.DS_TYPE_CD);
 			if (dsType == null || !dsType.equals(DataSetFactory.FEDERATED_DS_TYPE)) {
 				if (qbeEngine != null && (typeDocWizard == null || typeDocWizard.equalsIgnoreCase("REPORT"))) {
-					if (profile.getFunctionalities().contains(SpagoBIConstants.BUILD_QBE_QUERIES_FUNCTIONALITY)) {
+					if (profile.getFunctionalities().contains(CommunityFunctionalityConstants.BUILD_QBE_QUERIES_FUNCTIONALITY)) {
 						actions.put(qbeAction);
 					}
 				}
@@ -289,7 +290,7 @@ public class SelfServiceDataSetCRUD extends AbstractSpagoBIResource {
 	@POST
 	@Path("/delete")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
-	@UserConstraint(functionalities = { SpagoBIConstants.SELF_SERVICE_DATASET_MANAGEMENT })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.SELF_SERVICE_DATASET_MANAGEMENT })
 	public String deleteDataSet(@Context HttpServletRequest req) {
 		IEngUserProfile profile = (IEngUserProfile) req.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
 		HashMap<String, String> logParam = new HashMap();
@@ -379,7 +380,7 @@ public class SelfServiceDataSetCRUD extends AbstractSpagoBIResource {
 	@Path("/update")
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
-	@UserConstraint(functionalities = { SpagoBIConstants.SELF_SERVICE_DATASET_MANAGEMENT })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.SELF_SERVICE_DATASET_MANAGEMENT })
 	public Response updateDataSet(@Valid @BeanParam SelfServiceDataSetDTO selfServiceDataSetDTO) {
 		try {
 			IEngUserProfile profile = UserProfileManager.getProfile();
@@ -403,7 +404,7 @@ public class SelfServiceDataSetCRUD extends AbstractSpagoBIResource {
 	@Path("/save")
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
-	@UserConstraint(functionalities = { SpagoBIConstants.SELF_SERVICE_DATASET_MANAGEMENT })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.SELF_SERVICE_DATASET_MANAGEMENT })
 	public String saveDataSet(@Valid @BeanParam SelfServiceDataSetDTO selfServiceDataSetDTO) {
 		IEngUserProfile profile = UserProfileManager.getProfile();
 		DatasetMetadataParser dsp = new DatasetMetadataParser();
@@ -523,7 +524,7 @@ public class SelfServiceDataSetCRUD extends AbstractSpagoBIResource {
 	@POST
 	@Path("/share")
 	@Produces(MediaType.APPLICATION_JSON)
-	@UserConstraint(functionalities = { SpagoBIConstants.SELF_SERVICE_DATASET_MANAGEMENT })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.SELF_SERVICE_DATASET_MANAGEMENT })
 	public String shareDataSet(@Context HttpServletRequest req) {
 		UserProfile profile = (UserProfile) req.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
 		try {
@@ -893,7 +894,7 @@ public class SelfServiceDataSetCRUD extends AbstractSpagoBIResource {
 	@Path("/testDataSet")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
-	@UserConstraint(functionalities = { SpagoBIConstants.SELF_SERVICE_DATASET_MANAGEMENT })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.SELF_SERVICE_DATASET_MANAGEMENT })
 	public String testDataSet(@Valid @BeanParam SelfServiceDataSetDTO selfServiceDataSetDTO) {
 		IEngUserProfile profile = UserProfileManager.getProfile();
 
@@ -967,7 +968,7 @@ public class SelfServiceDataSetCRUD extends AbstractSpagoBIResource {
 	@Path("/getDataStore")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
 	@Consumes(MediaType.APPLICATION_JSON + "; charset=UTF-8")
-	@UserConstraint(functionalities = { SpagoBIConstants.SELF_SERVICE_DATASET_MANAGEMENT })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.SELF_SERVICE_DATASET_MANAGEMENT })
 	public String getDataStore(@Valid @BeanParam SelfServiceDataSetDTO selfServiceDataSetDTO) {
 		IEngUserProfile profile = UserProfileManager.getProfile();
 		Integer start = new Integer(0);

@@ -47,6 +47,7 @@ import org.json.JSONObject;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 import it.eng.spagobi.analiticalmodel.document.bo.ObjTemplate;
+import it.eng.spagobi.commons.constants.CommunityFunctionalityConstants;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.images.dao.IImagesDAO;
@@ -66,7 +67,7 @@ public class ImagesService {
 	@GET
 	@Path("/listImages")
 	@Produces(MediaType.APPLICATION_JSON)
-	@UserConstraint(functionalities = { SpagoBIConstants.IMAGES_MANAGEMENT })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.IMAGES_MANAGEMENT })
 	public String listImages(@Context HttpServletRequest req) {
 		try {
 			IImagesDAO dao = DAOFactory.getImagesDAO();
@@ -100,7 +101,7 @@ public class ImagesService {
 	@GET
 	@Path("/getImage")
 	@Produces(MediaType.APPLICATION_JSON)
-	@UserConstraint(functionalities = { SpagoBIConstants.IMAGES_MANAGEMENT })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.IMAGES_MANAGEMENT })
 	public void getImage(@Context HttpServletRequest req, @Context HttpServletResponse resp) {
 		try {
 			IImagesDAO dao = DAOFactory.getImagesDAO();
@@ -127,7 +128,7 @@ public class ImagesService {
 	@Path("/addImage")
 	@Consumes("multipart/form-data")
 	@Produces(MediaType.TEXT_PLAIN)
-	@UserConstraint(functionalities = { SpagoBIConstants.IMAGES_MANAGEMENT })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.IMAGES_MANAGEMENT })
 	public String addImage(MultiPartBody input, @Context HttpServletRequest req) {
 		String msg = "sbi.cockpit.widgets.image.imageWidgetDesigner.uploadOK";
 		String fileName = null;
@@ -290,7 +291,7 @@ public class ImagesService {
 	@GET
 	@Path("/deleteImage")
 	@Produces(MediaType.APPLICATION_JSON)
-	@UserConstraint(functionalities = { SpagoBIConstants.IMAGES_MANAGEMENT })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.IMAGES_MANAGEMENT })
 	public String deleteImage(@Context HttpServletRequest req) {
 		logger.debug("IN");
 		String msg = "sbi.cockpit.widgets.image.imageWidgetDesigner.deleteOK";
