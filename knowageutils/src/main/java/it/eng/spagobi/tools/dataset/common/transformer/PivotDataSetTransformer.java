@@ -82,7 +82,13 @@ public class PivotDataSetTransformer extends AbstractDataStoreTransformer {
 
 		for (int i = 0; i < pivotedFieldNames.size(); i++) {
 			IFieldMetaData fieldMeta;
-			fieldMeta = new FieldMetadata((String) pivotedFieldNames.get(i), pivotedFieldType);
+			String fieldToPut = "";
+			if (pivotedFieldType.getCanonicalName().toString().equals("java.math.BigDecimal")) {
+				fieldToPut = pivotedFieldNames.get(i).toString();
+			} else {
+				fieldToPut = (String) pivotedFieldNames.get(i);
+			}
+			fieldMeta = new FieldMetadata(fieldToPut, pivotedFieldType);
 			dataStoreMeta.addFiedMeta(fieldMeta);
 		}
 	}

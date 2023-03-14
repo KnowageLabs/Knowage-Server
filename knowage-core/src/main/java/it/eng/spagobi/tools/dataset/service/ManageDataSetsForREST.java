@@ -338,7 +338,7 @@ public class ManageDataSetsForREST {
 //									sourceDataset.setPersisted(true);
 //									((DerivedDataSet) dsRecalc).setSourceDataset(sourceDataset);
 //								}
-								if (sourceDataset.getDataSourceForReading() == null && sourceDataset.getDataSourceForWriting() != null) {
+								if (sourceDataset.getDataSourceForReading() == null && sourceDataset.getDataSource() != null) {
 									sourceDataset.setDataSourceForReading(sourceDataset.getDataSource());
 								}
 								((DerivedDataSet) ds).setSourceDataset(sourceDataset);
