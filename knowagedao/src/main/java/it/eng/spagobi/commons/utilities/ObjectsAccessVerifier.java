@@ -52,7 +52,10 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
  */
 public class ObjectsAccessVerifier {
 
-	static private Logger logger = Logger.getLogger(ObjectsAccessVerifier.class);
+	private static Logger logger = Logger.getLogger(ObjectsAccessVerifier.class);
+
+	private ObjectsAccessVerifier() {
+	}
 
 	/**
 	 * Controls if the current user can develop the object relative to the input folder id.
@@ -1237,6 +1240,8 @@ public class ObjectsAccessVerifier {
 			throw new EMFInternalError(EMFErrorSeverity.ERROR, "BIObject does not belong to any functionality!!");
 		}
 
+		logger.debug("List of functionlaties: " + foldersId);
+
 		boolean canExecByStateAndFolders = false;
 		if ("SUSP".equalsIgnoreCase(state)) {
 			// only admin can exec suspended document
@@ -1247,16 +1252,25 @@ public class ObjectsAccessVerifier {
 		while (foldersIdIt.hasNext()) {
 			Integer folderId = (Integer) foldersIdIt.next();
 			boolean canDev = canDev(state, folderId, profile);
+
+			logger.debug("canDev value: " + canDev);
+
 			if (canDev) {
 				canExecByStateAndFolders = true;
 				break;
 			}
 			boolean canTest = canTest(state, folderId, profile);
+
+			logger.debug("canTest value: " + canTest);
+
 			if (canTest) {
 				canExecByStateAndFolders = true;
 				break;
 			}
 			boolean canExecOnFolder = canExec(state, folderId, profile);
+
+			logger.debug("canExecOnFolder value: " + canExecOnFolder);
+
 			if (canExecOnFolder) {
 				// administrators, developers, testers, behavioural model
 				// administrators can see that document
@@ -1272,17 +1286,22 @@ public class ObjectsAccessVerifier {
 			}
 		}
 
+		logger.debug("canExecByStateAndFolders value: " + canExecByStateAndFolders);
+
 		if (canExecByStateAndFolders) {
 			Integer id = obj.getId();
 			// get the correct roles for execution
 			List correctRoles = null;
 			if (profile.isAbleToExecuteAction(SpagoBIConstants.DOCUMENT_MANAGEMENT_DEV)
 					|| profile.isAbleToExecuteAction(SpagoBIConstants.DOCUMENT_MANAGEMENT_USER)
-					|| profile.isAbleToExecuteAction(SpagoBIConstants.DOCUMENT_MANAGEMENT_ADMIN))
+					|| profile.isAbleToExecuteAction(SpagoBIConstants.DOCUMENT_MANAGEMENT_ADMIN)) {
 				correctRoles = DAOFactory.getBIObjectDAO().getCorrectRolesForExecution(id, profile);
-			else
+			} else {
 				correctRoles = DAOFactory.getBIObjectDAO().getCorrectRolesForExecution(id);
+			}
+
 			logger.debug("correct roles for execution retrived " + correctRoles);
+
 			if (correctRoles == null || correctRoles.size() == 0) {
 				logger.error("Document [" + obj.getLabel() + "] cannot be executed by no role of the user [" + ((UserProfile) profile).getUserId() + "]");
 				canExec = false;
@@ -1290,11 +1309,16 @@ public class ObjectsAccessVerifier {
 				logger.debug("Document [" + obj.getLabel() + "] can be executed by the user [" + ((UserProfile) profile).getUserId() + "]");
 				canExec = true;
 			}
+
+			logger.debug("canExec value: " + canExec);
+
 		} else {
 			logger.error("User [" + ((UserProfile) profile).getUserId() + "] cannot execute the document [" + obj.getLabel()
 					+ "] according to document's state and his permission on folders");
 			canExec = false;
 		}
+
+		logger.debug("canExec value: " + canExec);
 
 		monitor.stop();
 		logger.debug("OUT.canExec=" + canExec);

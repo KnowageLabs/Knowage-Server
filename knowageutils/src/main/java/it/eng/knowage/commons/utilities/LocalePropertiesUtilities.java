@@ -39,6 +39,10 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 public class LocalePropertiesUtilities {
 	private static transient Logger logger = Logger.getLogger(LocalePropertiesUtilities.class);
 
+	private LocalePropertiesUtilities() {
+		// TODO Auto-generated constructor stub
+	}
+
 	public static String getScriptFromLocale(SessionContainer permSess) {
 		String toReturn = "";
 		String script = (String) permSess.getAttribute(SpagoBIConstants.AF_SCRIPT);

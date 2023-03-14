@@ -74,6 +74,3 @@ Any contribution in these developments is very welcome!
  
 
 Knowage CE is part of the software stack managed by [OW2 Consortium](https://www.ow2.org/).
-
-Knowage is also part of the FIWARE platform, being the reference implementation of the Data Visualization Generic Enabler in the [FIWARE Catalogue](https://www.fiware.org/developers/catalogue/).
-

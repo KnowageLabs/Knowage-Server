@@ -18,74 +18,102 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 (function() {
 	angular
 		.module('cockpitModule')
-		.service('perLayerFilterService',function($q, cockpitModule_datasetServices) {
-			/*
-			 * Cache data for per-layer filter.
-			 */
-			var cache = {};
-
-			/*
-			 * Return a promise to supply filter values.
-			 */
-			this.getFilterValues = function(ds, col) {
-				var dsId = ds.dsId;
-				var dsName = ds.name;
-				var colName = col.name;
-
-				var deferred = $q.defer();
-
-				if (dsName in cache
-						&& colName in cache[dsName]
-						&& cache[dsName][colName].length > 0) {
-					var ret = [];
-					ret = cache[dsName][colName];
-
-					deferred.resolve(ret);
-				} else {
-
-					// Remove all cols except the one that we want
-					var newDs = angular.copy(ds);
-					newDs.content
-						.columnSelectedOfDataset = newDs.content
-							.columnSelectedOfDataset
-							.filter(function(elem) {
-								return elem.name == col.name
-							});
-
-					cockpitModule_datasetServices
-						.loadDatasetRecordsById(dsId, 0, -1, undefined, undefined, newDs, undefined)
-						.then(function(response) {
-							var ret = [];
-
-							var rows = response.rows;
-							for (var i in rows) {
-								var currVal = rows[i];
-								ret.push(currVal["column_1"]);
-							}
-
-							if(!cache[dsName]) {
-								cache[dsName] = {};
-							}
-							cache[dsName][colName] = ret;
-
-							deferred.resolve(ret);
-
-						},function(error) {
-							console.error(sbiModule_translate.load("sbi.glossary.load.error"));
-							deferred.reject();
-						});
-
-				}
-
-				return deferred.promise;
-			}
-
-		})
 		.filter('i18n', function(sbiModule_i18n) {
 			return function(label) {
 				return sbiModule_i18n.getI18n(label);
 			}
 		})
+		.directive('draggable', ['$document', function($document) {
+			return {
+				restrict: 'A',
+				link: function(scope, elm, attrs) {
+					var startX, startY, initialMouseX, initialMouseY;
+
+					var draggable = scope.$eval(attrs.draggable);
+					
+					if (draggable && draggable.position === "drag") {
+						var currPosition = draggable.coordinates = draggable.coordinates || [150,10];
+						
+						elm.css({
+							top:  currPosition[0],
+							left: currPosition[1]
+						});
+						
+						elm.bind('mouseover', function($event) {
+							elm.css({ cursor: "grab" });
+						});
+	
+						elm.bind('mouseout', function($event) {
+							elm.css({ cursor: "unset" });
+						});
+	
+						elm.bind('mousedown', function($event) {
+							startX = elm.prop('offsetLeft');
+							startY = elm.prop('offsetTop');
+							initialMouseX = $event.clientX;
+							initialMouseY = $event.clientY;
+							$document.bind('mousemove', mousemove);
+							$document.bind('mouseup', mouseup);
+							return false;
+						});
+	
+						function mousemove($event) {
+							var dx = $event.clientX - initialMouseX;
+							var dy = $event.clientY - initialMouseY;
+							
+							draggable.coordinates[0] = startY + dy;
+							draggable.coordinates[1] = startX + dx;
+							
+							var parenteElementBoundingRect = elm[0].previousElementSibling.getBoundingClientRect();
+							var parentWidth = parenteElementBoundingRect.width;
+							var parentHeight = parenteElementBoundingRect.height;
+							
+							var subElementBoundingRect = elm[0].querySelector(".mapWidgetLegend:not(.ng-hide)").getBoundingClientRect();
+							var legendWidth = subElementBoundingRect.width;
+							var legendHeight = subElementBoundingRect.height;
+							
+							draggable.coordinates[0] = Math.max(draggable.coordinates[0], 0 + legendHeight);
+							draggable.coordinates[1] = Math.max(draggable.coordinates[1], 0);
+							
+							draggable.coordinates[0] = Math.min(draggable.coordinates[0], parentHeight);
+							draggable.coordinates[1] = Math.min(draggable.coordinates[1], parentWidth  - legendWidth);
+							
+							elm.css({
+								top:  draggable.coordinates[0],
+								left: draggable.coordinates[1]
+							});
+							return false;
+						}
+	
+						function mouseup() {
+							$document.unbind('mousemove', mousemove);
+							$document.unbind('mouseup', mouseup);
+						}
+					} else {
+						elm.bind('mouseout', function($event) {
+							elm.css({ cursor: "unset" });
+						});
+					}
+				}
+			};
+		}])
+		.directive('mapWidgetLegendPanel', ['$document', function($document) {
+			return {
+				restrict: 'E',
+				scope: false,
+				replace: true,
+				link: function(scope, elm, attrs) {
+					scope.isDraggable = function() {
+						if (scope.ngModel.style.legend.position === "drag") {
+							return scope.ngModel.style.legend.coordinates;
+						} else {
+							return false;
+						}
+					}
+				},
+				templateUrl: baseScriptPath+ '/directives/cockpit-widget/widget/mapWidget/templates/mapWidgetLegendPanel.html'
+			};
+		}])
 		.directive('cockpitMapWidget',function(){
 			return{
 				templateUrl: baseScriptPath+ '/directives/cockpit-widget/widget/mapWidget/templates/mapWidgetTemplate.html',
@@ -160,18 +188,17 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			cockpitModule_widgetConfigurator,
 			cockpitModule_widgetServices,
 			cockpitModule_widgetSelection,
-			cockpitModule_properties,
-			perLayerFilterService){
+			cockpitModule_properties){
 
 		//ol objects
-		$scope.popupContainer; 		//popup detail
-		$scope.closer; 				//popup detail closer icon
+		$scope.popupContainer;		//popup detail
+		$scope.closer;				//popup detail closer icon
 		$scope.tooltipContainer;
-		$scope.layers = [];  		//layers with features
-		$scope.values = {};  		//layers with values
+		$scope.layers = [];		//layers with features
+		$scope.values = {};		//layers with values
 		$scope.savedValues = {};
-		$scope.configs = {}; 		//layers with configuration
-		$scope.columnsConfig = {} 	//layers with just columns definition
+		$scope.configs = {};		//layers with configuration
+		$scope.columnsConfig = {}	//layers with just columns definition
 		$scope.optionSidenavId = "optionSidenav-" + Math.random(); // random id for sidenav id
 		$scope.layerVisibility = [];
 		$scope.exploded = {}; // is heatp/cluster exploded?
@@ -399,6 +426,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				$scope.clearInternalData();
 
 				$scope.resetFilter();
+				$scope.resetAnimation();
 
 				$scope.addAllLayers();
 				$scope.setZoomControl();
@@ -463,9 +491,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 //############################################## SPECIFIC MAP WIDGET METHODS #########################################################################
 
-	    $scope.getLegend = function(referenceId, visualizationType){
-	    	$scope.legend = cockpitModule_mapThematizerServices.getLegend(referenceId, visualizationType);
-	    }
+		$scope.getLegend = function(referenceId, visualizationType){
+			$scope.legend = cockpitModule_mapThematizerServices.getLegend(referenceId, visualizationType);
+		}
 
 		function syncDatasetMetadata(layerDef) {
 
@@ -566,7 +594,19 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					$scope.exploded[currDsId] = false;
 				}
 			}
-			if (!$scope.ngModel.content.hasOwnProperty("enableBaseLayer")) $scope.ngModel.content.enableBaseLayer = true;
+			
+			$scope.ngModel.style = $scope.ngModel.style || {};
+			$scope.ngModel.style.legend = $scope.ngModel.style.legend || {};
+			// Retrocompatibility
+			if (Array.isArray($scope.ngModel.style.legend.position)) {
+				$scope.ngModel.style.legend.coordinates = $scope.ngModel.style.legend.position;
+				$scope.ngModel.style.legend.position = "drag";
+			}
+			$scope.ngModel.style.legend.position = $scope.ngModel.style.legend.position || "east";
+
+			if (!$scope.ngModel.content.hasOwnProperty("enableBaseLayer")) {
+				$scope.ngModel.content.enableBaseLayer = true;
+			}
 
 		}
 		
@@ -617,9 +657,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			var layerDef =  $scope.configs[layerID];
 
 			if (!layerDef) return;
-			
-			$scope.fixStats(layerDef, data);
 
+			$scope.fixStats(layerDef, data);
+	
 			columnsForData = $scope.getColumnSelectedOfDataset(layerDef.dsId) || [];
 
 			if (!$scope.checkLayer(layerDef)) {
@@ -655,6 +695,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 			cockpitModule_mapThematizerServices.setActiveConf($scope.ngModel.id + "|" + layerDef.name, layerDef);
 			cockpitModule_mapThematizerServices.updateLegend($scope.ngModel.id + "|" + layerDef.name, data, $scope.ngModel.style.legend); //add legend to internal structure
+			cockpitModule_mapThematizerServices.clearCache($scope.ngModel.id + "|" + layerDef.name);
 			if (layerDef.visualizationType == 'choropleth') {
 				if ($scope.ngModel.style.legend)
 					$scope.getLegend($scope.ngModel.id, $scope.ngModel.style.legend.visualizationType);
@@ -663,8 +704,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			}
 			var layer;
 			if (isCluster) {
-				var clusterSource = new ol.source.Cluster({source: featuresSource
-														  });
+				var clusterSource = new ol.source.Cluster({
+					source: featuresSource
+				});
 				layer = new ol.layer.Vector({source: clusterSource,
 					style: cockpitModule_mapThematizerServices.layerStyle
 				});
@@ -1384,6 +1426,150 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			}
 			return false;
 		}
+		
+		$scope.getColumnStats = function(layer, column) {
+			return getPerLayerFiltersValues(layer, column);
+		}
+
+		$scope.animationStatus = {};
+		
+		$scope.getAnimatedLayers = function() {
+			var layers = $scope.ngModel.content.layers || [];
+
+			return layers.filter($scope.isLayerAnimated);
+		}
+
+		$scope.toggleAnimation = function(layerName) {
+			if (layerName != undefined) {
+				if (!$scope.animationStatus[layerName]) {
+					$scope.animationStatus[layerName] = {};
+					$scope.animationStatus[layerName].inPlay = true;
+				} else {
+					$scope.animationStatus[layerName].inPlay = !$scope.animationStatus[layerName].inPlay;
+				}
+				
+				if ($scope.animationStatus[layerName].inPlay) {
+					setTimeout(() => {
+						$scope.animateLayer(layerName);
+					}, 0);
+				}
+			}
+		}
+
+		$scope.resetAnimation = function() {
+			Object.values($scope.animationStatus).forEach(function(e) {
+				e.inPlay = false;
+			});
+		}
+
+		$scope.isAnimationInPlay = function() {
+			return Object.values($scope.animationStatus).find(function(e) { return e.inPlay; }) != null;
+		}
+
+		$scope.getAnimationCurrentValue = function() {
+			var animationInPlay = Object.values($scope.animationStatus).find(function(e) { return e.inPlay; });
+			return animationInPlay && animationInPlay.currValue || "...";
+		}
+
+		$scope.animateLayer = function(layerName) {
+			if (layerName != null) {
+				var animatedLayer = $scope.ngModel.content.layers.find(function(e) { return e.name == layerName; });
+				var animatedColumn = animatedLayer.content.columnSelectedOfDataset.find($scope.isColumnAnimated);
+	
+				var layerName = animatedLayer.name;
+				var columnName = animatedColumn.name;
+	
+				var animationStatus = $scope.animationStatus[layerName];
+				var stats = $scope.dataSetStats[layerName];
+				var statsValues = Object.values(stats);
+				var distinctValues = statsValues.find(function(e) { return e.header == columnName; }).distinct;
+				
+				var olLayer = $scope.map.getLayers().getArray().find(function(e) { return e.name == layerName; });
+				var olSource = olLayer.getSource();
+				var olFeatures = olFeatures = olSource.getFeatures();
+				var featureMapByAnimatedCol = new Map();
+				
+				for (var olFeature of olFeatures) {
+					var columnNameVal = olFeature.get(columnName).value;
+					
+					if (!featureMapByAnimatedCol.has(columnNameVal)) {
+						featureMapByAnimatedCol.set(columnNameVal, []);
+					}
+					
+					var oldStyleFunction = olFeature.getStyleFunction();
+					olFeature.set("_animation_old_style_func", oldStyleFunction);
+					
+					olFeature.setStyle((feature, resolution) => {
+						var styleFunct = cockpitModule_mapThematizerServices.layerStyle;
+					
+						return styleFunct(feature, resolution);
+					});
+					
+					featureMapByAnimatedCol.get(columnNameVal).push(olFeature);
+				}
+				
+				var styleHidden  = new ol.style.Style({ visibility: 'hidden' });
+				var styleVisible = new ol.style.Style({ visibility: 'visible' });
+				
+				setTimeout(() => {
+					$scope.animationLoop(0, animationStatus, distinctValues, styleHidden, styleVisible, featureMapByAnimatedCol);
+				}, 100);
+			}
+		}
+
+		$scope.animationLoop = function(index, animationStatus, distinctValues, styleHidden, styleVisible, featureMapByAnimatedCol) {
+
+			i = distinctValues[index];
+			animationStatus.currValue = i;
+
+			var valuesToHide = distinctValues.filter(function(e) { return e != i; });
+
+			featureMapByAnimatedCol.get(i).forEach(function(e) { e.setStyle(null); });
+
+			for (var j of valuesToHide) {
+				featureMapByAnimatedCol.get(j).forEach(function(e) { e.setStyle(styleHidden); });
+			}
+
+			index++;
+			
+			if (index == distinctValues.length) {
+				index = 0;
+			} 
+
+			$scope.map.render();
+
+			if (animationStatus.inPlay) {
+				setTimeout(() => {
+					$scope.animationLoop(index, animationStatus, distinctValues, styleHidden, styleVisible, featureMapByAnimatedCol);
+				}, 1000);
+			} else {
+				animationStatus.currValue = null;
+				featureMapByAnimatedCol.forEach(function(value, key) {
+					value.forEach(function(e) {
+						var oldStyleFunction = e.get("_animation_old_style_func");
+						e.setStyle(oldStyleFunction);
+					});
+				});
+			}
+
+			$scope.$digest();
+
+		}
+
+		$scope.hasAnimatedLayer = function() {
+			var layers = $scope.ngModel.content.layers || [];
+
+			return layers.find($scope.isLayerAnimated) != undefined;
+		}
+
+		$scope.isLayerAnimated = function(layer) {
+			var columns = layer.content.columnSelectedOfDataset;
+			return columns.find($scope.isColumnAnimated) != undefined;
+		}
+		
+		$scope.isColumnAnimated = function(column) {
+			return column.properties.animateOn == true;
+		}
 
 		$scope.hasPerLayerFilters = function(ds) {
 
@@ -1461,15 +1647,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 			var layerName = layer.name;
 			var colName = col.name;
+			var stats = $scope.dataSetStats[layerName];
+			var statsValues = Object.values(stats);
+			var distinctValues = statsValues.find(function(e) { return e.header == colName; }).distinct;
 
-			return perLayerFilterService
-				.getFilterValues(layer, col)
-				.then(function(data) {
-					if (!$scope.perLayerFiltersValues[layerName]) {
-						$scope.perLayerFiltersValues[layerName] = {};
-					}
-					$scope.perLayerFiltersValues[layerName][colName] = data;
-				});
+			return Promise.resolve(distinctValues);
 
 		}
 
@@ -1573,8 +1755,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			scope.loading = true;
 
 			$scope.getPerLayerFiltersValues(currLayer, currCol)
-				.then(function() {
-					var allAvailablesValues = perLayerFiltersValues[currLayer.name][currCol.name];
+				.then(function(allAvailablesValues) {
 
 					scope.selectables =
 						allAvailablesValues.map(function(elem) {
@@ -1811,8 +1992,22 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			return layer.content.columnSelectedOfDataset.some(function(e) { return e.properties && e.properties.showMap == true; });
 		}
 
-	}
+		$scope.getMapLayout = function() {
+			var ret = "layout-row";
+			
+			if ($scope.isShowLegend
+				&& $scope.ngModel
+				&& $scope.ngModel.style
+				&& $scope.ngModel.style.legend
+				&& ($scope.ngModel.style.legend.position == "north" || $scope.ngModel.style.legend.position == "south")) {
+				ret = "layout-column";
+			}
+			
+			return ret;
+		}
 
+	}
+	
 	// this function register the widget in the cockpitModule_widgetConfigurator factory
 	addWidgetFunctionality("map",{'initialDimension':{'width':20, 'height':20},'updateble':true,'cliccable':true});
 })();

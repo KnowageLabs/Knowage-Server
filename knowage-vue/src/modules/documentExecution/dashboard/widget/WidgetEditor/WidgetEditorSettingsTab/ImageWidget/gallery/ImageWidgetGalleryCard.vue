@@ -1,13 +1,14 @@
 <template>
     <div>
         <div class="card-container">
-            <Toolbar class="kn-toolbar kn-toolbar--secondary p-p-0 p-m-0 p-col-12">
+            <Toolbar class="kn-toolbar  p-p-0 p-m-0 p-col-12" :class="[isSelected ? 'kn-toolbar--primary' : 'kn-toolbar--secondary']">
                 <template #start> {{ imageProp.name }} </template>
                 <template #end>
-                    <Button v-tooltip.top="$t('common.delete')" icon="pi pi-trash" class="p-button-link" @click="deleteImageConfirm" />
+                    <Button v-tooltip.top="$t('common.view')" icon="pi pi-eye" class="p-button-link" :class="[isSelected ? 'active-image-toolbar-buttons' : '']" @click="openImageSidebar" />
+                    <Button v-tooltip.top="$t('common.delete')" icon="pi pi-trash" class="p-button-link" :class="[isSelected ? 'active-image-toolbar-buttons' : '']" @click="deleteImageConfirm" />
                 </template>
             </Toolbar>
-            <div class="p-d-flex p-flex-column p-jc-center p-ai-center kn-flex image-container" :class="[isSelected ? 'selected-card-image-container' : 'card-image-container ']">
+            <div class="p-d-flex p-flex-column p-jc-center p-ai-center kn-flex image-container" @click="$emit('imageSelected', imageProp)">
                 <img class="card-image" :src="getImageUrl(imageProp)" :alt="imageProp.name" />
             </div>
         </div>
@@ -21,13 +22,16 @@ export default defineComponent({
     name: 'image-widget-gallery-card',
     components: {},
     props: { imageProp: { type: Object as PropType<IImage>, required: true }, isSelected: { type: Boolean, required: true } },
-    emits: ['delete'],
+    emits: ['delete', 'openSidebar', 'imageSelected'],
     data() {
         return {}
     },
     methods: {
         getImageUrl(image: IImage) {
             return import.meta.env.VITE_RESTFUL_SERVICES_PATH + `1.0/images/getImage?IMAGES_ID=${image.imgId}`
+        },
+        openImageSidebar() {
+            this.$emit('openSidebar', this.imageProp)
         },
         deleteImageConfirm() {
             this.$confirm.require({
@@ -60,10 +64,6 @@ export default defineComponent({
     background-color: rgb(236, 239, 241);
 }
 
-.selected-card-image-container {
-    background-color: #a9c3db;
-}
-
 .card-image {
     max-width: 100%;
     height: auto;
@@ -71,5 +71,8 @@ export default defineComponent({
 
 .image-container {
     overflow: hidden;
+}
+.active-image-toolbar-buttons {
+    color: white;
 }
 </style>

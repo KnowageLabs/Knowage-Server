@@ -66,6 +66,9 @@ public final class AuditServiceProxy extends AbstractServiceProxy {
 			} else {
 				service = Service.create(SERVICE_QNAME).getPort(AuditService.class);
 			}
+
+			setCommonHeader(service);
+
 			return service;
 		} catch (Exception e) {
 			logger.error("Impossible to locate [" + SERVICE_NAME + "] at [" + serviceUrl + "]");

@@ -181,12 +181,11 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 					}
 
 				} else if (DOCUMENT.equals(typeCode)) {
-					ObjectsAccessVerifier oav = new ObjectsAccessVerifier();
 					BIObject biobj = id != null ? DAOFactory.getBIObjectDAO().loadBIObjectById(id) : DAOFactory.getBIObjectDAO().loadBIObjectByLabel(label);
 
 					checkExecRightsByProducts(biobj);
 
-					correctRoles = id != null ? oav.getCorrectRolesForExecution(id, userProfile) : oav.getCorrectRolesForExecution(label, userProfile);
+					correctRoles = id != null ? ObjectsAccessVerifier.getCorrectRolesForExecution(id, userProfile) : ObjectsAccessVerifier.getCorrectRolesForExecution(label, userProfile);
 
 					if (biobj.getDrivers().size() == 0 && correctRoles.size() > 0) {
 						correctRoles = Arrays.asList(correctRoles.get(0));

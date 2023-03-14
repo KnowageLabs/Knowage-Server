@@ -112,7 +112,7 @@ export default defineComponent({
     },
     computed: {
         filteredVisibleFields(): any {
-            const newArr = this.query.fields.filter((field) => field.visible === true && field.inUse === true)
+            const newArr = this.query?.fields?.filter((field) => field.visible === true && field.inUse === true)
             return newArr
         }
     },

@@ -30,17 +30,21 @@ import java.util.UUID;
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 import org.json.JSONException;
+import org.json.JSONObject;
 import org.quartz.Job;
 import org.quartz.JobDataMap;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 
+import it.eng.qbe.dataset.DerivedDataSet;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.tenant.Tenant;
 import it.eng.spagobi.tenant.TenantManager;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
+import it.eng.spagobi.tools.dataset.bo.VersionedDataSet;
 import it.eng.spagobi.tools.dataset.dao.IDataSetDAO;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 abstract class AbstractExportJob implements Job {
 
@@ -170,6 +174,23 @@ abstract class AbstractExportJob implements Job {
 		IDataSetDAO dsDAO = DAOFactory.getDataSetDAO();
 		dsDAO.setUserProfile(userProfile);
 		IDataSet dataSet = dsDAO.loadDataSetById(dataSetId);
+		if (dataSet instanceof VersionedDataSet) {
+			VersionedDataSet vds = (VersionedDataSet) dataSet;
+			if (vds.getWrappedDataset() instanceof DerivedDataSet) {
+				IDataSet sourcedataSet = this.getDerivedSourceDataset(dataSet);
+				String jsonQuery = this.getJSonQueryDataset(dataSet);
+				if (sourcedataSet != null) {
+					DerivedDataSet dataSetDer = (DerivedDataSet) vds.getWrappedDataset();
+					dataSetDer.setSourceDataset(sourcedataSet);
+					dataSetDer.setJsonQuery(jsonQuery);
+					dataSetDer
+							.setDataSource(dataSetDer.getDataSourceForReading() != null ? dataSetDer.getDataSourceForReading() : sourcedataSet.getDataSource());
+					dataSetDer.setDataSourceForReading(
+							dataSetDer.getDataSourceForReading() != null ? dataSetDer.getDataSourceForReading() : sourcedataSet.getDataSource());
+					dataSet = dataSetDer;
+				}
+			}
+		}
 
 		logger.debug("Dump drivers:");
 		for (Entry<String, Object> entry : drivers.entrySet()) {
@@ -273,4 +294,39 @@ abstract class AbstractExportJob implements Job {
 	 */
 	protected abstract String mime();
 
+	public IDataSet getDerivedSourceDataset(IDataSet dataset) {
+		if (dataset instanceof VersionedDataSet) {
+			VersionedDataSet vds = (VersionedDataSet) dataset;
+			if (vds.getWrappedDataset() instanceof DerivedDataSet) {
+				JSONObject sourceJsonConfig;
+				try {
+					sourceJsonConfig = new JSONObject(vds.getWrappedDataset().getConfiguration());
+					String sourceDatasetLabel = sourceJsonConfig.getString("sourceDatasetLabel");
+					return DAOFactory.getDataSetDAO().loadDataSetByLabel(sourceDatasetLabel);
+				} catch (JSONException e) {
+					throw new SpagoBIRuntimeException("sourceJsonConfig no longer exists for " + vds.getWrappedDataset().getLabel() + " Dataset");
+				}
+
+			}
+		}
+		return dataset;
+	}
+
+	public String getJSonQueryDataset(IDataSet dataset) {
+		String jsonQuery = null;
+		if (dataset instanceof VersionedDataSet) {
+			VersionedDataSet vds = (VersionedDataSet) dataset;
+			if (vds.getWrappedDataset() instanceof DerivedDataSet) {
+				JSONObject sourceJsonConfig;
+				try {
+					sourceJsonConfig = new JSONObject(vds.getWrappedDataset().getConfiguration());
+					jsonQuery = sourceJsonConfig.getString("qbeJSONQuery");
+				} catch (JSONException e) {
+					throw new SpagoBIRuntimeException("sourceJsonConfig no longer exists for " + vds.getWrappedDataset().getLabel() + " Dataset");
+				}
+
+			}
+		}
+		return jsonQuery;
+	}
 }

@@ -17,15 +17,25 @@
  */
 package it.eng.spagobi.services.proxy;
 
+import static java.util.Objects.nonNull;
+
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpSession;
 import javax.xml.namespace.QName;
 import javax.xml.ws.Service;
+import javax.xml.ws.handler.MessageContext;
 
 import org.apache.log4j.Logger;
+import org.apache.logging.log4j.ThreadContext;
+
+import com.sun.xml.ws.developer.WSBindingProvider;
 
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.security.IEngUserProfile;
@@ -59,16 +69,16 @@ public abstract class AbstractServiceProxy {
 
 	static final String IS_BACKEND = "isBackend"; // request came from spagobi server
 
-	static private Logger logger = Logger.getLogger(AbstractServiceProxy.class);
+	private static Logger logger = Logger.getLogger(AbstractServiceProxy.class);
 
-	public AbstractServiceProxy(String user, HttpSession session) {
+	AbstractServiceProxy(String user, HttpSession session) {
 		this.session = session;
 		this.userId = user;
 
 		init();
 	}
 
-	public AbstractServiceProxy(String user, String secureAttributes, String serviceUrlStr, String spagoBiServerURL, String token) {
+	AbstractServiceProxy(String user, String secureAttributes, String serviceUrlStr, String spagoBiServerURL, String token) {
 		this.userId = user;
 		this.secureAttributes = secureAttributes;
 		this.serviceUrlStr = serviceUrlStr;
@@ -187,6 +197,24 @@ public abstract class AbstractServiceProxy {
 		} else {
 			SsoServiceInterface proxyService = SsoServiceFactory.createProxyService();
 			return proxyService.readTicket(session);
+		}
+	}
+
+	protected final void setCommonHeader(Object servicePort) {
+		if (servicePort instanceof WSBindingProvider) {
+			WSBindingProvider bp = (WSBindingProvider) servicePort;
+
+			Map<String, Object> requestContext = bp.getRequestContext();
+
+			requestContext.putIfAbsent(MessageContext.HTTP_REQUEST_HEADERS, new HashMap<>());
+
+			Map<String, List<String>> headers = (Map<String, List<String>>) requestContext.get(MessageContext.HTTP_REQUEST_HEADERS);
+
+			String correlationId = ThreadContext.get("correlationId");
+
+			if (nonNull(correlationId)) {
+				headers.put("X-Kn-Correlation-Id", Arrays.asList(correlationId));
+			}
 		}
 	}
 }

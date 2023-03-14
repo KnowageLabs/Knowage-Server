@@ -32,7 +32,6 @@ import HeaderRenderer from './registryCellRenderers/RegistryHeaderRenderer.vue'
 import TooltipRenderer from './registryCellRenderers/RegistryTooltipRenderer.vue'
 import store from '../../../../App.store'
 import cryptoRandomString from 'crypto-random-string'
-
 export default defineComponent({
     name: 'registry-datatable',
     components: {
@@ -51,10 +50,11 @@ export default defineComponent({
         pagination: { type: Object },
         entity: { type: Object as PropType<string | null> },
         id: { type: String },
+        keyColumnName: { type: String as any },
         stopWarningsState: { type: Array },
         dataLoading: { type: Boolean }
     },
-    emits: ['rowChanged', 'rowDeleted', 'pageChanged', 'warningChanged', 'saveRegistry'],
+    emits: ['rowChanged', 'rowDeleted', 'pageChanged', 'warningChanged', 'saveRegistry', 'sortingChanged'],
     data() {
         return {
             registryDescriptor,
@@ -83,7 +83,11 @@ export default defineComponent({
             selectedRows: [] as any,
             gridOptions: null as any,
             context: null as any,
-            ctrlDown: false
+            ctrlDown: false,
+            sortModel: {
+                fieldName: '',
+                orderType: 'NONE'
+            }
         }
     },
     computed: {
@@ -128,14 +132,15 @@ export default defineComponent({
         ...mapActions(store, ['setInfo', 'setError']),
         setEventListeners() {
             emitter.on('refreshTableWithData', this.loadRows)
+            emitter.on('clearSelectedRows', this.clearSelectedRows)
         },
         removeEventListeners() {
             emitter.off('refreshTableWithData', this.loadRows)
+            emitter.off('clearSelectedRows', this.clearSelectedRows)
         },
         onGridReady(params) {
             this.gridApi = params.api
             this.columnApi = params.columnApi
-
             this.refreshGridConfiguration()
         },
         refreshGridConfiguration() {
@@ -165,20 +170,17 @@ export default defineComponent({
                 rowSelection: 'multiple',
                 animateRows: true,
                 suppressScrollOnNewData: true,
-
                 // EVENTS
                 onCellKeyDown: this.onCellKeyDown,
                 onBodyScroll: this.onBodyScroll,
                 onSelectionChanged: this.onSelectionChanged,
                 onCellValueChanged: this.onCellValueChanged,
-
                 // CALLBACKS
                 onGridReady: this.onGridReady,
                 getRowStyle: this.getRowStyle,
                 getRowId: this.getRowId
             }
         },
-
         async loadColumnDefinitions() {
             this.loading = true
             this.columns = [
@@ -202,11 +204,13 @@ export default defineComponent({
                     el.editable = el.isEditable
                     el.headerName = el.title ?? el.columnInfo.header
                     el.tooltipField = el.field
-
                     this.addColumnEditableProps(el)
                     this.addColumnCheckboxRendererProps(el)
                     this.addColumnFormattingProps(el)
-
+                    el.headerComponent = HeaderRenderer
+                    el.headerComponentParams = {
+                        sortModel: this.sortModel
+                    }
                     this.columns.push(el)
                 }
             })
@@ -216,14 +220,17 @@ export default defineComponent({
         },
         addColumnEditableProps(el: any) {
             if (el.editable) {
-                el.headerComponent = HeaderRenderer
                 el.cellEditor = CellEditor
                 el.cellEditorParams = {
                     comboColumnOptions: this.comboColumnOptions
                 }
+                if (el.color)
+                    el.cellStyle = () => {
+                        return { color: 'black', backgroundColor: el.color, opacity: 1 }
+                    }
             } else {
                 el.cellStyle = () => {
-                    return { color: 'black', backgroundColor: 'rgba(231, 231, 231, 0.8)', opacity: 0.8 }
+                    return { color: 'black', backgroundColor: el.color ? el.color : 'rgba(231, 231, 231, 0.8)', opacity: 0.6 }
                 }
             }
         },
@@ -249,7 +256,11 @@ export default defineComponent({
                 el.valueFormatter = (params: any) => {
                     let configuration = { useGrouping: false, minFractionDigits: 0, maxFractionDigits: 0 } as { useGrouping: boolean; minFractionDigits: number; maxFractionDigits: number } | null
                     configuration = formatRegistryNumber(el)
-                    return Intl.NumberFormat(locale, { useGrouping: configuration?.useGrouping, minimumFractionDigits: configuration?.minFractionDigits, maximumFractionDigits: configuration?.maxFractionDigits ?? 2 }).format(params.value)
+
+                    const formattedValue = Intl.NumberFormat(locale, { useGrouping: configuration?.useGrouping, minimumFractionDigits: configuration?.minFractionDigits, maximumFractionDigits: configuration?.maxFractionDigits ?? 2 }).format(params.value)
+
+                    if ('NaN' === formattedValue) return '*'
+                    return formattedValue
                 }
             }
         },
@@ -274,11 +285,9 @@ export default defineComponent({
         async addColumnOptions(payload: any) {
             const column = payload.column
             const row = payload.row
-
             if (!this.comboColumnOptions[column.field]) {
                 this.comboColumnOptions[column.field] = []
             }
-
             if (!this.comboColumnOptions[column.field][row[column.dependences]]) {
                 await this.loadColumnOptions(column, row)
             }
@@ -286,10 +295,8 @@ export default defineComponent({
         async loadColumnOptions(column: any, row: any) {
             this.gridApi?.showLoadingOverlay()
             const subEntity = column.subEntity ? '::' + column.subEntity + '(' + column.foreignKey + ')' : ''
-
             const entityId = this.entity + subEntity + ':' + column.field
             const entityOrder = this.entity + subEntity + ':' + (column.orderBy ?? column.field)
-
             const postData = new URLSearchParams({
                 ENTITY_ID: entityId,
                 QUERY_TYPE: 'standard',
@@ -307,7 +314,6 @@ export default defineComponent({
         },
         loadConfiguration() {
             this.configuration = this.propConfiguration
-
             for (let i = 0; i < this.configuration.length; i++) {
                 if (this.configuration[i].name === 'enableButtons') {
                     this.buttons.enableButtons = this.configuration[i].value === 'true'
@@ -360,7 +366,6 @@ export default defineComponent({
                 })
                 this.gridApi.applyTransaction({ remove: rowsForTableDeletion })
             }
-
             const rowsForServiceDeletion = this.selectedRows.filter((row) => !row.isNew)
             if (rowsForServiceDeletion.length > 0) this.$emit('rowDeleted', rowsForServiceDeletion)
         },
@@ -373,12 +378,11 @@ export default defineComponent({
         addNewRow() {
             const newRow = { uniqueId: cryptoRandomString({ length: 16, type: 'base64' }), id: this.rows.length + 1, isNew: true }
             this.columns.forEach((el: any) => {
-                if (el.isVisible && el.field !== 'id') {
+                if (el.isVisible && el.field && el.field !== 'id') {
                     newRow[el.field] = el.defaultValue ?? ''
                 }
             })
             this.addRowToFirstPosition(newRow)
-
             if (this.lazyParams.size <= registryDescriptor.paginationLimit) {
                 this.first = 0
             }
@@ -390,6 +394,7 @@ export default defineComponent({
                 tempRow.uniqueId = cryptoRandomString({ length: 16, type: 'base64' })
                 tempRow.isNew = true
                 delete tempRow.id
+                if (this.keyColumnName) tempRow[this.keyColumnName] = ''
                 this.addRowToFirstPosition(tempRow)
             })
         },
@@ -400,7 +405,6 @@ export default defineComponent({
         onDropdownChange(payload: any) {
             const column = payload.column
             const row = payload.row
-
             this.selectedRow = row
             if (column.hasDependencies) {
                 this.dependentColumns = [] as any[]
@@ -411,14 +415,12 @@ export default defineComponent({
                     })
                 } else this.clearDependentColumnsValues()
             }
-
             row.edited = true
             this.$emit('rowChanged', row)
         },
         setDependentColumns(column: any) {
             const tempColumn = column
             if (!tempColumn.hasDependencies) return
-
             tempColumn.hasDependencies.forEach((el: any) => {
                 this.dependentColumns.push(el)
                 this.setDependentColumns(el)
@@ -429,7 +431,6 @@ export default defineComponent({
                 this.stopWarnings[payload.columnField] = true
                 this.$emit('warningChanged', this.stopWarnings)
             }
-
             this.clearDependentColumnsValues()
             this.warningVisible = false
         },
@@ -465,7 +466,6 @@ export default defineComponent({
                         paginationLimit: this.registryDescriptor.paginationLimit,
                         size: this.lazyParams.size
                     }
-
                     this.$emit('pageChanged', this.lazyParams)
                 }
             }, 300)
@@ -473,7 +473,6 @@ export default defineComponent({
         async onCellKeyDown(ev) {
             const myCell = this.getFocusedCell(ev)
             const [ctrlKey, cKey, vKey] = [17, 67, 86]
-
             if (ev.event.which === ctrlKey) {
                 this.ctrlDown = true
             } else if (ev.event.which == cKey && this.ctrlDown == true) {
@@ -493,7 +492,6 @@ export default defineComponent({
         async setCellValue(selectedCell, pasteValue) {
             const colDef = selectedCell.cell.column.colDef
             const cellType = this.getCellType(colDef)
-
             if (this.cellAcceptsPasteValue(colDef, cellType)) {
                 switch (cellType) {
                     case 'text':
@@ -587,6 +585,22 @@ export default defineComponent({
         },
         getRowStyle(params) {
             if (params.data.isNew) return { 'background-color': registryDescriptor.styles.colors.newRowColor }
+        },
+        sortingChanged(updatedSortModel) {
+            this.sortModel = updatedSortModel
+            this.columns.forEach((el: any) => {
+                if (el.isVisible) {
+                    el.headerComponent = HeaderRenderer
+                    el.headerComponentParams = {
+                        sortModel: updatedSortModel
+                    }
+                }
+            })
+            this.refreshGridConfiguration()
+            this.$emit('sortingChanged', updatedSortModel)
+        },
+        clearSelectedRows() {
+            this.selectedRows = []
         }
     }
 })
@@ -595,12 +609,15 @@ export default defineComponent({
 .flag-shown {
     opacity: 1;
 }
+
 .flag-hidden {
     opacity: 0;
 }
+
 .registry-grid {
     border: none;
 }
+
 .edited-cell-color-class {
     background-color: #749e43;
 }

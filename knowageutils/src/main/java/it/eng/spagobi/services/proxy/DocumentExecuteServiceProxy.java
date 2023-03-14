@@ -72,6 +72,9 @@ public class DocumentExecuteServiceProxy extends AbstractServiceProxy {
 			} else {
 				service = Service.create(SERVICE_QNAME).getPort(DocumentExecuteService.class);
 			}
+
+			setCommonHeader(service);
+
 			return service;
 		} catch (Exception e) {
 			logger.error("Impossible to locate [" + SERVICE_NAME + "] at [" + serviceUrl + "]");

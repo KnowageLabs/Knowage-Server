@@ -54,6 +54,28 @@ function mapWidgetEditControllerFunction(
 	$scope.widgetSpinner = false;
 	$scope.availableLegendAlignments = [{'label':$scope.translate.load('sbi.cockpit.style.textAlign.left'),'value':'left'},{'label':$scope.translate.load('sbi.cockpit.style.textAlign.center'),'value':'center'},{'label':$scope.translate.load('sbi.cockpit.style.textAlign.right'),'value':'right'}];
 	$scope.availableVisualizationTypes = ['Linear Gradient', 'Range'];
+	$scope.availableLegendPosition = [
+		{
+			'label':$scope.translate.load('sbi.cockpit.style.legend.position.north'),
+			'value':'north'
+		},
+		{
+			'label':$scope.translate.load('sbi.cockpit.style.legend.position.south'),
+			'value':'south'
+		},
+		{
+			'label':$scope.translate.load('sbi.cockpit.style.legend.position.west'),
+			'value':'west'
+		},
+		{
+			'label':$scope.translate.load('sbi.cockpit.style.legend.position.east'),
+			'value':'east'
+		},
+		{
+			'label':$scope.translate.load('sbi.cockpit.style.legend.position.drag'),
+			'value':'drag'
+		}
+	];
 
 	$scope.getTemplateUrl = function(template){
 		return cockpitModule_generalServices.getTemplateUrl('mapWidget',template);
@@ -91,9 +113,11 @@ function mapWidgetEditControllerFunction(
 			layer.pieConf.categorizeBy = layer.pieConf.categorizeBy || getFirstAttribute(layer);
 			layer.pieConf.type         = layer.pieConf.type         || "pie"; 
 			layer.pieConf.borderColor  = layer.pieConf.borderColor  || "rgba(0, 0, 0, 0.5)";
-			layer.pieConf.color        = layer.pieConf.color        || "rgba(127, 127, 127, 0.5)";
+			layer.pieConf.fromColor    = layer.pieConf.fromColor    || "rgba(63, 63, 63, 0.5)";
+			layer.pieConf.toColor      = layer.pieConf.toColor      || "rgba(191, 191, 191, 0.5)";
 			layer.pieConf.minSize      = layer.pieConf.minSize      || 5;
 			layer.pieConf.maxSize      = layer.pieConf.maxSize      || 35;
+			delete layer.pieConf.color;
 		}
 	}
 
@@ -202,6 +226,20 @@ function mapWidgetEditControllerFunction(
 		for(var i in columnsList){
 			if(columnsList[i].alias !== column.alias){
 				columnsList[i].properties.modal = false;
+			}
+		}
+
+	}
+
+	$scope.setAnimateOn = function(column, layer){
+		var columnsList = layer.content.columnSelectedOfDataset;
+		layer.animateOnColumn = (column.properties.animateOn) ? column.alias : undefined;
+
+		for(var i in columnsList){
+			if(columnsList[i].alias !== column.alias){
+				columnsList[i].properties.animateOn = false;
+			} else {
+				columnsList[i].properties.aggregateBy = true;
 			}
 		}
 

@@ -6,8 +6,8 @@
     </div>
 
     <div class="widgetButtonBarContainer">
-        <Button type="button" icon="fa-solid fa-ellipsis-h" @click="toggle" class="p-button-outlined p-button-rounded widgetMenuButton" />
-        <Menu label="Toggle" @click="toggle" :model="menuItems" ref="widgetmenu" :popup="true" />
+        <Button type="button" icon="fa-solid fa-ellipsis-h" class="p-button-outlined p-button-rounded widgetMenuButton" @click="toggle" />
+        <Menu ref="widgetmenu" label="Toggle" :model="menuItems" :popup="true" @click="toggle" />
     </div>
 </template>
 

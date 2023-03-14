@@ -1,6 +1,6 @@
 import { AxiosResponse } from 'axios'
 import { iParameter } from './KnParameterSidebar'
-import { getFormattedParameters } from './KnParameterSidebarDataDependency';
+import { addDefaultValueForSelectionTypeParameters, formatParameterDataOptions, getFormattedParameters } from './KnParameterSidebarDataDependency';
 
 export function setLovsDependency(loadedParameters: { filterStatus: iParameter[]; isReadyForExecution: boolean }, parameter: iParameter) {
     if (parameter.dependencies.lov.length !== 0) {
@@ -71,13 +71,6 @@ export function formatParameterAfterDataDependencyCheck(parameter: any) {
     if (parameter.parameterValue[0] && !parameter.parameterValue[0].description) {
         parameter.parameterValue[0].description = ''
     }
-}
 
-export function formatParameterDataOptions(parameter: iParameter, data: any) {
-    const valueColumn = parameter.metadata.valueColumn
-    const descriptionColumn = parameter.metadata.descriptionColumn
-    const valueIndex = Object.keys(parameter.metadata.colsMap).find((key: string) => parameter.metadata.colsMap[key] === valueColumn)
-    const descriptionIndex = Object.keys(parameter.metadata.colsMap).find((key: string) => parameter.metadata.colsMap[key] === descriptionColumn)
-
-    return { value: valueIndex ? data[valueIndex] : '', description: descriptionIndex ? data[descriptionIndex] : '' }
+    addDefaultValueForSelectionTypeParameters(parameter)
 }

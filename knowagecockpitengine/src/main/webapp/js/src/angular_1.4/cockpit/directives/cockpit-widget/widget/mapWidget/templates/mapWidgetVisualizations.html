@@ -191,7 +191,17 @@
 							<md-option ng-repeat="attribute in getAttributes(layer)" ng-value="attribute.name">{{attribute.name}}</md-option>
 						</md-select>
 					</md-input-container>
-		
+
+					<md-input-container class="md-block flex">
+						<label>{{translate.load('sbi.cockpit.map.edit.visualization.choroplet.fromColor')}}</label>
+						<color-picker options="colorPickerOptions" ng-model="layer.pieConf.fromColor"></color-picker> 
+					</md-input-container>
+
+					<md-input-container class="md-block flex">
+						<label>{{translate.load('sbi.cockpit.map.edit.visualization.choroplet.toColor')}}</label>
+						<color-picker options="colorPickerOptions" ng-model="layer.pieConf.toColor"></color-picker> 
+					</md-input-container>
+
 					<md-input-container class="md-block flex">
 						<label>{{translate.load('sbi.cockpit.map.edit.visualization.marker.borderColor')}}</label>
 						<color-picker options="colorPickerOptions" ng-model="layer.pieConf.borderColor"></color-picker> 

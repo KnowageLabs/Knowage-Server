@@ -22,7 +22,6 @@ import java.io.IOException;
 import java.util.Set;
 import java.util.TreeSet;
 
-import javax.servlet.http.HttpSession;
 import javax.websocket.EncodeException;
 import javax.websocket.EndpointConfig;
 import javax.websocket.Session;
@@ -35,7 +34,6 @@ import it.eng.knowage.websocket.bo.WSNewsBO;
 import it.eng.knowage.websocket.bo.WSNewsCountBO;
 import it.eng.knowage.websocket.bo.WebSocketBO;
 import it.eng.spago.error.EMFInternalError;
-import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.commons.bo.UserProfile;
 
 /**
@@ -45,17 +43,15 @@ class SessionData implements NewsListener, AsyncDownloadsListener {
 	private static final Logger LOGGER = Logger.getLogger(SessionData.class);
 
 	private final Session session;
-	private final HttpSession httpSession;
 	private final UserProfile userProfile;
 	private final WebSocketBO webSocketBO = new WebSocketBO();
 	private final String username;
 	private final Set<String> roles = new TreeSet<>();
 	private final String tenantId;
 
-	public SessionData(Session session, EndpointConfig config) {
+	public SessionData(Session session, UserProfile userProfile, EndpointConfig config) {
 		this.session = session;
-		this.httpSession = (HttpSession) config.getUserProperties().get("HTTP_SESSION");
-		this.userProfile = (UserProfile) httpSession.getAttribute(IEngUserProfile.ENG_USER_PROFILE);
+		this.userProfile = userProfile;
 
 		this.tenantId = userProfile.getOrganization();
 		this.username = userProfile.getUserId().toString();

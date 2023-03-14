@@ -305,7 +305,7 @@ public class DocumentCRUD extends AbstractSpagoBIResource {
 		}
 
 		logger.debug("OUT");
-		return "{}";
+		return "{\"root\": []}";
 	}
 
 	/**
@@ -393,7 +393,7 @@ public class DocumentCRUD extends AbstractSpagoBIResource {
 
 			if (direction != null && "UP".equalsIgnoreCase(direction)) {
 				moveStateUp(id);
-			}else if (direction != null && "DOWN".equalsIgnoreCase(direction)) {
+			} else if (direction != null && "DOWN".equalsIgnoreCase(direction)) {
 				moveStateDown(id);
 			}
 		} catch (EMFUserError e) {
@@ -404,46 +404,46 @@ public class DocumentCRUD extends AbstractSpagoBIResource {
 		return "{}";
 	}
 
-	private void moveStateUp(Integer id) throws EMFUserError  {
+	private void moveStateUp(Integer id) throws EMFUserError {
 
-	    if (id != null){
-    		BIObject obj = DAOFactory.getBIObjectDAO().loadBIObjectById(new Integer(id));
-    		if (obj!= null){
-    			String state = obj.getStateCode();
-    			if (state!= null && state.equals("DEV")){
-    				Domain dTemp = DAOFactory.getDomainDAO().loadDomainByCodeAndValue("STATE", "TEST");
-    				obj.setStateCode("TEST");
-    				obj.setStateID(dTemp.getValueId());
-    			}else if (state!= null && state.equals("TEST")){
-    				Domain dTemp = DAOFactory.getDomainDAO().loadDomainByCodeAndValue("STATE", "REL");
-    				obj.setStateCode("REL");
-    				obj.setStateID(dTemp.getValueId());
-    			}
-    			DAOFactory.getBIObjectDAO().modifyBIObject(obj);
-    		}
-	     }
-	 }
+		if (id != null) {
+			BIObject obj = DAOFactory.getBIObjectDAO().loadBIObjectById(new Integer(id));
+			if (obj != null) {
+				String state = obj.getStateCode();
+				if (state != null && state.equals("DEV")) {
+					Domain dTemp = DAOFactory.getDomainDAO().loadDomainByCodeAndValue("STATE", "TEST");
+					obj.setStateCode("TEST");
+					obj.setStateID(dTemp.getValueId());
+				} else if (state != null && state.equals("TEST")) {
+					Domain dTemp = DAOFactory.getDomainDAO().loadDomainByCodeAndValue("STATE", "REL");
+					obj.setStateCode("REL");
+					obj.setStateID(dTemp.getValueId());
+				}
+				DAOFactory.getBIObjectDAO().modifyBIObject(obj);
+			}
+		}
+	}
 
+	private void moveStateDown(Integer id) throws EMFUserError {
 
-	private void moveStateDown(Integer id) throws EMFUserError  {
+		if (id != null) {
+			BIObject obj = DAOFactory.getBIObjectDAO().loadBIObjectById(new Integer(id));
+			if (obj != null) {
+				String state = obj.getStateCode();
+				if (state != null && state.equals("REL")) {
+					Domain dTemp = DAOFactory.getDomainDAO().loadDomainByCodeAndValue("STATE", "TEST");
+					obj.setStateCode("TEST");
+					obj.setStateID(dTemp.getValueId());
+				} else if (state != null && state.equals("TEST")) {
+					Domain dTemp = DAOFactory.getDomainDAO().loadDomainByCodeAndValue("STATE", "DEV");
+					obj.setStateCode("DEV");
+					obj.setStateID(dTemp.getValueId());
+				}
+				DAOFactory.getBIObjectDAO().modifyBIObject(obj);
+			}
+		}
+	}
 
-	    if (id != null){
-    		BIObject obj = DAOFactory.getBIObjectDAO().loadBIObjectById(new Integer(id));
-    		if (obj!= null){
-    			String state = obj.getStateCode();
-    			if (state!= null && state.equals("REL")){
-    				Domain dTemp = DAOFactory.getDomainDAO().loadDomainByCodeAndValue("STATE", "TEST");
-    				obj.setStateCode("TEST");
-    				obj.setStateID(dTemp.getValueId());
-    			}else if (state!= null && state.equals("TEST")){
-    				Domain dTemp = DAOFactory.getDomainDAO().loadDomainByCodeAndValue("STATE", "DEV");
-    				obj.setStateCode("DEV");
-    				obj.setStateID(dTemp.getValueId());
-    			}
-    			DAOFactory.getBIObjectDAO().modifyBIObject(obj);
-    		}
-	     }
-	 }
 	/**
 	 * Creates a json array with children document informations
 	 *
@@ -502,11 +502,7 @@ public class DocumentCRUD extends AbstractSpagoBIResource {
 	// sending email to emailAddress with passed subject and emailContent
 	private void sendMail(String emailAddress, String subject, String emailContent) throws Exception {
 
-		SessionFacade facade = MailSessionBuilder.newInstance()
-			.usingUserProfile()
-			.withTimeout(5000)
-			.withConnectionTimeout(5000)
-			.build();
+		SessionFacade facade = MailSessionBuilder.newInstance().usingUserProfile().withTimeout(5000).withConnectionTimeout(5000).build();
 
 		// create a message
 		Message msg = facade.createNewMimeMessage();

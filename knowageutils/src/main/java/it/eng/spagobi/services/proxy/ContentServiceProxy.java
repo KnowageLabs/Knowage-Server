@@ -73,6 +73,9 @@ public final class ContentServiceProxy extends AbstractServiceProxy {
 			} else {
 				service = Service.create(SERVICE_QNAME).getPort(ContentService.class);
 			}
+
+			setCommonHeader(service);
+
 			return service;
 		} catch (Exception e) {
 			logger.error("Impossible to locate [" + SERVICE_NAME + "] at [" + serviceUrl + "]");

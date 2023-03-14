@@ -4,10 +4,12 @@ import java.io.Serializable;
 import java.sql.Timestamp;
 import java.time.Instant;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.UUID;
 
 import javax.json.JsonObject;
 
+import it.eng.spagobi.tenant.Tenant;
 import it.eng.spagobi.tenant.TenantManager;
 
 public class SbiEs implements Serializable {
@@ -68,7 +70,8 @@ public class SbiEs implements Serializable {
 
 		public SbiEs build() {
 
-			String organization = TenantManager.getTenant().getName();
+			Tenant tenant = TenantManager.getTenant();
+			String organization = Optional.ofNullable(tenant).map(Tenant::getName).orElse("");
 
 			if (Objects.isNull(es.getOrganization())) {
 				es.setOrganization(organization);

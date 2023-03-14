@@ -78,6 +78,10 @@ public abstract class AbstractQbeEngineAction extends AbstractEngineAction {
 		return qbeEngineInstance.getActiveQuery();
 	}
 
+	public Query getQuery(String fieldName, String orderType) {
+		return null;
+	}
+
 	public void addParameters(JSONArray parsListJSON) {
 		try {
 			if (parsListJSON != null) {
@@ -107,14 +111,9 @@ public abstract class AbstractQbeEngineAction extends AbstractEngineAction {
 					/**
 					 * This block of code:
 					 *
-					 * boolean multivalue = false;
-					 * if (tempVal != null && tempVal.contains(",")) {
-					 * 	multivalue = true;
-					 * }
+					 * boolean multivalue = false; if (tempVal != null && tempVal.contains(",")) { multivalue = true; }
 					 *
-					 * Was replaced by the following because the user has the ability
-					 * to say if the value is multivalue or not, we don't need to do
-					 * any logic.
+					 * Was replaced by the following because the user has the ability to say if the value is multivalue or not, we don't need to do any logic.
 					 */
 					boolean multivalue = obj.optBoolean(MULTI_PARAM);
 

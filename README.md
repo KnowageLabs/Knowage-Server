@@ -6,7 +6,6 @@
 [![Docker badge](https://img.shields.io/docker/pulls/knowagelabs/knowage-server-docker.svg)](https://hub.docker.com/r/knowagelabs/knowage-server-docker/)
 <br>
 [![Documentation badge](https://img.shields.io/readthedocs/knowage.svg)](https://knowage.rtfd.io/)
-[![Build Status](https://travis-ci.com/KnowageLabs/Knowage-Server.svg?branch=master)](https://travis-ci.com/KnowageLabs/Knowage-Server)
 
 KNOWAGE is the open source analytics and business intelligence suite that allows you to combine traditional data and big/cloud data sources into valuable and meaningful information. Its features, such as data
 federation, mash-up, data/text mining and advanced data visualization, give
@@ -14,10 +13,10 @@ comprehensive support to rich and multi-source data analysis. The suite is
 composed of two main modules and four additional plugins that can be combined to ensure full coverage of user’ requirements.
 
 
-KNOWAGE is now available on [FIWARE Marketplace](https://marketplace.fiware.org/) 
+KNOWAGE is now available on [FIWARE Marketplace](https://www.fiware.org/marketplace/) 
 as FIWARE-ready software enabler, being fully compliant with [FIWARE](https://www.fiware.org/) 
 architecture and GEs. For more information check the FIWARE Marketplace entry 
-for [KNOWAGE](https://marketplace.fiware.org/pages/solutions/59611fb5573b7cb51c44ef68).
+for [KNOWAGE](https://www.fiware.org/marketplace/product-details/?category=ready&id=engineering-knowage).
 
 |  :books: [Documentation](https://knowage-suite.rtfd.io/) | :page_facing_up: [Site](https://www.knowage-suite.com/site/home/) | :whale: [Docker Hub](https://hub.docker.com/r/knowagelabs/knowage-server-docker/) | :dart: [Roadmap](https://github.com/KnowageLabs/Knowage-Server/blob/master/ROADMAP.md) |
 

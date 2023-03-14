@@ -35,7 +35,7 @@
             @launchSelection="launchSelection"
             @changeFocus="changeFocus"
         ></WidgetButtonBar>
-        <ContextMenu ref="contextMenu" :model="items" v-if="canEditDashboard(document)" />
+        <ContextMenu v-if="canEditDashboard(document)" ref="contextMenu" :model="items" />
     </grid-item>
 </template>
 
@@ -277,7 +277,7 @@ export default defineComponent({
                 this.inFocus = false
             }
         },
-        resizedEvent: function (newHPx) {
+        resizedEvent: function(newHPx) {
             emitter.emit('widgetResized', newHPx)
         }
     }

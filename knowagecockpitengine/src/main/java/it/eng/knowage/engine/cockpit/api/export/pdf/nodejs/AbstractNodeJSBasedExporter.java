@@ -284,11 +284,11 @@ public abstract class AbstractNodeJSBasedExporter {
 		logger.info("Starting export script");
 		Process exec = processBuilder.start();
 
+		logOutputToCoreLog(exec);
+
 		logger.info("Waiting...");
 		exec.waitFor();
 		logger.warn("Exit value: " + exec.exitValue());
-
-		logOutputToCoreLog(exec);
 
 		final List<InputStream> imagesInputStreams = new ArrayList<>();
 

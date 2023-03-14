@@ -29,11 +29,11 @@
             >
                 <WidgetController v-for="item in sheet.widgets['lg']" :key="item.i" :active-sheet="activeSheet(index)" :document="document" :widget="currentWidget(item.id)" :item="item" :datasets="datasets" :dashboard-id="dashboardId" :variables="variables" :model="model"></WidgetController>
                 <div v-if="canEditDashboard(document)" class="emptyDashboardWizard">
-                    <div class="dashboardWizardContainer" v-if="dashboardModel?.configuration?.datasets.length === 0" @click="addDataset">
+                    <div v-if="dashboardModel?.configuration?.datasets.length === 0" class="dashboardWizardContainer" @click="addDataset">
                         <img src="/images/dashboard/common/databaseWizardDashboard.svg" />
                         <span>{{ $t('dashboard.wizard.addDataset') }}</span>
                     </div>
-                    <div class="dashboardWizardContainer" v-if="sheet.widgets?.lg?.length === 0" @click="addWidget">
+                    <div v-if="sheet.widgets?.lg?.length === 0" class="dashboardWizardContainer" @click="addWidget">
                         <img src="/images/dashboard/common/widgetWizardDashboard.svg" />
                         <span>{{ $t('dashboard.wizard.addWidget') }}</span>
                     </div>
@@ -59,7 +59,6 @@ import dashboardStore from './Dashboard.store'
 export default defineComponent({
     name: 'dashboard-manager',
     components: { KnDashboardTab, KnDashboardTabsPanel, WidgetController },
-    emits: ['addWidget', 'addDataset'],
     props: {
         model: { type: Object },
         document: { type: Object },
@@ -67,6 +66,7 @@ export default defineComponent({
         dashboardId: { type: String, required: true },
         variables: { type: Array as PropType<IVariable[]>, required: true }
     },
+    emits: ['addWidget', 'addDataset'],
     data() {
         return {
             dashboardModel: {} as any,
@@ -93,7 +93,7 @@ export default defineComponent({
             if ((!this.dashboard[this.dHash] && index === 0) || this.dashboard[this.dHash] === index) return true
             return false
         },
-        breakpointChangedEvent: function () {
+        breakpointChangedEvent: function() {
             // breakpointChangedEvent: function(newBreakpoint, newLayout) {
             // console.log('BREAKPOINT CHANGED breakpoint=', newBreakpoint, ', layout: ', newLayout)
         },

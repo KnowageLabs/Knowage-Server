@@ -22,9 +22,13 @@ import java.util.List;
 import java.util.Locale;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+
+import it.eng.knowage.commons.utilities.KnLanguageCookie;
+import it.eng.knowage.commons.utilities.LocalePropertiesUtilities;
 
 /**
 
@@ -115,7 +119,7 @@ public class ChangeLanguage extends AbstractHttpAction {
 		}
 
 		List<Locale> supportedLocales = GeneralUtilities.getSupportedLocales();
-
+		HttpServletResponse resp = getHttpResponse();
 		if (srLanguage == null) {
 			logger.error("language not specified");
 		} else {
@@ -155,6 +159,10 @@ public class ChangeLanguage extends AbstractHttpAction {
 				} else {
 					logger.error("profile attribute not modified to " + lang);
 				}
+
+				String knLanguage = LocalePropertiesUtilities.getAngularPropertiesFileName(currLocale, "-");
+				KnLanguageCookie.setCookie(resp, knLanguage);
+
 			}
 
 //			boolean found = false;
@@ -204,7 +212,8 @@ public class ChangeLanguage extends AbstractHttpAction {
 			url += "userHome.jsp";
 		}
 		servletRequest.getSession().setAttribute(LIST_MENU, lstMenu);
-		getHttpRequest().getRequestDispatcher(url).forward(getHttpRequest(), getHttpResponse());
+
+		getHttpRequest().getRequestDispatcher(url).forward(getHttpRequest(), resp);
 //		if (isPublicUser != null && isPublicUser.equalsIgnoreCase("TRUE")){
 //			serviceResponse.setAttribute(SpagoBIConstants.PUBLISHER_NAME, "userhomePublicUser");
 //		}else{

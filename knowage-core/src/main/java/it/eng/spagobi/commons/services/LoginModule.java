@@ -31,7 +31,6 @@ import java.util.Locale;
 import java.util.Locale.Builder;
 import java.util.Properties;
 
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -41,6 +40,7 @@ import org.apache.log4j.Logger;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 
+import it.eng.knowage.commons.utilities.KnLanguageCookie;
 import it.eng.knowage.monitor.IKnowageMonitor;
 import it.eng.knowage.monitor.KnowageMonitorFactory;
 import it.eng.spago.base.Constants;
@@ -146,11 +146,8 @@ public class LoginModule extends AbstractHttpModule {
 		Locale browserLocale = tmpLocale.build();
 
 		String localeCookie = browserLocale.toLanguageTag();
-		Cookie localeCookie_fl = new Cookie("kn.lang", localeCookie);
-		localeCookie_fl.setHttpOnly(true);
-		localeCookie_fl.setPath("/");
 		HttpServletResponse resp = getHttpResponse();
-		resp.addCookie(localeCookie_fl);
+		KnLanguageCookie.setCookie(resp, localeCookie);
 
 		MessageBuilder msgBuilder = new MessageBuilder();
 		Locale locale = msgBuilder.getLocale(servletRequest);

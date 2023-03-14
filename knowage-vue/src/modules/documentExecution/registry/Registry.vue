@@ -1,6 +1,6 @@
 <template>
     <div class="p-d-flex p-flex-column kn-width-full kn-height-full">
-        <!-- <Toolbar class="kn-toolbar kn-toolbar--secondary kn-width-full">
+        <Toolbar v-if="isPivot" class="kn-toolbar kn-toolbar--secondary kn-width-full">
             <template #start>
                 {{ $t('documentExecution.registry.title') }}
             </template>
@@ -9,7 +9,7 @@
                     <Button class="kn-button p-button-text" @click="saveRegistry">{{ $t('common.save') }}</Button>
                 </div>
             </template>
-        </Toolbar> -->
+        </Toolbar>
         <div class="p-d-flex p-flex-column kn-overflow kn-flex">
             <ProgressBar v-if="loading" mode="indeterminate" class="kn-progress-bar" data-test="progress-bar" />
             <div class="">
@@ -40,6 +40,7 @@
                         :column-map="columnMap"
                         :pagination="pagination"
                         :entity="entity"
+                        :key-column-name="keyColumnName"
                         :stop-warnings-state="stopWarningsState"
                         :data-loading="dataLoading"
                         @saveRegistry="saveRegistry"
@@ -47,6 +48,7 @@
                         @rowDeleted="onRowDeleted"
                         @pageChanged="updatePagination"
                         @warningChanged="setWarningState"
+                        @sortingChanged="onSortingChanged"
                     ></RegistryDatatable>
                 </div>
             </div>
@@ -91,7 +93,9 @@ export default defineComponent({
             stopWarningsState: [] as any[],
             isPivot: false,
             loading: false,
-            dataLoading: false
+            dataLoading: false,
+            sortModel: null as any,
+            keyColumnName: '' as string
         }
     },
     watch: {
@@ -100,6 +104,7 @@ export default defineComponent({
             this.stopWarningsState = []
         },
         async reloadTrigger() {
+            this.pagination.start = 0
             await this.loadPage()
             this.stopWarningsState = []
         }
@@ -111,6 +116,7 @@ export default defineComponent({
         ...mapActions(store, ['setInfo', 'setError']),
         async loadPage() {
             this.loading = true
+            emitter.emit('clearSelectedRows')
             await this.loadRegistry()
             this.loadRegistryData()
             this.loading = false
@@ -129,6 +135,12 @@ export default defineComponent({
             })
 
             postData.append('start', '' + this.pagination.start)
+
+            if (this.sortModel && this.sortModel.fieldName && this.sortModel.orderType) {
+                postData.append('fieldName', '' + this.sortModel.fieldName)
+                postData.append('orderType', '' + this.sortModel.orderType)
+            }
+
             await this.$http
                 .post(`/knowageqbeengine/servlet/AdapterHTTP?ACTION_NAME=LOAD_REGISTRY_ACTION&SBI_EXECUTION_ID=${this.id}`, postData, {
                     headers: {
@@ -139,8 +151,13 @@ export default defineComponent({
                 .then((response: AxiosResponse<any>) => {
                     this.pagination.size = response.data.results
                     this.registry = response.data
+                    this.loadKeyColumnName(response.data.metaData.fields)
                 })
                 .catch(() => {})
+        },
+        loadKeyColumnName(fieldsMetadata) {
+            const keyColumn = fieldsMetadata.find((field) => field.keyColumn === true)
+            this.keyColumnName = keyColumn.header
         },
         loadRegistryData() {
             if (this.registry) {
@@ -185,6 +202,7 @@ export default defineComponent({
             const limit = this.pagination.size <= registryDescriptor.paginationLimit ? this.registry.rows.length : registryDescriptor.paginationNumberOfItems
             for (let i = 0; i < limit; i++) {
                 const tempRow = {} as any
+                if (!this.registry.rows[i]) break
                 Object.keys(this.registry.rows[i]).forEach((key: string) => {
                     tempRow[this.columnMap[key]] = this.registry.rows[i][key]
                 })
@@ -205,7 +223,7 @@ export default defineComponent({
         },
         onRowChanged(row: any) {
             const tempRow = { ...row }
-            const index = this.updatedRows.findIndex((el: any) => el.id === tempRow.id)
+            const index = this.updatedRows.findIndex((el: any) => el.uniqueId === tempRow.uniqueId)
             index === -1 ? this.updatedRows.push(tempRow) : (this.updatedRows[index] = tempRow)
         },
         async saveRegistry() {
@@ -269,6 +287,7 @@ export default defineComponent({
                             this.pagination.size--
                         }
                     } else {
+                        this.pagination.start = 0
                         await this.reloadRegistryData(true)
                     }
                 })
@@ -336,6 +355,12 @@ export default defineComponent({
             await this.loadRegistry()
             this.loadRows(resetRows)
             this.dataLoading = false
+        },
+        async onSortingChanged(sortModel) {
+            this.pagination.start = 0
+            this.pagination.size = 0
+            this.sortModel = sortModel
+            await this.reloadRegistryData(true)
         }
     }
 })

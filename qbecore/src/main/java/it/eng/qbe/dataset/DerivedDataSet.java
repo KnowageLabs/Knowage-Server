@@ -61,10 +61,6 @@ public class DerivedDataSet extends QbeDataSet {
 
 	public DerivedDataSet(SpagoBiDataSet dataSetConfig) {
 		super(dataSetConfig);
-
-		LOGGER.debug("IN");
-
-		LOGGER.debug("OUT");
 	}
 
 	public String getTableName() {
@@ -101,7 +97,7 @@ public class DerivedDataSet extends QbeDataSet {
 		String modelName = getDatamarts();
 		List<String> modelNames = new ArrayList<String>();
 		modelNames.add(modelName);
-		dataSourceProperties.put("datasource", super.dataSource);
+		dataSourceProperties.put("datasource", this.dataSource != null ? this.dataSource : super.dataSource);
 		dataSourceProperties.put("dblinkMap", new HashMap());
 
 		if (this.getSourceDataset() != null) {
@@ -154,12 +150,14 @@ public class DerivedDataSet extends QbeDataSet {
 	}
 
 	@Override
-	public IDataSource getDataSourceForReading() {
-		return this.getDataSource();
+	public void setDataSource(IDataSource dataSource) {
+		this.dataSource = dataSource;
+		super.setDataSource(dataSource);
 	}
 
 	@Override
 	public void setDataSourceForReading(IDataSource datasourceForReading) {
+		super.setDataSourceForReading(datasourceForReading);
 		this.setDataSource(datasourceForReading);
 	}
 

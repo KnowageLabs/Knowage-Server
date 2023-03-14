@@ -18,31 +18,44 @@
 
 package it.eng.knowage.websocket;
 
+import static it.eng.knowage.websocket.KnowageWebSocket.USER_PROPERTIES_USER_PROFILE;
+import static java.util.Objects.nonNull;
+
 import java.util.Collections;
 
+import javax.servlet.http.HttpSession;
 import javax.websocket.HandshakeResponse;
 import javax.websocket.server.HandshakeRequest;
 import javax.websocket.server.ServerEndpointConfig;
 
 import org.apache.log4j.Logger;
 
+import it.eng.spago.security.IEngUserProfile;
+import it.eng.spagobi.commons.bo.UserProfile;
+
 public class HttpSessionConfigurator extends ServerEndpointConfig.Configurator {
 
-	private static transient Logger logger = Logger.getLogger(HttpSessionConfigurator.class);
+	private static Logger logger = Logger.getLogger(HttpSessionConfigurator.class);
 
 	@Override
 	public void modifyHandshake(ServerEndpointConfig sec, HandshakeRequest request, HandshakeResponse response) {
-		logger.debug("modifyHandshake() Current thread " + Thread.currentThread().getName());
 
-		Object httpSession = request.getHttpSession();
+		HttpSession httpSession = (HttpSession) request.getHttpSession();
+		UserProfile userProfile = null;
 
-		if (httpSession != null) {
-			sec.getUserProperties().remove("HTTP_SESSION");
-			sec.getUserProperties().put("HTTP_SESSION", httpSession);
+		if (nonNull(httpSession)) {
+			userProfile = (UserProfile) httpSession.getAttribute(IEngUserProfile.ENG_USER_PROFILE);
+		}
+
+		if (nonNull(userProfile)) {
+			sec.getUserProperties().remove(USER_PROPERTIES_USER_PROFILE);
+			sec.getUserProperties().put(USER_PROPERTIES_USER_PROFILE, userProfile);
 		} else {
 			// Reject
 			response.getHeaders().put(HandshakeResponse.SEC_WEBSOCKET_ACCEPT, Collections.emptyList());
 		}
 	}
+
+
 
 }
