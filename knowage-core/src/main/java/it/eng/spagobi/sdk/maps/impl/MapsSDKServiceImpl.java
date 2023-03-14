@@ -17,7 +17,7 @@
  */
 package it.eng.spagobi.sdk.maps.impl;
 
-import it.eng.spagobi.commons.constants.SpagoBIConstants;
+import it.eng.spagobi.commons.constants.CommunityFunctionalityConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.mapcatalogue.bo.GeoFeature;
 import it.eng.spagobi.mapcatalogue.bo.GeoMap;
@@ -46,7 +46,7 @@ public class MapsSDKServiceImpl extends AbstractSDKService implements MapsSDKSer
 		this.setTenant();
 		
 		try {
-			super.checkUserPermissionForFunctionality(SpagoBIConstants.MAPCATALOGUE_MANAGEMENT, "User cannot see map catalogue congifuration.");
+			super.checkUserPermissionForFunctionality(CommunityFunctionalityConstants.MAPCATALOGUE_MANAGEMENT, "User cannot see map catalogue congifuration.");
 			if (mapId == null) {
 				logger.warn("map identifier in input is null!");
 				return null;
@@ -79,7 +79,7 @@ public class MapsSDKServiceImpl extends AbstractSDKService implements MapsSDKSer
 		this.setTenant();
 		
 		try {
-			super.checkUserPermissionForFunctionality(SpagoBIConstants.MAPCATALOGUE_MANAGEMENT, "User cannot see map catalogues congifuration.");
+			super.checkUserPermissionForFunctionality(CommunityFunctionalityConstants.MAPCATALOGUE_MANAGEMENT, "User cannot see map catalogues congifuration.");
 			List mapList = DAOFactory.getSbiGeoMapsDAO().loadAllMaps();
 			toReturn = new SDKMap[mapList.size()];
 			for (int i = 0; i < mapList.size(); i++) {
@@ -108,7 +108,7 @@ public class MapsSDKServiceImpl extends AbstractSDKService implements MapsSDKSer
 		this.setTenant();
 		
 		try {
-			super.checkUserPermissionForFunctionality(SpagoBIConstants.MAPCATALOGUE_MANAGEMENT, "User cannot see map catalogues congifuration.");
+			super.checkUserPermissionForFunctionality(CommunityFunctionalityConstants.MAPCATALOGUE_MANAGEMENT, "User cannot see map catalogues congifuration.");
 			List featuresList = DAOFactory.getSbiGeoFeaturesDAO().loadAllFeatures();
 			toReturn = new SDKFeature[featuresList.size()];
 			for (int i = 0; i < featuresList.size(); i++) {
@@ -137,7 +137,7 @@ public class MapsSDKServiceImpl extends AbstractSDKService implements MapsSDKSer
 		this.setTenant();
 		
 		try {
-			super.checkUserPermissionForFunctionality(SpagoBIConstants.MAPCATALOGUE_MANAGEMENT, "User cannot see map catalogue congifuration.");
+			super.checkUserPermissionForFunctionality(CommunityFunctionalityConstants.MAPCATALOGUE_MANAGEMENT, "User cannot see map catalogue congifuration.");
 			if (featureId == null) {
 				logger.warn("Feature identifier in input is null!");
 				return null;
@@ -169,7 +169,7 @@ public class MapsSDKServiceImpl extends AbstractSDKService implements MapsSDKSer
 		this.setTenant();
 		
 		try {
-			super.checkUserPermissionForFunctionality(SpagoBIConstants.MAPCATALOGUE_MANAGEMENT, "User cannot see map catalogues congifuration.");
+			super.checkUserPermissionForFunctionality(CommunityFunctionalityConstants.MAPCATALOGUE_MANAGEMENT, "User cannot see map catalogues congifuration.");
 			if (mapId == null) {
 				logger.warn("Map identifier in input is null!");
 				return null;

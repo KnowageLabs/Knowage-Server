@@ -1,5 +1,6 @@
 <%@page import="it.eng.spago.security.IEngUserProfile"%>
 <%@page import="it.eng.spagobi.commons.constants.SpagoBIConstants"%>
+<%@page import="it.eng.spagobi.commons.constants.CommunityFunctionalityConstants"%>
 <%@page import="it.eng.spagobi.commons.utilities.UserUtilities"%>
 
 <%
@@ -16,7 +17,7 @@ IEngUserProfile profile = (IEngUserProfile)session.getAttribute(IEngUserProfile.
 				<md-icon md-font-icon="fa fa-eraser"></md-icon>
 			</md-button>	
 			<% 
-			if(UserUtilities.haveRoleAndAuthorization(profile, null, new String[]{SpagoBIConstants.SEE_VIEWPOINTS_FUNCTIONALITY}) || 
+			if(UserUtilities.haveRoleAndAuthorization(profile, null, new String[]{CommunityFunctionalityConstants.SEE_VIEWPOINTS_FUNCTIONALITY}) || 
 							UserUtilities.haveRoleAndAuthorization(profile, SpagoBIConstants.ADMIN_ROLE_TYPE, new String[0])){
 			%>					
 			<md-button aria-label="Open Saved Parameters" class="md-icon-button" 

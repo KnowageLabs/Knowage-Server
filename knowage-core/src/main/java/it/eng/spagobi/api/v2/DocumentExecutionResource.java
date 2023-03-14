@@ -100,6 +100,7 @@ import it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IBIMetaModelParamete
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IParameterUseDAO;
 import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.commons.bo.UserProfile;
+import it.eng.spagobi.commons.constants.CommunityFunctionalityConstants;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.dao.IBinContentDAO;
@@ -1366,7 +1367,7 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 	 */
 	@POST
 	@Path("/uploadfilemetadata")
-	@UserConstraint(functionalities = { SpagoBIConstants.DOCUMENT_METADATA_MANAGEMENT })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.DOCUMENT_METADATA_MANAGEMENT })
 	@Consumes({ MediaType.MULTIPART_FORM_DATA, MediaType.APPLICATION_JSON })
 	public Response uploadFile(MultiPartBody input) {
 

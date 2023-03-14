@@ -26,7 +26,7 @@ import javax.ws.rs.core.Response;
 
 import org.apache.log4j.Logger;
 
-import it.eng.spagobi.commons.constants.SpagoBIConstants;
+import it.eng.spagobi.commons.constants.CommunityFunctionalityConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.utilities.GeneralUtilities;
 import it.eng.spagobi.hdfs.work.HDFSWriteWork;
@@ -50,7 +50,7 @@ public class HDFSResource extends AbstractSpagoBIResource {
 
 	@POST
 	@Path("/{id}")
-	@UserConstraint(functionalities = { SpagoBIConstants.DATASOURCE_BIG_DATA })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.DATASOURCE_BIG_DATA })
 	public Response writeDataSet(@PathParam("id") Integer id, String body) {
 		String requestUUID;
 

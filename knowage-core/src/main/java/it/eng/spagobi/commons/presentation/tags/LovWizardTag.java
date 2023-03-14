@@ -26,6 +26,7 @@ import it.eng.spago.security.IEngUserProfile;
 import it.eng.spago.tracing.TracerSingleton;
 import it.eng.spagobi.behaviouralmodel.lov.bo.FixedListDetail;
 import it.eng.spagobi.behaviouralmodel.lov.bo.FixedListItemDetail;
+import it.eng.spagobi.commons.constants.CommunityFunctionalityConstants;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.utilities.ChannelUtilities;
 import it.eng.spagobi.commons.utilities.GeneralUtilities;
@@ -81,7 +82,7 @@ public class LovWizardTag extends CommonWizardLovTag {
     	
 		boolean isable = false;
 		try {
-			isable = userProfile.isAbleToExecuteAction(SpagoBIConstants.LOVS_MANAGEMENT);
+			isable = userProfile.isAbleToExecuteAction(CommunityFunctionalityConstants.LOVS_MANAGEMENT);
 		} catch (EMFInternalError e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

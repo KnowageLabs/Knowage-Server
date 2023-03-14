@@ -42,6 +42,7 @@ import it.eng.spagobi.analiticalmodel.document.dao.ISubreportDAO;
 import it.eng.spagobi.analiticalmodel.document.handlers.ExecutionInstance;
 import it.eng.spagobi.commons.bo.Subreport;
 import it.eng.spagobi.commons.bo.UserProfile;
+import it.eng.spagobi.commons.constants.CommunityFunctionalityConstants;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.utilities.ObjectsAccessVerifier;
@@ -406,9 +407,9 @@ public class ContentServiceImplSupplier {
 			Integer id = biobj.getId();
 			// get the correct roles for execution
 			List correctRoles = null;
-			if (profile.isAbleToExecuteAction(SpagoBIConstants.DOCUMENT_MANAGEMENT_DEV)
-					|| profile.isAbleToExecuteAction(SpagoBIConstants.DOCUMENT_MANAGEMENT_USER)
-					|| profile.isAbleToExecuteAction(SpagoBIConstants.DOCUMENT_MANAGEMENT_ADMIN))
+			if (profile.isAbleToExecuteAction(CommunityFunctionalityConstants.DOCUMENT_MANAGEMENT_DEV)
+					|| profile.isAbleToExecuteAction(CommunityFunctionalityConstants.DOCUMENT_MANAGEMENT_USER)
+					|| profile.isAbleToExecuteAction(CommunityFunctionalityConstants.DOCUMENT_MANAGEMENT_ADMIN))
 				correctRoles = DAOFactory.getBIObjectDAO().getCorrectRolesForExecution(id, profile);
 			else
 				correctRoles = DAOFactory.getBIObjectDAO().getCorrectRolesForExecution(id);

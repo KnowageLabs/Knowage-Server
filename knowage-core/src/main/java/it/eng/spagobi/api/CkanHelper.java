@@ -19,7 +19,7 @@ package it.eng.spagobi.api;
 
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.commons.bo.UserProfile;
-import it.eng.spagobi.commons.constants.SpagoBIConstants;
+import it.eng.spagobi.commons.constants.CommunityFunctionalityConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.utilities.GeneralUtilities;
 import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
@@ -63,7 +63,7 @@ public class CkanHelper {
 	@GET
 	@Path("/download")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
-	@UserConstraint(functionalities = { SpagoBIConstants.CKAN_FUNCTIONALITY })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.CKAN_FUNCTIONALITY })
 	public String DownloadCkanDataset(@Context HttpServletRequest request) throws JSONException {
 
 		logger.debug("IN");

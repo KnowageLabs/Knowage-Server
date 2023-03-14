@@ -31,7 +31,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import it.eng.knowage.engine.cockpit.api.AbstractCockpitEngineResource;
-import it.eng.spagobi.commons.constants.SpagoBIConstants;
+import it.eng.spagobi.commons.constants.CommunityFunctionalityConstants;
 import it.eng.spagobi.services.rest.annotations.UserConstraint;
 import it.eng.spagobi.tools.dataset.common.association.Association;
 import it.eng.spagobi.tools.dataset.common.association.AssociationGroup;
@@ -52,7 +52,7 @@ public class AssociationResource extends AbstractCockpitEngineResource {
 	@GET
 	@Path("/")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
-	@UserConstraint(functionalities = { SpagoBIConstants.CREATE_COCKPIT_FUNCTIONALITY })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.CREATE_COCKPIT_FUNCTIONALITY })
 	public String getAssociations() {
 
 		logger.debug("IN");
@@ -71,7 +71,7 @@ public class AssociationResource extends AbstractCockpitEngineResource {
 	@Path("/")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
-	@UserConstraint(functionalities = { SpagoBIConstants.CREATE_COCKPIT_FUNCTIONALITY })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.CREATE_COCKPIT_FUNCTIONALITY })
 	public String setAssociations(String jsonData) {
 
 		logger.debug("IN");

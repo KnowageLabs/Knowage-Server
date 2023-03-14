@@ -27,6 +27,7 @@ import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 import it.eng.spagobi.analiticalmodel.document.service.DetailBIObjectModule;
 import it.eng.spagobi.analiticalmodel.functionalitytree.bo.LowFunctionality;
+import it.eng.spagobi.commons.constants.CommunityFunctionalityConstants;
 import it.eng.spagobi.commons.constants.ObjectsTreeConstants;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
@@ -251,7 +252,7 @@ public class FunctionalitiesTreeInsertObjectHtmlGenerator implements ITreeHtmlGe
 				String imgFolder = urlBuilder.getResourceLinkByTheme(httpRequest, "/img/treefolder.gif", currTheme);
 				String imgFolderOp = urlBuilder.getResourceLinkByTheme(httpRequest, "/img/treefolderopen.gif", currTheme);
 				try{
-					if (profile.isAbleToExecuteAction(SpagoBIConstants.DOCUMENT_MANAGEMENT_ADMIN)|| ObjectsAccessVerifier.canDev(id, profile)){
+					if (profile.isAbleToExecuteAction(CommunityFunctionalityConstants.DOCUMENT_MANAGEMENT_ADMIN)|| ObjectsAccessVerifier.canDev(id, profile)){
 						boolean checked = false;
 						if (obj != null) {
 							List funcs = obj.getFunctionalities();
@@ -281,7 +282,7 @@ public class FunctionalitiesTreeInsertObjectHtmlGenerator implements ITreeHtmlGe
 					String imgFolder = urlBuilder.getResourceLinkByTheme(httpRequest, "/img/treefolderuser.gif", currTheme);
 					String imgFolderOp = urlBuilder.getResourceLinkByTheme(httpRequest, "/img/treefolderopenuser.gif", currTheme);
 					try{
-						if (profile.isAbleToExecuteAction(SpagoBIConstants.DOCUMENT_MANAGEMENT_ADMIN)|| ObjectsAccessVerifier.canDev(id, profile)){
+						if (profile.isAbleToExecuteAction(CommunityFunctionalityConstants.DOCUMENT_MANAGEMENT_ADMIN)|| ObjectsAccessVerifier.canDev(id, profile)){
 							boolean checked = false;
 							if (obj != null) {
 								List funcs = obj.getFunctionalities();

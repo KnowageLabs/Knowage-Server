@@ -47,7 +47,7 @@ import it.eng.spago.base.Constants;
 import it.eng.spago.error.EMFInternalError;
 import it.eng.spagobi.api.AbstractSpagoBIResource;
 import it.eng.spagobi.commons.bo.Domain;
-import it.eng.spagobi.commons.constants.SpagoBIConstants;
+import it.eng.spagobi.commons.constants.CommunityFunctionalityConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.dao.ICategoryDAO;
 import it.eng.spagobi.commons.dao.IDomainDAO;
@@ -151,7 +151,7 @@ public class DomainCRUD extends AbstractSpagoBIResource {
 	}
 
 	private void filterDataSourceDomains(List<Domain> domains) throws EMFInternalError {
-		if (!getUserProfile().getFunctionalities().contains(SpagoBIConstants.DATASOURCE_BIG_DATA)) {
+		if (!getUserProfile().getFunctionalities().contains(CommunityFunctionalityConstants.DATASOURCE_BIG_DATA)) {
 			Iterator<Domain> iterator = domains.iterator();
 			while (iterator.hasNext()) {
 				Domain domain = iterator.next();

@@ -32,7 +32,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import it.eng.knowage.security.ProductProfiler;
 import it.eng.spagobi.api.AbstractSpagoBIResource;
-import it.eng.spagobi.commons.constants.SpagoBIConstants;
+import it.eng.spagobi.commons.constants.CommunityFunctionalityConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.dao.IDomainDAO;
 import it.eng.spagobi.engines.config.bo.Engine;
@@ -48,7 +48,7 @@ public class DocumentDetailResource extends AbstractSpagoBIResource {
 	@GET
 	@Path("/engines")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
-	@UserConstraint(functionalities = { SpagoBIConstants.READ_ENGINES_MANAGEMENT, SpagoBIConstants.DOCUMENT_MANAGEMENT_DEV })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.READ_ENGINES_MANAGEMENT, CommunityFunctionalityConstants.DOCUMENT_MANAGEMENT_DEV })
 	public Response getEngines() {
 		logger.debug("IN");
 

@@ -41,7 +41,7 @@ import org.json.JSONObject;
 
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.api.AbstractSpagoBIResource;
-import it.eng.spagobi.commons.constants.SpagoBIConstants;
+import it.eng.spagobi.commons.constants.CommunityFunctionalityConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.serializer.SerializerFactory;
 import it.eng.spagobi.federateddataset.dao.ISbiFederationDefinitionDAO;
@@ -63,7 +63,7 @@ public class RestFederationDefinition extends AbstractSpagoBIResource {
 
 	@GET
 	@Path("/")
-	@UserConstraint(functionalities = { SpagoBIConstants.FEDERATED_DATASET_MANAGEMENT })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.ENABLE_FEDERATED_DATASET })
 	@Produces(MediaType.APPLICATION_JSON)
 	public List<FederationDefinition> get() {
 		try {
@@ -86,7 +86,7 @@ public class RestFederationDefinition extends AbstractSpagoBIResource {
 
 	@GET
 	@Path("/{id}")
-	@UserConstraint(functionalities = { SpagoBIConstants.FEDERATED_DATASET_MANAGEMENT })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.ENABLE_FEDERATED_DATASET })
 	@Produces(MediaType.APPLICATION_JSON)
 	public FederationDefinition getFederationByID(@PathParam("id") Integer id) {
 		try {

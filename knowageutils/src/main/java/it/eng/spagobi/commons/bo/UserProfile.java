@@ -17,6 +17,74 @@
  */
 package it.eng.spagobi.commons.bo;
 
+import static it.eng.spagobi.commons.constants.CommunityFunctionalityConstants.ALERT_MANAGEMENT;
+import static it.eng.spagobi.commons.constants.CommunityFunctionalityConstants.ARTIFACT_CATALOGUE_MANAGEMENT;
+import static it.eng.spagobi.commons.constants.CommunityFunctionalityConstants.CKAN_FUNCTIONALITY;
+import static it.eng.spagobi.commons.constants.CommunityFunctionalityConstants.CONTSTRAINT_MANAGEMENT;
+import static it.eng.spagobi.commons.constants.CommunityFunctionalityConstants.CONTSTRAINT_VIEW;
+import static it.eng.spagobi.commons.constants.CommunityFunctionalityConstants.CREATE_CHART_FUNCTIONALITY;
+import static it.eng.spagobi.commons.constants.CommunityFunctionalityConstants.CREATE_COCKPIT_FUNCTIONALITY;
+import static it.eng.spagobi.commons.constants.CommunityFunctionalityConstants.CREATE_DATASETS_AS_FINAL_USER;
+import static it.eng.spagobi.commons.constants.CommunityFunctionalityConstants.DATASET_MANAGEMENT;
+import static it.eng.spagobi.commons.constants.CommunityFunctionalityConstants.DATASOURCE_BIG_DATA;
+import static it.eng.spagobi.commons.constants.CommunityFunctionalityConstants.DATASOURCE_MANAGEMENT;
+import static it.eng.spagobi.commons.constants.CommunityFunctionalityConstants.DATASOURCE_READ;
+import static it.eng.spagobi.commons.constants.CommunityFunctionalityConstants.DATA_PREPARATION;
+import static it.eng.spagobi.commons.constants.CommunityFunctionalityConstants.DISTRIBUTIONLIST_MANAGEMENT;
+import static it.eng.spagobi.commons.constants.CommunityFunctionalityConstants.DISTRIBUTIONLIST_USER;
+import static it.eng.spagobi.commons.constants.CommunityFunctionalityConstants.DOCUMENT_ADMINISTRATION;
+import static it.eng.spagobi.commons.constants.CommunityFunctionalityConstants.DOCUMENT_DELETE_MANAGEMENT;
+import static it.eng.spagobi.commons.constants.CommunityFunctionalityConstants.DOCUMENT_DETAIL_MANAGEMENT;
+import static it.eng.spagobi.commons.constants.CommunityFunctionalityConstants.DOCUMENT_MANAGEMENT;
+import static it.eng.spagobi.commons.constants.CommunityFunctionalityConstants.DOCUMENT_MANAGEMENT_ADMIN;
+import static it.eng.spagobi.commons.constants.CommunityFunctionalityConstants.DOCUMENT_MANAGEMENT_DEV;
+import static it.eng.spagobi.commons.constants.CommunityFunctionalityConstants.DOCUMENT_MANAGEMENT_TEST;
+import static it.eng.spagobi.commons.constants.CommunityFunctionalityConstants.DOCUMENT_MANAGEMENT_USER;
+import static it.eng.spagobi.commons.constants.CommunityFunctionalityConstants.DOCUMENT_METADATA_MANAGEMENT;
+import static it.eng.spagobi.commons.constants.CommunityFunctionalityConstants.DOCUMENT_MOVE_DOWN_STATE;
+import static it.eng.spagobi.commons.constants.CommunityFunctionalityConstants.DOCUMENT_MOVE_UP_STATE;
+import static it.eng.spagobi.commons.constants.CommunityFunctionalityConstants.DOCUMENT_STATE_MANAGEMENT;
+import static it.eng.spagobi.commons.constants.CommunityFunctionalityConstants.DOMAIN_WRITE;
+import static it.eng.spagobi.commons.constants.CommunityFunctionalityConstants.EVENTS_MANAGEMENT;
+import static it.eng.spagobi.commons.constants.CommunityFunctionalityConstants.EXECUTE_CROSS_NAVIGATION;
+import static it.eng.spagobi.commons.constants.CommunityFunctionalityConstants.FEDERATION_DEFINITION;
+import static it.eng.spagobi.commons.constants.CommunityFunctionalityConstants.FUNCTIONALITIES_MANAGEMENT;
+import static it.eng.spagobi.commons.constants.CommunityFunctionalityConstants.FUNCTIONS_CATALOG_MANAGEMENT;
+import static it.eng.spagobi.commons.constants.CommunityFunctionalityConstants.GEO_LAYERS_MANAGEMENT;
+import static it.eng.spagobi.commons.constants.CommunityFunctionalityConstants.GIS_WEB_DESIGNER;
+import static it.eng.spagobi.commons.constants.CommunityFunctionalityConstants.HOTLINK_MANAGEMENT;
+import static it.eng.spagobi.commons.constants.CommunityFunctionalityConstants.IMAGES_MANAGEMENT;
+import static it.eng.spagobi.commons.constants.CommunityFunctionalityConstants.KPI_MANAGEMENT;
+import static it.eng.spagobi.commons.constants.CommunityFunctionalityConstants.KPI_SCHEDULATION;
+import static it.eng.spagobi.commons.constants.CommunityFunctionalityConstants.LOVS_MANAGEMENT;
+import static it.eng.spagobi.commons.constants.CommunityFunctionalityConstants.LOVS_VIEW;
+import static it.eng.spagobi.commons.constants.CommunityFunctionalityConstants.MANAGE_ANALYTICAL_WIDGET;
+import static it.eng.spagobi.commons.constants.CommunityFunctionalityConstants.MANAGE_CHART_WIDGET;
+import static it.eng.spagobi.commons.constants.CommunityFunctionalityConstants.MANAGE_CROSS_NAVIGATION;
+import static it.eng.spagobi.commons.constants.CommunityFunctionalityConstants.MANAGE_MULTISHEET_COCKPIT;
+import static it.eng.spagobi.commons.constants.CommunityFunctionalityConstants.MANAGE_STATIC_WIDGET;
+import static it.eng.spagobi.commons.constants.CommunityFunctionalityConstants.MAPCATALOGUE_MANAGEMENT;
+import static it.eng.spagobi.commons.constants.CommunityFunctionalityConstants.MENU_MANAGEMENT;
+import static it.eng.spagobi.commons.constants.CommunityFunctionalityConstants.META_MODELS_CATALOGUE_MANAGEMENT;
+import static it.eng.spagobi.commons.constants.CommunityFunctionalityConstants.META_MODEL_LIFECYCLE_MANAGEMENT;
+import static it.eng.spagobi.commons.constants.CommunityFunctionalityConstants.MODIFY_REFRESH;
+import static it.eng.spagobi.commons.constants.CommunityFunctionalityConstants.NOTIFY_CONTEXT_BROKER_ACTION;
+import static it.eng.spagobi.commons.constants.CommunityFunctionalityConstants.PARAMETER_MANAGEMENT;
+import static it.eng.spagobi.commons.constants.CommunityFunctionalityConstants.PARAMETER_VIEW;
+import static it.eng.spagobi.commons.constants.CommunityFunctionalityConstants.PROFILE_ATTRIBUTES_MANAGEMENT;
+import static it.eng.spagobi.commons.constants.CommunityFunctionalityConstants.PROFILE_MANAGEMENT;
+import static it.eng.spagobi.commons.constants.CommunityFunctionalityConstants.READ_ENGINES_MANAGEMENT;
+import static it.eng.spagobi.commons.constants.CommunityFunctionalityConstants.READ_ROLES;
+import static it.eng.spagobi.commons.constants.CommunityFunctionalityConstants.REGISTRY_DATA_ENTRY;
+import static it.eng.spagobi.commons.constants.CommunityFunctionalityConstants.SELF_SERVICE_DATASET_MANAGEMENT;
+import static it.eng.spagobi.commons.constants.CommunityFunctionalityConstants.SELF_SERVICE_META_MODEL_MANAGEMENT;
+import static it.eng.spagobi.commons.constants.CommunityFunctionalityConstants.SHARED_DEVELOPMENT;
+import static it.eng.spagobi.commons.constants.CommunityFunctionalityConstants.SYNCRONIZE_ROLES_MANAGEMENT;
+import static it.eng.spagobi.commons.constants.CommunityFunctionalityConstants.USER_SAVE_DOCUMENT_FUNCTIONALITY;
+import static it.eng.spagobi.commons.constants.CommunityFunctionalityConstants.VIEW_MY_FOLDER_ADMIN;
+import static it.eng.spagobi.commons.constants.CommunityFunctionalityConstants.WORKLIST_MANAGEMENT;
+import static it.eng.spagobi.commons.constants.CommunityFunctionalityConstants.WORKSPACE_MANAGEMENT;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -511,23 +579,23 @@ public class UserProfile implements IEngUserProfile {
 	}
 
 	private static Collection getSchedulerUserFunctionalities() {
-		String[] functionalities = { "AlertManagement", "AnalyticalWidget", "ArtifactCatalogueManagement", "ChartWidget", "CkanIntegrationFunctionality",
-				"ConstraintManagement", "ConstraintView", "CreateChartFunctionality", "CreateCockpitFunctionality", "CreateDatasetsAsFinalUser",
-				"DatasetManagement", "DataSourceBigData", "DataSourceManagement", "DataSourceRead", "DistributionListManagement", "DistributionListUser",
-				"DocumentAdministration", "DocumentAdminManagement", "DocumentDeleteManagement", "DocumentDetailManagement", "DocumentDevManagement",
-				"DocumentManagement", "DocumentMetadataManagement", "DocumentMoveDownState", "DocumentMoveUpState", "DocumentStateManagement",
-				"DocumentTestManagement", "DocumentUserManagement", "DomainWrite", "EventsManagement", "ExecuteCrossNavigation", "FederationDefinition",
-				"FunctionalitiesManagement", "FunctionsCatalogManagement", "GeoLayersManagement", "GisWebDesigner", "HotLinkManagement", "ImagesManagement",
-				"KpiManagement", "KpiSchedulation", "LovsManagement", "LovsView", "ManageCrossNavigation", "MapCatalogueManagement", "MenuManagement",
-				"MetaModelLifecycleManagement", "MetaModelsCatalogueManagement", "ModifyRefresh", "MultisheetCockpit", "NotifyContextBrokerAction",
-				"ParameterManagement", "ParameterView", "ProfileAttributeManagement", "ProfileManagement", "ReadEnginesManagement", "RegistryDataEntry",
-				"SelfServiceDatasetManagement", "SelfServiceMetaModelManagement", "SharedDevelopment", "StaticWidget", "SyncronizeRolesManagement",
-				"UserSaveDocumentFunctionality", "ViewMyFolderAdmin", "WorklistManagement", "WorkspaceManagement", "ReadRoles" };
+		String[] functionalities = { ALERT_MANAGEMENT, MANAGE_ANALYTICAL_WIDGET, ARTIFACT_CATALOGUE_MANAGEMENT, MANAGE_CHART_WIDGET, CKAN_FUNCTIONALITY,
+				CONTSTRAINT_MANAGEMENT, CONTSTRAINT_VIEW, CREATE_CHART_FUNCTIONALITY, CREATE_COCKPIT_FUNCTIONALITY, CREATE_DATASETS_AS_FINAL_USER,
+				DATASET_MANAGEMENT, DATASOURCE_BIG_DATA, DATASOURCE_MANAGEMENT, DATASOURCE_READ, DISTRIBUTIONLIST_MANAGEMENT, DISTRIBUTIONLIST_USER,
+				DOCUMENT_ADMINISTRATION, DOCUMENT_MANAGEMENT_ADMIN, DOCUMENT_DELETE_MANAGEMENT, DOCUMENT_DETAIL_MANAGEMENT, DOCUMENT_MANAGEMENT_DEV,
+				DOCUMENT_MANAGEMENT, DOCUMENT_METADATA_MANAGEMENT, DOCUMENT_MOVE_DOWN_STATE, DOCUMENT_MOVE_UP_STATE, DOCUMENT_STATE_MANAGEMENT,
+				DOCUMENT_MANAGEMENT_TEST, DOCUMENT_MANAGEMENT_USER, DOMAIN_WRITE, EVENTS_MANAGEMENT, EXECUTE_CROSS_NAVIGATION, FEDERATION_DEFINITION,
+				FUNCTIONALITIES_MANAGEMENT, FUNCTIONS_CATALOG_MANAGEMENT, GEO_LAYERS_MANAGEMENT, GIS_WEB_DESIGNER, HOTLINK_MANAGEMENT, IMAGES_MANAGEMENT,
+				KPI_MANAGEMENT, KPI_SCHEDULATION, LOVS_MANAGEMENT, LOVS_VIEW, MANAGE_CROSS_NAVIGATION, MAPCATALOGUE_MANAGEMENT, MENU_MANAGEMENT,
+				META_MODEL_LIFECYCLE_MANAGEMENT, META_MODELS_CATALOGUE_MANAGEMENT, MODIFY_REFRESH, MANAGE_MULTISHEET_COCKPIT, NOTIFY_CONTEXT_BROKER_ACTION,
+				PARAMETER_MANAGEMENT, PARAMETER_VIEW, PROFILE_ATTRIBUTES_MANAGEMENT, PROFILE_MANAGEMENT, READ_ENGINES_MANAGEMENT, REGISTRY_DATA_ENTRY,
+				SELF_SERVICE_DATASET_MANAGEMENT, SELF_SERVICE_META_MODEL_MANAGEMENT, SHARED_DEVELOPMENT, MANAGE_STATIC_WIDGET, SYNCRONIZE_ROLES_MANAGEMENT,
+				USER_SAVE_DOCUMENT_FUNCTIONALITY, VIEW_MY_FOLDER_ADMIN, WORKLIST_MANAGEMENT, WORKSPACE_MANAGEMENT, READ_ROLES };
 		return Arrays.asList(functionalities);
 	}
 
 	private static Collection getDataPreparationUserFunctionalities() {
-		String[] functionalities = { "DataPreparation" };
+		String[] functionalities = { DATA_PREPARATION };
 		return Arrays.asList(functionalities);
 	}
 

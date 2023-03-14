@@ -43,7 +43,7 @@ import org.json.JSONObject;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.api.AbstractSpagoBIResource;
 import it.eng.spagobi.commons.bo.Config;
-import it.eng.spagobi.commons.constants.SpagoBIConstants;
+import it.eng.spagobi.commons.constants.CommunityFunctionalityConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.dao.IConfigDAO;
 import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
@@ -65,7 +65,7 @@ public class ConfigResource extends AbstractSpagoBIResource {
 
 	@GET
 	@Path("/")
-	@UserConstraint(functionalities = { SpagoBIConstants.CONFIG_MANAGEMENT })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.CONFIG_MANAGEMENT })
 	@Produces(MediaType.APPLICATION_JSON)
 	public List<Config> getConfigs() {
 		logger.debug("IN");
@@ -103,7 +103,7 @@ public class ConfigResource extends AbstractSpagoBIResource {
 
 	@GET
 	@Path("/{id}")
-	@UserConstraint(functionalities = { SpagoBIConstants.CONFIG_MANAGEMENT })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.CONFIG_MANAGEMENT })
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
 	public Config getSingleConfig(@PathParam("id") Integer id) {
 		logger.debug("IN");
@@ -125,7 +125,7 @@ public class ConfigResource extends AbstractSpagoBIResource {
 
 	@GET
 	@Path("/label/{label}")
-	@UserConstraint(functionalities = { SpagoBIConstants.CONFIG_MANAGEMENT })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.CONFIG_MANAGEMENT })
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
 	public Config getSingleConfigByLabel(@PathParam("label") String label) {
 		logger.debug("IN");
@@ -236,7 +236,7 @@ public class ConfigResource extends AbstractSpagoBIResource {
 
 	@POST
 	@Path("/")
-	@UserConstraint(functionalities = { SpagoBIConstants.CONFIG_MANAGEMENT })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.CONFIG_MANAGEMENT })
 	@Consumes("application/json")
 	public Response insertConfig(@Valid Config body) {
 
@@ -265,7 +265,7 @@ public class ConfigResource extends AbstractSpagoBIResource {
 
 	@PUT
 	@Path("/{id}")
-	@UserConstraint(functionalities = { SpagoBIConstants.CONFIG_MANAGEMENT })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.CONFIG_MANAGEMENT })
 	@Consumes(MediaType.APPLICATION_JSON)
 	public Response updateConfig(@PathParam("id") Integer id, @Valid Config body) {
 
@@ -294,7 +294,7 @@ public class ConfigResource extends AbstractSpagoBIResource {
 
 	@PUT
 	@Path("/conf")
-	@UserConstraint(functionalities = { SpagoBIConstants.CONFIG_MANAGEMENT })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.CONFIG_MANAGEMENT })
 	@Consumes(MediaType.APPLICATION_JSON)
 	public Response updateConfig(String body) { // JSON obj
 
@@ -352,7 +352,7 @@ public class ConfigResource extends AbstractSpagoBIResource {
 
 	@DELETE
 	@Path("/{id}")
-	@UserConstraint(functionalities = { SpagoBIConstants.CONFIG_MANAGEMENT })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.CONFIG_MANAGEMENT })
 	public Response deleteConfig(@PathParam("id") Integer id) {
 		try {
 			IConfigDAO configsDao = DAOFactory.getSbiConfigDAO();

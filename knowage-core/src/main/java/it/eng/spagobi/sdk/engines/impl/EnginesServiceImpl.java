@@ -17,7 +17,7 @@
  */
 package it.eng.spagobi.sdk.engines.impl;
 
-import it.eng.spagobi.commons.constants.SpagoBIConstants;
+import it.eng.spagobi.commons.constants.CommunityFunctionalityConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.engines.config.bo.Engine;
 import it.eng.spagobi.sdk.AbstractSDKService;
@@ -43,7 +43,7 @@ public class EnginesServiceImpl extends AbstractSDKService implements EnginesSer
 		this.setTenant();
 		
         try {
-            super.checkUserPermissionForFunctionality(SpagoBIConstants.READ_ENGINES_MANAGEMENT, "User cannot see engines congifuration.");
+            super.checkUserPermissionForFunctionality(CommunityFunctionalityConstants.READ_ENGINES_MANAGEMENT, "User cannot see engines congifuration.");
             if (engineId == null) {
             	logger.warn("Engine identifier in input is null!");
             	return null;
@@ -74,7 +74,7 @@ public class EnginesServiceImpl extends AbstractSDKService implements EnginesSer
         this.setTenant();
         
         try {
-        	super.checkUserPermissionForFunctionality(SpagoBIConstants.READ_ENGINES_MANAGEMENT, "User cannot see engines congifuration.");
+        	super.checkUserPermissionForFunctionality(CommunityFunctionalityConstants.READ_ENGINES_MANAGEMENT, "User cannot see engines congifuration.");
         	List enginesList = DAOFactory.getEngineDAO().loadAllEngines();
         	List sdkEnginesList = new ArrayList();
     		if (enginesList != null && enginesList.size() > 0) {

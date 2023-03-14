@@ -17,7 +17,8 @@
  */
 package it.eng.spagobi.commons.utilities;
 
-import static it.eng.spagobi.commons.constants.SpagoBIConstants.DOCUMENT_WIDGET_USE;
+import static it.eng.spagobi.commons.constants.CommunityFunctionalityConstants.DOCUMENT_WIDGET_USE;
+import static it.eng.spagobi.commons.constants.CommunityFunctionalityConstants.MAP_WIDGET_USE;
 import static java.util.stream.Collectors.toList;
 
 import java.io.IOException;
@@ -57,6 +58,7 @@ import it.eng.spagobi.commons.bo.Domain;
 import it.eng.spagobi.commons.bo.Role;
 import it.eng.spagobi.commons.bo.RoleMetaModelCategory;
 import it.eng.spagobi.commons.bo.UserProfile;
+import it.eng.spagobi.commons.constants.CommunityFunctionalityConstants;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.dao.ICategoryDAO;
@@ -264,13 +266,13 @@ public class UserUtilities {
 		Assert.assertNotNull(profile, "Object in input is null");
 		logger.debug("IN.user id = [" + ((UserProfile) profile).getUserId() + "]");
 		try {
-			if (profile.isAbleToExecuteAction(SpagoBIConstants.DOCUMENT_MANAGEMENT_ADMIN) // for
+			if (profile.isAbleToExecuteAction(CommunityFunctionalityConstants.DOCUMENT_MANAGEMENT_ADMIN) // for
 																							// administrators
-					|| profile.isAbleToExecuteAction(SpagoBIConstants.DOCUMENT_MANAGEMENT_DEV) // for
+					|| profile.isAbleToExecuteAction(CommunityFunctionalityConstants.DOCUMENT_MANAGEMENT_DEV) // for
 																								// developers
-					|| profile.isAbleToExecuteAction(SpagoBIConstants.DOCUMENT_MANAGEMENT_TEST) // for
+					|| profile.isAbleToExecuteAction(CommunityFunctionalityConstants.DOCUMENT_MANAGEMENT_TEST) // for
 																								// testers
-					|| profile.isAbleToExecuteAction(SpagoBIConstants.PARAMETER_MANAGEMENT)) { // for
+					|| profile.isAbleToExecuteAction(CommunityFunctionalityConstants.PARAMETER_MANAGEMENT)) { // for
 																								// behavioural
 																								// model
 																								// administrators
@@ -287,9 +289,9 @@ public class UserUtilities {
 		Assert.assertNotNull(profile, "Object in input is null");
 		logger.debug("IN.user id = [" + ((UserProfile) profile).getUserId() + "]");
 		try {
-			if (profile.isAbleToExecuteAction(SpagoBIConstants.DOCUMENT_MANAGEMENT_ADMIN) // for
+			if (profile.isAbleToExecuteAction(CommunityFunctionalityConstants.DOCUMENT_MANAGEMENT_ADMIN) // for
 																							// administrators
-					|| profile.isAbleToExecuteAction(SpagoBIConstants.DOCUMENT_MANAGEMENT_DEV)) {// for
+					|| profile.isAbleToExecuteAction(CommunityFunctionalityConstants.DOCUMENT_MANAGEMENT_DEV)) {// for
 																									// developers
 				return true;
 			} else {
@@ -304,7 +306,7 @@ public class UserUtilities {
 		Assert.assertNotNull(profile, "Object in input is null");
 		logger.debug("IN.user id = [" + ((UserProfile) profile).getUserId() + "]");
 		try {
-			if (profile.isAbleToExecuteAction(SpagoBIConstants.DOCUMENT_MANAGEMENT_ADMIN)) {
+			if (profile.isAbleToExecuteAction(CommunityFunctionalityConstants.DOCUMENT_MANAGEMENT_ADMIN)) {
 				return true;
 			} else {
 				return false;
@@ -375,7 +377,7 @@ public class UserUtilities {
 		Assert.assertNotNull(profile, "Object in input is null");
 		logger.debug("IN.user id = [" + ((UserProfile) profile).getUserId() + "]");
 		try {
-			if (profile.isAbleToExecuteAction(SpagoBIConstants.DOCUMENT_MANAGEMENT_TEST)) {
+			if (profile.isAbleToExecuteAction(CommunityFunctionalityConstants.DOCUMENT_MANAGEMENT_TEST)) {
 				return true;
 			} else {
 				return false;
@@ -597,12 +599,12 @@ public class UserUtilities {
 	private static List<String> getSuperadminFunctionalities() {
 		List<String> superadminFunctionalities = new ArrayList<>();
 
-		superadminFunctionalities.add(SpagoBIConstants.DATASOURCE_MANAGEMENT);
-		superadminFunctionalities.add(SpagoBIConstants.DATASOURCE_READ);
-		superadminFunctionalities.add(SpagoBIConstants.CONFIG_MANAGEMENT);
-		superadminFunctionalities.add(SpagoBIConstants.EXPORTERS_CATALOGUE);
-		superadminFunctionalities.add(SpagoBIConstants.DOMAIN_MANAGEMENT);
-		superadminFunctionalities.add(SpagoBIConstants.LICENSE_MANAGEMENT);
+		superadminFunctionalities.add(CommunityFunctionalityConstants.DATASOURCE_MANAGEMENT);
+		superadminFunctionalities.add(CommunityFunctionalityConstants.DATASOURCE_READ);
+		superadminFunctionalities.add(CommunityFunctionalityConstants.CONFIG_MANAGEMENT);
+		superadminFunctionalities.add(CommunityFunctionalityConstants.EXPORTERS_CATALOGUE);
+		superadminFunctionalities.add(CommunityFunctionalityConstants.DOMAIN_MANAGEMENT);
+		superadminFunctionalities.add(CommunityFunctionalityConstants.LICENSE_MANAGEMENT);
 
 		return superadminFunctionalities;
 	}
@@ -621,137 +623,137 @@ public class UserUtilities {
 			Role virtualRole = getVirtualRole(roles, organization);
 
 			if (virtualRole.isAbleToSaveSubobjects()) {
-				roleFunctionalities.add(SpagoBIConstants.SAVE_SUBOBJECT_FUNCTIONALITY);
+				roleFunctionalities.add(CommunityFunctionalityConstants.SAVE_SUBOBJECT_FUNCTIONALITY);
 			}
 			if (virtualRole.isAbleToSeeSubobjects()) {
-				roleFunctionalities.add(SpagoBIConstants.SEE_SUBOBJECTS_FUNCTIONALITY);
+				roleFunctionalities.add(CommunityFunctionalityConstants.SEE_SUBOBJECTS_FUNCTIONALITY);
 			}
 			if (virtualRole.isAbleToSeeSnapshots()) {
-				roleFunctionalities.add(SpagoBIConstants.SEE_SNAPSHOTS_FUNCTIONALITY);
+				roleFunctionalities.add(CommunityFunctionalityConstants.SEE_SNAPSHOTS_FUNCTIONALITY);
 			}
 			if (virtualRole.isAbleToRunSnapshots()) {
-				roleFunctionalities.add(SpagoBIConstants.RUN_SNAPSHOTS_FUNCTIONALITY);
+				roleFunctionalities.add(CommunityFunctionalityConstants.RUN_SNAPSHOTS_FUNCTIONALITY);
 			}
 			if (virtualRole.isAbleToSeeViewpoints()) {
-				roleFunctionalities.add(SpagoBIConstants.SEE_VIEWPOINTS_FUNCTIONALITY);
+				roleFunctionalities.add(CommunityFunctionalityConstants.SEE_VIEWPOINTS_FUNCTIONALITY);
 			}
 			if (virtualRole.isAbleToSeeNotes()) {
-				roleFunctionalities.add(SpagoBIConstants.SEE_NOTES_FUNCTIONALITY);
+				roleFunctionalities.add(CommunityFunctionalityConstants.SEE_NOTES_FUNCTIONALITY);
 			}
 			if (virtualRole.isAbleToSendMail()) {
-				roleFunctionalities.add(SpagoBIConstants.SEND_MAIL_FUNCTIONALITY);
+				roleFunctionalities.add(CommunityFunctionalityConstants.SEND_MAIL_FUNCTIONALITY);
 			}
 			if (virtualRole.isAbleToSaveIntoPersonalFolder()) {
-				roleFunctionalities.add(SpagoBIConstants.SAVE_INTO_FOLDER_FUNCTIONALITY);
+				roleFunctionalities.add(CommunityFunctionalityConstants.SAVE_INTO_FOLDER_FUNCTIONALITY);
 			}
 			if (virtualRole.isAbleToSaveRememberMe()) {
-				roleFunctionalities.add(SpagoBIConstants.SAVE_REMEMBER_ME_FUNCTIONALITY);
+				roleFunctionalities.add(CommunityFunctionalityConstants.SAVE_REMEMBER_ME_FUNCTIONALITY);
 			}
 			if (virtualRole.isAbleToSeeMetadata()) {
-				roleFunctionalities.add(SpagoBIConstants.SEE_METADATA_FUNCTIONALITY);
+				roleFunctionalities.add(CommunityFunctionalityConstants.SEE_METADATA_FUNCTIONALITY);
 			}
 			if (virtualRole.isAbleToSaveMetadata()) {
-				roleFunctionalities.add(SpagoBIConstants.SAVE_METADATA_FUNCTIONALITY);
+				roleFunctionalities.add(CommunityFunctionalityConstants.SAVE_METADATA_FUNCTIONALITY);
 			}
 			if (virtualRole.isAbleToBuildQbeQuery()) {
-				roleFunctionalities.add(SpagoBIConstants.BUILD_QBE_QUERIES_FUNCTIONALITY);
+				roleFunctionalities.add(CommunityFunctionalityConstants.BUILD_QBE_QUERIES_FUNCTIONALITY);
 			}
 			if (virtualRole.isAbleToDoMassiveExport()) {
-				roleFunctionalities.add(SpagoBIConstants.DO_MASSIVE_EXPORT_FUNCTIONALITY);
+				roleFunctionalities.add(CommunityFunctionalityConstants.DO_MASSIVE_EXPORT_FUNCTIONALITY);
 			}
 			if (virtualRole.isAbleToManageUsers()) {
-				roleFunctionalities.add(SpagoBIConstants.FINAL_USERS_MANAGEMENT);
+				roleFunctionalities.add(CommunityFunctionalityConstants.FINAL_USERS_MANAGEMENT);
 			}
 			if (virtualRole.isAbleToSeeDocumentBrowser()) {
-				roleFunctionalities.add(SpagoBIConstants.SEE_DOCUMENT_BROWSER);
+				roleFunctionalities.add(CommunityFunctionalityConstants.SEE_DOCUMENT_BROWSER);
 			}
 			if (virtualRole.isAbleToSeeMyData()) {
-				roleFunctionalities.add(SpagoBIConstants.SEE_MY_DATA);
+				roleFunctionalities.add(CommunityFunctionalityConstants.SEE_MY_DATA);
 			}
 			if (virtualRole.isAbleToSeeMyWorkspace()) {
-				roleFunctionalities.add(SpagoBIConstants.SEE_MY_WORKSPACE);
+				roleFunctionalities.add(CommunityFunctionalityConstants.SEE_MY_WORKSPACE);
 			}
 			if (virtualRole.isAbleToSeeFavourites()) {
-				roleFunctionalities.add(SpagoBIConstants.SEE_FAVOURITES);
+				roleFunctionalities.add(CommunityFunctionalityConstants.SEE_FAVOURITES);
 			}
 			if (virtualRole.isAbleToSeeSubscriptions()) {
-				roleFunctionalities.add(SpagoBIConstants.SEE_SUBSCRIPTIONS);
+				roleFunctionalities.add(CommunityFunctionalityConstants.SEE_SUBSCRIPTIONS);
 			}
 			if (virtualRole.isAbleToSeeToDoList()) {
-				roleFunctionalities.add(SpagoBIConstants.SEE_TODO_LIST);
+				roleFunctionalities.add(CommunityFunctionalityConstants.SEE_TODO_LIST);
 			}
 			if (virtualRole.isAbleToCreateDocuments()) {
-				roleFunctionalities.add(SpagoBIConstants.CREATE_DOCUMENT);
+				roleFunctionalities.add(CommunityFunctionalityConstants.CREATE_DOCUMENT);
 			}
 			if (virtualRole.isAbleToEditAllKpiComm()) {
-				roleFunctionalities.add(SpagoBIConstants.KPI_COMMENT_EDIT_ALL);
+				roleFunctionalities.add(CommunityFunctionalityConstants.KPI_COMMENT_EDIT_ALL);
 			}
 			if (virtualRole.isAbleToEditMyKpiComm()) {
-				roleFunctionalities.add(SpagoBIConstants.KPI_COMMENT_EDIT_MY);
+				roleFunctionalities.add(CommunityFunctionalityConstants.KPI_COMMENT_EDIT_MY);
 			}
 			if (virtualRole.isAbleToDeleteKpiComm()) {
-				roleFunctionalities.add(SpagoBIConstants.KPI_COMMENT_DELETE);
+				roleFunctionalities.add(CommunityFunctionalityConstants.KPI_COMMENT_DELETE);
 			}
 			if (virtualRole.isAbleToCreateSocialAnalysis()) {
-				roleFunctionalities.add(SpagoBIConstants.CREATE_SOCIAL_ANALYSIS);
+				roleFunctionalities.add(CommunityFunctionalityConstants.CREATE_SOCIAL_ANALYSIS);
 			}
 			if (virtualRole.isAbleToViewSocialAnalysis()) {
-				roleFunctionalities.add(SpagoBIConstants.VIEW_SOCIAL_ANALYSIS);
+				roleFunctionalities.add(CommunityFunctionalityConstants.VIEW_SOCIAL_ANALYSIS);
 			}
 			if (virtualRole.isAbleToHierarchiesManagement()) {
-				roleFunctionalities.add(SpagoBIConstants.HIERARCHIES_MANAGEMENT);
+				roleFunctionalities.add(CommunityFunctionalityConstants.HIERARCHIES_MANAGEMENT);
 			}
 			if (virtualRole.isAbleToEnableDatasetPersistence()) {
-				roleFunctionalities.add(SpagoBIConstants.ENABLE_DATASET_PERSISTENCE);
+				roleFunctionalities.add(CommunityFunctionalityConstants.ENABLE_DATASET_PERSISTENCE);
 			}
 			if (virtualRole.isAbleToEnableFederatedDataset()) {
-				roleFunctionalities.add(SpagoBIConstants.ENABLE_FEDERATED_DATASET);
+				roleFunctionalities.add(CommunityFunctionalityConstants.ENABLE_FEDERATED_DATASET);
 			}
 			if (virtualRole.isAbleToEnableRate()) {
-				roleFunctionalities.add(SpagoBIConstants.ENABLE_TO_RATE);
+				roleFunctionalities.add(CommunityFunctionalityConstants.ENABLE_TO_RATE);
 			}
 			if (virtualRole.isAbleToEnablePrint()) {
-				roleFunctionalities.add(SpagoBIConstants.ENABLE_TO_PRINT);
+				roleFunctionalities.add(CommunityFunctionalityConstants.ENABLE_TO_PRINT);
 			}
 			if (virtualRole.isAbleToEnableCopyAndEmbed()) {
-				roleFunctionalities.add(SpagoBIConstants.ENABLE_TO_COPY_AND_EMBED);
+				roleFunctionalities.add(CommunityFunctionalityConstants.ENABLE_TO_COPY_AND_EMBED);
 			}
 			if (virtualRole.isAbleToManageGlossaryBusiness()) {
-				roleFunctionalities.add(SpagoBIConstants.MANAGE_GLOSSARY_BUSINESS);
+				roleFunctionalities.add(CommunityFunctionalityConstants.MANAGE_GLOSSARY_BUSINESS);
 			}
 			if (virtualRole.isAbleToManageGlossaryTechnical()) {
-				roleFunctionalities.add(SpagoBIConstants.MANAGE_GLOSSARY_TECHNICAL);
+				roleFunctionalities.add(CommunityFunctionalityConstants.MANAGE_GLOSSARY_TECHNICAL);
 			}
 			if (virtualRole.isAbleToManageKpiValue()) {
-				roleFunctionalities.add(SpagoBIConstants.MANAGE_KPI_VALUE);
+				roleFunctionalities.add(CommunityFunctionalityConstants.MANAGE_KPI_VALUE);
 			}
 			if (virtualRole.isAbleToManageCalendar()) {
-				roleFunctionalities.add(SpagoBIConstants.MANAGE_CALENDAR);
+				roleFunctionalities.add(CommunityFunctionalityConstants.MANAGE_CALENDAR);
 			}
 			if (virtualRole.isAbleToUseFunctionsCatalog()) {
-				roleFunctionalities.add(SpagoBIConstants.FUNCTIONS_CATALOG_USAGE);
+				roleFunctionalities.add(CommunityFunctionalityConstants.FUNCTIONS_CATALOG_USAGE);
 			}
 			if (virtualRole.isAbleToManageInternationalization()) {
-				roleFunctionalities.add(SpagoBIConstants.MANAGE_INTERNATIONALIZATION);
+				roleFunctionalities.add(CommunityFunctionalityConstants.MANAGE_INTERNATIONALIZATION);
 			}
 
 			if (virtualRole.isAbleToCreateSelfServiceCockpit()) {
-				roleFunctionalities.add(SpagoBIConstants.CREATE_SELF_SERVICE_COCKPIT);
+				roleFunctionalities.add(CommunityFunctionalityConstants.CREATE_SELF_SERVICE_COCKPIT);
 			}
 
 			if (virtualRole.isAbleToCreateSelfServiceGeoreport()) {
-				roleFunctionalities.add(SpagoBIConstants.CREATE_SELF_SERVICE_GEOREPORT);
+				roleFunctionalities.add(CommunityFunctionalityConstants.CREATE_SELF_SERVICE_GEOREPORT);
 			}
 
 			if (virtualRole.isAbleToCreateSelfServiceKpi()) {
-				roleFunctionalities.add(SpagoBIConstants.CREATE_SELF_SERVICE_KPI);
+				roleFunctionalities.add(CommunityFunctionalityConstants.CREATE_SELF_SERVICE_KPI);
 			}
 
 			if (virtualRole.isAbleToEditPythonScripts()) {
-				roleFunctionalities.add(SpagoBIConstants.EDIT_PYTHON_SCRIPTS);
+				roleFunctionalities.add(CommunityFunctionalityConstants.EDIT_PYTHON_SCRIPTS);
 			}
 			if (virtualRole.isAbleToCreateCustomChart()) {
-				roleFunctionalities.add(SpagoBIConstants.CREATE_CUSTOM_CHART);
+				roleFunctionalities.add(CommunityFunctionalityConstants.CREATE_CUSTOM_CHART);
 			}
 			if (!roleFunctionalities.isEmpty()) {
 				List<String> roleTypeFunctionalities = Arrays.asList(functionalities);
@@ -762,7 +764,7 @@ public class UserUtilities {
 				if (!isSuperAdm) {
 					for (int i = 0; i < functionalities.length; i++) {
 						String f = functionalities[i];
-						if (!f.equalsIgnoreCase(SpagoBIConstants.TENANT_MANAGEMENT)) {
+						if (!f.equalsIgnoreCase(CommunityFunctionalityConstants.TENANT_MANAGEMENT)) {
 							roleFunctionalities.add(f);
 						}
 					}
@@ -809,7 +811,7 @@ public class UserUtilities {
 	private static List<String> freeFunctionalities() {
 		List<String> ret = new ArrayList<>();
 		ret.add(DOCUMENT_WIDGET_USE);
-		ret.add("MapWidgetUse");
+		ret.add(MAP_WIDGET_USE);
 		return ret;
 	}
 

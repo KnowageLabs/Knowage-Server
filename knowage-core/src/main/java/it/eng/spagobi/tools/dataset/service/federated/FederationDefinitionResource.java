@@ -34,7 +34,7 @@ import org.apache.log4j.Logger;
 
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.commons.bo.UserProfile;
-import it.eng.spagobi.commons.constants.SpagoBIConstants;
+import it.eng.spagobi.commons.constants.CommunityFunctionalityConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.dataset.federation.FederationDefinitionAccessController;
 import it.eng.spagobi.dataset.federation.exceptions.FederationDefinitionAccessException;
@@ -56,7 +56,7 @@ public class FederationDefinitionResource {
 
 	@GET
 	@Path("/")
-	@UserConstraint(functionalities = { SpagoBIConstants.FEDERATED_DATASET_MANAGEMENT })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.ENABLE_FEDERATED_DATASET })
 	@Produces(MediaType.APPLICATION_JSON)
 	public List<FederationDefinition> get() {
 		try {
@@ -72,7 +72,7 @@ public class FederationDefinitionResource {
 
 	@GET
 	@Path("/{id}")
-	@UserConstraint(functionalities = { SpagoBIConstants.FEDERATED_DATASET_MANAGEMENT })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.ENABLE_FEDERATED_DATASET })
 	@Produces(MediaType.APPLICATION_JSON)
 	public FederationDefinition getFederationByID(@PathParam("id") Integer id) {
 		try {
@@ -107,7 +107,7 @@ public class FederationDefinitionResource {
 	@PUT
 	@Path("/{id}")
 	@Consumes(MediaType.APPLICATION_JSON)
-	@UserConstraint(functionalities = { SpagoBIConstants.FEDERATED_DATASET_MANAGEMENT })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.ENABLE_FEDERATED_DATASET })
 	public Integer update(@PathParam("id") Integer id, FederationDefinition fds) {
 		logger.debug("IN");
 		try {
@@ -122,7 +122,7 @@ public class FederationDefinitionResource {
 
 	@DELETE
 	@Path("/{id}")
-	@UserConstraint(functionalities = { SpagoBIConstants.FEDERATED_DATASET_MANAGEMENT })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.ENABLE_FEDERATED_DATASET })
 	public Response remove(@PathParam("id") Integer id) {
 
 		try {

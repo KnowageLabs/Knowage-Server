@@ -1,5 +1,6 @@
 <%@page import="it.eng.spago.security.IEngUserProfile"%>
 <%@page import="it.eng.spagobi.commons.constants.SpagoBIConstants"%>
+<%@page import="it.eng.spagobi.commons.constants.CommunityFunctionalityConstants"%>
 <%
 	//	HttpSession session2222 = request.getSession();
 	IEngUserProfile profile = (IEngUserProfile)session.getAttribute(IEngUserProfile.ENG_USER_PROFILE);;
@@ -13,13 +14,13 @@
 						ng-click="clearListParametersForm();">
 					<i class="fa fa-eraser" style="color:white"></i>
 				</md-button>	
-				<% if (profile.isAbleToExecuteAction(SpagoBIConstants.SEE_VIEWPOINTS_FUNCTIONALITY)) { %>						
+				<% if (profile.isAbleToExecuteAction(CommunityFunctionalityConstants.SEE_VIEWPOINTS_FUNCTIONALITY)) { %>						
 				<md-button title="Open Saved" aria-label="Open Saved Parameters" class="toolbar-button-custom" 
 						ng-click="urlViewPointService.getViewpoints();">
 					<i class="fa fa-pencil" style="color:white"></i>
 				</md-button>
 				  <%} %>
-				<% if (profile.isAbleToExecuteAction(SpagoBIConstants.SEE_VIEWPOINTS_FUNCTIONALITY)) { %>					
+				<% if (profile.isAbleToExecuteAction(CommunityFunctionalityConstants.SEE_VIEWPOINTS_FUNCTIONALITY)) { %>					
 				<md-button title="Save" aria-label="Save Parameters" class="toolbar-button-custom" 
 						ng-click="urlViewPointService.createNewViewpoint();">
 					<i class="fa fa-floppy-o" style="color:white"></i>

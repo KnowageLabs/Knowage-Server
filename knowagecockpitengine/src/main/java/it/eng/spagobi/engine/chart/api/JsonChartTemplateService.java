@@ -22,7 +22,7 @@ import com.jamonapi.MonitorFactory;
 import it.eng.knowage.engine.cockpit.api.CockpitExecutionClient;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.commons.bo.UserProfile;
-import it.eng.spagobi.commons.constants.SpagoBIConstants;
+import it.eng.spagobi.commons.constants.CommunityFunctionalityConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.engine.chart.ChartEngine;
@@ -73,7 +73,7 @@ public class JsonChartTemplateService extends AbstractChartEngineResource {
     @Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED + "; charset=UTF-8")
     @SuppressWarnings("rawtypes")
-    @UserConstraint(functionalities = {SpagoBIConstants.CREATE_COCKPIT_FUNCTIONALITY})
+    @UserConstraint(functionalities = {CommunityFunctionalityConstants.CREATE_COCKPIT_FUNCTIONALITY})
     public String getJSONChartTemplate(@FormParam("jsonTemplate") String jsonTemplate, @FormParam("exportWebApp") String exportWebApp,
                                        @FormParam("datasetLabel") String datasetLabel, @FormParam("driverParams") String driverParams, @FormParam("jsonData") String jsonData,
                                        @Context HttpServletResponse servletResponse) {
@@ -126,7 +126,7 @@ public class JsonChartTemplateService extends AbstractChartEngineResource {
     @Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED + "; charset=UTF-8")
     @SuppressWarnings("rawtypes")
-    @UserConstraint(functionalities = {SpagoBIConstants.CREATE_COCKPIT_FUNCTIONALITY})
+    @UserConstraint(functionalities = {CommunityFunctionalityConstants.CREATE_COCKPIT_FUNCTIONALITY})
     public String getJSONChartTemplateForCockpit(@FormParam("jsonTemplate") String jsonTemplate, @FormParam("exportWebApp") String exportWebApp,
                                                  @FormParam("jsonData") String jsonData, @Context HttpServletResponse servletResponse) {
         logger.debug("IN");
@@ -183,7 +183,7 @@ public class JsonChartTemplateService extends AbstractChartEngineResource {
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     @SuppressWarnings("rawtypes")
-    @UserConstraint(functionalities = {SpagoBIConstants.CREATE_COCKPIT_FUNCTIONALITY})
+    @UserConstraint(functionalities = {CommunityFunctionalityConstants.CREATE_COCKPIT_FUNCTIONALITY})
     public String drilldownHighchart(@FormParam("breadcrumb") String breadcrumb) {
         logger.debug("IN");
         try {
@@ -209,7 +209,7 @@ public class JsonChartTemplateService extends AbstractChartEngineResource {
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     @SuppressWarnings("rawtypes")
-    @UserConstraint(functionalities = {SpagoBIConstants.CREATE_COCKPIT_FUNCTIONALITY})
+    @UserConstraint(functionalities = {CommunityFunctionalityConstants.CREATE_COCKPIT_FUNCTIONALITY})
     public String drilldownHighchartForCockpit(@FormParam("breadcrumb") String breadcrumb, @FormParam("widgetData") String widgetData,
                                                @FormParam("selections") String selections, @FormParam("parameters") String parameters, @FormParam("aggregations") String aggregations,
                                                @DefaultValue("-1") @QueryParam("offset") int offset, @DefaultValue("-1") @QueryParam("size") int fetchSize,
@@ -265,7 +265,7 @@ public class JsonChartTemplateService extends AbstractChartEngineResource {
     @GET
     @Path("/fieldsMetadata")
     @Produces(MediaType.APPLICATION_JSON)
-    @UserConstraint(functionalities = {SpagoBIConstants.CREATE_COCKPIT_FUNCTIONALITY})
+    @UserConstraint(functionalities = {CommunityFunctionalityConstants.CREATE_COCKPIT_FUNCTIONALITY})
     public String getDatasetMetadata() {
         logger.debug("IN");
         try {
@@ -283,7 +283,7 @@ public class JsonChartTemplateService extends AbstractChartEngineResource {
     @GET
     @Path("/fieldsMetadataforCockpit/{datasetId}")
     @Produces(MediaType.APPLICATION_JSON)
-    @UserConstraint(functionalities = {SpagoBIConstants.CREATE_COCKPIT_FUNCTIONALITY})
+    @UserConstraint(functionalities = {CommunityFunctionalityConstants.CREATE_COCKPIT_FUNCTIONALITY})
     public String getDatasetMetadataForCockpit(@PathParam("datasetId") String datasetId) {
         logger.debug("IN");
         IDataSet dataSet = null;
@@ -310,7 +310,7 @@ public class JsonChartTemplateService extends AbstractChartEngineResource {
     @GET
     @Path("/usedDataset")
     @Produces(MediaType.APPLICATION_JSON)
-    @UserConstraint(functionalities = {SpagoBIConstants.CREATE_COCKPIT_FUNCTIONALITY})
+    @UserConstraint(functionalities = {CommunityFunctionalityConstants.CREATE_COCKPIT_FUNCTIONALITY})
     public String isDatasetRealTime() {
         logger.debug("IN");
         try {
@@ -328,7 +328,7 @@ public class JsonChartTemplateService extends AbstractChartEngineResource {
     @GET
     @Path("/usedDataset/{datasetId}")
     @Produces(MediaType.APPLICATION_JSON)
-    @UserConstraint(functionalities = {SpagoBIConstants.CREATE_COCKPIT_FUNCTIONALITY})
+    @UserConstraint(functionalities = {CommunityFunctionalityConstants.CREATE_COCKPIT_FUNCTIONALITY})
     public String isDatasetForCockpitRealTime(@PathParam("datasetId") String datasetId) {
         logger.debug("IN");
         IDataSet dataSet = null;
@@ -355,7 +355,7 @@ public class JsonChartTemplateService extends AbstractChartEngineResource {
     @Path("/{label}/getDataAndConf")
     @Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
     @SuppressWarnings("rawtypes")
-    @UserConstraint(functionalities = {SpagoBIConstants.CREATE_COCKPIT_FUNCTIONALITY})
+    @UserConstraint(functionalities = {CommunityFunctionalityConstants.CREATE_COCKPIT_FUNCTIONALITY})
     public String getDataAndConf(@PathParam("label") String label, String body, @Context HttpServletResponse servletResponse,
                                  @DefaultValue("-1") @QueryParam("offset") int offset, @DefaultValue("-1") @QueryParam("limit") int limit,
                                  @DefaultValue("-1") @QueryParam("size") int fetchSize, @QueryParam("nearRealtime") boolean isNearRealtime) {

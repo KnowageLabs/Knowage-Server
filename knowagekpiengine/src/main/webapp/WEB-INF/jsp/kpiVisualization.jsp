@@ -37,6 +37,7 @@ author:
 <%@page import="it.eng.spago.security.IEngUserProfile"%>
 <%@page import="it.eng.spagobi.commons.utilities.ChannelUtilities"%>
 <%@page import="it.eng.spagobi.commons.constants.SpagoBIConstants"%>
+<%@page import="it.eng.spagobi.commons.constants.CommunityFunctionalityConstants"%>
 <%@page import="it.eng.spagobi.kpi.bo.KpiValue"%>
 <%@page import="it.eng.knowage.engine.kpi.KpiEngineInstance"%>
 <%@page import="java.util.Iterator"%>
@@ -117,7 +118,7 @@ author:
 	// 		IEngUserProfile userProfile = (IEngUserProfile)permanentSession.getAttribute(IEngUserProfile.ENG_USER_PROFILE);
 	boolean canSee = false;
 
-	if (UserUtilities.haveRoleAndAuthorization(profile, null, new String[] { SpagoBIConstants.MANAGE_KPI_VALUE })
+	if (UserUtilities.haveRoleAndAuthorization(profile, null, new String[] { CommunityFunctionalityConstants.MANAGE_KPI_VALUE })
 			|| UserUtilities.haveRoleAndAuthorization(profile, SpagoBIConstants.ADMIN_ROLE_TYPE, new String[0])) {
 		canSee = true;
 	}

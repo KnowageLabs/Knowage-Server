@@ -48,6 +48,7 @@ import it.eng.spagobi.analiticalmodel.functionalitytree.dao.ILowFunctionalityDAO
 import it.eng.spagobi.api.AbstractSpagoBIResource;
 import it.eng.spagobi.commons.bo.Role;
 import it.eng.spagobi.commons.bo.UserProfile;
+import it.eng.spagobi.commons.constants.CommunityFunctionalityConstants;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.dao.IRoleDAO;
@@ -271,7 +272,7 @@ public class FunctionalitiesResource extends AbstractSpagoBIResource {
 
 	@GET
 	@Path("moveUp/{id}")
-	@UserConstraint(functionalities = { SpagoBIConstants.FUNCTIONALITIES_MANAGEMENT })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.FUNCTIONALITIES_MANAGEMENT })
 	@Produces(MediaType.APPLICATION_JSON + charset)
 	public Response getLowFunctMoveUp(@PathParam("id") Integer id) {
 
@@ -295,7 +296,7 @@ public class FunctionalitiesResource extends AbstractSpagoBIResource {
 
 	@GET
 	@Path("getParent/{id}")
-	@UserConstraint(functionalities = { SpagoBIConstants.FUNCTIONALITIES_MANAGEMENT })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.FUNCTIONALITIES_MANAGEMENT })
 	@Produces(MediaType.APPLICATION_JSON + charset)
 	public Response getParent(@PathParam("id") Integer id) {
 
@@ -319,7 +320,7 @@ public class FunctionalitiesResource extends AbstractSpagoBIResource {
 
 	@GET
 	@Path("moveDown/{id}")
-	@UserConstraint(functionalities = { SpagoBIConstants.FUNCTIONALITIES_MANAGEMENT })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.FUNCTIONALITIES_MANAGEMENT })
 	@Produces(MediaType.APPLICATION_JSON + charset)
 	public Response getLowFunctMoveDown(@PathParam("id") Integer id) {
 
@@ -343,7 +344,7 @@ public class FunctionalitiesResource extends AbstractSpagoBIResource {
 
 	@POST
 	@Path("/")
-	@UserConstraint(functionalities = { SpagoBIConstants.FUNCTIONALITIES_MANAGEMENT })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.FUNCTIONALITIES_MANAGEMENT })
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response insertLowFunctionality(@javax.ws.rs.core.Context HttpServletRequest req) {
 
@@ -423,7 +424,7 @@ public class FunctionalitiesResource extends AbstractSpagoBIResource {
 
 	@PUT
 	@Path("/{id}")
-	@UserConstraint(functionalities = { SpagoBIConstants.FUNCTIONALITIES_MANAGEMENT })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.FUNCTIONALITIES_MANAGEMENT })
 	@Consumes(MediaType.APPLICATION_JSON)
 	public Response updateLowFunctionality(@PathParam("id") Integer id, @javax.ws.rs.core.Context HttpServletRequest req) {
 		ILowFunctionalityDAO objDao = null;

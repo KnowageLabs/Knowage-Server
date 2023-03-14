@@ -27,6 +27,7 @@ import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 import it.eng.spagobi.analiticalmodel.document.bo.SubObject;
 import it.eng.spagobi.commons.bo.UserProfile;
+import it.eng.spagobi.commons.constants.CommunityFunctionalityConstants;
 import it.eng.spagobi.commons.constants.ObjectsTreeConstants;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
@@ -97,7 +98,7 @@ public class ExecuteDocumentAction extends AbstractSpagoBIAction {
 					SubObject subObject = getRequiredSubObject(obj);
 					if (subObject != null) {
 						logParam.put("SUBOJECT NAME", subObject.getName());
-						if (profile.isAbleToExecuteAction(SpagoBIConstants.DOCUMENT_MANAGEMENT_ADMIN)
+						if (profile.isAbleToExecuteAction(CommunityFunctionalityConstants.DOCUMENT_MANAGEMENT_ADMIN)
 								|| (subObject.getIsPublic().booleanValue() || subObject.getOwner().equals(profile.getUserId()))) {
 							this.getServiceResponse().setAttribute(SpagoBIConstants.SUBOBJECT, subObject);
 						} else {

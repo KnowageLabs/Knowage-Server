@@ -61,7 +61,7 @@ import it.eng.spago.error.EMFInternalError;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.commons.bo.UserProfile;
-import it.eng.spagobi.commons.constants.SpagoBIConstants;
+import it.eng.spagobi.commons.constants.CommunityFunctionalityConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.dao.ISpagoBIDao;
 import it.eng.spagobi.commons.utilities.GeneralUtilities;
@@ -133,7 +133,7 @@ public class KpiService {
 
 	@POST
 	@Path("/buildCardinalityMatrix")
-	@UserConstraint(functionalities = { SpagoBIConstants.KPI_MANAGEMENT })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.KPI_MANAGEMENT })
 	public Response buildCardinalityMatrix(@Context HttpServletRequest req) throws EMFUserError {
 		logger.debug("buildCardinalityMatrix IN");
 		Response out;
@@ -162,7 +162,7 @@ public class KpiService {
 
 	@POST
 	@Path("/listPlaceholderByMeasures")
-	@UserConstraint(functionalities = { SpagoBIConstants.KPI_MANAGEMENT })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.KPI_MANAGEMENT })
 	public Response listPlaceholderByMeasures(@Context HttpServletRequest req) throws EMFUserError {
 		Response out;
 		try {
@@ -188,7 +188,7 @@ public class KpiService {
 
 	@POST
 	@Path("/listPlaceholderByKpi")
-	@UserConstraint(functionalities = { SpagoBIConstants.KPI_MANAGEMENT })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.KPI_MANAGEMENT })
 	public Response listPlaceholderByKpi(@Context HttpServletRequest req) throws EMFUserError {
 		logger.debug("listPlaceholderByKpi IN");
 		Response out;
@@ -234,7 +234,7 @@ public class KpiService {
 
 	@GET
 	@Path("/listPlaceholder")
-	@UserConstraint(functionalities = { SpagoBIConstants.KPI_MANAGEMENT })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.KPI_MANAGEMENT })
 	public Response listPlaceholder(@Context HttpServletRequest req) throws EMFUserError {
 		Response out;
 		logger.debug("listPlaceholder IN");
@@ -246,7 +246,7 @@ public class KpiService {
 
 	@GET
 	@Path("/listMeasure")
-	@UserConstraint(functionalities = { SpagoBIConstants.KPI_MANAGEMENT })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.KPI_MANAGEMENT })
 	public Response listMeasure(@Context HttpServletRequest req, @QueryParam("orderProperty") String orderProperty, @QueryParam("orderType") String orderType)
 			throws EMFUserError {
 		Response out;
@@ -261,7 +261,7 @@ public class KpiService {
 
 	@GET
 	@Path("/{name}/existsMeasure")
-	@UserConstraint(functionalities = { SpagoBIConstants.KPI_MANAGEMENT })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.KPI_MANAGEMENT })
 	public String existsMeasure(@PathParam("name") String name, @Context HttpServletRequest req) throws EMFUserError {
 		logger.debug("existsMeasure IN");
 		Response out;
@@ -273,7 +273,7 @@ public class KpiService {
 
 	@GET
 	@Path("/{id}/{number}/logExecutionList")
-	@UserConstraint(functionalities = { SpagoBIConstants.KPI_MANAGEMENT })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.KPI_MANAGEMENT })
 	public Response logExecutionList(@PathParam("id") Integer id, @PathParam("number") Integer number, @Context HttpServletRequest req) throws EMFUserError {
 		logger.debug("logExecutionList IN");
 		Response out;
@@ -286,7 +286,7 @@ public class KpiService {
 
 	@GET
 	@Path("/{id}/logExecutionListOutputContent")
-	@UserConstraint(functionalities = { SpagoBIConstants.KPI_MANAGEMENT })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.KPI_MANAGEMENT })
 	public Response logExecutionListOutputContent(@PathParam("id") Integer id, @Context HttpServletRequest req) throws EMFUserError {
 		logger.debug("logExecutionListOutputContent IN");
 		Response out;
@@ -299,7 +299,7 @@ public class KpiService {
 
 	@GET
 	@Path("/{id}/{version}/loadRule")
-	@UserConstraint(functionalities = { SpagoBIConstants.KPI_MANAGEMENT })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.KPI_MANAGEMENT })
 	public Response loadRule(@PathParam("id") Integer id, @PathParam("version") Integer version, @Context HttpServletRequest req) throws EMFUserError {
 		logger.debug("loadRule IN");
 		Response out;
@@ -312,7 +312,7 @@ public class KpiService {
 
 	@GET
 	@Path("/{thresholdId}/loadThreshold")
-	@UserConstraint(functionalities = { SpagoBIConstants.KPI_MANAGEMENT })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.KPI_MANAGEMENT })
 	public Response loadThreshold(@PathParam("thresholdId") Integer id, @QueryParam("kpiId") Integer kpiId, @Context HttpServletRequest req)
 			throws EMFUserError {
 		logger.debug("loadThreshold IN");
@@ -329,7 +329,7 @@ public class KpiService {
 
 	@GET
 	@Path("/listAlias")
-	@UserConstraint(functionalities = { SpagoBIConstants.KPI_MANAGEMENT })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.KPI_MANAGEMENT })
 	public Response listAlias(@Context HttpServletRequest req) throws EMFUserError {
 		Response out;
 		logger.debug("listAlias IN");
@@ -342,7 +342,7 @@ public class KpiService {
 
 	@GET
 	@Path("/listAvailableAlias")
-	@UserConstraint(functionalities = { SpagoBIConstants.KPI_MANAGEMENT })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.KPI_MANAGEMENT })
 	public Response listAvailableAlias(@QueryParam("ruleId") Integer ruleId, @QueryParam("ruleVersion") Integer ruleVersion, @Context HttpServletRequest req)
 			throws EMFUserError, JSONException {
 		logger.debug("IN");
@@ -372,7 +372,7 @@ public class KpiService {
 	 */
 	@POST
 	@Path("/queryPreview")
-	@UserConstraint(functionalities = { SpagoBIConstants.KPI_MANAGEMENT })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.KPI_MANAGEMENT })
 	public Response queryPreview(@Context HttpServletRequest req) throws EMFUserError {
 		logger.debug("queryPreview IN");
 		Response out;
@@ -443,7 +443,7 @@ public class KpiService {
 
 	@POST
 	@Path("/preSaveRule")
-	@UserConstraint(functionalities = { SpagoBIConstants.KPI_MANAGEMENT })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.KPI_MANAGEMENT })
 	public Response preSave(@Context HttpServletRequest req) throws EMFUserError {
 		logger.debug("preSaveRule IN");
 		Response out;
@@ -612,7 +612,7 @@ public class KpiService {
 
 	@POST
 	@Path("/saveRule")
-	@UserConstraint(functionalities = { SpagoBIConstants.KPI_MANAGEMENT })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.KPI_MANAGEMENT })
 	public Response saveRule(@Context HttpServletRequest req) throws EMFUserError {
 		logger.debug("saveRule IN");
 		Response out;
@@ -668,7 +668,7 @@ public class KpiService {
 
 	@GET
 	@Path("/listKpi")
-	@UserConstraint(functionalities = { SpagoBIConstants.KPI_MANAGEMENT, SpagoBIConstants.CREATE_DOCUMENT })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.KPI_MANAGEMENT, CommunityFunctionalityConstants.CREATE_DOCUMENT })
 	public Response listKpi(@Context HttpServletRequest req) throws EMFUserError {
 		logger.debug("listKpi IN");
 		Response out;
@@ -682,7 +682,7 @@ public class KpiService {
 
 	@GET
 	@Path("/listKpiWithResult")
-	@UserConstraint(functionalities = { SpagoBIConstants.KPI_MANAGEMENT })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.KPI_MANAGEMENT })
 	public Response listKpiWithResult(@Context HttpServletRequest req) throws EMFUserError {
 		logger.debug("listKpiWithResult IN");
 		Response out;
@@ -695,7 +695,7 @@ public class KpiService {
 
 	@GET
 	@Path("/{id}/{version}/loadKpi")
-	@UserConstraint(functionalities = { SpagoBIConstants.KPI_MANAGEMENT })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.KPI_MANAGEMENT })
 	public Response loadKpi(@PathParam("id") Integer id, @PathParam("version") Integer version, @Context HttpServletRequest req) throws EMFUserError {
 		logger.debug("ID VERSION loadKpi  IN");
 		Response out;
@@ -707,7 +707,7 @@ public class KpiService {
 
 	@GET
 	@Path("/listThreshold")
-	@UserConstraint(functionalities = { SpagoBIConstants.KPI_MANAGEMENT })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.KPI_MANAGEMENT })
 	public Response listThreshold(@Context HttpServletRequest req) throws EMFUserError {
 		logger.debug("listThreshold IN");
 		Response out;
@@ -720,7 +720,7 @@ public class KpiService {
 
 	@POST
 	@Path("/saveKpi")
-	@UserConstraint(functionalities = { SpagoBIConstants.KPI_MANAGEMENT })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.KPI_MANAGEMENT })
 	public Response saveKpi(@Context HttpServletRequest req) throws EMFUserError, EMFInternalError {
 		logger.debug("saveKpi IN");
 		Response out;
@@ -775,7 +775,7 @@ public class KpiService {
 
 	@DELETE
 	@Path("/{id}/{version}/deleteKpi")
-	@UserConstraint(functionalities = { SpagoBIConstants.KPI_MANAGEMENT })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.KPI_MANAGEMENT })
 	public Response deleteKpi(@PathParam("id") Integer id, @PathParam("version") Integer version, @Context HttpServletRequest req) throws EMFUserError {
 		logger.debug("deleteKpi IN");
 		Response out;
@@ -795,7 +795,7 @@ public class KpiService {
 
 	@DELETE
 	@Path("/{id}/{version}/deleteRule")
-	@UserConstraint(functionalities = { SpagoBIConstants.KPI_MANAGEMENT })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.KPI_MANAGEMENT })
 	public Response deleteRule(@PathParam("id") Integer id, @PathParam("version") Integer version, @Context HttpServletRequest req) throws EMFUserError {
 		// Rule can only be removed logically
 		logger.debug("deleteRule IN");
@@ -825,7 +825,7 @@ public class KpiService {
 
 	@DELETE
 	@Path("/{id}/deleteKpiScheduler")
-	@UserConstraint(functionalities = { SpagoBIConstants.KPI_MANAGEMENT })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.KPI_MANAGEMENT })
 	public Response deleteKpiScheduler(@PathParam("id") Integer id, @Context HttpServletRequest req) throws EMFUserError {
 		logger.debug("deleteKpiScheduler IN");
 		Response out;
@@ -838,7 +838,7 @@ public class KpiService {
 
 	@GET
 	@Path("/listSchedulerKPI")
-	@UserConstraint(functionalities = { SpagoBIConstants.KPI_MANAGEMENT })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.KPI_MANAGEMENT })
 	public Response listSchedulerKPI(@Context HttpServletRequest req) throws EMFUserError {
 		logger.debug("listSchedulerKPI IN");
 		Response out;
@@ -851,7 +851,7 @@ public class KpiService {
 
 	@POST
 	@Path("/saveSchedulerKPI")
-	@UserConstraint(functionalities = { SpagoBIConstants.KPI_MANAGEMENT })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.KPI_MANAGEMENT })
 	public Response saveSchedulerKPI(@Context HttpServletRequest req) throws EMFUserError {
 		logger.debug("saveSchedulerKPI IN");
 		Response out;
@@ -886,7 +886,7 @@ public class KpiService {
 
 	@POST
 	@Path("/editKpiValue")
-	@UserConstraint(functionalities = { SpagoBIConstants.KPI_MANAGEMENT, SpagoBIConstants.MANAGE_KPI_VALUE })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.KPI_MANAGEMENT, CommunityFunctionalityConstants.MANAGE_KPI_VALUE })
 	public void editKpiValue(@Context HttpServletRequest req) throws EMFUserError {
 		logger.debug("editKpiValue IN");
 		Response out;
@@ -929,7 +929,7 @@ public class KpiService {
 
 	@GET
 	@Path("/{id}/loadSchedulerKPI")
-	@UserConstraint(functionalities = { SpagoBIConstants.KPI_MANAGEMENT })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.KPI_MANAGEMENT })
 	public Response loadSchedulerKPI(@PathParam("id") Integer id, @Context HttpServletRequest req) throws EMFUserError {
 		logger.debug("loadSchedulerKPI IN");
 		Response out;

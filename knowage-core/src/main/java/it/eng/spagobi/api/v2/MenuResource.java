@@ -47,7 +47,7 @@ import it.eng.spagobi.analiticalmodel.functionalitytree.dao.ILowFunctionalityDAO
 import it.eng.spagobi.api.AbstractSpagoBIResource;
 import it.eng.spagobi.commons.bo.Role;
 import it.eng.spagobi.commons.bo.UserProfile;
-import it.eng.spagobi.commons.constants.SpagoBIConstants;
+import it.eng.spagobi.commons.constants.CommunityFunctionalityConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.dao.IRoleDAO;
 import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
@@ -77,7 +77,7 @@ public class MenuResource extends AbstractSpagoBIResource {
 	@SuppressWarnings("unchecked")
 	@GET
 	@Path("/")
-	@UserConstraint(functionalities = { SpagoBIConstants.MENU_MANAGEMENT })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.MENU_MANAGEMENT })
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
 	public Response getMenues() {
 		logger.debug("IN");
@@ -104,7 +104,7 @@ public class MenuResource extends AbstractSpagoBIResource {
 	@SuppressWarnings("unchecked")
 	@GET
 	@Path("/functionalities")
-	@UserConstraint(functionalities = { SpagoBIConstants.MENU_MANAGEMENT })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.MENU_MANAGEMENT })
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
 	public String getFunctionalities() {
 		logger.debug("IN");
@@ -133,7 +133,7 @@ public class MenuResource extends AbstractSpagoBIResource {
 	@SuppressWarnings("unchecked")
 	@GET
 	@Path("/htmls")
-	@UserConstraint(functionalities = { SpagoBIConstants.MENU_MANAGEMENT })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.MENU_MANAGEMENT })
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
 	public Response getHTMLs() {
 		logger.debug("IN");
@@ -212,7 +212,7 @@ public class MenuResource extends AbstractSpagoBIResource {
 
 	@GET
 	@Path("moveUp/{id}")
-	@UserConstraint(functionalities = { SpagoBIConstants.MENU_MANAGEMENT })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.MENU_MANAGEMENT })
 	@Produces(MediaType.APPLICATION_JSON + charset)
 	public Response getMenuMoveUp(@PathParam("id") Integer id) {
 
@@ -236,7 +236,7 @@ public class MenuResource extends AbstractSpagoBIResource {
 
 	@GET
 	@Path("moveDown/{id}")
-	@UserConstraint(functionalities = { SpagoBIConstants.MENU_MANAGEMENT })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.MENU_MANAGEMENT })
 	@Produces(MediaType.APPLICATION_JSON + charset)
 	public Response getMenuMoveDown(@PathParam("id") Integer id) {
 
@@ -254,7 +254,7 @@ public class MenuResource extends AbstractSpagoBIResource {
 
 	@GET
 	@Path("changeWithFather/{id}")
-	@UserConstraint(functionalities = { SpagoBIConstants.MENU_MANAGEMENT })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.MENU_MANAGEMENT })
 	@Produces(MediaType.APPLICATION_JSON + charset)
 	public Response getMenuChangeWithFather(@PathParam("id") Integer id) {
 
@@ -278,7 +278,7 @@ public class MenuResource extends AbstractSpagoBIResource {
 
 	@POST
 	@Path("/")
-	@UserConstraint(functionalities = { SpagoBIConstants.MENU_MANAGEMENT })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.MENU_MANAGEMENT })
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response insertMenu(@javax.ws.rs.core.Context HttpServletRequest req) {
 
@@ -375,7 +375,7 @@ public class MenuResource extends AbstractSpagoBIResource {
 
 	@PUT
 	@Path("/{menuId}")
-	@UserConstraint(functionalities = { SpagoBIConstants.MENU_MANAGEMENT })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.MENU_MANAGEMENT })
 	@Consumes(MediaType.APPLICATION_JSON)
 	public Response updateMenu(@PathParam("menuId") Integer id, @javax.ws.rs.core.Context HttpServletRequest req) {
 		IMenuDAO objDao = null;
@@ -531,7 +531,7 @@ public class MenuResource extends AbstractSpagoBIResource {
 
 	@GET
 	@Path("getParent/{id}")
-	@UserConstraint(functionalities = { SpagoBIConstants.MENU_MANAGEMENT })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.MENU_MANAGEMENT })
 	@Produces(MediaType.APPLICATION_JSON + charset)
 	public Response getParent(@PathParam("id") Integer id) {
 

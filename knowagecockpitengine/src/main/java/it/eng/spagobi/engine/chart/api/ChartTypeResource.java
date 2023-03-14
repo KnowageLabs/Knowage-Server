@@ -27,7 +27,7 @@ import org.apache.log4j.Logger;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import it.eng.spagobi.commons.constants.SpagoBIConstants;
+import it.eng.spagobi.commons.constants.CommunityFunctionalityConstants;
 import it.eng.spagobi.engine.chart.ChartEngineConfig;
 import it.eng.spagobi.engine.chart.model.conf.ChartConfig;
 import it.eng.spagobi.services.rest.annotations.UserConstraint;
@@ -38,7 +38,7 @@ public class ChartTypeResource {
 	static private Logger logger = Logger.getLogger(ChartTypeResource.class);
 
 	@GET
-	@UserConstraint(functionalities = { SpagoBIConstants.CREATE_COCKPIT_FUNCTIONALITY })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.CREATE_COCKPIT_FUNCTIONALITY })
 	public String getChartTypes() {
 
 		Map<String, ChartConfig> chartLibConf = ChartEngineConfig.getChartLibConf();

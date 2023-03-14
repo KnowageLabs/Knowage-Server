@@ -41,7 +41,7 @@ import org.json.JSONObject;
 import it.eng.spagobi.api.AbstractSpagoBIResource;
 import it.eng.spagobi.commons.bo.Config;
 import it.eng.spagobi.commons.bo.Domain;
-import it.eng.spagobi.commons.constants.SpagoBIConstants;
+import it.eng.spagobi.commons.constants.CommunityFunctionalityConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.dao.IConfigDAO;
 import it.eng.spagobi.commons.dao.IDomainDAO;
@@ -92,7 +92,7 @@ public class ExportersResource extends AbstractSpagoBIResource {
 	@GET
 	@Path("/{eId}/{dId}")
 	@Produces(MediaType.APPLICATION_JSON)
-	@UserConstraint(functionalities = { SpagoBIConstants.DATASOURCE_READ })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.DATASOURCE_READ })
 	public String getExportersById(@PathParam("eId") Integer engineId, @PathParam("dId") Integer domainId) {
 
 		logger.debug("IN");

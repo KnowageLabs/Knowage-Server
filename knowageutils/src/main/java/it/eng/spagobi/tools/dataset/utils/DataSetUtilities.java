@@ -41,7 +41,7 @@ import org.json.JSONObjectDeserializator;
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.commons.bo.UserProfile;
-import it.eng.spagobi.commons.constants.SpagoBIConstants;
+import it.eng.spagobi.commons.constants.CommunityFunctionalityConstants;
 import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.container.ObjectUtils;
 import it.eng.spagobi.services.proxy.DataSetServiceProxy;
@@ -109,7 +109,7 @@ public class DataSetUtilities {
 	public static boolean isAdministrator(IEngUserProfile profile) {
 		Assert.assertNotNull(profile, "Object in input is null");
 		try {
-			if (profile.isAbleToExecuteAction(SpagoBIConstants.DOCUMENT_MANAGEMENT_ADMIN)) {
+			if (profile.isAbleToExecuteAction(CommunityFunctionalityConstants.DOCUMENT_MANAGEMENT_ADMIN)) {
 				return true;
 			} else {
 				return false;

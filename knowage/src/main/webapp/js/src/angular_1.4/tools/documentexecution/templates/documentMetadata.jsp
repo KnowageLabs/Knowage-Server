@@ -1,5 +1,6 @@
 <%@ page language="java" pageEncoding="UTF-8" session="true"%>
 <%@ page import="it.eng.spagobi.commons.constants.SpagoBIConstants"%>
+<%@ page import="it.eng.spagobi.commons.constants.CommunityFunctionalityConstants"%>
 
 <%-- ---------------------------------------------------------------------- --%>
 <%-- JAVA IMPORTS															--%>
@@ -12,7 +13,7 @@
 	<%@include file="/WEB-INF/jsp/commons/angular/angularImport.jsp"%>
 
   <% boolean canModify = false;
- 	 if (userProfile.isAbleToExecuteAction(SpagoBIConstants.SAVE_METADATA_FUNCTIONALITY)) {
+ 	 if (userProfile.isAbleToExecuteAction(CommunityFunctionalityConstants.SAVE_METADATA_FUNCTIONALITY)) {
  			canModify = true;
   
   } %>
@@ -74,7 +75,7 @@
 		  	<md-button class="md-raised" ng-click="metadataDlgCtrl.close()">
 				{{::metadataDlgCtrl.translate.load('sbi.general.close')}}
 			</md-button>
-	    	<% if (userProfile.isAbleToExecuteAction(SpagoBIConstants.SAVE_METADATA_FUNCTIONALITY)) { %>
+	    	<% if (userProfile.isAbleToExecuteAction(CommunityFunctionalityConstants.SAVE_METADATA_FUNCTIONALITY)) { %>
 			     <md-button aria-label="{{::metadataDlgCtrl.lblSave}}" class="md-primary md-raised" 
 					ng-click="metadataDlgCtrl.save()">
 					{{::metadataDlgCtrl.lblSave}}

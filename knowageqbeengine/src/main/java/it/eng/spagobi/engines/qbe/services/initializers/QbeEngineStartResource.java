@@ -46,6 +46,7 @@ import it.eng.qbe.dataset.FederationUtils;
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.base.SourceBeanException;
 import it.eng.spagobi.commons.bo.UserProfile;
+import it.eng.spagobi.commons.constants.CommunityFunctionalityConstants;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.engines.qbe.QbeEngine;
@@ -117,7 +118,7 @@ public class QbeEngineStartResource extends AbstractQbeEngineResource {
 
 				RegistryConfiguration registryConf = qbeEngineInstance.getRegistryConfiguration();
 				if (registryConf != null) {
-					if (!getUserProfile().isAbleToExecuteAction(SpagoBIConstants.REGISTRY_DATA_ENTRY)) {
+					if (!getUserProfile().isAbleToExecuteAction(CommunityFunctionalityConstants.REGISTRY_DATA_ENTRY)) {
 						throw new SpagoBIRuntimeException("It is not allowed to use the Registry document.");
 					}
 					logger.debug("Registry document");

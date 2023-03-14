@@ -24,7 +24,7 @@ import it.eng.spago.base.ResponseContainer;
 import it.eng.spago.base.SessionContainer;
 import it.eng.spago.error.EMFInternalError;
 import it.eng.spago.security.IEngUserProfile;
-import it.eng.spagobi.commons.constants.SpagoBIConstants;
+import it.eng.spagobi.commons.constants.CommunityFunctionalityConstants;
 import it.eng.spagobi.commons.utilities.ChannelUtilities;
 import it.eng.spagobi.commons.utilities.GeneralUtilities;
 import it.eng.spagobi.commons.utilities.messages.IMessageBuilder;
@@ -81,7 +81,7 @@ public class DatasetWizardTag  extends TagSupport {
 			
 			boolean isable = false;
 			try {
-				isable = userProfile.isAbleToExecuteAction(SpagoBIConstants.LOVS_MANAGEMENT);
+				isable = userProfile.isAbleToExecuteAction(CommunityFunctionalityConstants.LOVS_MANAGEMENT);
 			} catch (EMFInternalError e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

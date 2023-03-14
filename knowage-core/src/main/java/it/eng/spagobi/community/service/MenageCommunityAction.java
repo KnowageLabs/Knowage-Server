@@ -41,6 +41,7 @@ import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.analiticalmodel.functionalitytree.bo.LowFunctionality;
 import it.eng.spagobi.commons.bo.UserProfile;
+import it.eng.spagobi.commons.constants.CommunityFunctionalityConstants;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.utilities.ChannelUtilities;
@@ -124,7 +125,7 @@ public class MenageCommunityAction {
 	@GET
 	@Path("/user")
 	@Produces(MediaType.APPLICATION_JSON)
-	@UserConstraint(functionalities = { SpagoBIConstants.USER_SAVE_DOCUMENT_FUNCTIONALITY })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.USER_SAVE_DOCUMENT_FUNCTIONALITY })
 	public String getCommunity(@Context HttpServletRequest req) {
 		ISbiCommunityDAO commDao = null;
 		List<SbiCommunity> communities;

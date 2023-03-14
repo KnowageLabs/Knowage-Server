@@ -19,6 +19,7 @@ package it.eng.spagobi.sdk.datasets.impl;
 
 import it.eng.qbe.dataset.QbeDataSet;
 import it.eng.spago.security.IEngUserProfile;
+import it.eng.spagobi.commons.constants.CommunityFunctionalityConstants;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.sdk.AbstractSDKService;
@@ -62,7 +63,7 @@ public class DataSetsSDKServiceImpl extends AbstractSDKService implements DataSe
 		this.setTenant();
 
 		try {
-			super.checkUserPermissionForFunctionality(SpagoBIConstants.DATASET_MANAGEMENT, "User cannot see datasets congifuration.");
+			super.checkUserPermissionForFunctionality(CommunityFunctionalityConstants.DATASET_MANAGEMENT, "User cannot see datasets congifuration.");
 			if (dataSetId == null) {
 				logger.warn("DataSet identifier in input is null!");
 				return null;
@@ -98,7 +99,7 @@ public class DataSetsSDKServiceImpl extends AbstractSDKService implements DataSe
 		this.setTenant();
 
 		try {
-			super.checkUserPermissionForFunctionality(SpagoBIConstants.DATASET_MANAGEMENT, "User cannot see datasets congifuration.");
+			super.checkUserPermissionForFunctionality(CommunityFunctionalityConstants.DATASET_MANAGEMENT, "User cannot see datasets congifuration.");
 
 			IDataSetDAO dao = DAOFactory.getDataSetDAO();
 			dao.setUserProfile(getUserProfile());
@@ -133,7 +134,7 @@ public class DataSetsSDKServiceImpl extends AbstractSDKService implements DataSe
 		this.setTenant();
 
 		try {
-			super.checkUserPermissionForFunctionality(SpagoBIConstants.DATASET_MANAGEMENT, "User cannot see datasets congifuration.");
+			super.checkUserPermissionForFunctionality(CommunityFunctionalityConstants.DATASET_MANAGEMENT, "User cannot see datasets congifuration.");
 			if (sdkDataSet == null) {
 				logger.warn("SDKDataSet in input is null!");
 				return null;
@@ -228,7 +229,7 @@ public class DataSetsSDKServiceImpl extends AbstractSDKService implements DataSe
 
 		try {
 			IEngUserProfile profile = getUserProfile();
-			super.checkUserPermissionForFunctionality(SpagoBIConstants.DATASET_MANAGEMENT, "User cannot see datasets congifuration.");
+			super.checkUserPermissionForFunctionality(CommunityFunctionalityConstants.DATASET_MANAGEMENT, "User cannot see datasets congifuration.");
 			if (sdkDataSet == null) {
 				logger.warn("SDKDataSet in input is null!");
 				return null;
@@ -303,7 +304,7 @@ public class DataSetsSDKServiceImpl extends AbstractSDKService implements DataSe
 		this.setTenant();
 
 		try {
-			super.checkUserPermissionForFunctionality(SpagoBIConstants.DATASET_MANAGEMENT, "User cannot see datasets congifuration.");
+			super.checkUserPermissionForFunctionality(CommunityFunctionalityConstants.DATASET_MANAGEMENT, "User cannot see datasets congifuration.");
 			if (label == null) {
 				logger.warn("DataSet identifier in input is null!");
 				return null;

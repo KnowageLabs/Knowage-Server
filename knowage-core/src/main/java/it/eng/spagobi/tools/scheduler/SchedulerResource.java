@@ -14,7 +14,7 @@ import org.json.JSONObject;
 
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.api.AbstractSpagoBIResource;
-import it.eng.spagobi.commons.constants.SpagoBIConstants;
+import it.eng.spagobi.commons.constants.CommunityFunctionalityConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.utilities.AuditLogUtilities;
 import it.eng.spagobi.services.exceptions.ExceptionUtilities;
@@ -41,7 +41,7 @@ public class SchedulerResource extends AbstractSpagoBIResource {
 	@POST
 	@Path("/pauseTrigger")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
-	@UserConstraint(functionalities = { SpagoBIConstants.SCHEDULER_MANAGEMENT })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.SCHEDULER_MANAGEMENT })
 	public String pauseTrigger(@Context HttpServletRequest req) {
 		IEngUserProfile profile = (IEngUserProfile) req.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
 		HashMap<String, String> logParam = new HashMap<String, String>();
@@ -84,7 +84,7 @@ public class SchedulerResource extends AbstractSpagoBIResource {
 	@POST
 	@Path("/resumeTrigger")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
-	@UserConstraint(functionalities = { SpagoBIConstants.SCHEDULER_MANAGEMENT, SpagoBIConstants.KPI_SCHEDULATION })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.SCHEDULER_MANAGEMENT, CommunityFunctionalityConstants.KPI_SCHEDULATION })
 	public String resumeTrigger(@Context HttpServletRequest req) {
 		IEngUserProfile profile = (IEngUserProfile) req.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
 		HashMap<String, String> logParam = new HashMap<String, String>();

@@ -25,7 +25,7 @@ import javax.ws.rs.core.MediaType;
 import org.apache.log4j.Logger;
 import org.json.JSONObject;
 
-import it.eng.spagobi.commons.constants.SpagoBIConstants;
+import it.eng.spagobi.commons.constants.CommunityFunctionalityConstants;
 import it.eng.spagobi.engine.chart.ChartEngine;
 import it.eng.spagobi.engine.chart.api.AbstractChartEngineResource;
 import it.eng.spagobi.services.rest.annotations.UserConstraint;
@@ -39,7 +39,7 @@ public class EngineResource extends AbstractChartEngineResource {
 	@GET
 	@Path("/")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
-	@UserConstraint(functionalities = { SpagoBIConstants.CREATE_COCKPIT_FUNCTIONALITY })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.CREATE_COCKPIT_FUNCTIONALITY })
 	public String getEngine() {
 
 		logger.debug("IN");
@@ -55,7 +55,7 @@ public class EngineResource extends AbstractChartEngineResource {
 	@GET
 	@Path("/ping")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
-	@UserConstraint(functionalities = { SpagoBIConstants.CREATE_COCKPIT_FUNCTIONALITY })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.CREATE_COCKPIT_FUNCTIONALITY })
 	public String ping() {
 		return "ok";
 

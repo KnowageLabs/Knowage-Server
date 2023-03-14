@@ -22,6 +22,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         pageEncoding="UTF-8" %>
          
 <%@page import="it.eng.spagobi.commons.constants.SpagoBIConstants"%>
+<%@page import="it.eng.spagobi.commons.constants.CommunityFunctionalityConstants"%>
 <%@page import="it.eng.spagobi.commons.utilities.urls.UrlBuilderFactory"%>
 <%@page import="it.eng.spago.base.RequestContainer"%>
 <%@page import="java.util.Map"%>
@@ -45,7 +46,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	listFeatUrlPars.put("PAGE", "ListFeaturesPage");
 	String listFeatUrl = urlBuilder.getUrl(request, listFeatUrlPars);
 %>
-<% if (userProfile.isAbleToExecuteAction(SpagoBIConstants.MAPCATALOGUE_MANAGEMENT)) {%>
+<% if (userProfile.isAbleToExecuteAction(CommunityFunctionalityConstants.MAPCATALOGUE_MANAGEMENT)) {%>
 
 <portlet:defineObjects/>
 

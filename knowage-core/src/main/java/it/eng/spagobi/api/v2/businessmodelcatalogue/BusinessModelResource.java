@@ -52,7 +52,7 @@ import it.eng.spagobi.commons.bo.Domain;
 import it.eng.spagobi.commons.bo.Role;
 import it.eng.spagobi.commons.bo.RoleMetaModelCategory;
 import it.eng.spagobi.commons.bo.UserProfile;
-import it.eng.spagobi.commons.constants.SpagoBIConstants;
+import it.eng.spagobi.commons.constants.CommunityFunctionalityConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.dao.ICategoryDAO;
 import it.eng.spagobi.commons.dao.IDomainDAO;
@@ -98,7 +98,7 @@ public class BusinessModelResource extends AbstractSpagoBIResource {
 		IMetaModelsDAO businessModelsDAO = DAOFactory.getMetaModelsDAO();
 		businessModelsDAO.setUserProfile(getUserProfile());
 		try {
-			if (getUserProfile().getFunctionalities().contains(SpagoBIConstants.META_MODELS_CATALOGUE_MANAGEMENT)) {
+			if (getUserProfile().getFunctionalities().contains(CommunityFunctionalityConstants.META_MODELS_CATALOGUE_MANAGEMENT)) {
 				businessModelList = businessModelsDAO.loadAllMetaModels();
 			} else {
 				IRoleDAO roleDao = DAOFactory.getRoleDAO();
@@ -298,7 +298,7 @@ public class BusinessModelResource extends AbstractSpagoBIResource {
 	 **/
 	@POST
 	@Path("/{bmId}/versions")
-	@UserConstraint(functionalities = { SpagoBIConstants.META_MODELS_CATALOGUE_MANAGEMENT })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.META_MODELS_CATALOGUE_MANAGEMENT })
 	@Consumes(MediaType.MULTIPART_FORM_DATA)
 	public Response uploadFile(MultiPartBody body, @PathParam("bmId") int bmId) {
 

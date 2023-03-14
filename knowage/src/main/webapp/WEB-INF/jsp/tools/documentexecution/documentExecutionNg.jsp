@@ -138,8 +138,8 @@ boolean isAdmin = UserUtilities.isAdministrator(userProfile);
 boolean isSuperAdmin = (Boolean)((UserProfile)userProfile).getIsSuperadmin();
         
 // author: danristo
-boolean isAbleToExecuteAction = userProfile.isAbleToExecuteAction(SpagoBIConstants.SEE_SNAPSHOTS_FUNCTIONALITY);
-boolean isAbleToExecuteActionSnapshot = userProfile.isAbleToExecuteAction(SpagoBIConstants.RUN_SNAPSHOTS_FUNCTIONALITY);
+boolean isAbleToExecuteAction = userProfile.isAbleToExecuteAction(CommunityFunctionalityConstants.SEE_SNAPSHOTS_FUNCTIONALITY);
+boolean isAbleToExecuteActionSnapshot = userProfile.isAbleToExecuteAction(CommunityFunctionalityConstants.RUN_SNAPSHOTS_FUNCTIONALITY);
 
 %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
@@ -340,7 +340,7 @@ if(executionRoleNames.size() > 0 && canExecuteDocument) {
                                     </md-menu>
                                 </md-menu-item>
                           
-                                <% if (userProfile.isAbleToExecuteAction(SpagoBIConstants.SEND_MAIL_FUNCTIONALITY)
+                                <% if (userProfile.isAbleToExecuteAction(CommunityFunctionalityConstants.SEND_MAIL_FUNCTIONALITY)
                                         &&  obj.getBiObjectTypeCode().equals("REPORT")) { %>
                                 <md-menu-item class="md-indent">
                                     <md-icon class="fa fa-paper-plane"></md-icon>
@@ -351,7 +351,7 @@ if(executionRoleNames.size() > 0 && canExecuteDocument) {
                                 <%} %>
                           
                                 <span class="divider" ng-if="showCollaborationMenu">{{translate.load("sbi.generic.info")}}</span>
-                                <% if (userProfile.isAbleToExecuteAction(SpagoBIConstants.SEE_METADATA_FUNCTIONALITY)) { %>
+                                <% if (userProfile.isAbleToExecuteAction(CommunityFunctionalityConstants.SEE_METADATA_FUNCTIONALITY)) { %>
                                 <md-menu-item class="md-indent" ng-if="showCollaborationMenu">
                                     <md-icon class="fa fa-info-circle"></md-icon>
                                     <md-button ng-click="openInfoMetadata()">{{translate.load("sbi.execution.executionpage.toolbar.metadata")}}</md-button>
@@ -363,7 +363,7 @@ if(executionRoleNames.size() > 0 && canExecuteDocument) {
                                         ng-click="rankDocument()">{{translate.load('sbi.execution.executionpage.toolbar.rating')}}
                                     </md-button>
                                 </md-menu-item>
-                                <% if (userProfile.isAbleToExecuteAction(SpagoBIConstants.SEE_NOTES_FUNCTIONALITY)) { %>
+                                <% if (userProfile.isAbleToExecuteAction(CommunityFunctionalityConstants.SEE_NOTES_FUNCTIONALITY)) { %>
                                 <md-menu-item class="md-indent" ng-if="showCollaborationMenu">
                                     <md-icon class="fa fa-sticky-note-o"></md-icon>
                                     <md-button aria-label="{{translate.load('sbi.execution.executionpage.toolbar.annotate')}}" class="toolbar-button-custom"
