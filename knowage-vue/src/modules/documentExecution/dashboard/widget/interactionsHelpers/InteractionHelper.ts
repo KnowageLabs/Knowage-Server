@@ -13,10 +13,20 @@ export const loadAssociativeSelections = async (model: IDashboard, datasets: IDa
 }
 
 export const updateStoreSelections = (newSelection: ISelection, currentActiveSelections: ISelection[], dashboardId: string, updateSelectionFunction: Function, $http: any) => {
-    const index = currentActiveSelections.findIndex((activeSelection: ISelection) => activeSelection.datasetId === newSelection.datasetId && activeSelection.columnName === newSelection.columnName)
-    index !== -1 ? currentActiveSelections[index] = newSelection : currentActiveSelections.push(newSelection)
+    updateActiveSelections(newSelection, currentActiveSelections)
     updateSelectionFunction(dashboardId, currentActiveSelections, $http)
 }
+
+export const updateAllStoreSelections = (newSelections: ISelection[], currentActiveSelections: ISelection[], dashboardId: string, updateSelectionFunction: Function, $http: any) => {
+    newSelections.forEach((newSelection: ISelection) => updateActiveSelections(newSelection, currentActiveSelections))
+    updateSelectionFunction(dashboardId, currentActiveSelections, $http)
+}
+
+const updateActiveSelections = (newSelection: ISelection, currentActiveSelections: ISelection[],) => {
+    const index = currentActiveSelections.findIndex((activeSelection: ISelection) => activeSelection.datasetId === newSelection.datasetId && activeSelection.columnName === newSelection.columnName)
+    index !== -1 ? currentActiveSelections[index] = newSelection : currentActiveSelections.push(newSelection)
+}
+
 
 export const executeCrossNavigation = (documentCrossNavigationOutputParameters: ICrossNavigationParameter[], crossNavigationName: string | undefined) => {
     const payload = { documentCrossNavigationOutputParameters: documentCrossNavigationOutputParameters, crossNavigationName: crossNavigationName }
