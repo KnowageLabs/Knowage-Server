@@ -17,16 +17,32 @@
                     >
                     </WidgetEditorColumnsMultiselect>
                 </div>
-                <div class="p-col-12 p-md-2 p-d-flex p-flex-column">
+                <div class="p-col-12 p-md-6 p-d-flex p-flex-column p-p-2">
+                    <label class="kn-material-input-label p-mr-2">{{ $t('common.type') }}</label>
+                    <Dropdown v-model="visualizationType.type" class="kn-material-input" :options="descriptor.visualizationTypes" option-value="value" :disabled="visualizationTypeDisabled">
+                        <template #value="slotProps">
+                            <div>
+                                <span>{{ getTranslatedLabel(slotProps.value, descriptor.visualizationTypes, $t) }}</span>
+                            </div>
+                        </template>
+                        <template #option="slotProps">
+                            <div>
+                                <span>{{ $t(slotProps.option.label) }}</span>
+                            </div>
+                        </template>
+                    </Dropdown>
+                </div>
+                <div class="p-col-12 p-md-4 p-d-flex p-flex-column">
                     <label class="kn-material-input-label p-mr-2">{{ $t('dashboard.widgetEditor.prefix') }}</label>
                     <InputText v-model="visualizationType.prefix" class="kn-material-input p-inputtext-sm" :disabled="visualizationTypeDisabled" />
                 </div>
-                <div class="p-col-12 p-md-2 p-d-flex p-flex-column">
+                <div class="p-col-12 p-md-4 p-d-flex p-flex-column">
                     <label class="kn-material-input-label p-mr-2">{{ $t('dashboard.widgetEditor.suffix') }}</label>
                     <InputText v-model="visualizationType.suffix" class="kn-material-input p-inputtext-sm" :disabled="visualizationTypeDisabled" />
                 </div>
-                <div class="p-col-11 p-md-1 style-toolbar-container p-pt-4">
-                    <WidgetEditorStyleToolbar :options="descriptor.styleToolbarVisualizationTypeOptions" :prop-model="{ icon: visualizationType.icon }" :disabled="visualizationTypeDisabled" @change="onStyleToolbarChange($event, visualizationType)"></WidgetEditorStyleToolbar>
+                <div class="p-col-12 p-md-3 p-d-flex p-flex-column">
+                    <label class="kn-material-input-label">{{ $t('dashboard.widgetEditor.precision') }}</label>
+                    <InputNumber v-model="visualizationType.precision" class="kn-material-input p-inputtext-sm" :disabled="visualizationTypeDisabled" />
                 </div>
                 <div class="p-col-1 p-d-flex p-flex-column p-jc-center p-ai-center">
                     <i :class="[index === 0 ? 'pi pi-plus-circle' : 'pi pi-trash', visualizationTypeDisabled ? 'icon-disabled' : '']" class="kn-cursor-pointer p-ml-2" @click="index === 0 ? addVisualizationType() : removeVisualizationType(index)"></i>
@@ -38,24 +54,26 @@
 
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
-import { IWidget, IWidgetColumn, IWidgetStyleToolbarModel } from '@/modules/documentExecution/dashboard/Dashboard'
+import { IWidget, IWidgetColumn } from '@/modules/documentExecution/dashboard/Dashboard'
 import { IPivotTableWidgetVisualizationType, IPivotTableWidgetVisualizationTypes } from '@/modules/documentExecution/dashboard/interfaces/pivotTable/DashboardPivotTableWidget'
 import { emitter } from '@/modules/documentExecution/dashboard/DashboardHelpers'
+import { getTranslatedLabel } from '@/helpers/commons/dropdownHelper'
 import descriptor from '../PivotTableSettingsDescriptor.json'
+import InputNumber from 'primevue/inputnumber'
 import Dropdown from 'primevue/dropdown'
 import WidgetEditorColumnsMultiselect from '../../common/WidgetEditorColumnsMultiselect.vue'
-import WidgetEditorStyleToolbar from '../../common/styleToolbar/WidgetEditorStyleToolbar.vue'
 
 export default defineComponent({
     name: 'pivot-table-widget-visualization-type',
-    components: { Dropdown, WidgetEditorColumnsMultiselect, WidgetEditorStyleToolbar },
+    components: { InputNumber, Dropdown, WidgetEditorColumnsMultiselect },
     props: { widgetModel: { type: Object as PropType<IWidget>, required: true } },
     data() {
         return {
             descriptor,
             visualizationTypeModel: null as IPivotTableWidgetVisualizationTypes | null,
             availableColumnOptions: [] as (IWidgetColumn | { id: string; alias: string })[],
-            widgetColumnsAliasMap: {} as any
+            widgetColumnsAliasMap: {} as any,
+            getTranslatedLabel
         }
     },
     computed: {
@@ -119,11 +137,8 @@ export default defineComponent({
                 if (index !== -1) this.availableColumnOptions.splice(index, 1)
             })
         },
-        onStyleToolbarChange(model: IWidgetStyleToolbarModel, visualizationType: IPivotTableWidgetVisualizationType) {
-            if (model && model.icon) visualizationType.icon = model.icon
-        },
         addVisualizationType() {
-            if (this.visualizationTypeModel && !this.visualizationTypeDisabled) this.visualizationTypeModel.types.push({ target: [], prefix: '', suffix: '', icon: '' })
+            if (this.visualizationTypeModel && !this.visualizationTypeDisabled) this.visualizationTypeModel.types.push({ target: [], prefix: '', suffix: '', type: 'Text', precision: 2 })
         },
         removeVisualizationType(index: number) {
             if (!this.visualizationTypeModel || this.visualizationTypeDisabled) return

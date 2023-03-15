@@ -105,10 +105,11 @@
             "enabled": false,
             "types": [
                 {
-                    "icon": "",
+                    "precision": 2,
                     "prefix": "",
                     "suffix": "",
-                    "target": "all"
+                    "target": "all",
+                    "type": "Text"
                 }
             ]
         }

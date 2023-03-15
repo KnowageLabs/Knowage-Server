@@ -200,5 +200,19 @@
         {
             "type": "icon"
         }
+    ],
+    "visualizationTypes": [
+        {
+            "label": "common.text",
+            "value": "Text"
+        },
+        {
+            "label": "common.icon",
+            "value": "Icon only"
+        },
+        {
+            "label": "dashboard.widgetEditor.visualizationType.textAndIcon",
+            "value": "Text/Icon"
+        }
     ]
 }

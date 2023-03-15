@@ -24,7 +24,8 @@ const addVisualisationTypeMeasureColumn = (formattedWidget: IWidget, tempColumn:
         target: [getColumnId(tempColumn.id)],
         prefix: tempColumn.style?.prefix ?? '',
         suffix: tempColumn.style?.suffix,
-        icon: ''
+        type: tempColumn.visType ?? 'Text',
+        precision: tempColumn.style?.precision !== undefined ? tempColumn.style.precision : 2
     } as IPivotTableWidgetVisualizationType
 
     formattedWidget.settings.visualization.visualizationTypes.types.push(tempVisualizationType)

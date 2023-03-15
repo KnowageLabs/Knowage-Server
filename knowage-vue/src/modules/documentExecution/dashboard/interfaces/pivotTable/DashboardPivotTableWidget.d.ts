@@ -29,7 +29,8 @@ export interface IPivotTableWidgetVisualizationType {
     target: string | string[]
     prefix: string
     suffix: string,
-    icon: string
+    precision: number,
+    type: string
 }
 
 export interface IPivotTableWidgetConditionalStyle {
