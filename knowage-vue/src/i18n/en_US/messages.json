@@ -370,13 +370,14 @@
             "datasetDriversWarningMsg2": " datasets were not added!",
             "duplicateAssociationsMsg": "Association already exists!",
             "dynamic": "Dynamic",
-            "emptyAssociationError": "Association cannot be empty!",
+            "emptyAssociationError": "You must have at least 2 fields selected to create association.",
             "indexHint": "Indexes will be created on single selected columns.",
             "indexPresentMsg": "Index already exists!",
             "indexesTitle": "Indexes",
             "selectDatasets": "Select Datasets",
             "static": "Static",
-            "title": "Dataset Manageent"
+            "title": "Dataset Management",
+            "pendingChanges": "You have unsaved changes, are you sure you want to exit the editor?"
         },
         "generalSettings": {
             "attribute": "Attribute",
