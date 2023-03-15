@@ -69,21 +69,6 @@ export interface IPivotTableStyle {
     shadows: IWidgetShadowsStyle
     totals: IPivotTotal
     subTotals: IPivotTotal
-    columnHeaders: IPivotTableColumnHeadersStyle,
-    rowHeaders: IPivotTableColumnHeadersStyle
-}
-
-export interface IPivotTableColumnHeadersStyle {
-    enabled: boolean,
-    properties: {
-        "background-color": string,
-        color: string,
-        "font-family": string,
-        "font-size": string,
-        "font-style": string,
-        "font-weight": string,
-        "text-align": string
-    }
 }
 
 export interface IPivotFields {

@@ -30,9 +30,7 @@ export const createNewPivotTableWidgetSettings = () => {
             padding: widgetCommonDefaultValues.getDefaultPaddingStyle(),
             shadows: widgetCommonDefaultValues.getDefaultShadowsStyle(),
             totals: pivotTableDefaultValues.getDefaultTotals(),
-            subTotals: pivotTableDefaultValues.getDefaultTotals(),
-            columnHeaders: pivotTableDefaultValues.getDefaultColumnHeadersStyle(),
-            rowHeaders: pivotTableDefaultValues.getDefaultColumnHeadersStyle()
+            subTotals: pivotTableDefaultValues.getDefaultTotals()
         },
         responsive: widgetCommonDefaultValues.getDefaultResponsivnes(),
         tooltips: pivotTableDefaultValues.getDefaultTooltips()
