@@ -43,6 +43,8 @@ public interface ICategoryDAO extends ISpagoBIDao {
 
 	List<SbiCategory> getCategories(String type);
 
+	List<SbiCategory> getCategories();
+
 	SbiCategory getCategory(int id);
 
 	SbiCategory getCategory(Session aSession, int id);

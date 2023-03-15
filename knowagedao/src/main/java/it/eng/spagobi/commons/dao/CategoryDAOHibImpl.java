@@ -59,6 +59,22 @@ public class CategoryDAOHibImpl extends AbstractHibernateDAO implements ICategor
 	}
 
 	@Override
+	public List<SbiCategory> getCategories() {
+
+		Session aSession = null;
+
+		aSession = getSession();
+
+		Criteria criteria = aSession.createCriteria(SbiCategory.class);
+
+		Order orderOnName = Order.asc("name");
+
+		criteria.addOrder(orderOnName);
+
+		return criteria.list();
+	}
+
+	@Override
 	public SbiCategory getCategory(int id) {
 
 		Session aSession = null;

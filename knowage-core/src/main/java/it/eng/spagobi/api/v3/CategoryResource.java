@@ -21,26 +21,37 @@
  */
 package it.eng.spagobi.api.v3;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
+import org.apache.log4j.LogMF;
 import org.apache.log4j.Logger;
 
 import it.eng.spagobi.api.AbstractSpagoBIResource;
 import it.eng.spagobi.commons.bo.Domain;
 import it.eng.spagobi.commons.bo.UserProfile;
+import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.dao.ICategoryDAO;
+import it.eng.spagobi.commons.dao.dto.SbiCategory;
+import it.eng.spagobi.services.rest.annotations.UserConstraint;
 import it.eng.spagobi.user.UserProfileManager;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
+import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 
 /**
  * @author albnale
@@ -74,6 +85,109 @@ public class CategoryResource extends AbstractSpagoBIResource {
 			logger.debug("OUT");
 		}
 		return categories;
+	}
+
+	@GET
+	@Path("/")
+	@Produces(MediaType.APPLICATION_JSON)
+	@UserConstraint(functionalities = { SpagoBIConstants.SELF_SERVICE_DATASET_MANAGEMENT })
+	public List<SbiCategory> getCategories() {
+		logger.debug("IN");
+		ICategoryDAO categoryDAO = null;
+		final UserProfile userProfile = getUserProfile();
+		List<SbiCategory> listToReturn = new ArrayList<SbiCategory>();
+		try {
+			categoryDAO = DAOFactory.getCategoryDAO();
+			categoryDAO.setUserProfile(getUserProfile());
+			listToReturn = categoryDAO.getCategories().stream().collect(Collectors.toList());
+		} catch (Exception ex) {
+			LogMF.error(logger, "Cannot get available categories for user {0}", new Object[] { userProfile.getUserName() });
+			throw new SpagoBIServiceException(this.request.getPathInfo(), "An unexpected error occured while executing service", ex);
+		} finally {
+			logger.debug("OUT");
+		}
+
+		return listToReturn;
+	}
+
+	@GET
+	@Path("/{id}")
+	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
+	public SbiCategory getCategoryById(@PathParam("id") Integer sbiCategoryId) {
+		logger.debug("IN");
+		ICategoryDAO categoryDAO = null;
+		SbiCategory toReturn = null;
+		try {
+			categoryDAO = DAOFactory.getCategoryDAO();
+			categoryDAO.setUserProfile(getUserProfile());
+			toReturn = categoryDAO.getCategory(sbiCategoryId);
+		} catch (Exception e) {
+			throw new SpagoBIServiceException("Error getting category with id " + sbiCategoryId, e);
+		} finally {
+			logger.debug("OUT");
+		}
+		return toReturn;
+
+	}
+
+	@POST
+	@Path("/")
+	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
+	public SbiCategory categoryCreate(@Valid SbiCategory sbiCategory) {
+		logger.debug("IN");
+		ICategoryDAO categoryDAO = null;
+		try {
+			categoryDAO = DAOFactory.getCategoryDAO();
+			categoryDAO.setUserProfile(getUserProfile());
+			categoryDAO.create(sbiCategory);
+		} catch (Exception e) {
+			throw new SpagoBIServiceException("Cannot create sbiCategory " + Optional.ofNullable(sbiCategory).map(SbiCategory::getName).orElse("null"), e);
+		} finally {
+			logger.debug("OUT");
+		}
+		return sbiCategory;
+
+	}
+
+	@POST
+	@Path("/{id}")
+	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
+	public SbiCategory categoryUpdate(@Valid SbiCategory newSbiCategory) {
+
+		logger.debug("IN");
+		ICategoryDAO categoryDAO = null;
+		try {
+			categoryDAO = DAOFactory.getCategoryDAO();
+			categoryDAO.setUserProfile(getUserProfile());
+			categoryDAO.update(newSbiCategory);
+		} catch (Exception e) {
+			throw new SpagoBIServiceException("Error updating SbiCategory with id " + String.valueOf(newSbiCategory.getId()), e);
+		} finally {
+			logger.debug("OUT");
+		}
+		return newSbiCategory;
+
+	}
+
+	@DELETE
+	@Path("/{id}")
+	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
+	public Response categoryDelete(@Valid SbiCategory newSbiCategory) {
+		Response response = null;
+		logger.debug("IN");
+		ICategoryDAO categoryDAO = null;
+		try {
+			categoryDAO = DAOFactory.getCategoryDAO();
+			categoryDAO.setUserProfile(getUserProfile());
+			categoryDAO.delete(newSbiCategory);
+			response = Response.status(Response.Status.OK).build();
+		} catch (Exception e) {
+			throw new SpagoBIServiceException("Error deleting SbiCategory with id " + String.valueOf(newSbiCategory.getId()), e);
+		} finally {
+			logger.debug("OUT");
+		}
+		return response;
+
 	}
 
 	@Override
