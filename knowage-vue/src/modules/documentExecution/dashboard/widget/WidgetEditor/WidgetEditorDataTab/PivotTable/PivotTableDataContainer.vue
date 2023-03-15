@@ -1,6 +1,5 @@
 <template>
     <div v-if="widgetModel" class="p-grid">
-        {{ widgetModel.fields }}
         <FieldTable
             v-for="(field, index) in widgetModel.fields"
             :key="index"

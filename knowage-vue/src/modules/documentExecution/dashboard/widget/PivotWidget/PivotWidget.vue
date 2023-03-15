@@ -188,7 +188,7 @@ export default defineComponent({
         setCellConfiguration(event) {
             this.setTotals(event)
             this.setFieldCellConfiguration(event)
-            this.setHeaderStyles(event) //TODO: Does it need to exist now that we can target specific fields?
+            // this.setHeaderStyles(event) //TODO: Does it need to exist now that we can target specific fields?
             this.setTooltips(event)
         },
 
