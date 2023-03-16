@@ -10,7 +10,6 @@
 <script lang="ts">
 import { emitter } from '../../DashboardHelpers'
 import { DxPivotGrid, DxFieldChooser, DxFieldPanel } from 'devextreme-vue/pivot-grid'
-import Tooltip from 'devextreme/ui/tooltip'
 import PivotGridDataSource from 'devextreme/ui/pivot_grid/data_source'
 import { IDataset, ISelection, IWidget, ITableWidgetColumnStyles, ITableWidgetConditionalStyles, ITableWidgetVisualizationTypes } from '../../Dashboard'
 import { defineComponent, PropType } from 'vue'
@@ -296,11 +295,11 @@ export default defineComponent({
             if (cellEvent.area == 'data' || (cellEvent.area == 'column' && cellEvent.cell.dataIndex >= 0)) {
                 return this.pivotFields.values[cellEvent.cell.dataIndex]
             }
-            if (cellEvent.area == 'column' && !cellEvent.cell.dataIndex) {
+            if (cellEvent.area == 'column' && !cellEvent.cell.dataIndex && cellEvent.cell.path) {
                 const fieldIndex = cellEvent.cell.path.findIndex((pathElement) => pathElement == cellEvent.cell.text)
                 return this.pivotFields.columns[fieldIndex]
             }
-            if (cellEvent.area == 'row' && !cellEvent.cell.dataIndex) {
+            if (cellEvent.area == 'row' && !cellEvent.cell.dataIndex && cellEvent.cell.path) {
                 const fieldIndex = cellEvent.cell.path.findIndex((pathElement) => pathElement == cellEvent.cell.text)
                 return this.pivotFields.rows[fieldIndex]
             }
