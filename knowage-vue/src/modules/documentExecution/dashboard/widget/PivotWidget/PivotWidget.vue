@@ -271,18 +271,22 @@ export default defineComponent({
 
             //Visualization
             const visualizationTypes = this.propWidget.settings.visualization.visualizationTypes as ITableWidgetVisualizationTypes
+            let showVisualizationIcon = null as any
             if (cellEvent.area == 'data' && visualizationTypes.enabled) {
                 const cellVisualization = this.getFieldVisualization(parentField, visualizationTypes)
-                if (cellVisualization && cellEvent.cell.text) cellEvent.cellElement.textContent = `${cellVisualization.prefix ?? ''} ${cellEvent.cell.text} ${cellVisualization.suffix ?? ''}`
-                if (cellVisualization && cellVisualization.icon) cellEvent.cellElement.innerHTML += `<i class="${cellVisualization.icon} p-ml-1"/>`
+                if (cellVisualization && cellEvent.cell.text) cellEvent.cellElement.innerHTML = `<span class="prefix">${cellVisualization.prefix ?? ''}</span><span class="cellText">${cellEvent.cell.text}</span><span class="suffix">${cellVisualization.suffix ?? ''}<span/>`
+                if (cellVisualization.type === 'Icon only' || cellVisualization.type === 'Text/Icon') showVisualizationIcon = cellVisualization.type
             }
 
             //Conditional Styles
             const conditionalStyles = this.propWidget.settings.conditionalStyles as ITableWidgetConditionalStyles
             if (cellEvent.area == 'data' && conditionalStyles.enabled) {
-                const cellConditionalStyle = getColumnConditionalStyles(this.propWidget, parentField?.id, cellEvent.cell.text)
+                const cellConditionalStyle = getColumnConditionalStyles(this.propWidget, parentField?.id, cellEvent.cell.value)
                 if (cellConditionalStyle) cellStyleString = stringifyStyleProperties(cellConditionalStyle)
-                if (cellConditionalStyle && cellConditionalStyle.icon) cellEvent.cellElement.innerHTML += `<i class="${cellConditionalStyle.icon} p-ml-1"/>`
+                if (cellConditionalStyle && cellConditionalStyle.icon && showVisualizationIcon) {
+                    cellEvent.cellElement.querySelector('.cellText').insertAdjacentHTML('afterend', `<i class="${cellConditionalStyle.icon} p-ml-1"/>`)
+                    if (showVisualizationIcon === 'Icon only') console.log(cellEvent.cellElement.querySelector('.cellText').remove())
+                }
             }
 
             cellEvent.cellElement.style = cellStyleString
