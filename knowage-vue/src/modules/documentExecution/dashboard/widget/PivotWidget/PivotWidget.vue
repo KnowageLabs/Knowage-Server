@@ -23,6 +23,7 @@ import { IPivotTooltips } from '../../interfaces/pivotTable/DashboardPivotTableW
 import { getFormattedClickedValueForCrossNavigation, createPivotTableSelection } from './PivotWidgetHelpers'
 import { updateStoreSelections, executePivotTableWidgetCrossNavigation } from '../interactionsHelpers/InteractionHelper'
 import { mapActions } from 'pinia'
+import { formatNumberWithLocale } from '@/helpers/commons/localeHelper'
 
 export default defineComponent({
     name: 'table-widget',
@@ -152,12 +153,8 @@ export default defineComponent({
                         tempField.dataField = `column_${index}`
                         tempField.area = this.getDataField(fieldsName)
                         tempField.area = this.getDataField(fieldsName)
+                        tempField.format = (cellValue) => formatNumberWithLocale(cellValue, this.getFieldPrecision(tempField))
                         if (modelField.sort) tempField.sortOrder = modelField.sort.toLowerCase()
-
-                        // SIZING
-                        tempField.width = 1000
-                        tempField.wordWrapEnabled = true
-                        // if (tempField.area == 'column')
 
                         formattedFields.push(tempField)
                     })
@@ -181,6 +178,13 @@ export default defineComponent({
         getPivotData() {
             if (this.dataToShow && this.dataToShow.rows) return this.dataToShow.rows
             else return []
+        },
+        getFieldPrecision(field) {
+            const visualization = this.propWidget.settings.visualization.visualizationTypes
+            if (!visualization.types) return
+
+            const fieldVisualization = visualization.types.find((visType) => visType.target.includes(field.id)) ?? visualization.types[0]
+            return fieldVisualization.precision
         },
         //#endregion ===============================================================================================
 
@@ -282,8 +286,6 @@ export default defineComponent({
             }
 
             cellEvent.cellElement.style = cellStyleString
-            // SIZING
-            // cellEvent.cellElement.style = cellStyleString += 'height: 450px !important'
         },
         getFieldStylesConfiguration(cellEvent) {
             if (cellEvent.area == 'data') return this.propWidget.settings.style.fields
@@ -332,10 +334,6 @@ export default defineComponent({
 
             headerStylestring = stringifyStyleProperties(headerStyles.properties)
             cellEvent.cellElement.style = headerStylestring
-
-            // SIZING
-            // if (cellEvent.area == 'column') cellEvent.cellElement.style = headerStylestring += 'height: 1000px !important'
-            // else if (cellEvent.area == 'row') cellEvent.cellElement.style = headerStylestring
         },
         //#endregion ===============================================================================================
 
