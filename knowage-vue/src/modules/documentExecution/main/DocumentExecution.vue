@@ -1034,12 +1034,13 @@ export default defineComponent({
         },
         openDashboardGeneralSettings() {
             this.dashboardGeneralSettingsOpened = true
-            emitter.emit('openDashboardGeneralSettings')
+            emitter.emit('openDashboardGeneralSettings', this.document.dashboardId)
         },
         saveDashboard() {
-            emitter.emit('saveDashboard')
+            emitter.emit('saveDashboard', this.document.dashboardId)
         },
         async onNewDashboardSaved(document: { name: string; label: string }) {
+            if (this.breadcrumbs[0]) this.breadcrumbs[0].label = document.name
             this.document.label = document.label
             await this.loadDocument()
             this.userRole = this.user.sessionRole !== this.$t('role.defaultRolePlaceholder') ? this.user.sessionRole : null

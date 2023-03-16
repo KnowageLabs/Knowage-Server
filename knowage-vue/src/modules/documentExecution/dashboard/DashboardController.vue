@@ -132,6 +132,13 @@ export default defineComponent({
             return ['dashboard', 'dashboard-popup'].includes('' + this.mode)
         }
     },
+    watch: {
+        async document() {
+            if (!this.showDashboard) return
+            await this.getData()
+            this.$watch('model.configuration.datasets', (modelDatasets: IDashboardDataset[]) => setDatasetIntervals(modelDatasets, this.datasets))
+        }
+    },
     async created() {
         if (!this.showDashboard) return
         this.setEventListeners()
@@ -211,7 +218,6 @@ export default defineComponent({
                 .then((response: AxiosResponse<any>) => (this.crossNavigations = response.data))
                 .catch(() => {})
             this.appStore.setLoading(false)
-            //('------- loaded cross navigations: ', this.crossNavigations)
             this.store.setCrossNavigations(this.dashboardId, this.crossNavigations)
         },
         async loadHtmlGallery() {
@@ -287,8 +293,8 @@ export default defineComponent({
             this.datasetEditorVisible = false
             emitter.emit('datasetManagementClosed')
         },
-        async onSaveDashboardClicked() {
-            if (!this.document) return
+        async onSaveDashboardClicked(event: any) {
+            if (!this.document || event !== this.dashboardId) return
             if (this.newDashboardMode) {
                 this.saveDialogVisible = true
             } else {
@@ -340,7 +346,8 @@ export default defineComponent({
             this.selectionsDialogVisible = false
             this.removeSelections(selections, this.dashboardId)
         },
-        openGeneralSettings() {
+        openGeneralSettings(event) {
+            if (event !== this.dashboardId) return
             this.generalSettingsVisible = true
         },
         closeGeneralSettings() {
