@@ -90,6 +90,7 @@ import TabView from 'primevue/tabview'
 import TabPanel from 'primevue/tabpanel'
 import Textarea from 'primevue/textarea'
 import mainStore from '../../../../../App.store'
+import UserFunctionalitiesConstants from '@/UserFunctionalitiesConstants.json'
 
 export default defineComponent({
     name: 'document-execution-metadata-dialog',
@@ -116,7 +117,7 @@ export default defineComponent({
     },
     computed: {
         canModify(): boolean {
-            return (this.store.$state as any).user.functionalities.includes('SaveMetadataFunctionality')
+            return (this.store.$state as any).user.functionalities.includes(UserFunctionalitiesConstants.SAVE_METADATA_FUNCTIONALITY)
         }
     },
     watch: {

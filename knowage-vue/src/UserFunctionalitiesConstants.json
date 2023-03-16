@@ -146,6 +146,7 @@
     "SYNCRONIZE_ROLES_MANAGEMENT": "SyncronizeRolesManagement",
     "TEMPLATE_MANAGEMENT": "TemplateManagement",
     "THEME_MANAGEMENT": "ThemeManagement",
+    "TIMESPAN": "Timespan",
     "USER_SAVE_DOCUMENT_FUNCTIONALITY": "UserSaveDocumentFunctionality",
     "VIEW_MY_FOLDER_ADMIN": "ViewMyFolderAdmin",
     "VIEW_SCHEDULED_WORKSPACE": "ViewScheduledWorkspace",

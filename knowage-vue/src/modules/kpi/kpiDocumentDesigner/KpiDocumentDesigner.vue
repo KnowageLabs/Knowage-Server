@@ -45,6 +45,7 @@ import KpiDocumentDesignerSaveDialog from './KpiDocumentDesignerSaveDialog/KpiDo
 import KpiDocumentDesignerScorecardsListCard from './KpiDocumentDesignerScorecardsListCard/KpiDocumentDesignerScorecardsListCard.vue'
 import { mapState } from 'pinia'
 import mainStore from '../../../App.store'
+import UserFunctionalitiesConstants from '@/UserFunctionalitiesConstants.json'
 
 import deepcopy from 'deepcopy'
 
@@ -52,6 +53,10 @@ export default defineComponent({
     name: 'kpi-document-designer',
     components: { KpiDocumentDesignerDocumentTypeCard, KpiDocumentDesignerKpiListCard, KpiDocumentDesignerOptionsCard, KpiDocumentDesignerStyleCard, KpiDocumentDesignerTypeCard, KpiDocumentDesignerSaveDialog, KpiDocumentDesignerScorecardsListCard },
     props: { id: { type: String } },
+    setup() {
+        const store = mainStore()
+        return { store }
+    },
     data() {
         return {
             kpiDesigner: null as iKpiDesigner | null,
@@ -61,26 +66,24 @@ export default defineComponent({
             loading: false
         }
     },
-    watch: {
-        async id() {
-            await this.loadKpi()
-        }
-    },
     computed: {
         ...mapState(mainStore, {
             user: 'user'
         }),
         showScorecards(): boolean {
-            return (this.store.$state as any).user.functionalities.includes('ScorecardsManagement')
+            return (this.store.$state as any).user.functionalities.includes(UserFunctionalitiesConstants.SCORECARDS_MANAGEMENT)
         },
         saveButtonDisabled(): boolean {
             return this.kpiDesigner !== null && ((this.kpiDesigner.chart.type === 'kpi' && this.kpiTypeInvalid()) || (this.kpiDesigner.chart.type === 'scorecard' && this.scorecardTypeInvalid()))
         }
     },
-    setup() {
-        const store = mainStore()
-        return { store }
+
+    watch: {
+        async id() {
+            await this.loadKpi()
+        }
     },
+
     async created() {
         await this.loadPage()
     },
