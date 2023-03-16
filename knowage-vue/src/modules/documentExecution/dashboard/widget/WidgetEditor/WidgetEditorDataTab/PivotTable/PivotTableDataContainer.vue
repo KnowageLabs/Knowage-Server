@@ -30,10 +30,11 @@ import FieldForm from './PivotTableFieldForm.vue'
 export default defineComponent({
     name: 'pivot-table-data-container',
     components: { FieldTable, FieldForm },
-    props: { widgetModel: { type: Object as PropType<IWidget>, required: true }, selectedDataset: { type: Object as PropType<IDataset | null> } },
+    props: { propWidgetModel: { type: Object as PropType<IWidget>, required: true }, selectedDataset: { type: Object as PropType<IDataset | null> } },
     data() {
         return {
             descriptor,
+            widgetModel: {} as IWidget,
             columnFields: [] as IWidgetColumn[],
             rowFields: [] as IWidgetColumn[],
             dataFields: [] as IWidgetColumn[],
@@ -47,14 +48,21 @@ export default defineComponent({
         }
     },
     watch: {
+        propWidgetModel() {
+            this.loadWidgetModel()
+        },
         selectedDataset() {
             this.selectedField = null
         }
     },
     async created() {
+        this.loadWidgetModel()
         this.loadColumnTableItems()
     },
     methods: {
+        loadWidgetModel() {
+            this.widgetModel = this.propWidgetModel
+        },
         loadColumnTableItems() {
             this.columnFields = this.widgetModel.fields?.columns ?? []
             this.rowFields = this.widgetModel.fields?.rows ?? []
