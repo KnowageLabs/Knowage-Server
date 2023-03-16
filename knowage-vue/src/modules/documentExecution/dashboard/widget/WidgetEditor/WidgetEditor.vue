@@ -1,6 +1,5 @@
 <template>
     <Teleport to=".dashboard-container">
-        {{ 'TODO ' + widget }}
         <div class="dashboardEditor">
             <Toolbar class="kn-toolbar kn-toolbar--primary">
                 <template #start> {{ widget.type }} Widget Editor </template>

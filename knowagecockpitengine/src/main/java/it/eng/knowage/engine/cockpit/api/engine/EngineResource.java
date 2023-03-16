@@ -17,12 +17,6 @@
  */
 package it.eng.knowage.engine.cockpit.api.engine;
 
-import static it.eng.spagobi.commons.constants.SpagoBIConstants.CREATE_CUSTOM_CHART;
-import static it.eng.spagobi.commons.constants.SpagoBIConstants.DISCOVERY_WIDGET_USE;
-import static it.eng.spagobi.commons.constants.SpagoBIConstants.DOCUMENT_WIDGET_USE;
-import static it.eng.spagobi.commons.constants.SpagoBIConstants.EDIT_PYTHON_SCRIPTS;
-import static it.eng.spagobi.commons.constants.SpagoBIConstants.MAP_WIDGET_USE;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
@@ -45,6 +39,7 @@ import it.eng.knowage.engine.cockpit.CockpitEngine;
 import it.eng.knowage.engine.cockpit.api.AbstractCockpitEngineResource;
 import it.eng.spago.error.EMFInternalError;
 import it.eng.spagobi.commons.bo.UserProfile;
+import it.eng.spagobi.commons.constants.CommunityFunctionalityConstants;
 import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
 import it.eng.spagobi.user.UserProfileManager;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
@@ -141,13 +136,13 @@ public class EngineResource extends AbstractCockpitEngineResource {
 		ret.add(Widget.builder().withName("Cross Table").withDescKey("sbi.cockpit.editor.newwidget.description.cross").withImg("6.png")
 				.withCssClass("fa fa-table").withType("static-pivot-table").withTag("table").withTag("pivot").withTag("cross").build());
 
-		if (functionalities.contains(DOCUMENT_WIDGET_USE)) {
+		if (functionalities.contains(CommunityFunctionalityConstants.DOCUMENT_WIDGET_USE)) {
 
 			ret.add(Widget.builder().withName("Document").withDescKey("sbi.cockpit.editor.newwidget.description.document").withImg("7.png")
 					.withCssClass("fas fa-file-invoice").withType("document").withTag("document").withTag("datasource").build());
 		}
 
-		if (functionalities.contains(MAP_WIDGET_USE)) {
+		if (functionalities.contains(CommunityFunctionalityConstants.MAP_WIDGET_USE)) {
 
 			ret.add(Widget.builder().withName("Map").withDescKey("sbi.cockpit.editor.newwidget.description.map").withImg("7.png")
 					.withCssClass("fas fa-map-marked-alt").withType("map").withTag("map").build());
@@ -159,7 +154,7 @@ public class EngineResource extends AbstractCockpitEngineResource {
 		ret.add(Widget.builder().withName("Selector").withDescKey("sbi.cockpit.editor.newwidget.description.selector").withImg("9.png")
 				.withCssClass("fa fa-caret-square-o-down").withType("selector").withTag("selector").build());
 
-		if (functionalities.contains(EDIT_PYTHON_SCRIPTS) && isWidgetAllowedByProduct("Python/R")) {
+		if (functionalities.contains(CommunityFunctionalityConstants.EDIT_PYTHON_SCRIPTS) && isWidgetAllowedByProduct("Python/R")) {
 			ret.add(Widget.builder().withName("Python").withDescKey("sbi.cockpit.editor.newwidget.description.python").withImg("10.png")
 					.withCssClass("fab fa-python").withType("python").withTag("python").build());
 
@@ -167,12 +162,12 @@ public class EngineResource extends AbstractCockpitEngineResource {
 					.withType("r").withTag("r").build());
 		}
 
-		if (functionalities.contains(DISCOVERY_WIDGET_USE) && isWidgetAllowedByProduct("Discovery")) {
+		if (functionalities.contains(CommunityFunctionalityConstants.DISCOVERY_WIDGET_USE) && isWidgetAllowedByProduct("Discovery")) {
 
 			ret.add(Widget.builder().withName("Discovery").withDescKey("sbi.cockpit.editor.newwidget.description.discovery")/* TODO : .withImg(???) */
 					.withCssClass("fa fa-rocket").withType("discovery").withTag("discovery").build());
 		}
-		if (functionalities.contains(CREATE_CUSTOM_CHART) && isWidgetAllowedByProduct("CustomChart")) {
+		if (functionalities.contains(CommunityFunctionalityConstants.CREATE_CUSTOM_CHART) && isWidgetAllowedByProduct("CustomChart")) {
 			ret.add(Widget.builder().withName("Custom Chart").withDescKey("sbi.cockpit.editor.newwidget.description.custom.chart").withImg("4.png")
 					.withCssClass("fas fa-bezier-curve").withType("customchart").withTag("customChart").build());
 		}

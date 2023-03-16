@@ -61,7 +61,7 @@ import it.eng.spagobi.behaviouralmodel.lov.bo.ModalitiesValue;
 import it.eng.spagobi.behaviouralmodel.lov.dao.IModalitiesValueDAO;
 import it.eng.spagobi.commons.bo.Role;
 import it.eng.spagobi.commons.bo.RoleBO;
-import it.eng.spagobi.commons.constants.SpagoBIConstants;
+import it.eng.spagobi.commons.constants.CommunityFunctionalityConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
 import it.eng.spagobi.services.rest.annotations.UserConstraint;
@@ -77,7 +77,7 @@ public class AnalyticalDriversResource extends AbstractSpagoBIResource {
 	private final String charset = "; charset=UTF-8";
 
 	@GET
-	@UserConstraint(functionalities = { SpagoBIConstants.PARAMETER_MANAGEMENT })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.PARAMETER_MANAGEMENT })
 	@Path("/")
 	@Produces(MediaType.APPLICATION_JSON + charset)
 	public Response getDrivers() {
@@ -126,7 +126,7 @@ public class AnalyticalDriversResource extends AbstractSpagoBIResource {
 	// }
 
 	@GET
-	@UserConstraint(functionalities = { SpagoBIConstants.PARAMETER_MANAGEMENT })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.PARAMETER_MANAGEMENT })
 	@Path("/checks")
 	@Produces(MediaType.APPLICATION_JSON + charset)
 	public Response getChecks() {
@@ -148,7 +148,7 @@ public class AnalyticalDriversResource extends AbstractSpagoBIResource {
 
 	@GET
 	@Path("/{id}")
-	@UserConstraint(functionalities = { SpagoBIConstants.PARAMETER_MANAGEMENT })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.PARAMETER_MANAGEMENT })
 	@Produces(MediaType.APPLICATION_JSON + charset)
 	public Response getDriversById(@PathParam("id") Integer id) {
 		IParameterDAO driversDao = null;
@@ -168,7 +168,7 @@ public class AnalyticalDriversResource extends AbstractSpagoBIResource {
 	}
 
 	@GET
-	@UserConstraint(functionalities = { SpagoBIConstants.PARAMETER_MANAGEMENT })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.PARAMETER_MANAGEMENT })
 	@Path("/{id}/modes")
 	@Produces(MediaType.APPLICATION_JSON + charset)
 	public Response getParModesForDriver(@PathParam("id") Integer id) {
@@ -189,7 +189,7 @@ public class AnalyticalDriversResource extends AbstractSpagoBIResource {
 	}
 
 	@GET
-	@UserConstraint(functionalities = { SpagoBIConstants.PARAMETER_MANAGEMENT })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.PARAMETER_MANAGEMENT })
 	@Path("/{id}/lovs")
 	@Produces(MediaType.APPLICATION_JSON + charset)
 	public Response getLovsForDriver(@PathParam("id") Integer idParameter) {
@@ -214,7 +214,7 @@ public class AnalyticalDriversResource extends AbstractSpagoBIResource {
 	}
 
 	@GET
-	@UserConstraint(functionalities = { SpagoBIConstants.PARAMETER_MANAGEMENT })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.PARAMETER_MANAGEMENT })
 	@Path("/{id}/documents")
 	@Produces(MediaType.APPLICATION_JSON + charset)
 	public Response getDocumentsById(@PathParam("id") Integer idParameter) {
@@ -238,7 +238,7 @@ public class AnalyticalDriversResource extends AbstractSpagoBIResource {
 
 	@POST
 	@Path("/")
-	@UserConstraint(functionalities = { SpagoBIConstants.PARAMETER_MANAGEMENT })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.PARAMETER_MANAGEMENT })
 	@Consumes(MediaType.APPLICATION_JSON)
 	public Response insertDriver(@Valid Parameter driver) {
 
@@ -268,7 +268,7 @@ public class AnalyticalDriversResource extends AbstractSpagoBIResource {
 
 	@POST
 	@Path("/modes")
-	@UserConstraint(functionalities = { SpagoBIConstants.PARAMETER_MANAGEMENT })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.PARAMETER_MANAGEMENT })
 	@Consumes(MediaType.APPLICATION_JSON)
 	public Response insertUseMode(String body) {
 		ObjectMapper mapper = new ObjectMapper();
@@ -318,7 +318,7 @@ public class AnalyticalDriversResource extends AbstractSpagoBIResource {
 
 	@PUT
 	@Path("/{id}")
-	@UserConstraint(functionalities = { SpagoBIConstants.PARAMETER_MANAGEMENT })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.PARAMETER_MANAGEMENT })
 	@Consumes(MediaType.APPLICATION_JSON)
 	public Response updateDriver(@PathParam("id") Integer id, @Valid Parameter driver) {
 
@@ -362,7 +362,7 @@ public class AnalyticalDriversResource extends AbstractSpagoBIResource {
 
 	@PUT
 	@Path("/modes/{id}")
-	@UserConstraint(functionalities = { SpagoBIConstants.PARAMETER_MANAGEMENT })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.PARAMETER_MANAGEMENT })
 	@Consumes(MediaType.APPLICATION_JSON)
 	public Response updateUseMode(@PathParam("id") Integer id, String body) {
 
@@ -417,7 +417,7 @@ public class AnalyticalDriversResource extends AbstractSpagoBIResource {
 
 	@DELETE
 	@Path("/{id}")
-	@UserConstraint(functionalities = { SpagoBIConstants.PARAMETER_MANAGEMENT })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.PARAMETER_MANAGEMENT })
 	public Response deleteDriver(@PathParam("id") Integer id) {
 
 		IParameterDAO driversDao = null;
@@ -453,7 +453,7 @@ public class AnalyticalDriversResource extends AbstractSpagoBIResource {
 
 	@DELETE
 	@Path("/modes/{id}")
-	@UserConstraint(functionalities = { SpagoBIConstants.PARAMETER_MANAGEMENT })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.PARAMETER_MANAGEMENT })
 	public Response deleteUseMode(@PathParam("id") Integer id) {
 
 		IParameterUseDAO useModesDao = null;

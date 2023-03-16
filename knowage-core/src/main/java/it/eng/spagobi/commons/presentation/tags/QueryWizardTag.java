@@ -23,7 +23,7 @@ import it.eng.spago.base.SessionContainer;
 import it.eng.spago.error.EMFInternalError;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
-import it.eng.spagobi.commons.constants.SpagoBIConstants;
+import it.eng.spagobi.commons.constants.CommunityFunctionalityConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.utilities.ChannelUtilities;
 import it.eng.spagobi.commons.utilities.messages.IMessageBuilder;
@@ -127,7 +127,7 @@ public class QueryWizardTag extends CommonWizardLovTag {
 		IEngUserProfile userProfile = (IEngUserProfile)permanentSession.getAttribute(IEngUserProfile.ENG_USER_PROFILE);
 		boolean isable = false;
 		try {
-			isable = userProfile.isAbleToExecuteAction(SpagoBIConstants.LOVS_MANAGEMENT);
+			isable = userProfile.isAbleToExecuteAction(CommunityFunctionalityConstants.LOVS_MANAGEMENT);
 		} catch (EMFInternalError e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

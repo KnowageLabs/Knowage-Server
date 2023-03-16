@@ -11,7 +11,6 @@ import * as widgetCommonDefaultValues from '../../widget/WidgetEditor/helpers/co
 const columnNameIdMap = {}
 
 export const formatPivotTabletWidget = (widget: any) => {
-    console.log('----------- ORIGINAL WIDGET: ', widget)
     const formattedWidget = {
         id: widget.id,
         dataset: widget.dataset.dsId,
@@ -26,8 +25,6 @@ export const formatPivotTabletWidget = (widget: any) => {
 
     getFiltersForColumns(formattedWidget, widget)
     getSettingsFromPivotTableWidgetColumns(formattedWidget, widget)
-
-    console.log('----------- FORMATTED WIDGET: ', formattedWidget)
     return formattedWidget
 }
 

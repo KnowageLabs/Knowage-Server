@@ -43,7 +43,7 @@ import it.eng.spagobi.analiticalmodel.document.bo.ObjTemplate;
 import it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO;
 import it.eng.spagobi.analiticalmodel.document.dao.IObjTemplateDAO;
 import it.eng.spagobi.api.AbstractSpagoBIResource;
-import it.eng.spagobi.commons.constants.SpagoBIConstants;
+import it.eng.spagobi.commons.constants.CommunityFunctionalityConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.services.rest.annotations.UserConstraint;
 import it.eng.spagobi.utilities.JSError;
@@ -63,7 +63,7 @@ public class TemplateResource extends AbstractSpagoBIResource {
 	@GET
 	@Path("/")
 	@Produces("application/json")
-	@UserConstraint(functionalities = { SpagoBIConstants.DOCUMENT_MANAGEMENT_DEV })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.DOCUMENT_MANAGEMENT_DEV })
 	public List<ObjTemplate> getDocumentTemplates(@PathParam("id") Integer id) {
 		logger.debug("IN");
 		IBIObjectDAO documentDao = null;
@@ -87,7 +87,7 @@ public class TemplateResource extends AbstractSpagoBIResource {
 	@GET
 	@Path("/{templateId}")
 	@Produces("application/json")
-	@UserConstraint(functionalities = { SpagoBIConstants.DOCUMENT_MANAGEMENT_DEV })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.DOCUMENT_MANAGEMENT_DEV })
 	public byte[] getActiveDocumentTemplate(@PathParam("id") Integer id) {
 		logger.debug("IN");
 		IBIObjectDAO documentDao = null;
@@ -111,7 +111,7 @@ public class TemplateResource extends AbstractSpagoBIResource {
 	@GET
 	@Path("/selected/{templateId}")
 	@Produces("application/text")
-	@UserConstraint(functionalities = { SpagoBIConstants.DOCUMENT_MANAGEMENT_DEV })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.DOCUMENT_MANAGEMENT_DEV })
 	public byte[] getDocumentTemplate(@PathParam("id") Integer id, @PathParam("templateId") Integer templateId) {
 		logger.debug("IN");
 		byte[] temp = null;
@@ -134,7 +134,7 @@ public class TemplateResource extends AbstractSpagoBIResource {
 	 **/
 	@POST
 	@Path("/")
-	@UserConstraint(functionalities = { SpagoBIConstants.DOCUMENT_MANAGEMENT_DEV })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.DOCUMENT_MANAGEMENT_DEV })
 	@Consumes(MediaType.MULTIPART_FORM_DATA)
 	public Response uploadTemplate(MultiPartBody body, @PathParam("id") int id) {
 
@@ -225,7 +225,7 @@ public class TemplateResource extends AbstractSpagoBIResource {
 	@PUT
 	@Path("/{templateId}")
 	@Produces("application/json")
-	@UserConstraint(functionalities = { SpagoBIConstants.DOCUMENT_MANAGEMENT_DEV })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.DOCUMENT_MANAGEMENT_DEV })
 	public void setDocTemplateActive(@PathParam("id") Integer id, @PathParam("templateId") Integer templateId) {
 		logger.debug("IN");
 		Assert.assertNotNull(templateId, "Template ID can not be null");
@@ -249,7 +249,7 @@ public class TemplateResource extends AbstractSpagoBIResource {
 	@DELETE
 	@Path("/{templateId}")
 	@Produces("application/json")
-	@UserConstraint(functionalities = { SpagoBIConstants.DOCUMENT_MANAGEMENT_DEV })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.DOCUMENT_MANAGEMENT_DEV })
 	public Integer deleteDocumentActiveTemplateById(@PathParam("id") Integer id, @PathParam("templateId") Integer templateId) {
 		logger.debug("IN");
 		Assert.assertNotNull(templateId, "Template ID can not be null");

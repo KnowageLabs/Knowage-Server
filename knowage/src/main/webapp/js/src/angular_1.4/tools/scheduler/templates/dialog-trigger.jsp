@@ -1,6 +1,7 @@
 <%@page import="it.eng.spagobi.commons.bo.UserProfile"%>
 <%@page import="it.eng.spago.security.IEngUserProfile"%>
 <%@page import="it.eng.spagobi.commons.constants.SpagoBIConstants"%>
+<%@page import="it.eng.spagobi.commons.constants.CommunityFunctionalityConstants"%>
 <%@ include file="/WEB-INF/jsp/commons/angular/angularResource.jspf"%>
 
 <md-dialog aria-label="{{::translate.load('sbi.scheduler.schedulation.detail')}}" style="width:80%" class="kn-scheduler-dialog">
@@ -515,7 +516,7 @@
 						</div>
 						<%} %>
 						<%
-						if (userProfile.isAbleToExecuteAction(SpagoBIConstants.DISTRIBUTIONLIST_MANAGEMENT) && userProfile.isAbleToExecuteAction(SpagoBIConstants.SCHEDULING_DISTRIBUTED_OUTPUT)) {%>
+						if (userProfile.isAbleToExecuteAction(CommunityFunctionalityConstants.DISTRIBUTIONLIST_MANAGEMENT) && userProfile.isAbleToExecuteAction(CommunityFunctionalityConstants.SCHEDULING_DISTRIBUTED_OUTPUT)) {%>
 						<!-- 
 						<md-toolbar class="minihead unselectedItem"
 								ng-class="activityEventCtrl.selectedDocument.saveasdl? 'selectedItem' : 'unselectedItem'">

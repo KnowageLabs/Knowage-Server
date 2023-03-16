@@ -24,7 +24,7 @@ import org.apache.log4j.Logger;
 import org.json.JSONObject;
 
 import it.eng.spago.base.SourceBean;
-import it.eng.spagobi.commons.constants.SpagoBIConstants;
+import it.eng.spagobi.commons.constants.CommunityFunctionalityConstants;
 import it.eng.spagobi.engines.qbe.QbeEngine;
 import it.eng.spagobi.engines.qbe.QbeEngineAnalysisState;
 import it.eng.spagobi.engines.qbe.QbeEngineInstance;
@@ -117,7 +117,7 @@ public class QbeEngineStartAction extends AbstractEngineStartAction {
 			// CHECKS WHETHER IF IT IS A QBE DOCUMENT OR REGISTRY, BY LOOKING AT THE TEMPLATE
 			RegistryConfiguration registryConf = qbeEngineInstance.getRegistryConfiguration();
 			if (registryConf != null) {
-				if (!getUserProfile().isAbleToExecuteAction(SpagoBIConstants.REGISTRY_DATA_ENTRY)) {
+				if (!getUserProfile().isAbleToExecuteAction(CommunityFunctionalityConstants.REGISTRY_DATA_ENTRY)) {
 					throw new SpagoBIRuntimeException("It is not allowed to use the Registry document.");
 				}
 				logger.debug("Registry document");

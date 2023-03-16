@@ -79,7 +79,7 @@ import it.eng.spagobi.api.BusinessModelOpenParameters;
 import it.eng.spagobi.api.common.AbstractDataSetResource;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.ParameterUse;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IParameterUseDAO;
-import it.eng.spagobi.commons.constants.SpagoBIConstants;
+import it.eng.spagobi.commons.constants.CommunityFunctionalityConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.serializer.SerializationException;
 import it.eng.spagobi.commons.serializer.SerializerFactory;
@@ -176,7 +176,7 @@ public class DataSetResource extends AbstractDataSetResource {
 	@GET
 	@Path("/availableFunctions/{dsId}")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
-	@UserConstraint(functionalities = { SpagoBIConstants.SELF_SERVICE_DATASET_MANAGEMENT })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.SELF_SERVICE_DATASET_MANAGEMENT })
 	public String availableFunctions(@PathParam("dsId") String datasetId, @QueryParam("useCache") boolean useCache)
 			throws JSONException, DataBaseException, EMFUserError, DataSourceException {
 		logger.debug("IN");
@@ -221,7 +221,7 @@ public class DataSetResource extends AbstractDataSetResource {
 
 	@GET
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
-	@UserConstraint(functionalities = { SpagoBIConstants.SELF_SERVICE_DATASET_MANAGEMENT })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.SELF_SERVICE_DATASET_MANAGEMENT })
 	public String getDataSets(@QueryParam("includeDerived") String includeDerived, @QueryParam("callback") String callback,
 			@QueryParam("asPagedList") Boolean paged, @QueryParam("Page") String pageStr, @QueryParam("ItemPerPage") String itemPerPageStr,
 			@QueryParam("label") String search, @QueryParam("seeTechnical") Boolean seeTechnical, @QueryParam("ids") String ids,
@@ -280,7 +280,7 @@ public class DataSetResource extends AbstractDataSetResource {
 	@GET
 	@Path("/{label}")
 	@Produces(MediaType.APPLICATION_JSON)
-	@UserConstraint(functionalities = { SpagoBIConstants.SELF_SERVICE_DATASET_MANAGEMENT })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.SELF_SERVICE_DATASET_MANAGEMENT })
 	public String getDataSet(@PathParam("label") String label) {
 		return super.getDataSet(label);
 	}
@@ -289,13 +289,13 @@ public class DataSetResource extends AbstractDataSetResource {
 	@GET
 	@Path("/{label}/content")
 	@Produces(MediaType.APPLICATION_JSON)
-	@UserConstraint(functionalities = { SpagoBIConstants.SELF_SERVICE_DATASET_MANAGEMENT })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.SELF_SERVICE_DATASET_MANAGEMENT })
 	public Response execute(@PathParam("label") String label, String body) {
 		return super.execute(label, body);
 	}
 
 	@POST
-	@UserConstraint(functionalities = { SpagoBIConstants.SELF_SERVICE_DATASET_MANAGEMENT })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.SELF_SERVICE_DATASET_MANAGEMENT })
 	public Response addDataSet(String body) {
 		SbiDataSet sbiDataset = (SbiDataSet) JsonConverter.jsonToValidObject(body, SbiDataSet.class);
 
@@ -331,7 +331,7 @@ public class DataSetResource extends AbstractDataSetResource {
 
 	@PUT
 	@Path("/{label}")
-	@UserConstraint(functionalities = { SpagoBIConstants.SELF_SERVICE_DATASET_MANAGEMENT })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.SELF_SERVICE_DATASET_MANAGEMENT })
 	public Response modifyDataSet(@PathParam("label") String label, String body) {
 		IDataSet dataset = null;
 
@@ -368,7 +368,7 @@ public class DataSetResource extends AbstractDataSetResource {
 	@Override
 	@DELETE
 	@Path("/{label}")
-	@UserConstraint(functionalities = { SpagoBIConstants.SELF_SERVICE_DATASET_MANAGEMENT })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.SELF_SERVICE_DATASET_MANAGEMENT })
 	public Response deleteDataset(@PathParam("label") String label) {
 		return super.deleteDataset(label);
 	}
@@ -676,7 +676,7 @@ public class DataSetResource extends AbstractDataSetResource {
 	@POST
 	@Path("/{label}/data")
 	@Produces(MediaType.APPLICATION_JSON)
-	@UserConstraint(functionalities = { SpagoBIConstants.SELF_SERVICE_DATASET_MANAGEMENT })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.SELF_SERVICE_DATASET_MANAGEMENT })
 	public String getDataStorePostWithJsonInBody(@PathParam("label") String label, String body, @DefaultValue("-1") @QueryParam("limit") int maxRowCount,
 			@DefaultValue("-1") @QueryParam("offset") int offset, @DefaultValue("-1") @QueryParam("size") int fetchSize,
 			@QueryParam("nearRealtime") boolean isNearRealtime, @QueryParam("widgetName") String widgetName) {
@@ -753,7 +753,7 @@ public class DataSetResource extends AbstractDataSetResource {
 	@POST
 	@Path("/{label}/preview")
 	@Produces(MediaType.APPLICATION_JSON)
-	@UserConstraint(functionalities = { SpagoBIConstants.SELF_SERVICE_DATASET_MANAGEMENT })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.SELF_SERVICE_DATASET_MANAGEMENT })
 	public String getDataStorePreview(@PathParam("label") String label, String body) {
 		IDataSet dataSet = null;
 		try {
@@ -898,7 +898,7 @@ public class DataSetResource extends AbstractDataSetResource {
 	@POST
 	@Path("/addDatasetInCache")
 	@Produces(MediaType.APPLICATION_JSON)
-	@UserConstraint(functionalities = { SpagoBIConstants.SELF_SERVICE_DATASET_MANAGEMENT })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.SELF_SERVICE_DATASET_MANAGEMENT })
 	public Response addDatasetInCache(@Context HttpServletRequest req) {
 		Set<String> columns = new HashSet<String>();
 

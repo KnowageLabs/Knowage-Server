@@ -19,7 +19,7 @@ export const getFormattedFields = (widgetColumns: any, columnNameIdMap: any) => 
     const formattedColumns = [] as IWidgetColumn[]
 
     widgetColumns.forEach((widgetColumn) => {
-        const formattedColumn = { id: cryptoRandomString({ length: 16, type: 'base64' }), columnName: widgetColumn.id, alias: widgetColumn.alias, type: 'TODO - no type in old model', fieldType: widgetColumn.nature.toUpperCase(), filter: {} } as IWidgetColumn
+        const formattedColumn = { id: cryptoRandomString({ length: 16, type: 'base64' }), columnName: widgetColumn.id, alias: widgetColumn.alias, type: '', fieldType: widgetColumn.nature.toUpperCase(), filter: {} } as IWidgetColumn
 
         if (widgetColumn.isCalculated) {
             formattedColumn.formula = widgetColumn.formula

@@ -17,7 +17,7 @@
  */
 package it.eng.spagobi.tools.hierarchiesmanagement.service.rest;
 
-import it.eng.spagobi.commons.constants.SpagoBIConstants;
+import it.eng.spagobi.commons.constants.CommunityFunctionalityConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.services.rest.annotations.UserConstraint;
 import it.eng.spagobi.tools.dataset.bo.AbstractJDBCDataset;
@@ -55,7 +55,7 @@ public class HierarchyTechnicalService {
 	@GET
 	@Path("/getHierarchiesTechnical")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
-	@UserConstraint(functionalities = { SpagoBIConstants.HIERARCHIES_MANAGEMENT })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.HIERARCHIES_MANAGEMENT })
 	public String getHierarchiesTechnical(@QueryParam("dimension") String dimension) {
 		JSONArray hierarchiesJSONArray = new JSONArray();
 

@@ -47,7 +47,7 @@ import it.eng.knowage.export.wrapper.beans.ViewportDimensions;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 import it.eng.spagobi.commons.SingletonConfig;
-import it.eng.spagobi.commons.constants.SpagoBIConstants;
+import it.eng.spagobi.commons.constants.CommunityFunctionalityConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.utilities.GeneralUtilities;
 import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
@@ -131,7 +131,7 @@ public class PageResource extends AbstractChartEngineResource {
 	@GET
 	@Path("/")
 	@Produces(MediaType.APPLICATION_JSON)
-	@UserConstraint(functionalities = { SpagoBIConstants.CREATE_COCKPIT_FUNCTIONALITY })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.CREATE_COCKPIT_FUNCTIONALITY })
 	public String getDataSets() {
 		try {
 			JSONArray resultsJSON = new JSONArray();
@@ -153,7 +153,7 @@ public class PageResource extends AbstractChartEngineResource {
 	@POST
 	@Path("/{pagename}")
 	@Produces("text/html")
-	@UserConstraint(functionalities = { SpagoBIConstants.CREATE_COCKPIT_FUNCTIONALITY })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.CREATE_COCKPIT_FUNCTIONALITY })
 	public View openPage(@PathParam("pagename") String pageName) {
 		ChartEngineInstance engineInstance;
 		String dispatchUrl = urls.get(pageName);

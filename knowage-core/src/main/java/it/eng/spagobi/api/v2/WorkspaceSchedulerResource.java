@@ -40,7 +40,7 @@ import it.eng.spagobi.analiticalmodel.document.bo.Snapshot;
 import it.eng.spagobi.analiticalmodel.document.dao.ISnapshotDAO;
 import it.eng.spagobi.analiticalmodel.document.dao.SnapshotDAOHibImpl;
 import it.eng.spagobi.api.AbstractSpagoBIResource;
-import it.eng.spagobi.commons.constants.SpagoBIConstants;
+import it.eng.spagobi.commons.constants.CommunityFunctionalityConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.utilities.GeneralUtilities;
 import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
@@ -58,7 +58,7 @@ public class WorkspaceSchedulerResource extends AbstractSpagoBIResource {
 
 	@GET
 	@Path("/{scheduler}")
-	@UserConstraint(functionalities = { SpagoBIConstants.SEE_SNAPSHOTS_FUNCTIONALITY })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.SEE_SNAPSHOTS_FUNCTIONALITY })
 	@Produces(MediaType.APPLICATION_JSON)
 	public String getSchedulations(@PathParam("scheduler") String name, @QueryParam("collate") boolean collate)
 			throws IOException, EMFUserError, EMFInternalError, JSONException {

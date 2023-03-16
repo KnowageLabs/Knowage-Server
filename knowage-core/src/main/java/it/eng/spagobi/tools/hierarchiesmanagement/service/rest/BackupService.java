@@ -39,7 +39,7 @@ import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import it.eng.spagobi.commons.constants.SpagoBIConstants;
+import it.eng.spagobi.commons.constants.CommunityFunctionalityConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.services.rest.annotations.UserConstraint;
 import it.eng.spagobi.tools.dataset.bo.AbstractJDBCDataset;
@@ -67,7 +67,7 @@ public class BackupService {
 	@POST
 	@Path("/modifyHierarchyBkps")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
-	@UserConstraint(functionalities = { SpagoBIConstants.HIERARCHIES_MANAGEMENT })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.HIERARCHIES_MANAGEMENT })
 	public String modifyHierarchyBkps(@Context HttpServletRequest req) throws SQLException {
 		// modify an existing hierarchy (ONLY GENERAL section)
 		Connection databaseConnection = null;
@@ -198,7 +198,7 @@ public class BackupService {
 	@POST
 	@Path("/restoreHierarchyBkps")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
-	@UserConstraint(functionalities = { SpagoBIConstants.HIERARCHIES_MANAGEMENT })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.HIERARCHIES_MANAGEMENT })
 	public String restoreHierarchyBkps(@Context HttpServletRequest req) throws SQLException {
 		// restores a backup hierarchy
 		try {
@@ -235,7 +235,7 @@ public class BackupService {
 	@GET
 	@Path("/getHierarchyBkps")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
-	@UserConstraint(functionalities = { SpagoBIConstants.HIERARCHIES_MANAGEMENT })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.HIERARCHIES_MANAGEMENT })
 	public String getHierarchyBkps(@QueryParam("dimension") String dimension, @QueryParam("hierarchyCode") String hierarchyCode,
 			@QueryParam("hierarchyName") String hierarchyName, @QueryParam("hierarchyType") String hierarchyType) throws SQLException {
 

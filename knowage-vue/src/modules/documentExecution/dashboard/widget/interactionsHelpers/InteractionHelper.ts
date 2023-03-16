@@ -13,10 +13,20 @@ export const loadAssociativeSelections = async (model: IDashboard, datasets: IDa
 }
 
 export const updateStoreSelections = (newSelection: ISelection, currentActiveSelections: ISelection[], dashboardId: string, updateSelectionFunction: Function, $http: any) => {
-    const index = currentActiveSelections.findIndex((activeSelection: ISelection) => activeSelection.datasetId === newSelection.datasetId && activeSelection.columnName === newSelection.columnName)
-    index !== -1 ? currentActiveSelections[index] = newSelection : currentActiveSelections.push(newSelection)
+    updateActiveSelections(newSelection, currentActiveSelections)
     updateSelectionFunction(dashboardId, currentActiveSelections, $http)
 }
+
+export const updateAllStoreSelections = (newSelections: ISelection[], currentActiveSelections: ISelection[], dashboardId: string, updateSelectionFunction: Function, $http: any) => {
+    newSelections.forEach((newSelection: ISelection) => updateActiveSelections(newSelection, currentActiveSelections))
+    updateSelectionFunction(dashboardId, currentActiveSelections, $http)
+}
+
+const updateActiveSelections = (newSelection: ISelection, currentActiveSelections: ISelection[],) => {
+    const index = currentActiveSelections.findIndex((activeSelection: ISelection) => activeSelection.datasetId === newSelection.datasetId && activeSelection.columnName === newSelection.columnName)
+    index !== -1 ? currentActiveSelections[index] = newSelection : currentActiveSelections.push(newSelection)
+}
+
 
 export const executeCrossNavigation = (documentCrossNavigationOutputParameters: ICrossNavigationParameter[], crossNavigationName: string | undefined) => {
     const payload = { documentCrossNavigationOutputParameters: documentCrossNavigationOutputParameters, crossNavigationName: crossNavigationName }
@@ -45,30 +55,6 @@ const getFormattedTableOutputParameters = (clickedValue: IClickedValue, formatte
         }
     }
     return formattedOutputParameters
-}
-
-const getFormattedFixedOutputParameter = (crossNavigationParameter: IWidgetInteractionParameter) => {
-    const value = crossNavigationParameter.value ?? ''
-    const formattedValue = getFormattedFixedOutputValue(value, crossNavigationParameter.dataType)
-    return {
-        targetDriverUrlName: '',
-        parameterValue: [{ value: formattedValue, description: formattedValue }],
-        multivalue: false,
-        type: 'fromSourceDocumentOutputParameter',
-        parameterType: getDriverParameterTypeFromOutputParameterType(crossNavigationParameter.dataType),
-        outputDriverName: crossNavigationParameter.name
-    } as ICrossNavigationParameter
-}
-
-const getFormattedFixedOutputValue = (value: string, dataType: string) => {
-    switch (dataType) {
-        case 'date':
-            return getFormattedDateValue(value, 'date')
-        case 'number':
-            return isNaN(value as any) ? null : +value
-        default:
-            return value
-    }
 }
 
 const getFormattedTableDynamicOutputParameter = (clickedValue: IClickedValue, crossNavigationParameter: IWidgetInteractionParameter, formattedRow: any) => {
@@ -201,12 +187,12 @@ const getFormattedImageWidgetOutputParameters = (crossNavigationModel: IWidgetCr
     return formattedOutputParameters
 }
 
-export const executePivotTableWidgetCrossNavigation = (clickedValue: IClickedValue, crossNavigationModel: IWidgetCrossNavigation, dashboardId: string) => {
-    const outputParameters = getFormattedPivotTableOutputParameters(clickedValue, crossNavigationModel, dashboardId)
-    executeCrossNavigation(outputParameters, crossNavigationModel.name)
+export const executePivotTableWidgetCrossNavigation = (outputParameters: IWidgetInteractionParameter[], crossNavigationModel: IWidgetCrossNavigation, dashboardId: string) => {
+    const formattedOutputParameters = getFormattedPivotTableOutputParameters(outputParameters, crossNavigationModel, dashboardId)
+    executeCrossNavigation(formattedOutputParameters, crossNavigationModel.name)
 }
 
-const getFormattedPivotTableOutputParameters = (clickedValue: IClickedValue, crossNavigationModel: IWidgetCrossNavigation, dashboardId: string) => {
+const getFormattedPivotTableOutputParameters = (outputParameters: IWidgetInteractionParameter[], crossNavigationModel: IWidgetCrossNavigation, dashboardId: string) => {
     const formattedOutputParameters = [] as ICrossNavigationParameter[]
     for (let i = 0; i < crossNavigationModel.parameters.length; i++) {
         const crossNavigationParameter = crossNavigationModel.parameters[i] as IWidgetInteractionParameter
@@ -216,7 +202,7 @@ const getFormattedPivotTableOutputParameters = (clickedValue: IClickedValue, cro
                 formattedOutputParameters.push(getFormattedFixedOutputParameter(crossNavigationParameter))
                 break
             case 'dynamic':
-                formattedOutputParameters.push(getFormattedPivotTableDynamicOutputParameter(clickedValue, crossNavigationParameter))
+                formattedOutputParameters.push(getFormattedPivotTableDynamicOutputParameter(outputParameters, crossNavigationParameter))
                 break
             case 'selection':
                 addSelectionTypeOutputParameter(crossNavigationParameter, formattedOutputParameters, dashboardId)
@@ -225,10 +211,13 @@ const getFormattedPivotTableOutputParameters = (clickedValue: IClickedValue, cro
     return formattedOutputParameters
 }
 
-const getFormattedPivotTableDynamicOutputParameter = (clickedValue: IClickedValue, crossNavigationParameter: IWidgetInteractionParameter) => {
+const getFormattedPivotTableDynamicOutputParameter = (outputParameters: IWidgetInteractionParameter[], crossNavigationParameter: IWidgetInteractionParameter) => {
+    const index = outputParameters.findIndex((tempParameter: IWidgetInteractionParameter) => tempParameter.name === crossNavigationParameter.name)
+    const outputParameter = index !== -1 ? outputParameters[index] : null
+    const value = outputParameter?.value ?? ''
     return {
         targetDriverUrlName: '',
-        parameterValue: [{ value: clickedValue.value, description: clickedValue.value }],
+        parameterValue: [{ value: value, description: value }],
         multivalue: false,
         type: 'fromSourceDocumentOutputParameter',
         parameterType: getDriverParameterTypeFromOutputParameterType(crossNavigationParameter.dataType),
@@ -236,6 +225,29 @@ const getFormattedPivotTableDynamicOutputParameter = (clickedValue: IClickedValu
     } as ICrossNavigationParameter
 }
 
+const getFormattedFixedOutputParameter = (crossNavigationParameter: IWidgetInteractionParameter) => {
+    const value = crossNavigationParameter.value ?? ''
+    const formattedValue = getFormattedFixedOutputValue(value, crossNavigationParameter.dataType)
+    return {
+        targetDriverUrlName: '',
+        parameterValue: [{ value: formattedValue, description: formattedValue }],
+        multivalue: false,
+        type: 'fromSourceDocumentOutputParameter',
+        parameterType: getDriverParameterTypeFromOutputParameterType(crossNavigationParameter.dataType),
+        outputDriverName: crossNavigationParameter.name
+    } as ICrossNavigationParameter
+}
+
+const getFormattedFixedOutputValue = (value: string, dataType: string) => {
+    switch (dataType) {
+        case 'date':
+            return getFormattedDateValue(value, 'date')
+        case 'number':
+            return isNaN(value as any) ? null : +value
+        default:
+            return value
+    }
+}
 
 const addSelectionTypeOutputParameter = (crossNavigationParameter: IWidgetInteractionParameter, formattedOutputParameters: ICrossNavigationParameter[], dashboardId: string) => {
     const tempParameter = getFormattedSelectionOutputParameter(crossNavigationParameter, dashboardId)
@@ -258,6 +270,8 @@ const getFormattedSelectionOutputParameter = (crossNavigationParameter: IWidgetI
         outputDriverName: crossNavigationParameter.name
     } as ICrossNavigationParameter
 }
+
+
 
 const getAcitveSelectionValues = (values: any[], type: string) => {
     return values.map((value: any) => {

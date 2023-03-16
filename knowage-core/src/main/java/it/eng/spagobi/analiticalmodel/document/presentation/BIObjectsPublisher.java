@@ -26,6 +26,7 @@ import it.eng.spago.error.EMFErrorSeverity;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spago.presentation.PublisherDispatcherIFace;
 import it.eng.spago.security.IEngUserProfile;
+import it.eng.spagobi.commons.constants.CommunityFunctionalityConstants;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.utilities.GeneralUtilities;
 import it.eng.spagobi.commons.utilities.SpagoBITracer;
@@ -107,7 +108,7 @@ public class BIObjectsPublisher implements PublisherDispatcherIFace {
 			IEngUserProfile profile = (IEngUserProfile)permanentSession.getAttribute(IEngUserProfile.ENG_USER_PROFILE);
 			
 			try{
-				if (profile.isAbleToExecuteAction(SpagoBIConstants.DOCUMENT_MANAGEMENT_ADMIN)){
+				if (profile.isAbleToExecuteAction(CommunityFunctionalityConstants.DOCUMENT_MANAGEMENT_ADMIN)){
 					String operation = (String)serviceRequest.getAttribute(SpagoBIConstants.OPERATION);
 					if( (operation!=null) && (operation.equals(SpagoBIConstants.FUNCTIONALITIES_OPERATION)) ) {
 						pubName = "treeFunctionalities";
@@ -115,11 +116,11 @@ public class BIObjectsPublisher implements PublisherDispatcherIFace {
 						pubName = "treeAdminObjects";
 					}
 				}
-				else if (profile.isAbleToExecuteAction(SpagoBIConstants.DOCUMENT_MANAGEMENT_DEV))
+				else if (profile.isAbleToExecuteAction(CommunityFunctionalityConstants.DOCUMENT_MANAGEMENT_DEV))
 					pubName = "treeDevObjects";
-				else if (profile.isAbleToExecuteAction(SpagoBIConstants.DOCUMENT_MANAGEMENT_USER))
+				else if (profile.isAbleToExecuteAction(CommunityFunctionalityConstants.DOCUMENT_MANAGEMENT_USER))
 					pubName = "treeExecObjects";
-				else if (profile.isAbleToExecuteAction(SpagoBIConstants.DOCUMENT_MANAGEMENT_TEST))
+				else if (profile.isAbleToExecuteAction(CommunityFunctionalityConstants.DOCUMENT_MANAGEMENT_TEST))
 					pubName = "treeExecObjects";
 				else pubName = "treeExecObjects";
 			}

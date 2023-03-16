@@ -47,11 +47,6 @@
                         <label class="kn-material-input-label">{{ $t('dashboard.widgetEditor.suffix') }}</label>
                         <InputText v-model="tooltip.suffix" class="kn-material-input p-inputtext-sm" :disabled="!tooltip.enabled" />
                     </div>
-                    <!-- TODO: See if needs to be removed? -->
-                    <!-- <div v-if="optionsContainMeasureColumn(tooltip)" class="p-d-flex p-flex-column p-mx-2">
-                        <label class="kn-material-input-label p-mr-2">{{ $t('dashboard.widgetEditor.precision') }}</label>
-                        <InputNumber v-model="tooltip.precision" class="kn-material-input p-inputtext-sm" :disabled="!tooltip.enabled" @blur="tooltipsChanged" />
-                    </div> -->
                 </div>
 
                 <div class="p-grid p-ai-center p-pt-3">
@@ -157,7 +152,6 @@ export default defineComponent({
             if (index !== -1) this.availableColumnOptions.splice(index, 1)
         },
         loadColumnOptions() {
-            console.log('------------- CAAAAAAAAAAAAAAAAAAAAAAALED')
             this.availableColumnOptions = [...this.combinedArray]
         },
         loadWidgetColumnMaps() {

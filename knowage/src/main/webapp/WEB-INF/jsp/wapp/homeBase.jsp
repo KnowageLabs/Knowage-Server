@@ -66,7 +66,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	//System.out.println(jsonMenuList);
 %>
 
-<% Boolean enableGlossary=userProfile.isAbleToExecuteAction(SpagoBIConstants.GLOSSARY) ;%>
+<% Boolean enableGlossary=userProfile.isAbleToExecuteAction(CommunityFunctionalityConstants.GLOSSARY) ;%>
 <%if(enableGlossary){ %>
 <style>
 /* apply this style for the helps online link if the glossary is enabled */

@@ -106,14 +106,6 @@
                 "type": "Title"
             },
             {
-                "title": "dashboard.widgetEditor.pivot.style.columnHeaders",
-                "type": "ColumnHeadersStyle"
-            },
-            {
-                "title": "dashboard.widgetEditor.pivot.style.rowHeaders",
-                "type": "RowsHeadersStyle"
-            },
-            {
                 "title": "dashboard.widgetEditor.pivot.style.fieldHeaders",
                 "type": "FieldHeadersStyle"
             },

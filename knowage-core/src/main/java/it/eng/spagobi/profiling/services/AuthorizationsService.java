@@ -34,7 +34,7 @@ import org.json.JSONObject;
 import it.eng.knowage.security.ProductProfiler;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.commons.bo.UserProfile;
-import it.eng.spagobi.commons.constants.SpagoBIConstants;
+import it.eng.spagobi.commons.constants.CommunityFunctionalityConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.dao.IRoleDAO;
 import it.eng.spagobi.commons.dao.ITenantsDAO;
@@ -48,7 +48,7 @@ public class AuthorizationsService {
 
 	@GET
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
-	@UserConstraint(functionalities = { SpagoBIConstants.PROFILE_MANAGEMENT })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.PROFILE_MANAGEMENT })
 	public String getAuthorizations(@Context HttpServletRequest req) {
 		JSONObject documentJSON = new JSONObject();
 

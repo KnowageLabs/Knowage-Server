@@ -22,7 +22,7 @@ import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 import it.eng.spagobi.analiticalmodel.document.bo.SubObject;
 import it.eng.spagobi.commons.bo.UserProfile;
-import it.eng.spagobi.commons.constants.SpagoBIConstants;
+import it.eng.spagobi.commons.constants.CommunityFunctionalityConstants;
 import it.eng.spagobi.commons.serializer.SerializationException;
 import it.eng.spagobi.commons.serializer.SerializerFactory;
 import it.eng.spagobi.commons.utilities.ObjectsAccessVerifier;
@@ -77,7 +77,7 @@ public class GetDocumentInfoAction extends ExecuteDocumentAction {
 					result.put("canSeeDocument", true);						
 					SubObject subObject = getRequiredSubObject(obj);
 					if (subObject != null) {
-						if (profile.isAbleToExecuteAction(SpagoBIConstants.DOCUMENT_MANAGEMENT_ADMIN) || 
+						if (profile.isAbleToExecuteAction(CommunityFunctionalityConstants.DOCUMENT_MANAGEMENT_ADMIN) || 
 								(subObject.getIsPublic().booleanValue() || subObject.getOwner().equals(profile.getUserId()))) {
 							JSONObject subObjectJSON = (JSONObject) SerializerFactory.getSerializer("application/json").serialize( subObject ,locale);
 							result.put("subobject", subObjectJSON);

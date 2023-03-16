@@ -4,7 +4,8 @@
          pageEncoding="UTF-8"
          session="true" 
          import="it.eng.spago.base.*,
-                 it.eng.spagobi.commons.constants.SpagoBIConstants"
+                 it.eng.spagobi.commons.constants.SpagoBIConstants,
+                 it.eng.spagobi.commons.constants.CommunityFunctionalityConstants"
 %>
 <%@page import="it.eng.spagobi.commons.utilities.ChannelUtilities"%>
 <%@page import="it.eng.spagobi.commons.utilities.messages.IMessageBuilder"%>

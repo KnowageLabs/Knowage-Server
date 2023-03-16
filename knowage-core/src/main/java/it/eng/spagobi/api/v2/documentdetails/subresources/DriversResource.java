@@ -35,7 +35,7 @@ import org.hibernate.HibernateException;
 import it.eng.spagobi.api.AbstractSpagoBIResource;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IBIObjectParameterDAO;
-import it.eng.spagobi.commons.constants.SpagoBIConstants;
+import it.eng.spagobi.commons.constants.CommunityFunctionalityConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.services.rest.annotations.UserConstraint;
 import it.eng.spagobi.utilities.assertion.Assert;
@@ -49,7 +49,7 @@ public class DriversResource extends AbstractSpagoBIResource {
 	@SuppressWarnings("unchecked")
 	@GET
 	@Produces("application/json")
-	@UserConstraint(functionalities = { SpagoBIConstants.DOCUMENT_MANAGEMENT_DEV })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.DOCUMENT_MANAGEMENT_DEV })
 	public List<BIObjectParameter> getDocumentParameters(@PathParam("id") Integer id) {
 		logger.debug("IN");
 		List<BIObjectParameter> biObjectParameters = null;
@@ -70,7 +70,7 @@ public class DriversResource extends AbstractSpagoBIResource {
 	@POST
 	@Consumes("application/json")
 	@Produces("application/json")
-	@UserConstraint(functionalities = { SpagoBIConstants.DOCUMENT_MANAGEMENT_DEV })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.DOCUMENT_MANAGEMENT_DEV })
 	public BIObjectParameter addDocumentParameter(@PathParam("id") Integer id, @Valid BIObjectParameter biObjectParameter) {
 		logger.debug("IN");
 		Assert.assertNotNull(biObjectParameter, "Driver can not be null");
@@ -91,7 +91,7 @@ public class DriversResource extends AbstractSpagoBIResource {
 	@Path("{driverId}")
 	@Consumes("application/json")
 	@Produces("application/json")
-	@UserConstraint(functionalities = { SpagoBIConstants.DOCUMENT_MANAGEMENT_DEV })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.DOCUMENT_MANAGEMENT_DEV })
 	public BIObjectParameter modifyDocumentParameter(@PathParam("id") Integer id, @Valid BIObjectParameter biObjectParameter) {
 		logger.debug("IN");
 		Assert.assertNotNull(biObjectParameter, "Driver can not be null");
@@ -111,7 +111,7 @@ public class DriversResource extends AbstractSpagoBIResource {
 	@GET
 	@Path("{driverId}")
 	@Produces("application/json")
-	@UserConstraint(functionalities = { SpagoBIConstants.DOCUMENT_MANAGEMENT_DEV })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.DOCUMENT_MANAGEMENT_DEV })
 	public BIObjectParameter getDocumentDriverbyId(@PathParam("id") Integer id, @PathParam("driverId") Integer driverId) {
 		logger.debug("IN");
 		IBIObjectParameterDAO parameterDAO = null;
@@ -133,7 +133,7 @@ public class DriversResource extends AbstractSpagoBIResource {
 	@DELETE
 	@Path("{driverId}")
 	@Produces("application/json")
-	@UserConstraint(functionalities = { SpagoBIConstants.DOCUMENT_MANAGEMENT_DEV })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.DOCUMENT_MANAGEMENT_DEV })
 	public void deleteDocumentDriverById(@PathParam("id") Integer id, @PathParam("driverId") Integer driverId) {
 		logger.debug("IN");
 		IBIObjectParameterDAO parameterDAO = null;

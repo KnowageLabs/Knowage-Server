@@ -20,6 +20,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <%@ page language="java" pageEncoding="UTF-8" session="true"%>
 <%@page import="it.eng.spago.security.IEngUserProfile"%>
 <%@page import="it.eng.spagobi.commons.constants.SpagoBIConstants"%>
+<%@page import="it.eng.spagobi.commons.constants.CommunityFunctionalityConstants"%>
 
 <%-- ---------------------------------------------------------------------- --%>
 <%-- JAVA IMPORTS															--%>
@@ -31,7 +32,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	IEngUserProfile profile = (IEngUserProfile) request.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
 	boolean canSee = false;
 	
-	if (UserUtilities.haveRoleAndAuthorization(profile, null, new String[] { SpagoBIConstants.MANAGE_CALENDAR })
+	if (UserUtilities.haveRoleAndAuthorization(profile, null, new String[] { CommunityFunctionalityConstants.MANAGE_CALENDAR })
 			|| UserUtilities.haveRoleAndAuthorization(profile, SpagoBIConstants.ADMIN_ROLE_TYPE, new String[0])) {
 		canSee = true;
 	}

@@ -30,10 +30,11 @@ import FieldForm from './PivotTableFieldForm.vue'
 export default defineComponent({
     name: 'pivot-table-data-container',
     components: { FieldTable, FieldForm },
-    props: { widgetModel: { type: Object as PropType<IWidget>, required: true }, selectedDataset: { type: Object as PropType<IDataset | null> } },
+    props: { propWidgetModel: { type: Object as PropType<IWidget>, required: true }, selectedDataset: { type: Object as PropType<IDataset | null> } },
     data() {
         return {
             descriptor,
+            widgetModel: {} as IWidget,
             columnFields: [] as IWidgetColumn[],
             rowFields: [] as IWidgetColumn[],
             dataFields: [] as IWidgetColumn[],
@@ -47,15 +48,21 @@ export default defineComponent({
         }
     },
     watch: {
+        propWidgetModel() {
+            this.loadWidgetModel()
+        },
         selectedDataset() {
             this.selectedField = null
         }
     },
     async created() {
+        this.loadWidgetModel()
         this.loadColumnTableItems()
-        console.log('widget model', this.widgetModel, this.widgetModel.columns)
     },
     methods: {
+        loadWidgetModel() {
+            this.widgetModel = this.propWidgetModel
+        },
         loadColumnTableItems() {
             this.columnFields = this.widgetModel.fields?.columns ?? []
             this.rowFields = this.widgetModel.fields?.rows ?? []
@@ -64,27 +71,20 @@ export default defineComponent({
         },
         onFieldsReorder(payload: { fields: IWidgetColumn[]; fieldType: string }) {
             if (this.widgetModel.fields) {
-                console.log('BEFORE', payload, this.widgetModel.fields?.[payload.fieldType])
-                // eslint-disable-next-line vue/no-mutating-props
                 this.widgetModel.fields[payload.fieldType] = payload.fields
                 emitter.emit('columnsReordered', this.widgetModel.columns)
-                console.log('AFTER', this.widgetModel.fields[payload.fieldType])
             }
         },
         onFieldAdded(payload: { column: IWidgetColumn; rows: IWidgetColumn[]; fieldType: string }) {
             if (this.widgetModel.fields) {
-                console.log('BEFORE', payload, this.widgetModel.fields?.[payload.fieldType])
-                // eslint-disable-next-line vue/no-mutating-props
                 this.widgetModel.fields[payload.fieldType] = payload.rows
                 emitter.emit('columnAdded', payload.column)
-                console.log('AFTER', this.widgetModel.fields[payload.fieldType])
             }
         },
         onFieldItemUpdate(field: IWidgetColumn) {
             if (this.selectedField?.id === field.id) this.setSelectedField(field)
         },
         setSelectedField(column: IWidgetColumn) {
-            console.log('selected field', column)
             this.selectedField = { ...column }
         },
         onFieldDelete(column: IWidgetColumn) {

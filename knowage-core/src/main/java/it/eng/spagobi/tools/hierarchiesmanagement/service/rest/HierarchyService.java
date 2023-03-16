@@ -48,7 +48,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import it.eng.spagobi.commons.constants.SpagoBIConstants;
+import it.eng.spagobi.commons.constants.CommunityFunctionalityConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.container.ObjectUtils;
 import it.eng.spagobi.services.rest.annotations.UserConstraint;
@@ -86,7 +86,7 @@ public class HierarchyService {
 	@GET
 	@Path("/getHierarchyTree")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
-	@UserConstraint(functionalities = { SpagoBIConstants.HIERARCHIES_MANAGEMENT })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.HIERARCHIES_MANAGEMENT })
 	public String getHierarchyTree(@QueryParam("dimension") String dimension, @QueryParam("filterType") String hierarchyType,
 			@QueryParam("filterHierarchy") String hierarchyName, @QueryParam("validityDate") String hierarchyDate,
 			@QueryParam("filterDimension") String filterDimension, @QueryParam("filterDate") String filterDate, @QueryParam("optionDate") String optionDate,
@@ -134,7 +134,7 @@ public class HierarchyService {
 	@GET
 	@Path("/hierarchyMetadata")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
-	@UserConstraint(functionalities = { SpagoBIConstants.HIERARCHIES_MANAGEMENT })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.HIERARCHIES_MANAGEMENT })
 	public String getHierarchyFields(@QueryParam("dimension") String dimensionName) {
 
 		logger.debug("START");
@@ -157,7 +157,7 @@ public class HierarchyService {
 	@GET
 	@Path("/nodeMetadata")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
-	@UserConstraint(functionalities = { SpagoBIConstants.HIERARCHIES_MANAGEMENT })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.HIERARCHIES_MANAGEMENT })
 	public String getHierarchyNodeFields(@QueryParam("dimension") String dimensionName, @QueryParam("excludeLeaf") boolean excludeLeaf) {
 
 		logger.debug("START");
@@ -180,7 +180,7 @@ public class HierarchyService {
 	@POST
 	@Path("/saveHierarchy")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
-	@UserConstraint(functionalities = { SpagoBIConstants.HIERARCHIES_MANAGEMENT })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.HIERARCHIES_MANAGEMENT })
 	public String saveHierarchy(@Context HttpServletRequest req) {
 		Connection connection = null;
 		try {
@@ -307,7 +307,7 @@ public class HierarchyService {
 	@POST
 	@Path("/deleteHierarchy")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
-	@UserConstraint(functionalities = { SpagoBIConstants.HIERARCHIES_MANAGEMENT })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.HIERARCHIES_MANAGEMENT })
 	public String deleteHierarchy(@Context HttpServletRequest req) throws SQLException {
 		// delete hierarchy
 		Connection connection = null;
@@ -343,7 +343,7 @@ public class HierarchyService {
 	@GET
 	@Path("/getRelationsMasterTechnical")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
-	@UserConstraint(functionalities = { SpagoBIConstants.HIERARCHIES_MANAGEMENT })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.HIERARCHIES_MANAGEMENT })
 	public String getRelationsMasterTechnical(@QueryParam("dimension") String dimension, @QueryParam("hierSourceCode") String hierSourceCode,
 			@QueryParam("hierSourceName") String hierSourceName, @QueryParam("nodeSourceCode") String nodeSourceCode) throws SQLException {
 		// get relations between master and technical nodes

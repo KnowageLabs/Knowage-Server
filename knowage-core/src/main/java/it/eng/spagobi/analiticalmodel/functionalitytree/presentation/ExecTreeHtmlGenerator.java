@@ -38,6 +38,7 @@ import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 import it.eng.spagobi.analiticalmodel.functionalitytree.bo.LowFunctionality;
 import it.eng.spagobi.commons.bo.UserProfile;
+import it.eng.spagobi.commons.constants.CommunityFunctionalityConstants;
 import it.eng.spagobi.commons.constants.ObjectsTreeConstants;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.utilities.ChannelUtilities;
@@ -456,7 +457,7 @@ public class ExecTreeHtmlGenerator implements ITreeHtmlGenerator {
 				} else {
 					logger.debug("Node [" + obj.getName() + "] is accessible by user [" + ((UserProfile) profile).getUserId() + "]");
 					String prog = idObj.toString();
-					if ((stateObj.equals("TEST")) && canTest && profile.isAbleToExecuteAction(SpagoBIConstants.DOCUMENT_MANAGEMENT_TEST)) {
+					if ((stateObj.equals("TEST")) && canTest && profile.isAbleToExecuteAction(CommunityFunctionalityConstants.DOCUMENT_MANAGEMENT_TEST)) {
 						thereIsOneOrMoreObjectsInTestState = true;
 
 						htmlStream.append(treeName + ".add(" + dTreeObjects-- + ", " + idFolder + ",' <a title=\\'" + exec + "\\' href=\""

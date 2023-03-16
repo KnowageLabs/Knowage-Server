@@ -20,7 +20,7 @@ import { getColumnConditionalStyles } from '../TableWidget/TableWidgetHelper'
 import { getWidgetStyleByType, stringifyStyleProperties } from '../TableWidget/TableWidgetHelper'
 import { IPivotTooltips } from '../../interfaces/pivotTable/DashboardPivotTableWidget'
 import { getFormattedClickedValueForCrossNavigation, createPivotTableSelection } from './PivotWidgetHelpers'
-import { updateStoreSelections, executePivotTableWidgetCrossNavigation } from '../interactionsHelpers/InteractionHelper'
+import { updateAllStoreSelections, executePivotTableWidgetCrossNavigation } from '../interactionsHelpers/InteractionHelper'
 import { mapActions } from 'pinia'
 import { formatNumberWithLocale } from '@/helpers/commons/localeHelper'
 
@@ -52,7 +52,8 @@ export default defineComponent({
             pivotConfig: {} as any,
             fieldPickerConfig: {} as any,
             fieldPanelConfig: {} as any,
-            gridInstance: null as any
+            gridInstance: null as any,
+            activeSelections: [] as ISelection[]
         }
     },
     computed: {
@@ -65,7 +66,7 @@ export default defineComponent({
     },
     watch: {
         propActiveSelections() {
-            // this.loadActiveSelections()
+            this.loadActiveSelections()
         }
     },
     beforeMount() {},
@@ -73,6 +74,7 @@ export default defineComponent({
         this.setPivotConfiguration()
         this.setFieldPickerConfiguration()
         this.setFieldPanelConfiguration()
+        this.loadActiveSelections()
     },
     mounted() {
         this.setEventListeners()
@@ -89,6 +91,9 @@ export default defineComponent({
         },
         removeEventListeners() {
             emitter.on('widgetResized', this.resizePivot)
+        },
+        loadActiveSelections() {
+            this.activeSelections = this.propActiveSelections
         },
         resizePivot() {
             this.gridInstance.repaint()
@@ -313,11 +318,11 @@ export default defineComponent({
         onCellClicked(cellEvent) {
             if (this.editorMode) return
             if (this.propWidget.settings.interactions.crossNavigation.enabled) {
-                const formattedClickedValue = getFormattedClickedValueForCrossNavigation(cellEvent, this.dataFields)
-                if (formattedClickedValue) executePivotTableWidgetCrossNavigation(formattedClickedValue, this.propWidget.settings.interactions.crossNavigation, this.dashboardId)
+                const formattedOutputParameters = getFormattedClickedValueForCrossNavigation(cellEvent, this.dataFields, this.propWidget.settings.interactions.crossNavigation)
+                if (formattedOutputParameters) executePivotTableWidgetCrossNavigation(formattedOutputParameters, this.propWidget.settings.interactions.crossNavigation, this.dashboardId)
             } else if (this.propWidget.settings.interactions.selection.enabled) {
-                const selection = createPivotTableSelection(cellEvent, this.propWidget, this.datasets)
-                if (selection) updateStoreSelections(selection, this.propActiveSelections, this.dashboardId, this.setSelections, this.$http)
+                const selections = createPivotTableSelection(cellEvent, this.propWidget, this.datasets)
+                if (selections) updateAllStoreSelections(selections, this.activeSelections, this.dashboardId, this.setSelections, this.$http)
             }
         }
         //#endregion ===============================================================================================

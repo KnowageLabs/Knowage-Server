@@ -27,6 +27,7 @@ import it.eng.spagobi.analiticalmodel.functionalitytree.service.DetailFunctional
 import it.eng.spagobi.analiticalmodel.functionalitytree.service.MoveDownLowFunctionality;
 import it.eng.spagobi.analiticalmodel.functionalitytree.service.MoveUpLowFunctionality;
 import it.eng.spagobi.commons.constants.AdmintoolsConstants;
+import it.eng.spagobi.commons.constants.CommunityFunctionalityConstants;
 import it.eng.spagobi.commons.constants.ObjectsTreeConstants;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.utilities.ChannelUtilities;
@@ -159,7 +160,7 @@ public class FunctionalitiesTreeHtmlGenerator implements ITreeHtmlGenerator {
 		if (isRoot) {
 			try{
 				//if is not user_func will be only possible to insert, if it is user_funct and the user is admin can erase
-				if (user_funct==true && profile.isAbleToExecuteAction(SpagoBIConstants.DOCUMENT_MANAGEMENT_ADMIN)) {
+				if (user_funct==true && profile.isAbleToExecuteAction(CommunityFunctionalityConstants.DOCUMENT_MANAGEMENT_ADMIN)) {
 					htmlStream.append("	treeFunct.add(" + id + ", " + dTreeRootId + ",'" + name + "', 'javascript:linkEmpty()', '', '', '', '', 'true', 'menu" + requestIdentity + "(event, \\'"+createAddFunctionalityLink(path)+"\\', \\'\\', \\'"+createRemoveFunctionalityLink(path)+"\\', \\'\\', \\'\\')');\n");
 				}
 				else {			

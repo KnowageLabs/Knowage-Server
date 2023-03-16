@@ -1,6 +1,12 @@
 <template>
     <div v-show="model && visible && showDashboard" :id="`dashboard_${model?.configuration?.id}`" :class="mode === 'dashboard-popup' ? 'dashboard-container-popup' : 'dashboard-container'">
-        <Button icon="fas fa-square-check" class="p-m-3 p-button-rounded p-button-text p-button-plain" style="position: fixed; right: 0; z-index: 999; background-color: white; box-shadow: 0px 2px 3px #ccc" @click="selectionsDialogVisible = true" />
+        <Button
+            v-if="store.dashboards[dashboardId]?.selections?.length > 0"
+            icon="fas fa-square-check"
+            class="p-m-3 p-button-rounded p-button-text p-button-plain"
+            style="position: fixed; right: 0; z-index: 999; background-color: white; box-shadow: 0px 2px 3px #ccc"
+            @click="selectionsDialogVisible = true"
+        />
         <DashboardRenderer v-if="!loading && visible && showDashboard" :model="model" :datasets="datasets" :dashboardId="dashboardId" :documentDrivers="drivers" :variables="model ? model.configuration.variables : []"></DashboardRenderer>
 
         <Transition name="editorEnter" appear>

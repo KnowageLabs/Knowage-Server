@@ -12,9 +12,7 @@ export const getFormattedStyle = (widget: any) => {
         padding: getFormattedPaddingStyle(widget),
         shadows: getFormattedShadowsStyle(widget),
         totals: getFormattedTotalsStyle(widget),
-        subTotals: getFormattedSubTotalsStyle(widget),
-        columnHeaders: getFormattedColumnHeadersStyle(widget),
-        rowHeaders: pivotTableDefaultValues.getDefaultRowsHeadersStyle()
+        subTotals: getFormattedSubTotalsStyle(widget)
     } as IPivotTableStyle
 }
 
@@ -56,23 +54,5 @@ const getFormattedSubTotalsStyle = (widget: any) => {
         formattedStyles.properties.color = widget.content.style.subTotals.color
 
         return formattedStyles
-    }
-}
-
-const getFormattedColumnHeadersStyle = (widget: any) => {
-    const defaultColumnHeadersStyle = pivotTableDefaultValues.getDefaultColumnHeadersStyle()
-    if (!widget.content.style || !widget.content.style.crossTabHeaders) return defaultColumnHeadersStyle
-    const oldCrossTabHeaders = widget.content.style.crossTabHeaders
-    return {
-        enabled: true,
-        properties: {
-            "background-color": oldCrossTabHeaders['background-color'] ?? defaultColumnHeadersStyle.properties['background-color'],
-            color: oldCrossTabHeaders.color ?? defaultColumnHeadersStyle.properties.color,
-            "font-family": oldCrossTabHeaders['font-family'] ?? defaultColumnHeadersStyle.properties['font-family'],
-            "font-size": oldCrossTabHeaders['font-size'] ?? defaultColumnHeadersStyle.properties['font-size'],
-            "font-style": oldCrossTabHeaders['font-style'] ?? defaultColumnHeadersStyle.properties['font-style'],
-            "font-weight": oldCrossTabHeaders['font-weight'] ?? defaultColumnHeadersStyle.properties['font-weight'],
-            "text-align": oldCrossTabHeaders['text-align'] ?? defaultColumnHeadersStyle.properties['text-align']
-        }
     }
 }

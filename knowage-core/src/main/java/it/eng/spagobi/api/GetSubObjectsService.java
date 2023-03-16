@@ -6,7 +6,7 @@ import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.analiticalmodel.document.bo.SubObject;
 import it.eng.spagobi.analiticalmodel.document.dao.ISubObjectDAO;
 import it.eng.spagobi.commons.bo.UserProfile;
-import it.eng.spagobi.commons.constants.SpagoBIConstants;
+import it.eng.spagobi.commons.constants.CommunityFunctionalityConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
@@ -30,7 +30,7 @@ public class GetSubObjectsService extends AbstractSpagoBIResource {
 		List subObjectsList = null;
 		IEngUserProfile userProfile = this.getUserProfile();
 		try {
-			if (userProfile.isAbleToExecuteAction(SpagoBIConstants.DOCUMENT_MANAGEMENT_ADMIN)) {
+			if (userProfile.isAbleToExecuteAction(CommunityFunctionalityConstants.DOCUMENT_MANAGEMENT_ADMIN)) {
 				subObjectsList = DAOFactory.getSubObjectDAO().getSubObjects(biobjectId);
 			} else {
 				subObjectsList = DAOFactory.getSubObjectDAO().getAccessibleSubObjects(biobjectId, userProfile);
@@ -63,7 +63,7 @@ public class GetSubObjectsService extends AbstractSpagoBIResource {
 		}
 		boolean canDeleteSubObject = false;
 		try {
-			if (userProfile.isAbleToExecuteAction(SpagoBIConstants.DOCUMENT_MANAGEMENT_ADMIN)
+			if (userProfile.isAbleToExecuteAction(CommunityFunctionalityConstants.DOCUMENT_MANAGEMENT_ADMIN)
 					|| subObject.getOwner().equals(userProfile.getUserId().toString())) {
 				canDeleteSubObject = true;
 			}

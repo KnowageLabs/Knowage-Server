@@ -78,7 +78,7 @@ import it.eng.spagobi.behaviouralmodel.lov.bo.ScriptDetail;
 import it.eng.spagobi.behaviouralmodel.lov.dao.IModalitiesValueDAO;
 import it.eng.spagobi.behaviouralmodel.lov.service.GridMetadataContainer;
 import it.eng.spagobi.commons.bo.UserProfile;
-import it.eng.spagobi.commons.constants.SpagoBIConstants;
+import it.eng.spagobi.commons.constants.CommunityFunctionalityConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.serializer.SerializationException;
 import it.eng.spagobi.json.Xml;
@@ -104,7 +104,7 @@ public class LovResource extends AbstractSpagoBIResource {
 	@GET
 	@Path("/get/all")
 	@Produces(MediaType.APPLICATION_JSON)
-	@UserConstraint(functionalities = { SpagoBIConstants.LOVS_MANAGEMENT })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.LOVS_MANAGEMENT })
 	public List<ModalitiesValue> getAllListOfValues() {
 
 		logger.debug("IN");
@@ -147,7 +147,7 @@ public class LovResource extends AbstractSpagoBIResource {
 	@GET
 	@Path("/{id}")
 	@Produces(MediaType.APPLICATION_JSON)
-	@UserConstraint(functionalities = { SpagoBIConstants.LOVS_MANAGEMENT })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.LOVS_MANAGEMENT })
 	public ModalitiesValue getOnlyOneListOfValue(@PathParam("id") Integer idLOV) {
 
 		logger.debug("IN: input id = " + idLOV);
@@ -186,7 +186,7 @@ public class LovResource extends AbstractSpagoBIResource {
 	}
 
 	@GET
-	@UserConstraint(functionalities = { SpagoBIConstants.PARAMETER_MANAGEMENT })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.PARAMETER_MANAGEMENT })
 	@Path("/{id}/analyticalDrivers")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response loadDriversByLovId(@PathParam("id") Integer lovId) {
@@ -208,7 +208,7 @@ public class LovResource extends AbstractSpagoBIResource {
 	}
 
 	@GET
-	@UserConstraint(functionalities = { SpagoBIConstants.PARAMETER_MANAGEMENT })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.PARAMETER_MANAGEMENT })
 	@Path("/{id}/documents")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getDocumetsByLovId(@PathParam("id") Integer lovId) {
@@ -277,7 +277,7 @@ public class LovResource extends AbstractSpagoBIResource {
 	@POST
 	@Path("/preview")
 	@Produces(MediaType.APPLICATION_JSON)
-	@UserConstraint(functionalities = { SpagoBIConstants.LOVS_MANAGEMENT })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.LOVS_MANAGEMENT })
 	public String preview(@javax.ws.rs.core.Context HttpServletRequest req) {
 		logger.debug("IN");
 
@@ -405,7 +405,7 @@ public class LovResource extends AbstractSpagoBIResource {
 	@POST
 	@Path("/save")
 	@Consumes(MediaType.APPLICATION_JSON)
-	@UserConstraint(functionalities = { SpagoBIConstants.LOVS_MANAGEMENT })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.LOVS_MANAGEMENT })
 	public Response post(@javax.ws.rs.core.Context HttpServletRequest req) {
 		IModalitiesValueDAO modalitiesValueDAO;
 		Integer id = null;
@@ -448,7 +448,7 @@ public class LovResource extends AbstractSpagoBIResource {
 
 	@DELETE
 	@Path("/delete/{id}")
-	@UserConstraint(functionalities = { SpagoBIConstants.LOVS_MANAGEMENT })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.LOVS_MANAGEMENT })
 	public Response remove(@PathParam("id") Integer id) {
 		IModalitiesValueDAO modalitiesValueDAO;
 
@@ -477,7 +477,7 @@ public class LovResource extends AbstractSpagoBIResource {
 
 	@PUT
 	@Produces(MediaType.APPLICATION_JSON)
-	@UserConstraint(functionalities = { SpagoBIConstants.LOVS_MANAGEMENT })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.LOVS_MANAGEMENT })
 	public Response put(@javax.ws.rs.core.Context HttpServletRequest req) {
 
 		logger.debug("IN");
@@ -524,7 +524,7 @@ public class LovResource extends AbstractSpagoBIResource {
 	@POST
 	@Path("/checkdependecies")
 	@Produces(MediaType.APPLICATION_JSON)
-	@UserConstraint(functionalities = { SpagoBIConstants.LOVS_MANAGEMENT })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.LOVS_MANAGEMENT })
 	public String checkDependencies(@javax.ws.rs.core.Context HttpServletRequest req) {
 
 		IModalitiesValueDAO modalitiesValueDAO;

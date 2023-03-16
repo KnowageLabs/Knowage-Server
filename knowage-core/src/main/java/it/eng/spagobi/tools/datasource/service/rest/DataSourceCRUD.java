@@ -45,7 +45,7 @@ import it.eng.spagobi.api.AbstractSpagoBIResource;
 import it.eng.spagobi.api.v2.DataSourceResource;
 import it.eng.spagobi.commons.bo.Domain;
 import it.eng.spagobi.commons.bo.UserProfile;
-import it.eng.spagobi.commons.constants.SpagoBIConstants;
+import it.eng.spagobi.commons.constants.CommunityFunctionalityConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.dao.IDomainDAO;
 import it.eng.spagobi.commons.serializer.SerializationException;
@@ -84,7 +84,7 @@ public class DataSourceCRUD extends AbstractSpagoBIResource {
 
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
-	@UserConstraint(functionalities = { SpagoBIConstants.DATASOURCE_MANAGEMENT })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.DATASOURCE_MANAGEMENT })
 	public String getAllDataSources(@Context HttpServletRequest req, @QueryParam("onlySqlLike") boolean onlySqlLike) {
 		IDataSourceDAO dataSourceDao = null;
 		IDomainDAO domaindao = null;
@@ -128,7 +128,7 @@ public class DataSourceCRUD extends AbstractSpagoBIResource {
 
 	@DELETE
 	@Produces(MediaType.APPLICATION_JSON)
-	@UserConstraint(functionalities = { SpagoBIConstants.DATASOURCE_MANAGEMENT })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.DATASOURCE_MANAGEMENT })
 	public String deleteDataSource(@Context HttpServletRequest req) {
 		IEngUserProfile profile = getUserProfile();
 		HashMap<String, String> logParam = new HashMap();
@@ -180,7 +180,7 @@ public class DataSourceCRUD extends AbstractSpagoBIResource {
 
 	@POST
 	@Produces(MediaType.APPLICATION_JSON)
-	@UserConstraint(functionalities = { SpagoBIConstants.DATASOURCE_MANAGEMENT })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.DATASOURCE_MANAGEMENT })
 	public String saveDataSource(@Context HttpServletRequest req) {
 		UserProfile profile = (UserProfile) req.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
 

@@ -35,7 +35,7 @@ import it.eng.spagobi.analiticalmodel.document.bo.SubObject;
 import it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO;
 import it.eng.spagobi.analiticalmodel.document.dao.ISubObjectDAO;
 import it.eng.spagobi.commons.bo.UserProfile;
-import it.eng.spagobi.commons.constants.SpagoBIConstants;
+import it.eng.spagobi.commons.constants.CommunityFunctionalityConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.utilities.GeneralUtilities;
 import it.eng.spagobi.services.common.AbstractServiceImpl;
@@ -198,7 +198,7 @@ public class ContentServiceImpl extends AbstractServiceImpl implements ContentSe
 		try {
 			validateTicket(token, user);
 			IEngUserProfile profile = GeneralUtilities.createNewUserProfile(user);
-			if (!profile.getFunctionalities().contains(SpagoBIConstants.SAVE_SUBOBJECT_FUNCTIONALITY)) {
+			if (!profile.getFunctionalities().contains(CommunityFunctionalityConstants.SAVE_SUBOBJECT_FUNCTIONALITY)) {
 				logger.debug("KO - User " + user + " cannot save subobjects");
 				return "KO - You cannot save subobjects";
 			}
@@ -234,7 +234,7 @@ public class ContentServiceImpl extends AbstractServiceImpl implements ContentSe
 		try {
 			validateTicket(token, user);
 			IEngUserProfile profile = GeneralUtilities.createNewUserProfile(user);
-			if (!profile.getFunctionalities().contains(SpagoBIConstants.DOCUMENT_MANAGEMENT_DEV)) {
+			if (!profile.getFunctionalities().contains(CommunityFunctionalityConstants.DOCUMENT_MANAGEMENT_DEV)) {
 				logger.debug("KO - User " + user + " cannot save templates");
 				return "KO - You cannot save templates";
 			}

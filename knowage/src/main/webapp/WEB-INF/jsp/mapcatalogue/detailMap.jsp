@@ -26,6 +26,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	 				         it.eng.spagobi.commons.dao.DAOFactory,
 	 				         it.eng.spago.navigation.LightNavigationManager,
 	 				         it.eng.spagobi.commons.constants.SpagoBIConstants,
+	 				         it.eng.spagobi.commons.constants.CommunityFunctionalityConstants,
 	 				         java.util.Map,java.util.HashMap,java.util.List" %>
 	 				         
 	<%@page import="it.eng.spagobi.commons.utilities.ChannelUtilities"%>

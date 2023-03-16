@@ -17,6 +17,8 @@
  */
 package it.eng.spagobi.commons.serializer;
 
+import static it.eng.spagobi.commons.constants.CommunityFunctionalityConstants.SEE_METADATA_FUNCTIONALITY;
+
 import java.util.Collection;
 import java.util.Locale;
 
@@ -29,7 +31,7 @@ import it.eng.spago.error.EMFInternalError;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.analiticalmodel.functionalitytree.bo.LowFunctionality;
 import it.eng.spagobi.commons.bo.UserProfile;
-import it.eng.spagobi.commons.constants.SpagoBIConstants;
+import it.eng.spagobi.commons.constants.CommunityFunctionalityConstants;
 import it.eng.spagobi.commons.utilities.ObjectsAccessVerifier;
 import it.eng.spagobi.commons.utilities.messages.MessageBuilder;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
@@ -73,7 +75,7 @@ public class DocumentsJSONDecorator {
 			addDetailAction(document, profile, locale);
 			addShowMetadataAction(document, profile, locale);
 
-			if (profile.isAbleToExecuteAction(SpagoBIConstants.GLOSSARY)) {
+			if (profile.isAbleToExecuteAction(CommunityFunctionalityConstants.GLOSSARY)) {
 				addShowHelpOnLine(document, profile, locale);
 			}
 		} catch (Exception e) {
@@ -92,7 +94,7 @@ public class DocumentsJSONDecorator {
 
 	private static void addShowMetadataAction(JSONObject document, IEngUserProfile profile, Locale locale) throws JSONException, EMFInternalError {
 		Collection userFunctionalities = profile.getFunctionalities();
-		if (userFunctionalities.contains("SeeMetadataFunctionality")) {
+		if (userFunctionalities.contains(SEE_METADATA_FUNCTIONALITY)) {
 			JSONObject showmetadataAction = new JSONObject();
 			MessageBuilder msgBuild = new MessageBuilder();
 			showmetadataAction.put("name", "showmetadata");

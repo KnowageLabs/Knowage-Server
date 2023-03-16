@@ -38,7 +38,7 @@ import org.json.JSONObject;
 
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.commons.bo.UserProfile;
-import it.eng.spagobi.commons.constants.SpagoBIConstants;
+import it.eng.spagobi.commons.constants.CommunityFunctionalityConstants;
 import it.eng.spagobi.commons.utilities.UserUtilities;
 import it.eng.spagobi.services.exceptions.ExceptionUtilities;
 import it.eng.spagobi.services.rest.annotations.UserConstraint;
@@ -69,7 +69,7 @@ public class MeasureCatalogueCRUD {
 
 	@GET
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
-	@UserConstraint(functionalities = { SpagoBIConstants.MEASURES_CATALOGUE_MANAGEMENT })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.MEASURES_CATALOGUE_MANAGEMENT })
 	public String getAllMeasures(@Context HttpServletRequest req) {
 		IEngUserProfile profile = (IEngUserProfile) req.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
 		String measures = MeasureCatalogueSingleton.getMeasureCatologue().toString(((UserProfile) profile).getUserId().toString(),
@@ -81,7 +81,7 @@ public class MeasureCatalogueCRUD {
 	@Path("/join")
 	@Consumes("application/x-www-form-urlencoded")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
-	@UserConstraint(functionalities = { SpagoBIConstants.MEASURES_CATALOGUE_MANAGEMENT })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.MEASURES_CATALOGUE_MANAGEMENT })
 	public String join(@Context HttpServletRequest req, MultivaluedMap<String, String> form) {
 
 		logger.debug("IN");

@@ -63,7 +63,7 @@ import com.jamonapi.MonitorFactory;
 
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.api.common.AbstractDataSetResource;
-import it.eng.spagobi.commons.constants.SpagoBIConstants;
+import it.eng.spagobi.commons.constants.CommunityFunctionalityConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.serializer.SerializationException;
 import it.eng.spagobi.commons.serializer.SerializerFactory;
@@ -112,7 +112,7 @@ public class DataSetResource extends AbstractDataSetResource {
 	@GET
 	@Path("/")
 	@Produces(MediaType.APPLICATION_JSON)
-	@UserConstraint(functionalities = { SpagoBIConstants.SELF_SERVICE_DATASET_MANAGEMENT })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.SELF_SERVICE_DATASET_MANAGEMENT })
 	@Deprecated
 	public String getDataSets(@QueryParam("typeDoc") String typeDoc, @QueryParam("callback") String callback, @QueryParam("ids") String ids) {
 		logger.debug("IN");
@@ -145,7 +145,7 @@ public class DataSetResource extends AbstractDataSetResource {
 	@GET
 	@Path("/datasetsforlov")
 	@Produces(MediaType.APPLICATION_JSON)
-	@UserConstraint(functionalities = { SpagoBIConstants.SELF_SERVICE_DATASET_MANAGEMENT })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.SELF_SERVICE_DATASET_MANAGEMENT })
 	public Response getDataSetsForLOV(@QueryParam("typeDoc") String typeDoc, @QueryParam("callback") String callback) {
 		logger.debug("IN");
 		List<DataSetBasicInfo> toReturn = new ArrayList<>();
@@ -172,7 +172,7 @@ public class DataSetResource extends AbstractDataSetResource {
 	@GET
 	@Path("/pagopt/")
 	@Produces(MediaType.APPLICATION_JSON)
-	@UserConstraint(functionalities = { SpagoBIConstants.SELF_SERVICE_DATASET_MANAGEMENT })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.SELF_SERVICE_DATASET_MANAGEMENT })
 	public String getDataSetsPaginationOption(@QueryParam("typeDoc") String typeDoc, @QueryParam("callback") String callback,
 			@QueryParam("offset") Integer offsetInput, @QueryParam("fetchSize") Integer fetchSizeInput, @QueryParam("filters") JSONObject filters,
 			@QueryParam("ordering") JSONObject ordering, @QueryParam("tags") List<Integer> tags) {
@@ -215,7 +215,7 @@ public class DataSetResource extends AbstractDataSetResource {
 	@GET
 	@Path("/olderversions/{id}")
 	@Produces(MediaType.APPLICATION_JSON)
-	@UserConstraint(functionalities = { SpagoBIConstants.SELF_SERVICE_DATASET_MANAGEMENT })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.SELF_SERVICE_DATASET_MANAGEMENT })
 	public String geOlderVersionsForDataset(@PathParam("id") int id) {
 		logger.debug("IN");
 		List<IDataSet> olderVersions = null;
@@ -270,7 +270,7 @@ public class DataSetResource extends AbstractDataSetResource {
 	@GET
 	@Path("/{label}")
 	@Produces(MediaType.APPLICATION_JSON)
-	@UserConstraint(functionalities = { SpagoBIConstants.SELF_SERVICE_DATASET_MANAGEMENT })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.SELF_SERVICE_DATASET_MANAGEMENT })
 	public String getDataSet(@PathParam("label") String label) {
 
 		return super.getDataSet(label);
@@ -279,7 +279,7 @@ public class DataSetResource extends AbstractDataSetResource {
 	@GET
 	@Path("/id/{id}")
 	@Produces(MediaType.TEXT_HTML)
-	@UserConstraint(functionalities = { SpagoBIConstants.SELF_SERVICE_DATASET_MANAGEMENT })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.SELF_SERVICE_DATASET_MANAGEMENT })
 	public String getDataSetLabelById(@PathParam("id") String id) {
 		logger.debug("IN");
 
@@ -292,7 +292,7 @@ public class DataSetResource extends AbstractDataSetResource {
 	@PUT
 	@Path("/clone-file")
 	@Produces(MediaType.APPLICATION_JSON)
-	@UserConstraint(functionalities = { SpagoBIConstants.SELF_SERVICE_DATASET_MANAGEMENT })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.SELF_SERVICE_DATASET_MANAGEMENT })
 	public Response cloneFile(@QueryParam("fileName") String fileName) {
 		try {
 			String resourcePath = SpagoBIUtilities.getResourcePath();
@@ -318,7 +318,7 @@ public class DataSetResource extends AbstractDataSetResource {
 	@GET
 	@Path("/dataset/id/{id}")
 	@Produces(MediaType.APPLICATION_JSON)
-	@UserConstraint(functionalities = { SpagoBIConstants.SELF_SERVICE_DATASET_MANAGEMENT })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.SELF_SERVICE_DATASET_MANAGEMENT })
 	public String getDataSetById(@PathParam("id") Integer id) throws JSONException, SerializationException {
 		logger.debug("IN");
 		IDataSetDAO datasetDao;
@@ -373,7 +373,7 @@ public class DataSetResource extends AbstractDataSetResource {
 	@GET
 	@Path("/dataset/{dsLabel}/category")
 	@Produces(MediaType.APPLICATION_JSON)
-	@UserConstraint(functionalities = { SpagoBIConstants.SELF_SERVICE_DATASET_MANAGEMENT })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.SELF_SERVICE_DATASET_MANAGEMENT })
 	public String getDataSetCategoryByDsLabel(@PathParam("dsLabel") String dsLabel) {
 		try {
 			IDataSetDAO datasetDao = DAOFactory.getDataSetDAO();
@@ -389,7 +389,7 @@ public class DataSetResource extends AbstractDataSetResource {
 	@GET
 	@Path("/dataset/{dsLabel}/derived")
 	@Produces(MediaType.APPLICATION_JSON)
-	@UserConstraint(functionalities = { SpagoBIConstants.SELF_SERVICE_DATASET_MANAGEMENT })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.SELF_SERVICE_DATASET_MANAGEMENT })
 	public boolean getDerivedDataSetByDsLabel(@PathParam("dsLabel") String dsLabel) {
 		try {
 			IDataSetDAO datasetDao = DAOFactory.getDataSetDAO();
@@ -415,7 +415,7 @@ public class DataSetResource extends AbstractDataSetResource {
 	@GET
 	@Path("/{id}/restore")
 	@Produces(MediaType.APPLICATION_JSON)
-	@UserConstraint(functionalities = { SpagoBIConstants.SELF_SERVICE_DATASET_MANAGEMENT })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.SELF_SERVICE_DATASET_MANAGEMENT })
 	public String restoreCurrentDatasetVersion(@PathParam("id") String datasetId, @QueryParam("versionId") String versionId) throws JSONException {
 
 		logger.debug("IN");
@@ -445,7 +445,7 @@ public class DataSetResource extends AbstractDataSetResource {
 	@GET
 	@Path("/{label}/content")
 	@Produces(MediaType.APPLICATION_JSON)
-	@UserConstraint(functionalities = { SpagoBIConstants.SELF_SERVICE_DATASET_MANAGEMENT })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.SELF_SERVICE_DATASET_MANAGEMENT })
 	public Response execute(@PathParam("label") String label, String body) {
 		return super.execute(label, body);
 	}
@@ -453,7 +453,7 @@ public class DataSetResource extends AbstractDataSetResource {
 	@GET
 	@Path("/{id}/export")
 	@Produces(MediaType.TEXT_PLAIN)
-	@UserConstraint(functionalities = { SpagoBIConstants.SELF_SERVICE_DATASET_MANAGEMENT })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.SELF_SERVICE_DATASET_MANAGEMENT })
 	public Response export(@PathParam("id") int id, @QueryParam("outputType") @DefaultValue("csv") String outputType,
 			@QueryParam("DRIVERS") JSONObject driversJson, @QueryParam("PARAMETERS") JSONObject params) {
 
@@ -465,7 +465,7 @@ public class DataSetResource extends AbstractDataSetResource {
 				JSONArray paramsJson = params.getJSONArray("parameters");
 				JSONObject pars = new JSONObject();
 				pars.put(DataSetConstants.PARS, paramsJson);
-				ManageDataSetsForREST mdsr = new ManageDataSetsForREST();
+				ManageDataSetsForREST mdsr = ManageDataSetsForREST.getInstance();
 				parameters = mdsr.getDataSetParametersAsMap(pars);
 
 			} catch (Exception e) {
@@ -518,14 +518,14 @@ public class DataSetResource extends AbstractDataSetResource {
 	@Override
 	@DELETE
 	@Path("/{label}")
-	@UserConstraint(functionalities = { SpagoBIConstants.SELF_SERVICE_DATASET_MANAGEMENT })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.SELF_SERVICE_DATASET_MANAGEMENT })
 	public Response deleteDataset(@PathParam("label") String label) {
 		return super.deleteDataset(label);
 	}
 
 	@DELETE
 	@Path("/id/{id}")
-	@UserConstraint(functionalities = { SpagoBIConstants.SELF_SERVICE_DATASET_MANAGEMENT })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.SELF_SERVICE_DATASET_MANAGEMENT })
 	public Response deleteDatasetById(@PathParam("id") int id) {
 		IDataSetDAO datasetDao = DAOFactory.getDataSetDAO();
 		IDataSet dataset = datasetDao.loadDataSetById(id);
@@ -543,7 +543,7 @@ public class DataSetResource extends AbstractDataSetResource {
 	 */
 	@DELETE
 	@Path("/{id}/version/{versionId}")
-	@UserConstraint(functionalities = { SpagoBIConstants.SELF_SERVICE_DATASET_MANAGEMENT })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.SELF_SERVICE_DATASET_MANAGEMENT })
 	public Response deleteDatasetVersion(@PathParam("id") String datasetId, @PathParam("versionId") String versionId) {
 
 		IDataSetDAO datasetDao = DAOFactory.getDataSetDAO();
@@ -569,7 +569,7 @@ public class DataSetResource extends AbstractDataSetResource {
 	 */
 	@DELETE
 	@Path("/{id}/allversions")
-	@UserConstraint(functionalities = { SpagoBIConstants.SELF_SERVICE_DATASET_MANAGEMENT })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.SELF_SERVICE_DATASET_MANAGEMENT })
 	public Response deleteAllDatasetVersions(@PathParam("id") String datasetId) {
 
 		IDataSetDAO datasetDao = DAOFactory.getDataSetDAO();
@@ -589,7 +589,7 @@ public class DataSetResource extends AbstractDataSetResource {
 	@GET
 	@Path("/{label}/fields")
 	@Produces(MediaType.APPLICATION_JSON)
-	@UserConstraint(functionalities = { SpagoBIConstants.SELF_SERVICE_DATASET_MANAGEMENT })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.SELF_SERVICE_DATASET_MANAGEMENT })
 	public String getDataSetFields(@Context HttpServletRequest req, @PathParam("label") String label) {
 		logger.debug("IN");
 		try {
@@ -609,7 +609,7 @@ public class DataSetResource extends AbstractDataSetResource {
 	@GET
 	@Path("/{label}/parameters")
 	@Produces(MediaType.APPLICATION_JSON)
-	@UserConstraint(functionalities = { SpagoBIConstants.SELF_SERVICE_DATASET_MANAGEMENT })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.SELF_SERVICE_DATASET_MANAGEMENT })
 	public String getDataSetParameters(@Context HttpServletRequest req, @PathParam("label") String label) {
 		logger.debug("IN");
 		Assert.assertTrue(StringUtils.isNotBlank(label), "Dataset label cannot must be valorized");
@@ -632,7 +632,7 @@ public class DataSetResource extends AbstractDataSetResource {
 	@GET
 	@Path("/federated/{federationId}")
 	@Produces(MediaType.APPLICATION_JSON)
-	@UserConstraint(functionalities = { SpagoBIConstants.SELF_SERVICE_DATASET_MANAGEMENT })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.SELF_SERVICE_DATASET_MANAGEMENT })
 	public Response getFederatedDataSetsByFederetionId(@PathParam("federationId") Integer federationId) {
 		logger.debug("IN");
 		List<DataSetBasicInfo> toReturn = new ArrayList<>();
@@ -656,7 +656,7 @@ public class DataSetResource extends AbstractDataSetResource {
 	@GET
 	@Path("/enterprise")
 	@Produces(MediaType.APPLICATION_JSON)
-	@UserConstraint(functionalities = { SpagoBIConstants.SELF_SERVICE_DATASET_MANAGEMENT })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.SELF_SERVICE_DATASET_MANAGEMENT })
 	public String getEnterpriseDataSet(@QueryParam("typeDoc") String typeDoc) {
 		logger.debug("IN");
 		try {
@@ -676,7 +676,7 @@ public class DataSetResource extends AbstractDataSetResource {
 	@GET
 	@Path("/owned")
 	@Produces(MediaType.APPLICATION_JSON)
-	@UserConstraint(functionalities = { SpagoBIConstants.SELF_SERVICE_DATASET_MANAGEMENT })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.SELF_SERVICE_DATASET_MANAGEMENT })
 	public String getOwnedDataSet(@QueryParam("typeDoc") String typeDoc) {
 		logger.debug("IN");
 		try {
@@ -696,7 +696,7 @@ public class DataSetResource extends AbstractDataSetResource {
 	@GET
 	@Path("/shared")
 	@Produces(MediaType.APPLICATION_JSON)
-	@UserConstraint(functionalities = { SpagoBIConstants.SELF_SERVICE_DATASET_MANAGEMENT })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.SELF_SERVICE_DATASET_MANAGEMENT })
 	public String getSharedDataSet(@QueryParam("typeDoc") String typeDoc) {
 		logger.debug("IN");
 		try {
@@ -716,7 +716,7 @@ public class DataSetResource extends AbstractDataSetResource {
 	@GET
 	@Path("/uncertified")
 	@Produces(MediaType.APPLICATION_JSON)
-	@UserConstraint(functionalities = { SpagoBIConstants.SELF_SERVICE_DATASET_MANAGEMENT })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.SELF_SERVICE_DATASET_MANAGEMENT })
 	public String getUncertifiedDataSet(@QueryParam("typeDoc") String typeDoc) {
 		logger.debug("IN");
 		try {
@@ -738,7 +738,7 @@ public class DataSetResource extends AbstractDataSetResource {
 	@GET
 	@Path("/mydata")
 	@Produces(MediaType.APPLICATION_JSON)
-	@UserConstraint(functionalities = { SpagoBIConstants.SELF_SERVICE_DATASET_MANAGEMENT })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.SELF_SERVICE_DATASET_MANAGEMENT })
 	public String getMyDataDataSet(@QueryParam("typeDoc") String typeDoc) {
 		logger.debug("IN");
 		try {
@@ -754,7 +754,7 @@ public class DataSetResource extends AbstractDataSetResource {
 	@GET
 	@Path("/mydatanoparams")
 	@Produces(MediaType.APPLICATION_JSON)
-	@UserConstraint(functionalities = { SpagoBIConstants.SELF_SERVICE_DATASET_MANAGEMENT })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.SELF_SERVICE_DATASET_MANAGEMENT })
 	public String getMyDataDataSetWithoutParameters(@QueryParam("typeDoc") String typeDoc) {
 		logger.debug("IN");
 		try {
@@ -787,7 +787,7 @@ public class DataSetResource extends AbstractDataSetResource {
 	@GET
 	@Path("filterbytags/owned")
 	@Produces(MediaType.APPLICATION_JSON)
-	@UserConstraint(functionalities = { SpagoBIConstants.SELF_SERVICE_DATASET_MANAGEMENT })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.SELF_SERVICE_DATASET_MANAGEMENT })
 	public String filterOwnedDatasetsByTags(@QueryParam("tags") List<Integer> tagIds) {
 		logger.debug("IN");
 		try {
@@ -803,7 +803,7 @@ public class DataSetResource extends AbstractDataSetResource {
 	@GET
 	@Path("filterbytags/enterprise")
 	@Produces(MediaType.APPLICATION_JSON)
-	@UserConstraint(functionalities = { SpagoBIConstants.SELF_SERVICE_DATASET_MANAGEMENT })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.SELF_SERVICE_DATASET_MANAGEMENT })
 	public String filterEnterpriseDatasetsByTags(@QueryParam("tags") List<Integer> tagIds) {
 		logger.debug("IN");
 		try {
@@ -819,7 +819,7 @@ public class DataSetResource extends AbstractDataSetResource {
 	@GET
 	@Path("filterbytags/shared")
 	@Produces(MediaType.APPLICATION_JSON)
-	@UserConstraint(functionalities = { SpagoBIConstants.SELF_SERVICE_DATASET_MANAGEMENT })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.SELF_SERVICE_DATASET_MANAGEMENT })
 	public String filterSharedDatasetsByTags(@QueryParam("tags") List<Integer> tagIds) {
 		logger.debug("IN");
 		try {
@@ -842,7 +842,7 @@ public class DataSetResource extends AbstractDataSetResource {
 			dsDao = DAOFactory.getDataSetDAO();
 			dsDao.setUserProfile(getUserProfile());
 			JSONObject json = RestUtilities.readBodyAsJSONObject(req);
-			ManageDataSetsForREST mdsfr = new ManageDataSetsForREST();
+			ManageDataSetsForREST mdsfr = ManageDataSetsForREST.getInstance();
 
 			toReturnString = mdsfr.insertDataset(json.toString(), dsDao, null, getUserProfile(), req);
 		} catch (Exception e) {
@@ -856,9 +856,10 @@ public class DataSetResource extends AbstractDataSetResource {
 	@POST
 	@Path("/preview")
 	@Produces(MediaType.APPLICATION_JSON)
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.DOCUMENT_MANAGEMENT_ADMIN, CommunityFunctionalityConstants.DOCUMENT_MANAGEMENT_DEV })
 	public String previewDataSet(@Context HttpServletRequest req) throws IOException, JSONException {
 		JSONObject json = RestUtilities.readBodyAsJSONObject(req);
-		ManageDataSetsForREST mdsfr = new ManageDataSetsForREST();
+		ManageDataSetsForREST mdsfr = ManageDataSetsForREST.getInstance();
 
 		String toReturnString = mdsfr.previewDataset(json.toString(), getUserProfile());
 		return toReturnString;
@@ -1034,7 +1035,7 @@ public class DataSetResource extends AbstractDataSetResource {
 	@POST
 	@Path("/{datasetLabel}/cleanCache")
 	@Produces(MediaType.APPLICATION_JSON)
-	@UserConstraint(functionalities = { SpagoBIConstants.SELF_SERVICE_DATASET_MANAGEMENT })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.SELF_SERVICE_DATASET_MANAGEMENT })
 	public String cleanCache(@PathParam("datasetLabel") String datasetLabel) {
 		logger.debug("IN");
 		try {
@@ -1060,7 +1061,7 @@ public class DataSetResource extends AbstractDataSetResource {
 
 	@POST
 	@Path("/{association}/checkAssociation")
-	@UserConstraint(functionalities = { SpagoBIConstants.SELF_SERVICE_DATASET_MANAGEMENT })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.SELF_SERVICE_DATASET_MANAGEMENT })
 	public String checkAssociation(@PathParam("association") String association) {
 		logger.debug("IN");
 
@@ -1096,7 +1097,7 @@ public class DataSetResource extends AbstractDataSetResource {
 	@Path("/list/persist")
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
-	@UserConstraint(functionalities = { SpagoBIConstants.SELF_SERVICE_DATASET_MANAGEMENT })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.SELF_SERVICE_DATASET_MANAGEMENT })
 	public String persistDataSetsService() {
 		JSONObject labels = null;
 		try {

@@ -58,6 +58,7 @@ import it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IObjParuseDAO;
 import it.eng.spagobi.commons.bo.Domain;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.constants.AdmintoolsConstants;
+import it.eng.spagobi.commons.constants.CommunityFunctionalityConstants;
 import it.eng.spagobi.commons.constants.ObjectsTreeConstants;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
@@ -647,7 +648,7 @@ public class DetailBIObjectModule extends AbstractHttpModule {
 			String idFunctStr = (String) request.getAttribute(ObjectsTreeConstants.FUNCT_ID);
 			if (idFunctStr != null) {
 				Integer idFunct = new Integer(idFunctStr);
-				if (profile.isAbleToExecuteAction(SpagoBIConstants.DOCUMENT_MANAGEMENT_ADMIN)) {
+				if (profile.isAbleToExecuteAction(CommunityFunctionalityConstants.DOCUMENT_MANAGEMENT_ADMIN)) {
 					// deletes the document from the specified folder, no matter the permissions
 					objdao.eraseBIObject(obj, idFunct);
 				} else {
@@ -657,7 +658,7 @@ public class DetailBIObjectModule extends AbstractHttpModule {
 					}
 				}
 			} else {
-				if (profile.isAbleToExecuteAction(SpagoBIConstants.DOCUMENT_MANAGEMENT_ADMIN)) {
+				if (profile.isAbleToExecuteAction(CommunityFunctionalityConstants.DOCUMENT_MANAGEMENT_ADMIN)) {
 					if (initialPath != null && !initialPath.trim().equals("")) {
 						// in case of local administrator, deletes the document in the folders where he can admin
 						List funcsId = obj.getFunctionalities();

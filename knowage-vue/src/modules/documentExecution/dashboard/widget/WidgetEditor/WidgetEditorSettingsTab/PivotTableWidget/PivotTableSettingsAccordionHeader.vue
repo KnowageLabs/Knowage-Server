@@ -60,10 +60,6 @@ export default defineComponent({
                     return this.widgetModel.settings.style.totals
                 case 'SubTotals':
                     return this.widgetModel.settings.style.subTotals
-                case 'ColumnHeadersStyle':
-                    return this.widgetModel.settings.style.columnHeaders
-                case 'RowsHeadersStyle':
-                    return this.widgetModel.settings.style.rowHeaders
                 case 'VisualizationType':
                     return this.widgetModel.settings.visualization.visualizationTypes
                 default:

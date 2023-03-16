@@ -40,7 +40,7 @@ import org.apache.log4j.Logger;
 
 import it.eng.spagobi.api.AbstractSpagoBIResource;
 import it.eng.spagobi.commons.bo.Domain;
-import it.eng.spagobi.commons.constants.SpagoBIConstants;
+import it.eng.spagobi.commons.constants.CommunityFunctionalityConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.dao.ICategoryDAO;
 import it.eng.spagobi.commons.dao.IDomainDAO;
@@ -105,7 +105,7 @@ public class DomainResource extends AbstractSpagoBIResource {
 
 	@POST
 	@Path("/")
-	@UserConstraint(functionalities = { SpagoBIConstants.DOMAIN_WRITE })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.DOMAIN_WRITE })
 	@Consumes("application/json")
 	public Response insertDomain(@Valid Domain body) {
 
@@ -135,7 +135,7 @@ public class DomainResource extends AbstractSpagoBIResource {
 
 	@PUT
 	@Path("/{id}")
-	@UserConstraint(functionalities = { SpagoBIConstants.DOMAIN_WRITE })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.DOMAIN_WRITE })
 	@Consumes(MediaType.APPLICATION_JSON)
 	public Response updateDomain(@PathParam("id") Integer id, @Valid Domain body) {
 
@@ -165,7 +165,7 @@ public class DomainResource extends AbstractSpagoBIResource {
 
 	@DELETE
 	@Path("/{id}")
-	@UserConstraint(functionalities = { SpagoBIConstants.DOMAIN_WRITE })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.DOMAIN_WRITE })
 	public Response deleteDomain(@PathParam("id") Integer id) {
 
 		IDomainDAO domainsDao = null;
