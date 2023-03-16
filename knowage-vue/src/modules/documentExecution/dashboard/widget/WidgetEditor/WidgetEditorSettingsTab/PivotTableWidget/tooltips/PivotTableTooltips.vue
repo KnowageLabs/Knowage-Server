@@ -152,7 +152,6 @@ export default defineComponent({
             if (index !== -1) this.availableColumnOptions.splice(index, 1)
         },
         loadColumnOptions() {
-            console.log('------------- CAAAAAAAAAAAAAAAAAAAAAAALED')
             this.availableColumnOptions = [...this.combinedArray]
         },
         loadWidgetColumnMaps() {

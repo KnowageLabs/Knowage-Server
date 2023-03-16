@@ -53,7 +53,6 @@ export default defineComponent({
     },
     async created() {
         this.loadColumnTableItems()
-        console.log('widget model', this.widgetModel, this.widgetModel.columns)
     },
     methods: {
         loadColumnTableItems() {
@@ -64,27 +63,20 @@ export default defineComponent({
         },
         onFieldsReorder(payload: { fields: IWidgetColumn[]; fieldType: string }) {
             if (this.widgetModel.fields) {
-                console.log('BEFORE', payload, this.widgetModel.fields?.[payload.fieldType])
-                // eslint-disable-next-line vue/no-mutating-props
                 this.widgetModel.fields[payload.fieldType] = payload.fields
                 emitter.emit('columnsReordered', this.widgetModel.columns)
-                console.log('AFTER', this.widgetModel.fields[payload.fieldType])
             }
         },
         onFieldAdded(payload: { column: IWidgetColumn; rows: IWidgetColumn[]; fieldType: string }) {
             if (this.widgetModel.fields) {
-                console.log('BEFORE', payload, this.widgetModel.fields?.[payload.fieldType])
-                // eslint-disable-next-line vue/no-mutating-props
                 this.widgetModel.fields[payload.fieldType] = payload.rows
                 emitter.emit('columnAdded', payload.column)
-                console.log('AFTER', this.widgetModel.fields[payload.fieldType])
             }
         },
         onFieldItemUpdate(field: IWidgetColumn) {
             if (this.selectedField?.id === field.id) this.setSelectedField(field)
         },
         setSelectedField(column: IWidgetColumn) {
-            console.log('selected field', column)
             this.selectedField = { ...column }
         },
         onFieldDelete(column: IWidgetColumn) {

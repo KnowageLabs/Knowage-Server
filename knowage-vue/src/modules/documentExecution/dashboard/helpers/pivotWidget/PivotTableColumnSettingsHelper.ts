@@ -11,7 +11,6 @@ export const getSettingsFromPivotTableWidgetColumns = (formattedWidget: IWidget,
 const getSettingsFromMeasureColumns = (formattedWidget: IWidget, widget: any) => {
     for (let i = 0; i < widget.content.crosstabDefinition.measures.length; i++) {
         const tempColumn = widget.content.crosstabDefinition.measures[i]
-        console.log('----------------- TEMP COLUMN: ', tempColumn)
         getVisualizationTypeConfigurationsFromColumn(formattedWidget, tempColumn)
         getConditionalStyleFromColumn(formattedWidget, tempColumn)
     }
