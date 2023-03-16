@@ -95,12 +95,12 @@ export function getFormattedParameters(loadedParameters: { filterStatus: iParame
 
         if (parameter.type === 'DATE') {
             const dateValue = getFormattedDateParameterValue(parameter, userDateFormat)
-            parameters.push({ label: parameter.label, value: dateValue, description: dateValue })
+            parameters.push({ label: parameter.urlName, value: dateValue, description: dateValue })
         }
         else if (!parameter.multivalue) {
-            parameters.push({ label: parameter.label, value: parameter.parameterValue[0].value, description: parameter.parameterValue[0].description })
+            parameters.push({ label: parameter.urlName, value: parameter.parameterValue[0].value, description: parameter.parameterValue[0].description })
         } else {
-            parameters.push({ label: parameter.label, value: parameter.parameterValue?.map((el: any) => el.value), description: parameter.parameterDescription ?? '' })
+            parameters.push({ label: parameter.urlName, value: parameter.parameterValue?.map((el: any) => el.value), description: parameter.parameterDescription ?? '' })
         }
     })
 
@@ -125,9 +125,9 @@ function checkIfParameterDataContainsNewValue(parameter: iParameter) {
 
     const index = parameter.data.findIndex((option: any) => {
         if (option.value || option.description) {
-            return parameter.parameterValue[0].value === option.value && parameter.parameterValue[0].description === option.description
+            return parameter.parameterValue[0] && parameter.parameterValue[0].value === option.value && parameter.parameterValue[0].description === option.description
         } else {
-            return parameter.parameterValue[0].value === option[valueIndex] && parameter.parameterValue[0].description === option[descriptionIndex]
+            return parameter.parameterValue[0] && parameter.parameterValue[0].value === option[valueIndex] && parameter.parameterValue[0].description === option[descriptionIndex]
         }
     })
     return index !== -1
