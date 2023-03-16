@@ -275,7 +275,7 @@ export default defineComponent({
                 if (cellConditionalStyle) cellStyleString = stringifyStyleProperties(cellConditionalStyle)
                 if (cellConditionalStyle && cellConditionalStyle.icon && showVisualizationIcon) {
                     cellEvent.cellElement.querySelector('.cellText').insertAdjacentHTML('afterend', `<i class="${cellConditionalStyle.icon} p-ml-1"/>`)
-                    if (showVisualizationIcon === 'Icon only') console.log(cellEvent.cellElement.querySelector('.cellText').remove())
+                    if (showVisualizationIcon === 'Icon only') cellEvent.cellElement.querySelector('.cellText').remove()
                 }
             }
 
