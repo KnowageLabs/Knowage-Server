@@ -350,8 +350,8 @@ export default defineComponent({
         onCellClicked(cellEvent) {
             if (this.editorMode) return
             if (this.propWidget.settings.interactions.crossNavigation.enabled) {
-                const formattedClickedValue = getFormattedClickedValueForCrossNavigation(cellEvent, this.dataFields)
-                if (formattedClickedValue) executePivotTableWidgetCrossNavigation(formattedClickedValue, this.propWidget.settings.interactions.crossNavigation, this.dashboardId)
+                const formattedOutputParameters = getFormattedClickedValueForCrossNavigation(cellEvent, this.dataFields, this.propWidget.settings.interactions.crossNavigation)
+                if (formattedOutputParameters) executePivotTableWidgetCrossNavigation(formattedOutputParameters, this.propWidget.settings.interactions.crossNavigation, this.dashboardId)
             } else if (this.propWidget.settings.interactions.selection.enabled) {
                 const selections = createPivotTableSelection(cellEvent, this.propWidget, this.datasets)
                 if (selections) updateAllStoreSelections(selections, this.activeSelections, this.dashboardId, this.setSelections, this.$http)

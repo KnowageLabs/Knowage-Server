@@ -63,6 +63,7 @@ const getFormattedPivotTableSelection = () => {
 
 export const getFormattedCrossNavigation = (widget: any) => {
     const oldCrossNavigation = getOldCrossNavigation(widget)
+    console.log('------- oldCrossNavigation: ', oldCrossNavigation)
     if (!oldCrossNavigation) return widgetCommonDefaultValues.getDefaultCrossNavigation()  // TODO - see about chart default
 
     const formattedParameters = [] as IWidgetInteractionParameter[]

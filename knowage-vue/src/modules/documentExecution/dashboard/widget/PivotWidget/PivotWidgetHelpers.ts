@@ -1,19 +1,35 @@
-import { IDataset, ISelection, IWidget } from "../../Dashboard"
+import { IDataset, ISelection, IWidget, IWidgetCrossNavigation, IWidgetInteractionParameter } from "../../Dashboard"
 
 interface ISelectionValue { columnName: string, value: string, columnType: string }
 
-export const getFormattedClickedValueForCrossNavigation = (cellEvent: any, dataFields: any) => {
-    if (['T', 'GT'].includes(cellEvent.cell.type)) return null
-    const value = cellEvent.area === 'data' ? cellEvent.cell.value : cellEvent.cell.text
-    const type = cellEvent.area === 'data' ? getDataCellType(cellEvent, dataFields) : 'string'
-    return { value: value, type: type }
+export const getFormattedClickedValueForCrossNavigation = (cellEvent: any, dataFields: any, crossNavigationOptions: IWidgetCrossNavigation) => {
+    if (!cellEvent || cellEvent.area !== 'data') return null
+    const selectionValues = [] as ISelectionValue[]
+    addSelectionValues(cellEvent.cell.columnPath, cellEvent.columnFields, selectionValues)
+    addSelectionValues(cellEvent.cell.rowPath, cellEvent.rowFields, selectionValues)
+    const formattedOutputParameters = getFormattedOutputParameters(selectionValues, crossNavigationOptions.parameters)
+    return formattedOutputParameters
 }
 
-const getDataCellType = (cellEvent: any, dataFields: any) => {
-    // TODO - see about date
-    const dataField = dataFields[cellEvent.cell.dataIndex]
-    return dataField ? dataField.dataType : 'string'
+const getFormattedOutputParameters = (selectionValues: ISelectionValue[], outputParameters: IWidgetInteractionParameter[]) => {
+    const formattedOutputParameters = [] as IWidgetInteractionParameter[]
+    outputParameters.forEach((outputParameter: IWidgetInteractionParameter) => {
+        if (outputParameter.type === 'dynamic') {
+            const formattedOutputParameter = getFormattedDynamicOutputParameter(selectionValues, outputParameter)
+            if (formattedOutputParameter.value) formattedOutputParameters.push(getFormattedDynamicOutputParameter(selectionValues, outputParameter))
+        } else {
+            formattedOutputParameters.push(outputParameter)
+        }
+    })
+    return formattedOutputParameters
 }
+
+const getFormattedDynamicOutputParameter = (selectionValues: ISelectionValue[], outputParameter: IWidgetInteractionParameter) => {
+    const index = selectionValues.findIndex((selectionValue: ISelectionValue) => selectionValue.columnName === outputParameter.column)
+    outputParameter.value = index !== -1 ? selectionValues[index].value : ''
+    return outputParameter
+}
+
 
 export const createPivotTableSelection = (cellEvent: any, widgetModel: IWidget, datasets: IDataset[]) => {
     if (!cellEvent || cellEvent.area !== 'data') return null
