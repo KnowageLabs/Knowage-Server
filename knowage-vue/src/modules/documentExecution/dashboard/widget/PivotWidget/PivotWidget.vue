@@ -192,7 +192,6 @@ export default defineComponent({
         setCellConfiguration(event) {
             this.setTotals(event)
             this.setFieldCellConfiguration(event)
-            // this.setHeaderStyles(event) //TODO: Does it need to exist now that we can target specific fields?
             this.setTooltips(event)
         },
 
@@ -236,24 +235,11 @@ export default defineComponent({
             if (cellTooltipConfig) this.createFieldTooltips(cellEvent, cellTooltipConfig)
         },
         createFieldTooltips(cellEvent, tooltipConfig: IPivotTooltips) {
-            const container = document.createElement('div')
-            cellEvent.cellElement.appendChild(container)
-            new Tooltip(container, {
-                target: cellEvent.cellElement,
-                visible: false,
-                showEvent: 'mouseenter',
-                hideEvent: 'mouseleave click',
-                contentTemplate: function (content) {
-                    const label = document.createElement('div')
-                    if (cellEvent.area == 'data') {
-                        label.innerHTML = `<b>${tooltipConfig.prefix} ${cellEvent.cell.text} ${tooltipConfig.suffix}</b>`
-                        content.appendChild(label)
-                    } else {
-                        label.innerHTML = `<b>${tooltipConfig.header.enabled ? tooltipConfig.header.text : cellEvent.cell.text}</b>`
-                        content.appendChild(label)
-                    }
-                }
-            })
+            if (cellEvent.area == 'data') {
+                cellEvent.cellElement.title = `${tooltipConfig.prefix} ${cellEvent.cell.text} ${tooltipConfig.suffix}`
+            } else {
+                cellEvent.cellElement.title = `${tooltipConfig.header.enabled ? tooltipConfig.header.text : cellEvent.cell.text}`
+            }
         },
         //#endregion ===============================================================================================
 
@@ -274,7 +260,7 @@ export default defineComponent({
             let showVisualizationIcon = null as any
             if (cellEvent.area == 'data' && visualizationTypes.enabled) {
                 const cellVisualization = this.getFieldVisualization(parentField, visualizationTypes)
-                if (cellVisualization && cellEvent.cell.text) cellEvent.cellElement.innerHTML = `<span class="prefix">${cellVisualization.prefix ?? ''}</span><span class="cellText">${cellEvent.cell.text}</span><span class="suffix">${cellVisualization.suffix ?? ''}<span/>`
+                if (cellVisualization && cellEvent.cell.text) cellEvent.cellElement.innerHTML = `<span class="prefix">${cellVisualization.prefix ?? ''}</span><span class="cellText"> ${cellEvent.cell.text}</span><span class="suffix"> ${cellVisualization.suffix ?? ''}<span/>`
                 if (cellVisualization.type === 'Icon only' || cellVisualization.type === 'Text/Icon') showVisualizationIcon = cellVisualization.type
             }
 
@@ -322,25 +308,6 @@ export default defineComponent({
         isTotalCell(cellEvent) {
             return cellEvent.cell.type === 'GT' || cellEvent.cell.rowType === 'GT' || cellEvent.cell.columnType === 'GT' || cellEvent.cell.type === 'T' || cellEvent.cell.rowType === 'T' || cellEvent.cell.columnType === 'T'
         },
-        //#endregion ===============================================================================================
-
-        //#region ===================== Header Styles  ====================================================
-        setHeaderStyles(cellEvent) {
-            let headerStyles = null as any
-
-            const isDataColumn = cellEvent.area == 'data' || (cellEvent.area == 'column' && cellEvent.cell.dataIndex >= 0)
-            let headerStylestring = null as any
-
-            if (cellEvent.area == 'column') headerStyles = this.propWidget.settings.style.columnHeaders
-            else if (cellEvent.area == 'row') headerStyles = this.propWidget.settings.style.rowHeaders
-
-            if (cellEvent.area == 'data' || this.isTotalCell(cellEvent) || isDataColumn || !headerStyles.enabled) return
-
-            headerStylestring = stringifyStyleProperties(headerStyles.properties)
-            cellEvent.cellElement.style = headerStylestring
-        },
-        //#endregion ===============================================================================================
-
         //#endregion ===============================================================================================
 
         //#region ===================== Cell Click Events  ====================================================
