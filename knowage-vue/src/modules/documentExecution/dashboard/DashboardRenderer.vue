@@ -1,7 +1,7 @@
 <template>
     <KnDashboardTabsPanel v-model:sheets="dashboardModel.sheets" label-position="bottom" @sheet-change="sheetChange">
         <KnDashboardTab v-for="(sheet, index) in dashboardModel.sheets" :key="index" :index="index">
-            <!-- <grid-layout
+            <grid-layout
                 v-model:layout="sheet.widgets['lg']"
                 :responsive-layouts="sheet.widgets"
                 :responsive="true"
@@ -9,19 +9,6 @@
                 :row-height="30"
                 :is-draggable="canEditDashboard(document)"
                 :is-resizable="canEditDashboard(document)"
-                :vertical-compact="false"
-                :use-css-transforms="false"
-                :margin="[0, 0]"
-                @breakpoint-changed="breakpointChangedEvent"
-            > -->
-            <grid-layout
-                v-model:layout="sheet.widgets['lg']"
-                :responsive-layouts="sheet.widgets"
-                :responsive="true"
-                :cols="{ lg: 50, md: 100, sm: 50, xs: 20, xxs: 10 }"
-                :row-height="30"
-                :is-draggable="true"
-                :is-resizable="true"
                 :vertical-compact="false"
                 :use-css-transforms="false"
                 :margin="[0, 0]"
@@ -93,7 +80,7 @@ export default defineComponent({
             if ((!this.dashboard[this.dHash] && index === 0) || this.dashboard[this.dHash] === index) return true
             return false
         },
-        breakpointChangedEvent: function() {
+        breakpointChangedEvent: function () {
             // breakpointChangedEvent: function(newBreakpoint, newLayout) {
             // console.log('BREAKPOINT CHANGED breakpoint=', newBreakpoint, ', layout: ', newLayout)
         },
