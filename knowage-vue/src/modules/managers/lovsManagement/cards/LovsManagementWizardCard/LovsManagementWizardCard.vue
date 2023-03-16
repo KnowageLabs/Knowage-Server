@@ -25,7 +25,7 @@
     <LovsManagementProfileAttributesList v-show="profileAttributesDialogVisible" :visible="profileAttributesDialogVisible" :profileAttributes="profileAttributes" @selected="setCodeInput($event)" @close="profileAttributesDialogVisible = false"></LovsManagementProfileAttributesList>
     <LovsManagementParamsDialog v-show="paramsDialogVisible" :visible="paramsDialogVisible" :dependenciesList="dependenciesList" :mode="paramsDialogMode" @preview="onPreview" @close="onParamsDialogClose" @test="onTest"></LovsManagementParamsDialog>
     <LovsManagementPreviewDialog v-show="previewDialogVisible" :visible="previewDialogVisible" :dataForPreview="dataForPreview" :pagination="pagination" @close="onPreviewClose" @pageChanged="previewLov($event, false, true)"></LovsManagementPreviewDialog>
-    <LovsManagementTestDialog v-show="testDialogVisible" :visible="testDialogVisible" :selectedLov="lov" :testModel="treeListTypeModel" :testLovModel="testLovModel" :testLovTreeModel="testLovTreeModel" @close="onTestDialogClose()" @save="onTestSave($event)"></LovsManagementTestDialog>
+    <LovsManagementTestDialog v-if="testDialogVisible" :visible="testDialogVisible" :selectedLov="lov" :testModel="treeListTypeModel" :testLovModel="testLovModel" :testLovTreeModel="testLovTreeModel" @close="onTestDialogClose()" @save="onTestSave($event)"></LovsManagementTestDialog>
 </template>
 
 <script lang="ts">
@@ -557,12 +557,6 @@ export default defineComponent({
             this.treeListTypeModel = payload.treeListTypeModel
             this.testLovModel = payload.model
             this.testLovTreeModel = payload.treeModel
-
-            this.treeListTypeModel['VISIBLE-COLUMNS'] = ''
-            for (let i = 0; i < this.testLovModel.length; i++) {
-                this.treeListTypeModel['VISIBLE-COLUMNS'] += this.testLovModel[i].name
-                this.treeListTypeModel['VISIBLE-COLUMNS'] += i === this.testLovModel.length - 1 ? '' : ','
-            }
 
             this.treeListTypeModel['VALUE-COLUMNS'] = ''
             this.treeListTypeModel['DESCRIPTION-COLUMNS'] = ''
