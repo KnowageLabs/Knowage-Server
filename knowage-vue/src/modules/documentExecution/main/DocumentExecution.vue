@@ -181,6 +181,7 @@ import deepcopy from 'deepcopy'
 import DashboardController from '../dashboard/DashboardController.vue'
 import Dialog from 'primevue/dialog'
 import descriptor from './DocumentExecutionDescriptor.json'
+import UserFunctionalitiesConstants from '@/UserFunctionalitiesConstants.json'
 
 // @ts-ignore
 // eslint-disable-next-line
@@ -297,7 +298,7 @@ export default defineComponent({
         }),
         canEditCockpit(): boolean {
             if (!this.user || !this.document) return false
-            return (this.document.engine?.toLowerCase() === 'knowagecockpitengine' || this.document.engine?.toLowerCase() === 'knowagedashboardengine') && (this.user.functionalities?.includes('DocumentAdminManagement') || this.document.creationUser === this.user.userId)
+            return (this.document.engine?.toLowerCase() === 'knowagecockpitengine' || this.document.engine?.toLowerCase() === 'knowagedashboardengine') && (this.user.functionalities?.includes(UserFunctionalitiesConstants.DOCUMENT_ADMIN_MANAGEMENT) || this.document.creationUser === this.user.userId)
         },
         sessionRole(): string | null {
             if (!this.user) return null
@@ -963,7 +964,7 @@ export default defineComponent({
             if (this.$route.name === 'olap-designer') this.olapDesignerMode = true
         },
         isOrganizerEnabled() {
-            return this.user.isSuperadmin || this.user.functionalities.includes('DocumentAdminManagement') || this.user.functionalities.includes('SaveIntoFolderFunctionality')
+            return this.user.isSuperadmin || this.user.functionalities.includes(UserFunctionalitiesConstants.DOCUMENT_ADMIN_MANAGEMENT) || this.user.functionalities.includes(UserFunctionalitiesConstants.SAVE_INTO_FOLDER_FUNCTIONALITY)
         },
         async addToWorkspace() {
             this.loading = true

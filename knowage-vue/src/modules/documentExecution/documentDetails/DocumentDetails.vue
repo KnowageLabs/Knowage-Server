@@ -93,6 +93,7 @@ import ProgressSpinner from 'primevue/progressspinner'
 import { iDataSource, iAnalyticalDriver, iDriver, iEngine, iTemplate, iAttribute, iParType, iDateFormat, iFolder, iTableSmall, iOutputParam, iDocumentType } from '@/modules/documentExecution/documentDetails/DocumentDetails'
 import DocumentDetailOlapDesignerDialog from './dialogs/olapDesignerDialog/DocumentDetailOlapDesignerDialog.vue'
 import mainStore from '../../../App.store'
+import UserFunctionalitiesConstants from '@/UserFunctionalitiesConstants.json'
 
 export default defineComponent({
     name: 'document-details',
@@ -162,7 +163,7 @@ export default defineComponent({
             return this.selectedDocument?.functionalities?.length
         },
         showDataLineageTab(): boolean {
-            return (this.store.$state as any).user.functionalities.includes('DataSourceManagement')
+            return (this.store.$state as any).user.functionalities.includes(UserFunctionalitiesConstants.DATA_SOURCE_MANAGEMENT)
         }
     },
     watch: {

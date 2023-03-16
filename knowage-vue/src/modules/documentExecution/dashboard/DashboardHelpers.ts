@@ -9,6 +9,7 @@ import { formatChartJSWidget } from './widget/WidgetEditor/helpers/chartWidget/c
 import { formatHighchartsWidget } from './widget/WidgetEditor/helpers/chartWidget/highcharts/HighchartsHelpers'
 import { AxiosResponse } from 'axios'
 import mainStore from '@/App.store'
+import UserFunctionalitiesConstants from '@/UserFunctionalitiesConstants.json'
 
 const store = mainStore()
 
@@ -124,7 +125,7 @@ const getDatasetIdsFromDashboardModel = (dashboardModel: IDashboard | any) => {
 
 export const canEditDashboard = (document): boolean => {
     if (!store.user || !document) return false
-    return store.user.functionalities?.includes('DocumentAdminManagement') || document.creationUser === store.user.userId
+    return store.user.functionalities?.includes(UserFunctionalitiesConstants.DOCUMENT_ADMIN_MANAGEMENT) || document.creationUser === store.user.userId
 }
 
 export const getFormattedOutputParameters = (documentOutputParameters: IDashboardOutputParameter[]) => {
