@@ -1,5 +1,4 @@
 <template>
-    <!-- TODO: Suggest to completely redo this component in a CR -->
     <div class="widget-editor-card p-d-flex p-flex-column">
         <div class="p-d-flex p-flex-column">
             <label v-if="settings.label" class="kn-material-input-label">{{ $t(settings.label) }}</label>

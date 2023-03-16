@@ -1083,9 +1083,7 @@ export default defineComponent({
         },
         openCrossNavigationInNewWindow(tempDocument: any, crossNavigation: IDashboardCrossNavigation) {
             const parameters = encodeURI(JSON.stringify(tempDocument.formattedCrossNavigationParameters))
-            // TODO - Uncomment after peer
-            // const url = import.meta.env.VITE_HOST_URL + `/knowage-vue/document-browser/dashboard/${this.document.label}?role=${this.userRole}&crossNavigationParameters=${parameters}
-            const url = 'http://localhost:3000' + `/knowage-vue/document-browser/dashboard/${tempDocument.label}?role=${this.userRole}&crossNavigationParameters=${parameters}`
+            const url = import.meta.env.VITE_HOST_URL + `/knowage-vue/document-browser/dashboard/${this.document.label}?role=${this.userRole}&crossNavigationParameters=${parameters}`
             const popupOptions = crossNavigation.popupOptions ?? {
                 width: '800',
                 height: '600'
