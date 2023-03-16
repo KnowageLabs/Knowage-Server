@@ -19,6 +19,7 @@ import UseMode from './useModes/DriversManagementUseMode.vue'
 import { AxiosResponse } from 'axios'
 import driversManagemenDetailtDescriptor from './DriversManagementDetailDescriptor.json'
 import mainStore from '../../../App.store'
+import UserFunctionalitiesConstants from '@/UserFunctionalitiesConstants.json'
 
 export default defineComponent({
     name: 'metadata-management-detail',
@@ -84,7 +85,7 @@ export default defineComponent({
             this.driver = { ...this.selectedDriver } as any
             this.getModes()
         }
-        this.showMapDriver = (this.store.$state as any).user.functionalities.indexOf('MapDriverManagement') > -1
+        this.showMapDriver = (this.store.$state as any).user.functionalities.indexOf(UserFunctionalitiesConstants.MAP_DRIVER_MANAGEMENT) > -1
         this.loadAll()
     },
 

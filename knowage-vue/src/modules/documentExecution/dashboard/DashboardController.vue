@@ -132,6 +132,13 @@ export default defineComponent({
             return ['dashboard', 'dashboard-popup'].includes('' + this.mode)
         }
     },
+    watch: {
+        async document() {
+            if (!this.showDashboard) return
+            await this.getData()
+            this.$watch('model.configuration.datasets', (modelDatasets: IDashboardDataset[]) => setDatasetIntervals(modelDatasets, this.datasets))
+        }
+    },
     async created() {
         if (!this.showDashboard) return
         this.setEventListeners()
@@ -182,9 +189,12 @@ export default defineComponent({
                     .get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `3.0/documentexecution/` + this.document?.id + '/templates')
                     .then((response: AxiosResponse<any>) => (tempModel = response.data))
                     .catch(() => {})
+                console.log('------ ENTERED 2: ', tempModel)
             }
+
             this.datasets = await loadDatasets(tempModel, this.appStore, this.setAllDatasets, this.$http)
             this.model = (tempModel && this.newDashboardMode) || typeof tempModel.id != 'undefined' ? await formatNewModel(tempModel, this.datasets, this.$http) : await (formatModel(tempModel, this.document, this.datasets, this.drivers, this.profileAttributes, this.$http, this.user) as any)
+            console.log(' ---------- LOADED MODEL ', this.model)
             setDatasetIntervals(this.model?.configuration.datasets, this.datasets)
             this.store.setDashboard(this.dashboardId, this.model)
             this.store.setSelections(this.dashboardId, this.model.configuration.selections, this.$http)
@@ -211,7 +221,6 @@ export default defineComponent({
                 .then((response: AxiosResponse<any>) => (this.crossNavigations = response.data))
                 .catch(() => {})
             this.appStore.setLoading(false)
-            //('------- loaded cross navigations: ', this.crossNavigations)
             this.store.setCrossNavigations(this.dashboardId, this.crossNavigations)
         },
         async loadHtmlGallery() {
@@ -287,8 +296,8 @@ export default defineComponent({
             this.datasetEditorVisible = false
             emitter.emit('datasetManagementClosed')
         },
-        async onSaveDashboardClicked() {
-            if (!this.document) return
+        async onSaveDashboardClicked(event: any) {
+            if (!this.document || event !== this.dashboardId) return
             if (this.newDashboardMode) {
                 this.saveDialogVisible = true
             } else {
@@ -340,7 +349,8 @@ export default defineComponent({
             this.selectionsDialogVisible = false
             this.removeSelections(selections, this.dashboardId)
         },
-        openGeneralSettings() {
+        openGeneralSettings(event) {
+            if (event !== this.dashboardId) return
             this.generalSettingsVisible = true
         },
         closeGeneralSettings() {

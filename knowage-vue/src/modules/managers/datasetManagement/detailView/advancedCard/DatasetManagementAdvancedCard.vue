@@ -127,6 +127,7 @@ import Checkbox from 'primevue/checkbox'
 import InputSwitch from 'primevue/inputswitch'
 import { mapState } from 'pinia'
 import mainStore from '../../../../../App.store'
+import UserFunctionalitiesConstants from '@/UserFunctionalitiesConstants.json'
 
 export default defineComponent({
     components: { Card, InputSwitch, Checkbox, KnValidationMessages, DatasetScheduler },
@@ -146,10 +147,10 @@ export default defineComponent({
             return false
         },
         isAbleToSeeIsScheduledToolbar(): boolean {
-            return this.user.functionalities.includes('SchedulingDatasetManagement') && this.dataset.isPersisted
+            return this.user.functionalities.includes(UserFunctionalitiesConstants.SCHEDULING_DATASET_MANAGEMENT) && this.dataset.isPersisted
         },
         isAbleToSeeDatasetScheduler(): boolean {
-            return this.user.functionalities.includes('SchedulingDatasetManagement') && this.dataset.isPersisted && this.dataset.isScheduled
+            return this.user.functionalities.includes(UserFunctionalitiesConstants.SCHEDULING_DATASET_MANAGEMENT) && this.dataset.isPersisted && this.dataset.isScheduled
         }
     },
     emits: ['touched'],

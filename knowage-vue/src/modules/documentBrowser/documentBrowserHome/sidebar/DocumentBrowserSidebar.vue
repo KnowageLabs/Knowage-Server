@@ -67,6 +67,7 @@
 import { defineComponent } from 'vue'
 import { formatDate } from '@/helpers/commons/localeHelper'
 import mainStore from '../../../../App.store'
+import UserFunctionalitiesConstants from '@/UserFunctionalitiesConstants.json'
 
 export default defineComponent({
     name: 'document-browser-sidebar',
@@ -93,14 +94,14 @@ export default defineComponent({
             if (!this.user) return false
             switch (this.document.stateCode) {
                 case 'TEST':
-                    return this.user.functionalities.includes('DocumentTestManagement')
+                    return this.user.functionalities.includes(UserFunctionalitiesConstants.DOCUMENT_TEST_MANAGEMENT)
                 case 'DEV':
-                    return this.user.functionalities.includes('DocumentDevManagement')
+                    return this.user.functionalities.includes(UserFunctionalitiesConstants.DOCUMENT_DEV_MANAGEMENT)
                 case 'REL':
-                    return this.user.functionalities.includes('DocumentAdminManagement')
+                    return this.user.functionalities.includes(UserFunctionalitiesConstants.DOCUMENT_ADMIN_MANAGEMENT)
                 case 'SUSPENDED':
                 case 'SUSP':
-                    return this.user.functionalities.includes('DocumentAdminManagement')
+                    return this.user.functionalities.includes(UserFunctionalitiesConstants.DOCUMENT_ADMIN_MANAGEMENT)
                 default:
                     return false
             }

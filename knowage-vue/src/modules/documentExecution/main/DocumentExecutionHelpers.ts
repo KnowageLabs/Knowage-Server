@@ -1,4 +1,5 @@
 import { iExporter } from './DocumentExecution'
+import UserFunctionalitiesConstants from '@/UserFunctionalitiesConstants.json'
 
 export function createToolbarMenuItems(document: any, functions: any, exporters: iExporter[] | null, user: any, isOrganizerEnabled: boolean, mode: string | null, $t: any, newDashboardMode: boolean) {
     const toolbarMenuItems = [] as any[]
@@ -43,7 +44,7 @@ export function createToolbarMenuItems(document: any, functions: any, exporters:
     if (!newDashboardMode)
         exporters?.forEach((exporter: any) => toolbarMenuItems[1].items.push({ icon: 'fa fa-file-excel', label: exporter.name, command: () => functions.export(exporter.name) }))
 
-    if (user.functionalities.includes('SendMailFunctionality') && document.typeCode === 'REPORT') {
+    if (user.functionalities.includes(UserFunctionalitiesConstants.SEND_MAIL_FUNCTIONALITY) && document.typeCode === 'REPORT') {
         const index = toolbarMenuItems.findIndex((item: any) => item.label === $t('common.info.info'))
         if (index !== -1) {
             toolbarMenuItems[index].items.push({ icon: 'pi pi-envelope', label: $t('common.sendByEmail'), command: () => functions.openMailDialog() })
@@ -55,17 +56,17 @@ export function createToolbarMenuItems(document: any, functions: any, exporters:
         }
     }
 
-    if (user.functionalities.includes('SeeMetadataFunctionality') && !newDashboardMode) {
+    if (user.functionalities.includes(UserFunctionalitiesConstants.SEE_METADATA_FUNCTIONALITY) && !newDashboardMode) {
         const index = toolbarMenuItems.findIndex((item: any) => item.label === $t('common.info.info'))
         if (index !== -1) toolbarMenuItems[index].items.unshift({ icon: 'pi pi-info-circle', label: $t('common.metadata'), command: () => functions.openMetadata() })
     }
 
-    if (user.functionalities.includes('SeeNotesFunctionality') && !newDashboardMode) {
+    if (user.functionalities.includes(UserFunctionalitiesConstants.SEE_NOTES_FUNCTIONALITY) && !newDashboardMode) {
         const index = toolbarMenuItems.findIndex((item: any) => item.label === $t('common.info.info'))
         if (index !== -1) toolbarMenuItems[index].items.push({ icon: 'pi pi-file', label: $t('common.notes'), command: () => functions.openNotes() })
     }
 
-    if (user.functionalities.includes('SeeSnapshotsFunctionality') && user.enterprise && !newDashboardMode) {
+    if (user.functionalities.includes(UserFunctionalitiesConstants.SEE_SNAPSHOTS_FUNCTIONALITY) && user.enterprise && !newDashboardMode) {
         const index = toolbarMenuItems.findIndex((item: any) => item.label === $t('common.shortcuts'))
         if (index !== -1) toolbarMenuItems[index].items.unshift({ icon: '', label: $t('documentExecution.main.showScheduledExecutions'), command: () => functions.showScheduledExecutions() })
     }
@@ -80,7 +81,7 @@ export function createToolbarMenuItems(document: any, functions: any, exporters:
         if (index !== -1) toolbarMenuItems[index].items.unshift({ icon: '', label: $t('documentExecution.main.showOLAPCustomView'), command: () => functions.showOLAPCustomView() })
     }
 
-    if (user.functionalities.includes('EnableToCopyAndEmbed') && !newDashboardMode) {
+    if (user.functionalities.includes(UserFunctionalitiesConstants.ENABLE_TO_COPY_AND_EMBED) && !newDashboardMode) {
         const index = toolbarMenuItems.findIndex((item: any) => item.label === $t('common.shortcuts'))
         if (index !== -1) {
             toolbarMenuItems[index].items.push({ icon: 'fa fa-share', label: $t('documentExecution.main.copyLink'), command: () => functions.copyLink(false) })

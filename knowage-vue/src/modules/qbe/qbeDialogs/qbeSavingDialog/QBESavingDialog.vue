@@ -51,6 +51,7 @@ import MetadataCard from './QbeSavingDialogMetadata.vue'
 import useValidate from '@vuelidate/core'
 import descriptor from './QBESavingDialogDescriptor.json'
 import mainStore from '../../../../App.store'
+import UserFunctionalitiesConstants from '@/UserFunctionalitiesConstants.json'
 
 export default defineComponent({
     name: 'olap-custom-view-save-dialog',
@@ -243,7 +244,7 @@ export default defineComponent({
             }
         },
         setEndUserScope() {
-            if (this.selectedDataset && !this.selectedDataset.id && !(this.store.$state as any).user.functionalities.includes('QbeAdvancedSaving')) {
+            if (this.selectedDataset && !this.selectedDataset.id && !(this.store.$state as any).user.functionalities.includes(UserFunctionalitiesConstants.QBE_ADVANCED_SAVING)) {
                 const userScope = this.scopeTypes.find((scope) => scope.VALUE_CD === 'USER')
                 this.selectedDataset.scopeCd = userScope.VALUE_CD
                 this.selectedDataset.scopeId = userScope.VALUE_ID
