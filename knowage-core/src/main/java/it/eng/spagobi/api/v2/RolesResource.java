@@ -48,6 +48,7 @@ import it.eng.spagobi.commons.bo.Role;
 import it.eng.spagobi.commons.bo.RoleBO;
 import it.eng.spagobi.commons.bo.RoleMetaModelCategory;
 import it.eng.spagobi.commons.bo.UserProfile;
+import it.eng.spagobi.commons.constants.CommunityFunctionalityConstants;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.dao.ICategoryDAO;
@@ -65,7 +66,7 @@ public class RolesResource extends AbstractSpagoBIResource {
 	private final String charset = "; charset=UTF-8";
 
 	@GET
-	@UserConstraint(functionalities = { SpagoBIConstants.PROFILE_MANAGEMENT, SpagoBIConstants.FINAL_USERS_MANAGEMENT, SpagoBIConstants.READ_ROLES })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.PROFILE_MANAGEMENT, CommunityFunctionalityConstants.FINAL_USERS_MANAGEMENT, CommunityFunctionalityConstants.READ_ROLES })
 	@Path("/")
 	@Produces(MediaType.APPLICATION_JSON + charset)
 	public Response getRoles() {
@@ -80,7 +81,7 @@ public class RolesResource extends AbstractSpagoBIResource {
 			fullList = rolesDao.loadAllRoles();
 
 			IEngUserProfile profile = this.getUserProfile();
-			if (profile.isAbleToExecuteAction(SpagoBIConstants.PROFILE_MANAGEMENT) || profile.isAbleToExecuteAction(SpagoBIConstants.READ_ROLES)) {
+			if (profile.isAbleToExecuteAction(CommunityFunctionalityConstants.PROFILE_MANAGEMENT) || profile.isAbleToExecuteAction(CommunityFunctionalityConstants.READ_ROLES)) {
 				filteredList = fullList;
 			} else {
 				// user with FINAL_USERS_MANAGEMENT (users with neither
@@ -108,7 +109,7 @@ public class RolesResource extends AbstractSpagoBIResource {
 	}
 
 	@GET
-	@UserConstraint(functionalities = { SpagoBIConstants.PROFILE_MANAGEMENT })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.PROFILE_MANAGEMENT })
 	@Path("/{id}")
 	@Produces(MediaType.APPLICATION_JSON + charset)
 	public Response getRoleById(@PathParam("id") Integer id) {
@@ -149,7 +150,7 @@ public class RolesResource extends AbstractSpagoBIResource {
 	}
 
 	@GET
-	@UserConstraint(functionalities = { SpagoBIConstants.PROFILE_MANAGEMENT })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.PROFILE_MANAGEMENT })
 	@Path("/categories/{id}")
 	@Produces(MediaType.APPLICATION_JSON + charset)
 	public Response getMetaModelCategoriesById(@PathParam("id") Integer id) {
@@ -215,7 +216,7 @@ public class RolesResource extends AbstractSpagoBIResource {
 
 	@POST
 	@Path("/")
-	@UserConstraint(functionalities = { SpagoBIConstants.PROFILE_MANAGEMENT })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.PROFILE_MANAGEMENT })
 	@Consumes(MediaType.APPLICATION_JSON)
 	public Response insertRole(@Valid RoleBO body) {
 		IRoleDAO rolesDao = null;
@@ -241,7 +242,7 @@ public class RolesResource extends AbstractSpagoBIResource {
 
 	@POST
 	@Path("/{id}")
-	@UserConstraint(functionalities = { SpagoBIConstants.PROFILE_MANAGEMENT })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.PROFILE_MANAGEMENT })
 	@Consumes(MediaType.APPLICATION_JSON)
 	public Response updateRole(@PathParam("id") Integer id, @Valid RoleBO body) {
 
@@ -303,7 +304,7 @@ public class RolesResource extends AbstractSpagoBIResource {
 
 	@DELETE
 	@Path("/{id}")
-	@UserConstraint(functionalities = { SpagoBIConstants.PROFILE_MANAGEMENT })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.PROFILE_MANAGEMENT })
 	public Response deleteRole(@PathParam("id") Integer id) {
 
 		IRoleDAO rolesDao = null;
@@ -390,7 +391,7 @@ public class RolesResource extends AbstractSpagoBIResource {
 	 */
 
 	@GET
-	@UserConstraint(functionalities = { SpagoBIConstants.PROFILE_MANAGEMENT, SpagoBIConstants.FINAL_USERS_MANAGEMENT })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.PROFILE_MANAGEMENT, CommunityFunctionalityConstants.FINAL_USERS_MANAGEMENT })
 	@Path("/short")
 	@Produces(MediaType.APPLICATION_JSON + charset)
 	public Response getRolesSimeple() {
@@ -405,7 +406,7 @@ public class RolesResource extends AbstractSpagoBIResource {
 			fullList = rolesDao.loadAllRoles();
 
 			IEngUserProfile profile = this.getUserProfile();
-			if (profile.isAbleToExecuteAction(SpagoBIConstants.PROFILE_MANAGEMENT)) {
+			if (profile.isAbleToExecuteAction(CommunityFunctionalityConstants.PROFILE_MANAGEMENT)) {
 				filteredList = fullList;
 			} else {
 				filteredList = this.filterRolesListForFinalUser(fullList);

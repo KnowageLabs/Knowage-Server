@@ -36,6 +36,7 @@ import it.eng.spagobi.analiticalmodel.execution.service.ExecuteAdHocUtility;
 import it.eng.spagobi.commons.bo.Config;
 import it.eng.spagobi.commons.bo.Domain;
 import it.eng.spagobi.commons.bo.UserProfile;
+import it.eng.spagobi.commons.constants.CommunityFunctionalityConstants;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.dao.IConfigDAO;
@@ -474,7 +475,7 @@ public class SelfServiceDatasetStartAction extends ManageDatasets {
 		try {
 			profile = getUserProfile();
 			funcs = (List) profile.getFunctionalities();
-			if (isAbleTo(SpagoBIConstants.ENABLE_DATASET_PERSISTENCE, funcs)) {
+			if (isAbleTo(CommunityFunctionalityConstants.ENABLE_DATASET_PERSISTENCE, funcs)) {
 				return "true";
 			} else {
 				return "false";
@@ -491,7 +492,7 @@ public class SelfServiceDatasetStartAction extends ManageDatasets {
 		try {
 			profile = getUserProfile();
 			funcs = (List) profile.getFunctionalities();
-			if (isAbleTo(SpagoBIConstants.CKAN_FUNCTIONALITY, funcs)) {
+			if (isAbleTo(CommunityFunctionalityConstants.CKAN_FUNCTIONALITY, funcs)) {
 				return "true";
 			} else {
 				return "false";
@@ -509,7 +510,7 @@ public class SelfServiceDatasetStartAction extends ManageDatasets {
 			profile = getUserProfile();
 			funcs = (List) profile.getFunctionalities();
 			// Check if user can user CKAN
-			if (!isAbleTo(SpagoBIConstants.CKAN_FUNCTIONALITY, funcs)) {
+			if (!isAbleTo(CommunityFunctionalityConstants.CKAN_FUNCTIONALITY, funcs)) {
 				return "";
 			} else {
 				Properties ckanUrls = CKANConfig.getInstance().getConfig();
@@ -537,7 +538,7 @@ public class SelfServiceDatasetStartAction extends ManageDatasets {
 		try {
 			profile = getUserProfile();
 			funcs = (List) profile.getFunctionalities();
-			if (isAbleTo(SpagoBIConstants.CREATE_DATASETS_AS_FINAL_USER, funcs)) {
+			if (isAbleTo(CommunityFunctionalityConstants.CREATE_DATASETS_AS_FINAL_USER, funcs)) {
 				return "true";
 			} else {
 				return "false";
@@ -554,7 +555,7 @@ public class SelfServiceDatasetStartAction extends ManageDatasets {
 		try {
 			profile = getUserProfile();
 			funcs = (List) profile.getFunctionalities();
-			if (isAbleTo(SpagoBIConstants.ENABLE_FEDERATED_DATASET, funcs)) {
+			if (isAbleTo(CommunityFunctionalityConstants.ENABLE_FEDERATED_DATASET, funcs)) {
 				return "true";
 			} else {
 				return "false";

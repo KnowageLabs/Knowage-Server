@@ -49,7 +49,7 @@ import it.eng.knowage.functionscatalog.utils.OutputColumnDTO;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.api.AbstractSpagoBIResource;
 import it.eng.spagobi.commons.bo.UserProfile;
-import it.eng.spagobi.commons.constants.SpagoBIConstants;
+import it.eng.spagobi.commons.constants.CommunityFunctionalityConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.utilities.UserUtilities;
 import it.eng.spagobi.functions.dao.FunctionInUseException;
@@ -75,7 +75,7 @@ public class FunctionsCatalogResource extends AbstractSpagoBIResource {
 	@GET
 	@Path("/")
 	@Produces(MediaType.APPLICATION_JSON)
-	@UserConstraint(functionalities = { SpagoBIConstants.FUNCTIONS_CATALOG_USAGE, SpagoBIConstants.FUNCTIONS_CATALOG_MANAGEMENT })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.FUNCTIONS_CATALOG_USAGE, CommunityFunctionalityConstants.FUNCTIONS_CATALOG_MANAGEMENT })
 	public String getAllCatalogFunctions() throws IOException {
 		logger.debug("IN");
 
@@ -125,7 +125,7 @@ public class FunctionsCatalogResource extends AbstractSpagoBIResource {
 	@GET
 	@Path("/keywords")
 	@Produces(MediaType.APPLICATION_JSON)
-	@UserConstraint(functionalities = { SpagoBIConstants.FUNCTIONS_CATALOG_USAGE, SpagoBIConstants.FUNCTIONS_CATALOG_MANAGEMENT })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.FUNCTIONS_CATALOG_USAGE, CommunityFunctionalityConstants.FUNCTIONS_CATALOG_MANAGEMENT })
 	public String getAllKeywords() throws IOException {
 		logger.debug("IN");
 		JSONArray keywordsArray = new JSONArray();
@@ -169,7 +169,7 @@ public class FunctionsCatalogResource extends AbstractSpagoBIResource {
 	@GET
 	@Path("/{type}")
 	@Produces(MediaType.APPLICATION_JSON)
-	@UserConstraint(functionalities = { SpagoBIConstants.FUNCTIONS_CATALOG_USAGE, SpagoBIConstants.FUNCTIONS_CATALOG_MANAGEMENT })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.FUNCTIONS_CATALOG_USAGE, CommunityFunctionalityConstants.FUNCTIONS_CATALOG_MANAGEMENT })
 	public String getCatalogFunctionsByType(@PathParam("type") String type) throws IOException {
 		logger.debug("IN");
 
@@ -226,7 +226,7 @@ public class FunctionsCatalogResource extends AbstractSpagoBIResource {
 	@Path("/insert")
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
-	@UserConstraint(functionalities = { SpagoBIConstants.FUNCTIONS_CATALOG_MANAGEMENT })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.FUNCTIONS_CATALOG_MANAGEMENT })
 	public String insertCatalogFunction(@Valid CatalogFunctionDTO funcDTO) throws IOException {
 		logger.debug("IN");
 		JSONObject response = new JSONObject();
@@ -252,7 +252,7 @@ public class FunctionsCatalogResource extends AbstractSpagoBIResource {
 	@Path("/update/{id}")
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
-	@UserConstraint(functionalities = { SpagoBIConstants.FUNCTIONS_CATALOG_MANAGEMENT })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.FUNCTIONS_CATALOG_MANAGEMENT })
 	public String updateCatalogFunction(@PathParam("id") String uuid, @Valid CatalogFunctionDTO funcDTO) {
 		logger.debug("IN");
 		JSONObject response = new JSONObject();
@@ -290,7 +290,7 @@ public class FunctionsCatalogResource extends AbstractSpagoBIResource {
 	@GET
 	@Path("/delete/{id}")
 	@Produces(MediaType.APPLICATION_JSON)
-	@UserConstraint(functionalities = { SpagoBIConstants.FUNCTIONS_CATALOG_MANAGEMENT })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.FUNCTIONS_CATALOG_MANAGEMENT })
 	public String deleteCatalogFunction(@PathParam("id") String uuid) {
 		logger.debug("IN");
 

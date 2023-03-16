@@ -37,7 +37,7 @@ import org.json.JSONObject;
 import edu.emory.mathcs.backport.java.util.Collections;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
-import it.eng.spagobi.commons.constants.SpagoBIConstants;
+import it.eng.spagobi.commons.constants.CommunityFunctionalityConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
 import it.eng.spagobi.services.rest.annotations.UserConstraint;
@@ -62,7 +62,7 @@ public class CrossNavigationService {
 
 	@GET
 	@Path("/test")
-	@UserConstraint(functionalities = { SpagoBIConstants.MANAGE_CROSS_NAVIGATION })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.MANAGE_CROSS_NAVIGATION })
 	public Response test(@Context HttpServletRequest req) throws EMFUserError {
 
 		ICrossNavigationDAO dao = DAOFactory.getCrossNavigationDAO();
@@ -75,7 +75,7 @@ public class CrossNavigationService {
 	@GET
 	@Path("/listNavigation")
 	// @Produces(MediaType.APPLICATION_JSON)
-	@UserConstraint(functionalities = { SpagoBIConstants.MANAGE_CROSS_NAVIGATION })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.MANAGE_CROSS_NAVIGATION })
 	public Response listNavigation(@Context HttpServletRequest req) {
 		try {
 			ICrossNavigationDAO dao = DAOFactory.getCrossNavigationDAO();
@@ -93,7 +93,7 @@ public class CrossNavigationService {
 	@GET
 	@Path("/{id}/load")
 	@Produces(MediaType.APPLICATION_JSON)
-	@UserConstraint(functionalities = { SpagoBIConstants.MANAGE_CROSS_NAVIGATION })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.MANAGE_CROSS_NAVIGATION })
 	public Response loadNavigation(@PathParam("id") Integer id, @Context HttpServletRequest req) {
 		try {
 			ICrossNavigationDAO dao = DAOFactory.getCrossNavigationDAO();
@@ -113,7 +113,7 @@ public class CrossNavigationService {
 
 	@POST
 	@Path("/save")
-	@UserConstraint(functionalities = { SpagoBIConstants.MANAGE_CROSS_NAVIGATION })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.MANAGE_CROSS_NAVIGATION })
 	public Response save(@Context HttpServletRequest req) throws JSONException {
 		try {
 			String requestVal = RestUtilities.readBodyAsJSONObject(req).toString();
@@ -152,7 +152,7 @@ public class CrossNavigationService {
 	@POST
 	@Path("/remove")
 	@Produces(MediaType.APPLICATION_JSON)
-	@UserConstraint(functionalities = { SpagoBIConstants.MANAGE_CROSS_NAVIGATION })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.MANAGE_CROSS_NAVIGATION })
 	public Response remove(@Context HttpServletRequest req) {
 		try {
 			JSONObject o = RestUtilities.readBodyAsJSONObject(req);
@@ -167,7 +167,7 @@ public class CrossNavigationService {
 	@GET
 	@Path("/{label}/loadCrossNavigationByDocument")
 	@Produces(MediaType.APPLICATION_JSON)
-	@UserConstraint(functionalities = { SpagoBIConstants.EXECUTE_CROSS_NAVIGATION })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.EXECUTE_CROSS_NAVIGATION })
 	public Response loadCrossNavigationData(@PathParam("label") String label, @Context HttpServletRequest req) {
 		try {
 			ICrossNavigationDAO dao = DAOFactory.getCrossNavigationDAO();

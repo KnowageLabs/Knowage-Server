@@ -19,7 +19,7 @@ package it.eng.spagobi.api.v2;
 
 import it.eng.spagobi.api.AbstractSpagoBIResource;
 import it.eng.spagobi.commons.bo.UserProfile;
-import it.eng.spagobi.commons.constants.SpagoBIConstants;
+import it.eng.spagobi.commons.constants.CommunityFunctionalityConstants;
 import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
 import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
 import it.eng.spagobi.services.rest.annotations.UserConstraint;
@@ -49,7 +49,7 @@ public class UtilityResource extends AbstractSpagoBIResource {
 
 	@GET
 	@Path("/jndi")
-	@UserConstraint(functionalities = { SpagoBIConstants.CONFIG_MANAGEMENT })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.CONFIG_MANAGEMENT })
 	@Produces(MediaType.TEXT_PLAIN + "; charset=UTF-8")
 	public String getJndiValue(@QueryParam("label") String jndiLabel) {
 		logger.debug("IN");
@@ -68,7 +68,7 @@ public class UtilityResource extends AbstractSpagoBIResource {
 
 	@GET
 	@Path("/tenant")
-	@UserConstraint(functionalities = { SpagoBIConstants.CONFIG_MANAGEMENT })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.CONFIG_MANAGEMENT })
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
 	public String getTenant() {
 		logger.debug("IN");

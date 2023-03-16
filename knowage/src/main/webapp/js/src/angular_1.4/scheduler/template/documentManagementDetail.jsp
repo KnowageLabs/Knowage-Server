@@ -298,7 +298,7 @@
 		</md-content>
 	</div>
 	
-	<% if (userProfile.isAbleToExecuteAction(SpagoBIConstants.DISTRIBUTIONLIST_MANAGEMENT)) {%>
+	<% if (userProfile.isAbleToExecuteAction(it.eng.spagobi.commons.constants.CommunityFunctionalityConstants.DISTRIBUTIONLIST_MANAGEMENT)) {%>
 	<md-toolbar class="minihead unselectedItem"
 			ng-class="activityEventCtrl.selectedDocument.saveasdl? 'selectedItem' : 'unselectedItem'">
 		<div class="md-toolbar-tools" layout="row">

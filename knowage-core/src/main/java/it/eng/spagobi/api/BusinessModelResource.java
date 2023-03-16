@@ -77,6 +77,7 @@ import it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail;
 import it.eng.spagobi.behaviouralmodel.lov.bo.LovResultHandler;
 import it.eng.spagobi.behaviouralmodel.lov.exceptions.MissingLOVDependencyException;
 import it.eng.spagobi.commons.bo.UserProfile;
+import it.eng.spagobi.commons.constants.CommunityFunctionalityConstants;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.serializer.SerializationException;
@@ -128,7 +129,7 @@ public class BusinessModelResource {
 	@POST
 	@Path("/{qbeDatamart}/filters")
 	@Produces(MediaType.APPLICATION_JSON)
-	@UserConstraint(functionalities = { SpagoBIConstants.BUILD_QBE_QUERIES_FUNCTIONALITY })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.BUILD_QBE_QUERIES_FUNCTIONALITY })
 	public Response filters(@PathParam("qbeDatamart") String qbeDatamart) throws JSONException, IOException {
 
 		JSONObject requestVal = RestUtilities.readBodyAsJSONObject(request);

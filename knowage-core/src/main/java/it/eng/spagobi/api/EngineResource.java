@@ -17,7 +17,7 @@
  */
 package it.eng.spagobi.api;
 
-import it.eng.spagobi.commons.constants.SpagoBIConstants;
+import it.eng.spagobi.commons.constants.CommunityFunctionalityConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.engines.config.bo.Engine;
 import it.eng.spagobi.engines.config.dao.IEngineDAO;
@@ -50,7 +50,7 @@ public class EngineResource extends AbstractSpagoBIResource {
 	@GET
 	@Path("/")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
-	@UserConstraint(functionalities = { SpagoBIConstants.READ_ENGINES_MANAGEMENT, SpagoBIConstants.DOCUMENT_MANAGEMENT_DEV })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.READ_ENGINES_MANAGEMENT, CommunityFunctionalityConstants.DOCUMENT_MANAGEMENT_DEV })
 	public Response getEngines() {
 		logger.debug("IN");
 		IEngineDAO engineDao = null;
@@ -72,7 +72,7 @@ public class EngineResource extends AbstractSpagoBIResource {
 	@GET
 	@Path("/{label}")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
-	@UserConstraint(functionalities = { SpagoBIConstants.READ_ENGINES_MANAGEMENT, SpagoBIConstants.DOCUMENT_MANAGEMENT_DEV })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.READ_ENGINES_MANAGEMENT, CommunityFunctionalityConstants.DOCUMENT_MANAGEMENT_DEV })
 	public Response getEngine(@PathParam("label") String label) {
 		logger.debug("IN");
 		IEngineDAO engineDao = null;

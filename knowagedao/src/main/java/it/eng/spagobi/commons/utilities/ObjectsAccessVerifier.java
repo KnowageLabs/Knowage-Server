@@ -39,6 +39,7 @@ import it.eng.spagobi.analiticalmodel.functionalitytree.bo.LowFunctionality;
 import it.eng.spagobi.analiticalmodel.functionalitytree.dao.ILowFunctionalityDAO;
 import it.eng.spagobi.commons.bo.Role;
 import it.eng.spagobi.commons.bo.UserProfile;
+import it.eng.spagobi.commons.constants.CommunityFunctionalityConstants;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.dao.IRoleDAO;
@@ -247,12 +248,12 @@ public class ObjectsAccessVerifier {
 			return true;
 		} else if (state.equals("DEV")) {
 			try {
-				if (profile.isAbleToExecuteAction(SpagoBIConstants.DOCUMENT_MANAGEMENT_ADMIN)
-						|| profile.isAbleToExecuteAction(SpagoBIConstants.DOCUMENT_MANAGEMENT_DEV)) {
+				if (profile.isAbleToExecuteAction(CommunityFunctionalityConstants.DOCUMENT_MANAGEMENT_ADMIN)
+						|| profile.isAbleToExecuteAction(CommunityFunctionalityConstants.DOCUMENT_MANAGEMENT_DEV)) {
 					logger.debug("OUT.return true");
 					return true;
-				} else if (profile.isAbleToExecuteAction(SpagoBIConstants.DOCUMENT_MANAGEMENT_USER)
-						|| profile.isAbleToExecuteAction(SpagoBIConstants.DOCUMENT_MANAGEMENT_TEST)) {
+				} else if (profile.isAbleToExecuteAction(CommunityFunctionalityConstants.DOCUMENT_MANAGEMENT_USER)
+						|| profile.isAbleToExecuteAction(CommunityFunctionalityConstants.DOCUMENT_MANAGEMENT_TEST)) {
 					logger.debug("OUT.return false");
 					return false;
 				}
@@ -261,12 +262,12 @@ public class ObjectsAccessVerifier {
 			}
 		} else if (state.equals("TEST")) {
 			try {
-				if (profile.isAbleToExecuteAction(SpagoBIConstants.DOCUMENT_MANAGEMENT_ADMIN)
-						|| profile.isAbleToExecuteAction(SpagoBIConstants.DOCUMENT_MANAGEMENT_TEST)) {
+				if (profile.isAbleToExecuteAction(CommunityFunctionalityConstants.DOCUMENT_MANAGEMENT_ADMIN)
+						|| profile.isAbleToExecuteAction(CommunityFunctionalityConstants.DOCUMENT_MANAGEMENT_TEST)) {
 					logger.debug("OUT.return true");
 					return true;
-				} else if (profile.isAbleToExecuteAction(SpagoBIConstants.DOCUMENT_MANAGEMENT_USER)
-						|| profile.isAbleToExecuteAction(SpagoBIConstants.DOCUMENT_MANAGEMENT_DEV)) {
+				} else if (profile.isAbleToExecuteAction(CommunityFunctionalityConstants.DOCUMENT_MANAGEMENT_USER)
+						|| profile.isAbleToExecuteAction(CommunityFunctionalityConstants.DOCUMENT_MANAGEMENT_DEV)) {
 					logger.debug("OUT.return false");
 					return false;
 				}
@@ -321,7 +322,7 @@ public class ObjectsAccessVerifier {
 		try {
 			logger.debug("IN: obj id = [" + biObjectID + "]; user id = [" + ((UserProfile) profile).getUserId() + "]");
 			// if user is administrator, he can develop, no need to make any query to database
-			if (profile.isAbleToExecuteAction(SpagoBIConstants.DOCUMENT_MANAGEMENT_ADMIN)) {
+			if (profile.isAbleToExecuteAction(CommunityFunctionalityConstants.DOCUMENT_MANAGEMENT_ADMIN)) {
 				logger.debug("User [" + ((UserProfile) profile).getUserId() + "] is administrator. He can develop every document");
 				monitor.stop();
 				return true;
@@ -351,7 +352,7 @@ public class ObjectsAccessVerifier {
 		try {
 			logger.debug("IN: obj label = [" + obj.getLabel() + "]; user id = [" + ((UserProfile) profile).getUserId() + "]");
 			// if user is administrator, he can develop, no need to make any query to database
-			if (profile.isAbleToExecuteAction(SpagoBIConstants.DOCUMENT_MANAGEMENT_ADMIN)) {
+			if (profile.isAbleToExecuteAction(CommunityFunctionalityConstants.DOCUMENT_MANAGEMENT_ADMIN)) {
 				logger.debug("User [" + ((UserProfile) profile).getUserId() + "] is administrator. He can develop every document");
 				monitor.stop();
 				return true;
@@ -880,7 +881,7 @@ public class ObjectsAccessVerifier {
 
 		String state = obj.getStateCode();
 		if ("SUSP".equalsIgnoreCase(state)) {
-			if (!profile.isAbleToExecuteAction(SpagoBIConstants.DOCUMENT_MANAGEMENT_ADMIN)) {
+			if (!profile.isAbleToExecuteAction(CommunityFunctionalityConstants.DOCUMENT_MANAGEMENT_ADMIN)) {
 				monitor.stop();
 				return false;
 			} else {
@@ -911,10 +912,10 @@ public class ObjectsAccessVerifier {
 			boolean canExec = canExec(state, folderId, profile);
 			if (canExec) {
 				// administrators, developers, testers, behavioural model administrators can see that document
-				if (profile.isAbleToExecuteAction(SpagoBIConstants.DOCUMENT_MANAGEMENT_ADMIN) // for administrators
-						|| profile.isAbleToExecuteAction(SpagoBIConstants.DOCUMENT_MANAGEMENT_DEV) // for developers
-						|| profile.isAbleToExecuteAction(SpagoBIConstants.DOCUMENT_MANAGEMENT_TEST) // for testers
-						|| profile.isAbleToExecuteAction(SpagoBIConstants.PARAMETER_MANAGEMENT)) { // for behavioral model administrators
+				if (profile.isAbleToExecuteAction(CommunityFunctionalityConstants.DOCUMENT_MANAGEMENT_ADMIN) // for administrators
+						|| profile.isAbleToExecuteAction(CommunityFunctionalityConstants.DOCUMENT_MANAGEMENT_DEV) // for developers
+						|| profile.isAbleToExecuteAction(CommunityFunctionalityConstants.DOCUMENT_MANAGEMENT_TEST) // for testers
+						|| profile.isAbleToExecuteAction(CommunityFunctionalityConstants.PARAMETER_MANAGEMENT)) { // for behavioral model administrators
 					canSee = true;
 				} else {
 					if (obj.isPublicDoc() || (!obj.isPublicDoc() && ((UserProfile) profile).getUserId().equals(obj.getCreationUser())
@@ -949,7 +950,7 @@ public class ObjectsAccessVerifier {
 			canSee = true;
 		} else {
 			// if user is administrator, he can see all functionalities
-			if (profile.isAbleToExecuteAction(SpagoBIConstants.DOCUMENT_MANAGEMENT_ADMIN)) {
+			if (profile.isAbleToExecuteAction(CommunityFunctionalityConstants.DOCUMENT_MANAGEMENT_ADMIN)) {
 				canSee = true;
 			} else {
 				// if user can exec or dev or test on functionality, he can see it, otherwise he cannot see it
@@ -1052,8 +1053,8 @@ public class ObjectsAccessVerifier {
 		Monitor monitor = MonitorFactory.start("spagobi.core.ObjectAccessVerifier.getCorrectRolesForExecution");
 		logger.debug("IN");
 		List correctRoles = null;
-		if (profile.isAbleToExecuteAction(SpagoBIConstants.DOCUMENT_MANAGEMENT_DEV) || profile.isAbleToExecuteAction(SpagoBIConstants.DOCUMENT_MANAGEMENT_USER)
-				|| profile.isAbleToExecuteAction(SpagoBIConstants.DOCUMENT_MANAGEMENT_ADMIN)) {
+		if (profile.isAbleToExecuteAction(CommunityFunctionalityConstants.DOCUMENT_MANAGEMENT_DEV) || profile.isAbleToExecuteAction(CommunityFunctionalityConstants.DOCUMENT_MANAGEMENT_USER)
+				|| profile.isAbleToExecuteAction(CommunityFunctionalityConstants.DOCUMENT_MANAGEMENT_ADMIN)) {
 			logger.debug("User is able to execute action");
 			correctRoles = DAOFactory.getBIObjectDAO().getCorrectRolesForExecution(objectId, profile);
 		} else {
@@ -1110,7 +1111,7 @@ public class ObjectsAccessVerifier {
 			Assert.assertNotNull(lowFunctionality, "LowFunctionality object in input is null");
 			logger.debug("Evaulating deletion permission for user [" + ((UserProfile) profile).getUserId() + "] on folder [" + lowFunctionality.getPath()
 					+ "] for document with id [" + biobjectId + "] ...");
-			if (profile.isAbleToExecuteAction(SpagoBIConstants.DOCUMENT_MANAGEMENT_ADMIN)) {
+			if (profile.isAbleToExecuteAction(CommunityFunctionalityConstants.DOCUMENT_MANAGEMENT_ADMIN)) {
 				logger.debug("User is administrator, therefore he can delete it");
 				canDelete = true;
 			} else {
@@ -1154,7 +1155,7 @@ public class ObjectsAccessVerifier {
 		try {
 			Assert.assertNotNull(profile, "User profile object in input is null");
 			logger.debug("Evaulating deletion permission for user [" + ((UserProfile) profile).getUserId() + "] for document with id [" + biobjectId + "] ...");
-			if (profile.isAbleToExecuteAction(SpagoBIConstants.DOCUMENT_MANAGEMENT_ADMIN)) {
+			if (profile.isAbleToExecuteAction(CommunityFunctionalityConstants.DOCUMENT_MANAGEMENT_ADMIN)) {
 				logger.debug("User is administrator, therefore he can delete it");
 				canDelete = true;
 			} else {
@@ -1245,7 +1246,7 @@ public class ObjectsAccessVerifier {
 		boolean canExecByStateAndFolders = false;
 		if ("SUSP".equalsIgnoreCase(state)) {
 			// only admin can exec suspended document
-			canExecByStateAndFolders = profile.isAbleToExecuteAction(SpagoBIConstants.DOCUMENT_MANAGEMENT_ADMIN);
+			canExecByStateAndFolders = profile.isAbleToExecuteAction(CommunityFunctionalityConstants.DOCUMENT_MANAGEMENT_ADMIN);
 		}
 
 		Iterator foldersIdIt = foldersId.iterator();
@@ -1274,10 +1275,10 @@ public class ObjectsAccessVerifier {
 			if (canExecOnFolder) {
 				// administrators, developers, testers, behavioural model
 				// administrators can see that document
-				if (profile.isAbleToExecuteAction(SpagoBIConstants.DOCUMENT_MANAGEMENT_ADMIN) // for administrators
-						|| profile.isAbleToExecuteAction(SpagoBIConstants.DOCUMENT_MANAGEMENT_DEV) // for developers
-						|| profile.isAbleToExecuteAction(SpagoBIConstants.DOCUMENT_MANAGEMENT_TEST) // for testers
-						|| profile.isAbleToExecuteAction(SpagoBIConstants.PARAMETER_MANAGEMENT)) { // for behavioral model administrators
+				if (profile.isAbleToExecuteAction(CommunityFunctionalityConstants.DOCUMENT_MANAGEMENT_ADMIN) // for administrators
+						|| profile.isAbleToExecuteAction(CommunityFunctionalityConstants.DOCUMENT_MANAGEMENT_DEV) // for developers
+						|| profile.isAbleToExecuteAction(CommunityFunctionalityConstants.DOCUMENT_MANAGEMENT_TEST) // for testers
+						|| profile.isAbleToExecuteAction(CommunityFunctionalityConstants.PARAMETER_MANAGEMENT)) { // for behavioral model administrators
 					canExecByStateAndFolders = true;
 				} else {
 					canExecByStateAndFolders = checkProfileVisibility(obj, profile);
@@ -1292,9 +1293,9 @@ public class ObjectsAccessVerifier {
 			Integer id = obj.getId();
 			// get the correct roles for execution
 			List correctRoles = null;
-			if (profile.isAbleToExecuteAction(SpagoBIConstants.DOCUMENT_MANAGEMENT_DEV)
-					|| profile.isAbleToExecuteAction(SpagoBIConstants.DOCUMENT_MANAGEMENT_USER)
-					|| profile.isAbleToExecuteAction(SpagoBIConstants.DOCUMENT_MANAGEMENT_ADMIN)) {
+			if (profile.isAbleToExecuteAction(CommunityFunctionalityConstants.DOCUMENT_MANAGEMENT_DEV)
+					|| profile.isAbleToExecuteAction(CommunityFunctionalityConstants.DOCUMENT_MANAGEMENT_USER)
+					|| profile.isAbleToExecuteAction(CommunityFunctionalityConstants.DOCUMENT_MANAGEMENT_ADMIN)) {
 				correctRoles = DAOFactory.getBIObjectDAO().getCorrectRolesForExecution(id, profile);
 			} else {
 				correctRoles = DAOFactory.getBIObjectDAO().getCorrectRolesForExecution(id);

@@ -50,6 +50,7 @@ import it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IBIObjectParameterDA
 import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.commons.bo.Domain;
 import it.eng.spagobi.commons.bo.UserProfile;
+import it.eng.spagobi.commons.constants.CommunityFunctionalityConstants;
 import it.eng.spagobi.commons.constants.ObjectsTreeConstants;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
@@ -244,7 +245,7 @@ public class DetBIObjModHelper {
 		// First case: the current user is not an administrator (so he cannot see all the functionalities)
 		// and the modality is Modify. In this case some functionalities, that the user cannot see, can be
 		// already associated to the object (by different users). This associations mustn't be erased.
-		if (!profile.isAbleToExecuteAction(SpagoBIConstants.DOCUMENT_MANAGEMENT_ADMIN) && mod.equalsIgnoreCase(ObjectsTreeConstants.DETAIL_MOD)) {
+		if (!profile.isAbleToExecuteAction(CommunityFunctionalityConstants.DOCUMENT_MANAGEMENT_ADMIN) && mod.equalsIgnoreCase(ObjectsTreeConstants.DETAIL_MOD)) {
 			IBIObjectDAO objDAO = DAOFactory.getBIObjectDAO();
 			BIObject prevObj = objDAO.loadBIObjectById(id);
 			List prevFuncsId = prevObj.getFunctionalities();
@@ -258,7 +259,7 @@ public class DetBIObjModHelper {
 		// Second case: the current user is a local administrator (he can admin only a part of the tree)
 		// and the modality is Modify. In this case some funtionalities in oder part of the tree, which the
 		// user cannot see, can be already associated to the object. This associations mustn't be erased.
-		if (profile.isAbleToExecuteAction(SpagoBIConstants.DOCUMENT_MANAGEMENT_ADMIN) && initialPath != null && !initialPath.trim().equals("")
+		if (profile.isAbleToExecuteAction(CommunityFunctionalityConstants.DOCUMENT_MANAGEMENT_ADMIN) && initialPath != null && !initialPath.trim().equals("")
 				&& mod.equalsIgnoreCase(ObjectsTreeConstants.DETAIL_MOD)) {
 			IBIObjectDAO objDAO = DAOFactory.getBIObjectDAO();
 			BIObject prevObj = objDAO.loadBIObjectById(id);

@@ -48,7 +48,7 @@ import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 import it.eng.spagobi.analiticalmodel.functionalitytree.bo.LowFunctionality;
 import it.eng.spagobi.commons.bo.Role;
 import it.eng.spagobi.commons.constants.AdmintoolsConstants;
-import it.eng.spagobi.commons.constants.SpagoBIConstants;
+import it.eng.spagobi.commons.constants.CommunityFunctionalityConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.utilities.AuditLogUtilities;
 import it.eng.spagobi.commons.utilities.ChannelUtilities;
@@ -466,7 +466,7 @@ public class DetailMenuModule extends AbstractHttpModule {
 			menu.setHideSliders(false);
 			String functionality = (String) request.getAttribute("functionality");
 			menu.setFunctionality(functionality);
-			if (functionality.equals(SpagoBIConstants.DOCUMENT_BROWSER_USER)) {
+			if (functionality.equals(CommunityFunctionalityConstants.DOCUMENT_BROWSER_USER)) {
 				String initialPath = (String) request.getAttribute("initialPath");
 				menu.setInitialPath(initialPath);
 			} else {
@@ -638,7 +638,7 @@ public class DetailMenuModule extends AbstractHttpModule {
 					url = (String) config.getAttribute("link");
 					url = url.replaceAll("\\$\\{SPAGOBI_CONTEXT\\}", contextPath);
 					url = url.replaceAll("\\$\\{SPAGO_ADAPTER_HTTP\\}", GeneralUtilities.getSpagoAdapterHttpUrl());
-					if (functionality.equals(SpagoBIConstants.DOCUMENT_BROWSER_USER)) {
+					if (functionality.equals(CommunityFunctionalityConstants.DOCUMENT_BROWSER_USER)) {
 						String initialPath = menu.getInitialPath();
 						if (initialPath != null && !initialPath.trim().equals("")) {
 							// url += "&" + BIObjectsModule.MODALITY + "=" + BIObjectsModule.FILTER_TREE + "&" + TreeObjectsModule.PATH_SUBTREE + "="
@@ -649,7 +649,7 @@ public class DetailMenuModule extends AbstractHttpModule {
 //									+ idsPath;
 							url = String.format("%s/%s", url, idsPath);
 						}
-					} else if (functionality.equals(SpagoBIConstants.WORKSPACE_MANAGEMENT)) {
+					} else if (functionality.equals(CommunityFunctionalityConstants.WORKSPACE_MANAGEMENT)) {
 						String initialPath = menu.getInitialPath();
 						if (initialPath != null && initialPath.equals("documents")) {
 							url += "/recent";

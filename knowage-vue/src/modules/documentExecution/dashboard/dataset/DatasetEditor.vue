@@ -5,7 +5,7 @@
                 <template #start> {{ $t('dashboard.datasetEditor.title') }} </template>
                 <template #end>
                     <Button :disabled="modelHasEmptyAssociations" icon="pi pi-save" class="p-button-text p-button-rounded p-button-plain" @click="saveDatasetsToModel" />
-                    <Button icon="pi pi-times" class="p-button-text p-button-rounded p-button-plain" @click="$emit('closeDatasetEditor')" />
+                    <Button icon="pi pi-times" class="p-button-text p-button-rounded p-button-plain" @click="closeDatasetEditor" />
                 </template>
             </Toolbar>
 
@@ -80,14 +80,15 @@ export default defineComponent({
             dashboardAssociations: [] as IAssociation[],
             selectedAssociation: {} as any,
             ignoredDatasets: [] as string[],
-            uncachedDatasets: ['SbiQueryDataSet', 'SbiQbeDataSet', 'SbiSolrDataSet', 'SbiPreparedDataSet']
+            uncachedDatasets: ['SbiQueryDataSet', 'SbiQbeDataSet', 'SbiSolrDataSet', 'SbiPreparedDataSet'],
+            dirty: false
         }
     },
     computed: {
         modelHasEmptyAssociations(): boolean {
             let isInvalid = false
             this.dashboardAssociations?.some((association) => {
-                if (association.fields.length == 0) isInvalid = true
+                if (association.fields.length < 2) isInvalid = true
             })
             return isInvalid
         }
@@ -216,6 +217,8 @@ export default defineComponent({
         deleteDataset(datasetToDeleteId) {
             const toDeleteIndex = this.selectedDatasets.findIndex((dataset) => datasetToDeleteId === dataset.id.dsId)
             this.selectedDatasets.splice(toDeleteIndex, 1)
+
+            this.dirty = true
         },
 
         saveDatasetsToModel() {
@@ -246,6 +249,16 @@ export default defineComponent({
             }
 
             return formattedDataset
+        },
+        closeDatasetEditor() {
+            if (this.dirty) {
+                this.$confirm.require({
+                    message: this.$t('dashboard.datasetEditor.pendingChanges'),
+                    header: this.$t('common.toast.warning'),
+                    icon: 'pi pi-exclamation-triangle',
+                    accept: () => this.$emit('closeDatasetEditor')
+                })
+            } else this.$emit('closeDatasetEditor')
         }
     }
 })

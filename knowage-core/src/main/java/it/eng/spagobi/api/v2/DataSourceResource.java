@@ -58,7 +58,7 @@ import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.api.AbstractSpagoBIResource;
 import it.eng.spagobi.commons.bo.UserProfile;
-import it.eng.spagobi.commons.constants.SpagoBIConstants;
+import it.eng.spagobi.commons.constants.CommunityFunctionalityConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.utilities.messages.MessageBuilder;
 import it.eng.spagobi.services.datasource.bo.SpagoBiDataSource;
@@ -83,7 +83,7 @@ public class DataSourceResource extends AbstractSpagoBIResource {
 	@GET
 	@Path("/")
 	@Produces(MediaType.APPLICATION_JSON)
-	@UserConstraint(functionalities = { SpagoBIConstants.DATASOURCE_READ })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.DATASOURCE_READ })
 	public List<IDataSource> getDataSources(@QueryParam("type") String type) {
 		LOGGER.debug("IN");
 		try {
@@ -107,7 +107,7 @@ public class DataSourceResource extends AbstractSpagoBIResource {
 	@GET
 	@Path("/{dsId}")
 	@Produces(MediaType.APPLICATION_JSON)
-	@UserConstraint(functionalities = { SpagoBIConstants.DATASOURCE_READ })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.DATASOURCE_READ })
 	public IDataSource getDataSourceById(@PathParam("dsId") Integer dsId) {
 		LOGGER.debug("IN");
 		try {
@@ -132,7 +132,7 @@ public class DataSourceResource extends AbstractSpagoBIResource {
 	@POST
 	@Path("/")
 	@Consumes(MediaType.APPLICATION_JSON)
-	@UserConstraint(functionalities = { SpagoBIConstants.DATASOURCE_MANAGEMENT })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.DATASOURCE_MANAGEMENT })
 	public String postDataSource(IDataSource dataSource) {
 		LOGGER.debug("IN");
 		try {
@@ -170,7 +170,7 @@ public class DataSourceResource extends AbstractSpagoBIResource {
 	@PUT
 	@Path("/")
 	@Consumes(MediaType.APPLICATION_JSON)
-	@UserConstraint(functionalities = { SpagoBIConstants.DATASOURCE_MANAGEMENT })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.DATASOURCE_MANAGEMENT })
 	public List<IDataSource> putDataSource(IDataSource dataSource) {
 		LOGGER.debug("IN");
 		try {
@@ -201,7 +201,7 @@ public class DataSourceResource extends AbstractSpagoBIResource {
 
 	@DELETE
 	@Path("/{dsId}")
-	@UserConstraint(functionalities = { SpagoBIConstants.DATASOURCE_MANAGEMENT })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.DATASOURCE_MANAGEMENT })
 	public List<IDataSource> deleteDataSourceById(@PathParam("dsId") Integer dsId) throws EMFUserError {
 
 		LOGGER.debug("IN");
@@ -270,7 +270,7 @@ public class DataSourceResource extends AbstractSpagoBIResource {
 
 	@DELETE
 	@Path("/")
-	@UserConstraint(functionalities = { SpagoBIConstants.DATASOURCE_MANAGEMENT })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.DATASOURCE_MANAGEMENT })
 	public List<IDataSource> deleteMultiple(@QueryParam("id") List<Integer> ids) {
 		LOGGER.debug("IN");
 		try {
@@ -297,7 +297,7 @@ public class DataSourceResource extends AbstractSpagoBIResource {
 	@GET
 	@Path("/structure/{dsId}")
 	@Produces(MediaType.APPLICATION_JSON)
-	@UserConstraint(functionalities = { SpagoBIConstants.DATASOURCE_READ })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.DATASOURCE_READ })
 	public String getDataSourceStruct(@PathParam("dsId") Integer dsId, @QueryParam("tablePrefixLike") String tablePrefixLike,
 			@QueryParam("tablePrefixNotLike") String tablePrefixNotLike) {
 
@@ -328,7 +328,7 @@ public class DataSourceResource extends AbstractSpagoBIResource {
 	@POST
 	@Path("/test")
 	@Consumes(MediaType.APPLICATION_JSON)
-	@UserConstraint(functionalities = { SpagoBIConstants.DATASOURCE_MANAGEMENT })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.DATASOURCE_MANAGEMENT })
 	public Response testDataSource(IDataSource dataSource) throws Exception {
 
 		LOGGER.debug("IN");

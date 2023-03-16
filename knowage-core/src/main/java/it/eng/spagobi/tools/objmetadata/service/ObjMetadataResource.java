@@ -32,7 +32,7 @@ import javax.ws.rs.core.Response;
 import org.apache.log4j.Logger;
 
 import it.eng.spagobi.api.AbstractSpagoBIResource;
-import it.eng.spagobi.commons.constants.SpagoBIConstants;
+import it.eng.spagobi.commons.constants.CommunityFunctionalityConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
 import it.eng.spagobi.services.rest.annotations.UserConstraint;
@@ -49,7 +49,7 @@ public class ObjMetadataResource extends AbstractSpagoBIResource {
 	@GET
 	@Path("/")
 	@Produces(MediaType.APPLICATION_JSON)
-	@UserConstraint(functionalities = { SpagoBIConstants.SEE_METADATA_FUNCTIONALITY })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.SEE_METADATA_FUNCTIONALITY })
 	public List<ObjMetadata> getAllMetadata() {
 		List<ObjMetadata> metadata;
 		try {
@@ -67,7 +67,7 @@ public class ObjMetadataResource extends AbstractSpagoBIResource {
 	@POST
 	@Path("/")
 	@Produces(MediaType.APPLICATION_JSON)
-	@UserConstraint(functionalities = { SpagoBIConstants.SEE_METADATA_FUNCTIONALITY, SpagoBIConstants.SAVE_METADATA_FUNCTIONALITY })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.SEE_METADATA_FUNCTIONALITY, CommunityFunctionalityConstants.SAVE_METADATA_FUNCTIONALITY })
 	public Integer insertMetadata(@Valid ObjMetadataDTO metadataDTO) {
 		Integer toReturn;
 		try {
@@ -86,7 +86,7 @@ public class ObjMetadataResource extends AbstractSpagoBIResource {
 	@DELETE
 	@Path("/{id}")
 	@Produces(MediaType.APPLICATION_JSON)
-	@UserConstraint(functionalities = { SpagoBIConstants.SEE_METADATA_FUNCTIONALITY, SpagoBIConstants.SAVE_METADATA_FUNCTIONALITY })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.SEE_METADATA_FUNCTIONALITY, CommunityFunctionalityConstants.SAVE_METADATA_FUNCTIONALITY })
 	public Response deleteMetadata(@PathParam("id") Integer id) {
 		Response response = null;
 		try {

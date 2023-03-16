@@ -38,6 +38,7 @@ The following directive catches exceptions thrown by jsps, must be commented in 
 <%@page import="java.util.Locale"%>
 <%@page import="java.util.Map"%>
 <%@page import="it.eng.spagobi.commons.constants.SpagoBIConstants"%>
+<%@page import="it.eng.spagobi.commons.constants.CommunityFunctionalityConstants"%>
 <%@page import="it.eng.spago.security.IEngUserProfile"%>
 <%@page import="java.util.Enumeration"%>
 <%@page import="it.eng.spagobi.container.CoreContextManager"%>

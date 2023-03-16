@@ -37,7 +37,7 @@ import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.analiticalmodel.document.bo.OutputParameter;
 import it.eng.spagobi.analiticalmodel.document.dao.IOutputParameterDAO;
 import it.eng.spagobi.api.AbstractSpagoBIResource;
-import it.eng.spagobi.commons.constants.SpagoBIConstants;
+import it.eng.spagobi.commons.constants.CommunityFunctionalityConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.services.rest.annotations.UserConstraint;
 import it.eng.spagobi.utilities.assertion.Assert;
@@ -50,7 +50,7 @@ public class OutputParametarsResource extends AbstractSpagoBIResource {
 
 	@GET
 	@Produces("application/json")
-	@UserConstraint(functionalities = { SpagoBIConstants.DOCUMENT_MANAGEMENT_DEV })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.DOCUMENT_MANAGEMENT_DEV })
 	public List<OutputParameter> getDocumentOutputParameters(@PathParam("id") Integer id) {
 		logger.debug("IN");
 		IOutputParameterDAO outputParameterDAO = DAOFactory.getOutputParameterDAO();
@@ -63,7 +63,7 @@ public class OutputParametarsResource extends AbstractSpagoBIResource {
 	@POST
 	@Consumes("application/json")
 	@Produces("application/json")
-	@UserConstraint(functionalities = { SpagoBIConstants.DOCUMENT_MANAGEMENT_DEV })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.DOCUMENT_MANAGEMENT_DEV })
 	public OutputParameter addDocumentOutputParameters(@PathParam("id") Integer id, OutputParameter outputParameter) {
 		logger.debug("IN");
 		Assert.assertNotNull(outputParameter, "Output Parameters can not be null");
@@ -78,7 +78,7 @@ public class OutputParametarsResource extends AbstractSpagoBIResource {
 	@Path("{outParId}")
 	@Consumes("application/json")
 	@Produces("application/json")
-	@UserConstraint(functionalities = { SpagoBIConstants.DOCUMENT_MANAGEMENT_DEV })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.DOCUMENT_MANAGEMENT_DEV })
 	public String updateOutputParameter(@PathParam("id") Integer id, @PathParam("outParId") Integer outParId, OutputParameter outputParameter) {
 		logger.debug("IN");
 		try {
@@ -118,7 +118,7 @@ public class OutputParametarsResource extends AbstractSpagoBIResource {
 	@DELETE
 	@Path("{outputparId}")
 	@Produces("application/json")
-	@UserConstraint(functionalities = { SpagoBIConstants.DOCUMENT_MANAGEMENT_DEV })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.DOCUMENT_MANAGEMENT_DEV })
 	public Integer deleteDocumentOutputParameters(@PathParam("id") Integer id, @PathParam("outputparId") Integer outputparId) {
 		logger.debug("IN");
 

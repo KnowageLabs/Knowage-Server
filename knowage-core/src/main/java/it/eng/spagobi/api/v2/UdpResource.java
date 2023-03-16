@@ -18,7 +18,7 @@
 package it.eng.spagobi.api.v2;
 
 import it.eng.spagobi.api.AbstractSpagoBIResource;
-import it.eng.spagobi.commons.constants.SpagoBIConstants;
+import it.eng.spagobi.commons.constants.CommunityFunctionalityConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.deserializer.JSONDeserializer;
 import it.eng.spagobi.commons.serializer.SerializerFactory;
@@ -60,7 +60,7 @@ public class UdpResource extends AbstractSpagoBIResource {
 
 	@GET
 	@Path("/")
-	@UserConstraint(functionalities = { SpagoBIConstants.USER_DATA_PROPERTIES_MANAGEMENT })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.USER_DATA_PROPERTIES_MANAGEMENT })
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getSbiUdps(@Context HttpServletRequest request) {
 		logger.debug("IN");
@@ -93,7 +93,7 @@ public class UdpResource extends AbstractSpagoBIResource {
 
 	@GET
 	@Path("/{id}")
-	@UserConstraint(functionalities = { SpagoBIConstants.USER_DATA_PROPERTIES_MANAGEMENT })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.USER_DATA_PROPERTIES_MANAGEMENT })
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getSingleSbiUdp(@Context HttpServletRequest request, @PathParam("id") Integer id) {
 		logger.debug("IN");
@@ -130,7 +130,7 @@ public class UdpResource extends AbstractSpagoBIResource {
 
 	@POST
 	@Path("/")
-	@UserConstraint(functionalities = { SpagoBIConstants.USER_DATA_PROPERTIES_MANAGEMENT })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.USER_DATA_PROPERTIES_MANAGEMENT })
 	@Consumes(MediaType.APPLICATION_JSON)
 	public Response insertSbiUdp(String body) {
 
@@ -168,7 +168,7 @@ public class UdpResource extends AbstractSpagoBIResource {
 
 	@PUT
 	@Path("/{id}")
-	@UserConstraint(functionalities = { SpagoBIConstants.USER_DATA_PROPERTIES_MANAGEMENT })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.USER_DATA_PROPERTIES_MANAGEMENT })
 	@Consumes(MediaType.APPLICATION_JSON)
 	public Response updateSbiUdp(@PathParam("id") Integer id, String body) {
 
@@ -207,7 +207,7 @@ public class UdpResource extends AbstractSpagoBIResource {
 
 	@DELETE
 	@Path("/{id}")
-	@UserConstraint(functionalities = { SpagoBIConstants.USER_DATA_PROPERTIES_MANAGEMENT })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.USER_DATA_PROPERTIES_MANAGEMENT })
 	public Response deleteUdp(@PathParam("id") Integer id) {
 		IUdpDAO sbiUdpsDao = null;
 		try {
