@@ -91,13 +91,6 @@ export default defineComponent({
             this.refreshGridConfiguration(true)
             this.loadActiveSelectionValue()
         },
-        // dataToShow: {
-        //     handler() {
-        //         this.tableData = this.dataToShow
-        //         this.refreshGridConfiguration(true)
-        //         this.loadActiveSelectionValue()
-        //     },
-        // },
         propActiveSelections() {
             this.loadActiveSelections()
         }
@@ -274,7 +267,7 @@ export default defineComponent({
                             }
                             tempCol.cellClassRules = {
                                 'cell-span': function (params) {
-                                    return tempRows[params.rowIndex].span > 1
+                                    return tempRows[params.rowIndex]?.span > 1
                                 }
                             }
                         }
