@@ -99,7 +99,7 @@ const getDatasetLabel = (datasetId: number, datasets: IDataset[]) => {
 
 export const isCrossNavigationActive = (tableNode: any, crossNavigationOptions: IWidgetCrossNavigation) => {
     if (!crossNavigationOptions.enabled) return false
-    if (crossNavigationOptions.type === 'singleColumn' && (!crossNavigationOptions.column || tableNode.colDef?.columnName !== crossNavigationOptions.column)) return false
+    if (crossNavigationOptions.type === 'singleColumn' && (!crossNavigationOptions.column || tableNode.colDef?.colId !== crossNavigationOptions.column)) return false
     if (crossNavigationOptions.type === 'icon' && tableNode.colDef?.colId !== 'iconColumn') return false
     return true
 }
