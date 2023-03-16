@@ -25,6 +25,7 @@ import Dropdown from 'primevue/dropdown'
 import lovsManagementTestDialogDescriptor from './LovsManagementTestDialogDescriptor.json'
 import LovsManagementSimpleDatatable from './LovsManagementSimpleDatatable/LovsManagementSimpleDatatable.vue'
 import LovsManagementTree from './LovsManagementTree/LovsManagementTree.vue'
+import deepcopy from 'deepcopy'
 
 export default defineComponent({
     name: 'lovs-management-test-dialog',
@@ -63,6 +64,12 @@ export default defineComponent({
         }
     },
     watch: {
+        visible() {
+            this.loadLov()
+            this.loadTypeModel()
+            this.loadModel()
+            this.loadTreeModel()
+        },
         selectedLov() {
             this.loadLov()
         },
@@ -71,6 +78,7 @@ export default defineComponent({
         },
         testLovModel() {
             this.loadModel()
+            this.loadTypeModel()
         },
         testLovTreeModel() {
             this.loadTreeModel()
@@ -87,13 +95,13 @@ export default defineComponent({
             this.lov = this.selectedLov as iLov
         },
         loadTypeModel() {
-            this.treeListTypeModel = { ...this.testModel } as any
+            this.treeListTypeModel = deepcopy(this.testModel)
         },
         loadModel() {
-            this.model = [...(this.testLovModel as any[])]
+            this.model = deepcopy(this.testLovModel)
         },
         loadTreeModel() {
-            this.treeModel = [...(this.testLovTreeModel as any[])]
+            this.treeModel = deepcopy(this.testLovTreeModel)
         },
         resetValues() {
             this.treeModel = []
