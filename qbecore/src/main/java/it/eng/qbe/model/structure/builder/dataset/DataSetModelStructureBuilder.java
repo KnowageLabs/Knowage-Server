@@ -18,6 +18,11 @@
 
 package it.eng.qbe.model.structure.builder.dataset;
 
+import java.util.List;
+import java.util.Map;
+
+import org.apache.log4j.Logger;
+
 import it.eng.qbe.datasource.dataset.DataSetDataSource;
 import it.eng.qbe.model.properties.initializer.IModelStructurePropertiesInitializer;
 import it.eng.qbe.model.properties.initializer.SimpleModelStructurePropertiesInitializer;
@@ -31,11 +36,6 @@ import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
 import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
 import it.eng.spagobi.utilities.assertion.Assert;
-
-import java.util.List;
-import java.util.Map;
-
-import org.apache.log4j.Logger;
 
 /**
  * @author Alberto Ghedin (alberto.ghedin@eng.it)
@@ -125,8 +125,7 @@ public class DataSetModelStructureBuilder extends AbstractModelStructureBuilder 
 	/**
 	 * This method adds the normal fields to the datamart entry structure
 	 *
-	 * @param dataMartEntity
-	 *            : the datamart structure to complete
+	 * @param dataMartEntity : the datamart structure to complete
 	 */
 	public void addNormalFields(IModelEntity dataMartEntity, IDataSet entity) {
 		logger.debug("Adding the field " + dataMartEntity.getName());
@@ -184,6 +183,9 @@ public class DataSetModelStructureBuilder extends AbstractModelStructureBuilder 
 		propertiesInitializer.addProperties(datamartField);
 		if (fieldMetadata.getFieldType() != null) {
 			datamartField.getProperties().put(FIELD_TYPE_PROPERTY, (fieldMetadata.getFieldType().name()).toLowerCase());
+			if (datamartField.getType().equals("oracle.sql.TIMESTAMP")) {
+				datamartField.getProperties().put("format", "LLLL");
+			}
 		}
 
 	}
@@ -212,8 +214,7 @@ public class DataSetModelStructureBuilder extends AbstractModelStructureBuilder 
 	}
 
 	/**
-	 * @param DataSetDataSource
-	 *            the datasource to set
+	 * @param DataSetDataSource the datasource to set
 	 */
 	public void setDataSource(DataSetDataSource dataSource) {
 		this.dataSource = dataSource;
