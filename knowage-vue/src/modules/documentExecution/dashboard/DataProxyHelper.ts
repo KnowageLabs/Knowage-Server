@@ -73,7 +73,7 @@ const formatWidgetModelForGet = (dashboardId: any, propWidget: IWidget, dataset:
 
     propWidget.columns.forEach((column) => {
         if (column.fieldType === 'MEASURE') {
-            const measureToPush = { id: column.alias, alias: column.alias, columnName: column.columnName, funct: column.aggregation, orderColumn: column.alias } as any
+            const measureToPush = { id: column.alias, alias: column.alias, columnName: column.columnName, funct: column.aggregation, orderColumn: column.alias, orderType: propWidget.settings.sortingOrder } as any
             column.formula ? (measureToPush.formula = column.formula) : ''
             dataToSend.aggregations.measures.push(measureToPush)
         } else {
