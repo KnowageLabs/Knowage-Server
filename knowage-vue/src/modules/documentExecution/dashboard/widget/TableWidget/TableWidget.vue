@@ -1,7 +1,7 @@
 <template>
     <div class="kn-table-widget-container p-d-flex p-d-row kn-flex">
-        <div v-if="selectedColumn" class="multiselect-overlay">
-            <i class="fas fa-bolt kn-cursor-pointer" @click="applyMultiSelection" />
+        <div v-if="selectedColumn" class="multiselect-overlay kn-cursor-pointer" @click="applyMultiSelection">
+            <i class="fas fa-bolt" />
             {{ $t('dashboard.tableWidget.launchSelection') }}
         </div>
         <ag-grid-vue class="kn-table-widget-grid ag-theme-alpine kn-flex" :grid-options="gridOptions" :context="context"></ag-grid-vue>
@@ -266,7 +266,7 @@ export default defineComponent({
                                 } else return 1
                             }
                             tempCol.cellClassRules = {
-                                'cell-span': function (params) {
+                                'cell-span': function(params) {
                                     return tempRows[params.rowIndex]?.span > 1
                                 }
                             }
@@ -491,6 +491,7 @@ export default defineComponent({
             }
             if (tempSelection) {
                 this.updateActiveSelectionsWithMultivalueSelection(tempSelection)
+                updateStoreSelections(tempSelection, this.activeSelections, this.dashboardId, this.setSelections, this.$http)
                 this.$emit('launchSelection')
             }
 
