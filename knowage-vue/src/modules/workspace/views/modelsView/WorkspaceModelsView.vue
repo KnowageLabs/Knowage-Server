@@ -73,6 +73,7 @@ import QBE from '@/modules/qbe/QBE.vue'
 import MultiSelect from 'primevue/multiselect'
 import mainStore from '../../../../App.store'
 import { getCorrectRolesForExecutionForType } from '@/helpers/commons/roleHelper'
+import UserFunctionalitiesConstants from '@/UserFunctionalitiesConstants.json'
 
 export default defineComponent({
     name: 'workspace-models-view',
@@ -108,7 +109,7 @@ export default defineComponent({
     },
     computed: {
         hasEnableFederatedDatasetFunctionality(): boolean {
-            if (this.user && this.user.functionalities) return this.user.functionalities.includes('EnableFederatedDataset')
+            if (this.user && this.user.functionalities) return this.user.functionalities.includes(UserFunctionalitiesConstants.ENABLE_FEDERATED_DATASET)
             else return false
         }
     },

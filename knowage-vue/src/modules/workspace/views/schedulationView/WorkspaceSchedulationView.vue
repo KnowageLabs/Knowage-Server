@@ -23,6 +23,7 @@ import WorkspaceSchedulationOldSchedulationsDialog from './dialog/WorkspaceSched
 import WorkspaceSchedulationTable from './tables/WorkspaceSchedulationTable.vue'
 import mainStore from '../../../../App.store.js'
 import { mapActions, mapState } from 'pinia'
+import UserFunctionalitiesConstants from '@/UserFunctionalitiesConstants.json'
 
 export default defineComponent({
     name: 'workspace-schedulation-view',
@@ -42,7 +43,7 @@ export default defineComponent({
             user: 'user'
         }),
         canRunScheduledExecutions(): any {
-            return this.user.functionalities.includes('RunSnapshotsFunctionality')
+            return this.user.functionalities.includes(UserFunctionalitiesConstants.RUN_SNAPSHOTS_FUNCTIONALITY)
         }
     },
     async created() {

@@ -164,6 +164,7 @@ import mainStore from '../../../../App.store'
 import workspaceStore from '@/modules/workspace/Workspace.store.js'
 import { Client } from '@stomp/stompjs'
 import { getCorrectRolesForExecution } from '@/helpers/commons/roleHelper'
+import UserFunctionalitiesConstants from '@/UserFunctionalitiesConstants.json'
 
 export default defineComponent({
     components: {
@@ -198,7 +199,7 @@ export default defineComponent({
             return this.user.userId === this.selectedDataset.owner
         },
         showCkanIntegration(): any {
-            return this.user.functionalities.indexOf('CkanIntegrationFunctionality') > -1
+            return this.user.functionalities.indexOf(UserFunctionalitiesConstants.CKAN_INTEGRATION_FUNCTIONALITY) > -1
         },
         showQbeEditButton(): any {
             return this.user.userId === this.selectedDataset.owner && (this.selectedDataset.dsTypeCd == 'Federated' || this.selectedDataset.dsTypeCd == 'Qbe')
@@ -317,7 +318,7 @@ export default defineComponent({
                 })
             }
 
-            this.client.onStompError = function (frame) {
+            this.client.onStompError = function(frame) {
                 // Will be invoked in case of error encountered at Broker
                 // Bad login/passcode typically will cause an error
                 // Complaint brokers will set `message` header with a brief message. Body may contain details.
@@ -344,7 +345,7 @@ export default defineComponent({
                 data: this.selectedDataset,
                 headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'X-Disable-Errors': 'true' },
 
-                transformRequest: function (obj) {
+                transformRequest: function(obj) {
                     const str = [] as any
                     for (const p in obj) str.push(encodeURIComponent(p) + '=' + encodeURIComponent(obj[p]))
                     return str.join('&')

@@ -65,7 +65,16 @@
             </template>
             <div id="qbe-iframe-container" class="p-d-flex p-flex-row kn-flex">
                 <iframe v-if="qbeIframeVisible" id="qbeIframe" ref="qbeIframe" class="kn-width-full kn-height-full" :src="qbeUrl"></iframe>
-                <KnParameterSidebar v-if="parameterSidebarVisible" style="position: inherit; margin-left: auto" :filters-data="filtersData" :prop-document="qbeDataset" :user-role="userRole" :prop-q-b-e-parameters="qbeParameters" :prop-mode="'qbeView'" @execute="initiateQbeIframe"></KnParameterSidebar>
+                <KnParameterSidebar
+                    v-if="parameterSidebarVisible"
+                    style="position: inherit; margin-left: auto"
+                    :filters-data="filtersData"
+                    :prop-document="qbeDataset"
+                    :user-role="userRole"
+                    :prop-q-b-e-parameters="qbeParameters"
+                    :prop-mode="'qbeView'"
+                    @execute="initiateQbeIframe"
+                ></KnParameterSidebar>
             </div>
         </Dialog>
     </div>
@@ -121,25 +130,12 @@ import moment from 'moment'
 import { mapState } from 'pinia'
 import cryptoRandomString from 'crypto-random-string'
 import mainStore from '../../App.store'
+import UserFunctionalitiesConstants from '@/UserFunctionalitiesConstants.json'
 
 export default defineComponent({
     name: 'dataset-management',
     components: { Sidebar, Listbox, Accordion, AccordionTab, WorkspaceDocumentTree, WorkspaceNewFolderDialog, Dialog, KnParameterSidebar },
-    computed: {
-        ...mapState(mainStore, {
-            user: 'user'
-        }),
-        showRepository(): any {
-            return this.user.functionalities.includes('SaveIntoFolderFunctionality')
-        },
-        storeFunctionalitiesExist(): any {
-            this.createMenuItems()
-            return this.user.functionalities?.length > 0
-        },
-        userRole(): any {
-            return this.user.sessionRole !== this.$t('role.defaultRolePlaceholder') ? this.user.sessionRole : null
-        }
-    },
+
     setup() {
         const store = mainStore()
         return { store }
@@ -169,6 +165,21 @@ export default defineComponent({
             menuItems: [] as any,
             filtersData: null as any,
             qbeUrl: ''
+        }
+    },
+    computed: {
+        ...mapState(mainStore, {
+            user: 'user'
+        }),
+        showRepository(): any {
+            return this.user.functionalities.includes(UserFunctionalitiesConstants.SAVE_INTO_FOLDER_FUNCTIONALITY)
+        },
+        storeFunctionalitiesExist(): any {
+            this.createMenuItems()
+            return this.user.functionalities?.length > 0
+        },
+        userRole(): any {
+            return this.user.sessionRole !== this.$t('role.defaultRolePlaceholder') ? this.user.sessionRole : null
         }
     },
     created() {
