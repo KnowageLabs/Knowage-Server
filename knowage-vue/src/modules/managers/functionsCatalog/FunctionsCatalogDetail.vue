@@ -13,7 +13,7 @@
             <ProgressBar v-if="loading" mode="indeterminate" class="kn-progress-bar" />
         </template>
 
-        <TabView v-model:activeIndex="activeTab" >
+        <TabView v-model:activeIndex="activeTab">
             <TabPanel>
                 <template #header>
                     <span>{{ $t('common.general') }}</span>
@@ -66,6 +66,7 @@ import FunctionsCatalogWarningDialog from './FunctionsCatalogWarningDialog.vue'
 import TabView from 'primevue/tabview'
 import TabPanel from 'primevue/tabpanel'
 import mainStore from '../../../App.store'
+import UserFunctionalitiesConstants from '@/UserFunctionalitiesConstants.json'
 
 export default defineComponent({
     name: 'functions-catalog-detail',
@@ -95,7 +96,7 @@ export default defineComponent({
     },
     computed: {
         canManageFunctionalities(): boolean {
-            const index = (this.store.$state as any).user?.functionalities?.findIndex((el: string) => el === 'FunctionsCatalogManagement')
+            const index = (this.store.$state as any).user?.functionalities?.findIndex((el: string) => el === UserFunctionalitiesConstants.FUNCTIONS_CATALOG_MANAGEMENT)
             return index !== -1
         },
         readonly(): boolean {
@@ -136,7 +137,7 @@ export default defineComponent({
         closeFunctionDetail() {
             this.selectedFunction = this.getFunctionDefaultValues()
             this.$emit('close')
-            this.activeTab =0 
+            this.activeTab = 0
         },
         getFunctionDefaultValues() {
             return {

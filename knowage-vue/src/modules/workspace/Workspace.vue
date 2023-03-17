@@ -279,16 +279,16 @@ export default defineComponent({
         createMenuItems() {
             this.menuItems = []
             this.menuItems.push({ icon: 'fas fa-history', key: '0', label: 'workspace.menuLabels.recent', value: 'recent' }, { icon: 'fas fa-folder', key: '1', label: 'workspace.menuLabels.myRepository', value: 'repository' })
-            if (this.user?.functionalities?.includes('SeeMyData')) {
+            if (this.user?.functionalities?.includes(UserFunctionalitiesConstants.SEE_MY_DATA)) {
                 this.menuItems.push({ icon: 'fas fa-database', key: '2', label: 'workspace.menuLabels.myData', value: 'data' })
             }
-            if (this.user?.isSuperadmin || this.user?.functionalities?.includes('BuildQbeQueriesFunctionality')) {
+            if (this.user?.isSuperadmin || this.user?.functionalities?.includes(UserFunctionalitiesConstants.BUILD_QBE_QUERIES_FUNCTIONALITY)) {
                 this.menuItems.push({ icon: 'fas fa-table', key: '3', label: 'workspace.menuLabels.myModels', value: 'models' })
             }
-            if (this.user?.functionalities?.includes('CreateDocument')) {
+            if (this.user?.functionalities?.includes(UserFunctionalitiesConstants.CREATE_DOCUMENT)) {
                 this.menuItems.push({ icon: 'fas fa-th-large', key: '4', label: 'workspace.menuLabels.myAnalysis', value: 'analysis' })
             }
-            if (this.user?.functionalities?.includes('SeeSnapshotsFunctionality') && this.user?.functionalities?.includes('ViewScheduledWorkspace')) {
+            if (this.user?.functionalities?.includes(UserFunctionalitiesConstants.SEE_SNAPSHOTS_FUNCTIONALITY) && this.user?.functionalities?.includes(UserFunctionalitiesConstants.VIEW_SCHEDULED_WORKSPACE)) {
                 this.menuItems.push({
                     icon: 'fas fa-stopwatch',
                     key: '5',
@@ -296,7 +296,7 @@ export default defineComponent({
                     value: 'schedulation'
                 })
             }
-            if (this.user?.functionalities?.includes('DataPreparation')) {
+            if (this.user?.functionalities?.includes(UserFunctionalitiesConstants.DATA_PREPARATION)) {
                 this.menuItems.push({ icon: 'fas fa-cogs', key: '6', label: 'workspace.menuLabels.advanced', value: 'advanced' })
             }
         },

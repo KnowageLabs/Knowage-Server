@@ -271,7 +271,7 @@ export default defineComponent({
         this.userRole = this.user.sessionRole !== this.$t('role.defaultRolePlaceholder') ? this.user.sessionRole : null
         await this.getAllData()
 
-        if (this.user?.functionalities.includes('DataPreparation')) {
+        if (this.user?.functionalities.includes(UserFunctionalitiesConstants.DATA_PREPARATION)) {
             this.events = []
             const url = new URL(window.location.origin)
             url.protocol = url.protocol.replace('http', 'ws')
@@ -527,7 +527,7 @@ export default defineComponent({
 
             tmp.push({ key: 3, label: this.$t('workspace.myModels.openInQBE'), icon: 'fas fa-file-circle-question', command: () => this.openQBEUponDataset(clickedDocument), visible: this.isOpenInQBEVisible(clickedDocument) })
 
-            if (this.user?.functionalities.includes('DataPreparation')) {
+            if (this.user?.functionalities.includes(UserFunctionalitiesConstants.DATA_PREPARATION)) {
                 tmp.push({ key: 4, label: this.$t('workspace.myData.openDataPreparation'), icon: 'fas fa-cogs', command: () => this.openDataPreparation(clickedDocument), visible: this.canLoadData && (this.selectedDataset.pars && this.selectedDataset.pars.length == 0) })
             }
 
@@ -605,7 +605,7 @@ export default defineComponent({
                 .catch(() => {})
 
             // listen on websocket for avro export job to be finished
-            if (this.user?.functionalities.includes('DataPreparation') && Object.keys(this.client).length > 0) this.client.publish({ destination: '/app/prepare', body: dsId })
+            if (this.user?.functionalities.includes(UserFunctionalitiesConstants.DATA_PREPARATION) && Object.keys(this.client).length > 0) this.client.publish({ destination: '/app/prepare', body: dsId })
         },
         async openDataPreparation(dataset: any) {
             this.events = []
@@ -902,7 +902,7 @@ export default defineComponent({
         }
     },
     unmounted() {
-        if (this.user?.functionalities.includes('DataPreparation') && this.client && Object.keys(this.client).length > 0) {
+        if (this.user?.functionalities.includes(UserFunctionalitiesConstants.DATA_PREPARATION) && this.client && Object.keys(this.client).length > 0) {
             this.client.deactivate()
             this.client = {}
         }

@@ -20,6 +20,7 @@
     "CREATE_SELF_SELVICE_KPI": "CreateSelfSelviceKpi",
     "DATASET_ASSOCIATION_SMART_DETECTION": "DatasetAssociationSmartDetection",
     "DATASET_MANAGEMENT": "DatasetManagement",
+    "DATA_PREPARATION": "DataPreparation",
     "DATA_SOURCE_BIG_DATA": "DataSourceBigData",
     "DATA_SOURCE_MANAGEMENT": "DataSourceManagement",
     "DATA_SOURCE_READ": "DataSourceRead",

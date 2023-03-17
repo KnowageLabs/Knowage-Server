@@ -78,6 +78,7 @@ import DataTable from 'primevue/datatable'
 import KnFabButton from '@/components/UI/KnFabButton.vue'
 import KnOverlaySpinnerPanel from '@/components/UI/KnOverlaySpinnerPanel.vue'
 import mainStore from '../../../App.store'
+import UserFunctionalitiesConstants from '@/UserFunctionalitiesConstants.json'
 
 export default defineComponent({
     name: 'calendar-management',
@@ -99,7 +100,7 @@ export default defineComponent({
     },
     computed: {
         canManageCalendar(): boolean {
-            return (this.store.$state as any).user.functionalities.includes('ManageCalendar')
+            return (this.store.$state as any).user.functionalities.includes(UserFunctionalitiesConstants.MANAGE_CALENDAR)
         }
     },
     async created() {
