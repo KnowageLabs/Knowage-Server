@@ -159,6 +159,7 @@
     "STATIC_WIDGET": "StaticWidget",
     "SYNCRONIZE_ROLES_MANAGEMENT": "SyncronizeRolesManagement",
     "TEMPLATE_MANAGEMENT": "TemplateManagement",
+    "TEMPORAL_DIMENSION": "TemporalDimension",
     "THEME_MANAGEMENT": "ThemeManagement",
     "TIMESPAN": "Timespan",
     "TIME_FUNCTIONS": "Time_functions",
