@@ -2962,4 +2962,53 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 		return resultNumber;
 	}
 
+	@Override
+	public List<Kpi> listKpiByCategoryId(Integer catId) {
+		List<SbiKpiKpi> lst = list(new ICriterion<SbiKpiKpi>() {
+			@Override
+			public Criteria evaluate(Session session) {
+				Criteria c = session.createCriteria(SbiKpiKpi.class);
+				c.add(Restrictions.eq("category.id", catId));
+				return c;
+			}
+		});
+
+		List<Kpi> kpis = new ArrayList<>();
+		for (SbiKpiKpi sbi : lst) {
+			Kpi kpi = from(sbi, null, false);
+			kpis.add(kpi);
+		}
+		return kpis;
+	}
+
+	@Override
+	public List<RuleOutput> listRuleOutputByCategoryId(Integer catId) {
+		return executeOnTransaction(new IExecuteOnTransaction<List<RuleOutput>>() {
+			@Override
+			public List<RuleOutput> execute(Session session) throws Exception {
+				List<SbiKpiRuleOutput> sbiKpiRule = session.createCriteria(SbiKpiRuleOutput.class).add(Restrictions.eq("category.id", catId)).list();
+				List<RuleOutput> rules = new ArrayList<>();
+				for (SbiKpiRuleOutput sbiKpiRuleOutput : sbiKpiRule) {
+					rules.add(from(sbiKpiRuleOutput));
+				}
+				return rules;
+			}
+		});
+	}
+
+	@Override
+	public List<Target> listTargetByCategoryId(Integer catId) {
+		return executeOnTransaction(new IExecuteOnTransaction<List<Target>>() {
+			@Override
+			public List<Target> execute(Session session) throws Exception {
+				List<SbiKpiTarget> sbiKpiTarget = session.createCriteria(SbiKpiTarget.class).add(Restrictions.eq("category.id", catId)).list();
+				List<Target> targets = new ArrayList<>();
+				for (SbiKpiTarget sbiKpiT : sbiKpiTarget) {
+					targets.add(from(sbiKpiT, true));
+				}
+				return targets;
+			}
+		});
+	}
+
 }

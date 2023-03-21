@@ -24,20 +24,25 @@ import static it.eng.spagobi.commons.dao.ICategoryDAO.KPI_CATEGORY;
 import static it.eng.spagobi.commons.dao.ICategoryDAO.KPI_RULE_OUTPUT;
 import static it.eng.spagobi.commons.dao.ICategoryDAO.KPI_TARGET_CATEGORY;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.log4j.Logger;
 
+import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.dao.dto.SbiCategory;
+import it.eng.spagobi.kpi.bo.Kpi;
+import it.eng.spagobi.kpi.bo.RuleOutput;
+import it.eng.spagobi.kpi.bo.Target;
 import it.eng.spagobi.kpi.dao.IKpiDAO;
-import it.eng.spagobi.kpi.metadata.SbiKpiKpi;
-import it.eng.spagobi.kpi.metadata.SbiKpiRuleOutput;
-import it.eng.spagobi.kpi.metadata.SbiKpiTarget;
 import it.eng.spagobi.mapcatalogue.bo.GeoLayer;
 import it.eng.spagobi.mapcatalogue.dao.ISbiGeoLayersDAO;
+import it.eng.spagobi.tools.catalogue.bo.MetaModel;
 import it.eng.spagobi.tools.catalogue.dao.IMetaModelsDAO;
-import it.eng.spagobi.tools.catalogue.metadata.SbiMetaModel;
+import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.dao.IDataSetDAO;
-import it.eng.spagobi.tools.dataset.metadata.SbiDataSet;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 public class CategoryAPIImpl implements CategoryAPI {
 
@@ -99,40 +104,47 @@ public class CategoryAPIImpl implements CategoryAPI {
 
 	}
 
-	private SbiDataSet getDatasetsUsedByCategory(SbiCategory cat) {
+	@Override
+	public List<IDataSet> getDatasetsUsedByCategory(Integer catId) {
 		IDataSetDAO dsDao = DAOFactory.getDataSetDAO();
-		return null;
+		return dsDao.loadDataSetByCategoryId(catId);
 
 	}
 
-	private GeoLayer getGeoLayersUsedByCategory(SbiCategory cat) {
+	@Override
+	public List<GeoLayer> getGeoLayersUsedByCategory(Integer catId) {
 		ISbiGeoLayersDAO dsDao = DAOFactory.getSbiGeoLayerDao();
-		return null;
-
+		try {
+			return dsDao.loadLayerByCategoryId(catId);
+		} catch (EMFUserError e) {
+			throw new SpagoBIRuntimeException(e);
+		}
 	}
 
-	private SbiKpiKpi getKPIUsedByCategory(SbiCategory cat) {
-		IKpiDAO kpiDao = DAOFactory.getKpiDAO();
-		return null;
-
-	}
-
-	private SbiKpiTarget getKPITargetUsedByCategory(SbiCategory cat) {
-		IKpiDAO kpiDao = DAOFactory.getKpiDAO();
-		return null;
-
-	}
-
-	private SbiKpiRuleOutput getKpiRuleOutputUsedByCategory(SbiCategory cat) {
-		IKpiDAO kpiDao = DAOFactory.getKpiDAO();
-		return null;
-
-	}
-
-	private SbiMetaModel getMetaModelsUsedByCategory(SbiCategory cat) {
+	@Override
+	public List<MetaModel> getMetaModelsUsedByCategory(Integer catId) {
 		IMetaModelsDAO dsMeta = DAOFactory.getMetaModelsDAO();
-		return null;
+		List<Integer> catList = new ArrayList<Integer>();
+		catList.add(catId);
+		return dsMeta.loadMetaModelByCategories(catList);
+	}
 
+	@Override
+	public List<Kpi> getKPIUsedByCategory(Integer catId) {
+		IKpiDAO kpiDao = DAOFactory.getKpiDAO();
+		return kpiDao.listKpiByCategoryId(catId);
+	}
+
+	@Override
+	public List<Target> getKPITargetUsedByCategory(Integer catId) {
+		IKpiDAO kpiDao = DAOFactory.getKpiDAO();
+		return kpiDao.listTargetByCategoryId(catId);
+	}
+
+	@Override
+	public List<RuleOutput> getKpiRuleOutputUsedByCategory(Integer catId) {
+		IKpiDAO kpiDao = DAOFactory.getKpiDAO();
+		return kpiDao.listRuleOutputByCategoryId(catId);
 	}
 
 }

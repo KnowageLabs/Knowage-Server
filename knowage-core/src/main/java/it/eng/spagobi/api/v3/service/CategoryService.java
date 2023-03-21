@@ -29,6 +29,12 @@ import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.dao.ICategoryDAO;
 import it.eng.spagobi.commons.dao.dto.SbiCategory;
+import it.eng.spagobi.kpi.bo.Kpi;
+import it.eng.spagobi.kpi.bo.RuleOutput;
+import it.eng.spagobi.kpi.bo.Target;
+import it.eng.spagobi.mapcatalogue.bo.GeoLayer;
+import it.eng.spagobi.tools.catalogue.bo.MetaModel;
+import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 
 public class CategoryService {
@@ -55,4 +61,35 @@ public class CategoryService {
 		}
 		return listToReturn;
 	}
+
+	public List<IDataSet> getDatasetsUsedByCategory(Integer catId) {
+		CategoryAPIImpl catAPI = new CategoryAPIImpl();
+		return catAPI.getDatasetsUsedByCategory(catId);
+	}
+
+	public List<GeoLayer> getGeoLayersUsedByCategory(Integer catId) {
+		CategoryAPIImpl catAPI = new CategoryAPIImpl();
+		return catAPI.getGeoLayersUsedByCategory(catId);
+	}
+
+	public List<MetaModel> getMetaModelsUsedByCategory(Integer catId) {
+		CategoryAPIImpl catAPI = new CategoryAPIImpl();
+		return catAPI.getMetaModelsUsedByCategory(catId);
+	}
+
+	public List<Kpi> getKPIUsedByCategory(Integer catId) {
+		CategoryAPIImpl catAPI = new CategoryAPIImpl();
+		return catAPI.getKPIUsedByCategory(catId);
+	}
+
+	public List<Target> getKPITargetUsedByCategory(Integer catId) {
+		CategoryAPIImpl catAPI = new CategoryAPIImpl();
+		return catAPI.getKPITargetUsedByCategory(catId);
+	}
+
+	public List<RuleOutput> getKpiRuleOutputUsedByCategory(Integer catId) {
+		CategoryAPIImpl catAPI = new CategoryAPIImpl();
+		return catAPI.getKpiRuleOutputUsedByCategory(catId);
+	}
+
 }

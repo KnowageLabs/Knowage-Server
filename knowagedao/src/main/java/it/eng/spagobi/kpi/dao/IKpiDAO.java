@@ -363,4 +363,10 @@ public interface IKpiDAO extends ISpagoBIDao {
 	public Integer countCategoriesKPITarget(Integer catId);
 
 	public Integer countCategoriesKPIRuleOutput(Integer catId);
+
+	public List<Kpi> listKpiByCategoryId(Integer catId);
+
+	public List<RuleOutput> listRuleOutputByCategoryId(Integer catId);
+
+	public List<Target> listTargetByCategoryId(Integer catId);
 }

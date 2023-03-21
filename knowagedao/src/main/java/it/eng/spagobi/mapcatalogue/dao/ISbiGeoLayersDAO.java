@@ -70,4 +70,6 @@ public interface ISbiGeoLayersDAO extends ISpagoBIDao {
 	public List<SbiGeoLayersRoles> getListRolesById(Integer id, Session session);
 
 	public Integer countCategories(Integer catId);
+
+	public List<GeoLayer> loadLayerByCategoryId(Integer catId) throws EMFUserError;
 }
