@@ -3060,7 +3060,7 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 			session = getSession();
 			transaction = session.beginTransaction();
 
-			String hql = "select count(*) from SbiKpiKpi s where s.category.id = ? ";
+			String hql = "select count(*) from SbiDataSet s where s.category.id = ? ";
 			Query aQuery = session.createQuery(hql);
 			aQuery.setInteger(0, catId.intValue());
 			resultNumber = new Integer(((Long) aQuery.uniqueResult()).intValue());
@@ -3077,6 +3077,61 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 			logger.debug("OUT");
 		}
 		return resultNumber;
+	}
+
+	@Override
+	public List<IDataSet> loadDataSetByCategoryId(Integer catId) {
+		List<IDataSet> toReturn;
+		Session session;
+		Transaction transaction;
+
+		logger.debug("IN");
+
+		toReturn = new ArrayList<IDataSet>();
+		session = null;
+		transaction = null;
+		try {
+			if (catId == null) {
+				throw new IllegalArgumentException("Input parameter [catId] cannot be null");
+			}
+
+			try {
+				session = getSession();
+				Assert.assertNotNull(session, "session cannot be null");
+				transaction = session.beginTransaction();
+				Assert.assertNotNull(transaction, "transaction cannot be null");
+			} catch (Throwable t) {
+				throw new SpagoBIDAOException("An error occured while creating the new transaction", t);
+			}
+
+			Query hibQuery = session.createQuery("from SbiDataSet h where h.active = ? and h.category.id = :catId");
+
+			hibQuery.setBoolean(0, true);
+			hibQuery.setParameter("catId", catId);
+			List<SbiDataSet> sbiDataSet = hibQuery.list();
+			if (sbiDataSet != null) {
+				for (SbiDataSet sbiDataSetitem : sbiDataSet) {
+					toReturn.add(DataSetFactory.toDataSet(sbiDataSetitem, this.getUserProfile()));
+				}
+
+			} else {
+				logger.debug("Impossible to load dataset with category [" + catId + "].");
+			}
+
+			transaction.commit();
+
+		} catch (Throwable t) {
+			if (transaction != null && transaction.isActive()) {
+				transaction.rollback();
+			}
+			throw new SpagoBIDAOException("An unexpected error occured while loading dataset whose category id is equal to [" + catId + "]", t);
+		} finally {
+			if (session != null && session.isOpen()) {
+				session.close();
+			}
+			logger.debug("OUT");
+		}
+		return toReturn;
 	}
 
 }

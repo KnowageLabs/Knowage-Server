@@ -188,6 +188,7 @@ public class CommunityFunctionalityConstants {
 	public static final String VIEW_SOCIAL_ANALYSIS = "ViewSocialAnalysis";
 	public static final String WORKLIST_MANAGEMENT = "WorklistManagement";
 	public static final String WORKSPACE_MANAGEMENT = "WorkspaceManagement";
+	public static final String CATEGORY_MANAGEMENT = "CategoryManagement";
 
 	private CommunityFunctionalityConstants() {
 	}

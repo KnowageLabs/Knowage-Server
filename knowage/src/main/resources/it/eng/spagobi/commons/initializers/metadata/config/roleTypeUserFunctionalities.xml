@@ -408,5 +408,7 @@
 	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="QbeAdvancedSaving" roleType="MODEL_ADMIN" />	
 
 	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="ThemeManagement" roleType="ADMIN" />	
+	
+	<ROLE_TYPE_USER_FUNCTIONALITY userFunctionality="CategoryManagement" roleType="ADMIN" />	
 		
 </ROLE_TYPE_USER_FUNCTIONALITIES>

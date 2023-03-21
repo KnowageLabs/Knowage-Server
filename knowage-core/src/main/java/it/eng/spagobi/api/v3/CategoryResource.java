@@ -42,11 +42,21 @@ import org.apache.log4j.LogMF;
 import org.apache.log4j.Logger;
 
 import it.eng.spagobi.api.AbstractSpagoBIResource;
+import it.eng.spagobi.api.dto.CategoryDTO;
+import it.eng.spagobi.api.v3.service.CategoryService;
 import it.eng.spagobi.commons.bo.Domain;
 import it.eng.spagobi.commons.bo.UserProfile;
+import it.eng.spagobi.commons.constants.CommunityFunctionalityConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.dao.ICategoryDAO;
 import it.eng.spagobi.commons.dao.dto.SbiCategory;
+import it.eng.spagobi.kpi.bo.Kpi;
+import it.eng.spagobi.kpi.bo.RuleOutput;
+import it.eng.spagobi.kpi.bo.Target;
+import it.eng.spagobi.mapcatalogue.bo.GeoLayer;
+import it.eng.spagobi.services.rest.annotations.UserConstraint;
+import it.eng.spagobi.tools.catalogue.bo.MetaModel;
+import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.user.UserProfileManager;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
@@ -56,7 +66,6 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
  *
  */
 @Path("/3.0/category")
-
 public class CategoryResource extends AbstractSpagoBIResource {
 // logger component-
 	private static final Logger logger = Logger.getLogger(CategoryResource.class);
@@ -86,8 +95,30 @@ public class CategoryResource extends AbstractSpagoBIResource {
 	}
 
 	@GET
+	@Path("/categories")
+	@Produces(MediaType.APPLICATION_JSON)
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.CATEGORY_MANAGEMENT })
+	public List<CategoryDTO> getCategoriesDTO() {
+		logger.debug("IN");
+		final UserProfile userProfile = getUserProfile();
+		List<CategoryDTO> listToReturn = new ArrayList<CategoryDTO>();
+		try {
+			CategoryService cs = new CategoryService();
+			listToReturn = cs.getCategories(userProfile);
+		} catch (Exception ex) {
+			LogMF.error(logger, "Cannot get available categories for user {0}", new Object[] { userProfile.getUserName() });
+			throw new SpagoBIServiceException(this.request.getPathInfo(), "An unexpected error occured while executing service", ex);
+		} finally {
+			logger.debug("OUT");
+		}
+
+		return listToReturn;
+	}
+
+	@GET
 	@Path("/")
 	@Produces(MediaType.APPLICATION_JSON)
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.CATEGORY_MANAGEMENT })
 	public List<SbiCategory> getCategories() {
 		logger.debug("IN");
 		ICategoryDAO categoryDAO = null;
@@ -110,6 +141,7 @@ public class CategoryResource extends AbstractSpagoBIResource {
 	@GET
 	@Path("/{id}")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.CATEGORY_MANAGEMENT })
 	public SbiCategory getCategoryById(@PathParam("id") Integer sbiCategoryId) {
 		logger.debug("IN");
 		ICategoryDAO categoryDAO = null;
@@ -130,6 +162,7 @@ public class CategoryResource extends AbstractSpagoBIResource {
 	@POST
 	@Path("/")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.CATEGORY_MANAGEMENT })
 	public SbiCategory categoryCreate(@Valid SbiCategory sbiCategory) {
 		logger.debug("IN");
 		ICategoryDAO categoryDAO = null;
@@ -147,8 +180,9 @@ public class CategoryResource extends AbstractSpagoBIResource {
 	}
 
 	@POST
-	@Path("/{id}")
+	@Path("/update")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.CATEGORY_MANAGEMENT })
 	public SbiCategory categoryUpdate(@Valid SbiCategory newSbiCategory) {
 
 		logger.debug("IN");
@@ -167,8 +201,9 @@ public class CategoryResource extends AbstractSpagoBIResource {
 	}
 
 	@DELETE
-	@Path("/{id}")
+	@Path("/")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.CATEGORY_MANAGEMENT })
 	public Response categoryDelete(@Valid SbiCategory newSbiCategory) {
 		Response response = null;
 		logger.debug("IN");
@@ -200,5 +235,169 @@ public class CategoryResource extends AbstractSpagoBIResource {
 	@Override
 	public UserProfile getUserProfile() {
 		return UserProfileManager.getProfile();
+	}
+
+	@GET
+	@Path("/dataset/{id}")
+	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.CATEGORY_MANAGEMENT })
+	public Response getDatasetsById(@PathParam("id") int sbiCategoryId) {
+		logger.debug("IN");
+		Response response = null;
+		List<IDataSet> toReturn = new ArrayList<IDataSet>();
+		try {
+			CategoryService cs = new CategoryService();
+			toReturn = cs.getDatasetsUsedByCategory(sbiCategoryId);
+			List<CategoryObjectDTO> objToReturn = new ArrayList<CategoryObjectDTO>();
+			for (IDataSet iDataSet : toReturn) {
+				CategoryObjectDTO co = new CategoryObjectDTO(iDataSet.getLabel());
+				objToReturn.add(co);
+			}
+
+			// TODO: create a FACADE for every different object ?
+
+//			List<DataSetResourceSimpleFacade> collect = toReturn.stream().map(DataSetResourceSimpleFacade::new).collect(toList());
+//
+//			DataSetResourceResponseRoot<DataSetResourceSimpleFacade> of = new DataSetResourceResponseRoot<>(collect);
+
+			response = Response.status(Response.Status.OK).entity(objToReturn).build();
+
+		} catch (Exception e) {
+			throw new SpagoBIServiceException("Error getting category with id " + sbiCategoryId, e);
+		} finally {
+			logger.debug("OUT");
+		}
+		return response;
+
+	}
+
+	@GET
+	@Path("/metamodel/{id}")
+	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.CATEGORY_MANAGEMENT })
+	public Response getMetamodelsById(@PathParam("id") int sbiCategoryId) {
+		logger.debug("IN");
+		List<MetaModel> toReturn = new ArrayList<MetaModel>();
+		Response response = null;
+		try {
+			CategoryService cs = new CategoryService();
+			toReturn = cs.getMetaModelsUsedByCategory(sbiCategoryId);
+			List<CategoryObjectDTO> objToReturn = new ArrayList<CategoryObjectDTO>();
+			for (MetaModel meta : toReturn) {
+				CategoryObjectDTO co = new CategoryObjectDTO(meta.getName());
+				objToReturn.add(co);
+			}
+			response = Response.status(Response.Status.OK).entity(objToReturn).build();
+		} catch (Exception e) {
+			throw new SpagoBIServiceException("Error getting category with id " + sbiCategoryId, e);
+		} finally {
+			logger.debug("OUT");
+		}
+		return response;
+
+	}
+
+	@GET
+	@Path("/geolayer/{id}")
+	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.CATEGORY_MANAGEMENT })
+	public Response getGeoLayersById(@PathParam("id") Integer sbiCategoryId) {
+		logger.debug("IN");
+		Response response = null;
+		List<GeoLayer> toReturn = new ArrayList<GeoLayer>();
+		try {
+			List<CategoryObjectDTO> objToReturn = new ArrayList<CategoryObjectDTO>();
+			CategoryService cs = new CategoryService();
+			toReturn = cs.getGeoLayersUsedByCategory(sbiCategoryId);
+			for (GeoLayer geo : toReturn) {
+				CategoryObjectDTO co = new CategoryObjectDTO(geo.getName());
+				objToReturn.add(co);
+			}
+			response = Response.status(Response.Status.OK).entity(objToReturn).build();
+		} catch (Exception e) {
+			throw new SpagoBIServiceException("Error getting category with id " + sbiCategoryId, e);
+		} finally {
+			logger.debug("OUT");
+		}
+		return response;
+
+	}
+
+	@GET
+	@Path("/kpi/{id}")
+	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.CATEGORY_MANAGEMENT })
+	public Response getKpiById(@PathParam("id") Integer sbiCategoryId) {
+		logger.debug("IN");
+		List<Kpi> toReturn = new ArrayList<Kpi>();
+		Response response = null;
+		try {
+			CategoryService cs = new CategoryService();
+			toReturn = cs.getKPIUsedByCategory(sbiCategoryId);
+			List<CategoryObjectDTO> objToReturn = new ArrayList<CategoryObjectDTO>();
+			for (Kpi kpi : toReturn) {
+				CategoryObjectDTO co = new CategoryObjectDTO(kpi.getName());
+				objToReturn.add(co);
+			}
+			response = Response.status(Response.Status.OK).entity(objToReturn).build();
+		} catch (Exception e) {
+			throw new SpagoBIServiceException("Error getting category with id " + sbiCategoryId, e);
+		} finally {
+			logger.debug("OUT");
+		}
+		return response;
+
+	}
+
+	@GET
+	@Path("/kpitarget/{id}")
+	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.CATEGORY_MANAGEMENT })
+	public Response getKpiTargetById(@PathParam("id") Integer sbiCategoryId) {
+		logger.debug("IN");
+		List<Target> toReturn = new ArrayList<Target>();
+		Response response = null;
+		try {
+			CategoryService cs = new CategoryService();
+			toReturn = cs.getKPITargetUsedByCategory(sbiCategoryId);
+			List<CategoryObjectDTO> objToReturn = new ArrayList<CategoryObjectDTO>();
+			for (Target kpiT : toReturn) {
+				CategoryObjectDTO co = new CategoryObjectDTO(kpiT.getName());
+				objToReturn.add(co);
+			}
+			response = Response.status(Response.Status.OK).entity(objToReturn).build();
+		} catch (Exception e) {
+			throw new SpagoBIServiceException("Error getting category with id " + sbiCategoryId, e);
+		} finally {
+			logger.debug("OUT");
+		}
+		return response;
+
+	}
+
+	@GET
+	@Path("/kpiruleoutput/{id}")
+	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.CATEGORY_MANAGEMENT })
+	public Response getKpiRuleOutputById(@PathParam("id") Integer sbiCategoryId) {
+		logger.debug("IN");
+		List<RuleOutput> toReturn = new ArrayList<RuleOutput>();
+		Response response = null;
+		try {
+			CategoryService cs = new CategoryService();
+			toReturn = cs.getKpiRuleOutputUsedByCategory(sbiCategoryId);
+			List<CategoryObjectDTO> objToReturn = new ArrayList<CategoryObjectDTO>();
+			for (RuleOutput kpi : toReturn) {
+				CategoryObjectDTO co = new CategoryObjectDTO(kpi.getAlias());
+				objToReturn.add(co);
+			}
+			response = Response.status(Response.Status.OK).entity(objToReturn).build();
+		} catch (Exception e) {
+			throw new SpagoBIServiceException("Error getting category with id " + sbiCategoryId, e);
+		} finally {
+			logger.debug("OUT");
+		}
+		return response;
+
 	}
 }
