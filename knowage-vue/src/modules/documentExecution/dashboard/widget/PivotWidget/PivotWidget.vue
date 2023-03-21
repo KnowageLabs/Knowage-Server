@@ -1,9 +1,16 @@
 <template>
-    <div class="pivot-widget-container p-d-flex p-d-row kn-flex">Pivot Widget Goes Here</div>
+    <div class="pivot-widget-container p-d-flex p-d-row kn-flex">
+        <DxPivotGrid id="pivotgrid" ref="grid" :data-source="dataSource" v-bind="pivotConfig" @initialized="onGridInitialization">
+            <DxFieldChooser v-bind="fieldPickerConfig" />
+            <DxFieldPanel v-bind="fieldPanelConfig" />
+        </DxPivotGrid>
+    </div>
 </template>
 
 <script lang="ts">
 import { emitter } from '../../DashboardHelpers'
+import { DxPivotGrid, DxFieldChooser, DxFieldPanel } from 'devextreme-vue/pivot-grid'
+import PivotGridDataSource from 'devextreme/ui/pivot_grid/data_source'
 import { IDataset, ISelection, IWidget, ITableWidgetColumnStyles, ITableWidgetConditionalStyles, ITableWidgetVisualizationTypes } from '../../Dashboard'
 import { defineComponent, PropType } from 'vue'
 import mainStore from '../../../../../App.store'
@@ -19,7 +26,7 @@ import { formatNumberWithLocale } from '@/helpers/commons/localeHelper'
 
 export default defineComponent({
     name: 'table-widget',
-    components: {},
+    components: { DxPivotGrid, DxFieldChooser, DxFieldPanel },
     props: {
         propWidget: { type: Object as PropType<IWidget>, required: true },
         editorMode: { type: Boolean, required: false },
@@ -35,7 +42,12 @@ export default defineComponent({
         return { store, appStore }
     },
     data() {
+        const dataSource = new PivotGridDataSource({
+            fields: this.getFormattedFieldsFromModel(),
+            store: this.getPivotData()
+        })
         return {
+            dataSource,
             tableData: [] as any,
             pivotConfig: {} as any,
             fieldPickerConfig: {} as any,
@@ -46,8 +58,7 @@ export default defineComponent({
     },
     computed: {
         dataFields() {
-            // return this.dataSource.fields().filter((field) => field.area == 'data')
-            return []
+            return this.dataSource.fields().filter((field) => field.area == 'data')
         },
         pivotFields() {
             return this.gridInstance.getDataSource()._descriptions
