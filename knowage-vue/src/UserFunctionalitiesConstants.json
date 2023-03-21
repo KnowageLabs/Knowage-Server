@@ -5,6 +5,7 @@
     "BEHAVIOURAL_MODEL_LINEAGE": "BehaviouralModelLineage",
     "BUILD_QBE_QUERIES_FUNCTIONALITY": "BuildQbeQueriesFunctionality",
     "CACHE_MANAGEMENT": "CacheManagement",
+    "CALENDAR": "Calendar",
     "CHART_WIDGET": "ChartWidget",
     "CKAN_INTEGRATION_FUNCTIONALITY": "CkanIntegrationFunctionality",
     "COLLABORATION": "Collaboration",

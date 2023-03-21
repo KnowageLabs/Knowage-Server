@@ -9,7 +9,14 @@
             <span v-if="option.type === 'font-size'" class="icon-display-value-span p-ml-1">{{ '(' + displayValue + ')' }}</span>
         </div>
         <ColorPicker v-if="['border-color', 'color', 'background-color'].includes(option.type) && colorPickerVisible" class="dashboard-color-picker click-outside" theme="light" :color="color" :sucker-hide="true" @changeColor="changeColor" />
-        <WidgetEditorToolbarContextMenu v-show="['font-size', 'justify-content', 'text-align', 'font-family'].includes(option.type) && contextMenuVisible" class="context-menu" :option="option" @selected="onContextItemSelected" @inputChanged="onContextInputChanged"></WidgetEditorToolbarContextMenu>
+        <WidgetEditorToolbarContextMenu
+            v-show="['font-size', 'justify-content', 'text-align', 'font-family'].includes(option.type) && contextMenuVisible"
+            class="context-menu"
+            :option="option"
+            :initial-value="contextMenuInitialValue"
+            @selected="onContextItemSelected"
+            @inputChanged="onContextInputChanged"
+        ></WidgetEditorToolbarContextMenu>
     </div>
 </template>
 
@@ -46,6 +53,7 @@ export default defineComponent({
             active: false,
             iconPickerDialogVisible: false,
             displayValue: '',
+            contextMenuInitialValue: '',
             color: null as { r: number; g: number; b: number; a: number } | null,
             newColor: 'rgb(255, 255, 255)',
             colorPickTimer: null as any,
@@ -96,6 +104,16 @@ export default defineComponent({
                     break
                 case 'font-size':
                     this.displayValue = this.model['font-size'] ?? ''
+                    this.contextMenuInitialValue = this.displayValue
+                    break
+                case 'justify-content':
+                    this.contextMenuInitialValue = this.model['justify-content'] ?? ''
+                    break
+                case 'text-align':
+                    this.contextMenuInitialValue = this.model['text-align'] ?? ''
+                    break
+                case 'font-family':
+                    this.contextMenuInitialValue = this.model['font-family'] ?? ''
                     break
                 case 'border-color':
                     this.color = this.model['border-color'] ? getRGBColorFromString(this.model['border-color']) : null
