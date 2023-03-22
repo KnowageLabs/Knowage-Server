@@ -11,7 +11,11 @@ const mainStore = store()
 
 export const loadFilters = async (initialLoading: boolean, filtersData: { filterStatus: iParameter[], isReadyForExecution: boolean }, document: any, breadcrumbs: any[], userRole: string | null, parameterValuesMap: any, tabKey: string, sessionEnabled: boolean, $http: any, dateFormat: string, route: any, vueComponenet: any) => {
     if (parameterValuesMap && parameterValuesMap[document.label + '-' + tabKey] && initialLoading) return loadFiltersFromParametersMap(parameterValuesMap, document, tabKey, filtersData, breadcrumbs)
-    if (sessionEnabled && !document.navigationParams) return loadFiltersFromSession(document, filtersData, breadcrumbs)
+    if (sessionEnabled && !document.navigationParams) {
+        const filtersFromSession = loadFiltersFromSession(document, filtersData, breadcrumbs)
+        if (filtersFromSession) return filtersFromSession
+    }
+
     if (route.query.crossNavigationParameters) {
         document.formattedCrossNavigationParameters = JSON.parse(route.query.crossNavigationParameters)
         document.navigationFromDashboard = true
