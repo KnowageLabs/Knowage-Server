@@ -62,7 +62,7 @@ const removeColumnFromRows = (widgetModel: IWidget, column: IWidgetColumn) => {
     }
 }
 
-const removeColumnFromSubmodel = (column: IWidgetColumn, array: any[], subProperty: string, eventToEmit: string, allColumnsOption: boolean) => {
+export const removeColumnFromSubmodel = (column: IWidgetColumn, array: any[], subProperty: string, eventToEmit: string, allColumnsOption: boolean) => {
     let removed = false
     for (let i = array.length - 1; i >= (allColumnsOption ? 1 : 0); i--) {
         for (let j = (array[i][subProperty] as string[]).length; j >= 0; j--) {

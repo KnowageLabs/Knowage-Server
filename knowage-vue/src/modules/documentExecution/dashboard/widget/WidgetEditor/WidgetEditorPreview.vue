@@ -140,7 +140,7 @@ export default defineComponent({
             const widgetPreviewContainerRef = this.$refs.widgetPreviewContainer as any
             widgetPreviewContainerRef.classList.toggle('expand')
             setTimeout(() => {
-                emitter.emit('chartWidgetResized', this.propWidget)
+                emitter.emit('widgetResized', this.propWidget)
             }, 250)
         }
     }

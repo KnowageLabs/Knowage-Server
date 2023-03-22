@@ -61,7 +61,7 @@
         "Series": [
             {
                 "title": "dashboard.widgetEditor.series.title",
-                "type": "SriesLabel"
+                "type": "SeriesLabel"
             }
         ],
         "Settings": [

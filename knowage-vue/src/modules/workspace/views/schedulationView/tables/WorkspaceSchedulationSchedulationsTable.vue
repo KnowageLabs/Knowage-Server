@@ -25,6 +25,7 @@ import DataTable from 'primevue/datatable'
 import workspaceSchedulationSchedulationsTableDescriptor from './WorkspaceSchedulationSchedulationsTableDescriptor.json'
 import { mapState } from 'pinia'
 import mainStore from '../../../../../App.store.js'
+import UserFunctionalitiesConstants from '@/UserFunctionalitiesConstants.json'
 
 export default defineComponent({
     name: 'workspace-schedulation-schedulations-list',
@@ -43,7 +44,7 @@ export default defineComponent({
             user: 'user'
         }),
         canRunScheduledExecutions(): any {
-            return this.user.functionalities.includes('RunSnapshotsFunctionality')
+            return this.user.functionalities.includes(UserFunctionalitiesConstants.RUN_SNAPSHOTS_FUNCTIONALITY)
         }
     },
     watch: {

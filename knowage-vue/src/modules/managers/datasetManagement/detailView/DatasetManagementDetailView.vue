@@ -104,6 +104,7 @@ import { mapState, mapActions } from 'pinia'
 import Menu from 'primevue/menu'
 import PreparedDataset from '@/modules/managers/datasetManagement/detailView/preparedDataset/DatasetManagementPreparedDataset.vue'
 import QBE from '@/modules/qbe/QBE.vue'
+import UserFunctionalitiesConstants from '@/UserFunctionalitiesConstants.json'
 
 export default defineComponent({
     components: { TabView, TabPanel, DetailCard, AdvancedCard, LinkCard, TypeCard, MetadataCard, WorkspaceDataPreviewDialog, Menu, PreparedDataset, QBE },
@@ -249,7 +250,7 @@ export default defineComponent({
         //#region ===================== Save/Update Dataset & Tags =================================================
         async saveDataset() {
             const dsToSave = { ...this.selectedDataset } as any
-            if (this.user?.functionalities?.includes('DataPreparation') && dsToSave.id) {
+            if (this.user?.functionalities?.includes(UserFunctionalitiesConstants.DATA_PREPARATION) && dsToSave.id) {
                 await this.$http
                     .get(import.meta.env.VITE_DATA_PREPARATION_PATH + '1.0/instance/dataset/' + dsToSave.id, { headers: { 'X-Disable-Interceptor': 'true' } })
                     .then((response: AxiosResponse<any>) => {

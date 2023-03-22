@@ -65,7 +65,16 @@
             </template>
             <div id="qbe-iframe-container" class="p-d-flex p-flex-row kn-flex">
                 <iframe v-if="qbeIframeVisible" id="qbeIframe" ref="qbeIframe" class="kn-width-full kn-height-full" :src="qbeUrl"></iframe>
-                <KnParameterSidebar v-if="parameterSidebarVisible" style="position: inherit; margin-left: auto" :filters-data="filtersData" :prop-document="qbeDataset" :user-role="userRole" :prop-q-b-e-parameters="qbeParameters" :prop-mode="'qbeView'" @execute="initiateQbeIframe"></KnParameterSidebar>
+                <KnParameterSidebar
+                    v-if="parameterSidebarVisible"
+                    style="position: inherit; margin-left: auto"
+                    :filters-data="filtersData"
+                    :prop-document="qbeDataset"
+                    :user-role="userRole"
+                    :prop-q-b-e-parameters="qbeParameters"
+                    :prop-mode="'qbeView'"
+                    @execute="initiateQbeIframe"
+                ></KnParameterSidebar>
             </div>
         </Dialog>
     </div>
@@ -121,25 +130,12 @@ import moment from 'moment'
 import { mapState } from 'pinia'
 import cryptoRandomString from 'crypto-random-string'
 import mainStore from '../../App.store'
+import UserFunctionalitiesConstants from '@/UserFunctionalitiesConstants.json'
 
 export default defineComponent({
     name: 'dataset-management',
     components: { Sidebar, Listbox, Accordion, AccordionTab, WorkspaceDocumentTree, WorkspaceNewFolderDialog, Dialog, KnParameterSidebar },
-    computed: {
-        ...mapState(mainStore, {
-            user: 'user'
-        }),
-        showRepository(): any {
-            return this.user.functionalities.includes('SaveIntoFolderFunctionality')
-        },
-        storeFunctionalitiesExist(): any {
-            this.createMenuItems()
-            return this.user.functionalities?.length > 0
-        },
-        userRole(): any {
-            return this.user.sessionRole !== this.$t('role.defaultRolePlaceholder') ? this.user.sessionRole : null
-        }
-    },
+
     setup() {
         const store = mainStore()
         return { store }
@@ -169,6 +165,21 @@ export default defineComponent({
             menuItems: [] as any,
             filtersData: null as any,
             qbeUrl: ''
+        }
+    },
+    computed: {
+        ...mapState(mainStore, {
+            user: 'user'
+        }),
+        showRepository(): any {
+            return this.user.functionalities.includes(UserFunctionalitiesConstants.SAVE_INTO_FOLDER_FUNCTIONALITY)
+        },
+        storeFunctionalitiesExist(): any {
+            this.createMenuItems()
+            return this.user.functionalities?.length > 0
+        },
+        userRole(): any {
+            return this.user.sessionRole !== this.$t('role.defaultRolePlaceholder') ? this.user.sessionRole : null
         }
     },
     created() {
@@ -268,16 +279,16 @@ export default defineComponent({
         createMenuItems() {
             this.menuItems = []
             this.menuItems.push({ icon: 'fas fa-history', key: '0', label: 'workspace.menuLabels.recent', value: 'recent' }, { icon: 'fas fa-folder', key: '1', label: 'workspace.menuLabels.myRepository', value: 'repository' })
-            if (this.user?.functionalities?.includes('SeeMyData')) {
+            if (this.user?.functionalities?.includes(UserFunctionalitiesConstants.SEE_MY_DATA)) {
                 this.menuItems.push({ icon: 'fas fa-database', key: '2', label: 'workspace.menuLabels.myData', value: 'data' })
             }
-            if (this.user?.isSuperadmin || this.user?.functionalities?.includes('BuildQbeQueriesFunctionality')) {
+            if (this.user?.isSuperadmin || this.user?.functionalities?.includes(UserFunctionalitiesConstants.BUILD_QBE_QUERIES_FUNCTIONALITY)) {
                 this.menuItems.push({ icon: 'fas fa-table', key: '3', label: 'workspace.menuLabels.myModels', value: 'models' })
             }
-            if (this.user?.functionalities?.includes('CreateDocument')) {
+            if (this.user?.functionalities?.includes(UserFunctionalitiesConstants.CREATE_DOCUMENT)) {
                 this.menuItems.push({ icon: 'fas fa-th-large', key: '4', label: 'workspace.menuLabels.myAnalysis', value: 'analysis' })
             }
-            if (this.user?.functionalities?.includes('SeeSnapshotsFunctionality') && this.user?.functionalities?.includes('ViewScheduledWorkspace')) {
+            if (this.user?.functionalities?.includes(UserFunctionalitiesConstants.SEE_SNAPSHOTS_FUNCTIONALITY) && this.user?.functionalities?.includes(UserFunctionalitiesConstants.VIEW_SCHEDULED_WORKSPACE)) {
                 this.menuItems.push({
                     icon: 'fas fa-stopwatch',
                     key: '5',
@@ -285,7 +296,7 @@ export default defineComponent({
                     value: 'schedulation'
                 })
             }
-            if (this.user?.functionalities?.includes('DataPreparation')) {
+            if (this.user?.functionalities?.includes(UserFunctionalitiesConstants.DATA_PREPARATION)) {
                 this.menuItems.push({ icon: 'fas fa-cogs', key: '6', label: 'workspace.menuLabels.advanced', value: 'advanced' })
             }
         },

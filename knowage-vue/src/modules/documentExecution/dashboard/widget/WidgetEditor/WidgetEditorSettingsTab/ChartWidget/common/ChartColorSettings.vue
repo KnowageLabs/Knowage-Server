@@ -15,19 +15,19 @@
     <DataTable class="pallete-table p-m-2" :style="descriptor.colorPalleteStyle.table" :value="widgetModel.settings.chart.colors" :reorderable-columns="false" responsive-layout="scroll" @rowReorder="onRowReorder">
         <Column :row-reorder="true" :reorderable-column="false" :style="descriptor.colorPalleteStyle.column">
             <template #body="slotProps">
-                <span class="kn-height-full" :style="`background-color: ${slotProps.data}; color:${getContrastYIQ(slotProps.data)}`">
+                <span class="kn-height-full" :style="`background-color: ${slotProps.data}; color:${getContrastYIQ()}`">
                     <i class="p-datatable-reorderablerow-handle pi pi-bars p-m-2"></i>
                 </span>
             </template>
         </Column>
         <Column :sortable="false" :style="descriptor.colorPalleteStyle.columnMain">
             <template #body="slotProps">
-                <span class="kn-flex" :style="`background-color: ${slotProps.data}; color:${getContrastYIQ(slotProps.data)}`">{{ slotProps.data }}</span>
+                <span class="kn-flex" :style="`background-color: ${slotProps.data}; color:${getContrastYIQ()}`">{{ slotProps.data }}</span>
             </template>
         </Column>
         <Column :row-reorder="true" :reorderable-column="false" :style="descriptor.colorPalleteStyle.column">
             <template #body="slotProps">
-                <span class="kn-height-full" :style="`background-color: ${slotProps.data}; color:${getContrastYIQ(slotProps.data)}`">
+                <span class="kn-height-full" :style="`background-color: ${slotProps.data}; color:${getContrastYIQ()}`">
                     <i class="pi pi-pencil p-mr-2 click-outside" @click="toggleColorPicker(slotProps.index)"></i>
                     <i class="pi pi-trash p-mr-2" @click="deleteColor(slotProps.index)"></i>
                 </span>
@@ -69,10 +69,18 @@ export default defineComponent({
             customColorValue: '#8D8D8D',
             editIndex: -1,
             colorPickTimer: null as any,
-            useClickOutside
+            useClickOutside,
+            widget: {} as any
         }
     },
-    created() {},
+    watch: {
+        widgetModel() {
+            this.widget = this.widgetModel
+        }
+    },
+    created() {
+        this.widget = this.widgetModel
+    },
     methods: {
         toggleColorPicker(index) {
             this.colorPickerVisible = !this.colorPickerVisible
@@ -80,11 +88,11 @@ export default defineComponent({
             this.customColorValue = this.widgetModel.settings.chart.colors[this.editIndex]
         },
         onRowReorder(event) {
-            this.widgetModel.settings.chart.colors = event.value
+            this.widget.settings.chart.colors = event.value
             emitter.emit('refreshChart', this.widgetModel.id)
         },
         addColor() {
-            this.widgetModel.settings.chart.colors.push(this.customColorValue)
+            this.widget.settings.chart.colors.push(this.customColorValue)
             emitter.emit('refreshChart', this.widgetModel.id)
         },
         changeColor(color) {
@@ -96,13 +104,13 @@ export default defineComponent({
             }
             this.colorPickTimer = setTimeout(() => {
                 if (!this.customColorValue) return
-                if (this.editIndex != -1) this.widgetModel.settings.chart.colors[this.editIndex] = `rgba(${r}, ${g}, ${b}, ${a})`
+                if (this.editIndex != -1) this.widget.settings.chart.colors[this.editIndex] = `rgba(${r}, ${g}, ${b}, ${a})`
                 else this.customColorValue = `rgba(${r}, ${g}, ${b}, ${a})`
                 emitter.emit('refreshChart', this.widgetModel.id)
             }, 200)
         },
         deleteColor(index) {
-            this.widgetModel.settings.chart.colors.splice(index, 1)
+            this.widget.settings.chart.colors.splice(index, 1)
             emitter.emit('refreshChart', this.widgetModel.id)
         },
         getContrastYIQ() {

@@ -85,6 +85,7 @@ import Message from 'primevue/message'
 import documentBrowserTableDescriptor from './DocumentBrowserTableDescriptor.json'
 import mainStore from '../../../../App.store'
 import { getCorrectRolesForExecution } from '../../../../helpers/commons/roleHelper'
+import UserFunctionalitiesConstants from '@/UserFunctionalitiesConstants.json'
 
 export default defineComponent({
     name: 'document-browser-table',
@@ -128,7 +129,7 @@ export default defineComponent({
     },
     computed: {
         isAdmin(): boolean {
-            return this.user?.functionalities.includes('DocumentManagement') || this.user?.isSuperadmin
+            return this.user?.functionalities.includes(UserFunctionalitiesConstants.DOCUMENT_MANAGEMENT) || this.user?.isSuperadmin
         }
     },
     watch: {

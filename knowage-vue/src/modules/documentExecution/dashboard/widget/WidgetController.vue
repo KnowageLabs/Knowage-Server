@@ -1,5 +1,5 @@
 <template>
-    <grid-item :key="item.id" class="p-d-flex widget-grid-item" :x="item.x" :y="item.y" :w="item.w" :h="item.h" :i="item.i" drag-allow-from=".drag-handle" :class="{ canEdit: canEditDashboard(document) }" @resized="resizedEvent">
+    <grid-item :key="item.id" class="p-d-flex widget-grid-item" :x="item.x" :y="item.y" :w="item.w" :h="item.h" :i="item.i" drag-allow-from=".drag-handle" @resized="resizedEvent" :class="{ canEdit: canEditDashboard(document) }">
         <div v-if="initialized" class="drag-handle"></div>
         <ProgressSpinner v-if="loading || customChartLoading" class="kn-progress-spinner" />
         <Skeleton v-if="!initialized" shape="rectangle" height="100%" border-radius="0" />
@@ -156,7 +156,7 @@ export default defineComponent({
         },
         onWidgetRightClick(event) {
             const contextMenu = this.$refs.contextMenu as any
-            contextMenu.show(event)
+            contextMenu?.show(event)
         },
         loadWidget(widget: IWidget) {
             this.widgetModel = widget
@@ -275,8 +275,8 @@ export default defineComponent({
                 this.inFocus = false
             }
         },
-        resizedEvent: function (newHPx) {
-            emitter.emit('chartWidgetResized', newHPx)
+        resizedEvent: function(newHPx) {
+            emitter.emit('widgetResized', newHPx)
         }
     }
 })

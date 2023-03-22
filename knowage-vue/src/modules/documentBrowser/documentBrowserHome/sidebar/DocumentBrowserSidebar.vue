@@ -3,15 +3,15 @@
         <Toolbar id="document-detail-toolbar" class="kn-toolbar kn-toolbar--secondary">
             <template #start>
                 <div id="document-icons-container" class="p-d-flex p-flex-row p-jc-around">
-                    <i v-if="user?.functionalities.includes('DocumentUserManagement')" v-tooltip.top="$t('documentBrowser.executeDocument')" class="fa fa-play-circle document-pointer p-mx-4" @click="executeDocument" />
+                    <i v-if="user?.functionalities.includes(UserFunctionalitiesConstants.DOCUMENT_USER_MANAGEMENT)" v-tooltip.top="$t('documentBrowser.executeDocument')" class="fa fa-play-circle document-pointer p-mx-4" @click="executeDocument" />
                     <template v-if="canEditDocument">
                         <i v-tooltip.top="$t('documentBrowser.editDocument')" class="pi pi-pencil document-pointer p-mx-4" @click="$emit('showDocumentDetails', document)" />
                         <i v-tooltip.top="$t('documentBrowser.cloneDocument')" class="far fa-copy document-pointer p-mx-4" @click="cloneDocumentConfirm" />
-                        <i v-if="user?.functionalities.includes('DocumentDeleteManagement')" v-tooltip.top="$t('documentBrowser.deleteDocument')" class="far fa-trash-alt document-pointer p-mx-4" @click="deleteDocumentConfirm" />
+                        <i v-if="user?.functionalities.includes(UserFunctionalitiesConstants.DOCUMENT_DELETE_MANAGEMENT)" v-tooltip.top="$t('documentBrowser.deleteDocument')" class="far fa-trash-alt document-pointer p-mx-4" @click="deleteDocumentConfirm" />
                     </template>
-                    <i v-if="user?.functionalities.includes('DocumentMoveUpState') && document.stateCode === 'TEST'" v-tooltip.left="$t('documentBrowser.moveUpDocumentState')" class="fa fa-arrow-up document-pointer p-mx-4" @click="changeStateDocumentConfirm('UP')" />
+                    <i v-if="user?.functionalities.includes(UserFunctionalitiesConstants.DOCUMENT_MOVE_UP_STATE) && document.stateCode === 'TEST'" v-tooltip.left="$t('documentBrowser.moveUpDocumentState')" class="fa fa-arrow-up document-pointer p-mx-4" @click="changeStateDocumentConfirm('UP')" />
                     <i
-                        v-if="user?.functionalities.includes('DocumentMoveDownState') && (document.stateCode === 'TEST' || document.stateCode === 'REL')"
+                        v-if="user?.functionalities.includes(UserFunctionalitiesConstants.DOCUMENT_MOVE_DOWN_STATE) && (document.stateCode === 'TEST' || document.stateCode === 'REL')"
                         v-tooltip.left="$t('documentBrowser.moveDownDocumentState')"
                         class="fa fa-arrow-down document-pointer p-mx-4"
                         @click="changeStateDocumentConfirm('DOWN')"
@@ -67,6 +67,7 @@
 import { defineComponent } from 'vue'
 import { formatDate } from '@/helpers/commons/localeHelper'
 import mainStore from '../../../../App.store'
+import UserFunctionalitiesConstants from '@/UserFunctionalitiesConstants.json'
 
 export default defineComponent({
     name: 'document-browser-sidebar',
@@ -78,6 +79,7 @@ export default defineComponent({
     },
     data() {
         return {
+            UserFunctionalitiesConstants,
             document: null as any,
             user: null as any
         }
@@ -93,14 +95,14 @@ export default defineComponent({
             if (!this.user) return false
             switch (this.document.stateCode) {
                 case 'TEST':
-                    return this.user.functionalities.includes('DocumentTestManagement')
+                    return this.user.functionalities.includes(UserFunctionalitiesConstants.DOCUMENT_TEST_MANAGEMENT)
                 case 'DEV':
-                    return this.user.functionalities.includes('DocumentDevManagement')
+                    return this.user.functionalities.includes(UserFunctionalitiesConstants.DOCUMENT_DEV_MANAGEMENT)
                 case 'REL':
-                    return this.user.functionalities.includes('DocumentAdminManagement')
+                    return this.user.functionalities.includes(UserFunctionalitiesConstants.DOCUMENT_ADMIN_MANAGEMENT)
                 case 'SUSPENDED':
                 case 'SUSP':
-                    return this.user.functionalities.includes('DocumentAdminManagement')
+                    return this.user.functionalities.includes(UserFunctionalitiesConstants.DOCUMENT_ADMIN_MANAGEMENT)
                 default:
                     return false
             }

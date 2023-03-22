@@ -1,5 +1,5 @@
 <template>
-    <div v-if="model" :id="`dashboard_${model.configuration.id}`" class="dashboard-container">
+    <div v-show="model && visible && showDashboard" :id="`dashboard_${model?.configuration?.id}`" :class="mode === 'dashboard-popup' ? 'dashboard-container-popup' : 'dashboard-container'">
         <Button
             v-if="store.dashboards[dashboardId]?.selections?.length > 0"
             icon="fas fa-square-check"
@@ -7,7 +7,7 @@
             style="position: fixed; right: 0; z-index: 999; background-color: white; box-shadow: 0px 2px 3px #ccc"
             @click="selectionsDialogVisible = true"
         />
-        <DashboardRenderer v-if="!loading" :document="document" :model="model" :datasets="datasets" :dashboard-id="dashboardId" :document-drivers="drivers" :variables="model ? model.configuration.variables : []" @add-widget="addWidget" @add-dataset="addDataset"></DashboardRenderer>
+        <DashboardRenderer v-if="!loading && visible && showDashboard" :model="model" :datasets="datasets" :dashboardId="dashboardId" :documentDrivers="drivers" :variables="model ? model.configuration.variables : []"></DashboardRenderer>
 
         <Transition name="editorEnter" appear>
             <DatasetEditor v-if="datasetEditorVisible" :dashboard-id-prop="dashboardId" :available-datasets-prop="datasets" :filters-data-prop="filtersData" @closeDatasetEditor="closeDatasetEditor" @datasetEditorSaved="closeDatasetEditor" @allDatasetsLoaded="datasets = $event" />
@@ -51,10 +51,9 @@
  */
 import { defineComponent, PropType } from 'vue'
 import { AxiosResponse } from 'axios'
-import { v4 as uuidv4 } from 'uuid'
 import { iParameter } from '@/components/UI/KnParameterSidebar/KnParameterSidebar'
-import { IDashboardDataset, ISelection, IWidget, IGalleryItem, IDataset } from './Dashboard'
-import { emitter, createNewDashboardModel, formatDashboardForSave, formatNewModel, loadDatasets } from './DashboardHelpers'
+import { IDashboardDataset, ISelection, IGalleryItem, IDataset } from './Dashboard'
+import { emitter, createNewDashboardModel, formatDashboardForSave, formatNewModel, loadDatasets, getFormattedOutputParameters } from './DashboardHelpers'
 import { mapActions, mapState } from 'pinia'
 import { formatModel } from './helpers/DashboardBackwardCompatibilityHelper'
 import { setDatasetIntervals, clearAllDatasetIntervals } from './helpers/datasetRefresh/DatasetRefreshHelpers'
@@ -73,15 +72,36 @@ import DashboardGeneralSettings from './generalSettings/DashboardGeneralSettings
 import deepcopy from 'deepcopy'
 
 export default defineComponent({
-    name: 'dashboard-manager',
-    components: { DashboardRenderer, WidgetPickerDialog, DatasetEditor, WidgetEditor, DashboardControllerSaveDialog, SelectionsListDialog, DashboardGeneralSettings },
-    provide() {
-        return {
-            dHash: uuidv4()
-        }
+    name: 'dashboard-controller',
+    components: {
+        DashboardRenderer,
+        WidgetPickerDialog,
+        DatasetEditor,
+        WidgetEditor,
+        DashboardControllerSaveDialog,
+        SelectionsListDialog,
+        DashboardGeneralSettings
     },
-    props: { sbiExecutionId: { type: String }, document: { type: Object }, reloadTrigger: { type: Boolean }, hiddenFormData: { type: Object }, filtersData: { type: Object as PropType<{ filterStatus: iParameter[]; isReadyForExecution: boolean }> }, newDashboardMode: { type: Boolean } },
-    emits: ['newDashboardSaved', 'addDataset', 'addWidget'],
+    props: {
+        visible: { type: Boolean },
+        document: { type: Object },
+        reloadTrigger: { type: Boolean },
+        hiddenFormData: { type: Object },
+        filtersData: {
+            type: Object as PropType<{
+                filterStatus: iParameter[]
+                isReadyForExecution: boolean
+            }>
+        },
+        newDashboardMode: { type: Boolean },
+        mode: { type: Object as PropType<string | null>, required: true }
+    },
+    emits: ['newDashboardSaved', 'executeCrossNavigation', 'dashboardIdSet'],
+    setup() {
+        const store = dashboardStore()
+        const appStore = mainStore()
+        return { store, appStore }
+    },
     data() {
         return {
             descriptor,
@@ -107,34 +127,57 @@ export default defineComponent({
     computed: {
         ...mapState(mainStore, {
             user: 'user'
-        })
+        }),
+        showDashboard() {
+            return ['dashboard', 'dashboard-popup'].includes('' + this.mode)
+        }
     },
-    setup() {
-        const store = dashboardStore()
-        const appStore = mainStore()
-        return { store, appStore }
+    watch: {
+        async document() {
+            if (!this.showDashboard) return
+            await this.getData()
+            this.$watch('model.configuration.datasets', (modelDatasets: IDashboardDataset[]) => setDatasetIntervals(modelDatasets, this.datasets))
+        }
     },
     async created() {
+        if (!this.showDashboard) return
         this.setEventListeners()
         await this.getData()
-        this.$watch('model.configuration.datasets', (modelDatasets: IDashboardDataset[]) => {
-            setDatasetIntervals(modelDatasets, this.datasets)
-        })
+        this.$watch('model.configuration.datasets', (modelDatasets: IDashboardDataset[]) => setDatasetIntervals(modelDatasets, this.datasets))
     },
-    unmounted() {
+    beforeUnmount() {
         this.emptyStoreValues()
         clearAllDatasetIntervals()
     },
     methods: {
-        ...mapActions(dashboardStore, ['removeSelections', 'setAllDatasets', 'getSelections', 'setInternationalization', 'getInternationalization', 'setDashboardDocument', 'setDashboardDrivers', 'setProfileAttributes']),
+        ...mapActions(dashboardStore, ['removeSelections', 'setAllDatasets', 'getSelections', 'setInternationalization', 'getInternationalization', 'setDashboardDocument', 'setDashboardDrivers', 'setProfileAttributes', 'getCrossNavigations']),
+        setEventListeners() {
+            emitter.on('openNewWidgetPicker', this.openNewWidgetPicker)
+            emitter.on('openDatasetManagement', this.openDatasetManagementDialog)
+            emitter.on('openWidgetEditor', this.openWidgetEditor)
+            emitter.on('saveDashboard', this.onSaveDashboardClicked)
+            emitter.on('openDashboardGeneralSettings', this.openGeneralSettings)
+            emitter.on('executeCrossNavigation', this.executeCrossNavigation)
+        },
+        removeEventListeners() {
+            emitter.off('openNewWidgetPicker', this.openNewWidgetPicker)
+            emitter.off('openDatasetManagement', this.openDatasetManagementDialog)
+            emitter.off('openWidgetEditor', this.openWidgetEditor)
+            emitter.off('saveDashboard', this.onSaveDashboardClicked)
+            emitter.off('openDashboardGeneralSettings', this.openGeneralSettings)
+            emitter.off('executeCrossNavigation', this.executeCrossNavigation)
+        },
         async getData() {
             this.loading = true
-
+            this.dashboardId = cryptoRandomString({ length: 16, type: 'base64' })
+            this.$emit('dashboardIdSet', this.dashboardId)
             if (this.filtersData) this.drivers = loadDrivers(this.filtersData, this.model)
             await Promise.all([this.loadProfileAttributes(), this.loadModel(), this.loadInternationalization()])
             this.setDashboardDrivers(this.dashboardId, this.drivers)
             this.loadHtmlGallery()
             this.loadCustomChartGallery()
+            this.loadOutputParameters()
+            await this.loadCrossNavigations()
             this.loading = false
         },
         async loadModel() {
@@ -147,10 +190,10 @@ export default defineComponent({
                     .then((response: AxiosResponse<any>) => (tempModel = response.data))
                     .catch(() => {})
             }
+
             this.datasets = await loadDatasets(tempModel, this.appStore, this.setAllDatasets, this.$http)
             this.model = (tempModel && this.newDashboardMode) || typeof tempModel.id != 'undefined' ? await formatNewModel(tempModel, this.datasets, this.$http) : await (formatModel(tempModel, this.document, this.datasets, this.drivers, this.profileAttributes, this.$http, this.user) as any)
             setDatasetIntervals(this.model?.configuration.datasets, this.datasets)
-            this.dashboardId = cryptoRandomString({ length: 16, type: 'base64' })
             this.store.setDashboard(this.dashboardId, this.model)
             this.store.setSelections(this.dashboardId, this.model.configuration.selections, this.$http)
             this.store.setDashboardDocument(this.dashboardId, this.document)
@@ -192,44 +235,33 @@ export default defineComponent({
         },
         loadOutputParameters() {
             if (this.newDashboardMode) return
-            // TODO - Remove Mocked Output Parameters
-            const mockedParameters = descriptor.mockedOutputParameters
-            this.store.setOutputParameters(this.dashboardId, mockedParameters)
+            const formattedOutputParameters = this.document ? getFormattedOutputParameters(this.document.outputParameters) : []
+            this.store.setOutputParameters(this.dashboardId, formattedOutputParameters)
         },
 
         loadProfileAttributes() {
             this.profileAttributes = []
             const user = this.appStore.getUser()
             if (user && user.attributes) {
-                Object.keys(user.attributes).forEach((key: string) => this.profileAttributes.push({ name: key, value: user.attributes[key] }))
+                Object.keys(user.attributes).forEach((key: string) =>
+                    this.profileAttributes.push({
+                        name: key,
+                        value: user.attributes[key]
+                    })
+                )
             }
             this.setProfileAttributes(this.profileAttributes)
         },
-        setEventListeners() {
-            emitter.on('openNewWidgetPicker', () => {
-                this.openNewWidgetPicker()
-            })
-            emitter.on('openDatasetManagement', () => {
-                this.openDatasetManagementDialog()
-            })
-            emitter.on('openWidgetEditor', (widget) => {
-                this.openWidgetEditor(widget as IWidget)
-            })
-            emitter.on('saveDashboard', () => {
-                this.onSaveDashboardClicked()
-            })
-            emitter.on('openDashboardGeneralSettings', () => {
-                this.openGeneralSettings()
-            })
-        },
-        openNewWidgetPicker() {
+        openNewWidgetPicker(event: any) {
+            if (event !== this.dashboardId) return
             this.widgetPickerVisible = true
         },
-        openDatasetManagementDialog() {
+        openDatasetManagementDialog(event: any) {
+            if (event !== this.dashboardId) return
             this.datasetEditorVisible = true
             clearAllDatasetIntervals()
         },
-        openWidgetEditor(widget: IWidget) {
+        openWidgetEditor(widget: any) {
             this.selectedWidget = widget
             this.setWidgetEditorToVisible()
         },
@@ -244,10 +276,10 @@ export default defineComponent({
             clearAllDatasetIntervals()
         },
         emptyStoreValues() {
+            if (!this.dashboardId) return
             this.store.removeDashboard(this.dashboardId)
             this.store.setCrossNavigations(this.dashboardId, [])
             this.store.setOutputParameters(this.dashboardId, [])
-            this.store.setSelections(this.dashboardId, [], this.$http)
             this.store.setSelections(this.dashboardId, [], this.$http)
             this.setDashboardDrivers(this.dashboardId, [])
             this.setProfileAttributes([])
@@ -262,8 +294,8 @@ export default defineComponent({
             this.datasetEditorVisible = false
             emitter.emit('datasetManagementClosed')
         },
-        async onSaveDashboardClicked() {
-            if (!this.document) return
+        async onSaveDashboardClicked(event: any) {
+            if (!this.document || event !== this.dashboardId) return
             if (this.newDashboardMode) {
                 this.saveDialogVisible = true
             } else {
@@ -315,18 +347,18 @@ export default defineComponent({
             this.selectionsDialogVisible = false
             this.removeSelections(selections, this.dashboardId)
         },
-        openGeneralSettings() {
+        openGeneralSettings(event) {
+            if (event !== this.dashboardId) return
             this.generalSettingsVisible = true
         },
         closeGeneralSettings() {
             this.generalSettingsVisible = false
             emitter.emit('dashboardGeneralSettingsClosed')
         },
-        addDataset() {
-            this.$emit('addDataset')
-        },
-        addWidget() {
-            this.$emit('addWidget')
+        executeCrossNavigation(payload: any) {
+            const crossNavigations = this.getCrossNavigations(this.dashboardId)
+            payload.crossNavigations = crossNavigations
+            this.$emit('executeCrossNavigation', payload)
         }
     }
 })
@@ -339,5 +371,10 @@ export default defineComponent({
     .dashboard-container {
         height: calc(100vh - var(--kn-mainmenu-width));
     }
+}
+
+.dashboard-container-popup {
+    height: 100%;
+    flex: 1;
 }
 </style>

@@ -3,7 +3,7 @@
     <Accordion class="p-mb-3 p-mr-3">
         <AccordionTab :header="$t('common.parameters')">
             <!-- PARAMETERS ---------------- -->
-            <div v-for="(parameter, index) of selectedDatasetProp.parameters" :key="index" class="p-fluid p-formgrid p-grid p-mx-2 p-mt-2">
+            <div v-for="(parameter, index) of selectedDataset.parameters" :key="index" class="p-fluid p-formgrid p-grid p-mx-2 p-mt-2">
                 <div class="p-field p-col-4">
                     <span class="p-float-label">
                         <InputText id="label" v-model="parameter.name" class="kn-material-input" type="text" :disabled="true" />
@@ -26,7 +26,7 @@
             </div>
 
             <!-- DRIVERS ---------------- -->
-            <div v-for="(driver, index) of selectedDatasetProp.formattedDrivers" :key="index" class="p-fluid p-formgrid p-grid p-mx-2">
+            <div v-for="(driver, index) of selectedDataset.formattedDrivers" :key="index" class="p-fluid p-formgrid p-grid p-mx-2">
                 <div class="p-field p-col-4">
                     <span class="p-float-label">
                         <InputText id="label" v-model="driver.label" class="kn-material-input" :disabled="true" />
@@ -56,15 +56,7 @@
     </Accordion>
 
     <Menu id="parameterPickerMenu" ref="parameterPickerMenu" :model="menuButtons" />
-    <DatasetEditorDriverDialog
-        :visible="driversDialogVisible"
-        :prop-driver="selectedDriver"
-        :dashboard-id="dashboardId"
-        :selected-dataset-prop="selectedDatasetProp"
-        :drivers="selectedDatasetProp.formattedDrivers"
-        @updateDriver="onUpdateDriver"
-        @close="onDriversDialogClose"
-    ></DatasetEditorDriverDialog>
+    <DatasetEditorDriverDialog :visible="driversDialogVisible" :prop-driver="selectedDriver" :dashboard-id="dashboardId" :selected-dataset-prop="selectedDataset" :drivers="selectedDataset.formattedDrivers" @updateDriver="onUpdateDriver" @close="onDriversDialogClose"></DatasetEditorDriverDialog>
 </template>
 
 <script lang="ts">
@@ -97,7 +89,8 @@ export default defineComponent({
             menuButtons: [] as any,
             drivers: [] as IDashboardDatasetDriver[],
             driversDialogVisible: false,
-            selectedDriver: null as IDashboardDatasetDriver | null
+            selectedDriver: null as IDashboardDatasetDriver | null,
+            selectedDataset: {} as any
         }
     },
     computed: {
@@ -107,18 +100,20 @@ export default defineComponent({
     },
     watch: {
         selectedDatasetProp() {
+            this.selectedDataset = this.selectedDatasetProp
             this.loadDrivers()
         }
     },
     async created() {
+        this.selectedDataset = this.selectedDatasetProp
         this.loadDrivers()
     },
     methods: {
         loadDrivers() {
-            if (!this.selectedDatasetProp.formattedDrivers) {
-                this.selectedDatasetProp.formattedDrivers = this.selectedDatasetProp && this.selectedDatasetProp.drivers ? (getFormattedDatasetDrivers(this.selectedDatasetProp) as IDashboardDatasetDriver[]) : []
+            if (!this.selectedDataset.formattedDrivers) {
+                this.selectedDataset.formattedDrivers = this.selectedDataset && this.selectedDataset.drivers ? (getFormattedDatasetDrivers(this.selectedDataset) as IDashboardDatasetDriver[]) : []
             }
-            this.selectedDatasetProp.formattedDrivers.forEach((driver: IDashboardDatasetDriver) => {
+            this.selectedDataset.formattedDrivers.forEach((driver: IDashboardDatasetDriver) => {
                 if (driver.type === 'DATE') this.setDateDisplayValue(driver)
             })
         },
@@ -134,7 +129,7 @@ export default defineComponent({
             })
         },
         addDriverValueToParameter(driverUrl, paramName) {
-            this.selectedDatasetProp.parameters.find((parameter) => parameter.name === paramName).value = '$P{' + driverUrl + '}'
+            this.selectedDataset.parameters.find((parameter) => parameter.name === paramName).value = '$P{' + driverUrl + '}'
         },
         openDriverDialog(driver: IDashboardDatasetDriver) {
             this.selectedDriver = driver
@@ -160,9 +155,9 @@ export default defineComponent({
         async onUpdateDriver(driver: IDashboardDatasetDriver) {
             this.driversDialogVisible = false
             if (driver.type === 'DATE') this.setDateDisplayValue(driver)
-            await updateDataDependency(this.selectedDatasetProp.formattedDrivers, driver, this.documentDriversProp, this.user, this.$http)
-            const index = this.selectedDatasetProp.formattedDrivers.findIndex((tempDriver: IDashboardDatasetDriver) => tempDriver.urlName === driver.urlName)
-            if (index !== -1) this.selectedDatasetProp.formattedDrivers[index] = driver
+            await updateDataDependency(this.selectedDataset.formattedDrivers, driver, this.documentDriversProp, this.user, this.$http)
+            const index = this.selectedDataset.formattedDrivers.findIndex((tempDriver: IDashboardDatasetDriver) => tempDriver.urlName === driver.urlName)
+            if (index !== -1) this.selectedDataset.formattedDrivers[index] = driver
         }
     }
 })

@@ -2,7 +2,8 @@
     <div class="custom-cell-container p-d-flex kn-height-full" :style="getCellStyle()">
         <div v-if="isColumnOfType('date')" class="custom-cell-label">{{ dateFormatter(params.value) }}</div>
         <div v-else-if="isColumnOfType('timestamp')" class="custom-cell-label">{{ dateTimeFormatter(params.value) }}</div>
-        <div v-else class="custom-cell-label">{{ params.value }} {{ params.data.span > 1 ? params.data.span : '' }}</div>
+        <div v-else-if="isIconColumn" class="custom-cell-label kn-cursor-pointer"><i :class="icon"></i></div>
+        <div v-else class="custom-cell-label">{{ params.value }}</div>
         <span>{{ params.selectedColumn }}</span>
     </div>
 </template>
@@ -23,6 +24,16 @@ export default defineComponent({
     },
     data() {
         return { helpersDecriptor }
+    },
+    computed: {
+        isIconColumn() {
+            return this.params?.colId === 'iconColumn'
+        },
+        icon() {
+            if (!this.isIconColumn || !this.params.propWidget || !this.params.propWidget.settings.interactions) return ''
+
+            return this.params.propWidget.settings.interactions.crossNavigation.icon
+        }
     },
     watch: {
         params: {
@@ -87,6 +98,7 @@ export default defineComponent({
             } else return null
         },
         getCellStyle() {
+            if (this.isIconColumn) return 'justify-content: center; align-items: center;'
             const defaultColumnStyle = Object.entries(this.helpersDecriptor.defaultColumnStyles.styles[0].properties)
                 .map(([k, v]) => `${k}:${v}`)
                 .join(';')

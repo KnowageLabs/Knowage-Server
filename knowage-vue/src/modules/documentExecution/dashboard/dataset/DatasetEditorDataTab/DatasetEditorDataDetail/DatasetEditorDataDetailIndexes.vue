@@ -4,7 +4,7 @@
             <div class="p-col-12 p-d-flex">
                 <div class="kn-flex">
                     <span class="p-float-label">
-                        <MultiSelect v-model="selectedDatasetProp.modelIndexes" class="kn-material-input" :style="descriptor.style.indexMultiselect" :options="selectedDatasetProp.metadata.fieldsMeta" option-label="alias" option-value="alias" />
+                        <MultiSelect v-model="selectedDataset.modelIndexes" class="kn-material-input" :style="descriptor.style.indexMultiselect" :options="selectedDatasetProp.metadata.fieldsMeta" option-label="alias" option-value="alias" />
                         <label for="field" class="kn-material-input-label"> {{ $t('common.field') }}</label>
                     </span>
                 </div>
@@ -28,8 +28,17 @@ export default defineComponent({
     emits: [],
     data() {
         return {
-            descriptor
+            descriptor,
+            selectedDataset: {} as any
         }
+    },
+    watch: {
+        selectedDatasetProp() {
+            this.selectedDataset = this.selectedDatasetProp
+        }
+    },
+    created() {
+        this.selectedDataset = this.selectedDatasetProp
     }
 })
 </script>

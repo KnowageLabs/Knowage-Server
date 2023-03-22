@@ -7,12 +7,33 @@
             </template>
             <template #end>
                 <div class="p-d-flex p-jc-around">
-                    <Button v-if="mode == 'dashboard'" v-tooltip.left="$t('common.datasets')" icon="fas fa-database" class="p-button-text p-button-rounded p-button-plain p-mx-2" :class="{ 'dashboard-toolbar-icon': mode === 'dashboard' }" @click="openDashboardDatasetManagement"></Button>
-                    <Button v-if="mode == 'dashboard'" v-tooltip.left="$t('common.save')" icon="pi pi-save" class="p-button-text p-button-rounded p-button-plain p-mx-2" :class="{ 'dashboard-toolbar-icon': mode === 'dashboard' }" @click="saveDashboard"></Button>
+                    <Button
+                        v-if="mode == 'dashboard' && propMode !== 'document-execution-cross-navigation-popup'"
+                        v-tooltip.left="$t('common.datasets')"
+                        icon="fas fa-database"
+                        class="p-button-text p-button-rounded p-button-plain p-mx-2"
+                        :class="{ 'dashboard-toolbar-icon': mode === 'dashboard' }"
+                        @click="openDashboardDatasetManagement"
+                    ></Button>
+                    <Button
+                        v-if="mode == 'dashboard' && propMode !== 'document-execution-cross-navigation-popup'"
+                        v-tooltip.left="$t('common.save')"
+                        icon="pi pi-save"
+                        class="p-button-text p-button-rounded p-button-plain p-mx-2"
+                        :class="{ 'dashboard-toolbar-icon': mode === 'dashboard' }"
+                        @click="saveDashboard"
+                    ></Button>
                     <Button v-if="mode !== 'dashboard' && canEditCockpit && documentMode === 'VIEW'" v-tooltip.left="$t('documentExecution.main.editCockpit')" icon="pi pi-pencil" class="p-button-text p-button-rounded p-button-plain p-mx-2" @click="editCockpitDocumentConfirm"></Button>
                     <Button v-if="mode !== 'dashboard' && canEditCockpit && documentMode === 'EDIT'" v-tooltip.left="$t('documentExecution.main.viewCockpit')" icon="fa fa-eye" class="p-button-text p-button-rounded p-button-plain p-mx-2" @click="editCockpitDocumentConfirm"></Button>
                     <Button v-if="mode !== 'dashboard'" v-tooltip.left="$t('common.onlineHelp')" icon="pi pi-book" class="p-button-text p-button-rounded p-button-plain p-mx-2" @click="openHelp"></Button>
-                    <Button v-if="!newDashboardMode" v-tooltip.left="$t('common.refresh')" icon="pi pi-refresh" class="p-button-text p-button-rounded p-button-plain p-mx-2" :class="{ 'dashboard-toolbar-icon': mode === 'dashboard' }" @click="refresh"></Button>
+                    <Button
+                        v-if="!newDashboardMode && propMode !== 'document-execution-cross-navigation-popup'"
+                        v-tooltip.left="$t('common.refresh')"
+                        icon="pi pi-refresh"
+                        class="p-button-text p-button-rounded p-button-plain p-mx-2"
+                        :class="{ 'dashboard-toolbar-icon': mode === 'dashboard' }"
+                        @click="refresh"
+                    ></Button>
                     <Button
                         v-if="isParameterSidebarVisible && !newDashboardMode"
                         v-tooltip.left="$t('common.parameters')"
@@ -22,7 +43,7 @@
                         data-test="parameter-sidebar-icon"
                         @click="parameterSidebarVisible = !parameterSidebarVisible"
                     ></Button>
-                    <Button v-tooltip.left="$t('common.menu')" icon="fa fa-ellipsis-v" class="p-button-text p-button-rounded p-button-plain p-mx-2" :class="{ 'dashboard-toolbar-icon': mode === 'dashboard' }" @click="toggle"></Button>
+                    <Button v-if="propMode !== 'document-execution-cross-navigation-popup'" v-tooltip.left="$t('common.menu')" icon="fa fa-ellipsis-v" class="p-button-text p-button-rounded p-button-plain p-mx-2" :class="{ 'dashboard-toolbar-icon': mode === 'dashboard' }" @click="toggle"></Button>
                     <TieredMenu ref="menu" :model="toolbarMenuItems" :popup="true" />
                     <Button v-if="mode == 'dashboard'" id="add-widget-button" class="p-button-sm" :label="$t('dashboard.widgetEditor.addWidget')" icon="pi pi-plus-circle" @click="addWidget" />
                     <Button v-tooltip.left="$t('common.close')" icon="fa fa-times" class="p-button-text p-button-rounded p-button-plain p-mx-2" :class="{ 'dashboard-toolbar-icon': mode === 'dashboard' }" @click="closeDocumentConfirm"></Button>
@@ -30,11 +51,9 @@
             </template>
         </Toolbar>
         <ProgressBar v-if="loading" class="kn-progress-bar" mode="indeterminate" />
-
-        <div id="document-execution-view" ref="document-execution-view" class="p-d-flex p-flex-row myDivToPrint">
-            <div v-if="parameterSidebarVisible" id="document-execution-backdrop" @click="parameterSidebarVisible = false"></div>
-
-            <template v-if="(filtersData && filtersData.isReadyForExecution && !loading && !schedulationsTableVisible) || newDashboardMode">
+        <div ref="document-execution-view" class="p-d-flex p-flex-row document-execution-view myDivToPrint">
+            <div v-if="parameterSidebarVisible" :class="propMode === 'document-execution-cross-navigation-popup' ? 'document-execution-backdrop-popup-dialog' : 'document-execution-backdrop'" @click="parameterSidebarVisible = false"></div>
+            <div v-show="(filtersData && filtersData.isReadyForExecution && !loading && !schedulationsTableVisible) || newDashboardMode" class="kn-flex">
                 <Registry v-if="mode === 'registry'" :id="urlData?.sbiExecutionId" :reload-trigger="reloadTrigger"></Registry>
                 <Dossier v-else-if="mode === 'dossier'" :id="document.id" :reload-trigger="reloadTrigger" :filter-data="filtersData"></Dossier>
                 <Olap
@@ -50,18 +69,32 @@
                     @executeCrossNavigation="executeOLAPCrossNavigation"
                 ></Olap>
                 <DashboardController
-                    v-else-if="mode === 'dashboard' || newDashboardMode"
-                    :sbi-execution-id="urlData?.sbiExecutionId"
+                    v-else-if="propMode === 'document-execution-cross-navigation-popup' && document"
+                    :visible="filtersData && filtersData.isReadyForExecution && !loading"
                     :document="document"
                     :reload-trigger="reloadTrigger"
-                    :hidden-form-data="hiddenFormData"
-                    :filters-data="filtersData"
-                    :new-dashboard-mode="newDashboardMode"
-                    @newDashboardSaved="onNewDashboardSaved"
-                    @add-widget="addWidget"
-                    @add-dataset="openDashboardDatasetManagement"
+                    :hidden-form-data="document.hiddenFormData"
+                    :mode="'dashboard-popup'"
+                    :filters-data="document.filtersData"
+                    :new-dashboard-mode="false"
                 ></DashboardController>
-            </template>
+                <div v-show="mode === 'dashboard' || newDashboardMode" class="p-d-flex p-flex-row" style="height: 100%">
+                    <template v-for="(item, index) in breadcrumbs" :key="index">
+                        <DashboardController
+                            :visible="((filtersData && filtersData.isReadyForExecution) || newDashboardMode) && !loading && !schedulationsTableVisible && (item.label === document.name || newDashboardMode || (crossNavigationDialogVisible && index === breadcrumbs.length - 1))"
+                            :document="item.document"
+                            :reload-trigger="reloadTrigger"
+                            :hidden-form-data="item.hiddenFormData"
+                            :filters-data="item.filtersData"
+                            :new-dashboard-mode="newDashboardMode"
+                            :mode="mode"
+                            @dashboardIdSet="onSetDashboardId($event, item)"
+                            @newDashboardSaved="onNewDashboardSaved"
+                            @executeCrossNavigation="onExecuteCrossNavigation"
+                        ></DashboardController>
+                    </template>
+                </div>
+            </div>
             <iframe
                 v-for="(item, index) in breadcrumbs"
                 v-show="mode === 'iframe' && filtersData && filtersData.isReadyForExecution && !loading && !schedulationsTableVisible && (item.label === document.name || (crossNavigationContainerData && index === breadcrumbs.length - 1))"
@@ -81,6 +114,7 @@
                 :user-role="userRole"
                 :session-enabled="sessionEnabled"
                 :date-format="dateFormat"
+                :show-in-dialog="true"
                 data-test="parameter-sidebar"
                 @execute="onExecute"
                 @exportCSV="onExportCSV"
@@ -96,7 +130,19 @@
             <DocumentExecutionMailDialog :visible="mailDialogVisible" @close="mailDialogVisible = false" @sendMail="onMailSave"></DocumentExecutionMailDialog>
             <DocumentExecutionLinkDialog :visible="linkDialogVisible" :link-info="linkInfo" :embed-h-t-m-l="embedHTML" :prop-document="document" :parameters="linkParameters" @close="linkDialogVisible = false"></DocumentExecutionLinkDialog>
             <DocumentExecutionSelectCrossNavigationDialog :visible="destinationSelectDialogVisible" :cross-navigation-documents="crossNavigationDocuments" @close="destinationSelectDialogVisible = false" @selected="onCrossNavigationSelected"></DocumentExecutionSelectCrossNavigationDialog>
-            <DocumentExecutionCNContainerDialog v-if="crossNavigationContainerData" :visible="crossNavigationContainerVisible" :data="crossNavigationContainerData" @close="onCrossNavigationContainerClose"></DocumentExecutionCNContainerDialog>
+            <DocumentExecutionCNContainerDialog v-if="angularData && crossNavigationContainerData" :visible="crossNavigationContainerVisible" :data="crossNavigationContainerData" @close="onCrossNavigationContainerClose"></DocumentExecutionCNContainerDialog>
+            <Dialog class="p-fluid kn-dialog--toolbar--primary" :content-style="descriptor.popupDialog.style" :visible="crossNavigationDialogVisible" :modal="true" :show-header="false" :closable="false">
+                <DocumentExecution
+                    v-if="crossNavigationPopupDialogDocument"
+                    :id="crossNavigationPopupDialogDocument?.label"
+                    :prop-mode="'document-execution-cross-navigation-popup'"
+                    :parameter-values-map="parameterValuesMap"
+                    :tab-key="tabKey"
+                    :prop-cross-navigation-popup-dialog-document="crossNavigationPopupDialogDocument"
+                    @parametersChanged="$emit('parametersChanged', $event)"
+                    @close="onCrossNavigationPopupClose()"
+                ></DocumentExecution>
+            </Dialog>
         </div>
     </div>
 </template>
@@ -105,9 +151,16 @@
 import { defineComponent } from 'vue'
 import { AxiosResponse } from 'axios'
 import { iParameter } from '@/components/UI/KnParameterSidebar/KnParameterSidebar'
-import { iURLData, iExporter, iSchedulation } from './DocumentExecution'
+import { iURLData, iExporter, iSchedulation, ICrossNavigationBreadcrumb, ICrossNavigationParameter } from './DocumentExecution'
 import { createToolbarMenuItems } from './DocumentExecutionHelpers'
 import { emitter } from '../dashboard/DashboardHelpers'
+import { mapState, mapActions } from 'pinia'
+import { getCorrectRolesForExecution } from '../../../helpers/commons/roleHelper'
+import { executeAngularCrossNavigation, loadCrossNavigation } from './DocumentExecutionAngularCrossNavigationHelper'
+import { getDocumentForCrossNavigation, getSelectedCrossNavigation, updateBreadcrumbForCrossNavigation } from './DocumentExecutionCrossNavigationHelper'
+import { loadFilters } from './DocumentExecutionDirverHelpers'
+import { IDashboardCrossNavigation } from '../dashboard/Dashboard'
+import { luxonFormatDate } from '@/helpers/commons/localeHelper'
 import DocumentExecutionBreadcrumb from './breadcrumbs/DocumentExecutionBreadcrumb.vue'
 import DocumentExecutionHelpDialog from './dialogs/documentExecutionHelpDialog/DocumentExecutionHelpDialog.vue'
 import DocumentExecutionRankDialog from './dialogs/documentExecutionRankDialog/DocumentExecutionRankDialog.vue'
@@ -117,20 +170,18 @@ import DocumentExecutionMailDialog from './dialogs/documentExecutionMailDialog/D
 import DocumentExecutionSchedulationsTable from './tables/documentExecutionSchedulationsTable/DocumentExecutionSchedulationsTable.vue'
 import DocumentExecutionLinkDialog from './dialogs/documentExecutionLinkDialog/DocumentExecutionLinkDialog.vue'
 import KnParameterSidebar from '@/components/UI/KnParameterSidebar/KnParameterSidebar.vue'
-import { luxonFormatDate } from '@/helpers/commons/localeHelper'
 import TieredMenu from 'primevue/tieredmenu'
 import Registry from '../registry/Registry.vue'
 import Dossier from '../dossier/Dossier.vue'
 import Olap from '../olap/Olap.vue'
-import moment from 'moment'
 import DocumentExecutionSelectCrossNavigationDialog from './dialogs/documentExecutionSelectCrossNavigationDialog/DocumentExecutionSelectCrossNavigationDialog.vue'
 import DocumentExecutionCNContainerDialog from './dialogs/documentExecutionCNContainerDialog/DocumentExecutionCNContainerDialog.vue'
 import mainStore from '../../../App.store'
-import { mapState, mapActions } from 'pinia'
 import deepcopy from 'deepcopy'
 import DashboardController from '../dashboard/DashboardController.vue'
-import { getCorrectRolesForExecution } from '../../../helpers/commons/roleHelper'
-import { findCrossTargetByCrossName, loadNavigationParamsInitialValue } from './DocumentExecutionAngularCrossNavigationHelper'
+import Dialog from 'primevue/dialog'
+import descriptor from './DocumentExecutionDescriptor.json'
+import UserFunctionalitiesConstants from '@/UserFunctionalitiesConstants.json'
 
 // @ts-ignore
 // eslint-disable-next-line
@@ -166,7 +217,8 @@ export default defineComponent({
         Olap,
         DocumentExecutionSelectCrossNavigationDialog,
         DocumentExecutionCNContainerDialog,
-        DashboardController
+        DashboardController,
+        Dialog
     },
     props: {
         id: { type: String },
@@ -174,11 +226,13 @@ export default defineComponent({
         tabKey: { type: String },
         propMode: { type: String },
         selectedMenuItem: { type: Object },
-        menuItemClickedTrigger: { type: Boolean }
+        menuItemClickedTrigger: { type: Boolean },
+        propCrossNavigationPopupDialogDocument: { type: Object }
     },
     emits: ['close', 'updateDocumentName', 'parametersChanged'],
     data() {
         return {
+            descriptor,
             managementOpened: false,
             document: null as any,
             hiddenFormData: {} as any,
@@ -210,7 +264,7 @@ export default defineComponent({
             sbiExecutionId: null as string | null,
             embedHTML: false,
             reloadTrigger: false,
-            breadcrumbs: [] as any[],
+            breadcrumbs: [] as ICrossNavigationBreadcrumb[],
             linkParameters: [],
             embed: false,
             olapCustomViewVisible: false,
@@ -226,7 +280,47 @@ export default defineComponent({
             crossNavigationContainerData: null as any,
             newCockpitCreated: false,
             newDashboardMode: false,
-            dashboardGeneralSettingsOpened: false
+            dashboardGeneralSettingsOpened: false,
+            crossNavigationPayload: null as {
+                documentCrossNavigationOutputParameters: ICrossNavigationParameter[]
+                crossNavigationName: string | undefined
+                crossNavigations: IDashboardCrossNavigation[]
+            } | null,
+            crossNavigationPopupDialogDocument: null as any,
+            crossNavigationDialogVisible: false
+        }
+    },
+
+    computed: {
+        ...mapState(mainStore, {
+            user: 'user',
+            configurations: 'configurations'
+        }),
+        canEditCockpit(): boolean {
+            if (!this.user || !this.document) return false
+            return (this.document.engine?.toLowerCase() === 'knowagecockpitengine' || this.document.engine?.toLowerCase() === 'knowagedashboardengine') && (this.user.functionalities?.includes(UserFunctionalitiesConstants.DOCUMENT_ADMIN_MANAGEMENT) || this.document.creationUser === this.user.userId)
+        },
+        sessionRole(): string | null {
+            if (!this.user) return null
+            return this.user.sessionRole !== this.$t('role.defaultRolePlaceholder') ? this.user.sessionRole : null
+        },
+        url(): string {
+            return this.document
+                ? import.meta.env.VITE_HOST_URL +
+                      `/knowage/restful-services/publish?PUBLISHER=documentExecutionNg&OBJECT_ID=${this.document.id}&OBJECT_LABEL=${this.document.label}&TOOLBAR_VISIBLE=false&MENU_PARAMETERS=%7B%7D&LIGHT_NAVIGATOR_DISABLED=TRUE&SBI_EXECUTION_ID=${this.sbiExecutionId}&OBJECT_NAME=${this.document.name}&CROSS_PARAMETER=null`
+                : ''
+        },
+        isParameterSidebarVisible(): boolean {
+            if (!this.userRole) return false
+            let parameterVisible = false
+            for (let i = 0; i < this.filtersData?.filterStatus?.length; i++) {
+                const tempFilter = this.filtersData.filterStatus[i]
+                if (tempFilter.showOnPanel === 'true' && tempFilter.visible) {
+                    parameterVisible = true
+                    break
+                }
+            }
+            return parameterVisible
         }
     },
     watch: {
@@ -241,93 +335,46 @@ export default defineComponent({
             this.breadcrumbs = []
             this.filtersData = {} as any
             await this.loadDocument()
-
-            if (this.userRole) {
-                await this.loadPage(true)
-            } else {
-                this.parameterSidebarVisible = true
-            }
+            this.userRole ? await this.loadPage(true) : (this.parameterSidebarVisible = true)
         }
     },
     async activated() {
-        if (this.mode === 'iframe' && this.$route.name !== 'new-dashboard') {
-            if (this.userRole) {
-                await this.loadPage(true)
-            } else {
-                this.parameterSidebarVisible = true
-            }
-        }
+        if (this.mode === 'iframe' && this.$route.name !== 'new-dashboard') this.userRole ? await this.loadPage(true) : (this.parameterSidebarVisible = true)
     },
     deactivated() {
         this.parameterSidebarVisible = false
         window.removeEventListener('message', this.iframeEventsListener)
     },
-    computed: {
-        ...mapState(mainStore, {
-            user: 'user',
-            configurations: 'configurations'
-        }),
-        canEditCockpit(): boolean {
-            if (!this.user || !this.document) return false
-            return (this.document.engine?.toLowerCase() === 'knowagecockpitengine' || this.document.engine?.toLowerCase() === 'knowagedashboardengine') && (this.user.functionalities?.includes('DocumentAdminManagement') || this.document.creationUser === this.user.userId)
-        },
-        sessionRole(): string | null {
-            if (!this.user) return null
-            return this.user.sessionRole !== this.$t('role.defaultRolePlaceholder') ? this.user.sessionRole : null
-        },
-        url(): string {
-            if (this.document) {
-                return (
-                    import.meta.env.VITE_HOST_URL +
-                    `/knowage/restful-services/publish?PUBLISHER=documentExecutionNg&OBJECT_ID=${this.document.id}&OBJECT_LABEL=${this.document.label}&TOOLBAR_VISIBLE=false&MENU_PARAMETERS=%7B%7D&LIGHT_NAVIGATOR_DISABLED=TRUE&SBI_EXECUTION_ID=${this.sbiExecutionId}&OBJECT_NAME=${this.document.name}&CROSS_PARAMETER=null`
-                )
-            } else {
-                return ''
-            }
-        },
-        isParameterSidebarVisible(): boolean {
-            if (!this.userRole) return false
-
-            let parameterVisible = false
-            for (let i = 0; i < this.filtersData?.filterStatus?.length; i++) {
-                const tempFilter = this.filtersData.filterStatus[i]
-                if (tempFilter.showOnPanel === 'true' && tempFilter.visible) {
-                    parameterVisible = true
-                    break
-                }
-            }
-
-            return parameterVisible
-        }
-    },
     async created() {
         this.setEventListeners()
-
         window.addEventListener('message', this.iframeEventsListener)
 
-        if (this.propMode !== 'document-execution' && !this.$route.path.includes('olap-designer') && this.$route.name !== 'document-execution' && this.$route.name !== 'document-execution-embed' && this.$route.name !== 'document-execution-workspace') return
+        if (this.propCrossNavigationPopupDialogDocument) {
+            this.document = this.propCrossNavigationPopupDialogDocument
+            await this.loadUserConfig()
+            this.setMode()
+        } else {
+            if (this.propMode !== 'document-execution' && !this.$route.path.includes('olap-designer') && this.$route.name !== 'document-execution' && this.$route.name !== 'document-execution-embed' && this.$route.name !== 'document-execution-workspace') return
+            if (this.$route.name === 'new-dashboard') this.newDashboardMode = true
 
-        if (this.$route.name === 'new-dashboard') {
-            this.newDashboardMode = true
+            await this.loadUserConfig()
+            this.isOlapDesignerMode()
+            this.setMode()
+            this.document = { label: this.id }
+            if (this.newDashboardMode)
+                this.breadcrumbs.push({
+                    label: 'new-dashboard',
+                    document: this.document
+                })
+            if (!this.document.label) return
+            if (this.document.label === 'new-dashboard') {
+                this.newDashboardMode = true
+                return
+            }
+            await this.loadDocument()
         }
-        await this.loadUserConfig()
-
-        this.isOlapDesignerMode()
-        this.setMode()
-
-        this.document = { label: this.id }
-
-        if (!this.document.label) return
 
         this.userRole = this.user?.sessionRole !== this.$t('role.defaultRolePlaceholder') ? this.user?.sessionRole : null
-
-        if (this.document.label === 'new-dashboard') {
-            this.newDashboardMode = true
-            return
-        }
-
-        await this.loadDocument()
-
         let invalidRole = false
         getCorrectRolesForExecution(this.document).then(async (response: any) => {
             const correctRolesForExecution = response
@@ -350,13 +397,7 @@ export default defineComponent({
                     }
                 }
             }
-            if (!invalidRole) {
-                if (this.userRole) {
-                    await this.loadPage(true)
-                } else {
-                    this.parameterSidebarVisible = true
-                }
-            }
+            if (!invalidRole) this.userRole ? await this.loadPage(true) : (this.parameterSidebarVisible = true)
         })
     },
     unmounted() {
@@ -366,22 +407,20 @@ export default defineComponent({
         ...mapActions(mainStore, ['setInfo', 'setError', 'setDocumentExecutionEmbed']),
         iframeEventsListener(event) {
             if (event.data.type === 'crossNavigation') {
-                this.executeCrossNavigation(event)
+                executeAngularCrossNavigation(this, event, this.$http)
             } else if (event.data.type === 'cockpitExecuted') {
                 this.loading = false
             }
         },
         editCockpitDocumentConfirm() {
-            if (this.documentMode === 'EDIT') {
-                this.$confirm.require({
-                    message: this.$t('documentExecution.main.editModeConfirm'),
-                    header: this.$t('documentExecution.main.editCockpit'),
-                    icon: 'pi pi-exclamation-triangle',
-                    accept: () => this.editCockpitDocument()
-                })
-            } else {
-                this.editCockpitDocument()
-            }
+            this.documentMode === 'EDIT'
+                ? this.$confirm.require({
+                      message: this.$t('documentExecution.main.editModeConfirm'),
+                      header: this.$t('documentExecution.main.editCockpit'),
+                      icon: 'pi pi-exclamation-triangle',
+                      accept: () => this.editCockpitDocument()
+                  })
+                : this.editCockpitDocument()
         },
         async editCockpitDocument() {
             this.loading = true
@@ -437,9 +476,8 @@ export default defineComponent({
             } else {
                 const tempIndex = this.breadcrumbs.findIndex((el: any) => el.label === this.document.name)
                 let tempFrame = window.frames[tempIndex]
-                while (tempFrame && tempFrame.name !== 'documentFrame' + tempIndex) {
-                    tempFrame = tempFrame[0].frames
-                }
+                while (tempFrame && tempFrame.name !== 'documentFrame' + tempIndex) tempFrame = tempFrame[0].frames
+
                 tempFrame.postMessage({ type: 'export', format: type.toLowerCase() }, '*')
             }
         },
@@ -467,9 +505,7 @@ export default defineComponent({
             this.loading = true
             this.parameterSidebarVisible = false
             this.schedulationsTableVisible = true
-            await this.$http.get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `1.0/documentsnapshot/getSnapshots?id=${this.document.id}`).then((response: AxiosResponse<any>) => {
-                response.data?.schedulers.forEach((el: any) => this.schedulations.push({ ...el, urlPath: response.data.urlPath }))
-            })
+            await this.$http.get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `1.0/documentsnapshot/getSnapshots?id=${this.document.id}`).then((response: AxiosResponse<any>) => response.data?.schedulers.forEach((el: any) => this.schedulations.push({ ...el, urlPath: response.data.urlPath })))
             this.loading = false
         },
         async copyLink(embedHTML: boolean) {
@@ -498,33 +534,24 @@ export default defineComponent({
             }
         },
         closeDocument() {
-            const link = this.$route.path.includes('workspace') ? '/workspace' : '/document-browser'
-            this.$router.push(link)
-            this.breadcrumbs = []
+            if (this.propMode !== 'document-execution-cross-navigation-popup') {
+                this.$router.push(this.$route.path.includes('workspace') ? '/workspace' : '/document-browser')
+                this.breadcrumbs = []
+            }
             this.$emit('close')
         },
         setMode() {
             this.embed = this.$route.path.includes('embed')
-            if (this.embed) {
-                this.setDocumentExecutionEmbed()
-            }
-
-            if (this.$route.path.includes('registry')) {
-                this.mode = 'registry'
-            } else if (this.$route.path.includes('dossier')) {
-                this.mode = 'dossier'
-            } else if (this.$route.path.includes('olap')) {
-                this.mode = 'olap'
-            } else if (this.$route.path.includes('dashboard')) {
-                this.mode = 'dashboard'
-            } else {
-                this.mode = 'iframe'
-            }
+            if (this.embed) this.setDocumentExecutionEmbed()
+            if (this.$route.path.includes('registry')) this.mode = 'registry'
+            else if (this.$route.path.includes('dossier')) this.mode = 'dossier'
+            else if (this.$route.path.includes('olap')) this.mode = 'olap'
+            else if (this.$route.path.includes('dashboard')) this.mode = 'dashboard'
+            else this.mode = 'iframe'
         },
         async loadPage(initialLoading = false, documentLabel: string | null = null, crossNavigationPopupMode = false) {
             this.loading = true
-
-            await this.loadFilters(initialLoading)
+            this.filtersData = await loadFilters(initialLoading, this.filtersData, this.document, this.breadcrumbs, this.userRole, this.parameterValuesMap, this.tabKey as string, this.sessionEnabled, this.$http, this.dateFormat, this.$route, this)
             if (this.filtersData?.isReadyForExecution) {
                 this.parameterSidebarVisible = false
                 await this.loadURL(null, documentLabel, crossNavigationPopupMode)
@@ -532,143 +559,25 @@ export default defineComponent({
             } else if (this.filtersData?.filterStatus) {
                 this.parameterSidebarVisible = true
             }
-
             this.updateMode()
             this.loading = false
         },
         updateMode() {
-            if (this.document.typeCode === 'DATAMART') {
-                this.mode = 'registry'
-            } else if (this.document.typeCode === 'DOSSIER') {
-                this.mode = 'dossier'
-            } else if (this.document.typeCode === 'OLAP') {
-                this.mode = 'olap'
-            } else if (this.document.typeCode === 'DOCUMENT_COMPOSITE' && this.$route.path.includes('dashboard')) {
-                this.mode = 'dashboard'
-            } else {
-                this.mode = 'iframe'
-            }
+            if (this.document.typeCode === 'DATAMART') this.mode = 'registry'
+            else if (this.document.typeCode === 'DOSSIER') this.mode = 'dossier'
+            else if (this.document.typeCode === 'OLAP') this.mode = 'olap'
+            else if (this.document.typeCode === 'DOCUMENT_COMPOSITE' && this.$route.path.includes('dashboard')) this.mode = 'dashboard'
+            else this.mode = 'iframe'
         },
         async loadDocument() {
             await this.$http.get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/documents/${this.document?.label}`).then((response: AxiosResponse<any>) => (this.document = response.data))
-
             const index = this.breadcrumbs.findIndex((el: any) => el.label === this.document.name)
-            if (index !== -1) {
-                this.breadcrumbs[index].document = this.document
-            } else {
-                this.breadcrumbs.push({
-                    label: this.document.name,
-                    document: this.document
-                })
-            }
-        },
-        async loadFilters(initialLoading = false) {
-            if (this.parameterValuesMap && this.parameterValuesMap[this.document.label + '-' + this.tabKey] && initialLoading) {
-                this.filtersData = this.parameterValuesMap[this.document.label + '-' + this.tabKey]
-                this.setFiltersForBreadcrumbItem()
-                return
-            }
-
-            if (this.sessionEnabled && !this.document.navigationParams) {
-                const tempFilters = sessionStorage.getItem(this.document.label)
-                if (tempFilters) {
-                    this.filtersData = JSON.parse(tempFilters) as {
-                        filterStatus: iParameter[]
-                        isReadyForExecution: boolean
-                    }
-                    this.filtersData.filterStatus?.forEach((filter: any) => {
-                        if (filter.type === 'DATE' && filter.parameterValue[0].value) {
-                            filter.parameterValue[0].value = new Date(filter.parameterValue[0].value)
-                        }
-                    })
-                    this.setFiltersForBreadcrumbItem()
-                    return
-                }
-            }
-
-            await this.$http
-                .post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/documentexecution/filters`, {
-                    label: this.document.label,
-                    role: this.userRole,
-                    parameters: this.document.navigationParams ?? {}
-                })
-                .then((response: AxiosResponse<any>) => {
-                    this.filtersData = response.data
-                })
-                .catch((error: any) => {
-                    if (error.response?.status === 500) {
-                        this.setError({
-                            title: this.$t('common.error.generic'),
-                            msg: this.$t('documentExecution.main.userRoleError')
-                        })
-                    }
-                })
-
-            this.filtersData?.filterStatus?.forEach((el: iParameter) => {
-                el.parameterValue = !el.multivalue || (el.typeCode === 'MAN_IN' && !el.selectionType) ? [{ value: '', description: '' }] : []
-                if (el.driverDefaultValue?.length > 0) {
-                    let valueIndex = '_col0'
-                    let descriptionIndex = 'col1'
-                    if (el.metadata?.colsMap) {
-                        valueIndex = Object.keys(el.metadata?.colsMap).find((key: string) => el.metadata.colsMap[key] === el.metadata.valueColumn) as any
-                        descriptionIndex = Object.keys(el.metadata?.colsMap).find((key: string) => el.metadata.colsMap[key] === el.metadata.descriptionColumn) as any
-                    }
-
-                    el.parameterValue = el.driverDefaultValue.map((defaultValue: any) => {
-                        return {
-                            value: defaultValue.value ?? defaultValue[valueIndex],
-                            description: defaultValue.desc ?? defaultValue[descriptionIndex]
-                        }
-                    })
-
-                    if (el.type === 'DATE' && !el.selectionType && el.valueSelection === 'man_in' && el.showOnPanel === 'true' && el.visible) {
-                        el.parameterValue[0].value = moment(el.parameterValue[0].description?.split('#')[0]).toDate() as any
-                    }
-                }
-                if (el.data) {
-                    el.data = el.data.map((data: any) => {
-                        return this.formatParameterDataOptions(el, data)
-                    })
-
-                    if (el.data.length === 1) {
-                        el.parameterValue = [...el.data]
-                    }
-                }
-                if ((el.selectionType === 'COMBOBOX' || el.selectionType === 'LIST') && el.multivalue && el.mandatory && el.data.length === 1) {
-                    el.showOnPanel = 'false'
-                    el.visible = false
-                }
-
-                if (!el.parameterValue) {
-                    el.parameterValue = [{ value: '', description: '' }]
-                }
-
-                if (el.parameterValue[0] && !el.parameterValue[0].description) {
-                    el.parameterValue[0].description = el.parameterDescription ? el.parameterDescription[0] : ''
-                }
-            })
-
-            if (this.document.navigationParams) {
-                loadNavigationParamsInitialValue(this)
-            }
-
-            this.setFiltersForBreadcrumbItem()
-        },
-        setFiltersForBreadcrumbItem() {
-            const index = this.breadcrumbs.findIndex((el: any) => el.label === this.document.name)
-            if (index !== -1) this.breadcrumbs[index].filtersData = this.filtersData
-        },
-        formatParameterDataOptions(parameter: iParameter, data: any) {
-            if (!parameter.metadata) return { value: data['_col0'] ? data['_col0'] : '', description: data['_col1'] ? data['_col1'] : '' }
-            const valueColumn = parameter.metadata.valueColumn
-            const descriptionColumn = parameter.metadata.descriptionColumn
-            const valueIndex = Object.keys(parameter.metadata.colsMap).find((key: string) => parameter.metadata.colsMap[key] === valueColumn)
-            const descriptionIndex = Object.keys(parameter.metadata.colsMap).find((key: string) => parameter.metadata.colsMap[key] === descriptionColumn)
-
-            return {
-                value: valueIndex ? data[valueIndex] : '',
-                description: descriptionIndex ? data[descriptionIndex] : ''
-            }
+            index !== -1
+                ? (this.breadcrumbs[index].document = this.document)
+                : this.breadcrumbs.push({
+                      label: this.document.name,
+                      document: this.document
+                  })
         },
         async loadURL(olapParameters: any, documentLabel: string | null = null, crossNavigationPopupMode = false) {
             let error = false
@@ -680,15 +589,8 @@ export default defineComponent({
                 IS_FOR_EXPORT: true,
                 SBI_EXECUTION_ID: ''
             } as any
-
-            if (this.sbiExecutionId) {
-                postData.SBI_EXECUTION_ID = this.sbiExecutionId
-            }
-
-            if (this.document.typeCode === 'MAP') {
-                postData.EDIT_MODE = 'edit_map'
-            }
-
+            if (this.sbiExecutionId) postData.SBI_EXECUTION_ID = this.sbiExecutionId
+            if (this.document.typeCode === 'MAP') postData.EDIT_MODE = 'edit_map'
             await this.$http
                 .post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `1.0/documentexecution/url`, postData)
                 .then((response: AxiosResponse<any>) => {
@@ -707,9 +609,7 @@ export default defineComponent({
                 this.breadcrumbs[index].urlData = this.urlData
                 this.sbiExecutionId = this.urlData?.sbiExecutionId as string
             }
-
             if (error) return
-
             await this.sendForm(documentLabel, crossNavigationPopupMode)
         },
         async loadExporters() {
@@ -718,7 +618,6 @@ export default defineComponent({
         },
         async sendForm(documentLabel: string | null = null, crossNavigationPopupMode = false) {
             const tempIndex = this.breadcrumbs.findIndex((el: any) => el.label === this.document.name) as any
-
             const documentUrl = this.urlData?.url + '&timereloadurl=' + new Date().getTime()
             const postObject = {
                 params: { document: null } as any,
@@ -731,15 +630,11 @@ export default defineComponent({
             const paramsFromUrl = documentUrl?.split('?')[1]?.split('&')
 
             for (const i in paramsFromUrl) {
-                if (typeof paramsFromUrl !== 'function') {
-                    postObject.params[paramsFromUrl[i].split('=')[0]] = paramsFromUrl[i].split('=')[1]
-                }
+                if (typeof paramsFromUrl !== 'function') postObject.params[paramsFromUrl[i].split('=')[0]] = paramsFromUrl[i].split('=')[1]
             }
 
             let postForm = document.getElementById('postForm_' + postObject.params.document) as any
-            if (!postForm) {
-                postForm = document.createElement('form')
-            }
+            if (!postForm) postForm = document.createElement('form')
             postForm.id = 'postForm_' + postObject.params.document
             postForm.action = import.meta.env.VITE_HOST_URL + postObject.url
             postForm.method = 'post'
@@ -755,7 +650,6 @@ export default defineComponent({
                 if (inputElement) {
                     inputElement.value = decodeURIComponent(postObject.params[k])
                     inputElement.value = inputElement.value.replace(/\+/g, ' ')
-
                     this.hiddenFormData.set(k, decodeURIComponent(postObject.params[k]).replace(/\+/g, ' '))
                 } else {
                     const element = document.createElement('input')
@@ -764,7 +658,6 @@ export default defineComponent({
                     element.name = k
                     element.value = decodeURIComponent(postObject.params[k])
                     element.value = element.value.replace(/\+/g, ' ')
-
                     postForm.appendChild(element)
                     this.hiddenFormData.append(k, decodeURIComponent(postObject.params[k]).replace(/\+/g, ' '))
                 }
@@ -772,21 +665,14 @@ export default defineComponent({
 
             for (let i = postForm.elements.length - 1; i >= 0; i--) {
                 const postFormElement = postForm.elements[i].id.replace('postForm_' + postObject.params.document, '')
-
                 if (!(postFormElement in postObject.params)) {
                     postForm.removeChild(postForm.elements[i])
                     this.hiddenFormData.delete(postFormElement)
                 }
             }
-
             this.hiddenFormData.append('documentMode', this.documentMode)
 
-            if (this.document.typeCode === 'DATAMART' || this.document.typeCode === 'DOSSIER' || this.document.typeCode === 'OLAP' || (this.document.typeCode === 'DOCUMENT_COMPOSITE' && this.mode === 'dashboard')) {
-                await this.sendHiddenFormData()
-            } else {
-                postForm.submit()
-            }
-
+            this.document.typeCode === 'DATAMART' || this.document.typeCode === 'DOSSIER' || this.document.typeCode === 'OLAP' || (this.document.typeCode === 'DOCUMENT_COMPOSITE' && this.mode === 'dashboard') ? await this.sendHiddenFormData() : postForm.submit()
             const index = this.breadcrumbs.findIndex((el: any) => el.label === this.document.name)
             if (index !== -1) this.breadcrumbs[index].hiddenFormData = this.hiddenFormData
         },
@@ -807,29 +693,23 @@ export default defineComponent({
             await this.loadURL(null)
             this.parameterSidebarVisible = false
             this.reloadTrigger = !this.reloadTrigger
-
             if (!this.exporters || this.exporters.length === 0) {
                 await this.loadExporters()
                 const index = this.toolbarMenuItems.findIndex((item: any) => item.label === this.$t('common.export'))
-                if (index === -1) {
-                    this.toolbarMenuItems.splice(1, 0, {
-                        label: this.$t('common.export'),
-                        items: []
-                    })
-                } else {
-                    this.exporters?.forEach((exporter: any) =>
-                        this.toolbarMenuItems[index].items.push({
-                            icon: 'fa fa-file-excel',
-                            label: exporter.name,
-                            command: () => this.export(exporter.name)
-                        })
-                    )
-                }
+                index === -1
+                    ? this.toolbarMenuItems.splice(1, 0, {
+                          label: this.$t('common.export'),
+                          items: []
+                      })
+                    : this.exporters?.forEach((exporter: any) =>
+                          this.toolbarMenuItems[index].items.push({
+                              icon: 'fa fa-file-excel',
+                              label: exporter.name,
+                              command: () => this.export(exporter.name)
+                          })
+                      )
             }
-
-            if (this.sessionEnabled) {
-                this.saveParametersInSession()
-            }
+            if (this.sessionEnabled) this.saveParametersInSession()
             this.loading = false
         },
         async onExportCSV() {
@@ -842,25 +722,20 @@ export default defineComponent({
             this.loading = true
             await this.$http
                 .post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/export/cockpitData`, postData)
-                .then(() => {
+                .then(() =>
                     this.setInfo({
                         title: this.$t('common.toast.updateTitle'),
                         msg: this.$t('common.exportSuccess')
                     })
-                })
+                )
                 .catch(() => {})
             this.loading = false
         },
         getFormattedParameters() {
-            if (!this.filtersData || !this.filtersData.filterStatus) {
-                return {}
-            }
-
+            if (!this.filtersData || !this.filtersData.filterStatus) return {}
             const parameters = {} as any
-
             Object.keys(this.filtersData.filterStatus).forEach((key: any) => {
                 const parameter = this.filtersData.filterStatus[key]
-
                 if (parameter.parameterValue) {
                     if (parameter.type === 'DATE' && parameter.parameterValue[0] && parameter.parameterValue[0].value) {
                         parameters[parameter.urlName] = this.getFormattedDate(parameter.parameterValue[0].value)
@@ -883,22 +758,18 @@ export default defineComponent({
                     }
                 }
             })
-
             return parameters
         },
         getFormattedParametersForCSVExport() {
             if (!this.filtersData) return {}
-
             const parameters = {} as any
-
             Object.keys(this.filtersData.filterStatus).forEach((key: any) => {
                 const parameter = this.filtersData.filterStatus[key]
-
                 if (parameter.parameterValue) {
                     if (parameter.type === 'DATE') {
                         parameters[parameter.urlName] = this.getFormattedDate(parameter.parameterValue[0].value)
                     } else if (parameter.valueSelection === 'man_in' && !parameter.multivalue) {
-                        parameters[parameter.urlName] = parameter.type === 'NUM' ? +parameter.parameterValue[0].value : parameter.parameterValue[0].value
+                        parameters[parameter.urlName] = parameter.type === 'NUM' && parameter.parameterValue[0].value ? +parameter.parameterValue[0].value : parameter.parameterValue[0].value
                     } else if (parameter.selectionType === 'TREE' || parameter.selectionType === 'LOOKUP' || parameter.multivalue) {
                         let tempString = ''
                         for (let i = 0; i < parameter.parameterValue.length; i++) {
@@ -911,7 +782,6 @@ export default defineComponent({
                     }
                 }
             })
-
             return parameters
         },
         async getRank() {
@@ -919,12 +789,7 @@ export default defineComponent({
             await this.$http
                 .post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `documentrating/getvote`, { obj: this.document.id })
                 .then((response: AxiosResponse<any>) => (this.documentRank = response.data))
-                .catch((error: any) =>
-                    this.setError({
-                        title: this.$t('common.error.generic'),
-                        msg: error
-                    })
-                )
+                .catch((error: any) => this.setError({ title: this.$t('common.error.generic'), msg: error }))
             this.loading = false
         },
         async onSaveRank(newRank: any) {
@@ -960,7 +825,6 @@ export default defineComponent({
                     }
                 })
             )
-
             await this.$http
                 .post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `1.0/documentexecutionee/saveDocumentMetadata`, { id: this.document.id, jsonMeta: jsonMeta })
                 .then(() => {
@@ -991,12 +855,7 @@ export default defineComponent({
                     })
                     this.mailDialogVisible = false
                 })
-                .catch((error: any) => {
-                    this.setError({
-                        title: this.$t('common.error.generic'),
-                        msg: error
-                    })
-                })
+                .catch((error: any) => this.setError({ title: this.$t('common.error.generic'), msg: error }))
             this.loading = false
         },
         async onDeleteSchedulation(schedulation: any) {
@@ -1022,11 +881,13 @@ export default defineComponent({
             return luxonFormatDate(date, format, useDefaultFormat ? undefined : this.configurations['SPAGOBI.DATE-FORMAT-SERVER.format'])
         },
         async onBreadcrumbClick(item: any) {
+            if (!item) return
             this.document = item.document
             this.filtersData = item.filtersData
             this.urlData = item.urlData
             this.hiddenFormData = item.hiddenFormData
             this.documentMode = 'VIEW'
+            this.parameterSidebarVisible = !this.filtersData || this.filtersData.isReadyForExecution === false
             this.updateMode()
         },
         async onRoleChange(role: string) {
@@ -1038,194 +899,6 @@ export default defineComponent({
             this.urlData = null
             this.exporters = null
             await this.loadPage()
-        },
-        async executeCrossNavigation(event: any) {
-            this.angularData = event.data
-            await this.loadCrossNavigationByDocument(event.data)
-        },
-        async loadCrossNavigationByDocument(angularData: any) {
-            if (!this.document) return
-
-            let temp = {} as any
-
-            this.loading = true
-            await this.$http.get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `1.0/crossNavigation/${this.document.label}/loadCrossNavigationByDocument`).then((response: AxiosResponse<any>) => (temp = response.data))
-            this.loading = false
-
-            if (temp.length === 0) return
-
-            const crossTarget = findCrossTargetByCrossName(angularData, temp)
-
-            if (!crossTarget && temp.length > 1) {
-                this.crossNavigationDocuments = temp
-                this.destinationSelectDialogVisible = true
-            } else {
-                this.loadCrossNavigation(crossTarget ?? temp[0], angularData)
-            }
-        },
-        async loadCrossNavigation(crossNavigationDocument: any, angularData: any) {
-            this.formatAngularOutputParameters(angularData.otherOutputParameters)
-            const navigationParams = this.formatNavigationParams(angularData.otherOutputParameters, crossNavigationDocument ? crossNavigationDocument.navigationParams : [])
-            this.addDocumentOtherParametersToNavigationParamas(navigationParams, angularData, crossNavigationDocument)
-
-            const popupOptions = crossNavigationDocument?.popupOptions ? JSON.parse(crossNavigationDocument.popupOptions) : null
-
-            this.checkIfParameterHasFixedValue(navigationParams, crossNavigationDocument)
-
-            if (crossNavigationDocument?.crossType !== 2) {
-                this.document = {
-                    ...crossNavigationDocument?.document,
-                    navigationParams: navigationParams
-                }
-            }
-
-            if (crossNavigationDocument?.crossType === 2) {
-                this.openCrossNavigationInNewWindow(popupOptions, crossNavigationDocument, navigationParams)
-            } else if (crossNavigationDocument?.crossType === 1) {
-                const documentLabel = crossNavigationDocument?.document.label
-                this.crossNavigationContainerData = {
-                    documentLabel: documentLabel,
-                    iFrameName: documentLabel
-                }
-                this.crossNavigationContainerVisible = true
-                await this.loadPage(false, documentLabel, true)
-            } else {
-                const index = this.breadcrumbs.findIndex((el: any) => el.label === this.document.name)
-                if (index !== -1) {
-                    this.breadcrumbs[index].document = this.document
-                } else {
-                    this.breadcrumbs.push({
-                        label: this.document.name,
-                        document: this.document,
-                        crossBreadcrumb: this.getCrossBeadcrumb(crossNavigationDocument, angularData)
-                    })
-                }
-
-                await this.loadPage()
-            }
-            this.documentMode = 'VIEW'
-        },
-        checkIfParameterHasFixedValue(navigationParams: any, crossNavigationDocument: any) {
-            if (!crossNavigationDocument || !crossNavigationDocument.navigationParams) return
-            Object.keys(crossNavigationDocument.navigationParams).forEach((key: string) => {
-                const tempParam = crossNavigationDocument.navigationParams[key]
-                if (tempParam.fixed) {
-                    navigationParams[key] = tempParam.value
-                    navigationParams[key + '_field_visible_description'] = tempParam.value
-                }
-            })
-        },
-        getCrossBeadcrumb(crossNavigationDocument: any, angularData: any) {
-            let tempCrossBreadcrumb = crossNavigationDocument?.crossBreadcrumb
-            if (tempCrossBreadcrumb?.includes('$P{')) {
-                tempCrossBreadcrumb = this.updateCrossBreadCrumbWithParameterValues(tempCrossBreadcrumb, angularData)
-            }
-
-            return tempCrossBreadcrumb ?? this.document.name
-        },
-        updateCrossBreadCrumbWithParameterValues(tempCrossBreadcrumb: string, angularData: any) {
-            const parameterPlaceholders = tempCrossBreadcrumb.match(/{[\w\d]+}/g)
-            if (!parameterPlaceholders) return ''
-            const parameters = angularData.outputParameters
-            for (let i = 0; i < angularData.otherOutputParameters.length; i++) {
-                const key = Object.keys(angularData.otherOutputParameters[i])[0]
-                parameters[key] = angularData.otherOutputParameters[i][key]
-            }
-            const temp = [] as any[]
-            for (let i = 0; i < parameterPlaceholders.length; i++) {
-                const tempParameterName = parameterPlaceholders[i].substring(1, parameterPlaceholders[i].length - 1)
-                temp.push({
-                    parameterPlaceholder: parameterPlaceholders[i],
-                    value: parameters[tempParameterName]
-                })
-            }
-            let finalString = tempCrossBreadcrumb
-            for (let i = 0; i < temp.length; i++) {
-                finalString = finalString.replaceAll('$P' + temp[i].parameterPlaceholder, temp[i].value)
-            }
-
-            return finalString
-        },
-        addDocumentOtherParametersToNavigationParamas(navigationParams: any[], angularData: any, crossNavigationDocument: any) {
-            if (!angularData.outputParameters || angularData.outputParameters.length === 0 || !crossNavigationDocument?.navigationParams) return
-            const keys = Object.keys(angularData.outputParameters)
-            const documentNavigationParamsKeys = Object.keys(crossNavigationDocument.navigationParams)
-            for (let i = 0; i < keys.length; i++) {
-                const tempKey = keys[i]
-                let newKey = ''
-                for (let j = 0; j < documentNavigationParamsKeys.length; j++) {
-                    if (crossNavigationDocument.navigationParams[documentNavigationParamsKeys[j]].value?.label === tempKey) {
-                        newKey = documentNavigationParamsKeys[j]
-                    }
-                }
-                if (newKey) navigationParams[newKey] = angularData.outputParameters[tempKey]
-            }
-
-            this.addSourceDocumentParameterValuesFromDocumentNavigationParameters(navigationParams, crossNavigationDocument)
-        },
-        addSourceDocumentParameterValuesFromDocumentNavigationParameters(navigationParams: any[], crossNavigationDocument: any) {
-            const documentNavigationParamsKeys = Object.keys(crossNavigationDocument.navigationParams)
-            documentNavigationParamsKeys.forEach((key: string) => {
-                if (!navigationParams[key]) {
-                    const sourceParameter = this.filtersData.filterStatus.find((parameter: iParameter) => {
-                        return parameter.urlName === crossNavigationDocument.navigationParams[key].value.label
-                    })
-                    if (sourceParameter) {
-                        navigationParams[key] = sourceParameter.parameterValue[0].value ?? ''
-                        navigationParams[key + '_field_visible_description'] = sourceParameter.parameterValue[0].description ?? ''
-                    }
-                }
-            })
-        },
-        openCrossNavigationInNewWindow(popupOptions: any, crossNavigationDocument: any, navigationParams: any) {
-            if (!crossNavigationDocument || !crossNavigationDocument.document) return
-            const parameters = encodeURI(JSON.stringify(navigationParams))
-            const url =
-                import.meta.env.VITE_HOST_URL +
-                `/knowage/restful-services/publish?PUBLISHER=documentExecutionNg&OBJECT_ID=${crossNavigationDocument.document.id}&OBJECT_LABEL=${crossNavigationDocument.document.label}&SELECTED_ROLE=${this.sessionRole}&SBI_EXECUTION_ID=null&OBJECT_NAME=${crossNavigationDocument.document.name}&CROSS_PARAMETER=${parameters}`
-            window.open(url, '_blank', `toolbar=0,status=0,menubar=0,width=${popupOptions.width || '800'},height=${popupOptions.height || '600'}`)
-        },
-        formatAngularOutputParameters(otherOutputParameters: any[]) {
-            const startDocumentInputParameters = deepcopy(this.document.drivers)
-            const keys = [] as any[]
-            otherOutputParameters.forEach((parameter: any) => keys.push(Object.keys(parameter)[0]))
-            for (let i = 0; i < startDocumentInputParameters.length; i++) {
-                if (!keys.includes(startDocumentInputParameters[i].label)) {
-                    const tempObject = {} as any
-                    tempObject[startDocumentInputParameters[i].label] = this.getParameterValueForCrossNavigation(startDocumentInputParameters[i].label)
-                    otherOutputParameters.push(tempObject)
-                }
-            }
-        },
-        getParameterValueForCrossNavigation(parameterLabel: string) {
-            if (!parameterLabel) return
-            const index = this.filtersData.filterStatus?.findIndex((param: any) => param.label === parameterLabel)
-            return index !== -1 ? this.filtersData.filterStatus[index].parameterValue[0].value : ''
-        },
-        formatNavigationParams(otherOutputParameters: any[], navigationParams: any) {
-            const formatedParams = {} as any
-
-            otherOutputParameters.forEach((el: any) => {
-                let found = false
-                let label = ''
-
-                for (let i = 0; i < Object.keys(navigationParams).length; i++) {
-                    if (navigationParams[Object.keys(navigationParams)[i]].value.label === Object.keys(el)[0]) {
-                        found = true
-                        label = Object.keys(navigationParams)[i]
-                        break
-                    }
-                }
-
-                if (found) {
-                    formatedParams[label] = el[Object.keys(el)[0]]
-                    formatedParams[label + '_field_visible_description'] = el[Object.keys(el)[0]]
-                }
-            })
-
-            this.setNavigationParametersFromCurrentFilters(formatedParams, navigationParams)
-
-            return formatedParams
         },
         setNavigationParametersFromCurrentFilters(formatedParams: any, navigationParams: any) {
             const navigationParamsKeys = navigationParams ? Object.keys(navigationParams) : []
@@ -1264,62 +937,51 @@ export default defineComponent({
                 })
                 return
             }
-
             this.document = {
                 ...temp[0].document,
                 navigationParams: this.formatOLAPNavigationParams(crossNavigationParams, temp[0].navigationParams)
             }
-
             const index = this.breadcrumbs.findIndex((el: any) => el.label === this.document.name)
-            if (index !== -1) {
-                this.breadcrumbs[index].document = this.document
-            } else {
-                this.breadcrumbs.push({
-                    label: this.document.name,
-                    document: this.document
-                })
-            }
-
+            index !== -1
+                ? (this.breadcrumbs[index].document = this.document)
+                : this.breadcrumbs.push({
+                      label: this.document.name,
+                      document: this.document
+                  })
             await this.loadPage()
             this.reloadTrigger = !this.reloadTrigger
         },
         formatOLAPNavigationParams(crossNavigationParams: any, navigationParams: any) {
             const crossNavigationParamKeys = Object.keys(crossNavigationParams)
             const formattedParams = {} as any
-
             Object.keys(navigationParams).forEach((key: string) => {
                 const index = crossNavigationParamKeys.findIndex((el: string) => el === navigationParams[key].value.label)
-                if (index !== -1) {
-                    formattedParams[key] = crossNavigationParams[crossNavigationParamKeys[index]]
-                }
+                if (index !== -1) formattedParams[key] = crossNavigationParams[crossNavigationParamKeys[index]]
             })
-
             return formattedParams
         },
         isOlapDesignerMode() {
-            if (this.$route.name === 'olap-designer') {
-                this.olapDesignerMode = true
-            }
+            if (this.$route.name === 'olap-designer') this.olapDesignerMode = true
         },
         isOrganizerEnabled() {
-            return this.user.isSuperadmin || this.user.functionalities.includes('DocumentAdminManagement') || this.user.functionalities.includes('SaveIntoFolderFunctionality')
+            return this.user.isSuperadmin || this.user.functionalities.includes(UserFunctionalitiesConstants.DOCUMENT_ADMIN_MANAGEMENT) || this.user.functionalities.includes(UserFunctionalitiesConstants.SAVE_INTO_FOLDER_FUNCTIONALITY)
         },
         async addToWorkspace() {
             this.loading = true
             await this.$http
                 .post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/organizer/documents/${this.document.id}`, {}, { headers: { 'X-Disable-Errors': 'true' } })
-                .then(() => {
+                .then(() =>
                     this.setInfo({
                         title: this.$t('common.toast.updateTitle'),
                         msg: this.$t('common.toast.success')
                     })
-                })
-                .catch((error) => {
+                )
+                .catch((error) =>
                     this.setError({
                         title: this.$t('common.toast.updateTitle'),
                         msg: error.message === 'sbi.workspace.organizer.document.addtoorganizer.error.duplicateentry' ? this.$t('documentExecution.main.addToWorkspaceError') : error.message
                     })
-                })
+                )
             this.loading = false
         },
         async loadUserConfig() {
@@ -1328,32 +990,24 @@ export default defineComponent({
         },
         saveParametersInSession() {
             const tempFilters = deepcopy(this.filtersData)
-            tempFilters.filterStatus?.forEach((filter: any) => {
-                delete filter.dataDependsOnParameters
-                delete filter.dataDependentParameters
-                delete filter.dependsOnParameters
-                delete filter.dependentParameters
-                delete filter.lovDependsOnParameters
-                delete filter.lovDependentParameters
-            })
-
+            tempFilters.filterStatus?.forEach((filter: any) => ['dataDependsOnParameters', 'dataDependentParameters', 'dependsOnParameters', 'dependentParameters', 'lovDependsOnParameters', 'lovDependentParameters'].forEach((field: string) => delete filter[field]))
             sessionStorage.setItem(this.document.label, JSON.stringify(tempFilters))
         },
         async onCrossNavigationSelected(event: any) {
             this.destinationSelectDialogVisible = false
-            await this.loadCrossNavigation(event, this.angularData)
+            this.angularData ? await loadCrossNavigation(this, event, this.angularData) : this.getDocumentAfterCrossNavigationIsSelected(event)
         },
         onCrossNavigationContainerClose() {
             this.crossNavigationContainerData = null
-            this.crossNavigationContainerVisible = true
+            this.crossNavigationContainerVisible = false
             this.onBreadcrumbClick(this.breadcrumbs[0])
         },
         addWidget() {
-            emitter.emit('openNewWidgetPicker')
+            emitter.emit('openNewWidgetPicker', this.document.dashboardId)
         },
         openDashboardDatasetManagement() {
             this.managementOpened = true
-            emitter.emit('openDatasetManagement')
+            emitter.emit('openDatasetManagement', this.document.dashboardId)
         },
         setEventListeners() {
             emitter.on('datasetManagementClosed', this.onDatasetManagementClosed)
@@ -1381,42 +1035,101 @@ export default defineComponent({
         },
         openDashboardGeneralSettings() {
             this.dashboardGeneralSettingsOpened = true
-            emitter.emit('openDashboardGeneralSettings')
+            emitter.emit('openDashboardGeneralSettings', this.document.dashboardId)
         },
         saveDashboard() {
-            emitter.emit('saveDashboard')
+            emitter.emit('saveDashboard', this.document.dashboardId)
         },
         async onNewDashboardSaved(document: { name: string; label: string }) {
+            if (this.breadcrumbs[0]) this.breadcrumbs[0].label = document.name
             this.document.label = document.label
             await this.loadDocument()
-
             this.userRole = this.user.sessionRole !== this.$t('role.defaultRolePlaceholder') ? this.user.sessionRole : null
-
-            if (this.userRole) {
-                await this.loadPage(true)
-            } else {
-                this.parameterSidebarVisible = true
-            }
+            this.userRole ? await this.loadPage(true) : (this.parameterSidebarVisible = true)
             this.newDashboardMode = false
+        },
+        async onExecuteCrossNavigation(payload: { documentCrossNavigationOutputParameters: ICrossNavigationParameter[]; crossNavigationName: string | undefined; crossNavigations: IDashboardCrossNavigation[] }) {
+            this.crossNavigationPayload = payload
+            if (payload.crossNavigations.length === 0) {
+                this.setError({
+                    title: this.$t('common.error.generic'),
+                    msg: this.$t('documentExecution.main.crossNavigationError')
+                })
+                return
+            }
+            const selectedCrossNavigation = getSelectedCrossNavigation(payload.crossNavigationName, payload.crossNavigations)
+            if (!selectedCrossNavigation) {
+                this.crossNavigationDocuments = payload.crossNavigations
+                this.destinationSelectDialogVisible = true
+                return
+            }
+
+            this.executeCrossNavigation(selectedCrossNavigation, payload.documentCrossNavigationOutputParameters)
+        },
+        async getDocumentAfterCrossNavigationIsSelected(crossNavigation: IDashboardCrossNavigation) {
+            const documentCrossNavigationParameters = this.crossNavigationPayload ? this.crossNavigationPayload.documentCrossNavigationOutputParameters : []
+            this.executeCrossNavigation(crossNavigation, documentCrossNavigationParameters)
+        },
+        async executeCrossNavigation(crossNavigation: IDashboardCrossNavigation, documentCrossNavigationParameters: ICrossNavigationParameter[]) {
+            if (crossNavigation.crossType === 2) {
+                const tempDocument = getDocumentForCrossNavigation(documentCrossNavigationParameters, this.filtersData, crossNavigation)
+                this.openCrossNavigationInNewWindow(tempDocument, crossNavigation)
+            } else if (crossNavigation.crossType === 1) {
+                this.crossNavigationPopupDialogDocument = getDocumentForCrossNavigation(documentCrossNavigationParameters, this.filtersData, crossNavigation)
+                this.crossNavigationDialogVisible = true
+            } else {
+                this.document = getDocumentForCrossNavigation(documentCrossNavigationParameters, this.filtersData, crossNavigation)
+                updateBreadcrumbForCrossNavigation(this.breadcrumbs, this.document)
+                await this.loadPage(false, this.document.dsLabel, false)
+            }
+        },
+        openCrossNavigationInNewWindow(tempDocument: any, crossNavigation: IDashboardCrossNavigation) {
+            const parameters = encodeURI(JSON.stringify(tempDocument.formattedCrossNavigationParameters))
+            const url = import.meta.env.VITE_HOST_URL + `/knowage-vue/document-browser/dashboard/${this.document.label}?role=${this.userRole}&crossNavigationParameters=${parameters}`
+            const popupOptions = crossNavigation.popupOptions ?? {
+                width: '800',
+                height: '600'
+            }
+            window.open(url, '_blank', `toolbar=0,status=0,menubar=0,width=${popupOptions.width},height=${popupOptions.height}`)
+        },
+        onCrossNavigationPopupClose() {
+            this.crossNavigationPopupDialogDocument = null
+            this.crossNavigationDialogVisible = false
+            this.onBreadcrumbClick(this.breadcrumbs[this.breadcrumbs.length - 1])
+        },
+        onSetDashboardId(event: any, breadcrumb: ICrossNavigationBreadcrumb) {
+            breadcrumb.document.dashboardId = event
+            this.document.dashboardId = event
         }
     }
 })
 </script>
 
 <style lang="scss">
-#document-execution-view {
+.document-execution-view {
     position: relative;
     height: 100%;
     width: 100%;
 }
 
-#document-execution-backdrop {
+.document-execution-backdrop {
     background-color: rgba(33, 33, 33, 1);
     opacity: 0.48;
     z-index: 50;
     position: absolute;
     width: 100%;
     height: 100%;
+    top: 0;
+    left: 0;
+}
+
+.document-execution-backdrop-popup-dialog {
+    background-color: rgba(33, 33, 33, 1);
+    opacity: 0.48;
+    z-index: 50;
+    position: absolute;
+    width: 100%;
+    height: calc(80vh - 35px);
     top: 0;
     left: 0;
 }
@@ -1428,10 +1141,6 @@ export default defineComponent({
 .document-execution-iframe {
     width: 100%;
     height: 100%;
-}
-
-.document-execution-parameter-sidebar {
-    height: 60vh;
 }
 
 #document-execution-schedulations-table {
@@ -1453,18 +1162,18 @@ export default defineComponent({
     body * {
         visibility: hidden;
     }
-    #document-execution-view,
-    #document-execution-view * {
+    .document-execution-view,
+    .document-execution-view * {
         visibility: visible;
     }
 
-    #document-execution-view .document-execution-parameter-sidebar,
-    #document-execution-view .document-execution-parameter-sidebar *,
-    #document-execution-view #document-execution-backdrop {
+    .document-execution-view .document-execution-parameter-sidebar,
+    .document-execution-view .document-execution-parameter-sidebar *,
+    .document-execution-view .document-execution-backdrop {
         visibility: hidden;
     }
 
-    #document-execution-view {
+    .document-execution-view {
         background-color: white;
         height: 100%;
         width: 100%;

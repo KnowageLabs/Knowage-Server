@@ -17,6 +17,7 @@ export default defineComponent({
     data() {
         return {
             descriptor,
+            model: {} as IWidget,
             codeMirrorJsEditor: null as any,
             scriptOptions: {
                 cursor: true,
@@ -34,18 +35,25 @@ export default defineComponent({
         }
     },
     watch: {
+        widgetModel() {
+            this.loadModel()
+        },
         activeIndex(value: number) {
             if (value === 2 && this.codeMirrorJsEditor) setTimeout(() => this.codeMirrorJsEditor.refresh(), 100)
         }
     },
     created() {
+        this.loadModel()
         this.setupCodeMirror()
     },
     methods: {
+        loadModel() {
+            this.model = this.widgetModel
+        },
         setupCodeMirror() {
             const interval = setInterval(() => {
                 if (!this.$refs.codeMirrorJsEditor) return
-                this.code = this.widgetModel.settings.editor.js
+                this.code = this.model.settings.editor.js
                 this.codeMirrorJsEditor = (this.$refs.codeMirrorJsEditor as any).cminstance as any
                 setTimeout(() => {
                     this.codeMirrorJsEditor.refresh()
@@ -64,7 +72,7 @@ export default defineComponent({
             })
         },
         onKeyUp() {
-            this.widgetModel.settings.editor.js = this.code
+            this.model.settings.editor.js = this.code
         },
         keyAssistFunc() {
             if (this.isDatastore()) {
