@@ -31,8 +31,6 @@
         "crypto-random-string": "^5.0.0",
         "deasync": "^0.1.21",
         "deepcopy": "^2.1.0",
-        "devextreme": "22.2.4",
-        "devextreme-vue": "22.2.4",
         "fast-json-patch": "^3.1.0",
         "highcharts": "^10.3.1",
         "js-base64": "3.6.1",
