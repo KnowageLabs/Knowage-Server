@@ -1,5 +1,5 @@
-import { getFormattedStyle } from './../selectorWidget/SelectorWidgetStyleHelper';
-import { IWidget, IWidgetResponsive } from './../../Dashboard.d';
+import { getFormattedStyle } from './MapStyleHelper';
+import { IWidget, IWidgetResponsive, IWidgetExports } from './../../Dashboard.d';
 import { IMapWidgetSettings, IMapWidgetStyle } from './../../interfaces/mapWidget/DashboardMapWidget.d';
 import * as mapWidgetDefaultValues from '../../widget/WidgetEditor/helpers/mapWidget/MapWidgetDefaultValues'
 import * as widgetCommonDefaultValues from '../../widget/WidgetEditor/helpers/common/WidgetCommonDefaultValues'
@@ -44,7 +44,7 @@ const getFormattedWidgetSettings = (widget: any) => {
 
 // TODO
 const getFormattedConfiguration = (widget: any) => {
-    return {}
+    return { exports: { showExcelExport: widget.style?.showExcelExport ?? false, showScreenshot: widget.style?.showScreenshot ?? false } as IWidgetExports }
 }
 
 // TODO

@@ -1,4 +1,4 @@
-import { IWidgetInteractions, IWidgetResponsive, IWidgetTitle, IWidgetBordersStyle, IWidgetBackgroundStyle, IWidgetPaddingStyle, IWidgetShadowsStyle } from './../../Dashboard.d';
+import { IWidgetInteractions, IWidgetResponsive, IWidgetTitle, IWidgetBordersStyle, IWidgetBackgroundStyle, IWidgetPaddingStyle, IWidgetShadowsStyle, IWidgetExports } from './../../Dashboard.d';
 
 export interface IMapWidgetSettings {
     updatable: boolean
@@ -15,7 +15,7 @@ export interface IMapWidgetSettings {
 }
 
 export interface IMapWidgetConfiguration {
-    // TODO
+    exports: IWidgetExports
 }
 
 export interface IMapWidgetVisualizationSettings {
