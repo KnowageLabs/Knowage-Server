@@ -43,7 +43,7 @@ import KpiDocumentDesignerStyleCard from './KpiDocumentDesignerStyleCard/KpiDocu
 import KpiDocumentDesignerTypeCard from './KpiDocumentDesignerTypeCard/KpiDocumentDesignerTypeCard.vue'
 import KpiDocumentDesignerSaveDialog from './KpiDocumentDesignerSaveDialog/KpiDocumentDesignerSaveDialog.vue'
 import KpiDocumentDesignerScorecardsListCard from './KpiDocumentDesignerScorecardsListCard/KpiDocumentDesignerScorecardsListCard.vue'
-import { mapState } from 'pinia'
+import { mapActions, mapState } from 'pinia'
 import mainStore from '../../../App.store'
 import UserFunctionalitiesConstants from '@/UserFunctionalitiesConstants.json'
 
@@ -53,10 +53,6 @@ export default defineComponent({
     name: 'kpi-document-designer',
     components: { KpiDocumentDesignerDocumentTypeCard, KpiDocumentDesignerKpiListCard, KpiDocumentDesignerOptionsCard, KpiDocumentDesignerStyleCard, KpiDocumentDesignerTypeCard, KpiDocumentDesignerSaveDialog, KpiDocumentDesignerScorecardsListCard },
     props: { id: { type: String } },
-    setup() {
-        const store = mainStore()
-        return { store }
-    },
     data() {
         return {
             kpiDesigner: null as iKpiDesigner | null,
@@ -71,7 +67,7 @@ export default defineComponent({
             user: 'user'
         }),
         showScorecards(): boolean {
-            return (this.store.$state as any).user.functionalities.includes(UserFunctionalitiesConstants.SCORECARDS_MANAGEMENT)
+            return this.user.functionalities.includes(UserFunctionalitiesConstants.SCORECARDS_MANAGEMENT)
         },
         saveButtonDisabled(): boolean {
             return this.kpiDesigner !== null && ((this.kpiDesigner.chart.type === 'kpi' && this.kpiTypeInvalid()) || (this.kpiDesigner.chart.type === 'scorecard' && this.scorecardTypeInvalid()))
@@ -88,6 +84,7 @@ export default defineComponent({
         await this.loadPage()
     },
     methods: {
+        ...mapActions(mainStore, ['setInfo']),
         async loadPage() {
             this.loading = true
             const config = {
@@ -212,7 +209,7 @@ export default defineComponent({
             await this.$http
                 .post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/saveDocument`, postData)
                 .then((response: AxiosResponse<any>) => {
-                    this.store.setInfo({
+                    this.setInfo({
                         title: this.$t('common.toast.createTitle'),
                         msg: this.$t('common.toast.success')
                     })
@@ -235,7 +232,7 @@ export default defineComponent({
                     }
                 })
                 .then(() => {
-                    this.store.setInfo({
+                    this.setInfo({
                         title: this.$t('common.toast.updateTitle'),
                         msg: this.$t('common.toast.success')
                     })
