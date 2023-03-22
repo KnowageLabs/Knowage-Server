@@ -1,18 +1,18 @@
 <template>
     <div v-show="widgetModel">
-        <ChartJSWidgetSettingsAccordion v-show="selectedSetting" :widget-model="widgetModel" :settings="descriptor.settings[selectedSetting]" :datasets="datasets" :selected-datasets="selectedDatasets" :variables="variables" :dashboard-id="dashboardId"></ChartJSWidgetSettingsAccordion>
+        <VegaChartsSettingsAccordion v-show="selectedSetting" :widget-model="widgetModel" :settings="descriptor.settings[selectedSetting]" :datasets="datasets" :selected-datasets="selectedDatasets" :variables="variables" :dashboard-id="dashboardId"></VegaChartsSettingsAccordion>
     </div>
 </template>
 
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
 import { IWidget, IDataset, IVariable } from '@/modules/documentExecution/dashboard/Dashboard'
-import descriptor from './ChartJSWidgetSettingsDescriptor.json'
-import ChartJSWidgetSettingsAccordion from './ChartJSWidgetSettingsAccordion.vue'
+import descriptor from './VegaChartsSettingsContainerDescriptor.json'
+import VegaChartsSettingsAccordion from './VegaChartsSettingsAccordion.vue'
 
 export default defineComponent({
-    name: 'chart-js-widget-settings-container',
-    components: { ChartJSWidgetSettingsAccordion },
+    name: 'vega-charts-settings-container',
+    components: { VegaChartsSettingsAccordion },
     props: {
         widgetModel: { type: Object as PropType<IWidget>, required: true },
         selectedSetting: { type: String, required: true },

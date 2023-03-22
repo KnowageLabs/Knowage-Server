@@ -44,26 +44,18 @@ export default defineComponent({
                     return this.widgetModel.settings.style.padding
                 case 'ShadowsStyle':
                     return this.widgetModel.settings.style.shadows
-                case 'Legend':
-                    this.property = 'display'
-                    return this.widgetModel.settings.chartModel.model?.options?.plugins?.legend
                 case 'Tooltip':
                     return this.widgetModel.settings.chartModel.model?.options?.plugins?.tooltip
                 case 'Selection':
                     return this.widgetModel.settings.interactions.selection
                 case 'CrossNavigation':
                     return this.widgetModel.settings.interactions.crossNavigation
-                case 'Link':
-                    return this.widgetModel.settings.interactions.link
-                case 'Preview':
-                    return this.widgetModel.settings.interactions.preview
                 default:
                     return null
             }
         },
         onModelChange() {
             switch (this.type) {
-                case 'Legend':
                 case 'Tooltip':
                     setTimeout(() => emitter.emit('refreshChart', this.widgetModel.id), 250)
             }

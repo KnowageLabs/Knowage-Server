@@ -1,3 +1,4 @@
+import { formatVegaChartsWidget } from './chartWidget/vega/VegaChartsCompatibilityHelper';
 import { formatMapWidget } from './mapWidget/MapCompatibilityHelper';
 import { formatTableWidget } from './tableWidget/TableWidgetCompatibilityHelper'
 import { formatSelectorWidget } from '@/modules/documentExecution/dashboard/helpers/selectorWidget/SelectorWidgetCompatibilityHelper'
@@ -194,7 +195,6 @@ const checkIfWidgetInModel = (widget: any, formattedModel: any) => {
 
 export const formatWidget = (widget: any, formattedModel: IDashboard, user: any, drivers: IDashboardDriver[]) => {
     let formattedWidget = {} as any
-
     switch (widget.type) {
         case 'table':
             formattedWidget = formatTableWidget(widget, formattedModel, drivers)
@@ -212,9 +212,7 @@ export const formatWidget = (widget: any, formattedModel: IDashboard, user: any,
             formattedWidget = formatTextWidget(widget)
             break
         case 'chart':
-            // TODO widgetChange
-            formattedWidget = user?.enterprise ? formatHighchartsWidget(widget) : formatChartJSWidget(widget)
-            // formattedWidget = false ? formatHighchartsWidget(widget) : formatChartJSWidget(widget)
+            formattedWidget = getFormattedChartWidget(widget, user)
             break
         case 'image':
             formattedWidget = formatImageWidget(widget)
@@ -231,6 +229,12 @@ export const formatWidget = (widget: any, formattedModel: IDashboard, user: any,
     }
 
     return formattedWidget
+}
+
+const getFormattedChartWidget = (widget: any, user: any) => {
+    // TODO widgetChange
+    if (user?.enterprise) return widget.content?.chartTemplate?.CHART?.type === 'WORDCLOUD' ? formatVegaChartsWidget(widget) : formatHighchartsWidget(widget)
+    else return formatChartJSWidget(widget)
 }
 
 export const getFiltersForColumns = (formattedWidget: IWidget, oldWidget: any) => {

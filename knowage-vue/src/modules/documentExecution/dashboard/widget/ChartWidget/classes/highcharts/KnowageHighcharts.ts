@@ -15,9 +15,9 @@ export class KnowageHighcharts {
     }
 
     async updateCardinality(data: any) {
-        let cardinalityObj = {}
+        const cardinalityObj = {}
         this.model.settings.categories.forEach((category) => {
-            let tempCategory = data.metaData.fields.filter((i) => i.header === category)
+            const tempCategory = data.metaData.fields.filter((i) => i.header === category)
             if (tempCategory.length > 0) {
                 cardinalityObj[tempCategory[0].name] = {
                     category: category,
@@ -25,13 +25,13 @@ export class KnowageHighcharts {
                 }
             }
         })
-        await data.rows.forEach((row: any, index: number) => {
-            for (let k in cardinalityObj) {
+        await data.rows.forEach((row: any) => {
+            for (const k in cardinalityObj) {
                 if (row[k]) cardinalityObj[k].set.add(row[k])
             }
         })
         this.cardinality = []
-        for (let i in cardinalityObj) {
+        for (const i in cardinalityObj) {
             this.cardinality.push({ [cardinalityObj[i].category]: cardinalityObj[i].set.size })
         }
         return this.cardinality

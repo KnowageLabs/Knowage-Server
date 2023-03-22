@@ -118,6 +118,16 @@
             :variables="variables"
             :dashboard-id="dashboardId"
         ></MapWidgetSettingsContainer>
+        <VegaChartsSettingsContainer
+            v-else-if="propWidget.type === 'vega'"
+            class="model-div kn-flex kn-overflow p-py-3 p-pr-3"
+            :widget-model="propWidget"
+            :selected-setting="selectedSetting"
+            :datasets="datasets"
+            :selected-datasets="selectedDatasets"
+            :variables="variables"
+            :dashboard-id="dashboardId"
+        ></VegaChartsSettingsContainer>
     </div>
 </template>
 
@@ -136,6 +146,7 @@ import ImageWidgetSettingsContainer from './ImageWidget/ImageWidgetSettingsConta
 import CustomChartWidgetSettingsContainer from './CustomChartWidget/CustomChartWidgetSettingsContainer.vue'
 import PivotTableWidgetSettingsContainer from './PivotTableWidget/PivotTableWidgetSettingsContainer.vue'
 import MapWidgetSettingsContainer from './MapWidget/MapWidgetSettingsContainer.vue'
+import VegaChartsSettingsContainer from './ChartWidget/vega/VegaChartsSettingsContainer.vue'
 import selectorDescriptor from './SelectorWidget/SelectorWidgetSettingsDescriptor.json'
 import selectionsDescriptor from './SelectionsWidget/SelectionsWidgetSettingsDescriptor.json'
 import WidgetEditorSettingsList from './WidgetEditorSettingsList.vue'
@@ -150,6 +161,7 @@ import imageDescriptor from './ImageWidget/ImageWidgetSettingsDescriptor.json'
 import customChartDescriptor from './CustomChartWidget/CustomChartWidgetSettingsDescriptor.json'
 import pivotTableDescriptor from './PivotTableWidget/PivotTableSettingsDescriptor.json'
 import mapWidgetDescriptor from './MapWidget/MapSettingsDescriptor.json'
+import vegaChartsDescriptor from './ChartWidget/vega/VegaChartsSettingsContainerDescriptor.json'
 import { mapState } from 'pinia'
 import mainStore from '@/App.store'
 
@@ -167,7 +179,8 @@ export default defineComponent({
         ImageWidgetSettingsContainer,
         CustomChartWidgetSettingsContainer,
         PivotTableWidgetSettingsContainer,
-        MapWidgetSettingsContainer
+        MapWidgetSettingsContainer,
+        VegaChartsSettingsContainer
     },
     props: {
         propWidget: { type: Object as PropType<IWidget>, required: true },
@@ -238,6 +251,9 @@ export default defineComponent({
                     break
                 case 'map':
                     this.descriptor = mapWidgetDescriptor
+                    break
+                case 'vega':
+                    this.descriptor = vegaChartsDescriptor
             }
         },
         getHighchartsDescriptor() {

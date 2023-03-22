@@ -3,11 +3,10 @@
         <Accordion v-model:activeIndex="activeIndex" class="widget-editor-accordion">
             <AccordionTab v-for="(accordion, index) in settings" :key="index">
                 <template #header>
-                    <ChartJSWidgetSettingsAccordionHeader :widget-model="widgetModel" :title="accordion.title" :type="accordion.type"></ChartJSWidgetSettingsAccordionHeader>
+                    <VegaChartsSettingsAccordionHeader :widget-model="widgetModel" :title="accordion.title" :type="accordion.type"></VegaChartsSettingsAccordionHeader>
                 </template>
-                <ChartJSLegendSettings v-if="accordion.type === 'Legend'" :widget-model="widgetModel"></ChartJSLegendSettings>
-                <ChartJSTooltipSettings v-else-if="accordion.type === 'Tooltip'" :widget-model="widgetModel"></ChartJSTooltipSettings>
-                <ChartColorSettings v-else-if="accordion.type === 'Colors'" :widget-model="widgetModel"></ChartColorSettings>
+
+                <ChartColorSettings v-if="accordion.type === 'Colors'" :widget-model="widgetModel"></ChartColorSettings>
                 <WidgetExport v-else-if="accordion.type === 'Export'" :widget-model="widgetModel"></WidgetExport>
                 <WidgetTitleStyle v-else-if="accordion.type === 'Title'" :widget-model="widgetModel" :toolbar-style-settings="settingsTabDescriptor.defaultToolbarStyleOptions"></WidgetTitleStyle>
                 <WidgetRowsStyle v-else-if="accordion.type === 'RowsStyle'" :widget-model="widgetModel"></WidgetRowsStyle>
@@ -30,7 +29,7 @@ import { defineComponent, PropType } from 'vue'
 import { IWidget, IDataset, IVariable } from '@/modules/documentExecution/dashboard/Dashboard'
 import Accordion from 'primevue/accordion'
 import AccordionTab from 'primevue/accordiontab'
-import descriptor from './ChartJSWidgetSettingsDescriptor.json'
+import descriptor from './VegaChartsSettingsContainerDescriptor.json'
 import settingsTabDescriptor from '../../WidgetEditorSettingsTabDescriptor.json'
 import WidgetExport from '../../common/configuration/WidgetExport.vue'
 import WidgetRowsStyle from '../../common/style/WidgetRowsStyle.vue'
@@ -44,13 +43,11 @@ import WidgetPreview from '../../common/interactions/preview/WidgetPreview.vue'
 import WidgetTitleStyle from '../../common/style/WidgetTitleStyle.vue'
 import WidgetPaddingStyle from '../../common/style/WidgetPaddingStyle.vue'
 import WidgetBackgroundColorStyle from '../../common/style/WidgetBackgroundColorStyle.vue'
-import ChartJSLegendSettings from './legend/ChartJSLegendSettings.vue'
-import ChartJSTooltipSettings from './tooltip/ChartJSTooltipSettings.vue'
 import ChartColorSettings from '../common/ChartColorSettings.vue'
-import ChartJSWidgetSettingsAccordionHeader from './ChartJSWidgetSettingsAccordionHeader.vue'
+import VegaChartsSettingsAccordionHeader from './VegaChartsSettingsAccordionHeader.vue'
 
 export default defineComponent({
-    name: 'chart-js-widget-configuration-container',
+    name: 'chart-j-s-widget-configuration-container',
     components: {
         Accordion,
         AccordionTab,
@@ -65,11 +62,9 @@ export default defineComponent({
         WidgetCrossNavigation,
         WidgetInteractionsLinks,
         WidgetPreview,
-        ChartJSLegendSettings,
-        ChartJSTooltipSettings,
         ChartColorSettings,
         WidgetSelection,
-        ChartJSWidgetSettingsAccordionHeader
+        VegaChartsSettingsAccordionHeader
     },
     props: {
         widgetModel: { type: Object as PropType<IWidget>, required: true },

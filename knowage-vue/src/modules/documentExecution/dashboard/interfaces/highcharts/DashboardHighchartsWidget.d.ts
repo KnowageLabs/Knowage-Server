@@ -1,5 +1,7 @@
+import { IHighchartsGaugeActivityTooltip, IHighchartsModelPane, IHighchartsGaugeYAxis } from './DashboardHighchartsGaugeWidget.d';
+import { IWidgetExports, IWidgetTitle, IWidgetPaddingStyle, IWidgetBordersStyle, IWidgetShadowsStyle, IWidgetBackgroundStyle } from './../../Dashboard.d';
 import { IWidgetInteractions, IWidgetResponsive } from "../../Dashboard";
-import { IHighchartsGaugeSerie, IHighchartsSeriesDialSettings, IHighchartsSeriesPivotSettings, IHighchartsSolidGaugePlotOptions } from "./DashboardHighchartsGaugeWidget";
+import { IHighchartsGaugeSerie, IHighchartsSeriesDialSettings, IHighchartsSeriesPivotSettings } from "./DashboardHighchartsGaugeWidget";
 
 export interface IHighchartsWidgetSettings {
     updatable: boolean,
