@@ -2872,4 +2872,94 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 			}
 		});
 	}
+
+	@Override
+	public Integer countCategoriesKPI(Integer catId) {
+
+		logger.debug("IN");
+		Integer resultNumber = new Integer(0);
+		Session session = null;
+		Transaction transaction = null;
+		try {
+			session = getSession();
+			transaction = session.beginTransaction();
+
+			String hql = "select count(*) from SbiKpiKpi s where s.category.id = ? ";
+			Query aQuery = session.createQuery(hql);
+			aQuery.setInteger(0, catId.intValue());
+			resultNumber = new Integer(((Long) aQuery.uniqueResult()).intValue());
+
+		} catch (Throwable t) {
+			if (transaction != null && transaction.isActive()) {
+				transaction.rollback();
+			}
+			throw new SpagoBIDAOException("Error while getting the category with the SbiKpiKpi with id " + catId, t);
+		} finally {
+			if (session != null && session.isOpen()) {
+				session.close();
+			}
+			logger.debug("OUT");
+		}
+		return resultNumber;
+
+	}
+
+	@Override
+	public Integer countCategoriesKPITarget(Integer catId) {
+		logger.debug("IN");
+		Integer resultNumber = new Integer(0);
+		Session session = null;
+		Transaction transaction = null;
+		try {
+			session = getSession();
+			transaction = session.beginTransaction();
+
+			String hql = "select count(*) from SbiKpiTarget s where s.category.id = ? ";
+			Query aQuery = session.createQuery(hql);
+			aQuery.setInteger(0, catId.intValue());
+			resultNumber = new Integer(((Long) aQuery.uniqueResult()).intValue());
+
+		} catch (Throwable t) {
+			if (transaction != null && transaction.isActive()) {
+				transaction.rollback();
+			}
+			throw new SpagoBIDAOException("Error while getting the category with the SbiKpiTarget with id " + catId, t);
+		} finally {
+			if (session != null && session.isOpen()) {
+				session.close();
+			}
+			logger.debug("OUT");
+		}
+		return resultNumber;
+	}
+
+	@Override
+	public Integer countCategoriesKPIRuleOutput(Integer catId) {
+		logger.debug("IN");
+		Integer resultNumber = new Integer(0);
+		Session session = null;
+		Transaction transaction = null;
+		try {
+			session = getSession();
+			transaction = session.beginTransaction();
+
+			String hql = "select count(*) from SbiKpiRuleOutput s where s.category.id = ? ";
+			Query aQuery = session.createQuery(hql);
+			aQuery.setInteger(0, catId.intValue());
+			resultNumber = new Integer(((Long) aQuery.uniqueResult()).intValue());
+
+		} catch (Throwable t) {
+			if (transaction != null && transaction.isActive()) {
+				transaction.rollback();
+			}
+			throw new SpagoBIDAOException("Error while getting the category with the SbiKpiRuleOutput with id " + catId, t);
+		} finally {
+			if (session != null && session.isOpen()) {
+				session.close();
+			}
+			logger.debug("OUT");
+		}
+		return resultNumber;
+	}
+
 }

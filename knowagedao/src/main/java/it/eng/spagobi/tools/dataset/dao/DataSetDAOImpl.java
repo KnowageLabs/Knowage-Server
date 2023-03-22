@@ -3049,4 +3049,34 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 		List<String> rolesByCategory = categoryDao.getRolesByCategory(categoryId).stream().map(SbiExtRoles::getName).collect(Collectors.toList());
 		return rolesByCategory;
 	}
+
+	@Override
+	public Integer countCategories(Integer catId) {
+		logger.debug("IN");
+		Integer resultNumber = new Integer(0);
+		Session session = null;
+		Transaction transaction = null;
+		try {
+			session = getSession();
+			transaction = session.beginTransaction();
+
+			String hql = "select count(*) from SbiKpiKpi s where s.category.id = ? ";
+			Query aQuery = session.createQuery(hql);
+			aQuery.setInteger(0, catId.intValue());
+			resultNumber = new Integer(((Long) aQuery.uniqueResult()).intValue());
+
+		} catch (Throwable t) {
+			if (transaction != null && transaction.isActive()) {
+				transaction.rollback();
+			}
+			throw new SpagoBIDAOException("Error while getting the category with the data set with id " + catId, t);
+		} finally {
+			if (session != null && session.isOpen()) {
+				session.close();
+			}
+			logger.debug("OUT");
+		}
+		return resultNumber;
+	}
+
 }
