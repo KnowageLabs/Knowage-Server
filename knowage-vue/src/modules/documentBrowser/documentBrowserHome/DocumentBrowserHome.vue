@@ -55,6 +55,7 @@ import DocumentBrowserDetail from './DocumentBrowserDetail.vue'
 import KnFabButton from '@/components/UI/KnFabButton.vue'
 import Menu from 'primevue/menu'
 import mainStore from '../../../App.store'
+import UserFunctionalitiesConstants from '@/UserFunctionalitiesConstants.json'
 
 export default defineComponent({
     name: 'document-browser-home',
@@ -90,10 +91,10 @@ export default defineComponent({
             return this.user?.isSuperadmin
         },
         canAddNewDocument(): boolean {
-            return this.user?.functionalities?.includes('DocumentManagement')
+            return this.user?.functionalities?.includes(UserFunctionalitiesConstants.DOCUMENT_MANAGEMENT)
         },
         hasCreateCockpitFunctionality(): boolean {
-            return this.user.functionalities?.includes('CreateCockpitFunctionality')
+            return this.user.functionalities?.includes(UserFunctionalitiesConstants.CREATE_COCKPIT_FUNCTIONALITY)
         },
         isSidebarHidden(): boolean {
             if (this.sidebarVisible) {

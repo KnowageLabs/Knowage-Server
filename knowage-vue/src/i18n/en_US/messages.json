@@ -87,6 +87,7 @@
         "exportSuccess": "The download has started in background. You will find the result file in your download page.",
         "extraLarge": "Extra Large",
         "field": "Field",
+        "fields": "Fields",
         "file": "File",
         "fileName": "File Name",
         "filterBy": "Filter by",
@@ -678,6 +679,12 @@
             "interactions": {
                 "analyticalDriver": "Analytical Driver",
                 "basicUrl": "Basic Url",
+                "chartDynamicOptions": {
+                    "categoryName": "Category name",
+                    "categoryValue": "Category value",
+                    "serieName": "Serie name",
+                    "serieValue": "Serie value"
+                },
                 "crossNavigation": "Cross-navigation",
                 "crossNavigationName": "Cross Navigation Name",
                 "directDownload": "Direct download",
@@ -724,6 +731,28 @@
             },
             "pagination": "Pagination",
             "percentage": "Percentage",
+            "pivot": {
+                "configuration": {
+                    "fieldPanel": "Field Panel",
+                    "fieldPicker": "Field Picker",
+                    "grandTotal": "Show Totals",
+                    "grandTotalLabel": "Labels for Totals",
+                    "showFieldPicker": "Show Integrated Field Picker",
+                    "subTotalLabel": "Labels for SubTotals",
+                    "subtotal": "Show Subtotals"
+                },
+                "style": {
+                    "columnHeaders": "Column Headers",
+                    "fieldHeaders": "Field Headers",
+                    "rowHeaders": "Row Headers",
+                    "subTotals": "SubTotals",
+                    "totals": "Totals"
+                }
+            },
+            "pivotColumns": "Columns",
+            "pivotData": "Data",
+            "pivotFilters": "Filters",
+            "pivotRows": "Rows",
             "precision": "Precision",
             "prefix": "Prefix",
             "recentlyUsed": "Recently Used",
@@ -983,6 +1012,7 @@
             "closeDocumentConfirmTitle": "Close Document",
             "copyLink": "Copy link",
             "copyLinkAndShare": "Copy link and share it",
+            "crossNavigationError": "No target for selected cross navigation!",
             "crossNavigationNoTargetError": "No cross navigation targets available",
             "currentRank": "Curent Rank is...",
             "customMetadata": "Custom Metadata",

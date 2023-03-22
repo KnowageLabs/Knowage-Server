@@ -6,7 +6,7 @@
     "scripts": {
         "test": "vitest",
         "coverage": "vitest run --coverage",
-        "lint": "eslint --ext .js,.vue --ignore-path .gitignore --fix src",
+        "lint": "eslint --ext .js,.vue --ignore-path .gitignore --fix src --quiet",
         "dev": "vite",
         "build": "vite build"
     },
@@ -32,6 +32,7 @@
         "deasync": "^0.1.21",
         "deepcopy": "^2.1.0",
         "fast-json-patch": "^3.1.0",
+        "highcharts": "^10.3.1",
         "js-base64": "3.6.1",
         "luxon": "^2.5.2",
         "mitt": "^3.0.0",
@@ -42,7 +43,6 @@
         "primeflex": "^2.0.0",
         "primeicons": "^5.0.0",
         "primevue": "3.17.0",
-        "highcharts": "^10.3.1",
         "qs": "^6.10.2",
         "quill": "^1.3.7",
         "reflect-metadata": "^0.1.13",

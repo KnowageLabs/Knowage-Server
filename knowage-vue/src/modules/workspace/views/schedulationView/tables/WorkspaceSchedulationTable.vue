@@ -58,6 +58,7 @@ import WorkspaceSchedulationSchedulationsTable from './WorkspaceSchedulationSche
 import workspaceSchedulationTableDescriptor from './WorkspaceSchedulationTableDescriptor.json'
 import { mapState } from 'pinia'
 import mainStore from '../../../../../App.store.js'
+import UserFunctionalitiesConstants from '@/UserFunctionalitiesConstants.json'
 
 export default defineComponent({
     name: 'workspace-schedulation-table',
@@ -78,7 +79,7 @@ export default defineComponent({
             user: 'user'
         }),
         canSeeScheduledExecutions(): any {
-            return this.user.functionalities.includes('ViewScheduledWorkspace')
+            return this.user.functionalities.includes(UserFunctionalitiesConstants.VIEW_SCHEDULED_WORKSPACE)
         }
     },
     watch: {

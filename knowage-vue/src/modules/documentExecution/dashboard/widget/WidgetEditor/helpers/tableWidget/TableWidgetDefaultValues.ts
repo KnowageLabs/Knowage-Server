@@ -1,4 +1,4 @@
-import { ITableWidgetColumnGroups, ITableWidgetColumnStyles, ITableWidgetConditionalStyle, ITableWidgetConditionalStyles, ITableWidgetCustomMessages, IWidgetExports, ITableWidgetHeaders, ITableWidgetPagination, ITableWidgetRows, IWidgetRowsStyle, IWidgetSelection, ITableWidgetSummaryRows, ITableWidgetSummaryStyle, ITableWidgetTooltipStyle, ITableWidgetVisibilityCondition, ITableWidgetVisualization, ITawbleWidgetHeadersStyle } from "../../../../Dashboard"
+import { ITableWidgetColumnGroups, ITableWidgetColumnStyles, ITableWidgetConditionalStyle, ITableWidgetConditionalStyles, ITableWidgetCustomMessages, IWidgetExports, ITableWidgetHeaders, ITableWidgetPagination, ITableWidgetRows, IWidgetRowsStyle, IWidgetSelection, ITableWidgetSummaryRows, ITableWidgetSummaryStyle, ITableWidgetTooltipStyle, ITableWidgetVisibilityCondition, ITableWidgetVisualization, ITableWidgetHeadersStyle } from "../../../../Dashboard"
 import descriptor from './TableWidgetHelpersDescriptor.json'
 import deepcopy from 'deepcopy'
 
@@ -47,7 +47,7 @@ export const getDefaultColumnStyles = () => {
 }
 
 export const getDefaultHeadersStyle = () => {
-    return deepcopy(descriptor.defaultHeadersStyle) as ITawbleWidgetHeadersStyle
+    return deepcopy(descriptor.defaultHeadersStyle) as ITableWidgetHeadersStyle
 }
 
 export const getDefaultRowsStyle = () => {

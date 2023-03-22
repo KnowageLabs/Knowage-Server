@@ -33,7 +33,8 @@ export default defineComponent({
     data() {
         return {
             selectedAssociation: null as any,
-            selectedDatasets: [] as any[]
+            selectedDatasets: [] as any[],
+            dashboardAssociations: [] as IAssociation[]
         }
     },
     watch: {
@@ -43,11 +44,18 @@ export default defineComponent({
             },
             deep: true
         },
+        dashboardAssociationsProp: {
+            handler() {
+                this.dashboardAssociations = this.dashboardAssociationsProp as IAssociation[]
+            },
+            deep: true
+        },
         selectedDatasetsProp() {
             this.loadSelectedDatasets()
         }
     },
     created() {
+        this.dashboardAssociations = this.dashboardAssociationsProp as IAssociation[]
         this.loadSelectedDatasets()
     },
     methods: {
@@ -56,7 +64,7 @@ export default defineComponent({
         },
         createNewAssociation() {
             this.selectedAssociation = { fields: [], id: cryptoRandomString({ length: 16, type: 'base64' }) } as IAssociation
-            this.dashboardAssociationsProp.push(this.selectedAssociation)
+            this.dashboardAssociations.push(this.selectedAssociation)
             this.$emit('associationSelected', this.selectedAssociation)
         },
         associationSelected(associationToSelect) {
@@ -64,13 +72,13 @@ export default defineComponent({
             this.$emit('associationSelected', associationToSelect)
         },
         deleteAssociation(associationId) {
-            const index = this.dashboardAssociationsProp.findIndex((association) => association.id === associationId)
-            if (index !== -1) this.dashboardAssociationsProp.splice(index, 1)
+            const index = this.dashboardAssociations.findIndex((association) => association.id === associationId)
+            if (index !== -1) this.dashboardAssociations.splice(index, 1)
             this.selectedAssociation = null as any
         },
         addIndexesOnAssociations() {
             const selectedFields = {}
-            this.dashboardAssociationsProp.forEach((association) => {
+            this.dashboardAssociations.forEach((association) => {
                 association.fields.reduce((obj, item) => {
                     obj[item.dataset] = obj[item.dataset] || []
                     obj[item.dataset].push(item.column)

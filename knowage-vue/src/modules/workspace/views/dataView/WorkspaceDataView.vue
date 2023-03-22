@@ -164,6 +164,7 @@ import mainStore from '../../../../App.store'
 import workspaceStore from '@/modules/workspace/Workspace.store.js'
 import { Client } from '@stomp/stompjs'
 import { getCorrectRolesForExecution } from '@/helpers/commons/roleHelper'
+import UserFunctionalitiesConstants from '@/UserFunctionalitiesConstants.json'
 
 export default defineComponent({
     components: {
@@ -198,7 +199,7 @@ export default defineComponent({
             return this.user.userId === this.selectedDataset.owner
         },
         showCkanIntegration(): any {
-            return this.user.functionalities.indexOf('CkanIntegrationFunctionality') > -1
+            return this.user.functionalities.indexOf(UserFunctionalitiesConstants.CKAN_INTEGRATION_FUNCTIONALITY) > -1
         },
         showQbeEditButton(): any {
             return this.user.userId === this.selectedDataset.owner && (this.selectedDataset.dsTypeCd == 'Federated' || this.selectedDataset.dsTypeCd == 'Qbe')
@@ -270,7 +271,7 @@ export default defineComponent({
         this.userRole = this.user.sessionRole !== this.$t('role.defaultRolePlaceholder') ? this.user.sessionRole : null
         await this.getAllData()
 
-        if (this.user?.functionalities.includes('DataPreparation')) {
+        if (this.user?.functionalities.includes(UserFunctionalitiesConstants.DATA_PREPARATION)) {
             this.events = []
             const url = new URL(window.location.origin)
             url.protocol = url.protocol.replace('http', 'ws')
@@ -317,7 +318,7 @@ export default defineComponent({
                 })
             }
 
-            this.client.onStompError = function (frame) {
+            this.client.onStompError = function(frame) {
                 // Will be invoked in case of error encountered at Broker
                 // Bad login/passcode typically will cause an error
                 // Complaint brokers will set `message` header with a brief message. Body may contain details.
@@ -344,7 +345,7 @@ export default defineComponent({
                 data: this.selectedDataset,
                 headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'X-Disable-Errors': 'true' },
 
-                transformRequest: function (obj) {
+                transformRequest: function(obj) {
                     const str = [] as any
                     for (const p in obj) str.push(encodeURIComponent(p) + '=' + encodeURIComponent(obj[p]))
                     return str.join('&')
@@ -526,7 +527,7 @@ export default defineComponent({
 
             tmp.push({ key: 3, label: this.$t('workspace.myModels.openInQBE'), icon: 'fas fa-file-circle-question', command: () => this.openQBEUponDataset(clickedDocument), visible: this.isOpenInQBEVisible(clickedDocument) })
 
-            if (this.user?.functionalities.includes('DataPreparation')) {
+            if (this.user?.functionalities.includes(UserFunctionalitiesConstants.DATA_PREPARATION)) {
                 tmp.push({ key: 4, label: this.$t('workspace.myData.openDataPreparation'), icon: 'fas fa-cogs', command: () => this.openDataPreparation(clickedDocument), visible: this.canLoadData && (this.selectedDataset.pars && this.selectedDataset.pars.length == 0) })
             }
 
@@ -604,7 +605,7 @@ export default defineComponent({
                 .catch(() => {})
 
             // listen on websocket for avro export job to be finished
-            if (this.user?.functionalities.includes('DataPreparation') && Object.keys(this.client).length > 0) this.client.publish({ destination: '/app/prepare', body: dsId })
+            if (this.user?.functionalities.includes(UserFunctionalitiesConstants.DATA_PREPARATION) && Object.keys(this.client).length > 0) this.client.publish({ destination: '/app/prepare', body: dsId })
         },
         async openDataPreparation(dataset: any) {
             this.events = []
@@ -901,7 +902,7 @@ export default defineComponent({
         }
     },
     unmounted() {
-        if (this.user?.functionalities.includes('DataPreparation') && this.client && Object.keys(this.client).length > 0) {
+        if (this.user?.functionalities.includes(UserFunctionalitiesConstants.DATA_PREPARATION) && this.client && Object.keys(this.client).length > 0) {
             this.client.deactivate()
             this.client = {}
         }

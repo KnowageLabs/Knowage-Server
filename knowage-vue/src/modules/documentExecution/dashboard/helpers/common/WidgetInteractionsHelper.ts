@@ -9,10 +9,10 @@ import mainStore from '@/App.store'
 
 export const getFormattedInteractions = (widget: any) => {
     const interactions = {} as IWidgetInteractions
-    let chartType = getChartType(widget)
-    if (['table', 'chart'].includes(widget.type) && chartType !== 'GAUGE') interactions.selection = getFormattedSelection(widget) as IWidgetSelection
-    if (['table', 'html', 'text', 'chart', 'discovery', 'image', 'customchart'].includes(widget.type)) interactions.crossNavigation = getFormattedCrossNavigation(widget) as IWidgetCrossNavigation
-    if (['table', 'chart', 'discovery'].includes(widget.type)) interactions.link = getFormattedLinkInteraction(widget) as IWidgetLinks
+    const chartType = getChartType(widget)
+    if (['table', 'chart', 'static-pivot-table'].includes(widget.type) && chartType !== 'GAUGE') interactions.selection = getFormattedSelection(widget) as IWidgetSelection
+    if (['table', 'html', 'text', 'chart', 'discovery', 'image', 'customchart', 'static-pivot-table'].includes(widget.type)) interactions.crossNavigation = getFormattedCrossNavigation(widget) as IWidgetCrossNavigation
+    if (['table', 'chart', 'discovery', 'static-pivot-table'].includes(widget.type)) interactions.link = getFormattedLinkInteraction(widget) as IWidgetLinks
     if (['table', 'html', 'text', 'chart', 'discovery', 'customchart'].includes(widget.type)) interactions.preview = getFormattedPreview(widget) as IWidgetPreview
     if (['chart'].includes(widget.type)) interactions.drilldown = { enabled: false } as IHighchartsDrilldown
     return interactions
@@ -27,6 +27,8 @@ const getFormattedSelection = (widget: any) => {
         return getFormattedTableSelection(widget)
     } else if (widget.type === 'chart') {
         return getFormattedChartSelection()
+    } else if (widget.type === 'static-pivot-table') {
+        return getFormattedPivotTableSelection()
     }
 }
 
@@ -51,36 +53,73 @@ const getFormattedChartSelection = () => {
     const store = mainStore()
     const user = store.getUser()
     // TODO widgetChange
-    return user?.enterprise ? highchartsDefaultValues.getDefaultHighchartsSelections() : chartJSDefaultValues.getDefaultChartJSSelections
-    // return false ? highchartsDefaultValues.getDefaultHighchartsSelections() : chartJSDefaultValues.getDefaultChartJSSelections()
+    return user?.enterprise ? highchartsDefaultValues.getDefaultHighchartsSelections() : chartJSDefaultValues.getDefaultChartJSSelections()
+    //  return false ? highchartsDefaultValues.getDefaultHighchartsSelections() : chartJSDefaultValues.getDefaultChartJSSelections()
+}
+
+const getFormattedPivotTableSelection = () => {
+    return { enabled: true }
 }
 
 export const getFormattedCrossNavigation = (widget: any) => {
-    if (!widget.cross || !widget.cross.cross) return widgetCommonDefaultValues.getDefaultCrossNavigation()
+    const oldCrossNavigation = getOldCrossNavigation(widget)
+    if (!oldCrossNavigation) return widgetCommonDefaultValues.getDefaultCrossNavigation()
 
+    const formattedParameters = [] as IWidgetInteractionParameter[]
+    if (oldCrossNavigation.outputParameter) addFormattedFirstCrossNavigationParameter(oldCrossNavigation, formattedParameters)
+    if (oldCrossNavigation.outputParametersList) addFormattedCrossNavigationParameters(oldCrossNavigation.outputParametersList, formattedParameters)
     return {
-        enabled: widget.cross.cross.enable,
-        type: widget.cross.cross.crossType,
-        icon: widget.cross.cross.icon ? widget.cross.cross.icon.trim() : '',
-        column: getColumnId(widget.cross.cross.column),
-        name: widget.cross.cross.crossName,
-        parameters: widget.cross.cross.outputParametersList ? getFormattedCrossNavigationParameters(widget.cross.cross.outputParametersList) : []
+        enabled: oldCrossNavigation.enable,
+        type: oldCrossNavigation.crossType,
+        icon: oldCrossNavigation.icon ? oldCrossNavigation.icon.trim() : '',
+        column: oldCrossNavigation.column,
+        name: oldCrossNavigation.crossName,
+        parameters: formattedParameters
     }
 }
 
-const getFormattedCrossNavigationParameters = (outputParameterList: any) => {
-    const formattedParameters = [] as IWidgetInteractionParameter[]
+const getOldCrossNavigation = (widget: any) => {
+    switch (widget.type) {
+        case 'chart':
+            return widget.content.cross;
+        case 'table':
+        case 'image':
+        case 'html':
+        case 'customchart':
+        case 'static-pivot-table':
+            return widget.cross.cross
+        default:
+            return widget.cross
+
+    }
+}
+
+const addFormattedFirstCrossNavigationParameter = (oldWidgetCrossNavigation: any, formattedParameters: IWidgetInteractionParameter[]) => {
+    const formattedParameter = {
+        enabled: true,
+        name: oldWidgetCrossNavigation.outputParameter,
+        type: 'dynamic',
+        value: '',
+        column: oldWidgetCrossNavigation.column,
+        dataType: oldWidgetCrossNavigation.outputParametersList[oldWidgetCrossNavigation.outputParameter].dataType
+    } as IWidgetInteractionParameter
+    delete oldWidgetCrossNavigation.outputParametersList[oldWidgetCrossNavigation.outputParameter]
+    formattedParameters.push(formattedParameter)
+}
+
+const addFormattedCrossNavigationParameters = (outputParameterList: any, formattedParameters: IWidgetInteractionParameter[]) => {
     if (outputParameterList) {
         Object.keys(outputParameterList).forEach((key: string) => {
             const tempParameter = outputParameterList[key]
             const formattedParameter = {
-                enabled: tempParameter.enabled,
+                enabled: tempParameter.enabled ?? false,
                 name: key,
-                type: tempParameter.type,
-                value: tempParameter.value
+                type: tempParameter.type ?? '',
+                value: tempParameter.value,
+                dataType: tempParameter.dataType
             } as IWidgetInteractionParameter
-            if (tempParameter) formattedParameter.column = tempParameter.column
-            if (tempParameter) formattedParameter.dataset = tempParameter.dataset
+            if (tempParameter.column) formattedParameter.column = tempParameter.column
+            if (tempParameter.dataset) formattedParameter.dataset = tempParameter.dataset
             formattedParameters.push(formattedParameter)
         })
     }

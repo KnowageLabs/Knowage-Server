@@ -101,6 +101,7 @@ import WorkspaceCockpitDialog from './dialogs/WorkspaceCockpitDialog.vue'
 import mainStore from '../../../../App.store'
 import { getCorrectRolesForExecution } from '../../../../helpers/commons/roleHelper'
 import { mapState } from 'pinia'
+import UserFunctionalitiesConstants from '@/UserFunctionalitiesConstants.json'
 
 export default defineComponent({
     name: 'workspace-analysis-view',
@@ -118,7 +119,9 @@ export default defineComponent({
             user: 'user'
         }),
         addButtonIsVisible(): boolean {
-            return this.user.functionalities.includes('CreateSelfSelviceCockpit') || this.user.functionalities.includes('CreateSelfSelviceGeoreport') || this.user.functionalities.includes('CreateSelfSelviceKpi')
+            return (
+                this.user.functionalities.includes(UserFunctionalitiesConstants.CREATE_SELF_SELVICE_COCKPIT) || this.user.functionalities.includes(UserFunctionalitiesConstants.CREATE_SELF_SELVICE_GEOREPORT) || this.user.functionalities.includes(UserFunctionalitiesConstants.CREATE_SELF_SELVICE_KPI)
+            )
         }
     },
     setup() {
@@ -367,9 +370,9 @@ export default defineComponent({
         createCreationMenuButtons() {
             this.creationMenuButtons = []
 
-            if (this.user.functionalities.includes('CreateSelfSelviceCockpit')) this.creationMenuButtons.push({ key: '0', label: this.$t('common.cockpit'), command: () => this.openCockpitDialog(), visible: true })
-            if (this.user.functionalities.includes('CreateSelfSelviceGeoreport')) this.creationMenuButtons.push({ key: '1', label: this.$t('workspace.myAnalysis.geoRef'), command: () => this.openGeoRefCreation(), visible: true })
-            if (this.user.functionalities.includes('CreateSelfSelviceKpi')) this.creationMenuButtons.push({ key: '2', label: this.$t('common.kpi'), command: () => this.openKpiDocumentDesigner(), visible: true })
+            if (this.user.functionalities.includes(UserFunctionalitiesConstants.CREATE_SELF_SELVICE_COCKPIT)) this.creationMenuButtons.push({ key: '0', label: this.$t('common.cockpit'), command: () => this.openCockpitDialog(), visible: true })
+            if (this.user.functionalities.includes(UserFunctionalitiesConstants.CREATE_SELF_SELVICE_GEOREPORT)) this.creationMenuButtons.push({ key: '1', label: this.$t('workspace.myAnalysis.geoRef'), command: () => this.openGeoRefCreation(), visible: true })
+            if (this.user.functionalities.includes(UserFunctionalitiesConstants.CREATE_SELF_SELVICE_KPI)) this.creationMenuButtons.push({ key: '2', label: this.$t('common.kpi'), command: () => this.openKpiDocumentDesigner(), visible: true })
         },
         openCockpitDialog() {
             this.cockpitDialogVisible = true

@@ -115,33 +115,16 @@ import DataPreparationAvroHandlingDialog from '@/modules/workspace/dataPreparati
 import { AxiosResponse } from 'axios'
 import DataPreparationMonitoringDialog from '@/modules/workspace/dataPreparation/DataPreparationMonitoring/DataPreparationMonitoringDialog.vue'
 import { mapState, mapActions } from 'pinia'
-
 import mainStore from '../../../../App.store'
 import workspaceStore from '@/modules/workspace/Workspace.store.js'
 import { Client } from '@stomp/stompjs'
+import UserFunctionalitiesConstants from '@/UserFunctionalitiesConstants.json'
 
 export default defineComponent({
     components: { DataTable, KnDatasetList, Column, Chip, DataPreparationMonitoringDialog, EditPreparedDatasetDialog, DetailSidebar, WorkspaceCard, KnFabButton, WorkspaceDataCloneDialog, WorkspaceWarningDialog, WorkspaceDataPreviewDialog, Message, Menu, DataPreparationAvroHandlingDialog },
     props: { toggleCardDisplay: { type: Boolean } },
     emits: ['toggleDisplayView'],
-    computed: {
-        ...mapState(mainStore, ['user']),
-        ...mapState(workspaceStore, ['dataPreparation', 'isAvroReady']),
-        isDatasetOwner(): any {
-            return this.user.userId === this.selectedDataset.owner
-        },
-        canLoadData(): any {
-            if (this.selectedDataset.actions) {
-                for (let i = 0; i < this.selectedDataset.actions.length; i++) {
-                    const action = this.selectedDataset.actions[i]
-                    if (action.name == 'loaddata') {
-                        return true
-                    }
-                }
-            }
-            return false
-        }
-    },
+
     data() {
         return {
             mainDescriptor,
@@ -173,8 +156,26 @@ export default defineComponent({
             events: [] as any
         }
     },
+    computed: {
+        ...mapState(mainStore, ['user']),
+        ...mapState(workspaceStore, ['dataPreparation', 'isAvroReady']),
+        isDatasetOwner(): any {
+            return this.user.userId === this.selectedDataset.owner
+        },
+        canLoadData(): any {
+            if (this.selectedDataset.actions) {
+                for (let i = 0; i < this.selectedDataset.actions.length; i++) {
+                    const action = this.selectedDataset.actions[i]
+                    if (action.name == 'loaddata') {
+                        return true
+                    }
+                }
+            }
+            return false
+        }
+    },
     async created() {
-        if (this.user?.functionalities.includes('DataPreparation')) {
+        if (this.user?.functionalities.includes(UserFunctionalitiesConstants.DATA_PREPARATION)) {
             this.events = []
             const url = new URL(window.location.origin)
             url.protocol = url.protocol.replace('http', 'ws')
@@ -218,7 +219,7 @@ export default defineComponent({
                     }
                 })
             }
-            this.client.onStompError = function (frame) {
+            this.client.onStompError = function(frame) {
                 // Will be invoked in case of error encountered at Broker
                 // Bad login/passcode typically will cause an error
                 // Complaint brokers will set `message` header with a brief message. Body may contain details.
@@ -233,7 +234,7 @@ export default defineComponent({
         await this.getDatasets()
     },
     unmounted() {
-        if (this.user?.functionalities.includes('DataPreparation') && this.client && Object.keys(this.client).length > 0) {
+        if (this.user?.functionalities.includes(UserFunctionalitiesConstants.DATA_PREPARATION) && this.client && Object.keys(this.client).length > 0) {
             this.client.deactivate()
             this.client = {}
             this.events = []
@@ -252,7 +253,7 @@ export default defineComponent({
                 url: import.meta.env.VITE_RESTFUL_SERVICES_PATH + 'selfservicedataset/update',
                 data: this.selectedDataset,
                 headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'X-Disable-Errors': 'true' },
-                transformRequest: function (obj) {
+                transformRequest: function(obj) {
                     const str = [] as any
                     for (const p in obj) str.push(encodeURIComponent(p) + '=' + encodeURIComponent(obj[p]))
                     return str.join('&')
@@ -312,7 +313,7 @@ export default defineComponent({
         createMenuItems(clickedDocument: any) {
             let tmp = [] as any
 
-            if (this.user?.functionalities.includes('DataPreparation')) {
+            if (this.user?.functionalities.includes(UserFunctionalitiesConstants.DATA_PREPARATION)) {
                 tmp.push(
                     { key: 1, label: this.$t('workspace.myData.openDataPreparation'), icon: 'fas fa-cogs', command: () => this.openDataPreparation(clickedDocument), visible: true },
                     { key: 2, label: this.$t('workspace.myData.monitoring'), icon: 'pi pi-chart-line', command: () => this.handleMonitoring(clickedDocument), visible: true }
@@ -405,7 +406,7 @@ export default defineComponent({
         async generateAvro(dsId: number) {
             this.pushEvent(1)
             // listen on websocket for avro export job to be finished
-            if (this.user?.functionalities.includes('DataPreparation') && this.client && Object.keys(this.client).length > 0) this.client.publish({ destination: '/app/prepare', body: dsId })
+            if (this.user?.functionalities.includes(UserFunctionalitiesConstants.DATA_PREPARATION) && this.client && Object.keys(this.client).length > 0) this.client.publish({ destination: '/app/prepare', body: dsId })
 
             // launch avro export job
             await this.$http

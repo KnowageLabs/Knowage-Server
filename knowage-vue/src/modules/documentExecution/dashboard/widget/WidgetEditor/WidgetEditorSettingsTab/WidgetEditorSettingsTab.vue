@@ -98,6 +98,16 @@
             :custom-chart-gallery-prop="customChartGalleryProp"
             @galleryItemSelected="onGalleryItemSelected"
         ></CustomChartWidgetSettingsContainer>
+        <PivotTableWidgetSettingsContainer
+            v-else-if="propWidget.type === 'static-pivot-table'"
+            class="model-div kn-flex kn-overflow p-py-3 p-pr-3"
+            :widgetModel="propWidget"
+            :selectedSetting="selectedSetting"
+            :datasets="datasets"
+            :selectedDatasets="selectedDatasets"
+            :variables="variables"
+            :dashboardId="dashboardId"
+        ></PivotTableWidgetSettingsContainer>
     </div>
 </template>
 
@@ -114,6 +124,7 @@ import HighchartsWidgetSettingsContainer from './ChartWidget/highcharts/Highchar
 import ChartJSWidgetSettingsContainer from './ChartWidget/chartJS/ChartJSWidgetSettingsContainer.vue'
 import ImageWidgetSettingsContainer from './ImageWidget/ImageWidgetSettingsContainer.vue'
 import CustomChartWidgetSettingsContainer from './CustomChartWidget/CustomChartWidgetSettingsContainer.vue'
+import PivotTableWidgetSettingsContainer from './PivotTableWidget/PivotTableWidgetSettingsContainer.vue'
 import selectorDescriptor from './SelectorWidget/SelectorWidgetSettingsDescriptor.json'
 import selectionsDescriptor from './SelectionsWidget/SelectionsWidgetSettingsDescriptor.json'
 import WidgetEditorSettingsList from './WidgetEditorSettingsList.vue'
@@ -126,6 +137,7 @@ import HighchartsActivityGaugeSettingsDescriptor from './ChartWidget/highcharts/
 import HighchartsSolidGaugeSettingsDescriptor from './ChartWidget/highcharts/descriptors/HighchartsSolidGaugeSettingsDescriptor.json'
 import imageDescriptor from './ImageWidget/ImageWidgetSettingsDescriptor.json'
 import customChartDescriptor from './CustomChartWidget/CustomChartWidgetSettingsDescriptor.json'
+import pivotTableDescriptor from './PivotTableWidget/PivotTableSettingsDescriptor.json'
 import { mapState } from 'pinia'
 import mainStore from '@/App.store'
 
@@ -141,7 +153,8 @@ export default defineComponent({
         HighchartsWidgetSettingsContainer,
         ChartJSWidgetSettingsContainer,
         ImageWidgetSettingsContainer,
-        CustomChartWidgetSettingsContainer
+        CustomChartWidgetSettingsContainer,
+        PivotTableWidgetSettingsContainer
     },
     props: {
         propWidget: { type: Object as PropType<IWidget>, required: true },
@@ -206,6 +219,9 @@ export default defineComponent({
                     break
                 case 'customchart':
                     this.descriptor = customChartDescriptor
+                    break
+                case 'static-pivot-table':
+                    this.descriptor = pivotTableDescriptor
                     break
             }
         },

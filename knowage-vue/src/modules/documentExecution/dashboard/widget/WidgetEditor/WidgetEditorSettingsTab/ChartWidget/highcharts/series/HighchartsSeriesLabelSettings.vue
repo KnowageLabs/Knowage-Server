@@ -99,10 +99,11 @@ export default defineComponent({
         HighchartsGaugeSerieAdvancedSettings,
         WidgetEditorColorPicker
     },
-    props: { widgetModel: { type: Object as PropType<IWidget>, required: true } },
+    props: { propWidgetModel: { type: Object as PropType<IWidget>, required: true } },
     data() {
         return {
             descriptor,
+            widgetModel: {} as IWidget,
             model: null as IHighchartsChartModel | null,
             seriesSettings: [] as IHighchartsSeriesLabelsSetting[],
             toolbarModels: [] as {
@@ -140,14 +141,23 @@ export default defineComponent({
             return this.model && ['pie', 'gauge', 'solidgauge'].includes(this.model.chart.type)
         }
     },
+    watch: {
+        propWidgetModel() {
+            this.loadWidgetModel()
+        }
+    },
     created() {
         this.setEventListeners()
+        this.loadWidgetModel()
         this.loadModel()
     },
     unmounted() {
         this.removeEventListeners()
     },
     methods: {
+        loadWidgetModel() {
+            this.widgetModel = this.propWidgetModel
+        },
         setEventListeners() {
             emitter.on('seriesAdded', this.loadModel)
             emitter.on('seriesRemoved', this.loadModel)

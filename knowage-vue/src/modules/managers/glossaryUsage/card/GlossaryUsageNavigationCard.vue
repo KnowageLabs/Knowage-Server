@@ -59,6 +59,7 @@ import Column from 'primevue/column'
 import DataTable from 'primevue/datatable'
 import glossaryUsageNavigationCardDescriptor from './GlossaryUsageNavigationCardDescriptor.json'
 import mainStore from '../../../../App.store'
+import UserFunctionalitiesConstants from '@/UserFunctionalitiesConstants.json'
 
 export default defineComponent({
     name: 'glossary-usage-navigation-card',
@@ -99,7 +100,7 @@ export default defineComponent({
         canSeeLinkTable(): boolean {
             let index = -1
             if (this.user.functionalities) {
-                index = this.user.functionalities.findIndex((el: string) => el === 'ManageGlossaryTechnical')
+                index = this.user.functionalities.findIndex((el: string) => el === UserFunctionalitiesConstants.MANAGE_GLOSSARY_TECHNICAL)
             }
             return index !== -1
         }

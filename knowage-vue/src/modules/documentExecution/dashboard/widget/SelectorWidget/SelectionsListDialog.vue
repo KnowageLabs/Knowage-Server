@@ -79,6 +79,7 @@ export default defineComponent({
     methods: {
         ...mapActions(store, ['getDashboard', 'getSelections']),
         onGridReady(params) {
+            this.activeSelections = deepcopy(this.getSelections(this.dashboardId))
             this.gridApi = params.api
             this.gridColumnApi = params.columnApi
 
@@ -90,7 +91,7 @@ export default defineComponent({
             })
 
             const updateData = (data) => params.api.setRowData(data)
-            this.activeSelections = deepcopy(this.getSelections(this.dashboardId))
+
             updateData(this.activeSelections)
         },
         deleteSelection(selection: ISelection) {

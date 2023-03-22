@@ -33,6 +33,7 @@ import CalendarManagementDetailTable from './CalendarManagementDetailTable/Calen
 import moment from 'moment'
 import mainStore from '../../../../App.store'
 import deepcopy from 'deepcopy'
+import UserFunctionalitiesConstants from '@/UserFunctionalitiesConstants.json'
 
 export default defineComponent({
     name: 'calendar-management-dialog',
@@ -59,7 +60,7 @@ export default defineComponent({
             return this.calendar === null || !this.calendar.calendar || !this.calendar.calStartDay || !this.calendar.calEndDay
         },
         canManageCalendar(): boolean {
-            return (this.store.$state as any).user.functionalities.includes('ManageCalendar')
+            return (this.store.$state as any).user.functionalities.includes(UserFunctionalitiesConstants.MANAGE_CALENDAR)
         }
     },
     watch: {

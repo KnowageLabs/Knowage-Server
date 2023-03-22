@@ -5,7 +5,7 @@
     </div>
 
     <TieredMenu ref="menu" :model="toolbarMenuItems" :popup="true" />
-    <TagsDialog :visible="tagsDialogVisible" :widget-model="widgetModel" :mode="tagsDialogMode" widget-type="html" :variables="variables" :selected-datasets="selectedDatasets" :dashboard-id="dashboardId" @close="closeTagsDialog" @insert="onInsert" />
+    <TagsDialog :visible="tagsDialogVisible" :widget-model="model" :mode="tagsDialogMode" widget-type="html" :variables="variables" :selected-datasets="selectedDatasets" :dashboard-id="dashboardId" @close="closeTagsDialog" @insert="onInsert" />
 </template>
 
 <script lang="ts">
@@ -27,6 +27,7 @@ export default defineComponent({
     },
     data() {
         return {
+            model: {} as IWidget,
             codeMirrorHtmlEditor: null as any,
             toolbarMenuItems: [] as any[],
             tagsDialogMode: '' as string,
@@ -48,18 +49,25 @@ export default defineComponent({
         }
     },
     watch: {
+        widgetModel() {
+            this.loadModel()
+        },
         activeIndex(value: number) {
             if (value === 1 && this.codeMirrorHtmlEditor) setTimeout(() => this.codeMirrorHtmlEditor.refresh(), 100)
         }
     },
     created() {
+        this.loadModel()
         this.setupCodeMirror()
     },
     methods: {
+        loadModel() {
+            this.model = this.widgetModel
+        },
         setupCodeMirror() {
             const interval = setInterval(() => {
                 if (!this.$refs.codeMirrorHtmlEditor) return
-                this.code = this.widgetModel.settings.editor.html
+                this.code = this.model.settings.editor.html
                 this.codeMirrorHtmlEditor = (this.$refs.codeMirrorHtmlEditor as any).cminstance as any
                 setTimeout(() => {
                     this.codeMirrorHtmlEditor.refresh()
@@ -68,7 +76,7 @@ export default defineComponent({
             }, 200)
         },
         onKeyUp() {
-            this.widgetModel.settings.editor.html = this.code
+            this.model.settings.editor.html = this.code
         },
         toggle(event: Event) {
             this.createMenuItems()

@@ -76,10 +76,16 @@ export default defineComponent({
             calcFieldFunctionsToShow: [] as any
         }
     },
+    watch: {
+        widgetModel() {
+            this.loadModel()
+        }
+    },
     created() {
         this.setEventListeners()
-        this.loadDatasets()
         this.loadModel()
+        this.loadSelectedDataset()
+        this.loadDatasets()
     },
     unmounted() {
         this.removeEventListeners()
@@ -112,7 +118,6 @@ export default defineComponent({
         },
         loadModel() {
             this.model = this.widgetModel
-            this.loadSelectedDataset()
             this.loadDatasetColumns()
         },
         loadSelectedDataset() {
@@ -124,8 +129,11 @@ export default defineComponent({
         },
         onDatasetSelected() {
             this.loadDatasetColumns()
-            this.removeSelectedColumnsFromModel()
-            this.widgetModel.dataset = this.selectedDataset ? this.selectedDataset.id : null
+            this.loadModel()
+            if (this.model) {
+                this.model.dataset = this.selectedDataset ? this.selectedDataset.id : null
+                if (this.model.dataset !== this.selectedDataset?.id) this.removeSelectedColumnsFromModel()
+            }
             this.$emit('datasetSelected', this.selectedDataset)
             emitter.emit('clearWidgetData', this.widgetModel.id)
         },

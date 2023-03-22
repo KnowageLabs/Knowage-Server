@@ -1,9 +1,5 @@
-import { ISelectionsWidgetSettings } from '@/modules/documentExecution/dashboard/interfaces/DashboardSelectionsWidget'
-import { IChartJSWidgetSettings } from './interfaces/chartJS/DashboardChartJSWidget'
-import { IHTMLWidgetSettings } from './interfaces/DashboardHTMLWidget'
-import { IImageWidgetSettings } from './interfaces/DashboardImageWidget'
-import { ITextWidgetSettings } from './interfaces/DashboardTextWidget'
-import { IDrillOrderItem, IHighchartsDrilldown, IHighchartsWidgetSettings } from './interfaces/highcharts/DashboardHighchartsWidget'
+import { IDrillOrderItem, IHighchartsDrilldown } from './interfaces/highcharts/DashboardHighchartsWidget'
+import { IPivotFields } from './interfaces/pivotTable/DashboardPivotTableWidget'
 
 export interface IDashboard {
     sheets: []
@@ -41,8 +37,9 @@ export interface IWidget {
     dataset: number | null
     type: string
     columns: IWidgetColumn[]
-    settings: ITableWidgetSettings | ISelectionsWidgetSettings | ISelectorWidgetSettings | IHTMLWidgetSettings | ITextWidgetSettings | IHighchartsWidgetSettings | IChartJSWidgetSettings | IImageWidgetSettings | ICustomChartWidgetSettings
+    settings: any
     new?: boolean
+    fields?: IPivotFields
 }
 
 export interface ITableWidgetSettings {
@@ -171,7 +168,7 @@ export interface IWidgetInteractions {
     crossNavigation: IWidgetCrossNavigation
     link?: IWidgetLinks
     preview?: IWidgetPreview
-    selection?: IWidgetSelection,
+    selection?: IWidgetSelection
     drilldown?: IHighchartsDrilldown
 }
 
@@ -202,6 +199,7 @@ export interface IWidgetInteractionParameter {
     enabled: boolean
     name: string
     type: string
+    dataType: string
     value?: string
     column?: string
     driver?: string
@@ -216,7 +214,7 @@ export interface IWidgetPreview {
     dataset: number
     column?: string
     directDownload: boolean
-    icon?: stirng
+    icon?: string
 }
 
 export interface IWidgetSelection {
@@ -245,7 +243,7 @@ export interface ITableWidgetStyle {
     borders: IWidgetBordersStyle
     columns: ITableWidgetColumnStyles
     columnGroups: ITableWidgetColumnStyles
-    headers: ITawbleWidgetHeadersStyle
+    headers: ITableWidgetHeadersStyle
     padding: IWidgetPaddingStyle
     rows: IWidgetRowsStyle
     shadows: IWidgetShadowsStyle
@@ -285,7 +283,7 @@ export interface ITableWidgetColumnStyle {
     }
 }
 
-export interface ITawbleWidgetHeadersStyle {
+export interface ITableWidgetHeadersStyle {
     height: number
     properties: {
         'background-color': string
@@ -414,6 +412,7 @@ export interface IWidgetColumn {
     formulaEditor?: string
     drillOrder?: IDrillOrderItem
     orderType?: string
+    sort?: string
 }
 
 export interface IWidgetColumnFilter {
@@ -432,7 +431,6 @@ export interface IDashboardDataset {
     drivers?: IDashboardDatasetDriver[]
     indexes?: any[]
 }
-
 
 export interface IDashboardDatasetDriver {
     urlName: string
@@ -581,7 +579,7 @@ export interface IIcon {
     id: number
     label: string
     unicode: string
-    visible: booleam
+    visible: boolean
 }
 
 export interface IWidgetStyleToolbarModel {
@@ -589,7 +587,8 @@ export interface IWidgetStyleToolbarModel {
     'font-style'?: string
     'font-size'?: string
     'font-family'?: string
-    'justify-content'?: string
+    'justify-content'?: string,
+    'text-align'?: string,
     'border-color'?: string
     color?: string
     'background-color'?: string
@@ -673,3 +672,37 @@ export interface IChartType {
     value: string
     disabled: boolean
 }
+
+export interface IDashboardCrossNavigation {
+    crossBreadcrumb: string
+    crossId: number
+    crossName: string
+    crossText: string
+    crossType: number
+    document: any
+    documentId: number
+    navigationParams: any
+    popupOptions: any
+}
+
+export interface IDashboardOutputParameter {
+    biObjectId: number
+    formatCode: string | null
+    formatValue: string | null
+    id: number
+    isUserDefined: boolean
+    name: string
+    type: IDashboardOutputParameterType
+}
+
+interface IDashboardOutputParameterType {
+    domainCode: string
+    domainName: string
+    translatedValueDescription: string
+    translatedValueName: string
+    valueCd: string
+    valueDescription: string
+    valueId: number
+    valueName: string
+}
+

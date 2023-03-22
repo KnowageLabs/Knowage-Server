@@ -44,6 +44,7 @@ import Column from 'primevue/column'
 import DataTable from 'primevue/datatable'
 import MultiSelect from 'primevue/multiselect'
 import mainStore from '../../../../../App.store'
+import UserFunctionalitiesConstants from '@/UserFunctionalitiesConstants.json'
 
 export default defineComponent({
     name: 'calendar-management-detail-table',
@@ -61,7 +62,7 @@ export default defineComponent({
     },
     computed: {
         canManageCalendar(): boolean {
-            return (this.store.$state as any).user.functionalities.includes('ManageCalendar')
+            return (this.store.$state as any).user.functionalities.includes(UserFunctionalitiesConstants.MANAGE_CALENDAR)
         }
     },
     watch: {

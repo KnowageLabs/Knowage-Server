@@ -24,7 +24,8 @@ export default defineComponent({
                 const tempColumn = { id: target, alias: this.widgetColumnsAliasMap[target] }
                 if (tempColumn) targetOptions.push(tempColumn)
             })
-            return targetOptions.concat(this.availableTargetOptions as any)
+            const merged = this.mergeTargetOptionsWithAvailableTargetOptions(targetOptions)
+            return Object.values(merged) ?? []
         }
     },
     watch: {
@@ -38,6 +39,15 @@ export default defineComponent({
     methods: {
         loadValue() {
             this.modelValue = this.value as any[]
+        },
+        mergeTargetOptionsWithAvailableTargetOptions(targetOptions: (IWidgetColumn | { id: string; alias: string })[]) {
+            const merged = [...targetOptions, ...this.availableTargetOptions].reduce((acc: any, curr: any) => {
+                if (!acc[curr.id]) {
+                    acc[curr.id] = curr
+                }
+                return acc
+            }, {}) as any
+            return Object.values(merged)
         }
     }
 })

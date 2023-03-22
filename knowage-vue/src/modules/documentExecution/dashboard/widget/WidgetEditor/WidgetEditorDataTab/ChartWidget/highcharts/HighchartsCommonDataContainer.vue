@@ -43,10 +43,11 @@ import ChartWidgetColumnForm from '../common/ChartWidgetColumnForm.vue'
 export default defineComponent({
     name: 'highcharts-widget-common-data-container',
     components: { WidgetEditorColumnTable, ChartWidgetColumnForm },
-    props: { widgetModel: { type: Object as PropType<IWidget>, required: true }, selectedDataset: { type: Object as PropType<IDataset | null> } },
+    props: { propWidgetModel: { type: Object as PropType<IWidget>, required: true }, selectedDataset: { type: Object as PropType<IDataset | null> } },
     data() {
         return {
             descriptor,
+            widgetModel: {} as IWidget,
             highchartDescriptor,
             commonDescriptor,
             columnTableItems: {} as any,
@@ -73,15 +74,22 @@ export default defineComponent({
         }
     },
     watch: {
+        propWidgetModel() {
+            this.loadWidgetModel()
+        },
         selectedDataset() {
             this.selectedColumn = null
         }
     },
     async created() {
+        this.loadWidgetModel()
         this.$watch('widgetModel.columns', () => this.loadColumnTableItems())
         this.loadColumnTableItems()
     },
     methods: {
+        loadWidgetModel() {
+            this.widgetModel = this.propWidgetModel
+        },
         loadColumnTableItems() {
             this.columnTableItems = []
             this.columnTableItems['ATTRIBUTES'] = []

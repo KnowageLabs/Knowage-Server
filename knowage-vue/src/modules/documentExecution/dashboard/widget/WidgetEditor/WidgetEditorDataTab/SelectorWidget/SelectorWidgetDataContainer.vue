@@ -1,5 +1,5 @@
 <template>
-    <div v-if="widgetModel">
+    <div v-if="widget">
         <div class="p-d-flex p-flex-column kn-flex p-m-2">
             <label class="kn-material-input-label p-mr-2">{{ $t('dashboard.widgetEditor.sortingOrder') }}</label>
             <Dropdown v-model="sortingOrder" class="kn-material-input" :options="commonDescriptor.sortingOrderOptions" option-value="value" @change="sortingChanged">
@@ -15,7 +15,7 @@
                 </template>
             </Dropdown>
         </div>
-        <WidgetEditorColumnTable class="p-m-2" :widget-model="widgetModel" :items="columnTableItems" :settings="commonDescriptor.columnTableSettings" @itemAdded="onColumnAdded" @itemUpdated="onColumnItemUpdate" @itemSelected="setSelectedColumn" @itemDeleted="onColumnDelete"></WidgetEditorColumnTable>
+        <WidgetEditorColumnTable class="p-m-2" :widget-model="widget" :items="columnTableItems" :settings="commonDescriptor.columnTableSettings" @itemAdded="onColumnAdded" @itemUpdated="onColumnItemUpdate" @itemSelected="setSelectedColumn" @itemDeleted="onColumnDelete"></WidgetEditorColumnTable>
         <WidgetEditorFilterForm v-if="selectedColumn" :prop-column="selectedColumn"></WidgetEditorFilterForm>
     </div>
 </template>
@@ -38,6 +38,7 @@ export default defineComponent({
         return {
             descriptor,
             commonDescriptor,
+            widget: {} as IWidget,
             columnTableItems: [] as IWidgetColumn[],
             selectedColumn: null as IWidgetColumn | null,
             sortingOrder: ''
@@ -49,50 +50,54 @@ export default defineComponent({
         }
     },
     async created() {
-        this.$watch('widgetModel.columns', () => this.loadColumnTableItems())
+        this.loadWidget()
+        this.$watch('widget.columns', () => this.loadColumnTableItems())
         this.loadColumnTableItems()
         this.loadSortingOrder()
     },
     methods: {
+        loadWidget() {
+            this.widget = this.widgetModel
+        },
         loadColumnTableItems() {
-            this.columnTableItems = this.widgetModel.columns ?? []
+            this.columnTableItems = this.widget.columns ?? []
         },
         loadSortingOrder() {
-            this.sortingOrder = this.widgetModel.settings.sortingOrder ?? ''
+            this.sortingOrder = this.widget.settings.sortingOrder ?? ''
         },
         onColumnAdded(payload: { column: IWidgetColumn; rows: IWidgetColumn[] }) {
-            if (this.widgetModel.columns.length > 0) {
-                emitter.emit('columnRemoved', this.widgetModel.columns[0])
+            if (this.widget.columns.length > 0) {
+                emitter.emit('columnRemoved', this.widget.columns[0])
                 this.selectedColumn = null
             }
-            this.widgetModel.settings.isDateType = payload.column.type.toLowerCase().includes('date') || payload.column.type.toLowerCase().includes('timestamp')
-            this.widgetModel.columns = [payload.column]
+            this.widget.settings.isDateType = payload.column.type.toLowerCase().includes('date') || payload.column.type.toLowerCase().includes('timestamp')
+            this.widget.columns = [payload.column]
             emitter.emit('columnAdded', payload.column)
-            emitter.emit('refreshSelector', this.widgetModel.id)
-            emitter.emit('refreshWidgetWithData', this.widgetModel.id)
+            emitter.emit('refreshSelector', this.widget.id)
+            emitter.emit('refreshWidgetWithData', this.widget.id)
         },
         onColumnItemUpdate(column: IWidgetColumn) {
-            this.widgetModel.columns[0] = { ...column }
-            emitter.emit('collumnUpdated', { column: this.widgetModel.columns[0], columnIndex: 0 })
-            emitter.emit('refreshSelector', this.widgetModel.id)
-            if (this.widgetModel.columns[0].id === this.selectedColumn?.id) this.selectedColumn = { ...this.widgetModel.columns[0] }
-            emitter.emit('refreshWidgetWithData', this.widgetModel.id)
+            this.widget.columns[0] = { ...column }
+            emitter.emit('collumnUpdated', { column: this.widget.columns[0], columnIndex: 0 })
+            emitter.emit('refreshSelector', this.widget.id)
+            if (this.widget.columns[0].id === this.selectedColumn?.id) this.selectedColumn = { ...this.widget.columns[0] }
+            emitter.emit('refreshWidgetWithData', this.widget.id)
         },
         setSelectedColumn(column: IWidgetColumn) {
             this.selectedColumn = { ...column }
         },
         onColumnDelete(column: IWidgetColumn) {
-            this.widgetModel.columns = []
+            this.widget.columns = []
             if (column.id === this.selectedColumn?.id) this.selectedColumn = null
             emitter.emit('columnRemoved', column)
-            emitter.emit('refreshSelector', this.widgetModel.id)
-            if (this.widgetModel.columns.length == 0) emitter.emit('clearWidgetData', this.widgetModel.id)
-            else emitter.emit('refreshWidgetWithData', this.widgetModel.id)
+            emitter.emit('refreshSelector', this.widget.id)
+            if (this.widget.columns.length == 0) emitter.emit('clearWidgetData', this.widget.id)
+            else emitter.emit('refreshWidgetWithData', this.widget.id)
         },
         sortingChanged() {
-            this.widgetModel.settings.sortingOrder = this.sortingOrder
-            if (this.widgetModel.columns.length > 0) emitter.emit('refreshWidgetWithData', this.widgetModel.id)
-            emitter.emit('refreshSelector', this.widgetModel.id)
+            this.widget.settings.sortingOrder = this.sortingOrder
+            if (this.widget.columns.length > 0) emitter.emit('refreshWidgetWithData', this.widget.id)
+            emitter.emit('refreshSelector', this.widget.id)
         }
     }
 })

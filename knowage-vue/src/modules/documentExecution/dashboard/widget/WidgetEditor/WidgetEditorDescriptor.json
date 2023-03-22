@@ -77,36 +77,6 @@
             "value": "flex-end"
         }
     ],
-    "columnConditionOptions": [
-        {
-            "label": ">",
-            "value": ">"
-        },
-        {
-            "label": "<",
-            "value": "<"
-        },
-        {
-            "label": "==",
-            "value": "=="
-        },
-        {
-            "label": ">=",
-            "value": ">="
-        },
-        {
-            "label": "<=",
-            "value": "<="
-        },
-        {
-            "label": "!=",
-            "value": "!="
-        },
-        {
-            "label": "IN",
-            "value": "IN"
-        }
-    ],
     "fontFamilyOptions": [
         {
             "label": "",

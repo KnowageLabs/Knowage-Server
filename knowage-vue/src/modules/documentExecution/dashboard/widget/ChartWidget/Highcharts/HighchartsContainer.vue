@@ -8,8 +8,9 @@ import { emitter } from '@/modules/documentExecution/dashboard/DashboardHelpers'
 import { ISelection, IWidget, IWidgetColumn } from '../../../Dashboard'
 import { IHighchartsChartModel } from '../../../interfaces/highcharts/DashboardHighchartsWidget'
 import { mapActions } from 'pinia'
-import { updateStoreSelections } from '../../interactionsHelpers/InteractionHelper'
+import { updateStoreSelections, executeChartCrossNavigation } from '../../interactionsHelpers/InteractionHelper'
 import { formatActivityGauge } from './HighchartsModelFormattingHelpers'
+import { formatForCrossNavigation } from './HighchartsContainerHelpers'
 import Highcharts from 'highcharts'
 import Highcharts3D from 'highcharts/highcharts-3d'
 import HighchartsMore from 'highcharts/highcharts-more'
@@ -67,11 +68,11 @@ export default defineComponent({
         ...mapActions(mainStore, ['setError']),
         setEventListeners() {
             emitter.on('refreshChart', this.onRefreshChart)
-            emitter.on('chartWidgetResized', this.resizeChart)
+            emitter.on('widgetResized', this.resizeChart)
         },
         removeEventListeners() {
             emitter.off('refreshChart', this.onRefreshChart)
-            emitter.off('chartWidgetResized', this.resizeChart)
+            emitter.off('widgetResized', this.resizeChart)
         },
         onRefreshChart(widgetId: any | null = null) {
             if (widgetId && widgetId !== this.widgetModel.id) return
@@ -79,6 +80,7 @@ export default defineComponent({
             this.updateChartModel()
         },
         updateChartModel() {
+            if (!this.chartModel) return
             Highcharts.setOptions({ lang: { noData: this.chartModel.lang.noData } })
 
             this.widgetModel.settings.chartModel.setData(this.dataToShow, this.widgetModel)
@@ -100,7 +102,7 @@ export default defineComponent({
             try {
                 this.highchartsInstance = Highcharts.chart(this.chartID, modelToRender as any)
                 this.highchartsInstance.reflow()
-            } catch (error: any) {
+            } catch (error) {
                 this.setError({ title: this.$t('common.toast.errorTitle'), msg: error })
             }
         },
@@ -125,12 +127,21 @@ export default defineComponent({
         setSeriesEvents() {
             if (this.chartModel.plotOptions.series) {
                 this.chartModel.plotOptions.series.events = {
-                    click: this.setSelection
+                    click: this.executeInteractions
                 }
             } else
                 this.chartModel.plotOptions.series = {
-                    events: { click: this.setSelection }
+                    events: { click: this.executeInteractions }
                 }
+        },
+        executeInteractions(event: any) {
+            if (this.chartModel.chart.type !== 'pie') return
+            if (this.widgetModel.settings.interactions.crossNavigation.enabled) {
+                const formattedOutputParameters = formatForCrossNavigation(event, this.widgetModel.settings.interactions.crossNavigation, this.dataToShow)
+                executeChartCrossNavigation(formattedOutputParameters, this.widgetModel.settings.interactions.crossNavigation, this.dashboardId)
+            } else {
+                this.setSelection(event)
+            }
         },
         setSelection(event: any) {
             if (this.editorMode || !this.widgetModel.settings.interactions.selection || !this.widgetModel.settings.interactions.selection.enabled) return

@@ -1,11 +1,11 @@
 <template>
     <div class="toolbar-context-menu">
-        <div v-for="(option, index) in options" :key="index" class="toolbar-context-menu-option">
-            <div class="toolbar-context-item kn-cursor-pointer" @click="setSelectedValue(option.value)">
+        <div v-for="(contextMenuOption, index) in options" :key="index" class="toolbar-context-menu-option" :class="{ 'active-toolbar-context-menu-option': modelValue && modelValue === contextMenuOption.value }">
+            <div class="toolbar-context-item kn-cursor-pointer" @click="setSelectedValue(contextMenuOption.value)">
                 <div class="toolbar-item-text">
-                    {{ $t(option.label) }}
+                    {{ $t(contextMenuOption.label) }}
                 </div>
-                <i v-if="option.value === 'input'" class="pi pi-angle-right p-ml-auto p-mr-5"></i>
+                <i v-if="contextMenuOption.value === 'input'" class="pi pi-angle-right p-ml-auto p-mr-5"></i>
             </div>
             <InputText v-if="inputVisible" v-model="inputValue" class="toolbar-context-menu-input kn-material-input p-inputtext-sm" @input="onInputChanged" @change="onInputChanged" />
         </div>
@@ -19,7 +19,7 @@ import descriptor from './WidgetEditorStyleToolbarDescriptor.json'
 export default defineComponent({
     name: 'widget-editor-toolbar-context-menu',
     components: {},
-    props: { option: { type: Object as PropType<any>, required: true } },
+    props: { initialValue: { type: String }, option: { type: Object as PropType<any>, required: true } },
     emits: ['selected', 'inputChanged'],
     data() {
         return {
@@ -36,6 +36,8 @@ export default defineComponent({
                     return descriptor.fontSizeOptions
                 case 'justify-content':
                     return descriptor.cellAlignmentOptions
+                case 'text-align':
+                    return descriptor.textAlignmentOptions
                 case 'font-family':
                     return descriptor.fontFamilyOptions
                 default:
@@ -43,8 +45,13 @@ export default defineComponent({
             }
         }
     },
-    async created() {},
+    async created() {
+        this.loadInitialValue()
+    },
     methods: {
+        loadInitialValue() {
+            this.modelValue = this.initialValue
+        },
         setSelectedValue(value: string) {
             if (value === 'input') {
                 this.inputVisible = !this.inputVisible
@@ -100,5 +107,10 @@ export default defineComponent({
 
 .toolbar-context-menu-option:last-child {
     border-bottom: none;
+}
+
+.active-toolbar-context-menu-option {
+    background-color: #c2c2c2;
+    border-radius: 2px solid black;
 }
 </style>

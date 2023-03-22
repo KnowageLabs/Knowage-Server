@@ -1,4 +1,4 @@
-import { IWidgetInteractions, IWidgetResponsive } from "../../Dashboard";
+import { IWidgetBackgroundStyle, IWidgetBordersStyle, IWidgetExports, IWidgetInteractions, IWidgetPaddingStyle, IWidgetResponsive, IWidgetShadowsStyle, IWidgetTitle } from "../../Dashboard";
 import { ChartJSPieChartModel } from "./DashboardChartJSPieChartWidget";
 
 export interface IChartJSWidgetSettings {
@@ -73,4 +73,11 @@ export interface IChartJSData {
 export interface IChartJSSerie {
     backgroundColor: string[],
     data: number[]
+}
+
+export interface IChartInteractionValues {
+    serieName: string,
+    serieValue: string,
+    categoryName: string,
+    categoryValue: string
 }

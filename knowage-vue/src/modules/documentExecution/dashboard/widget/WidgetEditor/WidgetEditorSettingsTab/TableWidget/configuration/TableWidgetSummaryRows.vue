@@ -50,6 +50,11 @@ export default defineComponent({
             return !this.summaryRowsModel || !this.summaryRowsModel.enabled
         }
     },
+    watch: {
+        summaryRowsDiabled() {
+            this.onSummarRowEnabledChange()
+        }
+    },
     created() {
         this.loadSummaryRowsModel()
     },

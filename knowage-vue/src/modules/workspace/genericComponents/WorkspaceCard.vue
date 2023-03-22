@@ -30,6 +30,7 @@ import cardDescriptor from './WorkspaceCardDescriptor.json'
 import Menu from 'primevue/contextmenu'
 import mainStore from '../../../App.store'
 import { getCorrectRolesForExecution } from '../../../helpers/commons/roleHelper'
+import UserFunctionalitiesConstants from '@/UserFunctionalitiesConstants.json'
 
 export default defineComponent({
     name: 'workspace-sidebar',
@@ -183,7 +184,7 @@ export default defineComponent({
                 tmp.push({ key: 0, label: this.$t('workspace.myModels.editDataset'), icon: 'fas fa-pen', command: ()=>this.emitEvent('editDataset'), visible: this.isDatasetOwner && (this.document.dsTypeCd == 'File' || this.document.dsTypeCd == 'Prepared') })
                 tmp.push({ key: 1, label: this.$t('workspace.myModels.openInQBE'), icon: 'fas fa-file-circle-question', command: ()=>this.emitEvent('openDatasetInQBE'), visible: this.isOpenInQBEVisible(this.document) })
 
-                if ((this.store.$state as any).user?.functionalities.includes('DataPreparation')) {
+                if ((this.store.$state as any).user?.functionalities.includes(UserFunctionalitiesConstants.DATA_PREPARATION)) {
                     tmp.push(
                         { key: 2, label: this.$t('workspace.myData.openDataPreparation'), icon: 'fas fa-cogs', command: ()=>this.emitEvent('openDataPreparation'), visible: this.canLoadData && this.document.dsTypeCd != 'Qbe' && (this.document.pars && this.document.pars.length == 0) },
                         { key: 3, label: this.$t('workspace.myData.monitoring'), icon: 'fas fa-cogs', command: ()=>this.emitEvent('monitoring'), visible: this.canLoadData && this.document.dsTypeCd != 'Qbe' && (this.document.pars && this.document.pars.length == 0) }

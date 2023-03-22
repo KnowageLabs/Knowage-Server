@@ -1,4 +1,4 @@
-import { IDashboard, IDashboardConfiguration, IDataset, IVariable, IWidget } from './Dashboard'
+import { IDashboard, IDashboardConfiguration, IDashboardOutputParameter, IDataset, IVariable, IWidget } from './Dashboard'
 import { formatWidgetForSave, recreateKnowageChartModel } from './widget/WidgetEditor/helpers/WidgetEditorHelpers'
 import { setVariableValueFromDataset } from './generalSettings/VariablesHelper'
 import mitt from 'mitt'
@@ -9,6 +9,7 @@ import { formatChartJSWidget } from './widget/WidgetEditor/helpers/chartWidget/c
 import { formatHighchartsWidget } from './widget/WidgetEditor/helpers/chartWidget/highcharts/HighchartsHelpers'
 import { AxiosResponse } from 'axios'
 import mainStore from '@/App.store'
+import UserFunctionalitiesConstants from '@/UserFunctionalitiesConstants.json'
 
 const store = mainStore()
 
@@ -109,7 +110,7 @@ export const loadDatasets = async (dashboardModel: IDashboard | any, appStore: a
     await $http
         .get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + url)
         .then((response: AxiosResponse<any>) => (datasets = response.data ? response.data.item : []))
-        .catch(() => {})
+        .catch(() => { })
     setAllDatasets(datasets)
     appStore.setLoading(false)
     return datasets
@@ -124,5 +125,16 @@ const getDatasetIdsFromDashboardModel = (dashboardModel: IDashboard | any) => {
 
 export const canEditDashboard = (document): boolean => {
     if (!store.user || !document) return false
-    return store.user.functionalities?.includes('DocumentAdminManagement') || document.creationUser === store.user.userId
+    return store.user.functionalities?.includes(UserFunctionalitiesConstants.DOCUMENT_ADMIN_MANAGEMENT) || document.creationUser === store.user.userId
+}
+
+export const getFormattedOutputParameters = (documentOutputParameters: IDashboardOutputParameter[]) => {
+    if (!documentOutputParameters) return []
+    return documentOutputParameters.map((documentOutputParameter: IDashboardOutputParameter) => {
+        return {
+            enabled: true,
+            name: documentOutputParameter.name,
+            type: documentOutputParameter.type
+        }
+    })
 }

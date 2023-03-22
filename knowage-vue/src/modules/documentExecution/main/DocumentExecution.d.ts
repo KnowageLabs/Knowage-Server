@@ -1,3 +1,5 @@
+import { iParameter } from "@/components/UI/KnParameterSidebar/KnParameterSidebar"
+
 export interface iURLData {
     engineLabel: string,
     sbiExecutionId: string,
@@ -44,5 +46,51 @@ export interface iMetadata {
     generalMetadata: { name: string, value: string }[],
     shortText: { id: number, name: string, value: string }[],
     longText: { id: number, name: string, value: string }[],
-    file: { id: number, name: string, value: any, fileToSave?: { file: {}, fileName: string } }[],
+    file: { id: number, name: string, value: any, fileToSave?: { file: any, fileName: string } }[],
+}
+
+export interface IDocumentNavigationParameter {
+    id: string,
+    value: IDocumentNavigationParameterValue | string,
+    fixed: boolean,
+    sourceDriverUrlName?: string,
+}
+
+export interface IDocumentNavigationParameterValue {
+    label: string,
+    type: IDocumentNavigationParameterValueType,
+    inputParameterType: any,
+    dateFormat: any,
+    isInput: boolean
+}
+
+export interface IDocumentNavigationParameterValueType {
+    valueId: number,
+    valueCd: string,
+    valueName: string,
+    valueDescription: string,
+    domainCode: string,
+    domainName: string,
+    translatedValueDescription: string,
+    translatedValueName: string
+}
+
+export interface ICrossNavigationParameter {
+    targetDriverUrlName: string,
+    parameterValue: { value: string | number, description: string }[],
+    multivalue: boolean,
+    type: 'fixed' | 'fromSourceDocumentDriver' | 'fromSourceDocumentOutputParameter',
+    parameterType?: string,
+    selectionType?: string,
+    sourceDriverName?: string,
+    outputDriverName?: string
+}
+
+export interface ICrossNavigationBreadcrumb {
+    document: any,
+    label: string,
+    crossBreadcrumb?: string,
+    filtersData?: { filterStatus: iParameter[], isReadyForExecution: boolean },
+    hiddenFormData?: any,
+    urlData?: any
 }

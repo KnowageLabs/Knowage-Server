@@ -47,6 +47,7 @@ import { iFunction } from './FunctionsCatalog'
 import Column from 'primevue/column'
 import DataTable from 'primevue/datatable'
 import functionsCatalogDatatableDescriptor from './FunctionsCatalogDatatableDescriptor.json'
+import UserFunctionalitiesConstants from '@/UserFunctionalitiesConstants.json'
 
 export default defineComponent({
     name: 'functions-catalog-datatable',
@@ -68,7 +69,7 @@ export default defineComponent({
     },
     computed: {
         canManageFunctionalities(): boolean {
-            const index = this.user?.functionalities?.findIndex((el: string) => el === 'FunctionsCatalogManagement')
+            const index = this.user?.functionalities?.findIndex((el: string) => el === UserFunctionalitiesConstants.FUNCTIONS_CATALOG_MANAGEMENT)
             return index !== -1
         }
     },

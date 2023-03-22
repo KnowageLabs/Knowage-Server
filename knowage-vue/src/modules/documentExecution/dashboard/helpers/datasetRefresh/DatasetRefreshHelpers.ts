@@ -1,7 +1,7 @@
 import { IDataset, IDashboardDataset } from "@/modules/documentExecution/dashboard/Dashboard";
 import { emitter } from '../../DashboardHelpers'
 
-let dataSetIntervals = {}
+const dataSetIntervals = {}
 
 export const setDatasetIntervals = (modelDatasets: IDashboardDataset[], datasets: IDataset[]) => {
     if (!modelDatasets || !datasets) return

@@ -1,4 +1,18 @@
-import { IWidget, ITableWidgetSettings, ITableWidgetPagination, ITableWidgetConditionalStyle, ITableWidgetTooltipStyle, ITableWidgetStyle, IWidgetInteractions, ITableWidgetConfiguration, IWidgetResponsive, ITableWidgetConditionalStyles, IDashboard, IVariable, IDashboardDriver } from '../../Dashboard'
+import {
+    IWidget,
+    ITableWidgetSettings,
+    ITableWidgetPagination,
+    ITableWidgetConditionalStyle,
+    ITableWidgetTooltipStyle,
+    ITableWidgetStyle,
+    IWidgetInteractions,
+    ITableWidgetConfiguration,
+    IWidgetResponsive,
+    ITableWidgetConditionalStyles,
+    IDashboard,
+    IVariable,
+    IDashboardDriver
+} from '../../Dashboard'
 import { getFormattedConfiguration } from './TableWidgetConfigurationHelper'
 import { getFormattedStyle } from './TableWidgetStyleHelper'
 import { getSettingsFromWidgetColumns } from './TableWidgetColumnSettingsHelper'
@@ -104,7 +118,7 @@ const setConditionalStyleValueFromVariable = (conditionStyle: ITableWidgetCondit
         case 'profile':
         case 'driver':
             conditionStyle.condition.value = modelVariable.value
-            break;
+            break
         case 'dataset':
             if (modelVariable.column) {
                 conditionStyle.condition.value = modelVariable.value
@@ -119,7 +133,8 @@ const setConditionalStyleValueFromVariable = (conditionStyle: ITableWidgetCondit
 export const getFormattedPaginations = (widget: any) => {
     if (!widget.settings?.pagination) return tableWidgetDefaultValues.getDefaultPagination()
     return {
-        enabled: widget.settings.pagination.enabled, properties: { offset: 0, itemsNumber: widget.settings.pagination.itemsNumber ?? 15, totalItems: 0 }
+        enabled: widget.settings.pagination.enabled,
+        properties: { offset: 0, itemsNumber: widget.settings.pagination.itemsNumber ?? 15, totalItems: 0 }
     } as ITableWidgetPagination
 }
 

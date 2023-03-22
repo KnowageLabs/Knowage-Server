@@ -10,9 +10,10 @@
         </div>
         <ColorPicker v-if="['border-color', 'color', 'background-color'].includes(option.type) && colorPickerVisible" class="dashboard-color-picker click-outside" theme="light" :color="color" :sucker-hide="true" @changeColor="changeColor" />
         <WidgetEditorToolbarContextMenu
-            v-show="(option.type === 'font-size' || option.type === 'justify-content' || option.type === 'font-family') && contextMenuVisible"
+            v-show="['font-size', 'justify-content', 'text-align', 'font-family'].includes(option.type) && contextMenuVisible"
             class="context-menu"
             :option="option"
+            :initial-value="contextMenuInitialValue"
             @selected="onContextItemSelected"
             @inputChanged="onContextInputChanged"
         ></WidgetEditorToolbarContextMenu>
@@ -52,6 +53,7 @@ export default defineComponent({
             active: false,
             iconPickerDialogVisible: false,
             displayValue: '',
+            contextMenuInitialValue: '',
             color: null as { r: number; g: number; b: number; a: number } | null,
             newColor: 'rgb(255, 255, 255)',
             colorPickTimer: null as any,
@@ -60,7 +62,7 @@ export default defineComponent({
     },
     computed: {
         showArrowDown() {
-            return ['font-size', 'justify-content', 'border-color', 'color', 'background-color', 'font-family'].includes(this.option.type)
+            return ['font-size', 'justify-content', 'text-align', 'border-color', 'color', 'background-color', 'font-family'].includes(this.option.type)
         },
         showCircleIcon() {
             return ['border-color', 'color', 'background-color'].includes(this.option.type)
@@ -102,6 +104,16 @@ export default defineComponent({
                     break
                 case 'font-size':
                     this.displayValue = this.model['font-size'] ?? ''
+                    this.contextMenuInitialValue = this.displayValue
+                    break
+                case 'justify-content':
+                    this.contextMenuInitialValue = this.model['justify-content'] ?? ''
+                    break
+                case 'text-align':
+                    this.contextMenuInitialValue = this.model['text-align'] ?? ''
+                    break
+                case 'font-family':
+                    this.contextMenuInitialValue = this.model['font-family'] ?? ''
                     break
                 case 'border-color':
                     this.color = this.model['border-color'] ? getRGBColorFromString(this.model['border-color']) : null
@@ -176,6 +188,7 @@ export default defineComponent({
                     break
                 case 'font-size':
                 case 'justify-content':
+                case 'text-align':
                 case 'font-family':
                     this.changeContextMenuVisibility()
             }
@@ -220,6 +233,9 @@ export default defineComponent({
                     break
                 case 'justify-content':
                     this.model['justify-content'] = item
+                    break
+                case 'text-align':
+                    this.model['text-align'] = item
                     break
                 case 'font-family':
                     this.model['font-family'] = item

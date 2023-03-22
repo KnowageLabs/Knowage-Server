@@ -1,6 +1,6 @@
 <template>
-    <div v-if="widgetModel && widgetModel.type == 'selector'" class="outerIcon" :class="{ selected: widgetModel.settings.configuration.selectorType.modality == selectorType.value, disabled: cardDisabled }" :style="documentImageSource()" @click="changeSelectorModality(selectorType.value)" />
-    <div v-if="widgetModel && widgetModel.type == 'selection'" class="outerIcon" :class="{ selected: widgetModel.settings.configuration.type == selectorType.value }" :style="documentImageSource()" @click="changeSelectionType(selectorType.value)" />
+    <div v-if="model && model.type == 'selector'" class="outerIcon" :class="{ selected: model.settings.configuration.selectorType.modality == selectorType.value, disabled: cardDisabled }" :style="documentImageSource()" @click="changeSelectorModality(selectorType.value)" />
+    <div v-if="model && model.type == 'selection'" class="outerIcon" :class="{ selected: model.settings.configuration.type == selectorType.value }" :style="documentImageSource()" @click="changeSelectionType(selectorType.value)" />
 </template>
 
 <script lang="ts">
@@ -12,20 +12,32 @@ export default defineComponent({
     components: {},
     props: { widgetModel: { type: Object as PropType<IWidget>, required: true }, selectorType: { type: Object as any, true: false } },
     data() {
-        return {}
+        return {
+            model: {} as IWidget
+        }
     },
     computed: {
         cardDisabled(): boolean {
             if (this.selectorType.value == 'date' || this.selectorType.value == 'dateRange') {
-                if (this.widgetModel.columns[0]?.type.toLowerCase().includes('date') || this.widgetModel.columns[0]?.type.toLowerCase().includes('timestamp')) return false
+                if (this.model.columns[0]?.type.toLowerCase().includes('date') || this.model.columns[0]?.type.toLowerCase().includes('timestamp')) return false
                 else return true
-            } else if (this.widgetModel.columns[0]?.type.toLowerCase().includes('date') || this.widgetModel.columns[0]?.type.toLowerCase().includes('timestamp')) return true
+            } else if (this.model.columns[0]?.type.toLowerCase().includes('date') || this.model.columns[0]?.type.toLowerCase().includes('timestamp')) return true
             return false
         }
     },
-    created() {},
+    watch: {
+        widgetModel() {
+            this.loadModel()
+        }
+    },
+    created() {
+        this.loadModel()
+    },
     unmounted() {},
     methods: {
+        loadModel() {
+            this.model = this.widgetModel
+        },
         documentImageSource(): any {
             if (this.selectorType) {
                 return {
@@ -34,10 +46,10 @@ export default defineComponent({
             }
         },
         changeSelectorModality(event) {
-            this.widgetModel.settings.configuration.selectorType.modality = event
+            this.model.settings.configuration.selectorType.modality = event
         },
         changeSelectionType(event) {
-            this.widgetModel.settings.configuration.type = event
+            this.model.settings.configuration.type = event
         }
     }
 })

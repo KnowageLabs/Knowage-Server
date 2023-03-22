@@ -98,6 +98,7 @@ import Card from 'primevue/card'
 import Dropdown from 'primevue/dropdown'
 import descriptor from './QBESavingDialogDescriptor.json'
 import mainStore from '../../../../App.store'
+import UserFunctionalitiesConstants from '@/UserFunctionalitiesConstants.json'
 
 export default defineComponent({
     name: 'olap-custom-view-save-dialog',
@@ -116,7 +117,7 @@ export default defineComponent({
     },
     computed: {
         qbeAdvancedSaving(): any {
-            return (this.store.$state as any).user.functionalities.includes('QbeAdvancedSaving')
+            return (this.store.$state as any).user.functionalities.includes(UserFunctionalitiesConstants.QBE_ADVANCED_SAVING)
         }
     },
     watch: {

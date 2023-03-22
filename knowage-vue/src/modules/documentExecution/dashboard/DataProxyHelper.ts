@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /**
  * ! this helper will get the input informations from the widget requests and create an hash that will be used as unique data request identifier.
  * ! When the same data will be requested the helper will get it from the indexedDB, new data will be requested to the BE
@@ -40,6 +41,8 @@ export const getWidgetData = async (dashboardId: any, widget: IWidget, datasets:
             return await getPieChartData(widget, datasets, $http, initialCall, selections, associativeResponseSelections)
         case 'customchart':
             return await getCustomChartData(dashboardId, widget, datasets, $http, initialCall, selections, associativeResponseSelections)
+        case 'static-pivot-table':
+            return await getPivotData(dashboardId, widget, datasets, $http, initialCall, selections, associativeResponseSelections)
         default:
             break
     }
@@ -47,7 +50,7 @@ export const getWidgetData = async (dashboardId: any, widget: IWidget, datasets:
 
 //#region ===================== Common Methods - Formatting Model, Drivers, Parameters, Selections Management ====================================================
 const formatWidgetModelForGet = (dashboardId: any, propWidget: IWidget, dataset: IDashboardDataset, initialCall: boolean, selections: ISelection[], associativeResponseSelections?: any) => {
-    var dataToSend = {
+    const dataToSend = {
         aggregations: {
             dataset: '',
             measures: [],
@@ -70,11 +73,11 @@ const formatWidgetModelForGet = (dashboardId: any, propWidget: IWidget, dataset:
 
     propWidget.columns.forEach((column) => {
         if (column.fieldType === 'MEASURE') {
-            let measureToPush = { id: column.alias, alias: column.alias, columnName: column.columnName, funct: column.aggregation, orderColumn: column.alias } as any
+            const measureToPush = { id: column.alias, alias: column.alias, columnName: column.columnName, funct: column.aggregation, orderColumn: column.alias, orderType: propWidget.settings.sortingOrder } as any
             column.formula ? (measureToPush.formula = column.formula) : ''
             dataToSend.aggregations.measures.push(measureToPush)
         } else {
-            let attributeToPush = { id: column.alias, alias: column.alias, columnName: column.columnName, orderType: '', funct: 'NONE' } as any
+            const attributeToPush = { id: column.alias, alias: column.alias, columnName: column.columnName, orderType: '', funct: 'NONE' } as any
 
             //sort logic - to be changed by other widgets
             if (propWidget.type === 'table' || propWidget.type === 'html' || propWidget.type === 'text') column.id === propWidget.settings.sortingColumn ? (attributeToPush.orderType = propWidget.settings.sortingOrder) : ''
@@ -91,9 +94,9 @@ const formatWidgetModelForGet = (dashboardId: any, propWidget: IWidget, dataset:
     }
 
     if (dataset.parameters && dataset.parameters.length > 0) {
-        var paramRegex = /[^\$P{]+(?=\})/
+        const paramRegex = /[^\$P{]+(?=\})/
         dataset.parameters.forEach((param: any) => {
-            var matched = paramRegex.exec(param.value)
+            const matched = paramRegex.exec(param.value)
             if (matched && matched[0]) {
                 const documentDrivers = dashStore.dashboards[dashboardId].drivers
                 for (let index = 0; index < documentDrivers.length; index++) {
@@ -129,14 +132,18 @@ const addFiltersToPostData = (propWidget: IWidget, selectionsToSend: any, datase
         }
     })
 }
-
 const getFilters = (propWidget: IWidget, datasetLabel: string) => {
-    var columns = propWidget.columns
-    var activeFilters = {} as any
+    let columns = [] as any
+    if (propWidget.type === 'static-pivot-table') {
+        const modelFields = propWidget.fields
+        columns = modelFields?.columns.concat(modelFields.rows, modelFields.data, modelFields.filters)
+    } else columns = propWidget.columns
+
+    const activeFilters = {} as any
 
     columns.forEach((column) => {
         if (column.filter.enabled && column.filter.operator) {
-            var filterData = { filterOperator: column.filter.operator, filterVals: [`('${column.filter.value}')`] }
+            const filterData = { filterOperator: column.filter.operator, filterVals: [`('${column.filter.value}')`] }
             createNestedObject(activeFilters, [datasetLabel, column.columnName], filterData)
         }
     })
@@ -145,9 +152,9 @@ const getFilters = (propWidget: IWidget, datasetLabel: string) => {
 }
 
 const createNestedObject = function (base, names, value) {
-    var lastName = arguments.length === 3 ? names.pop() : false
+    const lastName = arguments.length === 3 ? names.pop() : false
 
-    for (var i = 0; i < names.length; i++) {
+    for (let i = 0; i < names.length; i++) {
         base = base[names[i]] = base[names[i]] || {}
     }
     if (lastName) base = base[lastName] = value
@@ -208,25 +215,25 @@ export const getVariableData = async (variable: IVariable, datasets: IDataset[],
 }
 
 const getVariableDatasetLabel = (variable: IVariable, datasets: IDataset[]) => {
-    var datasetIndex = datasets.findIndex((dataset: IDataset) => variable.dataset === dataset.id)
+    const datasetIndex = datasets.findIndex((dataset: IDataset) => variable.dataset === dataset.id)
     return datasetIndex !== -1 ? datasets[datasetIndex] : null
 }
 //#endregion ================================================================================================
 
 //#region ===================== Table Widget ====================================================
 export const getTableWidgetData = async (dashboardId: any, widget: IWidget, datasets: IDashboardDataset[], $http: any, initialCall: boolean, selections: ISelection[], associativeResponseSelections?: any) => {
-    var datasetIndex = datasets.findIndex((dataset: IDashboardDataset) => widget.dataset === dataset.id)
-    var selectedDataset = datasets[datasetIndex]
+    const datasetIndex = datasets.findIndex((dataset: IDashboardDataset) => widget.dataset === dataset.id)
+    const selectedDataset = datasets[datasetIndex]
 
     if (selectedDataset) {
-        var url = ''
-        let pagination = widget.settings.pagination
+        let url = ''
+        const pagination = widget.settings.pagination
         if (pagination.enabled) {
             url = `2.0/datasets/${selectedDataset.dsLabel}/data?offset=${pagination.properties.offset}&size=${pagination.properties.itemsNumber}&nearRealtime=true`
         } else url = `2.0/datasets/${selectedDataset.dsLabel}/data?offset=0&size=-1&nearRealtime=true`
 
-        let postData = formatWidgetModelForGet(dashboardId, widget, selectedDataset, initialCall, selections, associativeResponseSelections)
-        var tempResponse = null as any
+        const postData = formatWidgetModelForGet(dashboardId, widget, selectedDataset, initialCall, selections, associativeResponseSelections)
+        let tempResponse = null as any
 
         if (widget.dataset || widget.dataset === 0) clearDatasetInterval(widget.dataset)
         await $http
@@ -248,15 +255,15 @@ export const getTableWidgetData = async (dashboardId: any, widget: IWidget, data
 }
 
 const getSummaryRow = (propWidget: IWidget) => {
-    var summaryArray = [] as any
-    var columns = propWidget.columns
-    for (var k in propWidget.settings.configuration.summaryRows.list) {
-        var measures = [] as any
+    const summaryArray = [] as any
+    const columns = propWidget.columns
+    for (const k in propWidget.settings.configuration.summaryRows.list) {
+        const measures = [] as any
         if (columns) {
-            for (var i = 0; i < columns.length; i++) {
-                var col = columns[i]
+            for (let i = 0; i < columns.length; i++) {
+                const col = columns[i]
                 if (col.fieldType != 'ATTRIBUTE') {
-                    var obj = {}
+                    const obj = {}
                     obj['id'] = col.columnName || col.alias
                     obj['alias'] = col.alias || col.alias
 
@@ -271,7 +278,7 @@ const getSummaryRow = (propWidget: IWidget) => {
                 }
             }
         }
-        var result = {} as any
+        const result = {} as any
         result['measures'] = measures
         result['dataset'] = propWidget.dataset
         summaryArray.push(result)
@@ -283,14 +290,14 @@ const getSummaryRow = (propWidget: IWidget) => {
 
 //#region ===================== Selector Widget ====================================================
 export const getSelectorWidgetData = async (dashboardId: any, widget: IWidget, datasets: IDashboardDataset[], $http: any, initialCall: boolean, selections: ISelection[], associativeResponseSelections?: any) => {
-    var datasetIndex = datasets.findIndex((dataset: any) => widget.dataset === dataset.id)
-    var selectedDataset = datasets[datasetIndex]
+    const datasetIndex = datasets.findIndex((dataset: any) => widget.dataset === dataset.id)
+    const selectedDataset = datasets[datasetIndex]
 
     if (selectedDataset) {
-        var url = `2.0/datasets/${selectedDataset.dsLabel}/data?offset=-1&size=-1&nearRealtime=true`
+        const url = `2.0/datasets/${selectedDataset.dsLabel}/data?offset=-1&size=-1&nearRealtime=true`
 
-        let postData = formatWidgetModelForGet(dashboardId, widget, selectedDataset, initialCall, selections, associativeResponseSelections)
-        var tempResponse = null as any
+        const postData = formatWidgetModelForGet(dashboardId, widget, selectedDataset, initialCall, selections, associativeResponseSelections)
+        let tempResponse = null as any
 
         if (widget.dataset || widget.dataset === 0) clearDatasetInterval(widget.dataset)
         await $http
@@ -313,18 +320,18 @@ export const getSelectorWidgetData = async (dashboardId: any, widget: IWidget, d
 
 //#region ===================== Text & HTML Widget ====================================================
 export const getTextWidgetData = async (dashboardId: any, widget: IWidget, datasets: IDashboardDataset[], $http: any, initialCall: boolean, selections: ISelection[], associativeResponseSelections?: any) => {
-    var datasetIndex = datasets.findIndex((dataset: any) => widget.dataset === dataset.id)
-    var selectedDataset = datasets[datasetIndex]
+    const datasetIndex = datasets.findIndex((dataset: any) => widget.dataset === dataset.id)
+    const selectedDataset = datasets[datasetIndex]
 
     if (selectedDataset && widget.settings.editor.text) {
-        var text = widget.settings.editor.text
-        var numOfRowsToGet = maxRow(widget)
-        var url = `2.0/datasets/${selectedDataset.dsLabel}/data?offset=0&size=${numOfRowsToGet}&nearRealtime=true&limit=${numOfRowsToGet}`
+        const text = widget.settings.editor.text
+        const numOfRowsToGet = maxRow(widget)
+        const url = `2.0/datasets/${selectedDataset.dsLabel}/data?offset=0&size=${numOfRowsToGet}&nearRealtime=true&limit=${numOfRowsToGet}`
 
-        var aggregationsModel = getAggregationsModel(widget, text, selectedDataset)
-        var aggregationDataset = null as any
+        const aggregationsModel = getAggregationsModel(widget, text, selectedDataset)
+        let aggregationDataset = null as any
         if (aggregationsModel) {
-            let aggregationsPostData = formatWidgetModelForGet(dashboardId, aggregationsModel, selectedDataset, initialCall, selections, associativeResponseSelections)
+            const aggregationsPostData = formatWidgetModelForGet(dashboardId, aggregationsModel, selectedDataset, initialCall, selections, associativeResponseSelections)
             await $http
                 .post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + url, aggregationsPostData, { headers: { 'X-Disable-Errors': 'true' } })
                 .then((response: AxiosResponse<any>) => {
@@ -335,8 +342,8 @@ export const getTextWidgetData = async (dashboardId: any, widget: IWidget, datas
                 })
         }
 
-        let postData = formatWidgetModelForGet(null, widget, selectedDataset, initialCall, selections, associativeResponseSelections)
-        var tempResponse = null as any
+        const postData = formatWidgetModelForGet(null, widget, selectedDataset, initialCall, selections, associativeResponseSelections)
+        let tempResponse = null as any
         if (widget.dataset || widget.dataset === 0) clearDatasetInterval(widget.dataset)
         await $http
             .post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + url, postData, { headers: { 'X-Disable-Errors': 'true' } })
@@ -357,18 +364,18 @@ export const getTextWidgetData = async (dashboardId: any, widget: IWidget, datas
 }
 
 export const getHtmlWidgetData = async (dashboardId: any, widget: IWidget, datasets: IDashboardDataset[], $http: any, initialCall: boolean, selections: ISelection[], associativeResponseSelections?: any) => {
-    var datasetIndex = datasets.findIndex((dataset: any) => widget.dataset === dataset.id)
-    var selectedDataset = datasets[datasetIndex]
+    const datasetIndex = datasets.findIndex((dataset: any) => widget.dataset === dataset.id)
+    const selectedDataset = datasets[datasetIndex]
 
     if (selectedDataset && widget.settings.editor.html) {
-        var html = widget.settings.editor.html
-        var numOfRowsToGet = maxRow(widget)
-        var url = `2.0/datasets/${selectedDataset.dsLabel}/data?offset=0&size=${numOfRowsToGet}&nearRealtime=true&limit=${numOfRowsToGet}`
+        const html = widget.settings.editor.html
+        const numOfRowsToGet = maxRow(widget)
+        const url = `2.0/datasets/${selectedDataset.dsLabel}/data?offset=0&size=${numOfRowsToGet}&nearRealtime=true&limit=${numOfRowsToGet}`
 
-        var aggregationsModel = getAggregationsModel(widget, html, selectedDataset)
-        var aggregationDataset = null as any
+        const aggregationsModel = getAggregationsModel(widget, html, selectedDataset)
+        let aggregationDataset = null as any
         if (aggregationsModel) {
-            let aggregationsPostData = formatWidgetModelForGet(dashboardId, aggregationsModel, selectedDataset, initialCall, selections, associativeResponseSelections)
+            const aggregationsPostData = formatWidgetModelForGet(dashboardId, aggregationsModel, selectedDataset, initialCall, selections, associativeResponseSelections)
             await $http
                 .post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + url, aggregationsPostData, { headers: { 'X-Disable-Errors': 'true' } })
                 .then((response: AxiosResponse<any>) => {
@@ -379,8 +386,8 @@ export const getHtmlWidgetData = async (dashboardId: any, widget: IWidget, datas
                 })
         }
 
-        let postData = formatWidgetModelForGet(null, widget, selectedDataset, initialCall, selections, associativeResponseSelections)
-        var tempResponse = null as any
+        const postData = formatWidgetModelForGet(null, widget, selectedDataset, initialCall, selections, associativeResponseSelections)
+        let tempResponse = null as any
         if (widget.dataset || widget.dataset === 0) clearDatasetInterval(widget.dataset)
         await $http
             .post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + url, postData, { headers: { 'X-Disable-Errors': 'true' } })
@@ -416,22 +423,22 @@ const maxRow = (widgetModel) => {
 }
 
 const getAggregationsModel = (widgetModel, rawHtml, selectedDataset) => {
-    var aggregationsReg = rawHtml.match(aggregationsRegex)
+    const aggregationsReg = rawHtml.match(aggregationsRegex)
     if (aggregationsReg) {
-        var modelToSend = deepcopy(widgetModel)
+        const modelToSend = deepcopy(widgetModel)
         const tempModel = deepcopy(widgetModel)
         delete modelToSend.settings
         modelToSend.columns = []
 
-        for (var a in aggregationsReg) {
-            var aggregationReg = aggregationRegex.exec(aggregationsReg[a])
-            for (var m in tempModel.columns) {
+        for (const a in aggregationsReg) {
+            const aggregationReg = aggregationRegex.exec(aggregationsReg[a])
+            for (const m in tempModel.columns) {
                 if (aggregationReg && aggregationReg[1] && tempModel.columns[m].columnName == aggregationReg[1]) {
                     tempModel.columns[m].alias = aggregationReg[1] + '_' + aggregationReg[3]
                     tempModel.columns[m].fieldType = 'MEASURE'
                     tempModel.columns[m].aggregation = aggregationReg[3]
-                    var exists = false
-                    for (var c in modelToSend.columns) {
+                    let exists = false
+                    for (const c in modelToSend.columns) {
                         if (modelToSend.columns[c].alias == aggregationReg[1] + '_' + aggregationReg[3]) exists = true
                     }
                     if (!exists) modelToSend.columns.push(deepcopy(tempModel.columns[m]))
@@ -461,17 +468,17 @@ export const getHighchartsWidgetData = async (widget: IWidget, datasets: IDashbo
 
 //#region ===================== Chart Widget ====================================================
 const getPieChartData = async (widget: IWidget, datasets: IDashboardDataset[], $http: any, initialCall: boolean, selections: ISelection[], associativeResponseSelections?: any) => {
-    var datasetIndex = datasets.findIndex((dataset: IDashboardDataset) => widget.dataset === dataset.id)
-    var selectedDataset = datasets[datasetIndex]
+    const datasetIndex = datasets.findIndex((dataset: IDashboardDataset) => widget.dataset === dataset.id)
+    const selectedDataset = datasets[datasetIndex]
 
-    var measureCheck = widget.columns.findIndex((column: any) => column.fieldType === 'MEASURE') != -1
-    var categoryCheck = widget.columns.findIndex((column: any) => column.fieldType !== 'MEASURE') != -1
+    const measureCheck = widget.columns.findIndex((column: any) => column.fieldType === 'MEASURE') != -1
+    const categoryCheck = widget.columns.findIndex((column: any) => column.fieldType !== 'MEASURE') != -1
 
     if (selectedDataset && measureCheck && categoryCheck) {
-        var url = `2.0/datasets/${selectedDataset.dsLabel}/data?offset=-1&size=-1&nearRealtime=true`
+        const url = `2.0/datasets/${selectedDataset.dsLabel}/data?offset=-1&size=-1&nearRealtime=true`
 
-        let postData = formatChartWidgetForGet(widget, selectedDataset, initialCall, selections, associativeResponseSelections)
-        var tempResponse = null as any
+        const postData = formatChartWidgetForGet(widget, selectedDataset, initialCall, selections, associativeResponseSelections)
+        let tempResponse = null as any
 
         if (widget.dataset || widget.dataset === 0) clearDatasetInterval(widget.dataset)
         await $http
@@ -492,16 +499,16 @@ const getPieChartData = async (widget: IWidget, datasets: IDashboardDataset[], $
 }
 
 export const getGaugeChartData = async (widget: IWidget, datasets: IDashboardDataset[], $http: any, initialCall: boolean, selections: ISelection[], associativeResponseSelections?: any) => {
-    var datasetIndex = datasets.findIndex((dataset: IDashboardDataset) => widget.dataset === dataset.id)
-    var selectedDataset = datasets[datasetIndex]
+    const datasetIndex = datasets.findIndex((dataset: IDashboardDataset) => widget.dataset === dataset.id)
+    const selectedDataset = datasets[datasetIndex]
 
-    var measureCheck = widget.columns.findIndex((column: any) => column.fieldType === 'MEASURE') != -1
+    const measureCheck = widget.columns.findIndex((column: any) => column.fieldType === 'MEASURE') != -1
 
     if (selectedDataset && measureCheck) {
-        var url = `2.0/datasets/${selectedDataset.dsLabel}/data?offset=-1&size=-1&nearRealtime=true`
+        const url = `2.0/datasets/${selectedDataset.dsLabel}/data?offset=-1&size=-1&nearRealtime=true`
 
-        let postData = formatChartWidgetForGet(widget, selectedDataset, initialCall, selections, associativeResponseSelections)
-        var tempResponse = null as any
+        const postData = formatChartWidgetForGet(widget, selectedDataset, initialCall, selections, associativeResponseSelections)
+        let tempResponse = null as any
 
         if (widget.dataset || widget.dataset === 0) clearDatasetInterval(widget.dataset)
         await $http
@@ -522,7 +529,7 @@ export const getGaugeChartData = async (widget: IWidget, datasets: IDashboardDat
 }
 
 const formatChartWidgetForGet = (propWidget: IWidget, dataset: IDashboardDataset, initialCall: boolean, selections: ISelection[], associativeResponseSelections?: any) => {
-    var dataToSend = {
+    const dataToSend = {
         aggregations: {
             dataset: '',
             measures: [],
@@ -540,24 +547,24 @@ const formatChartWidgetForGet = (propWidget: IWidget, dataset: IDashboardDataset
     const chartType = propWidget.settings.chartModel?.model?.chart.type
     if (chartType == 'gauge' || chartType == 'activitygauge' || chartType == 'solidgauge') {
         propWidget.columns.forEach((measure) => {
-            let measureToPush = { id: `${measure.alias}_${measure.aggregation}`, alias: `${measure.alias}_${measure.aggregation}`, columnName: measure.columnName, funct: measure.aggregation, orderColumn: measure.alias } as any
+            const measureToPush = { id: `${measure.alias}_${measure.aggregation}`, alias: `${measure.alias}_${measure.aggregation}`, columnName: measure.columnName, funct: measure.aggregation, orderColumn: measure.alias } as any
             measure.formula ? (measureToPush.formula = measure.formula) : ''
             dataToSend.aggregations.measures.push(measureToPush)
         })
     } else {
         //MEASURE LOGIC - will ALWAYS HAVE ONE MEASURE
-        var measureIndex = propWidget.columns.findIndex((column: any) => column.fieldType === 'MEASURE')
-        var measure = propWidget.columns[measureIndex]
+        const measureIndex = propWidget.columns.findIndex((column: any) => column.fieldType === 'MEASURE')
+        const measure = propWidget.columns[measureIndex]
 
-        let measureToPush = { id: `${measure.alias}_${measure.aggregation}`, alias: `${measure.alias}_${measure.aggregation}`, columnName: measure.columnName, funct: measure.aggregation, orderColumn: measure.alias } as any
+        const measureToPush = { id: `${measure.alias}_${measure.aggregation}`, alias: `${measure.alias}_${measure.aggregation}`, columnName: measure.columnName, funct: measure.aggregation, orderColumn: measure.alias } as any
         measure.formula ? (measureToPush.formula = measure.formula) : ''
         dataToSend.aggregations.measures.push(measureToPush)
 
         //FIRST CATEGORY LOGIC - TODO: Make it grab the drilldown Category instead of the first one.
-        var categoryIndex = propWidget.columns.findIndex((column: any) => column.fieldType !== 'MEASURE')
-        var category = propWidget.columns[categoryIndex]
+        const categoryIndex = propWidget.columns.findIndex((column: any) => column.fieldType !== 'MEASURE')
+        const category = propWidget.columns[categoryIndex]
 
-        let categoryToPush = { id: category.alias, alias: category.alias, columnName: category.columnName, orderType: '', funct: 'NONE' } as any
+        const categoryToPush = { id: category.alias, alias: category.alias, columnName: category.columnName, orderType: '', funct: 'NONE' } as any
         dataToSend.aggregations.categories.push(categoryToPush)
     }
 
@@ -573,18 +580,18 @@ const formatChartWidgetForGet = (propWidget: IWidget, dataset: IDashboardDataset
 
 //#region ===================== Custom Chart Widget ====================================================
 const getCustomChartData = async (dashboardId, widget: IWidget, datasets: IDashboardDataset[], $http: any, initialCall: boolean, selections: ISelection[], associativeResponseSelections?: any) => {
-    var datasetIndex = datasets.findIndex((dataset: IDashboardDataset) => widget.dataset === dataset.id)
-    var selectedDataset = datasets[datasetIndex]
+    const datasetIndex = datasets.findIndex((dataset: IDashboardDataset) => widget.dataset === dataset.id)
+    const selectedDataset = datasets[datasetIndex]
 
-    // var measureCheck = widget.columns.findIndex((column: any) => column.fieldType === 'MEASURE') != -1
-    // var categoryCheck = widget.columns.findIndex((column: any) => column.fieldType !== 'MEASURE') != -1
+    // const measureCheck = widget.columns.findIndex((column: any) => column.fieldType === 'MEASURE') != -1
+    // const categoryCheck = widget.columns.findIndex((column: any) => column.fieldType !== 'MEASURE') != -1
 
     // if (selectedDataset && measureCheck && categoryCheck) {
     if (selectedDataset && widget.settings.editor.html) {
-        var url = `2.0/datasets/${selectedDataset.dsLabel}/data?offset=-1&size=-1&nearRealtime=true`
+        const url = `2.0/datasets/${selectedDataset.dsLabel}/data?offset=-1&size=-1&nearRealtime=true`
 
-        let postData = formatWidgetModelForGet(dashboardId, widget, selectedDataset, initialCall, selections, associativeResponseSelections)
-        var tempResponse = null as any
+        const postData = formatWidgetModelForGet(dashboardId, widget, selectedDataset, initialCall, selections, associativeResponseSelections)
+        let tempResponse = null as any
 
         if (widget.dataset || widget.dataset === 0) clearDatasetInterval(widget.dataset)
         await $http
@@ -607,20 +614,20 @@ const getCustomChartData = async (dashboardId, widget: IWidget, datasets: IDashb
 
 //#region ===================== Discovery Widget ====================================================
 const getDiscoveryChartData = async (widget: IWidget, datasets: IDashboardDataset[], $http: any, initialCall: boolean, selections: ISelection[], associativeResponseSelections?: any) => {
-    var datasetIndex = datasets.findIndex((dataset: IDashboardDataset) => widget.dataset === dataset.id)
-    var selectedDataset = datasets[datasetIndex]
+    const datasetIndex = datasets.findIndex((dataset: IDashboardDataset) => widget.dataset === dataset.id)
+    const selectedDataset = datasets[datasetIndex]
 
     if (selectedDataset) {
-        var url = ''
+        let url = ''
         if (!widget.settings.pagination) {
-            let pagination = { enabled: true, properties: { offset: 0, itemsNumber: 10, totalItems: null } }
+            const pagination = { enabled: true, properties: { offset: 0, itemsNumber: 10, totalItems: null } }
             widget.settings.pagination = pagination
         }
 
         url = `2.0/datasets/${selectedDataset.dsLabel}/data?offset=${widget.settings.pagination.properties.offset}&size=${widget.settings.pagination.properties.itemsNumber}&nearRealtime=true`
 
-        let postData = formatDiscoveryModelForGet(widget, selectedDataset, initialCall, selections, associativeResponseSelections)
-        var tempResponse = null as any
+        const postData = formatDiscoveryModelForGet(widget, selectedDataset, initialCall, selections, associativeResponseSelections)
+        let tempResponse = null as any
 
         if (widget.dataset || widget.dataset === 0) clearDatasetInterval(widget.dataset)
         await $http
@@ -642,7 +649,7 @@ const getDiscoveryChartData = async (widget: IWidget, datasets: IDashboardDatase
 }
 
 const formatDiscoveryModelForGet = (propWidget: IWidget, dataset: any, initialCall: boolean, selections: ISelection[], associativeResponseSelections?: any) => {
-    var dataToSend = {
+    const dataToSend = {
         aggregations: {
             dataset: '',
             measures: [],
@@ -662,11 +669,11 @@ const formatDiscoveryModelForGet = (propWidget: IWidget, dataset: any, initialCa
 
     propWidget.columns.forEach((column) => {
         if (column.fieldType === 'MEASURE') {
-            let measureToPush = { id: column.alias, alias: column.alias, columnName: column.columnName, funct: 'NONE', orderColumn: column.alias, functColumn: column.alias, orderType: '' } as any
+            const measureToPush = { id: column.alias, alias: column.alias, columnName: column.columnName, funct: 'NONE', orderColumn: column.alias, functColumn: column.alias, orderType: '' } as any
             column.formula ? (measureToPush.formula = column.formula) : ''
             dataToSend.aggregations.measures.push(measureToPush)
         } else {
-            let attributeToPush = { id: column.alias, alias: column.alias, columnName: column.columnName, orderType: '', funct: 'COUNT', functColumn: column.alias } as any
+            const attributeToPush = { id: column.alias, alias: column.alias, columnName: column.columnName, orderType: '', funct: 'COUNT', functColumn: column.alias } as any
 
             //sort logic - to be changed by other widgets
             if (propWidget.type === 'table' || propWidget.type === 'html' || propWidget.type === 'text') column.id === propWidget.settings.sortingColumn ? (attributeToPush.orderType = propWidget.settings.sortingOrder) : ''
@@ -683,20 +690,118 @@ const formatDiscoveryModelForGet = (propWidget: IWidget, dataset: any, initialCa
         })
     }
 
-    let searchWordSettings = propWidget.settings.search
+    const searchWordSettings = propWidget.settings.search
     if (searchWordSettings.enabled && searchWordSettings.searchWord && searchWordSettings.columns.length > 0) {
-        var searchPropName = searchWordSettings.columns.join(',')
+        const searchPropName = searchWordSettings.columns.join(',')
         dataToSend.likeSelections[dataset.dsLabel][searchPropName] = searchWordSettings.searchWord.trim()
     }
 
-    let facetSearchParams = propWidget.settings.search.facetSearchParams
+    const facetSearchParams = propWidget.settings.search.facetSearchParams
     if (facetSearchParams) {
-        var facetKeys = Object.keys(facetSearchParams)
+        const facetKeys = Object.keys(facetSearchParams)
         if (facetKeys.length > 0) {
             facetKeys.forEach((facetName) => {
                 dataToSend.likeSelections[dataset.dsLabel][facetName] = facetSearchParams[facetName][0]
             })
         }
+    }
+
+    return dataToSend
+}
+//#endregion ================================================================================================
+
+//#region ===================== Pivot Widget ====================================================
+export const getPivotData = async (dashboardId: any, widget: IWidget, datasets: IDashboardDataset[], $http: any, initialCall: boolean, selections: ISelection[], associativeResponseSelections?: any) => {
+    const datasetIndex = datasets.findIndex((dataset: IDashboardDataset) => widget.dataset === dataset.id)
+    const selectedDataset = datasets[datasetIndex]
+
+    if (selectedDataset && hasFields(widget)) {
+        const url = `2.0/datasets/${selectedDataset.dsLabel}/data?offset=-1&size=-1&nearRealtime=true`
+
+        const postData = formatPivotModelForGet(dashboardId, widget, selectedDataset, initialCall, selections, associativeResponseSelections)
+        let tempResponse = null as any
+
+        if (widget.dataset || widget.dataset === 0) clearDatasetInterval(widget.dataset)
+        await $http
+            .post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + url, postData, { headers: { 'X-Disable-Errors': 'true' } })
+            .then((response: AxiosResponse<any>) => {
+                tempResponse = response.data
+                tempResponse.initialCall = initialCall
+            })
+            .catch((error: any) => {
+                showGetDataError(error, selectedDataset.dsLabel)
+            })
+            .finally(() => {
+                // TODO - uncomment when realtime dataset example is ready
+                // resetDatasetInterval(widget)
+            })
+        return tempResponse
+    }
+}
+
+const hasFields = (propWidget: IWidget) => {
+    const fields = propWidget.fields || ({} as any)
+
+    if (fields.columns.length > 0 && fields.rows.length > 0 && fields.data.length > 0) return true
+    else return false
+}
+
+const formatPivotModelForGet = (dashboardId: any, propWidget: IWidget, dataset: IDashboardDataset, initialCall: boolean, selections: ISelection[], associativeResponseSelections?: any) => {
+    const dataToSend = {
+        aggregations: {
+            dataset: '',
+            measures: [],
+            categories: []
+        },
+        parameters: {},
+        selections: {},
+        drivers: {},
+        indexes: []
+    } as any
+
+    addSelectionsToData(dataToSend, propWidget, dataset.dsLabel, initialCall, selections, associativeResponseSelections)
+
+    dataToSend.aggregations.dataset = dataset.dsLabel
+
+    for (const fieldsName in propWidget.fields) {
+        const fields = propWidget.fields[fieldsName]
+        fields.forEach((field) => {
+            if (field.fieldType === 'MEASURE') {
+                const measureToPush = { id: field.alias, alias: field.alias, columnName: field.columnName, funct: field.aggregation, orderColumn: field.alias } as any
+                field.formula ? (measureToPush.formula = field.formula) : ''
+                dataToSend.aggregations.measures.push(measureToPush)
+            } else {
+                const attributeToPush = { id: field.alias, alias: field.alias, columnName: field.columnName, orderType: '', funct: 'NONE' } as any
+
+                //TODO: do we need sorting on BE???
+                // if (propWidget.type === 'table' || propWidget.type === 'html' || propWidget.type === 'text') field.id === propWidget.settings.sortingColumn ? (attributeToPush.orderType = propWidget.settings.sortingOrder) : ''
+                // else attributeToPush.orderType = propWidget.settings.sortingOrder
+
+                dataToSend.aggregations.categories.push(attributeToPush)
+            }
+        })
+    }
+
+    if (dataset.drivers && dataset.drivers.length > 0) {
+        dataset.drivers.forEach((driver: IDashboardDatasetDriver) => {
+            dataToSend.drivers[`${driver.urlName}`] = driver.parameterValue
+        })
+    }
+
+    if (dataset.parameters && dataset.parameters.length > 0) {
+        const paramRegex = /[^\$P{]+(?=\})/
+        dataset.parameters.forEach((param: any) => {
+            const matched = paramRegex.exec(param.value)
+            if (matched && matched[0]) {
+                const documentDrivers = dashStore.dashboards[dashboardId].drivers
+                for (let index = 0; index < documentDrivers.length; index++) {
+                    const driver = documentDrivers[index]
+                    if (driver.urlName == matched[0]) {
+                        dataToSend.parameters[`${param.name}`] = driver.value
+                    }
+                }
+            } else dataToSend.parameters[`${param.name}`] = param.value
+        })
     }
 
     return dataToSend

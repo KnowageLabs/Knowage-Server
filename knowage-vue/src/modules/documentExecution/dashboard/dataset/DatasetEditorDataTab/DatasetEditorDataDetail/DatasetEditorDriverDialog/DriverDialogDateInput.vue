@@ -40,7 +40,6 @@ export default defineComponent({
                 this.driver.parameterValue = [{ value: '', description: '' }]
             }
 
-            // TODO - See if we need this after we remove the mocked drivers
             if (this.driver && !(this.driver.parameterValue[0].value instanceof Date)) {
                 this.driver.parameterValue[0].value = new Date(this.driver.parameterValue[0].value)
             }

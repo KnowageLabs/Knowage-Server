@@ -1,5 +1,5 @@
 <template>
-    <div v-if="widgetModel" class="dashboard-card-shadow kn-height-full p-ml-1 p-d-flex p-flex-row">
+    <div v-if="model" class="dashboard-card-shadow kn-height-full p-ml-1 p-d-flex p-flex-row">
         <div class="p-grid p-m-2 kn-flex kn-overflow dashboard-scrollbar">
             <Message v-if="images.length == 0" class="kn-flex p-m-2" severity="info" :closable="false">
                 {{ $t('common.info.noDataFound') }}
@@ -19,7 +19,6 @@
                     :is-selected="selectedImage?.imgId === image.imgId"
                     :image-prop="image"
                     @imageSelected="setSelectedImage(image)"
-                    @openSidebar="openSidebar(image)"
                     @delete="onImageDelete"
                 />
 
@@ -52,6 +51,7 @@ export default defineComponent({
     data() {
         return {
             descriptor,
+            model: {} as IWidget,
             images: [] as IImage[],
             triggerImageUpload: false,
             selectedImage: null as IImage | null,
@@ -60,22 +60,29 @@ export default defineComponent({
         }
     },
     watch: {
+        widgetModel() {
+            this.loadModel()
+        },
         imagesListProp() {
             this.loadImages()
         }
     },
     created() {
+        this.loadModel()
         this.loadImages()
     },
     methods: {
         ...mapActions(appStore, ['setInfo', 'setError', 'setLoading']),
+        loadModel() {
+            this.model = this.widgetModel
+        },
         loadImages() {
             this.images = this.imagesListProp
             this.loadSelectedImage()
         },
         loadSelectedImage() {
-            if (this.widgetModel.settings.configuration?.image) {
-                const index = this.images.findIndex((image: IImage) => image.imgId === this.widgetModel.settings.configuration.image.id)
+            if (this.model.settings.configuration?.image) {
+                const index = this.images.findIndex((image: IImage) => image.imgId === this.model.settings.configuration.image.id)
                 if (index !== -1) this.selectedImage = this.images[index]
             }
         },
@@ -147,10 +154,7 @@ export default defineComponent({
         },
         setSelectedImage(image: IImage) {
             this.selectedImage = image
-            this.widgetModel.settings.configuration.image.id = image.imgId
-        },
-        openSidebar(image: IImage) {
-            this.selectedSidebarImage = image
+            this.model.settings.configuration.image.id = image.imgId
             this.sidebarVisible = true
         }
     }

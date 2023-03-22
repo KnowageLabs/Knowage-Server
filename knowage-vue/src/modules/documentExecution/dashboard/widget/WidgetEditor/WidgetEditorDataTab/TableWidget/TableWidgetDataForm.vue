@@ -1,6 +1,6 @@
 <template>
-    <div v-if="widgetModel" class="widget-editor-card p-p-2">
-        <div v-if="widgetModel.type === 'table'" class="p-d-flex p-flex-row p-ai-center p-my-1">
+    <div v-if="widget" class="widget-editor-card p-p-2">
+        <div v-if="widget.type === 'table'" class="p-d-flex p-flex-row p-ai-center p-my-1">
             <div class="kn-flex p-m-2">
                 <label class="kn-material-input-label p-mr-2">{{ $t('dashboard.widgetEditor.pagination') }}</label>
                 <InputSwitch v-model="paginationEnabled" @change="paginationChanged"></InputSwitch>
@@ -53,6 +53,7 @@ export default defineComponent({
         return {
             descriptor,
             commonDescriptor,
+            widget: {} as IWidget,
             paginationEnabled: false,
             itemsNumber: '0',
             sortingColumn: '',
@@ -60,6 +61,7 @@ export default defineComponent({
         }
     },
     created() {
+        this.loadWidget()
         this.setEventListeners()
         this.loadPagination()
         this.loadSortingSettings()
@@ -68,6 +70,9 @@ export default defineComponent({
         this.removeEventListeners()
     },
     methods: {
+        loadWidget() {
+            this.widget = this.widgetModel
+        },
         setEventListeners() {
             emitter.on('columnRemoved', this.onColumnRemoved)
         },
@@ -78,28 +83,28 @@ export default defineComponent({
             this.updateSortingColumn(column)
         },
         loadPagination() {
-            if (this.widgetModel?.settings?.pagination) {
-                this.paginationEnabled = this.widgetModel.settings.pagination.enabled
-                this.itemsNumber = '' + this.widgetModel.settings.pagination.properties.itemsNumber
+            if (this.widget?.settings?.pagination) {
+                this.paginationEnabled = this.widget.settings.pagination.enabled
+                this.itemsNumber = '' + this.widget.settings.pagination.properties.itemsNumber
             }
         },
         loadSortingSettings() {
-            if (this.widgetModel?.settings?.sortingColumn) this.sortingColumn = this.widgetModel.settings.sortingColumn
-            if (this.widgetModel?.settings?.sortingOrder) this.sortingOrder = this.widgetModel.settings.sortingOrder
+            if (this.widget?.settings?.sortingColumn) this.sortingColumn = this.widget.settings.sortingColumn
+            if (this.widget?.settings?.sortingOrder) this.sortingOrder = this.widget.settings.sortingOrder
         },
         paginationChanged() {
-            if (!this.widgetModel.settings) return
-            this.widgetModel.settings.pagination.enabled = this.paginationEnabled
-            this.widgetModel.settings.pagination.properties.itemsNumber = +this.itemsNumber
-            emitter.emit('paginationChanged', this.widgetModel.settings.pagination)
-            emitter.emit('refreshWidgetWithData', this.widgetModel.id)
+            if (!this.widget.settings) return
+            this.widget.settings.pagination.enabled = this.paginationEnabled
+            this.widget.settings.pagination.properties.itemsNumber = +this.itemsNumber
+            emitter.emit('paginationChanged', this.widget.settings.pagination)
+            emitter.emit('refreshWidgetWithData', this.widget.id)
         },
         sortingChanged() {
-            if (!this.widgetModel.settings) return
-            this.widgetModel.settings.sortingColumn = this.sortingColumn
-            this.widgetModel.settings.sortingOrder = this.sortingOrder
-            emitter.emit('sortingChanged', { sortingColumn: this.widgetModel.settings.sortingColumn, sortingOrder: this.widgetModel.settings.sortingOrder })
-            emitter.emit('refreshWidgetWithData', this.widgetModel.id)
+            if (!this.widget.settings) return
+            this.widget.settings.sortingColumn = this.sortingColumn
+            this.widget.settings.sortingOrder = this.sortingOrder
+            emitter.emit('sortingChanged', { sortingColumn: this.widget.settings.sortingColumn, sortingOrder: this.widget.settings.sortingOrder })
+            emitter.emit('refreshWidgetWithData', this.widget.id)
         },
         updateSortingColumn(column: IWidgetColumn) {
             if (column.columnName === this.sortingColumn) {
