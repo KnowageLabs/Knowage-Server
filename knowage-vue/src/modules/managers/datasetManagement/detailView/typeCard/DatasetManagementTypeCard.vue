@@ -96,17 +96,6 @@ export default defineComponent({
             qbeVisible: false
         }
     },
-    computed: {
-        getAllowed() {
-            return this.datasetTypes.filter((cd) => {
-                if (this.selectedDataset.dsTypeCd == 'Derived' || this.selectedDataset.dsTypeCd == 'Prepared') {
-                    return cd.VALUE_CD == this.selectedDataset.dsTypeCd
-                } else {
-                    return cd.VALUE_CD != 'Derived' && cd.VALUE_CD != 'Prepared'
-                }
-            })
-        }
-    },
     watch: {
         selectedDataset() {
             this.dataset = this.selectedDataset
@@ -128,6 +117,15 @@ export default defineComponent({
             this.dataset.restJsonPathAttributes = []
             this.dataset.restRequestHeaders = []
             this.$emit('touched')
+        },
+        getAllowed() {
+            return this.datasetTypes.filter((cd) => {
+                if (this.selectedDataset.dsTypeCd == 'Derived' || this.selectedDataset.dsTypeCd == 'Prepared') {
+                    return cd.VALUE_CD == this.selectedDataset.dsTypeCd
+                } else {
+                    return cd.VALUE_CD != 'Derived' && cd.VALUE_CD != 'Prepared'
+                }
+            })
         }
     }
 })

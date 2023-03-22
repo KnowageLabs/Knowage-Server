@@ -314,7 +314,7 @@ export default defineComponent({
                     name: document.name,
                     label: document.label,
                     description: document.description,
-                    type: 'DOCUMENT_COMPOSITE'
+                    type: 'DASHBOARD'
                 },
                 customData: {
                     templateContent: this.getTemplateContent()
