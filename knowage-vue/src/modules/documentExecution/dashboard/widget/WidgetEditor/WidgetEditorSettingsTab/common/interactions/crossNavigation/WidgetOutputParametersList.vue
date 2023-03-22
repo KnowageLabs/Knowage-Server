@@ -1,6 +1,5 @@
 <template>
     <div class="p-grid">
-        {{ widgetType }}
         <div v-for="(parameter, index) in parameters" :key="index" class="p-grid p-col-12 p-ai-center p-p-2">
             <div class="p-sm-6 p-md-1 p-ai-center">
                 <div class="kn-flex p-mx-4 p-my-2">
