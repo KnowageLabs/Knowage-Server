@@ -1,3 +1,4 @@
+import { formatMapWidget } from './mapWidget/MapCompatibilityHelper';
 import { formatTableWidget } from './tableWidget/TableWidgetCompatibilityHelper'
 import { formatSelectorWidget } from '@/modules/documentExecution/dashboard/helpers/selectorWidget/SelectorWidgetCompatibilityHelper'
 import { IAssociation, IDashboard, IDashboardConfiguration, IDataset, IDatasetParameter, ISelection, IVariable, IWidget, IWidgetColumn, IWidgetColumnFilter, IDashboardDataset, IDashboardDriver } from '../Dashboard'
@@ -194,8 +195,6 @@ const checkIfWidgetInModel = (widget: any, formattedModel: any) => {
 export const formatWidget = (widget: any, formattedModel: IDashboard, user: any, drivers: IDashboardDriver[]) => {
     let formattedWidget = {} as any
 
-
-
     switch (widget.type) {
         case 'table':
             formattedWidget = formatTableWidget(widget, formattedModel, drivers)
@@ -225,6 +224,10 @@ export const formatWidget = (widget: any, formattedModel: IDashboard, user: any,
             break
         case 'static-pivot-table':
             formattedWidget = formatPivotTabletWidget(widget)
+            break
+        case 'map':
+            formattedWidget = formatMapWidget(widget)
+
     }
 
     return formattedWidget

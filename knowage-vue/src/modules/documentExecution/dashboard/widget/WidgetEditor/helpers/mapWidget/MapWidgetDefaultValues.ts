@@ -1,0 +1,1 @@
+import descriptor from './MapWidgetDefaultValuesDescriptor.json'
