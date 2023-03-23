@@ -1,6 +1,5 @@
 <template>
     <div v-if="widgetModel">
-        {{ widgetModel.columns }}
         <WidgetEditorColumnTable
             v-if="chartType === 'wordcloud'"
             class="p-m-2"
@@ -34,7 +33,6 @@
 import { defineComponent, PropType } from 'vue'
 import { IDataset, IWidget, IWidgetColumn } from '@/modules/documentExecution/Dashboard/Dashboard'
 import { emitter } from '../../../../../DashboardHelpers'
-import { removeSerieFromWidgetModel } from '../../../helpers/chartWidget/highcharts/HighchartsDataTabHelpers'
 import descriptor from '../../TableWidget/TableWidgetDataDescriptor.json'
 import highchartDescriptor from './VegaDataContainerDescriptor.json'
 import commonDescriptor from '../../common/WidgetCommonDescriptor.json'
@@ -123,8 +121,6 @@ export default defineComponent({
                 this.widgetModel.columns.splice(index, 1)
                 if (column.id === this.selectedColumn?.id) this.selectedColumn = null
                 this.removeColumnFromColumnTableItems(column)
-                // TODO
-                //  removeSerieFromWidgetModel(this.widgetModel, column, this.chartType)
                 emitter.emit('refreshWidgetWithData', this.widgetModel.id)
             }
         },

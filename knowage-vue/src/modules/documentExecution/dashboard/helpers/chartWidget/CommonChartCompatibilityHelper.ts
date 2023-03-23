@@ -24,10 +24,8 @@ export const getFormattedWidgetColumns = (widget: any, chartLibrary: 'chartJS' |
         if (!widgetColumNameMap[widget.content.columnSelectedOfDatasetAggregations[i].name]) widgetColumNameMap[widget.content.columnSelectedOfDatasetAggregations[i].name] = getFormattedWidgetColumn(widget.content.columnSelectedOfDatasetAggregations[i], columnNameIdMap)
     }
 
-    console.log('-------- widgetColumNameMap 1: ', widgetColumNameMap)
     const formattedColumns = [] as IWidgetColumn[]
     const category = widget.content.chartTemplate.CHART.VALUES.CATEGORY
-    console.log(' !!!!!!!! CATEGORY: ', category)
     if (category) {
         Array.isArray(category) ? addCategoryColumnsFromArray(category, formattedColumns, widgetColumNameMap, widget, 'vega') : addCategoryColumns(category, formattedColumns, widgetColumNameMap, widget, chartLibrary)
     }
@@ -60,9 +58,7 @@ export const getMaximumNumberOfSeries = (chartLibrary: 'chartJS' | 'highcharts' 
 }
 
 const addCategoryColumnsFromArray = (category: IOldModelCategory[], formattedColumns: IWidgetColumn[], widgetColumNameMap: any, widget: IWidget, chartLibrary: 'vega') => {
-    console.log('-------- widgetColumNameMap 2: ', widgetColumNameMap)
     category.forEach((category: IOldModelCategory) => addCategoryColumn(category, widgetColumNameMap, formattedColumns, widget, chartLibrary))
-    console.log('------------ formattedColumns: ', formattedColumns)
 }
 
 export const addCategoryColumns = (category: IOldModelCategory, formattedColumns: IWidgetColumn[], widgetColumNameMap: any, widget: IWidget, chartLibrary: 'chartJS' | 'highcharts' | 'vega') => {
@@ -73,9 +69,6 @@ export const addCategoryColumns = (category: IOldModelCategory, formattedColumns
 }
 
 const addCategoryColumn = (category: IOldModelCategory, widgetColumNameMap: any, formattedColumns: IWidgetColumn[], widget: IWidget, chartLibrary: 'chartJS' | 'highcharts' | 'vega') => {
-    console.log('-------[category.column]: ', category.column)
-    console.log('------- widgetColumNameMap 3: ', widgetColumNameMap)
-    console.log('------- widgetColumNameMap[category.column]: ', widgetColumNameMap[category.column])
     if (widgetColumNameMap[category.column]) {
         const tempColumn = { ...widgetColumNameMap[category.column] }
         if (chartHasDrilldown(widget, chartLibrary) && category.drillOrder) tempColumn.drillOrder = createDrillOrder(category.drillOrder[category.column].orderColumn, category.drillOrder[category.column].orderType)

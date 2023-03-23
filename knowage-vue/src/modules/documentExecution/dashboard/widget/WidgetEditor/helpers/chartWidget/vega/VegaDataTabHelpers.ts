@@ -1,16 +1,16 @@
 import { IWidgetColumn } from "@/modules/documentExecution/dashboard/Dashboard";
 
-export const addChartJSColumnToTable = (tempColumn: IWidgetColumn, rows: IWidgetColumn[], chartType: string | undefined, attributesOnly: boolean, measuresOnly: boolean) => {
+export const addVegaColumnToTable = (tempColumn: IWidgetColumn, rows: IWidgetColumn[], chartType: string | undefined, attributesOnly: boolean, measuresOnly: boolean) => {
     let mode = ''
     if (attributesOnly) mode = 'attributesOnly'
     else if (measuresOnly) mode = 'measuresOnly'
     switch (chartType) {
-        case 'chartJSPieChart':
-            addChartJSPieChartColumnToTable(tempColumn, rows, chartType, mode)
+        case 'wordcloud':
+            addWordcloudColumnToTable(tempColumn, rows, chartType, mode)
     }
 }
 
-const addChartJSPieChartColumnToTable = (tempColumn: IWidgetColumn, rows: IWidgetColumn[], chartType: string | undefined, mode: string) => {
+const addWordcloudColumnToTable = (tempColumn: IWidgetColumn, rows: IWidgetColumn[], chartType: string | undefined, mode: string) => {
     if (mode === 'attributesOnly' && rows.length <= 1) {
         if (tempColumn.fieldType === 'MEASURE') {
             tempColumn.fieldType = 'ATTRIBUTE'
