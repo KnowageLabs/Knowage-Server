@@ -56,9 +56,9 @@
 					</md-input-container>
 					<md-input-container ng-if="layer.analysisConf.method!='CLASSIFY_BY_RANGES'" flex="50" class="md-block" >
 						<label>{{translate.load('sbi.cockpit.map.edit.visualization.choroplet.classesNumber')}}</label>
-						<input ng-model="layer.analysisConf.classes" type="number" ng-init="layer.analysisConf.classes=layer.analysisConf.classes||3">
+						<input ng-model="layer.analysisConf.classes" type="number" min="2" ng-init="layer.analysisConf.classes=layer.analysisConf.classes||3">
 					</md-input-container>
-					<md-button class="md-button md-primary" ng-if="layer.analysisConf.method=='CLASSIFY_BY_RANGES'" ng-click="getChoroplethThresholds($event,layer.analysisConf)">
+					<md-button class="md-button md-primary" ng-if="layer.analysisConf.method == 'CLASSIFY_BY_RANGES'" ng-click="getRangeClassificationThresholds($event, layer.analysisConf)">
 						{{translate.load('sbi.cockpit.map.edit.visualization.choroplet.manageRanges')}}
 					</md-button>
 				</div>
@@ -148,16 +148,40 @@
 
 			<div style="padding:8px;" ng-if="layer.visualizationType == 'balloons'">
 				<div layout="row" layout-align="start center" style="padding-bottom: 8px;" >
-					<md-input-container class="md-block flex">
-						<label>{{translate.load('sbi.cockpit.map.edit.visualization.marker.fillColor')}}</label>
-						<color-picker options="colorPickerOptions" ng-model="layer.balloonConf.color"></color-picker> 
+
+					<md-input-container flex="50" class="md-block">
+						<label>{{translate.load('sbi.cockpit.map.edit.visualization.choroplet.classes')}}</label>
+						<md-select ng-model="layer.balloonConf.method">
+							<md-option value="CLASSIFY_BY_EQUAL_INTERVALS">{{translate.load('sbi.cockpit.map.edit.visualization.choroplet.classesByEqualIntervals')}}</md-option>
+							<md-option value="CLASSIFY_BY_QUANTILS">{{translate.load('sbi.cockpit.map.edit.visualization.choroplet.classesByQuantils')}}</md-option>
+							<md-option value="CLASSIFY_BY_RANGES">{{translate.load('sbi.cockpit.map.edit.visualization.choroplet.classesByRanges')}}</md-option>
+						</md-select>
 					</md-input-container>
-		
-					<md-input-container class="md-block flex">
+					
+					<md-input-container ng-if="layer.balloonConf.method != 'CLASSIFY_BY_RANGES'" flex="50" class="md-block" >
+						<label>{{translate.load('sbi.cockpit.map.edit.visualization.choroplet.classesNumber')}}</label>
+						<input ng-model="layer.balloonConf.classes" type="number" min="2">
+					</md-input-container>
+
+					<md-button class="md-button md-primary" ng-if="layer.balloonConf.method == 'CLASSIFY_BY_RANGES'" ng-click="getRangeClassificationThresholds($event, layer.balloonConf)">
+						{{translate.load('sbi.cockpit.map.edit.visualization.choroplet.manageRanges')}}
+					</md-button>
+				</div>
+				<div layout="row" layout-align="start center" style="padding-bottom: 8px;" >
+					<md-input-container flex="35" class="md-block" >
+						<label>{{translate.load('sbi.cockpit.map.edit.visualization.choroplet.fromColor')}}</label>
+						 <color-picker options="colorPickerOptions" ng-model="layer.balloonConf.fromColor"></color-picker> 
+					</md-input-container>
+					<md-input-container flex="35" class="md-block">
+						<label>{{translate.load('sbi.cockpit.map.edit.visualization.choroplet.toColor')}}</label>
+						 <color-picker options="colorPickerOptions" ng-model="layer.balloonConf.toColor"></color-picker> 
+					</md-input-container>
+
+					<md-input-container flex="15" class="md-block flex">
 						<label>{{translate.load('sbi.cockpit.map.edit.visualization.marker.borderColor')}}</label>
 						<color-picker options="colorPickerOptions" ng-model="layer.balloonConf.borderColor"></color-picker> 
 					</md-input-container>
-		
+
 					<md-input-container class="md-block flex rz-slider-container">
 						<label>{{translate.load('sbi.cockpit.map.edit.visualization.marker.minSize')}}/{{translate.load('sbi.cockpit.map.edit.visualization.marker.maxSize')}}</label>
 						<rzslider rz-slider-model="layer.balloonConf.minSize" rz-slider-high="layer.balloonConf.maxSize" rz-slider-options="{ floor: 1, ceil: 100, hidePointerLabels: false, hideLimitLabels: true }"></rzslider>

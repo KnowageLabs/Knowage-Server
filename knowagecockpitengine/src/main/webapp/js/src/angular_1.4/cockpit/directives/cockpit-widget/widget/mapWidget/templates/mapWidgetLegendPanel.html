@@ -1,56 +1,72 @@
-<div class="mapWidgetLegendContainer" draggable="ngModel.style.legend" ng-class="ngModel.style.legend.position">
-	<div class="mapWidgetLegend" ng-show="isShowLegend">
-		<button class="toggleButton" ng-click="hideLegend()"><md-icon md-font-icon="fas fa-chevron-down"></button>
+<div class="mapWidgetLegendContainer" draggable="ngModel.style.legend" ng-class="ngModel.style.legend.position" ng-show="needLegend()" ng-style="{{ getLegendContainerStyle() }}">
 
-		<div ng-repeat="legendElem in legend">
+	<div class="mapWidgetLegend" ng-style="{{ getLegendSubContainerStyle() }}">
+		<button ng-show="isShowLegend" class="toggleButton" ng-click="hideLegend()"><md-icon md-font-icon="fas fa-chevron-down"></button>
+		<span ng-show="!isShowLegend" class="legendLayerLabel" flex>{{translate.load('sbi.cockpit.map.legend.label')}}</span>
+		<button  ng-show="!isShowLegend" class="toggleButton" ng-click="showLegend()"><md-icon md-font-icon="fas fa-chevron-up"></md-icon></button>
 
-			<div layout="column" ng-show="getLayerVisibility(legendElem.layer)" ng-if="legendElem.method == 'CLASSIFY_BY_EQUAL_INTERVALS'">
-				<span class="legendLayerLabel" flex>{{legendElem.alias}}</span>
-				<div layout="row" layout-align="start center">
-					<span class="legendStartLimit">{{legendElem.limits[0]}}&nbsp;&nbsp;</span>
-					<div style="height:10px;width:90%;display:block;border-radius:25px;" ng-style="{ background: 'linear-gradient(to right ' + legendElem.colors + ')' }"></div>
-					<span class="legendEndLimit">&nbsp;&nbsp;{{legendElem.limits[1]}}</span>
+		<div class="mapWidgteLegendInfo" ng-show="isShowLegend" ng-if="ngModel.style.legend.title.text" ng-style="{{ getLegendTitleStyle() }}">
+			<span>{{ ngModel.style.legend.title.text }}</span>
+		</div>
+
+		<div class="mapWidgteLegendInfo" ng-show="isShowLegend" ng-if="ngModel.style.legend.info.text" ng-style="{{ getLegendInfoStyle() }}">
+			<span>{{ ngModel.style.legend.info.text }}</span>
+		</div>
+
+		<div class="mapWidgetLegendElementLoop" ng-show="isShowLegend" ng-repeat="(key, legendElem) in legend">
+
+			<div ng-style="{{ getLegendSectionContainerStyle() }}" layout="{{ getLegendDisposition() }}" ng-show="getLayerVisibility(legendElem.layer)" ng-if="legendElem.visualizationType == 'choropleth' && legendElem.method == 'CLASSIFY_BY_EQUAL_INTERVALS'">
+				<span class="legendLayerLabel" ng-style="{{ getLegendSpanElementsStyle() }}">{{legendElem.alias}}</span>
+				<div layout="row" ng-style="{{ getLegendElementsStyle() }}">
+					<span class="legendStartLimit">{{legendElem.classification[0].from_label}}</span>
+					<div class="mapWidgetLegendGradient" ng-style="{ background: 'linear-gradient(to right, ' + legendElem.classification[0].color + ', ' + legendElem.classification[legendElem.classification.length-1].color + ')' }"></div>
+					<span class="legendEndLimit">{{legendElem.classification[legendElem.classification.length-1].to_label}}</span>
 				</div>
 			</div>
 
-			<div layout="column" ng-show="getLayerVisibility(legendElem.layer)" ng-if="legendElem.method == 'CLASSIFY_BY_QUANTILS'">
-				<span class="legendLayerLabel" flex>{{legendElem.alias}}</span>
-				<div layout="row" layout-align="start center">
-					<span class="legendStartLimit">{{legendElem.limits[0]}}&nbsp;&nbsp;</span>
-					<div style="height:10px;width:90%;display:block;border-radius:25px;" ng-style="{ background: 'linear-gradient(to right ' + legendElem.colors + ')' }"></div>
-					<span class="legendEndLimit">&nbsp;&nbsp;{{legendElem.limits[1]}}</span>
+			<div ng-style="{{ getLegendSectionContainerStyle() }}" layout="{{ getLegendDisposition() }}" ng-show="getLayerVisibility(legendElem.layer)" ng-if="legendElem.visualizationType == 'choropleth' && legendElem.method == 'CLASSIFY_BY_QUANTILS'">
+				<span class="legendLayerLabel" ng-style="{{ getLegendSpanElementsStyle() }}">{{legendElem.alias}}</span>
+				<div layout="row" ng-style="{{ getLegendElementsStyle() }}">
+					<span class="legendStartLimit">{{legendElem.classification[0].from_label}}</span>
+					<div class="mapWidgetLegendGradient" ng-style="{ background: 'linear-gradient(to right, ' + legendElem.classification[0].color + ', ' + legendElem.classification[legendElem.classification.length-1].color + ')' }"></div>
+					<span class="legendEndLimit">{{legendElem.classification[legendElem.classification.length-1].to_label}}</span>
 				</div>
 			</div>
 
-			<div layout="column" ng-show="getLayerVisibility(legendElem.layer)" layout-align="space-around center" ng-if="legendElem.method=='CLASSIFY_BY_RANGES'">
-				<span class="legendLayerLabel" flex>&nbsp;{{legendElem.alias}}</span>
-				<div layout="row" style="align-items:center" ng-repeat="r in legendElem.ranges">
-					<div style="height:10px;width:10px;border-radius:25px;" ng-style="{ background: r.color }"></div>
-					<div style="font-size:small;margin-left:5px;margin-right:5px;">[{{r.from}}-{{r.to}}]</div>
+			<div ng-style="{{ getLegendSectionContainerStyle() }}" layout="{{ getLegendDisposition() }}" ng-show="getLayerVisibility(legendElem.layer)" ng-if="legendElem.visualizationType == 'choropleth' && legendElem.method == 'CLASSIFY_BY_RANGES'">
+				<span class="legendLayerLabel" ng-style="{{ getLegendSpanElementsStyle() }}">{{legendElem.alias}}</span>
+				<div layout="row" ng-style="{{ getLegendElementsStyle() }}" ng-repeat="classification in legendElem.classification">
+					<div class="mapWidgetLegendDot" ng-style="{ background: classification.color }"></div>
+					<div style="font-size:small;margin-left:5px;margin-right:5px;">[{{classification.from_label}}-{{classification.to_label}}]</div>
 				</div>
 			</div>
 
-			<div layout="column" ng-show="getLayerVisibility(legendElem.layer)" layout-align="space-around center" ng-if="legendElem.visualizationType == 'balloons'">
-				<span class="legendLayerLabel" flex>&nbsp;{{legendElem.alias}}</span>
-				<div layout="row" style="align-items:center">
+			<div ng-style="{{ getLegendSectionContainerStyle() }}" layout="{{ getLegendDisposition() }}" ng-show="getLayerVisibility(legendElem.layer)" ng-if="legendElem.visualizationType == 'balloons'">
+				<span class="legendLayerLabel" ng-style="{{ getLegendSpanElementsStyle() }}">{{legendElem.alias}}</span>
+				<div layout="row" ng-style="{{ getLegendElementsStyle() }}" ng-repeat="classification in legendElem.classification">
+					<span class="legendStartLimit">[{{classification.from_label}}-{{classification.to_label}}]</span>
 					<svg height="20" width="20">
-						<circle cx="10" cy="10" r="8" ng-style="{ 'fill': legendElem.style.color, 'stroke': legendElem.style.borderColor, 'stroke-width': '1px' }"/>
+						<circle cx="10" cy="10" r="8" ng-style="{ 'fill': classification.color, 'stroke': classification.borderColor, 'stroke-width': '1px' }"/>
 					</svg>
 				</div>
 			</div>
 
-			<div layout="column" ng-show="getLayerVisibility(legendElem.layer)" layout-align="space-around center" ng-if="legendElem.visualizationType == 'pies'">
-				<span class="legendLayerLabel" flex>&nbsp;{{legendElem.alias}}</span>
-				<div layout="row" style="align-items:center" ng-repeat="r in legendElem.ranges">
-					<div style="height:10px;width:10px;border-radius:25px;" ng-style="{ background: r.color }"></div>
-					<div style="font-size:small;margin-left:5px;margin-right:5px;">{{r.value}}</div>
+			<div ng-style="{{ getLegendSectionContainerStyle() }}" layout="{{ getLegendDisposition() }}" ng-show="getLayerVisibility(legendElem.layer)" ng-if="legendElem.visualizationType == 'pies'">
+				<span class="legendLayerLabel" ng-style="{{ getLegendSpanElementsStyle() }}">{{legendElem.alias}}</span>
+				<div layout="row" ng-style="{{ getLegendElementsStyle() }}" ng-repeat="classification in legendElem.classification">
+					<svg height="20" width="20">
+						<path d="M 18 16 A 18 18 0 0 0 8 2 L 2 18 Z" ng-style="{ 'fill': classification.color, 'stroke': classification.borderColor, 'stroke-width': '1px' }"/>
+					</svg>
+					<div style="font-size:small;margin-left:5px;margin-right:5px;">{{ classification.category }}</div>
 				</div>
 			</div>
 
 		</div>
 	</div>
 
+<!-- 
 	<div class="mapWidgetLegend toggle-legend" ng-class="ngModel.style.legend.alignment" ng-show="!isShowLegend"">
 		<span class="legendLayerLabel" flex>{{translate.load('sbi.cockpit.map.legend.label')}}</span><button class="toggleButton" ng-click="showLegend()"><md-icon md-font-icon="fas fa-chevron-up"></md-icon></button>
 	</div>
+ -->
 </div>
