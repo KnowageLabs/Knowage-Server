@@ -13,7 +13,7 @@
 import { emitter } from '../../DashboardHelpers'
 import { mapActions } from 'pinia'
 import { AgGridVue } from 'ag-grid-vue3' // the AG Grid Vue Component
-import { IDashboardDataset, ISelection, IWidget } from '../../Dashboard'
+import { IDashboardDataset, ISelection, ITableWidgetVisualizationTypes, IWidget } from '../../Dashboard'
 import { defineComponent, PropType } from 'vue'
 import { createNewTableSelection, getColumnConditionalStyles, isConditionMet, isCrossNavigationActive, formatRowDataForCrossNavigation, getFormattedClickedValueForCrossNavigation, addIconColumn } from './TableWidgetHelper'
 import { executeTableWidgetCrossNavigation, updateStoreSelections } from '../interactionsHelpers/InteractionHelper'
@@ -266,7 +266,7 @@ export default defineComponent({
                                 } else return 1
                             }
                             tempCol.cellClassRules = {
-                                'cell-span': function(params) {
+                                'cell-span': function (params) {
                                     return tempRows[params.rowIndex]?.span > 1
                                 }
                             }
@@ -326,6 +326,13 @@ export default defineComponent({
                         if (pagination.enabled) {
                             this.showPaginator = true
                         } else this.showPaginator = false
+
+                        // VISUALIZATION TYPE CONFIGURATION  -----------------------------------------------------------------
+                        const visTypes = this.widgetModel.settings.visualization.visualizationTypes as ITableWidgetVisualizationTypes
+                        if (visTypes.enabled) {
+                            const colVisType = this.getColumnVisualizationType(tempCol.colId)
+                            tempCol.pinned = colVisType.pinned
+                        }
 
                         // CUSTOM MESSAGE CONFIGURATION  -----------------------------------------------------------------
                         const customMessageConfig = this.widgetModel.settings.configuration.customMessages
@@ -415,6 +422,13 @@ export default defineComponent({
             }
 
             return columnHidden
+        },
+        getColumnVisualizationType(colId) {
+            const visTypes = this.widgetModel.settings.visualization.visualizationTypes as ITableWidgetVisualizationTypes
+
+            const colVisType = visTypes.types.find((visType) => visType.target.includes(colId))
+            if (colVisType) return colVisType
+            else return visTypes.types[0]
         },
         updateData(data) {
             if (this.widgetModel.settings.configuration.summaryRows.enabled) {
