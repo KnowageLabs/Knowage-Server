@@ -13,7 +13,6 @@ export const loadFilters = async (initialLoading: boolean, filtersData: { filter
     if (parameterValuesMap && parameterValuesMap[document.label + '-' + tabKey] && initialLoading) return loadFiltersFromParametersMap(parameterValuesMap, document, tabKey, filtersData, breadcrumbs)
     if (sessionEnabled && !document.navigationParams) {
         const filtersFromSession = loadFiltersFromSession(document, filtersData, breadcrumbs)
-        console.log('---- filters from session: ', filtersFromSession)
         if (filtersFromSession.filterStatus) return filtersFromSession
     }
 
