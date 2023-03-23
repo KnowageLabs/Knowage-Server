@@ -1,1 +1,110 @@
-{}
+{
+    "defaultVegaAutosize": {
+        "contains": "padding",
+        "type": "fit"
+    },
+    "defaultVegaData": [
+        {
+            "name": "table",
+            "transform": [
+                {
+                    "as": "angle",
+                    "expr": "",
+                    "type": "formula"
+                }
+            ],
+            "values": []
+        }
+    ],
+    "defaultVegaDescription": "A word cloud visualization depicting Vega research paper abstracts.",
+    "defaultVegaMarks": [
+        {
+            "encode": {
+                "enter": {
+                    "align": {
+                        "value": "center"
+                    },
+                    "baseline": {
+                        "value": "alphabetic"
+                    },
+                    "fill": {
+                        "field": "text",
+                        "scale": "color"
+                    },
+                    "text": {
+                        "field": "text"
+                    },
+                    "tooltip": {
+                        "signal": "format(datum.count, '($.2f')"
+                    }
+                },
+                "hover": {
+                    "fillOpacity": {
+                        "value": 0.5
+                    }
+                },
+                "update": {
+                    "fillOpacity": {
+                        "value": 1
+                    }
+                }
+            },
+            "from": {
+                "data": "table"
+            },
+            "transform": [
+                {
+                    "font": "Helvetica Neue, Arial",
+                    "fontSize": {
+                        "field": "datum.count"
+                    },
+                    "fontSizeRange": [12, 100],
+                    "padding": 5,
+                    "rotate": {
+                        "field": "datum.angle"
+                    },
+                    "text": {
+                        "field": "text"
+                    },
+                    "type": "wordcloud"
+                }
+            ],
+            "type": "text"
+        }
+    ],
+    "defaultVegaPadding": 0,
+    "defaultVegaScales": [
+        {
+            "domain": {
+                "data": "table",
+                "field": "text"
+            },
+            "name": "color",
+            "range": ["#d5a928", "#652c90", "#939597"],
+            "type": "ordinal"
+        }
+    ],
+    "defaultVegaSchema": "https://vega.github.io/schema/vega/v5.json",
+    "defaultVegaSignals": [
+        {
+            "init": "containerSize()[0]",
+            "name": "width",
+            "on": [
+                {
+                    "events": "window:resize",
+                    "update": "containerSize()[0]"
+                }
+            ]
+        },
+        {
+            "init": "containerSize()[1]",
+            "name": "height",
+            "on": [
+                {
+                    "events": "window:resize",
+                    "update": "containerSize()[1]"
+                }
+            ]
+        }
+    ]
+}

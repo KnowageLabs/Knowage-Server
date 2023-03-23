@@ -1,11 +1,13 @@
 <template>
-    <div>VEGA CONTAINER</div>
+    <div id="test">VEGA CONTAINER</div>
 </template>
 
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
 import { emitter } from '@/modules/documentExecution/dashboard/DashboardHelpers'
 import { IWidget, ISelection } from '../../../Dashboard'
+import cryptoRandomString from 'crypto-random-string'
+import vegaEmbed from 'vega-embed'
 
 export default defineComponent({
     name: 'vega-container',
@@ -19,7 +21,8 @@ export default defineComponent({
     },
     data() {
         return {
-            vega: {
+            chartID: cryptoRandomString({ length: 16, type: 'base64' }),
+            chartModel: {
                 $schema: 'https://vega.github.io/schema/vega/v5.json',
                 description: 'A word cloud visualization depicting Vega research paper abstracts.',
                 width: 800,
@@ -104,7 +107,9 @@ export default defineComponent({
     },
     computed: {},
     watch: {},
-    mounted() {},
+    mounted() {
+        vegaEmbed('#test', this.chartModel as any)
+    },
     unmounted() {},
     methods: {}
 })
