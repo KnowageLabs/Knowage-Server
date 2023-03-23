@@ -35,7 +35,7 @@ export default defineComponent({
     data() {
         return {
             modelValue: null as any,
-            color: '#59c7f9',
+            color: '',
             colorPickTimer: null as any,
             useClickOutside
         }

@@ -1,6 +1,7 @@
 <template>
     <div ref="widgetPreviewContainer" class="widget-editor-preview-container p-d-flex p-flex-column p-ai-stretch p-jc-center kn-overflow">
         <div class="preview-buttons-container p-d-flex" style="position: absolute; top: 38px; right: 10px">
+            <Button icon="fas fa-terminal" class="p-button-rounded p-button-text p-button-plain" @click="logWidget" />
             <Button icon="fas fa-maximize" class="p-button-rounded p-button-text p-button-plain expand-button" @click="toggleExpandPreview" />
             <Button icon="fas fa-rotate-right" class="p-button-rounded p-button-text p-button-plain" @click="getWidgetData" />
         </div>
@@ -142,6 +143,9 @@ export default defineComponent({
             setTimeout(() => {
                 emitter.emit('widgetResized', this.propWidget)
             }, 250)
+        },
+        logWidget() {
+            console.log('this.propWidget', this.propWidget)
         }
     }
 })
