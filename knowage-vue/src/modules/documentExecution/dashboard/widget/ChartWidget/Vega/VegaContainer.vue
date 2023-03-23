@@ -1,5 +1,5 @@
 <template>
-    <div :id="'chartId' + chartID" class="kn-flex">VEGA CONTAINER</div>
+    <div :id="'chartId' + chartID" class="kn-flex"></div>
 </template>
 
 <script lang="ts">
@@ -11,6 +11,7 @@ import cryptoRandomString from 'crypto-random-string'
 import vegaEmbed from 'vega-embed'
 import mainStore from '@/App.store'
 import { IVegaChartsModel } from '../../../interfaces/vega/VegaChartsWidget'
+import deepcopy from 'deepcopy'
 
 export default defineComponent({
     name: 'vega-container',
@@ -110,6 +111,7 @@ export default defineComponent({
                 initialCall: false
             }
 
+            console.log('------ blas: ', deepcopy(this.widgetModel.settings))
             // TODO
             this.widgetModel.settings.chartModel.setData(mockedDataToShow)
 
@@ -243,9 +245,6 @@ export default defineComponent({
             } catch (error) {
                 this.setError({ title: this.$t('common.toast.errorTitle'), msg: error })
             }
-        },
-        updateChartData() {
-            this.widgetModel.settings.chartModel.setData(this.dataToShow)
         }
     }
 })

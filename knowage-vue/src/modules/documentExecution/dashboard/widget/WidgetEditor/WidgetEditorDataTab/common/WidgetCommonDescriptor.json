@@ -112,6 +112,11 @@
             "disabled": true,
             "label": "dashboard.widgetEditor.chartTypes.treemap",
             "value": "treeMap"
+        },
+        {
+            "disabled": false,
+            "label": "dashboard.widgetEditor.chartTypes.wordcloud",
+            "value": "wordcloud"
         }
     ],
     "columnAggregationOptions": [

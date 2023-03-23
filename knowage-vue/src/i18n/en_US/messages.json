@@ -455,7 +455,8 @@
                 "scatterChart": "Scatter Chart",
                 "solidgauge": "Solid Gauge",
                 "stackedColumnsChart": "Stacked Columns Chart",
-                "treemap": "Treemap"
+                "treemap": "Treemap",
+                "wordcloud": "Wordcloud"
             },
             "chips": "Chips",
             "colors": {

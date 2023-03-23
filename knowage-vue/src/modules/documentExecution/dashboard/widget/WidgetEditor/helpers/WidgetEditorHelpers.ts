@@ -1,3 +1,4 @@
+import { formatVegaWidget } from './chartWidget/vega/VegaHelpers';
 import { IWidget, IWidgetColumn } from '../../../Dashboard'
 import { formatTableWidgetForSave } from './tableWidget/TableWidgetBackendSaveHelper'
 import { createNewTableWidgetSettings } from '../helpers/tableWidget/TableWidgetFunctions'
@@ -116,4 +117,5 @@ export function getRGBColorFromString(color: string) {
 export const recreateKnowageChartModel = (widget: IWidget) => {
     if (widget.type === 'chartJS') formatChartJSWidget(widget)
     else if (widget.type === 'highcharts' && store.user.enterprise) formatHighchartsWidget(widget)
+    else if (widget.type === 'vega') formatVegaWidget(widget)
 }

@@ -15,7 +15,6 @@ export class KnowageVegaChartWordcloud extends KnowageVegaChart {
     }
 
     setData(data: any) {
-        console.log("------- DATA: ", data)
         if (!this.model.data[0]) return
         this.model.data[0].values = []
         if (data && data.rows) {
