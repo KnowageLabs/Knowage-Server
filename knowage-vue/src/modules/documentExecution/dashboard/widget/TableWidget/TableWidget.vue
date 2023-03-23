@@ -13,7 +13,7 @@
 import { emitter } from '../../DashboardHelpers'
 import { mapActions } from 'pinia'
 import { AgGridVue } from 'ag-grid-vue3' // the AG Grid Vue Component
-import { IDashboardDataset, ISelection, ITableWidgetVisualizationTypes, IWidget } from '../../Dashboard'
+import { IDashboardDataset, ISelection, ITableWidgetColumnStyle, ITableWidgetColumnStyles, ITableWidgetVisualizationTypes, IWidget } from '../../Dashboard'
 import { defineComponent, PropType } from 'vue'
 import { createNewTableSelection, getColumnConditionalStyles, isConditionMet, isCrossNavigationActive, formatRowDataForCrossNavigation, getFormattedClickedValueForCrossNavigation, addIconColumn } from './TableWidgetHelper'
 import { executeTableWidgetCrossNavigation, updateStoreSelections } from '../interactionsHelpers/InteractionHelper'
@@ -246,6 +246,10 @@ export default defineComponent({
 
                         if (tempCol.measure === 'MEASURE') tempCol.aggregationSelected = this.widgetModel.columns[datasetColumn].aggregation
 
+                        //COLUMN WIDTH
+                        const colWidth = this.getColumnWidth(tempCol.colId)
+                        if (colWidth && colWidth != 0) tempCol.minWidth = colWidth
+
                         //ROWSPAN MANAGEMENT
                         if (this.widgetModel.settings.configuration.rows.rowSpan.enabled && this.widgetModel.settings.configuration.rows.rowSpan.column === this.widgetModel.columns[datasetColumn].id) {
                             let previousValue
@@ -429,6 +433,14 @@ export default defineComponent({
             const colVisType = visTypes.types.find((visType) => visType.target.includes(colId))
             if (colVisType) return colVisType
             else return visTypes.types[0]
+        },
+        getColumnWidth(colId) {
+            const colStyles = this.widgetModel.settings.style.columns as ITableWidgetColumnStyles
+
+            const colStyle = colStyles.styles.find((style) => style.target.includes(colId)) as ITableWidgetColumnStyle
+
+            if (colStyle) return colStyle.properties.width
+            else return colStyles.styles[0].properties.width
         },
         updateData(data) {
             if (this.widgetModel.settings.configuration.summaryRows.enabled) {
