@@ -6,13 +6,7 @@
     "defaultVegaData": [
         {
             "name": "table",
-            "transform": [
-                {
-                    "as": "angle",
-                    "expr": "",
-                    "type": "formula"
-                }
-            ],
+            "transform": [],
             "values": []
         }
     ],
