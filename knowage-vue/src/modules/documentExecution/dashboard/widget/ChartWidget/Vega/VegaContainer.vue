@@ -1,5 +1,5 @@
 <template>
-    <div :id="'chartId' + chartID">VEGA CONTAINER</div>
+    <div :id="'chartId' + chartID" class="kn-flex">VEGA CONTAINER</div>
 </template>
 
 <script lang="ts">
@@ -60,17 +60,20 @@ export default defineComponent({
             // TODO - Remove Hardcoded
             this.chartModel = {
                 $schema: 'https://vega.github.io/schema/vega/v5.json',
-                chart: { type: '' },
+                chart: {
+                    type: 'wordcloud'
+                },
                 description: 'A word cloud visualization depicting Vega research paper abstracts.',
+
                 padding: 0,
                 autosize: {
-                    type: 'fit',
-                    contains: 'padding'
+                    contains: 'padding',
+                    type: 'fit'
                 },
                 signals: [
                     {
-                        name: 'width',
                         init: 'containerSize()[0]',
+                        name: 'width',
                         on: [
                             {
                                 events: 'window:resize',
@@ -79,8 +82,8 @@ export default defineComponent({
                         ]
                     },
                     {
-                        name: 'height',
                         init: 'containerSize()[1]',
+                        name: 'height',
                         on: [
                             {
                                 events: 'window:resize',
@@ -92,51 +95,38 @@ export default defineComponent({
                 data: [
                     {
                         name: 'table',
+                        transform: [],
                         values: [
                             {
                                 text: 'pre Alcoholic Beverages suf',
-                                count: 30
+                                count: 34
                             },
                             {
                                 text: 'Baked Goods',
-                                count: 20
+                                count: 39
                             },
                             {
                                 text: 'VEGA',
-                                count: 5
-                            }
-                        ],
-                        transform: [
-                            {
-                                type: 'formula',
-                                as: 'angle',
-                                expr: '[-45, 0, 45][~~(random() * 3)]'
+                                count: 100
                             }
                         ]
                     }
                 ],
                 scales: [
                     {
-                        name: 'color',
-                        type: 'ordinal',
                         domain: {
                             data: 'table',
                             field: 'text'
                         },
-                        range: ['#d5a928', '#652c90', '#939597']
+                        name: 'color',
+                        range: ['#d5a928', '#652c90', '#939597'],
+                        type: 'ordinal'
                     }
                 ],
                 marks: [
                     {
-                        type: 'text',
-                        from: {
-                            data: 'table'
-                        },
                         encode: {
                             enter: {
-                                text: {
-                                    field: 'text'
-                                },
                                 align: {
                                     value: 'center'
                                 },
@@ -144,44 +134,53 @@ export default defineComponent({
                                     value: 'alphabetic'
                                 },
                                 fill: {
-                                    scale: 'color',
+                                    field: 'text',
+                                    scale: 'color'
+                                },
+                                text: {
                                     field: 'text'
                                 },
                                 tooltip: {
                                     signal: "format(datum.count, '($.2f')"
                                 }
                             },
-                            update: {
-                                fillOpacity: {
-                                    value: 1
-                                }
-                            },
                             hover: {
                                 fillOpacity: {
                                     value: 0.5
                                 }
+                            },
+                            update: {
+                                fillOpacity: {
+                                    value: 1
+                                }
                             }
+                        },
+                        from: {
+                            data: 'table'
                         },
                         transform: [
                             {
-                                type: 'wordcloud',
-                                text: {
-                                    field: 'text'
-                                },
-                                rotate: {
-                                    field: 'datum.angle'
-                                },
                                 font: 'Helvetica Neue, Arial',
                                 fontSize: {
                                     field: 'datum.count'
                                 },
                                 fontSizeRange: [12, 100],
-                                padding: 5
+                                padding: 5,
+                                rotate: {
+                                    field: 'datum.angle'
+                                },
+                                text: {
+                                    field: 'text'
+                                },
+                                type: 'wordcloud'
                             }
-                        ]
+                        ],
+                        type: 'text'
                     }
                 ]
             }
+
+            console.log('-------- CHART MODEL TO RENDER: ', this.chartModel)
 
             try {
                 vegaEmbed('#chartId' + this.chartID, this.chartModel as any)
