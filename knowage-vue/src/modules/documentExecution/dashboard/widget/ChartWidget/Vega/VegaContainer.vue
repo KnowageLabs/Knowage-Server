@@ -111,7 +111,6 @@ export default defineComponent({
                 initialCall: false
             }
 
-            console.log('------ blas: ', deepcopy(this.widgetModel.settings))
             // TODO
             this.widgetModel.settings.chartModel.setData(mockedDataToShow)
 
