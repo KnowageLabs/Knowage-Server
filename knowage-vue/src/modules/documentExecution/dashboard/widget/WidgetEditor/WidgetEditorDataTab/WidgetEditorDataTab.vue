@@ -7,6 +7,7 @@
         <SelectorWidgetDataContainer v-else-if="widget.type === 'selector'" class="kn-flex model-div kn-overflow p-mx-2 p-my-3" :widget-model="propWidget" :selected-dataset="selectedDataset"></SelectorWidgetDataContainer>
         <HighchartsDataContainer v-else-if="widget.type === 'highcharts' && isEnterprise" class="kn-flex model-div kn-overflow p-mx-2 p-my-3" :widget-model="propWidget" :selected-dataset="selectedDataset" @selectedChartTypeChanged="onChartTypeChanged"></HighchartsDataContainer>
         <ChartJSDataContainer v-else-if="widget.type === 'chartJS'" class="kn-flex model-div kn-overflow p-mx-2 p-my-3" :widget-model="propWidget" :selected-dataset="selectedDataset"></ChartJSDataContainer>
+        <VegaDataContainer v-else-if="widget.type === 'vega'" class="kn-flex model-div kn-overflow p-mx-2 p-my-3" :widget-model="propWidget" :selected-dataset="selectedDataset"></VegaDataContainer>
         <PivotTableDataContainer v-else-if="widget.type === 'static-pivot-table'" class="kn-flex model-div kn-overflow p-mx-2 p-my-3" :prop-widget-model="propWidget" :selected-dataset="selectedDataset"></PivotTableDataContainer>
     </div>
 </template>
@@ -28,12 +29,13 @@ import HighchartsDataContainer from './ChartWidget/highcharts/HighchartsDataCont
 import PivotTableDataContainer from './PivotTable/PivotTableDataContainer.vue'
 import ChartJSDataContainer from './ChartWidget/chartJS/ChartJSDataContainer.vue'
 import ChartGallery from '../WidgetEditorDataTab/ChartWidget/common/ChartWidgetGallery.vue'
+import VegaDataContainer from './ChartWidget/vega/VegaDataContainer.vue'
 import { IHighchartsWidgetSettings } from '../../../interfaces/highcharts/DashboardHighchartsWidget'
 import { IChartJSWidgetSettings } from '../../../interfaces/chartJS/DashboardChartJSWidget'
 
 export default defineComponent({
     name: 'widget-editor-data-tab',
-    components: { WidgetEditorDataList, WidgetEditorHint, SelectorWidgetDataContainer, HighchartsDataContainer, WidgetEditorCommonDataContainer, ChartJSDataContainer, ChartGallery, PivotTableDataContainer },
+    components: { WidgetEditorDataList, WidgetEditorHint, SelectorWidgetDataContainer, HighchartsDataContainer, WidgetEditorCommonDataContainer, ChartJSDataContainer, ChartGallery, PivotTableDataContainer, VegaDataContainer },
     props: { propWidget: { type: Object as PropType<IWidget>, required: true }, datasets: { type: Array as PropType<IDataset[]> }, selectedDatasets: { type: Array as PropType<IDataset[]> } },
     emits: ['datasetSelected'],
     data() {

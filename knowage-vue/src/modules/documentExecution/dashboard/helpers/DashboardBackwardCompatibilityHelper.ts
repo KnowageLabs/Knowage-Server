@@ -233,7 +233,8 @@ export const formatWidget = (widget: any, formattedModel: IDashboard, user: any,
 
 const getFormattedChartWidget = (widget: any, user: any) => {
     // TODO widgetChange
-    if (user?.enterprise) return widget.content?.chartTemplate?.CHART?.type === 'WORDCLOUD' ? formatVegaChartsWidget(widget) : formatHighchartsWidget(widget)
+    if (widget.content?.chartTemplate?.CHART?.type === 'WORDCLOUD') return formatVegaChartsWidget(widget)
+    else if (user?.enterprise) return formatHighchartsWidget(widget)
     else return formatChartJSWidget(widget)
 }
 

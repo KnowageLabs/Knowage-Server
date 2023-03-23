@@ -375,10 +375,10 @@
             "indexHint": "Indexes will be created on single selected columns.",
             "indexPresentMsg": "Index already exists!",
             "indexesTitle": "Indexes",
+            "pendingChanges": "You have unsaved changes, are you sure you want to exit the editor?",
             "selectDatasets": "Select Datasets",
             "static": "Static",
-            "title": "Dataset Management",
-            "pendingChanges": "You have unsaved changes, are you sure you want to exit the editor?"
+            "title": "Dataset Management"
         },
         "generalSettings": {
             "attribute": "Attribute",
@@ -831,6 +831,12 @@
                 "title": "Values Management",
                 "wrapText": "Wrap Text",
                 "wrapTextHint": "Wrap text hint placeholder"
+            },
+            "vega": {
+                "wordcloud": {
+                    "dimensionsTableHint": "Attributes only.",
+                    "valuesTableHint": "Measures only."
+                }
             },
             "visibilityConditions": {
                 "always": "Always",

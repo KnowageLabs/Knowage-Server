@@ -24,9 +24,15 @@ export const getFormattedWidgetColumns = (widget: any, chartLibrary: 'chartJS' |
         if (!widgetColumNameMap[widget.content.columnSelectedOfDatasetAggregations[i].name]) widgetColumNameMap[widget.content.columnSelectedOfDatasetAggregations[i].name] = getFormattedWidgetColumn(widget.content.columnSelectedOfDatasetAggregations[i], columnNameIdMap)
     }
 
+    console.log('-------- widgetColumNameMap 1: ', widgetColumNameMap)
     const formattedColumns = [] as IWidgetColumn[]
     const category = widget.content.chartTemplate.CHART.VALUES.CATEGORY
-    if (category) addCategoryColumns(category, formattedColumns, widgetColumNameMap, widget, chartLibrary)
+    console.log(' !!!!!!!! CATEGORY: ', category)
+    if (category) {
+        Array.isArray(category) ? addCategoryColumnsFromArray(category, formattedColumns, widgetColumNameMap, widget, 'vega') : addCategoryColumns(category, formattedColumns, widgetColumNameMap, widget, chartLibrary)
+    }
+
+
 
     const index = getMaximumNumberOfSeries(chartLibrary, chartType, widget)
     if (widget.content.chartTemplate.CHART.VALUES.SERIE) {
@@ -53,6 +59,12 @@ export const getMaximumNumberOfSeries = (chartLibrary: 'chartJS' | 'highcharts' 
     return null
 }
 
+const addCategoryColumnsFromArray = (category: IOldModelCategory[], formattedColumns: IWidgetColumn[], widgetColumNameMap: any, widget: IWidget, chartLibrary: 'vega') => {
+    console.log('-------- widgetColumNameMap 2: ', widgetColumNameMap)
+    category.forEach((category: IOldModelCategory) => addCategoryColumn(category, widgetColumNameMap, formattedColumns, widget, chartLibrary))
+    console.log('------------ formattedColumns: ', formattedColumns)
+}
+
 export const addCategoryColumns = (category: IOldModelCategory, formattedColumns: IWidgetColumn[], widgetColumNameMap: any, widget: IWidget, chartLibrary: 'chartJS' | 'highcharts' | 'vega') => {
     addCategoryColumn(category, widgetColumNameMap, formattedColumns, widget, chartLibrary)
     if (!chartCanHaveOnlyOneAttribute(widget, chartLibrary) && category.groupbyNames) {
@@ -61,6 +73,9 @@ export const addCategoryColumns = (category: IOldModelCategory, formattedColumns
 }
 
 const addCategoryColumn = (category: IOldModelCategory, widgetColumNameMap: any, formattedColumns: IWidgetColumn[], widget: IWidget, chartLibrary: 'chartJS' | 'highcharts' | 'vega') => {
+    console.log('-------[category.column]: ', category.column)
+    console.log('------- widgetColumNameMap 3: ', widgetColumNameMap)
+    console.log('------- widgetColumNameMap[category.column]: ', widgetColumNameMap[category.column])
     if (widgetColumNameMap[category.column]) {
         const tempColumn = { ...widgetColumNameMap[category.column] }
         if (chartHasDrilldown(widget, chartLibrary) && category.drillOrder) tempColumn.drillOrder = createDrillOrder(category.drillOrder[category.column].orderColumn, category.drillOrder[category.column].orderType)
@@ -69,7 +84,7 @@ const addCategoryColumn = (category: IOldModelCategory, widgetColumNameMap: any,
 }
 
 const chartCanHaveOnlyOneAttribute = (widget: any, chartLibrary: 'chartJS' | 'highcharts' | 'vega') => {
-    return chartLibrary === 'chartJS' && widget.content.chartTemplate.CHART.type === 'PIE'
+    return (chartLibrary === 'chartJS' && widget.content.chartTemplate.CHART.type === 'PIE')
 }
 
 const chartHasDrilldown = (widget: any, chartLibrary: 'chartJS' | 'highcharts' | 'vega') => {

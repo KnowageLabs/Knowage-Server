@@ -51,7 +51,7 @@ export default defineComponent({
         onRefreshChart(widgetId: any | null = null) {
             if (widgetId && widgetId !== this.widgetModel.id) return
             this.chartModel = this.widgetModel.settings.chartModel ? this.widgetModel.settings.chartModel.model : null
-            console.log('---------- onRefreshChart: ', this.chartModel)
+            //    console.log('---------- onRefreshChart: ', this.chartModel)
             this.updateChartModel()
         },
         updateChartModel() {
@@ -141,7 +141,7 @@ export default defineComponent({
                                     field: 'text'
                                 },
                                 tooltip: {
-                                    signal: "format(datum.count, '($.2f')"
+                                    signal: "format(datum.count, '(.2f')"
                                 }
                             },
                             hover: {
@@ -180,7 +180,7 @@ export default defineComponent({
                 ]
             }
 
-            console.log('-------- CHART MODEL TO RENDER: ', this.chartModel)
+            // console.log('-------- CHART MODEL TO RENDER: ', this.chartModel)
 
             try {
                 vegaEmbed('#chartId' + this.chartID, this.chartModel as any)
