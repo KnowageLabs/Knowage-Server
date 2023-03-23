@@ -2872,4 +2872,143 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 			}
 		});
 	}
+
+	@Override
+	public Integer countCategoriesKPI(Integer catId) {
+
+		logger.debug("IN");
+		Integer resultNumber = new Integer(0);
+		Session session = null;
+		Transaction transaction = null;
+		try {
+			session = getSession();
+			transaction = session.beginTransaction();
+
+			String hql = "select count(*) from SbiKpiKpi s where s.category.id = ? ";
+			Query aQuery = session.createQuery(hql);
+			aQuery.setInteger(0, catId.intValue());
+			resultNumber = new Integer(((Long) aQuery.uniqueResult()).intValue());
+
+		} catch (Throwable t) {
+			if (transaction != null && transaction.isActive()) {
+				transaction.rollback();
+			}
+			throw new SpagoBIDAOException("Error while getting the category with the SbiKpiKpi with id " + catId, t);
+		} finally {
+			if (session != null && session.isOpen()) {
+				session.close();
+			}
+			logger.debug("OUT");
+		}
+		return resultNumber;
+
+	}
+
+	@Override
+	public Integer countCategoriesKPITarget(Integer catId) {
+		logger.debug("IN");
+		Integer resultNumber = new Integer(0);
+		Session session = null;
+		Transaction transaction = null;
+		try {
+			session = getSession();
+			transaction = session.beginTransaction();
+
+			String hql = "select count(*) from SbiKpiTarget s where s.category.id = ? ";
+			Query aQuery = session.createQuery(hql);
+			aQuery.setInteger(0, catId.intValue());
+			resultNumber = new Integer(((Long) aQuery.uniqueResult()).intValue());
+
+		} catch (Throwable t) {
+			if (transaction != null && transaction.isActive()) {
+				transaction.rollback();
+			}
+			throw new SpagoBIDAOException("Error while getting the category with the SbiKpiTarget with id " + catId, t);
+		} finally {
+			if (session != null && session.isOpen()) {
+				session.close();
+			}
+			logger.debug("OUT");
+		}
+		return resultNumber;
+	}
+
+	@Override
+	public Integer countCategoriesKPIRuleOutput(Integer catId) {
+		logger.debug("IN");
+		Integer resultNumber = new Integer(0);
+		Session session = null;
+		Transaction transaction = null;
+		try {
+			session = getSession();
+			transaction = session.beginTransaction();
+
+			String hql = "select count(*) from SbiKpiRuleOutput s where s.category.id = ? ";
+			Query aQuery = session.createQuery(hql);
+			aQuery.setInteger(0, catId.intValue());
+			resultNumber = new Integer(((Long) aQuery.uniqueResult()).intValue());
+
+		} catch (Throwable t) {
+			if (transaction != null && transaction.isActive()) {
+				transaction.rollback();
+			}
+			throw new SpagoBIDAOException("Error while getting the category with the SbiKpiRuleOutput with id " + catId, t);
+		} finally {
+			if (session != null && session.isOpen()) {
+				session.close();
+			}
+			logger.debug("OUT");
+		}
+		return resultNumber;
+	}
+
+	@Override
+	public List<Kpi> listKpiByCategoryId(Integer catId) {
+		List<SbiKpiKpi> lst = list(new ICriterion<SbiKpiKpi>() {
+			@Override
+			public Criteria evaluate(Session session) {
+				Criteria c = session.createCriteria(SbiKpiKpi.class);
+				c.add(Restrictions.eq("category.id", catId));
+				return c;
+			}
+		});
+
+		List<Kpi> kpis = new ArrayList<>();
+		for (SbiKpiKpi sbi : lst) {
+			Kpi kpi = from(sbi, null, false);
+			kpis.add(kpi);
+		}
+		return kpis;
+	}
+
+	@Override
+	public List<RuleOutput> listRuleOutputByCategoryId(Integer catId) {
+		return executeOnTransaction(new IExecuteOnTransaction<List<RuleOutput>>() {
+			@Override
+			public List<RuleOutput> execute(Session session) throws Exception {
+				List<SbiKpiRuleOutput> sbiKpiRule = session.createCriteria(SbiKpiRuleOutput.class).add(Restrictions.eq("category.id", catId)).list();
+				List<RuleOutput> rules = new ArrayList<>();
+				for (SbiKpiRuleOutput sbiKpiRuleOutput : sbiKpiRule) {
+					rules.add(from(sbiKpiRuleOutput));
+				}
+				return rules;
+			}
+		});
+	}
+
+	@Override
+	public List<Target> listTargetByCategoryId(Integer catId) {
+		return executeOnTransaction(new IExecuteOnTransaction<List<Target>>() {
+			@Override
+			public List<Target> execute(Session session) throws Exception {
+				List<SbiKpiTarget> sbiKpiTarget = session.createCriteria(SbiKpiTarget.class).add(Restrictions.eq("category.id", catId)).list();
+				List<Target> targets = new ArrayList<>();
+				for (SbiKpiTarget sbiKpiT : sbiKpiTarget) {
+					targets.add(from(sbiKpiT, true));
+				}
+				return targets;
+			}
+		});
+	}
+
 }

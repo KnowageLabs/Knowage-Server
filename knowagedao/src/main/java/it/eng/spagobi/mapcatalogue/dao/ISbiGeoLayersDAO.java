@@ -17,13 +17,6 @@
  */
 package it.eng.spagobi.mapcatalogue.dao;
 
-import it.eng.spago.error.EMFUserError;
-import it.eng.spago.security.IEngUserProfile;
-import it.eng.spagobi.commons.dao.ISpagoBIDao;
-import it.eng.spagobi.commons.metadata.SbiExtRoles;
-import it.eng.spagobi.mapcatalogue.bo.GeoLayer;
-import it.eng.spagobi.mapcatalogue.metadata.SbiGeoLayersRoles;
-
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
@@ -32,6 +25,13 @@ import java.util.List;
 import org.hibernate.Session;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import it.eng.spago.error.EMFUserError;
+import it.eng.spago.security.IEngUserProfile;
+import it.eng.spagobi.commons.dao.ISpagoBIDao;
+import it.eng.spagobi.commons.metadata.SbiExtRoles;
+import it.eng.spagobi.mapcatalogue.bo.GeoLayer;
+import it.eng.spagobi.mapcatalogue.metadata.SbiGeoLayersRoles;
 
 public interface ISbiGeoLayersDAO extends ISpagoBIDao {
 
@@ -68,4 +68,8 @@ public interface ISbiGeoLayersDAO extends ISpagoBIDao {
 	public List<SbiGeoLayersRoles> getListRolesById(Integer id);
 
 	public List<SbiGeoLayersRoles> getListRolesById(Integer id, Session session);
+
+	public Integer countCategories(Integer catId);
+
+	public List<GeoLayer> loadLayerByCategoryId(Integer catId) throws EMFUserError;
 }

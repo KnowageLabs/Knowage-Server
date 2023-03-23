@@ -16,7 +16,7 @@
                     <i class="pi pi-bars" :style="dataListDescriptor.style.list.listIcon"></i>
                     <i :style="dataListDescriptor.style.list.listIcon" :class="slotProps.option.fieldType === 'ATTRIBUTE' ? 'fas fa-font' : 'fas fa-hashtag'" class="p-ml-2"></i>
                     <div class="kn-list-item-text">
-                        <span>{{ slotProps.option.alias }}</span>
+                        <span v-tooltip.top="slotProps.option.alias" class="dashboard-editor-list-alias-container">{{ slotProps.option.alias }}</span>
                     </div>
                 </div>
             </template>
@@ -202,3 +202,9 @@ export default defineComponent({
     }
 })
 </script>
+
+<style lang="scss" scoped>
+.dashboard-editor-list-alias-container {
+    font-size: 0.8rem;
+}
+</style>

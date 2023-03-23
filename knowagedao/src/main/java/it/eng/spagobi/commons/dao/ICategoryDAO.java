@@ -38,10 +38,13 @@ public interface ICategoryDAO extends ISpagoBIDao {
 	String KPI_CATEGORY = "KPI_KPI_CATEGORY";
 	String KPI_MEASURE_CATEGORY = "KPI_MEASURE_CATEGORY";
 	String KPI_TARGET_CATEGORY = "KPI_TARGET_CATEGORY";
+	String KPI_RULE_OUTPUT = "KPI_RULE_OUTPUT";
 
 	// Queries
 
 	List<SbiCategory> getCategories(String type);
+
+	List<SbiCategory> getCategories();
 
 	SbiCategory getCategory(int id);
 

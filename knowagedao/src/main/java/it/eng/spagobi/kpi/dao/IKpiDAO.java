@@ -17,6 +17,15 @@
  */
 package it.eng.spagobi.kpi.dao;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import org.hibernate.Session;
+
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.commons.bo.Domain;
 import it.eng.spagobi.commons.dao.ISpagoBIDao;
@@ -39,15 +48,6 @@ import it.eng.spagobi.kpi.dao.KpiDAOImpl.STATUS;
 import it.eng.spagobi.kpi.metadata.SbiKpiThresholdValue;
 import it.eng.spagobi.utilities.exceptions.SpagoBIException;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import org.hibernate.Session;
-
 public interface IKpiDAO extends ISpagoBIDao {
 
 	/**
@@ -69,8 +69,7 @@ public interface IKpiDAO extends ISpagoBIDao {
 	/**
 	 * Retrieves all rule output filtered by type (MEASURE, ATTRIBUTE, TEMPORAL_ATTRIBUTE) and status (only active / only not active / all records)
 	 *
-	 * @param type
-	 *            (see SbiDomains)
+	 * @param type   (see SbiDomains)
 	 * @param status
 	 * @return rule output list
 	 */
@@ -83,8 +82,7 @@ public interface IKpiDAO extends ISpagoBIDao {
 	/**
 	 * Checks if given measure names are really existing on db
 	 *
-	 * @param measure
-	 *            names
+	 * @param measure names
 	 * @return true if all measures are existing false otherwise
 	 */
 	public Boolean existsMeasureNames(String... names);
@@ -92,8 +90,7 @@ public interface IKpiDAO extends ISpagoBIDao {
 	/**
 	 * Retrieves all kpi that are using a threshold
 	 *
-	 * @param threshold
-	 *            id
+	 * @param threshold id
 	 * @return a list of kpi id
 	 */
 	public List<Integer> listKpiByThreshold(Integer thresholdId);
@@ -164,20 +161,13 @@ public interface IKpiDAO extends ISpagoBIDao {
 	/**
 	 * Retrieves all the KPI values satisfying the specified criteria
 	 *
-	 * @param kpiId
-	 *            The id of the KPI
-	 * @param kpiVersion
-	 *            The version of the KPI
-	 * @param computedAfter
-	 *            The datetime after which the KPI values must have been computed (optional, it can be null)
-	 * @param includeComputedAfter
-	 *            If true, computedAfter is checked for equals (optional)
-	 * @param computedBefore
-	 *            The datetime before which the KPI values must have been computed (optional, it can be null)
-	 * @param includeComputedBefore
-	 *            If true, computedBefore is checked for equals (optional)
-	 * @param attributesValues
-	 *            The KPI attributes name-value pairs
+	 * @param kpiId                 The id of the KPI
+	 * @param kpiVersion            The version of the KPI
+	 * @param computedAfter         The datetime after which the KPI values must have been computed (optional, it can be null)
+	 * @param includeComputedAfter  If true, computedAfter is checked for equals (optional)
+	 * @param computedBefore        The datetime before which the KPI values must have been computed (optional, it can be null)
+	 * @param includeComputedBefore If true, computedBefore is checked for equals (optional)
+	 * @param attributesValues      The KPI attributes name-value pairs
 	 * @return The list of KPI values
 	 */
 	public List<KpiValue> findKpiValues(Integer kpiId, Integer kpiVersion, Date computedAfter, Boolean includeComputedAfter, Date computedBefore,
@@ -198,10 +188,8 @@ public interface IKpiDAO extends ISpagoBIDao {
 	/**
 	 * Insert or update a KPI
 	 *
-	 * @param kpi
-	 *            The KPI
-	 * @param overwriteMode
-	 *            Whether or not an existing KPI should be updated (either directly or by creating a new version)
+	 * @param kpi           The KPI
+	 * @param overwriteMode Whether or not an existing KPI should be updated (either directly or by creating a new version)
 	 * @return The KPI
 	 */
 	public Kpi importKpi(final Kpi kpi, boolean overwriteMode, Session session);
@@ -221,8 +209,7 @@ public interface IKpiDAO extends ISpagoBIDao {
 	/**
 	 * Retrieves a KPI id, searching by its name
 	 *
-	 * @param the
-	 *            KPI name
+	 * @param the KPI name
 	 * @return the KPI id, null if not found
 	 */
 	public Integer getKpiIdByName(String name);
@@ -274,10 +261,8 @@ public interface IKpiDAO extends ISpagoBIDao {
 	/**
 	 * Given a kpi id and version, it retrieves a list of placeholder related to its measures
 	 *
-	 * @param kpi
-	 *            id
-	 * @param kpi
-	 *            version
+	 * @param kpi id
+	 * @param kpi version
 	 * @return a list of placeholder name
 	 */
 	public Map<Kpi, List<String>> listPlaceholderByKpiList(List<Kpi> kpis);
@@ -372,4 +357,16 @@ public interface IKpiDAO extends ISpagoBIDao {
 	public Scorecard loadScorecardByName(String name);
 
 	public Scorecard loadScorecardByName(String name, Map<String, String> attributesValues);
+
+	public Integer countCategoriesKPI(Integer catId);
+
+	public Integer countCategoriesKPITarget(Integer catId);
+
+	public Integer countCategoriesKPIRuleOutput(Integer catId);
+
+	public List<Kpi> listKpiByCategoryId(Integer catId);
+
+	public List<RuleOutput> listRuleOutputByCategoryId(Integer catId);
+
+	public List<Target> listTargetByCategoryId(Integer catId);
 }

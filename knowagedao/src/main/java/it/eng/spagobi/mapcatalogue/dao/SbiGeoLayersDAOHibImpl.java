@@ -60,6 +60,7 @@ import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
 import it.eng.spagobi.commons.dao.ICriterion;
+import it.eng.spagobi.commons.dao.SpagoBIDAOException;
 import it.eng.spagobi.commons.metadata.SbiExtRoles;
 import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
 import it.eng.spagobi.commons.utilities.UserUtilities;
@@ -1038,5 +1039,71 @@ public class SbiGeoLayersDAOHibImpl extends AbstractHibernateDAO implements ISbi
 			url = url.replaceAll("&outputFormat=application%2Fjson", "&outputFormat=SHAPE-ZIP");
 		}
 		return url;
+	}
+
+	@Override
+	public Integer countCategories(Integer catId) {
+		logger.debug("IN");
+		Integer resultNumber = new Integer(0);
+		Session session = null;
+		Transaction transaction = null;
+		try {
+			session = getSession();
+			transaction = session.beginTransaction();
+
+			String hql = "select count(*) from SbiGeoLayers s where s.category_id = ? ";
+			Query aQuery = session.createQuery(hql);
+			aQuery.setInteger(0, catId.intValue());
+			resultNumber = new Integer(((Long) aQuery.uniqueResult()).intValue());
+
+		} catch (Throwable t) {
+			if (transaction != null && transaction.isActive()) {
+				transaction.rollback();
+			}
+			throw new SpagoBIDAOException("Error while getting the category with the geo layer with id " + catId, t);
+		} finally {
+			if (session != null && session.isOpen()) {
+				session.close();
+			}
+			logger.debug("OUT");
+		}
+		return resultNumber;
+	}
+
+	@Override
+	public List<GeoLayer> loadLayerByCategoryId(Integer catId) throws EMFUserError {
+		GeoLayer biLayer = null;
+		Session tmpSession = null;
+		// Transaction tx = null;
+		List<GeoLayer> retLayers = new ArrayList<GeoLayer>();
+		try {
+			tmpSession = getSession();
+			// tx = tmpSession.beginTransaction();
+			Criterion labelCriterrion = Expression.eq("category.id", catId);
+			Criteria criteria = tmpSession.createCriteria(SbiGeoLayers.class);
+			criteria.add(labelCriterrion);
+			List hibList = criteria.list();
+			Iterator it = hibList.iterator();
+			SbiGeoLayers hibLayer;
+			while (it.hasNext()) {
+				hibLayer = (SbiGeoLayers) it.next();
+				retLayers.add(hibLayer.toGeoLayer());
+			}
+
+			// tx.commit();
+		} catch (HibernateException he) {
+			logException(he);
+			// if (tx != null)
+			// tx.rollback();
+			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
+		} finally {
+
+			if (tmpSession != null) {
+				if (tmpSession.isOpen())
+					tmpSession.close();
+			}
+
+		}
+		return retLayers;
 	}
 }
