@@ -35,6 +35,7 @@
             <ImageWidget v-if="widget.type === 'image'" :widget-model="widget" :dashboard-id="dashboardId" :editor-mode="false" />
             <CustomChartWidget v-if="widget.type == 'customchart'" :prop-widget="widget" :widget-data="widgetData" :prop-active-selections="activeSelections" :editor-mode="false" :dashboard-id="dashboardId" :variables="variables" @loading="$emit('loading', $event)"></CustomChartWidget>
             <PivotWidget v-if="widget.type == 'static-pivot-table' && !widgetLoading" :prop-widget="widget" :datasets="datasets" :data-to-show="dataToShow" :editor-mode="false" :prop-active-selections="activeSelections" :dashboard-id="dashboardId" />
+            <VegaContainer v-if="widget.type === 'vega'" :widget-model="widget" :data-to-show="widgetData" :prop-active-selections="activeSelections" :editor-mode="false" :dashboard-id="dashboardId"></VegaContainer>
         </div>
     </div>
 </template>
@@ -56,12 +57,13 @@ import ChartJSContainer from '../widget/ChartWidget/ChartJS/ChartJSContainer.vue
 import ImageWidget from '../widget/ImageWidget/ImageWidget.vue'
 import PivotWidget from '../widget/PivotWidget/PivotWidget.vue'
 import CustomChartWidget from '../widget/CustomChartWidget/CustomChartWidget.vue'
+import VegaContainer from '../widget/ChartWidget/Vega/VegaContainer.vue'
 import { mapState } from 'pinia'
 import mainStore from '@/App.store'
 
 export default defineComponent({
     name: 'widget-renderer',
-    components: { TableWidget, SelectorWidget, ActiveSelectionsWidget, WebComponentContainer, HighchartsContainer, ChartJSContainer, ImageWidget, CustomChartWidget, PivotWidget },
+    components: { TableWidget, SelectorWidget, ActiveSelectionsWidget, WebComponentContainer, HighchartsContainer, ChartJSContainer, ImageWidget, CustomChartWidget, PivotWidget, VegaContainer },
     props: {
         widget: { required: true, type: Object as any },
         widgetLoading: { required: true, type: Boolean as any },

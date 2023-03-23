@@ -17,7 +17,7 @@ import { formatForCrossNavigation } from './ChartJSContainerHelper'
 ChartJS.register(Title, Tooltip, Legend, ArcElement, CategoryScale)
 
 export default defineComponent({
-    name: 'chart-j-s-container',
+    name: 'chart-js-container',
     components: { Pie },
     props: {
         widgetModel: { type: Object as PropType<IWidget>, required: true },
