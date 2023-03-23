@@ -37,7 +37,7 @@ export class KnowageHighchartsPieChart extends KnowageHighcharts {
             this.range[serieIndex] = { serie: item.name }
             item.data = []
             data?.rows?.forEach((row: any) => {
-                let serieElement = {
+                const serieElement = {
                     id: row.id,
                     name: row['column_1'],
                     y: row['column_2'],

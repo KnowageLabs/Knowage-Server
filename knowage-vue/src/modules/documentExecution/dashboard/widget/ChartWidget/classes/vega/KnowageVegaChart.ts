@@ -1,7 +1,7 @@
 import { IVegaChartsModel } from '../../../../interfaces/vega/VegaChartsWidget';
 import * as vegaChartsDefaultValues from '../../../WidgetEditor/helpers/chartWidget/vega/VegaDefaultValues'
 
-export class VegaChart {
+export class KnowageVegaChart {
     model: IVegaChartsModel
 
     constructor() {

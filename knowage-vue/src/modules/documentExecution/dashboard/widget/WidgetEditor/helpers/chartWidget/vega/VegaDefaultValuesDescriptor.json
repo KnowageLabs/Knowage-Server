@@ -29,7 +29,7 @@
                         "field": "text"
                     },
                     "tooltip": {
-                        "signal": "format(datum.count, '($.2f')"
+                        "signal": "format(datum.count, '(.2f')"
                     }
                 },
                 "hover": {
@@ -48,11 +48,11 @@
             },
             "transform": [
                 {
-                    "font": "Helvetica Neue, Arial",
+                    "font": "Arial",
                     "fontSize": {
                         "field": "datum.count"
                     },
-                    "fontSizeRange": [12, 100],
+                    "fontSizeRange": [8, 34],
                     "padding": 5,
                     "rotate": {
                         "field": "datum.angle"
