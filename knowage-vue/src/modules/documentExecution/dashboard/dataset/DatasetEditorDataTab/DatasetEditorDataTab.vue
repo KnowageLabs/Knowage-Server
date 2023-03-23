@@ -1,7 +1,7 @@
 <template>
     <DataList :dashboard-datasets-prop="dashboardDatasetsProp" :available-datasets-prop="availableDatasetsProp" :selected-datasets-prop="selectedDatasets" @addSelectedDatasets="addSelectedDatasets" @datasetSelected="selectDataset" @deleteDataset="$emit('deleteDataset', $event)" />
     <DataDetail :dashboard-datasets-prop="dashboardDatasetsProp" :selected-dataset-prop="selectedDataset" :document-drivers-prop="documentDriversProp" :dashboard-id="dashboardId" data-test="dataset-detail" />
-    <DatasetEditorPreview v-if="selectedDataset.id" id="dataset-editor-preview" :selected-dataset-prop="selectedDataset" data-test="dataset-preview" />
+    <DatasetEditorPreview v-if="selectedDataset.id" id="dataset-editor-preview" :prop-dataset="selectedDataset" data-test="dataset-preview" />
 </template>
 
 <script lang="ts">
@@ -67,6 +67,7 @@ export default defineComponent({
         -webkit-transition: width 0.3s;
         transition: flex 0.3s;
         flex: 1;
+        border-left: 1px solid #ccc;
     }
 }
 </style>
