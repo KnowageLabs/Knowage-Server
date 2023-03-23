@@ -82,6 +82,7 @@ export default defineComponent({
             } else return null
         },
         getMultiselectStyle() {
+            if (this.params.colDef.colId === 'indexColumn') return
             const selection = this.params.propWidget.settings.interactions.selection
             const celectedCellValues = this.params.multiSelectedCells
             const selectedColumn = this.params.selectedColumnArray[0]
