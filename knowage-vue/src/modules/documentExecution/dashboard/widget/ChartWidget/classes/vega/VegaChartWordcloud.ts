@@ -1,7 +1,6 @@
 import { updateWordcloudChartModel } from './updater/VegaChartWordcloudUpdater';
 import { VegaChart } from './VegaChart';
 import { IWidget, IWidgetColumn } from '@/modules/documentExecution/dashboard/Dashboard'
-import * as vegaChartsDefaultValues from '../../../WidgetEditor/helpers/chartWidget/vega/VegaDefaultValues'
 import deepcopy from 'deepcopy'
 
 export class VegaChartsWordcloud extends VegaChart {
@@ -9,9 +8,7 @@ export class VegaChartsWordcloud extends VegaChart {
         super()
         if (model && model.CHART) this.updateModel(deepcopy(model))
         else if (model) this.model = deepcopy(model)
-
-
-        // this.model.chart.type = 'wordcloud'
+        this.model.chart.type = 'wordcloud'
     }
 
     updateModel(oldModel: any) {
@@ -19,6 +16,8 @@ export class VegaChartsWordcloud extends VegaChart {
     }
 
     setData(data: any, widgetModel: IWidget) {
+        console.log('------- DATA: ', data)
+        console.log('------- widgetModel: ', widgetModel)
         // if (this.model.series.length === 0) this.getSeriesFromWidgetModel(widgetModel)
 
         // this.model.series.map((item, serieIndex) => {

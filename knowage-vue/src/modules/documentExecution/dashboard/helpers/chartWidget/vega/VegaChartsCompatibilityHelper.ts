@@ -1,3 +1,4 @@
+import { VegaChartsWordcloud } from './../../../widget/ChartWidget/classes/vega/VegaChartWordcloud';
 import { getFormattedStyle } from './VegaChartsStyleHelper';
 import { getFormattedInteractions } from './../../common/WidgetInteractionsHelper';
 import { getFormattedColorSettings, getFormattedWidgetColumns } from './../CommonChartCompatibilityHelper';
@@ -49,8 +50,9 @@ const getFormattedConfiguration = (widget: any) => {
 
 const createChartModel = (widget: any) => {
     const widgetContentChartTemplate = widget.content.chartTemplate
-    console.log("-------- widgetContentChartTemplate: ", widgetContentChartTemplate)
     switch (widgetContentChartTemplate.CHART.type) {
+        case "WORDCLOUD":
+            return new VegaChartsWordcloud(widgetContentChartTemplate)
         default:
             return null
     }

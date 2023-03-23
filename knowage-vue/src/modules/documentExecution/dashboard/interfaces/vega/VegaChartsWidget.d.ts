@@ -13,6 +13,7 @@ export interface IVegaChartsSettings {
 
 export interface IVegaChartsModel {
     "$schema": string,
+    chart: { type: string },
     description: string,
     padding: number,
     autosize: {

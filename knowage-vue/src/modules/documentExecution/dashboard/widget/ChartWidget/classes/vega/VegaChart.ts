@@ -15,6 +15,7 @@ export class VegaChart {
     createNewChartModel() {
         return {
             "$schema": vegaChartsDefaultValues.getDefaultVegaSchema(),
+            chart: { type: '' },
             description: vegaChartsDefaultValues.getDefaultVegaDescription(),
             padding: vegaChartsDefaultValues.getDefaultVegaPadding(),
             autosize: vegaChartsDefaultValues.getDefaultVegaAutosize(),
