@@ -2023,9 +2023,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			var ret = {};
 
 			if ($scope.ngModel.style.legend.position != 'north'
-					&& $scope.ngModel.style.legend.position != 'south'
-					&& !isNaN($scope.ngModel.style.legend.width)) {
-				ret["width"] = $scope.ngModel.style.legend.width;
+					&& $scope.ngModel.style.legend.position != 'south') {
+				
+				if (!isNaN($scope.ngModel.style.legend.width)) {
+					ret["width"] = "150px"; // TODO
+				} else {
+					ret["width"] = $scope.ngModel.style.legend.width;
+				}
 			} else {
 				ret["width"] = "100%";
 			}
