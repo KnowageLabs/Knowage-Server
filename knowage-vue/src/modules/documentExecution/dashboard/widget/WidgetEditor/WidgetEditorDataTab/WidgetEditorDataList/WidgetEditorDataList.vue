@@ -129,7 +129,6 @@ export default defineComponent({
         },
         onDatasetSelected() {
             this.loadDatasetColumns()
-            this.loadModel()
 
             if (this.model) {
                 this.model.dataset = this.selectedDataset ? this.selectedDataset.id : null
