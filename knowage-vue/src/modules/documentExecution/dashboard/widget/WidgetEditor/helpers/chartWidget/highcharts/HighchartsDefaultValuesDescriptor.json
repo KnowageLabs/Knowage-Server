@@ -127,8 +127,7 @@
         "tickWidth": 3
     },
     "defaultHighchartsSelection": {
-        "enabled": true,
-        "modalColumn": ""
+        "enabled": true
     },
     "defaultLegendSettings": {
         "align": "center",

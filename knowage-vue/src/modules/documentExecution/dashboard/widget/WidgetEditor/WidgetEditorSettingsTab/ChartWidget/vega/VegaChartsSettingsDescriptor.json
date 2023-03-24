@@ -81,6 +81,12 @@
         }
     ],
     "settings": {
+        "Chart": [
+            {
+                "title": "dashboard.widgetEditor.colors.title",
+                "type": "Colors"
+            }
+        ],
         "Configuration": [
             {
                 "title": "common.text",
@@ -150,6 +156,11 @@
             "icon": "fa fa-paint-brush",
             "label": "common.style",
             "value": "Style"
+        },
+        {
+            "icon": "pi pi-table",
+            "label": "common.chart",
+            "value": "Chart"
         },
         {
             "icon": "fa fa-hand-pointer",

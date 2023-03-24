@@ -26,7 +26,7 @@ const getFormattedSelection = (widget: any) => {
     if (widget.type === 'table') {
         return getFormattedTableSelection(widget)
     } else if (widget.type === 'chart') {
-        return getFormattedChartSelection()
+        return getFormattedChartSelection(widget)
     } else if (widget.type === 'static-pivot-table') {
         return getFormattedPivotTableSelection()
     }
@@ -49,10 +49,11 @@ const getFormattedTableSelection = (widget: any) => {
     return formattedSelection
 }
 
-const getFormattedChartSelection = () => {
+const getFormattedChartSelection = (widget: any) => {
     const store = mainStore()
     const user = store.getUser()
     // TODO widgetChange
+    if (widget.content?.chartTemplate?.CHART?.type === 'WORDCLOUD') return chartJSDefaultValues.getDefaultChartJSSelections()
     return user?.enterprise ? highchartsDefaultValues.getDefaultHighchartsSelections() : chartJSDefaultValues.getDefaultChartJSSelections()
     //  return false ? highchartsDefaultValues.getDefaultHighchartsSelections() : chartJSDefaultValues.getDefaultChartJSSelections()
 }

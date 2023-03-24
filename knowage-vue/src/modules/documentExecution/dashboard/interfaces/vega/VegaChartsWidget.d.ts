@@ -6,6 +6,7 @@ export interface IVegaChartsSettings {
     chartModel: IVegaChartsModel | null,
     configuration: IVegaChartsConfiguration,
     interactions: IWidgetInteractions,
+    chart: IVegaChartSettings,
     style: IVegaChartsStyle,
     tooltip: IVegaChartsTooltipSettings,
     responsive: IWidgetResponsive
@@ -130,6 +131,10 @@ export interface IVegaChartsNoDataConfiguration {
         color: string
         'background-color': string
     }
+}
+
+export interface IVegaChartSettings {
+    colors: string[]
 }
 
 export interface IVegaChartsTooltipSettings {

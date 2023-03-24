@@ -9,6 +9,7 @@
                 <VegaNoDataMessageConfiguration v-if="accordion.type === 'NoDataMessageConfiguration'" :widget-model="widgetModel"></VegaNoDataMessageConfiguration>
                 <VegaTextConfiguration v-if="accordion.type === 'TextConfiguration'" :widget-model="widgetModel"></VegaTextConfiguration>
                 <VegaTooltipSettings v-if="accordion.type === 'Tooltips'" :widget-model="widgetModel"></VegaTooltipSettings>
+                <ChartColorSettings v-else-if="accordion.type === 'Colors'" :widget-model="widgetModel"></ChartColorSettings>
                 <WidgetExport v-else-if="accordion.type === 'Export'" :widget-model="widgetModel"></WidgetExport>
                 <WidgetTitleStyle v-else-if="accordion.type === 'Title'" :widget-model="widgetModel" :toolbar-style-settings="settingsTabDescriptor.defaultToolbarStyleOptions"></WidgetTitleStyle>
                 <WidgetRowsStyle v-else-if="accordion.type === 'RowsStyle'" :widget-model="widgetModel"></WidgetRowsStyle>
@@ -49,6 +50,7 @@ import WidgetBackgroundColorStyle from '../../common/style/WidgetBackgroundColor
 import VegaChartsSettingsAccordionHeader from './VegaChartsSettingsAccordionHeader.vue'
 import VegaTextConfiguration from '../vega/configuration/VegaTextConfiguration.vue'
 import VegaTooltipSettings from '../vega/tooltip/VegaTooltipSettings.vue'
+import ChartColorSettings from '../common/ChartColorSettings.vue'
 
 export default defineComponent({
     name: 'vega-charts-configuration-container',
@@ -70,7 +72,8 @@ export default defineComponent({
         WidgetSelection,
         VegaChartsSettingsAccordionHeader,
         VegaTextConfiguration,
-        VegaTooltipSettings
+        VegaTooltipSettings,
+        ChartColorSettings
     },
     props: {
         widgetModel: { type: Object as PropType<IWidget>, required: true },

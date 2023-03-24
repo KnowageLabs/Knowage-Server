@@ -123,11 +123,18 @@ export default defineComponent({
 
             this.setTextConfiguration()
             this.setTooltipConfiguration()
+            this.setChartColors()
 
             console.log('-------- CHART MODEL TO RENDER: ', this.chartModel)
 
             try {
-                if (!this.showNoData) vegaEmbed('#chartId' + this.chartID, this.chartModel as any)
+                if (!this.showNoData)
+                    vegaEmbed('#chartId' + this.chartID, this.chartModel as any).then((res: any) => {
+                        const view = res.view
+                        view.addEventListener('click', (event: any, item: any) => {
+                            if (item && item.datum) this.executeInteractions(item.datum)
+                        })
+                    })
             } catch (error) {
                 this.setError({ title: this.$t('common.toast.errorTitle'), msg: error })
             }
@@ -146,8 +153,32 @@ export default defineComponent({
             if (!this.chartModel || !this.chartModel.marks || !this.chartModel.marks[0] || !this.chartModel.marks[0].encode || !this.chartModel.marks[0].encode.enter || !this.chartModel.marks[0].encode.enter.tooltip || !this.widgetModel.settings.tooltip) return
             const tooltipSettings = this.widgetModel.settings.tooltip as IVegaChartsTooltipSettings
             const tooltip = this.chartModel.marks[0].encode.enter.tooltip
-            //tooltip.signal = `format(datum.count, '.${tooltipSettings.precision}f')`
             tooltip.signal = `'${tooltipSettings.prefix}' + format(datum.count, '.${tooltipSettings.precision}f') + '${tooltipSettings.suffix}' `
+        },
+        setChartColors() {
+            if (!this.chartModel || !this.chartModel.scales || !this.chartModel.scales[0] || !this.chartModel.data[0] || !this.widgetModel.settings.chart) return
+            const colors = this.widgetModel.settings.chart.colors
+            const numberOfValues = this.chartModel.data[0].values.length
+            const scale = this.chartModel.scales[0]
+            scale.range = []
+            let i = 0
+            let j = 0
+            while (i < numberOfValues) {
+                scale.range.push(colors[j])
+                if (j === colors.length - 1) j = 0
+                j++
+                i++
+            }
+        },
+        executeInteractions(event: any) {
+            console.log('---------- EVENT: ', event)
+            if (this.editorMode) return
+            // if (this.widgetModel.settings.interactions.crossNavigation.enabled) {
+            //     const formattedOutputParameters = formatForCrossNavigation(selectionEvent[0], this.widgetModel, this.chartData, this.dataToShow)
+            //     executeChartCrossNavigation(formattedOutputParameters, this.widgetModel.settings.interactions.crossNavigation, this.dashboardId)
+            // } else {
+            //     this.setSelection(event, selectionEvent)
+            // }
         }
     }
 })

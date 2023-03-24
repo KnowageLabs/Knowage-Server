@@ -2,7 +2,7 @@ import { hexToRgb } from './../../FormattingHelpers';
 import { KnowageVegaChartWordcloud } from '../../../widget/ChartWidget/classes/vega/KnowageVegaChartWordcloud';
 import { getFormattedStyle } from './VegaChartsStyleHelper';
 import { getFormattedInteractions } from './../../common/WidgetInteractionsHelper';
-import { getFormattedWidgetColumns } from './../CommonChartCompatibilityHelper';
+import { getFormattedWidgetColumns, getFormattedColorSettings } from './../CommonChartCompatibilityHelper';
 import { IWidget, IWidgetExports } from './../../../Dashboard.d';
 import { getFiltersForColumns } from './../../DashboardBackwardCompatibilityHelper';
 import { IVegaChartsSettings, IVegaChartsConfiguration } from './../../../interfaces/vega/VegaChartsWidget.d';
@@ -40,6 +40,7 @@ const getFormattedWidgetSettings = (widget: any) => {
         interactions: getFormattedInteractions(widget),
         style: getFormattedStyle(widget),
         tooltip: getFormattedTooltipSettings(widget),
+        chart: { colors: getFormattedColorSettings(widget) },
         responsive: widgetCommonDefaultValues.getDefaultResponsivnes()
     } as IVegaChartsSettings
     return formattedSettings
