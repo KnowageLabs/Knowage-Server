@@ -54,6 +54,28 @@ function mapWidgetEditControllerFunction(
 	$scope.widgetSpinner = false;
 	$scope.availableLegendAlignments = [{'label':$scope.translate.load('sbi.cockpit.style.textAlign.left'),'value':'left'},{'label':$scope.translate.load('sbi.cockpit.style.textAlign.center'),'value':'center'},{'label':$scope.translate.load('sbi.cockpit.style.textAlign.right'),'value':'right'}];
 	$scope.availableVisualizationTypes = ['Linear Gradient', 'Range'];
+	$scope.availableLegendPosition = [
+		{
+			'label':$scope.translate.load('sbi.cockpit.style.legend.position.north'),
+			'value':'north'
+		},
+		{
+			'label':$scope.translate.load('sbi.cockpit.style.legend.position.south'),
+			'value':'south'
+		},
+		{
+			'label':$scope.translate.load('sbi.cockpit.style.legend.position.west'),
+			'value':'west'
+		},
+		{
+			'label':$scope.translate.load('sbi.cockpit.style.legend.position.east'),
+			'value':'east'
+		},
+		{
+			'label':$scope.translate.load('sbi.cockpit.style.legend.position.drag'),
+			'value':'drag'
+		}
+	];
 
 	$scope.getTemplateUrl = function(template){
 		return cockpitModule_generalServices.getTemplateUrl('mapWidget',template);
@@ -71,6 +93,9 @@ function mapWidgetEditControllerFunction(
 		layer.visualizationType = type;
 		if(layer.clusterConf && layer.clusterConf.enabled) layer.clusterConf.enabled = false;
 		if(layer.heatmapConf && layer.heatmapConf.enabled) layer.heatmapConf.enabled = false;
+		if(type == 'markers'){
+			layer.clusterConf = layer.clusterConf || {};
+		}
 		if(type == 'clusters'){
 			layer.clusterConf = layer.clusterConf || {};
 			layer.clusterConf.enabled = true;
@@ -82,9 +107,12 @@ function mapWidgetEditControllerFunction(
 		if(type == "balloons"){
 			layer.balloonConf             = layer.balloonConf             || {};
 			layer.balloonConf.borderColor = layer.balloonConf.borderColor || "rgba(0, 0, 0, 0.5)";
-			layer.balloonConf.color       = layer.balloonConf.color       || "rgba(127, 127, 127, 0.5)";
+			layer.balloonConf.fromColor   = layer.balloonConf.fromColor   || "rgba( 65,  65,  65, 0.5)";
+			layer.balloonConf.toColor     = layer.balloonConf.toColor     || "rgba(192, 192, 192, 0.5)";
 			layer.balloonConf.minSize     = layer.balloonConf.minSize     || 5;
 			layer.balloonConf.maxSize     = layer.balloonConf.maxSize     || 35;
+			layer.balloonConf.method      = layer.balloonConf.method      || "CLASSIFY_BY_EQUAL_INTERVALS";
+			layer.balloonConf.classes     = layer.balloonConf.classes     || 3;
 		}
 		if(type == "pies"){
 			layer.pieConf              = layer.pieConf              || {};
@@ -95,6 +123,8 @@ function mapWidgetEditControllerFunction(
 			layer.pieConf.toColor      = layer.pieConf.toColor      || "rgba(191, 191, 191, 0.5)";
 			layer.pieConf.minSize      = layer.pieConf.minSize      || 5;
 			layer.pieConf.maxSize      = layer.pieConf.maxSize      || 35;
+			layer.pieConf.method       = layer.pieConf.method       || "CLASSIFY_BY_EQUAL_INTERVALS";
+			layer.pieConf.classes      = layer.pieConf.classes      || 3;
 			delete layer.pieConf.color;
 		}
 	}
@@ -216,6 +246,8 @@ function mapWidgetEditControllerFunction(
 		for(var i in columnsList){
 			if(columnsList[i].alias !== column.alias){
 				columnsList[i].properties.animateOn = false;
+			} else {
+				columnsList[i].properties.aggregateBy = true;
 			}
 		}
 
@@ -361,11 +393,8 @@ function mapWidgetEditControllerFunction(
 		  clickOutsideToClose:true,
 		  locals: {  }
 		})
-//	    $scope.hideWidgetSpinner();
 		$scope.widgetSpinner = false;
-//		$scope.safeApply();
 	}
-//  	$scope.colorPickerOptions = {format:'hex'};
 	$scope.colorPickerOptions = {format:'rgb'};
 	$scope.setIconType = function(layer,type) {
 		if (!layer.markerConf) layer.markerConf={};
@@ -536,13 +565,15 @@ function mapWidgetEditControllerFunction(
 		})
 	}
 
-	$scope.getChoroplethThresholds = function(ev, analysisConf) {
+	$scope.getRangeClassificationThresholds = function(ev, analysisConf) {
 
 		$mdDialog.show({
 			controller: function ($scope,$mdDialog) {
 
 				$scope.activeAnalysisConf = {};
+				
 				angular.copy(analysisConf,$scope.activeAnalysisConf);
+				
 				if(!$scope.activeAnalysisConf.properties) $scope.activeAnalysisConf.properties = {};
 
 				$scope.addThreshold = function() {
@@ -557,7 +588,7 @@ function mapWidgetEditControllerFunction(
 				}
 
 				$scope.set = function(){
-					angular.copy($scope.activeAnalysisConf,analysisConf);
+					angular.copy($scope.activeAnalysisConf, analysisConf);
 					$mdDialog.hide();
 				}
 				$scope.cancel = function(){
@@ -566,10 +597,10 @@ function mapWidgetEditControllerFunction(
 			},
 			scope: $scope,
 			preserveScope:true,
-		  templateUrl: $scope.getTemplateUrl('mapWidgetChoroplethThresholds'),
-		  targetEvent: ev,
-		  clickOutsideToClose:true,
-		  locals: {  }
+			templateUrl: $scope.getTemplateUrl('mapWidgetRangeClassificationThresholds'),
+			targetEvent: ev,
+			clickOutsideToClose:true,
+			locals: {}
 		})
 	}
 

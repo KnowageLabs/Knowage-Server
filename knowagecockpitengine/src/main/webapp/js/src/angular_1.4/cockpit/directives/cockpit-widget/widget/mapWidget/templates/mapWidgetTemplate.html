@@ -1,24 +1,30 @@
-<div layout="row" class="cockpit-map-widget" layout-fill style="position: relative;">
-	<div id="{{ngModel.content.mapId}}" class="map" style="width:100%">
+<div class="cockpit-map-widget" style="position: relative;" ng-class="getMapLayout()">
+	<div id="{{ngModel.content.mapId}}" class="map" flex>
+		<!-- 
 		<div class="optionsController" ng-click="toggleSidenav()" ng-class="{ 'sideNavOpened': sideNavOpened }" ng-if="!ngModel.controlPanelAlwaysOpen">
 			<md-tooltip>{{translate.load('sbi.cockpit.map.togglemapoptions')}}</md-tooltip>
 			<i class="fa fa-cog"></i>
 		</div>
-		<div class="optionsController" ng-click="toggleSidenav()" ng-class="{ 'sideNavOpened': sideNavOpened }" ng-if="!ngModel.controlPanelAlwaysOpen">
+		 -->
+		<div class="optionsController" ng-click="toggleSidenav()" ng-if="!ngModel.controlPanelAlwaysOpen">
 			<md-tooltip>{{translate.load('sbi.cockpit.map.togglemapoptions')}}</md-tooltip>
 			<i class="fa fa-cog"></i>
 		</div>
 		<div class="mapAnimationController" ng-show="hasAnimatedLayer()">
-			<select ng-model="selectedAnimatedLayerName">
-				<option ng-value="currLayer.name" ng-repeat="currLayer in ngModel.content.layers | orderBy:'':true | filter:isLayerAnimated">{{ currLayer.alias }}</option>
+			<select ng-model="selectedAnimatedLayerName" ng-disabled="isAnimationInPlay()">
+				<option ng-value="currLayer.name" ng-repeat="currLayer in getAnimatedLayers()">{{ currLayer.alias }}</option>
 			</select>
+			<span>
+				{{ getAnimationCurrentValue() }}
+			</span>
 			<md-button class="md-icon-button" ng-click="toggleAnimation(selectedAnimatedLayerName)">
 				<md-icon md-font-icon="fas" ng-class="{ 'fa-play': !animationStatus[selectedAnimatedLayerName].inPlay, 'fa-stop': animationStatus[selectedAnimatedLayerName].inPlay }"></md-icon>
 			</md-button>
 		</div>
-		<ng-include src="getTemplateUrl('mapWidgetLegendPanel')"></ng-include>
 	</div>
-	
+
+	<map-widget-legend-panel></map-widget-legend-panel>
+
 	<div id="tooltip-{{ngModel.id}}" class="ol-tooltip">
 		<span>{{ tooltip }}</span>
 	</div> 
@@ -28,7 +34,7 @@
 		</div> 
 		<h2 ng-style="{ 'font-size': ngModel.style.tooltip.text['font-size'] }">{{translate.load('sbi.cockpit.map.details')}}</h2>
 		<div id="popup-content-{{ngModel.id}}" class="popup-content" ng-style="ngModel.style.tooltip.box">
-			<ul>
+			<ul ng-if="selectedLayerDefinition.visualizationType != 'pies'">
 				<li ng-repeat="prop in layerConfig track by $index" ng-if="prop.properties.showDetails">
 					<p>
 						<strong ng-style="ngModel.style.tooltip.text">{{ prop.aliasToShow | i18n}}:</strong>
@@ -38,6 +44,24 @@
 				</li>
 				<li ng-if="checkCrossNavigation()">
 					<span class="crossNavigationLink" ng-click="crossNavigate(layerConfig.dsId,layerConfig,props)">{{(ngModel.cross && ngModel.cross.cross && ngModel.cross.cross.label) || translate.load('sbi.cockpit.map.gotodetail')}}</span>
+				</li>
+			</ul>
+			<ul ng-if="selectedLayerDefinition.visualizationType == 'pies'">
+				<li>
+					<p>
+						<span ng-style="ngModel.style.tooltip.text">{{ getDetailPieAggregatorAlias() }}</span>
+					</p>
+				</li>
+				<li ng-repeat="(key, value) in selectedFeature.get('_pie_aggregation')">
+					<p>
+						<span ng-style="ngModel.style.tooltip.text">
+							<svg height="10" width="10">
+								<circle cx="5" cy="5" r="4" ng-style="{ 'fill': getDetailPieAggregatorClassificationByValue(key).color, 'stroke': getDetailPieAggregatorClassificationByValue(key).borderColor, 'stroke-width': '1px' }"/>
+							</svg>
+						</span>
+						<span ng-style="ngModel.style.tooltip.text">{{ key }}:</span>
+						<span ng-style="ngModel.style.tooltip.text" ng-cloak >{{ value }}</span>
+					</p>
 				</li>
 			</ul>
 		</div>

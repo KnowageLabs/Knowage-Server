@@ -27,80 +27,93 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			return {
 				restrict: 'A',
 				link: function(scope, elm, attrs) {
-					var startX, startY, initialMouseX, initialMouseY;
-					elm.css({ position: 'absolute' });
+					scope.$watch(attrs.draggable, function(newVal, oldVal) {
 
-					var currPosition = scope.$eval(attrs.draggable);
+						var startX, startY, initialMouseX, initialMouseY;
+						var draggable = scope.$eval(attrs.draggable);
 
-					if (currPosition == undefined) {
-						scope.$eval(attrs.draggable + "= [100,10]");
-						currPosition = scope.$eval(attrs.draggable);
-					}
-
-					elm.css({
-						top:  currPosition[0],
-						left: currPosition[1]
-					});
+						if (draggable && draggable.position === "drag") {
+							var currPosition = draggable.coordinates = draggable.coordinates || [150,10];
+							
+							elm.css({
+								top:  currPosition[0],
+								left: currPosition[1]
+							});
+							
+							elm.bind('mouseover', function($event) {
+								elm.css({ cursor: "grab" });
+							});
+		
+							elm.bind('mouseout', function($event) {
+								elm.css({ cursor: "unset" });
+							});
+		
+							elm.bind('mousedown', function($event) {
+								startX = elm.prop('offsetLeft');
+								startY = elm.prop('offsetTop');
+								initialMouseX = $event.clientX;
+								initialMouseY = $event.clientY;
+								$document.bind('mousemove', mousemove);
+								$document.bind('mouseup', mouseup);
+								return false;
+							});
+		
+							function mousemove($event) {
+								var dx = $event.clientX - initialMouseX;
+								var dy = $event.clientY - initialMouseY;
+								
+								draggable.coordinates[0] = startY + dy;
+								draggable.coordinates[1] = startX + dx;
+								
+								var parenteElementBoundingRect = elm[0].previousElementSibling.getBoundingClientRect();
+								var parentWidth = parenteElementBoundingRect.width;
+								var parentHeight = parenteElementBoundingRect.height;
+								
+								var subElementBoundingRect = elm[0].querySelector(".mapWidgetLegend:not(.ng-hide)").getBoundingClientRect();
+								var legendWidth = subElementBoundingRect.width;
+								var legendHeight = subElementBoundingRect.height;
+								
+								draggable.coordinates[0] = Math.max(draggable.coordinates[0], 0 + legendHeight);
+								draggable.coordinates[1] = Math.max(draggable.coordinates[1], 0);
+								
+								draggable.coordinates[0] = Math.min(draggable.coordinates[0], parentHeight);
+								draggable.coordinates[1] = Math.min(draggable.coordinates[1], parentWidth  - legendWidth);
+								
+								elm.css({
+									top:  draggable.coordinates[0],
+									left: draggable.coordinates[1]
+								});
+								return false;
+							}
+		
+							function mouseup() {
+								$document.unbind('mousemove', mousemove);
+								$document.unbind('mouseup', mouseup);
+							}
+						} else {
+							elm.bind('mouseout', function($event) {
+								elm.css({ cursor: "unset" });
+							});
+						}
 					
-					elm.bind('mouseover', function($event) {
-						elm.css({ cursor: "grab" });
-					});
-
-					elm.bind('mouseout', function($event) {
-						elm.css({ cursor: "unset" });
-					});
-
-					elm.bind('mousedown', function($event) {
-						startX = elm.prop('offsetLeft');
-						startY = elm.prop('offsetTop');
-						initialMouseX = $event.clientX;
-						initialMouseY = $event.clientY;
-						$document.bind('mousemove', mousemove);
-						$document.bind('mouseup', mouseup);
-						return false;
-					});
-
-					function mousemove($event) {
-						var dx = $event.clientX - initialMouseX;
-						var dy = $event.clientY - initialMouseY;
-						
-						currPosition[0] = startY + dy;
-						currPosition[1] = startX + dx;
-						
-						var parenteElementBoundingRect = elm[0].closest(".map").getBoundingClientRect();
-						var parentWidth = parenteElementBoundingRect.width;
-						var parentHeight = parenteElementBoundingRect.height;
-						
-						var subElementBoundingRect = elm[0].querySelector(".mapWidgetLegend:not(.ng-hide)").getBoundingClientRect();
-						var legendWidth = subElementBoundingRect.width;
-						var legendHeight = subElementBoundingRect.height;
-						
-						currPosition[0] = Math.max(currPosition[0], 0 + legendHeight);
-						currPosition[1] = Math.max(currPosition[1], 0);
-						
-						currPosition[0] = Math.min(currPosition[0], parentHeight);
-						currPosition[1] = Math.min(currPosition[1], parentWidth  - legendWidth);
-						
-						elm.css({
-							top:  currPosition[0],
-							left: currPosition[1]
-						});
-						return false;
-					}
-
-					function mouseup() {
-						$document.unbind('mousemove', mousemove);
-						$document.unbind('mouseup', mouseup);
-					}
+					}, true);
+					
 				}
 			};
 		}])
-		.directive('mapWidgetLabelPanel', ['$document', function($document) {
+		.directive('mapWidgetLegendPanel', ['$document', function($document) {
 			return {
 				restrict: 'E',
 				scope: false,
+				replace: true,
 				link: function(scope, elm, attrs) {
-					
+					scope.isDraggable = function() {
+						if (scope.ngModel.style.legend.position === "drag") {
+							return scope.ngModel.style.legend.coordinates;
+						} else {
+							return false;
+						}
+					}
 				},
 				templateUrl: baseScriptPath+ '/directives/cockpit-widget/widget/mapWidget/templates/mapWidgetLegendPanel.html'
 			};
@@ -182,14 +195,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			cockpitModule_properties){
 
 		//ol objects
-		$scope.popupContainer; 		//popup detail
-		$scope.closer; 				//popup detail closer icon
+		$scope.popupContainer;		//popup detail
+		$scope.closer;				//popup detail closer icon
 		$scope.tooltipContainer;
-		$scope.layers = [];  		//layers with features
-		$scope.values = {};  		//layers with values
+		$scope.layers = [];		//layers with features
+		$scope.values = {};		//layers with values
 		$scope.savedValues = {};
-		$scope.configs = {}; 		//layers with configuration
-		$scope.columnsConfig = {} 	//layers with just columns definition
+		$scope.configs = {};		//layers with configuration
+		$scope.columnsConfig = {}	//layers with just columns definition
 		$scope.optionSidenavId = "optionSidenav-" + Math.random(); // random id for sidenav id
 		$scope.layerVisibility = [];
 		$scope.exploded = {}; // is heatp/cluster exploded?
@@ -199,6 +212,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		$scope.isShowLegend = true; //legend is on by default
 		$scope.i18n = sbiModule_i18n;
 		$scope.dataSetStats = {};
+		$scope.legend = {};
+		$scope.selectedLayer = undefined;
+		$scope.selectedLayerDefinition = undefined;
+		$scope.selectedFeature = undefined;
 
 		$scope.i18n.loadI18nMap();
 
@@ -329,7 +346,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					} else if (filters[f].type == 'MEASURE'){
 						var columnValue = Number(datastore.rows[i][columnName]);
 						var filterValue = filters[f].values.map(function (x) {
-						    return Number(x);
+							return Number(x);
 						});
 						//check operator
 						var operator = String(filters[f].operator);
@@ -480,12 +497,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			return finishEdit.promise;
 		}
 
-//############################################## SPECIFIC MAP WIDGET METHODS #########################################################################
-
-	    $scope.getLegend = function(referenceId, visualizationType){
-	    	$scope.legend = cockpitModule_mapThematizerServices.getLegend(referenceId, visualizationType);
-	    }
-
 		function syncDatasetMetadata(layerDef) {
 
 			var toNames = function(el) { return el.name; };
@@ -585,7 +596,19 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					$scope.exploded[currDsId] = false;
 				}
 			}
-			if (!$scope.ngModel.content.hasOwnProperty("enableBaseLayer")) $scope.ngModel.content.enableBaseLayer = true;
+			
+			$scope.ngModel.style = $scope.ngModel.style || {};
+			$scope.ngModel.style.legend = $scope.ngModel.style.legend || {};
+			// Retrocompatibility
+			if (Array.isArray($scope.ngModel.style.legend.position)) {
+				$scope.ngModel.style.legend.coordinates = $scope.ngModel.style.legend.position;
+				$scope.ngModel.style.legend.position = "drag";
+			}
+			$scope.ngModel.style.legend.position = $scope.ngModel.style.legend.position || "east";
+
+			if (!$scope.ngModel.content.hasOwnProperty("enableBaseLayer")) {
+				$scope.ngModel.content.enableBaseLayer = true;
+			}
 
 		}
 		
@@ -662,7 +685,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 			layerDef.layerID = layerID;
 			cockpitModule_mapServices.clearCache(layerID);
-			var featuresSource = cockpitModule_mapServices.getFeaturesDetails(geoColumn, selectedMeasure, layerDef, columnsForData, data);
+			var featuresSource = cockpitModule_mapServices.getFeaturesDetails(geoColumn, selectedMeasure, layerDef, columnsForData, data, $scope.legend);
 			if (featuresSource == null){
 				// creates a fake layer for internal object (because isn't the first loop anymore)
 				layer = {};
@@ -673,18 +696,16 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			}
 
 			cockpitModule_mapThematizerServices.setActiveConf($scope.ngModel.id + "|" + layerDef.name, layerDef);
-			cockpitModule_mapThematizerServices.updateLegend($scope.ngModel.id + "|" + layerDef.name, data, $scope.ngModel.style.legend); //add legend to internal structure
-			cockpitModule_mapThematizerServices.clearCache($scope.ngModel.id + "|" + layerDef.name);
-			if (layerDef.visualizationType == 'choropleth') {
-				if ($scope.ngModel.style.legend)
-					$scope.getLegend($scope.ngModel.id, $scope.ngModel.style.legend.visualizationType);
-				else
-					$scope.getLegend($scope.ngModel.id);
-			}
+			cockpitModule_mapThematizerServices.updateLegend($scope.legend, $scope.ngModel.id + "|" + layerDef.name, data, $scope.ngModel.style.legend); //add legend to internal structure
+			
+			cockpitModule_mapThematizerServices.clearStyleCache($scope.ngModel.id + "|" + layerDef.name);
+			cockpitModule_mapThematizerServices.makeStyleCache($scope.ngModel.id + "|" + layerDef.name, layerDef);
+
 			var layer;
 			if (isCluster) {
-				var clusterSource = new ol.source.Cluster({source: featuresSource
-														  });
+				var clusterSource = new ol.source.Cluster({
+					source: featuresSource
+				});
 				layer = new ol.layer.Vector({source: clusterSource,
 					style: cockpitModule_mapThematizerServices.layerStyle
 				});
@@ -767,43 +788,43 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			return null;
 		}
 
-	    $scope.getTargetDataset = function() {
-	    	for (l in $scope.ngModel.content.layers){
-	    		if ($scope.isTargetLayer($scope.ngModel.content.layers[l])){
-	    			return $scope.ngModel.content.layers[l];
-	    		}
-	    	}
-	    	return null;
-	    }
+		$scope.getTargetDataset = function() {
+			for (l in $scope.ngModel.content.layers){
+				if ($scope.isTargetLayer($scope.ngModel.content.layers[l])){
+					return $scope.ngModel.content.layers[l];
+				}
+			}
+			return null;
+		}
 
-	    $scope.addViewEvents = function(){
-	    	//view events
-	    	var view = $scope.map.getView();
-            view.on("change:resolution", function(e) {
-            	//zoom action
-        	    if (Number.isInteger(e.target.getZoom())) {
-	            	var previousZoom = $scope.ngModel.content.currentView.zoom;
-	            	var newZoom =  e.target.getZoom();
-	            	if (previousZoom > newZoom ){
-	            		for (l in $scope.ngModel.content.layers){
-		    		    	var layerDef =  $scope.ngModel.content.layers[l];
-		    		    	var isCluster = $scope.isCluster(layerDef);
-		    		    	var isHeatmap = $scope.isHeatmap(layerDef);
-		    		    	if (isCluster){
-			    				var values = $scope.values[layerDef.name];
-				        		$scope.createLayerWithData(layerDef.name, values, true, false); //return to cluster view
-			    			}
-			    			if (isHeatmap){
-			    				var values = $scope.values[layerDef.name];
-				        		$scope.createLayerWithData(layerDef.name, values, false, true); //return to cluster view
-			    			}
-	            		}
-	            	}
-        	    }
-        	    $scope.ngModel.content.currentView.zoom = e.target.getZoom();
-        	    $scope.ngModel.content.currentView.center = e.target.getCenter();
-            });
-	    }
+		$scope.addViewEvents = function(){
+			//view events
+			var view = $scope.map.getView();
+			view.on("change:resolution", function(e) {
+				//zoom action
+				if (Number.isInteger(e.target.getZoom())) {
+					var previousZoom = $scope.ngModel.content.currentView.zoom;
+					var newZoom =  e.target.getZoom();
+					if (previousZoom > newZoom ){
+						for (l in $scope.ngModel.content.layers){
+							var layerDef =  $scope.ngModel.content.layers[l];
+							var isCluster = $scope.isCluster(layerDef);
+							var isHeatmap = $scope.isHeatmap(layerDef);
+							if (isCluster){
+								var values = $scope.values[layerDef.name];
+								$scope.createLayerWithData(layerDef.name, values, true, false); //return to cluster view
+							}
+							if (isHeatmap){
+								var values = $scope.values[layerDef.name];
+								$scope.createLayerWithData(layerDef.name, values, false, true); //return to cluster view
+							}
+						}
+					}
+				}
+				$scope.ngModel.content.currentView.zoom = e.target.getZoom();
+				$scope.ngModel.content.currentView.center = e.target.getCenter();
+			});
+		}
 
 		$scope.addMapEvents = function (){
 			if ($scope.closer){
@@ -817,6 +838,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			function locateClickedLayer(evt) {
 				var featureFounded = false;
 				$scope.selectedLayer = undefined;
+				$scope.selectedLayerDefinition = undefined;
 				$scope.selectedFeature = undefined;
 				$scope.props = {};
 				$scope.clickOnFeature = false;
@@ -832,6 +854,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						
 						if (!layer.get("originalLayer").isStatic && !featureFounded) {
 							$scope.selectedLayer = layer;
+							$scope.selectedLayerDefinition = $scope.selectedLayer.get("originalLayer");
 							$scope.selectedFeature = (Array.isArray(feature.get('features')) && feature.get('features').length == 1) ? feature.get('features')[0] : feature;
 							$scope.props = $scope.selectedFeature.getProperties();
 							$scope.clickOnFeature = true;
@@ -967,14 +990,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			});
 		}
 
-	    $scope.isDisplayableProp = function (p, config){
-	    	for (c in config){
-	    		if (p == config[c].name && config[c].properties.showDetails){
-	    			return config[c];
-	    		}
-	    	}
-	    	return null;
-	    }
+		$scope.isDisplayableProp = function (p, config){
+			for (c in config){
+				if (p == config[c].name && config[c].properties.showDetails){
+					return config[c];
+				}
+			}
+			return null;
+		}
 
 		$scope.getFeaturesFromDataset = function(layerDef){
 			//prepare object with metadata for desiderata dataset columns
@@ -1127,8 +1150,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 		}
 
-	    //control panel events
-	    $scope.toggleLayer = function(e,n){
+		//control panel events
+		$scope.toggleLayer = function(e,n){
 			e.stopPropagation();
 			console.log($scope.ngModel.mutualExclusion);
 			if($scope.ngModel.mutualExclusion === false) {
@@ -1156,7 +1179,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					}
 				}
 			}
-	    }
+		}
 
 		$scope.toggleLayerExpanse = function(layer){
 			if ($scope.hasMeasures(layer)) {
@@ -1166,34 +1189,34 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			}
 		}
 
-	    $scope.getLayerVisibility = function(n){
-	    	var l = $scope.getLayerByName(n);
-	    	if (!l || !l.getVisible) return; //do nothing
-	    	return l.getVisible();
-	    }
+		$scope.getLayerVisibility = function(n){
+			var l = $scope.getLayerByName(n);
+			if (!l || !l.getVisible) return; //do nothing
+			return l.getVisible();
+		}
 
-	    $scope.getVisibleLayersCount = function(){
-	    	var visibleLayersCount = 0;
-	    	for (var i=0; i<$scope.layers.length; i++) {
-	    		var l = $scope.layers[i].layer;
-	    		if (l && l.getVisible && l.getVisible()) {
-	    			visibleLayersCount++;
-	    		}
-	    	}
-	    	return visibleLayersCount;
-	    }
+		$scope.getVisibleLayersCount = function(){
+			var visibleLayersCount = 0;
+			for (var i=0; i<$scope.layers.length; i++) {
+				var l = $scope.layers[i].layer;
+				if (l && l.getVisible && l.getVisible()) {
+					visibleLayersCount++;
+				}
+			}
+			return visibleLayersCount;
+		}
 
-	    $scope.getIndicatorVisibility = function(l,n){
-	    	for (lpos in  $scope.ngModel.content.layers){
-	    		if ( $scope.ngModel.content.layers[lpos].name == l)
-		    	for (var i in $scope.ngModel.content.layers[lpos].indicators){
-		    		if ($scope.ngModel.content.layers[lpos].indicators[i].label == n){
-		    			return $scope.ngModel.content.layers[lpos].indicators[i].showMap || false;
-		    		}
-		    	}
-	    	}
-	    	return false;
-	    }
+		$scope.getIndicatorVisibility = function(l,n){
+			for (lpos in  $scope.ngModel.content.layers){
+				if ( $scope.ngModel.content.layers[lpos].name == l)
+				for (var i in $scope.ngModel.content.layers[lpos].indicators){
+					if ($scope.ngModel.content.layers[lpos].indicators[i].label == n){
+						return $scope.ngModel.content.layers[lpos].indicators[i].showMap || false;
+					}
+				}
+			}
+			return false;
+		}
 
 		//Thematization
 		$scope.thematizeMeasure = function (l, m){
@@ -1212,10 +1235,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		}
 
 		//thematizer functions
-	    $scope.refreshStyle = function (layer, measure, config, configColumns, values, geoColumn){
+		$scope.refreshStyle = function (layer, measure, config, configColumns, values, geoColumn){
 			//prepare object for thematization
-	    	var layerID = $scope.ngModel.id + "|" + config.name;
-	    	var elem = null;
+			var layerID = $scope.ngModel.id + "|" + config.name;
+			var elem = null;
 
 			if (measure != null) {
 				elem = cockpitModule_mapServices.getColumnConfigByProp(configColumns, 'aliasToShow', measure);
@@ -1224,74 +1247,78 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				elem = cockpitModule_mapServices.getColumnConfigByProp(configColumns, 'name', activeIndicator);
 			}
 
-	    	if (elem){
-		    	cockpitModule_mapThematizerServices.setActiveIndicator(elem.name);
-		    	config.defaultIndicator = elem.name;
+			if (elem){
+				cockpitModule_mapThematizerServices.setActiveIndicator(elem.name);
+				config.defaultIndicator = elem.name;
 
-		    	cockpitModule_mapThematizerServices.loadIndicatorMaxMinVal(config.name +'|'+ elem.name, values);
-		    	cockpitModule_mapThematizerServices.updateLegend(layerID, values,$scope.ngModel.style.legend);
+				cockpitModule_mapThematizerServices.loadIndicatorMaxMinVal(config.name +'|'+ elem.name, values);
+				cockpitModule_mapThematizerServices.updateLegend($scope.legend, layerID, values,$scope.ngModel.style.legend);
 
-		    	$scope.getLegend($scope.ngModel.id, $scope.ngModel.style.legend.visualizationType);
+				// $scope.getLegend($scope.ngModel.id, $scope.ngModel.style.legend.visualizationType);
 			}
 
 			layer.getSource().changed();
 
 		}
 
-	    //Utility functions
-	    $scope.getLayerByName = function(n){
-	    	var tmpName = n.split("|");
-	    	if (tmpName.length > 1) n = tmpName[1];
-	    	for (l in $scope.layers){
-	    		if ($scope.layers[l].name === n)
-	    			return $scope.layers[l].layer;
-	    	}
-	    	return null;
-	    }
+		//Utility functions
+		$scope.getLayerByName = function(n){
+			var tmpName = n.split("|");
+			if (tmpName.length > 1) n = tmpName[1];
+			for (l in $scope.layers){
+				if ($scope.layers[l].name === n)
+					return $scope.layers[l].layer;
+			}
+			return null;
+		}
 
-	    $scope.addLayer = function(n,l){
-	    	$scope.layers.push({"name": n,"layer":l});
-	    }
+		$scope.addLayer = function(n,l){
+			$scope.layers.push({"name": n,"layer":l});
+		}
 
-	    $scope.removeLayer = function(n){
-	    	for (l in $scope.layers){
-	    		if ($scope.layers[l].name == n)
-	    			$scope.layers.splice(l,1);
-	    	}
-	    }
+		$scope.removeLayer = function(n){
+			for (l in $scope.layers){
+				if ($scope.layers[l].name == n)
+					$scope.layers.splice(l,1);
+			}
+		}
 
 		$scope.clearInternalData = function(){
 			$scope.layers = [];
 			$scope.values = {};
 			$scope.savedValues = {};
 			$scope.configs = {};
-			$scope.legend = [];
+			$scope.v = [];
 			$scope.exploded = {};
 			$scope.layerVisibility = [];
-			cockpitModule_mapThematizerServices.removeLegends();
+			$scope.legend = {};
+			$scope.selectedLayer = undefined;
+			$scope.selectedLayerDefinition = undefined;
+			$scope.selectedFeature = undefined;
+			$scope.props = {};
 			cockpitModule_mapThematizerServices.clearDefaultMarkerCache();
 		}
 
-	    $scope.setLayerProperty = function(l, p, v){
-	    	for (o in $scope.layers){
-	    		if ($scope.layers[o].name === l)
-	    			$scope.layers[o][p] = v;
-	    	}
-	    }
+		$scope.setLayerProperty = function(l, p, v){
+			for (o in $scope.layers){
+				if ($scope.layers[o].name === l)
+					$scope.layers[o][p] = v;
+			}
+		}
 
-	    $scope.getLayerProperty = function(l, p){
-	    	for (o in $scope.layers){
-	    		if ($scope.layers[o].name === l)
-	    			return $scope.layers[o][p] || null;
-	    	}
-	    }
+		$scope.getLayerProperty = function(l, p){
+			for (o in $scope.layers){
+				if ($scope.layers[o].name === l)
+					return $scope.layers[o][p] || null;
+			}
+		}
 
-	    $scope.setLayerProperty = function(l, p, v){
-	    	for (o in $scope.layers){
-	    		if ($scope.layers[o].name === l)
-	    			$scope.layers[o][p] = v;
-	    	}
-	    }
+		$scope.setLayerProperty = function(l, p, v){
+			for (o in $scope.layers){
+				if ($scope.layers[o].name === l)
+					$scope.layers[o][p] = v;
+			}
+		}
 
 		/**
 		 * @deprecated Not used
@@ -1302,9 +1329,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			}
 		}
 
-	    $scope.crossNavigate = function(dsId,layerConfig,props) {
-	    	$scope.doSelection(layerConfig.alias, $scope.props[layerConfig[0].name].value, null, null, props, null, dsId);
-	    }
+		$scope.crossNavigate = function(dsId,layerConfig,props) {
+			$scope.doSelection(layerConfig.alias, $scope.props[layerConfig[0].name].value, null, null, props, null, dsId);
+		}
 
 		$scope.checkCrossNavigation = function(){
 			var targetLayer = $scope.getTargetDataset();
@@ -1414,7 +1441,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		$scope.getAnimatedLayers = function() {
 			var layers = $scope.ngModel.content.layers || [];
 
-			return layers.filter($scope.isLayerAnimated);
+			return layers
+				.filter($scope.isLayerWithVisualizationDifferentThanPie)
+				.filter($scope.isLayerAnimated);
 		}
 
 		$scope.toggleAnimation = function(layerName) {
@@ -1537,7 +1566,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		$scope.hasAnimatedLayer = function() {
 			var layers = $scope.ngModel.content.layers || [];
 
-			return layers.find($scope.isLayerAnimated) != undefined;
+			return layers
+				.filter($scope.isLayerWithVisualizationDifferentThanPie)
+				.find($scope.isLayerAnimated) != undefined;
+		}
+
+		$scope.isLayerWithVisualizationDifferentThanPie = function(layer) {
+			return layer.visualizationType != "pies";
 		}
 
 		$scope.isLayerAnimated = function(layer) {
@@ -1970,8 +2005,164 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			return layer.content.columnSelectedOfDataset.some(function(e) { return e.properties && e.properties.showMap == true; });
 		}
 
-	}
+		$scope.getMapLayout = function() {
+			var ret = "layout-row";
+			
+			if ($scope.isShowLegend
+				&& $scope.ngModel
+				&& $scope.ngModel.style
+				&& $scope.ngModel.style.legend
+				&& ($scope.ngModel.style.legend.position == "north" || $scope.ngModel.style.legend.position == "south")) {
+				ret = "layout-column";
+			}
+			
+			return ret;
+		}
 
+		$scope.needLegend = function() {
+			return Object.keys($scope.legend).length > 0;
+		}
+
+		$scope.getLegendContainerStyle = function() {
+			var ret = {};
+
+			if ($scope.ngModel.style.legend.position != 'north'
+					&& $scope.ngModel.style.legend.position != 'south') {
+				
+				if (!isNaN($scope.ngModel.style.legend.width)) {
+					ret["width"] = "150px"; // TODO
+				} else {
+					ret["width"] = $scope.ngModel.style.legend.width;
+				}
+			} else {
+				ret["width"] = "100%";
+			}
+
+			return ret;
+		}
+
+		$scope.getLegendSubContainerStyle = function() {
+			var ret = {};
+
+			if ($scope.ngModel.style.legend.backgroundColor) {
+				ret["background-color"] = $scope.ngModel.style.legend.backgroundColor;
+			} else {
+				if ($scope.ngModel.style.legend.position == 'drag' && !$scope.ngModel.style.legend.backgroundColor) {
+					ret["background-color"] = "white";
+				} else {
+					ret["background-color"] = "unset";
+				}
+			}
+
+			return ret;
+		}
+
+		$scope.getLegendSectionContainerStyle = function() {
+			var ret = {};
+
+			ret["justify-content"] = $scope.getLegendAlignment();
+
+			return ret;
+		}
+
+		$scope.getLegendElementsStyle = function() {
+			var ret = {};
+
+			ret["justify-content"] = $scope.getLegendAlignment();
+
+			return ret;
+		}
+
+		$scope.getLegendSpanElementsStyle = function() {
+			var ret = {};
+
+			var position = $scope.ngModel.style.legend.position;
+
+			if ("north" === position || "south" === position) {
+			} else {
+				ret["text-align"] = $scope.ngModel.style.legend.alignment;
+			}
+
+			return ret;
+		}
+
+		$scope.getLegendAlignment = function() {
+			var ret = "center center";
+			var alignement = $scope.ngModel.style.legend.alignment;
+
+			if ("left" === alignement) {
+				ret = "flex-start";
+			} else if ("center" === alignement) {
+				ret = "center";
+			} else if ("right" === alignement) {
+				ret = "flex-end";
+			}
+
+			return ret;
+		}
+
+		$scope.getLegendDisposition = function() {
+			var ret = null;
+			var position = $scope.ngModel.style.legend.position;
+
+			if ("north" === position || "south" === position) {
+				ret = "row";
+			} else {
+				ret = "column";
+			}
+
+			return ret;
+		}
+
+		$scope.getLegendTitleStyle = function() {
+			return {
+					'font-size': ($scope.ngModel.style.legend.title.fontSize) ? $scope.ngModel.style.legend.title.fontSize : '12px'
+				};
+		}
+
+		$scope.getLegendInfoStyle = function() {
+			return {
+					'font-size': ($scope.ngModel.style.legend.info.fontSize) ? $scope.ngModel.style.legend.info.fontSize : '8px'
+				};
+		}
+
+		$scope.getDetailPieAggregatorAlias = function() {
+			var ret = "";
+
+			if ($scope.selectedLayerDefinition) {
+				ret = $scope.selectedLayerDefinition
+					.content
+					.columnSelectedOfDataset
+					.find(function(e) {
+						return e.name == $scope.selectedFeature.get('_pie_aggregator');
+					}).alias;
+			}
+
+			return ret;
+		}
+
+		$scope.getDetailPieAggregatorClassificationByValue = function(value) {
+			var ret = "black";
+
+			if ($scope.selectedLayerDefinition) {
+				
+				var layerId = $scope.selectedLayerDefinition.layerID;
+				var currLegend = $scope.legend[layerId];
+				var currClassification = currLegend.classification;
+				ret = currClassification.find(function(e) {
+						return e.category === value;
+					});
+			}
+
+			return ret;
+		}
+
+		$scope.getLegendEntries = function() {
+			return Object.values($scope.legend);
+		}
+
+	}
+	
 	// this function register the widget in the cockpitModule_widgetConfigurator factory
 	addWidgetFunctionality("map",{'initialDimension':{'width':20, 'height':20},'updateble':true,'cliccable':true});
 })();
