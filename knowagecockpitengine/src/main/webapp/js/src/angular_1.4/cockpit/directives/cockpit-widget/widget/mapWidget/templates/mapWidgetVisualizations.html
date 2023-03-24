@@ -148,24 +148,63 @@
 
 			<div style="padding:8px;" ng-if="layer.visualizationType == 'balloons'">
 				<div layout="row" layout-align="start center" style="padding-bottom: 8px;" >
-					<md-input-container class="md-block flex" ng-if="layer.visualizationType == 'balloons'">
+					<md-input-container class="md-block flex">
 						<label>{{translate.load('sbi.cockpit.map.edit.visualization.marker.fillColor')}}</label>
 						<color-picker options="colorPickerOptions" ng-model="layer.balloonConf.color"></color-picker> 
 					</md-input-container>
 		
-					<md-input-container class="md-block flex" ng-if="layer.visualizationType == 'balloons'">
+					<md-input-container class="md-block flex">
 						<label>{{translate.load('sbi.cockpit.map.edit.visualization.marker.borderColor')}}</label>
 						<color-picker options="colorPickerOptions" ng-model="layer.balloonConf.borderColor"></color-picker> 
 					</md-input-container>
 		
-					<md-input-container class="md-block flex rz-slider-container" ng-if="layer.visualizationType == 'balloons'">
+					<md-input-container class="md-block flex rz-slider-container">
 						<label>{{translate.load('sbi.cockpit.map.edit.visualization.marker.minSize')}}/{{translate.load('sbi.cockpit.map.edit.visualization.marker.maxSize')}}</label>
 						<rzslider rz-slider-model="layer.balloonConf.minSize" rz-slider-high="layer.balloonConf.maxSize" rz-slider-options="{ floor: 1, ceil: 100, hidePointerLabels: false, hideLimitLabels: true }"></rzslider>
 					</md-input-container>
 				</div>
 			</div>
+
+			<div style="padding:8px;" ng-if="layer.visualizationType == 'pies'">
+
+				<div layout="row" layout-align="start center" style="padding-bottom: 8px;" ng-if="getAttributes(layer).length == 0">
+					<md-input-container class="md-block flex">
+						<div class="kn-info">{{translate.load('sbi.cockpit.map.edit.visualization.pie.disclaimer')}}</div>
+					</md-input-container>
+				</div>
+
+				<div layout="row" layout-align="start center" style="padding-bottom: 8px;" >
+
+					<md-input-container class="md-block flex">
+						<label>{{translate.load('sbi.cockpit.map.edit.visualization.pie.pieTypeLabel')}}</label>
+						<md-select ng-model="layer.pieConf.type" aria-label="Pie type">
+							<md-option ng-value="'pie'">{{translate.load('sbi.cockpit.map.edit.visualization.pie.pieType')}}</md-option>
+							<md-option ng-value="'pie3D'">{{translate.load('sbi.cockpit.map.edit.visualization.pie.pie3DType')}}</md-option>
+							<md-option ng-value="'donut'">{{translate.load('sbi.cockpit.map.edit.visualization.pie.donutType')}}</md-option>
+							<md-option ng-value="'bar'">{{translate.load('sbi.cockpit.map.edit.visualization.pie.barType')}}</md-option>
+						</md-select>
+					</md-input-container>
 		
-		<md-subheader ng-if="layer.visualizationType == 'heatmap'">{{translate.load('sbi.cockpit.map.edit.visualization.header.heatmap')}}</md-subheader>
+					<md-input-container class="md-block flex">
+						<label>{{translate.load('sbi.cockpit.map.edit.visualization.pie.categoryLabel')}}</label>
+						<md-select ng-model="layer.pieConf.categorizeBy" aria-label="Categorize by">
+							<md-option ng-repeat="attribute in getAttributes(layer)" ng-value="attribute.name">{{attribute.name}}</md-option>
+						</md-select>
+					</md-input-container>
+		
+					<md-input-container class="md-block flex">
+						<label>{{translate.load('sbi.cockpit.map.edit.visualization.marker.borderColor')}}</label>
+						<color-picker options="colorPickerOptions" ng-model="layer.pieConf.borderColor"></color-picker> 
+					</md-input-container>
+		
+					<md-input-container class="md-block flex rz-slider-container">
+						<label>{{translate.load('sbi.cockpit.map.edit.visualization.marker.minSize')}}/{{translate.load('sbi.cockpit.map.edit.visualization.marker.maxSize')}}</label>
+						<rzslider rz-slider-model="layer.pieConf.minSize" rz-slider-high="layer.pieConf.maxSize" rz-slider-options="{ floor: 1, ceil: 100, hidePointerLabels: false, hideLimitLabels: true }"></rzslider>
+					</md-input-container>
+				</div>
+			</div>
+
+			<md-subheader ng-if="layer.visualizationType == 'heatmap'">{{translate.load('sbi.cockpit.map.edit.visualization.header.heatmap')}}</md-subheader>
 			<div style="padding:16px;" ng-if="layer.visualizationType == 'heatmap'">
 				
 				<div layout="row" layout-align="start center">

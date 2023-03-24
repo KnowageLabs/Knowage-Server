@@ -107,7 +107,6 @@ public class DataStore implements IDataStore {
 	@Override
 	public void appendRecord(IRecord record) {
 		records.add(record);
-		stats.addRecord(record);
 	}
 
 	@Override
@@ -118,7 +117,6 @@ public class DataStore implements IDataStore {
 	@Override
 	public void insertRecord(int position, IRecord record) {
 		records.add(position, record);
-		stats.addRecord(record);
 	}
 
 	@Override

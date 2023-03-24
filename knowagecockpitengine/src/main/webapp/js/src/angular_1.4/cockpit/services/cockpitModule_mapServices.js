@@ -45,18 +45,16 @@
 				var geoFieldName;
 				var geoFieldValue;
 				var geoFieldConfig;
-				var	featuresSource = new ol.source.Vector();
+				var featuresSource = new ol.source.Vector();
 
-				for(var c=0; c < configColumns.length; c++){
-					var conf = configColumns[c];
+				for (const conf of configColumns){
 					if (conf.name === geoColumn){
 						geoFieldConfig = conf;
 						break;
 					}
 				}
 
-				for(var k=0; k < values.metaData.fields.length; k++){
-					var field = values.metaData.fields[k];
+				for (const field of values.metaData.fields){
 					if (field.header === geoColumn){
 						geoFieldName = field.name;
 						break;
@@ -90,17 +88,21 @@
 									for (var i in feature) {
 										var currFeature = feature[i];
 
+										setCommonFeatureProperty(feature, values, geoFieldValue);
+
 										ms.setUpGeoJSONFeature(currFeature, config, row, configColumns, values);
 										ms.setUpSelectedMeasure(selectedMeasure, config, values);
 
-										featuresSource.addFeature(currFeature);
+										ms.addFeatureToSource(featuresSource, currFeature, config, row);
 									}
 								} else {
+
+									setCommonFeatureProperty(feature, values, geoFieldValue);
 
 									ms.setUpGeoJSONFeature(feature, config, row, configColumns, values);
 									ms.setUpSelectedMeasure(selectedMeasure, config, values);
 
-									featuresSource.addFeature(feature);
+									ms.addFeatureToSource(featuresSource, feature, config, row);
 								}
 
 
@@ -111,10 +113,12 @@
 									featureProjection: 'EPSG:3857'
 								});
 
+								setCommonFeatureProperty(feature, values, geoFieldValue);
+
 								ms.setUpWKTFeature(feature, config, row, configColumns, values);
 								ms.setUpSelectedMeasure(selectedMeasure, config, values);
 
-								featuresSource.addFeature(feature);
+								ms.addFeatureToSource(featuresSource, feature, config, row);
 							} else if (geoFieldConfig.properties.coordType == 'string') {
 								if (geoFieldConfig.properties.coordType == 'string' && IsJsonString(geoFieldValue)){
 									console.log("Location is set as STRING but its value has a JSON format. Please check the configuration: ["+geoFieldValue+"]");
@@ -127,6 +131,8 @@
 								//set ol objects
 								feature = new ol.Feature(geometry);
 
+								setCommonFeatureProperty(feature, values, geoFieldValue);
+
 								//at least add the layer owner
 								feature.set("parentLayer",  config.layerID);
 								feature.set("isSimpleMarker", isSimpleMarker);
@@ -134,11 +140,10 @@
 								ms.addDsPropertiesToFeature(feature, row, configColumns, values.metaData.fields);
 								ms.setUpSelectedMeasure(selectedMeasure, config, values);
 
-								featuresSource.addFeature(feature);
+								ms.addFeatureToSource(featuresSource, feature, config, row);
 
 							}
-							
-							feature.set("stats", values.stats);
+
 						} catch(err) {
 							console.log("Error getting feature from row " + r + ". The original error was: " + err + ". Skipping to the next row...");
 						}
@@ -148,6 +153,15 @@
 				}
 			}
 			return new ol.source.Vector();
+		}
+
+		function setCommonFeatureProperty(feature, values, geoFieldValue) {
+			feature.set("_spatial_attribute_value", geoFieldValue);
+			feature.set("stats", values.stats);
+		}
+
+		function getOriginalSpatialValueFromFeature(feature) {
+			return feature.get("_spatial_attribute_value");
 		}
 
 		function IsJsonString(str) {
@@ -401,11 +415,86 @@
 		}
 
 		ms.isCluster = function(feature) {
-		  if (!feature || !feature.get('features')) {
-		        return false;
-		  }
-		  return feature.get('features').length > 1;
+			if (!feature || !feature.get('features')) {
+				return false;
+			}
+			return feature.get('features').length > 1;
 		}
+
+		ms.addFeatureToSource = function(source, feature, config, row) {
+			var aggregator = getAggregator(config);
+			
+			aggregator(source, feature, config, row);
+		}
+
+		ms.clearCache = function(layerId) {
+			clearPieCache(layerId);
+		}
+
+		function getAggregator(config) {
+			var isPie = config.visualizationType == "pies";
+			var ret = noAggregationAggregator;
+			
+			if (isPie) {
+				ret = pieAggregator;
+			}
+			
+			return ret;
+		}
+
+		function noAggregationAggregator(source, feature, config, row) {
+			source.addFeature(feature);
+		}
+		
+		var pieCache = new Map();
+
+		function pieAggregator(source, feature, config, row) {
+			var layerId = config.layerID;
+			var defaultIndicator = config.defaultIndicator;
+			var categorizeBy = config.pieConf.categorizeBy;
+			var categoryStat = Object.values(stat).find(function(e) { return e.header == categorizeBy; });
+			var categoryValue = row[categoryStat.name];
+			var categoryDistinct = categoryStat.distinct;
+			var categoryValueIndex = categoryDistinct.indexOf(categoryValue);
+
+			if (!pieCache.has(layerId)) {
+				pieCache.set(layerId, new Map());
+			}
+
+			var featureCache = pieCache.get(layerId);
+			var originalSpatialValue = getOriginalSpatialValueFromFeature(feature);
+
+			if (!featureCache.has(originalSpatialValue)) {
+				featureCache.set(originalSpatialValue, feature);
+				
+				var categoryCardinality = categoryStat.cardinality;
+
+				var indicator = feature.get(defaultIndicator);
+				var originalIndicatorValue = indicator.value;
+
+				indicator.value = new Array(categoryCardinality).fill(0);
+				
+				indicator.value[categoryValueIndex] = originalIndicatorValue;
+
+				source.addFeature(feature);
+			} else {
+				var cachedFeature = featureCache.get(originalSpatialValue);
+				var oldIndicator = cachedFeature.get(defaultIndicator);
+				var oldIndicatorValue = oldIndicator.value;
+
+				var indicator = feature.get(defaultIndicator);
+				var originalIndicatorValue = indicator.value;
+
+				oldIndicatorValue[categoryValueIndex] = oldIndicatorValue[categoryValueIndex] + originalIndicatorValue;
+			}
+		}
+		
+		function clearPieCache(layerId) {
+			if (pieCache.has(layerId)) {
+				pieCache.delete(layerId);
+			}
+		}
+		
 	}
 
 })();

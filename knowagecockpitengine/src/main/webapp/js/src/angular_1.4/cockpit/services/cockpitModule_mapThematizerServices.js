@@ -37,9 +37,10 @@
 			mts.setActiveIndicator(defaultIndicator);
 
 			var configThematizer = config.analysisConf || {};
-			var configMarker = config.markerConf || {};
-			var configCluster = config.clusterConf || {};
-			var configBalloon = config.balloonConf || {};
+			var configMarker     = config.markerConf   || {};
+			var configCluster    = config.clusterConf  || {};
+			var configBalloon    = config.balloonConf  || {};
+			var configPie        = config.pieConf      || {};
 			var useCache = false; //cache isn't use for analysis, just with fixed marker
 			var isSimpleMarker = props["isSimpleMarker"];
 			var isCluster = (Array.isArray(feature.get('features'))) ? true : false;
@@ -49,6 +50,7 @@
 			});
 			var visualizationType = config.visualizationType;
 			var isBalloon = visualizationType == "balloons";
+			var isPie = visualizationType == "pies";
 			var value;
 			var style;
 
@@ -91,6 +93,9 @@
 				useCache = false;
 			} else if (!thematized && isBalloon) {
 				style = mts.getBalloonStyles(value, props, configBalloon, measureStat);
+				useCache = false;
+			} else if (!thematized && isPie) {
+				style = mts.getPieStyles(value, props, configPie, measureStat);
 				useCache = false;
 			} else if (!thematized) {
 				style = mts.getOnlyMarkerStyles(value, props, configMarker);
@@ -324,6 +329,41 @@
 						radius: size,
 						fill: new ol.style.Fill({color: color}),
 						stroke: new ol.style.Stroke({color: borderColor, width: 1})
+					}),
+			});
+
+			return style;
+		}
+
+		mts.getPieStyles = function (value, props, config, measureStat){
+			
+			var style;
+			var color;
+			var borderColor = config.borderColor;
+			var minSize = config.minSize;
+			var maxSize = config.maxSize;
+			var type = config.type;
+			
+			// if (props[mts.getActiveIndicator()] && props[mts.getActiveIndicator()].thresholdsConfig) color = mts.getColorByThresholds(value, props);
+			if (!color)	color = config.color;
+			
+			var total = value.reduce(function(a,c) { return a+c; }, 0) / value.length;
+			
+			var unitSize = (maxSize - minSize) / measureStat.cardinality;
+			var perValueSize = minSize + ((measureStat.distinct.filter(e => e <= total).length-1) * unitSize);
+
+			var size = perValueSize;
+
+			style = new ol.style.Style({
+				image: new ol.style.Chart({
+						type: type,
+						radius: size,
+						fill: new ol.style.Fill({color: color}),
+						data: value,
+						stroke: new ol.style.Stroke({
+							color: borderColor,
+							width: 1
+						})
 					}),
 			});
 
