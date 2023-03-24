@@ -1,5 +1,5 @@
 module.exports = function(grunt) {
-	var knowageContext = '../../../../knowage/src/main/webapp/';
+  var knowageContext = '../../../../knowage/src/main/webapp/';
   
   grunt.initConfig({
     pkg: grunt.file.readJSON('package.json'),
@@ -15,7 +15,6 @@ module.exports = function(grunt) {
 	        		 knowageContext + 'js/lib/angular/angular-gridster/angular-gridster.min.js',
 	        		 knowageContext + 'js/lib/angular/angular-drag-and-drop-lists/angular-drag-and-drop-lists.js',
 	        		 knowageContext + 'js/lib/angular/angular-json-tree/json-tree.js',
-	        		 knowageContext + 'js/lib/openlayers/6.1.1/ol.js',
 	        		 knowageContext + 'js/lib/mathjs/4.0.1/math.min.js'
 	        	 ],
 	        	 'dist/knowagecockpit-modules-bundle.js': [
@@ -49,8 +48,7 @@ module.exports = function(grunt) {
 					knowageContext +  'node_modules/codemirror/lib/codemirror.css',
 					knowageContext +  'node_modules/codemirror/theme/eclipse.css',
 					knowageContext + 'node_modules/jsonformatter/dist/json-formatter.min.css',
-					knowageContext +  'js/lib/angular/angular-json-tree/json-tree.css',
-					knowageContext +  'js/lib/openlayers/6.1.1/ol.css'
+					knowageContext +  'js/lib/angular/angular-json-tree/json-tree.css'
 	        	 ],
 	        	 'dist/knowagecockpit-sources-bundle_<%= pkg.version %>.js' : [
 					'js/src/angular_1.4/tools/commons/angular-table/AngularTable.js',

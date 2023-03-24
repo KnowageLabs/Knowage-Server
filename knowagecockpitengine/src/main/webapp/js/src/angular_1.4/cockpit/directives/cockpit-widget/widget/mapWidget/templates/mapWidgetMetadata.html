@@ -66,6 +66,7 @@
 												<th>{{translate.load('sbi.cockpit.map.edit.metadata.type')}}</th>
 												<th>{{translate.load('sbi.cockpit.map.edit.metadata.aggregationFunction')}}</th>
 												<th style="text-align:center">{{translate.load('sbi.cockpit.map.edit.metadata.aggregateBy')}}</th>
+												<th style="text-align:center">{{translate.load('sbi.cockpit.map.edit.metadata.animateOn')}}</th>
 												<th style="text-align:center">{{translate.load('sbi.cockpit.map.edit.metadata.showOnDetail')}}</th>
 												<th style="text-align:center">{{translate.load('sbi.cockpit.map.edit.metadata.showOnMap')}}</th>
 												<th style="text-align:center">{{translate.load('sbi.cockpit.map.edit.metadata.showOnFilter')}}</th>
@@ -125,6 +126,9 @@
 												</td>
 												<td style="text-align:center">
 													<md-checkbox ng-model="column.properties.aggregateBy" aria-label="Aggregate by this attribute" ng-if="column.fieldType=='ATTRIBUTE' || column.fieldType=='SPATIAL_ATTRIBUTE'" ng-change="setAggregateBy(column,layer)"/>
+												</td>
+												<td style="text-align:center">
+													<md-checkbox ng-model="column.properties.animateOn" aria-label="Animate widget on this attribute" ng-if="column.fieldType=='ATTRIBUTE' || column.fieldType=='SPATIAL_ATTRIBUTE'" ng-change="setAnimateOn(column,layer)"/>
 												</td>
 												<td style="text-align:center">
 													<md-checkbox ng-model="column.properties.showDetails" aria-label="Show column on details" ng-if="column.fieldType=='MEASURE' || column.fieldType=='ATTRIBUTE'"  ng-disabled="column.fieldType=='ATTRIBUTE' && !column.properties.aggregateBy"/>

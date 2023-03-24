@@ -57,6 +57,7 @@
     "ng-scrollbars": "0.0.11",
     "ng-wysiwyg": "0.6.2",
     "ngdraggable": "0.1.10",
+    "ol": "^6.15.1",
     "ol-ext": "^4.0.4",
     "pleaserotate.js": "0.1.2",
     "toastify-js": "^1.6.1",
