@@ -13,8 +13,6 @@ import VegaContainerNoData from './VegaContainerNoData.vue'
 import cryptoRandomString from 'crypto-random-string'
 import vegaEmbed from 'vega-embed'
 import mainStore from '@/App.store'
-import deepcopy from 'deepcopy'
-import { transform } from '@vue/compiler-core'
 
 export default defineComponent({
     name: 'vega-container',
@@ -121,7 +119,7 @@ export default defineComponent({
             }
 
             // TODO
-            this.widgetModel.settings.chartModel.setData(mockedDataToShow)
+            this.widgetModel.settings.chartModel.setData(mockedDataToShow, this.widgetModel)
 
             this.setTextConfiguration()
 
@@ -139,9 +137,19 @@ export default defineComponent({
             const transform = this.chartModel.marks[0].transform[0]
             transform.font = widgetTextConfiguration.font
             transform.rotate = widgetTextConfiguration.wordAngle
+            transform.padding = widgetTextConfiguration.wordPadding
             transform.fontSizeRange[0] = widgetTextConfiguration.minimumFontSize
             transform.fontSizeRange[1] = widgetTextConfiguration.maximumFontSize
         }
     }
 })
+
+// export interface IVegaChartsTextConfiguration {
+//     font: string,
+//     minimumFontSize: number,
+//     maximumFontSize: number,
+//     wordPadding: number,
+//     wordAngle: number,
+//     maxNumberOfWords: number
+// }
 </script>

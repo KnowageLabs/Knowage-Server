@@ -94,12 +94,3 @@ const getFormattedTextConfiguration = (widget: any) => {
     if (oldModelChart.maxWords) formmattedTextConfiguration.maxNumberOfWords = oldModelChart.maxWords
     return formmattedTextConfiguration
 }
-
-// export interface IVegaChartsTextConfiguration {
-//     font: string,
-//     minimumFontSize: number,
-//     maximumFontSize: number,
-//     wordPadding: number,
-//     wordAngle: number,
-//     maxNumberOfWords: number
-// }

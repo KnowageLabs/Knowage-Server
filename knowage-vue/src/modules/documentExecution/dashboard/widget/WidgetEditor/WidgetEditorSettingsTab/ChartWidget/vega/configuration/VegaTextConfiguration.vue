@@ -1,9 +1,6 @@
 <template>
     <div v-if="textConfiguration" class="p-grid p-jc-center p-ai-center p-p-4">
-        <div class="p-col-12">
-            {{ textConfiguration }}
-        </div>
-        <div class="p-col-12 p-md-6 p-lg-4 p-d-flex p-flex-column">
+        <div class="p-col-12 p-md-6 p-lg-6 p-d-flex p-flex-column">
             <label class="kn-material-input-label p-mr-2">{{ $t('dashboard.widgetEditor.textConfiguration.font') }}</label>
             <Dropdown v-model="textConfiguration.font" class="kn-material-input" :options="descriptor.fontOptions" option-value="value" @change="modelChanged">
                 <template #value="slotProps">
@@ -19,24 +16,29 @@
             </Dropdown>
         </div>
 
-        <div class="p-col-12 p-md-3 p-lg-2 p-d-flex p-flex-column kn-flex">
+        <div class="p-col-12 p-md-3 p-lg-3 p-d-flex p-flex-column">
             <label v-tooltip.top="$t('dashboard.widgetEditor.textConfiguration.minimumFontSize')" class="kn-material-input-label p-mr-2 kn-truncated">{{ $t('dashboard.widgetEditor.textConfiguration.minimumFontSize') }}</label>
-            <InputNumber v-model="textConfiguration.maximumFontSize" class="kn-material-input p-inputtext-sm" @blur="modelChanged" />
-        </div>
-
-        <div class="p-col-12 p-md-3 p-lg-2 p-d-flex p-flex-column kn-flex">
-            <label v-tooltip.top="$t('dashboard.widgetEditor.textConfiguration.maximumFontSize')" class="kn-material-input-label p-mr-2 kn-truncated">{{ $t('dashboard.widgetEditor.textConfiguration.maximumFontSize') }}</label>
             <InputNumber v-model="textConfiguration.minimumFontSize" class="kn-material-input p-inputtext-sm" @blur="modelChanged" />
         </div>
 
-        <div class="p-col-12 p-md-6 p-lg-2 p-d-flex p-flex-column kn-flex">
+        <div class="p-col-12 p-md-3 p-lg-3 p-d-flex p-flex-column">
+            <label v-tooltip.top="$t('dashboard.widgetEditor.textConfiguration.maximumFontSize')" class="kn-material-input-label p-mr-2 kn-truncated">{{ $t('dashboard.widgetEditor.textConfiguration.maximumFontSize') }}</label>
+            <InputNumber v-model="textConfiguration.maximumFontSize" class="kn-material-input p-inputtext-sm" @blur="modelChanged" />
+        </div>
+
+        <div class="p-col-12 p-md-4 p-lg-4 p-d-flex p-flex-column">
             <label v-tooltip.top="$t('dashboard.widgetEditor.textConfiguration.wordPadding')" class="kn-material-input-label p-mr-2 kn-truncated">{{ $t('dashboard.widgetEditor.textConfiguration.wordPadding') }}</label>
             <InputNumber v-model="textConfiguration.wordPadding" class="kn-material-input p-inputtext-sm" @blur="modelChanged" />
         </div>
 
-        <div class="p-col-12 p-md-6 p-lg-2 p-d-flex p-flex-column kn-flex">
+        <div class="p-col-12 p-md-4 p-lg-4 p-d-flex p-flex-column">
+            <label v-tooltip.top="$t('dashboard.widgetEditor.textConfiguration.maximumWords')" class="kn-material-input-label p-mr-2 kn-truncated">{{ $t('dashboard.widgetEditor.textConfiguration.maximumWords') }}</label>
+            <InputNumber v-model="textConfiguration.maxNumberOfWords" class="kn-material-input p-inputtext-sm" @blur="modelChanged" />
+        </div>
+
+        <div class="p-col-12 p-md-4 p-lg-4 p-d-flex p-flex-column">
             <label v-tooltip.top="$t('dashboard.widgetEditor.textConfiguration.wordAngle')" class="kn-material-input-label p-mr-2 kn-truncated">{{ $t('dashboard.widgetEditor.textConfiguration.wordAngle') }}</label>
-            <div class="p-d-flex p-flex-row p-ai-center">
+            <div class="p-d-flex p-flex-row p-ai-center p-fluid">
                 <InputNumber v-model="textConfiguration.wordAngle" class="kn-material-input p-inputtext-sm" @blur="modelChanged" />
                 <i v-tooltip.top="$t('dashboard.widgetEditor.textConfiguration.wordAngleHint')" class="pi pi-question-circle kn-cursor-pointer p-ml-2"></i>
             </div>
