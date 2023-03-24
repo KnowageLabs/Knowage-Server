@@ -7,7 +7,7 @@
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
 import { IWidget, IDataset, IVariable } from '@/modules/documentExecution/dashboard/Dashboard'
-import descriptor from './VegaChartsSettingsContainerDescriptor.json'
+import descriptor from './VegaChartsSettingsDescriptor.json'
 import VegaChartsSettingsAccordion from './VegaChartsSettingsAccordion.vue'
 
 export default defineComponent({

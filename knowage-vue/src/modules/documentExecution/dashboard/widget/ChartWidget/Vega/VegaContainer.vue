@@ -1,5 +1,6 @@
 <template>
-    <div :id="'chartId' + chartID" class="kn-flex"></div>
+    <VegaContainerNoData v-if="showNoData" :widget-model="widgetModel"></VegaContainerNoData>
+    <div v-else :id="'chartId' + chartID" class="kn-flex"></div>
 </template>
 
 <script lang="ts">
@@ -7,15 +8,16 @@ import { defineComponent, PropType } from 'vue'
 import { emitter } from '@/modules/documentExecution/dashboard/DashboardHelpers'
 import { mapActions } from 'pinia'
 import { IWidget, ISelection } from '../../../Dashboard'
+import { IVegaChartsModel } from '../../../interfaces/vega/VegaChartsWidget'
+import VegaContainerNoData from './VegaContainerNoData.vue'
 import cryptoRandomString from 'crypto-random-string'
 import vegaEmbed from 'vega-embed'
 import mainStore from '@/App.store'
-import { IVegaChartsModel } from '../../../interfaces/vega/VegaChartsWidget'
 import deepcopy from 'deepcopy'
 
 export default defineComponent({
     name: 'vega-container',
-    components: {},
+    components: { VegaContainerNoData },
     props: {
         widgetModel: { type: Object as PropType<IWidget>, required: true },
         dataToShow: { type: Object as any, required: true },
@@ -27,6 +29,11 @@ export default defineComponent({
         return {
             chartID: cryptoRandomString({ length: 16, type: 'alphanumeric' }),
             chartModel: {} as IVegaChartsModel
+        }
+    },
+    computed: {
+        showNoData() {
+            return this.widgetModel && this.dataToShow && this.dataToShow.rows.length == 0
         }
     },
     watch: {
@@ -51,6 +58,7 @@ export default defineComponent({
         },
         onRefreshChart(widgetId: any | null = null) {
             if (widgetId && widgetId !== this.widgetModel.id) return
+
             this.chartModel = this.widgetModel.settings.chartModel ? this.widgetModel.settings.chartModel.model : null
             //    console.log('---------- onRefreshChart: ', this.chartModel)
             this.updateChartModel()
@@ -240,7 +248,7 @@ export default defineComponent({
             console.log('-------- CHART MODEL TO RENDER: ', this.chartModel)
 
             try {
-                vegaEmbed('#chartId' + this.chartID, this.chartModel as any)
+                if (!this.showNoData) vegaEmbed('#chartId' + this.chartID, this.chartModel as any)
             } catch (error) {
                 this.setError({ title: this.$t('common.toast.errorTitle'), msg: error })
             }

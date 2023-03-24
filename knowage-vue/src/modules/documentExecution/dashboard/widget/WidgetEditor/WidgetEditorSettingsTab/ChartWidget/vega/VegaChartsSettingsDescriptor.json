@@ -1,12 +1,41 @@
 {
+    "alignmentOptions": [
+        {
+            "label": "common.left",
+            "value": "start"
+        },
+        {
+            "label": "common.center",
+            "value": "center"
+        },
+        {
+            "label": "common.right",
+            "value": "end"
+        }
+    ],
+    "noDataToolbarStyleOptions": [
+        {
+            "type": "font-weight"
+        },
+        {
+            "type": "font-size"
+        },
+        {
+            "type": "font-family"
+        },
+        {
+            "type": "color"
+        },
+        {
+            "type": "background-color"
+        }
+    ],
     "settings": {
-        "Chart": [
-            {
-                "title": "dashboard.widgetEditor.colors.title",
-                "type": "Colors"
-            }
-        ],
         "Configuration": [
+            {
+                "title": "dashboard.widgetEditor.noData.title",
+                "type": "NoDataMessageConfiguration"
+            },
             {
                 "title": "dashboard.widgetEditor.export.title",
                 "type": "Export"
@@ -63,11 +92,6 @@
             "value": "Style"
         },
         {
-            "icon": "pi pi-table",
-            "label": "common.chart",
-            "value": "Chart"
-        },
-        {
             "icon": "fa fa-hand-pointer",
             "label": "dashboard.widgetEditor.interactions.title",
             "value": "Interactions"
@@ -76,6 +100,20 @@
             "icon": "pi pi-tablet",
             "label": "dashboard.widgetEditor.responsive.title",
             "value": "Responsive"
+        }
+    ],
+    "verticalAlignmentOptions": [
+        {
+            "label": "common.bottom",
+            "value": "end"
+        },
+        {
+            "label": "common.center",
+            "value": "center"
+        },
+        {
+            "label": "common.top",
+            "value": "start"
         }
     ]
 }

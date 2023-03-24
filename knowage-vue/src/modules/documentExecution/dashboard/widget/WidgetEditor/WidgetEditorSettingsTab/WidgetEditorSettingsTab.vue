@@ -161,7 +161,7 @@ import imageDescriptor from './ImageWidget/ImageWidgetSettingsDescriptor.json'
 import customChartDescriptor from './CustomChartWidget/CustomChartWidgetSettingsDescriptor.json'
 import pivotTableDescriptor from './PivotTableWidget/PivotTableSettingsDescriptor.json'
 import mapWidgetDescriptor from './MapWidget/MapSettingsDescriptor.json'
-import vegaChartsDescriptor from './ChartWidget/vega/VegaChartsSettingsContainerDescriptor.json'
+import vegaChartsDescriptor from './ChartWidget/vega/VegaChartsSettingsDescriptor.json'
 import { mapState } from 'pinia'
 import mainStore from '@/App.store'
 

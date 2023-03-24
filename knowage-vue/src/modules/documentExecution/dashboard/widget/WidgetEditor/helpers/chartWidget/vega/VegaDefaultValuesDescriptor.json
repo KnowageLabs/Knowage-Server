@@ -66,6 +66,20 @@
             "type": "text"
         }
     ],
+    "defaultVegaNoDataConfiguration": {
+        "position": {
+            "align": "center",
+            "verticalAlign": "center"
+        },
+        "style": {
+            "background-color": "",
+            "color": "",
+            "font-family": "",
+            "font-size": "12px",
+            "font-weight": ""
+        },
+        "text": "No data"
+    },
     "defaultVegaPadding": 0,
     "defaultVegaScales": [
         {

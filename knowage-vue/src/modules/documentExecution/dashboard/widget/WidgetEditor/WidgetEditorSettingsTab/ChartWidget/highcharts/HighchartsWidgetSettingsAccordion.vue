@@ -7,7 +7,7 @@
                 </template>
 
                 <Highcharts3DConfiguration v-if="accordion.type === 'ConfigurationOf3D'" :widget-model="widgetModel"></Highcharts3DConfiguration>
-                <NoDataMessageConfiguration v-else-if="accordion.type === 'NoDataMessageConfiguration'" :widget-model="widgetModel"></NoDataMessageConfiguration>
+                <HighchartsNoDataMessageConfiguration v-else-if="accordion.type === 'NoDataMessageConfiguration'" :widget-model="widgetModel"></HighchartsNoDataMessageConfiguration>
                 <HighchartsAccessibilitySettings v-else-if="accordion.type === 'AccessibilitySettings'" :widget-model="widgetModel"></HighchartsAccessibilitySettings>
                 <HighchartsSeriesAccessibilitySettings v-else-if="accordion.type === 'SeriesAccessibilitySettings'" :prop-widget-model="widgetModel"></HighchartsSeriesAccessibilitySettings>
                 <HighchartsLabelsSettings v-else-if="accordion.type === 'Labels'" :widget-model="widgetModel"></HighchartsLabelsSettings>
@@ -58,7 +58,7 @@ import WidgetTitleStyle from '../../common/style/WidgetTitleStyle.vue'
 import WidgetPaddingStyle from '../../common/style/WidgetPaddingStyle.vue'
 import WidgetBackgroundColorStyle from '../../common/style/WidgetBackgroundColorStyle.vue'
 import Highcharts3DConfiguration from '../highcharts/configuration/Highcharts3DConfiguration.vue'
-import NoDataMessageConfiguration from '../common/configuration/NoDataMessageConfiguration.vue'
+import HighchartsNoDataMessageConfiguration from '../highcharts/configuration/HighchartsNoDataMessageConfiguration.vue'
 import HighchartsAccessibilitySettings from '../highcharts/accessibility/HighchartsAccessibilitySettings.vue'
 import HighchartsSeriesAccessibilitySettings from '../highcharts/accessibility/HighchartsSeriesAccessibilitySettings.vue'
 import HighchartsLabelsSettings from '../highcharts/labels/HighchartsLabelsSettings.vue'
@@ -92,7 +92,7 @@ export default defineComponent({
         WidgetInteractionsLinks,
         WidgetPreview,
         Highcharts3DConfiguration,
-        NoDataMessageConfiguration,
+        HighchartsNoDataMessageConfiguration,
         HighchartsAccessibilitySettings,
         HighchartsSeriesAccessibilitySettings,
         HighchartsLabelsSettings,

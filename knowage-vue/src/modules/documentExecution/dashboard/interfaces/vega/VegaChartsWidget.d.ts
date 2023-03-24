@@ -6,7 +6,6 @@ export interface IVegaChartsSettings {
     chartModel: IVegaChartsModel | null,
     configuration: IVegaChartsConfiguration,
     interactions: IWidgetInteractions,
-    chart: IVegaChartSettings,
     style: IVegaChartsStyle,
     responsive: IWidgetResponsive
 }
@@ -105,12 +104,23 @@ export interface IVegaChartsMarkTransform {
 }
 
 export interface IVegaChartsConfiguration {
+    noDataConfiguration: IVegaChartsNoDataConfiguration
     exports: IWidgetExports
 }
 
-
-export interface IVegaChartSettings {
-    colors: string[]
+export interface IVegaChartsNoDataConfiguration {
+    text: '',
+    position: {
+        align: string,
+        verticalAlign: string
+    },
+    style: {
+        'font-family': string
+        'font-size': string
+        'font-weight': string
+        color: string
+        'background-color': string
+    }
 }
 
 export interface IVegaChartsStyle {
