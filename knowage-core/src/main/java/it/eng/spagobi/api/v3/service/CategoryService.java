@@ -50,8 +50,8 @@ public class CategoryService {
 			List<SbiCategory> listToAnalyze = categoryDAO.getCategories().stream().collect(Collectors.toList());
 			CategoryAPIImpl catAPI = new CategoryAPIImpl();
 			for (SbiCategory sbiCategory : listToAnalyze) {
-				listToReturn.add(
-						new CategoryDTO(sbiCategory.getCode(), sbiCategory.getName(), sbiCategory.getType(), catAPI.getNumberOfCategoryUsages(sbiCategory)));
+				listToReturn.add(new CategoryDTO(sbiCategory.getId(), sbiCategory.getCode(), sbiCategory.getName(), sbiCategory.getType(),
+						catAPI.getNumberOfCategoryUsages(sbiCategory)));
 			}
 		} catch (Exception ex) {
 			LogMF.error(logger, "Cannot get available categories for user {0}", new Object[] { profile.getUserName() });
