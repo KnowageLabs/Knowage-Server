@@ -488,7 +488,7 @@
 			.mapWidgetLegendGradient {
 				height: 10px;
 				width: 90%;
-				margin: 0 8px;
+				margin: 0 3px;
 				display: block;
 				border-radius: 25px;
 				position: relative;
@@ -498,7 +498,10 @@
 			.mapWidgetLegendDot {
 				height: 10px;
 				width: 10px;
+				margin: 0 3px;
 				border-radius: 25px;
+				position: relative;
+				top: 3px;
 			}
 
 		}

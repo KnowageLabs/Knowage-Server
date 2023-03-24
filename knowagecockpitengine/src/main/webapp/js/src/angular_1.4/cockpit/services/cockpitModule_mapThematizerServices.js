@@ -592,7 +592,8 @@
 			if (legendStyle.visualizationType == 'Range') {
 				updateLegendForRangeMode(externalLegend, layerName);
 			}
-			console.log("\tRegular intervals legends: ", currLegend);
+
+			console.log("\tLegend for choropleth and intervals: ", currLegend);
 		}
 
 		mts.updateLegendForChoroplethAndQuantils = function(externalLegend, layerName, config, legendStyle, data) {
@@ -643,7 +644,8 @@
 					k++;
 				}
 			}
-			console.log("\tQuantils legends: ", currLegend);
+
+			console.log("\tLegend for choropleth and quantils: ", currLegend);
 		}
 
 		mts.updateLegendForChoroplethAndRanges = function(externalLegend, layerName, config, legendStyle ) {
@@ -678,6 +680,16 @@
 				currLegend.classification[i].from_label = formatLegendValue(from, legendStyle);
 				currLegend.classification[i].to_label   = formatLegendValue(to, legendStyle);
 			}
+
+			if (!currLegend.classification[0].from_label) {
+				currLegend.classification[0].from_label = "min";
+			}
+
+			if (!currLegend.classification[currLegend.classification.length-1].to_label) {
+				currLegend.classification[currLegend.classification.length-1].to_label = "max";
+			}
+
+			console.log("\tLegend for choropleth and ranges: ", currLegend);
 		}
 
 		mts.updateLegendForBalloons = function(externalLegend, layerName, config, legendStyle, data) {
@@ -823,7 +835,8 @@
 					k++;
 				}
 			}
-			console.log("\tQuantils legends: ", currLegend);
+
+			console.log("\Legend for balloons and quantils: ", currLegend);
 		}
 
 		mts.updateLegendForBalloonsAndRanges = function(externalLegend, layerName, config, legendStyle, data) {
@@ -876,6 +889,8 @@
 				currLegend.classification[i].from_label = formatLegendValue(from, legendStyle);
 				currLegend.classification[i].to_label   = formatLegendValue(to, legendStyle);
 			}
+
+			console.log("\tLegend for balloons and ranges: ", currLegend);
 		}
 
 		mts.updateLegendForPies = function(externalLegend, layerName, config, legendStyle, data) {

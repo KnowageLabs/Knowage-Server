@@ -15,21 +15,18 @@
 
 		<div class="mapWidgetLegendElementLoop" ng-show="isShowLegend" ng-repeat="legendElem in getLegendEntries() | orderBy:'alias'">
 		
-			<div ng-style="getLegendSectionContainerStyle()" layout="{{ getLegendDisposition() }}" ng-show="getLayerVisibility(legendElem.layer)" ng-if="legendElem.visualizationType == 'choropleth' && legendElem.method == 'CLASSIFY_BY_EQUAL_INTERVALS'">
+			<div ng-style="getLegendSectionContainerStyle()" layout="{{ getLegendDisposition() }}" ng-show="getLayerVisibility(legendElem.layer)" ng-if="legendElem.visualizationType == 'choropleth' && legendElem.method != 'CLASSIFY_BY_RANGES'">
 				<span class="legendLayerLabel" ng-style="getLegendSpanElementsStyle()">{{legendElem.alias}}</span>
-				<div layout="row" ng-style="getLegendElementsStyle()">
+
+				<div layout="row" ng-style="getLegendElementsStyle()" ng-if="ngModel.style.legend.visualizationType != 'Range'">
 					<span class="legendStartLimit">{{legendElem.classification[0].from_label}}</span>
 					<div class="mapWidgetLegendGradient" ng-style="{ background: 'linear-gradient(to right, ' + legendElem.classification[0].color + ', ' + legendElem.classification[legendElem.classification.length-1].color + ')' }"></div>
 					<span class="legendEndLimit">{{legendElem.classification[legendElem.classification.length-1].to_label}}</span>
 				</div>
-			</div>
 
-			<div ng-style="getLegendSectionContainerStyle()" layout="{{ getLegendDisposition() }}" ng-show="getLayerVisibility(legendElem.layer)" ng-if="legendElem.visualizationType == 'choropleth' && legendElem.method == 'CLASSIFY_BY_QUANTILS'">
-				<span class="legendLayerLabel" ng-style="getLegendSpanElementsStyle()">{{legendElem.alias}}</span>
-				<div layout="row" ng-style="getLegendElementsStyle()">
-					<span class="legendStartLimit">{{legendElem.classification[0].from_label}}</span>
-					<div class="mapWidgetLegendGradient" ng-style="{ background: 'linear-gradient(to right, ' + legendElem.classification[0].color + ', ' + legendElem.classification[legendElem.classification.length-1].color + ')' }"></div>
-					<span class="legendEndLimit">{{legendElem.classification[legendElem.classification.length-1].to_label}}</span>
+				<div layout="row" ng-style="getLegendElementsStyle()" ng-if="ngModel.style.legend.visualizationType == 'Range'" ng-repeat="classification in legendElem.classification">
+					<div class="mapWidgetLegendDot" ng-style="{ background: classification.color }"></div>
+					<div style="font-size:small;margin-left:5px;margin-right:5px;">[{{classification.from_label}}-{{classification.to_label}}]</div>
 				</div>
 			</div>
 
@@ -64,9 +61,4 @@
 		</div>
 	</div>
 
-<!-- 
-	<div class="mapWidgetLegend toggle-legend" ng-class="ngModel.style.legend.alignment" ng-show="!isShowLegend"">
-		<span class="legendLayerLabel" flex>{{translate.load('sbi.cockpit.map.legend.label')}}</span><button class="toggleButton" ng-click="showLegend()"><md-icon md-font-icon="fas fa-chevron-up"></md-icon></button>
-	</div>
- -->
 </div>
