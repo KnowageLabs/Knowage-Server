@@ -41,7 +41,8 @@ var cockpitApp= angular.module("cockpitModule",[
 	'agGrid',
 	'driversExecutionModule',
 	'chartDesignerManager',
-	'customWidgetAPI'
+	'customWidgetAPI',
+	'rzSlider'
 	]);
 cockpitApp.config(function($mdThemingProvider,$mdGestureProvider,$compileProvider,$mdInkRippleProvider,$mdAriaProvider, $mdDateLocaleProvider) {
     $mdThemingProvider.theme('knowage')

@@ -72,8 +72,8 @@ public class DataStore implements IDataStore {
 	public static String DEFAULT_SCHEMA_NAME = "KA";
 
 	protected IMetaData metaData = new MetaData();
-
 	protected List<IRecord> records = new ArrayList<>();
+	private final DataStoreStats stats = new DataStoreStats();
 
 	Date cacheDate = null;
 
@@ -107,6 +107,7 @@ public class DataStore implements IDataStore {
 	@Override
 	public void appendRecord(IRecord record) {
 		records.add(record);
+		stats.addRecord(record);
 	}
 
 	@Override
@@ -117,6 +118,7 @@ public class DataStore implements IDataStore {
 	@Override
 	public void insertRecord(int position, IRecord record) {
 		records.add(position, record);
+		stats.addRecord(record);
 	}
 
 	@Override
@@ -773,5 +775,10 @@ public class DataStore implements IDataStore {
 		}
 		newDataStoreMetadata.setProperties(dataStoreMetadata.getProperties());
 		setMetaData(newDataStoreMetadata);
+	}
+
+	@Override
+	public final DataStoreStats getStats() {
+		return stats;
 	}
 }

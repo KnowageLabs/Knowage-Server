@@ -137,6 +137,8 @@
 								featuresSource.addFeature(feature);
 
 							}
+							
+							feature.set("stats", values.stats);
 						} catch(err) {
 							console.log("Error getting feature from row " + r + ". The original error was: " + err + ". Skipping to the next row...");
 						}
