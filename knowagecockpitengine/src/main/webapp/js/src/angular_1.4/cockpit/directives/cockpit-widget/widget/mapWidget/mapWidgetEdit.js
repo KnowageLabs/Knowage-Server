@@ -95,7 +95,6 @@ function mapWidgetEditControllerFunction(
 		if(layer.heatmapConf && layer.heatmapConf.enabled) layer.heatmapConf.enabled = false;
 		if(type == 'markers'){
 			layer.clusterConf = layer.clusterConf || {};
-			layer.clusterConf.enabled = true;
 		}
 		if(type == 'clusters'){
 			layer.clusterConf = layer.clusterConf || {};
