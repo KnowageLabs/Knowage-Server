@@ -287,7 +287,7 @@
 				border: 3px solid rgba(white,.7);
 				color: white;
 				border-radius:2px;
-				z-index: 99;
+				z-index: 2;
 				transition: right .3s linear;
 				&.sideNavOpened {
 					right: 327px;
@@ -451,7 +451,6 @@
 				left: 0%;
 				position: relative;
 				font-size: .7rem;
-				min-width: 50px;
 				padding: 0 4px;
 				text-align: right;
 			}
@@ -459,7 +458,6 @@
 				right: 0%;
 				position: relative;
 				font-size: .7rem;
-				width: 50px;
 				text-align: left;
 			}
 			&.left{

@@ -27,73 +27,77 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			return {
 				restrict: 'A',
 				link: function(scope, elm, attrs) {
-					var startX, startY, initialMouseX, initialMouseY;
+					scope.$watch(attrs.draggable, function(newVal, oldVal) {
 
-					var draggable = scope.$eval(attrs.draggable);
-					
-					if (draggable && draggable.position === "drag") {
-						var currPosition = draggable.coordinates = draggable.coordinates || [150,10];
-						
-						elm.css({
-							top:  currPosition[0],
-							left: currPosition[1]
-						});
-						
-						elm.bind('mouseover', function($event) {
-							elm.css({ cursor: "grab" });
-						});
-	
-						elm.bind('mouseout', function($event) {
-							elm.css({ cursor: "unset" });
-						});
-	
-						elm.bind('mousedown', function($event) {
-							startX = elm.prop('offsetLeft');
-							startY = elm.prop('offsetTop');
-							initialMouseX = $event.clientX;
-							initialMouseY = $event.clientY;
-							$document.bind('mousemove', mousemove);
-							$document.bind('mouseup', mouseup);
-							return false;
-						});
-	
-						function mousemove($event) {
-							var dx = $event.clientX - initialMouseX;
-							var dy = $event.clientY - initialMouseY;
-							
-							draggable.coordinates[0] = startY + dy;
-							draggable.coordinates[1] = startX + dx;
-							
-							var parenteElementBoundingRect = elm[0].previousElementSibling.getBoundingClientRect();
-							var parentWidth = parenteElementBoundingRect.width;
-							var parentHeight = parenteElementBoundingRect.height;
-							
-							var subElementBoundingRect = elm[0].querySelector(".mapWidgetLegend:not(.ng-hide)").getBoundingClientRect();
-							var legendWidth = subElementBoundingRect.width;
-							var legendHeight = subElementBoundingRect.height;
-							
-							draggable.coordinates[0] = Math.max(draggable.coordinates[0], 0 + legendHeight);
-							draggable.coordinates[1] = Math.max(draggable.coordinates[1], 0);
-							
-							draggable.coordinates[0] = Math.min(draggable.coordinates[0], parentHeight);
-							draggable.coordinates[1] = Math.min(draggable.coordinates[1], parentWidth  - legendWidth);
+						var startX, startY, initialMouseX, initialMouseY;
+						var draggable = scope.$eval(attrs.draggable);
+
+						if (draggable && draggable.position === "drag") {
+							var currPosition = draggable.coordinates = draggable.coordinates || [150,10];
 							
 							elm.css({
-								top:  draggable.coordinates[0],
-								left: draggable.coordinates[1]
+								top:  currPosition[0],
+								left: currPosition[1]
 							});
-							return false;
+							
+							elm.bind('mouseover', function($event) {
+								elm.css({ cursor: "grab" });
+							});
+		
+							elm.bind('mouseout', function($event) {
+								elm.css({ cursor: "unset" });
+							});
+		
+							elm.bind('mousedown', function($event) {
+								startX = elm.prop('offsetLeft');
+								startY = elm.prop('offsetTop');
+								initialMouseX = $event.clientX;
+								initialMouseY = $event.clientY;
+								$document.bind('mousemove', mousemove);
+								$document.bind('mouseup', mouseup);
+								return false;
+							});
+		
+							function mousemove($event) {
+								var dx = $event.clientX - initialMouseX;
+								var dy = $event.clientY - initialMouseY;
+								
+								draggable.coordinates[0] = startY + dy;
+								draggable.coordinates[1] = startX + dx;
+								
+								var parenteElementBoundingRect = elm[0].previousElementSibling.getBoundingClientRect();
+								var parentWidth = parenteElementBoundingRect.width;
+								var parentHeight = parenteElementBoundingRect.height;
+								
+								var subElementBoundingRect = elm[0].querySelector(".mapWidgetLegend:not(.ng-hide)").getBoundingClientRect();
+								var legendWidth = subElementBoundingRect.width;
+								var legendHeight = subElementBoundingRect.height;
+								
+								draggable.coordinates[0] = Math.max(draggable.coordinates[0], 0 + legendHeight);
+								draggable.coordinates[1] = Math.max(draggable.coordinates[1], 0);
+								
+								draggable.coordinates[0] = Math.min(draggable.coordinates[0], parentHeight);
+								draggable.coordinates[1] = Math.min(draggable.coordinates[1], parentWidth  - legendWidth);
+								
+								elm.css({
+									top:  draggable.coordinates[0],
+									left: draggable.coordinates[1]
+								});
+								return false;
+							}
+		
+							function mouseup() {
+								$document.unbind('mousemove', mousemove);
+								$document.unbind('mouseup', mouseup);
+							}
+						} else {
+							elm.bind('mouseout', function($event) {
+								elm.css({ cursor: "unset" });
+							});
 						}
-	
-						function mouseup() {
-							$document.unbind('mousemove', mousemove);
-							$document.unbind('mouseup', mouseup);
-						}
-					} else {
-						elm.bind('mouseout', function($event) {
-							elm.css({ cursor: "unset" });
-						});
-					}
+					
+					}, true);
+					
 				}
 			};
 		}])
