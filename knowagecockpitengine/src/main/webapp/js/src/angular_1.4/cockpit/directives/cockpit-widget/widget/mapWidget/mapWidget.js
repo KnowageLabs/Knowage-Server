@@ -2043,7 +2043,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			if ($scope.ngModel.style.legend.backgroundColor) {
 				ret["background-color"] = $scope.ngModel.style.legend.backgroundColor;
 			} else {
-				ret["background-color"] = "unset";
+				if ($scope.ngModel.style.legend.position == 'drag' && !$scope.ngModel.style.legend.backgroundColor) {
+					ret["background-color"] = "white";
+				} else {
+					ret["background-color"] = "unset";
+				}
 			}
 
 			return ret;
@@ -2148,7 +2152,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 			return ret;
 		}
-		
+
+		$scope.getLegendEntries = function() {
+			return Object.values($scope.legend);
+		}
 
 	}
 	

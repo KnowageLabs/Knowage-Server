@@ -448,17 +448,18 @@
 				font-weight:bold;
 			}
 			.legendStartLimit{
-				left:0%;
-				position:relative;
-				font-size:.7rem;
-				width:50px;
+				left: 0%;
+				position: relative;
+				font-size: .7rem;
+				min-width: 50px;
+				padding: 0 4px;
 				text-align: right;
 			}
 			.legendEndLimit{
-				right:0%;
-				position:relative;
-				font-size:.7rem;
-				width:50px;
+				right: 0%;
+				position: relative;
+				font-size: .7rem;
+				width: 50px;
 				text-align: left;
 			}
 			&.left{
@@ -489,10 +490,11 @@
 			.mapWidgetLegendGradient {
 				height: 10px;
 				width: 90%;
-				margin-left: 2px;
-				margin-right: 2px;
+				margin: 0 8px;
 				display: block;
 				border-radius: 25px;
+				position: relative;
+				top: 3px;
 			}
 
 			.mapWidgetLegendDot {
