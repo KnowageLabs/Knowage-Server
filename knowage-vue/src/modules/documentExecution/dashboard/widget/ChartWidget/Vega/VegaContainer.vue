@@ -8,7 +8,7 @@ import { defineComponent, PropType } from 'vue'
 import { emitter } from '@/modules/documentExecution/dashboard/DashboardHelpers'
 import { mapActions } from 'pinia'
 import { IWidget, ISelection } from '../../../Dashboard'
-import { IVegaChartsModel, IVegaChartsTextConfiguration } from '../../../interfaces/vega/VegaChartsWidget'
+import { IVegaChartsModel, IVegaChartsTextConfiguration, IVegaChartsTooltipSettings } from '../../../interfaces/vega/VegaChartsWidget'
 import VegaContainerNoData from './VegaContainerNoData.vue'
 import cryptoRandomString from 'crypto-random-string'
 import vegaEmbed from 'vega-embed'
@@ -122,6 +122,7 @@ export default defineComponent({
             this.widgetModel.settings.chartModel.setData(mockedDataToShow, this.widgetModel)
 
             this.setTextConfiguration()
+            this.setTooltipConfiguration()
 
             console.log('-------- CHART MODEL TO RENDER: ', this.chartModel)
 
@@ -140,16 +141,14 @@ export default defineComponent({
             transform.padding = widgetTextConfiguration.wordPadding
             transform.fontSizeRange[0] = widgetTextConfiguration.minimumFontSize
             transform.fontSizeRange[1] = widgetTextConfiguration.maximumFontSize
+        },
+        setTooltipConfiguration() {
+            if (!this.chartModel || !this.chartModel.marks || !this.chartModel.marks[0] || !this.chartModel.marks[0].encode || !this.chartModel.marks[0].encode.enter || !this.chartModel.marks[0].encode.enter.tooltip || !this.widgetModel.settings.tooltip) return
+            const tooltipSettings = this.widgetModel.settings.tooltip as IVegaChartsTooltipSettings
+            const tooltip = this.chartModel.marks[0].encode.enter.tooltip
+            //tooltip.signal = `format(datum.count, '.${tooltipSettings.precision}f')`
+            tooltip.signal = `'${tooltipSettings.prefix}' + format(datum.count, '.${tooltipSettings.precision}f') + '${tooltipSettings.suffix}' `
         }
     }
 })
-
-// export interface IVegaChartsTextConfiguration {
-//     font: string,
-//     minimumFontSize: number,
-//     maximumFontSize: number,
-//     wordPadding: number,
-//     wordAngle: number,
-//     maxNumberOfWords: number
-// }
 </script>

@@ -39,6 +39,7 @@ const getFormattedWidgetSettings = (widget: any) => {
         configuration: getFormattedConfiguration(widget),
         interactions: getFormattedInteractions(widget),
         style: getFormattedStyle(widget),
+        tooltip: getFormattedTooltipSettings(widget),
         responsive: widgetCommonDefaultValues.getDefaultResponsivnes()
     } as IVegaChartsSettings
     return formattedSettings
@@ -88,9 +89,18 @@ const getFormattedTextConfiguration = (widget: any) => {
     const formmattedTextConfiguration = vegaChartsDefaultValues.getDefaultVegaTextConfiguration()
     const oldModelChart = widget.content.chartTemplate.CHART
     if (!oldModelChart) return formmattedTextConfiguration
-    console.log('------- oldModel: ', oldModelChart)
     if (oldModelChart.style) formmattedTextConfiguration.font = oldModelChart.style.fontFamily
     if (oldModelChart.wordPadding) formmattedTextConfiguration.wordPadding = oldModelChart.wordPadding
     if (oldModelChart.maxWords) formmattedTextConfiguration.maxNumberOfWords = oldModelChart.maxWords
     return formmattedTextConfiguration
+}
+
+const getFormattedTooltipSettings = (widget: any) => {
+    const formattedTooltipSettings = vegaChartsDefaultValues.getDefaultTooltipSettings()
+    const oldSerie = widget.content.chartTemplate.CHART?.VALUES?.SERIE ? widget.content.chartTemplate.CHART.VALUES.SERIE[0] : null
+    if (!oldSerie) return formattedTooltipSettings
+    if (oldSerie.prefixChar) formattedTooltipSettings.prefix = oldSerie.prefixChar
+    if (oldSerie.postfixChar) formattedTooltipSettings.suffix = oldSerie.postfixChar
+    if (oldSerie.precision || oldSerie.precision === 0) formattedTooltipSettings.precision = oldSerie.precision
+    return formattedTooltipSettings
 }

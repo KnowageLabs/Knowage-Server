@@ -7,6 +7,7 @@ export interface IVegaChartsSettings {
     configuration: IVegaChartsConfiguration,
     interactions: IWidgetInteractions,
     style: IVegaChartsStyle,
+    tooltip: IVegaChartsTooltipSettings,
     responsive: IWidgetResponsive
 }
 
@@ -129,6 +130,12 @@ export interface IVegaChartsNoDataConfiguration {
         color: string
         'background-color': string
     }
+}
+
+export interface IVegaChartsTooltipSettings {
+    prefix: string,
+    suffix: string,
+    precision: number
 }
 
 export interface IVegaChartsStyle {

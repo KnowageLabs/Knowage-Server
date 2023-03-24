@@ -1,4 +1,9 @@
 {
+    "defaultTooltipSettings": {
+        "precision": 2,
+        "prefix": "",
+        "suffix": ""
+    },
     "defaultVegaAutosize": {
         "contains": "padding",
         "type": "fit"
