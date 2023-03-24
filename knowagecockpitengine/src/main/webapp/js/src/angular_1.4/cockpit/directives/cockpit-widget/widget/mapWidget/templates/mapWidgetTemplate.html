@@ -4,10 +4,6 @@
 			<md-tooltip>{{translate.load('sbi.cockpit.map.togglemapoptions')}}</md-tooltip>
 			<i class="fa fa-cog"></i>
 		</div>
-		<div class="optionsController" ng-click="toggleSidenav()" ng-class="{ 'sideNavOpened': sideNavOpened }" ng-if="!ngModel.controlPanelAlwaysOpen">
-			<md-tooltip>{{translate.load('sbi.cockpit.map.togglemapoptions')}}</md-tooltip>
-			<i class="fa fa-cog"></i>
-		</div>
 		<div class="mapAnimationController" ng-show="hasAnimatedLayer()">
 			<select ng-model="selectedAnimatedLayerName" ng-disabled="isAnimationInPlay()">
 				<option ng-value="currLayer.name" ng-repeat="currLayer in getAnimatedLayers()">{{ currLayer.alias }}</option>

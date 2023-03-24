@@ -2023,9 +2023,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			var ret = {};
 
 			if ($scope.ngModel.style.legend.position != 'north'
-					&& $scope.ngModel.style.legend.position != 'south'
-					&& !isNaN($scope.ngModel.style.legend.width)) {
-				ret["width"] = $scope.ngModel.style.legend.width;
+					&& $scope.ngModel.style.legend.position != 'south') {
+				
+				if (!isNaN($scope.ngModel.style.legend.width)) {
+					ret["width"] = "150px"; // TODO
+				} else {
+					ret["width"] = $scope.ngModel.style.legend.width;
+				}
 			} else {
 				ret["width"] = "100%";
 			}
@@ -2039,7 +2043,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			if ($scope.ngModel.style.legend.backgroundColor) {
 				ret["background-color"] = $scope.ngModel.style.legend.backgroundColor;
 			} else {
-				ret["background-color"] = "unset";
+				if ($scope.ngModel.style.legend.position == 'drag' && !$scope.ngModel.style.legend.backgroundColor) {
+					ret["background-color"] = "white";
+				} else {
+					ret["background-color"] = "unset";
+				}
 			}
 
 			return ret;
@@ -2144,7 +2152,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 			return ret;
 		}
-		
+
+		$scope.getLegendEntries = function() {
+			return Object.values($scope.legend);
+		}
 
 	}
 	
