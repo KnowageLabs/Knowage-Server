@@ -46,6 +46,7 @@ const getFormattedWidgetSettings = (widget: any) => {
 
 const getFormattedConfiguration = (widget: any) => {
     return {
+        textConfiguration: getFormattedTextConfiguration(widget),
         noDataConfiguration: getFormattedNoDataConfiguration(widget),
         exports: { showExcelExport: widget.style?.showExcelExport ?? false, showScreenshot: widget.style?.showScreenshot ?? false } as IWidgetExports
     } as IVegaChartsConfiguration
@@ -83,3 +84,22 @@ const getFormattedNoDataConfiguration = (widget: any) => {
     return formmattedNoDataConfiguration
 }
 
+const getFormattedTextConfiguration = (widget: any) => {
+    const formmattedTextConfiguration = vegaChartsDefaultValues.getDefaultVegaTextConfiguration()
+    const oldModelChart = widget.content.chartTemplate.CHART
+    if (!oldModelChart) return formmattedTextConfiguration
+    console.log('------- oldModel: ', oldModelChart)
+    if (oldModelChart.style) formmattedTextConfiguration.font = oldModelChart.style.fontFamily
+    if (oldModelChart.wordPadding) formmattedTextConfiguration.wordPadding = oldModelChart.wordPadding
+    if (oldModelChart.maxWords) formmattedTextConfiguration.maxNumberOfWords = oldModelChart.maxWords
+    return formmattedTextConfiguration
+}
+
+// export interface IVegaChartsTextConfiguration {
+//     font: string,
+//     minimumFontSize: number,
+//     maximumFontSize: number,
+//     wordPadding: number,
+//     wordAngle: number,
+//     maxNumberOfWords: number
+// }

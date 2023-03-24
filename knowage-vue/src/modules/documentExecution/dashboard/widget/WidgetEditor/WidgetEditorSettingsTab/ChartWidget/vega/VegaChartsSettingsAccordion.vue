@@ -7,6 +7,7 @@
                 </template>
 
                 <VegaNoDataMessageConfiguration v-if="accordion.type === 'NoDataMessageConfiguration'" :widget-model="widgetModel"></VegaNoDataMessageConfiguration>
+                <VegaTextConfiguration v-if="accordion.type === 'TextConfiguration'" :widget-model="widgetModel"></VegaTextConfiguration>
                 <WidgetExport v-else-if="accordion.type === 'Export'" :widget-model="widgetModel"></WidgetExport>
                 <WidgetTitleStyle v-else-if="accordion.type === 'Title'" :widget-model="widgetModel" :toolbar-style-settings="settingsTabDescriptor.defaultToolbarStyleOptions"></WidgetTitleStyle>
                 <WidgetRowsStyle v-else-if="accordion.type === 'RowsStyle'" :widget-model="widgetModel"></WidgetRowsStyle>
@@ -45,6 +46,7 @@ import WidgetTitleStyle from '../../common/style/WidgetTitleStyle.vue'
 import WidgetPaddingStyle from '../../common/style/WidgetPaddingStyle.vue'
 import WidgetBackgroundColorStyle from '../../common/style/WidgetBackgroundColorStyle.vue'
 import VegaChartsSettingsAccordionHeader from './VegaChartsSettingsAccordionHeader.vue'
+import VegaTextConfiguration from '../vega/configuration/VegaTextConfiguration.vue'
 
 export default defineComponent({
     name: 'chart-j-s-widget-configuration-container',
@@ -64,7 +66,8 @@ export default defineComponent({
         WidgetInteractionsLinks,
         WidgetPreview,
         WidgetSelection,
-        VegaChartsSettingsAccordionHeader
+        VegaChartsSettingsAccordionHeader,
+        VegaTextConfiguration
     },
     props: {
         widgetModel: { type: Object as PropType<IWidget>, required: true },

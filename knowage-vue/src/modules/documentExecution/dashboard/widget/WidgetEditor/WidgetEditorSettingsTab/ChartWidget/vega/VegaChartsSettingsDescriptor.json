@@ -13,6 +13,56 @@
             "value": "end"
         }
     ],
+    "fontOptions": [
+        {
+            "label": "",
+            "value": ""
+        },
+        {
+            "label": "kpi.kpiDocumentDesigner.fontFamily.roboto",
+            "value": "Roboto"
+        },
+        {
+            "label": "kpi.kpiDocumentDesigner.fontFamily.arial",
+            "value": "Arial"
+        },
+        {
+            "label": "kpi.kpiDocumentDesigner.fontFamily.timesNewRoman",
+            "value": "Times New Roman"
+        },
+        {
+            "label": "kpi.kpiDocumentDesigner.fontFamily.courierNew",
+            "value": "Courier New"
+        },
+        {
+            "label": "kpi.kpiDocumentDesigner.fontFamily.tahoma",
+            "value": "Tahoma"
+        },
+        {
+            "label": "kpi.kpiDocumentDesigner.fontFamily.verdana",
+            "value": "Verdana"
+        },
+        {
+            "label": "dashboard.widgetEditor.vega.fontOptions.impact",
+            "value": "Impact"
+        },
+        {
+            "label": "dashboard.widgetEditor.vega.fontOptions.calibri",
+            "value": "Calibri"
+        },
+        {
+            "label": "dashboard.widgetEditor.vega.fontOptions.cambria",
+            "value": "Cambria"
+        },
+        {
+            "label": "dashboard.widgetEditor.vega.fontOptions.georgia",
+            "value": "Georgia"
+        },
+        {
+            "label": "dashboard.widgetEditor.vega.fontOptions.gungsuh",
+            "value": "Gungsuh"
+        }
+    ],
     "noDataToolbarStyleOptions": [
         {
             "type": "font-weight"
@@ -32,6 +82,10 @@
     ],
     "settings": {
         "Configuration": [
+            {
+                "title": "common.text",
+                "type": "TextConfiguration"
+            },
             {
                 "title": "dashboard.widgetEditor.noData.title",
                 "type": "NoDataMessageConfiguration"

@@ -92,9 +92,7 @@ export interface IVegaChartsMarkTransform {
     text: {
         field: string
     },
-    rotate: {
-        field: string
-    },
+    rotate: number,
     font: string,
     fontSize: {
         field: string
@@ -104,8 +102,18 @@ export interface IVegaChartsMarkTransform {
 }
 
 export interface IVegaChartsConfiguration {
+    textConfiguration: IVegaChartsTextConfiguration,
     noDataConfiguration: IVegaChartsNoDataConfiguration
     exports: IWidgetExports
+}
+
+export interface IVegaChartsTextConfiguration {
+    font: string,
+    minimumFontSize: number,
+    maximumFontSize: number,
+    wordPadding: number,
+    wordAngle: number,
+    maxNumberOfWords: number
 }
 
 export interface IVegaChartsNoDataConfiguration {

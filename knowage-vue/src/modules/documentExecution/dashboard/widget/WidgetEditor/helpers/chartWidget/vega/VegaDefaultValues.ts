@@ -1,6 +1,10 @@
-import { IVegaChartsSignal, IVegaChartsData, IVegaChartsScale, IVegaChartsMark, IVegaChartsNoDataConfiguration } from './../../../../../interfaces/vega/VegaChartsWidget.d';
+import { IVegaChartsSignal, IVegaChartsData, IVegaChartsScale, IVegaChartsMark, IVegaChartsNoDataConfiguration, IVegaChartsTextConfiguration } from './../../../../../interfaces/vega/VegaChartsWidget.d';
 import descriptor from './VegaDefaultValuesDescriptor.json'
 import deepcopy from "deepcopy"
+
+export const getDefaultVegaTextConfiguration = () => {
+    return deepcopy(descriptor.defaultVegaTextConfiguration) as IVegaChartsTextConfiguration
+}
 
 export const getDefaultVegaNoDataConfiguration = () => {
     return deepcopy(descriptor.defaultVegaNoDataConfiguration) as IVegaChartsNoDataConfiguration

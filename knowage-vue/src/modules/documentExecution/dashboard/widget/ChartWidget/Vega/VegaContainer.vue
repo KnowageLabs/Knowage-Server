@@ -8,12 +8,13 @@ import { defineComponent, PropType } from 'vue'
 import { emitter } from '@/modules/documentExecution/dashboard/DashboardHelpers'
 import { mapActions } from 'pinia'
 import { IWidget, ISelection } from '../../../Dashboard'
-import { IVegaChartsModel } from '../../../interfaces/vega/VegaChartsWidget'
+import { IVegaChartsModel, IVegaChartsTextConfiguration } from '../../../interfaces/vega/VegaChartsWidget'
 import VegaContainerNoData from './VegaContainerNoData.vue'
 import cryptoRandomString from 'crypto-random-string'
 import vegaEmbed from 'vega-embed'
 import mainStore from '@/App.store'
 import deepcopy from 'deepcopy'
+import { transform } from '@vue/compiler-core'
 
 export default defineComponent({
     name: 'vega-container',
@@ -122,128 +123,7 @@ export default defineComponent({
             // TODO
             this.widgetModel.settings.chartModel.setData(mockedDataToShow)
 
-            // TODO - Remove Hardcoded
-            // this.chartModel = {
-            //     $schema: 'https://vega.github.io/schema/vega/v5.json',
-            //     chart: {
-            //         type: 'wordcloud'
-            //     },
-            //     description: 'A word cloud visualization depicting Vega research paper abstracts.',
-
-            //     padding: 0,
-            //     autosize: {
-            //         contains: 'padding',
-            //         type: 'fit'
-            //     },
-            //     signals: [
-            //         {
-            //             init: 'containerSize()[0]',
-            //             name: 'width',
-            //             on: [
-            //                 {
-            //                     events: 'window:resize',
-            //                     update: 'containerSize()[0]'
-            //                 }
-            //             ]
-            //         },
-            //         {
-            //             init: 'containerSize()[1]',
-            //             name: 'height',
-            //             on: [
-            //                 {
-            //                     events: 'window:resize',
-            //                     update: 'containerSize()[1]'
-            //                 }
-            //             ]
-            //         }
-            //     ],
-            //     data: [
-            //         {
-            //             name: 'table',
-            //             transform: [],
-            //             values: [
-            //                 {
-            //                     text: 'pre Alcoholic Beverages suf',
-            //                     count: 34
-            //                 },
-            //                 {
-            //                     text: 'Baked Goods',
-            //                     count: 39
-            //                 },
-            //                 {
-            //                     text: 'VEGA',
-            //                     count: 100
-            //                 }
-            //             ]
-            //         }
-            //     ],
-            //     scales: [
-            //         {
-            //             domain: {
-            //                 data: 'table',
-            //                 field: 'text'
-            //             },
-            //             name: 'color',
-            //             range: ['#d5a928', '#652c90', '#939597'],
-            //             type: 'ordinal'
-            //         }
-            //     ],
-            //     marks: [
-            //         {
-            //             encode: {
-            //                 enter: {
-            //                     align: {
-            //                         value: 'center'
-            //                     },
-            //                     baseline: {
-            //                         value: 'alphabetic'
-            //                     },
-            //                     fill: {
-            //                         field: 'text',
-            //                         scale: 'color'
-            //                     },
-            //                     text: {
-            //                         field: 'text'
-            //                     },
-            //                     tooltip: {
-            //                         signal: "format(datum.count, '(.2f')"
-            //                     }
-            //                 },
-            //                 hover: {
-            //                     fillOpacity: {
-            //                         value: 0.5
-            //                     }
-            //                 },
-            //                 update: {
-            //                     fillOpacity: {
-            //                         value: 1
-            //                     }
-            //                 }
-            //             },
-            //             from: {
-            //                 data: 'table'
-            //             },
-            //             transform: [
-            //                 {
-            //                     font: 'Helvetica Neue, Arial',
-            //                     fontSize: {
-            //                         field: 'datum.count'
-            //                     },
-            //                     fontSizeRange: [12, 100],
-            //                     padding: 5,
-            //                     rotate: {
-            //                         field: 'datum.angle'
-            //                     },
-            //                     text: {
-            //                         field: 'text'
-            //                     },
-            //                     type: 'wordcloud'
-            //                 }
-            //             ],
-            //             type: 'text'
-            //         }
-            //     ]
-            // }
+            this.setTextConfiguration()
 
             console.log('-------- CHART MODEL TO RENDER: ', this.chartModel)
 
@@ -252,6 +132,15 @@ export default defineComponent({
             } catch (error) {
                 this.setError({ title: this.$t('common.toast.errorTitle'), msg: error })
             }
+        },
+        setTextConfiguration() {
+            if (!this.chartModel || !this.chartModel.marks || !this.chartModel.marks[0] || !this.chartModel.marks[0].transform || !this.chartModel.marks[0].transform[0] || !this.widgetModel.settings.configuration.textConfiguration) return
+            const widgetTextConfiguration = this.widgetModel.settings.configuration.textConfiguration as IVegaChartsTextConfiguration
+            const transform = this.chartModel.marks[0].transform[0]
+            transform.font = widgetTextConfiguration.font
+            transform.rotate = widgetTextConfiguration.wordAngle
+            transform.fontSizeRange[0] = widgetTextConfiguration.minimumFontSize
+            transform.fontSizeRange[1] = widgetTextConfiguration.maximumFontSize
         }
     }
 })

@@ -54,9 +54,7 @@
                     },
                     "fontSizeRange": [8, 34],
                     "padding": 5,
-                    "rotate": {
-                        "field": "datum.angle"
-                    },
+                    "rotate": 0,
                     "text": {
                         "field": "text"
                     },
@@ -114,5 +112,13 @@
                 }
             ]
         }
-    ]
+    ],
+    "defaultVegaTextConfiguration": {
+        "font": "",
+        "maxNumberOfWords": 100,
+        "maximumFontSize": 32,
+        "minimumFontSize": 8,
+        "wordAngle": 0,
+        "wordPadding": 12
+    }
 }
