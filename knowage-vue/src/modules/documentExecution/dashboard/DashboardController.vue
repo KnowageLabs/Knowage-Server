@@ -323,17 +323,18 @@ export default defineComponent({
                 folders: folders
             }
 
-            await this.$http
-                .post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/saveDocument`, postData)
-                .then(() => {
-                    this.appStore.setInfo({
-                        title: this.$t('common.toast.createTitle'),
-                        msg: this.$t('common.toast.success')
-                    })
-                    this.saveDialogVisible = false
-                    if (this.newDashboardMode) this.$emit('newDashboardSaved', document)
-                })
-                .catch(() => {})
+            console.log('------- BLA: ', postData)
+            // await this.$http
+            //     .post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/saveDocument`, postData)
+            //     .then(() => {
+            //         this.appStore.setInfo({
+            //             title: this.$t('common.toast.createTitle'),
+            //             msg: this.$t('common.toast.success')
+            //         })
+            //         this.saveDialogVisible = false
+            //         if (this.newDashboardMode) this.$emit('newDashboardSaved', document)
+            //     })
+            //     .catch(() => {})
 
             this.appStore.setLoading(false)
         },

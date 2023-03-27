@@ -9,7 +9,8 @@ import { emitter } from '@/modules/documentExecution/dashboard/DashboardHelpers'
 import { mapActions } from 'pinia'
 import { IWidget, ISelection, IWidgetColumn } from '../../../Dashboard'
 import { IVegaChartsModel, IVegaChartsTextConfiguration, IVegaChartsTooltipSettings } from '../../../interfaces/vega/VegaChartsWidget'
-import { updateStoreSelections } from '../../interactionsHelpers/InteractionHelper'
+import { executeChartCrossNavigation, updateStoreSelections } from '../../interactionsHelpers/InteractionHelper'
+import { formatForCrossNavigation } from './VegaContainerHelpers'
 import VegaContainerNoData from './VegaContainerNoData.vue'
 import cryptoRandomString from 'crypto-random-string'
 import vegaEmbed from 'vega-embed'
@@ -65,7 +66,7 @@ export default defineComponent({
             //    console.log('---------- onRefreshChart: ', this.chartModel)
             this.updateChartModel()
         },
-        updateChartModel() {
+        async updateChartModel() {
             if (!this.chartModel) return
 
             // TODO - REMOVE
@@ -132,10 +133,11 @@ export default defineComponent({
 
             try {
                 if (!this.showNoData)
-                    vegaEmbed('#chartId' + this.chartID, this.chartModel as any).then((res: any) => {
+                    await vegaEmbed('#chartId' + this.chartID, this.chartModel as any).then((res: any) => {
                         const view = res.view
                         view.addEventListener('click', (event: any, item: any) => {
                             if (item && item.datum) this.executeInteractions(item.datum)
+                            view.finalize()
                         })
                     })
             } catch (error) {
@@ -174,16 +176,13 @@ export default defineComponent({
             }
         },
         executeInteractions(event: any) {
-            console.log('---------- EVENT: ', event)
             if (this.editorMode) return
-            // if (this.widgetModel.settings.interactions.crossNavigation.enabled) {
-            //     const formattedOutputParameters = formatForCrossNavigation(selectionEvent[0], this.widgetModel, this.chartData, this.dataToShow)
-            //     executeChartCrossNavigation(formattedOutputParameters, this.widgetModel.settings.interactions.crossNavigation, this.dashboardId)
-            // } else {
-            //     this.setSelection(event, selectionEvent)
-            // }
-
-            this.setSelection(event)
+            if (this.widgetModel.settings.interactions.crossNavigation.enabled) {
+                const formattedOutputParameters = formatForCrossNavigation(event, this.widgetModel)
+                executeChartCrossNavigation(formattedOutputParameters, this.widgetModel.settings.interactions.crossNavigation, this.dashboardId)
+            } else {
+                this.setSelection(event)
+            }
         },
         setSelection(event: any) {
             if (this.editorMode || !event || !this.widgetModel.settings.interactions.selection || !this.widgetModel.settings.interactions.selection.enabled) return
