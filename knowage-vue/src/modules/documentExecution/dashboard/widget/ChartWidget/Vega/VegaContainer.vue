@@ -69,6 +69,8 @@ export default defineComponent({
         async updateChartModel() {
             if (!this.chartModel) return
 
+            console.log('------- dataToShow DATA : ', this.dataToShow)
+
             // TODO - REMOVE
             const mockedDataToShow = {
                 metaData: {
@@ -123,7 +125,7 @@ export default defineComponent({
             }
 
             // TODO
-            this.widgetModel.settings.chartModel.setData(mockedDataToShow, this.widgetModel)
+            this.widgetModel.settings.chartModel.setData(this.dataToShow, this.widgetModel)
 
             this.setTextConfiguration()
             this.setTooltipConfiguration()
