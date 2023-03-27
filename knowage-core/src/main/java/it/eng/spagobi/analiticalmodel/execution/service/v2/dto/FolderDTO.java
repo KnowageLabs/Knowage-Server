@@ -40,4 +40,9 @@ public class FolderDTO {
 		this.id = id;
 	}
 
+	@Override
+	public String toString() {
+		return "FolderDTO [id=" + id + "]";
+	}
+
 }
