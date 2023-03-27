@@ -35,6 +35,7 @@ import hierarchyManagementRoutes from '@/modules/managers/hierarchyManagement/Hi
 import scorecardsRoutes from '@/modules/managers/scorecards/Scorecards.routes.js'
 import eventsManagementRoutes from '@/modules/managers/eventsManagement/EventsManagement.routes.js'
 import dashboardRoutes from '@/modules/documentExecution/dashboard/Dashboard.routes.js'
+import categoriesManagementRoutes from '@/modules/managers/categoriesManagement/CategoriesManagement.routes.js'
 
 const baseRoutes = []
 
@@ -76,5 +77,6 @@ const routes = baseRoutes
     .concat(scorecardsRoutes)
     .concat(eventsManagementRoutes)
     .concat(dashboardRoutes)
+    .concat(categoriesManagementRoutes)
 
 export default routes

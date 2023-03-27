@@ -1,0 +1,57 @@
+{
+    "columns": [
+        {
+            "field": "code",
+            "header": "managers.categoriesManagement.code"
+        },
+        {
+            "field": "name",
+            "header": "managers.categoriesManagement.name"
+        },
+        {
+            "field": "type",
+            "header": "managers.categoriesManagement.type"
+        },
+        {
+            "field": "occurrences",
+            "header": "managers.categoriesManagement.occurences"
+        }
+    ],
+    "form": {
+        "style": {
+            "width": "60vw"
+        }
+    },
+    "globalFilterFields": ["code", "name", "occurences", "type"],
+    "operation": {
+        "insert": {
+            "toastTitle": "common.toast.createTitle"
+        },
+        "success": "common.toast.success",
+        "update": {
+            "toastTitle": "common.toast.updateTitle"
+        }
+    },
+    "pField": {
+        "style": {
+            "margin-bottom": "40px"
+        }
+    },
+    "table": {
+        "column": {
+            "badgeStyle": {
+                "width": "10%",
+                "word-break": "break-all"
+            },
+            "style": {
+                "word-break": "break-all"
+            }
+        },
+        "iconColumn": {
+            "style": {
+                "text-align": "end",
+                "width": "5%"
+            }
+        }
+    }
+}

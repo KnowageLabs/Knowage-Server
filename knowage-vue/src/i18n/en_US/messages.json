@@ -1925,6 +1925,13 @@
             "valueDescription": "Value description",
             "valueName": "Value name"
         },
+        "categoriesManagement": {
+            "title": "Categories Management",
+            "code": "Category code",
+            "name": "Category name",
+            "occurences": "Used by",
+            "type": "Type"
+        },
         "driversManagement": {
             "add": "Add",
             "deleteError": "Error",
