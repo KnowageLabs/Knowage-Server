@@ -56,6 +56,25 @@
             </div>
         </form>
 
+        <DataTable v-if="!loading" class="p-datatable-sm kn-table" :value="categoryData" :scrollable="true" scroll-height="400px" :loading="loading" data-key="versNum" responsive-layout="stack" breakpoint="960px">
+            <template #empty>
+                {{ $t('managers.datasetManagement.noVersions') }}
+            </template>
+            <!-- <Column field="userIn" :header="$t('managers.datasetManagement.creationUser')" :sortable="true" />
+            <Column field="type" :header="$t('importExport.gallery.column.type')" :sortable="true" />
+            <Column field="dateIn" :header="$t('managers.mondrianSchemasManagement.headers.creationDate')" data-type="date" :sortable="true">
+                <template #body="{ data }">
+                    {{ formatDate(data.dateIn) }}
+                </template>
+            </Column>
+            <Column @rowClick="false">
+                <template #body="slotProps">
+                    <Button v-if="slotProps.data.versNum !== 0" icon="fas fa-retweet" class="p-button-link" @click="restoreVersionConfirm(slotProps.data)" />
+                    <Button v-if="slotProps.data.versNum !== 0" icon="pi pi-trash" class="p-button-link" @click="deleteConfirm('deleteOne', slotProps.data)" />
+                </template>
+            </Column> -->
+        </DataTable>
+
         <template #footer>
             <Button class="kn-button kn-button--secondary" :label="$t('common.close')" @click="closeTemplate"></Button>
             <Button class="kn-button kn-button--primary" :label="$t('common.save')" :disabled="buttonDisabled" @click="handleSubmit"></Button>
@@ -67,6 +86,7 @@
 import { defineComponent, PropType } from 'vue'
 import { iCategory } from './CategoriesManagement'
 import { createValidations } from '../../../helpers/commons/validationHelper'
+import { AxiosResponse } from 'axios'
 import Dialog from 'primevue/dialog'
 import descriptor from './CategoriesManagementDescriptor.json'
 import validationDescriptor from './CategoriesManagementValidationDescriptor.json'
@@ -95,7 +115,9 @@ export default defineComponent({
             category: {} as iCategory,
             dirty: false,
             v$: useValidate() as any,
-            operation: 'insert'
+            operation: 'insert',
+            loading: false,
+            categoryData: [] as any
         }
     },
     validations() {
@@ -117,12 +139,22 @@ export default defineComponent({
             this.category = { ...this.propCategory } as iCategory
         }
     },
+    created() {
+        this.loadCategoryData()
+    },
     mounted() {
         if (this.propCategory) {
             this.category = { ...this.propCategory } as iCategory
         }
     },
     methods: {
+        async loadCategoryData() {
+            this.loading = true
+            await this.$http
+                .get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `3.0/category/dataset/${this.propCategory.id}`)
+                .then((response: AxiosResponse<any>) => (this.categoryData = response.data))
+                .finally(() => (this.loading = false))
+        },
         async handleSubmit() {
             // if (this.v$.$invalid) {
             //     return
