@@ -42,7 +42,7 @@ export const formatVegaWidget = (widget: IWidget) => {
 export const createVegaSModel = (chartType: string) => {
     console.log('--------- CHART TYPE: ', chartType)
     switch (chartType) {
-        case 'pie':
+        case 'wordcloud':
             return new KnowageVegaChartWordcloud(null)
         default:
             return null

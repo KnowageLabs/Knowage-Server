@@ -1,5 +1,5 @@
 import { formatVegaForSave } from './chartWidget/vega/VegaBackendSaveHelper';
-import { formatVegaWidget } from './chartWidget/vega/VegaHelpers';
+import { formatVegaWidget, createNewVegaSettings } from './chartWidget/vega/VegaHelpers';
 import { IWidget, IWidgetColumn } from '../../../Dashboard'
 import { formatTableWidgetForSave } from './tableWidget/TableWidgetBackendSaveHelper'
 import { createNewTableWidgetSettings } from '../helpers/tableWidget/TableWidgetFunctions'
@@ -81,6 +81,9 @@ const createNewWidgetSettings = (widget: IWidget) => {
             break
         case 'static-pivot-table':
             widget.settings = createNewPivotTableWidgetSettings()
+            break
+        case 'vega':
+            widget.settings = createNewVegaSettings()
             break
     }
 }
