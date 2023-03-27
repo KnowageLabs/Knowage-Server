@@ -79,9 +79,9 @@ export default defineComponent({
         onColumnChanged() {
             const forInsert =
                 this.widgetModel.type === 'html'
-                    ? `[kn-column='${this.selectedColumnName}'${this.row ? ` row='${this.row}'` : ''}${this.aggregation ? ` aggregation='${this.aggregation}'` : ''}${this.precision ? ` precision='${this.precision}'` : ''}${this.format ? ' format' : ''}${
-                          this.prefix ? ` prefix='${this.prefix}'` : ''
-                      }${this.suffix ? ` suffix='${this.suffix}'` : ''}]`
+                    ? `[kn-column='${this.selectedColumnName}'${this.row ? ` row='${this.row}'` : ''}${this.aggregation ? ` aggregation='${this.aggregation}'` : ''}${` precision='${this.precision}'`}${this.format ? ' format' : ''}${this.prefix ? ` prefix='${this.prefix}'` : ''}${
+                          this.suffix ? ` suffix='${this.suffix}'` : ''
+                      }]`
                     : `${this.prefix ?? ''}[kn-column='${this.selectedColumnName}'${this.row ? ` row='${this.row}'` : ''}${this.aggregation ? ` aggregation='${this.aggregation}'` : ''}${this.precision ? ` precision='${this.precision}'` : ''}${this.format ? ' format' : ''}]${this.suffix ?? ''}`
             this.$emit('insertChanged', forInsert)
         }
