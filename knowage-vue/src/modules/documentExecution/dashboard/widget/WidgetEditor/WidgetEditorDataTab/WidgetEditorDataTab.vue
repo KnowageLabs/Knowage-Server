@@ -6,8 +6,8 @@
         <WidgetEditorCommonDataContainer v-else-if="['table', 'html', 'text', 'discovery', 'customchart'].includes(widget.type)" class="kn-flex model-div kn-overflow p-mx-2 p-my-3" :prop-widget-model="widget" :selected-dataset="selectedDataset"></WidgetEditorCommonDataContainer>
         <SelectorWidgetDataContainer v-else-if="widget.type === 'selector'" class="kn-flex model-div kn-overflow p-mx-2 p-my-3" :widget-model="propWidget" :selected-dataset="selectedDataset"></SelectorWidgetDataContainer>
         <HighchartsDataContainer v-else-if="widget.type === 'highcharts' && isEnterprise" class="kn-flex model-div kn-overflow p-mx-2 p-my-3" :widget-model="propWidget" :selected-dataset="selectedDataset" @selectedChartTypeChanged="onChartTypeChanged"></HighchartsDataContainer>
-        <ChartJSDataContainer v-else-if="widget.type === 'chartJS'" class="kn-flex model-div kn-overflow p-mx-2 p-my-3" :widget-model="propWidget" :selected-dataset="selectedDataset"></ChartJSDataContainer>
-        <VegaDataContainer v-else-if="widget.type === 'vega'" class="kn-flex model-div kn-overflow p-mx-2 p-my-3" :widget-model="propWidget" :selected-dataset="selectedDataset"></VegaDataContainer>
+        <ChartJSDataContainer v-else-if="widget.type === 'chartJS'" class="kn-flex model-div kn-overflow p-mx-2 p-my-3" :widget-model="propWidget" :selected-dataset="selectedDataset" @selectedChartTypeChanged="onChartTypeChanged"></ChartJSDataContainer>
+        <VegaDataContainer v-else-if="widget.type === 'vega'" class="kn-flex model-div kn-overflow p-mx-2 p-my-3" :widget-model="propWidget" :selected-dataset="selectedDataset" @selectedChartTypeChanged="onChartTypeChanged"></VegaDataContainer>
         <PivotTableDataContainer v-else-if="widget.type === 'static-pivot-table'" class="kn-flex model-div kn-overflow p-mx-2 p-my-3" :prop-widget-model="propWidget" :selected-dataset="selectedDataset"></PivotTableDataContainer>
     </div>
 </template>
@@ -15,8 +15,8 @@
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
 import { IWidget, IDataset } from '../../../Dashboard'
-import { createNewHighchartsModel } from '../../WidgetEditor/helpers/chartWidget/highcharts/HighchartsHelpers'
-import { createChartJSModel } from '../helpers/chartWidget/chartJS/ChartJSHelpers'
+import { createNewHighchartsModel, createNewHighchartsSettings } from '../../WidgetEditor/helpers/chartWidget/highcharts/HighchartsHelpers'
+import { createChartJSModel, createNewChartJSSettings } from '../helpers/chartWidget/chartJS/ChartJSHelpers'
 import { updateWidgetModelColumnsAfterChartTypeChange } from '../helpers/chartWidget/highcharts/HighchartsDataTabHelpers'
 import { emitter } from '@/modules/documentExecution/dashboard/DashboardHelpers'
 import { mapState } from 'pinia'
@@ -74,12 +74,22 @@ export default defineComponent({
         onChartTypeChanged(chartType: string) {
             console.log('_---- onChartTypeChanged', chartType)
             if (!this.widget) return
-            if (this.isEnterprise) updateWidgetModelColumnsAfterChartTypeChange(this.widget, chartType)
+
             // TODO widgetChange
             if (chartType === 'wordcloud') {
+                this.widget.type = 'vega'
                 this.widget.settings = createNewVegaSettings()
                 this.widget.settings.chartModel = createVegaModel(this.widget, chartType)
-            } else this.widget.settings.chartModel = this.isEnterprise ? createNewHighchartsModel(chartType, this.widget.settings.chartModel?.model) : createChartJSModel(chartType)
+            } else if (this.isEnterprise) {
+                this.widget.type = 'highcharts'
+                this.widget.settings = createNewHighchartsSettings()
+                updateWidgetModelColumnsAfterChartTypeChange(this.widget, chartType)
+                this.widget.settings.chartModel = createNewHighchartsModel(chartType, this.widget.settings.chartModel?.model)
+            } else {
+                this.widget.type = 'chartJS'
+                this.widget.settings = createNewChartJSSettings()
+                this.widget.settings.chartModel = createChartJSModel(chartType)
+            }
             // this.propWidget.settings.chartModel = false ? createNewHighchartsModel(chartType) : createChartJSModel(chartType)
             console.log('------- this.widget: ', deepcopy(this.widget))
             emitter.emit('chartTypeChanged', this.widget.id)

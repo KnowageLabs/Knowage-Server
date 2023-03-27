@@ -68,13 +68,10 @@ const createNewWidgetSettings = (widget: IWidget) => {
             widget.settings = createNewTextWidgetSettings()
             break
         case 'chartJS':
-            console.log('------- ENTERED chartJS')
             widget.settings = createNewChartJSSettings()
             break
         case 'highcharts':
-            console.log('------- ENTERED HIGHCARTS')
-            // widget.settings = createNewHighchartsSettings()
-            widget.settings = createNewVegaSettings()
+            widget.settings = createNewHighchartsSettings()
             break
         case 'image':
             widget.settings = createNewImageWidgetSettings()
@@ -86,7 +83,6 @@ const createNewWidgetSettings = (widget: IWidget) => {
             widget.settings = createNewPivotTableWidgetSettings()
             break
         case 'vega':
-            console.log('------- ENTERED vega')
             widget.settings = createNewVegaSettings()
             break
     }

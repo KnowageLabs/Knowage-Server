@@ -1,6 +1,6 @@
 <template>
     <div v-if="widgetModel">
-        <ChartWidgetChartTypeDropdown :widget-model="widgetModel"></ChartWidgetChartTypeDropdown>
+        <ChartWidgetChartTypeDropdown :widget-model="widgetModel" @selectedChartTypeChanged="$emit('selectedChartTypeChanged', $event)"></ChartWidgetChartTypeDropdown>
         <ChartJSPieChartDataContainer :widget-model="widgetModel" :selected-dataset="selectedDataset"></ChartJSPieChartDataContainer>
     </div>
 </template>
@@ -12,9 +12,10 @@ import ChartJSPieChartDataContainer from './ChartJSPieChartDataContainer.vue'
 import ChartWidgetChartTypeDropdown from '../common/ChartWidgetChartTypeDropdown.vue'
 
 export default defineComponent({
-    name: 'chart-j-s-widget-data-container',
+    name: 'chart-js-widget-data-container',
     components: { ChartWidgetChartTypeDropdown, ChartJSPieChartDataContainer },
     props: { widgetModel: { type: Object as PropType<IWidget>, required: true }, selectedDataset: { type: Object as PropType<IDataset | null> } },
+    emits: ['selectedChartTypeChanged'],
     data() {
         return {}
     },
