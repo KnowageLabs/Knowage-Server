@@ -681,6 +681,7 @@
                 "analyticalDriver": "Analytical Driver",
                 "basicUrl": "Basic Url",
                 "chartDynamicOptions": {
+                    "categoryId": "Category Id",
                     "categoryName": "Category name",
                     "categoryValue": "Category value",
                     "serieName": "Serie name",
@@ -810,9 +811,9 @@
             "textConfiguration": {
                 "font": "Font",
                 "maximumFontSize": "Minimum Font Size",
+                "maximumWords": "Maximum Words",
                 "minimumFontSize": "Maximum Font Size",
                 "wordAngle": "Word Angle",
-                "maximumWords": "Maximum Words",
                 "wordAngleHint": "Word Angle Hint Placeholder",
                 "wordPadding": "Word Padding"
             },

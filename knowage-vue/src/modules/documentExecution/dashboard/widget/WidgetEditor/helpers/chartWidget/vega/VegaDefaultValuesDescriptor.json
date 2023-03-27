@@ -15,7 +15,7 @@
             "values": []
         }
     ],
-    "defaultVegaDescription": "A word cloud visualization depicting Vega research paper abstracts.",
+    "defaultVegaDescription": "A word cloud visualization.",
     "defaultVegaMarks": [
         {
             "encode": {

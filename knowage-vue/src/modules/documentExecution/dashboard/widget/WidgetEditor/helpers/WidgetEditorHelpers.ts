@@ -1,3 +1,4 @@
+import { formatVegaForSave } from './chartWidget/vega/VegaBackendSaveHelper';
 import { formatVegaWidget } from './chartWidget/vega/VegaHelpers';
 import { IWidget, IWidgetColumn } from '../../../Dashboard'
 import { formatTableWidgetForSave } from './tableWidget/TableWidgetBackendSaveHelper'
@@ -98,6 +99,9 @@ export function formatWidgetForSave(tempWidget: IWidget) {
             break
         case 'chartJS':
             formatChartJSForSave(widget)
+            break
+        case 'vega':
+            formatVegaForSave(widget)
     }
     return widget
 }

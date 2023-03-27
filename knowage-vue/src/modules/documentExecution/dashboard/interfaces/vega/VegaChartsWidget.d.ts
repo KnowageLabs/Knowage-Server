@@ -150,3 +150,11 @@ export interface IVegaChartsStyle {
     shadows: IWidgetShadowsStyle,
     background: IWidgetBackgroundStyle
 }
+
+export interface IChartInteractionValues {
+    serieName: string,
+    serieValue: string,
+    categoryName: string,
+    categoryValue: string,
+    categoryId: string
+}

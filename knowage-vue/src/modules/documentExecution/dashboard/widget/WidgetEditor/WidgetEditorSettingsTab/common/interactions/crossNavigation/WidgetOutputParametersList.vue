@@ -29,7 +29,7 @@
                 <label class="kn-material-input-label">{{ $t('common.value') }}</label>
                 <InputText v-model="parameter.value" class="kn-material-input p-inputtext-sm" :disabled="disabled" @change="parametersChanged" />
             </div>
-            <div v-else-if="parameter.type === 'dynamic' && ['table', 'highcharts', 'chartJS', 'static-pivot-table'].includes(widgetType)" class="p-sm-12 p-md-7 p-d-flex p-flex-row p-ai-center kn-flex">
+            <div v-else-if="parameter.type === 'dynamic' && ['table', 'highcharts', 'chartJS', 'static-pivot-table', 'vega'].includes(widgetType)" class="p-sm-12 p-md-7 p-d-flex p-flex-row p-ai-center kn-flex">
                 <div class="p-d-flex p-flex-column kn-flex">
                     <label class="kn-material-input-label"> {{ $t('common.column') }}</label>
                     <Dropdown
@@ -42,9 +42,9 @@
                         :disabled="disabled"
                         @change="parametersChanged"
                     ></Dropdown>
-                    <Dropdown v-else v-model="parameter.column" class="kn-material-input" :options="descriptor.chartInteractionDynamicOptions" :disabled="disabled" @change="parametersChanged">
+                    <Dropdown v-else v-model="parameter.column" class="kn-material-input" :options="['vega'].includes(widgetModel.type) ? descriptor.vegaChartInteractionDynamicOptions : descriptor.chartInteractionDynamicOptions" :disabled="disabled" @change="parametersChanged">
                         <template #value="slotProps">
-                            <span>{{ getTranslatedLabel(slotProps.value, descriptor.chartInteractionDynamicOptions, $t) }}</span>
+                            <span>{{ getTranslatedLabel(slotProps.value, ['vega'].includes(widgetModel.type) ? descriptor.vegaChartInteractionDynamicOptions : descriptor.chartInteractionDynamicOptions, $t) }}</span>
                         </template>
                         <template #option="slotProps">
                             <span>{{ $t(slotProps.option.label) }}</span>
