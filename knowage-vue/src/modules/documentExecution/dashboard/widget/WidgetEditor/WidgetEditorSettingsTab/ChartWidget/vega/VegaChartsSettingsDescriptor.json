@@ -1,0 +1,195 @@
+{
+    "alignmentOptions": [
+        {
+            "label": "common.left",
+            "value": "start"
+        },
+        {
+            "label": "common.center",
+            "value": "center"
+        },
+        {
+            "label": "common.right",
+            "value": "end"
+        }
+    ],
+    "fontOptions": [
+        {
+            "label": "",
+            "value": ""
+        },
+        {
+            "label": "kpi.kpiDocumentDesigner.fontFamily.roboto",
+            "value": "Roboto"
+        },
+        {
+            "label": "kpi.kpiDocumentDesigner.fontFamily.arial",
+            "value": "Arial"
+        },
+        {
+            "label": "kpi.kpiDocumentDesigner.fontFamily.timesNewRoman",
+            "value": "Times New Roman"
+        },
+        {
+            "label": "kpi.kpiDocumentDesigner.fontFamily.courierNew",
+            "value": "Courier New"
+        },
+        {
+            "label": "kpi.kpiDocumentDesigner.fontFamily.tahoma",
+            "value": "Tahoma"
+        },
+        {
+            "label": "kpi.kpiDocumentDesigner.fontFamily.verdana",
+            "value": "Verdana"
+        },
+        {
+            "label": "dashboard.widgetEditor.vega.fontOptions.impact",
+            "value": "Impact"
+        },
+        {
+            "label": "dashboard.widgetEditor.vega.fontOptions.calibri",
+            "value": "Calibri"
+        },
+        {
+            "label": "dashboard.widgetEditor.vega.fontOptions.cambria",
+            "value": "Cambria"
+        },
+        {
+            "label": "dashboard.widgetEditor.vega.fontOptions.georgia",
+            "value": "Georgia"
+        },
+        {
+            "label": "dashboard.widgetEditor.vega.fontOptions.gungsuh",
+            "value": "Gungsuh"
+        }
+    ],
+    "noDataToolbarStyleOptions": [
+        {
+            "type": "font-weight"
+        },
+        {
+            "type": "font-size"
+        },
+        {
+            "type": "font-family"
+        },
+        {
+            "type": "color"
+        },
+        {
+            "type": "background-color"
+        }
+    ],
+    "settings": {
+        "Chart": [
+            {
+                "title": "dashboard.widgetEditor.colors.title",
+                "type": "Colors"
+            }
+        ],
+        "Configuration": [
+            {
+                "title": "common.text",
+                "type": "TextConfiguration"
+            },
+            {
+                "title": "dashboard.widgetEditor.noData.title",
+                "type": "NoDataMessageConfiguration"
+            },
+            {
+                "title": "dashboard.widgetEditor.export.title",
+                "type": "Export"
+            }
+        ],
+        "Interactions": [
+            {
+                "title": "dashboard.widgetEditor.interactions.selection",
+                "type": "Selection"
+            },
+            {
+                "title": "dashboard.widgetEditor.interactions.crossNavigation",
+                "type": "CrossNavigation"
+            }
+        ],
+        "Responsive": [
+            {
+                "title": "dashboard.widgetEditor.responsive.title",
+                "type": "Responsive"
+            }
+        ],
+        "Style": [
+            {
+                "title": "dashboard.widgetEditor.titles.title",
+                "type": "Title"
+            },
+            {
+                "title": "dashboard.widgetEditor.background",
+                "type": "BackgroundColorStyle"
+            },
+            {
+                "title": "dashboard.widgetEditor.borders.title",
+                "type": "BordersStyle"
+            },
+            {
+                "title": "dashboard.widgetEditor.padding.title",
+                "type": "PaddingStyle"
+            },
+            {
+                "title": "dashboard.widgetEditor.shadows.title",
+                "type": "ShadowsStyle"
+            }
+        ],
+        "Tooltips": [
+            {
+                "title": "dashboard.widgetEditor.tooltips.title",
+                "type": "Tooltips"
+            }
+        ]
+    },
+    "settingsListOptions": [
+        {
+            "icon": "fa fa-cogs",
+            "label": "dashboard.widgetEditor.configuration",
+            "value": "Configuration"
+        },
+        {
+            "icon": "fa fa-paint-brush",
+            "label": "common.style",
+            "value": "Style"
+        },
+        {
+            "icon": "pi pi-table",
+            "label": "common.chart",
+            "value": "Chart"
+        },
+        {
+            "icon": "fa fa-hand-pointer",
+            "label": "dashboard.widgetEditor.interactions.title",
+            "value": "Interactions"
+        },
+        {
+            "icon": "fa fa-commenting",
+            "label": "dashboard.widgetEditor.tooltips.title",
+            "value": "Tooltips"
+        },
+        {
+            "icon": "pi pi-tablet",
+            "label": "dashboard.widgetEditor.responsive.title",
+            "value": "Responsive"
+        }
+    ],
+    "verticalAlignmentOptions": [
+        {
+            "label": "common.bottom",
+            "value": "end"
+        },
+        {
+            "label": "common.center",
+            "value": "center"
+        },
+        {
+            "label": "common.top",
+            "value": "start"
+        }
+    ]
+}

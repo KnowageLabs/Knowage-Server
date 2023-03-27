@@ -807,6 +807,15 @@
                 "pinnedColumnsOnly": "Pinned columns only",
                 "title": "Summary rows"
             },
+            "textConfiguration": {
+                "font": "Font",
+                "maximumFontSize": "Minimum Font Size",
+                "minimumFontSize": "Maximum Font Size",
+                "wordAngle": "Word Angle",
+                "maximumWords": "Maximum Words",
+                "wordAngleHint": "Word Angle Hint Placeholder",
+                "wordPadding": "Word Padding"
+            },
             "textParsingError": "Text Parsing Error",
             "title": "Widget Editor",
             "titles": {
@@ -834,6 +843,13 @@
                 "wrapTextHint": "Wrap text hint placeholder"
             },
             "vega": {
+                "fontOptions": {
+                    "calibri": "Calibri",
+                    "cambria": "Cambria",
+                    "georgia": "Georiga",
+                    "gungsuh": "Gungsuh",
+                    "impact": "Impact"
+                },
                 "wordcloud": {
                     "dimensionsTableHint": "Attributes only.",
                     "valuesTableHint": "Measures only."
