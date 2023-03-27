@@ -72,58 +72,58 @@ export default defineComponent({
             console.log('------- dataToShow DATA : ', this.dataToShow)
 
             // TODO - REMOVE
-            const mockedDataToShow = {
-                metaData: {
-                    totalProperty: 'results',
-                    root: 'rows',
-                    id: 'id',
-                    fields: [
-                        'recNo',
-                        {
-                            name: 'column_1',
-                            header: 'PRODUCT_FAMILY',
-                            dataIndex: 'column_1',
-                            type: 'string',
-                            multiValue: false
-                        },
-                        {
-                            name: 'column_2',
-                            header: 'UNIT_SALES_SUM',
-                            dataIndex: 'column_2',
-                            type: 'float',
-                            precision: 54,
-                            scale: 4,
-                            multiValue: false
-                        }
-                    ],
-                    cacheDate: '2023-03-23 16:38:56.806'
-                },
-                results: 4,
-                rows: [
-                    {
-                        id: 1,
-                        column_1: 'Food',
-                        column_2: 244181.8227
-                    },
-                    {
-                        id: 2,
-                        column_1: 'Drink',
-                        column_2: 37519.9496
-                    },
-                    {
-                        id: 3,
-                        column_1: 'Non-Consumable',
-                        column_2: 142034.041
-                    },
-                    {
-                        id: 4,
-                        column_1: 'Car',
-                        column_2: 1590.4262
-                    }
-                ],
-                initialCall: false
-            }
-
+            // const mockedDataToShow = {
+            //     metaData: {
+            //         totalProperty: 'results',
+            //         root: 'rows',
+            //         id: 'id',
+            //         fields: [
+            //             'recNo',
+            //             {
+            //                 name: 'column_1',
+            //                 header: 'PRODUCT_FAMILY',
+            //                 dataIndex: 'column_1',
+            //                 type: 'string',
+            //                 multiValue: false
+            //             },
+            //             {
+            //                 name: 'column_2',
+            //                 header: 'UNIT_SALES_SUM',
+            //                 dataIndex: 'column_2',
+            //                 type: 'float',
+            //                 precision: 54,
+            //                 scale: 4,
+            //                 multiValue: false
+            //             }
+            //         ],
+            //         cacheDate: '2023-03-23 16:38:56.806'
+            //     },
+            //     results: 4,
+            //     rows: [
+            //         {
+            //             id: 1,
+            //             column_1: 'Food',
+            //             column_2: 244181.8227
+            //         },
+            //         {
+            //             id: 2,
+            //             column_1: 'Drink',
+            //             column_2: 37519.9496
+            //         },
+            //         {
+            //             id: 3,
+            //             column_1: 'Non-Consumable',
+            //             column_2: 142034.041
+            //         },
+            //         {
+            //             id: 4,
+            //             column_1: 'Car',
+            //             column_2: 1590.4262
+            //         }
+            //     ],
+            //     initialCall: false
+            // }
+            const mockedDataToShow = this.dataToShow
             // TODO
             this.widgetModel.settings.chartModel.setData(this.dataToShow, this.widgetModel)
 
