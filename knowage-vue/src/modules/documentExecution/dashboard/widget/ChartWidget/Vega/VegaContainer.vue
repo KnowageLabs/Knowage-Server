@@ -7,12 +7,14 @@
 import { defineComponent, PropType } from 'vue'
 import { emitter } from '@/modules/documentExecution/dashboard/DashboardHelpers'
 import { mapActions } from 'pinia'
-import { IWidget, ISelection } from '../../../Dashboard'
+import { IWidget, ISelection, IWidgetColumn } from '../../../Dashboard'
 import { IVegaChartsModel, IVegaChartsTextConfiguration, IVegaChartsTooltipSettings } from '../../../interfaces/vega/VegaChartsWidget'
+import { updateStoreSelections } from '../../interactionsHelpers/InteractionHelper'
 import VegaContainerNoData from './VegaContainerNoData.vue'
 import cryptoRandomString from 'crypto-random-string'
 import vegaEmbed from 'vega-embed'
 import mainStore from '@/App.store'
+import dashboardStore from '@/modules/documentExecution/dashboard/Dashboard.store'
 
 export default defineComponent({
     name: 'vega-container',
@@ -48,6 +50,7 @@ export default defineComponent({
         this.removeEventListeners()
     },
     methods: {
+        ...mapActions(dashboardStore, ['setSelections', 'getDatasetLabel']),
         ...mapActions(mainStore, ['setError']),
         setEventListeners() {
             emitter.on('refreshChart', this.onRefreshChart)
@@ -179,6 +182,24 @@ export default defineComponent({
             // } else {
             //     this.setSelection(event, selectionEvent)
             // }
+
+            this.setSelection(event)
+        },
+        setSelection(event: any) {
+            if (this.editorMode || !event || !this.widgetModel.settings.interactions.selection || !this.widgetModel.settings.interactions.selection.enabled) return
+            updateStoreSelections(this.createNewSelection([event.text]), this.propActiveSelections, this.dashboardId, this.setSelections, this.$http)
+        },
+        createNewSelection(value: (string | number)[]) {
+            const attributeColumn = this.widgetModel.columns.find((column: IWidgetColumn) => column.fieldType === 'ATTRIBUTE')
+            const selection = {
+                datasetId: this.widgetModel.dataset as number,
+                datasetLabel: this.getDatasetLabel(this.widgetModel.dataset as number),
+                columnName: attributeColumn?.columnName ?? '',
+                value: value,
+                aggregated: false,
+                timestamp: new Date().getTime()
+            }
+            return selection
         }
     }
 })
