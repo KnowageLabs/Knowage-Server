@@ -20,6 +20,10 @@ import { createChartJSModel } from '../helpers/chartWidget/chartJS/ChartJSHelper
 import { updateWidgetModelColumnsAfterChartTypeChange } from '../helpers/chartWidget/highcharts/HighchartsDataTabHelpers'
 import { emitter } from '@/modules/documentExecution/dashboard/DashboardHelpers'
 import { mapState } from 'pinia'
+import { IHighchartsWidgetSettings } from '../../../interfaces/highcharts/DashboardHighchartsWidget'
+import { IChartJSWidgetSettings } from '../../../interfaces/chartJS/DashboardChartJSWidget'
+import { createVegaModel, createNewVegaSettings } from '../helpers/chartWidget/vega/VegaHelpers'
+import { IVegaChartsSettings } from '../../../interfaces/vega/VegaChartsWidget'
 import mainStore from '@/App.store'
 import WidgetEditorDataList from './WidgetEditorDataList/WidgetEditorDataList.vue'
 import WidgetEditorHint from '../WidgetEditorHint.vue'
@@ -30,8 +34,7 @@ import PivotTableDataContainer from './PivotTable/PivotTableDataContainer.vue'
 import ChartJSDataContainer from './ChartWidget/chartJS/ChartJSDataContainer.vue'
 import ChartGallery from '../WidgetEditorDataTab/ChartWidget/common/ChartWidgetGallery.vue'
 import VegaDataContainer from './ChartWidget/vega/VegaDataContainer.vue'
-import { IHighchartsWidgetSettings } from '../../../interfaces/highcharts/DashboardHighchartsWidget'
-import { IChartJSWidgetSettings } from '../../../interfaces/chartJS/DashboardChartJSWidget'
+import deepcopy from 'deepcopy'
 
 export default defineComponent({
     name: 'widget-editor-data-tab',
@@ -50,8 +53,8 @@ export default defineComponent({
         }),
         chartPickerVisible() {
             let visible = false
-            if (!this.widget || !['highcharts', 'chartJS'].includes(this.widget.type)) return false
-            const model = (this.widget.settings as IHighchartsWidgetSettings | IChartJSWidgetSettings).chartModel?.model
+            if (!this.widget || !['highcharts', 'chartJS', 'vega'].includes(this.widget.type)) return false
+            const model = (this.widget.settings as IHighchartsWidgetSettings | IChartJSWidgetSettings | IVegaChartsSettings).chartModel?.model
             visible = !model?.chart?.type
             emitter.emit('chartPickerVisible', visible)
             return visible
@@ -69,11 +72,16 @@ export default defineComponent({
             this.selectedDataset = dataset as IDataset
         },
         onChartTypeChanged(chartType: string) {
+            console.log('_---- onChartTypeChanged', chartType)
             if (!this.widget) return
             if (this.isEnterprise) updateWidgetModelColumnsAfterChartTypeChange(this.widget, chartType)
             // TODO widgetChange
-            this.widget.settings.chartModel = this.isEnterprise ? createNewHighchartsModel(chartType, this.widget.settings.chartModel?.model) : createChartJSModel(chartType)
+            if (chartType === 'wordcloud') {
+                this.widget.settings = createNewVegaSettings()
+                this.widget.settings.chartModel = createVegaModel(this.widget, chartType)
+            } else this.widget.settings.chartModel = this.isEnterprise ? createNewHighchartsModel(chartType, this.widget.settings.chartModel?.model) : createChartJSModel(chartType)
             // this.propWidget.settings.chartModel = false ? createNewHighchartsModel(chartType) : createChartJSModel(chartType)
+            console.log('------- this.widget: ', deepcopy(this.widget))
             emitter.emit('chartTypeChanged', this.widget.id)
             emitter.emit('refreshWidgetWithData', this.widget.id)
         }
