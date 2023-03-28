@@ -34,6 +34,7 @@ import PivotTableDataContainer from './PivotTable/PivotTableDataContainer.vue'
 import ChartJSDataContainer from './ChartWidget/chartJS/ChartJSDataContainer.vue'
 import ChartGallery from '../WidgetEditorDataTab/ChartWidget/common/ChartWidgetGallery.vue'
 import VegaDataContainer from './ChartWidget/vega/VegaDataContainer.vue'
+import { updateVegaModelColumnsAfterChartTypeChange } from '../helpers/chartWidget/vega/VegaDataTabHelpers'
 
 export default defineComponent({
     name: 'widget-editor-data-tab',
@@ -77,6 +78,7 @@ export default defineComponent({
             if (chartType === 'wordcloud') {
                 this.widget.type = 'vega'
                 this.widget.settings = createNewVegaSettings()
+                updateVegaModelColumnsAfterChartTypeChange(this.widget, chartType)
                 this.widget.settings.chartModel = createVegaModel(this.widget, chartType)
             } else if (this.isEnterprise) {
                 this.widget.type = 'highcharts'

@@ -26,7 +26,7 @@ const addWordcloudColumnToTable = (tempColumn: IWidgetColumn, rows: IWidgetColum
     }
 }
 
-export const updateWidgetModelColumnsAfterChartTypeChange = (widget: IWidget, chartType: string) => {
+export const updateVegaModelColumnsAfterChartTypeChange = (widget: IWidget, chartType: string) => {
     const maxAttributeColumns = chartType === 'wordcloud' ? 1 : 0
     const maxMeasureColumns = getMaxValuesNumber(chartType) ?? widget.columns.length
     const updatedColumns = [] as IWidgetColumn[]
