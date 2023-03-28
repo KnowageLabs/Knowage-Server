@@ -1,6 +1,7 @@
 export interface IHighchartsHeatmapAxis {
     min: number | null,
     max: number | null,
+    categories: string[],
     labels: IHighchartsHeatmapAxisLabels
     title: IHighchartsHeatmapAxisTitle
 }
