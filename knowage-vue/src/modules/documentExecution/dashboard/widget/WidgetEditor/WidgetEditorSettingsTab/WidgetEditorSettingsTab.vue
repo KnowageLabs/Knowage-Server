@@ -157,6 +157,7 @@ import HighchartsPieSettingsDescriptor from './ChartWidget/highcharts/descriptor
 import HighchartsGaugeSettingsDescriptor from './ChartWidget/highcharts/descriptors/HighchartsGaugeSettingsDescriptor.json'
 import HighchartsActivityGaugeSettingsDescriptor from './ChartWidget/highcharts/descriptors/HighchartsActivityGaugeSettingsDescriptor.json'
 import HighchartsSolidGaugeSettingsDescriptor from './ChartWidget/highcharts/descriptors/HighchartsSolidGaugeSettingsDescriptor.json'
+import HighchartsHeatmapSettingsDescriptor from './ChartWidget/highcharts/descriptors/HighchartsHeatmapSettingsDescriptor.json'
 import imageDescriptor from './ImageWidget/ImageWidgetSettingsDescriptor.json'
 import customChartDescriptor from './CustomChartWidget/CustomChartWidgetSettingsDescriptor.json'
 import pivotTableDescriptor from './PivotTableWidget/PivotTableSettingsDescriptor.json'
@@ -266,6 +267,8 @@ export default defineComponent({
                     return HighchartsActivityGaugeSettingsDescriptor
                 case 'solidgauge':
                     return HighchartsSolidGaugeSettingsDescriptor
+                case 'heatmap':
+                    return HighchartsHeatmapSettingsDescriptor
             }
         },
         onItemClicked(item: any) {

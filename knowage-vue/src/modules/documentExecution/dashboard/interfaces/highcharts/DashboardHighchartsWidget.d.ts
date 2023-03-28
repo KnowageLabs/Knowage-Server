@@ -1,3 +1,4 @@
+import { IHighchartsHeatmapAxis } from './DashboardHighchartsHeatmapWidget.d';
 import { IHighchartsGaugeActivityTooltip, IHighchartsModelPane, IHighchartsGaugeYAxis } from './DashboardHighchartsGaugeWidget.d';
 import { IWidgetExports, IWidgetTitle, IWidgetPaddingStyle, IWidgetBordersStyle, IWidgetShadowsStyle, IWidgetBackgroundStyle } from './../../Dashboard.d';
 import { IWidgetInteractions, IWidgetResponsive } from "../../Dashboard";
@@ -99,7 +100,8 @@ export interface IHighchartsChartModel {
         enabled: boolean
     },
     pane?: IHighchartsModelPane,
-    yAxis?: IHighchartsGaugeYAxis
+    xAxis?: IHighchartsHeatmapAxis
+    yAxis?: IHighchartsGaugeYAxis | IHighchartsHeatmapAxis
 }
 
 export interface IHighchartsChartPlotOptions {
