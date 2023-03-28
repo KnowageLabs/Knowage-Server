@@ -85,6 +85,7 @@ public class SaveDocumentResource extends AbstractSpagoBIResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response saveDocument(@Valid SaveDocumentDTO saveDocumentDTO) {
 		logger.debug("IN");
+		logger.debug("saveDocumentDTO: " + saveDocumentDTO);
 
 		JSError error = new JSError();
 		Integer id = null;
