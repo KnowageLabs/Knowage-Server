@@ -44,7 +44,6 @@ import { getWidgetStyleByType } from '../TableWidget/TableWidgetHelper'
 import { emitter } from '../../DashboardHelpers'
 import { getWidgetData } from '../../DataProxyHelper'
 import { mapState, mapActions } from 'pinia'
-import mock from '../../dataset/DatasetEditorTestMocks.json'
 import descriptor from '../../dataset/DatasetEditorDescriptor.json'
 import ProgressBar from 'primevue/progressbar'
 import store from '../../Dashboard.store'
@@ -72,7 +71,6 @@ export default defineComponent({
         return {
             descriptor,
             widgetTitle: null as any,
-            mock,
             widgetData: {} as any,
             loading: false,
             activeSelections: [] as ISelection[],

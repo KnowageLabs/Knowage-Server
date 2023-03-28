@@ -49,7 +49,6 @@ import { IDashboardDataset, ISelection, IVariable } from '../Dashboard'
 import TableWidget from './TableWidget/TableWidget.vue'
 import SelectorWidget from './SelectorWidget/SelectorWidget.vue'
 import ActiveSelectionsWidget from './ActiveSelectionsWidget/ActiveSelectionsWidget.vue'
-import mock from '../dataset/DatasetEditorTestMocks.json'
 import WebComponentContainer from './WebComponent/WebComponentContainer.vue'
 import HighchartsContainer from '../widget/ChartWidget/Highcharts/HighchartsContainer.vue'
 import ChartJSContainer from '../widget/ChartWidget/ChartJS/ChartJSContainer.vue'
@@ -76,7 +75,6 @@ export default defineComponent({
     emits: ['interaction', 'launchSelection', 'reloadData', 'loading'],
     data() {
         return {
-            mock,
             dataToShow: {} as any,
             activeSelections: [] as ISelection[],
             htmlContent: '' as string,
