@@ -42,6 +42,7 @@
                     <InputText
                         id="type"
                         v-model.trim="v$.category.type.$model"
+                        :disabled="inputDisabled"
                         class="kn-material-input"
                         type="text"
                         :class="{
@@ -56,28 +57,19 @@
             </div>
         </form>
 
-        <DataTable v-if="!loading" class="p-datatable-sm kn-table" :value="categoryData" :scrollable="true" scroll-height="400px" :loading="loading" data-key="versNum" responsive-layout="stack" breakpoint="960px">
-            <template #empty>
-                {{ $t('managers.datasetManagement.noVersions') }}
-            </template>
-            <!-- <Column field="userIn" :header="$t('managers.datasetManagement.creationUser')" :sortable="true" />
-            <Column field="type" :header="$t('importExport.gallery.column.type')" :sortable="true" />
-            <Column field="dateIn" :header="$t('managers.mondrianSchemasManagement.headers.creationDate')" data-type="date" :sortable="true">
-                <template #body="{ data }">
-                    {{ formatDate(data.dateIn) }}
-                </template>
-            </Column>
-            <Column @rowClick="false">
-                <template #body="slotProps">
-                    <Button v-if="slotProps.data.versNum !== 0" icon="fas fa-retweet" class="p-button-link" @click="restoreVersionConfirm(slotProps.data)" />
-                    <Button v-if="slotProps.data.versNum !== 0" icon="pi pi-trash" class="p-button-link" @click="deleteConfirm('deleteOne', slotProps.data)" />
-                </template>
-            </Column> -->
-        </DataTable>
+        <div v-if="propCategory?.id" class="p-d-flex p-flex-column" :style="descriptor.chipsTable">
+            <Toolbar class="kn-toolbar kn-toolbar--secondary">
+                <template #start> {{ $t('managers.categoriesManagement.occurences') }} </template>
+            </Toolbar>
+            <div class="p-grid p-m-1">
+                <span v-for="(tag, index) of categoryTags" :key="index" class="detail-chips"> {{ tag.name }}</span>
+            </div>
+        </div>
 
         <template #footer>
             <Button class="kn-button kn-button--secondary" :label="$t('common.close')" @click="closeTemplate"></Button>
             <Button class="kn-button kn-button--primary" :label="$t('common.save')" :disabled="buttonDisabled" @click="handleSubmit"></Button>
+            <Button class="kn-button kn-button--primary" :label="'log'" @click="logStuff"></Button>
         </template>
     </Dialog>
 </template>
@@ -117,7 +109,7 @@ export default defineComponent({
             v$: useValidate() as any,
             operation: 'insert',
             loading: false,
-            categoryData: [] as any
+            categoryTags: [] as any
         }
     },
     validations() {
@@ -127,8 +119,10 @@ export default defineComponent({
     },
     computed: {
         formHeader(): any {
-            // return this.category.valueId ? this.$t('common.edit') : this.$t('common.new')
-            return 'TEST'
+            return this.propCategory?.id ? this.$t('common.edit') : this.$t('common.new')
+        },
+        inputDisabled(): any {
+            return this.propCategory
         },
         buttonDisabled(): any {
             return this.v$.$invalid
@@ -140,7 +134,7 @@ export default defineComponent({
         }
     },
     created() {
-        this.loadCategoryData()
+        if (this.propCategory?.id) this.loadCategoryData()
     },
     mounted() {
         if (this.propCategory) {
@@ -150,27 +144,42 @@ export default defineComponent({
     methods: {
         async loadCategoryData() {
             this.loading = true
+            const url = this.getCategoryTagsUrl() as string
             await this.$http
-                .get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `3.0/category/dataset/${this.propCategory.id}`)
-                .then((response: AxiosResponse<any>) => (this.categoryData = response.data))
+                .get(url)
+                .then((response: AxiosResponse<any>) => (this.categoryTags = response.data))
                 .finally(() => (this.loading = false))
         },
+        getCategoryTagsUrl() {
+            switch (this.propCategory.type) {
+                case 'DATASET_CATEGORY':
+                    return import.meta.env.VITE_RESTFUL_SERVICES_PATH + `3.0/category/dataset/${this.propCategory.id}`
+                case 'BM_CATEGORY':
+                    return import.meta.env.VITE_RESTFUL_SERVICES_PATH + `3.0/category/metamodel/${this.propCategory.id}`
+                case 'GEO_CATEGORY':
+                    return import.meta.env.VITE_RESTFUL_SERVICES_PATH + `3.0/category/geolayer/${this.propCategory.id}`
+                case 'KPI_KPI_CATEGORY':
+                    return import.meta.env.VITE_RESTFUL_SERVICES_PATH + `3.0/category/kpi/${this.propCategory.id}`
+                case 'KPI_TARGET_CATEGORY':
+                    return import.meta.env.VITE_RESTFUL_SERVICES_PATH + `3.0/category/kpitarget/${this.propCategory.id}`
+                case 'KPI_MEASURE_CATEGORY':
+                    return import.meta.env.VITE_RESTFUL_SERVICES_PATH + `3.0/category/kpiruleoutput/${this.propCategory.id}`
+            }
+        },
         async handleSubmit() {
-            // if (this.v$.$invalid) {
-            //     return
-            // }
-            // let url = import.meta.env.VITE_RESTFUL_SERVICES_PATH + '2.0/domains'
-            // if (this.category.valueId) {
-            //     this.operation = 'update'
-            //     url += '/' + this.category.valueId
-            // }
-            // await this.sendRequest(url).then(() => {
-            //     this.store.setInfo({
-            //         title: this.$t(this.descriptor.operation[this.operation].toastTitle),
-            //         msg: this.$t(this.descriptor.operation.success)
-            //     })
-            //     this.$emit('created')
-            // })
+            if (this.v$.$invalid) {
+                return
+            }
+            const url = import.meta.env.VITE_RESTFUL_SERVICES_PATH + '3.0/category'
+            if (this.category.id) this.operation = 'update'
+
+            await this.sendRequest(url).then(() => {
+                this.store.setInfo({
+                    title: this.$t(this.descriptor.operation[this.operation].toastTitle),
+                    msg: this.$t(this.descriptor.operation.success)
+                })
+                this.$emit('created')
+            })
         },
         sendRequest(url: string) {
             if (this.operation === 'insert') {
@@ -181,7 +190,24 @@ export default defineComponent({
         },
         closeTemplate() {
             this.$emit('close')
+        },
+        logStuff() {
+            console.log(this.v$)
         }
     }
 })
 </script>
+<style lang="scss">
+.detail-chips {
+    color: rgba(0, 0, 0, 0.87);
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    background-color: #ccc;
+    padding: 2px 8px;
+    border-radius: 20px;
+    margin: 2px;
+    font-size: 0.85rem;
+    margin-bottom: 2px;
+}
+</style>

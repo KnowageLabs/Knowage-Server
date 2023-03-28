@@ -69,22 +69,6 @@
                         }
                     }
                 ]
-            },
-            {
-                "fieldName": "active",
-                "validators": []
-            },
-            {
-                "fieldName": "valueCheck",
-                "validators": []
-            },
-            {
-                "fieldName": "category",
-                "validators": [
-                    {
-                        "key": "required"
-                    }
-                ]
             }
         ]
     }
