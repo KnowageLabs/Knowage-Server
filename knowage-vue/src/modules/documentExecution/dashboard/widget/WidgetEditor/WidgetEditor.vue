@@ -23,7 +23,7 @@
                     @datasetSelected="onDatasetSelected"
                 />
 
-                <div class="preview-buttons-container p-d-flex" style="position: absolute; top: 38px; right: 10px">
+                <div v-if="selectedSetting != 'Gallery'" class="preview-buttons-container p-d-flex" style="position: absolute; top: 38px; right: 10px">
                     <Button icon="fas fa-magnifying-glass" class="p-button-rounded p-button-text p-button-plain expand-button" @click="togglePreview" />
                 </div>
 
