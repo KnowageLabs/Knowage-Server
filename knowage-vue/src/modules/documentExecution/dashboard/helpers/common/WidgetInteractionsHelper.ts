@@ -55,7 +55,6 @@ const getFormattedChartSelection = (widget: any) => {
     // TODO widgetChange
     if (widget.content?.chartTemplate?.CHART?.type === 'WORDCLOUD') return chartJSDefaultValues.getDefaultChartJSSelections()
     return user?.enterprise ? highchartsDefaultValues.getDefaultHighchartsSelections() : chartJSDefaultValues.getDefaultChartJSSelections()
-    //  return false ? highchartsDefaultValues.getDefaultHighchartsSelections() : chartJSDefaultValues.getDefaultChartJSSelections()
 }
 
 const getFormattedPivotTableSelection = () => {

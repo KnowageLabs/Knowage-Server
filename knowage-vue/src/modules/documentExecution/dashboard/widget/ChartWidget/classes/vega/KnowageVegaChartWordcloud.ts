@@ -1,19 +1,12 @@
 import { IWidget } from './../../../../Dashboard.d';
-import { updateWordcloudChartModel } from './updater/KnowageVegaChartWordcloudUpdater';
 import { KnowageVegaChart } from './KnowageVegaChart';
 import deepcopy from 'deepcopy'
 
 export class KnowageVegaChartWordcloud extends KnowageVegaChart {
     constructor(model: any) {
         super()
-        console.log(" CONSTRUCTOR CALLED!")
-        if (model && model.CHART) this.updateModel(deepcopy(model))
-        else if (model) this.model = deepcopy(model)
+        if (model) this.model = deepcopy(model)
         this.model.chart.type = 'wordcloud'
-    }
-
-    updateModel(oldModel: any) {
-        updateWordcloudChartModel(oldModel, this.model)
     }
 
     setData(data: any, widgetModel: IWidget) {

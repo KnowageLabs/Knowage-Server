@@ -1,4 +1,4 @@
-import { IWidgetColumn } from "@/modules/documentExecution/dashboard/Dashboard";
+import { IWidget, IWidgetColumn } from "@/modules/documentExecution/dashboard/Dashboard";
 
 export const addVegaColumnToTable = (tempColumn: IWidgetColumn, rows: IWidgetColumn[], chartType: string | undefined, attributesOnly: boolean, measuresOnly: boolean) => {
     let mode = ''
@@ -23,6 +23,33 @@ const addWordcloudColumnToTable = (tempColumn: IWidgetColumn, rows: IWidgetColum
             tempColumn.aggregation = 'SUM'
         }
         rows[0] = tempColumn
+    }
+}
+
+export const updateWidgetModelColumnsAfterChartTypeChange = (widget: IWidget, chartType: string) => {
+    const maxAttributeColumns = chartType === 'wordcloud' ? 1 : 0
+    const maxMeasureColumns = getMaxValuesNumber(chartType) ?? widget.columns.length
+    const updatedColumns = [] as IWidgetColumn[]
+    let attributesAdded = 0
+    let measuresAdded = 0
+    widget.columns.forEach((column: IWidgetColumn) => {
+        if (column.fieldType === 'ATTRIBUTE' && attributesAdded < maxAttributeColumns) {
+            updatedColumns.push(column)
+            attributesAdded++
+        } else if (column.fieldType === 'MEASURE' && measuresAdded < maxMeasureColumns) {
+            updatedColumns.push(column)
+            measuresAdded++
+        }
+    })
+    widget.columns = updatedColumns
+}
+
+const getMaxValuesNumber = (chartType: string | undefined) => {
+    switch (chartType) {
+        case 'wordcloud':
+            return 1;
+        default:
+            return null
     }
 }
 
