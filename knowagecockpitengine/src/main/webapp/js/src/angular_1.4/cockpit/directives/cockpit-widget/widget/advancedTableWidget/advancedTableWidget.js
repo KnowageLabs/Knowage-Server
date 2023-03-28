@@ -71,6 +71,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 		function crossHasType(type){
 			if($scope.interaction && $scope.interaction.crossType && $scope.interaction.crossType === type) return true;
+			if($scope.interaction && $scope.interaction.type === 'message' && $scope.interaction.interactionType === type) return true;
 			if($scope.interaction && $scope.interaction.previewType && $scope.interaction.previewType === type) return true;
 			if($scope.interaction && $scope.interaction.links){
 				for(var l in $scope.interaction.links) {
@@ -979,6 +980,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			}
 		}
 		
+		function sendMessage(row){
+			$scope.doSelection(undefined, undefined, undefined, undefined, row);
+		}
+		
 		function getColumnFromTableMetadata(colId){
 			if(colId){
 				for(var m in $scope.metadata.fields){
@@ -1027,6 +1032,25 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					}
 					break;
 				}
+			}
+			
+			if ($scope.interaction && $scope.interaction.type === "message" && $scope.interaction.enable) {
+				switch (interactionType) {
+				case 'allRow':
+					sendMessage(mapRow(node.data));
+					break;
+				case 'singleColumn':
+					if (node.colDef.headerName == $scope.interaction.column) {
+						sendMessage(mapRow(node.data));
+					}
+					break;
+				case 'icon':
+					if (node.colDef.headerName == "") {
+						sendMessage(mapRow(node.data));
+					}
+					break;
+				}
+				return
 			}
 
 			if($scope.ngModel.settings.multiselectable) {
