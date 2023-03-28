@@ -40,7 +40,7 @@ import it.eng.spagobi.workspace.metadata.SbiObjFuncOrganizerId;
 
 public class ObjFuncOrganizerHIBDAOImpl extends AbstractHibernateDAO implements IObjFuncOrganizerDAO {
 
-	private static transient Logger logger = Logger.getLogger(ObjFuncOrganizerHIBDAOImpl.class);
+	private static final Logger logger = Logger.getLogger(ObjFuncOrganizerHIBDAOImpl.class);
 
 	/**
 	 * The method that collects all Organizer documents available for current user. It does not look for a particular folder, but rather for all documents that
@@ -49,14 +49,14 @@ public class ObjFuncOrganizerHIBDAOImpl extends AbstractHibernateDAO implements 
 	 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 	 */
 	@Override
-	public List loadAllOrganizerDocuments() {
+	public List<DocumentOrganizer> loadAllOrganizerDocuments() {
 
 		logger.debug("IN");
 		Session aSession = null;
 		Transaction tx = null;
 
-		List listOfDocuments = null;
-		List toReturn = new ArrayList();
+		List<SbiObjFuncOrganizer> listOfDocuments = null;
+		List<DocumentOrganizer> toReturn = new ArrayList<>();
 
 		try {
 
@@ -107,12 +107,12 @@ public class ObjFuncOrganizerHIBDAOImpl extends AbstractHibernateDAO implements 
 	}
 
 	@Override
-	public List loadDocumentsByFolder(Integer folderId) {
+	public List<DocumentOrganizer> loadDocumentsByFolder(Integer folderId) {
 		logger.debug("IN");
 		Session aSession = null;
 		Transaction tx = null;
-		List listOfDocuments = null;
-		List toReturn = new ArrayList();
+		List<SbiObjFuncOrganizer> listOfDocuments = null;
+		List<DocumentOrganizer> toReturn = new ArrayList<>();
 		try {
 			aSession = getSession();
 			tx = aSession.beginTransaction();
