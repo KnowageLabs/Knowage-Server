@@ -1,3 +1,4 @@
+import { IHighchartsHeatmapAxis } from './../../../../../interfaces/highcharts/DashboardHighchartsHeatmapWidget.d';
 import { IWidgetSelection } from "@/modules/documentExecution/dashboard/Dashboard"
 import { IHighchartsAccessibilitySettings, IHighchartsChartPlotOptions, IHighchartsLegend, IHighchartsNoDataConfiguration, IHighchartsOptions3D, IHighchartsSerieAccessibility, IHighchartsSerieLabelSettings, IHighchartsSeriesLabelsSetting, IHighchartsTooltip, ISerieAccessibilitySetting } from "@/modules/documentExecution/dashboard/interfaces/highcharts/DashboardHighchartsWidget"
 import { IHighchartsBands, IHighchartsGaugeYAxis, IHighchartsModelPane, IHighchartsSeriesDialSettings, IHighchartsSeriesPivotSettings, IHighchartsGaugeActivityTooltip } from "@/modules/documentExecution/dashboard/interfaces/highcharts/DashboardHighchartsGaugeWidget"
@@ -106,6 +107,14 @@ export const getDefaultActivityGaugeYAxis = () => {
 
 export const getDefaultBandsSetting = () => {
     return deepcopy(descriptor.defaultBandsSetting) as IHighchartsBands
+}
+
+export const getDefaultHeatmapXAxis = () => {
+    return deepcopy(descriptor.defaultHeatmapXAxis) as IHighchartsHeatmapAxis
+}
+
+export const getDefaultHeatmapYAxis = () => {
+    return deepcopy(descriptor.defaultHeatmapYAxis) as IHighchartsHeatmapAxis
 }
 
 

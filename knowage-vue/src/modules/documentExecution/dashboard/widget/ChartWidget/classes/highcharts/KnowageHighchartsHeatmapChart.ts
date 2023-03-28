@@ -28,12 +28,20 @@ export class KnowageHighchartsHeatmapChart extends KnowageHighcharts {
 
     setSpecificOptionsDefaultValues() {
         // TODO
+        this.setHeatmapXAxis()
+        this.setHeatmapXAxis()
     }
 
     setData(data: any, widgetModel: IWidget) {
+        console.log('---------- DATA: ', data)
+        console.log('---------- widgetModel: ', widgetModel)
 
         // TODO
         if (this.model.series.length === 0) this.getSeriesFromWidgetModel(widgetModel)
+        const seriesColumnKey = this.getSeriesColumnKey(data, widgetModel)
+        console.log('getSeriesColumnKey: ', seriesColumnKey)
+
+        this.setXAxisCategoriesData(data, widgetModel)
 
         this.model.series.map((item, serieIndex) => {
             this.range[serieIndex] = { serie: item.name }
@@ -54,6 +62,32 @@ export class KnowageHighchartsHeatmapChart extends KnowageHighcharts {
         return this.model.series
     }
 
+    getSeriesColumnKey(data: any, widgetModel: IWidget) {
+        const measureColumn = widgetModel.columns.find((column: IWidgetColumn) => column.fieldType === 'MEASURE')
+        if (measureColumn && data.metaData?.fields) {
+            const index = data.metaData.fields.findIndex((field: any) => field.header?.startsWith(measureColumn.columnName))
+            return index !== -1 ? data.metaData.fields[index].name : ''
+        }
+        return ''
+    }
+
+    setXAxisCategoriesData(data: any, widgetModel: IWidget) {
+        const attributeColumn = widgetModel.columns.find((column: IWidgetColumn) => column.fieldType === 'ATTRIBUTE')
+        const xCategoriesSet = new Set()
+        if (attributeColumn && data?.metaData?.fields) {
+            const index = data.metaData.fields.findIndex((field: any) => field.header?.startsWith(attributeColumn.columnName))
+            const attibuteColumnName = index !== -1 ? data.metaData.fields[index].name : ''
+
+            data?.rows?.forEach((row: any) => {
+                xCategoriesSet.add(row[attibuteColumnName])
+            })
+
+            const setValues = Array.from(xCategoriesSet)
+            setValues.forEach((value: any) => this.model.xAxis?.categories.push(value))
+        }
+        console.log('------ XCATEGORIES SET: ', xCategoriesSet)
+    }
+
 
     getSeriesFromWidgetModel(widgetModel: IWidget) {
         // TODO
@@ -61,6 +95,15 @@ export class KnowageHighchartsHeatmapChart extends KnowageHighcharts {
         if (!measureColumn) return
         this.model.series = [createSerie(measureColumn.columnName, measureColumn.aggregation, true)]
     }
+
+    setHeatmapXAxis() {
+        this.model.xAxis = highchartsDefaultValues.getDefaultHeatmapXAxis()
+    }
+
+    setHeatmapYAxis() {
+        this.model.yAxis = highchartsDefaultValues.getDefaultHeatmapYAxis()
+    }
+
 
     updateSeriesLabelSettings(widgetModel: IWidget) {
         // TODO

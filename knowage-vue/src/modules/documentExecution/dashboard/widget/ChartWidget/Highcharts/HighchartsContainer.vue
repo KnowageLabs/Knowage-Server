@@ -86,8 +86,6 @@ export default defineComponent({
             if (!this.chartModel) return
             Highcharts.setOptions({ lang: { noData: this.chartModel.lang.noData } })
 
-            console.log('--------- DATA TO SHOW: ', mockedData)
-
             // TODO - remove mock
             this.widgetModel.settings.chartModel.setData(mockedData, this.widgetModel)
 

@@ -126,6 +126,54 @@
         "tickPosition": "outside",
         "tickWidth": 3
     },
+    "defaultHeatmapXAxis": {
+        "categories": [],
+        "labels": {
+            "rotation": null,
+            "style": {
+                "color": "",
+                "fontFamily": "",
+                "fontSize": "14px",
+                "fontWeight": ""
+            }
+        },
+        "max": null,
+        "min": null,
+        "title": {
+            "enabled": true,
+            "style": {
+                "color": "",
+                "fontFamily": "",
+                "fontSize": "14px",
+                "fontWeight": ""
+            },
+            "text": ""
+        }
+    },
+    "defaultHeatmapYAxis": {
+        "categories": [],
+        "labels": {
+            "rotation": null,
+            "style": {
+                "color": "",
+                "fontFamily": "",
+                "fontSize": "14px",
+                "fontWeight": ""
+            }
+        },
+        "max": null,
+        "min": null,
+        "title": {
+            "enabled": true,
+            "style": {
+                "color": "",
+                "fontFamily": "",
+                "fontSize": "14px",
+                "fontWeight": ""
+            },
+            "text": ""
+        }
+    },
     "defaultHighchartsSelection": {
         "enabled": true
     },
