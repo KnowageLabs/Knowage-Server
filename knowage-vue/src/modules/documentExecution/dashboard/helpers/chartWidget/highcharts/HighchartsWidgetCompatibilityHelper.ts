@@ -1,3 +1,4 @@
+import { KnowageHighchartsHeatmapChart } from './../../../widget/ChartWidget/classes/highcharts/KnowageHighchartsHeatmapChart';
 import { IWidget, IWidgetExports, IWidgetInteractions } from '../../../Dashboard'
 import { IHighchartsWidgetConfiguration, IHighchartsWidgetSettings } from '../../../interfaces/highcharts/DashboardHighchartsWidget'
 import { KnowageHighchartsPieChart } from '../../../widget/ChartWidget/classes/highcharts/KnowageHighchartsPieChart'
@@ -15,6 +16,8 @@ import * as highchartsDefaultValues from '../../../widget/WidgetEditor/helpers/c
 const columnNameIdMap = {}
 
 export const formatHighchartsWidget = (widget: any) => {
+    console.log('-------- ORIGINAL WIDGET: ', widget)
+
     const formattedWidget = {
         id: widget.id,
         dataset: widget.dataset.dsId ?? null,
@@ -27,6 +30,8 @@ export const formatHighchartsWidget = (widget: any) => {
     formattedWidget.settings = getFormattedWidgetSettings(widget) as IHighchartsWidgetSettings
     getFiltersForColumns(formattedWidget, widget)
     formattedWidget.settings.chartModel = createChartModel(widget)
+
+    console.log('-------- FORMATTED WIDGET: ', formattedWidget)
     return formattedWidget
 }
 
@@ -67,6 +72,8 @@ const createChartModel = (widget: any) => {
             return new KnowageHighchartsPieChart(widgetContentChartTemplate)
         case 'GAUGE':
             return createGaugeChartInstance(widgetContentChartTemplate)
+        case 'HEATMAP':
+            return new KnowageHighchartsHeatmapChart(widgetContentChartTemplate)
         default:
             return null
     }

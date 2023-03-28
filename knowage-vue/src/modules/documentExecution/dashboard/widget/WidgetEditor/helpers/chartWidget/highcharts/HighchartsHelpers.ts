@@ -1,3 +1,4 @@
+import { KnowageHighchartsHeatmapChart } from './../../../../ChartWidget/classes/highcharts/KnowageHighchartsHeatmapChart';
 import { IWidget } from "@/modules/documentExecution/dashboard/Dashboard"
 import { KnowageHighchartsPieChart } from "../../../../ChartWidget/classes/highcharts/KnowageHighchartsPieChart"
 import { IHighchartsChartModel, IHighchartsWidgetSettings } from "@/modules/documentExecution/dashboard/interfaces/highcharts/DashboardHighchartsWidget"
@@ -52,6 +53,9 @@ export const formatHighchartsWidget = (widget: IWidget) => {
             break
         case 'solidgauge':
             widget.settings.chartModel = new KnowageHighchartsSolidGaugeChart(chartModel)
+            break
+        case 'heatmap':
+            widget.settings.chartModel = new KnowageHighchartsHeatmapChart(chartModel)
             break
     }
 

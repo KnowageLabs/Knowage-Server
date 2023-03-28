@@ -1,11 +1,11 @@
 <template>
     <div v-if="widgetModel">
         <WidgetEditorColumnTable
-            v-if="chartType === 'pie'"
+            v-if="['pie', 'heatmap'].includes(chartType)"
             class="p-m-2"
             :widget-model="widgetModel"
             :items="columnTableItems['ATTRIBUTES'] ?? []"
-            :settings="{ ...commonDescriptor.columnTableSettings, ...highchartDescriptor.pieChartcolumnTableSettings[0] }"
+            :settings="columnTableSettings"
             :chart-type="chartType"
             @rowReorder="onColumnsReorder($event, 'ATTRIBUTES')"
             @itemAdded="onColumnAdded"
@@ -58,18 +58,30 @@ export default defineComponent({
         chartType() {
             return this.widgetModel?.settings.chartModel?.model?.chart.type
         },
+        columnTableSettings() {
+            switch (this.chartType) {
+                case 'pie':
+                    return { ...commonDescriptor.columnTableSettings, ...highchartDescriptor.pieChartColumnTableSettings[0] }
+                case 'heatmap':
+                    return { ...commonDescriptor.columnTableSettings, ...highchartDescriptor.heatmapColumnTableSettings[0] }
+                default:
+                    return { ...commonDescriptor.columnTableSettings, ...highchartDescriptor.pieChartColumnTableSettings[0] }
+            }
+        },
         valuesColumnSettings() {
             switch (this.chartType) {
                 case 'pie':
-                    return { ...commonDescriptor.columnTableSettings, ...highchartDescriptor.pieChartcolumnTableSettings[1] }
+                    return { ...commonDescriptor.columnTableSettings, ...highchartDescriptor.pieChartColumnTableSettings[1] }
                 case 'gauge':
-                    return { ...commonDescriptor.columnTableSettings, ...highchartDescriptor.gaugeChartcolumnTableSettings[0] }
+                    return { ...commonDescriptor.columnTableSettings, ...highchartDescriptor.gaugeChartColumnTableSettings[0] }
                 case 'activitygauge':
-                    return { ...commonDescriptor.columnTableSettings, ...highchartDescriptor.activityGaugeChartcolumnTableSettings[0] }
+                    return { ...commonDescriptor.columnTableSettings, ...highchartDescriptor.activitygaugeChartColumnTableSettings[0] }
                 case 'solidgauge':
-                    return { ...commonDescriptor.columnTableSettings, ...highchartDescriptor.solidGaugeChartcolumnTableSettings[0] }
+                    return { ...commonDescriptor.columnTableSettings, ...highchartDescriptor.solidgaugeChartColumnTableSettings[0] }
+                case 'heatmap':
+                    return { ...commonDescriptor.columnTableSettings, ...highchartDescriptor.heatmapColumnTableSettings[1] }
                 default:
-                    return { ...commonDescriptor.columnTableSettings, ...highchartDescriptor.gaugeChartcolumnTableSettings[0] }
+                    return { ...commonDescriptor.columnTableSettings, ...highchartDescriptor.gaugeChartColumnTableSettings[0] }
             }
         }
     },
@@ -96,10 +108,20 @@ export default defineComponent({
             this.columnTableItems['MEASURES'] = []
             this.widgetModel.columns.forEach((column: IWidgetColumn) => {
                 const type = column.fieldType == 'MEASURE' ? 'MEASURES' : 'ATTRIBUTES'
-                const maxNumberOfDimensions = this.chartType === 'highchartsPieChart' ? 1 : null
+                const maxNumberOfDimensions = this.getMaximumNumberOfDimensions()
                 if (type === 'MEASURES' && maxNumberOfDimensions && this.columnTableItems['MEASURES'].length === maxNumberOfDimensions) return
                 this.columnTableItems[type].push(column)
             })
+        },
+        getMaximumNumberOfDimensions() {
+            switch (this.chartType) {
+                case 'pie':
+                    return 1
+                case 'heatmap':
+                    return 2
+                default:
+                    return null
+            }
         },
         onColumnsReorder(columns: IWidgetColumn[], type: 'ATTRIBUTES' | 'MEASURES') {
             this.columnTableItems[type] = columns

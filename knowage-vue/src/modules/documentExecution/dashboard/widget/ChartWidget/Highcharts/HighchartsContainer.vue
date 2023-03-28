@@ -18,6 +18,7 @@ import HighchartsSolidGauge from 'highcharts/modules/solid-gauge'
 import Accessibility from 'highcharts/modules/accessibility'
 import NoDataToDisplay from 'highcharts/modules/no-data-to-display'
 import SeriesLabel from 'highcharts/modules/series-label'
+import HighchartsHeatmap from 'highcharts/modules/heatmap'
 import cryptoRandomString from 'crypto-random-string'
 import store from '../../../Dashboard.store'
 import deepcopy from 'deepcopy'
@@ -25,6 +26,7 @@ import mainStore from '@/App.store'
 
 HighchartsMore(Highcharts)
 HighchartsSolidGauge(Highcharts)
+HighchartsHeatmap(Highcharts)
 Accessibility(Highcharts)
 NoDataToDisplay(Highcharts)
 SeriesLabel(Highcharts)
@@ -99,10 +101,13 @@ export default defineComponent({
 
             const modelToRender = this.getModelForRender()
 
+            console.log('--------- CHART MODEL TO RENDER: ', modelToRender)
+
             try {
                 this.highchartsInstance = Highcharts.chart(this.chartID, modelToRender as any)
                 this.highchartsInstance.reflow()
             } catch (error) {
+                console.log('--------- CHART MODEL TO RENDER ERROR: ', error)
                 this.setError({ title: this.$t('common.toast.errorTitle'), msg: error })
             }
         },

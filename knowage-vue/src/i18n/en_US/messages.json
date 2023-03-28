@@ -588,6 +588,10 @@
                 "gauge": {
                     "valuesTableHint": "Measures only."
                 },
+                "heatmap": {
+                    "dimensionsTableHint": "Exactly two attributes to define categories. If the attribute is of type Date (Timestamp) it must be the first one. You are not able to reorder categories.",
+                    "valuesTableHint": "Exactly one measure only to define series"
+                },
                 "labels": {
                     "distance": "Distance",
                     "distanceHint": "The distance of the data label from the pie's edge. Negative numbers put the data label on top of the pie slices. Can also be defined as a percentage of pie's radius. Connectors are only shown for data labels outside the pie.",

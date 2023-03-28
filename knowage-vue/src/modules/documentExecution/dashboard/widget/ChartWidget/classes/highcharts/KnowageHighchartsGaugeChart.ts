@@ -19,7 +19,7 @@ export class KnowageHighchartsGaugeChart extends KnowageHighcharts {
             const serie = this.model.series[i] as IHighchartsGaugeSerie
             serie.data = []
             data?.rows?.forEach((row: any) => {
-                let serieElement = {
+                const serieElement = {
                     name: serie.name,
                     y: row[`column_${i + 1}`]
                 } as IHighchartsGaugeSerieData

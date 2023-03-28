@@ -89,7 +89,7 @@ export default defineComponent({
             return this.widgetModel.type
         },
         rowReorderEnabled(): boolean {
-            return this.widgetModel && ['table', 'html', 'text', 'highcharts', 'discovery', 'customchart'].includes(this.widgetModel.type) && this.rows.length > 1
+            return this.widgetModel && (['table', 'html', 'text', 'discovery', 'customchart'].includes(this.widgetModel.type) || this.chartType !== 'heatmap') && this.rows.length > 1
         }
     },
     watch: {
