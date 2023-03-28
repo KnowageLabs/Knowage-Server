@@ -413,12 +413,39 @@
       
       
       <!-- MESSAGE -->
-      <md-card ng-if="crossHtml || crossCustom">
+      <md-card ng-if="crossHtml || crossCustom || crossTable">
          <md-subheader class="switchSubheader">
             <md-switch ng-model="ngModel.message.enable" ng-change="toggleEnabled('message')"></md-switch>
             <span flex>{{translate.load("kn.cockpit.cross.message.title")}}</span>
          </md-subheader>
          <md-card-content ng-if="ngModel.message.enable">
+         <div layout="row" layout-align="space-around center">
+               <md-input-container ng-show="crossTable" class="md-block" flex>
+                  <label>{{::translate.load('kn.crossconfigurator.interactiontype')}}</label>
+                  <md-select ng-model="ngModel.message.interactionType" ng-disabled="!ngModel.message.enable">
+                     <md-option></md-option>
+                     <md-option value="allRow">{{::translate.load('kn.crossconfigurator.interactiontype.wholerow')}}</md-option>
+                     <md-option value="singleColumn">{{::translate.load('kn.crossconfigurator.interactiontype.singlecolumn')}}</md-option>
+                     <md-option value="icon" ng-if="!crossDiscovery">{{::translate.load('kn.crossconfigurator.interactiontype.icon')}}</md-option>
+                  </md-select>
+               </md-input-container>
+               <div layout="row" flex="70" ng-if="crossTable && !ngModel.message.interactionType" layout-align="center center">
+                  <div class="kn-info"  flex="60">
+                     {{::translate.load('kn.crossconfigurator.interactiontype.choose')}}
+                  </div>
+               </div>
+               <md-input-container ng-if="ngModel.message.interactionType && ngModel.message.interactionType === 'singleColumn'" ng-show="crossTable" class="md-block" flex>
+                  <label>{{translate.load("sbi.cockpit.cross.column")}}</label>
+                  <md-select ng-model="ngModel.message.column" ng-disabled="!ngModel.message.enable">
+                     <md-option></md-option>
+                     <md-option ng-repeat="c in $parent.newModel.content.columnSelectedOfDataset" ng-value="c.name">{{c.name}}</md-option>
+                  </md-select>
+               </md-input-container>
+               <button class="md-button md-raised md-button-empty" ng-if="ngModel.message && crossTable && ngModel.message.interactionType == 'icon'" ng-click="chooseIcon('message')" ng-disabled="!ngModel.message.enable">
+               <span ng-if="!ngModel.message.icon">{{::translate.load('kn.crossconfigurator.chooseicon')}}</span>
+               <i ng-if="ngModel.message.icon" ng-class="ngModel.message.icon"></i>
+               </button>
+            </div>
          	<div layout="row" layout-align="center center">
          		<div class="kn-info" flex="80">
          			{{translate.load("kn.cockpit.cross.message.hint")}}
