@@ -109,8 +109,6 @@ export default defineComponent({
     unmounted() {
         this.removeEventListeners()
     },
-    mounted() {},
-
     methods: {
         ...mapActions(store, ['setSelections']),
         loadWidgetModel() {

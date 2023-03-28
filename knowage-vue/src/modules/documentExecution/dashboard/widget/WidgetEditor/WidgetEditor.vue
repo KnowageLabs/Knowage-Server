@@ -22,7 +22,12 @@
                     @settingChanged="onSettingChanged"
                     @datasetSelected="onDatasetSelected"
                 />
-                <WidgetEditorPreview v-if="widget.type != 'static-pivot-table' && selectedSetting != 'Gallery' && !chartPickerVisible" :prop-widget="widget" :dashboard-id="dashboardId" :datasets="selectedModelDatasets" :variables="variables" />
+
+                <div class="preview-buttons-container p-d-flex" style="position: absolute; top: 38px; right: 10px">
+                    <Button icon="fas fa-magnifying-glass" class="p-button-rounded p-button-text p-button-plain expand-button" @click="togglePreview" />
+                </div>
+
+                <WidgetEditorPreview v-if="widget.type != 'static-pivot-table' && selectedSetting != 'Gallery' && !chartPickerVisible && showPreview" :prop-widget="widget" :dashboard-id="dashboardId" :datasets="selectedModelDatasets" :variables="variables" />
             </div>
         </div>
     </Teleport>
@@ -73,7 +78,8 @@ export default defineComponent({
             selectedModelDatasets: [] as IDashboardDataset[],
             selectedDatasets: [] as IDataset[],
             selectedSetting: '',
-            chartPickerVisible: false
+            chartPickerVisible: false,
+            showPreview: false
         }
     },
     watch: {
@@ -153,6 +159,9 @@ export default defineComponent({
         },
         changeChartPickerVisbility(value: any) {
             this.chartPickerVisible = value
+        },
+        togglePreview() {
+            this.showPreview = !this.showPreview
         }
     }
 })
