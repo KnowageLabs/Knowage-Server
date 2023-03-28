@@ -3,12 +3,16 @@ import { getFormattedLabels, getFormattedLegend, getFormattedNoDataConfiguration
 
 export const updateHeatmapChartModel = (oldModel: any, newModel: IHighchartsChartModel) => {
     console.log('-------- OLD CHART MODEL: ', oldModel)
-    //getFormattedNoDataConfiguration(oldModel, newModel)
-    //getFormattedLegend(oldModel, newModel)
+    getFormattedNoDataConfiguration(oldModel, newModel)
+    getFormattedLegend(oldModel, newModel)
     //getFormattedLabels(oldModel, newModel)
     //getFormattedSeries(oldModel, newModel, 1)
     //getFormattedTooltipSettings(oldModel, newModel)
     console.log('-------- NEW CHART MODEL: ', newModel)
 
     return newModel
+}
+
+const getFormattedLabels = (oldModel: any, newModel: IHighchartsChartModel) => {
+
 }
