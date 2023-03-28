@@ -51,7 +51,7 @@
                     </Column>
                     <Column :style="descriptor.table.iconColumn.style">
                         <template #body="slotProps">
-                            <Button icon="pi pi-trash" class="p-button-link" :data-test="'delete-button'" @click="deleteCategoryConfirm(slotProps.data.valueId)" />
+                            <Button icon="pi pi-trash" class="p-button-link" :data-test="'delete-button'" @click="deleteCategoryConfirm(slotProps.data)" />
                         </template>
                     </Column>
                 </DataTable>
@@ -109,16 +109,16 @@ export default defineComponent({
                 .then((response: AxiosResponse<any>) => (this.categories = response.data))
                 .finally(() => (this.loading = false))
         },
-        deleteCategoryConfirm(categoryId: number) {
+        deleteCategoryConfirm(category: iCategory) {
             this.$confirm.require({
                 message: this.$t('common.toast.deleteMessage'),
                 header: this.$t('common.toast.deleteConfirmTitle'),
                 icon: 'pi pi-exclamation-triangle',
-                accept: () => this.deleteCategory(categoryId)
+                accept: () => this.deleteCategory(category)
             })
         },
-        async deleteCategory(categoryId: number) {
-            await this.$http.delete(import.meta.env.VITE_RESTFUL_SERVICES_PATH + '3.0/category/' + categoryId).then(() => {
+        async deleteCategory(category: iCategory) {
+            await this.$http.delete(import.meta.env.VITE_RESTFUL_SERVICES_PATH + '3.0/category', { data: category }).then(() => {
                 this.store.setInfo({ title: this.$t('common.toast.deleteTitle'), msg: this.$t('common.toast.deleteSuccess') })
                 this.loadCategories()
             })

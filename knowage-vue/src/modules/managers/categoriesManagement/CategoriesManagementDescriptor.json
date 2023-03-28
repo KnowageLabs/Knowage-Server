@@ -53,5 +53,8 @@
                 "width": "5%"
             }
         }
+    },
+    "chipsTable": {
+        "border": "1px solid #ccc"
     }
 }
