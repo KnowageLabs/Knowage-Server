@@ -99,17 +99,18 @@ public class SaveDocumentResource extends AbstractSpagoBIResource {
 				String action = saveDocumentDTO.getAction();
 				logger.debug("Action type is equal to [" + action + "]");
 				if (DOC_SAVE.equalsIgnoreCase(action)) {
-
+					logger.debug("Sanitize XSS");
 					checkAndSanitizeXSS(saveDocumentDTO);
-
+					logger.debug("Do insert document");
 					id = doInsertDocument(saveDocumentDTO, error);
 				} else if (DOC_UPDATE.equalsIgnoreCase(action)) {
 					logger.error("DOC_UPDATE action is no more supported");
 					throw new SpagoBIServiceException(saveDocumentDTO.getPathInfo(), "sbi.document.unsupported.udpateaction");
 				} else if (MODIFY_COCKPIT.equalsIgnoreCase(action) || MODIFY_KPI.equalsIgnoreCase(action)) {
 
+					logger.debug("Sanitize XSS");
 					checkAndSanitizeXSS(saveDocumentDTO);
-
+					logger.debug("Do modify document");
 					id = doModifyDocument(saveDocumentDTO, action, error);
 				} else {
 					throw new SpagoBIServiceException(saveDocumentDTO.getPathInfo(), "sbi.document.unsupported.action");
@@ -172,8 +173,9 @@ public class SaveDocumentResource extends AbstractSpagoBIResource {
 				}
 
 			}
+			// TODO Change when new template is completed
 		} catch (Exception e) {
-			logger.info("Old template version");
+			logger.info("New template version", e);
 		}
 	}
 
@@ -210,6 +212,7 @@ public class SaveDocumentResource extends AbstractSpagoBIResource {
 	}
 
 	private Integer doInsertDocument(SaveDocumentDTO saveDocumentDTO, JSError error) throws JSONException, EMFUserError {
+		logger.debug("IN");
 		DocumentDTO documentDTO = saveDocumentDTO.getDocumentDTO();
 		Assert.assertNotNull(StringUtilities.isNotEmpty(documentDTO.getName()), "Document's name cannot be null or empty");
 		Assert.assertNotNull(StringUtilities.isNotEmpty(documentDTO.getLabel()), "Document's label cannot be null or empty");
@@ -223,6 +226,7 @@ public class SaveDocumentResource extends AbstractSpagoBIResource {
 				error.addErrorKey("sbi.document.labelAlreadyExistent");
 			} else {
 				String type = documentDTO.getType();
+				logger.debug("type: " + type);
 				if (SpagoBIConstants.MAP_TYPE_CODE.equalsIgnoreCase(type)) {
 					id = insertGeoreportDocument(saveDocumentDTO, documentManagementAPI);
 				} else if (SpagoBIConstants.DOCUMENT_COMPOSITE_TYPE.equalsIgnoreCase(type) || SpagoBIConstants.DASHBOARD_TYPE.equalsIgnoreCase(type)) {
@@ -237,6 +241,7 @@ public class SaveDocumentResource extends AbstractSpagoBIResource {
 			logger.error(t);
 			error.addErrorKey("sbi.document.saveError");
 		}
+		logger.debug("OUT");
 		return id;
 	}
 
@@ -393,16 +398,21 @@ public class SaveDocumentResource extends AbstractSpagoBIResource {
 
 	private Integer insertCockpitDocument(SaveDocumentDTO saveDocumentDTO, AnalyticalModelDocumentManagementAPI documentManagementAPI)
 			throws EMFUserError, JSONException {
-
+		logger.debug("IN");
 		List<Integer> filteredFolders = new ArrayList<Integer>();
 		filteredFolders = getFilteredFoldersList(saveDocumentDTO, filteredFolders);
 		CustomDataDTO customData = saveDocumentDTO.getCustomDataDTO();
 		Assert.assertNotNull(customData, "Custom data object cannot be null");
 
 		BIObject document = createBaseDocument(saveDocumentDTO.getDocumentDTO(), filteredFolders, documentManagementAPI);
+		logger.debug("Base document created");
+		logger.debug(document);
 		ObjTemplate template = buildDocumentTemplate("template.sbicockpit", customData, null);
+		logger.debug("Template created");
+		logger.debug(template);
 
 		documentManagementAPI.saveDocument(document, template);
+		logger.debug("OUT");
 		return document.getId();
 	}
 
@@ -612,8 +622,11 @@ public class SaveDocumentResource extends AbstractSpagoBIResource {
 
 	private ObjTemplate buildDocumentTemplate(String templateName, CustomDataDTO customDataDTO, BIObject sourceDocument) throws JSONException {
 		String templateContent = customDataDTO.getTemplateContentAsString();
+		logger.debug("templateContent: " + templateContent);
 
 		String modelName = customDataDTO.getModelName();
+		logger.debug("modelName: " + modelName);
+
 		return buildDocumentTemplate(templateName, templateContent, sourceDocument, modelName);
 	}
 
