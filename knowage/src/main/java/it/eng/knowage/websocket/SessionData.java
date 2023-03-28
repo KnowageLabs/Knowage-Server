@@ -49,7 +49,7 @@ class SessionData implements NewsListener, AsyncDownloadsListener {
 	private final Set<String> roles = new TreeSet<>();
 	private final String tenantId;
 
-	public SessionData(Session session, UserProfile userProfile, EndpointConfig config) {
+	SessionData(Session session, UserProfile userProfile, EndpointConfig config) {
 		this.session = session;
 		this.userProfile = userProfile;
 
