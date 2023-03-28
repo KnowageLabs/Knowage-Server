@@ -27,6 +27,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <%@page import="it.eng.spagobi.utilities.engines.rest.ExecutionSession"%>
 <%@page import="it.eng.knowage.security.ProductProfiler"%>
 <%@page import="java.util.Enumeration"%>
+<%@page import="it.eng.spagobi.commons.constants.CommunityFunctionalityConstants"%>
 
 <%@page import="it.eng.spagobi.tools.dataset.dao.IBIObjDataSetDAO"%>
 <%@page import="it.eng.spagobi.tools.dataset.dao.BIObjDataSetDAOHibImpl"%>

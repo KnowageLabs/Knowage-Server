@@ -172,6 +172,17 @@ angular.module('cockpitModule').service('cockpitModule_helperDescriptors',functi
 						'options': availableDatasets}]
 				},
 			{
+				'label':sbiModule_translate.load('kn.cockpit.html.tag13'),
+				'name': 'preview',
+				'description': sbiModule_translate.load('kn.cockpit.html.tag13.desc'),
+				'tag':'<div kn-message=%%value%%></div>',
+				'inputs': [
+					{	'name':'value',
+						'type': 'text',
+						'flex':'flex',
+						'replacer':'=\"***\"'}]
+				},
+			{
 				'label':sbiModule_translate.load('kn.cockpit.html.tag10'),
 				'name': 'active-selection',
 				'description': sbiModule_translate.load('kn.cockpit.html.tag10.desc'),
