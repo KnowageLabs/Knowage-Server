@@ -10,8 +10,6 @@ import * as widgetCommonDefaultValues from '../../../widget/WidgetEditor/helpers
 import * as vegaChartsDefaultValues from '../../../widget/WidgetEditor/helpers/chartWidget/vega/VegaDefaultValues'
 
 export const formatVegaChartsWidget = (widget: any) => {
-    console.log('------------- ORIGINAL WIDGET: ', widget)
-
     const formattedWidget = {
         id: widget.id,
         dataset: widget.dataset.dsId ?? null,
@@ -24,8 +22,6 @@ export const formatVegaChartsWidget = (widget: any) => {
     formattedWidget.settings = getFormattedWidgetSettings(widget) as IVegaChartsSettings
     getFiltersForColumns(formattedWidget, widget)
     formattedWidget.settings.chartModel = createChartModel(widget)
-
-    console.log('------------- FORMATTED WIDGET: ', formattedWidget)
 
     return formattedWidget
 }

@@ -34,7 +34,6 @@ import PivotTableDataContainer from './PivotTable/PivotTableDataContainer.vue'
 import ChartJSDataContainer from './ChartWidget/chartJS/ChartJSDataContainer.vue'
 import ChartGallery from '../WidgetEditorDataTab/ChartWidget/common/ChartWidgetGallery.vue'
 import VegaDataContainer from './ChartWidget/vega/VegaDataContainer.vue'
-import deepcopy from 'deepcopy'
 
 export default defineComponent({
     name: 'widget-editor-data-tab',

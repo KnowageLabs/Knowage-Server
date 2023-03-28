@@ -55,7 +55,6 @@ export default defineComponent({
     },
     computed: {
         chartType() {
-            console.log('---------- WIDGET MODEL: ', this.widgetModel)
             return this.widgetModel?.settings.chartModel?.model?.chart.type
         }
     },

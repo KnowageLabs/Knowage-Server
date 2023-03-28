@@ -1,6 +1,6 @@
 <template>
     <VegaContainerNoData v-if="showNoData" :widget-model="widgetModel"></VegaContainerNoData>
-    <div v-else :id="'chartId' + chartID" class="kn-flex"></div>
+    <div v-else :id="'chartId' + chartID" class="kn-flex" :style="chartContainerStyles"></div>
 </template>
 
 <script lang="ts">
@@ -30,12 +30,19 @@ export default defineComponent({
     data() {
         return {
             chartID: cryptoRandomString({ length: 16, type: 'alphanumeric' }),
-            chartModel: {} as IVegaChartsModel
+            chartModel: {} as IVegaChartsModel,
+            chartHeight: 0 as number
         }
     },
     computed: {
         showNoData() {
             return this.widgetModel && this.dataToShow && this.dataToShow.rows.length == 0
+        },
+        chartContainerStyles(): any {
+            return {
+                height: this.editorMode ? '100%' : `${this.chartHeight}px`,
+                position: 'relative'
+            }
         }
     },
     watch: {
@@ -55,15 +62,15 @@ export default defineComponent({
         ...mapActions(mainStore, ['setError']),
         setEventListeners() {
             emitter.on('refreshChart', this.onRefreshChart)
+            emitter.on('widgetResized', this.onChartResize)
         },
         removeEventListeners() {
             emitter.off('refreshChart', this.onRefreshChart)
+            emitter.off('widgetResized', this.onChartResize)
         },
         onRefreshChart(widgetId: any | null = null) {
             if (widgetId && widgetId !== this.widgetModel.id) return
-
             this.chartModel = this.widgetModel.settings.chartModel ? this.widgetModel.settings.chartModel.model : null
-            //    console.log('---------- onRefreshChart: ', this.chartModel)
             this.updateChartModel()
         },
         async updateChartModel() {
@@ -74,11 +81,9 @@ export default defineComponent({
             this.setTooltipConfiguration()
             this.setChartColors()
 
-            console.log('-------- CHART MODEL TO RENDER: ', this.chartModel)
-
             try {
                 if (!this.showNoData)
-                    await vegaEmbed('#chartId' + this.chartID, this.chartModel as any).then((res: any) => {
+                    await vegaEmbed('#chartId' + this.chartID, this.chartModel as any, { actions: false }).then((res: any) => {
                         const view = res.view
                         view.addEventListener('click', (event: any, item: any) => {
                             if (item && item.datum) this.executeInteractions(item.datum)
@@ -144,6 +149,9 @@ export default defineComponent({
                 timestamp: new Date().getTime()
             }
             return selection
+        },
+        onChartResize(newHeight: any) {
+            this.chartHeight = newHeight
         }
     }
 })

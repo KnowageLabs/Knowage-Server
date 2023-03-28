@@ -5,7 +5,7 @@ import deepcopy from 'deepcopy'
 export class KnowageVegaChartWordcloud extends KnowageVegaChart {
     constructor(model: any) {
         super()
-        if (model) this.model = deepcopy(model)
+        if (model && !model.CHART) this.model = deepcopy(model)
         this.model.chart.type = 'wordcloud'
     }
 
