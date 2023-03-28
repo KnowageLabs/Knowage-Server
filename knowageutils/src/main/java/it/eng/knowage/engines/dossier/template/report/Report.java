@@ -35,6 +35,7 @@ public class Report {
 	String sheetHeight;
 	String sheetWidth;
 	String deviceScaleFactor;
+	String source;
 
 	public Report() {
 		placeholders = new ArrayList<>();
@@ -111,6 +112,15 @@ public class Report {
 	@JsonSetter("PARAMETER")
 	public void setParameters(List<Parameter> parameters) {
 		this.parameters = parameters;
+	}
+
+	public String getSource() {
+		return source;
+	}
+
+	@JsonSetter("source")
+	public void setSource(String source) {
+		this.source = source;
 	}
 
 	@JsonIgnore
