@@ -23,4 +23,9 @@ public class SourceDatasetDTO {
 		this.label = label;
 	}
 
+	@Override
+	public String toString() {
+		return "SourceDatasetDTO [label=" + label + "]";
+	}
+
 }
