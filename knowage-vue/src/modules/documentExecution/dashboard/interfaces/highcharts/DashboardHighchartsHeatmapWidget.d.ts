@@ -1,3 +1,5 @@
+import { IHighchartsSerieAccessibility } from "./DashboardHighchartsWidget"
+
 export interface IHighchartsHeatmapAxis {
     min: number | null,
     max: number | null,
@@ -29,4 +31,17 @@ export interface IHighchartsHeatmapAxisTitle {
         fontWeight: string
         color: string
     }
+}
+
+export interface IHighchartsHeatmapSerie {
+    name: string,
+    data: IHighchartsHeatmapSerieData[],
+    accessibility?: IHighchartsSerieAccessibility
+}
+
+export interface IHighchartsHeatmapSerieData {
+    id: number,
+    x: number,
+    y: number,
+    value: number
 }

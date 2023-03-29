@@ -10,6 +10,9 @@ export const createGaugeSerie = (serieName: string) => {
     return { name: serieName, data: [], colorByPoint: false, accessibility: highchartsDefaultValues.getDefaultSeriesAccessibilitySettings() }
 }
 
+export const createHeatMapSerie = (serieName: string) => {
+    return { name: serieName, data: [], accessibility: highchartsDefaultValues.getDefaultSeriesAccessibilitySettings() }
+}
 
 export const getFormattedNoDataConfiguration = (oldModel: any, newModel: IHighchartsChartModel) => {
     if (oldModel.CHART.EMPTYMESSAGE) {

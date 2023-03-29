@@ -1,4 +1,4 @@
-import { IHighchartsHeatmapAxis } from './DashboardHighchartsHeatmapWidget.d';
+import { IHighchartsHeatmapAxis, IHighchartsHeatmapSerie } from './DashboardHighchartsHeatmapWidget.d';
 import { IHighchartsGaugeActivityTooltip, IHighchartsModelPane, IHighchartsGaugeYAxis } from './DashboardHighchartsGaugeWidget.d';
 import { IWidgetExports, IWidgetTitle, IWidgetPaddingStyle, IWidgetBordersStyle, IWidgetShadowsStyle, IWidgetBackgroundStyle } from './../../Dashboard.d';
 import { IWidgetInteractions, IWidgetResponsive } from "../../Dashboard";
@@ -85,7 +85,7 @@ export interface IHighchartsChartModel {
     },
     noData: IHighchartsNoDataConfiguration,
     accessibility: IHighchartsAccessibilitySettings,
-    series: (IHighchartsChartSerie | IHighchartsGaugeSerie)[],
+    series: (IHighchartsChartSerie | IHighchartsGaugeSerie | IHighchartsHeatmapSerie)[],
     settings: IIHighchartsChartModelSettings,
     plotOptions: {
         pie?: IHighchartsChartPlotOptions,
