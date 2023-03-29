@@ -129,7 +129,7 @@ export default defineComponent({
     },
     computed: {
         isAdmin(): boolean {
-            return this.user?.functionalities.includes(UserFunctionalitiesConstants.DOCUMENT_MANAGEMENT) || this.user?.isSuperadmin
+            return this.user?.functionalities?.includes(UserFunctionalitiesConstants.DOCUMENT_MANAGEMENT) || this.user?.isSuperadmin
         }
     },
     watch: {
