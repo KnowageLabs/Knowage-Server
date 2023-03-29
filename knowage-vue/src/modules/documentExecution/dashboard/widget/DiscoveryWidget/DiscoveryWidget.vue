@@ -35,7 +35,7 @@
                 </div>
             </div>
             <div class="table-container">
-                <ag-grid-vue v-if="!gridLoading" class="discovery-grid ag-theme-alpine kn-flex discovery-grid-scrollbar" :grid-options="gridOptions"></ag-grid-vue>
+                <ag-grid-vue v-if="!gridLoading" class="discovery-grid ag-theme-alpine kn-flex discovery-grid-scrollbar" :grid-options="gridOptions" :context="context"></ag-grid-vue>
                 <PaginationRenderer class="discovery-pagination" :prop-widget-pagination="propWidget.settings.pagination" @page-changed="$emit('pageChanged')" />
             </div>
         </div>
@@ -71,7 +71,7 @@ export default defineComponent({
         propActiveSelections: { type: Array as PropType<ISelection[]>, required: true },
         dashboardId: { type: String, required: true }
     },
-    emits: ['pageChanged', 'facetsChanged', 'searchWordChanged', 'launchSelection'],
+    emits: ['pageChanged', 'facetsChanged', 'searchWordChanged', 'launchSelection', 'sortingChanged'],
     setup() {
         const store = dashboardStore()
         const appStore = mainStore()
@@ -92,7 +92,8 @@ export default defineComponent({
             columnApi: null as any,
             gridLoading: false,
             selectedColumn: false as any,
-            getRowId: null as any
+            getRowId: null as any,
+            context: null as any
         }
     },
     computed: {
@@ -124,6 +125,9 @@ export default defineComponent({
     },
     created() {
         this.prepareWidget()
+    },
+    beforeMount() {
+        this.context = { componentParent: this }
     },
     mounted() {
         this.setInitialWidgetWidth()
@@ -403,6 +407,9 @@ export default defineComponent({
                 updateStoreSelections(createNewTableSelection([node.value], node.colDef.columnName, this.propWidget, this.datasets), this.activeSelections, this.dashboardId, this.setSelections, this.$http)
                 this.gridApi?.refreshCells({ force: true })
             }
+        },
+        sortingChanged() {
+            this.$emit('sortingChanged')
         }
         //#endregion ================================================================================================
     }
