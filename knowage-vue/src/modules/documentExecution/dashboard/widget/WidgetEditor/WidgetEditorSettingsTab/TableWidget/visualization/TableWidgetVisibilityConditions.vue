@@ -63,15 +63,19 @@
                             </div>
                         </div>
                         <div class="p-col-12 p-grid p-ai-center p-ai-center p-pt-1">
-                            <div class="p-col-12 p-md-4 p-d-flex p-flex-column p-p-2">
+                            <div class="p-col-12 p-md-3 p-d-flex p-flex-column p-p-2">
                                 <label class="kn-material-input-label"> {{ $t('common.columns') }}</label>
                                 <MultiSelect v-model="visibilityCondition.target" :options="widgetModel.columns" option-label="alias" option-value="id" :disabled="visibilityConditionsDisabled" @change="visibilityConditionsChanged"> </MultiSelect>
                             </div>
-                            <div class="p-col-6 p-md-4">
+                            <div class="p-col-4 p-md-3">
                                 <InputSwitch v-model="visibilityCondition.hide" :disabled="visibilityConditionsDisabled" @change="visibilityConditionsChanged"></InputSwitch>
                                 <label class="kn-material-input-label p-p-1">{{ $t('dashboard.widgetEditor.visibilityConditions.hideColumn') }}</label>
                             </div>
-                            <div class="p-col-6 p-md-4">
+                            <div class="p-col-4 p-md-3">
+                                <InputSwitch v-model="visibilityCondition.hideFromSummary" :disabled="visibilityConditionsDisabled" @change="visibilityConditionsChanged"></InputSwitch>
+                                <label class="kn-material-input-label p-p-1">{{ $t('dashboard.widgetEditor.visibilityConditions.hideFromSummary') }}</label>
+                            </div>
+                            <div class="p-col-4 p-md-3">
                                 <InputSwitch v-model="visibilityCondition.hidePdf" :disabled="visibilityConditionsDisabled" @change="visibilityConditionsChanged"></InputSwitch>
                                 <label class="kn-material-input-label p-p-1">{{ $t('dashboard.widgetEditor.visibilityConditions.hideOnPdf') }}</label>
                             </div>
@@ -214,6 +218,7 @@ export default defineComponent({
                 target: [],
                 hide: false,
                 hidePdf: false,
+                hideFromSummary: false,
                 condition: { type: 'Always' }
             })
         },

@@ -64,6 +64,17 @@
                         </template>
                     </Dropdown>
                 </div>
+                <div v-if="optionsContainTimestampColumn(visualizationType)" class="p-col-11 p-md-5 p-d-flex p-flex-column p-p-2">
+                    <label class="kn-material-input-label p-mr-2">{{ $t('managers.datasetManagement.ckanDateFormat') }}</label>
+                    <Dropdown v-model="visualizationType.dateFormat" class="kn-material-input" :options="descriptor.dateFormats" :disabled="visualizationTypeDisabled" @change="visualizationTypeChanged">
+                        <template #option="slotProps">
+                            <span>{{ getFormattedDate(new Date(), slotProps.option) }}</span>
+                        </template>
+                        <template #value="slotProps">
+                            <span>{{ getFormattedDate(new Date(), slotProps.value) }}</span>
+                        </template>
+                    </Dropdown>
+                </div>
             </div>
             <div v-if="optionsContainMeasureColumn(visualizationType) && (visualizationType.type === 'Bar' || visualizationType.type === 'Sparkline')" class="p-col-12 p-grid p-ai-center p-pt-1">
                 <div class="p-col-12 p-md-6 p-lg-3 p-d-flex p-flex-column p-px-2">
@@ -111,6 +122,7 @@ import { defineComponent, PropType } from 'vue'
 import { IWidget, ITableWidgetVisualizationType, IWidgetColumn, IWidgetStyleToolbarModel, ITableWidgetVisualizationTypes } from '@/modules/documentExecution/dashboard/Dashboard'
 import { emitter } from '../../../../../DashboardHelpers'
 import { getTranslatedLabel } from '@/helpers/commons/dropdownHelper'
+import { formatDate } from '@/helpers/commons/localeHelper'
 import descriptor from '../TableWidgetSettingsDescriptor.json'
 import Dropdown from 'primevue/dropdown'
 import InputNumber from 'primevue/inputnumber'
@@ -133,6 +145,7 @@ export default defineComponent({
             availableColumnOptions: [] as (IWidgetColumn | { id: string; alias: string })[],
             widgetColumnsAliasMap: {} as any,
             widgetColumnsTypeMap: {} as any,
+            widgetColumnsIsDateMap: {} as any,
             getTranslatedLabel
         }
     },
@@ -175,8 +188,11 @@ export default defineComponent({
         },
         loadWidgetColumnMaps() {
             this.widgetModel.columns.forEach((column: IWidgetColumn) => {
-                if (column.id) this.widgetColumnsAliasMap[column.id] = column.alias
-                if (column.id && column.fieldType) this.widgetColumnsTypeMap[column.id] = column.fieldType
+                if (column.id) {
+                    this.widgetColumnsAliasMap[column.id] = column.alias
+                    if (column.fieldType) this.widgetColumnsTypeMap[column.id] = column.fieldType
+                    this.widgetColumnsIsDateMap[column.id] = column.type.includes('DATE') || column.type.includes('TIMESTAMP')
+                }
             })
         },
         visualizationTypeChanged() {
@@ -236,6 +252,16 @@ export default defineComponent({
             if (!found && (visualizationType.type === 'Bar' || visualizationType.type === 'Sparkline')) this.resetMeasureProperties(visualizationType)
             return found
         },
+        optionsContainTimestampColumn(visualizationType: ITableWidgetVisualizationType) {
+            let found = false
+            for (let i = 0; i < visualizationType.target.length; i++) {
+                if (this.widgetColumnsIsDateMap[visualizationType.target[i]]) {
+                    found = true
+                    break
+                }
+            }
+            return found
+        },
         resetMeasureProperties(visualizationType: ITableWidgetVisualizationType) {
             visualizationType.type = 'Text'
             const fields = ['min', 'max', 'alignment']
@@ -280,7 +306,10 @@ export default defineComponent({
         },
         addColumnAsOption(column: IWidgetColumn) {
             this.availableColumnOptions.push(column)
-            if (column.id) this.widgetColumnsAliasMap[column.id] = column.alias
+            this.loadWidgetColumnMaps()
+        },
+        getFormattedDate(date: any, format: any) {
+            return formatDate(date, format)
         }
     }
 })

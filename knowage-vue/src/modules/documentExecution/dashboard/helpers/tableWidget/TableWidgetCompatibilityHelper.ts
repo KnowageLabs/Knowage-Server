@@ -1,18 +1,4 @@
-import {
-    IWidget,
-    ITableWidgetSettings,
-    ITableWidgetPagination,
-    ITableWidgetConditionalStyle,
-    ITableWidgetTooltipStyle,
-    ITableWidgetStyle,
-    IWidgetInteractions,
-    ITableWidgetConfiguration,
-    IWidgetResponsive,
-    ITableWidgetConditionalStyles,
-    IDashboard,
-    IVariable,
-    IDashboardDriver
-} from '../../Dashboard'
+import { IWidget, ITableWidgetSettings, ITableWidgetPagination, ITableWidgetConditionalStyle, ITableWidgetTooltipStyle, ITableWidgetStyle, IWidgetInteractions, ITableWidgetConfiguration, IWidgetResponsive, ITableWidgetConditionalStyles, IDashboard, IVariable, IDashboardDriver } from '../../Dashboard'
 import { getFormattedConfiguration } from './TableWidgetConfigurationHelper'
 import { getFormattedStyle } from './TableWidgetStyleHelper'
 import { getSettingsFromWidgetColumns } from './TableWidgetColumnSettingsHelper'
@@ -60,6 +46,7 @@ const getFormattedWidgetSettings = (widget: any, formattedDashboardModel: IDashb
 const getFormattedConditionalStyles = (widget: any, formattedDashboardModel: IDashboard, drivers: IDashboardDriver[]) => {
     const formattedStyles = { enabled: false, conditions: [] } as ITableWidgetConditionalStyles
     if (widget.settings.rowThresholds?.enabled) {
+        formattedStyles.enabled = true
         widget.settings.rowThresholds.list.forEach((rowThreshold: any) => {
             formattedStyles.conditions.push(createConditionFromRowThreshold(rowThreshold, formattedDashboardModel, drivers))
         })
@@ -70,7 +57,7 @@ const getFormattedConditionalStyles = (widget: any, formattedDashboardModel: IDa
 
 const createConditionFromRowThreshold = (rowThreshold: any, formattedDashboardModel: IDashboard, drivers: IDashboardDriver[]) => {
     const conditionStyle = {
-        target: getColumnId(rowThreshold.column),
+        target: rowThreshold.column ? getColumnId(rowThreshold.column) : [],
         applyToWholeRow: false,
         condition: { type: rowThreshold.compareValueType, operator: rowThreshold.condition, value: '' },
         properties: {
@@ -84,6 +71,7 @@ const createConditionFromRowThreshold = (rowThreshold: any, formattedDashboardMo
             icon: ''
         }
     } as ITableWidgetConditionalStyle
+    if (rowThreshold.formula) conditionStyle.condition.formula = rowThreshold.formula
     switch (conditionStyle.condition.type) {
         case 'static':
             conditionStyle.condition.value = rowThreshold.compareValue
