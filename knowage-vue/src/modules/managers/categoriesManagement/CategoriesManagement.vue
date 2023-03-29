@@ -118,7 +118,9 @@ export default defineComponent({
             })
         },
         async deleteCategory(category: iCategory) {
-            await this.$http.delete(import.meta.env.VITE_RESTFUL_SERVICES_PATH + '3.0/category', { data: category }).then(() => {
+            const dataToDelete = { code: category.code, id: category.id, name: category.name, type: category.type } as any
+
+            await this.$http.delete(import.meta.env.VITE_RESTFUL_SERVICES_PATH + '3.0/category', { data: dataToDelete }).then(() => {
                 this.store.setInfo({ title: this.$t('common.toast.deleteTitle'), msg: this.$t('common.toast.deleteSuccess') })
                 this.loadCategories()
             })
