@@ -48,8 +48,8 @@ import { mapActions } from 'pinia'
 import { IDataset, ISelection, IWidget } from '../../Dashboard'
 import { defineComponent, PropType } from 'vue'
 import { AgGridVue } from 'ag-grid-vue3' // the AG Grid Vue Component
-import { updateStoreSelections } from '../interactionsHelpers/InteractionHelper'
-import { createNewTableSelection } from '../TableWidget/TableWidgetHelper'
+import { executeTableWidgetCrossNavigation, updateStoreSelections } from '../interactionsHelpers/InteractionHelper'
+import { createNewTableSelection, formatRowDataForCrossNavigation, getFormattedClickedValueForCrossNavigation, isCrossNavigationActive } from '../TableWidget/TableWidgetHelper'
 import 'ag-grid-community/styles/ag-grid.css' // Core grid CSS, always needed
 import 'ag-grid-community/styles/ag-theme-alpine.css' // Optional theme CSS
 import mainStore from '../../../../../App.store'
@@ -401,6 +401,13 @@ export default defineComponent({
             return columntooltipConfig
         },
         onCellClicked(node) {
+            if (!this.editorMode && isCrossNavigationActive(node, this.propWidget.settings.interactions.crossNavigation)) {
+                const formattedRow = formatRowDataForCrossNavigation(node, this.dataToShow)
+                const formattedClickedValue = getFormattedClickedValueForCrossNavigation(node, this.dataToShow)
+                executeTableWidgetCrossNavigation(formattedClickedValue, formattedRow, this.propWidget.settings.interactions.crossNavigation, this.dashboardId)
+                return
+            }
+
             if (!this.editorMode) {
                 if (node.colDef.measure == 'MEASURE' || node.colDef.pinned || node.value === '' || node.value == undefined) return
 

@@ -73,5 +73,5 @@ export interface IHighchartsGaugeActivityTooltip {
         fontSize: string
         fontWeight: string
     },
-    positioner: function
+    positioner: Function
 }

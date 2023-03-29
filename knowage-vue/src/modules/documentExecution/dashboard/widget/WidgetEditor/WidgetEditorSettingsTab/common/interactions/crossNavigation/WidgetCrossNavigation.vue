@@ -3,10 +3,10 @@
         <div class="p-grid p-col-12 p-ai-center">
             <div v-if="!['html', 'text', 'highcharts', 'chartJS', 'image', 'customchart', 'static-pivot-table'].includes(widgetModel.type)" class="p-col-6 p-sm-12 p-md-6 p-d-flex p-flex-column kn-flex p-px-2">
                 <label class="kn-material-input-label"> {{ $t('common.type') }}</label>
-                <Dropdown v-model="crossNavigationModel.type" class="kn-material-input" :options="descriptor.interactionTypes" option-value="value" :disabled="crossNavigationDisabled" @change="onInteractionTypeChanged">
+                <Dropdown v-model="crossNavigationModel.type" class="kn-material-input" :options="interactionTypes" option-value="value" :disabled="crossNavigationDisabled" @change="onInteractionTypeChanged">
                     <template #value="slotProps">
                         <div>
-                            <span>{{ getTranslatedLabel(slotProps.value, descriptor.interactionTypes, $t) }}</span>
+                            <span>{{ getTranslatedLabel(slotProps.value, interactionTypes, $t) }}</span>
                         </div>
                     </template>
                     <template #option="slotProps">
@@ -18,7 +18,7 @@
             </div>
         </div>
         <div class="p-grid p-col-12 p-ai-center">
-            <div v-if="widgetModel.type === 'table' && crossNavigationModel.type === 'singleColumn'" class="p-sm-12 p-md-5 p-d-flex p-flex-row p-ai-center p-px-2">
+            <div v-if="['table', 'discovery'].includes(widgetModel.type) && crossNavigationModel.type === 'singleColumn'" class="p-sm-12 p-md-5 p-d-flex p-flex-row p-ai-center p-px-2">
                 <div class="p-d-flex p-flex-column kn-flex">
                     <label class="kn-material-input-label"> {{ $t('common.column') }}</label>
                     <Dropdown v-model="crossNavigationModel.column" class="kn-material-input" :options="widgetModel.columns" option-label="alias" option-value="id" :disabled="crossNavigationDisabled"> </Dropdown>
@@ -81,6 +81,9 @@ export default defineComponent({
         },
         crossNavigationDisabled() {
             return !this.crossNavigationModel || !this.crossNavigationModel.enabled
+        },
+        interactionTypes() {
+            return this.widgetModel && this.widgetModel.type === 'table' ? this.descriptor.interactionTypes : this.descriptor.interactionTypes.slice(0, 2)
         }
     },
     created() {
