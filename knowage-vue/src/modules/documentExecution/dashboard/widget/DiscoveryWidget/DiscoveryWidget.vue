@@ -24,16 +24,11 @@
                             class="facet-accordion-content selectable"
                             @click="selectFacet(facetName, row)"
                         >
-                            <!-- <span v-if="facet.metaData.type == 'date'" class="kn-truncated">
-                                    TODO: Set Date Format
-                                    {{ setTimeFormat(item.column_1, facet.metaData.dateFormat) }}
-                                </span> -->
                             <span class="kn-truncated">
                                 {{ row.column_1 }}
                             </span>
                             <div class="facet-chip p-ml-auto">
                                 {{ row.column_2 }}
-                                <!-- {{facet.column_2 | number:getDecimalPlaces("column_2", item.column_2, facet.metaData.fields)}} -->
                             </div>
                         </div>
                     </div>
@@ -117,21 +112,8 @@ export default defineComponent({
         }
     },
     watch: {
-        propWidget: {
-            handler() {
-                // console.group('PROP WIDGET PROP HANDLER ------------------------------------')
-                // console.log('propWidget ', this.propWidget)
-                // console.groupEnd()
-                // if (!this.editorMode) this.setGridData()
-            },
-            deep: true
-        },
         dataToShow: {
             handler() {
-                console.group('DATA TO SHOW PROP HANDLER ------------------------------------')
-                console.log('dataToShow ', this.dataToShow)
-                console.groupEnd()
-
                 this.reloadWidgetData()
             },
             deep: true
@@ -141,10 +123,6 @@ export default defineComponent({
         }
     },
     created() {
-        console.group('CREATED HOOK ------------------------------------')
-        console.log('propWidget ', this.propWidget)
-        console.log('dataToShow ', this.dataToShow)
-        console.groupEnd()
         this.prepareWidget()
     },
     mounted() {
@@ -179,11 +157,6 @@ export default defineComponent({
             this.setGridData()
         },
         reloadWidgetWithoutData() {
-            console.group('reloadWidgetWithoutData ------------------------------------')
-            console.log('propWidget ', this.propWidget)
-            console.log('dataToShow ', this.dataToShow)
-            console.groupEnd()
-
             this.createColumnDefinitions()
             this.setFacetData()
             this.gridApi.setColumnDefs(this.gridColumns)
@@ -320,11 +293,6 @@ export default defineComponent({
             this.gridApi = params.api
             this.columnApi = params.columnApi
 
-            console.group('ON GRID READY HOOK ------------------------------------')
-            console.log('propWidget ', this.propWidget)
-            console.log('dataToShow ', this.dataToShow)
-            console.groupEnd()
-
             this.setGridData()
             this.setHeaderHeight()
         },
@@ -362,14 +330,10 @@ export default defineComponent({
             for (const datasetColumn in this.propWidget.columns) {
                 for (const responseField in responseFields) {
                     const modelColumn = this.propWidget.columns[datasetColumn]
-                    // const responseColumn = responseFields[responseField]
 
                     if (typeof responseFields[responseField] == 'object' && ((dataset.type == 'SbiSolrDataSet' && modelColumn.alias.toLowerCase() === responseFields[responseField].header) || modelColumn.alias.toLowerCase() === responseFields[responseField].header.toLowerCase())) {
-                        // console.log('responseColumn', responseColumn)
-                        // console.log('modelColumn HIDE : ', modelColumn)
-
                         const tempCol = {
-                            hide: false, //TODO: implement hide condition
+                            hide: false,
                             colId: modelColumn.id,
                             headerName: modelColumn.alias,
                             columnName: modelColumn.columnName,
@@ -440,7 +404,6 @@ export default defineComponent({
                 this.gridApi?.refreshCells({ force: true })
             }
         }
-
         //#endregion ================================================================================================
     }
 })
