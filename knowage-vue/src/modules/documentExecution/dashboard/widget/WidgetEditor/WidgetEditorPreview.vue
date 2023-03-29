@@ -1,10 +1,5 @@
 <template>
     <div ref="widgetPreviewContainer" class="widget-editor-preview-container p-d-flex p-flex-column p-ai-stretch p-jc-center kn-overflow">
-        <div class="preview-buttons-container p-d-flex" style="position: absolute; top: 38px; right: 10px">
-            <Button icon="fas fa-maximize" class="p-button-rounded p-button-text p-button-plain expand-button" @click="toggleExpandPreview" />
-            <Button icon="fas fa-rotate-right" class="p-button-rounded p-button-text p-button-plain" @click="getWidgetData" />
-        </div>
-
         <ProgressBar v-if="loading || customChartLoading" class="p-mx-2" mode="indeterminate" />
         <div class="widget-container p-mx-2" :style="getWidgetContainerStyle()">
             <div v-if="widgetTitle && widgetTitle.enabled" class="p-d-flex p-ai-center" style="border-radius: 0px" :style="getWidgetTitleStyle()">
@@ -47,18 +42,17 @@
 import { defineComponent, PropType } from 'vue'
 import { IDashboardDataset, ISelection, IVariable, IWidget } from '../../Dashboard'
 import { getWidgetStyleByType } from '../TableWidget/TableWidgetHelper'
-import mock from '../../dataset/DatasetEditorTestMocks.json'
-import descriptor from '../../dataset/DatasetEditorDescriptor.json'
-import TableWidget from '../TableWidget/TableWidget.vue'
-import SelectorWidget from '../SelectorWidget/SelectorWidget.vue'
-import ActiveSelectionsWidget from '../ActiveSelectionsWidget/ActiveSelectionsWidget.vue'
 import { emitter } from '../../DashboardHelpers'
 import { getWidgetData } from '../../DataProxyHelper'
-import ProgressBar from 'primevue/progressbar'
 import { mapState, mapActions } from 'pinia'
+import descriptor from '../../dataset/DatasetEditorDescriptor.json'
+import ProgressBar from 'primevue/progressbar'
 import store from '../../Dashboard.store'
 import mainStore from '@/App.store'
 import deepcopy from 'deepcopy'
+import TableWidget from '../TableWidget/TableWidget.vue'
+import SelectorWidget from '../SelectorWidget/SelectorWidget.vue'
+import ActiveSelectionsWidget from '../ActiveSelectionsWidget/ActiveSelectionsWidget.vue'
 import WebComponentContainer from '../WebComponent/WebComponentContainer.vue'
 import HighchartsContainer from '../ChartWidget/Highcharts/HighchartsContainer.vue'
 import ChartJSContainer from '../ChartWidget/ChartJS/ChartJSContainer.vue'
@@ -79,7 +73,6 @@ export default defineComponent({
         return {
             descriptor,
             widgetTitle: null as any,
-            mock,
             widgetData: {} as any,
             loading: false,
             activeSelections: [] as ISelection[],
@@ -137,20 +130,13 @@ export default defineComponent({
         getWidgetPadding() {
             const styleString = getWidgetStyleByType(this.propWidget, 'padding')
             return styleString
-        },
-        toggleExpandPreview() {
-            const widgetPreviewContainerRef = this.$refs.widgetPreviewContainer as any
-            widgetPreviewContainerRef.classList.toggle('expand')
-            setTimeout(() => {
-                emitter.emit('widgetResized', this.propWidget)
-            }, 250)
         }
     }
 })
 </script>
 <style lang="scss" scoped>
 .widget-editor-preview-container {
-    flex: 0.5;
+    flex: 10000;
     border-left: 1px solid #ccc;
     .widget-container {
         display: flex;
@@ -165,8 +151,5 @@ export default defineComponent({
             overflow: hidden;
         }
     }
-}
-.widget-editor-preview-container.expand {
-    flex: 10000;
 }
 </style>

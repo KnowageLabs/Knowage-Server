@@ -70,4 +70,9 @@ public class CustomDataDTO {
 		this.modelName = modelName;
 	}
 
+	@Override
+	public String toString() {
+		return "CustomDataDTO [templateContent=" + templateContent + ", modelName=" + modelName + "]";
+	}
+
 }

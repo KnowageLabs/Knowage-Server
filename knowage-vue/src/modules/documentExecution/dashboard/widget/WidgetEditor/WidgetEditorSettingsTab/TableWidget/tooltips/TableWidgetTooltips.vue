@@ -60,6 +60,7 @@
                     <div class="p-col-12 p-md-9 p-d-flex p-flex-column p-px-2">
                         <label class="kn-material-input-label">{{ $t('common.text') }}</label>
                         <InputText v-model="tooltip.header.text" class="kn-material-input p-inputtext-sm" :disabled="!tooltip.enabled || !tooltip.header.enabled" @change="tooltipsChanged" />
+                        <small>{{ $t('dashboard.widgetEditor.inputHintForTooltips') }}</small>
                     </div>
                 </div>
             </div>
