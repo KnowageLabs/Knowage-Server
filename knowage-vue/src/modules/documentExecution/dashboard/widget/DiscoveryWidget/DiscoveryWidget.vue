@@ -1,9 +1,9 @@
 <template>
-    <div ref="discoveryContainer" class="discovery-container" v-resize="onWidgetSizeChange">
+    <div ref="discoveryContainer" v-resize="onWidgetSizeChange" class="discovery-container">
         <ProgressSpinner v-if="widgetLoading" class="kn-progress-spinner" />
         <div class="kn-width-full p-d-flex">
             <Button v-if="widgetWidth < 600 && displayFacets" :icon="burgerIcon" class="p-button-text p-button-rounded p-button-plain p-as-center" @click="toggleFacets" />
-            <InputText v-if="displaySearch" class="discovery-search kn-material-input kn-flex p-mb-2" v-model="searchWord" type="text" :placeholder="$t('common.search')" @keyup.enter="searchItems" />
+            <InputText v-if="displaySearch" v-model="searchWord" class="discovery-search kn-material-input kn-flex p-mb-2" type="text" :placeholder="$t('common.search')" @keyup.enter="searchItems" />
         </div>
         <div class="discovery-content">
             <div v-if="displayFacets" ref="facetsContainer" :class="{ sidenav: widgetWidth < 600 }" class="facets-container dashboard-scrollbar p-mr-2" :style="getFacetWidth()">
@@ -17,10 +17,11 @@
                     </Toolbar>
                     <div v-if="!facet.closed">
                         <div
-                            v-for="row in facet.rows.slice(0, propWidget.settings.facets.limit)"
+                            v-for="(row, index) in facet.rows.slice(0, propWidget.settings.facets.limit)"
+                            :key="index"
+                            v-tooltip.top="facet.column_1"
                             :class="{ selected: isFacetSelected(facetName, row), blocked: isFacetBlocked(facetName, row) }"
                             class="facet-accordion-content selectable"
-                            v-tooltip.top="facet.column_1"
                             @click="selectFacet(facetName, row)"
                         >
                             <!-- <span v-if="facet.metaData.type == 'date'" class="kn-truncated">
@@ -39,8 +40,8 @@
                 </div>
             </div>
             <div class="table-container">
-                <ag-grid-vue v-if="!gridLoading" class="discovery-grid ag-theme-alpine kn-flex discovery-grid-scrollbar" :gridOptions="gridOptions"></ag-grid-vue>
-                <PaginationRenderer class="discovery-pagination" :propWidgetPagination="propWidget.settings.pagination" @pageChanged="$emit('pageChanged')" />
+                <ag-grid-vue v-if="!gridLoading" class="discovery-grid ag-theme-alpine kn-flex discovery-grid-scrollbar" :grid-options="gridOptions"></ag-grid-vue>
+                <PaginationRenderer class="discovery-pagination" :prop-widget-pagination="propWidget.settings.pagination" @page-changed="$emit('pageChanged')" />
             </div>
         </div>
     </div>
@@ -49,7 +50,7 @@
 <script lang="ts">
 import { emitter } from '../../DashboardHelpers'
 import { mapActions } from 'pinia'
-import { IDashboardDataset, IDataset, ISelection, IWidget } from '../../Dashboard'
+import { IDataset, ISelection, IWidget } from '../../Dashboard'
 import { defineComponent, PropType } from 'vue'
 import { AgGridVue } from 'ag-grid-vue3' // the AG Grid Vue Component
 import { updateStoreSelections } from '../interactionsHelpers/InteractionHelper'
@@ -65,7 +66,6 @@ import ProgressSpinner from 'primevue/progressspinner'
 
 export default defineComponent({
     name: 'table-widget',
-    emits: ['pageChanged', 'facetsChanged', 'searchWordChanged', 'launchSelection'],
     components: { AgGridVue, PaginationRenderer, ProgressSpinner },
     props: {
         widgetLoading: { type: Boolean, required: true },
@@ -75,6 +75,46 @@ export default defineComponent({
         dataToShow: { type: Object as any, required: true },
         propActiveSelections: { type: Array as PropType<ISelection[]>, required: true },
         dashboardId: { type: String, required: true }
+    },
+    emits: ['pageChanged', 'facetsChanged', 'searchWordChanged', 'launchSelection'],
+    setup() {
+        const store = dashboardStore()
+        const appStore = mainStore()
+        return { store, appStore }
+    },
+    data() {
+        return {
+            tableData: [] as any,
+            activeSelections: [] as ISelection[],
+            searchWord: '',
+            widgetWidth: 0 as number,
+            facetSidenavShown: false,
+            facetsToDisplay: {} as any,
+            gridColumns: [] as any[],
+            gridRows: [] as any[],
+            gridOptions: null as any,
+            gridApi: null as any,
+            columnApi: null as any,
+            gridLoading: false,
+            selectedColumn: false as any,
+            getRowId: null as any
+        }
+    },
+    computed: {
+        burgerIcon(): string {
+            if (this.facetSidenavShown) return 'fas fa-x'
+            else return 'fas fa-bars'
+        },
+        displayFacets(): boolean {
+            const facetSettings = this.propWidget.settings.facets
+            if (facetSettings.enabled) return true
+            else return false
+        },
+        displaySearch(): boolean {
+            const searchSettings = this.propWidget.settings.search
+            if (searchSettings.enabled) return true
+            else return false
+        }
     },
     watch: {
         propWidget: {
@@ -99,46 +139,6 @@ export default defineComponent({
         propActiveSelections() {
             // this.loadActiveSelections()
         }
-    },
-    computed: {
-        burgerIcon(): string {
-            if (this.facetSidenavShown) return 'fas fa-x'
-            else return 'fas fa-bars'
-        },
-        displayFacets(): boolean {
-            let facetSettings = this.propWidget.settings.facets
-            if (facetSettings.enabled) return true
-            else return false
-        },
-        displaySearch(): boolean {
-            let searchSettings = this.propWidget.settings.search
-            if (searchSettings.enabled) return true
-            else return false
-        }
-    },
-    data() {
-        return {
-            tableData: [] as any,
-            activeSelections: [] as ISelection[],
-            searchWord: '',
-            widgetWidth: 0 as number,
-            facetSidenavShown: false,
-            facetsToDisplay: {} as any,
-            //ag-grid-stuff
-            gridColumns: [] as any[],
-            gridRows: [] as any[],
-            gridOptions: null as any,
-            gridApi: null as any,
-            columnApi: null as any,
-            gridLoading: false,
-            selectedColumn: false as any,
-            getRowId: null as any
-        }
-    },
-    setup() {
-        const store = dashboardStore()
-        const appStore = mainStore()
-        return { store, appStore }
     },
     created() {
         console.group('CREATED HOOK ------------------------------------')
@@ -204,13 +204,13 @@ export default defineComponent({
             const temp = this.$refs['discoveryContainer'] as any
             this.widgetWidth = temp.clientHeight
         },
-        onWidgetSizeChange({ width, height, offsetWidth, offsetHeight }) {
+        onWidgetSizeChange({ width }) {
             this.widgetWidth = width
             if (width > 600) this.facetSidenavShown = false
         },
         searchItems() {
             if (this.editorMode) return
-            let searchSettings = this.propWidget.settings.search
+            const searchSettings = this.propWidget.settings.search
             if (searchSettings.columns.length > 0) {
                 searchSettings.searchWord = this.searchWord
                 this.$emit('searchWordChanged')
@@ -218,15 +218,15 @@ export default defineComponent({
         },
         //#region ===================== Facet Logic ====================================================
         getFacetWidth() {
-            let facetSettings = this.propWidget.settings.facets
+            const facetSettings = this.propWidget.settings.facets
             if (this.widgetWidth >= 600) return { width: facetSettings.width }
             else return {}
         },
         setFacetData() {
             if (this.displayFacets && this.tableData.facets) {
-                let facetSettings = this.propWidget.settings.facets
+                const facetSettings = this.propWidget.settings.facets
 
-                var facetKeys = Object.keys(this.tableData.facets)
+                const facetKeys = Object.keys(this.tableData.facets)
                 if (facetKeys) {
                     facetKeys.forEach((facetName) => {
                         if (facetSettings.columns.includes(facetName)) {
@@ -238,8 +238,8 @@ export default defineComponent({
             }
         },
         setFacetAccordionState() {
-            let facetSettings = this.propWidget.settings.facets
-            let facetSearchParams = this.propWidget.settings.search.facetSearchParams
+            const facetSettings = this.propWidget.settings.facets
+            const facetSearchParams = this.propWidget.settings.search.facetSearchParams
 
             if (facetSettings.closedByDefault) {
                 Object.keys(this.facetsToDisplay).forEach((facet) => {
@@ -253,13 +253,13 @@ export default defineComponent({
             }
         },
         isFacetSelected(facetName, row) {
-            let facetSearchParams = this.propWidget.settings.search.facetSearchParams
+            const facetSearchParams = this.propWidget.settings.search.facetSearchParams
             if (facetSearchParams[facetName] && facetSearchParams[facetName].includes(row.column_1)) return true
             else return false
         },
         isFacetBlocked(facetName, row) {
-            let facetSearchParams = this.propWidget.settings.search.facetSearchParams
-            let facetBrotherSelected = facetSearchParams[facetName] && facetSearchParams[facetName].length > 0 && !facetSearchParams[facetName].includes(row.column_1)
+            const facetSearchParams = this.propWidget.settings.search.facetSearchParams
+            const facetBrotherSelected = facetSearchParams[facetName] && facetSearchParams[facetName].length > 0 && !facetSearchParams[facetName].includes(row.column_1)
 
             if (row.column_2 == 0 || facetBrotherSelected) return true
             else return false
@@ -271,14 +271,15 @@ export default defineComponent({
         },
         selectFacet(facetName, row) {
             if (this.isFacetBlocked(facetName, row)) return
-            let facetSettings = this.propWidget.settings.facets
+            const facetSettings = this.propWidget.settings.facets
             if (facetSettings.selection) {
                 //if there are any search params, empty them, now we are doing selection not search
+                // eslint-disable-next-line vue/no-mutating-props
                 this.propWidget.settings.search.facetSearchParams = {}
                 //TODO: Selection logic
                 updateStoreSelections(createNewTableSelection([row['column_1']], facetName, this.propWidget, this.datasets), this.activeSelections, this.dashboardId, this.setSelections, this.$http)
             } else {
-                let facetSearchParams = this.propWidget.settings.search.facetSearchParams
+                const facetSearchParams = this.propWidget.settings.search.facetSearchParams
                 if (facetSearchParams[facetName] && !facetSearchParams[facetName].includes(row.column_1)) {
                     facetSearchParams[facetName].push(row.column_1)
                 } else if (facetSearchParams[facetName] && facetSearchParams[facetName].includes(row.column_1)) {
@@ -328,8 +329,8 @@ export default defineComponent({
             this.setHeaderHeight()
         },
         setHeaderHeight() {
-            let headerConfig = this.propWidget.settings.style.headers
-            this.gridApi?.setHeaderHeight(this.propWidget.settings.style.headers.height)
+            const headerConfig = this.propWidget.settings.style.headers
+            this.gridApi?.setHeaderHeight(headerConfig.height)
         },
         getRowHeight() {
             const rowsConfiguration = this.propWidget.settings.style.rows
@@ -337,7 +338,7 @@ export default defineComponent({
             else return 25
         },
         getRowStyle(params) {
-            var rowStyles = this.propWidget.settings.style.rows
+            const rowStyles = this.propWidget.settings.style.rows
 
             if (rowStyles.alternatedRows && rowStyles.alternatedRows.enabled) {
                 if (rowStyles.alternatedRows.oddBackgroundColor && params.node.rowIndex % 2 === 0) {
@@ -354,20 +355,20 @@ export default defineComponent({
         },
         async createColumnDefinitions() {
             this.gridLoading = true
-            var columns = [] as any
-            var dataset = { type: 'SbiFileDataSet' }
-            var responseFields = this.tableData?.metaData?.fields
+            const columns = [] as any
+            const dataset = { type: 'SbiFileDataSet' }
+            const responseFields = this.tableData?.metaData?.fields
 
-            for (var datasetColumn in this.propWidget.columns) {
-                for (var responseField in responseFields) {
-                    let modelColumn = this.propWidget.columns[datasetColumn]
-                    let responseColumn = responseFields[responseField]
+            for (const datasetColumn in this.propWidget.columns) {
+                for (const responseField in responseFields) {
+                    const modelColumn = this.propWidget.columns[datasetColumn]
+                    // const responseColumn = responseFields[responseField]
 
                     if (typeof responseFields[responseField] == 'object' && ((dataset.type == 'SbiSolrDataSet' && modelColumn.alias.toLowerCase() === responseFields[responseField].header) || modelColumn.alias.toLowerCase() === responseFields[responseField].header.toLowerCase())) {
                         // console.log('responseColumn', responseColumn)
                         // console.log('modelColumn HIDE : ', modelColumn)
 
-                        var tempCol = {
+                        const tempCol = {
                             hide: false, //TODO: implement hide condition
                             colId: modelColumn.id,
                             headerName: modelColumn.alias,
@@ -380,10 +381,11 @@ export default defineComponent({
                         } as any
 
                         // COLUMN STYLE ---------------------------------------------------------------------------
-                        var columnStyles = this.propWidget.settings.style.columns
+                        const columnStyles = this.propWidget.settings.style.columns
 
                         if (columnStyles.enabled) {
-                            var columnStyleString = null as any
+                            let columnStyleString = null as any
+                            // eslint-disable-next-line @typescript-eslint/no-unused-vars
                             columnStyleString = Object.entries(columnStyles.styles[0].properties)
                                 .map(([k, v]) => `${k}:${v}`)
                                 .join(';')
@@ -396,13 +398,13 @@ export default defineComponent({
                                 }
                             })
 
-                            tempCol.cellStyle = (params) => {
+                            tempCol.cellStyle = () => {
                                 return columnStyles.styles[0].properties
                             }
                         }
 
                         // TOOLTIP CONFIGURATION  -----------------------------------------------------------------
-                        var tooltipConfig = this.getColumnTooltipConfig(tempCol.colId)
+                        const tooltipConfig = this.getColumnTooltipConfig(tempCol.colId)
                         if (tooltipConfig !== null) {
                             tempCol.tooltipComponent = TooltipRenderer
                             tempCol.tooltipField = tempCol.field
@@ -421,8 +423,8 @@ export default defineComponent({
             this.gridLoading = false
         },
         getColumnTooltipConfig(colId) {
-            var tooltipConfig = this.propWidget.settings.tooltips
-            var columntooltipConfig = null as any
+            const tooltipConfig = this.propWidget.settings.tooltips
+            let columntooltipConfig = null as any
             tooltipConfig[0].enabled ? (columntooltipConfig = tooltipConfig[0]) : ''
             tooltipConfig.forEach((config) => {
                 config.target.includes(colId) ? (columntooltipConfig = config) : ''
