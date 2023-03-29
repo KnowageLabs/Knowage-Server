@@ -47,7 +47,7 @@ class NewsFeed {
 
 	private Set<String> alreadyScheduledTenant = new HashSet<>();
 
-	public NewsFeed() {
+	NewsFeed() {
 		super();
 	}
 
