@@ -41,7 +41,9 @@ export class KnowageHighchartsHeatmapChart extends KnowageHighcharts {
         const seriesColumnKey = this.getSeriesColumnKey(data, widgetModel)
         console.log('getSeriesColumnKey: ', seriesColumnKey)
 
+        const categoryValuesMap = {}
         this.setAxisCategoriesData(data, widgetModel)
+        this.setCategoriesValuesMap = {}
 
         const modelSeries = this.model.series as IHighchartsHeatmapSerie[]
         modelSeries.map((item, serieIndex) => {
@@ -88,7 +90,7 @@ export class KnowageHighchartsHeatmapChart extends KnowageHighcharts {
             const setValues = Array.from(categoriesSet)
             setValues.forEach((value: any) => axisCategories.push(value))
         }
-        console.log('------ CATEGORIES SET: ', categoriesSet)
+        console.log('------ axisCategories: ', axisCategories)
     }
 
     getSeriesFromWidgetModel(widgetModel: IWidget) {
