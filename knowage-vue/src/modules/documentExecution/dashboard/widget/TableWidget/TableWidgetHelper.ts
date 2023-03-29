@@ -40,10 +40,11 @@ export const getColumnConditionalStyles = (propWidget: IWidget, colId: string, v
     const conditionalStyles = propWidget.settings.conditionalStyles
     let styleString = null as any
 
-    const columnConditionalStyles = conditionalStyles.conditions.filter((condition) => condition.target.includes(colId))
+    const columnConditionalStyles = conditionalStyles.conditions.filter((condition) => condition.target.includes(colId) || condition.condition.formula)
+
     if (columnConditionalStyles.length > 0) {
         for (let i = 0; i < columnConditionalStyles.length; i++) {
-            if (isConditionMet(columnConditionalStyles[i].condition, valueToCompare)) {
+            if ((columnConditionalStyles[i].condition.formula && isFormulaConditionMet(columnConditionalStyles[i].condition.formula, valueToCompare)) || (!columnConditionalStyles[i].condition.formula && isConditionMet(columnConditionalStyles[i].condition, valueToCompare))) {
                 if (columnConditionalStyles[i].applyToWholeRow && !returnString) {
                     styleString = columnConditionalStyles[i].properties
                 } else if (returnString) {
@@ -58,6 +59,32 @@ export const getColumnConditionalStyles = (propWidget: IWidget, colId: string, v
         }
     }
     return styleString
+}
+
+const isFormulaConditionMet = (formula, valueToCompare) => {
+    const formattedFormula = replacePlaceholders(formula, valueToCompare, false)
+    return eval(formattedFormula)
+}
+
+const replacePlaceholders = (text, data, skipAdapting) => {
+    function adaptToType(value) {
+        if (skipAdapting) return value
+        else return isNaN(value) ? '"' + value + '"' : value
+    }
+    // variables
+    text = text.replace(/\$V\{([a-zA-Z0-9_\-.]+)\}/g, (match, variable) => {
+        // return adaptToType(cockpitModule_properties.VARIABLES[variable])
+    })
+    // fields
+    text = text.replace(/\$F\{([a-zA-Z0-9_\-.]+)\}/g, (match, field) => {
+        return adaptToType(data[field])
+    })
+    // parameters
+    text = text.replace(/\$P\{([a-zA-Z0-9_\-.]+)\}/g, (match, parameter) => {
+        // var parameterKey = cockpitModule_analyticalDrivers[parameter + '_description'] ? parameter + '_description' : parameter
+        // return adaptToType(cockpitModule_analyticalDrivers[parameterKey])
+    })
+    return text
 }
 
 export const isConditionMet = (condition, valueToCompare) => {
