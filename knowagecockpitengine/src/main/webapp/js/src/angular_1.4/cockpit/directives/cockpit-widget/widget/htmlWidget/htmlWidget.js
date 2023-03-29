@@ -105,6 +105,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			$scope.ngModel.dataset.dsId = $scope.ngModel.datasetId;
 			delete $scope.ngModel.datasetId;
 		}
+		
+		$scope.sendMessage = function(info){
+			$scope.doSelection(null, null, null, null, info, null, null, null, "message");
+		}
 
 		$scope.showPreview = function(datasetLabel){
 			var dataset = cockpitModule_datasetServices.getDatasetByLabel(datasetLabel);
@@ -357,6 +361,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				  if (allElements[j] && allElements[j].hasAttribute("kn-preview")){
 				    	var datasetPreviewLabel = allElements[j].getAttribute("kn-preview");
 				    	allElements[j].setAttribute("ng-click", "showPreview('" + datasetPreviewLabel + "')");
+				    }
+				  if (allElements[j] && allElements[j].hasAttribute("kn-message")){
+				    	allElements[j].setAttribute("ng-click", "sendMessage('"+allElements[j].getAttribute("kn-message")+"')");
 				    }
 				  if (allElements[j] && allElements[j].hasAttribute("kn-cross")){
 				    	allElements[j].setAttribute("ng-click", "doSelection(null,'"+allElements[j].getAttribute("kn-cross")+"')");
