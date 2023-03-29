@@ -17,14 +17,15 @@
  */
 package it.eng.spagobi.workspace.dao;
 
-import it.eng.spagobi.commons.dao.ISpagoBIDao;
-import it.eng.spagobi.workspace.metadata.SbiObjFuncOrganizer;
-
 import java.util.List;
+
+import it.eng.spagobi.commons.dao.ISpagoBIDao;
+import it.eng.spagobi.workspace.bo.DocumentOrganizer;
+import it.eng.spagobi.workspace.metadata.SbiObjFuncOrganizer;
 
 public interface IObjFuncOrganizerDAO extends ISpagoBIDao {
 
-	public List loadDocumentsByFolder(Integer folderId);
+	public List<DocumentOrganizer> loadDocumentsByFolder(Integer folderId);
 
 	public SbiObjFuncOrganizer addDocumentToOrganizer(Integer documentId);
 
@@ -35,10 +36,10 @@ public interface IObjFuncOrganizerDAO extends ISpagoBIDao {
 	/**
 	 * The method that collects all Organizer documents available for current user. It does not look for a particular folder, but rather for all documents that
 	 * exist for the user.
-	 * 
+	 *
 	 * @return The list of all documents available in the user's Organizer.
 	 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 	 */
-	public List loadAllOrganizerDocuments();
+	public List<DocumentOrganizer> loadAllOrganizerDocuments();
 
 }
