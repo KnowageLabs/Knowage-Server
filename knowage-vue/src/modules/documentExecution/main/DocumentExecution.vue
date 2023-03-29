@@ -53,11 +53,11 @@
         <ProgressBar v-if="loading" class="kn-progress-bar" mode="indeterminate" />
         <div ref="document-execution-view" class="p-d-flex p-flex-row document-execution-view myDivToPrint">
             <div v-if="parameterSidebarVisible" :class="propMode === 'document-execution-cross-navigation-popup' ? 'document-execution-backdrop-popup-dialog' : 'document-execution-backdrop'" @click="parameterSidebarVisible = false"></div>
-            <div v-show="(filtersData && filtersData.isReadyForExecution && !loading && !schedulationsTableVisible) || newDashboardMode" class="kn-flex">
-                <Registry v-if="mode === 'registry'" :id="urlData?.sbiExecutionId" :reload-trigger="reloadTrigger"></Registry>
-                <Dossier v-else-if="mode === 'dossier'" :id="document.id" :reload-trigger="reloadTrigger" :filter-data="filtersData"></Dossier>
+            <div v-show="showExecutedDocument || newDashboardMode" class="kn-flex">
+                <Registry v-if="showExecutedDocument && mode === 'registry'" :id="urlData?.sbiExecutionId" :reload-trigger="reloadTrigger"></Registry>
+                <Dossier v-else-if="showExecutedDocument && mode === 'dossier'" :id="document.id" :reload-trigger="reloadTrigger" :filter-data="filtersData"></Dossier>
                 <Olap
-                    v-else-if="mode === 'olap'"
+                    v-else-if="showExecutedDocument && mode === 'olap'"
                     :id="urlData?.sbiExecutionId"
                     :olap-id="document.id"
                     :olap-name="document.label"
@@ -69,7 +69,7 @@
                     @executeCrossNavigation="executeOLAPCrossNavigation"
                 ></Olap>
                 <DashboardController
-                    v-else-if="propMode === 'document-execution-cross-navigation-popup' && document"
+                    v-else-if="showExecutedDocument && propMode === 'document-execution-cross-navigation-popup' && document"
                     :visible="filtersData && filtersData.isReadyForExecution && !loading"
                     :document="document"
                     :reload-trigger="reloadTrigger"
@@ -185,7 +185,7 @@ import UserFunctionalitiesConstants from '@/UserFunctionalitiesConstants.json'
 
 // @ts-ignore
 // eslint-disable-next-line
-window.execExternalCrossNavigation = function(outputParameters, otherOutputParameters, crossNavigationLabel) {
+window.execExternalCrossNavigation = function (outputParameters, otherOutputParameters, crossNavigationLabel) {
     postMessage(
         {
             type: 'crossNavigation',
@@ -290,7 +290,6 @@ export default defineComponent({
             crossNavigationDialogVisible: false
         }
     },
-
     computed: {
         ...mapState(mainStore, {
             user: 'user',
@@ -321,6 +320,9 @@ export default defineComponent({
                 }
             }
             return parameterVisible
+        },
+        showExecutedDocument() {
+            return this.filtersData && this.filtersData.isReadyForExecution && !this.loading && !this.schedulationsTableVisible
         }
     },
     watch: {
@@ -614,7 +616,9 @@ export default defineComponent({
         },
         async loadExporters() {
             if (!this.urlData || !this.urlData.engineLabel) return
-            await this.$http.get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/exporters/${this.urlData.engineLabel}`).then((response: AxiosResponse<any>) => (this.exporters = response.data.exporters))
+            if (!this.urlData || !this.urlData.engineLabel) return
+            const engineLabel = 'knowagedashboardengine' === this.urlData.engineLabel ? 'knowagecockpitengine' : this.urlData.engineLabel
+            await this.$http.get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/exporters/${engineLabel}`).then((response: AxiosResponse<any>) => (this.exporters = response.data.exporters))
         },
         async sendForm(documentLabel: string | null = null, crossNavigationPopupMode = false) {
             const tempIndex = this.breadcrumbs.findIndex((el: any) => el.label === this.document.name) as any

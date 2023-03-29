@@ -40,7 +40,7 @@
 			}
 		}
 
-		ms.getFeaturesDetails = function(geoColumn, selectedMeasure, config, configColumns, values){
+		ms.getFeaturesDetails = function(geoColumn, selectedMeasure, config, configColumns, values, externalLegend){
 			if (values != undefined){
 				var geoFieldName;
 				var geoFieldValue;
@@ -88,7 +88,7 @@
 									for (var i in feature) {
 										var currFeature = feature[i];
 
-										setCommonFeatureProperty(feature, values, geoFieldValue);
+										setCommonFeatureProperty(feature, values, geoFieldValue, externalLegend);
 
 										ms.setUpGeoJSONFeature(currFeature, config, row, configColumns, values);
 										ms.setUpSelectedMeasure(selectedMeasure, config, values);
@@ -97,7 +97,7 @@
 									}
 								} else {
 
-									setCommonFeatureProperty(feature, values, geoFieldValue);
+									setCommonFeatureProperty(feature, values, geoFieldValue, externalLegend);
 
 									ms.setUpGeoJSONFeature(feature, config, row, configColumns, values);
 									ms.setUpSelectedMeasure(selectedMeasure, config, values);
@@ -113,7 +113,7 @@
 									featureProjection: 'EPSG:3857'
 								});
 
-								setCommonFeatureProperty(feature, values, geoFieldValue);
+								setCommonFeatureProperty(feature, values, geoFieldValue, externalLegend);
 
 								ms.setUpWKTFeature(feature, config, row, configColumns, values);
 								ms.setUpSelectedMeasure(selectedMeasure, config, values);
@@ -131,7 +131,7 @@
 								//set ol objects
 								feature = new ol.Feature(geometry);
 
-								setCommonFeatureProperty(feature, values, geoFieldValue);
+								setCommonFeatureProperty(feature, values, geoFieldValue, externalLegend);
 
 								//at least add the layer owner
 								feature.set("parentLayer",  config.layerID);
@@ -155,9 +155,10 @@
 			return new ol.source.Vector();
 		}
 
-		function setCommonFeatureProperty(feature, values, geoFieldValue) {
+		function setCommonFeatureProperty(feature, values, geoFieldValue, externalLegend) {
 			feature.set("_spatial_attribute_value", geoFieldValue);
 			feature.set("stats", values.stats);
+			feature.set("legend", externalLegend);
 		}
 
 		function getOriginalSpatialValueFromFeature(feature) {
@@ -469,23 +470,32 @@
 				
 				var categoryCardinality = categoryStat.cardinality;
 
-				var indicator = feature.get(defaultIndicator);
+				var props = feature.getProperties();
+				var indicator = props[defaultIndicator];
 				var originalIndicatorValue = indicator.value;
 
-				indicator.value = new Array(categoryCardinality).fill(0);
-				
-				indicator.value[categoryValueIndex] = originalIndicatorValue;
+				var pieAggregation = {};
+				pieAggregation[categoryValue] = originalIndicatorValue;
+				feature.set("_pie_aggregation", pieAggregation);
+				feature.set("_pie_aggregator", categorizeBy);
 
 				source.addFeature(feature);
 			} else {
 				var cachedFeature = featureCache.get(originalSpatialValue);
-				var oldIndicator = cachedFeature.get(defaultIndicator);
+				var cachedFeatureProps = cachedFeature.getProperties();
+				var oldIndicator = cachedFeatureProps[defaultIndicator];
 				var oldIndicatorValue = oldIndicator.value;
 
-				var indicator = feature.get(defaultIndicator);
+				var props = feature.getProperties();
+				var indicator = props[defaultIndicator];
 				var originalIndicatorValue = indicator.value;
 
-				oldIndicatorValue[categoryValueIndex] = oldIndicatorValue[categoryValueIndex] + originalIndicatorValue;
+				var pieAggregation = cachedFeatureProps["_pie_aggregation"];
+				if (pieAggregation.hasOwnProperty(categoryValue)) {
+					pieAggregation[categoryValue] = pieAggregation[categoryValue] + originalIndicatorValue;
+				} else {
+					pieAggregation[categoryValue] = originalIndicatorValue;
+				}
 			}
 		}
 		

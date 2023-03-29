@@ -166,6 +166,7 @@
             </div>
          </md-card-content>
       </md-card>
+      
       <md-card  ng-if="!crossImage && !crossMap && !crossPivot && !crossText">
          <md-subheader class="switchSubheader">
             <md-switch ng-model="ngModel.preview.enable" ng-change="toggleEnabled('preview')"></md-switch>
@@ -407,6 +408,25 @@
                </div>
             </div>
          </div>
+         </md-card-content>
+      </md-card>
+      
+      
+      <!-- MESSAGE -->
+      <md-card ng-if="crossHtml || crossCustom">
+         <md-subheader class="switchSubheader">
+            <md-switch ng-model="ngModel.message.enable" ng-change="toggleEnabled('message')"></md-switch>
+            <span flex>{{translate.load("kn.cockpit.cross.message.title")}}</span>
+         </md-subheader>
+         <md-card-content ng-if="ngModel.message.enable">
+         	<div layout="row" layout-align="center center">
+         		<div class="kn-info" flex="80">
+         			{{translate.load("kn.cockpit.cross.message.hint")}}
+         		</div>
+         	</div>
+            <div class="smallCodeMirror">
+               <textarea id="json" ui-codemirror="editorOptionsMessageJSON" ng-model="ngModel.message.json" ui-refresh="reloadCodemirror" style="border: 1px solid #ccc"></textarea>
+            </div>
          </md-card-content>
       </md-card>
    </div>

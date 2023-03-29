@@ -96,4 +96,10 @@ public class SaveDocumentDTO {
 		this.folders = folders;
 	}
 
+	@Override
+	public String toString() {
+		return "SaveDocumentDTO [updateFromWorkspace=" + updateFromWorkspace + ", document=" + document + ", action=" + action + ", pathInfo=" + pathInfo
+				+ ", customData=" + customData + ", sourceData=" + sourceData + ", folders=" + folders + "]";
+	}
+
 }

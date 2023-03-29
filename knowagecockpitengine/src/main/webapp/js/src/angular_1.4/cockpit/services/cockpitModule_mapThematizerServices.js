@@ -15,7 +15,7 @@
 		var mts = this; // mapThematizerServices
 
 		var cacheSymbolMinMax;
-		var activeInd, activeConf, activeLegend;
+		var activeInd, activeConf;
 
 		// TODO : Replace all related logics and use styleCache2
 		var styleCache = {};
@@ -24,8 +24,37 @@
 		var styleCache2 = new Map();
 		
 		// Set the style cache before layer adding
-		mts.clearCache = function(layerName) {
+		mts.clearStyleCache = function(layerName) {
 			styleCache2.set(layerName, new Map());
+		}
+
+		mts.makeStyleCache = function(layerName, layerDef) {
+//			if (layerDef.visualizationType = "balloons") {
+//				var balloonConf = layerDef.balloonConf;
+//				var classes = balloonConf.classes || 2;
+//				var minSize = balloonConf.minSize;
+//				var maxSize = balloonConf.maxSize;
+//				
+//				if (classes < 2) {
+//					classes = 2;
+//				}
+//
+//				var ranges = math.range(minSize, maxSize, ( ( maxSize - minSize ) / ( classes-1 /* because we include the end */ ) ), true).toArray();
+//
+//				var styles = {};
+//				for (var i=0; i<classes; i++) {
+//					styles[i] = new ol.style.Style({
+//						image: new ol.style.Circle({
+//								radius: size,
+//								fill: new ol.style.Fill({color: color}),
+//								stroke: new ol.style.Stroke({color: borderColor, width: 1})
+//							}),
+//					});
+//				}
+//				
+//				debugger;
+//			}
+			
 		}
 		
 		function findIndicatorStats(indicator, stats) {
@@ -44,23 +73,26 @@
 
 			var props  = localFeature.getProperties();
 			var parentLayer = props["parentLayer"];
+			var externalLegend = props["legend"];
 			var config = mts.getActiveConf(parentLayer) || {};
 			var defaultIndicator = config.defaultIndicator;
 
 			mts.setActiveIndicator(defaultIndicator);
 
+			var visualizationType = config.visualizationType;
+
+			var isChoropleth = visualizationType == "choropleth";
+			var isHeatmap    = visualizationType == "heatmap";
+			var isCluster    = visualizationType == "clusters";
+			var isMarker     = visualizationType == "markers";
+			var isBalloon    = visualizationType == "balloons";
+			var isPie        = visualizationType == "pies";
+
 			var configThematizer = config.analysisConf || {};
-			var configMarker     = config.markerConf   || {};
-			var configCluster    = config.clusterConf  || {};
-			var configBalloon    = config.balloonConf  || {};
-			var configPie        = config.pieConf      || {};
 			var useCache = false; //cache isn't use for analysis, just with fixed marker
 			var isSimpleMarker = props["isSimpleMarker"];
 			var isCluster = (Array.isArray(feature.get('features'))) ? true : false;
 			var measureStat = findIndicatorStats(defaultIndicator, props["stats"]);
-			var visualizationType = config.visualizationType;
-			var isBalloon = visualizationType == "balloons";
-			var isPie = visualizationType == "pies";
 			var value;
 			var style;
 
@@ -70,46 +102,53 @@
 				value = (props[mts.getActiveIndicator()])  ? props[mts.getActiveIndicator()].value : undefined;
 			}
 
-			var thematized = false;
+//			var thematized = false;
 
-			if (config.visualizationType == 'choropleth') {
-				configThematizer.parentLayer = parentLayer;
-				if (!configMarker.style) configMarker.style = {};
-				if (isSimpleMarker)
-					configMarker.style.color = mts.getChoroplethColor(value, parentLayer) || "grey";
-				else{
-					style = mts.getChoroplethStyles(value, parentLayer, null);
-					thematized = true;
-				}
-			}
+//			if (config.visualizationType == 'choropleth') {
+//				configThematizer.parentLayer = parentLayer;
+//				if (!configMarker.style) configMarker.style = {};
+//				if (isSimpleMarker)
+//					configMarker.style.color = mts.getColorFromClassification(value, parentLayer) || "grey";
+//				else{
+//					style = mts.getChoroplethStyles(value, parentLayer, null);
+//					thematized = true;
+//				}
+//			}
 
-			if (!isSimpleMarker){
-				var fillColor   = (configMarker.style && configMarker.style.color)       ? configMarker.style.color       : "grey";
-				var borderColor = (configMarker.style && configMarker.style.borderColor) ? configMarker.style.borderColor : undefined;
+//			if (!isSimpleMarker){
+//				var fillColor   = (configMarker.style && configMarker.style.color)       ? configMarker.style.color       : "grey";
+//				var borderColor = (configMarker.style && configMarker.style.borderColor) ? configMarker.style.borderColor : undefined;
+//
+//				if (props[mts.getActiveIndicator()]
+//						&& props[mts.getActiveIndicator()].thresholdsConfig
+//						&& props[mts.getActiveIndicator()].thresholdsConfig.length != 0) {
+//					fillColor = mts.getColorByThresholds(value, props) || fillColor;
+//				}
+//
+//				style = mts.getChoroplethStyles(value, parentLayer, fillColor, borderColor);
+//				thematized = true;
+//			}
 
-				if (props[mts.getActiveIndicator()]
-						&& props[mts.getActiveIndicator()].thresholdsConfig
-						&& props[mts.getActiveIndicator()].thresholdsConfig.length != 0) {
-					fillColor = mts.getColorByThresholds(value, props) || fillColor;
-				}
-
-				style = mts.getChoroplethStyles(value, parentLayer, fillColor, borderColor);
-				thematized = true;
-			}
-
-
-			if (!thematized && isCluster && feature.get('features').length > 1 ){
-				style = mts.getClusterStyles(value, props, configCluster);
-				useCache = false;
-			} else if (!thematized && isBalloon) {
-				style = mts.getBalloonStyles(value, props, configBalloon, measureStat);
-				useCache = false;
-			} else if (!thematized && isPie) {
-				style = mts.getPieStyles(value, props, configPie, measureStat);
-				useCache = false;
-			} else if (!thematized) {
-				style = mts.getOnlyMarkerStyles(value, props, configMarker);
-				useCache = true;
+			if (isChoropleth) {
+				var configMarker = config.markerConf || {};
+				var extColor = mts.getColorFromClassification(externalLegend, value, parentLayer);
+				style = mts.getMarkerStyles(value, parentLayer, props, configMarker, extColor);
+			} else if (/* !thematized && */ isCluster && feature.get('features').length > 1 ){
+				var configCluster = config.clusterConf || {};
+				style = mts.getClusterStyles(value, parentLayer, props, configCluster);
+//				useCache = false;
+			} else if (/* !thematized && */ isBalloon) {
+				var balloonConf = config.balloonConf || {};
+				style = mts.getBalloonStyles(externalLegend, value, parentLayer, props, balloonConf, measureStat);
+//				useCache = false;
+			} else if (/* !thematized && */ isPie) {
+				var configPie = config.pieConf || {};
+				style = mts.getPieStyles(value, parentLayer, props, configPie, measureStat);
+//				useCache = false;
+			} else /* if (!thematized) */ {
+				var configMarker = config.markerConf || {};
+				style = mts.getMarkerStyles(value, parentLayer, props, configMarker);
+//				useCache = true;
 			}
 
 			if (useCache && !styleCache[parentLayer]) {
@@ -184,7 +223,7 @@
 			return Math.round(toReturn*100)/100; //max 2 decimals
 	    }
 
-	    mts.getClusterStyles = function (value, props, config){
+	    mts.getClusterStyles = function (value, parentLayer, props, config){
 	      var tmpSize =  (config.style && config.style['font-size']) ? config.style['font-size'] : '12px';
 	      var tmpFont = "bold " + tmpSize + " Roboto";
 	      return new ol.style.Style({
@@ -236,7 +275,7 @@
 		}
 
 		mts.getChoroplethStyles = function(value, parentLayer, fillColor, borderColor) {
-			var color =  mts.getChoroplethColor(value, parentLayer) || fillColor;
+			var color =  mts.getColorFromClassification(value, parentLayer) || fillColor;
 
 			return  [new ol.style.Style({
 				stroke: new ol.style.Stroke({
@@ -250,16 +289,16 @@
 
 		}
 
-		mts.getOnlyMarkerStyles = function (value, props, config){
+		mts.getMarkerStyles = function (value, parentLayer, props, config, extColor) {
 			var style;
-			var color;
+			var color = extColor;
 			var alpha;
 
-			if (props[mts.getActiveIndicator()] && props[mts.getActiveIndicator()].thresholdsConfig) color = mts.getColorByThresholds(value, props);
-			if (!color)	color =  (config.style && config.style.color) ? config.style.color : 'grey';
-//			if (!color)	color =  (config.style && config.style.color) ? mts.rgbaToHex(config.style.color) : 'grey';
-			if (!alpha) alpha = (config.style && config.style.color) ?  mts.rgbaToAlpha(config.style.color) : 1;
-
+			if (!color) color = mts.getColorFromClassification(value, parentLayer);
+			if (!color) color = mts.getColorByThresholds(value, props);
+			if (!color) color = (config.style && config.style.color) ? config.style.color : 'grey';
+//			if (!color) color = (config.style && config.style.color) ? mts.rgbaToHex(config.style.color) : 'grey';
+			if (!alpha) alpha = (config.style && config.style.color) ? mts.rgbaToAlpha(config.style.color) : 1;
 
 			switch(config.type) {
 
@@ -281,61 +320,62 @@
 			case "url": case 'img':
 				//img (upload)
 				style =  new ol.style.Style({
-				image: new ol.style.Icon(
-						/** @type {olx.style.IconOptions} */
-					({
-						stroke: new ol.style.Stroke({ //border doesn't work
-						color: 'red',
-						width: 10
-					}),
-					scale: (config.scale) ? (config.scale/100) : 1,
-					opacity: 1,
-					crossOrigin: null,
-					src: config[config.type]
-					}))
+					image: new ol.style.Icon({
+							stroke: new ol.style.Stroke({ //border doesn't work
+								color: 'red',
+								width: 10
+							}),
+							scale: (config.scale) ? (config.scale/100) : 1,
+							opacity: 1,
+							crossOrigin: null,
+							src: config[config.type]
+						})
 				});
 				break;
 
 			default:
 				var size = (config.size || 12);
 				var scale = size / 100;
-				var defaultImg = mts.getDefaultMarker(value, props, config);
+				var defaultImg = mts.getDefaultMarker(value, color, props, config);
 
-				style =  new ol.style.Style({
-				image: new ol.style.Icon(
-						/** @type {olx.style.IconOptions} */
-					({
+				style = new ol.style.Style({
+					image: new ol.style.Icon({
 						crossOrigin: 'anonymous',
 						opacity: alpha,
 						img: defaultImg,
 						imgSize: [100, 100],
 						scale: scale
 					})
-				)});
+				});
+
+//				style = new ol.style.Style({
+//					image: new ol.style.Circle({
+//							radius: size / 2,
+//							fill: new ol.style.Fill({color: color}),
+//							stroke: new ol.style.Stroke({color: "#000000", width: 1})
+//						})
+//				});
+
 				break;
 
 			}
 			return style;
 		}
 
-		mts.getBalloonStyles = function (value, props, config, measureStat){
+		mts.getBalloonStyles = function (externalLegend, value, parentLayer, props, config, measureStat){
 
 			var style;
 			var layerName = props["parentLayer"];
-			var minSize = config.minSize;
-			var maxSize = config.maxSize;
 
-			var unitSize = (maxSize - minSize) / measureStat.cardinality;
-			var perValueSize = minSize + (measureStat.distinct.indexOf(value) * unitSize);
-
-			var size = perValueSize;
+			var size = mts.getDimensionFromClassification(externalLegend, value, parentLayer);
 
 			if (!styleCache2.get(layerName).has(size)) {
 				var color;
 				var borderColor = config.borderColor ? config.borderColor : "rgba(0, 0, 0, 0.5)";
 				
-				if (props[mts.getActiveIndicator()] && props[mts.getActiveIndicator()].thresholdsConfig) color = mts.getColorByThresholds(value, props);
-				if (!color)	color = (config.color) ? config.color : "rgba(127, 127, 127, 0.5)";
+				color = mts.getColorFromClassification(externalLegend, value, parentLayer);
+				if (!color) color = mts.getColorByThresholds(value, props);
+				if (!color) color = (config.color) ? config.color : "rgba(127, 127, 127, 0.5)";
 				
 				style = new ol.style.Style({
 					image: new ol.style.Circle({
@@ -353,37 +393,38 @@
 			return style;
 		}
 
-		mts.getPieStyles = function (value, props, config, measureStat){
+		mts.getPieStyles = function (value, parentLayer, props, config, measureStat){
+
+			var pieAggregation = props["_pie_aggregation"];
+			var keys = Object.keys(pieAggregation);
+			var values = Object.values(pieAggregation);
 
 			var style;
 			var layerName = props["parentLayer"];
 			var minSize = config.minSize;
 			var maxSize = config.maxSize;
-			var total = value.reduce(function(a,c) { return a+c; }, 0) / value.length;
+			var total = values.reduce(function(a,c) { return a+c; }, 0) / values.length;
 
 			var unitSize = (maxSize - minSize) / measureStat.cardinality;
 			var perValueSize = minSize + ((measureStat.distinct.filter(e => e <= total).length-1) * unitSize);
 
 			var size = perValueSize;
 
-			if (!styleCache2.get(layerName).has(size)) {
+//			if (!styleCache2.get(layerName).has(size)) {
 				var borderColor = config.borderColor;
 				var type = config.type;
 				var fromColor = config.fromColor;
 				var toColor = config.toColor;
-				var stats = props["stats"];
-				var category = config.categorizeBy;
-				var categoryStats = findIndicatorStats(category, stats);
 
-				var grad = tinygradient([fromColor, toColor]);
-				var colors= grad.rgb(categoryStats.cardinality);
+				var tg = tinygradient([fromColor, toColor]);
+				var colors= tg.rgb(keys.length);
 
 				style = new ol.style.Style({
 					image: new ol.style.Chart({
 							type: type,
 							radius: size,
 							colors: colors,
-							data: value,
+							data: Object.values(pieAggregation),
 							stroke: new ol.style.Stroke({
 								color: borderColor,
 								width: 1
@@ -392,7 +433,7 @@
 				});
 				
 				styleCache2.get(layerName).set(size, style);
-			}
+//			}
 			
 			style = styleCache2.get(layerName).get(size);
 
@@ -405,11 +446,7 @@
 			mts.defaultMarkerCache = {};
 		}
 
-		mts.getDefaultMarker = function(value, props, config) {
-			var color;
-
-			if (props[mts.getActiveIndicator()] && props[mts.getActiveIndicator()].thresholdsConfig) color = mts.getColorByThresholds(value, props);
-			if (!color)	color =  (config.style && config.style.color) ? config.style.color : 'grey';
+		mts.getDefaultMarker = function(value, color, props, config) {
 
 			var layerName = props.parentLayer;
 			var key = "" + layerName + "|" + color;
@@ -425,38 +462,42 @@
 		}
 
 		mts.getColorByThresholds = function(value, props){
-			var config = props[mts.getActiveIndicator()].thresholdsConfig;
-			var toReturn = undefined;
-			var isEqualOp = false;
-
-			for (c in config){
-				var evalText = "";
-				var thr = config[c];
-				var idx = 0;
-				value= Number(value); //force conversion to number type
-				for (t in thr){
-					if (!isNaN(value) && typeof(thr['operator'+idx]) != 'undefined' && typeof(thr['val'+idx]) != 'undefined'){
-						if (evalText != "") evalText += " && ";
-						evalText += "(" + value + " " + thr['operator'+idx] + " " + thr['val'+idx] + " )";
-						if (thr['operator'+idx] == '==' && eval(evalText)) {
-							toReturn = thr['color'];
-							isEqualOp = true; //the equal operator has the priority
-							if (thr['warning'])
-								 props[mts.getActiveIndicator()]['showWarning'] = true;
+			if (props[mts.getActiveIndicator()] && props[mts.getActiveIndicator()].thresholdsConfig) {
+				var config = props[mts.getActiveIndicator()].thresholdsConfig;
+				var toReturn = undefined;
+				var isEqualOp = false;
+	
+				for (c in config){
+					var evalText = "";
+					var thr = config[c];
+					var idx = 0;
+					value= Number(value); //force conversion to number type
+					for (t in thr){
+						if (!isNaN(value) && typeof(thr['operator'+idx]) != 'undefined' && typeof(thr['val'+idx]) != 'undefined'){
+							if (evalText != "") evalText += " && ";
+							evalText += "(" + value + " " + thr['operator'+idx] + " " + thr['val'+idx] + " )";
+							if (thr['operator'+idx] == '==' && eval(evalText)) {
+								toReturn = thr['color'];
+								isEqualOp = true; //the equal operator has the priority
+								if (thr['warning'])
+									 props[mts.getActiveIndicator()]['showWarning'] = true;
+								break;
+							}
+						}else
 							break;
-						}
-					}else
-						break;
-					idx++;
+						idx++;
+					}
+					if (!isEqualOp && eval(evalText) == true) { //get the last color definition
+						toReturn = thr['color'];
+						if (thr['warning'])
+							 props[mts.getActiveIndicator()]['showWarning'] = true;
+					}
+	
 				}
-				if (!isEqualOp && eval(evalText) == true) { //get the last color definition
-					toReturn = thr['color'];
-					if (thr['warning'])
-						 props[mts.getActiveIndicator()]['showWarning'] = true;
-				}
-
+				return toReturn;
 			}
-			return toReturn;
+			
+			return null;
 		}
 
 		mts.setHeatmapWeight= function(feature){
@@ -466,67 +507,22 @@
 			var minmaxLabel = (layerIds.length > 1) ? layerIds[1] + '|' + config.defaultIndicator : layerIds[0] + '|' + config.defaultIndicator; //minMax uses just dslabel reference
 			var minmax = mts.getCacheSymbolMinMax()[minmaxLabel];
 			var props  = feature.getProperties();
-		    var p = feature.get(config.defaultIndicator);
+			var p = feature.get(config.defaultIndicator);
 
-		    if (!minmax == undefined || p.value === "")
-		    	return 0;
-
-		    // perform calculation to get weight between 0 - 1
-		    // apply formule: w = w-min/max-min (http://www.statisticshowto.com/normalized/)
-//		    weight = (p.value - minmax.minValue)/(minmax.maxValue-minmax.minValue);
-		    weight = (((p.value - minmax.minValue)/(minmax.maxValue-minmax.minValue))*(1-0.3))+0.3;
-		    weight = Math.round(weight * 1000) / 1000; //round 3 digits
-//		    console.log("p.value: " + p.value + " - weight: ", weight );
-		    return weight;
-		}
-
-		mts.getLegend = function (referenceId, visualizationType){
-		
-			console.log("Get legend for " + referenceId + " and visualization type " + visualizationType + " on following list of legend:", mts.activeLegend);
-
-			var toReturn = [];
-			for (l in mts.activeLegend){
-				var colors = "";
-				var limits = [];
-				var tmpLayerName = l.split("|");
-				if (tmpLayerName[0] == referenceId && mts.activeLegend[l] && mts.activeLegend[l].choroplet){
-					if (mts.activeLegend[l].method=="CLASSIFY_BY_RANGES" || visualizationType == 'Range') {
-						var ranges = [];
-						for (c in mts.activeLegend[l].choroplet){
-							var tmpConf = mts.activeLegend[l].choroplet[c];
-							if (tmpConf.from == null) tmpConf.from = "min";
-							if (tmpConf.to == null) tmpConf.to = "max";
-							ranges.push({"color": tmpConf.color, "from": tmpConf.from, "to":tmpConf.to});
-						}
-						toReturn.push({"layer": tmpLayerName[1], "alias": mts.activeLegend[l].alias, "method": mts.activeLegend[l].method, "dataNotAvailable": mts.activeLegend[l].dataNotAvailable, "ranges": ranges});
-					} else {
-						for (c in mts.activeLegend[l].choroplet){
-							var tmpConf = mts.activeLegend[l].choroplet[c];
-							if (tmpConf.color) colors += ", " + tmpConf.color;
-							if (limits.length == 0) limits.push(tmpConf.from);
-							if (limits.length >= 1) limits.splice(1, 1, tmpConf.to);
-						}
-						toReturn.push({"layer": tmpLayerName[1], "alias": mts.activeLegend[l].alias, "method": mts.activeLegend[l].method, "colors": colors, "limits": limits});
-					}
-				} else if (mts.activeLegend[l].visualizationType == "balloons") {
-					toReturn.push({"layer": tmpLayerName[1], "alias": mts.activeLegend[l].alias, visualizationType: mts.activeLegend[l].visualizationType, "style": mts.activeLegend[l].style});
-				} else if (mts.activeLegend[l].visualizationType == "pies") {
-					toReturn.push({"layer": tmpLayerName[1], "alias": mts.activeLegend[l].alias, visualizationType: mts.activeLegend[l].visualizationType, "ranges": mts.activeLegend[l].ranges});
-				}
+			if (!minmax == undefined || p.value === "") {
+				return 0;
 			}
 
-			console.log("Generated legend:", toReturn);
-
-			return toReturn;
+			// perform calculation to get weight between 0 - 1
+			// apply formule: w = w-min/max-min (http://www.statisticshowto.com/normalized/)
+			weight = (((p.value - minmax.minValue)/(minmax.maxValue-minmax.minValue))*(1-0.3))+0.3;
+			weight = Math.round(weight * 1000) / 1000; //round 3 digits
+			return weight;
 		}
 
-		mts.updateLegend = function(layerName, data, legendStyle){
+		mts.updateLegend = function(externalLegend, layerName, data, legendStyle){
 
 			console.log("Update legend for " + layerName + ":", data);
-
-			if (!mts.activeLegend) {
-				mts.activeLegend = {};
-			}
 
 			var config = mts.getActiveConf(layerName) || {};
 
@@ -537,69 +533,84 @@
 				return;
 			}
 
-			if (config.visualizationType == 'choropleth' && config.analysisConf) {
-				if (config.analysisConf.method == "CLASSIFY_BY_EQUAL_INTERVALS") {
-					mts.updateLegendForChoroplethAndIntervals(layerName, config, legendStyle, data);
-				} else if (config.analysisConf.method == "CLASSIFY_BY_QUANTILS") {
-					mts.updateLegendForChoroplethAndQuantils(layerName, config, legendStyle, data);
-				} else if (config.analysisConf.method == "CLASSIFY_BY_RANGES") {
-					mts.updateLegendForChoroplethAndRanges(layerName, config, legendStyle);
-				} else {
-					console.log("\tTemathization method [" + config.analysisConf.method + "] not supported");
-				}
+			if (config.visualizationType == 'choropleth') {
+				mts.updateLegendForChoropleth(externalLegend, layerName, config, legendStyle, data);
 			} else if(config.visualizationType == 'balloons') {
-				mts.updateLegendForBalloons(layerName, config, legendStyle, data);
+				mts.updateLegendForBalloons(externalLegend, layerName, config, legendStyle, data);
 			} else if(config.visualizationType == 'pies') {
-				mts.updateLegendForPies(layerName, config, legendStyle, data);
+				mts.updateLegendForPies(externalLegend, layerName, config, legendStyle, data);
 			} else {
 				console.log("\tWARNING: Legend not supported for visualization type: ", config.visualizationType);
 			}
 		}
 
-		mts.updateLegendForChoroplethAndIntervals = function(layerName, config, legendStyle, data) {
+		mts.updateLegendForChoropleth = function(externalLegend, layerName, config, legendStyle, data) {
+			if (config.analysisConf.method == "CLASSIFY_BY_EQUAL_INTERVALS") {
+				mts.updateLegendForChoroplethAndIntervals(externalLegend, layerName, config, legendStyle, data);
+			} else if (config.analysisConf.method == "CLASSIFY_BY_QUANTILS") {
+				mts.updateLegendForChoroplethAndQuantils(externalLegend, layerName, config, legendStyle, data);
+			} else if (config.analysisConf.method == "CLASSIFY_BY_RANGES") {
+				mts.updateLegendForChoroplethAndRanges(externalLegend, layerName, config, legendStyle);
+			} else {
+				console.log("\tClassification method not supported: " + config.analysisConf.method);
+			}
+		}
+
+		mts.updateLegendForChoroplethAndIntervals = function(externalLegend, layerName, config, legendStyle, data) {
 			console.log("\tUpdate legend for choropleth and intervals");
 
 			mts.setActiveIndicator(config.defaultIndicator);
 
-			if (!mts.activeLegend[layerName]) {
-				mts.activeLegend[layerName] = {
-					choroplet:[]
-				};
+			if (!externalLegend[layerName]) {
+				externalLegend[layerName] = { classification:[] };
 			}
 
-			mts.activeLegend[layerName].alias = config.alias;
-			mts.activeLegend[layerName].method = config.analysisConf.method;
+			var currLegend = externalLegend[layerName];
 
-			mts.updateChoroplethLegendGradient(layerName, config.analysisConf, config.analysisConf.classes);
+			currLegend.layer = layerName;
+			currLegend.alias = config.alias;
+			currLegend.visualizationType = "choropleth";
+			currLegend.method = config.analysisConf.method;
+
+			mts.updateChoroplethLegendGradient(externalLegend, layerName, config.analysisConf, config.analysisConf.classes);
 			var layerNameForMinMAx = layerName.split("|");
 
 			var minValue = mts.cacheSymbolMinMax[layerNameForMinMAx[1] + '|' + mts.getActiveIndicator()].minValue;
 			var maxValue = mts.cacheSymbolMinMax[layerNameForMinMAx[1] + '|' + mts.getActiveIndicator()].maxValue;
 			var split = (maxValue-minValue)/(config.analysisConf.classes);
 			for (var i=0; i<config.analysisConf.classes; i++) {
-				mts.activeLegend[layerName].choroplet[i].from = formatLegendValue((minValue+(split*i)),     legendStyle);
-				mts.activeLegend[layerName].choroplet[i].to   = formatLegendValue((minValue+(split*(i+1))), legendStyle);
+				var from = (minValue+(split*i));
+				var to   = (minValue+(split*(i+1)));
+				
+				currLegend.classification[i].from = from;
+				currLegend.classification[i].to   = to;
+
+				currLegend.classification[i].from_label = formatLegendValue(from, legendStyle);
+				currLegend.classification[i].to_label   = formatLegendValue(to,   legendStyle);
 			}
 
 			if (legendStyle.visualizationType == 'Range') {
-				updateLegendForRangeMode(layerName);
+				updateLegendForRangeMode(externalLegend, layerName);
 			}
-			console.log("\tRegular intervals legends: ", mts.activeLegend[layerName]);
+
+			console.log("\tLegend for choropleth and intervals: ", currLegend);
 		}
 
-		mts.updateLegendForChoroplethAndQuantils = function(layerName, config, legendStyle, data) {
+		mts.updateLegendForChoroplethAndQuantils = function(externalLegend, layerName, config, legendStyle, data) {
 			console.log("\tUpdate legend for choropleth and quantils");
 
 			mts.setActiveIndicator(config.defaultIndicator);
 
-			if (!mts.activeLegend[layerName]) {
-				mts.activeLegend[layerName] = {
-					choroplet:[]
-				};
+			if (!externalLegend[layerName]) {
+				externalLegend[layerName] = { classification:[] };
 			}
 
-			mts.activeLegend[layerName].alias = config.alias;
-			mts.activeLegend[layerName].method = config.analysisConf.method;
+			var currLegend = externalLegend[layerName];
+
+			currLegend.layer = layerName;
+			currLegend.alias = config.alias;
+			currLegend.visualizationType = "choropleth";
+			currLegend.method = config.analysisConf.method;
 
 			var values=[];
 			var columnName = mts.getColumnName(mts.getActiveIndicator(), data.metaData.fields);
@@ -612,134 +623,347 @@
 				return a - b;
 			});
 			var intervals = Number(values.length < config.analysisConf.classes ? values.length : config.analysisConf.classes );
-			mts.updateChoroplethLegendGradient(layerName, config.analysisConf, intervals);
+			mts.updateChoroplethLegendGradient(externalLegend, layerName, config.analysisConf, intervals);
 			var quantils = math.quantileSeq(values, intervals);
 
 			var binSize = Math.floor(values.length / intervals);
 			var k=0;
 			for (var i=0;i<values.length;i+=binSize) {
 				if (k>=intervals) {
-					mts.activeLegend[layerName].choroplet[intervals-1].to = values[i+binSize] || values[values.length-1];
+					currLegend.classification[intervals-1].to = values[i+binSize] || values[values.length-1];
 				} else {
-					mts.activeLegend[layerName].choroplet[k].from = formatLegendValue(values[i],                                    legendStyle);
-					mts.activeLegend[layerName].choroplet[k].to   = formatLegendValue(values[i+binSize] || values[values.length-1], legendStyle);
+					var from = values[i];
+					var to   = values[i+binSize] || values[values.length-1];
+
+					currLegend.classification[k].from = from;
+					currLegend.classification[k].to   = to;
+
+					currLegend.classification[k].from_label = formatLegendValue(from, legendStyle);
+					currLegend.classification[k].to_label   = formatLegendValue(to,   legendStyle);
+
 					k++;
 				}
 			}
-			console.log("\tQuantils legends: ", mts.activeLegend[layerName]);
+
+			console.log("\tLegend for choropleth and quantils: ", currLegend);
 		}
 
-		mts.updateLegendForChoroplethAndRanges = function(layerName, config, legendStyle ) {
+		mts.updateLegendForChoroplethAndRanges = function(externalLegend, layerName, config, legendStyle ) {
 			console.log("\tUpdate legend for choropleth and ranges");
 
 			mts.setActiveIndicator(config.defaultIndicator);
 
-			if (!mts.activeLegend[layerName]) {
-				mts.activeLegend[layerName] = {
-					choroplet:[]
-				};
+			if (!externalLegend[layerName]) {
+				externalLegend[layerName] = { classification:[] };
 			}
 
-			mts.activeLegend[layerName].alias = config.alias;
-			mts.activeLegend[layerName].method = config.analysisConf.method;
+			var currLegend = externalLegend[layerName];
+
+			currLegend.layer = layerName;
+			currLegend.alias = config.alias;
+			currLegend.visualizationType = "choropleth";
+			currLegend.method = config.analysisConf.method;
 
 			for (var i = config.analysisConf.properties.thresholds.length-1; i>=0; i--) {
 				var threshold = config.analysisConf.properties.thresholds[i];
-				mts.activeLegend[layerName].choroplet[i] = {
+				currLegend.classification[i] = {
 					color: threshold.color,
 					itemFeatures: []
 				};
-				mts.activeLegend[layerName].choroplet[i].from = formatLegendValue(threshold.from, legendStyle);
-				mts.activeLegend[layerName].choroplet[i].to   = formatLegendValue(threshold.to, legendStyle);
+				
+				var from = threshold.from;
+				var to   = threshold.to;
+				
+				currLegend.classification[i].from = from;
+				currLegend.classification[i].to   = to;
+				
+				currLegend.classification[i].from_label = formatLegendValue(from, legendStyle);
+				currLegend.classification[i].to_label   = formatLegendValue(to, legendStyle);
+			}
+
+			if (!currLegend.classification[0].from_label) {
+				currLegend.classification[0].from_label = "min";
+			}
+
+			if (!currLegend.classification[currLegend.classification.length-1].to_label) {
+				currLegend.classification[currLegend.classification.length-1].to_label = "max";
+			}
+
+			console.log("\tLegend for choropleth and ranges: ", currLegend);
+		}
+
+		mts.updateLegendForBalloons = function(externalLegend, layerName, config, legendStyle, data) {
+			if (config.balloonConf.method == "CLASSIFY_BY_EQUAL_INTERVALS") {
+				mts.updateLegendForBalloonsAndIntervals(externalLegend, layerName, config, legendStyle, data);
+			} else if (config.balloonConf.method == "CLASSIFY_BY_QUANTILS") {
+				mts.updateLegendForBalloonsAndQuantils(externalLegend, layerName, config, legendStyle, data);
+			} else if (config.balloonConf.method == "CLASSIFY_BY_RANGES") {
+				mts.updateLegendForBalloonsAndRanges(externalLegend, layerName, config, legendStyle, data);
+			} else {
+				console.log("\tClassification method not supported: " + config.analysisConf.method);
 			}
 		}
 
-		mts.updateLegendForBalloons = function(layerName, config, legendStyle, data) {
-			console.log("\tUpdate legend for balloons");
-
-			mts.setActiveIndicator(config.defaultIndicator);
-
-			if (!mts.activeLegend[layerName]) {
-				mts.activeLegend[layerName] = {};
-			}
-
-			var currLegend = mts.activeLegend[layerName];
+		mts.updateLegendForBalloonsAndIntervals = function(externalLegend, layerName, config, legendStyle, data) {
+			console.log("\tUpdate legend for balloons and intervals");
 
 			var balloonConf = config.balloonConf;
 
+			var classes     = balloonConf.classes;
+			var borderColor = balloonConf.borderColor;
+			var fromColor   = balloonConf.fromColor;
+			var toColor     = balloonConf.toColor;
+			var minSize     = balloonConf.minSize;
+			var maxSize     = balloonConf.maxSize;
+
+			if (classes < 2) {
+				classes = 2;
+			}
+
+			var defaultIndicator = config.defaultIndicator;
+			var measureStat = findIndicatorStats(defaultIndicator, data.stats);
+
+			var tg = tinygradient([fromColor, toColor]);
+			var gradients = tg.rgb(classes);
+			var dimensions = math.range(minSize, maxSize, ( ( maxSize - minSize ) / ( classes-1 /* because we include the end */ ) ), true).toArray();
+
+			mts.setActiveIndicator(defaultIndicator);
+
+			if (!externalLegend[layerName]) {
+				externalLegend[layerName] = { classification: [] };
+			}
+
+			var currLegend = externalLegend[layerName];
+
+			currLegend.classification = [];
+
+			currLegend.layer = layerName;
 			currLegend.alias = config.alias;
 			currLegend.visualizationType = "balloons";
-			currLegend.style = {
-				color: balloonConf.color,
-				borderColor: balloonConf.borderColor
+			currLegend.method = balloonConf.method;
+
+			var minValue = measureStat.min;
+			var maxValue = measureStat.max;
+			var split = (maxValue-minValue) / classes;
+			for (var i=0; i<classes; i++) {
+				var from = (minValue+(split*i));
+				var to   = (minValue+(split*(i+1)));
+
+				currLegend.classification[i] = {};
+
+				currLegend.classification[i].itemFeatures = [];
+				currLegend.classification[i].color = gradients[i].toRgbString();
+				currLegend.classification[i].borderColor = borderColor;
+				currLegend.classification[i].dimension = dimensions[i];
+
+				currLegend.classification[i].from = from;
+				currLegend.classification[i].to   = to;
+
+				currLegend.classification[i].from_label = formatLegendValue(from, legendStyle);
+				currLegend.classification[i].to_label   = formatLegendValue(to,   legendStyle);
 			}
 
-			console.log("\tLegend for balloons: ", currLegend);
+			console.log("\tLegend for balloons and intervals: ", currLegend);
 		}
 
-		mts.updateLegendForPies = function(layerName, config, legendStyle, data) {
-			console.log("\tUpdate legend for pies");
+		mts.updateLegendForBalloonsAndQuantils = function(externalLegend, layerName, config, legendStyle, data) {
+			console.log("\tUpdate legend for balloons and quantils");
 
-			mts.setActiveIndicator(config.defaultIndicator);
+			var balloonConf = config.balloonConf;
 
-			if (!mts.activeLegend[layerName]) {
-				mts.activeLegend[layerName] = {};
+			var classes     = balloonConf.classes;
+			var borderColor = balloonConf.borderColor;
+			var fromColor   = balloonConf.fromColor;
+			var toColor     = balloonConf.toColor;
+			var minSize     = balloonConf.minSize;
+			var maxSize     = balloonConf.maxSize;
+
+			if (classes < 2) {
+				classes = 2;
 			}
 
-			var currLegend = mts.activeLegend[layerName];
+			var defaultIndicator = config.defaultIndicator;
+			var measureStat = findIndicatorStats(defaultIndicator, data.stats);
 
-			var stats = data.stats;
+			var tg = tinygradient([fromColor, toColor]);
+			var gradients = tg.rgb(classes);
+			var dimensions = math.range(minSize, maxSize, ( ( maxSize - minSize ) / ( classes-1 /* because we include the end */ ) ), true).toArray();
+
+			mts.setActiveIndicator(defaultIndicator);
+
+			if (!externalLegend[layerName]) {
+				externalLegend[layerName] = { classification: [] };
+			}
+
+			var currLegend = externalLegend[layerName];
+
+			currLegend.classification = [];
+
+			currLegend.layer = layerName;
+			currLegend.alias = config.alias;
+			currLegend.visualizationType = "balloons";
+			currLegend.method = balloonConf.method;
+
+			var values = measureStat.distinct;
+
+			var intervals = Number(values.length < classes ? values.length : classes);
+
+			var binSize = Math.floor(values.length / intervals);
+			var k=0;
+			for (var i=0; i < values.length; i += binSize) {
+				if (k>=intervals) {
+					currLegend.classification[intervals-1].to = values[i+binSize] || values[values.length-1];
+
+					currLegend.classification[intervals-1].to_label = formatLegendValue(values[i+binSize] || values[values.length-1], legendStyle);
+				} else {
+					var from = values[i];
+					var to   = values[i+binSize] || values[values.length-1];
+
+					currLegend.classification[k] = {};
+
+					currLegend.classification[k].itemFeatures = [];
+					currLegend.classification[k].color = gradients[k].toRgbString();
+					currLegend.classification[k].borderColor = borderColor;
+					currLegend.classification[k].dimension = dimensions[k];
+
+					currLegend.classification[k].from = from;
+					currLegend.classification[k].to   = to;
+
+					currLegend.classification[k].from_label = formatLegendValue(from, legendStyle);
+					currLegend.classification[k].to_label   = formatLegendValue(to,   legendStyle);
+
+					k++;
+				}
+			}
+
+			console.log("\Legend for balloons and quantils: ", currLegend);
+		}
+
+		mts.updateLegendForBalloonsAndRanges = function(externalLegend, layerName, config, legendStyle, data) {
+			console.log("\tUpdate legend for balloons and ranges");
+
+			var balloonConf = config.balloonConf;
+
+			var borderColor = balloonConf.borderColor;
+			var classes     = balloonConf.properties.thresholds.length;
+			var minSize     = balloonConf.minSize;
+			var maxSize     = balloonConf.maxSize;
+
+//			if (classes < 2) {
+//				classes = 2;
+//			}
+
+			var defaultIndicator = config.defaultIndicator;
+			var measureStat = findIndicatorStats(defaultIndicator, data.stats);
+
+			var dimensions = math.range(minSize, maxSize, ( ( maxSize - minSize ) / ( classes-1 /* because we include the end */ ) ), true).toArray();
+
+			mts.setActiveIndicator(defaultIndicator);
+
+			if (!externalLegend[layerName]) {
+				externalLegend[layerName] = { classification:[] };
+			}
+
+			var currLegend = externalLegend[layerName];
+
+			currLegend.layer = layerName;
+			currLegend.alias = config.alias;
+			currLegend.visualizationType = "balloons";
+			currLegend.method = balloonConf.method;
+
+			for (var i = balloonConf.properties.thresholds.length-1; i>=0; i--) {
+				var threshold = balloonConf.properties.thresholds[i];
+				currLegend.classification[i] = {
+					color: threshold.color,
+					borderColor: borderColor,
+					dimension: dimensions[i],
+					itemFeatures: []
+				};
+				
+				var from = threshold.from;
+				var to   = threshold.to;
+				
+				currLegend.classification[i].from = from;
+				currLegend.classification[i].to   = to;
+				
+				currLegend.classification[i].from_label = formatLegendValue(from, legendStyle);
+				currLegend.classification[i].to_label   = formatLegendValue(to, legendStyle);
+			}
+
+			console.log("\tLegend for balloons and ranges: ", currLegend);
+		}
+
+		mts.updateLegendForPies = function(externalLegend, layerName, config, legendStyle, data) {
+			console.log("\tUpdate legend for choropleth and intervals");
+			
 			var pieConf = config.pieConf;
-			var category = pieConf.categorizeBy;
-			var fromColor = pieConf.fromColor;
-			var toColor = pieConf.toColor;
-			var categoryStats = findIndicatorStats(category, stats);
+
+			var category    = pieConf.categorizeBy;
+			var borderColor = pieConf.borderColor;
+			var fromColor   = pieConf.fromColor;
+			var toColor     = pieConf.toColor;
+
+			var categoryStats = findIndicatorStats(category, data.stats);
+			var categoryCardinality = categoryStats.cardinality;
 			var categoryDistinct = categoryStats.distinct;
+			
 
-			var grad = tinygradient([fromColor, toColor]);
-			var colors= grad.rgb(categoryStats.cardinality);
+			var classes = categoryCardinality;
+			var defaultIndicator = config.defaultIndicator;
 
+			var tg = tinygradient([fromColor, toColor]);
+			var gradients = tg.rgb(classes);
+
+			mts.setActiveIndicator(defaultIndicator);
+
+			if (!externalLegend[layerName]) {
+				externalLegend[layerName] = { classification:[] };
+			}
+
+			var currLegend = externalLegend[layerName];
+
+			currLegend.layer = layerName;
 			currLegend.alias = config.alias;
 			currLegend.visualizationType = "pies";
-			currLegend.ranges = [];
-			
-			for (var i=0; i<categoryDistinct.length; i++) {
-				currLegend.ranges.push({
-					color: colors[i],
-					value: categoryDistinct[i]
-				});
+
+			for (var i=0; i<classes; i++) {
+				currLegend.classification[i] = {};
+
+				currLegend.classification[i].category = categoryDistinct[i];
+				currLegend.classification[i].color = gradients[i].toRgbString();
+				currLegend.classification[i].borderColor = borderColor;
 			}
 
-			console.log("\tLegend for pies: ", currLegend);
 		}
 
-		var updateLegendForRangeMode = function (layerName){
-			var from = mts.activeLegend[layerName].choroplet[0].from;
-			var to = mts.activeLegend[layerName].choroplet[0].to;
+		var updateLegendForRangeMode = function(externalLegend, layerName){
+			var currLegend = externalLegend[layerName];
+			var from = currLegend.classification[0].from;
+			var to = currLegend.classification[0].to;
 			var onlyOneRange = true;
-			for (var i=0; i<mts.activeLegend[layerName].choroplet.length; i++) {
-				if (mts.activeLegend[layerName].choroplet[i].from != from || mts.activeLegend[layerName].choroplet[i].to != to) {
+			for (var i=0; i<currLegend.classification.length; i++) {
+				if (currLegend.classification[i].from != from || currLegend.classification[i].to != to) {
 					onlyOneRange = false;
 					break;
 				}
 			}
 			if (onlyOneRange) {
-				var choropletToKeep = mts.activeLegend[layerName].choroplet[0];
-				mts.activeLegend[layerName].choroplet = []; // reset choroplets
-				mts.activeLegend[layerName].choroplet[0] = choropletToKeep;
+				var choropletToKeep = currLegend.classification[0];
+				currLegend.classification = []; // reset choroplets
+				currLegend.classification[0] = choropletToKeep;
 			}
 
 			var dataNotAvailable = true;
-			for (var i=0; i<mts.activeLegend[layerName].choroplet.length; i++) {
-				if (!isNaN(mts.activeLegend[layerName].choroplet[i].from) || !isNaN(mts.activeLegend[layerName].choroplet[i].to)) {
+			for (var i=0; i<currLegend.classification.length; i++) {
+				if (!isNaN(currLegend.classification[i].from) || !isNaN(currLegend.classification[i].to)) {
 					dataNotAvailable = false;
 					break;
 				}
 			}
 			if (dataNotAvailable) {
-				mts.activeLegend[layerName].dataNotAvailable = true;
+				currLegend.dataNotAvailable = true;
 			} else {
-				mts.activeLegend[layerName].dataNotAvailable = false;
+				currLegend.dataNotAvailable = false;
 			}
 		}
 
@@ -759,21 +983,18 @@
 			return prefix + localeFormatted + suffix;
 		}
 
-		mts.removeLegends = function (){
-			 mts.activeLegend = {};
-		}
+		mts.updateChoroplethLegendGradient = function(externalLegend, layerName, chorConfig, numberGradient){
+			var tg = tinygradient([chorConfig.fromColor, chorConfig.toColor]);
+			var gradients= tg.rgb(numberGradient == 1 ? 2 : numberGradient); // ternary operator required to handle single line dataset
+			var currLegend = externalLegend[layerName];
+			currLegend.classification.length=0;
 
-		mts.updateChoroplethLegendGradient = function(layerName, chorConfig, numberGradient){
-			var grad = tinygradient([chorConfig.fromColor, chorConfig.toColor]);
-			var gradienti= grad.rgb(numberGradient == 1 ? 2 : numberGradient); // ternary operator required to handle single line dataset
-			mts.activeLegend[layerName].choroplet.length=0;
-
-			for(var i=0; i < gradienti.length; i++){
+			for(var i=0; i < gradients.length; i++){
 				var  tmpGrad={};
-				tmpGrad.color = gradienti[i].toRgbString();
+				tmpGrad.color = gradients[i].toRgbString();
 				tmpGrad.item = 0; //number of features in this range
 				tmpGrad.itemFeatures = []; //features in this range
-				mts.activeLegend[layerName].choroplet.push(tmpGrad);
+				currLegend.classification.push(tmpGrad);
 			}
 		}
 
@@ -794,8 +1015,6 @@
 			}
 			return (size < 0 ) ? 0 : size;
 		}
-
-
 
 		mts.getCacheSymbolMinMax=function(){
 			return mts.cacheSymbolMinMax || {};
@@ -832,30 +1051,66 @@
 			mts.setCacheSymbolMinMax(key, {minValue:minV, maxValue:maxV});
 		}
 
-		mts.getChoroplethColor = function(val,layerName){
-			if (!mts.activeLegend || !mts.activeLegend[layerName]) return;
+		mts.getColorFromClassification = function(externalLegend, val, layerName){
+			if (!externalLegend[layerName]) {
+				return;
+			}
 
-			var color;
+			var currLegend = externalLegend[layerName];
+			var classification = currLegend.classification;
+			var currIndicator = mts.getActiveIndicator();
+			var ret;
 			var value = Number(val);
 
-			for(var i=0; i < mts.activeLegend[layerName].choroplet.length; i++){
-				if(Number(val) >= Number( mts.activeLegend[layerName].choroplet[i].from) && Number(val) < Number( mts.activeLegend[layerName].choroplet[i].to)){
-					color = mts.activeLegend[layerName].choroplet[i].color;
-					if( mts.activeLegend[layerName].choroplet[i].itemFeatures.indexOf(mts.getActiveIndicator())==-1){
-						 mts.activeLegend[layerName].choroplet[i].itemFeatures.push(mts.getActiveIndicator());
-						 mts.activeLegend[layerName].choroplet[i].item++;
+			for(var i=0; i < classification.length; i++){
+				if(Number(val) >= Number(classification[i].from) && Number(val) < Number(classification[i].to)){
+					ret = classification[i].color;
+					if(classification[i].itemFeatures.indexOf(currIndicator) == -1){
+						classification[i].itemFeatures.push(currIndicator);
+						classification[i].item++;
 					}
 					break;
 				}
 			}
-			if(color==undefined){
-				color= mts.activeLegend[layerName].choroplet[ mts.activeLegend[layerName].choroplet.length-1].color;
-				if( mts.activeLegend[layerName].choroplet[ mts.activeLegend[layerName].choroplet.length-1].itemFeatures.indexOf(mts.getActiveIndicator())==-1){
-					 mts.activeLegend[layerName].choroplet[ mts.activeLegend[layerName].choroplet.length-1].itemFeatures.push(mts.getActiveIndicator());
-					 mts.activeLegend[layerName].choroplet[ mts.activeLegend[layerName].choroplet.length-1].item++;
+			if(ret == undefined){
+				ret = classification[classification.length-1].color;
+				if(classification[classification.length-1].itemFeatures.indexOf(currIndicator)==-1){
+					classification[classification.length-1].itemFeatures.push(currIndicator);
+					classification[classification.length-1].item++;
 				}
 			}
-			return color;
+			return ret;
+		}
+
+		mts.getDimensionFromClassification = function(externalLegend, val, layerName){
+			if (!externalLegend[layerName]) {
+				return;
+			}
+
+			var currLegend = externalLegend[layerName];
+			var classification = currLegend.classification;
+			var currIndicator = mts.getActiveIndicator();
+			var ret;
+			var value = Number(val);
+
+			for(var i=0; i < classification.length; i++){
+				if(Number(val) >= Number(classification[i].from) && Number(val) < Number(classification[i].to)){
+					ret = classification[i].dimension;
+					if(classification[i].itemFeatures.indexOf(currIndicator) == -1){
+						classification[i].itemFeatures.push(currIndicator);
+						classification[i].item++;
+					}
+					break;
+				}
+			}
+			if(ret == undefined){
+				ret = classification[classification.length-1].dimension;
+				if(classification[classification.length-1].itemFeatures.indexOf(currIndicator)==-1){
+					classification[classification.length-1].itemFeatures.push(currIndicator);
+					classification[classification.length-1].item++;
+				}
+			}
+			return ret;
 		}
 
 		mts.getColumnName = function(key, values){

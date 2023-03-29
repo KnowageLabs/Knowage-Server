@@ -88,7 +88,7 @@ public class HtmlSanitizer {
 				.allowWithoutAttributes("figure", "span")
 				.allowUrlProtocols("data")
 				// Knowage
-				.allowAttributes("kn-cross", "kn-if", "kn-import", "kn-repeat", "kn-preview", "kn-selection-column", "kn-selection-value", "limit").globally()
+				.allowAttributes("kn-cross", "kn-if", "kn-import", "kn-repeat", "kn-preview", "kn-selection-column", "kn-selection-value", "kn-message", "limit").globally()
 				// SVG
 				.allowElements("circle", "defs", "foreignobject", "g", "metadata", "path", "svg", "text", "tspan")
 				.allowElements("dc:format", "dc:title", "dc:type")

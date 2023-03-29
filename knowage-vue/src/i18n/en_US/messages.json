@@ -680,6 +680,7 @@
                 "uploadImage": "Upload Image"
             },
             "inputHintForPixels": "use px measure unit, ie: 5px",
+            "inputHintForTooltips": "This text will overwrite the column's header default tooltip. Variables and parameters placeholders are available.",
             "inside": "Inside",
             "interactions": {
                 "analyticalDriver": "Analytical Driver",

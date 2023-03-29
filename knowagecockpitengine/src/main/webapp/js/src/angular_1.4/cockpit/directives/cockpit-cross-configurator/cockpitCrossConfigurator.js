@@ -185,6 +185,15 @@ function cockpitCrossConfiguratorControllerFunction($scope,sbiModule_translate,c
         _editor.on("beforeChange", function() {});
         _editor.on("change", function() {});
     };
+    
+    $scope.codemirrorMessageLoaded = function(_editor) {
+        $scope._doc = _editor.getDoc();
+        $scope._editor = _editor;
+        _editor.focus();
+        $scope._doc.markClean()
+        _editor.on("beforeChange", function() {});
+        _editor.on("change", function() {});
+    };
 
     //codemirror options
     $scope.editorOptionsJSON = {
@@ -193,6 +202,14 @@ function cockpitCrossConfiguratorControllerFunction($scope,sbiModule_translate,c
         lineNumbers: true,
         mode: {name:"javascript"},
         onLoad: $scope.codemirrorLoaded
+    };
+    
+    $scope.editorOptionsMessageJSON = {
+        theme: 'eclipse',
+        lineWrapping: true,
+        lineNumbers: true,
+        mode: {name:"javascript"},
+        onLoad: $scope.codemirrorMessageLoaded
     };
 
 	$scope.chooseIcon = function(type, link){
@@ -313,7 +330,7 @@ function cockpitCrossConfiguratorControllerFunction($scope,sbiModule_translate,c
 	$scope.crossImage = !$scope.localModel && !$scope.$parent.newModel;
 
 	$scope.toggleEnabled = function(type){
-		var toggleArray = ['cross','preview','link'];
+		var toggleArray = ['cross','preview','link','message'];
 		if($scope.localModel) var crossModels = $scope.localModel;
 		if($scope.$parent && $scope.$parent.newModel) var crossModels = $scope.$parent.newModel.cross;
 		for(var k in toggleArray){
@@ -368,6 +385,7 @@ function cockpitCrossConfiguratorControllerFunction($scope,sbiModule_translate,c
 				if(tempOutPutArray.indexOf(k) == -1) delete $scope.ngModel.cross.outputParametersList[k];
 			}
 		}
+		if(!$scope.ngModel.message) $scope.ngModel.message = {json:"{\n\n}"}
 	}
 
 	$scope.resetCross=function(){

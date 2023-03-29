@@ -100,7 +100,7 @@ export default defineComponent({
         loadDatasets() {
             this.datasetOptions = []
             this.selectedDatasets?.forEach((dataset: IDataset) => {
-                if ((this.widgetModel.type !== 'discovery' && dataset.type !== 'SbiSolrDataSet') || (this.widgetModel.type === 'discovery' && dataset.type === 'SbiSolrDataSet')) {
+                if ((this.widgetModel.type === 'discovery' && dataset.type === 'SbiSolrDataSet') || this.widgetModel.type !== 'discovery') {
                     this.datasetOptions.push({
                         id: dataset.id.dsId,
                         label: dataset.label,
@@ -129,7 +129,6 @@ export default defineComponent({
         },
         onDatasetSelected() {
             this.loadDatasetColumns()
-
             if (this.model) {
                 this.model.dataset = this.selectedDataset ? this.selectedDataset.id : null
                 if (this.model.dataset !== this.selectedDataset?.id) this.removeSelectedColumnsFromModel()

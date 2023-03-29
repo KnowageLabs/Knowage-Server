@@ -22,7 +22,7 @@
                 <small>{{ $t('dashboard.widgetEditor.borders.bordersThicknessHint') }}</small>
             </div>
             <div class="p-col-12 p-md-4 p-px-2 p-pt-4">
-                <WidgetEditorColorPicker :initial-value="bordersStyleModel.properties['border-width']" :label="$t('dashboard.widgetEditor.borders.bordersColor')" :disabled="bordersStyleDisabled" @change="onSelectionColorChanged"></WidgetEditorColorPicker>
+                <WidgetEditorColorPicker :initial-value="bordersStyleModel.properties['border-color']" :label="$t('dashboard.widgetEditor.borders.bordersColor')" :disabled="bordersStyleDisabled" @change="onSelectionColorChanged"></WidgetEditorColorPicker>
             </div>
         </div>
 

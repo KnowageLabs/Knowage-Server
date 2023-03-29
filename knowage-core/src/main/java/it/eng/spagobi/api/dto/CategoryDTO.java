@@ -2,20 +2,31 @@ package it.eng.spagobi.api.dto;
 
 public class CategoryDTO {
 
+	private Integer id;
+
 	private String code;
 
 	private String name;
 
 	private String type;
 
-	private Integer occurences;
+	private Integer occurrences;
 
-	public CategoryDTO(String code, String name, String type, Integer occurences) {
+	public CategoryDTO(Integer id, String code, String name, String type, Integer occurrences) {
 		super();
+		this.id = id;
 		this.code = code;
 		this.name = name;
 		this.type = type;
-		this.occurences = occurences;
+		this.occurrences = occurrences;
+	}
+
+	public Integer getId() {
+		return id;
+	}
+
+	public void setId(Integer id) {
+		this.id = id;
 	}
 
 	public String getCode() {
@@ -42,12 +53,12 @@ public class CategoryDTO {
 		this.type = type;
 	}
 
-	public Integer getOccurences() {
-		return occurences;
+	public Integer getOccurrences() {
+		return occurrences;
 	}
 
-	public void setOccurences(Integer occurences) {
-		this.occurences = occurences;
+	public void setOccurrences(Integer occurrences) {
+		this.occurrences = occurrences;
 	}
 
 	@Override

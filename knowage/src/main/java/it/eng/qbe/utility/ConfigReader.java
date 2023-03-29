@@ -26,34 +26,32 @@ import it.eng.spagobi.commons.dao.IConfigDAO;
 import it.eng.spagobi.utilities.engines.rest.SimpleRestClient;
 
 /**
- *
  * @author Gavardi Giulio(giulio.gavardi@eng.it)
  */
 
 public class ConfigReader extends SimpleRestClient {
 
-	private String serviceUrl = "/restful-services/2.0/configs/label";
+	private static final Logger LOGGER = Logger.getLogger(ConfigReader.class);
 	private static final String CONFIG_LABEL = "KNOWAGE.CUSTOMIZED_DATABASE_FUNCTIONS";
+
 	UserProfile userProfile = null;
 
 	public ConfigReader(UserProfile _userProfile) {
 		userProfile = _userProfile;
 	}
 
-	static protected Logger logger = Logger.getLogger(ConfigReader.class);
-
 	public String readCustom() throws Exception {
 
-		logger.debug("IN");
+		LOGGER.debug("IN");
 
-		logger.debug("call DAO");
+		LOGGER.debug("call DAO");
 		IConfigDAO configDAO = DAOFactory.getSbiConfigDAO();
 		configDAO.setUserProfile(userProfile);
 		Config config = configDAO.loadConfigParametersByLabel(CONFIG_LABEL);
 
 		String toReturn = config != null ? config.getValueCheck() : null;
 
-		logger.debug("OUT");
+		LOGGER.debug("OUT");
 
 		return toReturn;
 	}

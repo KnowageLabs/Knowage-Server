@@ -56,7 +56,7 @@ class AsyncDownloadsFeed {
 
 	private final Map<Path, Set<AsyncDownloadsListener>> path2Listeners = new HashMap<>();
 
-	public AsyncDownloadsFeed() {
+	AsyncDownloadsFeed() {
 		super();
 	}
 

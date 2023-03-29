@@ -13,7 +13,7 @@
 import { emitter } from '../../DashboardHelpers'
 import { mapActions } from 'pinia'
 import { AgGridVue } from 'ag-grid-vue3' // the AG Grid Vue Component
-import { IDashboardDataset, ISelection, IWidget } from '../../Dashboard'
+import { IDashboardDataset, ISelection, ITableWidgetColumnStyle, ITableWidgetColumnStyles, ITableWidgetVisualizationTypes, IWidget } from '../../Dashboard'
 import { defineComponent, PropType } from 'vue'
 import { createNewTableSelection, getColumnConditionalStyles, isConditionMet, isCrossNavigationActive, formatRowDataForCrossNavigation, getFormattedClickedValueForCrossNavigation, addIconColumn } from './TableWidgetHelper'
 import { executeTableWidgetCrossNavigation, updateStoreSelections } from '../interactionsHelpers/InteractionHelper'
@@ -109,8 +109,6 @@ export default defineComponent({
     unmounted() {
         this.removeEventListeners()
     },
-    mounted() {},
-
     methods: {
         ...mapActions(store, ['setSelections']),
         loadWidgetModel() {
@@ -246,6 +244,10 @@ export default defineComponent({
 
                         if (tempCol.measure === 'MEASURE') tempCol.aggregationSelected = this.widgetModel.columns[datasetColumn].aggregation
 
+                        //COLUMN WIDTH
+                        const colWidth = this.getColumnWidth(tempCol.colId)
+                        if (colWidth && colWidth != 0) tempCol.minWidth = colWidth
+
                         //ROWSPAN MANAGEMENT
                         if (this.widgetModel.settings.configuration.rows.rowSpan.enabled && this.widgetModel.settings.configuration.rows.rowSpan.column === this.widgetModel.columns[datasetColumn].id) {
                             let previousValue
@@ -266,7 +268,7 @@ export default defineComponent({
                                 } else return 1
                             }
                             tempCol.cellClassRules = {
-                                'cell-span': function(params) {
+                                'cell-span': function (params) {
                                     return tempRows[params.rowIndex]?.span > 1
                                 }
                             }
@@ -326,6 +328,13 @@ export default defineComponent({
                         if (pagination.enabled) {
                             this.showPaginator = true
                         } else this.showPaginator = false
+
+                        // VISUALIZATION TYPE CONFIGURATION  -----------------------------------------------------------------
+                        const visTypes = this.widgetModel.settings.visualization.visualizationTypes as ITableWidgetVisualizationTypes
+                        if (visTypes.enabled) {
+                            const colVisType = this.getColumnVisualizationType(tempCol.colId)
+                            tempCol.pinned = colVisType.pinned
+                        }
 
                         // CUSTOM MESSAGE CONFIGURATION  -----------------------------------------------------------------
                         const customMessageConfig = this.widgetModel.settings.configuration.customMessages
@@ -415,6 +424,21 @@ export default defineComponent({
             }
 
             return columnHidden
+        },
+        getColumnVisualizationType(colId) {
+            const visTypes = this.widgetModel.settings.visualization.visualizationTypes as ITableWidgetVisualizationTypes
+
+            const colVisType = visTypes.types.find((visType) => visType.target.includes(colId))
+            if (colVisType) return colVisType
+            else return visTypes.types[0]
+        },
+        getColumnWidth(colId) {
+            const colStyles = this.widgetModel.settings.style.columns as ITableWidgetColumnStyles
+
+            const colStyle = colStyles.styles.find((style) => style.target.includes(colId)) as ITableWidgetColumnStyle
+
+            if (colStyle) return colStyle.properties.width
+            else return colStyles.styles[0].properties.width
         },
         updateData(data) {
             if (this.widgetModel.settings.configuration.summaryRows.enabled) {

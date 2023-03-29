@@ -154,7 +154,7 @@
     			height: 100%;
     			width: 100%;
     		}
-    		[kn-cross], [kn-preview], [kn-selection-column]  {
+    		[kn-cross], [kn-preview], [kn-selection-column], [kn-message]  {
     			cursor: pointer;
     		}
     	}
@@ -287,7 +287,7 @@
 				border: 3px solid rgba(white,.7);
 				color: white;
 				border-radius:2px;
-				z-index: 99;
+				z-index: 2;
 				transition: right .3s linear;
 				&.sideNavOpened {
 					right: 327px;
@@ -407,22 +407,28 @@
 				order: 2;
 			}
 
+			&.drag {
+				.mapWidgetLegend {
+					border-radius: 5px;
+					height: auto;
+					min-height: 100% !important;
+				}
+			}
 		}
 		md-backdrop {
 			z-index: 10;
 		}
 		.mapWidgetLegend {
-			position:absolute;
-			padding:10px;
-			display:block;
-			min-width:250px;
-			width:auto;
-			height:auto;
-			bottom:0;
+			padding: 8px;
+			width: 100%;
+			height: 100%;
+
+			position: absolute;
+			display: block;
+			min-width: 250px;
+			bottom: 0;
 			background-color:white;
-			opacity:0.9;
-			border-radius:5px;
-			margin-right:8px;
+			
 			&.ranges{
 				min-width: 100px;
 				&:nth-last-child(2){
@@ -442,17 +448,16 @@
 				font-weight:bold;
 			}
 			.legendStartLimit{
-				left:0%;
-				position:relative;
-				font-size:.7rem;
-				width:50px;
+				left: 0%;
+				position: relative;
+				font-size: .7rem;
+				padding: 0 4px;
 				text-align: right;
 			}
 			.legendEndLimit{
-				right:0%;
-				position:relative;
-				font-size:.7rem;
-				width:50px;
+				right: 0%;
+				position: relative;
+				font-size: .7rem;
 				text-align: left;
 			}
 			&.left{
@@ -474,6 +479,31 @@
 				background:none; 
 				border:none;
 			}
+
+			.mapWidgetLegendElementLoop {
+				width: 100%;
+				padding: 5px;
+			}
+
+			.mapWidgetLegendGradient {
+				height: 10px;
+				width: 90%;
+				margin: 0 3px;
+				display: block;
+				border-radius: 25px;
+				position: relative;
+				top: 3px;
+			}
+
+			.mapWidgetLegendDot {
+				height: 10px;
+				width: 10px;
+				margin: 0 3px;
+				border-radius: 25px;
+				position: relative;
+				top: 3px;
+			}
+
 		}
 		.mapOptionsSidenav {
 			z-index: 11;

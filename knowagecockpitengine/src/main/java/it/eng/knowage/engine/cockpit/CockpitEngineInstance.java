@@ -74,15 +74,19 @@ public class CockpitEngineInstance extends AbstractEngineInstance {
 				for (int i = 0; i < sheets.length(); i++) {
 					JSONObject sheet = sheets.optJSONObject(i);
 					JSONArray widgets = sheet.optJSONArray("widgets");
-					for (int j = 0; j < widgets.length(); j++) {
-						JSONObject widget = widgets.optJSONObject(j);
-						String type = widget.getString("type");
-						if (type.equals("chart")) {
+					if (widgets == null) {
+						/* DASHBOARD TODO */
+					} else {
+						for (int j = 0; j < widgets.length(); j++) {
+							JSONObject widget = widgets.optJSONObject(j);
+							String type = widget.getString("type");
+							if (type.equals("chart")) {
 
-							JSONObject content = widget.getJSONObject("content");
-							JSONObject oldDesigner = content.optJSONObject("chartTemplate").optJSONObject("CHART");
-							if (oldDesigner.get("style") instanceof String) {
-								this.template = parseTemplate(this.template);
+								JSONObject content = widget.getJSONObject("content");
+								JSONObject oldDesigner = content.optJSONObject("chartTemplate").optJSONObject("CHART");
+								if (oldDesigner.get("style") instanceof String) {
+									this.template = parseTemplate(this.template);
+								}
 							}
 						}
 					}

@@ -77,9 +77,14 @@ export default defineComponent({
     created() {},
     methods: {
         onColumnChanged() {
-            // prettier-ignore
-            const forInsert = `[kn-column='${this.selectedColumnName}'${this.row ? ` row='${this.row}'` : ''}${this.aggregation ? ` aggregation='${this.aggregation}'` : ''}${this.precision ? ` precision='${this.precision}'` : ''}${this.format ? ' format' : ''}${this.prefix ? ` prefix='${this.prefix}'` : ''}${this.suffix ? ` suffix='${this.suffix}'` : ''}]`
+            const forInsert = this.widgetModel.type === 'html' ? this.htmlStringBuilder() : this.widgetStringBuilder()
             this.$emit('insertChanged', forInsert)
+        },
+        htmlStringBuilder() {
+            return `[kn-column='${this.selectedColumnName}'${this.row ? ` row='${this.row}'` : ''}${this.aggregation ? ` aggregation='${this.aggregation}'` : ''}${this.suffix ? ` suffix='${this.suffix}'` : ''}]`
+        },
+        widgetStringBuilder() {
+            return `${this.prefix ?? ''}[kn-column='${this.selectedColumnName}'${this.row ? ` row='${this.row}'` : ''}${this.aggregation ? ` aggregation='${this.aggregation}'` : ''}${this.precision ? ` precision='${this.precision}'` : ''}${this.format ? ' format' : ''}]${this.suffix ?? ''}`
         }
     }
 })
