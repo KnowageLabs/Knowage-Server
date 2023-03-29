@@ -852,7 +852,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             })
             // parameters
             jsonToReplace = jsonToReplace.replace(/\$P\{([a-zA-Z0-9\_\-\.]+)\}/g, function (match, parameter) {
-                return adaptToType(cockpitModule_analyticalDrivers[parameter])
+                if(cockpitModule_analyticalDrivers[parameter] === "") return '""' 
+			    else return adaptToType(cockpitModule_analyticalDrivers[parameter]);
             })
              // dynamic
             jsonToReplace = jsonToReplace.replace(/\{value}/g, function (match, parameter) {
