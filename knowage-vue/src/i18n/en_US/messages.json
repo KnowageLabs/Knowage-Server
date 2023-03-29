@@ -92,6 +92,7 @@
         "fileName": "File Name",
         "filterBy": "Filter by",
         "filters": "Filters",
+        "formula": "Formula",
         "from": "From",
         "general": "General",
         "generate": "Generate",
@@ -375,10 +376,10 @@
             "indexHint": "Indexes will be created on single selected columns.",
             "indexPresentMsg": "Index already exists!",
             "indexesTitle": "Indexes",
+            "pendingChanges": "You have unsaved changes, are you sure you want to exit the editor?",
             "selectDatasets": "Select Datasets",
             "static": "Static",
-            "title": "Dataset Management",
-            "pendingChanges": "You have unsaved changes, are you sure you want to exit the editor?"
+            "title": "Dataset Management"
         },
         "generalSettings": {
             "attribute": "Attribute",
@@ -471,7 +472,9 @@
             "conditions": {
                 "applyToWholeRow": "Apply to whole row",
                 "compareValueType": "Value type",
-                "title": "Conditions"
+                "formulaHint": "Formula hint placeholder",
+                "title": "Conditions",
+                "useAdvancedFormula": "Use Advanced Formula"
             },
             "configuration": "Configuration",
             "configurationOf3D": {
@@ -500,6 +503,20 @@
             },
             "descending": "Descending",
             "dimensions": "Dimensions",
+            "discoveryWidget": {
+                "facets": {
+                    "closedByDefault": "Closed by default",
+                    "columnWidth": "Column width",
+                    "decimalPrecision": "Decimal precision",
+                    "enableSelection": "Enable Selection",
+                    "maxNumber": "Max number",
+                    "title": "Facets"
+                },
+                "search": {
+                    "defaultTextSearch": "Discovery Text Search",
+                    "title": "Text Search"
+                }
+            },
             "dragColumnsHint": "Drag columns here",
             "drilldown": {
                 "title": "Drilldown"
@@ -835,6 +852,7 @@
             "visibilityConditions": {
                 "always": "Always",
                 "hideColumn": "Hide Column",
+                "hideFromSummary": "Hide Summary",
                 "hideOnPdf": "Hide on PDF",
                 "onVariableValue": "On Variable Value",
                 "title": "Visibility Conditions"

@@ -8,6 +8,7 @@
         "styles": [
             {
                 "properties": {
+                    "align-items": "center",
                     "background-color": "",
                     "color": "",
                     "font-family": "",
@@ -151,6 +152,7 @@
             "value": ""
         },
         "hide": false,
+        "hideFromSummary": false,
         "hidePdf": false,
         "target": []
     },

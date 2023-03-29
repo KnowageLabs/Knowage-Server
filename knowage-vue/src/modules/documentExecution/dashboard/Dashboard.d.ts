@@ -72,7 +72,8 @@ export interface ITableWidgetConditionalStyle {
         variableKey?: string
         variablePivotDatasetOptions?: any
         operator: string
-        value: string
+        value: string,
+        formula?: string
     }
     properties: {
         'justify-content': string
@@ -272,6 +273,7 @@ export interface ITableWidgetColumnStyles {
 export interface ITableWidgetColumnStyle {
     target: string | string[]
     properties: {
+        'align-items': string,
         width: string | number
         'background-color': string
         color: string
@@ -359,6 +361,7 @@ export interface ITableWidgetVisualizationTypes {
 export interface ITableWidgetVisualizationType {
     target: string | string[]
     type: string
+    dateFormat?: string
     precision?: number
     prefix?: string
     suffix?: string
@@ -378,7 +381,8 @@ export interface ITableWidgetVisibilityConditions {
 export interface ITableWidgetVisibilityCondition {
     target: string[]
     hide: boolean
-    hidePdf: boolean
+    hidePdf: boolean,
+    hideFromSummary: boolean,
     condition: {
         type: string
         variable?: string

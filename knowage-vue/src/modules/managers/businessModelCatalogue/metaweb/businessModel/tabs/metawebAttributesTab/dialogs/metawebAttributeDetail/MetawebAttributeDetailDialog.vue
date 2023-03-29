@@ -145,7 +145,11 @@ import mainStore from '../../../../../../../../../App.store'
 export default defineComponent({
     name: 'metaweb-attribute-detail-dialog',
     components: { Dialog, Dropdown, MultiSelect },
-    props: { visible: { type: Boolean }, selectedAttribute: { type: Object as PropType<iBusinessModelColumn> }, roles: { type: Array } },
+    props: {
+        visible: { type: Boolean },
+        selectedAttribute: { type: Object as PropType<iBusinessModelColumn> },
+        roles: { type: Array }
+    },
     emits: ['close', 'save'],
     setup() {
         const store = mainStore()
@@ -185,7 +189,11 @@ export default defineComponent({
     methods: {
         loadAttribute() {
             if (this.selectedAttribute) {
-                this.attribute = { ...this.selectedAttribute, physicalColumn: { ...this.selectedAttribute.physicalColumn }, properties: this.getDeepCopyProperties(this.selectedAttribute.properties) } as iBusinessModelColumn
+                this.attribute = {
+                    ...this.selectedAttribute,
+                    physicalColumn: { ...this.selectedAttribute.physicalColumn },
+                    properties: this.getDeepCopyProperties(this.selectedAttribute.properties)
+                } as iBusinessModelColumn
             }
 
             this.getAttributeType()

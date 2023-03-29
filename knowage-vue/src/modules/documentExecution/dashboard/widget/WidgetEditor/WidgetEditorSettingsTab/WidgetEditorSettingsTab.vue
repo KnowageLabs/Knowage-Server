@@ -108,6 +108,16 @@
             :variables="variables"
             :dashboardId="dashboardId"
         ></PivotTableWidgetSettingsContainer>
+        <DiscoveryWidgetSettingsContainer
+            v-else-if="propWidget.type === 'discovery'"
+            class="model-div kn-flex kn-overflow p-py-3 p-pr-3"
+            :widgetModel="propWidget"
+            :selectedSetting="selectedSetting"
+            :datasets="datasets"
+            :selectedDatasets="selectedDatasets"
+            :variables="variables"
+            :dashboardId="dashboardId"
+        ></DiscoveryWidgetSettingsContainer>
     </div>
 </template>
 
@@ -125,6 +135,7 @@ import ChartJSWidgetSettingsContainer from './ChartWidget/chartJS/ChartJSWidgetS
 import ImageWidgetSettingsContainer from './ImageWidget/ImageWidgetSettingsContainer.vue'
 import CustomChartWidgetSettingsContainer from './CustomChartWidget/CustomChartWidgetSettingsContainer.vue'
 import PivotTableWidgetSettingsContainer from './PivotTableWidget/PivotTableWidgetSettingsContainer.vue'
+import DiscoveryWidgetSettingsContainer from './DiscoveryWidget/DiscoveryWidgetSettingsContainer.vue'
 import selectorDescriptor from './SelectorWidget/SelectorWidgetSettingsDescriptor.json'
 import selectionsDescriptor from './SelectionsWidget/SelectionsWidgetSettingsDescriptor.json'
 import WidgetEditorSettingsList from './WidgetEditorSettingsList.vue'
@@ -138,6 +149,7 @@ import HighchartsSolidGaugeSettingsDescriptor from './ChartWidget/highcharts/des
 import imageDescriptor from './ImageWidget/ImageWidgetSettingsDescriptor.json'
 import customChartDescriptor from './CustomChartWidget/CustomChartWidgetSettingsDescriptor.json'
 import pivotTableDescriptor from './PivotTableWidget/PivotTableSettingsDescriptor.json'
+import discoveryDescriptor from './DiscoveryWidget/DiscoveryWidgetSettingsDescriptor.json'
 import { mapState } from 'pinia'
 import mainStore from '@/App.store'
 
@@ -154,7 +166,8 @@ export default defineComponent({
         ChartJSWidgetSettingsContainer,
         ImageWidgetSettingsContainer,
         CustomChartWidgetSettingsContainer,
-        PivotTableWidgetSettingsContainer
+        PivotTableWidgetSettingsContainer,
+        DiscoveryWidgetSettingsContainer
     },
     props: {
         propWidget: { type: Object as PropType<IWidget>, required: true },
@@ -222,6 +235,9 @@ export default defineComponent({
                     break
                 case 'static-pivot-table':
                     this.descriptor = pivotTableDescriptor
+                    break
+                case 'discovery':
+                    this.descriptor = discoveryDescriptor
                     break
             }
         },

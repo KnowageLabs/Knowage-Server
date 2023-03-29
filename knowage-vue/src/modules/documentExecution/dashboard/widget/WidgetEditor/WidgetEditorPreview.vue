@@ -37,6 +37,7 @@
                     :variables="variables"
                     @loading="customChartLoading = $event"
                 ></CustomChartWidget>
+                <DiscoveryWidget v-if="propWidget.type == 'discovery'" :propWidget="propWidget" :datasets="datasets" :dataToShow="widgetData" :editorMode="true" :dashboardId="dashboardId" :propActiveSelections="activeSelections" @pageChanged="getWidgetData" />
             </div>
         </div>
     </div>
@@ -63,10 +64,11 @@ import HighchartsContainer from '../ChartWidget/Highcharts/HighchartsContainer.v
 import ChartJSContainer from '../ChartWidget/ChartJS/ChartJSContainer.vue'
 import ImageWidget from '../ImageWidget/ImageWidget.vue'
 import CustomChartWidget from '../CustomChartWidget/CustomChartWidget.vue'
+import DiscoveryWidget from '../DiscoveryWidget/DiscoveryWidget.vue'
 
 export default defineComponent({
     name: 'widget-editor-preview',
-    components: { TableWidget, SelectorWidget, ActiveSelectionsWidget, ProgressBar, WebComponentContainer, HighchartsContainer, ChartJSContainer, ImageWidget, CustomChartWidget },
+    components: { TableWidget, SelectorWidget, ActiveSelectionsWidget, ProgressBar, WebComponentContainer, HighchartsContainer, ChartJSContainer, ImageWidget, CustomChartWidget, DiscoveryWidget },
     props: {
         propWidget: { type: Object as PropType<IWidget>, required: true },
         datasets: { type: Array as PropType<IDashboardDataset[]>, required: true },

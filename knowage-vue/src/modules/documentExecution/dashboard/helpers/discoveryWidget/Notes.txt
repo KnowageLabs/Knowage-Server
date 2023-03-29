@@ -1,0 +1,26 @@
+- vratiti u Dashboard.....Compatibility.vue:
+
+   case 'customchart':
+            formattedWidget = formatCustomChartWidget(widget)
+            break;
+			
+			
+- vratiti u WidgetRender.vue:
+
+  <DiscoveryWidget
+                v-if="widget.type === 'discovery'"
+                :propWidget="widget"
+                :datasets="datasets"
+                :dataToShow="dataToShow"
+                :editorMode="false"
+                :propActiveSelections="activeSelections"
+                :dashboardId="dashboardId"
+                :widgetLoading="widgetLoading"
+                @pageChanged="$emit('reloadData')"
+                @facetsChanged="$emit('reloadData')"
+                @searchWordChanged="$emit('reloadData')"
+            />
+			
+- vratiti u WidgetEditorPreview.vue:
+
+ <DiscoveryWidget v-if="propWidget.type == 'discovery'" :propWidget="propWidget" :datasets="datasets" :dataToShow="widgetData" :editorMode="true" :dashboardId="dashboardId" :propActiveSelections="activeSelections" @pageChanged="getWidgetData" />
