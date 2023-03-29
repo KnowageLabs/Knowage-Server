@@ -40,7 +40,7 @@ export interface IHighchartsHeatmapSerie {
 }
 
 export interface IHighchartsHeatmapSerieData {
-    id: number,
+    id: string,
     x: number,
     y: number,
     value: number

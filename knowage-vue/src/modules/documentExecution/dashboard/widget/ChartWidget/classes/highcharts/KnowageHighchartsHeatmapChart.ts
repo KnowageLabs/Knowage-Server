@@ -1,4 +1,4 @@
-import { IHighchartsHeatmapSerie, IHighchartsHeatmapAxis } from './../../../../interfaces/highcharts/DashboardHighchartsHeatmapWidget.d';
+import { IHighchartsHeatmapSerie, IHighchartsHeatmapAxis, IHighchartsHeatmapSerieData } from './../../../../interfaces/highcharts/DashboardHighchartsHeatmapWidget.d';
 import { KnowageHighcharts } from './KnowageHighcharts'
 import { updatePieChartModel } from './updater/KnowageHighchartsPieChartUpdater'
 import { IWidget, IWidgetColumn } from '@/modules/documentExecution/dashboard/Dashboard'
@@ -34,33 +34,68 @@ export class KnowageHighchartsHeatmapChart extends KnowageHighcharts {
 
     setData(data: any, widgetModel: IWidget) {
         console.log('---------- DATA: ', data)
-        console.log('---------- widgetModel: ', widgetModel)
-
-        // TODO
+        if (!data || !data.rows) return
         if (this.model.series.length === 0) this.getSeriesFromWidgetModel(widgetModel)
-        const seriesColumnKey = this.getSeriesColumnKey(data, widgetModel)
-        console.log('getSeriesColumnKey: ', seriesColumnKey)
 
         const categoryValuesMap = {}
-        this.setAxisCategoriesData(data, widgetModel)
-        this.setCategoriesValuesMap = {}
+        const xAxisCategoriesSet = new Set() as Set<string>
+        const yAxisCategoriesSet = new Set() as Set<string>
+        this.populateCategoryValuesMap(data, categoryValuesMap, xAxisCategoriesSet, yAxisCategoriesSet)
 
-        const modelSeries = this.model.series as IHighchartsHeatmapSerie[]
-        modelSeries.map((item, serieIndex) => {
-            this.range[serieIndex] = { serie: item.name }
-            item.data = []
+        const xAxisCategories = this.setXAxisCategories(xAxisCategoriesSet)
+        const yAxisCategories = this.setYAxisCategories(yAxisCategoriesSet)
 
-            data?.rows?.forEach((row: any) => {
-                const serieElement = {
-                    id: row.id,
-                    value: row[seriesColumnKey],
-                    x: 0,
-                    y: 0
-                }
-                item.data.push(serieElement)
-            })
-        })
+        this.setDataInModelSerie(xAxisCategories, yAxisCategories, categoryValuesMap)
+
+        console.log('----- MODEL: ', this.model)
         return this.model.series
+    }
+
+    populateCategoryValuesMap(data: any, categoryValuesMap: any, xAxisCategoriesSet: Set<string>, yAxisCategoriesSet: Set<string>) {
+        data.rows.forEach((row: any) => {
+            const xCategoryValue = row['column_1']
+            const yCategoryValue = row['column_2']
+            if (!categoryValuesMap[xCategoryValue]) categoryValuesMap[xCategoryValue] = {}
+            categoryValuesMap[xCategoryValue][yCategoryValue] = row['column_3'] ?? null
+
+            xAxisCategoriesSet.add(xCategoryValue)
+            yAxisCategoriesSet.add(yCategoryValue)
+        })
+    }
+
+    setXAxisCategories(xAxisCategoriesSet: Set<string>) {
+        if (this.model.xAxis?.categories) {
+            this.model.xAxis.categories = Array.from(xAxisCategoriesSet) as string[]
+            this.model.xAxis.categories.sort()
+            return this.model.xAxis.categories
+        } else return []
+    }
+
+
+    setYAxisCategories(yAxisCategoriesSet: Set<string>) {
+        if ((this.model.yAxis as IHighchartsHeatmapAxis)?.categories) {
+            (this.model.yAxis as IHighchartsHeatmapAxis).categories = Array.from(yAxisCategoriesSet) as string[]
+            (this.model.yAxis as IHighchartsHeatmapAxis).categories.sort()
+            return (this.model.yAxis as IHighchartsHeatmapAxis).categories
+        } else return []
+    }
+
+    setDataInModelSerie(xAxisCategories: string[], yAxisCategories: string[], categoryValuesMap: any) {
+        const modelSerie = this.model.series ? this.model.series[0] : null
+        if (modelSerie && xAxisCategories && yAxisCategories) {
+            modelSerie.data = [] as IHighchartsHeatmapSerieData[]
+            for (let i = 0; i < xAxisCategories.length; i++) {
+                for (let j = yAxisCategories.length - 1; j >= 0; j--) {
+                    modelSerie.data.push({
+                        id: xAxisCategories[i] + ' | ' + yAxisCategories[j],
+                        value: categoryValuesMap[xAxisCategories[i]][yAxisCategories[j]] ?? null,
+                        x: i,
+                        y: j
+                    })
+                }
+            }
+        }
+
     }
 
     getSeriesColumnKey(data: any, widgetModel: IWidget) {
@@ -70,27 +105,6 @@ export class KnowageHighchartsHeatmapChart extends KnowageHighcharts {
             return index !== -1 ? data.metaData.fields[index].name : ''
         }
         return ''
-    }
-
-    setAxisCategoriesData(data: any, widgetModel: IWidget) {
-        const filteredAttributes = widgetModel.columns.filter((column: IWidgetColumn) => column.fieldType === 'ATTRIBUTE')
-        const firstTwoAttributes = filteredAttributes.slice(0, 2)
-        console.log('firstTwo: ', firstTwoAttributes)
-        this.setSpecificAxisCategoriesData(data, firstTwoAttributes[0], 'x')
-        this.setSpecificAxisCategoriesData(data, firstTwoAttributes[1], 'y')
-    }
-
-    setSpecificAxisCategoriesData(data: any, column: IWidgetColumn, axisType: 'x' | 'y') {
-        const categoriesSet = new Set()
-        const axisCategories = axisType === 'x' ? this.model.xAxis?.categories : (this.model.yAxis as IHighchartsHeatmapAxis)?.categories
-        if (column && data?.metaData?.fields && axisCategories) {
-            const index = data.metaData.fields.findIndex((field: any) => field.header?.startsWith(column.columnName))
-            const attibuteColumnName = index !== -1 ? data.metaData.fields[index].name : ''
-            data.rows?.forEach((row: any) => categoriesSet.add(row[attibuteColumnName]))
-            const setValues = Array.from(categoriesSet)
-            setValues.forEach((value: any) => axisCategories.push(value))
-        }
-        console.log('------ axisCategories: ', axisCategories)
     }
 
     getSeriesFromWidgetModel(widgetModel: IWidget) {
