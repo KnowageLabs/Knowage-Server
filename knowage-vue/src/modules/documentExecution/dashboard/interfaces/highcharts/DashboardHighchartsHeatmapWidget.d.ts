@@ -1,4 +1,4 @@
-import { IHighchartsSerieAccessibility } from "./DashboardHighchartsWidget"
+import { IHighchartsChartDataLabels, IHighchartsSerieAccessibility } from "./DashboardHighchartsWidget"
 
 export interface IHighchartsHeatmapAxis {
     min: number | null,
@@ -10,6 +10,7 @@ export interface IHighchartsHeatmapAxis {
 
 export interface IHighchartsHeatmapAxisLabels {
     rotation: number | null
+    align: string,
     style: {
         fontFamily: string
         fontSize: string
@@ -43,5 +44,6 @@ export interface IHighchartsHeatmapSerieData {
     id: string,
     x: number,
     y: number,
-    value: number
+    value: number,
+    dataLabels: IHighchartsChartDataLabels
 }

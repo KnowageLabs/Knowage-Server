@@ -415,6 +415,7 @@
             "addWidget": "Add widget",
             "aggregation": "Aggregation",
             "ascending": "Ascending",
+            "axis": "Axis",
             "background": "Background",
             "borders": {
                 "borderRadiusBottomLeft": "Border radius bottom left",
@@ -607,7 +608,11 @@
                 },
                 "heatmap": {
                     "dimensionsTableHint": "Exactly two attributes to define categories. If the attribute is of type Date (Timestamp) it must be the first one. You are not able to reorder categories.",
-                    "valuesTableHint": "Exactly one measure only to define series"
+                    "labelRotation": "Label Rotation",
+                    "rotation": "Rotation",
+                    "valuesTableHint": "Exactly one measure only to define series",
+                    "axisMaxHint": "The minimum value of the axis. If null the min value is automatically calculated.",
+                    "axisMinHint": "The maximum value of the axis. If null, the max value is automatically calculated."
                 },
                 "labels": {
                     "distance": "Distance",
@@ -899,7 +904,9 @@
                 "sparkline": "Sparkline",
                 "textAndIcon": "Text & Icon",
                 "title": "Visualization Type"
-            }
+            },
+            "xAxis": "X Axis",
+            "yAxis": "Y Axis"
         },
         "wizard": {
             "addDataset": "Add a new dataset to the dashboard",

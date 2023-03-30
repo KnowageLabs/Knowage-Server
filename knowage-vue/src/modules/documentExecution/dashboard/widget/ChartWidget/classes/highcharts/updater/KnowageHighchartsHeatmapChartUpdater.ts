@@ -5,7 +5,7 @@ export const updateHeatmapChartModel = (oldModel: any, newModel: IHighchartsChar
     console.log('-------- OLD CHART MODEL: ', oldModel)
     getFormattedNoDataConfiguration(oldModel, newModel)
     getFormattedLegend(oldModel, newModel)
-    //getFormattedLabels(oldModel, newModel)
+    getFormattedLabels(oldModel, newModel)
     //getFormattedSeries(oldModel, newModel, 1)
     //getFormattedTooltipSettings(oldModel, newModel)
     console.log('-------- NEW CHART MODEL: ', newModel)

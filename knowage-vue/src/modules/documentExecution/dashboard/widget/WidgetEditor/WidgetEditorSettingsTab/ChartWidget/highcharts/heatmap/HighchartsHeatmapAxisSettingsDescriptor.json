@@ -1,0 +1,16 @@
+{
+    "styleToolbarSettings": [
+        {
+            "type": "font-weight"
+        },
+        {
+            "type": "font-size"
+        },
+        {
+            "type": "font-family"
+        },
+        {
+            "type": "color"
+        }
+    ]
+}

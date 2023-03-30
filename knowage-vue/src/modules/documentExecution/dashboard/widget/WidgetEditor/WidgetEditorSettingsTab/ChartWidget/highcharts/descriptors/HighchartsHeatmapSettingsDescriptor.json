@@ -81,6 +81,18 @@
                 "title": "dashboard.widgetEditor.tooltip.title",
                 "type": "Tooltip"
             }
+        ],
+        "XAxis": [
+            {
+                "title": "dashboard.widgetEditor.axis",
+                "type": "HeatMapXAxisSettings"
+            }
+        ],
+        "YAxis": [
+            {
+                "title": "dashboard.widgetEditor.axis",
+                "type": "HeatMapYAxisSettings"
+            }
         ]
     },
     "settingsListOptions": [
@@ -98,6 +110,16 @@
             "icon": "fa fa-paint-brush",
             "label": "common.style",
             "value": "Style"
+        },
+        {
+            "icon": "fa-solid fa-arrow-up",
+            "label": "dashboard.widgetEditor.yAxis",
+            "value": "YAxis"
+        },
+        {
+            "icon": "fa-solid fa-arrow-right",
+            "label": "dashboard.widgetEditor.xAxis",
+            "value": "XAxis"
         },
         {
             "icon": "pi pi-table",

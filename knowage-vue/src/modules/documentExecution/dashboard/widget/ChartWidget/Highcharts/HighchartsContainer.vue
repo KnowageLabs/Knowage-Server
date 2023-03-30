@@ -91,7 +91,7 @@ export default defineComponent({
 
             this.widgetModel.settings.chartModel.updateSeriesAccessibilitySettings(this.widgetModel)
             this.widgetModel.settings.chartModel.updateSeriesLabelSettings(this.widgetModel)
-            this.updateDataLabels()
+            this.chartModel.chart.type === 'heatmap' ? this.updateAxisLabels() : this.updateDataLabels()
             this.error = this.updateLegendSettings()
             if (this.error) return
             this.error = this.updateTooltipSettings()
@@ -122,6 +122,13 @@ export default defineComponent({
             const dataLabels = this.chartModel.plotOptions && this.chartModel.plotOptions[this.chartModel.chart.type] ? this.chartModel.plotOptions[this.chartModel.chart.type].dataLabels : null
             if (dataLabels) {
                 this.error = this.widgetModel.settings.chartModel.updateFormatterSettings(dataLabels, 'format', 'formatter', 'formatterText', 'formatterError')
+                if (this.error) return
+            }
+        },
+        updateAxisLabels() {
+            const axisLabels = this.chartModel.xAxis && this.chartModel.xAxis.labels ? this.chartModel.xAxis.labels : null
+            if (axisLabels) {
+                this.error = this.widgetModel.settings.chartModel.updateFormatterSettings(axisLabels, 'format', 'formatter', 'formatterText', 'formatterError')
                 if (this.error) return
             }
         },

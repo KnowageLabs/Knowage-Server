@@ -1,6 +1,6 @@
+import { updateHeatmapChartModel } from './updater/KnowageHighchartsHeatmapChartUpdater';
 import { IHighchartsHeatmapSerie, IHighchartsHeatmapAxis, IHighchartsHeatmapSerieData } from './../../../../interfaces/highcharts/DashboardHighchartsHeatmapWidget.d';
 import { KnowageHighcharts } from './KnowageHighcharts'
-import { updatePieChartModel } from './updater/KnowageHighchartsPieChartUpdater'
 import { IWidget, IWidgetColumn } from '@/modules/documentExecution/dashboard/Dashboard'
 import { IHighchartsChartSerie, IHighchartsChartSerieData } from '@/modules/documentExecution/dashboard/interfaces/highcharts/DashboardHighchartsWidget'
 import { createHeatMapSerie } from './updater/KnowageHighchartsCommonUpdater'
@@ -23,7 +23,7 @@ export class KnowageHighchartsHeatmapChart extends KnowageHighcharts {
     }
 
     updateModel(oldModel: any) {
-        updatePieChartModel(oldModel, this.model)
+        updateHeatmapChartModel(oldModel, this.model)
     }
 
     setSpecificOptionsDefaultValues() {
@@ -90,7 +90,8 @@ export class KnowageHighchartsHeatmapChart extends KnowageHighcharts {
                         id: xAxisCategories[i] + ' | ' + yAxisCategories[j],
                         value: categoryValuesMap[xAxisCategories[i]][yAxisCategories[j]] ?? null,
                         x: i,
-                        y: j
+                        y: j,
+                        dataLabels: {}  // TODO
                     })
                 }
             }
@@ -127,8 +128,8 @@ export class KnowageHighchartsHeatmapChart extends KnowageHighcharts {
         if (!widgetModel || !widgetModel.settings.series || !widgetModel.settings.series.seriesLabelsSettings || !widgetModel.settings.series.seriesLabelsSettings[0]) return
         const seriesLabelSetting = widgetModel.settings.series.seriesLabelsSettings[0]
         if (!seriesLabelSetting.label.enabled) return
-        this.model.series.forEach((serie: IHighchartsChartSerie) => {
-            serie.data.forEach((data: IHighchartsChartSerieData) => {
+        (this.model.series as IHighchartsHeatmapSerie[]).forEach((serie: IHighchartsHeatmapSerie) => {
+            serie.data.forEach((data: IHighchartsHeatmapSerieData) => {
                 data.dataLabels = {
                     backgroundColor: seriesLabelSetting.label.backgroundColor ?? '',
                     distance: 30,

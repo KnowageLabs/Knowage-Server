@@ -34,6 +34,8 @@
                 <WidgetCrossNavigation v-else-if="accordion.type === 'CrossNavigation'" :widget-model="widgetModel" :datasets="datasets" :selected-datasets="selectedDatasets" :dashboard-id="dashboardId"></WidgetCrossNavigation>
                 <WidgetInteractionsLinks v-else-if="accordion.type === 'Link'" :widget-model="widgetModel" :datasets="datasets" :selected-datasets="selectedDatasets" :dashboard-id="dashboardId"></WidgetInteractionsLinks>
                 <WidgetPreview v-else-if="accordion.type === 'Preview'" :widget-model="widgetModel" :datasets="datasets" :selected-datasets="selectedDatasets" :dashboard-id="dashboardId"></WidgetPreview>
+                <HighchartsHeatmapAxisSettings v-else-if="accordion.type === 'HeatMapXAxisSettings'" :widget-model="widgetModel" axis="x"></HighchartsHeatmapAxisSettings>
+                <HighchartsHeatmapAxisSettings v-else-if="accordion.type === 'HeatMapYAxisSettings'" :widget-model="widgetModel" axis="y"></HighchartsHeatmapAxisSettings>
             </AccordionTab>
         </Accordion>
     </div>
@@ -74,6 +76,7 @@ import HighchartsGaugeTickSettings from './gauge/settings/HighchartsGaugeTickSet
 import HighchartsStopsSettings from './gauge/settings/HighchartsStopsSettings.vue'
 import HighchartsGaugeBandsSettings from './gauge/settings/HighchartsGaugeBandsSettings.vue'
 import HighchartsWidgetSettingsAccordionHeader from './HighchartsWidgetSettingsAccordionHeader.vue'
+import HighchartsHeatmapAxisSettings from './heatmap/HighchartsHeatmapAxisSettings.vue'
 
 export default defineComponent({
     name: 'hihgcharts-widget-configuration-container',
@@ -108,7 +111,8 @@ export default defineComponent({
         HighchartsGaugeTickSettings,
         HighchartsStopsSettings,
         HighchartsGaugeBandsSettings,
-        HighchartsWidgetSettingsAccordionHeader
+        HighchartsWidgetSettingsAccordionHeader,
+        HighchartsHeatmapAxisSettings
     },
     props: {
         widgetModel: { type: Object as PropType<IWidget>, required: true },
