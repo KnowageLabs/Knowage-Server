@@ -309,11 +309,15 @@ public abstract class AbstractDriverRuntime<T extends AbstractDriver> {
 				AtomicInteger colCount = new AtomicInteger(0);
 
 				lovVisibleColumnsNames.forEach(e -> {
-					colPlaceholder2ColName.put("_col" + colCount.getAndIncrement(), e);
+					if (!colPlaceholder2ColName.containsValue(e)) {
+						colPlaceholder2ColName.put("_col" + colCount.getAndIncrement(), e);
+					}
 				});
 
 				lovInvisibleColumnsNames.forEach(e -> {
-					colPlaceholder2ColName.put("_col" + colCount.getAndIncrement(), e);
+					if (!colPlaceholder2ColName.containsValue(e)) {
+						colPlaceholder2ColName.put("_col" + colCount.getAndIncrement(), e);
+					}
 				});
 			}
 
