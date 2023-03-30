@@ -200,7 +200,7 @@ export default defineComponent({
             else return {}
         },
         setFacetData() {
-            if (this.displayFacets && this.tableData.facets) {
+            if (this.displayFacets && this.tableData?.facets) {
                 const facetSettings = this.propWidget.settings.facets
 
                 const facetKeys = Object.keys(this.tableData.facets)
