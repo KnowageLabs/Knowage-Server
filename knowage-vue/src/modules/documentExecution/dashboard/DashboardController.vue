@@ -191,7 +191,7 @@ export default defineComponent({
                     .catch(() => {})
             }
 
-            this.datasets = await loadDatasets(tempModel, this.appStore, this.setAllDatasets, this.$http)
+            this.datasets = this.newDashboardMode ? [] : await loadDatasets(tempModel, this.appStore, this.setAllDatasets, this.$http)
             this.model = (tempModel && this.newDashboardMode) || typeof tempModel.id != 'undefined' ? await formatNewModel(tempModel, this.datasets, this.$http) : await (formatModel(tempModel, this.document, this.datasets, this.drivers, this.profileAttributes, this.$http, this.user) as any)
             setDatasetIntervals(this.model?.configuration.datasets, this.datasets)
             this.store.setDashboard(this.dashboardId, this.model)
