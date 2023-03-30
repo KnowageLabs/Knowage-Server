@@ -104,6 +104,7 @@ export default defineComponent({
         loadModel() {
             if (!this.widgetModel.settings.chartModel || !this.widgetModel.settings.chartModel.model) return
             this.axisModel = this.axis === 'x' ? this.widgetModel.settings.chartModel.model.xAxis : this.widgetModel.settings.chartModel.model.yAxis
+            this.loadToolbarModel()
         },
         loadToolbarModel() {
             if (this.axisModel && this.axisModel.labels)

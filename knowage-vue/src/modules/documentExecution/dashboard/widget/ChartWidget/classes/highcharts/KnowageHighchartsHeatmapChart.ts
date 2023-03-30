@@ -26,13 +26,11 @@ export class KnowageHighchartsHeatmapChart extends KnowageHighcharts {
     }
 
     setSpecificOptionsDefaultValues() {
-        // TODO
         this.setHeatmapXAxis()
         this.setHeatmapYAxis()
     }
 
     setData(data: any, widgetModel: IWidget) {
-        console.log('---------- DATA: ', data)
         if (!data || !data.rows) return
         if (this.model.series.length === 0) this.getSeriesFromWidgetModel(widgetModel)
 
@@ -45,8 +43,6 @@ export class KnowageHighchartsHeatmapChart extends KnowageHighcharts {
         const yAxisCategories = this.setYAxisCategories(yAxisCategoriesSet)
 
         this.setDataInModelSerie(xAxisCategories, yAxisCategories, categoryValuesMap)
-
-        console.log('----- MODEL: ', this.model)
         return this.model.series
     }
 
