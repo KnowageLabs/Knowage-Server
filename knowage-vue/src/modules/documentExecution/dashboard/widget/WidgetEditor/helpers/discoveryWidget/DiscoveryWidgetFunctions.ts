@@ -22,6 +22,7 @@ export const createNewDiscoveryWidgetSettings = () => {
         style: {
             title: widgetCommonDefaultValues.getDefaultTitleStyle(),
             borders: widgetCommonDefaultValues.getDefaultBordersStyle(),
+            headers: tableWidgetDefaultValues.getDefaultHeadersStyle(),
             columns: tableWidgetDefaultValues.getDefaultColumnStyles(),
             padding: widgetCommonDefaultValues.getDefaultPaddingStyle(),
             rows: tableWidgetDefaultValues.getDefaultRowsStyle(),
