@@ -74,13 +74,16 @@ const replacePlaceholders = (text, data, skipAdapting) => {
     // variables
     text = text.replace(/\$V\{([a-zA-Z0-9_\-.]+)\}/g, (match, variable) => {
         // return adaptToType(cockpitModule_properties.VARIABLES[variable])
+        console.log('variables', match, variable)
     })
     // fields
     text = text.replace(/\$F\{([a-zA-Z0-9_\-.]+)\}/g, (match, field) => {
+        console.log('fields', match, field, data)
         return adaptToType(data[field])
     })
     // parameters
     text = text.replace(/\$P\{([a-zA-Z0-9_\-.]+)\}/g, (match, parameter) => {
+        console.log('parameters', match, parameter)
         // var parameterKey = cockpitModule_analyticalDrivers[parameter + '_description'] ? parameter + '_description' : parameter
         // return adaptToType(cockpitModule_analyticalDrivers[parameterKey])
     })
