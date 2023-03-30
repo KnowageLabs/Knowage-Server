@@ -2,7 +2,6 @@ import { updateHeatmapChartModel } from './updater/KnowageHighchartsHeatmapChart
 import { IHighchartsHeatmapSerie, IHighchartsHeatmapAxis, IHighchartsHeatmapSerieData } from './../../../../interfaces/highcharts/DashboardHighchartsHeatmapWidget.d';
 import { KnowageHighcharts } from './KnowageHighcharts'
 import { IWidget, IWidgetColumn } from '@/modules/documentExecution/dashboard/Dashboard'
-import { IHighchartsChartSerie, IHighchartsChartSerieData } from '@/modules/documentExecution/dashboard/interfaces/highcharts/DashboardHighchartsWidget'
 import { createHeatMapSerie } from './updater/KnowageHighchartsCommonUpdater'
 import * as highchartsDefaultValues from '../../../WidgetEditor/helpers/chartWidget/highcharts/HighchartsDefaultValues'
 import deepcopy from 'deepcopy'

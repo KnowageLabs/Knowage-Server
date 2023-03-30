@@ -129,6 +129,7 @@
     "defaultHeatmapXAxis": {
         "categories": [],
         "labels": {
+            "align": "center",
             "rotation": null,
             "style": {
                 "color": "",
@@ -153,6 +154,7 @@
     "defaultHeatmapYAxis": {
         "categories": [],
         "labels": {
+            "align": "center",
             "rotation": null,
             "style": {
                 "color": "",
