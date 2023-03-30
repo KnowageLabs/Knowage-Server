@@ -104,7 +104,7 @@ export const loadDatasets = async (dashboardModel: IDashboard | any, appStore: a
     let url = `2.0/datasets/?asPagedList=true&seeTechnical=true`
     if (dashboardModel) {
         const datasetIdsAsString = getDatasetIdsFromDashboardModel(dashboardModel)
-        if (!datasetIdsAsString) return
+        if (!datasetIdsAsString) return []
         url += `&ids=${datasetIdsAsString}`
     }
     let datasets = []
