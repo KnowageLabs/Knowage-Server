@@ -13,6 +13,7 @@
                 :editor-mode="false"
                 :prop-active-selections="activeSelections"
                 :dashboard-id="dashboardId"
+                :prop-variables="variables"
                 @pageChanged="$emit('reloadData')"
                 @sortingChanged="$emit('reloadData')"
                 @launchSelection="$emit('launchSelection', $event)"
