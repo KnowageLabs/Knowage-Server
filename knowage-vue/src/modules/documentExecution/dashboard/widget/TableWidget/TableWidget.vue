@@ -13,7 +13,7 @@
 import { emitter } from '../../DashboardHelpers'
 import { mapActions } from 'pinia'
 import { AgGridVue } from 'ag-grid-vue3' // the AG Grid Vue Component
-import { IDashboardDataset, ISelection, ITableWidgetColumnStyle, ITableWidgetColumnStyles, ITableWidgetVisualizationTypes, IWidget } from '../../Dashboard'
+import { IDashboardDataset, ISelection, ITableWidgetColumnStyle, ITableWidgetColumnStyles, ITableWidgetVisualizationTypes, IVariable, IWidget } from '../../Dashboard'
 import { defineComponent, PropType } from 'vue'
 import { createNewTableSelection, getColumnConditionalStyles, isConditionMet, isCrossNavigationActive, formatRowDataForCrossNavigation, getFormattedClickedValueForCrossNavigation, addIconColumn } from './TableWidgetHelper'
 import { executeTableWidgetCrossNavigation, updateStoreSelections } from '../interactionsHelpers/InteractionHelper'
@@ -50,7 +50,8 @@ export default defineComponent({
         datasets: { type: Array as PropType<IDashboardDataset[]>, required: true },
         dataToShow: { type: Object as any, required: true },
         propActiveSelections: { type: Array as PropType<ISelection[]>, required: true },
-        dashboardId: { type: String, required: true }
+        dashboardId: { type: String, required: true },
+        propVariables: { type: Array as PropType<IVariable[]>, required: true }
     },
     emits: ['pageChanged', 'sortingChanged', 'launchSelection'],
     setup() {
@@ -111,6 +112,7 @@ export default defineComponent({
     },
     methods: {
         ...mapActions(store, ['setSelections']),
+        ...mapActions(dashboardStore, ['getDashboardDrivers']),
         loadWidgetModel() {
             this.widgetModel = this.propWidget
         },
@@ -205,6 +207,8 @@ export default defineComponent({
             const columnGroups = {}
             this.columnsNameArray = []
 
+            const dashboardDrivers = this.getDashboardDrivers(this.dashboardId)
+            const dashboardVariables = this.propVariables
             const dataset = { type: 'SbiFileDataSet' }
 
             if (this.widgetModel.settings.configuration.rows.indexColumn) {
@@ -239,9 +243,15 @@ export default defineComponent({
                             headerComponent: HeaderRenderer,
                             headerComponentParams: { colId: this.widgetModel.columns[datasetColumn].id, propWidget: this.widgetModel },
                             cellRenderer: CellRenderer,
-                            cellRendererParams: { colId: this.widgetModel.columns[datasetColumn].id, propWidget: this.widgetModel, multiSelectedCells: this.multiSelectedCells, selectedColumnArray: this.selectedColumnArray }
+                            cellRendererParams: {
+                                colId: this.widgetModel.columns[datasetColumn].id,
+                                propWidget: this.widgetModel,
+                                multiSelectedCells: this.multiSelectedCells,
+                                selectedColumnArray: this.selectedColumnArray,
+                                dashboardDrivers: dashboardDrivers,
+                                dashboardVariables: dashboardVariables
+                            }
                         } as any
-
                         if (tempCol.measure === 'MEASURE') tempCol.aggregationSelected = this.widgetModel.columns[datasetColumn].aggregation
 
                         //COLUMN WIDTH

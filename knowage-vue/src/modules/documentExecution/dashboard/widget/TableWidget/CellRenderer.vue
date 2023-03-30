@@ -14,6 +14,7 @@ import { getColumnConditionalStyles } from './TableWidgetHelper'
 import helpersDecriptor from '../WidgetEditor/helpers/tableWidget/TableWidgetHelpersDescriptor.json'
 import moment from 'moment'
 import { getLocale } from '@/helpers/commons/localeHelper'
+import { ITableWidgetVisualizationTypes } from '../../Dashboard'
 
 export default defineComponent({
     props: {
@@ -78,7 +79,7 @@ export default defineComponent({
         },
         getConditionalStyle() {
             if (this.params.propWidget.settings.conditionalStyles.enabled) {
-                return getColumnConditionalStyles(this.params.propWidget, this.params.colId, this.params.value, true)
+                return getColumnConditionalStyles(this.params.propWidget, this.params.colId, this.params.value, true, this.params.dashboardVariables, this.params.dashboardDrivers)
             } else return null
         },
         getMultiselectStyle() {
@@ -115,13 +116,32 @@ export default defineComponent({
 
             return cellColumn?.type.toLowerCase().includes(columnType)
         },
+        getColumnVisualizationType(colId) {
+            const visTypes = this.params.propWidget.settings.visualization.visualizationTypes as ITableWidgetVisualizationTypes
+
+            const colVisType = visTypes.types.find((visType) => visType.target.includes(colId))
+            if (colVisType) return colVisType
+            else return visTypes.types[0]
+        },
         dateFormatter(params) {
+            const visType = this.getColumnVisualizationType(this.params.colId)
+
             const isDateValid = moment(params, 'DD/MM/YYYY').isValid()
-            return isDateValid ? moment(params, 'DD/MM/YYYY').locale(getLocale(true)).format('LL') : params
+            return isDateValid
+                ? moment(params, 'DD/MM/YYYY')
+                      .locale(getLocale(true))
+                      .format(visType?.dateFormat || 'LL')
+                : params
         },
         dateTimeFormatter(params) {
+            const visType = this.getColumnVisualizationType(this.params.colId)
+
             const isDateValid = moment(params, 'DD/MM/YYYY HH:mm:ss.SSS').isValid()
-            return isDateValid ? moment(params, 'DD/MM/YYYY HH:mm:ss.SSS').locale(getLocale(true)).format('LLL') : params
+            return isDateValid
+                ? moment(params, 'DD/MM/YYYY HH:mm:ss.SSS')
+                      .locale(getLocale(true))
+                      .format(visType?.dateFormat || 'LLL')
+                : params
         }
     }
 })
