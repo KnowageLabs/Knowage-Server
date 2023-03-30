@@ -1,4 +1,4 @@
-import { ITableWidgetColumnStyles, ITableWidgetCustomMessages, ITableWidgetPagination, IWidgetBackgroundStyle, IWidgetBordersStyle, IWidgetExports, IWidgetInteractions, IWidgetPaddingStyle, IWidgetResponsive, IWidgetShadowsStyle, IWidgetTitle } from '../Dashboard'
+import { ITableWidgetColumnStyles, ITableWidgetCustomMessages, ITableWidgetTooltipStyle, IWidgetBackgroundStyle, IWidgetBordersStyle, IWidgetExports, IWidgetInteractions, IWidgetPaddingStyle, IWidgetResponsive, IWidgetRowsStyle, IWidgetShadowsStyle, IWidgetTitle } from '../Dashboard'
 
 export interface IDiscoveryWidgetSettings {
     updatable: boolean
