@@ -41,10 +41,13 @@ export const getColumnConditionalStyles = (propWidget: IWidget, colId: string, v
     let styleString = null as any
 
     const columnConditionalStyles = conditionalStyles.conditions.filter((condition) => condition.target.includes(colId) || condition.condition.formula)
+    const columnName = propWidget.columns.find((column) => column.id === colId)?.columnName
+
+    console.log('columnName', columnName)
 
     if (columnConditionalStyles.length > 0) {
         for (let i = 0; i < columnConditionalStyles.length; i++) {
-            if ((columnConditionalStyles[i].condition.formula && isFormulaConditionMet(columnConditionalStyles[i].condition.formula, valueToCompare)) || (!columnConditionalStyles[i].condition.formula && isConditionMet(columnConditionalStyles[i].condition, valueToCompare))) {
+            if ((columnConditionalStyles[i].condition.formula && isFormulaConditionMet(columnConditionalStyles[i].condition.formula, valueToCompare, columnName)) || (!columnConditionalStyles[i].condition.formula && isConditionMet(columnConditionalStyles[i].condition, valueToCompare))) {
                 if (columnConditionalStyles[i].applyToWholeRow && !returnString) {
                     styleString = columnConditionalStyles[i].properties
                 } else if (returnString) {
@@ -61,12 +64,12 @@ export const getColumnConditionalStyles = (propWidget: IWidget, colId: string, v
     return styleString
 }
 
-const isFormulaConditionMet = (formula, valueToCompare) => {
-    const formattedFormula = replacePlaceholders(formula, valueToCompare, false)
+const isFormulaConditionMet = (formula, valueToCompare, columnName) => {
+    const formattedFormula = replacePlaceholders(formula, valueToCompare, false, columnName)
     return eval(formattedFormula)
 }
 
-const replacePlaceholders = (text, data, skipAdapting) => {
+const replacePlaceholders = (text, data, skipAdapting, columnName) => {
     function adaptToType(value) {
         if (skipAdapting) return value
         else return isNaN(value) ? '"' + value + '"' : value
@@ -78,8 +81,13 @@ const replacePlaceholders = (text, data, skipAdapting) => {
     })
     // fields
     text = text.replace(/\$F\{([a-zA-Z0-9_\-.]+)\}/g, (match, field) => {
-        console.log('fields', match, field, data)
-        return adaptToType(data[field])
+        // console.group(' ---------------------')
+        // console.log('match', match)
+        // console.log('field', field)
+        // console.log('data', data)
+        // console.log('columnName', columnName)
+        // console.groupEnd()
+        if (field === columnName) return adaptToType(data)
     })
     // parameters
     text = text.replace(/\$P\{([a-zA-Z0-9_\-.]+)\}/g, (match, parameter) => {
@@ -87,6 +95,8 @@ const replacePlaceholders = (text, data, skipAdapting) => {
         // var parameterKey = cockpitModule_analyticalDrivers[parameter + '_description'] ? parameter + '_description' : parameter
         // return adaptToType(cockpitModule_analyticalDrivers[parameterKey])
     })
+
+    console.log('AAAAAAAAAAAAAAAA', text)
     return text
 }
 
