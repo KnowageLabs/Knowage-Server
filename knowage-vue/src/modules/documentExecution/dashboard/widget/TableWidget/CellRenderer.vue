@@ -79,7 +79,7 @@ export default defineComponent({
         },
         getConditionalStyle() {
             if (this.params.propWidget.settings.conditionalStyles.enabled) {
-                return getColumnConditionalStyles(this.params.propWidget, this.params.colId, this.params.value, true)
+                return getColumnConditionalStyles(this.params.propWidget, this.params.colId, this.params.value, true, this.params.dashboardVariables, this.params.dashboardDrivers)
             } else return null
         },
         getMultiselectStyle() {

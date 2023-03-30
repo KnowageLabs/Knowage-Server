@@ -1,4 +1,4 @@
-import { IWidget, ITableWidgetColumnGroup, IDataset, IWidgetCrossNavigation } from '../../Dashboard'
+import { IWidget, ITableWidgetColumnGroup, IDataset, IWidgetCrossNavigation, IVariable, IDashboardDriver } from '../../Dashboard'
 
 export const getColumnGroup = (propWidget: IWidget, col: ITableWidgetColumnGroup) => {
     const modelGroups = propWidget.settings.configuration.columnGroups.groups
@@ -36,18 +36,19 @@ export const getWidgetStyleByTypeWithoutValidation = (propWidget: IWidget, style
     return styleString + ';'
 }
 
-export const getColumnConditionalStyles = (propWidget: IWidget, colId: string, valueToCompare: any, returnString?: boolean) => {
+export const getColumnConditionalStyles = (propWidget: IWidget, colId: string, valueToCompare: any, returnString?: boolean, variables?: IVariable[], drivers?: IDashboardDriver[]) => {
     const conditionalStyles = propWidget.settings.conditionalStyles
     let styleString = null as any
 
     const columnConditionalStyles = conditionalStyles.conditions.filter((condition) => condition.target.includes(colId) || condition.condition.formula)
     const columnName = propWidget.columns.find((column) => column.id === colId)?.columnName
 
-    console.log('columnName', columnName)
-
     if (columnConditionalStyles.length > 0) {
         for (let i = 0; i < columnConditionalStyles.length; i++) {
-            if ((columnConditionalStyles[i].condition.formula && isFormulaConditionMet(columnConditionalStyles[i].condition.formula, valueToCompare, columnName)) || (!columnConditionalStyles[i].condition.formula && isConditionMet(columnConditionalStyles[i].condition, valueToCompare))) {
+            if (
+                (columnConditionalStyles[i].condition.formula && isFormulaConditionMet(columnConditionalStyles[i].condition.formula, valueToCompare, columnName, variables, drivers)) ||
+                (!columnConditionalStyles[i].condition.formula && isConditionMet(columnConditionalStyles[i].condition, valueToCompare))
+            ) {
                 if (columnConditionalStyles[i].applyToWholeRow && !returnString) {
                     styleString = columnConditionalStyles[i].properties
                 } else if (returnString) {
@@ -64,39 +65,35 @@ export const getColumnConditionalStyles = (propWidget: IWidget, colId: string, v
     return styleString
 }
 
-const isFormulaConditionMet = (formula, valueToCompare, columnName) => {
-    const formattedFormula = replacePlaceholders(formula, valueToCompare, false, columnName)
+const isFormulaConditionMet = (formula, valueToCompare, columnName, variables?: IVariable[], drivers?: IDashboardDriver[]) => {
+    const formattedFormula = replacePlaceholders(formula, valueToCompare, false, columnName, variables, drivers)
     return eval(formattedFormula)
 }
 
-const replacePlaceholders = (text, data, skipAdapting, columnName) => {
+const replacePlaceholders = (text, data, skipAdapting, columnName, variables?: IVariable[], drivers?: IDashboardDriver[]) => {
     function adaptToType(value) {
         if (skipAdapting) return value
         else return isNaN(value) ? '"' + value + '"' : value
     }
     // variables
-    text = text.replace(/\$V\{([a-zA-Z0-9_\-.]+)\}/g, (match, variable) => {
-        // return adaptToType(cockpitModule_properties.VARIABLES[variable])
-        console.log('variables', match, variable)
+    text = text.replace(/\$V\{([a-zA-Z0-9_\-.]+)\}/g, (match, variableName) => {
+        if (variables && variables.length > 0) {
+            const dashboardVariable = variables.find((variable) => variable.name === variableName)
+            if (dashboardVariable) return adaptToType(dashboardVariable.value)
+        }
     })
     // fields
     text = text.replace(/\$F\{([a-zA-Z0-9_\-.]+)\}/g, (match, field) => {
-        // console.group(' ---------------------')
-        // console.log('match', match)
-        // console.log('field', field)
-        // console.log('data', data)
-        // console.log('columnName', columnName)
-        // console.groupEnd()
         if (field === columnName) return adaptToType(data)
     })
-    // parameters
-    text = text.replace(/\$P\{([a-zA-Z0-9_\-.]+)\}/g, (match, parameter) => {
-        console.log('parameters', match, parameter)
-        // var parameterKey = cockpitModule_analyticalDrivers[parameter + '_description'] ? parameter + '_description' : parameter
-        // return adaptToType(cockpitModule_analyticalDrivers[parameterKey])
+    // parameters/drivers
+    text = text.replace(/\$P\{([a-zA-Z0-9_\-.]+)\}/g, (match, parameterName) => {
+        if (drivers && drivers.length > 0) {
+            const dashboardVariable = drivers.find((driver) => driver.urlName === parameterName)
+            if (dashboardVariable) return adaptToType(dashboardVariable.value)
+        }
     })
 
-    console.log('AAAAAAAAAAAAAAAA', text)
     return text
 }
 

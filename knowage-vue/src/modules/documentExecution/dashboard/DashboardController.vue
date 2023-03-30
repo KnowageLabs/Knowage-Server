@@ -137,6 +137,10 @@ export default defineComponent({
             if (!this.showDashboard) return
             await this.getData()
             this.$watch('model.configuration.datasets', (modelDatasets: IDashboardDataset[]) => setDatasetIntervals(modelDatasets, this.datasets))
+        },
+        async reloadTrigger() {
+            if (!this.showDashboard) return
+            await this.getData()
         }
     },
     async created() {
@@ -150,7 +154,7 @@ export default defineComponent({
         clearAllDatasetIntervals()
     },
     methods: {
-        ...mapActions(dashboardStore, ['removeSelections', 'setAllDatasets', 'getSelections', 'setInternationalization', 'getInternationalization', 'setDashboardDocument', 'setDashboardDrivers', 'setProfileAttributes', 'getCrossNavigations']),
+        ...mapActions(dashboardStore, ['getDashboardDrivers', 'removeSelections', 'setAllDatasets', 'getSelections', 'setInternationalization', 'getInternationalization', 'setDashboardDocument', 'setDashboardDrivers', 'setProfileAttributes', 'getCrossNavigations']),
         setEventListeners() {
             emitter.on('openNewWidgetPicker', this.openNewWidgetPicker)
             emitter.on('openDatasetManagement', this.openDatasetManagementDialog)
