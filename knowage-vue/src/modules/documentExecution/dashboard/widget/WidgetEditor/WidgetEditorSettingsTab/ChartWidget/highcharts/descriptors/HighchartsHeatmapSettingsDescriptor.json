@@ -86,12 +86,20 @@
             {
                 "title": "dashboard.widgetEditor.axis",
                 "type": "HeatMapXAxisSettings"
+            },
+            {
+                "title": "common.title",
+                "type": "HeatMapXAxisTitleSettings"
             }
         ],
         "YAxis": [
             {
                 "title": "dashboard.widgetEditor.axis",
                 "type": "HeatMapYAxisSettings"
+            },
+            {
+                "title": "common.title",
+                "type": "HeatMapYAxisTitleSettings"
             }
         ]
     },

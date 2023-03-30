@@ -36,6 +36,8 @@
                 <WidgetPreview v-else-if="accordion.type === 'Preview'" :widget-model="widgetModel" :datasets="datasets" :selected-datasets="selectedDatasets" :dashboard-id="dashboardId"></WidgetPreview>
                 <HighchartsHeatmapAxisSettings v-else-if="accordion.type === 'HeatMapXAxisSettings'" :widget-model="widgetModel" axis="x"></HighchartsHeatmapAxisSettings>
                 <HighchartsHeatmapAxisSettings v-else-if="accordion.type === 'HeatMapYAxisSettings'" :widget-model="widgetModel" axis="y"></HighchartsHeatmapAxisSettings>
+                <HighchartsHeatmapAxisTitleSettings v-else-if="accordion.type === 'HeatMapXAxisTitleSettings'" :widget-model="widgetModel" axis="y"></HighchartsHeatmapAxisTitleSettings>
+                <HighchartsHeatmapAxisTitleSettings v-else-if="accordion.type === 'HeatMapYAxisTitleSettings'" :widget-model="widgetModel" axis="y"></HighchartsHeatmapAxisTitleSettings>
             </AccordionTab>
         </Accordion>
     </div>
@@ -77,6 +79,7 @@ import HighchartsStopsSettings from './gauge/settings/HighchartsStopsSettings.vu
 import HighchartsGaugeBandsSettings from './gauge/settings/HighchartsGaugeBandsSettings.vue'
 import HighchartsWidgetSettingsAccordionHeader from './HighchartsWidgetSettingsAccordionHeader.vue'
 import HighchartsHeatmapAxisSettings from './heatmap/HighchartsHeatmapAxisSettings.vue'
+import HighchartsHeatmapAxisTitleSettings from './heatmap/HighchartsHeatmapAxisTitleSettings.vue'
 
 export default defineComponent({
     name: 'hihgcharts-widget-configuration-container',
@@ -112,7 +115,8 @@ export default defineComponent({
         HighchartsStopsSettings,
         HighchartsGaugeBandsSettings,
         HighchartsWidgetSettingsAccordionHeader,
-        HighchartsHeatmapAxisSettings
+        HighchartsHeatmapAxisSettings,
+        HighchartsHeatmapAxisTitleSettings
     },
     props: {
         widgetModel: { type: Object as PropType<IWidget>, required: true },

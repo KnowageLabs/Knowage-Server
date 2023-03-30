@@ -7,8 +7,8 @@ export const updateHeatmapChartModel = (oldModel: any, newModel: IHighchartsChar
     console.log('-------- OLD CHART MODEL: ', oldModel)
     getFormattedNoDataConfiguration(oldModel, newModel)
     getFormattedLegend(oldModel, newModel)
-    getFormattedAxisLabels(oldModel, newModel, 'x')
-    getFormattedAxisLabels(oldModel, newModel, 'y')
+    getFormattedAxisSettings(oldModel, newModel, 'x')
+    getFormattedAxisSettings(oldModel, newModel, 'y')
     //getFormattedSeries(oldModel, newModel, 1)
     //getFormattedTooltipSettings(oldModel, newModel)
     console.log('-------- NEW CHART MODEL: ', newModel)
@@ -16,7 +16,7 @@ export const updateHeatmapChartModel = (oldModel: any, newModel: IHighchartsChar
     return newModel
 }
 
-const getFormattedAxisLabels = (oldModel: any, newModel: IHighchartsChartModel, axis: 'x' | 'y') => {
+const getFormattedAxisSettings = (oldModel: any, newModel: IHighchartsChartModel, axis: 'x' | 'y') => {
     const oldAxis = axis === 'x' ? oldModel.CHART.AXES_LIST.AXIS[1] : oldModel.CHART.AXES_LIST.AXIS[0]
     const newModelAxis = highchartsDefaultValues.getDefaultHeatmapXAxis()
     if (!oldAxis) return
@@ -35,53 +35,3 @@ const getFormattedAxisLabels = (oldModel: any, newModel: IHighchartsChartModel, 
     }
     axis === 'x' ? newModel.xAxis = newModelAxis : newModel.yAxis = newModelAxis
 }
-
-
-
-// export interface IHighchartsHeatmapAxis {
-//     min: number | null,
-//     max: number | null,
-//     categories: string[],
-//     labels: IHighchartsHeatmapAxisLabels
-//     title: IHighchartsHeatmapAxisTitle
-// }
-
-// export interface IHighchartsHeatmapAxisLabels {
-//     rotation: number | null
-//     align: string,
-//     style: {
-//         fontFamily: string
-//         fontSize: string
-//         fontWeight: string
-//         color: string
-//     },
-//     format?: string,
-//     formatter?: Function,
-//     formatterText?: string,
-//     formatterError?: string,
-// }
-
-// export interface IHighchartsHeatmapAxisTitle {
-//     enabled: boolean,
-//     text: string,
-//     style: {
-//         fontFamily: string
-//         fontSize: string
-//         fontWeight: string
-//         color: string
-//     }
-// }
-
-// export interface IHighchartsHeatmapSerie {
-//     name: string,
-//     data: IHighchartsHeatmapSerieData[],
-//     accessibility?: IHighchartsSerieAccessibility
-// }
-
-// export interface IHighchartsHeatmapSerieData {
-//     id: string,
-//     x: number,
-//     y: number,
-//     value: number,
-//     dataLabels: IHighchartsChartDataLabels
-// }

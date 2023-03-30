@@ -43,6 +43,10 @@ export default defineComponent({
                 case 'Tooltip':
                 case 'ActivityGaugeTooltip':
                     return this.widgetModel.settings.chartModel.model?.tooltip
+                case 'HeatMapXAxisTitleSettings':
+                    return this.widgetModel.settings.chartModel.model?.xAxis?.title
+                case 'HeatMapYAxisTitleSettings':
+                    return this.widgetModel.settings.chartModel.model?.xAxis?.title
                 case 'Title':
                     return this.widgetModel.settings.style.title
                 case 'ColumnStyle':
