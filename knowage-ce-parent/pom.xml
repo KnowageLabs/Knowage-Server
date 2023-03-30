@@ -480,18 +480,25 @@
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-project-info-reports-plugin</artifactId>
 				<version>3.4.2</version>
+				<reportSets>
+					<reportSet>
+						<id>main</id>
+						<reports>
+							<report>index</report>
+						</reports>
+					</reportSet>
+				</reportSets>
 			</plugin>
 
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-jxr-plugin</artifactId>
-				<version>2.3</version>
+				<artifactId>maven-checkstyle-plugin</artifactId>
+				<version>3.2.1</version>
 				<reportSets>
 					<reportSet>
-						<id>aggregate</id>
-						<inherited>false</inherited>
+						<id>checkstyle</id>
 						<reports>
-							<report>aggregate</report>
+							<report>checkstyle</report>
 						</reports>
 					</reportSet>
 				</reportSets>
@@ -512,13 +519,28 @@
 				</reportSets>
 			</plugin>
 
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jxr-plugin</artifactId>
+				<version>2.3</version>
+				<reportSets>
+					<reportSet>
+						<id>aggregate</id>
+						<inherited>false</inherited>
+						<reports>
+							<report>aggregate</report>
+						</reports>
+					</reportSet>
+				</reportSets>
+			</plugin>
+
 		</plugins>
 	</reporting>
 
 	<distributionManagement>
 		<site>
-			<id>main</id>
-			<url>file://${basedir}/target/website</url>
+			<id>${project.artifactId}-site</id>
+			<url>file:///C:/KNOWAGE/tmp/project-site/${project.artifactId}</url>
 		</site>
 	</distributionManagement>
 

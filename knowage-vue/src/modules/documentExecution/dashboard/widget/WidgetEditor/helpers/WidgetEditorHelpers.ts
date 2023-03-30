@@ -1,3 +1,4 @@
+import { createNewDiscoveryWidgetSettings } from './discoveryWidget/DiscoveryWidgetFunctions';
 import { formatVegaForSave } from './chartWidget/vega/VegaBackendSaveHelper';
 import { formatVegaWidget, createNewVegaSettings } from './chartWidget/vega/VegaHelpers';
 import { IWidget, IWidgetColumn } from '../../../Dashboard'
@@ -81,6 +82,9 @@ const createNewWidgetSettings = (widget: IWidget) => {
             break
         case 'static-pivot-table':
             widget.settings = createNewPivotTableWidgetSettings()
+            break
+        case 'discovery':
+            widget.settings = createNewDiscoveryWidgetSettings()
             break
         case 'vega':
             widget.settings = createNewVegaSettings()

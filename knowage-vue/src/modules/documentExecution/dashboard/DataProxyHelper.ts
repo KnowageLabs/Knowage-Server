@@ -43,6 +43,8 @@ export const getWidgetData = async (dashboardId: any, widget: IWidget, datasets:
             return await getCustomChartData(dashboardId, widget, datasets, $http, initialCall, selections, associativeResponseSelections)
         case 'static-pivot-table':
             return await getPivotData(dashboardId, widget, datasets, $http, initialCall, selections, associativeResponseSelections)
+        case 'discovery':
+            return await getDiscoveryChartData(widget, datasets, $http, initialCall, selections, associativeResponseSelections)
         case 'vega':
             return await getPieChartData(widget, datasets, $http, initialCall, selections, associativeResponseSelections)
         default:

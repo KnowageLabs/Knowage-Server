@@ -15,6 +15,7 @@ import { formatChartJSWidget } from './chartWidget/chartJS/ChartJSWidgetCompatib
 import { formatImageWidget } from './imageWidget/ImageWidgetCompatibilityHelper'
 import { formatCustomChartWidget } from './customChart/CustomChartWidgetCompatibilityHelper'
 import { formatPivotTabletWidget } from './pivotWidget/PivotTableCompatibilityHelper'
+import { formatDiscoveryWidget } from './discoveryWidget/DiscoveryWidgetCompatibilityHelper'
 
 const datasetIdLabelMap = {}
 
@@ -222,6 +223,9 @@ export const formatWidget = (widget: any, formattedModel: IDashboard, user: any,
             break
         case 'static-pivot-table':
             formattedWidget = formatPivotTabletWidget(widget)
+            break
+        case 'discovery':
+            formattedWidget = formatDiscoveryWidget(widget, drivers)
             break
         case 'map':
             formattedWidget = formatMapWidget(widget)

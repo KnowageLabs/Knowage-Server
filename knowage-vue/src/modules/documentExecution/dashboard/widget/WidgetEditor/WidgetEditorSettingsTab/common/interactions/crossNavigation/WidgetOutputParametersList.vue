@@ -29,14 +29,14 @@
                 <label class="kn-material-input-label">{{ $t('common.value') }}</label>
                 <InputText v-model="parameter.value" class="kn-material-input p-inputtext-sm" :disabled="disabled" @change="parametersChanged" />
             </div>
-            <div v-else-if="parameter.type === 'dynamic' && ['table', 'highcharts', 'chartJS', 'static-pivot-table', 'vega'].includes(widgetType)" class="p-sm-12 p-md-7 p-d-flex p-flex-row p-ai-center kn-flex">
+            <div v-else-if="parameter.type === 'dynamic' && ['table', 'highcharts', 'chartJS', 'static-pivot-table', 'discovery', 'vega'].includes(widgetType)" class="p-sm-12 p-md-7 p-d-flex p-flex-row p-ai-center kn-flex">
                 <div class="p-d-flex p-flex-column kn-flex">
                     <label class="kn-material-input-label"> {{ $t('common.column') }}</label>
                     <Dropdown
-                        v-if="['table', 'static-pivot-table'].includes(widgetType)"
+                        v-if="['table', 'discovery', 'static-pivot-table'].includes(widgetType)"
                         v-model="parameter.column"
                         class="kn-material-input"
-                        :options="widgetType === 'table' ? widgetModel.columns : pivotTalbeFields"
+                        :options="['table', 'discovery'].includes(widgetType) ? widgetModel.columns : pivotTalbeFields"
                         option-label="alias"
                         option-value="columnName"
                         :disabled="disabled"

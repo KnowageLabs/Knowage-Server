@@ -23,7 +23,7 @@ const addColumnToColumnGroup = (formattedWidget: IWidget, tempColumn: any) => {
 }
 
 const getVisualizationTypeConfigurationsFromColumn = (formattedWidget: IWidget, tempColumn: any) => {
-    if ((tempColumn.fieldType === 'ATTRIBUTE' && tempColumn.precision !== 0) || tempColumn.style?.prefix || tempColumn.style?.suffix || tempColumn.pinned) {
+    if ((tempColumn.fieldType === 'ATTRIBUTE' && tempColumn.precision !== 0) || tempColumn.style?.prefix || tempColumn.style?.suffix || tempColumn.pinned || tempColumn.dateFormat) {
         addVisualisationTypeAttributeColumn(formattedWidget, tempColumn)
     } else if (tempColumn.fieldType === 'MEASURE' && tempColumn.visType) {
         addVisualisationTypeMeasureColumn(formattedWidget, tempColumn)
@@ -35,13 +35,14 @@ const getVisibilityConditionsFromColumn = (formattedWidget: IWidget, tempColumn:
         target: [getColumnId(tempColumn.name)],
         hide: tempColumn.style?.hiddenColumn ?? false,
         hidePdf: tempColumn.style?.hideFromPdf ?? false,
+        hideFromSummary: tempColumn.style?.hideSummary ?? false,
         condition: {
             type: 'always'
         }
     } as ITableWidgetVisibilityCondition
     if (tempColumn.variables) {
         getVisibilityConditionVariable(formattedWidget, tempColumn, tempVisibiilityCondition, formattedDashboardModel)
-    } else if (tempVisibiilityCondition.hide || tempVisibiilityCondition.hidePdf) {
+    } else if (tempVisibiilityCondition.hide || tempVisibiilityCondition.hidePdf || tempVisibiilityCondition.hideFromSummary) {
         formattedWidget.settings.visualization.visibilityConditions.enabled = true
         formattedWidget.settings.visualization.visibilityConditions.conditions.push(tempVisibiilityCondition)
     }
@@ -95,7 +96,7 @@ const addVisibilityConditionToTheModel = (rule: ITableWidgetVisibilityCondition,
 export const getStyleFromColumn = (formattedWidget: IWidget, tempColumn: any, columnNameIdMap: any) => {
     if (!tempColumn.style) return
     let hasStyle = false
-    let fields = ['background-color', 'color', 'justify-content', 'font-size', 'font-family', 'font-style', 'font-weight']
+    const fields = ['background-color', 'color', 'justify-content', 'font-size', 'font-family', 'font-style', 'font-weight', 'align-items']
     for (let i = 0; i < fields.length; i++) {
         if (tempColumn.style.hasOwnProperty(fields[i])) {
             hasStyle = true
@@ -107,9 +108,10 @@ export const getStyleFromColumn = (formattedWidget: IWidget, tempColumn: any, co
         formattedWidget.settings.style.columns.styles.push({
             target: [columnNameIdMap[tempColumn.name]],
             properties: {
+                'align-items': tempColumn.style['align-items'] ?? 'center',
                 width: tempColumn.style.width,
-                'background-color': tempColumn.style['background-color'] ?? 'rgb(0, 0, 0)',
-                color: tempColumn.style.color ?? 'rgb(255, 255, 255)',
+                'background-color': tempColumn.style['background-color'] ?? 'rgb(255, 255, 255)',
+                color: tempColumn.style.color ?? 'rgb(0, 0, 0)',
                 'justify-content': tempColumn.style['justify-content'] ?? '',
                 'font-size': tempColumn.style['font-size'] ?? '',
                 'font-family': tempColumn.style['font-family'] ?? '',
@@ -206,7 +208,8 @@ const addVisualisationTypeMeasureColumn = (formattedWidget: IWidget, tempColumn:
         precision: tempColumn.precision,
         prefix: tempColumn.style?.prefix ?? '',
         suffix: tempColumn.style?.suffix,
-        pinned: tempColumn.pinned ?? ''
+        pinned: tempColumn.pinned ?? '',
+        dateFormat: tempColumn.dateFormat ?? ''
     } as ITableWidgetVisualizationType
     if ((tempColumn.visType === 'Chart' || tempColumn.visType === 'Text & Chart') && tempColumn.barchart) {
         tempVisualizationType.min = tempColumn.barchart.minValue ?? 0

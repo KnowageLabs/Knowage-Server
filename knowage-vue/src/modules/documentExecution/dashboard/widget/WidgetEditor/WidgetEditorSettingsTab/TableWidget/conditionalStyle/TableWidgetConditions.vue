@@ -13,65 +13,75 @@
                 ></div>
 
                 <div class="p-col-12 p-grid p-p-0" :draggable="!conditionalStylesDisabled" @dragstart.stop="onDragStart($event, index)">
-                    <div class="p-col-1 p-d-flex p-flex-column p-jc-center p-ai-center">
-                        <i class="pi pi-th-large kn-cursor-pointer" :class="[conditionalStylesDisabled ? 'icon-disabled' : '']"></i>
-                    </div>
                     <div class="p-col-10 p-grid p-ai-center">
-                        <div class="p-grid p-col-12 p-ai-center">
-                            <div class="p-sm-12 p-md-6 p-lg-3 p-d-flex p-flex-column p-p-2">
-                                <label class="kn-material-input-label"> {{ $t('common.column') }}</label>
-                                <Dropdown v-model="conditionalStyle.target" class="kn-material-input" :options="widgetModel.columns" option-label="alias" option-value="id" :disabled="conditionalStylesDisabled" @change="conditionalStylesChanged"> </Dropdown>
-                            </div>
-                            <div class="p-sm-12 p-md-6 p-lg-2 p-d-flex p-flex-column p-p-2 operator-dropdown-container">
-                                <label class="kn-material-input-label"> {{ $t('common.operator') }}</label>
-                                <Dropdown v-model="conditionalStyle.condition.operator" class="kn-material-input" :options="descriptor.columnConditionOptions" option-label="label" option-value="value" :disabled="conditionalStylesDisabled" @change="conditionalStylesChanged"> </Dropdown>
-                            </div>
-                            <div class="p-sm-12 p-md-6 p-lg-3 p-d-flex p-flex-column p-p-2 value-type-dropdown">
-                                <label class="kn-material-input-label"> {{ $t('dashboard.widgetEditor.conditions.compareValueType') }}</label>
-                                <Dropdown v-model="conditionalStyle.condition.type" class="kn-material-input" :options="descriptor.conditionCompareValueTypes" option-value="value" :disabled="conditionalStylesDisabled" @change="onCompareValueTypeChanged(conditionalStyle)">
-                                    <template #value="slotProps">
-                                        <div>
-                                            <span>{{ getTranslatedLabel(slotProps.value, descriptor.conditionCompareValueTypes, $t) }}</span>
-                                        </div>
-                                    </template>
-                                    <template #option="slotProps">
-                                        <div>
-                                            <span>{{ $t(slotProps.option.label) }}</span>
-                                        </div>
-                                    </template>
-                                </Dropdown>
-                            </div>
-                            <div v-if="conditionalStyle.condition.type === 'static'" class="p-sm-12 p-md-6 p-lg-4 p-d-flex p-flex-column p-pl-2 p-pt-2">
-                                <label class="kn-material-input-label">{{ $t('common.value') }}</label>
-                                <InputText v-model="conditionalStyle.condition.value" class="kn-material-input p-inputtext-sm" :disabled="conditionalStylesDisabled" @change="conditionalStylesChanged" />
-                            </div>
-                            <div v-else-if="conditionalStyle.condition.type === 'parameter'" class="p-sm-12 p-md-6 p-lg-4 p-d-flex p-flex-column p-pl-2">
-                                <label class="kn-material-input-label">{{ $t('common.value') }}</label>
-                                <Dropdown v-model="conditionalStyle.condition.parameter" class="kn-material-input" :options="drivers" option-label="name" option-value="name" :disabled="conditionalStylesDisabled" @change="onDriverChanged(conditionalStyle)"> </Dropdown>
-                            </div>
-                            <div v-else-if="conditionalStyle.condition.type === 'variable'" class="p-sm-12 p-md-4 p-lg-2 p-pl-2 p-d-flex p-flex-column kn-flex p-pl-2">
-                                <label class="kn-material-input-label">{{ $t('common.value') }}</label>
-                                <Dropdown v-model="conditionalStyle.condition.variable" class="kn-material-input" :options="variables" option-label="name" option-value="name" :disabled="conditionalStylesDisabled" @change="onVariableChanged(conditionalStyle)"> </Dropdown>
-                            </div>
-                            <div v-if="conditionalStyle.condition.type === 'variable' && conditionalStyle.condition.variablePivotDatasetOptions" class="p-col-12 p-md-2 p-d-flex p-flex-column">
-                                <label class="kn-material-input-label p-mr-2">{{ $t('common.key') }}</label>
-                                <Dropdown
-                                    v-model="conditionalStyle.condition.variableKey"
-                                    class="kn-material-input"
-                                    :options="conditionalStyle.condition.variablePivotDatasetOptions ? Object.keys(conditionalStyle.condition.variablePivotDatasetOptions) : []"
-                                    :disabled="conditionalStylesDisabled"
-                                    @change="onVariableKeyChanged(conditionalStyle)"
-                                >
-                                </Dropdown>
-                            </div>
+                        <div class="p-col-2 p-d-flex p-flex-column p-jc-center p-ai-center">
+                            <i class="pi pi-th-large kn-cursor-pointer" :class="[conditionalStylesDisabled ? 'icon-disabled' : '']"></i>
                         </div>
-                        <div class="p-col-12">
-                            <WidgetEditorStyleToolbar :options="descriptor.conditionsToolbarStyleOptions" :prop-model="conditionalStyle.properties" :disabled="conditionalStylesDisabled" @change="onStyleToolbarChange($event, conditionalStyle)"> </WidgetEditorStyleToolbar>
-                        </div>
+                        <div class="p-col-10 p-grid p-ai-center">
+                            <div class="p-col-1 p-d-flex p-jc-center p-ai-center">
+                                <i v-tooltip="$t('dashboard.widgetEditor.conditions.useAdvancedFormula')" class="fa fa-code kn-cursor-pointer p-mr-2" :class="[conditionalStylesDisabled ? 'icon-disabled' : '']" @click="onFormulaIconClicked(conditionalStyle)"></i>
+                            </div>
+                            <div v-if="conditionalStyle.condition.formula || conditionalStyle.condition.formula === ''" class="p-col-11 p-d-flex p-flex-column">
+                                <label class="kn-material-input-label">{{ $t('common.formula') }}</label>
+                                <InputText v-model="conditionalStyle.condition.formula" class="kn-material-input p-inputtext-sm" :disabled="conditionalStylesDisabled" @change="conditionalStylesChanged" />
+                                <small> {{ $t('dashboard.widgetEditor.conditions.formulaHint') }}</small>
+                            </div>
+                            <div v-else class="p-grid p-col-11 p-ai-center">
+                                <div class="p-sm-12 p-md-6 p-lg-3 p-d-flex p-flex-column p-p-2">
+                                    <label class="kn-material-input-label"> {{ $t('common.column') }}</label>
+                                    <Dropdown v-model="conditionalStyle.target" class="kn-material-input" :options="widgetModel.columns" option-label="alias" option-value="id" :disabled="conditionalStylesDisabled" @change="conditionalStylesChanged"> </Dropdown>
+                                </div>
+                                <div class="p-sm-12 p-md-6 p-lg-2 p-d-flex p-flex-column p-p-2 operator-dropdown-container">
+                                    <label class="kn-material-input-label"> {{ $t('common.operator') }}</label>
+                                    <Dropdown v-model="conditionalStyle.condition.operator" class="kn-material-input" :options="descriptor.columnConditionOptions" option-label="label" option-value="value" :disabled="conditionalStylesDisabled" @change="conditionalStylesChanged"> </Dropdown>
+                                </div>
+                                <div class="p-sm-12 p-md-6 p-lg-3 p-d-flex p-flex-column p-p-2 value-type-dropdown">
+                                    <label class="kn-material-input-label"> {{ $t('dashboard.widgetEditor.conditions.compareValueType') }}</label>
+                                    <Dropdown v-model="conditionalStyle.condition.type" class="kn-material-input" :options="descriptor.conditionCompareValueTypes" option-value="value" :disabled="conditionalStylesDisabled" @change="onCompareValueTypeChanged(conditionalStyle)">
+                                        <template #value="slotProps">
+                                            <div>
+                                                <span>{{ getTranslatedLabel(slotProps.value, descriptor.conditionCompareValueTypes, $t) }}</span>
+                                            </div>
+                                        </template>
+                                        <template #option="slotProps">
+                                            <div>
+                                                <span>{{ $t(slotProps.option.label) }}</span>
+                                            </div>
+                                        </template>
+                                    </Dropdown>
+                                </div>
+                                <div v-if="conditionalStyle.condition.type === 'static'" class="p-sm-12 p-md-6 p-lg-4 p-d-flex p-flex-column p-pl-2 p-pt-2">
+                                    <label class="kn-material-input-label">{{ $t('common.value') }}</label>
+                                    <InputText v-model="conditionalStyle.condition.value" class="kn-material-input p-inputtext-sm" :disabled="conditionalStylesDisabled" @change="conditionalStylesChanged" />
+                                </div>
+                                <div v-else-if="conditionalStyle.condition.type === 'parameter'" class="p-sm-12 p-md-6 p-lg-4 p-d-flex p-flex-column p-pl-2">
+                                    <label class="kn-material-input-label">{{ $t('common.value') }}</label>
+                                    <Dropdown v-model="conditionalStyle.condition.parameter" class="kn-material-input" :options="drivers" option-label="name" option-value="name" :disabled="conditionalStylesDisabled" @change="onDriverChanged(conditionalStyle)"> </Dropdown>
+                                </div>
+                                <div v-else-if="conditionalStyle.condition.type === 'variable'" class="p-sm-12 p-md-4 p-lg-2 p-pl-2 p-d-flex p-flex-column kn-flex p-pl-2">
+                                    <label class="kn-material-input-label">{{ $t('common.value') }}</label>
+                                    <Dropdown v-model="conditionalStyle.condition.variable" class="kn-material-input" :options="variables" option-label="name" option-value="name" :disabled="conditionalStylesDisabled" @change="onVariableChanged(conditionalStyle)"> </Dropdown>
+                                </div>
+                                <div v-if="conditionalStyle.condition.type === 'variable' && conditionalStyle.condition.variablePivotDatasetOptions" class="p-col-12 p-md-2 p-d-flex p-flex-column">
+                                    <label class="kn-material-input-label p-mr-2">{{ $t('common.key') }}</label>
+                                    <Dropdown
+                                        v-model="conditionalStyle.condition.variableKey"
+                                        class="kn-material-input"
+                                        :options="conditionalStyle.condition.variablePivotDatasetOptions ? Object.keys(conditionalStyle.condition.variablePivotDatasetOptions) : []"
+                                        :disabled="conditionalStylesDisabled"
+                                        @change="onVariableKeyChanged(conditionalStyle)"
+                                    >
+                                    </Dropdown>
+                                </div>
+                            </div>
+                            <div class="p-col-12">
+                                <WidgetEditorStyleToolbar :options="descriptor.conditionsToolbarStyleOptions" :prop-model="conditionalStyle.properties" :disabled="conditionalStylesDisabled" @change="onStyleToolbarChange($event, conditionalStyle)"> </WidgetEditorStyleToolbar>
+                            </div>
 
-                        <div class="p-col-12 p-px-4 p-py-2">
-                            <InputSwitch v-model="conditionalStyle.applyToWholeRow" :disabled="conditionalStylesDisabled" @change="conditionalStylesChanged"></InputSwitch>
-                            <label class="kn-material-input-label p-ml-4">{{ $t('dashboard.widgetEditor.conditions.applyToWholeRow') }}</label>
+                            <div class="p-col-12 p-px-4 p-py-2">
+                                <InputSwitch v-model="conditionalStyle.applyToWholeRow" :disabled="conditionalStylesDisabled" @change="conditionalStylesChanged"></InputSwitch>
+                                <label class="kn-material-input-label p-ml-4">{{ $t('dashboard.widgetEditor.conditions.applyToWholeRow') }}</label>
+                            </div>
                         </div>
                     </div>
 
@@ -305,6 +315,11 @@ export default defineComponent({
         },
         onColumnRemoved() {
             this.loadConditionalStyles()
+        },
+        onFormulaIconClicked(conditionalStyle: ITableWidgetConditionalStyle) {
+            if (this.conditionalStylesDisabled) return
+            if (conditionalStyle.condition.formula || conditionalStyle.condition.formula === '') delete conditionalStyle.condition.formula
+            else conditionalStyle.condition.formula = ''
         }
     }
 })
