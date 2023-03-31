@@ -5,6 +5,8 @@ import { IWidget, IWidgetColumn } from '@/modules/documentExecution/dashboard/Da
 import { createHeatMapSerie } from './updater/KnowageHighchartsCommonUpdater'
 import * as highchartsDefaultValues from '../../../WidgetEditor/helpers/chartWidget/highcharts/HighchartsDefaultValues'
 import deepcopy from 'deepcopy'
+import moment from 'moment';
+import { formatDate } from '@/helpers/commons/localeHelper';
 
 export class KnowageHighchartsHeatmapChart extends KnowageHighcharts {
     constructor(model: any) {
@@ -37,46 +39,59 @@ export class KnowageHighchartsHeatmapChart extends KnowageHighcharts {
     }
 
     setData(data: any, widgetModel: IWidget) {
+        console.log('------------ DATA: ', data)
         if (!data || !data.rows) return
         if (this.model.series.length === 0) this.getSeriesFromWidgetModel(widgetModel)
 
         const categoryValuesMap = {}
         const xAxisCategoriesSet = new Set() as Set<string>
         const yAxisCategoriesSet = new Set() as Set<string>
-        this.populateCategoryValuesMap(data, categoryValuesMap, xAxisCategoriesSet, yAxisCategoriesSet)
 
-        const xAxisCategories = this.setXAxisCategories(xAxisCategoriesSet)
-        const yAxisCategories = this.setYAxisCategories(yAxisCategoriesSet)
+        const firstAttributeIsDate = data.metaData.fields[1] && ['date', 'timestamp'].includes(data.metaData.fields[1].type)
+        const secondAttributeIsDate = data.metaData.fields[2] && ['date', 'timestamp'].includes(data.metaData.fields[2].type)
+        const dateFormat = widgetModel.settings?.configuration?.datetypeSettings?.format
+        this.populateCategoryValuesMap(data, categoryValuesMap, xAxisCategoriesSet, yAxisCategoriesSet, widgetModel, firstAttributeIsDate, secondAttributeIsDate, dateFormat)
+
+        const xAxisCategories = this.setXAxisCategories(xAxisCategoriesSet, firstAttributeIsDate ? dateFormat : '')
+        const yAxisCategories = this.setYAxisCategories(yAxisCategoriesSet, secondAttributeIsDate ? dateFormat : '')
 
         this.setDataInModelSerie(xAxisCategories, yAxisCategories, categoryValuesMap)
         return this.model.series
     }
 
-    populateCategoryValuesMap(data: any, categoryValuesMap: any, xAxisCategoriesSet: Set<string>, yAxisCategoriesSet: Set<string>) {
+    populateCategoryValuesMap(data: any, categoryValuesMap: any, xAxisCategoriesSet: Set<string>, yAxisCategoriesSet: Set<string>, widgetModel: IWidget, firstAttributeIsDate: boolean, secondAttributeIsDate: boolean, dateFormat: string) {
         data.rows.forEach((row: any) => {
-            const xCategoryValue = row['column_1']
-            const yCategoryValue = row['column_2']
+            const xCategoryValue = firstAttributeIsDate ? this.getFormattedDateCategoryValue(row['column_1'], dateFormat, data.metaData.fields[1].type) : row['column_1']
+            const yCategoryValue = secondAttributeIsDate ? this.getFormattedDateCategoryValue(row['column_2'], dateFormat, data.metaData.fields[2].type) : row['column_2']
             if (!categoryValuesMap[xCategoryValue]) categoryValuesMap[xCategoryValue] = {}
-            categoryValuesMap[xCategoryValue][yCategoryValue] = row['column_3'] ?? null
+            if (categoryValuesMap[xCategoryValue][yCategoryValue]) categoryValuesMap[xCategoryValue][yCategoryValue] += row['column_3'] ?? 0
+            else categoryValuesMap[xCategoryValue][yCategoryValue] = row['column_3'] ?? null
 
             xAxisCategoriesSet.add(xCategoryValue)
             yAxisCategoriesSet.add(yCategoryValue)
         })
     }
 
-    setXAxisCategories(xAxisCategoriesSet: Set<string>) {
+    getFormattedDateCategoryValue(dateString: string, dateFormat: string, type: 'date' | 'timestamp') {
+        if (!dateFormat) return dateString
+        const date = moment(dateString, type === 'date' ? 'DD/MM/YYYY' : 'DD/MM/YYYY HH:mm:ss.SSS')
+        return date.isValid() ? date.format(dateFormat) : dateString
+    }
+
+    setXAxisCategories(xAxisCategoriesSet: Set<string>, dateFormat: '') {
         if (this.model.xAxis?.categories) {
             this.model.xAxis.categories = Array.from(xAxisCategoriesSet) as string[]
-            this.model.xAxis.categories.sort()
+            dateFormat ? this.model.xAxis.categories.sort((a, b) => moment(a, dateFormat).diff(moment(b, dateFormat))) : this.model.xAxis.categories.sort()
+            // this.model.xAxis.categories.sort()
             return this.model.xAxis.categories
         } else return []
     }
 
 
-    setYAxisCategories(yAxisCategoriesSet: Set<string>) {
+    setYAxisCategories(yAxisCategoriesSet: Set<string>, dateFormat: '') {
         if ((this.model.yAxis as IHighchartsHeatmapAxis)?.categories) {
             (this.model.yAxis as IHighchartsHeatmapAxis).categories = Array.from(yAxisCategoriesSet) as string[]
-            (this.model.yAxis as IHighchartsHeatmapAxis).categories.sort()
+            dateFormat ? (this.model.yAxis as IHighchartsHeatmapAxis).categories.sort((a, b) => moment(a, dateFormat).diff(moment(b, dateFormat))) : (this.model.yAxis as IHighchartsHeatmapAxis).categories.sort()
             return (this.model.yAxis as IHighchartsHeatmapAxis).categories
         } else return []
     }

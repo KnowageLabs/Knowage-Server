@@ -10,7 +10,7 @@
                     <span>{{ getFormattedDate(new Date(), slotProps.option) }}</span>
                 </template>
                 <template #value="slotProps">
-                    <span>{{ getFormattedDate(new Date(), slotProps.option) }}</span>
+                    <span>{{ getFormattedDate(new Date(), slotProps.value) }}</span>
                 </template>
             </Dropdown>
         </div>
