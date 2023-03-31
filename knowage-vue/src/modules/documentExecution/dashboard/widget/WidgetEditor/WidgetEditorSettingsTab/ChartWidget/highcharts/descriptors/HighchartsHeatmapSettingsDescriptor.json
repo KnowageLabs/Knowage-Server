@@ -18,6 +18,10 @@
         ],
         "Configuration": [
             {
+                "title": "dashboard.widgetEditor.highcharts.heatmap.nullValues.title",
+                "type": "HeatmapNullSettings"
+            },
+            {
                 "title": "dashboard.widgetEditor.noData.title",
                 "type": "NoDataMessageConfiguration"
             },
@@ -85,21 +89,21 @@
         "XAxis": [
             {
                 "title": "dashboard.widgetEditor.axis",
-                "type": "HeatMapXAxisSettings"
+                "type": "HeatmapXAxisSettings"
             },
             {
                 "title": "common.title",
-                "type": "HeatMapXAxisTitleSettings"
+                "type": "HeatmapXAxisTitleSettings"
             }
         ],
         "YAxis": [
             {
                 "title": "dashboard.widgetEditor.axis",
-                "type": "HeatMapYAxisSettings"
+                "type": "HeatmapYAxisSettings"
             },
             {
                 "title": "common.title",
-                "type": "HeatMapYAxisTitleSettings"
+                "type": "HeatmapYAxisTitleSettings"
             }
         ]
     },

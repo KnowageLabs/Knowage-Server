@@ -91,6 +91,7 @@ export interface IHighchartsChartModel {
         pie?: IHighchartsChartPlotOptions,
         gauge?: IHighchartsChartPlotOptions,
         solidgauge?: IHighchartsChartPlotOptions
+        heatmap?: IHighchartsChartPlotOptions
         series?: { events: any }
     },
     legend: IHighchartsLegend,
@@ -109,6 +110,8 @@ export interface IHighchartsChartPlotOptions {
     depth: number,
     allowPointSelect: boolean,
     cursor: string,
+    connectNulls?: boolean,
+    nullColor?: string,
     dataLabels: IHighchartsChartDataLabels,
 }
 

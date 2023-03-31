@@ -613,6 +613,11 @@
                     "axisMinHint": "The maximum value of the axis. If null, the max value is automatically calculated.",
                     "dimensionsTableHint": "Exactly two attributes to define categories. If the attribute is of type Date (Timestamp) it must be the first one. You are not able to reorder categories.",
                     "labelRotation": "Label Rotation",
+                    "nullValues": {
+                        "connectNulls": "Connect Nulls",
+                        "nullColor": "Null Color",
+                        "title": "Null Values"
+                    },
                     "rotation": "Rotation",
                     "valuesTableHint": "Exactly one measure only to define series"
                 },

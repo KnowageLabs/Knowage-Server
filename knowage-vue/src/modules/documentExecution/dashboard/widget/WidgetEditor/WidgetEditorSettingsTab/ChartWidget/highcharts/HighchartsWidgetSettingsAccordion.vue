@@ -34,10 +34,11 @@
                 <WidgetCrossNavigation v-else-if="accordion.type === 'CrossNavigation'" :widget-model="widgetModel" :datasets="datasets" :selected-datasets="selectedDatasets" :dashboard-id="dashboardId"></WidgetCrossNavigation>
                 <WidgetInteractionsLinks v-else-if="accordion.type === 'Link'" :widget-model="widgetModel" :datasets="datasets" :selected-datasets="selectedDatasets" :dashboard-id="dashboardId"></WidgetInteractionsLinks>
                 <WidgetPreview v-else-if="accordion.type === 'Preview'" :widget-model="widgetModel" :datasets="datasets" :selected-datasets="selectedDatasets" :dashboard-id="dashboardId"></WidgetPreview>
-                <HighchartsHeatmapAxisSettings v-else-if="accordion.type === 'HeatMapXAxisSettings'" :widget-model="widgetModel" axis="x"></HighchartsHeatmapAxisSettings>
-                <HighchartsHeatmapAxisSettings v-else-if="accordion.type === 'HeatMapYAxisSettings'" :widget-model="widgetModel" axis="y"></HighchartsHeatmapAxisSettings>
-                <HighchartsHeatmapAxisTitleSettings v-else-if="accordion.type === 'HeatMapXAxisTitleSettings'" :widget-model="widgetModel" axis="x"></HighchartsHeatmapAxisTitleSettings>
-                <HighchartsHeatmapAxisTitleSettings v-else-if="accordion.type === 'HeatMapYAxisTitleSettings'" :widget-model="widgetModel" axis="y"></HighchartsHeatmapAxisTitleSettings>
+                <HighchartsHeatmapAxisSettings v-else-if="accordion.type === 'HeatmapXAxisSettings'" :widget-model="widgetModel" axis="x"></HighchartsHeatmapAxisSettings>
+                <HighchartsHeatmapAxisSettings v-else-if="accordion.type === 'HeatmapYAxisSettings'" :widget-model="widgetModel" axis="y"></HighchartsHeatmapAxisSettings>
+                <HighchartsHeatmapAxisTitleSettings v-else-if="accordion.type === 'HeatmapXAxisTitleSettings'" :widget-model="widgetModel" axis="x"></HighchartsHeatmapAxisTitleSettings>
+                <HighchartsHeatmapAxisTitleSettings v-else-if="accordion.type === 'HeatmapYAxisTitleSettings'" :widget-model="widgetModel" axis="y"></HighchartsHeatmapAxisTitleSettings>
+                <HighchartsHeatmapNullSettings v-else-if="accordion.type === 'HeatmapNullSettings'" :widget-model="widgetModel"></HighchartsHeatmapNullSettings>
             </AccordionTab>
         </Accordion>
     </div>
@@ -80,6 +81,7 @@ import HighchartsGaugeBandsSettings from './gauge/settings/HighchartsGaugeBandsS
 import HighchartsWidgetSettingsAccordionHeader from './HighchartsWidgetSettingsAccordionHeader.vue'
 import HighchartsHeatmapAxisSettings from './heatmap/HighchartsHeatmapAxisSettings.vue'
 import HighchartsHeatmapAxisTitleSettings from './heatmap/HighchartsHeatmapAxisTitleSettings.vue'
+import HighchartsHeatmapNullSettings from './heatmap/HighchartsHeatmapNullSettings.vue'
 
 export default defineComponent({
     name: 'hihgcharts-widget-configuration-container',
@@ -116,7 +118,8 @@ export default defineComponent({
         HighchartsGaugeBandsSettings,
         HighchartsWidgetSettingsAccordionHeader,
         HighchartsHeatmapAxisSettings,
-        HighchartsHeatmapAxisTitleSettings
+        HighchartsHeatmapAxisTitleSettings,
+        HighchartsHeatmapNullSettings
     },
     props: {
         widgetModel: { type: Object as PropType<IWidget>, required: true },

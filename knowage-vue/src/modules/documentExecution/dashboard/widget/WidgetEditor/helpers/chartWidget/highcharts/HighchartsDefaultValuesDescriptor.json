@@ -1,4 +1,20 @@
 {
+    "dafaultHeatmapPlotOptions": {
+        "connectNulls": false,
+        "cursor": "pointer",
+        "dataLabels": {
+            "backgroundColor": "",
+            "enabled": false,
+            "position": "",
+            "style": {
+                "color": "",
+                "fontFamily": "",
+                "fontSize": "14px",
+                "fontWeight": ""
+            }
+        },
+        "showInLegend": false
+    },
     "dafaultPaneOptions": {
         "center": ["50%", "50%"],
         "endAngle": 120,

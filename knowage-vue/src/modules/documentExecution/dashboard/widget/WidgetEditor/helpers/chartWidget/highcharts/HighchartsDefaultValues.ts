@@ -117,4 +117,6 @@ export const getDefaultHeatmapYAxis = () => {
     return deepcopy(descriptor.defaultHeatmapYAxis) as IHighchartsHeatmapAxis
 }
 
-
+export const getDafaultHeatmapPlotOptions = () => {
+    return deepcopy(descriptor.dafaultHeatmapPlotOptions) as IHighchartsChartPlotOptions
+}
