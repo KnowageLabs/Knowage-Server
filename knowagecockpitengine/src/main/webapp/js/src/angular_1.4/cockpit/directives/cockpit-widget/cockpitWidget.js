@@ -869,7 +869,7 @@ cockpitModule_templateServices.getDatasetUsetByWidgetWithParams();
 		  	});
 		}
 
-    $scope.doSelection = async function (columnName, columnValue, modalColumn, modalValue, row, skipRefresh, dsId, disableAssociativeLogic, directInteraction) {
+    $scope.doSelection = async function (columnName, columnValue, modalColumn, modalValue, row, skipRefresh, dsId, disableAssociativeLogic, directInteraction,isoDate) {
 		if($scope.ngModel.cliccable==false){
 			console.log("widget is not cliccable")
 			return;
@@ -1112,8 +1112,8 @@ cockpitModule_templateServices.getDatasetUsetByWidgetWithParams();
 								}
 							}
 						}else{
-							if(!content.type && content.dataType === "date" && modalValue){
-									outputParameter[par] = modalValue
+							if(!content.type && content.dataType === "date" && isoDate){
+									outputParameter[par] = isoDate
 							}
 						}
 					}
