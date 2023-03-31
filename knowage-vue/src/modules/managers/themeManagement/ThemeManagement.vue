@@ -112,11 +112,7 @@ export default defineComponent({
         this.currentTheme = this.themeHelper.getDefaultKnowageTheme()
         this.getAllThemes()
     },
-    computed: {
-        ...mapState(mainStore, ['defaultTheme'])
-    },
     methods: {
-        ...mapActions(mainStore, ['setInfo', 'setTheme']),
         triggerInputFile(value) {
             this.triggerInput = value
         },
@@ -217,7 +213,7 @@ export default defineComponent({
             this.importWidget(json)
         },
         importWidget(json: JSON) {
-            this.$http.post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + 'thememanagement', json).then(() => {
+            this.$http.post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + 'thememanagement', json).then(() => {
                 this.setInfo({ title: this.$t('managers.themeManagement.uploadTheme'), msg: this.$t('managers.themeManagement.themeSuccessfullyUploaded') })
 
                 this.getAllThemes()
