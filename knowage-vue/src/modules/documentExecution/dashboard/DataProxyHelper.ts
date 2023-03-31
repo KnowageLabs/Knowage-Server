@@ -550,7 +550,7 @@ const formatChartWidgetForGet = (propWidget: IWidget, dataset: IDashboardDataset
     dataToSend.aggregations.dataset = dataset.dsLabel
 
     const chartType = propWidget.settings.chartModel?.model?.chart.type
-    if (chartType == 'gauge' || chartType == 'activitygauge' || chartType == 'solidgauge') {
+    if (chartType == 'gauge' || chartType == 'activitygauge' || chartType == 'solidgauge' || chartType == 'heatmap') {
         propWidget.columns.forEach((measure) => {
             const measureToPush = { id: `${measure.alias}_${measure.aggregation}`, alias: `${measure.alias}_${measure.aggregation}`, columnName: measure.columnName, funct: measure.aggregation, orderColumn: measure.alias } as any
             measure.formula ? (measureToPush.formula = measure.formula) : ''
