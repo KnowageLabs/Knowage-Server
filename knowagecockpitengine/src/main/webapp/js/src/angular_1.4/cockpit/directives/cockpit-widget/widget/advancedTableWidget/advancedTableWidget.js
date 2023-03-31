@@ -1111,12 +1111,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					}
 				}
 				if(['timestamp','time','date'].includes(node.colDef.fieldType)){
-					newValue = luxon.DateTime.fromFormat(node.value, getColumnFromTableMetadata(node.colDef.field).dateFormatJava).toISO()
+					var isoDate = luxon.DateTime.fromFormat(node.value, getColumnFromTableMetadata(node.colDef.field).dateFormatJava).toISO()
+					newValue = null;
 				}
 				else {
 					newValue = null;
 				}
-				$scope.doSelection(getColumnNameFromTableMetadata(node.colDef.headerName, node.colDef.field), node.value, $scope.ngModel.settings.modalSelectionColumn, newValue, mapRow(node.data));
+				$scope.doSelection(getColumnNameFromTableMetadata(node.colDef.headerName, node.colDef.field), node.value, $scope.ngModel.settings.modalSelectionColumn, newValue, mapRow(node.data),undefined,undefined,undefined,undefined,isoDate);
 			}
 		}
 
