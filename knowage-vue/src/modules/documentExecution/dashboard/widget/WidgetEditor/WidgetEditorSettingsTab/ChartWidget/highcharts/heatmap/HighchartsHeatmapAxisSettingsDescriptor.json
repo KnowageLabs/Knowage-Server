@@ -1,4 +1,18 @@
 {
+    "axisTitleAlignOptions": [
+        {
+            "label": "common.low",
+            "value": "low"
+        },
+        {
+            "label": "common.center",
+            "value": "center"
+        },
+        {
+            "label": "common.high",
+            "value": "high"
+        }
+    ],
     "styleToolbarSettings": [
         {
             "type": "font-weight"

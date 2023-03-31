@@ -1,3 +1,4 @@
+import { IHighchartsHeatmapAxis } from './../../../../../interfaces/highcharts/DashboardHighchartsHeatmapWidget.d';
 import { hexToRgba } from '@/modules/documentExecution/dashboard/helpers/FormattingHelpers';
 import { IHighchartsChartModel } from '@/modules/documentExecution/dashboard/interfaces/highcharts/DashboardHighchartsWidget'
 import { getFormattedLegend, getFormattedNoDataConfiguration, getFormattedSeries, getFormattedTooltipSettings } from './KnowageHighchartsCommonUpdater'
@@ -20,8 +21,13 @@ const getFormattedAxisSettings = (oldModel: any, newModel: IHighchartsChartModel
     const oldAxis = axis === 'x' ? oldModel.CHART.AXES_LIST.AXIS[1] : oldModel.CHART.AXES_LIST.AXIS[0]
     const newModelAxis = highchartsDefaultValues.getDefaultHeatmapXAxis()
     if (!oldAxis) return
-    console.log('-------- OLD AXIS: ', oldAxis)
-    // TODO - Ask ON PEER if we need this 
+    setFormattedAxisLabels(oldAxis, newModelAxis)
+    setFormattedAxisTitle(oldAxis, newModelAxis)
+    axis === 'x' ? newModel.xAxis = newModelAxis : newModel.yAxis = newModelAxis
+}
+
+const setFormattedAxisLabels = (oldAxis: any, newModelAxis: IHighchartsHeatmapAxis) => {
+    // TODO - Ask ON PEER if we need this
     // if (oldAxis.min) newModelAxis.min = +oldAxis.min
     // if (oldAxis.max) newModelAxis.max = +oldAxis.max
     if (oldAxis.position) newModelAxis.labels.align = oldAxis.position
@@ -33,5 +39,31 @@ const getFormattedAxisSettings = (oldModel: any, newModel: IHighchartsChartModel
         if (oldAxis.style.fontWeight) newModelAxis.labels.style.fontWeight = oldAxis.style.fontWeight
         if (oldAxis.style.rotate) newModelAxis.labels.rotation = oldAxis.style.rotate
     }
-    axis === 'x' ? newModel.xAxis = newModelAxis : newModel.yAxis = newModelAxis
+}
+
+const setFormattedAxisTitle = (oldAxis: any, newModelAxis: IHighchartsHeatmapAxis) => {
+    const oldAxisTitle = oldAxis.TITLE
+    if (!oldAxisTitle) return
+    if (oldAxisTitle.text) {
+        newModelAxis.title.enabled = true
+        newModelAxis.title.text = oldAxisTitle.text
+    }
+    if (oldAxisTitle.style) {
+        if (oldAxisTitle.style.align) newModelAxis.title.align = getFormattedTitleAlign(oldAxis.style.align)
+        if (oldAxisTitle.style.color) newModelAxis.title.style.color = hexToRgba(oldAxis.style.color)
+        if (oldAxisTitle.style.fontFamily) newModelAxis.title.style.fontFamily = oldAxis.style.fontFamily
+        if (oldAxisTitle.style.fontSize) newModelAxis.title.style.fontSize = oldAxis.style.fontSize
+        if (oldAxisTitle.style.fontWeight) newModelAxis.title.style.fontWeight = oldAxis.style.fontWeight
+    }
+}
+
+const getFormattedTitleAlign = (oldAxisTitleAlign: 'left' | 'center' | 'right') => {
+    switch (oldAxisTitleAlign) {
+        case 'left':
+            return 'low'
+        case 'right':
+            return 'high'
+        default:
+            return 'center'
+    }
 }

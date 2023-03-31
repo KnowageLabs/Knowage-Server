@@ -3,9 +3,24 @@
         <div class="p-col-12">
             {{ axisModel?.title }}
         </div>
-        <div class="p-col-12 p-md-6 p-lg-2 p-d-flex p-flex-column kn-flex">
+        <div class="p-col-12 p-md-6 p-d-flex p-flex-column">
             <label class="kn-material-input-label p-mr-2">{{ $t('common.text') }}</label>
             <InputText v-model="axisModel.title.text" class="kn-material-input p-inputtext-sm" :disabled="titleDisabled" @change="modelChanged" />
+        </div>
+        <div class="p-col-12 p-md-6 p-d-flex p-flex-column">
+            <label class="kn-material-input-label p-mr-2">{{ $t('common.align') }}</label>
+            <Dropdown v-model="axisModel.title.align" class="kn-material-input" :options="descriptor.axisTitleAlignOptions" option-value="value" @change="modelChanged">
+                <template #value="slotProps">
+                    <div>
+                        <span>{{ getTranslatedLabel(slotProps.value, descriptor.axisTitleAlignOptions, $t) }}</span>
+                    </div>
+                </template>
+                <template #option="slotProps">
+                    <div>
+                        <span>{{ $t(slotProps.option.label) }}</span>
+                    </div>
+                </template>
+            </Dropdown>
         </div>
         <div class="p-col-12 p-px-2 p-pt-4">
             <WidgetEditorStyleToolbar :options="descriptor.styleToolbarSettings" :prop-model="toolbarModel" :disabled="titleDisabled" @change="onStyleToolbarChange"></WidgetEditorStyleToolbar>
@@ -18,18 +33,23 @@ import { defineComponent, PropType } from 'vue'
 import { IWidget, IWidgetStyleToolbarModel } from '@/modules/documentExecution/dashboard/Dashboard'
 import { IHighchartsHeatmapAxis } from '@/modules/documentExecution/dashboard/interfaces/highcharts/DashboardHighchartsHeatmapWidget'
 import { emitter } from '@/modules/documentExecution/dashboard/DashboardHelpers'
+import { getTranslatedLabel } from '@/helpers/commons/dropdownHelper'
 import descriptor from './HighchartsHeatmapAxisSettingsDescriptor.json'
+import settingsDescriptor from '../HighchartsWidgetSettingsDescriptor.json'
+import Dropdown from 'primevue/dropdown'
 import WidgetEditorStyleToolbar from '../../../common/styleToolbar/WidgetEditorStyleToolbar.vue'
 
 export default defineComponent({
     name: 'highcharts-heatmap-axis-title-settings',
-    components: { WidgetEditorStyleToolbar },
+    components: { Dropdown, WidgetEditorStyleToolbar },
     props: { widgetModel: { type: Object as PropType<IWidget>, required: true }, axis: { type: String, required: true } },
     data() {
         return {
             descriptor,
+            settingsDescriptor,
             axisModel: null as IHighchartsHeatmapAxis | null,
-            toolbarModel: {} as { 'font-family': string; 'font-size': string; 'font-weight': string; color: string }
+            toolbarModel: {} as { 'font-family': string; 'font-size': string; 'font-weight': string; color: string },
+            getTranslatedLabel
         }
     },
     computed: {

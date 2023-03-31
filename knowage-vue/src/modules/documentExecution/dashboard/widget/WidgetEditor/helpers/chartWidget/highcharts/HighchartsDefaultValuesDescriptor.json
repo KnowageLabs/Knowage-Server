@@ -141,6 +141,7 @@
         "max": null,
         "min": null,
         "title": {
+            "align": "center",
             "enabled": true,
             "style": {
                 "color": "",
@@ -166,6 +167,7 @@
         "max": null,
         "min": null,
         "title": {
+            "align": "center",
             "enabled": true,
             "style": {
                 "color": "",

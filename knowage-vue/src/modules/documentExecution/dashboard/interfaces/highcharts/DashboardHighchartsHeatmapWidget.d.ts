@@ -26,6 +26,7 @@ export interface IHighchartsHeatmapAxisLabels {
 export interface IHighchartsHeatmapAxisTitle {
     enabled: boolean,
     text: string,
+    align: string,
     style: {
         fontFamily: string
         fontSize: string

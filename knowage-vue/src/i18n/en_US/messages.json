@@ -98,6 +98,7 @@
         "generate": "Generate",
         "group": "Group",
         "height": "Height",
+        "high": "High",
         "home": "Home",
         "horizontal": "Horizontal",
         "horizontalAlign": "Horizontal Align",
@@ -131,6 +132,7 @@
         "locked": "Locked",
         "loggedUser": "logged user",
         "login": "Login",
+        "low": "Low",
         "max": "Max",
         "medium": "Medium",
         "menu": "Menu",
@@ -607,12 +609,12 @@
                     "valuesTableHint": "Measures only."
                 },
                 "heatmap": {
+                    "axisMaxHint": "The minimum value of the axis. If null the min value is automatically calculated.",
+                    "axisMinHint": "The maximum value of the axis. If null, the max value is automatically calculated.",
                     "dimensionsTableHint": "Exactly two attributes to define categories. If the attribute is of type Date (Timestamp) it must be the first one. You are not able to reorder categories.",
                     "labelRotation": "Label Rotation",
                     "rotation": "Rotation",
-                    "valuesTableHint": "Exactly one measure only to define series",
-                    "axisMaxHint": "The minimum value of the axis. If null the min value is automatically calculated.",
-                    "axisMinHint": "The maximum value of the axis. If null, the max value is automatically calculated."
+                    "valuesTableHint": "Exactly one measure only to define series"
                 },
                 "labels": {
                     "distance": "Distance",
