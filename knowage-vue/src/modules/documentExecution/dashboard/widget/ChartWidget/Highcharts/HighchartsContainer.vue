@@ -23,7 +23,7 @@ import cryptoRandomString from 'crypto-random-string'
 import store from '../../../Dashboard.store'
 import deepcopy from 'deepcopy'
 import mainStore from '@/App.store'
-import { mockedData2 } from './mockedData'
+// import { mockedData2 } from './mockedData'
 
 HighchartsMore(Highcharts)
 HighchartsSolidGauge(Highcharts)
@@ -87,8 +87,8 @@ export default defineComponent({
             Highcharts.setOptions({ lang: { noData: this.chartModel.lang.noData } })
 
             // TODO - remove mock
-            console.log('------- mockedData2: ', JSON.parse(mockedData2))
-            this.widgetModel.settings.chartModel.setData(JSON.parse(mockedData2), this.widgetModel)
+            console.log('------- mockedData2: ', this.dataToShow)
+            this.widgetModel.settings.chartModel.setData(this.dataToShow, this.widgetModel)
 
             this.widgetModel.settings.chartModel.updateSeriesAccessibilitySettings(this.widgetModel)
             this.widgetModel.settings.chartModel.updateSeriesLabelSettings(this.widgetModel)

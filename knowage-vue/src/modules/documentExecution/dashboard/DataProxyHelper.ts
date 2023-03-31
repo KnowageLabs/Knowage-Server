@@ -465,6 +465,8 @@ export const getHighchartsWidgetData = async (widget: IWidget, datasets: IDashbo
             return await getGaugeChartData(widget, datasets, $http, initialCall, selections, associativeResponseSelections)
         case 'solidgauge':
             return await getGaugeChartData(widget, datasets, $http, initialCall, selections, associativeResponseSelections)
+        case 'heatmap':
+            return await getGaugeChartData(widget, datasets, $http, initialCall, selections, associativeResponseSelections)
         default:
             return ''
     }
@@ -505,7 +507,6 @@ const getPieChartData = async (widget: IWidget, datasets: IDashboardDataset[], $
 export const getGaugeChartData = async (widget: IWidget, datasets: IDashboardDataset[], $http: any, initialCall: boolean, selections: ISelection[], associativeResponseSelections?: any) => {
     const datasetIndex = datasets.findIndex((dataset: IDashboardDataset) => widget.dataset === dataset.id)
     const selectedDataset = datasets[datasetIndex]
-
     const measureCheck = widget.columns.findIndex((column: any) => column.fieldType === 'MEASURE') != -1
 
     if (selectedDataset && measureCheck) {
