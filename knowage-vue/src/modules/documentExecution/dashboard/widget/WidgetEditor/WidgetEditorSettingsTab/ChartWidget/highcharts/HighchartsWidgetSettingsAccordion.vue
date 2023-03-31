@@ -36,7 +36,7 @@
                 <WidgetPreview v-else-if="accordion.type === 'Preview'" :widget-model="widgetModel" :datasets="datasets" :selected-datasets="selectedDatasets" :dashboard-id="dashboardId"></WidgetPreview>
                 <HighchartsHeatmapAxisSettings v-else-if="accordion.type === 'HeatMapXAxisSettings'" :widget-model="widgetModel" axis="x"></HighchartsHeatmapAxisSettings>
                 <HighchartsHeatmapAxisSettings v-else-if="accordion.type === 'HeatMapYAxisSettings'" :widget-model="widgetModel" axis="y"></HighchartsHeatmapAxisSettings>
-                <HighchartsHeatmapAxisTitleSettings v-else-if="accordion.type === 'HeatMapXAxisTitleSettings'" :widget-model="widgetModel" axis="y"></HighchartsHeatmapAxisTitleSettings>
+                <HighchartsHeatmapAxisTitleSettings v-else-if="accordion.type === 'HeatMapXAxisTitleSettings'" :widget-model="widgetModel" axis="x"></HighchartsHeatmapAxisTitleSettings>
                 <HighchartsHeatmapAxisTitleSettings v-else-if="accordion.type === 'HeatMapYAxisTitleSettings'" :widget-model="widgetModel" axis="y"></HighchartsHeatmapAxisTitleSettings>
             </AccordionTab>
         </Accordion>

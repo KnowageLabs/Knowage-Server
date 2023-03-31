@@ -75,7 +75,7 @@ export default defineComponent({
         onStyleToolbarChange(model: IWidgetStyleToolbarModel) {
             if (!this.axisModel || !this.axisModel.title) return
             this.toolbarModel = { 'font-family': model['font-family'] ?? '', 'font-size': model['font-size'] ?? '14px', 'font-weight': model['font-weight'] ?? '', color: model.color ?? '' }
-            this.axisModel.labels.style = { color: this.toolbarModel.color ?? '', fontSize: this.toolbarModel['font-size'] ?? '14px', fontFamily: this.toolbarModel['font-family'] ?? '', fontWeight: this.toolbarModel['font-weight'] ?? '' }
+            this.axisModel.title.style = { color: this.toolbarModel.color ?? '', fontSize: this.toolbarModel['font-size'] ?? '14px', fontFamily: this.toolbarModel['font-family'] ?? '', fontWeight: this.toolbarModel['font-weight'] ?? '' }
             this.modelChanged()
         }
     }
