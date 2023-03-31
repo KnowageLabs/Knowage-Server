@@ -12,9 +12,9 @@ const loadCrossNavigationByDocument = async (vueComponent: any, angularData: any
 
     let temp = {} as any
 
-    vueComponent.loading = true
+    vueComponent.loadingCrossNavigationDocument = true
     await $http.get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `1.0/crossNavigation/${vueComponent.document.label}/loadCrossNavigationByDocument`).then((response: AxiosResponse<any>) => (temp = response.data))
-    vueComponent.loading = false
+    vueComponent.loadingCrossNavigationDocument = false
 
     if (temp.length === 0) return
 
