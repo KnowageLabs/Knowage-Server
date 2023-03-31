@@ -17,7 +17,7 @@ const columnNameIdMap = {}
 
 export const formatHighchartsWidget = (widget: any) => {
     console.log('-------- ORIGINAL WIDGET: ', widget)
-
+    const chartType = widget.content?.chartTemplate?.CHART?.type ?? ''
     const formattedWidget = {
         id: widget.id,
         dataset: widget.dataset.dsId ?? null,
@@ -27,20 +27,20 @@ export const formatHighchartsWidget = (widget: any) => {
         settings: {} as IHighchartsWidgetSettings
     } as IWidget
 
-    formattedWidget.settings = getFormattedWidgetSettings(widget) as IHighchartsWidgetSettings
+    formattedWidget.settings = getFormattedWidgetSettings(widget, chartType) as IHighchartsWidgetSettings
     getFiltersForColumns(formattedWidget, widget)
-    formattedWidget.settings.chartModel = createChartModel(widget)
+    formattedWidget.settings.chartModel = createChartModel(widget, chartType)
 
     console.log('-------- FORMATTED WIDGET: ', formattedWidget)
     return formattedWidget
 }
 
-const getFormattedWidgetSettings = (widget: any) => {
+const getFormattedWidgetSettings = (widget: any, chartType: string) => {
     const formattedSettings = {
         updatable: widget.updateble,
         clickable: widget.cliccable,
         chartModel: null,
-        configuration: getFormattedConfiguration(widget),
+        configuration: getFormattedConfiguration(widget, chartType),
         accesssibility: { seriesAccesibilitySettings: getFormattedSeriesAccesibilitySettings(widget) },
         series: { seriesLabelsSettings: getFormattedSerieLabelsSettings(widget) },
         interactions: getFormattedInteractions(widget) as IWidgetInteractions,
@@ -51,10 +51,15 @@ const getFormattedWidgetSettings = (widget: any) => {
     return formattedSettings
 }
 
-const getFormattedConfiguration = (widget: any) => {
-    return {
-        exports: { showExcelExport: widget.style?.showExcelExport ?? false, showScreenshot: widget.style?.showScreenshot ?? false } as IWidgetExports
-    } as IHighchartsWidgetConfiguration
+const getFormattedConfiguration = (widget: any, chartType: string) => {
+    const formattedConfiguration = { exports: { showExcelExport: widget.style?.showExcelExport ?? false, showScreenshot: widget.style?.showScreenshot ?? false } as IWidgetExports } as IHighchartsWidgetConfiguration
+    if (chartType === 'HEATMAP') formattedConfiguration.datetypeSettings = getFormmatedDatetypeSettings(widget)
+    return formattedConfiguration
+}
+
+const getFormmatedDatetypeSettings = (widget: any) => {
+    const formattedDatetypeSettings = highchartsDefaultValues.getDefaultDateTypeSettings()
+    return formattedDatetypeSettings
 }
 
 const getFormattedSeriesAccesibilitySettings = (widget: any) => {
@@ -65,9 +70,9 @@ export const getColumnId = (widgetColumnName: string) => {
     return columnNameIdMap[widgetColumnName]
 }
 
-const createChartModel = (widget: any) => {
+const createChartModel = (widget: any, chartType: string) => {
     const widgetContentChartTemplate = widget.content.chartTemplate
-    switch (widgetContentChartTemplate.CHART.type) {
+    switch (chartType) {
         case 'PIE':
             return new KnowageHighchartsPieChart(widgetContentChartTemplate)
         case 'GAUGE':

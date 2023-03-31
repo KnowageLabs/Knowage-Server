@@ -1,4 +1,4 @@
-import { IHighchartsHeatmapAxis, IHighchartsHeatmapSerie } from './DashboardHighchartsHeatmapWidget.d';
+import { IHighchartsHeatmapAxis, IHighchartsHeatmapDatetype, IHighchartsHeatmapSerie } from './DashboardHighchartsHeatmapWidget.d';
 import { IHighchartsGaugeActivityTooltip, IHighchartsModelPane, IHighchartsGaugeYAxis } from './DashboardHighchartsGaugeWidget.d';
 import { IWidgetExports, IWidgetTitle, IWidgetPaddingStyle, IWidgetBordersStyle, IWidgetShadowsStyle, IWidgetBackgroundStyle } from './../../Dashboard.d';
 import { IWidgetInteractions, IWidgetResponsive } from "../../Dashboard";
@@ -24,6 +24,7 @@ export interface IDrillOrderItem {
 }
 
 export interface IHighchartsWidgetConfiguration {
+    datetypeSettings?: IHighchartsHeatmapDatetype
     exports: IWidgetExports
 }
 

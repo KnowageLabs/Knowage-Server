@@ -18,6 +18,10 @@
         ],
         "Configuration": [
             {
+                "title": "dashboard.widgetEditor.highcharts.heatmap.datetype",
+                "type": "DatetypeSettings"
+            },
+            {
                 "title": "dashboard.widgetEditor.highcharts.heatmap.nullValues.title",
                 "type": "HeatmapNullSettings"
             },

@@ -117,6 +117,10 @@
         "thickness": 10,
         "to": 0
     },
+    "defaultDateTypeSettings": {
+        "enabled": false,
+        "format": ""
+    },
     "defaultGaugeChartPlotOptions": {
         "dataLabels": {
             "backgroundColor": "rgba(194,194,194, 1)",

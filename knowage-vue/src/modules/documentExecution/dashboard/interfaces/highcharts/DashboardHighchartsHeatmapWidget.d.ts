@@ -48,3 +48,8 @@ export interface IHighchartsHeatmapSerieData {
     value: number,
     dataLabels: IHighchartsChartDataLabels
 }
+
+export interface IHighchartsHeatmapDatetype {
+    enabled: boolean,
+    format: string
+}

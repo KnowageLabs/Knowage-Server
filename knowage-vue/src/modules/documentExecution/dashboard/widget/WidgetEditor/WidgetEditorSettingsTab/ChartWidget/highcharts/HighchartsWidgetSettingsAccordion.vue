@@ -39,6 +39,7 @@
                 <HighchartsHeatmapAxisTitleSettings v-else-if="accordion.type === 'HeatmapXAxisTitleSettings'" :widget-model="widgetModel" axis="x"></HighchartsHeatmapAxisTitleSettings>
                 <HighchartsHeatmapAxisTitleSettings v-else-if="accordion.type === 'HeatmapYAxisTitleSettings'" :widget-model="widgetModel" axis="y"></HighchartsHeatmapAxisTitleSettings>
                 <HighchartsHeatmapNullSettings v-else-if="accordion.type === 'HeatmapNullSettings'" :widget-model="widgetModel"></HighchartsHeatmapNullSettings>
+                <HighchartsHeatmapDatetipeSettings v-else-if="accordion.type === 'DatetypeSettings'" :widget-model="widgetModel"></HighchartsHeatmapDatetipeSettings>
             </AccordionTab>
         </Accordion>
     </div>
@@ -82,6 +83,7 @@ import HighchartsWidgetSettingsAccordionHeader from './HighchartsWidgetSettingsA
 import HighchartsHeatmapAxisSettings from './heatmap/HighchartsHeatmapAxisSettings.vue'
 import HighchartsHeatmapAxisTitleSettings from './heatmap/HighchartsHeatmapAxisTitleSettings.vue'
 import HighchartsHeatmapNullSettings from './heatmap/HighchartsHeatmapNullSettings.vue'
+import HighchartsHeatmapDatetipeSettings from './heatmap/HighchartsHeatmapDatetipeSettings.vue'
 
 export default defineComponent({
     name: 'hihgcharts-widget-configuration-container',
@@ -119,7 +121,8 @@ export default defineComponent({
         HighchartsWidgetSettingsAccordionHeader,
         HighchartsHeatmapAxisSettings,
         HighchartsHeatmapAxisTitleSettings,
-        HighchartsHeatmapNullSettings
+        HighchartsHeatmapNullSettings,
+        HighchartsHeatmapDatetipeSettings
     },
     props: {
         widgetModel: { type: Object as PropType<IWidget>, required: true },
