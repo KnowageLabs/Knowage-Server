@@ -465,8 +465,6 @@ export const getHighchartsWidgetData = async (widget: IWidget, datasets: IDashbo
             return await getGaugeChartData(widget, datasets, $http, initialCall, selections, associativeResponseSelections)
         case 'solidgauge':
             return await getGaugeChartData(widget, datasets, $http, initialCall, selections, associativeResponseSelections)
-        case 'heatmap':
-            return await getCustomChartData(widget, datasets, $http, initialCall, selections, associativeResponseSelections)
         default:
             return ''
     }
