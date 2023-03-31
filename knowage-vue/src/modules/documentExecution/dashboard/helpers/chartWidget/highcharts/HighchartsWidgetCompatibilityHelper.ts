@@ -59,7 +59,37 @@ const getFormattedConfiguration = (widget: any, chartType: string) => {
 
 const getFormmatedDatetypeSettings = (widget: any) => {
     const formattedDatetypeSettings = highchartsDefaultValues.getDefaultDateTypeSettings()
+    const oldChartModel = widget.content?.chartTemplate?.CHART
+    if (oldChartModel) {
+        formattedDatetypeSettings.enabled = oldChartModel.dateTime
+        formattedDatetypeSettings.format = getProperDateTimeFormat(oldChartModel.dateFormat)
+    }
     return formattedDatetypeSettings
+}
+
+const getProperDateTimeFormat = (oldDateFormat: string) => {
+    switch (oldDateFormat) {
+        case 'minus':
+            return 'DD-MM-YYYY';
+        case 'slash':
+            return 'DD/MM/YYYY';
+        case 'year':
+            return 'YYYY';
+        case 'month':
+            return 'MMMM YYYY';
+        case 'day':
+            return 'dddd, MMM D, YYYY';
+        case 'hour':
+            return 'dddd, MMM D, YYYY hh';
+        case 'minute':
+            return 'dddd, MMM D, YYYY hh:mm';
+        case 'second':
+            return 'dddd, MMM D, YYYY hh:mm:ss';
+        case 'millisecond':
+            return 'dddd, MMM D, YYYY hh:mm:ss sss';
+        default:
+            return ''
+    }
 }
 
 const getFormattedSeriesAccesibilitySettings = (widget: any) => {
