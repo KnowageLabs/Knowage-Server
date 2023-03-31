@@ -7,7 +7,7 @@
             </div>
 
             <div class="widget-container-renderer" :style="getWidgetPadding()">
-                <TableWidget v-if="propWidget.type == 'table'" :prop-widget="propWidget" :datasets="datasets" :data-to-show="widgetData" :editor-mode="true" :dashboard-id="dashboardId" :prop-active-selections="activeSelections" @pageChanged="getWidgetData" />
+                <TableWidget v-if="propWidget.type == 'table'" :prop-widget="propWidget" :datasets="datasets" :data-to-show="widgetData" :editor-mode="true" :dashboard-id="dashboardId" :prop-active-selections="activeSelections" :prop-variables="variables" @pageChanged="getWidgetData" />
                 <SelectorWidget v-if="propWidget.type == 'selector'" :prop-widget="propWidget" :data-to-show="widgetData" :widget-initial-data="widgetData" :editor-mode="true" :prop-active-selections="activeSelections" :datasets="datasets" :selection-is-locked="false" :dashboard-id="dashboardId" />
                 <ActiveSelectionsWidget v-if="propWidget.type == 'selection'" :prop-widget="propWidget" :prop-active-selections="activeSelections" :editor-mode="true" :dashboard-id="dashboardId" />
                 <WebComponentContainer

@@ -2667,8 +2667,14 @@
             "title": "Tenant Management"
         },
         "themeManagement": {
+            "download": "Download Theme",
             "hint": "Theme management allows you to create a theme, changing the default  colors/dimensions of different interface elements of Knowage. You can also create more than one theme and switch them as you like. Click on one existing item from the list on the side, or press the \"+\" button to add one.",
-            "title": "Theme Management"
+            "import": "Import existing Theme",
+            "new": "Add new Theme",
+            "save": "Save Theme",
+            "themeSuccessfullyUploaded": "Theme Successfully uploaded",
+            "title": "Theme Management",
+            "uploadTheme": "Theme Upload"
         },
         "timespan": {
             "cloneAlreadyDefined": "The next timespan is already defiend",
