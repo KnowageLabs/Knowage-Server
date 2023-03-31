@@ -214,7 +214,7 @@ export default defineComponent({
         },
         importWidget(json: JSON) {
             this.$http.post(process.env.VUE_APP_RESTFUL_SERVICES_PATH + 'thememanagement', json).then(() => {
-                this.setInfo({ title: this.$t('managers.themeManagement.uploadTheme'), msg: this.$t('managers.themeManagement.themeSuccessfullyUploaded') })
+                this.$store.commit('setInfo', { title: this.$t('managers.themeManagement.uploadTheme'), msg: this.$t('managers.themeManagement.themeSuccessfullyUploaded') })
 
                 this.getAllThemes()
             })
