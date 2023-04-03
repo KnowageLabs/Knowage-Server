@@ -4,7 +4,6 @@
             <i class="fas fa-bolt" />
             {{ $t('dashboard.tableWidget.launchSelection') }}
         </div>
-        {{ selectedColumn }}
         <ag-grid-vue class="kn-table-widget-grid ag-theme-alpine kn-flex" :grid-options="gridOptions" :context="context"></ag-grid-vue>
         <PaginatorRenderer v-if="showPaginator" :prop-widget-pagination="widgetModel.settings.pagination" @pageChanged="$emit('pageChanged')" />
     </div>

@@ -47,9 +47,6 @@ export default defineComponent({
     },
     created() {
         this.getCellStyle()
-        // console.group('cellPrep ---------------------', this.params.eGridCell)
-        // console.log('params', this.params)
-        // console.groupEnd()
     },
     methods: {
         getColumnStyle() {
