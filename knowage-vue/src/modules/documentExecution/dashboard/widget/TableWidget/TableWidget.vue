@@ -90,7 +90,6 @@ export default defineComponent({
         dataToShow() {
             this.tableData = this.dataToShow
             this.refreshGridConfiguration(true)
-            this.loadActiveSelectionValue()
         },
         propActiveSelections() {
             this.loadActiveSelections()
@@ -162,6 +161,7 @@ export default defineComponent({
                 suppressRowClickSelection: true,
                 suppressCellFocus: true,
                 suppressMultiRangeSelection: true,
+                suppressRowVirtualisation: true,
                 rowHeight: 25,
 
                 // EVENTS
@@ -256,7 +256,10 @@ export default defineComponent({
 
                         //COLUMN WIDTH
                         const colWidth = this.getColumnWidth(tempCol.colId)
-                        if (colWidth && colWidth != 0) tempCol.minWidth = colWidth
+                        if (colWidth && colWidth != 0) {
+                            tempCol.minWidth = colWidth
+                            tempCol.maxWidth = colWidth
+                        }
 
                         //ROWSPAN MANAGEMENT
                         if (this.widgetModel.settings.configuration.rows.rowSpan.enabled && this.widgetModel.settings.configuration.rows.rowSpan.column === this.widgetModel.columns[datasetColumn].id) {
@@ -530,7 +533,7 @@ export default defineComponent({
                 this.$emit('launchSelection')
             }
 
-            this.multiSelectedCells.length = 0
+            this.removeSelectedValues()
             this.selectedColumn = ''
         },
 
@@ -571,6 +574,7 @@ export default defineComponent({
     border-left: 1px solid lightgrey !important;
     border-right: 1px solid lightgrey !important;
     border-bottom: 1px solid lightgrey !important;
+    background-color: white;
 }
 .multiselect-overlay {
     display: flex;

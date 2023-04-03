@@ -3,7 +3,7 @@
         <div v-if="isColumnOfType('date')" class="custom-cell-label">{{ dateFormatter(params.value) }}</div>
         <div v-else-if="isColumnOfType('timestamp')" class="custom-cell-label">{{ dateTimeFormatter(params.value) }}</div>
         <div v-else-if="isIconColumn" class="custom-cell-label kn-cursor-pointer"><i :class="icon"></i></div>
-        <div v-else class="custom-cell-label">{{ params.value }}</div>
+        <div v-else-if="!isSummaryIndexColumn" class="custom-cell-label">{{ params.value }}</div>
         <span>{{ params.selectedColumn }}</span>
     </div>
 </template>
@@ -27,8 +27,11 @@ export default defineComponent({
         return { helpersDecriptor }
     },
     computed: {
-        isIconColumn() {
+        isIconColumn(): boolean {
             return this.params?.colId === 'iconColumn'
+        },
+        isSummaryIndexColumn(): boolean {
+            return this.params.colId === 'indexColumn' && this.params.node.rowPinned === 'bottom'
         },
         icon() {
             if (!this.isIconColumn || !this.params.propWidget || !this.params.propWidget.settings.interactions) return ''

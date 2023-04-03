@@ -98,6 +98,7 @@ export default defineComponent({
             this.setSeriesEvents()
 
             const modelToRender = this.getModelForRender()
+            modelToRender.chart.backgroundColor = null
 
             try {
                 this.highchartsInstance = Highcharts.chart(this.chartID, modelToRender as any)
