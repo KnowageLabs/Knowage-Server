@@ -1,6 +1,10 @@
 <template>
-    <div v-if="model && model.type == 'selector'" class="outerIcon" :class="{ selected: model.settings.configuration.selectorType.modality == selectorType.value, disabled: cardDisabled }" :style="documentImageSource()" @click="changeSelectorModality(selectorType.value)" />
-    <div v-if="model && model.type == 'selection'" class="outerIcon" :class="{ selected: model.settings.configuration.type == selectorType.value }" :style="documentImageSource()" @click="changeSelectionType(selectorType.value)" />
+    <div v-if="model && model.type == 'selector'" v-tooltip.top="selectorType.label" class="outerIcon" :class="{ selected: model.settings.configuration.selectorType.modality == selectorType.value, disabled: cardDisabled }" @click="changeSelectorModality(selectorType.value)">
+        <div class="innerIcon" :style="documentImageSource()"></div>
+    </div>
+    <div v-if="model && model.type == 'selection'" v-tooltip.top="selectorType.label" class="outerIcon" :class="{ selected: model.settings.configuration.type == selectorType.value }" @click="changeSelectionType(selectorType.value)">
+        <div class="innerIcon" :style="documentImageSource()"></div>
+    </div>
 </template>
 
 <script lang="ts">
@@ -41,7 +45,8 @@ export default defineComponent({
         documentImageSource(): any {
             if (this.selectorType) {
                 return {
-                    'background-image': `url(${this.selectorType.imageUrl})`
+                    'mask-image': `url(${this.selectorType.imageUrl})`,
+                    '-webkit-mask-image': `url(${this.selectorType.imageUrl})`
                 }
             }
         },
@@ -57,26 +62,40 @@ export default defineComponent({
 
 <style lang="scss">
 .outerIcon {
-    width: 115px;
-    height: 60px;
-    border: 1px solid #ccc;
+    .innerIcon {
+        mask-size: 50%;
+        mask-repeat: no-repeat;
+        mask-position: center center;
+        -webkit-mask-size: 50%;
+        -webkit-mask-repeat: no-repeat;
+        -webkit-mask-position: center center;
+        background-repeat: no-repeat;
+        background-size: 50%;
+        background-position: center;
+        background-color: var(--kn-color-primary);
+        width: 115px;
+        height: 60px;
+    }
+
+    border: 1px solid var(--kn-color-borders);
     cursor: pointer;
     margin: 5px;
     &.selected {
-        border: 2px solid;
-        background-color: #a9c3db;
-        border-color: #43749e;
+        border: 1px solid var(--kn-color-secondary);
+        background-color: var(--kn-color-primary);
+        .innerIcon {
+            background-color: white;
+        }
     }
     &:hover {
-        background-color: darken(#a9c3db, 15%);
+        background-color: var(--kn-color-secondary);
+        .innerIcon {
+            background-color: white;
+        }
     }
     &.disabled {
-        background-color: darken(#ccc, 10%);
         cursor: not-allowed;
         pointer-events: none !important;
     }
-    background-repeat: no-repeat;
-    background-size: contain;
-    background-position: center;
 }
 </style>
