@@ -4,6 +4,7 @@
             <i class="fas fa-bolt" />
             {{ $t('dashboard.tableWidget.launchSelection') }}
         </div>
+        {{ selectedColumn }}
         <ag-grid-vue class="kn-table-widget-grid ag-theme-alpine kn-flex" :grid-options="gridOptions" :context="context"></ag-grid-vue>
         <PaginatorRenderer v-if="showPaginator" :prop-widget-pagination="widgetModel.settings.pagination" @pageChanged="$emit('pageChanged')" />
     </div>
@@ -90,7 +91,6 @@ export default defineComponent({
         dataToShow() {
             this.tableData = this.dataToShow
             this.refreshGridConfiguration(true)
-            this.loadActiveSelectionValue()
         },
         propActiveSelections() {
             this.loadActiveSelections()
@@ -533,8 +533,11 @@ export default defineComponent({
                 this.$emit('launchSelection')
             }
 
-            this.multiSelectedCells.length = 0
+            this.removeSelectedValues()
             this.selectedColumn = ''
+
+            console.log('multiSelectedCells', this.selectedColumn)
+            console.log('setting false', this.selectedColumn)
         },
 
         updateActiveSelectionsWithMultivalueSelection(tempSelection: ISelection) {
