@@ -381,8 +381,6 @@ export default defineComponent({
                             tempCol.headerTooltip = null
                         }
 
-                        // tempCol.width = 50
-
                         const colWidth = this.getColumnWidth(tempCol.colId)
                         if (colWidth && colWidth != 0) {
                             tempCol.minWidth = colWidth
@@ -391,6 +389,7 @@ export default defineComponent({
 
                         tempCol.autoHeight = true
                         tempCol.wrapText = true
+                        tempCol.cellStyle = { 'white-space': 'normal' }
 
                         columns.push(tempCol)
                     }
