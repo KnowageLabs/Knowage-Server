@@ -256,7 +256,10 @@ export default defineComponent({
 
                         //COLUMN WIDTH
                         const colWidth = this.getColumnWidth(tempCol.colId)
-                        if (colWidth && colWidth != 0) tempCol.minWidth = colWidth
+                        if (colWidth && colWidth != 0) {
+                            tempCol.minWidth = colWidth
+                            tempCol.maxWidth = colWidth
+                        }
 
                         //ROWSPAN MANAGEMENT
                         if (this.widgetModel.settings.configuration.rows.rowSpan.enabled && this.widgetModel.settings.configuration.rows.rowSpan.column === this.widgetModel.columns[datasetColumn].id) {
