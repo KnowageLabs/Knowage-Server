@@ -45,7 +45,7 @@
 <script lang="ts">
 import { emitter } from '../../DashboardHelpers'
 import { mapActions } from 'pinia'
-import { IDataset, ISelection, IWidget } from '../../Dashboard'
+import { IDataset, ISelection, ITableWidgetColumnStyle, ITableWidgetColumnStyles, IWidget } from '../../Dashboard'
 import { defineComponent, PropType } from 'vue'
 import { AgGridVue } from 'ag-grid-vue3' // the AG Grid Vue Component
 import { executeTableWidgetCrossNavigation, updateStoreSelections } from '../interactionsHelpers/InteractionHelper'
@@ -253,7 +253,6 @@ export default defineComponent({
                 //if there are any search params, empty them, now we are doing selection not search
                 // eslint-disable-next-line vue/no-mutating-props
                 this.propWidget.settings.search.facetSearchParams = {}
-                //TODO: Selection logic
                 updateStoreSelections(createNewTableSelection([row['column_1']], facetName, this.propWidget, this.datasets), this.activeSelections, this.dashboardId, this.setSelections, this.$http)
             } else {
                 const facetSearchParams = this.propWidget.settings.search.facetSearchParams
@@ -382,6 +381,17 @@ export default defineComponent({
                             tempCol.headerTooltip = null
                         }
 
+                        // tempCol.width = 50
+
+                        const colWidth = this.getColumnWidth(tempCol.colId)
+                        if (colWidth && colWidth != 0) {
+                            tempCol.minWidth = colWidth
+                            tempCol.maxWidth = colWidth
+                        }
+
+                        tempCol.autoHeight = true
+                        tempCol.wrapText = true
+
                         columns.push(tempCol)
                     }
                 }
@@ -417,6 +427,14 @@ export default defineComponent({
         },
         sortingChanged() {
             this.$emit('sortingChanged')
+        },
+        getColumnWidth(colId) {
+            const colStyles = this.propWidget.settings.style.columns as ITableWidgetColumnStyles
+
+            const colStyle = colStyles.styles.find((style) => style.target.includes(colId)) as ITableWidgetColumnStyle
+
+            if (colStyle) return colStyle.properties.width
+            else return colStyles.styles[0].properties.width
         }
         //#endregion ================================================================================================
     }
