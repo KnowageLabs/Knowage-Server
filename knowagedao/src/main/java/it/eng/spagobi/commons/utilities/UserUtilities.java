@@ -33,10 +33,13 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.portlet.PortletRequest;
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -59,17 +62,21 @@ import it.eng.spagobi.commons.bo.Role;
 import it.eng.spagobi.commons.bo.RoleMetaModelCategory;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.constants.CommunityFunctionalityConstants;
+import it.eng.spagobi.commons.constants.ConfigurationConstants;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.dao.ICategoryDAO;
 import it.eng.spagobi.commons.dao.IDomainDAO;
 import it.eng.spagobi.commons.dao.IRoleDAO;
+import it.eng.spagobi.commons.metadata.SbiExtRoles;
 import it.eng.spagobi.commons.metadata.SbiTenant;
 import it.eng.spagobi.dao.exception.DAORuntimeException;
 import it.eng.spagobi.engines.config.bo.Engine;
 import it.eng.spagobi.engines.config.dao.IEngineDAO;
 import it.eng.spagobi.profiling.PublicProfile;
 import it.eng.spagobi.profiling.bean.SbiAccessibilityPreferences;
+import it.eng.spagobi.profiling.bean.SbiUser;
+import it.eng.spagobi.profiling.dao.ISbiUserDAO;
 import it.eng.spagobi.services.common.JWTSsoService;
 import it.eng.spagobi.services.common.SsoServiceFactory;
 import it.eng.spagobi.services.common.SsoServiceInterface;
@@ -232,6 +239,14 @@ public class UserUtilities {
 
 					checkTenant(user);
 
+					if (userHasNoRoles(user)) {
+						setDefaultRole(user);
+					}
+
+					if (importUsersIsEnabled() && userIsNotInInternalMetadata(user)) {
+						importUser(user);
+					}
+
 					user.setFunctions(readFunctionality(user));
 
 					profile = new UserProfile(user);
@@ -262,20 +277,80 @@ public class UserUtilities {
 
 	}
 
+	private static boolean userIsNotInInternalMetadata(SpagoBIUserProfile user) {
+		SbiUser internalUser = DAOFactory.getSbiUserDAO().loadSbiUserByUserId(user.getUserId());
+		return internalUser == null;
+	}
+
+	private static void importUser(SpagoBIUserProfile user) {
+		SbiUser newUser = fromSpagoBIUserProfile2SbiUser(user);
+		ISbiUserDAO userDAO = DAOFactory.getSbiUserDAO();
+		userDAO.setTenant(user.getOrganization());
+		userDAO.fullSaveOrUpdateSbiUser(newUser);
+	}
+
+	protected static SbiUser fromSpagoBIUserProfile2SbiUser(SpagoBIUserProfile user) {
+		SbiUser newUser = new SbiUser();
+
+		newUser.setUserId(user.getUserId());
+		newUser.setFullName(user.getUserName());
+		newUser.setIsSuperadmin(user.getIsSuperadmin());
+		newUser.getCommonInfo().setOrganization(user.getOrganization());
+
+		List<String> roleNamesList = Arrays.asList(user.getRoles());
+
+		IRoleDAO roleDAO = DAOFactory.getRoleDAO();
+		roleDAO.setTenant(user.getOrganization());
+
+		// @formatter:off
+		List<SbiExtRoles> rolesList = roleNamesList.stream()
+				.map(roleName -> {
+					Role role = null;
+					try {
+						role = roleDAO.loadByName(roleName);
+					} catch (Exception e) {
+						throw new SpagoBIRuntimeException("An error occurred while loading role with name [" + roleName + "]", e);
+					}
+					return role != null ? new SbiExtRoles(role.getId()) : null;
+				})
+				.filter(x -> x != null)  // to filter roles there were not found into database
+				.collect(Collectors.toList());
+		// @formatter:on
+
+		newUser.setSbiExtUserRoleses(new HashSet<>(rolesList));
+		return newUser;
+	}
+
+	private static boolean importUsersIsEnabled() {
+		String importUserIsEnabled = SingletonConfig.getInstance().getConfigValue(ConfigurationConstants.INTERNAL_SECURITY_LOGIN_IMPORT_USER_IF_NOT_EXISTING);
+		return "true".equalsIgnoreCase(importUserIsEnabled);
+	}
+
+	private static boolean userHasNoRoles(SpagoBIUserProfile user) {
+		return ArrayUtils.isEmpty(user.getRoles());
+	}
+
+	/**
+	 * This method sets the default role, in case it is defined
+	 *
+	 * @param user the user profile object to be initialized with the default role
+	 */
+	private static void setDefaultRole(SpagoBIUserProfile user) {
+		String defaultRole = SingletonConfig.getInstance().getConfigValue(ConfigurationConstants.INTERNAL_SECURITY_USERS_DEFAULT_ROLE);
+		if (ArrayUtils.isEmpty(user.getRoles()) && StringUtils.isNotEmpty(defaultRole)) {
+			logger.debug("User profile object has no roles, setting the default one that is [" + defaultRole + "]");
+			user.setRoles(new String[] { defaultRole });
+		}
+	}
+
 	public static boolean isTechnicalUser(IEngUserProfile profile) {
 		Assert.assertNotNull(profile, "Object in input is null");
 		logger.debug("IN.user id = [" + ((UserProfile) profile).getUserId() + "]");
 		try {
-			if (profile.isAbleToExecuteAction(CommunityFunctionalityConstants.DOCUMENT_MANAGEMENT_ADMIN) // for
-																							// administrators
-					|| profile.isAbleToExecuteAction(CommunityFunctionalityConstants.DOCUMENT_MANAGEMENT_DEV) // for
-																								// developers
-					|| profile.isAbleToExecuteAction(CommunityFunctionalityConstants.DOCUMENT_MANAGEMENT_TEST) // for
-																								// testers
-					|| profile.isAbleToExecuteAction(CommunityFunctionalityConstants.PARAMETER_MANAGEMENT)) { // for
-																								// behavioural
-																								// model
-																								// administrators
+			if (profile.isAbleToExecuteAction(CommunityFunctionalityConstants.DOCUMENT_MANAGEMENT_ADMIN) // for administrators
+					|| profile.isAbleToExecuteAction(CommunityFunctionalityConstants.DOCUMENT_MANAGEMENT_DEV) // for developers
+					|| profile.isAbleToExecuteAction(CommunityFunctionalityConstants.DOCUMENT_MANAGEMENT_TEST) // for testers
+					|| profile.isAbleToExecuteAction(CommunityFunctionalityConstants.PARAMETER_MANAGEMENT)) { // for behavioural model administrators
 				return true;
 			} else {
 				return false;
@@ -289,10 +364,8 @@ public class UserUtilities {
 		Assert.assertNotNull(profile, "Object in input is null");
 		logger.debug("IN.user id = [" + ((UserProfile) profile).getUserId() + "]");
 		try {
-			if (profile.isAbleToExecuteAction(CommunityFunctionalityConstants.DOCUMENT_MANAGEMENT_ADMIN) // for
-																							// administrators
-					|| profile.isAbleToExecuteAction(CommunityFunctionalityConstants.DOCUMENT_MANAGEMENT_DEV)) {// for
-																									// developers
+			if (profile.isAbleToExecuteAction(CommunityFunctionalityConstants.DOCUMENT_MANAGEMENT_ADMIN) // for administrators
+					|| profile.isAbleToExecuteAction(CommunityFunctionalityConstants.DOCUMENT_MANAGEMENT_DEV)) { // for developers
 				return true;
 			} else {
 				return false;
@@ -1134,10 +1207,7 @@ public class UserUtilities {
 				rolesDao = DAOFactory.getRoleDAO();
 				rolesDao.setUserProfile(profile);
 				ICategoryDAO categoryDao = DAOFactory.getCategoryDAO();
-				List<Domain> array = categoryDao.getCategoriesForDataset()
-					.stream()
-					.map(Domain::fromCategory)
-					.collect(toList());
+				List<Domain> array = categoryDao.getCategoriesForDataset().stream().map(Domain::fromCategory).collect(toList());
 				for (String roleName : roleNames) {
 					Role role = rolesDao.loadByName(roleName);
 					List<RoleMetaModelCategory> ds = rolesDao.getMetaModelCategoriesForRole(role.getId());
@@ -1172,10 +1242,7 @@ public class UserUtilities {
 				rolesDao.setUserProfile(profile);
 				IDomainDAO domainDao = DAOFactory.getDomainDAO();
 				ICategoryDAO categoryDao = DAOFactory.getCategoryDAO();
-				List<Domain> allCategories = categoryDao.getCategoriesForBusinessModel()
-					.stream()
-					.map(Domain::fromCategory)
-					.collect(toList());
+				List<Domain> allCategories = categoryDao.getCategoriesForBusinessModel().stream().map(Domain::fromCategory).collect(toList());
 				for (String roleName : roleNames) {
 					Role role = rolesDao.loadByName(roleName);
 					List<RoleMetaModelCategory> roles = rolesDao.getMetaModelCategoriesForRole(role.getId());

@@ -17,6 +17,11 @@
  */
 package it.eng.spagobi.security;
 
+import org.apache.log4j.Logger;
+
+import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.profiling.bean.SbiUser;
+import it.eng.spagobi.services.common.JWTSsoService;
 import it.eng.spagobi.services.security.bo.SpagoBIUserProfile;
 import it.eng.spagobi.utilities.assertion.UnreachableCodeException;
 
@@ -30,9 +35,37 @@ import it.eng.spagobi.utilities.assertion.UnreachableCodeException;
  */
 public class OAuth2HybridSecurityServiceSupplier extends InternalSecurityServiceSupplierImpl {
 
+	static private Logger logger = Logger.getLogger(OAuth2HybridSecurityServiceSupplier.class);
+
 	@Override
 	public SpagoBIUserProfile checkAuthentication(String userId, String psw) {
 		throw new UnreachableCodeException("You cannot invoke this method, since authentication must be delegated to the OAuth2 provider");
 	}
 
+	@Override
+	public SpagoBIUserProfile createUserProfile(String jwtToken) {
+		logger.debug("IN - JWT token: " + jwtToken);
+		try {
+			String userId = JWTSsoService.jwtToken2userId(jwtToken);
+			logger.debug("Clear text userId: " + userId);
+			SbiUser user = DAOFactory.getSbiUserDAO().loadSbiUserByUserId(userId);
+			if (user == null) {
+				logger.debug("User [" + userId + "] was not found into internal metadata, returning a minimal profile object...");
+				return createMinimumUserProfile(jwtToken, userId);
+			} else {
+				return super.createUserProfile(jwtToken);
+			}
+		} finally {
+			logger.debug("OUT");
+		}
+	}
+
+	private SpagoBIUserProfile createMinimumUserProfile(String jwtToken, String userId) {
+		SpagoBIUserProfile profile = new SpagoBIUserProfile();
+		profile.setUniqueIdentifier(jwtToken);
+		profile.setUserId(userId);
+		profile.setUserName(userId);
+		profile.setIsSuperadmin(false);
+		return profile;
+	}
 }

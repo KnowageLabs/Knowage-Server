@@ -664,7 +664,15 @@
 	<CONFIG label="ZIP_MIN_INFLATE_RATIO" name="ZIP_MIN_INFLATE_RATIO"
 		description="Sets the ratio between de- and inflated bytes to detect zipbomb. It defaults to 0.0009"
 		isActive="true" valueCheck="0.0009" valueType="NUM"
-		category="GENERIC_CONFIGURATION" />	
+		category="GENERIC_CONFIGURATION" />
+		
+	<CONFIG label="internal.security.login.importUserIfNotExisting" name="Enable import of user into internal metadata when not existing"
+		description="Enable import procudere of an user profile object into internal metadata if he is not existing" isActive="true"
+		valueCheck="false" valueType="STRING" category="SECURITY" />
+		
+	<CONFIG label="internal.security.users.defaultRole" name="Default users role"
+		description="Default role to be assigned to the users when they have no roles" isActive="true"
+		valueCheck="default_role" valueType="STRING" category="SECURITY" />
 
 </CONFIGS>
 
