@@ -19,7 +19,7 @@
                 </div>
             </template>
         </Toolbar>
-        <ProgressBar v-if="loading" class="kn-progress-bar" mode="indeterminate" />
+        <ProgressBar v-if="loading || loadingCrossNavigationDocument" class="kn-progress-bar" mode="indeterminate" />
 
         <div ref="document-execution-view" id="document-execution-view" class="p-d-flex p-flex-row myDivToPrint">
             <div v-if="parameterSidebarVisible" id="document-execution-backdrop" @click="parameterSidebarVisible = false"></div>
@@ -196,7 +196,8 @@ export default defineComponent({
             angularData: null as any,
             crossNavigationContainerVisible: false,
             crossNavigationContainerData: null as any,
-            newCockpitCreated: false
+            newCockpitCreated: false,
+            loadingCrossNavigationDocument: false
         }
     },
     watch: {
@@ -592,7 +593,7 @@ export default defineComponent({
             }
         },
         async loadPage(initialLoading: boolean = false, documentLabel: string | null = null, crossNavigationPopupMode: boolean = false) {
-            this.loading = true
+            this.loading = crossNavigationPopupMode ? false : true
 
             await this.loadFilters(initialLoading)
             if (this.filtersData?.isReadyForExecution) {
@@ -1123,9 +1124,9 @@ export default defineComponent({
             if (!this.document) return
             let temp = {} as any
 
-            this.loading = true
+            this.loadingCrossNavigationDocument = true
             await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `1.0/crossNavigation/${this.document.label}/loadCrossNavigationByDocument`).then((response: AxiosResponse<any>) => (temp = response.data))
-            this.loading = false
+            this.loadingCrossNavigationDocument = false
 
             if (temp.length === 0) return
 
