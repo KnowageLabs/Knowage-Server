@@ -162,6 +162,7 @@ export default defineComponent({
                 suppressRowClickSelection: true,
                 suppressCellFocus: true,
                 suppressMultiRangeSelection: true,
+                suppressRowVirtualisation: true,
                 rowHeight: 25,
 
                 // EVENTS
@@ -577,6 +578,7 @@ export default defineComponent({
     border-left: 1px solid lightgrey !important;
     border-right: 1px solid lightgrey !important;
     border-bottom: 1px solid lightgrey !important;
+    background-color: white;
 }
 .multiselect-overlay {
     display: flex;
