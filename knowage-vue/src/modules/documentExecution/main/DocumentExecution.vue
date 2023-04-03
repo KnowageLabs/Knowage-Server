@@ -50,7 +50,7 @@
                 </div>
             </template>
         </Toolbar>
-        <ProgressBar v-if="loading" class="kn-progress-bar" mode="indeterminate" />
+        <ProgressBar v-if="loading || loadingCrossNavigationDocument" class="kn-progress-bar" mode="indeterminate" />
         <div ref="document-execution-view" class="p-d-flex p-flex-row document-execution-view myDivToPrint">
             <div v-if="parameterSidebarVisible" :class="propMode === 'document-execution-cross-navigation-popup' ? 'document-execution-backdrop-popup-dialog' : 'document-execution-backdrop'" @click="parameterSidebarVisible = false"></div>
             <div v-show="showExecutedDocument || newDashboardMode" class="kn-flex">
@@ -287,7 +287,8 @@ export default defineComponent({
                 crossNavigations: IDashboardCrossNavigation[]
             } | null,
             crossNavigationPopupDialogDocument: null as any,
-            crossNavigationDialogVisible: false
+            crossNavigationDialogVisible: false,
+            loadingCrossNavigationDocument: false
         }
     },
     computed: {
@@ -552,7 +553,7 @@ export default defineComponent({
             else this.mode = 'iframe'
         },
         async loadPage(initialLoading = false, documentLabel: string | null = null, crossNavigationPopupMode = false) {
-            this.loading = true
+            this.loading = crossNavigationPopupMode ? false : true
             this.filtersData = await loadFilters(initialLoading, this.filtersData, this.document, this.breadcrumbs, this.userRole, this.parameterValuesMap, this.tabKey as string, this.sessionEnabled, this.$http, this.dateFormat, this.$route, this)
             if (this.filtersData?.isReadyForExecution) {
                 this.parameterSidebarVisible = false
