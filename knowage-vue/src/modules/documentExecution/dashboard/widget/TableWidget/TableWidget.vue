@@ -535,9 +535,6 @@ export default defineComponent({
 
             this.removeSelectedValues()
             this.selectedColumn = ''
-
-            console.log('multiSelectedCells', this.selectedColumn)
-            console.log('setting false', this.selectedColumn)
         },
 
         updateActiveSelectionsWithMultivalueSelection(tempSelection: ISelection) {
