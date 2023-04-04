@@ -720,7 +720,7 @@ function cockpitStyleColumnFunction(
 
     $scope.addRange = function () {
         if (!$scope.selectedColumn.ranges) $scope.selectedColumn.ranges = []
-        $scope.selectedColumn.ranges.push({ compareValueType: 'static', valueArray: [] })
+        $scope.selectedColumn.ranges.push({compareValueType:"static","valueArray":[]});
     }
 
     $scope.emptyVariable = function (threshold) {
