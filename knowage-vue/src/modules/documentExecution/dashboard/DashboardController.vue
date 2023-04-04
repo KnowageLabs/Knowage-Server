@@ -7,7 +7,7 @@
             style="position: fixed; right: 0; z-index: 999; background-color: white; box-shadow: 0px 2px 3px #ccc"
             @click="selectionsDialogVisible = true"
         />
-        <DashboardRenderer v-if="!loading && visible && showDashboard" :model="model" :datasets="datasets" :dashboardId="dashboardId" :documentDrivers="drivers" :variables="model ? model.configuration.variables : []"></DashboardRenderer>
+        <DashboardRenderer v-if="!loading && visible && showDashboard" :document="document" :model="model" :datasets="datasets" :dashboardId="dashboardId" :documentDrivers="drivers" :variables="model ? model.configuration.variables : []"></DashboardRenderer>
 
         <Transition name="editorEnter" appear>
             <DatasetEditor v-if="datasetEditorVisible" :dashboard-id-prop="dashboardId" :available-datasets-prop="datasets" :filters-data-prop="filtersData" @closeDatasetEditor="closeDatasetEditor" @datasetEditorSaved="closeDatasetEditor" @allDatasetsLoaded="datasets = $event" />
@@ -137,6 +137,10 @@ export default defineComponent({
             if (!this.showDashboard) return
             await this.getData()
             this.$watch('model.configuration.datasets', (modelDatasets: IDashboardDataset[]) => setDatasetIntervals(modelDatasets, this.datasets))
+        },
+        async reloadTrigger() {
+            if (!this.showDashboard) return
+            await this.getData()
         }
     },
     async created() {
@@ -150,7 +154,7 @@ export default defineComponent({
         clearAllDatasetIntervals()
     },
     methods: {
-        ...mapActions(dashboardStore, ['removeSelections', 'setAllDatasets', 'getSelections', 'setInternationalization', 'getInternationalization', 'setDashboardDocument', 'setDashboardDrivers', 'setProfileAttributes', 'getCrossNavigations']),
+        ...mapActions(dashboardStore, ['getDashboardDrivers', 'removeSelections', 'setAllDatasets', 'getSelections', 'setInternationalization', 'getInternationalization', 'setDashboardDocument', 'setDashboardDrivers', 'setProfileAttributes', 'getCrossNavigations']),
         setEventListeners() {
             emitter.on('openNewWidgetPicker', this.openNewWidgetPicker)
             emitter.on('openDatasetManagement', this.openDatasetManagementDialog)
@@ -191,7 +195,7 @@ export default defineComponent({
                     .catch(() => {})
             }
 
-            this.datasets = await loadDatasets(tempModel, this.appStore, this.setAllDatasets, this.$http)
+            this.datasets = this.newDashboardMode ? [] : await loadDatasets(tempModel, this.appStore, this.setAllDatasets, this.$http)
             this.model = (tempModel && this.newDashboardMode) || typeof tempModel.id != 'undefined' ? await formatNewModel(tempModel, this.datasets, this.$http) : await (formatModel(tempModel, this.document, this.datasets, this.drivers, this.profileAttributes, this.$http, this.user) as any)
             setDatasetIntervals(this.model?.configuration.datasets, this.datasets)
             this.store.setDashboard(this.dashboardId, this.model)

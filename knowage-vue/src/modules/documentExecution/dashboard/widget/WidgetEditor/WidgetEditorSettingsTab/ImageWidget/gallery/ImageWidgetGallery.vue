@@ -21,10 +21,9 @@
                     @imageSelected="setSelectedImage(image)"
                     @delete="onImageDelete"
                 />
-
-                <div v-if="sidebarVisible" id="image-widget-gallery-card-sidebar-container">
-                    <ImageWidgetGallerySidebar :selected-image="selectedImage" @close="sidebarVisible = false"></ImageWidgetGallerySidebar>
-                </div>
+            </div>
+            <div v-if="sidebarVisible" id="image-widget-gallery-card-sidebar-container">
+                <ImageWidgetGallerySidebar :selected-image="selectedImage" @close="sidebarVisible = false"></ImageWidgetGallerySidebar>
             </div>
         </div>
     </div>

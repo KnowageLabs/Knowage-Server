@@ -1,6 +1,6 @@
 <template>
     <div class="custom-header-group-container" :style="getSummaryStyle()">
-        <span class="custom-header-group-label">
+        <span v-if="!params.hideSummary" class="custom-header-group-label">
             <b style="margin-right: 4px">{{ params.value ? params.summaryRows[params.rowIndex] : '' }} </b>
             {{ params.value ?? '' }}
         </span>

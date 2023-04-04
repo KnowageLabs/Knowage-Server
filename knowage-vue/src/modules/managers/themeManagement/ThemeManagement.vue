@@ -6,9 +6,11 @@
                     {{ $t('managers.themeManagement.title') }}
                 </template>
                 <template #end>
-                    <FabButton icon="fas fa-plus" @click="addTheme" />
+                    <FabButton icon="fas fa-plus" @click="toggleAdd" />
+                    <Menu ref="menu" :model="addMenuItems" :popup="true" style="width: 240px"></Menu>
                 </template>
             </Toolbar>
+            <KnInputFile label="" :change-function="uploadTheme" accept="application/json,application/zip" :trigger-input="triggerInput" />
             <ProgressBar v-if="loading" mode="indeterminate" class="kn-progress-bar" />
             <KnListBox :options="availableThemes" :selected="selectedTheme" :settings="descriptor.knListSettings" @click="selectTheme" @delete.stop="deleteThemeConfirm" />
         </div>
@@ -24,7 +26,8 @@
                     {{ themeToSend.themeName }}
                 </template>
                 <template #end>
-                    <Button icon="pi pi-save" class="p-button-text p-button-rounded p-button-plain" @click="handleSave" />
+                    <Button v-if="selectedTheme.id" icon="pi pi-download" class="p-button-text p-button-rounded p-button-plain" @click="downloadTheme" :title="$t('managers.themeManagement.download')" />
+                    <Button icon="pi pi-save" class="p-button-text p-button-rounded p-button-plain" @click="handleSave" :title="$t('managers.themeManagement.save')" />
                 </template>
             </Toolbar>
             <div class="p-p-2 p-mt-2 p-d-flex p-ai-center">
@@ -67,20 +70,20 @@ import FabButton from '@/components/UI/KnFabButton.vue'
 import ThemeManagementDescriptor from '@/modules/managers/themeManagement/ThemeManagementDescriptor.json'
 import ThemeManagementExamples from '@/modules/managers/themeManagement/ThemeManagementExamples.vue'
 import themeHelper from '@/helpers/themeHelper/themeHelper'
+import KnInputFile from '@/components/UI/KnInputFile.vue'
+import { downloadDirect } from '@/helpers/commons/fileHelper'
 import Divider from 'primevue/divider'
+import Menu from 'primevue/menu'
 import Fieldset from 'primevue/fieldset'
 import InputSwitch from 'primevue/inputswitch'
 import KnListBox from '@/components/UI/KnListBox/KnListBox.vue'
 import KnHint from '@/components/UI/KnHint.vue'
+import { mapActions, mapState } from 'pinia'
 import mainStore from '../../../App.store'
 
 export default defineComponent({
     name: 'theme-management',
-    components: { Divider, FabButton, Fieldset, InputSwitch, KnHint, KnListBox, ThemeManagementExamples },
-    setup() {
-        const store = mainStore()
-        return { store }
-    },
+    components: { Divider, FabButton, Fieldset, InputSwitch, Menu, KnHint, KnInputFile, KnListBox, ThemeManagementExamples },
     data() {
         return {
             descriptor: ThemeManagementDescriptor,
@@ -88,8 +91,19 @@ export default defineComponent({
             selectedTheme: { config: {} } as any,
             themeToSend: { config: {} } as any,
             availableThemes: [] as any[],
+            triggerInput: false,
             loading: false,
-            themeHelper: new themeHelper()
+            themeHelper: new themeHelper(),
+            addMenuItems: [
+                { label: this.$t('managers.themeManagement.new'), icon: 'fas fa-plus', command: () => this.addTheme() },
+                {
+                    label: this.$t('managers.themeManagement.import'),
+                    icon: 'fas fa-file-import',
+                    command: () => {
+                        this.triggerInputFile(true)
+                    }
+                }
+            ]
         }
     },
     mounted() {
@@ -97,10 +111,23 @@ export default defineComponent({
         this.currentTheme = this.themeHelper.getDefaultKnowageTheme()
         this.getAllThemes()
     },
+    computed: {
+        ...mapState(mainStore, ['defaultTheme'])
+    },
     methods: {
+        ...mapActions(mainStore, ['setInfo', 'setTheme']),
+        triggerInputFile(value) {
+            this.triggerInput = value
+        },
         addTheme() {
             this.themeToSend = { ...this.descriptor.emptyTheme }
             this.overrideDefaultValues(this.descriptor.emptyTheme)
+        },
+        toggleAdd(event) {
+            // eslint-disable-next-line
+            // @ts-ignore
+            this.$refs.menu.toggle(event)
+            this.triggerInputFile(false)
         },
         deleteThemeConfirm(event: any) {
             this.$confirm.require({
@@ -113,7 +140,7 @@ export default defineComponent({
         async deleteTheme(event) {
             this.loading = true
             await this.$http.delete(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `thememanagement/${event.item.id}`).then(() => {
-                this.store.setInfo({ title: this.$t('common.toast.deleteTitle'), msg: this.$t('common.toast.deleteSuccess') })
+                this.setInfo({ title: this.$t('common.toast.deleteTitle'), msg: this.$t('common.toast.deleteSuccess') })
 
                 this.themeToSend = { config: {} }
                 this.selectedTheme = { config: {} }
@@ -140,7 +167,7 @@ export default defineComponent({
 
         async handleSave() {
             await this.$http.post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `thememanagement`, this.themeToSend).then((response) => {
-                this.store.setInfo({ title: this.$t('common.toast.updateTitle'), msg: this.$t('common.toast.updateSuccess') })
+                this.setInfo({ title: this.$t('common.toast.updateTitle'), msg: this.$t('common.toast.updateSuccess') })
                 if (!this.themeToSend.id) {
                     this.themeToSend.id = response.data
                     this.selectedTheme.id = response.data
@@ -161,20 +188,44 @@ export default defineComponent({
                 this.selectedTheme.active = newValues.active
                 this.selectedTheme.config = { ...this.currentTheme, ...newValues.config }
             } else {
-                this.store.setTheme({})
-                this.themeHelper.setTheme((this.store.$state as any).defaultTheme)
+                this.setTheme({})
+                this.themeHelper.setTheme(this.defaultTheme)
             }
         },
         selectTheme(event) {
             this.overrideDefaultValues(event.item)
         },
         setActiveTheme(theme) {
-            const newTheme = { ...(this.store.$state as any).defaultTheme, ...theme.config }
-            this.store.setTheme(newTheme)
+            const newTheme = { ...this.defaultTheme, ...theme.config }
+            this.setTheme(newTheme)
             this.themeHelper.setTheme(newTheme)
         },
         updateModelToSend(key) {
             this.themeToSend.config[key] = this.selectedTheme.config[key]
+        },
+        uploadTheme(event): void {
+            const reader = new FileReader()
+            reader.onload = this.onReaderLoad
+            reader.readAsText(event.target.files[0])
+            this.triggerInputFile(false)
+            event.target.value = ''
+        },
+        onReaderLoad(event) {
+            const json = JSON.parse(event.target.result)
+            json.active = false
+            this.importWidget(json)
+        },
+        importWidget(json: JSON) {
+            this.$http.post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + 'thememanagement', json).then(() => {
+                this.setInfo({ title: this.$t('managers.themeManagement.uploadTheme'), msg: this.$t('managers.themeManagement.themeSuccessfullyUploaded') })
+
+                this.getAllThemes()
+            })
+        },
+        downloadTheme(): void {
+            let themeToDownload = { ...this.selectedTheme }
+            if (themeToDownload.id) delete themeToDownload.id
+            downloadDirect(JSON.stringify(themeToDownload), themeToDownload.themeName, 'application/json')
         }
     }
 })

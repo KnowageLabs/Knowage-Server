@@ -830,7 +830,7 @@ cockpitModule_templateServices.getDatasetUsetByWidgetWithParams();
 		function adaptToType(value) {
 			return isNaN(value) ? '"'+value+'"' : value;
 		}
-		var jsonToReplace = json;
+		var jsonToReplace = json.replace(/(\r\n|\n|\r|\s)/g,"");
 		// variables
 		jsonToReplace = jsonToReplace.replace(/\$V\{([a-zA-Z0-9\_\-\.]+)\}/g, function(match,variable){
 			return adaptToType(cockpitModule_properties.VARIABLES[variable]);
@@ -841,8 +841,13 @@ cockpitModule_templateServices.getDatasetUsetByWidgetWithParams();
 		});
 		// parameters
 		jsonToReplace = jsonToReplace.replace(/\$P\{([a-zA-Z0-9\_\-\.]+)\}/g, function(match,parameter){
-			return adaptToType(cockpitModule_analyticalDrivers[parameter]);
+			if(cockpitModule_analyticalDrivers[parameter] === "") return '""' 
+			else return adaptToType(cockpitModule_analyticalDrivers[parameter]);
 		});
+		 // dynamic
+        jsonToReplace = jsonToReplace.replace(/\{value}/g, function (match, parameter) {
+            return adaptToType(row)
+        })
 		return JSON.stringify(JSON.parse(jsonToReplace));
 	}
 
@@ -852,7 +857,19 @@ cockpitModule_templateServices.getDatasetUsetByWidgetWithParams();
 		}
 	}
 
-	$scope.doSelection = function(columnName, columnValue, modalColumn, modalValue, row, skipRefresh, dsId, disableAssociativeLogic,directInteraction){
+	function getTopLevelWindow(){
+	
+			return $q(function(resolve, reject) {
+				function getHigherParentWindow(currentWindow){
+					if (currentWindow.parent == currentWindow) resolve(currentWindow.parent)
+					else if(currentWindow.parent != currentWindow) getHigherParentWindow(currentWindow.parent)
+					else resolve(false)
+				}
+				getHigherParentWindow(window)
+		  	});
+		}
+
+    $scope.doSelection = async function (columnName, columnValue, modalColumn, modalValue, row, skipRefresh, dsId, disableAssociativeLogic, directInteraction,isoDate) {
 		if($scope.ngModel.cliccable==false){
 			console.log("widget is not cliccable")
 			return;
@@ -873,6 +890,11 @@ cockpitModule_templateServices.getDatasetUsetByWidgetWithParams();
 		var linkSettings;
 		if($scope.ngModel.cross != undefined  && $scope.ngModel.cross.link != undefined) linkSettings = angular.copy($scope.ngModel.cross.link);
 		if($scope.ngModel.content && $scope.ngModel.content.link) linkSettings = angular.copy($scope.ngModel.content.link);
+		
+		var messageSettings
+            if ($scope.ngModel.cross != undefined && $scope.ngModel.cross.message != undefined) messageSettings = angular.copy($scope.ngModel.cross.message)
+            if ($scope.ngModel.content && $scope.ngModel.content.message) messageSettings = angular.copy($scope.ngModel.content.message)
+		
 		var originalColumnName = "";
 					if ($scope.ngModel.content.columnSelectedOfDataset){
 				        for(var i=0; i<$scope.ngModel.content.columnSelectedOfDataset.length; i++){
@@ -1090,8 +1112,8 @@ cockpitModule_templateServices.getDatasetUsetByWidgetWithParams();
 								}
 							}
 						}else{
-							if(!content.type && content.dataType === "date" && modalValue){
-									outputParameter[par] = modalValue
+							if(!content.type && content.dataType === "date" && isoDate){
+									outputParameter[par] = isoDate
 							}
 						}
 					}
@@ -1182,6 +1204,19 @@ cockpitModule_templateServices.getDatasetUsetByWidgetWithParams();
 						return;
 					}
 				}
+			}
+		}
+
+		if (!directInteraction || directInteraction == 'message') {
+			if (messageSettings && messageSettings.enable) {
+				var secondParameter = row ? row : columnName;
+				getTopLevelWindow().then((parentWindow)=>{
+					parentWindow.postMessage({
+							"source":"knowage",
+ 							"type": "message",
+				      		"json":  JSON.parse(replacePlaceholders(messageSettings.json, secondParameter))
+					},"*")
+				})
 			}
 		}
 

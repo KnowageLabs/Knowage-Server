@@ -13,7 +13,7 @@
 import { emitter } from '../../DashboardHelpers'
 import { mapActions } from 'pinia'
 import { AgGridVue } from 'ag-grid-vue3' // the AG Grid Vue Component
-import { IDashboardDataset, ISelection, ITableWidgetColumnStyle, ITableWidgetColumnStyles, ITableWidgetVisualizationTypes, IWidget } from '../../Dashboard'
+import { IDashboardDataset, ISelection, ITableWidgetColumnStyle, ITableWidgetColumnStyles, ITableWidgetVisualizationTypes, IVariable, IWidget } from '../../Dashboard'
 import { defineComponent, PropType } from 'vue'
 import { createNewTableSelection, getColumnConditionalStyles, isConditionMet, isCrossNavigationActive, formatRowDataForCrossNavigation, getFormattedClickedValueForCrossNavigation, addIconColumn } from './TableWidgetHelper'
 import { executeTableWidgetCrossNavigation, updateStoreSelections } from '../interactionsHelpers/InteractionHelper'
@@ -50,7 +50,8 @@ export default defineComponent({
         datasets: { type: Array as PropType<IDashboardDataset[]>, required: true },
         dataToShow: { type: Object as any, required: true },
         propActiveSelections: { type: Array as PropType<ISelection[]>, required: true },
-        dashboardId: { type: String, required: true }
+        dashboardId: { type: String, required: true },
+        propVariables: { type: Array as PropType<IVariable[]>, required: true }
     },
     emits: ['pageChanged', 'sortingChanged', 'launchSelection'],
     setup() {
@@ -89,7 +90,6 @@ export default defineComponent({
         dataToShow() {
             this.tableData = this.dataToShow
             this.refreshGridConfiguration(true)
-            this.loadActiveSelectionValue()
         },
         propActiveSelections() {
             this.loadActiveSelections()
@@ -109,10 +109,9 @@ export default defineComponent({
     unmounted() {
         this.removeEventListeners()
     },
-    mounted() {},
-
     methods: {
         ...mapActions(store, ['setSelections']),
+        ...mapActions(dashboardStore, ['getDashboardDrivers']),
         loadWidgetModel() {
             this.widgetModel = this.propWidget
         },
@@ -162,6 +161,7 @@ export default defineComponent({
                 suppressRowClickSelection: true,
                 suppressCellFocus: true,
                 suppressMultiRangeSelection: true,
+                suppressRowVirtualisation: true,
                 rowHeight: 25,
 
                 // EVENTS
@@ -207,6 +207,8 @@ export default defineComponent({
             const columnGroups = {}
             this.columnsNameArray = []
 
+            const dashboardDrivers = this.getDashboardDrivers(this.dashboardId)
+            const dashboardVariables = this.propVariables
             const dataset = { type: 'SbiFileDataSet' }
 
             if (this.widgetModel.settings.configuration.rows.indexColumn) {
@@ -232,7 +234,7 @@ export default defineComponent({
                     if (typeof responseFields[responseField] == 'object' && ((dataset.type == 'SbiSolrDataSet' && thisColumn.alias.toLowerCase() === responseFields[responseField].header) || thisColumn.alias.toLowerCase() === responseFields[responseField].header.toLowerCase())) {
                         this.columnsNameArray.push(responseFields[responseField].name)
                         const tempCol = {
-                            hide: this.getColumnVisibilityCondition(this.widgetModel.columns[datasetColumn].id),
+                            hide: this.getColumnVisibilityCondition(this.widgetModel.columns[datasetColumn].id, 'hide'),
                             colId: this.widgetModel.columns[datasetColumn].id,
                             headerName: this.widgetModel.columns[datasetColumn].alias,
                             columnName: this.widgetModel.columns[datasetColumn].columnName,
@@ -241,14 +243,23 @@ export default defineComponent({
                             headerComponent: HeaderRenderer,
                             headerComponentParams: { colId: this.widgetModel.columns[datasetColumn].id, propWidget: this.widgetModel },
                             cellRenderer: CellRenderer,
-                            cellRendererParams: { colId: this.widgetModel.columns[datasetColumn].id, propWidget: this.widgetModel, multiSelectedCells: this.multiSelectedCells, selectedColumnArray: this.selectedColumnArray }
+                            cellRendererParams: {
+                                colId: this.widgetModel.columns[datasetColumn].id,
+                                propWidget: this.widgetModel,
+                                multiSelectedCells: this.multiSelectedCells,
+                                selectedColumnArray: this.selectedColumnArray,
+                                dashboardDrivers: dashboardDrivers,
+                                dashboardVariables: dashboardVariables
+                            }
                         } as any
-
                         if (tempCol.measure === 'MEASURE') tempCol.aggregationSelected = this.widgetModel.columns[datasetColumn].aggregation
 
                         //COLUMN WIDTH
                         const colWidth = this.getColumnWidth(tempCol.colId)
-                        if (colWidth && colWidth != 0) tempCol.minWidth = colWidth
+                        if (colWidth && colWidth != 0) {
+                            tempCol.minWidth = colWidth
+                            tempCol.maxWidth = colWidth
+                        }
 
                         //ROWSPAN MANAGEMENT
                         if (this.widgetModel.settings.configuration.rows.rowSpan.enabled && this.widgetModel.settings.configuration.rows.rowSpan.column === this.widgetModel.columns[datasetColumn].id) {
@@ -286,7 +297,8 @@ export default defineComponent({
                                             summaryRows: this.widgetModel.settings.configuration.summaryRows.list.map((row) => {
                                                 return row.label
                                             }),
-                                            propWidget: this.widgetModel
+                                            propWidget: this.widgetModel,
+                                            hideSummary: this.getColumnVisibilityCondition(this.widgetModel.columns[datasetColumn].id, 'hideFromSummary')
                                         }
                                     }
                                 } else {
@@ -409,7 +421,7 @@ export default defineComponent({
                 }
             }
         },
-        getColumnVisibilityCondition(colId) {
+        getColumnVisibilityCondition(colId, propertyToReturn) {
             const visCond = this.widgetModel.settings.visualization.visibilityConditions
             let columnHidden = false as boolean
 
@@ -418,9 +430,9 @@ export default defineComponent({
                 //We always take the 1st condition as a priority for the column and use that one.
                 if (colConditions[0]) {
                     if (colConditions[0].condition.type === 'always') {
-                        columnHidden = colConditions[0].hide
+                        columnHidden = colConditions[0][propertyToReturn]
                     } else {
-                        isConditionMet(colConditions[0].condition, colConditions[0].condition.variableValue) ? (columnHidden = colConditions[0].hide) : ''
+                        isConditionMet(colConditions[0].condition, colConditions[0].condition.variableValue) ? (columnHidden = colConditions[0][propertyToReturn]) : ''
                     }
                 }
             }
@@ -521,7 +533,7 @@ export default defineComponent({
                 this.$emit('launchSelection')
             }
 
-            this.multiSelectedCells.length = 0
+            this.removeSelectedValues()
             this.selectedColumn = ''
         },
 
@@ -562,6 +574,7 @@ export default defineComponent({
     border-left: 1px solid lightgrey !important;
     border-right: 1px solid lightgrey !important;
     border-bottom: 1px solid lightgrey !important;
+    background-color: white;
 }
 .multiselect-overlay {
     display: flex;

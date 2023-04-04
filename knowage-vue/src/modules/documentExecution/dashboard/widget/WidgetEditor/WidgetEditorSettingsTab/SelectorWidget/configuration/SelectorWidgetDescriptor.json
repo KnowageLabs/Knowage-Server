@@ -18,45 +18,45 @@
     ],
     "selectionTypes": [
         {
-            "imageUrl": "/knowage/themes/commons/img/cockpit/selectorWidget/radio.svg",
-            "label": "list",
+            "imageUrl": "/knowage-vue/images/dashboard/activeSelectionTypes/list.svg",
+            "label": "List",
             "value": "list"
         },
         {
-            "imageUrl": "/knowage/themes/commons/img/cockpit/selectorWidget/multiDropdown.svg",
-            "label": "chips",
+            "imageUrl": "/knowage-vue/images/dashboard/activeSelectionTypes/chips.svg",
+            "label": "Chips",
             "value": "chips"
         }
     ],
     "selectorTypes": [
         {
-            "imageUrl": "/knowage/themes/commons/img/cockpit/selectorWidget/radio.svg",
-            "label": "singleValue",
+            "imageUrl": "/knowage-vue/images/dashboard/selectorTypes/radio.svg",
+            "label": "Single Value",
             "value": "singleValue"
         },
         {
-            "imageUrl": "/knowage/themes/commons/img/cockpit/selectorWidget/check.svg",
-            "label": "multiValue",
+            "imageUrl": "/knowage-vue/images/dashboard/selectorTypes/check.svg",
+            "label": "Multi-value",
             "value": "multiValue"
         },
         {
-            "imageUrl": "/knowage/themes/commons/img/cockpit/selectorWidget/dropdown.svg",
-            "label": "dropdown",
+            "imageUrl": "/knowage-vue/images/dashboard/selectorTypes/dropdown.svg",
+            "label": "Dropdown",
             "value": "dropdown"
         },
         {
-            "imageUrl": "/knowage/themes/commons/img/cockpit/selectorWidget/multiDropdown.svg",
-            "label": "multiDropdown",
+            "imageUrl": "/knowage-vue/images/dashboard/selectorTypes/multiDropdown.svg",
+            "label": "Multi-Dropdown",
             "value": "multiDropdown"
         },
         {
-            "imageUrl": "/knowage/themes/commons/img/cockpit/selectorWidget/singleDate.svg",
-            "label": "date",
+            "imageUrl": "/knowage-vue/images/dashboard/selectorTypes/singleDate.svg",
+            "label": "Date",
             "value": "date"
         },
         {
-            "imageUrl": "/knowage/themes/commons/img/cockpit/selectorWidget/multiDate.svg",
-            "label": "dateRange",
+            "imageUrl": "/knowage-vue/images/dashboard/selectorTypes/multiDate.svg",
+            "label": "Date Range",
             "value": "dateRange"
         }
     ]

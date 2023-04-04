@@ -420,7 +420,7 @@ public class AbstractDocumentExecutionWork extends DossierExecutionClient implem
 			@Override
 			public boolean accept(final File dir, final String name) {
 				for (final String ext : EXTENSIONS) {
-					if (name.endsWith("." + ext)) {
+					if (name.endsWith("." + ext) && name.startsWith("sheet")) {
 						return (true);
 					}
 				}
@@ -439,8 +439,10 @@ public class AbstractDocumentExecutionWork extends DossierExecutionClient implem
 							new ArrayList<PlaceHolder>());
 
 					FileUtils.copyFile(f, to);
-
-					imagesMap.put(reportToUse.getImageName() + "_" + f.getName(), to.getAbsolutePath());
+					if (reportToUse.getImageName().contains(FilenameUtils.removeExtension(f.getName()))) {
+						imagesMap.put(reportToUse.getImageName(), to.getAbsolutePath());
+					} else
+						imagesMap.put(reportToUse.getImageName() + "_" + f.getName(), to.getAbsolutePath());
 
 					FileUtils.deleteQuietly(f);
 

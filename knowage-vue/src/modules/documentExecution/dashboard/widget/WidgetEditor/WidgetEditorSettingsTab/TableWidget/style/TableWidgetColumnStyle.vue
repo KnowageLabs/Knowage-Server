@@ -7,7 +7,21 @@
                     <label class="kn-material-input-label p-mr-2">{{ $t('common.width') }}</label>
                     <InputNumber v-model="(columnStyle.properties.width as number)" class="kn-material-input p-inputtext-sm" :disabled="columnStylesDisabled" @blur="columnStylesChanged" />
                 </div>
-                <div class="p-col-8"></div>
+                <div class="p-col-8 p-d-flex p-flex-column p-p-2">
+                    <label class="kn-material-input-label"> {{ $t('common.verticalAlign') }}</label>
+                    <Dropdown v-model="columnStyle.properties['align-items']" class="kn-material-input" :options="descriptor.verticalAlignmentOptions" option-value="value" :disabled="columnStylesDisabled">
+                        <template #value="slotProps">
+                            <div>
+                                <span>{{ getTranslatedLabel(slotProps.value, descriptor.verticalAlignmentOptions, $t) }}</span>
+                            </div>
+                        </template>
+                        <template #option="slotProps">
+                            <div>
+                                <span>{{ $t(slotProps.option.label) }}</span>
+                            </div>
+                        </template>
+                    </Dropdown>
+                </div>
             </div>
             <div class="p-col-12 p-md-12 p-grid p-ai-center">
                 <div class="p-col-10 p-md-11 p-d-flex p-flex-column p-p-2">
@@ -41,6 +55,7 @@
 import { defineComponent, PropType } from 'vue'
 import { IWidget, ITableWidgetColumnStyle, IWidgetStyleToolbarModel, IWidgetColumn, ITableWidgetColumnGroup, ITableWidgetColumnStyles } from '@/modules/documentExecution/dashboard/Dashboard'
 import { emitter } from '../../../../../DashboardHelpers'
+import { getTranslatedLabel } from '@/helpers/commons/dropdownHelper'
 import descriptor from '../TableWidgetSettingsDescriptor.json'
 import settingsDescriptor from '../../WidgetEditorSettingsTabDescriptor.json'
 import Dropdown from 'primevue/dropdown'
@@ -58,7 +73,8 @@ export default defineComponent({
             settingsDescriptor,
             columnStyles: null as ITableWidgetColumnStyles | null,
             availableColumnOptions: [] as (IWidgetColumn | ITableWidgetColumnGroup | { id: string; alias: string })[],
-            widgetColumnsAliasMap: {} as any
+            widgetColumnsAliasMap: {} as any,
+            getTranslatedLabel
         }
     },
     computed: {
@@ -139,7 +155,7 @@ export default defineComponent({
             const intersection = (columnStyle.target as string[]).filter((el: string) => !event.value.includes(el))
             columnStyle.target = event.value
 
-            intersection.length > 0 ? this.onColumnsRemovedFromMultiselect(intersection, columnStyle) : this.onColumnsAddedFromMultiselect(columnStyle)
+            intersection.length > 0 ? this.onColumnsRemovedFromMultiselect(intersection) : this.onColumnsAddedFromMultiselect(columnStyle)
             this.columnStylesChanged()
         },
         onColumnsAddedFromMultiselect(columnStyle: ITableWidgetColumnStyle) {
@@ -149,7 +165,6 @@ export default defineComponent({
             })
         },
         onColumnsRemovedFromMultiselect(intersection: string[]) {
-            //onColumnsRemovedFromMultiselect(intersection: string[], columnStyle: ITableWidgetColumnStyle) {
             intersection.forEach((el: string) =>
                 this.availableColumnOptions.push({
                     id: el,
@@ -162,6 +177,7 @@ export default defineComponent({
             this.columnStyles.styles.push({
                 target: [],
                 properties: {
+                    'align-items': 'center',
                     width: '',
                     'background-color': 'rgb(0, 0, 0)',
                     color: 'rgb(255, 255, 255)',

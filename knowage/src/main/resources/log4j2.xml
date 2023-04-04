@@ -184,7 +184,7 @@
 		<logger name="Spago" level="error" additivity="false">
 			<AppenderRef ref="KNOWAGE_CORE" />
 		</logger>
-		<logger name="it.eng.spagobi.commons.utilities.ObjectsAccessVerifier" level="debug" additivity="false">
+		<logger name="it.eng.spagobi.commons.utilities.ObjectsAccessVerifier" level="warn" additivity="false">
 			<AppenderRef ref="KNOWAGE_CORE" />
 		</logger>
 		<Root level="error">

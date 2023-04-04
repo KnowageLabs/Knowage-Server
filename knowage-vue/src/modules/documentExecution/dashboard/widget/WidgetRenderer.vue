@@ -13,6 +13,7 @@
                 :editor-mode="false"
                 :prop-active-selections="activeSelections"
                 :dashboard-id="dashboardId"
+                :prop-variables="variables"
                 @pageChanged="$emit('reloadData')"
                 @sortingChanged="$emit('reloadData')"
                 @launchSelection="$emit('launchSelection', $event)"
@@ -35,6 +36,19 @@
             <ImageWidget v-if="widget.type === 'image'" :widget-model="widget" :dashboard-id="dashboardId" :editor-mode="false" />
             <CustomChartWidget v-if="widget.type == 'customchart'" :prop-widget="widget" :widget-data="widgetData" :prop-active-selections="activeSelections" :editor-mode="false" :dashboard-id="dashboardId" :variables="variables" @loading="$emit('loading', $event)"></CustomChartWidget>
             <PivotWidget v-if="widget.type == 'static-pivot-table' && !widgetLoading" :prop-widget="widget" :datasets="datasets" :data-to-show="dataToShow" :editor-mode="false" :prop-active-selections="activeSelections" :dashboard-id="dashboardId" />
+            <DiscoveryWidget
+                v-if="widget.type === 'discovery'"
+                :prop-widget="widget"
+                :datasets="datasets"
+                :data-to-show="dataToShow"
+                :editor-mode="false"
+                :prop-active-selections="activeSelections"
+                :dashboard-id="dashboardId"
+                :widget-loading="widgetLoading"
+                @pageChanged="$emit('reloadData')"
+                @facetsChanged="$emit('reloadData')"
+                @searchWordChanged="$emit('reloadData')"
+            />
         </div>
     </div>
 </template>
@@ -49,19 +63,19 @@ import { IDashboardDataset, ISelection, IVariable } from '../Dashboard'
 import TableWidget from './TableWidget/TableWidget.vue'
 import SelectorWidget from './SelectorWidget/SelectorWidget.vue'
 import ActiveSelectionsWidget from './ActiveSelectionsWidget/ActiveSelectionsWidget.vue'
-import mock from '../dataset/DatasetEditorTestMocks.json'
 import WebComponentContainer from './WebComponent/WebComponentContainer.vue'
 import HighchartsContainer from '../widget/ChartWidget/Highcharts/HighchartsContainer.vue'
 import ChartJSContainer from '../widget/ChartWidget/ChartJS/ChartJSContainer.vue'
 import ImageWidget from '../widget/ImageWidget/ImageWidget.vue'
 import PivotWidget from '../widget/PivotWidget/PivotWidget.vue'
 import CustomChartWidget from '../widget/CustomChartWidget/CustomChartWidget.vue'
+import DiscoveryWidget from '../widget/DiscoveryWidget/DiscoveryWidget.vue'
 import { mapState } from 'pinia'
 import mainStore from '@/App.store'
 
 export default defineComponent({
     name: 'widget-renderer',
-    components: { TableWidget, SelectorWidget, ActiveSelectionsWidget, WebComponentContainer, HighchartsContainer, ChartJSContainer, ImageWidget, CustomChartWidget, PivotWidget },
+    components: { TableWidget, SelectorWidget, ActiveSelectionsWidget, WebComponentContainer, HighchartsContainer, ChartJSContainer, ImageWidget, CustomChartWidget, PivotWidget, DiscoveryWidget },
     props: {
         widget: { required: true, type: Object as any },
         widgetLoading: { required: true, type: Boolean as any },
@@ -76,7 +90,6 @@ export default defineComponent({
     emits: ['interaction', 'launchSelection', 'reloadData', 'loading'],
     data() {
         return {
-            mock,
             dataToShow: {} as any,
             activeSelections: [] as ISelection[],
             htmlContent: '' as string,

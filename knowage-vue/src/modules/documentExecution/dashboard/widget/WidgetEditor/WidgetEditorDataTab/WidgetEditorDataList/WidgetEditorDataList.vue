@@ -83,9 +83,9 @@ export default defineComponent({
     },
     created() {
         this.setEventListeners()
+        this.loadDatasets()
         this.loadModel()
         this.loadSelectedDataset()
-        this.loadDatasets()
     },
     unmounted() {
         this.removeEventListeners()
@@ -100,7 +100,7 @@ export default defineComponent({
         loadDatasets() {
             this.datasetOptions = []
             this.selectedDatasets?.forEach((dataset: IDataset) => {
-                if ((this.widgetModel.type !== 'discovery' && dataset.type !== 'SbiSolrDataSet') || (this.widgetModel.type === 'discovery' && dataset.type === 'SbiSolrDataSet')) {
+                if ((this.widgetModel.type === 'discovery' && dataset.type === 'SbiSolrDataSet') || this.widgetModel.type !== 'discovery') {
                     this.datasetOptions.push({
                         id: dataset.id.dsId,
                         label: dataset.label,
@@ -110,14 +110,13 @@ export default defineComponent({
                     })
                 }
             })
-
+        },
+        loadModel() {
+            this.model = this.widgetModel
             if (this.datasetOptions.length === 1) {
                 this.selectedDataset = this.datasetOptions[0]
                 this.onDatasetSelected()
             }
-        },
-        loadModel() {
-            this.model = this.widgetModel
             this.loadDatasetColumns()
         },
         loadSelectedDataset() {
@@ -126,10 +125,10 @@ export default defineComponent({
                 this.selectedDataset = this.datasetOptions[index]
                 this.$emit('datasetSelected', this.selectedDataset)
             }
+            this.loadDatasetColumns()
         },
         onDatasetSelected() {
             this.loadDatasetColumns()
-            this.loadModel()
             if (this.model) {
                 this.model.dataset = this.selectedDataset ? this.selectedDataset.id : null
                 if (this.model.dataset !== this.selectedDataset?.id) this.removeSelectedColumnsFromModel()

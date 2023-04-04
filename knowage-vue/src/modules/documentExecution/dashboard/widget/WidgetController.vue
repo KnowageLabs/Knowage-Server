@@ -108,6 +108,14 @@ export default defineComponent({
             ]
         }
     },
+    computed: {
+        ...mapState(store, ['dashboards']),
+        ...mapState(mainStore, ['user']),
+        playSelectionButtonVisible(): boolean {
+            if (!this.widget || !this.widget.settings.configuration || !this.widget.settings.configuration.selectorType) return false
+            return this.widget.type === 'selector' && ['multiValue', 'multiDropdown', 'dateRange'].includes(this.widget.settings.configuration.selectorType.modality) && !this.selectionIsLocked
+        }
+    },
     watch: {
         widget: {
             async handler() {
@@ -127,14 +135,6 @@ export default defineComponent({
     },
     unmounted() {
         this.removeEventListeners()
-    },
-    computed: {
-        ...mapState(store, ['dashboards']),
-        ...mapState(mainStore, ['user']),
-        playSelectionButtonVisible(): boolean {
-            if (!this.widget || !this.widget.settings.configuration || !this.widget.settings.configuration.selectorType) return false
-            return this.widget.type === 'selector' && ['multiValue', 'multiDropdown', 'dateRange'].includes(this.widget.settings.configuration.selectorType.modality) && !this.selectionIsLocked
-        }
     },
     methods: {
         ...mapActions(store, ['getDashboard', 'getSelections', 'setSelections', 'removeSelection', 'deleteWidget']),
@@ -275,7 +275,7 @@ export default defineComponent({
                 this.inFocus = false
             }
         },
-        resizedEvent: function(newHPx) {
+        resizedEvent: function (newHPx) {
             emitter.emit('widgetResized', newHPx)
         }
     }

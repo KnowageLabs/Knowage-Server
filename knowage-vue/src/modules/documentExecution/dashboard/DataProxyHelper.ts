@@ -43,6 +43,8 @@ export const getWidgetData = async (dashboardId: any, widget: IWidget, datasets:
             return await getCustomChartData(dashboardId, widget, datasets, $http, initialCall, selections, associativeResponseSelections)
         case 'static-pivot-table':
             return await getPivotData(dashboardId, widget, datasets, $http, initialCall, selections, associativeResponseSelections)
+        case 'discovery':
+            return await getDiscoveryChartData(widget, datasets, $http, initialCall, selections, associativeResponseSelections)
         default:
             break
     }
@@ -71,9 +73,12 @@ const formatWidgetModelForGet = (dashboardId: any, propWidget: IWidget, dataset:
         dataToSend.summaryRow = getSummaryRow(propWidget)
     }
 
+    //if dataset is table solr, it needs this option
+    if (propWidget.type === 'table') dataToSend.options = { solrFacetPivot: true }
+
     propWidget.columns.forEach((column) => {
         if (column.fieldType === 'MEASURE') {
-            const measureToPush = { id: column.alias, alias: column.alias, columnName: column.columnName, funct: column.aggregation, orderColumn: column.alias, orderType: propWidget.settings.sortingOrder } as any
+            const measureToPush = { id: column.alias, alias: column.alias, columnName: column.columnName, funct: column.aggregation, orderColumn: column.alias, orderType: propWidget.settings?.sortingOrder } as any
             column.formula ? (measureToPush.formula = column.formula) : ''
             dataToSend.aggregations.measures.push(measureToPush)
         } else {

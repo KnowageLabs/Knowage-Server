@@ -129,6 +129,7 @@
             "value": "setLabel"
         }
     ],
+    "dateFormats": ["LLLL", "llll", "LLL", "lll", "DD/MM/YYYY HH:mm:SS", "DD/MM/YYYY HH:mm", "LL", "ll", "L", "l", "LT", "LTS"],
     "headersCompareValueType": [
         {
             "label": "common.static",
@@ -316,6 +317,20 @@
         },
         {
             "type": "background-color"
+        }
+    ],
+    "verticalAlignmentOptions": [
+        {
+            "label": "common.bottom",
+            "value": "flex-end"
+        },
+        {
+            "label": "common.middle",
+            "value": "center"
+        },
+        {
+            "label": "common.top",
+            "value": "flex-start"
         }
     ],
     "visibilityConditionOperators": [

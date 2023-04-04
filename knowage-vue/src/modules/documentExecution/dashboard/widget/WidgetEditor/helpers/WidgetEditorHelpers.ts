@@ -1,3 +1,4 @@
+import { createNewDiscoveryWidgetSettings } from './discoveryWidget/DiscoveryWidgetFunctions';
 import { IWidget, IWidgetColumn } from '../../../Dashboard'
 import { formatTableWidgetForSave } from './tableWidget/TableWidgetBackendSaveHelper'
 import { createNewTableWidgetSettings } from '../helpers/tableWidget/TableWidgetFunctions'
@@ -79,6 +80,9 @@ const createNewWidgetSettings = (widget: IWidget) => {
             break
         case 'static-pivot-table':
             widget.settings = createNewPivotTableWidgetSettings()
+            break
+        case 'discovery':
+            widget.settings = createNewDiscoveryWidgetSettings()
             break
     }
 }
