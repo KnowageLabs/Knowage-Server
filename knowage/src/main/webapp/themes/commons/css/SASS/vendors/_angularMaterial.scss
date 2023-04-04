@@ -3,3 +3,39 @@
 		height:48px;
 	}
 }
+
+md-chips.small-chips {
+    display: block;
+    font-size: .7rem;
+    padding: 0 0 2px 2px;
+    vertical-align: middle;
+    ._md-chip-input-container{
+		margin:0;
+	}
+    md-chip{
+        cursor: default;
+        border-radius: 16px;
+        display: block;
+        height: 24px;
+        line-height: 24px;
+        margin: 4px 4px 0 0;
+        padding: 0 8px;
+        float: left;
+        box-sizing: border-box;
+        max-width: 100%;
+        position: relative;
+        background: rgb(224,224,224);
+        color: rgb(66,66,66);
+        ._md-chip-remove-container{
+			width:24px;
+			height:24px;
+			button._md-chip-remove{
+				width:24px;
+				height:24px;
+				svg{
+					width:80%;
+				}
+			}
+		}
+    }
+}
