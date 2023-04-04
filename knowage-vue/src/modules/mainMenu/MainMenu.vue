@@ -66,7 +66,7 @@ import LanguageDialog from '@/modules/mainMenu/dialogs/LanguageDialog/LanguageDi
 import LicenseDialog from '@/modules/mainMenu/dialogs/LicenseDialog/LicenseDialog.vue'
 import NewsDialog from '@/modules/mainMenu/dialogs/NewsDialog/NewsDialog.vue'
 import RoleDialog from '@/modules/mainMenu/dialogs/RoleDialog.vue'
-import { mapState } from 'pinia'
+import { mapState, mapActions } from 'pinia'
 import auth from '@/helpers/commons/authHelper'
 import { AxiosResponse } from 'axios'
 import DownloadsDialog from '@/modules/mainMenu/dialogs/DownloadsDialog/DownloadsDialog.vue'
@@ -90,10 +90,6 @@ export default defineComponent({
         ScrollPanel
     },
     emits: ['update:visibility', 'menuItemSelected'],
-    setup() {
-        const store = mainStore()
-        return { store }
-    },
     data() {
         return {
             adminMenuOpened: false,
@@ -122,6 +118,7 @@ export default defineComponent({
         window.removeEventListener('resize', this.getDimensions)
     },
     methods: {
+        ...mapActions(mainStore, ['setHomePage', 'setLoading']),
         info() {
             this.display = !this.display
         },
@@ -254,7 +251,7 @@ export default defineComponent({
         },
         async loadMenu(recursive = false) {
             window.addEventListener('resize', this.getDimensions)
-            this.store.setLoading(true)
+            this.setLoading(true)
             let localObject = { locale: this.$i18n.fallbackLocale.toString() }
             if (Object.keys(this.locale).length !== 0) localObject = { locale: this.locale }
             if (localStorage.getItem('locale')) {
@@ -278,7 +275,7 @@ export default defineComponent({
                         const homePage = this.findHomePage(this.dynamicUserFunctionalities) || {}
                         if (homePage && Object.keys(homePage).length !== 0) {
                             if (!this.stateHomePage.label) {
-                                this.store.setHomePage(homePage)
+                                this.setHomePage(homePage)
                             }
                         }
                     }
@@ -296,7 +293,7 @@ export default defineComponent({
                     else this.loadMenu(true)
                 })
                 .finally(() => {
-                    this.store.setLoading(false)
+                    this.setLoading(false)
                     this.getDimensions()
                 })
         },

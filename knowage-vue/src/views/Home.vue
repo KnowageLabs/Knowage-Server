@@ -1,6 +1,6 @@
 <template>
-    <iframe v-if="homePage.label && completeUrl" :src="`${completeUrl}`"></iframe>
-    <div v-else class="homeContainer">
+    <iframe v-if="!homePage.loading && homePage.label && completeUrl" :src="`${completeUrl}`"></iframe>
+    <div v-if="!homePage.loading && !homePage.label" class="homeContainer">
         <div class="upperSection p-d-flex">
             <div class="p-d-flex p-flex-column kn-flex">
                 <div class="logo">
@@ -46,12 +46,6 @@ import mainStore from '../App.store.js'
 
 export default defineComponent({
     name: 'home',
-    components: {},
-    props: {},
-    setup() {
-        const store = mainStore()
-        return { store }
-    },
     data() {
         return {
             completeUrl: false
@@ -62,7 +56,7 @@ export default defineComponent({
     },
     methods: {
         setCompleteUrl() {
-            if (Object.keys(this.homePage).length > 0) {
+            if (this.homePage?.url || this.homePage?.to) {
                 this.completeUrl = this.homePage.url
                 if (this.homePage.to) {
                     const to = this.homePage.to?.replaceAll('\\/', '/')
