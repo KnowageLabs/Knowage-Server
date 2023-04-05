@@ -349,7 +349,7 @@ export default defineComponent({
             return import.meta.env.VITE_HOST_URL + `/knowage/servlet/AdapterHTTP?ACTION_NAME=MANAGE_PREVIEW_FILE_ACTION&SBI_ENVIRONMENT=DOCBROWSER&LIGHT_NAVIGATOR_DISABLED=TRUE&operation=DOWNLOAD&fileName=${this.selectedDocument?.previewFile}`
         },
         designerButtonVisible(): boolean {
-            return this.document.typeCode == 'OLAP' || this.document.typeCode == 'KPI' || this.document.engine == 'knowagegisengine'
+            return this.document.typeCode == 'OLAP' || this.document.typeCode == 'KPI' || this.document.engine == 'knowagegisengine' || this.document.engine == 'knowagedossierengine'
         },
         ...mapState(mainStore, {
             user: 'user'
@@ -481,11 +481,18 @@ export default defineComponent({
                             this.openGis()
                             break
                         }
+                        case 'DOSSIER': {
+                            this.openDossierDesigner()
+                            break
+                        }
                         default:
                             this.openDesigner()
                     }
                 }
             })
+        },
+        async openDossierDesigner() {
+            this.$emit('openDesignerDialog')
         },
         async openDesigner() {
             if (this.listOfTemplates.length === 0) {

@@ -72,6 +72,7 @@
         </div>
 
         <DocumentDetailOlapDesignerDialog v-if="designerDialogVisible" :visible="designerDialogVisible" :selected-document="selectedDocument" @close="designerDialogVisible = false" @designerStarted="onDesignerStart"></DocumentDetailOlapDesignerDialog>
+        <DocumentDetailDossierDesignerDialog v-if="user.enterprise && dossierDesignerDialogVisible" :visible="dossierDesignerDialogVisible" :selected-document="selectedDocument" @close="dossierDesignerDialogVisible = false"></DocumentDetailDossierDesignerDialog>
     </div>
 </template>
 
@@ -92,8 +93,10 @@ import TabPanel from 'primevue/tabpanel'
 import ProgressSpinner from 'primevue/progressspinner'
 import { iDataSource, iAnalyticalDriver, iDriver, iEngine, iTemplate, iAttribute, iParType, iDateFormat, iFolder, iTableSmall, iOutputParam, iDocumentType } from '@/modules/documentExecution/documentDetails/DocumentDetails'
 import DocumentDetailOlapDesignerDialog from './dialogs/olapDesignerDialog/DocumentDetailOlapDesignerDialog.vue'
+import DocumentDetailDossierDesignerDialog from './dialogs/dossierDesignerDialog/DocumentDetailDossierDesignerDialog.vue'
 import mainStore from '../../../App.store'
 import UserFunctionalitiesConstants from '@/UserFunctionalitiesConstants.json'
+import { mapState, mapActions } from 'pinia'
 
 export default defineComponent({
     name: 'document-details',
@@ -108,7 +111,8 @@ export default defineComponent({
         TabPanel,
         Badge,
         ProgressSpinner,
-        DocumentDetailOlapDesignerDialog
+        DocumentDetailOlapDesignerDialog,
+        DocumentDetailDossierDesignerDialog
     },
     props: { propDocId: { type: String }, propFolderId: { type: String }, propMode: { type: String }, viewMode: { type: String }, wholeItem: { type: Object } },
     emits: ['closeDetails', 'documentSaved'],
@@ -143,10 +147,14 @@ export default defineComponent({
             allDocumentDetails: [] as any,
             savedSubreports: [] as any,
             selectedSubreports: [] as any,
-            designerDialogVisible: false
+            designerDialogVisible: false,
+            dossierDesignerDialogVisible: false
         }
     },
     computed: {
+        ...mapState(mainStore, {
+            user: 'user'
+        }),
         invalidOutputParams(): number {
             if (this.selectedDocument && this.selectedDocument.outputParameters) {
                 return this.selectedDocument.outputParameters.filter((parameter: any) => parameter.numberOfErrors > 0).length
@@ -163,7 +171,7 @@ export default defineComponent({
             return this.selectedDocument?.functionalities?.length
         },
         showDataLineageTab(): boolean {
-            return (this.store.$state as any).user.functionalities.includes(UserFunctionalitiesConstants.DATA_SOURCE_MANAGEMENT)
+            return this.user.functionalities.includes(UserFunctionalitiesConstants.DATA_SOURCE_MANAGEMENT)
         }
     },
     watch: {
@@ -193,6 +201,7 @@ export default defineComponent({
         }
     },
     methods: {
+        ...mapActions(mainStore, ['setLoading']),
         setDocumentAndFolderIds() {
             if (this.propMode === 'execution') {
                 this.docId = this.propDocId
@@ -423,7 +432,13 @@ export default defineComponent({
             event.index === 5 ? this.getAllSubreports() : ''
         },
         openDesignerDialog() {
-            this.designerDialogVisible = true
+            if (this.selectedDocument.engine === 'knowagedossierengine') {
+                this.dossierDesignerDialogVisible = true
+                this.designerDialogVisible = false
+            } else {
+                this.designerDialogVisible = true
+                this.dossierDesignerDialogVisible = false
+            }
         },
         onDesignerStart(document: any) {
             this.$router.push(`/olap-designer/${document.sbiExecutionId}?olapId=${document.id}&olapName=${document.name}&olapLabel=${document.label}&noTemplate=${true}&reference=${document.reference}&engine=${document.engine}&artifactId=${document.artifactId}`)
