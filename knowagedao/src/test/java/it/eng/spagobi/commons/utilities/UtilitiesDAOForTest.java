@@ -23,14 +23,26 @@ import javax.naming.Context;
 
 import com.mysql.jdbc.jdbc2.optional.MysqlConnectionPoolDataSource;
 
+import it.eng.spago.error.EMFInternalError;
+import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.dao.DAOConfig;
+import it.eng.spagobi.commons.metadata.SbiHibernateModel;
+import it.eng.spagobi.tenant.Tenant;
+import it.eng.spagobi.tenant.TenantManager;
+import it.eng.spagobi.user.UserProfileManager;
 import it.eng.spagobi.utilities.MockContext;
 import it.eng.spagobi.utilities.MockFactory;
 
 public class UtilitiesDAOForTest {
 
+	public static final String TEST_ORGANIZATION = "DEFAULT_TENANT";
+
+	private UtilitiesDAOForTest() {
+
+	}
+
 	public static void setUpDatabaseTestJNDI() throws Exception {
-		DAOConfig.setHibernateConfigurationFileFile(new File("../knowage/src/hibernate.cfg.xml"));
+		DAOConfig.setHibernateConfigurationFileFile(new File("../knowage/src/main/resources/hibernate.cfg.xml"));
 
 		try {
 			Class.forName("org.hsqldb.jdbcDriver");
@@ -44,19 +56,34 @@ public class UtilitiesDAOForTest {
 		System.setProperty(Context.INITIAL_CONTEXT_FACTORY, MockFactory.class.getName());
 
 		/* Construct DataSources*/MysqlConnectionPoolDataSource knowageDs = new MysqlConnectionPoolDataSource();
-		knowageDs.setURL("jdbc:mysql://localhost/knowage_master");
+		knowageDs.setURL("jdbc:mysql://localhost:3310/knowage_8_2");
 		knowageDs.setUser("root");
-		knowageDs.setPassword("123456");
+		knowageDs.setPassword("root");
 
-		MysqlConnectionPoolDataSource foodmartDs = new MysqlConnectionPoolDataSource();
-		foodmartDs.setURL("jdbc:mysql://localhost/foodmart");
-		foodmartDs.setUser("root");
-		foodmartDs.setPassword("123456");
+//		MysqlConnectionPoolDataSource foodmartDs = new MysqlConnectionPoolDataSource();
+//		foodmartDs.setURL("jdbc:mysql://localhost/foodmart");
+//		foodmartDs.setUser("root");
+//		foodmartDs.setPassword("123456");
 
 		Context ic = new MockContext();
 		MockFactory.context = ic;
-		ic.bind("java:/comp/env/jdbc/knowage", knowageDs);
 		ic.bind("java:comp/env/jdbc/knowage", knowageDs);
-		ic.bind("java:comp/env/jdbc/foodmart", foodmartDs);
+//		ic.bind("java:comp/env/jdbc/foodmart", foodmartDs);
+	}
+
+	public static void commonInfoInitialization(SbiHibernateModel e) {
+		e.getCommonInfo().setOrganization(TEST_ORGANIZATION);
+	}
+
+	public static void setUpUserProfile() throws EMFInternalError {
+		UserProfile e = new UserProfile("biadmin", TEST_ORGANIZATION);
+
+		UserProfileManager.setProfile(e);
+		TenantManager.setTenant(new Tenant(TEST_ORGANIZATION));
+	}
+
+	public static void resetUserProfile() {
+		UserProfileManager.unset();
+		TenantManager.unset();
 	}
 }

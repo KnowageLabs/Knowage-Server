@@ -37,6 +37,12 @@ import java.util.Date;
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
+/**
+ * @deprecated Replaced by KNOWAGE_TM-513
+ * TODO : Delete
+ */
+@Deprecated
 public class FunctionsOrganizer implements Serializable {
 
 	// Fields

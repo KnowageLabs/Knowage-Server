@@ -29,6 +29,8 @@ import java.util.Set;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.BigIntegerNode;
 import com.fasterxml.jackson.databind.node.BooleanNode;
@@ -44,6 +46,8 @@ import com.fasterxml.jackson.databind.node.TextNode;
  * @author Andrea Gioia (andrea.gioia@eng.it)
  *
  */
+@JsonSerialize(using = JSONObjectSerializer.class)
+@JsonDeserialize(using = JSONObjectDeserializer.class)
 public class JSONObject extends AbstractJSONObject implements Serializable {
 
 	private static final long serialVersionUID = -6237508419256769078L;

@@ -104,6 +104,9 @@ import it.eng.spagobi.tools.timespan.dao.ITimespanDAO;
 import it.eng.spagobi.tools.udp.dao.IUdpDAO;
 import it.eng.spagobi.tools.udp.dao.IUdpValueDAO;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
+import it.eng.spagobi.view.dao.ISbiViewDAO;
+import it.eng.spagobi.view.dao.ISbiViewForDocDAO;
+import it.eng.spagobi.view.dao.ISbiViewHierarchyDAO;
 import it.eng.spagobi.wapp.dao.IMenuDAO;
 import it.eng.spagobi.wapp.dao.IMenuRolesDAO;
 import it.eng.spagobi.whatif.dao.IWhatifWorkflowDAO;
@@ -958,6 +961,11 @@ public class DAOFactory {
 		return (ICatalogFunctionDAO) createDAOInstance("ICatalogFunctionDAO");
 	}
 
+	/**
+	 * @deprecated Replaced by KNOWAGE_TM-513
+	 * TODO : Delete
+	 */
+	@Deprecated
 	public static IFunctionsOrganizerDAO getFunctionsOrganizerDAO() {
 		return (IFunctionsOrganizerDAO) createDAOInstance("IFunctionsOrganizerDAO");
 	}
@@ -966,6 +974,11 @@ public class DAOFactory {
 		return (IWhatifWorkflowDAO) createDAOInstance("IWhatifWorkflowDAO");
 	}
 
+	/**
+	 * @deprecated Replaced by KNOWAGE_TM-513
+	 * TODO : Delete
+	 */
+	@Deprecated
 	public static IObjFuncOrganizerDAO getObjFuncOrganizerDAO() {
 		return (IObjFuncOrganizerDAO) createDAOInstance("IObjFuncOrganizerDAO");
 	}
@@ -992,6 +1005,18 @@ public class DAOFactory {
 
 	public static ISbiTagDAO getSbiTagDao() {
 		return (ISbiTagDAO) createDAOInstance("ISbiTagDAO");
+	}
+
+	public static ISbiViewHierarchyDAO getSbiViewHierarchyDAO() {
+		return (ISbiViewHierarchyDAO) createDAOInstance("ISbiViewHierarchyDAO");
+	}
+
+	public static ISbiViewDAO getSbiViewDAO() {
+		return (ISbiViewDAO) createDAOInstance("ISbiViewDAO");
+	}
+
+	public static ISbiViewForDocDAO getSbiViewForDocDAO() {
+		return (ISbiViewForDocDAO) createDAOInstance("ISbiViewForDocDAO");
 	}
 
 	private static boolean isAuthorizationEventsEmissionEnable() {

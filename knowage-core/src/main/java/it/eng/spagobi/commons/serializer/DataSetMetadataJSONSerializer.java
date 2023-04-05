@@ -21,7 +21,6 @@ package it.eng.spagobi.commons.serializer;
 import java.util.List;
 import java.util.Locale;
 
-import org.json.ICommonObject;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -55,8 +54,8 @@ public class DataSetMetadataJSONSerializer implements Serializer {
 		}
 	}
 
-	public ICommonObject serializeToJson(String meta) throws SourceBeanException, JSONException {
-		ICommonObject ret = null;
+	public Object serializeToJson(String meta) throws SourceBeanException, JSONException {
+		Object ret = null;
 
 		if (meta != null && !meta.equals("")) {
 			SourceBean source = SourceBean.fromXMLString(meta);

@@ -1,0 +1,79 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+
+	<class name="it.eng.spagobi.view.metadata.SbiViewHierarchy" table="SBI_VIEW_HIERARCHY" lazy="false">
+		<id name="id" type="string">
+			<column name="id" />
+			<generator class="org.hibernate.id.UUIDGenerator" />
+		</id>
+
+		<component class="it.eng.spagobi.commons.metadata.SbiCommonInfo"
+			name="commonInfo">
+			<property generated="never" lazy="false" name="userIn" type="string">
+				<column length="100" name="USER_IN" not-null="true" />
+			</property>
+			<property generated="never" lazy="false" name="userUp" type="string">
+				<column length="100" name="USER_UP" not-null="false" />
+			</property>
+			<property generated="never" lazy="false" name="userDe" type="string">
+				<column length="100" name="USER_DE" not-null="false" />
+			</property>
+			<property generated="never" lazy="false" name="timeIn" type="timestamp">
+				<column name="TIME_IN" not-null="true" />
+			</property>
+			<property generated="never" lazy="false" name="timeUp" type="timestamp">
+				<column name="TIME_UP" not-null="false" />
+			</property>
+			<property generated="never" lazy="false" name="timeDe" type="timestamp">
+				<column name="TIME_DE" not-null="false" />
+			</property>
+			<property generated="never" lazy="false" name="sbiVersionIn"
+				type="string">
+				<column length="10" name="SBI_VERSION_IN" not-null="false" />
+			</property>
+			<property generated="never" lazy="false" name="sbiVersionUp"
+				type="string">
+				<column length="10" name="SBI_VERSION_UP" not-null="false" />
+			</property>
+			<property generated="never" lazy="false" name="sbiVersionDe"
+				type="string">
+				<column length="10" name="SBI_VERSION_DE" not-null="false" />
+			</property>
+			<property generated="never" lazy="false" name="organization"
+				type="string">
+				<column length="20" name="ORGANIZATION" not-null="false" />
+			</property>
+		</component>
+
+		<property generated="never" lazy="false" name="name" type="string">
+			<column length="200" name="name" not-null="true" unique="false" />
+		</property>
+		<property generated="never" lazy="false" name="descr" type="string">
+			<column length="40" name="descr" not-null="false" />
+		</property>
+		<property generated="never" lazy="false" name="progr" type="integer">
+			<column name="progr" not-null="true" />
+		</property>
+
+		<many-to-one name="parent" class="it.eng.spagobi.view.metadata.SbiViewHierarchy" column="parent_id" cascade="all" insert="true" update="true" lazy="false"/>
+
+		<set name="children" sort="natural" cascade="all-delete-orphan" lazy="false">
+			<key>
+				<column name="parent_id" not-null="true" />
+			</key>
+			<one-to-many class="it.eng.spagobi.view.metadata.SbiViewHierarchy" />
+		</set>
+
+		<filter name="userFilter" condition="user_in=:user" />
+		<filter name="tenantFilter" condition="organization=:tenant" />
+
+	</class>
+	<filter-def name="userFilter">
+		<filter-param name="user" type="string" />
+	</filter-def>
+	<filter-def name="tenantFilter">
+		<filter-param name="tenant" type="string"/>
+	</filter-def>
+</hibernate-mapping>

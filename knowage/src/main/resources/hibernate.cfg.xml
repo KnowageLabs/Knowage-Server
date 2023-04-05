@@ -244,6 +244,10 @@
 		<mapping resource="it/eng/spagobi/commons/metadata/mapping/SbiCockpitAssociation.hbm.xml" />
 		<mapping resource="it/eng/spagobi/commons/metadata/mapping/SbiCockpitWidget.hbm.xml" />
 
+		<!-- View -->
+		<mapping resource="it/eng/spagobi/view/metadata/mapping/SbiViewHierarchy.hbm.xml" />
+		<mapping resource="it/eng/spagobi/view/metadata/mapping/SbiView.hbm.xml" />
+		<mapping resource="it/eng/spagobi/view/metadata/mapping/SbiViewForDoc.hbm.xml" />
 
 		<!-- end mapping -->
 
