@@ -360,22 +360,22 @@ public abstract class AbstractBIResourceRuntime<T extends AbstractDriver> {
 	 *   <pre>
 	 *     [
 	 *       {
-	 *         "label": "KNOWAGE-6401-1-1",
+	 *         "urlName": "KNOWAGE-6401-1-1",
 	 *         "value": "Ice Cream",
 	 *         "description": "Descrizione di Ice Cream"
 	 *       },
 	 *       {
-	 *         "label": "KNOWAGE-6401-1-3",
+	 *         "urlName": "KNOWAGE-6401-1-3",
 	 *         "value": [],
 	 *         "description": ""
 	 *       },
 	 *       {
-	 *         "label": "KNOWAGE-6401-1-2",
+	 *         "urlName": "KNOWAGE-6401-1-2",
 	 *         "value": [ "Spices" ],
 	 *         "description": "Descrizione di Spices"
 	 *       },
 	 *       {
-	 *         "label": "KNOWAGE-6401-1-4",
+	 *         "urlName": "KNOWAGE-6401-1-4",
 	 *         "value": "",
 	 *         "description": ""
 	 *       }
