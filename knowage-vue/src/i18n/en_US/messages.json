@@ -1004,6 +1004,23 @@
             "deleteConfirm": "Are you sure you want to delete the selected activity?",
             "deleteSuccess": "Successfully deleted selected activity.",
             "deleteTitle": "Delete dossier activity",
+            "designerDialog": {
+                "chooseDocumentInfo": "Select the document to attach it to the placeholder. Then choose the driver link type and proceed using a saved view or setting values for the driver parameters",
+                "closeAndRun": "Close and run",
+                "dossierUrlName": "Dossier url name",
+                "downloadable": "Downloadable",
+                "driverLinkType": "Driver link type",
+                "inherit": "Inherit",
+                "linkTo": "Link to",
+                "noDocumentLinkedToThePlaceholder": "No document linked to the placeholder",
+                "noPlaceholdersFound": "The uploaded document doesn't contain placeholders accordingly to the prefix. Please, try again with another document",
+                "noPlaceholdersHint": "No placeholder seleted. Click on a list element to select one.",
+                "placeholders": "Placeholders",
+                "step0": "Dossier designer - Upload file and choose the prefix for images",
+                "step1": "Dossier designer - Hook placeholders to documents",
+                "uploadable": "Uploadable",
+                "urlName": "Url name"
+            },
             "downloadMissingError": "Download ERROR - Document is missing",
             "downloadTemplate": "Download document template",
             "headers": {
