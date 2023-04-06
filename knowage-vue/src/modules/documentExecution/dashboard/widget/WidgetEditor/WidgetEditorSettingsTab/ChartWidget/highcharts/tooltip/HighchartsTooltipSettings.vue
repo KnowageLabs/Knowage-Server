@@ -3,7 +3,7 @@
         <div class="p-col-12 p-py-4">
             <WidgetEditorStyleToolbar :options="descriptor.tooltipStyleOptions" :prop-model="toolbarModel" :disabled="tooltipDisabled" @change="onStyleToolbarChange"> </WidgetEditorStyleToolbar>
         </div>
-        <div class="p-col-12 p-py-4">
+        <div v-if="chartType === 'pie'" class="p-col-12 p-py-4">
             <div class="p-d-flex p-flex-row p-jc-center">
                 <label class="kn-material-input-label kn-cursor-pointer" @click="advancedVisible = !advancedVisible">{{ $t('common.advanced') }}<i :class="advancedVisible ? 'fas fa-chevron-up' : 'fas fa-chevron-down'" class="p-ml-2"></i></label>
             </div>
@@ -70,6 +70,9 @@ export default defineComponent({
     computed: {
         tooltipDisabled(): boolean {
             return !this.model || !this.model.tooltip.enabled
+        },
+        chartType() {
+            return this.model?.chart.type
         }
     },
     created() {

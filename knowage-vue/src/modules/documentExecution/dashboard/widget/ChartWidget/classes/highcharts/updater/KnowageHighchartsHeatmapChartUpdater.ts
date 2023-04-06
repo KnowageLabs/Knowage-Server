@@ -1,7 +1,7 @@
 import { IHighchartsHeatmapAxis } from './../../../../../interfaces/highcharts/DashboardHighchartsHeatmapWidget.d';
 import { hexToRgba } from '@/modules/documentExecution/dashboard/helpers/FormattingHelpers';
 import { IHighchartsChartModel } from '@/modules/documentExecution/dashboard/interfaces/highcharts/DashboardHighchartsWidget'
-import { getFormattedLegend, getFormattedNoDataConfiguration, getFormattedSeries, getFormattedTooltipSettings } from './KnowageHighchartsCommonUpdater'
+import { getFormattedLegend, getFormattedNoDataConfiguration, getFormattedSeries } from './KnowageHighchartsCommonUpdater'
 import * as highchartsDefaultValues from '../../../../WidgetEditor/helpers/chartWidget/highcharts/HighchartsDefaultValues'
 
 export const updateHeatmapChartModel = (oldModel: any, newModel: IHighchartsChartModel) => {
@@ -11,7 +11,7 @@ export const updateHeatmapChartModel = (oldModel: any, newModel: IHighchartsChar
     getFormattedAxisSettings(oldModel, newModel, 'x')
     getFormattedAxisSettings(oldModel, newModel, 'y')
     //getFormattedSeries(oldModel, newModel, 1)
-    //getFormattedTooltipSettings(oldModel, newModel)
+    getFormattedTooltipSettings(oldModel, newModel)
     console.log('-------- NEW CHART MODEL: ', newModel)
 
     return newModel
@@ -66,4 +66,20 @@ const getFormattedTitleAlign = (oldAxisTitleAlign: 'left' | 'center' | 'right') 
         default:
             return 'center'
     }
+}
+
+const getFormattedTooltipSettings = (oldModel: any, newModel: IHighchartsChartModel) => {
+    const oldTooltipSettings = oldModel.CHART?.TOOLTIP
+    if (!oldTooltipSettings) return
+    newModel.tooltip = {
+        enabled: true,
+        style: {
+            fontFamily: oldTooltipSettings.style.fontFamily,
+            fontSize: oldTooltipSettings.style.fontSize,
+            fontWeight: oldTooltipSettings.style.fontWeight,
+            color: oldTooltipSettings.style.color ? hexToRgba(oldTooltipSettings.style.color) : ''
+        },
+        backgroundColor: oldTooltipSettings.backgroundColor ? hexToRgba(oldTooltipSettings.backgroundColor) : ''
+    }
+
 }
