@@ -64,7 +64,6 @@ const store = defineStore('store', {
         setLoading(loading) {
             if (loading) this.loading++
             else this.loading--
-            console.log('------- LOADING: ', this.loading)
 
             if (this.loading < 0) this.loading = 0
         },

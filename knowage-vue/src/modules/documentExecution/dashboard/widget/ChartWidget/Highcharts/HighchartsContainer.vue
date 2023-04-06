@@ -153,7 +153,6 @@ export default defineComponent({
             if (this.chartModel.chart.type !== 'pie' && this.chartModel.chart.type !== 'heatmap') return
             if (this.widgetModel.settings.interactions.crossNavigation.enabled) {
                 const formattedOutputParameters = formatForCrossNavigation(event, this.widgetModel.settings.interactions.crossNavigation, this.dataToShow, this.chartModel.chart.type)
-                console.log('------- FINAL: ', formattedOutputParameters)
                 executeChartCrossNavigation(formattedOutputParameters, this.widgetModel.settings.interactions.crossNavigation, this.dashboardId)
             } else if (this.chartModel.chart.type === 'pie') {
                 this.setSelection(event)

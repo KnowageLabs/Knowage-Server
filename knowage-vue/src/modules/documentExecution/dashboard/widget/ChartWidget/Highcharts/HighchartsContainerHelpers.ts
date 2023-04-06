@@ -2,11 +2,7 @@ import { IWidgetCrossNavigation, IWidgetInteractionParameter } from "../../../Da
 import { IChartInteractionValues } from "../../../interfaces/chartJS/DashboardChartJSWidget";
 
 export const formatForCrossNavigation = (chartEvent: any, crossNavigationOptions: IWidgetCrossNavigation, dataToShow: any, chartType: string) => {
-    console.log('--------- CHART EVENT: ', chartEvent)
-    console.log('--------- chartType: ', chartType)
-    console.log('--------- crossNavigationOptions: ', crossNavigationOptions)
     const formattedChartValues = getFormattedChartValues(chartEvent, dataToShow, chartType)
-
     const formattedOutputParameters = getFormattedOutputParameters(formattedChartValues, crossNavigationOptions.parameters)
     return formattedOutputParameters
 
@@ -21,7 +17,6 @@ const getFormattedChartValues = (chartEvent: any, dataToShow: any, chartType: st
         formattedChartValues.groupingName = groupingName
         formattedChartValues.groupingValue = chartPoint.options.groupingValue
     }
-    console.log('--------- formattedChartValues: ', formattedChartValues)
     return formattedChartValues
 }
 
