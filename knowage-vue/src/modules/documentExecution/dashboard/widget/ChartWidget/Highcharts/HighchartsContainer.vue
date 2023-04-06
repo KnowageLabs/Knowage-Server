@@ -87,7 +87,8 @@ export default defineComponent({
             Highcharts.setOptions({ lang: { noData: this.chartModel.lang.noData } })
 
             // TODO - remove mock
-            this.widgetModel.settings.chartModel.setData(JSON.parse(mockedData2), this.widgetModel)
+            // this.widgetModel.settings.chartModel.setData(JSON.parse(mockedData2), this.widgetModel)
+            this.widgetModel.settings.chartModel.setData(this.dataToShow, this.widgetModel)
 
             this.widgetModel.settings.chartModel.updateSeriesAccessibilitySettings(this.widgetModel)
             this.widgetModel.settings.chartModel.updateSeriesLabelSettings(this.widgetModel)

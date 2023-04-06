@@ -465,6 +465,8 @@ export const getHighchartsWidgetData = async (widget: IWidget, datasets: IDashbo
             return await getGaugeChartData(widget, datasets, $http, initialCall, selections, associativeResponseSelections)
         case 'solidgauge':
             return await getGaugeChartData(widget, datasets, $http, initialCall, selections, associativeResponseSelections)
+        case 'heatmap':
+            return await getGaugeChartData(widget, datasets, $http, initialCall, selections, associativeResponseSelections)
         default:
             return ''
     }
@@ -563,12 +565,21 @@ const formatChartWidgetForGet = (propWidget: IWidget, dataset: IDashboardDataset
         measure.formula ? (measureToPush.formula = measure.formula) : ''
         dataToSend.aggregations.measures.push(measureToPush)
 
-        //FIRST CATEGORY LOGIC - TODO: Make it grab the drilldown Category instead of the first one.
-        const categoryIndex = propWidget.columns.findIndex((column: any) => column.fieldType !== 'MEASURE')
-        const category = propWidget.columns[categoryIndex]
-
-        const categoryToPush = { id: category.alias, alias: category.alias, columnName: category.columnName, orderType: '', funct: 'NONE' } as any
-        dataToSend.aggregations.categories.push(categoryToPush)
+        //HEATMAP CATEGORY LOGIC - TODO: Grab all attributes/categories, not only 1st one, there can be 2 max.
+        if (chartType == 'heatmap') {
+            propWidget.columns.forEach((column: any) => {
+                if (column.fieldType !== 'MEASURE') {
+                    const categoryToPush = { id: column.alias, alias: column.alias, columnName: column.columnName, orderType: '', funct: 'NONE' } as any
+                    dataToSend.aggregations.categories.push(categoryToPush)
+                }
+            })
+        } else {
+            //FIRST CATEGORY LOGIC - TODO: Make it grab the drilldown Category instead of the first one.
+            const categoryIndex = propWidget.columns.findIndex((column: any) => column.fieldType !== 'MEASURE')
+            const category = propWidget.columns[categoryIndex]
+            const categoryToPush = { id: category.alias, alias: category.alias, columnName: category.columnName, orderType: '', funct: 'NONE' } as any
+            dataToSend.aggregations.categories.push(categoryToPush)
+        }
     }
 
     if (dataset.drivers && dataset.drivers.length > 0) {
