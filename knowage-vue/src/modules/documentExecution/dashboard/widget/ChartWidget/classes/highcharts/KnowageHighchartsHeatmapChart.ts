@@ -82,7 +82,6 @@ export class KnowageHighchartsHeatmapChart extends KnowageHighcharts {
         if (this.model.xAxis?.categories) {
             this.model.xAxis.categories = Array.from(xAxisCategoriesSet) as string[]
             dateFormat ? this.model.xAxis.categories.sort((a, b) => moment(a, dateFormat).diff(moment(b, dateFormat))) : this.model.xAxis.categories.sort()
-            // this.model.xAxis.categories.sort()
             return this.model.xAxis.categories
         } else return []
     }
@@ -170,7 +169,7 @@ export class KnowageHighchartsHeatmapChart extends KnowageHighcharts {
         //this.model.series = this.model.series.map((serie: IHighchartsGaugeSerie) => { return this.getFormattedSerieFromOtherChartTypeSerie(serie) })
     }
 
-    getFormattedSerieFromOtherChartTypeSerie(otherChartSerie: IHighchartsGaugeSerie) {
+    getFormattedSerieFromOtherChartTypeSerie(otherChartSerie: any) {
         // TODO
         // const formattedSerie = { name: otherChartSerie.name, data: [], colorByPoint: true } as IHighchartsChartSerie
         // if (otherChartSerie.accessibility) formattedSerie.accessibility
