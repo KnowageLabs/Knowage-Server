@@ -1,5 +1,5 @@
 <template>
-    <LayersList></LayersList>
+    <LayersList :widget-model="widget" :datasets="datasets" :selected-datasets="selectedDatasets"></LayersList>
 </template>
 
 <script lang="ts">

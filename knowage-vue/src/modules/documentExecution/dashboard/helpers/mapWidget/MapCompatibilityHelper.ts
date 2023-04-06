@@ -1,13 +1,12 @@
-import { getFormattedStyle } from './MapStyleHelper';
-import { IWidget, IWidgetResponsive, IWidgetExports } from './../../Dashboard.d';
-import { IMapWidgetSettings, IMapWidgetStyle } from './../../interfaces/mapWidget/DashboardMapWidget.d';
+import { getFormattedStyle } from './MapStyleHelper'
+import { IWidget, IWidgetResponsive, IWidgetExports } from './../../Dashboard.d'
+import { IMapWidgetSettings, IMapWidgetStyle } from './../../interfaces/mapWidget/DashboardMapWidget.d'
 import * as mapWidgetDefaultValues from '../../widget/WidgetEditor/helpers/mapWidget/MapWidgetDefaultValues'
 import * as widgetCommonDefaultValues from '../../widget/WidgetEditor/helpers/common/WidgetCommonDefaultValues'
 
 const columnNameIdMap = {}
 
 export const formatMapWidget = (widget: any) => {
-
     console.log('--------- ORIGINAL WIDGET: ', widget)
 
     const formattedWidget = {
@@ -15,13 +14,14 @@ export const formatMapWidget = (widget: any) => {
         dataset: widget.dataset.dsId,
         type: widget.type,
         columns: [],
+        layers: getFormattedLayers(widget),
         theme: '',
         style: {},
         settings: {} as IMapWidgetSettings
     } as IWidget
     formattedWidget.settings = getFormattedWidgetSettings(widget)
 
-    console.log('--------- FORMATTED WIDGET: ', widget)
+    console.log('--------- FORMATTED WIDGET: ', formattedWidget)
 
     return formattedWidget
 }
@@ -40,6 +40,11 @@ const getFormattedWidgetSettings = (widget: any) => {
         tooltips: getFormattedTooltipsSettings(widget)
     } as IMapWidgetSettings
     return formattedSettings
+}
+
+// TODO - formatirati layere kad zavrsimo sprint, pitaj boga sta nam sve treba odavde a sta ne......
+const getFormattedLayers = (widget: any) => {
+    return widget.content.layers
 }
 
 // TODO

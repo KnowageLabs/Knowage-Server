@@ -3182,6 +3182,7 @@
                 "emptyInfo": "Add a dataset",
                 "layerFilters": "Layer Filters",
                 "layerList": "Layer List",
+                "layers": "Layers",
                 "layersDialogEmpty": "No available layers",
                 "layersTableEmpty": "Add a layer",
                 "openMapWarning": "Opening the map will undo all unsaved modifications, are you sure you want to continue?"
