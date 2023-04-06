@@ -55,7 +55,7 @@ import { IDataset } from '../../../Dashboard'
 export default defineComponent({
     name: 'datasets-catalog-datatable',
     components: { Column, DataTable, Dialog },
-    props: { visible: { required: true, type: Boolean }, selectedDatasetsProp: { required: true, type: Array as any }, availableDatasetsProp: { required: true, type: Array as PropType<IDataset[]> } },
+    props: { visible: { required: true, type: Boolean }, availableDatasetsProp: { required: true, type: Array as PropType<IDataset[]> }, selectedDatasetsProp: { required: true, type: Array as any } },
     emits: ['close', 'addSelectedDatasets'],
     setup() {
         const dashboardStore = dashStore()
@@ -91,7 +91,7 @@ export default defineComponent({
         filterOutSelectedDatasets(selectedDatasets, allDatasets) {
             return allDatasets.filter((responseDataset) => {
                 return !selectedDatasets.find((selectedDataset) => {
-                    return responseDataset.id.dsId === selectedDataset.id.dsId
+                    return responseDataset.id.dsId === selectedDataset.dsId
                 })
             })
         },
