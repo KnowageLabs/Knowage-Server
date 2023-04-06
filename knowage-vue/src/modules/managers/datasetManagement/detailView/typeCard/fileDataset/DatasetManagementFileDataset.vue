@@ -73,8 +73,8 @@
     <div id="preview-container" v-if="rows.length > 0">
         <Toolbar class="kn-toolbar kn-toolbar--secondary p-mt-3">
             <template #start>
-                <Button v-if="!expandTableCard" icon="fas fa-chevron-right" class="p-button-text p-button-rounded p-button-plain" style="color:white" @click="expandTableCard = true" />
-                <Button v-else icon="fas fa-chevron-down" class="p-button-text p-button-rounded p-button-plain" style="color:white" @click="expandTableCard = false" />
+                <Button v-if="!expandTableCard" icon="fas fa-chevron-right" class="p-button-text p-button-rounded p-button-plain" style="color: white" @click="expandTableCard = true" />
+                <Button v-else icon="fas fa-chevron-down" class="p-button-text p-button-rounded p-button-plain" style="color: white" @click="expandTableCard = false" />
                 {{ $t('managers.lovsManagement.preview') }}
             </template>
             <template #end>
@@ -83,8 +83,8 @@
         </Toolbar>
         <Card class="p-m-2" v-show="expandTableCard">
             <template #content>
-                <DataTable :value="rows" class="p-datatable-sm kn-table" :loading="loading" responsiveLayout="scroll" :scrollable="true" scrollDirection="both" scrollHeight="800px" stripedRows rowHover style="width:70vw">
-                    <Column v-for="col of columns" :field="col.name" :header="col.header" :key="col.dataIndex" class="kn-truncated" style="width:250px" />
+                <DataTable :value="rows" class="p-datatable-sm kn-table" :loading="loading" responsiveLayout="scroll" :scrollable="true" scrollDirection="both" scrollHeight="800px" stripedRows rowHover style="width: 70vw">
+                    <Column v-for="col of columns" :field="col.name" :header="col.header" :key="col.dataIndex" class="kn-truncated" style="width: 250px" />
                 </DataTable>
             </template>
         </Card>
@@ -203,7 +203,8 @@ export default defineComponent({
             await this.$http
                 .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `2.0/datasets/download/file?dsLabel=${encodedLabel}&type=${this.dataset.fileType}`, {
                     headers: {
-                        Accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9'
+                        Accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9',
+                        responseType: 'blob'
                     }
                 })
                 .then(

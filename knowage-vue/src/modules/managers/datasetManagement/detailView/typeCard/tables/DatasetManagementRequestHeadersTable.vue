@@ -17,12 +17,12 @@
                     {{ $t('managers.datasetManagement.tableEmpty') }}
                 </template>
                 <Column field="name" :header="$t('kpi.alert.name')" :sortable="true">
-                    <template #editor="{ data }">
+                    <template #body="{ data }">
                         <InputText class="kn-material-input" :style="tableDescriptor.style.columnStyle" v-model="data.name" />
                     </template>
                 </Column>
                 <Column field="value" :header="$t('common.value')" :sortable="true">
-                    <template #editor="{ data }">
+                    <template #body="{ data }">
                         <InputText class="kn-material-input" :style="tableDescriptor.style.columnStyle" v-model="data.value" />
                     </template>
                 </Column>
