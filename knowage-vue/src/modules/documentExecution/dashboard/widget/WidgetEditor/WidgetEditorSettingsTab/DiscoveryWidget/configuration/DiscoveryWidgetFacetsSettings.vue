@@ -2,7 +2,7 @@
     <div v-if="facetSettings" class="p-grid p-jc-center p-ai-center p-p-4">
         <div class="p-col-12 p-d-flex p-flex-column p-p-2">
             <label class="kn-material-input-label"> {{ $t('common.columns') }}</label>
-            <MultiSelect v-model="facetSettings.columns" :options="widgetModel.columns" optionLabel="columnName" optionValue="columnName" :disabled="facetSettingsDisabled" @change="facetsSettingsChanged"> </MultiSelect>
+            <MultiSelect v-model="facetSettings.columns" :options="widgetModel.columns.filter((column: any) => column.fieldType === 'ATTRIBUTE')" optionLabel="columnName" optionValue="columnName" :disabled="facetSettingsDisabled" @change="facetsSettingsChanged"> </MultiSelect>
         </div>
 
         <div class="p-col-12 p-md-6 p-lg-3 p-grid p-ai-center p-pt-4">
