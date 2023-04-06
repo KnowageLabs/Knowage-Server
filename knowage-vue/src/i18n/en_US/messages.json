@@ -719,6 +719,8 @@
                     "categoryId": "Category Id",
                     "categoryName": "Category name",
                     "categoryValue": "Category value",
+                    "groupingName": "Grouping name",
+                    "groupingValue": "Grouping value",
                     "serieName": "Serie name",
                     "serieValue": "Serie value"
                 },

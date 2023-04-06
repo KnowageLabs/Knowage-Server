@@ -79,5 +79,7 @@ export interface IChartInteractionValues {
     serieName: string,
     serieValue: string,
     categoryName: string,
-    categoryValue: string
+    categoryValue: string,
+    groupingName?: string,
+    groupingValue?: string
 }

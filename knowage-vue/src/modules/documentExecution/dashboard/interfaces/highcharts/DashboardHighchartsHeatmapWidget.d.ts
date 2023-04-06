@@ -46,6 +46,8 @@ export interface IHighchartsHeatmapSerieData {
     x: number,
     y: number,
     value: number,
+    name: string,
+    groupingValue: string,
     dataLabels: IHighchartsChartDataLabels
 }
 

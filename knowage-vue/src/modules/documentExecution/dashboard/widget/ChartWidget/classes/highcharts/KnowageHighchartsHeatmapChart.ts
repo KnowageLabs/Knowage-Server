@@ -39,6 +39,7 @@ export class KnowageHighchartsHeatmapChart extends KnowageHighcharts {
     }
 
     setData(data: any, widgetModel: IWidget) {
+        // TODO - see about sorting
         console.log('------------ DATA: ', data)
         if (!data || !data.rows) return
         if (this.model.series.length === 0) this.getSeriesFromWidgetModel(widgetModel)
@@ -106,6 +107,8 @@ export class KnowageHighchartsHeatmapChart extends KnowageHighcharts {
                         value: categoryValuesMap[xAxisCategories[i]][yAxisCategories[j]] ?? null,
                         x: i,
                         y: j,
+                        name: xAxisCategories[i],
+                        groupingValue: yAxisCategories[j],
                         dataLabels: {}  // TODO
                     })
                 }

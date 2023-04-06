@@ -1,4 +1,14 @@
 {
+    "chartInteractionAdditionalDynamicOptions": [
+        {
+            "label": "dashboard.widgetEditor.interactions.chartDynamicOptions.groupingName",
+            "value": "GROUPING_NAME"
+        },
+        {
+            "label": "dashboard.widgetEditor.interactions.chartDynamicOptions.groupingValue",
+            "value": "GROUPING_VALUE"
+        }
+    ],
     "chartInteractionDynamicOptions": [
         {
             "label": "dashboard.widgetEditor.interactions.chartDynamicOptions.serieName",

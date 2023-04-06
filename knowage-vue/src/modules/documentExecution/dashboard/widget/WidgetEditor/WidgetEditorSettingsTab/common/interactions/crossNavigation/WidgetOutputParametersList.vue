@@ -42,9 +42,9 @@
                         :disabled="disabled"
                         @change="parametersChanged"
                     ></Dropdown>
-                    <Dropdown v-else v-model="parameter.column" class="kn-material-input" :options="['vega'].includes(widgetModel.type) ? descriptor.vegaChartInteractionDynamicOptions : descriptor.chartInteractionDynamicOptions" :disabled="disabled" @change="parametersChanged">
+                    <Dropdown v-else v-model="parameter.column" class="kn-material-input" :options="chartColumnOptions" :disabled="disabled" @change="parametersChanged">
                         <template #value="slotProps">
-                            <span>{{ getTranslatedLabel(slotProps.value, ['vega'].includes(widgetModel.type) ? descriptor.vegaChartInteractionDynamicOptions : descriptor.chartInteractionDynamicOptions, $t) }}</span>
+                            <span>{{ getTranslatedLabel(slotProps.value, chartColumnOptions, $t) }}</span>
                         </template>
                         <template #option="slotProps">
                             <span>{{ $t(slotProps.option.label) }}</span>
@@ -103,6 +103,16 @@ export default defineComponent({
             const modelFields = this.widgetModel.fields
             const combinedArray = modelFields?.columns.concat(modelFields.rows, modelFields.data, modelFields.filters)
             return combinedArray
+        },
+        chartColumnOptions() {
+            if (['table', 'discovery', 'static-pivot-table'].includes(this.widgetType)) return []
+            if (['vega'].includes(this.widgetModel.type)) {
+                return descriptor.vegaChartInteractionDynamicOptions
+            } else if (this.widgetModel.settings.chartModel?.model?.chart?.type === 'heatmap') {
+                return descriptor.chartInteractionDynamicOptions.concat(descriptor.chartInteractionAdditionalDynamicOptions)
+            } else {
+                return descriptor.chartInteractionDynamicOptions
+            }
         }
     },
     watch: {
