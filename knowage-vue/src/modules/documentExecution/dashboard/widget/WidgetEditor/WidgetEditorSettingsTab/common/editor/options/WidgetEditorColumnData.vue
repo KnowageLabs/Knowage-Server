@@ -5,7 +5,7 @@
     <div v-else class="p-fluid p-formgrid p-grid">
         <div class="p-field p-col-8">
             <span class="p-float-label">
-                <Dropdown v-model="selectedColumnName" class="kn-material-input" :options="widgetModel.columns" option-value="columnName" option-label="columnName" @change="onColumnChanged"> </Dropdown>
+                <Dropdown v-model="selectedColumn" class="kn-material-input" :options="widgetModel.columns" option-label="columnName" @change="onColumnChanged"> </Dropdown>
                 <label class="kn-material-input-label"> {{ $t('common.column') }}</label>
             </span>
         </div>
@@ -21,7 +21,7 @@
                 <label class="kn-material-input-label"> {{ $t('dashboard.widgetEditor.aggregation') }}</label>
             </span>
         </div>
-        <div class="p-field p-col-3">
+        <div v-if="selectedColumn && selectedColumn.fieldType === 'MEASURE'" class="p-field p-col-3">
             <span class="p-float-label">
                 <InputText v-model="precision" type="number" class="kn-material-input" @change="onColumnChanged" />
                 <label class="kn-material-input-label">{{ $t('dashboard.widgetEditor.precision') }}</label>
@@ -49,7 +49,7 @@
 
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
-import { IWidget } from '@/modules/documentExecution/dashboard/Dashboard'
+import { IWidget, IWidgetColumn } from '@/modules/documentExecution/dashboard/Dashboard'
 import Dropdown from 'primevue/dropdown'
 import descriptor from '../WidgetTagsDialogDescriptor.json'
 import tableDescriptor from '../../../TableWidget/TableWidgetSettingsDescriptor.json'
@@ -65,7 +65,7 @@ export default defineComponent({
         return {
             descriptor,
             tableDescriptor,
-            selectedColumnName: '',
+            selectedColumn: null as IWidgetColumn | null,
             row: '',
             aggregation: '',
             prefix: '',
@@ -77,16 +77,17 @@ export default defineComponent({
     created() {},
     methods: {
         onColumnChanged() {
+            if (this.selectedColumn && this.selectedColumn.fieldType === 'ATTRIBUTE') this.precision = 0
             const forInsert = this.widgetModel.type === 'html' ? this.htmlStringBuilder() : this.widgetStringBuilder()
             this.$emit('insertChanged', forInsert)
         },
         htmlStringBuilder() {
-            return `[kn-column='${this.selectedColumnName}'${this.row ? ` row='${this.row}'` : ''}${this.aggregation ? ` aggregation='${this.aggregation}'` : ''}${` precision='${this.precision}'`}${this.format ? ' format' : ''}${this.prefix ? ` prefix='${this.prefix}'` : ''}${
-                this.suffix ? ` suffix='${this.suffix}'` : ''
-            }]`
+            return `[kn-column='${this.selectedColumn?.columnName}'${this.row ? ` row='${this.row}'` : ''}${this.aggregation ? ` aggregation='${this.aggregation}'` : ''}${this.selectedColumn?.fieldType === 'MEASURE' ? ` precision='${this.precision}'` : ''}${this.format ? ' format' : ''}${
+                this.prefix ? ` prefix='${this.prefix}'` : ''
+            }${this.suffix ? ` suffix='${this.suffix}'` : ''}]`
         },
         widgetStringBuilder() {
-            return `${this.prefix ?? ''}[kn-column='${this.selectedColumnName}'${this.row ? ` row='${this.row}'` : ''}${this.aggregation ? ` aggregation='${this.aggregation}'` : ''}${this.precision ? ` precision='${this.precision}'` : ''}${this.format ? ' format' : ''}]${this.suffix ?? ''}`
+            return `${this.prefix ?? ''}[kn-column='${this.selectedColumn?.columnName}'${this.row ? ` row='${this.row}'` : ''}${this.aggregation ? ` aggregation='${this.aggregation}'` : ''}${this.precision ? ` precision='${this.precision}'` : ''}${this.format ? ' format' : ''}]${this.suffix ?? ''}`
         }
     }
 })

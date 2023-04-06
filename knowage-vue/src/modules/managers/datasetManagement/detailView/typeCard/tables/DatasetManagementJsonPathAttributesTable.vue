@@ -18,20 +18,17 @@
                     {{ $t('managers.datasetManagement.tableEmpty') }}
                 </template>
                 <Column field="name" :header="$t('kpi.alert.name')" :sortable="true">
-                    <template #editor="{ data }">
+                    <template #body="{ data }">
                         <InputText v-model="data.name" class="kn-material-input" :style="tableDescriptor.style.columnStyle" />
                     </template>
                 </Column>
                 <Column field="jsonPathValue" :header="$t('managers.datasetManagement.jsonPathValue')" :sortable="true">
-                    <template #editor="{ data }">
+                    <template #body="{ data }">
                         <InputText v-model="data.jsonPathValue" class="kn-material-input" :style="tableDescriptor.style.columnStyle" />
                     </template>
                 </Column>
                 <Column field="typeOrJsonPathValue" :header="$t('managers.datasetManagement.typeOrJsonPathValue')" :sortable="true">
-                    <template #body="slotProps">
-                        {{ slotProps.data.jsonPathType }}
-                    </template>
-                    <template #editor="{ data }">
+                    <template #body="{ data }">
                         <Dropdown id="scope" v-model="data.jsonPathType" class="kn-material-input" :style="tableDescriptor.style.columnStyle" :options="jsonPathTypes" />
                     </template>
                 </Column>
