@@ -56,12 +56,6 @@
                 "type": "Responsive"
             }
         ],
-        "Series": [
-            {
-                "title": "dashboard.widgetEditor.series.title",
-                "type": "SeriesLabel"
-            }
-        ],
         "Style": [
             {
                 "title": "dashboard.widgetEditor.titles.title",
@@ -146,11 +140,6 @@
             "icon": "pi pi-table",
             "label": "dashboard.widgetEditor.tooltip.title",
             "value": "Tooltip"
-        },
-        {
-            "icon": "pi pi-table",
-            "label": "dashboard.widgetEditor.series.title",
-            "value": "Series"
         },
         {
             "icon": "pi pi-table",

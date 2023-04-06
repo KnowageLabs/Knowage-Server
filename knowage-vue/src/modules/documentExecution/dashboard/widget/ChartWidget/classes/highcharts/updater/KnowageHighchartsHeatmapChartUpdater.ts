@@ -10,7 +10,7 @@ export const updateHeatmapChartModel = (oldModel: any, newModel: IHighchartsChar
     getFormattedLegend(oldModel, newModel)
     getFormattedAxisSettings(oldModel, newModel, 'x')
     getFormattedAxisSettings(oldModel, newModel, 'y')
-    //getFormattedSeries(oldModel, newModel, 1)
+    getFormattedSeries(oldModel, newModel, 1)
     getFormattedTooltipSettings(oldModel, newModel)
     console.log('-------- NEW CHART MODEL: ', newModel)
 
@@ -69,10 +69,13 @@ const getFormattedTitleAlign = (oldAxisTitleAlign: 'left' | 'center' | 'right') 
 }
 
 const getFormattedTooltipSettings = (oldModel: any, newModel: IHighchartsChartModel) => {
-    const oldTooltipSettings = oldModel.CHART?.TOOLTIP
-    if (!oldTooltipSettings) return
+    if (!oldModel.CHART) return
+    const oldTooltipSettings = oldModel.CHART.TOOLTIP
     newModel.tooltip = {
         enabled: true,
+        valueDecimals: 2,
+        valuePrefix: '',
+        valueSuffix: '',
         style: {
             fontFamily: oldTooltipSettings.style.fontFamily,
             fontSize: oldTooltipSettings.style.fontSize,
@@ -81,5 +84,11 @@ const getFormattedTooltipSettings = (oldModel: any, newModel: IHighchartsChartMo
         },
         backgroundColor: oldTooltipSettings.backgroundColor ? hexToRgba(oldTooltipSettings.backgroundColor) : ''
     }
+
+    const oldSerie = oldModel.CHART.VALUES?.SERIE ? oldModel.CHART?.VALUES?.SERIE[0] : null
+    if (!oldSerie) return
+    newModel.tooltip.valueDecimals = oldSerie.precision
+    newModel.tooltip.valuePrefix = oldSerie.prefixChar
+    newModel.tooltip.valueSuffix = oldSerie.postfixChar
 
 }

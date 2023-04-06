@@ -109,7 +109,6 @@ export class KnowageHighchartsHeatmapChart extends KnowageHighcharts {
                         y: j,
                         name: xAxisCategories[i],
                         groupingValue: yAxisCategories[j],
-                        dataLabels: {}  // TODO
                     })
                 }
             }

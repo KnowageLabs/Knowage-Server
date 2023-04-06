@@ -1,5 +1,15 @@
 <template>
     <div v-if="model" class="p-grid p-jc-center p-ai-center p-p-4">
+        <div v-if="chartType === 'heatmap'" class="p-col-12 p-d-flex p-flex-row">
+            <div class="p-col-12 p-md-6 p-lg-2 p-d-flex p-flex-column kn-flex">
+                <label class="kn-material-input-label p-mr-">{{ $t('dashboard.widgetEditor.prefix') }}</label>
+                <InputText v-model="model.tooltip.valuePrefix" class="kn-material-input p-inputtext-sm" @change="modelChanged" />
+            </div>
+            <div class="p-col-12 p-md-6 p-lg-2 p-d-flex p-flex-column kn-flex">
+                <label class="kn-material-input-label">{{ $t('dashboard.widgetEditor.suffix') }}</label>
+                <InputText v-model="model.tooltip.valueSuffix" class="kn-material-input p-inputtext-sm" @change="modelChanged" />
+            </div>
+        </div>
         <div class="p-col-12 p-py-4">
             <WidgetEditorStyleToolbar :options="descriptor.tooltipStyleOptions" :prop-model="toolbarModel" :disabled="tooltipDisabled" @change="onStyleToolbarChange"> </WidgetEditorStyleToolbar>
         </div>
@@ -39,7 +49,6 @@
 import { defineComponent, PropType } from 'vue'
 import { IWidget, IWidgetStyleToolbarModel } from '../../../../../../Dashboard'
 import { emitter } from '@/modules/documentExecution/dashboard/DashboardHelpers'
-import { IHighchartsChartModel } from '@/modules/documentExecution/dashboard/interfaces/highcharts/DashboardHighchartsWidget'
 import descriptor from '../HighchartsWidgetSettingsDescriptor.json'
 import Message from 'primevue/message'
 import WidgetEditorStyleToolbar from '../../../common/styleToolbar/WidgetEditorStyleToolbar.vue'
@@ -56,7 +65,7 @@ export default defineComponent({
     data() {
         return {
             descriptor,
-            model: null as IHighchartsChartModel | null,
+            model: null as any | null,
             toolbarModel: {} as {
                 'font-family': string
                 'font-size': string

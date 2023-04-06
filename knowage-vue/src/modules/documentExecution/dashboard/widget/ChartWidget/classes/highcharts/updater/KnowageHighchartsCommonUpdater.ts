@@ -38,7 +38,16 @@ export const getFormattedSeries = (oldModel: any, newModel: IHighchartsChartMode
         if (endIndex > oldModel.CHART.VALUES.SERIE.length) endIndex = oldModel.CHART.VALUES.SERIE.length
         for (let i = 0; i < endIndex; i++) {
             const serie = oldModel.CHART.VALUES.SERIE[i]
-            newModel.series.push(oldModel.CHART.type === 'PIE' ? createSerie(serie.name, serie.groupingFunction, colorByPoint) : createGaugeSerie(serie.name))
+            switch (oldModel.CHART.type) {
+                case 'PIE':
+                    newModel.series.push(createSerie(serie.name, serie.groupingFunction, colorByPoint))
+                    break;
+                case 'HEATMAP':
+                    newModel.series.push(createHeatMapSerie(serie.name))
+                    break
+                default:
+                    newModel.series.push(createGaugeSerie(serie.name))
+            }
         }
     }
 }

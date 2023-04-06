@@ -9,7 +9,7 @@ import { ISelection, IWidget, IWidgetColumn } from '../../../Dashboard'
 import { IHighchartsChartModel } from '../../../interfaces/highcharts/DashboardHighchartsWidget'
 import { mapActions } from 'pinia'
 import { updateStoreSelections, executeChartCrossNavigation } from '../../interactionsHelpers/InteractionHelper'
-import { formatActivityGauge } from './HighchartsModelFormattingHelpers'
+import { formatActivityGauge, formatHeatmap } from './HighchartsModelFormattingHelpers'
 import { formatForCrossNavigation } from './HighchartsContainerHelpers'
 import Highcharts from 'highcharts'
 import Highcharts3D from 'highcharts/highcharts-3d'
@@ -23,7 +23,6 @@ import cryptoRandomString from 'crypto-random-string'
 import store from '../../../Dashboard.store'
 import deepcopy from 'deepcopy'
 import mainStore from '@/App.store'
-import { mockedData2 } from './mockedData'
 
 HighchartsMore(Highcharts)
 HighchartsSolidGauge(Highcharts)
@@ -139,6 +138,7 @@ export default defineComponent({
             hasError = this.widgetModel.settings.chartModel.updateFormatterSettings(this.chartModel.tooltip, null, 'pointFormatter', 'pointFormatterText', 'pointFormatterError')
             return hasError
         },
+
         setSeriesEvents() {
             if (this.chartModel.plotOptions.series) {
                 this.chartModel.plotOptions.series.events = {
@@ -185,6 +185,9 @@ export default defineComponent({
             const formattedChartModel = deepcopy(this.chartModel)
             if (formattedChartModel.chart.type === 'activitygauge') {
                 formatActivityGauge(formattedChartModel, this.widgetModel)
+            } else if (formattedChartModel.chart.type === 'heatmap') {
+                console.log(' dsfasfa sggfsgs')
+                formatHeatmap(formattedChartModel)
             }
             return formattedChartModel
         }

@@ -218,6 +218,9 @@ export interface IHighchartsLegend {
 
 export interface IHighchartsTooltip {
     enabled: boolean,
+    valuePrefix?: string,
+    valueSuffix?: string,
+    valueDecimals?: number,
     style: {
         fontFamily: string
         fontSize: string

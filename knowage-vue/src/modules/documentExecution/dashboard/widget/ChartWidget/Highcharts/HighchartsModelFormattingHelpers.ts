@@ -3,6 +3,7 @@ import { hexToRgba } from "../../../helpers/FormattingHelpers"
 import { IHighchartsGaugeSerieData } from "../../../interfaces/highcharts/DashboardHighchartsGaugeWidget"
 import { IHighchartsChartModel } from "../../../interfaces/highcharts/DashboardHighchartsWidget"
 import { getRGBColorFromString } from '../../WidgetEditor/helpers/WidgetEditorHelpers'
+import Highcharts from 'highcharts'
 
 export const formatActivityGauge = (formattedChartModel: IHighchartsChartModel, widgetModel: IWidget) => {
     formattedChartModel.chart.type = 'solidgauge'
@@ -29,4 +30,11 @@ const reduceOpacityFromColorString = (colorString: string | null, newOpacity: nu
     const rgbaColor = getRGBColorFromString(color)
     if (rgbaColor.a) rgbaColor.a = newOpacity
     return rgbaColor ? `rgba(${rgbaColor.r}, ${rgbaColor.g}, ${rgbaColor.b}, ${rgbaColor.a})` : 'none'
+}
+
+export const formatHeatmap = (formattedChartModel: IHighchartsChartModel) => {
+    const tooltip = formattedChartModel.tooltip as any
+    tooltip.formatter = function (this: Highcharts.TooltipFormatterContextObject) {
+        return this.point.options.value ? this.series.name + '<br/><b>' + this.point.options.id + ': </b>' + tooltip.valuePrefix + this.point.options.value + tooltip.valueSuffix : this.series.name;
+    }
 }
