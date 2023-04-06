@@ -17,6 +17,8 @@
  */
 package it.eng.knowage.engines.dossier.template.parameter;
 
+import javax.xml.bind.annotation.XmlAttribute;
+
 import com.fasterxml.jackson.annotation.JsonSetter;
 
 public class Parameter {
@@ -27,6 +29,7 @@ public class Parameter {
 	private String value;
 	private String urlNameDescription;
 
+	@XmlAttribute
 	public String getType() {
 		return type;
 	}
@@ -35,6 +38,7 @@ public class Parameter {
 		this.type = type;
 	}
 
+	@XmlAttribute
 	public String getUrlName() {
 		return urlName;
 	}
@@ -44,6 +48,7 @@ public class Parameter {
 		this.urlName = urlName;
 	}
 
+	@XmlAttribute
 	public String getDossierUrlName() {
 		return dossierUrlName;
 	}
@@ -53,6 +58,7 @@ public class Parameter {
 		this.dossierUrlName = dossierUrlName;
 	}
 
+	@XmlAttribute
 	public String getValue() {
 		return value;
 	}
