@@ -37,4 +37,12 @@ export const formatHeatmap = (formattedChartModel: IHighchartsChartModel) => {
     tooltip.formatter = function (this: Highcharts.TooltipFormatterContextObject) {
         return this.point.options.value ? this.series.name + '<br/><b>' + this.point.options.id + ': </b>' + tooltip.valuePrefix + this.point.options.value + tooltip.valueSuffix : this.series.name;
     }
+
+    const colors = formattedChartModel.colors
+    const increment = 100 / (colors.length - 1) / 100
+    console.log('------ increment: ', increment)
+    formattedChartModel.colorAxis = { stops: [] }
+    for (let i = 0; i < colors.length; i++) {
+        formattedChartModel.colorAxis.stops.push([i * increment, colors[i]])
+    }
 }
