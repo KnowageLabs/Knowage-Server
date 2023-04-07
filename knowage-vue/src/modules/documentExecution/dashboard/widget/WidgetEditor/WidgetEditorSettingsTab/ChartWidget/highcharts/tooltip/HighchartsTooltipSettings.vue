@@ -54,6 +54,7 @@ import { defineComponent, PropType } from 'vue'
 import { IWidget, IWidgetStyleToolbarModel } from '../../../../../../Dashboard'
 import { emitter } from '@/modules/documentExecution/dashboard/DashboardHelpers'
 import descriptor from '../HighchartsWidgetSettingsDescriptor.json'
+import InputNumber from 'primevue/inputnumber'
 import Message from 'primevue/message'
 import WidgetEditorStyleToolbar from '../../../common/styleToolbar/WidgetEditorStyleToolbar.vue'
 import HighchartsFormatterCodeMirror from '../common/HighchartsFormatterCodeMirror.vue'
@@ -61,6 +62,7 @@ import HighchartsFormatterCodeMirror from '../common/HighchartsFormatterCodeMirr
 export default defineComponent({
     name: 'hihgcharts-tooltip-settings',
     components: {
+        InputNumber,
         Message,
         WidgetEditorStyleToolbar,
         HighchartsFormatterCodeMirror

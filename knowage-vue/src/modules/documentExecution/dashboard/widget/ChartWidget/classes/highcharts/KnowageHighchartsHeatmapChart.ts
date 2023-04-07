@@ -5,7 +5,6 @@ import { createHeatMapSerie } from './updater/KnowageHighchartsCommonUpdater'
 import * as highchartsDefaultValues from '../../../WidgetEditor/helpers/chartWidget/highcharts/HighchartsDefaultValues'
 import deepcopy from 'deepcopy'
 import moment from 'moment';
-import { formatDate } from '@/helpers/commons/localeHelper';
 
 export class KnowageHighchartsHeatmapChart extends KnowageHighcharts {
     constructor(model: any) {
@@ -144,14 +143,12 @@ export class KnowageHighchartsHeatmapChart extends KnowageHighcharts {
 
 
     formatSeriesFromOtherChartTypeSeries() {
-        // TODO
-        //this.model.series = this.model.series.map((serie: IHighchartsGaugeSerie) => { return this.getFormattedSerieFromOtherChartTypeSerie(serie) })
+        this.model.series = this.model.series.map((serie: any) => { return this.getFormattedSerieFromOtherChartTypeSerie(serie) })
     }
 
     getFormattedSerieFromOtherChartTypeSerie(otherChartSerie: any) {
-        // TODO
-        // const formattedSerie = { name: otherChartSerie.name, data: [], colorByPoint: true } as IHighchartsChartSerie
-        // if (otherChartSerie.accessibility) formattedSerie.accessibility
-        // return formattedSerie
+        const formattedSerie = { name: otherChartSerie.name, data: [], accessibility: {} }
+        if (otherChartSerie.accessibility) formattedSerie.accessibility
+        return formattedSerie
     }
 }

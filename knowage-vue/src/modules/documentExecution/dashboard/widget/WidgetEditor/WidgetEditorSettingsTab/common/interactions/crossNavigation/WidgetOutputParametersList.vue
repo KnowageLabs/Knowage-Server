@@ -42,7 +42,7 @@
                         :disabled="disabled"
                         @change="parametersChanged"
                     ></Dropdown>
-                    <Dropdown v-else v-model="parameter.column" class="kn-material-input" :options="chartColumnOptions" :disabled="disabled" @change="parametersChanged">
+                    <Dropdown v-else v-model="parameter.column" class="kn-material-input" :options="chartColumnOptions" option-value="value" :disabled="disabled" @change="parametersChanged">
                         <template #value="slotProps">
                             <span>{{ getTranslatedLabel(slotProps.value, chartColumnOptions, $t) }}</span>
                         </template>
