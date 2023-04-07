@@ -71,7 +71,6 @@
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
 import { IWidget, IWidgetStyleToolbarModel } from '@/modules/documentExecution/dashboard/Dashboard'
-import { IHighchartsHeatmapAxis } from '@/modules/documentExecution/dashboard/interfaces/highcharts/DashboardHighchartsHeatmapWidget'
 import { emitter } from '@/modules/documentExecution/dashboard/DashboardHelpers'
 import { getTranslatedLabel } from '@/helpers/commons/dropdownHelper'
 import descriptor from './HighchartsHeatmapAxisSettingsDescriptor.json'
@@ -91,7 +90,7 @@ export default defineComponent({
         return {
             descriptor,
             settingsDescriptor,
-            axisModel: null as IHighchartsHeatmapAxis | null,
+            axisModel: null as any,
             toolbarModel: {} as { 'font-family': string; 'font-size': string; 'font-weight': string; color: string },
             advancedVisible: false,
             getTranslatedLabel

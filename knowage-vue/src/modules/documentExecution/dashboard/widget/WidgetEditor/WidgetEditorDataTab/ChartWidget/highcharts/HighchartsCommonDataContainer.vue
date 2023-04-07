@@ -31,7 +31,7 @@
 
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
-import { IDataset, IWidget, IWidgetColumn } from '@/modules/documentExecution/Dashboard/Dashboard'
+import { IDataset, IWidget, IWidgetColumn } from '@/modules/documentExecution/dashboard/Dashboard'
 import { emitter } from '../../../../../DashboardHelpers'
 import { removeSerieFromWidgetModel } from '../../../helpers/chartWidget/highcharts/HighchartsDataTabHelpers'
 import descriptor from '../../TableWidget/TableWidgetDataDescriptor.json'

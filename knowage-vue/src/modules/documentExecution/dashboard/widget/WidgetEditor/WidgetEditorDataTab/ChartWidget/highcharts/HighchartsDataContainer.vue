@@ -7,7 +7,7 @@
 
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
-import { IDataset, IWidget } from '@/modules/documentExecution/Dashboard/Dashboard'
+import { IDataset, IWidget } from '@/modules/documentExecution/dashboard/Dashboard'
 import HighchartsCommonDataContainer from './HighchartsCommonDataContainer.vue'
 import ChartWidgetChartTypeDropdown from '../common/ChartWidgetChartTypeDropdown.vue'
 

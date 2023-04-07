@@ -2,6 +2,7 @@ import { hexToRgba } from '@/modules/documentExecution/dashboard/helpers/Formatt
 import { IHighchartsChartModel } from '@/modules/documentExecution/dashboard/interfaces/highcharts/DashboardHighchartsWidget'
 import { getFormattedNoDataConfiguration, getFormattedSeries } from './KnowageHighchartsCommonUpdater'
 import * as highchartsDefaultValues from '../../../../WidgetEditor/helpers/chartWidget/highcharts/HighchartsDefaultValues'
+import deepcopy from 'deepcopy';
 
 export const updateHeatmapChartModel = (oldModel: any, newModel: IHighchartsChartModel) => {
     getFormattedNoDataConfiguration(oldModel, newModel)
@@ -18,6 +19,7 @@ const getFormattedAxisSettings = (oldModel: any, newModel: IHighchartsChartModel
     if (!oldAxis) return
     setFormattedAxisLabels(oldAxis, newModelAxis)
     setFormattedAxisTitle(oldAxis, newModelAxis)
+    console.log('----- new MODE Axis: ', deepcopy(newModelAxis))
     axis === 'x' ? newModel.xAxis = newModelAxis : newModel.yAxis = newModelAxis
 }
 
@@ -38,17 +40,18 @@ const setFormattedAxisLabels = (oldAxis: any, newModelAxis: any) => {
 
 const setFormattedAxisTitle = (oldAxis: any, newModelAxis: any) => {
     const oldAxisTitle = oldAxis.TITLE
+    console.log('--------------- OLD AXIS: ', oldAxis)
     if (!oldAxisTitle) return
     if (oldAxisTitle.text) {
         newModelAxis.title.enabled = true
         newModelAxis.title.text = oldAxisTitle.text
     }
     if (oldAxisTitle.style) {
-        if (oldAxisTitle.style.align) newModelAxis.title.align = getFormattedTitleAlign(oldAxis.style.align)
-        if (oldAxisTitle.style.color) newModelAxis.title.style.color = hexToRgba(oldAxis.style.color)
-        if (oldAxisTitle.style.fontFamily) newModelAxis.title.style.fontFamily = oldAxis.style.fontFamily
-        if (oldAxisTitle.style.fontSize) newModelAxis.title.style.fontSize = oldAxis.style.fontSize
-        if (oldAxisTitle.style.fontWeight) newModelAxis.title.style.fontWeight = oldAxis.style.fontWeight
+        if (oldAxisTitle.style.align) newModelAxis.title.align = getFormattedTitleAlign(oldAxisTitle.style.align)
+        if (oldAxisTitle.style.color) newModelAxis.title.style.color = hexToRgba(oldAxisTitle.style.color)
+        if (oldAxisTitle.style.fontFamily) newModelAxis.title.style.fontFamily = oldAxisTitle.style.fontFamily
+        if (oldAxisTitle.style.fontSize) newModelAxis.title.style.fontSize = oldAxisTitle.style.fontSize
+        if (oldAxisTitle.style.fontWeight) newModelAxis.title.style.fontWeight = oldAxisTitle.style.fontWeight
     }
 }
 
@@ -68,7 +71,7 @@ const getFormattedTooltipSettings = (oldModel: any, newModel: IHighchartsChartMo
     const oldTooltipSettings = oldModel.CHART.TOOLTIP
     newModel.tooltip = {
         enabled: true,
-        valueDecimals: 2,
+        valueDecimals: 0,
         valuePrefix: '',
         valueSuffix: '',
         style: {
@@ -83,7 +86,7 @@ const getFormattedTooltipSettings = (oldModel: any, newModel: IHighchartsChartMo
     const oldSerie = oldModel.CHART.VALUES?.SERIE ? oldModel.CHART?.VALUES?.SERIE[0] : null
     if (!oldSerie) return
     newModel.tooltip.valueDecimals = oldSerie.precision
-    newModel.tooltip.valuePrefix = oldSerie.prefixChar
-    newModel.tooltip.valueSuffix = oldSerie.postfixChar
+    newModel.tooltip.valuePrefix = oldSerie.prefixChar + ' '
+    newModel.tooltip.valueSuffix = ' ' + oldSerie.postfixChar
 
 }

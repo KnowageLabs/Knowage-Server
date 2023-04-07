@@ -143,32 +143,6 @@ export class KnowageHighchartsHeatmapChart extends KnowageHighcharts {
     }
 
 
-    updateSeriesLabelSettings(widgetModel: IWidget) {
-        // TODO
-        if (!widgetModel || !widgetModel.settings.series || !widgetModel.settings.series.seriesLabelsSettings || !widgetModel.settings.series.seriesLabelsSettings[0]) return
-        const seriesLabelSetting = widgetModel.settings.series.seriesLabelsSettings[0]
-        if (!seriesLabelSetting.label.enabled) return
-        (this.model.series as any[]).forEach((serie: any) => {
-            serie.data.forEach((data: any) => {
-                data.dataLabels = {
-                    backgroundColor: seriesLabelSetting.label.backgroundColor ?? '',
-                    distance: 30,
-                    enabled: true,
-                    position: '',
-                    style: {
-                        fontFamily: seriesLabelSetting.label.style.fontFamily,
-                        fontSize: seriesLabelSetting.label.style.fontSize,
-                        fontWeight: seriesLabelSetting.label.style.fontWeight,
-                        color: seriesLabelSetting.label.style.color ?? ''
-                    },
-                    formatter: function () {
-                        return KnowageHighchartsHeatmapChart.prototype.handleFormatter(this, seriesLabelSetting.label)
-                    }
-                }
-            })
-        })
-    }
-
     formatSeriesFromOtherChartTypeSeries() {
         // TODO
         //this.model.series = this.model.series.map((serie: IHighchartsGaugeSerie) => { return this.getFormattedSerieFromOtherChartTypeSerie(serie) })

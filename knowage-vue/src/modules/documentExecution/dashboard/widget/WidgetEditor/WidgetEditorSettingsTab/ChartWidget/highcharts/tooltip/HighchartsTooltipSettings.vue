@@ -1,13 +1,17 @@
 <template>
     <div v-if="model" class="p-grid p-jc-center p-ai-center p-p-4">
         <div v-if="chartType === 'heatmap'" class="p-col-12 p-d-flex p-flex-row">
-            <div class="p-col-12 p-md-6 p-lg-2 p-d-flex p-flex-column kn-flex">
+            <div class="p-col-12 p-md-4 p-d-flex p-flex-column kn-flex">
                 <label class="kn-material-input-label p-mr-">{{ $t('dashboard.widgetEditor.prefix') }}</label>
                 <InputText v-model="model.tooltip.valuePrefix" class="kn-material-input p-inputtext-sm" @change="modelChanged" />
             </div>
-            <div class="p-col-12 p-md-6 p-lg-2 p-d-flex p-flex-column kn-flex">
+            <div class="p-col-12 p-md-4 p-d-flex p-flex-column kn-flex">
                 <label class="kn-material-input-label">{{ $t('dashboard.widgetEditor.suffix') }}</label>
                 <InputText v-model="model.tooltip.valueSuffix" class="kn-material-input p-inputtext-sm" @change="modelChanged" />
+            </div>
+            <div class="p-col-12 p-md-4 p-d-flex p-flex-column kn-flex">
+                <label class="kn-material-input-label p-mr-2">{{ $t('dashboard.widgetEditor.precision') }}</label>
+                <InputNumber v-model="model.tooltip.valueDecimals" class="kn-material-input p-inputtext-sm" @blur="modelChanged" />
             </div>
         </div>
         <div class="p-col-12 p-py-4">

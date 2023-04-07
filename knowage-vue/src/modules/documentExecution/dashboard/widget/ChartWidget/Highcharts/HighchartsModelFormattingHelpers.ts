@@ -1,6 +1,5 @@
 import { IWidget } from "../../../Dashboard"
 import { hexToRgba } from "../../../helpers/FormattingHelpers"
-import { IHighchartsGaugeSerieData } from "../../../interfaces/highcharts/DashboardHighchartsGaugeWidget"
 import { IHighchartsChartModel } from "../../../interfaces/highcharts/DashboardHighchartsWidget"
 import { getRGBColorFromString } from '../../WidgetEditor/helpers/WidgetEditorHelpers'
 import Highcharts from 'highcharts'
@@ -11,7 +10,7 @@ export const formatActivityGauge = (formattedChartModel: IHighchartsChartModel, 
     if (!formattedChartModel.pane) return
     formattedChartModel.pane.background = []
     for (let i = 0; i < formattedChartModel.series.length; i++) {
-        const serieData = formattedChartModel.series[i].data[0] as IHighchartsGaugeSerieData
+        const serieData = formattedChartModel.series[i].data[0]
         if (!serieData) continue
         const temp = {
             outerRadius: serieData.radius,
@@ -40,8 +39,10 @@ export const formatHeatmap = (formattedChartModel: IHighchartsChartModel) => {
 
 const formatHeatmapTooltip = (formattedChartModel: IHighchartsChartModel) => {
     const tooltip = formattedChartModel.tooltip as any
+    const prefix = tooltip.valuePrefix ?? ''
+    const suffix = tooltip.valueSuffix ?? ''
     tooltip.formatter = function (this: Highcharts.TooltipFormatterContextObject) {
-        return this.point.options.value ? this.series.name + '<br/><b>' + this.point.options.id + ': </b>' + tooltip.valuePrefix + this.point.options.value + tooltip.valueSuffix : this.series.name;
+        return this.point.options.value ? this.series.name + '<br/><b>' + this.point.options.id + ': </b>' + prefix + Highcharts.numberFormat(this.point.options.value, tooltip.valueDecimals) + suffix : this.series.name;
     }
 }
 
