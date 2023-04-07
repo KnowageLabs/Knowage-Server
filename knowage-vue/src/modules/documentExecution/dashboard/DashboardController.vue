@@ -367,6 +367,7 @@ export default defineComponent({
     }
 })
 </script>
+
 <style lang="scss">
 .dashboard-container {
     flex: 1;

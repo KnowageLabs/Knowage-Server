@@ -71,6 +71,8 @@ export const createNewHighchartsModel = (chartType: string, model: IHighchartsCh
             return new KnowageHighchartsActivityGaugeChart(model)
         case 'solidgauge':
             return new KnowageHighchartsSolidGaugeChart(model)
+        case 'heatmap':
+            return new KnowageHighchartsHeatmapChart(model)
         default:
             return null
     }
@@ -79,7 +81,6 @@ export const createNewHighchartsModel = (chartType: string, model: IHighchartsCh
 const getSeriesAccesibilitySettings = () => {
     return [{ names: ['all'], accessibility: highchartsDefaultValues.getDefaultSeriesAccessibilitySettings() }]
 }
-
 
 const getSerieLabelsSettings = () => {
     const serieLabelSettings = { names: ['all'], label: { ...highchartsDefaultValues.getDefaultSerieLabelSettings(), enabled: true }, dial: highchartsDefaultValues.getDefaultSerieDialSettings(), pivot: highchartsDefaultValues.getDefaultSeriePivotSettings() }

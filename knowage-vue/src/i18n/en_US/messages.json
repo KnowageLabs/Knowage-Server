@@ -452,6 +452,7 @@
                 "donutChart": "Donut Chart",
                 "funnelChart": "Funnel Chart",
                 "gauge": "Gauge",
+                "heatmap": "Heatmap",
                 "lineChart": "Line Chart",
                 "parallelChart": "Parallel Chart",
                 "pieChart": "Pie Chart",

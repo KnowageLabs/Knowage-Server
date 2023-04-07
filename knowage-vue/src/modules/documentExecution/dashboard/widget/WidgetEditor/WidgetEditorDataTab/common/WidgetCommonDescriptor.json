@@ -117,6 +117,11 @@
             "disabled": false,
             "label": "dashboard.widgetEditor.chartTypes.wordcloud",
             "value": "wordcloud"
+        },
+        {
+            "disabled": false,
+            "label": "dashboard.widgetEditor.chartTypes.heatmap",
+            "value": "heatmap"
         }
     ],
     "columnAggregationOptions": [
