@@ -1,4 +1,4 @@
-import { IHighchartsHeatmapAxis, IHighchartsHeatmapDatetype } from './../../../../../interfaces/highcharts/DashboardHighchartsHeatmapWidget.d';
+import { IHighchartsHeatmapAxis, IHighchartsHeatmapDatetype, IHighchartsHeatmapLegend } from './../../../../../interfaces/highcharts/DashboardHighchartsHeatmapWidget.d';
 import { IWidgetSelection } from "@/modules/documentExecution/dashboard/Dashboard"
 import { IHighchartsAccessibilitySettings, IHighchartsChartPlotOptions, IHighchartsLegend, IHighchartsNoDataConfiguration, IHighchartsOptions3D, IHighchartsSerieAccessibility, IHighchartsSerieLabelSettings, IHighchartsSeriesLabelsSetting, IHighchartsTooltip, ISerieAccessibilitySetting } from "@/modules/documentExecution/dashboard/interfaces/highcharts/DashboardHighchartsWidget"
 import { IHighchartsBands, IHighchartsGaugeYAxis, IHighchartsModelPane, IHighchartsSeriesDialSettings, IHighchartsSeriesPivotSettings, IHighchartsGaugeActivityTooltip } from "@/modules/documentExecution/dashboard/interfaces/highcharts/DashboardHighchartsGaugeWidget"
@@ -123,4 +123,8 @@ export const getDafaultHeatmapPlotOptions = () => {
 
 export const getDefaultDateTypeSettings = () => {
     return deepcopy(descriptor.defaultDateTypeSettings) as IHighchartsHeatmapDatetype
+}
+
+export const getDefaultHeatmapLegendSettings = () => {
+    return deepcopy(descriptor.defaultHeatmapLegendSettings) as IHighchartsHeatmapLegend
 }

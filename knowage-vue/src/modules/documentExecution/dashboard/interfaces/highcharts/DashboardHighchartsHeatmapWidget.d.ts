@@ -1,4 +1,4 @@
-import { IHighchartsChartDataLabels, IHighchartsSerieAccessibility } from "./DashboardHighchartsWidget"
+import { IHighchartsSerieAccessibility } from "./DashboardHighchartsWidget"
 
 export interface IHighchartsHeatmapAxis {
     min: number | null,
@@ -53,4 +53,18 @@ export interface IHighchartsHeatmapSerieData {
 export interface IHighchartsHeatmapDatetype {
     enabled: boolean,
     format: string
+}
+
+export interface IHighchartsHeatmapLegend {
+    enabled: boolean,
+    align: string,
+    layout: string,
+    verticalAlign: string,
+    symbolHeight: number,
+    title: {
+        text: string,
+        style: {
+            "fontWeight": string
+        }
+    }
 }

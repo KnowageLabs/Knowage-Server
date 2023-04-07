@@ -29,13 +29,17 @@ export class KnowageHighchartsHeatmapChart extends KnowageHighcharts {
 
     setSpecificOptionsDefaultValues() {
         this.setHeatmapPlotOptions()
+        this.setHeatmapLegend()
         this.setHeatmapXAxis()
         this.setHeatmapYAxis()
     }
 
-
     setHeatmapPlotOptions() {
         this.model.plotOptions.heatmap = highchartsDefaultValues.getDafaultHeatmapPlotOptions()
+    }
+
+    setHeatmapLegend() {
+        this.model.legend = highchartsDefaultValues.getDefaultHeatmapLegendSettings()
     }
 
     setData(data: any, widgetModel: IWidget) {

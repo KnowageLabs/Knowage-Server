@@ -146,6 +146,19 @@
         "tickPosition": "outside",
         "tickWidth": 3
     },
+    "defaultHeatmapLegendSettings": {
+        "align": "right",
+        "enabled": true,
+        "layout": "vertical",
+        "symbolHeight": 50,
+        "title": {
+            "style": {
+                "fontWeight": ""
+            },
+            "text": ""
+        },
+        "verticalAlign": ""
+    },
     "defaultHeatmapXAxis": {
         "categories": [],
         "labels": {

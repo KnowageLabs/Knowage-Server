@@ -44,12 +44,6 @@
                 "type": "Preview"
             }
         ],
-        "Legend": [
-            {
-                "title": "dashboard.widgetEditor.legend.title",
-                "type": "Legend"
-            }
-        ],
         "Responsive": [
             {
                 "title": "dashboard.widgetEditor.responsive.title",
@@ -130,11 +124,6 @@
             "icon": "fa-solid fa-arrow-right",
             "label": "dashboard.widgetEditor.xAxis",
             "value": "XAxis"
-        },
-        {
-            "icon": "pi pi-table",
-            "label": "dashboard.widgetEditor.legend.title",
-            "value": "Legend"
         },
         {
             "icon": "pi pi-table",
