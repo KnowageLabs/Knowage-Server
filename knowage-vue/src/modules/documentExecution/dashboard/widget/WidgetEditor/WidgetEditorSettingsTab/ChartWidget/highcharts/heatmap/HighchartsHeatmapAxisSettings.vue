@@ -1,6 +1,5 @@
 <template>
     <div v-if="axisModel" class="p-grid p-jc-center p-ai-center p-p-4">
-        {{ axisModel }}
         <div class="p-col-12 p-md-3 p-d-flex p-flex-column">
             <label class="kn-material-input-label p-mr-2">{{ $t('common.min') }}</label>
             <div class="p-d-flex p-flex-row p-ai-center p-fluid">

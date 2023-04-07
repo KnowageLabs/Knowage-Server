@@ -14,7 +14,7 @@ export const createNewHighchartsSettings = () => {
         updatable: true,
         clickable: true,
         chartModel: null,
-        configuration: { exports: { showExcelExport: true, showScreenshot: true } },
+        configuration: { exports: { showExcelExport: true, showScreenshot: true }, datetypeSettings: highchartsDefaultValues.getDefaultDateTypeSettings() },
         accesssibility: { seriesAccesibilitySettings: getSeriesAccesibilitySettings() },
         series: { seriesLabelsSettings: getSerieLabelsSettings() },
         interactions: {

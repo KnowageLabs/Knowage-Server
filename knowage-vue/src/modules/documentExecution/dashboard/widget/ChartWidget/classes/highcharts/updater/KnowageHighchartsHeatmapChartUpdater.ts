@@ -2,7 +2,6 @@ import { hexToRgba } from '@/modules/documentExecution/dashboard/helpers/Formatt
 import { IHighchartsChartModel } from '@/modules/documentExecution/dashboard/interfaces/highcharts/DashboardHighchartsWidget'
 import { getFormattedNoDataConfiguration, getFormattedSeries } from './KnowageHighchartsCommonUpdater'
 import * as highchartsDefaultValues from '../../../../WidgetEditor/helpers/chartWidget/highcharts/HighchartsDefaultValues'
-import deepcopy from 'deepcopy';
 
 export const updateHeatmapChartModel = (oldModel: any, newModel: IHighchartsChartModel) => {
     getFormattedNoDataConfiguration(oldModel, newModel)
@@ -19,14 +18,10 @@ const getFormattedAxisSettings = (oldModel: any, newModel: IHighchartsChartModel
     if (!oldAxis) return
     setFormattedAxisLabels(oldAxis, newModelAxis)
     setFormattedAxisTitle(oldAxis, newModelAxis)
-    console.log('----- new MODE Axis: ', deepcopy(newModelAxis))
     axis === 'x' ? newModel.xAxis = newModelAxis : newModel.yAxis = newModelAxis
 }
 
 const setFormattedAxisLabels = (oldAxis: any, newModelAxis: any) => {
-    // TODO - Ask ON PEER if we need this
-    // if (oldAxis.min) newModelAxis.min = +oldAxis.min
-    // if (oldAxis.max) newModelAxis.max = +oldAxis.max
     if (oldAxis.position) newModelAxis.labels.align = oldAxis.position
     if (oldAxis.style) {
         if (oldAxis.style.align) newModelAxis.labels.align = oldAxis.style.align
@@ -40,7 +35,6 @@ const setFormattedAxisLabels = (oldAxis: any, newModelAxis: any) => {
 
 const setFormattedAxisTitle = (oldAxis: any, newModelAxis: any) => {
     const oldAxisTitle = oldAxis.TITLE
-    console.log('--------------- OLD AXIS: ', oldAxis)
     if (!oldAxisTitle) return
     if (oldAxisTitle.text) {
         newModelAxis.title.enabled = true
@@ -62,7 +56,7 @@ const getFormattedTitleAlign = (oldAxisTitleAlign: 'left' | 'center' | 'right') 
         case 'right':
             return 'high'
         default:
-            return 'center'
+            return 'middle'
     }
 }
 

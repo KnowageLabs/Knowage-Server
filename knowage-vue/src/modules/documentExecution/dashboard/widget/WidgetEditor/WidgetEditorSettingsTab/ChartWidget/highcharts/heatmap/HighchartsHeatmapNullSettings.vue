@@ -1,8 +1,5 @@
 <template>
     <div v-if="heatmapPlotOptions" class="p-grid p-jc-center p-ai-center p-p-4">
-        <div class="p-col-12">
-            {{ heatmapPlotOptions }}
-        </div>
         <div class="p-col-3 p-md-4">
             <InputSwitch v-model="heatmapPlotOptions.connectNulls" @change="modelChanged"></InputSwitch>
             <label class="kn-material-input-label p-m-2">{{ $t('dashboard.widgetEditor.highcharts.heatmap.nullValues.connectNulls') }}</label>

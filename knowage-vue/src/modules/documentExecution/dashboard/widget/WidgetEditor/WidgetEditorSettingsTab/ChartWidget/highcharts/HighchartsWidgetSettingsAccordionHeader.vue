@@ -47,6 +47,8 @@ export default defineComponent({
                     return this.widgetModel.settings.chartModel.model?.xAxis?.title
                 case 'HeatmapYAxisTitleSettings':
                     return this.widgetModel.settings.chartModel.model?.xAxis?.title
+                case 'DatetypeSettings':
+                    return this.widgetModel.settings.configuration.datetypeSettings
                 case 'Title':
                     return this.widgetModel.settings.style.title
                 case 'ColumnStyle':

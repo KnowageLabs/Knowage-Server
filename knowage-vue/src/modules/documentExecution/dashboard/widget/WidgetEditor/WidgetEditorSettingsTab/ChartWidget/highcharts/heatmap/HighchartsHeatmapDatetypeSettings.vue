@@ -3,7 +3,7 @@
         <div class="p-col-12">
             {{ datetypeSettings }}
         </div>
-        <div class="p-col-12 p-p-d-flex p-flex-column p-p-2">
+        <div class="p-col-10 p-p-d-flex p-flex-column p-p-2 p-fluid">
             <label class="kn-material-input-label p-mr-2">{{ $t('managers.datasetManagement.ckanDateFormat') }}</label>
             <Dropdown v-model="datetypeSettings.format" class="kn-material-input" :options="descriptor.dateFormats" :disabled="datetypeSettingsDisabled" @change="modelChanged">
                 <template #option="slotProps">
@@ -14,6 +14,7 @@
                 </template>
             </Dropdown>
         </div>
+        <div class="p-col-2"></div>
     </div>
 </template>
 
@@ -21,7 +22,6 @@
 import { defineComponent, PropType } from 'vue'
 import { IWidget } from '@/modules/documentExecution/dashboard/Dashboard'
 import { emitter } from '@/modules/documentExecution/dashboard/DashboardHelpers'
-import { IHighchartsHeatmapDatetype } from '@/modules/documentExecution/dashboard/interfaces/highcharts/DashboardHighchartsHeatmapWidget'
 import { formatDate } from '@/helpers/commons/localeHelper'
 import descriptor from './HighchartsHeatmapAxisSettingsDescriptor.json'
 import Dropdown from 'primevue/dropdown'
@@ -33,7 +33,7 @@ export default defineComponent({
     data() {
         return {
             descriptor,
-            datetypeSettings: null as IHighchartsHeatmapDatetype | null
+            datetypeSettings: null as any
         }
     },
     computed: {
