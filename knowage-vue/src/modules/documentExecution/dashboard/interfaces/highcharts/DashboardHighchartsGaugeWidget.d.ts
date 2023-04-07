@@ -4,12 +4,7 @@ export interface IHighchartsModelPane {
     startAngle: number,
     endAngle: number,
     center?: [],
-    background?: {
-        backgroundColor: string,
-        innerRadius: string,
-        outerRadius: string,
-        shape: string
-    }
+    background?: any
 }
 
 export interface IHighchartsGaugeYAxis {

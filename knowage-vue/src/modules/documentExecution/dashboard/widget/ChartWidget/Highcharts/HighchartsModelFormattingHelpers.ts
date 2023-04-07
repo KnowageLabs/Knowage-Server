@@ -8,9 +8,10 @@ import Highcharts from 'highcharts'
 export const formatActivityGauge = (formattedChartModel: IHighchartsChartModel, widgetModel: IWidget) => {
     formattedChartModel.chart.type = 'solidgauge'
     const colors = widgetModel.settings.chart.colors
+    if (!formattedChartModel.pane) return
     formattedChartModel.pane.background = []
     for (let i = 0; i < formattedChartModel.series.length; i++) {
-        let serieData = formattedChartModel.series[i].data[0] as IHighchartsGaugeSerieData
+        const serieData = formattedChartModel.series[i].data[0] as IHighchartsGaugeSerieData
         if (!serieData) continue
         const temp = {
             outerRadius: serieData.radius,
@@ -33,14 +34,20 @@ const reduceOpacityFromColorString = (colorString: string | null, newOpacity: nu
 }
 
 export const formatHeatmap = (formattedChartModel: IHighchartsChartModel) => {
+    formatHeatmapTooltip(formattedChartModel)
+    formatHeatmapColors(formattedChartModel)
+}
+
+const formatHeatmapTooltip = (formattedChartModel: IHighchartsChartModel) => {
     const tooltip = formattedChartModel.tooltip as any
     tooltip.formatter = function (this: Highcharts.TooltipFormatterContextObject) {
         return this.point.options.value ? this.series.name + '<br/><b>' + this.point.options.id + ': </b>' + tooltip.valuePrefix + this.point.options.value + tooltip.valueSuffix : this.series.name;
     }
+}
 
+const formatHeatmapColors = (formattedChartModel: IHighchartsChartModel) => {
     const colors = formattedChartModel.colors
     const increment = 100 / (colors.length - 1) / 100
-    console.log('------ increment: ', increment)
     formattedChartModel.colorAxis = { stops: [] }
     for (let i = 0; i < colors.length; i++) {
         formattedChartModel.colorAxis.stops.push([i * increment, colors[i]])

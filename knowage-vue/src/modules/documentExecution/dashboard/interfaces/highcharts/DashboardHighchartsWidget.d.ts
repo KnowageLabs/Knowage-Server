@@ -103,7 +103,8 @@ export interface IHighchartsChartModel {
     },
     pane?: IHighchartsModelPane,
     xAxis?: IHighchartsHeatmapAxis
-    yAxis?: IHighchartsGaugeYAxis | IHighchartsHeatmapAxis
+    yAxis?: IHighchartsGaugeYAxis | IHighchartsHeatmapAxis,
+    colorAxis?: { stops: any[] }
 }
 
 export interface IHighchartsChartPlotOptions {

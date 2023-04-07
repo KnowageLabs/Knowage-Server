@@ -186,7 +186,6 @@ export default defineComponent({
             if (formattedChartModel.chart.type === 'activitygauge') {
                 formatActivityGauge(formattedChartModel, this.widgetModel)
             } else if (formattedChartModel.chart.type === 'heatmap') {
-                console.log(' dsfasfa sggfsgs')
                 formatHeatmap(formattedChartModel)
             }
             return formattedChartModel
