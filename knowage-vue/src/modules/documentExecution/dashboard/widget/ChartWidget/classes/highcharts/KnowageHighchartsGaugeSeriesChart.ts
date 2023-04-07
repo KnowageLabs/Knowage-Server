@@ -1,10 +1,9 @@
 import { KnowageHighchartsGaugeChart } from './KnowageHighchartsGaugeChart'
 import { IWidget } from '@/modules/documentExecution/dashboard/Dashboard'
+import { IHighchartsSeriesLabelsSetting } from '@/modules/documentExecution/dashboard/interfaces/highcharts/DashboardHighchartsWidget'
 import { updateGaugeChartModel } from './updater/KnowageHighchartsGaugeChartUpdater'
 import * as highchartsDefaultValues from '../../../WidgetEditor/helpers/chartWidget/highcharts/HighchartsDefaultValues'
 import deepcopy from 'deepcopy'
-import { IHighchartsSeriesLabelsSetting } from '@/modules/documentExecution/dashboard/interfaces/highcharts/DashboardHighchartsWidget'
-import { IHighchartsGaugeSerie, IHighchartsGaugeSerieData } from '@/modules/documentExecution/dashboard/interfaces/highcharts/DashboardHighchartsGaugeWidget'
 
 
 export class KnowageHighchartsGaugeSeriesChart extends KnowageHighchartsGaugeChart {
@@ -60,7 +59,7 @@ export class KnowageHighchartsGaugeSeriesChart extends KnowageHighchartsGaugeCha
     setAllSeriesSettings(widgetModel: IWidget, chartColors: string[]) {
         const allSeriesSettings = widgetModel.settings.series.seriesLabelsSettings[0]
         if (allSeriesSettings.label.enabled) {
-            this.model.series.forEach((serie: IHighchartsGaugeSerie, index: number) => {
+            this.model.series.forEach((serie: any, index: number) => {
                 const color = chartColors[index % chartColors.length] ?? ''
                 this.updateSeriesDataWithSerieSettings(serie, allSeriesSettings, index, color)
             })
@@ -70,9 +69,9 @@ export class KnowageHighchartsGaugeSeriesChart extends KnowageHighchartsGaugeCha
     }
 
     resetSeriesSettings(chartColors: string[]) {
-        this.model.series.forEach((serie: IHighchartsGaugeSerie, index: number) => {
+        this.model.series.forEach((serie: any, index: number) => {
             const color = chartColors[index % chartColors.length] ?? ''
-            serie.data.forEach((data: IHighchartsGaugeSerieData) => {
+            serie.data.forEach((data: any) => {
                 data.dataLabels = { ...highchartsDefaultValues.getDefaultSerieLabelSettings(), position: '' }
                 data.dataLabels.formatter = undefined
             })
@@ -80,7 +79,7 @@ export class KnowageHighchartsGaugeSeriesChart extends KnowageHighchartsGaugeCha
         })
     }
 
-    resetDialAndPivotSerieSettings(serie: IHighchartsGaugeSerie, color: string) {
+    resetDialAndPivotSerieSettings(serie: any, color: string) {
         serie.dial = highchartsDefaultValues.getDefaultSerieDialSettings()
         serie.dial.backgroundColor = color
         serie.pivot = highchartsDefaultValues.getDefaultSeriePivotSettings()
@@ -95,15 +94,15 @@ export class KnowageHighchartsGaugeSeriesChart extends KnowageHighchartsGaugeCha
     }
 
     updateSpecificSeriesLabelSettings(serieName: string, seriesSettings: IHighchartsSeriesLabelsSetting, chartColors: string[]) {
-        const index = this.model.series.findIndex((serie: IHighchartsGaugeSerie) => serie.name === serieName)
+        const index = this.model.series.findIndex((serie: any) => serie.name === serieName)
         if (index !== -1) {
             const color = chartColors[index % chartColors.length] ?? ''
             this.updateSeriesDataWithSerieSettings(this.model.series[index], seriesSettings, index, color)
         }
     }
 
-    updateSeriesDataWithSerieSettings(serie: IHighchartsGaugeSerie, seriesSettings: IHighchartsSeriesLabelsSetting, index: number, color: string) {
-        serie.data.forEach((data: IHighchartsGaugeSerieData) => {
+    updateSeriesDataWithSerieSettings(serie: any, seriesSettings: IHighchartsSeriesLabelsSetting, index: number, color: string) {
+        serie.data.forEach((data: any) => {
             data.dataLabels = {
                 y: index * 40,
                 backgroundColor: seriesSettings.label.backgroundColor ?? color,
@@ -124,7 +123,7 @@ export class KnowageHighchartsGaugeSeriesChart extends KnowageHighchartsGaugeCha
         this.updateSeriesDialAndPivotSettings(serie, seriesSettings, color)
     }
 
-    updateSeriesDialAndPivotSettings(serie: IHighchartsGaugeSerie, seriesSettings: IHighchartsSeriesLabelsSetting, color: string) {
+    updateSeriesDialAndPivotSettings(serie: any, seriesSettings: IHighchartsSeriesLabelsSetting, color: string) {
         if (seriesSettings.dial) {
             serie.dial = { ...seriesSettings.dial }
             if (!seriesSettings.dial.backgroundColor) serie.dial.backgroundColor = color

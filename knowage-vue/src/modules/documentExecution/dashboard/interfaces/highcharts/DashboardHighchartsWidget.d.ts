@@ -1,8 +1,6 @@
-import { IHighchartsHeatmapAxis, IHighchartsHeatmapDatetype, IHighchartsHeatmapSerie } from './DashboardHighchartsHeatmapWidget.d';
-import { IHighchartsGaugeActivityTooltip, IHighchartsModelPane, IHighchartsGaugeYAxis } from './DashboardHighchartsGaugeWidget.d';
 import { IWidgetExports, IWidgetTitle, IWidgetPaddingStyle, IWidgetBordersStyle, IWidgetShadowsStyle, IWidgetBackgroundStyle } from './../../Dashboard.d';
 import { IWidgetInteractions, IWidgetResponsive } from "../../Dashboard";
-import { IHighchartsGaugeSerie, IHighchartsSeriesDialSettings, IHighchartsSeriesPivotSettings } from "./DashboardHighchartsGaugeWidget";
+
 
 export interface IHighchartsWidgetSettings {
     updatable: boolean,
@@ -24,7 +22,7 @@ export interface IDrillOrderItem {
 }
 
 export interface IHighchartsWidgetConfiguration {
-    datetypeSettings?: IHighchartsHeatmapDatetype
+    datetypeSettings?: any
     exports: IWidgetExports
 }
 
@@ -44,8 +42,8 @@ export interface IHighchartsSeriesSetting {
 export interface IHighchartsSeriesLabelsSetting {
     names: string[],
     label: IHighchartsSerieLabelSettings,
-    dial?: IHighchartsSeriesDialSettings,
-    pivot?: IHighchartsSeriesPivotSettings,
+    dial?: any,
+    pivot?: any,
     serieColor?: string,
     serieColorEnabled?: boolean
 }
@@ -86,8 +84,8 @@ export interface IHighchartsChartModel {
     },
     noData: IHighchartsNoDataConfiguration,
     accessibility: IHighchartsAccessibilitySettings,
-    series: (IHighchartsChartSerie | IHighchartsGaugeSerie | IHighchartsHeatmapSerie)[],
-    settings: IIHighchartsChartModelSettings,
+    series: any[],
+    settings: IHighchartsChartModelSettings,
     plotOptions: {
         pie?: IHighchartsChartPlotOptions,
         gauge?: IHighchartsChartPlotOptions,
@@ -95,15 +93,15 @@ export interface IHighchartsChartModel {
         heatmap?: IHighchartsChartPlotOptions
         series?: { events: any }
     },
-    legend: IHighchartsLegend,
-    tooltip: IHighchartsTooltip | IHighchartsGaugeActivityTooltip,
+    legend: any,
+    tooltip: any,
     colors: string[]
     credits: {
         enabled: boolean
     },
-    pane?: IHighchartsModelPane,
-    xAxis?: IHighchartsHeatmapAxis
-    yAxis?: IHighchartsGaugeYAxis | IHighchartsHeatmapAxis,
+    pane?: any,
+    xAxis?: any
+    yAxis?: any,
     colorAxis?: { stops: any[] }
 }
 
@@ -192,7 +190,7 @@ export interface IHighchartsSerieAccessibility {
     keyboardNavigation: { enabled: boolean }
 }
 
-export interface IIHighchartsChartModelSettings {
+export interface IHighchartsChartModelSettings {
     drilldown: any, // TODO
     categories: any // TODO
 }

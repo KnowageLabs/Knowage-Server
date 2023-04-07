@@ -1,4 +1,3 @@
-import { IHighchartsHeatmapAxis } from './../../../../../interfaces/highcharts/DashboardHighchartsHeatmapWidget.d';
 import { hexToRgba } from '@/modules/documentExecution/dashboard/helpers/FormattingHelpers';
 import { IHighchartsChartModel } from '@/modules/documentExecution/dashboard/interfaces/highcharts/DashboardHighchartsWidget'
 import { getFormattedNoDataConfiguration, getFormattedSeries } from './KnowageHighchartsCommonUpdater'
@@ -22,7 +21,7 @@ const getFormattedAxisSettings = (oldModel: any, newModel: IHighchartsChartModel
     axis === 'x' ? newModel.xAxis = newModelAxis : newModel.yAxis = newModelAxis
 }
 
-const setFormattedAxisLabels = (oldAxis: any, newModelAxis: IHighchartsHeatmapAxis) => {
+const setFormattedAxisLabels = (oldAxis: any, newModelAxis: any) => {
     // TODO - Ask ON PEER if we need this
     // if (oldAxis.min) newModelAxis.min = +oldAxis.min
     // if (oldAxis.max) newModelAxis.max = +oldAxis.max
@@ -37,7 +36,7 @@ const setFormattedAxisLabels = (oldAxis: any, newModelAxis: IHighchartsHeatmapAx
     }
 }
 
-const setFormattedAxisTitle = (oldAxis: any, newModelAxis: IHighchartsHeatmapAxis) => {
+const setFormattedAxisTitle = (oldAxis: any, newModelAxis: any) => {
     const oldAxisTitle = oldAxis.TITLE
     if (!oldAxisTitle) return
     if (oldAxisTitle.text) {

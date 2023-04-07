@@ -1,5 +1,4 @@
 import { updateHeatmapChartModel } from './updater/KnowageHighchartsHeatmapChartUpdater';
-import { IHighchartsHeatmapSerie, IHighchartsHeatmapAxis, IHighchartsHeatmapSerieData } from './../../../../interfaces/highcharts/DashboardHighchartsHeatmapWidget.d';
 import { KnowageHighcharts } from './KnowageHighcharts'
 import { IWidget, IWidgetColumn } from '@/modules/documentExecution/dashboard/Dashboard'
 import { createHeatMapSerie } from './updater/KnowageHighchartsCommonUpdater'
@@ -93,17 +92,17 @@ export class KnowageHighchartsHeatmapChart extends KnowageHighcharts {
 
 
     setYAxisCategories(yAxisCategoriesSet: Set<string>, dateFormat: '') {
-        if ((this.model.yAxis as IHighchartsHeatmapAxis)?.categories) {
-            (this.model.yAxis as IHighchartsHeatmapAxis).categories = Array.from(yAxisCategoriesSet) as string[]
-            dateFormat ? (this.model.yAxis as IHighchartsHeatmapAxis).categories.sort((a, b) => moment(a, dateFormat).diff(moment(b, dateFormat))) : (this.model.yAxis as IHighchartsHeatmapAxis).categories.sort()
-            return (this.model.yAxis as IHighchartsHeatmapAxis).categories
+        if (this.model.yAxis?.categories) {
+            this.model.yAxis.categories = Array.from(yAxisCategoriesSet) as string[]
+            dateFormat ? this.model.yAxis.categories.sort((a, b) => moment(a, dateFormat).diff(moment(b, dateFormat))) : this.model.yAxis.categories.sort()
+            return this.model.yAxis.categories
         } else return []
     }
 
     setDataInModelSerie(xAxisCategories: string[], yAxisCategories: string[], categoryValuesMap: any) {
         const modelSerie = this.model.series ? this.model.series[0] : null
         if (modelSerie && xAxisCategories && yAxisCategories) {
-            modelSerie.data = [] as IHighchartsHeatmapSerieData[]
+            modelSerie.data = [] as any[]
             for (let i = 0; i < xAxisCategories.length; i++) {
                 for (let j = yAxisCategories.length - 1; j >= 0; j--) {
                     modelSerie.data.push({
@@ -149,8 +148,8 @@ export class KnowageHighchartsHeatmapChart extends KnowageHighcharts {
         if (!widgetModel || !widgetModel.settings.series || !widgetModel.settings.series.seriesLabelsSettings || !widgetModel.settings.series.seriesLabelsSettings[0]) return
         const seriesLabelSetting = widgetModel.settings.series.seriesLabelsSettings[0]
         if (!seriesLabelSetting.label.enabled) return
-        (this.model.series as IHighchartsHeatmapSerie[]).forEach((serie: IHighchartsHeatmapSerie) => {
-            serie.data.forEach((data: IHighchartsHeatmapSerieData) => {
+        (this.model.series as any[]).forEach((serie: any) => {
+            serie.data.forEach((data: any) => {
                 data.dataLabels = {
                     backgroundColor: seriesLabelSetting.label.backgroundColor ?? '',
                     distance: 30,

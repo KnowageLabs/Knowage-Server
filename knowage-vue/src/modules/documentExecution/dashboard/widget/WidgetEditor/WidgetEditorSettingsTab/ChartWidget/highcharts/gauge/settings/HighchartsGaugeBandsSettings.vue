@@ -49,7 +49,6 @@ import { emitter } from '@/modules/documentExecution/dashboard/DashboardHelpers'
 import { IWidget } from '@/modules/documentExecution/dashboard/Dashboard'
 import { IHighchartsChartModel } from '@/modules/documentExecution/dashboard/interfaces/highcharts/DashboardHighchartsWidget'
 import { getTranslatedLabel } from '@/helpers/commons/dropdownHelper'
-import { IHighchartsBands } from '@/modules/documentExecution/dashboard/interfaces/highcharts/DashboardHighchartsGaugeWidget'
 import descriptor from '../../HighchartsWidgetSettingsDescriptor.json'
 import InputNumber from 'primevue/inputnumber'
 import Message from 'primevue/message'
@@ -79,7 +78,7 @@ export default defineComponent({
         modelChanged() {
             emitter.emit('refreshChart', this.widgetModel.id)
         },
-        onSelectionColorChanged(event: string | null, plotBand: IHighchartsBands) {
+        onSelectionColorChanged(event: string | null, plotBand: any) {
             if (!event) return
             plotBand.color = event
             this.modelChanged()

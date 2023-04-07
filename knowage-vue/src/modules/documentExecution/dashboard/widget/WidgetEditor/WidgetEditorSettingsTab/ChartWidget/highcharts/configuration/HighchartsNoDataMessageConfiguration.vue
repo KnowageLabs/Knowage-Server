@@ -44,7 +44,7 @@
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
 import { IWidget, IWidgetStyleToolbarModel } from '../../../../../../Dashboard'
-import { IHighchartsChartModel } from '@/modules/documentExecution/dashboard/interfaces/highcharts/DashboardHighchartsPieChartWidget'
+import { IHighchartsChartModel } from '@/modules/documentExecution/dashboard/interfaces/highcharts/DashboardHighchartsWidget'
 import { emitter } from '@/modules/documentExecution/dashboard/DashboardHelpers'
 import { getTranslatedLabel } from '@/helpers/commons/dropdownHelper'
 import descriptor from '../HighchartsWidgetSettingsDescriptor.json'
