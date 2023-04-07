@@ -26,7 +26,7 @@ const addHighchartsColumnToTableRows = (tempColumn: IWidgetColumn, rows: IWidget
 
 const addAttributeColumnToTableRows = (tempColumn: IWidgetColumn, rows: IWidgetColumn[], chartType: string | undefined) => {
     const maxValues = getMaxCategoriesNumber(chartType)
-    if (maxValues && maxValues !== 1 && rows.length >= maxValues || areAdditionalAttributesConstraintsInvalid(tempColumn, rows, chartType)) return
+    if (maxValues && rows.length >= maxValues || areAdditionalAttributesConstraintsInvalid(tempColumn, rows, chartType)) return
     if (tempColumn.fieldType === 'MEASURE') {
         tempColumn.fieldType = 'ATTRIBUTE'
         tempColumn.aggregation = ''
@@ -36,7 +36,6 @@ const addAttributeColumnToTableRows = (tempColumn: IWidgetColumn, rows: IWidgetC
         "orderColumnId": "",
         "orderType": ""
     }
-    if (rows.length === 1 && maxValues === 1) rows[0] = tempColumn
     addColumnToRows(rows, tempColumn)
 }
 
@@ -44,7 +43,7 @@ const addAttributeColumnToTableRows = (tempColumn: IWidgetColumn, rows: IWidgetC
 const getMaxCategoriesNumber = (chartType: string | undefined) => {
     switch (chartType) {
         case 'pie':
-            return 1
+            return 4
         case 'heatmap':
             return 2
         default:
@@ -140,7 +139,7 @@ const removeColumnFromSubmodel = (column: IWidgetColumn, array: any[], allSeries
 }
 
 export const updateWidgetModelColumnsAfterChartTypeChange = (widget: IWidget, chartType: string) => {
-    const maxAttributeColumns = chartType === 'pie' ? 4 : 0
+    const maxAttributeColumns = getMaxCategoriesNumber(chartType) ?? 0
     const maxMeasureColumns = getMaxValuesNumber(chartType) ?? widget.columns.length
     const updatedColumns = [] as IWidgetColumn[]
     let attributesAdded = 0
@@ -156,4 +155,3 @@ export const updateWidgetModelColumnsAfterChartTypeChange = (widget: IWidget, ch
     })
     widget.columns = updatedColumns
 }
-
