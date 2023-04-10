@@ -751,6 +751,16 @@
                 "title": "Legend"
             },
             "manualInput": "Manual input",
+            "map": {
+                "visTypes": {
+                    "balloons": "Balloons",
+                    "choropleth": "Choropleth",
+                    "clusters": "Clusters",
+                    "heatmap": "Heatmap",
+                    "markers": "Markers",
+                    "pies": "Pies"
+                }
+            },
             "noData": {
                 "title": "No data"
             },

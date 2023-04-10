@@ -1,0 +1,36 @@
+{
+    "style": {
+        "galleryCard": {
+            "border": "1px solid #cccccc",
+            "height": "80px",
+            "transition": "0.5s ease",
+            "width": "140px"
+        }
+    },
+    "visTypes": [
+        {
+            "class": "markers",
+            "name": "markers"
+        },
+        {
+            "class": "balloons",
+            "name": "balloons"
+        },
+        {
+            "class": "pies",
+            "name": "pies"
+        },
+        {
+            "class": "clusters",
+            "name": "clusters"
+        },
+        {
+            "class": "heatmap",
+            "name": "heatmap"
+        },
+        {
+            "class": "choropleth",
+            "name": "choropleth"
+        }
+    ]
+}
