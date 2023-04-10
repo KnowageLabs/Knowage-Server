@@ -81,10 +81,11 @@ export default defineComponent({
                 updateVegaModelColumnsAfterChartTypeChange(this.widget, chartType)
                 this.widget.settings.chartModel = createVegaModel(this.widget, chartType)
             } else if (this.isEnterprise) {
+                const oldChartModel = this.widget.settings.chartModel?.model
                 this.widget.type = 'highcharts'
                 this.widget.settings = createNewHighchartsSettings()
                 updateWidgetModelColumnsAfterChartTypeChange(this.widget, chartType)
-                this.widget.settings.chartModel = createNewHighchartsModel(chartType, this.widget.settings.chartModel?.model)
+                this.widget.settings.chartModel = createNewHighchartsModel(chartType, oldChartModel)
             } else {
                 this.widget.type = 'chartJS'
                 this.widget.settings = createNewChartJSSettings()

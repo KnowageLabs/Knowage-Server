@@ -49,14 +49,14 @@ export class KnowageHighchartsHeatmapChart extends KnowageHighcharts {
         const categoryValuesMap = {}
         const xAxisCategoriesSet = new Set() as Set<string>
         const yAxisCategoriesSet = new Set() as Set<string>
-
         const firstAttributeIsDate = data.metaData.fields[1] && ['date', 'timestamp'].includes(data.metaData.fields[1].type)
         const secondAttributeIsDate = data.metaData.fields[2] && ['date', 'timestamp'].includes(data.metaData.fields[2].type)
+        const attrbiuteColumnsFromWidgetModel = widgetModel.columns.filter((column: IWidgetColumn) => column.fieldType === 'ATTRIBUTE')
         const dateFormat = widgetModel.settings?.configuration?.datetypeSettings?.format
         this.populateCategoryValuesMap(data, categoryValuesMap, xAxisCategoriesSet, yAxisCategoriesSet, widgetModel, firstAttributeIsDate, secondAttributeIsDate, dateFormat)
 
-        const xAxisCategories = this.setXAxisCategories(xAxisCategoriesSet, firstAttributeIsDate ? dateFormat : '')
-        const yAxisCategories = this.setYAxisCategories(yAxisCategoriesSet, secondAttributeIsDate ? dateFormat : '')
+        const xAxisCategories = this.setXAxisCategories(xAxisCategoriesSet, firstAttributeIsDate ? dateFormat : '', attrbiuteColumnsFromWidgetModel[0])
+        const yAxisCategories = this.setYAxisCategories(yAxisCategoriesSet, secondAttributeIsDate ? dateFormat : '', attrbiuteColumnsFromWidgetModel[1])
 
         this.setDataInModelSerie(xAxisCategories, yAxisCategories, categoryValuesMap)
         return this.model.series
@@ -81,19 +81,33 @@ export class KnowageHighchartsHeatmapChart extends KnowageHighcharts {
         return date.isValid() ? date.format(dateFormat) : dateString
     }
 
-    setXAxisCategories(xAxisCategoriesSet: Set<string>, dateFormat: '') {
+    // TODO - Put in same method?
+    setXAxisCategories(xAxisCategoriesSet: Set<string>, dateFormat: string, modelAttributeColumn: IWidgetColumn | null) {
+        const sortType = modelAttributeColumn?.orderType ? modelAttributeColumn.orderType : 'asc'
+        console.log('------- SORT TYPE: ', sortType)
         if (this.model.xAxis?.categories) {
             this.model.xAxis.categories = Array.from(xAxisCategoriesSet) as string[]
-            dateFormat ? this.model.xAxis.categories.sort((a, b) => moment(a, dateFormat).diff(moment(b, dateFormat))) : this.model.xAxis.categories.sort()
+            this.sortCategories(this.model.xAxis.categories, dateFormat, sortType)
             return this.model.xAxis.categories
         } else return []
     }
 
+    sortCategories(categories: string[], dateFormat: string, sortType: string) {
+        if (dateFormat) {
+            categories.sort((a: string, b: string) => sortType === 'desc' ? moment(b, dateFormat).diff(moment(a, dateFormat)) : moment(a, dateFormat).diff(moment(b, dateFormat)))
+        } else {
+            sortType === 'desc' ? categories.reverse() : categories.sort()
+        }
+        console.log('categories: ', categories)
+    }
 
-    setYAxisCategories(yAxisCategoriesSet: Set<string>, dateFormat: '') {
+
+    setYAxisCategories(yAxisCategoriesSet: Set<string>, dateFormat: '', modelAttributeColumn: IWidgetColumn | null) {
+        const sortType = modelAttributeColumn?.orderType ? modelAttributeColumn.orderType : 'asc'
+        console.log('------- SORT TYPE: ', sortType)
         if (this.model.yAxis?.categories) {
             this.model.yAxis.categories = Array.from(yAxisCategoriesSet) as string[]
-            dateFormat ? this.model.yAxis.categories.sort((a, b) => moment(a, dateFormat).diff(moment(b, dateFormat))) : this.model.yAxis.categories.sort()
+            this.sortCategories(this.model.yAxis.categories, dateFormat, sortType)
             return this.model.yAxis.categories
         } else return []
     }

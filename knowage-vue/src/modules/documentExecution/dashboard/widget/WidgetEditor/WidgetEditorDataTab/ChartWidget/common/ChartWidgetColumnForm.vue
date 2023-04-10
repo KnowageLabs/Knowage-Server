@@ -1,5 +1,7 @@
 <template>
     <div v-if="column" class="widget-editor-card p-p-2">
+        {{ 'TODO' }}
+        {{ column }}
         <div class="p-my-2">
             <div class="p-d-flex p-flex-row p-ai-center">
                 <div class="p-d-flex p-flex-column kn-flex p-m-2">
@@ -71,7 +73,7 @@ import WidgetEditorFilterForm from '../../common/WidgetEditorFilterForm.vue'
 export default defineComponent({
     name: 'table-widget-column-form',
     components: { Dropdown, WidgetEditorFilterForm },
-    props: { widgetModel: { type: Object as PropType<IWidget>, required: true }, selectedColumn: { type: Object as PropType<IWidgetColumn | null>, required: true } },
+    props: { widgetModel: { type: Object as PropType<IWidget>, required: true }, selectedColumn: { type: Object as PropType<IWidgetColumn | null>, required: true }, chartType: { type: String } },
     data() {
         return {
             commonDescriptor,

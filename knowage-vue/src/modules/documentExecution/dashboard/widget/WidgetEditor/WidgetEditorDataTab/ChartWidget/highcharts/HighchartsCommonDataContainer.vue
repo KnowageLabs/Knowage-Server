@@ -25,7 +25,7 @@
             @itemSelected="setSelectedColumn"
             @itemDeleted="onColumnDelete"
         ></WidgetEditorColumnTable>
-        <ChartWidgetColumnForm class="p-m-2" :widget-model="widgetModel" :selected-column="selectedColumn"></ChartWidgetColumnForm>
+        <ChartWidgetColumnForm class="p-m-2" :widget-model="widgetModel" :selected-column="selectedColumn" :chart-type="chartType"></ChartWidgetColumnForm>
     </div>
 </template>
 
