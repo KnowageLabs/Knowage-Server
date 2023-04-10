@@ -124,6 +124,7 @@
         "language": "Language",
         "large": "Large",
         "lastChangeDate": "Last change date",
+        "layer": "Layer",
         "layout": "Layout",
         "left": "Left",
         "library": "Library",
@@ -752,6 +753,7 @@
             },
             "manualInput": "Manual input",
             "map": {
+                "tooltipHint": "The selected elements will be visible on mouse hover",
                 "visTypes": {
                     "balloons": "Balloons",
                     "choropleth": "Choropleth",

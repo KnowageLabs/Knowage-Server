@@ -1,1 +1,6 @@
-{}
+{
+    "defaultTooltips": {
+        "enabled": true,
+        "layers": []
+    }
+}
