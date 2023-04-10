@@ -14,6 +14,7 @@
                 <WidgetResponsive v-else-if="accordion.type === 'Responsive'" :widget-model="widgetModel"></WidgetResponsive>
                 <WidgetSelection v-else-if="accordion.type === 'Selection'" :widget-model="widgetModel"></WidgetSelection>
                 <WidgetCrossNavigation v-else-if="accordion.type === 'CrossNavigation'" :widget-model="widgetModel" :datasets="datasets" :selected-datasets="selectedDatasets" :dashboard-id="dashboardId"></WidgetCrossNavigation>
+                <MapTooltips v-else-if="accordion.type === 'Tooltips'" :widget-model="widgetModel"></MapTooltips>
             </AccordionTab>
         </Accordion>
     </div>
@@ -36,6 +37,7 @@ import WidgetTitleStyle from '../common/style/WidgetTitleStyle.vue'
 import WidgetPaddingStyle from '../common/style/WidgetPaddingStyle.vue'
 import WidgetBackgroundColorStyle from '../common/style/WidgetBackgroundColorStyle.vue'
 import MapSettingsAccordionHeader from './MapSettingsAccordionHeader.vue'
+import MapTooltips from './tooltips/MapTooltips.vue'
 
 export default defineComponent({
     name: 'map-settings-accordion',
@@ -51,7 +53,8 @@ export default defineComponent({
         WidgetPaddingStyle,
         WidgetBackgroundColorStyle,
         WidgetCrossNavigation,
-        MapSettingsAccordionHeader
+        MapSettingsAccordionHeader,
+        MapTooltips
     },
     props: {
         widgetModel: { type: Object as PropType<IWidget>, required: true },

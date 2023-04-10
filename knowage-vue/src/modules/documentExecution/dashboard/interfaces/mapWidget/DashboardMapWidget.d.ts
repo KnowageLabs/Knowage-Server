@@ -86,7 +86,8 @@ export interface IMapDialogSettingsProperty {
 }
 
 export interface IMapTooltipSettings {
-    // TODO
+    enabled: boolean,
+    layers: { name: string, columns: string[] }[],
 }
 
 export interface IMapWidgetStyle {

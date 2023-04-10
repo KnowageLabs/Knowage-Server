@@ -20,7 +20,7 @@ export const formatMapWidget = (widget: any) => {
         settings: {} as IMapWidgetSettings
     } as IWidget
     formattedWidget.settings = getFormattedWidgetSettings(widget)
-
+    getFormattedSettingsFromLayers(widget, formattedWidget) // TODO - Move to other file
     console.log('--------- FORMATTED WIDGET: ', formattedWidget)
 
     return formattedWidget
@@ -73,6 +73,22 @@ const getFormattedDialogSettings = (widget: any) => {
 }
 
 // TODO
-const getFormattedTooltipsSettings = (widget: any) => {
-    return {}
+const getFormattedTooltipsSettings = () => {
+    const formattedTooltips = mapWidgetDefaultValues.getDefaultMapTooltips()
+    return formattedTooltips
 }
+
+const getFormattedSettingsFromLayers = (widget: any, formattedWidget: IWidget) => {
+    const layers = widget.content.layers
+    layers?.forEach((layer: any) => {
+        layer?.content?.columnSelectedOfDataset?.forEach((column: any) => {
+            addLayerColumnTooltipOptions(column, formattedWidget, layer.name)
+        })
+    })
+}
+
+const addLayerColumnTooltipOptions = (oldColumn: any, formattedWidget: IWidget, layerName: string) => {
+    if (oldColumn?.properties?.showTooltip) {
+        formattedWidget.settings.tooltips.layers.push({ name: layerName, columns: [oldColumn.name] })
+    }
+} 

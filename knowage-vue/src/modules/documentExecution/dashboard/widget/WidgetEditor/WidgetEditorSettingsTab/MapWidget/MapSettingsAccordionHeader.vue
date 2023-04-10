@@ -42,6 +42,8 @@ export default defineComponent({
                     return this.widgetModel.settings.style.padding
                 case 'ShadowsStyle':
                     return this.widgetModel.settings.style.shadows
+                case 'Tooltips':
+                    return this.widgetModel.settings.tooltips
                 default:
                     return null
             }
