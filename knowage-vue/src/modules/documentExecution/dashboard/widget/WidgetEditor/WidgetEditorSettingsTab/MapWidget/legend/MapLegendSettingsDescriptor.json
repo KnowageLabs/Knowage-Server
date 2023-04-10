@@ -1,0 +1,16 @@
+{
+    "visualizationTypes": [
+        {
+            "label": "common.bottom",
+            "value": "bottom"
+        },
+        {
+            "label": "common.middle",
+            "value": "middle"
+        },
+        {
+            "label": "common.top",
+            "value": "top"
+        }
+    ]
+}

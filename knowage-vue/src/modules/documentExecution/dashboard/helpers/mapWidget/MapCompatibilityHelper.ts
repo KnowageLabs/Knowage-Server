@@ -65,7 +65,16 @@ const getFormattedConditionalStyles = (widget: any) => {
 
 // TODO
 const getFormattedLegend = (widget: any) => {
-    return {}
+    const formattedLegendSettings = mapWidgetDefaultValues.getDefaultLegendSettings()
+    if (!widget.style || !widget.style.legend) return formattedLegendSettings
+    formattedLegendSettings.alignment = widget.style.legend
+    formattedLegendSettings.visualizationType = widget.style.visualizationType
+    if (widget.style.legend.format) {
+        formattedLegendSettings.precision = widget.style.legend.precision
+        formattedLegendSettings.prefix = widget.style.legend.prefix
+        formattedLegendSettings.suffix = widget.style.legend.suffix
+    }
+    return formattedLegendSettings
 }
 
 const getFormattedDialogSettings = (widget: any) => {

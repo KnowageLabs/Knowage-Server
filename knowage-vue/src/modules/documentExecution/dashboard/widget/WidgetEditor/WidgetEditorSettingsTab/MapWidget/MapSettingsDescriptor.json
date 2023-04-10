@@ -28,7 +28,12 @@
                 "type": "CrossNavigation"
             }
         ],
-        "Legend": [],
+        "Legend": [
+            {
+                "title": "dashboard.widgetEditor.legend.title",
+                "type": "Legend"
+            }
+        ],
         "Responsive": [
             {
                 "title": "dashboard.widgetEditor.responsive.title",
@@ -98,7 +103,7 @@
         },
         {
             "icon": "fa fa-hand-pointer",
-            "label": "LEGEND",
+            "label": "dashboard.widgetEditor.legend.title",
             "value": "Legend"
         },
         {
