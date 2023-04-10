@@ -41,8 +41,6 @@ export class KnowageHighchartsHeatmapChart extends KnowageHighcharts {
     }
 
     setData(data: any, widgetModel: IWidget) {
-        // TODO - see about sorting
-        console.log('------------ DATA: ', data)
         if (!data || !data.rows) return
         if (this.model.series.length === 0) this.getSeriesFromWidgetModel(widgetModel)
 
@@ -52,7 +50,7 @@ export class KnowageHighchartsHeatmapChart extends KnowageHighcharts {
         const firstAttributeIsDate = data.metaData.fields[1] && ['date', 'timestamp'].includes(data.metaData.fields[1].type)
         const secondAttributeIsDate = data.metaData.fields[2] && ['date', 'timestamp'].includes(data.metaData.fields[2].type)
         const attrbiuteColumnsFromWidgetModel = widgetModel.columns.filter((column: IWidgetColumn) => column.fieldType === 'ATTRIBUTE')
-        const dateFormat = widgetModel.settings?.configuration?.datetypeSettings?.format
+        const dateFormat = widgetModel.settings?.configuration?.datetypeSettings && widgetModel.settings.configuration.datetypeSettings.enabled ? widgetModel.settings?.configuration?.datetypeSettings?.format : ''
         this.populateCategoryValuesMap(data, categoryValuesMap, xAxisCategoriesSet, yAxisCategoriesSet, widgetModel, firstAttributeIsDate, secondAttributeIsDate, dateFormat)
 
         const xAxisCategories = this.setXAxisCategories(xAxisCategoriesSet, firstAttributeIsDate ? dateFormat : '', attrbiuteColumnsFromWidgetModel[0])
@@ -81,7 +79,6 @@ export class KnowageHighchartsHeatmapChart extends KnowageHighcharts {
         return date.isValid() ? date.format(dateFormat) : dateString
     }
 
-    // TODO - Put in same method?
     setXAxisCategories(xAxisCategoriesSet: Set<string>, dateFormat: string, modelAttributeColumn: IWidgetColumn | null) {
         const sortType = modelAttributeColumn?.orderType ? modelAttributeColumn.orderType : 'ASC'
         if (this.model.xAxis?.categories) {
@@ -92,19 +89,14 @@ export class KnowageHighchartsHeatmapChart extends KnowageHighcharts {
     }
 
     sortCategories(categories: string[], dateFormat: string, sortType: string) {
-        console.log('------- SORT TYPE: ', sortType)
-        console.log('!!!!!!!!!!!!!!!!!!!!!!!!!! ORIGINAL CATEGORIES: ', deepcopy(categories))
         if (dateFormat) {
             categories.sort((a: string, b: string) => sortType === 'DESC' ? moment(a, dateFormat).diff(moment(b, dateFormat)) : moment(b, dateFormat).diff(moment(a, dateFormat)))
         } else {
             sortType === 'DESC' ? categories.sort() : categories.sort().reverse()
         }
-        console.log('!!!!!!!!!!!!! categories: ', categories)
     }
 
-
     setYAxisCategories(yAxisCategoriesSet: Set<string>, dateFormat: '', modelAttributeColumn: IWidgetColumn | null) {
-        console.log('--------- ORDER TYPE: ', modelAttributeColumn?.orderType)
         let sortType = modelAttributeColumn?.orderType ? modelAttributeColumn.orderType : 'ASC'
         sortType = sortType === 'ASC' ? 'DESC' : 'ASC'
         if (this.model.yAxis?.categories) {
@@ -116,8 +108,6 @@ export class KnowageHighchartsHeatmapChart extends KnowageHighcharts {
 
     setDataInModelSerie(xAxisCategories: string[], yAxisCategories: string[], categoryValuesMap: any) {
         const modelSerie = this.model.series ? this.model.series[0] : null
-        console.log('------------------------- xAxisCategories: ', xAxisCategories)
-        console.log('------------------------- yAxisCategories: ', yAxisCategories)
         if (modelSerie && xAxisCategories && yAxisCategories) {
             modelSerie.data = [] as any[]
             for (let i = 0; i < xAxisCategories.length; i++) {
