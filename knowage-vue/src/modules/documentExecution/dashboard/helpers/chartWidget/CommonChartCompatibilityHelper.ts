@@ -69,10 +69,9 @@ export const addCategoryColumns = (category: IOldModelCategory, formattedColumns
 }
 
 const addCategoryColumn = (category: IOldModelCategory, widgetColumNameMap: any, formattedColumns: IWidgetColumn[], widget: IWidget, chartLibrary: 'chartJS' | 'highcharts' | 'vega') => {
-    console.log('------------------------ category: ', category)
     if (widgetColumNameMap[category.column]) {
         const tempColumn = { ...widgetColumNameMap[category.column] }
-        if (category.orderType) tempColumn.orderType = category.orderType
+        if (category.orderType) tempColumn.orderType = category.orderType === 'desc' ? "DESC" : "ASC"
         if (chartHasDrilldown(widget, chartLibrary) && category.drillOrder) tempColumn.drillOrder = createDrillOrder(category.drillOrder[category.column].orderColumn, category.drillOrder[category.column].orderType)
         formattedColumns.push(tempColumn)
     }
