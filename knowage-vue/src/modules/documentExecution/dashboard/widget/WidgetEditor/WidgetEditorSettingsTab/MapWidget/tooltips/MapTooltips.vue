@@ -4,12 +4,8 @@
             {{ $t('dashboard.widgetEditor.map.tooltipHint') }}
         </Message>
         <div v-for="(tooltip, index) in tooltips.layers" :key="index" class="dynamic-form-item p-grid p-col-12 p-ai-center p-py-2 p-pb-2">
-            <div class="p-col-12">
-                {{ tooltip }}
-            </div>
-            <div v-show="index !== 0 && dropzoneTopVisible[index]" class="p-col-12 form-list-item-dropzone-active" @drop.stop="onDropComplete($event, 'before', index)" @dragover.prevent @dragenter.prevent @dragleave.prevent></div>
+            <div v-show="dropzoneTopVisible[index]" class="p-col-12 form-list-item-dropzone-active" @drop.stop="onDropComplete($event, 'before', index)" @dragover.prevent @dragenter.prevent @dragleave.prevent></div>
             <div
-                v-show="index !== 0"
                 class="p-col-12 form-list-item-dropzone"
                 :class="{ 'form-list-item-dropzone-active': dropzoneTopVisible[index] }"
                 @drop.stop="onDropComplete($event, 'before', index)"
@@ -19,25 +15,25 @@
             ></div>
 
             <div class="p-grid p-col-12">
-                <div class="p-col-1 p-md-2 p-d-flex p-flex-column p-jc-center p-pr-4">
+                <div class="p-col-1 p-d-flex p-flex-column p-jc-center p-pr-4">
                     <i class="pi pi-th-large kn-cursor-pointer"></i>
                 </div>
-                <div class="p-col-11 p-md-4 p-d-flex p-flex-column" :draggable="true" @dragstart.stop="onDragStart($event, index)">
+                <div class="p-col-11 p-md-5 p-d-flex p-flex-column" :draggable="true" @dragstart.stop="onDragStart($event, index)">
                     <label class="kn-material-input-label">{{ $t('common.layer') }}</label>
-                    <Dropdown v-model="tooltip.name" class="kn-material-input" :options="widgetModel.layers" option-value="name" option-label="name" :disabled="tooltipsDisabled"> </Dropdown>
+                    <Dropdown v-model="tooltip.name" class="kn-material-input" :options="widgetModel.layers" option-value="name" option-label="name" :disabled="tooltipsDisabled" @change="onLayerChange(tooltip)"> </Dropdown>
                 </div>
 
-                <div class="p-col-11 p-md-4 p-d-flex p-flex-column">
+                <div class="p-col-11 p-md-5 p-d-flex p-flex-column">
                     <label class="kn-material-input-label"> {{ $t('common.columns') }}</label>
                     <MultiSelect v-model="tooltip.columns" :options="getColumnOptionsFromLayer(tooltip)" option-label="alias" option-value="name" :disabled="tooltipsDisabled"> </MultiSelect>
                 </div>
-                <div class="p-col-1 p-md-2 p-d-flex p-flex-column p-jc-center p-ai-center p-pl-2">
-                    <i :class="[index === 0 ? 'pi pi-plus-circle' : 'pi pi-trash']" class="kn-cursor-pointer p-ml-2 p-mt-4" @click="index === 0 ? addTooltip() : removeTooltip(index)"></i>
+                <div class="p-col-1 p-d-flex p-flex-row p-jc-center p-ai-center p-pl-2">
+                    <i v-if="index === 0" class="pi pi-plus-circle kn-cursor-pointer p-ml-2 p-mt-4" @click="addTooltip()"></i>
+                    <i class="pi pi-trash kn-cursor-pointer p-ml- p-mt-4" @click="removeTooltip(index)"></i>
                 </div>
             </div>
 
             <div
-                v-show="index !== 0"
                 class="p-col-12 form-list-item-dropzone"
                 :class="{ 'form-list-item-dropzone-active': dropzoneBottomVisible[index] }"
                 @drop.stop="onDropComplete($event, 'after', index)"
@@ -45,7 +41,7 @@
                 @dragenter.prevent="displayDropzone('bottom', index)"
                 @dragleave.prevent="hideDropzone('bottom', index)"
             ></div>
-            <div v-show="index !== 0 && dropzoneBottomVisible[index]" class="p-col-12 form-list-item-dropzone-active" @drop.stop="onDropComplete($event, 'after', index)" @dragover.prevent @dragenter.prevent @dragleave.prevent></div>
+            <div v-show="dropzoneBottomVisible[index]" class="p-col-12 form-list-item-dropzone-active" @drop.stop="onDropComplete($event, 'after', index)" @dragover.prevent @dragenter.prevent @dragleave.prevent></div>
         </div>
     </div>
 </template>
@@ -92,7 +88,13 @@ export default defineComponent({
             this.tooltips?.layers.push({ name: '', columns: [] })
         },
         removeTooltip(index: number) {
-            this.tooltips?.layers.splice(index, 1)
+            if (!this.tooltips || !this.tooltips.layers) return
+            if (index === 0) {
+                this.tooltips.layers[0].name = ''
+                this.tooltips.layers[0].columns = []
+            } else {
+                this.tooltips.layers.splice(index, 1)
+            }
         },
         onDragStart(event: any, index: number) {
             event.dataTransfer.setData('text/plain', JSON.stringify(index))
@@ -119,6 +121,9 @@ export default defineComponent({
         getColumnOptionsFromLayer(tooltip: { name: string; columns: string[] }) {
             const index = this.widgetModel.layers.findIndex((layer: any) => layer.name === tooltip.name)
             return index !== -1 ? this.widgetModel.layers[index].content.columnSelectedOfDataset : []
+        },
+        onLayerChange(tooltip: { name: string; columns: string[] }) {
+            tooltip.columns = []
         }
     }
 })
