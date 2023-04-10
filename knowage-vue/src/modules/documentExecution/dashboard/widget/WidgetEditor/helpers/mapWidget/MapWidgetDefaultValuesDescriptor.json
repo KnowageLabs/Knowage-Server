@@ -1,6 +1,11 @@
 {
     "defaultTooltips": {
         "enabled": true,
-        "layers": []
+        "layers": [
+            {
+                "columns": [],
+                "name": ""
+            }
+        ]
     }
 }

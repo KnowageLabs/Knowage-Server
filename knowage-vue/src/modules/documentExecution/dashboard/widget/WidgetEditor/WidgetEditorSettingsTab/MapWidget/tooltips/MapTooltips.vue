@@ -1,9 +1,9 @@
 <template>
-    <div v-if="tooltips" class="p-grid p-jc-center p-ai-center p-p-4">
-        <Message class="p-col-12 p-d-flex p-jc-center p-mx-4" severity="info" :closable="false">
+    <div v-if="tooltips" class="p-grid p-jc-center p-ai-center p-m-1">
+        <Message class="kn-width-full p-d-flex p-jc-center p-m-0" severity="info" :closable="false">
             {{ $t('dashboard.widgetEditor.map.tooltipHint') }}
         </Message>
-        <div v-for="(tooltip, index) in tooltips.layers" :key="index" class="dynamic-form-item p-grid p-col-12 p-ai-center p-py-2 p-pb-2">
+        <div v-for="(tooltip, index) in tooltips.layers" :key="index" class="dynamic-form-item p-grid p-col-12 p-ai-center">
             <div v-show="dropzoneTopVisible[index]" class="p-col-12 form-list-item-dropzone-active" @drop.stop="onDropComplete($event, 'before', index)" @dragover.prevent @dragenter.prevent @dragleave.prevent></div>
             <div
                 class="p-col-12 form-list-item-dropzone"
@@ -14,22 +14,21 @@
                 @dragleave.prevent="hideDropzone('top', index)"
             ></div>
 
-            <div class="p-grid p-col-12" :draggable="true" @dragstart.stop="onDragStart($event, index)">
-                <div class="p-col-1 p-d-flex p-flex-column p-jc-center p-pr-4">
-                    <i class="pi pi-th-large kn-cursor-pointer"></i>
+            <div class="p-d-flex kn-flex p-ai-center" :draggable="true" @dragstart.stop="onDragStart($event, index)">
+                <i class="pi pi-th-large kn-cursor-pointer"></i>
+                <div class="kn-flex p-mx-2 p-d-flex p-flex-row" style="gap: 0.5em">
+                    <span class="p-float-label kn-flex">
+                        <Dropdown v-model="tooltip.name" :disabled="tooltipsDisabled" class="kn-material-input kn-width-full" :options="widgetModel.layers" option-value="name" option-label="name" show-clear @change="onLayerChange(tooltip)"> </Dropdown>
+                        <label class="kn-material-input-label">{{ $t('common.layer') }}</label>
+                    </span>
+                    <span class="p-float-label kn-flex">
+                        <MultiSelect v-model="tooltip.columns" :disabled="tooltipsDisabled" :options="getColumnOptionsFromLayer(tooltip)" class="kn-material-input kn-width-full" option-label="alias" option-value="name"> </MultiSelect>
+                        <label class="kn-material-input-label"> {{ $t('common.columns') }}</label>
+                    </span>
                 </div>
-                <div class="p-col-11 p-md-5 p-d-flex p-flex-column">
-                    <label class="kn-material-input-label">{{ $t('common.layer') }}</label>
-                    <Dropdown v-model="tooltip.name" class="kn-material-input" :options="widgetModel.layers" option-value="name" option-label="name" :disabled="tooltipsDisabled" @change="onLayerChange(tooltip)"> </Dropdown>
-                </div>
-
-                <div class="p-col-11 p-md-5 p-d-flex p-flex-column">
-                    <label class="kn-material-input-label"> {{ $t('common.columns') }}</label>
-                    <MultiSelect v-model="tooltip.columns" :options="getColumnOptionsFromLayer(tooltip)" option-label="alias" option-value="name" :disabled="tooltipsDisabled"> </MultiSelect>
-                </div>
-                <div class="p-col-1 p-d-flex p-flex-row p-jc-center p-ai-center p-pl-2">
-                    <i v-if="index === 0" class="pi pi-plus-circle kn-cursor-pointer p-ml-2 p-mt-4" @click="addTooltip()"></i>
-                    <i class="pi pi-trash kn-cursor-pointer p-ml-4 p-mt-4" @click="removeTooltip(index)"></i>
+                <div class="p-d-flex p-flex-row p-jc-center p-ai-center">
+                    <i v-if="index === 0" class="pi pi-plus-circle kn-cursor-pointer" @click="addTooltip()"></i>
+                    <i v-if="index !== 0" class="pi pi-trash kn-cursor-pointer" @click="removeTooltip(index)"></i>
                 </div>
             </div>
 
@@ -53,6 +52,7 @@ import { IMapTooltipSettings } from '@/modules/documentExecution/dashboard/inter
 import Dropdown from 'primevue/dropdown'
 import MultiSelect from 'primevue/multiselect'
 import Message from 'primevue/message'
+import defaultsDescriptor from '../../../helpers/mapWidget/MapWidgetDefaultValuesDescriptor.json'
 
 export default defineComponent({
     name: 'map-tooltips',
@@ -60,6 +60,7 @@ export default defineComponent({
     props: { widgetModel: { type: Object as PropType<IWidget>, required: true } },
     data() {
         return {
+            defaultsDescriptor,
             tooltips: null as IMapTooltipSettings | null,
             dropzoneTopVisible: {},
             dropzoneBottomVisible: {}
@@ -83,18 +84,15 @@ export default defineComponent({
         removeEventListeners() {},
         loadTooltips() {
             if (this.widgetModel?.settings?.tooltips) this.tooltips = this.widgetModel.settings.tooltips
+            else this.tooltips = defaultsDescriptor.defaultTooltips
         },
         addTooltip() {
             this.tooltips?.layers.push({ name: '', columns: [] })
         },
         removeTooltip(index: number) {
             if (!this.tooltips || !this.tooltips.layers) return
-            if (index === 0) {
-                this.tooltips.layers[0].name = ''
-                this.tooltips.layers[0].columns = []
-            } else {
-                this.tooltips.layers.splice(index, 1)
-            }
+
+            this.tooltips.layers.splice(index, 1)
         },
         onDragStart(event: any, index: number) {
             event.dataTransfer.setData('text/plain', JSON.stringify(index))
