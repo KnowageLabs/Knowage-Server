@@ -66,8 +66,8 @@ export interface IMapWidgetLegend {
 
 export interface IMapDialogSettings {
     enabled: boolean,
-    width: number,
-    height: number,
+    width: string,
+    height: string,
     style: {
         'justify-content': string
         'font-family': string

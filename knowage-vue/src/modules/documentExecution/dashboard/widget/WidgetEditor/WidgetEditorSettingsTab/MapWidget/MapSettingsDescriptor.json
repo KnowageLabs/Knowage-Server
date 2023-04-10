@@ -12,7 +12,12 @@
                 "type": "Export"
             }
         ],
-        "Dialog": [],
+        "Dialog": [
+            {
+                "title": "common.dialog",
+                "type": "DialogSettings"
+            }
+        ],
         "Interactions": [
             {
                 "title": "dashboard.widgetEditor.interactions.selection",
@@ -98,7 +103,7 @@
         },
         {
             "icon": "fa fa-hand-pointer",
-            "label": "DIALOG",
+            "label": "common.dialog",
             "value": "Dialog"
         },
         {

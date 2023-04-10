@@ -44,6 +44,8 @@ export default defineComponent({
                     return this.widgetModel.settings.style.shadows
                 case 'Tooltips':
                     return this.widgetModel.settings.tooltips
+                case 'DialogSettings':
+                    return this.widgetModel.settings.dialog
                 default:
                     return null
             }

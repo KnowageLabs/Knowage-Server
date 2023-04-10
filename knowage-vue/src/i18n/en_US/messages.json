@@ -55,6 +55,7 @@
         "detail": "Detail",
         "details": "Details",
         "development": "Development",
+        "dialog": "Dialog",
         "documentDetails": "Document Details",
         "documents": "Documents",
         "download": "download",
@@ -753,6 +754,7 @@
             },
             "manualInput": "Manual input",
             "map": {
+                "dialogHint": "The selected elements will be visible when clicking on the map",
                 "tooltipHint": "The selected elements will be visible on mouse hover"
             },
             "noData": {
