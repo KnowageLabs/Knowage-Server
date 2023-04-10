@@ -14,11 +14,11 @@
                 @dragleave.prevent="hideDropzone('top', index)"
             ></div>
 
-            <div class="p-grid p-col-12">
+            <div class="p-grid p-col-12" :draggable="true" @dragstart.stop="onDragStart($event, index)">
                 <div class="p-col-1 p-d-flex p-flex-column p-jc-center p-pr-4">
                     <i class="pi pi-th-large kn-cursor-pointer"></i>
                 </div>
-                <div class="p-col-11 p-md-5 p-d-flex p-flex-column" :draggable="true" @dragstart.stop="onDragStart($event, index)">
+                <div class="p-col-11 p-md-5 p-d-flex p-flex-column">
                     <label class="kn-material-input-label">{{ $t('common.layer') }}</label>
                     <Dropdown v-model="tooltip.name" class="kn-material-input" :options="widgetModel.layers" option-value="name" option-label="name" :disabled="tooltipsDisabled" @change="onLayerChange(tooltip)"> </Dropdown>
                 </div>
@@ -29,7 +29,7 @@
                 </div>
                 <div class="p-col-1 p-d-flex p-flex-row p-jc-center p-ai-center p-pl-2">
                     <i v-if="index === 0" class="pi pi-plus-circle kn-cursor-pointer p-ml-2 p-mt-4" @click="addTooltip()"></i>
-                    <i class="pi pi-trash kn-cursor-pointer p-ml- p-mt-4" @click="removeTooltip(index)"></i>
+                    <i class="pi pi-trash kn-cursor-pointer p-ml-4 p-mt-4" @click="removeTooltip(index)"></i>
                 </div>
             </div>
 
