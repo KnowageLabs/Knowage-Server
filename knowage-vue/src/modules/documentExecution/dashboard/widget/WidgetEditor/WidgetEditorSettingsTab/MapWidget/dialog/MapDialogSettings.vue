@@ -1,25 +1,23 @@
 <template>
-    <div v-if="dialogSettings" class="p-grid p-jc-center p-ai-center p-p-4">
-        <div class="p-grid p-col-12">
-            <div class="p-col-12 p-md-6 p-d-flex p-flex-column">
+    <div v-if="dialogSettings" class="p-m-3">
+        <div class="kn-flex p-d-flex p-flex-row" style="gap: 0.5em">
+            <div class="p-float-label kn-flex">
+                <InputText v-model="dialogSettings.width" class="kn-material-input kn-width-full p-inputtext-sm" :disabled="dialogSettingsDisabled" />
                 <label class="kn-material-input-label">{{ $t('common.width') }}</label>
-                <InputText v-model="dialogSettings.width" class="kn-material-input p-inputtext-sm" :disabled="dialogSettingsDisabled" />
             </div>
-            <div class="p-col-12 p-md-6 p-d-flex p-flex-column">
+            <div class="p-float-label kn-flex">
+                <InputText v-model="dialogSettings.height" class="kn-material-input kn-width-full p-inputtext-sm" :disabled="dialogSettingsDisabled" />
                 <label class="kn-material-input-label">{{ $t('common.height') }}</label>
-                <InputText v-model="dialogSettings.height" class="kn-material-input p-inputtext-sm" :disabled="dialogSettingsDisabled" />
-            </div>
-
-            <div class="p-col-12 p-py-4">
-                <WidgetEditorStyleToolbar :options="descriptor.toolbarStyleOptions" :prop-model="dialogSettings.style" :disabled="dialogSettingsDisabled" @change="onStyleToolbarChange"> </WidgetEditorStyleToolbar>
             </div>
         </div>
 
-        <Message class="p-col-12 p-d-flex p-jc-center p-mx-4" severity="info" :closable="false">
+        <WidgetEditorStyleToolbar class="p-my-3" :options="descriptor.toolbarStyleOptions" :prop-model="dialogSettings.style" :disabled="dialogSettingsDisabled" @change="onStyleToolbarChange"> </WidgetEditorStyleToolbar>
+
+        <Message class="kn-width-full p-d-flex p-jc-center p-m-0 p-mx-2" severity="info" :closable="false">
             {{ $t('dashboard.widgetEditor.map.dialogHint') }}
         </Message>
 
-        <div v-for="(dialogProperty, index) in dialogSettings.properties" :key="index" class="dynamic-form-item p-grid p-col-12 p-ai-center p-py-2 p-pb-2">
+        <div v-for="(dialogProperty, index) in dialogSettings.properties" :key="index" class="dynamic-form-item p-grid p-col-12 p-ai-center p-m-0 p-pt-0">
             <div v-show="dropzoneTopVisible[index]" class="p-col-12 form-list-item-dropzone-active" @drop.stop="onDropComplete($event, 'before', index)" @dragover.prevent @dragenter.prevent @dragleave.prevent></div>
             <div
                 class="p-col-12 form-list-item-dropzone"
@@ -30,22 +28,21 @@
                 @dragleave.prevent="hideDropzone('top', index)"
             ></div>
 
-            <div class="p-grid p-col-12" :draggable="true" @dragstart.stop="onDragStart($event, index)">
-                <div class="p-col-1 p-d-flex p-flex-column p-jc-center p-pr-4">
-                    <i class="pi pi-th-large kn-cursor-pointer"></i>
+            <div class="p-d-flex kn-flex p-ai-center" :draggable="true" @dragstart.stop="onDragStart($event, index)">
+                <i class="pi pi-th-large kn-cursor-pointer"></i>
+                <div class="kn-flex p-mx-2 p-d-flex p-flex-row" style="gap: 0.5em">
+                    <span class="p-float-label kn-flex">
+                        <Dropdown v-model="dialogProperty.layer" :disabled="dialogSettingsDisabled" class="kn-material-input kn-width-full" :options="widgetModel.layers" option-value="name" option-label="name" show-clear @change="onLayerChange(dialogProperty)"> </Dropdown>
+                        <label class="kn-material-input-label">{{ $t('common.layer') }}</label>
+                    </span>
+                    <span class="p-float-label kn-flex">
+                        <MultiSelect v-model="dialogProperty.columns" :disabled="dialogSettingsDisabled" class="kn-material-input kn-width-full" :options="getColumnOptionsFromLayer(dialogProperty)" option-label="alias" option-value="name"> </MultiSelect>
+                        <label class="kn-material-input-label"> {{ $t('common.columns') }}</label>
+                    </span>
                 </div>
-                <div class="p-col-11 p-md-5 p-d-flex p-flex-column">
-                    <label class="kn-material-input-label">{{ $t('common.layer') }}</label>
-                    <Dropdown v-model="dialogProperty.layer" class="kn-material-input" :options="widgetModel.layers" option-value="name" option-label="name" :disabled="dialogSettingsDisabled" @change="onLayerChange(dialogProperty)"> </Dropdown>
-                </div>
-
-                <div class="p-col-11 p-md-5 p-d-flex p-flex-column">
-                    <label class="kn-material-input-label"> {{ $t('common.columns') }}</label>
-                    <MultiSelect v-model="dialogProperty.columns" :options="getColumnOptionsFromLayer(dialogProperty)" option-label="alias" option-value="name" :disabled="dialogSettingsDisabled"> </MultiSelect>
-                </div>
-                <div class="p-col-1 p-d-flex p-flex-row p-jc-center p-ai-center p-pl-2">
-                    <i v-if="index === 0" class="pi pi-plus-circle kn-cursor-pointer p-ml-2 p-mt-4" @click="addTooltip()"></i>
-                    <i class="pi pi-trash kn-cursor-pointer p-ml-4 p-mt-4" @click="removeTooltip(index)"></i>
+                <div class="p-d-flex p-flex-row p-jc-center p-ai-center">
+                    <i v-if="index === 0" class="pi pi-plus-circle kn-cursor-pointer" @click="addTooltip()"></i>
+                    <i v-if="index !== 0" class="pi pi-trash kn-cursor-pointer" @click="removeTooltip(index)"></i>
                 </div>
             </div>
 

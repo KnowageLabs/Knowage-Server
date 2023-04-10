@@ -1,6 +1,6 @@
 <template>
-    <div v-if="tooltips" class="p-grid p-jc-center p-ai-center p-m-1">
-        <Message class="kn-width-full p-d-flex p-jc-center p-m-0" severity="info" :closable="false">
+    <div v-if="tooltips" class="p-grid p-jc-center p-ai-center p-m-3">
+        <Message class="kn-width-full p-d-flex p-jc-center p-m-0 p-mx-2" severity="info" :closable="false">
             {{ $t('dashboard.widgetEditor.map.tooltipHint') }}
         </Message>
         <div v-for="(tooltip, index) in tooltips.layers" :key="index" class="dynamic-form-item p-grid p-col-12 p-ai-center">
