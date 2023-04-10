@@ -61,13 +61,47 @@ export interface IMapWidgetConditionalStyle {
 }
 
 export interface IMapWidgetLegend {
-    // TODO
+    enabled: boolean,
+    visualizationType: string,
+    position: string,
+    alignment: string,
+    prefix: string,
+    suffix: string,
+    precision: number,
+    title: IMapWidgetLegendTitle,
+    text: IMapWidgetLegendText
+}
+
+export interface IMapWidgetLegendTitle {
+    text: string,
+    style: {
+        'justify-content': string
+        'font-family': string
+        'font-size': string
+        'font-style': string
+        'font-weight': string
+        color: string
+        'background-color': string
+    }
+}
+
+export interface IMapWidgetLegendText {
+    text: string,
+    style: {
+        'justify-content': string
+        'font-family': string
+        'font-size': string
+        'font-style': string
+        'font-weight': string
+        color: string
+        'background-color': string
+    }
 }
 
 export interface IMapDialogSettings {
     enabled: boolean,
-    width: number,
-    height: number,
+    width: string,
+    height: string,
     style: {
         'justify-content': string
         'font-family': string

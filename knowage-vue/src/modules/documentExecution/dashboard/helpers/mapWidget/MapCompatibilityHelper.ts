@@ -3,6 +3,7 @@ import { IWidget, IWidgetResponsive, IWidgetExports } from './../../Dashboard.d'
 import { IMapWidgetSettings, IMapWidgetStyle } from './../../interfaces/mapWidget/DashboardMapWidget.d'
 import * as mapWidgetDefaultValues from '../../widget/WidgetEditor/helpers/mapWidget/MapWidgetDefaultValues'
 import * as widgetCommonDefaultValues from '../../widget/WidgetEditor/helpers/common/WidgetCommonDefaultValues'
+import { hexToRgba } from '../FormattingHelpers'
 
 const columnNameIdMap = {}
 
@@ -37,7 +38,7 @@ const getFormattedWidgetSettings = (widget: any) => {
         dialog: getFormattedDialogSettings(widget),
         style: getFormattedStyle(widget) as IMapWidgetStyle,
         responsive: widgetCommonDefaultValues.getDefaultResponsivnes() as IWidgetResponsive,
-        tooltips: getFormattedTooltipsSettings(widget)
+        tooltips: getFormattedTooltipsSettings()
     } as IMapWidgetSettings
     return formattedSettings
 }
@@ -64,15 +65,32 @@ const getFormattedConditionalStyles = (widget: any) => {
 
 // TODO
 const getFormattedLegend = (widget: any) => {
-    return {}
+    const formattedLegendSettings = mapWidgetDefaultValues.getDefaultLegendSettings()
+    if (!widget.style || !widget.style.legend) return formattedLegendSettings
+    formattedLegendSettings.alignment = widget.style.legend
+    formattedLegendSettings.visualizationType = widget.style.visualizationType
+    if (widget.style.legend.format) {
+        formattedLegendSettings.precision = widget.style.legend.precision
+        formattedLegendSettings.prefix = widget.style.legend.prefix
+        formattedLegendSettings.suffix = widget.style.legend.suffix
+    }
+    return formattedLegendSettings
 }
 
-// TODO
 const getFormattedDialogSettings = (widget: any) => {
-    return {}
+    const formattedDialogSettings = mapWidgetDefaultValues.getDefaultDialogSettings()
+    if (!widget.style || !widget.style.tooltip) return formattedDialogSettings
+    if (widget.style.tooltip.box) {
+        formattedDialogSettings.height = widget.style.tooltip.box.height
+        formattedDialogSettings.width = widget.style.tooltip.box.width
+    }
+    if (widget.style.tooltip.text) {
+        formattedDialogSettings.style['font-size'] = widget.style.tooltip.text['font-size']
+        formattedDialogSettings.style.color = widget.style.tooltip.text.color ? hexToRgba(widget.style.tooltip.text.color) : ''
+    }
+    return formattedDialogSettings
 }
 
-// TODO
 const getFormattedTooltipsSettings = () => {
     const formattedTooltips = mapWidgetDefaultValues.getDefaultMapTooltips()
     return formattedTooltips

@@ -16,6 +16,8 @@
                 <WidgetCrossNavigation v-else-if="accordion.type === 'CrossNavigation'" :widget-model="widgetModel" :datasets="datasets" :selected-datasets="selectedDatasets" :dashboard-id="dashboardId"></WidgetCrossNavigation>
                 <WidgetVisType v-else-if="accordion.type === 'VisualizationType'" :widget-model="widgetModel" />
                 <MapTooltips v-else-if="accordion.type === 'Tooltips'" :widget-model="widgetModel"></MapTooltips>
+                <MapDialogSettings v-else-if="accordion.type === 'DialogSettings'" :widget-model="widgetModel"></MapDialogSettings>
+                <MapLegendSettings v-else-if="accordion.type === 'Legend'" :widget-model="widgetModel"></MapLegendSettings>
             </AccordionTab>
         </Accordion>
     </div>
@@ -40,6 +42,9 @@ import WidgetBackgroundColorStyle from '../common/style/WidgetBackgroundColorSty
 import MapSettingsAccordionHeader from './MapSettingsAccordionHeader.vue'
 import WidgetVisType from './visualization/MapVisualizationType.vue'
 import MapTooltips from './tooltips/MapTooltips.vue'
+import MapDialogSettings from './dialog/MapDialogSettings.vue'
+import MapLegendSettings from './legend/MapLegendSettings.vue'
+
 export default defineComponent({
     components: {
         Accordion,
@@ -54,8 +59,10 @@ export default defineComponent({
         WidgetBackgroundColorStyle,
         WidgetCrossNavigation,
         MapSettingsAccordionHeader,
-        WidgetVisType,
-        MapTooltips
+        MapTooltips,
+        MapDialogSettings,
+        MapLegendSettings,
+        WidgetVisType
     },
     props: {
         widgetModel: { type: Object as PropType<IWidget>, required: true },

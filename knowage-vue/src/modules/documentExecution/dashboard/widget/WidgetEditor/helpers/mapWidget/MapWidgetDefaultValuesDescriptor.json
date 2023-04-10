@@ -1,4 +1,57 @@
 {
+    "defaultDialogSettings": {
+        "enabled": true,
+        "height": "200px",
+        "properties": [
+            {
+                "columns": [],
+                "layer": ""
+            }
+        ],
+        "style": {
+            "background-color": "",
+            "color": "",
+            "font-family": "",
+            "font-size": "16px",
+            "font-style": "",
+            "font-weight": "",
+            "justify-content": "center"
+        },
+        "width": "200px"
+    },
+    "defaultLegendSettings": {
+        "alignment": "center",
+        "enabled": true,
+        "position": "center",
+        "precision": 2,
+        "prefix": "",
+        "suffix": "",
+        "text": {
+            "style": {
+                "background-color": "",
+                "color": "",
+                "font-family": "",
+                "font-size": "16px",
+                "font-style": "",
+                "font-weight": "",
+                "justify-content": "center"
+            },
+            "text": ""
+        },
+        "title": {
+            "style": {
+                "background-color": "",
+                "color": "",
+                "font-family": "",
+                "font-size": "16px",
+                "font-style": "",
+                "font-weight": "",
+                "justify-content": "center"
+            },
+            "text": ""
+        },
+        "visualizationType": ""
+    },
     "defaultTooltips": {
         "enabled": true,
         "layers": [

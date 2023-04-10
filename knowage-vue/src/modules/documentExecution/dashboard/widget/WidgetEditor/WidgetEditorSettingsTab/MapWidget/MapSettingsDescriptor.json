@@ -12,7 +12,12 @@
                 "type": "Export"
             }
         ],
-        "Dialog": [],
+        "Dialog": [
+            {
+                "title": "common.dialog",
+                "type": "DialogSettings"
+            }
+        ],
         "Interactions": [
             {
                 "title": "dashboard.widgetEditor.interactions.selection",
@@ -23,7 +28,12 @@
                 "type": "CrossNavigation"
             }
         ],
-        "Legend": [],
+        "Legend": [
+            {
+                "title": "dashboard.widgetEditor.legend.title",
+                "type": "Legend"
+            }
+        ],
         "Responsive": [
             {
                 "title": "dashboard.widgetEditor.responsive.title",
@@ -93,12 +103,12 @@
         },
         {
             "icon": "fa fa-hand-pointer",
-            "label": "LEGEND",
+            "label": "dashboard.widgetEditor.legend.title",
             "value": "Legend"
         },
         {
             "icon": "fa fa-hand-pointer",
-            "label": "DIALOG",
+            "label": "common.dialog",
             "value": "Dialog"
         },
         {
