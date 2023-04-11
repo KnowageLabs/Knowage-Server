@@ -20,6 +20,7 @@
                 <MapLegendSettings v-else-if="accordion.type === 'Legend'" :widget-model="widgetModel"></MapLegendSettings>
                 <MapBaseLayerSettings v-else-if="accordion.type === 'BaseLayer'" :widget-model="widgetModel" :layers="layers"></MapBaseLayerSettings>
                 <MapControlPanelSettings v-else-if="accordion.type === 'ControlPanel'" :widget-model="widgetModel"></MapControlPanelSettings>
+                <MapConditionalStyles v-else-if="accordion.type === 'Conditions'" :widget-model="widgetModel" :variables="variables" :dashboard-id="dashboardId"></MapConditionalStyles>
             </AccordionTab>
         </Accordion>
     </div>
@@ -50,6 +51,7 @@ import MapDialogSettings from './dialog/MapDialogSettings.vue'
 import MapLegendSettings from './legend/MapLegendSettings.vue'
 import MapBaseLayerSettings from './configuration/MapBaseLayerSettings.vue'
 import MapControlPanelSettings from './configuration/MapControlPanelSettings.vue'
+import MapConditionalStyles from './conditionalStyle/MapConditionalStyles.vue'
 
 export default defineComponent({
     components: {
@@ -70,7 +72,8 @@ export default defineComponent({
         MapLegendSettings,
         WidgetVisType,
         MapBaseLayerSettings,
-        MapControlPanelSettings
+        MapControlPanelSettings,
+        MapConditionalStyles
     },
     props: {
         widgetModel: { type: Object as PropType<IWidget>, required: true },

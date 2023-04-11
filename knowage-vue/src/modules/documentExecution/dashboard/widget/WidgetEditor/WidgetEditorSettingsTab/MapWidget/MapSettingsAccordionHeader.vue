@@ -50,6 +50,8 @@ export default defineComponent({
                     return this.widgetModel.settings.legend
                 case 'BaseLayer':
                     return this.widgetModel.settings.configuration.baseLayer
+                case 'Conditions':
+                    return this.widgetModel.settings.conditionalStyles
                 default:
                     return null
             }

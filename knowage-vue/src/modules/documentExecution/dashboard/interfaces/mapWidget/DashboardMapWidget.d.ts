@@ -64,14 +64,7 @@ export interface IMapWidgetConditionalStyle {
         value: string
     },
     properties: {
-        'justify-content': string
-        'font-family': string
-        'font-size': string
-        'font-style': string
-        'font-weight': string
-        color: string
         'background-color': string
-        icon: string
     }
 }
 

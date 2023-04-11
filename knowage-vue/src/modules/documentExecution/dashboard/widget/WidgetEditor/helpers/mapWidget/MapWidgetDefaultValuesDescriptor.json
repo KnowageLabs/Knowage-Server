@@ -6,6 +6,18 @@
         "showScale": false,
         "zoomFactor": null
     },
+    "defaultConditionalStyle": {
+        "condition": {
+            "operator": "",
+            "type": "",
+            "value": ""
+        },
+        "properties": {
+            "background-color": ""
+        },
+        "targetColumn": "",
+        "targetLayer": ""
+    },
     "defaultControlPanelSettings": {
         "alwaysShow": false,
         "dimension": ""

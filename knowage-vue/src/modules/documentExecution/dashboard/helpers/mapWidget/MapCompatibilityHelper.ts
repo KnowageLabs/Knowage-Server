@@ -1,6 +1,6 @@
 import { getFormattedStyle } from './MapStyleHelper'
 import { IWidget, IWidgetResponsive, IWidgetExports } from './../../Dashboard.d'
-import { IMapWidgetSettings, IMapWidgetStyle } from './../../interfaces/mapWidget/DashboardMapWidget.d'
+import { IMapWidgetConditionalStyles, IMapWidgetSettings, IMapWidgetStyle } from './../../interfaces/mapWidget/DashboardMapWidget.d'
 import * as mapWidgetDefaultValues from '../../widget/WidgetEditor/helpers/mapWidget/MapWidgetDefaultValues'
 import * as widgetCommonDefaultValues from '../../widget/WidgetEditor/helpers/common/WidgetCommonDefaultValues'
 import { hexToRgba } from '../FormattingHelpers'
@@ -33,7 +33,7 @@ const getFormattedWidgetSettings = (widget: any) => {
         clickable: widget.cliccable,
         configuration: getFormattedConfiguration(widget),
         visualization: getFormattedVisualization(widget),
-        conditionalStyles: getFormattedConditionalStyles(widget),
+        conditionalStyles: getFormattedConditionalStyles(),
         legend: getFormattedLegend(widget),
         dialog: getFormattedDialogSettings(widget),
         style: getFormattedStyle(widget) as IMapWidgetStyle,
@@ -79,12 +79,12 @@ const getFormattedVisualization = (widget: any) => {
     return {}
 }
 
-// TODO
-const getFormattedConditionalStyles = (widget: any) => {
-    return {}
+// TODO - Darko - where is this in old app?!! Thresholds can't be converted.
+const getFormattedConditionalStyles = () => {
+    const formattedStyles = { enabled: false, conditions: [] } as IMapWidgetConditionalStyles
+    return formattedStyles
 }
 
-// TODO
 const getFormattedLegend = (widget: any) => {
     const formattedLegendSettings = mapWidgetDefaultValues.getDefaultLegendSettings()
     if (!widget.style || !widget.style.legend) return formattedLegendSettings
