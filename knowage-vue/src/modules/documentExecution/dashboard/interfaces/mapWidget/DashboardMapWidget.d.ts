@@ -15,7 +15,16 @@ export interface IMapWidgetSettings {
 }
 
 export interface IMapWidgetConfiguration {
+    baseLayer: IMapWidgetBaseLayer
     exports: IWidgetExports
+}
+
+export interface IMapWidgetBaseLayer {
+    enabled: boolean,
+    backgroundLayerId: number | null,
+    zoomFactor: number | null,
+    showScale: boolean,
+    autoCentering: boolean
 }
 
 export interface IMapWidgetVisualizationSettings {
@@ -130,4 +139,27 @@ export interface IMapWidgetStyle {
     background: IWidgetBackgroundStyle
     padding: IWidgetPaddingStyle
     shadows: IWidgetShadowsStyle
+}
+
+export interface IMapWidgetLayer {
+    layerId: number,
+    name: string,
+    descr: string,
+    type: string,
+    label: string,
+    baseLayer: false,
+    layerDef: string,
+    pathFile: string,
+    layerLabel: string,
+    layerName: string,
+    layerIdentify: string,
+    layerURL: any,
+    layerOptions: any,
+    layerParams: any,
+    layerOrder: number,
+    category_id: any,
+    category: any,
+    roles: any,
+    properties: string[],
+    filebody: any
 }

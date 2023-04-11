@@ -18,6 +18,8 @@
                 <MapTooltips v-else-if="accordion.type === 'Tooltips'" :widget-model="widgetModel"></MapTooltips>
                 <MapDialogSettings v-else-if="accordion.type === 'DialogSettings'" :widget-model="widgetModel"></MapDialogSettings>
                 <MapLegendSettings v-else-if="accordion.type === 'Legend'" :widget-model="widgetModel"></MapLegendSettings>
+                <MapBaseLayerSettings v-else-if="accordion.type === 'BaseLayer'" :widget-model="widgetModel" :layers="layers"></MapBaseLayerSettings>
+                <MapControlPanelSettings v-else-if="accordion.type === 'ControlPanel'" :widget-model="widgetModel"></MapControlPanelSettings>
             </AccordionTab>
         </Accordion>
     </div>
@@ -26,6 +28,8 @@
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
 import { IWidget, IDataset, IVariable } from '@/modules/documentExecution/dashboard/Dashboard'
+import { IMapWidgetLayer } from '@/modules/documentExecution/dashboard/interfaces/mapWidget/DashboardMapWidget'
+import { AxiosResponse } from 'axios'
 import Accordion from 'primevue/accordion'
 import AccordionTab from 'primevue/accordiontab'
 import descriptor from './MapSettingsDescriptor.json'
@@ -44,6 +48,8 @@ import WidgetVisType from './visualization/MapVisualizationType.vue'
 import MapTooltips from './tooltips/MapTooltips.vue'
 import MapDialogSettings from './dialog/MapDialogSettings.vue'
 import MapLegendSettings from './legend/MapLegendSettings.vue'
+import MapBaseLayerSettings from './configuration/MapBaseLayerSettings.vue'
+import MapControlPanelSettings from './configuration/MapControlPanelSettings.vue'
 
 export default defineComponent({
     components: {
@@ -62,7 +68,9 @@ export default defineComponent({
         MapTooltips,
         MapDialogSettings,
         MapLegendSettings,
-        WidgetVisType
+        WidgetVisType,
+        MapBaseLayerSettings,
+        MapControlPanelSettings
     },
     props: {
         widgetModel: { type: Object as PropType<IWidget>, required: true },
@@ -77,6 +85,7 @@ export default defineComponent({
         return {
             descriptor,
             settingsTabDescriptor,
+            layers: [] as IMapWidgetLayer[],
             activeIndex: -1
         }
     },
@@ -88,10 +97,17 @@ export default defineComponent({
     },
     created() {
         this.setActiveAccordion()
+        this.loadLayers()
     },
     methods: {
         setActiveAccordion() {
             if (this.settings?.length === 1) this.activeIndex = 0
+        },
+        async loadLayers() {
+            await this.$http
+                .get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + 'layers')
+                .then((response: AxiosResponse<any>) => (this.layers = response.data.root))
+                .catch(() => {})
         }
     }
 })

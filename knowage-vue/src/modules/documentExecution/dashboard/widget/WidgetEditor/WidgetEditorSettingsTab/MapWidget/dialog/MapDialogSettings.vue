@@ -89,18 +89,11 @@ export default defineComponent({
         }
     },
     created() {
-        this.setEventListeners()
         this.loadTooltips()
     },
-
-    unmounted() {
-        this.removeEventListeners()
-    },
     methods: {
-        setEventListeners() {},
-        removeEventListeners() {},
         loadTooltips() {
-            if (this.widgetModel?.settings?.tooltips) this.dialogSettings = this.widgetModel.settings.dialog
+            if (this.widgetModel?.settings?.dialog) this.dialogSettings = this.widgetModel.settings.dialog
         },
         addTooltip() {
             this.dialogSettings?.properties.push({ layer: '', columns: [] })

@@ -1,64 +1,71 @@
 {
-    "defaultDialogSettings": {
-        "enabled": true,
-        "height": "200px",
-        "properties": [
-            {
-                "columns": [],
-                "layer": ""
-            }
-        ],
-        "style": {
-            "background-color": "",
-            "color": "",
-            "font-family": "",
-            "font-size": "16px",
-            "font-style": "",
-            "font-weight": "",
-            "justify-content": "center"
-        },
-        "width": "200px"
+  "defaultBaseLayerSettings": {
+    "enabled": true,
+    "autoCentering": false,
+    "backgroundLayerId": null,
+    "showScale": false,
+    "zoomFactor": null
+  },
+  "defaultDialogSettings": {
+    "enabled": true,
+    "height": "200px",
+    "properties": [
+      {
+        "columns": [],
+        "layer": ""
+      }
+    ],
+    "style": {
+      "background-color": "",
+      "color": "",
+      "font-family": "",
+      "font-size": "16px",
+      "font-style": "",
+      "font-weight": "",
+      "justify-content": "center"
     },
-    "defaultLegendSettings": {
-        "alignment": "center",
-        "enabled": true,
-        "position": "north",
-        "precision": 2,
-        "prefix": "",
-        "suffix": "",
-        "text": {
-            "style": {
-                "background-color": "",
-                "color": "",
-                "font-family": "",
-                "font-size": "16px",
-                "font-style": "",
-                "font-weight": "",
-                "justify-content": "center"
-            },
-            "text": ""
-        },
-        "title": {
-            "style": {
-                "background-color": "",
-                "color": "",
-                "font-family": "",
-                "font-size": "16px",
-                "font-style": "",
-                "font-weight": "",
-                "justify-content": "center"
-            },
-            "text": ""
-        },
-        "visualizationType": "Linear Gradient"
+    "width": "200px"
+  },
+  "defaultLegendSettings": {
+    "alignment": "center",
+    "enabled": true,
+    "position": "north",
+    "precision": 2,
+    "prefix": "",
+    "suffix": "",
+    "text": {
+      "style": {
+        "background-color": "",
+        "color": "",
+        "font-family": "",
+        "font-size": "16px",
+        "font-style": "",
+        "font-weight": "",
+        "justify-content": "center"
+      },
+      "text": ""
     },
-    "defaultTooltips": {
-        "enabled": true,
-        "layers": [
-            {
-                "columns": [],
-                "name": ""
-            }
-        ]
-    }
+    "title": {
+      "style": {
+        "background-color": "",
+        "color": "",
+        "font-family": "",
+        "font-size": "16px",
+        "font-style": "",
+        "font-weight": "",
+        "justify-content": "center"
+      },
+      "text": ""
+    },
+    "visualizationType": "Linear Gradient"
+  },
+  "defaultTooltips": {
+    "enabled": true,
+    "layers": [
+      {
+        "columns": [],
+        "name": ""
+      }
+    ]
+  }
 }

@@ -754,6 +754,16 @@
             },
             "manualInput": "Manual input",
             "map": {
+                "baseLayer": {
+                    "autoCentering": "Auto centering",
+                    "selectBackgroundLayer": "Select Background Layer",
+                    "showScale": "Show scale",
+                    "title": "Enable Base Layer",
+                    "zoomFactor": "Zoom factor"
+                },
+                "controlPanel": {
+                    "title": "Control Panel"
+                },
                 "dialogHint": "The selected elements will be visible when clicking on the map",
                 "legendText": "Legend Text",
                 "legendTitle": "Legend Title",

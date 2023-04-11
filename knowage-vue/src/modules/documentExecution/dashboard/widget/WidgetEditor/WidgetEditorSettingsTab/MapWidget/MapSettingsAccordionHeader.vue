@@ -48,6 +48,8 @@ export default defineComponent({
                     return this.widgetModel.settings.dialog
                 case 'Legend':
                     return this.widgetModel.settings.legend
+                case 'BaseLayer':
+                    return this.widgetModel.settings.configuration.baseLayer
                 default:
                     return null
             }

@@ -8,8 +8,12 @@
         ],
         "Configuration": [
             {
-                "title": "dashboard.widgetEditor.export.title",
-                "type": "Export"
+                "title": "dashboard.widgetEditor.map.baseLayer.title",
+                "type": "BaseLayer"
+            },
+            {
+                "title": "dashboard.widgetEditor.map.controlPanel.title",
+                "type": "ControlPanel"
             }
         ],
         "Dialog": [

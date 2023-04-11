@@ -75,7 +75,7 @@
 
         <div class="p-formgrid p-grid p-p-4">
             <div class="p-float-label p-col-12">
-                <Textarea v-model="legendSettings.text.text" class="kn-material-input kn-width-full" rows="2" maxlength="250" :auto-resize="true" :disabled="legendSettingsDisabled" />
+                <Textarea v-model="legendSettings.text.text" class="kn-material-input kn-width-full" rows="4" maxlength="500" :auto-resize="true" :disabled="legendSettingsDisabled" />
                 <label class="kn-material-input-label">{{ $t('dashboard.widgetEditor.map.legendText') }}</label>
             </div>
 
@@ -117,7 +117,7 @@ export default defineComponent({
     },
     methods: {
         loadLegendSettings() {
-            if (this.widgetModel?.settings?.tooltips) this.legendSettings = this.widgetModel.settings.legend
+            if (this.widgetModel?.settings?.legend) this.legendSettings = this.widgetModel.settings.legend
         },
         onStyleToolbarChange(model: IWidgetStyleToolbarModel, property: 'title' | 'text') {
             if (!this.legendSettings || !this.legendSettings[property]) return

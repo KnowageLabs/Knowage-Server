@@ -50,7 +50,20 @@ const getFormattedLayers = (widget: any) => {
 
 // TODO
 const getFormattedConfiguration = (widget: any) => {
-    return { exports: { showExcelExport: widget.style?.showExcelExport ?? false, showScreenshot: widget.style?.showScreenshot ?? false } as IWidgetExports }
+    return {
+        baseLayer: getFormattedBaseLayer(widget),
+        exports: { showExcelExport: widget.style?.showExcelExport ?? false, showScreenshot: widget.style?.showScreenshot ?? false } as IWidgetExports
+    }
+}
+
+const getFormattedBaseLayer = (widget: any) => {
+    const formattedBaseLayer = mapWidgetDefaultValues.getDefaultBaseLayerSettings()
+    if (!widget.content) return formattedBaseLayer
+    formattedBaseLayer.backgroundLayerId = widget.content.backgroundLayerId
+    formattedBaseLayer.zoomFactor = widget.content.zoomFactor
+    formattedBaseLayer.showScale = widget.content.showScale
+    formattedBaseLayer.autoCentering = widget.content.autoCentering
+    return formattedBaseLayer
 }
 
 // TODO
