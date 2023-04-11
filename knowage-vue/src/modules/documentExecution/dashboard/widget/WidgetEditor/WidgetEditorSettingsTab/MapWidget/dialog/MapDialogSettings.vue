@@ -148,12 +148,12 @@ export default defineComponent({
             const defaultDialogSettings = mapWidgetDefaultValues.getDefaultDialogSettings()
             this.dialogSettings.style = {
                 'font-family': model['font-family'] ?? defaultDialogSettings.style['font-family'],
-                'font-style': model['font-style'] ?? 'normal',
-                'font-size': model['font-size'] ?? '1px',
-                'font-weight': model['font-weight'] ?? '',
-                'justify-content': model['justify-content'] ?? '',
-                color: model.color ?? '',
-                'background-color': model['background-color'] ?? ''
+                'font-style': model['font-style'] ?? defaultDialogSettings.style['font-style'],
+                'font-size': model['font-size'] ?? defaultDialogSettings.style['font-size'],
+                'font-weight': model['font-weight'] ?? defaultDialogSettings.style['font-weight'],
+                'justify-content': model['justify-content'] ?? defaultDialogSettings.style['justify-content'],
+                color: model.color ?? defaultDialogSettings.style.color,
+                'background-color': model['background-color'] ?? defaultDialogSettings.style['background-color']
             }
         }
     }

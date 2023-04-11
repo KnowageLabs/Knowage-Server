@@ -67,12 +67,12 @@ const getFormattedConditionalStyles = (widget: any) => {
 const getFormattedLegend = (widget: any) => {
     const formattedLegendSettings = mapWidgetDefaultValues.getDefaultLegendSettings()
     if (!widget.style || !widget.style.legend) return formattedLegendSettings
-    formattedLegendSettings.alignment = widget.style.legend
-    formattedLegendSettings.visualizationType = widget.style.visualizationType
+    formattedLegendSettings.alignment = widget.style.legend.alignment
+    formattedLegendSettings.visualizationType = widget.style.legend.visualizationType
     if (widget.style.legend.format) {
-        formattedLegendSettings.precision = widget.style.legend.precision
-        formattedLegendSettings.prefix = widget.style.legend.prefix
-        formattedLegendSettings.suffix = widget.style.legend.suffix
+        formattedLegendSettings.precision = widget.style.legend.format.precision
+        formattedLegendSettings.prefix = widget.style.legend.format.prefix
+        formattedLegendSettings.suffix = widget.style.legend.format.suffix
     }
     return formattedLegendSettings
 }

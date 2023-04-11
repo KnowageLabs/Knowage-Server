@@ -46,6 +46,8 @@ export default defineComponent({
                     return this.widgetModel.settings.tooltips
                 case 'DialogSettings':
                     return this.widgetModel.settings.dialog
+                case 'Legend':
+                    return this.widgetModel.settings.legend
                 default:
                     return null
             }

@@ -22,7 +22,7 @@
     "defaultLegendSettings": {
         "alignment": "center",
         "enabled": true,
-        "position": "center",
+        "position": "north",
         "precision": 2,
         "prefix": "",
         "suffix": "",
@@ -50,7 +50,7 @@
             },
             "text": ""
         },
-        "visualizationType": ""
+        "visualizationType": "Linear Gradient"
     },
     "defaultTooltips": {
         "enabled": true,

@@ -755,6 +755,12 @@
             "manualInput": "Manual input",
             "map": {
                 "dialogHint": "The selected elements will be visible when clicking on the map",
+                "legendText": "Legend Text",
+                "legendTitle": "Legend Title",
+                "linearGradient": "Linear Gradient",
+                "north": "North",
+                "range": "Range",
+                "south": "South",
                 "tooltipHint": "The selected elements will be visible on mouse hover",
                 "visTypes": {
                     "balloons": "Balloons",
@@ -807,6 +813,7 @@
             "pivotData": "Data",
             "pivotFilters": "Filters",
             "pivotRows": "Rows",
+            "position": "Position",
             "precision": "Precision",
             "prefix": "Prefix",
             "recentlyUsed": "Recently Used",
