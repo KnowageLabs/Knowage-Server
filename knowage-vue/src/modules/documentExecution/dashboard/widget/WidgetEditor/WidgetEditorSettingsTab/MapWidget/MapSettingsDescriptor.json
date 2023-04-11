@@ -30,6 +30,14 @@
             {
                 "title": "dashboard.widgetEditor.interactions.crossNavigation",
                 "type": "CrossNavigation"
+            },
+            {
+                "title": "dashboard.widgetEditor.interactions.link",
+                "type": "Link"
+            },
+            {
+                "title": "dashboard.widgetEditor.interactions.preview",
+                "type": "Preview"
             }
         ],
         "Legend": [

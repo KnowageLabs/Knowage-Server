@@ -767,6 +767,7 @@
                     "dimensionHint": "Control Panel Dimension Hint",
                     "title": "Control Panel"
                 },
+                "crossNavigationLabelHint": "This is the label of the link. If empty it will be \"Go to detail\"",
                 "dialogHint": "The selected elements will be visible when clicking on the map",
                 "legendText": "Legend Text",
                 "legendTitle": "Legend Title",

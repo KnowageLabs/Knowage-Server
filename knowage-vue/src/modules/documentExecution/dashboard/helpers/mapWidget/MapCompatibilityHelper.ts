@@ -1,11 +1,10 @@
 import { getFormattedStyle } from './MapStyleHelper'
-import { IWidget, IWidgetResponsive, IWidgetExports } from './../../Dashboard.d'
+import { IWidget, IWidgetResponsive, IWidgetExports, IWidgetInteractions } from './../../Dashboard.d'
 import { IMapWidgetConditionalStyles, IMapWidgetSettings, IMapWidgetStyle } from './../../interfaces/mapWidget/DashboardMapWidget.d'
+import { hexToRgba } from '../FormattingHelpers'
+import { getFormattedInteractions } from '../common/WidgetInteractionsHelper'
 import * as mapWidgetDefaultValues from '../../widget/WidgetEditor/helpers/mapWidget/MapWidgetDefaultValues'
 import * as widgetCommonDefaultValues from '../../widget/WidgetEditor/helpers/common/WidgetCommonDefaultValues'
-import { hexToRgba } from '../FormattingHelpers'
-
-const columnNameIdMap = {}
 
 export const formatMapWidget = (widget: any) => {
     console.log('--------- ORIGINAL WIDGET: ', widget)
@@ -36,6 +35,7 @@ const getFormattedWidgetSettings = (widget: any) => {
         conditionalStyles: getFormattedConditionalStyles(),
         legend: getFormattedLegend(widget),
         dialog: getFormattedDialogSettings(widget),
+        interactions: getFormattedInteractions(widget) as IWidgetInteractions,
         style: getFormattedStyle(widget) as IMapWidgetStyle,
         responsive: widgetCommonDefaultValues.getDefaultResponsivnes() as IWidgetResponsive,
         tooltips: getFormattedTooltipsSettings()

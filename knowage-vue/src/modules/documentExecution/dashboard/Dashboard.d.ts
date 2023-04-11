@@ -179,6 +179,7 @@ export interface IWidgetCrossNavigation {
     type: string
     column: string
     icon?: string
+    label?: string
     name: string
     parameters: IWidgetInteractionParameter[]
 }

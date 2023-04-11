@@ -52,6 +52,14 @@ export default defineComponent({
                     return this.widgetModel.settings.configuration.baseLayer
                 case 'Conditions':
                     return this.widgetModel.settings.conditionalStyles
+                case 'Selection':
+                    return this.widgetModel.settings.interactions.selection
+                case 'CrossNavigation':
+                    return this.widgetModel.settings.interactions.crossNavigation
+                case 'Link':
+                    return this.widgetModel.settings.interactions.link
+                case 'Preview':
+                    return this.widgetModel.settings.interactions.preview
                 default:
                     return null
             }
