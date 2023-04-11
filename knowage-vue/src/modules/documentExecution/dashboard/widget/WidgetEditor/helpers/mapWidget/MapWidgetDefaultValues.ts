@@ -1,4 +1,4 @@
-import { IMapDialogSettings, IMapTooltipSettings, IMapWidgetBaseLayer, IMapWidgetLegend } from '@/modules/documentExecution/dashboard/interfaces/mapWidget/DashboardMapWidget'
+import { IMapDialogSettings, IMapTooltipSettings, IMapWidgetBaseLayer, IMapWidgetControlPanel, IMapWidgetLegend } from '@/modules/documentExecution/dashboard/interfaces/mapWidget/DashboardMapWidget'
 import descriptor from './MapWidgetDefaultValuesDescriptor.json'
 
 export const getDefaultMapTooltips = () => {
@@ -15,4 +15,8 @@ export const getDefaultLegendSettings = () => {
 
 export const getDefaultBaseLayerSettings = () => {
     return descriptor.defaultBaseLayerSettings as IMapWidgetBaseLayer
+}
+
+export const getDefaultControlPanelSettings = () => {
+    return descriptor.defaultControlPanelSettings as IMapWidgetControlPanel
 }

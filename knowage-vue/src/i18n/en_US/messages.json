@@ -762,6 +762,9 @@
                     "zoomFactor": "Zoom factor"
                 },
                 "controlPanel": {
+                    "alwaysShow": "Always show control panel",
+                    "dimension": "Control Panel Dimension",
+                    "dimensionHint": "Control Panel Dimension Hint",
                     "title": "Control Panel"
                 },
                 "dialogHint": "The selected elements will be visible when clicking on the map",

@@ -16,6 +16,7 @@ export interface IMapWidgetSettings {
 
 export interface IMapWidgetConfiguration {
     baseLayer: IMapWidgetBaseLayer
+    controlPanel: IMapWidgetControlPanel
     exports: IWidgetExports
 }
 
@@ -25,6 +26,11 @@ export interface IMapWidgetBaseLayer {
     zoomFactor: number | null,
     showScale: boolean,
     autoCentering: boolean
+}
+
+export interface IMapWidgetControlPanel {
+    alwaysShow: boolean,
+    dimension: string
 }
 
 export interface IMapWidgetVisualizationSettings {

@@ -52,6 +52,7 @@ const getFormattedLayers = (widget: any) => {
 const getFormattedConfiguration = (widget: any) => {
     return {
         baseLayer: getFormattedBaseLayer(widget),
+        controlPanel: getFormattedControlPanel(widget),
         exports: { showExcelExport: widget.style?.showExcelExport ?? false, showScreenshot: widget.style?.showScreenshot ?? false } as IWidgetExports
     }
 }
@@ -64,6 +65,13 @@ const getFormattedBaseLayer = (widget: any) => {
     formattedBaseLayer.showScale = widget.content.showScale
     formattedBaseLayer.autoCentering = widget.content.autoCentering
     return formattedBaseLayer
+}
+
+const getFormattedControlPanel = (widget: any) => {
+    const formattedControlPanel = mapWidgetDefaultValues.getDefaultControlPanelSettings()
+    formattedControlPanel.alwaysShow = widget.controlPanelAlwaysOpen
+    if (widget.style?.controlPanel) formattedControlPanel.dimension = widget.style.controlPanel.width
+    return formattedControlPanel
 }
 
 // TODO

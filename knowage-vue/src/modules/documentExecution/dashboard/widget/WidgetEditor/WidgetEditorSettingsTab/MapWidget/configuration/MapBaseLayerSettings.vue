@@ -1,8 +1,5 @@
 <template>
     <div v-if="baseLayerSettings">
-        <div class="p-col-12">
-            {{ baseLayerSettings }}
-        </div>
         <div class="p-formgrid p-grid p-p-3">
             <span class="p-field p-float-label p-col-12 p-lg-6 p-fluid">
                 <Dropdown v-model="baseLayerSettings.backgroundLayerId" class="kn-material-input" :options="layers" option-value="layerId" option-label="label" :disabled="baseLayerSettingsDisabled"></Dropdown>
@@ -51,10 +48,10 @@ export default defineComponent({
         }
     },
     created() {
-        this.loadLegendSettings()
+        this.loadBaseLayerSettings()
     },
     methods: {
-        loadLegendSettings() {
+        loadBaseLayerSettings() {
             if (this.widgetModel?.settings?.configuration?.baseLayer) this.baseLayerSettings = this.widgetModel.settings.configuration.baseLayer
         }
     }
