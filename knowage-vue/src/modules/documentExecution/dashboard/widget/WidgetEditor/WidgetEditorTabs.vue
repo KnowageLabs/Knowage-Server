@@ -1,6 +1,6 @@
 <template>
     <TabView :active-index="activeIndex">
-        <TabPanel v-if="propWidget && propWidget.type !== 'selection' && propWidget.type !== 'image'" :header="$t(propWidget.type === 'map' ? 'LAYERS' : 'common.data')">
+        <TabPanel v-if="propWidget && propWidget.type !== 'selection' && propWidget.type !== 'image'" :header="$t(propWidget.type === 'map' ? 'common.layers' : 'common.data')">
             <MapWidgetLayersTab v-if="propWidget.type === 'map'" :prop-widget="propWidget" :datasets="datasets" :selected-datasets="selectedDatasets"></MapWidgetLayersTab>
             <WidgetEditorDataTab v-else :prop-widget="propWidget" :datasets="datasets" :selected-datasets="selectedDatasets" data-test="data-tab" @datasetSelected="$emit('datasetSelected', $event)"></WidgetEditorDataTab>
         </TabPanel>
