@@ -788,6 +788,7 @@
                 "legendTitle": "Legend Title",
                 "linearGradient": "Linear Gradient",
                 "metadata": {
+                    "addField": "Add Field",
                     "aggregateBy": "Aggregate by",
                     "aggregateByHint": "Aggregate by hint",
                     "coordFormat": "Coord Format",

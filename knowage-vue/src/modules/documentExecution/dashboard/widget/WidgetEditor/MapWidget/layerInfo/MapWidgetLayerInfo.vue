@@ -71,7 +71,7 @@ import { getTranslatedLabel } from '@/helpers/commons/dropdownHelper'
 import { IMapWidgetLayer } from '@/modules/documentExecution/dashboard/interfaces/mapWidget/DashboardMapWidget'
 import { IDataset } from '@/modules/documentExecution/dashboard/Dashboard'
 import { mapActions } from 'pinia'
-import descriptor from './MapWidgetMetadataDescriptor.json'
+import descriptor from './MapWidgetLayerInfoDescriptor.json'
 import Dropdown from 'primevue/dropdown'
 import InputSwitch from 'primevue/inputswitch'
 import Message from 'primevue/message'
@@ -116,8 +116,10 @@ export default defineComponent({
         },
         onStaticChange() {
             if (!this.layer) return
-            this.layer.targetDefault = false
-            this.layer.defaultVisible = true
+            if (this.layer.isStatic) {
+                this.layer.targetDefault = false
+                this.layer.defaultVisible = true
+            }
         }
     }
 })

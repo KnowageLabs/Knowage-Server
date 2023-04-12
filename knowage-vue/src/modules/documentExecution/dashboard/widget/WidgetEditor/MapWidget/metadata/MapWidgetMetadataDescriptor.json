@@ -30,6 +30,23 @@
         }
     ],
     "columnTypeOptions": ["ATTRIBUTE", "MEASURE", "SPATIAL_ATTRIBUTE"],
+    "columns": [
+        {
+            "field": "name",
+            "header": "common.name",
+            "style": {}
+        },
+        {
+            "field": "alias",
+            "header": "common.alias",
+            "style": {}
+        },
+        {
+            "field": "type",
+            "header": "common.type",
+            "style": {}
+        }
+    ],
     "coordFormats": [
         {
             "label": "dashboard.widgetEditor.map.metadata.lonLat",
@@ -54,5 +71,12 @@
             "value": "wkt"
         }
     ],
-    "layerTypes": ["DATASET", "CATALOG"]
+    "globalFilterFields": ["name", "alias", "type"],
+    "style": {
+        "dialog": {
+            "max-width": "1200px",
+            "min-width": "600px",
+            "width": "60%"
+        }
+    }
 }

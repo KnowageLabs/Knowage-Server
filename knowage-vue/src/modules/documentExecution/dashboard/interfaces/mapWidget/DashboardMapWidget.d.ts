@@ -214,5 +214,6 @@ export interface IWidgetMapLayerColumn {
     decrypt: boolean,
     subjectId: boolean,
     aliasToShow: string,
-    aggregationSelected?: string
+    aggregationSelected?: string,
+    deleted?: boolean
 }

@@ -8,7 +8,7 @@
 <script lang="ts">
 import { PropType, defineComponent } from 'vue'
 import { IMapWidgetLayer } from '../../../interfaces/mapWidget/DashboardMapWidget'
-import MapWidgetLayerInfo from './metadata/MapWidgetLayerInfo.vue'
+import MapWidgetLayerInfo from './layerInfo/MapWidgetLayerInfo.vue'
 import MapWidgetMetadata from './metadata/MapWidgetMetadata.vue'
 
 export default defineComponent({
