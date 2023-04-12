@@ -1,5 +1,5 @@
 <template>
-    <div class="p-formgrid p-grid p-p-3">
+    <div v-if="spatialAttribute" class="p-formgrid p-grid p-p-3">
         <div class="p-col-12 p-mb-4">
             <label class="kn-material-input-label">{{ $t('dashboard.widgetEditor.map.metadata.spatialAttribute') }}</label>
         </div>
@@ -46,17 +46,18 @@
 <script lang="ts">
 import { PropType, defineComponent } from 'vue'
 import { getTranslatedLabel } from '@/helpers/commons/dropdownHelper'
+import { IWidgetMapLayerColumn } from '@/modules/documentExecution/dashboard/interfaces/mapWidget/DashboardMapWidget'
 import descriptor from './MapWidgetMetadataDescriptor.json'
 import Dropdown from 'primevue/dropdown'
 
 export default defineComponent({
     name: 'map-widget-metadata-spatial-attribute',
     components: { Dropdown },
-    props: { propSpatialAttribute: { type: Object as PropType<any>, required: true } },
+    props: { propSpatialAttribute: { type: Object as PropType<IWidgetMapLayerColumn | null>, required: true } },
     data() {
         return {
             descriptor,
-            spatialAttribute: null as any,
+            spatialAttribute: null as IWidgetMapLayerColumn | null,
             getTranslatedLabel
         }
     },

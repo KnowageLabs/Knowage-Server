@@ -55,6 +55,7 @@
 
 <script lang="ts">
 import { PropType, defineComponent } from 'vue'
+import { IWidgetMapLayerColumn } from '@/modules/documentExecution/dashboard/interfaces/mapWidget/DashboardMapWidget'
 import descriptor from './MapWidgetMetadataDescriptor.json'
 import Dropdown from 'primevue/dropdown'
 import InputSwitch from 'primevue/inputswitch'
@@ -63,12 +64,12 @@ export default defineComponent({
     name: 'map-widget-metadata-fields',
     components: { Dropdown, InputSwitch },
     props: {
-        propFields: { type: Array as PropType<any>, required: true }
+        propFields: { type: Array as PropType<IWidgetMapLayerColumn[]>, required: true }
     },
     data() {
         return {
             descriptor,
-            fields: null as any
+            fields: [] as IWidgetMapLayerColumn[]
         }
     },
     watch: {
@@ -82,10 +83,10 @@ export default defineComponent({
     methods: {
         loadFields() {
             this.fields = this.propFields
-            console.log('-------- LOADED FIELDS: ', this.fields)
+            // console.log('-------- LOADED FIELDS: ', this.fields)
         },
         addField() {
-            console.log('------ ADD FIELD CALLED!')
+            // console.log('------ ADD FIELD CALLED!')
         },
         removeField(index: number) {
             this.fields.splice(index, 1)

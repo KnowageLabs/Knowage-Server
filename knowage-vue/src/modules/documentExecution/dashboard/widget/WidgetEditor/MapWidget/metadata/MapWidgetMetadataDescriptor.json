@@ -53,5 +53,6 @@
             "label": "dashboard.widgetEditor.map.metadata.wktFormat",
             "value": "wkt"
         }
-    ]
+    ],
+    "layerTypes": ["DATASET"]
 }

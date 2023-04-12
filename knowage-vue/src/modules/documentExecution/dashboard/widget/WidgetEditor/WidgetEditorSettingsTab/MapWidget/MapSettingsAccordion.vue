@@ -31,7 +31,7 @@
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
 import { IWidget, IDataset, IVariable } from '@/modules/documentExecution/dashboard/Dashboard'
-import { IMapWidgetLayer } from '@/modules/documentExecution/dashboard/interfaces/mapWidget/DashboardMapWidget'
+import { ILayer } from '@/modules/documentExecution/dashboard/interfaces/mapWidget/DashboardMapWidget'
 import { AxiosResponse } from 'axios'
 import Accordion from 'primevue/accordion'
 import AccordionTab from 'primevue/accordiontab'
@@ -94,7 +94,7 @@ export default defineComponent({
         return {
             descriptor,
             settingsTabDescriptor,
-            layers: [] as IMapWidgetLayer[],
+            layers: [] as ILayer[],
             activeIndex: -1
         }
     },

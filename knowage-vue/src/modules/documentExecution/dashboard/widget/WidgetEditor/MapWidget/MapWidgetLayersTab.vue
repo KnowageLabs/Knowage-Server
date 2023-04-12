@@ -7,6 +7,7 @@
 import { PropType, defineComponent } from 'vue'
 import { IDataset, IWidget } from '../../../Dashboard'
 import { mapState } from 'pinia'
+import { IMapWidgetLayer } from '../../../interfaces/mapWidget/DashboardMapWidget'
 import mainStore from '@/App.store'
 import LayersList from './MapWidgetLayersTabList.vue'
 import MapWidgetLayerDetail from './MapWidgetLayerDetail.vue'
@@ -33,7 +34,7 @@ export default defineComponent({
         return {
             selectedDataset: null as IDataset | null,
             widget: {} as IWidget,
-            selectedLayer: null as any
+            selectedLayer: null as IMapWidgetLayer | null
         }
     },
     computed: {

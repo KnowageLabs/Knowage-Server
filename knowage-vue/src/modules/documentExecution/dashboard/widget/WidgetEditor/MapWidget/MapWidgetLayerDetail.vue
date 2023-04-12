@@ -1,20 +1,23 @@
 <template>
-    <div>
-        <MapWidgetMetadata :selectedLayer="layer"></MapWidgetMetadata>
+    <div class="p-d-flex p-flex-column kn-flex">
+        <MapWidgetLayerInfo :selected-layer="layer"></MapWidgetLayerInfo>
+        <MapWidgetMetadata class="p-mt-2" :selected-layer="layer"></MapWidgetMetadata>
     </div>
 </template>
 
 <script lang="ts">
 import { PropType, defineComponent } from 'vue'
+import { IMapWidgetLayer } from '../../../interfaces/mapWidget/DashboardMapWidget'
+import MapWidgetLayerInfo from './metadata/MapWidgetLayerInfo.vue'
 import MapWidgetMetadata from './metadata/MapWidgetMetadata.vue'
 
 export default defineComponent({
     name: 'map-widget-layer-detail',
-    components: { MapWidgetMetadata },
-    props: { selectedLayer: { type: Object as PropType<any>, required: true } },
+    components: { MapWidgetLayerInfo, MapWidgetMetadata },
+    props: { selectedLayer: { type: Object as PropType<IMapWidgetLayer | null>, required: true } },
     data() {
         return {
-            layer: null as any
+            layer: null as IMapWidgetLayer | null
         }
     },
     watch: {
@@ -28,7 +31,6 @@ export default defineComponent({
     methods: {
         loadLayer() {
             this.layer = this.selectedLayer
-            console.log('---- CAAAAAALED', this.layer)
         }
     }
 })

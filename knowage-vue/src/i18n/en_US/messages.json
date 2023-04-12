@@ -773,6 +773,13 @@
                 },
                 "crossNavigationLabelHint": "This is the label of the link. If empty it will be \"Go to detail\"",
                 "dialogHint": "The selected elements will be visible when clicking on the map",
+                "layerInfo": {
+                    "defaultVisible": "Default visible",
+                    "defaultVisibleHint": "Default visible hint",
+                    "staticHint": "Static hint",
+                    "target": "Target",
+                    "targetHint": "Target hint"
+                },
                 "legendText": "Legend Text",
                 "legendTitle": "Legend Title",
                 "linearGradient": "Linear Gradient",

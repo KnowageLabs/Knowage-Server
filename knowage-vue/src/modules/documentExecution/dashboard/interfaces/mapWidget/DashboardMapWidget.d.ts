@@ -1,4 +1,4 @@
-import { IWidgetInteractions, IWidgetResponsive, IWidgetTitle, IWidgetBordersStyle, IWidgetBackgroundStyle, IWidgetPaddingStyle, IWidgetShadowsStyle, IWidgetExports } from './../../Dashboard.d';
+import { IWidgetInteractions, IWidgetResponsive, IWidgetTitle, IWidgetBordersStyle, IWidgetBackgroundStyle, IWidgetPaddingStyle, IWidgetShadowsStyle, IWidgetExports, IDataset } from './../../Dashboard.d';
 
 export interface IMapWidgetSettings {
     updatable: boolean
@@ -140,7 +140,7 @@ export interface IMapWidgetStyle {
     shadows: IWidgetShadowsStyle
 }
 
-export interface IMapWidgetLayer {
+export interface ILayer {
     layerId: number,
     name: string,
     descr: string,
@@ -161,4 +161,54 @@ export interface IMapWidgetLayer {
     roles: any,
     properties: string[],
     filebody: any
+}
+
+export interface IMapWidgetLayer {
+    type: string,
+    dsId: 213,
+    alias: string,
+    name: string,
+    defaultVisible: boolean,
+    dataset: IDataset,
+    content: {
+        columnSelectedOfDataset: IWidgetMapLayerColumn[]
+    },
+    order: number,
+    targetDefault: boolean,
+    hasShownDetails: boolean,
+    defaultIndicator: string,
+    layerID: string,
+    isStatic: boolean,
+    showTooltip: boolean,
+    tooltipColumn: string,
+    visualizationType: string,
+    markerConf: any,
+    clusterConf: any,
+    heatmapConf: any,
+    analysisConf: any,
+    modalSelectionColumn: string
+}
+
+export interface IWidgetMapLayerColumn {
+    name: string,
+    alias: string,
+    type: string,
+    properties: {
+        aggregateBy: boolean,
+        coordType: string,
+        coordFormat: string,
+        showTooltip: boolean,
+        modal: boolean,
+        showMap?: boolean,
+        showFilter?: boolean
+    },
+    fieldType: string,
+    multiValue: boolean,
+    precision: number,
+    scale: number,
+    personal: boolean,
+    decrypt: boolean,
+    subjectId: boolean,
+    aliasToShow: string,
+    aggregationSelected?: string
 }
