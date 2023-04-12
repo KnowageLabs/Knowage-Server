@@ -44,14 +44,13 @@ import com.fasterxml.jackson.databind.node.TextNode;
  * @author Andrea Gioia (andrea.gioia@eng.it)
  *
  */
-public class JSONObject extends AbstractJSONObject implements ICommonObject, Serializable {
+public class JSONObject extends AbstractJSONObject implements Serializable {
 
 	private static final long serialVersionUID = -6237508419256769078L;
 
 	private ObjectNode rootNode;
 
-	@Override
-	public ObjectNode getWrappedObject() {
+	ObjectNode getWrappedObject() {
 		return this.rootNode;
 	}
 
