@@ -3,9 +3,9 @@ import { onMounted, onBeforeMount } from "vue"
 export function useClickOutside(el_target_ref, callback_fn) {
     if (!el_target_ref) return
 
-    let listener = (e) => {
+    const listener = (e) => {
         if (e.target == el_target_ref.value || e.composedPath().filter((el) => {
-            return el?.className?.includes('click-outside')
+            return el && el.className && typeof el.className.includes === 'function' && el.className.includes('click-outside')
         }).length > 0) {
             return
         }

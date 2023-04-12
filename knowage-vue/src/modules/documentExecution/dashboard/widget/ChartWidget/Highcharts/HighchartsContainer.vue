@@ -100,6 +100,7 @@ export default defineComponent({
             this.setSeriesEvents()
 
             const modelToRender = this.getModelForRender()
+            modelToRender.chart.backgroundColor = null
 
             console.log('--------- CHART MODEL TO RENDER: ', modelToRender)
 

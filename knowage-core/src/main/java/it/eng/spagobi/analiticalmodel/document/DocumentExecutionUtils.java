@@ -28,6 +28,7 @@ import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -913,22 +914,22 @@ public class DocumentExecutionUtils {
 	 *   <pre>
 	 *     [
 	 *       {
-	 *         "name": "KNOWAGE-6401-1-1",
+	 *         "urlName": "KNOWAGE-6401-1-1",
 	 *         "value": "Ice Cream",
 	 *         "description": "Descrizione di Ice Cream"
 	 *       },
 	 *       {
-	 *         "name": "KNOWAGE-6401-1-3",
+	 *         "urlName": "KNOWAGE-6401-1-3",
 	 *         "value": [],
 	 *         "description": ""
 	 *       },
 	 *       {
-	 *         "name": "KNOWAGE-6401-1-2",
+	 *         "urlName": "KNOWAGE-6401-1-2",
 	 *         "value": [ "Spices" ],
 	 *         "description": "Descrizione di Spices"
 	 *       },
 	 *       {
-	 *         "name": "KNOWAGE-6401-1-4",
+	 *         "urlName": "KNOWAGE-6401-1-4",
 	 *         "value": "",
 	 *         "description": ""
 	 *       }
@@ -947,13 +948,21 @@ public class DocumentExecutionUtils {
 				for (int j=0; j<length; j++) {
 					JSONObject jsonObject = (JSONObject) paramsArray.get(j);
 
-					String key = (String) jsonObject.get("label");
-					Object v = jsonObject.get("value");
+					/*
+					 * WORKAROUND : the right way to match the driver is by comparing the URL but
+					 * in the past we've used the label. This is just for retrocompatibility.
+					 */
+					String key = jsonObject.optString("urlName");
+					if (StringUtils.isBlank(key)) {
+						key = jsonObject.optString("label");
+					}
 
-					if (v == JSONObject.NULL) {
+					Object value = jsonObject.get("value");
+
+					if (value == JSONObject.NULL) {
 						ret.put(key, null);
-					} else if (v instanceof JSONArray) {
-						JSONArray a = (JSONArray) v;
+					} else if (value instanceof JSONArray) {
+						JSONArray a = (JSONArray) value;
 						String[] nv = new String[a.length()];
 						for (int i = 0; i < a.length(); i++) {
 							if (a.get(i) != null) {
@@ -963,15 +972,15 @@ public class DocumentExecutionUtils {
 							}
 						}
 						ret.put(key, nv);
-					} else if (v instanceof String) {
-						ret.put(key, v);
-					} else if (v instanceof Integer) {
-						ret.put(key, "" + v);
-					} else if (v instanceof Double) {
-						ret.put(key, "" + v);
+					} else if (value instanceof String) {
+						ret.put(key, value);
+					} else if (value instanceof Integer) {
+						ret.put(key, "" + value);
+					} else if (value instanceof Double) {
+						ret.put(key, "" + value);
 					} else {
-						Assert.assertUnreachable("Attribute [" + key + "] value [" + v
-								+ "] of PARAMETERS is not of type JSONArray nor String. It is of type [" + v.getClass().getName() + "]");
+						Assert.assertUnreachable("Attribute [" + key + "] value [" + value
+								+ "] of PARAMETERS is not of type JSONArray nor String. It is of type [" + value.getClass().getName() + "]");
 					}
 				}
 			} catch (JSONException e) {

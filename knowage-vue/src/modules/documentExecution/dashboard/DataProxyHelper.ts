@@ -75,6 +75,9 @@ const formatWidgetModelForGet = (dashboardId: any, propWidget: IWidget, dataset:
         dataToSend.summaryRow = getSummaryRow(propWidget)
     }
 
+    //if dataset is table solr, it needs this option
+    if (propWidget.type === 'table') dataToSend.options = { solrFacetPivot: true }
+
     propWidget.columns.forEach((column) => {
         if (column.fieldType === 'MEASURE') {
             const measureToPush = { id: column.alias, alias: column.alias, columnName: column.columnName, funct: column.aggregation, orderColumn: column.alias, orderType: propWidget.settings?.sortingOrder } as any

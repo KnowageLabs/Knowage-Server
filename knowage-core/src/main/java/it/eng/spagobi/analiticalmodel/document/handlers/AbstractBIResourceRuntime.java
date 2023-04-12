@@ -1,5 +1,8 @@
 package it.eng.spagobi.analiticalmodel.document.handlers;
 
+import static org.apache.commons.lang3.StringUtils.isBlank;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -357,22 +360,22 @@ public abstract class AbstractBIResourceRuntime<T extends AbstractDriver> {
 	 *   <pre>
 	 *     [
 	 *       {
-	 *         "name": "KNOWAGE-6401-1-1",
+	 *         "urlName": "KNOWAGE-6401-1-1",
 	 *         "value": "Ice Cream",
 	 *         "description": "Descrizione di Ice Cream"
 	 *       },
 	 *       {
-	 *         "name": "KNOWAGE-6401-1-3",
+	 *         "urlName": "KNOWAGE-6401-1-3",
 	 *         "value": [],
 	 *         "description": ""
 	 *       },
 	 *       {
-	 *         "name": "KNOWAGE-6401-1-2",
+	 *         "urlName": "KNOWAGE-6401-1-2",
 	 *         "value": [ "Spices" ],
 	 *         "description": "Descrizione di Spices"
 	 *       },
 	 *       {
-	 *         "name": "KNOWAGE-6401-1-4",
+	 *         "urlName": "KNOWAGE-6401-1-4",
 	 *         "value": "",
 	 *         "description": ""
 	 *       }
@@ -392,8 +395,17 @@ public abstract class AbstractBIResourceRuntime<T extends AbstractDriver> {
 			try {
 				JSONObject jsonObject = (JSONObject) jsonArray.get(i);
 
-				String name = (String) jsonObject.get("label");
-				if (biparam.getLabel().equals(name)) {
+				String urlName = jsonObject.optString("urlName");
+				String label = jsonObject.optString("label");
+
+				/*
+				 * WORKAROUND : the right way to match the driver is by comparing the URL but
+				 * in the past we've used the label. This is just for retrocompatibility.
+				 */
+				boolean matchByUrl = isNotBlank(urlName) && urlName.equals(biparam.getParameterUrlName());
+				boolean matchByLabel = isNotBlank(label) && label.equals(biparam.getLabel());
+
+				if (matchByUrl || (isBlank(urlName) && matchByLabel)) {
 					Object value = jsonObject.get("value");
 					Object description = jsonObject.get("description");
 

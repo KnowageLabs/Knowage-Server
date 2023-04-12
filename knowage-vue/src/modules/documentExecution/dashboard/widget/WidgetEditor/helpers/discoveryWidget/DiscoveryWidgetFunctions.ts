@@ -35,8 +35,8 @@ export const createNewDiscoveryWidgetSettings = () => {
 }
 
 export const addColumnToDiscoveryWidgetModel = (widgetModel: IWidget, column: IWidgetColumn) => {
-    if (column.fieldType === 'ATTRIBUTE') widgetModel.settings.facets.columns.push(column.columnName)
-    widgetModel.settings.search.columns.push(column.columnName)
+    if (column.fieldType === 'ATTRIBUTE' && !widgetModel.settings.facets.columns.includes(column.columnName)) widgetModel.settings.facets.columns.push(column.columnName)
+    if (!widgetModel.settings.search.columns.includes(column.columnName)) widgetModel.settings.search.columns.push(column.columnName)
 }
 
 export const removeColumnFromDiscoveryWidgetModel = (widgetModel: IWidget, column: IWidgetColumn) => {

@@ -158,9 +158,15 @@
 					       					</md-select>
 								    	</md-input-container>
 								    
-								    	<md-input-container flex class="md-block" ng-if="!threshold.compareValueType || threshold.compareValueType == 'static'"">
+								    	<md-input-container flex class="md-block" ng-if="!threshold.compareValueType || (threshold.compareValueType == 'static' && threshold.operator != 'IN')">
 						       				<label>{{::translate.load('sbi.cockpit.widget.table.rowthreshold.comparevalue')}}</label>
 						       				<input type="text" ng-model="threshold.value" />
+								    	</md-input-container>
+								    	
+								    
+								    	<md-input-container flex class="md-block" ng-if="threshold.compareValueType == 'static' && threshold.operator == 'IN'">
+						       				<label>{{::translate.load('sbi.cockpit.widget.table.rowthreshold.comparevalue')}}</label>
+						       				<md-chips class="small-chips" md-removable="true" md-add-on-blur="true" ng-model="threshold.valueArray" readonly="false"></md-chips>
 								    	</md-input-container>
 								    	
 								    	<button flex="10" class="md-button md-raised md-button-empty" ng-click="chooseIcon(threshold)" ng-style="{'background-color':threshold['background-color']}">
