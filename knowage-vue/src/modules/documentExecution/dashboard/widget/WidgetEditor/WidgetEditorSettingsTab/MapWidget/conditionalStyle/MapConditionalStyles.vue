@@ -53,7 +53,7 @@
                             </div>
                             <div v-else-if="conditionalStyle.condition.type === 'parameter'" class="p-d-flex p-flex-column kn-flex p-pl-1">
                                 <label class="kn-material-input-label">{{ $t('common.value') }}</label>
-                                <Dropdown v-model="conditionalStyle.condition.parameter" class="kn-material-input" :options="drivers" option-label="name" option-value="name" :disabled="conditionalStylesDisabled" @change="onDriverChanged(conditionalStyle)"> </Dropdown>
+                                <Dropdown v-model="conditionalStyle.condition.parameter" class="kn-material-input" :options="drivers" option-label="name" option-value="urlName" :disabled="conditionalStylesDisabled" @change="onDriverChanged(conditionalStyle)"> </Dropdown>
                             </div>
                             <div v-else-if="conditionalStyle.condition.type === 'variable'" class="p-d-flex p-flex-column kn-flex p-pl-1">
                                 <label class="kn-material-input-label">{{ $t('common.value') }}</label>
@@ -159,7 +159,7 @@ export default defineComponent({
         },
         loadParameterValuesMap() {
             if (!this.drivers) return
-            this.drivers.forEach((driver: any) => (this.parameterValuesMap[driver.name] = driver.value))
+            this.drivers.forEach((driver: any) => (this.parameterValuesMap[driver.urlName] = driver.value))
         },
         loadVariableValuesMap() {
             if (!this.variables) return

@@ -228,7 +228,7 @@ export const formatWidget = (widget: any, formattedModel: IDashboard, user: any,
             formattedWidget = formatDiscoveryWidget(widget, drivers)
             break
         case 'map':
-            formattedWidget = formatMapWidget(widget)
+            formattedWidget = formatMapWidget(widget, formattedModel, drivers)
 
     }
 

@@ -1,12 +1,13 @@
-import { getFormattedStyle } from './MapStyleHelper'
-import { IWidget, IWidgetResponsive, IWidgetExports, IWidgetInteractions } from './../../Dashboard.d'
+import { IWidget, IWidgetResponsive, IWidgetExports, IWidgetInteractions, IDashboard, IDashboardDriver } from './../../Dashboard.d'
 import { IMapWidgetConditionalStyles, IMapWidgetSettings, IMapWidgetStyle } from './../../interfaces/mapWidget/DashboardMapWidget.d'
+import { getFormattedStyle } from './MapStyleHelper'
 import { hexToRgba } from '../FormattingHelpers'
 import { getFormattedInteractions } from '../common/WidgetInteractionsHelper'
+import { getFormattedSettingsFromLayers } from './MapLayersCompatibilityHelper'
 import * as mapWidgetDefaultValues from '../../widget/WidgetEditor/helpers/mapWidget/MapWidgetDefaultValues'
 import * as widgetCommonDefaultValues from '../../widget/WidgetEditor/helpers/common/WidgetCommonDefaultValues'
 
-export const formatMapWidget = (widget: any) => {
+export const formatMapWidget = (widget: any, formattedDashboardModel: IDashboard, drivers: IDashboardDriver[]) => {
     console.log('--------- ORIGINAL WIDGET: ', widget)
 
     const formattedWidget = {
@@ -20,9 +21,9 @@ export const formatMapWidget = (widget: any) => {
         settings: {} as IMapWidgetSettings
     } as IWidget
     formattedWidget.settings = getFormattedWidgetSettings(widget)
-    getFormattedSettingsFromLayers(widget, formattedWidget) // TODO - Move to other file
-    console.log('--------- FORMATTED WIDGET: ', formattedWidget)
+    getFormattedSettingsFromLayers(widget, formattedWidget, formattedDashboardModel, drivers)
 
+    console.log('--------- FORMATTED WIDGET: ', formattedWidget)
     return formattedWidget
 }
 
@@ -31,7 +32,7 @@ const getFormattedWidgetSettings = (widget: any) => {
         updatable: widget.updateble,
         clickable: widget.cliccable,
         configuration: getFormattedConfiguration(widget),
-        visualization: getFormattedVisualization(widget),
+        visualization: getFormattedVisualization(),
         conditionalStyles: getFormattedConditionalStyles(),
         legend: getFormattedLegend(widget),
         dialog: getFormattedDialogSettings(widget),
@@ -74,17 +75,8 @@ const getFormattedControlPanel = (widget: any) => {
 }
 
 // TODO - Darko - see about this
-const getFormattedVisualization = (widget: any) => {
+const getFormattedVisualization = () => {
     const formattedVisualizationSettings = mapWidgetDefaultValues.getDefaultVisualizationSettings()
-    const layers = widget.content.layers
-    layers?.forEach((layer: any) => formattedVisualizationSettings.types.push({
-        target: layer.name,
-        type: layer.visualizationType,
-        markerConf: layer.markerConf,
-        clusterConf: layer.clusterConf,
-        heatmapConf: layer.heatmapConf,
-        analysisConf: layer.analysisConf
-    }))
     return formattedVisualizationSettings
 }
 
@@ -126,17 +118,3 @@ const getFormattedTooltipsSettings = () => {
     return formattedTooltips
 }
 
-const getFormattedSettingsFromLayers = (widget: any, formattedWidget: IWidget) => {
-    const layers = widget.content.layers
-    layers?.forEach((layer: any) => {
-        layer?.content?.columnSelectedOfDataset?.forEach((column: any) => {
-            addLayerColumnTooltipOptions(column, formattedWidget, layer.name)
-        })
-    })
-}
-
-const addLayerColumnTooltipOptions = (oldColumn: any, formattedWidget: IWidget, layerName: string) => {
-    if (oldColumn?.properties?.showTooltip) {
-        formattedWidget.settings.tooltips.layers.push({ name: layerName, columns: [oldColumn.name] })
-    }
-} 
