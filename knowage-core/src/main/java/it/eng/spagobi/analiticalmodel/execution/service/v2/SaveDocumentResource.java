@@ -311,7 +311,7 @@ public class SaveDocumentResource extends AbstractSpagoBIResource {
 			return document.getId();
 		} catch (Throwable t) {
 			logger.error("Error updating document", t);
-			logger.debug("Document was: " + String.valueOf(saveDocumentDTO));
+			logger.debug("Document was: " + String.valueOf(request));
 			error.addErrorKey("sbi.document.saveError");
 		}
 		return null;
