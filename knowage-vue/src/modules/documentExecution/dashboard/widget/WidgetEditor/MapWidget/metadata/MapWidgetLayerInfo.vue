@@ -3,7 +3,7 @@
         <h2 class="p-ml-3">{{ $t('common.layer') }}</h2>
         <div class="p-formgrid p-grid p-p-3">
             <div class="p-float-label p-col-12 p-lg-6 kn-flex">
-                <InputText v-model="layer.name" class="kn-material-input kn-width-full" :disabled="true" />
+                <InputText v-model="layer.alias" class="kn-material-input kn-width-full" :disabled="true" />
                 <label class="kn-material-input-label">{{ $t('common.layer') }}</label>
             </div>
 
@@ -32,6 +32,36 @@
                 <i v-tooltip.top="$t('dashboard.widgetEditor.map.layerInfo.defaultVisibleHint')" class="pi pi-question-circle kn-cursor-pointer p-mx-3"></i>
             </span>
         </div>
+
+        <Message class="kn-width-full p-d-flex p-jc-center p-m-0 p-mx-2" severity="info" :closable="false">
+            {{ $t('dashboard.widgetEditor.map.layerInfo.linkHint') }}
+        </Message>
+
+        <div class="p-formgrid p-grid p-p-3 p-mt-2">
+            <div class="p-col-5">
+                <span class="p-field p-float-label p-col-12 p-lg-6 p-fluid kn-width-full">
+                    <Dropdown v-model="layer.datasetLink" class="kn-material-input" :options="datasets" option-value="id.dsId" option-label="name"> </Dropdown>
+                    <label class="kn-material-input-label"> {{ $t('common.dataset') }} </label>
+                </span>
+                <span class="p-field p-float-label p-col-12 p-lg-6 p-fluid kn-width-full">
+                    <Dropdown v-model="layer.datasetColumnLink" class="kn-material-input" :options="datasetColumnsLinkOptions" option-value="name" option-label="alias"> </Dropdown>
+                    <label class="kn-material-input-label"> {{ $t('dashboard.widgetEditor.map.layerInfo.datasetColumn') }} </label>
+                </span>
+            </div>
+            <div class="p-d-flex p-flex-column p-jc-center p-ai-center p-col-2">
+                <i class="fa fa-link"></i>
+            </div>
+            <div class="p-col-5">
+                <span class="p-field p-float-label p-col-12 p-lg-6 p-fluid kn-width-full">
+                    <Dropdown v-model="layer.catalogLayerLink" class="kn-material-input" :options="[]"> </Dropdown>
+                    <label class="kn-material-input-label"> {{ $t('dashboard.widgetEditor.map.layerInfo.catalogLayer') }} </label>
+                </span>
+                <span class="p-field p-float-label p-col-12 p-lg-6 p-fluid kn-width-full">
+                    <Dropdown v-model="layer.catalogLayerColumnLink" class="kn-material-input" :options="[]"> </Dropdown>
+                    <label class="kn-material-input-label"> {{ $t('dashboard.widgetEditor.map.layerInfo.catalogLayerColumn') }} </label>
+                </span>
+            </div>
+        </div>
     </div>
 </template>
 
@@ -39,19 +69,31 @@
 import { PropType, defineComponent } from 'vue'
 import { getTranslatedLabel } from '@/helpers/commons/dropdownHelper'
 import { IMapWidgetLayer } from '@/modules/documentExecution/dashboard/interfaces/mapWidget/DashboardMapWidget'
+import { IDataset } from '@/modules/documentExecution/dashboard/Dashboard'
+import { mapActions } from 'pinia'
 import descriptor from './MapWidgetMetadataDescriptor.json'
 import Dropdown from 'primevue/dropdown'
 import InputSwitch from 'primevue/inputswitch'
+import Message from 'primevue/message'
+import dashboardStore from '@/modules/documentExecution/dashboard/Dashboard.store'
 
 export default defineComponent({
     name: 'map-widget-layer-info',
-    components: { Dropdown, InputSwitch },
+    components: { Dropdown, InputSwitch, Message },
     props: { selectedLayer: { type: Object as PropType<IMapWidgetLayer | null>, required: true } },
     data() {
         return {
             descriptor,
             layer: null as IMapWidgetLayer | null,
+            datasets: [] as IDataset[],
             getTranslatedLabel
+        }
+    },
+    computed: {
+        datasetColumnsLinkOptions() {
+            if (!this.layer || !this.layer.datasetLink) return []
+            const index = this.datasets.findIndex((dataset: IDataset) => dataset.id.dsId === this.layer?.datasetLink)
+            return index !== -1 ? this.datasets[index].metadata.fieldsMeta : []
         }
     },
     watch: {
@@ -59,13 +101,18 @@ export default defineComponent({
             this.loadLayer()
         }
     },
+
     created() {
         this.loadLayer()
+        this.loadDatasets()
     },
     methods: {
+        ...mapActions(dashboardStore, ['getAllDatasets']),
         loadLayer() {
             this.layer = this.selectedLayer
-            console.log('---- loadedLayer', this.layer)
+        },
+        loadDatasets() {
+            this.datasets = this.getAllDatasets()
         },
         onStaticChange() {
             if (!this.layer) return

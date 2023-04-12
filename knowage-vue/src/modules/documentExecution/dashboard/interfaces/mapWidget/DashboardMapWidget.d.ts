@@ -165,7 +165,7 @@ export interface ILayer {
 
 export interface IMapWidgetLayer {
     type: string,
-    dsId: 213,
+    dsId: number,
     alias: string,
     name: string,
     defaultVisible: boolean,
@@ -186,7 +186,11 @@ export interface IMapWidgetLayer {
     clusterConf: any,
     heatmapConf: any,
     analysisConf: any,
-    modalSelectionColumn: string
+    modalSelectionColumn: string,
+    datasetLink?: number
+    datasetColumnLink?: number
+    catalogLayerLink?: number
+    catalogLayerColumnLink?: number
 }
 
 export interface IWidgetMapLayerColumn {

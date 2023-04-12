@@ -774,8 +774,12 @@
                 "crossNavigationLabelHint": "This is the label of the link. If empty it will be \"Go to detail\"",
                 "dialogHint": "The selected elements will be visible when clicking on the map",
                 "layerInfo": {
+                    "catalogLayer": "Catalog Layer",
+                    "catalogLayerColumn": "Catalog Layer Column",
+                    "datasetColumn": "Dataset column",
                     "defaultVisible": "Default visible",
                     "defaultVisibleHint": "Default visible hint",
+                    "linkHint": "Catalog type layer will link a dataset Column value to a catalog Column one. Select them for the dataset join",
                     "staticHint": "Static hint",
                     "target": "Target",
                     "targetHint": "Target hint"

@@ -54,5 +54,5 @@
             "value": "wkt"
         }
     ],
-    "layerTypes": ["DATASET"]
+    "layerTypes": ["DATASET", "CATALOG"]
 }
