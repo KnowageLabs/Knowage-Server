@@ -1,5 +1,5 @@
 <template>
-    <div class="p-grid p-jc-center p-ai-center p-p-4">
+    <div class="p-grid p-jc-center p-ai-center kn-flex p-p-4">
         <div class="p-d-flex p-flex-row p-col-12 p-mb-4">
             <label class="kn-material-input-label">{{ $t('common.fields') }}</label>
             <i class="pi pi-plus-circle kn-cursor-pointer p-ml-auto" @click="addField"></i>
