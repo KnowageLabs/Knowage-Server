@@ -81,10 +81,8 @@ export default defineComponent({
             type: Boolean,
             default: false
         },
-        selectedDoc: {
-            type: Object,
-            required: false
-        }
+        selectedDoc: {},
+        documents: { type: Object, required: false }
     },
     emits: ['close', 'apply'],
     data() {
@@ -92,7 +90,7 @@ export default defineComponent({
             dialogDescriptor,
             loading: false,
             selected: {} as any,
-            documents: [] as any,
+            dialogDocuments: [] as any,
             filters: {
                 global: [filterDefault],
                 DOCUMENT_LABEL: {
@@ -108,9 +106,14 @@ export default defineComponent({
     },
     watch: {
         async selectedDoc() {
-            await this.loadAllDoc()
-            this.selected = this.documents.item.find((doc) => doc.DOCUMENT_ID === this.selectedDoc)
+            if (this.documents?.length == 0) await this.loadAllDoc()
+            else this.dialogDocuments = this.documents
+
+            this.selected = this.dialogDocuments.item.find((doc) => doc.DOCUMENT_ID === this.selectedDoc)
         }
+    },
+    beforeUnmount() {
+        this.dialogDocuments = []
     },
     methods: {
         closeDialog() {
@@ -120,7 +123,7 @@ export default defineComponent({
             this.loading = true
             await this.$http
                 .get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + '2.0/documents/listDocument')
-                .then((response: AxiosResponse<any>) => (this.documents = response.data))
+                .then((response: AxiosResponse<any>) => (this.dialogDocuments = response.data))
                 .finally(() => (this.loading = false))
         },
         hadleSelect() {

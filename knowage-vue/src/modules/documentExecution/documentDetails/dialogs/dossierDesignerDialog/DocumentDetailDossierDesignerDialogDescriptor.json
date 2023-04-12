@@ -1,12 +1,16 @@
 {
     "driverTypes": [
         {
-            "code": "DYNAMIC",
-            "label": "Dynamic"
+            "code": "dynamic",
+            "label": "dashboard.widgetEditor.interactions.dynamic"
         },
         {
-            "code": "STATIC",
-            "label": "Static"
+            "code": "static",
+            "label": "common.static"
+        },
+        {
+            "code": "inherit",
+            "label": "documentExecution.dossier.designerDialog.inherit"
         }
     ],
     "knListSettings": {
@@ -57,7 +61,7 @@
                 ]
             },
             {
-                "fieldName": "fileName",
+                "fieldName": "name",
                 "validators": [
                     {
                         "key": "required"

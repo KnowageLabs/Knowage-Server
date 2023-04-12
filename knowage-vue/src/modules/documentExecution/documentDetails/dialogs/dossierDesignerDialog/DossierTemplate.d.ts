@@ -1,18 +1,18 @@
 export interface iDossierTemplate {
     type: string
     prefix?: string
-    fileName: string
+    name: string
     placeholders: iPlaceholder[]
-    downloadable: boolean
-    uploadable: boolean
+    downloadable?: boolean
+    uploadable?: boolean
 }
 
 export interface iPlaceholder {
-    name: string
-    documentLabel?: string
+    imageName: string
+    label?: string
     source: string
-    parameters?: iDriver[]
-    views?: iView[]
+    parameters: any[]
+    views: iView[]
 }
 
 export interface iView {
@@ -20,7 +20,7 @@ export interface iView {
     creationDate: Date
 }
 
-export interface iDriver {
+export interface iDossierDriver {
     label: string
     type: string
     dossier_url_name?: string
