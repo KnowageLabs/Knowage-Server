@@ -48,7 +48,6 @@ const getFormattedLayers = (widget: any) => {
     return widget.content.layers
 }
 
-// TODO
 const getFormattedConfiguration = (widget: any) => {
     return {
         baseLayer: getFormattedBaseLayer(widget),
@@ -74,9 +73,19 @@ const getFormattedControlPanel = (widget: any) => {
     return formattedControlPanel
 }
 
-// TODO
+// TODO - Darko - see about this
 const getFormattedVisualization = (widget: any) => {
-    return {}
+    const formattedVisualizationSettings = mapWidgetDefaultValues.getDefaultVisualizationSettings()
+    const layers = widget.content.layers
+    layers?.forEach((layer: any) => formattedVisualizationSettings.types.push({
+        target: layer.name,
+        type: layer.visualizationType,
+        markerConf: layer.markerConf,
+        clusterConf: layer.clusterConf,
+        heatmapConf: layer.heatmapConf,
+        analysisConf: layer.analysisConf
+    }))
+    return formattedVisualizationSettings
 }
 
 // TODO - Darko - where is this in old app?!! Thresholds can't be converted.

@@ -37,13 +37,63 @@ export interface IMapWidgetVisualizationSettings {
     types: IMapWidgetVisualizationType[]
 }
 
+// TODO - Darko - See with Darko about this
 export interface IMapWidgetVisualizationType {
     target: string,
     type: string,
-    marker: {
-        type: string
-    }
+    markerConf?: IMapWidgetVisualizationTypeMarker,
+    clusterConf?: IMapWidgetVisualizationTypeCluster,
+    heatmapConf?: IMapWidgetVisualizationTypeHeatmap,
+    analysisConf?: IMapWidgetVisualizationTypeChoropleth
+}
 
+export interface IMapWidgetVisualizationTypeMarker {
+    type: string,
+    style: {
+        color?: string,
+        borderColor?: string
+    },
+    size?: number,
+    icon?: {
+        label: string,
+        className: string,
+        unicode: string,
+        visible: boolean,
+        id: number,
+        category: string,
+        fontWeight: number,
+        fontFamily: string
+    },
+    scale?: number,
+    url?: string
+    img?: string
+}
+
+export interface IMapWidgetVisualizationTypeCluster {
+    enabled: boolean,
+    radiusSize: number,
+    style: {
+        "font-size"?: string,
+        color?: string,
+        'background-color'?: string
+    }
+}
+
+export interface IMapWidgetVisualizationTypeHeatmap {
+    enabled: boolean,
+    radius: number,
+    blur: number
+}
+
+export interface IMapWidgetVisualizationTypeChoropleth {
+    method: string,
+    classes: number,
+    fromColor: string,
+    toColor: string,
+    parentLayer?: string,
+    properties?: {
+        thresholds: { color: string, from: number, to: number }[]
+    }
 }
 
 export interface IMapWidgetConditionalStyles {

@@ -1,4 +1,4 @@
-import { IMapDialogSettings, IMapTooltipSettings, IMapWidgetBaseLayer, IMapWidgetConditionalStyle, IMapWidgetControlPanel, IMapWidgetLegend } from '@/modules/documentExecution/dashboard/interfaces/mapWidget/DashboardMapWidget'
+import { IMapDialogSettings, IMapTooltipSettings, IMapWidgetBaseLayer, IMapWidgetConditionalStyle, IMapWidgetControlPanel, IMapWidgetLegend, IMapWidgetVisualizationSettings, IMapWidgetVisualizationTypeChoropleth, IMapWidgetVisualizationTypeCluster, IMapWidgetVisualizationTypeHeatmap, IMapWidgetVisualizationTypeMarker } from '@/modules/documentExecution/dashboard/interfaces/mapWidget/DashboardMapWidget'
 import descriptor from './MapWidgetDefaultValuesDescriptor.json'
 
 export const getDefaultMapTooltips = () => {
@@ -21,6 +21,29 @@ export const getDefaultControlPanelSettings = () => {
     return descriptor.defaultControlPanelSettings as IMapWidgetControlPanel
 }
 
-export const getDfaultConditionalStyle = () => {
+export const getDefaultConditionalStyle = () => {
     return descriptor.defaultConditionalStyle as IMapWidgetConditionalStyle
+}
+
+export const getDefaultVisualizationSettings = () => {
+    const visualizationSettings = { types: [] } as IMapWidgetVisualizationSettings
+    return visualizationSettings
+}
+
+export const getDefaultVisualizationMarkerConfiguration = () => {
+    return descriptor.defaultVisualizationMarkerConfiguration as IMapWidgetVisualizationTypeMarker
+}
+
+export const getDefaultVisualizationClusterConfiguration = () => {
+    return descriptor.defaultVisualizationClusterConfiguration as IMapWidgetVisualizationTypeCluster
+}
+
+
+export const getDefaultVisualizationHeatmapConfiguration = () => {
+    return descriptor.defaultVisualizationHeatmapConfiguration as IMapWidgetVisualizationTypeHeatmap
+}
+
+
+export const getDefaultVisualizationChoroplethConfiguration = () => {
+    return descriptor.defaultVisualizationChoroplethConfiguration as IMapWidgetVisualizationTypeChoropleth
 }

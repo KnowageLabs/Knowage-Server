@@ -168,7 +168,7 @@ export default defineComponent({
         onConditionalStylesEnabledChange() {
             if (!this.conditionalStylesModel) return
             if (this.conditionalStylesModel.enabled && this.conditionalStylesModel.conditions.length === 0) {
-                this.conditionalStylesModel.conditions.push(mapWidgetDefaultValues.getDfaultConditionalStyle())
+                this.conditionalStylesModel.conditions.push(mapWidgetDefaultValues.getDefaultConditionalStyle())
             }
         },
         onCompareValueTypeChanged(conditionalStyle: IMapWidgetConditionalStyle) {
@@ -212,7 +212,7 @@ export default defineComponent({
         },
         addConditionalStyle() {
             if (!this.conditionalStylesModel || this.conditionalStylesDisabled) return
-            this.conditionalStylesModel.conditions.push(mapWidgetDefaultValues.getDfaultConditionalStyle())
+            this.conditionalStylesModel.conditions.push(mapWidgetDefaultValues.getDefaultConditionalStyle())
         },
         removeConditionalStyle(index: number) {
             if (!this.conditionalStylesModel || this.conditionalStylesDisabled) return

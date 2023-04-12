@@ -83,5 +83,30 @@
                 "name": ""
             }
         ]
+    },
+    "defaultVisualizationChoroplethConfiguration": {
+        "classes": 3,
+        "fromColor": "#rgba(209, 209, 209, 1)",
+        "method": "CLASSIFY_BY_EQUAL_INTERVALS",
+        "toColor": "rgba(91, 91, 91, 1)"
+    },
+    "defaultVisualizationClusterConfiguration": {
+        "enabled": false,
+        "radiusSize": 10,
+        "style": {
+            "font-size": "12px"
+        }
+    },
+    "defaultVisualizationHeatmapConfiguration": {
+        "blur": 15,
+        "enabled": false,
+        "radius": 8
+    },
+    "defaultVisualizationMarkerConfiguration": {
+        "style": {
+            "borderColor": "",
+            "color": ""
+        },
+        "type": "default"
     }
 }
