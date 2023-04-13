@@ -1267,7 +1267,11 @@ $mdPanel,cockpitModule_widgetSelection,cockpitModule_properties,cockpitModule_ut
 									tempJSN  +=",";
 								}
 								if(cockpitModule_properties.PARAMETERS[parameter].type == "String"){
-									tempJSN  +=  (splittedValues[j].charAt(0) == "'" ? "" : "'") + splittedValues[j] + (splittedValues[j].charAt(splittedValues[j].length - 1) == "'" ? "" : "'") ;
+									if ((splittedValues[j].charAt(0) == "'") && (splittedValues[j].charAt(splittedValues[j].length - 1) == "'")) {
+										splittedValues[j] = splittedValues[j].substring(1, splittedValues[j].length - 1);										
+									}
+									splittedValues[j]  = splittedValues[j].replace(/'/g, "\'");
+									tempJSN  += splittedValues[j];
 								}
 								else {
 									tempJSN  += splittedValues[j];
