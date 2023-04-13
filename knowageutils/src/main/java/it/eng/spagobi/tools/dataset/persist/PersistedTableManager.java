@@ -66,6 +66,7 @@ import it.eng.spagobi.utilities.database.temporarytable.TemporaryTableManager;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
+import it.eng.spagobi.utilities.sql.SqlUtils;
 
 /**
  * Functions that manage the persistence of the dataset
@@ -137,18 +138,18 @@ public class PersistedTableManager implements IPersistedManager {
 
 		dataset.setPersisted(false);
 		if (dataset.isIterable()) {
-			persist(dataset, dsPersist, tableName);
+			persist(dataset, dsPersist, tableName, false);
 		} else {
 			dataset.loadData();
 			IDataStore datastore = dataset.getDataStore();
 			if (dataset.getDsType().toString().equalsIgnoreCase("File")) {
 				ajustMetaDataFromFrontend(datastore, dataset);
 			}
-			persistDataset(datastore, dsPersist);
+			persistDataset(datastore, dsPersist, false);
 		}
 	}
 
-	public void persist(IDataSet dataSet, IDataSource datasource, String tableName) throws Exception {
+	public void persist(IDataSet dataSet, IDataSource datasource, String tableName, boolean forCache) throws Exception {
 		logger.debug("IN");
 
 		Monitor monitor = MonitorFactory.start("spagobi.cache.sqldb.persist.paginated");
@@ -165,7 +166,7 @@ public class PersistedTableManager implements IPersistedManager {
 				configureColumnSize(iterator.getMetaData());
 
 				logger.debug("Creating table to transfer data");
-				createTable(iterator.getMetaData(), datasource);
+				createTable(iterator.getMetaData(), datasource, forCache);
 
 				List<IRecord> records = new ArrayList<>(BATCH_SIZE);
 				int recordCount = 0;
@@ -209,7 +210,7 @@ public class PersistedTableManager implements IPersistedManager {
 
 	}
 
-	public void persistDataset(IDataSet dataSet, IDataStore datastore, IDataSource datasource, String tableName) throws Exception {
+	public void persistDataset(IDataSet dataSet, IDataStore datastore, IDataSource datasource, String tableName, boolean forCache) throws Exception {
 		setTableNameAndDialect(datasource, tableName);
 
 		if (dataSet instanceof VersionedDataSet) {
@@ -219,7 +220,7 @@ public class PersistedTableManager implements IPersistedManager {
 			datastore = normalizeFileDataSet(dataSet, datastore);
 		}
 
-		persistDataset(datastore, datasource);
+		persistDataset(datastore, datasource, forCache);
 	}
 
 	public void updateDataset(IDataSource datasource, IDataStore datastore, String tableName) throws Exception {
@@ -533,7 +534,7 @@ public class PersistedTableManager implements IPersistedManager {
 		return datastore;
 	}
 
-	public void persistDataset(IDataStore datastore, IDataSource datasource) throws Exception {
+	public void persistDataset(IDataStore datastore, IDataSource datasource, boolean forCache) throws Exception {
 		logger.debug("IN");
 		Connection connection = null;
 		String dialect = datasource.getHibDialectClass();
@@ -561,7 +562,7 @@ public class PersistedTableManager implements IPersistedManager {
 				}
 			}
 			// Steps #3,4: define create table statement
-			createTable(datastore.getMetaData(), datasource);
+			createTable(datastore.getMetaData(), datasource, forCache);
 			// Step #5: execute batch with insert statements
 			for (int i = 0; i < statements.length; i++) {
 				PreparedStatement statement = statements[i];
@@ -1011,7 +1012,7 @@ public class PersistedTableManager implements IPersistedManager {
 		return dataBase.getDataBaseType(type);
 	}
 
-	private String getCreateTableQuery(IMetaData md, IDataSource dataSource) throws DataBaseException {
+	private String getCreateTableQuery(IMetaData md, IDataSource dataSource, boolean forCache) throws DataBaseException {
 		String toReturn = null;
 
 		// creates the table only when metadata has fields
@@ -1033,7 +1034,11 @@ public class PersistedTableManager implements IPersistedManager {
 				toReturn += " " + (md.getIdFieldIndex() == i ? "NOT NULL PRIMARY KEY" : "");
 				toReturn += ((i < l - 1) ? " , " : "");
 			}
-			toReturn += " )";
+			if (forCache && dataSource.getDialectName().equalsIgnoreCase(SqlUtils.DIALECT_MYSQL)) {
+				logger.debug("Creating table using ENGINE=MEMORY functionality for MYSQL");
+				toReturn += " ) ENGINE = MEMORY ";
+			} else
+				toReturn += " )";
 		} else {
 			logger.debug("Metadata fields object not found! Doesn't create temporary table.");
 		}
@@ -1234,10 +1239,10 @@ public class PersistedTableManager implements IPersistedManager {
 		this.queryTimeout = queryTimeout;
 	}
 
-	public void createTable(IMetaData md, IDataSource dataSource) throws Exception {
+	public void createTable(IMetaData md, IDataSource dataSource, boolean forCache) throws Exception {
 		logger.debug("IN");
 		// Steps #1: define create table statement
-		String createStmtQuery = getCreateTableQuery(md, dataSource);
+		String createStmtQuery = getCreateTableQuery(md, dataSource, forCache);
 		if (createStmtQuery != null) {
 			dropTableIfExists(dataSource);
 			// Step #2: execute create table statement

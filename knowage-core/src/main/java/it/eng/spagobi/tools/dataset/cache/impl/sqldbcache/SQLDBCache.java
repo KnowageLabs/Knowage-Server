@@ -412,7 +412,7 @@ public class SQLDBCache implements ICache {
 							logger.debug("Setting query timeout...");
 							persistedTableManager.setQueryTimeout(queryTimeout);
 						}
-						persistedTableManager.persist(dataSet, getDataSource(), tableName);
+						persistedTableManager.persist(dataSet, getDataSource(), tableName, true);
 						persistedTableManager.createIndexesOnTable(dataSet, getDataSource(), tableName, columns);
 
 						cacheMetadata.addCacheItem(dataSet.getName(), signature, tableName,
@@ -550,7 +550,7 @@ public class SQLDBCache implements ICache {
 			}
 			String tableName = PersistedTableManager.generateRandomTableName(this.getMetadata().getTableNamePrefix());
 			Monitor monitor = MonitorFactory.start("spagobi.cache.sqldb.persistStoreInCache.persistdataset");
-			persistedTableManager.persistDataset(dataset, resultset, getDataSource(), tableName);
+			persistedTableManager.persistDataset(dataset, resultset, getDataSource(), tableName, true);
 			monitor.stop();
 			return tableName;
 		} catch (Throwable t) {
