@@ -38,7 +38,7 @@
 				</div>
 			</div>
 
-			<div ng-style="getLegendSectionContainerStyle()" layout="{{ getLegendDisposition() }}" ng-show="getLayerVisibility(legendElem.layer)" ng-if="legendElem.visualizationType == 'balloons'">
+			<div ng-if="legendElem.visualizationType == 'balloons'" ng-style="getLegendSectionContainerStyle()" layout="{{ getLegendDisposition() }}" ng-show="getLayerVisibility(legendElem.layer)">
 				<span class="legendLayerLabel" ng-style="getLegendSpanElementsStyle()">{{legendElem.alias}}</span>
 				<div layout="row" ng-style="getLegendElementsStyle()" ng-repeat="classification in legendElem.classification" style="margin: 0 3px;">
 					<svg height="{{ classification.dimension + 2 }}" width="{{ classification.dimension + 2 }}" ng-style="{ position: 'relative', top: 3 }">
