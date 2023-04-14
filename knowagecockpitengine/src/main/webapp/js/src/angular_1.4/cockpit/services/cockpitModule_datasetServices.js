@@ -1271,7 +1271,7 @@ $mdPanel,cockpitModule_widgetSelection,cockpitModule_properties,cockpitModule_ut
 										splittedValues[j] = splittedValues[j].substring(1, splittedValues[j].length - 1);										
 									}
 									splittedValues[j]  = splittedValues[j].replace(/'/g, "\'");
-									tempJSN  += splittedValues[j];
+									tempJSN  += `'${splittedValues[j]}'`;
 								}
 								else {
 									tempJSN  += splittedValues[j];
