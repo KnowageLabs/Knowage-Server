@@ -17,6 +17,8 @@
  */
 package it.eng.knowage.engines.dossier.template.parameter;
 
+import java.util.Objects;
+
 import javax.xml.bind.annotation.XmlAttribute;
 
 import com.fasterxml.jackson.annotation.JsonSetter;
@@ -80,6 +82,24 @@ public class Parameter {
 	@JsonSetter("url_name_description")
 	public void setUrlNameDescription(String urlNameDescription) {
 		this.urlNameDescription = urlNameDescription;
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(dossierUrlName, type, urlName, urlNameDescription, value);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Parameter other = (Parameter) obj;
+		return Objects.equals(dossierUrlName, other.dossierUrlName) && Objects.equals(type, other.type) && Objects.equals(urlName, other.urlName)
+				&& Objects.equals(urlNameDescription, other.urlNameDescription) && Objects.equals(value, other.value);
 	}
 
 }
