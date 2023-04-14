@@ -216,4 +216,12 @@ export default defineComponent({
     height: 100%;
     border: none;
 }
+
+.isMobileDevice {
+    #folders-tree {
+        &:deep(.p-treenode:last-child .p-treenode-children) {
+            padding-bottom: 70px;
+        }
+    }
+}
 </style>
