@@ -3,7 +3,7 @@
         id="folders-tree"
         v-model:selectionKeys="selectedFolderKey"
         class="kn-tree kn-column-tree kn-flex p-p-0"
-        scroll-height="calc(100vh - 127px)"
+        scroll-height="100%"
         maximizable
         :value="nodes"
         selection-mode="single"
@@ -211,6 +211,9 @@ export default defineComponent({
 
 <style lang="scss" scoped>
 #folders-tree {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
     border: none;
 }
 </style>
