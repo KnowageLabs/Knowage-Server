@@ -84,6 +84,20 @@ public class Parameter {
 		this.urlNameDescription = urlNameDescription;
 	}
 
+	public Parameter(String type, String urlName, String dossierUrlName, String value, String urlNameDescription) {
+		super();
+		if (type != null)
+			this.type = type;
+		if (urlName != null)
+			this.urlName = urlName;
+		if (dossierUrlName != null)
+			this.dossierUrlName = dossierUrlName;
+		if (value != null)
+			this.value = value;
+		if (urlNameDescription != null)
+			this.urlNameDescription = urlNameDescription;
+	}
+
 	@Override
 	public int hashCode() {
 		return Objects.hash(dossierUrlName, type, urlName, urlNameDescription, value);
