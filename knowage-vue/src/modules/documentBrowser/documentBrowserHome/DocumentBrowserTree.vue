@@ -3,7 +3,7 @@
         id="folders-tree"
         v-model:selectionKeys="selectedFolderKey"
         class="kn-tree kn-column-tree kn-flex p-p-0"
-        scroll-height="100%"
+        scroll-height="calc(100vh - 127px)"
         maximizable
         :value="nodes"
         selection-mode="single"
@@ -219,6 +219,9 @@ export default defineComponent({
 
 .isMobileDevice {
     #folders-tree {
+        &:deep(.p-tree-wrapper) {
+            max-height: 100% !important;
+        }
         &:deep(.p-treenode:last-child .p-treenode-children) {
             padding-bottom: 70px;
         }
