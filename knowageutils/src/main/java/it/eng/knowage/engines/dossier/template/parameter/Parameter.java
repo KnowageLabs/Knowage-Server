@@ -21,8 +21,10 @@ import java.util.Objects;
 
 import javax.xml.bind.annotation.XmlAttribute;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonSetter;
 
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class Parameter {
 
 	private String type;
