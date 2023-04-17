@@ -341,8 +341,7 @@ public class DatasetManagementAPI {
 	}
 
 	/**
-	 * @deprecated
-	 * TODO ML-DATASOURCE-V3 Delete
+	 * @deprecated TODO ML-DATASOURCE-V3 Delete
 	 */
 	@Deprecated
 	public List<IDataSet> getEnterpriseDataSet() {
@@ -356,8 +355,7 @@ public class DatasetManagementAPI {
 	}
 
 	/**
-	 * @deprecated
-	 * TODO ML-DATASOURCE-V3 Delete
+	 * @deprecated TODO ML-DATASOURCE-V3 Delete
 	 */
 	@Deprecated
 	public List<IDataSet> getOwnedDataSet() {
@@ -372,8 +370,7 @@ public class DatasetManagementAPI {
 	}
 
 	/**
-	 * @deprecated
-	 * TODO ML-DATASOURCE-V3 Delete
+	 * @deprecated TODO ML-DATASOURCE-V3 Delete
 	 */
 	@Deprecated
 	public List<IDataSet> getSharedDataSet() {
@@ -387,8 +384,7 @@ public class DatasetManagementAPI {
 	}
 
 	/**
-	 * @deprecated
-	 * TODO ML-DATASOURCE-V3 Delete
+	 * @deprecated TODO ML-DATASOURCE-V3 Delete
 	 */
 	@Deprecated
 	public List<IDataSet> getUncertifiedDataSet() {
@@ -402,8 +398,7 @@ public class DatasetManagementAPI {
 	}
 
 	/**
-	 * @deprecated
-	 * TODO ML-DATASOURCE-V3 Delete
+	 * @deprecated TODO ML-DATASOURCE-V3 Delete
 	 */
 	@Deprecated
 	public List<IDataSet> getMyDataDataSet() {
@@ -525,10 +520,7 @@ public class DatasetManagementAPI {
 			ICategoryDAO categoryDao = DAOFactory.getCategoryDAO();
 
 			// TODO : Makes sense?
-			List<Domain> dialects = categoryDao.getCategoriesForDataset()
-				.stream()
-				.map(Domain::fromCategory)
-				.collect(toList());
+			List<Domain> dialects = categoryDao.getCategoriesForDataset().stream().map(Domain::fromCategory).collect(toList());
 			if (dialects == null || dialects.size() == 0) {
 				return null;
 			}
@@ -543,10 +535,7 @@ public class DatasetManagementAPI {
 				List<RoleMetaModelCategory> aRoleCategories = roledao.getMetaModelCategoriesForRole(role.getId());
 				List<RoleMetaModelCategory> resp = new ArrayList<>();
 
-				List<Domain> array = categoryDao.getCategoriesForDataset()
-					.stream()
-					.map(Domain::fromCategory)
-					.collect(toList());
+				List<Domain> array = categoryDao.getCategoriesForDataset().stream().map(Domain::fromCategory).collect(toList());
 
 				for (RoleMetaModelCategory r : aRoleCategories) {
 					for (Domain dom : array) {
@@ -682,6 +671,8 @@ public class DatasetManagementAPI {
 										} else {
 											if (isString)
 												value = value.replaceAll("\'", "\'\'");
+											if (value.endsWith(delim))
+												value = delim + value + delim;
 											newValues.add(value);
 										}
 
@@ -742,6 +733,9 @@ public class DatasetManagementAPI {
 										} else {
 											if (isString)
 												value = value.replaceAll("\'", "\'\'");
+											if (value.endsWith(delim))
+												value = delim + value + delim;
+
 											newValues.add(value);
 										}
 
