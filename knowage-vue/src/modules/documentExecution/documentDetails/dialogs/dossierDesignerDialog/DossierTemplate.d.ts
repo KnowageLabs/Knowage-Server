@@ -13,6 +13,9 @@ export interface iPlaceholder {
     source: string
     parameters: any[]
     views: iView[]
+    sheetHeight: number
+    sheetWidth: number
+    deviceScaleFactor: number
 }
 
 export interface iView {

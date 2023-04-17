@@ -1005,6 +1005,7 @@
             "deleteSuccess": "Successfully deleted selected activity.",
             "deleteTitle": "Delete dossier activity",
             "designerDialog": {
+                "deviceScaleFactor": "Device scale factor",
                 "dossierUrlName": "Dossier url name",
                 "downloadable": "Downloadable",
                 "driverLinkType": "Driver link type",
@@ -1012,6 +1013,7 @@
                 "fileNameHint": "File upload cannot be undone",
                 "inherit": "Inherit",
                 "linkTo": "Link to",
+                "linkToDocumentHint": "Select the document to attach it to the placeholder. Then choose the driver link type and proceed using a saved view or setting values for the driver parameters",
                 "noDocumentLinkedToThePlaceholder": "No document linked to the placeholder",
                 "noDriversAndNoViewsForDocument": "No driver and no views found for the document",
                 "noPlaceholdersFound": "The uploaded document doesn't contain placeholders accordingly to the prefix. Please, try again with another document",
@@ -1019,12 +1021,13 @@
                 "placeholders": "Placeholders",
                 "prefixHint": "This field will be case sensitive",
                 "saveAndRun": "Save and run",
+                "sheetHeight": "Sheet Height",
+                "sheetWidth": "Sheet width",
                 "step0": {
                     "info": "Upload the template for the dossier and set the prefix to use to search for images within",
                     "title": "Dossier designer - Upload file and choose the prefix for images"
                 },
                 "step1": {
-                    "info": "Select the document to attach it to the placeholder. Then choose the driver link type and proceed using a saved view or setting values for the driver parameters",
                     "title": "Dossier designer - Hook placeholders to documents"
                 },
                 "uploadable": "Uploadable",

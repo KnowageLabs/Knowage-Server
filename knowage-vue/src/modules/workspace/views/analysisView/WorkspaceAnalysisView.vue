@@ -80,6 +80,7 @@
 
     <KnInputFile v-if="!uploading" :change-function="uploadAnalysisFile" accept="image/*" :trigger-input="triggerUpload" />
     <WorkspaceCockpitDialog :visible="cockpitDialogVisible" @close="closeCockpitDialog"></WorkspaceCockpitDialog>
+    <DocumentDetailDossierDesignerDialog v-if="user.enterprise && dossierDesignerDialogVisible" :visible="dossierDesignerDialogVisible" :selected-document="selectedDocument" @close="dossierDesignerDialogVisible = false"></DocumentDetailDossierDesignerDialog>
 </template>
 <script lang="ts">
 import { defineComponent } from 'vue'
@@ -102,28 +103,13 @@ import mainStore from '../../../../App.store'
 import { getCorrectRolesForExecution } from '../../../../helpers/commons/roleHelper'
 import { mapState } from 'pinia'
 import UserFunctionalitiesConstants from '@/UserFunctionalitiesConstants.json'
+import DocumentDetailDossierDesignerDialog from '@/modules/documentExecution/documentDetails/dialogs/dossierDesignerDialog/DocumentDetailDossierDesignerDialog.vue'
 
 export default defineComponent({
     name: 'workspace-analysis-view',
-    components: { DataTable, Column, DetailSidebar, WorkspaceCard, KnFabButton, Menu, Message, KnInputFile, WorkspaceAnalysisViewEditDialog, WorkspaceWarningDialog, WorkspaceAnalysisViewShareDialog, WorkspaceCockpitDialog },
+    components: { DataTable, Column, DetailSidebar, WorkspaceCard, KnFabButton, Menu, Message, KnInputFile, WorkspaceAnalysisViewEditDialog, WorkspaceWarningDialog, WorkspaceAnalysisViewShareDialog, WorkspaceCockpitDialog, DocumentDetailDossierDesignerDialog },
     props: { toggleCardDisplay: { type: Boolean } },
     emits: ['showMenu', 'toggleDisplayView', 'execute'],
-    computed: {
-        isOwner(): any {
-            return (this.store.$state as any).user.userId === this.selectedAnalysis.creationUser
-        },
-        isShared(): any {
-            return this.selectedAnalysis.functionalities.length > 1
-        },
-        ...mapState(mainStore, {
-            user: 'user'
-        }),
-        addButtonIsVisible(): boolean {
-            return (
-                this.user.functionalities.includes(UserFunctionalitiesConstants.CREATE_SELF_SELVICE_COCKPIT) || this.user.functionalities.includes(UserFunctionalitiesConstants.CREATE_SELF_SELVICE_GEOREPORT) || this.user.functionalities.includes(UserFunctionalitiesConstants.CREATE_SELF_SELVICE_KPI)
-            )
-        }
-    },
     setup() {
         const store = mainStore()
         return { store }
@@ -146,9 +132,29 @@ export default defineComponent({
             uploading: false,
             shareDialogVisible: false,
             creationMenuButtons: [] as any,
-            cockpitDialogVisible: false
+            cockpitDialogVisible: false,
+            dossierDesignerDialogVisible: false,
+            selectedDocument: null
         }
     },
+    computed: {
+        isOwner(): any {
+            return this.user.userId === this.selectedAnalysis.creationUser
+        },
+        isShared(): any {
+            return this.selectedAnalysis.functionalities.length > 1
+        },
+        ...mapState(mainStore, {
+            user: 'user',
+            isEnterprise: 'isEnterprise'
+        }),
+        addButtonIsVisible(): boolean {
+            return (
+                this.user.functionalities.includes(UserFunctionalitiesConstants.CREATE_SELF_SELVICE_COCKPIT) || this.user.functionalities.includes(UserFunctionalitiesConstants.CREATE_SELF_SELVICE_GEOREPORT) || this.user.functionalities.includes(UserFunctionalitiesConstants.CREATE_SELF_SELVICE_KPI)
+            )
+        }
+    },
+
     created() {
         this.getAnalysisDocs()
     },
@@ -373,6 +379,7 @@ export default defineComponent({
             if (this.user.functionalities.includes(UserFunctionalitiesConstants.CREATE_SELF_SELVICE_COCKPIT)) this.creationMenuButtons.push({ key: '0', label: this.$t('common.cockpit'), command: () => this.openCockpitDialog(), visible: true })
             if (this.user.functionalities.includes(UserFunctionalitiesConstants.CREATE_SELF_SELVICE_GEOREPORT)) this.creationMenuButtons.push({ key: '1', label: this.$t('workspace.myAnalysis.geoRef'), command: () => this.openGeoRefCreation(), visible: true })
             if (this.user.functionalities.includes(UserFunctionalitiesConstants.CREATE_SELF_SELVICE_KPI)) this.creationMenuButtons.push({ key: '2', label: this.$t('common.kpi'), command: () => this.openKpiDocumentDesigner(), visible: true })
+            if (this.isEnterprise) this.creationMenuButtons.push({ key: '3', label: this.$t('common.dossier'), command: () => this.openDossierDesigner(), visible: true })
         },
         openCockpitDialog() {
             this.cockpitDialogVisible = true
@@ -386,6 +393,9 @@ export default defineComponent({
         },
         openGeoRefCreation() {
             this.$router.push('/gis/new')
+        },
+        openDossierDesigner() {
+            this.dossierDesignerDialogVisible = true
         }
     }
 })
