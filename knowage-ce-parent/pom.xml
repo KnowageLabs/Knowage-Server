@@ -95,6 +95,13 @@
 		<checkstyle.config.location>../checkstyle/checkstyle.xml</checkstyle.config.location>
 		<checkstyle.header.file>../LICENSE</checkstyle.header.file>
 		<mpir.skip>true</mpir.skip>
+		
+		<!--
+			Exlude some types from Sonar analisys for now.
+			
+			In the future they can be included too.
+		 -->
+		<sonar.exclusions>**/*.css, **/*.js, **/*.ts, **/*.xml, **/dist/**/*, **/node_modules/**/*</sonar.exclusions>
 	</properties>
 
 	<modules>
