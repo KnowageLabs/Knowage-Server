@@ -13,9 +13,14 @@
                 <img class="kn-width-full kn-height-full" :src="getImageSource(visTypeConfig.name)" />
             </div>
         </div>
-        <br />
+
+        <hr class="kn-width-full p-my-2" />
 
         <VisTypeConfig :vis-type-prop="visType" />
+
+        <br />
+        <br />
+        <br />
     </div>
 </template>
 

@@ -1,6 +1,6 @@
 <template>
-    <div class="p-d-flex p-flex-column p-m-2">
-        <div v-if="visType.type === 'markers'">markers component</div>
+    <div class="p-d-flex p-flex-column">
+        <MarkersConfig v-if="visType.type === 'markers'" :marker-config-prop="visTypeProp.markerConf" />
         <MapVisualizationTypeBalloonsChoropleth v-else-if="visType.type === 'balloons'" :prop-visualization-type-configuration="visType.balloonConf ?? null" type="balloons"></MapVisualizationTypeBalloonsChoropleth>
         <div v-else-if="visType.type === 'pies'">pies component</div>
         <div v-else-if="visType.type === 'clusters'">clusters component</div>
@@ -17,9 +17,11 @@ import descriptor from './MapVisualizationTypeDescriptor.json'
 import MapVisualizationTypeHeatmap from './configuration/MapVisualizationTypeHeatmap.vue'
 import MapVisualizationTypeBalloonsChoropleth from './configuration/MapVisualizationTypeBalloonsChoropleth.vue'
 
+import MarkersConfig from './configurations/MapMarkersConfiguration.vue'
+
 export default defineComponent({
     name: 'map-visualization-type',
-    components: { MapVisualizationTypeHeatmap, MapVisualizationTypeBalloonsChoropleth },
+    components: { MarkersConfig, MapVisualizationTypeHeatmap, MapVisualizationTypeBalloonsChoropleth },
     props: { visTypeProp: { type: Object as PropType<IMapWidgetVisualizationType>, required: true } },
     emits: [],
     data() {

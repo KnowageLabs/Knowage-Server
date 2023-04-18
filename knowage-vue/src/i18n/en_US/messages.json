@@ -798,6 +798,14 @@
                 "legendText": "Legend Text",
                 "legendTitle": "Legend Title",
                 "linearGradient": "Linear Gradient",
+                "markerTypes": {
+                    "default": "Default Marker",
+                    "icon": "Icon Marker",
+                    "image": "Image Marker",
+                    "web": "Web Image Marker",
+                    "iconUrl": "Icon URL",
+                    "scale%": "Scale %"
+                },
                 "manageRanges": "Manage Ranges",
                 "metadata": {
                     "addField": "Add Field",
