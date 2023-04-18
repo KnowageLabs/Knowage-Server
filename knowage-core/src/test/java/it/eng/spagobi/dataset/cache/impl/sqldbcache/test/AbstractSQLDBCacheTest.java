@@ -457,7 +457,7 @@ public abstract class AbstractSQLDBCacheTest extends AbstractCacheTest {
 		persistedTableManager.setTableName(tableName);
 
 		try {
-			persistedTableManager.persistDataset(dataStore, dataSourceWriting);
+			persistedTableManager.persistDataset(dataStore, dataSourceWriting, true);
 		} catch (Exception e) {
 			logger.error("Error persisting dataset");
 		}

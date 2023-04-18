@@ -1262,7 +1262,7 @@ $mdPanel,cockpitModule_widgetSelection,cockpitModule_properties,cockpitModule_ut
 						// CASE 4 [[pippo],[pluto]]
 						
 						for (var j in splittedValues) {
-							if (splittedValues[j] != "") {
+							if (splittedValues[j] && splittedValues[j] != "") {
 								if (j!=0) {
 									tempJSN  +=",";
 								}
@@ -1271,7 +1271,7 @@ $mdPanel,cockpitModule_widgetSelection,cockpitModule_properties,cockpitModule_ut
 										splittedValues[j] = splittedValues[j].substring(1, splittedValues[j].length - 1);										
 									}
 									splittedValues[j]  = splittedValues[j].replace(/'/g, "\'");
-									tempJSN  += splittedValues[j];
+									tempJSN  += `'${splittedValues[j]}'`;
 								}
 								else {
 									tempJSN  += splittedValues[j];

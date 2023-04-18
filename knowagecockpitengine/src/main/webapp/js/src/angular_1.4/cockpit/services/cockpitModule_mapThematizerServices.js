@@ -90,7 +90,7 @@
 
 			var configThematizer = config.analysisConf || {};
 			var useCache = false; //cache isn't use for analysis, just with fixed marker
-			var isSimpleMarker = props["isSimpleMarker"];
+			var coordType = props["coordType"];
 			var isCluster = (Array.isArray(feature.get('features'))) ? true : false;
 			var measureStat = findIndicatorStats(defaultIndicator, props["stats"]);
 			var value;
@@ -102,66 +102,36 @@
 				value = (props[mts.getActiveIndicator()])  ? props[mts.getActiveIndicator()].value : undefined;
 			}
 
-//			var thematized = false;
-
-//			if (config.visualizationType == 'choropleth') {
-//				configThematizer.parentLayer = parentLayer;
-//				if (!configMarker.style) configMarker.style = {};
-//				if (isSimpleMarker)
-//					configMarker.style.color = mts.getColorFromClassification(value, parentLayer) || "grey";
-//				else{
-//					style = mts.getChoroplethStyles(value, parentLayer, null);
-//					thematized = true;
-//				}
-//			}
-
-//			if (!isSimpleMarker){
-//				var fillColor   = (configMarker.style && configMarker.style.color)       ? configMarker.style.color       : "grey";
-//				var borderColor = (configMarker.style && configMarker.style.borderColor) ? configMarker.style.borderColor : undefined;
-//
-//				if (props[mts.getActiveIndicator()]
-//						&& props[mts.getActiveIndicator()].thresholdsConfig
-//						&& props[mts.getActiveIndicator()].thresholdsConfig.length != 0) {
-//					fillColor = mts.getColorByThresholds(value, props) || fillColor;
-//				}
-//
-//				style = mts.getChoroplethStyles(value, parentLayer, fillColor, borderColor);
-//				thematized = true;
-//			}
-
 			if (isChoropleth) {
-				var configMarker = config.markerConf || {};
 				var extColor = mts.getColorFromClassification(externalLegend, value, parentLayer);
-				style = mts.getMarkerStyles(value, parentLayer, props, configMarker, extColor);
-			} else if (/* !thematized && */ isCluster && feature.get('features').length > 1 ){
+				var configMarker = config.markerConf || {};
+				if (coordType == "string") {
+					style = mts.getMarkerStyles(value, parentLayer, props, configMarker, extColor);
+				} else {
+					var analysisConf = config.analysisConf || {};
+					var borderColor = configMarker.style.borderColor;
+					style = mts.getChoroplethStyles(value, parentLayer, extColor, borderColor);
+				}
+			} else if (isCluster && feature.get('features').length > 1 ){
 				var configCluster = config.clusterConf || {};
 				style = mts.getClusterStyles(value, parentLayer, props, configCluster);
-//				useCache = false;
-			} else if (/* !thematized && */ isBalloon) {
+			} else if (isBalloon) {
 				var balloonConf = config.balloonConf || {};
 				style = mts.getBalloonStyles(externalLegend, value, parentLayer, props, balloonConf, measureStat);
-//				useCache = false;
-			} else if (/* !thematized && */ isPie) {
+			} else if (isPie) {
 				var configPie = config.pieConf || {};
 				style = mts.getPieStyles(value, parentLayer, props, configPie, measureStat);
-//				useCache = false;
-			} else /* if (!thematized) */ {
+			} else {
 				var configMarker = config.markerConf || {};
 				style = mts.getMarkerStyles(value, parentLayer, props, configMarker);
-//				useCache = true;
 			}
 
-			if (useCache && !styleCache[parentLayer]) {
-				styleCache[parentLayer] = style;
-				return styleCache[parentLayer] ;
-			} else {
-				return style;
-			}
+			return style;
 		}
 
-	    mts.trim = function (str) {
-	    	return str.replace(/^\s+|\s+$/gm,'');
-	    }
+		mts.trim = function (str) {
+			return str.replace(/^\s+|\s+$/gm,'');
+		}
 
 	    mts.rgbaToHex = function (rgba) {
 	        var parts = rgba.substring(rgba.indexOf("(")).split(","),
@@ -573,10 +543,12 @@
 			currLegend.method = config.analysisConf.method;
 
 			mts.updateChoroplethLegendGradient(externalLegend, layerName, config.analysisConf, config.analysisConf.classes);
-			var layerNameForMinMAx = layerName.split("|");
 
-			var minValue = mts.cacheSymbolMinMax[layerNameForMinMAx[1] + '|' + mts.getActiveIndicator()].minValue;
-			var maxValue = mts.cacheSymbolMinMax[layerNameForMinMAx[1] + '|' + mts.getActiveIndicator()].maxValue;
+			var defaultIndicator = config.defaultIndicator;
+			var measureStat = findIndicatorStats(defaultIndicator, data.stats);
+
+			var minValue = measureStat.min;
+			var maxValue = measureStat.max;
 			var split = (maxValue-minValue)/(config.analysisConf.classes);
 			for (var i=0; i<config.analysisConf.classes; i++) {
 				var from = (minValue+(split*i));
