@@ -211,6 +211,20 @@ export default defineComponent({
 
 <style lang="scss" scoped>
 #folders-tree {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
     border: none;
+}
+
+.isMobileDevice {
+    #folders-tree {
+        &:deep(.p-tree-wrapper) {
+            max-height: 100% !important;
+        }
+        &:deep(.p-treenode:last-child .p-treenode-children) {
+            padding-bottom: 70px;
+        }
+    }
 }
 </style>

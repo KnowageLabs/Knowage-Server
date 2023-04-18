@@ -23,6 +23,11 @@ import it.eng.spagobi.commons.dao.ISpagoBIDao;
 import it.eng.spagobi.workspace.bo.FunctionsOrganizer;
 import it.eng.spagobi.workspace.metadata.SbiFunctionsOrganizer;
 
+/**
+ * @deprecated Replaced by KNOWAGE_TM-513
+ * TODO : Delete
+ */
+@Deprecated
 public interface IFunctionsOrganizerDAO extends ISpagoBIDao {
 
 	public List<FunctionsOrganizer> loadFolderByUser();

@@ -45,11 +45,8 @@ import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Expression;
+import org.json.JSONObject;
 import org.safehaus.uuid.UUIDGenerator;
-
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import it.eng.spago.error.EMFErrorSeverity;
 import it.eng.spago.error.EMFUserError;
@@ -1115,24 +1112,14 @@ public class TenantsDAOHibImpl extends AbstractHibernateDAO implements ITenantsD
 	}
 
 	@Override
-	public String updateThemes(IEngUserProfile profile, String uuid, String themeName, ObjectNode newThemeConfig, boolean isActive) throws EMFUserError {
+	public String updateThemes(IEngUserProfile profile, String uuid, String themeName, JSONObject newThemeConfig, boolean isActive) throws EMFUserError {
 		ITenantsDAO tenantDao = DAOFactory.getTenantsDAO();
 		tenantDao.setUserProfile(profile);
 		Tenant tenantManager = TenantManager.getTenant();
 		String tenantName = tenantManager.getName();
 		SbiTenant tenant = tenantDao.loadTenantByName(tenantName);
 
-		ObjectMapper mapper = new ObjectMapper();
-		String newThemeConfigStr = null;
-
-		if (!newThemeConfig.isEmpty(null)) {
-			try {
-				newThemeConfigStr = mapper.writeValueAsString(newThemeConfig);
-			} catch (JsonProcessingException e1) {
-				// TODO Auto-generated catch block
-				throw new SpagoBIRuntimeException("Error during theme config conversion", e1);
-			}
-		}
+		String newThemeConfigStr = newThemeConfig.toString();
 
 		if (uuid == null) {
 			if (isActive) {
