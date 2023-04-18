@@ -1,6 +1,6 @@
 <template>
-    <div class="p-d-flex p-flex-column p-m-2">
-        <div v-if="visType.type === 'markers'">markers component</div>
+    <div class="p-d-flex p-flex-column">
+        <MarkersConfig v-if="visType.type === 'markers'" :marker-config-prop="visTypeProp.markerConf" />
         <div v-else-if="visType.type === 'balloons'">balloons component</div>
         <div v-else-if="visType.type === 'pies'">pies component</div>
         <div v-else-if="visType.type === 'clusters'">clusters component</div>
@@ -15,9 +15,11 @@ import { defineComponent, PropType } from 'vue'
 
 import descriptor from './MapVisualizationTypeDescriptor.json'
 
+import MarkersConfig from './configurations/MapMarkersConfiguration.vue'
+
 export default defineComponent({
     name: 'map-visualization-type',
-    components: {},
+    components: { MarkersConfig },
     props: { visTypeProp: { type: Object as PropType<IMapWidgetVisualizationType>, required: true } },
     emits: [],
     data() {

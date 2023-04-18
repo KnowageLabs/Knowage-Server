@@ -1,4 +1,4 @@
-import { IWidgetInteractions, IWidgetResponsive, IWidgetTitle, IWidgetBordersStyle, IWidgetBackgroundStyle, IWidgetPaddingStyle, IWidgetShadowsStyle, IWidgetExports, IDataset } from './../../Dashboard.d'
+import { IWidgetInteractions, IWidgetResponsive, IWidgetTitle, IWidgetBordersStyle, IWidgetBackgroundStyle, IWidgetPaddingStyle, IWidgetShadowsStyle, IWidgetExports, IDataset, IIcon } from './../../Dashboard.d'
 
 export interface IMapWidgetSettings {
     updatable: boolean
@@ -54,16 +54,7 @@ export interface IMapWidgetVisualizationTypeMarker {
         borderColor?: string
     }
     size?: number
-    icon?: {
-        label: string
-        className: string
-        unicode: string
-        visible: boolean
-        id: number
-        category: string
-        fontWeight: number
-        fontFamily: string
-    }
+    icon?: IIcon
     scale?: number
     url?: string
     img?: string

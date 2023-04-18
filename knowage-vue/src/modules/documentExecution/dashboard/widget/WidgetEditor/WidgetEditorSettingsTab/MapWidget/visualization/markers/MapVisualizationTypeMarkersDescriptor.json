@@ -1,0 +1,24 @@
+{
+    "markerTypes": [
+        {
+            "class": "fas fa-circle",
+            "name": "default",
+            "tooltip": "dashboard.widgetEditor.map.markerTypes.default"
+        },
+        {
+            "class": "fas fa-location-dot",
+            "name": "icon",
+            "tooltip": "dashboard.widgetEditor.map.markerTypes.icon"
+        },
+        {
+            "class": "fas fa-image",
+            "name": "img",
+            "tooltip": "dashboard.widgetEditor.map.markerTypes.image"
+        },
+        {
+            "class": "fas fa-globe",
+            "name": "web",
+            "tooltip": "dashboard.widgetEditor.map.markerTypes.web"
+        }
+    ]
+}
