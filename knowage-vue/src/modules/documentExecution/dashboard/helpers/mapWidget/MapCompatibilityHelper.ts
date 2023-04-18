@@ -74,13 +74,11 @@ const getFormattedControlPanel = (widget: any) => {
     return formattedControlPanel
 }
 
-// TODO - Darko - see about this
 const getFormattedVisualization = () => {
     const formattedVisualizationSettings = mapWidgetDefaultValues.getDefaultVisualizationSettings()
     return formattedVisualizationSettings
 }
 
-// TODO - Darko - where is this in old app?!! Thresholds can't be converted.
 const getFormattedConditionalStyles = () => {
     const formattedStyles = { enabled: false, conditions: [] } as IMapWidgetConditionalStyles
     return formattedStyles
