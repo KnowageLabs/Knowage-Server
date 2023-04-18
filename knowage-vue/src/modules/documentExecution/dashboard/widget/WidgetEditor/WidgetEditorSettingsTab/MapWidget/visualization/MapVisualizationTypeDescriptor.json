@@ -1,10 +1,33 @@
 {
+    "classesMethodOptions": [
+        {
+            "label": "dashboard.widgetEditor.map.classesMethodOptions.byEqualIntervals",
+            "value": "CLASSIFY_BY_EQUAL_INTERVALS"
+        },
+        {
+            "label": "dashboard.widgetEditor.map.classesMethodOptions.byQuantils",
+            "value": "CLASSIFY_BY_QUANTILS"
+        },
+        {
+            "label": "dashboard.widgetEditor.map.classesMethodOptions.byRanges",
+            "value": "CLASSIFY_BY_RANGES"
+        }
+    ],
     "style": {
         "galleryCard": {
             "border": "1px solid #cccccc",
             "height": "80px",
             "transition": "0.5s ease",
             "width": "140px"
+        },
+        "rangesDialog": {
+            "max-width": "1200px",
+            "min-width": "600px",
+            "width": "60%"
+        },
+        "rangesDialogBreakpoints": {
+            "640px": "100vw",
+            "960px": "75vw"
         }
     },
     "visTypes": [

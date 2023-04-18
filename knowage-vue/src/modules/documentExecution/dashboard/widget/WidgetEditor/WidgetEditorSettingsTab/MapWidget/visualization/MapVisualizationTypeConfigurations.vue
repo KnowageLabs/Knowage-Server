@@ -5,7 +5,7 @@
         <div v-else-if="visType.type === 'pies'">pies component</div>
         <div v-else-if="visType.type === 'clusters'">clusters component</div>
         <MapVisualizationTypeHeatmap v-else-if="visType.type === 'heatmap'" :prop-heatmap-configuration="visType.heatmapConf ?? null"></MapVisualizationTypeHeatmap>
-        <div v-else-if="visType.type === 'choropleth'">choropleth component</div>
+        <MapVisualizationTypeChoropleth v-else-if="visType.type === 'choropleth'" :prop-choropleth-configuration="visType.analysisConf ?? null"></MapVisualizationTypeChoropleth>
     </div>
 </template>
 
@@ -15,10 +15,11 @@ import { defineComponent, PropType } from 'vue'
 
 import descriptor from './MapVisualizationTypeDescriptor.json'
 import MapVisualizationTypeHeatmap from './configuration/MapVisualizationTypeHeatmap.vue'
+import MapVisualizationTypeChoropleth from './configuration/MapVisualizationTypeChoropleth.vue'
 
 export default defineComponent({
     name: 'map-visualization-type',
-    components: { MapVisualizationTypeHeatmap },
+    components: { MapVisualizationTypeHeatmap, MapVisualizationTypeChoropleth },
     props: { visTypeProp: { type: Object as PropType<IMapWidgetVisualizationType>, required: true } },
     emits: [],
     data() {

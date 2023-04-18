@@ -85,6 +85,7 @@
         ]
     },
     "defaultVisualizationChoroplethConfiguration": {
+        "borderColor": "",
         "classes": 3,
         "fromColor": "#rgba(209, 209, 209, 1)",
         "method": "CLASSIFY_BY_EQUAL_INTERVALS",
@@ -99,7 +100,6 @@
     },
     "defaultVisualizationHeatmapConfiguration": {
         "blur": 15,
-        "enabled": false,
         "radius": 8
     },
     "defaultVisualizationMarkerConfiguration": {
