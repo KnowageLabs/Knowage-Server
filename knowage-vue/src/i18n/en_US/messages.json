@@ -425,6 +425,7 @@
             "ascending": "Ascending",
             "axis": "Axis",
             "background": "Background",
+            "blur": "Blur",
             "borders": {
                 "borderRadiusBottomLeft": "Border radius bottom left",
                 "borderRadiusBottomRight": "Border radius bottom right",
@@ -758,6 +759,7 @@
             },
             "manualInput": "Manual input",
             "map": {
+                "addThreshold": "Add Threshold",
                 "baseLayer": {
                     "autoCentering": "Auto centering",
                     "selectBackgroundLayer": "Select Background Layer",
@@ -765,6 +767,13 @@
                     "title": "Enable Base Layer",
                     "zoomFactor": "Zoom factor"
                 },
+                "classesMethodOptions": {
+                    "byEqualIntervals": "Classify by equal intervals",
+                    "byQuantils": "Classify by equal quantils",
+                    "byRanges": "Classify by ranges",
+                    "title": "Classes method"
+                },
+                "classesNumber": "Classes number",
                 "controlPanel": {
                     "alwaysShow": "Always show control panel",
                     "dimension": "Control Panel Dimension",
@@ -773,6 +782,8 @@
                 },
                 "crossNavigationLabelHint": "This is the label of the link. If empty it will be \"Go to detail\"",
                 "dialogHint": "The selected elements will be visible when clicking on the map",
+                "fromColor": "From color",
+                "fromThreshold": "From (>=)",
                 "layerInfo": {
                     "catalogLayer": "Catalog Layer",
                     "catalogLayerColumn": "Catalog Layer Column",
@@ -795,6 +806,7 @@
                     "iconUrl": "Icon URL",
                     "scale%": "Scale %"
                 },
+                "manageRanges": "Manage Ranges",
                 "metadata": {
                     "addField": "Add Field",
                     "aggregateBy": "Aggregate by",
@@ -812,6 +824,9 @@
                 "north": "North",
                 "range": "Range",
                 "south": "South",
+                "thresholds": "Thresholds",
+                "toColor": "To color",
+                "toThreshold": "To (<)",
                 "tooltipHint": "The selected elements will be visible on mouse hover",
                 "visTypes": {
                     "balloons": "Balloons",
@@ -867,6 +882,7 @@
             "position": "Position",
             "precision": "Precision",
             "prefix": "Prefix",
+            "radius": "Radius",
             "recentlyUsed": "Recently Used",
             "responsive": {
                 "extraLargeDevices": "Show On Extra Large Devices",

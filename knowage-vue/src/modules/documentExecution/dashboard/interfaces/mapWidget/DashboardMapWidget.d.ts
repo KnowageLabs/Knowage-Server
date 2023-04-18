@@ -71,7 +71,6 @@ export interface IMapWidgetVisualizationTypeCluster {
 }
 
 export interface IMapWidgetVisualizationTypeHeatmap {
-    enabled: boolean
     radius: number
     blur: number
 }
@@ -81,7 +80,7 @@ export interface IMapWidgetVisualizationTypeChoropleth {
     classes: number
     fromColor: string
     toColor: string
-    parentLayer?: string
+    borderColor: string
     properties?: {
         thresholds: { color: string; from: number; to: number }[]
     }

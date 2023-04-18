@@ -37,7 +37,6 @@ export default defineComponent({
     methods: {
         loadLayer() {
             this.layer = this.selectedLayer
-            // console.log('-------- LOADED LAYER: ', this.layer)
             this.loadSpatialAttribute()
         },
         loadSpatialAttribute() {
