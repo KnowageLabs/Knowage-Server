@@ -189,6 +189,7 @@ export default defineComponent({
         }
     },
     created() {
+        this.setupCodeMirror()
         this.calcFieldFunctions = [...this.propCalcFieldFunctions]
         this.availableFunctions = [...this.calcFieldFunctions].sort((a, b) => {
             return a.name.localeCompare(b.name)
@@ -198,7 +199,6 @@ export default defineComponent({
         })
         this.cf = { formula: '' } as IKnCalculatedField
         if (!this.readOnly && this.template && !this.template.parameters && this.source === 'QBE') {
-
             this.cf = { colName: this.template.alias, formula: this.template.expression } as IKnCalculatedField
         }
         if (!this.readOnly && this.template && !this.template.parameters && this.source === 'dashboard') {
@@ -331,7 +331,8 @@ export default defineComponent({
             const from = { line: cursor.line, ch: start }
             const to = { line: cursor.line, ch: end }
             const range = this.codeMirror.getDoc().getRange(from, to)
-            const fieldAlias = this.source !== 'QBE' ? '$F{' + data.item.fieldAlias + '}' : data.item.fieldAlias
+
+            const fieldAlias = this.source !== 'QBE' ? this.wrap(data.item.fieldAlias) : data.item.fieldAlias
             const spContent = data.elementType === 'function' ? data.item : fieldAlias
             if (range.match(/\(|\)|,|\./g)) {
                 this.codeMirror.getDoc().replaceSelection(spContent, cursor)
@@ -344,6 +345,11 @@ export default defineComponent({
                 if (textEl) this.cf.formula = textEl.innerText
             }
             this.codeMirror.refresh()
+        },
+        wrap(alias: string): string {
+            const regex = /(\$F{)[a-zA-Z0-9_]+(})/g
+            const found = alias.match(regex)
+            return !found ? '$F{' + alias + '}' : alias
         },
         applyValidationResultsToFormula() {
             const from = { line: this.codeMirror.getDoc().firstLine(), ch: 0 }
