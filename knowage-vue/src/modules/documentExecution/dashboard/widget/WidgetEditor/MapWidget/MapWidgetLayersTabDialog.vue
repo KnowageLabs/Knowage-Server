@@ -90,7 +90,7 @@ export default defineComponent({
         },
         filterOutSelectedDatasets(selectedDatasets, allDatasets) {
             return allDatasets.filter((responseDataset) => {
-                return !selectedDatasets.find((selectedDataset) => {
+                return !selectedDatasets?.find((selectedDataset) => {
                     return responseDataset.id.dsId === selectedDataset.dsId
                 })
             })

@@ -25,13 +25,13 @@
             @itemSelected="setSelectedColumn"
             @itemDeleted="onColumnDelete"
         ></WidgetEditorColumnTable>
-        <ChartWidgetColumnForm class="p-m-2" :widget-model="widgetModel" :selected-column="selectedColumn"></ChartWidgetColumnForm>
+        <ChartWidgetColumnForm class="p-m-2" :widget-model="widgetModel" :selected-column="selectedColumn" :chart-type="chartType"></ChartWidgetColumnForm>
     </div>
 </template>
 
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
-import { IDataset, IWidget, IWidgetColumn } from '@/modules/documentExecution/Dashboard/Dashboard'
+import { IDataset, IWidget, IWidgetColumn } from '@/modules/documentExecution/dashboard/Dashboard'
 import { emitter } from '../../../../../DashboardHelpers'
 import descriptor from '../../TableWidget/TableWidgetDataDescriptor.json'
 import highchartDescriptor from './VegaDataContainerDescriptor.json'
