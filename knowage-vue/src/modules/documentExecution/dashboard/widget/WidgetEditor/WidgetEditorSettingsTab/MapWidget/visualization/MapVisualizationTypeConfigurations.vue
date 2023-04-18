@@ -1,9 +1,9 @@
 <template>
     <div class="p-d-flex p-flex-column">
-        <MarkersConfig v-if="visType.type === 'markers'" :marker-config-prop="visTypeProp.markerConf" />
+        <MapVisualizationTypeMarkers v-if="visType.type === 'markers'" :marker-config-prop="visTypeProp.markerConf" />
         <MapVisualizationTypeBalloonsChoropleth v-else-if="visType.type === 'balloons'" :prop-visualization-type-configuration="visType.balloonConf ?? null" type="balloons"></MapVisualizationTypeBalloonsChoropleth>
         <div v-else-if="visType.type === 'pies'">pies component</div>
-        <div v-else-if="visType.type === 'clusters'">clusters component</div>
+        <MapVisualizationTypeClusters v-if="visType.type === 'clusters'" :cluster-config-prop="visTypeProp.clusterConf" :marker-config-prop="visTypeProp.markerConf" />
         <MapVisualizationTypeHeatmap v-else-if="visType.type === 'heatmap'" :prop-heatmap-configuration="visType.heatmapConf ?? null"></MapVisualizationTypeHeatmap>
         <MapVisualizationTypeBalloonsChoropleth v-else-if="visType.type === 'choropleth'" :prop-visualization-type-configuration="visType.analysisConf ?? null" type="choropleth"></MapVisualizationTypeBalloonsChoropleth>
     </div>
@@ -14,14 +14,14 @@ import { IMapWidgetVisualizationType } from '@/modules/documentExecution/dashboa
 import { defineComponent, PropType } from 'vue'
 
 import descriptor from './MapVisualizationTypeDescriptor.json'
-import MapVisualizationTypeHeatmap from './configuration/MapVisualizationTypeHeatmap.vue'
+import MapVisualizationTypeMarkers from './configuration/MapVisualizationTypeMarkers.vue'
 import MapVisualizationTypeBalloonsChoropleth from './configuration/MapVisualizationTypeBalloonsChoropleth.vue'
-
-import MarkersConfig from './configurations/MapMarkersConfiguration.vue'
+import MapVisualizationTypeClusters from './configuration/MapVisualizationTypeClusters.vue'
+import MapVisualizationTypeHeatmap from './configuration/MapVisualizationTypeHeatmap.vue'
 
 export default defineComponent({
     name: 'map-visualization-type',
-    components: { MarkersConfig, MapVisualizationTypeHeatmap, MapVisualizationTypeBalloonsChoropleth },
+    components: { MapVisualizationTypeMarkers, MapVisualizationTypeClusters, MapVisualizationTypeHeatmap, MapVisualizationTypeBalloonsChoropleth },
     props: { visTypeProp: { type: Object as PropType<IMapWidgetVisualizationType>, required: true } },
     emits: [],
     data() {

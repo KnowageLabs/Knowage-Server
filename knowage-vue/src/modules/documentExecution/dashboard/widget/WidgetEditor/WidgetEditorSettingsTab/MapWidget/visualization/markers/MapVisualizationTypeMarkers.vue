@@ -30,7 +30,7 @@
                     </span>
                     <Button icon="fas fa-images fa-2x" class="p-button-text p-button-plain p-p-0 p-ml-2" @click="toggleImagePicker" />
                 </div>
-                <div v-else-if="markerConfig.type === 'web'" class="p-d-flex p-flex-row">
+                <div v-else-if="markerConfig.type === 'url'" class="p-d-flex p-flex-row">
                     <span class="p-float-label kn-flex">
                         <InputText id="fileName" v-model="markerConfig.url" v-tooltip.bottom="markerConfig.url" class="kn-material-input kn-width-full" />
                         <label for="fileName" class="kn-material-input-label"> {{ $t('dashboard.widgetEditor.map.markerTypes.iconUrl') }} </label>

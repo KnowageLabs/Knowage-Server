@@ -17,7 +17,7 @@
         },
         {
             "class": "fas fa-globe",
-            "name": "web",
+            "name": "url",
             "tooltip": "dashboard.widgetEditor.map.markerTypes.web"
         }
     ]
