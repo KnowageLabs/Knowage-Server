@@ -370,12 +370,12 @@ export default defineComponent({
             if (this.jsonTemplate.PPT_TEMPLATE == null) {
                 const fileName = this.jsonTemplate?.DOC_TEMPLATE?.name ? this.jsonTemplate?.DOC_TEMPLATE?.name : this.jsonTemplate?.PPT_TEMPLATE_V2?.name
                 await this.$http
-                    .get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + 'dossier/checkPathFile?templateName=' + fileName)
+                    .get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `dossier/checkPathFile?templateName=${fileName}&documentId=${this.id}`)
                     .then((response: AxiosResponse<any>) => {
                         if (response.data.STATUS == 'KO') {
                             this.store.setInfo({ title: this.$t('common.error.generic'), msg: this.$t('documentExecution.dossier.templateDownloadError') })
                         } else if (response.data.STATUS == 'OK') {
-                            window.open(import.meta.env.VITE_RESTFUL_SERVICES_PATH + 'dossier/resourcePath?templateName=' + fileName)
+                            window.open(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `dossier/resourcePath?templateName=${fileName}&documentId=${this.id}`)
                         }
                     })
                     .catch((error) => {
@@ -383,7 +383,7 @@ export default defineComponent({
                     })
             } else {
                 const fileName = this.jsonTemplate.PPT_TEMPLATE.name
-                window.open(import.meta.env.VITE_RESTFUL_SERVICES_PATH + 'resourcePath?templateName=' + fileName)
+                window.open(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `resourcePath?templateName=${fileName}&documentId=${this.id}`)
             }
         },
         setUploadType() {
@@ -399,6 +399,7 @@ export default defineComponent({
         async uploadTemplate(uploadedFile) {
             const formData = new FormData()
             formData.append('file', uploadedFile)
+            formData.append('documentId', '' + this.id)
             await this.$http
                 .post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + 'dossier/importTemplateFile', formData, { headers: { 'Content-Type': 'multipart/form-data', 'X-Disable-Errors': 'true' } })
                 .then(async () => {

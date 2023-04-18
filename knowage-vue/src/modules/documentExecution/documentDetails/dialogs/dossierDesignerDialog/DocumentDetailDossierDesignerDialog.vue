@@ -649,13 +649,13 @@ export default defineComponent({
             this.setUploadType()
         },
         async uploadTemplate(uploadedFile) {
-            const formData = new FormData()
-            formData.append('file', uploadedFile)
-
             if (!this.isValidFile(uploadedFile)) {
                 // validation
                 this.setError({ title: this.$t('common.error.generic'), msg: this.$t('documentExecution.dossier.templateUploadError') })
             } else {
+                const formData = new FormData()
+                formData.append('file', uploadedFile)
+                formData.append('documentId', '' + this.getDocument()?.id)
                 await this.$http
                     .post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + 'dossier/importTemplateFile', formData, { headers: { 'Content-Type': 'multipart/form-data', 'X-Disable-Errors': 'true' } })
                     .then(async () => {
