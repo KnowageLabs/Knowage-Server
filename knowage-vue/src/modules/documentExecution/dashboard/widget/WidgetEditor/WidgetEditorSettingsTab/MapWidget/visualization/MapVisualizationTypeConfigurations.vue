@@ -1,9 +1,9 @@
 <template>
     <div class="p-d-flex p-flex-column">
-        <MarkersConfig v-if="visType.type === 'markers'" :marker-config-prop="visTypeProp.markerConf" />
+        <MapVisualizationTypeMarkers v-if="visType.type === 'markers'" :marker-config-prop="visTypeProp.markerConf" />
         <div v-else-if="visType.type === 'balloons'">balloons component</div>
         <div v-else-if="visType.type === 'pies'">pies component</div>
-        <div v-else-if="visType.type === 'clusters'">clusters component</div>
+        <MapVisualizationTypeClusters v-if="visType.type === 'clusters'" :cluster-config-prop="visTypeProp.clusterConf" :marker-config-prop="visTypeProp.markerConf" />
         <MapVisualizationTypeHeatmap v-else-if="visType.type === 'heatmap'" :prop-heatmap-configuration="visType.heatmapConf ?? null"></MapVisualizationTypeHeatmap>
         <MapVisualizationTypeChoropleth v-else-if="visType.type === 'choropleth'" :prop-choropleth-configuration="visType.analysisConf ?? null"></MapVisualizationTypeChoropleth>
     </div>
@@ -16,12 +16,12 @@ import { defineComponent, PropType } from 'vue'
 import descriptor from './MapVisualizationTypeDescriptor.json'
 import MapVisualizationTypeHeatmap from './configuration/MapVisualizationTypeHeatmap.vue'
 import MapVisualizationTypeChoropleth from './configuration/MapVisualizationTypeChoropleth.vue'
-
-import MarkersConfig from './configurations/MapMarkersConfiguration.vue'
+import MapVisualizationTypeMarkers from './configuration/MapVisualizationTypeMarkers.vue'
+import MapVisualizationTypeClusters from './configuration/MapVisualizationTypeClusters.vue'
 
 export default defineComponent({
     name: 'map-visualization-type',
-    components: { MarkersConfig, MapVisualizationTypeHeatmap, MapVisualizationTypeChoropleth },
+    components: { MapVisualizationTypeMarkers, MapVisualizationTypeHeatmap, MapVisualizationTypeChoropleth, MapVisualizationTypeClusters },
     props: { visTypeProp: { type: Object as PropType<IMapWidgetVisualizationType>, required: true } },
     emits: [],
     data() {

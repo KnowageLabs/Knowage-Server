@@ -31,7 +31,7 @@
                     <Button icon="fas fa-images fa-2x" class="p-button-text p-button-plain p-p-0 p-ml-2" @click="toggleImagePicker" />
                     <!-- TODO: Bojan - ^ Ovde je toggle za images -->
                 </div>
-                <div v-else-if="markerConfig.type === 'web'" class="p-d-flex p-flex-row">
+                <div v-else-if="markerConfig.type === 'url'" class="p-d-flex p-flex-row">
                     <span class="p-float-label kn-flex">
                         <InputText id="fileName" v-model="markerConfig.url" v-tooltip.bottom="markerConfig.url" class="kn-material-input kn-width-full" />
                         <label for="fileName" class="kn-material-input-label"> {{ $t('dashboard.widgetEditor.map.markerTypes.iconUrl') }} </label>
@@ -45,7 +45,7 @@
         </div>
         <div class="config-preview" :style="getPreviewStyle()">
             <i v-if="markerConfig.type === 'default' || markerConfig.type === 'icon'" :class="getIconClass()" />
-            <img v-if="markerConfig.type === 'img' || markerConfig.type === 'web'" :src="markerConfig.type === 'img' ? markerConfig.img : markerConfig.url" :style="`width: ${markerConfig.scale}%; height: ${markerConfig.scale}%;`" />
+            <img v-if="markerConfig.type === 'img' || markerConfig.type === 'url'" :src="markerConfig.type === 'img' ? markerConfig.img : markerConfig.url" :style="`width: ${markerConfig.scale}%; height: ${markerConfig.scale}%;`" />
             <!-- TODO: Bojan - ^ Ovo je div za IMG ako treba nesto da se menja -->
         </div>
     </div>
