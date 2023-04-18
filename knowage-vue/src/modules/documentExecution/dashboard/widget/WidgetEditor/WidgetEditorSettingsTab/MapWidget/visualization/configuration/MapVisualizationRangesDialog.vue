@@ -8,9 +8,6 @@
             </Toolbar>
         </template>
         <div v-for="(range, index) in ranges" :key="index" class="dynamic-form-item p-grid p-col-12 p-ai-center">
-            <div class="p-col-12">
-                {{ range }}
-            </div>
             <div class="p-col-6 p-lg-4 p-p-2">
                 <WidgetEditorColorPicker :initial-value="range.color" :label="$t('common.color')" @change="onSelectionColorChanged($event, range)"></WidgetEditorColorPicker>
             </div>
