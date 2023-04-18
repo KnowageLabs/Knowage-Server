@@ -25,12 +25,14 @@ const addLayerVisualizationTypeSettings = (layer: any, formattedWidget: IWidget)
         type: layer.visualizationType,
         markerConf: layer.markerConf,
         balloonConf: layer.balloonConf,
+        pieConf: layer.pieConf,
         clusterConf: layer.clusterConf,
         heatmapConf: layer.heatmapConf,
         analysisConf: layer.analysisConf
     }
     if (!visualizationType.markerConf) visualizationType.markerConf = mapWidgetDefaultValues.getDefaultVisualizationMarkerConfiguration()
     if (!visualizationType.balloonConf) visualizationType.balloonConf = mapWidgetDefaultValues.getDefaultVisualizationBalloonsConfiguration()
+    if (!visualizationType.pieConf) visualizationType.pieConf = mapWidgetDefaultValues.getDefaultVisualizationPieConfiguration()
     if (!visualizationType.clusterConf) visualizationType.clusterConf = mapWidgetDefaultValues.getDefaultVisualizationClusterConfiguration()
     if (!visualizationType.heatmapConf) visualizationType.heatmapConf = mapWidgetDefaultValues.getDefaultVisualizationHeatmapConfiguration()
     if (!visualizationType.analysisConf) visualizationType.analysisConf = mapWidgetDefaultValues.getDefaultVisualizationChoroplethConfiguration()

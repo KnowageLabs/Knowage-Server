@@ -87,7 +87,7 @@
     "defaultVisualizationBalloonsConfiguration": {
         "borderColor": "",
         "classes": 3,
-        "fromColor": "#rgba(209, 209, 209, 1)",
+        "fromColor": "rgba(209, 209, 209, 1)",
         "maxSize": 100,
         "method": "CLASSIFY_BY_EQUAL_INTERVALS",
         "minSize": 1,
@@ -123,5 +123,14 @@
             "color": ""
         },
         "type": "default"
+    },
+    "defaultVisualizationPieConfiguration": {
+        "borderColor": "",
+        "categorizeBy": "ID",
+        "fromColor": "rgba(209, 209, 209, 1)",
+        "maxSize": 100,
+        "minSize": 1,
+        "toColor": "rgba(91, 91, 91, 1)",
+        "type": "pies"
     }
 }
