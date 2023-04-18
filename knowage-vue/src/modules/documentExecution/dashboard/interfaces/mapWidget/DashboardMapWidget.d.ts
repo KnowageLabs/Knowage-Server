@@ -37,12 +37,12 @@ export interface IMapWidgetVisualizationSettings {
     types: IMapWidgetVisualizationType[]
 }
 
-// TODO - Darko - See with Darko about this
 export interface IMapWidgetVisualizationType {
     target: string[]
     type: string
     markerConf?: IMapWidgetVisualizationTypeMarker
     balloonConf?: IMapWidgetVisualizationTypeBalloons
+    pieConf?: IMapWidgetVisualizationTypePie
     clusterConf?: IMapWidgetVisualizationTypeCluster
     heatmapConf?: IMapWidgetVisualizationTypeHeatmap
     analysisConf?: IMapWidgetVisualizationTypeChoropleth
@@ -72,6 +72,17 @@ export interface IMapWidgetVisualizationTypeBalloons {
     properties?: {
         thresholds: { color: string; from: number; to: number }[]
     }
+}
+
+
+export interface IMapWidgetVisualizationTypePie {
+    categorizeBy: string,
+    type: string,
+    borderColor: string,
+    fromColor: string,
+    toColor: string,
+    minSize: number,
+    maxSize: number
 }
 
 export interface IMapWidgetVisualizationTypeCluster {

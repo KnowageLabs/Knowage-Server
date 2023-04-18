@@ -1,4 +1,4 @@
-import { IMapDialogSettings, IMapTooltipSettings, IMapWidgetBaseLayer, IMapWidgetConditionalStyle, IMapWidgetControlPanel, IMapWidgetLegend, IMapWidgetVisualizationSettings, IMapWidgetVisualizationTypeBalloons, IMapWidgetVisualizationTypeChoropleth, IMapWidgetVisualizationTypeCluster, IMapWidgetVisualizationTypeHeatmap, IMapWidgetVisualizationTypeMarker } from '@/modules/documentExecution/dashboard/interfaces/mapWidget/DashboardMapWidget'
+import { IMapDialogSettings, IMapTooltipSettings, IMapWidgetBaseLayer, IMapWidgetConditionalStyle, IMapWidgetControlPanel, IMapWidgetLegend, IMapWidgetVisualizationSettings, IMapWidgetVisualizationTypeBalloons, IMapWidgetVisualizationTypeChoropleth, IMapWidgetVisualizationTypeCluster, IMapWidgetVisualizationTypeHeatmap, IMapWidgetVisualizationTypeMarker, IMapWidgetVisualizationTypePie } from '@/modules/documentExecution/dashboard/interfaces/mapWidget/DashboardMapWidget'
 import descriptor from './MapWidgetDefaultValuesDescriptor.json'
 
 export const getDefaultMapTooltips = () => {
@@ -36,6 +36,10 @@ export const getDefaultVisualizationMarkerConfiguration = () => {
 
 export const getDefaultVisualizationBalloonsConfiguration = () => {
     return descriptor.defaultVisualizationBalloonsConfiguration as IMapWidgetVisualizationTypeBalloons
+}
+
+export const getDefaultVisualizationPieConfiguration = () => {
+    return descriptor.defaultVisualizationPieConfiguration as IMapWidgetVisualizationTypePie
 }
 
 export const getDefaultVisualizationClusterConfiguration = () => {

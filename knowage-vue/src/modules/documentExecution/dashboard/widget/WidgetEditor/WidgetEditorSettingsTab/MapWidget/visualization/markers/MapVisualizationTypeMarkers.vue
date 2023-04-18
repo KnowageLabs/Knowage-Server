@@ -1,7 +1,6 @@
 <template>
     <div class="p-d-flex p-flex-row">
         <div class="p-d-flex p-flex-column p-jc-sb kn-flex p-mr-2">
-            {{ markerConfig }}
             <div class="p-grid gap-1 p-m-0" style="column-gap: 0.5em; row-gap: 0.5em">
                 <div
                     v-for="(markerTypeConfig, visTypeConfigIndex) in descriptor.markerTypes"

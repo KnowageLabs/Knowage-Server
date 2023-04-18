@@ -1,4 +1,14 @@
 {
+    "categorizeByOptions": [
+        {
+            "label": "dashboard.widgetEditor.map.categorizeByOptions.id",
+            "value": "ID"
+        },
+        {
+            "label": "dashboard.widgetEditor.map.categorizeByOptions.description",
+            "value": "DESCRIPTION"
+        }
+    ],
     "classesMethodOptions": [
         {
             "label": "dashboard.widgetEditor.map.classesMethodOptions.byEqualIntervals",
@@ -11,6 +21,24 @@
         {
             "label": "dashboard.widgetEditor.map.classesMethodOptions.byRanges",
             "value": "CLASSIFY_BY_RANGES"
+        }
+    ],
+    "pieTypeOptions": [
+        {
+            "label": "dashboard.widgetEditor.map.pieTypeOptions.pies",
+            "value": "pies"
+        },
+        {
+            "label": "dashboard.widgetEditor.map.pieTypeOptions.pie3D",
+            "value": "pie3D"
+        },
+        {
+            "label": "dashboard.widgetEditor.map.pieTypeOptions.donuts",
+            "value": "donuts"
+        },
+        {
+            "label": "dashboard.widgetEditor.map.pieTypeOptions.bars",
+            "value": "bars"
         }
     ],
     "style": {
