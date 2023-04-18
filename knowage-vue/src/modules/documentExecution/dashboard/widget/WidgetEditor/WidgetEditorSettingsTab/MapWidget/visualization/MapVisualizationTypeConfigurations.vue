@@ -14,10 +14,10 @@ import { IMapWidgetVisualizationType } from '@/modules/documentExecution/dashboa
 import { defineComponent, PropType } from 'vue'
 
 import descriptor from './MapVisualizationTypeDescriptor.json'
-import MapVisualizationTypeHeatmap from './configuration/MapVisualizationTypeHeatmap.vue'
-import MapVisualizationTypeBalloonsChoropleth from './configuration/MapVisualizationTypeBalloonsChoropleth.vue'
 import MapVisualizationTypeMarkers from './configuration/MapVisualizationTypeMarkers.vue'
+import MapVisualizationTypeBalloonsChoropleth from './configuration/MapVisualizationTypeBalloonsChoropleth.vue'
 import MapVisualizationTypeClusters from './configuration/MapVisualizationTypeClusters.vue'
+import MapVisualizationTypeHeatmap from './configuration/MapVisualizationTypeHeatmap.vue'
 
 export default defineComponent({
     name: 'map-visualization-type',
