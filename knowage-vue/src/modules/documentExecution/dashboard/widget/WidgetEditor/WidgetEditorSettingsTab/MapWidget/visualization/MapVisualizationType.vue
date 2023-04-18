@@ -9,8 +9,8 @@
         </div>
 
         <div class="p-grid gap-1 p-m-0" style="column-gap: 0.5em; row-gap: 0.5em">
-            <div v-for="(visType, index) in descriptor.visTypes" :key="index" class="visTypeCards">
-                <img style="height: 100%; width: 100%" :src="getImageSource(visType.name)" />
+            <div v-for="(visType, index) in descriptor.visTypes" :key="index" v-tooltip.bottom="$t(visType.tooltip)" class="visTypeCards">
+                <img class="kn-width-full kn-height-full" :src="getImageSource(visType.name)" />
             </div>
         </div>
         <br />

@@ -1,5 +1,5 @@
-import { IDashboard, IDashboardDriver, IVariable, IWidget } from "../../Dashboard"
-import { IMapWidgetConditionalStyle } from "../../interfaces/mapWidget/DashboardMapWidget"
+import { IDashboard, IDashboardDriver, IVariable, IWidget } from '../../Dashboard'
+import { IMapWidgetConditionalStyle } from '../../interfaces/mapWidget/DashboardMapWidget'
 
 export const getFormattedSettingsFromLayers = (widget: any, formattedWidget: IWidget, formattedDashboardModel: IDashboard, drivers: IDashboardDriver[]) => {
     const layers = widget.content.layers
@@ -18,9 +18,9 @@ const addLayerColumnTooltipOptions = (oldColumn: any, formattedWidget: IWidget, 
     }
 }
 
-const addLayerVisualizationTypeSettings = (layer: any, formattedWidget: IWidget,) => {
+const addLayerVisualizationTypeSettings = (layer: any, formattedWidget: IWidget) => {
     formattedWidget.settings.visualization.types.push({
-        target: layer.name,
+        target: [layer.name],
         type: layer.visualizationType,
         markerConf: layer.markerConf,
         clusterConf: layer.clusterConf,
@@ -42,9 +42,10 @@ const addLayerColumnConditionalStyleSettings = (oldColumn: any, formattedWidget:
 
 const createConditionalStyleFromRange = (oldColumn: any, range: any, layerName: string) => {
     return {
-        targetLayer: layerName, targetColumn: oldColumn.name,
+        targetLayer: layerName,
+        targetColumn: oldColumn.name,
         condition: { type: 'static', operator: range.operator, value: range.value },
-        properties: { 'background-color': range['background-color'] ?? '', }
+        properties: { 'background-color': range['background-color'] ?? '' }
     } as IMapWidgetConditionalStyle
 }
 

@@ -10,27 +10,33 @@
     "visTypes": [
         {
             "class": "markers",
-            "name": "markers"
+            "name": "markers",
+            "tooltip": "dashboard.widgetEditor.map.visTypes.markers"
         },
         {
             "class": "balloons",
-            "name": "balloons"
+            "name": "balloons",
+            "tooltip": "dashboard.widgetEditor.map.visTypes.balloons"
         },
         {
             "class": "pies",
-            "name": "pies"
+            "name": "pies",
+            "tooltip": "dashboard.widgetEditor.map.visTypes.pies"
         },
         {
             "class": "clusters",
-            "name": "clusters"
+            "name": "clusters",
+            "tooltip": "dashboard.widgetEditor.map.visTypes.clusters"
         },
         {
             "class": "heatmap",
-            "name": "heatmap"
+            "name": "heatmap",
+            "tooltip": "dashboard.widgetEditor.map.visTypes.heatmap"
         },
         {
             "class": "choropleth",
-            "name": "choropleth"
+            "name": "choropleth",
+            "tooltip": "dashboard.widgetEditor.map.visTypes.choropleth"
         }
     ]
 }
