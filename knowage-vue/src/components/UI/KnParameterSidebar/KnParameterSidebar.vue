@@ -535,13 +535,13 @@ export default defineComponent({
                 const parameter = this.parameters.filterStatus[key]
                 if (!parameter.multivalue) {
                     parameters.push({
-                        label: parameter.label,
+                        urlName: parameter.urlName,
                         value: parameter.parameterValue[0].value,
                         description: parameter.parameterValue[0].description ?? ''
                     })
                 } else {
                     parameters.push({
-                        label: parameter.label,
+                        urlName: parameter.urlName,
                         value: parameter.parameterValue?.map((el: any) => el.value),
                         description: parameter.parameterDescription ?? ''
                     })
