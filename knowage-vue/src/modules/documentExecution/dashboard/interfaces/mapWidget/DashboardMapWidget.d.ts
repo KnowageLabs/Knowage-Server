@@ -42,6 +42,7 @@ export interface IMapWidgetVisualizationType {
     target: string[]
     type: string
     markerConf?: IMapWidgetVisualizationTypeMarker
+    balloonConf?: IMapWidgetVisualizationTypeBalloons
     clusterConf?: IMapWidgetVisualizationTypeCluster
     heatmapConf?: IMapWidgetVisualizationTypeHeatmap
     analysisConf?: IMapWidgetVisualizationTypeChoropleth
@@ -67,6 +68,19 @@ export interface IMapWidgetVisualizationTypeMarker {
     scale?: number
     url?: string
     img?: string
+}
+
+export interface IMapWidgetVisualizationTypeBalloons {
+    borderColor: string,
+    fromColor: string,
+    toColor: string,
+    minSize: number,
+    maxSize: number,
+    method: string,
+    classes: number,
+    properties?: {
+        thresholds: { color: string; from: number; to: number }[]
+    }
 }
 
 export interface IMapWidgetVisualizationTypeCluster {

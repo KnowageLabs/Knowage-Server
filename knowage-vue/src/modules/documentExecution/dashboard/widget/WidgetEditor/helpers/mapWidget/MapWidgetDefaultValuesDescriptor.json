@@ -84,11 +84,26 @@
             }
         ]
     },
+    "defaultVisualizationBalloonsConfiguration": {
+        "borderColor": "",
+        "classes": 3,
+        "fromColor": "#rgba(209, 209, 209, 1)",
+        "maxSize": 100,
+        "method": "CLASSIFY_BY_EQUAL_INTERVALS",
+        "minSize": 1,
+        "properties": {
+            "thresholds": []
+        },
+        "toColor": "rgba(91, 91, 91, 1)"
+    },
     "defaultVisualizationChoroplethConfiguration": {
         "borderColor": "",
         "classes": 3,
         "fromColor": "#rgba(209, 209, 209, 1)",
         "method": "CLASSIFY_BY_EQUAL_INTERVALS",
+        "properties": {
+            "thresholds": []
+        },
         "toColor": "rgba(91, 91, 91, 1)"
     },
     "defaultVisualizationClusterConfiguration": {

@@ -815,6 +815,7 @@
                 },
                 "north": "North",
                 "range": "Range",
+                "rangeLabel": "Min size (%)/Max size (%)",
                 "south": "South",
                 "thresholds": "Thresholds",
                 "toColor": "To color",

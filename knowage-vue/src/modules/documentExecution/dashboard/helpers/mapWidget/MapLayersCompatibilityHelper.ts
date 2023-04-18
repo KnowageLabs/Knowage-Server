@@ -1,5 +1,6 @@
 import { IDashboard, IDashboardDriver, IVariable, IWidget } from '../../Dashboard'
 import { IMapWidgetConditionalStyle } from '../../interfaces/mapWidget/DashboardMapWidget'
+import * as mapWidgetDefaultValues from '../../widget/WidgetEditor/helpers/mapWidget/MapWidgetDefaultValues'
 
 export const getFormattedSettingsFromLayers = (widget: any, formattedWidget: IWidget, formattedDashboardModel: IDashboard, drivers: IDashboardDriver[]) => {
     const layers = widget.content.layers
@@ -19,14 +20,21 @@ const addLayerColumnTooltipOptions = (oldColumn: any, formattedWidget: IWidget, 
 }
 
 const addLayerVisualizationTypeSettings = (layer: any, formattedWidget: IWidget) => {
-    formattedWidget.settings.visualization.types.push({
+    const visualizationType = {
         target: [layer.name],
         type: layer.visualizationType,
         markerConf: layer.markerConf,
+        balloonConf: layer.balloonConf,
         clusterConf: layer.clusterConf,
         heatmapConf: layer.heatmapConf,
         analysisConf: layer.analysisConf
-    })
+    }
+    if (!visualizationType.markerConf) visualizationType.markerConf = mapWidgetDefaultValues.getDefaultVisualizationMarkerConfiguration()
+    if (!visualizationType.balloonConf) visualizationType.balloonConf = mapWidgetDefaultValues.getDefaultVisualizationBalloonsConfiguration()
+    if (!visualizationType.clusterConf) visualizationType.clusterConf = mapWidgetDefaultValues.getDefaultVisualizationClusterConfiguration()
+    if (!visualizationType.heatmapConf) visualizationType.heatmapConf = mapWidgetDefaultValues.getDefaultVisualizationHeatmapConfiguration()
+    if (!visualizationType.analysisConf) visualizationType.analysisConf = mapWidgetDefaultValues.getDefaultVisualizationChoroplethConfiguration()
+    formattedWidget.settings.visualization.types.push(visualizationType)
 }
 
 const addLayerColumnConditionalStyleSettings = (oldColumn: any, formattedWidget: IWidget, layerName: string, formattedDashboardModel: IDashboard, drivers: IDashboardDriver[]) => {
