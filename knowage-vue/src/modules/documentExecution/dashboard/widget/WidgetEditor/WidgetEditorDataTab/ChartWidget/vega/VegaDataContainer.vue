@@ -7,7 +7,7 @@
 
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
-import { IDataset, IWidget } from '@/modules/documentExecution/Dashboard/Dashboard'
+import { IDataset, IWidget } from '@/modules/documentExecution/dashboard/Dashboard'
 import VegaCommonDataContainer from './VegaCommonDataContainer.vue'
 import ChartWidgetChartTypeDropdown from '../common/ChartWidgetChartTypeDropdown.vue'
 
