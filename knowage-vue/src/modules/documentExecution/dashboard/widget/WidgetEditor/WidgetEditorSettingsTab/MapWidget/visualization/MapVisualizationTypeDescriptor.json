@@ -20,6 +20,15 @@
             "transition": "0.5s ease",
             "width": "140px"
         },
+        "imagesDialog": {
+            "max-width": "1200px",
+            "min-width": "600px",
+            "width": "60%"
+        },
+        "imagesDialogBreakpoints": {
+            "640px": "100vw",
+            "960px": "75vw"
+        },
         "rangesDialog": {
             "max-width": "1200px",
             "min-width": "600px",

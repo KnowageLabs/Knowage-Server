@@ -784,6 +784,7 @@
                 "dialogHint": "The selected elements will be visible when clicking on the map",
                 "fromColor": "From color",
                 "fromThreshold": "From (>=)",
+                "imagesGallery": "Images Gallery",
                 "layerInfo": {
                     "catalogLayer": "Catalog Layer",
                     "catalogLayerColumn": "Catalog Layer Column",
@@ -798,15 +799,15 @@
                 "legendText": "Legend Text",
                 "legendTitle": "Legend Title",
                 "linearGradient": "Linear Gradient",
+                "manageRanges": "Manage Ranges",
                 "markerTypes": {
                     "default": "Default Marker",
                     "icon": "Icon Marker",
-                    "image": "Image Marker",
-                    "web": "Web Image Marker",
                     "iconUrl": "Icon URL",
-                    "scale%": "Scale %"
+                    "image": "Image Marker",
+                    "scale%": "Scale %",
+                    "web": "Web Image Marker"
                 },
-                "manageRanges": "Manage Ranges",
                 "metadata": {
                     "addField": "Add Field",
                     "aggregateBy": "Aggregate by",
@@ -825,7 +826,6 @@
                 "range": "Range",
                 "rangeLabel": "Min size (%)/Max size (%)",
                 "south": "South",
-                "thresholds": "Thresholds",
                 "toColor": "To color",
                 "toThreshold": "To (<)",
                 "tooltipHint": "The selected elements will be visible on mouse hover",
@@ -945,6 +945,7 @@
                 "wordPadding": "Word Padding"
             },
             "textParsingError": "Text Parsing Error",
+            "thresholds": "Thresholds",
             "title": "Widget Editor",
             "titles": {
                 "title": "Title"

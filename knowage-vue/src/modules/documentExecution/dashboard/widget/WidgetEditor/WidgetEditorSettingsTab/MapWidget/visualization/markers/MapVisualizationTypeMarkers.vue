@@ -1,7 +1,7 @@
 <template>
     <div class="p-d-flex p-flex-row">
         <div class="p-d-flex p-flex-column p-jc-sb kn-flex p-mr-2">
-            <!-- {{ markerConfig }} -->
+            {{ markerConfig }}
             <div class="p-grid gap-1 p-m-0" style="column-gap: 0.5em; row-gap: 0.5em">
                 <div
                     v-for="(markerTypeConfig, visTypeConfigIndex) in descriptor.markerTypes"
@@ -29,7 +29,6 @@
                         <label class="kn-material-input-label">{{ $t('dashboard.widgetEditor.map.markerTypes.scale%') }}</label>
                     </span>
                     <Button icon="fas fa-images fa-2x" class="p-button-text p-button-plain p-p-0 p-ml-2" @click="toggleImagePicker" />
-                    <!-- TODO: Bojan - ^ Ovde je toggle za images -->
                 </div>
                 <div v-else-if="markerConfig.type === 'web'" class="p-d-flex p-flex-row">
                     <span class="p-float-label kn-flex">
@@ -46,29 +45,27 @@
         <div class="config-preview" :style="getPreviewStyle()">
             <i v-if="markerConfig.type === 'default' || markerConfig.type === 'icon'" :class="getIconClass()" />
             <img v-if="markerConfig.type === 'img' || markerConfig.type === 'web'" :src="markerConfig.type === 'img' ? markerConfig.img : markerConfig.url" :style="`width: ${markerConfig.scale}%; height: ${markerConfig.scale}%;`" />
-            <!-- TODO: Bojan - ^ Ovo je div za IMG ako treba nesto da se menja -->
         </div>
     </div>
 
     <WidgetEditorStyleIconPickerDialog v-if="iconPickerDialogVisible" :prop-model="markerConfig.icon" used-from="markers" @close="iconPickerDialogVisible = false" @save="onIconSelected" />
-    <!-- TODO: Bojan - Dijalog za images ovde -->
+    <MapVisualizationImagePickerDialog v-if="imagePickerDialogVisible" :visible="imagePickerDialogVisible" @close="imagePickerDialogVisible = false" @setImage="onSetImage"></MapVisualizationImagePickerDialog>
 </template>
 
 <script lang="ts">
 import { IMapWidgetVisualizationTypeMarker } from '@/modules/documentExecution/dashboard/interfaces/mapWidget/DashboardMapWidget'
 import { defineComponent, PropType } from 'vue'
 import { IIcon } from '@/modules/documentExecution/dashboard/Dashboard'
-
+import { IImage } from '@/modules/documentExecution/dashboard/interfaces/DashboardImageWidget'
 import descriptor from './MapVisualizationTypeMarkersDescriptor.json'
-
 import WidgetEditorColorPicker from '../../../common/WidgetEditorColorPicker.vue'
 import InputNumber from 'primevue/inputnumber'
-
 import WidgetEditorStyleIconPickerDialog from '../../../common/styleToolbar/WidgetEditorStyleIconPickerDialog.vue'
+import MapVisualizationImagePickerDialog from './MapVisualizationImagePickerDialog.vue'
 
 export default defineComponent({
     name: 'map-visualization-type',
-    components: { WidgetEditorColorPicker, InputNumber, WidgetEditorStyleIconPickerDialog },
+    components: { WidgetEditorColorPicker, InputNumber, WidgetEditorStyleIconPickerDialog, MapVisualizationImagePickerDialog },
     props: { markerConfigProp: { type: Object as PropType<IMapWidgetVisualizationTypeMarker | undefined>, required: true } },
     emits: [],
     data() {
@@ -125,6 +122,10 @@ export default defineComponent({
         onIconSelected(icon: IIcon) {
             this.markerConfig.icon = icon
             this.iconPickerDialogVisible = false
+        },
+        onSetImage(image: IImage) {
+            this.markerConfig.img = import.meta.env.VITE_RESTFUL_SERVICES_PATH + image.url
+            this.imagePickerDialogVisible = false
         }
     }
 })

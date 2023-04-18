@@ -1,5 +1,5 @@
 <template>
-    <div v-if="model" class="dashboard-card-shadow kn-height-full p-ml-1 p-d-flex p-flex-row">
+    <div v-if="model || mode === 'map'" class="dashboard-card-shadow kn-height-full p-ml-1 p-d-flex p-flex-row">
         <div class="p-grid p-m-2 kn-flex kn-overflow dashboard-scrollbar">
             <Message v-if="images.length == 0" class="kn-flex p-m-2" severity="info" :closable="false">
                 {{ $t('common.info.noDataFound') }}
@@ -18,6 +18,7 @@
                     :class="[selectedImage?.imgId === image.imgId ? 'selected-card-image-container' : '']"
                     :is-selected="selectedImage?.imgId === image.imgId"
                     :image-prop="image"
+                    :mode="mode"
                     @imageSelected="setSelectedImage(image)"
                     @delete="onImageDelete"
                 />
@@ -31,7 +32,6 @@
 
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
-import { IWidget } from '@/modules/documentExecution/Dashboard/Dashboard'
 import { IImage } from '@/modules/documentExecution/dashboard/interfaces/DashboardImageWidget'
 import { mapActions } from 'pinia'
 import { AxiosResponse } from 'axios'
@@ -41,16 +41,18 @@ import ImageWidgetGalleryCard from './ImageWidgetGalleryCard.vue'
 import KnInputFile from '@/components/UI/KnInputFile.vue'
 import Message from 'primevue/message'
 import ImageWidgetGallerySidebar from './ImageWidgetGallerySidebar.vue'
+import { IWidget } from '@/modules/documentExecution/dashboard/Dashboard'
+import deepcopy from 'deepcopy'
 
 export default defineComponent({
     name: 'image-widget-gallery',
     components: { ImageWidgetGalleryCard, KnInputFile, Message, ImageWidgetGallerySidebar },
-    props: { widgetModel: { type: Object as PropType<IWidget>, required: true }, imagesListProp: { type: Array as PropType<IImage[]>, required: true } },
-    emits: ['uploadedImage'],
+    props: { widgetModel: { type: Object as PropType<IWidget | null>, required: true }, imagesListProp: { type: Array as PropType<IImage[]>, required: true }, mode: { type: String } },
+    emits: ['uploadedImage', 'selectedImage', 'imageDeleted'],
     data() {
         return {
             descriptor,
-            model: {} as IWidget,
+            model: null as IWidget | null,
             images: [] as IImage[],
             triggerImageUpload: false,
             selectedImage: null as IImage | null,
@@ -80,8 +82,8 @@ export default defineComponent({
             this.loadSelectedImage()
         },
         loadSelectedImage() {
-            if (this.model.settings.configuration?.image) {
-                const index = this.images.findIndex((image: IImage) => image.imgId === this.model.settings.configuration.image.id)
+            if (this.model?.settings.configuration?.image) {
+                const index = this.images.findIndex((image: IImage) => image.imgId === this.model?.settings.configuration.image.id)
                 if (index !== -1) this.selectedImage = this.images[index]
             }
         },
@@ -145,6 +147,7 @@ export default defineComponent({
         onSuccessfullImageDelete(image: IImage) {
             const index = this.images.findIndex((tempImage: IImage) => tempImage.imgId === image.imgId)
             if (index !== -1) {
+                this.$emit('imageDeleted', deepcopy(this.images[index]))
                 this.images.splice(index, 1)
                 this.setInfo({ title: this.$t('common.toast.deleteTitle'), msg: this.$t('common.toast.deleteSuccess') })
                 this.selectedSidebarImage = null
@@ -153,8 +156,9 @@ export default defineComponent({
         },
         setSelectedImage(image: IImage) {
             this.selectedImage = image
-            this.model.settings.configuration.image.id = image.imgId
-            this.sidebarVisible = true
+            if (this.model) this.model.settings.configuration.image.id = image.imgId
+            if (this.mode !== 'map') this.sidebarVisible = true
+            this.$emit('selectedImage', this.selectedImage)
         }
     }
 })
