@@ -28,7 +28,6 @@ import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
-import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.dataset.common.iterator.CsvStreamingOutput;
 
 /**
@@ -45,22 +44,12 @@ public class CSVExportJob extends AbstractExportJob {
 
 		logger.debug("Start CSV export for dataSetId " + getDataSetId() + " with id " + getId() + " by user " + getUserProfile().getUserId());
 
-		OutputStream exportFileOS = getDataOutputStream();
-		try {
+		try(OutputStream exportFileOS = getDataOutputStream()) {
 			IDataSet dataSet = getDataSet();
 
-			IDataStore dataStore = null;
-			try {
-				logger.debug("Starting iteration to transfer data");
-				dataSet.loadData();
-				dataStore = dataSet.getDataStore();
-				StreamingOutput stream = new CsvStreamingOutput(dataStore);
-				stream.write(exportFileOS);
-			} finally {
-				if (exportFileOS != null) {
-					exportFileOS.close();
-				}
-			}
+			logger.debug("Starting iteration to transfer data");
+			StreamingOutput stream = new CsvStreamingOutput(dataSet.iterator());
+			stream.write(exportFileOS);
 		} catch (IOException e) {
 			String msg = String.format("Error writing data file \"%s\"!", getDataFile());
 			logger.error(msg, e);

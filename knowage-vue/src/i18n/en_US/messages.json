@@ -280,6 +280,7 @@
             "fields": "Fields",
             "formula": "Formula",
             "functions": "Functions",
+            "noAvailableFields": "No fields available to use within a calculated field",
             "officialDocumentation": "Official documentation ({function})",
             "title": "Calculated field",
             "type": "Type"
