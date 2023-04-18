@@ -1,4 +1,4 @@
-import { IWidgetInteractions, IWidgetResponsive, IWidgetTitle, IWidgetBordersStyle, IWidgetBackgroundStyle, IWidgetPaddingStyle, IWidgetShadowsStyle, IWidgetExports, IDataset } from './../../Dashboard.d';
+import { IWidgetInteractions, IWidgetResponsive, IWidgetTitle, IWidgetBordersStyle, IWidgetBackgroundStyle, IWidgetPaddingStyle, IWidgetShadowsStyle, IWidgetExports, IDataset } from './../../Dashboard.d'
 
 export interface IMapWidgetSettings {
     updatable: boolean
@@ -21,15 +21,15 @@ export interface IMapWidgetConfiguration {
 }
 
 export interface IMapWidgetBaseLayer {
-    enabled: boolean,
-    backgroundLayerId: number | null,
-    zoomFactor: number | null,
-    showScale: boolean,
+    enabled: boolean
+    backgroundLayerId: number | null
+    zoomFactor: number | null
+    showScale: boolean
     autoCentering: boolean
 }
 
 export interface IMapWidgetControlPanel {
-    alwaysShow: boolean,
+    alwaysShow: boolean
     dimension: string
 }
 
@@ -39,60 +39,60 @@ export interface IMapWidgetVisualizationSettings {
 
 // TODO - Darko - See with Darko about this
 export interface IMapWidgetVisualizationType {
-    target: string,
-    type: string,
-    markerConf?: IMapWidgetVisualizationTypeMarker,
-    clusterConf?: IMapWidgetVisualizationTypeCluster,
-    heatmapConf?: IMapWidgetVisualizationTypeHeatmap,
+    target: string[]
+    type: string
+    markerConf?: IMapWidgetVisualizationTypeMarker
+    clusterConf?: IMapWidgetVisualizationTypeCluster
+    heatmapConf?: IMapWidgetVisualizationTypeHeatmap
     analysisConf?: IMapWidgetVisualizationTypeChoropleth
 }
 
 export interface IMapWidgetVisualizationTypeMarker {
-    type: string,
+    type: string
     style: {
-        color?: string,
+        color?: string
         borderColor?: string
-    },
-    size?: number,
+    }
+    size?: number
     icon?: {
-        label: string,
-        className: string,
-        unicode: string,
-        visible: boolean,
-        id: number,
-        category: string,
-        fontWeight: number,
+        label: string
+        className: string
+        unicode: string
+        visible: boolean
+        id: number
+        category: string
+        fontWeight: number
         fontFamily: string
-    },
-    scale?: number,
+    }
+    scale?: number
     url?: string
     img?: string
 }
 
 export interface IMapWidgetVisualizationTypeCluster {
-    enabled: boolean,
-    radiusSize: number,
+    enabled: boolean
+    radiusSize: number
     style: {
-        "font-size"?: string,
-        color?: string,
+        'font-size'?: string
+        color?: string
         'background-color'?: string
     }
 }
 
 export interface IMapWidgetVisualizationTypeHeatmap {
-    enabled: boolean,
-    radius: number,
+    enabled: boolean
+    radius: number
     blur: number
 }
 
 export interface IMapWidgetVisualizationTypeChoropleth {
-    method: string,
-    classes: number,
-    fromColor: string,
-    toColor: string,
-    parentLayer?: string,
+    method: string
+    classes: number
+    fromColor: string
+    toColor: string
+    parentLayer?: string
     properties?: {
-        thresholds: { color: string, from: number, to: number }[]
+        thresholds: { color: string; from: number; to: number }[]
     }
 }
 
@@ -102,8 +102,8 @@ export interface IMapWidgetConditionalStyles {
 }
 
 export interface IMapWidgetConditionalStyle {
-    targetLayer: string,
-    targetColumn: string,
+    targetLayer: string
+    targetColumn: string
     condition: {
         type: string
         variable?: string
@@ -112,26 +112,26 @@ export interface IMapWidgetConditionalStyle {
         variablePivotDatasetOptions?: any
         operator: string
         value: string
-    },
+    }
     properties: {
         'background-color': string
     }
 }
 
 export interface IMapWidgetLegend {
-    enabled: boolean,
-    visualizationType: string,
-    position: string,
-    alignment: string,
-    prefix: string,
-    suffix: string,
-    precision: number,
-    title: IMapWidgetLegendTitle,
+    enabled: boolean
+    visualizationType: string
+    position: string
+    alignment: string
+    prefix: string
+    suffix: string
+    precision: number
+    title: IMapWidgetLegendTitle
     text: IMapWidgetLegendText
 }
 
 export interface IMapWidgetLegendTitle {
-    text: string,
+    text: string
     style: {
         'justify-content': string
         'font-family': string
@@ -144,7 +144,7 @@ export interface IMapWidgetLegendTitle {
 }
 
 export interface IMapWidgetLegendText {
-    text: string,
+    text: string
     style: {
         'justify-content': string
         'font-family': string
@@ -157,9 +157,9 @@ export interface IMapWidgetLegendText {
 }
 
 export interface IMapDialogSettings {
-    enabled: boolean,
-    width: string,
-    height: string,
+    enabled: boolean
+    width: string
+    height: string
     style: {
         'justify-content': string
         'font-family': string
@@ -168,18 +168,18 @@ export interface IMapDialogSettings {
         'font-weight': string
         color: string
         'background-color': string
-    },
+    }
     properties: IMapDialogSettingsProperty[]
 }
 
 export interface IMapDialogSettingsProperty {
-    layer: string,
+    layer: string
     columns: string[]
 }
 
 export interface IMapTooltipSettings {
-    enabled: boolean,
-    layers: { name: string, columns: string[] }[],
+    enabled: boolean
+    layers: { name: string; columns: string[] }[]
 }
 
 export interface IMapWidgetStyle {
@@ -191,52 +191,52 @@ export interface IMapWidgetStyle {
 }
 
 export interface ILayer {
-    layerId: number,
-    name: string,
-    descr: string,
-    type: string,
-    label: string,
-    baseLayer: false,
-    layerDef: string,
-    pathFile: string,
-    layerLabel: string,
-    layerName: string,
-    layerIdentify: string,
-    layerURL: any,
-    layerOptions: any,
-    layerParams: any,
-    layerOrder: number,
-    category_id: any,
-    category: any,
-    roles: any,
-    properties: string[],
+    layerId: number
+    name: string
+    descr: string
+    type: string
+    label: string
+    baseLayer: false
+    layerDef: string
+    pathFile: string
+    layerLabel: string
+    layerName: string
+    layerIdentify: string
+    layerURL: any
+    layerOptions: any
+    layerParams: any
+    layerOrder: number
+    category_id: any
+    category: any
+    roles: any
+    properties: string[]
     filebody: any
 }
 
 export interface IMapWidgetLayer {
-    type: string,
-    dsId: number,
-    alias: string,
-    name: string,
-    defaultVisible: boolean,
-    dataset: IDataset,
+    type: string
+    dsId: number
+    alias: string
+    name: string
+    defaultVisible: boolean
+    dataset: IDataset
     content: {
         columnSelectedOfDataset: IWidgetMapLayerColumn[]
-    },
-    order: number,
-    targetDefault: boolean,
-    hasShownDetails: boolean,
-    defaultIndicator: string,
-    layerID: string,
-    isStatic: boolean,
-    showTooltip: boolean,
-    tooltipColumn: string,
-    visualizationType: string,
-    markerConf: any,
-    clusterConf: any,
-    heatmapConf: any,
-    analysisConf: any,
-    modalSelectionColumn: string,
+    }
+    order: number
+    targetDefault: boolean
+    hasShownDetails: boolean
+    defaultIndicator: string
+    layerID: string
+    isStatic: boolean
+    showTooltip: boolean
+    tooltipColumn: string
+    visualizationType: string
+    markerConf: any
+    clusterConf: any
+    heatmapConf: any
+    analysisConf: any
+    modalSelectionColumn: string
     datasetLink?: number
     datasetColumnLink?: number
     catalogLayerLink?: number
@@ -244,26 +244,26 @@ export interface IMapWidgetLayer {
 }
 
 export interface IWidgetMapLayerColumn {
-    name: string,
-    alias: string,
-    type: string,
+    name: string
+    alias: string
+    type: string
     properties: {
-        aggregateBy: boolean,
-        coordType: string,
-        coordFormat: string,
-        showTooltip: boolean,
-        modal: boolean,
-        showMap?: boolean,
+        aggregateBy: boolean
+        coordType: string
+        coordFormat: string
+        showTooltip: boolean
+        modal: boolean
+        showMap?: boolean
         showFilter?: boolean
-    },
-    fieldType: string,
-    multiValue: boolean,
-    precision: number,
-    scale: number,
-    personal: boolean,
-    decrypt: boolean,
-    subjectId: boolean,
-    aliasToShow: string,
-    aggregationSelected?: string,
+    }
+    fieldType: string
+    multiValue: boolean
+    precision: number
+    scale: number
+    personal: boolean
+    decrypt: boolean
+    subjectId: boolean
+    aliasToShow: string
+    aggregationSelected?: string
     deleted?: boolean
 }
