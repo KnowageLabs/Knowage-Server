@@ -41,6 +41,7 @@ import javax.ws.rs.core.Response.ResponseBuilder;
 
 import org.apache.clerezza.jaxrs.utils.form.FormFile;
 import org.apache.clerezza.jaxrs.utils.form.MultiPartBody;
+import org.apache.clerezza.jaxrs.utils.form.ParameterValue;
 import org.apache.log4j.Logger;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -125,16 +126,16 @@ public class DossierActivityResource extends AbstractSpagoBIResource {
 
 	@GET
 	@Path("/resourcePath")
-	public Response getresourcePath(@QueryParam("templateName") String fileName) throws JSONException {
+	public Response getresourcePath(@QueryParam("templateName") String fileName, @QueryParam("documentId") Integer documentId) throws JSONException {
 		String separator = File.separator;
 		if (fileName.endsWith("?"))
 			fileName = fileName.substring(0, fileName.length() - 1);
-		String outPath = SpagoBIUtilities.getResourcePath() + separator + "dossier" + separator + fileName;
+		String outPath = SpagoBIUtilities.getResourcePath() + separator + "dossier" + separator + documentId + separator + fileName;
 		ResponseBuilder responseBuilder = null;
 		byte[] bytes;
 		File file = new File(outPath);
 		JSONObject response = new JSONObject();
-		File dossierDir = new File(SpagoBIUtilities.getResourcePath() + separator + "dossier" + separator);
+		File dossierDir = new File(SpagoBIUtilities.getResourcePath() + separator + "dossier" + separator + documentId + separator);
 		try {
 			PathTraversalChecker.isValidFileName(fileName);
 			PathTraversalChecker.preventPathTraversalAttack(file, dossierDir);
@@ -158,14 +159,14 @@ public class DossierActivityResource extends AbstractSpagoBIResource {
 
 	@GET
 	@Path("/checkPathFile")
-	public Response checkPathFile(@QueryParam("templateName") String fileName) throws JSONException {
+	public Response checkPathFile(@QueryParam("templateName") String fileName, @QueryParam("documentId") Integer documentId) throws JSONException {
 		String separator = File.separator;
 		if (fileName.endsWith("?"))
 			fileName = fileName.substring(0, fileName.length() - 1);
-		String outPath = SpagoBIUtilities.getResourcePath() + separator + "dossier" + separator + fileName;
+		String outPath = SpagoBIUtilities.getResourcePath() + separator + "dossier" + separator + documentId + separator + fileName;
 		byte[] bytes;
 		File file = new File(outPath);
-		File dossierDir = new File(SpagoBIUtilities.getResourcePath() + separator + "dossier" + separator);
+		File dossierDir = new File(SpagoBIUtilities.getResourcePath() + separator + "dossier" + separator + documentId + separator);
 		JSONObject response = new JSONObject();
 		try {
 			PathTraversalChecker.isValidFileName(fileName);
@@ -194,14 +195,15 @@ public class DossierActivityResource extends AbstractSpagoBIResource {
 		try {
 			String separator = File.separator;
 			final FormFile file = multipartFormDataInput.getFormFileParameterValues("file")[0];
+			ParameterValue documentIdParam = multipartFormDataInput.getParameteValues("documentId")[0];
 			String fileName = file.getFileName();
 			archiveBytes = file.getContent();
-			File dossierDir = new File(SpagoBIUtilities.getResourcePath() + separator + "dossier");
+			File dossierDir = new File(SpagoBIUtilities.getResourcePath() + separator + "dossier" + separator + documentIdParam + separator);
 			if (!dossierDir.exists()) {
 				dossierDir.mkdir();
 			}
 			PathTraversalChecker.isValidFileName(fileName);
-			File f = new File(SpagoBIUtilities.getResourcePath() + separator + "dossier" + separator + fileName);
+			File f = new File(SpagoBIUtilities.getResourcePath() + separator + "dossier" + separator + documentIdParam + separator + fileName);
 			PathTraversalChecker.preventPathTraversalAttack(f, dossierDir);
 			FileOutputStream outputStream = new FileOutputStream(f);
 			outputStream.write(archiveBytes);
