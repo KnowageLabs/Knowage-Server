@@ -18,6 +18,7 @@ import { createNewPivotTableWidgetSettings } from './pivotTableWidget/PivotTable
 import cryptoRandomString from 'crypto-random-string'
 import deepcopy from 'deepcopy'
 import useStore from '@/App.store'
+import { createNewMapWidgetSettings } from './mapWidget/MapWidgetFunctions';
 
 const store = useStore()
 
@@ -88,6 +89,10 @@ const createNewWidgetSettings = (widget: IWidget) => {
             break
         case 'vega':
             widget.settings = createNewVegaSettings()
+            break
+        case 'map':
+            widget.layers = []
+            widget.settings = createNewMapWidgetSettings()
             break
     }
 }
