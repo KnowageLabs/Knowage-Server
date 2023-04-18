@@ -4,7 +4,7 @@
         <div v-else-if="visType.type === 'balloons'">balloons component</div>
         <div v-else-if="visType.type === 'pies'">pies component</div>
         <div v-else-if="visType.type === 'clusters'">clusters component</div>
-        <div v-else-if="visType.type === 'heatmap'">heatmap component</div>
+        <MapVisualizationTypeHeatmap v-else-if="visType.type === 'heatmap'" :prop-heatmap-configuration="visType.heatmapConf ?? null"></MapVisualizationTypeHeatmap>
         <div v-else-if="visType.type === 'choropleth'">choropleth component</div>
     </div>
 </template>
@@ -14,10 +14,11 @@ import { IMapWidgetVisualizationType } from '@/modules/documentExecution/dashboa
 import { defineComponent, PropType } from 'vue'
 
 import descriptor from './MapVisualizationTypeDescriptor.json'
+import MapVisualizationTypeHeatmap from './configuration/MapVisualizationTypeHeatmap.vue'
 
 export default defineComponent({
     name: 'map-visualization-type',
-    components: {},
+    components: { MapVisualizationTypeHeatmap },
     props: { visTypeProp: { type: Object as PropType<IMapWidgetVisualizationType>, required: true } },
     emits: [],
     data() {

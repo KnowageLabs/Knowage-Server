@@ -425,6 +425,7 @@
             "ascending": "Ascending",
             "axis": "Axis",
             "background": "Background",
+            "blur": "Blur",
             "borders": {
                 "borderRadiusBottomLeft": "Border radius bottom left",
                 "borderRadiusBottomRight": "Border radius bottom right",
@@ -859,6 +860,7 @@
             "position": "Position",
             "precision": "Precision",
             "prefix": "Prefix",
+            "radius": "Radius",
             "recentlyUsed": "Recently Used",
             "responsive": {
                 "extraLargeDevices": "Show On Extra Large Devices",
