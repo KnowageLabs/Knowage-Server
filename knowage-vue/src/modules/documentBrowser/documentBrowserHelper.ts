@@ -6,6 +6,8 @@ export function getRouteDocumentType(item: any) {
             routeDocumentType = 'registry'
             break
         case 'DASHBOARD':
+            routeDocumentType = 'dashboard'
+            break
         case 'DOCUMENT_COMPOSITE':
             routeDocumentType = 'document-composite'
             break
