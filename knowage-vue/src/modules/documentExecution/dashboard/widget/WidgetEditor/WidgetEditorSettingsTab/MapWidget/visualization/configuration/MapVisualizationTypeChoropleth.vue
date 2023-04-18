@@ -19,7 +19,7 @@
         <div v-if="classifyByRanges" class="p-ml-4">
             <Button class="kn-button kn-button--primary" @click="onManageRangesClicked">{{ $t('dashboard.widgetEditor.map.manageRanges') }}</Button>
         </div>
-        <div v-if="!classifyByRanges" class="p-float-label p-col-12 p-lg-6 p-fluid p-p-2">
+        <div v-if="!classifyByRanges" class="p-float-label p-col-12 p-lg-6 p-fluid p-p-1">
             <InputNumber v-model="choroplethConfiguration.classes" class="kn-material-input p-inputtext-sm" />
             <label class="kn-material-input-label">{{ $t('dashboard.widgetEditor.map.classesNumber') }}</label>
         </div>
