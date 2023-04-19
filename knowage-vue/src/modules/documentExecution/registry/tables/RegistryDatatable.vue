@@ -9,7 +9,7 @@
             </div>
             <Button icon="fas fa-save" class="p-button-text p-button-rounded p-button-plain kn-button-light" @click="$emit('saveRegistry')" />
         </div>
-        <ag-grid-vue v-if="!loading" class="registry-grid ag-theme-alpine kn-height-full" :row-data="rows" :grid-options="gridOptions" :context="context" />
+        <ag-grid-vue class="registry-grid ag-theme-alpine kn-height-full" :row-data="rows" :grid-options="gridOptions" :context="context" />
     </div>
 
     <RegistryDatatableWarningDialog :visible="warningVisible" :columns="dependentColumns" @close="onWarningDialogClose"></RegistryDatatableWarningDialog>
@@ -43,7 +43,7 @@ export default defineComponent({
         TooltipRenderer
     },
     props: {
-        propColumns: { type: Array },
+        propColumns: { type: Array, required: true },
         propRows: { type: Array, required: true },
         columnMap: { type: Object },
         propConfiguration: { type: Object },
@@ -101,6 +101,9 @@ export default defineComponent({
         },
         propConfiguration() {
             this.loadConfiguration()
+        },
+        propRows() {
+            this.gridApi.setRowData(this.rows)
         },
         dataLoading() {
             this.dataLoading ? this.gridApi.showLoadingOverlay() : this.gridApi.hideOverlay()
@@ -182,6 +185,7 @@ export default defineComponent({
             }
         },
         async loadColumnDefinitions() {
+            if (this.propColumns.length == 0 || this.columns.length > 0) return
             this.loading = true
             this.columns = [
                 {
@@ -217,6 +221,8 @@ export default defineComponent({
             this.setColumnDependencies()
             await this.loadInitialDropdownOptions()
             this.loading = false
+
+            this.gridApi.setColumnDefs(this.columns)
         },
         addColumnEditableProps(el: any) {
             if (el.editable) {
