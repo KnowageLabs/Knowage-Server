@@ -243,6 +243,16 @@ export default defineComponent({
                 response.data[0].usedByNDocs = 0
 
                 this.selectedDataset = { ...response.data[0] }
+
+                this.selectedDataset.restJsonPathAttributes ? (this.selectedDataset.restJsonPathAttributes = JSON.parse(this.selectedDataset.restJsonPathAttributes ? this.selectedDataset.restJsonPathAttributes : '[]')) : []
+                this.selectedDataset.restRequestHeaders ? (this.selectedDataset.restRequestHeaders = JSON.parse(this.selectedDataset.restRequestHeaders ? this.selectedDataset.restRequestHeaders : '{}')) : {}
+
+                if (this.selectedDataset.restRequestHeaders) {
+                    const restRequestHeadersKeys = Object.keys(this.selectedDataset.restRequestHeaders)
+                    this.selectedDataset.restRequestHeaders = restRequestHeadersKeys.map((e) => ({ name: e, value: this.selectedDataset.restRequestHeaders[e] }))
+                }
+
+                console.log('this.selectedDataset.', this.selectedDataset)
             })
         },
         //#endregion ===============================================================================================
