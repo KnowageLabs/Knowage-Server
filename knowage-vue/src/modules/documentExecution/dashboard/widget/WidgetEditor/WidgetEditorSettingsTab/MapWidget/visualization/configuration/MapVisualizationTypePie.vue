@@ -1,5 +1,5 @@
 <template>
-    <div v-if="pieConfiguration" class="p-formgrid p-grid p-p-2">
+    <div v-if="pieConfiguration" class="p-formgrid p-grid p-mt-2">
         <div class="p-field p-float-label p-col-12 p-lg-6 p-fluid">
             <Dropdown v-model="pieConfiguration.type" class="kn-material-input" :options="descriptor.pieTypeOptions" option-value="value">
                 <template #value="slotProps">
@@ -32,17 +32,17 @@
             <label class="kn-material-input-label"> {{ $t('dashboard.widgetEditor.map.categorizeBy') }} </label>
         </div>
 
-        <div class="p-col-12 p-lg-3 p-p-2">
+        <div class="p-col-12 p-lg-3">
             <WidgetEditorColorPicker :initial-value="pieConfiguration.fromColor" :label="$t('dashboard.widgetEditor.map.fromColor')" @change="onSelectionColorChanged($event, 'fromColor')"></WidgetEditorColorPicker>
         </div>
-        <div class="p-col-12 p-lg-3 p-p-2">
+        <div class="p-col-12 p-lg-3">
             <WidgetEditorColorPicker :initial-value="pieConfiguration.toColor" :label="$t('dashboard.widgetEditor.map.toColor')" @change="onSelectionColorChanged($event, 'toColor')"></WidgetEditorColorPicker>
         </div>
-        <div class="p-col-12 p-lg-3 p-p-2">
+        <div class="p-col-12 p-lg-3">
             <WidgetEditorColorPicker :initial-value="pieConfiguration.borderColor" :label="$t('dashboard.widgetEditor.iconTooltips.borderColor')" @change="onSelectionColorChanged($event, 'borderColor')"></WidgetEditorColorPicker>
         </div>
 
-        <div class="p-col-12 p-lg-3 p-p-2">
+        <div class="p-col-12 p-lg-3">
             <label class="kn-material-input-label">{{ $t('dashboard.widgetEditor.map.rangeLabel') }}</label>
             <Slider v-model="rangeValue" class="p-mt-2" range :min="1" :max="100" @change="onRangeSizeChange" />
         </div>

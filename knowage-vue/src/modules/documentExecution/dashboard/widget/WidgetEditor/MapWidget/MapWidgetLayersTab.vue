@@ -1,6 +1,6 @@
 <template>
     <LayersList :widget-model="widget" :datasets="datasets" :selected-datasets="selectedDatasets" @layerSelected="setSelectedLayer"></LayersList>
-    <MapWidgetLayerDetail id="map-widget-layer-detail" class="p-d-flex kn-flex kn-overflow p-p-4" :selected-layer="selectedLayer"></MapWidgetLayerDetail>
+    <MapWidgetLayerDetail id="map-widget-layer-detail" class="p-d-flex kn-flex kn-overflow p-p-3" :selected-layer="selectedLayer"></MapWidgetLayerDetail>
 </template>
 
 <script lang="ts">

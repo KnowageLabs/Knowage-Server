@@ -1,5 +1,5 @@
 <template>
-    <div v-if="widgetModel" class="dashboard-editor-list-card-container p-m-3">
+    <div v-if="widgetModel" class="dashboard-editor-list-card-container p-my-3 p-ml-3">
         <div class="p-col-12 p-d-flex">
             <label class="kn-material-input-label p-as-center p-ml-1"> {{ $t('workspace.gis.dnl.layers') }} </label>
             <Button :label="$t('workspace.gis.dnl.addLayer')" icon="pi pi-plus-circle" class="p-button-outlined p-ml-auto p-mr-1" @click="openLayersDialog" />

@@ -44,7 +44,6 @@ const getFormattedWidgetSettings = (widget: any) => {
     return formattedSettings
 }
 
-// TODO - formatirati layere kad zavrsimo sprint, pitaj boga sta nam sve treba odavde a sta ne......
 const getFormattedLayers = (widget: any) => {
     return widget.content.layers
 }
@@ -115,4 +114,3 @@ const getFormattedTooltipsSettings = () => {
     const formattedTooltips = mapWidgetDefaultValues.getDefaultMapTooltips()
     return formattedTooltips
 }
-

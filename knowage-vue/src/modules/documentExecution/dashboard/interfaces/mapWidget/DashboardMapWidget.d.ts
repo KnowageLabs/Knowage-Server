@@ -62,26 +62,25 @@ export interface IMapWidgetVisualizationTypeMarker {
 }
 
 export interface IMapWidgetVisualizationTypeBalloons {
-    borderColor: string,
-    fromColor: string,
-    toColor: string,
-    minSize: number,
-    maxSize: number,
-    method: string,
-    classes: number,
+    borderColor: string
+    fromColor: string
+    toColor: string
+    minSize: number
+    maxSize: number
+    method: string
+    classes: number
     properties?: {
         thresholds: { color: string; from: number; to: number }[]
     }
 }
 
-
 export interface IMapWidgetVisualizationTypePie {
-    categorizeBy: string,
-    type: string,
-    borderColor: string,
-    fromColor: string,
-    toColor: string,
-    minSize: number,
+    categorizeBy: string
+    type: string
+    borderColor: string
+    fromColor: string
+    toColor: string
+    minSize: number
     maxSize: number
 }
 

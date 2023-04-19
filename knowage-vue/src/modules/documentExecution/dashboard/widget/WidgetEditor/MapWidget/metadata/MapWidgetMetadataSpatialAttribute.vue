@@ -4,7 +4,7 @@
             <label class="kn-material-input-label">{{ $t('dashboard.widgetEditor.map.metadata.spatialAttribute') }}</label>
         </div>
 
-        <div class="p-float-label p-col-12 p-lg-4 kn-flex">
+        <div class="p-field p-float-label p-col-12 p-lg-4 kn-flex">
             <InputText v-model="spatialAttribute.alias" class="kn-material-input kn-width-full" :disabled="true" />
             <label class="kn-material-input-label">{{ $t('common.column') }}</label>
         </div>

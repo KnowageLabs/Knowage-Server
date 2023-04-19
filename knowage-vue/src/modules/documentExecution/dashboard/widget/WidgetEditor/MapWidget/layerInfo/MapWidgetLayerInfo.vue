@@ -1,13 +1,13 @@
 <template>
-    <div v-if="layer" class="widget-editor-card p-p-2">
-        <h2 class="p-ml-3">{{ $t('common.layer') }}</h2>
-        <div class="p-formgrid p-grid p-p-3">
+    <div v-if="layer" class="widget-editor-card">
+        <h3 class="p-ml-3">{{ $t('common.layer') }}</h3>
+        <div class="p-formgrid p-grid p-fluid p-mx-3">
             <div class="p-float-label p-col-12 p-lg-6 kn-flex">
-                <InputText v-model="layer.alias" class="kn-material-input kn-width-full" :disabled="true" />
+                <InputText v-model="layer.alias" class="kn-material-input" :disabled="true" />
                 <label class="kn-material-input-label">{{ $t('common.layer') }}</label>
             </div>
 
-            <span class="p-field p-float-label p-col-12 p-lg-6 p-fluid">
+            <span class="p-field p-float-label p-col-12 p-lg-6">
                 <Dropdown v-model="layer.type" class="kn-material-input" :options="descriptor.layerTypes"> </Dropdown>
                 <label class="kn-material-input-label"> {{ $t('common.type') }} </label>
             </span>
@@ -15,7 +15,7 @@
 
         <hr />
 
-        <div class="p-formgrid p-grid p-p-3 p-mt-2">
+        <div class="p-formgrid p-grid p-m-3 p-pt-3">
             <span class="p-field p-col-12 p-lg-4 p-jc-center p-pl-3">
                 <InputSwitch v-model="layer.isStatic" @change="onStaticChange" />
                 <label class="kn-material-input-label p-ml-3"> {{ $t('common.static') }} </label>
@@ -33,7 +33,7 @@
             </span>
         </div>
 
-        <Message class="kn-width-full p-d-flex p-jc-center p-m-0 p-mx-2" severity="info" :closable="false">
+        <Message class="p-mx-4" severity="info" :closable="false">
             {{ $t('dashboard.widgetEditor.map.layerInfo.linkHint') }}
         </Message>
 

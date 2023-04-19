@@ -1,6 +1,6 @@
 <template>
     <div v-if="layer" class="widget-editor-card p-p-2">
-        <h2 class="p-ml-3">{{ $t('common.metadata') }}</h2>
+        <h3 class="p-ml-3">{{ $t('common.metadata') }}</h3>
         <MapWidgetMetadataSpatialAttribute :prop-spatial-attribute="spatialAttribute"></MapWidgetMetadataSpatialAttribute>
         <hr />
         <MapWidgetMetadataFields v-if="selectedLayer?.content?.columnSelectedOfDataset" :propFields="selectedLayer.content.columnSelectedOfDataset"></MapWidgetMetadataFields>

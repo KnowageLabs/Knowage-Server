@@ -1,10 +1,10 @@
 <template>
-    <div v-if="heatmapConfiguration" class="p-formgrid p-grid p-p-2">
-        <div class="p-float-label p-col-12 p-lg-6 p-fluid p-p-2">
+    <div v-if="heatmapConfiguration" class="p-formgrid p-grid p-mt-2">
+        <div class="p-float-label p-col-12 p-lg-6 p-fluid">
             <InputNumber v-model="heatmapConfiguration.radius" class="kn-material-input" />
             <label class="kn-material-input-label">{{ $t('dashboard.widgetEditor.radius') }}</label>
         </div>
-        <div class="p-float-label p-col-12 p-lg-6 p-fluid p-p-2">
+        <div class="p-float-label p-col-12 p-lg-6 p-fluid">
             <InputNumber v-model="heatmapConfiguration.blur" class="kn-material-input" />
             <label class="kn-material-input-label">{{ $t('dashboard.widgetEditor.blur') }}</label>
         </div>
