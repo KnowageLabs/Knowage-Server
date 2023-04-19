@@ -189,6 +189,9 @@ export default defineComponent({
             })
         },
         emitCloneDataset(event) {
+            this.$router.push('/dataset-management')
+            this.datasetToCloneId = null
+
             this.$router.push('/dataset-management/new-dataset')
             setTimeout(() => {
                 this.datasetToCloneId = event.item.id
