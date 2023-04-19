@@ -17,8 +17,8 @@
                     <template #end>
                         <div class="p-d-flex p-flex-row">
                             <div v-if="selectedGlossary && selectedGlossaryId && selectedGlossaryId != -1">
-                                <Button class="kn-button p-button-text" @click="addNewGlossary('Clone')">{{ $t('common.clone') }}</Button>
-                                <Button class="kn-button p-button-text" @click="deleteGlossaryConfirm">{{ $t('common.delete') }}</Button>
+                                <Button class="kn-button p-button-text glossary-info-button" @click="addNewGlossary('Clone')">{{ $t('common.clone') }}</Button>
+                                <Button class="kn-button p-button-text glossary-info-button" @click="deleteGlossaryConfirm">{{ $t('common.delete') }}</Button>
                             </div>
                         </div>
                     </template>
@@ -619,5 +619,10 @@ export default defineComponent({
 
 .node-label {
     word-wrap: break-word;
+}
+.glossary-info-button {
+    &:hover:enabled {
+        color: white !important;
+    }
 }
 </style>
