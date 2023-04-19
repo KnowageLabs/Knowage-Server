@@ -141,7 +141,7 @@ export default defineComponent({
         },
         getBadgeColor(value) {
             if (value > 0) return 'background: #3B82F6'
-            else return 'background: #EF4444'
+            else return 'background: #cccccc'
         }
     }
 })
