@@ -334,8 +334,12 @@ export default defineComponent({
             const from = { line: cursor.line, ch: start }
             const to = { line: cursor.line, ch: end }
             const range = this.codeMirror.getDoc().getRange(from, to)
-            const fieldAlias = this.source !== 'QBE' ? this.wrap(data.item.fieldAlias) : data.item.fieldAlias
-            const spContent = data.elementType === 'function' ? data.item : fieldAlias
+            let fieldAlias = ''
+            let spContent = ''
+            if (data.item.fieldAlias) {
+                fieldAlias = this.source !== 'QBE' ? this.wrap(data.item.fieldAlias) : data.item.fieldAlias
+            }
+            spContent = data.elementType === 'function' ? data.item : fieldAlias
             if (range.match(/\(|\)|,|\./g)) {
                 this.codeMirror.getDoc().replaceSelection(spContent, cursor)
             } else {
