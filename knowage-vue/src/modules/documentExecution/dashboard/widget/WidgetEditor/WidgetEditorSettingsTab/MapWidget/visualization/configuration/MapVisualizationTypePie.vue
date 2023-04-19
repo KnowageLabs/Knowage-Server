@@ -1,9 +1,5 @@
 <template>
     <div v-if="pieConfiguration" class="p-formgrid p-grid p-p-2">
-        <div class="p-col-12">
-            {{ pieConfiguration }}
-        </div>
-
         <div class="p-field p-float-label p-col-12 p-lg-6 p-fluid">
             <Dropdown v-model="pieConfiguration.type" class="kn-material-input" :options="descriptor.pieTypeOptions" option-value="value">
                 <template #value="slotProps">

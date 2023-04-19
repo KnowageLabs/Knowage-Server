@@ -131,6 +131,6 @@
         "maxSize": 100,
         "minSize": 1,
         "toColor": "rgba(91, 91, 91, 1)",
-        "type": "pies"
+        "type": "pie"
     }
 }

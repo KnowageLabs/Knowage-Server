@@ -26,19 +26,19 @@
     "pieTypeOptions": [
         {
             "label": "dashboard.widgetEditor.map.pieTypeOptions.pies",
-            "value": "pies"
+            "value": "pie"
         },
         {
-            "label": "dashboard.widgetEditor.map.pieTypeOptions.pie3D",
+            "label": "dashboard.widgetEditor.map.pieTypeOptions.pies3d",
             "value": "pie3D"
         },
         {
             "label": "dashboard.widgetEditor.map.pieTypeOptions.donuts",
-            "value": "donuts"
+            "value": "donut"
         },
         {
             "label": "dashboard.widgetEditor.map.pieTypeOptions.bars",
-            "value": "bars"
+            "value": "bar"
         }
     ],
     "style": {

@@ -767,6 +767,11 @@
                     "title": "Enable Base Layer",
                     "zoomFactor": "Zoom factor"
                 },
+                "categorizeBy": "Categorize By",
+                "categorizeByOptions": {
+                    "description": "DESCRIPTION",
+                    "id": "ID"
+                },
                 "classesMethodOptions": {
                     "byEqualIntervals": "Classify by equal intervals",
                     "byQuantils": "Classify by equal quantils",
@@ -823,6 +828,12 @@
                     "wktFormat": "WKT Format"
                 },
                 "north": "North",
+                "pieTypeOptions": {
+                    "bars": "Bars",
+                    "donuts": "Donuts",
+                    "pies": "Pies",
+                    "pies3d": "Pies 3D"
+                },
                 "range": "Range",
                 "rangeLabel": "Min size (%)/Max size (%)",
                 "south": "South",
