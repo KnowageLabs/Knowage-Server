@@ -823,8 +823,8 @@ export default defineComponent({
                 .then((response: AxiosResponse<any>) => {
                     valid = response.data
                 })
-                .catch(() => this.setError({ title: this.$t('common.error.generic'), msg: this.$t('documentExecution.dossier.templateUploadError') }))
-                .finally(() => (this.triggerUpload = false))
+                .catch(() => this.setError({ title: this.$t('common.error.generic'), msg: this.$t('documentExecution.dossier.errorDuringValidation') }))
+                .finally()
 
             return valid
         },
