@@ -23,6 +23,7 @@
                     <div class="kn-list-item-text">
                         <span v-tooltip.top="slotProps.option.alias" class="dashboard-editor-list-alias-container">{{ slotProps.option.alias }}</span>
                     </div>
+                    <Button icon="far fa-trash-alt" class="p-button-text p-button-rounded p-button-plain p-ml-auto" @click.stop="deleteLayer(slotProps.index)" />
                 </div>
             </template>
         </Listbox>
@@ -109,6 +110,9 @@ export default defineComponent({
 
             this.closeLayersDialog()
             console.log('AFTER', this.layers)
+        },
+        deleteLayer(index) {
+            this.layers.splice(index, 1)
         }
     }
 })
