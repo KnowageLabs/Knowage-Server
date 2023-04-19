@@ -600,23 +600,18 @@ export default defineComponent({
         async saveDashboard(document: any) {
             this.setLoading(true)
             if (!this.document) return
-            //const folders = this.newDashboardMode && this.$route.query.folderId ? [this.$route.query.folderId] : []
 
-            const postData = {
-                engine: 'knowagedossierengine',
-                functionalities: [],
-                name: document.name,
-                label: document.label,
-                refreshSeconds: 0,
-                stateCode: 'REL',
-                typeCode: 'DOSSIER',
-                visible: true,
-                lockedByUser: false
+            const formattedAnalysis = {
+                document: {
+                    name: document.name,
+                    label: document.label,
+                    description: document.description
+                },
+                updateFromWorkspace: true
             }
-
             await this.$http
-                .post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `2.0/documentdetails`, postData)
-                .then((response: AxiosResponse<any>) => {
+                .post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + '2.0/saveDocument/', formattedAnalysis, { headers: { 'X-Disable-Errors': 'true' } })
+                .then((response: any) => {
                     this.setInfo({
                         title: this.$t('common.toast.createTitle'),
                         msg: this.$t('common.toast.success')
@@ -627,7 +622,12 @@ export default defineComponent({
 
                     this.save()
                 })
-                .catch(() => {})
+                .catch((response: any) => {
+                    this.setError({
+                        title: this.$t('common.toast.createTitle'),
+                        msg: response
+                    })
+                })
 
             this.setLoading(false)
         },
@@ -652,20 +652,6 @@ export default defineComponent({
             if (!this.isValidFile(uploadedFile)) {
                 // validation
                 this.setError({ title: this.$t('common.error.generic'), msg: this.$t('documentExecution.dossier.templateUploadError') })
-            } else {
-                const formData = new FormData()
-                formData.append('file', uploadedFile)
-                formData.append('documentId', '' + this.getDocument()?.id)
-                await this.$http
-                    .post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + 'dossier/importTemplateFile', formData, { headers: { 'Content-Type': 'multipart/form-data', 'X-Disable-Errors': 'true' } })
-                    .then(async () => {
-                        this.activeTemplate.name = uploadedFile.name
-                        this.activeTemplate.type = this.getDossierType(this.activeTemplate.name)
-                        this.activeTemplate.placeholders = []
-                        this.setInfo({ title: this.$t('common.toast.success'), msg: this.$t('common.toast.uploadSuccess') })
-                    })
-                    .catch(() => this.setError({ title: this.$t('common.error.generic'), msg: this.$t('documentExecution.dossier.templateUploadError') }))
-                    .finally(() => (this.triggerUpload = false))
             }
         },
         selected(event) {
@@ -725,6 +711,20 @@ export default defineComponent({
             if (!this.document?.id) {
                 this.saveDialogVisible = true
             } else {
+                /*                 const formData = new FormData()
+                formData.append('file', this.uploadedFiles[0])
+                formData.append('documentId', '' + this.getDocument()?.id)
+                await this.$http
+                    .post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + 'dossier/importTemplateFile', formData, { headers: { 'Content-Type': 'multipart/form-data', 'X-Disable-Errors': 'true' } })
+                    .then(async () => {
+                        this.activeTemplate.name = uploadedFile.name
+                        this.activeTemplate.type = this.getDossierType(this.activeTemplate.name)
+                        this.activeTemplate.placeholders = []
+                        this.setInfo({ title: this.$t('common.toast.success'), msg: this.$t('common.toast.uploadSuccess') })
+                    })
+                    .catch(() => this.setError({ title: this.$t('common.error.generic'), msg: this.$t('documentExecution.dossier.templateUploadError') }))
+                    .finally(() => (this.triggerUpload = false)) */
+
                 const templateToSave = await this.handleDrivers()
 
                 if (templateToSave) {
@@ -809,9 +809,24 @@ export default defineComponent({
         getDossierType(fileName: string): string {
             return fileName.indexOf('.docx') == -1 ? 'PPT_TEMPLATE_V2' : 'DOC_TEMPLATE'
         },
-        isValidFile(uploadedFile): boolean {
+        async isValidFile(uploadedFile) {
             const fileName = uploadedFile.name
-            return !this.activeTemplate?.type || this.activeTemplate?.type === this.getDossierType(fileName)
+            let valid = !this.activeTemplate?.type || this.activeTemplate?.type === this.getDossierType(fileName)
+            if (!valid) return false
+
+            const formData = new FormData()
+            formData.append('file', uploadedFile)
+            formData.append('documentId', '' + this.getDocument()?.id)
+            formData.append('prefix', '' + this.activeTemplate.prefix)
+            await this.$http
+                .post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + 'dossier/validateDocument', formData, { headers: { 'Content-Type': 'multipart/form-data', 'X-Disable-Errors': 'true' } })
+                .then((response: AxiosResponse<any>) => {
+                    valid = response.data
+                })
+                .catch(() => this.setError({ title: this.$t('common.error.generic'), msg: this.$t('documentExecution.dossier.templateUploadError') }))
+                .finally(() => (this.triggerUpload = false))
+
+            return valid
         },
         getDocument() {
             return this.selectedDocument || this.document
