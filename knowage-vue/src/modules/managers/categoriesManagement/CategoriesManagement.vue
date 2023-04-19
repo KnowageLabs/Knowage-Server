@@ -40,7 +40,7 @@
                     <template #empty> {{ $t('common.info.noDataFound') }} </template>
                     <template #loading> {{ $t('common.info.dataLoading') }} </template>
 
-                    <Column v-for="col of descriptor.columns" :key="col.field" :field="col.field" :header="$t(col.header)" :style="col.field === 'occurences' ? descriptor.table.column.badgeStyle : descriptor.table.column.style" :sortable="true" class="kn-truncated">
+                    <Column v-for="col of descriptor.columns" :key="col.field" :field="col.field" :header="$t(col.header)" :style="col.field === 'occurrences' ? descriptor.table.column.badgeStyle : descriptor.table.column.style" :sortable="true" class="kn-truncated">
                         <template #filter="{ filterModel }">
                             <InputText v-model="filterModel.value" type="text" class="p-column-filter" />
                         </template>
@@ -91,7 +91,7 @@ export default defineComponent({
                 global: [filterDefault],
                 code: { operator: FilterOperator.AND, constraints: [filterDefault] },
                 name: { operator: FilterOperator.AND, constraints: [filterDefault] },
-                occurences: { operator: FilterOperator.AND, constraints: [filterDefault] },
+                occurrences: { operator: FilterOperator.AND, constraints: [filterDefault] },
                 type: { operator: FilterOperator.AND, constraints: [filterDefault] }
             } as Object,
             formVisible: false,

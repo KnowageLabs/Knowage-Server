@@ -1,4 +1,7 @@
 {
+    "chipsTable": {
+        "border": "1px solid #ccc"
+    },
     "columns": [
         {
             "field": "code",
@@ -22,7 +25,7 @@
             "width": "60vw"
         }
     },
-    "globalFilterFields": ["code", "name", "occurences", "type"],
+    "globalFilterFields": ["code", "name", "occurrences", "type"],
     "operation": {
         "insert": {
             "toastTitle": "common.toast.createTitle"
@@ -53,8 +56,5 @@
                 "width": "5%"
             }
         }
-    },
-    "chipsTable": {
-        "border": "1px solid #ccc"
     }
 }
