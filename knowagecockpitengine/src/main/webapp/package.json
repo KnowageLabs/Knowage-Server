@@ -1,6 +1,6 @@
 {
   "name": "knowagecockpitengine",
-  "version": "8.1.9-SNAPSHOT",
+  "version": "8.1.9",
   "description": "",
   "main": "index.js",
   "scripts": {
