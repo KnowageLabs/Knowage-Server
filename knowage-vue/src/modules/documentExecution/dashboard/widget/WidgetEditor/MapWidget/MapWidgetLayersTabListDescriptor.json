@@ -1,4 +1,30 @@
 {
+    "defaultLayerConfig": {
+        "alias": "",
+        "analysisConf": "",
+        "balloonConf": {},
+        "clusterConf": {},
+        "content": {
+            "columnSelectedOfDataset": []
+        },
+        "dataset": {},
+        "defaultIndicator": "",
+        "defaultVisible": true,
+        "dsId": 206,
+        "hasShownDetails": true,
+        "heatmapConf": {},
+        "isStatic": false,
+        "layerID": "",
+        "markerConf": {},
+        "modalSelectionColumn": "",
+        "name": "",
+        "order": 0,
+        "showTooltip": false,
+        "targetDefault": false,
+        "tooltipColumn": "",
+        "type": "DATASET",
+        "visualizationType": "markers"
+    },
     "filterFields": ["alias"],
     "knListSettings": {
         "buttons": [

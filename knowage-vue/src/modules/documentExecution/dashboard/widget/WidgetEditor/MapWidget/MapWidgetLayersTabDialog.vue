@@ -107,7 +107,7 @@ export default defineComponent({
             }, 250)
         },
         addSelectedDatasets() {
-            // this.$emit('addSelectedDatasets', this.selectedDatasets)
+            this.$emit('addSelectedDatasets', this.selectedDatasets)
         }
     }
 })

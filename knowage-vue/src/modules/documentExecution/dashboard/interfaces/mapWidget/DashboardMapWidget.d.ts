@@ -233,7 +233,7 @@ export interface IMapWidgetLayer {
     alias: string
     name: string
     defaultVisible: boolean
-    dataset: IDataset
+    dataset: IDataset | any
     content: {
         columnSelectedOfDataset: IWidgetMapLayerColumn[]
     }

@@ -4,7 +4,6 @@
             <label class="kn-material-input-label p-as-center p-ml-1"> {{ $t('workspace.gis.dnl.layers') }} </label>
             <Button :label="$t('workspace.gis.dnl.addLayer')" icon="pi pi-plus-circle" class="p-button-outlined p-ml-auto p-mr-1" @click="openLayersDialog" />
         </div>
-
         <Listbox class="kn-list kn-list-no-border-right dashboard-editor-list" :options="layers" :filter="true" :filter-placeholder="$t('common.search')" :filter-fields="dataListDescriptor.filterFields" :empty-filter-message="$t('common.info.noDataFound')">
             <template #empty>{{ $t('common.info.noDataFound') }}</template>
             <template #option="slotProps">
@@ -29,7 +28,7 @@
         </Listbox>
     </div>
 
-    <LayersDialog :visible="layersDialogVisible" :available-datasets-prop="selectedDatasets" :selected-datasets-prop="widgetModel.layers" @close="closeLayersDialog" />
+    <LayersDialog :visible="layersDialogVisible" :available-datasets-prop="selectedDatasets" :selected-datasets-prop="widgetModel.layers" @add-selected-datasets="addDatasets" @close="closeLayersDialog" />
 </template>
 
 <script lang="ts">
@@ -39,6 +38,8 @@ import { IMapWidgetLayer } from '../../../interfaces/mapWidget/DashboardMapWidge
 import LayersDialog from './MapWidgetLayersTabDialog.vue'
 import Listbox from 'primevue/listbox'
 import dataListDescriptor from './MapWidgetLayersTabListDescriptor.json'
+
+import deepcopy from 'deepcopy'
 
 export default defineComponent({
     name: 'map-widget-layers-list',
@@ -90,6 +91,24 @@ export default defineComponent({
             const temp = this.widgetModel.layers[eventData]
             this.layers.splice(eventData, 1)
             this.layers.splice(dropIndex, 0, temp)
+        },
+        addDatasets(datasets: IDataset[]) {
+            console.log('datasets', datasets)
+            console.log('layers', this.layers)
+            datasets.forEach((dataset) => {
+                const datasetToAdd = deepcopy(dataListDescriptor.defaultLayerConfig) as IMapWidgetLayer
+                datasetToAdd.alias = dataset.name
+                datasetToAdd.name = dataset.name
+                datasetToAdd.layerID = dataset.label
+                datasetToAdd.dataset = dataset
+                datasetToAdd.content.columnSelectedOfDataset = dataset.metadata.fieldsMeta
+                datasetToAdd.dsId = dataset.id.dsId
+
+                this.layers.push(datasetToAdd)
+            })
+
+            this.closeLayersDialog()
+            console.log('AFTER', this.layers)
         }
     }
 })
