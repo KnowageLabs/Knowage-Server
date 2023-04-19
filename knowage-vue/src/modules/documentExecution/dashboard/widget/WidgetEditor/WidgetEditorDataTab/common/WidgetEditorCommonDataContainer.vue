@@ -1,6 +1,5 @@
 <template>
     <div v-if="widgetModel">
-        {{ widgetModel.columns }}
         <TableWidgetDataForm v-if="widgetType !== 'discovery'" class="p-m-2" :widget-model="widgetModel" :sorting-column-options="columnTableItems"></TableWidgetDataForm>
         <WidgetEditorColumnTable
             class="p-m-2"
