@@ -43,7 +43,7 @@
         </div>
         <div class="config-preview" :style="getPreviewStyle()">
             <i v-if="markerConfig.type === 'default' || markerConfig.type === 'icon'" :class="getIconClass()" />
-            <img v-if="markerConfig.type === 'img' || markerConfig.type === 'web'" :src="markerConfig.type === 'img' ? markerConfig.img : markerConfig.url" :style="`width: ${markerConfig.scale}%; height: ${markerConfig.scale}%;`" />
+            <img v-if="markerConfig.type === 'img' || markerConfig.type === 'url'" :src="markerConfig.type === 'img' ? markerConfig.img : markerConfig.url" :style="`width: ${markerConfig.scale}%; height: ${markerConfig.scale}%;`" />
         </div>
     </div>
 
