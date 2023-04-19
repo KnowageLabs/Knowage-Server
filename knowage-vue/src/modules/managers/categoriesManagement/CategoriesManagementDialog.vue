@@ -57,9 +57,9 @@
             </div>
         </form>
 
-        <div v-if="propCategory?.id" class="p-d-flex p-flex-column" :style="descriptor.chipsTable">
+        <div v-if="propCategory?.id && categoryTags.length > 0" class="p-d-flex p-flex-column" :style="descriptor.chipsTable">
             <Toolbar class="kn-toolbar kn-toolbar--secondary">
-                <template #start> {{ $t('managers.categoriesManagement.occurences') }} </template>
+                <template #start> {{ $t('managers.categoriesManagement.occurrences') }} </template>
             </Toolbar>
             <div class="p-grid p-m-1">
                 <span v-for="(tag, index) of categoryTags" :key="index" class="detail-chips"> {{ tag.name }}</span>
@@ -90,7 +90,7 @@ export default defineComponent({
     components: { Dialog, KnValidationMessages },
     props: {
         propCategory: {
-            type: Object as PropType<iCategory> | null,
+            type: Object as PropType<iCategory> | any,
             required: true
         }
     },
@@ -166,13 +166,10 @@ export default defineComponent({
             }
         },
         async handleSubmit() {
-            if (this.v$.$invalid) {
-                return
-            }
-            const url = import.meta.env.VITE_RESTFUL_SERVICES_PATH + '3.0/category'
+            if (this.v$.$invalid) return
             if (this.category.id) this.operation = 'update'
 
-            await this.sendRequest(url).then(() => {
+            await this.sendRequest().then(() => {
                 this.store.setInfo({
                     title: this.$t(this.descriptor.operation[this.operation].toastTitle),
                     msg: this.$t(this.descriptor.operation.success)
@@ -180,11 +177,11 @@ export default defineComponent({
                 this.$emit('created')
             })
         },
-        sendRequest(url: string) {
-            if (this.operation === 'insert') {
-                return this.$http.post(url, this.category)
-            } else {
-                return this.$http.put(url, this.category)
+        sendRequest() {
+            if (this.operation === 'insert') return this.$http.post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + '3.0/category', this.category)
+            else {
+                delete this.category.occurrences
+                return this.$http.post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + '3.0/category/update', this.category)
             }
         },
         closeTemplate() {
