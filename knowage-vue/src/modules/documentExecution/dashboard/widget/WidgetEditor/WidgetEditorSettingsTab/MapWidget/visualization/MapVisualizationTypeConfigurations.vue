@@ -2,7 +2,7 @@
     <div class="p-d-flex p-flex-column">
         <MapVisualizationTypeMarkers v-if="visType.type === 'markers'" :marker-config-prop="visTypeProp.markerConf" />
         <MapVisualizationTypeBalloonsChoropleth v-else-if="visType.type === 'balloons'" :prop-visualization-type-configuration="visType.balloonConf ?? null" type="balloons"></MapVisualizationTypeBalloonsChoropleth>
-        <MapVisualizationTypePie v-else-if="visType.type === 'pies'" :prop-pie-configuration="visType.pieConf ?? null">pies component</MapVisualizationTypePie>
+        <MapVisualizationTypePie v-else-if="visType.type === 'pies'" :prop-pie-configuration="visType.pieConf ?? null"></MapVisualizationTypePie>
         <MapVisualizationTypeClusters v-if="visType.type === 'clusters'" :cluster-config-prop="visTypeProp.clusterConf" :marker-config-prop="visTypeProp.markerConf" />
         <MapVisualizationTypeHeatmap v-else-if="visType.type === 'heatmap'" :prop-heatmap-configuration="visType.heatmapConf ?? null"></MapVisualizationTypeHeatmap>
         <MapVisualizationTypeBalloonsChoropleth v-else-if="visType.type === 'choropleth'" :prop-visualization-type-configuration="visType.analysisConf ?? null" type="choropleth"></MapVisualizationTypeBalloonsChoropleth>
