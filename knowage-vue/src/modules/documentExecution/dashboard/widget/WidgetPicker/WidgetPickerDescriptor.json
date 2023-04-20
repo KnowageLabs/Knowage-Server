@@ -1,11 +1,7 @@
 {
+    "imageExtension": ".svg",
+    "imagePath": "/knowage-vue/images/dashboard/widgetTypes/",
     "style": {
-        "cardIconContainer": {
-            "background-color": "#cccccc",
-            "border-right": "1px solid #cccccc",
-            "flex-shrink": "0",
-            "width": "100px"
-        },
         "dialog": {
             "width": "60%"
         },
