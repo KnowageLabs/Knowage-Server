@@ -1,7 +1,7 @@
 <template>
-    <div v-if="widget">
+    <div v-if="widget" class="p-d-flex p-flex-column">
         <WidgetEditorColumnTable
-            class="p-m-2"
+            class="p-m-2 p-order-1"
             :widget-model="widget"
             :items="columnTableItems['ATTRIBUTES'] ?? []"
             :settings="{ ...commonDescriptor.columnTableSettings, ...chartJSDescriptor.pieChartColumnTableSettings[0] }"
@@ -9,28 +9,28 @@
             @rowReorder="onColumnsReorder"
             @itemAdded="onColumnAdded"
             @itemUpdated="onColumnItemUpdate"
-            @itemSelected="setSelectedColumn"
+            @itemSelected="setSelectedColumn($event, 2)"
             @itemDeleted="onColumnDelete"
         ></WidgetEditorColumnTable>
         <WidgetEditorColumnTable
-            class="p-m-2"
+            class="p-m-2 p-order-3"
             :widget-model="widget"
             :items="columnTableItems['MEASURES'] ?? []"
             :settings="{ ...commonDescriptor.columnTableSettings, ...chartJSDescriptor.pieChartColumnTableSettings[1] }"
             chart-type="chartJSPieChart"
             @itemAdded="onColumnAdded"
             @itemUpdated="onColumnItemUpdate"
-            @itemSelected="setSelectedColumn"
+            @itemSelected="setSelectedColumn($event, 4)"
             @itemDeleted="onColumnDelete"
         ></WidgetEditorColumnTable>
-        <ChartWidgetColumnForm class="p-m-2" :widget-model="widget" :selected-column="selectedColumn"></ChartWidgetColumnForm>
+        <ChartWidgetColumnForm class="p-m-2" :style="{ order: formFlexOrder }" :widget-model="widget" :selected-column="selectedColumn" :chart-type="'pie'"></ChartWidgetColumnForm>
     </div>
 </template>
 
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
-import { IDataset, IWidget, IWidgetColumn } from '@/modules/documentExecution/Dashboard/Dashboard'
 import { emitter } from '../../../../../DashboardHelpers'
+import { IDataset, IWidget, IWidgetColumn } from '@/modules/documentExecution/dashboard/Dashboard'
 import descriptor from '../../TableWidget/TableWidgetDataDescriptor.json'
 import chartJSDescriptor from './ChartJSDataContainerDescriptor.json'
 import commonDescriptor from '../../common/WidgetCommonDescriptor.json'
@@ -48,7 +48,8 @@ export default defineComponent({
             chartJSDescriptor,
             commonDescriptor,
             columnTableItems: {} as any,
-            selectedColumn: null as IWidgetColumn | null
+            selectedColumn: null as IWidgetColumn | null,
+            formFlexOrder: 4
         }
     },
     watch: {
@@ -101,7 +102,8 @@ export default defineComponent({
                 if (this.widget.columns[index].id === this.selectedColumn?.id) this.selectedColumn = { ...this.widget.columns[index] }
             }
         },
-        setSelectedColumn(column: IWidgetColumn) {
+        setSelectedColumn(column: IWidgetColumn, formFlexOrder: number) {
+            this.formFlexOrder = formFlexOrder
             this.selectedColumn = { ...column }
         },
         onColumnDelete(column: IWidgetColumn) {

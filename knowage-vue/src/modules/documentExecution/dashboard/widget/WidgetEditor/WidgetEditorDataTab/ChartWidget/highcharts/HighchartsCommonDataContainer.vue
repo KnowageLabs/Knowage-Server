@@ -1,8 +1,8 @@
 <template>
-    <div v-if="widgetModel">
+    <div v-if="widgetModel" class="p-d-flex p-flex-column">
         <WidgetEditorColumnTable
             v-if="['pie', 'heatmap'].includes(chartType)"
-            class="p-m-2"
+            class="p-m-2 p-order-1"
             :widget-model="widgetModel"
             :items="columnTableItems['ATTRIBUTES'] ?? []"
             :settings="columnTableSettings"
@@ -10,11 +10,11 @@
             @rowReorder="onColumnsReorder($event, 'ATTRIBUTES')"
             @itemAdded="onColumnAdded"
             @itemUpdated="onColumnItemUpdate"
-            @itemSelected="setSelectedColumn"
+            @itemSelected="setSelectedColumn($event, 2)"
             @itemDeleted="onColumnDelete"
         ></WidgetEditorColumnTable>
         <WidgetEditorColumnTable
-            class="p-m-2"
+            class="p-m-2 p-order-3"
             :widget-model="widgetModel"
             :items="columnTableItems['MEASURES'] ?? []"
             :settings="valuesColumnSettings"
@@ -22,10 +22,10 @@
             @rowReorder="onColumnsReorder($event, 'MEASURES')"
             @itemAdded="onColumnAdded"
             @itemUpdated="onColumnItemUpdate"
-            @itemSelected="setSelectedColumn"
+            @itemSelected="setSelectedColumn($event, 4)"
             @itemDeleted="onColumnDelete"
         ></WidgetEditorColumnTable>
-        <ChartWidgetColumnForm class="p-m-2" :widget-model="widgetModel" :selected-column="selectedColumn" :chart-type="chartType"></ChartWidgetColumnForm>
+        <ChartWidgetColumnForm class="p-m-2" :style="{ order: formFlexOrder }" :widget-model="widgetModel" :selected-column="selectedColumn" :chart-type="chartType"></ChartWidgetColumnForm>
     </div>
 </template>
 
@@ -51,7 +51,8 @@ export default defineComponent({
             highchartDescriptor,
             commonDescriptor,
             columnTableItems: {} as any,
-            selectedColumn: null as IWidgetColumn | null
+            selectedColumn: null as IWidgetColumn | null,
+            formFlexOrder: 4
         }
     },
     computed: {
@@ -149,7 +150,8 @@ export default defineComponent({
                 if (this.widgetModel.columns[index].id === this.selectedColumn?.id) this.selectedColumn = { ...this.widgetModel.columns[index] }
             }
         },
-        setSelectedColumn(column: IWidgetColumn) {
+        setSelectedColumn(column: IWidgetColumn, formFlexOrder: number) {
+            this.formFlexOrder = formFlexOrder
             this.selectedColumn = { ...column }
         },
         onColumnDelete(column: IWidgetColumn) {

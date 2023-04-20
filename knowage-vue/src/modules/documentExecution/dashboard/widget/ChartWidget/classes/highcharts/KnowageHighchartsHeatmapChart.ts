@@ -149,9 +149,8 @@ export class KnowageHighchartsHeatmapChart extends KnowageHighcharts {
         this.model.yAxis = highchartsDefaultValues.getDefaultHeatmapYAxis()
     }
 
-
     formatSeriesFromOtherChartTypeSeries() {
-        this.model.series = this.model.series.map((serie: any) => { return this.getFormattedSerieFromOtherChartTypeSerie(serie) })
+        this.model.series = this.model.series?.map((serie: any) => { return this.getFormattedSerieFromOtherChartTypeSerie(serie) })
     }
 
     getFormattedSerieFromOtherChartTypeSerie(otherChartSerie: any) {
