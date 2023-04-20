@@ -81,7 +81,7 @@
         }
     ],
     "settings": {
-        "Chart": [
+        "Colors": [
             {
                 "title": "dashboard.widgetEditor.colors.title",
                 "type": "Colors"
@@ -159,8 +159,8 @@
         },
         {
             "icon": "pi pi-table",
-            "label": "common.chart",
-            "value": "Chart"
+            "label": "common.colors",
+            "value": "Colors"
         },
         {
             "icon": "fa fa-hand-pointer",
