@@ -53,7 +53,7 @@
             </div>
             <div class="p-col-5">
                 <span class="p-field p-float-label p-col-12 p-lg-6 p-fluid kn-width-full">
-                    <Dropdown v-model="layer.catalogLayerLink" class="kn-material-input" :options="[]"> </Dropdown>
+                    <Dropdown v-model="layer.catalogLayerLink" class="kn-material-input" :options="layers" option-value="name" option-label="name"> </Dropdown>
                     <label class="kn-material-input-label"> {{ $t('dashboard.widgetEditor.map.layerInfo.catalogLayer') }} </label>
                 </span>
                 <span class="p-field p-float-label p-col-12 p-lg-6 p-fluid kn-width-full">
@@ -68,7 +68,7 @@
 <script lang="ts">
 import { PropType, defineComponent } from 'vue'
 import { getTranslatedLabel } from '@/helpers/commons/dropdownHelper'
-import { IMapWidgetLayer } from '@/modules/documentExecution/dashboard/interfaces/mapWidget/DashboardMapWidget'
+import { ILayer, IMapWidgetLayer } from '@/modules/documentExecution/dashboard/interfaces/mapWidget/DashboardMapWidget'
 import { IDataset } from '@/modules/documentExecution/dashboard/Dashboard'
 import { mapActions } from 'pinia'
 import descriptor from './MapWidgetLayerInfoDescriptor.json'
@@ -80,7 +80,7 @@ import dashboardStore from '@/modules/documentExecution/dashboard/Dashboard.stor
 export default defineComponent({
     name: 'map-widget-layer-info',
     components: { Dropdown, InputSwitch, Message },
-    props: { selectedLayer: { type: Object as PropType<IMapWidgetLayer | null>, required: true } },
+    props: { selectedLayer: { type: Object as PropType<IMapWidgetLayer | null>, required: true }, layers: { type: Array as PropType<ILayer[]>, required: true } },
     data() {
         return {
             descriptor,

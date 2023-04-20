@@ -32,7 +32,6 @@
 import { defineComponent, PropType } from 'vue'
 import { IWidget, IDataset, IVariable } from '@/modules/documentExecution/dashboard/Dashboard'
 import { ILayer } from '@/modules/documentExecution/dashboard/interfaces/mapWidget/DashboardMapWidget'
-import { AxiosResponse } from 'axios'
 import Accordion from 'primevue/accordion'
 import AccordionTab from 'primevue/accordiontab'
 import descriptor from './MapSettingsDescriptor.json'
@@ -87,14 +86,14 @@ export default defineComponent({
         datasets: { type: Array as PropType<IDataset[]> },
         selectedDatasets: { type: Array as PropType<IDataset[]> },
         variables: { type: Array as PropType<IVariable[]>, required: true },
-        dashboardId: { type: String, required: true }
+        dashboardId: { type: String, required: true },
+        layers: { type: Array as PropType<ILayer[]>, required: true }
     },
 
     data() {
         return {
             descriptor,
             settingsTabDescriptor,
-            layers: [] as ILayer[],
             activeIndex: -1
         }
     },
@@ -106,17 +105,10 @@ export default defineComponent({
     },
     created() {
         this.setActiveAccordion()
-        this.loadLayers()
     },
     methods: {
         setActiveAccordion() {
             if (this.settings?.length === 1) this.activeIndex = 0
-        },
-        async loadLayers() {
-            await this.$http
-                .get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + 'layers')
-                .then((response: AxiosResponse<any>) => (this.layers = response.data.root))
-                .catch(() => {})
         }
     }
 })

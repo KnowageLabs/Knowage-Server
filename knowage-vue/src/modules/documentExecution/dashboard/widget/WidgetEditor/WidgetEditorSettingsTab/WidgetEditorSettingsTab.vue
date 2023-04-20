@@ -127,6 +127,7 @@
             :selected-datasets="selectedDatasets"
             :variables="variables"
             :dashboard-id="dashboardId"
+            :layers="layers"
         ></MapWidgetSettingsContainer>
         <VegaChartsSettingsContainer
             v-else-if="propWidget.type === 'vega'"
@@ -144,6 +145,7 @@
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
 import { IWidget, IDataset, IVariable, IGalleryItem } from '../../../Dashboard'
+import { ILayer } from '../../../interfaces/mapWidget/DashboardMapWidget'
 import tableDescriptor from './TableWidget/TableWidgetSettingsDescriptor.json'
 import TableWidgetSettingsContainer from './TableWidget/TableWidgetSettingsContainer.vue'
 import SelectorWidgetSettingsContainer from './SelectorWidget/SelectorWidgetSettingsContainer.vue'
@@ -203,7 +205,8 @@ export default defineComponent({
         variables: { type: Array as PropType<IVariable[]>, required: true },
         htmlGalleryProp: { type: Array as PropType<IGalleryItem[]>, required: true },
         customChartGalleryProp: { type: Array as PropType<IGalleryItem[]>, required: true },
-        dashboardId: { type: String, required: true }
+        dashboardId: { type: String, required: true },
+        layers: { type: Array as PropType<ILayer[]>, required: true }
     },
     emits: ['settingChanged'],
     data() {
