@@ -138,6 +138,7 @@ export default defineComponent({
             this.$emit('update:visibility', false)
         },
         async onLoad() {
+            this.showMenu = true
             await this.$http
                 .get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + '2.0/export/dataset')
                 .then((response) => {

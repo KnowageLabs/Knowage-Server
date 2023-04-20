@@ -43,6 +43,7 @@
 import { defineComponent, PropType } from 'vue'
 import { IDashboardDataset, IDatasetColumn, IDataset, IWidget } from '../../../../Dashboard'
 import { emitter } from '../../../../DashboardHelpers'
+import { removeColumnFromDiscoveryWidgetModel } from '../../helpers/discoveryWidget/DiscoveryWidgetFunctions'
 import descriptor from './WidgetEditorDataListDescriptor.json'
 import Dropdown from 'primevue/dropdown'
 import mainStore from '../../../../../../../App.store'
@@ -140,7 +141,7 @@ export default defineComponent({
             if (!this.model?.columns) return
             for (let i = 0; i < this.model.columns.length; i++) {
                 emitter.emit('columnRemoved', this.model.columns[i])
-                // if (this.widgetModel.type === 'discovery') removeColumnFromDiscoveryWidgetModel(this.widgetModel, this.model.columns[i])
+                if (this.widgetModel.type === 'discovery') removeColumnFromDiscoveryWidgetModel(this.widgetModel, this.model.columns[i])
             }
             emitter.emit('refreshWidgetWithData', this.widgetModel.id)
             this.model.columns = []

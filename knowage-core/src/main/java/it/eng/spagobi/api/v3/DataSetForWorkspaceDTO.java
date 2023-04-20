@@ -25,7 +25,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.databind.node.ContainerNode;
 
 import it.eng.knowage.parameter.ParameterManagerFactory;
 import it.eng.spago.base.SourceBean;
@@ -43,7 +42,7 @@ class DataSetForWorkspaceDTO extends AbstractDataSetDTO {
 	private static final DataSetMetadataJSONSerializer metaSerializer = new DataSetMetadataJSONSerializer();
 	private final List<DataSetParameterDTO> params = new ArrayList<>();
 	private final List<DataSetParameterDTO> drivers = new ArrayList<>();
-	private ContainerNode<?> meta;
+	private JSONObject meta;
 
 	public DataSetForWorkspaceDTO(SbiDataSet dataset) {
 		super(dataset);
@@ -85,7 +84,7 @@ class DataSetForWorkspaceDTO extends AbstractDataSetDTO {
 	private void initMeta() throws SourceBeanException, JSONException {
 		String metaAsString = dataset.getDsMetadata();
 		if (metaAsString != null)
-			meta = metaSerializer.serializeToJson(metaAsString).getWrappedObject();
+			meta = (JSONObject) metaSerializer.serializeToJson(metaAsString);
 	}
 
 	private void initDrivers() throws JSONException {
@@ -142,7 +141,7 @@ class DataSetForWorkspaceDTO extends AbstractDataSetDTO {
 		return params;
 	}
 
-	public ContainerNode<?> getMeta() throws SourceBeanException, JSONException {
+	public JSONObject getMeta() throws SourceBeanException, JSONException {
 		return meta;
 	}
 

@@ -1262,12 +1262,16 @@ $mdPanel,cockpitModule_widgetSelection,cockpitModule_properties,cockpitModule_ut
 						// CASE 4 [[pippo],[pluto]]
 						
 						for (var j in splittedValues) {
-							if (splittedValues[j] != "") {
+							if (splittedValues[j] && splittedValues[j] != "") {
 								if (j!=0) {
 									tempJSN  +=",";
 								}
 								if(cockpitModule_properties.PARAMETERS[parameter].type == "String"){
-									tempJSN  +=  (splittedValues[j].charAt(0) == "'" ? "" : "'") + splittedValues[j] + (splittedValues[j].charAt(splittedValues[j].length - 1) == "'" ? "" : "'") ;
+									if ((splittedValues[j].charAt(0) == "'") && (splittedValues[j].charAt(splittedValues[j].length - 1) == "'")) {
+										splittedValues[j] = splittedValues[j].substring(1, splittedValues[j].length - 1);										
+									}
+									splittedValues[j]  = splittedValues[j].replace(/'/g, "\'");
+									tempJSN  += `'${splittedValues[j]}'`;
 								}
 								else {
 									tempJSN  += splittedValues[j];

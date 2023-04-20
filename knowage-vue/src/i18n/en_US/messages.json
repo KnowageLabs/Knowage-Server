@@ -289,6 +289,7 @@
             "fields": "Fields",
             "formula": "Formula",
             "functions": "Functions",
+            "noAvailableFields": "No fields available to use within a calculated field",
             "officialDocumentation": "Official documentation ({function})",
             "title": "Calculated field",
             "type": "Type"
@@ -1020,6 +1021,64 @@
             },
             "xAxis": "X Axis",
             "yAxis": "Y Axis"
+        },
+        "widgets": {
+            "chart": {
+                "description": "Custom chart with binding to datasources data. Pie chart, bar chart and scatter chart available.",
+                "title": "chart"
+            },
+            "customchart": {
+                "description": "Custom chart with binding to datasources data. Custom javascript and external libraries are available.",
+                "title": "custom"
+            },
+            "discovery": {
+                "description": "Advanced faceted table to interact with Solr datasets",
+                "title": "discovery"
+            },
+            "document": {
+                "description": "Custom document upload as databind or datasource.",
+                "title": "document"
+            },
+            "html": {
+                "description": "Custom HTML code editor with shortcodes to embed dynamic content.",
+                "title": "html"
+            },
+            "image": {
+                "description": "Custom static or dynamic web/uploaded image.",
+                "title": "image"
+            },
+            "map": {
+                "description": "Interactive map with multiple layers representation.",
+                "title": "map"
+            },
+            "python": {
+                "description": "Write your own python code and create your visualization.",
+                "title": "python"
+            },
+            "r": {
+                "description": "Write your own R script and create your custom visualization.",
+                "title": "r"
+            },
+            "selection": {
+                "description": "View current selections on widgets.",
+                "title": "active selections"
+            },
+            "selector": {
+                "description": "Selector widget to easily filter categories.",
+                "title": "selector"
+            },
+            "static-pivot-table": {
+                "description": "Pivot or cross table with datasource binding.",
+                "title": "pivot"
+            },
+            "table": {
+                "description": "Standard table with datasource binding.",
+                "title": "table"
+            },
+            "text": {
+                "description": "Static or dynamic widget text. Uses a WYSIWYG editor and shortcodes to embed dynamic content.",
+                "title": "text"
+            }
         },
         "wizard": {
             "addDataset": "Add a new dataset to the dashboard",

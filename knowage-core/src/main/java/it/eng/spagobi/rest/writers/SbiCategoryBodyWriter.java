@@ -5,6 +5,7 @@ import java.io.OutputStream;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
 
+import javax.ws.rs.Produces;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
@@ -16,6 +17,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import it.eng.spagobi.commons.dao.dto.SbiCategory;
 
 @Provider
+@Produces(MediaType.APPLICATION_JSON)
 public class SbiCategoryBodyWriter implements MessageBodyWriter<SbiCategory> {
 
 	private static class SbiCategoryWrapper {
@@ -56,7 +58,7 @@ public class SbiCategoryBodyWriter implements MessageBodyWriter<SbiCategory> {
 
 	@Override
 	public boolean isWriteable(Class<?> type, Type genericType, Annotation[] annotations, MediaType mediaType) {
-		return true;
+		return type == SbiCategory.class;
 	}
 
 	@Override

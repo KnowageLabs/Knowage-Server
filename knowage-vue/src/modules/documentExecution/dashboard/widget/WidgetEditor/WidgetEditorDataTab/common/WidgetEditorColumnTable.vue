@@ -29,7 +29,7 @@
                 </Column>
                 <Column v-for="column in settings.columns" :key="column.field" class="kn-truncated" :field="column.field" :header="column.header ? $t(column.header) : ''" :sortable="column.sortable">
                     <template #body="slotProps">
-                        <div :style="column.style ?? ''">
+                        <div>
                             <InputText v-if="column.field === 'alias'" v-model="slotProps.data[column.field]" class="kn-material-input" @change="onColumnAliasRenamed(slotProps.data)" />
                             <Dropdown
                                 v-else-if="column.field === 'aggregation' && aggregationDropdownIsVisible(slotProps.data)"
@@ -170,7 +170,7 @@ export default defineComponent({
         },
         onCalcFieldAdded(field) {
             this.rows.push(field as IWidgetColumn)
-            this.$emit('itemAdded', field)
+            this.$emit('itemAdded', { column: field, rows: this.rows, settings: this.settings })
         }
     }
 })

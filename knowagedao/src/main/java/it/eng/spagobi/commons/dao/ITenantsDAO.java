@@ -20,7 +20,7 @@ package it.eng.spagobi.commons.dao;
 import java.util.List;
 import java.util.Set;
 
-import com.fasterxml.jackson.databind.node.ObjectNode;
+import org.json.JSONObject;
 
 import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
@@ -68,7 +68,7 @@ public interface ITenantsDAO extends ISpagoBIDao {
 	 *
 	 */
 
-	public String updateThemes(IEngUserProfile profile, String uuid, String themeName, ObjectNode newThemeConfig, boolean isActive) throws EMFUserError;
+	public String updateThemes(IEngUserProfile profile, String uuid, String themeName, JSONObject newThemeConfig, boolean isActive) throws EMFUserError;
 
 	public void deleteTheme(IEngUserProfile profile, String uuid) throws EMFUserError;
 

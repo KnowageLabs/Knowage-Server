@@ -591,7 +591,7 @@ public class WhatIfHTMLRendereCallback extends HtmlRenderCallback {
 		return result;
 	}
 
-	private String formatValue(String label, double value) {
+	private String formatValue(String label, Double value) {
 		String resArr[] = label.split("\\|");
 
 		for (int i = 0; i < resArr.length; i++) {

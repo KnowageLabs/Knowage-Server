@@ -28,8 +28,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
  * @author FMilosavljevic
- *
+ * @deprecated We have a JSONObject, we must use it.
  */
+@Deprecated
 public class JSONObjectDeserializator {
 	static protected Logger logger = Logger.getLogger(JSONObjectDeserializator.class);
 

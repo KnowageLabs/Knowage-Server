@@ -569,7 +569,7 @@ export default defineComponent({
             if (this.document.typeCode === 'DATAMART') this.mode = 'registry'
             else if (this.document.typeCode === 'DOSSIER') this.mode = 'dossier'
             else if (this.document.typeCode === 'OLAP') this.mode = 'olap'
-            else if (this.document.typeCode === 'DOCUMENT_COMPOSITE' && this.$route.path.includes('dashboard')) this.mode = 'dashboard'
+            else if ((this.document.typeCode === 'DOCUMENT_COMPOSITE' && this.$route.path.includes('dashboard')) || this.document.typeCode === 'DASHBOARD') this.mode = 'dashboard'
             else this.mode = 'iframe'
         },
         async loadDocument() {

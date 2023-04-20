@@ -44,8 +44,13 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.workspace.bo.DocumentOrganizer;
 import it.eng.spagobi.workspace.dao.IObjFuncOrganizerDAO;
 
+/**
+ * @deprecated Replaced by KNOWAGE_TM-513
+ * TODO : Delete
+ */
 @Path("/2.0/organizer/documents")
 @ManageAuthorization
+@Deprecated
 public class DocumentsOrganizerResource extends AbstractSpagoBIResource {
 
 	private static final Logger LOGGER = LogManager.getLogger(DocumentsOrganizerResource.class);

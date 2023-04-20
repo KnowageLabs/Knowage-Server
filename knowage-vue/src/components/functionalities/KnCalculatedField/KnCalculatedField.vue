@@ -30,7 +30,10 @@
                         <h5 class="p-float-label p-text-uppercase p-m-2">{{ $t('components.knCalculatedField.fields') }}</h5>
 
                         <ScrollPanel class="kn-list knListBox kn-flex kn-list-no-border-right" style="height: 200px !important; border: 1px">
-                            <div v-for="(field, index) in fields" :key="index" v-tooltip.bottom="source === 'QBE' ? field.fieldLabel : field.fieldAlias" class="kn-list-item p-d-flex p-ai-center fieldType kn-truncated p-ml-2" draggable="true" @dragstart="dragElement($event, field, 'field')">
+                            <Message v-if="fields?.length == 0" severity="warn" :closable="false">
+                                {{ $t('components.knCalculatedField.noAvailableFields') }}
+                            </Message>
+                            <div v-for="(field, index) in fields" v-else :key="index" v-tooltip.bottom="source === 'QBE' ? field.fieldLabel : field.fieldAlias" class="kn-list-item p-d-flex p-ai-center fieldType kn-truncated p-ml-2" draggable="true" @dragstart="dragElement($event, field, 'field')">
                                 <div><i class="fa fa-solid fa-bars"></i></div>
                                 <div v-if="source === 'QBE'" class="p-ml-2">{{ field.fieldLabel }}</div>
                                 <div v-else class="p-ml-2">{{ field.fieldAlias }}</div>
@@ -189,6 +192,7 @@ export default defineComponent({
         }
     },
     created() {
+        this.setupCodeMirror()
         this.calcFieldFunctions = [...this.propCalcFieldFunctions]
         this.availableFunctions = [...this.calcFieldFunctions].sort((a, b) => {
             return a.name.localeCompare(b.name)
@@ -198,7 +202,6 @@ export default defineComponent({
         })
         this.cf = { formula: '' } as IKnCalculatedField
         if (!this.readOnly && this.template && !this.template.parameters && this.source === 'QBE') {
-
             this.cf = { colName: this.template.alias, formula: this.template.expression } as IKnCalculatedField
         }
         if (!this.readOnly && this.template && !this.template.parameters && this.source === 'dashboard') {
@@ -331,8 +334,12 @@ export default defineComponent({
             const from = { line: cursor.line, ch: start }
             const to = { line: cursor.line, ch: end }
             const range = this.codeMirror.getDoc().getRange(from, to)
-            const fieldAlias = this.source !== 'QBE' ? '$F{' + data.item.fieldAlias + '}' : data.item.fieldAlias
-            const spContent = data.elementType === 'function' ? data.item : fieldAlias
+            let fieldAlias = ''
+            let spContent = ''
+            if (data.item.fieldAlias) {
+                fieldAlias = this.source !== 'QBE' ? this.wrap(data.item.fieldAlias) : data.item.fieldAlias
+            }
+            spContent = data.elementType === 'function' ? data.item : fieldAlias
             if (range.match(/\(|\)|,|\./g)) {
                 this.codeMirror.getDoc().replaceSelection(spContent, cursor)
             } else {
@@ -344,6 +351,11 @@ export default defineComponent({
                 if (textEl) this.cf.formula = textEl.innerText
             }
             this.codeMirror.refresh()
+        },
+        wrap(alias: string): string {
+            const regex = /(\$F{)[a-zA-Z0-9_]+(})/g
+            const found = alias.match(regex)
+            return !found ? '$F{' + alias + '}' : alias
         },
         applyValidationResultsToFormula() {
             const from = { line: this.codeMirror.getDoc().firstLine(), ch: 0 }

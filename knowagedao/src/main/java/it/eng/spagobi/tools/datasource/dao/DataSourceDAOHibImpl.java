@@ -303,7 +303,7 @@ public class DataSourceDAOHibImpl extends AbstractHibernateDAO implements IDataS
 			aSession = getSession();
 			tx = aSession.beginTransaction();
 
-			aSession.disableFilter(TENANT_FILTER_NAME);
+			aSession.disableFilter(FILTER_TENANT);
 
 			Criteria c = aSession.createCriteria(SbiDataSource.class);
 
@@ -355,7 +355,7 @@ public class DataSourceDAOHibImpl extends AbstractHibernateDAO implements IDataS
 			aSession = getSession();
 			tx = aSession.beginTransaction();
 
-			aSession.disableFilter(TENANT_FILTER_NAME);
+			aSession.disableFilter(FILTER_TENANT);
 
 			Criteria c = aSession.createCriteria(SbiDataSource.class);
 
