@@ -819,7 +819,7 @@ export default defineComponent({
             formData.append('documentId', '' + this.getDocument()?.id)
             formData.append('prefix', '' + this.activeTemplate.prefix)
             await this.$http
-                .post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + 'dossier/validateDocument', formData, { headers: { 'Content-Type': 'multipart/form-data', 'X-Disable-Errors': 'true' } })
+                .post('/knowagedossierengine/api/dossiervalidator/validateDocument', formData, { headers: { 'Content-Type': 'multipart/form-data', 'X-Disable-Errors': 'true' } })
                 .then((response: AxiosResponse<any>) => {
                     valid = response.data
                 })
