@@ -22,13 +22,12 @@ import dashboardStore from '../../Dashboard.store'
 import descriptor from '../../dataset/DatasetEditorDescriptor.json'
 import 'ag-grid-community/styles/ag-grid.css' // Core grid CSS, always needed
 import 'ag-grid-community/styles/ag-theme-alpine.css' // Optional theme CSS
-import CellRenderer from './CellRenderer.vue'
+import CellRenderer from './CellRenderer'
 import HeaderRenderer from './HeaderRenderer.vue'
 import TooltipRenderer from './TooltipRenderer.vue'
 import SummaryRowRenderer from './SummaryRowRenderer.vue'
 import HeaderGroupRenderer from './HeaderGroupRenderer.vue'
 import PaginatorRenderer from './PaginatorRenderer.vue'
-import store from '../../Dashboard.store'
 
 export default defineComponent({
     name: 'table-widget',
@@ -54,11 +53,6 @@ export default defineComponent({
         propVariables: { type: Array as PropType<IVariable[]>, required: true }
     },
     emits: ['pageChanged', 'sortingChanged', 'launchSelection'],
-    setup() {
-        const store = dashboardStore()
-        const appStore = mainStore()
-        return { store, appStore }
-    },
     data() {
         return {
             descriptor,
@@ -110,7 +104,7 @@ export default defineComponent({
         this.removeEventListeners()
     },
     methods: {
-        ...mapActions(store, ['setSelections']),
+        ...mapActions(mainStore, ['setSelections']),
         ...mapActions(dashboardStore, ['getDashboardDrivers']),
         loadWidgetModel() {
             this.widgetModel = this.propWidget
@@ -161,7 +155,7 @@ export default defineComponent({
                 suppressRowClickSelection: true,
                 suppressCellFocus: true,
                 suppressMultiRangeSelection: true,
-                suppressRowVirtualisation: true,
+                suppressRowVirtualisation: false,
                 rowHeight: 25,
 
                 // EVENTS
@@ -575,6 +569,17 @@ export default defineComponent({
     border-right: 1px solid lightgrey !important;
     border-bottom: 1px solid lightgrey !important;
     background-color: white;
+}
+.ag-cell {
+    .barContainer {
+        width: 100%;
+        height: 100%;
+        display: inline-flex;
+        .innerBar {
+            height: 100%;
+            margin: 1px;
+        }
+    }
 }
 .multiselect-overlay {
     display: flex;

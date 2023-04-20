@@ -47,7 +47,7 @@ export const getColumnConditionalStyles = (propWidget: IWidget, colId: string, v
         for (let i = 0; i < columnConditionalStyles.length; i++) {
             if (
                 (columnConditionalStyles[i].condition.formula && isFormulaConditionMet(columnConditionalStyles[i].condition.formula, valueToCompare, columnName, variables, drivers)) ||
-                (!columnConditionalStyles[i].condition.formula && isConditionMet(columnConditionalStyles[i].condition, valueToCompare))
+                (!columnConditionalStyles[i].condition.formula && isConditionMet(columnConditionalStyles[i].condition, valueToCompare, variables, drivers))
             ) {
                 if (columnConditionalStyles[i].applyToWholeRow && !returnString) {
                     styleString = columnConditionalStyles[i].properties
@@ -97,29 +97,32 @@ const replacePlaceholders = (text, data, skipAdapting, columnName, variables?: I
     return text
 }
 
-export const isConditionMet = (condition, valueToCompare) => {
+export const isConditionMet = (condition, valueToCompare, variables, drivers) => {
     let fullfilledCondition = false
+    let comparer = condition.value
+    if (condition.type == 'variable' && variables) comparer = variables.find((i) => i.name === condition.variable).value
+    if (condition.type == 'parameter' && drivers) comparer = drivers.find((i) => i.name === condition.variable).value
     switch (condition.operator) {
         case '==':
-            fullfilledCondition = valueToCompare == condition.value
+            fullfilledCondition = valueToCompare == comparer
             break
         case '>=':
-            fullfilledCondition = valueToCompare >= condition.value
+            fullfilledCondition = valueToCompare >= comparer
             break
         case '<=':
-            fullfilledCondition = valueToCompare <= condition.value
+            fullfilledCondition = valueToCompare <= comparer
             break
         case 'IN':
-            fullfilledCondition = condition.value.split(',').indexOf(valueToCompare) != -1
+            fullfilledCondition = comparer.split(',').indexOf(valueToCompare) != -1
             break
         case '>':
-            fullfilledCondition = valueToCompare > condition.value
+            fullfilledCondition = valueToCompare > comparer
             break
         case '<':
-            fullfilledCondition = valueToCompare < condition.value
+            fullfilledCondition = valueToCompare < comparer
             break
         case '!=':
-            fullfilledCondition = valueToCompare != condition.value
+            fullfilledCondition = valueToCompare != comparer
             break
     }
     return fullfilledCondition

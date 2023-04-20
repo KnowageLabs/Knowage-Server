@@ -19,6 +19,13 @@
             padding: 0 !important;
             border: none;
         }
+        .ag-cell-value {
+            & > span {
+                display: inline-flex;
+                height: 100%;
+                width: 100%;
+            }
+        }
 
         .custom-header-container,
         .custom-header-group-container {
