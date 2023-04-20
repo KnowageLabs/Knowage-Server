@@ -647,11 +647,16 @@ export default defineComponent({
             this.uploading = true
             this.uploadTemplate(event.target.files[0])
             this.setUploadType()
+            this.uploading = false
         },
         async uploadTemplate(uploadedFile) {
             if (!this.isValidFile(uploadedFile)) {
                 // validation
                 this.setError({ title: this.$t('common.error.generic'), msg: this.$t('documentExecution.dossier.templateUploadError') })
+            } else {
+                this.activeTemplate.name = uploadedFile.name
+                this.activeTemplate.type = this.getDossierType(this.activeTemplate.name)
+                this.activeTemplate.placeholders = []
             }
         },
         selected(event) {
@@ -819,7 +824,7 @@ export default defineComponent({
             formData.append('documentId', '' + this.getDocument()?.id)
             formData.append('prefix', '' + this.activeTemplate.prefix)
             await this.$http
-                .post('/knowagedossierengine/api/dossiervalidator/validateDocument', formData, { headers: { 'Content-Type': 'multipart/form-data', 'X-Disable-Errors': 'true' } })
+                .post('/knowagedossierengine/api/dossiervalidation/validateDocument', formData, { headers: { 'Content-Type': 'multipart/form-data', 'X-Disable-Errors': 'true' } })
                 .then((response: AxiosResponse<any>) => {
                     valid = response.data
                 })
