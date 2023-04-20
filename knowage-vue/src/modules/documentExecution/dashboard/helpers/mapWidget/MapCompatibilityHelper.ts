@@ -8,8 +8,6 @@ import * as mapWidgetDefaultValues from '../../widget/WidgetEditor/helpers/mapWi
 import * as widgetCommonDefaultValues from '../../widget/WidgetEditor/helpers/common/WidgetCommonDefaultValues'
 
 export const formatMapWidget = (widget: any, formattedDashboardModel: IDashboard, drivers: IDashboardDriver[]) => {
-    console.log('--------- ORIGINAL WIDGET: ', widget)
-
     const formattedWidget = {
         id: widget.id,
         dataset: widget.dataset.dsId,
@@ -22,8 +20,6 @@ export const formatMapWidget = (widget: any, formattedDashboardModel: IDashboard
     } as IWidget
     formattedWidget.settings = getFormattedWidgetSettings(widget)
     getFormattedSettingsFromLayers(widget, formattedWidget, formattedDashboardModel, drivers)
-
-    console.log('--------- FORMATTED WIDGET: ', formattedWidget)
     return formattedWidget
 }
 
@@ -75,6 +71,7 @@ const getFormattedControlPanel = (widget: any) => {
 
 const getFormattedVisualization = () => {
     const formattedVisualizationSettings = mapWidgetDefaultValues.getDefaultVisualizationSettings()
+    if (formattedVisualizationSettings.types.length === 1) formattedVisualizationSettings.types.splice(0, 1)
     return formattedVisualizationSettings
 }
 

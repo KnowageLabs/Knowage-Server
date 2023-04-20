@@ -78,7 +78,6 @@ export default defineComponent({
     },
     async created() {
         await this.setDatasetList()
-        console.log(this.datasets)
     },
     updated() {
         this.filteredDatasets = [...this.datasets]

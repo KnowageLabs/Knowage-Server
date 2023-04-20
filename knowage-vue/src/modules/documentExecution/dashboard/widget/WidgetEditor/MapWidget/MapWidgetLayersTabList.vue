@@ -94,8 +94,6 @@ export default defineComponent({
             this.layers.splice(dropIndex, 0, temp)
         },
         addDatasets(datasets: IDataset[]) {
-            console.log('datasets', datasets)
-            console.log('layers', this.layers)
             datasets.forEach((dataset) => {
                 const datasetToAdd = deepcopy(dataListDescriptor.defaultLayerConfig) as IMapWidgetLayer
                 datasetToAdd.alias = dataset.name
@@ -109,7 +107,6 @@ export default defineComponent({
             })
 
             this.closeLayersDialog()
-            console.log('AFTER', this.layers)
         },
         deleteLayer(index) {
             this.layers.splice(index, 1)
