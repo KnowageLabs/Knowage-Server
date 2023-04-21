@@ -32,11 +32,10 @@ export const loadCrossNavigation = async (vueComponent: any, crossNavigationDocu
     formatAngularOutputParameters(vueComponent, angularData.otherOutputParameters)
     const navigationParams = formatNavigationParams(vueComponent, angularData.otherOutputParameters, crossNavigationDocument ? crossNavigationDocument.navigationParams : [])
     addDocumentOtherParametersToNavigationParamas(vueComponent, navigationParams, angularData, crossNavigationDocument)
-
     const popupOptions = crossNavigationDocument?.popupOptions ? JSON.parse(crossNavigationDocument.popupOptions) : null
-
     checkIfParameterHasFixedValue(navigationParams, crossNavigationDocument)
 
+    const sourceDocumentName = vueComponent.document.name
     if (crossNavigationDocument?.crossType !== 2) {
         vueComponent.document = {
             ...crossNavigationDocument?.document,
@@ -48,8 +47,10 @@ export const loadCrossNavigation = async (vueComponent: any, crossNavigationDocu
         openCrossNavigationInNewWindow(vueComponent, popupOptions, crossNavigationDocument, navigationParams)
     } else if (crossNavigationDocument?.crossType === 1) {
         const documentLabel = crossNavigationDocument?.document.label
+        vueComponent.crossNavigationSourceDocumentName = sourceDocumentName
         vueComponent.crossNavigationContainerData = {
             documentLabel: documentLabel,
+            documentName: crossNavigationDocument.document.name,
             iFrameName: documentLabel
         }
         vueComponent.crossNavigationContainerVisible = true

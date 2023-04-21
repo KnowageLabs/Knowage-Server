@@ -3,7 +3,7 @@
         <Toolbar v-if="!embed && !olapDesignerMode && !managementOpened && !dashboardGeneralSettingsOpened" class="kn-toolbar kn-toolbar--primary p-col-12">
             <template #start>
                 <DocumentExecutionBreadcrumb v-if="breadcrumbs.length > 1" :breadcrumbs="breadcrumbs" @breadcrumbClicked="onBreadcrumbClick"></DocumentExecutionBreadcrumb>
-                <span v-else>{{ document?.name }}</span>
+                <span v-else>{{ crossNavigationSourceDocumentName ? crossNavigationSourceDocumentName : document?.name }}</span>
             </template>
             <template #end>
                 <div class="p-d-flex p-jc-around">
@@ -288,7 +288,8 @@ export default defineComponent({
             } | null,
             crossNavigationPopupDialogDocument: null as any,
             crossNavigationDialogVisible: false,
-            loadingCrossNavigationDocument: false
+            loadingCrossNavigationDocument: false,
+            crossNavigationSourceDocumentName: ''
         }
     },
     computed: {
@@ -1005,7 +1006,8 @@ export default defineComponent({
         onCrossNavigationContainerClose() {
             this.crossNavigationContainerData = null
             this.crossNavigationContainerVisible = false
-            this.onBreadcrumbClick(this.breadcrumbs[0])
+            this.crossNavigationSourceDocumentName = ''
+            this.onBreadcrumbClick(this.breadcrumbs[this.breadcrumbs.length - 1])
         },
         addWidget() {
             emitter.emit('openNewWidgetPicker', this.document.dashboardId)
