@@ -111,7 +111,13 @@
 			if (exportWidget) {
 				requestUrl.exportWidget = exportWidget;
 			}
-
+		var regex = new RegExp("^_(SUM|AVG|COUNT|COUNT_DISTINCT|NONE|MAX|MIN)$");
+		for (var k in widget.content.columnSelectedOfDataset) {
+			if (regex.test(widget.content.columnSelectedOfDataset[k].alias)){
+				widget.content.columnSelectedOfDataset[k].alias = widget.content.columnSelectedOfDataset[k].name + widget.content.columnSelectedOfDataset[k].alias;
+				widget.content.columnSelectedOfDataset[k].aliasToShow = widget.content.columnSelectedOfDataset[k].name + widget.content.columnSelectedOfDataset[k].aliasToShow;
+			}
+		}
 			if (!angular.equals(cockpitModule_properties.VARIABLES,{})) {
 				for (var k in widget.content.columnSelectedOfDataset) {
 					if(Array.isArray(widget.content.columnSelectedOfDataset[k].variables) && widget.content.columnSelectedOfDataset[k].variables.length) {
