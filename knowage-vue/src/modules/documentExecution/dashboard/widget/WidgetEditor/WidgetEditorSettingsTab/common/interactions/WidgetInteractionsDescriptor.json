@@ -1,4 +1,14 @@
 {
+    "chartInteractionAdditionalDynamicOptions": [
+        {
+            "label": "dashboard.widgetEditor.interactions.chartDynamicOptions.groupingName",
+            "value": "GROUPING_NAME"
+        },
+        {
+            "label": "dashboard.widgetEditor.interactions.chartDynamicOptions.groupingValue",
+            "value": "GROUPING_VALUE"
+        }
+    ],
     "chartInteractionDynamicOptions": [
         {
             "label": "dashboard.widgetEditor.interactions.chartDynamicOptions.serieName",
@@ -105,6 +115,28 @@
         },
         {
             "type": "background-color"
+        }
+    ],
+    "vegaChartInteractionDynamicOptions": [
+        {
+            "label": "dashboard.widgetEditor.interactions.chartDynamicOptions.serieName",
+            "value": "SERIE_NAME"
+        },
+        {
+            "label": "dashboard.widgetEditor.interactions.chartDynamicOptions.serieValue",
+            "value": "SERIE_VALUE"
+        },
+        {
+            "label": "dashboard.widgetEditor.interactions.chartDynamicOptions.categoryName",
+            "value": "CATEGORY_NAME"
+        },
+        {
+            "label": "dashboard.widgetEditor.interactions.chartDynamicOptions.categoryValue",
+            "value": "CATEGORY_VALUE"
+        },
+        {
+            "label": "dashboard.widgetEditor.interactions.chartDynamicOptions.categoryId",
+            "value": "CATEGORY_ID"
         }
     ]
 }

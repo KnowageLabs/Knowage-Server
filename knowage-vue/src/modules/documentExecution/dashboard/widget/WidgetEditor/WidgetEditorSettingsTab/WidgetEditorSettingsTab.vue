@@ -101,12 +101,12 @@
         <PivotTableWidgetSettingsContainer
             v-else-if="propWidget.type === 'static-pivot-table'"
             class="model-div kn-flex kn-overflow p-py-3 p-pr-3"
-            :widgetModel="propWidget"
-            :selectedSetting="selectedSetting"
+            :widget-model="propWidget"
+            :selected-setting="selectedSetting"
             :datasets="datasets"
-            :selectedDatasets="selectedDatasets"
+            :selected-datasets="selectedDatasets"
             :variables="variables"
-            :dashboardId="dashboardId"
+            :dashboard-id="dashboardId"
         ></PivotTableWidgetSettingsContainer>
         <DiscoveryWidgetSettingsContainer
             v-else-if="propWidget.type === 'discovery'"
@@ -118,12 +118,34 @@
             :variables="variables"
             :dashboardId="dashboardId"
         ></DiscoveryWidgetSettingsContainer>
+        <MapWidgetSettingsContainer
+            v-else-if="propWidget.type === 'map'"
+            class="model-div kn-flex kn-overflow p-py-3 p-pr-3"
+            :widget-model="propWidget"
+            :selected-setting="selectedSetting"
+            :datasets="datasets"
+            :selected-datasets="selectedDatasets"
+            :variables="variables"
+            :dashboard-id="dashboardId"
+            :layers="layers"
+        ></MapWidgetSettingsContainer>
+        <VegaChartsSettingsContainer
+            v-else-if="propWidget.type === 'vega'"
+            class="model-div kn-flex kn-overflow p-py-3 p-pr-3"
+            :widget-model="propWidget"
+            :selected-setting="selectedSetting"
+            :datasets="datasets"
+            :selected-datasets="selectedDatasets"
+            :variables="variables"
+            :dashboard-id="dashboardId"
+        ></VegaChartsSettingsContainer>
     </div>
 </template>
 
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
 import { IWidget, IDataset, IVariable, IGalleryItem } from '../../../Dashboard'
+import { ILayer } from '../../../interfaces/mapWidget/DashboardMapWidget'
 import tableDescriptor from './TableWidget/TableWidgetSettingsDescriptor.json'
 import TableWidgetSettingsContainer from './TableWidget/TableWidgetSettingsContainer.vue'
 import SelectorWidgetSettingsContainer from './SelectorWidget/SelectorWidgetSettingsContainer.vue'
@@ -136,6 +158,8 @@ import ImageWidgetSettingsContainer from './ImageWidget/ImageWidgetSettingsConta
 import CustomChartWidgetSettingsContainer from './CustomChartWidget/CustomChartWidgetSettingsContainer.vue'
 import PivotTableWidgetSettingsContainer from './PivotTableWidget/PivotTableWidgetSettingsContainer.vue'
 import DiscoveryWidgetSettingsContainer from './DiscoveryWidget/DiscoveryWidgetSettingsContainer.vue'
+import MapWidgetSettingsContainer from './MapWidget/MapWidgetSettingsContainer.vue'
+import VegaChartsSettingsContainer from './ChartWidget/vega/VegaChartsSettingsContainer.vue'
 import selectorDescriptor from './SelectorWidget/SelectorWidgetSettingsDescriptor.json'
 import selectionsDescriptor from './SelectionsWidget/SelectionsWidgetSettingsDescriptor.json'
 import WidgetEditorSettingsList from './WidgetEditorSettingsList.vue'
@@ -146,10 +170,13 @@ import HighchartsPieSettingsDescriptor from './ChartWidget/highcharts/descriptor
 import HighchartsGaugeSettingsDescriptor from './ChartWidget/highcharts/descriptors/HighchartsGaugeSettingsDescriptor.json'
 import HighchartsActivityGaugeSettingsDescriptor from './ChartWidget/highcharts/descriptors/HighchartsActivityGaugeSettingsDescriptor.json'
 import HighchartsSolidGaugeSettingsDescriptor from './ChartWidget/highcharts/descriptors/HighchartsSolidGaugeSettingsDescriptor.json'
+import HighchartsHeatmapSettingsDescriptor from './ChartWidget/highcharts/descriptors/HighchartsHeatmapSettingsDescriptor.json'
 import imageDescriptor from './ImageWidget/ImageWidgetSettingsDescriptor.json'
 import customChartDescriptor from './CustomChartWidget/CustomChartWidgetSettingsDescriptor.json'
 import pivotTableDescriptor from './PivotTableWidget/PivotTableSettingsDescriptor.json'
 import discoveryDescriptor from './DiscoveryWidget/DiscoveryWidgetSettingsDescriptor.json'
+import mapWidgetDescriptor from './MapWidget/MapSettingsDescriptor.json'
+import vegaChartsDescriptor from './ChartWidget/vega/VegaChartsSettingsDescriptor.json'
 import { mapState } from 'pinia'
 import mainStore from '@/App.store'
 
@@ -167,7 +194,9 @@ export default defineComponent({
         ImageWidgetSettingsContainer,
         CustomChartWidgetSettingsContainer,
         PivotTableWidgetSettingsContainer,
-        DiscoveryWidgetSettingsContainer
+        DiscoveryWidgetSettingsContainer,
+        MapWidgetSettingsContainer,
+        VegaChartsSettingsContainer
     },
     props: {
         propWidget: { type: Object as PropType<IWidget>, required: true },
@@ -176,7 +205,8 @@ export default defineComponent({
         variables: { type: Array as PropType<IVariable[]>, required: true },
         htmlGalleryProp: { type: Array as PropType<IGalleryItem[]>, required: true },
         customChartGalleryProp: { type: Array as PropType<IGalleryItem[]>, required: true },
-        dashboardId: { type: String, required: true }
+        dashboardId: { type: String, required: true },
+        layers: { type: Array as PropType<ILayer[]>, required: true }
     },
     emits: ['settingChanged'],
     data() {
@@ -239,6 +269,11 @@ export default defineComponent({
                 case 'discovery':
                     this.descriptor = discoveryDescriptor
                     break
+                case 'map':
+                    this.descriptor = mapWidgetDescriptor
+                    break
+                case 'vega':
+                    this.descriptor = vegaChartsDescriptor
             }
         },
         getHighchartsDescriptor() {
@@ -251,6 +286,8 @@ export default defineComponent({
                     return HighchartsActivityGaugeSettingsDescriptor
                 case 'solidgauge':
                     return HighchartsSolidGaugeSettingsDescriptor
+                case 'heatmap':
+                    return HighchartsHeatmapSettingsDescriptor
             }
         },
         onItemClicked(item: any) {

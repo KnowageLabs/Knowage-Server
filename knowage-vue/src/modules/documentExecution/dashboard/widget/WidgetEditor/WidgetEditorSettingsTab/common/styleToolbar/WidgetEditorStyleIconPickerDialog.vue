@@ -44,7 +44,7 @@ import descriptor from './WidgetEditorStyleToolbarDescriptor.json'
 export default defineComponent({
     name: 'widget-editor-icon-picker-dialog',
     components: { Dialog },
-    props: { propModel: { type: Object as PropType<IWidgetStyleToolbarModel | null>, required: true } },
+    props: { propModel: { type: Object as PropType<IWidgetStyleToolbarModel | any | null>, required: true }, usedFrom: { type: String, required: false, default: 'toolbar' } },
     emits: ['close', 'save'],
     data() {
         return {
@@ -67,6 +67,7 @@ export default defineComponent({
             this.filteredIcons = this.icons ? [...this.icons] : []
         },
         getSelectedIcon() {
+            if (this.usedFrom === 'markers') this.selectedIcon = this.propModel
             if (!this.propModel || !this.propModel.icon) return
             const index = this.icons.findIndex((icon: IIcon) => icon.className === this.propModel?.icon)
             if (index !== -1) this.selectedIcon = { ...this.icons[index] }

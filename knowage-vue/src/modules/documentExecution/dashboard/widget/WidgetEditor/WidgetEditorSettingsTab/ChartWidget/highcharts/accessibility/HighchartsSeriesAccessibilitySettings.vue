@@ -59,7 +59,7 @@ export default defineComponent({
     },
     computed: {
         allSeriesOptionEnabled() {
-            return this.model && this.model.chart.type !== 'pie' && this.model.chart.type !== 'solidgauge'
+            return this.model && this.model.chart.type !== 'pie' && this.model.chart.type !== 'solidgauge' && this.model.chart.type !== 'heatmap'
         }
     },
     watch: {

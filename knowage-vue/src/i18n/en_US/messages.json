@@ -35,6 +35,7 @@
         },
         "collapse": "collapse",
         "color": "Color",
+        "colors": "Colors",
         "column": "Column",
         "columns": "Columns",
         "comment": "Comment",
@@ -55,6 +56,7 @@
         "detail": "Detail",
         "details": "Details",
         "development": "Development",
+        "dialog": "Dialog",
         "documentDetails": "Document Details",
         "documents": "Documents",
         "download": "download",
@@ -98,6 +100,7 @@
         "generate": "Generate",
         "group": "Group",
         "height": "Height",
+        "high": "High",
         "home": "Home",
         "horizontal": "Horizontal",
         "horizontalAlign": "Horizontal Align",
@@ -116,6 +119,7 @@
         },
         "information": "information",
         "input": "Input",
+        "json": "JSON",
         "key": "Key",
         "kpi": "KPI",
         "label": "label",
@@ -123,6 +127,8 @@
         "language": "Language",
         "large": "Large",
         "lastChangeDate": "Last change date",
+        "layer": "Layer",
+        "layers": "Layers",
         "layout": "Layout",
         "left": "Left",
         "library": "Library",
@@ -131,6 +137,7 @@
         "locked": "Locked",
         "loggedUser": "logged user",
         "login": "Login",
+        "low": "Low",
         "max": "Max",
         "medium": "Medium",
         "menu": "Menu",
@@ -138,6 +145,7 @@
         "metadata": "Metadata",
         "middle": "Middle",
         "min": "Min",
+        "modal": "Modal",
         "modify": "modify",
         "move": "Move",
         "name": "name",
@@ -206,6 +214,7 @@
         "state": "State",
         "static": "Static",
         "status": "Status",
+        "string": "String",
         "style": "Style",
         "suspended": "Suspended",
         "table": {
@@ -416,7 +425,9 @@
             "addWidget": "Add widget",
             "aggregation": "Aggregation",
             "ascending": "Ascending",
+            "axis": "Axis",
             "background": "Background",
+            "blur": "Blur",
             "borders": {
                 "borderRadiusBottomLeft": "Border radius bottom left",
                 "borderRadiusBottomRight": "Border radius bottom right",
@@ -450,6 +461,7 @@
                 "donutChart": "Donut Chart",
                 "funnelChart": "Funnel Chart",
                 "gauge": "Gauge",
+                "heatmap": "Heatmap",
                 "lineChart": "Line Chart",
                 "parallelChart": "Parallel Chart",
                 "pieChart": "Pie Chart",
@@ -457,7 +469,8 @@
                 "scatterChart": "Scatter Chart",
                 "solidgauge": "Solid Gauge",
                 "stackedColumnsChart": "Stacked Columns Chart",
-                "treemap": "Treemap"
+                "treemap": "Treemap",
+                "wordcloud": "Wordcloud"
             },
             "chips": "Chips",
             "colors": {
@@ -605,6 +618,20 @@
                 "gauge": {
                     "valuesTableHint": "Measures only."
                 },
+                "heatmap": {
+                    "axisMaxHint": "The minimum value of the axis. If null the min value is automatically calculated.",
+                    "axisMinHint": "The maximum value of the axis. If null, the max value is automatically calculated.",
+                    "datetype": "Datetype",
+                    "dimensionsTableHint": "Exactly two attributes to define categories. If the attribute is of type Date (Timestamp) it must be the first one. You are not able to reorder categories.",
+                    "labelRotation": "Label Rotation",
+                    "nullValues": {
+                        "connectNulls": "Connect Nulls",
+                        "nullColor": "Null Color",
+                        "title": "Null Values"
+                    },
+                    "rotation": "Rotation",
+                    "valuesTableHint": "Exactly one measure only to define series"
+                },
                 "labels": {
                     "distance": "Distance",
                     "distanceHint": "The distance of the data label from the pie's edge. Negative numbers put the data label on top of the pie slices. Can also be defined as a percentage of pie's radius. Connectors are only shown for data labels outside the pie.",
@@ -699,8 +726,11 @@
                 "analyticalDriver": "Analytical Driver",
                 "basicUrl": "Basic Url",
                 "chartDynamicOptions": {
+                    "categoryId": "Category Id",
                     "categoryName": "Category name",
                     "categoryValue": "Category value",
+                    "groupingName": "Grouping name",
+                    "groupingValue": "Grouping value",
                     "serieName": "Serie name",
                     "serieValue": "Serie value"
                 },
@@ -730,6 +760,97 @@
                 "title": "Legend"
             },
             "manualInput": "Manual input",
+            "map": {
+                "addThreshold": "Add Threshold",
+                "baseLayer": {
+                    "autoCentering": "Auto centering",
+                    "selectBackgroundLayer": "Select Background Layer",
+                    "showScale": "Show scale",
+                    "title": "Enable Base Layer",
+                    "zoomFactor": "Zoom factor"
+                },
+                "categorizeBy": "Categorize By",
+                "categorizeByOptions": {
+                    "description": "DESCRIPTION",
+                    "id": "ID"
+                },
+                "classesMethodOptions": {
+                    "byEqualIntervals": "Classify by equal intervals",
+                    "byQuantils": "Classify by equal quantils",
+                    "byRanges": "Classify by ranges",
+                    "title": "Classes method"
+                },
+                "classesNumber": "Classes number",
+                "controlPanel": {
+                    "alwaysShow": "Always show control panel",
+                    "dimension": "Control Panel Dimension",
+                    "dimensionHint": "Control Panel Dimension Hint",
+                    "title": "Control Panel"
+                },
+                "crossNavigationLabelHint": "This is the label of the link. If empty it will be \"Go to detail\"",
+                "dialogHint": "The selected elements will be visible when clicking on the map",
+                "fromColor": "From color",
+                "fromThreshold": "From (>=)",
+                "imagesGallery": "Images Gallery",
+                "layerInfo": {
+                    "catalogLayer": "Catalog Layer",
+                    "catalogLayerColumn": "Catalog Layer Column",
+                    "datasetColumn": "Dataset column",
+                    "defaultVisible": "Default visible",
+                    "defaultVisibleHint": "Default visible hint",
+                    "linkHint": "Catalog type layer will link a dataset Column value to a catalog Column one. Select them for the dataset join",
+                    "staticHint": "Static hint",
+                    "target": "Target",
+                    "targetHint": "Target hint"
+                },
+                "legendText": "Legend Text",
+                "legendTitle": "Legend Title",
+                "linearGradient": "Linear Gradient",
+                "manageRanges": "Manage Ranges",
+                "markerTypes": {
+                    "default": "Default Marker",
+                    "icon": "Icon Marker",
+                    "iconUrl": "Icon URL",
+                    "image": "Image Marker",
+                    "scale%": "Scale %",
+                    "web": "Web Image Marker"
+                },
+                "metadata": {
+                    "addField": "Add Field",
+                    "aggregateBy": "Aggregate by",
+                    "aggregateByHint": "Aggregate by hint",
+                    "coordFormat": "Coord Format",
+                    "coordType": "Coord Type",
+                    "latLon": "lat lon",
+                    "lonLat": "lon lat",
+                    "modalHint": "Modal Hint",
+                    "showOnFilters": "Show on filters",
+                    "showOnMap": "Show on map",
+                    "spatialAttribute": "Spatial Attribute",
+                    "wktFormat": "WKT Format"
+                },
+                "north": "North",
+                "pieTypeOptions": {
+                    "bars": "Bars",
+                    "donuts": "Donuts",
+                    "pies": "Pies",
+                    "pies3d": "Pies 3D"
+                },
+                "range": "Range",
+                "rangeLabel": "Min size (%)/Max size (%)",
+                "south": "South",
+                "toColor": "To color",
+                "toThreshold": "To (<)",
+                "tooltipHint": "The selected elements will be visible on mouse hover",
+                "visTypes": {
+                    "balloons": "Balloons",
+                    "choropleth": "Choropleth",
+                    "clusters": "Clusters",
+                    "heatmap": "Heatmap",
+                    "markers": "Markers",
+                    "pies": "Pies"
+                }
+            },
             "noData": {
                 "title": "No data"
             },
@@ -772,8 +893,10 @@
             "pivotData": "Data",
             "pivotFilters": "Filters",
             "pivotRows": "Rows",
+            "position": "Position",
             "precision": "Precision",
             "prefix": "Prefix",
+            "radius": "Radius",
             "recentlyUsed": "Recently Used",
             "responsive": {
                 "extraLargeDevices": "Show On Extra Large Devices",
@@ -825,7 +948,17 @@
                 "pinnedColumnsOnly": "Pinned columns only",
                 "title": "Summary rows"
             },
+            "textConfiguration": {
+                "font": "Font",
+                "maximumFontSize": "Maximum Font Size",
+                "maximumWords": "Maximum Words",
+                "minimumFontSize": "Minimum Font Size",
+                "wordAngle": "Word Angle",
+                "wordAngleHint": "Word Angle Hint Placeholder",
+                "wordPadding": "Word Padding"
+            },
             "textParsingError": "Text Parsing Error",
+            "thresholds": "Thresholds",
             "title": "Widget Editor",
             "titles": {
                 "title": "Title"
@@ -851,6 +984,19 @@
                 "wrapText": "Wrap Text",
                 "wrapTextHint": "Wrap text hint placeholder"
             },
+            "vega": {
+                "fontOptions": {
+                    "calibri": "Calibri",
+                    "cambria": "Cambria",
+                    "georgia": "Georiga",
+                    "gungsuh": "Gungsuh",
+                    "impact": "Impact"
+                },
+                "wordcloud": {
+                    "dimensionsTableHint": "Attributes only.",
+                    "valuesTableHint": "Measures only."
+                }
+            },
             "visibilityConditions": {
                 "always": "Always",
                 "hideColumn": "Hide Column",
@@ -872,7 +1018,9 @@
                 "sparkline": "Sparkline",
                 "textAndIcon": "Text & Icon",
                 "title": "Visualization Type"
-            }
+            },
+            "xAxis": "X Axis",
+            "yAxis": "Y Axis"
         },
         "widgets": {
             "chart": {
@@ -1744,6 +1892,13 @@
         "catalogFunction": {
             "hint": "The import/export functionality allows you to bulk insert/extract data from your tenant. \n Select the category to view the items present. \n Click on @:common.import if you want to import a package. \n Select the items and click  @:common.export if you want to download them in a zip archive.",
             "title": "Import/Export"
+        },
+        "categoriesManagement": {
+            "code": "Category code",
+            "name": "Category name",
+            "occurences": "Used by",
+            "title": "Categories Management",
+            "type": "Type"
         },
         "configurationManagement": {
             "createNewHeader": "Create new configuration",
@@ -3189,6 +3344,7 @@
                 "emptyInfo": "Add a dataset",
                 "layerFilters": "Layer Filters",
                 "layerList": "Layer List",
+                "layers": "Layers",
                 "layersDialogEmpty": "No available layers",
                 "layersTableEmpty": "Add a layer",
                 "openMapWarning": "Opening the map will undo all unsaved modifications, are you sure you want to continue?"

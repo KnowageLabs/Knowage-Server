@@ -29,7 +29,7 @@
                 <label class="kn-material-input-label">{{ $t('common.value') }}</label>
                 <InputText v-model="parameter.value" class="kn-material-input p-inputtext-sm" :disabled="disabled" @change="parametersChanged" />
             </div>
-            <div v-else-if="parameter.type === 'dynamic' && ['table', 'highcharts', 'chartJS', 'static-pivot-table', 'discovery'].includes(widgetType)" class="p-sm-12 p-md-7 p-d-flex p-flex-row p-ai-center kn-flex">
+            <div v-else-if="parameter.type === 'dynamic' && ['table', 'highcharts', 'chartJS', 'static-pivot-table', 'discovery', 'vega', 'map'].includes(widgetType)" class="p-sm-12 p-md-7 p-d-flex p-flex-row p-ai-center kn-flex">
                 <div class="p-d-flex p-flex-column kn-flex">
                     <label class="kn-material-input-label"> {{ $t('common.column') }}</label>
                     <Dropdown
@@ -42,9 +42,10 @@
                         :disabled="disabled"
                         @change="parametersChanged"
                     ></Dropdown>
-                    <Dropdown v-else v-model="parameter.column" class="kn-material-input" :options="descriptor.chartInteractionDynamicOptions" :disabled="disabled" @change="parametersChanged">
+                    <Dropdown v-else-if="widgetType === 'map'" v-model="parameter.column" class="kn-material-input" :options="mapColumnOptions" option-label="alias" option-value="columnName" :disabled="disabled" @change="parametersChanged"></Dropdown>
+                    <Dropdown v-else v-model="parameter.column" class="kn-material-input" :options="chartColumnOptions" option-value="value" :disabled="disabled" @change="parametersChanged">
                         <template #value="slotProps">
-                            <span>{{ getTranslatedLabel(slotProps.value, descriptor.chartInteractionDynamicOptions, $t) }}</span>
+                            <span>{{ getTranslatedLabel(slotProps.value, chartColumnOptions, $t) }}</span>
                         </template>
                         <template #option="slotProps">
                             <span>{{ $t(slotProps.option.label) }}</span>
@@ -103,6 +104,22 @@ export default defineComponent({
             const modelFields = this.widgetModel.fields
             const combinedArray = modelFields?.columns.concat(modelFields.rows, modelFields.data, modelFields.filters)
             return combinedArray
+        },
+        chartColumnOptions() {
+            if (['table', 'discovery', 'static-pivot-table'].includes(this.widgetType)) return []
+            if (['vega'].includes(this.widgetModel.type)) {
+                return descriptor.vegaChartInteractionDynamicOptions
+            } else if (this.widgetModel.settings.chartModel?.model?.chart?.type === 'heatmap') {
+                return descriptor.chartInteractionDynamicOptions.concat(descriptor.chartInteractionAdditionalDynamicOptions)
+            } else {
+                return descriptor.chartInteractionDynamicOptions
+            }
+        },
+        mapColumnOptions() {
+            if (this.widgetType !== 'map' || !this.widgetModel.layers) return []
+            const columns = [] as { columnName: string; alias: string }[]
+            this.widgetModel.layers.forEach((layer: any) => layer.content?.columnSelectedOfDataset?.forEach((column: any) => columns.push({ columnName: column.name, alias: column.alias })))
+            return columns
         }
     },
     watch: {

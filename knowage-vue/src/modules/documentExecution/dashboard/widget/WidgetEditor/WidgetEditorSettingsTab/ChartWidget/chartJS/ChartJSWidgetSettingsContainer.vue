@@ -11,7 +11,7 @@ import descriptor from './ChartJSWidgetSettingsDescriptor.json'
 import ChartJSWidgetSettingsAccordion from './ChartJSWidgetSettingsAccordion.vue'
 
 export default defineComponent({
-    name: 'chart-j-s-widget-settings-container',
+    name: 'chart-js-widget-settings-container',
     components: { ChartJSWidgetSettingsAccordion },
     props: {
         widgetModel: { type: Object as PropType<IWidget>, required: true },

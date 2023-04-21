@@ -9,7 +9,7 @@ import { ISelection, IWidget, IWidgetColumn } from '../../../Dashboard'
 import { IHighchartsChartModel } from '../../../interfaces/highcharts/DashboardHighchartsWidget'
 import { mapActions } from 'pinia'
 import { updateStoreSelections, executeChartCrossNavigation } from '../../interactionsHelpers/InteractionHelper'
-import { formatActivityGauge } from './HighchartsModelFormattingHelpers'
+import { formatActivityGauge, formatHeatmap } from './HighchartsModelFormattingHelpers'
 import { formatForCrossNavigation } from './HighchartsContainerHelpers'
 import Highcharts from 'highcharts'
 import Highcharts3D from 'highcharts/highcharts-3d'
@@ -18,6 +18,7 @@ import HighchartsSolidGauge from 'highcharts/modules/solid-gauge'
 import Accessibility from 'highcharts/modules/accessibility'
 import NoDataToDisplay from 'highcharts/modules/no-data-to-display'
 import SeriesLabel from 'highcharts/modules/series-label'
+import HighchartsHeatmap from 'highcharts/modules/heatmap'
 import cryptoRandomString from 'crypto-random-string'
 import store from '../../../Dashboard.store'
 import deepcopy from 'deepcopy'
@@ -25,6 +26,7 @@ import mainStore from '@/App.store'
 
 HighchartsMore(Highcharts)
 HighchartsSolidGauge(Highcharts)
+HighchartsHeatmap(Highcharts)
 Accessibility(Highcharts)
 NoDataToDisplay(Highcharts)
 SeriesLabel(Highcharts)
@@ -86,8 +88,8 @@ export default defineComponent({
             this.widgetModel.settings.chartModel.setData(this.dataToShow, this.widgetModel)
 
             this.widgetModel.settings.chartModel.updateSeriesAccessibilitySettings(this.widgetModel)
-            this.widgetModel.settings.chartModel.updateSeriesLabelSettings(this.widgetModel)
-            this.updateDataLabels()
+            if (this.chartModel.chart.type !== 'heatmap') this.widgetModel.settings.chartModel.updateSeriesLabelSettings(this.widgetModel)
+            this.chartModel.chart.type === 'heatmap' ? this.updateAxisLabels() : this.updateDataLabels()
             this.error = this.updateLegendSettings()
             if (this.error) return
             this.error = this.updateTooltipSettings()
@@ -119,12 +121,20 @@ export default defineComponent({
                 if (this.error) return
             }
         },
+        updateAxisLabels() {
+            const axisLabels = this.chartModel.xAxis && this.chartModel.xAxis.labels ? this.chartModel.xAxis.labels : null
+            if (axisLabels) {
+                this.error = this.widgetModel.settings.chartModel.updateFormatterSettings(axisLabels, 'format', 'formatter', 'formatterText', 'formatterError')
+                if (this.error) return
+            }
+        },
         updateTooltipSettings() {
             let hasError = this.widgetModel.settings.chartModel.updateFormatterSettings(this.chartModel.tooltip, null, 'formatter', 'formatterText', 'formatterError')
             if (hasError) return hasError
             hasError = this.widgetModel.settings.chartModel.updateFormatterSettings(this.chartModel.tooltip, null, 'pointFormatter', 'pointFormatterText', 'pointFormatterError')
             return hasError
         },
+
         setSeriesEvents() {
             if (this.chartModel.plotOptions.series) {
                 this.chartModel.plotOptions.series.events = {
@@ -136,11 +146,11 @@ export default defineComponent({
                 }
         },
         executeInteractions(event: any) {
-            if (this.chartModel.chart.type !== 'pie') return
+            if (this.chartModel.chart.type !== 'pie' && this.chartModel.chart.type !== 'heatmap') return
             if (this.widgetModel.settings.interactions.crossNavigation.enabled) {
-                const formattedOutputParameters = formatForCrossNavigation(event, this.widgetModel.settings.interactions.crossNavigation, this.dataToShow)
+                const formattedOutputParameters = formatForCrossNavigation(event, this.widgetModel.settings.interactions.crossNavigation, this.dataToShow, this.chartModel.chart.type)
                 executeChartCrossNavigation(formattedOutputParameters, this.widgetModel.settings.interactions.crossNavigation, this.dashboardId)
-            } else {
+            } else if (this.chartModel.chart.type === 'pie') {
                 this.setSelection(event)
             }
         },
@@ -171,6 +181,8 @@ export default defineComponent({
             const formattedChartModel = deepcopy(this.chartModel)
             if (formattedChartModel.chart.type === 'activitygauge') {
                 formatActivityGauge(formattedChartModel, this.widgetModel)
+            } else if (formattedChartModel.chart.type === 'heatmap') {
+                formatHeatmap(formattedChartModel)
             }
             return formattedChartModel
         }

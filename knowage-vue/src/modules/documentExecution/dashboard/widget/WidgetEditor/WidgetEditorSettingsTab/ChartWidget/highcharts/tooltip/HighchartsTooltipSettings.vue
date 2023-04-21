@@ -1,9 +1,23 @@
 <template>
     <div v-if="model" class="p-grid p-jc-center p-ai-center p-p-4">
+        <div v-if="chartType === 'heatmap'" class="p-col-12 p-d-flex p-flex-row">
+            <div class="p-col-12 p-md-4 p-d-flex p-flex-column kn-flex">
+                <label class="kn-material-input-label p-mr-">{{ $t('dashboard.widgetEditor.prefix') }}</label>
+                <InputText v-model="model.tooltip.valuePrefix" class="kn-material-input p-inputtext-sm" @change="modelChanged" />
+            </div>
+            <div class="p-col-12 p-md-4 p-d-flex p-flex-column kn-flex">
+                <label class="kn-material-input-label">{{ $t('dashboard.widgetEditor.suffix') }}</label>
+                <InputText v-model="model.tooltip.valueSuffix" class="kn-material-input p-inputtext-sm" @change="modelChanged" />
+            </div>
+            <div class="p-col-12 p-md-4 p-d-flex p-flex-column kn-flex">
+                <label class="kn-material-input-label p-mr-2">{{ $t('dashboard.widgetEditor.precision') }}</label>
+                <InputNumber v-model="model.tooltip.valueDecimals" class="kn-material-input p-inputtext-sm" @blur="modelChanged" />
+            </div>
+        </div>
         <div class="p-col-12 p-py-4">
             <WidgetEditorStyleToolbar :options="descriptor.tooltipStyleOptions" :prop-model="toolbarModel" :disabled="tooltipDisabled" @change="onStyleToolbarChange"> </WidgetEditorStyleToolbar>
         </div>
-        <div class="p-col-12 p-py-4">
+        <div v-if="chartType === 'pie'" class="p-col-12 p-py-4">
             <div class="p-d-flex p-flex-row p-jc-center">
                 <label class="kn-material-input-label kn-cursor-pointer" @click="advancedVisible = !advancedVisible">{{ $t('common.advanced') }}<i :class="advancedVisible ? 'fas fa-chevron-up' : 'fas fa-chevron-down'" class="p-ml-2"></i></label>
             </div>
@@ -39,8 +53,8 @@
 import { defineComponent, PropType } from 'vue'
 import { IWidget, IWidgetStyleToolbarModel } from '../../../../../../Dashboard'
 import { emitter } from '@/modules/documentExecution/dashboard/DashboardHelpers'
-import { IHighchartsChartModel } from '@/modules/documentExecution/dashboard/interfaces/highcharts/DashboardHighchartsWidget'
 import descriptor from '../HighchartsWidgetSettingsDescriptor.json'
+import InputNumber from 'primevue/inputnumber'
 import Message from 'primevue/message'
 import WidgetEditorStyleToolbar from '../../../common/styleToolbar/WidgetEditorStyleToolbar.vue'
 import HighchartsFormatterCodeMirror from '../common/HighchartsFormatterCodeMirror.vue'
@@ -48,6 +62,7 @@ import HighchartsFormatterCodeMirror from '../common/HighchartsFormatterCodeMirr
 export default defineComponent({
     name: 'hihgcharts-tooltip-settings',
     components: {
+        InputNumber,
         Message,
         WidgetEditorStyleToolbar,
         HighchartsFormatterCodeMirror
@@ -56,7 +71,7 @@ export default defineComponent({
     data() {
         return {
             descriptor,
-            model: null as IHighchartsChartModel | null,
+            model: null as any | null,
             toolbarModel: {} as {
                 'font-family': string
                 'font-size': string
@@ -70,6 +85,9 @@ export default defineComponent({
     computed: {
         tooltipDisabled(): boolean {
             return !this.model || !this.model.tooltip.enabled
+        },
+        chartType() {
+            return this.model?.chart.type
         }
     },
     created() {

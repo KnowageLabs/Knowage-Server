@@ -174,7 +174,7 @@ export default defineComponent({
             link.parameters = parameters
         },
         onAddParameter(link: ITableWidgetLink) {
-            link.parameters.push({ enabled: true, name: '', type: '' })
+            link.parameters.push({ enabled: true, name: '', type: '', dataType: '' })
         },
         onParameterDelete(index: number, link: ITableWidgetLink) {
             link.parameters.splice(index, 1)

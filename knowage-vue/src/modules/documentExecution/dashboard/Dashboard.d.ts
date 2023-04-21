@@ -40,6 +40,7 @@ export interface IWidget {
     settings: any
     new?: boolean
     fields?: IPivotFields
+    layers?: any
 }
 
 export interface ITableWidgetSettings {
@@ -72,7 +73,7 @@ export interface ITableWidgetConditionalStyle {
         variableKey?: string
         variablePivotDatasetOptions?: any
         operator: string
-        value: string,
+        value: string
         formula?: string
     }
     properties: {
@@ -178,6 +179,7 @@ export interface IWidgetCrossNavigation {
     type: string
     column: string
     icon?: string
+    label?: string
     name: string
     parameters: IWidgetInteractionParameter[]
 }
@@ -273,7 +275,7 @@ export interface ITableWidgetColumnStyles {
 export interface ITableWidgetColumnStyle {
     target: string | string[]
     properties: {
-        'align-items': string,
+        'align-items': string
         width: string | number
         'background-color': string
         color: string
@@ -381,8 +383,8 @@ export interface ITableWidgetVisibilityConditions {
 export interface ITableWidgetVisibilityCondition {
     target: string[]
     hide: boolean
-    hidePdf: boolean,
-    hideFromSummary: boolean,
+    hidePdf: boolean
+    hideFromSummary: boolean
     condition: {
         type: string
         variable?: string
@@ -591,8 +593,8 @@ export interface IWidgetStyleToolbarModel {
     'font-style'?: string
     'font-size'?: string
     'font-family'?: string
-    'justify-content'?: string,
-    'text-align'?: string,
+    'justify-content'?: string
+    'text-align'?: string
     'border-color'?: string
     color?: string
     'background-color'?: string
@@ -709,4 +711,3 @@ interface IDashboardOutputParameterType {
     valueId: number
     valueName: string
 }
-

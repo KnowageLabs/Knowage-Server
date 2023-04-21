@@ -12,8 +12,7 @@
                     <Dropdown v-model="column.aggregation" class="kn-material-input" :options="commonDescriptor.columnAggregationOptions" option-value="value" option-label="label" @change="selectedColumnUpdated"> </Dropdown>
                 </div>
             </div>
-
-            <div v-if="column.drillOrder" class="p-d-flex p-flex-row p-ai-center p-mt-2">
+            <div v-if="chartType === 'pie' && column.drillOrder" class="p-d-flex p-flex-row p-ai-center p-mt-2">
                 <div class="p-d-flex p-flex-column kn-flex-2 p-m-2">
                     <label class="kn-material-input-label p-mr-2">{{ $t('dashboard.widgetEditor.sortingColumn') }}</label>
                     <Dropdown v-model="column.drillOrder.orderColumnId" class="kn-material-input" :options="sortingColumnOptions" option-value="id" option-label="alias" @change="sortingChanged"> </Dropdown>
@@ -35,7 +34,7 @@
                 </div>
             </div>
 
-            <div v-else-if="column.orderType" class="p-d-flex p-flex-row p-ai-center p-mt-2">
+            <div v-else-if="['pie', 'heatmap'].includes(chartType)" class="p-d-flex p-flex-row p-ai-center p-mt-2">
                 <div class="p-d-flex p-flex-column kn-flex p-m-2">
                     <label class="kn-material-input-label p-mr-2">{{ $t('dashboard.widgetEditor.sortingOrder') }}</label>
                     <Dropdown v-model="column.orderType" class="kn-material-input" :options="commonDescriptor.sortingOrderOptions" option-value="value" @change="selectedColumnUpdated">
@@ -71,7 +70,7 @@ import WidgetEditorFilterForm from '../../common/WidgetEditorFilterForm.vue'
 export default defineComponent({
     name: 'table-widget-column-form',
     components: { Dropdown, WidgetEditorFilterForm },
-    props: { widgetModel: { type: Object as PropType<IWidget>, required: true }, selectedColumn: { type: Object as PropType<IWidgetColumn | null>, required: true } },
+    props: { widgetModel: { type: Object as PropType<IWidget>, required: true }, selectedColumn: { type: Object as PropType<IWidgetColumn | null>, required: true }, chartType: { type: String, required: true } },
     data() {
         return {
             commonDescriptor,

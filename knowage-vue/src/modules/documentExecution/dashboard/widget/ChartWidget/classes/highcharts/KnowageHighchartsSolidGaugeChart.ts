@@ -1,7 +1,5 @@
 import { IWidget } from '@/modules/documentExecution/dashboard/Dashboard'
-import { IHighchartsSeriesLabelsSetting } from '@/modules/documentExecution/dashboard/interfaces/highcharts/DashboardHighchartsWidget'
 import { updateSolidGaugeChartModel } from './updater/KnowageHighchartsSolidGaugeChartUpdater'
-import { IHighchartsGaugeSerie, IHighchartsGaugeSerieData } from '@/modules/documentExecution/dashboard/interfaces/highcharts/DashboardHighchartsGaugeWidget'
 import { KnowageHighchartsGaugeChart } from './KnowageHighchartsGaugeChart'
 import * as highchartsDefaultValues from '../../../WidgetEditor/helpers/chartWidget/highcharts/HighchartsDefaultValues'
 import deepcopy from 'deepcopy'
@@ -55,9 +53,9 @@ export class KnowageHighchartsSolidGaugeChart extends KnowageHighchartsGaugeChar
     }
 
 
-    updateSeriesDataWithSerieSettings(serie: IHighchartsGaugeSerie, seriesSettings: IHighchartsSeriesLabelsSetting) {
+    updateSeriesDataWithSerieSettings(serie: any, seriesSettings: any) {
         if (!serie || !seriesSettings) return
-        serie.data.forEach((data: IHighchartsGaugeSerieData) => {
+        serie.data.forEach((data: any) => {
             data.dataLabels = {
                 backgroundColor: null,
                 distance: 30,
@@ -74,9 +72,5 @@ export class KnowageHighchartsSolidGaugeChart extends KnowageHighchartsGaugeChar
                 }
             }
         })
-        if (seriesSettings.label.enabled) {
-
-        }
-
     }
 }

@@ -1,6 +1,5 @@
 import { IWidgetSelection } from "@/modules/documentExecution/dashboard/Dashboard"
 import { IHighchartsAccessibilitySettings, IHighchartsChartPlotOptions, IHighchartsLegend, IHighchartsNoDataConfiguration, IHighchartsOptions3D, IHighchartsSerieAccessibility, IHighchartsSerieLabelSettings, IHighchartsSeriesLabelsSetting, IHighchartsTooltip, ISerieAccessibilitySetting } from "@/modules/documentExecution/dashboard/interfaces/highcharts/DashboardHighchartsWidget"
-import { IHighchartsBands, IHighchartsGaugeYAxis, IHighchartsModelPane, IHighchartsSeriesDialSettings, IHighchartsSeriesPivotSettings, IHighchartsGaugeActivityTooltip } from "@/modules/documentExecution/dashboard/interfaces/highcharts/DashboardHighchartsGaugeWidget"
 import deepcopy from "deepcopy"
 import descriptor from './HighchartsDefaultValuesDescriptor.json'
 
@@ -57,11 +56,11 @@ export const getDefaultSerieLabelSettings = () => {
 }
 
 export const getDefaultSerieDialSettings = () => {
-    return deepcopy(descriptor.defaultSerieDialSettings) as IHighchartsSeriesDialSettings
+    return deepcopy(descriptor.defaultSerieDialSettings)
 }
 
 export const getDefaultSeriePivotSettings = () => {
-    return deepcopy(descriptor.defaultSeriePivotSettings) as IHighchartsSeriesPivotSettings
+    return deepcopy(descriptor.defaultSeriePivotSettings)
 }
 
 export const getDafaultGaugeChartPlotOptions = () => {
@@ -73,16 +72,16 @@ export const getdefaultActivityGaugeChartPlotOptions = () => {
 }
 
 export const getDafaultPaneOptions = () => {
-    return deepcopy(descriptor.dafaultPaneOptions) as IHighchartsModelPane
+    return deepcopy(descriptor.dafaultPaneOptions)
 }
 
 export const getDefaultActivityGaugePaneOptions = () => {
-    return deepcopy(descriptor.defaultActivityGaugePaneOptions) as IHighchartsModelPane
+    return deepcopy(descriptor.defaultActivityGaugePaneOptions)
 }
 
 export const getDefaultActivityGaugeTooltip = () => {
-    const defaultTooltipSettings = deepcopy(descriptor.defaultActivityGaugeTooltip) as IHighchartsGaugeActivityTooltip
-    defaultTooltipSettings.positioner = function (labelWidth) {
+    const defaultTooltipSettings = deepcopy(descriptor.defaultActivityGaugeTooltip) as any
+    defaultTooltipSettings.positioner = function (labelWidth: number) {
         return {
             x: ((this as any).chart.chartWidth - labelWidth) / 2,
             y: (this as any).chart.plotHeight / 2 + 15
@@ -91,21 +90,38 @@ export const getDefaultActivityGaugeTooltip = () => {
     return defaultTooltipSettings
 }
 
-
 export const getDafaultSolidGaugePaneOptions = () => {
-    return deepcopy(descriptor.dafaultSolidGaugePaneOptions) as IHighchartsModelPane
+    return deepcopy(descriptor.dafaultSolidGaugePaneOptions)
 }
 
 export const getDefaultGaugeYAxis = () => {
-    return deepcopy(descriptor.defaultGaugeYAxis) as IHighchartsGaugeYAxis
+    return deepcopy(descriptor.defaultGaugeYAxis)
 }
 
 export const getDefaultActivityGaugeYAxis = () => {
-    return deepcopy(descriptor.defaultActivityGaugeYAxis) as IHighchartsGaugeYAxis
+    return deepcopy(descriptor.defaultActivityGaugeYAxis)
 }
 
 export const getDefaultBandsSetting = () => {
-    return deepcopy(descriptor.defaultBandsSetting) as IHighchartsBands
+    return deepcopy(descriptor.defaultBandsSetting)
 }
 
+export const getDefaultHeatmapXAxis = () => {
+    return deepcopy(descriptor.defaultHeatmapXAxis)
+}
 
+export const getDefaultHeatmapYAxis = () => {
+    return deepcopy(descriptor.defaultHeatmapYAxis)
+}
+
+export const getDafaultHeatmapPlotOptions = () => {
+    return deepcopy(descriptor.dafaultHeatmapPlotOptions) as IHighchartsChartPlotOptions
+}
+
+export const getDefaultDateTypeSettings = () => {
+    return deepcopy(descriptor.defaultDateTypeSettings)
+}
+
+export const getDefaultHeatmapLegendSettings = () => {
+    return deepcopy(descriptor.defaultHeatmapLegendSettings)
+}

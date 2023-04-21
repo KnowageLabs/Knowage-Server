@@ -1,3 +1,4 @@
+import { KnowageHighchartsHeatmapChart } from './../../../widget/ChartWidget/classes/highcharts/KnowageHighchartsHeatmapChart';
 import { IWidget, IWidgetExports, IWidgetInteractions } from '../../../Dashboard'
 import { IHighchartsWidgetConfiguration, IHighchartsWidgetSettings } from '../../../interfaces/highcharts/DashboardHighchartsWidget'
 import { KnowageHighchartsPieChart } from '../../../widget/ChartWidget/classes/highcharts/KnowageHighchartsPieChart'
@@ -5,7 +6,7 @@ import { getFormattedInteractions } from '../../common/WidgetInteractionsHelper'
 import { getFiltersForColumns } from '../../DashboardBackwardCompatibilityHelper'
 import { getFormattedWidgetColumns, getFormattedColorSettings } from '../CommonChartCompatibilityHelper'
 import { getFormattedStyle } from './HighchartsWidgetStyleHelper'
-import { KnowageHighchartsGaugeSeriesChart } from '../../../widget/ChartWidget/classes/highcharts/KnowaageHighchartsGaugeSeriesChart'
+import { KnowageHighchartsGaugeSeriesChart } from '../../../widget/ChartWidget/classes/highcharts/KnowageHighchartsGaugeSeriesChart'
 import { KnowageHighchartsSolidGaugeChart } from '../../../widget/ChartWidget/classes/highcharts/KnowageHighchartsSolidGaugeChart'
 import { KnowageHighchartsActivityGaugeChart } from '../../../widget/ChartWidget/classes/highcharts/KnowageHighchartsActivityGaugeChart'
 import { getFormattedSerieLabelsSettings } from './HighchartsSeriesSettingsCompatibilityHelper'
@@ -15,6 +16,7 @@ import * as highchartsDefaultValues from '../../../widget/WidgetEditor/helpers/c
 const columnNameIdMap = {}
 
 export const formatHighchartsWidget = (widget: any) => {
+    const chartType = widget.content?.chartTemplate?.CHART?.type ?? ''
     const formattedWidget = {
         id: widget.id,
         dataset: widget.dataset.dsId ?? null,
@@ -24,18 +26,19 @@ export const formatHighchartsWidget = (widget: any) => {
         settings: {} as IHighchartsWidgetSettings
     } as IWidget
 
-    formattedWidget.settings = getFormattedWidgetSettings(widget) as IHighchartsWidgetSettings
+    formattedWidget.settings = getFormattedWidgetSettings(widget, chartType) as IHighchartsWidgetSettings
     getFiltersForColumns(formattedWidget, widget)
-    formattedWidget.settings.chartModel = createChartModel(widget)
+    formattedWidget.settings.chartModel = createChartModel(widget, chartType)
+
     return formattedWidget
 }
 
-const getFormattedWidgetSettings = (widget: any) => {
+const getFormattedWidgetSettings = (widget: any, chartType: string) => {
     const formattedSettings = {
         updatable: widget.updateble,
         clickable: widget.cliccable,
         chartModel: null,
-        configuration: getFormattedConfiguration(widget),
+        configuration: getFormattedConfiguration(widget, chartType),
         accesssibility: { seriesAccesibilitySettings: getFormattedSeriesAccesibilitySettings(widget) },
         series: { seriesLabelsSettings: getFormattedSerieLabelsSettings(widget) },
         interactions: getFormattedInteractions(widget) as IWidgetInteractions,
@@ -46,10 +49,45 @@ const getFormattedWidgetSettings = (widget: any) => {
     return formattedSettings
 }
 
-const getFormattedConfiguration = (widget: any) => {
-    return {
-        exports: { showExcelExport: widget.style?.showExcelExport ?? false, showScreenshot: widget.style?.showScreenshot ?? false } as IWidgetExports
-    } as IHighchartsWidgetConfiguration
+const getFormattedConfiguration = (widget: any, chartType: string) => {
+    const formattedConfiguration = { exports: { showExcelExport: widget.style?.showExcelExport ?? false, showScreenshot: widget.style?.showScreenshot ?? false } as IWidgetExports } as IHighchartsWidgetConfiguration
+    if (chartType === 'HEATMAP') formattedConfiguration.datetypeSettings = getFormmatedDatetypeSettings(widget)
+    return formattedConfiguration
+}
+
+const getFormmatedDatetypeSettings = (widget: any) => {
+    const formattedDatetypeSettings = highchartsDefaultValues.getDefaultDateTypeSettings()
+    const oldChartModel = widget.content?.chartTemplate?.CHART
+    if (oldChartModel) {
+        formattedDatetypeSettings.enabled = oldChartModel.dateTime
+        formattedDatetypeSettings.format = getProperDateTimeFormat(oldChartModel.dateFormat)
+    }
+    return formattedDatetypeSettings
+}
+
+const getProperDateTimeFormat = (oldDateFormat: string) => {
+    switch (oldDateFormat) {
+        case 'minus':
+            return 'DD-MM-YYYY';
+        case 'slash':
+            return 'DD/MM/YYYY';
+        case 'year':
+            return 'YYYY';
+        case 'month':
+            return 'MMMM YYYY';
+        case 'day':
+            return 'dddd, MMM D, YYYY';
+        case 'hour':
+            return 'dddd, MMM D, YYYY hh';
+        case 'minute':
+            return 'dddd, MMM D, YYYY hh:mm';
+        case 'second':
+            return 'dddd, MMM D, YYYY hh:mm:ss';
+        case 'millisecond':
+            return 'dddd, MMM D, YYYY hh:mm:ss sss';
+        default:
+            return ''
+    }
 }
 
 const getFormattedSeriesAccesibilitySettings = (widget: any) => {
@@ -60,13 +98,15 @@ export const getColumnId = (widgetColumnName: string) => {
     return columnNameIdMap[widgetColumnName]
 }
 
-const createChartModel = (widget: any) => {
+const createChartModel = (widget: any, chartType: string) => {
     const widgetContentChartTemplate = widget.content.chartTemplate
-    switch (widgetContentChartTemplate.CHART.type) {
+    switch (chartType) {
         case 'PIE':
             return new KnowageHighchartsPieChart(widgetContentChartTemplate)
         case 'GAUGE':
             return createGaugeChartInstance(widgetContentChartTemplate)
+        case 'HEATMAP':
+            return new KnowageHighchartsHeatmapChart(widgetContentChartTemplate)
         default:
             return null
     }

@@ -33,6 +33,7 @@
                     @loading="customChartLoading = $event"
                 ></CustomChartWidget>
                 <DiscoveryWidget v-if="propWidget.type == 'discovery'" :propWidget="propWidget" :datasets="datasets" :dataToShow="widgetData" :editorMode="true" :dashboardId="dashboardId" :propActiveSelections="activeSelections" @pageChanged="getWidgetData" />
+                <VegaContainer v-if="propWidget.type === 'vega' && !loading" :widget-model="propWidget" :data-to-show="widgetData" :editor-mode="true" :dashboard-id="dashboardId" :prop-active-selections="activeSelections"></VegaContainer>
             </div>
         </div>
     </div>
@@ -59,10 +60,11 @@ import ChartJSContainer from '../ChartWidget/ChartJS/ChartJSContainer.vue'
 import ImageWidget from '../ImageWidget/ImageWidget.vue'
 import CustomChartWidget from '../CustomChartWidget/CustomChartWidget.vue'
 import DiscoveryWidget from '../DiscoveryWidget/DiscoveryWidget.vue'
+import VegaContainer from '../ChartWidget/Vega/VegaContainer.vue'
 
 export default defineComponent({
     name: 'widget-editor-preview',
-    components: { TableWidget, SelectorWidget, ActiveSelectionsWidget, ProgressBar, WebComponentContainer, HighchartsContainer, ChartJSContainer, ImageWidget, CustomChartWidget, DiscoveryWidget },
+    components: { TableWidget, SelectorWidget, ActiveSelectionsWidget, ProgressBar, WebComponentContainer, HighchartsContainer, ChartJSContainer, ImageWidget, CustomChartWidget, DiscoveryWidget, VegaContainer },
     props: {
         propWidget: { type: Object as PropType<IWidget>, required: true },
         datasets: { type: Array as PropType<IDashboardDataset[]>, required: true },

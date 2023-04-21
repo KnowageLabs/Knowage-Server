@@ -29,6 +29,7 @@
         <DashboardControllerSaveDialog v-if="saveDialogVisible" :visible="saveDialogVisible" @save="saveNewDashboard" @close="saveDialogVisible = false"></DashboardControllerSaveDialog>
         <SelectionsListDialog v-if="selectionsDialogVisible" :visible="selectionsDialogVisible" :dashboard-id="dashboardId" @close="selectionsDialogVisible = false" @save="onSelectionsRemove" />
     </div>
+
     <WidgetEditor
         v-if="widgetEditorVisible"
         :dashboard-id="dashboardId"
@@ -367,6 +368,7 @@ export default defineComponent({
     }
 })
 </script>
+
 <style lang="scss">
 .dashboard-container {
     flex: 1;

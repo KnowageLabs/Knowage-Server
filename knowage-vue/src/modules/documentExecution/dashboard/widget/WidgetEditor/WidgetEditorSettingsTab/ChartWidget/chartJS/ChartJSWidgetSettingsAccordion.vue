@@ -50,7 +50,7 @@ import ChartColorSettings from '../common/ChartColorSettings.vue'
 import ChartJSWidgetSettingsAccordionHeader from './ChartJSWidgetSettingsAccordionHeader.vue'
 
 export default defineComponent({
-    name: 'chart-j-s-widget-configuration-container',
+    name: 'chart-js-widget-configuration-container',
     components: {
         Accordion,
         AccordionTab,

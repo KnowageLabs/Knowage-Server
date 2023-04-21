@@ -10,10 +10,10 @@ import mainStore from '@/App.store'
 export const getFormattedInteractions = (widget: any) => {
     const interactions = {} as IWidgetInteractions
     const chartType = getChartType(widget)
-    if (['table', 'chart', 'static-pivot-table'].includes(widget.type) && chartType !== 'GAUGE') interactions.selection = getFormattedSelection(widget) as IWidgetSelection
-    if (['table', 'html', 'text', 'chart', 'discovery', 'image', 'customchart', 'static-pivot-table'].includes(widget.type)) interactions.crossNavigation = getFormattedCrossNavigation(widget) as IWidgetCrossNavigation
-    if (['table', 'chart', 'discovery', 'static-pivot-table'].includes(widget.type)) interactions.link = getFormattedLinkInteraction(widget) as IWidgetLinks
-    if (['table', 'html', 'text', 'chart', 'discovery', 'customchart'].includes(widget.type)) interactions.preview = getFormattedPreview(widget) as IWidgetPreview
+    if (['table', 'chart', 'static-pivot-table', 'map'].includes(widget.type) && chartType !== 'GAUGE') interactions.selection = getFormattedSelection(widget) as IWidgetSelection
+    if (['table', 'html', 'text', 'chart', 'discovery', 'image', 'customchart', 'static-pivot-table', 'map'].includes(widget.type)) interactions.crossNavigation = getFormattedCrossNavigation(widget) as IWidgetCrossNavigation
+    if (['table', 'chart', 'discovery', 'static-pivot-table', 'map'].includes(widget.type)) interactions.link = getFormattedLinkInteraction(widget) as IWidgetLinks
+    if (['table', 'html', 'text', 'chart', 'discovery', 'customchart', 'map'].includes(widget.type)) interactions.preview = getFormattedPreview(widget) as IWidgetPreview
     if (['chart'].includes(widget.type)) interactions.drilldown = { enabled: false } as IHighchartsDrilldown
     return interactions
 }
@@ -26,9 +26,9 @@ const getFormattedSelection = (widget: any) => {
     if (widget.type === 'table') {
         return getFormattedTableSelection(widget)
     } else if (widget.type === 'chart') {
-        return getFormattedChartSelection()
-    } else if (widget.type === 'static-pivot-table') {
-        return getFormattedPivotTableSelection()
+        return getFormattedChartSelection(widget)
+    } else if (['static-pivot-table', 'map'].includes(widget.type)) {
+        return getFormattedCommonSelection()
     }
 }
 
@@ -49,15 +49,15 @@ const getFormattedTableSelection = (widget: any) => {
     return formattedSelection
 }
 
-const getFormattedChartSelection = () => {
+const getFormattedChartSelection = (widget: any) => {
     const store = mainStore()
     const user = store.getUser()
     // TODO widgetChange
+    if (widget.content?.chartTemplate?.CHART?.type === 'WORDCLOUD') return chartJSDefaultValues.getDefaultChartJSSelections()
     return user?.enterprise ? highchartsDefaultValues.getDefaultHighchartsSelections() : chartJSDefaultValues.getDefaultChartJSSelections()
-    //  return false ? highchartsDefaultValues.getDefaultHighchartsSelections() : chartJSDefaultValues.getDefaultChartJSSelections()
 }
 
-const getFormattedPivotTableSelection = () => {
+const getFormattedCommonSelection = () => {
     return { enabled: true }
 }
 
@@ -68,14 +68,16 @@ export const getFormattedCrossNavigation = (widget: any) => {
     const formattedParameters = [] as IWidgetInteractionParameter[]
     if (oldCrossNavigation.outputParameter) addFormattedFirstCrossNavigationParameter(oldCrossNavigation, formattedParameters)
     if (oldCrossNavigation.outputParametersList) addFormattedCrossNavigationParameters(oldCrossNavigation.outputParametersList, formattedParameters)
-    return {
+    const formattedCrossNavigation = {
         enabled: oldCrossNavigation.enable,
         type: oldCrossNavigation.crossType,
         icon: oldCrossNavigation.icon ? oldCrossNavigation.icon.trim() : '',
         column: oldCrossNavigation.column,
         name: oldCrossNavigation.crossName,
         parameters: formattedParameters
-    }
+    } as IWidgetCrossNavigation
+    if (oldCrossNavigation.label) formattedCrossNavigation.label = oldCrossNavigation.label
+    return formattedCrossNavigation
 }
 
 const getOldCrossNavigation = (widget: any) => {
@@ -88,6 +90,7 @@ const getOldCrossNavigation = (widget: any) => {
         case 'customchart':
         case 'static-pivot-table':
         case 'discovery':
+        case 'map':
             return widget.cross.cross
         default:
             return widget.cross

@@ -1,5 +1,6 @@
+import { IWidgetExports, IWidgetTitle, IWidgetPaddingStyle, IWidgetBordersStyle, IWidgetShadowsStyle, IWidgetBackgroundStyle } from './../../Dashboard.d';
 import { IWidgetInteractions, IWidgetResponsive } from "../../Dashboard";
-import { IHighchartsGaugeSerie, IHighchartsSeriesDialSettings, IHighchartsSeriesPivotSettings, IHighchartsSolidGaugePlotOptions } from "./DashboardHighchartsGaugeWidget";
+
 
 export interface IHighchartsWidgetSettings {
     updatable: boolean,
@@ -21,6 +22,7 @@ export interface IDrillOrderItem {
 }
 
 export interface IHighchartsWidgetConfiguration {
+    datetypeSettings?: any
     exports: IWidgetExports
 }
 
@@ -40,8 +42,8 @@ export interface IHighchartsSeriesSetting {
 export interface IHighchartsSeriesLabelsSetting {
     names: string[],
     label: IHighchartsSerieLabelSettings,
-    dial?: IHighchartsSeriesDialSettings,
-    pivot?: IHighchartsSeriesPivotSettings,
+    dial?: any,
+    pivot?: any,
     serieColor?: string,
     serieColorEnabled?: boolean
 }
@@ -78,26 +80,30 @@ export interface IHighchartsChartModel {
     },
     chart: {
         options3d: IHighchartsOptions3D
-        type: string
+        type: string,
+        backgroundColor?: any
     },
     noData: IHighchartsNoDataConfiguration,
     accessibility: IHighchartsAccessibilitySettings,
-    series: (IHighchartsChartSerie | IHighchartsGaugeSerie)[],
-    settings: IIHighchartsChartModelSettings,
+    series: any[],
+    settings: IHighchartsChartModelSettings,
     plotOptions: {
         pie?: IHighchartsChartPlotOptions,
         gauge?: IHighchartsChartPlotOptions,
         solidgauge?: IHighchartsChartPlotOptions
+        heatmap?: IHighchartsChartPlotOptions
         series?: { events: any }
     },
-    legend: IHighchartsLegend,
-    tooltip: IHighchartsTooltip | IHighchartsGaugeActivityTooltip,
+    legend: any,
+    tooltip: any,
     colors: string[]
     credits: {
         enabled: boolean
     },
-    pane?: IHighchartsModelPane,
-    yAxis?: IHighchartsGaugeYAxis
+    pane?: any,
+    xAxis?: any
+    yAxis?: any,
+    colorAxis?: { stops: any[] }
 }
 
 export interface IHighchartsChartPlotOptions {
@@ -105,6 +111,8 @@ export interface IHighchartsChartPlotOptions {
     depth: number,
     allowPointSelect: boolean,
     cursor: string,
+    connectNulls?: boolean,
+    nullColor?: string,
     dataLabels: IHighchartsChartDataLabels,
 }
 
@@ -183,7 +191,7 @@ export interface IHighchartsSerieAccessibility {
     keyboardNavigation: { enabled: boolean }
 }
 
-export interface IIHighchartsChartModelSettings {
+export interface IHighchartsChartModelSettings {
     drilldown: any, // TODO
     categories: any // TODO
 }
@@ -210,6 +218,9 @@ export interface IHighchartsLegend {
 
 export interface IHighchartsTooltip {
     enabled: boolean,
+    valuePrefix?: string,
+    valueSuffix?: string,
+    valueDecimals?: number,
     style: {
         fontFamily: string
         fontSize: string

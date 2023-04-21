@@ -1,4 +1,20 @@
 {
+    "dafaultHeatmapPlotOptions": {
+        "connectNulls": false,
+        "cursor": "pointer",
+        "dataLabels": {
+            "backgroundColor": "",
+            "enabled": false,
+            "position": "",
+            "style": {
+                "color": "",
+                "fontFamily": "",
+                "fontSize": "14px",
+                "fontWeight": ""
+            }
+        },
+        "showInLegend": false
+    },
     "dafaultPaneOptions": {
         "center": ["50%", "50%"],
         "endAngle": 120,
@@ -101,6 +117,10 @@
         "thickness": 10,
         "to": 0
     },
+    "defaultDateTypeSettings": {
+        "enabled": false,
+        "format": ""
+    },
     "defaultGaugeChartPlotOptions": {
         "dataLabels": {
             "backgroundColor": "rgba(194,194,194, 1)",
@@ -126,9 +146,73 @@
         "tickPosition": "outside",
         "tickWidth": 3
     },
-    "defaultHighchartsSelection": {
+    "defaultHeatmapLegendSettings": {
+        "align": "right",
         "enabled": true,
-        "modalColumn": ""
+        "layout": "vertical",
+        "symbolHeight": 50,
+        "title": {
+            "style": {
+                "fontWeight": ""
+            },
+            "text": ""
+        },
+        "verticalAlign": ""
+    },
+    "defaultHeatmapXAxis": {
+        "categories": [],
+        "labels": {
+            "align": "center",
+            "rotation": null,
+            "style": {
+                "color": "",
+                "fontFamily": "",
+                "fontSize": "14px",
+                "fontWeight": ""
+            }
+        },
+        "max": null,
+        "min": null,
+        "title": {
+            "align": "center",
+            "enabled": true,
+            "style": {
+                "color": "",
+                "fontFamily": "",
+                "fontSize": "14px",
+                "fontWeight": ""
+            },
+            "text": ""
+        }
+    },
+    "defaultHeatmapYAxis": {
+        "categories": [],
+        "labels": {
+            "align": "center",
+            "rotation": null,
+            "style": {
+                "color": "",
+                "fontFamily": "",
+                "fontSize": "14px",
+                "fontWeight": ""
+            }
+        },
+        "max": null,
+        "min": null,
+        "title": {
+            "align": "center",
+            "enabled": true,
+            "style": {
+                "color": "",
+                "fontFamily": "",
+                "fontSize": "14px",
+                "fontWeight": ""
+            },
+            "text": ""
+        }
+    },
+    "defaultHighchartsSelection": {
+        "enabled": true
     },
     "defaultLegendSettings": {
         "align": "center",

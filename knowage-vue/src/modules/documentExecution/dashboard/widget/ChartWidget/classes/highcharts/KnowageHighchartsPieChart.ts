@@ -5,7 +5,6 @@ import { IHighchartsChartSerie, IHighchartsChartSerieData } from '@/modules/docu
 import { createSerie } from './updater/KnowageHighchartsCommonUpdater'
 import * as highchartsDefaultValues from '../../../WidgetEditor/helpers/chartWidget/highcharts/HighchartsDefaultValues'
 import deepcopy from 'deepcopy'
-import { IHighchartsGaugeSerie } from '@/modules/documentExecution/dashboard/interfaces/highcharts/DashboardHighchartsGaugeWidget'
 
 export class KnowageHighchartsPieChart extends KnowageHighcharts {
     constructor(model: any) {
@@ -37,7 +36,7 @@ export class KnowageHighchartsPieChart extends KnowageHighcharts {
             this.range[serieIndex] = { serie: item.name }
             item.data = []
             data?.rows?.forEach((row: any) => {
-                let serieElement = {
+                const serieElement = {
                     id: row.id,
                     name: row['column_1'],
                     y: row['column_2'],
@@ -88,10 +87,10 @@ export class KnowageHighchartsPieChart extends KnowageHighcharts {
     }
 
     formatSeriesFromOtherChartTypeSeries() {
-        this.model.series = this.model.series.map((serie: IHighchartsGaugeSerie) => { return this.getFormattedSerieFromOtherChartTypeSerie(serie) })
+        this.model.series = this.model.series.map((serie: any) => { return this.getFormattedSerieFromOtherChartTypeSerie(serie) })
     }
 
-    getFormattedSerieFromOtherChartTypeSerie(otherChartSerie: IHighchartsGaugeSerie) {
+    getFormattedSerieFromOtherChartTypeSerie(otherChartSerie: any) {
         const formattedSerie = { name: otherChartSerie.name, data: [], colorByPoint: true } as IHighchartsChartSerie
         if (otherChartSerie.accessibility) formattedSerie.accessibility
         return formattedSerie

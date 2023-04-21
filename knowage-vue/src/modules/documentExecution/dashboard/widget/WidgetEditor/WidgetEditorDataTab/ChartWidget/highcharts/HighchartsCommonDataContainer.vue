@@ -1,20 +1,20 @@
 <template>
-    <div v-if="widgetModel">
+    <div v-if="widgetModel" class="p-d-flex p-flex-column">
         <WidgetEditorColumnTable
-            v-if="chartType === 'pie'"
-            class="p-m-2"
+            v-if="['pie', 'heatmap'].includes(chartType)"
+            class="p-m-2 p-order-1"
             :widget-model="widgetModel"
             :items="columnTableItems['ATTRIBUTES'] ?? []"
-            :settings="{ ...commonDescriptor.columnTableSettings, ...highchartDescriptor.pieChartcolumnTableSettings[0] }"
+            :settings="columnTableSettings"
             :chart-type="chartType"
             @rowReorder="onColumnsReorder($event, 'ATTRIBUTES')"
             @itemAdded="onColumnAdded"
             @itemUpdated="onColumnItemUpdate"
-            @itemSelected="setSelectedColumn"
+            @itemSelected="setSelectedColumn($event, 2)"
             @itemDeleted="onColumnDelete"
         ></WidgetEditorColumnTable>
         <WidgetEditorColumnTable
-            class="p-m-2"
+            class="p-m-2 p-order-3"
             :widget-model="widgetModel"
             :items="columnTableItems['MEASURES'] ?? []"
             :settings="valuesColumnSettings"
@@ -22,16 +22,16 @@
             @rowReorder="onColumnsReorder($event, 'MEASURES')"
             @itemAdded="onColumnAdded"
             @itemUpdated="onColumnItemUpdate"
-            @itemSelected="setSelectedColumn"
+            @itemSelected="setSelectedColumn($event, 4)"
             @itemDeleted="onColumnDelete"
         ></WidgetEditorColumnTable>
-        <ChartWidgetColumnForm class="p-m-2" :widget-model="widgetModel" :selected-column="selectedColumn"></ChartWidgetColumnForm>
+        <ChartWidgetColumnForm class="p-m-2" :style="{ order: formFlexOrder }" :widget-model="widgetModel" :selected-column="selectedColumn" :chart-type="chartType"></ChartWidgetColumnForm>
     </div>
 </template>
 
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
-import { IDataset, IWidget, IWidgetColumn } from '@/modules/documentExecution/Dashboard/Dashboard'
+import { IDataset, IWidget, IWidgetColumn } from '@/modules/documentExecution/dashboard/Dashboard'
 import { emitter } from '../../../../../DashboardHelpers'
 import { removeSerieFromWidgetModel } from '../../../helpers/chartWidget/highcharts/HighchartsDataTabHelpers'
 import descriptor from '../../TableWidget/TableWidgetDataDescriptor.json'
@@ -51,25 +51,38 @@ export default defineComponent({
             highchartDescriptor,
             commonDescriptor,
             columnTableItems: {} as any,
-            selectedColumn: null as IWidgetColumn | null
+            selectedColumn: null as IWidgetColumn | null,
+            formFlexOrder: 4
         }
     },
     computed: {
         chartType() {
             return this.widgetModel?.settings.chartModel?.model?.chart.type
         },
+        columnTableSettings() {
+            switch (this.chartType) {
+                case 'pie':
+                    return { ...commonDescriptor.columnTableSettings, ...highchartDescriptor.pieChartColumnTableSettings[0] }
+                case 'heatmap':
+                    return { ...commonDescriptor.columnTableSettings, ...highchartDescriptor.heatmapColumnTableSettings[0] }
+                default:
+                    return { ...commonDescriptor.columnTableSettings, ...highchartDescriptor.pieChartColumnTableSettings[0] }
+            }
+        },
         valuesColumnSettings() {
             switch (this.chartType) {
                 case 'pie':
-                    return { ...commonDescriptor.columnTableSettings, ...highchartDescriptor.pieChartcolumnTableSettings[1] }
+                    return { ...commonDescriptor.columnTableSettings, ...highchartDescriptor.pieChartColumnTableSettings[1] }
                 case 'gauge':
-                    return { ...commonDescriptor.columnTableSettings, ...highchartDescriptor.gaugeChartcolumnTableSettings[0] }
+                    return { ...commonDescriptor.columnTableSettings, ...highchartDescriptor.gaugeChartColumnTableSettings[0] }
                 case 'activitygauge':
-                    return { ...commonDescriptor.columnTableSettings, ...highchartDescriptor.activityGaugeChartcolumnTableSettings[0] }
+                    return { ...commonDescriptor.columnTableSettings, ...highchartDescriptor.activitygaugeChartColumnTableSettings[0] }
                 case 'solidgauge':
-                    return { ...commonDescriptor.columnTableSettings, ...highchartDescriptor.solidGaugeChartcolumnTableSettings[0] }
+                    return { ...commonDescriptor.columnTableSettings, ...highchartDescriptor.solidgaugeChartColumnTableSettings[0] }
+                case 'heatmap':
+                    return { ...commonDescriptor.columnTableSettings, ...highchartDescriptor.heatmapColumnTableSettings[1] }
                 default:
-                    return { ...commonDescriptor.columnTableSettings, ...highchartDescriptor.gaugeChartcolumnTableSettings[0] }
+                    return { ...commonDescriptor.columnTableSettings, ...highchartDescriptor.gaugeChartColumnTableSettings[0] }
             }
         }
     },
@@ -96,10 +109,20 @@ export default defineComponent({
             this.columnTableItems['MEASURES'] = []
             this.widgetModel.columns.forEach((column: IWidgetColumn) => {
                 const type = column.fieldType == 'MEASURE' ? 'MEASURES' : 'ATTRIBUTES'
-                const maxNumberOfDimensions = this.chartType === 'highchartsPieChart' ? 1 : null
+                const maxNumberOfDimensions = this.getMaximumNumberOfDimensions()
                 if (type === 'MEASURES' && maxNumberOfDimensions && this.columnTableItems['MEASURES'].length === maxNumberOfDimensions) return
                 this.columnTableItems[type].push(column)
             })
+        },
+        getMaximumNumberOfDimensions() {
+            switch (this.chartType) {
+                case 'pie':
+                    return 1
+                case 'heatmap':
+                    return 2
+                default:
+                    return null
+            }
         },
         onColumnsReorder(columns: IWidgetColumn[], type: 'ATTRIBUTES' | 'MEASURES') {
             this.columnTableItems[type] = columns
@@ -127,7 +150,8 @@ export default defineComponent({
                 if (this.widgetModel.columns[index].id === this.selectedColumn?.id) this.selectedColumn = { ...this.widgetModel.columns[index] }
             }
         },
-        setSelectedColumn(column: IWidgetColumn) {
+        setSelectedColumn(column: IWidgetColumn, formFlexOrder: number) {
+            this.formFlexOrder = formFlexOrder
             this.selectedColumn = { ...column }
         },
         onColumnDelete(column: IWidgetColumn) {

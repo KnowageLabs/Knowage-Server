@@ -1,19 +1,31 @@
 {
-    "activityGaugeChartcolumnTableSettings": [
+    "activitygaugeChartColumnTableSettings": [
         {
             "hint": "dashboard.widgetEditor.highcharts.activityGauge.valuesTableHint",
             "label": "common.values",
             "measuresOnly": true
         }
     ],
-    "gaugeChartcolumnTableSettings": [
+    "gaugeChartColumnTableSettings": [
         {
             "hint": "dashboard.widgetEditor.highcharts.gauge.valuesTableHint",
             "label": "common.values",
             "measuresOnly": true
         }
     ],
-    "pieChartcolumnTableSettings": [
+    "heatmapColumnTableSettings": [
+        {
+            "attributesOnly": true,
+            "hint": "dashboard.widgetEditor.highcharts.heatmap.dimensionsTableHint",
+            "label": "dashboard.widgetEditor.dimensions"
+        },
+        {
+            "hint": "dashboard.widgetEditor.highcharts.heatmap.valuesTableHint",
+            "label": "common.values",
+            "measuresOnly": true
+        }
+    ],
+    "pieChartColumnTableSettings": [
         {
             "attributesOnly": true,
             "hint": "dashboard.widgetEditor.highcharts.piechart.dimensionsTableHint",
@@ -25,7 +37,7 @@
             "measuresOnly": true
         }
     ],
-    "solidGaugeChartcolumnTableSettings": [
+    "solidgaugeChartColumnTableSettings": [
         {
             "hint": "dashboard.widgetEditor.highcharts.solidGauge.valuesTableHint",
             "label": "common.values",

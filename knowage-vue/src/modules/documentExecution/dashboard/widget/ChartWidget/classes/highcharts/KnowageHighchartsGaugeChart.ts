@@ -1,5 +1,4 @@
 import { IWidget, IWidgetColumn } from '@/modules/documentExecution/dashboard/Dashboard'
-import { IHighchartsGaugeSerie, IHighchartsGaugeSerieData } from '@/modules/documentExecution/dashboard/interfaces/highcharts/DashboardHighchartsGaugeWidget'
 import { IHighchartsChartSerie } from '@/modules/documentExecution/dashboard/interfaces/highcharts/DashboardHighchartsWidget'
 import { KnowageHighcharts } from './KnowageHighcharts'
 import { createGaugeSerie } from './updater/KnowageHighchartsCommonUpdater'
@@ -16,13 +15,13 @@ export class KnowageHighchartsGaugeChart extends KnowageHighcharts {
         let startingInnerRadius = 88
 
         for (let i = 0; i < this.model.series.length; i++) {
-            const serie = this.model.series[i] as IHighchartsGaugeSerie
+            const serie = this.model.series[i] as any
             serie.data = []
             data?.rows?.forEach((row: any) => {
-                let serieElement = {
+                const serieElement = {
                     name: serie.name,
                     y: row[`column_${i + 1}`]
-                } as IHighchartsGaugeSerieData
+                } as any
                 if (this.model.chart.type === 'activitygauge') {
                     serieElement.radius = startingRadius + '%'
                     serieElement.innerRadius = startingInnerRadius + '%'
@@ -36,7 +35,7 @@ export class KnowageHighchartsGaugeChart extends KnowageHighcharts {
     }
 
     getSeriesFromWidgetModel(widgetModel: IWidget, maxNumberOfSeries: number | undefined) {
-        const newSeries = [] as IHighchartsGaugeSerie[]
+        const newSeries = [] as any[]
         let seriesAdded = 0
 
         for (let i = 0; i < widgetModel.columns.length; i++) {
@@ -47,9 +46,9 @@ export class KnowageHighchartsGaugeChart extends KnowageHighcharts {
         this.model.series = newSeries
     }
 
-    addSerieFromExistingSeriesOrWidgetColumns(column: IWidgetColumn, newSeries: IHighchartsGaugeSerie[]) {
+    addSerieFromExistingSeriesOrWidgetColumns(column: IWidgetColumn, newSeries: any[]) {
         if (column.fieldType === 'MEASURE') {
-            const index = this.model.series.findIndex((serie: IHighchartsGaugeSerie) => serie.name === column.columnName)
+            const index = this.model.series.findIndex((serie: any) => serie.name === column.columnName)
             index !== -1 ? newSeries.push(this.model.series[index]) : newSeries.push(createGaugeSerie(column.columnName))
         }
     }
@@ -59,7 +58,7 @@ export class KnowageHighchartsGaugeChart extends KnowageHighcharts {
     }
 
     getFormattedSerieFromOtherChartTypeSerie(otherChartSerie: IHighchartsChartSerie) {
-        const formattedSerie = { name: otherChartSerie.name, data: [], colorByPoint: false } as IHighchartsGaugeSerie
+        const formattedSerie = { name: otherChartSerie.name, data: [], colorByPoint: false } as any
         if (otherChartSerie.accessibility) formattedSerie.accessibility
         return formattedSerie
     }

@@ -1,9 +1,10 @@
+import { KnowageHighchartsHeatmapChart } from './../../../../ChartWidget/classes/highcharts/KnowageHighchartsHeatmapChart';
 import { IWidget } from "@/modules/documentExecution/dashboard/Dashboard"
 import { KnowageHighchartsPieChart } from "../../../../ChartWidget/classes/highcharts/KnowageHighchartsPieChart"
 import { IHighchartsChartModel, IHighchartsWidgetSettings } from "@/modules/documentExecution/dashboard/interfaces/highcharts/DashboardHighchartsWidget"
 import { KnowageHighchartsActivityGaugeChart } from "../../../../ChartWidget/classes/highcharts/KnowageHighchartsActivityGaugeChart"
 import { KnowageHighchartsSolidGaugeChart } from "../../../../ChartWidget/classes/highcharts/KnowageHighchartsSolidGaugeChart"
-import { KnowageHighchartsGaugeSeriesChart } from "../../../../ChartWidget/classes/highcharts/KnowaageHighchartsGaugeSeriesChart"
+import { KnowageHighchartsGaugeSeriesChart } from "../../../../ChartWidget/classes/highcharts/KnowageHighchartsGaugeSeriesChart"
 import * as widgetCommonDefaultValues from '../../common/WidgetCommonDefaultValues'
 import * as  highchartsDefaultValues from "../highcharts/HighchartsDefaultValues"
 import descriptor from '../../../WidgetEditorSettingsTab/ChartWidget/common/ChartColorSettingsDescriptor.json'
@@ -13,7 +14,7 @@ export const createNewHighchartsSettings = () => {
         updatable: true,
         clickable: true,
         chartModel: null,
-        configuration: { exports: { showExcelExport: true, showScreenshot: true } },
+        configuration: { exports: { showExcelExport: true, showScreenshot: true }, datetypeSettings: highchartsDefaultValues.getDefaultDateTypeSettings() },
         accesssibility: { seriesAccesibilitySettings: getSeriesAccesibilitySettings() },
         series: { seriesLabelsSettings: getSerieLabelsSettings() },
         interactions: {
@@ -53,6 +54,9 @@ export const formatHighchartsWidget = (widget: IWidget) => {
         case 'solidgauge':
             widget.settings.chartModel = new KnowageHighchartsSolidGaugeChart(chartModel)
             break
+        case 'heatmap':
+            widget.settings.chartModel = new KnowageHighchartsHeatmapChart(chartModel)
+            break
     }
 
 }
@@ -67,6 +71,8 @@ export const createNewHighchartsModel = (chartType: string, model: IHighchartsCh
             return new KnowageHighchartsActivityGaugeChart(model)
         case 'solidgauge':
             return new KnowageHighchartsSolidGaugeChart(model)
+        case 'heatmap':
+            return new KnowageHighchartsHeatmapChart(model)
         default:
             return null
     }
@@ -75,7 +81,6 @@ export const createNewHighchartsModel = (chartType: string, model: IHighchartsCh
 const getSeriesAccesibilitySettings = () => {
     return [{ names: ['all'], accessibility: highchartsDefaultValues.getDefaultSeriesAccessibilitySettings() }]
 }
-
 
 const getSerieLabelsSettings = () => {
     const serieLabelSettings = { names: ['all'], label: { ...highchartsDefaultValues.getDefaultSerieLabelSettings(), enabled: true }, dial: highchartsDefaultValues.getDefaultSerieDialSettings(), pivot: highchartsDefaultValues.getDefaultSeriePivotSettings() }

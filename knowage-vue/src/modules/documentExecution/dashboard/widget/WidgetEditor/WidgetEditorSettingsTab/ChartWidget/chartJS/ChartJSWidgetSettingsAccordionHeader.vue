@@ -36,10 +36,6 @@ export default defineComponent({
             switch (this.type) {
                 case 'Title':
                     return this.widgetModel.settings.style.title
-                case 'ColumnStyle':
-                    return this.widgetModel.settings.style.columns
-                case 'ColumnGroupsStyle':
-                    return this.widgetModel.settings.style.columnGroups
                 case 'BackgroundColorStyle':
                     return this.widgetModel.settings.style.background
                 case 'BordersStyle':

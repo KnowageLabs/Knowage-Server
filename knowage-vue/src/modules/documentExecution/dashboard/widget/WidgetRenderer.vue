@@ -49,6 +49,7 @@
                 @facetsChanged="$emit('reloadData')"
                 @searchWordChanged="$emit('reloadData')"
             />
+            <VegaContainer v-if="widget.type === 'vega'" :widget-model="widget" :data-to-show="widgetData" :prop-active-selections="activeSelections" :editor-mode="false" :dashboard-id="dashboardId"></VegaContainer>
         </div>
     </div>
 </template>
@@ -70,12 +71,13 @@ import ImageWidget from '../widget/ImageWidget/ImageWidget.vue'
 import PivotWidget from '../widget/PivotWidget/PivotWidget.vue'
 import CustomChartWidget from '../widget/CustomChartWidget/CustomChartWidget.vue'
 import DiscoveryWidget from '../widget/DiscoveryWidget/DiscoveryWidget.vue'
+import VegaContainer from '../widget/ChartWidget/Vega/VegaContainer.vue'
 import { mapState } from 'pinia'
 import mainStore from '@/App.store'
 
 export default defineComponent({
     name: 'widget-renderer',
-    components: { TableWidget, SelectorWidget, ActiveSelectionsWidget, WebComponentContainer, HighchartsContainer, ChartJSContainer, ImageWidget, CustomChartWidget, PivotWidget, DiscoveryWidget },
+    components: { TableWidget, SelectorWidget, ActiveSelectionsWidget, WebComponentContainer, HighchartsContainer, ChartJSContainer, ImageWidget, CustomChartWidget, PivotWidget, DiscoveryWidget, VegaContainer },
     props: {
         widget: { required: true, type: Object as any },
         widgetLoading: { required: true, type: Boolean as any },

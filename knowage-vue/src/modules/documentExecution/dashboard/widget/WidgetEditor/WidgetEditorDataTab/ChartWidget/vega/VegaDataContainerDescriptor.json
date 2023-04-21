@@ -1,0 +1,14 @@
+{
+    "wordcloudColumnTableSettings": [
+        {
+            "attributesOnly": true,
+            "hint": "dashboard.widgetEditor.vega.wordcloud.dimensionsTableHint",
+            "label": "dashboard.widgetEditor.dimensions"
+        },
+        {
+            "hint": "dashboard.widgetEditor.vega.wordcloud.valuesTableHint",
+            "label": "common.values",
+            "measuresOnly": true
+        }
+    ]
+}

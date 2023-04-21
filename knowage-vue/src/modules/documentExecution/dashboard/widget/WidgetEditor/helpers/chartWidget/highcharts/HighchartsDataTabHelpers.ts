@@ -10,19 +10,23 @@ export const addHighchartsColumnToTable = (tempColumn: IWidgetColumn, rows: IWid
         case 'gauge':
         case 'activitygauge':
         case 'solidgauge':
+        case 'heatmap':
             addHighchartsColumnToTableRows(tempColumn, rows, chartType, mode, widgetModel)
     }
 }
 
 const addHighchartsColumnToTableRows = (tempColumn: IWidgetColumn, rows: IWidgetColumn[], chartType: string | undefined, mode: string, widgetModel: IWidget) => {
-    if (mode === 'attributesOnly' && rows.length < 4) {
-        addAttributeColumnToTableRows(tempColumn, rows)
+    if (mode === 'attributesOnly') {
+        addAttributeColumnToTableRows(tempColumn, rows, chartType)
     } else if (mode === 'measuresOnly') {
         addMeasureColumnToTableRows(tempColumn, rows, chartType, widgetModel)
     }
 }
 
-const addAttributeColumnToTableRows = (tempColumn: IWidgetColumn, rows: IWidgetColumn[]) => {
+
+const addAttributeColumnToTableRows = (tempColumn: IWidgetColumn, rows: IWidgetColumn[], chartType: string | undefined) => {
+    const maxValues = getMaxCategoriesNumber(chartType)
+    if (maxValues && rows.length >= maxValues || areAdditionalAttributesConstraintsInvalid(tempColumn, rows, chartType)) return
     if (tempColumn.fieldType === 'MEASURE') {
         tempColumn.fieldType = 'ATTRIBUTE'
         tempColumn.aggregation = ''
@@ -34,6 +38,33 @@ const addAttributeColumnToTableRows = (tempColumn: IWidgetColumn, rows: IWidgetC
     }
     addColumnToRows(rows, tempColumn)
 }
+
+
+const getMaxCategoriesNumber = (chartType: string | undefined) => {
+    switch (chartType) {
+        case 'pie':
+            return 4
+        case 'heatmap':
+            return 2
+        default:
+            return null
+    }
+}
+
+const areAdditionalAttributesConstraintsInvalid = (tempColumn: IWidgetColumn, rows: IWidgetColumn[], chartType: string | undefined) => {
+    switch (chartType) {
+        case 'heatmap':
+            return isHeatmapTimestampColumnIsTheFirstOne(tempColumn, rows)
+        default:
+            return false
+    }
+}
+
+const isHeatmapTimestampColumnIsTheFirstOne = (tempColumn: IWidgetColumn, rows: IWidgetColumn[]) => {
+    if (tempColumn.type.includes('TIMESTAMP') && rows.length === 1) return true
+    return false
+}
+
 
 const addMeasureColumnToTableRows = (tempColumn: IWidgetColumn, rows: IWidgetColumn[], chartType: string | undefined, widgetModel: IWidget) => {
     const maxValues = getMaxValuesNumber(chartType)
@@ -53,6 +84,7 @@ const getMaxValuesNumber = (chartType: string | undefined) => {
     switch (chartType) {
         case 'pie':
         case 'solidgauge':
+        case 'heatmap':
             return 1
         case 'activitygauge':
             return 4
@@ -107,7 +139,7 @@ const removeColumnFromSubmodel = (column: IWidgetColumn, array: any[], allSeries
 }
 
 export const updateWidgetModelColumnsAfterChartTypeChange = (widget: IWidget, chartType: string) => {
-    const maxAttributeColumns = chartType === 'pie' ? 4 : 0
+    const maxAttributeColumns = getMaxCategoriesNumber(chartType) ?? 0
     const maxMeasureColumns = getMaxValuesNumber(chartType) ?? widget.columns.length
     const updatedColumns = [] as IWidgetColumn[]
     let attributesAdded = 0
@@ -123,4 +155,3 @@ export const updateWidgetModelColumnsAfterChartTypeChange = (widget: IWidget, ch
     })
     widget.columns = updatedColumns
 }
-
