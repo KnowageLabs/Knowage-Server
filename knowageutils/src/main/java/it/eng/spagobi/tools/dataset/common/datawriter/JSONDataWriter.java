@@ -223,7 +223,7 @@ public class JSONDataWriter implements IDataWriter {
 
 		try {
 			ret.put("min", min);
-		} catch(JSONException e) {
+		} catch (JSONException e) {
 			// TODO: handle exception
 		}
 
@@ -373,6 +373,9 @@ public class JSONDataWriter implements IDataWriter {
 					result = TIMESTAMP_FORMATTER_V2.format((TemporalAccessor) field.getValue());
 				} else if (ZonedDateTime.class.isAssignableFrom(fieldMetaData.getType())) {
 					result = TIMESTAMP_FORMATTER_V2.format((TemporalAccessor) field.getValue());
+				} else if ("oracle.sql.TIMESTAMP".equals(fieldMetaData.getType().getCanonicalName())) {
+					Timestamp timestamp = generateTimestampFromOracleFormat(field);
+					result = TIMESTAMP_FORMATTER.format(timestamp);
 				} else {
 					result = field.getValue().toString();
 				}
@@ -382,6 +385,20 @@ public class JSONDataWriter implements IDataWriter {
 
 		}
 
+	}
+
+	private Timestamp generateTimestampFromOracleFormat(IField field) {
+		String s = field.getValue().toString();
+		int year = Integer.parseInt(s.substring(0, 4)) - 1900;
+		int month = Integer.parseInt(s.substring(5, 7)) - 1;
+		int date = Integer.parseInt(s.substring(8, 10));
+		int hour = Integer.parseInt(s.substring(11, 13));
+		int minute = Integer.parseInt(s.substring(14, 16));
+		int second = Integer.parseInt(s.substring(17, 19));
+		String nanoString = s.substring(20);
+		int nano = Integer.parseInt(nanoString) * (int) Math.pow(10, 9 - nanoString.length());
+		Timestamp timestamp = new Timestamp(year, month, date, hour, minute, second, nano);
+		return timestamp;
 	}
 
 	public JSONObject writeDataAndMeta(IDataStore dataStore) throws RuntimeException {
