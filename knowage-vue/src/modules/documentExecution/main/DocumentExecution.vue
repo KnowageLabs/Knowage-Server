@@ -3,7 +3,7 @@
         <Toolbar v-if="!embed && !olapDesignerMode" class="kn-toolbar kn-toolbar--primary p-col-12">
             <template #start>
                 <DocumentExecutionBreadcrumb v-if="breadcrumbs.length > 1" :breadcrumbs="breadcrumbs" @breadcrumbClicked="onBreadcrumbClick"></DocumentExecutionBreadcrumb>
-                <span v-else>{{ document?.name }}</span>
+                <span v-else>{{ crossNavigationSourceDocumentName ? crossNavigationSourceDocumentName : document?.name }}</span>
             </template>
 
             <template #end>
@@ -197,7 +197,8 @@ export default defineComponent({
             crossNavigationContainerVisible: false,
             crossNavigationContainerData: null as any,
             newCockpitCreated: false,
-            loadingCrossNavigationDocument: false
+            loadingCrossNavigationDocument: false,
+            crossNavigationSourceDocumentName: ''
         }
     },
     watch: {
@@ -1143,11 +1144,10 @@ export default defineComponent({
             this.formatAngularOutputParameters(angularData.otherOutputParameters)
             const navigationParams = this.formatNavigationParams(angularData.otherOutputParameters, crossNavigationDocument ? crossNavigationDocument.navigationParams : [])
             this.addDocumentOtherParametersToNavigationParams(navigationParams, angularData, crossNavigationDocument)
-
             const popupOptions = crossNavigationDocument?.popupOptions ? JSON.parse(crossNavigationDocument.popupOptions) : null
-
             this.checkIfParameterHasFixedValue(navigationParams, crossNavigationDocument)
 
+            const sourceDocumentName = this.document.name
             if (crossNavigationDocument?.crossType !== 2) {
                 this.document = {
                     ...crossNavigationDocument?.document,
@@ -1158,9 +1158,11 @@ export default defineComponent({
             if (crossNavigationDocument?.crossType === 2) {
                 this.openCrossNavigationInNewWindow(popupOptions, crossNavigationDocument, navigationParams)
             } else if (crossNavigationDocument?.crossType === 1) {
-                const documentLabel = crossNavigationDocument?.document.label
+                const documentLabel = crossNavigationDocument.document.label
+                this.crossNavigationSourceDocumentName = sourceDocumentName
                 this.crossNavigationContainerData = {
                     documentLabel: documentLabel,
+                    documentName: crossNavigationDocument.document.name,
                     iFrameName: documentLabel
                 }
                 this.crossNavigationContainerVisible = true
@@ -1429,6 +1431,7 @@ export default defineComponent({
         onCrossNavigationContainerClose() {
             this.crossNavigationContainerData = null
             this.crossNavigationContainerVisible = true
+            this.crossNavigationSourceDocumentName = ''
             this.onBreadcrumbClick(this.breadcrumbs[this.breadcrumbs.length - 1])
         }
     }
