@@ -270,7 +270,7 @@ export default defineComponent({
             document: null as iDocument | null,
             sbiExecutionId: '',
             loading: false,
-            uploadedFiles: [],
+            uploadedFile: {} as any,
             name: '',
             step: 0,
             v$: useValidate() as any,
@@ -516,14 +516,7 @@ export default defineComponent({
         closeDialog() {
             this.$emit('close')
         },
-        onDelete(idx) {
-            this.uploadedFiles.splice(idx)
-        },
-        onAdvancedUpload(data) {
-            // eslint-disable-next-line
-            // @ts-ignore
-            this.uploadedFiles[0] = data.files[0]
-        },
+
         async setActiveTemplate() {
             /*this.activeTemplate = {
                 name: 'TEST_SIL_TEMPLATE.docx',
@@ -552,6 +545,12 @@ export default defineComponent({
             if (this.step == 0) {
                 const ppt = this.activeTemplate.type === 'PPT_TEMPLATE_V2'
                 const typeEndpoint = ppt ? 'pptplaceholders' : 'docplaceholders'
+
+                if (!this.isValidFile()) {
+                    // validation
+                    this.setError({ title: this.$t('common.error.generic'), msg: this.$t('documentExecution.dossier.templateUploadError') })
+                    return
+                }
 
                 let url = `/knowagedossierengine/api/dossierdocument/${typeEndpoint}`
 
@@ -607,7 +606,7 @@ export default defineComponent({
                     label: document.label,
                     description: document.description
                 },
-                updateFromWorkspace: true
+                updateFromWorkspace: false
             }
             await this.$http
                 .post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + '2.0/saveDocument/', formattedAnalysis, { headers: { 'X-Disable-Errors': 'true' } })
@@ -645,19 +644,14 @@ export default defineComponent({
         },
         startTemplateUpload(event) {
             this.uploading = true
-            this.uploadTemplate(event.target.files[0])
+            this.uploadedFile = event.target.files[0]
+            this.uploadTemplate()
             this.setUploadType()
-            this.uploading = false
         },
-        async uploadTemplate(uploadedFile) {
-            if (!this.isValidFile(uploadedFile)) {
-                // validation
-                this.setError({ title: this.$t('common.error.generic'), msg: this.$t('documentExecution.dossier.templateUploadError') })
-            } else {
-                this.activeTemplate.name = uploadedFile.name
-                this.activeTemplate.type = this.getDossierType(this.activeTemplate.name)
-                this.activeTemplate.placeholders = []
-            }
+        async uploadTemplate() {
+            this.activeTemplate.name = this.uploadedFile.name
+            this.activeTemplate.type = this.getDossierType(this.activeTemplate.name)
+            this.activeTemplate.placeholders = []
         },
         selected(event) {
             const pos = this.activeTemplate.placeholders.map((e) => e.imageName).indexOf(event.value.imageName)
@@ -716,19 +710,19 @@ export default defineComponent({
             if (!this.document?.id) {
                 this.saveDialogVisible = true
             } else {
-                /*                 const formData = new FormData()
-                formData.append('file', this.uploadedFiles[0])
+                const formData = new FormData()
+                formData.append('file', this.uploadedFile)
                 formData.append('documentId', '' + this.getDocument()?.id)
                 await this.$http
                     .post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + 'dossier/importTemplateFile', formData, { headers: { 'Content-Type': 'multipart/form-data', 'X-Disable-Errors': 'true' } })
                     .then(async () => {
-                        this.activeTemplate.name = uploadedFile.name
+                        this.activeTemplate.name = this.uploadedFile.name
                         this.activeTemplate.type = this.getDossierType(this.activeTemplate.name)
                         this.activeTemplate.placeholders = []
                         this.setInfo({ title: this.$t('common.toast.success'), msg: this.$t('common.toast.uploadSuccess') })
                     })
                     .catch(() => this.setError({ title: this.$t('common.error.generic'), msg: this.$t('documentExecution.dossier.templateUploadError') }))
-                    .finally(() => (this.triggerUpload = false)) */
+                    .finally(() => (this.triggerUpload = false))
 
                 const templateToSave = await this.handleDrivers()
 
@@ -814,13 +808,13 @@ export default defineComponent({
         getDossierType(fileName: string): string {
             return fileName.indexOf('.docx') == -1 ? 'PPT_TEMPLATE_V2' : 'DOC_TEMPLATE'
         },
-        async isValidFile(uploadedFile) {
-            const fileName = uploadedFile.name
+        async isValidFile() {
+            const fileName = this.uploadedFile?.name
             let valid = !this.activeTemplate?.type || this.activeTemplate?.type === this.getDossierType(fileName)
             if (!valid) return false
 
             const formData = new FormData()
-            formData.append('file', uploadedFile)
+            formData.append('file', this.uploadedFile)
             formData.append('documentId', '' + this.getDocument()?.id)
             formData.append('prefix', '' + this.activeTemplate.prefix)
             await this.$http
