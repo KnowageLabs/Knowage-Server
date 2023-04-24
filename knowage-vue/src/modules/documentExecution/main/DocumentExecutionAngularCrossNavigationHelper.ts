@@ -4,6 +4,7 @@ import moment from 'moment'
 
 export const executeAngularCrossNavigation = async (vueComponent: any, event: any, $http: any) => {
     vueComponent.angularData = event.data
+    console.log("------------ vueComponent.angularData: ", vueComponent.angularData)
     await loadCrossNavigationByDocument(vueComponent, event.data, $http)
 }
 
@@ -195,7 +196,7 @@ function findCrossTargetByCrossName(angularData: any, temp: any[]) {
 }
 
 export function loadNavigationParamsInitialValue(vueComponent: any) {
-    Object.keys(vueComponent.document.navigationParams).forEach((key: string) => {
+    Object.keys(vueComponent.document.navigationParams).forEach(async (key: string) => {
         for (let i = 0; i < vueComponent.filtersData.filterStatus.length; i++) {
             const tempParam = vueComponent.filtersData.filterStatus[i]
             if (key === tempParam.urlName || key === tempParam.label) {
