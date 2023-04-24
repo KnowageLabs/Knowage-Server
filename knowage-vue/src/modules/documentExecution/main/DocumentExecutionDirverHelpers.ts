@@ -5,7 +5,6 @@ import moment from 'moment'
 import i18n from '@/App.i18n'
 import { AxiosResponse } from 'axios'
 import { loadNavigationInitialValuesFromDashboard } from './DocumentExecutionCrossNavigationHelper'
-import deepcopy from 'deepcopy'
 
 const { t } = i18n.global
 const mainStore = store()
@@ -33,8 +32,6 @@ export const loadFilters = async (initialLoading: boolean, filtersData: { filter
             filtersData = vueComponenet.filtersData
         }
     }
-
-    console.log('----- filters data: ', deepcopy(filtersData))
     setFiltersForBreadcrumbItem(breadcrumbs, filtersData, document)
 
     return filtersData

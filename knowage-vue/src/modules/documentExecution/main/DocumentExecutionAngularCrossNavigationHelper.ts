@@ -4,7 +4,6 @@ import moment from 'moment'
 
 export const executeAngularCrossNavigation = async (vueComponent: any, event: any, $http: any) => {
     vueComponent.angularData = event.data
-    console.log("------------ vueComponent.angularData: ", vueComponent.angularData)
     await loadCrossNavigationByDocument(vueComponent, event.data, $http)
 }
 
@@ -216,6 +215,7 @@ export function loadNavigationParamsInitialValue(vueComponent: any) {
                     }
                 }
                 if (tempParam.selectionType === 'COMBOBOX') formatCrossNavigationComboParameterDescription(tempParam)
+                else if (['TREE', 'LOOKUP'].includes(tempParam.selectionType) && tempParam.parameterValue[0]) tempParam.parameterValue[0].description = tempParam.parameterValue[0].value
             }
         }
     })
