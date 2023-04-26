@@ -1076,9 +1076,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					}
 
 					rows.push(mapRow(node.data));
-
-					for(var k in rows){
-						newValue.push(rows[k][tempAlias]);
+					if(tempAlias){
+						for(var k in rows){
+							newValue.push(rows[k][tempAlias]);
+						}
 					}
 				}
 				else {
