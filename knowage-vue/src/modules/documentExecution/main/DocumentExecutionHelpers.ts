@@ -1,5 +1,7 @@
+import moment from 'moment'
 import { iExporter } from './DocumentExecution'
 import UserFunctionalitiesConstants from '@/UserFunctionalitiesConstants.json'
+import deepcopy from 'deepcopy'
 
 export function createToolbarMenuItems(document: any, functions: any, exporters: iExporter[] | null, user: any, isOrganizerEnabled: boolean, mode: string | null, $t: any, newDashboardMode: boolean) {
     const toolbarMenuItems = [] as any[]
@@ -109,3 +111,14 @@ const removeEmptyToolbarItems = (toolbarMenuItems: any[]) => {
     }
 }
 
+
+export function getValidDate(value: string) {
+    let momentDate = moment(deepcopy(value))
+    if (momentDate.isValid()) return momentDate.toDate()
+    const validFormats = ['DD/MM/YYYY', 'DD/MM/YYYY HH:mm:ss.SSS']
+    for (let i = 0; i < validFormats.length; i++) {
+        momentDate = moment(deepcopy(value), validFormats[i])
+        if (momentDate.isValid()) return momentDate.toDate()
+    }
+    return ''
+}

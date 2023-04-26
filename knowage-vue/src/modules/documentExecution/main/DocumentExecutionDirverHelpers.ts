@@ -1,10 +1,10 @@
 import { iParameter } from '@/components/UI/KnParameterSidebar/KnParameterSidebar'
 import { loadNavigationParamsInitialValue } from './DocumentExecutionAngularCrossNavigationHelper'
 import store from '@/App.store.js'
-import moment from 'moment'
 import i18n from '@/App.i18n'
 import { AxiosResponse } from 'axios'
 import { loadNavigationInitialValuesFromDashboard } from './DocumentExecutionCrossNavigationHelper'
+import { getValidDate } from './DocumentExecutionHelpers'
 
 const { t } = i18n.global
 const mainStore = store()
@@ -29,7 +29,7 @@ export const loadFilters = async (initialLoading: boolean, filtersData: { filter
         if (document.navigationFromDashboard) loadNavigationInitialValuesFromDashboard(document, filtersData, dateFormat)
         else {
             loadNavigationParamsInitialValue(vueComponenet)
-            filtersData = vueComponenet.filtersData
+            // filtersData = vueComponenet.filtersData
         }
     }
     setFiltersForBreadcrumbItem(breadcrumbs, filtersData, document)
@@ -84,7 +84,9 @@ const getFilters = async (document: any, userRole: string | null, $http: any) =>
 
 const formatDrivers = (filtersData: { filterStatus: iParameter[], isReadyForExecution: boolean } | null) => {
     filtersData?.filterStatus?.forEach((el: iParameter) => {
-        el.parameterValue = !el.multivalue || (el.valueSelection === 'man_in' && !el.selectionType) ? [{ value: '', description: '' }] : []
+        if (el.type === 'DATE') formatDateDriver(el)
+        else el.parameterValue = !el.multivalue || (el.valueSelection === 'man_in' && !el.selectionType) ? [{ value: '', description: '' }] : []
+
         if (el.driverDefaultValue?.length > 0) {
             let valueIndex = '_col0'
             let descriptionIndex = 'col1'
@@ -100,10 +102,9 @@ const formatDrivers = (filtersData: { filterStatus: iParameter[], isReadyForExec
                 }
             })
 
-            if (el.type === 'DATE' && !el.selectionType && el.valueSelection === 'man_in' && el.showOnPanel === 'true' && el.visible) {
-                el.parameterValue[0].value = moment(el.parameterValue[0].value, 'DD/MM/YYYY').toDate() as any
-            }
+            formatDateDriver(el)
         }
+
         if (el.data) {
             el.data = el.data.map((data: any) => {
                 return formatParameterDataOptions(el, data)
@@ -126,6 +127,13 @@ const formatDrivers = (filtersData: { filterStatus: iParameter[], isReadyForExec
             el.parameterValue[0].description = el.parameterDescription ? el.parameterDescription[0] : ''
         }
     })
+}
+
+const formatDateDriver = (el: any) => {
+    if (el.type === 'DATE' && !el.selectionType && el.valueSelection === 'man_in' && el.showOnPanel === 'true' && el.visible) {
+        el.parameterValue[0].value = getValidDate('' + el.parameterValue[0].value)
+    }
+
 }
 
 const setFiltersForBreadcrumbItem = (breadcrumbs: any[], filtersData: { filterStatus: iParameter[], isReadyForExecution: boolean }, document: any) => {

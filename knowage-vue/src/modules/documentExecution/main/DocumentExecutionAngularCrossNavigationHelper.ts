@@ -1,6 +1,7 @@
 import { AxiosResponse } from 'axios'
+import { getValidDate } from './DocumentExecutionHelpers'
 import deepcopy from 'deepcopy'
-import moment from 'moment'
+
 
 export const executeAngularCrossNavigation = async (vueComponent: any, event: any, $http: any) => {
     vueComponent.angularData = event.data
@@ -225,17 +226,6 @@ function checkIfMultivalueDriverContainsCrossNavigationValue(tempParam: any, cro
     if (!['LIST', 'COMBOBOX'].includes(tempParam.selectionType)) return true
     const index = tempParam.data.findIndex((option: { value: string; description: string }) => option.value == crossNavigationValue)
     return index !== -1
-}
-
-function getValidDate(value: string) {
-    let momentDate = moment(deepcopy(value))
-    if (momentDate.isValid()) return momentDate.toDate()
-    const validFormats = ['DD/MM/YYYY', 'DD/MM/YYYY HH:mm:ss.SSS']
-    for (let i = 0; i < validFormats.length; i++) {
-        momentDate = moment(deepcopy(value), validFormats[i])
-        if (momentDate.isValid()) return momentDate.toDate()
-    }
-    return ''
 }
 
 function formatCrossNavigationComboParameterDescription(tempParam: any) {
