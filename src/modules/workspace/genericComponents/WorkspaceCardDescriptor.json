@@ -1,0 +1,36 @@
+{
+    "analysisViewFields": {
+        "image": "previewFile",
+        "label": "label",
+        "name": "name",
+        "type": "typeCode"
+    },
+    "businessModelViewFields": {
+        "image": "previewFile",
+        "label": "name",
+        "name": "description",
+        "type": "dataSourceLabel"
+    },
+    "datasetViewFields": {
+        "image": "previewFile",
+        "label": "label",
+        "name": "name",
+        "type": "dsTypeCd"
+    },
+    "defaultImages": {
+        "businessModel": "model.jpg",
+        "missing": "dashboard.jpg"
+    },
+    "defaultViewFields": {
+        "image": "previewFile",
+        "label": "documentLabel",
+        "name": "documentName",
+        "type": "documentType"
+    },
+    "federationDatasetViewFields": {
+        "image": "previewFile",
+        "label": "label",
+        "name": "name",
+        "type": "owner"
+    }
+}

@@ -1,0 +1,28 @@
+{
+    "datasetTypes": {
+        "java.lang.Boolean": "Boolean",
+        "java.lang.Double": "Double",
+        "java.lang.Float": "Float",
+        "java.lang.Integer": "Integer",
+        "java.lang.Long": "Long",
+        "java.lang.String": "String",
+        "java.math.BigDecimal": "Float",
+        "java.sql.Date": "Date",
+        "java.sql.Timestamp": "Timestamp",
+        "java.time.LocalDateTime": "Local Date",
+        "java.util.Date": "Date",
+        "java.util.LinkedHashMap": "Hash Map",
+        "net.minidev.json.JSONArray": "JSON",
+        "oracle.sql.TIMESTAMP": "Date"
+    },
+    "style": {
+        "metaCard": {
+            "card": {
+                "width": "240px"
+            },
+            "listItem": {
+                "height": "30px"
+            }
+        }
+    }
+}

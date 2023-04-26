@@ -1,0 +1,31 @@
+{
+    "criteriaOptions": ["M", "MP", "P"],
+    "criteriaTooltipMap": {
+        "M": "managers.scorecards.majority",
+        "MP": "managers.scorecards.majorityWithPriority",
+        "P": "managers.scorecards.priority"
+    },
+    "kpiIconColorClassMap": {
+        "GREEN": "scorecard-kpi-icon-green",
+        "GREY": "scorecard-kpi-icon-grey",
+        "LIGHT-GREY": "scorecard-kpi-icon-light-grey",
+        "RED": "scorecard-kpi-icon-red",
+        "YELLOW": "scorecard-kpi-icon-yellow"
+    },
+    "style": {
+        "inputContainer": {
+            "flex": "0 0 261px"
+        },
+        "multiselect": {
+            "border": "1px solid rgba(0, 0, 0, 0.12)",
+            "height": "35px",
+            "max-width": "200px"
+        }
+    },
+    "selectedCriteriaMap": {
+        "MAJORITY": "M",
+        "MAJORITY_WITH_PRIORITY": "MP",
+        "PRIORITY": "P"
+    },
+    "defaultCriteriaValue": "MAJORITY"
+}

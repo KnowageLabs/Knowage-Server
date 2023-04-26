@@ -1,0 +1,9 @@
+{
+    "node": {
+        "style": {
+            "padding": "0"
+        }
+    },
+    "orderByOptions": ["", "name", "id"],
+    "selectColumnStyle": "width: 5%"
+}

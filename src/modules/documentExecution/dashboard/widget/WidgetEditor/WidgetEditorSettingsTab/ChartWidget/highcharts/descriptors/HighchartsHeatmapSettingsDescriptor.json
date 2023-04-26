@@ -1,0 +1,149 @@
+{
+    "settings": {
+        "Accessibility": [
+            {
+                "title": "dashboard.widgetEditor.accessibility.title",
+                "type": "AccessibilitySettings"
+            },
+            {
+                "title": "dashboard.widgetEditor.seriesAccessibility.title",
+                "type": "SeriesAccessibilitySettings"
+            }
+        ],
+        "Colors": [
+            {
+                "title": "dashboard.widgetEditor.colors.title",
+                "type": "Colors"
+            }
+        ],
+        "Configuration": [
+            {
+                "title": "dashboard.widgetEditor.highcharts.heatmap.datetype",
+                "type": "DatetypeSettings"
+            },
+            {
+                "title": "dashboard.widgetEditor.highcharts.heatmap.nullValues.title",
+                "type": "HeatmapNullSettings"
+            },
+            {
+                "title": "dashboard.widgetEditor.noData.title",
+                "type": "NoDataMessageConfiguration"
+            },
+            {
+                "title": "dashboard.widgetEditor.export.title",
+                "type": "Export"
+            }
+        ],
+        "Interactions": [
+            {
+                "title": "dashboard.widgetEditor.interactions.crossNavigation",
+                "type": "CrossNavigation"
+            },
+            {
+                "title": "dashboard.widgetEditor.interactions.preview",
+                "type": "Preview"
+            }
+        ],
+        "Responsive": [
+            {
+                "title": "dashboard.widgetEditor.responsive.title",
+                "type": "Responsive"
+            }
+        ],
+        "Style": [
+            {
+                "title": "dashboard.widgetEditor.titles.title",
+                "type": "Title"
+            },
+            {
+                "title": "dashboard.widgetEditor.background",
+                "type": "BackgroundColorStyle"
+            },
+            {
+                "title": "dashboard.widgetEditor.borders.title",
+                "type": "BordersStyle"
+            },
+            {
+                "title": "dashboard.widgetEditor.padding.title",
+                "type": "PaddingStyle"
+            },
+            {
+                "title": "dashboard.widgetEditor.shadows.title",
+                "type": "ShadowsStyle"
+            }
+        ],
+        "Tooltip": [
+            {
+                "title": "dashboard.widgetEditor.tooltip.title",
+                "type": "Tooltip"
+            }
+        ],
+        "XAxis": [
+            {
+                "title": "dashboard.widgetEditor.axis",
+                "type": "HeatmapXAxisSettings"
+            },
+            {
+                "title": "common.title",
+                "type": "HeatmapXAxisTitleSettings"
+            }
+        ],
+        "YAxis": [
+            {
+                "title": "dashboard.widgetEditor.axis",
+                "type": "HeatmapYAxisSettings"
+            },
+            {
+                "title": "common.title",
+                "type": "HeatmapYAxisTitleSettings"
+            }
+        ]
+    },
+    "settingsListOptions": [
+        {
+            "icon": "fa fa-cogs",
+            "label": "dashboard.widgetEditor.configuration",
+            "value": "Configuration"
+        },
+        {
+            "icon": "pi pi-table",
+            "label": "dashboard.widgetEditor.accessibility.title",
+            "value": "Accessibility"
+        },
+        {
+            "icon": "fa fa-paint-brush",
+            "label": "common.style",
+            "value": "Style"
+        },
+        {
+            "icon": "fa-solid fa-arrow-up",
+            "label": "dashboard.widgetEditor.yAxis",
+            "value": "YAxis"
+        },
+        {
+            "icon": "fa-solid fa-arrow-right",
+            "label": "dashboard.widgetEditor.xAxis",
+            "value": "XAxis"
+        },
+        {
+            "icon": "pi pi-table",
+            "label": "dashboard.widgetEditor.tooltip.title",
+            "value": "Tooltip"
+        },
+        {
+            "icon": "pi pi-table",
+            "label": "common.colors",
+            "value": "Colors"
+        },
+        {
+            "icon": "fa fa-hand-pointer",
+            "label": "dashboard.widgetEditor.interactions.title",
+            "value": "Interactions"
+        },
+        {
+            "icon": "pi pi-tablet",
+            "label": "dashboard.widgetEditor.responsive.title",
+            "value": "Responsive"
+        }
+    ]
+}

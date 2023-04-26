@@ -1,0 +1,109 @@
+{
+    "defaultValuesTypes": [
+        {
+            "label": "",
+            "value": ""
+        },
+        {
+            "label": "dashboard.widgetEditor.defaultValues.columnsFirstItem",
+            "value": "FIRST"
+        },
+        {
+            "label": "dashboard.widgetEditor.defaultValues.columnsLastItem",
+            "value": "LAST"
+        },
+        {
+            "label": "common.static",
+            "value": "STATIC"
+        }
+    ],
+    "labelToolbarStyleOptions": [
+        {
+            "type": "font-weight"
+        },
+        {
+            "type": "font-style"
+        },
+        {
+            "type": "font-size"
+        },
+        {
+            "type": "font-family"
+        },
+        {
+            "type": "color"
+        },
+        {
+            "type": "background-color"
+        }
+    ],
+    "settings": {
+        "Configuration": [
+            {
+                "title": "dashboard.widgetEditor.selectorType.title",
+                "type": "SelectorType"
+            },
+            {
+                "title": "dashboard.widgetEditor.defaultValues.title",
+                "type": "DefaultValues"
+            },
+            {
+                "title": "dashboard.widgetEditor.valuesManagement.title",
+                "type": "ValuesManagement"
+            },
+            {
+                "title": "dashboard.widgetEditor.export.title",
+                "type": "Export"
+            }
+        ],
+        "Responsive": [
+            {
+                "title": "dashboard.widgetEditor.responsive.title",
+                "type": "Responsive"
+            }
+        ],
+        "Style": [
+            {
+                "title": "dashboard.widgetEditor.titles.title",
+                "type": "Title"
+            },
+            {
+                "title": "common.label",
+                "type": "LabelStyle"
+            },
+            {
+                "title": "dashboard.widgetEditor.background",
+                "type": "BackgroundColorStyle"
+            },
+            {
+                "title": "dashboard.widgetEditor.borders.title",
+                "type": "BordersStyle"
+            },
+            {
+                "title": "dashboard.widgetEditor.padding.title",
+                "type": "PaddingStyle"
+            },
+            {
+                "title": "dashboard.widgetEditor.shadows.title",
+                "type": "ShadowsStyle"
+            }
+        ]
+    },
+    "settingsListOptions": [
+        {
+            "icon": "fa fa-cogs",
+            "label": "dashboard.widgetEditor.configuration",
+            "value": "Configuration"
+        },
+        {
+            "icon": "fa fa-paint-brush",
+            "label": "common.style",
+            "value": "Style"
+        },
+        {
+            "icon": "pi pi-tablet",
+            "label": "dashboard.widgetEditor.responsive.title",
+            "value": "Responsive"
+        }
+    ]
+}

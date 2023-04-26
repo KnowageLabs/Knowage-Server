@@ -1,0 +1,20 @@
+{
+    "validations": {
+        "tenant": [
+            {
+                "fieldName": "MULTITENANT_NAME",
+                "validators": [
+                    {
+                        "key": "required"
+                    },
+                    {
+                        "key": "regex",
+                        "validator": {
+                            "type": "extendedAlphanumericRegex"
+                        }
+                    }
+                ]
+            }
+        ]
+    }
+}

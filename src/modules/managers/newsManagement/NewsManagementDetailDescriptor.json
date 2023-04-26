@@ -1,0 +1,11 @@
+{
+    "operation": {
+        "insert": {
+            "toastTitle": "common.toast.createTitle"
+        },
+        "update": {
+            "toastTitle": "common.toast.updateTitle"
+        },
+        "success": "common.toast.success"
+    }
+}

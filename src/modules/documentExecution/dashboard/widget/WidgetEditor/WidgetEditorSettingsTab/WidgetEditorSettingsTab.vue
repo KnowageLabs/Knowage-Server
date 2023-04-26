@@ -1,0 +1,309 @@
+<template>
+    <WidgetEditorSettingsList v-if="descriptor" :widget-model="propWidget" :options="descriptor.settingsListOptions" @itemClicked="onItemClicked"></WidgetEditorSettingsList>
+    <div v-if="propWidget" class="p-d-flex kn-flex kn-overflow">
+        <TableWidgetSettingsContainer
+            v-if="propWidget.type === 'table'"
+            class="model-div kn-flex kn-overflow p-py-3 p-pr-3"
+            :widget-model="propWidget"
+            :selected-setting="selectedSetting"
+            :datasets="datasets"
+            :selected-datasets="selectedDatasets"
+            :variables="variables"
+            :dashboard-id="dashboardId"
+        ></TableWidgetSettingsContainer>
+        <SelectorWidgetSettingsContainer
+            v-else-if="propWidget.type === 'selector'"
+            class="model-div kn-flex kn-overflow p-py-3 p-pr-3"
+            :widget-model="propWidget"
+            :selected-setting="selectedSetting"
+            :datasets="datasets"
+            :selected-datasets="selectedDatasets"
+            :variables="variables"
+        ></SelectorWidgetSettingsContainer>
+        <SelectionsWidgetSettingsContainer
+            v-else-if="propWidget.type === 'selection'"
+            class="model-div kn-flex kn-overflow p-py-3 p-pr-3"
+            :widget-model="propWidget"
+            :selected-setting="selectedSetting"
+            :datasets="datasets"
+            :selected-datasets="selectedDatasets"
+            :variables="variables"
+        ></SelectionsWidgetSettingsContainer>
+        <HTMLWidgetSettingsContainer
+            v-else-if="propWidget.type === 'html'"
+            class="model-div kn-flex kn-overflow p-py-3 p-pr-3"
+            :widget-model="propWidget"
+            :selected-setting="selectedSetting"
+            :datasets="datasets"
+            :selected-datasets="selectedDatasets"
+            :variables="variables"
+            :dashboard-id="dashboardId"
+            :html-gallery-prop="htmlGalleryProp"
+            @galleryItemSelected="onGalleryItemSelected"
+        ></HTMLWidgetSettingsContainer>
+        <TextWidgetSettingsContainer
+            v-else-if="propWidget.type === 'text'"
+            class="model-div kn-flex kn-overflow p-py-3 p-pr-3"
+            :widget-model="propWidget"
+            :selected-setting="selectedSetting"
+            :datasets="datasets"
+            :selected-datasets="selectedDatasets"
+            :variables="variables"
+            :dashboard-id="dashboardId"
+        ></TextWidgetSettingsContainer>
+        <HighchartsWidgetSettingsContainer
+            v-else-if="propWidget.type === 'highcharts' && user.enterprise"
+            class="model-div kn-flex kn-overflow p-py-3 p-pr-3"
+            :widget-model="propWidget"
+            :selected-setting="selectedSetting"
+            :datasets="datasets"
+            :selected-datasets="selectedDatasets"
+            :variables="variables"
+            :dashboard-id="dashboardId"
+            :descriptor="descriptor"
+        >
+        </HighchartsWidgetSettingsContainer>
+        <ChartJSWidgetSettingsContainer
+            v-else-if="propWidget.type === 'chartJS'"
+            class="model-div kn-flex kn-overflow p-py-3 p-pr-3"
+            :widget-model="propWidget"
+            :selected-setting="selectedSetting"
+            :datasets="datasets"
+            :selected-datasets="selectedDatasets"
+            :variables="variables"
+            :dashboard-id="dashboardId"
+        >
+        </ChartJSWidgetSettingsContainer>
+        <ImageWidgetSettingsContainer
+            v-else-if="propWidget.type === 'image'"
+            class="model-div kn-flex kn-overflow p-py-3 p-pr-3"
+            :widget-model="propWidget"
+            :selected-setting="selectedSetting"
+            :datasets="datasets"
+            :selected-datasets="selectedDatasets"
+            :variables="variables"
+            :dashboard-id="dashboardId"
+            @settingSelected="$emit('settingChanged', $event)"
+        >
+        </ImageWidgetSettingsContainer>
+        <CustomChartWidgetSettingsContainer
+            v-else-if="propWidget.type === 'customchart'"
+            class="model-div kn-flex kn-overflow p-py-3 p-pr-3"
+            :widget-model="propWidget"
+            :selected-setting="selectedSetting"
+            :datasets="datasets"
+            :selected-datasets="selectedDatasets"
+            :variables="variables"
+            :dashboard-id="dashboardId"
+            :custom-chart-gallery-prop="customChartGalleryProp"
+            @galleryItemSelected="onGalleryItemSelected"
+        ></CustomChartWidgetSettingsContainer>
+        <PivotTableWidgetSettingsContainer
+            v-else-if="propWidget.type === 'static-pivot-table'"
+            class="model-div kn-flex kn-overflow p-py-3 p-pr-3"
+            :widget-model="propWidget"
+            :selected-setting="selectedSetting"
+            :datasets="datasets"
+            :selected-datasets="selectedDatasets"
+            :variables="variables"
+            :dashboard-id="dashboardId"
+        ></PivotTableWidgetSettingsContainer>
+        <DiscoveryWidgetSettingsContainer
+            v-else-if="propWidget.type === 'discovery'"
+            class="model-div kn-flex kn-overflow p-py-3 p-pr-3"
+            :widgetModel="propWidget"
+            :selectedSetting="selectedSetting"
+            :datasets="datasets"
+            :selectedDatasets="selectedDatasets"
+            :variables="variables"
+            :dashboardId="dashboardId"
+        ></DiscoveryWidgetSettingsContainer>
+        <MapWidgetSettingsContainer
+            v-else-if="propWidget.type === 'map'"
+            class="model-div kn-flex kn-overflow p-py-3 p-pr-3"
+            :widget-model="propWidget"
+            :selected-setting="selectedSetting"
+            :datasets="datasets"
+            :selected-datasets="selectedDatasets"
+            :variables="variables"
+            :dashboard-id="dashboardId"
+            :layers="layers"
+        ></MapWidgetSettingsContainer>
+        <VegaChartsSettingsContainer
+            v-else-if="propWidget.type === 'vega'"
+            class="model-div kn-flex kn-overflow p-py-3 p-pr-3"
+            :widget-model="propWidget"
+            :selected-setting="selectedSetting"
+            :datasets="datasets"
+            :selected-datasets="selectedDatasets"
+            :variables="variables"
+            :dashboard-id="dashboardId"
+        ></VegaChartsSettingsContainer>
+    </div>
+</template>
+
+<script lang="ts">
+import { defineComponent, PropType } from 'vue'
+import { IWidget, IDataset, IVariable, IGalleryItem } from '../../../Dashboard'
+import { ILayer } from '../../../interfaces/mapWidget/DashboardMapWidget'
+import tableDescriptor from './TableWidget/TableWidgetSettingsDescriptor.json'
+import TableWidgetSettingsContainer from './TableWidget/TableWidgetSettingsContainer.vue'
+import SelectorWidgetSettingsContainer from './SelectorWidget/SelectorWidgetSettingsContainer.vue'
+import SelectionsWidgetSettingsContainer from './SelectionsWidget/SelectionsWidgetSettingsContainer.vue'
+import HTMLWidgetSettingsContainer from './HTMLWidget/HTMLWidgetSettingsContainer.vue'
+import TextWidgetSettingsContainer from './TextWidget/TextWidgetSettingsContainer.vue'
+import HighchartsWidgetSettingsContainer from './ChartWidget/highcharts/HighchartsWidgetSettingsContainer.vue'
+import ChartJSWidgetSettingsContainer from './ChartWidget/chartJS/ChartJSWidgetSettingsContainer.vue'
+import ImageWidgetSettingsContainer from './ImageWidget/ImageWidgetSettingsContainer.vue'
+import CustomChartWidgetSettingsContainer from './CustomChartWidget/CustomChartWidgetSettingsContainer.vue'
+import PivotTableWidgetSettingsContainer from './PivotTableWidget/PivotTableWidgetSettingsContainer.vue'
+import DiscoveryWidgetSettingsContainer from './DiscoveryWidget/DiscoveryWidgetSettingsContainer.vue'
+import MapWidgetSettingsContainer from './MapWidget/MapWidgetSettingsContainer.vue'
+import VegaChartsSettingsContainer from './ChartWidget/vega/VegaChartsSettingsContainer.vue'
+import selectorDescriptor from './SelectorWidget/SelectorWidgetSettingsDescriptor.json'
+import selectionsDescriptor from './SelectionsWidget/SelectionsWidgetSettingsDescriptor.json'
+import WidgetEditorSettingsList from './WidgetEditorSettingsList.vue'
+import htmlDescriptor from './HTMLWidget/HTMLWidgetSettingsDescriptor.json'
+import textDescriptor from './TextWidget/TextWidgetSettingsDescriptor.json'
+import chartJSDescriptor from './ChartWidget/chartJS/ChartJSWidgetSettingsDescriptor.json'
+import HighchartsPieSettingsDescriptor from './ChartWidget/highcharts/descriptors/HighchartsPieSettingsDescriptor.json'
+import HighchartsGaugeSettingsDescriptor from './ChartWidget/highcharts/descriptors/HighchartsGaugeSettingsDescriptor.json'
+import HighchartsActivityGaugeSettingsDescriptor from './ChartWidget/highcharts/descriptors/HighchartsActivityGaugeSettingsDescriptor.json'
+import HighchartsSolidGaugeSettingsDescriptor from './ChartWidget/highcharts/descriptors/HighchartsSolidGaugeSettingsDescriptor.json'
+import HighchartsHeatmapSettingsDescriptor from './ChartWidget/highcharts/descriptors/HighchartsHeatmapSettingsDescriptor.json'
+import imageDescriptor from './ImageWidget/ImageWidgetSettingsDescriptor.json'
+import customChartDescriptor from './CustomChartWidget/CustomChartWidgetSettingsDescriptor.json'
+import pivotTableDescriptor from './PivotTableWidget/PivotTableSettingsDescriptor.json'
+import discoveryDescriptor from './DiscoveryWidget/DiscoveryWidgetSettingsDescriptor.json'
+import mapWidgetDescriptor from './MapWidget/MapSettingsDescriptor.json'
+import vegaChartsDescriptor from './ChartWidget/vega/VegaChartsSettingsDescriptor.json'
+import { mapState } from 'pinia'
+import mainStore from '@/App.store'
+
+export default defineComponent({
+    name: 'widget-editor-settings-tab',
+    components: {
+        TableWidgetSettingsContainer,
+        WidgetEditorSettingsList,
+        SelectorWidgetSettingsContainer,
+        SelectionsWidgetSettingsContainer,
+        HTMLWidgetSettingsContainer,
+        TextWidgetSettingsContainer,
+        HighchartsWidgetSettingsContainer,
+        ChartJSWidgetSettingsContainer,
+        ImageWidgetSettingsContainer,
+        CustomChartWidgetSettingsContainer,
+        PivotTableWidgetSettingsContainer,
+        DiscoveryWidgetSettingsContainer,
+        MapWidgetSettingsContainer,
+        VegaChartsSettingsContainer
+    },
+    props: {
+        propWidget: { type: Object as PropType<IWidget>, required: true },
+        datasets: { type: Array as PropType<IDataset[]> },
+        selectedDatasets: { type: Array as PropType<IDataset[]> },
+        variables: { type: Array as PropType<IVariable[]>, required: true },
+        htmlGalleryProp: { type: Array as PropType<IGalleryItem[]>, required: true },
+        customChartGalleryProp: { type: Array as PropType<IGalleryItem[]>, required: true },
+        dashboardId: { type: String, required: true },
+        layers: { type: Array as PropType<ILayer[]>, required: true }
+    },
+    emits: ['settingChanged'],
+    data() {
+        return {
+            descriptor: null as any,
+            selectedDescriptor: {},
+            selectedSetting: ''
+        }
+    },
+    computed: {
+        ...mapState(mainStore, {
+            user: 'user'
+        }),
+        chartType() {
+            return this.propWidget?.settings.chartModel?.model?.chart.type
+        }
+    },
+    watch: {
+        chartType() {
+            this.loadDescriptor()
+        }
+    },
+    created() {
+        this.loadDescriptor()
+    },
+    methods: {
+        loadDescriptor() {
+            switch (this.propWidget.type) {
+                case 'table':
+                    this.descriptor = tableDescriptor
+                    break
+                case 'selector':
+                    this.descriptor = selectorDescriptor
+                    break
+                case 'selection':
+                    this.descriptor = selectionsDescriptor
+                    break
+                case 'html':
+                    this.descriptor = { ...htmlDescriptor }
+                    this.checkIfHtmlWidgetGalleryOptionIsDisabled()
+                    break
+                case 'text':
+                    this.descriptor = textDescriptor
+                    break
+                case 'highcharts':
+                    this.descriptor = this.getHighchartsDescriptor()
+                    break
+                case 'chartJS':
+                    this.descriptor = chartJSDescriptor
+                    break
+                case 'image':
+                    this.descriptor = imageDescriptor
+                    break
+                case 'customchart':
+                    this.descriptor = customChartDescriptor
+                    break
+                case 'static-pivot-table':
+                    this.descriptor = pivotTableDescriptor
+                    break
+                case 'discovery':
+                    this.descriptor = discoveryDescriptor
+                    break
+                case 'map':
+                    this.descriptor = mapWidgetDescriptor
+                    break
+                case 'vega':
+                    this.descriptor = vegaChartsDescriptor
+            }
+        },
+        getHighchartsDescriptor() {
+            switch (this.chartType) {
+                case 'pie':
+                    return HighchartsPieSettingsDescriptor
+                case 'gauge':
+                    return HighchartsGaugeSettingsDescriptor
+                case 'activitygauge':
+                    return HighchartsActivityGaugeSettingsDescriptor
+                case 'solidgauge':
+                    return HighchartsSolidGaugeSettingsDescriptor
+                case 'heatmap':
+                    return HighchartsHeatmapSettingsDescriptor
+            }
+        },
+        onItemClicked(item: any) {
+            this.selectedSetting = item.value
+            this.$emit('settingChanged', item.value)
+            this.selectedDescriptor = { table: item.descriptor }
+        },
+        checkIfHtmlWidgetGalleryOptionIsDisabled() {
+            if (this.htmlGalleryProp.length > 0) return
+            const index = this.descriptor.settingsListOptions.findIndex((option: any) => option.value === 'Gallery')
+            if (index !== -1) this.descriptor.settingsListOptions[index].disabled = true
+        },
+        onGalleryItemSelected() {
+            this.selectedSetting = 'Editor'
+            this.$emit('settingChanged', 'Editor')
+        }
+    }
+})
+</script>

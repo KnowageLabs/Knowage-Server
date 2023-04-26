@@ -1,0 +1,391 @@
+{
+    "changeType": {
+        "parameters": [
+            {
+                "name": "columns",
+                "optionLabel": "header",
+                "optionValue": "header",
+                "type": "multiSelect",
+                "validationRules": "required"
+            },
+            {
+                "availableOptions": [],
+                "name": "destType",
+                "placeholder": "managers.workspaceManagement.dataPreparation.transformations.destType",
+                "type": "dropdown",
+                "validationRules": "required|alpha_dash"
+            }
+        ],
+        "validations": [
+            {
+                "fieldName": "columns",
+                "validators": [
+                    {
+                        "key": "required"
+                    },
+                    {
+                        "key": "maximumCharacters",
+                        "validator": {
+                            "params": {
+                                "max": 100
+                            },
+                            "type": "maxLength"
+                        }
+                    },
+                    {
+                        "key": "regex",
+                        "validator": {
+                            "type": "extendedAlphanumericRegex"
+                        }
+                    }
+                ]
+            }
+        ]
+    },
+    "drop": {
+        "parameters": [
+            {
+                "name": "columnName",
+                "type": "string",
+                "validationRules": "required|alpha"
+            }
+        ],
+        "validations": [
+            {
+                "fieldName": "column",
+                "validators": [
+                    {
+                        "key": "required"
+                    },
+                    {
+                        "key": "maximumCharacters",
+                        "validator": {
+                            "params": {
+                                "max": 100
+                            },
+                            "type": "maxLength"
+                        }
+                    },
+                    {
+                        "key": "regex",
+                        "validator": {
+                            "type": "extendedAlphanumericRegex"
+                        }
+                    }
+                ]
+            }
+        ]
+    },
+    "merge": {
+        "parameters": [
+            {
+                "name": "columns",
+                "optionLabel": "header",
+                "type": "multiSelect",
+                "validationRules": "required"
+            },
+            {
+                "name": "separator",
+                "type": "string",
+                "validationRules": "alpha"
+            },
+            {
+                "name": "columnName",
+                "type": "string",
+                "validationRules": "required|alpha"
+            }
+        ]
+    },
+    "padding": {
+        "parameters": [
+            {
+                "name": "prefix",
+                "type": "string",
+                "validationRules": "alpha_dash"
+            },
+            {
+                "name": "columns",
+                "optionLabel": "header",
+                "optionValue": "header",
+                "type": "multiSelect",
+                "validationRules": "required"
+            },
+            {
+                "name": "suffix",
+                "type": "string",
+                "validationRules": "alpha_dash"
+            }
+        ],
+        "validations": [
+            {
+                "fieldName": "columns",
+                "validators": [
+                    {
+                        "key": "required"
+                    },
+                    {
+                        "key": "maximumCharacters",
+                        "validator": {
+                            "params": {
+                                "max": 100
+                            },
+                            "type": "maxLength"
+                        }
+                    },
+                    {
+                        "key": "regex",
+                        "validator": {
+                            "type": "extendedAlphanumericRegex"
+                        }
+                    }
+                ]
+            },
+            {
+                "fieldName": "prefix",
+                "validators": [
+                    {
+                        "key": "required"
+                    },
+                    {
+                        "key": "maximumCharacters",
+                        "validator": {
+                            "params": {
+                                "max": 100
+                            },
+                            "type": "maxLength"
+                        }
+                    },
+                    {
+                        "key": "regex",
+                        "validator": {
+                            "type": "extendedAlphanumericRegex"
+                        }
+                    }
+                ]
+            },
+            {
+                "fieldName": "suffix",
+                "validators": [
+                    {
+                        "key": "required"
+                    },
+                    {
+                        "key": "maximumCharacters",
+                        "validator": {
+                            "params": {
+                                "max": 100
+                            },
+                            "type": "maxLength"
+                        }
+                    },
+                    {
+                        "key": "regex",
+                        "validator": {
+                            "type": "extendedAlphanumericRegex"
+                        }
+                    }
+                ]
+            }
+        ]
+    },
+    "removeDuplicates": {
+        "parameters": [
+            {
+                "name": "columns",
+                "optionLabel": "header",
+                "optionValue": "header",
+                "type": "multiSelect",
+                "validationRules": "required"
+            }
+        ],
+        "validations": [
+            {
+                "fieldName": "column",
+                "validators": [
+                    {
+                        "key": "required"
+                    },
+                    {
+                        "key": "maximumCharacters",
+                        "validator": {
+                            "params": {
+                                "max": 100
+                            },
+                            "type": "maxLength"
+                        }
+                    },
+                    {
+                        "key": "regex",
+                        "validator": {
+                            "type": "extendedAlphanumericRegex"
+                        }
+                    }
+                ]
+            }
+        ]
+    },
+    "removeNull": {
+        "parameters": [
+            {
+                "name": "columns",
+                "optionLabel": "header",
+                "optionValue": "header",
+                "type": "multiSelect",
+                "validationRules": "required"
+            }
+        ],
+        "validations": [
+            {
+                "fieldName": "columns",
+                "validators": [
+                    {
+                        "key": "required"
+                    },
+                    {
+                        "key": "maximumCharacters",
+                        "validator": {
+                            "params": {
+                                "max": 100
+                            },
+                            "type": "maxLength"
+                        }
+                    },
+                    {
+                        "key": "regex",
+                        "validator": {
+                            "type": "extendedAlphanumericRegex"
+                        }
+                    }
+                ]
+            }
+        ]
+    },
+    "replace": {
+        "parameters": [
+            {
+                "name": "columns",
+                "optionLabel": "header",
+                "optionValue": "header",
+                "type": "multiSelect",
+                "validationRules": "required"
+            },
+            {
+                "name": "oldChar",
+                "type": "string",
+                "validationRules": "required|alpha_dash"
+            },
+            {
+                "name": "newChar",
+                "type": "string",
+                "validationRules": "required|alpha_dash"
+            }
+        ],
+        "validations": [
+            {
+                "fieldName": "column",
+                "validators": [
+                    {
+                        "key": "required"
+                    },
+                    {
+                        "key": "maximumCharacters",
+                        "validator": {
+                            "params": {
+                                "max": 100
+                            },
+                            "type": "maxLength"
+                        }
+                    },
+                    {
+                        "key": "regex",
+                        "validator": {
+                            "type": "extendedAlphanumericRegex"
+                        }
+                    }
+                ]
+            },
+            {
+                "fieldName": "oldChar",
+                "validators": [
+                    {
+                        "key": "required"
+                    },
+                    {
+                        "key": "maximumCharacters",
+                        "validator": {
+                            "params": {
+                                "max": 100
+                            },
+                            "type": "maxLength"
+                        }
+                    },
+                    {
+                        "key": "regex",
+                        "validator": {
+                            "type": "extendedAlphanumericRegex"
+                        }
+                    }
+                ]
+            },
+            {
+                "fieldName": "newChar",
+                "validators": [
+                    {
+                        "key": "required"
+                    },
+                    {
+                        "key": "maximumCharacters",
+                        "validator": {
+                            "params": {
+                                "max": 100
+                            },
+                            "type": "maxLength"
+                        }
+                    },
+                    {
+                        "key": "regex",
+                        "validator": {
+                            "type": "extendedAlphanumericRegex"
+                        }
+                    }
+                ]
+            }
+        ]
+    },
+    "trim": {
+        "parameters": [
+            {
+                "name": "columns",
+                "optionLabel": "header",
+                "optionValue": "header",
+                "type": "multiSelect",
+                "validationRules": "required"
+            }
+        ],
+        "validations": [
+            {
+                "fieldName": "column",
+                "validators": [
+                    {
+                        "key": "required"
+                    },
+                    {
+                        "key": "maximumCharacters",
+                        "validator": {
+                            "params": {
+                                "max": 100
+                            },
+                            "type": "maxLength"
+                        }
+                    },
+                    {
+                        "key": "regex",
+                        "validator": {
+                            "type": "extendedAlphanumericRegex"
+                        }
+                    }
+                ]
+            }
+        ]
+    }
+}

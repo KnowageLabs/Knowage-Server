@@ -1,0 +1,36 @@
+@import '@/assets/scss/utils/_variables.scss';
+
+@import '@/assets/scss/base/_reset.scss';
+@import '@/assets/scss/base/_common.scss';
+@import '@/assets/scss/base/_typography.scss';
+
+@import '@/assets/scss/theme/_material.scss';
+
+@import '@/assets/scss/layout/_breadcrumb.scss';
+@import '@/assets/scss/layout/_button.scss';
+@import '@/assets/scss/layout/_card.scss';
+@import '@/assets/scss/layout/_checkbox.scss';
+@import '@/assets/scss/layout/_dialog.scss';
+@import '@/assets/scss/layout/_divider.scss';
+@import '@/assets/scss/layout/_input.scss';
+@import '@/assets/scss/layout/_list.scss';
+@import '@/assets/scss/layout/_menu.scss';
+@import '@/assets/scss/layout/_message.scss';
+@import '@/assets/scss/layout/_page.scss';
+@import '@/assets/scss/layout/_paginator.scss';
+@import '@/assets/scss/layout/_progress.scss';
+@import '@/assets/scss/layout/_tab.scss';
+@import '@/assets/scss/layout/_table.scss';
+@import '@/assets/scss/layout/_toolbar.scss';
+@import '@/assets/scss/layout/_tree.scss';
+@import '@/assets/scss/layout/_dashboardEditorDialog.scss';
+@import '@/assets/scss/layout/_dashboard.scss';
+@import '@/assets/scss/layout/_selectorWidget.scss';
+
+@import '@/assets/scss/components/_knHint.scss';
+@import '@/assets/scss/components/_knTabCard.scss';
+@import '@/assets/scss/components/_knOverlaySpinnerPanel.scss';
+@import '@/assets/scss/components/_knRotate.scss';
+
+@import '@/assets/scss/vendors/_codeMirror.scss';
+@import '@/assets/scss/vendors/agGrid.scss';

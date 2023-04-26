@@ -1,0 +1,44 @@
+{
+    "schedulingTypes": [
+        {
+            "label": "managers.cacheManagement.none",
+            "value": "NONE"
+        },
+        {
+            "label": "managers.cacheManagement.every_10_mins",
+            "value": "EVERY_10_MINS"
+        },
+        {
+            "label": "managers.cacheManagement.every_15_mins",
+            "value": "EVERY_15_MINS"
+        },
+        {
+            "label": "managers.cacheManagement.every_20_mins",
+            "value": "EVERY_20_MINS"
+        },
+        {
+            "label": "managers.cacheManagement.every_30_mins",
+            "value": "EVERY_30_MINS"
+        },
+        {
+            "label": "managers.cacheManagement.hourly",
+            "value": "HOURLY"
+        },
+        {
+            "label": "managers.cacheManagement.daily",
+            "value": "DAILY"
+        },
+        {
+            "label": "managers.cacheManagement.weekly",
+            "value": "WEEKLY"
+        },
+        {
+            "label": "managers.cacheManagement.monthly",
+            "value": "MONTHLY"
+        },
+        {
+            "label": "managers.cacheManagement.yearly",
+            "value": "YEARLY"
+        }
+    ]
+}

@@ -1,0 +1,32 @@
+{
+    "admissibleDateFormats": ["LLLL", "llll", "LLL", "lll", "DD/MM/YYYY HH:mm:SS", "DD/MM/YYYY HH:mm", "LL", "ll", "L", "l"],
+    "columnTypes": [
+        {
+            "label": "Attribute",
+            "name": "ATTRIBUTE"
+        },
+        {
+            "label": "Measure",
+            "name": "MEASURE"
+        }
+    ],
+    "style": {
+        "iconColumnStyle": {
+            "width": "10%"
+        }
+    },
+    "types": [
+        {
+            "label": "String",
+            "name": "STRING"
+        },
+        {
+            "label": "Number",
+            "name": "NUMBER"
+        },
+        {
+            "label": "Date",
+            "name": "DATE"
+        }
+    ]
+}

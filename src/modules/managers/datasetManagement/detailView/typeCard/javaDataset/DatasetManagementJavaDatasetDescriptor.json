@@ -1,0 +1,22 @@
+{
+    "style": {
+        "maxWidth": {
+            "width": "100%"
+        }
+    },
+    "validations": {
+        "dataset": [
+            {
+                "fieldName": "jClassName",
+                "validators": [
+                    {
+                        "key": "required",
+                        "validator": {
+                            "type": "java-class-field-required"
+                        }
+                    }
+                ]
+            }
+        ]
+    }
+}

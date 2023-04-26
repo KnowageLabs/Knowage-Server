@@ -1,0 +1,23 @@
+{
+    "columns": [
+        {
+            "field": "name",
+            "label": "common.name"
+        },
+        {
+            "field": "description",
+            "label": "common.description"
+        },
+        {
+            "field": "isPublic",
+            "label": "common.public"
+        }
+    ],
+    "globalFilterFields": ["name", "description", "isPublic"],
+    "iconColumn": {
+        "style": {
+            "text-align": "end",
+            "width": "10%"
+        }
+    }
+}

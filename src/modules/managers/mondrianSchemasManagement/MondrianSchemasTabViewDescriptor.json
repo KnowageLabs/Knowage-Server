@@ -1,0 +1,27 @@
+{
+    "column": {
+        "header": {
+            "style": {
+                "display": "flex",
+                "flex-direction": "column"
+            }
+        },
+        "style": {
+            "width": "50%"
+        }
+    },
+    "operation": {
+        "insert": {
+            "toastTitle": "common.toast.createTitle"
+        },
+        "success": "common.toast.success",
+        "update": {
+            "toastTitle": "common.toast.updateTitle"
+        }
+    },
+    "pField": {
+        "style": {
+            "margin-bottom": "40px"
+        }
+    }
+}

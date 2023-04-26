@@ -1,0 +1,88 @@
+{
+    "columnsLov": [
+        {
+            "field": "label",
+            "header": "common.label"
+        },
+        {
+            "field": "name",
+            "header": "common.name"
+        },
+        {
+            "field": "description",
+            "header": "common.description"
+        }
+    ],
+    "defaultFormula": [
+        {
+            "f_value": "FIRST",
+            "name": "Main lov's first item"
+        },
+        {
+            "f_value": "LAST",
+            "name": "Main lov's last item"
+        }
+    ],
+    "defaultValues": [
+        {
+            "label": "none",
+            "name": "None"
+        },
+        {
+            "label": "lov",
+            "name": "Use a LOV"
+        },
+        {
+            "label": "pickUp",
+            "name": "Pick Up"
+        }
+    ],
+    "dialog": {
+        "breakpoints": {
+            "640px": "100vw",
+            "960px": "85vw"
+        },
+        "style": {
+            "width": "70vw"
+        }
+    },
+    "globalFilterFields": ["label", "name", "description"],
+    "maxValues": [
+        {
+            "label": "none",
+            "name": "None"
+        },
+        {
+            "label": "lov",
+            "name": "Use a LOV"
+        }
+    ],
+    "table": {
+        "column": {
+            "style": {
+                "width": "45%",
+                "word-break": "break-all"
+            }
+        },
+        "iconColumn": {
+            "style": {
+                "text-align": "end",
+                "width": "5%"
+            }
+        }
+    },
+    "types": [
+        {
+            "name": "LOV",
+            "valueSelection": "lov"
+        },
+        {
+            "name": "Manual Input",
+            "valueSelection": "man_in"
+        },
+        {
+            "name": "Map Input",
+            "valueSelection": "map_in"
+        }
+    ]
+}

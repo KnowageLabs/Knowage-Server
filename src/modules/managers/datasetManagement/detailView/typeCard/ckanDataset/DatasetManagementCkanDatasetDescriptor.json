@@ -1,0 +1,177 @@
+{
+    "ckanDateFormat": [
+        {
+            "name": "dd/MM/yyyy",
+            "value": "dd/MM/yyyy"
+        },
+        {
+            "name": "MM/dd/yyyy",
+            "value": "MM/dd/yyyy"
+        },
+        {
+            "name": "dd-MM-yyyy",
+            "value": "dd-MM-yyyy"
+        },
+        {
+            "name": "MM-dd-yyyy",
+            "value": "MM-dd-yyyy"
+        },
+        {
+            "name": "yyyy-MM-dd",
+            "value": "yyyy-MM-dd"
+        },
+        {
+            "name": "yyyy:MM:dd",
+            "value": "yyyy:MM:dd"
+        },
+        {
+            "name": "dd.MM.yyyy",
+            "value": "dd.MM.yyyy"
+        },
+        {
+            "name": "MM.dd.yyyy",
+            "value": "MM.dd.yyyy"
+        }
+    ],
+    "ckanFileTypes": [
+        {
+            "name": "XLS",
+            "value": "xls"
+        },
+        {
+            "name": "CSV",
+            "value": "csv"
+        }
+    ],
+    "csvDelimiterCharacterTypes": [
+        {
+            "name": ",",
+            "value": ","
+        },
+        {
+            "name": ";",
+            "value": ";"
+        },
+        {
+            "name": "\\t",
+            "value": "\\t"
+        },
+        {
+            "name": "|",
+            "value": "|"
+        }
+    ],
+    "csvEncodingTypes": [
+        {
+            "name": "windows-1252",
+            "value": "windows-1252"
+        },
+        {
+            "name": "UTF-8",
+            "value": "UTF-8"
+        },
+        {
+            "name": "UTF-16",
+            "value": "UTF-16"
+        },
+        {
+            "name": "US-ASCII",
+            "value": "US-ASCII"
+        },
+        {
+            "name": "ISO-8859-1",
+            "value": "ISO-8859-1"
+        }
+    ],
+    "csvQuoteCharacterTypes": [
+        {
+            "name": "\"",
+            "value": "\""
+        },
+        {
+            "name": "'",
+            "value": "'"
+        }
+    ],
+    "validations": {
+        "dataset": [
+            {
+                "fieldName": "ckanFileType",
+                "validators": [
+                    {
+                        "key": "required",
+                        "validator": {
+                            "type": "ckan-fields-required"
+                        }
+                    }
+                ]
+            },
+            {
+                "fieldName": "ckanId",
+                "validators": [
+                    {
+                        "key": "required",
+                        "validator": {
+                            "type": "ckan-fields-required"
+                        }
+                    }
+                ]
+            },
+            {
+                "fieldName": "ckanUrl",
+                "validators": [
+                    {
+                        "key": "required",
+                        "validator": {
+                            "type": "ckan-fields-required"
+                        }
+                    }
+                ]
+            },
+            {
+                "fieldName": "ckanCsvDelimiter",
+                "validators": [
+                    {
+                        "key": "required",
+                        "validator": {
+                            "type": "csv-fields-required"
+                        }
+                    }
+                ]
+            },
+            {
+                "fieldName": "ckanCsvQuote",
+                "validators": [
+                    {
+                        "key": "required",
+                        "validator": {
+                            "type": "csv-fields-required"
+                        }
+                    }
+                ]
+            },
+            {
+                "fieldName": "ckanCsvEncoding",
+                "validators": [
+                    {
+                        "key": "required",
+                        "validator": {
+                            "type": "csv-fields-required"
+                        }
+                    }
+                ]
+            },
+            {
+                "fieldName": "ckanDateFormat",
+                "validators": [
+                    {
+                        "key": "required",
+                        "validator": {
+                            "type": "csv-fields-required"
+                        }
+                    }
+                ]
+            }
+        ]
+    }
+}

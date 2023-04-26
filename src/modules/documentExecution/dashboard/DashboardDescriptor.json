@@ -1,0 +1,49 @@
+{
+    "labelMaxLength": 100,
+    "nameMaxLength": 200,
+    "saveDialog": {
+        "style": {
+            "width": "50vw"
+        }
+    },
+    "saveHintMessageStyle": {
+        "align-items": "center",
+        "display": "flex",
+        "justify-content": "center",
+        "text-align": "center"
+    },
+    "selectionsDateFormat": "DD/MM/yyyy HH:mm:ss sss",
+    "selectionsDateMultiFormat": "DD/MM/YYYY",
+    "validations": {
+        "document": [
+            {
+                "fieldName": "label",
+                "validators": [
+                    {
+                        "key": "required"
+                    },
+                    {
+                        "key": "regex",
+                        "validator": {
+                            "type": "extendedAlphanumericRegex"
+                        }
+                    }
+                ]
+            },
+            {
+                "fieldName": "name",
+                "validators": [
+                    {
+                        "key": "required"
+                    },
+                    {
+                        "key": "regex",
+                        "validator": {
+                            "type": "extendedAlphanumericRegex"
+                        }
+                    }
+                ]
+            }
+        ]
+    }
+}

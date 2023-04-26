@@ -1,0 +1,42 @@
+{
+    "descriptionMaxLength": "160",
+    "dialog": {
+        "style": {
+            "width": "60vw"
+        }
+    },
+    "labelMaxLength": "50",
+    "nameMaxLength": "50",
+    "validations": {
+        "dataset": [
+            {
+                "fieldName": "label",
+                "validators": [
+                    {
+                        "key": "required"
+                    },
+                    {
+                        "key": "regex",
+                        "validator": {
+                            "type": "extendedAlphanumericRegex"
+                        }
+                    }
+                ]
+            },
+            {
+                "fieldName": "name",
+                "validators": [
+                    {
+                        "key": "required"
+                    },
+                    {
+                        "key": "regex",
+                        "validator": {
+                            "type": "extendedAlphanumericRegex"
+                        }
+                    }
+                ]
+            }
+        ]
+    }
+}

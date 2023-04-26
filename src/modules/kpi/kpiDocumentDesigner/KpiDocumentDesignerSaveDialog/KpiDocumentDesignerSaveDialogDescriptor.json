@@ -1,0 +1,13 @@
+{
+    "dialog": {
+        "contentStyle": {
+            "padding": "1rem"
+        },
+        "style": {
+            "height": "40%",
+            "max-height": "40%",
+            "max-width": "40%",
+            "min-width": "40%"
+        }
+    }
+}

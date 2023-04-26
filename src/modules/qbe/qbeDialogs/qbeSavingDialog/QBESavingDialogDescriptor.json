@@ -1,0 +1,82 @@
+{
+    "dialog": {
+        "style": {
+            "min-width": "60%"
+        }
+    },
+    "validations": {
+        "advancedTab": [
+            {
+                "fieldName": "persistTableName",
+                "validators": [
+                    {
+                        "key": "required",
+                        "validator": {
+                            "type": "persist-field-required"
+                        }
+                    }
+                ]
+            }
+        ],
+        "dataset": [
+            {
+                "fieldName": "name",
+                "validators": [
+                    {
+                        "key": "required"
+                    },
+                    {
+                        "key": "regex",
+                        "validator": {
+                            "type": "extendedAlphanumericRegex"
+                        }
+                    }
+                ]
+            },
+            {
+                "fieldName": "label",
+                "validators": [
+                    {
+                        "key": "required"
+                    },
+                    {
+                        "key": "regex",
+                        "validator": {
+                            "type": "extendedAlphanumericRegex"
+                        }
+                    }
+                ]
+            },
+            {
+                "fieldName": "description",
+                "validators": [
+                    {
+                        "key": "regex",
+                        "validator": {
+                            "type": "extendedAlphanumericRegex"
+                        }
+                    }
+                ]
+            },
+            {
+                "fieldName": "scopeCd",
+                "validators": [
+                    {
+                        "key": "required"
+                    }
+                ]
+            },
+            {
+                "fieldName": "catTypeVn",
+                "validators": [
+                    {
+                        "key": "required",
+                        "validator": {
+                            "type": "cat-type-required"
+                        }
+                    }
+                ]
+            }
+        ]
+    }
+}

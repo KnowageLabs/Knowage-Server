@@ -1,0 +1,108 @@
+{
+    "validations": {
+        "datasource": [
+            {
+                "fieldName": "label",
+                "validators": [
+                    {
+                        "key": "required"
+                    }
+                ]
+            },
+            {
+                "fieldName": "dialectName",
+                "validators": [
+                    {
+                        "key": "required"
+                    }
+                ]
+            },
+            {
+                "fieldName": "schemaAttribute",
+                "validators": [
+                    {
+                        "key": "regex",
+                        "validator": {
+                            "type": "extendedAlphanumericRegex"
+                        }
+                    }
+                ]
+            },
+            {
+                "fieldName": "jndi",
+                "validators": [
+                    {
+                        "key": "required",
+                        "validator": {
+                            "type": "jndi-name-required"
+                        }
+                    }
+                ]
+            },
+            {
+                "fieldName": "urlConnection",
+                "validators": [
+                    {
+                        "key": "required",
+                        "validator": {
+                            "type": "jdbc-data-required"
+                        }
+                    }
+                ]
+            },
+            {
+                "fieldName": "driver",
+                "validators": [
+                    {
+                        "key": "required",
+                        "validator": {
+                            "type": "jdbc-data-required"
+                        }
+                    }
+                ]
+            }
+        ],
+        "jdbcPoolConfiguration": [
+            {
+                "fieldName": "maxTotal",
+                "validators": [
+                    {
+                        "key": "required"
+                    }
+                ]
+            },
+            {
+                "fieldName": "maxWait",
+                "validators": [
+                    {
+                        "key": "required"
+                    }
+                ]
+            },
+            {
+                "fieldName": "abandonedTimeout",
+                "validators": [
+                    {
+                        "key": "required"
+                    }
+                ]
+            },
+            {
+                "fieldName": "timeBetweenEvictionRuns",
+                "validators": [
+                    {
+                        "key": "required"
+                    }
+                ]
+            },
+            {
+                "fieldName": "minEvictableIdleTimeMillis",
+                "validators": [
+                    {
+                        "key": "required"
+                    }
+                ]
+            }
+        ]
+    }
+}

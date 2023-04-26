@@ -1,0 +1,40 @@
+{
+    "accordionOverflowDiv": {
+        "height": "515px",
+        "overflow-x": "hidden",
+        "overflow-y": "auto"
+    },
+    "driverDialogStyle": {
+        "width": "60%"
+    },
+    "indexFields": [
+        {
+            "label": "dashboard.datasetEditor.dynamic",
+            "value": "dynamic"
+        },
+        {
+            "label": "dashboard.datasetEditor.static",
+            "value": "static"
+        }
+    ],
+    "style": {
+        "checkboxColumn": {
+            "width": "flex: 0 0 4rem;"
+        },
+        "indexInfoIcon": {
+            "color": "#929292"
+        },
+        "indexMultiselect": {
+            "max-width": "250px"
+        },
+        "message": {
+            "align-items": "center",
+            "display": "flex",
+            "justify-content": "center",
+            "text-align": "center"
+        },
+        "nodeStyle": {
+            "padding": 0
+        }
+    }
+}

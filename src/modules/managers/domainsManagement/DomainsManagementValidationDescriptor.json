@@ -1,0 +1,26 @@
+{
+    "validations": {
+        "domain": [
+            {
+                "fieldName": "valueCd",
+                "validators": [{ "key": "required" }, { "key": "maximumCharacters", "validator": { "type": "maxLength", "params": { "max": 100 } } }, { "key": "regex", "validator": { "type": "extendedAlphanumericRegex" } }]
+            },
+            {
+                "fieldName": "valueName",
+                "validators": [{ "key": "required" }, { "key": "maximumCharacters", "validator": { "type": "maxLength", "params": { "max": 40 } } }, { "key": "regex", "validator": { "type": "extendedAlphanumericRegex" } }]
+            },
+            {
+                "fieldName": "domainCode",
+                "validators": [{ "key": "required" }, { "key": "maximumCharacters", "validator": { "type": "maxLength", "params": { "max": 20 } } }, { "key": "regex", "validator": { "type": "extendedAlphanumericRegex" } }]
+            },
+            {
+                "fieldName": "domainName",
+                "validators": [{ "key": "required" }, { "key": "maximumCharacters", "validator": { "type": "maxLength", "params": { "max": 40 } } }, { "key": "regex", "validator": { "type": "extendedAlphanumericRegex" } }]
+            },
+            {
+                "fieldName": "valueDescription",
+                "validators": [{ "key": "required" }, { "key": "maximumCharacters", "validator": { "type": "maxLength", "params": { "max": 160 } } }, { "key": "regex", "validator": { "type": "extendedAlphanumericRegex" } }]
+            }
+        ]
+    }
+}

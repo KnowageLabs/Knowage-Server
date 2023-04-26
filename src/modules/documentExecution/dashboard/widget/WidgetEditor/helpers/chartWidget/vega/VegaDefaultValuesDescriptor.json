@@ -1,0 +1,129 @@
+{
+    "defaultTooltipSettings": {
+        "precision": 2,
+        "prefix": "",
+        "suffix": ""
+    },
+    "defaultVegaAutosize": {
+        "contains": "padding",
+        "type": "fit"
+    },
+    "defaultVegaData": [
+        {
+            "name": "table",
+            "transform": [],
+            "values": []
+        }
+    ],
+    "defaultVegaDescription": "A word cloud visualization.",
+    "defaultVegaMarks": [
+        {
+            "encode": {
+                "enter": {
+                    "align": {
+                        "value": "center"
+                    },
+                    "baseline": {
+                        "value": "alphabetic"
+                    },
+                    "fill": {
+                        "field": "text",
+                        "scale": "color"
+                    },
+                    "text": {
+                        "field": "text"
+                    },
+                    "tooltip": {
+                        "signal": "format(datum.count, '(.2f')"
+                    }
+                },
+                "hover": {
+                    "fillOpacity": {
+                        "value": 0.5
+                    }
+                },
+                "update": {
+                    "fillOpacity": {
+                        "value": 1
+                    }
+                }
+            },
+            "from": {
+                "data": "table"
+            },
+            "transform": [
+                {
+                    "font": "Arial",
+                    "fontSize": {
+                        "field": "datum.count"
+                    },
+                    "fontSizeRange": [8, 34],
+                    "padding": 5,
+                    "rotate": 0,
+                    "text": {
+                        "field": "text"
+                    },
+                    "type": "wordcloud"
+                }
+            ],
+            "type": "text"
+        }
+    ],
+    "defaultVegaNoDataConfiguration": {
+        "position": {
+            "align": "center",
+            "verticalAlign": "center"
+        },
+        "style": {
+            "background-color": "",
+            "color": "",
+            "font-family": "",
+            "font-size": "12px",
+            "font-weight": ""
+        },
+        "text": "No data"
+    },
+    "defaultVegaPadding": 0,
+    "defaultVegaScales": [
+        {
+            "domain": {
+                "data": "table",
+                "field": "text"
+            },
+            "name": "color",
+            "range": ["#d5a928", "#652c90", "#939597"],
+            "type": "ordinal"
+        }
+    ],
+    "defaultVegaSchema": "https://vega.github.io/schema/vega/v5.json",
+    "defaultVegaSignals": [
+        {
+            "init": "containerSize()[0]",
+            "name": "width",
+            "on": [
+                {
+                    "events": "window:resize",
+                    "update": "containerSize()[0]"
+                }
+            ]
+        },
+        {
+            "init": "containerSize()[1]",
+            "name": "height",
+            "on": [
+                {
+                    "events": "window:resize",
+                    "update": "containerSize()[1]"
+                }
+            ]
+        }
+    ],
+    "defaultVegaTextConfiguration": {
+        "font": "",
+        "maxNumberOfWords": 100,
+        "maximumFontSize": 32,
+        "minimumFontSize": 8,
+        "wordAngle": 0,
+        "wordPadding": 12
+    }
+}

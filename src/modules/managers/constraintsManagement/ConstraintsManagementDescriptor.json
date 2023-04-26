@@ -1,0 +1,11 @@
+{
+    "filterFields": ["label", "name", "valueTypeCd"],
+    "iconTypesMap": {
+        "false": {
+            "icon": "pi pi-lock-open"
+        },
+        "true": {
+            "icon": "pi pi-lock"
+        }
+    }
+}

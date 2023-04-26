@@ -1,0 +1,105 @@
+{
+    "horizontalAlignmentOptions": [
+        {
+            "label": "common.center",
+            "value": "center"
+        },
+        {
+            "label": "common.left",
+            "value": "left"
+        },
+        {
+            "label": "common.right",
+            "value": "right"
+        }
+    ],
+    "settings": {
+        "Configuration": [
+            {
+                "title": "common.image",
+                "type": "ImageSettings"
+            },
+            {
+                "title": "dashboard.widgetEditor.export.title",
+                "type": "Export"
+            }
+        ],
+        "Gallery": [],
+        "Interactions": [
+            {
+                "title": "dashboard.widgetEditor.interactions.crossNavigation",
+                "type": "CrossNavigation"
+            }
+        ],
+        "Responsive": [
+            {
+                "title": "dashboard.widgetEditor.responsive.title",
+                "type": "Responsive"
+            }
+        ],
+        "Style": [
+            {
+                "title": "dashboard.widgetEditor.titles.title",
+                "type": "Title"
+            },
+            {
+                "title": "dashboard.widgetEditor.background",
+                "type": "BackgroundColorStyle"
+            },
+            {
+                "title": "dashboard.widgetEditor.borders.title",
+                "type": "BordersStyle"
+            },
+            {
+                "title": "dashboard.widgetEditor.padding.title",
+                "type": "PaddingStyle"
+            },
+            {
+                "title": "dashboard.widgetEditor.shadows.title",
+                "type": "ShadowsStyle"
+            }
+        ]
+    },
+    "settingsListOptions": [
+        {
+            "disabled": false,
+            "icon": "fa fa-book",
+            "label": "dashboard.widgetEditor.gallery",
+            "value": "Gallery"
+        },
+        {
+            "icon": "fa fa-cogs",
+            "label": "dashboard.widgetEditor.configuration",
+            "value": "Configuration"
+        },
+        {
+            "icon": "fa fa-paint-brush",
+            "label": "common.style",
+            "value": "Style"
+        },
+        {
+            "icon": "fa fa-hand-pointer",
+            "label": "dashboard.widgetEditor.interactions.title",
+            "value": "Interactions"
+        },
+        {
+            "icon": "pi pi-tablet",
+            "label": "dashboard.widgetEditor.responsive.title",
+            "value": "Responsive"
+        }
+    ],
+    "verticalAlignmentOptions": [
+        {
+            "label": "common.center",
+            "value": "center"
+        },
+        {
+            "label": "common.top",
+            "value": "top"
+        },
+        {
+            "label": "common.bottom",
+            "value": "bottom"
+        }
+    ]
+}

@@ -1,0 +1,42 @@
+{
+    "validations": {
+        "target": [
+            {
+                "fieldName": "name",
+                "validators": [
+                    {
+                        "key": "required"
+                    },
+                    {
+                        "key": "regex",
+                        "validator": {
+                            "type": "extendedAlphanumericRegex"
+                        }
+                    }
+                ]
+            },
+            {
+                "fieldName": "startValidity",
+                "validators": [
+                    {
+                        "key": "required"
+                    }
+                ]
+            },
+            {
+                "fieldName": "endValidity",
+                "validators": [
+                    {
+                        "key": "required"
+                    },
+                    {
+                        "key": "is_after_date",
+                        "validator": {
+                            "type": "is-after-date"
+                        }
+                    }
+                ]
+            }
+        ]
+    }
+}

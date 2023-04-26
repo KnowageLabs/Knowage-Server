@@ -1,0 +1,22 @@
+{
+    "columnsDocument": [
+        {
+            "field": "DOCUMENT_LABEL",
+            "header": "kpi.alert.name"
+        },
+        {
+            "field": "DOCUMENT_NAME",
+            "header": "kpi.alert.label"
+        }
+    ],
+    "dialog": {
+        "breakpoints": {
+            "640px": "100vw",
+            "960px": "85vw"
+        },
+        "style": {
+            "width": "70vw"
+        }
+    },
+    "documentFilterFields": ["label", "name"]
+}

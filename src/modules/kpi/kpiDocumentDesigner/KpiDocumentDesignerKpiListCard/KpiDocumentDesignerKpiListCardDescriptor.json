@@ -1,0 +1,59 @@
+{
+    "columnStyle": {
+        "flex": 1
+    },
+    "columns": [
+        {
+            "field": "name",
+            "header": "common.name",
+            "style": {
+                "flex": 1
+            }
+        },
+        {
+            "field": "category",
+            "header": "common.category",
+            "style": {
+                "flex": 1
+            }
+        }
+    ],
+    "dialog": {
+        "contentStyle": {
+            "padding-left": "1rem",
+            "padding-top": "1rem"
+        },
+        "style": {
+            "height": "60%",
+            "max-height": "60%",
+            "max-width": "60%",
+            "min-width": "60%"
+        }
+    },
+    "globalFilterFields": ["name", "category"],
+    "iconColumnStyle": {
+        "flex": 0.5,
+        "justify-content": "end"
+    },
+    "prefixSuffixOptions": [
+        {
+            "label": "kpi.kpiDocumentDesigner.suffix",
+            "value": "true"
+        },
+        {
+            "label": "kpi.kpiDocumentDesigner.prefix",
+            "value": "false"
+        }
+    ],
+    "selectKpiGlobalFilterFields": ["name", "category.valueCd", "author"],
+    "viewAsOptions": [
+        {
+            "label": "kpi.kpiDocumentDesigner.speedometer",
+            "value": "speedometer"
+        },
+        {
+            "label": "kpi.kpiDocumentDesigner.kpiCard",
+            "value": "kpicard"
+        }
+    ]
+}

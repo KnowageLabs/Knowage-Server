@@ -1,0 +1,30 @@
+{
+    "defaultChipsStyle": {
+        "height": 25,
+        "properties": {
+            "background-color": "",
+            "color": "",
+            "font-family": "",
+            "font-size": "",
+            "font-style": "",
+            "font-weight": "",
+            "justify-content": ""
+        }
+    },
+    "defaultNoSelectionsConfiguration": {
+        "customText": "",
+        "enabled": false
+    },
+    "defaultRowsStyle": {
+        "alternatedRows": {
+            "enabled": false,
+            "evenBackgroundColor": "rgb(228, 232, 236)",
+            "oddBackgroundColor": ""
+        },
+        "height": 25
+    },
+    "defaultValuesManagement": {
+        "showColumn": true,
+        "showDataset": false
+    }
+}

@@ -1,0 +1,23 @@
+{
+    "style": {
+        "codeMirror": {
+            "height": "50%",
+            "width": "50%"
+        }
+    },
+    "validations": {
+        "dataset": [
+            {
+                "fieldName": "sourceDatasetLabel",
+                "validators": [
+                    {
+                        "key": "required",
+                        "validator": {
+                            "type": "qbe-fields-required"
+                        }
+                    }
+                ]
+            }
+        ]
+    }
+}

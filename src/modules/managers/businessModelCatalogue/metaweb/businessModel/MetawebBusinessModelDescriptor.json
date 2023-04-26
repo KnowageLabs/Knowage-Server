@@ -1,0 +1,67 @@
+{
+    "filterFields": ["name"],
+    "style": {
+        "absolute": {
+            "position": "absolute"
+        },
+        "bsDialog": {
+            "height": "80%",
+            "max-height": "80%",
+            "min-width": "80%"
+        },
+        "globalFilterFields": ["name"],
+        "mainList": {
+            "height": "100%"
+        },
+        "summaryItemFirst": {
+            "flex-basis": "50%",
+            "flex-grow": 1,
+            "flex-shrink": 1
+        },
+        "summaryItemMiddle": {
+            "flex-basis": "10%",
+            "flex-grow": 1,
+            "flex-shrink": 1
+        },
+        "summaryItemSecond": {
+            "flex-basis": "50%",
+            "flex-grow": 1,
+            "flex-shrink": 1,
+            "text-align": "end"
+        },
+        "summaryItemWidth": {
+            "width": "50%"
+        },
+        "tableCell": {
+            "flex-basis": "100%"
+        }
+    },
+    "validations": {
+        "tmpBnssView": [
+            {
+                "fieldName": "name",
+                "validators": [
+                    {
+                        "key": "required",
+                        "validator": {
+                            "type": "bv-dialog-required"
+                        }
+                    }
+                ]
+            }
+        ],
+        "tmpBusinessModel": [
+            {
+                "fieldName": "name",
+                "validators": [
+                    {
+                        "key": "required",
+                        "validator": {
+                            "type": "bm-dialog-required"
+                        }
+                    }
+                ]
+            }
+        ]
+    }
+}

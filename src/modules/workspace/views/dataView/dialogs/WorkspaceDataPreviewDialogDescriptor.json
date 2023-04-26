@@ -1,0 +1,18 @@
+{
+    "dialog": {
+        "contentStyle": {
+            "display": "flex",
+            "flex": "1",
+            "flex-direction": "column",
+            "padding-bottom": "0"
+        },
+        "style": {
+            "display": "flex",
+            "flex-direction": "column",
+            "max-height": "90%",
+            "max-width": "80%",
+            "min-height": "435px",
+            "min-width": "600px"
+        }
+    }
+}

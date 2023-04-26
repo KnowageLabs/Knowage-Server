@@ -1,0 +1,87 @@
+{
+    "validations": {
+        "attribute": [
+            {
+                "fieldName": "attributeName",
+                "validators": [
+                    {
+                        "key": "required"
+                    },
+                    {
+                        "key": "maximumCharacters",
+                        "validator": {
+                            "params": {
+                                "max": 100
+                            },
+                            "type": "maxLength"
+                        }
+                    },
+                    {
+                        "key": "regex",
+                        "validator": {
+                            "type": "extendedAlphanumericRegex"
+                        }
+                    }
+                ]
+            },
+            {
+                "fieldName": "attributeDescription",
+                "validators": [
+                    {
+                        "key": "required"
+                    },
+                    {
+                        "key": "maximumCharacters",
+                        "validator": {
+                            "params": {
+                                "max": 250
+                            },
+                            "type": "maxLength"
+                        }
+                    },
+                    {
+                        "key": "regex",
+                        "validator": {
+                            "type": "extendedAlphanumericRegex"
+                        }
+                    }
+                ]
+            },
+            {
+                "fieldName": "value",
+                "validators": [
+                    {
+                        "key": "required"
+                    }
+                ]
+            },
+            {
+                "fieldName": "lov",
+                "validators": []
+            },
+            {
+                "fieldName": "lovId",
+                "validators": [
+                    {
+                        "key": "required",
+                        "validator": {
+                            "type": "custom-required"
+                        }
+                    }
+                ]
+            },
+            {
+                "fieldName": "multivalue",
+                "validators": []
+            },
+            {
+                "fieldName": "allowUser",
+                "validators": []
+            },
+            {
+                "fieldName": "syntax",
+                "validators": []
+            }
+        ]
+    }
+}

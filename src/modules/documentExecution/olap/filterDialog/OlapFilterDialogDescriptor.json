@@ -1,0 +1,35 @@
+{
+    "iconColumnStyle": {
+        "text-align": "center",
+        "width": "5%"
+    },
+    "node": {
+        "style": {
+            "padding": 0
+        }
+    },
+    "selectButtonOptions": [
+        {
+            "label": "documentExecution.olap.filterDialog.selectFields",
+            "value": "selectFields"
+        },
+        {
+            "label": "documentExecution.olap.filterDialog.filterUsingDrivers",
+            "value": "filterUsingDrivers"
+        }
+    ],
+    "style": {
+        "dialog": {
+            "height": "80%",
+            "width": "80%"
+        }
+    },
+    "styles": {
+        "message": {
+            "align-items": "center",
+            "display": "flex",
+            "justify-content": "center",
+            "text-align": "center"
+        }
+    }
+}

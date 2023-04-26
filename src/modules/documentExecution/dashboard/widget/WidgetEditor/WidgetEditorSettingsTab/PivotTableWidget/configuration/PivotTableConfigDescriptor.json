@@ -1,0 +1,4 @@
+{
+    "rowTotals": ["grandTotal", "subTotal"],
+    "fieldPicker": ["showFieldPicker"]
+}

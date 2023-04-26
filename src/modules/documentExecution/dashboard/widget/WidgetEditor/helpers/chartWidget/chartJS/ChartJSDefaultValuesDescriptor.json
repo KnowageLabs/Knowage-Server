@@ -1,0 +1,21 @@
+{
+    "defaultChartJSSelection": {
+        "enabled": true
+    },
+    "defaultLegendSettings": {
+        "align": "center",
+        "display": true,
+        "position": "top"
+    },
+    "defaultTooltipSettings": {
+        "backgroundColor": "",
+        "bodyColor": "",
+        "bodyFont": {
+            "family": "",
+            "size": 14,
+            "style": "",
+            "weight": ""
+        },
+        "enabled": true
+    }
+}

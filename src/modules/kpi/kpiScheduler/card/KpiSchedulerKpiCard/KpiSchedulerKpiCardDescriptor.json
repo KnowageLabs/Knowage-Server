@@ -1,0 +1,27 @@
+{
+    "columns": [
+        {
+            "field": "name",
+            "header": "common.name",
+            "style": {}
+        },
+        {
+            "field": "category.translatedValueName",
+            "header": "common.category",
+            "style": {}
+        }
+    ],
+    "dialog": {
+        "style": {
+            "width": "60vw"
+        }
+    },
+    "globalFilterFields": ["name"],
+    "table": {
+        "iconColumn": {
+            "style": {
+                "text-align": "end"
+            }
+        }
+    }
+}

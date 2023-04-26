@@ -1,0 +1,50 @@
+{
+    "validations": {
+        "advancedTab": [
+            {
+                "fieldName": "pivotColName",
+                "validators": [
+                    {
+                        "key": "required",
+                        "validator": {
+                            "type": "transformable-field-required"
+                        }
+                    }
+                ]
+            },
+            {
+                "fieldName": "pivotColValue",
+                "validators": [
+                    {
+                        "key": "required",
+                        "validator": {
+                            "type": "transformable-field-required"
+                        }
+                    }
+                ]
+            },
+            {
+                "fieldName": "pivotRowName",
+                "validators": [
+                    {
+                        "key": "required",
+                        "validator": {
+                            "type": "transformable-field-required"
+                        }
+                    }
+                ]
+            },
+            {
+                "fieldName": "persistTableName",
+                "validators": [
+                    {
+                        "key": "required",
+                        "validator": {
+                            "type": "persist-field-required"
+                        }
+                    }
+                ]
+            }
+        ]
+    }
+}
