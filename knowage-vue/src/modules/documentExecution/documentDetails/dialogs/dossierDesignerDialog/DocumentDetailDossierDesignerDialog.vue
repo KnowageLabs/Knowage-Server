@@ -501,7 +501,7 @@ export default defineComponent({
                     label: document.label,
                     description: document.description
                 },
-                action: 'DOC_SAVE',
+                action: 'DOSSIER_SAVE',
                 updateFromWorkspace: false
             }
             await this.$http
