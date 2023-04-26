@@ -15,7 +15,7 @@
 
 	<dependencyManagement>
 
-		<dependencies>v
+		<dependencies>
 
 			<!-- 
 				Duplicated in:
@@ -88,7 +88,43 @@
 					<failOnMissingWebXml>false</failOnMissingWebXml>
 					<attachClasses>true</attachClasses>
 					<classesClassifier>classes</classesClassifier>
+					
+					<webResources>
+						<resource>
+							<directory>${vue.build.dir}/target/knowage-vue</directory>
+							<includes>
+								<include>**.*</include>
+							</includes>
+						</resource>
+					</webResources>
+
 				</configuration>
+			</plugin>
+
+			<plugin>
+				<artifactId>maven-resources-plugin</artifactId>
+				<version>3.0.2</version>
+				<executions>
+					<execution>
+						<id>copy-vue-resources</id>
+						<phase>generate-sources</phase>
+						<goals>
+							<goal>copy-resources</goal>
+						</goals>
+						<configuration>
+							<outputDirectory>${vue.build.dir}</outputDirectory>
+							<resources>
+								<resource>
+									<directory>${basedir}/src/vue</directory>
+									<excludes>
+										<exclude>node_modules</exclude>
+										<exclude>dist</exclude>
+									</excludes>
+								</resource>
+							</resources>
+						</configuration>
+					</execution>
+				</executions>
 			</plugin>
 
 			<plugin>
@@ -103,6 +139,7 @@
 						</goals>
 						<phase>process-resources</phase>
 						<configuration>
+							<workingDirectory>${vue.build.dir}</workingDirectory>
 							<executable>npm</executable>
 							<arguments>
 								<argument>version</argument>
@@ -118,6 +155,7 @@
 						</goals>
 						<phase>compile</phase>
 						<configuration>
+							<workingDirectory>${vue.build.dir}</workingDirectory>
 							<executable>npm</executable>
 							<arguments>
 								<argument>install</argument>
@@ -132,6 +170,7 @@
 						</goals>
 						<phase>compile</phase>
 						<configuration>
+							<workingDirectory>${vue.build.dir}</workingDirectory>
 							<executable>npm</executable>
 							<arguments>
 								<argument>run</argument>
@@ -142,6 +181,26 @@
 				</executions>
 			</plugin>
 
+			<plugin>
+				<artifactId>maven-clean-plugin</artifactId>
+				<version>3.2.0</version>
+				<configuration>
+					<filesets>
+						<fileset>
+							<directory>${vue.build.dir}</directory>
+							<includes>
+								<include>**/*</include>
+							</includes>
+							<followSymlinks>false</followSymlinks>
+						</fileset>
+					</filesets>
+				</configuration>
+			</plugin>
+
 		</plugins>
 	</build>
+
+	<properties>
+		<vue.build.dir>${project.build.directory}/vue</vue.build.dir>
+	</properties>
 </project>
