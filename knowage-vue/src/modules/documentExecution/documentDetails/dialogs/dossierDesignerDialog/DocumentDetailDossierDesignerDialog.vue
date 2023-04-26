@@ -14,7 +14,8 @@
                     </span>
 
                     <Button icon="fas fa-upload fa-1x" class="p-button-text p-button-plain p-ml-2" @click="setUploadType" />
-                    <KnInputFile v-if="!uploading" label="Template file" :change-function="startTemplateUpload" :trigger-input="triggerUpload" />
+                    <KnInputFile v-if="!uploading" :label="$t('documentExecution.dossier.designerDialog.templateFile')" :change-function="startTemplateUpload" accept=".docx, .pptx" :trigger-input="triggerUpload" />
+                    <KnValidationMessages class="p-mt-1" :v-comp="v$.activeTemplate.name.$model" />
                 </div>
                 <div class="p-col-6 p-d-flex">
                     <span class="p-float-label p-col">
@@ -125,9 +126,9 @@
                                 <div v-if="activeTemplate.placeholders[currentSelectedIndex].source === 'views'">
                                     <DataTable
                                         ref="dt"
-                                        v-model:selection="selectedView"
+                                        v-model:selection="activeTemplate.placeholders[currentSelectedIndex].views.selected"
                                         v-model:filters="filters"
-                                        :value="views"
+                                        :value="activeTemplate.placeholders[currentSelectedIndex].views.availableViews"
                                         class="p-datatable-sm kn-table"
                                         data-key="id"
                                         :paginator="true"
@@ -230,8 +231,7 @@ import { mapState, mapActions } from 'pinia'
 import Dialog from 'primevue/dialog'
 import ProgressSpinner from 'primevue/progressspinner'
 import mainStore from '../../../../../App.store'
-import cryptoRandomString from 'crypto-random-string'
-import { iDossierTemplate, iPlaceholder, iView } from '@/modules/documentExecution/documentDetails/dialogs/dossierDesignerDialog/DossierTemplate'
+import { iDossierTemplate, iPlaceholder } from '@/modules/documentExecution/documentDetails/dialogs/dossierDesignerDialog/DossierTemplate'
 import useValidate from '@vuelidate/core'
 import KnInputFile from '@/components/UI/KnInputFile.vue'
 import descriptor from '@/modules/documentExecution/documentDetails/dialogs/dossierDesignerDialog/DocumentDetailDossierDesignerDialogDescriptor.json'
@@ -250,8 +250,6 @@ import Accordion from 'primevue/accordion'
 import AccordionTab from 'primevue/accordiontab'
 import Divider from 'primevue/divider'
 import DashboardControllerSaveDialog from '@/modules/documentExecution/dashboard/DashboardControllerSaveDialog.vue'
-import { getCorrectRolesForExecution } from '@/helpers/commons/roleHelper'
-import { iURLData } from '@/modules/documentExecution/main/DocumentExecution'
 
 export default defineComponent({
     name: 'document-detail-dossier-designer-dialog',
@@ -268,37 +266,29 @@ export default defineComponent({
             filterDefault,
             FilterOperator,
             document: null as iDocument | null,
-            sbiExecutionId: '',
             loading: false,
             uploadedFile: {} as any,
             name: '',
             step: 0,
             v$: useValidate() as any,
             dirty: false,
-            placeholders: [],
             maxSizeLimit: 10000000,
             triggerUpload: false,
             uploading: false,
             activeTemplate: {} as iDossierTemplate,
-            views: [] as iView[],
-            selectedView: {} as iView,
             viewColumns: [] as { name: string; header: string }[],
             docDialogVisible: false,
             docId: -1,
             currentSelectedIndex: -1,
             executeMenuItems: [] as { label: string; command: Function }[],
             documents: [],
-            driverTypes: [],
+            driverTypes: [] as { code: string; label: string }[],
             linkTypes: [] as { code: string; label: string }[],
             sheetHeight: 1366,
             sheetWidth: 650,
             deviceScaleFactor: 1.5,
             activeIndex: 1,
             saveDialogVisible: false,
-            urlData: null as iURLData | null,
-            hiddenFormUrl: '' as string,
-            hiddenFormData: {} as any,
-            documentMode: 'VIEW',
             filters: {
                 global: [filterDefault],
                 typeCode: {
@@ -335,7 +325,6 @@ export default defineComponent({
         }
     },
     async created() {
-        this.sbiExecutionId = cryptoRandomString({ length: 16, type: 'base64' })
         await this.loadDocument()
         await this.setActiveTemplate()
     },
@@ -368,9 +357,8 @@ export default defineComponent({
         },
         async loadDocument() {
             this.document = this.selectedDocument ? { ...this.selectedDocument } : ({} as iDocument)
-            this.sbiExecutionId = cryptoRandomString({ length: 16, type: 'base64' })
 
-            this.initialize()
+            await this.initialize()
         },
         async initialize() {
             if (!this.document || !this.user) return
@@ -396,71 +384,7 @@ export default defineComponent({
 
             this.loading = false
         },
-        async sendForm(documentLabel: string | null = null) {
-            const documentUrl = this.urlData?.url + '&timereloadurl=' + new Date().getTime()
-            const postObject = {
-                params: { document: null } as any,
-                url: documentUrl.split('?')[0]
-            }
-            postObject.params.documentMode = 'VIEW'
-            this.hiddenFormUrl = postObject.url
-            const paramsFromUrl = documentUrl?.split('?')[1]?.split('&')
 
-            for (const i in paramsFromUrl) {
-                if (typeof paramsFromUrl !== 'function') postObject.params[paramsFromUrl[i].split('=')[0]] = paramsFromUrl[i].split('=')[1]
-            }
-
-            let postForm = document.getElementById('postForm_' + postObject.params.document) as any
-            if (!postForm) postForm = document.createElement('form')
-            postForm.id = 'postForm_' + postObject.params.document
-            postForm.action = import.meta.env.VITE_HOST_URL + postObject.url
-            postForm.method = 'post'
-            postForm.target = documentLabel
-            postForm.acceptCharset = 'UTF-8'
-            document.body.appendChild(postForm)
-
-            this.hiddenFormData = new URLSearchParams()
-
-            for (const k in postObject.params) {
-                const inputElement = document.getElementById('postForm_' + postObject.params.document + k) as any
-                if (inputElement) {
-                    inputElement.value = decodeURIComponent(postObject.params[k])
-                    inputElement.value = inputElement.value.replace(/\+/g, ' ')
-                    this.hiddenFormData.set(k, decodeURIComponent(postObject.params[k]).replace(/\+/g, ' '))
-                } else {
-                    const element = document.createElement('input')
-                    element.type = 'hidden'
-                    element.id = 'postForm_' + postObject.params.document + k
-                    element.name = k
-                    element.value = decodeURIComponent(postObject.params[k])
-                    element.value = element.value.replace(/\+/g, ' ')
-                    postForm.appendChild(element)
-                    this.hiddenFormData.append(k, decodeURIComponent(postObject.params[k]).replace(/\+/g, ' '))
-                }
-            }
-
-            for (let i = postForm.elements.length - 1; i >= 0; i--) {
-                const postFormElement = postForm.elements[i].id.replace('postForm_' + postObject.params.document, '')
-                if (!(postFormElement in postObject.params)) {
-                    postForm.removeChild(postForm.elements[i])
-                    this.hiddenFormData.delete(postFormElement)
-                }
-            }
-            this.hiddenFormData.append('documentMode', this.documentMode)
-
-            await this.sendHiddenFormData()
-        },
-        async sendHiddenFormData() {
-            await this.$http
-                .post(this.hiddenFormUrl, this.hiddenFormData, {
-                    headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded',
-                        Accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9'
-                    }
-                })
-                .then(() => {})
-                .catch(() => {})
-        },
         applyTranslations() {
             const descriptorColumns = JSON.parse(JSON.stringify(descriptor.view.columns))
             descriptorColumns.forEach((element) => {
@@ -619,6 +543,7 @@ export default defineComponent({
             this.uploadedFile = event.target.files[0]
             this.uploadTemplate()
             this.setUploadType()
+            setTimeout(() => (this.uploading = false), 200)
         },
         async uploadTemplate() {
             this.activeTemplate.name = this.uploadedFile.name

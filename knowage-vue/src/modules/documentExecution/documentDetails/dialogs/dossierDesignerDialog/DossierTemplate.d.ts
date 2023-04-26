@@ -12,10 +12,15 @@ export interface iPlaceholder {
     label?: string
     source: string
     parameters: any[]
-    views: iView[]
+    views: iViews
     sheetHeight: number
     sheetWidth: number
     deviceScaleFactor: number
+}
+
+export interface iViews {
+    selected: iView
+    availableViews: iView[]
 }
 
 export interface iView {

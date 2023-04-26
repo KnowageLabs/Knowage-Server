@@ -1006,6 +1006,7 @@
             "deleteSuccess": "Successfully deleted selected activity.",
             "deleteTitle": "Delete dossier activity",
             "designerDialog": {
+                "templateFile": "Template file",
                 "deviceScaleFactor": "Device scale factor",
                 "dossierUrlName": "Dossier url name",
                 "downloadable": "Downloadable",
