@@ -87,8 +87,6 @@ export default defineComponent({
 #dashboard-save-dialog .p-dialog-header,
 #dashboard-save-dialog .p-dialog-content {
     padding: 0;
-}
-#dashboard-save-dialog .p-dialog-content {
     display: flex;
     flex-direction: column;
     flex: 1;

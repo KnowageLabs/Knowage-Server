@@ -26,11 +26,11 @@
     },
     "linkTypes": [
         {
-            "code": "VIEWS",
+            "code": "views",
             "label": "Views"
         },
         {
-            "code": "DRIVERS",
+            "code": "drivers",
             "label": "Drivers"
         }
     ],

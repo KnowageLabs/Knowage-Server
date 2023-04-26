@@ -11,7 +11,6 @@
                     <span class="p-float-label p-col">
                         <InputText id="fileName" v-model="v$.activeTemplate.name.$model" class="kn-material-input kn-width-full" :disabled="true" @change="setDirty()" />
                         <label for="fileName" class="kn-material-input-label"> {{ $t('documentExecution.documentDetails.info.uploadTemplate') }} </label>
-                        <small id="fileName-help">{{ $t('documentExecution.dossier.designerDialog.fileNameHint') }}</small>
                     </span>
 
                     <Button icon="fas fa-upload fa-1x" class="p-button-text p-button-plain p-ml-2" @click="setUploadType" />
@@ -123,7 +122,7 @@
                                         {{ $t(`documentExecution.dossier.designerDialog.noDriversAndNoViewsForDocument`) }}
                                     </Message>
                                 </div>
-                                <div v-if="activeTemplate.placeholders[currentSelectedIndex].source === 'VIEWS'">
+                                <div v-if="activeTemplate.placeholders[currentSelectedIndex].source === 'views'">
                                     <DataTable
                                         ref="dt"
                                         v-model:selection="selectedView"
@@ -143,7 +142,7 @@
                                         <Column v-for="col of viewColumns" :key="col.name" class="kn-truncated" :field="col.name" :header="col.header" :sortable="true"> </Column>
                                     </DataTable>
                                 </div>
-                                <div v-else-if="activeTemplate.placeholders[currentSelectedIndex].source === 'DRIVERS'">
+                                <div v-else-if="activeTemplate.placeholders[currentSelectedIndex].source === 'drivers'">
                                     <div v-for="driver in activeTemplate.placeholders[currentSelectedIndex].parameters" :key="driver.label" class="kn-card p-m-2 p-p-2">
                                         <span class="p-text-bold p-text-italic">{{ driver.label }} </span>
 
@@ -210,7 +209,7 @@
                 </div>
             </div>
 
-            <DashboardControllerSaveDialog v-if="saveDialogVisible" :visible="saveDialogVisible" @save="saveNewDashboard" @close="saveDialogVisible = false"></DashboardControllerSaveDialog>
+            <DashboardControllerSaveDialog v-if="saveDialogVisible" :visible="saveDialogVisible" @save="saveNewDossier" @close="saveDialogVisible = false"></DashboardControllerSaveDialog>
         </div>
         <template #footer>
             <Button v-if="step >= 0 && step < 2" class="kn-button kn-button--secondary p-jc-start" @click="back"> {{ $t('common.back') }}</Button>
@@ -259,7 +258,8 @@ export default defineComponent({
     components: { Accordion, AccordionTab, Divider, Column, DataTable, Dialog, Dropdown, DocDialog, KnInputFile, KnHint, InputNumber, InputSwitch, Listbox, Message, ProgressSpinner, DashboardControllerSaveDialog },
     props: {
         visible: { type: Boolean },
-        selectedDocument: { type: Object as PropType<iDocument> }
+        selectedDocument: { type: Object as PropType<iDocument> },
+        isFromWorkspace: Boolean
     },
     emits: ['designerStarted', 'close', 'touched'],
     data() {
@@ -359,8 +359,8 @@ export default defineComponent({
             let types = JSON.parse(JSON.stringify(this.linkTypes))
             const currTempl = this.activeTemplate.placeholders[this.currentSelectedIndex]
             if (this.currentSelectedIndex != -1) {
-                if (!currTempl.parameters || currTempl.parameters?.length == 0) types = types.filter((x) => x.code !== 'DRIVERS')
-                if (!currTempl.views || currTempl.views?.length == 0) types = types.filter((x) => x.code !== 'VIEWS')
+                if (!currTempl.parameters || currTempl.parameters?.length == 0) types = types.filter((x) => x.code !== 'drivers')
+                if (!currTempl.views || currTempl.views?.length == 0) types = types.filter((x) => x.code !== 'views')
                 if (types.length == 1) currTempl.source = types[0].code
             }
 
@@ -393,39 +393,6 @@ export default defineComponent({
             // await this.$http.post(url, null, { headers: { Accept: 'application/json, text/plain, */*' } }).then((response: AxiosResponse<any>) => {
             //     console.log(response)
             // })
-
-            if (Object.keys(this.document).length == 0) {
-            } else {
-                await getCorrectRolesForExecution(this.document).then(async (response: any) => {
-                    let error = false
-
-                    const postData = {
-                        label: this.document?.label,
-                        role: response[0],
-                        parameters: {},
-                        EDIT_MODE: 'null',
-                        IS_FOR_EXPORT: true,
-                        SBI_EXECUTION_ID: ''
-                    } as any
-                    if (this.sbiExecutionId) postData.SBI_EXECUTION_ID = this.sbiExecutionId
-
-                    await this.$http
-                        .post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `1.0/documentexecution/url`, postData)
-                        .then((response: AxiosResponse<any>) => {
-                            error = false
-                            this.urlData = response.data
-                            this.sbiExecutionId = this.urlData?.sbiExecutionId as string
-                        })
-                        .catch((response: AxiosResponse<any>) => {
-                            error = true
-                            this.urlData = response.data
-                            this.sbiExecutionId = this.urlData?.sbiExecutionId as string
-                        })
-
-                    if (error) return
-                    await this.sendForm(this.document?.label)
-                })
-            }
 
             this.loading = false
         },
@@ -501,13 +468,13 @@ export default defineComponent({
             })
             this.viewColumns = descriptorColumns
 
-            const descriptorDriverTypes = JSON.parse(JSON.stringify(descriptor.driverTypes))
+            const descriptorDriverTypes = JSON.parse(JSON.stringify(descriptor.driverTypes.filter((x) => (this.isFromWorkspace ? x.code !== 'dynamic' : true))))
             descriptorDriverTypes.forEach((element) => {
                 element.label = this.$t(element.label)
             })
             this.driverTypes = descriptorDriverTypes
 
-            const descriptorLinkTypes = JSON.parse(JSON.stringify(descriptor.linkTypes))
+            const descriptorLinkTypes = JSON.parse(JSON.stringify(descriptor.linkTypes.filter((x) => (this.isFromWorkspace ? x.code !== 'views' : true))))
             descriptorLinkTypes.forEach((element) => {
                 element.label = this.$t(element.label)
             })
@@ -518,6 +485,10 @@ export default defineComponent({
         },
 
         async setActiveTemplate() {
+            /*const userId = this.user?.userUniqueIdentifier
+            await this.$http.get(`/knowagedossierengine/api/dossierdocument/dossierTemplate?user_id=${userId}`).then((response: any) => {
+                if (response.data) this.activeTemplate = response
+            })*/
             /*this.activeTemplate = {
                 name: 'TEST_SIL_TEMPLATE.docx',
                 type: 'DOC_TEMPLATE',
@@ -526,7 +497,7 @@ export default defineComponent({
                     {
                         imageName: 'img_sil_01',
                         label: 'Registry_with_2_ADs',
-                        source: 'DRIVERS',
+                        source: 'drivers',
                         sheetHeight:0,
                         sheetWidth:0,
                         deviceScaleFactor:1.5,
@@ -536,8 +507,8 @@ export default defineComponent({
                         ],
                         views: []
                     },
-                    { imageName: 'img_sil_02', label: 'R_registry_uno_a_uno', source: 'DRIVERS', parameters: [{ url_name: 'ad_regione', type: 'static', dossier_url_name: 'a', value: 'c' }], views: [] },
-                    { imageName: 'img_sil_03', label: 'KPI1_NODRIVER', source: 'DRIVERS', parameters: [], views: [] }
+                    { imageName: 'img_sil_02', label: 'R_registry_uno_a_uno', source: 'drivers', parameters: [{ url_name: 'ad_regione', type: 'static', dossier_url_name: 'a', value: 'c' }], views: [] },
+                    { imageName: 'img_sil_03', label: 'KPI1_NODRIVER', source: 'drivers', parameters: [], views: [] }
                 ]
             }*/
         },
@@ -546,7 +517,7 @@ export default defineComponent({
                 const ppt = this.activeTemplate.type === 'PPT_TEMPLATE_V2'
                 const typeEndpoint = ppt ? 'pptplaceholders' : 'docplaceholders'
 
-                if (!this.isValidFile()) {
+                if (!(await this.isValidFile())) {
                     // validation
                     this.setError({ title: this.$t('common.error.generic'), msg: this.$t('documentExecution.dossier.templateUploadError') })
                     return
@@ -558,7 +529,7 @@ export default defineComponent({
                 const userId = this.user?.userUniqueIdentifier
                 const prefix = this.activeTemplate.prefix
 
-                url += `?fileName=${fileName}&userId=${userId}&prefix=${prefix}`
+                url += `?fileName=${fileName}&prefix=${prefix}&user_id=${userId}`
                 this.loading = true
 
                 const placeholdersInTheLastTemplate = this.activeTemplate.placeholders?.length > 0
@@ -593,10 +564,10 @@ export default defineComponent({
                 this.step++
             }
         },
-        async saveNewDashboard(document: { name: string; label: string }) {
-            await this.saveDashboard(document)
+        async saveNewDossier(document: { name: string; label: string }) {
+            await this.saveDossier(document)
         },
-        async saveDashboard(document: any) {
+        async saveDossier(document: any) {
             this.setLoading(true)
             if (!this.document) return
 
@@ -665,8 +636,6 @@ export default defineComponent({
             this.currentSelectedIndex = pos
         },
         async handleDoc(doc) {
-            //TODO
-            console.log(doc)
             this.docDialogVisible = false
 
             this.activeTemplate.placeholders[this.currentSelectedIndex] = { ...this.activeTemplate.placeholders[this.currentSelectedIndex], label: doc.DOCUMENT_LABEL, source: '' }
@@ -703,12 +672,16 @@ export default defineComponent({
             menu.toggle(event)
         },
         async saveAndRun() {
-            await this.save().then(() => {
-                this.$router.push(`/dossier/${this.document?.label}`)
-            })
+            if (this.isFromWorkspace) {
+                this.saveDialogVisible = true
+            } else {
+                await this.save().then(() => {
+                    this.$router.push(`/dossier/${this.document?.label}`)
+                })
+            }
         },
         async saveAndClose() {
-            if (!this.getDocument()?.id) {
+            if (this.isFromWorkspace) {
                 this.saveDialogVisible = true
             } else {
                 await this.save().then(() => {
