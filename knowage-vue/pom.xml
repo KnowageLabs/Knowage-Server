@@ -93,7 +93,7 @@
 						<resource>
 							<directory>${vue.build.dir}/target/knowage-vue</directory>
 							<includes>
-								<include>**.*</include>
+								<include>**/*</include>
 							</includes>
 						</resource>
 					</webResources>
@@ -112,7 +112,9 @@
 							<goal>copy-resources</goal>
 						</goals>
 						<configuration>
+							<includeEmptyDirs>true</includeEmptyDirs>
 							<outputDirectory>${vue.build.dir}</outputDirectory>
+							<overwrite>true</overwrite>
 							<resources>
 								<resource>
 									<directory>${basedir}/src/vue</directory>
