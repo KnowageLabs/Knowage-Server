@@ -724,9 +724,7 @@ export default defineComponent({
             formData.append('prefix', '' + this.activeTemplate.prefix)
             await this.$http
                 .post(`/knowagedossierengine/api/dossiervalidator/validateDocument?user_id=${this.user?.userUniqueIdentifier}`, formData, { headers: { 'Content-Type': 'multipart/form-data', 'X-Disable-Errors': 'true' } })
-                .then((response: AxiosResponse<any>) => {
-                    valid = response.data
-                })
+                .then(() => (valid = true))
                 .catch(() => this.setError({ title: this.$t('common.error.generic'), msg: this.$t('documentExecution.dossier.errorDuringValidation') }))
                 .finally()
 
