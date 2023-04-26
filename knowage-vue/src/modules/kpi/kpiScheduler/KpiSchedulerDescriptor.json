@@ -1,8 +1,0 @@
-{
-    "filterFields": ["name", "jobStatus", "kpiNames"],
-    "listBox": {
-        "style": {
-            "max-height": "80vh"
-        }
-    }
-}

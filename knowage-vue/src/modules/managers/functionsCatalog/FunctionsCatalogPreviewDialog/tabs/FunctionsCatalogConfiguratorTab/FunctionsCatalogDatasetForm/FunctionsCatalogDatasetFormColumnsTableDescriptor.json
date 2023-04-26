@@ -1,8 +1,0 @@
-{
-    "breakpoint": "960px",
-    "dataKey": "name",
-    "dropdownStyle": {
-        "border": "none"
-    },
-    "responsiveLayout": "stack"
-}
