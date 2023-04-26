@@ -216,7 +216,7 @@
             <Button v-if="step >= 0 && step < 2" class="kn-button kn-button--secondary p-jc-start" @click="back"> {{ $t('common.back') }}</Button>
             <Button v-if="step == 0" class="kn-button kn-button--primary p-jc-end" :disabled="v$.$invalid" @click="next"> {{ $t('common.next') }}</Button>
 
-            <Button v-if="step == 1" class="kn-button kn-button--primary p-jc-end" @click="save()"> {{ $t('common.save') }}</Button>
+            <Button v-if="step == 1" class="kn-button kn-button--primary p-jc-end" @click="saveAndClose()"> {{ $t('common.save') }}</Button>
             <Button v-if="step == 1" class="kn-button kn-button--primary p-jc-end" @click="saveAndRun()"> {{ $t('documentExecution.dossier.designerDialog.saveAndRun') }}</Button>
         </template>
     </Dialog>
@@ -606,6 +606,7 @@ export default defineComponent({
                     label: document.label,
                     description: document.description
                 },
+                action: 'DOC_SAVE',
                 updateFromWorkspace: false
             }
             await this.$http
@@ -706,36 +707,42 @@ export default defineComponent({
                 this.$router.push(`/dossier/${this.document?.label}`)
             })
         },
-        async save() {
-            if (!this.document?.id) {
+        async saveAndClose() {
+            if (!this.getDocument()?.id) {
                 this.saveDialogVisible = true
             } else {
-                const formData = new FormData()
-                formData.append('file', this.uploadedFile)
-                formData.append('documentId', '' + this.getDocument()?.id)
-                await this.$http
-                    .post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + 'dossier/importTemplateFile', formData, { headers: { 'Content-Type': 'multipart/form-data', 'X-Disable-Errors': 'true' } })
-                    .then(async () => {
-                        this.activeTemplate.name = this.uploadedFile.name
-                        this.activeTemplate.type = this.getDossierType(this.activeTemplate.name)
-                        this.activeTemplate.placeholders = []
-                        this.setInfo({ title: this.$t('common.toast.success'), msg: this.$t('common.toast.uploadSuccess') })
-                    })
-                    .catch(() => this.setError({ title: this.$t('common.error.generic'), msg: this.$t('documentExecution.dossier.templateUploadError') }))
-                    .finally(() => (this.triggerUpload = false))
+                await this.save().then(() => {
+                    this.$router.go(0)
+                })
+            }
+        },
+        async save() {
+            const formData = new FormData()
+            formData.append('file', this.uploadedFile)
+            formData.append('documentId', '' + this.getDocument()?.id)
+            await this.$http
+                .post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + 'dossier/importTemplateFile', formData, { headers: { 'Content-Type': 'multipart/form-data', 'X-Disable-Errors': 'true' } })
+                .then(async () => {
+                    this.activeTemplate.name = this.uploadedFile.name
+                    this.activeTemplate.type = this.getDossierType(this.activeTemplate.name)
 
-                const templateToSave = await this.handleDrivers()
+                    const templateToSave = await this.handleDrivers()
 
-                if (templateToSave) {
                     const objToSend = { id: this.getDocument()?.id, template: templateToSave }
 
                     // SAVE TEMPLATE
-                    await this.$http.post(`/knowagedossierengine/api/dossierdocument/saveTemplate?user_id=${this.user?.userUniqueIdentifier}`, objToSend).then(() => {
-                        this.closeDialog()
-                        this.$router.go(0)
-                    })
-                }
-            }
+                    await this.$http
+                        .post(`/knowagedossierengine/api/dossierdocument/saveTemplate?user_id=${this.user?.userUniqueIdentifier}`, objToSend)
+                        .then(() => {
+                            this.closeDialog()
+                            this.setInfo({ title: this.$t('common.toast.success'), msg: this.$t('common.toast.uploadSuccess') })
+                        })
+                        .catch(() => {
+                            this.setError({ title: this.$t('common.error.generic'), msg: this.$t('documentExecution.dossier.errorSavingDocument') })
+                        })
+                })
+                .catch(() => this.setError({ title: this.$t('common.error.generic'), msg: this.$t('documentExecution.dossier.templateUploadError') }))
+                .finally(() => (this.triggerUpload = false))
         },
         async handleDrivers() {
             const objToSave = JSON.parse(JSON.stringify(this.activeTemplate))
