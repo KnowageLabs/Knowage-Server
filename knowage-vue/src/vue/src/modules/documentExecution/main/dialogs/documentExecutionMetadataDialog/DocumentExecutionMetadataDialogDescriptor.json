@@ -1,0 +1,12 @@
+{
+    "dialog": {
+        "style": {
+            "width": "80vw"
+        }
+    },
+    "editor": {
+        "style": {
+            "height": "260px"
+        }
+    }
+}

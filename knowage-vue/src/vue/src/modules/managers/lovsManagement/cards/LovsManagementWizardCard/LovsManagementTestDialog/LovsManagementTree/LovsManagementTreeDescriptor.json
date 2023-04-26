@@ -1,0 +1,16 @@
+{
+    "filterFields": ["name"],
+    "listBox": {
+        "style": {
+            "max-height": "450px"
+        }
+    },
+    "table": {
+        "iconColumn": {
+            "style": {
+                "text-align": "end",
+                "width": "10%"
+            }
+        }
+    }
+}

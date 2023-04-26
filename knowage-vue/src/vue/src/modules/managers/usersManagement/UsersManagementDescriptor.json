@@ -1,0 +1,27 @@
+{
+  "columns": [
+    { "field": "userId", "header": "User ID" },
+    { "field": "fullName", "header": "Full Name" }
+  ],
+  "globalFilterFields": [
+    "userId",
+    "fullName"
+  ],
+  "table": {
+    "column": {
+      "style": {
+        "width": "40%"
+      }
+    },
+    "iconColumn": {
+      "style": {
+        "text-align": "end"
+      }
+    }
+  },
+  "form": {
+    "style": {
+      "width": "60vw"
+    }
+  }
+}

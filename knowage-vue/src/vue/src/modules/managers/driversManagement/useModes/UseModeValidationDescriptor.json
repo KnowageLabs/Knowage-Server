@@ -1,0 +1,90 @@
+{
+    "validations": {
+        "mode": [
+            {
+                "fieldName": "label",
+                "validators": [
+                    {
+                        "key": "required"
+                    },
+                    {
+                        "key": "regex",
+                        "validator": {
+                            "type": "extendedAlphanumericRegex"
+                        }
+                    }
+                ]
+            },
+            {
+                "fieldName": "name",
+                "validators": [
+                    {
+                        "key": "required"
+                    },
+                    {
+                        "key": "regex",
+                        "validator": {
+                            "type": "extendedAlphanumericRegex"
+                        }
+                    }
+                ]
+            },
+            {
+                "fieldName": "valueSelection",
+                "validators": [
+                    {
+                        "key": "required"
+                    }
+                ]
+            },
+            {
+                "fieldName": "selectionType",
+                "validators": [
+                    {
+                        "key": "required_type_for_lov"
+                    }
+                ]
+            },
+            {
+                "fieldName": "selectedLayer",
+                "validators": [
+                    {
+                        "key": "required_for_map_in"
+                    }
+                ]
+            },
+            {
+                "fieldName": "defaultFormula",
+                "validators": [
+                    {
+                        "key": "required_for_pick_up"
+                    }
+                ]
+            },
+            {
+                "fieldName": "typeLov",
+                "validators": [
+                    {
+                        "key": "required_lovId_for_lov"
+                    }
+                ]
+            },
+            {
+                "fieldName": "defLov",
+                "validators": [
+                    {
+                        "key": "required_lov_for_default"
+                    }
+                ]
+            },
+            {
+                "fieldName": "maxLov",
+                "validators": [
+                    {
+                        "key": "required_lov_for_max"
+                    }
+                ]
+            }
+        ]
+    }
+}

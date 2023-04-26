@@ -1,0 +1,51 @@
+{
+    "columnConditionOptions": [
+        {
+            "label": ">",
+            "value": ">"
+        },
+        {
+            "label": "<",
+            "value": "<"
+        },
+        {
+            "label": "==",
+            "value": "=="
+        },
+        {
+            "label": ">=",
+            "value": ">="
+        },
+        {
+            "label": "<=",
+            "value": "<="
+        },
+        {
+            "label": "!=",
+            "value": "!="
+        },
+        {
+            "label": "IN",
+            "value": "IN"
+        }
+    ],
+    "conditionCompareValueTypes": [
+        {
+            "label": "common.static",
+            "value": "static"
+        },
+        {
+            "label": "common.parameter",
+            "value": "parameter"
+        },
+        {
+            "label": "common.variable",
+            "value": "variable"
+        }
+    ],
+    "conditionsToolbarStyleOptions": [
+        {
+            "type": "background-color"
+        }
+    ]
+}

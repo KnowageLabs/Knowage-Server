@@ -1,0 +1,38 @@
+{
+    "defaultLanguageColumns": [
+        {
+            "field": "label",
+            "header": "common.label"
+        },
+        {
+            "field": "message",
+            "header": "managers.internationalizationManagement.table.messageCode"
+        }
+    ],
+    "defaultMessage": {
+        "label": "",
+        "language": "",
+        "message": ""
+    },
+    "headerStyles": {
+        "buttonsHeaderStyle": "width:200px",
+        "dirtyHeaderStyle": "width: 2%",
+        "searchBoxStyle": "width: 20%"
+    },
+    "notDefaultLanguageColumns": [
+        {
+            "disabled": true,
+            "field": "label",
+            "header": "common.label"
+        },
+        {
+            "disabled": true,
+            "field": "defaultMessageCode",
+            "header": "managers.internationalizationManagement.table.defaultMessage"
+        },
+        {
+            "field": "message",
+            "header": "managers.internationalizationManagement.table.messageCode"
+        }
+    ]
+}

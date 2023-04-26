@@ -1,0 +1,30 @@
+{
+    "columns": [
+        {
+            "field": "jobName",
+            "header": "common.name"
+        },
+        {
+            "field": "jobDescription",
+            "header": "common.description"
+        }
+    ],
+    "expanderHeaderStyle": {
+        "width": "3rem"
+    },
+    "globalFilterFields": ["jobName", "jobDescription"],
+    "iconColumn": {
+        "style": {
+            "text-align": "end",
+            "width": "5%"
+        }
+    },
+    "styles": {
+        "message": {
+            "align-items": "center",
+            "display": "flex",
+            "justify-content": "center",
+            "text-align": "center"
+        }
+    }
+}

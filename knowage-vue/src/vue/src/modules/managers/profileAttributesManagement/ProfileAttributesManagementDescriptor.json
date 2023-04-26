@@ -1,0 +1,37 @@
+{
+  "columns": [
+    { "field": "attributeName", "header": "Name" },
+    { "field": "attributeDescription", "header": "Description" }
+  ],
+  "attributeTypeValues": [
+    { "name": "String", "value": "STRING" },
+    { "name": "Number", "value": "NUMBER" },
+    { "name": "Date", "value": "DATE" }
+  ],
+  "headers": {
+    "headers": {
+      "Content-Type": "application/json"
+    }
+  },
+  "globalFilterFields": [
+    "attributeName",
+    "attributeDescription"
+  ],
+  "table": {
+    "column": {
+      "style": {
+        "width": "40%"
+      }
+    },
+    "iconColumn": {
+      "style": {
+        "text-align": "end"
+      }
+    }
+  },
+  "form": {
+    "style": {
+      "width": "60vw"
+    }
+  }
+}

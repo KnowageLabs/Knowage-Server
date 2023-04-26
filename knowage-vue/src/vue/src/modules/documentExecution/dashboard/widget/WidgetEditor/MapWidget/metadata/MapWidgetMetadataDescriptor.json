@@ -1,0 +1,82 @@
+{
+    "columnAggregationOptions": [
+        {
+            "label": "NONE",
+            "value": "NONE"
+        },
+        {
+            "label": "SUM",
+            "value": "SUM"
+        },
+        {
+            "label": "AVG",
+            "value": "AVG"
+        },
+        {
+            "label": "MAX",
+            "value": "MAX"
+        },
+        {
+            "label": "MIN",
+            "value": "MIN"
+        },
+        {
+            "label": "COUNT",
+            "value": "COUNT"
+        },
+        {
+            "label": "COUNT_DISTINCT",
+            "value": "COUNT_DISTINCT"
+        }
+    ],
+    "columnTypeOptions": ["ATTRIBUTE", "MEASURE", "SPATIAL_ATTRIBUTE"],
+    "columns": [
+        {
+            "field": "name",
+            "header": "common.name",
+            "style": {}
+        },
+        {
+            "field": "alias",
+            "header": "common.alias",
+            "style": {}
+        },
+        {
+            "field": "type",
+            "header": "common.type",
+            "style": {}
+        }
+    ],
+    "coordFormats": [
+        {
+            "label": "dashboard.widgetEditor.map.metadata.lonLat",
+            "value": "lon lat"
+        },
+        {
+            "label": "dashboard.widgetEditor.map.metadata.latLon",
+            "value": "lat lon"
+        }
+    ],
+    "coordTypes": [
+        {
+            "label": "common.string",
+            "value": "string"
+        },
+        {
+            "label": "common.json",
+            "value": "json"
+        },
+        {
+            "label": "dashboard.widgetEditor.map.metadata.wktFormat",
+            "value": "wkt"
+        }
+    ],
+    "globalFilterFields": ["name", "alias", "type"],
+    "style": {
+        "dialog": {
+            "max-width": "1200px",
+            "min-width": "600px",
+            "width": "60%"
+        }
+    }
+}

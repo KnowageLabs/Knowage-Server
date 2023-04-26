@@ -1,0 +1,11 @@
+{
+    "dialog": {
+        "style": {
+            "width": "80vw"
+        }
+    },
+    "globalFilterFields": ["value"],
+    "selectColumnStyle": {
+        "width": "3%"
+    }
+}

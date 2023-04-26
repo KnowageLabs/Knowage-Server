@@ -1,0 +1,26 @@
+{
+    "columns": [
+        {
+            "field": "id",
+            "header": "documentExecution.olap.deleteVersion.id",
+            "style": ""
+        },
+        {
+            "field": "name",
+            "header": "common.name",
+            "style": "width: 40%"
+        },
+        {
+            "field": "description",
+            "header": "common.description",
+            "style": "width: 40%"
+        }
+    ],
+    "selectColumnStyle": "width: 3em",
+    "style": {
+        "dialog": {
+            "height": "60%",
+            "width": "60%"
+        }
+    }
+}

@@ -1,0 +1,150 @@
+{
+    "allowedEditors": {
+        "chart": ["html", "javascript", "css"],
+        "html": ["html", "css"],
+        "python": ["python"]
+    },
+    "editor": {
+        "css": {
+            "icon": "fab fa-css3",
+            "name": "cssCodemirror"
+        },
+        "html": {
+            "icon": "fab fa-html5",
+            "name": "htmlCodemirror"
+        },
+        "javascript": {
+            "icon": "fab fa-js-square",
+            "name": "javascriptCodemirror"
+        },
+        "python": {
+            "icon": "fab fa-python",
+            "name": "pythonCodemirror"
+        }
+    },
+    "iconTypesMap": {
+        "chart": {
+            "className": "fab fa-js-square",
+            "style": {
+                "background-color": "#ffc107",
+                "color": "white"
+            }
+        },
+        "html": {
+            "className": "fab fa-html5",
+            "style": {
+                "background-color": "#c2185b",
+                "color": "white"
+            }
+        },
+        "python": {
+            "className": "fab fa-python",
+            "style": {
+                "background-color": "#4caf50",
+                "color": "white"
+            }
+        }
+    },
+    "knListSettings": {
+        "avatar": {
+            "property": "type",
+            "values": {
+                "chart": {
+                    "icon": "fab fa-js-square",
+                    "style": {
+                        "background-color": "#ffc107",
+                        "color": "white"
+                    }
+                },
+                "html": {
+                    "icon": "fab fa-html5",
+                    "style": {
+                        "background-color": "#c2185b",
+                        "color": "white"
+                    }
+                },
+                "python": {
+                    "icon": "fab fa-python",
+                    "style": {
+                        "background-color": "#4caf50",
+                        "color": "white"
+                    }
+                }
+            }
+        },
+        "buttons": [
+            {
+                "emits": "delete",
+                "icon": "fas fa-trash-alt",
+                "label": "common.delete"
+            }
+        ],
+        "defaultSortField": "label",
+        "filterFields": ["label", "name", "type", "tags"],
+        "interaction": {
+            "parameterLabel": "id",
+            "parameterValue": "id",
+            "path": "gallery-detail",
+            "type": "router"
+        },
+        "sortFields": ["label", "name", "type"]
+    },
+    "options": {
+        "css": {
+            "cursor": true,
+            "line": false,
+            "lineNumbers": true,
+            "mode": "css",
+            "tabSize": 4,
+            "theme": "eclipse"
+        },
+        "html": {
+            "cursor": true,
+            "line": false,
+            "lineNumbers": true,
+            "mode": "xml",
+            "tabSize": 4,
+            "theme": "eclipse"
+        },
+        "javascript": {
+            "cursor": true,
+            "line": false,
+            "lineNumbers": true,
+            "mode": "javascript",
+            "tabSize": 4,
+            "theme": "eclipse"
+        },
+        "python": {
+            "cursor": true,
+            "line": false,
+            "lineNumbers": true,
+            "mode": "text/x-python",
+            "tabSize": 4,
+            "theme": "eclipse"
+        }
+    },
+    "outputTypes": [
+        {
+            "name": "HTML",
+            "value": "html"
+        },
+        {
+            "name": "image",
+            "value": "img"
+        }
+    ],
+    "types": [
+        {
+            "name": "HTML",
+            "value": "html"
+        },
+        {
+            "name": "Chart",
+            "value": "chart"
+        },
+        {
+            "name": "Python",
+            "value": "python"
+        }
+    ]
+}

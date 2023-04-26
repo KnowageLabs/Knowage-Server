@@ -1,0 +1,68 @@
+{
+    "filterFields": ["itypeCd", "label", "name"],
+    "iconTypesMap": {
+        "DATASET": "fas fa-database",
+        "FIX_LOV": "fas fa-list",
+        "JAVA_CLASS": "fab fa-java",
+        "QUERY": "fas fa-table",
+        "SCRIPT": "fab fa-js-square"
+    },
+    "knListSettings": {
+        "avatar": {
+            "property": "itypeCd",
+            "values": {
+                "DATASET": {
+                    "icon": "fas fa-database",
+                    "style": {
+                        "background-color": "#4caf50",
+                        "color": "white"
+                    }
+                },
+                "FIX_LOV": {
+                    "icon": "fas fa-list",
+                    "style": {
+                        "background-color": "#4caf50",
+                        "color": "white"
+                    }
+                },
+                "JAVA_CLASS": {
+                    "icon": "fab fa-java",
+                    "style": {
+                        "background-color": "#4caf50",
+                        "color": "white"
+                    }
+                },
+                "QUERY": {
+                    "icon": "fas fa-table",
+                    "style": {
+                        "background-color": "#c2185b",
+                        "color": "white"
+                    }
+                },
+                "SCRIPT": {
+                    "icon": "fab fa-js-square",
+                    "style": {
+                        "background-color": "#ffc107",
+                        "color": "white"
+                    }
+                }
+            }
+        },
+        "buttons": [
+            {
+                "emits": "delete",
+                "icon": "fas fa-trash-alt",
+                "label": "common.delete"
+            }
+        ],
+        "defaultSortField": "label",
+        "filterFields": ["label", "name", "itypeCd"],
+        "interaction": {
+            "parameterLabel": "id",
+            "parameterValue": "id",
+            "path": "edit-lov",
+            "type": "router"
+        },
+        "sortFields": ["label", "name", "itypeCd"]
+    }
+}

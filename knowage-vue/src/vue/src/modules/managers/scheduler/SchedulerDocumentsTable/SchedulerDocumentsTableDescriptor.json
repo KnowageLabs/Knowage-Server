@@ -1,0 +1,20 @@
+{
+    "breakpoint": "960px",
+    "iconColumnStyle": {
+        "text-align": "end",
+        "width": "10%"
+    },
+    "nameColumnStyle": {
+        "width": "20%"
+    },
+    "responsiveLayout": "stack",
+    "rows": 15,
+    "styles": {
+        "message": {
+            "align-items": "center",
+            "display": "flex",
+            "justify-content": "center",
+            "text-align": "center"
+        }
+    }
+}

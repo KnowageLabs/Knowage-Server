@@ -1,0 +1,36 @@
+.kn-tab {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    &.kn-tab-overflow-visible {
+        .p-tabview-panels {
+            .p-tabview-panel {
+                overflow: visible;
+            }
+        }
+    }
+    .p-tabview-panels {
+        flex: 1;
+        padding: 0;
+        .p-tabview-panel {
+            height: 100%;
+            overflow-y: auto;
+            overflow-x: hidden;
+        }
+    }
+    &.p-tabview {
+        .p-tabview-nav {
+            .p-tabview-nav-link {
+                text-transform: capitalize;
+            }
+            .p-tabview-ink-bar {
+                background-color: var(--kn-color-primary);
+            }
+            li.p-highlight {
+                .p-tabview-nav-link {
+                    color: var(--kn-color-primary);
+                }
+            }
+        }
+    }
+}

@@ -1,0 +1,16 @@
+{
+    "treeTypes": [
+        {
+            "name": "Simple",
+            "value": "simple"
+        },
+        {
+            "name": "Tree",
+            "value": "tree"
+        },
+        {
+            "name": "Tree selectable inner nodes",
+            "value": "treeinner"
+        }
+    ]
+}

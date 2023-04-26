@@ -1,0 +1,40 @@
+{
+  "columns": [
+    {
+      "field": "DOCUMENT_NAME",
+      "header": "Name"
+    },
+    {
+      "field": "DOCUMENT_DESCR",
+      "header": "Description"
+    }
+  ],
+  "headers": {
+    "headers": {
+      "Content-Type": "application/json"
+    }
+  },
+  "globalFilterFields": [
+    "DOCUMENT_NAME",
+    "DOCUMENT_DESCR"
+  ],
+  "table": {
+    "column": {
+      "style": {
+        "width": "18%",
+        "word-break": "break-all"
+      }
+    },
+    "iconColumn": {
+      "style": {
+        "text-align": "end",
+        "width": "5%"
+      }
+    }
+  },
+  "form": {
+    "style": {
+      "width": "60vw"
+    }
+  }
+}

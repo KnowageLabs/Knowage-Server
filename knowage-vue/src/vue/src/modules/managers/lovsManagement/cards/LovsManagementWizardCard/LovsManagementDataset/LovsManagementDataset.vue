@@ -1,0 +1,163 @@
+<template>
+    <div v-if="selectedDataset" class="p-fluid p-formgrid p-grid">
+        <span class="p-field p-col-6 p-float-label">
+            <InputText id="datasetLabel" v-model.trim="selectedDataset.label" class="kn-material-input" type="text" disabled />
+            <label for="datasetLabel" class="kn-material-input-label"> {{ $t('common.label') }} * </label>
+        </span>
+        <span class="p-field p-col-5 p-float-label">
+            <InputText id="datasetName" v-model.trim="selectedDataset.name" class="kn-material-input" type="text" disabled />
+            <label for="datasetName" class="kn-material-input-label"> {{ $t('common.name') }} * </label>
+        </span>
+        <span class="p-field">
+            <Button icon="pi pi-search-plus" class="p-button-text p-button-rounded p-button-plain" @click="showDatasetsDialog = true" />
+        </span>
+    </div>
+
+    <Dialog :visible="showDatasetsDialog" :modal="true" class="full-screen-dialog p-fluid kn-dialog--toolbar--primary" :closable="false" position="right" :base-z-index="1" :auto-z-index="true">
+        <template #header>
+            <Toolbar class="kn-toolbar kn-toolbar--primary p-m-0 p-col">
+                <template #start>Select Dataset</template>
+                <template #end>
+                    <Button icon="pi pi-save" class="p-button-text p-button-rounded p-button-plain" :disabled="buttonDisabled" data-test="submit-button" @click="onSave" />
+                    <Button icon="pi pi-times" class="p-button-text p-button-rounded p-button-plain" data-test="close-button" @click="showDatasetsDialog = false" />
+                </template>
+            </Toolbar>
+        </template>
+
+        <DataTable
+            v-model:filters="filters"
+            v-model:selection="selectedDataset"
+            :value="datasets"
+            :paginator="true"
+            class="p-datatable-sm kn-table p-ml-2 p-mr-2"
+            data-key="id"
+            filter-display="menu"
+            :global-filter-fields="lovsManagementDatasetDescriptor.globalFilterFields"
+            :rows="20"
+            responsive-layout="stack"
+            breakpoint="960px"
+            :current-page-report-template="
+                $t('common.table.footer.paginated', {
+                    first: '{first}',
+                    last: '{last}',
+                    totalRecords: '{totalRecords}'
+                })
+            "
+            selection-mode="single"
+        >
+            <template #header>
+                <div class="table-header">
+                    <span class="p-input-icon-left">
+                        <i class="pi pi-search" />
+                        <InputText v-model="filters['global'].value" class="kn-material-input" type="text" :placeholder="$t('common.search')" badge="0" data-test="search-input" />
+                    </span>
+                </div>
+            </template>
+            <template #empty>
+                {{ $t('common.info.noDataFound') }}
+            </template>
+
+            <Column v-for="col of columns" :key="col.field" :field="col.field" :header="$t(col.header)" :sortable="true" :style="col.style" class="kn-truncated">
+                <template #filter="{ filterModel }">
+                    <InputText v-model="filterModel.value" type="text" class="p-column-filter"></InputText>
+                </template>
+                <template #body="slotProps">
+                    <span :title="slotProps.data[col.field]">{{ slotProps.data[col.field] }}</span>
+                </template>
+            </Column>
+        </DataTable>
+    </Dialog>
+</template>
+
+<script lang="ts">
+import { AxiosResponse } from 'axios'
+import { defineComponent } from 'vue'
+import { FilterOperator } from 'primevue/api'
+import { filterDefault } from '@/helpers/commons/filterHelper'
+import lovsManagementDatasetDescriptor from './LovsManagementDatasetDescriptor.json'
+import Dialog from 'primevue/dialog'
+import DataTable from 'primevue/datatable'
+import Column from 'primevue/column'
+
+export default defineComponent({
+    name: 'lovs-management-dataset',
+    components: { Dialog, DataTable, Column },
+    props: { dataset: Object },
+    data() {
+        return {
+            lovsManagementDatasetDescriptor,
+            dirty: false,
+            showDatasetsDialog: false,
+            datasets: [] as any,
+            selectedDataset: {} as any,
+            columns: lovsManagementDatasetDescriptor.columns,
+            filters: {
+                global: [filterDefault],
+                label: {
+                    operator: FilterOperator.AND,
+                    constraints: [filterDefault]
+                },
+                name: {
+                    operator: FilterOperator.AND,
+                    constraints: [filterDefault]
+                },
+                description: {
+                    operator: FilterOperator.AND,
+                    constraints: [filterDefault]
+                },
+                owner: {
+                    operator: FilterOperator.AND,
+                    constraints: [filterDefault]
+                },
+                scope: {
+                    operator: FilterOperator.AND,
+                    constraints: [filterDefault]
+                }
+            } as Object
+        }
+    },
+    watch: {
+        dataset() {
+            this.loadDataset()
+        }
+    },
+    async created() {
+        this.loadDataset()
+        await this.loadDatasets()
+    },
+    methods: {
+        async loadDatasets() {
+            await this.$http.get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + '1.0/datasets/datasetsforlov/').then((response: AxiosResponse<any>) => (this.datasets = response.data))
+        },
+        loadDataset() {
+            this.selectedDataset = { ...this.dataset }
+        },
+        onSave() {
+            this.showDatasetsDialog = false
+            this.$emit('selected', this.selectedDataset)
+        }
+    }
+})
+</script>
+
+<style lang="scss">
+.full-screen-dialog.p-dialog {
+    max-height: 100%;
+    height: 100vh;
+    width: calc(100vw - #{54px});
+    margin: 0;
+    .p-dialog-content {
+        padding: 0;
+        margin: 0;
+        flex: 1;
+        overflow: hidden;
+    }
+    .p-dialog-header {
+        padding: 0;
+        margin: 0;
+    }
+}
+.full-screen-dialog.p-dialog .p-dialog-content {
+    padding: 0;
+}
+</style>

@@ -1,0 +1,39 @@
+{
+    "columns": [
+        {
+            "field": "name",
+            "header": "managers.cacheManagement.name",
+            "style": {
+                "width": "30%"
+            }
+        },
+        {
+            "field": "signature",
+            "header": "managers.cacheManagement.signature",
+            "style": {
+                "width": "30%"
+            }
+        },
+        {
+            "field": "table",
+            "header": "managers.cacheManagement.table",
+            "style": {
+                "width": "20%"
+            }
+        },
+        {
+            "field": "dimension",
+            "header": "managers.cacheManagement.dimension",
+            "style": {
+                "width": "140px"
+            }
+        }
+    ],
+    "table": {
+        "iconColumn": {
+            "style": {
+                "text-align": "end"
+            }
+        }
+    }
+}

@@ -1,0 +1,11 @@
+{
+    "filterFields": ["name"],
+    "style": {
+        "listTrashIcon": {
+            "height": "5px"
+        },
+        "listbox": {
+            "height": "65vh"
+        }
+    }
+}

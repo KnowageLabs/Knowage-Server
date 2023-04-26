@@ -1,0 +1,50 @@
+.knRotate {
+    width: 100%;
+    height: 100vh;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 9999;
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background-color: #202020;
+    .phone {
+        height: 50px;
+        width: 100px;
+        border: 3px solid white;
+        border-radius: 10px;
+        animation: rotate 1.5s ease-in-out infinite alternate;
+        /* display: none; */
+    }
+
+    .message {
+        color: white;
+        font-size: 1em;
+        margin-top: 40px;
+        /* display: none; */
+    }
+}
+
+@media screen and (max-width: 812px) and (orientation: portrait) {
+    .knRotate {
+        display: flex;
+    }
+    .phone,
+    .message {
+        display: block;
+    }
+}
+
+@keyframes rotate {
+    0% {
+        transform: rotate(90deg);
+    }
+    50% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(0deg);
+    }
+}

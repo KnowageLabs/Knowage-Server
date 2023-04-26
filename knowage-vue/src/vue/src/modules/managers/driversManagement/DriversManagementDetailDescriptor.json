@@ -1,0 +1,22 @@
+{
+    "filterFields": ["name"],
+    "operation": {
+        "insert": {
+            "toastTitle": "common.toast.createTitle"
+        },
+        "success": "common.toast.success",
+        "update": {
+            "toastTitle": "common.toast.updateTitle"
+        }
+    },
+    "options": [
+        {
+            "label": "functional",
+            "name": "Functional"
+        },
+        {
+            "label": "temporal",
+            "name": "Temporal"
+        }
+    ]
+}

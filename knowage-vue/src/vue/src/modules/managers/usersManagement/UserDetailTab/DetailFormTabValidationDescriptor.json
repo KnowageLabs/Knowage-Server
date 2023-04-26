@@ -1,0 +1,90 @@
+{
+    "validations": {
+        "userDetailsForm": [
+            {
+                "fieldName": "userId",
+                "validators": [
+                    {
+                        "key": "maxLength",
+                        "validator": {
+                            "params": {
+                                "max": 100
+                            },
+                            "type": "maxLength"
+                        }
+                    },
+                    {
+                        "key": "required"
+                    },
+                    {
+                        "key": "regex",
+                        "validator": {
+                            "type": "fullnameRegex"
+                        }
+                    }
+                ]
+            },
+            {
+                "fieldName": "fullName",
+                "validators": [
+                    {
+                        "key": "maxLength",
+                        "validator": {
+                            "params": {
+                                "max": 250
+                            },
+                            "type": "maxLength"
+                        }
+                    },
+                    {
+                        "key": "required"
+                    },
+                    {
+                        "key": "regex",
+                        "validator": {
+                            "type": "fullnameRegex"
+                        }
+                    }
+                ]
+            },
+            {
+                "fieldName": "password",
+                "validators": [
+                    {
+                        "key": "minLength",
+                        "validator": {
+                            "params": {
+                                "min": 6
+                            },
+                            "type": "minLength"
+                        }
+                    },
+                    {
+                        "key": "required",
+                        "validator": {
+                            "type": "custom-required"
+                        }
+                    }
+                ]
+            },
+            {
+                "fieldName": "passwordConfirm",
+                "validators": [
+                    {
+                        "key": "required",
+                        "validator": {
+                            "type": "custom-required"
+                        }
+                    },
+                    {
+                        "key": "sameAsPassword",
+                        "translateBaseKey": "usersManagement.validation",
+                        "validator": {
+                            "type": "custom-sameAs"
+                        }
+                    }
+                ]
+            }
+        ]
+    }
+}

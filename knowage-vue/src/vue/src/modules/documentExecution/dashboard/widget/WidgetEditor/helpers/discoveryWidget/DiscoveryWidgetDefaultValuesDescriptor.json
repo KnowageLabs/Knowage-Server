@@ -1,0 +1,19 @@
+{
+    "defaultFacetsSettings": {
+        "closedByDefault": false,
+        "columns": [],
+        "enabled": true,
+        "limit": null,
+        "precision": null,
+        "selection": true,
+        "width": ""
+    },
+    "defaultSearchSettings": {
+        "columns": [],
+        "default": false,
+        "defaultType": "static",
+        "defaultValue": "",
+        "enabled": true,
+        "facetSearchParams": {}
+    }
+}

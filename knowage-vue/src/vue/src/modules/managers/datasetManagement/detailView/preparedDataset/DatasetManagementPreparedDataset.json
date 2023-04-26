@@ -1,0 +1,28 @@
+{
+    "validations": {
+        "dataset": [
+            {
+                "fieldName": "flatTableName",
+                "validators": [
+                    {
+                        "key": "required",
+                        "validator": {
+                            "type": "flat-fields-required"
+                        }
+                    }
+                ]
+            },
+            {
+                "fieldName": "dataSourceFlat",
+                "validators": [
+                    {
+                        "key": "required",
+                        "validator": {
+                            "type": "flat-fields-required"
+                        }
+                    }
+                ]
+            }
+        ]
+    }
+}

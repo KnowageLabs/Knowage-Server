@@ -1,0 +1,9 @@
+{
+    "dialog": {
+        "style": {
+            "height": "80vh",
+            "padding": 0,
+            "width": "80vw"
+        }
+    }
+}

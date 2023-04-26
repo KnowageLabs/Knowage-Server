@@ -1,0 +1,22 @@
+{
+    "validations": {
+        "role": [
+            {
+                "fieldName": "name",
+                "validators": [{ "key": "required" }, { "key": "regex", "validator": { "type": "extendedAlphanumericRegex" } }]
+            },
+            {
+                "fieldName": "code",
+                "validators": [{ "key": "regex", "validator": { "type": "extendedAlphanumericRegex" } }]
+            },
+            {
+                "fieldName": "description",
+                "validators": [{ "key": "regex", "validator": { "type": "extendedAlphanumericRegex" } }]
+            },
+            {
+                "fieldName": "roleTypeID",
+                "validators": [{ "key": "required" }]
+            }
+        ]
+    }
+}

@@ -1,0 +1,102 @@
+{
+    "categorizeByOptions": [
+        {
+            "label": "dashboard.widgetEditor.map.categorizeByOptions.id",
+            "value": "ID"
+        },
+        {
+            "label": "dashboard.widgetEditor.map.categorizeByOptions.description",
+            "value": "DESCRIPTION"
+        }
+    ],
+    "classesMethodOptions": [
+        {
+            "label": "dashboard.widgetEditor.map.classesMethodOptions.byEqualIntervals",
+            "value": "CLASSIFY_BY_EQUAL_INTERVALS"
+        },
+        {
+            "label": "dashboard.widgetEditor.map.classesMethodOptions.byQuantils",
+            "value": "CLASSIFY_BY_QUANTILS"
+        },
+        {
+            "label": "dashboard.widgetEditor.map.classesMethodOptions.byRanges",
+            "value": "CLASSIFY_BY_RANGES"
+        }
+    ],
+    "pieTypeOptions": [
+        {
+            "label": "dashboard.widgetEditor.map.pieTypeOptions.pies",
+            "value": "pie"
+        },
+        {
+            "label": "dashboard.widgetEditor.map.pieTypeOptions.pies3d",
+            "value": "pie3D"
+        },
+        {
+            "label": "dashboard.widgetEditor.map.pieTypeOptions.donuts",
+            "value": "donut"
+        },
+        {
+            "label": "dashboard.widgetEditor.map.pieTypeOptions.bars",
+            "value": "bar"
+        }
+    ],
+    "style": {
+        "galleryCard": {
+            "border": "1px solid #cccccc",
+            "height": "80px",
+            "transition": "0.5s ease",
+            "width": "140px"
+        },
+        "imagesDialog": {
+            "max-width": "1200px",
+            "min-width": "600px",
+            "width": "60%"
+        },
+        "imagesDialogBreakpoints": {
+            "640px": "100vw",
+            "960px": "75vw"
+        },
+        "rangesDialog": {
+            "max-width": "1200px",
+            "min-width": "600px",
+            "width": "60%"
+        },
+        "rangesDialogBreakpoints": {
+            "640px": "100vw",
+            "960px": "75vw"
+        }
+    },
+    "visTypes": [
+        {
+            "class": "markers",
+            "name": "markers",
+            "tooltip": "dashboard.widgetEditor.map.visTypes.markers"
+        },
+        {
+            "class": "balloons",
+            "name": "balloons",
+            "tooltip": "dashboard.widgetEditor.map.visTypes.balloons"
+        },
+        {
+            "class": "pies",
+            "name": "pies",
+            "tooltip": "dashboard.widgetEditor.map.visTypes.pies"
+        },
+        {
+            "class": "clusters",
+            "name": "clusters",
+            "tooltip": "dashboard.widgetEditor.map.visTypes.clusters"
+        },
+        {
+            "class": "heatmap",
+            "name": "heatmap",
+            "tooltip": "dashboard.widgetEditor.map.visTypes.heatmap"
+        },
+        {
+            "class": "choropleth",
+            "name": "choropleth",
+            "tooltip": "dashboard.widgetEditor.map.visTypes.choropleth"
+        }
+    ]
+}

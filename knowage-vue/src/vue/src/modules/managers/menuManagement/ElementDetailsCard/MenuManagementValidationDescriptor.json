@@ -1,0 +1,118 @@
+{
+    "validations": {
+        "menuNode": [
+            {
+                "fieldName": "name",
+                "validators": [
+                    {
+                        "key": "required"
+                    },
+                    {
+                        "key": "maximumCharacters",
+                        "validator": {
+                            "params": {
+                                "max": 100
+                            },
+                            "type": "maxLength"
+                        }
+                    },
+                    {
+                        "key": "regex",
+                        "validator": {
+                            "type": "extendedAlphanumericRegex"
+                        }
+                    }
+                ]
+            },
+            {
+                "fieldName": "descr",
+                "validators": [
+                    {
+                        "key": "required"
+                    },
+                    {
+                        "key": "maximumCharacters",
+                        "validator": {
+                            "params": {
+                                "max": 100
+                            },
+                            "type": "maxLength"
+                        }
+                    },
+                    {
+                        "key": "regex",
+                        "validator": {
+                            "type": "extendedAlphanumericRegex"
+                        }
+                    }
+                ]
+            },
+            {
+                "fieldName": "menuNodeContent",
+                "validators": [
+                    {
+                        "key": "required"
+                    }
+                ]
+            },
+            {
+                "fieldName": "staticPage",
+                "validators": []
+            },
+            {
+                "fieldName": "externalApplicationUrl",
+                "validators": [
+                    {
+                        "key": "maximumCharacters",
+                        "validator": {
+                            "params": {
+                                "max": 1000
+                            },
+                            "type": "maxLength"
+                        }
+                    }
+                ]
+            },
+            {
+                "fieldName": "functionality",
+                "validators": []
+            },
+            {
+                "fieldName": "objId",
+                "validators": []
+            },
+            {
+                "fieldName": "document",
+                "validators": [
+                    {
+                        "key": "maximumCharacters",
+                        "validator": {
+                            "params": {
+                                "max": 100
+                            },
+                            "type": "maxLength"
+                        }
+                    }
+                ]
+            },
+            {
+                "fieldName": "objParameters",
+                "validators": [
+                    {
+                        "key": "maximumCharacters",
+                        "validator": {
+                            "params": {
+                                "max": 1000
+                            },
+                            "type": "maxLength"
+                        }
+                    }
+                ]
+            },
+            {
+                "fieldName": "initialPath",
+                "validators": []
+            }
+        ]
+    }
+}

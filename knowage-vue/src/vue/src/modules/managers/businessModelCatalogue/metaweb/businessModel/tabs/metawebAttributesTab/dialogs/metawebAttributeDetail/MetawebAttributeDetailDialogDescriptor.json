@@ -1,0 +1,11 @@
+{
+    "dialog": {
+        "style": {
+            "height": "80%",
+            "max-height": "80%",
+            "max-width": "80%",
+            "min-width": "80%"
+        }
+    },
+    "typeOptions": ["attribute", "measure"]
+}

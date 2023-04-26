@@ -1,0 +1,549 @@
+{
+    "availableFunctions": [
+        {
+            "category": "conditional",
+            "formula": "CASE WHEN expr1 THEN expr2 [WHEN expr3 THEN expr4]* [ELSE expr5] END",
+            "help": "dataPreparation.casewhen",
+            "label": "CASE/WHEN",
+            "name": "CASE/WHEN",
+            "officialDocumentationLink": "https://spark.apache.org/docs/2.4.8/api/sql/index.html#when"
+        },
+        {
+            "category": "conditional",
+            "formula": "if(expr1, expr2, expr3)",
+            "help": "dataPreparation.if",
+            "label": "if",
+            "name": "if",
+            "officialDocumentationLink": "https://spark.apache.org/docs/2.4.8/api/sql/index.html#if"
+        },
+        {
+            "category": "conditional",
+            "formula": "nullif(expr1, expr2)",
+            "help": "dataPreparation.nullif",
+            "label": "nullif",
+            "name": "nullif",
+            "officialDocumentationLink": "https://spark.apache.org/docs/2.4.8/api/sql/index.html#nullif"
+        },
+        {
+            "category": "conditional",
+            "formula": "nvl(expr1, expr2)",
+            "help": "dataPreparation.nvl",
+            "label": "nvl",
+            "name": "nvl",
+            "officialDocumentationLink": "https://spark.apache.org/docs/2.4.8/api/sql/index.html#nvl"
+        },
+        {
+            "category": "math",
+            "formula": "abs(expr)",
+            "help": "dataPreparation.abs",
+            "label": "abs",
+            "name": "abs",
+            "officialDocumentationLink": "https://spark.apache.org/docs/2.4.8/api/sql/index.html#abs"
+        },
+        {
+            "category": "math",
+            "formula": "acos(expr)",
+            "help": "dataPreparation.acos",
+            "label": "acos",
+            "name": "acos",
+            "officialDocumentationLink": "https://spark.apache.org/docs/2.4.8/api/sql/index.html#acos"
+        },
+        {
+            "category": "math",
+            "formula": "asin(expr)",
+            "help": "dataPreparation.asin",
+            "label": "asin",
+            "name": "asin",
+            "officialDocumentationLink": "https://spark.apache.org/docs/2.4.8/api/sql/index.html#asin"
+        },
+        {
+            "category": "math",
+            "formula": "atan(expr)",
+            "help": "dataPreparation.atan",
+            "label": "atan",
+            "name": "atan",
+            "officialDocumentationLink": "https://spark.apache.org/docs/2.4.8/api/sql/index.html#atan"
+        },
+        {
+            "category": "math",
+            "formula": "cos(expr)",
+            "help": "dataPreparation.cos",
+            "label": "cos",
+            "name": "cos",
+            "officialDocumentationLink": "https://spark.apache.org/docs/2.4.8/api/sql/index.html#cos"
+        },
+        {
+            "category": "math",
+            "formula": "exp(expr)",
+            "help": "dataPreparation.exp",
+            "label": "exp",
+            "name": "exp",
+            "officialDocumentationLink": "https://spark.apache.org/docs/2.4.8/api/sql/index.html#exp"
+        },
+        {
+            "category": "math",
+            "formula": "factorial(expr)",
+            "help": "dataPreparation.factorial",
+            "label": "factorial",
+            "name": "factorial",
+            "officialDocumentationLink": "https://spark.apache.org/docs/2.4.8/api/sql/index.html#factorial"
+        },
+        {
+            "category": "math",
+            "formula": "floor(expr)",
+            "help": "dataPreparation.floor",
+            "label": "floor",
+            "name": "floor",
+            "officialDocumentationLink": "https://spark.apache.org/docs/2.4.8/api/sql/index.html#floor"
+        },
+        {
+            "category": "math",
+            "formula": "ln(expr)",
+            "help": "dataPreparation.ln",
+            "label": "ln",
+            "name": "ln",
+            "officialDocumentationLink": "https://spark.apache.org/docs/2.4.8/api/sql/index.html#ln"
+        },
+        {
+            "category": "math",
+            "formula": "log(base, expr)",
+            "help": "dataPreparation.log",
+            "label": "log",
+            "name": "log",
+            "officialDocumentationLink": "https://spark.apache.org/docs/2.4.8/api/sql/index.html#log"
+        },
+        {
+            "category": "math",
+            "formula": "pow(expr1, expr2)",
+            "help": "dataPreparation.pow",
+            "label": "pow",
+            "name": "pow",
+            "officialDocumentationLink": "https://spark.apache.org/docs/2.4.8/api/sql/index.html#pow"
+        },
+        {
+            "category": "math",
+            "formula": "round(expr, d)",
+            "help": "dataPreparation.round",
+            "label": "round",
+            "name": "round",
+            "officialDocumentationLink": "https://spark.apache.org/docs/2.4.8/api/sql/index.html#round"
+        },
+        {
+            "category": "math",
+            "formula": "sin(expr)",
+            "help": "dataPreparation.sin",
+            "label": "sin",
+            "name": "sin",
+            "officialDocumentationLink": "https://spark.apache.org/docs/2.4.8/api/sql/index.html#sin"
+        },
+        {
+            "category": "math",
+            "formula": "tan(expr)",
+            "help": "dataPreparation.tan",
+            "label": "tan",
+            "name": "tan",
+            "officialDocumentationLink": "https://spark.apache.org/docs/2.4.8/api/sql/index.html#tan"
+        },
+        {
+            "category": "string",
+            "formula": "char_length(expr)",
+            "help": "dataPreparation.char_length",
+            "label": "char_length",
+            "name": "char_length",
+            "officialDocumentationLink": "https://spark.apache.org/docs/2.4.8/api/sql/index.html#char_length"
+        },
+        {
+            "category": "string",
+            "formula": "coalesce(expr1, expr2, ...)",
+            "help": "dataPreparation.coalesce",
+            "label": "coalesce",
+            "name": "coalesce",
+            "officialDocumentationLink": "https://spark.apache.org/docs/2.4.8/api/sql/index.html#coalesce"
+        },
+        {
+            "category": "string",
+            "formula": "concat(col1, col2, ..., colN)",
+            "help": "dataPreparation.concat",
+            "label": "concat",
+            "name": "concat",
+            "officialDocumentationLink": "https://spark.apache.org/docs/2.4.8/api/sql/index.html#concat"
+        },
+        {
+            "category": "string",
+            "formula": "left(str, len)",
+            "help": "dataPreparation.left",
+            "label": "left",
+            "name": "left",
+            "officialDocumentationLink": "https://spark.apache.org/docs/2.4.8/api/sql/index.html#left"
+        },
+        {
+            "category": "string",
+            "formula": "length(expr)",
+            "help": "dataPreparation.length",
+            "label": "length",
+            "name": "length",
+            "officialDocumentationLink": "https://spark.apache.org/docs/2.4.8/api/sql/index.html#length"
+        },
+        {
+            "category": "string",
+            "formula": "locate(substr, str[, pos])",
+            "help": "dataPreparation.locate",
+            "label": "locate",
+            "name": "locate",
+            "officialDocumentationLink": "https://spark.apache.org/docs/2.4.8/api/sql/index.html#locate"
+        },
+        {
+            "category": "string",
+            "formula": "lower(str)",
+            "help": "dataPreparation.lower",
+            "label": "lower",
+            "name": "lower",
+            "officialDocumentationLink": "https://spark.apache.org/docs/2.4.8/api/sql/index.html#lower"
+        },
+        {
+            "category": "string",
+            "formula": "lpad(str, len, pad)",
+            "help": "dataPreparation.lpad",
+            "label": "lpad",
+            "name": "lpad",
+            "officialDocumentationLink": "https://spark.apache.org/docs/2.4.8/api/sql/index.html#lpad"
+        },
+        {
+            "category": "string",
+            "formula": "ltrim(str)",
+            "help": "dataPreparation.ltrim1",
+            "label": "ltrim1",
+            "name": "ltrim1",
+            "officialDocumentationLink": "https://spark.apache.org/docs/2.4.8/api/sql/index.html#ltrim1"
+        },
+        {
+            "category": "string",
+            "formula": "ltrim(trimStr, str)",
+            "help": "dataPreparation.ltrim2",
+            "label": "ltrim2",
+            "name": "ltrim2",
+            "officialDocumentationLink": "https://spark.apache.org/docs/2.4.8/api/sql/index.html#ltrim2"
+        },
+        {
+            "category": "string",
+            "formula": "replace(str, search[, replace])",
+            "help": "dataPreparation.replace",
+            "label": "replace",
+            "name": "replace",
+            "officialDocumentationLink": "https://spark.apache.org/docs/2.4.8/api/sql/index.html#replace"
+        },
+        {
+            "category": "string",
+            "formula": "rtrim(str)",
+            "help": "dataPreparation.rtrim1",
+            "label": "rtrim1",
+            "name": "rtrim1",
+            "officialDocumentationLink": "https://spark.apache.org/docs/2.4.8/api/sql/index.html#rtrim1"
+        },
+        {
+            "category": "string",
+            "formula": "rtrim(trimStr, str)",
+            "help": "dataPreparation.rtrim2",
+            "label": "rtrim2",
+            "name": "rtrim2",
+            "officialDocumentationLink": "https://spark.apache.org/docs/2.4.8/api/sql/index.html#rtrim2"
+        },
+        {
+            "category": "string",
+            "formula": "sha(expr)",
+            "help": "dataPreparation.sha",
+            "label": "sha",
+            "name": "sha",
+            "officialDocumentationLink": "https://spark.apache.org/docs/2.4.8/api/sql/index.html#sha"
+        },
+        {
+            "category": "string",
+            "formula": "substr(str, pos[, len])",
+            "help": "dataPreparation.substr",
+            "label": "substr",
+            "name": "substr",
+            "officialDocumentationLink": "https://spark.apache.org/docs/2.4.8/api/sql/index.html#substr"
+        },
+        {
+            "category": "string",
+            "formula": "trim(str)",
+            "help": "dataPreparation.trim",
+            "label": "trim",
+            "name": "trim",
+            "officialDocumentationLink": "https://spark.apache.org/docs/2.4.8/api/sql/index.html#trim"
+        },
+        {
+            "category": "string",
+            "formula": "upper(str)",
+            "help": "dataPreparation.upper",
+            "label": "upper",
+            "name": "upper",
+            "officialDocumentationLink": "https://spark.apache.org/docs/2.4.8/api/sql/index.html#upper"
+        },
+        {
+            "category": "temporal",
+            "formula": "add_months(start_date, num_months)",
+            "help": "dataPreparation.add_months",
+            "label": "add_months",
+            "name": "add_months",
+            "officialDocumentationLink": "https://spark.apache.org/docs/2.4.8/api/sql/index.html#add_months"
+        },
+        {
+            "category": "temporal",
+            "formula": "current_date()",
+            "help": "dataPreparation.current_date",
+            "label": "current_date",
+            "name": "current_date",
+            "officialDocumentationLink": "https://spark.apache.org/docs/2.4.8/api/sql/index.html#current_date"
+        },
+        {
+            "category": "temporal",
+            "formula": "current_timestamp()",
+            "help": "dataPreparation.current_timestamp",
+            "label": "current_timestamp",
+            "name": "current_timestamp",
+            "officialDocumentationLink": "https://spark.apache.org/docs/2.4.8/api/sql/index.html#current_timestamp"
+        },
+        {
+            "category": "temporal",
+            "formula": "date_add(start_date, num_days)",
+            "help": "dataPreparation.date_add",
+            "label": "date_add",
+            "name": "date_add",
+            "officialDocumentationLink": "https://spark.apache.org/docs/2.4.8/api/sql/index.html#date_add"
+        },
+        {
+            "category": "temporal",
+            "formula": "date_sub(start_date, num_days)",
+            "help": "dataPreparation.date_sub",
+            "label": "date_sub",
+            "name": "date_sub",
+            "officialDocumentationLink": "https://spark.apache.org/docs/2.4.8/api/sql/index.html#date_sub"
+        },
+        {
+            "category": "temporal",
+            "formula": "date_trunc(fmt, ts)",
+            "help": "dataPreparation.date_trunc",
+            "label": "date_trunc",
+            "name": "date_trunc",
+            "officialDocumentationLink": "https://spark.apache.org/docs/2.4.8/api/sql/index.html#date_trunc"
+        },
+        {
+            "category": "temporal",
+            "formula": "datediff(endDate, startDate)",
+            "help": "dataPreparation.datediff",
+            "label": "datediff",
+            "name": "datediff",
+            "officialDocumentationLink": "https://spark.apache.org/docs/2.4.8/api/sql/index.html#datediff"
+        },
+        {
+            "category": "temporal",
+            "formula": "day(date)",
+            "help": "dataPreparation.day",
+            "label": "day",
+            "name": "day",
+            "officialDocumentationLink": "https://spark.apache.org/docs/2.4.8/api/sql/index.html#day"
+        },
+        {
+            "category": "temporal",
+            "formula": "dayofmonth(date)",
+            "help": "dataPreparation.dayofmonth",
+            "label": "dayofmonth",
+            "name": "dayofmonth",
+            "officialDocumentationLink": "https://spark.apache.org/docs/2.4.8/api/sql/index.html#dayofmonth"
+        },
+        {
+            "category": "temporal",
+            "formula": "dayofweek(date)",
+            "help": "dataPreparation.dayofweek",
+            "label": "dayofweek",
+            "name": "dayofweek",
+            "officialDocumentationLink": "https://spark.apache.org/docs/2.4.8/api/sql/index.html#dayofweek"
+        },
+        {
+            "category": "temporal",
+            "formula": "dayofyear(date)",
+            "help": "dataPreparation.dayofyear",
+            "label": "dayofyear",
+            "name": "dayofyear",
+            "officialDocumentationLink": "https://spark.apache.org/docs/2.4.8/api/sql/index.html#dayofyear"
+        },
+        {
+            "category": "temporal",
+            "formula": "hour(timestamp)",
+            "help": "dataPreparation.hour",
+            "label": "hour",
+            "name": "hour",
+            "officialDocumentationLink": "https://spark.apache.org/docs/2.4.8/api/sql/index.html#hour"
+        },
+        {
+            "category": "temporal",
+            "formula": "last_day(date)",
+            "help": "dataPreparation.last_day",
+            "label": "last_day",
+            "name": "last_day",
+            "officialDocumentationLink": "https://spark.apache.org/docs/2.4.8/api/sql/index.html#last_day"
+        },
+        {
+            "category": "temporal",
+            "formula": "minute(timestamp)",
+            "help": "dataPreparation.minute",
+            "label": "minute",
+            "name": "minute",
+            "officialDocumentationLink": "https://spark.apache.org/docs/2.4.8/api/sql/index.html#minute"
+        },
+        {
+            "category": "temporal",
+            "formula": "month(date)",
+            "help": "dataPreparation.month",
+            "label": "month",
+            "name": "month",
+            "officialDocumentationLink": "https://spark.apache.org/docs/2.4.8/api/sql/index.html#month"
+        },
+        {
+            "category": "temporal",
+            "formula": "months_between(timestamp1, timestamp2[, roundOff])",
+            "help": "dataPreparation.months_between",
+            "label": "months_between",
+            "name": "months_between",
+            "officialDocumentationLink": "https://spark.apache.org/docs/2.4.8/api/sql/index.html#months_between"
+        },
+        {
+            "category": "temporal",
+            "formula": "next_day(start_date, day_of_week)",
+            "help": "dataPreparation.next_day",
+            "label": "next_day",
+            "name": "next_day",
+            "officialDocumentationLink": "https://spark.apache.org/docs/2.4.8/api/sql/index.html#next_day"
+        },
+        {
+            "category": "temporal",
+            "formula": "quarter(date)",
+            "help": "dataPreparation.quarter",
+            "label": "quarter",
+            "name": "quarter",
+            "officialDocumentationLink": "https://spark.apache.org/docs/2.4.8/api/sql/index.html#quarter"
+        },
+        {
+            "category": "temporal",
+            "formula": "second(timestamp)",
+            "help": "dataPreparation.second",
+            "label": "second",
+            "name": "second",
+            "officialDocumentationLink": "https://spark.apache.org/docs/2.4.8/api/sql/index.html#second"
+        },
+        {
+            "category": "temporal",
+            "formula": "timestamp(expr)",
+            "help": "dataPreparation.timestamp",
+            "label": "timestamp",
+            "name": "timestamp",
+            "officialDocumentationLink": "https://spark.apache.org/docs/2.4.8/api/sql/index.html#timestamp"
+        },
+        {
+            "category": "temporal",
+            "formula": "to_date(date_str[, fmt])",
+            "help": "dataPreparation.to_date",
+            "label": "to_date",
+            "name": "to_date",
+            "officialDocumentationLink": "https://spark.apache.org/docs/2.4.8/api/sql/index.html#to_date"
+        },
+        {
+            "category": "temporal",
+            "formula": "to_timestamp(timestamp_str[, fmt])",
+            "help": "dataPreparation.to_timestamp",
+            "label": "to_timestamp",
+            "name": "to_timestamp",
+            "officialDocumentationLink": "https://spark.apache.org/docs/2.4.8/api/sql/index.html#to_timestamp"
+        },
+        {
+            "category": "temporal",
+            "formula": "weekday(date)",
+            "help": "dataPreparation.weekday",
+            "label": "weekday",
+            "name": "weekday",
+            "officialDocumentationLink": "https://spark.apache.org/docs/2.4.8/api/sql/index.html#weekday"
+        },
+        {
+            "category": "temporal",
+            "formula": "weekofyear(date)",
+            "help": "dataPreparation.weekofyear",
+            "label": "weekofyear",
+            "name": "weekofyear",
+            "officialDocumentationLink": "https://spark.apache.org/docs/2.4.8/api/sql/index.html#weekofyear"
+        },
+        {
+            "category": "temporal",
+            "formula": "year(date)",
+            "help": "dataPreparation.year",
+            "label": "year",
+            "name": "year",
+            "officialDocumentationLink": "https://spark.apache.org/docs/2.4.8/api/sql/index.html#year"
+        }
+    ],
+    "availableTypes": [
+        {
+            "code": "string",
+            "label": "string"
+        },
+        {
+            "code": "numeric",
+            "label": "numeric"
+        },
+        {
+            "code": "timestamp",
+            "label": "timestamp"
+        },
+        {
+            "code": "date",
+            "label": "date"
+        }
+    ],
+    "category": {
+        "label": "category"
+    },
+    "formula": "dataPreparation.formula",
+    "hint": "dataPreparation.hint",
+    "validations": [
+        {
+            "fieldName": "colName",
+            "validators": [
+                {
+                    "key": "required"
+                },
+                {
+                    "key": "maximumCharacters",
+                    "validator": {
+                        "params": {
+                            "max": 100
+                        },
+                        "type": "maxLength"
+                    }
+                },
+                {
+                    "key": "regex",
+                    "validator": {
+                        "type": "extendedAlphanumericRegex"
+                    }
+                }
+            ]
+        },
+        {
+            "fieldName": "formula",
+            "validators": [
+                {
+                    "key": "required"
+                },
+                {
+                    "key": "maximumCharacters",
+                    "validator": {
+                        "params": {
+                            "max": 1000
+                        },
+                        "type": "maxLength"
+                    }
+                }
+            ]
+        }
+    ]
+}

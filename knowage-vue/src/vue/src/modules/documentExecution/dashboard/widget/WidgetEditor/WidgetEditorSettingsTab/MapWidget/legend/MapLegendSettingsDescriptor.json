@@ -1,0 +1,59 @@
+{
+    "alignmentOptions": [
+        {
+            "label": "common.left",
+            "value": "left"
+        },
+        {
+            "label": "common.center",
+            "value": "center"
+        },
+        {
+            "label": "common.right",
+            "value": "right"
+        }
+    ],
+    "positionOptions": [
+        {
+            "label": "dashboard.widgetEditor.map.north",
+            "value": "north"
+        },
+        {
+            "label": "dashboard.widgetEditor.map.south",
+            "value": "south"
+        }
+    ],
+    "toolbarStyleOptions": [
+        {
+            "type": "font-weight"
+        },
+        {
+            "type": "font-style"
+        },
+        {
+            "type": "font-size"
+        },
+        {
+            "type": "justify-content"
+        },
+        {
+            "type": "font-family"
+        },
+        {
+            "type": "color"
+        },
+        {
+            "type": "background-color"
+        }
+    ],
+    "visualizationTypes": [
+        {
+            "label": "dashboard.widgetEditor.map.linearGradient",
+            "value": "Linear Gradient"
+        },
+        {
+            "label": "dashboard.widgetEditor.map.range",
+            "value": "Range"
+        }
+    ]
+}

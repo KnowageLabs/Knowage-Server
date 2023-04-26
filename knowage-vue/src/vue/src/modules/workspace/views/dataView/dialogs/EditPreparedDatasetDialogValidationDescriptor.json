@@ -1,0 +1,50 @@
+{
+    "hint": "managers.workspaceManagement.dataPreparation.dataset.hint",
+    "validations": {
+        "configuration": [
+            {
+                "fieldName": "name",
+                "validators": [
+                    {
+                        "key": "required"
+                    },
+                    {
+                        "key": "maximumCharacters",
+                        "validator": {
+                            "params": {
+                                "max": 100
+                            },
+                            "type": "maxLength"
+                        }
+                    },
+                    {
+                        "key": "regex",
+                        "validator": {
+                            "type": "extendedAlphanumericRegex"
+                        }
+                    }
+                ]
+            },
+            {
+                "fieldName": "description",
+                "validators": [
+                    {
+                        "key": "maximumCharacters",
+                        "validator": {
+                            "params": {
+                                "max": 500
+                            },
+                            "type": "maxLength"
+                        }
+                    },
+                    {
+                        "key": "regex",
+                        "validator": {
+                            "type": "extendedAlphanumericRegex"
+                        }
+                    }
+                ]
+            }
+        ]
+    }
+}

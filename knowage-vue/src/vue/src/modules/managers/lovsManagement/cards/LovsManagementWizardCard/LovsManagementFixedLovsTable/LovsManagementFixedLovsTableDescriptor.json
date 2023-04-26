@@ -1,0 +1,22 @@
+{
+    "globalFilterFields": ["VALUE", "DESCRIPTION"],
+    "table": {
+        "iconColumn": {
+            "style": {
+                "text-align": "end",
+                "width": "10%"
+            }
+        },
+        "inputColumnStyle": {
+            "width": "30%"
+        },
+        "reorderColumn": {
+            "headerStyle": {
+                "width": "3rem"
+            }
+        },
+        "textAreaColumnStyle": {
+            "width": "60%"
+        }
+    }
+}

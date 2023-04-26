@@ -1,0 +1,22 @@
+{
+    "ccMaxLength": 160,
+    "dialog": {
+        "style": {
+            "width": "60vw"
+        }
+    },
+    "editor": {
+        "style": {
+            "height": "260px"
+        }
+    },
+    "objectMaxLength": 160,
+    "styles": {
+        "message": {
+            "align-items": "center",
+            "display": "flex",
+            "justify-content": "center",
+            "text-align": "center"
+        }
+    }
+}

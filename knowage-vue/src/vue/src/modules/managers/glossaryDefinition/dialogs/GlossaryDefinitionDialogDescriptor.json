@@ -1,0 +1,34 @@
+{
+    "dialog": {
+        "breakpoints": {
+            "640px": "100vw",
+            "960px": "85vw"
+        },
+        "style": {
+            "width": "70vw"
+        }
+    },
+    "operation": {
+        "insert": {
+            "toastTitle": "common.toast.createTitle"
+        },
+        "success": "common.toast.success",
+        "update": {
+            "toastTitle": "common.toast.updateTitle"
+        }
+    },
+    "table": {
+        "column": {
+            "style": {
+                "width": "45%",
+                "word-break": "break-all"
+            }
+        },
+        "iconColumn": {
+            "style": {
+                "text-align": "end",
+                "width": "5%"
+            }
+        }
+    }
+}

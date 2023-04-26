@@ -1,0 +1,181 @@
+{
+    "activityGaugeTooltipStyleOptions": [
+        {
+            "type": "font-weight"
+        },
+        {
+            "type": "font-size"
+        },
+        {
+            "type": "font-family"
+        },
+        {
+            "type": "background-color"
+        }
+    ],
+    "alignmentOptions": [
+        {
+            "label": "common.left",
+            "value": "left"
+        },
+        {
+            "label": "common.center",
+            "value": "center"
+        },
+        {
+            "label": "common.right",
+            "value": "right"
+        }
+    ],
+    "allSerieOption": [
+        {
+            "label": "all",
+            "value": "all"
+        }
+    ],
+    "keyboardNavigationOrderOptions": [
+        {
+            "label": "dashboard.widgetEditor.series.title",
+            "value": "series"
+        },
+        {
+            "label": "dashboard.widgetEditor.accessibility.keyboardNavigationOrderOptions.zoom",
+            "value": "zoom"
+        },
+        {
+            "label": "dashboard.widgetEditor.accessibility.keyboardNavigationOrderOptions.rangeSelector",
+            "value": "rangeSelector"
+        },
+        {
+            "label": "dashboard.widgetEditor.accessibility.keyboardNavigationOrderOptions.chartMenu",
+            "value": "chartMenu"
+        },
+        {
+            "label": "dashboard.widgetEditor.accessibility.keyboardNavigationOrderOptions.legend",
+            "value": "legend"
+        },
+        {
+            "label": "dashboard.widgetEditor.accessibility.keyboardNavigationOrderOptions.container",
+            "value": "container"
+        }
+    ],
+    "labelsStyleOptions": [
+        {
+            "type": "font-weight"
+        },
+        {
+            "type": "font-size"
+        },
+        {
+            "type": "justify-content"
+        },
+        {
+            "type": "font-family"
+        },
+        {
+            "type": "color"
+        },
+        {
+            "type": "background-color"
+        }
+    ],
+    "layoutOptions": [
+        {
+            "label": "common.horizontal",
+            "value": "horizontal"
+        },
+        {
+            "label": "common.vertical",
+            "value": "vertical"
+        },
+        {
+            "label": "dashboard.widgetEditor.highcharts.proximate",
+            "value": "proximate"
+        }
+    ],
+    "legendStyleOptions": [
+        {
+            "type": "font-weight"
+        },
+        {
+            "type": "font-size"
+        },
+        {
+            "type": "font-family"
+        },
+        {
+            "type": "border-color"
+        },
+        {
+            "type": "color"
+        },
+        {
+            "type": "background-color"
+        }
+    ],
+    "noDataToolbarStyleOptions": [
+        {
+            "type": "font-weight"
+        },
+        {
+            "type": "font-size"
+        },
+        {
+            "type": "font-family"
+        },
+        {
+            "type": "color"
+        },
+        {
+            "type": "background-color"
+        }
+    ],
+    "scaleOptions": ["empty", "k", "m", "g", "t", "p", "e"],
+    "tickPositionOptions": [
+        {
+            "label": "dashboard.widgetEditor.inside",
+            "value": "inside"
+        },
+        {
+            "label": "dashboard.widgetEditor.outside",
+            "value": "outside"
+        }
+    ],
+    "tooltipStyleOptions": [
+        {
+            "type": "font-weight"
+        },
+        {
+            "type": "font-size"
+        },
+        {
+            "type": "font-family"
+        },
+        {
+            "type": "color"
+        },
+        {
+            "type": "background-color"
+        }
+    ],
+    "verticalAlignmentOptions": [
+        {
+            "label": "common.bottom",
+            "value": "bottom"
+        },
+        {
+            "label": "common.middle",
+            "value": "middle"
+        },
+        {
+            "label": "common.top",
+            "value": "top"
+        }
+    ],
+    "warningMessageStyle": {
+        "align-items": "center",
+        "display": "flex",
+        "justify-content": "center",
+        "text-align": "center"
+    }
+}

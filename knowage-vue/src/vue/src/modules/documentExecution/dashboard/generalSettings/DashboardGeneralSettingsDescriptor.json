@@ -1,0 +1,36 @@
+{
+    "listStyle": {
+        "listIcon": {
+            "color": "#929292"
+        },
+        "listItem": {
+            "height": "30px"
+        }
+    },
+    "settingsList": [
+        {
+            "icon": "fa-brands fa-diaspora",
+            "label": "common.variables",
+            "value": "Variables"
+        }
+    ],
+    "settingsListFilterFields": ["label"],
+    "variableTypes": [
+        {
+            "label": "dashboard.widgetEditor.interactions.static",
+            "value": "static"
+        },
+        {
+            "label": "common.dataset",
+            "value": "dataset"
+        },
+        {
+            "label": "dashboard.widgetEditor.interactions.analyticalDriver",
+            "value": "driver"
+        },
+        {
+            "label": "dashboard.generalSettings.profile",
+            "value": "profile"
+        }
+    ]
+}

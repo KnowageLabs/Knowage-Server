@@ -1,0 +1,20 @@
+{
+    "cmAutocomplete": [
+        ".getDataArray(function)",
+        ".getRecords()",
+        ".getColumn(columnName)",
+        ".getSeriesAndData(name)",
+        ".sort(columnName)",
+        ".filter()",
+        ".hierarchy()",
+        ".getChild(index)",
+        ".getChildren()",
+        ".getSiblings()",
+        ".getLevel(index)",
+        ".getParent()",
+        ".getValue(measureName)",
+        ".variables",
+        ".profile",
+        ".clickManager()"
+    ]
+}

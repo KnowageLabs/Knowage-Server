@@ -1,0 +1,251 @@
+<template>
+    <Toolbar class="kn-toolbar kn-toolbar--secondary p-m-0">
+        <template #start>{{ tenant.MULTITENANT_NAME }}</template>
+        <template #end>
+            <Button icon="pi pi-save" class="p-button-text p-button-rounded p-button-plain" :disabled="buttonDisabled" @click="handleSubmit" />
+            <Button icon="pi pi-times" class="p-button-text p-button-rounded p-button-plain" @click="closeTemplateConfirm" />
+        </template>
+    </Toolbar>
+    <ProgressBar v-if="loading" mode="indeterminate" class="kn-progress-bar" />
+    <div class="card">
+        <TabView class="tabview-custom" data-test="tab-view">
+            <TabPanel>
+                <template #header>
+                    <span>{{ $t('managers.tenantManagement.detail.title') }}</span>
+                </template>
+
+                <TenantDetail :selected-tenant="tenant" :list-of-themes="listOfThemes" @fieldChanged="onFieldChange" />
+            </TabPanel>
+
+            <TabPanel>
+                <template #header>
+                    <span>{{ $t('managers.tenantManagement.productTypes.title') }}</span>
+                </template>
+
+                <ProductTypes :title="$t('managers.tenantManagement.productTypes.title')" :data-list="listOfProductTypes" :selected-data="listOfSelectedProducts" @changed="setSelectedProducts($event)" />
+            </TabPanel>
+
+            <TabPanel>
+                <template #header>
+                    <span>{{ $t('managers.tenantManagement.dataSource.title') }}</span>
+                </template>
+
+                <ProductTypes :title="$t('managers.tenantManagement.dataSource.title')" :data-list="listOfDataSources" :selected-data="listOfSelectedDataSources" @changed="setSelectedDataSources($event)" />
+            </TabPanel>
+        </TabView>
+    </div>
+</template>
+<script lang="ts">
+import { defineComponent } from 'vue'
+import { iMultitenant, iTenantToSave } from '../TenantManagement'
+import { AxiosResponse } from 'axios'
+import TabView from 'primevue/tabview'
+import TabPanel from 'primevue/tabpanel'
+import tabViewDescriptor from './TenantManagementTabViewDescriptor.json'
+import TenantDetail from './DetailTab/TenantDetail.vue'
+import ProductTypes from './SelectionTableTab/SelectionTable.vue'
+import useValidate from '@vuelidate/core'
+import mainStore from '../../../../App.store'
+
+export default defineComponent({
+    components: {
+        TabView,
+        TabPanel,
+        TenantDetail,
+        ProductTypes
+    },
+    props: {
+        selectedTenant: {
+            type: Object,
+            required: false
+        },
+        licenses: Array
+    },
+    emits: ['touched', 'closed', 'inserted'],
+    setup() {
+        const store = mainStore()
+        return { store }
+    },
+    data() {
+        return {
+            tabViewDescriptor,
+            loading: false,
+            touched: false,
+            operation: 'insert',
+            v$: useValidate() as any,
+            tenant: {} as iMultitenant,
+            listOfThemes: [] as any,
+            availableLicenses: [] as any,
+            listOfProductTypes: [] as any,
+            listOfSelectedProducts: [] as any,
+            listOfDataSources: [] as any,
+            listOfSelectedDataSources: [] as any
+        }
+    },
+    computed: {
+        buttonDisabled(): any {
+            if ((this.listOfSelectedProducts && this.listOfSelectedProducts.length === 0) || (this.listOfSelectedDataSources && this.listOfSelectedDataSources.length === 0) || this.v$.$invalid) {
+                return true
+            }
+            return false
+        }
+    },
+    watch: {
+        selectedTenant() {
+            this.tenant = { ...this.selectedTenant } as iMultitenant
+            this.getTenantData()
+        },
+        licenses() {
+            this.availableLicenses = this.licenses
+        }
+    },
+    mounted() {
+        if (this.selectedTenant) {
+            this.tenant = { ...this.selectedTenant } as iMultitenant
+        }
+        this.availableLicenses = this.licenses
+        this.loadAllData()
+        this.getTenantData()
+    },
+    methods: {
+        loadData(dataType: string) {
+            return this.$http.get(import.meta.env.VITE_RESTFUL_SERVICES_PATH + `multitenant${dataType}`)
+        },
+
+        async loadAllData() {
+            this.loading = true
+            await this.loadData('/themes').then((response: AxiosResponse<any>) => {
+                this.listOfThemes = response.data.root
+            })
+            await this.loadData('/datasources').then((response: AxiosResponse<any>) => {
+                this.listOfDataSources = response.data.root
+            })
+            await this.loadData('/producttypes').then((response: AxiosResponse<any>) => {
+                this.listOfProductTypes = response.data.root
+                this.filterArrayByTargetArr(this.listOfProductTypes, this.availableLicenses)
+            })
+            this.loading = false
+        },
+
+        filterArrayByTargetArr(sourceArr, targetArr) {
+            const newArr = sourceArr.filter((elem) => targetArr.find((target) => elem.LABEL == target.product))
+            this.listOfProductTypes = newArr
+        },
+
+        async getTenantData() {
+            this.loading = true
+            this.listOfSelectedProducts = null
+            this.listOfSelectedDataSources = null
+            this.touched = false
+
+            await this.loadData(`/producttypes?TENANT=${this.tenant.MULTITENANT_NAME}`).then((response: AxiosResponse<any>) => {
+                const productTypes = response.data.root
+
+                this.listOfSelectedProducts = []
+                this.copySelectedElement(productTypes, this.listOfSelectedProducts)
+            })
+            await this.loadData(`/datasources?TENANT=${this.tenant.MULTITENANT_NAME}`).then((response: AxiosResponse<any>) => {
+                const dataSources = response.data.root
+
+                this.listOfSelectedDataSources = []
+                this.copySelectedElement(dataSources, this.listOfSelectedDataSources)
+            })
+            this.loading = false
+        },
+        copySelectedElement(source, selected) {
+            for (let i = 0; i < source.length; i++) {
+                if (source[i].CHECKED == true) {
+                    selected.push(source[i])
+                }
+            }
+        },
+
+        async handleSubmit() {
+            if (this.v$.$invalid) {
+                return
+            }
+            const url = import.meta.env.VITE_RESTFUL_SERVICES_PATH + 'multitenant/save'
+
+            await this.$http.post(url, this.createTenantToSave()).then((response: AxiosResponse<any>) => {
+                if (this.selectedTenant) {
+                    this.store.setInfo({
+                        title: this.$t(this.tabViewDescriptor.operation[this.operation].toastTitle),
+                        msg: this.$t(this.tabViewDescriptor.operation.success)
+                    })
+                } else {
+                    this.store.setInfo({
+                        title: this.$t(this.tabViewDescriptor.operation[this.operation].toastTitle),
+                        msg: this.$t(this.tabViewDescriptor.operation.success) + response.data.NEW_USER,
+                        duration: 0
+                    })
+                }
+
+                this.$emit('inserted')
+                this.$router.replace('/tenants-management')
+            })
+        },
+
+        createTenantToSave() {
+            const tenantToSave = {} as iTenantToSave
+            tenantToSave.MULTITENANT_ID = this.tenant.MULTITENANT_ID ? '' + this.tenant.MULTITENANT_ID : ''
+            tenantToSave.MULTITENANT_NAME = this.tenant.MULTITENANT_NAME
+            this.tenant.MULTITENANT_THEME ? (tenantToSave.MULTITENANT_THEME = this.tenant.MULTITENANT_THEME) : ''
+            tenantToSave.MULTITENANT_IMAGE = this.tenant.MULTITENANT_IMAGE
+            tenantToSave.DS_LIST = this.listOfSelectedDataSources.map((dataSource) => {
+                delete dataSource.CHECKED
+                return dataSource
+            })
+            tenantToSave.PRODUCT_TYPE_LIST = this.listOfSelectedProducts.map((productType) => {
+                delete productType.CHECKED
+                return productType
+            })
+            return tenantToSave
+        },
+
+        closeTemplate() {
+            this.$router.push('/tenants-management')
+            this.$emit('closed')
+        },
+
+        onFieldChange(event) {
+            this.tenant[event.fieldName] = event.value
+            this.touched = true
+            this.$emit('touched')
+        },
+
+        setSelectedProducts(categories: any[]) {
+            this.listOfSelectedProducts = categories
+            this.touched = true
+            this.$emit('touched')
+        },
+
+        setSelectedDataSources(categories: any[]) {
+            this.listOfSelectedDataSources = categories
+            this.touched = true
+            this.$emit('touched')
+        },
+
+        closeTemplateConfirm() {
+            if (!this.touched) {
+                this.closeTemplate()
+            } else {
+                this.$confirm.require({
+                    message: this.$t('common.toast.unsavedChangesMessage'),
+                    header: this.$t('common.toast.unsavedChangesHeader'),
+                    icon: 'pi pi-exclamation-triangle',
+                    accept: () => {
+                        this.touched = false
+                        this.closeTemplate()
+                    }
+                })
+            }
+        }
+    }
+})
+</script>
+
+<style lang="scss" scoped>
+::v-deep(.p-toolbar-group-right) {
+    height: 100%;
+}
+</style>

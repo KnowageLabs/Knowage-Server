@@ -1,0 +1,9 @@
+{
+    "breakpoint": "960px",
+    "dataKey": "name",
+    "editMode": "cell",
+    "inputStyle": {
+        "border": "none"
+    },
+    "responsiveLayout": "stack"
+}

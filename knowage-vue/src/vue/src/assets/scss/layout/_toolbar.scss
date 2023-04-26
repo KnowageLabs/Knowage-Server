@@ -1,0 +1,43 @@
+.kn-toolbar {
+    border-radius: 0 !important;
+    height: var(--kn-toolbar-height);
+    min-height: var(--kn-toolbar-height);
+    font-weight: var(--kn-toolbar-font-weight) !important;
+    font-size: var(--kn-toolbar-font-size) !important;
+    border: none;
+    padding: var(--kn-toolbar-padding) !important;
+    background-color: var(--kn-toolbar-default-background-color);
+    color: var(--kn-toolbar-default-color);
+    border-top-right-radius: 0;
+    border-top-right-radius: 0;
+    text-transform: capitalize;
+
+    &--primary {
+        @extend .kn-toolbar;
+        background-color: var(--kn-toolbar-primary-background-color) !important;
+        color: var(--kn-toolbar-primary-color);
+        .p-button.p-button-text.p-button-plain {
+            color: var(--kn-toolbar-primary-icon-color);
+            &:enabled:hover {
+                color: var(--kn-toolbar-primary-icon-hover-color);
+            }
+        }
+    }
+
+    &--secondary {
+        @extend .kn-toolbar;
+        background-color: var(--kn-toolbar-secondary-background-color) !important;
+        color: var(--kn-toolbar-secondary-color);
+    }
+
+    &--default {
+        @extend .kn-toolbar;
+        background-color: var(--kn-toolbar-default-background-color) !important;
+        color: var(--kn-toolbar-default-color);
+    }
+
+    &--transparent {
+        @extend .kn-toolbar;
+        background-color: transparent !important;
+    }
+}

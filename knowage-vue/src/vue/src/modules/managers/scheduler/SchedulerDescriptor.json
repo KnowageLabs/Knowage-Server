@@ -1,0 +1,28 @@
+{
+    "knListSettings": {
+        "badgeField": "numberOfDocuments",
+        "badgeSeverity": "info",
+        "buttons": [
+            {
+                "emits": "clone",
+                "icon": "far fa-copy",
+                "label": "common.clone"
+            },
+            {
+                "emits": "delete",
+                "icon": "far fa-trash-alt",
+                "label": "common.delete"
+            }
+        ],
+        "defaultSortField": "jobName",
+        "filterFields": ["jobName"],
+        "interaction": {
+            "parameterLabel": "jobName",
+            "parameterValue": "jobName",
+            "type": "event"
+        },
+        "sortFields": ["jobName"],
+        "titleField": "jobName",
+        "tooltipField": "jobDescription"
+    }
+}

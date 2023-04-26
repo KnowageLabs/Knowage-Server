@@ -1,0 +1,12 @@
+{
+    "dialog": {
+        "style": {
+            "height": "40%",
+            "max-height": "40%",
+            "max-width": "20%",
+            "min-width": "20%"
+        }
+    },
+    "downloadModes": ["geojson"],
+    "downloadModesWFS": ["geojson", "kml", "shp"]
+}

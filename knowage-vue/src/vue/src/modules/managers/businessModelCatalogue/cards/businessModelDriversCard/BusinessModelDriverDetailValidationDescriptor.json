@@ -1,0 +1,48 @@
+{
+    "validations": {
+        "driver": [
+            {
+                "fieldName": "label",
+                "validators": [
+                    {
+                        "key": "required"
+                    },
+                    {
+                        "key": "regex",
+                        "validator": {
+                            "type": "extendedAlphanumericRegex"
+                        }
+                    }
+                ]
+            },
+            {
+                "fieldName": "parameter",
+                "validators": [
+                    {
+                        "key": "required"
+                    }
+                ]
+            },
+            {
+                "fieldName": "parameterUrlName",
+                "validators": [
+                    {
+                        "key": "required"
+                    },
+                    {
+                        "key": "regex",
+                        "validator": {
+                            "type": "alphanumericNoSpaces"
+                        }
+                    },
+                    {
+                        "key": "custom_unique",
+                        "validator": {
+                            "type": "custom-unique"
+                        }
+                    }
+                ]
+            }
+        ]
+    }
+}

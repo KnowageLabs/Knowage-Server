@@ -1,0 +1,24 @@
+{
+    "unitsOptions": [
+        {
+            "label": "cron.day",
+            "value": "day"
+        },
+        {
+            "label": "cron.week",
+            "value": "week"
+        },
+        {
+            "label": "cron.month",
+            "value": "month"
+        },
+        {
+            "label": "cron.quarter",
+            "value": "quarter"
+        },
+        {
+            "label": "cron.year",
+            "value": "year"
+        }
+    ]
+}
