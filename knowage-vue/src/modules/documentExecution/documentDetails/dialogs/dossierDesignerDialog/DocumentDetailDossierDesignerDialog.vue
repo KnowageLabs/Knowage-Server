@@ -503,7 +503,10 @@ export default defineComponent({
                     type: 'DOSSIER'
                 },
                 action: 'DOC_SAVE',
-                updateFromWorkspace: false
+                updateFromWorkspace: false,
+                customData: {
+                    templateContent: {}
+                }
             }
             await this.$http
                 .post(import.meta.env.VITE_RESTFUL_SERVICES_PATH + '2.0/saveDocument/', formattedAnalysis, { headers: { 'X-Disable-Errors': 'true' } })
