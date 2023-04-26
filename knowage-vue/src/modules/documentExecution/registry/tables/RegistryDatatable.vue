@@ -404,6 +404,7 @@ export default defineComponent({
                 delete tempRow.id
                 if (this.keyColumnName) tempRow[this.keyColumnName] = ''
                 this.addRowToFirstPosition(tempRow)
+                this.$emit('rowChanged', tempRow)
             })
         },
         addRowToFirstPosition(newRow: any) {

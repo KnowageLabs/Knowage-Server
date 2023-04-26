@@ -329,7 +329,6 @@ export default defineComponent({
             await this.reloadRegistryData(true)
         },
         async updatePagination(lazyParams: any) {
-            this.updatedRows = []
             this.pagination = {
                 start: lazyParams.paginationStart,
                 limit: lazyParams.paginationLimit,
@@ -337,6 +336,7 @@ export default defineComponent({
             }
 
             if (this.pagination.size > registryDescriptor.paginationLimit) {
+                this.updatedRows = []
                 await this.reloadRegistryData()
             }
         },
