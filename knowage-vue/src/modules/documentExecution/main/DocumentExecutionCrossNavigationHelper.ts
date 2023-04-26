@@ -29,6 +29,7 @@ export function loadNavigationParamsInitialValue(vueComponent: any) {
                     }
                 }
                 if (tempParam.selectionType === 'COMBOBOX') formatCrossNavigationComboParameterDescription(tempParam)
+                else if (['TREE', 'LOOKUP'].includes(tempParam.selectionType) && tempParam.parameterValue[0]) tempParam.parameterValue[0].description = tempParam.parameterValue[0].value
             }
         }
     })
