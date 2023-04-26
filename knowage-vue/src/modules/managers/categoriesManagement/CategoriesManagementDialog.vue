@@ -39,18 +39,18 @@
 
             <div class="p-field p-col-12 p-mb-3" :style="descriptor.pField.style">
                 <span class="p-float-label">
-                    <InputText
-                        id="type"
-                        v-model.trim="v$.category.type.$model"
-                        :disabled="inputDisabled"
-                        class="kn-material-input"
-                        type="text"
+                    <Dropdown
+                        v-model="v$.category.type.$model"
+                        class="kn-material-input kn-width-full"
+                        :options="descriptor.availableTypes"
+                        option-label="label"
+                        option-value="code"
                         :class="{
                             'p-invalid': v$.category.type.$invalid && v$.category.type.$dirty
                         }"
-                        max-length="500"
-                        @blur="v$.category.type.$touch()"
+                        :disabled="inputDisabled"
                     />
+
                     <label for="type" class="kn-material-input-label">{{ $t('managers.categoriesManagement.type') }} * </label>
                 </span>
                 <KnValidationMessages :v-comp="v$.category.type" :additional-translate-params="{ fieldName: $t('managers.categoriesManagement.type') }"></KnValidationMessages>
@@ -84,10 +84,11 @@ import validationDescriptor from './CategoriesManagementValidationDescriptor.jso
 import KnValidationMessages from '../../../components/UI/KnValidatonMessages.vue'
 import useValidate from '@vuelidate/core'
 import mainStore from '../../../App.store'
+import Dropdown from 'primevue/dropdown'
 
 export default defineComponent({
     name: 'category-management-dialog',
-    components: { Dialog, KnValidationMessages },
+    components: { Dialog, Dropdown, KnValidationMessages },
     props: {
         propCategory: {
             type: Object as PropType<iCategory> | any,

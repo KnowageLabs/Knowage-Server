@@ -1,4 +1,30 @@
 {
+    "availableTypes": [
+        {
+            "code": "BM_CATEGORY",
+            "label": "BM_CATEGORY"
+        },
+        {
+            "code": "DATASET_CATEGORY",
+            "label": "DATASET_CATEGORY"
+        },
+        {
+            "code": "GEO_CATEGORY",
+            "label": "GEO_CATEGORY"
+        },
+        {
+            "code": "KPI_KPI_CATEGORY",
+            "label": "KPI_KPI_CATEGORY"
+        },
+        {
+            "code": "KPI_TARGET_CATEGORY",
+            "label": "KPI_TARGET_CATEGORY"
+        },
+        {
+            "code": "KPI_MEASURE_CATEGORY",
+            "label": "KPI_MEASURE_CATEGORY"
+        }
+    ],
     "chipsTable": {
         "border": "1px solid #ccc"
     },
