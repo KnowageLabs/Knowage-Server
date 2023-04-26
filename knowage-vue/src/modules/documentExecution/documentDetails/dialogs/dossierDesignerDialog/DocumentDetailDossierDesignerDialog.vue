@@ -499,9 +499,10 @@ export default defineComponent({
                 document: {
                     name: document.name,
                     label: document.label,
-                    description: document.description
+                    description: document.description,
+                    type: 'DOSSIER'
                 },
-                action: 'DOSSIER_SAVE',
+                action: 'DOC_SAVE',
                 updateFromWorkspace: false
             }
             await this.$http
