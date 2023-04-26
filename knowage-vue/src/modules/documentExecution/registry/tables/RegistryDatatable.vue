@@ -3,9 +3,9 @@
         <div id="registry-grid-toolbar" class="p-d-flex p-flex-row p-ai-center" :style="registryDescriptor.styles.tableToolbar">
             <div v-if="selectedRows.length > 0" class="p-ml-1">{{ selectedRows.length }} {{ $t('documentExecution.registry.grid.rowsSelected') }}</div>
             <div id="operation-buttons-containter" class="p-ml-auto" :style="registryDescriptor.styles.tableToolbarButtonContainer">
-                <Button v-tooltip.top="$t('documentExecution.registry.grid.addRow')" icon="fas fa-plus" class="p-button-text p-button-rounded p-button-plain kn-button-light" data-test="new-row-button" @click="addNewRow" />
+                <Button v-tooltip.top="$t('documentExecution.registry.grid.addRow')" :disabled="!addButtonEnabled" icon="fas fa-plus" class="p-button-text p-button-rounded p-button-plain kn-button-light" data-test="new-row-button" @click="addNewRow" />
                 <Button v-tooltip.top="$t('documentExecution.registry.grid.cloneRows')" icon="fas fa-clone" class="p-button-text p-button-rounded p-button-plain kn-button-light" @click="cloneRows" />
-                <Button v-tooltip.top="$t('documentExecution.registry.grid.deleteRows')" icon="fas fa-trash" class="p-button-text p-button-rounded p-button-plain kn-button-light" @click="rowsDeleteConfirm()" />
+                <Button v-tooltip.top="$t('documentExecution.registry.grid.deleteRows')" :disabled="!deleteButtonEnabled" icon="fas fa-trash" class="p-button-text p-button-rounded p-button-plain kn-button-light" @click="rowsDeleteConfirm()" />
             </div>
             <Button icon="fas fa-save" class="p-button-text p-button-rounded p-button-plain kn-button-light" @click="$emit('saveRegistry')" />
         </div>
@@ -93,6 +93,12 @@ export default defineComponent({
     computed: {
         getCurrentLocaleDefaultDateFormat() {
             return (column) => (column.isEditable ? column.format || primeVueDate() : localeDate())
+        },
+        deleteButtonEnabled(): boolean {
+            return this.buttons.enableButtons && this.buttons.enableDeleteRecords
+        },
+        addButtonEnabled(): boolean {
+            return this.buttons.enableButtons && this.buttons.enableAddRecords
         }
     },
     watch: {
@@ -324,12 +330,8 @@ export default defineComponent({
                 if (this.configuration[i].name === 'enableButtons') {
                     this.buttons.enableButtons = this.configuration[i].value === 'true'
                 } else {
-                    if (this.configuration[i].name === 'enableDeleteRecords') {
-                        this.buttons.enableDeleteRecords = this.configuration[i].value === 'true'
-                    }
-                    if (this.configuration[i].name === 'enableAddRecords') {
-                        this.buttons.enableAddRecords = this.configuration[i].value === 'true'
-                    }
+                    if (this.configuration[i].name === 'enableDeleteRecords') this.buttons.enableDeleteRecords = this.configuration[i].value === 'true'
+                    if (this.configuration[i].name === 'enableAddRecords') this.buttons.enableAddRecords = this.configuration[i].value === 'true'
                 }
             }
         },
@@ -402,6 +404,7 @@ export default defineComponent({
                 delete tempRow.id
                 if (this.keyColumnName) tempRow[this.keyColumnName] = ''
                 this.addRowToFirstPosition(tempRow)
+                this.$emit('rowChanged', tempRow)
             })
         },
         addRowToFirstPosition(newRow: any) {
