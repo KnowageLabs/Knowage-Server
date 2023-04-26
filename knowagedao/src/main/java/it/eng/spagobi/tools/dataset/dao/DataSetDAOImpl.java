@@ -3060,7 +3060,7 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 			session = getSession();
 			transaction = session.beginTransaction();
 
-			String hql = "select count(*) from SbiDataSet s where s.category.id = ? ";
+			String hql = "select count(distinct id.dsId) from SbiDataSet s where s.category.id = ? ";
 			Query aQuery = session.createQuery(hql);
 			aQuery.setInteger(0, catId.intValue());
 			resultNumber = new Integer(((Long) aQuery.uniqueResult()).intValue());
