@@ -195,7 +195,7 @@ function findCrossTargetByCrossName(angularData: any, temp: any[]) {
 }
 
 export function loadNavigationParamsInitialValue(vueComponent: any) {
-    Object.keys(vueComponent.document.navigationParams).forEach((key: string) => {
+    Object.keys(vueComponent.document.navigationParams).forEach(async (key: string) => {
         for (let i = 0; i < vueComponent.filtersData.filterStatus.length; i++) {
             const tempParam = vueComponent.filtersData.filterStatus[i]
             if (key === tempParam.urlName || key === tempParam.label) {
@@ -215,6 +215,7 @@ export function loadNavigationParamsInitialValue(vueComponent: any) {
                     }
                 }
                 if (tempParam.selectionType === 'COMBOBOX') formatCrossNavigationComboParameterDescription(tempParam)
+                else if (['TREE', 'LOOKUP'].includes(tempParam.selectionType) && tempParam.parameterValue[0]) tempParam.parameterValue[0].description = tempParam.parameterValue[0].value
             }
         }
     })

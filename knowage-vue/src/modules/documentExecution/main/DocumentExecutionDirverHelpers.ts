@@ -26,7 +26,11 @@ export const loadFilters = async (initialLoading: boolean, filtersData: { filter
     formatDrivers(filtersData)
 
     if (document.navigationParams || document.formattedCrossNavigationParameters) {
-        document.navigationFromDashboard ? loadNavigationInitialValuesFromDashboard(document, filtersData, dateFormat) : loadNavigationParamsInitialValue(vueComponenet)
+        if (document.navigationFromDashboard) loadNavigationInitialValuesFromDashboard(document, filtersData, dateFormat)
+        else {
+            loadNavigationParamsInitialValue(vueComponenet)
+            filtersData = vueComponenet.filtersData
+        }
     }
     setFiltersForBreadcrumbItem(breadcrumbs, filtersData, document)
 
