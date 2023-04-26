@@ -22,14 +22,13 @@ export const loadFilters = async (initialLoading: boolean, filtersData: { filter
     }
 
     filtersData = await getFilters(document, userRole, $http)
-
     formatDrivers(filtersData)
 
     if (document.navigationParams || document.formattedCrossNavigationParameters) {
         if (document.navigationFromDashboard) loadNavigationInitialValuesFromDashboard(document, filtersData, dateFormat)
         else {
+            vueComponenet.filtersData = filtersData
             loadNavigationParamsInitialValue(vueComponenet)
-            // filtersData = vueComponenet.filtersData
         }
     }
     setFiltersForBreadcrumbItem(breadcrumbs, filtersData, document)
