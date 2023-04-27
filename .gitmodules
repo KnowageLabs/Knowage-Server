@@ -2,4 +2,4 @@
 	path = knowage-vue/src/vue
 	url = https://github.com/KnowageLabs/Knowage-Server-Frontend.git
 	branch = master
-
+	update = rebase
