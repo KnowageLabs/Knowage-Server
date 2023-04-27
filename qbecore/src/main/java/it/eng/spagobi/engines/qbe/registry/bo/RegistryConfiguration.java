@@ -19,6 +19,7 @@ package it.eng.spagobi.engines.qbe.registry.bo;
 
 import java.util.Iterator;
 import java.util.List;
+import java.util.Optional;
 
 import org.apache.log4j.Logger;
 
@@ -315,6 +316,10 @@ public class RegistryConfiguration {
 
 		private Object defaultValue = null;
 
+		private boolean isAudit = false;
+
+		private AuditColumnType auditColumnType = null;
+
 		public String getTitle() {
 			return title;
 		}
@@ -493,6 +498,40 @@ public class RegistryConfiguration {
 			this.defaultValue = defaultValue;
 		}
 
+		public boolean isAudit() {
+			return isAudit;
+		}
+
+		public void setAudit(boolean isAudit) {
+			this.isAudit = isAudit;
+		}
+
+		public AuditColumnType getAuditColumnType() {
+			return auditColumnType;
+		}
+
+		public void setAuditColumnType(AuditColumnType auditColumnType) {
+			this.auditColumnType = auditColumnType;
+		}
+
+	}
+
+	public enum AuditColumnType {
+
+		// @formatter:off
+		USER_INSERT, USER_UPDATE, USER_DELETE,
+		TIME_INSERT, TIME_UPDATE, TIME_DELETE,
+		IS_DELETED;
+		// @formatter:on
+
+	}
+
+	public Optional<Column> getAuditColumn(AuditColumnType auditColumnType) {
+		// @formatter:off
+		return this.columns.stream()
+				.filter(column -> column.isAudit() && column.getAuditColumnType().equals(auditColumnType))
+				.findFirst();
+		// @formatter:on
 	}
 
 }

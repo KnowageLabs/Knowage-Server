@@ -25,10 +25,12 @@ import org.apache.log4j.Logger;
 
 import it.eng.spago.base.SourceBean;
 import it.eng.spagobi.engines.qbe.registry.bo.RegistryConfiguration;
+import it.eng.spagobi.engines.qbe.registry.bo.RegistryConfiguration.AuditColumnType;
 import it.eng.spagobi.engines.qbe.registry.bo.RegistryConfiguration.Column;
 import it.eng.spagobi.engines.qbe.registry.bo.RegistryConfiguration.Configuration;
 import it.eng.spagobi.engines.qbe.registry.bo.RegistryConfiguration.Filter;
 import it.eng.spagobi.utilities.assertion.Assert;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 /**
  * @author Davide Zerbetto (davide.zerbetto@eng.it)
@@ -87,6 +89,8 @@ public class RegistryConfigurationXMLParser {
 	public static final String EDITOR_TYPE_COMBO = "COMBO";
 	public static final String EDITOR_TYPE_PICKER = "PICKER";
 	public static final String EDITOR_TYPE_POPUP = "POPUP";
+
+	public static final String ATTRIBUTE_IS_AUDIT_COLUMN = "AUDIT";
 
 	public RegistryConfiguration parse(SourceBean registryConf) {
 		logger.debug("IN");
@@ -297,6 +301,19 @@ public class RegistryConfigurationXMLParser {
 						logger.warn("For sub-entity references, only " + EDITOR_TYPE_COMBO + " is admissible as editor type");
 					}
 					column.setEditorType(EDITOR_TYPE_COMBO);
+				}
+
+				String auditStr = (String) aColumn.getAttribute(ATTRIBUTE_IS_AUDIT_COLUMN);
+				if (auditStr != null) {
+					column.setAudit(true);
+					try {
+						AuditColumnType auditColumnType = AuditColumnType.valueOf(auditStr.toUpperCase());
+						column.setAuditColumnType(auditColumnType);
+					} catch (Exception e) {
+						logger.error("Unrecognized audit column type [" + auditStr + "]");
+						throw new SpagoBIRuntimeException("Unrecognized audit column type [" + auditStr + "]", e);
+					}
+
 				}
 
 				list.add(column);
