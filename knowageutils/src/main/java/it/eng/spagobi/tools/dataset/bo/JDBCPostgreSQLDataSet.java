@@ -39,7 +39,7 @@ import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
-public class JDBCPostgreSQLDataSet extends AbstractJDBCDataset {
+public class JDBCPostgreSQLDataSet extends JDBCDataSet {
 
 	private static transient Logger logger = Logger.getLogger(JDBCPostgreSQLDataSet.class);
 
