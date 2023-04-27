@@ -59,6 +59,10 @@ public class ExecuteAdHocUtility {
 		return getEngineByDriver("it.eng.spagobi.engines.drivers.kpi.KpiDriver");
 	}
 
+	public static Engine getDossierEngine() {
+		return getEngineByDriver("it.eng.spagobi.engines.drivers.dossier.DossierDriver");
+	}
+
 	public static Engine getEngineByDriver(String driver) {
 		Engine engine;
 
