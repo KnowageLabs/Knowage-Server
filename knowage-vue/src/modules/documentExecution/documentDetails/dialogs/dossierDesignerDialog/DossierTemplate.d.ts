@@ -31,9 +31,9 @@ export interface iView {
 export interface iDossierDriver {
     label: string
     type: string
-    dossier_url_name?: string
-    url_name?: string
-    url_name_description?: string
+    dossierUrlName?: string
+    urlName?: string
+    urlNameDescription?: string
     value?: string
     inherit?: boolean
 }
