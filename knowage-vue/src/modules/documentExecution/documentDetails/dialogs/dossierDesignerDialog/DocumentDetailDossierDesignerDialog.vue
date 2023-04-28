@@ -91,8 +91,14 @@
                             <Dropdown v-model="activeTemplate.placeholders[currentSelectedIndex].source" class="kn-material-input kn-width-full" :options="getTypes()" option-label="label" option-value="code" />
                             <label for="label" class="kn-material-input-label"> {{ $t('documentExecution.dossier.designerDialog.linkTo') }}</label>
                         </span>
+
                         <DocDialog :dialog-visible="docDialogVisible" :selected-doc="docId" :documents="documents" @close="docDialogVisible = false" @apply="handleDoc"></DocDialog>
                     </div>
+
+                    <Message v-if="activeTemplate.placeholders[currentSelectedIndex].label && !docHasDriversOrViews()" class="p-m-4" severity="warn" :closable="false">
+                        {{ $t(`documentExecution.dossier.designerDialog.noViewsAvailable`) }}
+                    </Message>
+
                     <div v-if="activeTemplate.placeholders[currentSelectedIndex].source">
                         <Accordion :active-index="activeIndex" class="widget-editor-accordion">
                             <AccordionTab :header="$t('common.settings')">
@@ -420,6 +426,7 @@ export default defineComponent({
                     if (response.data.name) {
                         this.activeTemplate = response.data
                         this.uploadedFile.name = this.activeTemplate.name
+                        this.activeTemplate.type = this.getDossierType(this.activeTemplate.name)
                     }
                 })
                 .finally(() => (this.loading = false))

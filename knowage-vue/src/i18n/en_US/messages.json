@@ -1006,7 +1006,6 @@
             "deleteSuccess": "Successfully deleted selected activity.",
             "deleteTitle": "Delete dossier activity",
             "designerDialog": {
-                "templateFile": "Template file",
                 "deviceScaleFactor": "Device scale factor",
                 "dossierUrlName": "Dossier url name",
                 "downloadable": "Downloadable",
@@ -1019,6 +1018,7 @@
                 "noDriversAndNoViewsForDocument": "No driver and no views found for the document",
                 "noPlaceholdersFound": "The uploaded document doesn't contain placeholders accordingly to the prefix. Please, try again with another document",
                 "noPlaceholdersHint": "No placeholder seleted. Click on a list element to select one.",
+                "noViewsAvailable": "No views available",
                 "placeholders": "Placeholders",
                 "prefixHint": "This field will be case sensitive",
                 "saveAndRun": "Save and run",
@@ -1031,6 +1031,7 @@
                 "step1": {
                     "title": "Dossier designer - Hook placeholders to documents"
                 },
+                "templateFile": "Template file",
                 "uploadable": "Uploadable",
                 "urlName": "Url name"
             },
