@@ -19,6 +19,7 @@ package it.eng.qbe.datasource.jpa.audit;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Optional;
 
 import javax.persistence.metamodel.EntityType;
 
@@ -44,22 +45,18 @@ public class JPAPersistenceManagerInTableAudit {
 	private JPAPersistenceManagerInTableAudit(JPAPersistenceManager jpaPersistenceManager, RegistryConfiguration registryConfiguration,
 			UserProfile userProfile) {
 		super();
-
-		Assert.assertNotNull(jpaPersistenceManager, "Missing persistence manager object");
-		Assert.assertNotNull(registryConfiguration, "Missing registry configuration object");
-		Assert.assertNotNull(userProfile, "Missing user profile object");
-
 		this.jpaPersistenceManager = jpaPersistenceManager;
 		this.registryConfiguration = registryConfiguration;
 		this.userProfile = userProfile;
 	}
 
 	public void auditUpdate(JSONObject newRecordValues, EntityType targetEntity, Object obj) {
-		Boolean isLogicalDeletion = Boolean.FALSE;
-		Boolean isLogicalUnDeletion = Boolean.FALSE;
+		boolean isLogicalDeletion = false;
+		boolean isLogicalUnDeletion = false;
 
-		if (registryConfiguration.getAuditColumn(AuditColumnType.IS_DELETED).isPresent()) {
-			Column column = registryConfiguration.getAuditColumn(AuditColumnType.IS_DELETED).get();
+		Optional<Column> isDeletedColumnOpt = registryConfiguration.getAuditColumn(AuditColumnType.IS_DELETED);
+		if (isDeletedColumnOpt.isPresent()) {
+			Column column = isDeletedColumnOpt.get();
 			Object newDeletionStatusObj;
 			try {
 				newDeletionStatusObj = newRecordValues.get(column.getField());
@@ -147,6 +144,11 @@ public class JPAPersistenceManagerInTableAudit {
 		}
 
 		public JPAPersistenceManagerInTableAudit build() {
+
+			Assert.assertNotNull(jpaPersistenceManager, "Missing persistence manager object");
+			Assert.assertNotNull(registryConfiguration, "Missing registry configuration object");
+			Assert.assertNotNull(userProfile, "Missing user profile object");
+
 			return new JPAPersistenceManagerInTableAudit(jpaPersistenceManager, registryConfiguration, userProfile);
 		}
 	}
