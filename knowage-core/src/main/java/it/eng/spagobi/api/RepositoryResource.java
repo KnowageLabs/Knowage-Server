@@ -19,6 +19,7 @@
 package it.eng.spagobi.api;
 
 import static java.util.Objects.nonNull;
+import static java.util.stream.Collectors.toSet;
 
 import java.util.ArrayList;
 import java.util.Deque;
@@ -253,6 +254,22 @@ public class RepositoryResource extends AbstractSpagoBIResource {
 		dao.delete(v);
 
 		return toViewOverDocument(v);
+	}
+
+	@GET
+	@Path("/view/document/{id}")
+	public Set<ViewOverDocument> getViewsOnDoc(@PathParam("id") int biObjectId) throws EMFUserError {
+		BIObject document = getDocument(biObjectId);
+
+		ISbiViewDAO dao = DAOFactory.getSbiViewDAO();
+		dao.setUserProfile(UserProfileManager.getProfile());
+
+		Set<SbiView> ownedAndPublicViewsOverDoc = dao.getOwnedAndPublicViewsOverDoc(document);
+
+		return ownedAndPublicViewsOverDoc
+				.stream()
+				.map(this::toViewOverDocument)
+				.collect(toSet());
 	}
 
 	@POST

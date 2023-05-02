@@ -20,6 +20,7 @@ package it.eng.spagobi.view.dao;
 
 import java.util.Set;
 
+import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 import it.eng.spagobi.commons.dao.ISpagoBIDao;
 import it.eng.spagobi.view.metadata.SbiView;
 
@@ -38,5 +39,11 @@ public interface ISbiViewDAO extends ISpagoBIDao {
 	SbiView delete(SbiView e);
 
 	Set<SbiView> readByViewHierarchyId(String id);
+
+	Set<SbiView> getOwnedAndPublicViewsOverDoc(int biObjectId);
+
+	default Set<SbiView> getOwnedAndPublicViewsOverDoc(BIObject biObject) {
+		return getOwnedAndPublicViewsOverDoc(biObject.getId());
+	}
 
 }
