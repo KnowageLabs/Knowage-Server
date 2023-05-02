@@ -460,7 +460,7 @@ public class MenuResource extends AbstractSpagoBIResource {
 			} else {
 				MenuIcon menuIcon = new MenuIcon();
 				JSONObject jsonObject = paramsObj.getJSONObject("icon");
-				menuIcon.setId(jsonObject.getInt("id"));
+				menuIcon.setId(jsonObject.getString("id"));
 				menuIcon.setCategory(jsonObject.getString("category"));
 				menuIcon.setLabel(jsonObject.getString("label"));
 				menuIcon.setClassName(jsonObject.getString("className"));

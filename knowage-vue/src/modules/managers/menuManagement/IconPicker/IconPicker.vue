@@ -15,8 +15,8 @@
             <div class="p-mt-4">
                 <div class="iconPicker__icons">
                     <p>fontawesome</p>
-                    <a href="#" @click.stop.prevent="getIcon(icon)" :class="`item ${selected === icon.name ? 'selected' : ''}`" v-for="icon in icons" :key="icon.value">
-                        <i :class="'fas fa-' + icon.name"></i>
+                    <a v-for="icon in localIcons" :key="icon.id" href="#" :class="`item ${selected === icon.id ? 'selected' : ''}`" :title="icon.id" @click.stop.prevent="getIcon(icon)">
+                        <i :class="`fa-${icon.membership?.free[0] || 'solid'} fa-${icon.id}`"></i>
                     </a>
                 </div>
             </div>
@@ -28,10 +28,10 @@
     </Dialog>
 </template>
 
-<script>
+<script lang="ts">
 import KnImageToBase64IconPicker from '@/components/UI/KnImageToBase64IconPicker.vue'
 import Dialog from 'primevue/dialog'
-import icons from './icons'
+import icons from './icons.json'
 import { defineComponent } from 'vue'
 export default defineComponent({
     name: 'IconPicker',
@@ -50,13 +50,16 @@ export default defineComponent({
             modalShown: false,
             disableChoosen: false,
             selected: '',
-            chosenIcon: {},
-            icons
+            chosenIcon: {} as any,
+            localIcons: [] as Array<any>
         }
+    },
+    mounted() {
+        this.localIcons = icons.icons.filter((i) => i.membership.free.length > 0)
     },
     methods: {
         getIcon(icon) {
-            this.selected = icon.name
+            this.selected = icon.id
             this.chosenIcon = icon
             this.disableChoosen = false
         },
@@ -70,24 +73,24 @@ export default defineComponent({
         },
         filterIcons(event) {
             const search = event.target.value.trim()
-            let filter = []
-            if (search.length > 3) {
-                filter = icons.filter((item) => {
+            let filter = [] as Array<any>
+            if (search.length > 1) {
+                filter = icons.icons.filter((item) => {
                     const regex = new RegExp(search, 'gi')
-                    return item.name.match(regex)
+                    return item.id.match(regex) && item.membership.free.length > 0
                 })
             } else if (search.length === 0) {
-                this.icons = icons
+                this.localIcons = icons.icons.filter((i) => i.membership.free.length > 0)
             }
             if (filter.length > 0) {
-                this.icons = filter
+                this.localIcons = filter
             }
         },
         toggleDisableChooseButton(value) {
             this.disableChoosen = value
         },
         onBase64ImageSelection(image) {
-            this.choosenIcon = image
+            this.chosenIcon = image
             this.$emit('chooseIcon', image)
         }
     }

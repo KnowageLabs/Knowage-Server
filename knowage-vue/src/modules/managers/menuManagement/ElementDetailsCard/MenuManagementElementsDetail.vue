@@ -31,8 +31,8 @@
                                 <span class="p-float-label">
                                     <InputText id="descr" type="text" v-model.trim="v$.menuNode.descr.$model" @blur="onDataChange(v$.menuNode.descr)" class="p-inputtext p-component kn-material-input" aria-describedby="descr-help" />
                                     <Button v-if="isIconSelectorShown(menuNode) && (menuNode.icon != null || menuNode.custIcon != null)" icon="pi pi-times" @click="clearSelectedIcon" />
-                                    <Button v-if="isCustomIconShown(menuNode)"><img style="max-height: 26px; max-width: 26px;" :src="selectedIcon"/></Button>
-                                    <Button v-if="isFaIconShown(menuNode)"><i :class="selectedIcon"></i></Button>
+                                    <Button v-if="isCustomIconShown(menuNode)"><img style="max-height: 26px; max-width: 26px" :src="selectedIcon" /></Button>
+                                    <Button v-if="isFaIconShown(menuNode)" style="display: inline-flex; justify-content: center"><i :class="selectedIcon"></i></Button>
                                     <Button v-if="isIconSelectorShown(menuNode)" class="p-button" @click="openFontAwesomeSelectionModal()">{{ $t('managers.menuManagement.chooseIcon').toUpperCase() }}</Button>
                                     <label for="descr">{{ $t('managers.menuManagement.description') }} *</label>
                                 </span>
@@ -189,13 +189,13 @@ export default defineComponent({
     },
     watch: {
         selectedMenuNode: {
-            handler: function(node) {
+            handler: function (node) {
                 this.v$.$reset()
                 this.loadNode(node)
             }
         },
         selectedRoles: {
-            handler: function(roles) {
+            handler: function (roles) {
                 this.menuNode.roles = roles
             }
         },
@@ -359,8 +359,8 @@ export default defineComponent({
             } else {
                 this.menuNode.icon = {
                     id: choosenIcon.id,
-                    className: 'fas fa-' + choosenIcon.name,
-                    unicode: choosenIcon.value,
+                    className: `fa-${choosenIcon.membership.free[0] || 'solid'} fa-${choosenIcon.id}`,
+                    unicode: choosenIcon.unicode,
                     category: 'solid',
                     label: '',
                     src: null,
@@ -368,7 +368,7 @@ export default defineComponent({
                 }
 
                 this.menuNode.custIcon = null
-                this.selectedIcon = this.menuNode.icon.className = 'fas fa-' + choosenIcon.name
+                this.selectedIcon = this.menuNode.icon.className
                 this.menuNode.icon.id = choosenIcon.id
             }
 

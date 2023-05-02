@@ -28,6 +28,7 @@ export async function updateLovDependency(loadedParameters: { filterStatus: iPar
 
 export async function lovDependencyCheck(loadedParameters: { filterStatus: iParameter[], isReadyForExecution: boolean }, parameter: iParameter, loading: boolean, document: any, sessionRole: string | null, $http: any, mode: string, userDateFormat: string) {
     loading = true
+
     if (parameter.parameterValue[0]) {
         parameter.parameterValue[0] = { value: '', description: '' }
     } else {
