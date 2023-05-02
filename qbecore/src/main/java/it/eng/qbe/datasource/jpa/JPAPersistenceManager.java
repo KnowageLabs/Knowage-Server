@@ -49,6 +49,7 @@ import org.json.JSONObject;
 
 import it.eng.qbe.datasource.IPersistenceManager;
 import it.eng.qbe.datasource.jpa.audit.JPAPersistenceManagerAuditLogger;
+import it.eng.qbe.datasource.jpa.audit.JPAPersistenceManagerInTableAudit;
 import it.eng.qbe.datasource.jpa.audit.Operation;
 import it.eng.qbe.logger.QueryAuditLogger;
 import it.eng.qbe.model.structure.IModelEntity;
@@ -76,6 +77,10 @@ public class JPAPersistenceManager implements IPersistenceManager {
 	private static final Logger logger = Logger.getLogger(JPAPersistenceManager.class);
 
 	private static final Logger auditlogger = QueryAuditLogger.LOGGER;
+
+	public static final String TIMESTAMP_SIMPLE_FORMAT = "dd/MM/yyyy HH:mm:ss";
+
+	public static final String TIMESTAMP_ISO_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSSZ";
 
 	public JPAPersistenceManager(JPADataSource dataSource) {
 		super();
@@ -190,10 +195,9 @@ public class JPAPersistenceManager implements IPersistenceManager {
 
 			Iterator it = aRecord.keys();
 
-			Object newObj = null;
 			Class classToCreate = targetEntity.getJavaType();
 
-			newObj = classToCreate.newInstance();
+			Object newObj = classToCreate.newInstance();
 			logger.debug("Key column class is equal to [" + newObj.getClass().getName() + "]");
 
 			while (it.hasNext()) {
@@ -247,6 +251,15 @@ public class JPAPersistenceManager implements IPersistenceManager {
 
 				toReturn = pkValue;
 			}
+
+			// @formatter:off
+			JPAPersistenceManagerInTableAudit jpaPersistenceManagerInTableAudit = JPAPersistenceManagerInTableAudit.builder()
+					.withJPAPersistenceManager(this)
+					.withRegistryConfiguration(registryConf)
+					.withUserProfile(UserProfileManager.getProfile())
+					.build();
+			// @formatter:on
+			jpaPersistenceManagerInTableAudit.auditInsertion(registryConf, targetEntity, newObj);
 
 			if (!entityTransaction.isActive()) {
 				entityTransaction.begin();
@@ -322,8 +335,8 @@ public class JPAPersistenceManager implements IPersistenceManager {
 
 				Column column = registryConf.getColumnConfiguration(attributeName);
 
-				if (!column.isEditable() || column.isInfoColumn()) {
-					logger.debug("Skip column [" + attributeName + "] because it is not editable or it is an info column");
+				if (!column.isEditable() || column.isInfoColumn() || column.isAudit()) {
+					logger.debug("Skip column [" + attributeName + "] because it is not editable or it is an info or audit column");
 					continue;
 				}
 
@@ -353,6 +366,15 @@ public class JPAPersistenceManager implements IPersistenceManager {
 
 				processedAttributes.add(attributeName);
 			}
+
+			// @formatter:off
+			JPAPersistenceManagerInTableAudit jpaPersistenceManagerInTableAudit = JPAPersistenceManagerInTableAudit.builder()
+					.withJPAPersistenceManager(this)
+					.withRegistryConfiguration(registryConf)
+					.withUserProfile(UserProfileManager.getProfile())
+					.build();
+			// @formatter:on
+			jpaPersistenceManagerInTableAudit.auditUpdate(aRecord, targetEntity, obj);
 
 			if (!entityTransaction.isActive()) {
 				entityTransaction.begin();
@@ -583,7 +605,7 @@ public class JPAPersistenceManager implements IPersistenceManager {
 		return keyName;
 	}
 
-	private Object getOldProperty(EntityType targetEntity, Object obj, String aKey) {
+	public Object getOldProperty(EntityType targetEntity, Object obj, String aKey) {
 
 		logger.debug("IN");
 
@@ -625,7 +647,7 @@ public class JPAPersistenceManager implements IPersistenceManager {
 		}
 	}
 
-	private void setProperty(EntityType targetEntity, Object obj, String aKey, Object newValue) {
+	public void setProperty(EntityType targetEntity, Object obj, String aKey, Object newValue) {
 		logger.debug("IN");
 		try {
 			Attribute a = targetEntity.getAttribute(aKey);
@@ -706,8 +728,8 @@ public class JPAPersistenceManager implements IPersistenceManager {
 				toReturn = value;
 		} else if (Timestamp.class.isAssignableFrom(clazz)) {
 			Date date;
-			SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy hh:mm:ss");
-			SimpleDateFormat sdfISO = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
+			SimpleDateFormat sdf = new SimpleDateFormat(TIMESTAMP_SIMPLE_FORMAT);
+			SimpleDateFormat sdfISO = new SimpleDateFormat(TIMESTAMP_ISO_FORMAT);
 			// SimpleDateFormat sdf = new
 			// SimpleDateFormat("MM/dd/yyyy hh:mm:ss");
 			if (value.equals("") || value.toLowerCase().equals("null")) {

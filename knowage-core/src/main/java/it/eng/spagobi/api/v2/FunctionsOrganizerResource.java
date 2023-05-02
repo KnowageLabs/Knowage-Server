@@ -16,8 +16,13 @@ import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
 import it.eng.spagobi.workspace.bo.FunctionsOrganizer;
 import it.eng.spagobi.workspace.dao.IFunctionsOrganizerDAO;
 
+/**
+ * @deprecated Replaced by KNOWAGE_TM-513
+ * TODO : Delete
+ */
 @Path("/2.0/organizer/folders")
 @ManageAuthorization
+@Deprecated
 public class FunctionsOrganizerResource extends AbstractSpagoBIResource {
 
 	private static final Logger LOGGER = Logger.getLogger(FunctionsOrganizerResource.class);

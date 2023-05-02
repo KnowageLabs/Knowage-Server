@@ -36,7 +36,6 @@ import org.apache.logging.log4j.Logger;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.gson.JsonSyntaxException;
 
 import it.eng.knowage.security.ProductProfiler;
@@ -80,7 +79,7 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 	@GET
 	@Path("/{id}/templates")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
-	public ObjectNode getDocumentTemplates(@PathParam("id") Integer id) throws JSONException, EMFInternalError {
+	public JSONObject getDocumentTemplates(@PathParam("id") Integer id) throws JSONException, EMFInternalError {
 		LOGGER.debug("IN");
 
 		UserProfile userProfile = getUserProfile();
@@ -111,7 +110,7 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 			throw new SpagoBIRestServiceException("Could not get content from template", buildLocaleFromSession(), e);
 		}
 		LOGGER.debug("OUT");
-		return jsonTemplate.getWrappedObject();
+		return jsonTemplate;
 	}
 
 	@GET

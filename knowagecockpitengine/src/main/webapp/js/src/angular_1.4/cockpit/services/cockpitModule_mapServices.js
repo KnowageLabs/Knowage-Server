@@ -43,7 +43,6 @@
 		ms.getFeaturesDetails = function(geoColumn, selectedMeasure, config, configColumns, values, externalLegend){
 			if (values != undefined){
 				var geoFieldName;
-				var geoFieldValue;
 				var geoFieldConfig;
 				var featuresSource = new ol.source.Vector();
 
@@ -64,20 +63,23 @@
 				if (geoFieldName){
 					var lon;
 					var lat;
-					var isSimpleMarker = true;
 					for(var r=0; r < values.rows.length; r++) {
 						try {
 							//get coordinates
 							var geometry;
 							var feature;
 							var row = values.rows[r];
-							geoFieldValue = row[geoFieldName].trim();
+							var geoFieldValue = row[geoFieldName].trim();
+
 							if (!geoFieldConfig.properties.coordType){
 								//retrocompatibility management (just string type)
 								geoFieldConfig.properties.coordType = 'string';
 								geoFieldConfig.properties.coordFormat = 'lon lat';
 							}
-							if (geoFieldConfig.properties.coordType == 'json'){
+
+							var coordType = geoFieldConfig.properties.coordType;
+
+							if (coordType == 'json'){
 
 								feature = new ol.format.GeoJSON().readFeatures(geoFieldValue, {
 									dataProjection: 'EPSG:4326',
@@ -88,7 +90,7 @@
 									for (var i in feature) {
 										var currFeature = feature[i];
 
-										setCommonFeatureProperty(feature, values, geoFieldValue, externalLegend);
+										setCommonFeatureProperty(currFeature, values, geoFieldValue, externalLegend, coordType);
 
 										ms.setUpGeoJSONFeature(currFeature, config, row, configColumns, values);
 										ms.setUpSelectedMeasure(selectedMeasure, config, values);
@@ -97,7 +99,7 @@
 									}
 								} else {
 
-									setCommonFeatureProperty(feature, values, geoFieldValue, externalLegend);
+									setCommonFeatureProperty(feature, values, geoFieldValue, externalLegend, coordType);
 
 									ms.setUpGeoJSONFeature(feature, config, row, configColumns, values);
 									ms.setUpSelectedMeasure(selectedMeasure, config, values);
@@ -106,36 +108,34 @@
 								}
 
 
-							} else if (geoFieldConfig.properties.coordType == 'wkt') {
+							} else if (coordType == 'wkt') {
 
 								feature = new ol.format.WKT().readFeature(geoFieldValue, {
 									dataProjection: 'EPSG:4326',
 									featureProjection: 'EPSG:3857'
 								});
 
-								setCommonFeatureProperty(feature, values, geoFieldValue, externalLegend);
+								setCommonFeatureProperty(feature, values, geoFieldValue, externalLegend, coordType);
 
 								ms.setUpWKTFeature(feature, config, row, configColumns, values);
 								ms.setUpSelectedMeasure(selectedMeasure, config, values);
 
 								ms.addFeatureToSource(featuresSource, feature, config, row);
-							} else if (geoFieldConfig.properties.coordType == 'string') {
-								if (geoFieldConfig.properties.coordType == 'string' && IsJsonString(geoFieldValue)){
+							} else if (coordType == 'string') {
+								if (coordType == 'string' && IsJsonString(geoFieldValue)){
 									console.log("Location is set as STRING but its value has a JSON format. Please check the configuration: ["+geoFieldValue+"]");
 									sbiModule_messaging.showInfoMessage(sbiModule_translate.load('sbi.cockpit.map.stringInvalid').replace("{0}",geoColumn).replace("{1}",geoFieldValue.substring(0,20)+'...'), 'Title', 0);
 									return null;
 								}
-								isSimpleMarker = true;
 								geometry = ms.getGeometry(geoColumn, geoFieldConfig, geoFieldValue);
 
 								//set ol objects
 								feature = new ol.Feature(geometry);
 
-								setCommonFeatureProperty(feature, values, geoFieldValue, externalLegend);
+								setCommonFeatureProperty(feature, values, geoFieldValue, externalLegend, coordType);
 
 								//at least add the layer owner
 								feature.set("parentLayer",  config.layerID);
-								feature.set("isSimpleMarker", isSimpleMarker);
 								feature.set("sourceType",  (config.markerConf && config.markerConf.type ) ?  config.markerConf.type : "simple");
 								ms.addDsPropertiesToFeature(feature, row, configColumns, values.metaData.fields);
 								ms.setUpSelectedMeasure(selectedMeasure, config, values);
@@ -155,10 +155,11 @@
 			return new ol.source.Vector();
 		}
 
-		function setCommonFeatureProperty(feature, values, geoFieldValue, externalLegend) {
+		function setCommonFeatureProperty(feature, values, geoFieldValue, externalLegend, coordType) {
 			feature.set("_spatial_attribute_value", geoFieldValue);
 			feature.set("stats", values.stats);
 			feature.set("legend", externalLegend);
+			feature.set("coordType", coordType);
 		}
 
 		function getOriginalSpatialValueFromFeature(feature) {

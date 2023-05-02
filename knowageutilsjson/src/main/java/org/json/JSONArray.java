@@ -25,6 +25,8 @@ import java.util.Iterator;
 import java.util.Map;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.NullNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -33,12 +35,13 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
  * @author Andrea Gioia (andrea.gioia@eng.it)
  *
  */
-public class JSONArray extends AbstractJSONArray implements ICommonObject {
+@JsonSerialize(using = JSONArraySerializer.class)
+@JsonDeserialize(using = JSONArrayDeserializer.class)
+public class JSONArray extends AbstractJSONArray {
 
 	private ArrayNode rootNode;
 
-	@Override
-	public ArrayNode getWrappedObject() {
+	ArrayNode getWrappedObject() {
 		return this.rootNode;
 	}
 

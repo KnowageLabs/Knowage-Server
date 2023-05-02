@@ -36,6 +36,11 @@ package it.eng.spagobi.workspace.bo;
  */
 import it.eng.spagobi.hotlink.rememberme.bo.HotLink;
 
+/**
+ * @deprecated Replaced by KNOWAGE_TM-513
+ * TODO : Delete
+ */
+@Deprecated
 public class DocumentOrganizer extends HotLink {
 
 	private Integer functId;

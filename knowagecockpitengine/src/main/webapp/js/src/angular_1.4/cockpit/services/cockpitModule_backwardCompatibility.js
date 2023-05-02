@@ -55,22 +55,27 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		}
 
 		self.updateCockpitModel = function(template){
+			const version = template.knowageVersion || template.version
 			//to version 6.3
-			if(!self.compareVersion("6.3.0",template.knowageVersion)){
+			if(!self.compareVersion("6.3.0",version)){
 				if(template.configuration && typeof(template.configuration.showScreenshot)=='undefined') template.configuration.showScreenshot = true;
 			}
-			if(!self.compareVersion("7.3.0",template.knowageVersion)){
+			if(!self.compareVersion("7.3.0",version)){
 				if(template.configuration && typeof(template.configuration.showExcelExport)=='undefined') template.configuration.showExcelExport = true;
 			}
 
-			//Cycle trough all widgets
-			for(var sheet in template.sheets){
-				for(var widget in template.sheets[sheet].widgets){
-					self.updateModel(template.sheets[sheet].widgets[widget],template.knowageVersion);
+			if (!template.version) {
+				//Cycle trough all widgets
+				for(var sheet in template.sheets){
+					for(var widget in template.sheets[sheet].widgets){
+						self.updateModel(template.sheets[sheet].widgets[widget],version);
+					}
 				}
 			}
 
-			template.knowageVersion = currentVersion;
+			if(template.knowageVersion) template.knowageVersion = currentVersion;
+			else template.version = currentVersion;
+			
 			return template;
 		}
 

@@ -624,7 +624,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						.fieldsMeta
 						.find(function(e) { return e.name == curr.header })
 				
-					stat[i] = data.stats[i];
+					// If dataset has zero rows, data.stats[i] could fail
+					stat[i] = data.stats[i] || {};
 					stat[i].name = curr.name;
 					stat[i].header = curr.header;
 					stat[i].fieldType = otherMetaData ? otherMetaData.fieldType : "MEASURE";

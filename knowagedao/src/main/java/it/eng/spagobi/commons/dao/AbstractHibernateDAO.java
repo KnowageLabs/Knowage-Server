@@ -46,14 +46,19 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
  */
 public class AbstractHibernateDAO {
 
-	private static transient Logger logger = Logger.getLogger(AbstractHibernateDAO.class);
+	private static Logger logger = Logger.getLogger(AbstractHibernateDAO.class);
+
+	private static final String TENANT_DEFAULT = "DEFAULT_TENANT";
+
+	public static final String FILTER_TENANT = "tenantFilter";
+	public static final String FILTER_USER = "userFilter";
+
+	public static final String FILTER_TENANT_PARAM_TENANT = "tennat";
+	public static final String FILTER_USER_PARAM_USER = "user";
 
 	private String userID = "server";
 	private IEngUserProfile profile = null;
 	private String tenant = null;
-
-	public static final String TENANT_FILTER_NAME = "tenantFilter";
-	private static final String TENANT_DEFAULT = "DEFAULT_TENANT";
 
 	public void setUserID(String user) {
 		userID = user;
@@ -139,14 +144,14 @@ public class AbstractHibernateDAO {
 	}
 
 	protected void enableTenantFilter(Session session, String tenantId) {
-		Filter filter = session.enableFilter(TENANT_FILTER_NAME);
+		Filter filter = session.enableFilter(FILTER_TENANT);
 		filter.setParameter("tenant", tenantId);
 	}
 
 	protected void disableTenantFilter(Session session) {
-		Filter filter = session.getEnabledFilter(TENANT_FILTER_NAME);
+		Filter filter = session.getEnabledFilter(FILTER_TENANT);
 		if (filter != null) {
-			session.disableFilter(TENANT_FILTER_NAME);
+			session.disableFilter(FILTER_TENANT);
 		}
 	}
 

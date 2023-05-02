@@ -243,7 +243,8 @@ public class SaveDocumentResource extends AbstractSpagoBIResource {
 				}
 			}
 		} catch (Throwable t) {
-			logger.error(t);
+			logger.error("Error inserting document", t);
+			logger.debug("Document was: " + String.valueOf(saveDocumentDTO));
 			error.addErrorKey("sbi.document.saveError");
 		}
 		logger.debug("OUT");
@@ -314,7 +315,8 @@ public class SaveDocumentResource extends AbstractSpagoBIResource {
 			documentManagementAPI.saveDocument(document, template);
 			return document.getId();
 		} catch (Throwable t) {
-			logger.error(t);
+			logger.error("Error updating document", t);
+			logger.debug("Document was: " + String.valueOf(request));
 			error.addErrorKey("sbi.document.saveError");
 		}
 		return null;

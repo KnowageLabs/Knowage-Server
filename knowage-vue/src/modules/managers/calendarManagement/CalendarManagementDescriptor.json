@@ -1,6 +1,0 @@
-{
-    "globalFilterFields": ["calendar", "calType"],
-    "iconColumnStyle": {
-        "text-align": "end"
-    }
-}

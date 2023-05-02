@@ -987,7 +987,7 @@ public class MenuDAOImpl extends AbstractHibernateDAO implements IMenuDAO {
 			MenuIcon menuIcon = new MenuIcon();
 			try {
 				JSONObject jsonObject = new JSONObject(hibMenu.getIcon());
-				menuIcon.setId(jsonObject.getInt("id"));
+				menuIcon.setId(jsonObject.getString("id"));
 				menuIcon.setCategory(jsonObject.getString("category"));
 				menuIcon.setLabel(jsonObject.getString("label"));
 				menuIcon.setClassName(jsonObject.getString("className"));

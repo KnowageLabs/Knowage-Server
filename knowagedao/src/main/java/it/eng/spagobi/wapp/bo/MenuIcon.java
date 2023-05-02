@@ -15,7 +15,7 @@ public class MenuIcon {
 	private String className;
 	private String unicode;
 	private Boolean visible;
-	private Integer id;
+	private String id;
 	private String category;
 	private String src;
 
@@ -51,11 +51,11 @@ public class MenuIcon {
 		this.visible = visible;
 	}
 
-	public Integer getId() {
+	public String getId() {
 		return id;
 	}
 
-	public void setId(Integer id) {
+	public void setId(String id) {
 		this.id = id;
 	}
 

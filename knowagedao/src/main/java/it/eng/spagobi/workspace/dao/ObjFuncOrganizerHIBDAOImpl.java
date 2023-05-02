@@ -38,6 +38,11 @@ import it.eng.spagobi.workspace.metadata.SbiFunctionsOrganizer;
 import it.eng.spagobi.workspace.metadata.SbiObjFuncOrganizer;
 import it.eng.spagobi.workspace.metadata.SbiObjFuncOrganizerId;
 
+/**
+ * @deprecated Replaced by KNOWAGE_TM-513
+ * TODO : Delete
+ */
+@Deprecated
 public class ObjFuncOrganizerHIBDAOImpl extends AbstractHibernateDAO implements IObjFuncOrganizerDAO {
 
 	private static final Logger logger = Logger.getLogger(ObjFuncOrganizerHIBDAOImpl.class);
