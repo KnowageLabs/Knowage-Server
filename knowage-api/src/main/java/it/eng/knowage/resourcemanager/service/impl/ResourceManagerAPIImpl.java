@@ -163,7 +163,7 @@ public class ResourceManagerAPIImpl implements ResourceManagerAPI {
 				canSee = false;
 			}
 		}
-		if (nodeFile.isDirectory() && canSee) {
+		if (nodeFile.isDirectory() && canSee(nodePath, profile)) {
 			String[] subNote = nodeFile.list();
 			for (String fileName : subNote) {
 				Path path = nodePath.resolve(fileName);
@@ -208,7 +208,9 @@ public class ResourceManagerAPIImpl implements ResourceManagerAPI {
 
 					Path completePath = getTotalPath(folder, profile);
 					if (path.toString().toLowerCase().startsWith(completePath.toString().toLowerCase())
-							|| path.toString().toLowerCase().startsWith(getWorkDirectory(profile).toString().toLowerCase())) {
+							|| path.toString().toLowerCase().equals(getWorkDirectory(profile).toString().toLowerCase())
+							|| (path.toString().toLowerCase().startsWith(getWorkDirectory(profile).toString().toLowerCase()) && path.toFile().exists()
+									&& !path.toFile().isDirectory())) {
 						return true;
 					}
 
