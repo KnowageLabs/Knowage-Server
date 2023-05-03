@@ -451,6 +451,18 @@
 				font-size:.7rem;
 				font-weight:bold;
 			}
+			.legendLayerCircle{
+				margin: 0 3px;
+				min-height: 25px;
+				display: inline-flex;
+				justify-content: flex-start;
+				align-items: center;
+				div[type="circle"]{
+					border-width:1px;
+					border-radius:50%;
+					border-style: solid;
+				}
+			}
 			.legendStartLimit{
 				left: 0%;
 				position: relative;
