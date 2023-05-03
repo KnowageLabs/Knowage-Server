@@ -24,7 +24,7 @@
 					<span class="legendEndLimit">{{legendElem.classification[legendElem.classification.length-1].to_label}}</span>
 				</div>
 
-				<div layout="row" ng-style="getLegendElementsStyle()" ng-if="ngModel.style.legend.visualizationType == 'Range'" ng-repeat="classification in legendElem.classification">
+				<div type="range" layout="row" ng-style="getLegendElementsStyle()" ng-if="ngModel.style.legend.visualizationType == 'Range'" ng-repeat="classification in legendElem.classification">
 					<div class="mapWidgetLegendDot" ng-style="{ background: classification.color }"></div>
 					<div style="font-size:small;margin-left:5px;margin-right:5px;">[{{classification.from_label}}-{{classification.to_label}}]</div>
 				</div>
