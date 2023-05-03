@@ -147,7 +147,6 @@ export default defineComponent({
         formatMetadataFileValues() {
             if (!this.metadata) return
             this.metadata.file = this.metadata.file.map((file: any) => {
-                if (file.value) file.value = JSON.parse(file.value)
                 return file
             })
         },
