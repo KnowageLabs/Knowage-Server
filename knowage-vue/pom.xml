@@ -161,7 +161,7 @@
 							<executable>npm</executable>
 							<arguments>
 								<argument>install</argument>
-								<argument>--legacy-peer-deps</argument>
+								<argument>--workspaces</argument>
 							</arguments>
 						</configuration>
 					</execution>
