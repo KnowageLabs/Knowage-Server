@@ -20,8 +20,6 @@ package it.eng.spagobi.tools.objmetadata.bo;
 import java.io.Serializable;
 import java.util.Date;
 
-import org.json.JSONObject;
-
 /**
  * @author Antonella Giachino (antonella.giachino@eng.it)
  */
@@ -37,7 +35,7 @@ public class ObjMetacontent implements Serializable {
 	private Date creationDate = null;
 	private byte[] content = null;
 	private Integer binaryContentId = null;
-	private JSONObject additionalInfo = null;
+	private String additionalInfo = null;
 
 	/**
 	 * @return the objMetacontentId
@@ -162,7 +160,7 @@ public class ObjMetacontent implements Serializable {
 	/**
 	 * @return the additionalInfo
 	 */
-	public JSONObject getAdditionalInfo() {
+	public String getAdditionalInfo() {
 		return additionalInfo;
 	}
 
@@ -170,7 +168,7 @@ public class ObjMetacontent implements Serializable {
 	 * @param additionalInfo
 	 *            the additionalInfo to set
 	 */
-	public void setAdditionalInfo(JSONObject additionalInfo) {
+	public void setAdditionalInfo(String additionalInfo) {
 		this.additionalInfo = additionalInfo;
 	}
 
