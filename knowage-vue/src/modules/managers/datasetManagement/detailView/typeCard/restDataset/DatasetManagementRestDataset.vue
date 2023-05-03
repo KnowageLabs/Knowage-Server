@@ -170,7 +170,7 @@ export default defineComponent({
         setDatasetToComponent() {
             this.dataset = this.selectedDataset
 
-            this.dataset.restDirectlyJSONAttributes = Boolean(this.dataset.restDirectlyJSONAttributes)
+            this.dataset.restDirectlyJSONAttributes = this.dataset.restDirectlyJSONAttributes.toLowerCase() === 'true'
             this.dataset.restNGSI = this.dataset.restNGSI === 'true'
         }
     }
