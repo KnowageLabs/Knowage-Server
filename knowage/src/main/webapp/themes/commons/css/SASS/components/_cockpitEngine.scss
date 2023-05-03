@@ -376,12 +376,16 @@
 				
 				.mapWidgetLegend {
 					display: flex;
-					flex-direction: column;
+					flex-direction: row;
 					justify-content: center;
 					align-items: center;
 					
 					&>div {
 						width: 100%;
+						
+						div[type="range"]{
+							width:100%;
+						}
 						
 						.layout-column {
 							width: 100%;
@@ -446,6 +450,18 @@
 			.legendLayerLabel{
 				font-size:.7rem;
 				font-weight:bold;
+			}
+			.legendLayerCircle{
+				margin: 0 3px;
+				min-height: 25px;
+				display: inline-flex;
+				justify-content: flex-start;
+				align-items: center;
+				div[type="circle"]{
+					border-width:1px;
+					border-radius:50%;
+					border-style: solid;
+				}
 			}
 			.legendStartLimit{
 				left: 0%;
