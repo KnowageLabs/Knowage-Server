@@ -23,7 +23,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
-import java.util.Optional;
 
 import org.hibernate.HibernateException;
 import org.hibernate.usertype.UserType;
@@ -78,19 +77,14 @@ public class JSONObjectUserType implements UserType {
 
 	@Override
 	public Object nullSafeGet(ResultSet rs, String[] names, Object owner) throws HibernateException, SQLException {
-		Object ret = null;
 		if (!rs.wasNull()) {
 			try {
-				Optional<String> value = Optional.ofNullable(rs.getString(names[0]));
-
-				if (value.isPresent()) {
-					ret = new JSONObject(value.get());
-				}
+				return new JSONObject(rs.getString(names[0]));
 			} catch (JSONException e) {
 				throw new RuntimeException(e);
 			}
 		}
-		return ret;
+		return null;
 	}
 
 	@Override
