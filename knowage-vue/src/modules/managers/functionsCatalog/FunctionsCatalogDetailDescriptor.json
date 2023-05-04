@@ -2,7 +2,7 @@
     "dialog": {
         "style": {
             "height": "100vh",
-            "padding": "1rem"
+            "overflow": "auto"
         }
     },
     "styles": {
