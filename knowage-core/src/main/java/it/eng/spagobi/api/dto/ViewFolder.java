@@ -18,8 +18,12 @@
 
 package it.eng.spagobi.api.dto;
 
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
+
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
 /**
  * @author Marco Libanori
@@ -35,6 +39,12 @@ public class ViewFolder {
 	private String description;
 
 	private Integer progr;
+
+	@JsonInclude(Include.NON_NULL)
+	private Instant created;
+
+	@JsonInclude(Include.NON_NULL)
+	private Instant updated;
 
 	private final List<ViewFolder> children = new ArrayList<>();
 
@@ -60,6 +70,13 @@ public class ViewFolder {
 	 */
 	public List<ViewFolder> getChildren() {
 		return children;
+	}
+
+	/**
+	 * @return the created
+	 */
+	public Instant getCreated() {
+		return created;
 	}
 
 	/**
@@ -97,12 +114,26 @@ public class ViewFolder {
 		return progr;
 	}
 
+	/**
+	 * @return the updated
+	 */
+	public Instant getUpdated() {
+		return updated;
+	}
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + ((id == null) ? 0 : id.hashCode());
 		return result;
+	}
+
+	/**
+	 * @param created the created to set
+	 */
+	public void setCreated(Instant created) {
+		this.created = created;
 	}
 
 	/**
@@ -138,6 +169,13 @@ public class ViewFolder {
 	 */
 	public void setProgr(Integer progr) {
 		this.progr = progr;
+	}
+
+	/**
+	 * @param updated the updated to set
+	 */
+	public void setUpdated(Instant updated) {
+		this.updated = updated;
 	}
 
 	@Override
