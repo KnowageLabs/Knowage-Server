@@ -140,7 +140,11 @@ public class RepositoryResource extends AbstractSpagoBIResource {
 
 		String parentId = e.getParentId();
 
-		SbiViewHierarchy parent = getFolder(parentId);
+		SbiViewHierarchy parent = null;
+
+		if (nonNull(parentId)) {
+			parent = getFolder(parentId);
+		}
 
 		SbiViewHierarchy v = new SbiViewHierarchy();
 
@@ -162,7 +166,12 @@ public class RepositoryResource extends AbstractSpagoBIResource {
 
 		String parentId = e.getParentId();
 
-		SbiViewHierarchy parent = getFolder(parentId);
+		SbiViewHierarchy parent = null;
+
+		if (nonNull(parentId)) {
+			parent = getFolder(parentId);
+		}
+
 		SbiViewHierarchy v = getFolder(e.getId());
 
 		v.setDescr(e.getDescription());
