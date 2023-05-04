@@ -106,11 +106,11 @@
 				var extColor = mts.getColorFromClassification(externalLegend, value, parentLayer);
 				var configMarker = config.markerConf || {};
 				if (coordType == "string") {
-					style = mts.getMarkerStyles(value, parentLayer, props, configMarker, extColor);
+					style = mts.getMarkerStyles(externalLegend, value, parentLayer, props, configMarker, extColor);
 				} else {
 					var analysisConf = config.analysisConf || {};
 					var borderColor = configMarker.style.borderColor;
-					style = mts.getChoroplethStyles(value, parentLayer, extColor, borderColor);
+					style = mts.getChoroplethStyles(externalLegend, value, parentLayer, extColor, borderColor);
 				}
 			} else if (isCluster && feature.get('features').length > 1 ){
 				var configCluster = config.clusterConf || {};
@@ -123,7 +123,7 @@
 				style = mts.getPieStyles(value, parentLayer, props, configPie, measureStat);
 			} else {
 				var configMarker = config.markerConf || {};
-				style = mts.getMarkerStyles(value, parentLayer, props, configMarker);
+				style = mts.getMarkerStyles(externalLegend, value, parentLayer, props, configMarker);
 			}
 
 			return style;
@@ -244,8 +244,8 @@
 		            });
 		}
 
-		mts.getChoroplethStyles = function(value, parentLayer, fillColor, borderColor) {
-			var color =  mts.getColorFromClassification(value, parentLayer) || fillColor;
+		mts.getChoroplethStyles = function(externalLegend, value, parentLayer, fillColor, borderColor) {
+			var color =  mts.getColorFromClassification(externalLegend, value, parentLayer) || fillColor;
 
 			return  [new ol.style.Style({
 				stroke: new ol.style.Stroke({
@@ -259,12 +259,12 @@
 
 		}
 
-		mts.getMarkerStyles = function (value, parentLayer, props, config, extColor) {
+		mts.getMarkerStyles = function (externalLegend, value, parentLayer, props, config, extColor) {
 			var style;
 			var color = extColor;
 			var alpha;
 
-			if (!color) color = mts.getColorFromClassification(value, parentLayer);
+			if (!color) color = mts.getColorFromClassification(externalLegend, value, parentLayer);
 			if (!color) color = mts.getColorByThresholds(value, props);
 			if (!color) color = (config.style && config.style.color) ? config.style.color : 'grey';
 //			if (!color) color = (config.style && config.style.color) ? mts.rgbaToHex(config.style.color) : 'grey';
