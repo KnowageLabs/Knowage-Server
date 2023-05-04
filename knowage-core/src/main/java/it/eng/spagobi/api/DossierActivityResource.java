@@ -195,15 +195,22 @@ public class DossierActivityResource extends AbstractSpagoBIResource {
 		try {
 			String separator = File.separator;
 			final FormFile file = multipartFormDataInput.getFormFileParameterValues("file")[0];
-			ParameterValue documentIdParam = multipartFormDataInput.getParameteValues("documentId")[0];
+			ParameterValue[] documentIdArray = multipartFormDataInput.getParameteValues("documentId");
+			String identifier = "";
+			if (documentIdArray.length == 1) {
+				identifier = documentIdArray[0].toString();
+			} else {
+				identifier = multipartFormDataInput.getParameteValues("uuid")[0].toString();
+			}
+
 			String fileName = file.getFileName();
 			archiveBytes = file.getContent();
-			File dossierDir = new File(SpagoBIUtilities.getResourcePath() + separator + "dossier" + separator + documentIdParam + separator);
+			File dossierDir = new File(SpagoBIUtilities.getResourcePath() + separator + "dossier" + separator + identifier + separator);
 			if (!dossierDir.exists()) {
 				dossierDir.mkdir();
 			}
 			PathTraversalChecker.isValidFileName(fileName);
-			File f = new File(SpagoBIUtilities.getResourcePath() + separator + "dossier" + separator + documentIdParam + separator + fileName);
+			File f = new File(SpagoBIUtilities.getResourcePath() + separator + "dossier" + separator + identifier + separator + fileName);
 			PathTraversalChecker.preventPathTraversalAttack(f, dossierDir);
 			FileOutputStream outputStream = new FileOutputStream(f);
 			outputStream.write(archiveBytes);
