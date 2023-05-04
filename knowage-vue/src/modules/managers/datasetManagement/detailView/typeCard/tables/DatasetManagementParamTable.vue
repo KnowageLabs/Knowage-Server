@@ -85,6 +85,10 @@ export default defineComponent({
     },
     created() {
         this.dataset = this.selectedDataset
+        this.deleteMultivalueDefault()
+    },
+    updated() {
+        this.deleteMultivalueDefault()
     },
     watch: {
         selectedDataset() {
@@ -106,6 +110,13 @@ export default defineComponent({
                 })
             } else {
                 this.insertParameter()
+            }
+        },
+        deleteMultivalueDefault() {
+            if (this.dataset.pars.length > 0) {
+                this.dataset.pars.forEach((element) => {
+                    if (element.multiValue && element.defaultValue.length === 1 && element.defaultValue[0] === '') element.defaultValue.pop()
+                })
             }
         },
         checkboxChange(data) {
@@ -142,6 +153,14 @@ export default defineComponent({
 })
 </script>
 <style lang="scss" scoped>
+#scope {
+    width: 90%;
+    &:deep(span.p-dropdown-label) {
+        display: inline-flex;
+        align-items: center;
+        padding: 0;
+    }
+}
 .chipsContainer {
     width: 100%;
     &:deep(.p-chips) {
