@@ -23,6 +23,7 @@ public class AbstractDossierTemplate {
 	private DocDossierTemplate docTemplate;
 	private String downloadable;
 	private String uploadable;
+	private String prefix;
 
 	@JsonProperty("REPORT")
 	List<Report> reports = new ArrayList<>();
@@ -88,6 +89,16 @@ public class AbstractDossierTemplate {
 	@XmlAttribute(name = "uploadable", required = true)
 	public void setUploadable(String uploadable) {
 		this.uploadable = uploadable;
+	}
+
+	@JsonIgnore
+	public String getPrefix() {
+		return prefix;
+	}
+
+	@XmlAttribute(name = "prefix", required = false)
+	public void setPrefix(String prefix) {
+		this.prefix = prefix;
 	}
 
 	@JsonIgnore
