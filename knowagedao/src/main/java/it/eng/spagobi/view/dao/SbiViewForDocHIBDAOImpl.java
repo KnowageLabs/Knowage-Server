@@ -156,7 +156,7 @@ public class SbiViewForDocHIBDAOImpl extends AbstractHibernateDAO implements ISb
 			Filter filter = session.enableFilter(FILTER_USER);
 			filter.setParameter(FILTER_USER_PARAM_USER, userProfile.getUserId());
 
-			List list = session.createCriteria(SbiViewForDoc.class)
+			List<SbiViewForDoc> list = session.createCriteria(SbiViewForDoc.class)
 				.createAlias("parent", "parent")
 				.add(Restrictions.eq("parent.id", id))
 				.list();

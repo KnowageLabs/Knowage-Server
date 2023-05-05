@@ -156,7 +156,7 @@ public class SbiViewHierarchyHIBDAOImpl extends AbstractHibernateDAO implements 
 			Filter filter = session.enableFilter(FILTER_USER);
 			filter.setParameter(FILTER_USER_PARAM_USER, userProfile.getUserId());
 
-			List list = session.createCriteria(SbiViewHierarchy.class).list();
+			List<SbiViewHierarchy> list = session.createCriteria(SbiViewHierarchy.class).list();
 			e.addAll(list);
 
 		} finally {
