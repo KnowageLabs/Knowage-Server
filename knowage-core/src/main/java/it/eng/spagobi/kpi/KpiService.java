@@ -24,7 +24,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -36,6 +35,7 @@ import java.util.Set;
 
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
+import javax.script.ScriptException;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -52,8 +52,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.quartz.JobExecutionException;
 
-import com.fasterxml.jackson.core.JsonGenerationException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import it.eng.spago.error.EMFErrorSeverity;
@@ -194,7 +192,7 @@ public class KpiService {
 		Response out;
 		try {
 			JSONArray arrayOfKpi = RestUtilities.readBodyAsJSONArray(req);
-			List<Kpi> kpiLst = new ArrayList<>();
+			final List<Kpi> kpiLst = new ArrayList<>();
 			for (int i = 0; i < arrayOfKpi.length(); i++) {
 				JSONObject kpiKey = arrayOfKpi.getJSONObject(i);
 				kpiLst.add(new Kpi(kpiKey.getInt("id"), kpiKey.getInt("version")));
@@ -202,7 +200,7 @@ public class KpiService {
 			Map<String, String> result = new HashMap<>();
 
 			IKpiDAO dao = getKpiDAO(req);
-			if (kpiLst != null && !kpiLst.isEmpty()) {
+			if (!kpiLst.isEmpty()) {
 				Map<Kpi, List<String>> lst = dao.listPlaceholderByKpiList(kpiLst);
 
 				for (Entry<Kpi, List<String>> keyValue : lst.entrySet()) {
@@ -425,7 +423,7 @@ public class KpiService {
 
 	@GET
 	@Path("/findKpiValuesTest")
-	public Response findKpiValuesTest() throws EMFUserError, JsonGenerationException, JsonMappingException, IOException {
+	public Response findKpiValuesTest() throws IOException {
 		logger.debug("findKpiValuesTest IN");
 		Response out;
 		IKpiDAO kpiDao = DAOFactory.getKpiDAO();
@@ -721,7 +719,7 @@ public class KpiService {
 	@POST
 	@Path("/saveKpi")
 	@UserConstraint(functionalities = { CommunityFunctionalityConstants.KPI_MANAGEMENT })
-	public Response saveKpi(@Context HttpServletRequest req) throws EMFUserError, EMFInternalError {
+	public Response saveKpi(@Context HttpServletRequest req) throws EMFUserError {
 		logger.debug("saveKpi IN");
 		Response out;
 		IKpiDAO dao = getKpiDAO(req);
@@ -844,7 +842,7 @@ public class KpiService {
 		Response out;
 		IKpiDAO dao = getKpiDAO(req);
 		List<KpiScheduler> schedulerList = dao.listKpiScheduler();
-		out = Response.ok(JsonConverter.objectToJson(schedulerList, schedulerList.getClass()).toString()).build();
+		out = Response.ok(JsonConverter.objectToJson(schedulerList, schedulerList.getClass())).build();
 		logger.debug("listSchedulerKPI OUT");
 		return out;
 	}
@@ -887,10 +885,9 @@ public class KpiService {
 	@POST
 	@Path("/editKpiValue")
 	@UserConstraint(functionalities = { CommunityFunctionalityConstants.KPI_MANAGEMENT, CommunityFunctionalityConstants.MANAGE_KPI_VALUE })
-	public void editKpiValue(@Context HttpServletRequest req) throws EMFUserError {
+	public void editKpiValue(@Context HttpServletRequest req) {
 		logger.debug("editKpiValue IN");
 		Response out;
-		JSONArray array = new JSONArray();
 		UserProfile profile = (UserProfile) req.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
 		try {
 			JSONObject requestVal = RestUtilities.readBodyAsJSONObject(req);
@@ -944,7 +941,7 @@ public class KpiService {
 	 * *** Private methods ***
 	 */
 
-	private void checkConflictsWithKpi(JSError jsError, Rule rule, Map<Kpi, List<String>> kpimap, IKpiDAO kpiDao) throws EMFUserError {
+	private void checkConflictsWithKpi(JSError jsError, Rule rule, Map<Kpi, List<String>> kpimap, IKpiDAO kpiDao) {
 		if (rule.getId() != null && rule.getVersion() != null) {
 
 			// Checking if any removed measure is linked to a kpi (if so we cannot save this rule)
@@ -1030,7 +1027,7 @@ public class KpiService {
 						}
 					}
 					kpiNames.add(kpi.getName());
-					if (schedulerList.size() > 0) {
+					if (!schedulerList.isEmpty()) {
 						anyScheduler = true;
 					}
 				}
@@ -1112,8 +1109,6 @@ public class KpiService {
 			fieldName = "StartDate";
 		} else if (scheduler.getFrequency().getCron() == null) {
 			fieldName = "Crono";
-		} else if (scheduler.getDelta() == null) {
-			fieldName = "Delta";
 		} else if (scheduler.getKpis() == null || scheduler.getKpis().isEmpty()) {
 			fieldName = "Kpi list";
 		} else if (scheduler.getFrequency().getStartTime() == null) {
@@ -1183,7 +1178,7 @@ public class KpiService {
 		List<String> selectedAttrs = new ArrayList<>();
 	}
 
-	private void checkCardinality(JSError errors, String cardinality, String definition) throws JSONException, EMFUserError {
+	private void checkCardinality(JSError errors, String cardinality, String definition) throws JSONException {
 		JSONArray measureArray = new JSONObject(cardinality).getJSONArray("measureList");
 		JSONArray measureOfFormulaArray = new JSONObject(definition).getJSONArray("measures");
 		if (measureArray.length() != measureOfFormulaArray.length()) {
@@ -1212,12 +1207,7 @@ public class KpiService {
 					}
 				}
 			}
-			Collections.sort(measureLst, new Comparator<Measure>() {
-				@Override
-				public int compare(Measure m1, Measure m2) {
-					return m1.selectedAttrs.size() - m2.selectedAttrs.size();
-				}
-			});
+			Collections.sort(measureLst, (m1, m2) -> m1.selectedAttrs.size() - m2.selectedAttrs.size());
 			for (int i = 1; i < measureLst.size(); i++) {
 				Measure prevMeasure = measureLst.get(i - 1);
 				Measure currMeasure = measureLst.get(i);
@@ -1235,7 +1225,7 @@ public class KpiService {
 		if (threshold.getType() == null && threshold.getTypeId() == null) {
 			errors.addErrorKey(NEW_KPI_THRESHOLD_TYPE_MANDATORY);
 		}
-		if (threshold.getThresholdValues() == null || threshold.getThresholdValues().size() == 0) {
+		if (threshold.getThresholdValues() == null || threshold.getThresholdValues().isEmpty()) {
 			errors.addErrorKey(NEW_KPI_THRESHOLD_VALUES_MANDATORY);
 		}
 	}
@@ -1271,7 +1261,7 @@ public class KpiService {
 			if (script.matches("[\\s\\+\\-\\*/\\d\\(\\)]+")) {
 				try {
 					engine.eval(script);
-				} catch (Throwable e) {
+				} catch (ScriptException|NullPointerException e) {
 					jsError.addErrorKey(NEW_KPI_DEFINITION_SYNTAXERROR);
 				}
 			} else {
