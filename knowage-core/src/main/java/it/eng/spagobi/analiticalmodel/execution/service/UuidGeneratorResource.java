@@ -21,6 +21,8 @@ package it.eng.spagobi.analiticalmodel.execution.service;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.safehaus.uuid.UUID;
 import org.safehaus.uuid.UUIDGenerator;
 
@@ -29,12 +31,14 @@ import it.eng.spagobi.api.AbstractSpagoBIResource;
 @Path("/1.0/qbe-execution-id")
 public class UuidGeneratorResource extends AbstractSpagoBIResource {
 
+	private static final Logger LOGGER = LogManager.getLogger(UuidGeneratorResource.class);
+
 	@GET
 	@Path("/")
 	public String createNewExecutionId() {
 		String executionId;
 
-		logger.debug("IN");
+		LOGGER.debug("IN");
 
 		executionId = null;
 		try {
@@ -42,10 +46,8 @@ public class UuidGeneratorResource extends AbstractSpagoBIResource {
 			UUID uuidObj = uuidGen.generateTimeBasedUUID();
 			executionId = uuidObj.toString();
 			executionId = executionId.replaceAll("-", "");
-		} catch (Throwable t) {
-
 		} finally {
-			logger.debug("OUT");
+			LOGGER.debug("OUT");
 		}
 
 		return executionId;

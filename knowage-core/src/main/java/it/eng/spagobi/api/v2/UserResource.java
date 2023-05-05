@@ -39,6 +39,9 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import it.eng.spago.error.EMFInternalError;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
@@ -67,12 +70,14 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 @Path("/2.0/users")
 @ManageAuthorization
 public class UserResource extends AbstractSpagoBIResource {
-	private final String charset = "; charset=UTF-8";
+
+	private static final Logger LOGGER = LogManager.getLogger(UserResource.class);
+	private static final String CHARSET = "; charset=UTF-8";
 
 	@GET
 	@UserConstraint(functionalities = { CommunityFunctionalityConstants.PROFILE_MANAGEMENT, CommunityFunctionalityConstants.FINAL_USERS_MANAGEMENT })
 	@Path("/")
-	@Produces(MediaType.APPLICATION_JSON + charset)
+	@Produces(MediaType.APPLICATION_JSON + CHARSET)
 	public Response getUserList(@QueryParam("dateFilter") String dateFilter) {
 		ISbiUserDAO usersDao = null;
 		List<UserBO> fullList = null;
@@ -114,7 +119,7 @@ public class UserResource extends AbstractSpagoBIResource {
 
 			return Response.ok(fullList).build();
 		} catch (Exception e) {
-			logger.error("Error with loading resource", e);
+			LOGGER.error("Error with loading resource", e);
 			throw new SpagoBIRestServiceException("Error with loading resource", buildLocaleFromSession(), e);
 		}
 	}
@@ -122,7 +127,7 @@ public class UserResource extends AbstractSpagoBIResource {
 	@GET
 	@UserConstraint(functionalities = { CommunityFunctionalityConstants.PROFILE_MANAGEMENT, CommunityFunctionalityConstants.FINAL_USERS_MANAGEMENT })
 	@Path("/{id}")
-	@Produces(MediaType.APPLICATION_JSON + charset)
+	@Produces(MediaType.APPLICATION_JSON + CHARSET)
 	public Response getUserById(@PathParam("id") Integer id) {
 		ISbiUserDAO usersDao = null;
 		SbiUserDAOHibImpl hib = new SbiUserDAOHibImpl();
@@ -132,8 +137,8 @@ public class UserResource extends AbstractSpagoBIResource {
 		ProfileAttributeResourceRoleProcessor roleFilter = new ProfileAttributeResourceRoleProcessor();
 		try {
 
-			SbiUser sbiUser = new SbiUser();
-			UserBO user = new UserBO();
+			SbiUser sbiUser = null;
+			UserBO user = null;
 			usersDao = DAOFactory.getSbiUserDAO();
 			usersDao.setUserProfile(getUserProfile());
 			sbiUser = usersDao.loadSbiUserById(id);
@@ -149,7 +154,7 @@ public class UserResource extends AbstractSpagoBIResource {
 			}
 			return Response.ok(user).build();
 		} catch (Exception e) {
-			logger.error("User with selected id: " + id + " doesn't exists", e);
+			LOGGER.error("User with selected id: " + id + " doesn't exists", e);
 			throw new SpagoBIRestServiceException("Item with selected id: " + id + " doesn't exists", buildLocaleFromSession(), e);
 		}
 	}
@@ -163,7 +168,7 @@ public class UserResource extends AbstractSpagoBIResource {
 
 		String userId = requestDTO.getUserId();
 		if (userId.startsWith(PublicProfile.PUBLIC_USER_PREFIX)) {
-			logger.error("public is reserved prefix for user id");
+			LOGGER.error("public is reserved prefix for user id");
 			throw new SpagoBIServiceException("SPAGOBI_SERVICE", "public_ is a reserved prefix for user name", null);
 		}
 
@@ -172,7 +177,7 @@ public class UserResource extends AbstractSpagoBIResource {
 			usersDao.setUserProfile(getUserProfile());
 			SbiUser existingUser = usersDao.loadSbiUserByUserId(userId);
 			if (existingUser != null && userId.equals(existingUser.getUserId())) {
-				logger.error("User already exists. User_ID is unique");
+				LOGGER.error("User already exists. User_ID is unique");
 				throw new SpagoBIRestServiceException("User with provided ID already exists.", buildLocaleFromSession(), new Throwable());
 			}
 		} catch (SpagoBIRestServiceException ex) {
@@ -216,7 +221,7 @@ public class UserResource extends AbstractSpagoBIResource {
 			try {
 				sbiUser.setPassword(Password.encriptPassword(password));
 			} catch (Exception e) {
-				logger.error("Impossible to encrypt Password", e);
+				LOGGER.error("Impossible to encrypt Password", e);
 				throw new SpagoBIServiceException("SPAGOBI_SERVICE", "Impossible to encrypt Password", e);
 			}
 		}
@@ -226,7 +231,7 @@ public class UserResource extends AbstractSpagoBIResource {
 			String encodedUser = URLEncoder.encode("" + id, "UTF-8");
 			return Response.created(new URI("2.0/users/" + encodedUser)).entity(encodedUser).build();
 		} catch (Exception e) {
-			logger.error("Error while inserting resource", e);
+			LOGGER.error("Error while inserting resource", e);
 			throw new SpagoBIRestServiceException("Error while inserting resource", buildLocaleFromSession(), e);
 		}
 	}
@@ -243,7 +248,7 @@ public class UserResource extends AbstractSpagoBIResource {
 
 		String userId = requestDTO.getUserId();
 		if (userId.startsWith(PublicProfile.PUBLIC_USER_PREFIX)) {
-			logger.error("public is reserved prefix for user id");
+			LOGGER.error("public is reserved prefix for user id");
 			throw new SpagoBIServiceException("SPAGOBI_SERVICE", "public_ is a reserved prefix for user name", null);
 		}
 
@@ -258,7 +263,7 @@ public class UserResource extends AbstractSpagoBIResource {
 //		sbiUser.setFailedLoginAttempts(0);
 
 		List<Integer> list = requestDTO.getSbiExtUserRoleses();
-		Set<SbiExtRoles> roles = new HashSet<SbiExtRoles>(0);
+		Set<SbiExtRoles> roles = new HashSet<>(0);
 		for (Integer i : list) {
 			SbiExtRoles role = new SbiExtRoles();
 			role.setExtRoleId(i);
@@ -279,7 +284,7 @@ public class UserResource extends AbstractSpagoBIResource {
 			objDao.setUserProfile(getUserProfile());
 			attrList = objDao.loadSbiAttributes();
 		} catch (EMFUserError e1) {
-			logger.error("Impossible get attributes", e1);
+			LOGGER.error("Impossible get attributes", e1);
 		}
 
 		for (Entry<Integer, HashMap<String, String>> entry : map.entrySet()) {
@@ -301,7 +306,7 @@ public class UserResource extends AbstractSpagoBIResource {
 			if (objDao.getUserProfile().getRoles().size() == 1 && objDao.getUserProfile().getRoles().toArray()[0].equals("user"))
 				roleFilter.setAttributeHiddenFromUser(sbiUserOriginal, attributes, attrList);
 		} catch (EMFInternalError e1) {
-			logger.error(e1.getMessage(), e1);
+			LOGGER.error(e1.getMessage(), e1);
 		}
 
 		sbiUser.setSbiUserAttributeses(attributes);
@@ -311,7 +316,7 @@ public class UserResource extends AbstractSpagoBIResource {
 			try {
 				sbiUser.setPassword(Password.encriptPassword(password));
 			} catch (Exception e) {
-				logger.error("Impossible to encrypt Password", e);
+				LOGGER.error("Impossible to encrypt Password", e);
 				throw new SpagoBIServiceException("SPAGOBI_SERVICE", "Impossible to encrypt Password", e);
 			}
 		} else {
@@ -325,7 +330,7 @@ public class UserResource extends AbstractSpagoBIResource {
 			String encodedUser = URLEncoder.encode("" + idToReturn, "UTF-8");
 			return Response.created(new URI("2.0/users/" + encodedUser)).entity(encodedUser).build();
 		} catch (Exception e) {
-			logger.error(e.getMessage(), e);
+			LOGGER.error(e.getMessage(), e);
 			throw new SpagoBIRestServiceException(e.getMessage(), buildLocaleFromSession(), e);
 		}
 	}
@@ -344,7 +349,7 @@ public class UserResource extends AbstractSpagoBIResource {
 			String encodedUser = URLEncoder.encode("" + id, "UTF-8");
 			return Response.ok().entity(encodedUser).build();
 		} catch (Exception e) {
-			logger.error("Error with deleting resource with id: " + id, e);
+			LOGGER.error("Error with deleting resource with id: " + id, e);
 			throw new SpagoBIRestServiceException("Error with deleting resource with id: " + id, buildLocaleFromSession(), e);
 		}
 	}

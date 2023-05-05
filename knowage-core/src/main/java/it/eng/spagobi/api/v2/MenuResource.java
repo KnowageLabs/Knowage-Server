@@ -36,6 +36,8 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -66,7 +68,10 @@ import it.eng.spagobi.wapp.dao.IMenuDAO;
 @Path("/2.0/menu")
 @ManageAuthorization
 public class MenuResource extends AbstractSpagoBIResource {
-	private final String charset = "; charset=UTF-8";
+
+	private static final Logger LOGGER = LogManager.getLogger(MenuResource.class);
+
+	private static final String CHARSET = "; charset=UTF-8";
 
 	/**
 	 * Getting list of all menus. Arrays of Roles that belong to one menu are implemented to be like: One Role only with id and name
@@ -80,7 +85,7 @@ public class MenuResource extends AbstractSpagoBIResource {
 	@UserConstraint(functionalities = { CommunityFunctionalityConstants.MENU_MANAGEMENT })
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
 	public Response getMenues() {
-		logger.debug("IN");
+		LOGGER.debug("IN");
 
 		try {
 			UserProfile profile = getUserProfile();
@@ -94,10 +99,10 @@ public class MenuResource extends AbstractSpagoBIResource {
 			return Response.ok(allMenus).build();
 		} catch (Exception e) {
 			String errorString = "sbi.menu.load.menus.error";
-			logger.error(errorString, e);
+			LOGGER.error(errorString, e);
 			throw new SpagoBIRestServiceException(errorString, buildLocaleFromSession(), e);
 		} finally {
-			logger.debug("OUT");
+			LOGGER.debug("OUT");
 		}
 	}
 
@@ -107,7 +112,7 @@ public class MenuResource extends AbstractSpagoBIResource {
 	@UserConstraint(functionalities = { CommunityFunctionalityConstants.MENU_MANAGEMENT })
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
 	public String getFunctionalities() {
-		logger.debug("IN");
+		LOGGER.debug("IN");
 		JSONObject resp = new JSONObject();
 		try {
 			ILowFunctionalityDAO lowfuncdao = DAOFactory.getLowFunctionalityDAO();
@@ -123,10 +128,10 @@ public class MenuResource extends AbstractSpagoBIResource {
 
 		} catch (Exception e) {
 			String errorString = "sbi.menu.load.menus.error";
-			logger.error(errorString, e);
+			LOGGER.error(errorString, e);
 			throw new SpagoBIRestServiceException(errorString, buildLocaleFromSession(), e);
 		} finally {
-			logger.debug("OUT");
+			LOGGER.debug("OUT");
 		}
 	}
 
@@ -136,12 +141,9 @@ public class MenuResource extends AbstractSpagoBIResource {
 	@UserConstraint(functionalities = { CommunityFunctionalityConstants.MENU_MANAGEMENT })
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
 	public Response getHTMLs() {
-		logger.debug("IN");
+		LOGGER.debug("IN");
 
 		try {
-			UserProfile profile = getUserProfile();
-			IMenuDAO dao = DAOFactory.getMenuDAO();
-
 			String resourcePath = SpagoBIUtilities.getResourcePath() + File.separatorChar + "static_menu";
 			File dir = new File(resourcePath);
 			String[] files = null;
@@ -192,15 +194,15 @@ public class MenuResource extends AbstractSpagoBIResource {
 			return Response.ok(njo.toString()).build();
 
 		} catch (SpagoBIRuntimeException e) {
-			logger.error(e.getMessage(), e);
+			LOGGER.error(e.getMessage(), e);
 			throw new SpagoBIRestServiceException(e.getMessage(), buildLocaleFromSession(), e);
 
 		} catch (Exception e) {
 			String errorString = "sbi.menu.load.htmls.error";
-			logger.error(errorString, e);
+			LOGGER.error(errorString, e);
 			throw new SpagoBIRestServiceException(errorString, buildLocaleFromSession(), e);
 		} finally {
-			logger.debug("OUT");
+			LOGGER.debug("OUT");
 		}
 	}
 
@@ -213,7 +215,7 @@ public class MenuResource extends AbstractSpagoBIResource {
 	@GET
 	@Path("moveUp/{id}")
 	@UserConstraint(functionalities = { CommunityFunctionalityConstants.MENU_MANAGEMENT })
-	@Produces(MediaType.APPLICATION_JSON + charset)
+	@Produces(MediaType.APPLICATION_JSON + CHARSET)
 	public Response getMenuMoveUp(@PathParam("id") Integer id) {
 
 		try {
@@ -222,7 +224,7 @@ public class MenuResource extends AbstractSpagoBIResource {
 
 		} catch (Exception e) {
 			String errorString = "sbi.menu.load.menu.moveUp.error";
-			logger.error(errorString, e);
+			LOGGER.error(errorString, e);
 			throw new SpagoBIRestServiceException(errorString, buildLocaleFromSession(), e);
 		}
 
@@ -237,7 +239,7 @@ public class MenuResource extends AbstractSpagoBIResource {
 	@GET
 	@Path("moveDown/{id}")
 	@UserConstraint(functionalities = { CommunityFunctionalityConstants.MENU_MANAGEMENT })
-	@Produces(MediaType.APPLICATION_JSON + charset)
+	@Produces(MediaType.APPLICATION_JSON + CHARSET)
 	public Response getMenuMoveDown(@PathParam("id") Integer id) {
 
 		try {
@@ -246,7 +248,7 @@ public class MenuResource extends AbstractSpagoBIResource {
 
 		} catch (Exception e) {
 			String errorString = "sbi.menu.load.menu.moveDown.error";
-			logger.error(errorString, e);
+			LOGGER.error(errorString, e);
 			throw new SpagoBIRestServiceException(errorString, buildLocaleFromSession(), e);
 		}
 
@@ -255,7 +257,7 @@ public class MenuResource extends AbstractSpagoBIResource {
 	@GET
 	@Path("changeWithFather/{id}")
 	@UserConstraint(functionalities = { CommunityFunctionalityConstants.MENU_MANAGEMENT })
-	@Produces(MediaType.APPLICATION_JSON + charset)
+	@Produces(MediaType.APPLICATION_JSON + CHARSET)
 	public Response getMenuChangeWithFather(@PathParam("id") Integer id) {
 
 		try {
@@ -264,7 +266,7 @@ public class MenuResource extends AbstractSpagoBIResource {
 
 		} catch (Exception e) {
 			String errorString = "sbi.menu.load.menu.changeWithFather.error";
-			logger.error(errorString, e);
+			LOGGER.error(errorString, e);
 			throw new SpagoBIRestServiceException(errorString, buildLocaleFromSession(), e);
 		}
 
@@ -361,7 +363,7 @@ public class MenuResource extends AbstractSpagoBIResource {
 			return Response.ok(menu).build();
 		} catch (Exception e) {
 			String errorString = "sbi.menu.save.error";
-			logger.error(errorString, e);
+			LOGGER.error(errorString, e);
 			throw new SpagoBIRestServiceException(errorString, buildLocaleFromSession(), e);
 		}
 
@@ -498,7 +500,7 @@ public class MenuResource extends AbstractSpagoBIResource {
 
 		} catch (Exception e) {
 			String errorString = "sbi.menu.modify.error";
-			logger.error(errorString, e);
+			LOGGER.error(errorString, e);
 			throw new SpagoBIRestServiceException(errorString, buildLocaleFromSession(), e);
 		}
 	}
@@ -524,7 +526,7 @@ public class MenuResource extends AbstractSpagoBIResource {
 			return Response.ok().build();
 		} catch (Exception e) {
 			String errorString = "sbi.menu.delete.error";
-			logger.error(errorString, e);
+			LOGGER.error(errorString, e);
 			throw new SpagoBIRestServiceException(errorString, buildLocaleFromSession(), e);
 		}
 	}
@@ -532,7 +534,7 @@ public class MenuResource extends AbstractSpagoBIResource {
 	@GET
 	@Path("getParent/{id}")
 	@UserConstraint(functionalities = { CommunityFunctionalityConstants.MENU_MANAGEMENT })
-	@Produces(MediaType.APPLICATION_JSON + charset)
+	@Produces(MediaType.APPLICATION_JSON + CHARSET)
 	public Response getParent(@PathParam("id") Integer id) {
 
 		try {
@@ -541,7 +543,7 @@ public class MenuResource extends AbstractSpagoBIResource {
 
 		} catch (Exception e) {
 			String errorString = "sbi.menu.load.parent.menu";
-			logger.error(errorString, e);
+			LOGGER.error(errorString, e);
 			throw new SpagoBIRestServiceException(errorString, buildLocaleFromSession(), e);
 		}
 

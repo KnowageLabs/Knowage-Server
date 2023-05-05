@@ -39,6 +39,8 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.json.JSONObject;
 
 import it.eng.spagobi.api.AbstractSpagoBIResource;
@@ -56,7 +58,10 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRestServiceException;
 @Path("/2.0/i18nMessages")
 @ManageAuthorization
 public class I18nResource extends AbstractSpagoBIResource {
-	private final String charset = "; charset=UTF-8";
+
+	private static final Logger LOGGER = LogManager.getLogger(I18nResource.class);
+
+	private static final String CHARSET = "; charset=UTF-8";
 
 	@GET
 	@Path("/") // i18nmessages/
@@ -95,7 +100,7 @@ public class I18nResource extends AbstractSpagoBIResource {
 
 		} catch (Exception e) {
 			String errorString = "Error in getting translations";
-			logger.error(errorString, e);
+			LOGGER.error(errorString, e);
 			throw new SpagoBIRestServiceException(errorString, buildLocaleFromSession(), e);
 		}
 
@@ -106,7 +111,7 @@ public class I18nResource extends AbstractSpagoBIResource {
 	 */
 	@GET
 	@Path("/internationalization/") // i18nmessages/internationalization/
-	@Produces(MediaType.APPLICATION_JSON + charset)
+	@Produces(MediaType.APPLICATION_JSON + CHARSET)
 	public Response getAllI18NMessages(@QueryParam("currLanguage") String currLanguage) {
 		List<SbiI18NMessages> toReturn = null;
 		try {
@@ -114,7 +119,7 @@ public class I18nResource extends AbstractSpagoBIResource {
 			return Response.ok(toReturn).build();
 		} catch (Exception e) {
 			String errorString = "Error has occurred while getting Internationalization Message translations";
-			logger.error(errorString, e);
+			LOGGER.error(errorString, e);
 			throw new SpagoBIRestServiceException(errorString, buildLocaleFromSession(), e);
 		}
 	}
@@ -129,7 +134,7 @@ public class I18nResource extends AbstractSpagoBIResource {
 			I18NMessagesDAO.insertI18NMessage(toSbiI18NMessageBody(message));
 			return Response.ok().build();
 		} catch (Exception e) {
-			logger.error("Error while saving I18NMessage", e);
+			LOGGER.error("Error while saving I18NMessage", e);
 			throw new SpagoBIRestServiceException("Error while saving new I18NMessage", buildLocaleFromSession(), e);
 		}
 	}
@@ -155,7 +160,7 @@ public class I18nResource extends AbstractSpagoBIResource {
 			String encodedI18NMessage = URLEncoder.encode("" + message.getId(), "UTF-8");
 			return Response.created(new URI("/2.0/i18nMessages/" + encodedI18NMessage)).entity(encodedI18NMessage).build();
 		} catch (Exception e) {
-			logger.error("Error while updating I18NMessage", e);
+			LOGGER.error("Error while updating I18NMessage", e);
 			throw new SpagoBIRestServiceException("Error while updating I18NMessage", buildLocaleFromSession(), e);
 		}
 	}
@@ -177,7 +182,7 @@ public class I18nResource extends AbstractSpagoBIResource {
 			String encodedI18NMessage = URLEncoder.encode("" + id, "UTF-8");
 			return Response.ok().entity(encodedI18NMessage).build();
 		} catch (Exception e) {
-			logger.error("Error has occurred while deleting I18NMessage", e);
+			LOGGER.error("Error has occurred while deleting I18NMessage", e);
 			throw new SpagoBIRestServiceException("Error while deleting I18NMessage", buildLocaleFromSession(), e);
 		}
 	}
@@ -197,7 +202,7 @@ public class I18nResource extends AbstractSpagoBIResource {
 			String encodedI18NMessage = URLEncoder.encode("" + id, "UTF-8");
 			return Response.ok().entity(encodedI18NMessage).build();
 		} catch (Exception e) {
-			logger.error("Error has occurred while deleting Default-Language I18NMessage", e);
+			LOGGER.error("Error has occurred while deleting Default-Language I18NMessage", e);
 			throw new SpagoBIRestServiceException("Error while deleting Default-Language I18NMessage", buildLocaleFromSession(), e);
 		}
 	}

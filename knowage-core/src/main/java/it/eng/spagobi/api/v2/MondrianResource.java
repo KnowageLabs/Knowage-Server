@@ -39,6 +39,8 @@ import javax.ws.rs.core.UriInfo;
 
 import org.apache.clerezza.jaxrs.utils.form.FormFile;
 import org.apache.clerezza.jaxrs.utils.form.MultiPartBody;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import it.eng.spagobi.api.AbstractSpagoBIResource;
 import it.eng.spagobi.commons.dao.DAOFactory;
@@ -52,6 +54,8 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 @Path("2.0/mondrianSchemasResource")
 @ManageAuthorization
 public class MondrianResource extends AbstractSpagoBIResource {
+
+	private static final Logger LOGGER = LogManager.getLogger(MondrianResource.class);
 
 	@Context
 	private UriInfo uri;
@@ -75,7 +79,7 @@ public class MondrianResource extends AbstractSpagoBIResource {
 			e.printStackTrace();
 		}
 
-		return new ArrayList<Artifact>();
+		return new ArrayList<>();
 	}
 
 	// TODO insert correct Functionalities
@@ -92,10 +96,10 @@ public class MondrianResource extends AbstractSpagoBIResource {
 			artifact = artifactDAO.loadArtifactById(id);
 
 		} catch (Exception e) {
-			logger.error("Error while getting artifact with id: " + id, e);
+			LOGGER.error("Error while getting artifact with id: " + id, e);
 
 		} finally {
-			logger.debug("OUT");
+			LOGGER.debug("OUT");
 		}
 		return artifact;
 	}
@@ -110,10 +114,10 @@ public class MondrianResource extends AbstractSpagoBIResource {
 			artifactDAO.setUserProfile(getUserProfile());
 			artifact = artifactDAO.loadArtifactByNameAndType(name, "MONDRIAN_SCHEMA");
 		} catch (Exception e) {
-			logger.error("Error while getting artifact with name: " + name, e);
+			LOGGER.error("Error while getting artifact with name: " + name, e);
 			throw new SpagoBIServiceException(this.request.getPathInfo(), "Error while getting artifact with name: " + name, e);
 		} finally {
-			logger.debug("OUT");
+			LOGGER.debug("OUT");
 		}
 		return artifact;
 	}
@@ -133,10 +137,10 @@ public class MondrianResource extends AbstractSpagoBIResource {
 			versions = artifactDAO.loadArtifactVersions(id);
 
 		} catch (Exception e) {
-			logger.error("Error while getting artifact versions with id: " + id, e);
+			LOGGER.error("Error while getting artifact versions with id: " + id, e);
 
 		} finally {
-			logger.debug("OUT");
+			LOGGER.debug("OUT");
 		}
 		return versions;
 	}
@@ -158,7 +162,7 @@ public class MondrianResource extends AbstractSpagoBIResource {
 			}
 
 		} catch (Exception e) {
-			logger.error("Error while getting artifact versions with id: " + id, e);
+			LOGGER.error("Error while getting artifact versions with id: " + id, e);
 
 		}
 		return null;
@@ -184,7 +188,7 @@ public class MondrianResource extends AbstractSpagoBIResource {
 			return response.build();
 
 		} catch (Exception e) {
-			logger.error("Error while getting artifact versions with id: " + id, e);
+			LOGGER.error("Error while getting artifact versions with id: " + id, e);
 
 		}
 		return Response.status(Status.BAD_REQUEST).entity("Error ").build();
@@ -214,7 +218,7 @@ public class MondrianResource extends AbstractSpagoBIResource {
 		} catch (Exception e) {
 
 			Response.notModified().build();
-			logger.error("Error while adding new artifact", e);
+			LOGGER.error("Error while adding new artifact", e);
 			throw new SpagoBIRuntimeException("Error while adding new artifact", e);
 		}
 
@@ -257,7 +261,7 @@ public class MondrianResource extends AbstractSpagoBIResource {
 	@Consumes(MediaType.APPLICATION_JSON)
 	public Response update(@PathParam("ID") int artifactId, @Valid Artifact artifact) {
 
-		logger.debug("IN");
+		LOGGER.debug("IN");
 
 		if (artifact == null) {
 			return Response.status(Status.BAD_REQUEST).entity("Error JSON parsing").build();
@@ -291,7 +295,7 @@ public class MondrianResource extends AbstractSpagoBIResource {
 			return Response.ok(savedArtifact).build();
 
 		} catch (Exception e) {
-			logger.error("Error while updating url of the new resource", e);
+			LOGGER.error("Error while updating url of the new resource", e);
 			throw new SpagoBIRuntimeException("Error while updating url of the new resource", e);
 
 		}
@@ -314,7 +318,7 @@ public class MondrianResource extends AbstractSpagoBIResource {
 
 			return Response.ok().build();
 		} catch (Exception e) {
-			logger.error("Error while deleting url of the new resource", e);
+			LOGGER.error("Error while deleting url of the new resource", e);
 			throw new SpagoBIRuntimeException("Error while deleting url of the new resource", e);
 		}
 
@@ -363,7 +367,7 @@ public class MondrianResource extends AbstractSpagoBIResource {
 			}
 
 		} catch (Exception e) {
-			logger.error("Error while deleting url of the new resource", e);
+			LOGGER.error("Error while deleting url of the new resource", e);
 			throw new SpagoBIRuntimeException("Error while deleting url of the new resource", e);
 
 		}

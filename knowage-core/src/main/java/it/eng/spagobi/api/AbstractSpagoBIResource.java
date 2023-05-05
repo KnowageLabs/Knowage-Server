@@ -22,8 +22,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.core.Context;
 
-import org.apache.log4j.Logger;
-
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.utilities.UserUtilities;
 import it.eng.spagobi.user.UserProfileManager;
@@ -40,15 +38,9 @@ public class AbstractSpagoBIResource extends AbstractRestService {
 
 	@Context
 	protected HttpServletRequest request;
+
 	@Context
 	protected HttpServletResponse response;
-
-	/**
-	 * @deprecated Substitute this with a specific logger in evert subclass.
-	 * TODO Delete
-	 */
-	@Deprecated
-	public static final Logger logger = Logger.getLogger(AbstractSpagoBIResource.class);
 
 	public EngineStartServletIOManager getIOManager() {
 		EngineStartServletIOManager ioManager = null;
