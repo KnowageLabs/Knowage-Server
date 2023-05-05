@@ -379,6 +379,7 @@
 				
 				.mapWidgetLegend {
 					display: flex;
+					flex-direction: row;
 					justify-content: center;
 					align-items: center;
 					
@@ -499,14 +500,8 @@
 			}
 
 			.mapWidgetLegendElementLoop {
-				display: flex;
-			    justify-content: center;
-			    align-items: center;
 				width: 100%;
 				padding: 5px;
-				&>div {
-					flex:1;
-				}
 			}
 
 			.mapWidgetLegendGradient {
