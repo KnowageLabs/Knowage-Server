@@ -161,13 +161,13 @@ public class DocumentCompositionExporterAction extends AbstractSpagoBIAction {
 				response.setHeader("Content-Disposition", "filename=\"report." + outputType + "\";");
 				response.setContentLength((int) tmpFile.length());
 
-				BufferedInputStream in = new BufferedInputStream(new FileInputStream(tmpFile));
-				int b = -1;
-				while ((b = in.read()) != -1) {
-					response.getOutputStream().write(b);
+				try (BufferedInputStream in = new BufferedInputStream(new FileInputStream(tmpFile))) {
+					int b = -1;
+					while ((b = in.read()) != -1) {
+						response.getOutputStream().write(b);
+					}
+					response.getOutputStream().flush();
 				}
-				response.getOutputStream().flush();
-				in.close();
 			}
 			logger.debug("OUT");
 
