@@ -30,9 +30,9 @@
 				</div>
 			</div>
 
-			<div ng-style="getLegendSectionContainerStyle()" layout="{{ getLegendDisposition() }}" ng-show="getLayerVisibility(legendElem.layer)" ng-if="legendElem.visualizationType == 'choropleth' && legendElem.method == 'CLASSIFY_BY_RANGES'">
+			<div ng-style="getLegendSectionContainerStyle()" class="layout-fill" layout="{{ getLegendDisposition() }}" ng-show="getLayerVisibility(legendElem.layer)" ng-if="legendElem.visualizationType == 'choropleth' && legendElem.method == 'CLASSIFY_BY_RANGES'">
 				<span class="legendLayerLabel" ng-style="getLegendSpanElementsStyle()">{{legendElem.alias}}</span>
-				<div layout="row" ng-style="getLegendElementsStyle()" ng-repeat="classification in legendElem.classification">
+				<div layout="row" ng-style="getLegendElementsStyle()" ng-repeat="classification in legendElem.classification" style="align-items:center">
 					<div class="mapWidgetLegendDot" ng-style="{ background: classification.color }"></div>
 					<div style="font-size:small;margin-left:5px;margin-right:5px;">[{{classification.from_label}}-{{classification.to_label}}]</div>
 				</div>
@@ -40,7 +40,7 @@
 			<div ng-if="legendElem.visualizationType == 'balloons'" ng-style="getLegendSectionContainerStyle()" layout="{{ getLegendDisposition() }}" ng-show="getLayerVisibility(legendElem.layer)">
 				<span class="legendLayerLabel" ng-style="getLegendSpanElementsStyle()">{{legendElem.alias}}</span>
 				<div class="legendLayerCircle" ng-if="classification && classification.dimension" layout="row" ng-style="getLegendElementsStyle()" ng-repeat="classification in legendElem.classification">
-					<div type="circle" ng-style="{'width':classification.dimension,'height':classification.dimension,'background-color':classification.color,'border-color':classification.borderColor}"></div>
+					<div type="circle" ng-style="{'min-width':classification.dimension,'width':classification.dimension,'height':classification.dimension,'background-color':classification.color,'border-color':classification.borderColor}"></div>
 					<span class="legendStartLimit">[{{classification.from_label}}-{{classification.to_label}}]</span>
 				</div>
 			</div>
