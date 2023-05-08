@@ -54,7 +54,6 @@ import it.eng.spagobi.commons.constants.CommunityFunctionalityConstants;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.dao.ICategoryDAO;
-import it.eng.spagobi.commons.dao.IDomainDAO;
 import it.eng.spagobi.commons.dao.IRoleDAO;
 import it.eng.spagobi.commons.domains.DomainCRUD;
 import it.eng.spagobi.commons.utilities.UserUtilities;
@@ -103,7 +102,7 @@ public class RolesResource extends AbstractSpagoBIResource {
 	}
 
 	private List<Role> filterRolesListForFinalUser(List<Role> allRoles) {
-		List<Role> toReturn = new ArrayList<Role>();
+		List<Role> toReturn = new ArrayList<>();
 		for (Role role : allRoles) {
 			if (role.getRoleTypeCD().equalsIgnoreCase(SpagoBIConstants.ROLE_TYPE_USER)) {
 				toReturn.add(role);
@@ -136,7 +135,7 @@ public class RolesResource extends AbstractSpagoBIResource {
 	@Path("/idsByNames")
 	public Response getRolesIdsByName(@QueryParam("name") List<String> roleNames) {
 		IRoleDAO rolesDao = null;
-		List roles = new ArrayList<>();
+		List<Integer> roles = new ArrayList<>();
 		try {
 			for (int i = 0; i < roleNames.size(); i++) {
 				Role role = null;
@@ -196,8 +195,8 @@ public class RolesResource extends AbstractSpagoBIResource {
 				resp = array;
 
 			} else {
-				for (Iterator iterator = roles.iterator(); iterator.hasNext();) {
-					String role = (String) iterator.next();
+				for (Iterator<String> iterator = roles.iterator(); iterator.hasNext();) {
+					String role = iterator.next();
 					rolesDao = DAOFactory.getRoleDAO();
 					rolesDao.setUserProfile(getUserProfile());
 					ds.addAll(rolesDao.getDataSetCategoriesForRole(role));
@@ -224,7 +223,7 @@ public class RolesResource extends AbstractSpagoBIResource {
 	@Consumes(MediaType.APPLICATION_JSON)
 	public Response insertRole(@Valid RoleBO body) {
 		IRoleDAO rolesDao = null;
-		Role role = BOtoRole(body);
+		Role role = roleBoToRole(body);
 		List<RoleMetaModelCategory> listMetaModelCategories = body.getRoleMetaModelCategories();
 		try {
 			rolesDao = DAOFactory.getRoleDAO();
@@ -250,14 +249,13 @@ public class RolesResource extends AbstractSpagoBIResource {
 	@Consumes(MediaType.APPLICATION_JSON)
 	public Response updateRole(@PathParam("id") Integer id, @Valid RoleBO body) {
 
-		Role role = BOtoRole(body);
+		Role role = roleBoToRole(body);
 		role.setId(body.getId());
 		List<RoleMetaModelCategory> listMetaModelCategories = body.getRoleMetaModelCategories();
 		List<Domain> listAll;
 
 		try {
 			IRoleDAO rolesDao = DAOFactory.getRoleDAO();
-			IDomainDAO domainsDao = DAOFactory.getDomainDAO();
 			ICategoryDAO categoryDao = DAOFactory.getCategoryDAO();
 			rolesDao.setUserProfile(getUserProfile());
 			rolesDao.modifyRole(role);
@@ -319,8 +317,8 @@ public class RolesResource extends AbstractSpagoBIResource {
 			rolesDao = DAOFactory.getRoleDAO();
 			rolesDao.setUserProfile(getUserProfile());
 			// Remove Role - Business Model Categories Associations
-			List<RoleMetaModelCategory> RoleMetaModelCategories = rolesDao.getMetaModelCategoriesForRole(id);
-			for (RoleMetaModelCategory roleMetaModelCategory : RoleMetaModelCategories) {
+			List<RoleMetaModelCategory> roleMetaModelCategories = rolesDao.getMetaModelCategoriesForRole(id);
+			for (RoleMetaModelCategory roleMetaModelCategory : roleMetaModelCategories) {
 				rolesDao.removeRoleMetaModelCategory(roleMetaModelCategory.getRoleId(), roleMetaModelCategory.getCategoryId());
 			}
 
@@ -333,7 +331,7 @@ public class RolesResource extends AbstractSpagoBIResource {
 		}
 	}
 
-	public Role BOtoRole(RoleBO bo) {
+	public Role roleBoToRole(RoleBO bo) {
 		Role role = new Role();
 		role.setName(bo.getName());
 		role.setCode(bo.getCode());

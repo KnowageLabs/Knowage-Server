@@ -39,8 +39,8 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.criterion.Criterion;
-import org.hibernate.criterion.Expression;
 import org.hibernate.criterion.MatchMode;
+import org.hibernate.criterion.Restrictions;
 
 import it.eng.spago.base.RequestContainer;
 import it.eng.spago.base.SessionContainer;
@@ -76,7 +76,7 @@ import net.sf.ehcache.Element;
  * Defines the Hibernate implementations for all DAO methods, for a functionality.
  */
 public class LowFunctionalityDAOHibImpl extends AbstractHibernateDAO implements ILowFunctionalityDAO {
-	private static transient Logger logger = Logger.getLogger(LowFunctionalityDAOHibImpl.class);
+	private static final Logger LOGGER = Logger.getLogger(LowFunctionalityDAOHibImpl.class);
 
 	public static final String PAGE = "PAGE";
 	public static final String ROOT = "ROOT";
@@ -95,15 +95,15 @@ public class LowFunctionalityDAOHibImpl extends AbstractHibernateDAO implements 
 	 */
 	@Override
 	public boolean checkUserRootExists(String userId) throws EMFUserError {
-		logger.debug("IN");
+		LOGGER.debug("IN");
 		boolean exists = false;
 		Session aSession = null;
 		Transaction tx = null;
 		try {
 			aSession = getSession();
 			tx = aSession.beginTransaction();
-			Criterion userfunctANDnullparent = Expression.and(Expression.isNull("parentFunct"), Expression.eq("functTypeCd", "USER_FUNCT"));
-			Criterion filters = Expression.and(userfunctANDnullparent, Expression.like("path", "/" + userId));
+			Criterion userfunctANDnullparent = Restrictions.and(Restrictions.isNull("parentFunct"), Restrictions.eq("functTypeCd", "USER_FUNCT"));
+			Criterion filters = Restrictions.and(userfunctANDnullparent, Restrictions.like("path", "/" + userId));
 			Criteria criteria = aSession.createCriteria(SbiFunctions.class);
 			criteria.add(filters);
 			SbiFunctions hibFunct = (SbiFunctions) criteria.uniqueResult();
@@ -111,7 +111,7 @@ public class LowFunctionalityDAOHibImpl extends AbstractHibernateDAO implements 
 				exists = true;
 			tx.commit();
 		} catch (HibernateException he) {
-			logger.error("HibernateException", he);
+			LOGGER.error("HibernateException", he);
 			if (tx != null)
 				tx.rollback();
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
@@ -121,7 +121,7 @@ public class LowFunctionalityDAOHibImpl extends AbstractHibernateDAO implements 
 					aSession.close();
 			}
 		}
-		logger.debug("OUT");
+		LOGGER.debug("OUT");
 		return exists;
 	}
 
@@ -133,7 +133,7 @@ public class LowFunctionalityDAOHibImpl extends AbstractHibernateDAO implements 
 	 */
 	@Override
 	public void insertUserFunctionality(UserFunctionality userfunct) throws EMFUserError {
-		logger.debug("IN");
+		LOGGER.debug("IN");
 		Session aSession = null;
 		Transaction tx = null;
 		try {
@@ -142,7 +142,7 @@ public class LowFunctionalityDAOHibImpl extends AbstractHibernateDAO implements 
 			SbiFunctions hibFunct = new SbiFunctions();
 
 			// recover sbidomain of the user functionality
-			Criterion vcdEQusfunct = Expression.eq("valueCd", "USER_FUNCT");
+			Criterion vcdEQusfunct = Restrictions.eq("valueCd", "USER_FUNCT");
 			Criteria criteria = aSession.createCriteria(SbiDomains.class);
 			criteria.add(vcdEQusfunct);
 			SbiDomains functTypeDomain = (SbiDomains) criteria.uniqueResult();
@@ -160,11 +160,11 @@ public class LowFunctionalityDAOHibImpl extends AbstractHibernateDAO implements 
 				// if it is not the root controls if the parent functionality
 				// exists
 				Criteria parentCriteria = aSession.createCriteria(SbiFunctions.class);
-				Criterion parentCriterion = Expression.eq("functId", parentId);
+				Criterion parentCriterion = Restrictions.eq("functId", parentId);
 				parentCriteria.add(parentCriterion);
 				hibParentFunct = (SbiFunctions) parentCriteria.uniqueResult();
 				if (hibParentFunct == null) {
-					logger.error("The parent Functionality with id = " + parentId + " does not exist.");
+					LOGGER.error("The parent Functionality with id = " + parentId + " does not exist.");
 					throw new EMFUserError(EMFErrorSeverity.ERROR, 1038);
 				}
 			}
@@ -183,9 +183,9 @@ public class LowFunctionalityDAOHibImpl extends AbstractHibernateDAO implements 
 				hibQuery.setInteger(0, parentId.intValue());
 				Integer maxProg = (Integer) hibQuery.uniqueResult();
 				if (maxProg != null)
-					hibFunct.setProg(new Integer(maxProg.intValue() + 1));
+					hibFunct.setProg(maxProg.intValue() + 1);
 				else
-					hibFunct.setProg(new Integer(1));
+					hibFunct.setProg(1);
 			}
 
 			updateSbiCommonInfo4Insert(hibFunct, true);
@@ -196,10 +196,10 @@ public class LowFunctionalityDAOHibImpl extends AbstractHibernateDAO implements 
 
 			/*
 			 * TODO does it make sens to assign execution permissions on personal folder??? Set functRoleToSave = new HashSet(); criteria =
-			 * aSession.createCriteria(SbiDomains.class); Criterion relstatecriterion = Expression.eq("valueCd", "REL"); criteria.add(relstatecriterion);
+			 * aSession.createCriteria(SbiDomains.class); Criterion relstatecriterion = Restrictions.eq("valueCd", "REL"); criteria.add(relstatecriterion);
 			 * SbiDomains relStateDomain = (SbiDomains)criteria.uniqueResult(); Criterion nameEqrolenameCri = null; Role[] roles = userfunct.getExecRoles();
 			 * if(roles!=null){ for(int i=0; i<roles.length; i++) { Role role = roles[i]; if (role!=null) { logger.debug("Role Name="+role.getName());
-			 * nameEqrolenameCri = Expression.eq("name", role.getName()); } else logger.debug("Role IS NULL");
+			 * nameEqrolenameCri = Restrictions.eq("name", role.getName()); } else logger.debug("Role IS NULL");
 			 *
 			 * criteria = aSession.createCriteria(SbiExtRoles.class); criteria.add(nameEqrolenameCri); SbiExtRoles hibRole =
 			 * (SbiExtRoles)criteria.uniqueResult(); SbiFuncRoleId sbifuncroleid = new SbiFuncRoleId(); sbifuncroleid.setFunction(hibFunct);
@@ -210,7 +210,7 @@ public class LowFunctionalityDAOHibImpl extends AbstractHibernateDAO implements 
 
 			tx.commit();
 		} catch (HibernateException he) {
-			logger.error("HibernateException", he);
+			LOGGER.error("HibernateException", he);
 			if (tx != null)
 				tx.rollback();
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
@@ -218,7 +218,7 @@ public class LowFunctionalityDAOHibImpl extends AbstractHibernateDAO implements 
 			if (aSession != null) {
 				if (aSession.isOpen())
 					aSession.close();
-				logger.debug("OUT");
+				LOGGER.debug("OUT");
 			}
 		}
 
@@ -242,11 +242,11 @@ public class LowFunctionalityDAOHibImpl extends AbstractHibernateDAO implements 
 	 */
 	@Override
 	public LowFunctionality loadLowFunctionalityByID(Integer functionalityID, boolean recoverBIObjects) throws EMFUserError {
-		logger.debug("IN");
+		LOGGER.debug("IN");
 		LowFunctionality funct = null;
 		funct = getFromCache(String.valueOf(functionalityID));
 		if (funct == null) {
-			logger.debug("Not found a LowFunctionality [ " + functionalityID + " ] into the cache");
+			LOGGER.debug("Not found a LowFunctionality [ " + functionalityID + " ] into the cache");
 			Session aSession = null;
 			Transaction tx = null;
 			try {
@@ -258,7 +258,7 @@ public class LowFunctionalityDAOHibImpl extends AbstractHibernateDAO implements 
 				}
 				tx.commit();
 			} catch (HibernateException he) {
-				logger.error("HibernateException", he);
+				LOGGER.error("HibernateException", he);
 				if (tx != null)
 					tx.rollback();
 				throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
@@ -270,7 +270,7 @@ public class LowFunctionalityDAOHibImpl extends AbstractHibernateDAO implements 
 			}
 			putIntoCache(String.valueOf(functionalityID), funct);
 		}
-		logger.debug("OUT");
+		LOGGER.debug("OUT");
 		return funct;
 	}
 
@@ -288,7 +288,7 @@ public class LowFunctionalityDAOHibImpl extends AbstractHibernateDAO implements 
 	 */
 	@Override
 	public LowFunctionality loadLowFunctionalityByCode(String code, boolean recoverBIObjects) throws EMFUserError {
-		logger.debug("IN");
+		LOGGER.debug("IN");
 		LowFunctionality funct = null;
 		funct = getFromCache(code);
 		if (funct == null) {
@@ -297,7 +297,7 @@ public class LowFunctionalityDAOHibImpl extends AbstractHibernateDAO implements 
 			try {
 				aSession = getSession();
 				tx = aSession.beginTransaction();
-				Criterion labelCriterrion = Expression.eq("code", code);
+				Criterion labelCriterrion = Restrictions.eq("code", code);
 				Criteria criteria = aSession.createCriteria(SbiFunctions.class);
 				criteria.add(labelCriterrion);
 				SbiFunctions hibFunct = (SbiFunctions) criteria.uniqueResult();
@@ -307,7 +307,7 @@ public class LowFunctionalityDAOHibImpl extends AbstractHibernateDAO implements 
 					return null;
 				tx.commit();
 			} catch (HibernateException he) {
-				logger.error("HibernateException", he);
+				LOGGER.error("HibernateException", he);
 				if (tx != null)
 					tx.rollback();
 				throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
@@ -319,7 +319,7 @@ public class LowFunctionalityDAOHibImpl extends AbstractHibernateDAO implements 
 			}
 			putIntoCache(code, funct);
 		}
-		logger.debug("OUT");
+		LOGGER.debug("OUT");
 		return funct;
 	}
 
@@ -336,22 +336,22 @@ public class LowFunctionalityDAOHibImpl extends AbstractHibernateDAO implements 
 	 */
 	@Override
 	public List loadLowFunctionalityList(List functionalityIDs) throws EMFUserError {
-		logger.debug("IN");
-		List lowFunctList = new ArrayList();
+		LOGGER.debug("IN");
+		List<LowFunctionality> lowFunctList = new ArrayList<>();
 		List filteredFunctionalityIDs = new ArrayList();
 		if (functionalityIDs != null && !functionalityIDs.isEmpty()) {
-			logger.debug("SIZE=" + functionalityIDs.size());
+			LOGGER.debug("SIZE=" + functionalityIDs.size());
 			Iterator iter = functionalityIDs.iterator();
 			while (iter.hasNext()) {
 				Object id = iter.next();
 				Integer intId = (Integer) iter.next();
-				logger.debug("Function ID=" + intId.toString());
+				LOGGER.debug("Function ID=" + intId.toString());
 				LowFunctionality funct = getFromCache(intId.toString());
 				if (funct != null) {
-					logger.debug("Function ID=" + intId.toString() + "found from cache");
+					LOGGER.debug("Function ID=" + intId.toString() + "found from cache");
 					lowFunctList.add(funct);
 				} else {
-					logger.debug("Function ID=" + intId.toString() + "not found from cache.");
+					LOGGER.debug("Function ID=" + intId.toString() + "not found from cache.");
 					filteredFunctionalityIDs.add(id);
 				}
 			}
@@ -364,7 +364,7 @@ public class LowFunctionalityDAOHibImpl extends AbstractHibernateDAO implements 
 
 			Criteria criteria = aSession.createCriteria(SbiFunctions.class);
 			// criteria.setFetchMode("sbiFuncRoles", FetchMode.JOIN);
-			Criterion domainCdCriterrion = Expression.in("functId", functionalityIDs);
+			Criterion domainCdCriterrion = Restrictions.in("functId", functionalityIDs);
 			criteria.add(domainCdCriterrion);
 			List temp = criteria.list();
 			// Query
@@ -377,13 +377,13 @@ public class LowFunctionalityDAOHibImpl extends AbstractHibernateDAO implements 
 					LowFunctionality lowFunctionality = toLowFunctionality(func, false);
 					putIntoCache(String.valueOf(lowFunctionality.getId()), lowFunctionality);
 					lowFunctList.add(lowFunctionality);
-					logger.debug("ADD funcionality:" + lowFunctionality.getName());
+					LOGGER.debug("ADD funcionality:" + lowFunctionality.getName());
 				}
 			}
 			tx.commit();
 
 		} catch (HibernateException he) {
-			logger.error("HibernateException", he);
+			LOGGER.error("HibernateException", he);
 			if (tx != null)
 				tx.rollback();
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
@@ -393,7 +393,7 @@ public class LowFunctionalityDAOHibImpl extends AbstractHibernateDAO implements 
 					aSession.close();
 			}
 		}
-		logger.debug("OUT.Size=" + lowFunctList.size());
+		LOGGER.debug("OUT.Size=" + lowFunctList.size());
 		return lowFunctList;
 	}
 
@@ -410,7 +410,7 @@ public class LowFunctionalityDAOHibImpl extends AbstractHibernateDAO implements 
 	 */
 	@Override
 	public LowFunctionality loadRootLowFunctionality(boolean recoverBIObjects) throws EMFUserError {
-		logger.debug("IN");
+		LOGGER.debug("IN");
 		LowFunctionality funct = null;
 		funct = getFromCache(ROOT);
 		if (funct == null) {
@@ -420,8 +420,8 @@ public class LowFunctionalityDAOHibImpl extends AbstractHibernateDAO implements 
 				aSession = getSession();
 				tx = aSession.beginTransaction();
 				/* ********* start luca changes *************** */
-				// Criterion filters = Expression.isNull("parentFunct");
-				Criterion filters = Expression.and(Expression.isNull("parentFunct"), Expression.eq("functTypeCd", "LOW_FUNCT"));
+				// Criterion filters = Restrictions.isNull("parentFunct");
+				Criterion filters = Restrictions.and(Restrictions.isNull("parentFunct"), Restrictions.eq("functTypeCd", "LOW_FUNCT"));
 				/* ************ end luca changes ************** */
 				Criteria criteria = aSession.createCriteria(SbiFunctions.class);
 				criteria.add(filters);
@@ -431,7 +431,7 @@ public class LowFunctionalityDAOHibImpl extends AbstractHibernateDAO implements 
 				funct = toLowFunctionality(hibFunct, recoverBIObjects);
 				tx.commit();
 			} catch (HibernateException he) {
-				logger.error("HibernateException", he);
+				LOGGER.error("HibernateException", he);
 				if (tx != null)
 					tx.rollback();
 				throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
@@ -443,7 +443,7 @@ public class LowFunctionalityDAOHibImpl extends AbstractHibernateDAO implements 
 			}
 			putIntoCache(ROOT, funct);
 		}
-		logger.debug("OUT");
+		LOGGER.debug("OUT");
 		return funct;
 	}
 
@@ -461,7 +461,7 @@ public class LowFunctionalityDAOHibImpl extends AbstractHibernateDAO implements 
 	 */
 	@Override
 	public LowFunctionality loadLowFunctionalityByPath(String functionalityPath, boolean recoverBIObjects) throws EMFUserError {
-		logger.debug("IN");
+		LOGGER.debug("IN");
 		LowFunctionality funct = null;
 		funct = getFromCache(functionalityPath);
 		if (funct == null) {
@@ -470,7 +470,7 @@ public class LowFunctionalityDAOHibImpl extends AbstractHibernateDAO implements 
 			try {
 				aSession = getSession();
 				tx = aSession.beginTransaction();
-				Criterion domainCdCriterrion = Expression.eq("path", functionalityPath);
+				Criterion domainCdCriterrion = Restrictions.eq("path", functionalityPath);
 				Criteria criteria = aSession.createCriteria(SbiFunctions.class);
 				criteria.add(domainCdCriterrion);
 				SbiFunctions hibFunct = (SbiFunctions) criteria.uniqueResult();
@@ -479,7 +479,7 @@ public class LowFunctionalityDAOHibImpl extends AbstractHibernateDAO implements 
 				funct = toLowFunctionality(hibFunct, recoverBIObjects);
 				tx.commit();
 			} catch (HibernateException he) {
-				logger.error("HibernateException", he);
+				LOGGER.error("HibernateException", he);
 				if (tx != null)
 					tx.rollback();
 				throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
@@ -491,7 +491,7 @@ public class LowFunctionalityDAOHibImpl extends AbstractHibernateDAO implements 
 			}
 			putIntoCache(functionalityPath, funct);
 		}
-		logger.debug("OUT");
+		LOGGER.debug("OUT");
 		return funct;
 	}
 
@@ -506,7 +506,7 @@ public class LowFunctionalityDAOHibImpl extends AbstractHibernateDAO implements 
 	 */
 	@Override
 	public void modifyLowFunctionality(LowFunctionality aLowFunctionality) throws EMFUserError {
-		logger.debug("IN");
+		LOGGER.debug("IN");
 		Session aSession = null;
 		Transaction tx = null;
 		try {
@@ -533,12 +533,12 @@ public class LowFunctionalityDAOHibImpl extends AbstractHibernateDAO implements 
 			hibFunct.setSbiFuncRoles(functRoleToSave);
 			// set new data
 			hibFunct.setDescr(aLowFunctionality.getDescription());
-			Criterion domainCdCriterrion = Expression.eq("valueCd", aLowFunctionality.getCodType());
+			Criterion domainCdCriterrion = Restrictions.eq("valueCd", aLowFunctionality.getCodType());
 			Criteria criteria = aSession.createCriteria(SbiDomains.class);
 			criteria.add(domainCdCriterrion);
 			SbiDomains functTypeDomain = (SbiDomains) criteria.uniqueResult();
 			if (functTypeDomain == null) {
-				logger.error("The Domain with value_cd=" + aLowFunctionality.getCodType() + " does not exist.");
+				LOGGER.error("The Domain with value_cd=" + aLowFunctionality.getCodType() + " does not exist.");
 				throw new EMFUserError(EMFErrorSeverity.ERROR, 1037);
 			}
 
@@ -548,11 +548,11 @@ public class LowFunctionalityDAOHibImpl extends AbstractHibernateDAO implements 
 
 			Integer parentId = aLowFunctionality.getParentId();
 			Criteria parentCriteria = aSession.createCriteria(SbiFunctions.class);
-			Criterion parentCriterion = Expression.eq("functId", parentId);
+			Criterion parentCriterion = Restrictions.eq("functId", parentId);
 			parentCriteria.add(parentCriterion);
 			SbiFunctions hibParentFunct = (SbiFunctions) parentCriteria.uniqueResult();
 			if (hibParentFunct == null) {
-				logger.error("The parent Functionality with id = " + parentId + " does not exist.");
+				LOGGER.error("The parent Functionality with id = " + parentId + " does not exist.");
 				throw new EMFUserError(EMFErrorSeverity.ERROR, 1037);
 			}
 			hibFunct.setParentFunct(hibParentFunct);
@@ -579,7 +579,7 @@ public class LowFunctionalityDAOHibImpl extends AbstractHibernateDAO implements 
 
 				// loads sub folders and changes their path
 				Criteria subFoldersCriteria = aSession.createCriteria(SbiFunctions.class);
-				Criterion subFoldersCriterion = Expression.like("path", previousPath + "/", MatchMode.START);
+				Criterion subFoldersCriterion = Restrictions.like("path", previousPath + "/", MatchMode.START);
 				subFoldersCriteria.add(subFoldersCriterion);
 				List hibList = subFoldersCriteria.list();
 				Iterator it = hibList.iterator();
@@ -594,7 +594,7 @@ public class LowFunctionalityDAOHibImpl extends AbstractHibernateDAO implements 
 			// commit all changes
 			tx.commit();
 		} catch (HibernateException he) {
-			logger.error("HibernateException", he);
+			LOGGER.error("HibernateException", he);
 
 			if (tx != null)
 				tx.rollback();
@@ -605,12 +605,12 @@ public class LowFunctionalityDAOHibImpl extends AbstractHibernateDAO implements 
 			if (aSession != null) {
 				if (aSession.isOpen()) {
 					aSession.close();
-					logger.debug("The [modifyLowFunctionality] occurs. LowFunctionality cache will be cleaned.");
+					LOGGER.debug("The [modifyLowFunctionality] occurs. LowFunctionality cache will be cleaned.");
 					this.clearCache();
 				}
 			}
 		}
-		logger.debug("OUT");
+		LOGGER.debug("OUT");
 	}
 
 	/**
@@ -630,11 +630,11 @@ public class LowFunctionalityDAOHibImpl extends AbstractHibernateDAO implements 
 		Criterion domainCdCriterrion = null;
 		Criteria criteria = null;
 		criteria = aSession.createCriteria(SbiDomains.class);
-		domainCdCriterrion = Expression.and(Expression.eq("valueCd", permission), Expression.eq("domainCd", SpagoBIConstants.PERMISSION_ON_FOLDER));
+		domainCdCriterrion = Restrictions.and(Restrictions.eq("valueCd", permission), Restrictions.eq("domainCd", SpagoBIConstants.PERMISSION_ON_FOLDER));
 		criteria.add(domainCdCriterrion);
 		SbiDomains permissionDomain = (SbiDomains) criteria.uniqueResult();
 		if (permissionDomain == null) {
-			logger.error("The Domain with value_cd=" + permission + " and domain_cd=" + SpagoBIConstants.PERMISSION_ON_FOLDER + " does not exist.");
+			LOGGER.error("The Domain with value_cd=" + permission + " and domain_cd=" + SpagoBIConstants.PERMISSION_ON_FOLDER + " does not exist.");
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 1039);
 		}
 		Role[] roles = null;
@@ -649,7 +649,7 @@ public class LowFunctionalityDAOHibImpl extends AbstractHibernateDAO implements 
 		}
 		for (int i = 0; i < roles.length; i++) {
 			Role role = roles[i];
-			domainCdCriterrion = Expression.eq("name", role.getName());
+			domainCdCriterrion = Restrictions.eq("name", role.getName());
 			criteria = aSession.createCriteria(SbiExtRoles.class);
 			criteria.add(domainCdCriterrion);
 			SbiExtRoles hibRole = (SbiExtRoles) criteria.uniqueResult();
@@ -666,7 +666,7 @@ public class LowFunctionalityDAOHibImpl extends AbstractHibernateDAO implements 
 			aSession.save(sbifuncrole);
 			functRoleToSave.add(sbifuncrole);
 		}
-		logger.debug("The [saveRolesFunctionality] occurs. LowFunctionality cache will be cleaned.");
+		LOGGER.debug("The [saveRolesFunctionality] occurs. LowFunctionality cache will be cleaned.");
 		this.clearCache();
 		return functRoleToSave;
 	}
@@ -684,7 +684,7 @@ public class LowFunctionalityDAOHibImpl extends AbstractHibernateDAO implements 
 	 */
 	@Override
 	public LowFunctionality insertLowFunctionality(LowFunctionality aLowFunctionality, IEngUserProfile profile) throws EMFUserError {
-		logger.debug("IN");
+		LOGGER.debug("IN");
 		Session aSession = null;
 		Transaction tx = null;
 		try {
@@ -693,12 +693,12 @@ public class LowFunctionalityDAOHibImpl extends AbstractHibernateDAO implements 
 			SbiFunctions hibFunct = new SbiFunctions();
 			hibFunct.setCode(aLowFunctionality.getCode());
 			hibFunct.setDescr(aLowFunctionality.getDescription());
-			Criterion domainCdCriterrion = Expression.eq("valueCd", aLowFunctionality.getCodType());
+			Criterion domainCdCriterrion = Restrictions.eq("valueCd", aLowFunctionality.getCodType());
 			Criteria criteria = aSession.createCriteria(SbiDomains.class);
 			criteria.add(domainCdCriterrion);
 			SbiDomains functTypeDomain = (SbiDomains) criteria.uniqueResult();
 			if (functTypeDomain == null) {
-				logger.error("The Domain with value_cd=" + aLowFunctionality.getCodType() + " does not exist.");
+				LOGGER.error("The Domain with value_cd=" + aLowFunctionality.getCodType() + " does not exist.");
 				throw new EMFUserError(EMFErrorSeverity.ERROR, 1038);
 			}
 			hibFunct.setFunctType(functTypeDomain);
@@ -712,11 +712,11 @@ public class LowFunctionalityDAOHibImpl extends AbstractHibernateDAO implements 
 				// if it is not the root controls if the parent functionality
 				// exists
 				Criteria parentCriteria = aSession.createCriteria(SbiFunctions.class);
-				Criterion parentCriterion = Expression.eq("functId", parentId);
+				Criterion parentCriterion = Restrictions.eq("functId", parentId);
 				parentCriteria.add(parentCriterion);
 				hibParentFunct = (SbiFunctions) parentCriteria.uniqueResult();
 				if (hibParentFunct == null) {
-					logger.error("The parent Functionality with id = " + parentId + " does not exist.");
+					LOGGER.error("The parent Functionality with id = " + parentId + " does not exist.");
 					throw new EMFUserError(EMFErrorSeverity.ERROR, 1038);
 				}
 			}
@@ -760,7 +760,7 @@ public class LowFunctionalityDAOHibImpl extends AbstractHibernateDAO implements 
 
 			tx.commit();
 		} catch (HibernateException he) {
-			logger.error("HibernateException", he);
+			LOGGER.error("HibernateException", he);
 
 			if (tx != null)
 				tx.rollback();
@@ -771,10 +771,10 @@ public class LowFunctionalityDAOHibImpl extends AbstractHibernateDAO implements 
 			if (aSession != null) {
 				if (aSession.isOpen()) {
 					aSession.close();
-					logger.debug("The [insertLowFunctionality] occurs. LowFunctionality cache will be cleaned.");
+					LOGGER.debug("The [insertLowFunctionality] occurs. LowFunctionality cache will be cleaned.");
 					this.clearCache();
 				}
-				logger.debug("OUT");
+				LOGGER.debug("OUT");
 			}
 		}
 		return aLowFunctionality;
@@ -794,7 +794,7 @@ public class LowFunctionalityDAOHibImpl extends AbstractHibernateDAO implements 
 	 */
 	@Override
 	public void eraseLowFunctionality(LowFunctionality aLowFunctionality, IEngUserProfile profile) throws EMFUserError {
-		logger.debug("IN");
+		LOGGER.debug("IN");
 		Session aSession = null;
 		Transaction tx = null;
 		try {
@@ -833,7 +833,7 @@ public class LowFunctionalityDAOHibImpl extends AbstractHibernateDAO implements 
 
 			tx.commit();
 		} catch (HibernateException he) {
-			logger.error("HibernateException", he);
+			LOGGER.error("HibernateException", he);
 
 			if (tx != null)
 				tx.rollback();
@@ -854,10 +854,10 @@ public class LowFunctionalityDAOHibImpl extends AbstractHibernateDAO implements 
 				if (aSession != null) {
 					if (aSession.isOpen()) {
 						aSession.close();
-						logger.debug("The [eraseLowFunctionality] occurs. LowFunctionality cache will be cleaned.");
+						LOGGER.debug("The [eraseLowFunctionality] occurs. LowFunctionality cache will be cleaned.");
 						this.clearCache();
 					}
-					logger.debug("OUT");
+					LOGGER.debug("OUT");
 				}
 		}
 	}
@@ -890,15 +890,15 @@ public class LowFunctionalityDAOHibImpl extends AbstractHibernateDAO implements 
 	}
 
 	public LowFunctionality toLowFunctionality(SbiFunctions hibFunct, boolean recoverBIObjects, List<String> allowedDocTypes, String date, String status) {
-		logger.debug("IN");
+		LOGGER.debug("IN");
 		LowFunctionality lowFunct = new LowFunctionality();
 		lowFunct.setId(hibFunct.getFunctId());
-		logger.debug("ID=" + hibFunct.getFunctId().toString());
+		LOGGER.debug("ID=" + hibFunct.getFunctId().toString());
 		lowFunct.setCode(hibFunct.getCode());
 		lowFunct.setCodType(hibFunct.getFunctTypeCd());
 		lowFunct.setDescription(hibFunct.getDescr());
 		lowFunct.setName(hibFunct.getName());
-		logger.debug("NAME=" + hibFunct.getName());
+		LOGGER.debug("NAME=" + hibFunct.getName());
 		lowFunct.setPath(hibFunct.getPath());
 		lowFunct.setProg(hibFunct.getProg());
 		SbiFunctions parentFuntionality = hibFunct.getParentFunct();
@@ -916,13 +916,13 @@ public class LowFunctionalityDAOHibImpl extends AbstractHibernateDAO implements 
 
 		Set roles = hibFunct.getSbiFuncRoles();
 		if (roles != null) {
-			logger.debug("getSbiFuncRoles() size=" + roles.size());
+			LOGGER.debug("getSbiFuncRoles() size=" + roles.size());
 			Iterator iterRoles = roles.iterator();
 			while (iterRoles.hasNext()) {
 				SbiFuncRole hibfuncrole = (SbiFuncRole) iterRoles.next();
 				SbiExtRoles hibRole = hibfuncrole.getId().getRole();
 				SbiDomains hibPermission = hibfuncrole.getId().getState();
-				logger.debug("hibfuncrole.getId().getRole().getName()=" + hibRole.getName());
+				LOGGER.debug("hibfuncrole.getId().getRole().getName()=" + hibRole.getName());
 				RoleDAOHibImpl roleDAO = new RoleDAOHibImpl();
 				Role role = roleDAO.toRole(hibRole);
 
@@ -1006,11 +1006,11 @@ public class LowFunctionalityDAOHibImpl extends AbstractHibernateDAO implements 
 					}
 				}
 			} catch (EMFUserError e) {
-				logger.error("Error", e);
+				LOGGER.error("Error", e);
 			}
 		}
 		lowFunct.setBiObjects(biObjects);
-		logger.debug("OUT");
+		LOGGER.debug("OUT");
 
 		return lowFunct;
 	}
@@ -1041,7 +1041,7 @@ public class LowFunctionalityDAOHibImpl extends AbstractHibernateDAO implements 
 		try {
 			aSession = getSession();
 			tx = aSession.beginTransaction();
-			Criterion domainCdCriterrion = Expression.eq("code", code);
+			Criterion domainCdCriterrion = Restrictions.eq("code", code);
 			Criteria criteria = aSession.createCriteria(SbiFunctions.class);
 			criteria.add(domainCdCriterrion);
 			SbiFunctions func = (SbiFunctions) criteria.uniqueResult();
@@ -1050,7 +1050,7 @@ public class LowFunctionalityDAOHibImpl extends AbstractHibernateDAO implements 
 			}
 			tx.commit();
 		} catch (HibernateException he) {
-			logger.error("HibernateException", he);
+			LOGGER.error("HibernateException", he);
 
 			if (tx != null)
 				tx.rollback();
@@ -1106,7 +1106,7 @@ public class LowFunctionalityDAOHibImpl extends AbstractHibernateDAO implements 
 	 */
 	@Override
 	public List loadAllLowFunctionalities(boolean recoverBIObjects, List<String> allowedDocTypes, String date, String status) throws EMFUserError {
-		logger.debug("IN");
+		LOGGER.debug("IN");
 		Session aSession = null;
 		Transaction tx = null;
 		List realResult = new ArrayList();
@@ -1125,7 +1125,7 @@ public class LowFunctionalityDAOHibImpl extends AbstractHibernateDAO implements 
 				}
 
 			} catch (Exception e) {
-				logger.error("Error while recovering user profile", e);
+				LOGGER.error("Error while recovering user profile", e);
 			}
 			// user has admin functionality it.eng.spagobi.commons.constants.CommunityFunctionalityConstants.VIEW_MY_FOLDER_ADMIN he can view all
 			// Low_func and all user func
@@ -1158,7 +1158,7 @@ public class LowFunctionalityDAOHibImpl extends AbstractHibernateDAO implements 
 					hibQuery.setString(0, "/" + username);
 				}
 			} catch (EMFInternalError e) {
-				logger.error("EMFInternalError while access to DBMS", e);
+				LOGGER.error("EMFInternalError while access to DBMS", e);
 			}
 
 			/* ********* end luca changes ***************** */
@@ -1174,7 +1174,7 @@ public class LowFunctionalityDAOHibImpl extends AbstractHibernateDAO implements 
 			}
 			tx.commit();
 		} catch (HibernateException he) {
-			logger.error("HibernateException", he);
+			LOGGER.error("HibernateException", he);
 
 			if (tx != null)
 				tx.rollback();
@@ -1187,13 +1187,13 @@ public class LowFunctionalityDAOHibImpl extends AbstractHibernateDAO implements 
 					aSession.close();
 			}
 		}
-		logger.debug("OUT");
+		LOGGER.debug("OUT");
 		return realResult;
 	}
 
 	@Override
 	public List<LowFunctionality> loadFunctionalitiesForSharing(Integer docId) {
-		logger.debug("IN");
+		LOGGER.debug("IN");
 		Session session = null;
 		List<LowFunctionality> toReturn = new ArrayList<>();
 		List<SbiFunctions> hibList = new ArrayList<>();
@@ -1230,14 +1230,14 @@ public class LowFunctionalityDAOHibImpl extends AbstractHibernateDAO implements 
 				toReturn.add(funct);
 			}
 		} catch (Exception e) {
-			logger.error("Cannot load functionalities for sharing", e);
+			LOGGER.error("Cannot load functionalities for sharing", e);
 			throw new SpagoBIDAOException("Cannot load functionalities for sharing", e);
 		} finally {
 			if (session != null && session.isOpen())
 				session.close();
 		}
 
-		logger.debug("OUT");
+		LOGGER.debug("OUT");
 		return toReturn;
 	}
 
@@ -1255,7 +1255,7 @@ public class LowFunctionalityDAOHibImpl extends AbstractHibernateDAO implements 
 	 */
 	@Override
 	public List loadSubLowFunctionalities(String initialPath, boolean recoverBIObjects) throws EMFUserError {
-		logger.debug("IN");
+		LOGGER.debug("IN");
 		Session aSession = null;
 		Transaction tx = null;
 		List realResult = new ArrayList();
@@ -1264,7 +1264,7 @@ public class LowFunctionalityDAOHibImpl extends AbstractHibernateDAO implements 
 			tx = aSession.beginTransaction();
 
 			// loads folder corresponding to initial path
-			Criterion domainCdCriterrion = Expression.eq("path", initialPath);
+			Criterion domainCdCriterrion = Restrictions.eq("path", initialPath);
 			Criteria criteria = aSession.createCriteria(SbiFunctions.class);
 			criteria.add(domainCdCriterrion);
 			SbiFunctions hibFunct = (SbiFunctions) criteria.uniqueResult();
@@ -1297,7 +1297,7 @@ public class LowFunctionalityDAOHibImpl extends AbstractHibernateDAO implements 
 			}
 			tx.commit();
 		} catch (HibernateException he) {
-			logger.error("HibernateException", he);
+			LOGGER.error("HibernateException", he);
 
 			if (tx != null)
 				tx.rollback();
@@ -1310,7 +1310,7 @@ public class LowFunctionalityDAOHibImpl extends AbstractHibernateDAO implements 
 					aSession.close();
 			}
 		}
-		logger.debug("OUT");
+		LOGGER.debug("OUT");
 		return realResult;
 	}
 
@@ -1327,7 +1327,7 @@ public class LowFunctionalityDAOHibImpl extends AbstractHibernateDAO implements 
 	 */
 	@Override
 	public boolean hasChild(Integer id) throws EMFUserError {
-		logger.debug("IN");
+		LOGGER.debug("IN");
 		Session aSession = null;
 		Transaction tx = null;
 		try {
@@ -1335,7 +1335,7 @@ public class LowFunctionalityDAOHibImpl extends AbstractHibernateDAO implements 
 			tx = aSession.beginTransaction();
 
 			// controls if there are sub folders
-			Criterion parentChildCriterion = Expression.eq("parentFunct.functId", id);
+			Criterion parentChildCriterion = Restrictions.eq("parentFunct.functId", id);
 			Criteria parentCriteria = aSession.createCriteria(SbiFunctions.class);
 			parentCriteria.add(parentChildCriterion);
 			List childFunctions = parentCriteria.list();
@@ -1348,7 +1348,7 @@ public class LowFunctionalityDAOHibImpl extends AbstractHibernateDAO implements 
 			if (hibObjfunctions != null && hibObjfunctions.size() > 0)
 				return true;
 			// Criterion objectChildCriterion =
-			// Expression.eq("sbiFunction.functId", id);
+			// Restrictions.eq("sbiFunction.functId", id);
 			// Criteria objectCriteria =
 			// aSession.createCriteria(SbiObjFunc.class);
 			// objectCriteria.add(objectChildCriterion);
@@ -1359,7 +1359,7 @@ public class LowFunctionalityDAOHibImpl extends AbstractHibernateDAO implements 
 
 			return false;
 		} catch (HibernateException he) {
-			logger.error("HibernateException", he);
+			LOGGER.error("HibernateException", he);
 
 			if (tx != null)
 				tx.rollback();
@@ -1370,7 +1370,7 @@ public class LowFunctionalityDAOHibImpl extends AbstractHibernateDAO implements 
 			if (aSession != null) {
 				if (aSession.isOpen())
 					aSession.close();
-				logger.debug("OUT");
+				LOGGER.debug("OUT");
 
 			}
 		}
@@ -1385,7 +1385,7 @@ public class LowFunctionalityDAOHibImpl extends AbstractHibernateDAO implements 
 	 */
 	@Override
 	public void deleteInconsistentRoles(Set rolesSet) throws EMFUserError {
-		logger.debug("IN");
+		LOGGER.debug("IN");
 		Session aSession = null;
 		Transaction tx = null;
 		String hql = null;
@@ -1424,7 +1424,7 @@ public class LowFunctionalityDAOHibImpl extends AbstractHibernateDAO implements 
 			}
 			tx.commit();
 		} catch (HibernateException he) {
-			logger.error("HibernateException", he);
+			LOGGER.error("HibernateException", he);
 			if (tx != null)
 				tx.rollback();
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
@@ -1437,10 +1437,10 @@ public class LowFunctionalityDAOHibImpl extends AbstractHibernateDAO implements 
 			if (aSession != null) {
 				if (aSession.isOpen()) {
 					aSession.close();
-					logger.debug("The [deleteInconsistentRoles] occurs. LowFunctionality cache will be cleaned.");
+					LOGGER.debug("The [deleteInconsistentRoles] occurs. LowFunctionality cache will be cleaned.");
 					this.clearCache();
 				}
-				logger.debug("OUT");
+				LOGGER.debug("OUT");
 			}
 		}
 
@@ -1453,7 +1453,7 @@ public class LowFunctionalityDAOHibImpl extends AbstractHibernateDAO implements 
 	 */
 	@Override
 	public List loadChildFunctionalities(Integer parentId, boolean recoverBIObjects) throws EMFUserError {
-		logger.debug("IN");
+		LOGGER.debug("IN");
 		Session aSession = null;
 		Transaction tx = null;
 		List realResult = new ArrayList();
@@ -1473,7 +1473,7 @@ public class LowFunctionalityDAOHibImpl extends AbstractHibernateDAO implements 
 			}
 			tx.commit();
 		} catch (HibernateException he) {
-			logger.error("HibernateException", he);
+			LOGGER.error("HibernateException", he);
 
 			if (tx != null)
 				tx.rollback();
@@ -1486,7 +1486,7 @@ public class LowFunctionalityDAOHibImpl extends AbstractHibernateDAO implements 
 					aSession.close();
 			}
 		}
-		logger.debug("OUT");
+		LOGGER.debug("OUT");
 		return realResult;
 	}
 
@@ -1497,7 +1497,7 @@ public class LowFunctionalityDAOHibImpl extends AbstractHibernateDAO implements 
 	 */
 	@Override
 	public void moveDownLowFunctionality(Integer functionalityID) throws EMFUserError {
-		logger.debug("IN");
+		LOGGER.debug("IN");
 		Session aSession = null;
 		Transaction tx = null;
 		try {
@@ -1518,7 +1518,7 @@ public class LowFunctionalityDAOHibImpl extends AbstractHibernateDAO implements 
 			query.setInteger(1, hibFunct.getParentFunct().getFunctId().intValue());
 			SbiFunctions hibUpperFunct = (SbiFunctions) query.uniqueResult();
 			if (hibUpperFunct == null) {
-				logger.error("The function with prog [" + newProg + "] does not exist.");
+				LOGGER.error("The function with prog [" + newProg + "] does not exist.");
 				return;
 			}
 
@@ -1530,7 +1530,7 @@ public class LowFunctionalityDAOHibImpl extends AbstractHibernateDAO implements 
 
 			tx.commit();
 		} catch (HibernateException he) {
-			logger.error("HibernateException", he);
+			LOGGER.error("HibernateException", he);
 
 			if (tx != null)
 				tx.rollback();
@@ -1541,10 +1541,10 @@ public class LowFunctionalityDAOHibImpl extends AbstractHibernateDAO implements 
 			if (aSession != null) {
 				if (aSession.isOpen()) {
 					aSession.close();
-					logger.debug("The [moveDownLowFunctionality] occurs. LowFunctionality cache will be cleaned.");
+					LOGGER.debug("The [moveDownLowFunctionality] occurs. LowFunctionality cache will be cleaned.");
 					this.clearCache();
 				}
-				logger.debug("OUT");
+				LOGGER.debug("OUT");
 			}
 		}
 	}
@@ -1556,7 +1556,7 @@ public class LowFunctionalityDAOHibImpl extends AbstractHibernateDAO implements 
 	 */
 	@Override
 	public void moveUpLowFunctionality(Integer functionalityID) throws EMFUserError {
-		logger.debug("IN");
+		LOGGER.debug("IN");
 		Session aSession = null;
 		Transaction tx = null;
 		try {
@@ -1576,7 +1576,7 @@ public class LowFunctionalityDAOHibImpl extends AbstractHibernateDAO implements 
 			query.setInteger(1, hibFunct.getParentFunct().getFunctId().intValue());
 			SbiFunctions hibUpperFunct = (SbiFunctions) query.uniqueResult();
 			if (hibUpperFunct == null) {
-				logger.error("The function with prog [" + newProg + "] does not exist.");
+				LOGGER.error("The function with prog [" + newProg + "] does not exist.");
 				return;
 			}
 
@@ -1585,7 +1585,7 @@ public class LowFunctionalityDAOHibImpl extends AbstractHibernateDAO implements 
 
 			tx.commit();
 		} catch (HibernateException he) {
-			logger.error("HibernateException", he);
+			LOGGER.error("HibernateException", he);
 
 			if (tx != null)
 				tx.rollback();
@@ -1596,17 +1596,17 @@ public class LowFunctionalityDAOHibImpl extends AbstractHibernateDAO implements 
 			if (aSession != null) {
 				if (aSession.isOpen()) {
 					aSession.close();
-					logger.debug("The [moveUpLowFunctionality] occurs. LowFunctionality cache will be cleaned.");
+					LOGGER.debug("The [moveUpLowFunctionality] occurs. LowFunctionality cache will be cleaned.");
 					this.clearCache();
 				}
-				logger.debug("OUT");
+				LOGGER.debug("OUT");
 			}
 		}
 	}
 
 	@Override
 	public List loadAllUserFunct() throws EMFUserError {
-		logger.debug("IN");
+		LOGGER.debug("IN");
 		Session aSession = null;
 		Transaction tx = null;
 		List sbifunct = new ArrayList();
@@ -1624,7 +1624,7 @@ public class LowFunctionalityDAOHibImpl extends AbstractHibernateDAO implements 
 			}
 
 		} catch (HibernateException he) {
-			logger.error("HibernateException", he);
+			LOGGER.error("HibernateException", he);
 
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 
@@ -1634,7 +1634,7 @@ public class LowFunctionalityDAOHibImpl extends AbstractHibernateDAO implements 
 					aSession.close();
 			}
 		}
-		logger.debug("OUT");
+		LOGGER.debug("OUT");
 		return userfunct;
 	}
 
@@ -1652,7 +1652,7 @@ public class LowFunctionalityDAOHibImpl extends AbstractHibernateDAO implements 
 	 */
 	@Override
 	public List loadUserFunctionalities(Integer parentId, boolean recoverBIObjects, IEngUserProfile profile) throws EMFUserError {
-		logger.debug("IN");
+		LOGGER.debug("IN");
 		Session aSession = null;
 		Transaction tx = null;
 		List realResult = new ArrayList();
@@ -1671,7 +1671,7 @@ public class LowFunctionalityDAOHibImpl extends AbstractHibernateDAO implements 
 
 				}
 			} catch (Exception e) {
-				logger.error("Error while recovering user profile", e);
+				LOGGER.error("Error while recovering user profile", e);
 			}
 			boolean onlyFirstLevel = (parentId == null) ? true : false;
 
@@ -1778,7 +1778,7 @@ public class LowFunctionalityDAOHibImpl extends AbstractHibernateDAO implements 
 			}
 			tx.commit();
 		} catch (HibernateException he) {
-			logger.error("HibernateException", he);
+			LOGGER.error("HibernateException", he);
 
 			if (tx != null)
 				tx.rollback();
@@ -1791,7 +1791,7 @@ public class LowFunctionalityDAOHibImpl extends AbstractHibernateDAO implements 
 					aSession.close();
 			}
 		}
-		logger.debug("OUT");
+		LOGGER.debug("OUT");
 		return realResult;
 	}
 
@@ -1809,7 +1809,7 @@ public class LowFunctionalityDAOHibImpl extends AbstractHibernateDAO implements 
 	 */
 	@Override
 	public List loadUserFunctionalitiesFiltered(Integer parentId, boolean recoverBIObjects, IEngUserProfile profile, String permission) throws EMFUserError {
-		logger.debug("IN");
+		LOGGER.debug("IN");
 		Session aSession = null;
 		Transaction tx = null;
 		List realResult = new ArrayList();
@@ -1916,16 +1916,16 @@ public class LowFunctionalityDAOHibImpl extends AbstractHibernateDAO implements 
 				}
 			});
 
-			Iterator it = hibList.iterator();
+			Iterator<SbiFunctions> it = hibList.iterator();
 			while (it.hasNext()) {
-				SbiFunctions tmpFunc = (SbiFunctions) it.next();
+				SbiFunctions tmpFunc = it.next();
 
 				LowFunctionality funct = toLowFunctionality(tmpFunc, recoverBIObjects);
 				putIntoCache(String.valueOf(funct.getId()), funct);
 				realResult.add(funct);
 			}
 		} catch (HibernateException he) {
-			logger.error("HibernateException", he);
+			LOGGER.error("HibernateException", he);
 
 			if (tx != null)
 				tx.rollback();
@@ -1938,7 +1938,7 @@ public class LowFunctionalityDAOHibImpl extends AbstractHibernateDAO implements 
 					aSession.close();
 			}
 		}
-		logger.debug("OUT");
+		LOGGER.debug("OUT");
 		return realResult;
 	}
 
@@ -1967,13 +1967,13 @@ public class LowFunctionalityDAOHibImpl extends AbstractHibernateDAO implements 
 	 */
 	@Override
 	public List loadParentFunctionalities(Integer functId, Integer rootFolderID) throws EMFUserError {
-		logger.debug("IN");
+		LOGGER.debug("IN");
 
 		LowFunctionality funct = null;
 		Integer tmpFunctId = null;
 		Session aSession = null;
 		Transaction tx = null;
-		List realResult = new ArrayList();
+		List<LowFunctionality> realResult = new ArrayList<>();
 		try {
 			aSession = getSession();
 			tx = aSession.beginTransaction();
@@ -2004,7 +2004,7 @@ public class LowFunctionalityDAOHibImpl extends AbstractHibernateDAO implements 
 
 			tx.commit();
 		} catch (HibernateException he) {
-			logger.error("HibernateException", he);
+			LOGGER.error("HibernateException", he);
 
 			if (tx != null)
 				tx.rollback();
@@ -2017,13 +2017,13 @@ public class LowFunctionalityDAOHibImpl extends AbstractHibernateDAO implements 
 					aSession.close();
 			}
 		}
-		logger.debug("OUT");
+		LOGGER.debug("OUT");
 		return realResult;
 	}
 
 	@Override
 	public Integer insertCommunityFunctionality(LowFunctionality aLowFunctionality) throws EMFUserError {
-		logger.debug("IN");
+		LOGGER.debug("IN");
 		Session aSession = null;
 		Transaction tx = null;
 		Integer result = null;
@@ -2033,7 +2033,7 @@ public class LowFunctionalityDAOHibImpl extends AbstractHibernateDAO implements 
 			SbiFunctions hibFunct = new SbiFunctions();
 
 			// recover sbidomain of the user functionality
-			Criterion vcdEQusfunct = Expression.eq("valueCd", "COMMUNITY_FUNCT");
+			Criterion vcdEQusfunct = Restrictions.eq("valueCd", "COMMUNITY_FUNCT");
 			Criteria criteria = aSession.createCriteria(SbiDomains.class);
 			criteria.add(vcdEQusfunct);
 			SbiDomains functTypeDomain = (SbiDomains) criteria.uniqueResult();
@@ -2051,11 +2051,11 @@ public class LowFunctionalityDAOHibImpl extends AbstractHibernateDAO implements 
 				// if it is not the root controls if the parent functionality
 				// exists
 				Criteria parentCriteria = aSession.createCriteria(SbiFunctions.class);
-				Criterion parentCriterion = Expression.eq("functId", parentId);
+				Criterion parentCriterion = Restrictions.eq("functId", parentId);
 				parentCriteria.add(parentCriterion);
 				hibParentFunct = (SbiFunctions) parentCriteria.uniqueResult();
 				if (hibParentFunct == null) {
-					logger.error("The parent Functionality with id = " + parentId + " does not exist.");
+					LOGGER.error("The parent Functionality with id = " + parentId + " does not exist.");
 					throw new EMFUserError(EMFErrorSeverity.ERROR, 1038);
 				}
 			}
@@ -2064,7 +2064,7 @@ public class LowFunctionalityDAOHibImpl extends AbstractHibernateDAO implements 
 
 			// manages prog column that determines the folders order
 			if (hibParentFunct == null)
-				hibFunct.setProg(new Integer(1));
+				hibFunct.setProg(1);
 			else {
 				// loads sub functionalities
 
@@ -2073,9 +2073,9 @@ public class LowFunctionalityDAOHibImpl extends AbstractHibernateDAO implements 
 				hibQuery.setString(1, "COMMUNITY_FUNCT");
 				Integer maxProg = (Integer) hibQuery.uniqueResult();
 				if (maxProg != null)
-					hibFunct.setProg(new Integer(maxProg.intValue() + 1));
+					hibFunct.setProg(maxProg.intValue() + 1);
 				else
-					hibFunct.setProg(new Integer(1));
+					hibFunct.setProg(1);
 			}
 
 			updateSbiCommonInfo4Insert(hibFunct, true);
@@ -2084,7 +2084,7 @@ public class LowFunctionalityDAOHibImpl extends AbstractHibernateDAO implements 
 
 			tx.commit();
 		} catch (HibernateException he) {
-			logger.error("HibernateException", he);
+			LOGGER.error("HibernateException", he);
 			if (tx != null)
 				tx.rollback();
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
@@ -2092,17 +2092,17 @@ public class LowFunctionalityDAOHibImpl extends AbstractHibernateDAO implements 
 			if (aSession != null) {
 				if (aSession.isOpen()) {
 					aSession.close();
-					logger.debug("The [insertCommunityFunctionality] occurs. LowFunctionality cache will be cleaned.");
+					LOGGER.debug("The [insertCommunityFunctionality] occurs. LowFunctionality cache will be cleaned.");
 					this.clearCache();
 				}
-				logger.debug("OUT");
+				LOGGER.debug("OUT");
 			}
 		}
 		return result;
 	}
 
 	private LowFunctionality getFromCache(String key) {
-		logger.debug("IN");
+		LOGGER.debug("IN");
 		String tenantId = this.getTenant();
 		LowFunctionality funct = null;
 		if (tenantId != null) {
@@ -2111,13 +2111,13 @@ public class LowFunctionalityDAOHibImpl extends AbstractHibernateDAO implements 
 			try {
 				if (cacheManager == null) {
 					cacheManager = CacheManager.create();
-					logger.debug("Cache for tenant " + tenantId + "does not exist yet. Nothing to get.");
-					logger.debug("OUT");
+					LOGGER.debug("Cache for tenant " + tenantId + "does not exist yet. Nothing to get.");
+					LOGGER.debug("OUT");
 					return null;
 				} else {
 					if (!cacheManager.cacheExists(cacheName)) {
-						logger.debug("Cache for tenant " + tenantId + "does not exist yet. Nothing to get.");
-						logger.debug("OUT");
+						LOGGER.debug("Cache for tenant " + tenantId + "does not exist yet. Nothing to get.");
+						LOGGER.debug("OUT");
 						return null;
 					} else {
 						Element el = cacheManager.getCache(cacheName).get(key);
@@ -2130,12 +2130,12 @@ public class LowFunctionalityDAOHibImpl extends AbstractHibernateDAO implements 
 				throw new SpagoBIRuntimeException("Error while getting a LowFunctionality cache item with key " + key + " for tenant " + tenantId, t);
 			}
 		}
-		logger.debug("OUT");
+		LOGGER.debug("OUT");
 		return funct;
 	}
 
 	private void putIntoCache(String key, LowFunctionality funct) {
-		logger.debug("IN");
+		LOGGER.debug("IN");
 		String tenantId = this.getTenant();
 		if (tenantId != null) {
 			// The tenant is set, so let's find it into the cache
@@ -2145,7 +2145,7 @@ public class LowFunctionalityDAOHibImpl extends AbstractHibernateDAO implements 
 					cacheManager = CacheManager.create();
 				}
 				if (!cacheManager.cacheExists(cacheName)) {
-					logger.debug("Cache for tenant " + tenantId + "does not exist. It will be create.");
+					LOGGER.debug("Cache for tenant " + tenantId + "does not exist. It will be create.");
 					Cache cache = new Cache(cacheName, 300, true, false, 20, 20);
 					cacheManager.addCache(cache);
 				}
@@ -2154,11 +2154,11 @@ public class LowFunctionalityDAOHibImpl extends AbstractHibernateDAO implements 
 				throw new SpagoBIRuntimeException("Error while putting LowFunctionality cache item with key " + key + " for tenant " + tenantId, t);
 			}
 		}
-		logger.debug("OUT");
+		LOGGER.debug("OUT");
 	}
 
 	private void clearCache() {
-		logger.debug("IN");
+		LOGGER.debug("IN");
 		String tenantId = this.getTenant();
 		if (tenantId != null) {
 			// The tenant is set, so let's find it into the cache
