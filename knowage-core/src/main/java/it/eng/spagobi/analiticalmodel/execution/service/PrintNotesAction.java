@@ -19,6 +19,7 @@ package it.eng.spagobi.analiticalmodel.execution.service;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -26,7 +27,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
-import java.io.StringBufferInputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -36,7 +36,6 @@ import org.apache.commons.collections.map.HashedMap;
 import org.apache.log4j.Logger;
 import org.safehaus.uuid.UUID;
 import org.safehaus.uuid.UUIDGenerator;
-import org.xml.sax.InputSource;
 
 import it.eng.spago.base.RequestContainer;
 import it.eng.spago.base.SourceBean;
@@ -123,16 +122,16 @@ public class PrintNotesAction extends AbstractSpagoBIAction {
 		parameters.put("TITLE", executionInstance.getBIObject().getLabel());
 
 		UUIDGenerator uuidGen  = UUIDGenerator.getInstance();
-		UUID uuid_local = uuidGen.generateTimeBasedUUID();
-		String executionId = uuid_local.toString();
-		executionId = executionId.replaceAll("-", "");
+		UUID uuidLocal = uuidGen.generateTimeBasedUUID();
+		String executionId = uuidLocal.toString();
+		executionId = executionId.replace("-", "");
 		//Creta etemp file
 		String dirS = System.getProperty("java.io.tmpdir");
 		File dir = new File(dirS);
 		dir.mkdirs();
 		String fileName="notes"+executionId;
 		File tmpFile=null;
-		try (OutputStream out = new FileOutputStream(tmpFile); StringBufferInputStream sbis = new StringBufferInputStream(templateStr)) {
+		try (OutputStream out = new FileOutputStream(tmpFile); ByteArrayInputStream sbis = new ByteArrayInputStream(templateStr.getBytes("UTF-8"))) {
 			tmpFile = File.createTempFile(fileName, "." + outputType, dir);
 
 			LOGGER.debug("compiling report");
@@ -205,26 +204,23 @@ public class PrintNotesAction extends AbstractSpagoBIAction {
 			//logger.debug("templateDirPath: "+templateDirPath!=null ? templateDirPath : "");
 			templateDirPath+=TEMPLATE_NAME;
 			LOGGER.debug("templatePath: "+templateDirPath!=null ? templateDirPath : "");
-			if (templateDirPath!=null){
-				try (InputStream fis= Thread.currentThread().getContextClassLoader().getResourceAsStream(templateDirPath)) {
-					if(fis!=null){
-						LOGGER.debug("File Input Stream created");
-					}else {
-						LOGGER.warn("File Input Stream NOT created");
-					}
-					InputSource inputSource = new InputSource(fis);
-					LOGGER.debug("Input Source created");
-					try (InputStreamReader in = new InputStreamReader(fis); BufferedReader reader = new BufferedReader(in)) {
-						LOGGER.debug("Buffer Reader created");
-						String line = null;
-						try {
-							while( (line = reader.readLine()) != null) {
-								buffer.append(line + "\n");
-							}
-						} catch (IOException e) {
-							LOGGER.error("error in appending lines to the buffer",e);
-							e.printStackTrace();
+			try (InputStream fis= Thread.currentThread().getContextClassLoader().getResourceAsStream(templateDirPath)) {
+				if(fis!=null){
+					LOGGER.debug("File Input Stream created");
+				}else {
+					LOGGER.warn("File Input Stream NOT created");
+				}
+				LOGGER.debug("Input Source created");
+				try (InputStreamReader in = new InputStreamReader(fis); BufferedReader reader = new BufferedReader(in)) {
+					LOGGER.debug("Buffer Reader created");
+					String line = null;
+					try {
+						while( (line = reader.readLine()) != null) {
+							buffer.append(line + "\n");
 						}
+					} catch (IOException e) {
+						LOGGER.error("error in appending lines to the buffer",e);
+						e.printStackTrace();
 					}
 				}
 			}
