@@ -156,7 +156,7 @@ export default defineComponent({
         }
     },
     watch: {
-        '$route.params.id': function (id) {
+        '$route.params.id': function(id) {
             this.loadTemplate(id)
         }
     },
@@ -251,7 +251,7 @@ export default defineComponent({
             const self = this
             reader.addEventListener(
                 'load',
-                function () {
+                function() {
                     self.template.image = reader.result || ''
                 },
                 false
@@ -282,14 +282,6 @@ export default defineComponent({
             // @ts-ignore
             this.$refs[ref].editor.refresh()
         }
-    },
-    watch: {
-        '$route.params.id': function(id) {
-            this.loadTemplate(id)
-    }
-    },
-    unmounted() {
-        window.removeEventListener('resize', this.resizeHandler)
     }
 })
 </script>
