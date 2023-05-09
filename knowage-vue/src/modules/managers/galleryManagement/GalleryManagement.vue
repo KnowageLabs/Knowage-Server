@@ -69,7 +69,7 @@ export default defineComponent({
         loadAllTemplates(): void {
             this.loading = true
             this.axios
-				.get(process.env.VUE_APP_API_PATH + '1.0/widgetgallery')
+                .get(process.env.VUE_APP_API_PATH + '1.0/widgetgallery')
                 .then((response: AxiosResponse<any>) => {
                     this.galleryTemplates = response.data.map((item) => {
                         // TODO remove after backend implementation
@@ -89,9 +89,9 @@ export default defineComponent({
                 icon: 'pi pi-exclamation-triangle',
                 accept: () => {
                     this.axios
-						.delete(process.env.VUE_APP_API_PATH + '1.0/widgetgallery/' + templateId)
+                        .delete(process.env.VUE_APP_API_PATH + '1.0/widgetgallery/' + templateId)
                         .then(() => {
-							this.$store.commit('setInfo', { title: this.$t('managers.widgetGallery.deleteTemplate'), msg: this.$t('managers.widgetGallery.templateSuccessfullyDeleted') })
+                            this.$store.commit('setInfo', { title: this.$t('managers.widgetGallery.deleteTemplate'), msg: this.$t('managers.widgetGallery.templateSuccessfullyDeleted') })
                             this.loadAllTemplates()
                             if (templateId === this.$route.params.id) this.$router.push('/gallery-management')
                         })
@@ -122,7 +122,7 @@ export default defineComponent({
             const json = JSON.parse(event.target.result)
 
             if (!json.label && !json.name) {
-                this.store.setError({ title: this.$t('common.error.uploading'), msg: this.$t('managers.widgetGallery.fieldIsMandatory', { field: this.$t('common.name') }) })
+                this.$store.commit('setError', { title: this.$t('common.error.uploading'), msg: this.$t('managers.widgetGallery.fieldIsMandatory', { field: this.$t('common.name') }) })
                 return
             }
 
@@ -150,8 +150,8 @@ export default defineComponent({
         importWidget(json: JSON) {
             this.adjustMandatoryFields(json)
 
-			this.$http.post(process.env.VUE_APP_API_PATH + '1.0/widgetgallery/import', json).then(() => {
-				this.$store.commit('setInfo', { title: this.$t('managers.widgetGallery.uploadTemplate'), msg: this.$t('managers.widgetGallery.templateSuccessfullyUploaded') })
+            this.$http.post(process.env.VUE_APP_API_PATH + '1.0/widgetgallery/import', json).then(() => {
+                this.$store.commit('setInfo', { title: this.$t('managers.widgetGallery.uploadTemplate'), msg: this.$t('managers.widgetGallery.templateSuccessfullyUploaded') })
 
                 this.loadAllTemplates()
             })

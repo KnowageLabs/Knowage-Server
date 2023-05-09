@@ -228,7 +228,7 @@ export default defineComponent({
                 const label = this.template.label
                 const name = this.template.name
                 if (!label && !name) {
-                    this.store.setError({ title: this.$t('common.error.uploading'), msg: this.$t('managers.widgetGallery.fieldIsMandatory', { field: this.$t('common.name') }) })
+                    this.$store.commit('setError', { title: this.$t('common.error.uploading'), msg: this.$t('managers.widgetGallery.fieldIsMandatory', { field: this.$t('common.name') }) })
                     return
                 }
                 if (!label && name) this.template.label = name
