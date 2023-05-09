@@ -2,12 +2,12 @@
     <Toolbar class="kn-toolbar kn-toolbar--secondary p-m-0">
         <template #start> Template {{ template.label }} </template>
         <template #end>
-            <Button icon="pi pi-download" class="p-button-text p-button-rounded p-button-plain" v-tooltip.bottom="$t('common.download')" @click="downloadTemplate" :disabled="!template.id" />
-            <Button icon="pi pi-save" class="p-button-text p-button-rounded p-button-plain" v-tooltip.bottom="$t('common.save')" :disabled="!dirty" @click="saveTemplate" />
-            <Button icon="pi pi-times" class="p-button-text p-button-rounded p-button-plain" v-tooltip.bottom="$t('common.close')" @click="closeTemplate($event)" />
+            <Button v-tooltip.bottom="$t('common.download')" icon="pi pi-download" class="p-button-text p-button-rounded p-button-plain" :disabled="!template.id" @click="downloadTemplate" />
+            <Button v-tooltip.bottom="$t('common.save')" icon="pi pi-save" class="p-button-text p-button-rounded p-button-plain" :disabled="isSaveButtonDisabled" @click="saveTemplate" />
+            <Button v-tooltip.bottom="$t('common.close')" icon="pi pi-times" class="p-button-text p-button-rounded p-button-plain" @click="closeTemplateConfirm()" />
         </template>
     </Toolbar>
-    <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" />
+    <ProgressBar v-if="loading" mode="indeterminate" class="kn-progress-bar" />
 
     <div class="managerDetail">
         <div class="p-grid p-m-0 p-fluid">
@@ -17,37 +17,39 @@
                         <div class="p-grid">
                             <div class="p-col-3">
                                 <span class="p-float-label">
-                                    <InputText id="label" class="kn-material-input" type="text" v-model="template.label" @change="setDirty" />
+                                    <InputText id="label" v-model="v$.template.label.$model" class="kn-material-input" type="text" @change="setDirty" />
                                     <label class="kn-material-input-label" for="label">{{ $t('common.label') }}</label>
                                 </span>
+                                <KnValidationMessages class="p-mt-1" :v-comp="v$.template.label" :additional-translate-params="{ fieldName: $t('common.label') }" />
                             </div>
                             <div class="p-col-3">
                                 <span class="p-float-label">
-                                    <InputText id="name" class="kn-material-input" type="text" v-model="template.name" @change="setDirty" />
+                                    <InputText id="name" v-model="v$.template.name.$model" class="kn-material-input" type="text" @change="setDirty" />
                                     <label class="kn-material-input-label" for="name">{{ $t('common.name') }}</label>
                                 </span>
+                                <KnValidationMessages class="p-mt-1" :v-comp="v$.template.name" :additional-translate-params="{ fieldName: $t('common.name') }" />
                             </div>
-                            <div :class="template.type === 'python' ? 'p-col-3' : 'p-col-6'">
+                            <div :class="v$.template.type === 'python' ? 'p-col-3' : 'p-col-6'">
                                 <span class="p-float-label">
-                                    <Dropdown id="type" class="kn-material-input" v-model="template.type" @change="setDirty" :options="galleryDescriptor.types" optionLabel="name" optionValue="value" />
+                                    <Dropdown id="type" v-model="v$.template.type" class="kn-material-input" :options="galleryDescriptor.types" option-label="name" option-value="value" @change="setDirty" />
                                     <label class="kn-material-input-label" for="type">{{ $t('common.type') }}</label>
                                 </span>
                             </div>
-                            <div class="p-col-3" v-if="template.type === 'python'">
+                            <div v-if="v$.template.type === 'python'" class="p-col-3">
                                 <span class="p-float-label">
-                                    <Dropdown id="outputType" class="kn-material-input" v-model="template.outputType" @change="setDirty" :options="galleryDescriptor.outputTypes" optionLabel="name" optionValue="value" />
+                                    <Dropdown id="outputType" v-model="v$.template.outputType.$model" class="kn-material-input" :options="galleryDescriptor.outputTypes" option-label="name" option-value="value" @change="setDirty" />
                                     <label class="kn-material-input-label" for="outputType">{{ $t('managers.widgetGallery.outputType') }}</label>
                                 </span>
                             </div>
                             <div class="p-col-12">
                                 <span class="p-float-label">
-                                    <Textarea v-model="template.description" class="kn-material-input" style="resize:none" id="description" rows="3" @change="setDirty" />
+                                    <Textarea id="description" v-model="v$.template.description.$model" class="kn-material-input" style="resize: none" rows="3" @change="setDirty" />
                                     <label class="kn-material-input-label" for="description">{{ $t('common.description') }}</label>
                                 </span>
                             </div>
-                            <div class="p-col-12">
-                                <span class="p-float-label kn-material-input">
-                                    <Chips v-model="template.tags" @add="setDirty" @remove="setDirty" :allowDuplicate="false" />
+                            <div class="p-col-12 kn-truncated">
+                                <span class="p-float-label kn-material-input" :title="$t('managers.widgetGallery.tags.availableCharacters')">
+                                    <Chips v-model="v$.template.tags.$model" :allow-duplicate="false" @add="setDirty" @remove="setDirty" />
                                     <label class="kn-material-input-label" for="tags">{{ $t('common.tags') }}</label>
                                 </span>
                                 <small id="username1-help">{{ $t('managers.widgetGallery.tags.availableCharacters') }}</small>
@@ -59,32 +61,32 @@
             <div class="p-col-3 kn-height-full">
                 <Card class="imageUploader">
                     <template #title>
-                        <input id="inputImage" type="file" @change="uploadFile" accept="image/png, image/jpeg" />
-                        <label for="inputImage" v-tooltip.bottom="$t('common.upload')">
+                        <input id="inputImage" type="file" accept="image/png, image/jpeg" @change="uploadFile" />
+                        <label v-tooltip.bottom="$t('common.upload')" for="inputImage">
                             <i class="pi pi-upload" />
                         </label>
                     </template>
                     <template #content>
                         <div class="imageContainer p-d-flex p-jc-center p-ai-center">
-                            <i class="far fa-image fa-5x icon" v-if="!template.image" />
-                            <img :src="template.image" v-if="template.image" height="100%" class="kn-no-select" />
+                            <i v-if="!template.image" class="far fa-image fa-5x icon" />
+                            <img v-if="template.image" :src="template.image" height="100%" class="kn-no-select" />
                         </div>
                     </template>
                 </Card>
             </div>
         </div>
-        <div class="p-grid p-m-2 flex" v-if="template.type && windowWidth < windowWidthBreakPoint">
-            <TabView class="tabview-custom" style="width:100%" @tab-change="tabChange">
-                <TabPanel v-for="(allowedEditor, index) in galleryDescriptor.allowedEditors[template.type]" v-bind:key="allowedEditor">
+        <div v-if="template.type && windowWidth < windowWidthBreakPoint" class="p-grid p-m-2 flex">
+            <TabView class="tabview-custom" style="width: 100%">
+                <TabPanel v-for="(allowedEditor, index) in galleryDescriptor.allowedEditors[template.type]" :key="allowedEditor">
                     <template #header>
-                        <i :class="['icon', galleryDescriptor.editor[allowedEditor].icon]"></i>&nbsp;<span style="text-transform:uppercase">{{ $t('common.codingLanguages.' + allowedEditor) }}</span>
+                        <i :class="['icon', galleryDescriptor.editor[allowedEditor].icon]"></i>&nbsp;<span style="text-transform: uppercase">{{ $t('common.codingLanguages.' + allowedEditor) }}</span>
                     </template>
                     <VCodeMirror :ref="'editor_' + index" class="flex" v-model:value="template.code[allowedEditor]" :options="galleryDescriptor.options[allowedEditor]" @update:value="onCmCodeChange" />
                 </TabPanel>
             </TabView>
         </div>
-        <div class="p-grid p-m-0 flex" v-if="template.type && windowWidth >= windowWidthBreakPoint">
-            <div :class="'p-col-' + 12 / galleryDescriptor.allowedEditors[template.type].length" v-for="allowedEditor in galleryDescriptor.allowedEditors[template.type]" v-bind:key="allowedEditor" style="height:100%;display:flex;flex-direction:column">
+        <div v-if="template.type && windowWidth >= windowWidthBreakPoint" class="p-grid p-m-0 flex">
+            <div v-for="allowedEditor in galleryDescriptor.allowedEditors[template.type]" :key="allowedEditor" class="multiViewer" :class="'p-col-' + 12 / galleryDescriptor.allowedEditors[template.type].length">
                 <h4>
                     <i :class="['icon', galleryDescriptor.editor[allowedEditor].icon]"></i>
                     {{ $t('common.codingLanguages.' + allowedEditor) }}
@@ -109,6 +111,9 @@ import TabPanel from 'primevue/tabpanel'
 import Textarea from 'primevue/textarea'
 import galleryDescriptor from './GalleryManagementDescriptor.json'
 import { IGalleryTemplate } from './GalleryManagement'
+import useValidate from '@vuelidate/core'
+import { createValidations } from '@/helpers/commons/validationHelper'
+import KnValidationMessages from '@/components/UI/KnValidatonMessages.vue'
 
 export default defineComponent({
     name: 'gallery-management-detail',
@@ -116,32 +121,51 @@ export default defineComponent({
         Chips,
         VCodeMirror,
         Dropdown,
+        KnValidationMessages,
         InputText,
         TabView,
         TabPanel,
         Textarea
     },
-    emits: ['saved'],
     props: {
         id: String
     },
+    emits: ['saved'],
     data() {
         return {
-            dirty: false as Boolean,
+            dirty: false as boolean,
             files: [],
-            loading: false as Boolean,
-            test: '' as String,
+            loading: false as boolean,
+            test: '' as string,
             galleryTemplates: [],
             template: {} as IGalleryTemplate,
             galleryDescriptor: galleryDescriptor,
             windowWidth: window.innerWidth,
-            windowWidthBreakPoint: 1500
+            windowWidthBreakPoint: 1500,
+            v$: useValidate() as any
+        }
+    },
+    validations() {
+        return {
+            template: createValidations('template', this.galleryDescriptor.validations.template)
+        }
+    },
+    computed: {
+        isSaveButtonDisabled(): any {
+            return this.v$.$invalid || !this.dirty
+        }
+    },
+    watch: {
+        '$route.params.id': function (id) {
+            this.loadTemplate(id)
         }
     },
     created() {
         this.loadTemplate(this.id)
         window.addEventListener('resize', this.resizeHandler)
-        console.log('OPTIONS: ', this.galleryDescriptor.options['html'])
+    },
+    unmounted() {
+        window.removeEventListener('resize', this.resizeHandler)
     },
     methods: {
         downloadTemplate(): void {
@@ -156,6 +180,21 @@ export default defineComponent({
                 })
             } else {
                 downloadDirect(JSON.stringify(this.template), this.template.name, 'application/json')
+            }
+        },
+        closeTemplateConfirm(): void {
+            if (!this.dirty) {
+                this.closeTemplate()
+            } else {
+                this.$confirm.require({
+                    message: this.$t('common.toast.unsavedChangesMessage'),
+                    header: this.$t('common.toast.unsavedChangesHeader'),
+                    icon: 'pi pi-exclamation-triangle',
+                    accept: () => {
+                        this.dirty = false
+                        this.closeTemplate()
+                    }
+                })
             }
         },
         closeTemplate(): void {
@@ -185,7 +224,15 @@ export default defineComponent({
         },
         saveTemplate(): void {
             if (this.validateTags()) {
-                let postUrl = this.id ? '1.0/widgetgallery/' + this.id : '1.0/widgetgallery'
+                const postUrl = this.id ? '1.0/widgetgallery/' + this.id : '1.0/widgetgallery'
+                const label = this.template.label
+                const name = this.template.name
+                if (!label && !name) {
+                    this.store.setError({ title: this.$t('common.error.uploading'), msg: this.$t('managers.widgetGallery.fieldIsMandatory', { field: this.$t('common.name') }) })
+                    return
+                }
+                if (!label && name) this.template.label = name
+                if (label && !name) this.template.name = label
                 this.$http
                     .post(process.env.VUE_APP_API_PATH + postUrl, this.template)
                     .then((response: AxiosResponse<any>) => {
@@ -201,10 +248,10 @@ export default defineComponent({
         },
         uploadFile(event): void {
             const reader = new FileReader()
-            let self = this
+            const self = this
             reader.addEventListener(
                 'load',
-                function() {
+                function () {
                     self.template.image = reader.result || ''
                 },
                 false
@@ -217,10 +264,10 @@ export default defineComponent({
         resizeHandler(): void {
             this.windowWidth = window.innerWidth
         },
-        validateTags(): Boolean {
+        validateTags(): boolean {
             const validationRegex = /^([a-zA-Z0-9-_])*$/g
-            for (var idx in this.template.tags) {
-                let currentTag = this.template.tags[idx]
+            for (const idx in this.template.tags) {
+                const currentTag = this.template.tags[idx]
                 const valid = currentTag.match(validationRegex)
                 if (!valid) {
                     this.$store.commit('setError', { title: this.$t('common.error.uploading'), msg: this.$t('common.error.tags.tagIsNotValid', { tag: currentTag }) })
@@ -239,7 +286,7 @@ export default defineComponent({
     watch: {
         '$route.params.id': function(id) {
             this.loadTemplate(id)
-        }
+    }
     },
     unmounted() {
         window.removeEventListener('resize', this.resizeHandler)
