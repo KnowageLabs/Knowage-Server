@@ -259,7 +259,7 @@ public class JPAPersistenceManager implements IPersistenceManager {
 					.withUserProfile(UserProfileManager.getProfile())
 					.build();
 			// @formatter:on
-			jpaPersistenceManagerInTableAudit.auditInsertion(registryConf, targetEntity, newObj);
+			jpaPersistenceManagerInTableAudit.auditInsertion(targetEntity, newObj);
 
 			if (!entityTransaction.isActive()) {
 				entityTransaction.begin();

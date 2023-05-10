@@ -108,11 +108,11 @@ public class JPAPersistenceManagerInTableAudit {
 				.ifPresent(column -> jpaPersistenceManager.setProperty(targetEntity, obj, column.getField(), Boolean.TRUE));
 	}
 
-	public void auditInsertion(RegistryConfiguration registryConf, EntityType targetEntity, Object newObj) {
+	public void auditInsertion(EntityType targetEntity, Object newObj) {
 		String currentTimestamp = new SimpleDateFormat(JPAPersistenceManager.TIMESTAMP_SIMPLE_FORMAT).format(new Date());
-		registryConf.getAuditColumn(AuditColumnType.USER_INSERT)
+		registryConfiguration.getAuditColumn(AuditColumnType.USER_INSERT)
 				.ifPresent(column -> jpaPersistenceManager.setProperty(targetEntity, newObj, column.getField(), this.userProfile.getUserId()));
-		registryConf.getAuditColumn(AuditColumnType.TIME_INSERT)
+		registryConfiguration.getAuditColumn(AuditColumnType.TIME_INSERT)
 				.ifPresent(column -> jpaPersistenceManager.setProperty(targetEntity, newObj, column.getField(), currentTimestamp));
 	}
 
