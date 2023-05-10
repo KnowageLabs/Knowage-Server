@@ -12,10 +12,10 @@
         breakpoint="600px"
         :scrollable="true"
         :scrollHeight="knParameterPopupDialogDescriptor.dialog.scrollHeight"
-        @row-select="$emit('selected', selectedRow)"
-        @row-unselect="$emit('selected', selectedRow)"
-        @row-select-all="$emit('selected', selectedRow)"
-        @row-unselect-all="$emit('selected', selectedRow)"
+        @row-select="setSelectedRow"
+        @row-unselect="setSelectedRow"
+        @row-select-all="setSelectedRow"
+        @row-unselect-all="setSelectedRow"
     >
         <template #empty>
             <Message class="p-m-2" severity="info" :closable="false" :style="knParameterPopupDialogDescriptor.styles.message">
@@ -48,7 +48,12 @@ import Message from 'primevue/message'
 export default defineComponent({
     name: 'kn-parameter-popup-dialog',
     components: { Column, DataTable, Message },
-    props: { parameterPopUpData: { type: Object }, multivalue: { type: Boolean }, multipleSelectedRows: { type: Array } },
+    props: {
+        parameterPopUpData: { type: Object },
+        multivalue: { type: Boolean },
+        multipleSelectedRows: { type: Array }
+    },
+    emits: ['selected'],
     data() {
         return {
             knParameterPopupDialogDescriptor,
@@ -73,12 +78,18 @@ export default defineComponent({
 
             this.columns = []
             Object.keys(this.parameterPopUpData?.result.metadata.colsMap).forEach((key: string) => {
-                this.columns.push({ header: this.parameterPopUpData?.result.metadata.colsMap[key], field: key })
+                this.columns.push({
+                    header: this.parameterPopUpData?.result.metadata.colsMap[key],
+                    field: key
+                })
             })
 
             this.columns.forEach((el: any) => this.globalFilterFields.push(el.field))
 
             this.selectedRow = this.multipleSelectedRows
+        },
+        setSelectedRow() {
+            setTimeout(() => this.$emit('selected', this.selectedRow), 10)
         }
     }
 })
