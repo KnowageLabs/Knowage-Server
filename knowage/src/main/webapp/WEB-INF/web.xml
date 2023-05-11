@@ -22,8 +22,8 @@
 	</filter>
 	<filter-mapping>
 		<filter-name>LoggerSetupFilter</filter-name>
-		<dispatcher>REQUEST</dispatcher>
 		<url-pattern>/*</url-pattern>
+		<dispatcher>REQUEST</dispatcher>
 	</filter-mapping>
 
 
@@ -39,11 +39,11 @@
 
 	<filter-mapping>
 		<filter-name>EncodingFilter</filter-name>
-		<dispatcher>REQUEST</dispatcher>
-		<dispatcher>FORWARD</dispatcher>
 		<url-pattern>/servlet/AdapterHTTP</url-pattern>
 		<url-pattern>/public/servlet/AdapterHTTP</url-pattern>
 		<url-pattern>/WEB-INF/jsp/*</url-pattern>
+		<dispatcher>REQUEST</dispatcher>
+		<dispatcher>FORWARD</dispatcher>
 	</filter-mapping>
 
 	<filter>
@@ -128,11 +128,11 @@
 
 	<filter-mapping>
 		<filter-name>SpagoBICoreCheckSessionFilter</filter-name>
-		<dispatcher>REQUEST</dispatcher>
 		<url-pattern>/servlet/AdapterHTTP</url-pattern>
 		<url-pattern>/public/servlet/AdapterHTTP</url-pattern>
 		<url-pattern>/restful-services/publish</url-pattern>
 		<url-pattern>/public/restful-services/publish</url-pattern>
+		<dispatcher>REQUEST</dispatcher>
 	</filter-mapping>
 
 	<!-- START-CAS ${enable.cas.end}
@@ -174,25 +174,25 @@
 
 	<filter-mapping>
 		<filter-name>HmacLoginFilter</filter-name>
+		<url-pattern>/restful-services/publish</url-pattern>
 		<dispatcher>REQUEST</dispatcher>
 		<dispatcher>FORWARD</dispatcher>
-		<url-pattern>/restful-services/publish</url-pattern>
 	</filter-mapping>
 
 	<filter-mapping>
 		<filter-name>ProfileFilter</filter-name>
-		<dispatcher>REQUEST</dispatcher>
-		<dispatcher>FORWARD</dispatcher>
 		<url-pattern>/servlet/AdapterHTTP</url-pattern>
 		<url-pattern>/restful-services/publish</url-pattern>
 		<url-pattern>/public/restful-services/publish</url-pattern>
 		<url-pattern>/public/servlet/AdapterHTTP</url-pattern>
+		<dispatcher>REQUEST</dispatcher>
+		<dispatcher>FORWARD</dispatcher>
 	</filter-mapping>
 	
 	<filter-mapping>
 		<filter-name>ProfileFilter</filter-name>
-		<dispatcher>FORWARD</dispatcher>
 		<url-pattern>/WEB-INF/jsp/*</url-pattern>
+		<dispatcher>FORWARD</dispatcher>
 	</filter-mapping>
 	
 	<filter-mapping>
@@ -216,12 +216,12 @@
 	</filter>
 	<filter-mapping>
 		<filter-name>HMACFilter</filter-name>
-		<dispatcher>REQUEST</dispatcher>
-		<dispatcher>FORWARD</dispatcher>
 		<url-pattern>/restful-services/1.0/datasets/list/persist</url-pattern>
 		<url-pattern>/restful-services/federateddataset/federation</url-pattern>
 		<url-pattern>/restful-services/federateddataset/insertNoDup</url-pattern>
 		<url-pattern>/restful-services/1.0/documents/saveChartTemplate</url-pattern>
+		<dispatcher>REQUEST</dispatcher>
+		<dispatcher>FORWARD</dispatcher>
 	</filter-mapping>
 	<!-- HMAC filter ends -->
 

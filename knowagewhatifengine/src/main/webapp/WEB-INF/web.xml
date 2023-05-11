@@ -22,8 +22,8 @@
 	</filter>
 	<filter-mapping>
 		<filter-name>LoggerSetupFilter</filter-name>
-		<dispatcher>REQUEST</dispatcher>
 		<url-pattern>/*</url-pattern>
+		<dispatcher>REQUEST</dispatcher>
 	</filter-mapping>
 
 
@@ -136,26 +136,26 @@
 
 	<filter-mapping>
 		<filter-name>EncodingFilter</filter-name>
+		<url-pattern>/restful-services/*</url-pattern>
 		<dispatcher>REQUEST</dispatcher>
 		<dispatcher>FORWARD</dispatcher>
-		<url-pattern>/restful-services/*</url-pattern>
 	</filter-mapping>
 	<filter-mapping>
 		<filter-name>EngineCheckSessionFilter</filter-name>
+		<url-pattern>/restful-services/*</url-pattern>
 		<dispatcher>REQUEST</dispatcher>
 		<dispatcher>FORWARD</dispatcher>
-		<url-pattern>/restful-services/*</url-pattern>
 	</filter-mapping>
 	<filter-mapping>
 		<filter-name>SpagoBIAccessFilter</filter-name>
+		<url-pattern>/restful-services/*</url-pattern>
 		<dispatcher>REQUEST</dispatcher>
 		<dispatcher>FORWARD</dispatcher>
-		<url-pattern>/restful-services/*</url-pattern>
 	</filter-mapping>
 	<filter-mapping>
 		<filter-name>SpagoBIAccessFilter</filter-name>
-		<dispatcher>FORWARD</dispatcher>
 		<url-pattern>/WEB-INF/jsp/*</url-pattern>
+		<dispatcher>FORWARD</dispatcher>
 	</filter-mapping>
 
 	<servlet>

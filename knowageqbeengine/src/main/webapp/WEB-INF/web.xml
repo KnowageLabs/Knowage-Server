@@ -21,8 +21,8 @@
 	</filter>
 	<filter-mapping>
 		<filter-name>LoggerSetupFilter</filter-name>
-		<dispatcher>REQUEST</dispatcher>
 		<url-pattern>/*</url-pattern>
+		<dispatcher>REQUEST</dispatcher>
 	</filter-mapping>
 
 
