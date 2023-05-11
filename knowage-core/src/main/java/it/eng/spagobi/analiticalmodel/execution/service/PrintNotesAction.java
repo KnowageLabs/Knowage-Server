@@ -200,10 +200,10 @@ public class PrintNotesAction extends AbstractSpagoBIAction {
 
 			//String rootPath=ConfigSingleton.getRootPath();
 			//logger.debug("rootPath: "+rootPath!=null ? rootPath : "");
-			String templateDirPath=TEMPLATE_PATH;
+			String templateDirPath = TEMPLATE_PATH;
 			//logger.debug("templateDirPath: "+templateDirPath!=null ? templateDirPath : "");
-			templateDirPath+=TEMPLATE_NAME;
-			LOGGER.debug("templatePath: "+templateDirPath!=null ? templateDirPath : "");
+			templateDirPath += TEMPLATE_NAME;
+			LOGGER.debug("templatePath: " + templateDirPath);
 			try (InputStream fis= Thread.currentThread().getContextClassLoader().getResourceAsStream(templateDirPath)) {
 				if(fis!=null){
 					LOGGER.debug("File Input Stream created");
