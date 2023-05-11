@@ -18,10 +18,10 @@ export function setLovsDependency(loadedParameters: { filterStatus: iParameter[]
     }
 }
 
-export async function updateLovDependency(loadedParameters: { filterStatus: iParameter[], isReadyForExecution: boolean }, parameter: iParameter, loading: boolean, document: any, sessionRole: string | null, $http: any, mode: string, userDateFormat: string) {
+export async function updateLovDependency(loadedParameters: { filterStatus: iParameter[], isReadyForExecution: boolean }, parameter: iParameter, loading: boolean, document: any, sessionRole: string | null, $http: any, mode: string, resetValue: boolean, userDateFormat: string) {
     if (parameter && parameter.lovDependentParameters) {
         for (let i = 0; i < parameter.lovDependentParameters.length; i++) {
-            await lovDependencyCheck(loadedParameters, parameter.lovDependentParameters[i], loading, document, sessionRole, $http, mode, userDateFormat)
+            await lovDependencyCheck(loadedParameters, parameter.lovDependentParameters[i], loading, document, sessionRole, $http, mode, resetValue, userDateFormat)
         }
     }
 }
