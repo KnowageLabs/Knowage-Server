@@ -322,6 +322,9 @@ public class RepositoryResource extends AbstractSpagoBIResource {
 
 	private ViewOverDocument toViewOverDocument(SbiView e) {
 		ViewOverDocument ret = new ViewOverDocument();
+		SbiCommonInfo commonInfo = e.getCommonInfo();
+		Instant created = Optional.ofNullable(commonInfo.getTimeIn()).map(Date::toInstant).orElse(null);
+		Instant updated = Optional.ofNullable(commonInfo.getTimeUp()).map(Date::toInstant).orElse(null);
 
 		ret.setBiObjectId(e.getBiObjId());
 		ret.setDescription(e.getDescr());
@@ -330,6 +333,8 @@ public class RepositoryResource extends AbstractSpagoBIResource {
 		ret.setLabel(e.getLabel());
 		ret.setName(e.getName());
 		ret.setSettings(e.getSettings());
+		ret.setCreated(created);
+		ret.setUpdated(updated);
 
 		return ret;
 	}
@@ -337,6 +342,9 @@ public class RepositoryResource extends AbstractSpagoBIResource {
 	private ViewOfImportedDoc toViewOfImportedDoc(SbiViewForDoc e) {
 
 		ViewOfImportedDoc ret = new ViewOfImportedDoc();
+		SbiCommonInfo commonInfo = e.getCommonInfo();
+		Instant created = Optional.ofNullable(commonInfo.getTimeIn()).map(Date::toInstant).orElse(null);
+		Instant updated = Optional.ofNullable(commonInfo.getTimeUp()).map(Date::toInstant).orElse(null);
 		try {
 			BIObject object = getDocument(e.getBiObjId());
 
@@ -346,6 +354,8 @@ public class RepositoryResource extends AbstractSpagoBIResource {
 			ret.setDescription(object.getDescription());
 			ret.setLabel(object.getLabel());
 			ret.setName(object.getName());
+			ret.setCreated(created);
+			ret.setUpdated(updated);
 		} catch (EMFUserError e1) {
 			throw new SpagoBIRuntimeException(e1);
 		}

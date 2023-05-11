@@ -18,7 +18,12 @@
 
 package it.eng.spagobi.api.dto;
 
+import java.time.Instant;
+
 import org.apache.commons.lang3.builder.CompareToBuilder;
+
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
 /**
  * @author Marco Libanori
@@ -31,6 +36,12 @@ public abstract class AbstractViewFolderItem implements Comparable<AbstractViewF
 	private Integer biObjectId;
 
 	private String parentId;
+
+	@JsonInclude(Include.NON_NULL)
+	private Instant created;
+
+	@JsonInclude(Include.NON_NULL)
+	private Instant updated;
 
 	@Override
 	public int compareTo(AbstractViewFolderItem o) {
@@ -72,6 +83,13 @@ public abstract class AbstractViewFolderItem implements Comparable<AbstractViewF
 	}
 
 	/**
+	 * @return the created
+	 */
+	public Instant getCreated() {
+		return created;
+	}
+
+	/**
 	 * @return the description
 	 */
 	public abstract String getDescription();
@@ -87,7 +105,6 @@ public abstract class AbstractViewFolderItem implements Comparable<AbstractViewF
 	 * @return the label
 	 */
 	public abstract String getLabel();
-
 
 	/**
 	 * @return the name
@@ -106,6 +123,14 @@ public abstract class AbstractViewFolderItem implements Comparable<AbstractViewF
 	 */
 	public abstract String getType();
 
+
+	/**
+	 * @return the updated
+	 */
+	public Instant getUpdated() {
+		return updated;
+	}
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -123,6 +148,13 @@ public abstract class AbstractViewFolderItem implements Comparable<AbstractViewF
 	}
 
 	/**
+	 * @param created the created to set
+	 */
+	public void setCreated(Instant created) {
+		this.created = created;
+	}
+
+	/**
 	 * @param id the id to set
 	 */
 	public void setId(String id) {
@@ -134,5 +166,12 @@ public abstract class AbstractViewFolderItem implements Comparable<AbstractViewF
 	 */
 	public void setParentId(String parentId) {
 		this.parentId = parentId;
+	}
+
+	/**
+	 * @param updated the updated to set
+	 */
+	public void setUpdated(Instant updated) {
+		this.updated = updated;
 	}
 }

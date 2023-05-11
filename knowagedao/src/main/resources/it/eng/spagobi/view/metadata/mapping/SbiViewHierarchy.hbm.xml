@@ -57,7 +57,7 @@
 			<column name="progr" not-null="true" />
 		</property>
 
-		<many-to-one name="parent" class="it.eng.spagobi.view.metadata.SbiViewHierarchy" column="parent_id" cascade="all" insert="true" update="true" lazy="false"/>
+		<many-to-one name="parent" class="it.eng.spagobi.view.metadata.SbiViewHierarchy" column="parent_id" cascade="none" insert="true" update="true" lazy="false"/>
 
 		<set name="children" sort="natural" cascade="all-delete-orphan" lazy="false">
 			<key>
