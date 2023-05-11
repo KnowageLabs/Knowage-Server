@@ -1064,9 +1064,6 @@ cockpitModule_templateServices.getDatasetUsetByWidgetWithParams();
 							else if(content.type == 'dynamic'){
 								if(content.column){
 									if(model.type!='static-pivot-table'){
-										if(modalValue && modalValue.length > 0){
-											var valToAdd = modalValue
-										}else{
 											var valToAdd = '';
 											var columnNameToSearch = columnAliasesMap[content.column] ?  columnAliasesMap[content.column] : content.column;
 											if(row[columnNameToSearch]) valToAdd = row[columnNameToSearch].value || row[columnNameToSearch];
@@ -1076,7 +1073,6 @@ cockpitModule_templateServices.getDatasetUsetByWidgetWithParams();
 											if(content.dataType === "date" && isoDate){
 												valToAdd = isoDate
 											}
-										}
 									}else {
 										if(content.column == 'MEASURE_COLUMN_NAME' && modalColumn){
 											var valToAdd = modalColumn;

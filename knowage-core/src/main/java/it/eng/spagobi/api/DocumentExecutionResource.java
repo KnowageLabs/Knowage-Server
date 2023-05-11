@@ -171,7 +171,7 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 		}
 	}
 
-	static protected Logger logger = Logger.getLogger(DocumentExecutionResource.class);
+	private static final Logger LOGGER = Logger.getLogger(DocumentExecutionResource.class);
 
 	/**
 	 * @return { executionURL: 'http:...', errors: 1 - 'role missing' 2 -'Missing paramters' [list of missing mandatory filters ] 3 -'operation not allowed' [if
@@ -185,7 +185,7 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
 	public Response getDocumentExecutionURL(@Context HttpServletRequest req) throws IOException, JSONException {
 
-		logger.debug("IN");
+		LOGGER.debug("IN");
 		Monitor getDocumentExecutionURLMonitor = MonitorFactory.start("Knowage.DocumentExecutionResource.getDocumentExecutionURL");
 
 		Monitor getDocumentExecutionURLIntroMonitor = MonitorFactory.start("Knowage.DocumentExecutionResource.getDocumentExecutionURL.intro");
@@ -280,7 +280,7 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 			toRet.put("errors", arrerr);
 			return Response.ok(toRet.toString()).build();
 		} catch (Exception e) {
-			logger.error("Error while getting the document execution url", e);
+			LOGGER.error("Error while getting the document execution url", e);
 			err.put("message", e.getMessage());
 			arrerr.put(err);
 			JSONObject toRet = new JSONObject();
@@ -289,7 +289,7 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 		} finally {
 			getDocumentExecutionURLMonitor.stop();
 		}
-		logger.debug("OUT");
+		LOGGER.debug("OUT");
 		return Response.ok(resultAsMap).build();
 	}
 
@@ -503,7 +503,7 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 
 			}
 		} catch (Exception e) {
-			logger.error("Cannot retrieve drivers list", e);
+			LOGGER.error("Cannot retrieve drivers list", e);
 			throw new SpagoBIRuntimeException(e.getMessage(), e);
 		}
 		return parametersArrayList;
@@ -522,7 +522,7 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
 	public Response getDocumentExecutionFilters(@Context HttpServletRequest req) throws DocumentExecutionException, EMFUserError, IOException, JSONException {
 
-		logger.debug("IN");
+		LOGGER.debug("IN");
 
 		RequestContainer aRequestContainer = RequestContainerAccess.getRequestContainer(req);
 		JSONObject requestVal = RestUtilities.readBodyAsJSONObject(req);
@@ -636,7 +636,7 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 
 								}
 							} catch (UnsupportedEncodingException e) {
-								logger.debug("An error occured while decoding parameter with value[" + itemVal + "]" + e);
+								LOGGER.debug("An error occured while decoding parameter with value[" + itemVal + "]" + e);
 							}
 						}
 					} else if (paramValues instanceof String) {
@@ -697,7 +697,7 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 						ArrayList<HashMap<String, Object>> defaultValues = manageDataRange(biObject, role, objParameter.getId());
 						parameterAsMap.put("defaultValues", defaultValues);
 					} catch (SerializationException e) {
-						logger.debug("Filters DATE RANGE ERRORS ", e);
+						LOGGER.debug("Filters DATE RANGE ERRORS ", e);
 					}
 
 				}
@@ -756,7 +756,7 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 					DefaultValuesList valueList = null;
 					// check if the parameter is really valorized (for example if it isn't an empty list)
 					List lstValues = (List) parameterAsMap.get("parameterValue");
-					if (lstValues.size() == 0)
+					if (lstValues.isEmpty())
 						jsonCrossParameters.remove(objParameter.getId());
 
 					String parLab = objParameter.getDriver() != null && objParameter.getDriver().getParameter() != null
@@ -833,7 +833,7 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 					"The value of configuration variable document.execution.startAutomatically is not valid, contact your administrator");
 		}
 
-		logger.debug("OUT");
+		LOGGER.debug("OUT");
 		return Response.ok(resultAsMap).build();
 	}
 
@@ -939,7 +939,7 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 				sessionParametersMap.put(key, parJson);
 			}
 		} catch (Exception e) {
-			logger.error("Error converting session parameters to JSON: ", e);
+			LOGGER.error("Error converting session parameters to JSON: ", e);
 		}
 
 		return sessionParametersMap;
@@ -950,7 +950,7 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 			List values = parameter.getDriver().getParameterValues();
 			// if parameter is mandatory and has no value, execution cannot start automatically
 			if (parameter.isMandatory() && (values == null || values.isEmpty())) {
-				logger.debug("Parameter [" + parameter.getId() + "] is mandatory but has no values. Execution cannot start automatically");
+				LOGGER.debug("Parameter [" + parameter.getId() + "] is mandatory but has no values. Execution cannot start automatically");
 				return false;
 			}
 		}
@@ -963,7 +963,7 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 		List<BIObjectParameter> parameters = biObject.getDrivers();
 		for (BIObjectParameter parameter : parameters) {
 			if (crossNavigationParametesMap.has(parameter.getParameterUrlName())) {
-				logger.debug("Found value from request for parmaeter [" + parameter.getParameterUrlName() + "]");
+				LOGGER.debug("Found value from request for parmaeter [" + parameter.getParameterUrlName() + "]");
 				documentUrlManager.refreshParameterForFilters(parameter, crossNavigationParametesMap);
 				parsFromCross.add(parameter.getParameterUrlName());
 				continue;
@@ -1011,7 +1011,7 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 
 		try {
 			if (DateRangeDAOUtilities.isDateRange(biObjectParameter)) {
-				logger.debug("loading date range combobox");
+				LOGGER.debug("loading date range combobox");
 
 			}
 		} catch (Exception e) {
@@ -1126,9 +1126,9 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 
 		ArrayList<HashMap<String, Object>> result = (ArrayList<HashMap<String, Object>>) defaultValuesData.get(DocumentExecutionUtils.DEFAULT_VALUES);
 
-		HashMap<String, Object> resultAsMap = new HashMap<String, Object>();
+		HashMap<String, Object> resultAsMap = new HashMap<>();
 
-		if (result != null && result.size() > 0) {
+		if (result != null && !result.isEmpty()) {
 			resultAsMap.put("filterValues", result);
 			resultAsMap.put("errors", new ArrayList<>());
 		} else {
@@ -1140,7 +1140,7 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 			resultAsMap.put("errors", errorList);
 		}
 
-		logger.debug("OUT");
+		LOGGER.debug("OUT");
 		return Response.ok(resultAsMap).build();
 	}
 
@@ -1152,7 +1152,7 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
 	public Response getDocumentExecutionFilterList(@QueryParam("label") String label, @QueryParam("role") String role,
 			@QueryParam("parameters") String jsonParameters, @QueryParam("urlName") String urlName, @Context HttpServletRequest req) {
-		logger.debug("IN");
+		LOGGER.debug("IN");
 
 		String toBeReturned = "{}";
 
@@ -1162,11 +1162,11 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 		} catch (DocumentExecutionException e) {
 			return Response.ok("{errors: '" + e.getMessage() + "', }").build();
 		} catch (Exception e) {
-			logger.error("Error while getting the document execution filterlist", e);
+			LOGGER.error("Error while getting the document execution filterlist", e);
 			throw new SpagoBIRuntimeException("Error while getting the document execution filterlist", e);
 		}
 
-		logger.debug("OUT");
+		LOGGER.debug("OUT");
 		return Response.ok(toBeReturned).build();
 	}
 
@@ -1177,7 +1177,7 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 	@Path("/canHavePublicExecutionUrl")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
 	public Response canHavePublicExecutionUrl(@Context HttpServletRequest req) {
-		logger.debug("IN");
+		LOGGER.debug("IN");
 
 		Boolean toReturn = false;
 
@@ -1203,15 +1203,15 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 				results.put("isPublic", toReturn);
 
 			} else {
-				logger.error("Object with label " + label + " not found");
+				LOGGER.error("Object with label " + label + " not found");
 				throw new SpagoBIRuntimeException("Object with label " + label + " not found");
 			}
 		} catch (Exception e) {
-			logger.error("Exception when testing public execution possibility", e);
+			LOGGER.error("Exception when testing public execution possibility", e);
 			throw new SpagoBIRuntimeException("Exception when testing public execution possibility", e);
 		}
 
-		logger.debug("OUT");
+		LOGGER.debug("OUT");
 
 		return Response.ok(results.toString()).build();
 	}
@@ -1289,7 +1289,7 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 			return response.build();
 
 		} catch (Exception e) {
-			logger.error(httpRequest.getPathInfo(), e);
+			LOGGER.error(httpRequest.getPathInfo(), e);
 			throw new SpagoBIRuntimeException("Error returning file.", e);
 		}
 
@@ -1331,16 +1331,12 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 
 		filePath = filePath + "/" + fileName;
 		File file = new File(filePath);
-		FileInputStream fis = null;
 		byte[] bFile = null;
-		try {
-			fis = new FileInputStream(file);
+		try(FileInputStream fis = new FileInputStream(file)) {
 			bFile = new byte[(int) file.length()];
 
 			// convert file into array of bytes
-			fis = new FileInputStream(file);
 			fis.read(bFile);
-			fis.close();
 		} catch (IOException e) {
 			throw new IOException("Error reading " + filePath + " file.", e);
 		}
@@ -1351,13 +1347,13 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 	protected String getExecutionRole(String role) throws EMFInternalError, DocumentExecutionException {
 		UserProfile userProfile = getUserProfile();
 		if (role != null && !role.equals("")) {
-			logger.debug("role for document execution: " + role);
+			LOGGER.debug("role for document execution: " + role);
 		} else {
 			if (userProfile.getRoles().size() == 1) {
 				role = userProfile.getRoles().iterator().next().toString();
-				logger.debug("profile role for document execution: " + role);
+				LOGGER.debug("profile role for document execution: " + role);
 			} else {
-				logger.debug("missing role for document execution, role:" + role);
+				LOGGER.debug("missing role for document execution, role:" + role);
 				throw new DocumentExecutionException(message.getMessage("SBIDev.docConf.execBIObject.selRoles.Title"));
 			}
 		}
@@ -1367,7 +1363,7 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 
 	private DefaultValuesList buildParameterSessionValueList(String sessionParameterValue, String sessionParameterDescription, BIObjectParameter objParameter) {
 
-		logger.debug("IN");
+		LOGGER.debug("IN");
 
 		DefaultValuesList valueList = new DefaultValuesList();
 
@@ -1390,7 +1386,7 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 				valueList.add(valueDef);
 				return valueList;
 			} catch (ParseException e) {
-				logger.error("Error while building default Value List Date Type ", e);
+				LOGGER.error("Error while building default Value List Date Type ", e);
 				return null;
 			}
 		} else if (objParameter.getParameter().getType().equals("DATE_RANGE")) {
@@ -1412,20 +1408,20 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 				valueList.add(valueDef);
 				return valueList;
 			} catch (ParseException e) {
-				logger.error("Error while building default Value List Date Type ", e);
+				LOGGER.error("Error while building default Value List Date Type ", e);
 				return null;
 			}
 		}
 
 		else if (objParameter.isMultivalue()) {
-			logger.debug("Multivalue case");
+			LOGGER.debug("Multivalue case");
 			try {
 				// split sessionValue
 				JSONArray valuesArray = new JSONArray(sessionParameterValue);
 				StringTokenizer st = new StringTokenizer(sessionParameterDescription, ";", false);
 
-				ArrayList<String> values = new ArrayList<String>();
-				ArrayList<String> descriptions = new ArrayList<String>();
+				ArrayList<String> values = new ArrayList<>();
+				ArrayList<String> descriptions = new ArrayList<>();
 
 				int i = 0;
 				while (st.hasMoreTokens()) {
@@ -1449,11 +1445,11 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 				}
 
 			} catch (Exception e) {
-				logger.error("Error in converting multivalue session values", e);
+				LOGGER.error("Error in converting multivalue session values", e);
 			}
 
 		} else {
-			logger.debug("NOT - multivalue case");
+			LOGGER.debug("NOT - multivalue case");
 			// value could be String or array
 
 			try {
@@ -1473,11 +1469,11 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 				valueList.add(valueDef);
 
 			} catch (Exception e) {
-				logger.error("Error in converting single value session values", e);
+				LOGGER.error("Error in converting single value session values", e);
 			}
 		}
 
-		logger.debug("OUT");
+		LOGGER.debug("OUT");
 		return valueList;
 	}
 
@@ -1490,7 +1486,7 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 			date = formatter.format(d);
 			// jsonParameters.put(objParameter.getId(), date);
 		} catch (ParseException e) {
-			logger.error("Error prase date server ", e);
+			LOGGER.error("Error prase date server ", e);
 
 		}
 		return date;
@@ -1499,18 +1495,18 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 	private static void addToZipFile(String filePath, String fileName, ZipOutputStream zos) throws FileNotFoundException, IOException {
 
 		File file = new File(filePath + "/" + fileName);
-		FileInputStream fis = new FileInputStream(file);
-		ZipEntry zipEntry = new ZipEntry(fileName);
-		zos.putNextEntry(zipEntry);
+		try (FileInputStream fis = new FileInputStream(file)) {
+			ZipEntry zipEntry = new ZipEntry(fileName);
+			zos.putNextEntry(zipEntry);
 
-		byte[] bytes = new byte[1024];
-		int length;
-		while ((length = fis.read(bytes)) >= 0) {
-			zos.write(bytes, 0, length);
+			byte[] bytes = new byte[1024];
+			int length;
+			while ((length = fis.read(bytes)) >= 0) {
+				zos.write(bytes, 0, length);
+			}
+
+			zos.closeEntry();
 		}
-
-		zos.closeEntry();
-		fis.close();
 	}
 
 	private static void deleteDirectoryContent(File path) {
@@ -1544,16 +1540,12 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 	@SuppressWarnings("resource")
 	private byte[] getFileByteArray(String filePath) throws IOException {
 		File file = new File(filePath);
-		FileInputStream fis = null;
 		byte[] bFile = null;
-		try {
-			fis = new FileInputStream(file);
+		try(FileInputStream fis = new FileInputStream(file)) {
 			bFile = new byte[(int) file.length()];
 
 			// convert file into array of bytes
-			fis = new FileInputStream(file);
 			fis.read(bFile);
-			fis.close();
 		} catch (IOException e) {
 			throw new IOException("Error reading " + filePath + " file.", e);
 		}
@@ -1562,7 +1554,7 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 	}
 
 	public ArrayList<HashMap<String, Object>> transformRuntimeDrivers(List<BusinessModelDriverRuntime> parameters, IParameterUseDAO parameterUseDAO,
-			String role, MetaModel businessModel, BusinessModelOpenParameters BMOP) {
+			String role, MetaModel businessModel, BusinessModelOpenParameters bmop) {
 		ArrayList<HashMap<String, Object>> parametersArrayList = new ArrayList<>();
 		ParameterUse parameterUse;
 		for (BusinessModelDriverRuntime objParameter : parameters) {
@@ -1570,7 +1562,7 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 			try {
 				parameterUse = parameterUseDAO.loadByUseID(paruseId);
 			} catch (EMFUserError e1) {
-				logger.debug(e1.getCause(), e1);
+				LOGGER.debug(e1.getCause(), e1);
 				throw new SpagoBIRuntimeException(e1.getMessage(), e1);
 			}
 
@@ -1643,7 +1635,7 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 						} catch (UnsupportedEncodingException e) {
 							// TODO Auto-generated catch block
 							// e.printStackTrace();
-							logger.debug("An error occured while decoding parameter with value[" + itemVal + "]" + e);
+							LOGGER.debug("An error occured while decoding parameter with value[" + itemVal + "]" + e);
 						}
 					}
 				} else if (paramValues instanceof String) {
@@ -1652,7 +1644,7 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 						try {
 							paramValues = URLDecoder.decode((String) paramValues, "UTF-8");
 						} catch (UnsupportedEncodingException e) {
-							logger.debug(e.getCause(), e);
+							LOGGER.debug(e.getCause(), e);
 							throw new SpagoBIRuntimeException(e.getMessage(), e);
 						}
 					}
@@ -1664,7 +1656,7 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 						try {
 							parDescrVal = URLDecoder.decode(parDescrVal, "UTF-8");
 						} catch (UnsupportedEncodingException e) {
-							logger.debug(e.getCause(), e);
+							LOGGER.debug(e.getCause(), e);
 							throw new SpagoBIRuntimeException(e.getMessage(), e);
 						}
 					}
@@ -1702,17 +1694,17 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 				// if parameterValue is not null and is array, check if all element are present in lov
 				Object values = parameterAsMap.get("parameterValue");
 				if (values != null && admissibleValues != null) {
-					BMOP.checkIfValuesAreAdmissible(values, admissibleValues);
+					bmop.checkIfValuesAreAdmissible(values, admissibleValues);
 				}
 			}
 
 			// DATE RANGE DEFAULT VALUE
 			if (objParameter.getParType().equals("DATE_RANGE")) {
 				try {
-					ArrayList<HashMap<String, Object>> defaultValues = BMOP.manageDataRange(businessModel, role, objParameter.getId());
+					ArrayList<HashMap<String, Object>> defaultValues = bmop.manageDataRange(businessModel, role, objParameter.getId());
 					parameterAsMap.put("defaultValues", defaultValues);
 				} catch (SerializationException | EMFUserError | JSONException | IOException e) {
-					logger.debug("Filters DATE RANGE ERRORS ", e);
+					LOGGER.debug("Filters DATE RANGE ERRORS ", e);
 				}
 			}
 
@@ -1820,7 +1812,7 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 		try {
 			role = getUserProfile().getRoles().contains("admin") ? "admin" : (String) getUserProfile().getRoles().iterator().next();
 		} catch (EMFInternalError e2) {
-			logger.debug(e2.getCause(), e2);
+			LOGGER.debug(e2.getCause(), e2);
 			throw new SpagoBIRuntimeException(e2.getMessage(), e2);
 		}
 		MetaModel businessModel = dao.loadMetaModelForExecutionByNameAndRole(businessModelName, role, loadDSwithDrivers);

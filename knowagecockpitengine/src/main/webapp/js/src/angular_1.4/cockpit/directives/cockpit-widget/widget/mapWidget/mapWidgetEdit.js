@@ -334,8 +334,12 @@ function mapWidgetEditControllerFunction(
 								currCol.aliasToShow = currCol.alias;
 
 								// Initialize columns
-								if (currCol.fieldType == 'ATTRIBUTE' || currCol.fieldType == 'SPATIAL_ATTRIBUTE') {
+								if (currCol.fieldType == 'SPATIAL_ATTRIBUTE') {
+									currCol.properties.aggregateBy = true;
+								} else if (currCol.fieldType == 'ATTRIBUTE' || currCol.fieldType == 'SPATIAL_ATTRIBUTE') {
 									currCol.properties.aggregateBy = false;
+								} else if (currCol.fieldType == 'MEASURE') {
+									currCol.aggregationSelected = $scope.availableAggregationFunctionsForMeasures[0];
 								}
 
 								columnSelected.push(currCol);

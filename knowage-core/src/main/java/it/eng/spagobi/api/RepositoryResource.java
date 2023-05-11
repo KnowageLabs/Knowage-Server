@@ -21,7 +21,9 @@ package it.eng.spagobi.api;
 import static java.util.Objects.nonNull;
 import static java.util.stream.Collectors.toSet;
 
+import java.time.Instant;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Deque;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -29,6 +31,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import java.util.function.Consumer;
 
@@ -52,6 +55,7 @@ import it.eng.spagobi.api.dto.ViewFolder;
 import it.eng.spagobi.api.dto.ViewOfImportedDoc;
 import it.eng.spagobi.api.dto.ViewOverDocument;
 import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.commons.metadata.SbiCommonInfo;
 import it.eng.spagobi.user.UserProfileManager;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.view.dao.ISbiViewDAO;
@@ -140,7 +144,11 @@ public class RepositoryResource extends AbstractSpagoBIResource {
 
 		String parentId = e.getParentId();
 
-		SbiViewHierarchy parent = getFolder(parentId);
+		SbiViewHierarchy parent = null;
+
+		if (nonNull(parentId)) {
+			parent = getFolder(parentId);
+		}
 
 		SbiViewHierarchy v = new SbiViewHierarchy();
 
@@ -162,7 +170,12 @@ public class RepositoryResource extends AbstractSpagoBIResource {
 
 		String parentId = e.getParentId();
 
-		SbiViewHierarchy parent = getFolder(parentId);
+		SbiViewHierarchy parent = null;
+
+		if (nonNull(parentId)) {
+			parent = getFolder(parentId);
+		}
+
 		SbiViewHierarchy v = getFolder(e.getId());
 
 		v.setDescr(e.getDescription());
@@ -353,11 +366,16 @@ public class RepositoryResource extends AbstractSpagoBIResource {
 	private ViewFolder toViewFolder(SbiViewHierarchy e) {
 		ViewFolder ret = new ViewFolder();
 		SbiViewHierarchy parent = e.getParent();
+		SbiCommonInfo commonInfo = e.getCommonInfo();
+		Instant created = Optional.ofNullable(commonInfo.getTimeIn()).map(Date::toInstant).orElse(null);
+		Instant updated = Optional.ofNullable(commonInfo.getTimeUp()).map(Date::toInstant).orElse(null);
 
 		ret.setId(e.getId());
 		ret.setName(e.getName());
 		ret.setDescription(e.getDescr());
 		ret.setProgr(e.getProgr());
+		ret.setCreated(created);
+		ret.setUpdated(updated);
 
 		if (nonNull(parent)) {
 			ret.setParentId(parent.getId());

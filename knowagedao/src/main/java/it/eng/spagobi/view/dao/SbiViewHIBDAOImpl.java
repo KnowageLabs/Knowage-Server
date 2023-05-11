@@ -156,7 +156,7 @@ public class SbiViewHIBDAOImpl extends AbstractHibernateDAO implements ISbiViewD
 			Filter filter = session.enableFilter(FILTER_USER);
 			filter.setParameter(FILTER_USER_PARAM_USER, userProfile.getUserId());
 
-			List list = session.createCriteria(SbiView.class)
+			List<SbiView> list = session.createCriteria(SbiView.class)
 				.createAlias("parent", "parent")
 				.add(Restrictions.eq("parent.id", id))
 				.list();
@@ -184,7 +184,7 @@ public class SbiViewHIBDAOImpl extends AbstractHibernateDAO implements ISbiViewD
 			Filter filter = session.enableFilter(FILTER_USER);
 			filter.setParameter(FILTER_USER_PARAM_USER, userProfile.getUserId());
 
-			List list = session.createCriteria(SbiView.class)
+			List<SbiView> list = session.createCriteria(SbiView.class)
 				.add(Restrictions.eq("biObjId", biObjectId))
 				.list();
 

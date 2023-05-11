@@ -139,7 +139,7 @@ public class AbstractDocumentExecutionWork extends DossierExecutionClient implem
 			String dbArray = activity.getConfigContent();
 			JSONArray jsonArray = null;
 
-			HashMap<String, String> paramMap = new HashMap<String, String>();
+			HashMap<String, String> paramMap = new HashMap<>();
 
 			if (dbArray != null && !dbArray.isEmpty()) {
 				jsonArray = new org.json.JSONArray(dbArray);
@@ -239,7 +239,7 @@ public class AbstractDocumentExecutionWork extends DossierExecutionClient implem
 					}
 
 					// DOC with images replaced creation
-					imagesMap = new HashMap<String, String>();
+					imagesMap = new HashMap<>();
 					if (isZipped) {
 						String message = "Document has more than one single sheet. Screenshot is replaced with an empty image.";
 						logger.debug(message);
@@ -312,7 +312,7 @@ public class AbstractDocumentExecutionWork extends DossierExecutionClient implem
 	}
 
 	public String addParametersToServiceUrl(Integer progressthreadId, BIObject biObject, Report reportToUse, StringBuilder serviceUrlBuilder,
-			JSONArray jsonArray, HashMap<String, String> paramMap) throws UnsupportedEncodingException, JSONException {
+			JSONArray jsonArray, Map<String, String> paramMap) throws UnsupportedEncodingException, JSONException {
 		List<BIObjectParameter> drivers = biObject.getDrivers();
 		if (drivers != null) {
 			List<Parameter> parameter = reportToUse.getParameters();
@@ -396,30 +396,30 @@ public class AbstractDocumentExecutionWork extends DossierExecutionClient implem
 		File outFolder = new File(outFolderPath);
 
 		byte[] buffer = new byte[1024];
-		ZipInputStream zis = new ZipInputStream(new ByteArrayInputStream(responseAsByteArray));
-		ZipEntry zipEntry = zis.getNextEntry();
-		while (zipEntry != null) {
-			File newFile = FileUtilities.createFile(FilenameUtils.removeExtension(zipEntry.getName()), ".png", randomKey, new ArrayList<PlaceHolder>());
-			FileOutputStream fos = new FileOutputStream(newFile);
-			int len;
-			while ((len = zis.read(buffer)) > 0) {
-				fos.write(buffer, 0, len);
+		try (ZipInputStream zis = new ZipInputStream(new ByteArrayInputStream(responseAsByteArray))) {
+			ZipEntry zipEntry = zis.getNextEntry();
+			while (zipEntry != null) {
+				File newFile = FileUtilities.createFile(FilenameUtils.removeExtension(zipEntry.getName()), ".png", randomKey, new ArrayList<PlaceHolder>());
+				try (FileOutputStream fos = new FileOutputStream(newFile)) {
+					int len;
+					while ((len = zis.read(buffer)) > 0) {
+						fos.write(buffer, 0, len);
+					}
+				}
+				zipEntry = zis.getNextEntry();
 			}
-			fos.close();
-			zipEntry = zis.getNextEntry();
+			zis.closeEntry();
 		}
-		zis.closeEntry();
-		zis.close();
 
 		// array of supported extensions (use a List if you prefer)
-		String[] EXTENSIONS = new String[] { "gif", "png", "bmp" // and other formats you need
+		String[] extensions = new String[] { "gif", "png", "bmp" // and other formats you need
 		};
 		// filter to identify images based on their extensions
-		FilenameFilter IMAGE_FILTER = new FilenameFilter() {
+		FilenameFilter imageFilter = new FilenameFilter() {
 
 			@Override
 			public boolean accept(final File dir, final String name) {
-				for (final String ext : EXTENSIONS) {
+				for (final String ext : extensions) {
 					if (name.endsWith("." + ext) && name.startsWith("sheet")) {
 						return (true);
 					}
@@ -431,12 +431,12 @@ public class AbstractDocumentExecutionWork extends DossierExecutionClient implem
 		String documentLabel = reportToUse.getLabel();
 
 		if (outFolder.isDirectory()) {
-			for (final File f : outFolder.listFiles(IMAGE_FILTER)) {
+			for (final File f : outFolder.listFiles(imageFilter)) {
 
 				try {
 
 					File to = FileUtilities.createFile(FilenameUtils.removeExtension(documentLabel + "_" + f.getName()), ".png", randomKey,
-							new ArrayList<PlaceHolder>());
+							new ArrayList<>());
 
 					FileUtils.copyFile(f, to);
 					if (reportToUse.getImageName().contains(FilenameUtils.removeExtension(f.getName()))) {
@@ -547,55 +547,46 @@ public class AbstractDocumentExecutionWork extends DossierExecutionClient implem
 	}
 
 	public File createErrorFile(BIObject biObj, Throwable error) {
-//		public File createErrorFile(BIObject biObj, Throwable error, Map randomNamesToName) {
 		logger.debug("IN");
 		File toReturn = null;
-		FileWriter fw = null;
-		ArrayList<PlaceHolder> list = new ArrayList<PlaceHolder>();
+		ArrayList<PlaceHolder> list = new ArrayList<>();
 		PlaceHolder p = new PlaceHolder();
 		p.setValue("ERROR");
 		list.add(p);
 		try {
 			if (biObj == null) {
 				toReturn = FileUtilities.createFile("errorLog", ".txt", randomKey, list);
-				fw = new FileWriter(toReturn);
-				fw.write(error + "\n");
-				if (error != null) {
-					StackTraceElement[] errs = error.getStackTrace();
-					for (int i = 0; i < errs.length; i++) {
-						String err = errs[i].toString();
-						fw.write(err + "\n");
+				try (FileWriter fw = new FileWriter(toReturn)) {
+					fw.write(error + "\n");
+					if (error != null) {
+						StackTraceElement[] errs = error.getStackTrace();
+						for (int i = 0; i < errs.length; i++) {
+							String err = errs[i].toString();
+							fw.write(err + "\n");
+						}
 					}
+					fw.flush();
 				}
-				fw.flush();
 			} else {
 				String fileName = "Error " + biObj.getLabel() + "-" + biObj.getName();
 				toReturn = FileUtilities.createFile(fileName, ".txt", randomKey, list);
-//			randomNamesToName.put(toReturn.getName(), fileName + ".txt");
-				fw = new FileWriter(toReturn);
-				fw.write("Error while executing biObject " + biObj.getLabel() + " - " + biObj.getName() + "\n");
-				fw.write(error + "\n");
-				if (error != null) {
-					StackTraceElement[] errs = error.getStackTrace();
-					for (int i = 0; i < errs.length; i++) {
-						String err = errs[i].toString();
-						fw.write(err + "\n");
+				try (FileWriter fw = new FileWriter(toReturn)) {
+					fw.write("Error while executing biObject " + biObj.getLabel() + " - " + biObj.getName() + "\n");
+					fw.write(error + "\n");
+					if (error != null) {
+						StackTraceElement[] errs = error.getStackTrace();
+						for (int i = 0; i < errs.length; i++) {
+							String err = errs[i].toString();
+							fw.write(err + "\n");
+						}
 					}
+					fw.flush();
 				}
-				fw.flush();
 			}
 		} catch (Exception e) {
 			logger.error("Error in wirting error file for biObj " + biObj.getLabel());
 			deleteDBRowInCaseOfError(progressThreadDAO, progressThreadId);
 			throw new SpagoBIServiceException("Error in wirting error file for biObj " + biObj.getLabel(), e);
-		} finally {
-			if (fw != null) {
-				try {
-					fw.flush();
-					fw.close();
-				} catch (IOException e) {
-				}
-			}
 		}
 		logger.debug("OUT");
 		return toReturn;

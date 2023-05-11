@@ -29,6 +29,8 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.json.JSONObject;
 
 import it.eng.spago.base.RequestContainer;
@@ -51,14 +53,15 @@ import it.eng.spagobi.wapp.util.MenuUtilities;
 @Path("/3.0/menu")
 @ManageAuthorization
 public class MenuResource extends AbstractSpagoBIResource {
-	private final String charset = "; charset=UTF-8";
+
+	private static final Logger LOGGER = LogManager.getLogger(MenuResource.class);
 
 	@GET
 	@Path("/enduser")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
 	public String getEndUserMenu(@Context HttpServletRequest req) {
 
-		logger.debug("IN");
+		LOGGER.debug("IN");
 
 		IEngUserProfile userProfile = getUserProfile();
 
@@ -92,7 +95,7 @@ public class MenuResource extends AbstractSpagoBIResource {
 			throw new SpagoBIRuntimeException(message, e);
 		}
 
-		logger.debug("OUT");
+		LOGGER.debug("OUT");
 		return jsonMenuList.toString();
 
 	}

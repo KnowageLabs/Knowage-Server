@@ -17,11 +17,12 @@
  */
 package it.eng.spagobi.analiticalmodel.execution.service.v2;
 
-import java.util.List;
-
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
@@ -41,13 +42,13 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 @ManageAuthorization
 public class MonitoringResource extends AbstractSpagoBIResource {
 
-	List recentsList = null;
+	private static final Logger LOGGER = LogManager.getLogger(MonitoringResource.class);
 
 	@GET
 	@Path("/{label}")
 	public Integer loadDocumentIdByLabel(@PathParam("label") String label) {
 
-		logger.debug("IN");
+		LOGGER.debug("IN");
 		Integer objId = null;
 
 		try {
@@ -57,7 +58,7 @@ public class MonitoringResource extends AbstractSpagoBIResource {
 			document = biObjectDao.loadBIObjectByLabel(label);
 			objId = document.getId();
 		} catch (EMFUserError e) {
-			logger.error("Error loading the document ID for a schedulation in workspace", e);
+			LOGGER.error("Error loading the document ID for a schedulation in workspace", e);
 			throw new SpagoBIServiceException(this.request.getPathInfo(), "An unexpected error occured while executing service", e);
 		}
 

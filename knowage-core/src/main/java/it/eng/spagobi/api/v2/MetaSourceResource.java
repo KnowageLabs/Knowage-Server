@@ -13,6 +13,9 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.api.AbstractSpagoBIResource;
 import it.eng.spagobi.commons.constants.CommunityFunctionalityConstants;
@@ -30,9 +33,11 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 @ManageAuthorization
 public class MetaSourceResource extends AbstractSpagoBIResource {
 
+	private static final Logger LOGGER = LogManager.getLogger(MetaSourceResource.class);
+	private static final String SERVICE_NAME = "MetaSourceResource";
+
 	private ISbiMetaSourceDAO sbiMetaSourceDAO = null;
 	private ISbiMetaTableDAO sbiMetaTableDAO = null;
-	private final static String SERVICE_NAME = "MetaSourceResource";
 
 	public MetaSourceResource() {
 
@@ -79,7 +84,7 @@ public class MetaSourceResource extends AbstractSpagoBIResource {
 			metaTables = sbiMetaSourceDAO.loadMetaTables(sourceId);
 
 		} catch (EMFUserError e) {
-			logger.debug(e.getMessage());
+			LOGGER.debug(e.getMessage());
 		}
 		return metaTables;
 	}
@@ -99,7 +104,7 @@ public class MetaSourceResource extends AbstractSpagoBIResource {
 				}
 			}
 		} catch (EMFUserError e) {
-			logger.debug(e.getMessage());
+			LOGGER.debug(e.getMessage());
 		}
 		return null;
 	}
@@ -135,10 +140,10 @@ public class MetaSourceResource extends AbstractSpagoBIResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
 	public SbiMetaSource modify(@Valid SbiMetaSource sbiMetaSource, @PathParam("sourceId") Integer sourceId) {
-		logger.debug("IN");
+		LOGGER.debug("IN");
 		init();
 		if (sbiMetaSource == null) {
-			logger.debug("sbiMetasource is null");
+			LOGGER.debug("sbiMetasource is null");
 		}
 
 		SbiMetaSource temp = null;
@@ -152,7 +157,7 @@ public class MetaSourceResource extends AbstractSpagoBIResource {
 		} catch (Exception e) {
 			throw new SpagoBIServiceException(SERVICE_NAME, e.getLocalizedMessage());
 		}
-		logger.debug("OUT");
+		LOGGER.debug("OUT");
 		return temp;
 
 	}

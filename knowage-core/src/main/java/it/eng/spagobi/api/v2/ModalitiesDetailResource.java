@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,7 +11,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -33,6 +33,9 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import it.eng.spagobi.api.AbstractSpagoBIResource;
 import it.eng.spagobi.behaviouralmodel.check.bo.Check;
 import it.eng.spagobi.behaviouralmodel.check.dao.ICheckDAO;
@@ -46,12 +49,14 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 @Path("/2.0/customChecks")
 @ManageAuthorization
 public class ModalitiesDetailResource extends AbstractSpagoBIResource {
-	private final String charset = "; charset=UTF-8";
+
+	private static final Logger LOGGER = LogManager.getLogger(ModalitiesDetailResource.class);
+	private static final String CHARSET = "; charset=UTF-8";
 
 	@GET
 	@UserConstraint(functionalities = { CommunityFunctionalityConstants.CONTSTRAINT_MANAGEMENT })
 	@Path("/")
-	@Produces(MediaType.APPLICATION_JSON + charset)
+	@Produces(MediaType.APPLICATION_JSON + CHARSET)
 	public Response getCustom() {
 		ICheckDAO checksDao = null;
 		List<Check> fullList = null;
@@ -63,7 +68,7 @@ public class ModalitiesDetailResource extends AbstractSpagoBIResource {
 			fullList = checksDao.loadCustomChecks();
 			return Response.ok(fullList).build();
 		} catch (Exception e) {
-			logger.error("Error with loading resource", e);
+			LOGGER.error("Error with loading resource", e);
 			throw new SpagoBIRestServiceException("Error with loading resource", buildLocaleFromSession(), e);
 		}
 
@@ -72,7 +77,7 @@ public class ModalitiesDetailResource extends AbstractSpagoBIResource {
 	@GET
 	@Path("/{id}")
 	@UserConstraint(functionalities = { CommunityFunctionalityConstants.CONTSTRAINT_MANAGEMENT })
-	@Produces(MediaType.APPLICATION_JSON + charset)
+	@Produces(MediaType.APPLICATION_JSON + CHARSET)
 	public Response getSingleCheck(@PathParam("id") Integer id) {
 		ICheckDAO checksDao = null;
 
@@ -84,7 +89,7 @@ public class ModalitiesDetailResource extends AbstractSpagoBIResource {
 			return Response.ok(check).build();
 
 		} catch (Exception e) {
-			logger.error("Check with selected id: " + id + " doesn't exists", e);
+			LOGGER.error("Check with selected id: " + id + " doesn't exists", e);
 			throw new SpagoBIRestServiceException("Item with selected id: " + id + " doesn't exists", buildLocaleFromSession(), e);
 		}
 
@@ -99,7 +104,7 @@ public class ModalitiesDetailResource extends AbstractSpagoBIResource {
 		ICheckDAO checksDao = null;
 		Check check = body;
 		if (check.getCheckId() != null) {
-			logger.error("Error paramters. New check should not have ID value");
+			LOGGER.error("Error paramters. New check should not have ID value");
 			throw new SpagoBIRuntimeException("Error paramters. New check should not have ID value");
 		}
 
@@ -110,7 +115,7 @@ public class ModalitiesDetailResource extends AbstractSpagoBIResource {
 			String encodedCheck = URLEncoder.encode("" + id, "UTF-8");
 			return Response.created(new URI("2.0/customChecks/" + encodedCheck)).entity(encodedCheck).build();
 		} catch (Exception e) {
-			logger.error("Error while inserting resource", e);
+			LOGGER.error("Error while inserting resource", e);
 			throw new SpagoBIRestServiceException("Error while inserting resource", buildLocaleFromSession(), e);
 		}
 	}
@@ -124,7 +129,7 @@ public class ModalitiesDetailResource extends AbstractSpagoBIResource {
 		ICheckDAO checksDao = null;
 		Check check = body;
 		if (check.getCheckId() == null) {
-			logger.error("The check with ID " + id + " doesn't exist");
+			LOGGER.error("The check with ID " + id + " doesn't exist");
 			throw new SpagoBIRuntimeException("The check with ID " + id + " doesn't exist");
 		}
 
@@ -135,7 +140,7 @@ public class ModalitiesDetailResource extends AbstractSpagoBIResource {
 			String encodedCheck = URLEncoder.encode("" + check.getCheckId(), "UTF-8");
 			return Response.created(new URI("2.0/customChecks/" + encodedCheck)).entity(encodedCheck).build();
 		} catch (Exception e) {
-			logger.error("Error while modifying resource with id: " + id, e);
+			LOGGER.error("Error while modifying resource with id: " + id, e);
 			throw new SpagoBIRestServiceException("Error while modifying resource with id: " + id, buildLocaleFromSession(), e);
 		}
 	}
@@ -156,7 +161,7 @@ public class ModalitiesDetailResource extends AbstractSpagoBIResource {
 			String encodedCheck = URLEncoder.encode("" + check.getCheckId(), "UTF-8");
 			return Response.ok().entity(encodedCheck).build();
 		} catch (Exception e) {
-			logger.error("Error with deleting resource with id: " + id, e);
+			LOGGER.error("Error with deleting resource with id: " + id, e);
 			throw new SpagoBIRestServiceException("Error with deleting resource with id: " + id, buildLocaleFromSession(), e);
 		}
 	}

@@ -22,16 +22,20 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 
 public class FileUtilities {
-	
-	private static transient Logger logger = Logger.getLogger(FileUtilities.class);
+
+	private static final Logger LOGGER = Logger.getLogger(FileUtilities.class);
+
+	private FileUtilities() {
+
+	}
 
 	public static File createFile(String fileName, String fileExtension, String randomKey, List<PlaceHolder> placeHolders) {
-		logger.debug("IN");
+		LOGGER.debug("IN");
 
-		logger.debug("Creating a file called " + fileName + "." + fileExtension);
+		LOGGER.debug("Creating a file called " + fileName + "." + fileExtension);
 
 		File dossierFolder = DossierExecutionUtilities.getDossierExecutionFolder();
-		List<String> placeHoldersValues = new ArrayList<String>();
+		List<String> placeHoldersValues = new ArrayList<>();
 		for (PlaceHolder placeHolder : placeHolders) {
 			String value = placeHolder.getValue();
 			placeHoldersValues.add(value);
@@ -42,83 +46,71 @@ public class FileUtilities {
 		File documentsFolder = new File(path);
 		documentsFolder.mkdirs();
 		File createdFile = new File(documentsFolder, fileName + fileExtension);
-		FileWriter fw = null;
 		try {
 			createdFile.createNewFile();
 		} catch (IOException e) {
-			logger.error("Error creating a new file");
+			LOGGER.error("Error creating a new file");
 			throw new SpagoBIRuntimeException("Error creating a new file", e);
 		}
 
-		logger.debug("OUT");
+		LOGGER.debug("OUT");
 
 		return createdFile;
 	}
-	
+
 	public static File createErrorFile(BIObject biObj, Throwable error, List<PlaceHolder> placeHolders,String randomKey) {
-		logger.debug("IN");
+		LOGGER.debug("IN");
 		File toReturn = null;
-		FileWriter fw = null;
-		logger.debug("Creating error file for biObject with label [" + biObj.getLabel() + "]");
+		LOGGER.debug("Creating error file for biObject with label [" + biObj.getLabel() + "]");
 
 		try {
 			String fileName = "Error " + biObj.getLabel() + "-" + biObj.getName();
 			toReturn = createFile(fileName, ".txt", randomKey, placeHolders);
-			fw = new FileWriter(toReturn);
-			fw.write("Error while executing biObject " + biObj.getLabel() + " - " + biObj.getName() + "\n");
-			if (error != null) {
-				StackTraceElement[] errs = error.getStackTrace();
-				for (int i = 0; i < errs.length; i++) {
-					String err = errs[i].toString();
-					fw.write(err + "\n");
+			try (FileWriter fw = new FileWriter(toReturn)) {
+				fw.write("Error while executing biObject " + biObj.getLabel() + " - " + biObj.getName() + "\n");
+				if (error != null) {
+					StackTraceElement[] errs = error.getStackTrace();
+					for (int i = 0; i < errs.length; i++) {
+						String err = errs[i].toString();
+						fw.write(err + "\n");
+					}
 				}
+				fw.flush();
 			}
-			fw.flush();
 		} catch (Exception e) {
-			logger.error("Error in writing error file for biObj " + biObj.getLabel());
-			
+			LOGGER.error("Error in writing error file for biObj " + biObj.getLabel());
+
 			throw new SpagoBIServiceException("Error in wirting error file for biObj " + biObj.getLabel(), e);
-		} finally {
-			if (fw != null) {
-				try {
-					fw.flush();
-					fw.close();
-				} catch (IOException e) {
-				}
-			}
 		}
-		logger.debug("OUT");
+		LOGGER.debug("OUT");
 		return toReturn;
 	}
-	
+
 	public static void writeFile(File file,byte[] byteArray){
-		FileOutputStream stream;
-		try {
-			stream = new FileOutputStream(file);
+		try(FileOutputStream stream = new FileOutputStream(file)) {
 			stream.write(byteArray);
-			
+
 			stream.flush();
-			stream.close();
-			
-			logger.debug("create an export file named " + file.getName());
+
+			LOGGER.debug("create an export file named " + file.getName());
 		} catch (FileNotFoundException e) {
-			logger.error("File with path "+file.getPath()+" doesn't exists",e);
+			LOGGER.error("File with path "+file.getPath()+" doesn't exists",e);
 			throw new SpagoBIRuntimeException("File with path "+file.getPath()+" doesn't exists");
 		} catch (IOException e) {
-			logger.error("Error while writing a file "+file.getName(),e);
+			LOGGER.error("Error while writing a file "+file.getName(),e);
 			throw new SpagoBIRuntimeException("Error while writing a file "+file.getName(),e);
 		}
 	}
-	
+
 	public static  String cleanFileName(String name) {
-		logger.debug("IN");
+		LOGGER.debug("IN");
 		char[] forbiddenCharList = { '/', '?', '!', ';', ':', '.', ',', '*', '#', '@', '\'', '%', '&', '(', ')' };
 
 		for (int i = 0; i < forbiddenCharList.length; i++) {
 			char f = forbiddenCharList[i];
 			name = name.replace(f, '_');
 		}
-		logger.debug("OUT");
+		LOGGER.debug("OUT");
 		return name;
 	}
 }

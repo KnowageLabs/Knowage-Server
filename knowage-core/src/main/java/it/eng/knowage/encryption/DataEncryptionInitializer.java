@@ -42,7 +42,7 @@ import it.eng.spagobi.tools.scheduler.dao.ISchedulerDAO;
  */
 public class DataEncryptionInitializer implements InitializerIFace {
 
-	private static Logger LOGGER = LogManager.getLogger(DataEncryptionInitializer.class);
+	private static final Logger LOGGER = LogManager.getLogger(DataEncryptionInitializer.class);
 
 	public static final String DEFAULT_JOB_GROUP = "Encryption";
 	public static final String DEFAULT_JOB_NAME = "PrivacyManagerQueryJob";
@@ -90,40 +90,21 @@ public class DataEncryptionInitializer implements InitializerIFace {
 					if (anyNull(genAlgo, genPwd)) {
 						LOGGER.error("Failing to read generic encryption algorithm configuration from both system properties and system environment: you must provide all the configuration values listed in the documentation.");
 					} else {
-						cfg = new EncryptionConfiguration(GENERIC);
-
-						cfg.setEncryptionPwd(genPwd);
-
-						cfg.setAlgorithm(genAlgo);
-
-						try {
-							DataEncryptionCfgForExternalEngines decfee = DataEncryptionCfgForExternalEngines.getInstance();
-							decfee.setKeyTemplateForAlgorithm(cfgKey, genAlgo);
-							decfee.setKeyTemplateForPassword(cfgKey, genPwd);
-						} catch (Exception e) {
-							LOGGER.warn("Error initializing data encryption for external engines", e);
-						}
-
-						LOGGER.warn("Generic encryption algorithm configuration created");
+						cfg = configureGenericDecryption(genAlgo, genPwd, cfgKey);
 					}
 				} else {
-					cfg = new EncryptionConfiguration(PRIVACY_MANAGER);
-
-					cfg.setPmUrl(pmUrl);
-					cfg.setPmUser(pmUser);
-					cfg.setPmPwd(pmPwd);
-					cfg.setPmApplication(pmApp);
-
-					cfg.setAlgorithm(pmAlgo);
-
-					LOGGER.warn("Privacy Manager configuration created");
+					cfg = configurePrivacyManager(pmUrl, pmUser, pmPwd, pmApp, pmAlgo);
 				}
 
-				EncryptionPreferencesRegistry.getInstance()
-					.addConfiguration(cfgKey, cfg);
+				if (cfg != null) {
+					EncryptionPreferencesRegistry.getInstance()
+						.addConfiguration(cfgKey, cfg);
 
-				if (PRIVACY_MANAGER.equals(cfg.getType())) {
-					scheduleJobToRetrieveThePassword(cfg);
+					if (PRIVACY_MANAGER.equals(cfg.getType())) {
+						scheduleJobToRetrieveThePassword(cfg);
+					}
+				} else {
+					LOGGER.warn("No decryption configuration set");
 				}
 			}
 		} catch (Exception e) {
@@ -187,4 +168,41 @@ public class DataEncryptionInitializer implements InitializerIFace {
 
 		return ret;
 	}
+
+	private EncryptionConfiguration configureGenericDecryption(String genAlgo, String genPwd, String cfgKey) {
+		EncryptionConfiguration cfg;
+		cfg = new EncryptionConfiguration(GENERIC);
+
+		cfg.setEncryptionPwd(genPwd);
+
+		cfg.setAlgorithm(genAlgo);
+
+		try {
+			DataEncryptionCfgForExternalEngines decfee = DataEncryptionCfgForExternalEngines.getInstance();
+			decfee.setKeyTemplateForAlgorithm(cfgKey, genAlgo);
+			decfee.setKeyTemplateForPassword(cfgKey, genPwd);
+		} catch (Exception e) {
+			LOGGER.warn("Error initializing data encryption for external engines", e);
+		}
+
+		LOGGER.warn("Generic encryption algorithm configuration created");
+		return cfg;
+	}
+
+	private EncryptionConfiguration configurePrivacyManager(String pmUrl, String pmUser, String pmPwd, String pmApp, String pmAlgo) {
+		EncryptionConfiguration cfg;
+		cfg = new EncryptionConfiguration(PRIVACY_MANAGER);
+
+		cfg.setPmUrl(pmUrl);
+		cfg.setPmUser(pmUser);
+		cfg.setPmPwd(pmPwd);
+		cfg.setPmApplication(pmApp);
+
+		cfg.setAlgorithm(pmAlgo);
+
+		LOGGER.warn("Privacy Manager configuration created");
+		return cfg;
+	}
+
 }
+

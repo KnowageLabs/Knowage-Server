@@ -36,6 +36,7 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
@@ -467,9 +468,11 @@ public class ResourceManagerAPIImpl implements ResourceManagerAPI {
 
 			File fileDest = tempDirectory.resolve(fullPath.getName(fullPath.getNameCount() - 1)).toFile();
 			FileUtils.copyDirectory(fullPath.toFile(), fileDest);
-			List<Path> files = Files.walk(tempDirectory).collect(toList());
+			try (Stream<Path> walk = Files.walk(tempDirectory)) {
+				List<Path> files = walk.collect(toList());
 
-			putEntries(tempDirectory, tempFile, files);
+				putEntries(tempDirectory, tempFile, files);
+			}
 
 			cleanUpTempDirectory(tempDirectory);
 
@@ -491,10 +494,11 @@ public class ResourceManagerAPIImpl implements ResourceManagerAPI {
 				Path workDir = getTotalPath(path, profile);
 				FileUtils.copyFileToDirectory(workDir.toFile(), fileDest);
 			}
-			List<Path> files = Files.walk(tempDirectory).collect(toList());
+			try (Stream<Path> walk = Files.walk(tempDirectory)) {
+				List<Path> files = walk.collect(toList());
 
-			putEntries(tempDirectory, tempFile, files);
-
+				putEntries(tempDirectory, tempFile, files);
+			}
 			cleanUpTempDirectory(tempDirectory);
 
 			return tempFile;
@@ -528,19 +532,19 @@ public class ResourceManagerAPIImpl implements ResourceManagerAPI {
 	private void extractFolder(String zipFile, String extractFolder) throws IOException {
 		ZipFile zip = null;
 		try {
-			int BUFFER = 2048;
+			int buffer = 2048;
 			File file = new File(zipFile);
 
 			zip = new ZipFile(file);
 			String newPath = extractFolder;
 
 			new File(newPath).mkdir();
-			Enumeration zipFileEntries = zip.entries();
+			Enumeration<? extends ZipEntry> zipFileEntries = zip.entries();
 
 			// Process each entry
 			while (zipFileEntries.hasMoreElements()) {
 				// grab a zip file entry
-				ZipEntry entry = (ZipEntry) zipFileEntries.nextElement();
+				ZipEntry entry = zipFileEntries.nextElement();
 				String currentEntry = entry.getName();
 
 				File destFile = new File(newPath, currentEntry);
@@ -554,23 +558,22 @@ public class ResourceManagerAPIImpl implements ResourceManagerAPI {
 					BufferedInputStream is = new BufferedInputStream(zip.getInputStream(entry));
 					int currentByte;
 					// establish buffer for writing file
-					byte data[] = new byte[BUFFER];
+					byte[] data = new byte[buffer];
 
 					// write the current file to disk
-					FileOutputStream fos = new FileOutputStream(destFile);
-					BufferedOutputStream dest = new BufferedOutputStream(fos, BUFFER);
+					try (FileOutputStream fos = new FileOutputStream(destFile); BufferedOutputStream dest = new BufferedOutputStream(fos, buffer)) {
 
-					// read and write until last byte is encountered
-					while ((currentByte = is.read(data, 0, BUFFER)) != -1) {
-						dest.write(data, 0, currentByte);
+						// read and write until last byte is encountered
+						while ((currentByte = is.read(data, 0, buffer)) != -1) {
+							dest.write(data, 0, currentByte);
+						}
+						dest.flush();
 					}
-					dest.flush();
-					dest.close();
-					is.close();
 				}
 
 			}
-		} catch (Exception e) { // TODO: change it for error handling
+		} catch (Exception e) {
+			// TODO: change it for error handling
 			throw new KnowageRuntimeException(e);
 		} finally {
 			zip.close();
@@ -588,7 +591,9 @@ public class ResourceManagerAPIImpl implements ResourceManagerAPI {
 
 	private void cleanUpTempDirectory(Path tempDirectory) throws IOException {
 		// Common way to delete recursively
-		Files.walk(tempDirectory).sorted(Comparator.reverseOrder()).map(Path::toFile).forEach(File::delete);
+		try (Stream<Path> walk = Files.walk(tempDirectory)) {
+			walk.sorted(Comparator.reverseOrder()).map(Path::toFile).forEach(File::delete);
+		}
 	}
 
 	private boolean isStartingFromModel(Path path, SpagoBIUserProfile profile) throws IOException {
