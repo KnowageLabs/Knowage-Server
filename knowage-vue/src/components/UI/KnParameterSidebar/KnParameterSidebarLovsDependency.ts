@@ -26,7 +26,7 @@ export async function updateLovDependency(loadedParameters: { filterStatus: iPar
     }
 }
 
-export async function lovDependencyCheck(loadedParameters: { filterStatus: iParameter[], isReadyForExecution: boolean }, parameter: iParameter, loading: boolean, document: any, sessionRole: string | null, $http: any, mode: string, userDateFormat: string) {
+export async function lovDependencyCheck(loadedParameters: { filterStatus: iParameter[], isReadyForExecution: boolean }, parameter: iParameter, loading: boolean, document: any, sessionRole: string | null, $http: any, mode: string, resetValue: boolean, userDateFormat: string) {
     loading = true
 
     if (parameter.parameterValue[0]) {
@@ -34,6 +34,8 @@ export async function lovDependencyCheck(loadedParameters: { filterStatus: iPara
     } else {
         parameter.parameterValue = [{ value: '', description: '' }]
     }
+
+    if (resetValue) return
 
     const postData = { label: document?.label, parameters: getFormattedParameters(loadedParameters, userDateFormat), paramId: parameter.urlName, role: sessionRole }
     let url = '2.0/documentExeParameters/admissibleValues'

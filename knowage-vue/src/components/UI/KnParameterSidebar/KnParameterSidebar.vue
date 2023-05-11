@@ -587,7 +587,7 @@ export default defineComponent({
             const role = this.sessionRole && this.sessionRole !== this.$t('role.defaultRolePlaceholder') ? this.sessionRole : this.role
             this.updateVisualDependency(parameter)
             await updateDataDependency(this.parameters, parameter, this.loading, this.document, role, this.$http, this.mode, resetValue, this.userDateFormat)
-            await updateLovDependency(this.parameters, parameter, this.loading, this.document, role, this.$http, this.mode, this.userDateFormat)
+            await updateLovDependency(this.parameters, parameter, this.loading, this.document, role, this.$http, this.mode, resetValue, this.userDateFormat)
             this.$emit('parametersChanged', {
                 parameters: this.parameters,
                 document: this.propDocument
