@@ -40,19 +40,18 @@ import { defineComponent } from 'vue'
 import Dialog from 'primevue/dialog'
 import documentExecutionLinkDialogDescriptor from './DocumentExecutionLinkDialogDescriptor.json'
 import Textarea from 'primevue/textarea'
-import qs from 'qs'
 
 export default defineComponent({
     name: 'document-execution-link-dialog',
     components: { Dialog, Textarea },
-    props: { visible: { type: Boolean }, linkInfo: { type: Object }, embedHTML: { type: Boolean }, propDocument: { type: Object }, parameters: { type: Array } },
+    props: { visible: { type: Boolean }, linkInfo: { type: Object }, embedHTML: { type: Boolean }, propDocument: { type: Object }, parameters: { type: Object } },
     emits: ['close'],
     data() {
         return {
             documentExecutionLinkDialogDescriptor,
             publicUrl: '',
             document: null as any,
-            linkParameters: [] as any
+            linkParameters: '' as string
         }
     },
     watch: {
@@ -79,7 +78,17 @@ export default defineComponent({
             this.document = this.propDocument
         },
         loadParameters() {
-            this.linkParameters = this.parameters as any[]
+            this.linkParameters = Object.keys(this.parameters)
+                .map((key) => {
+                    if (Array.isArray(this.parameters[key])) {
+                        let string = ''
+                        this.parameters[key].forEach((item, index) => {
+                            string += `${index !== 0 ? '&' : ''}${key}=${item}`
+                        })
+                        return string
+                    } else return key + '=' + this.parameters[key]
+                })
+                .join('&')
         },
         getPublicUrl() {
             const tenant = (this.$store.state as any).user.organization
@@ -94,14 +103,13 @@ export default defineComponent({
                 }
             } else {
                 if (this.embedHTML) {
-                    this.publicUrl =
-                        '<iframe width="600" height="600" src="' +
-                        location.origin +
-                        `/knowage${this.linkInfo?.isPublic ? '/public' : '/'}/servlet/AdapterHTTP?ACTION_NAME=EXECUTE_DOCUMENT_ACTION&OBJECT_LABEL=${this.document.label}&TOOLBAR_VISIBLE=true&ORGANIZATION=${tenant}&NEW_SESSION=true&PARAMETERS=${qs.stringify(this.linkParameters)}` +
-                        '" frameborder="0"></iframe>'
+                    this.publicUrl = `<iframe width="600" height="600" src="${location.origin}/knowage${this.linkInfo?.isPublic ? '/public' : ''}/servlet/AdapterHTTP?ACTION_NAME=EXECUTE_DOCUMENT_ACTION&OBJECT_LABEL=${
+                        this.document.label
+                    }&TOOLBAR_VISIBLE=true&ORGANIZATION=${tenant}&NEW_SESSION=true&PARAMETERS=${encodeURIComponent(this.linkParameters)}" frameborder="0"></iframe>`
                 } else {
-                    this.publicUrl =
-                        location.origin + `/knowage${this.linkInfo?.isPublic ? '/public' : '/'}/servlet/AdapterHTTP?ACTION_NAME=EXECUTE_DOCUMENT_ACTION&OBJECT_LABEL=${this.document.label}&TOOLBAR_VISIBLE=true&ORGANIZATION=${tenant}&NEW_SESSION=true&PARAMETERS=${qs.stringify(this.linkParameters)}`
+                    this.publicUrl = `${location.origin}/knowage${this.linkInfo?.isPublic ? '/public' : ''}/servlet/AdapterHTTP?ACTION_NAME=EXECUTE_DOCUMENT_ACTION&OBJECT_LABEL=${this.document.label}&TOOLBAR_VISIBLE=true&ORGANIZATION=${tenant}&NEW_SESSION=true&PARAMETERS=${encodeURIComponent(
+                        this.linkParameters
+                    )}`
                 }
             }
         },
