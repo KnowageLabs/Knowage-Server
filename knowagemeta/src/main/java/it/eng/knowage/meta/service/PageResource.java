@@ -278,6 +278,7 @@ public class PageResource {
 			propertyType.getAdmissibleValues().add("BIGINT");
 			propertyType.getAdmissibleValues().add("FLOAT");
 			propertyType.getAdmissibleValues().add("SMALLINT");
+			propertyType.getAdmissibleValues().add("NUMERIC");
 		}
 
 	}
