@@ -325,6 +325,8 @@ public class RepositoryResource extends AbstractSpagoBIResource {
 		SbiCommonInfo commonInfo = e.getCommonInfo();
 		Instant created = Optional.ofNullable(commonInfo.getTimeIn()).map(Date::toInstant).orElse(null);
 		Instant updated = Optional.ofNullable(commonInfo.getTimeUp()).map(Date::toInstant).orElse(null);
+		SbiViewHierarchy parent = e.getParent();
+		String parentId = parent.getId();
 
 		ret.setBiObjectId(e.getBiObjId());
 		ret.setDescription(e.getDescr());
@@ -335,22 +337,24 @@ public class RepositoryResource extends AbstractSpagoBIResource {
 		ret.setSettings(e.getSettings());
 		ret.setCreated(created);
 		ret.setUpdated(updated);
+		ret.setParentId(parentId);
 
 		return ret;
 	}
 
 	private ViewOfImportedDoc toViewOfImportedDoc(SbiViewForDoc e) {
-
 		ViewOfImportedDoc ret = new ViewOfImportedDoc();
 		SbiCommonInfo commonInfo = e.getCommonInfo();
 		Instant created = Optional.ofNullable(commonInfo.getTimeIn()).map(Date::toInstant).orElse(null);
 		Instant updated = Optional.ofNullable(commonInfo.getTimeUp()).map(Date::toInstant).orElse(null);
+		SbiViewHierarchy parent = e.getParent();
+		String parentId = parent.getId();
 		try {
 			BIObject object = getDocument(e.getBiObjId());
 
 			ret.setBiObjectId(object.getBiObjectTypeID());
 			ret.setId(e.getId());
-			ret.setParentId(e.getParent().getId());
+			ret.setParentId(parentId);
 			ret.setDescription(object.getDescription());
 			ret.setLabel(object.getLabel());
 			ret.setName(object.getName());
