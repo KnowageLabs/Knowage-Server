@@ -22,6 +22,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <%@page import="it.eng.spagobi.analiticalmodel.document.dao.BIObjectDAOHibImpl"%>
 <%@page import="it.eng.spagobi.analiticalmodel.document.bo.BIObject"%>
 <%@page import="it.eng.spagobi.commons.dao.DAOFactory"%>
+<%@page import="org.apache.commons.lang.StringEscapeUtils"%>
 <%@ page language="java" pageEncoding="UTF-8" session="true"%>
 <%@ include file="/WEB-INF/jsp/commons/angular/angularResource.jspf"%>
 
@@ -87,32 +88,32 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         /*
         * Validation check for exec_from variable for security reasons
         */
-		var execFrom = '<%=request.getParameter("EXEC_FROM")%>';
+		var execFrom = '<%=StringEscapeUtils.escapeJavaScript(request.getParameter("EXEC_FROM"))%>';
 		if (execFrom !='WORKSPACE_ORGANIZER') {
 			execFrom = null;
 		}
 		
 		var obj = { 
-				'OBJECT_ID' : 			'<%=request.getParameter("OBJECT_ID") != null
+				'OBJECT_ID' : 			'<%=StringEscapeUtils.escapeJavaScript(request.getParameter("OBJECT_ID") != null
 					? request.getParameter("OBJECT_ID")
-					: aRequestContainer.getServiceRequest().getAttribute("OBJECT_ID")%>', 
-				'OBJECT_LABEL' : 		'<%=request.getParameter("OBJECT_LABEL") != null
+					: String.valueOf(aRequestContainer.getServiceRequest().getAttribute("OBJECT_ID")))%>', 
+				'OBJECT_LABEL' : 		'<%=StringEscapeUtils.escapeJavaScript(request.getParameter("OBJECT_LABEL") != null
 					? request.getParameter("OBJECT_LABEL")
-					: aRequestContainer.getServiceRequest().getAttribute("OBJECT_LABEL")%>',
-				'OBJECT_NAME' : 		'<%=objectName.replaceAll(Pattern.quote("'"), Matcher.quoteReplacement("\\'"))%>',
-				'isSourceDocument' : 	'<%=request.getParameter("IS_SOURCE_DOCUMENT") != null
+					: String.valueOf(aRequestContainer.getServiceRequest().getAttribute("OBJECT_LABEL")))%>',
+				'OBJECT_NAME' : 		'<%=StringEscapeUtils.escapeJavaScript(objectName)%>',
+				'isSourceDocument' : 	'<%=StringEscapeUtils.escapeJavaScript(request.getParameter("IS_SOURCE_DOCUMENT") != null
 					? request.getParameter("IS_SOURCE_DOCUMENT")
-					: aRequestContainer.getServiceRequest().getAttribute("IS_SOURCE_DOCUMENT")%>',
+					: String.valueOf(aRequestContainer.getServiceRequest().getAttribute("IS_SOURCE_DOCUMENT")))%>',
 				'SBI_EXECUTION_ID' : '',
-				'MENU_PARAMETERS' : 	'<%=aRequestContainer.getServiceRequest().getAttribute("PARAMETERS")%>',
-				'EDIT_MODE': '<%=request.getParameter("EDIT_MODE") != null
+				'MENU_PARAMETERS' : 	decodeURIComponent('<%=StringEscapeUtils.escapeJavaScript(String.valueOf(aRequestContainer.getServiceRequest().getAttribute("PARAMETERS")))%>'),
+				'EDIT_MODE': '<%=StringEscapeUtils.escapeJavaScript(request.getParameter("EDIT_MODE") != null
 					? request.getParameter("EDIT_MODE")
-					: aRequestContainer.getServiceRequest().getAttribute("EDIT_MODE")%>',
+					: String.valueOf(aRequestContainer.getServiceRequest().getAttribute("EDIT_MODE")))%>',
 				'EXEC_FROM': execFrom,
-				'COCKPIT_PARAMETER' : '<%=cockpitParameters.replaceAll(Pattern.quote("'"), Matcher.quoteReplacement("\\'"))%>',
-				'IS_FROM_DOCUMENT_WIDGET' : '<%=request.getParameter("IS_FROM_DOCUMENT_WIDGET")%>',
-                'TOOLBAR_VISIBLE' : '<%=request.getParameter("TOOLBAR_VISIBLE")%>',
-                'CAN_RESET_PARAMETERS' : '<%=request.getParameter("CAN_RESET_PARAMETERS")%>',
+				'COCKPIT_PARAMETER' : '<%=StringEscapeUtils.escapeJavaScript(cockpitParameters)%>',
+				'IS_FROM_DOCUMENT_WIDGET' : '<%=StringEscapeUtils.escapeJavaScript(request.getParameter("IS_FROM_DOCUMENT_WIDGET"))%>',
+                'TOOLBAR_VISIBLE' : '<%=StringEscapeUtils.escapeJavaScript(request.getParameter("TOOLBAR_VISIBLE"))%>',
+                'CAN_RESET_PARAMETERS' : '<%=StringEscapeUtils.escapeJavaScript(request.getParameter("CAN_RESET_PARAMETERS"))%>',
                
 
 		};
@@ -120,10 +121,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		<%
 		if (request.getParameter("SELECTED_ROLE") != null
 					&& !request.getParameter("SELECTED_ROLE").equalsIgnoreCase("")) {%>
-			obj.SELECTED_ROLE = '<%=request.getParameter("SELECTED_ROLE")%>';
+			obj.SELECTED_ROLE = '<%=StringEscapeUtils.escapeJavaScript(request.getParameter("SELECTED_ROLE"))%>';
         <%} else if (request.getParameter("ROLE") != null
                 && !request.getParameter("ROLE").equalsIgnoreCase("")) {%>
-                obj.SELECTED_ROLE = '<%=request.getParameter("ROLE")%>';
+                obj.SELECTED_ROLE = '<%=StringEscapeUtils.escapeJavaScript(request.getParameter("ROLE"))%>';
         <%}%>
         
 	return obj;
