@@ -78,17 +78,18 @@ export default defineComponent({
             this.document = this.propDocument
         },
         loadParameters() {
-            this.linkParameters = Object.keys(this.parameters)
-                .map((key) => {
-                    if (Array.isArray(this.parameters[key])) {
-                        let string = ''
-                        this.parameters[key].forEach((item, index) => {
-                            string += `${index !== 0 ? '&' : ''}${key}=${item}`
-                        })
-                        return string
-                    } else return key + '=' + this.parameters[key]
-                })
-                .join('&')
+            if (this.parameters)
+                this.linkParameters = Object.keys(this.parameters)
+                    .map((key) => {
+                        if (this.parameters && this.parameters[key] && Array.isArray(this.parameters[key])) {
+                            let string = ''
+                            this.parameters[key].forEach((item, index) => {
+                                string += `${index !== 0 ? '&' : ''}${key}=${item}`
+                            })
+                            return string
+                        } else return key + '=' + (this.parameters && this.parameters[key] ? this.parameters[key] : '')
+                    })
+                    .join('&')
         },
         getPublicUrl() {
             const tenant = (this.$store.state as any).user.organization
