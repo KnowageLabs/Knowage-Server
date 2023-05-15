@@ -17,6 +17,8 @@
  */
 package it.eng.spagobi.api;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
+
 import java.net.URI;
 import java.net.URLEncoder;
 import java.util.List;
@@ -77,7 +79,7 @@ public abstract class AbstractDocumentResource extends AbstractSpagoBIResource {
 		documentManager.saveDocument(document, null);
 
 		try {
-			String encodedLabel = URLEncoder.encode(document.getLabel(), "UTF-8");
+			String encodedLabel = URLEncoder.encode(document.getLabel(), UTF_8.name());
 			encodedLabel = encodedLabel.replaceAll("\\+", "%20");
 			return Response.created(new URI("1.0/documents/" + encodedLabel)).build();
 		} catch (Exception e) {

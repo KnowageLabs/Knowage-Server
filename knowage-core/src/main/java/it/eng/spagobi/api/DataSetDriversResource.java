@@ -20,6 +20,7 @@ package it.eng.spagobi.api;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -151,10 +152,10 @@ public class DataSetDriversResource extends AbstractDataSetResource {
 						try {
 							// % character breaks decode method
 							if (!itemVal.contains("%")) {
-								itemVal = URLDecoder.decode(itemVal, "UTF-8");
+								itemVal = URLDecoder.decode(itemVal, StandardCharsets.UTF_8.name());
 							}
 							if (!itemDescr.contains("%")) {
-								itemDescr = URLDecoder.decode(itemDescr, "UTF-8");
+								itemDescr = URLDecoder.decode(itemDescr, StandardCharsets.UTF_8.name());
 							}
 
 							// check input value and convert if it's an old multivalue syntax({;{xxx;yyy}STRING}) to list of values :["A-OMP", "A-PO", "CL"]
@@ -184,7 +185,7 @@ public class DataSetDriversResource extends AbstractDataSetResource {
 					// % character breaks decode method
 					if (!((String) paramValues).contains("%")) {
 						try {
-							paramValues = URLDecoder.decode((String) paramValues, "UTF-8");
+							paramValues = URLDecoder.decode((String) paramValues, StandardCharsets.UTF_8.name());
 						} catch (UnsupportedEncodingException e) {
 							logger.debug(e.getCause(), e);
 							throw new SpagoBIRuntimeException(e.getMessage(), e);
@@ -196,7 +197,7 @@ public class DataSetDriversResource extends AbstractDataSetResource {
 							: paramValues.toString();
 					if (!parDescrVal.contains("%")) {
 						try {
-							parDescrVal = URLDecoder.decode(parDescrVal, "UTF-8");
+							parDescrVal = URLDecoder.decode(parDescrVal, StandardCharsets.UTF_8.name());
 						} catch (UnsupportedEncodingException e) {
 							logger.debug(e.getCause(), e);
 							throw new SpagoBIRuntimeException(e.getMessage(), e);

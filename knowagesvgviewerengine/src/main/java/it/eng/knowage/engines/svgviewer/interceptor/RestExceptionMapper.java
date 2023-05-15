@@ -18,9 +18,7 @@
 
 package it.eng.knowage.engines.svgviewer.interceptor;
 
-import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceException;
-
-import java.io.UnsupportedEncodingException;
+import static java.nio.charset.StandardCharsets.UTF_8;
 
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -32,6 +30,8 @@ import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceException;
 
 /**
  *
@@ -82,12 +82,7 @@ public class RestExceptionMapper implements ExceptionMapper<RuntimeException> {
 
 		byte[] bytesResponse = null;
 
-		try {
-			bytesResponse = serializedMessages.toString().getBytes("UTF-8");
-		} catch (UnsupportedEncodingException e1) {
-			logger.error("Error setting the encoding of the response", e1);
-			bytesResponse = serializedMessages.toString().getBytes();
-		}
+		bytesResponse = serializedMessages.toString().getBytes(UTF_8);
 
 		// Response response = Response.status(500).entity(bytesResponse).header(HttpHeaders.CONTENT_ENCODING, "UTF8").build();
 		// return response;

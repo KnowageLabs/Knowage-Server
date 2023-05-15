@@ -3,6 +3,7 @@ package it.eng.spagobi.api;
 import static it.eng.spagobi.commons.constants.SpagoBIConstants.DATE_RANGE_OPTIONS_KEY;
 import static it.eng.spagobi.commons.constants.SpagoBIConstants.DATE_RANGE_QUANTITY_JSON;
 import static it.eng.spagobi.commons.constants.SpagoBIConstants.DATE_RANGE_TYPE_JSON;
+import static java.nio.charset.StandardCharsets.UTF_8;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -584,10 +585,10 @@ public class BusinessModelOpenParameters extends AbstractSpagoBIResource {
 						try {
 							// % character breaks decode method
 							if (!itemVal.contains("%")) {
-								itemVal = URLDecoder.decode(itemVal, "UTF-8");
+								itemVal = URLDecoder.decode(itemVal, UTF_8.name());
 							}
 							if (!itemDescr.contains("%")) {
-								itemDescr = URLDecoder.decode(itemDescr, "UTF-8");
+								itemDescr = URLDecoder.decode(itemDescr, UTF_8.name());
 							}
 
 							// check input value and convert if it's an old multivalue syntax({;{xxx;yyy}STRING}) to list of values :["A-OMP", "A-PO", "CL"]
@@ -614,14 +615,14 @@ public class BusinessModelOpenParameters extends AbstractSpagoBIResource {
 				} else if (paramValues instanceof String) {
 					// % character breaks decode method
 					if (!((String) paramValues).contains("%")) {
-						paramValues = URLDecoder.decode((String) paramValues, "UTF-8");
+						paramValues = URLDecoder.decode((String) paramValues, UTF_8.name());
 					}
 					paramValueLst.add(paramValues.toString());
 
 					String parDescrVal = paramDescriptionValues != null && paramDescriptionValues instanceof String ? paramDescriptionValues.toString()
 							: paramValues.toString();
 					if (!parDescrVal.contains("%")) {
-						parDescrVal = URLDecoder.decode(parDescrVal, "UTF-8");
+						parDescrVal = URLDecoder.decode(parDescrVal, UTF_8.name());
 					}
 					paramDescrLst.add(parDescrVal);
 
@@ -800,7 +801,7 @@ public class BusinessModelOpenParameters extends AbstractSpagoBIResource {
 				String value = String.valueOf(valueObj);
 				// if (!value.equals("%7B%3B%7B") && !value.equalsIgnoreCase("%")) {
 				if (!value.equals("") && !value.equalsIgnoreCase("%")) {
-					toReturn.put(key, URLDecoder.decode(value, "UTF-8"));
+					toReturn.put(key, URLDecoder.decode(value, UTF_8.name()));
 				} else {
 					toReturn.put(key, value); // uses the original value for list and %
 				}
@@ -808,7 +809,7 @@ public class BusinessModelOpenParameters extends AbstractSpagoBIResource {
 				String value = String.valueOf(valueObj);
 				// if (!value.equals("%7B%3B%7B") && !value.equalsIgnoreCase("%")) {
 				if (!value.equals("") && !value.equalsIgnoreCase("%")) {
-					toReturn.put(key, URLDecoder.decode(value, "UTF-8"));
+					toReturn.put(key, URLDecoder.decode(value, UTF_8.name()));
 				} else {
 					toReturn.put(key, value); // uses the original value for list and %
 				}
@@ -819,10 +820,10 @@ public class BusinessModelOpenParameters extends AbstractSpagoBIResource {
 					// String value = (String) valuesLst.get(v);
 					String value = (valuesLst.get(v) != null) ? String.valueOf(valuesLst.get(v)) : "";
 					if (!value.equals("") && !value.equalsIgnoreCase("%")) {
-						ValuesLstDecoded.put(URLDecoder.decode(value, "UTF-8"));
+						ValuesLstDecoded.put(URLDecoder.decode(value, UTF_8.name()));
 					} else {
 						ValuesLstDecoded.put(value);
-						URLDecoder.decode(value, "UTF-8"); // uses the original value for list and %
+						URLDecoder.decode(value, UTF_8.name()); // uses the original value for list and %
 					}
 				}
 				toReturn.put(key, ValuesLstDecoded);

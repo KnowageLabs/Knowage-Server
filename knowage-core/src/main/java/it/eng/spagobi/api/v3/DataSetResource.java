@@ -19,6 +19,7 @@
 package it.eng.spagobi.api.v3;
 
 import static it.eng.spagobi.analiticalmodel.document.DocumentExecutionUtils.createParameterValuesMap;
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.stream.Collectors.toList;
 
 import java.io.File;
@@ -1007,10 +1008,10 @@ public class DataSetResource {
 						try {
 							// % character breaks decode method
 							if (!itemVal.contains("%")) {
-								itemVal = URLDecoder.decode(itemVal, "UTF-8");
+								itemVal = URLDecoder.decode(itemVal, UTF_8.name());
 							}
 							if (!itemDescr.contains("%")) {
-								itemDescr = URLDecoder.decode(itemDescr, "UTF-8");
+								itemDescr = URLDecoder.decode(itemDescr, UTF_8.name());
 							}
 
 							// check input value and convert if it's an old multivalue syntax({;{xxx;yyy}STRING}) to list of values :["A-OMP", "A-PO", "CL"]
@@ -1038,7 +1039,7 @@ public class DataSetResource {
 					// % character breaks decode method
 					if (!((String) paramValues).contains("%")) {
 						try {
-							paramValues = URLDecoder.decode((String) paramValues, "UTF-8");
+							paramValues = URLDecoder.decode((String) paramValues, UTF_8.name());
 						} catch (UnsupportedEncodingException e) {
 							logger.debug(e.getCause(), e);
 							throw new SpagoBIRuntimeException(e.getMessage(), e);
@@ -1050,7 +1051,7 @@ public class DataSetResource {
 							: paramValues.toString();
 					if (!parDescrVal.contains("%")) {
 						try {
-							parDescrVal = URLDecoder.decode(parDescrVal, "UTF-8");
+							parDescrVal = URLDecoder.decode(parDescrVal, UTF_8.name());
 						} catch (UnsupportedEncodingException e) {
 							logger.debug(e.getCause(), e);
 							throw new SpagoBIRuntimeException(e.getMessage(), e);

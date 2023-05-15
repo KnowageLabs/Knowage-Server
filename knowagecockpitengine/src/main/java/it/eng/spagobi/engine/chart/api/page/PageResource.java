@@ -17,6 +17,8 @@
  */
 package it.eng.spagobi.engine.chart.api.page;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
+
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.HashMap;
@@ -245,8 +247,8 @@ public class PageResource extends AbstractChartEngineResource {
 
 	private RenderOptions getRenderOptionsForPdfExporter(HttpServletRequest request) throws UnsupportedEncodingException {
 		String userId = (String) getUserProfile().getUserUniqueIdentifier();
-		String encodedUserId = Base64.encode(userId.getBytes("UTF-8"));
-		Map<String, String> headers = new HashMap<String, String>(1);
+		String encodedUserId = Base64.encode(userId.getBytes(UTF_8));
+		Map<String, String> headers = new HashMap<>(1);
 		headers.put("Authorization", "Direct " + encodedUserId);
 
 		RenderOptions defaultRenderOptions = RenderOptions.defaultOptions();
@@ -301,9 +303,9 @@ public class PageResource extends AbstractChartEngineResource {
 				String[] values = parameterMap.get(parameter);
 				if (values != null && values.length > 0) {
 					sb.append(sep);
-					sb.append(URLEncoder.encode(parameter, "UTF-8"));
+					sb.append(URLEncoder.encode(parameter, UTF_8.name()));
 					sb.append("=");
-					sb.append(URLEncoder.encode(values[0], "UTF-8"));
+					sb.append(URLEncoder.encode(values[0], UTF_8.name()));
 					sep = "&";
 				}
 			}

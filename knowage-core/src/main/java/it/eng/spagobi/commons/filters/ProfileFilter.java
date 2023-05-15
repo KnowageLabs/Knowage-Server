@@ -17,6 +17,8 @@
  */
 package it.eng.spagobi.commons.filters;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
+
 import java.io.IOException;
 import java.net.URLEncoder;
 
@@ -178,7 +180,7 @@ public class ProfileFilter implements Filter {
 						String contextName = ChannelUtilities.getSpagoBIContextName(httpRequest);
 						String targetService = httpRequest.getRequestURI() + "?" + httpRequest.getQueryString();
 						String redirectURL = contextName + "/servlet/AdapterHTTP?PAGE=LoginPage&NEW_SESSION=TRUE&targetService="
-								+ URLEncoder.encode(targetService, "UTF-8");
+								+ URLEncoder.encode(targetService, UTF_8.name());
 						httpResponse.sendRedirect(redirectURL);
 						return;
 					}

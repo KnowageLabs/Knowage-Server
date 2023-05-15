@@ -17,6 +17,8 @@
  */
 package it.eng.spagobi.engines.exporters;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
+
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -112,14 +114,14 @@ public class DocumentCompositionExporter {
 					String tmpContent = tmpSvg.get("SVG_" + label).toString();
 
 					/*
-					 * //create the png file using the svg String svg = tmpContent; svgInputStream = new ByteArrayInputStream(svg.getBytes("UTF-8")); File dir =
+					 * //create the png file using the svg String svg = tmpContent; svgInputStream = new ByteArrayInputStream(svg.getBytes(StandardCharsets.UTF_8)); File dir =
 					 * new File(System.getProperty("java.io.tmpdir")); Random generator = new Random(); int randomInt = generator.nextInt(); File imgFile =
 					 * File.createTempFile(Integer .valueOf(randomInt).toString(), ".png", dir); svgOutputStream = new FileOutputStream(imgFile);
 					 * ExportHighCharts.transformSVGIntoPNG(svgInputStream, svgOutputStream); // read input from file pngInputStream = new
 					 * FileInputStream(imgFile);
 					 */
 					String svg = tmpContent;
-					svgInputStream = new ByteArrayInputStream(svg.getBytes("UTF-8"));
+					svgInputStream = new ByteArrayInputStream(svg.getBytes(UTF_8));
 					File dir = new File(System.getProperty("java.io.tmpdir"));
 					Random generator = new Random();
 					int randomInt = generator.nextInt();

@@ -17,11 +17,9 @@
  */
 package it.eng.spagobi.utilities;
 
-import it.eng.spagobi.utilities.assertion.Assert;
-import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
+import static java.nio.charset.StandardCharsets.UTF_8;
 
 import java.io.StringWriter;
-import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Collection;
@@ -32,6 +30,8 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.PropertyException;
 
+import it.eng.spagobi.utilities.assertion.Assert;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import net.openhft.hashing.LongHashFunction;
 
 /**
@@ -242,12 +242,10 @@ public class Helper {
 
 	public static String md5(String res) {
 		try {
-			byte[] bytesOfMessage = res.getBytes("UTF-8");
+			byte[] bytesOfMessage = res.getBytes(UTF_8);
 			MessageDigest md = getMD5Instance();
 			byte[] thedigest = md.digest(bytesOfMessage);
-			return new String(thedigest, "UTF-8");
-		} catch (UnsupportedEncodingException e) {
-			throw new SpagoBIRuntimeException(e);
+			return new String(thedigest, UTF_8);
 		} catch (NoSuchAlgorithmException e) {
 			throw new SpagoBIRuntimeException(e);
 		}
@@ -260,7 +258,7 @@ public class Helper {
 
 	public static String sha256(String res) {
 		try {
-			byte[] bytesOfMessage = res.getBytes("UTF-8");
+			byte[] bytesOfMessage = res.getBytes(UTF_8);
 			MessageDigest md = getSHA256Instance();
 			byte[] thedigest = md.digest(bytesOfMessage);
 
@@ -270,8 +268,6 @@ public class Helper {
 				sb.append(Integer.toString((thedigest[i] & 0xff) + 0x100, 16).substring(1));
 			}
 			return sb.toString();
-		} catch (UnsupportedEncodingException e) {
-			throw new SpagoBIRuntimeException(e);
 		} catch (NoSuchAlgorithmException e) {
 			throw new SpagoBIRuntimeException(e);
 		}

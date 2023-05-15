@@ -17,6 +17,8 @@
  */
 package it.eng.spagobi.api.v2;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
+
 import java.net.URI;
 import java.net.URLEncoder;
 import java.util.Iterator;
@@ -157,7 +159,7 @@ public class I18nResource extends AbstractSpagoBIResource {
 				I18NMessagesDAO.updateNonDefaultI18NMessagesLabel(messageBeforeUpdate, message);
 			}
 			I18NMessagesDAO.updateI18NMessage(message);
-			String encodedI18NMessage = URLEncoder.encode("" + message.getId(), "UTF-8");
+			String encodedI18NMessage = URLEncoder.encode("" + message.getId(), UTF_8.name());
 			return Response.created(new URI("/2.0/i18nMessages/" + encodedI18NMessage)).entity(encodedI18NMessage).build();
 		} catch (Exception e) {
 			LOGGER.error("Error while updating I18NMessage", e);
@@ -179,7 +181,7 @@ public class I18nResource extends AbstractSpagoBIResource {
 		try {
 			I18NMessagesDAO = DAOFactory.getI18NMessageDAO();
 			I18NMessagesDAO.deleteI18NMessage(id);
-			String encodedI18NMessage = URLEncoder.encode("" + id, "UTF-8");
+			String encodedI18NMessage = URLEncoder.encode("" + id, UTF_8.name());
 			return Response.ok().entity(encodedI18NMessage).build();
 		} catch (Exception e) {
 			LOGGER.error("Error has occurred while deleting I18NMessage", e);
@@ -199,7 +201,7 @@ public class I18nResource extends AbstractSpagoBIResource {
 			SbiI18NMessages message = I18NMessagesDAO.getSbiI18NMessageById(id);
 			I18NMessagesDAO.deleteNonDefaultI18NMessages(message);
 			I18NMessagesDAO.deleteI18NMessage(id);
-			String encodedI18NMessage = URLEncoder.encode("" + id, "UTF-8");
+			String encodedI18NMessage = URLEncoder.encode("" + id, UTF_8.name());
 			return Response.ok().entity(encodedI18NMessage).build();
 		} catch (Exception e) {
 			LOGGER.error("Error has occurred while deleting Default-Language I18NMessage", e);

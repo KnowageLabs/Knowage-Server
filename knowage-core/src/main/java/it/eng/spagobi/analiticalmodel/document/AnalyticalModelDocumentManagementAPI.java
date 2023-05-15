@@ -17,6 +17,8 @@
  */
 package it.eng.spagobi.analiticalmodel.document;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -629,7 +631,7 @@ public class AnalyticalModelDocumentManagementAPI {
 					documentMatadataProperty.setObjmetaId(metadataPropertyId);
 					documentMatadataProperty.setBiobjId(document.getId());
 					documentMatadataProperty.setSubobjId(subObjectId);
-					documentMatadataProperty.setContent(documentMetadataPropertyValue.getBytes("UTF-8"));
+					documentMatadataProperty.setContent(documentMetadataPropertyValue.getBytes(UTF_8));
 					documentMatadataProperty.setCreationDate(new Date());
 					documentMatadataProperty.setLastChangeDate(new Date());
 
@@ -637,7 +639,7 @@ public class AnalyticalModelDocumentManagementAPI {
 				} else {
 					logger.debug("ObjMetacontent for metadata id = " + metadataPropertyId + ", biobject id = " + document.getId() + ", subobject id = "
 							+ subObjectId + " was found, it will be modified...");
-					documentMatadataProperty.setContent(documentMetadataPropertyValue.getBytes("UTF-8"));
+					documentMatadataProperty.setContent(documentMetadataPropertyValue.getBytes(UTF_8));
 					documentMatadataProperty.setLastChangeDate(new Date());
 
 					documentMetadataPropertyDAO.modifyObjMetacontent(documentMatadataProperty);

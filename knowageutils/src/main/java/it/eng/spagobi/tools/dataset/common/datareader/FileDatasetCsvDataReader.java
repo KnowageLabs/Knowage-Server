@@ -17,6 +17,8 @@
  */
 package it.eng.spagobi.tools.dataset.common.datareader;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
+
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.math.BigDecimal;
@@ -61,7 +63,7 @@ public class FileDatasetCsvDataReader extends AbstractDataReader {
 	public static final String CSV_FILE_DATE_FORMAT = "dateFormat";
 	public static final String CSV_FILE_TIMESTAMP_FORMAT = "timestampFormat";
 
-	private static final String UTF_8_ENCODING = "UTF-8";
+	private static final String UTF_8_ENCODING = UTF_8.name();
 	private static final String UTF_8_BOM_ENCODING = "UTF-8-BOM";
 	private static final String UTF8_BOM = "\uFEFF";
 

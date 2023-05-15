@@ -17,6 +17,8 @@
  */
 package it.eng.spagobi.api.v2;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
+
 import java.net.URI;
 import java.net.URLEncoder;
 import java.util.ArrayList;
@@ -228,7 +230,7 @@ public class UserResource extends AbstractSpagoBIResource {
 
 		try {
 			Integer id = usersDao.fullSaveOrUpdateSbiUser(sbiUser);
-			String encodedUser = URLEncoder.encode("" + id, "UTF-8");
+			String encodedUser = URLEncoder.encode("" + id, UTF_8.name());
 			return Response.created(new URI("2.0/users/" + encodedUser)).entity(encodedUser).build();
 		} catch (Exception e) {
 			LOGGER.error("Error while inserting resource", e);
@@ -327,7 +329,7 @@ public class UserResource extends AbstractSpagoBIResource {
 			usersDao = DAOFactory.getSbiUserDAO();
 			usersDao.setUserProfile(getUserProfile());
 			Integer idToReturn = usersDao.fullSaveOrUpdateSbiUser(sbiUser);
-			String encodedUser = URLEncoder.encode("" + idToReturn, "UTF-8");
+			String encodedUser = URLEncoder.encode("" + idToReturn, UTF_8.name());
 			return Response.created(new URI("2.0/users/" + encodedUser)).entity(encodedUser).build();
 		} catch (Exception e) {
 			LOGGER.error(e.getMessage(), e);
@@ -346,7 +348,7 @@ public class UserResource extends AbstractSpagoBIResource {
 			usersDao = DAOFactory.getSbiUserDAO();
 			usersDao.setUserProfile(getUserProfile());
 			usersDao.deleteSbiUserById(id);
-			String encodedUser = URLEncoder.encode("" + id, "UTF-8");
+			String encodedUser = URLEncoder.encode("" + id, UTF_8.name());
 			return Response.ok().entity(encodedUser).build();
 		} catch (Exception e) {
 			LOGGER.error("Error with deleting resource with id: " + id, e);

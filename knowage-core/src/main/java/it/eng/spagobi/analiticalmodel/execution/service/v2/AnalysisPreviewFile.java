@@ -241,7 +241,7 @@ public class AnalysisPreviewFile extends AbstractSpagoBIResource {
 	 * 
 	 * content.setContent(bytes); content.setCreationDate(new Date()); content.setCreationUser(getUserProfile().getUserName().toString());
 	 * 
-	 * artifactDAO.insertArtifactContent(artifactId, content); String encodedContentId = URLEncoder.encode("" + content.getId(), "UTF-8"); //
+	 * artifactDAO.insertArtifactContent(artifactId, content); String encodedContentId = URLEncoder.encode("" + content.getId(), StandardCharsets.UTF_8); //
 	 * System.out.println(new URI(uri.getAbsolutePath() + encodedContentId)); } catch (IOException e) { e.printStackTrace(); }
 	 * 
 	 * } else { return Response.status(Status.BAD_REQUEST).build();

@@ -981,7 +981,7 @@ public class SelfServiceDataSetCRUD extends AbstractSpagoBIResource {
 		try {
 			IDataSetDAO dao = DAOFactory.getDataSetDAO();
 			dao.setUserProfile(profile);
-//			req.setCharacterEncoding("UTF-8");
+//			req.setCharacterEncoding(StandardCharsets.UTF_8);
 			String datasetMetadata = selfServiceDataSetDTO.getDatasetMetadata();
 			IDataSet dataSet;
 

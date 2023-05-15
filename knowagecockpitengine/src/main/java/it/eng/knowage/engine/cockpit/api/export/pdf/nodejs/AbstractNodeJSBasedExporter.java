@@ -1,5 +1,7 @@
 package it.eng.knowage.engine.cockpit.api.export.pdf.nodejs;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
@@ -253,7 +255,7 @@ public abstract class AbstractNodeJSBasedExporter {
 		int sheetHeight = getSheetHeight(document);
 		double deviceScaleFactor = getDeviceScaleFactor(document);
 		boolean isMultiSheet = getIsMultiSheet(document);
-		String encodedUserId = Base64.encodeBase64String(userId.getBytes("UTF-8"));
+		String encodedUserId = Base64.encodeBase64String(userId.getBytes(UTF_8));
 		logger.debug("Encoded User Id: " + encodedUserId);
 
 		URI url = UriBuilder.fromUri(requestUrl).replaceQueryParam("outputType_description", "HTML").replaceQueryParam("outputType", "HTML")

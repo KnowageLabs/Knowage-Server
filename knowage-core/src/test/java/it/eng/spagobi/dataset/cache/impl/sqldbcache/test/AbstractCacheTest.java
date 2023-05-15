@@ -17,6 +17,17 @@
  */
 package it.eng.spagobi.dataset.cache.impl.sqldbcache.test;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
+
+import java.io.File;
+import java.math.BigDecimal;
+import java.util.HashMap;
+import java.util.Map;
+
+import org.apache.log4j.Logger;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import it.eng.qbe.dataset.QbeDataSet;
 import it.eng.spago.configuration.ConfigSingleton;
 import it.eng.spago.configuration.FileCreatorConfiguration;
@@ -36,14 +47,6 @@ import it.eng.spagobi.tools.dataset.cache.ICache;
 import it.eng.spagobi.tools.dataset.cache.impl.sqldbcache.SQLDBCacheConfiguration;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import junit.framework.TestCase;
-import org.apache.log4j.Logger;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.File;
-import java.math.BigDecimal;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * @author Marco Cortella (marco.cortella@eng.it)
@@ -137,7 +140,7 @@ public abstract class AbstractCacheTest extends TestCase {
 			jsonConf.put("csvDelimiter", ",");
 			jsonConf.put("csvDelimiter", ",");
 			jsonConf.put("csvQuote", "\"");
-			jsonConf.put("csvEncoding", "UTF-8");
+			jsonConf.put("csvEncoding", UTF_8.name());
 			jsonConf.put("DS_SCOPE", "USER");
 			fileDataset.setDsMetadata(
 					"<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?><META version=\"1\"><COLUMNLIST><COLUMN alias=\"customer_id\" fieldType=\"ATTRIBUTE\" name=\"customer_id\" type=\"java.lang.Integer\"/><COLUMN alias=\"lname\" fieldType=\"ATTRIBUTE\" name=\"lname\" type=\"java.lang.String\"/><COLUMN alias=\"fname\" fieldType=\"ATTRIBUTE\" name=\"fname\" type=\"java.lang.String\"/><COLUMN alias=\"num_children_at_home\" fieldType=\"ATTRIBUTE\" name=\"num_children_at_home\" type=\"java.lang.Integer\"/></COLUMNLIST><DATASET><PROPERTY name=\"resultNumber\" value=\"49\"/> </DATASET></META>");

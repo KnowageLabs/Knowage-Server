@@ -17,6 +17,8 @@
  */
 package it.eng.knowage.engine.cockpit.api.page;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
+
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -205,7 +207,7 @@ public class PageResource extends AbstractCockpitEngineResource {
 			 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 			 */
 			response.setContentType(MediaType.TEXT_HTML);
-			response.setCharacterEncoding("UTF-8");
+			response.setCharacterEncoding(UTF_8.name());
 
 			if ("execute".equals(pageName)) {
 				String outputType = request.getParameter(OUTPUT_TYPE);
@@ -350,7 +352,7 @@ public class PageResource extends AbstractCockpitEngineResource {
 
 	private RenderOptions getRenderOptionsForPdfExporter(HttpServletRequest request) throws UnsupportedEncodingException {
 		String userId = (String) getUserProfile().getUserUniqueIdentifier();
-		String encodedUserId = Base64.encode(userId.getBytes("UTF-8"));
+		String encodedUserId = Base64.encode(userId.getBytes(UTF_8));
 		Map<String, String> headers = new HashMap<String, String>(1);
 		headers.put("Authorization", "Direct " + encodedUserId);
 
@@ -409,9 +411,9 @@ public class PageResource extends AbstractCockpitEngineResource {
 				String[] values = parameterMap.get(parameter);
 				if (values != null && values.length > 0) {
 					sb.append(sep);
-					sb.append(URLEncoder.encode(parameter, "UTF-8"));
+					sb.append(URLEncoder.encode(parameter, UTF_8.name()));
 					sb.append("=");
-					sb.append(URLEncoder.encode(values[0], "UTF-8"));
+					sb.append(URLEncoder.encode(values[0], UTF_8.name()));
 					sep = "&";
 				}
 			}
@@ -439,9 +441,9 @@ public class PageResource extends AbstractCockpitEngineResource {
 			String[] values = parameterMap.get(parameter);
 			if (values != null && values.length > 0) {
 				sb.append(sep);
-				sb.append(URLEncoder.encode(parameter, "UTF-8"));
+				sb.append(URLEncoder.encode(parameter, UTF_8.name()));
 				sb.append("=");
-				sb.append(URLEncoder.encode(values[0], "UTF-8"));
+				sb.append(URLEncoder.encode(values[0], UTF_8.name()));
 				sep = "&";
 			}
 		}

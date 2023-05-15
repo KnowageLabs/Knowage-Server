@@ -19,6 +19,7 @@
 package it.eng.spagobi.security.hmacfilter;
 
 import static it.eng.spagobi.security.hmacfilter.HMACUtils.checkHMAC;
+import static java.nio.charset.StandardCharsets.UTF_8;
 
 import java.io.IOException;
 
@@ -34,13 +35,13 @@ import javax.servlet.http.HttpServletRequest;
  * This class implements a HMAC ( https://en.wikipedia.org/wiki/Hash-based_message_authentication_code ) filter. The shared {@link HMACFilter#key} is
  * initialized by filter configuration. It's used internally by the engines. The HMAC key is configured through JNDI : {@link HMACFilter#HMAC_JNDI_LOOKUP}. See
  * web.xml of knowage project for configuring the Filter.
- * 
+ *
  * @author fabrizio
- * 
+ *
  */
 public class HMACFilter implements Filter {
 
-	public static final String DEFAULT_ENCODING = "UTF-8";
+	public static final String DEFAULT_ENCODING = UTF_8.name();
 
 	public static final String KEY_CONFIG_NAME = "hmacKey";
 

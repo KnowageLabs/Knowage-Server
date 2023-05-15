@@ -1,5 +1,7 @@
 package it.eng.spagobi.analiticalmodel.document.handlers;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
+
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
@@ -154,7 +156,7 @@ public class DocumentRuntime extends AbstractBIResourceRuntime<BIObjectParameter
 							if (value != null && !value.equals("")) {
 								// encoding value
 								try {
-									value = URLEncoder.encode(value, "UTF-8");
+									value = URLEncoder.encode(value, UTF_8.name());
 								} catch (UnsupportedEncodingException e) {
 									logger.warn("UTF-8 encoding is not supported!!!", e);
 									logger.warn("Using system encoding...");

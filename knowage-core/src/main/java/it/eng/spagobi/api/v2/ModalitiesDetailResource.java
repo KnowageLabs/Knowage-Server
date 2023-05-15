@@ -17,6 +17,8 @@
  */
 package it.eng.spagobi.api.v2;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
+
 import java.net.URI;
 import java.net.URLEncoder;
 import java.util.List;
@@ -112,7 +114,7 @@ public class ModalitiesDetailResource extends AbstractSpagoBIResource {
 			checksDao = DAOFactory.getChecksDAO();
 			checksDao.setUserProfile(getUserProfile());
 			Integer id = checksDao.insertCheck(check);
-			String encodedCheck = URLEncoder.encode("" + id, "UTF-8");
+			String encodedCheck = URLEncoder.encode("" + id, UTF_8.name());
 			return Response.created(new URI("2.0/customChecks/" + encodedCheck)).entity(encodedCheck).build();
 		} catch (Exception e) {
 			LOGGER.error("Error while inserting resource", e);
@@ -137,7 +139,7 @@ public class ModalitiesDetailResource extends AbstractSpagoBIResource {
 			checksDao = DAOFactory.getChecksDAO();
 			checksDao.setUserProfile(getUserProfile());
 			checksDao.modifyCheck(check);
-			String encodedCheck = URLEncoder.encode("" + check.getCheckId(), "UTF-8");
+			String encodedCheck = URLEncoder.encode("" + check.getCheckId(), UTF_8.name());
 			return Response.created(new URI("2.0/customChecks/" + encodedCheck)).entity(encodedCheck).build();
 		} catch (Exception e) {
 			LOGGER.error("Error while modifying resource with id: " + id, e);
@@ -158,7 +160,7 @@ public class ModalitiesDetailResource extends AbstractSpagoBIResource {
 			checksDao = DAOFactory.getChecksDAO();
 			checksDao.setUserProfile(getUserProfile());
 			checksDao.eraseCheck(check);
-			String encodedCheck = URLEncoder.encode("" + check.getCheckId(), "UTF-8");
+			String encodedCheck = URLEncoder.encode("" + check.getCheckId(), UTF_8.name());
 			return Response.ok().entity(encodedCheck).build();
 		} catch (Exception e) {
 			LOGGER.error("Error with deleting resource with id: " + id, e);

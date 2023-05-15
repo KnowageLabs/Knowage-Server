@@ -1,5 +1,7 @@
 package it.eng.spagobi.api;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
+
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -177,7 +179,7 @@ public class DocumentExecutionSendMail extends AbstractSpagoBIResource {
 
 			// create and fill the first message part
 			MimeBodyPart mbp1 = new MimeBodyPart();
-			mbp1.setText(message, "utf-8", "html");
+			mbp1.setText(message, UTF_8.name(), "html");
 			// create the second message part
 			MimeBodyPart mbp2 = new MimeBodyPart();
 			// attach the file to the message

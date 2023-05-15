@@ -18,6 +18,8 @@
 
 package it.eng.knowage.backendservices.rest.widgets;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
+
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -76,7 +78,7 @@ public abstract class MLEngineUtils {
 		JSONObject templateJson;
 		try {
 			byte[] decodedBytes = Base64.decodeBase64(base64template);
-			templateJson = new JSONObject(new String(decodedBytes, "UTF-8"));
+			templateJson = new JSONObject(new String(decodedBytes, UTF_8));
 			JSONArray sheets = (JSONArray) templateJson.get("sheets");
 			for (int i = 0; i < sheets.length(); i++) {
 				JSONObject sheet = sheets.getJSONObject(i);

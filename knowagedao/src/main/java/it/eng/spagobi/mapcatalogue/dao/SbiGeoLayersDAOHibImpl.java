@@ -28,6 +28,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -291,7 +292,7 @@ public class SbiGeoLayersDAOHibImpl extends AbstractHibernateDAO implements ISbi
 				layerDef.put("layer_order", "null");
 			}
 
-			hibLayer.setLayerDef(layerDef.toString().getBytes("utf-8"));
+			hibLayer.setLayerDef(layerDef.toString().getBytes(StandardCharsets.UTF_8));
 			updateSbiCommonInfo4Update(hibLayer);
 
 			// delete all roles of layer
@@ -464,7 +465,7 @@ public class SbiGeoLayersDAOHibImpl extends AbstractHibernateDAO implements ISbi
 				layerDef.put("layer_order", "null");
 			}
 
-			hibLayer.setLayerDef(layerDef.toString().getBytes("utf-8"));
+			hibLayer.setLayerDef(layerDef.toString().getBytes(StandardCharsets.UTF_8));
 			// save on db
 			updateSbiCommonInfo4Insert(hibLayer);
 			id = (Integer) tmpSession.save(hibLayer);
@@ -612,7 +613,7 @@ public class SbiGeoLayersDAOHibImpl extends AbstractHibernateDAO implements ISbi
 				URL url = new URL(urlDescribeFeature);
 				URLConnection connection = url.openConnection();
 
-				BufferedReader br = new BufferedReader(new InputStreamReader(connection.getInputStream(), "utf-8"));
+				BufferedReader br = new BufferedReader(new InputStreamReader(connection.getInputStream(), StandardCharsets.UTF_8));
 				String inputLine;
 				while ((inputLine = br.readLine()) != null) {
 					JSONObject obj = new JSONObject(inputLine);
@@ -793,7 +794,7 @@ public class SbiGeoLayersDAOHibImpl extends AbstractHibernateDAO implements ISbi
 				int HttpResult = connection.getResponseCode();
 				if (HttpResult == HttpURLConnection.HTTP_OK) {
 
-					BufferedReader br = new BufferedReader(new InputStreamReader(connection.getInputStream(), "utf-8"));
+					BufferedReader br = new BufferedReader(new InputStreamReader(connection.getInputStream(), StandardCharsets.UTF_8));
 					String inputLine;
 					while ((inputLine = br.readLine()) != null) {
 						obj = new JSONObject(inputLine);
@@ -905,7 +906,7 @@ public class SbiGeoLayersDAOHibImpl extends AbstractHibernateDAO implements ISbi
 					if (!userIsAbilited(roles, profile)) {
 						continue;
 					}
-					String str = new String(hibLayer.getLayerDef(), "UTF-8");
+					String str = new String(hibLayer.getLayerDef(), StandardCharsets.UTF_8);
 					JSONObject layerDef = new JSONObject(str);
 
 					bilayer.setLayerIdentify(layerDef.getString("layerId"));

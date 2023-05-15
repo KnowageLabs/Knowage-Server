@@ -17,6 +17,8 @@
  */
 package it.eng.spagobi.analiticalmodel.document.service;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -133,7 +135,7 @@ public class GetSnapshotContentAction extends AbstractHttpAction {
 			logger.error("Current user [" + ((UserProfile) profile).getUserId().toString() + "] CANNOT see snapshot with id = " + idSnap
 					+ " of document with id = " + objectId);
 			// content = "You cannot see required snapshot.".getBytes();
-			content = "You cannot see required snapshot.".getBytes("UTF-8");
+			content = "You cannot see required snapshot.".getBytes(UTF_8);
 		}
 
 		Map<String, Object> toReturn = new HashMap<String, Object>();

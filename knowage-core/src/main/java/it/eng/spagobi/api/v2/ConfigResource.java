@@ -17,6 +17,8 @@
  */
 package it.eng.spagobi.api.v2;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
+
 import java.net.URI;
 import java.net.URLEncoder;
 import java.util.Iterator;
@@ -254,7 +256,7 @@ public class ConfigResource extends AbstractSpagoBIResource {
 			configsDao = DAOFactory.getSbiConfigDAO();
 			configsDao.setUserProfile(getUserProfile());
 			configsDao.saveConfig(config);
-			String encodedConfig = URLEncoder.encode("" + config.getId(), "UTF-8");
+			String encodedConfig = URLEncoder.encode("" + config.getId(), UTF_8.name());
 			return Response.created(new URI("1.0/configs/" + encodedConfig)).entity(encodedConfig).build();
 		} catch (Exception e) {
 			Response.notModified().build();
@@ -284,7 +286,7 @@ public class ConfigResource extends AbstractSpagoBIResource {
 			configsDao = DAOFactory.getSbiConfigDAO();
 			configsDao.setUserProfile(getUserProfile());
 			configsDao.saveConfig(config);
-			String encodedConfig = URLEncoder.encode("" + config.getId(), "UTF-8");
+			String encodedConfig = URLEncoder.encode("" + config.getId(), UTF_8.name());
 			return Response.created(new URI("1.0/configs/" + encodedConfig)).entity(encodedConfig).build();
 		} catch (Exception e) {
 			logger.error("Error while updating url of the new resource", e);

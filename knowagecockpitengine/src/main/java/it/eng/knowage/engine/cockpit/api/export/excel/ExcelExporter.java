@@ -14,6 +14,8 @@
  */
 package it.eng.knowage.engine.cockpit.api.export.excel;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
+
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -108,7 +110,7 @@ public class ExcelExporter extends AbstractFormatExporter {
 		try {
 			final Path outputDir = Files.createTempDirectory("knowage-xls-exporter-");
 
-			String encodedUserId = Base64.encodeBase64String(userUniqueIdentifier.getBytes("UTF-8"));
+			String encodedUserId = Base64.encodeBase64String(userUniqueIdentifier.getBytes(UTF_8));
 
 			// Script
 			String cockpitExportScriptPath = SingletonConfig.getInstance().getConfigValue(CONFIG_NAME_FOR_EXPORT_SCRIPT_PATH);

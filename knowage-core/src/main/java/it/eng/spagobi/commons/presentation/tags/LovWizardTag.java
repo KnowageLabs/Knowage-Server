@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,11 +11,20 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package it.eng.spagobi.commons.presentation.tags;
+
+import static java.nio.charset.StandardCharsets.UTF_8;
+
+import java.net.URLDecoder;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.jsp.JspException;
 
 import it.eng.spago.base.Constants;
 import it.eng.spago.base.RequestContainer;
@@ -36,15 +45,8 @@ import it.eng.spagobi.commons.utilities.urls.IUrlBuilder;
 import it.eng.spagobi.commons.utilities.urls.UrlBuilderFactory;
 import it.eng.spagobi.utilities.themes.ThemesManager;
 
-import java.net.URLDecoder;
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.jsp.JspException;
-
 /**
- * Presentation tag for Fix Lov Wizard details. 
+ * Presentation tag for Fix Lov Wizard details.
  */
 
 public class LovWizardTag extends CommonWizardLovTag {
@@ -60,12 +62,13 @@ public class LovWizardTag extends CommonWizardLovTag {
 	  String disabled = "disabled" ;
 	  protected String currTheme="";
 
-	
+
 	/* (non-Javadoc)
 	 * @see javax.servlet.jsp.tagext.TagSupport#doStartTag()
 	 */
+	@Override
 	public int doStartTag() throws JspException {
-		TracerSingleton.log(SpagoBIConstants.NAME_MODULE , TracerSingleton.DEBUG, 
+		TracerSingleton.log(SpagoBIConstants.NAME_MODULE , TracerSingleton.DEBUG,
 				            "LovWizardTag::doStartTag:: invocato");
 		httpRequest = (HttpServletRequest) pageContext.getRequest();
 		requestContainer = ChannelUtilities.getRequestContainer(httpRequest);
@@ -79,7 +82,7 @@ public class LovWizardTag extends CommonWizardLovTag {
 
     	currTheme=ThemesManager.getCurrentTheme(requestContainer);
     	if(currTheme==null)currTheme=ThemesManager.getDefaultTheme();
-    	
+
 		boolean isable = false;
 		try {
 			isable = userProfile.isAbleToExecuteAction(CommunityFunctionalityConstants.LOVS_MANAGEMENT);
@@ -92,11 +95,11 @@ public class LovWizardTag extends CommonWizardLovTag {
 			   	readonly = "";
 			   	disabled = "";
 			   }
-		
+
 		StringBuffer output = new StringBuffer();
-		
+
 		try {
-			
+
 			output.append("<table width='100%' cellspacing='0' border='0'>\n");
 			output.append("	<tr>\n");
 			output.append("		<td class='titlebar_level_2_text_section' style='vertical-align:middle;'>\n");
@@ -116,13 +119,13 @@ public class LovWizardTag extends CommonWizardLovTag {
 			output.append(generateProfAttrTitleSection(urlImgProfAttr));
 			output.append("	</tr>\n");
 			output.append("</table>\n");
-			
+
 			output.append("<br/>\n");
-			
+
 			String newItemNameField = msgBuilder.getMessage("SBIDev.lovWiz.newItemNameField", "messages", httpRequest);
 			String newItemValueField = msgBuilder.getMessage("SBIDev.lovWiz.newItemValueField", "messages", httpRequest);
 			output.append("<input type='hidden' id='insertFixLovItem' name='' value=''/>\n");
-			output.append("<div class='div_detail_area_forms_lov'>\n");	
+			output.append("<div class='div_detail_area_forms_lov'>\n");
 			output.append("		<div class='div_detail_label_lov'>\n");
 			output.append("			<span class='portlet-form-field-label'>\n");
 			output.append(newItemValueField);
@@ -160,7 +163,7 @@ public class LovWizardTag extends CommonWizardLovTag {
 				//lovProvider = GeneralUtilities.substituteQuotesIntoString(lovProvider);
 				lovs = FixedListDetail.fromXML(lovProvider).getItems();
 			}
-			
+
 			output.append("<table class=\"table_detail_fix_lov\">\n");
 		  	output.append("	<tr>\n");
 		  	output.append("		<td colspan='1' class='portlet-section-header'>\n");
@@ -188,21 +191,21 @@ public class LovWizardTag extends CommonWizardLovTag {
 				boolean alternate = false;
 		        String rowClass;
 				for (int i = 0; i < lovs.size(); i++) {
-					FixedListItemDetail lovDet = (FixedListItemDetail) lovs.get(i); 
+					FixedListItemDetail lovDet = (FixedListItemDetail) lovs.get(i);
 					String name = lovDet.getValue();
 					String description = lovDet.getDescription();
-					
+
 					//before sending name and description to the hidden input,
 					//substitute single and double quotes with their html encoding
 					name = GeneralUtilities.substituteQuotesIntoString(name);
 					description= GeneralUtilities.substituteQuotesIntoString(description);
-				
+
 					output.append("		<input type='hidden' name='nameOfFixedListItem' value='" + name + "'/>\n");
 					output.append("		<input type='hidden' id='valueItem'  name='valueOfFixedListItem' value='"+description+"'/>\n");
 					rowClass = (alternate) ? "portlet-section-alternate" : "portlet-section-body";
 		            alternate = !alternate;
 					output.append("	<tr class='portlet-font'>\n");
-					String descrDec = URLDecoder.decode(description,"UTF-8");
+					String descrDec = URLDecoder.decode(description,UTF_8.name());
 					output.append("		<td class='" + rowClass + "'>");
 					output.append("          <span style='display:inline;' id='nameRow"+i+"'>"+name+"</span>");
 					output.append("          <input type='text' style='display:none;' id='nameRow"+i+"InpText' name='nameRow"+i+"InpText' value='"+name+"' />");
@@ -229,14 +232,14 @@ public class LovWizardTag extends CommonWizardLovTag {
 					output.append("			</div>");
 					output.append("		</td>\n");
 					}
-					
+
 					output.append("		<td class='" + rowClass + "'>\n");
 					String tableCol4 = msgBuilder.getMessage("SBIDev.lovWiz.tableCol4", "messages", httpRequest);
 					output.append("			<input type='image' onclick='setLovProviderModified(true);setIndexOfFixedLovItemToDelete(\""+ i +"\")' class ='portlet-menu-item' \n");
 					output.append("				src= '" + urlBuilder.getResourceLinkByTheme(httpRequest, "/img/erase.gif",currTheme) + "' \n");
 					output.append("				title='" + tableCol4 + "' alt='" + tableCol4 + "' />\n");
 		  			output.append("		</td>\n");
-		  			
+
 		  			output.append("		<td class='" + rowClass + "'>\n");
 		  			if(i<(lovs.size()-1)) {
 						String tableCol5 = msgBuilder.getMessage("SBIDev.lovWiz.tableCol5", "messages", httpRequest);
@@ -247,7 +250,7 @@ public class LovWizardTag extends CommonWizardLovTag {
 		  				output.append("	        &nbsp;");
 		  			}
 		  			output.append("		</td>\n");
-		  			
+
 		  			output.append("		<td class='" + rowClass + "'>\n");
 		  			if(i>0) {
 						String tableCol6 = msgBuilder.getMessage("SBIDev.lovWiz.tableCol6", "messages", httpRequest);
@@ -258,11 +261,11 @@ public class LovWizardTag extends CommonWizardLovTag {
 		  				output.append("	        &nbsp;");
 		  			}
 		  			output.append("		</td>\n");
-		  			
+
 		  			output.append("	</tr>\n");
 		  		}
 		  	}
-		  				 
+
 			output.append("</table>\n");
 			output.append("<script>\n");
 			output.append(" function setIndexOfFixedLovItemToDelete (i) {\n");
@@ -274,7 +277,7 @@ public class LovWizardTag extends CommonWizardLovTag {
 			output.append("		document.getElementById('insertFixLovItem').value = 'insertFixLovItem';\n");
 			output.append("		document.getElementById('modalitiesValueForm').submit();\n");
 			output.append(" }\n");
-			
+
 			output.append(" function changeRowValues(index) {\n");
 			output.append("		document.getElementById('nameRow'+index).style.display = 'none';\n");
 			output.append("		document.getElementById('descrRow'+index).style.display = 'none';\n");
@@ -283,25 +286,25 @@ public class LovWizardTag extends CommonWizardLovTag {
 			output.append("		document.getElementById('divBtnDetailRow'+index).style.display = 'none';\n");
 			output.append("		document.getElementById('divBtnSaveRow'+index).style.display = 'inline';\n");
 			output.append(" }\n");
-			
+
 			output.append(" function saveRowValues(i) {\n");
 			output.append("		document.getElementById('indexOfFixedLovItemToChange').name = 'indexOfFixedLovItemToChange';\n");
 			output.append("		document.getElementById('indexOfFixedLovItemToChange').value = i;\n");
 			output.append(" }\n");
-			
+
 			output.append(" function downRow(i) {\n");
 			output.append("		document.getElementById('indexOfItemToDown').name = 'indexOfItemToDown';\n");
 			output.append("		document.getElementById('indexOfItemToDown').value = i;\n");
 			output.append(" }\n");
-			
+
 			output.append(" function upRow(i) {\n");
 			output.append("		document.getElementById('indexOfItemToUp').name = 'indexOfItemToUp';\n");
 			output.append("		document.getElementById('indexOfItemToUp').value = i;\n");
 			output.append(" }\n");
-			
+
 			output.append("</script>\n");
-			
-			
+
+
 			output.append("<script>\n");
 			output.append("		var infowizardfixlistopen = false;\n");
 			output.append("		var winFLWT = null;\n");
@@ -328,32 +331,33 @@ public class LovWizardTag extends CommonWizardLovTag {
 			output.append("		}\n");
 			output.append("		Windows.addObserver(observerFLWT);\n");
 			output.append("</script>\n");
-			
-			output.append("<div id='fixlistwizardinfodiv' style='display:none;'>\n");	
+
+			output.append("<div id='fixlistwizardinfodiv' style='display:none;'>\n");
 			output.append(msgBuilder.getMessageTextFromResource("it/eng/spagobi/commons/presentation/tags/info/fixlistwizardinfo", httpRequest));
 			output.append("</div>\n");
-			
+
             pageContext.getOut().print(output.toString());
         }
         catch (Exception ex) {
             TracerSingleton.log(Constants.NOME_MODULO, TracerSingleton.CRITICAL, "LovWizardTag::doStartTag::", ex);
             throw new JspException(ex.getMessage());
         }
-	    
+
 		return SKIP_BODY;
 	}
-	
+
     /* (non-Javadoc)
      * @see javax.servlet.jsp.tagext.TagSupport#doEndTag()
      */
-    public int doEndTag() throws JspException {
+    @Override
+	public int doEndTag() throws JspException {
         TracerSingleton.log(Constants.NOME_MODULO, TracerSingleton.DEBUG, "LovWizardTag::doEndTag:: invocato");
         return super.doEndTag();
     }
-	
+
 	/**
 	 * Gets the lov provider.
-	 * 
+	 *
 	 * @return the lov provider
 	 */
 	public String getLovProvider() {
@@ -362,11 +366,11 @@ public class LovWizardTag extends CommonWizardLovTag {
 
 	/**
 	 * Sets the lov provider.
-	 * 
+	 *
 	 * @param lovProvider the new lov provider
 	 */
 	public void setLovProvider(String lovProvider) {
 		this.lovProvider = lovProvider;
 	}
-	
+
 }

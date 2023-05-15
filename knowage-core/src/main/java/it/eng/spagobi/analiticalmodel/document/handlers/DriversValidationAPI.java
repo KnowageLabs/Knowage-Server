@@ -1,5 +1,7 @@
 package it.eng.spagobi.analiticalmodel.document.handlers;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
+
 import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -338,7 +340,7 @@ public class DriversValidationAPI {
 				if (val.equalsIgnoreCase("%")) {
 					value = "%";
 				} else {
-					value = URLDecoder.decode(val, "UTF-8");
+					value = URLDecoder.decode(val, UTF_8.name());
 				}
 				String description = null;
 				if (value.equals("")) {

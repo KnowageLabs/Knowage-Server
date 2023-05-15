@@ -174,7 +174,7 @@ public class DownloadZipAction extends AbstractBaseHttpAction{ //AbstractHttpAct
 			try{							
 				File file = new File("exception.txt");
 				String text = t.getMessage() + " \n" + (( t.getStackTrace()!=null)?t.getStackTrace():"");
-				FileUtils.writeStringToFile(file, text, "UTF-8");
+				FileUtils.writeStringToFile(file, text, StandardCharsets.UTF_8);
 				writeBackToClient(file, null, false, "exception.txt", "text/plain");								
 			}catch(Throwable t2){
 				logger.error("Error in defining error file ",t2);

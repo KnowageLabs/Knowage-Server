@@ -17,6 +17,7 @@
  */
 package it.eng.spagobi.api.v2;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.stream.Collectors.toList;
 
 import java.net.URI;
@@ -235,7 +236,7 @@ public class RolesResource extends AbstractSpagoBIResource {
 				}
 			}
 
-			String encodedRole = URLEncoder.encode("" + role.getId(), "UTF-8");
+			String encodedRole = URLEncoder.encode("" + role.getId(), UTF_8.name());
 			return Response.created(new URI("2.0/roles/" + encodedRole)).entity(encodedRole).build();
 		} catch (Exception e) {
 			LOGGER.error("Error while inserting resource", e);
@@ -296,7 +297,7 @@ public class RolesResource extends AbstractSpagoBIResource {
 				rolesDao.removeRoleDataSetCategory(role.getId(), domain.getValueId());
 			}
 
-			String encodedRole = URLEncoder.encode("" + role.getId(), "UTF-8");
+			String encodedRole = URLEncoder.encode("" + role.getId(), UTF_8.name());
 			return Response.created(new URI("2.0/roles/" + encodedRole)).entity(encodedRole).build();
 		} catch (Exception e) {
 			LOGGER.error("Error while modifying resource with id: " + id, e);
@@ -323,7 +324,7 @@ public class RolesResource extends AbstractSpagoBIResource {
 			}
 
 			rolesDao.eraseRole(role);
-			String encodedRole = URLEncoder.encode("" + id, "UTF-8");
+			String encodedRole = URLEncoder.encode("" + id, UTF_8.name());
 			return Response.ok().entity(encodedRole).build();
 		} catch (Exception e) {
 			LOGGER.error("Error with deleting resource with id: " + id, e);

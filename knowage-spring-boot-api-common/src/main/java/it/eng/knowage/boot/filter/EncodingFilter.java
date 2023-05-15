@@ -1,5 +1,7 @@
 package it.eng.knowage.boot.filter;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
+
 import java.io.IOException;
 
 import javax.servlet.Filter;
@@ -28,7 +30,7 @@ public class EncodingFilter implements Filter {
 
 		String encoding = filterConfig.getInitParameter("encoding");
 		if (encoding == null) {
-			encoding = "UTF-8";
+			encoding = UTF_8.name();
 		}
 		request.setCharacterEncoding(encoding);
 

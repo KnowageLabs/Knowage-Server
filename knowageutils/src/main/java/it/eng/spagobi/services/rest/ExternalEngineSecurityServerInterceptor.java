@@ -17,6 +17,8 @@
  */
 package it.eng.spagobi.services.rest;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.core.Context;
@@ -63,7 +65,7 @@ public class ExternalEngineSecurityServerInterceptor extends AbstractSecuritySer
 				if (position > -1 && position < 5) {// Direct stay at the beginning of the header
 					String encodedUser = auto.replaceFirst("Direct ", "");
 					byte[] decodedBytes = Base64.decode(encodedUser);
-					String userId = new String(decodedBytes, "UTF-8");
+					String userId = new String(decodedBytes, UTF_8);
 					SecurityServiceProxy proxy = new SecurityServiceProxy(userId, servletRequest.getSession());
 					profile = (UserProfile) proxy.getUserProfile();
 				}

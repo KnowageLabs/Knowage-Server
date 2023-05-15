@@ -17,6 +17,8 @@
  */
 package it.eng.spagobi.rest.interceptors;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
+
 import java.util.Optional;
 import java.util.StringTokenizer;
 
@@ -102,13 +104,13 @@ public class SecurityServerInterceptor extends AbstractSecurityServerInterceptor
 				if (position > -1 && position < 5) {// Direct stay at the beginning of the header
 					String encodedUser = auto.replaceFirst("Direct ", "");
 					byte[] decodedBytes = Base64.decode(encodedUser);
-					String user = new String(decodedBytes, "UTF-8");
+					String user = new String(decodedBytes, UTF_8);
 					profile = (UserProfile) UserUtilities.getUserProfile(user);
 				} else {
 					String encodedUserPassword = auto.replaceFirst("Basic ", "");
 					String credentials = null;
 					byte[] decodedBytes = Base64.decode(encodedUserPassword);
-					credentials = new String(decodedBytes, "UTF-8");
+					credentials = new String(decodedBytes, UTF_8);
 
 					StringTokenizer tokenizer = new StringTokenizer(credentials, ":");
 					String user = tokenizer.nextToken();

@@ -17,6 +17,8 @@
  */
 package it.eng.spagobi.api.v2;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
+
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -49,7 +51,7 @@ public class RestDataSetResource extends AbstractDataSetResource {
 		try {
 			URL resource = Thread.currentThread().getContextClassLoader().getResource("../test/dataset/orion.json");
 			byte[] encoded = Files.readAllBytes(Paths.get(resource.toURI()));
-			String datasetDescription = new String(encoded, "UTF-8");
+			String datasetDescription = new String(encoded, UTF_8);
 			return datasetDescription;
 		} catch (Exception e) {
 			String error = "Error while reading file SbiRESTDataSet.json";

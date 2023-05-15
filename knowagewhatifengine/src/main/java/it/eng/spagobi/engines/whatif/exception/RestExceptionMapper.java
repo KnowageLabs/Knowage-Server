@@ -18,10 +18,7 @@
 
 package it.eng.spagobi.engines.whatif.exception;
 
-import it.eng.spagobi.engines.whatif.common.AbstractWhatIfEngineService;
-import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceException;
-
-import java.io.UnsupportedEncodingException;
+import static java.nio.charset.StandardCharsets.UTF_8;
 
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.Response;
@@ -32,6 +29,9 @@ import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import it.eng.spagobi.engines.whatif.common.AbstractWhatIfEngineService;
+import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceException;
 
 /**
  * @author Alberto Ghedin (alberto.ghedin@eng.it)
@@ -46,12 +46,13 @@ public class RestExceptionMapper extends AbstractWhatIfEngineService implements 
 	private static final String ERROR_SERVICE = "errorService";
 	private static final String ERROR_MESSAGES = "errors";
 
+	@Override
 	public Response toResponse(Throwable e) {
 		logger.debug("RestExceptionMapper:toResponse IN");
 		String localizedMessage = e.getLocalizedMessage();
 		String errorMessage = "";
 		String errorService = "";
-		
+
 		if(e.getCause()!=null){
 			errorMessage = e.getCause().toString();
 		}else{
@@ -84,12 +85,7 @@ public class RestExceptionMapper extends AbstractWhatIfEngineService implements 
 
 		byte[] bytesResponse = null;
 
-		try {
-			bytesResponse = serializedMessages.toString().getBytes("UTF-8");
-		} catch (UnsupportedEncodingException e1) {
-			logger.error("Error setting the encoding of the response", e1);
-			bytesResponse = serializedMessages.toString().getBytes();
-		}
+		bytesResponse = serializedMessages.toString().getBytes(UTF_8);
 
 		Response response = Response.status(200).entity(bytesResponse).header(HttpHeaders.CONTENT_ENCODING, "UTF8").build();
 

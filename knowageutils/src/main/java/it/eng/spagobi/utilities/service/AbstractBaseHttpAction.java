@@ -17,6 +17,8 @@
  */
 package it.eng.spagobi.utilities.service;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
+
 import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -220,12 +222,12 @@ public abstract class AbstractBaseHttpAction extends AbstractHttpAction {
 		// encoding content using UTF8, since content length depends on encoding
 		String utf8EncodedContent = null;
 		if (content != null) {
-			utf8EncodedContent = new String(content.getBytes("UTF-8"), "UTF-8");
+			utf8EncodedContent = new String(content.getBytes(UTF_8), UTF_8);
 		} else {
 			utf8EncodedContent = "";
 		}
 		// getHttpResponse().setContentLength( utf8EncodedContent.length() );
-		getHttpResponse().setCharacterEncoding("UTF-8");
+		getHttpResponse().setCharacterEncoding(UTF_8.name());
 		getHttpResponse().setStatus(statusCode);
 
 		getHttpResponse().getWriter().print(utf8EncodedContent);

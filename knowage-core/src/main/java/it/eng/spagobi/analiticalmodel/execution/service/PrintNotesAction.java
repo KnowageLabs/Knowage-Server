@@ -17,6 +17,8 @@
  */
 package it.eng.spagobi.analiticalmodel.execution.service;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
+
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
@@ -131,7 +133,7 @@ public class PrintNotesAction extends AbstractSpagoBIAction {
 		dir.mkdirs();
 		String fileName="notes"+executionId;
 		File tmpFile=null;
-		try (OutputStream out = new FileOutputStream(tmpFile); ByteArrayInputStream sbis = new ByteArrayInputStream(templateStr.getBytes("UTF-8"))) {
+		try (OutputStream out = new FileOutputStream(tmpFile); ByteArrayInputStream sbis = new ByteArrayInputStream(templateStr.getBytes(UTF_8))) {
 			tmpFile = File.createTempFile(fileName, "." + outputType, dir);
 
 			LOGGER.debug("compiling report");

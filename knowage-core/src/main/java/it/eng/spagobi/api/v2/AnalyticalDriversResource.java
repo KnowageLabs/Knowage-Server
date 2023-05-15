@@ -17,6 +17,8 @@
  */
 package it.eng.spagobi.api.v2;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
+
 import java.net.URI;
 import java.net.URLEncoder;
 import java.util.ArrayList;
@@ -308,7 +310,7 @@ public class AnalyticalDriversResource extends AbstractSpagoBIResource {
 			useModesDao = DAOFactory.getParameterUseDAO();
 			useModesDao.setUserProfile(getUserProfile());
 			useModesDao.insertParameterUse(useMode);
-			String encodedUseMode = URLEncoder.encode("" + useMode.getUseID(), "UTF-8");
+			String encodedUseMode = URLEncoder.encode("" + useMode.getUseID(), UTF_8.name());
 			return Response.created(new URI("2.0/analyticalDrivers/" + encodedUseMode)).entity(encodedUseMode).build();
 		} catch (Exception e) {
 			LOGGER.error("Error while inserting resource", e);
@@ -346,7 +348,7 @@ public class AnalyticalDriversResource extends AbstractSpagoBIResource {
 
 			driversDao.modifyParameter(driver);
 
-			String encodedDriver = URLEncoder.encode("" + driver.getId(), "UTF-8");
+			String encodedDriver = URLEncoder.encode("" + driver.getId(), UTF_8.name());
 
 			JSONArray jsonArray = new JSONArray();
 			response.put("encodedDriver", encodedDriver);
@@ -407,7 +409,7 @@ public class AnalyticalDriversResource extends AbstractSpagoBIResource {
 				}
 			}
 			useModesDao.modifyParameterUse(useMode);
-			String encodedUseMode = URLEncoder.encode("" + useMode.getUseID(), "UTF-8");
+			String encodedUseMode = URLEncoder.encode("" + useMode.getUseID(), UTF_8.name());
 			return Response.created(new URI("2.0/analyticalDrivers/" + encodedUseMode)).entity(encodedUseMode).build();
 		} catch (Exception e) {
 			LOGGER.error("Error while modifying resource with id: {}", id, e);
@@ -432,7 +434,7 @@ public class AnalyticalDriversResource extends AbstractSpagoBIResource {
 			driversDao.setUserProfile(getUserProfile());
 			fullList = useModesDao.loadParametersUseByParId(id);
 			List objectsLabels = DAOFactory.getBIObjectParameterDAO().getDocumentLabelsListUsingParameter(id);
-			if (objectsLabels != null && objectsLabels.size() > 0) {
+			if (objectsLabels != null && !objectsLabels.isEmpty()) {
 				LOGGER.error("Driver in use");
 				throw new SpagoBIRuntimeException("Driver in use");
 			}
@@ -443,7 +445,7 @@ public class AnalyticalDriversResource extends AbstractSpagoBIResource {
 			}
 			driversDao.eraseParameter(driver);
 
-			String encodedDriver = URLEncoder.encode("" + driver.getId(), "UTF-8");
+			String encodedDriver = URLEncoder.encode("" + driver.getId(), UTF_8.name());
 			return Response.ok().entity(encodedDriver).build();
 		} catch (Exception e) {
 			LOGGER.error("Error with deleting resource with id: {}", id, e);
@@ -465,7 +467,7 @@ public class AnalyticalDriversResource extends AbstractSpagoBIResource {
 			useModesDao.setUserProfile(getUserProfile());
 			useModesDao.eraseParameterUse(mode);
 
-			String encodedMode = URLEncoder.encode("" + mode.getUseID(), "UTF-8");
+			String encodedMode = URLEncoder.encode("" + mode.getUseID(), UTF_8.name());
 			return Response.ok().entity(encodedMode).build();
 		} catch (Exception e) {
 			LOGGER.error("Error with deleting resource with id: {}", id, e);

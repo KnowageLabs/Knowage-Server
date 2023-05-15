@@ -1,7 +1,8 @@
 package it.eng.spagobi.api;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
+
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -123,12 +124,9 @@ public class DocumentExecutionSnapshot extends AbstractSpagoBIResource {
 				} else {
 					LOGGER.error("Current user [{}] CANNOT see snapshot with id = {} of document with id = {}", ((UserProfile) profile).getUserId().toString(), idSnap, objectId);
 					// content = "You cannot see required snapshot.".getBytes();
-					content = "You cannot see required snapshot.".getBytes("UTF-8");
+					content = "You cannot see required snapshot.".getBytes(UTF_8);
 				}
 			} catch (EMFInternalError e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (UnsupportedEncodingException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}

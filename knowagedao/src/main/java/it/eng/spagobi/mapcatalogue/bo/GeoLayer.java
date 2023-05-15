@@ -17,7 +17,8 @@
  */
 package it.eng.spagobi.mapcatalogue.bo;
 
-import java.io.UnsupportedEncodingException;
+import static java.nio.charset.StandardCharsets.UTF_8;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -122,7 +123,7 @@ public class GeoLayer {
 		if (layerDef != null) {
 			try {
 
-				String layerDefString = new String(layerDef, "UTF-8");
+				String layerDefString = new String(layerDef, UTF_8);
 				JSONObject layerDefJson = new JSONObject(layerDefString);
 
 				this.setLayerIdentify(layerDefJson.getString("layerId"));
@@ -162,8 +163,6 @@ public class GeoLayer {
 			} catch (NumberFormatException e) {
 				e.printStackTrace();
 			} catch (JSONException e) {
-				e.printStackTrace();
-			} catch (UnsupportedEncodingException e) {
 				e.printStackTrace();
 			}
 		} else {

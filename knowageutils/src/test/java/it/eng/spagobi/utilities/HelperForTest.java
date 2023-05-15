@@ -17,6 +17,8 @@
 */
 package it.eng.spagobi.utilities;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
+
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -29,7 +31,7 @@ public class HelperForTest {
 
 	public static String readFile(String fileName, Class<?> clazz) throws IOException {
 		InputStream in = clazz.getResourceAsStream(fileName);
-		String res= IOUtils.toString(in, "UTF-8");
+		String res= IOUtils.toString(in, UTF_8);
 		in.close();
 		return res;
 	}

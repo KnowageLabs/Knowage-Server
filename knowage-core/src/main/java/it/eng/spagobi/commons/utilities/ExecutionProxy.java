@@ -17,6 +17,8 @@
  */
 package it.eng.spagobi.commons.utilities;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
@@ -322,7 +324,7 @@ public class ExecutionProxy {
 				httpMethod = postMethod;
 			}
 			String userId = (String) UserProfile.createSchedulerUserProfile().getUserUniqueIdentifier();
-			String encodedUserId = Base64.getEncoder().encodeToString(userId.getBytes("UTF-8"));
+			String encodedUserId = Base64.getEncoder().encodeToString(userId.getBytes(UTF_8));
 			httpMethod.addRequestHeader("Authorization", "Direct " + encodedUserId);
 
 			// sent request to the engine

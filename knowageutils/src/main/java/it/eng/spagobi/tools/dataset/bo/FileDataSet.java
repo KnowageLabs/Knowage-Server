@@ -17,6 +17,8 @@
  */
 package it.eng.spagobi.tools.dataset.bo;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
+
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
@@ -289,7 +291,7 @@ public class FileDataSet extends ConfigurableDataSet {
 			return cfg.getString(CSV_FILE_ENCODING);
 		} catch (Exception e) {
 			logger.error("Cannot retrieve CSV file encoding from dataset config, using UTF-8 as default", e);
-			return "UTF-8";
+			return UTF_8.name();
 		}
 	}
 

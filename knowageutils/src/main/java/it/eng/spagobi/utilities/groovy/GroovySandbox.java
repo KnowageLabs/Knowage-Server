@@ -10,6 +10,7 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.net.URL;
 import java.net.URLConnection;
+import java.nio.charset.StandardCharsets;
 import java.sql.Blob;
 import java.sql.NClob;
 import java.sql.Time;
@@ -186,7 +187,7 @@ public class GroovySandbox {
 	private void addPredefinedMethods(List<String> staticImportMethods) throws IOException {
 
 		try (InputStream stream = Thread.currentThread().getContextClassLoader().getResourceAsStream(SpagoBIConstants.PREDEFINED_GROOVY_SCRIPT_FILE_NAME)) {
-			List<String> lines = IOUtils.readLines(stream, "UTF-8");
+			List<String> lines = IOUtils.readLines(stream, StandardCharsets.UTF_8);
 			for (String line : lines) {
 				if (line.contains("public ")) {
 					// found method: es: public String getMultiValueProfileAttribute(String attrName...

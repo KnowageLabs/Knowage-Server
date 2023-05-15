@@ -17,6 +17,8 @@
  */
 package it.eng.spagobi.dataset.cache.test;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
+
 import java.math.BigDecimal;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -40,7 +42,7 @@ import it.eng.spagobi.tools.datasource.bo.IDataSource;
 public class TestXmlFactory {
 
 	private static JSONObject getJsonObjectFromXml(String xmlFileAbsolutePath) throws Exception {
-		String xmlString = new String(Files.readAllBytes(Paths.get(xmlFileAbsolutePath)), "UTF-8");
+		String xmlString = new String(Files.readAllBytes(Paths.get(xmlFileAbsolutePath)), UTF_8);
 		String jsonString = Xml.xml2json(xmlString);
 		JSONObject jsonObject = new JSONObject(jsonString);
 		return jsonObject;

@@ -17,6 +17,8 @@
  */
 package it.eng.knowage.boot.utils;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -53,7 +55,7 @@ public class StringUtilities {
 
 	public static final String START_USER_PROFILE_ATTRIBUTE = "${";
 
-	public static final String DEFAULT_CHARSET = "UTF-8";
+	public static final String DEFAULT_CHARSET = UTF_8.name();
 
 	private static transient Logger logger = Logger.getLogger(StringUtilities.class);
 

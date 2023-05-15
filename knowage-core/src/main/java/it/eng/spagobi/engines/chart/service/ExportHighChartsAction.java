@@ -17,6 +17,8 @@
  */
 package it.eng.spagobi.engines.chart.service;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
+
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -69,7 +71,7 @@ public class ExportHighChartsAction extends AbstractEngineAction {
 
 			String svg = this.getAttributeAsString(SVG);
 
-			inputStream = new ByteArrayInputStream(svg.getBytes("UTF-8"));
+			inputStream = new ByteArrayInputStream(svg.getBytes(UTF_8));
 			// inputStream = new
 			// ByteArrayInputStream(svg.getBytes("ISO-8859-1"));
 			String outputType = this.getAttributeAsString(OUTPUT_FORMAT);

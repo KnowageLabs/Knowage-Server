@@ -3,6 +3,7 @@ package it.eng.spagobi.api;
 import static it.eng.spagobi.commons.constants.SpagoBIConstants.DATE_RANGE_OPTIONS_KEY;
 import static it.eng.spagobi.commons.constants.SpagoBIConstants.DATE_RANGE_QUANTITY_JSON;
 import static it.eng.spagobi.commons.constants.SpagoBIConstants.DATE_RANGE_TYPE_JSON;
+import static java.nio.charset.StandardCharsets.UTF_8;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -505,10 +506,10 @@ public class DocumentExecutionParameters extends AbstractSpagoBIResource {
 						try {
 							// % character breaks decode method
 							if (!itemVal.contains("%")) {
-								itemVal = URLDecoder.decode(itemVal, "UTF-8");
+								itemVal = URLDecoder.decode(itemVal, UTF_8.name());
 							}
 							if (!itemDescr.contains("%")) {
-								itemDescr = URLDecoder.decode(itemDescr, "UTF-8");
+								itemDescr = URLDecoder.decode(itemDescr, UTF_8.name());
 							}
 
 							// check input value and convert if it's an old multivalue syntax({;{xxx;yyy}STRING}) to list of values :["A-OMP", "A-PO", "CL"]
@@ -536,7 +537,7 @@ public class DocumentExecutionParameters extends AbstractSpagoBIResource {
 					// % character breaks decode method
 					if (!((String) paramValues).contains("%")) {
 						try {
-							paramValues = URLDecoder.decode((String) paramValues, "UTF-8");
+							paramValues = URLDecoder.decode((String) paramValues, UTF_8.name());
 						} catch (UnsupportedEncodingException e) {
 							logger.debug(e.getCause(), e);
 							throw new SpagoBIRuntimeException(e.getMessage(), e);
@@ -548,7 +549,7 @@ public class DocumentExecutionParameters extends AbstractSpagoBIResource {
 							: paramValues.toString();
 					if (!parDescrVal.contains("%")) {
 						try {
-							parDescrVal = URLDecoder.decode(parDescrVal, "UTF-8");
+							parDescrVal = URLDecoder.decode(parDescrVal, UTF_8.name());
 						} catch (UnsupportedEncodingException e) {
 							logger.debug(e.getCause(), e);
 							throw new SpagoBIRuntimeException(e.getMessage(), e);

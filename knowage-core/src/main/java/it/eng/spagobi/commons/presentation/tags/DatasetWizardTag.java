@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,13 +11,23 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 
 package it.eng.spagobi.commons.presentation.tags;
+
+import static java.nio.charset.StandardCharsets.UTF_8;
+
+import java.net.URLDecoder;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.jsp.JspException;
+import javax.servlet.jsp.tagext.TagSupport;
 
 import it.eng.spago.base.RequestContainer;
 import it.eng.spago.base.ResponseContainer;
@@ -34,14 +44,6 @@ import it.eng.spagobi.commons.utilities.urls.UrlBuilderFactory;
 import it.eng.spagobi.tools.dataset.bo.DataSetParameterItem;
 import it.eng.spagobi.tools.dataset.bo.DataSetParametersList;
 import it.eng.spagobi.utilities.themes.ThemesManager;
-
-import java.net.URLDecoder;
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.jsp.JspException;
-import javax.servlet.jsp.tagext.TagSupport;
 
 
 /**   @author Giulio Gavardi
@@ -61,10 +63,11 @@ public class DatasetWizardTag  extends TagSupport {
 		  boolean isreadonly = true ;
 		  String disabled = "disabled" ;
 
-		
+
 		/* (non-Javadoc)
 		 * @see javax.servlet.jsp.tagext.TagSupport#doStartTag()
 		 */
+		@Override
 		public int doStartTag() throws JspException {
 			httpRequest = (HttpServletRequest) pageContext.getRequest();
 			requestContainer = ChannelUtilities.getRequestContainer(httpRequest);
@@ -78,7 +81,7 @@ public class DatasetWizardTag  extends TagSupport {
 
 	    	currTheme=ThemesManager.getCurrentTheme(requestContainer);
 	    	if(currTheme==null)currTheme=ThemesManager.getDefaultTheme();
-			
+
 			boolean isable = false;
 			try {
 				isable = userProfile.isAbleToExecuteAction(CommunityFunctionalityConstants.LOVS_MANAGEMENT);
@@ -91,11 +94,11 @@ public class DatasetWizardTag  extends TagSupport {
 				   	readonly = "";
 				   	disabled = "";
 				   }
-			
+
 			StringBuffer output = new StringBuffer();
-			
+
 			try {
-				//output.append("<table id='tag'><tr><td>");				
+				//output.append("<table id='tag'><tr><td>");
 				output.append("<table width='100%' cellspacing='0' border='0'>\n");
 				output.append("	<tr>\n");
 				output.append("		<td class='titlebar_level_2_text_section' style='vertical-align:middle;'>\n");
@@ -117,11 +120,11 @@ public class DatasetWizardTag  extends TagSupport {
 				output.append("</table>\n");
 
 				output.append("<br/>\n");
-				
+
 				String newItemTypeField = msgBuilder.getMessage("SBIDev.DataSetWiz.newItemTypeField", "messages", httpRequest);
 				String newItemNameField = msgBuilder.getMessage("SBIDev.DataSetWiz.newItemNameField", "messages", httpRequest);
 				output.append("<input type='hidden' id='insertDatasetParameterItem' name='' value=''/>\n");
-				output.append("<div class='div_detail_area_forms_lov'>\n");	
+				output.append("<div class='div_detail_area_forms_lov'>\n");
 				output.append("		<div class='div_detail_label_lov'>\n");
 				output.append("			<span class='portlet-form-field-label'>\n");
 				output.append(newItemNameField);
@@ -166,7 +169,7 @@ public class DatasetWizardTag  extends TagSupport {
 					//lovProvider = GeneralUtilities.substituteQuotesIntoString(lovProvider);
 					parameters = DataSetParametersList.fromXML(parametersXML).getItems();
 				}
-				
+
 				output.append("<table class=\"table_detail__lov\">\n");
 			  	output.append("	<tr>\n");
 			  	output.append("		<td colspan='1' class='portlet-section-header'>\n");
@@ -194,21 +197,21 @@ public class DatasetWizardTag  extends TagSupport {
 					boolean alternate = false;
 			        String rowClass;
 					for (int i = 0; i < parameters.size(); i++) {
-						DataSetParameterItem dsDet = (DataSetParameterItem) parameters.get(i); 
+						DataSetParameterItem dsDet = (DataSetParameterItem) parameters.get(i);
 						String name = dsDet.getName();
 						String type = dsDet.getType();
-						
+
 						//before sending name and description to the hidden input,
 						//substitute single and double quotes with their html encoding
 						name = GeneralUtilities.substituteQuotesIntoString(name);
 						type= GeneralUtilities.substituteQuotesIntoString(type);
-					
+
 						output.append("		<input type='hidden' name='nameOfDatasetParameterListItem' value='" + name + "'/>\n");
 						output.append("		<input type='hidden' id='valueItem'  name='nameOfDatasetParameterItem' value='"+type+"'/>\n");
 						rowClass = (alternate) ? "portlet-section-alternate" : "portlet-section-body";
 			            alternate = !alternate;
 						output.append("	<tr class='portlet-font'>\n");
-						String typeDec = URLDecoder.decode(type,"UTF-8");
+						String typeDec = URLDecoder.decode(type,UTF_8.name());
 						output.append("		<td class='" + rowClass + "'>");
 						output.append("          <span style='display:inline;' id='nameRow"+i+"'>"+name+"</span>");
 						output.append("          <input type='text' style='display:none;' id='nameRow"+i+"InpText' name='nameRow"+i+"InpText' value='"+name+"' />");
@@ -251,14 +254,14 @@ public class DatasetWizardTag  extends TagSupport {
 						output.append("			</div>");
 						output.append("		</td>\n");
 						}
-						
+
 						output.append("		<td class='" + rowClass + "'>\n");
 						String tableCol4 = msgBuilder.getMessage("SBIDev.DataSetWiz.tableCol4", "messages", httpRequest);
 						output.append("			<input type='image' onclick='setParametersXMLModified(true);setIndexOfDatasetParameterItemToDelete(\""+ i +"\")' class ='portlet-menu-item' \n");
 						output.append("				src= '" + urlBuilder.getResourceLinkByTheme(httpRequest, "/img/erase.gif",currTheme) + "' \n");
 						output.append("				title='" + tableCol4 + "' alt='" + tableCol4 + "' />\n");
 			  			output.append("		</td>\n");
-			  			
+
 			  			output.append("		<td class='" + rowClass + "'>\n");
 			  		/*	if(i<(parameters.size()-1)) {
 							String tableCol5 = msgBuilder.getMessage("SBIDev.DataSetWiz.tableCol5", "messages", httpRequest);
@@ -269,7 +272,7 @@ public class DatasetWizardTag  extends TagSupport {
 			  				output.append("	        &nbsp;");
 			  			}*/
 			  			output.append("		</td>\n");
-			  			
+
 			  			output.append("		<td class='" + rowClass + "'>\n");
 			  			/*if(i>0) {
 							String tableCol6 = msgBuilder.getMessage("SBIDev.DataSetWiz.tableCol6", "messages", httpRequest);
@@ -280,11 +283,11 @@ public class DatasetWizardTag  extends TagSupport {
 			  				output.append("	        &nbsp;");
 			  			}*/
 			  			output.append("		</td>\n");
-			  			
+
 			  			output.append("	</tr>\n");
 			  		}
 			  	}
-			  				 
+
 				output.append("</table>\n");
 				output.append("<script>\n");
 				output.append(" function setIndexOfDatasetParameterItemToDelete(i) {\n");
@@ -296,7 +299,7 @@ public class DatasetWizardTag  extends TagSupport {
 				output.append("		document.getElementById('insertDatasetParameterItem').value = 'insertDatasetParameterItem';\n");
 				output.append("		document.getElementById('dsForm').submit();\n");
 				output.append(" }\n");
-				
+
 				output.append(" function changeRowValues(index) {\n");
 				output.append("		document.getElementById('nameRow'+index).style.display = 'none';\n");
 				output.append("		document.getElementById('typeRow'+index).style.display = 'none';\n");
@@ -305,25 +308,25 @@ public class DatasetWizardTag  extends TagSupport {
 				output.append("		document.getElementById('divBtnDetailRow'+index).style.display = 'none';\n");
 				output.append("		document.getElementById('divBtnSaveRow'+index).style.display = 'inline';\n");
 				output.append(" }\n");
-				
+
 				output.append(" function saveRowValues(i) {\n");
 				output.append("		document.getElementById('indexOfDatasetParameterItemToChange').name = 'indexOfDatasetParameterItemToChange';\n");
 				output.append("		document.getElementById('indexOfDatasetParameterItemToChange').value = i;\n");
 				output.append(" }\n");
-				
+
 				output.append(" function downRow(i) {\n");
 				output.append("		document.getElementById('indexOfItemToDown').name = 'indexOfItemToDown';\n");
 				output.append("		document.getElementById('indexOfItemToDown').value = i;\n");
 				output.append(" }\n");
-				
+
 				output.append(" function upRow(i) {\n");
 				output.append("		document.getElementById('indexOfItemToUp').name = 'indexOfItemToUp';\n");
 				output.append("		document.getElementById('indexOfItemToUp').value = i;\n");
 				output.append(" }\n");
-				
+
 				output.append("</script>\n");
-				
-				
+
+
 				output.append("<script>\n");
 				output.append("		var infowizarddatasetlistopen = false;\n");
 				output.append("		var winFLWT = null;\n");
@@ -350,32 +353,33 @@ public class DatasetWizardTag  extends TagSupport {
 				output.append("		}\n");
 				output.append("		Windows.addObserver(observerFLWT);\n");
 				output.append("</script>\n");
-				
-				output.append("<div id='datasetlistwizardinfodiv' style='display:none;'>\n");	
+
+				output.append("<div id='datasetlistwizardinfodiv' style='display:none;'>\n");
 				output.append(msgBuilder.getMessageTextFromResource("it/eng/spagobi/commons/presentation/tags/info/datasetlistwizardinfo", httpRequest));
 				output.append("</div>\n");
 				//output.append("</td></tr></table>\n");
-				
-				
+
+
 	            pageContext.getOut().print(output.toString());
 	        }
 	        catch (Exception ex) {
 	            throw new JspException(ex.getMessage());
 	        }
-		    
+
 			return SKIP_BODY;
 		}
-		
+
 	    /* (non-Javadoc)
     	 * @see javax.servlet.jsp.tagext.TagSupport#doEndTag()
     	 */
-    	public int doEndTag() throws JspException {
+    	@Override
+		public int doEndTag() throws JspException {
 	        return super.doEndTag();
 	    }
 
 		/**
 		 * Gets the parameters xml.
-		 * 
+		 *
 		 * @return the parameters xml
 		 */
 		public String getParametersXML() {
@@ -384,13 +388,13 @@ public class DatasetWizardTag  extends TagSupport {
 
 		/**
 		 * Sets the parameters xml.
-		 * 
+		 *
 		 * @param parametersXML the new parameters xml
 		 */
 		public void setParametersXML(String parametersXML) {
 			this.parametersXML = parametersXML;
 		}
-		
+
 		protected String generateProfAttrTitleSection(String urlImg) {
 			StringBuffer output = new StringBuffer();
 			output.append("		<td class='titlebar_level_2_empty_section'>&nbsp;</td>\n");
@@ -406,10 +410,10 @@ public class DatasetWizardTag  extends TagSupport {
 			String outputStr = output.toString();
 			return outputStr;
 		}
-	
-	
-	
-	
-	
-	
+
+
+
+
+
+
 }

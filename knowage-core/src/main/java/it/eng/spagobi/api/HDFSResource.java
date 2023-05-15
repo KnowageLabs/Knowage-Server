@@ -17,6 +17,8 @@
  */
 package it.eng.spagobi.api;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
+
 import java.net.URLEncoder;
 
 import javax.ws.rs.POST;
@@ -76,7 +78,7 @@ public class HDFSResource extends AbstractSpagoBIResource {
 			commonj.work.WorkManager workManager = knowageWorkManager.getInnerInstance();
 			workManager.schedule(hdfsWriteWork);
 
-			return Response.ok(URLEncoder.encode(requestUUID, "UTF-8")).build();
+			return Response.ok(URLEncoder.encode(requestUUID, UTF_8.name())).build();
 
 		} catch (Exception e) {
 			throw new SpagoBIRuntimeException("Error while init dataset writing on HDFS: " + e.getMessage(), e);

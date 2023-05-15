@@ -17,8 +17,9 @@
  */
 package it.eng.spagobi.utilities.engines;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
+
 import java.io.UnsupportedEncodingException;
-import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -244,7 +245,7 @@ public class EngineStartServletIOManager extends BaseServletIOManager {
 
 	public String getTemplateAsString(boolean forEdit) {
 		byte[] template = getTemplate(forEdit);
-		return template != null ? new String(template, StandardCharsets.UTF_8) : null;
+		return template != null ? new String(template, UTF_8) : null;
 	}
 
 	public byte[] getTemplate(boolean forEdit) {
@@ -481,7 +482,7 @@ public class EngineStartServletIOManager extends BaseServletIOManager {
 		logger.debug("IN");
 
 		try {
-			this.getRequest().setCharacterEncoding("UTF-8");
+			this.getRequest().setCharacterEncoding(UTF_8.name());
 		} catch (UnsupportedEncodingException e) {
 			logger.error(e);
 		}

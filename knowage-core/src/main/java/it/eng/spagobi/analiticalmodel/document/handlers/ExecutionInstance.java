@@ -17,6 +17,8 @@
  */
 package it.eng.spagobi.analiticalmodel.document.handlers;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
+
 import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
@@ -1033,7 +1035,7 @@ public class ExecutionInstance implements Serializable {
 				if (val.equalsIgnoreCase("%")) {
 					value = "%";
 				} else {
-					value = URLDecoder.decode(val, "UTF-8");
+					value = URLDecoder.decode(val, UTF_8.name());
 				}
 				String description = null;
 				if (value.equals("")) {
@@ -1359,7 +1361,7 @@ public class ExecutionInstance implements Serializable {
 							if (value != null && !value.equals("")) {
 								// encoding value
 								try {
-									value = URLEncoder.encode(value, "UTF-8");
+									value = URLEncoder.encode(value, UTF_8.name());
 								} catch (UnsupportedEncodingException e) {
 									logger.warn("UTF-8 encoding is not supported!!!", e);
 									logger.warn("Using system encoding...");

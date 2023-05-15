@@ -17,9 +17,10 @@
  */
 package it.eng.spagobi.engines.whatif.schema;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
+
 import java.io.File;
 import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
 import java.util.Base64;
 
 import org.apache.log4j.Logger;
@@ -57,7 +58,7 @@ public class SpagoBIFilterDynamicSchemaProcessor extends LocalizingDynamicSchema
 		// logger.debug("Attribute value in Base64 encoding is " + attrValueBase64);
 		// String value = null;
 		// try {
-		// value = new String(DECODER.decodeBuffer(attrValueBase64), "UTF-8");
+		// value = new String(DECODER.decodeBuffer(attrValueBase64), StandardCharsets.UTF_8);
 		// } catch (UnsupportedEncodingException e) {
 		// logger.error("UTF-8 encoding not supported!!!!!", e);
 		// value = new String(DECODER.decodeBuffer(attrValueBase64));
@@ -153,12 +154,7 @@ public class SpagoBIFilterDynamicSchemaProcessor extends LocalizingDynamicSchema
 				String attrValueBase64 = connectInfo.get(att);
 				logger.debug("Attribute value in Base64 encoding is " + attrValueBase64);
 				String value = null;
-				try {
-					value = new String(DECODER.decode(attrValueBase64), "UTF-8");
-				} catch (UnsupportedEncodingException e) {
-					logger.error("UTF-8 encoding not supported!!!!!", e);
-					value = new String(DECODER.decode(attrValueBase64));
-				}
+				value = new String(DECODER.decode(attrValueBase64), UTF_8);
 				logger.debug("change attribute " + att + " with  [" + value + "]");
 
 				modifiedSchema = modifiedSchema.replaceAll("\\$\\{" + att + "\\}", value);
@@ -187,12 +183,7 @@ public class SpagoBIFilterDynamicSchemaProcessor extends LocalizingDynamicSchema
 				String attrValueBase64 = connectInfo.get(att);
 				logger.debug("Parameter value in Base64 encoding is " + attrValueBase64);
 				String value = null;
-				try {
-					value = new String(DECODER.decode(attrValueBase64), "UTF-8");
-				} catch (UnsupportedEncodingException e) {
-					logger.error("UTF-8 encoding not supported!!!!!", e);
-					value = new String(DECODER.decode(attrValueBase64));
-				}
+				value = new String(DECODER.decode(attrValueBase64), UTF_8);
 				logger.debug("change attribute " + att + " with  [" + value + "]");
 
 				modifiedSchema = modifiedSchema.replaceAll("\\$P\\{" + att + "\\}", value);

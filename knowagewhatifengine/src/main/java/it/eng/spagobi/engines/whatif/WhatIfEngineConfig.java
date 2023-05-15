@@ -18,8 +18,9 @@
 
 package it.eng.spagobi.engines.whatif;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
+
 import java.io.File;
-import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.HashMap;
@@ -289,7 +290,7 @@ public class WhatIfEngineConfig {
 		String valueBase64 = encodeValue(value);
 		// if (value != null) {
 		// try {
-		// valueBase64 = ENCODER.encode(value.getBytes("UTF-8"));
+		// valueBase64 = ENCODER.encode(value.getBytes(StandardCharsets.UTF_8));
 		// } catch (UnsupportedEncodingException e) {
 		// logger.error("UTF-8 encoding not supported!!!!!", e);
 		// valueBase64 = ENCODER.encode(value.getBytes());
@@ -304,12 +305,7 @@ public class WhatIfEngineConfig {
 		// encoding value in Base64
 		String valueBase64 = null;
 		if (v != null) {
-			try {
-				valueBase64 = ENCODER.encodeToString(v.getBytes("UTF-8"));
-			} catch (UnsupportedEncodingException e) {
-				logger.error("UTF-8 encoding not supported!!!!!", e);
-				valueBase64 = ENCODER.encodeToString(v.getBytes());
-			}
+			valueBase64 = ENCODER.encodeToString(v.getBytes(UTF_8));
 		}
 		return valueBase64;
 	}

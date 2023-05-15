@@ -1,5 +1,7 @@
 package it.eng.knowage.engine.cockpit.api.export;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -32,7 +34,7 @@ public class CockpitExportResource extends AbstractCockpitEngineResource {
 	@Path("/excel")
 	public View exportToExcel() {
 		logger.debug("IN");
-		response.setCharacterEncoding("UTF-8");
+		response.setCharacterEncoding(UTF_8.name());
 		String dispatchUrl = null;
 		try {
 			String outputType = request.getParameter(OUTPUT_TYPE);
@@ -57,7 +59,7 @@ public class CockpitExportResource extends AbstractCockpitEngineResource {
 	@Produces(MediaType.APPLICATION_OCTET_STREAM)
 	public void exportExcel(@Context HttpServletRequest req) {
 		logger.debug("IN");
-		response.setCharacterEncoding("UTF-8");
+		response.setCharacterEncoding(UTF_8.name());
 		try {
 			JSONObject body = RestUtilities.readBodyAsJSONObject(req);
 			String template = getIOManager().getTemplateAsString();
@@ -96,7 +98,7 @@ public class CockpitExportResource extends AbstractCockpitEngineResource {
 	@Produces(MediaType.APPLICATION_OCTET_STREAM)
 	public void exportPdf(@Context HttpServletRequest req) {
 		logger.debug("IN");
-		response.setCharacterEncoding("UTF-8");
+		response.setCharacterEncoding(UTF_8.name());
 		try {
 			JSONObject body = RestUtilities.readBodyAsJSONObject(req);
 			String userId = body.getString(USER_ID);

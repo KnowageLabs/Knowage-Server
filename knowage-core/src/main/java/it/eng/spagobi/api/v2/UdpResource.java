@@ -17,16 +17,7 @@
  */
 package it.eng.spagobi.api.v2;
 
-import it.eng.spagobi.api.AbstractSpagoBIResource;
-import it.eng.spagobi.commons.constants.CommunityFunctionalityConstants;
-import it.eng.spagobi.commons.dao.DAOFactory;
-import it.eng.spagobi.commons.deserializer.JSONDeserializer;
-import it.eng.spagobi.commons.serializer.SerializerFactory;
-import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
-import it.eng.spagobi.services.rest.annotations.UserConstraint;
-import it.eng.spagobi.tools.udp.dao.IUdpDAO;
-import it.eng.spagobi.tools.udp.metadata.SbiUdp;
-import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
+import static java.nio.charset.StandardCharsets.UTF_8;
 
 import java.net.URI;
 import java.net.URLEncoder;
@@ -50,6 +41,17 @@ import javax.ws.rs.core.Response.Status;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONObject;
+
+import it.eng.spagobi.api.AbstractSpagoBIResource;
+import it.eng.spagobi.commons.constants.CommunityFunctionalityConstants;
+import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.commons.deserializer.JSONDeserializer;
+import it.eng.spagobi.commons.serializer.SerializerFactory;
+import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
+import it.eng.spagobi.services.rest.annotations.UserConstraint;
+import it.eng.spagobi.tools.udp.dao.IUdpDAO;
+import it.eng.spagobi.tools.udp.metadata.SbiUdp;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 @Path("/2.0/udp")
 @ManageAuthorization
@@ -157,7 +159,7 @@ public class UdpResource extends AbstractSpagoBIResource {
 			sbiUdpsDao = DAOFactory.getUdpDAO();
 			sbiUdpsDao.setUserProfile(getUserProfile());
 			sbiUdpsDao.insert(sbiUdp);
-			String encodedSbiUdp = URLEncoder.encode("" + sbiUdp.getUdpId(), "UTF-8");
+			String encodedSbiUdp = URLEncoder.encode("" + sbiUdp.getUdpId(), UTF_8.name());
 			return Response.created(new URI("1.0/userdataproperties/" + encodedSbiUdp)).entity(encodedSbiUdp).build();
 		} catch (Exception e) {
 			Response.notModified().build();
@@ -197,7 +199,7 @@ public class UdpResource extends AbstractSpagoBIResource {
 			sbiUdpsDao = DAOFactory.getUdpDAO();
 			sbiUdpsDao.setUserProfile(getUserProfile());
 			sbiUdpsDao.update(sbiUdp);
-			String encodedSbiUdp = URLEncoder.encode("" + sbiUdp.getUdpId(), "UTF-8");
+			String encodedSbiUdp = URLEncoder.encode("" + sbiUdp.getUdpId(), UTF_8.name());
 			return Response.created(new URI("1.0/userdataproperties/" + encodedSbiUdp)).entity(encodedSbiUdp).build();
 		} catch (Exception e) {
 			logger.error("Error while updating url of the new resource", e);

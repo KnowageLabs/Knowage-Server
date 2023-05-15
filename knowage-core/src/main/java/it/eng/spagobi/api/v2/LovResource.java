@@ -17,6 +17,8 @@
  */
 package it.eng.spagobi.api.v2;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
+
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -464,7 +466,7 @@ public class LovResource extends AbstractSpagoBIResource {
 			}
 			modalitiesValueDAO.eraseModalitiesValue(modVal);
 
-			String encodedLov = URLEncoder.encode("" + modVal.getId(), "UTF-8");
+			String encodedLov = URLEncoder.encode("" + modVal.getId(), UTF_8.name());
 			return Response.ok().entity(encodedLov).build();
 
 		} catch (Exception exception) {

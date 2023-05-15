@@ -17,6 +17,9 @@
  */
 package it.eng.spagobi.utilities.engines.rest;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
+
+import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 import java.util.Iterator;
 import java.util.Map;
@@ -194,7 +197,7 @@ public class SimpleRestClient {
 			request.setEntity(builder.build());
 			client = HttpClientBuilder.create().build();
 
-			String encodedBytes = Base64.getEncoder().encodeToString(userId.getBytes("UTF-8"));
+			String encodedBytes = Base64.getEncoder().encodeToString(userId.getBytes(StandardCharsets.UTF_8));
 			request.addHeader("Authorization", "Direct " + encodedBytes);
 
 			authenticationProvider.provideAuthenticationMultiPart(request, myHeaders);
@@ -279,7 +282,7 @@ public class SimpleRestClient {
 	private void addAuthorizations(Builder request, String userId, MultivaluedMap<String, Object> myHeaders) throws Exception {
 		logger.debug("Adding auth for user " + userId);
 
-		String encodedBytes = Base64.getEncoder().encodeToString(userId.getBytes("UTF-8"));
+		String encodedBytes = Base64.getEncoder().encodeToString(userId.getBytes(UTF_8));
 		request.header("Authorization", "Direct " + encodedBytes);
 		request.header("X-Kn-Authorization", "Bearer " + userId);
 		myHeaders.add("Authorization", "Direct " + encodedBytes);

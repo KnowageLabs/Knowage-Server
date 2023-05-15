@@ -17,6 +17,8 @@
  */
 package it.eng.spagobi.api.v2;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
+
 import java.net.URI;
 import java.net.URLEncoder;
 import java.util.ArrayList;
@@ -124,7 +126,7 @@ public class DomainResource extends AbstractSpagoBIResource {
 			domainsDao.setUserProfile(getUserProfile());
 			List<Domain> domainsList = domainsDao.loadListDomains();
 			domainsDao.saveDomain(domain);
-			String encodedDomain = URLEncoder.encode("" + domain.getValueId(), "UTF-8");
+			String encodedDomain = URLEncoder.encode("" + domain.getValueId(), UTF_8.name());
 			return Response.created(new URI("1.0/domains/" + encodedDomain)).entity(encodedDomain).build();
 		} catch (Exception e) {
 			Response.notModified().build();
@@ -155,7 +157,7 @@ public class DomainResource extends AbstractSpagoBIResource {
 			domainsDao.setUserProfile(getUserProfile());
 			List<Domain> domainsList = domainsDao.loadListDomains();
 			domainsDao.saveDomain(domain);
-			String encodedDomain = URLEncoder.encode("" + domain.getValueId(), "UTF-8");
+			String encodedDomain = URLEncoder.encode("" + domain.getValueId(), UTF_8.name());
 			return Response.created(new URI("1.0/domains/" + encodedDomain)).entity(encodedDomain).build();
 		} catch (Exception e) {
 			logger.error("Error while updating url of the new resource", e);

@@ -17,8 +17,35 @@
  */
 package it.eng.spagobi.engine.chart.api;
 
+import static it.eng.spagobi.engine.chart.util.ChartEngineUtil.ve;
+import static java.nio.charset.StandardCharsets.UTF_8;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletResponse;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.DefaultValue;
+import javax.ws.rs.FormParam;
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
+
+import org.apache.log4j.Logger;
+import org.apache.velocity.Template;
+import org.apache.velocity.VelocityContext;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import com.jamonapi.Monitor;
 import com.jamonapi.MonitorFactory;
+
 import it.eng.knowage.engine.cockpit.api.CockpitExecutionClient;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.commons.bo.UserProfile;
@@ -35,21 +62,6 @@ import it.eng.spagobi.tools.dataset.common.behaviour.UserProfileUtils;
 import it.eng.spagobi.tools.dataset.dao.IDataSetDAO;
 import it.eng.spagobi.utilities.engines.EngineConstants;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
-import org.apache.log4j.Logger;
-import org.apache.velocity.Template;
-import org.apache.velocity.VelocityContext;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import javax.servlet.http.HttpServletResponse;
-import javax.ws.rs.*;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-import java.util.HashMap;
-import java.util.Map;
-
-import static it.eng.spagobi.engine.chart.util.ChartEngineUtil.ve;
 
 @Path("/1.0/chart/jsonChartTemplate")
 public class JsonChartTemplateService extends AbstractChartEngineResource {
@@ -104,7 +116,7 @@ public class JsonChartTemplateService extends AbstractChartEngineResource {
             VelocityContext velocityContext = ChartEngineUtil.loadVelocityContext(jsonTemplate, jsonData, Boolean.parseBoolean(exportWebApp),
                     engineInstance.getDocumentLabel(), getEngineInstance().getUserProfile());
             String chartType = ChartEngineUtil.extractChartType(jsonTemplate, velocityContext);
-            Template velocityTemplate = ve.getTemplate(ChartEngineUtil.getVelocityModelPath(chartType), "UTF-8");
+            Template velocityTemplate = ve.getTemplate(ChartEngineUtil.getVelocityModelPath(chartType), UTF_8.name());
             String jsonChartTemplate = ChartEngineUtil.applyTemplate(velocityTemplate, velocityContext);
             jsonChartTemplate = ChartEngineUtil.replaceParameters(jsonChartTemplate, analyticalDrivers);
             logger.debug("jsonChartTemplate " + jsonChartTemplate);
@@ -147,7 +159,7 @@ public class JsonChartTemplateService extends AbstractChartEngineResource {
             VelocityContext velocityContext = ChartEngineUtil.loadVelocityContext(jsonTemplate, jsonData, Boolean.parseBoolean(exportWebApp), null,
                     getIOManager().getUserProfile());
             String chartType = ChartEngineUtil.extractChartType(jsonTemplate, velocityContext);
-            Template velocityTemplate = ve.getTemplate(ChartEngineUtil.getVelocityModelPath(chartType), "UTF-8");
+            Template velocityTemplate = ve.getTemplate(ChartEngineUtil.getVelocityModelPath(chartType), UTF_8.name());
             String jsonChartTemplate = ChartEngineUtil.applyTemplate(velocityTemplate, velocityContext);
             logger.debug(jsonChartTemplate);
             logger.debug(jsonChartTemplate.trim());

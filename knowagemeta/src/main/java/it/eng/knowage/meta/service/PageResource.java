@@ -17,6 +17,8 @@
  */
 package it.eng.knowage.meta.service;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
+
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -208,7 +210,7 @@ public class PageResource {
 			// -------------------------------------------------------------------------------------------
 
 			response.setContentType("text/html");
-			response.setCharacterEncoding("UTF-8");
+			response.setCharacterEncoding(UTF_8.name());
 
 			return new View(dispatchUrl);
 

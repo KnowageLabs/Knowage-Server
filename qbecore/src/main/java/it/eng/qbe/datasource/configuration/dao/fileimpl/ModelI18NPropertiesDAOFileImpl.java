@@ -17,6 +17,8 @@
  */
 package it.eng.qbe.datasource.configuration.dao.fileimpl;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -94,9 +96,9 @@ public class ModelI18NPropertiesDAOFileImpl implements IModelI18NPropertiesDAO {
 
 			properties = new Properties();
 			if (zipEntry != null) {
-				properties.load(new InputStreamReader(modelJarFile.getInputStream(zipEntry), "UTF-8"));
+				properties.load(new InputStreamReader(modelJarFile.getInputStream(zipEntry), UTF_8));
 //				bundle = new PropertyResourceBundle(new InputStreamReader(
-//						modelJarFile.getInputStream(zipEntry), "UTF-8"));
+//						modelJarFile.getInputStream(zipEntry), StandardCharsets.UTF_8));
 
 				// properties.load(modelJarFile.getInputStream(zipEntry));
 			}

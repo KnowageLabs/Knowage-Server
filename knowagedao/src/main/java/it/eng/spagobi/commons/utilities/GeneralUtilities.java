@@ -17,6 +17,8 @@
  */
 package it.eng.spagobi.commons.utilities;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
+
 import java.io.File;
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
@@ -676,7 +678,7 @@ public class GeneralUtilities extends SpagoBIUtilities {
 
 	/**
 	 * Returns an url starting with the given base url and adding parameters retrieved by the input parameters map. Each parameter value is encoded using
-	 * URLEncoder.encode(value, "UTF-8");
+	 * URLEncoder.encode(value, StandardCharsets.UTF_8);
 	 *
 	 * @param baseUrl The base url
 	 * @param mapPars The parameters map; those parameters will be added to the base url (values will be encoded using UTF-8 encoding)
@@ -698,7 +700,7 @@ public class GeneralUtilities extends SpagoBIUtilities {
 					String value = valueObj.toString();
 					// encoding value
 					try {
-						value = URLEncoder.encode(value, "UTF-8");
+						value = URLEncoder.encode(value, UTF_8.name());
 
 						// put all + to space! that is because
 						// otherwise %2B (encoding of plus) and + (substitution of white space in an url)
@@ -754,7 +756,7 @@ public class GeneralUtilities extends SpagoBIUtilities {
 
 			// do the decode
 			try {
-				parameterValue = URLDecoder.decode(parameterValueEncoded, "UTF-8");
+				parameterValue = URLDecoder.decode(parameterValueEncoded, UTF_8.name());
 			} catch (UnsupportedEncodingException e) {
 				logger.error("Error in decoding parameter: UTF 8 not supported " + parameterName + "; use preceding value " + parameterValueEncoded, e);
 				parameterValue = parameterValueEncoded;

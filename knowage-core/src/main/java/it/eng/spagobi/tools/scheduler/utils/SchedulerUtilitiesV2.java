@@ -17,6 +17,8 @@
  */
 package it.eng.spagobi.tools.scheduler.utils;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Collections;
@@ -1322,7 +1324,7 @@ public class SchedulerUtilitiesV2 {
 			}
 
 			String json = UserUtilities.fromUserProfile2JSON(profile);
-			String base64 = Base64.encodeBase64String(json.getBytes("UTF-8"));
+			String base64 = Base64.encodeBase64String(json.getBytes(UTF_8));
 			return base64;
 		} catch (Exception e) {
 			String message = "Error while serializing user profile object";
@@ -1333,7 +1335,7 @@ public class SchedulerUtilitiesV2 {
 
 	public static UserProfile deserializeUserProfile(String string) {
 		try {
-			String json = new String(Base64.decodeBase64(string.getBytes("UTF-8")), "UTF-8");
+			String json = new String(Base64.decodeBase64(string.getBytes(UTF_8)), UTF_8);
 			UserProfile profile = UserUtilities.fromJSON2UserProfile(json);
 			return profile;
 		} catch (Exception e) {

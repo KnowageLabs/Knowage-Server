@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,17 +11,13 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package it.eng.spagobi.signup.validation;
 
-import it.eng.spagobi.commons.utilities.GeneralUtilities;
-import it.eng.spagobi.commons.utilities.messages.IMessageBuilder;
-import it.eng.spagobi.commons.utilities.messages.MessageBuilderFactory;
-import it.eng.spagobi.rest.validation.IFieldsValidator;
-import it.eng.spagobi.utilities.json.JSONUtils;
+import static java.nio.charset.StandardCharsets.UTF_8;
 
 import java.net.URLDecoder;
 import java.util.Locale;
@@ -32,6 +28,12 @@ import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import it.eng.spagobi.commons.utilities.GeneralUtilities;
+import it.eng.spagobi.commons.utilities.messages.IMessageBuilder;
+import it.eng.spagobi.commons.utilities.messages.MessageBuilderFactory;
+import it.eng.spagobi.rest.validation.IFieldsValidator;
+import it.eng.spagobi.utilities.json.JSONUtils;
 
 public class SignupFieldsValidator implements IFieldsValidator {
 
@@ -83,19 +85,19 @@ public class SignupFieldsValidator implements IFieldsValidator {
 
 		try {
 			if (name != null)
-				name = URLDecoder.decode(name, "UTF-8");
+				name = URLDecoder.decode(name, UTF_8.name());
 			if (surname != null)
-				surname = URLDecoder.decode(surname, "UTF-8");
+				surname = URLDecoder.decode(surname, UTF_8.name());
 			if (username != null)
-				username = URLDecoder.decode(username, "UTF-8");
+				username = URLDecoder.decode(username, UTF_8.name());
 			if (password != null)
-				password = URLDecoder.decode(password, "UTF-8");
+				password = URLDecoder.decode(password, UTF_8.name());
 			if (confirmPassword != null)
-				confirmPassword = URLDecoder.decode(confirmPassword, "UTF-8");
+				confirmPassword = URLDecoder.decode(confirmPassword, UTF_8.name());
 			if (email != null)
-				email = URLDecoder.decode(email, "UTF-8");
+				email = URLDecoder.decode(email, UTF_8.name());
 			if (birthDate != null)
-				birthDate = URLDecoder.decode(birthDate, "UTF-8");
+				birthDate = URLDecoder.decode(birthDate, UTF_8.name());
 
 		} catch (Exception ex) {
 			logger.error(ex.getMessage());

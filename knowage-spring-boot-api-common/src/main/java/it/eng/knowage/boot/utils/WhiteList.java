@@ -17,6 +17,8 @@
  */
 package it.eng.knowage.boot.utils;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -61,7 +63,7 @@ public class WhiteList implements IWhiteList {
 			xstream.registerConverter(new ServiceConverter());
 			xstream.addImplicitCollection(WhiteListBean.class, "service", Service.class);
 			xstream.allowTypes(new Class[] { it.eng.knowage.boot.utils.WhiteListBean.class });
-			String fileString = getFileContent(stream, "UTF-8");
+			String fileString = getFileContent(stream, UTF_8.name());
 			if (!file.exists() || file.isDirectory()) {
 				return services;
 			} else {

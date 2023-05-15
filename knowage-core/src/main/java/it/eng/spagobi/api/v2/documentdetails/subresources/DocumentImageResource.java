@@ -1,5 +1,7 @@
 package it.eng.spagobi.api.v2.documentdetails.subresources;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
+
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -104,7 +106,7 @@ public class DocumentImageResource extends AbstractSpagoBIResource {
 				}
 
 				byte[] previewBytes = Files.readAllBytes(previewFile.toPath());
-				String encodedfile = new String(Base64.getEncoder().encode(previewBytes), "UTF-8");
+				String encodedfile = new String(Base64.getEncoder().encode(previewBytes), UTF_8);
 				try {
 					rb = Response.ok(encodedfile);
 				} catch (Exception e) {

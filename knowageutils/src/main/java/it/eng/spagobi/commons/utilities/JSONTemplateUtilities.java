@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,11 +11,13 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package it.eng.spagobi.commons.utilities;
+
+import static java.nio.charset.StandardCharsets.UTF_8;
 
 import java.io.IOException;
 import java.io.StringWriter;
@@ -34,7 +36,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 public class JSONTemplateUtilities {
-	
+
 	private static String XML_TAG_TEXT_CONTENT = "XML_TAG_TEXT_CONTENT";
 
 	public static String convertJsonToXML(JSONObject json) throws ParserConfigurationException, JSONException, IOException {
@@ -46,7 +48,7 @@ public class JSONTemplateUtilities {
 		Element xmlDom = extractXmlFromJson(json, dom, null);
 		StringWriter outputStream = new StringWriter();
 		OutputFormat outputFormat = new OutputFormat();
-		outputFormat.setEncoding("UTF-8");
+		outputFormat.setEncoding(UTF_8.name());
 		outputFormat.setIndenting(true);
 		XMLSerializer serializer = new XMLSerializer(outputStream, outputFormat);
 		serializer.serialize(xmlDom);
@@ -87,16 +89,16 @@ public class JSONTemplateUtilities {
 			}
 
 			else {
-				//if json object has property XML_TAG_TEXT_CONTENT in tag will be set text content 
-				// else it will be added as a attribute 
+				//if json object has property XML_TAG_TEXT_CONTENT in tag will be set text content
+				// else it will be added as a attribute
 				// added by @Dragan Pirkovic
 				if(key.equals(XML_TAG_TEXT_CONTENT)){
 					parent.setTextContent(value.toString());
 				}else{
 					parent.setAttribute(key, value.toString());
 				}
-				
-				
+
+
 			}
 		}
 
