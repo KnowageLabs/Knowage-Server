@@ -78,7 +78,16 @@ public class GeneralUtilities extends SpagoBIUtilities {
 	static DecimalFormatSymbols decSymbols = decFormat.getDecimalFormatSymbols();
 	public static final int MAX_DEFAULT_FILE_5M_SIZE = 5242880;
 	public static final int MAX_DEFAULT_FILE_10M_SIZE = 10485760; // 10 mega byte
-
+	private static final String VUE_ENVIRONMENT = "vue.environment";
+	private static boolean isProduction = true;
+	static {
+		String vueEnvironment = System.getProperty(VUE_ENVIRONMENT);
+		logger.info("Retrieved " + VUE_ENVIRONMENT + " system property. Vue environment is: [" + vueEnvironment + "]");
+		if (vueEnvironment != null && vueEnvironment.equalsIgnoreCase("development")) {
+			logger.info("Setting production mode to off. Development mode is now enabled.");
+			isProduction = false;
+		}
+	}
 	// private static String SPAGOBI_DOMAIN = null;
 
 	/**
@@ -876,21 +885,44 @@ public class GeneralUtilities extends SpagoBIUtilities {
 		if (urlEngine == null || urlEngine.trim().equals("")) {
 			logger.debug("Secondary url is not defined for engine " + eng.getLabel() + "; main url will be used.");
 			// in case there is not a Secondary URL, use the main url
-			urlEngine = eng.getUrl();
+			if (!"it.eng.spagobi.engines.drivers.dashboard.DashboardDriver".equals(eng.getDriverName())) {
+				urlEngine = eng.getUrl();
+			} else {
+				urlEngine = "/";
+			}
 		}
 		logger.debug("Engine url is " + urlEngine);
-		Assert.assertTrue(urlEngine != null && !urlEngine.trim().equals(""), "External engine url is not defined!!");
-		urlEngine = resolveRelativeUrls(urlEngine);
+		if (!"it.eng.spagobi.engines.drivers.dashboard.DashboardDriver".equals(eng.getDriverName())) {
+			Assert.assertTrue(urlEngine != null && !urlEngine.trim().equals(""), "External engine url is not defined!!");
+		}
+		if ("it.eng.spagobi.engines.drivers.dashboard.DashboardDriver".equals(eng.getDriverName())) {
+			urlEngine = resolveRelativeUrlsForVue(urlEngine);
+		} else
+			urlEngine = resolveRelativeUrls(urlEngine);
 
 		if (!"it.eng.spagobi.engines.drivers.cockpit.CockpitDriver".equals(eng.getDriverName())
 				&& !"it.eng.spagobi.engines.drivers.chart.ChartDriver".equals(eng.getDriverName())
-
-		) {
+				&& !"it.eng.spagobi.engines.drivers.dashboard.DashboardDriver".equals(eng.getDriverName())) {
 			// ADD this extension because this is a BackEnd engine invocation
 			urlEngine = urlEngine + backEndExtension;
 		}
 		logger.debug("OUT: returning " + urlEngine);
 		return urlEngine;
+	}
+
+	private static String resolveRelativeUrlsForVue(String url) {
+		logger.debug("IN: url = " + url);
+		if (url.startsWith("/")) {
+			logger.debug("Url is relative");
+			String domain = getServiceHostUrl();
+			if (!isProduction)
+				domain = domain.replaceAll("8080", "3000"); // for testing purposes
+			logger.debug("SpagoBI domain is " + domain);
+			url = domain + url;
+			logger.debug("Absolute url is " + url);
+		}
+		logger.debug("OUT: returning " + url);
+		return url;
 	}
 
 	private static String resolveRelativeUrls(String url) {
@@ -909,6 +941,7 @@ public class GeneralUtilities extends SpagoBIUtilities {
 	public static String getServiceHostUrl() {
 		String serviceURL = SpagoBIUtilities.readJndiResource(SingletonConfig.getInstance().getConfigValue("SPAGOBI.SPAGOBI_SERVICE_JNDI"));
 		serviceURL = serviceURL.substring(0, serviceURL.lastIndexOf('/'));
+
 		return serviceURL;
 	}
 
