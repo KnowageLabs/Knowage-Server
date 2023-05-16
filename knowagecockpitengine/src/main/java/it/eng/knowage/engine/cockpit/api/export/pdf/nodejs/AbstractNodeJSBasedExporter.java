@@ -152,7 +152,7 @@ public abstract class AbstractNodeJSBasedExporter {
 			case "knowagechartengine":
 				break;
 			case "knowagecockpitengine":
-			case "knowagedashboardengine":
+
 				ObjTemplate objTemplate = document.getActiveTemplate();
 				if (objTemplate == null) {
 					throw new SpagoBIRuntimeException("Unable to get template for document with id [" + documentId + "]");
@@ -175,6 +175,41 @@ public abstract class AbstractNodeJSBasedExporter {
 					}
 				}
 				break;
+			case "knowagedashboardengine":
+				ObjTemplate objTemplateNew = document.getActiveTemplate();
+				if (objTemplateNew == null) {
+					throw new SpagoBIRuntimeException("Unable to get template for document with id [" + documentId + "]");
+				}
+				String templateStringNew = new String(objTemplateNew.getContent());
+				JSONObject templateNew = new JSONObject(templateStringNew);
+				JSONArray sheetsNew = templateNew.getJSONArray("sheets");
+				int sheetLabelHeigthNew = (sheetsNew.length() > 0) ? 48 : 0;
+				for (int sheetIndex = 0; sheetIndex < sheetsNew.length(); sheetIndex++) {
+					JSONObject sheet = (JSONObject) sheetsNew.get(sheetIndex);
+					if (sheet.has("widgets")) {
+						if (sheet.get("widgets") instanceof JSONArray) {
+							JSONArray widgets = sheet.getJSONArray("widgets");
+							for (int widgetIndex = 0; widgetIndex < widgets.length(); widgetIndex++) {
+								JSONObject widget = (JSONObject) widgets.get(widgetIndex);
+								int row = widget.getInt("x");
+								int sizeY = widget.getInt("y");
+								int widgetHeight = (row + sizeY) * 30 + sheetLabelHeigthNew; // scaling by cockpitModule_gridsterOptions.rowWidth
+								sheetHeight = Math.max(sheetHeight, widgetHeight);
+							}
+						} else {
+							JSONObject widget = sheet.getJSONObject("widgets");
+							JSONArray widgetLG = widget.getJSONArray("lg");
+							for (int widgetIndex = 0; widgetIndex < widgetLG.length(); widgetIndex++) {
+								JSONObject widgetToAnalyze = (JSONObject) widgetLG.get(widgetIndex);
+								int row = widgetToAnalyze.getInt("x");
+								int sizeY = widgetToAnalyze.getInt("y");
+								int widgetHeight = (row + sizeY) * 30 + sheetLabelHeigthNew; // scaling by cockpitModule_gridsterOptions.rowWidth
+								sheetHeight = Math.max(sheetHeight, widgetHeight);
+							}
+						}
+					}
+				}
+				break;
 			}
 			return sheetHeight;
 		} catch (JSONException e) {
@@ -189,7 +224,6 @@ public abstract class AbstractNodeJSBasedExporter {
 			case "knowagechartengine":
 				break;
 			case "knowagecockpitengine":
-			case "knowagedashboardengine":
 				ObjTemplate objTemplate = document.getActiveTemplate();
 				if (objTemplate == null) {
 					throw new SpagoBIRuntimeException("Unable to get template for document with id [" + documentId + "]");
@@ -208,6 +242,41 @@ public abstract class AbstractNodeJSBasedExporter {
 							int sizeY = widget.getInt("sizeY");
 							int widgetWidth = (row + sizeY) * 30 + sheetLabelHeigth; // scaling by cockpitModule_gridsterOptions.rowWidth
 							sheetWidth = Math.max(sheetWidth, widgetWidth);
+						}
+					}
+				}
+				break;
+			case "knowagedashboardengine":
+				ObjTemplate objTemplateNew = document.getActiveTemplate();
+				if (objTemplateNew == null) {
+					throw new SpagoBIRuntimeException("Unable to get template for document with id [" + documentId + "]");
+				}
+				String templateStringNew = new String(objTemplateNew.getContent());
+				JSONObject templateNew = new JSONObject(templateStringNew);
+				JSONArray sheetsNew = templateNew.getJSONArray("sheets");
+				int sheetLabelHeigthNew = (sheetsNew.length() > 0) ? 48 : 0;
+				for (int sheetIndex = 0; sheetIndex < sheetsNew.length(); sheetIndex++) {
+					JSONObject sheet = (JSONObject) sheetsNew.get(sheetIndex);
+					if (sheet.has("widgets")) {
+						if (sheet.get("widgets") instanceof JSONArray) {
+							JSONArray widgets = sheet.getJSONArray("widgets");
+							for (int widgetIndex = 0; widgetIndex < widgets.length(); widgetIndex++) {
+								JSONObject widget = (JSONObject) widgets.get(widgetIndex);
+								int row = widget.getInt("x");
+								int sizeY = widget.getInt("y");
+								int widgetWidth = (row + sizeY) * 30 + sheetLabelHeigthNew; // scaling by cockpitModule_gridsterOptions.rowWidth
+								sheetWidth = Math.max(sheetWidth, widgetWidth);
+							}
+						} else {
+							JSONObject widget = sheet.getJSONObject("widgets");
+							JSONArray widgetLG = widget.getJSONArray("lg");
+							for (int widgetIndex = 0; widgetIndex < widgetLG.length(); widgetIndex++) {
+								JSONObject widgetToAnalyze = (JSONObject) widgetLG.get(widgetIndex);
+								int row = widgetToAnalyze.getInt("x");
+								int sizeY = widgetToAnalyze.getInt("y");
+								int widgetWidth = (row + sizeY) * 30 + sheetLabelHeigthNew; // scaling by cockpitModule_gridsterOptions.rowWidth
+								sheetWidth = Math.max(sheetWidth, widgetWidth);
+							}
 						}
 					}
 				}
@@ -321,7 +390,7 @@ public abstract class AbstractNodeJSBasedExporter {
 		BufferedReader b = new BufferedReader(isr);
 		String line = null;
 		logger.warn("Process output");
-		while((line = b.readLine()) != null) {
+		while ((line = b.readLine()) != null) {
 			logger.warn(line);
 		}
 	}

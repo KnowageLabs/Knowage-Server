@@ -20,6 +20,8 @@ package it.eng.knowage.engines.dossier.template.report;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.xml.bind.annotation.XmlAttribute;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonSetter;
 
@@ -35,6 +37,8 @@ public class Report {
 	String sheetHeight;
 	String sheetWidth;
 	String deviceScaleFactor;
+	String source;
+	String viewId;
 
 	public Report() {
 		placeholders = new ArrayList<>();
@@ -111,6 +115,25 @@ public class Report {
 	@JsonSetter("PARAMETER")
 	public void setParameters(List<Parameter> parameters) {
 		this.parameters = parameters;
+	}
+
+	public String getSource() {
+		return source;
+	}
+
+	@JsonSetter("source")
+	public void setSource(String source) {
+		this.source = source;
+	}
+
+	@XmlAttribute(name = "viewId", required = false)
+	public String getViewId() {
+		return viewId;
+	}
+
+	@JsonSetter("viewId")
+	public void setViewId(String viewId) {
+		this.viewId = viewId;
 	}
 
 	@JsonIgnore

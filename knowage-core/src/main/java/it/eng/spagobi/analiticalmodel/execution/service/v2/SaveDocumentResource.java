@@ -133,49 +133,52 @@ public class SaveDocumentResource extends AbstractSpagoBIResource {
 
 	private void checkAndSanitizeXSS(SaveDocumentDTO saveDocumentDTO) {
 		XSSUtils xssUtils = new XSSUtils();
+		DocumentDTO docDTO = saveDocumentDTO.getDocumentDTO();
+		String docType = docDTO.getType();
+		if (docType != null && !docType.equals(SpagoBIConstants.DOSSIER_TYPE)) {
+			CustomDataDTO customDataDTO = saveDocumentDTO.getCustomDataDTO();
+			Map<String, Object> templateContent = customDataDTO.getTemplateContent();
+			ArrayList<Map<String, Object>> sheets = (ArrayList<Map<String, Object>>) templateContent.get("sheets");
 
-		CustomDataDTO customDataDTO = saveDocumentDTO.getCustomDataDTO();
-		Map<String, Object> templateContent = customDataDTO.getTemplateContent();
-		ArrayList<Map<String, Object>> sheets = (ArrayList<Map<String, Object>>) templateContent.get("sheets");
+			try {
+				for (Map<String, Object> sheet : sheets) {
+					String label = (String) sheet.get("label");
+					ArrayList<Map<String, Object>> widgets = (ArrayList<Map<String, Object>>) sheet.get("widgets");
 
-		try {
-			for (Map<String, Object> sheet : sheets) {
-				String label = (String) sheet.get("label");
-				ArrayList<Map<String, Object>> widgets = (ArrayList<Map<String, Object>>) sheet.get("widgets");
+					for (Map<String, Object> widget : widgets) {
 
-				for (Map<String, Object> widget : widgets) {
+						String type = (String) widget.get("type");
 
-					String type = (String) widget.get("type");
+						if ("html".equals(type)) {
 
-					if ("html".equals(type)) {
+							String html = (String) widget.get("htmlToRender");
 
-						String html = (String) widget.get("htmlToRender");
+							boolean isSafe = xssUtils.isSafe(html);
 
-						boolean isSafe = xssUtils.isSafe(html);
+							if (!isSafe) {
+								throw new InvalidHtmlPayloadInCockpitException(label, html);
+							}
 
-						if (!isSafe) {
-							throw new InvalidHtmlPayloadInCockpitException(label, html);
+						} else if ("customchart".equals(type)) {
+
+							Map<String, Object> html = (Map<String, Object>) widget.get("html");
+
+							String code = (String) html.get("code");
+
+							boolean isSafe = xssUtils.isSafe(code);
+
+							if (!isSafe) {
+								throw new InvalidHtmlPayloadInCockpitException(label, code);
+							}
+
 						}
-
-					} else if ("customchart".equals(type)) {
-
-						Map<String, Object> html = (Map<String, Object>) widget.get("html");
-
-						String code = (String) html.get("code");
-
-						boolean isSafe = xssUtils.isSafe(code);
-
-						if (!isSafe) {
-							throw new InvalidHtmlPayloadInCockpitException(label, code);
-						}
-
 					}
-				}
 
+				}
+				// TODO Change when new template is completed
+			} catch (Exception e) {
+				logger.info("New template version", e);
 			}
-			// TODO Change when new template is completed
-		} catch (Exception e) {
-			logger.info("New template version", e);
 		}
 	}
 
@@ -231,6 +234,8 @@ public class SaveDocumentResource extends AbstractSpagoBIResource {
 					id = insertGeoreportDocument(saveDocumentDTO, documentManagementAPI);
 				} else if (SpagoBIConstants.DOCUMENT_COMPOSITE_TYPE.equalsIgnoreCase(type) || SpagoBIConstants.DASHBOARD_TYPE.equalsIgnoreCase(type)) {
 					id = insertCockpitDocument(saveDocumentDTO, documentManagementAPI);
+				} else if (SpagoBIConstants.DOSSIER_TYPE.equalsIgnoreCase(type)) {
+					id = insertDossierDocument(saveDocumentDTO, documentManagementAPI);
 				} else if ("KPI".equalsIgnoreCase(type)) {
 					id = insertKPIDocument(saveDocumentDTO, documentManagementAPI);
 				} else {
@@ -360,6 +365,27 @@ public class SaveDocumentResource extends AbstractSpagoBIResource {
 	}
 
 	private Integer insertKPIDocument(SaveDocumentDTO saveDocumentDTO, AnalyticalModelDocumentManagementAPI documentManagementAPI)
+			throws JSONException, EMFUserError {
+		DocumentDTO documentDTO = saveDocumentDTO.getDocumentDTO();
+		List<Integer> filteredFolders = new ArrayList<Integer>();
+		filteredFolders = getFilteredFoldersList(saveDocumentDTO, filteredFolders);
+		CustomDataDTO customDataDTO = saveDocumentDTO.getCustomDataDTO();
+		Map<String, Object> json = new HashMap<String, Object>();
+		String templateContent = customDataDTO.getTemplateContentAsString();
+		json.put("templateContent", templateContent);
+
+		customDataDTO.setTemplateContent(json);
+
+		Assert.assertNotNull(customDataDTO, "Custom data object cannot be null");
+
+		BIObject document = createBaseDocument(documentDTO, filteredFolders, documentManagementAPI);
+		ObjTemplate template = buildDocumentTemplate("template.xml", customDataDTO, null);
+
+		documentManagementAPI.saveDocument(document, template);
+		return document.getId();
+	}
+
+	private Integer insertDossierDocument(SaveDocumentDTO saveDocumentDTO, AnalyticalModelDocumentManagementAPI documentManagementAPI)
 			throws JSONException, EMFUserError {
 		DocumentDTO documentDTO = saveDocumentDTO.getDocumentDTO();
 		List<Integer> filteredFolders = new ArrayList<Integer>();

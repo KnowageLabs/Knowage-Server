@@ -523,7 +523,7 @@ public class ObjTemplateDAOHibImpl extends AbstractHibernateDAO implements IObjT
 
 			if (biObject != null) {
 				String driverName = biObject.getEngine().getDriverName();
-				if (driverName != null && !"".equals(driverName)) {
+				if (driverName != null && !"".equals(driverName) && !objTemplate.getName().startsWith("DossierTemplateWizard_")) {
 
 					// save associations among dataset and documents
 					try {

@@ -404,6 +404,10 @@ public class PageResource extends AbstractCockpitEngineResource {
 		String externalUrl = GeneralUtilities.getExternalEngineUrl(eng);
 
 		StringBuilder sb = new StringBuilder(externalUrl);
+		if (eng.getLabel().equals("knowagedashboardengine")) {
+			sb.append("knowage-vue/document-browser/dashboard/");
+			sb.append(documentLabel);
+		}
 		String sep = "?";
 		Map<String, String[]> parameterMap = request.getParameterMap();
 		for (String parameter : parameterMap.keySet()) {
@@ -435,6 +439,10 @@ public class PageResource extends AbstractCockpitEngineResource {
 		String externalUrl = GeneralUtilities.getExternalEngineUrl(eng);
 
 		StringBuilder sb = new StringBuilder(externalUrl);
+		if (eng.getLabel().equals("knowagedashboardengine")) {
+			sb.append("knowage-vue/document-browser/dashboard/");
+			sb.append(documentLabel);
+		}
 		String sep = "?";
 		Map<String, String[]> parameterMap = request.getParameterMap();
 		for (String parameter : parameterMap.keySet()) {

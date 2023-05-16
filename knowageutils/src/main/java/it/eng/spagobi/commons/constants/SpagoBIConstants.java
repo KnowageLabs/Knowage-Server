@@ -151,7 +151,6 @@ public class SpagoBIConstants {
 	public static final String NUMBER_TYPE_FILTER = "NUM";
 	public static final String STRING_TYPE_FILTER = "STRING";
 	public static final String DATE_TYPE_FILTER = "DATE";
-	
 
 	// DATE RANGE
 
@@ -357,6 +356,7 @@ public class SpagoBIConstants {
 	public static final String DOCUMENT_COMPOSITION = "DOCUMENT_COMPOSITION";
 	public static final String DOCUMENT_COMPOSITE_TYPE = "DOCUMENT_COMPOSITE";
 	public static final String DASHBOARD_TYPE = "DASHBOARD";
+	public static final String DOSSIER_TYPE = "DOSSIER";
 	public static final String MENUES_LIST = "MENUES_LIST";
 
 	public static final String BACK_URL = "BACK_URL";

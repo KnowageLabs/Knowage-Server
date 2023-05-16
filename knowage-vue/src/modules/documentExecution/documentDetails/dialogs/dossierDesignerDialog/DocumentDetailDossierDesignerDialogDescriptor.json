@@ -1,0 +1,91 @@
+{
+    "driverTypes": [
+        {
+            "code": "dynamic",
+            "label": "dashboard.widgetEditor.interactions.dynamic"
+        },
+        {
+            "code": "static",
+            "label": "common.static"
+        },
+        {
+            "code": "inherit",
+            "label": "documentExecution.dossier.designerDialog.inherit"
+        }
+    ],
+    "knListSettings": {
+        "buttons": [],
+        "defaultSortField": "name",
+        "filterFields": ["name", "type"],
+        "interaction": {
+            "type": "event"
+        },
+        "sortFields": ["name", "type"],
+        "textField": false,
+        "titleField": "name"
+    },
+    "linkTypes": [
+        {
+            "code": "VIEWS",
+            "label": "Views"
+        },
+        {
+            "code": "DRIVERS",
+            "label": "Drivers"
+        }
+    ],
+    "noPlaceholdersHint": "common.dossier.noPlaceholdersHint",
+    "operation": {
+        "insert": {
+            "toastTitle": "common.toast.createTitle"
+        },
+        "success": "common.toast.success",
+        "update": {
+            "toastTitle": "common.toast.updateTitle"
+        }
+    },
+    "validations": {
+        "activeTemplate": [
+            {
+                "fieldName": "prefix",
+                "validators": [
+                    {
+                        "key": "required"
+                    },
+                    {
+                        "key": "regex",
+                        "validator": {
+                            "type": "extendedAlphanumericRegex"
+                        }
+                    }
+                ]
+            },
+            {
+                "fieldName": "name",
+                "validators": [
+                    {
+                        "key": "required"
+                    },
+                    {
+                        "key": "regex",
+                        "validator": {
+                            "type": "extendedAlphanumericRegex"
+                        }
+                    }
+                ]
+            }
+        ]
+    },
+    "view": {
+        "columns": [
+            {
+                "header": "common.name",
+                "name": "name"
+            },
+            {
+                "header": "common.creationDate",
+                "name": "creationDate"
+            }
+        ]
+    }
+}
