@@ -72,12 +72,14 @@ import it.eng.spagobi.utilities.json.JSONTemplateUtils;
 
 public class SpagoBIChartInternalEngine implements InternalEngineIFace {
 
-	private static transient Logger logger = Logger.getLogger(SpagoBIChartInternalEngine.class);
+	private static final Logger LOGGER = Logger.getLogger(SpagoBIChartInternalEngine.class);
 
 	// public static final String messageBundle =
 	// "component_spagobichartKPI_messages";
 	public static final String messageBundle = "MessageFiles.component_spagobidashboardIE_messages";
 	public static final String HIGHCHART_TEMPLATE = "HIGHCHART";
+
+	private final Random random = new Random();
 
 	/**
 	 * This method is used to execute a chart code way and returning the image chart execution Pay attention that must get the parameters from BiObject in order
@@ -91,7 +93,7 @@ public class SpagoBIChartInternalEngine implements InternalEngineIFace {
 	 * @throws EMFUserError
 	 */
 	public File executeChartCode(RequestContainer requestContainer, BIObject obj, SourceBean response, IEngUserProfile userProfile) throws EMFUserError {
-		logger.debug("IN");
+		LOGGER.debug("IN");
 
 		File toReturn = null;
 		Locale locale = GeneralUtilities.getDefaultLocale();
@@ -101,7 +103,7 @@ public class SpagoBIChartInternalEngine implements InternalEngineIFace {
 		String documentId = obj.getId().toString();
 
 		// **************get the template*****************
-		logger.debug("getting template");
+		LOGGER.debug("getting template");
 		SourceBean serviceRequest = requestContainer.getServiceRequest();
 
 		try {
@@ -114,7 +116,7 @@ public class SpagoBIChartInternalEngine implements InternalEngineIFace {
 					throw new Exception("Active Template null");
 				contentBytes = template.getContent();
 				if (contentBytes == null) {
-					logger.error("TEMPLATE DOESN'T EXIST !!!!!!!!!!!!!!!!!!!!!!!!!!!");
+					LOGGER.error("TEMPLATE DOESN'T EXIST !!!!!!!!!!!!!!!!!!!!!!!!!!!");
 					EMFUserError userError = new EMFUserError(EMFErrorSeverity.ERROR, 2007);
 					userError.setBundle("messages");
 					throw userError;
@@ -125,7 +127,7 @@ public class SpagoBIChartInternalEngine implements InternalEngineIFace {
 				String contentStr = new String(contentBytes);
 				content = SourceBean.fromXMLString(contentStr);
 			} catch (Exception e) {
-				logger.error("Error while converting the Template bytes into a SourceBean object");
+				LOGGER.error("Error while converting the Template bytes into a SourceBean object");
 				EMFUserError userError = new EMFUserError(EMFErrorSeverity.ERROR, 2003);
 				userError.setBundle("messages");
 				throw userError;
@@ -136,10 +138,10 @@ public class SpagoBIChartInternalEngine implements InternalEngineIFace {
 			String subtype = (String) content.getAttribute("type");
 			String data = "";
 			try {
-				logger.debug("Getting Data Set ID");
+				LOGGER.debug("Getting Data Set ID");
 				data = obj.getDataSetId().toString();
 			} catch (Exception e) {
-				logger.error("Error while getting the dataset ", e);
+				LOGGER.error("Error while getting the dataset ", e);
 				return null;
 			}
 
@@ -147,7 +149,7 @@ public class SpagoBIChartInternalEngine implements InternalEngineIFace {
 			Map parametersMap = getParameters(obj);
 
 			try {
-				logger.debug("create the chart");
+				LOGGER.debug("create the chart");
 				// set the right chart type
 				sbi = ChartImpl.createChart(type, subtype);
 				sbi.setProfile(userProfile);
@@ -164,7 +166,7 @@ public class SpagoBIChartInternalEngine implements InternalEngineIFace {
 				// building for static exporting
 
 			} catch (Exception e) {
-				logger.error("Error while creating the chart", e);
+				LOGGER.error("Error while creating the chart", e);
 				EMFUserError userError = new EMFUserError(EMFErrorSeverity.ERROR, 2004);
 				userError.setBundle("messages");
 				throw userError;
@@ -234,15 +236,14 @@ public class SpagoBIChartInternalEngine implements InternalEngineIFace {
 
 			// TODO MultiCHart export
 			if (sbi.getMultichart()) {
-				logger.debug("no treated yet multichart export");
+				LOGGER.debug("no treated yet multichart export");
 			} else {
 
 				JFreeChart chart = null;
 				chart = sbi.createChart(copyDatasets);
 				String dir = System.getProperty("java.io.tmpdir");
-				Random generator = new Random();
-				int randomInt = generator.nextInt();
-				String path = dir + "/" + Integer.valueOf(randomInt).toString() + ".png";
+				int randomInt = random.nextInt();
+				String path = dir + "/" + Integer.toString(randomInt) + ".png";
 				// String path=dir+"/"+executionId+".png";
 				toReturn = new java.io.File(path);
 
@@ -251,10 +252,10 @@ public class SpagoBIChartInternalEngine implements InternalEngineIFace {
 			}
 
 		} catch (Exception e) {
-			logger.error("Error in executing th chart");
+			LOGGER.error("Error in executing th chart");
 		}
 
-		logger.debug("OUT");
+		LOGGER.debug("OUT");
 		return toReturn;
 
 	}
@@ -315,7 +316,7 @@ public class SpagoBIChartInternalEngine implements InternalEngineIFace {
 				executeChart(requestContainer, obj, response, userProfile, locale);
 			}
 		} catch (Exception e) {
-			logger.error("Error in execution chart. " + e.getLocalizedMessage());
+			LOGGER.error("Error in execution chart. " + e.getLocalizedMessage());
 			throw new EMFUserError(EMFErrorSeverity.ERROR, "100", messageBundle);
 		}
 	}
@@ -351,7 +352,7 @@ public class SpagoBIChartInternalEngine implements InternalEngineIFace {
 			Map parametersMap = getParameters(obj);
 
 			try {
-				logger.debug("create the chart");
+				LOGGER.debug("create the chart");
 				// set the right chart type
 				sbi = ChartImpl.createChart(type, subtype);
 				sbi.setProfile(userProfile);
@@ -366,7 +367,7 @@ public class SpagoBIChartInternalEngine implements InternalEngineIFace {
 
 				boolean linkable = sbi.isLinkable();
 				if (linkable) {
-					logger.debug("Linkable chart, search in request for serieurlname or categoryurlname");
+					LOGGER.debug("Linkable chart, search in request for serieurlname or categoryurlname");
 					String serieurlname = "";
 					String categoryurlname = "";
 
@@ -397,8 +398,8 @@ public class SpagoBIChartInternalEngine implements InternalEngineIFace {
 					// check if there are other parameters from the drill
 					// parameters whose value is in the request; elsewhere take
 					// them from template
-					logger.debug("Linkable chart: search in the request for other parameters");
-					HashMap<String, DrillParameter> drillParametersMap = new HashMap<String, DrillParameter>();
+					LOGGER.debug("Linkable chart: search in the request for other parameters");
+					HashMap<String, DrillParameter> drillParametersMap = new HashMap<>();
 
 					if (((ILinkableChart) sbi).getDrillParametersMap() != null) {
 
@@ -426,7 +427,7 @@ public class SpagoBIChartInternalEngine implements InternalEngineIFace {
 				}
 
 			} catch (Exception e) {
-				logger.error("Error while creating the chart", e);
+				LOGGER.error("Error while creating the chart", e);
 				EMFUserError userError = new EMFUserError(EMFErrorSeverity.ERROR, 2004);
 				userError.setBundle("messages");
 				throw userError;
@@ -486,7 +487,7 @@ public class SpagoBIChartInternalEngine implements InternalEngineIFace {
 
 			try {
 				// chart = sbi.createChart(title,dataset);
-				logger.debug("successfull chart creation");
+				LOGGER.debug("successfull chart creation");
 				if (serviceRequest != null && response != null) {
 					String executionId = (String) serviceRequest.getAttribute("SBI_EXECUTION_ID");
 					if (executionId != null)
@@ -502,7 +503,7 @@ public class SpagoBIChartInternalEngine implements InternalEngineIFace {
 				throw userError;
 			}
 
-			logger.debug("OUT");
+			LOGGER.debug("OUT");
 
 		} catch (EMFUserError e) {
 
@@ -510,7 +511,7 @@ public class SpagoBIChartInternalEngine implements InternalEngineIFace {
 
 		} catch (Exception e) {
 			EMFUserError userError = new EMFUserError(EMFErrorSeverity.ERROR, 101);
-			logger.error("Generic Error");
+			LOGGER.error("Generic Error");
 			errorHandler.addError(userError);
 
 		}
@@ -530,7 +531,7 @@ public class SpagoBIChartInternalEngine implements InternalEngineIFace {
 	@Override
 	public void executeSubObject(RequestContainer requestContainer, BIObject obj, SourceBean response, Object subObjectInfo) throws EMFUserError {
 		// it cannot be invoked
-		logger.error("SpagoBIDashboardInternalEngine cannot exec subobjects.");
+		LOGGER.error("SpagoBIDashboardInternalEngine cannot exec subobjects.");
 		throw new EMFUserError(EMFErrorSeverity.ERROR, "101", messageBundle);
 	}
 
@@ -547,7 +548,7 @@ public class SpagoBIChartInternalEngine implements InternalEngineIFace {
 	@Override
 	public void handleNewDocumentTemplateCreation(RequestContainer requestContainer, BIObject obj, SourceBean response)
 			throws EMFUserError, InvalidOperationRequest {
-		logger.error("SpagoBIDashboardInternalEngine cannot build document template.");
+		LOGGER.error("SpagoBIDashboardInternalEngine cannot build document template.");
 		throw new InvalidOperationRequest();
 
 	}
@@ -564,7 +565,7 @@ public class SpagoBIChartInternalEngine implements InternalEngineIFace {
 	 */
 	@Override
 	public void handleDocumentTemplateEdit(RequestContainer requestContainer, BIObject obj, SourceBean response) throws EMFUserError, InvalidOperationRequest {
-		logger.error("SpagoBIDashboardInternalEngine cannot build document template.");
+		LOGGER.error("SpagoBIDashboardInternalEngine cannot build document template.");
 		throw new InvalidOperationRequest();
 	}
 
@@ -577,7 +578,7 @@ public class SpagoBIChartInternalEngine implements InternalEngineIFace {
 				throw new Exception("Active Template null");
 			contentBytes = template.getContent();
 			if (contentBytes == null) {
-				logger.error("TEMPLATE DOESN'T EXIST !!!!!!!!!!!!!!!!!!!!!!!!!!!");
+				LOGGER.error("TEMPLATE DOESN'T EXIST !!!!!!!!!!!!!!!!!!!!!!!!!!!");
 				EMFUserError userError = new EMFUserError(EMFErrorSeverity.ERROR, 2007);
 				userError.setBundle("messages");
 				throw userError;
@@ -588,7 +589,7 @@ public class SpagoBIChartInternalEngine implements InternalEngineIFace {
 			String contentStr = new String(contentBytes);
 			content = SourceBean.fromXMLString(contentStr);
 		} catch (Exception e) {
-			logger.error("Error while converting the Template bytes into a SourceBean object");
+			LOGGER.error("Error while converting the Template bytes into a SourceBean object");
 			EMFUserError userError = new EMFUserError(EMFErrorSeverity.ERROR, 2003);
 			userError.setBundle("messages");
 			throw userError;
@@ -609,7 +610,7 @@ public class SpagoBIChartInternalEngine implements InternalEngineIFace {
 
 		// Search if the chart has parameters
 		List parametersList = obj.getDrivers();
-		logger.debug("Check for BIparameters and relative values");
+		LOGGER.debug("Check for BIparameters and relative values");
 		if (parametersList != null) {
 			parametersMap = new HashMap();
 			for (Iterator iterator = parametersList.iterator(); iterator.hasNext();) {
@@ -664,7 +665,7 @@ public class SpagoBIChartInternalEngine implements InternalEngineIFace {
 
 		// Search if the chart has parameters
 		List parametersList = obj.getDrivers();
-		logger.debug("Check for BIparameters and relative values");
+		LOGGER.debug("Check for BIparameters and relative values");
 		if (parametersList != null) {
 			for (Iterator iterator = parametersList.iterator(); iterator.hasNext();) {
 				BIObjectParameter par = (BIObjectParameter) iterator.next();
@@ -702,7 +703,7 @@ public class SpagoBIChartInternalEngine implements InternalEngineIFace {
 						JSONObj.put("value", value);
 						JSONPars.put(JSONObj);
 					} catch (Exception e) {
-						logger.warn("Impossible to load parameter object " + name + " whose value is " + value + " to JSONObject", e);
+						LOGGER.warn("Impossible to load parameter object " + name + " whose value is " + value + " to JSONObject", e);
 					}
 				}
 			}
@@ -715,10 +716,10 @@ public class SpagoBIChartInternalEngine implements InternalEngineIFace {
 		DatasetMap datasets = null;
 		// calculate values for the chart
 		try {
-			logger.debug("Retrieve value by executing the dataset");
+			LOGGER.debug("Retrieve value by executing the dataset");
 			datasets = sbi.calculateValue();
 		} catch (Exception e) {
-			logger.error("Error in retrieving the value", e);
+			LOGGER.error("Error in retrieving the value", e);
 			EMFUserError userError = new EMFUserError(EMFErrorSeverity.ERROR, 2006);
 			userError.setBundle("messages");
 			throw userError;
@@ -730,7 +731,7 @@ public class SpagoBIChartInternalEngine implements InternalEngineIFace {
 	private String getChartType(BIObject obj, EMFErrorHandler errorHandler) throws EMFUserError {
 		SourceBean template = getTemplate(obj.getId().toString());
 		if (template == null) {
-			logger.error("The template object is null.");
+			LOGGER.error("The template object is null.");
 			throw new EMFUserError(EMFErrorSeverity.ERROR, "100", messageBundle);
 		}
 		return template.getName();
@@ -739,15 +740,15 @@ public class SpagoBIChartInternalEngine implements InternalEngineIFace {
 	private String getDataset(BIObject obj) throws EMFUserError {
 		String toReturn = "";
 		try {
-			logger.debug("Getting Data Set ID");
+			LOGGER.debug("Getting Data Set ID");
 			if (obj.getDataSetId() != null) {
 				toReturn = obj.getDataSetId().toString();
 			} else {
-				logger.error("Data Set not defined");
+				LOGGER.error("Data Set not defined");
 				throw new Exception("Data Set not defined");
 			}
 		} catch (Exception e) {
-			logger.error("Error while getting the dataset");
+			LOGGER.error("Error while getting the dataset");
 			EMFUserError userError = new EMFUserError(EMFErrorSeverity.ERROR, 9207);
 			userError.setBundle("messages");
 			throw userError;

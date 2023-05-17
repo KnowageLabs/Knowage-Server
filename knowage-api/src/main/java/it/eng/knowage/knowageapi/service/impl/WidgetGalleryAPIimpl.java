@@ -53,6 +53,7 @@ public class WidgetGalleryAPIimpl implements WidgetGalleryAPI {
 	private SbiWidgetGalleryDao sbiWidgetGalleryDao;
 
 	private static final String GALLERY_FUNCTION = "WidgetGalleryManagement";
+	private static final Random RANDOM = new Random();
 
 	private XSSUtils xssUtils = new XSSUtils();
 
@@ -109,7 +110,7 @@ public class WidgetGalleryAPIimpl implements WidgetGalleryAPI {
 				checkXSS(html);
 
 				String htmlCode = html;
-				JSONObject jsonBody = new JSONObject(new String(widgetGalleryDTO.getTemplate()));
+				JSONObject jsonBody = new JSONObject(widgetGalleryDTO.getTemplate());
 				JSONObject jsonCode = jsonBody.optJSONObject("code");
 				jsonCode.put("html", htmlCode);
 				jsonCode.put("python", widgetGalleryDTO.getCode().getPython());
@@ -164,7 +165,7 @@ public class WidgetGalleryAPIimpl implements WidgetGalleryAPI {
 				checkXSS(html);
 
 				String htmlCode = html;
-				JSONObject jsonBody = new JSONObject(new String(widgetGalleryDTO.getTemplate()));
+				JSONObject jsonBody = new JSONObject(widgetGalleryDTO.getTemplate());
 				JSONObject jsonCode = jsonBody.optJSONObject("code");
 				jsonCode.put("html", htmlCode);
 				jsonCode.put("python", widgetGalleryDTO.getCode().getPython());
@@ -219,8 +220,8 @@ public class WidgetGalleryAPIimpl implements WidgetGalleryAPI {
 
 			String[] tagArray = tags.split(",");
 
-			tagList = new ArrayList<SbiWidgetGalleryTag>();
-			ArrayList<String> insertedTags = new ArrayList<String>();
+			tagList = new ArrayList<>();
+			ArrayList<String> insertedTags = new ArrayList<>();
 			for (int i = 0; i < tagArray.length; i++) {
 
 				tagArray[i] = tagArray[i].trim().replaceAll("\"", "");
@@ -253,8 +254,7 @@ public class WidgetGalleryAPIimpl implements WidgetGalleryAPI {
 	}
 
 	private static long get64LeastSignificantBitsForVersion1() {
-		Random random = new Random();
-		long random63BitLong = random.nextLong() & 0x3FFFFFFFFFFFFFFFL;
+		long random63BitLong = RANDOM.nextLong() & 0x3FFFFFFFFFFFFFFFL;
 		long variant3BitFlag = 0x8000000000000000L;
 		return random63BitLong + variant3BitFlag;
 	}

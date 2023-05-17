@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,11 +11,21 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package it.eng.spagobi.community.bo;
+
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Random;
+import java.util.Set;
+
+import javax.servlet.http.HttpServletRequest;
+
+import org.apache.log4j.Logger;
 
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.analiticalmodel.functionalitytree.bo.LowFunctionality;
@@ -34,20 +44,12 @@ import it.eng.spagobi.profiling.bean.SbiUserAttributes;
 import it.eng.spagobi.profiling.dao.ISbiAttributeDAO;
 import it.eng.spagobi.profiling.dao.ISbiUserDAO;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Random;
-import java.util.Set;
-
-import javax.servlet.http.HttpServletRequest;
-
-import org.apache.log4j.Logger;
-
 public class CommunityManager {
-	
-	static private Logger logger = Logger.getLogger(CommunityManager.class);
-	
+
+	private static final Logger LOGGER = Logger.getLogger(CommunityManager.class);
+
+	private final Random random = new Random();
+
 	public Integer saveCommunity(SbiCommunity community, String communityName, String userId, HttpServletRequest request){
 		Integer communityId = null;
 		//if user is registering to SpagoBI and inserts a community,
@@ -58,94 +60,93 @@ public class CommunityManager {
 			ISbiAttributeDAO attrsDAO = DAOFactory.getSbiAttributeDAO();
 			ISbiUserDAO userDao = DAOFactory.getSbiUserDAO();
 			ISbiCommunityDAO commDao = DAOFactory.getCommunityDAO();
-			
+
 			//loads the user:
 			SbiUser user = userDao.loadSbiUserByUserId(userId);
 
 			if(community != null  && community.getCommunityId() != null){
-				//if exists a mail is sent to the owner of the community that accepts him as 
+				//if exists a mail is sent to the owner of the community that accepts him as
 				//member or refuse him
-				
+
 				//1. recovers the e-mail address of the community owner from the user attributes
 				SbiUser owner = userDao.loadSbiUserByUserId(community.getOwner());
-				
+
 				//2. deletes user from other communities (only one community at a time)
 				mngUserCommunityAfterDelete(user);
-				logger.debug("User-community membership deleted");
-				
-				List communities = commDao.loadSbiCommunityByUser(userId);
+				LOGGER.debug("User-community membership deleted");
+
+				List<SbiCommunity> communities = commDao.loadSbiCommunityByUser(userId);
 				if (communities != null){
 					for (int i=0; i<communities.size(); i++){
-						SbiCommunity comm = (SbiCommunity)communities.get(i);
+						SbiCommunity comm = communities.get(i);
 						commDao.deleteMemberFromCommunity(userId, comm.getCommunityId());
-						logger.debug("Erase user by community " + comm.getName() + " for new insertion to " + community.getName());
-					}					
+						LOGGER.debug("Erase user by community " + comm.getName() + " for new insertion to " + community.getName());
+					}
 				}
 				SbiAttribute attrMail = attrsDAO.loadSbiAttributeByName("email");
 				if(attrMail != null){
 					Integer attrId = attrMail.getAttributeId();
 					SbiUserAttributes userAttr= attrsDAO.loadSbiAttributesByUserAndId(owner.getId(), attrId);
 					String emailValue = userAttr.getAttributeValue();
-					
+
 					//3. sends the email
 					CommunityUtilities communityUtil = new CommunityUtilities();
-					boolean result = communityUtil.dispatchMail(communityName, user, owner, emailValue, request);
+					communityUtil.dispatchMail(communityName, user, owner, emailValue, request);
 				}else{
-					logger.info("Owner doesn't have an email address");
+					LOGGER.info("Owner doesn't have an email address");
 				}
-				
+
 			}else{
-				//if doesn't exist then the community is created, together with a new folder with 
-				//the name of the community (functionality code)	
-			
-				Random generator = new Random();
-				int randomInt = generator.nextInt();
+				//if doesn't exist then the community is created, together with a new folder with
+				//the name of the community (functionality code)
+
+				int randomInt = random.nextInt();
 				//1.creates a folder:
 				LowFunctionality aLowFunctionality = new LowFunctionality();
-				
+
 				ILowFunctionalityDAO lowFunct = DAOFactory.getLowFunctionalityDAO();
 				LowFunctionality root = lowFunct.loadRootLowFunctionality(false);
-				
+
 				aLowFunctionality.setCodType("COMMUNITY_FUNCT");
-				String code = "community"+Integer.valueOf(randomInt).toString();
+				String code = "community" + Integer.toString(randomInt);
 				aLowFunctionality.setCode(code);
 				aLowFunctionality.setName(communityName);
-				aLowFunctionality.setPath("/"+communityName);	
+				aLowFunctionality.setPath("/"+communityName);
 				aLowFunctionality.setParentId(root.getId());
 
 				//2.populates community bean
 				if(community == null){
-					community = populateCommunity(userId, communityName, code);				
+					community = populateCommunity(userId, communityName, code);
 				}
-								
+
 				//3. deletes user from other communities (only one community at a time)
 				mngUserCommunityAfterDelete(user);
-				logger.debug("User-community membership deleted");
-					
-				List communities = commDao.loadSbiCommunityByUser(userId);
+				LOGGER.debug("User-community membership deleted");
+
+				List<SbiCommunity> communities = commDao.loadSbiCommunityByUser(userId);
 				if (communities != null){
 					for (int i=0; i<communities.size(); i++){
-						SbiCommunity comm = (SbiCommunity)communities.get(i);
+						SbiCommunity comm = communities.get(i);
 						commDao.deleteCommunityById(comm.getCommunityId());
-						logger.debug("Erase user by community " + comm.getName() + " for new insertion to " + community.getName());
-					}					
+						LOGGER.debug("Erase user by community " + comm.getName() + " for new insertion to " + community.getName());
+					}
 				}
 				//4. saves community and user-community relashionship
 				communityId = commDAO.saveSbiComunityUsers(community, userId);
-				
-				Integer functId = lowFunct.insertCommunityFunctionality(aLowFunctionality);
-				
-				//5. add roles for the user				
+
+				lowFunct.insertCommunityFunctionality(aLowFunctionality);
+
+				//5. add roles for the user
 				addRolesToFunctionality(userId, code);
 			}
 		} catch (EMFUserError e) {
-			logger.error(e.getMessage());
+			LOGGER.error(e.getMessage());
 		}
-		
+
 		return communityId;
-		
+
 	}
-	private SbiCommunity populateCommunity(String userId, 
+	private SbiCommunity populateCommunity(String userId,
 			String communityName,
 			String functCode){
 		SbiCommunity community = new SbiCommunity();
@@ -153,22 +154,22 @@ public class CommunityManager {
 		community.setDescription(communityName);
 		community.setFunctCode(functCode);
 		community.setOwner(userId);
-		
+
 		return community;
-		
+
 	}
 	public void addRolesToFunctionality(String userId, String functCode) throws EMFUserError{
 		ISbiUserDAO userDao = DAOFactory.getSbiUserDAO();
 		IRoleDAO roledao= DAOFactory.getRoleDAO();
 		ILowFunctionalityDAO lowFunctDao = DAOFactory.getLowFunctionalityDAO();
 		SbiUser user = userDao.loadSbiUserByUserId(userId);
-		
+
 		ArrayList<SbiExtRoles> userRoles = userDao.loadSbiUserRolesById(user.getId());
 		LowFunctionality funct = lowFunctDao.loadLowFunctionalityByCode(functCode, false);
 		Role [] execRole4Funct = funct.getExecRoles();
-		
-		ArrayList<Role> roles = new ArrayList<Role>();
-		Set<Integer> roleIds = new HashSet<Integer>();
+
+		ArrayList<Role> roles = new ArrayList<>();
+		Set<Integer> roleIds = new HashSet<>();
 		for(int j=0; j<execRole4Funct.length; j++){
 			Role alreadySetRole = execRole4Funct[j];
 			roles.add(alreadySetRole);
@@ -180,16 +181,16 @@ public class CommunityManager {
 			if(!roleIds.contains(extRID)){
 				Role r = roledao.loadByID(extRID);
 				roles.add(r);
-			}					
+			}
 		}
 		Role [] rolesArr = roles.toArray(new Role[roles.size()]);
-		
-		
+
+
 		funct.setDevRoles(rolesArr);
 		funct.setExecRoles(rolesArr);
 		funct.setTestRoles(rolesArr);
 		funct.setCreateRoles(rolesArr);
-		
+
 		lowFunctDao.modifyLowFunctionality(funct);
 	}
 	/**This method executes the following actions after user deletion:
@@ -197,10 +198,10 @@ public class CommunityManager {
 	 * - if user is owner of a community and there are other members --> the ownership shifts to the oldest member
 	 * - if he is just a member --> the relationship with the community is deleted
 	 * @param userId the user that has been deleted
-	 * @throws EMFUserError 
+	 * @throws EMFUserError
 	 */
 	public void mngUserCommunityAfterDelete(SbiUser user) throws EMFUserError{
-		logger.debug("IN");
+		LOGGER.debug("IN");
 		ISbiCommunityDAO commDao = DAOFactory.getCommunityDAO();
 		List <SbiCommunity> communitiesOwned= commDao.loadSbiCommunityByOwner(user.getUserId());
 		if(communitiesOwned != null && !communitiesOwned.isEmpty()){
@@ -214,16 +215,16 @@ public class CommunityManager {
 					String newOwnerId = membership.getId().getUserId();
 					commOwned.setOwner(newOwnerId);
 					commDao.updateSbiComunity(commOwned);
-					logger.debug("New owner "+newOwnerId+" for community "+commOwned.getName());
+					LOGGER.debug("New owner "+newOwnerId+" for community "+commOwned.getName());
 				}else{
 					commDao.deleteCommunityById(commOwned.getCommunityId());
-					logger.debug("Deleted owner community "+commOwned.getName());
+					LOGGER.debug("Deleted owner community "+commOwned.getName());
 				}
-			}			
+			}
 		}
 		//in any case delete relationship
 		commDao.deleteCommunityMembership(user.getUserId());
-		logger.debug("Deleted community memberships for user "+user.getUserId());
-		logger.debug("OUT");
+		LOGGER.debug("Deleted community memberships for user "+user.getUserId());
+		LOGGER.debug("OUT");
 	}
 }

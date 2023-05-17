@@ -28,6 +28,8 @@ import it.eng.spagobi.tools.datasource.bo.IDataSource;
  */
 public class TestDataSourceFactory {
 
+	private static final Random RANDOM = new Random();
+
 	public static IDataSource createDataSource(TestConstants.DatabaseType type, boolean isWritingDatasource) {
 		IDataSource dataSource;
 
@@ -97,9 +99,8 @@ public class TestDataSourceFactory {
 	public static IDataSource createDataSource(String label, String url, String user, String password, String driver, String hibDialectClass,
 			String hibDialectName, boolean isReadOnly, boolean isWriteDefault, boolean useForDataprep) {
 		IDataSource dataSource = DataSourceFactory.getDataSource();
-		Random rand = new Random();
 
-		int id = rand.nextInt(999999) + 1;
+		int id = RANDOM.nextInt(999999) + 1;
 		dataSource.setDsId(id);
 		dataSource.setLabel(label);
 		dataSource.setDescr(label);

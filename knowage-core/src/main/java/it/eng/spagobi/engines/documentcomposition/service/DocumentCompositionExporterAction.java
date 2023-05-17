@@ -48,11 +48,13 @@ import it.eng.spagobi.engines.exporters.DocumentCompositionExporter;
 
 public class DocumentCompositionExporterAction extends AbstractSpagoBIAction {
 
-	private static transient Logger logger = Logger.getLogger(DocumentCompositionExporterAction.class);
+	private static final Logger LOGGER = Logger.getLogger(DocumentCompositionExporterAction.class);
+
+	private final Random random = new Random();
 
 	@Override
 	public void doService() {
-		logger.debug("IN");
+		LOGGER.debug("IN");
 		HttpServletRequest httpRequest = getHttpRequest();
 		HttpSession session = httpRequest.getSession();
 
@@ -62,21 +64,20 @@ public class DocumentCompositionExporterAction extends AbstractSpagoBIAction {
 
 		// create the pdfFile
 		String dir = System.getProperty("java.io.tmpdir");
-		Random generator = new Random();
-		int randomInt = generator.nextInt();
-		String path = dir + "/" + Integer.valueOf(randomInt).toString() + ".pdf";
+		int randomInt = random.nextInt();
+		String path = dir + "/" + Integer.toString(randomInt) + ".pdf";
 
 		// File tmpFile=new File("path");
 		File tmpFile = new File(path);
 
 		// map that associates document labels and DOcument Containers (containing informations)
-		Map<String, DocumentContainer> documents = new LinkedHashMap<String, DocumentContainer>();
+		Map<String, DocumentContainer> documents = new LinkedHashMap<>();
 
 		SpagoBIRequestContainer requestContainer = getSpagoBIRequestContainer();
 		SourceBean sb = requestContainer.getRequest();
 
 		// Recover currentParametersConfiguration
-		Map<String, CurrentConfigurationDocComp> currentConfigurationsMap = new HashMap<String, CurrentConfigurationDocComp>();
+		Map<String, CurrentConfigurationDocComp> currentConfigurationsMap = new HashMap<>();
 
 		// if only one metadata style is wrong use default table style (ignore table positions)
 		boolean defaultStyle = false;
@@ -87,16 +88,16 @@ public class DocumentCompositionExporterAction extends AbstractSpagoBIAction {
 		for (Iterator iterator = docCompConf.getDocumentsArray().iterator(); iterator.hasNext();) {
 			Document doc = (Document) iterator.next();
 			String label = doc.getSbiObjLabel();
-			logger.debug("Document " + label);
+			LOGGER.debug("Document " + label);
 			try {
 				// recover style informations
 				String styleLab = (String) iteratorStyles.next();
 				String styleString = (String) styles.get(styleLab);
 				if (styleString == null)
 					styleString = "";
-				MetadataStyle metadataStyle = MetadataStyle.getMetadataStyle(label, styleString.toString(), docCompConf);
-				if (defaultStyle == false) {
-					defaultStyle = (metadataStyle == null) ? true : false;
+				MetadataStyle metadataStyle = MetadataStyle.getMetadataStyle(label, styleString, docCompConf);
+				if (!defaultStyle) {
+					defaultStyle = (metadataStyle == null);
 				}
 
 				DocumentContainer documentContainer = new DocumentContainer();
@@ -107,7 +108,7 @@ public class DocumentCompositionExporterAction extends AbstractSpagoBIAction {
 				continue;
 			}
 			// get its parameters configuration
-			logger.debug("Get parametrs configuration for document " + label);
+			LOGGER.debug("Get parametrs configuration for document " + label);
 			Object urlO = sb.getAttribute("TRACE_PAR_" + label);
 			if (urlO != null) {
 				String url = urlO.toString();
@@ -118,11 +119,11 @@ public class DocumentCompositionExporterAction extends AbstractSpagoBIAction {
 			}
 
 			// get its svg (for highcharts document because they're created only by the client-side)
-			logger.debug("Get svg content for the highchart " + label);
+			LOGGER.debug("Get svg content for the highchart " + label);
 			String svg = (sb.getAttribute("SVG_" + label) != null) ? sb.getAttribute("SVG_" + label).toString() : null;
 			if (svg != null) {
 				CurrentConfigurationDocComp ccdc = new CurrentConfigurationDocComp(label);
-				Map<String, Object> svgChartPar = new HashMap<String, Object>();
+				Map<String, Object> svgChartPar = new HashMap<>();
 				svgChartPar.put("SVG_" + label, svg);
 				ccdc.setParameters(svgChartPar);
 				currentConfigurationsMap.put("SVG_" + label, ccdc);
@@ -137,7 +138,7 @@ public class DocumentCompositionExporterAction extends AbstractSpagoBIAction {
 			}
 
 			if (id == null) {
-				logger.error("Document id not found");
+				LOGGER.error("Document id not found");
 				return;
 			}
 			BIObject document = null;
@@ -146,7 +147,7 @@ public class DocumentCompositionExporterAction extends AbstractSpagoBIAction {
 			IEngUserProfile profile = getUserProfile();
 
 			// CALL EXPORTER
-			logger.debug("call exporter");
+			LOGGER.debug("call exporter");
 			DocumentCompositionExporter exporter = new DocumentCompositionExporter();
 			tmpFile = exporter.exportDocumentCompositionPDF(tmpFile, docCompConf, document, profile, currentConfigurationsMap, documents, defaultStyle);
 
@@ -154,7 +155,7 @@ public class DocumentCompositionExporterAction extends AbstractSpagoBIAction {
 				String outputType = "PDF";
 				String mimeType = "application/pdf";
 
-				logger.debug("Report exported succesfully");
+				LOGGER.debug("Report exported succesfully");
 
 				HttpServletResponse response = getHttpResponse();
 				response.setContentType(mimeType);
@@ -169,10 +170,10 @@ public class DocumentCompositionExporterAction extends AbstractSpagoBIAction {
 					response.getOutputStream().flush();
 				}
 			}
-			logger.debug("OUT");
+			LOGGER.debug("OUT");
 
 		} catch (Throwable e) {
-			logger.error("An exception has occured", e);
+			LOGGER.error("An exception has occured", e);
 			// throw new Exception(e);
 		} finally {
 			if (tmpFile != null)

@@ -53,12 +53,14 @@ import it.eng.spagobi.utilities.ParametersDecoder;
 
 public class DocumentCompositionExporter {
 
-	private static transient Logger logger = Logger.getLogger(DocumentCompositionExporter.class);
+	private static final Logger LOGGER = Logger.getLogger(DocumentCompositionExporter.class);
+
+	private final Random random = new Random();
 
 	public File exportDocumentCompositionPDF(File tmpFile, DocumentCompositionConfiguration dcConf, BIObject document, IEngUserProfile profile,
 			Map<String, CurrentConfigurationDocComp> currentConfs, Map<String, DocumentContainer> documentsMap, boolean defaultStyle) throws Exception {
 
-		logger.debug("IN");
+		LOGGER.debug("IN");
 		String output = null;
 		InputStream svgInputStream = null;
 		InputStream pngInputStream = null;
@@ -70,7 +72,7 @@ public class DocumentCompositionExporter {
 				Object key = iterator.next();
 				Document doc = (Document) docMap.get(key);
 				String label = doc.getSbiObjLabel();
-				logger.debug("Document " + label);
+				LOGGER.debug("Document " + label);
 
 				// get document container information
 				DocumentContainer documentContainer = documentsMap.get(label);
@@ -92,7 +94,7 @@ public class DocumentCompositionExporter {
 					try {
 						object = dao.loadBIObjectForExecutionByIdAndRole(objectID.getId(), role.toString());
 					} catch (Exception e) {
-						logger.error("error in recovering the role");
+						LOGGER.error("error in recovering the role");
 					}
 					if (object != null)
 						break;
@@ -100,7 +102,7 @@ public class DocumentCompositionExporter {
 
 				// set parameters: from url retrieved by iframe, fill
 				// BiObjectParameters with value
-				logger.debug("fill parameters from URL");
+				LOGGER.debug("fill parameters from URL");
 				fillBIObjectWithParameterValues(object, currentConfs.get(label));
 
 				// only for HIGHCHARTS and EXT charts documents (SVG_label is
@@ -113,19 +115,11 @@ public class DocumentCompositionExporter {
 					Map tmpSvg = currentConfs.get("SVG_" + label).getParameters();
 					String tmpContent = tmpSvg.get("SVG_" + label).toString();
 
-					/*
-					 * //create the png file using the svg String svg = tmpContent; svgInputStream = new ByteArrayInputStream(svg.getBytes(StandardCharsets.UTF_8)); File dir =
-					 * new File(System.getProperty("java.io.tmpdir")); Random generator = new Random(); int randomInt = generator.nextInt(); File imgFile =
-					 * File.createTempFile(Integer .valueOf(randomInt).toString(), ".png", dir); svgOutputStream = new FileOutputStream(imgFile);
-					 * ExportHighCharts.transformSVGIntoPNG(svgInputStream, svgOutputStream); // read input from file pngInputStream = new
-					 * FileInputStream(imgFile);
-					 */
 					String svg = tmpContent;
 					svgInputStream = new ByteArrayInputStream(svg.getBytes(UTF_8));
 					File dir = new File(System.getProperty("java.io.tmpdir"));
-					Random generator = new Random();
-					int randomInt = generator.nextInt();
-					File pdfFile = File.createTempFile(Integer.valueOf(randomInt).toString(), ".pdf", dir);
+					int randomInt = random.nextInt();
+					File pdfFile = File.createTempFile(Integer.toString(randomInt), ".pdf", dir);
 					svgOutputStream = new FileOutputStream(pdfFile);
 					ExportHighCharts.transformSVGIntoPDF(svgInputStream, svgOutputStream);
 
@@ -136,7 +130,7 @@ public class DocumentCompositionExporter {
 					long length = pdfFile.length();
 
 					if (length > Integer.MAX_VALUE) {
-						logger.error("file too large");
+						LOGGER.error("file too large");
 						return null;
 					}
 
@@ -153,12 +147,12 @@ public class DocumentCompositionExporter {
 
 					// Ensure all the bytes have been read in
 					if (offset < returnByteArray.length) {
-						logger.warn("Could not read all the file");
+						LOGGER.warn("Could not read all the file");
 					}
 
 				} else // if (!doc.getType().equals("CHART")) {
 				if (true) {
-					logger.debug("call execution proxy");
+					LOGGER.debug("call execution proxy");
 
 					// Calling execution proxy
 					ExecutionProxy proxy = new ExecutionProxy();
@@ -176,10 +170,10 @@ public class DocumentCompositionExporter {
 					returnByteArray = proxy.exec(profile, ExecutionProxy.EXPORT_MODALITY, output);
 				}
 				// add content retrieved to Document Container
-				logger.debug("add content retrieved to Document Container");
+				LOGGER.debug("add content retrieved to Document Container");
 				if (returnByteArray != null) {
 					if (returnByteArray.length == 0)
-						logger.warn("empty byte array retrieved for document " + label);
+						LOGGER.warn("empty byte array retrieved for document " + label);
 					documentContainer.setContent(returnByteArray);
 					documentContainer.setDocumentLabel(label);
 					documentContainer.setDocumentType(object.getBiObjectTypeCode());
@@ -188,7 +182,7 @@ public class DocumentCompositionExporter {
 
 			FileOutputStream fileOutputStream = new FileOutputStream(tmpFile);
 			PdfCreator pdfCreator = new PdfCreator();
-			logger.debug("Call PDF Creation");
+			LOGGER.debug("Call PDF Creation");
 			pdfCreator.setVideoHeight(dcConf.getVideoHeight());
 			pdfCreator.setVideoWidth(dcConf.getVideoWidth());
 
@@ -197,11 +191,11 @@ public class DocumentCompositionExporter {
 			pdfFile.flush();
 			pdfFile.close();
 
-			logger.debug("OUT");
+			LOGGER.debug("OUT");
 
 			return tmpFile;
 		} catch (Exception e) {
-			logger.error(e);
+			LOGGER.error(e);
 			return null;
 		} finally {
 			// Close the input stream
@@ -209,21 +203,21 @@ public class DocumentCompositionExporter {
 				try {
 					pngInputStream.close();
 				} catch (IOException e) {
-					logger.error(e);
+					LOGGER.error(e);
 				}
 			}
 			if (svgInputStream != null) {
 				try {
 					svgInputStream.close();
 				} catch (IOException e) {
-					logger.error(e);
+					LOGGER.error(e);
 				}
 			}
 			if (svgOutputStream != null) {
 				try {
 					svgOutputStream.close();
 				} catch (IOException e) {
-					logger.error(e);
+					LOGGER.error(e);
 				}
 			}
 		}
@@ -238,17 +232,17 @@ public class DocumentCompositionExporter {
 
 	public void fillBIObjectWithParameterValues(BIObject object, CurrentConfigurationDocComp currentConf) {
 
-		logger.debug("IN");
+		LOGGER.debug("IN");
 		// For each parameter the object needs search for a value in currentConf
 		if (currentConf == null)
 			return;
 
-		List parametersBO = object.getDrivers();
+		List<BIObjectParameter> parametersBO = object.getDrivers();
 		Map<String, Object> currentParameters = currentConf.getParameters();
 		if (currentParameters != null) {
 			if (parametersBO != null) {
-				for (Iterator iterator = parametersBO.iterator(); iterator.hasNext();) {
-					BIObjectParameter parAss = (BIObjectParameter) iterator.next();
+				for (Iterator<BIObjectParameter> iterator = parametersBO.iterator(); iterator.hasNext();) {
+					BIObjectParameter parAss = iterator.next();
 					String urlName = parAss.getParameterUrlName();
 					// get the value if present, otherwise will keep the present
 					// one
@@ -263,7 +257,7 @@ public class DocumentCompositionExporter {
 							String valueString = valueObj.toString();
 							List values = (new ParametersDecoder()).getOriginalValues(valueString);
 							if (values != null) {
-								logger.debug("Put new values " + valueString + " to parameter " + urlName);
+								LOGGER.debug("Put new values " + valueString + " to parameter " + urlName);
 								parAss.setParameterValues(values);
 								// remove value
 								currentParameters.remove(urlName);
@@ -278,9 +272,9 @@ public class DocumentCompositionExporter {
 			// particular parameters)
 
 			if (parametersBO == null)
-				parametersBO = new ArrayList<BIObjectParameter>();
-			for (Iterator iterator = currentParameters.keySet().iterator(); iterator.hasNext();) {
-				String lab = (String) iterator.next();
+				parametersBO = new ArrayList<>();
+			for (Iterator<String> iterator = currentParameters.keySet().iterator(); iterator.hasNext();) {
+				String lab = iterator.next();
 				BIObjectParameter biObjPar = new BIObjectParameter();
 				biObjPar.setParameterUrlName(lab);
 
@@ -302,7 +296,7 @@ public class DocumentCompositionExporter {
 			}
 
 		}
-		logger.debug("OUT");
+		LOGGER.debug("OUT");
 	}
 
 }

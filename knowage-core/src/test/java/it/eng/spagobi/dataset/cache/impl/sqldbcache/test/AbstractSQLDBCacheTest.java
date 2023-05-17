@@ -49,7 +49,9 @@ import it.eng.spagobi.utilities.database.DataBaseException;
  */
 public abstract class AbstractSQLDBCacheTest extends AbstractCacheTest {
 
-	static private Logger logger = Logger.getLogger(AbstractSQLDBCacheTest.class);
+	private static final Logger LOGGER = Logger.getLogger(AbstractSQLDBCacheTest.class);
+
+	private final Random random = new Random();
 
 	// Test cases
 
@@ -118,7 +120,7 @@ public abstract class AbstractSQLDBCacheTest extends AbstractCacheTest {
 		resultset = sqlDataset.getDataStore();
 		cache.put(sqlDataset, resultset, null);
 		assertNotNull(cache.get(sqlDataset.getSignature()));
-		logger.debug("JDBCDataset inserted inside cache");
+		LOGGER.debug("JDBCDataset inserted inside cache");
 	}
 
 	public void testCachePutFileDataSet() throws DataBaseException {
@@ -129,7 +131,7 @@ public abstract class AbstractSQLDBCacheTest extends AbstractCacheTest {
 		cache.put(fileDataset, resultset, null);
 		;
 		assertNotNull(cache.get(fileDataset.getSignature()));
-		logger.debug("FileDataSet inserted inside cache");
+		LOGGER.debug("FileDataSet inserted inside cache");
 	}
 
 	public void testCachePutQbeDataSet() throws DataBaseException {
@@ -139,7 +141,7 @@ public abstract class AbstractSQLDBCacheTest extends AbstractCacheTest {
 		resultset = qbeDataset.getDataStore();
 		cache.put(qbeDataset, resultset, null);
 		assertNotNull(cache.get(qbeDataset.getSignature()));
-		logger.debug("QbeDataSet inserted inside cache");
+		LOGGER.debug("QbeDataSet inserted inside cache");
 
 	}
 
@@ -150,7 +152,7 @@ public abstract class AbstractSQLDBCacheTest extends AbstractCacheTest {
 		resultset = flatDataset.getDataStore();
 		cache.put(flatDataset, resultset, null);
 		assertNotNull(cache.get(flatDataset.getSignature()));
-		logger.debug("FlatDataSet inserted inside cache");
+		LOGGER.debug("FlatDataSet inserted inside cache");
 
 	}
 
@@ -161,7 +163,7 @@ public abstract class AbstractSQLDBCacheTest extends AbstractCacheTest {
 		resultset = scriptDataset.getDataStore();
 		cache.put(scriptDataset, resultset, null);
 		assertNotNull(cache.get(scriptDataset.getSignature()));
-		logger.debug("ScriptDataset inserted inside cache");
+		LOGGER.debug("ScriptDataset inserted inside cache");
 
 	}
 
@@ -236,7 +238,7 @@ public abstract class AbstractSQLDBCacheTest extends AbstractCacheTest {
 		fileDataset.loadData();
 		resultset = fileDataset.getDataStore();
 		cache.put(fileDataset, resultset, null);
-		logger.debug("FileDataSet inserted inside cache");
+		LOGGER.debug("FileDataSet inserted inside cache");
 		String tableName = cache.getMetadata().getCacheItem(fileDataset.getSignature()).getTable();
 		assertTrue(cache.delete(fileDataset.getSignature(), true));
 		assertNull("Dataset still present in cache registry", cache.get(fileDataset.getSignature()));
@@ -246,8 +248,8 @@ public abstract class AbstractSQLDBCacheTest extends AbstractCacheTest {
 			dataStore = dataSourceWriting.executeStatement("SELECT * FROM " + tableName, 0, 0);
 
 		} catch (Exception e) {
-			logger.debug("The table [" + tableName + "] not found on cache database");
-			logger.debug("Delete successfull: The table [" + tableName + "] not found on cache database");
+			LOGGER.debug("The table [" + tableName + "] not found on cache database");
+			LOGGER.debug("Delete successfull: The table [" + tableName + "] not found on cache database");
 
 		}
 
@@ -305,7 +307,7 @@ public abstract class AbstractSQLDBCacheTest extends AbstractCacheTest {
 			}
 		} else {
 			flag = true;
-			logger.debug("Not enought space for inserting the dataset in cache");
+			LOGGER.debug("Not enought space for inserting the dataset in cache");
 
 		}
 		assertTrue("Problem calculating space avaiable for inserting dataset in cache", flag);
@@ -341,7 +343,7 @@ public abstract class AbstractSQLDBCacheTest extends AbstractCacheTest {
 			cacheZero.put(sqlDataset, resultset, null);
 
 		} catch (CacheException | DataBaseException ex) {
-			logger.error("Dataset cannot be cached", ex);
+			LOGGER.error("Dataset cannot be cached", ex);
 			exception = true;
 		} finally {
 			assertTrue("Wrong behavior: Exception expected but not catched", exception);
@@ -355,7 +357,7 @@ public abstract class AbstractSQLDBCacheTest extends AbstractCacheTest {
 		ICacheMetadata cacheMetadata = cache.getMetadata();
 		BigDecimal cacheSpaceAvaiable = cacheMetadata.getAvailableMemory();
 		assertNotNull("Error calculating avaiable cache space", cacheSpaceAvaiable);
-		logger.debug(" >> Avaiable cache space: " + cacheSpaceAvaiable + " byte");
+		LOGGER.debug(" >> Avaiable cache space: " + cacheSpaceAvaiable + " byte");
 	}
 
 	public void testGetDimensionSpaceUsed() {
@@ -367,7 +369,7 @@ public abstract class AbstractSQLDBCacheTest extends AbstractCacheTest {
 		ICacheMetadata cacheMetadata = cache.getMetadata();
 		BigDecimal estimatedDatasetDimension = cacheMetadata.getRequiredMemory(resultset);
 		assertNotNull("Error calculating dimension of dataset", estimatedDatasetDimension);
-		logger.debug(" >> Estimated dataset dimension: " + estimatedDatasetDimension + " byte");
+		LOGGER.debug(" >> Estimated dataset dimension: " + estimatedDatasetDimension + " byte");
 	}
 
 	public void testCountNumberOfObjects() throws DataBaseException {
@@ -414,7 +416,7 @@ public abstract class AbstractSQLDBCacheTest extends AbstractCacheTest {
 		resultset = qbeDataset.getDataStore();
 		String signature = qbeDataset.getSignature();
 		cache.put(qbeDataset, resultset, null);
-		logger.debug("QbeDataSet inserted inside cache");
+		LOGGER.debug("QbeDataSet inserted inside cache");
 
 		ICacheMetadata cacheMetadata = cache.getMetadata();
 		CacheItem cacheItem = cache.getMetadata().getCacheItem(signature);
@@ -451,15 +453,14 @@ public abstract class AbstractSQLDBCacheTest extends AbstractCacheTest {
 		DatabaseDialect dialect = DatabaseDialect.get(dataSourceWriting.getHibDialectClass());
 		PersistedTableManager persistedTableManager = new PersistedTableManager();
 		persistedTableManager.setDialect(dialect);
-		Random ran = new Random();
-		int x = ran.nextInt(100);
+		int x = random.nextInt(100);
 		String tableName = "SbiTest" + x;
 		persistedTableManager.setTableName(tableName);
 
 		try {
 			persistedTableManager.persistDataset(dataStore, dataSourceWriting);
 		} catch (Exception e) {
-			logger.error("Error persisting dataset");
+			LOGGER.error("Error persisting dataset");
 		}
 
 		// try to query the table using the SchemaName.TableName syntax if schemaName is valorized

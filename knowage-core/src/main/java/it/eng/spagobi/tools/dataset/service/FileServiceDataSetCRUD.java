@@ -34,7 +34,6 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 
 import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.HttpConnectionManager;
 import org.apache.commons.httpclient.HttpException;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.lang.StringUtils;
@@ -56,7 +55,6 @@ import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOConfig;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.utilities.FileUtilities;
-import it.eng.spagobi.commons.utilities.GeneralUtilities;
 import it.eng.spagobi.engines.config.bo.Engine;
 import it.eng.spagobi.services.rest.annotations.UserConstraint;
 import it.eng.spagobi.tools.dataset.bo.FileDataSet;
@@ -133,19 +131,21 @@ import it.eng.spagobi.utilities.assertion.Assert;
 @Path("/fileservicedataset")
 public class FileServiceDataSetCRUD {
 
-	static private Logger logger = Logger.getLogger(it.eng.spagobi.tools.dataset.service.FileServiceDataSetCRUD.class);
+	private static final Logger LOGGER = Logger.getLogger(it.eng.spagobi.tools.dataset.service.FileServiceDataSetCRUD.class);
 
 	// Distinguish if has to be opened with QBE
-	static final private String OPEN_WITH = "openWith";
-	static final private String QBE = "qbe";
+	private static final String OPEN_WITH = "openWith";
+	private static final String QBE = "qbe";
 
 	//
-	static final private String PARAMETERS_URL = "parametersUrl";
+	private static final String PARAMETERS_URL = "parametersUrl";
 
 	// the name of the data file expected to download inside the zip
-	static private String DATA_FILE_NAME = "data.csv";
+	private static String DATA_FILE_NAME = "data.csv";
 	// the name of the metadata file expected to download inside the zip
-	static private String METADATA_FILE_NAME = "metadata.json";
+	private static String METADATA_FILE_NAME = "metadata.json";
+
+	private final Random random = new Random();
 
 	IEngUserProfile profile = null;
 
@@ -160,19 +160,18 @@ public class FileServiceDataSetCRUD {
 	@Path("/createdataset")
 	@UserConstraint(functionalities = { CommunityFunctionalityConstants.SELF_SERVICE_DATASET_MANAGEMENT })
 	public Response createDataSet(@Context HttpServletRequest req) throws Exception {
-		logger.debug("IN");
+		LOGGER.debug("IN");
 
-		Object openWithO = req.getParameter(OPEN_WITH);
-		logger.debug("Open with QBE Engine");
+		LOGGER.debug("Open with QBE Engine");
 
 		Object parsRemoteUrlO = req.getParameter(PARAMETERS_URL);
 		String parsRemoteUrl = parsRemoteUrlO != null ? parsRemoteUrlO.toString() : "";
 
-		logger.debug("Patrameters of remote call are " + parsRemoteUrl);
+		LOGGER.debug("Patrameters of remote call are " + parsRemoteUrl);
 
 		String remoteUrl = getRemoteUrl(parsRemoteUrl);
 
-		logger.debug("Remote URL to call is " + remoteUrl);
+		LOGGER.debug("Remote URL to call is " + remoteUrl);
 
 		profile = (IEngUserProfile) req.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
 
@@ -181,33 +180,33 @@ public class FileServiceDataSetCRUD {
 		try {
 			response = getCSVFile(remoteUrl);
 		} catch (Exception e) {
-			logger.error("Error in retrieving CSV file from server ", e);
+			LOGGER.error("Error in retrieving CSV file from server ", e);
 			throw e;
 		}
 
-		logger.debug("Files retrieved from remote url, decompress zip");
+		LOGGER.debug("Files retrieved from remote url, decompress zip");
 
 		File tempDir = null;
 		try {
 			tempDir = decompressByteArray(response);
 		} catch (Exception e) {
-			logger.error("Error in decompressing zip file", e);
+			LOGGER.error("Error in decompressing zip file", e);
 			throw e;
 		}
 
-		logger.debug("Archive decompressed");
+		LOGGER.debug("Archive decompressed");
 
 		String jsonContent = null;
 		try {
 
-			File metadataFile = new File(tempDir.getAbsolutePath() + "/" + METADATA_FILE_NAME);
+			File metadataFile = new File(tempDir.getAbsolutePath(), METADATA_FILE_NAME);
 			jsonContent = deserializeString(metadataFile);
 		} catch (IOException e) {
-			logger.error("Error in reading JSON from metadata file", e);
+			LOGGER.error("Error in reading JSON from metadata file", e);
 			throw e;
 		}
 
-		logger.debug("Metadata Json file read " + jsonContent);
+		LOGGER.debug("Metadata Json file read " + jsonContent);
 
 		JSONObject jsonObject = null;
 
@@ -217,18 +216,18 @@ public class FileServiceDataSetCRUD {
 			jsonObject = new JSONObject(jsonContent);
 			dataSet = readMetadataAndSaveDataset(jsonObject);
 		} catch (Exception e) {
-			logger.error("Error in retrieving dataset metadata and saving metadata", e);
+			LOGGER.error("Error in retrieving dataset metadata and saving metadata", e);
 			throw e;
 		}
 
 		// copy data file to resources
-		File dataFile = new File(tempDir.getAbsolutePath() + "/" + DATA_FILE_NAME);
+		File dataFile = new File(tempDir.getAbsolutePath(), DATA_FILE_NAME);
 		copyDataFileToResources(dataFile, dataSet);
 
 		// FIND DATASOURCE_FOR_WRITING
 		IDataSource idataSource = DAOFactory.getDataSourceDAO().loadDataSourceWriteDefault();
 		if (idataSource == null) {
-			logger.error("No write default datasource defined");
+			LOGGER.error("No write default datasource defined");
 			throw new Exception("No write default datasource defined");
 		}
 		String dataSourceLabel = idataSource.getLabel();
@@ -236,13 +235,12 @@ public class FileServiceDataSetCRUD {
 		String url = null;
 
 		String host = req.getServerName();
-		String context = req.getContextPath();
 		String protocol = req.getProtocol();
 		if (protocol.contains("/")) {
 			protocol = protocol.substring(0, protocol.indexOf("/")).toLowerCase();
 		}
 
-		String port = Integer.valueOf(req.getServerPort()).toString();
+		String port = Integer.toString(req.getServerPort());
 
 		// get Qbe context
 		Engine qbeEngine = DAOFactory.getEngineDAO().loadEngineByDriver("it.eng.spagobi.engines.drivers.qbe.QbeDriver");
@@ -265,7 +263,6 @@ public class FileServiceDataSetCRUD {
 
 		HttpSession permanentSession = req.getSession();
 
-		Locale locale = null;
 		String currLanguage = (String) permanentSession.getAttribute(SpagoBIConstants.AF_LANGUAGE);
 		String currCountry = (String) permanentSession.getAttribute(SpagoBIConstants.AF_COUNTRY);
 		String currScript = (String) permanentSession.getAttribute(SpagoBIConstants.AF_SCRIPT);
@@ -275,16 +272,13 @@ public class FileServiceDataSetCRUD {
 			if (StringUtils.isNotBlank(currScript)) {
 				tmpLocale.setScript(currScript);
 			}
+		}
 
-			locale = tmpLocale.build();
-		} else
-			locale = GeneralUtilities.getDefaultLocale();
-
-		logger.debug("Language retrieved: [" + currLanguage + "]; country retrieved: [" + currCountry + "]");
+		LOGGER.debug("Language retrieved: [" + currLanguage + "]; country retrieved: [" + currCountry + "]");
 
 		url = protocol + "://" + host + ":" + port + "/" + qbeContext;
 
-		logger.debug("Open with QBE case");
+		LOGGER.debug("Open with QBE case");
 
 		url += "?ACTION_NAME=QBE_ENGINE_FROM_DATASET_START_ACTION";
 		url += "&user_id=" + profile.getUserUniqueIdentifier();
@@ -295,10 +289,10 @@ public class FileServiceDataSetCRUD {
 		url += "&SBI_COUNTRY=" + currCountry;
 		url += "&SBI_SCRIPT=" + currScript;
 
-		logger.debug("URL to call");
+		LOGGER.debug("URL to call");
 		java.net.URI location = new java.net.URI(url);
 
-		logger.debug("OUT");
+		LOGGER.debug("OUT");
 		return javax.ws.rs.core.Response.temporaryRedirect(location).build();
 
 	}
@@ -311,24 +305,24 @@ public class FileServiceDataSetCRUD {
 	 * @throws EMFUserError
 	 * @throws Exception
 	 */
-	String getRemoteUrl(String parameters) throws EMFUserError, Exception {
-		logger.debug("IN");
+	String getRemoteUrl(String parameters) throws Exception {
+		LOGGER.debug("IN");
 
 		Config protocolC = DAOFactory.getSbiConfigDAO().loadConfigParametersByLabel("remoteUrl.protocol");
 		String protocol = protocolC != null ? protocolC.getValueCheck() : null;
-		logger.debug(protocol);
+		LOGGER.debug(protocol);
 
 		Config hostC = DAOFactory.getSbiConfigDAO().loadConfigParametersByLabel("remoteUrl.host");
 		String host = hostC != null ? hostC.getValueCheck() : null;
-		logger.debug(host);
+		LOGGER.debug(host);
 
 		Config domainC = DAOFactory.getSbiConfigDAO().loadConfigParametersByLabel("remoteUrl.domain");
 		String domain = domainC != null ? domainC.getValueCheck() : null;
-		logger.debug(domain);
+		LOGGER.debug(domain);
 
 		Config portC = DAOFactory.getSbiConfigDAO().loadConfigParametersByLabel("remoteUrl.port");
 		String port = portC != null ? portC.getValueCheck() : null;
-		logger.debug(port);
+		LOGGER.debug(port);
 
 		Assert.assertNotNull(protocol, "Protocol not present in sbi configs");
 		Assert.assertNotNull(host, "Host not present in sbi configs");
@@ -336,7 +330,7 @@ public class FileServiceDataSetCRUD {
 
 		String url = protocol + "://" + host + ((port != null && !port.equalsIgnoreCase("")) ? (":" + port) : "") + domain + "?" + parameters;
 
-		logger.debug("OUT");
+		LOGGER.debug("OUT");
 
 		return url;
 
@@ -350,10 +344,9 @@ public class FileServiceDataSetCRUD {
 	 * @throws HttpException
 	 * @throws IOException
 	 */
-	byte[] getCSVFile(String url) throws HttpException, IOException {
-		logger.debug("IN");
+	byte[] getCSVFile(String url) throws IOException {
+		LOGGER.debug("IN");
 		HttpClient client = new HttpClient();
-		HttpConnectionManager conManager = client.getHttpConnectionManager();
 
 		// Cancel, proxy settings made on server
 		// logger.debug("Setting proxy");
@@ -366,15 +359,15 @@ public class FileServiceDataSetCRUD {
 
 		GetMethod httpGet = new GetMethod(url);
 		int statusCode = client.executeMethod(httpGet);
-		logger.debug("Status code after request to remote URL is " + statusCode);
+		LOGGER.debug("Status code after request to remote URL is " + statusCode);
 		byte[] response = httpGet.getResponseBody();
 
 		if (response == null) {
-			logger.warn("Response of remote URL is empty");
+			LOGGER.warn("Response of remote URL is empty");
 		}
 
 		httpGet.releaseConnection();
-		logger.debug("OUT");
+		LOGGER.debug("OUT");
 		return response;
 	}
 
@@ -387,42 +380,38 @@ public class FileServiceDataSetCRUD {
 	 */
 
 	File decompressByteArray(byte[] response) throws IOException {
-		logger.debug("IN");
+		LOGGER.debug("IN");
 		// write byteArray
 		File dir = new File(System.getProperty("java.io.tmpdir"));
-		Random generator = new Random();
-		int randomInt = generator.nextInt();
-		String fileName = Integer.valueOf(randomInt).toString();
+		int randomInt = random.nextInt();
+		String fileName = Integer.toString(randomInt);
 		File zipFile = File.createTempFile(fileName, ".zip", dir);
 
-		logger.debug("created temporary zip file " + zipFile.getAbsolutePath());
+		LOGGER.debug("created temporary zip file " + zipFile.getAbsolutePath());
 
-		FileOutputStream fos = new FileOutputStream(zipFile);
-		fos.write(response);
-		fos.close();
+		try (FileOutputStream fos = new FileOutputStream(zipFile)) {
+			fos.write(response);
+		}
 
 		// create folder to store temporary files
-		File temp = new File(System.getProperty("java.io.tmpdir") + "/" + fileName);
+		File temp = new File(System.getProperty("java.io.tmpdir"), fileName);
 		temp.mkdir();
 
-		logger.debug("Unzip file in  " + temp.getAbsolutePath());
+		LOGGER.debug("Unzip file in  " + temp.getAbsolutePath());
 
 		new SpagoBIAccessUtils().unzip(zipFile, temp);
-		logger.debug("OUT");
+		LOGGER.debug("OUT");
 		return temp;
 	}
 
 	public static String deserializeString(File file) throws IOException {
 		int len;
 		char[] chr = new char[4096];
-		final StringBuffer buffer = new StringBuffer();
-		final FileReader reader = new FileReader(file);
-		try {
+		final StringBuilder buffer = new StringBuilder();
+		try (FileReader reader = new FileReader(file)) {
 			while ((len = reader.read(chr)) > 0) {
 				buffer.append(chr, 0, len);
 			}
-		} finally {
-			reader.close();
 		}
 		return buffer.toString();
 	}
@@ -436,8 +425,8 @@ public class FileServiceDataSetCRUD {
 	 * @throws EMFUserError
 	 */
 
-	FileDataSet readMetadataAndSaveDataset(JSONObject jsonObject) throws JSONException, EMFUserError {
-		logger.debug("IN");
+	FileDataSet readMetadataAndSaveDataset(JSONObject jsonObject) throws JSONException {
+		LOGGER.debug("IN");
 
 		FileDataSet dataSet = new FileDataSet();
 
@@ -470,44 +459,44 @@ public class FileServiceDataSetCRUD {
 			cml = writeXMLMetadata(jsonObject);
 			dataSet.setDsMetadata(cml);
 		} catch (SourceBeanException e) {
-			logger.error("Error in retrieving fields metadata in correct format from metadata json");
+			LOGGER.error("Error in retrieving fields metadata in correct format from metadata json");
 		}
 
 		IDataSetDAO dataSetDAO = DAOFactory.getDataSetDAO();
 
-		logger.debug("check if dataset with label " + label + " is already present");
+		LOGGER.debug("check if dataset with label " + label + " is already present");
 
 		// check label is already present; insert or modify dependengly
 		IDataSet iDataSet = DAOFactory.getDataSetDAO().loadDataSetByLabel(label);
 
 		// loadActiveDataSetByLabel(label);
 		if (iDataSet != null) {
-			logger.debug("a dataset with label " + label + " is already present: modify it");
+			LOGGER.debug("a dataset with label " + label + " is already present: modify it");
 			dataSet.setId(iDataSet.getId());
 			dataSetDAO.modifyDataSet(dataSet);
 		} else {
-			logger.debug("No dataset with label " + label + " is already present: insert it");
+			LOGGER.debug("No dataset with label " + label + " is already present: insert it");
 			dataSetDAO.insertDataSet(dataSet);
 
 		}
 
-		logger.debug("OUT");
+		LOGGER.debug("OUT");
 		return dataSet;
 	}
 
 	void copyDataFileToResources(File tempDataFile, FileDataSet dataSet) {
-		logger.debug("IN");
+		LOGGER.debug("IN");
 		// put csv file inside resources
 		String resourcePath = dataSet.getResourcePath();
 		String fileResPath = resourcePath + "/dataset/files/";
 		File destFile = new File(fileResPath);
 		FileUtilities.copyFile(tempDataFile, destFile, true, false);
-		logger.debug("OUT");
+		LOGGER.debug("OUT");
 
 	}
 
 	String writeXMLMetadata(JSONObject jsonObject) throws JSONException, SourceBeanException {
-		logger.debug("IN");
+		LOGGER.debug("IN");
 		String toReturn = null;
 
 		SourceBean sb = new SourceBean(DatasetMetadataParser.COLUMNLIST);
@@ -551,12 +540,12 @@ public class FileServiceDataSetCRUD {
 		}
 
 		toReturn = sb.toXML(false);
-		logger.debug("OUT");
+		LOGGER.debug("OUT");
 		return toReturn;
 	}
 
 	String oracleTypetoJava(String oracle) {
-		logger.debug("IN");
+		LOGGER.debug("IN");
 		String javaToReturn = null;
 		if (oracle.equalsIgnoreCase("VARCHAR") || oracle.equals("VARCHAR2")) {
 			javaToReturn = "java.lang.String";
@@ -570,7 +559,7 @@ public class FileServiceDataSetCRUD {
 			javaToReturn = "java.math.Boolean";
 
 		}
-		logger.debug("OUT");
+		LOGGER.debug("OUT");
 		return javaToReturn;
 	}
 
@@ -582,21 +571,21 @@ public class FileServiceDataSetCRUD {
 		try {
 			Assert.assertNotNull(DAOFactory.getEngineDAO(), "EngineDao cannot be null");
 			engines = DAOFactory.getEngineDAO().loadAllEnginesForBIObjectType(SpagoBIConstants.DATAMART_TYPE_CODE);
-			if (engines == null || engines.size() == 0) {
+			if (engines == null || engines.isEmpty()) {
 				throw new Exception("There are no engines for documents of type [DATAMART] available");
 			} else {
 				qbeEngine = engines.get(0);
 				if (engines.size() > 1) {
-					LogMF.warn(logger, "There are more than one engine for document of type [DATAMART]. We will use the one whose label is equal to [{0}]",
+					LogMF.warn(LOGGER, "There are more than one engine for document of type [DATAMART]. We will use the one whose label is equal to [{0}]",
 							qbeEngine.getLabel());
 				} else {
-					LogMF.debug(logger, "Using qbe engine with label [{0}]", qbeEngine.getLabel());
+					LogMF.debug(LOGGER, "Using qbe engine with label [{0}]", qbeEngine.getLabel());
 				}
 			}
 		} catch (Throwable t) {
 			throw new Exception("Impossible to load a valid engine for document of type [DATAMART]", t);
 		} finally {
-			logger.debug("OUT");
+			LOGGER.debug("OUT");
 		}
 
 		return qbeEngine;
