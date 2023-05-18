@@ -18,6 +18,8 @@
 
 package it.eng.knowage.resteasy;
 
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.ext.ContextResolver;
 import javax.ws.rs.ext.Provider;
 
@@ -33,6 +35,7 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
  * @author Marco Libanori
  */
 @Provider
+@Produces(MediaType.APPLICATION_JSON)
 public class ObjectMapperContextResolver implements ContextResolver<ObjectMapper> {
 
 	private final ObjectMapper mapper;
@@ -47,4 +50,5 @@ public class ObjectMapperContextResolver implements ContextResolver<ObjectMapper
 	public ObjectMapper getContext(Class<?> type) {
 		return mapper;
 	}
+
 }

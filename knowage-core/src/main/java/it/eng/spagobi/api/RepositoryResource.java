@@ -35,6 +35,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.function.Consumer;
 
+import javax.inject.Inject;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -46,6 +47,9 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 import org.apache.log4j.Logger;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
@@ -75,6 +79,9 @@ import it.eng.spagobi.view.metadata.SbiViewHierarchy;
 public class RepositoryResource extends AbstractSpagoBIResource {
 
 	private static final Logger LOGGER = Logger.getLogger(RepositoryResource.class);
+
+	@Inject
+	private ObjectMapper mapper;
 
 	@GET
 	@Path("/")
@@ -115,12 +122,12 @@ public class RepositoryResource extends AbstractSpagoBIResource {
 
 	@GET
 	@Path("/{id}")
-	public List<AbstractViewFolderItem> getFolderContents(@PathParam("id") String id) {
-		List<AbstractViewFolderItem> ret = new ArrayList<>();
+	public FolderContentsResponse getFolderContents(@PathParam("id") String id) throws JsonProcessingException {
+		FolderContentsResponse ret = new FolderContentsResponse();
 
 		SbiViewHierarchy vh = getFolder(id);
 
-		Consumer<AbstractViewFolderItem> addToRet = ret::add;
+		Consumer<AbstractViewFolderItem> addToRet = e -> ret.getContent().add(e);
 
 		Set<SbiView> v1 = getViewsInFolder(vh);
 		Set<SbiViewForDoc> v2 = getImportedDocsInFolder(vh);
@@ -206,6 +213,14 @@ public class RepositoryResource extends AbstractSpagoBIResource {
 		return toViewFolder(v);
 	}
 
+	@GET
+	@Path("/view/{id}")
+	public ViewOverDocument readView(@PathParam("id") String id) {
+		SbiView v = getView(id);
+
+		return toViewOverDocument(v);
+	}
+
 	@POST
 	@Path("/view")
 	public ViewOverDocument createView(ViewOverDocument e) throws EMFUserError {
@@ -285,9 +300,17 @@ public class RepositoryResource extends AbstractSpagoBIResource {
 				.collect(toSet());
 	}
 
+	@GET
+	@Path("/document/{id}")
+	public ViewOfImportedDoc readImportedDoc(@PathParam("id") String id) {
+		SbiViewForDoc v = getViewForDoc(id);
+
+		return toViewOfImportedDoc(v);
+	}
+
 	@POST
 	@Path("/document")
-	public SbiViewForDoc importDoc(ViewOfImportedDoc e) throws EMFUserError {
+	public ViewOfImportedDoc importDoc(ViewOfImportedDoc e) throws EMFUserError {
 		ISbiViewForDocDAO dao = DAOFactory.getSbiViewForDocDAO();
 		dao.setUserProfile(UserProfileManager.getProfile());
 
@@ -304,27 +327,27 @@ public class RepositoryResource extends AbstractSpagoBIResource {
 
 		dao.create(v);
 
-		return v;
+		return toViewOfImportedDoc(v);
 	}
 
 	@DELETE
 	@Path("/document/{id}")
 	@Consumes(MediaType.WILDCARD)
-	public SbiViewForDoc deleteImportedDoc(@PathParam("id") String id) {
+	public ViewOfImportedDoc deleteImportedDoc(@PathParam("id") String id) {
 		ISbiViewForDocDAO dao = DAOFactory.getSbiViewForDocDAO();
 		dao.setUserProfile(UserProfileManager.getProfile());
 
 		SbiViewForDoc v = getViewForDoc(id);
 		dao.delete(v);
 
-		return v;
+		return toViewOfImportedDoc(v);
 	}
 
 	private ViewOverDocument toViewOverDocument(SbiView e) {
 		ViewOverDocument ret = new ViewOverDocument();
 		SbiCommonInfo commonInfo = e.getCommonInfo();
-		Instant created = Optional.ofNullable(commonInfo.getTimeIn()).map(Date::toInstant).orElse(null);
-		Instant updated = Optional.ofNullable(commonInfo.getTimeUp()).map(Date::toInstant).orElse(null);
+		Instant created = Optional.ofNullable(commonInfo.getTimeIn()).map(this::toZonedDateTime).orElse(null);
+		Instant updated = Optional.ofNullable(commonInfo.getTimeUp()).map(this::toZonedDateTime).orElse(null);
 		SbiViewHierarchy parent = e.getParent();
 		String parentId = parent.getId();
 
@@ -345,14 +368,14 @@ public class RepositoryResource extends AbstractSpagoBIResource {
 	private ViewOfImportedDoc toViewOfImportedDoc(SbiViewForDoc e) {
 		ViewOfImportedDoc ret = new ViewOfImportedDoc();
 		SbiCommonInfo commonInfo = e.getCommonInfo();
-		Instant created = Optional.ofNullable(commonInfo.getTimeIn()).map(Date::toInstant).orElse(null);
-		Instant updated = Optional.ofNullable(commonInfo.getTimeUp()).map(Date::toInstant).orElse(null);
+		Instant created = Optional.ofNullable(commonInfo.getTimeIn()).map(this::toZonedDateTime).orElse(null);
+		Instant updated = Optional.ofNullable(commonInfo.getTimeUp()).map(this::toZonedDateTime).orElse(null);
 		SbiViewHierarchy parent = e.getParent();
 		String parentId = parent.getId();
 		try {
 			BIObject object = getDocument(e.getBiObjId());
 
-			ret.setBiObjectId(object.getBiObjectTypeID());
+			ret.setBiObjectId(object.getId());
 			ret.setId(e.getId());
 			ret.setParentId(parentId);
 			ret.setDescription(object.getDescription());
@@ -503,6 +526,36 @@ public class RepositoryResource extends AbstractSpagoBIResource {
 		}
 
 		return ret;
+	}
+
+	private Instant toZonedDateTime(Date date) {
+		// @formatter:off
+		return Optional.of(date)
+				.map(Date::toInstant)
+				.orElse(null);
+		// @formatter:on
+	}
+
+}
+
+/**
+ * This is a workaround to a problem between JAX-RS and lists.
+ *
+ * The method {@link RepositoryResource#getFolderContents(String)} returned a <code>List<AbstractViewFolderItem></code> but someone
+ * between Resteasy or Jackson didn't use to apply the correct serialization to every object in the list. Using a wrapper like this
+ * seems to solve the problem.
+ *
+ * I was not able to find a solution or documentation about this behavior.
+ */
+class FolderContentsResponse {
+
+	private final List<AbstractViewFolderItem> content = new ArrayList<>();
+
+	/**
+	 * @return the content
+	 */
+	public List<AbstractViewFolderItem> getContent() {
+		return content;
 	}
 
 }

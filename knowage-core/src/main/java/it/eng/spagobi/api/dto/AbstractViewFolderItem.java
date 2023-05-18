@@ -123,7 +123,6 @@ public abstract class AbstractViewFolderItem implements Comparable<AbstractViewF
 	 */
 	public abstract String getType();
 
-
 	/**
 	 * @return the updated
 	 */
@@ -146,6 +145,7 @@ public abstract class AbstractViewFolderItem implements Comparable<AbstractViewF
 	public void setBiObjectId(Integer biObjectId) {
 		this.biObjectId = biObjectId;
 	}
+
 
 	/**
 	 * @param created the created to set
@@ -174,4 +174,5 @@ public abstract class AbstractViewFolderItem implements Comparable<AbstractViewF
 	public void setUpdated(Instant updated) {
 		this.updated = updated;
 	}
+
 }
