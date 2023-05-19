@@ -256,6 +256,8 @@ public class RepositoryResource extends AbstractSpagoBIResource {
 		ISbiViewDAO dao = DAOFactory.getSbiViewDAO();
 		dao.setUserProfile(UserProfileManager.getProfile());
 
+		String parentId = e.getParentId();
+		SbiViewHierarchy parent = getFolder(parentId);
 		SbiView v = getView(id);
 
 		// v.setBiObjId(e.getBiObjectId()) : no change to original document
@@ -263,7 +265,7 @@ public class RepositoryResource extends AbstractSpagoBIResource {
 		v.setDrivers(e.getDrivers());
 		// v.setLabel(???) : no change to label
 		v.setName(e.getName());
-		// v.setParent(???) : no movement between folder
+		v.setParent(parent);
 		v.setSettings(e.getSettings());
 
 		dao.update(v);
@@ -326,6 +328,25 @@ public class RepositoryResource extends AbstractSpagoBIResource {
 		v.setParent(parent);
 
 		dao.create(v);
+
+		return toViewOfImportedDoc(v);
+	}
+
+	@PUT
+	@Path("/document")
+	public ViewOfImportedDoc updateImportedDoc(ViewOfImportedDoc e) {
+		String id = e.getId();
+
+		ISbiViewForDocDAO dao = DAOFactory.getSbiViewForDocDAO();
+		dao.setUserProfile(UserProfileManager.getProfile());
+
+		String parentId = e.getParentId();
+		SbiViewHierarchy parent = getFolder(parentId);
+		SbiViewForDoc v = getViewForDoc(id);
+
+		v.setParent(parent);
+
+		dao.update(v);
 
 		return toViewOfImportedDoc(v);
 	}
