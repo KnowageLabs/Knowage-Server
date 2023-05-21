@@ -199,6 +199,8 @@ public class CssColorParser {
 	 *  - hsla(1,2,3,4)
 	 *  - red
 	 *  - brown
+	 *  - #123
+	 *  - #123abc
 	 * The available matching groups are:
 	 *  - rgbr
 	 *  - rgbg
@@ -215,9 +217,16 @@ public class CssColorParser {
 	 *  - hslal
 	 *  - hslaa
 	 *  - literal
+	 *  - hex
+	 *  - hexsr (short red)
+	 *  - hexsg (short green)
+	 *  - hexsb (short blue)
+	 *  - hexr (red)
+	 *  - hexg (green)
+	 *  - hexb (blue)
 	 * The value to match mustn't contain spaces.
 	 */
-	private static final Pattern CSS_COLOR_PATTERN = Pattern.compile("^(?:rgb\\((?<rgbr>\\d+),(?<rgbg>\\d+),(?<rgbb>\\d+)\\))|(?:hsl\\((?<hslh>\\d+),(?<hsls>\\d+),(?<hsll>\\d+)\\))|(?:rgba\\((?<rgbar>\\d+),(?<rgbag>\\d+),(?<rgbab>\\d+),(?<rgbaa>\\d+)\\))|(?:hsla\\((?<hslah>\\d+),(?<hslas>\\d+),(?<hslal>\\d+),(?<hslaa>\\d+)\\))|(?<literal>aliceblue|antiquewhite|aqua|aqua|aquamarine|azure|beige|bisque|black|black|blanchedalmond|blue|blue|blueviolet|brown|burlywood|cadetblue|chartreuse|chocolate|coral|cornflowerblue|cornsilk|crimson|cyan|darkblue|darkcyan|darkgoldenrod|darkgray|darkgreen|darkgrey|darkkhaki|darkmagenta|darkolivegreen|darkorange|darkorchid|darkred|darksalmon|darkseagreen|darkslateblue|darkslategray|darkslategrey|darkturquoise|darkviolet|deeppink|deepskyblue|dimgray|dimgrey|dodgerblue|firebrick|floralwhite|forestgreen|fuchsia|fuchsia|gainsboro|ghostwhite|gold|goldenrod|gray|gray|green|green|greenyellow|grey|honeydew|hotpink|indianred|indigo|ivory|khaki|lavender|lavenderblush|lawngreen|lemonchiffon|lightblue|lightcoral|lightcyan|lightgoldenrodyellow|lightgray|lightgreen|lightgrey|lightpink|lightsalmon|lightseagreen|lightskyblue|lightslategray|lightslategrey|lightsteelblue|lightyellow|lime|lime|limegreen|linen|magenta|maroon|maroon|mediumaquamarine|mediumblue|mediumorchid|mediumpurple|mediumseagreen|mediumslateblue|mediumspringgreen|mediumturquoise|mediumvioletred|midnightblue|mintcream|mistyrose|moccasin|navajowhite|navy|navy|oldlace|olive|olive|olivedrab|orange|orangered|orchid|palegoldenrod|palegreen|paleturquoise|palevioletred|papayawhip|peachpuff|peru|pink|plum|powderblue|purple|purple|red|red|rosybrown|royalblue|saddlebrown|salmon|sandybrown|seagreen|seashell|sienna|silver|silver|skyblue|slateblue|slategray|slategrey|snow|springgreen|steelblue|tan|teal|teal|thistle|tomato|turquoise|violet|wheat|white|white|whitesmoke|yellow|yellow|yellowgreen)$", Pattern.CASE_INSENSITIVE);
+	private static final Pattern CSS_COLOR_PATTERN = Pattern.compile("^(?:rgb\\((?<rgbr>\\d+),(?<rgbg>\\d+),(?<rgbb>\\d+)\\))|(?:hsl\\((?<hslh>\\d+),(?<hsls>\\d+),(?<hsll>\\d+)\\))|(?:rgba\\((?<rgbar>\\d+),(?<rgbag>\\d+),(?<rgbab>\\d+),(?<rgbaa>\\d+)\\))|(?:hsla\\((?<hslah>\\d+),(?<hslas>\\d+),(?<hslal>\\d+),(?<hslaa>\\d+)\\))|(?<literal>aliceblue|antiquewhite|aqua|aqua|aquamarine|azure|beige|bisque|black|black|blanchedalmond|blue|blue|blueviolet|brown|burlywood|cadetblue|chartreuse|chocolate|coral|cornflowerblue|cornsilk|crimson|cyan|darkblue|darkcyan|darkgoldenrod|darkgray|darkgreen|darkgrey|darkkhaki|darkmagenta|darkolivegreen|darkorange|darkorchid|darkred|darksalmon|darkseagreen|darkslateblue|darkslategray|darkslategrey|darkturquoise|darkviolet|deeppink|deepskyblue|dimgray|dimgrey|dodgerblue|firebrick|floralwhite|forestgreen|fuchsia|fuchsia|gainsboro|ghostwhite|gold|goldenrod|gray|gray|green|green|greenyellow|grey|honeydew|hotpink|indianred|indigo|ivory|khaki|lavender|lavenderblush|lawngreen|lemonchiffon|lightblue|lightcoral|lightcyan|lightgoldenrodyellow|lightgray|lightgreen|lightgrey|lightpink|lightsalmon|lightseagreen|lightskyblue|lightslategray|lightslategrey|lightsteelblue|lightyellow|lime|lime|limegreen|linen|magenta|maroon|maroon|mediumaquamarine|mediumblue|mediumorchid|mediumpurple|mediumseagreen|mediumslateblue|mediumspringgreen|mediumturquoise|mediumvioletred|midnightblue|mintcream|mistyrose|moccasin|navajowhite|navy|navy|oldlace|olive|olive|olivedrab|orange|orangered|orchid|palegoldenrod|palegreen|paleturquoise|palevioletred|papayawhip|peachpuff|peru|pink|plum|powderblue|purple|purple|red|red|rosybrown|royalblue|saddlebrown|salmon|sandybrown|seagreen|seashell|sienna|silver|silver|skyblue|slateblue|slategray|slategrey|snow|springgreen|steelblue|tan|teal|teal|thistle|tomato|turquoise|violet|wheat|white|white|whitesmoke|yellow|yellow|yellowgreen)|(?<hex>#(?:(?<hexsr>[0-9a-fA-F])(?<hexsg>[0-9a-fA-F])(?<hexsb>[0-9a-fA-F]))|(?:(?<hexr>[0-9a-fA-F]{2})(?<hexg>[0-9a-fA-F]{2})(?<hexb>[0-9a-fA-F]{2})))$");
 
 	public static CssColorParser getInstance() {
 		return INSTANCE;
@@ -259,6 +268,24 @@ public class CssColorParser {
 						throw new UnsupportedOperationException("The value " + rgbColor + " is not supported yet");
 					} else if((nonNull(matcher.group("literal")))) {
 						ret = CssColorLiteral.parse(matcher.group("literal")).toColor();
+					} else if((nonNull(matcher.group("hexsr")))) {
+						String hexsr = matcher.group("hexsr");
+						String hexsg = matcher.group("hexsg");
+						String hexsb = matcher.group("hexsb");
+						ret = new Color(
+								Integer.parseInt(hexsr + hexsr, 16),
+								Integer.parseInt(hexsg + hexsg, 16),
+								Integer.parseInt(hexsb + hexsb, 16)
+							);
+					} else if((nonNull(matcher.group("hexr")))) {
+						String hexr = matcher.group("hexr");
+						String hexg = matcher.group("hexg");
+						String hexb = matcher.group("hexb");
+						ret = new Color(
+								Integer.parseInt(hexr, 16),
+								Integer.parseInt(hexg, 16),
+								Integer.parseInt(hexb, 16)
+							);
 					} else {
 						throw new UnsupportedOperationException("The value " + rgbColor + " is not supported yet");
 					}
