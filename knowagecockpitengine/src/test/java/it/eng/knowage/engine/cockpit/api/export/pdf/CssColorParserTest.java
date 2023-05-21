@@ -41,4 +41,26 @@ public class CssColorParserTest {
 		assertEquals(a, b);
 	}
 
+	@Test
+	public void testHex() {
+
+		CssColorParser instance = CssColorParser.getInstance();
+
+		Color a = new Color(1,2,3);
+		Color b = instance.parse("#010203", Color.BLACK);
+
+		assertEquals(a, b);
+	}
+
+	@Test
+	public void testHexShort() {
+
+		CssColorParser instance = CssColorParser.getInstance();
+
+		Color a = new Color(17,34,51);
+		Color b = instance.parse("#123", Color.BLACK);
+
+		assertEquals(a, b);
+	}
+
 }
