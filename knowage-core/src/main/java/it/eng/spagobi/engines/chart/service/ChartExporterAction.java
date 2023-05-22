@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,27 +11,11 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package it.eng.spagobi.engines.chart.service;
-
-import it.eng.spago.base.SourceBean;
-import it.eng.spago.base.SourceBeanAttribute;
-import it.eng.spago.error.EMFErrorSeverity;
-import it.eng.spago.error.EMFUserError;
-import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
-import it.eng.spagobi.analiticalmodel.document.bo.ObjTemplate;
-import it.eng.spagobi.analiticalmodel.document.handlers.ExecutionInstance;
-import it.eng.spagobi.commons.constants.SpagoBIConstants;
-import it.eng.spagobi.commons.dao.DAOFactory;
-import it.eng.spagobi.commons.services.AbstractSpagoBIAction;
-import it.eng.spagobi.container.CoreContextManager;
-import it.eng.spagobi.container.SpagoBISessionContainer;
-import it.eng.spagobi.container.strategy.LightNavigatorContextRetrieverStrategy;
-import it.eng.spagobi.engines.exporters.ChartExporter;
-import it.eng.spagobi.utilities.assertion.Assert;
 
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -45,6 +29,19 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
 
+import it.eng.spago.base.SourceBean;
+import it.eng.spago.base.SourceBeanAttribute;
+import it.eng.spago.error.EMFErrorSeverity;
+import it.eng.spago.error.EMFUserError;
+import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
+import it.eng.spagobi.analiticalmodel.document.bo.ObjTemplate;
+import it.eng.spagobi.analiticalmodel.document.handlers.ExecutionInstance;
+import it.eng.spagobi.commons.constants.SpagoBIConstants;
+import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.commons.services.AbstractSpagoBIAction;
+import it.eng.spagobi.engines.exporters.ChartExporter;
+import it.eng.spagobi.utilities.assertion.Assert;
+
 public class ChartExporterAction extends AbstractSpagoBIAction {
 
 	private static transient Logger logger=Logger.getLogger(ChartExporterAction.class);
@@ -55,17 +52,18 @@ public class ChartExporterAction extends AbstractSpagoBIAction {
 
 	/**
 	 * This action is called by the user who wants to export the result of a Chart in PDF
-	 * 
+	 *
 	 */
 
+	@Override
 	public void doService() {
 		logger.debug("IN");
-		
+
 		File tmpFile=null;
 		boolean isMultichart = false;
 		String orientationType = "";
 		String outputType="";
-		
+
 		//HttpServletRequest httpRequest = getHttpRequest();
 		//HttpSession session=httpRequest.getSession();
 
@@ -81,7 +79,7 @@ public class ChartExporterAction extends AbstractSpagoBIAction {
 			BIObject document=DAOFactory.getBIObjectDAO().loadBIObjectById(id);
 			String docName=document.getName();
 
-			
+
 //			**************get the template*****************
 			logger.debug("getting template");
 
@@ -95,7 +93,7 @@ public class ChartExporterAction extends AbstractSpagoBIAction {
 					logger.error("TEMPLATE DOESN'T EXIST !!!!!!!!!!!!!!!!!!!!!!!!!!!");
 					EMFUserError userError = new EMFUserError(EMFErrorSeverity.ERROR, 2007);
 					userError.setBundle("messages");
-					throw userError; 
+					throw userError;
 				}
 
 				// get bytes of template and transform them into a SourceBean
@@ -108,10 +106,10 @@ public class ChartExporterAction extends AbstractSpagoBIAction {
 				userError.setBundle("messages");
 				throw userError;
 			}
-			
 
-			// get all the data parameters 
-			try{					
+
+			// get all the data parameters
+			try{
 				Map dataParameters = new HashMap();
 				SourceBean dataSB = (SourceBean)content.getAttribute(CONF);
 				List dataAttrsList = dataSB.getContainedSourceBeanAttributes();
@@ -124,11 +122,11 @@ public class ChartExporterAction extends AbstractSpagoBIAction {
 					dataParameters.put(nameParam, valueParam);
 				}
 
-				if(dataParameters.get(MULTICHART)!=null && (((String)dataParameters.get(MULTICHART)).equalsIgnoreCase("true") ))	
+				if(dataParameters.get(MULTICHART)!=null && (((String)dataParameters.get(MULTICHART)).equalsIgnoreCase("true") ))
 					isMultichart=true;
-				
+
 				orientationType="";
-				if(dataParameters.get(ORIENTATION)!=null && !(((String)dataParameters.get(ORIENTATION)).equalsIgnoreCase("") )){	
+				if(dataParameters.get(ORIENTATION)!=null && !(((String)dataParameters.get(ORIENTATION)).equalsIgnoreCase("") )){
 					orientationType=(String)dataParameters.get(ORIENTATION);
 				}
 			}
@@ -136,19 +134,19 @@ public class ChartExporterAction extends AbstractSpagoBIAction {
 				logger.error(e.getCause()+" "+e.getStackTrace());
 				logger.error("many error in reading data source parameters",e);
 			}
-					
-			//Recover uuId				
+
+			//Recover uuId
 			String uuId = this.getAttributeAsString("uuid");
-			if(uuId==null) {	
-				//Recover executionContextId	
+			if(uuId==null) {
+				//Recover executionContextId
 				/*String executionContextId = (serviceRequest.getAttribute("executionContextId"))==null?"":(String)serviceRequest.getAttribute("executionContextId");
 				RequestContainer requestContainer = getRequestContainer();
 				SessionContainer sessionContainer = requestContainer.getSessionContainer();
 
-				CoreContextManager contextManager = new CoreContextManager(new SpagoBISessionContainer(sessionContainer), 
+				CoreContextManager contextManager = new CoreContextManager(new SpagoBISessionContainer(sessionContainer),
 						new LightNavigatorContextRetrieverStrategy(serviceRequest));
 				logger.debug("sessionContainer and permanentContainer retrived");
-				
+
 
 				ExecutionInstance instance = contextManager.getExecutionInstance(executionContextId);
 				*/
@@ -157,10 +155,10 @@ public class ChartExporterAction extends AbstractSpagoBIAction {
 				uuId = executionInstance.getExecutionId();
 			}
 			//Recover outputType		;
-			outputType=this.getAttributeAsString(OUTPUT_TYPE);	
+			outputType=this.getAttributeAsString(OUTPUT_TYPE);
 
 			ChartExporter exporter=new ChartExporter();
-			
+
 			String mimeType = "";
 			if (outputType.equalsIgnoreCase("PDF")){
 				mimeType = "application/pdf";
@@ -170,17 +168,17 @@ public class ChartExporterAction extends AbstractSpagoBIAction {
 			logger.debug("Chart exported succesfully");
 
 			HttpServletResponse response = getHttpResponse();
-			response.setContentType(mimeType);							
+			response.setContentType(mimeType);
 			response.setHeader("Content-Disposition", "filename=\"chart." + outputType + "\";");
 			response.setContentLength((int) tmpFile.length());
 
-			BufferedInputStream in = new BufferedInputStream(new FileInputStream(tmpFile));
-			int b = -1;
-			while ((b = in.read()) != -1) {
-				response.getOutputStream().write(b);
+			try (BufferedInputStream in = new BufferedInputStream(new FileInputStream(tmpFile))) {
+				int b = -1;
+				while ((b = in.read()) != -1) {
+					response.getOutputStream().write(b);
+				}
+				response.getOutputStream().flush();
 			}
-			response.getOutputStream().flush();
-			in.close();
 			logger.debug("OUT");
 
 

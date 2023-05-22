@@ -1333,7 +1333,7 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 		filePath = filePath + "/" + fileName;
 		File file = new File(filePath);
 		byte[] bFile = null;
-		try(FileInputStream fis = new FileInputStream(file)) {
+		try (FileInputStream fis = new FileInputStream(file)) {
 			bFile = new byte[(int) file.length()];
 
 			// convert file into array of bytes
@@ -1542,7 +1542,7 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 	private byte[] getFileByteArray(String filePath) throws IOException {
 		File file = new File(filePath);
 		byte[] bFile = null;
-		try(FileInputStream fis = new FileInputStream(file)) {
+		try (FileInputStream fis = new FileInputStream(file)) {
 			bFile = new byte[(int) file.length()];
 
 			// convert file into array of bytes

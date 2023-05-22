@@ -189,33 +189,33 @@ public class ExecutionProxy {
 					File file = sbcie.executeChartCode(reqContainer, biObject, null, profile);
 
 					// read input from file
-					InputStream is = new FileInputStream(file);
+					try (InputStream is = new FileInputStream(file)) {
 
-					// Get the size of the file
-					long length = file.length();
+						// Get the size of the file
+						long length = file.length();
 
-					if (length > Integer.MAX_VALUE) {
-						logger.error("file too large");
-						return null;
+						if (length > Integer.MAX_VALUE) {
+							logger.error("file too large");
+							return null;
+						}
+
+						// Create the byte array to hold the data
+						byte[] bytes = new byte[(int) length];
+
+						// Read in the bytes
+						int offset = 0;
+						int numRead = 0;
+						while (offset < bytes.length && (numRead = is.read(bytes, offset, bytes.length - offset)) >= 0) {
+							offset += numRead;
+						}
+
+						// Ensure all the bytes have been read in
+						if (offset < bytes.length) {
+							logger.warn("Could not read all the file");
+						}
+
+						return bytes;
 					}
-
-					// Create the byte array to hold the data
-					byte[] bytes = new byte[(int) length];
-
-					// Read in the bytes
-					int offset = 0;
-					int numRead = 0;
-					while (offset < bytes.length && (numRead = is.read(bytes, offset, bytes.length - offset)) >= 0) {
-						offset += numRead;
-					}
-
-					// Ensure all the bytes have been read in
-					if (offset < bytes.length) {
-						logger.warn("Could not read all the file");
-					}
-					// Close the input stream and return bytes
-					is.close();
-					return bytes;
 				} // end chart case
 				else {
 					return response;

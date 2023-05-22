@@ -180,16 +180,17 @@ public class DocumentCompositionExporter {
 				}
 			}
 
-			FileOutputStream fileOutputStream = new FileOutputStream(tmpFile);
-			PdfCreator pdfCreator = new PdfCreator();
-			LOGGER.debug("Call PDF Creation");
-			pdfCreator.setVideoHeight(dcConf.getVideoHeight());
-			pdfCreator.setVideoWidth(dcConf.getVideoWidth());
+			try (FileOutputStream fileOutputStream = new FileOutputStream(tmpFile)) {
+				PdfCreator pdfCreator = new PdfCreator();
+				LOGGER.debug("Call PDF Creation");
+				pdfCreator.setVideoHeight(dcConf.getVideoHeight());
+				pdfCreator.setVideoWidth(dcConf.getVideoWidth());
 
-			FileOutputStream pdfFile = pdfCreator.createPdfFile(fileOutputStream, documentsMap, defaultStyle);
+				FileOutputStream pdfFile = pdfCreator.createPdfFile(fileOutputStream, documentsMap, defaultStyle);
 
-			pdfFile.flush();
-			pdfFile.close();
+				pdfFile.flush();
+				pdfFile.close();
+			}
 
 			LOGGER.debug("OUT");
 

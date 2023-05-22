@@ -29,27 +29,27 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 public class AzureSignInConfig {
 
-	static private Logger logger = Logger.getLogger(AzureSignInConfig.class);
+	private static Logger logger = Logger.getLogger(AzureSignInConfig.class);
 
-	static private final String AZURE_AUTHENTICATION_BASE_URL = "https://login.microsoftonline.com/";
+	private static final String AZURE_AUTHENTICATION_BASE_URL = "https://login.microsoftonline.com/";
 
-	static protected final String AZURE_AUTHENTICATION_CONFIG = "azure.signin.config";
+	protected static final String AZURE_AUTHENTICATION_CONFIG = "azure.signin.config";
 
-	static protected final String AZURE_CLIENT_ID = "client_id";
+	protected static final String AZURE_CLIENT_ID = "client_id";
 
-	static protected final String AZURE_TENANT_ID = "tenant_id";
+	protected static final String AZURE_TENANT_ID = "tenant_id";
 
-	static protected final String IS_ENABLED = "enabled";
+	protected static final String IS_ENABLED = "enabled";
 
-	static protected Properties properties = new Properties();
+	protected static Properties properties = new Properties();
 
 	static {
 		try {
 			String filename = System.getProperty(AZURE_AUTHENTICATION_CONFIG);
 			if (filename != null) {
 				logger.info("Retrieved " + AZURE_AUTHENTICATION_CONFIG + " system property. Azure SignIn configuration file is: [" + filename + "]");
-				try {
-					properties.load(new FileInputStream(filename));
+				try (FileInputStream fis = new FileInputStream(filename)) {
+					properties.load(fis);
 				} catch (FileNotFoundException e) {
 					logger.error("Could not find file with Azure Sign-In config: file [" + filename + "] not found");
 					throw new SpagoBIRuntimeException("Could not find file with Azure Sign-In config: file [" + filename + "] not found", e);

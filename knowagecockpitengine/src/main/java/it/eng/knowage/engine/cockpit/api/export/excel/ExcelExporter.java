@@ -151,15 +151,13 @@ public class ExcelExporter extends AbstractFormatExporter {
 	}
 
 	private byte[] getByteArrayFromFile(Path excelFile, Path outputDir) {
-		try {
-			FileInputStream fis = new FileInputStream(excelFile.toString());
-			ByteArrayOutputStream bos = new ByteArrayOutputStream();
+		try (FileInputStream fis = new FileInputStream(excelFile.toString());
+				ByteArrayOutputStream bos = new ByteArrayOutputStream()) {
 			byte[] buf = new byte[1024];
 			for (int readNum; (readNum = fis.read(buf)) != -1;) {
 				// Writes len bytes from the specified byte array starting at offset off to this byte array output stream
 				bos.write(buf, 0, readNum); // no doubt here is 0
 			}
-			fis.close();
 			return bos.toByteArray();
 		} catch (Exception e) {
 			logger.error("Cannot serialize excel file", e);

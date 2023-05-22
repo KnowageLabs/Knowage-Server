@@ -150,7 +150,7 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 	private static final String PROPERTY_DATA = "data";
 	private static final String PROPERTY_METADATA = "metadata";
 
-	public static String MODE_SIMPLE = "simple";
+	public static final String MODE_SIMPLE = "simple";
 	// public static String MODE_COMPLETE = "complete";
 	// public static String START = "start";
 	// public static String LIMIT = "limit";
@@ -583,8 +583,8 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 				parameterAsMap.put("type", objParameter.getParType());
 				parameterAsMap.put("selectionType", objParameter.getSelectionType());
 				parameterAsMap.put("valueSelection", parameterUse.getValueSelection());
-				parameterAsMap.put("visible", ((objParameter.isVisible())));
-				parameterAsMap.put("mandatory", ((objParameter.isMandatory())));
+				parameterAsMap.put("visible", objParameter.isVisible());
+				parameterAsMap.put("mandatory", objParameter.isMandatory());
 				parameterAsMap.put("multivalue", objParameter.isMultivalue());
 				parameterAsMap.put("driverLabel", objParameter.getPar().getLabel());
 				parameterAsMap.put("driverUseLabel", objParameter.getAnalyticalDriverExecModality().getLabel());
@@ -1220,6 +1220,9 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 		return getParameterValues(req);
 	}
 
+	/**
+	 * @deprecated Replaced by {@link #getParameterValuesV2(HttpServletRequest)}
+	 */
 	@POST
 	@Path("/parametervalues")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
@@ -1641,18 +1644,18 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 	private static void addToZipFile(String filePath, String fileName, ZipOutputStream zos) throws FileNotFoundException, IOException {
 
 		File file = new File(filePath + "/" + fileName);
-		FileInputStream fis = new FileInputStream(file);
-		ZipEntry zipEntry = new ZipEntry(fileName);
-		zos.putNextEntry(zipEntry);
+		try (FileInputStream fis = new FileInputStream(file)) {
+			ZipEntry zipEntry = new ZipEntry(fileName);
+			zos.putNextEntry(zipEntry);
 
-		byte[] bytes = new byte[1024];
-		int length;
-		while ((length = fis.read(bytes)) >= 0) {
-			zos.write(bytes, 0, length);
+			byte[] bytes = new byte[1024];
+			int length;
+			while ((length = fis.read(bytes)) >= 0) {
+				zos.write(bytes, 0, length);
+			}
+
+			zos.closeEntry();
 		}
-
-		zos.closeEntry();
-		fis.close();
 	}
 
 	private static void deleteDirectoryContent(File path) {
@@ -1726,8 +1729,8 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 			parameterAsMap.put("valueSelection", parameterUse.getValueSelection());
 			parameterAsMap.put("selectedLayer", objParameter.getSelectedLayer());
 			parameterAsMap.put("selectedLayerProp", objParameter.getSelectedLayerProp());
-			parameterAsMap.put("visible", ((objParameter.isVisible())));
-			parameterAsMap.put("mandatory", ((objParameter.isMandatory())));
+			parameterAsMap.put("visible", objParameter.isVisible());
+			parameterAsMap.put("mandatory", objParameter.isMandatory());
 			parameterAsMap.put("multivalue", objParameter.isMultivalue());
 			parameterAsMap.put("driverLabel", objParameter.getPar().getLabel());
 			parameterAsMap.put("driverUseLabel", objParameter.getAnalyticalDriverExecModality().getLabel());
@@ -1951,8 +1954,8 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 		ArrayList<HashMap<String, Object>> parametersArrList = new ArrayList<>();
 		IMetaModelsDAO dao = DAOFactory.getMetaModelsDAO();
 		IParameterUseDAO parameterUseDAO = DAOFactory.getParameterUseDAO();
-		List<BusinessModelDriverRuntime> parameters = new ArrayList<>();
-		BusinessModelOpenParameters BMOP = new BusinessModelOpenParameters();
+		List<BusinessModelDriverRuntime> parameters = null;
+		BusinessModelOpenParameters bmop = new BusinessModelOpenParameters();
 		String role;
 		try {
 			role = getUserProfile().getRoles().contains("admin") ? "admin" : (String) getUserProfile().getRoles().iterator().next();
@@ -1966,7 +1969,7 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 		}
 		BusinessModelRuntime dum = new BusinessModelRuntime(this.getUserProfile(), null);
 		parameters = BusinessModelOpenUtils.getParameters(businessModel, role, request.getLocale(), null, true, dum);
-		parametersArrList = transformRuntimeDrivers(parameters, parameterUseDAO, role, businessModel, BMOP);
+		parametersArrList = transformRuntimeDrivers(parameters, parameterUseDAO, role, businessModel, bmop);
 
 		return parametersArrList;
 	}
