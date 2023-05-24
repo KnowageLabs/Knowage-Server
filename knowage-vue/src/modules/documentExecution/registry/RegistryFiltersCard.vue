@@ -59,7 +59,7 @@ export default defineComponent({
     },
     methods: {
         loadFilters() {
-            this.filters = [...(this.propFilters as any[])]
+            this.filters = this.propFilters ? this.propFilters.filter((filter: any) => filter.visible) : []
         },
         setFilterValue(value: string, index: number) {
             this.filters[index].filterValue = value
