@@ -244,6 +244,8 @@ public class PdfExporter extends AbstractFormatExporter {
 						valueStr = summaryRowLabel + " " + valueStr;
 					}
 
+					valueStr = workaroundToRemoveCommonProblematicChars(valueStr);
+
 					Cell<PDPage> cell = row.createCell(columnPercentWidths[c], valueStr, HorizontalAlignment.get("center"), VerticalAlignment.get("top"));
 					// first of all set alternate rows color
 					if (settings != null && settings.has("alternateRows")) {
@@ -578,4 +580,22 @@ public class PdfExporter extends AbstractFormatExporter {
 		return cockpitSelections;
 	}
 
+	/**
+	 * Replace common problematic characters for Apache PDFBox, used by Boxable.
+	 *
+	 * The characters below aren't available in common font like Times New Roman, Helvetica, etc... So
+	 * we replace them with spaces.
+	 *
+	 * @since Ticket#2023051987000018
+	 */
+	private String workaroundToRemoveCommonProblematicChars(String valueStr) {
+		valueStr = valueStr.replace('\u00A0',' ');
+		valueStr = valueStr.replace('\u2007',' ');
+		valueStr = valueStr.replace('\u202F',' ');
+		valueStr = valueStr.replace('\n',' ');
+		valueStr = valueStr.replace('\r',' ');
+		return valueStr;
+	}
+
 }
+
