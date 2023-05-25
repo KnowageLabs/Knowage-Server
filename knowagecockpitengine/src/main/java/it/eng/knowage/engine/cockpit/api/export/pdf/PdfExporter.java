@@ -166,7 +166,7 @@ public class PdfExporter extends AbstractFormatExporter {
 				addDataToTable(table, settings, columnsOrdered, pdfHiddenColumns, columnDateFormats, columnStyles, rows);
 
 				offset += fetchSize;
-			} while(offset < totalNumberOfRows);
+			} while (offset < totalNumberOfRows);
 
 			table.draw();
 
@@ -175,7 +175,8 @@ public class PdfExporter extends AbstractFormatExporter {
 		}
 	}
 
-	private void addDataToTable(BaseTable table, JSONObject settings, JSONArray columnsOrdered, List<Integer> pdfHiddenColumns, String[] columnDateFormats, JSONObject[] columnStyles, JSONArray rows) throws JSONException {
+	private void addDataToTable(BaseTable table, JSONObject settings, JSONArray columnsOrdered, List<Integer> pdfHiddenColumns, String[] columnDateFormats,
+			JSONObject[] columnStyles, JSONArray rows) throws JSONException {
 		// Check if summary row is enabled
 		boolean summaryRowEnabled = false;
 		String summaryRowLabel = null;
@@ -271,7 +272,8 @@ public class PdfExporter extends AbstractFormatExporter {
 		}
 	}
 
-	private void addHeaderToTable(BaseTable table, JSONObject style, JSONObject widgetContent, JSONArray columnsOrdered, List<Integer> pdfHiddenColumns) throws JSONException {
+	private void addHeaderToTable(BaseTable table, JSONObject style, JSONObject widgetContent, JSONArray columnsOrdered, List<Integer> pdfHiddenColumns)
+			throws JSONException {
 		HashMap<String, String> arrayHeader = new HashMap<String, String>();
 		for (int i = 0; i < widgetContent.getJSONArray("columnSelectedOfDataset").length(); i++) {
 			JSONObject column = widgetContent.getJSONArray("columnSelectedOfDataset").getJSONObject(i);
@@ -297,8 +299,7 @@ public class PdfExporter extends AbstractFormatExporter {
 				columnName = arrayHeader.get(columnName);
 			}
 
-			Cell<PDPage> headerCell = headerRow.createCell(columnPercentWidths[i], columnName, HorizontalAlignment.get("center"),
-					VerticalAlignment.get("top"));
+			Cell<PDPage> headerCell = headerRow.createCell(columnPercentWidths[i], columnName, HorizontalAlignment.get("center"), VerticalAlignment.get("top"));
 			if (style != null && style.has("th") && style.getJSONObject("th").optBoolean("enabled")) {
 				JSONObject headerStyle = style.getJSONObject("th");
 				headerCell.setFont(PDType1Font.HELVETICA_BOLD);
