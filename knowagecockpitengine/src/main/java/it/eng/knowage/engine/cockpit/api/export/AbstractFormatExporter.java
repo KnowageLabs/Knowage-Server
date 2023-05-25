@@ -27,8 +27,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.log4j.Logger;
@@ -43,6 +41,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import it.eng.knowage.engine.cockpit.api.export.pdf.CssColorParser;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.i18n.dao.I18NMessagesDAO;
@@ -52,19 +51,24 @@ import it.eng.spagobi.tools.dataset.bo.VersionedDataSet;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 public abstract class AbstractFormatExporter {
-	static private Logger logger = Logger.getLogger(AbstractFormatExporter.class);
+	private static final Logger LOGGER = Logger.getLogger(AbstractFormatExporter.class);
+
+	protected static final String DATE_FORMAT = "dd/MM/yyyy";
+	protected static final CssColorParser CSS_COLOR_PARSER = CssColorParser.getInstance();
+
+	public static final String UNIQUE_ALIAS_PLACEHOLDER = "_$_";
+	public static final String TIMESTAMP_FORMAT = "dd/MM/yyyy HH:mm:ss.SSS";
+
 	protected Locale locale;
 	protected final String userUniqueIdentifier;
 	protected final JSONObject body;
-	public static final String UNIQUE_ALIAS_PLACEHOLDER = "_$_";
-	protected static final String DATE_FORMAT = "dd/MM/yyyy";
-	public static final String TIMESTAMP_FORMAT = "dd/MM/yyyy HH:mm:ss.SSS";
 	// TODO : Do we really need a "state" instance here instead of a local variable?
 	protected List<Integer> hiddenColumns;
 	protected Map<String, String> i18nMessages;
-	protected Map<String, CellStyle> format2CellStyle = new HashMap<String, CellStyle>();
+	protected Map<String, CellStyle> format2CellStyle = new HashMap<>();
 
-	public AbstractFormatExporter(String userUniqueIdentifier, JSONObject body) {
+
+	protected AbstractFormatExporter(String userUniqueIdentifier, JSONObject body) {
 		this.userUniqueIdentifier = userUniqueIdentifier;
 		this.body = body;
 		locale = getLocaleFromBody(body);
@@ -74,17 +78,16 @@ public abstract class AbstractFormatExporter {
 		try {
 			String language = body.getString(SpagoBIConstants.SBI_LANGUAGE);
 			String country = body.getString(SpagoBIConstants.SBI_COUNTRY);
-			Locale toReturn = new Locale(language, country);
-			return toReturn;
+			return new Locale(language, country);
 		} catch (Exception e) {
-			logger.warn("Cannot get locale information from input parameters body", e);
+			LOGGER.warn("Cannot get locale information from input parameters body", e);
 			return Locale.ENGLISH;
 		}
 
 	}
 
 	protected HashMap<String, String> getMapFromGroupsArray(JSONArray groupsArray, JSONArray aggr) {
-		HashMap<String, String> returnMap = new HashMap<String, String>();
+		HashMap<String, String> returnMap = new HashMap<>();
 		try {
 			if (aggr != null && groupsArray != null) {
 
@@ -127,14 +130,14 @@ public abstract class AbstractFormatExporter {
 				}
 			}
 		} catch (Exception e) {
-			logger.error("Couldn't get widget " + widgetId + " type, it will be exported as a normal widget.");
+			LOGGER.error("Couldn't get widget " + widgetId + " type, it will be exported as a normal widget.");
 		}
-		logger.error("Couldn't get widget " + widgetId + " type, it will be exported as a normal widget.");
+		LOGGER.error("Couldn't get widget " + widgetId + " type, it will be exported as a normal widget.");
 		return "";
 	}
 
 	protected List<Integer> getHiddenColumnsList(JSONArray columns) {
-		List<Integer> hiddenColumns = new ArrayList<Integer>();
+		List<Integer> hiddenColumns = new ArrayList<>();
 		try {
 			for (int i = 0; i < columns.length(); i++) {
 				JSONObject column = columns.getJSONObject(i);
@@ -161,8 +164,8 @@ public abstract class AbstractFormatExporter {
 			}
 			return hiddenColumns;
 		} catch (Exception e) {
-			logger.error("Error while getting hidden columns list", e);
-			return new ArrayList<Integer>();
+			LOGGER.error("Error while getting hidden columns list", e);
+			return new ArrayList<>();
 		}
 	}
 
@@ -209,7 +212,7 @@ public abstract class AbstractFormatExporter {
 			}
 			return false;
 		} catch (Exception e) {
-			logger.error("Error while evaluating if column must be hidden according to variable.", e);
+			LOGGER.error("Error while evaluating if column must be hidden according to variable.", e);
 			return false;
 		}
 	}
@@ -244,7 +247,7 @@ public abstract class AbstractFormatExporter {
 			}
 			return columnsOrdered;
 		} catch (Exception e) {
-			logger.error("Error retrieving ordered columns");
+			LOGGER.error("Error retrieving ordered columns");
 			return new JSONArray();
 		}
 	}
@@ -262,7 +265,7 @@ public abstract class AbstractFormatExporter {
 			} else
 				return column.getString("aliasToShow");
 		} catch (Exception e) {
-			logger.error("Error retrieving table column header values.", e);
+			LOGGER.error("Error retrieving table column header values.", e);
 			return "";
 		}
 	}
@@ -274,7 +277,7 @@ public abstract class AbstractFormatExporter {
 			else
 				return body.getJSONArray("COCKPIT_VARIABLES").getJSONObject(0);
 		} catch (JSONException e) {
-			logger.error("Cannot retrieve cockpit variables", e);
+			LOGGER.error("Cannot retrieve cockpit variables", e);
 			return new JSONObject();
 		}
 	}
@@ -301,7 +304,7 @@ public abstract class AbstractFormatExporter {
 	}
 
 	public JSONObject getDataStoreForWidget(JSONObject template, JSONObject widget, int offset, int fetchSize) {
-		Map<String, Object> map = new java.util.HashMap<String, Object>();
+		Map<String, Object> map = new java.util.HashMap<>();
 		JSONObject datastore = null;
 		try {
 			JSONObject configuration = template.getJSONObject("configuration");
@@ -342,7 +345,7 @@ public abstract class AbstractFormatExporter {
 			return datastore;
 		} catch (Exception e) {
 			String message = "Unable to get data";
-			logger.error(message, e);
+			LOGGER.error(message, e);
 			throw new SpagoBIRuntimeException(message);
 		}
 	}
@@ -353,8 +356,8 @@ public abstract class AbstractFormatExporter {
 			try {
 				i18nMessages = messageDao.getAllI18NMessages(locale);
 			} catch (Exception e) {
-				logger.error("Error while getting i18n messages", e);
-				i18nMessages = new HashMap<String, String>();
+				LOGGER.error("Error while getting i18n messages", e);
+				i18nMessages = new HashMap<>();
 			}
 		}
 		return i18nMessages.getOrDefault(columnName, columnName);
@@ -385,7 +388,7 @@ public abstract class AbstractFormatExporter {
 			}
 			return toReturn;
 		} catch (Exception e) {
-			logger.error("Error while retrieving table columns styles.", e);
+			LOGGER.error("Error while retrieving table columns styles.", e);
 			return new JSONObject[columnsOrdered.length() + 10];
 		}
 	}
@@ -626,7 +629,7 @@ public abstract class AbstractFormatExporter {
 	}
 
 	protected void manipulateDimensions(JSONArray dimensions) throws JSONException {
-		Set<String> dimensionsAliases = new HashSet<String>();
+		Set<String> dimensionsAliases = new HashSet<>();
 		for (int i = 0; i < dimensions.length(); i++) {
 			JSONObject d = dimensions.getJSONObject(i);
 			String alias = d.getString("alias");
@@ -647,7 +650,7 @@ public abstract class AbstractFormatExporter {
 				}
 			}
 		} catch (JSONException e) {
-			logger.error("Can not filter Columns Array");
+			LOGGER.error("Can not filter Columns Array");
 		}
 		return columns;
 	}
@@ -776,7 +779,7 @@ public abstract class AbstractFormatExporter {
 
 			return toReturn;
 		} catch (Exception e) {
-			logger.error("Error while building column {" + colName + "} CellStyle. Default style will be used.", e);
+			LOGGER.error("Error while building column {" + colName + "} CellStyle. Default style will be used.", e);
 			return toReturn;
 		}
 	}
@@ -894,7 +897,7 @@ public abstract class AbstractFormatExporter {
 
 			return toReturn;
 		} catch (Exception e) {
-			logger.error("Error while building column {" + colName + "} CellStyle. Default style will be used.", e);
+			LOGGER.error("Error while building column {" + colName + "} CellStyle. Default style will be used.", e);
 			return toReturn;
 		}
 	}
@@ -929,7 +932,7 @@ public abstract class AbstractFormatExporter {
 						break;
 					}
 					if (rowValueOBJ instanceof Integer) {
-						rowValue = new Double((Integer) rowValueOBJ);
+						rowValue = ((Integer) rowValueOBJ).doubleValue();
 					} else
 						rowValue = (Double) rowValueOBJ;
 
@@ -1246,7 +1249,7 @@ public abstract class AbstractFormatExporter {
 
 			return toReturn;
 		} catch (Exception e) {
-			logger.error("Error while building column {" + colName + "} CellStyle. Default style will be used.", e);
+			LOGGER.error("Error while building column {" + colName + "} CellStyle. Default style will be used.", e);
 			return toReturn;
 		}
 	}
@@ -1264,7 +1267,7 @@ public abstract class AbstractFormatExporter {
 
 			return toReturn;
 		} catch (Exception e) {
-			logger.error("Error while building column {" + colName + "} CellStyle. Default style will be used.", e);
+			LOGGER.error("Error while building column {" + colName + "} CellStyle. Default style will be used.", e);
 			return toReturn;
 		}
 	}
@@ -1280,30 +1283,20 @@ public abstract class AbstractFormatExporter {
 
 			return toReturn;
 		} catch (Exception e) {
-			logger.error("Error while building column {" + colName + "} CellStyle. Default style will be used.", e);
+			LOGGER.error("Error while building column {" + colName + "} CellStyle. Default style will be used.", e);
 			return toReturn;
 		}
 	}
 
 	public static Color parseColor(String input) {
-		Pattern c = Pattern.compile("rgb *\\( *([0-9]+), *([0-9]+), *([0-9]+) *\\)");
-		Matcher m = c.matcher(input);
-		Color color = null;
-		if (m.matches()) {
-			color = new Color(Integer.valueOf(m.group(1)), // r
-					Integer.valueOf(m.group(2)), // g
-					Integer.valueOf(m.group(3))); // b
-		} else {
-			color = Color.decode(input);
-		}
-		return color;
+		return CSS_COLOR_PARSER.parse(input, Color.BLACK);
 	}
 
 	private String getCellType(JSONObject column, String colName, JSONObject colStyle) {
 		try {
 			return column.getString("type");
 		} catch (Exception e) {
-			logger.error("Error while retrieving column {" + colName + "} type. It will be treated as string.", e);
+			LOGGER.error("Error while retrieving column {" + colName + "} type. It will be treated as string.", e);
 			return "string";
 		}
 	}
@@ -1332,13 +1325,13 @@ public abstract class AbstractFormatExporter {
 	}
 
 	protected String getNumberFormatByPrecision(int precision, String initialFormat) {
-		String format = initialFormat;
+		StringBuilder format = new StringBuilder(initialFormat);
 		if (precision > 0) {
-			format += ".";
+			format.append(".");
 			for (int j = 0; j < precision; j++) {
-				format += "0";
+				format.append("0");
 			}
 		}
-		return format;
+		return format.toString();
 	}
 }

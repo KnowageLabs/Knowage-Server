@@ -64,7 +64,6 @@ public class PdfExporter extends AbstractFormatExporter {
 
 	private float totalColumnsWidth = 0;
 	private float[] columnPercentWidths;
-	private CssColorParser cssColorParser = CssColorParser.getInstance();
 
 	public PdfExporter(String userUniqueIdentifier, JSONObject body) {
 		super(userUniqueIdentifier, body);
@@ -272,7 +271,7 @@ public class PdfExporter extends AbstractFormatExporter {
 	}
 
 	private void addHeaderToTable(BaseTable table, JSONObject style, JSONObject widgetContent, JSONArray columnsOrdered, List<Integer> pdfHiddenColumns) throws JSONException {
-		HashMap<String, String> arrayHeader = new HashMap<String, String>();
+		HashMap<String, String> arrayHeader = new HashMap<>();
 		for (int i = 0; i < widgetContent.getJSONArray("columnSelectedOfDataset").length(); i++) {
 			JSONObject column = widgetContent.getJSONArray("columnSelectedOfDataset").getJSONObject(i);
 			String key;
@@ -442,7 +441,7 @@ public class PdfExporter extends AbstractFormatExporter {
 			return pdfHiddenColumns;
 		} catch (Exception e) {
 			LOGGER.error("Error while getting PDF hidden columns list");
-			return new ArrayList<Integer>();
+			return new ArrayList<>();
 		}
 	}
 
@@ -469,8 +468,7 @@ public class PdfExporter extends AbstractFormatExporter {
 	private Color getColumnBackgroundColor(JSONObject[] columnStyles, int c) {
 		try {
 			String rgbColor = columnStyles[c].optString("background-color");
-			Color color = getColorFromString(rgbColor, null);
-			return color;
+			return getColorFromString(rgbColor, null);
 		} catch (Exception e) {
 			return null;
 		}
@@ -479,8 +477,7 @@ public class PdfExporter extends AbstractFormatExporter {
 	private Color getColumnTextColor(JSONObject[] columnStyles, int c) {
 		try {
 			String rgbColor = columnStyles[c].optString("color");
-			Color color = getColorFromString(rgbColor, null);
-			return color;
+			return getColorFromString(rgbColor, null);
 		} catch (Exception e) {
 			return null;
 		}
@@ -498,7 +495,7 @@ public class PdfExporter extends AbstractFormatExporter {
 
 	private Color getColorFromString(String rgbColor, Color defaultColor) {
 		try {
-			return cssColorParser.parse(rgbColor, defaultColor);
+			return CSS_COLOR_PARSER.parse(rgbColor, defaultColor);
 		} catch (Exception e) {
 			LOGGER.error("Cannot create color from string {" + rgbColor + "}. Default color {" + defaultColor + "} will be used", e);
 			return defaultColor;
@@ -554,7 +551,6 @@ public class PdfExporter extends AbstractFormatExporter {
 			float yStartNewPage = page.getMediaBox().getHeight() - (2 * margin);
 			float bottomMargin = 20;
 			float tableWidth = page.getMediaBox().getWidth() - (2 * margin);
-//			float tableWidth = totalColumnsWidth;
 			// y position is your coordinate of top left corner of the table
 			Assert.assertTrue(tableWidth > 0, "Page dimension is too small!");
 			float yPosition = 550;

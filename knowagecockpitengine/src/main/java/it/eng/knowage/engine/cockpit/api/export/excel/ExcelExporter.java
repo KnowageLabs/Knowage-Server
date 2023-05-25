@@ -59,9 +59,7 @@ import it.eng.knowage.engine.cockpit.api.export.AbstractFormatExporter;
 import it.eng.knowage.engine.cockpit.api.export.ExporterClient;
 import it.eng.knowage.engine.cockpit.api.export.excel.exporters.IWidgetExporter;
 import it.eng.knowage.engine.cockpit.api.export.excel.exporters.WidgetExporterFactory;
-import it.eng.qbe.serializer.SerializationException;
 import it.eng.spago.error.EMFAbstractError;
-import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.analiticalmodel.document.bo.ObjTemplate;
 import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.commons.dao.DAOFactory;
@@ -75,18 +73,17 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 public class ExcelExporter extends AbstractFormatExporter {
 
-	static private Logger logger = Logger.getLogger(ExcelExporter.class);
+	private static final Logger LOGGER = Logger.getLogger(ExcelExporter.class);
+	private static final String[] WIDGETS_TO_IGNORE = { "image", "text", "selector", "selection", "html" };
+	private static final String SCRIPT_NAME = "cockpit-export-xls.js";
+	private static final String CONFIG_NAME_FOR_EXPORT_SCRIPT_PATH = "internal.nodejs.chromium.export.path";
+	private static final int SHEET_NAME_MAX_LEN = 31;
 
 	public static final String UNIQUE_ALIAS_PLACEHOLDER = "_$_";
 
 	private final boolean isSingleWidgetExport;
 	private int uniqueId = 0;
 	private String requestURL = "";
-
-	private static final String[] WIDGETS_TO_IGNORE = { "image", "text", "selector", "selection", "html" };
-	private static final String SCRIPT_NAME = "cockpit-export-xls.js";
-	private static final String CONFIG_NAME_FOR_EXPORT_SCRIPT_PATH = "internal.nodejs.chromium.export.path";
-	private static final int SHEET_NAME_MAX_LEN = 31;
 
 	// used only for scheduled export
 	public ExcelExporter(String outputType, String userUniqueIdentifier, Map<String, String[]> parameterMap, String requestURL) {
@@ -106,7 +103,7 @@ public class ExcelExporter extends AbstractFormatExporter {
 
 	// used only for scheduled exports
 	// leverages on an external script that uses chromium to open the cockpit and click on the export button
-	public byte[] getBinaryData(String documentLabel) throws IOException, InterruptedException, EMFUserError {
+	public byte[] getBinaryData(String documentLabel) throws IOException, InterruptedException {
 		try {
 			final Path outputDir = Files.createTempDirectory("knowage-xls-exporter-");
 
@@ -120,7 +117,7 @@ public class ExcelExporter extends AbstractFormatExporter {
 				String msg = String.format("Cannot find export script at \"%s\": did you set the correct value for %s configuration?", exportScriptFullPath,
 						CONFIG_NAME_FOR_EXPORT_SCRIPT_PATH);
 				IllegalStateException ex = new IllegalStateException(msg);
-				logger.error(msg, ex);
+				LOGGER.error(msg, ex);
 				throw ex;
 			}
 
@@ -130,22 +127,22 @@ public class ExcelExporter extends AbstractFormatExporter {
 
 			setWorkingDirectory(cockpitExportScriptPath, processBuilder);
 
-			logger.info("Node complete command line: " + processBuilder.command());
+			LOGGER.info("Node complete command line: " + processBuilder.command());
 
-			logger.info("Starting export script");
+			LOGGER.info("Starting export script");
 			Process exec = processBuilder.start();
 
 			logOutputToCoreLog(exec);
 
-			logger.info("Waiting...");
+			LOGGER.info("Waiting...");
 			exec.waitFor();
-			logger.warn("Exit value: " + exec.exitValue());
+			LOGGER.warn("Exit value: " + exec.exitValue());
 
 			// the script creates the resulting xls and saves it to outputFile
 			Path outputFile = outputDir.resolve(documentLabel + ".xlsx");
 			return getByteArrayFromFile(outputFile, outputDir);
 		} catch (Exception e) {
-			logger.error("Error during scheduled export execution", e);
+			LOGGER.error("Error during scheduled export execution", e);
 			throw e;
 		}
 	}
@@ -160,7 +157,7 @@ public class ExcelExporter extends AbstractFormatExporter {
 			}
 			return bos.toByteArray();
 		} catch (Exception e) {
-			logger.error("Cannot serialize excel file", e);
+			LOGGER.error("Cannot serialize excel file", e);
 			throw new SpagoBIRuntimeException("Cannot serialize excel file", e);
 		} finally {
 			try {
@@ -168,12 +165,12 @@ public class ExcelExporter extends AbstractFormatExporter {
 					Files.delete(excelFile);
 				Files.delete(outputDir);
 			} catch (Exception e) {
-				logger.error("Cannot delete temp file", e);
+				LOGGER.error("Cannot delete temp file", e);
 			}
 		}
 	}
 
-	public byte[] getBinaryData(Integer documentId, String documentLabel, String templateString, String options) throws JSONException, SerializationException {
+	public byte[] getBinaryData(Integer documentId, String documentLabel, String templateString, String options) throws JSONException {
 		if (templateString == null) {
 			ObjTemplate template = null;
 			String message = "Unable to get template for document with id [" + documentId + "] and label [" + documentLabel + "]";
@@ -204,7 +201,7 @@ public class ExcelExporter extends AbstractFormatExporter {
 					optionsObj = new JSONObject(options);
 				IWidgetExporter widgetExporter = WidgetExporterFactory.getExporter(this, widgetType, templateString, widgetId, wb, optionsObj);
 				exportedSheets = widgetExporter.export();
-				HashMap<String, HashMap<String, Object>> selectionsMap = new HashMap<String, HashMap<String, Object>>();
+				HashMap<String, HashMap<String, Object>> selectionsMap = new HashMap<>();
 				try {
 					selectionsMap = createSelectionsMap();
 				} catch (JSONException e) {
@@ -264,7 +261,7 @@ public class ExcelExporter extends AbstractFormatExporter {
 						String dsLabel = getDatasetLabel(template, datasetId);
 						String selections = getCockpitSelectionsFromBody(widget).toString();
 						JSONObject configuration = template.getJSONObject("configuration");
-						Map<String, Object> parametersMap = new HashMap<String, Object>();
+						Map<String, Object> parametersMap = new HashMap<>();
 						if (getRealtimeFromWidget(datasetId, configuration))
 							parametersMap.put("nearRealtime", true);
 						JSONObject datastore = client.getDataStore(parametersMap, dsLabel, userUniqueIdentifier, selections);
@@ -272,13 +269,13 @@ public class ExcelExporter extends AbstractFormatExporter {
 						options.put("jsonData", datastore.getJSONArray("rows"));
 						toReturn.put(String.valueOf(widgetId), options);
 					} catch (Exception e) {
-						logger.warn("Cannot build crosstab options for widget [" + widgetId + "]. Only raw data without formatting will be exported.", e);
+						LOGGER.warn("Cannot build crosstab options for widget [" + widgetId + "]. Only raw data without formatting will be exported.", e);
 					}
 				}
 			}
 			return toReturn;
 		} catch (Exception e) {
-			logger.warn("Error while building crosstab options. Only raw data without formatting will be exported.", e);
+			LOGGER.warn("Error while building crosstab options. Only raw data without formatting will be exported.", e);
 			return new JSONObject();
 		}
 	}
@@ -303,7 +300,7 @@ public class ExcelExporter extends AbstractFormatExporter {
 			}
 			forceUniqueHeaders(cockpitSelections);
 		} catch (Exception e) {
-			logger.error("Cannot get cockpit selections", e);
+			LOGGER.error("Cannot get cockpit selections", e);
 			return new JSONObject();
 		}
 		return cockpitSelections;
@@ -364,10 +361,10 @@ public class ExcelExporter extends AbstractFormatExporter {
 				exportedSheets += widgetExporter.export();
 
 			} catch (Exception e) {
-				logger.error("Error while exporting widget [" + widgetId + "]", e);
+				LOGGER.error("Error while exporting widget [" + widgetId + "]", e);
 			}
 		}
-		HashMap<String, HashMap<String, Object>> selectionsMap = new HashMap<String, HashMap<String, Object>>();
+		HashMap<String, HashMap<String, Object>> selectionsMap = new HashMap<>();
 		try {
 			selectionsMap = createSelectionsMap();
 		} catch (JSONException e) {
@@ -391,7 +388,7 @@ public class ExcelExporter extends AbstractFormatExporter {
 	}
 
 	public JSONArray getMultiDataStoreForWidget(JSONObject template, JSONObject widget) {
-		Map<String, Object> map = new java.util.HashMap<String, Object>();
+		Map<String, Object> map = new java.util.HashMap<>();
 		JSONArray multiDataStore = new JSONArray();
 		try {
 			JSONObject configuration = template.getJSONObject("configuration");
@@ -437,7 +434,7 @@ public class ExcelExporter extends AbstractFormatExporter {
 			else
 				return true;
 		} catch (Exception e) {
-			logger.warn("Error while checking if layer is empty", e);
+			LOGGER.warn("Error while checking if layer is empty", e);
 			return false;
 		}
 	}
@@ -476,7 +473,7 @@ public class ExcelExporter extends AbstractFormatExporter {
 				}
 			}
 		} catch (Exception e) {
-			logger.error("Cannot get cockpit selections", e);
+			LOGGER.error("Cannot get cockpit selections", e);
 			return new JSONObject();
 		}
 		return cockpitSelections;
@@ -530,11 +527,11 @@ public class ExcelExporter extends AbstractFormatExporter {
 			JSONArray columns = metadata.getJSONArray("fields");
 			columns = filterDataStoreColumns(columns);
 			JSONArray rows = dataStore.getJSONArray("rows");
-			HashMap<String, Object> variablesMap = new HashMap<String, Object>();
+			HashMap<String, Object> variablesMap = new HashMap<>();
 			JSONObject widgetData = dataStore.getJSONObject("widgetData");
 			JSONObject widgetContent = widgetData.getJSONObject("content");
-			HashMap<String, String> arrayHeader = new HashMap<String, String>();
-			HashMap<String, String> chartAggregationsMap = new HashMap<String, String>();
+			HashMap<String, String> arrayHeader = new HashMap<>();
+			HashMap<String, String> chartAggregationsMap = new HashMap<>();
 			if (widgetData.getString("type").equalsIgnoreCase("table")) {
 				for (int i = 0; i < widgetContent.getJSONArray("columnSelectedOfDataset").length(); i++) {
 					JSONObject column = widgetContent.getJSONArray("columnSelectedOfDataset").getJSONObject(i);
@@ -587,7 +584,7 @@ public class ExcelExporter extends AbstractFormatExporter {
 				groupsArray = widgetData.getJSONArray("groups");
 			}
 
-			HashMap<String, String> mapGroupsAndColumns = new HashMap<String, String>();
+			HashMap<String, String> mapGroupsAndColumns = new HashMap<>();
 			JSONArray columnsOrdered;
 			if (widgetData.getString("type").equalsIgnoreCase("table") && widgetContent.has("columnSelectedOfDataset")) {
 				hiddenColumns = getHiddenColumnsList(widgetContent.getJSONArray("columnSelectedOfDataset"));
@@ -600,7 +597,7 @@ public class ExcelExporter extends AbstractFormatExporter {
 				if (widgetContent.get("columnSelectedOfDataset") instanceof JSONArray)
 					mapGroupsAndColumns = getMapFromGroupsArray(groupsArray, widgetContent.getJSONArray("columnSelectedOfDataset"));
 			} catch (JSONException e) {
-				logger.error("Couldn't retrieve groups", e);
+				LOGGER.error("Couldn't retrieve groups", e);
 			}
 
 			if (offset == 0) { // if pagination is active, headers must be created only once
@@ -660,9 +657,9 @@ public class ExcelExporter extends AbstractFormatExporter {
 
 			// cell styles for table widget
 			JSONObject[] columnStyles = new JSONObject[columnsOrdered.length() + 10];
-			HashMap<String, String> mapColumns = new HashMap<String, String>();
-			HashMap<String, String> mapColumnsTypes = new HashMap<String, String>();
-			HashMap<String, Object> mapParameters = new HashMap<String, Object>();
+			HashMap<String, String> mapColumns = new HashMap<>();
+			HashMap<String, String> mapColumnsTypes = new HashMap<>();
+			HashMap<String, Object> mapParameters = new HashMap<>();
 			if (widgetData.getString("type").equalsIgnoreCase("table")) {
 				columnStyles = getColumnsStyles(columnsOrdered, widgetContent);
 				mapColumns = getColumnsMap(columnsOrdered);
@@ -725,7 +722,7 @@ public class ExcelExporter extends AbstractFormatExporter {
 											mapColumns, mapColumnsTypes, variablesMap, mapParameters));
 								}
 							} catch (Exception e) {
-								logger.debug("Date will be exported as string due to error: ", e);
+								LOGGER.debug("Date will be exported as string due to error: ", e);
 								cell.setCellValue(s);
 							}
 							break;
@@ -739,7 +736,7 @@ public class ExcelExporter extends AbstractFormatExporter {
 											mapColumnsTypes, variablesMap, mapParameters));
 								}
 							} catch (Exception e) {
-								logger.debug("Timestamp will be exported as string due to error: ", e);
+								LOGGER.debug("Timestamp will be exported as string due to error: ", e);
 								cell.setCellValue(s);
 							}
 							break;
@@ -792,7 +789,7 @@ public class ExcelExporter extends AbstractFormatExporter {
 	}
 
 	private HashMap<String, String> getColumnsMap(JSONArray columnsOrdered) {
-		HashMap<String, String> mapp = new HashMap<String, String>();
+		HashMap<String, String> mapp = new HashMap<>();
 		for (int c = 0; c < columnsOrdered.length(); c++) {
 			try {
 				JSONObject column = columnsOrdered.getJSONObject(c);
@@ -806,7 +803,7 @@ public class ExcelExporter extends AbstractFormatExporter {
 	}
 
 	private HashMap<String, String> getColumnsMapTypes(JSONArray columnsOrdered) {
-		HashMap<String, String> mapp = new HashMap<String, String>();
+		HashMap<String, String> mapp = new HashMap<>();
 		for (int c = 0; c < columnsOrdered.length(); c++) {
 			try {
 				JSONObject column = columnsOrdered.getJSONObject(c);
@@ -820,7 +817,7 @@ public class ExcelExporter extends AbstractFormatExporter {
 	}
 
 	private HashMap<String, Object> getParametersMap(JSONObject drivers) {
-		HashMap<String, Object> mapp = new HashMap<String, Object>();
+		HashMap<String, Object> mapp = new HashMap<>();
 
 		Iterator<String> keys = drivers.keys();
 
@@ -852,7 +849,7 @@ public class ExcelExporter extends AbstractFormatExporter {
 	}
 
 	private HashMap<String, HashMap<String, Object>> createSelectionsMap() throws JSONException {
-		HashMap<String, HashMap<String, Object>> selectionsMap = new HashMap<String, HashMap<String, Object>>();
+		HashMap<String, HashMap<String, Object>> selectionsMap = new HashMap<>();
 		if (body.has("COCKPIT_SELECTIONS") && body.get("COCKPIT_SELECTIONS") instanceof JSONArray) {
 			JSONArray cockpitSelections = body.getJSONArray("COCKPIT_SELECTIONS");
 
@@ -870,7 +867,7 @@ public class ExcelExporter extends AbstractFormatExporter {
 							if (selections.get(key) instanceof JSONObject) {
 								JSONObject selection = (JSONObject) selections.get(key);
 								Iterator<String> selectionKeys = selection.keys();
-								HashMap<String, Object> selects = new HashMap<String, Object>();
+								HashMap<String, Object> selects = new HashMap<>();
 
 								while (selectionKeys.hasNext()) {
 									String selKey = selectionKeys.next();
@@ -922,7 +919,7 @@ public class ExcelExporter extends AbstractFormatExporter {
 					if (selections.get(key) instanceof JSONObject) {
 						JSONObject selection = (JSONObject) selections.get(key);
 						Iterator<String> selectionKeys = selection.keys();
-						HashMap<String, Object> selects = new HashMap<String, Object>();
+						HashMap<String, Object> selects = new HashMap<>();
 						while (selectionKeys.hasNext()) {
 							String selKey = selectionKeys.next();
 							Object select = selection.get(selKey);
@@ -967,21 +964,21 @@ public class ExcelExporter extends AbstractFormatExporter {
 		try {
 			return column.getString("type");
 		} catch (Exception e) {
-			logger.error("Error while retrieving column {" + colName + "} type. It will be treated as string.", e);
+			LOGGER.error("Error while retrieving column {" + colName + "} type. It will be treated as string.", e);
 			return "string";
 		}
 	}
 
 	@Override
 	protected String getNumberFormatByPrecision(int precision, String initialFormat) {
-		String format = initialFormat;
+		StringBuilder format = new StringBuilder(initialFormat);
 		if (precision > 0) {
-			format += ".";
+			format.append(".");
 			for (int j = 0; j < precision; j++) {
-				format += "0";
+				format.append("0");
 			}
 		}
-		return format;
+		return format.toString();
 	}
 
 	/*
@@ -1055,7 +1052,7 @@ public class ExcelExporter extends AbstractFormatExporter {
 
 	public static String[] toStringArray(JSONArray array) {
 		if (array == null)
-			return null;
+			return new String[0];
 
 		String[] arr = new String[array.length()];
 		for (int i = 0; i < arr.length; i++) {
@@ -1073,9 +1070,9 @@ public class ExcelExporter extends AbstractFormatExporter {
 		InputStreamReader isr = new InputStreamReader(exec.getInputStream());
 		BufferedReader b = new BufferedReader(isr);
 		String line = null;
-		logger.warn("Process output");
+		LOGGER.warn("Process output");
 		while((line = b.readLine()) != null) {
-			logger.warn(line);
+			LOGGER.warn(line);
 		}
 	}
 

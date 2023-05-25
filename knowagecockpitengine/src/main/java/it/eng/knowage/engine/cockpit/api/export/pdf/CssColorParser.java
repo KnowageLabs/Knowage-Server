@@ -16,7 +16,7 @@ public class CssColorParser {
 
 	private static final CssColorParser INSTANCE = new CssColorParser();
 
-	private static enum CssColorLiteral {
+	private enum CssColorLiteral {
 		ALICEBLUE(240, 248, 255),
 		ANTIQUEWHITE(250, 235, 215),
 		AQUA(0, 255, 255),
