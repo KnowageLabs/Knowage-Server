@@ -30,7 +30,8 @@ import java.util.regex.Pattern;
 import javax.naming.InitialContext;
 import javax.sql.DataSource;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.quartz.Scheduler;
 import org.quartz.impl.StdSchedulerFactory;
 
@@ -41,6 +42,7 @@ import it.eng.spagobi.commons.utilities.SpagoBITracer;
 
 public class QuartzInitializer implements InitializerIFace {
 
+	private static final Logger LOGGER = LogManager.getLogger(QuartzInitializer.class);
 	private static final String PROPERTY_DATASOURCE_JNDI = "org.quartz.dataSource.quartz.jndiURL";
 	private static final String PROPERTY_DELEGATE_CLASS = "org.quartz.jobStore.driverDelegateClass";
 
@@ -52,7 +54,7 @@ public class QuartzInitializer implements InitializerIFace {
 	private static final String JDBC_MARIADB = "jdbc:mariadb";
 	private static final String JDBC_SQLSERVER = "jdbc:sqlserver";
 
-	private static final Map<String, String> JDBC_URL_PREFIX_2_DELEGATE_CLASS = new HashMap<String, String>();
+	private static final Map<String, String> JDBC_URL_PREFIX_2_DELEGATE_CLASS = new HashMap<>();
 
 	static {
 		JDBC_URL_PREFIX_2_DELEGATE_CLASS.put(JDBC_MYSQL, "org.quartz.impl.jdbcjobstore.StdJDBCDelegate");
@@ -63,8 +65,6 @@ public class QuartzInitializer implements InitializerIFace {
 		JDBC_URL_PREFIX_2_DELEGATE_CLASS.put(JDBC_INGRES, "org.quartz.impl.jdbcjobstore.StdJDBCDelegate");
 		JDBC_URL_PREFIX_2_DELEGATE_CLASS.put(JDBC_HSQLDB, "org.quartz.impl.jdbcjobstore.HSQLDBDelegate");
 	}
-
-	public static transient Logger logger = Logger.getLogger(QuartzInitializer.class);
 
 	private SourceBean _config = null;
 
@@ -86,9 +86,9 @@ public class QuartzInitializer implements InitializerIFace {
 			String figuredOutValue = null;
 
 			if (properties.containsKey(PROPERTY_DELEGATE_CLASS)) {
-				logger.info("Quartz delegate class set to " + properties.get(PROPERTY_DELEGATE_CLASS));
+				LOGGER.info("Quartz delegate class set to " + properties.get(PROPERTY_DELEGATE_CLASS));
 			} else {
-				logger.warn("Property " + PROPERTY_DELEGATE_CLASS + " not set! Trying to figure out what delegate class needs to be used...");
+				LOGGER.warn("Property " + PROPERTY_DELEGATE_CLASS + " not set! Trying to figure out what delegate class needs to be used...");
 				determineDelegateClass(properties);
 			}
 
@@ -97,6 +97,11 @@ public class QuartzInitializer implements InitializerIFace {
 			sched.start();
 		} catch (Exception e) {
 			SpagoBITracer.major(SpagoBIConstants.NAME_MODULE, this.getClass().getName(), "init", "Error while initializing scheduler " + e);
+			// @formatter:off
+			LOGGER.atError()
+				.withThrowable(e)
+				.log("Unable to init Quartz scheduler");
+			// @formatter:on
 		}
 	}
 
@@ -132,11 +137,11 @@ public class QuartzInitializer implements InitializerIFace {
 
 			figuredOutValue = JDBC_URL_PREFIX_2_DELEGATE_CLASS.get(urlPrefix);
 
-			logger.info("Quartz will be initialized with the delegate class " + figuredOutValue);
+			LOGGER.info("Quartz will be initialized with the delegate class " + figuredOutValue);
 			properties.put(PROPERTY_DELEGATE_CLASS, figuredOutValue);
 
 		} catch (Exception e) {
-			logger.error("Error determining Hibernate's dialect", e);
+			LOGGER.error("Error determining Hibernate's dialect", e);
 		} finally {
 			if (connection != null) {
 				try {
