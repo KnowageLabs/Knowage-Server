@@ -43,6 +43,7 @@ import org.apache.log4j.Logger;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.CreationHelper;
+import org.apache.poi.ss.usermodel.FillPatternType;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -643,6 +644,8 @@ public class ExcelExporter extends AbstractFormatExporter {
 
 			XSSFCellStyle intCellStyle = (XSSFCellStyle) wb.createCellStyle();
 			intCellStyle.setDataFormat(createHelper.createDataFormat().getFormat("0"));
+			short defaultColor = intCellStyle.getFillBackgroundColor();
+			FillPatternType defaultPattern = intCellStyle.getFillPattern();
 
 			XSSFCellStyle floatCellStyle = (XSSFCellStyle) wb.createCellStyle();
 			floatCellStyle.setDataFormat(createHelper.createDataFormat().getFormat("#,##0.00"));
@@ -661,10 +664,11 @@ public class ExcelExporter extends AbstractFormatExporter {
 			HashMap<String, String> mapColumnsTypes = new HashMap<>();
 			HashMap<String, Object> mapParameters = new HashMap<>();
 			if (widgetData.getString("type").equalsIgnoreCase("table")) {
-				columnStyles = getColumnsStyles(columnsOrdered, widgetContent);
 				mapColumns = getColumnsMap(columnsOrdered);
 				mapColumnsTypes = getColumnsMapTypes(columnsOrdered);
 				mapParameters = createMapParameters(mapParameters);
+				columnStyles = getColumnsStyles(wb, createHelper, mapColumns, columnsOrdered, widgetContent);
+				getRowStyles(settings, wb, createHelper, mapColumns, mapColumnsTypes);
 			}
 			variablesMap = createMapVariables(variablesMap);
 			// FILL RECORDS
