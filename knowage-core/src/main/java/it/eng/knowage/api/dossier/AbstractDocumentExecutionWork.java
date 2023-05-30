@@ -218,10 +218,10 @@ public class AbstractDocumentExecutionWork extends DossierExecutionClient implem
 					serviceUrlBuilder.append("&isMultiSheet=" + isMultiSheet);
 					String serviceUrl = addParametersToServiceUrl(progressThreadId, biObject, reportToUse, serviceUrlBuilder, jsonArray, paramMap);
 
-					if (executedDocuments.contains(serviceUrl)) {
-						progressThreadManager.incrementPartial(progressThreadId);
-						break;
-					}
+//					if (executedDocuments.contains(serviceUrl)) {
+//						progressThreadManager.incrementPartial(progressThreadId);
+//						break;
+//					}
 
 					// Images creation
 					Response images = executePostService(null, serviceUrl, userUniqueIdentifier, MediaType.TEXT_HTML, dossierTemplateJson);
@@ -435,8 +435,7 @@ public class AbstractDocumentExecutionWork extends DossierExecutionClient implem
 
 				try {
 
-					File to = FileUtilities.createFile(FilenameUtils.removeExtension(documentLabel + "_" + f.getName()), ".png", randomKey,
-							new ArrayList<>());
+					File to = FileUtilities.createFile(FilenameUtils.removeExtension(documentLabel + "_" + f.getName()), ".png", randomKey, new ArrayList<>());
 
 					FileUtils.copyFile(f, to);
 					if (reportToUse.getImageName().contains(FilenameUtils.removeExtension(f.getName()))) {
