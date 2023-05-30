@@ -17,19 +17,12 @@
  */
 package it.eng.spagobi.mapcatalogue.dao;
 
-import it.eng.spago.error.EMFErrorSeverity;
-import it.eng.spago.error.EMFUserError;
-import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
-import it.eng.spagobi.commons.metadata.SbiBinContents;
-import it.eng.spagobi.mapcatalogue.bo.GeoMap;
-import it.eng.spagobi.mapcatalogue.metadata.SbiGeoMaps;
-import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -47,7 +40,15 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.criterion.Criterion;
-import org.hibernate.criterion.Expression;
+import org.hibernate.criterion.Restrictions;
+
+import it.eng.spago.error.EMFErrorSeverity;
+import it.eng.spago.error.EMFUserError;
+import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
+import it.eng.spagobi.commons.metadata.SbiBinContents;
+import it.eng.spagobi.mapcatalogue.bo.GeoMap;
+import it.eng.spagobi.mapcatalogue.metadata.SbiGeoMaps;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 /**
  * @author giachino antonella
@@ -55,7 +56,7 @@ import org.hibernate.criterion.Expression;
  */
 public class SbiGeoMapsDAOHibImpl extends AbstractHibernateDAO implements ISbiGeoMapsDAO {
 
-	static private Logger logger = Logger.getLogger(SbiGeoMapsDAOHibImpl.class);
+	private static final Logger LOGGER = Logger.getLogger(SbiGeoMapsDAOHibImpl.class);
 
 	/**
 	 * Load map by id.
@@ -122,7 +123,7 @@ public class SbiGeoMapsDAOHibImpl extends AbstractHibernateDAO implements ISbiGe
 		try {
 			tmpSession = getSession();
 			tx = tmpSession.beginTransaction();
-			Criterion labelCriterrion = Expression.eq("name", name);
+			Criterion labelCriterrion = Restrictions.eq("name", name);
 			Criteria criteria = tmpSession.createCriteria(SbiGeoMaps.class);
 			criteria.add(labelCriterrion);
 			// List tmpLst = criteria.list();
@@ -183,7 +184,7 @@ public class SbiGeoMapsDAOHibImpl extends AbstractHibernateDAO implements ISbiGe
 			SbiGeoMaps hibMap = (SbiGeoMaps) hqlQuery.uniqueResult();
 
 			if (hibMap == null) {
-				logger.error("SVG with hierarchyName [" + hierarchy + "] and memberName[" + member + "] and level [" + level + "] non found in catalogue. ");
+				LOGGER.error("SVG with hierarchyName [" + hierarchy + "] and memberName[" + member + "] and level [" + level + "] non found in catalogue. ");
 				throw new SpagoBIRuntimeException("SVG with hierarchyName [" + hierarchy + "] and memberName[" + member + "] and level [" + level
 						+ "] non found in catalogue.");
 			}
@@ -248,7 +249,7 @@ public class SbiGeoMapsDAOHibImpl extends AbstractHibernateDAO implements ISbiGe
 				// recover the saved binary hibernate object
 				hibBinContents = (SbiBinContents) tmpSession.load(SbiBinContents.class, idBin);
 			}
-			SbiGeoMaps hibMap = (SbiGeoMaps) tmpSession.load(SbiGeoMaps.class, new Integer(aMap.getMapId()));
+			SbiGeoMaps hibMap = (SbiGeoMaps) tmpSession.load(SbiGeoMaps.class, aMap.getMapId());
 			hibMap.setName(aMap.getName());
 			hibMap.setDescr(aMap.getDescr());
 			hibMap.setUrl(aMap.getUrl());
@@ -354,7 +355,7 @@ public class SbiGeoMapsDAOHibImpl extends AbstractHibernateDAO implements ISbiGe
 			tmpSession = getSession();
 			tx = tmpSession.beginTransaction();
 
-			SbiGeoMaps hibMap = (SbiGeoMaps) tmpSession.load(SbiGeoMaps.class, new Integer(aMap.getMapId()));
+			SbiGeoMaps hibMap = (SbiGeoMaps) tmpSession.load(SbiGeoMaps.class, aMap.getMapId());
 
 			tmpSession.delete(hibMap);
 
@@ -389,8 +390,6 @@ public class SbiGeoMapsDAOHibImpl extends AbstractHibernateDAO implements ISbiGe
 	 *
 	 * @throws EMFUserError
 	 *             the EMF user error
-	 *
-	 * @see it.eng.spagobi.geo.bo.dao.IEngineDAO#loadAllEngines()
 	 */
 	@Override
 	public List loadAllMaps() throws EMFUserError {
@@ -458,10 +457,10 @@ public class SbiGeoMapsDAOHibImpl extends AbstractHibernateDAO implements ISbiGe
 
 			String hql = " from SbiGeoMapFeatures s where s.id.mapId =?";
 			Query aQuery = tmpSession.createQuery(hql);
-			aQuery.setInteger(0, mapIdInt.intValue());
+			aQuery.setInteger(0, mapIdInt);
 
 			List biFeaturesAssocitedWithMap = aQuery.list();
-			if (biFeaturesAssocitedWithMap.size() > 0)
+			if (!biFeaturesAssocitedWithMap.isEmpty())
 				bool = true;
 			else
 				bool = false;
@@ -497,7 +496,7 @@ public class SbiGeoMapsDAOHibImpl extends AbstractHibernateDAO implements ISbiGe
 	 */
 	@Override
 	public List getFeaturesFromSVG(byte[] content) throws Exception {
-		logger.debug("IN");
+		LOGGER.debug("IN");
 		// load a svg file
 		XMLInputFactory xmlIF = XMLInputFactory.newInstance();
 		xmlIF.setProperty(XMLInputFactory.IS_COALESCING, Boolean.TRUE);
@@ -510,18 +509,18 @@ public class SbiGeoMapsDAOHibImpl extends AbstractHibernateDAO implements ISbiGe
 		} else {
 			tmpdir = javaIoTmpDir + System.getProperty("file.separator") + "temp";
 		}
-		logger.debug("** tmpdir: " + tmpdir);
+		LOGGER.debug("** tmpdir: " + tmpdir);
 		File dir = new File(tmpdir);
 		dir.mkdirs();
-		logger.debug("Temporary file created.");
+		LOGGER.debug("Temporary file created.");
 		File tmpFile = null;
 		try {
 			tmpFile = File.createTempFile("svgfile", ".svg", dir);
-			OutputStream out = new FileOutputStream(tmpFile);
-			out.write(content);
+			try (OutputStream out = new FileOutputStream(tmpFile)) {
+				out.write(content);
+			}
 		} catch (Exception e) {
-			logger.error("Error while creating outputstream: ", e);
-			e.printStackTrace();
+			LOGGER.error("Error while creating outputstream: ", e);
 		}
 
 		FileInputStream fisMap = null;
@@ -531,18 +530,18 @@ public class SbiGeoMapsDAOHibImpl extends AbstractHibernateDAO implements ISbiGe
 		try {
 			fisMap = new FileInputStream(tmpFile);
 		} catch (FileNotFoundException e) {
-			logger.error("file svg not found, path " + tmpFile);
+			LOGGER.error("file svg not found, path " + tmpFile);
 			throw new EMFUserError(EMFErrorSeverity.ERROR, "error.mapfile.notfound");
 		}
 		XMLStreamReader streamReader = null;
 		try {
 			streamReader = xmlIF.createXMLStreamReader(fisMap);
 		} catch (XMLStreamException e) {
-			logger.error("Cannot load the stream of the file svg, path " + tmpFile);
+			LOGGER.error("Cannot load the stream of the file svg, path " + tmpFile);
 			throw new EMFUserError(EMFErrorSeverity.ERROR, "error.mapfile.notloaded");
 		}
 		if (streamReader == null) {
-			logger.debug("streamReader is null.");
+			LOGGER.debug("streamReader is null.");
 			throw new EMFUserError(EMFErrorSeverity.ERROR, "error.mapfile.notloaded");
 		}
 
@@ -592,19 +591,21 @@ public class SbiGeoMapsDAOHibImpl extends AbstractHibernateDAO implements ISbiGe
 				event = streamReader.next();
 			}
 		} catch (XMLStreamException xe) {
-			logger.error("Error while parsign the svg file: " + xe.getMessage());
+			LOGGER.error("Error while parsign the svg file: " + xe.getMessage());
 			throw new EMFUserError(EMFErrorSeverity.ERROR, "5031", "component_mapcatalogue_messages");
 		} finally {
 			streamReader.close();
 		}
 
 		// instant cleaning
-		if (tmpFile != null)
-			tmpFile.delete();
-		if (dir != null)
-			dir.delete();
+		if (tmpFile != null) {
+			Files.deleteIfExists(tmpFile.toPath());
+		}
+		if (dir != null) {
+			Files.deleteIfExists(dir.toPath());
+		}
 
-		logger.debug("OUT");
+		LOGGER.debug("OUT");
 		return lstFeatures;
 	}
 

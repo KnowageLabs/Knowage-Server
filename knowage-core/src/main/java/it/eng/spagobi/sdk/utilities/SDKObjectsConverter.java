@@ -20,6 +20,7 @@ package it.eng.spagobi.sdk.utilities;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -89,12 +90,12 @@ import it.eng.spagobi.utilities.json.JSONUtils;
 
 public class SDKObjectsConverter {
 
-	static private Logger logger = Logger.getLogger(SDKObjectsConverter.class);
+	private static final Logger LOGGER = Logger.getLogger(SDKObjectsConverter.class);
 
 	public SDKDocument fromBIObjectToSDKDocument(BIObject obj) {
-		logger.debug("IN");
+		LOGGER.debug("IN");
 		if (obj == null) {
-			logger.warn("BIObject in input is null!!");
+			LOGGER.warn("BIObject in input is null!!");
 			return null;
 		}
 		SDKDocument aDoc = new SDKDocument();
@@ -117,14 +118,14 @@ public class SDKObjectsConverter {
 		if (dataSourceId != null) {
 			aDoc.setDataSourceId(dataSourceId);
 		}
-		logger.debug("OUT");
+		LOGGER.debug("OUT");
 		return aDoc;
 	}
 
 	public BIObject fromSDKDocumentToBIObject(SDKDocument document) {
-		logger.debug("IN");
+		LOGGER.debug("IN");
 		if (document == null) {
-			logger.warn("SDKDocument in input is null!!");
+			LOGGER.warn("SDKDocument in input is null!!");
 			return null;
 		}
 		BIObject obj = null;
@@ -154,29 +155,29 @@ public class SDKObjectsConverter {
 			IEngineDAO engineDAO = DAOFactory.getEngineDAO();
 			if (document.getEngineId() == null) {
 				// if engine id is not specified take the first engine for the biobject type
-				List engines = engineDAO.loadAllEnginesForBIObjectType(document.getType());
-				if (engines.size() == 0) {
+				List<Engine> engines = engineDAO.loadAllEnginesForBIObjectType(document.getType());
+				if (engines.isEmpty()) {
 					throw new Exception("No engines defined for document type = [" + document.getType() + "]");
 				}
-				engine = (Engine) engines.get(0);
+				engine = engines.get(0);
 			} else {
 				engine = engineDAO.loadEngineByID(document.getEngineId());
 			}
 			obj.setEngine(engine);
 
 		} catch (Exception e) {
-			logger.error("Error while converting SDKDocument into BIObject.", e);
-			logger.debug("Returning null.");
+			LOGGER.error("Error while converting SDKDocument into BIObject.", e);
+			LOGGER.debug("Returning null.");
 			return null;
 		}
-		logger.debug("OUT");
+		LOGGER.debug("OUT");
 		return obj;
 	}
 
 	public SDKTemplate fromObjTemplateToSDKTemplate(ObjTemplate objTemplate) {
-		logger.debug("IN");
+		LOGGER.debug("IN");
 		if (objTemplate == null) {
-			logger.warn("ObjTemplate in input is null!!");
+			LOGGER.warn("ObjTemplate in input is null!!");
 			return null;
 		}
 		SDKTemplate toReturn = null;
@@ -188,18 +189,18 @@ public class SDKObjectsConverter {
 			DataHandler dhSource = new DataHandler(mods);
 			toReturn.setContent(dhSource);
 		} catch (Exception e) {
-			logger.error("Error while converting ObjTemplate into SDKTemplate.", e);
-			logger.debug("Returning null.");
+			LOGGER.error("Error while converting ObjTemplate into SDKTemplate.", e);
+			LOGGER.debug("Returning null.");
 			return null;
 		}
-		logger.debug("OUT");
+		LOGGER.debug("OUT");
 		return toReturn;
 	}
 
 	public ObjTemplate fromSDKTemplateToObjTemplate(SDKTemplate sdkTemplate) {
-		logger.debug("IN");
+		LOGGER.debug("IN");
 		if (sdkTemplate == null) {
-			logger.warn("SDKTemplate in input is null!!");
+			LOGGER.warn("SDKTemplate in input is null!!");
 			return null;
 		}
 		InputStream is = null;
@@ -214,38 +215,43 @@ public class SDKObjectsConverter {
 			toReturn.setContent(templateContent);
 			toReturn.setDimension(Long.toString(templateContent.length / 1000) + " KByte");
 		} catch (Exception e) {
-			logger.error("Error while converting SDKTemplate into ObjTemplate.", e);
-			logger.debug("Returning null.");
+			LOGGER.error("Error while converting SDKTemplate into ObjTemplate.", e);
+			LOGGER.debug("Returning null.");
 			return null;
 		} finally {
 			if (is != null) {
 				try {
 					is.close();
 				} catch (IOException e) {
-					logger.error("Error closing input stream of attachment", e);
+					LOGGER.error("Error closing input stream of attachment", e);
 				}
 			}
 			if (dh != null && dh.getName() != null) {
-				logger.debug("Deleting attachment file ...");
+				LOGGER.debug("Deleting attachment file ...");
 				File attachment = new File(dh.getName());
 				if (attachment.exists() && attachment.isFile()) {
-					boolean attachmentFileDeleted = attachment.delete();
-					if (attachmentFileDeleted) {
-						logger.debug("Attachment file deleted");
-					} else {
-						logger.warn("Attachment file NOT deleted");
+					boolean attachmentFileDeleted;
+					try {
+						attachmentFileDeleted = Files.deleteIfExists(attachment.toPath());
+						if (attachmentFileDeleted) {
+							LOGGER.debug("Attachment file deleted");
+						} else {
+							LOGGER.warn("Attachment file NOT deleted");
+						}
+					} catch (IOException e) {
+						LOGGER.warn("Non fatal error deleting following file: " + attachment);
 					}
 				}
 			}
 		}
-		logger.debug("OUT");
+		LOGGER.debug("OUT");
 		return toReturn;
 	}
 
 	public SDKDocumentParameter fromBIObjectParameterToSDKDocumentParameter(BIObjectParameter biParameter) {
-		logger.debug("IN");
+		LOGGER.debug("IN");
 		if (biParameter == null) {
-			logger.warn("BIObjectParameter in input is null!!");
+			LOGGER.warn("BIObjectParameter in input is null!!");
 			return null;
 		}
 		SDKDocumentParameter aDocParameter = new SDKDocumentParameter();
@@ -269,14 +275,14 @@ public class SDKObjectsConverter {
 		it.eng.spagobi.sdk.documents.bo.SDKConstraint[] constraintsArray = new it.eng.spagobi.sdk.documents.bo.SDKConstraint[newConstraints.size()];
 		constraintsArray = (it.eng.spagobi.sdk.documents.bo.SDKConstraint[]) newConstraints.toArray(constraintsArray);
 		aDocParameter.setConstraints(constraintsArray);
-		logger.debug("OUT");
+		LOGGER.debug("OUT");
 		return aDocParameter;
 	}
 
 	public SDKConstraint fromCheckToSDKConstraint(Check aCheck) {
-		logger.debug("IN");
+		LOGGER.debug("IN");
 		if (aCheck == null) {
-			logger.warn("Check in input is null!!");
+			LOGGER.warn("Check in input is null!!");
 			return null;
 		}
 		SDKConstraint constraint = new SDKConstraint();
@@ -287,14 +293,14 @@ public class SDKObjectsConverter {
 		constraint.setType(aCheck.getValueTypeCd());
 		constraint.setFirstValue(aCheck.getFirstValue());
 		constraint.setSecondValue(aCheck.getSecondValue());
-		logger.debug("OUT");
+		LOGGER.debug("OUT");
 		return constraint;
 	}
 
 	public SDKFunctionality fromLowFunctionalityToSDKFunctionality(LowFunctionality lowFunctionality) {
-		logger.debug("IN");
+		LOGGER.debug("IN");
 		if (lowFunctionality == null) {
-			logger.warn("LowFunctionality in input is null!!");
+			LOGGER.warn("LowFunctionality in input is null!!");
 			return null;
 		}
 		SDKFunctionality functionality = new SDKFunctionality();
@@ -305,14 +311,14 @@ public class SDKObjectsConverter {
 		functionality.setParentId(lowFunctionality.getParentId());
 		functionality.setPath(lowFunctionality.getPath());
 		functionality.setProg(lowFunctionality.getProg());
-		logger.debug("OUT");
+		LOGGER.debug("OUT");
 		return functionality;
 	}
 
 	public SDKEngine fromEngineToSDKEngine(Engine engine) {
-		logger.debug("IN");
+		LOGGER.debug("IN");
 		if (engine == null) {
-			logger.warn("Engine in input is null!!");
+			LOGGER.warn("Engine in input is null!!");
 			return null;
 		}
 		SDKEngine sdkEngine = null;
@@ -334,19 +340,19 @@ public class SDKObjectsConverter {
 			sdkEngine.setUseDataSource(engine.getUseDataSource());
 
 		} catch (Exception e) {
-			logger.error("Error while converting Engine into SDKEngine.", e);
-			logger.debug("Returning null.");
+			LOGGER.error("Error while converting Engine into SDKEngine.", e);
+			LOGGER.debug("Returning null.");
 			return null;
 		} finally {
-			logger.debug("OUT");
+			LOGGER.debug("OUT");
 		}
 		return sdkEngine;
 	}
 
 	public SDKDataSource fromSpagoBiDataSourceToSDKDataSource(SpagoBiDataSource spagoBiDataSource) {
-		logger.debug("IN");
+		LOGGER.debug("IN");
 		if (spagoBiDataSource == null) {
-			logger.warn("SpagoBiDataSource in input is null!!");
+			LOGGER.warn("SpagoBiDataSource in input is null!!");
 			return null;
 		}
 		SDKDataSource toReturn = null;
@@ -360,7 +366,7 @@ public class SDKObjectsConverter {
 			// toReturn.setDialectId(spagoBiDataSource.get)
 			toReturn.setDriver(spagoBiDataSource.getDriver());
 			if (spagoBiDataSource.getMultiSchema() != null) {
-				toReturn.setMultiSchema(spagoBiDataSource.getMultiSchema() == true ? Integer.valueOf(1) : Integer.valueOf(0));
+				toReturn.setMultiSchema(Boolean.TRUE.equals(spagoBiDataSource.getMultiSchema()) ? 1 : 0);
 			} else {
 				toReturn.setMultiSchema(null);
 			}
@@ -369,19 +375,19 @@ public class SDKObjectsConverter {
 			toReturn.setUrlConnection(spagoBiDataSource.getUrl());
 
 		} catch (Exception e) {
-			logger.error("Error while converting SpagoBiDataSource into SDKDataSource.", e);
-			logger.debug("Returning null.");
+			LOGGER.error("Error while converting SpagoBiDataSource into SDKDataSource.", e);
+			LOGGER.debug("Returning null.");
 			return null;
 		} finally {
-			logger.debug("OUT");
+			LOGGER.debug("OUT");
 		}
 		return toReturn;
 	}
 
 	public SDKDataSet fromSpagoBiDataSetToSDKDataSet(SpagoBiDataSet spagoBiDataSet) {
-		logger.debug("IN");
+		LOGGER.debug("IN");
 		if (spagoBiDataSet == null) {
-			logger.warn("SpagoBiDataSet in input is null!!");
+			LOGGER.warn("SpagoBiDataSet in input is null!!");
 			return null;
 		}
 		SDKDataSet toReturn = null;
@@ -455,19 +461,19 @@ public class SDKObjectsConverter {
 			toReturn.setParameters(parameters);
 
 		} catch (Exception e) {
-			logger.error("Error while converting SpagoBiDataSet into SDKDataSet.", e);
-			logger.debug("Returning null.");
+			LOGGER.error("Error while converting SpagoBiDataSet into SDKDataSet.", e);
+			LOGGER.debug("Returning null.");
 			return null;
 		} finally {
-			logger.debug("OUT");
+			LOGGER.debug("OUT");
 		}
 		return toReturn;
 	}
 
 	public SDKDataSetParameter[] fromDataSetParameterItemListToSDKDataSetParameterArray(List dataSetParameterItemList) {
-		logger.debug("IN");
+		LOGGER.debug("IN");
 		if (dataSetParameterItemList == null) {
-			logger.warn("DataSetParameterItem list in input is null!!");
+			LOGGER.warn("DataSetParameterItem list in input is null!!");
 			return null;
 		}
 		SDKDataSetParameter[] toReturn = new SDKDataSetParameter[dataSetParameterItemList.size()];
@@ -476,14 +482,14 @@ public class SDKObjectsConverter {
 			SDKDataSetParameter aSDKDataSetParameter = this.fromDataSetParameterItemToSDKDataSetParameter(aDataSetParameterItem);
 			toReturn[i] = aSDKDataSetParameter;
 		}
-		logger.debug("OUT");
+		LOGGER.debug("OUT");
 		return toReturn;
 	}
 
 	public String fromSDKDataSetParameterArrayToBIDataSetParameterList(SDKDataSetParameter[] dataSetParameterArray) throws SourceBeanException {
-		logger.debug("IN");
+		LOGGER.debug("IN");
 		if (dataSetParameterArray == null) {
-			logger.warn("dataSetParameterArray in input is null!!");
+			LOGGER.warn("dataSetParameterArray in input is null!!");
 			return null;
 		}
 		String toReturn = null;
@@ -495,44 +501,44 @@ public class SDKObjectsConverter {
 		}
 		toReturn = this.deserializeSKDatasetParametersArray(paramsList);
 
-		logger.debug("OUT");
+		LOGGER.debug("OUT");
 		return toReturn;
 	}
 
 	public SDKDataSetParameter fromDataSetParameterItemToSDKDataSetParameter(DataSetParameterItem dataSetParameterItem) {
 
-		logger.debug("IN");
+		LOGGER.debug("IN");
 
 		if (dataSetParameterItem == null) {
-			logger.warn("DataSetParameterItem in input is null!!");
+			LOGGER.warn("DataSetParameterItem in input is null!!");
 			return null;
 		}
 		SDKDataSetParameter toReturn = new SDKDataSetParameter();
 		toReturn.setName(dataSetParameterItem.getName());
 		toReturn.setType(dataSetParameterItem.getType());
-		logger.debug("OUT");
+		LOGGER.debug("OUT");
 		return toReturn;
 	}
 
-	public DataSetParameterItem fromSDKDataSetParameterItemToBIDataSetParameter(SDKDataSetParameter SDKDataSetParameterItem) {
+	public DataSetParameterItem fromSDKDataSetParameterItemToBIDataSetParameter(SDKDataSetParameter sdkDataSetParameterItem) {
 
-		logger.debug("IN");
+		LOGGER.debug("IN");
 
-		if (SDKDataSetParameterItem == null) {
-			logger.warn("SDKDataSetParameterItem in input is null!!");
+		if (sdkDataSetParameterItem == null) {
+			LOGGER.warn("SDKDataSetParameterItem in input is null!!");
 			return null;
 		}
 		DataSetParameterItem toReturn = new DataSetParameterItem();
-		toReturn.setName(SDKDataSetParameterItem.getName());
-		toReturn.setType(SDKDataSetParameterItem.getType());
-		logger.debug("OUT");
+		toReturn.setName(sdkDataSetParameterItem.getName());
+		toReturn.setType(sdkDataSetParameterItem.getType());
+		LOGGER.debug("OUT");
 		return toReturn;
 	}
 
 	public IDataSet fromSDKDatasetToBIDataset(SDKDataSet dataset) {
-		logger.debug("IN");
+		LOGGER.debug("IN");
 		if (dataset == null) {
-			logger.warn("SDKDataSet in input is null!!");
+			LOGGER.warn("SDKDataSet in input is null!!");
 			return null;
 		}
 		IDataSet ds = null;
@@ -590,7 +596,7 @@ public class SDKObjectsConverter {
 						((QbeDataSet) ds).setDataSource(dataSource);
 					}
 				} else {
-					logger.warn("Dataset " + ds.getLabel() + "has no associated datasource");
+					LOGGER.warn("Dataset " + ds.getLabel() + "has no associated datasource");
 				}
 			} else if (dataset.getType().equalsIgnoreCase(DataSetConstants.DS_SCRIPT)) {
 				ds = new ScriptDataSet();
@@ -659,9 +665,7 @@ public class SDKObjectsConverter {
 
 				SbiCategory c = categoryDao.getCategoryForDataSet(dataset.getCategory());
 
-				Domain category = Optional.of(c)
-					.map(Domain::fromCategory)
-					.get();
+				Domain category = Optional.of(c).map(Domain::fromCategory).get();
 
 				// ds.setCategoryValueName(category.getValueCd());
 				ds.setCategoryId(category.getValueId());
@@ -669,33 +673,33 @@ public class SDKObjectsConverter {
 			}
 
 		} catch (Exception e) {
-			logger.error("Error while converting SDKDataSet into GuiDataSet.", e);
-			logger.debug("Returning null.");
+			LOGGER.error("Error while converting SDKDataSet into GuiDataSet.", e);
+			LOGGER.debug("Returning null.");
 			return null;
 		}
-		logger.debug("OUT");
+		LOGGER.debug("OUT");
 		return ds;
 	}
 
 	public SDKDataStoreMetadata fromDataStoreMetadataToSDKDataStoreMetadata(MetaData aDataStoreMetaData) {
-		logger.debug("IN");
+		LOGGER.debug("IN");
 		if (aDataStoreMetaData == null) {
-			logger.warn("DataStoreMetaData in input is null!!");
+			LOGGER.warn("DataStoreMetaData in input is null!!");
 			return null;
 		}
 		SDKDataStoreMetadata toReturn = new SDKDataStoreMetadata();
-		Map properties = aDataStoreMetaData.getProperties();
-		toReturn.setProperties(new HashMap(properties));
+		Map<String, Object> properties = aDataStoreMetaData.getProperties();
+		toReturn.setProperties(new HashMap<>(properties));
 		SDKDataStoreFieldMetadata[] fieldsMetadata = this.fromFieldMetadataListToSDKDataStoreFieldMetadataArray(aDataStoreMetaData.getFieldsMeta());
 		toReturn.setFieldsMetadata(fieldsMetadata);
-		logger.debug("OUT");
+		LOGGER.debug("OUT");
 		return toReturn;
 	}
 
 	private SDKDataStoreFieldMetadata[] fromFieldMetadataListToSDKDataStoreFieldMetadataArray(List fieldsMeta) {
-		logger.debug("IN");
+		LOGGER.debug("IN");
 		if (fieldsMeta == null) {
-			logger.warn("List fieldsMeta in input is null!!");
+			LOGGER.warn("List fieldsMeta in input is null!!");
 			return null;
 		}
 		SDKDataStoreFieldMetadata[] toReturn = new SDKDataStoreFieldMetadata[fieldsMeta.size()];
@@ -704,14 +708,14 @@ public class SDKObjectsConverter {
 			SDKDataStoreFieldMetadata aSDKDataStoreFieldMetadata = this.fromFieldMetadataToSDKDataStoreFieldMetadata(aFieldMetadata);
 			toReturn[i] = aSDKDataStoreFieldMetadata;
 		}
-		logger.debug("OUT");
+		LOGGER.debug("OUT");
 		return toReturn;
 	}
 
 	private SDKDataStoreFieldMetadata fromFieldMetadataToSDKDataStoreFieldMetadata(FieldMetadata fieldMetadata) {
-		logger.debug("IN");
+		LOGGER.debug("IN");
 		if (fieldMetadata == null) {
-			logger.warn("FieldMetadata in input is null!!");
+			LOGGER.warn("FieldMetadata in input is null!!");
 			return null;
 		}
 		SDKDataStoreFieldMetadata toReturn = new SDKDataStoreFieldMetadata();
@@ -719,7 +723,7 @@ public class SDKObjectsConverter {
 		toReturn.setProperties(new HashMap(properties));
 		toReturn.setName(fieldMetadata.getAlias() != null ? fieldMetadata.getAlias() : fieldMetadata.getName());
 		toReturn.setClassName(fieldMetadata.getType().getName());
-		logger.debug("OUT");
+		LOGGER.debug("OUT");
 		return toReturn;
 	}
 
@@ -740,9 +744,9 @@ public class SDKObjectsConverter {
 	}
 
 	public SbiGeoFeatures fromSDKFeatureToSbiGeoFeatures(SDKFeature feature) {
-		logger.debug("IN");
+		LOGGER.debug("IN");
 		if (feature == null) {
-			logger.warn("SDKFeature in input is null!!");
+			LOGGER.warn("SDKFeature in input is null!!");
 			return null;
 		}
 		SbiGeoFeatures sbiFeature = null;
@@ -754,18 +758,18 @@ public class SDKObjectsConverter {
 			sbiFeature.setType(feature.getType());
 
 		} catch (Exception e) {
-			logger.error("Error while converting SDKFeature into SbiGeoFeature.", e);
-			logger.debug("Returning null.");
+			LOGGER.error("Error while converting SDKFeature into SbiGeoFeature.", e);
+			LOGGER.debug("Returning null.");
 			return null;
 		}
-		logger.debug("OUT");
+		LOGGER.debug("OUT");
 		return sbiFeature;
 	}
 
 	public SDKFeature fromSbiGeoFeatureToSDKFeature(SbiGeoFeatures feature) {
-		logger.debug("IN");
+		LOGGER.debug("IN");
 		if (feature == null) {
-			logger.warn("Feature in input is null!!");
+			LOGGER.warn("Feature in input is null!!");
 			return null;
 		}
 		SDKFeature sdkFeature = null;
@@ -776,19 +780,19 @@ public class SDKObjectsConverter {
 			sdkFeature.setDescr(feature.getDescr());
 			sdkFeature.setType(feature.getType());
 		} catch (Exception e) {
-			logger.error("Error while converting Feature into SDKFeature.", e);
-			logger.debug("Returning null.");
+			LOGGER.error("Error while converting Feature into SDKFeature.", e);
+			LOGGER.debug("Returning null.");
 			return null;
 		} finally {
-			logger.debug("OUT");
+			LOGGER.debug("OUT");
 		}
 		return sdkFeature;
 	}
 
 	public SbiGeoMaps fromSDKMapsToSbiGeoMaps(SDKMap map) {
-		logger.debug("IN");
+		LOGGER.debug("IN");
 		if (map == null) {
-			logger.warn("SDKMaps in input is null!!");
+			LOGGER.warn("SDKMaps in input is null!!");
 			return null;
 		}
 		SbiGeoMaps sbiMap = null;
@@ -811,18 +815,18 @@ public class SDKObjectsConverter {
 			}
 
 		} catch (Exception e) {
-			logger.error("Error while converting SDKMap into SbiGeoFeature.", e);
-			logger.debug("Returning null.");
+			LOGGER.error("Error while converting SDKMap into SbiGeoFeature.", e);
+			LOGGER.debug("Returning null.");
 			return null;
 		}
-		logger.debug("OUT");
+		LOGGER.debug("OUT");
 		return sbiMap;
 	}
 
 	public SDKMap fromSbiGeoMapToSDKMap(SbiGeoMaps sbiMap) {
-		logger.debug("IN");
+		LOGGER.debug("IN");
 		if (sbiMap == null) {
-			logger.warn("sbiMap in input is null!!");
+			LOGGER.warn("sbiMap in input is null!!");
 			return null;
 		}
 		SDKMap sdkMap = null;
@@ -837,11 +841,11 @@ public class SDKObjectsConverter {
 				sdkMap.setBinId(sbiMap.getBinContents().getId());
 			}
 		} catch (Exception e) {
-			logger.error("Error while converting Feature into SDKFeature.", e);
-			logger.debug("Returning null.");
+			LOGGER.error("Error while converting Feature into SDKFeature.", e);
+			LOGGER.debug("Returning null.");
 			return null;
 		} finally {
-			logger.debug("OUT");
+			LOGGER.debug("OUT");
 		}
 		return sdkMap;
 	}
@@ -866,9 +870,9 @@ public class SDKObjectsConverter {
 	}
 
 	public SDKDomain fromDomainToSDKDomain(Domain domain) {
-		logger.debug("IN");
+		LOGGER.debug("IN");
 		if (domain == null) {
-			logger.warn("domain in input is null!!");
+			LOGGER.warn("domain in input is null!!");
 			return null;
 		}
 		SDKDomain sdkDomain = null;
@@ -880,11 +884,11 @@ public class SDKObjectsConverter {
 			sdkDomain.setValueNm(domain.getValueName());
 			sdkDomain.setValueDs(domain.getValueDescription());
 		} catch (Exception e) {
-			logger.error("Error while converting domain into SDKDomain.", e);
-			logger.debug("Returning null.");
+			LOGGER.error("Error while converting domain into SDKDomain.", e);
+			LOGGER.debug("Returning null.");
 			return null;
 		} finally {
-			logger.debug("OUT");
+			LOGGER.debug("OUT");
 		}
 		return sdkDomain;
 	}

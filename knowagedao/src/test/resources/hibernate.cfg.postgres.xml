@@ -83,7 +83,6 @@
 		<mapping resource="it/eng/spagobi/analiticalmodel/functionalitytree/metadata/mapping/SbiFuncRole.hbm.xml" />
 		<mapping resource="it/eng/spagobi/monitoring/metadata/mapping/SbiAudit.hbm.xml" />
 		<mapping resource="it/eng/spagobi/engines/config/metadata/mapping/SbiEngines.hbm.xml" />
-		<mapping resource="it/eng/spagobi/engines/config/metadata/mapping/SbiExporters.hbm.xml" />
 		<mapping resource="it/eng/spagobi/tools/datasource/metadata/mapping/SbiDataSource.hbm.xml" />
 		<mapping resource="it/eng/spagobi/tools/distributionlist/metadata/mapping/SbiDistributionList.hbm.xml" />
 		<mapping resource="it/eng/spagobi/tools/distributionlist/metadata/mapping/SbiDistributionListsObjects.hbm.xml" />

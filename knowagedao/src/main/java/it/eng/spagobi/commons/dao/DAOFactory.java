@@ -17,7 +17,6 @@
  */
 package it.eng.spagobi.commons.dao;
 
-import org.apache.log4j.Logger;
 import org.hibernate.HibernateException;
 
 import it.eng.spago.error.EMFUserError;
@@ -48,7 +47,6 @@ import it.eng.spagobi.commons.dao.es.EventToDatabaseEmittingCommand;
 import it.eng.spagobi.community.dao.ISbiCommunityDAO;
 import it.eng.spagobi.dossier.dao.ISbiDossierActivityDAO;
 import it.eng.spagobi.engines.config.dao.IEngineDAO;
-import it.eng.spagobi.engines.config.dao.ISbiExportersDAO;
 import it.eng.spagobi.federateddataset.dao.ISbiFederationDefinitionDAO;
 import it.eng.spagobi.functions.dao.IBIObjFunctionDAO;
 import it.eng.spagobi.functions.dao.ICatalogFunctionDAO;
@@ -118,8 +116,6 @@ import it.eng.spagobi.workspace.dao.IObjFuncOrganizerDAO;
  */
 public class DAOFactory {
 
-	private static final Logger LOGGER = Logger.getLogger(DAOFactory.class);
-
 	private static final String CONFIG_EMIT_AUTHORIZATION_EVENTS = "KNOWAGE.EMIT_AUTHORIZATION_EVENTS";
 
 	private static String getDAOClass(String daoName) {
@@ -138,7 +134,7 @@ public class DAOFactory {
 		Object daoObject = null;
 		try {
 			daoObject = Class.forName(getDAOClass(daoName)).newInstance();
-		} catch (Throwable e) {
+		} catch (Exception e) {
 			throw new SpagoBIRuntimeException("Cannot instantiate " + daoName, e);
 		}
 		return daoObject;
@@ -962,8 +958,7 @@ public class DAOFactory {
 	}
 
 	/**
-	 * @deprecated Replaced by KNOWAGE_TM-513
-	 * TODO : Delete
+	 * @deprecated Replaced by KNOWAGE_TM-513 TODO : Delete
 	 */
 	@Deprecated
 	public static IFunctionsOrganizerDAO getFunctionsOrganizerDAO() {
@@ -975,8 +970,7 @@ public class DAOFactory {
 	}
 
 	/**
-	 * @deprecated Replaced by KNOWAGE_TM-513
-	 * TODO : Delete
+	 * @deprecated Replaced by KNOWAGE_TM-513 TODO : Delete
 	 */
 	@Deprecated
 	public static IObjFuncOrganizerDAO getObjFuncOrganizerDAO() {
@@ -989,10 +983,6 @@ public class DAOFactory {
 
 	public static ISbiDossierActivityDAO getDossierActivityDao() {
 		return (ISbiDossierActivityDAO) createDAOInstance("DossierActivityDAO");
-	}
-
-	public static ISbiExportersDAO getExportersDao() {
-		return (ISbiExportersDAO) createDAOInstance("ExportersDAO");
 	}
 
 	public static IMetaModelParuseDAO getMetaModelParuseDao() {
@@ -1023,5 +1013,8 @@ public class DAOFactory {
 		SingletonConfig config = SingletonConfig.getInstance();
 		String configValue = config.getConfigValue(CONFIG_EMIT_AUTHORIZATION_EVENTS);
 		return Boolean.parseBoolean(configValue);
+	}
+
+	private DAOFactory() {
 	}
 }

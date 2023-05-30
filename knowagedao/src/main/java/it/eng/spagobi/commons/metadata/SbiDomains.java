@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,7 +11,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -31,8 +31,6 @@ public class SbiDomains extends SbiHibernateModel {
 	private String valueNm;
 	private String valueDs;
 
-	// private Set sbiExporterses = new HashSet(0);
-
 	// Constructors
 
 	/**
@@ -43,9 +41,8 @@ public class SbiDomains extends SbiHibernateModel {
 
 	/**
 	 * constructor with id.
-	 * 
-	 * @param valueId
-	 *            the value id
+	 *
+	 * @param valueId the value id
 	 */
 	public SbiDomains(Integer valueId) {
 		this.valueId = valueId;
@@ -55,7 +52,7 @@ public class SbiDomains extends SbiHibernateModel {
 
 	/**
 	 * Gets the value id.
-	 * 
+	 *
 	 * @return the value id
 	 */
 	public Integer getValueId() {
@@ -64,9 +61,8 @@ public class SbiDomains extends SbiHibernateModel {
 
 	/**
 	 * Sets the value id.
-	 * 
-	 * @param valueId
-	 *            the new value id
+	 *
+	 * @param valueId the new value id
 	 */
 	public void setValueId(Integer valueId) {
 		this.valueId = valueId;
@@ -74,7 +70,7 @@ public class SbiDomains extends SbiHibernateModel {
 
 	/**
 	 * Gets the domain cd.
-	 * 
+	 *
 	 * @return the domain cd
 	 */
 	public String getDomainCd() {
@@ -83,9 +79,8 @@ public class SbiDomains extends SbiHibernateModel {
 
 	/**
 	 * Sets the domain cd.
-	 * 
-	 * @param domainCd
-	 *            the new domain cd
+	 *
+	 * @param domainCd the new domain cd
 	 */
 	public void setDomainCd(String domainCd) {
 		this.domainCd = domainCd;
@@ -93,7 +88,7 @@ public class SbiDomains extends SbiHibernateModel {
 
 	/**
 	 * Gets the domain nm.
-	 * 
+	 *
 	 * @return the domain nm
 	 */
 	public String getDomainNm() {
@@ -102,9 +97,8 @@ public class SbiDomains extends SbiHibernateModel {
 
 	/**
 	 * Sets the domain nm.
-	 * 
-	 * @param domainNm
-	 *            the new domain nm
+	 *
+	 * @param domainNm the new domain nm
 	 */
 	public void setDomainNm(String domainNm) {
 		this.domainNm = domainNm;
@@ -112,7 +106,7 @@ public class SbiDomains extends SbiHibernateModel {
 
 	/**
 	 * Gets the value cd.
-	 * 
+	 *
 	 * @return the value cd
 	 */
 	public String getValueCd() {
@@ -121,9 +115,8 @@ public class SbiDomains extends SbiHibernateModel {
 
 	/**
 	 * Sets the value cd.
-	 * 
-	 * @param valueCd
-	 *            the new value cd
+	 *
+	 * @param valueCd the new value cd
 	 */
 	public void setValueCd(String valueCd) {
 		this.valueCd = valueCd;
@@ -131,7 +124,7 @@ public class SbiDomains extends SbiHibernateModel {
 
 	/**
 	 * Gets the value nm.
-	 * 
+	 *
 	 * @return the value nm
 	 */
 	public String getValueNm() {
@@ -140,9 +133,8 @@ public class SbiDomains extends SbiHibernateModel {
 
 	/**
 	 * Sets the value nm.
-	 * 
-	 * @param valueNm
-	 *            the new value nm
+	 *
+	 * @param valueNm the new value nm
 	 */
 	public void setValueNm(String valueNm) {
 		this.valueNm = valueNm;
@@ -150,7 +142,7 @@ public class SbiDomains extends SbiHibernateModel {
 
 	/**
 	 * Gets the value ds.
-	 * 
+	 *
 	 * @return the value ds
 	 */
 	public String getValueDs() {
@@ -159,9 +151,8 @@ public class SbiDomains extends SbiHibernateModel {
 
 	/**
 	 * Sets the value ds.
-	 * 
-	 * @param valueDs
-	 *            the new value ds
+	 *
+	 * @param valueDs the new value ds
 	 */
 	public void setValueDs(String valueDs) {
 		this.valueDs = valueDs;
@@ -169,7 +160,7 @@ public class SbiDomains extends SbiHibernateModel {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see java.lang.Object#hashCode()
 	 */
 	@Override
@@ -182,7 +173,7 @@ public class SbiDomains extends SbiHibernateModel {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
 	@Override
@@ -201,11 +192,5 @@ public class SbiDomains extends SbiHibernateModel {
 			return false;
 		return true;
 	}
-
-	/*
-	 * public Set getSbiExporterses() { return sbiExporterses; }
-	 * 
-	 * public void setSbiExporterses(Set sbiExporterses) { this.sbiExporterses = sbiExporterses; }
-	 */
 
 }

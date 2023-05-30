@@ -49,7 +49,6 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.criterion.Criterion;
-import org.hibernate.criterion.Expression;
 import org.hibernate.criterion.Restrictions;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -72,7 +71,7 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 public class SbiGeoLayersDAOHibImpl extends AbstractHibernateDAO implements ISbiGeoLayersDAO {
 
-	static private Logger logger = Logger.getLogger(SbiGeoLayersDAOHibImpl.class);
+	private static final Logger LOGGER = Logger.getLogger(SbiGeoLayersDAOHibImpl.class);
 
 	/**
 	 * Load layer by id.
@@ -148,7 +147,7 @@ public class SbiGeoLayersDAOHibImpl extends AbstractHibernateDAO implements ISbi
 		try {
 			tmpSession = getSession();
 			// tx = tmpSession.beginTransaction();
-			Criterion labelCriterrion = Expression.eq("label", label);
+			Criterion labelCriterrion = Restrictions.eq("label", label);
 			Criteria criteria = tmpSession.createCriteria(SbiGeoLayers.class);
 			criteria.add(labelCriterrion);
 			SbiGeoLayers hibLayer = (SbiGeoLayers) criteria.uniqueResult();
@@ -203,7 +202,7 @@ public class SbiGeoLayersDAOHibImpl extends AbstractHibernateDAO implements ISbi
 			tmpSession = getSession();
 			tx = tmpSession.beginTransaction();
 
-			SbiGeoLayers hibLayer = (SbiGeoLayers) tmpSession.load(SbiGeoLayers.class, new Integer(aLayer.getLayerId()));
+			SbiGeoLayers hibLayer = (SbiGeoLayers) tmpSession.load(SbiGeoLayers.class, aLayer.getLayerId());
 			hibLayer.setName(aLayer.getName());
 			if (aLayer.getDescr() == null) {
 				aLayer.setDescr("");
@@ -227,11 +226,6 @@ public class SbiGeoLayersDAOHibImpl extends AbstractHibernateDAO implements ISbi
 			String path = null;
 			if (modified) {
 				if (aLayer.getPathFile() != null) {
-					String separator = "";
-					if (!aLayer.getPathFile().endsWith("" + File.separatorChar)) {
-						separator += File.separatorChar;
-					}
-
 					path = aLayer.getPathFile() + File.separator + "Layer" + File.separator;
 					aLayer.setPathFile(path + aLayer.getLabel());
 
@@ -347,7 +341,7 @@ public class SbiGeoLayersDAOHibImpl extends AbstractHibernateDAO implements ISbi
 				Files.copy(originalDatasetFile.toPath(), newDatasetFile.toPath());
 
 				// Then delete old file
-				originalDatasetFile.delete();
+				Files.deleteIfExists(originalDatasetFile.toPath());
 			} catch (IOException e) {
 				throw new SpagoBIRuntimeException("Cannot move dataset File", e);
 			}
@@ -395,10 +389,6 @@ public class SbiGeoLayersDAOHibImpl extends AbstractHibernateDAO implements ISbi
 			String path = null;
 			if (aLayer.getPathFile() != null) {
 
-				String separator = "";
-				if (!aLayer.getPathFile().endsWith("" + File.separatorChar)) {
-					separator += File.separatorChar;
-				}
 				if (aLayer.getPathFile() == "") {
 					path = "Layer" + File.separator;
 				} else {
@@ -418,13 +408,12 @@ public class SbiGeoLayersDAOHibImpl extends AbstractHibernateDAO implements ISbi
 				if (aLayer.getPathFile() != null) {
 					String resourcePath = SpagoBIUtilities.getResourcePath();
 					new File(resourcePath + File.separator + "Layer").mkdirs();
-					OutputStreamWriter out;
 					String name = aLayer.getLabel();
-					out = new FileWriter(resourcePath + File.separator + "Layer" + File.separator + name);
-					String content = new String(aLayer.getFilebody());
-					content = content.replaceAll("\t", "").replaceAll("\n", "").replaceAll("\r", "");
-					out.write(content);
-					out.close();
+					try (OutputStreamWriter out = new FileWriter(resourcePath + File.separator + "Layer" + File.separator + name)) {
+						String content = new String(aLayer.getFilebody());
+						content = content.replaceAll("\t", "").replaceAll("\n", "").replaceAll("\r", "");
+						out.write(content);
+					}
 				}
 			} catch (IOException e) {
 				logException(e);
@@ -481,7 +470,9 @@ public class SbiGeoLayersDAOHibImpl extends AbstractHibernateDAO implements ISbi
 			}
 
 			tx.commit();
-		} catch (HibernateException he) {
+		} catch (
+
+		HibernateException he) {
 			logException(he);
 
 			if (tx != null)
@@ -515,15 +506,14 @@ public class SbiGeoLayersDAOHibImpl extends AbstractHibernateDAO implements ISbi
 	@Override
 	public ArrayList<String> getProperties(int layerId) {
 		Session tmpSession = null;
-		InputStream inputstream = null;
-		ArrayList<String> keys = new ArrayList<String>();
+		ArrayList<String> keys = new ArrayList<>();
 		try {
 			tmpSession = getSession();
 			tmpSession.beginTransaction();
 			GeoLayer aLayer = loadLayerByID(layerId);
 			JSONObject layerDef = new JSONObject(new String(aLayer.getLayerDef()));
 			if (aLayer.getType().equals("Google") || aLayer.getType().equals("TMS") || aLayer.getType().equals("OSM")) {
-				return new ArrayList<String>();
+				return new ArrayList<>();
 			}
 			// load properties of file
 			if (aLayer.getType().equals("File")) {
@@ -536,29 +526,32 @@ public class SbiGeoLayersDAOHibImpl extends AbstractHibernateDAO implements ISbi
 				}
 				File doc = new File(aLayer.getPathFile());
 				URL path = doc.toURI().toURL();
-				inputstream = path.openStream();
-				BufferedReader br = new BufferedReader(new InputStreamReader(inputstream));
-				String c;
-				JSONArray content = new JSONArray();
+				try (InputStream inputstream = path.openStream();
+						InputStreamReader isr = new InputStreamReader(inputstream);
+						BufferedReader br = new BufferedReader(isr)) {
+					String c;
+					JSONArray content = new JSONArray();
 
-				do {
-					c = br.readLine();
-					if (c != null) {
-						JSONObject obj = new JSONObject(c);
-						content = obj.getJSONArray("features");
-						for (int j = 0; j < content.length(); j++) {
-							obj = content.getJSONObject(j).getJSONObject("properties");
-							Iterator<String> it = obj.keys();
-							while (it.hasNext()) {
-								String key = it.next();
-								if (!keys.contains(key)) {
-									keys.add(key);
+					do {
+						c = br.readLine();
+						if (c != null) {
+							JSONObject obj = new JSONObject(c);
+							content = obj.getJSONArray("features");
+							for (int j = 0; j < content.length(); j++) {
+								obj = content.getJSONObject(j).getJSONObject("properties");
+								Iterator<String> it = obj.keys();
+								while (it.hasNext()) {
+									String key = it.next();
+									if (!keys.contains(key)) {
+										keys.add(key);
+									}
 								}
 							}
 						}
-					}
 
-				} while (c != null);
+					} while (c != null);
+
+				}
 			}
 
 			// load properties of wfs
@@ -597,6 +590,7 @@ public class SbiGeoLayersDAOHibImpl extends AbstractHibernateDAO implements ISbi
 					HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
 					// Create all-trusting host name verifier
 					HostnameVerifier allHostsValid = new HostnameVerifier() {
+
 						@Override
 						public boolean verify(String hostname, SSLSession session) {
 							return true;
@@ -613,37 +607,31 @@ public class SbiGeoLayersDAOHibImpl extends AbstractHibernateDAO implements ISbi
 				URL url = new URL(urlDescribeFeature);
 				URLConnection connection = url.openConnection();
 
-				BufferedReader br = new BufferedReader(new InputStreamReader(connection.getInputStream(), StandardCharsets.UTF_8));
-				String inputLine;
-				while ((inputLine = br.readLine()) != null) {
-					JSONObject obj = new JSONObject(inputLine);
-					JSONArray content = (JSONArray) obj.get("featureTypes");
-					content.getJSONObject(0);
-					for (int j = 0; j < content.length(); j++) {
-						JSONArray arr = content.getJSONObject(j).getJSONArray("properties");
-						for (int k = 0; k < arr.length(); k++) {
+				try (InputStream inputStream = connection.getInputStream();
+						BufferedReader br = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8))) {
+					String inputLine;
+					while ((inputLine = br.readLine()) != null) {
+						JSONObject obj = new JSONObject(inputLine);
+						JSONArray content = (JSONArray) obj.get("featureTypes");
+						content.getJSONObject(0);
+						for (int j = 0; j < content.length(); j++) {
+							JSONArray arr = content.getJSONObject(j).getJSONArray("properties");
+							for (int k = 0; k < arr.length(); k++) {
 
-							JSONObject val = arr.getJSONObject(k);
-							if (!keys.contains(val.get("name"))) {
-								keys.add(val.getString("name"));
+								JSONObject val = arr.getJSONObject(k);
+								if (!keys.contains(val.get("name"))) {
+									keys.add(val.getString("name"));
+								}
 							}
 						}
 					}
 				}
-				br.close();
 			}
 		} catch (Exception e) {
 			throw new IllegalArgumentException("Error during loading properties : " + e.getLocalizedMessage(), e);
 		} finally {
 			if (tmpSession != null && tmpSession.isOpen()) {
 				tmpSession.close();
-			}
-			if (inputstream != null) {
-				try {
-					inputstream.close();
-				} catch (Exception e) {
-					throw new SpagoBIRuntimeException("Cannot close file input stream", e);
-				}
 			}
 		}
 		return keys;
@@ -761,11 +749,11 @@ public class SbiGeoLayersDAOHibImpl extends AbstractHibernateDAO implements ISbi
 				}
 				File doc = new File(aLayer.getPathFile());
 				URL path = doc.toURI().toURL();
-				InputStream inputstream = path.openStream();
-				BufferedReader br = new BufferedReader(new InputStreamReader(inputstream));
-				String c;
-				c = br.readLine();
-				obj = new JSONObject(c);
+				try (InputStream inputstream = path.openStream(); BufferedReader br = new BufferedReader(new InputStreamReader(inputstream))) {
+					String c;
+					c = br.readLine();
+					obj = new JSONObject(c);
+				}
 
 			}
 			// load properties of wfs
@@ -791,18 +779,19 @@ public class SbiGeoLayersDAOHibImpl extends AbstractHibernateDAO implements ISbi
 				connection.setRequestProperty("Accept", "application/json");
 				// connection.setReadTimeout(30 * 1000);
 				connection.connect();
-				int HttpResult = connection.getResponseCode();
-				if (HttpResult == HttpURLConnection.HTTP_OK) {
+				int httpResult = connection.getResponseCode();
+				if (httpResult == HttpURLConnection.HTTP_OK) {
 
-					BufferedReader br = new BufferedReader(new InputStreamReader(connection.getInputStream(), StandardCharsets.UTF_8));
-					String inputLine;
-					while ((inputLine = br.readLine()) != null) {
-						obj = new JSONObject(inputLine);
+					try (InputStreamReader isr = new InputStreamReader(connection.getInputStream(), StandardCharsets.UTF_8);
+							BufferedReader br = new BufferedReader(isr)) {
+						String inputLine;
+						while ((inputLine = br.readLine()) != null) {
+							obj = new JSONObject(inputLine);
 
+						}
 					}
-					br.close();
 				} else {
-					System.out.println(connection.getResponseMessage());
+					LOGGER.debug(connection.getResponseMessage());
 				}
 
 			}
@@ -829,7 +818,7 @@ public class SbiGeoLayersDAOHibImpl extends AbstractHibernateDAO implements ISbi
 			Query q = tmpSession.createQuery(hql);
 			q.setInteger(0, id);
 			roles = q.list();
-			if (roles.size() == 0) {
+			if (roles.isEmpty()) {
 				return null;
 			}
 
@@ -854,7 +843,7 @@ public class SbiGeoLayersDAOHibImpl extends AbstractHibernateDAO implements ISbi
 			Query q = session.createQuery(hql);
 			q.setInteger(0, id);
 			roles = q.list();
-			if (roles.size() == 0) {
+			if (roles.isEmpty()) {
 				return null;
 			}
 
@@ -872,15 +861,13 @@ public class SbiGeoLayersDAOHibImpl extends AbstractHibernateDAO implements ISbi
 	 * @throws EMFUserError                 the EMF user error
 	 * @throws JSONException
 	 * @throws UnsupportedEncodingException
-	 *
-	 * @see it.eng.spagobi.geo.bo.dao.IEngineDAO#loadAllEngines()
 	 */
 	@SuppressWarnings("rawtypes")
 	@Override
 	public List<GeoLayer> loadAllLayers(String[] listLabel, IEngUserProfile profile) throws EMFUserError, JSONException, UnsupportedEncodingException {
 		Session tmpSession = null;
 		Transaction tx = null;
-		List<GeoLayer> realResult = new ArrayList<GeoLayer>();
+		List<GeoLayer> realResult = new ArrayList<>();
 		try {
 			tmpSession = getSession();
 			tx = tmpSession.beginTransaction();
@@ -986,9 +973,9 @@ public class SbiGeoLayersDAOHibImpl extends AbstractHibernateDAO implements ISbi
 			try {
 				rolesProfile = profile.getRoles();
 
-				Iterator it = rolesProfile.iterator();
+				Iterator<String> it = rolesProfile.iterator();
 				while (it.hasNext()) {
-					String roleName = (String) it.next();
+					String roleName = it.next();
 					if (roleName.equals(r.getRole().getName())) {
 						return true;
 					}
@@ -1044,8 +1031,8 @@ public class SbiGeoLayersDAOHibImpl extends AbstractHibernateDAO implements ISbi
 
 	@Override
 	public Integer countCategories(Integer catId) {
-		logger.debug("IN");
-		Integer resultNumber = new Integer(0);
+		LOGGER.debug("IN");
+		Integer resultNumber = 0;
 		Session session = null;
 		Transaction transaction = null;
 		try {
@@ -1055,7 +1042,7 @@ public class SbiGeoLayersDAOHibImpl extends AbstractHibernateDAO implements ISbi
 			String hql = "select count(*) from SbiGeoLayers s where s.category_id = ? ";
 			Query aQuery = session.createQuery(hql);
 			aQuery.setInteger(0, catId.intValue());
-			resultNumber = new Integer(((Long) aQuery.uniqueResult()).intValue());
+			resultNumber = ((Long) aQuery.uniqueResult()).intValue();
 
 		} catch (Throwable t) {
 			if (transaction != null && transaction.isActive()) {
@@ -1066,21 +1053,20 @@ public class SbiGeoLayersDAOHibImpl extends AbstractHibernateDAO implements ISbi
 			if (session != null && session.isOpen()) {
 				session.close();
 			}
-			logger.debug("OUT");
+			LOGGER.debug("OUT");
 		}
 		return resultNumber;
 	}
 
 	@Override
 	public List<GeoLayer> loadLayerByCategoryId(Integer catId) throws EMFUserError {
-		GeoLayer biLayer = null;
 		Session tmpSession = null;
 		// Transaction tx = null;
-		List<GeoLayer> retLayers = new ArrayList<GeoLayer>();
+		List<GeoLayer> retLayers = new ArrayList<>();
 		try {
 			tmpSession = getSession();
 			// tx = tmpSession.beginTransaction();
-			Criterion labelCriterrion = Expression.eq("category.id", catId);
+			Criterion labelCriterrion = Restrictions.eq("category.id", catId);
 			Criteria criteria = tmpSession.createCriteria(SbiGeoLayers.class);
 			criteria.add(labelCriterrion);
 			List hibList = criteria.list();

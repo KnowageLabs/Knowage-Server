@@ -19,7 +19,6 @@ package it.eng.spagobi.services.content.service;
 
 import java.util.ArrayList;
 import java.util.Base64;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -41,260 +40,258 @@ import it.eng.spagobi.services.security.exceptions.SecurityException;
 
 public class PublishImpl extends AbstractServiceImpl {
 
-    static private Logger logger = Logger.getLogger(PublishImpl.class);
+	private static final Logger LOGGER = Logger.getLogger(PublishImpl.class);
 
-    /**
-     * Publish template.
-     *
-     * @param token the token
-     * @param user the user
-     * @param attributes the attributes
-     *
-     * @return the string
-     */
-    public String publishTemplate(String token, String user, HashMap attributes) {
-	// TODO IMPLEMENTARE I CONTROLLI
-	PublishImpl helper = new PublishImpl();
-	logger.debug("IN");
-	Monitor monitor =MonitorFactory.start("spagobi.service.content.publishTemplate");
-	try {
-	    validateTicket(token, user);
-	    this.setTenantByUserId(user);
-	    return helper.publishTemplate(user, attributes);
-	} catch (SecurityException e) {
-	    logger.error("SecurityException", e);
-	    return null;
-	} finally {
-		this.unsetTenant();
-	    monitor.stop();
-	    logger.debug("OUT");
+	/**
+	 * Publish template.
+	 *
+	 * @param token      the token
+	 * @param user       the user
+	 * @param attributes the attributes
+	 *
+	 * @return the string
+	 */
+	public String publishTemplate(String token, String user, Map attributes) {
+		// TODO IMPLEMENTARE I CONTROLLI
+		PublishImpl helper = new PublishImpl();
+		LOGGER.debug("IN");
+		Monitor monitor = MonitorFactory.start("spagobi.service.content.publishTemplate");
+		try {
+			validateTicket(token, user);
+			this.setTenantByUserId(user);
+			return helper.publishTemplate(user, attributes);
+		} catch (SecurityException e) {
+			LOGGER.error("SecurityException", e);
+			return null;
+		} finally {
+			this.unsetTenant();
+			monitor.stop();
+			LOGGER.debug("OUT");
+		}
+
 	}
 
-    }
+	private String publishTemplate(String user, Map attributes) {
+		LOGGER.debug("IN");
+		Base64.Decoder decoder = Base64.getDecoder();
+		String encodedTemplate = (String) attributes.get("TEMPLATE");
+		byte[] buffer = null;
+		try {
 
-    private String publishTemplate(String user, HashMap attributes) {
-	logger.debug("IN");
-	Base64.Decoder decoder = Base64.getDecoder();
-	String encodedTemplate = (String) attributes.get("TEMPLATE");
-	byte[] buffer = null;
-	try {
-
-	    buffer = decoder.decode(encodedTemplate);
-	    String template = new String(buffer);
-	    attributes.put("TEMPLATE", template);
-	    String label = (String) attributes.get("LABEL");
-	    BIObject obj = DAOFactory.getBIObjectDAO().loadBIObjectByLabel(label);
-	    if (obj == null) {
-		obj = createBIObject();
-		initBIObject(attributes, obj);
-	    } else {
-		obj = updateBIObject(attributes, obj);
-	    }
-	    return "OK";
-	} catch (EMFUserError e) {
-	    logger.error("IOException when decode template", e);
-	    return "KO";
-	} finally {
-	    logger.debug("OUT");
-	}
-    }
-
-    private BIObject updateBIObject(Map mapPar, BIObject obj) {
-	logger.debug("IN");
-	String name = (String) mapPar.get("NAME");
-	String description = (String) mapPar.get("DESCRIPTION");
-	String encryptStr = (String) mapPar.get("ENCRYPTED");
-	Integer encrypt = (encryptStr.equalsIgnoreCase("" + false) ? new Integer(0) : new Integer(1));
-	String visibleStr = (String) mapPar.get("VISIBLE");
-	Integer visible = (visibleStr.equalsIgnoreCase("" + false) ? new Integer(0) : new Integer(1));
-	String type = (String) mapPar.get("TYPE");
-
-	int t = -1;
-	try {
-	    List biobjTypes = DAOFactory.getDomainDAO().loadListDomainsByType("BIOBJ_TYPE");
-	    for (int i = 0; i < biobjTypes.size(); i++) {
-		Domain domain = (Domain) biobjTypes.get(i);
-		if (domain.getValueCd().equals(type))
-		    t = domain.getValueId().intValue();
-	    }
-	} catch (EMFUserError e2) {
-	    logger.error("Error while retive object type", e2);
+			buffer = decoder.decode(encodedTemplate);
+			String template = new String(buffer);
+			attributes.put("TEMPLATE", template);
+			String label = (String) attributes.get("LABEL");
+			BIObject obj = DAOFactory.getBIObjectDAO().loadBIObjectByLabel(label);
+			if (obj == null) {
+				obj = createBIObject();
+				initBIObject(attributes, obj);
+			} else {
+				obj = updateBIObject(attributes, obj);
+			}
+			return "OK";
+		} catch (EMFUserError e) {
+			LOGGER.error("IOException when decode template", e);
+			return "KO";
+		} finally {
+			LOGGER.debug("OUT");
+		}
 	}
 
-	Integer typeIdInt = new Integer(t);
+	private BIObject updateBIObject(Map mapPar, BIObject obj) {
+		LOGGER.debug("IN");
+		String name = (String) mapPar.get("NAME");
+		String description = (String) mapPar.get("DESCRIPTION");
+		String encryptStr = (String) mapPar.get("ENCRYPTED");
+		Integer encrypt = (encryptStr.equalsIgnoreCase("" + false) ? 0 : 1);
+		String visibleStr = (String) mapPar.get("VISIBLE");
+		Integer visible = (visibleStr.equalsIgnoreCase("" + false) ? 0 : 1);
+		String type = (String) mapPar.get("TYPE");
 
-	Engine engine = null;
-	List engines = null;
-	try {
-	    engines = DAOFactory.getEngineDAO().loadAllEngines();
-	} catch (EMFUserError e) {
-	    logger.error("Error while retrive engine", e);
-	}
-	for (int i = 0; i < engines.size(); i++) {
-	    engine = (Engine) engines.get(i);
-	    if (engine.getBiobjTypeId().intValue() == typeIdInt.intValue())
-		break;
-	}
+		int t = -1;
+		try {
+			List<Domain> biobjTypes = DAOFactory.getDomainDAO().loadListDomainsByType("BIOBJ_TYPE");
+			for (int i = 0; i < biobjTypes.size(); i++) {
+				Domain domain = biobjTypes.get(i);
+				if (domain.getValueCd().equals(type))
+					t = domain.getValueId().intValue();
+			}
+		} catch (EMFUserError e2) {
+			LOGGER.error("Error while retive object type", e2);
+		}
 
-	obj.setName(name);
-	obj.setDescription(description);
+		Integer typeIdInt = t;
 
-	obj.setEncrypt(encrypt);
-	obj.setVisible(visible);
+		Engine engine = null;
+		List<Engine> engines = null;
+		try {
+			engines = DAOFactory.getEngineDAO().loadAllEngines();
+		} catch (EMFUserError e) {
+			LOGGER.error("Error while retrive engine", e);
+		}
+		for (int i = 0; i < engines.size(); i++) {
+			engine = engines.get(i);
+			if (engine.getBiobjTypeId().intValue() == typeIdInt.intValue())
+				break;
+		}
 
-	obj.setEngine(engine);
+		obj.setName(name);
+		obj.setDescription(description);
 
-	String template = (String) mapPar.get("TEMPLATE");
-	//ObjTemplate objTemp = obj.getActiveTemplate();
-	ObjTemplate objTemp = new ObjTemplate();
-	objTemp.setName("etlTemplate.xml");
-	objTemp.setContent(template.getBytes());
+		obj.setEncrypt(encrypt);
+		obj.setVisible(visible);
 
-	Domain domain = null;
-	try {
-	    DAOFactory.getBIObjectDAO().modifyBIObject(obj, objTemp);
-	    domain = DAOFactory.getDomainDAO().loadDomainById(engine.getBiobjTypeId());
-	} catch (EMFUserError e1) {
-	    logger.error("Error while retrive doomain", e1);
-	}
-	obj.setBiObjectTypeCode(domain.getValueCd());
+		obj.setEngine(engine);
 
-	obj.setBiObjectTypeID(typeIdInt);
+		String template = (String) mapPar.get("TEMPLATE");
+		// ObjTemplate objTemp = obj.getActiveTemplate();
+		ObjTemplate objTemp = new ObjTemplate();
+		objTemp.setName("etlTemplate.xml");
+		objTemp.setContent(template.getBytes());
 
-	logger.debug("OUT");
-	return obj;
-    }
+		Domain domain = null;
+		try {
+			DAOFactory.getBIObjectDAO().modifyBIObject(obj, objTemp);
+			domain = DAOFactory.getDomainDAO().loadDomainById(engine.getBiobjTypeId());
+		} catch (EMFUserError e1) {
+			LOGGER.error("Error while retrive doomain", e1);
+		}
+		obj.setBiObjectTypeCode(domain.getValueCd());
 
-    private void initBIObject(Map mapPar, BIObject obj) throws EMFUserError {
+		obj.setBiObjectTypeID(typeIdInt);
 
-	logger.debug("IN");
-	String label = (String) mapPar.get("LABEL");
-	String name = (String) mapPar.get("NAME");
-	String description = (String) mapPar.get("DESCRIPTION");
-	String encryptStr = (String) mapPar.get("ENCRYPTED");
-	Integer encrypt = (encryptStr.equalsIgnoreCase("" + false) ? new Integer(0) : new Integer(1));
-	String visibleStr = (String) mapPar.get("VISIBLE");
-	Integer visible = (visibleStr.equalsIgnoreCase("" + false) ? new Integer(0) : new Integer(1));
-	String functionalitiyCode = (String) mapPar.get("FUNCTIONALITYCODE");
-	String state = (String) mapPar.get("STATE");
-	String type = (String) mapPar.get("TYPE");
-	String user = (String) mapPar.get("USER");
-
-	int t = -1;
-	try {
-	    List biobjTypes = DAOFactory.getDomainDAO().loadListDomainsByType("BIOBJ_TYPE");
-	    for (int i = 0; i < biobjTypes.size(); i++) {
-		Domain domain = (Domain) biobjTypes.get(i);
-		if (domain.getValueCd().equals(type))
-		    t = domain.getValueId().intValue();
-	    }
-	} catch (EMFUserError e2) {
-	    logger.error("Error while retrive object type from domain", e2);
+		LOGGER.debug("OUT");
+		return obj;
 	}
 
-	Integer typeIdInt = new Integer(t);
+	private void initBIObject(Map mapPar, BIObject obj) throws EMFUserError {
 
-	Engine engine = null;
-	List engines = null;
-	try {
-	    engines = DAOFactory.getEngineDAO().loadAllEngines();
-	} catch (EMFUserError e) {
-	    logger.error("Error while retrive engines", e);
-	}
-	for (int i = 0; i < engines.size(); i++) {
-	    engine = (Engine) engines.get(i);
-	    if (engine.getBiobjTypeId().intValue() == typeIdInt.intValue())
-		break;
-	}
-	logger.info(engine.getName());
+		LOGGER.debug("IN");
+		String label = (String) mapPar.get("LABEL");
+		String name = (String) mapPar.get("NAME");
+		String description = (String) mapPar.get("DESCRIPTION");
+		String encryptStr = (String) mapPar.get("ENCRYPTED");
+		Integer encrypt = (encryptStr.equalsIgnoreCase("" + false) ? 0 : 1);
+		String visibleStr = (String) mapPar.get("VISIBLE");
+		Integer visible = (visibleStr.equalsIgnoreCase("" + false) ? 0 : 1);
+		String functionalitiyCode = (String) mapPar.get("FUNCTIONALITYCODE");
+		String state = (String) mapPar.get("STATE");
+		String type = (String) mapPar.get("TYPE");
+		String user = (String) mapPar.get("USER");
 
-	obj.setLabel(label);
-	obj.setName(name);
-	obj.setDescription(description);
+		int t = -1;
+		try {
+			List<Domain> biobjTypes = DAOFactory.getDomainDAO().loadListDomainsByType("BIOBJ_TYPE");
+			for (int i = 0; i < biobjTypes.size(); i++) {
+				Domain domain = biobjTypes.get(i);
+				if (domain.getValueCd().equals(type))
+					t = domain.getValueId().intValue();
+			}
+		} catch (EMFUserError e2) {
+			LOGGER.error("Error while retrive object type from domain", e2);
+		}
 
-	obj.setEncrypt(encrypt);
-	obj.setVisible(visible);
+		Integer typeIdInt = t;
 
-	obj.setEngine(engine);
-	obj.setCreationUser(user);
+		Engine engine = null;
+		List<Engine> engines = null;
+		try {
+			engines = DAOFactory.getEngineDAO().loadAllEngines();
+		} catch (EMFUserError e) {
+			LOGGER.error("Error while retrive engines", e);
+		}
+		for (int i = 0; i < engines.size(); i++) {
+			engine = engines.get(i);
+			if (engine.getBiobjTypeId().intValue() == typeIdInt.intValue())
+				break;
+		}
+		LOGGER.info(engine.getName());
 
-	String template = (String) mapPar.get("TEMPLATE");
-	//ObjTemplate objTemp = obj.getActiveTemplate();
-	ObjTemplate objTemp = new ObjTemplate();
-	objTemp.setName("etlTemplate.xml");
-	objTemp.setContent(template.getBytes());
+		obj.setLabel(label);
+		obj.setName(name);
+		obj.setDescription(description);
 
-	obj.setBiObjectTypeID(typeIdInt);
-	obj.setBiObjectTypeCode(type);
+		obj.setEncrypt(encrypt);
+		obj.setVisible(visible);
 
-	obj.setStateCode(state);
-	Integer valueId = null;
-	List l = DAOFactory.getDomainDAO().loadListDomainsByType("STATE");
-	if (!l.isEmpty()){
-		Iterator it = l.iterator();
-		while(it.hasNext()){
-			Domain dtemp = (Domain)it.next();
-			if (dtemp.getValueCd().equals(state)){
-				valueId = dtemp.getValueId();
+		obj.setEngine(engine);
+		obj.setCreationUser(user);
+
+		String template = (String) mapPar.get("TEMPLATE");
+		// ObjTemplate objTemp = obj.getActiveTemplate();
+		ObjTemplate objTemp = new ObjTemplate();
+		objTemp.setName("etlTemplate.xml");
+		objTemp.setContent(template.getBytes());
+
+		obj.setBiObjectTypeID(typeIdInt);
+		obj.setBiObjectTypeCode(type);
+
+		obj.setStateCode(state);
+		Integer valueId = null;
+		List<Domain> l = DAOFactory.getDomainDAO().loadListDomainsByType("STATE");
+		if (!l.isEmpty()) {
+			Iterator<Domain> it = l.iterator();
+			while (it.hasNext()) {
+				Domain dtemp = it.next();
+				if (dtemp.getValueCd().equals(state)) {
+					valueId = dtemp.getValueId();
+					break;
+				}
+			}
+		}
+		obj.setStateID(valueId);
+
+		Domain domain = null;
+		try {
+			domain = DAOFactory.getDomainDAO().loadDomainById(engine.getBiobjTypeId());
+		} catch (EMFUserError e1) {
+			LOGGER.error("Error while reading domain by type");
+		}
+		obj.setBiObjectTypeCode(domain.getValueCd());
+
+		List functionalities = new ArrayList();
+		try {
+			functionalities = DAOFactory.getLowFunctionalityDAO().loadAllLowFunctionalities(false);
+		} catch (EMFUserError e) {
+			LOGGER.error("Error while reading functionalities", e);
+		}
+
+		List<Integer> funcs = new ArrayList<>();
+		for (int i = 0; i < functionalities.size(); i++) {
+			LowFunctionality functionality = (LowFunctionality) functionalities.get(i);
+			if (functionality.getCode().equals(functionalitiyCode)) {
+
+				Integer id = functionality.getId();
+				funcs.add(id);
 				break;
 			}
 		}
-	}
-	obj.setStateID(valueId);
 
-	Domain domain = null;
-	try {
-	    domain = DAOFactory.getDomainDAO().loadDomainById(engine.getBiobjTypeId());
-	} catch (EMFUserError e1) {
-	    logger.error("Error while reading domain by type");
-	}
-	obj.setBiObjectTypeCode(domain.getValueCd());
+		obj.setFunctionalities(funcs);
+		DAOFactory.getBIObjectDAO().insertBIObject(obj, objTemp);
 
-	List functionalities = new ArrayList();
-	try {
-	    functionalities = DAOFactory.getLowFunctionalityDAO().loadAllLowFunctionalities(false);
-	} catch (EMFUserError e) {
-	    logger.error("Error while reading functionalities", e);
+		LOGGER.debug("OUT");
 	}
 
-	List funcs = new ArrayList();
-	for (int i = 0; i < functionalities.size(); i++) {
-	    LowFunctionality functionality = (LowFunctionality) functionalities.get(i);
-	    if (functionality.getCode().equals(functionalitiyCode)) {
+	private BIObject createBIObject() {
+		LOGGER.debug("IN");
+		BIObject obj = new BIObject();
 
-		Integer id = functionality.getId();
-		funcs.add(id);
-		break;
-	    }
+		obj.setId(0);
+		obj.setEngine(null);
+		obj.setDescription("");
+		obj.setLabel("");
+		obj.setName("");
+		obj.setEncrypt(0);
+		obj.setVisible(1);
+		obj.setRelName("");
+		obj.setStateID(null);
+		obj.setStateCode("");
+		obj.setBiObjectTypeID(null);
+		obj.setBiObjectTypeCode("");
+		obj.setFunctionalities(new ArrayList());
+		LOGGER.debug("OUT");
+		return obj;
 	}
-
-	obj.setFunctionalities(funcs);
-	DAOFactory.getBIObjectDAO().insertBIObject(obj, objTemp);
-
-	logger.debug("OUT");
-    }
-
-    private BIObject createBIObject() {
-	logger.debug("IN");
-	BIObject obj = new BIObject();
-
-	List functionalitites = new ArrayList();
-
-	obj.setId(new Integer(0));
-	obj.setEngine(null);
-	obj.setDescription("");
-	obj.setLabel("");
-	obj.setName("");
-	obj.setEncrypt(new Integer(0));
-	obj.setVisible(new Integer(1));
-	obj.setRelName("");
-	obj.setStateID(null);
-	obj.setStateCode("");
-	obj.setBiObjectTypeID(null);
-	obj.setBiObjectTypeCode("");
-	obj.setFunctionalities(functionalitites);
-	logger.debug("OUT");
-	return obj;
-    }
 
 }

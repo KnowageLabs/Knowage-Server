@@ -133,17 +133,12 @@ public class FileServiceDataSetCRUD {
 
 	private static final Logger LOGGER = Logger.getLogger(it.eng.spagobi.tools.dataset.service.FileServiceDataSetCRUD.class);
 
-	// Distinguish if has to be opened with QBE
-	private static final String OPEN_WITH = "openWith";
-	private static final String QBE = "qbe";
-
+	// the name of the data file expected to download inside the zip
+	private static final String DATA_FILE_NAME = "data.csv";
+	// the name of the metadata file expected to download inside the zip
+	private static final String METADATA_FILE_NAME = "metadata.json";
 	//
 	private static final String PARAMETERS_URL = "parametersUrl";
-
-	// the name of the data file expected to download inside the zip
-	private static String DATA_FILE_NAME = "data.csv";
-	// the name of the metadata file expected to download inside the zip
-	private static String METADATA_FILE_NAME = "metadata.json";
 
 	private final Random random = new Random();
 
@@ -564,13 +559,10 @@ public class FileServiceDataSetCRUD {
 	}
 
 	protected Engine getQbeEngine() throws Exception {
-		Engine qbeEngine;
-		List<Engine> engines;
-
-		qbeEngine = null;
+		Engine qbeEngine = null;
 		try {
 			Assert.assertNotNull(DAOFactory.getEngineDAO(), "EngineDao cannot be null");
-			engines = DAOFactory.getEngineDAO().loadAllEnginesForBIObjectType(SpagoBIConstants.DATAMART_TYPE_CODE);
+			List<Engine> engines = DAOFactory.getEngineDAO().loadAllEnginesForBIObjectType(SpagoBIConstants.DATAMART_TYPE_CODE);
 			if (engines == null || engines.isEmpty()) {
 				throw new Exception("There are no engines for documents of type [DATAMART] available");
 			} else {
@@ -582,7 +574,7 @@ public class FileServiceDataSetCRUD {
 					LogMF.debug(LOGGER, "Using qbe engine with label [{0}]", qbeEngine.getLabel());
 				}
 			}
-		} catch (Throwable t) {
+		} catch (Exception t) {
 			throw new Exception("Impossible to load a valid engine for document of type [DATAMART]", t);
 		} finally {
 			LOGGER.debug("OUT");

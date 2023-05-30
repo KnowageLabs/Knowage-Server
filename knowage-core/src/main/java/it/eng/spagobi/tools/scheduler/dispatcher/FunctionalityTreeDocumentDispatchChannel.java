@@ -17,7 +17,6 @@
  */
 package it.eng.spagobi.tools.scheduler.dispatcher;
 
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -52,10 +51,10 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
  */
 public class FunctionalityTreeDocumentDispatchChannel implements IDocumentDispatchChannel {
 
-	private DispatchContext dispatchContext;
-
 	// logger component
-	private static Logger logger = Logger.getLogger(FunctionalityTreeDocumentDispatchChannel.class);
+	private static final Logger LOGGER = Logger.getLogger(FunctionalityTreeDocumentDispatchChannel.class);
+
+	private DispatchContext dispatchContext;
 
 	public FunctionalityTreeDocumentDispatchChannel(DispatchContext dispatchContext) {
 		this.dispatchContext = dispatchContext;
@@ -70,7 +69,7 @@ public class FunctionalityTreeDocumentDispatchChannel implements IDocumentDispat
 				folderDispatchDataSotre = dataSet.getDataStore();
 			}
 			this.dispatchContext.setFolderDispatchDataSotre(folderDispatchDataSotre);
-		} catch (Throwable t) {
+		} catch (Exception t) {
 			throw new SpagoBIRuntimeException("Impossible to instatiate DocumentDispatchChannel class", t);
 		}
 	}
@@ -99,7 +98,7 @@ public class FunctionalityTreeDocumentDispatchChannel implements IDocumentDispat
 		String nameSuffix;
 		String descriptionSuffix;
 
-		logger.debug("IN");
+		LOGGER.debug("IN");
 
 		try {
 
@@ -123,14 +122,14 @@ public class FunctionalityTreeDocumentDispatchChannel implements IDocumentDispat
 			Domain relDom = domainDAO.loadDomainByCodeAndValue("STATE", "REL");
 			// recover engine
 			IEngineDAO engineDAO = DAOFactory.getEngineDAO();
-			List engines = engineDAO.loadAllEnginesForBIObjectType(officeDocDom.getValueCd());
+			List<Engine> engines = engineDAO.loadAllEnginesForBIObjectType(officeDocDom.getValueCd());
 			if (engines.isEmpty()) {
 				throw new Exception(" No suitable engines for the new document");
 			}
-			Engine engine = (Engine) engines.get(0);
+			Engine engine = engines.get(0);
 			// load the template
 			ObjTemplate objTemp = new ObjTemplate();
-			objTemp.setActive(new Boolean(true));
+			objTemp.setActive(true);
 			objTemp.setContent(executionOutput);
 			objTemp.setName(docName + fileExt);
 			// load all functionality
@@ -147,14 +146,14 @@ public class FunctionalityTreeDocumentDispatchChannel implements IDocumentDispat
 
 			String jobName = jex.getJobDetail().getKey().getName();
 			String completeLabel = "scheduler_" + jobName + "_" + docName;
-			String label = "sched_" + String.valueOf(Math.abs(completeLabel.hashCode()));
+			String label = "sched_" + Math.abs(completeLabel.hashCode());
 
 			BIObject newbiobj = new BIObject();
 			newbiobj.setDescription(docDesc);
 			newbiobj.setCreationUser("scheduler");
 			newbiobj.setLabel(label);
 			newbiobj.setName(docName);
-			newbiobj.setEncrypt(new Integer(0));
+			newbiobj.setEncrypt(0);
 			newbiobj.setEngine(engine);
 			newbiobj.setDataSourceId(document.getDataSourceId());
 			newbiobj.setRelName("");
@@ -162,10 +161,9 @@ public class FunctionalityTreeDocumentDispatchChannel implements IDocumentDispat
 			newbiobj.setBiObjectTypeID(officeDocDom.getValueId());
 			newbiobj.setStateCode(relDom.getValueCd());
 			newbiobj.setStateID(relDom.getValueId());
-			newbiobj.setVisible(new Integer(1));
+			newbiobj.setVisible(1);
 			newbiobj.setFunctionalities(storeInFunctionalities);
 			IBIObjectDAO objectDAO = DAOFactory.getBIObjectDAO();
-			Timestamp aoModRecDate;
 			BIObject biobjexist = objectDAO.loadBIObjectByLabel(label);
 			if (biobjexist == null) {
 				objectDAO.insertBIObject(newbiobj, objTemp);
@@ -173,11 +171,11 @@ public class FunctionalityTreeDocumentDispatchChannel implements IDocumentDispat
 				newbiobj.setId(biobjexist.getId());
 				objectDAO.modifyBIObject(newbiobj, objTemp);
 			}
-		} catch (Throwable t) {
-			logger.error("Error while saving schedule result as new document", t);
+		} catch (Exception t) {
+			LOGGER.error("Error while saving schedule result as new document", t);
 			return false;
 		} finally {
-			logger.debug("OUT");
+			LOGGER.debug("OUT");
 		}
 
 		return true;
@@ -189,30 +187,30 @@ public class FunctionalityTreeDocumentDispatchChannel implements IDocumentDispat
 	}
 
 	private static List findFolders(DispatchContext dispatchContext, BIObject document, IDataStore folderDispatchDataStore) {
-		logger.debug("IN");
+		LOGGER.debug("IN");
 		List toReturn = null;
 		List<String> folders = new ArrayList();
 		try {
 			folders.addAll(findFoldersFromFixedList(dispatchContext));
 		} catch (Exception e) {
-			logger.error(e);
+			LOGGER.error(e);
 		}
 		try {
 			folders.addAll(findFoldersFromDataSet(dispatchContext, document, folderDispatchDataStore));
 		} catch (NullPointerException en) {
-			logger.error("Folders defined into dataset " + dispatchContext.getDataSetFolderLabel() + "  not found.");
+			LOGGER.error("Folders defined into dataset " + dispatchContext.getDataSetFolderLabel() + "  not found.");
 		} catch (Exception e) {
-			logger.error(e);
+			LOGGER.error(e);
 		}
 
 		toReturn = folders;
-		logger.debug("OUT: returning " + toReturn);
+		LOGGER.debug("OUT: returning " + toReturn);
 		return toReturn;
 	}
 
 	private static List findFoldersFromFixedList(DispatchContext info) throws Exception {
-		logger.debug("IN");
-		List folders = new ArrayList();
+		LOGGER.debug("IN");
+		List<Integer> folders = new ArrayList<>();
 		String functIdsConcat = info.getFunctionalityIds();
 		String[] functIds = functIdsConcat.split(",");
 		for (int i = 0; i < functIds.length; i++) {
@@ -222,22 +220,22 @@ public class FunctionalityTreeDocumentDispatchChannel implements IDocumentDispat
 			Integer functId = Integer.valueOf(functIdStr);
 			folders.add(functId);
 		}
-		logger.debug("OUT");
+		LOGGER.debug("OUT");
 		return folders;
 	}
 
 	private static List findFoldersFromDataSet(DispatchContext info, BIObject biobj, IDataStore dataStore) throws Exception {
-		logger.debug("IN");
+		LOGGER.debug("IN");
 		List folders = new ArrayList();
 		if (info.isUseFolderDataSet()) {
-			logger.debug("Trigger is configured to save documents to folders retrieved by a dataset");
+			LOGGER.debug("Trigger is configured to save documents to folders retrieved by a dataset");
 			if (dataStore == null || dataStore.isEmpty()) {
 				throw new Exception("The dataset in input is empty!! Cannot retrieve folders from it.");
 			}
 			// in this case folders must be retrieved by the dataset (which the datastore in input belongs to)
 			// we must find the parameter value in order to filter the dataset
 			String dsParameterLabel = info.getDataSetFolderParameterLabel();
-			logger.debug("The dataset will be filtered using the value of the parameter [" + dsParameterLabel + "]");
+			LOGGER.debug("The dataset will be filtered using the value of the parameter [" + dsParameterLabel + "]");
 			// looking for the parameter
 			List parameters = biobj.getDrivers();
 			BIObjectParameter parameter = null;
@@ -259,30 +257,30 @@ public class FunctionalityTreeDocumentDispatchChannel implements IDocumentDispat
 			if (values == null || values.isEmpty()) {
 				throw new Exception("The document parameter with label [" + dsParameterLabel + "] has no values. Cannot filter the dataset.");
 			}
-			logger.debug("Values found: " + StringUtils.join(values.toArray(), ","));
+			LOGGER.debug("Values found: " + StringUtils.join(values.toArray(), ","));
 			codeValue = (String) values.get(0);
-			logger.debug("Using value [" + codeValue + "] for dataset filtering...");
+			LOGGER.debug("Using value [" + codeValue + "] for dataset filtering...");
 
 			Iterator it = dataStore.iterator();
 			while (it.hasNext()) {
 				String folder = null;
-				IRecord record = (IRecord) it.next();
+				IRecord currRecord = (IRecord) it.next();
 				// the parameter value is used to filter on the first dataset field
-				IField valueField = record.getFieldAt(0);
+				IField valueField = currRecord.getFieldAt(0);
 				Object valueObj = valueField.getValue();
 				String value = null;
 				if (valueObj != null)
 					value = valueObj.toString();
 				if (codeValue.equals(value)) {
-					logger.debug("Found value [" + codeValue + "] on the first field of a record of the dataset.");
+					LOGGER.debug("Found value [" + codeValue + "] on the first field of a record of the dataset.");
 					// recipient address is on the second dataset field
-					IField folderField = record.getFieldAt(1);
+					IField folderField = currRecord.getFieldAt(1);
 					Object folderFieldObj = folderField.getValue();
 					if (folderFieldObj != null) {
 						folder = folderFieldObj.toString();
-						logger.debug("Found folder [" + folder + "] on the second field of the record.");
+						LOGGER.debug("Found folder [" + folder + "] on the second field of the record.");
 					} else {
-						logger.warn("The second field of the record is null.");
+						LOGGER.warn("The second field of the record is null.");
 					}
 				}
 				if (folder != null) {
@@ -291,13 +289,13 @@ public class FunctionalityTreeDocumentDispatchChannel implements IDocumentDispat
 						LowFunctionality func = DAOFactory.getLowFunctionalityDAO().loadLowFunctionalityByCode(folder, false);
 						folders.add(func.getId());
 					} catch (EMFUserError emf) {
-						logger.debug("Folder with code: " + folder + " not exists.");
+						LOGGER.debug("Folder with code: " + folder + " not exists.");
 					}
 				}
 			}
-			logger.debug("Folders found from dataset: " + StringUtils.join(folders.toArray(), ","));
+			LOGGER.debug("Folders found from dataset: " + StringUtils.join(folders.toArray(), ","));
 		}
-		logger.debug("OUT");
+		LOGGER.debug("OUT");
 		return folders;
 	}
 

@@ -17,8 +17,6 @@
  */
 package it.eng.spagobi.commons.serializer;
 
-import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 
@@ -26,13 +24,9 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
-import it.eng.spagobi.commons.bo.Domain;
 import it.eng.spagobi.commons.dao.DAOFactory;
-import it.eng.spagobi.commons.dao.IDomainDAO;
 import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
-import it.eng.spagobi.commons.utilities.messages.MessageBuilder;
 import it.eng.spagobi.engines.config.bo.Engine;
-import it.eng.spagobi.engines.config.bo.Exporters;
 import it.eng.spagobi.engines.config.dao.IEngineDAO;
 
 /**
@@ -88,10 +82,7 @@ public class DocumentsJSONSerializer implements Serializer {
 
 			result.put(ID, obj.getId());
 			result.put(LABEL, obj.getLabel());
-			MessageBuilder msgBuild = new MessageBuilder();
 			String objName = null;
-			// objName = msgBuild.getUserMessage(obj.getName(),null, locale);
-			// objName = msgBuild.getI18nMessage(locale, obj.getName());
 			objName = obj.getName();
 			result.put(NAME, objName);
 			if (objName.length() > SHORT_NAME_CHARACTERS_LIMIT) {
@@ -101,8 +92,6 @@ public class DocumentsJSONSerializer implements Serializer {
 			}
 
 			String description = obj.getDescription();
-			// description = msgBuild.getUserMessage( obj.getDescription() ,null, locale);
-			// description = msgBuild.getI18nMessage(locale, obj.getDescription());
 
 			result.put(DESCRIPTION, description);
 			result.put(TYPECODE, obj.getBiObjectTypeCode());
@@ -143,39 +132,24 @@ public class DocumentsJSONSerializer implements Serializer {
 				result.put(DOC_VERSION, obj.getDocVersion());
 			result.put(ACTIONS, new JSONArray());
 
-			Integer engineId = null;
 			Engine engineObj = obj.getEngine();
-			JSONArray prova = new JSONArray();
+			JSONArray exportersArray = new JSONArray();
 			if (engineObj != null) {
 
 				IEngineDAO engineDao = DAOFactory.getEngineDAO();
-				List exporters = new ArrayList();
-				exporters = engineDao.getAssociatedExporters(engineObj);
+				List<String> exporters = engineDao.getAssociatedExporters(engineObj);
 				if (!exporters.isEmpty()) {
-					for (Iterator iterator = exporters.iterator(); iterator.hasNext();) {
+					for (String exporter : exporters) {
 
-						Exporters exp = (Exporters) iterator.next();
-						Integer domainId = exp.getDomainId();
-
-						IDomainDAO domainDao = DAOFactory.getDomainDAO();
-						Domain domain = domainDao.loadDomainById(domainId);
-						if (domain != null) {
-							String value_cd = domain.getValueCd();
-							String urlExporter = null;
-							if (value_cd != null) {
-								prova.put(value_cd);
-							}
-						}
+						exportersArray.put(exporter);
 					}
 				}
 			}
 
-			result.put(EXPORTERS, prova);
+			result.put(EXPORTERS, exportersArray);
 
-		} catch (Throwable t) {
+		} catch (Exception t) {
 			throw new SerializationException("An error occurred while serializing object: " + o, t);
-		} finally {
-
 		}
 
 		return result;

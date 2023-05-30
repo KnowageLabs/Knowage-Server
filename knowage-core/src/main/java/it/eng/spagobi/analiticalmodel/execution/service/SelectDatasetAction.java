@@ -110,9 +110,7 @@ public class SelectDatasetAction extends ExecuteDocumentAction {
 
 			editActionParameters.put("selected_datasource_label", datasource.getLabel());
 			// add the data default datasource of teh engine
-			Engine qbeEngine = getQbeEngine();
 			int defEngineDataSource = 0;
-			// qbeEngine.getDataSourceId();
 			editActionParameters.put("ENGINE_DATASOURCE_ID", defEngineDataSource);
 
 			// IDataSource dataSource = getDatasourceToOpen(dataSourceId);
@@ -120,7 +118,7 @@ public class SelectDatasetAction extends ExecuteDocumentAction {
 			// String parametersStrng = dataset.getParamsMap().getActiveDetail().getParameters();
 			// Map<String, String> datasetParameterValuesMap = getDatasetParameterValuesMapFromString(parametersStrng);
 
-			Map<String, String> datasetParameterValuesMap = dataset.getParamsMap() != null ? dataset.getParamsMap() : new HashMap<String, String>();
+			Map<String, String> datasetParameterValuesMap = dataset.getParamsMap() != null ? dataset.getParamsMap() : new HashMap<>();
 
 			if (dataset.getParamsMap() != null)
 				editActionParameters.putAll(dataset.getParamsMap());
@@ -135,7 +133,7 @@ public class SelectDatasetAction extends ExecuteDocumentAction {
 
 				datasetId = dataset.getId();
 				Assert.assertNotNull(datasetId, "Dataset Id cannot be null");
-			} catch (Throwable t) {
+			} catch (Exception t) {
 				throw new SpagoBIServiceException(SERVICE_NAME, "An error occurred while creating dataset from bean [" + dataset + "]", t);
 			}
 			LogMF.debug(logger, "Datset [{0}]succesfully created with id [{1}]", dataset, datasetId);
@@ -155,7 +153,7 @@ public class SelectDatasetAction extends ExecuteDocumentAction {
 				// if(businessMetadata != null) {
 				// getServiceResponse().setAttribute(OUTPUT_PARAMETER_BUSINESS_METADATA, businessMetadata.toString());
 				// }
-			} catch (Throwable t) {
+			} catch (Exception t) {
 				throw new SpagoBIServiceException(SERVICE_NAME, "An error occurred while creating dataset from bean [" + dataset + "]", t);
 			}
 			logger.trace("Output parameter succesfully copied to response");
@@ -166,21 +164,18 @@ public class SelectDatasetAction extends ExecuteDocumentAction {
 	}
 
 	protected Engine getEngine(String typeCode) {
-		Engine engine;
-		List<Engine> engines;
-
-		engine = null;
+		Engine engine = null;
 		try {
 			Assert.assertNotNull(DAOFactory.getEngineDAO(), "EngineDao cannot be null");
-			engines = DAOFactory.getEngineDAO().loadAllEnginesForBIObjectType(typeCode);
-			if (engines == null || engines.size() == 0) {
+			List<Engine> engines = DAOFactory.getEngineDAO().loadAllEnginesForBIObjectType(typeCode);
+			if (engines == null || engines.isEmpty()) {
 				throw new SpagoBIServiceException(SERVICE_NAME, "There are no engines for documents of type [" + typeCode + "] available");
 			} else {
 				engine = engines.get(0);
 				LogMF.warn(logger, "There are more than one engine for document of type [" + typeCode + "]. We will use the one whose label is equal to [{0}]",
 						engine.getLabel());
 			}
-		} catch (Throwable t) {
+		} catch (Exception t) {
 			throw new SpagoBIServiceException(SERVICE_NAME, "Impossible to load a valid engine for document of type [" + typeCode + "]", t);
 		} finally {
 			logger.debug("OUT");
@@ -190,7 +185,7 @@ public class SelectDatasetAction extends ExecuteDocumentAction {
 	}
 
 	protected Map<String, String> buildEditServiceBaseParametersMap(String actionToCall) {
-		HashMap<String, String> parametersMap = new HashMap<String, String>();
+		HashMap<String, String> parametersMap = new HashMap<>();
 
 		parametersMap.put("ACTION_NAME", actionToCall);
 		parametersMap.put("NEW_SESSION", "TRUE");
@@ -213,21 +208,16 @@ public class SelectDatasetAction extends ExecuteDocumentAction {
 	}
 
 	protected String createNewExecutionId() {
-		String executionId;
+		String executionId = null;
 
 		logger.debug("IN");
 
-		executionId = null;
-		try {
-			UUIDGenerator uuidGen = UUIDGenerator.getInstance();
-			UUID uuidObj = uuidGen.generateTimeBasedUUID();
-			executionId = uuidObj.toString();
-			executionId = executionId.replaceAll("-", "");
-		} catch (Throwable t) {
+		UUIDGenerator uuidGen = UUIDGenerator.getInstance();
+		UUID uuidObj = uuidGen.generateTimeBasedUUID();
+		executionId = uuidObj.toString();
+		executionId = executionId.replace("-", "");
 
-		} finally {
-			logger.debug("OUT");
-		}
+		logger.debug("OUT");
 
 		return executionId;
 	}
@@ -258,7 +248,7 @@ public class SelectDatasetAction extends ExecuteDocumentAction {
 			dataset = dsDao.loadDataSetByLabel(label);
 			Assert.assertNotNull(dataset, "Dataset with label [" + label + "] not found");
 
-		} catch (Throwable t) {
+		} catch (Exception t) {
 			throw new SpagoBIServiceException(SERVICE_NAME, "Impossible to read from request parameter required to retrieve dataset", t);
 		} finally {
 			logger.debug("OUT");
@@ -268,14 +258,11 @@ public class SelectDatasetAction extends ExecuteDocumentAction {
 	}
 
 	private Engine getEngineByDocumentType(String type) {
-		Engine engine;
-		List<Engine> engines;
-
-		engine = null;
+		Engine engine = null;
 		try {
 			Assert.assertNotNull(DAOFactory.getEngineDAO(), "EngineDao cannot be null");
-			engines = DAOFactory.getEngineDAO().loadAllEnginesForBIObjectType(type);
-			if (engines == null || engines.size() == 0) {
+			List<Engine> engines = DAOFactory.getEngineDAO().loadAllEnginesForBIObjectType(type);
+			if (engines == null || engines.isEmpty()) {
 				throw new SpagoBIServiceException(SERVICE_NAME, "There are no engines for documents of type [" + type + "] available");
 			} else {
 				engine = engines.get(0);
@@ -286,7 +273,7 @@ public class SelectDatasetAction extends ExecuteDocumentAction {
 					LogMF.debug(logger, "Using engine with label [{0}]", engine.getLabel());
 				}
 			}
-		} catch (Throwable t) {
+		} catch (Exception t) {
 			throw new SpagoBIServiceException(SERVICE_NAME, "Impossible to load a valid engine for document of type [" + type + "]", t);
 		} finally {
 			logger.debug("OUT");
@@ -295,7 +282,4 @@ public class SelectDatasetAction extends ExecuteDocumentAction {
 		return engine;
 	}
 
-	private Engine getQbeEngine() {
-		return getEngineByDocumentType(SpagoBIConstants.DATAMART_TYPE_CODE);
-	}
 }

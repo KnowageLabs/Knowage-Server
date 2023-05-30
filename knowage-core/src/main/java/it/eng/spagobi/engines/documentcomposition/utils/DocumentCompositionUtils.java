@@ -18,6 +18,7 @@
 package it.eng.spagobi.engines.documentcomposition.utils;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -46,7 +47,6 @@ import it.eng.spagobi.analiticalmodel.document.dao.IViewpointDAO;
 import it.eng.spagobi.analiticalmodel.document.handlers.ExecutionInstance;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.Parameter;
-import it.eng.spagobi.commons.bo.Domain;
 import it.eng.spagobi.commons.constants.ObjectsTreeConstants;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
@@ -56,7 +56,6 @@ import it.eng.spagobi.container.CoreContextManager;
 import it.eng.spagobi.container.SpagoBISessionContainer;
 import it.eng.spagobi.container.strategy.LightNavigatorContextRetrieverStrategy;
 import it.eng.spagobi.engines.config.bo.Engine;
-import it.eng.spagobi.engines.config.bo.Exporters;
 import it.eng.spagobi.engines.documentcomposition.configuration.Constants;
 import it.eng.spagobi.engines.documentcomposition.configuration.DocumentCompositionConfiguration;
 import it.eng.spagobi.engines.documentcomposition.configuration.DocumentCompositionConfiguration.Document;
@@ -68,9 +67,12 @@ import it.eng.spagobi.monitoring.dao.AuditManager;
  */
 
 public class DocumentCompositionUtils {
-	private static transient Logger logger = Logger.getLogger(DocumentCompositionUtils.class);
+	private static final Logger LOGGER = Logger.getLogger(DocumentCompositionUtils.class);
 	public static final String DOCUMENT_OUTPUT_PARAMETERS = "DOCUMENT_OUTPUT_PARAMETERS";
-	public static final String messageBundle = "component_spagobidocumentcompositionIE_messages";
+	public static final String MESSAGE_BUNDLE = "component_spagobidocumentcompositionIE_messages";
+
+	private DocumentCompositionUtils() {
+	}
 
 	/**
 	 * Returns an url for execute the document with the engine associated. It calls relative driver.
@@ -83,7 +85,7 @@ public class DocumentCompositionUtils {
 	 *         null, else it is null and the url is complete.
 	 */
 	public static String getExecutionUrl(String objLabel, SessionContainer sessionContainer, SourceBean requestSB) {
-		logger.debug("IN");
+		LOGGER.debug("IN");
 
 		Monitor monitor = MonitorFactory.start("spagobi.engines.DocumentCompositionUtils.getExecutionUrl");
 
@@ -91,7 +93,7 @@ public class DocumentCompositionUtils {
 		String urlReturn = "";
 
 		if (objLabel == null || objLabel.equals("")) {
-			logger.error("Object Label is null: cannot get engine's url.");
+			LOGGER.error("Object Label is null: cannot get engine's url.");
 			return "1008|";
 		}
 
@@ -109,10 +111,10 @@ public class DocumentCompositionUtils {
 			// BIObject obj = DAOFactory.getBIObjectDAO().loadBIObjectForExecutionByLabelAndRole(objLabel, executionRole);
 			// BIObject obj = DAOFactory.getBIObjectDAO().loadBIObjectByLabel(objLabel);
 			if (obj == null) {
-				logger.error("Cannot obtain engine url. Document with label " + objLabel + " doesn't exist into database.");
+				LOGGER.error("Cannot obtain engine url. Document with label " + objLabel + " doesn't exist into database.");
 				List l = new ArrayList();
 				l.add(objLabel);
-				throw new EMFUserError(EMFErrorSeverity.ERROR, "1005", l, messageBundle);
+				throw new EMFUserError(EMFErrorSeverity.ERROR, "1005", l, MESSAGE_BUNDLE);
 			}
 			// Engine engine = obj.getEngine();
 
@@ -160,7 +162,7 @@ public class DocumentCompositionUtils {
 				List l = new ArrayList();
 				l.add(obj.getLabel());
 				EMFUserError userError = new EMFUserError(EMFErrorSeverity.ERROR, 1079, l);
-				logger.error("The object with label " + obj.getLabel() + " hasn't got a document into template");
+				LOGGER.error("The object with label " + obj.getLabel() + " hasn't got a document into template");
 				return "1002|";
 			}
 
@@ -176,8 +178,8 @@ public class DocumentCompositionUtils {
 				Map mapPars = aEngineDriver.getParameterMap(obj, profile, executionRole);
 				String id = (String) requestSB.getAttribute("vpId");
 				if (id != null) {
-					IViewpointDAO VPDAO = DAOFactory.getViewpointDAO();
-					Viewpoint vp = VPDAO.loadViewpointByID(new Integer(id));
+					IViewpointDAO vPDao = DAOFactory.getViewpointDAO();
+					Viewpoint vp = vPDao.loadViewpointByID(new Integer(id));
 					String[] vpParameters = vp.getVpValueParams().split("%26");
 					if (vpParameters != null) {
 						for (int i = 0; i < vpParameters.length; i++) {
@@ -218,7 +220,7 @@ public class DocumentCompositionUtils {
 
 					// retrocompatibility management: output parameter are skipped
 					if (parkey.equalsIgnoreCase(DOCUMENT_OUTPUT_PARAMETERS)) {
-						logger.debug("Output paramters aren't added to request url. They will be recovered directly by the target document!");
+						LOGGER.debug("Output paramters aren't added to request url. They will be recovered directly by the target document!");
 					} else
 						urlReturn = (new StringBuilder()).append(urlReturn).append("&").append(parkey).append("=").append(parvalue).toString();
 				} while (true);
@@ -275,15 +277,15 @@ public class DocumentCompositionUtils {
 
 			urlReturn = baseUrlReturn + urlReturn;
 
-			logger.debug("urlReturn: " + "|" + urlReturn);
+			LOGGER.debug("urlReturn: " + "|" + urlReturn);
 		} catch (Exception ex) {
-			logger.error("Error while getting execution url: " + ex);
+			LOGGER.error("Error while getting execution url: " + ex);
 			return null;
 		} finally {
 			monitor.stop();
 		}
 
-		logger.debug("OUT");
+		LOGGER.debug("OUT");
 
 		return "|" + urlReturn;
 	}
@@ -299,7 +301,7 @@ public class DocumentCompositionUtils {
 	 *         null, else it is null and the url is complete.
 	 */
 	public static String getEngineTestUrl(String objLabel, SessionContainer sessionContainer, SourceBean requestSB) {
-		logger.debug("IN");
+		LOGGER.debug("IN");
 
 		Monitor monitor = MonitorFactory.start("spagobi.engines.DocumentCompositionUtils.getEngineTestUrl");
 
@@ -307,7 +309,7 @@ public class DocumentCompositionUtils {
 		String urlReturn = "";
 
 		if (objLabel == null || objLabel.equals("")) {
-			logger.error("Object Label is null: cannot get engine's url.");
+			LOGGER.error("Object Label is null: cannot get engine's url.");
 			return "1008|";
 		}
 
@@ -316,10 +318,10 @@ public class DocumentCompositionUtils {
 			SessionContainer permSession = sessionContainer.getPermanentContainer();
 			BIObject obj = DAOFactory.getBIObjectDAO().loadBIObjectByLabel(objLabel);
 			if (obj == null) {
-				logger.error("Cannot obtain engine url. Document with label " + objLabel + " doesn't exist into database.");
+				LOGGER.error("Cannot obtain engine url. Document with label " + objLabel + " doesn't exist into database.");
 				List l = new ArrayList();
 				l.add(objLabel);
-				throw new EMFUserError(EMFErrorSeverity.ERROR, "1005", l, messageBundle);
+				throw new EMFUserError(EMFErrorSeverity.ERROR, "1005", l, MESSAGE_BUNDLE);
 			}
 
 			String className = obj.getEngine().getClassName();
@@ -334,16 +336,16 @@ public class DocumentCompositionUtils {
 					baseUrlReturn = baseUrlReturn.substring(0, restURLPos + 1);
 				baseUrlReturn += "Test?";
 				urlReturn = baseUrlReturn;
-				logger.debug("urlReturn: " + "|" + urlReturn);
+				LOGGER.debug("urlReturn: " + "|" + urlReturn);
 			}
 		} catch (Exception ex) {
-			logger.error("Error while getting execution url: " + ex);
+			LOGGER.error("Error while getting execution url: " + ex);
 			return null;
 		} finally {
 			monitor.stop();
 		}
 
-		logger.debug("OUT");
+		LOGGER.debug("OUT");
 
 		return "|" + urlReturn;
 	}
@@ -357,7 +359,7 @@ public class DocumentCompositionUtils {
 	 * @return a string with the url completed
 	 */
 	private static String getParametersUrl(BIObject obj, Document document, SourceBean requestSB, ExecutionInstance instance) {
-		logger.debug("IN");
+		LOGGER.debug("IN");
 		String paramUrl = "";
 		// set others parameters value
 		Properties lstParams = document.getParams();
@@ -382,26 +384,26 @@ public class DocumentCompositionUtils {
 						values = requestSB.getAttributeAsList(key);
 						// if value isn't defined, check if there is a value into the instance(there is when a document is called from a refresh o viewpoint
 						// mode)
-						if (values == null || values.size() == 0 || ((String) values.get(0)).equals("")) {
+						if (values == null || values.isEmpty() || ((String) values.get(0)).equals("")) {
 							List instanceValue = getInstanceValue(key, instance);
-							if (instanceValue != null && instanceValue.size() > 0 && !instanceValue.get(0).equals(""))
+							if (instanceValue != null && !instanceValue.isEmpty() && !instanceValue.get(0).equals(""))
 								values = instanceValue;
 						}
 						// if value isn't defined, gets the default value from the template
-						if (values == null || values.size() == 0 || ((String) values.get(0)).equals("")) {
+						if (values == null || values.isEmpty() || ((String) values.get(0)).equals("")) {
 							values.add(lstParams.getProperty(("default_value_param_" + document.getNumOrder() + "_" + cont)));
 						}
-						logger.debug("Values to pass : " + values);
+						LOGGER.debug("Values to pass : " + values);
 						// define a BIObjectParameter to use it for encode (multivalue management).
 						if (obj.getEngine().getClassName() == null || obj.getEngine().getClassName().equalsIgnoreCase("")) {
 							// EXTERNAL ENGINES
 							BIObjectParameter par = getBIObjectParameter(obj, key);
 							par.setParameterValues(values);
 							Parameter tmpPar = par.getParameter();
-							logger.debug("Manage parameter : " + tmpPar.getLabel() + "...");
+							LOGGER.debug("Manage parameter : " + tmpPar.getLabel() + "...");
 							if (tmpPar != null && values.size() > 1 && tmpPar.getModalityValue() != null && ((!(par).isMultivalue())
 									|| tmpPar.getModalityValue().getITypeCd().equalsIgnoreCase(SpagoBIConstants.INPUT_TYPE_MAN_IN_CODE))) {
-								logger.debug("Force the multivalue modality for parameter " + tmpPar.getLabel());
+								LOGGER.debug("Force the multivalue modality for parameter " + tmpPar.getLabel());
 								// force the multivalue management if the parameter has defined as MANUAL INPUT and the values is multiple.
 								tmpPar.getModalityValue().setMultivalue(true);
 								tmpPar.getModalityValue().setITypeCd(SpagoBIConstants.INPUT_TYPE_QUERY_CODE);
@@ -412,7 +414,7 @@ public class DocumentCompositionUtils {
 							Map parsMap = new HashMap();
 							parsMap.put(key, parsValue);
 							String tmpUrl = GeneralUtilities.getUrl("", parsMap);
-							logger.debug("tmpUrl for " + obj.getLabel() + ": " + tmpUrl);
+							LOGGER.debug("tmpUrl for " + obj.getLabel() + ": " + tmpUrl);
 							paramUrl += "&" + tmpUrl.substring(tmpUrl.indexOf("?") + 1);
 
 							// paramUrl += "&" + key + "=" + tmpUrl;
@@ -436,35 +438,16 @@ public class DocumentCompositionUtils {
 				}
 			}
 		} catch (Exception ex) {
-			logger.error("Error while getting parameter's document " + document.getSbiObjLabel() + " param: " + key + ": " + ex);
+			LOGGER.error("Error while getting parameter's document " + document.getSbiObjLabel() + " param: " + key + ": " + ex);
 			return null;
 		}
 
 		/*
 		 * if (forInternalEngine) paramUrl = paramUrl.substring(0, paramUrl.length()-3); else paramUrl = paramUrl.substring(0, paramUrl.length()-5);
 		 */
-		logger.debug("paramUrl: " + paramUrl);
-		logger.debug("OUT");
+		LOGGER.debug("paramUrl: " + paramUrl);
+		LOGGER.debug("OUT");
 		return paramUrl;
-	}
-
-	/**
-	 * Return an hashmap of all parameters for the document managed
-	 *
-	 * @param urlReturn String with url and parameters
-	 * @return HashMap
-	 */
-	private static HashMap getAllParamsValue(String urlReturn) {
-		HashMap retHM = new HashMap();
-		String tmpStr = urlReturn.substring(urlReturn.indexOf("?") + 1);
-		String[] tmpArr = tmpStr.split("&");
-		for (int i = 0; i < tmpArr.length; i++) {
-			String strPar = tmpArr[i];
-			String key = strPar.substring(0, strPar.indexOf("="));
-			String value = strPar.substring(strPar.indexOf("=") + 1);
-			retHM.put(key, value);
-		}
-		return retHM;
 	}
 
 	private static List getInstanceValue(String key, ExecutionInstance instance) {
@@ -513,41 +496,32 @@ public class DocumentCompositionUtils {
 	 * @return
 	 */
 	public static List getAvailableExporters(String objLabel, SessionContainer sessionContainer, SourceBean requestSB) {
-		logger.debug("IN");
+		LOGGER.debug("IN");
 
-		List<Exporters> exporters = null;
 		List<String> exportersTypes = null;
 		if (objLabel == null || objLabel.equals("")) {
-			logger.error("Object Label is null: cannot get engine's url.");
+			LOGGER.error("Object Label is null: cannot get engine's url.");
 			return null;
 		}
 
 		try {
-			// get the user profile from session
-			SessionContainer permSession = sessionContainer.getPermanentContainer();
-			IEngUserProfile profile = (IEngUserProfile) permSession.getAttribute(IEngUserProfile.ENG_USER_PROFILE);
 			BIObject obj = DAOFactory.getBIObjectDAO().loadBIObjectByLabel(objLabel);
 			if (obj == null) {
-				logger.error("Cannot obtain engine url. Document with label " + objLabel + " doesn't exist into database.");
-				List l = new ArrayList();
-				l.add(objLabel);
-				throw new EMFUserError(EMFErrorSeverity.ERROR, "1005", l, messageBundle);
+				LOGGER.error("Cannot obtain engine url. Document with label " + objLabel + " doesn't exist into database.");
+				List<String> l = Arrays.asList(objLabel);
+				throw new EMFUserError(EMFErrorSeverity.ERROR, "1005", l, MESSAGE_BUNDLE);
 			}
 			Engine engine = obj.getEngine();
-			exporters = DAOFactory.getEngineDAO().getAssociatedExporters(engine);
-			if (exporters != null) {
-				exportersTypes = new ArrayList<String>();
-				for (int i = 0; i < exporters.size(); i++) {
-					Domain domain = DAOFactory.getDomainDAO().loadDomainById(exporters.get(i).getDomainId());
-					String cd = domain.getValueCd();
-					exportersTypes.add(cd);
-				}
+			List<String> exporters = DAOFactory.getEngineDAO().getAssociatedExporters(engine);
+			exportersTypes = new ArrayList<>();
+			for (String exporter : exporters) {
+				exportersTypes.add(exporter);
 			}
 		} catch (Exception e) {
-			logger.error("Error while getting document's exporters for label :" + objLabel + ": " + e);
+			LOGGER.error("Error while getting document's exporters for label :" + objLabel + ": " + e);
 			return null;
 		} finally {
-			logger.debug("OUT");
+			LOGGER.debug("OUT");
 		}
 
 		return exportersTypes;

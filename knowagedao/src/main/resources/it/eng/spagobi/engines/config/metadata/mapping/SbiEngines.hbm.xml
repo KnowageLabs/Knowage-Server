@@ -95,19 +95,7 @@
         </property>
         <many-to-one name="biobjType" class="it.eng.spagobi.commons.metadata.SbiDomains">
             <column name="biobj_type" not-null="true" />
-        </many-to-one>     
-        <set name="sbiExporterses" inverse="true">
-            <key>
-                <column name="ENGINE_ID" not-null="true" />
-            </key>
-            <one-to-many class="it.eng.spagobi.engines.config.metadata.SbiExporters" />
-        </set>   
-        <set name="sbiProductTypeEngine" inverse="true">
-            <key>
-                <column name="ENGINE_ID" not-null="true" />
-            </key>
-            <one-to-many class="it.eng.spagobi.commons.metadata.SbiProductTypeEngine" />
-        </set>     
+        </many-to-one>
     </class>
 
 </hibernate-mapping>

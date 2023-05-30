@@ -51,7 +51,6 @@ public class MetadataInitializer extends SpagoBIInitializer {
 		metadataInitializers.add(new ChecksInitializer());
 		metadataInitializers.add(new LovsInitializer());
 		metadataInitializers.add(new FunctionalitiesInitializer());
-		metadataInitializers.add(new ExportersInitializer());
 		metadataInitializers.add(new ConfigurationsInitializer());
 		metadataInitializers.add(new AlertListenerInitializer());
 		metadataInitializers.add(new AlertActionInitializer());
@@ -88,7 +87,7 @@ public class MetadataInitializer extends SpagoBIInitializer {
 				endTime = System.currentTimeMillis();
 				logger.info("[" + metadataInitializer.getTargetComponentName() + "] succesfully initializated in " + (endTime - startTime) + " ms");
 			}
-		} catch (Throwable t) {
+		} catch (Exception t) {
 			logger.error("An unexpected error occured while initializing metadata", t);
 		} finally {
 			logger.debug("OUT");

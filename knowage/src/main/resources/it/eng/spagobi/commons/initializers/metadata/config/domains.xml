@@ -209,38 +209,7 @@
 		domainCd="MODEL_NODE" domainNm="Model node type" valueDs="sbidomains.ds.Generic_Node" />
 	<DOMAIN valueCd="PIVOT_TRANSFOMER" valueNm="sbidomains.nm.pivot_transformer"
 		domainCd="TRANSFORMER_TYPE" domainNm="Transformer types" valueDs="sbidomains.ds.pivot_transformer" />
-	<DOMAIN valueCd="PDF" valueNm="PDF" domainCd="EXPORT_TYPE"
-		domainNm="Exporters type" valueDs="Export type" />
-	<DOMAIN valueCd="XLS" valueNm="XLS" domainCd="EXPORT_TYPE"
-		domainNm="Exporters type" valueDs="Export type" />
-	<DOMAIN valueCd="CSV" valueNm="CSV" domainCd="EXPORT_TYPE"
-		domainNm="Exporters type" valueDs="Export type" />
-	<DOMAIN valueCd="XML" valueNm="XML" domainCd="EXPORT_TYPE"
-		domainNm="Exporters type" valueDs="Export type" />
-	<DOMAIN valueCd="TXT" valueNm="TXT" domainCd="EXPORT_TYPE"
-		domainNm="Exporters type" valueDs="Export type" />
-	<DOMAIN valueCd="JPG" valueNm="JPG" domainCd="EXPORT_TYPE"
-		domainNm="Exporters type" valueDs="Export type" />
-	<DOMAIN valueCd="PPT" valueNm="PPT" domainCd="EXPORT_TYPE"
-		domainNm="Exporters type" valueDs="Export type" />
-	<DOMAIN valueCd="RTF" valueNm="RTF" domainCd="EXPORT_TYPE"
-		domainNm="Exporters type" valueDs="Export type" />
-	<DOMAIN valueCd="GRAPHML" valueNm="GRAPHML" domainCd="EXPORT_TYPE"
-		domainNm="Exporters type" valueDs="Export type" />
-	<DOMAIN valueCd="PNG" valueNm="PNG" domainCd="EXPORT_TYPE"
-		domainNm="Exporters type" valueDs="Export type" />
-	<DOMAIN valueCd="JRXML" valueNm="JRXML" domainCd="EXPORT_TYPE"
-		domainNm="Exporters type" valueDs="Export type" />
-	<DOMAIN valueCd="XLSX" valueNm="XLSX" domainCd="EXPORT_TYPE"
-		domainNm="Exporters type" valueDs="Export type" />
-	<DOMAIN valueCd="PPTX" valueNm="PPTX" domainCd="EXPORT_TYPE"
-		domainNm="Exporters type" valueDs="Export type" />
-	<DOMAIN valueCd="DOC" valueNm="DOC" domainCd="EXPORT_TYPE"
-		domainNm="Exporters type" valueDs="Export type" />
-	<DOMAIN valueCd="DOCX" valueNm="DOCX" domainCd="EXPORT_TYPE"
-		domainNm="Exporters type" valueDs="Export type" />
-	<DOMAIN valueCd="JSON" valueNm="JSON" domainCd="EXPORT_TYPE"
-		domainNm="Exporters type" valueDs="Export type" />		
+
 	<DOMAIN valueCd="Basic" valueNm="Basic" domainCd="KPI_TYPE"
 		domainNm="Kpi Type" valueDs="" />
 	<DOMAIN valueCd="Derived" valueNm="Derived" domainCd="KPI_TYPE"
@@ -599,9 +568,6 @@
 			
 	<DOMAIN valueCd="All" valueNm="All"
 		domainCd="FUNCTION_TYPE" domainNm="All kind of functions" valueDs="all.png" />				
-			
-	<DOMAIN valueCd="APDF" valueNm="APDF"
-		domainCd="EXPORT_TYPE" domainNm="Exporters types" valueDs="Export type" />				
 
 	<DOMAIN valueCd="Announcement" valueNm="sbidomains.news.announcement" 
 		domainCd="NEWS_TYPE" domainNm="News Type" valueDs="sbidomains.news.announcement"></DOMAIN>
@@ -611,6 +577,5 @@
 		
 	<DOMAIN valueCd="Warning" valueNm="sbidomains.news.warning" 
 		domainCd="NEWS_TYPE" domainNm="News Type" valueDs="sbidomains.news.warning"></DOMAIN>
-			
-			
+
 </DOMAINS>
