@@ -28,7 +28,7 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 public class CKANConfig {
 
-	private static Logger logger = Logger.getLogger(CKANConfig.class);
+	private static final Logger LOGGER = Logger.getLogger(CKANConfig.class);
 
 	public static final String CKAN_CONFIG_PROPERTY = "ckan.config";
 	private static final String CKAN_CONFIG_FILE = "ckan.config.properties";
@@ -40,20 +40,20 @@ public class CKANConfig {
 	}
 
 	private static Properties loadConfig() {
-		Properties p = null;
+		Properties p = new Properties();
 		try {
-			InputStream source = null;
 			String configFilename = System.getProperty(CKAN_CONFIG_PROPERTY);
 			if (configFilename != null) {
-				logger.debug("Loading CKAN configuration from system property config [" + configFilename + "]");
-				source = new FileInputStream(configFilename);
+				LOGGER.debug("Loading CKAN configuration from system property config [" + configFilename + "]");
+				try (InputStream source = new FileInputStream(configFilename)) {
+					p.load(source);
+				}
 			} else {
-				logger.debug("Loading CKAN configuration from classpath config [" + CKAN_CONFIG_FILE + "]");
-				source = CKANConfig.class.getResourceAsStream("/" + CKAN_CONFIG_FILE);
+				LOGGER.debug("Loading CKAN configuration from classpath config [" + CKAN_CONFIG_FILE + "]");
+				try (InputStream source = CKANConfig.class.getResourceAsStream("/" + CKAN_CONFIG_FILE)) {
+					p.load(source);
+				}
 			}
-
-			p = new Properties();
-			p.load(source);
 		} catch (IOException e) {
 			throw new SpagoBIRuntimeException("Cannot load CKAN configuration", e);
 		}

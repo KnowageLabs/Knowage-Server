@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,7 +11,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -38,12 +38,12 @@ import org.apache.log4j.Logger;
  */
 public class SpagoBIAccessUtils {
 
-	static protected Logger logger = Logger.getLogger(SpagoBIAccessUtils.class);
+	private static final Logger LOGGER = Logger.getLogger(SpagoBIAccessUtils.class);
 
 	/**
 	 * Unzip.
 	 *
-	 * @param repository_zip
+	 * @param repositoryZip
 	 *            the repository_zip
 	 * @param newDirectory
 	 *            the new directory
@@ -53,41 +53,37 @@ public class SpagoBIAccessUtils {
 	 * @throws IOException
 	 *             Signals that an I/O exception has occurred.
 	 */
-	public void unzip(File repository_zip, File newDirectory) throws ZipException, IOException {
-		ZipFile zipFile = new ZipFile(repository_zip);
-		Enumeration entries = zipFile.entries();
-		ZipEntry entry = null;
-		String name = null;
-		String path = null;
-		File file = null;
-		FileOutputStream fileout = null;
-		BufferedOutputStream bufout = null;
-		InputStream in = null;
-		while (entries.hasMoreElements()) {
-			entry = (ZipEntry) entries.nextElement();
-			name = entry.getName();
-			path = newDirectory.getPath() + File.separator + name;
-			file = new File(path);
+	public void unzip(File repositoryZip, File newDirectory) throws ZipException, IOException {
+		try (ZipFile zipFile = new ZipFile(repositoryZip)) {
+			Enumeration<? extends ZipEntry> entries = zipFile.entries();
+			ZipEntry entry = null;
+			String name = null;
+			String path = null;
+			File file = null;
+			while (entries.hasMoreElements()) {
+				entry = entries.nextElement();
+				name = entry.getName();
+				path = newDirectory.getPath() + File.separator + name;
+				file = new File(path);
 
-			// if file already exists, deletes it
-			if (file.exists() && file.isFile())
-				deleteDirectory(file);
+				// if file already exists, deletes it
+				if (file.exists() && file.isFile())
+					deleteDirectory(file);
 
-			if (!entry.isDirectory()) {
-				file = file.getParentFile();
-				file.mkdirs();
-				fileout = new FileOutputStream(newDirectory.getPath() + File.separator + entry.getName());
-				bufout = new BufferedOutputStream(fileout);
-				in = zipFile.getInputStream(entry);
-				copyInputStream(in, bufout);
-				bufout.flush();
-				in.close();
-				bufout.close();
-			} else {
-				file.mkdirs();
+				if (!entry.isDirectory()) {
+					file = file.getParentFile();
+					file.mkdirs();
+					try (FileOutputStream fileout = new FileOutputStream(newDirectory.getPath() + File.separator + entry.getName());
+							BufferedOutputStream bufout = new BufferedOutputStream(fileout);
+							InputStream in = zipFile.getInputStream(entry)) {
+						copyInputStream(in, bufout);
+						bufout.flush();
+					}
+				} else {
+					file.mkdirs();
+				}
 			}
 		}
-		zipFile.close();
 	}
 
 	private void copyInputStream(InputStream in, OutputStream out) throws IOException {
@@ -188,7 +184,7 @@ public class SpagoBIAccessUtils {
 			bos.close();
 			return ret;
 		} catch (IOException ioe) {
-			logger.error("Exception: " + ioe);
+			LOGGER.error("Exception: " + ioe);
 			ioe.printStackTrace();
 			return null;
 		}
@@ -217,7 +213,7 @@ public class SpagoBIAccessUtils {
 			}
 			os.flush();
 		} catch (IOException ioe) {
-			logger.error("Exception: " + ioe);
+			LOGGER.error("Exception: " + ioe);
 			ioe.printStackTrace();
 		} finally {
 			if (closeStreams) {
@@ -227,7 +223,7 @@ public class SpagoBIAccessUtils {
 					if (is != null)
 						is.close();
 				} catch (IOException e) {
-					logger.error("Error closing streams: " + e);
+					LOGGER.error("Error closing streams: " + e);
 					e.printStackTrace();
 				}
 

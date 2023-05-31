@@ -18,13 +18,13 @@
 
 package it.eng.spagobi.tools.dataset.common.iterator;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.math.BigDecimal;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Map;
+import java.util.stream.Stream;
 
 import org.apache.commons.lang.math.NumberUtils;
 import org.apache.log4j.Logger;
@@ -42,7 +42,7 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 public class CsvIterator extends FileIterator implements DataIterator {
 
-	private static transient Logger logger = Logger.getLogger(CsvIterator.class);
+	private static final Logger LOGGER = Logger.getLogger(CsvIterator.class);
 
 	private final String[] header;
 	private final ICsvMapReader reader;
@@ -58,12 +58,11 @@ public class CsvIterator extends FileIterator implements DataIterator {
 	}
 
 	private long getTotalNumberOfLines(Path filePath) throws IOException {
-		BufferedReader reader = new BufferedReader(new FileReader(filePath.toFile()));
-		long lines = 0;
-		while (reader.readLine() != null)
-			lines++;
-		reader.close();
-		return lines;
+		long ret = 0;
+		try (Stream<String> lines = Files.lines(filePath)) {
+			ret = lines.count();
+		}
+		return ret;
 	}
 
 	@Override
@@ -74,16 +73,16 @@ public class CsvIterator extends FileIterator implements DataIterator {
 	@Override
 	public IRecord next() {
 		Map<String, String> contentsMap;
-		IRecord record = new Record();
+		IRecord r = new Record();
 		try {
 			contentsMap = reader.read(header);
 			for (int i = 0; i < header.length; i++) {
 				Object value = getValue(contentsMap.get(header[i]), metadata.getFieldMeta(i));
 				IField field = new Field(value);
-				logger.debug("Appending " + field);
-				record.appendField(field);
+				LOGGER.debug("Appending " + field);
+				r.appendField(field);
 			}
-			return record;
+			return r;
 		} catch (Exception e) {
 			throw new SpagoBIRuntimeException(e);
 		}

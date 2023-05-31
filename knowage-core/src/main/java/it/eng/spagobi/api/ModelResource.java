@@ -49,7 +49,7 @@ import it.eng.spagobi.tools.catalogue.dao.IMetaModelsDAO;
 @ManageAuthorization
 public class ModelResource extends AbstractSpagoBIResource {
 
-	public static transient Logger logger = Logger.getLogger(ModelResource.class);
+	public static final Logger LOGGER = Logger.getLogger(ModelResource.class);
 
 	/**
 	 * Service to lock the meta model
@@ -61,7 +61,7 @@ public class ModelResource extends AbstractSpagoBIResource {
 	@Path("/{metaModelId}/lock")
 	@UserConstraint(functionalities = { CommunityFunctionalityConstants.META_MODELS_CATALOGUE_MANAGEMENT })
 	public String lockMetaModel(@PathParam("metaModelId") int metaModelId) {
-		logger.debug("IN");
+		LOGGER.debug("IN");
 
 		Object profileO = getAttributeFromHttpSession(IEngUserProfile.ENG_USER_PROFILE);
 		if (profileO == null) {
@@ -70,34 +70,34 @@ public class ModelResource extends AbstractSpagoBIResource {
 		}
 		String userId = ((UserProfile) profileO).getUserId().toString();
 
-		logger.debug("User Id is " + userId);
-		logger.debug("MetaModel Id is " + metaModelId);
+		LOGGER.debug("User Id is " + userId);
+		LOGGER.debug("MetaModel Id is " + metaModelId);
 
 		IMetaModelsDAO modelDAO = DAOFactory.getMetaModelsDAO();
 
 		MetaModel model = modelDAO.loadMetaModelById(metaModelId);
 
 		if (model == null) {
-			logger.error("MetaModel referring to id [" + metaModelId + "] could not be loaded");
+			LOGGER.error("MetaModel referring to id [" + metaModelId + "] could not be loaded");
 			return ExceptionUtilities.serializeException("MetaModel with id [" + metaModelId + "] could not be loaded", null);
 		}
 
-		logger.debug("MetaMOdel id is " + metaModelId);
+		LOGGER.debug("MetaMOdel id is " + metaModelId);
 
 		String locker = modelDAO.lockMetaModel(metaModelId, userId);
 		String status = null;
 		if (locker != null && locker.equals(userId)) {
-			logger.debug("MetaModel with artifact " + metaModelId + " was locked by current user " + locker);
+			LOGGER.debug("MetaModel with artifact " + metaModelId + " was locked by current user " + locker);
 			status = SpagoBIConstants.SBI_META_MODEL_VALUE_LOCKED_BY_USER;
 		} else if (locker != null) {
-			logger.debug("MetaModel with artifact " + metaModelId + " was already locked by user " + locker);
+			LOGGER.debug("MetaModel with artifact " + metaModelId + " was already locked by user " + locker);
 			status = SpagoBIConstants.SBI_META_MODEL_VALUE_LOCKED_BY_OTHER;
 		} else {
-			logger.debug("MetaModel with artifact " + metaModelId + " was not locked");
+			LOGGER.debug("MetaModel with artifact " + metaModelId + " was not locked");
 			status = SpagoBIConstants.SBI_META_MODEL_VALUE_UNLOCKED;
 		}
 
-		logger.debug("Artifact with artifact " + metaModelId + " is in status " + status + " ");
+		LOGGER.debug("Artifact with artifact " + metaModelId + " is in status " + status + " ");
 		try {
 			JSONObject resultsJSON = new JSONObject();
 			resultsJSON.put("status", status);
@@ -107,7 +107,7 @@ public class ModelResource extends AbstractSpagoBIResource {
 		} catch (Throwable t) {
 			return ExceptionUtilities.serializeException("An unexpected error occured while executing service", null);
 		} finally {
-			logger.debug("OUT");
+			LOGGER.debug("OUT");
 		}
 	}
 
@@ -121,7 +121,7 @@ public class ModelResource extends AbstractSpagoBIResource {
 	@Path("/{metaModelId}/unlock")
 	@UserConstraint(functionalities = { CommunityFunctionalityConstants.META_MODELS_CATALOGUE_MANAGEMENT })
 	public String unlockMetaModel(@PathParam("metaModelId") int metaModelId) {
-		logger.debug("IN");
+		LOGGER.debug("IN");
 
 		Object profileO = getAttributeFromHttpSession(IEngUserProfile.ENG_USER_PROFILE);
 		if (profileO == null) {
@@ -130,28 +130,28 @@ public class ModelResource extends AbstractSpagoBIResource {
 		}
 		String userId = ((UserProfile) profileO).getUserId().toString();
 
-		logger.debug("User Id is " + userId);
-		logger.debug("MetaModel Id is " + metaModelId);
+		LOGGER.debug("User Id is " + userId);
+		LOGGER.debug("MetaModel Id is " + metaModelId);
 
 		IMetaModelsDAO modelDAO = DAOFactory.getMetaModelsDAO();
 
 		MetaModel model = modelDAO.loadMetaModelById(metaModelId);
 
 		if (model == null) {
-			logger.error("MetaModel referring to id [" + metaModelId + "] could not be loaded");
+			LOGGER.error("MetaModel referring to id [" + metaModelId + "] could not be loaded");
 			return ExceptionUtilities.serializeException("MetaModel with id [" + metaModelId + "] could not be loaded", null);
 		}
 
-		logger.debug("MetaModel id is " + metaModelId);
+		LOGGER.debug("MetaModel id is " + metaModelId);
 
 		String locker = modelDAO.unlockMetaModel(metaModelId, userId);
 		String status = null;
 
 		if (locker == null) {
-			logger.debug("MetaModel was unlocked");
+			LOGGER.debug("MetaModel was unlocked");
 			status = SpagoBIConstants.SBI_META_MODEL_VALUE_UNLOCKED;
 		} else {
-			logger.warn("MetaModel was not unlocked and is hold by locker " + locker);
+			LOGGER.warn("MetaModel was not unlocked and is hold by locker " + locker);
 			if (locker != null && userId.equals(locker)) {
 				status = SpagoBIConstants.SBI_META_MODEL_VALUE_LOCKED_BY_USER;
 			} else {
@@ -160,7 +160,7 @@ public class ModelResource extends AbstractSpagoBIResource {
 			}
 		}
 
-		logger.debug("MetaModel with id " + metaModelId + " is in status " + status + " ");
+		LOGGER.debug("MetaModel with id " + metaModelId + " is in status " + status + " ");
 
 		try {
 			JSONObject resultsJSON = new JSONObject();
@@ -171,7 +171,7 @@ public class ModelResource extends AbstractSpagoBIResource {
 		} catch (Throwable t) {
 			return ExceptionUtilities.serializeException("An unexpected error occured while executing service", null);
 		} finally {
-			logger.debug("OUT");
+			LOGGER.debug("OUT");
 		}
 
 	}

@@ -44,13 +44,13 @@ import it.eng.spagobi.utilities.json.JSONUtils;
  */
 public class FlatDataSet extends ConfigurableDataSet {
 
-	public static String DS_TYPE = "SbiFlatDataSet";
+	private static final Logger LOGGER = Logger.getLogger(FlatDataSet.class);
+
+	public static final String DS_TYPE = "SbiFlatDataSet";
 
 	public static final String FLAT_TABLE_NAME = "flatTableName";
 	public static final String DATA_SOURCE = "dataSourceFlat";
 	public static final String OLD_DATA_SOURCE = "dataSource";
-
-	private static transient Logger logger = Logger.getLogger(FlatDataSet.class);
 
 	private String tableName = null;
 	private IDataSource dataSource = null;
@@ -63,7 +63,7 @@ public class FlatDataSet extends ConfigurableDataSet {
 	public FlatDataSet(SpagoBiDataSet dataSetConfig) {
 		super(dataSetConfig);
 
-		logger.debug("IN");
+		LOGGER.debug("IN");
 
 		try {
 			this.setDataSource(DataSourceFactory.getDataSource(dataSetConfig.getDataSource()));
@@ -75,11 +75,11 @@ public class FlatDataSet extends ConfigurableDataSet {
 			JSONObject jsonConf = ObjectUtils.toJSONObject(config);
 			this.setTableName((jsonConf.get(FLAT_TABLE_NAME) != null) ? jsonConf.get(FLAT_TABLE_NAME).toString() : "");
 		} catch (Exception e) {
-			logger.error("Error while reading dataset configuration. Error:", e);
+			LOGGER.error("Error while reading dataset configuration. Error:", e);
 			throw new SpagoBIRuntimeException("Error while reading dataset configuration", e);
 		}
 
-		logger.debug("OUT");
+		LOGGER.debug("OUT");
 	}
 
 	public String getTableName() {
@@ -102,7 +102,7 @@ public class FlatDataSet extends ConfigurableDataSet {
 			DatasetMetadataParser dsp = new DatasetMetadataParser();
 			metadata = dsp.xmlToMetadata(getDsMetadata());
 		} catch (Exception e) {
-			logger.error("Error loading the metadata", e);
+			LOGGER.error("Error loading the metadata", e);
 			throw new SpagoBIEngineRuntimeException("Error loading the metadata", e);
 		}
 		return metadata;
@@ -129,7 +129,7 @@ public class FlatDataSet extends ConfigurableDataSet {
 			jsonConf.put(DATA_SOURCE, (this.getDataSource() == null) ? "" : this.getDataSource().getLabel());
 			toReturn.setConfiguration(jsonConf.toString());
 		} catch (Exception e) {
-			logger.error("Error while defining dataset configuration. Error:", e);
+			LOGGER.error("Error while defining dataset configuration. Error:", e);
 			throw new SpagoBIRuntimeException("Error while defining dataset configuration. Error:", e);
 		}
 
@@ -159,7 +159,7 @@ public class FlatDataSet extends ConfigurableDataSet {
 
 	@Override
 	public DataIterator iterator() {
-		logger.debug("IN");
+		LOGGER.debug("IN");
 		try {
 			String query = "select * from " + this.getTableName();
 			Connection connection = dataSource.getConnection();
@@ -171,7 +171,7 @@ public class FlatDataSet extends ConfigurableDataSet {
 		} catch (Exception e) {
 			throw new SpagoBIRuntimeException(e);
 		} finally {
-			logger.debug("OUT");
+			LOGGER.debug("OUT");
 		}
 	}
 

@@ -96,7 +96,6 @@ import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineException;
-import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIEngineRestServiceRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
@@ -109,18 +108,19 @@ import it.eng.spagobi.writeback4j.mondrian.CacheManager;
 
 public class ModelResource extends AbstractWhatIfEngineService {
 
-	public static transient Logger logger = Logger.getLogger(ModelResource.class);
-	public static transient Logger auditlogger = Logger.getLogger("audit.stack");
 	private static final String VERSION_FAKE_DESCR = "sbiNoDescription";
 	private static final String TEMPLATE_MONDRIAN_SCHEMA = "mondranSchema";
+	private static final String EXPORT_FILE_NAME = "KnowageOlapExport";
+
+	public static final Logger LOGGER = Logger.getLogger(ModelResource.class);
+	public static final Logger AUDIT_LOGGER = Logger.getLogger("audit.stack");
+	public static final String EXPRESSION = "expression";
 
 	@Context
 	private HttpServletResponse response;
 
 	// input parameters
-	public static final String EXPRESSION = "expression";
 
-	private static final String exportFileName = "KnowageOlapExport";
 	private VersionManager versionManager;
 
 	private VersionManager getVersionBusiness() {
@@ -144,7 +144,7 @@ public class ModelResource extends AbstractWhatIfEngineService {
 	@Produces("text/html; charset=UTF-8")
 
 	public String setMdx() throws OlapException {
-		logger.debug("IN");
+		LOGGER.debug("IN");
 		String table = "";
 
 		WhatIfEngineInstance ei = getWhatIfEngineInstance();
@@ -167,14 +167,14 @@ public class ModelResource extends AbstractWhatIfEngineService {
 		}
 
 		if (!isNullOrEmpty(requestBody)) {
-			logger.debug("Updating the query in the model");
+			LOGGER.debug("Updating the query in the model");
 			model.setMdx(requestBody);
 		} else {
-			logger.debug("No query found");
+			LOGGER.debug("No query found");
 		}
 
 		table = renderModel(model);
-		logger.debug("OUT");
+		LOGGER.debug("OUT");
 		return table;
 
 	}
@@ -184,7 +184,7 @@ public class ModelResource extends AbstractWhatIfEngineService {
 	@Produces("text/html; charset=UTF-8")
 
 	public String setValue(@PathParam("ordinal") int ordinal) {
-		logger.debug("IN : ordinal = [" + ordinal + "]");
+		LOGGER.debug("IN : ordinal = [" + ordinal + "]");
 		logOperation("Set value");
 		WhatIfEngineInstance ei = getWhatIfEngineInstance();
 		PivotModel model = ei.getPivotModel();
@@ -199,7 +199,7 @@ public class ModelResource extends AbstractWhatIfEngineService {
 		} catch (Exception e) {
 			throw new SpagoBIEngineRestServiceRuntimeException("generic.error", this.getLocale(), e);
 		}
-		logger.debug("expression = [" + expression + "]");
+		LOGGER.debug("expression = [" + expression + "]");
 		SpagoBICellSetWrapper cellSetWrapper = (SpagoBICellSetWrapper) model.getCellSet();
 		SpagoBICellWrapper cellWrapper = (SpagoBICellWrapper) cellSetWrapper.getCell(ordinal);
 		OlapDataSource olapDataSource = ei.getOlapDataSource();
@@ -211,14 +211,14 @@ public class ModelResource extends AbstractWhatIfEngineService {
 			par.setWhatIfInfo(cellWrapper, model, olapDataSource, ei);
 			value = (Double) par.parse().value;
 		} catch (Exception e) {
-			logger.debug("Error parsing What-if metalanguage expression", e);
+			LOGGER.debug("Error parsing What-if metalanguage expression", e);
 			String errorMessage = e.getMessage().replace(": Couldn't repair and continue parse", "");
 			throw new SpagoBIEngineRestServiceRuntimeException(errorMessage, this.getLocale(), e);
 		}
 
 		String algorithm = ei.getAlgorithmInUse();
-		logger.debug("Resolving the allocation algorithm");
-		logger.debug("The class of the algorithm is [" + algorithm + "]");
+		LOGGER.debug("Resolving the allocation algorithm");
+		LOGGER.debug("The class of the algorithm is [" + algorithm + "]");
 		IAllocationAlgorithm allocationAlgorithm;
 
 		try {
@@ -226,7 +226,7 @@ public class ModelResource extends AbstractWhatIfEngineService {
 			properties.put(DefaultWeightedAllocationAlgorithm.ENGINEINSTANCE_PROPERTY, ei);
 			allocationAlgorithm = AllocationAlgorithmFactory.getAllocationAlgorithm(algorithm, ei, properties);
 		} catch (SpagoBIEngineException e) {
-			logger.error(e);
+			LOGGER.error(e);
 			throw new SpagoBIEngineRestServiceRuntimeException("sbi.olap.writeback.algorithm.definition.error", getLocale(), e);
 		}
 
@@ -235,7 +235,7 @@ public class ModelResource extends AbstractWhatIfEngineService {
 		String table = renderModel(model);
 
 		logTransormations();
-		logger.debug("OUT");
+		LOGGER.debug("OUT");
 		return table;
 	}
 
@@ -244,7 +244,7 @@ public class ModelResource extends AbstractWhatIfEngineService {
 	@Produces("text/html; charset=UTF-8")
 
 	public String persistTransformations() {
-		logger.debug("IN");
+		LOGGER.debug("IN");
 		logOperation("Save");
 
 		Connection connection;
@@ -254,14 +254,14 @@ public class ModelResource extends AbstractWhatIfEngineService {
 
 		SpagoBIPivotModel modelWrapper = (SpagoBIPivotModel) model;
 
-		logger.debug("Persisting the modifications..");
+		LOGGER.debug("Persisting the modifications..");
 
 		IDataSource dataSource = ei.getDataSource();
 		try {
-			logger.debug("Getting the connection to DB");
+			LOGGER.debug("Getting the connection to DB");
 			connection = dataSource.getConnection();
 		} catch (Exception e) {
-			logger.error("Error opening connection to datasource " + dataSource.getLabel());
+			LOGGER.error("Error opening connection to datasource " + dataSource.getLabel());
 			throw new SpagoBIRuntimeException("Error opening connection to datasource " + dataSource.getLabel(), e);
 		}
 		try {
@@ -272,35 +272,35 @@ public class ModelResource extends AbstractWhatIfEngineService {
 			// Persisting the pending modifications
 			modelWrapper.persistTransformations(connection);
 		} catch (WhatIfPersistingTransformationException e) {
-			logger.debug("Error persisting the modifications", e);
+			LOGGER.debug("Error persisting the modifications", e);
 			logErrorTransformations(e.getTransformations());
 			throw new SpagoBIEngineRestServiceRuntimeException(e.getLocalizationmessage(), modelWrapper.getLocale(), "Error persisting modifications", e);
 		} finally {
-			logger.debug("Closing the connection used to persist the modifications");
+			LOGGER.debug("Closing the connection used to persist the modifications");
 			try {
 				connection.close();
 			} catch (SQLException e) {
-				logger.error("Error closing the connection to the db");
+				LOGGER.error("Error closing the connection to the db");
 				throw new SpagoBIEngineRestServiceRuntimeException(getLocale(), e);
 			}
-			logger.debug("Closed the connection used to persist the modifications");
+			LOGGER.debug("Closed the connection used to persist the modifications");
 		}
 
-		logger.debug("Modification persisted...");
+		LOGGER.debug("Modification persisted...");
 
-		logger.debug("Cleaning the cache and restoring the model");
+		LOGGER.debug("Cleaning the cache and restoring the model");
 		CacheManager.flushCache(olapDataSource);
 		String mdx = modelWrapper.getCurrentMdx();
 		modelWrapper.setMdx(mdx);
 		modelWrapper.initialize();
-		logger.debug("Finish to clean the cache and restoring the model");
+		LOGGER.debug("Finish to clean the cache and restoring the model");
 
 		String table = renderModel(model);
 
 		logOperation("Transormations stack cleaned");
 		logTransormations();
 
-		logger.debug("OUT");
+		LOGGER.debug("OUT");
 		return table;
 	}
 
@@ -315,7 +315,7 @@ public class ModelResource extends AbstractWhatIfEngineService {
 	@Produces("text/html; charset=UTF-8")
 
 	public String increaseVersion() {
-		logger.debug("IN");
+		LOGGER.debug("IN");
 		logOperation("Save As");
 		String name;
 		String descr;
@@ -326,10 +326,10 @@ public class ModelResource extends AbstractWhatIfEngineService {
 			name = json.getString("name");
 			descr = json.getString("descr");
 		} catch (IOException e1) {
-			logger.error("Error loading the parameters from the request", e1);
+			LOGGER.error("Error loading the parameters from the request", e1);
 			throw new SpagoBIEngineRestServiceRuntimeException(getLocale(), e1);
 		} catch (JSONException e1) {
-			logger.error("Error loading the parameters from the request", e1);
+			LOGGER.error("Error loading the parameters from the request", e1);
 			throw new SpagoBIEngineRestServiceRuntimeException(getLocale(), e1);
 		}
 
@@ -347,12 +347,12 @@ public class ModelResource extends AbstractWhatIfEngineService {
 			model = getVersionBusiness().persistNewVersionProcedure(name, descr);
 		} catch (WhatIfPersistingTransformationException e) {
 			logErrorTransformations(e.getTransformations());
-			logger.error("Error persisting the trasformations in the new version a new version", e);
+			LOGGER.error("Error persisting the trasformations in the new version a new version", e);
 			throw new SpagoBIEngineRestServiceRuntimeException("versionresource.generic.error", getLocale(), e);
 		}
 
 		logTransormations();
-		logger.debug("OUT");
+		LOGGER.debug("OUT");
 		String toReturn = renderModel(model);
 		totalTime.stop();
 		return toReturn;
@@ -363,14 +363,14 @@ public class ModelResource extends AbstractWhatIfEngineService {
 	@Produces("text/html; charset=UTF-8")
 
 	public String undo() {
-		logger.debug("IN");
+		LOGGER.debug("IN");
 		WhatIfEngineInstance ei = getWhatIfEngineInstance();
 		SpagoBIPivotModel model = (SpagoBIPivotModel) ei.getPivotModel();
 		model.undo();
 		String table = renderModel(model);
 		logOperation("Undo");
 		logTransormations();
-		logger.debug("OUT");
+		LOGGER.debug("OUT");
 		return table;
 	}
 
@@ -382,7 +382,7 @@ public class ModelResource extends AbstractWhatIfEngineService {
 	@Path("/")
 	@GET
 	public String getMdx() {
-		logger.debug("IN");
+		LOGGER.debug("IN");
 		WhatIfEngineInstance ei = getWhatIfEngineInstance();
 		PivotModel model = ei.getPivotModel();
 
@@ -392,7 +392,7 @@ public class ModelResource extends AbstractWhatIfEngineService {
 			mdx = "";
 		}
 
-		logger.debug("OUT");
+		LOGGER.debug("OUT");
 		return mdx;
 
 	}
@@ -486,28 +486,17 @@ public class ModelResource extends AbstractWhatIfEngineService {
 		PivotModel model = ei.getPivotModel();
 
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
-		ObjectOutputStream stream = null;
-		try {
-			stream = new ObjectOutputStream(out);
+		try (ObjectOutputStream stream = new ObjectOutputStream(out)) {
 			Serializable state = model.saveState();
 			stream.writeObject(state);
 		} catch (IOException e) {
-			logger.error("Error while serializing model", e);
-		} finally {
-			try {
-				if (stream != null)
-					stream.close();
-			} catch (IOException e) {
-				logger.error("Impossible to close the stream for the serialization of the model");
-				throw new SpagoBIEngineRuntimeException("Impossible to close the stream for the serialization of the model");
-
-			}
+			LOGGER.error("Error while serializing model", e);
 		}
 
 		byte[] outputByte = out.toByteArray();
 
 		Date d = new Date();
-		String fileName = exportFileName + "_" + d.getYear() + d.getMonth() + d.getDay() + d.getHours() + d.getMinutes() + ".txt";
+		String fileName = EXPORT_FILE_NAME + "_" + d.getYear() + d.getMonth() + d.getDay() + d.getHours() + d.getMinutes() + ".txt";
 
 		return Response.ok(outputByte, MediaType.APPLICATION_OCTET_STREAM).header("content-disposition", "attachment; filename = " + fileName).build();
 	}
@@ -521,7 +510,7 @@ public class ModelResource extends AbstractWhatIfEngineService {
 		OutputStream out = null;
 		try {
 			URL resourceLocation = Thread.currentThread().getContextClassLoader().getResource(EXCELL_TEMPLATE_FILE_NAME);
-			logger.debug("Resource is: " + resourceLocation);
+			LOGGER.debug("Resource is: " + resourceLocation);
 			Assert.assertNotNull(resourceLocation, "Could not find " + EXCELL_TEMPLATE_FILE_NAME + " in java resources");
 			FileInputStream fileInputStream1 = new FileInputStream(new File(resourceLocation.toURI().getPath()));
 			FileInputStream fileInputStream2 = new FileInputStream(result);
@@ -543,7 +532,7 @@ public class ModelResource extends AbstractWhatIfEngineService {
 				getServletResponse().getOutputStream().flush();
 				getServletResponse().getOutputStream().close();
 			} catch (IOException e) {
-				logger.error("write output file stream error " + e.getMessage());
+				LOGGER.error("write output file stream error " + e.getMessage());
 				throw new SpagoBIServiceException("test", "Impossible to write output file xls error", e);
 			}
 
@@ -558,7 +547,7 @@ public class ModelResource extends AbstractWhatIfEngineService {
 		Date date = new Date();
 		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd_hh:mm");
 
-		fileName = exportFileName + "_" + format.format(date);
+		fileName = EXPORT_FILE_NAME + "_" + format.format(date);
 		return fileName;
 	}
 
@@ -568,18 +557,18 @@ public class ModelResource extends AbstractWhatIfEngineService {
 
 	public void logTransormations(String info) {
 		if (info != null) {
-			auditlogger.info(info);
+			AUDIT_LOGGER.info(info);
 		}
-		auditlogger.info("Pending transformations: ");
-		auditlogger.info(((SpagoBIPivotModel) getWhatIfEngineInstance().getPivotModel()).getPendingTransformations().toString());
+		AUDIT_LOGGER.info("Pending transformations: ");
+		AUDIT_LOGGER.info(((SpagoBIPivotModel) getWhatIfEngineInstance().getPivotModel()).getPendingTransformations().toString());
 	}
 
 	public void logOperation(String info) {
-		auditlogger.info("OPERATION PERFORMED: " + info);
+		AUDIT_LOGGER.info("OPERATION PERFORMED: " + info);
 	}
 
 	public void logErrorTransformations(CellTransformationsStack remaningTransformations) {
-		auditlogger.info("Error persisting the these modifications " + remaningTransformations.toString());
+		AUDIT_LOGGER.info("Error persisting the these modifications " + remaningTransformations.toString());
 	}
 
 	private HttpServletResponse getServletResponse() {
@@ -614,7 +603,7 @@ public class ModelResource extends AbstractWhatIfEngineService {
 		try {
 			FileUtils.writeByteArrayToFile(file, outputByte);
 		} catch (IOException e) {
-			logger.error("Impossible to write to file");
+			LOGGER.error("Impossible to write to file");
 		}
 		return file;
 	}

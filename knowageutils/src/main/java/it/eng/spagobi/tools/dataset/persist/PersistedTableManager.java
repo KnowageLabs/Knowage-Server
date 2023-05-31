@@ -714,41 +714,25 @@ public class PersistedTableManager implements IPersistedManager {
 		return result;
 	}
 
-	private boolean indexAlreadyOnTable(Connection conn, IDataSource datasource, String tableName, Set<String> columns, String indexName) {
+	private boolean indexAlreadyOnTable(IDataSource datasource, String tableName, Set<String> columns, String indexName) {
 		boolean result = false;
 
-		Statement stmt = null;
-		ResultSet rs3 = null;
-
-		try {
+		try (Connection conn = getConnection(datasource)) {
 			String query = buildGetIndexOnTable(conn, tableName, columns, indexName);
-			stmt = conn.createStatement();
-			int count = -1;
-			if (query != null) {
-				rs3 = stmt.executeQuery(query);
-
-				while (rs3.next()) {
-					count = rs3.getInt("cnt");
+			try (Statement stmt = conn.createStatement()) {
+				int count = -1;
+				if (query != null) {
+					try (ResultSet rs3 = stmt.executeQuery(query)) {
+						while (rs3.next()) {
+							count = rs3.getInt("cnt");
+						}
+					}
 				}
-			}
 
-			result = count > 0;
+				result = count > 0;
+			}
 		} catch (SQLException e) {
 			LOGGER.debug("Impossible to retrieve index for table [" + tableName + "] and columns [" + columns.iterator().next() + "]", e);
-			if (stmt != null) {
-				try {
-					stmt.close();
-				} catch (SQLException e1) {
-					LOGGER.debug(e1);
-				}
-			}
-			if (conn != null) {
-				try {
-					conn.close();
-				} catch (SQLException e2) {
-					LOGGER.debug(e2);
-				}
-			}
 		}
 
 		return result;
@@ -759,45 +743,30 @@ public class PersistedTableManager implements IPersistedManager {
 		String signature = tableName;
 		LOGGER.debug("Retrieve table name for signature " + signature);
 
-		Connection conn = getConnection(datasource);
-		Statement stmt = null;
+		try (Connection conn = getConnection(datasource)) {
+			try {
+				Iterator<String> it = columns.iterator();
+				while (it.hasNext()) {
+					String currInd = it.next();
+					Set<String> currIndSet = new HashSet<>();
+					currIndSet.add(currInd);
 
-		try {
-			Iterator<String> it = columns.iterator();
-			while (it.hasNext()) {
-				String currInd = it.next();
-				Set<String> currIndSet = new HashSet<String>();
-				currIndSet.add(currInd);
+					if (!indexAlreadyOnTable(datasource, tableName, currIndSet, "fed" + Math.abs(columns.hashCode()))) {
+						String query = buildIndexStatement(datasource, tableName, currIndSet);
 
-				if (!indexAlreadyOnTable(conn, datasource, tableName, currIndSet, "fed" + Math.abs(columns.hashCode()))) {
-					String query = buildIndexStatement(conn, tableName, currIndSet);
-
-					if (query != null) {
-						stmt = conn.createStatement();
-						stmt.executeUpdate(query);
+						if (query != null) {
+							try (Statement stmt = conn.createStatement()) {
+								stmt.executeUpdate(query);
+							}
+						} else {
+							LOGGER.debug("Impossible to build the index statement and thus creating the index. Tablename and/or column are null or empty.");
+						}
 					} else {
-						LOGGER.debug("Impossible to build the index statement and thus creating the index. Tablename and/or column are null or empty.");
+						LOGGER.debug("Index on table " + tableName + " (" + columns.iterator().next() + ")already present in database");
 					}
-				} else {
-					LOGGER.debug("Index on table " + tableName + " (" + columns.iterator().next() + ")already present in database");
 				}
-			}
-		} catch (SQLException e) {
-			LOGGER.debug("Impossible to build index for table [" + tableName + "] and columns [" + columns + "]", e);
-		} finally {
-			if (stmt != null) {
-				try {
-					stmt.close();
-				} catch (SQLException e) {
-					LOGGER.debug(e);
-				}
-			}
-			if (conn != null) {
-				try {
-					conn.close();
-				} catch (SQLException e) {
-					LOGGER.debug(e);
-				}
+			} catch (SQLException e) {
+				LOGGER.debug("Impossible to build index for table [" + tableName + "] and columns [" + columns + "]", e);
 			}
 		}
 
@@ -863,7 +832,6 @@ public class PersistedTableManager implements IPersistedManager {
 					statement = sb.toString();
 				}
 			} catch (SQLException e) {
-				// TODO Auto-generated catch block
 				LOGGER.error(e.getMessage(), e);
 			}
 		}
@@ -871,7 +839,7 @@ public class PersistedTableManager implements IPersistedManager {
 		return statement;
 	}
 
-	private String buildIndexStatement(Connection conn, String tableName, Set<String> columns) {
+	private String buildIndexStatement(IDataSource datasource, String tableName, Set<String> columns) {
 		LOGGER.debug("IN - Table [" + tableName + "], Column [" + columns + "]");
 
 		String statement = null;
@@ -887,7 +855,7 @@ public class PersistedTableManager implements IPersistedManager {
 				columnsSTring.setLength(columnsSTring.length() - 1);
 
 				if (tableName != null && !tableName.isEmpty() && columns != null && !columns.isEmpty()) {
-					try {
+					try (Connection conn = getConnection(datasource)) {
 						if (conn.getMetaData().getDatabaseProductName().toLowerCase().contains("oracle")) {
 							StringBuilder sb = new StringBuilder();
 							sb.append("CREATE INDEX");
@@ -918,7 +886,6 @@ public class PersistedTableManager implements IPersistedManager {
 							statement = sb.toString();
 						}
 					} catch (SQLException e) {
-						// TODO Auto-generated catch block
 						LOGGER.error(e.getMessage(), e);
 					}
 				}
