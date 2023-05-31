@@ -1,5 +1,5 @@
 <template>
-    <Card class="p-m-2">
+    <Card v-if="filters.length > 0" class="p-m-2">
         <template #header>
             <Toolbar class="kn-toolbar kn-toolbar--default">
                 <template #start>
