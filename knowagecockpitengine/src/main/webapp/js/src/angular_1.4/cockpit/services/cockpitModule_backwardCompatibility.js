@@ -360,6 +360,19 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						}
 					}
 				}
+				if(model.type=='static-pivot-table'){
+					for(var k in model.content.crosstabDefinition.measures){
+						delete model.content.crosstabDefinition.measures[k].colorThresholdOptions;
+						if (model.content.crosstabDefinition.measures[k].ranges && model.content.crosstabDefinition.measures[k].ranges.length > 0){
+							model.content.crosstabDefinition.measures[k].ranges = model.content.crosstabDefinition.measures[k].ranges.map((item)=>{
+								if (item.operator == "=") {
+									item.operator = "==";
+								}
+								return item;
+							})
+						}
+					}
+				}
 			}
 
 			if(model.content.name.match(/new[a-zA-Z\s\-]*Widget/g)) model.content.name = model.type + '_' + model.id;
