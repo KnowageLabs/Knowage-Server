@@ -75,7 +75,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 			if(template.knowageVersion) template.knowageVersion = currentVersion;
 			else template.version = currentVersion;
-			
+
 			return template;
 		}
 
@@ -353,7 +353,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					if (!model.style.legend) model.style.legend = {};
 				}
 			}
-			
+
 			if(!self.compareVersion("8.1.0",version)){
 				if(model.type=='table'){
 					for(var k in model.content.columnSelectedOfDataset){
@@ -361,6 +361,19 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 							model.content.columnSelectedOfDataset[k].ranges = model.content.columnSelectedOfDataset[k].ranges.map((item)=>{
 								item.compareValueType = "static"
 								return item
+							})
+						}
+					}
+				}
+				if(model.type=='static-pivot-table'){
+					for(var k in model.content.crosstabDefinition.measures){
+						delete model.content.crosstabDefinition.measures[k].colorThresholdOptions;
+						if (model.content.crosstabDefinition.measures[k].ranges && model.content.crosstabDefinition.measures[k].ranges.length > 0){
+							model.content.crosstabDefinition.measures[k].ranges = model.content.crosstabDefinition.measures[k].ranges.map((item)=>{
+								if (item.operator == "=") {
+									item.operator = "==";
+								}
+								return item;
 							})
 						}
 					}
