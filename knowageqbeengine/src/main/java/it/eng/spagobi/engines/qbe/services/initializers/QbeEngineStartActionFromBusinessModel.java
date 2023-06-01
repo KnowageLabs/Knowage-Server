@@ -34,7 +34,7 @@ import it.eng.spagobi.utilities.engines.SpagoBIEngineStartupException;
 public class QbeEngineStartActionFromBusinessModel extends QbeEngineStartAction {
 
 	/** Logger component. */
-	private static transient Logger logger = Logger.getLogger(QbeEngineStartActionFromBusinessModel.class);
+	private static final Logger logger = Logger.getLogger(QbeEngineStartActionFromBusinessModel.class);
 	public static final String ENGINE_DATASOURCE_LABEL = "ENGINE_DATASOURCE_LABEL";
 
 	private static final String DATA_SOURCE_LABEL = "DATA_SOURCE_LABEL";

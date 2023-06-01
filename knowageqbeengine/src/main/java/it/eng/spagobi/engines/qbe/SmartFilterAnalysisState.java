@@ -30,7 +30,7 @@ public class SmartFilterAnalysisState extends EngineAnalysisState {
 		
 	/** Logger component. */
 
-    private static transient Logger logger = Logger.getLogger(SmartFilterAnalysisState.class);
+    private static final Logger logger = Logger.getLogger(SmartFilterAnalysisState.class);
 	
 	public SmartFilterAnalysisState( JSONObject formValues ) {
 		super( );

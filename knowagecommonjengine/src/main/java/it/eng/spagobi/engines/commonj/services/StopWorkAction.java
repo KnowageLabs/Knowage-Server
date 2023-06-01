@@ -47,7 +47,7 @@ public class StopWorkAction extends AbstractEngineAction {
 
 	private static final String PID = "PROCESS_ID";
 
-	private static transient Logger logger = Logger.getLogger(StopWorkAction.class);
+	private static final Logger logger = Logger.getLogger(StopWorkAction.class);
 
 	@Override
 	public void init(SourceBean config) {

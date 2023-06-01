@@ -44,7 +44,7 @@ public class FeaturesProviderDAOWFSImpl extends AbstractHibernateDAO implements 
 	public static final String GEOID_PVALUE = "geoIdPValue";
 
 	/** Logger component. */
-	private static transient Logger logger = Logger.getLogger(FeaturesProviderDAOWFSImpl.class);
+	private static final Logger logger = Logger.getLogger(FeaturesProviderDAOWFSImpl.class);
 
 	@Override
 	public SimpleFeature getFeatureById(Object fetureProviderEndPoint, String layerName, Map parameters) {

@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,7 +11,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -38,7 +38,7 @@ import it.eng.spagobi.wapp.bo.Menu;
  *
  */
 public class MenuRolesDAOImpl extends AbstractHibernateDAO implements IMenuRolesDAO {
-	private static transient Logger logger = Logger.getLogger(MenuRolesDAOImpl.class);
+	private static final Logger LOGGER = Logger.getLogger(MenuRolesDAOImpl.class);
 
 	/**
 	 * Load menu by role id.
@@ -55,12 +55,12 @@ public class MenuRolesDAOImpl extends AbstractHibernateDAO implements IMenuRoles
 	 */
 	@Override
 	public List loadMenuByRoleId(Integer roleId) throws EMFUserError {
-		logger.debug("IN");
+		LOGGER.debug("IN");
 		if (roleId != null)
-			logger.debug("roleId=" + roleId.toString());
+			LOGGER.debug("roleId=" + roleId.toString());
 		Session aSession = null;
 		Transaction tx = null;
-		List realResult = new ArrayList();
+		List<Menu> realResult = new ArrayList<>();
 		String hql = null;
 		Query hqlQuery = null;
 
@@ -73,23 +73,23 @@ public class MenuRolesDAOImpl extends AbstractHibernateDAO implements IMenuRoles
 
 			hqlQuery = aSession.createQuery(hql);
 			hqlQuery.setInteger(0, roleId.intValue());
-			List hibList = hqlQuery.list();
+			List<Object[]> hibList = hqlQuery.list();
 
-			Iterator it = hibList.iterator();
+			Iterator<Object[]> it = hibList.iterator();
 			IMenuDAO menuDAO = DAOFactory.getMenuDAO();
 			Menu tmpMenu = null;
 			while (it.hasNext()) {
-				Object[] tmpLst = (Object[]) it.next();
+				Object[] tmpLst = it.next();
 				Integer menuId = (Integer) tmpLst[0];
 				tmpMenu = menuDAO.loadMenuByID(menuId, roleId);
 				if (tmpMenu != null) {
-					logger.debug("Add Menu:" + tmpMenu.getName());
+					LOGGER.debug("Add Menu:" + tmpMenu.getName());
 					realResult.add(tmpMenu);
 				}
 			}
 			tx.commit();
 		} catch (HibernateException he) {
-			logger.error("HibernateException", he);
+			LOGGER.error("HibernateException", he);
 
 			if (tx != null)
 				tx.rollback();
@@ -102,7 +102,7 @@ public class MenuRolesDAOImpl extends AbstractHibernateDAO implements IMenuRoles
 					aSession.close();
 			}
 		}
-		logger.debug("OUT");
+		LOGGER.debug("OUT");
 		return realResult;
 	}
 

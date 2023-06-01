@@ -14,7 +14,7 @@ public class DatabaseUtils {
 	private SimpleDateFormat dateFormatter = new SimpleDateFormat(DATE_FORMAT);
 	private static SimpleDateFormat timestampFormatter = new SimpleDateFormat(TIMESTAMP_FORMAT);
 
-	private static transient Logger logger = Logger.getLogger(DatabaseUtils.class);
+	private static final Logger logger = Logger.getLogger(DatabaseUtils.class);
 
 	public static Object timestampFormatter(Object value) {
 

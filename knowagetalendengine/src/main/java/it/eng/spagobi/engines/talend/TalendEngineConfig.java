@@ -29,7 +29,7 @@ public class TalendEngineConfig {
 
 	public static String RUNTIMEREPOSITORY_ROOT_DIR = "RUNTIMEREPOSITORY_ROOT_DIR";
 
-	private static transient Logger logger = Logger.getLogger(TalendEngineConfig.class);
+	private static final Logger logger = Logger.getLogger(TalendEngineConfig.class);
 
 	public static TalendEngineConfig getInstance() {
 		if (instance == null) {

@@ -45,7 +45,7 @@ public class QbeEngineAnalysisState extends EngineAnalysisState {
 
 	private Locale locale;
 	/** Logger component. */
-	private static transient Logger logger = Logger.getLogger(QbeEngineAnalysisState.class);
+	private static final Logger logger = Logger.getLogger(QbeEngineAnalysisState.class);
 
 	public QbeEngineAnalysisState(IDataSource dataSource) {
 		super();

@@ -41,7 +41,7 @@ public class SvgViewerEngineConfig {
 
 	List<Properties> levels;
 
-	private static transient Logger logger = Logger.getLogger(SvgViewerEngineConfig.class);
+	private static final Logger logger = Logger.getLogger(SvgViewerEngineConfig.class);
 
 	// -- singleton pattern --------------------------------------------
 	private static SvgViewerEngineConfig instance;

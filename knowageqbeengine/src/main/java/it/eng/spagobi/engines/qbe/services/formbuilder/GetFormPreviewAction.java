@@ -33,7 +33,7 @@ import org.apache.log4j.Logger;
 public class GetFormPreviewAction extends AbstractQbeEngineAction {
 	
 	/** Logger component. */
-    private static transient Logger logger = Logger.getLogger(GetFormPreviewAction.class);
+    private static final Logger logger = Logger.getLogger(GetFormPreviewAction.class);
    
 	public void service(SourceBean request, SourceBean response)  {
 		

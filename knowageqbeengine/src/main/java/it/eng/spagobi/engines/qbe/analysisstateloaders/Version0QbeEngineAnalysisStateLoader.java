@@ -33,7 +33,7 @@ public class Version0QbeEngineAnalysisStateLoader extends AbstractQbeEngineAnaly
     public final static String TO_VERSION = "1";
     
 	/** Logger component. */
-    private static transient Logger logger = Logger.getLogger(Version0QbeEngineAnalysisStateLoader.class);
+    private static final Logger logger = Logger.getLogger(Version0QbeEngineAnalysisStateLoader.class);
 	
     public Version0QbeEngineAnalysisStateLoader() {
     	super();

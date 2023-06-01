@@ -55,7 +55,7 @@ public class GetDatamartsNamesAction extends AbstractQbeEngineAction {
 
 	
 	/** Logger component. */
-    private static transient Logger logger = Logger.getLogger(GetDatamartsNamesAction.class);
+    private static final Logger logger = Logger.getLogger(GetDatamartsNamesAction.class);
     
     public static final String ENGINE_NAME = "SpagoBIQbeEngine";
 		

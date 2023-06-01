@@ -40,7 +40,7 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 public abstract class AbstractQbeEngineAction extends AbstractEngineAction {
 
 	/** Logger component. */
-	private static transient Logger logger = Logger.getLogger(AbstractQbeEngineAction.class);
+	private static final Logger logger = Logger.getLogger(AbstractQbeEngineAction.class);
 
 	private static final String PARAM_VALUE_NAME = "value";
 	public static final String DEFAULT_VALUE_PARAM = "defaultValue";

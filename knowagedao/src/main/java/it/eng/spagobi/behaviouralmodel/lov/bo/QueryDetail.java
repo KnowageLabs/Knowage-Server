@@ -82,7 +82,7 @@ import it.eng.spagobi.utilities.objects.Couple;
  * Defines the <code>QueryDetail</code> objects. This object is used to store Query Wizard detail information.
  */
 public class QueryDetail extends AbstractLOV implements ILovDetail {
-	private static transient Logger logger = Logger.getLogger(QueryDetail.class);
+	private static final Logger logger = Logger.getLogger(QueryDetail.class);
 
 	public static final String TRUE_CONDITION = " ( 1 = 1 ) ";
 	private String dataSource = "";

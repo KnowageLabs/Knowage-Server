@@ -34,7 +34,7 @@ public class CommonjEngineConfig {
 
 	public static String COMMONJ_REPOSITORY_ROOT_DIR = "commonjRepository_root_dir";
 
-	private static transient Logger logger = Logger.getLogger(CommonjEngineConfig.class);
+	private static final Logger logger = Logger.getLogger(CommonjEngineConfig.class);
 
 	public static CommonjEngineConfig getInstance() {
 		if (instance == null) {

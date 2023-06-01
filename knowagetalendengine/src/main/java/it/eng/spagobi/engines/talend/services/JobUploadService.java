@@ -47,7 +47,7 @@ public class JobUploadService extends AbstractEngineStartServlet {
 
 	private static final long serialVersionUID = 1L;
 
-	private static transient Logger logger = Logger.getLogger(JobUploadService.class);
+	private static final Logger logger = Logger.getLogger(JobUploadService.class);
 
 	@Override
 	public void doService( EngineStartServletIOManager servletIOManager ) throws SpagoBIEngineException {

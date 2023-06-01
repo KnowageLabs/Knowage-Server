@@ -61,7 +61,7 @@ public class WhatIfEngineConfig {
 	private Map<String, List> includes;
 	private Set<String> enabledIncludes;
 	private Map<String, AllocationAlgorithmDefinition> algorithmsDefinitionMap;
-	private static transient Logger logger = Logger.getLogger(WhatIfEngineConfig.class);
+	private static final Logger logger = Logger.getLogger(WhatIfEngineConfig.class);
 	private static final String PROPORTIONAL_ALGORITHM_CONF = "proportionalAlgorithmPersistQueryWhereClause";
 
 	// -- singleton pattern --------------------------------------------

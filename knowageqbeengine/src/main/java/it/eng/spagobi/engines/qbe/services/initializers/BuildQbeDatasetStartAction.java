@@ -61,7 +61,7 @@ public class BuildQbeDatasetStartAction extends AbstractEngineStartAction {
 	public static final String ENGINE_INSTANCE = EngineConstants.ENGINE_INSTANCE;
 
 	/** Logger component. */
-	private static transient Logger logger = Logger.getLogger(BuildQbeDatasetStartAction.class);
+	private static final Logger logger = Logger.getLogger(BuildQbeDatasetStartAction.class);
 
 	public static final String ENGINE_NAME = "SpagoBIQbeEngine";
 

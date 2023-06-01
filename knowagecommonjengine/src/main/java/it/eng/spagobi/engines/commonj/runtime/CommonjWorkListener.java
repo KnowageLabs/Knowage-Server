@@ -51,7 +51,7 @@ public class CommonjWorkListener implements WorkListener {
 	String biObjectLabel;
 	String pid;
 
-	private static transient Logger logger = Logger.getLogger(CommonjWorkListener.class);
+	private static final Logger logger = Logger.getLogger(CommonjWorkListener.class);
 
 	public CommonjWorkListener(AuditServiceProxy auditServiceProxy, EventServiceProxy eventServiceProxy) {
 		this.auditServiceProxy = auditServiceProxy;

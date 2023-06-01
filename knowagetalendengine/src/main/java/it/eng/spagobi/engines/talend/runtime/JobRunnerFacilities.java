@@ -25,7 +25,7 @@ import org.apache.log4j.Logger;
 
 public class JobRunnerFacilities {
 	
-	private static transient Logger logger = Logger.getLogger(JobRunnerFacilities.class);
+	private static final Logger logger = Logger.getLogger(JobRunnerFacilities.class);
 
 	public static final String TALEND_ROLES_HANDLER_CLASS_NAME = "it.eng.spagobi.engines.drivers.talend.TalendRolesHandler";
 	public static final String TALEND_PRESENTAION_HANDLER_CLASS_NAME = "it.eng.spagobi.engines.drivers.talend.TalendEventPresentationHandler";

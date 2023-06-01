@@ -32,7 +32,7 @@ public class SvgViewerEngine {
 	private static SvgViewerEngineConfig engineConfig;
 
 	/** Logger component. */
-	private static transient Logger logger = Logger.getLogger(SvgViewerEngine.class);
+	private static final Logger logger = Logger.getLogger(SvgViewerEngine.class);
 
 	// init engine
 	static {

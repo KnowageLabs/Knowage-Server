@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,7 +11,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -32,12 +32,11 @@ import org.apache.log4j.Logger;
  *
  */
 public class ClassLoaderManager {
-	
+
+	private static final Logger LOGGER = Logger.getLogger(ClassLoaderManager.class);
+
 	public static ClassLoader qbeClassLoader;
-	
-	private static transient Logger logger = Logger.getLogger(ClassLoaderManager.class);
-	
-	
+
 	/**
 	 * Updates the class loader of the thread and sets the class loader in the
 	 * variable qbeClassLoader..
@@ -46,52 +45,52 @@ public class ClassLoaderManager {
 	 * @return
 	 */
 	public static ClassLoader updateCurrentWebClassLoader(File jarFile){
-		
-		logger.debug("IN");
-		  
+
+		LOGGER.debug("IN");
+
 		try {
-			
-			logger.debug("Jar file to be loaded: " + jarFile.getAbsoluteFile());
-			
-			
+
+			LOGGER.debug("Jar file to be loaded: " + jarFile.getAbsoluteFile());
+
+
 			DynamicClassLoader previousCL = getPreviousClassLoader(qbeClassLoader, jarFile);
 			if ( previousCL != null ) {
 				// the jar file has already been loaded, we must verify if it has been changed
-				logger.debug("Found a previous class loader for file " + jarFile.getAbsolutePath() );
+				LOGGER.debug("Found a previous class loader for file " + jarFile.getAbsolutePath());
 				if ( jarFile.lastModified() == previousCL.getJarFileLastModified() ) {
 					// the file has not been changed, no need to update the class loader
-					logger.debug("File " + jarFile.getAbsolutePath() + " has not been changed, no need to update the classloader" );
+					LOGGER.debug("File " + jarFile.getAbsolutePath() + " has not been changed, no need to update the classloader");
 				} else {
 					// we must remove the class loader associated to that jar file and then recreate it
-					logger.debug("File " + jarFile.getAbsolutePath() + " has been changed, removing it ..." );
+					LOGGER.debug("File " + jarFile.getAbsolutePath() + " has been changed, removing it ...");
 					removeClassLoader(previousCL);
-					// then update the class loader 
+					// then update the class loader
 					qbeClassLoader = updateCurrentClassLoader(jarFile);
 				}
 			} else {
 				// the jar file hasn't already been loaded, we must add it with a new class loader
-				logger.debug("File " + jarFile.getAbsolutePath() + " hasn't already been loaded, loading it ...");
-				// update the class loader 
+				LOGGER.debug("File " + jarFile.getAbsolutePath() + " hasn't already been loaded, loading it ...");
+				// update the class loader
 				qbeClassLoader = updateCurrentClassLoader(jarFile);
 			}
-			
+
 			Thread.currentThread().setContextClassLoader(qbeClassLoader);
-			
-			
+
+
 		} catch (Exception e) {
-			logger.error("Impossible to update current class loader", e);
+			LOGGER.error("Impossible to update current class loader", e);
 		}
 
 		return qbeClassLoader;
 	}
-	
+
 	private static void removeClassLoader(DynamicClassLoader previousCL) {
 		if ( qbeClassLoader instanceof DynamicClassLoader ) {
 			DynamicClassLoader start = (DynamicClassLoader) qbeClassLoader;
 			ClassLoader genericClassLoader = start;
 			// save all the class loaders already defined into a temp list, except the one that we have to remove,
 			// untill we find the root web app class loader
-			List<DynamicClassLoader> currentClassLoaders = new ArrayList<DynamicClassLoader>();
+			List<DynamicClassLoader> currentClassLoaders = new ArrayList<>();
 			ClassLoader root = null;
 			while (genericClassLoader instanceof DynamicClassLoader) {
 				DynamicClassLoader aDynClassLoader = (DynamicClassLoader) genericClassLoader;
@@ -101,7 +100,7 @@ public class ClassLoaderManager {
 				genericClassLoader = start.getParent();
 			}
 			root = genericClassLoader;
-			
+
 			// re-recreate all the dynamic class loaders
 			ClassLoader previous = root;
 			for (int i = 0; i < currentClassLoaders.size(); i++) {
@@ -134,15 +133,15 @@ public class ClassLoaderManager {
 	 * @return
 	 */
 	public static ClassLoader updateCurrentClassLoader(File file){
-		
+
 		ClassLoader cl =  Thread.currentThread().getContextClassLoader();
-		
+
 		boolean wasAlreadyLoaded = false;
-		
-		logger.debug("IN");
-		
+
+		LOGGER.debug("IN");
+
 		JarFile jarFile = null;
-		try {			
+		try {
 			jarFile = new JarFile(file);
 			Enumeration<JarEntry> entries = jarFile.entries();
 			while (entries.hasMoreElements()) {
@@ -153,50 +152,54 @@ public class ClassLoaderManager {
 					className = className.replaceAll("/", ".");
 					className = className.replaceAll("\\\\", ".");
 					try {
-						logger.debug("loading class [" + className  + "]" + " with class loader [" + Thread.currentThread().getContextClassLoader().getClass().getName()+ "]");
+						LOGGER.debug("loading class [" + className + "]" + " with class loader ["
+								+ Thread.currentThread().getContextClassLoader().getClass().getName() + "]");
 						Thread.currentThread().getContextClassLoader().loadClass(className);
 						wasAlreadyLoaded = true;
-						logger.debug("Class [" + className  + "] has been already loaded (?)");
+						LOGGER.debug("Class [" + className + "] has been already loaded (?)");
 						break;
 					} catch (Exception e) {
 						wasAlreadyLoaded = false;
-						logger.debug("Class [" + className  + "] hasn't be loaded yet (?)");
+						LOGGER.debug("Class [" + className + "] hasn't be loaded yet (?)");
 						break;
 					}
 				}
 			}
-			
+
 		} catch (Exception e) {
-			logger.error("Impossible to update current class loader", e);
+			LOGGER.error("Impossible to update current class loader", e);
 		} finally{
 			try {
 				if(jarFile!=null){
 					jarFile.close();
 				}
 			} catch (Exception e2) {
-				logger.error("Error closing the jar file",e2);
+				LOGGER.error("Error closing the jar file", e2);
 			}
 		}
-		
-		logger.debug("Jar file [" + file.getName()  + "] already loaded: " + wasAlreadyLoaded);
-		
+
+		LOGGER.debug("Jar file [" + file.getName() + "] already loaded: " + wasAlreadyLoaded);
+
 		try {
 
 			if (!wasAlreadyLoaded) {
-				
+
 				ClassLoader previous = cl;
 				Thread.currentThread().getContextClassLoader();
     		    DynamicClassLoader current = new DynamicClassLoader(file, previous);
 			    Thread.currentThread().setContextClassLoader(current);
 			    cl = current;
 			}
-			
+
 		} catch (Exception e) {
-			logger.error("Impossible to update current class loader", e);
+			LOGGER.error("Impossible to update current class loader", e);
 		}
-		
+
 		return cl;
 	}
-	
+
+	private ClassLoaderManager() {
+
+	}
 }
 

@@ -30,7 +30,7 @@ import it.eng.spagobi.utilities.threadmanager.WorkManager;
 
 public class PerlJobRunner implements IJobRunner {
 
-	private static transient Logger logger = Logger.getLogger(PerlJobRunner.class);
+	private static final Logger logger = Logger.getLogger(PerlJobRunner.class);
 	
 	private RuntimeRepository runtimeRepository;
 	

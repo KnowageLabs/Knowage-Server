@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,16 +11,11 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package it.eng.spagobi.analiticalmodel.document.util;
-
-import it.eng.spago.base.SourceBean;
-import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
-import it.eng.spagobi.commons.dao.DAOFactory;
-import it.eng.spagobi.engines.documentcomposition.configuration.Constants;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -31,11 +26,18 @@ import java.util.Properties;
 
 import org.apache.log4j.Logger;
 
+import it.eng.spago.base.SourceBean;
+import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
+import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.engines.documentcomposition.configuration.Constants;
+
 /**
  * @author Marco Cortella (marco.cortella@eng.it) Class created to remove dependency from BIObjectDAOHibImpl and
  *         it.eng.spagobi.engines.documentcomposition.configuration.DocumentConfigurationConfiguration
  */
 public class DocumentCompositionUtil {
+
+	private static final Logger LOGGER = Logger.getLogger(DocumentCompositionUtil.class);
 
 	private Map documentsMap;
 	private final String templateFile;
@@ -43,7 +45,6 @@ public class DocumentCompositionUtil {
 	public static final String TEMPLATE_VALUE = "template_value";
 	public static final String DOCUMENTS_CONFIGURATION = "DOCUMENTS_CONFIGURATION";
 
-	private static transient Logger logger = Logger.getLogger(DocumentCompositionUtil.class);
 
 	private static Integer DEFAULT_WIDTH = new Integer("1024");
 	private static Integer DEFAULT_HEIGHT = new Integer("768");
@@ -52,7 +53,7 @@ public class DocumentCompositionUtil {
 
 	/**
 	 * Instantiates a new document composition configuration.
-	 * 
+	 *
 	 * @param DocumentCompositionConfigurationSB
 	 *            the document composition configuration sb
 	 */
@@ -66,7 +67,7 @@ public class DocumentCompositionUtil {
 	}
 
 	private void initDocuments(SourceBean documentsConfigurationSB) {
-		logger.debug("IN");
+		LOGGER.debug("IN");
 		Document document;
 		String attributeValue;
 
@@ -114,7 +115,7 @@ public class DocumentCompositionUtil {
 
 				BIObject obj = DAOFactory.getBIObjectDAO().loadBIObjectByLabel(attributeValue);
 				if (obj == null) {
-					logger.error("Document with label " + attributeValue + " doesn't exist in SpagoBI. Check the label!");
+					LOGGER.error("Document with label " + attributeValue + " doesn't exist in SpagoBI. Check the label!");
 					continue;
 				}
 				String typeCD = obj.getBiObjectTypeCode();
@@ -190,14 +191,14 @@ public class DocumentCompositionUtil {
 				addDocument(document);
 			}
 		} catch (Exception e) {
-			logger.error("Error while initializing the document. ", e);
+			LOGGER.error("Error while initializing the document. ", e);
 		}
-		logger.debug("OUT");
+		LOGGER.debug("OUT");
 	}
 
 	/**
 	 * Adds the document.
-	 * 
+	 *
 	 * @param document
 	 *            the document
 	 */
@@ -209,11 +210,11 @@ public class DocumentCompositionUtil {
 
 	/**
 	 * Gets the sbi obj labels array.
-	 * 
+	 *
 	 * @return the sbi obj labels array
 	 */
 	public List getSbiObjLabelsArray() {
-		logger.debug("IN");
+		LOGGER.debug("IN");
 
 		Collection collLabels = documentsMap.values();
 		List retLabels = new ArrayList();
@@ -224,9 +225,9 @@ public class DocumentCompositionUtil {
 				retLabels.add(tmpDoc.getSbiObjLabel());
 			}
 		} catch (Exception e) {
-			logger.error("Error while getting documents label.", e);
+			LOGGER.error("Error while getting documents label.", e);
 		}
-		logger.debug("OUT");
+		LOGGER.debug("OUT");
 		return retLabels;
 
 	}
@@ -236,8 +237,8 @@ public class DocumentCompositionUtil {
 	 */
 	public static class Document {
 		int numOrder;
-		Integer videoWidth[];
-		Integer videoHeight[];
+		Integer[] videoWidth;
+		Integer[] videoHeight;
 		String title;
 		String sbiObjLabel;
 		String style;
@@ -260,7 +261,7 @@ public class DocumentCompositionUtil {
 
 		/**
 		 * Gets the sbi obj label.
-		 * 
+		 *
 		 * @return the sbi obj label
 		 */
 		public String getSbiObjLabel() {
@@ -269,7 +270,7 @@ public class DocumentCompositionUtil {
 
 		/**
 		 * Sets the sbi obj label.
-		 * 
+		 *
 		 * @param sbiObjLabel
 		 *            the new sbi obj label
 		 */
@@ -279,7 +280,7 @@ public class DocumentCompositionUtil {
 
 		/**
 		 * Gets the name par.
-		 * 
+		 *
 		 * @return the name par
 		 */
 		public String getNamePar() {
@@ -288,7 +289,7 @@ public class DocumentCompositionUtil {
 
 		/**
 		 * Sets the name par.
-		 * 
+		 *
 		 * @param namePar
 		 *            the new name par
 		 */
@@ -298,7 +299,7 @@ public class DocumentCompositionUtil {
 
 		/**
 		 * Gets the sbi par name.
-		 * 
+		 *
 		 * @return the sbi par name
 		 */
 		public String getSbiParName() {
@@ -307,7 +308,7 @@ public class DocumentCompositionUtil {
 
 		/**
 		 * Sets the sbi par name.
-		 * 
+		 *
 		 * @param sbiParName
 		 *            the new sbi par name
 		 */
@@ -317,7 +318,7 @@ public class DocumentCompositionUtil {
 
 		/**
 		 * Gets the type.
-		 * 
+		 *
 		 * @return the type
 		 */
 		public String getType() {
@@ -326,7 +327,7 @@ public class DocumentCompositionUtil {
 
 		/**
 		 * Sets the type.
-		 * 
+		 *
 		 * @param type
 		 *            the new type
 		 */
@@ -336,7 +337,7 @@ public class DocumentCompositionUtil {
 
 		/**
 		 * Gets the default value.
-		 * 
+		 *
 		 * @return the default value
 		 */
 		public String getDefaultValue() {
@@ -345,7 +346,7 @@ public class DocumentCompositionUtil {
 
 		/**
 		 * Sets the default value.
-		 * 
+		 *
 		 * @param defaultValue
 		 *            the new default value
 		 */
@@ -355,7 +356,7 @@ public class DocumentCompositionUtil {
 
 		/**
 		 * Gets the params.
-		 * 
+		 *
 		 * @return the params
 		 */
 		public Properties getParams() {
@@ -364,7 +365,7 @@ public class DocumentCompositionUtil {
 
 		/**
 		 * Sets the params.
-		 * 
+		 *
 		 * @param params
 		 *            the new params
 		 */
@@ -374,7 +375,7 @@ public class DocumentCompositionUtil {
 
 		/**
 		 * Gets the style.
-		 * 
+		 *
 		 * @return the style
 		 */
 		public String getStyle() {
@@ -398,7 +399,7 @@ public class DocumentCompositionUtil {
 
 		/**
 		 * /**
-		 * 
+		 *
 		 * @return the activeExport
 		 */
 		public String getActiveExport() {
@@ -415,7 +416,7 @@ public class DocumentCompositionUtil {
 
 		/**
 		 * Sets the style.
-		 * 
+		 *
 		 * @param style
 		 *            the new style
 		 */
@@ -425,7 +426,7 @@ public class DocumentCompositionUtil {
 
 		/**
 		 * Gets the num order.
-		 * 
+		 *
 		 * @return the num order
 		 */
 		public int getNumOrder() {
@@ -434,7 +435,7 @@ public class DocumentCompositionUtil {
 
 		/**
 		 * Sets the num order.
-		 * 
+		 *
 		 * @param numOrder
 		 *            the new num order
 		 */
@@ -444,7 +445,7 @@ public class DocumentCompositionUtil {
 
 		/**
 		 * Gets the video width.
-		 * 
+		 *
 		 * @return the video width
 		 */
 		public Integer[] getVideoWidth() {
@@ -453,7 +454,7 @@ public class DocumentCompositionUtil {
 
 		/**
 		 * Sets the video width.
-		 * 
+		 *
 		 * @param videoWidth
 		 *            the new video width
 		 */
@@ -463,7 +464,7 @@ public class DocumentCompositionUtil {
 
 		/**
 		 * Gets the video height.
-		 * 
+		 *
 		 * @return the video height
 		 */
 		public Integer[] getVideoHeight() {
@@ -472,7 +473,7 @@ public class DocumentCompositionUtil {
 
 		/**
 		 * Sets the video height.
-		 * 
+		 *
 		 * @param videoHeight
 		 *            the new video height
 		 */

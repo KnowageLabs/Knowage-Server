@@ -37,7 +37,7 @@ import org.apache.log4j.Logger;
 public class WorksRepository {
 	private File rootDir;
 
-	private static transient Logger logger = Logger.getLogger(WorksRepository.class);
+	private static final Logger logger = Logger.getLogger(WorksRepository.class);
 
 	/**
 	 * Instantiates a new runtime repository.

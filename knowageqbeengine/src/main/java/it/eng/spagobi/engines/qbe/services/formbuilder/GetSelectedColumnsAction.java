@@ -45,7 +45,7 @@ public class GetSelectedColumnsAction  extends AbstractQbeEngineAction {
 
 
 	/** Logger component. */
-	private static transient Logger logger = Logger.getLogger(GetSelectedColumnsAction.class);
+	private static final Logger logger = Logger.getLogger(GetSelectedColumnsAction.class);
 
 	public void service(SourceBean request, SourceBean response)  {				
 

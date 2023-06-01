@@ -50,7 +50,7 @@ public class WorkConfiguration {
 
 	public static final String DEFAULT_CONTEXT = "Default";
 
-	private static transient Logger logger = Logger.getLogger(WorkConfiguration.class);
+	private static final Logger logger = Logger.getLogger(WorkConfiguration.class);
 
 	public WorkConfiguration(WorksRepository worksRepository) {
 		this.worksRepository = worksRepository;

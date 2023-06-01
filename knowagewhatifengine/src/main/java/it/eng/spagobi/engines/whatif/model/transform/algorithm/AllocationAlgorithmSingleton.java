@@ -28,7 +28,7 @@ import org.apache.log4j.Logger;
 public class AllocationAlgorithmSingleton {
 
 	private static AllocationAlgorithmSingleton instance = null;
-	private static transient Logger logger = Logger.getLogger(SingletonConfig.class);
+	private static final Logger logger = Logger.getLogger(SingletonConfig.class);
 
 	Map<String, AllocationAlgorithmDefinition> allocationAlgorithms;
 

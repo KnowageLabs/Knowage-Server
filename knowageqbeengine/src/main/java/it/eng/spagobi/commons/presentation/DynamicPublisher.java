@@ -28,7 +28,7 @@ public class DynamicPublisher implements PublisherDispatcherIFace {
 	
 	public static final String PUBLISHER_NAME = "PUBLISHER_NAME";
 	
-	private static transient Logger logger = Logger.getLogger(DynamicPublisher.class);
+	private static final Logger logger = Logger.getLogger(DynamicPublisher.class);
 	
 	/**
 	 * Class constructor.

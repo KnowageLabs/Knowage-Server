@@ -35,7 +35,7 @@ import org.apache.log4j.Logger;
 public class DataSetEventManager extends Observable {
 
 	public static DataSetEventManager instance;
-	private static transient Logger logger = Logger.getLogger(DataSetEventManager.class);
+	private static final Logger logger = Logger.getLogger(DataSetEventManager.class);
 	
 	public synchronized static DataSetEventManager getInstance() {
 		try{

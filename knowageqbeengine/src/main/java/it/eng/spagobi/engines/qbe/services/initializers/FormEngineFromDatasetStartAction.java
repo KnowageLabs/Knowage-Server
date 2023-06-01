@@ -45,7 +45,7 @@ public class FormEngineFromDatasetStartAction extends FormEngineStartAction {
 	private final static String IS_NEW_DOCUMENT = "IS_NEW_DOCUMENT";
 
 	/** Logger component. */
-	private static transient Logger logger = Logger.getLogger(FormEngineFromDatasetStartAction.class);
+	private static final Logger logger = Logger.getLogger(FormEngineFromDatasetStartAction.class);
 
 	private IDataSet dataSet;
 

@@ -34,7 +34,7 @@ public class WhatIfEngine {
 	private static WhatIfEngineConfig engineConfig;
 
 	/** Logger component. */
-	private static transient Logger logger = Logger.getLogger(WhatIfEngine.class);
+	private static final Logger logger = Logger.getLogger(WhatIfEngine.class);
 
 	// init engine
 	static {

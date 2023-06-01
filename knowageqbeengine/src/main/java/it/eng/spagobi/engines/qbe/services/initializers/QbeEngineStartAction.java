@@ -60,7 +60,7 @@ public class QbeEngineStartAction extends AbstractEngineStartAction {
 	public static final String IS_TECHNICAL_USER = "isTechnicalUser";
 
 	/** Logger component. */
-	private static transient Logger logger = Logger.getLogger(QbeEngineStartAction.class);
+	private static final Logger logger = Logger.getLogger(QbeEngineStartAction.class);
 
 	public static final String ENGINE_NAME = "SpagoBIQbeEngine";
 

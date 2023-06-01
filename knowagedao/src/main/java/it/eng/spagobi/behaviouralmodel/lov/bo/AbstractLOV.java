@@ -23,7 +23,7 @@ import it.eng.spagobi.utilities.objects.Couple;
 
 public abstract class AbstractLOV implements ILovDetail {
 
-	private static transient Logger logger = Logger.getLogger(AbstractLOV.class);
+	private static final Logger logger = Logger.getLogger(AbstractLOV.class);
 
 	@Override
 	public boolean isSimpleLovType() {

@@ -66,7 +66,7 @@ public class QbeEngineFromFederationStartAction extends QbeEngineStartAction {
 	public static final String DATASOURCE_LABEL = "datasource_label";
 
 	/** Logger component. */
-	private static transient Logger logger = Logger.getLogger(QbeEngineFromFederationStartAction.class);
+	private static final Logger logger = Logger.getLogger(QbeEngineFromFederationStartAction.class);
 
 	public static final String ENGINE_NAME = "SpagoBIQbeEngine";
 

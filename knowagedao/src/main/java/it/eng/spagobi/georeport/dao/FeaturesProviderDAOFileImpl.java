@@ -51,7 +51,7 @@ public class FeaturesProviderDAOFileImpl extends AbstractHibernateDAO implements
 	public static final String GEOID_PVALUE = "geoIdPValue";
 
 	/** Logger component. */
-	private static transient Logger logger = Logger.getLogger(FeaturesProviderDAOFileImpl.class);
+	private static final Logger logger = Logger.getLogger(FeaturesProviderDAOFileImpl.class);
 
 	public FeaturesProviderDAOFileImpl(File resourceFolder) {
 		this.resourceFolder = resourceFolder;

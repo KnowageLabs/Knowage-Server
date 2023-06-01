@@ -43,7 +43,7 @@ public class FormEngineTemplateBuilder extends AbstractEngineStartAction {
 
 	
 	/** Logger component. */
-    private static transient Logger logger = Logger.getLogger(FormEngineStartAction.class);
+    private static final Logger logger = Logger.getLogger(FormEngineStartAction.class);
     
     public static final String ENGINE_NAME = "SpagoBIFormEngine";
 		

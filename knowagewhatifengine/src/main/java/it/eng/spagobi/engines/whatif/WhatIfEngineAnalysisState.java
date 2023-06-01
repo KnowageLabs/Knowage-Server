@@ -43,7 +43,7 @@ import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
 public class WhatIfEngineAnalysisState extends EngineAnalysisState {
 
 	/** Logger component. */
-	private static transient Logger logger = Logger.getLogger(WhatIfEngineAnalysisState.class);
+	private static final Logger logger = Logger.getLogger(WhatIfEngineAnalysisState.class);
 
 	public WhatIfEngineAnalysisState() {
 		super();

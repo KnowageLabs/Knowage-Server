@@ -35,7 +35,7 @@ import org.joda.time.DateTimeZone;
 
 public class PersistedTableHelper {
 
-	private static transient Logger logger = Logger.getLogger(PersistedTableHelper.class);
+	private static final Logger logger = Logger.getLogger(PersistedTableHelper.class);
 
 	public static void addField(PreparedStatement insertStatement, int fieldIndex, Object fieldValue, String fieldMetaName, String fieldMetaTypeName,
 			boolean isfieldMetaFieldTypeMeasure, Map<String, Integer> columnSizes) {

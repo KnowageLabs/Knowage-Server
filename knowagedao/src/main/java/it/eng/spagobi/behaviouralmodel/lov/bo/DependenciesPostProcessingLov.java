@@ -57,7 +57,7 @@ import it.eng.spagobi.utilities.assertion.Assert;
  */
 public abstract class DependenciesPostProcessingLov extends AbstractLOV {
 
-	private static transient Logger logger = Logger.getLogger(DependenciesPostProcessingLov.class);
+	private static final Logger logger = Logger.getLogger(DependenciesPostProcessingLov.class);
 
 	/**
 	 * Filters the input list according to the provided dependencies' configuration and the parameters' values.

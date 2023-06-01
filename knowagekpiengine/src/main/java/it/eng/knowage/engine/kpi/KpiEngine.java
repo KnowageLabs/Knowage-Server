@@ -29,7 +29,7 @@ public class KpiEngine {
 	private static KpiEngineConfig engineConfig;
 
 	/** Logger component. */
-	private static transient Logger logger = Logger.getLogger(KpiEngine.class);
+	private static final Logger logger = Logger.getLogger(KpiEngine.class);
 
 	// init engine
 	static {

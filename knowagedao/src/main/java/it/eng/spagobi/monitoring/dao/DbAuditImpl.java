@@ -42,7 +42,7 @@ import it.eng.spagobi.monitoring.metadata.SbiAudit;
 
 public class DbAuditImpl extends AbstractHibernateDAO implements IAuditDAO {
 
-	private static transient Logger logger = Logger.getLogger(DbAuditImpl.class);
+	private static final Logger logger = Logger.getLogger(DbAuditImpl.class);
 
 	/**
 	 * Insert audit.

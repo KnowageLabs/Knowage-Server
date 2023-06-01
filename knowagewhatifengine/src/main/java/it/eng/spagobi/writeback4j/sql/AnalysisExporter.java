@@ -52,7 +52,7 @@ import it.eng.spagobi.writeback4j.ISchemaRetriver;
  */
 public class AnalysisExporter extends AbstractSqlSchemaManager {
 
-	private static transient Logger logger = Logger.getLogger(AnalysisExporter.class);
+	private static final Logger logger = Logger.getLogger(AnalysisExporter.class);
 	private final PivotModel model;
 
 	public AnalysisExporter(PivotModel model, ISchemaRetriver retriver) {

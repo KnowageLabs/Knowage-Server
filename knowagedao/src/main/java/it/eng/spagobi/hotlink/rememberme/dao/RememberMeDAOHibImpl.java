@@ -47,7 +47,7 @@ import org.hibernate.criterion.Expression;
  */
 public class RememberMeDAOHibImpl extends AbstractHibernateDAO implements IRememberMeDAO {
 
-	private static transient Logger logger = Logger.getLogger(RememberMeDAOHibImpl.class);
+	private static final Logger logger = Logger.getLogger(RememberMeDAOHibImpl.class);
 	
 	/* (non-Javadoc)
 	 * @see it.eng.spagobi.hotlink.rememberme.dao.IRememberMeDAO#delete(java.lang.Integer)

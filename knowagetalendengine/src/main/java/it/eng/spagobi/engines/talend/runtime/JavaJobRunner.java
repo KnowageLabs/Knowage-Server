@@ -51,7 +51,7 @@ public class JavaJobRunner implements IJobRunner {
 	public static final String DEFAULT_XMS_VALUE = "256";
 	public static final String DEFAULT_XMX_VALUE = "1024";
 
-	private static transient Logger logger = Logger.getLogger(JavaJobRunner.class);
+	private static final Logger logger = Logger.getLogger(JavaJobRunner.class);
 
 	JavaJobRunner(RuntimeRepository runtimeRepository) {
 		this.runtimeRepository = runtimeRepository;

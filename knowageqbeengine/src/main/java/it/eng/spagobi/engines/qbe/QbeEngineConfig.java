@@ -50,7 +50,7 @@ public class QbeEngineConfig {
 	public static String SPAGOBI_SERVER_URL = "SPAGOBI_SERVER_URL";
 	public static String DEFAULT_SPAGOBI_SERVER_URL = "http://localhost:8080/SpagoBI";
 
-	private static transient Logger logger = Logger.getLogger(QbeEngineConfig.class);
+	private static final Logger logger = Logger.getLogger(QbeEngineConfig.class);
 
 	// -- singleton pattern --------------------------------------------
 	private static QbeEngineConfig instance;

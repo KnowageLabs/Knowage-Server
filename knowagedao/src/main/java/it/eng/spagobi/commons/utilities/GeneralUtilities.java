@@ -72,7 +72,7 @@ import it.eng.spagobi.utilities.file.FileUtils;
  */
 public class GeneralUtilities extends SpagoBIUtilities {
 
-	private static transient Logger logger = Logger.getLogger(GeneralUtilities.class);
+	private static final Logger logger = Logger.getLogger(GeneralUtilities.class);
 
 	private static final String PREVIEW_FILE_STORAGE_DIRECTORY = "preview" + File.separatorChar + "images";
 	static private String backEndExtension = "BackEnd";

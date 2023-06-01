@@ -56,7 +56,7 @@ public class GetSQLQueryAction extends AbstractQbeEngineAction {
 	// AVAILABLE PUBLISHERS
 
 	/** Logger component. */
-	private static transient Logger logger = Logger.getLogger(GetSQLQueryAction.class);
+	private static final Logger logger = Logger.getLogger(GetSQLQueryAction.class);
 
 	public static final String ENGINE_NAME = "SpagoBIQbeEngine";
 	public static final String REPLACE_PARAMETERS_WITH_QUESTION = "replaceParametersWithQuestion";

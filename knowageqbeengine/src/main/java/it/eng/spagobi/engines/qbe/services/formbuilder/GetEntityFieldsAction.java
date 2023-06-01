@@ -45,7 +45,7 @@ public class GetEntityFieldsAction  extends AbstractQbeEngineAction {
 	public static final String FIELD_ID = "fieldId";
 	
 	/** Logger component. */
-    private static transient Logger logger = Logger.getLogger(GetEntityFieldsAction.class);
+    private static final Logger logger = Logger.getLogger(GetEntityFieldsAction.class);
    
 	public void service(SourceBean request, SourceBean response) {				
 	

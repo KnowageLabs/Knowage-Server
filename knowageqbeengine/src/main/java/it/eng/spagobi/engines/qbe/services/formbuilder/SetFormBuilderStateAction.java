@@ -40,7 +40,7 @@ public class SetFormBuilderStateAction  extends AbstractQbeEngineAction {
 	
 	
 	/** Logger component. */
-    private static transient Logger logger = Logger.getLogger(SetFormBuilderStateAction.class);
+    private static final Logger logger = Logger.getLogger(SetFormBuilderStateAction.class);
    
 	public void service(SourceBean request, SourceBean response)  {
 		

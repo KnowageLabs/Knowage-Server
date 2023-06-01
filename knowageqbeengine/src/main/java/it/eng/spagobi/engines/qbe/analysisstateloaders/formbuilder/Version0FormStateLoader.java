@@ -33,7 +33,7 @@ public class Version0FormStateLoader extends AbstractFormStateLoader{
     public final static String TO_VERSION = "1";
     
 	/** Logger component. */
-    private static transient Logger logger = Logger.getLogger(Version0FormStateLoader.class);
+    private static final Logger logger = Logger.getLogger(Version0FormStateLoader.class);
 	
     public Version0FormStateLoader() {
     	super();

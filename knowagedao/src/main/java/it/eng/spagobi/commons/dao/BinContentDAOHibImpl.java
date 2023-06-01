@@ -26,7 +26,7 @@ import it.eng.spagobi.commons.metadata.SbiBinContents;
 
 public class BinContentDAOHibImpl extends AbstractHibernateDAO implements IBinContentDAO {
 
-	private static transient Logger logger = Logger.getLogger(BinContentDAOHibImpl.class);
+	private static final Logger logger = Logger.getLogger(BinContentDAOHibImpl.class);
 
 	/*
 	 * (non-Javadoc)

@@ -34,7 +34,7 @@ public class SpagoBITalendEngineClient {
 	String port;
 	String appContext;
 	
-	private static transient Logger logger = Logger.getLogger(SpagoBITalendEngineClient.class);
+	private static final Logger logger = Logger.getLogger(SpagoBITalendEngineClient.class);
 	
 	private static final String JOB_UPLOAD_SERVICE = "JobUploadService";
 	private static final String ENGINE_INFO_SERVICE = "EngineInfoService";

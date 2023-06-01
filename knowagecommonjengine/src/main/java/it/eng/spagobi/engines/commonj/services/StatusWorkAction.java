@@ -44,7 +44,7 @@ import de.myfoo.commonj.work.FooRemoteWorkItem;
 
 public class StatusWorkAction extends AbstractEngineAction {
 
-	private static transient Logger logger = Logger.getLogger(StatusWorkAction.class);
+	private static final Logger logger = Logger.getLogger(StatusWorkAction.class);
 
 	@Override
 	public void init(SourceBean config) {

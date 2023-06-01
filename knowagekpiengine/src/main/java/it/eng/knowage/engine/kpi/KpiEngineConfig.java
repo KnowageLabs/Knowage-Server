@@ -43,7 +43,7 @@ public class KpiEngineConfig {
 
 	private static EnginConf engineConfig;
 
-	private static transient Logger logger = Logger.getLogger(KpiEngineConfig.class);
+	private static final Logger logger = Logger.getLogger(KpiEngineConfig.class);
 
 	// -- singleton pattern --------------------------------------------
 	private static KpiEngineConfig instance;

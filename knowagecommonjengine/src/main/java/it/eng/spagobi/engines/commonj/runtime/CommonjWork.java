@@ -58,7 +58,7 @@ public class CommonjWork {
 	static final String CMD_PAR="CMD_PAR";
 	static final String CLASSPATH="classpath";
 
-	private static transient Logger logger = Logger.getLogger(CommonjWork.class);
+	private static final Logger logger = Logger.getLogger(CommonjWork.class);
 
 	public CommonjWork(SourceBean template) throws SpagoBIEngineException {
 		logger.debug("IN");

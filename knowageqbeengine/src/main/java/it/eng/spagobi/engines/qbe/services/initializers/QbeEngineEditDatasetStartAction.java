@@ -38,7 +38,7 @@ import org.apache.log4j.Logger;
 public class QbeEngineEditDatasetStartAction extends QbeEngineStartAction {	
 	
 	/** Logger component. */
-    private static transient Logger logger = Logger.getLogger(QbeEngineEditDatasetStartAction.class);
+    private static final Logger logger = Logger.getLogger(QbeEngineEditDatasetStartAction.class);
         
     private static final String INPUT_DATA_SET_LABEL = "dataset_label";
     

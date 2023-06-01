@@ -49,7 +49,7 @@ public class FormState extends EngineAnalysisState {
 	public static final String FORM_STATE_VALUES = "FORM_STATE_VALUES";
 
 	/** Logger component. */
-	private static transient Logger logger = Logger.getLogger(FormState.class);
+	private static final Logger logger = Logger.getLogger(FormState.class);
 
 	@Override
 	public void load(byte[] rowData) throws SpagoBIEngineException {

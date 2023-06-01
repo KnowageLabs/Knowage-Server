@@ -40,7 +40,7 @@ import org.apache.log4j.Logger;
  */
 public class SpagoBICoreDatamartRetriever implements IQbeDataSetDatamartRetriever {
 
-	private static transient Logger logger = Logger.getLogger(SpagoBICoreDatamartRetriever.class);
+	private static final Logger logger = Logger.getLogger(SpagoBICoreDatamartRetriever.class);
 
 	public SpagoBICoreDatamartRetriever() {
 	}

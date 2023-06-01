@@ -49,9 +49,9 @@ public class GraphManager {
 	private static IDefaultCoverGraph defaultCoverGraph;
 	private static IGraphValidator validator;
 	private static List<IPathsFilter> pathFilters;
-	private static transient Logger logger = Logger.getLogger(GraphManager.class);
+	private static final Logger logger = Logger.getLogger(GraphManager.class);
 
-	public synchronized static IDefaultCoverGraph getDefaultCoverGraphInstance(String className) {
+	public static synchronized IDefaultCoverGraph getDefaultCoverGraphInstance(String className) {
 
 		try {
 			if (defaultCoverGraph == null)
@@ -65,7 +65,7 @@ public class GraphManager {
 		return defaultCoverGraph;
 	}
 
-	public synchronized static IGraphValidator getGraphValidatorInstance(String className) {
+	public static synchronized IGraphValidator getGraphValidatorInstance(String className) {
 
 		try {
 			if (validator == null)
@@ -79,11 +79,11 @@ public class GraphManager {
 		return validator;
 	}
 
-	public synchronized static List<IPathsFilter> getPathFilters(String classNames) {
+	public static synchronized List<IPathsFilter> getPathFilters(String classNames) {
 
 		try {
 			if (pathFilters == null) {
-				pathFilters = new ArrayList<IPathsFilter>();
+				pathFilters = new ArrayList<>();
 				String[] classes = classNames.split(",");
 				if (classes != null) {
 					for (int i = 0; i < classes.length; i++) {
@@ -124,7 +124,7 @@ public class GraphManager {
 		if (modelEntities == null || queryGraph == null) {
 			return false;
 		}
-		if (queryGraph.vertexSet() == null || queryGraph.vertexSet().size() == 0) {
+		if (queryGraph.vertexSet() == null || queryGraph.vertexSet().isEmpty()) {
 			return true;// the case when the user select only an entity
 		}
 		return queryGraph.vertexSet().size() == modelEntities.size();
@@ -149,6 +149,10 @@ public class GraphManager {
 		QueryGraph queryGraph = null;
 		queryGraph = GraphUtilities.getCoverGraph(dataSource, query);
 		return queryGraph.vertexSet();
+	}
+
+	private GraphManager() {
+
 	}
 
 }

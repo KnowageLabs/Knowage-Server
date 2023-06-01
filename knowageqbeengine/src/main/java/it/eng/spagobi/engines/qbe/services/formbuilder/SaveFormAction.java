@@ -44,7 +44,7 @@ public class SaveFormAction extends AbstractQbeEngineAction {
 	
 	
 	/** Logger component. */
-    private static transient Logger logger = Logger.getLogger(SaveFormAction.class);
+    private static final Logger logger = Logger.getLogger(SaveFormAction.class);
    
 	public void service(SourceBean request, SourceBean response)  {
 		

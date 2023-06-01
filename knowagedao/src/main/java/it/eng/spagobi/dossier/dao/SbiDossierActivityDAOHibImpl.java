@@ -37,7 +37,7 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 public class SbiDossierActivityDAOHibImpl extends AbstractHibernateDAO implements ISbiDossierActivityDAO {
 
-	private static transient Logger logger = Logger.getLogger(SbiDossierActivityDAOHibImpl.class);
+	private static final Logger logger = Logger.getLogger(SbiDossierActivityDAOHibImpl.class);
 
 	@Override
 	public Integer insertNewActivity(DossierActivity dossierActivity) {

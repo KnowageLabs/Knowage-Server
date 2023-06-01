@@ -20,7 +20,6 @@ package it.eng.qbe.model.structure;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -30,8 +29,8 @@ import org.json.JSONObject;
  *
  */
 public class ModelRelationshipDescriptor implements IModelRelationshipDescriptor {
+
 	JSONObject relationshipJSON;
-	private static transient Logger logger = Logger.getLogger(ModelRelationshipDescriptor.class);
 
 	public ModelRelationshipDescriptor(JSONObject relationshipJSON) {
 		this.relationshipJSON = relationshipJSON;
@@ -89,7 +88,7 @@ public class ModelRelationshipDescriptor implements IModelRelationshipDescriptor
 	@Override
 	public List<String> getSourceFieldUniqueNames() {
 		try {
-			List<String> sourceColumnNames = new ArrayList<String>();
+			List<String> sourceColumnNames = new ArrayList<>();
 
 			JSONObject sourceTable = relationshipJSON.getJSONObject("sourceTable");
 			JSONArray sourceColumn = relationshipJSON.getJSONArray("sourceColumns");
@@ -111,7 +110,7 @@ public class ModelRelationshipDescriptor implements IModelRelationshipDescriptor
 	@Override
 	public List<String> getDestinationFieldUniqueNames() {
 		try {
-			List<String> destinationColumnNames = new ArrayList<String>();
+			List<String> destinationColumnNames = new ArrayList<>();
 
 			JSONObject destinationTable = relationshipJSON.getJSONObject("destinationTable");
 			JSONArray destinationColumn = relationshipJSON.getJSONArray("destinationColumns");

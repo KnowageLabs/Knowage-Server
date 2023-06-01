@@ -48,7 +48,7 @@ import it.eng.spagobi.utilities.objects.Couple;
  */
 public class DatasetDetail extends DependenciesPostProcessingLov implements ILovDetail {
 
-	private static transient Logger logger = Logger.getLogger(DatasetDetail.class);
+	private static final Logger logger = Logger.getLogger(DatasetDetail.class);
 
 	private List visibleColumnNames = null;
 	private String valueColumnName = "";

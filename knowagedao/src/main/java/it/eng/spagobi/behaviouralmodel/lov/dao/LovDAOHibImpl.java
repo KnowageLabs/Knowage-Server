@@ -42,7 +42,7 @@ import it.eng.spagobi.commons.metadata.SbiDomains;
 
 public class LovDAOHibImpl extends AbstractHibernateDAO implements IModalitiesValueDAO {
 
-	private static transient Logger logger = Logger.getLogger(LovDAOHibImpl.class);
+	private static final Logger logger = Logger.getLogger(LovDAOHibImpl.class);
 
 	/**
 	 * Load modalities value by id.

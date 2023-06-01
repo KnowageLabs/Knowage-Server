@@ -44,19 +44,19 @@ import it.eng.spagobi.utilities.sql.SqlUtils;
 
 public class DataSetDataSource extends AbstractDataSource implements ISQLDataSource {
 
+	private static final Logger LOGGER = Logger.getLogger(DataSetDataSource.class);
+
 	private List<IDataSet> datasets;
 	public static final String EMPTY_MODEL_NAME = "";
 	public static final String DATASETS = "DATASETS";
 	public Class statementType = SQLStatement.class;
 
-	private static transient Logger logger = Logger.getLogger(DataSetDataSource.class);
-
 	protected DataSetDataSource(String dataSourceName, IDataSourceConfiguration configuration) {
-		logger.debug("Creating a new DataSetDataSource");
+		LOGGER.debug("Creating a new DataSetDataSource");
 		setName(dataSourceName);
 		dataMartModelAccessModality = new AbstractModelAccessModality();
 		this.configuration = configuration;
-		datasets = new ArrayList<IDataSet>();
+		datasets = new ArrayList<>();
 
 		Assert.assertNotNull(configuration.loadDataSourceProperties(), "The properties of the datasource can not be empty");
 
@@ -79,7 +79,7 @@ public class DataSetDataSource extends AbstractDataSource implements ISQLDataSou
 		} else {
 			Assert.assertUnreachable("Not suitable configuration to create a JPADataSource");
 		}
-		logger.debug("Created a new JPADataSource");
+		LOGGER.debug("Created a new JPADataSource");
 		initStatementType();
 	}
 

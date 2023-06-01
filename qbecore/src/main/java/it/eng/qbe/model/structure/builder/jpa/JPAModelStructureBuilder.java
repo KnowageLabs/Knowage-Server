@@ -17,7 +17,6 @@
  */
 package it.eng.qbe.model.structure.builder.jpa;
 
-import java.lang.reflect.Member;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -57,14 +56,14 @@ import it.eng.spagobi.utilities.assertion.Assert;
  */
 public class JPAModelStructureBuilder extends AbstractModelStructureBuilder {
 
+	private static final Logger LOGGER = Logger.getLogger(JPAModelStructureBuilder.class);
+	private static final int DEFAULT_MAX_RECURSION_LEVEL = 0;
+
+	public static final String VIEWS_INNER_JOINS_RELATION_NAME = "VIEWS_INNER_JOINS";
+
 	private EntityManager entityManager;
 	private int maxRecursionLevel;
-	public static final String VIEWS_INNER_JOINS_RELATION_NAME = "VIEWS_INNER_JOINS";
 	IModelStructurePropertiesInitializer propertiesInitializer;
-
-	private static int DEFAULT_MAX_RECURSION_LEVEL = 0;
-
-	private static transient Logger logger = Logger.getLogger(JPAModelStructureBuilder.class);
 
 	/**
 	 * Constructor
@@ -97,7 +96,7 @@ public class JPAModelStructureBuilder extends AbstractModelStructureBuilder {
 		ModelStructure modelStructure;
 		String modelName;
 
-		logger.debug("IN");
+		LOGGER.debug("IN");
 
 		try {
 			modelStructure = new ModelStructure();
@@ -120,14 +119,14 @@ public class JPAModelStructureBuilder extends AbstractModelStructureBuilder {
 			addRelationshipsBetweenRootEntities(modelStructure);
 			addRelationshipsBetweenViews(modelStructure);
 
-			logger.info("Model structure for model [" + modelName + "] succesfully built");
+			LOGGER.info("Model structure for model [" + modelName + "] succesfully built");
 
 			return modelStructure;
 
 		} catch (Throwable t) {
 			throw new RuntimeException("Impossible to build model structure", t);
 		} finally {
-			logger.debug("OUT");
+			LOGGER.debug("OUT");
 		}
 	}
 
@@ -152,9 +151,9 @@ public class JPAModelStructureBuilder extends AbstractModelStructureBuilder {
 				try {
 					modelStructure.addRootEntityRelationship(modelName, sourceEntity, sourceFields, destinationEntity, destinationFields, "many-to-one",
 							VIEWS_INNER_JOINS_RELATION_NAME, "dragan", null);
-					logger.debug("Succesfully added relationship between [" + sourceEntity.getName() + "] and [" + destinationEntity.getName() + "]");
+					LOGGER.debug("Succesfully added relationship between [" + sourceEntity.getName() + "] and [" + destinationEntity.getName() + "]");
 				} catch (Throwable t) {
-					logger.error("Impossible to add relationship between [" + sourceEntity.getName() + "] and [" + destinationEntity.getName() + "]", t);
+					LOGGER.error("Impossible to add relationship between [" + sourceEntity.getName() + "] and [" + destinationEntity.getName() + "]", t);
 				}
 
 			}
@@ -170,9 +169,9 @@ public class JPAModelStructureBuilder extends AbstractModelStructureBuilder {
 				try {
 					modelStructure.addRootEntityRelationship(modelName, sourceEntity, sourceFields, destinationEntity, destinationFields, "many-to-one",
 							VIEWS_INNER_JOINS_RELATION_NAME, "dragan2", null);
-					logger.debug("Succesfully added relationship between [" + sourceEntity.getName() + "] and [" + destinationEntity.getName() + "]");
+					LOGGER.debug("Succesfully added relationship between [" + sourceEntity.getName() + "] and [" + destinationEntity.getName() + "]");
 				} catch (Throwable t) {
-					logger.error("Impossible to add relationship between [" + sourceEntity.getName() + "] and [" + destinationEntity.getName() + "]", t);
+					LOGGER.error("Impossible to add relationship between [" + sourceEntity.getName() + "] and [" + destinationEntity.getName() + "]", t);
 				}
 
 			}
@@ -189,13 +188,13 @@ public class JPAModelStructureBuilder extends AbstractModelStructureBuilder {
 
 		jpaMetamodel = getEntityManager().getMetamodel();
 		jpaEntities = jpaMetamodel.getEntities();
-		logger.debug("Jpa metamodel contains [" + jpaEntities.size() + "] entity types");
+		LOGGER.debug("Jpa metamodel contains [" + jpaEntities.size() + "] entity types");
 
 		for (EntityType<?> entityType : jpaEntities) {
-			logger.debug("Adding entity type [" + entityType + "] to model structure");
+			LOGGER.debug("Adding entity type [" + entityType + "] to model structure");
 			String entityTypeName = entityType.getJavaType().getName();
 			addEntity(modelStructure, modelName, entityTypeName);
-			logger.info("Entity type [" + entityType + "] succesfully added to model structure");
+			LOGGER.info("Entity type [" + entityType + "] succesfully added to model structure");
 		}
 	}
 
@@ -207,9 +206,9 @@ public class JPAModelStructureBuilder extends AbstractModelStructureBuilder {
 			/*
 			 * 1) Load Views definitions and adds to the model structure (with outbound relations from Business Views)
 			 */
-			List<ModelViewEntity> addedViewsEntities = new ArrayList<ModelViewEntity>();
+			List<ModelViewEntity> addedViewsEntities = new ArrayList<>();
 			List<IModelViewEntityDescriptor> list = getDataSource().getConfiguration().loadViews();
-			if (list.size() > 0) {
+			if (!list.isEmpty()) {
 				for (int i = 0; i < list.size(); i++) {
 					IModelViewEntityDescriptor viewDescriptor = list.get(i);
 
@@ -237,7 +236,7 @@ public class JPAModelStructureBuilder extends AbstractModelStructureBuilder {
 						if (!viewRelationshipDescriptor.isOutbound()) {
 							String sourceEntityUniqueName = viewRelationshipDescriptor.getSourceEntityUniqueName();
 							IModelEntity entity = modelStructure.getEntity(sourceEntityUniqueName);
-							logger.debug("Source Entity Unique name: " + entity.getUniqueName());
+							LOGGER.debug("Source Entity Unique name: " + entity.getUniqueName());
 
 							// Add node for first level entities (using UniqueName)
 							ModelViewEntity viewEntity = new ModelViewEntity(viewDescriptor, modelName, modelStructure, entity);
@@ -249,14 +248,14 @@ public class JPAModelStructureBuilder extends AbstractModelStructureBuilder {
 
 							// Add node for subentities (using Entity Type matching)
 							for (IModelEntity modelEntity : allEntities) {
-								logger.debug("Searched Entity type: " + entity.getType());
-								logger.debug("Current Entity type: " + modelEntity.getType());
+								LOGGER.debug("Searched Entity type: " + entity.getType());
+								LOGGER.debug("Current Entity type: " + modelEntity.getType());
 								if (modelEntity.getType().equals(entity.getType())) {
 									ModelViewEntity viewEntitySub = new ModelViewEntity(viewDescriptor, modelName, modelStructure, modelEntity);
 									addCalculatedFieldsForViews(viewEntitySub);
 									// addHierarchiesForViews(viewEntitySub);
 									propertiesInitializer.addProperties(viewEntitySub);
-									logger.debug(" ** Found matching for: " + modelEntity.getType() + " with " + entity.getType());
+									LOGGER.debug(" ** Found matching for: " + modelEntity.getType() + " with " + entity.getType());
 									this.addSubEntity(modelEntity, viewEntitySub, modelEntity.getDepth());
 									// modelEntity.addSubEntity(viewEntitySub);
 									addedViewsEntities.add(viewEntitySub);
@@ -278,14 +277,14 @@ public class JPAModelStructureBuilder extends AbstractModelStructureBuilder {
 		} catch (Throwable t) {
 			throw new RuntimeException("Impossible to add views to model structure", t);
 		} finally {
-			logger.debug("OUT");
+			LOGGER.debug("OUT");
 		}
 	}
 
 	private List<IModelEntity> visitModelStructure(ModelStructure modelStructure, String modelName) {
 		List<IModelEntity> rootEntities = modelStructure.getRootEntities(modelName);
-		List<IModelEntity> subEntities = new ArrayList<IModelEntity>();
-		List<IModelEntity> allSubEntities = new ArrayList<IModelEntity>();
+		List<IModelEntity> subEntities = new ArrayList<>();
+		List<IModelEntity> allSubEntities = new ArrayList<>();
 		for (IModelEntity entity : rootEntities) {
 			subEntities.addAll(entity.getAllSubEntities());
 			visitLevel(entity.getAllSubEntities(), allSubEntities, 1);
@@ -336,8 +335,8 @@ public class JPAModelStructureBuilder extends AbstractModelStructureBuilder {
 	 */
 	public List<IModelEntity> addNormalFields(IModelEntity modelEntity) {
 
-		logger.debug("Adding the field " + modelEntity.getName());
-		List<IModelEntity> subEntities = new ArrayList<IModelEntity>();
+		LOGGER.debug("Adding the field " + modelEntity.getName());
+		List<IModelEntity> subEntities = new ArrayList<>();
 		EntityType thisEntityType = null;
 
 		Metamodel classMetadata = getEntityManager().getMetamodel();
@@ -373,7 +372,7 @@ public class JPAModelStructureBuilder extends AbstractModelStructureBuilder {
 				try {
 					joinColumn = (((java.lang.reflect.Field) a.getJavaMember()).getAnnotation(javax.persistence.JoinColumn.class));
 				} catch (Exception e) {
-					logger.error("Error loading the join column annotation for entity " + entityName, e);
+					LOGGER.error("Error loading the join column annotation for entity " + entityName, e);
 				}
 
 				if (joinColumn != null) {
@@ -393,7 +392,7 @@ public class JPAModelStructureBuilder extends AbstractModelStructureBuilder {
 			}
 		}
 
-		logger.debug("Field " + modelEntity.getName() + " added");
+		LOGGER.debug("Field " + modelEntity.getName() + " added");
 		return subEntities;
 	}
 
@@ -404,8 +403,6 @@ public class JPAModelStructureBuilder extends AbstractModelStructureBuilder {
 	 * @param dataMartEntity the parent entity
 	 */
 	private void addField(Attribute attr, IModelEntity dataMartEntity, String keyPrefix) {
-		String n = attr.getName();
-		Member m = attr.getJavaMember();
 		Class c = attr.getJavaType();
 		String type = c.getName();
 
@@ -422,7 +419,7 @@ public class JPAModelStructureBuilder extends AbstractModelStructureBuilder {
 	}
 
 	private void addCalculatedFields(IModelEntity dataMartEntity) {
-		logger.debug("Adding the calculated field " + dataMartEntity.getName());
+		LOGGER.debug("Adding the calculated field " + dataMartEntity.getName());
 		List calculatedFileds;
 		ModelCalculatedField calculatedField;
 
@@ -434,7 +431,7 @@ public class JPAModelStructureBuilder extends AbstractModelStructureBuilder {
 				propertiesInitializer.addProperties(calculatedField);
 			}
 		}
-		logger.debug("Added the calculated field " + dataMartEntity.getName());
+		LOGGER.debug("Added the calculated field " + dataMartEntity.getName());
 	}
 
 	private void addCalculatedFieldsForViews(IModelEntity dataMartEntity) {
@@ -448,7 +445,7 @@ public class JPAModelStructureBuilder extends AbstractModelStructureBuilder {
 	}
 
 	private void addHierarchies(IModelEntity dataMartEntity) {
-		logger.debug("Adding hierarchies " + dataMartEntity.getName());
+		LOGGER.debug("Adding hierarchies " + dataMartEntity.getName());
 
 		HierarchicalDimensionField dimension = dataMartEntity.getStructure().getHierarchicalDimensions().get(dataMartEntity.getUniqueType());
 		if (dimension != null) {
@@ -483,7 +480,7 @@ public class JPAModelStructureBuilder extends AbstractModelStructureBuilder {
 	}
 
 	private void addSubEntity(IModelEntity parentEntity, IModelEntity subEntity, int recursionLevel) {
-		logger.debug("Adding the sub entity field " + subEntity.getName() + " child of " + parentEntity.getName());
+		LOGGER.debug("Adding the sub entity field " + subEntity.getName() + " child of " + parentEntity.getName());
 		IModelEntity dataMartEntity;
 
 		// String entityName = getEntityNameFromEntityType(entityType);
@@ -495,7 +492,7 @@ public class JPAModelStructureBuilder extends AbstractModelStructureBuilder {
 		addCalculatedFields(dataMartEntity);
 		addHierarchies(dataMartEntity);
 		addSubEntities(dataMartEntity, subEntities, recursionLevel);
-		logger.debug("Added the sub entity field " + subEntity.getName() + " child of " + parentEntity.getName());
+		LOGGER.debug("Added the sub entity field " + subEntity.getName() + " child of " + parentEntity.getName());
 	}
 
 	/**

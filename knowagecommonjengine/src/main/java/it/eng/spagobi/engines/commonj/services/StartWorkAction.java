@@ -64,7 +64,7 @@ import it.eng.spagobi.utilities.threadmanager.WorkManager;
 
 public class StartWorkAction extends AbstractEngineAction {
 
-	private static transient Logger logger = Logger.getLogger(StartWorkAction.class);
+	private static final Logger logger = Logger.getLogger(StartWorkAction.class);
 
 	private Content template;
 	private ContentServiceProxy contentProxy;
