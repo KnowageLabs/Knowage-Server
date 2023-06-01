@@ -17,6 +17,9 @@
  */
 package it.eng.spagobi.engines.config.metadata;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import it.eng.spagobi.commons.metadata.SbiDomains;
 import it.eng.spagobi.commons.metadata.SbiHibernateModel;
 
@@ -42,6 +45,7 @@ public class SbiEngines extends SbiHibernateModel {
 	private SbiDomains biobjType;
 	private Boolean useDataSource;
 	private Boolean useDataSet;
+	private Set sbiProductTypeEngine = new HashSet(0);
 
 	// Constructors
 
@@ -346,6 +350,14 @@ public class SbiEngines extends SbiHibernateModel {
 	 */
 	public void setUseDataSet(Boolean useDataSet) {
 		this.useDataSet = useDataSet;
+	}
+
+	public Set getSbiProductTypeEngine() {
+		return sbiProductTypeEngine;
+	}
+
+	public void setSbiProductTypeEngine(Set sbiProductTypeEngine) {
+		this.sbiProductTypeEngine = sbiProductTypeEngine;
 	}
 
 	/*
