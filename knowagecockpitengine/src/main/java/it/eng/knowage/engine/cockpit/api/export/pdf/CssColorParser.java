@@ -308,7 +308,7 @@ public class CssColorParser {
 			}
 
 		} catch (Exception e) {
-			LOGGER.atError().withThrowable(e).log("Cannot create color from string {}. Default color {} will be used", rgbColor, defaultColor);
+			LOGGER.error("Cannot create color from string {" + rgbColor + "}. Default color {" + defaultColor + "} will be used", e);
 		}
 
 		return ret;
