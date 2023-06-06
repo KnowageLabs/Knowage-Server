@@ -322,7 +322,15 @@ public class PageResource extends AbstractCockpitEngineResource {
 	}
 
 	private Response openPagePngInternal(String pageName) throws EMFUserError, IOException, InterruptedException {
-		String requestURL = getRequestUrlForPdfExport(request);
+		String requestURL = null;
+		String documentLabel = request.getParameter("DOCUMENT_LABEL");
+		String viewName = request.getParameter("viewName");
+		String viewId = request.getParameter("viewId");
+		if (viewName != null && viewId != null) {
+			requestURL = getRequestUrlWithViewHandling(documentLabel, viewName, viewId);
+		} else {
+			requestURL = getRequestUrlForPdfExport(request);
+		}
 		RenderOptions renderOptions = getRenderOptionsForPdfExporter(request);
 
 		int documentId = Integer.valueOf(request.getParameter("document"));
@@ -341,13 +349,51 @@ public class PageResource extends AbstractCockpitEngineResource {
 
 		if (!isZipped) {
 			mimeType = "image/png";
-			contentDisposition = "attachment; fileName=" + request.getParameter("DOCUMENT_LABEL") + ".png";
+			contentDisposition = "attachment; fileName=" + documentLabel + ".png";
 		} else {
 			mimeType = "application/zip";
-			contentDisposition = "attachment; fileName=" + request.getParameter("DOCUMENT_LABEL") + ".zip";
+			contentDisposition = "attachment; fileName=" + documentLabel + ".zip";
 		}
 
 		return Response.ok(data, mimeType).header("Content-length", Integer.toString(data.length)).header("Content-Disposition", contentDisposition).build();
+	}
+
+	/**
+	 * @param documentLabel
+	 * @param viewName
+	 * @param viewId
+	 * @return
+	 */
+	private String getRequestUrlWithViewHandling(String documentLabel, String viewName, String viewId) {
+		String requestURL;
+		String externalUrl = getExternalUrl(documentLabel);
+
+		StringBuilder sb = new StringBuilder(externalUrl);
+		sb.append("knowage-vue/workspace/dashboard-view/");
+		sb.append(documentLabel);
+		sb.append("?viewName=");
+		sb.append(viewName);
+		sb.append("&viewId=");
+		sb.append(viewId);
+
+		requestURL = sb.toString();
+		return requestURL;
+	}
+
+	/**
+	 * @param documentLabel
+	 * @return
+	 */
+	private String getExternalUrl(String documentLabel) {
+		BIObject biObject = null;
+		try {
+			biObject = DAOFactory.getBIObjectDAO().loadBIObjectByLabel(documentLabel);
+		} catch (EMFUserError e) {
+			throw new SpagoBIRuntimeException("Error retrieving document with label " + documentLabel, e);
+		}
+		Engine eng = biObject.getEngine();
+		String externalUrl = GeneralUtilities.getExternalEngineUrl(eng);
+		return externalUrl;
 	}
 
 	private RenderOptions getRenderOptionsForPdfExporter(HttpServletRequest request) throws UnsupportedEncodingException {
@@ -404,7 +450,7 @@ public class PageResource extends AbstractCockpitEngineResource {
 		String externalUrl = GeneralUtilities.getExternalEngineUrl(eng);
 
 		StringBuilder sb = new StringBuilder(externalUrl);
-		if (eng.getLabel().equals("knowagedashboardengine")) {
+		if ("knowagedashboardengine".equals(eng.getLabel())) {
 			sb.append("knowage-vue/document-browser/dashboard/");
 			sb.append(documentLabel);
 		}

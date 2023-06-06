@@ -184,7 +184,8 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 
 					checkExecRightsByProducts(biobj);
 
-					correctRoles = id != null ? ObjectsAccessVerifier.getCorrectRolesForExecution(id, userProfile) : ObjectsAccessVerifier.getCorrectRolesForExecution(label, userProfile);
+					correctRoles = id != null ? ObjectsAccessVerifier.getCorrectRolesForExecution(id, userProfile)
+							: ObjectsAccessVerifier.getCorrectRolesForExecution(label, userProfile);
 
 					if (biobj.getDrivers().size() == 0 && correctRoles.size() > 0) {
 						correctRoles = Arrays.asList(correctRoles.get(0));

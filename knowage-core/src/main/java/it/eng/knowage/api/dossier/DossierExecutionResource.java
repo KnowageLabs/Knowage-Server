@@ -200,11 +200,19 @@ public class DossierExecutionResource extends AbstractSpagoBIResource {
 		List<Report> reports = dossierTemplate.getReports();
 		for (Report report : reports) {
 			String documentLabel = report.getLabel();
+
 			BIObject biObject = biobjectDAO.loadBIObjectByLabel(documentLabel);
 			if (biObject != null) {
-				List<Parameter> parameters = report.getParameters();
-				// fill parameters
-				fillParametersValues(biObject, parameters);
+
+				String viewId = report.getViewId();
+				if (viewId == null) { /* DRIVER */
+
+					List<Parameter> parameters = report.getParameters();
+					// fill parameters
+					fillParametersValues(biObject, parameters);
+
+				}
+
 				BIObjectPlaceholdersPair pair = new BIObjectPlaceholdersPair();
 				pair.setBiObject(biObject);
 				pair.setPlaceholders(report.getPlaceholders());
