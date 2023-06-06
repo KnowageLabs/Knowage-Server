@@ -327,7 +327,8 @@ public class PageResource extends AbstractCockpitEngineResource {
 		String viewName = request.getParameter("viewName");
 		String viewId = request.getParameter("viewId");
 		if (viewName != null && viewId != null) {
-			requestURL = getRequestUrlWithViewHandling(documentLabel, viewName, viewId);
+
+			requestURL = getRequestUrlWithViewHandling(documentLabel);
 		} else {
 			requestURL = getRequestUrlForPdfExport(request);
 		}
@@ -364,17 +365,15 @@ public class PageResource extends AbstractCockpitEngineResource {
 	 * @param viewId
 	 * @return
 	 */
-	private String getRequestUrlWithViewHandling(String documentLabel, String viewName, String viewId) {
+	private String getRequestUrlWithViewHandling(String documentLabel) {
 		String requestURL;
 		String externalUrl = getExternalUrl(documentLabel);
 
 		StringBuilder sb = new StringBuilder(externalUrl);
 		sb.append("knowage-vue/workspace/dashboard-view/");
 		sb.append(documentLabel);
-		sb.append("?viewName=");
-		sb.append(viewName);
-		sb.append("&viewId=");
-		sb.append(viewId);
+		sb.append("?");
+		sb.append(request.getQueryString());
 
 		requestURL = sb.toString();
 		return requestURL;
