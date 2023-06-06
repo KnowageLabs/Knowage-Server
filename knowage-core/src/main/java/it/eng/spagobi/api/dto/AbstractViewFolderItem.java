@@ -35,6 +35,8 @@ public abstract class AbstractViewFolderItem implements Comparable<AbstractViewF
 
 	private Integer biObjectId;
 
+	private String biObjectTypeCode;
+
 	private String parentId;
 
 	@JsonInclude(Include.NON_NULL)
@@ -80,6 +82,13 @@ public abstract class AbstractViewFolderItem implements Comparable<AbstractViewF
 	 */
 	public Integer getBiObjectId() {
 		return biObjectId;
+	}
+
+	/**
+	 * @return the biObjectTypeCode
+	 */
+	public String getBiObjectTypeCode() {
+		return biObjectTypeCode;
 	}
 
 	/**
@@ -146,6 +155,12 @@ public abstract class AbstractViewFolderItem implements Comparable<AbstractViewF
 		this.biObjectId = biObjectId;
 	}
 
+	/**
+	 * @param biObjectTypeCode the biObjectTypeCode to set
+	 */
+	public void setBiObjectTypeCode(String biObjectTypeCode) {
+		this.biObjectTypeCode = biObjectTypeCode;
+	}
 
 	/**
 	 * @param created the created to set

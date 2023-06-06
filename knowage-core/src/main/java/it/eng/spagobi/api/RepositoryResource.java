@@ -372,16 +372,23 @@ public class RepositoryResource extends AbstractSpagoBIResource {
 		SbiViewHierarchy parent = e.getParent();
 		String parentId = parent.getId();
 
-		ret.setBiObjectId(e.getBiObjId());
-		ret.setDescription(e.getDescr());
-		ret.setDrivers(e.getDrivers());
-		ret.setId(e.getId());
-		ret.setLabel(e.getLabel());
-		ret.setName(e.getName());
-		ret.setSettings(e.getSettings());
-		ret.setCreated(created);
-		ret.setUpdated(updated);
-		ret.setParentId(parentId);
+		try {
+			BIObject object = getDocument(e.getBiObjId());
+
+			ret.setBiObjectId(object.getId());
+			ret.setBiObjectTypeCode(object.getBiObjectTypeCode());
+			ret.setDescription(e.getDescr());
+			ret.setDrivers(e.getDrivers());
+			ret.setId(e.getId());
+			ret.setLabel(e.getLabel());
+			ret.setName(e.getName());
+			ret.setSettings(e.getSettings());
+			ret.setCreated(created);
+			ret.setUpdated(updated);
+			ret.setParentId(parentId);
+		} catch (EMFUserError e1) {
+			throw new SpagoBIRuntimeException(e1);
+		}
 
 		return ret;
 	}
@@ -397,6 +404,7 @@ public class RepositoryResource extends AbstractSpagoBIResource {
 			BIObject object = getDocument(e.getBiObjId());
 
 			ret.setBiObjectId(object.getId());
+			ret.setBiObjectTypeCode(object.getBiObjectTypeCode());
 			ret.setId(e.getId());
 			ret.setParentId(parentId);
 			ret.setDescription(object.getDescription());
