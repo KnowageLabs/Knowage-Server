@@ -40,11 +40,11 @@ import it.eng.spagobi.wapp.bo.Menu;
 
 public class ReadHtmlFile extends AbstractHttpAction {
 
-	static private Logger logger = Logger.getLogger(ReadHtmlFile.class);
+	private static final Logger LOGGER = Logger.getLogger(ReadHtmlFile.class);
 
 	@Override
 	public void service(SourceBean serviceRequest, SourceBean serviceResponse) throws Exception {
-		logger.debug("IN");
+		LOGGER.debug("IN");
 		freezeHttpResponse();
 
 		// Start writing log in the DB
@@ -68,56 +68,52 @@ public class ReadHtmlFile extends AbstractHttpAction {
 		ServletOutputStream out = httpResp.getOutputStream();
 
 		String menuId = (String) serviceRequest.getAttribute("MENU_ID");
-		logger.debug("menuId=" + menuId);
+		LOGGER.debug("menuId=" + menuId);
 		if (menuId != null) {
 			Menu menu = DAOFactory.getMenuDAO().loadMenuByID(Integer.valueOf(menuId));
 			boolean accessible = new MenuManagementAPI(UserUtilities.getUserProfile()).isAccessibleMenu(menu);
 			if (!accessible) {
-				logger.error("No role found for menu with id = " + menu.getMenuId() + ". Not allowed menu.");
+				LOGGER.error("No role found for menu with id = " + menu.getMenuId() + ". Not allowed menu.");
 				throw new Exception("No role found for menu with id = " + menu.getMenuId() + ". Not allowed menu.");
 			}
 
 			String fileName = menu.getStaticPage();
 
 			if (fileName == null) {
-				logger.error("Menu with id = " + menu.getMenuId() + " has no file name specified");
+				LOGGER.error("Menu with id = " + menu.getMenuId() + " has no file name specified");
 				throw new Exception("Menu has no file name specified");
 			}
 
 			// check the validity of the fileName (it must not be a path)
 			// TODO remove this control and write better this action, or remove the action at all
 			if (fileName.contains("\\") || fileName.contains("/") || fileName.contains("..")) {
-				logger.error("Menu with id = " + menu.getMenuId() + " has file name [" + fileName + "] containing file separator character!!!");
+				LOGGER.error("Menu with id = " + menu.getMenuId() + " has file name [" + fileName + "] containing file separator character!!!");
 				throw new Exception("Menu file name cannot contain file separator character");
 			}
 
-			logger.debug("fileName=" + fileName);
+			LOGGER.debug("fileName=" + fileName);
 
 			String filePath = SpagoBIUtilities.getResourcePath();
 			filePath += "/static_menu/" + fileName;
 
-			logger.debug("filePath=" + filePath);
+			LOGGER.debug("filePath=" + filePath);
 
-			FileInputStream fis = null;
-			try {
-				fis = new FileInputStream(filePath);
+			try (FileInputStream fis = new FileInputStream(filePath)) {
+				int avalaible = fis.available(); // Mi informo sul num. bytes.
+
+				for (int i = 0; i < avalaible; i++) {
+					out.write(fis.read());
+				}
+
+				out.flush();
 			} catch (Exception e) {
-				logger.error("Could not open file " + filePath);
+				LOGGER.error("Could not open file " + filePath);
 				throw new Exception("Could not open file");
 			}
 
-			int avalaible = fis.available(); // Mi informo sul num. bytes.
-
-			for (int i = 0; i < avalaible; i++) {
-				out.write(fis.read());
-			}
-
-			fis.close();
-			out.flush();
-			out.close();
-			logger.debug("OUT");
+			LOGGER.debug("OUT");
 		} else {
-			logger.error("missing id");
+			LOGGER.error("missing id");
 			throw new Exception("missing id");
 		}
 	}
