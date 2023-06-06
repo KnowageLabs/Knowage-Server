@@ -70,13 +70,12 @@ public class SbiWidgetGalleryDaoImpl implements SbiWidgetGalleryDao {
 	public String update(SbiWidgetGallery sbiWidgetGallery) {
 		logger.debug("IN");
 
-		SbiWidgetGallery sbiWidgetGalleryFound = null;
-		List<SbiWidgetGallery> resultList = em
+		SbiWidgetGallery sbiWidgetGalleryFound = em
 				.createQuery("SELECT t FROM SbiWidgetGallery t where t.id.uuid = :value1 and t.id.organization = :value2", SbiWidgetGallery.class)
-				.setParameter("value1", sbiWidgetGallery.getId().getUuid()).setParameter("value2", sbiWidgetGallery.getId().getOrganization()).getResultList();
-		if (resultList.size() == 1) {
-			sbiWidgetGalleryFound = resultList.get(0);
-		}
+				.setParameter("value1", sbiWidgetGallery.getId().getUuid()).setParameter("value2", sbiWidgetGallery.getId().getOrganization())
+				.getSingleResult();
+
+		int counter = sbiWidgetGallery.getUsageCounter() + 1;
 
 		sbiWidgetGalleryFound.setAuthor(sbiWidgetGallery.getAuthor());
 		sbiWidgetGalleryFound.setDescription(sbiWidgetGallery.getDescription());
@@ -90,7 +89,6 @@ public class SbiWidgetGalleryDaoImpl implements SbiWidgetGalleryDao {
 		sbiWidgetGalleryFound.setType(sbiWidgetGallery.getType());
 		sbiWidgetGalleryFound.setUserUp(sbiWidgetGallery.getUserUp());
 		sbiWidgetGalleryFound.setOutputType(sbiWidgetGallery.getOutputType());
-		int counter = sbiWidgetGallery.getUsageCounter() + 1;
 		sbiWidgetGalleryFound.setUsageCounter(counter);
 		sbiWidgetGalleryFound.getSbiWidgetGalleryTags().clear();
 		sbiWidgetGalleryFound.getSbiWidgetGalleryTags().addAll(sbiWidgetGallery.getSbiWidgetGalleryTags());

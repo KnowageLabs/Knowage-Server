@@ -43,6 +43,8 @@ import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
  */
 public class CrossTab {
 
+	private static final Logger LOGGER = Logger.getLogger(CrossTab.class);
+
 	private Node columnsRoot;
 	private Node rowsRoot;
 	String[][] dataMatrix;
@@ -56,9 +58,6 @@ public class CrossTab {
 
 	private static final String PATH_SEPARATOR = "_S_";
 	private static final String DATA_MATRIX_NA = "NA";
-
-	private static final SimpleDateFormat DATE_FORMATTER = new SimpleDateFormat("dd/MM/yyyy");
-	private static final SimpleDateFormat TIMESTAMP_FORMATTER = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
 
 	public static final String CROSSTAB_NODE_JSON_KEY = "node_key";
 	public static final String CROSSTAB_NODE_JSON_CHILDS = "node_childs";
@@ -77,7 +76,8 @@ public class CrossTab {
 	public static final String MEASURE_FORMAT = "format";
 	public static final String MEASURE_POSITION = "measurePosition";
 
-	private static Logger logger = Logger.getLogger(CrossTab.class);
+	private static final String DATE_FORMAT_DATE = "dd/MM/yyyy";
+	private static final String DATE_FORMAT_TIMESTAMP = "dd/MM/yyyy HH:mm:ss";
 
 	public enum CellType {
 		DATA("data"), CF("cf"), SUBTOTAL("partialsum"), TOTAL("totals");
@@ -149,7 +149,7 @@ public class CrossTab {
 		rowsRoot.orderedSubtree();
 
 		if (index < valuesDataStore.getRecordsCount()) {
-			logger.debug("Crosstab cells number limit exceeded");
+			LOGGER.debug("Crosstab cells number limit exceeded");
 			Node completeColumnsRoot = new Node("rootCompleteC");
 			for (index = 0; index < valuesDataStore.getRecordsCount(); index++) {
 				valueRecord = valuesDataStore.getRecordAt(index);
@@ -472,9 +472,11 @@ public class CrossTab {
 			clazz = String.class;
 		}
 		if (Timestamp.class.isAssignableFrom(clazz)) {
-			fieldValue = TIMESTAMP_FORMATTER.format(obj);
+			SimpleDateFormat timestampFormatter = new SimpleDateFormat(DATE_FORMAT_TIMESTAMP);
+			fieldValue = timestampFormatter.format(obj);
 		} else if (Date.class.isAssignableFrom(clazz)) {
-			fieldValue = DATE_FORMATTER.format(obj);
+			SimpleDateFormat dateFormatter = new SimpleDateFormat(DATE_FORMAT_DATE);
+			fieldValue = dateFormatter.format(obj);
 		} else {
 			fieldValue = obj.toString();
 		}
