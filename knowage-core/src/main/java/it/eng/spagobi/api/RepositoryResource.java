@@ -35,6 +35,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.function.Consumer;
 
+import javax.inject.Inject;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -44,6 +45,11 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
+
+import org.apache.log4j.Logger;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
@@ -71,6 +77,11 @@ import it.eng.spagobi.view.metadata.SbiViewHierarchy;
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
 public class RepositoryResource extends AbstractSpagoBIResource {
+
+	private static final Logger LOGGER = Logger.getLogger(RepositoryResource.class);
+
+	@Inject
+	private ObjectMapper mapper;
 
 	@GET
 	@Path("/")
@@ -111,7 +122,7 @@ public class RepositoryResource extends AbstractSpagoBIResource {
 
 	@GET
 	@Path("/{id}")
-	public FolderContentsResponse getFolderContents(@PathParam("id") String id) {
+	public FolderContentsResponse getFolderContents(@PathParam("id") String id) throws JsonProcessingException {
 		FolderContentsResponse ret = new FolderContentsResponse();
 
 		SbiViewHierarchy vh = getFolder(id);
@@ -188,7 +199,7 @@ public class RepositoryResource extends AbstractSpagoBIResource {
 	@DELETE
 	@Path("/{id}")
 	@Consumes(MediaType.WILDCARD)
-	public void deleteFolder(@PathParam("id") String id) {
+	public ViewFolder deleteFolder(@PathParam("id") String id) {
 		ISbiViewHierarchyDAO dao = DAOFactory.getSbiViewHierarchyDAO();
 		dao.setUserProfile(UserProfileManager.getProfile());
 
@@ -198,6 +209,8 @@ public class RepositoryResource extends AbstractSpagoBIResource {
 		checkFolderReferencingItself(v);
 
 		dao.delete(v);
+
+		return toViewFolder(v);
 	}
 
 	@GET
@@ -263,12 +276,14 @@ public class RepositoryResource extends AbstractSpagoBIResource {
 	@DELETE
 	@Path("/view/{id}")
 	@Consumes(MediaType.WILDCARD)
-	public void deleteView(@PathParam("id") String id) {
+	public ViewOverDocument deleteView(@PathParam("id") String id) {
 		ISbiViewDAO dao = DAOFactory.getSbiViewDAO();
 		dao.setUserProfile(UserProfileManager.getProfile());
 
 		SbiView v = getView(id);
 		dao.delete(v);
+
+		return toViewOverDocument(v);
 	}
 
 	@GET
@@ -339,12 +354,14 @@ public class RepositoryResource extends AbstractSpagoBIResource {
 	@DELETE
 	@Path("/document/{id}")
 	@Consumes(MediaType.WILDCARD)
-	public void deleteImportedDoc(@PathParam("id") String id) {
+	public ViewOfImportedDoc deleteImportedDoc(@PathParam("id") String id) {
 		ISbiViewForDocDAO dao = DAOFactory.getSbiViewForDocDAO();
 		dao.setUserProfile(UserProfileManager.getProfile());
 
 		SbiViewForDoc v = getViewForDoc(id);
 		dao.delete(v);
+
+		return toViewOfImportedDoc(v);
 	}
 
 	private ViewOverDocument toViewOverDocument(SbiView e) {
