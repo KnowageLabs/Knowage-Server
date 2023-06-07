@@ -43,7 +43,7 @@ public class MeasureCatalogueSingleton {
 			measureCatologue = new MeasureCatalogue();
 			logger.debug("Measure catalogue created");
 
-			DataSetEventManager.getInstance().addEventListener(measureCatologue);
+			DataSetEventManager.getINSTANCE().addEventListener(measureCatologue);
 
 		}
 

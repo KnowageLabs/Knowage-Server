@@ -24,7 +24,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Vector;
 
 import org.apache.log4j.Logger;
 
@@ -57,7 +56,7 @@ import it.eng.spagobi.utilities.assertion.Assert;
  */
 public abstract class DependenciesPostProcessingLov extends AbstractLOV {
 
-	private static final Logger logger = Logger.getLogger(DependenciesPostProcessingLov.class);
+	private static final Logger LOGGER = Logger.getLogger(DependenciesPostProcessingLov.class);
 
 	/**
 	 * Filters the input list according to the provided dependencies' configuration and the parameters' values.
@@ -68,7 +67,7 @@ public abstract class DependenciesPostProcessingLov extends AbstractLOV {
 	 * @return the list filtered considering the dependencies
 	 */
 	public List processDependencies(List rows, Map selectedParameterValues, List<? extends AbstractParuse> dependencies) {
-		if (selectedParameterValues != null && dependencies != null && dependencies.size() > 0) {
+		if (selectedParameterValues != null && dependencies != null && !dependencies.isEmpty()) {
 			if (dependencies.size() == 1) {
 				AbstractParuse biParameterExecDependency = dependencies.get(0);
 				rows = filterForCorrelation(rows, biParameterExecDependency, selectedParameterValues);
@@ -138,7 +137,7 @@ public abstract class DependenciesPostProcessingLov extends AbstractLOV {
 				return filterList(list, filterValues, valueTypeFilter, objParuse.getFilterColumn(), objParuse.getFilterOperation());
 			}
 		} catch (Exception e) {
-			logger.error("Error while doing filter for corelation ", e);
+			LOGGER.error("Error while doing filter for corelation ", e);
 			return list;
 		}
 	}
@@ -201,7 +200,7 @@ public abstract class DependenciesPostProcessingLov extends AbstractLOV {
 				tmpExpr = tmpExpr.substring(indRR + 1);
 			}
 			if (numberOfLeftRound != numberOfRightRound) {
-				logger.warn("Expression is wrong: number of left breaks is different from right breaks. Returning list without evaluating expression");
+				LOGGER.warn("Expression is wrong: number of left breaks is different from right breaks. Returning list without evaluating expression");
 				return list;
 			}
 
@@ -268,12 +267,12 @@ public abstract class DependenciesPostProcessingLov extends AbstractLOV {
 					previusCalculated = mergeLists(firstList, secondList);
 				} else {
 					// previousList remains the same as before
-					logger.warn("A part of the Expression is wrong: inside a left break and right break there's no condition AND or OR");
+					LOGGER.warn("A part of the Expression is wrong: inside a left break and right break there's no condition AND or OR");
 				}
 				expr = expr.substring(0, indLR) + "previousList" + expr.substring(indRR + 1);
 			}
 		} catch (Exception e) {
-			logger.warn("An error occurred while evaluating expression, return the complete list");
+			LOGGER.warn("An error occurred while evaluating expression, return the complete list");
 			return list;
 		}
 		return previusCalculated;
@@ -399,7 +398,7 @@ public abstract class DependenciesPostProcessingLov extends AbstractLOV {
 						e);
 				HashMap params = new HashMap();
 				params.put(Constants.NOME_MODULO, "DelegatedBasicListService::filterList");
-				Vector v = new Vector();
+				List<Object> v = new ArrayList<>();
 				v.add(value);
 				EMFValidationError error = new EMFValidationError(EMFErrorSeverity.WARNING, SpagoBIConstants.TYPE_VALUE_FILTER, "1051", v, params);
 				throw error;
@@ -412,7 +411,7 @@ public abstract class DependenciesPostProcessingLov extends AbstractLOV {
 						e);
 				HashMap params = new HashMap();
 				params.put(Constants.NOME_MODULO, "DelegatedBasicListService::filterList");
-				Vector v = new Vector();
+				List<Object> v = new ArrayList<>();
 				v.add(valuefilter);
 				EMFValidationError error = new EMFValidationError(EMFErrorSeverity.WARNING, SpagoBIConstants.VALUE_FILTER, "1052", v, params);
 				throw error;
@@ -459,7 +458,7 @@ public abstract class DependenciesPostProcessingLov extends AbstractLOV {
 						e);
 				HashMap params = new HashMap();
 				params.put(Constants.NOME_MODULO, "DelegatedBasicListService::filterList");
-				Vector v = new Vector();
+				List<Object> v = new ArrayList<>();
 				v.add(value);
 				v.add(format);
 				EMFValidationError error = new EMFValidationError(EMFErrorSeverity.WARNING, SpagoBIConstants.TYPE_VALUE_FILTER, "1054", v, params);
@@ -474,7 +473,7 @@ public abstract class DependenciesPostProcessingLov extends AbstractLOV {
 						e);
 				HashMap params = new HashMap();
 				params.put(Constants.NOME_MODULO, "DelegatedBasicListService::filterList");
-				Vector v = new Vector();
+				List<Object> v = new ArrayList<>();
 				v.add(valuefilter);
 				v.add(format);
 				EMFValidationError error = new EMFValidationError(EMFErrorSeverity.WARNING, SpagoBIConstants.VALUE_FILTER, "1055", v, params);

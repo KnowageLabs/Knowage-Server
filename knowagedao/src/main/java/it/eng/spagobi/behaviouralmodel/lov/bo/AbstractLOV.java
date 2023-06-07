@@ -23,7 +23,7 @@ import it.eng.spagobi.utilities.objects.Couple;
 
 public abstract class AbstractLOV implements ILovDetail {
 
-	private static final Logger logger = Logger.getLogger(AbstractLOV.class);
+	private static final Logger LOGGER = Logger.getLogger(AbstractLOV.class);
 
 	@Override
 	public boolean isSimpleLovType() {
@@ -33,7 +33,7 @@ public abstract class AbstractLOV implements ILovDetail {
 	protected List<String> getTreeValueColumns() {
 		try {
 			List<Couple<String, String>> list = this.getTreeLevelsColumns();
-			List<String> toReturn = new ArrayList<String>();
+			List<String> toReturn = new ArrayList<>();
 			if (list != null) {
 				Iterator<Couple<String, String>> it = list.iterator();
 				while (it.hasNext()) {
@@ -49,7 +49,7 @@ public abstract class AbstractLOV implements ILovDetail {
 	protected List<String> getTreeDescriptionColumns() {
 		try {
 			List<Couple<String, String>> list = this.getTreeLevelsColumns();
-			List<String> toReturn = new ArrayList<String>();
+			List<String> toReturn = new ArrayList<>();
 			if (list != null) {
 				Iterator<Couple<String, String>> it = list.iterator();
 				while (it.hasNext()) {
@@ -67,11 +67,11 @@ public abstract class AbstractLOV implements ILovDetail {
 		Set<String> parameterNames = getParameterNames();
 		if (parameterNames != null && !parameterNames.isEmpty()) {
 			if (biObjectParameters != null && !biObjectParameters.isEmpty()) {
-				parameters = new HashMap<String, String>(parameterNames.size());
+				parameters = new HashMap<>(parameterNames.size());
 				int numberOfParametersFound = 0;
 				for (AbstractDriver objParam : biObjectParameters) {
 					if (parameterNames.contains(objParam.getParameter().getLabel())) {
-						logger.debug("Found parameter with name [" + objParam.getParameter().getLabel() + "], also used by the LOV.");
+						LOGGER.debug("Found parameter with name [" + objParam.getParameter().getLabel() + "], also used by the LOV.");
 						numberOfParametersFound++;
 						String parameterValue = null;
 						List<String> parameterValues = objParam.getParameterValues();
@@ -83,10 +83,10 @@ public abstract class AbstractLOV implements ILovDetail {
 								parameterValue = StringUtilities.getMultiValue(SpagoBIUtilities.fromListToString(parameterValues, ","), objParam.getParameter()
 										.getType());
 							}
-							logger.debug("The parameter with name [" + objParam.getParameter().getLabel() + "] has value [" + parameterValue + "]");
+							LOGGER.debug("The parameter with name [" + objParam.getParameter().getLabel() + "] has value [" + parameterValue + "]");
 							parameters.put(objParam.getParameter().getLabel(), parameterValue);
 						} else {
-							logger.error("The parameter with name [" + objParam.getParameter().getLabel() + "] is null");
+							LOGGER.error("The parameter with name [" + objParam.getParameter().getLabel() + "] is null");
 							MissingLOVDependencyException mlda = new MissingLOVDependencyException(
 									"Impossible to retrieve all the parameters value for the LOV.");
 							mlda.setDependsFrom(objParam.getParameter().getLabel());
@@ -95,12 +95,12 @@ public abstract class AbstractLOV implements ILovDetail {
 					}
 				}
 				if (numberOfParametersFound != parameterNames.size()) {
-					logger.error("The LOV needs " + parameterNames.size()
+					LOGGER.error("The LOV needs " + parameterNames.size()
 							+ ", but the parameters from the document execution do not match all the LOV parameters.");
 					throw new MissingLOVDependencyException("Impossible to retrieve all the parameters value for the LOV.");
 				}
 			} else {
-				logger.error("The LOV needs " + parameterNames.size() + ", but the set of parameter from the document execution is null or empty.");
+				LOGGER.error("The LOV needs " + parameterNames.size() + ", but the set of parameter from the document execution is null or empty.");
 				throw new MissingLOVDependencyException("Impossible to retrieve all the parameters value for the LOV.");
 			}
 		}
@@ -112,29 +112,29 @@ public abstract class AbstractLOV implements ILovDetail {
 		Set<String> parameterNames = getParameterNames();
 		if (parameterNames != null && !parameterNames.isEmpty()) {
 			if (biObjectParameters != null && !biObjectParameters.isEmpty()) {
-				parameters = new HashMap<String, String>(parameterNames.size());
+				parameters = new HashMap<>(parameterNames.size());
 				int numberOfParametersFound = 0;
 				for (AbstractDriver objParam : biObjectParameters) {
 					if (parameterNames.contains(objParam.getParameter().getLabel())) {
 						String parameterType = objParam.getParameter().getType();
-						logger.debug("Found parameter with name [" + objParam.getParameter().getLabel() + "], also used by the LOV.");
+						LOGGER.debug("Found parameter with name [" + objParam.getParameter().getLabel() + "], also used by the LOV.");
 						numberOfParametersFound++;
 						if (parameterType != null) {
-							logger.debug("The parameter with name [" + objParam.getParameter().getLabel() + "] has value [" + parameterType + "]");
+							LOGGER.debug("The parameter with name [" + objParam.getParameter().getLabel() + "] has value [" + parameterType + "]");
 							parameters.put(objParam.getParameter().getLabel(), parameterType);
 						} else {
-							logger.error("The parameter with name [" + objParam.getParameter().getLabel() + "] is null");
+							LOGGER.error("The parameter with name [" + objParam.getParameter().getLabel() + "] is null");
 							throw new SpagoBIRuntimeException("Impossible to retrieve all the parameters value for the LOV.");
 						}
 					}
 				}
 				if (numberOfParametersFound != parameterNames.size()) {
-					logger.error("The LOV needs " + parameterNames.size()
+					LOGGER.error("The LOV needs " + parameterNames.size()
 							+ ", but the parameters from the document execution do not match all the LOV parameters.");
 					throw new SpagoBIRuntimeException("Impossible to retrieve all the parameters value for the LOV.");
 				}
 			} else {
-				logger.error("The LOV needs " + parameterNames.size() + ", but the set of parameter from the document execution is null or empty.");
+				LOGGER.error("The LOV needs " + parameterNames.size() + ", but the set of parameter from the document execution is null or empty.");
 				throw new SpagoBIRuntimeException("Impossible to retrieve all the parameters value for the LOV.");
 			}
 		}

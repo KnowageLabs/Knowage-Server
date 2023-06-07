@@ -17,6 +17,13 @@
  */
 package it.eng.spagobi.tools.dataset.utils.datamart;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
+
+import org.apache.log4j.Logger;
+
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
 import it.eng.spagobi.commons.utilities.StringUtilities;
@@ -26,34 +33,19 @@ import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
-
-import org.apache.log4j.Logger;
-
 /**
  * @author Andrea Gioia
  * @author Davide Zerbetto (davide.zerbetto@eng.it)
  */
 public class SpagoBICoreDatamartRetriever implements IQbeDataSetDatamartRetriever {
 
-	private static final Logger logger = Logger.getLogger(SpagoBICoreDatamartRetriever.class);
-
-	public SpagoBICoreDatamartRetriever() {
-	}
+	private static final Logger LOGGER = Logger.getLogger(SpagoBICoreDatamartRetriever.class);
 
 	public File getDataMartDir() {
-		File qbeDataMartDir;
-
-		qbeDataMartDir = null;
-
 		String baseDirStr = SpagoBIUtilities.getResourcePath();
 		File baseDir = new File(baseDirStr);
 		String completePath = baseDir + File.separator + File.separator + "qbe" + File.separator + "datamarts";
-		qbeDataMartDir = new File(completePath);
+		File qbeDataMartDir = new File(completePath);
 
 		if (qbeDataMartDir.exists() && !qbeDataMartDir.isDirectory()) {
 			throw new SpagoBIRuntimeException("Path [" + completePath + "] refers to a file.");
@@ -72,12 +64,12 @@ public class SpagoBICoreDatamartRetriever implements IQbeDataSetDatamartRetrieve
 
 		File metamodelJarFile;
 
-		logger.debug("IN");
+		LOGGER.debug("IN");
 
 		metamodelJarFile = null;
 		try {
 			Assert.assertTrue(StringUtilities.isNotEmpty(metamodelName), "Input parameter [metamodelName] cannot be null");
-			logger.debug("Load metamodel jar file for model [" + metamodelName + "]");
+			LOGGER.debug("Load metamodel jar file for model [" + metamodelName + "]");
 
 			File targetMetamodelFolder = new File(getDataMartDir(), metamodelName);
 			metamodelJarFile = new File(targetMetamodelFolder, "datamart.jar");
@@ -85,21 +77,21 @@ public class SpagoBICoreDatamartRetriever implements IQbeDataSetDatamartRetrieve
 			IMetaModelsDAO metamodelsDAO = DAOFactory.getMetaModelsDAO();
 
 			if (metamodelJarFile.exists()) {
-				logger.debug("jar file for metamodel [" + metamodelName + "] has been already loaded in folder [" + targetMetamodelFolder + "]");
+				LOGGER.debug("jar file for metamodel [" + metamodelName + "] has been already loaded in folder [" + targetMetamodelFolder + "]");
 				long localVersionLastModified = metamodelJarFile.lastModified();
 				long remoteVersionLastModified = metamodelsDAO.getActiveMetaModelContentLastModified(metamodelName);
 				if (localVersionLastModified < remoteVersionLastModified) {
 					downloadJarFile(metamodelName, targetMetamodelFolder);
 				}
 			} else {
-				logger.debug("jar file for metamodel [" + metamodelName + "] has not been already downloaded");
+				LOGGER.debug("jar file for metamodel [" + metamodelName + "] has not been already downloaded");
 				downloadJarFile(metamodelName, targetMetamodelFolder);
 			}
 
 			Assert.assertTrue(metamodelJarFile.exists(), "After load opertion file [" + metamodelJarFile + "] must exist");
+		} catch (SpagoBIEngineRuntimeException e) {
+			throw e;
 		} catch (Throwable t) {
-			if (t instanceof SpagoBIEngineRuntimeException)
-				throw (SpagoBIEngineRuntimeException) t;
 			throw new SpagoBIEngineRuntimeException("An unexpected error occured while loading metamodel's jar file", t);
 		}
 
@@ -118,18 +110,18 @@ public class SpagoBICoreDatamartRetriever implements IQbeDataSetDatamartRetrieve
 		Content content = null;
 		try {
 			IMetaModelsDAO metamodelsDAO = DAOFactory.getMetaModelsDAO();
-			logger.debug("Loading jar file for metamodel [" + metamodelName + "] from SpagoBI metadata repository ...");
+			LOGGER.debug("Loading jar file for metamodel [" + metamodelName + "] from SpagoBI metadata repository ...");
 			content = metamodelsDAO.loadActiveMetaModelContentByName(metamodelName);
 			if (content == null)
 				throw new SpagoBIEngineRuntimeException("Metamodel [" + metamodelName + "] not found");
-			logger.debug("jar file for metamodel [" + metamodelName + "] has been loaded succesfully from SpagoBI metadata repository");
+			LOGGER.debug("jar file for metamodel [" + metamodelName + "] has been loaded succesfully from SpagoBI metadata repository");
 		} catch (Throwable t) {
 			throw new SpagoBIEngineRuntimeException("Impossible to load jar file of metamodel [" + metamodelName + "] from repository", t);
 		}
 
-		logger.debug("Copying jar file of metamodel [" + metamodelName + "] locally into folder [" + destinationFolder + "] ...");
+		LOGGER.debug("Copying jar file of metamodel [" + metamodelName + "] locally into folder [" + destinationFolder + "] ...");
 		storeJarFile(content, destinationFolder);
-		logger.debug("jar file of metamodel [" + metamodelName + "] succesfully copied locally into folder [" + destinationFolder + "] ...");
+		LOGGER.debug("jar file of metamodel [" + metamodelName + "] succesfully copied locally into folder [" + destinationFolder + "] ...");
 	}
 
 	/**
@@ -150,35 +142,23 @@ public class SpagoBICoreDatamartRetriever implements IQbeDataSetDatamartRetrieve
 		if (!destinationFolder.exists())
 			destinationFolder.mkdirs();
 
-		FileOutputStream fos = null;
-		try {
-			fos = new FileOutputStream(metamodelJarFile);
+		try (FileOutputStream fos = new FileOutputStream(metamodelJarFile);) {
 			byte[] cont = content.getContent();
 			fos.write(cont);
 			fos.flush();
 		} catch (Throwable t) {
 			throw new SpagoBIEngineRuntimeException("An unexpected error occured while saving localy metamodel's jar file", t);
-		} finally {
-			try {
-				fos.close();
-			} catch (IOException e) {
-				logger.error("Error while closing file output stream", e);
-			}
 		}
 	}
 
 	public boolean isAJPADatamartJarFile(File metamodelJarFile) {
-		ZipFile zipFile;
 		ZipEntry zipEntry;
 
-		try {
-			zipFile = new ZipFile(metamodelJarFile);
+		try (ZipFile zipFile = new ZipFile(metamodelJarFile)) {
+			zipEntry = zipFile.getEntry("META-INF/persistence.xml");
 		} catch (Throwable t) {
-			// throw new DAOException("Impossible to read jar file [" + metamodelJarFile + "]");
 			throw new SpagoBIRuntimeException("Impossible to read jar file [" + metamodelJarFile + "]");
 		}
-
-		zipEntry = zipFile.getEntry("META-INF/persistence.xml");
 
 		return zipEntry != null;
 	}

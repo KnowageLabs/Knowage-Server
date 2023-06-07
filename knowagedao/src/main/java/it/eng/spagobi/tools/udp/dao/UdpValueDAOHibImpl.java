@@ -42,11 +42,11 @@ import it.eng.spagobi.tools.udp.metadata.SbiUdpValue;
  */
 public class UdpValueDAOHibImpl extends AbstractHibernateDAO implements IUdpValueDAO {
 
-	private static final Logger logger = Logger.getLogger(UdpValueDAOHibImpl.class);
+	private static final Logger LOGGER = Logger.getLogger(UdpValueDAOHibImpl.class);
 
 	@Override
 	public Integer insert(SbiUdpValue propValue) {
-		logger.debug("IN");
+		LOGGER.debug("IN");
 		Session session = null;
 		Transaction tx = null;
 		Integer id = null;
@@ -65,7 +65,7 @@ public class UdpValueDAOHibImpl extends AbstractHibernateDAO implements IUdpValu
 			if (session != null) {
 				session.close();
 			}
-			logger.debug("OUT");
+			LOGGER.debug("OUT");
 		}
 		return id;
 	}
@@ -78,7 +78,7 @@ public class UdpValueDAOHibImpl extends AbstractHibernateDAO implements IUdpValu
 
 	@Override
 	public void update(SbiUdpValue propValue) {
-		logger.debug("IN");
+		LOGGER.debug("IN");
 		Session session = getSession();
 		Transaction tx = null;
 		try {
@@ -96,21 +96,21 @@ public class UdpValueDAOHibImpl extends AbstractHibernateDAO implements IUdpValu
 		} finally {
 			session.close();
 		}
-		logger.debug("OUT");
+		LOGGER.debug("OUT");
 
 	}
 
 	@Override
 	public void update(Session session, SbiUdpValue propValue) {
-		logger.debug("IN");
+		LOGGER.debug("IN");
 		updateSbiCommonInfo4Update(propValue);
 		session.update(propValue);
-		logger.debug("OUT");
+		LOGGER.debug("OUT");
 	}
 
 	@Override
 	public void delete(SbiUdpValue propValue) {
-		logger.debug("IN");
+		LOGGER.debug("IN");
 		Session session = getSession();
 		Transaction tx = null;
 		try {
@@ -127,19 +127,19 @@ public class UdpValueDAOHibImpl extends AbstractHibernateDAO implements IUdpValu
 		} finally {
 			session.close();
 		}
-		logger.debug("OUT");
+		LOGGER.debug("OUT");
 	}
 
 	@Override
 	public void delete(Session session, SbiUdpValue item) {
-		logger.debug("IN");
+		LOGGER.debug("IN");
 		session.delete(item);
-		logger.debug("OUT");
+		LOGGER.debug("OUT");
 	}
 
 	@Override
 	public void delete(Integer id) {
-		logger.debug("IN");
+		LOGGER.debug("IN");
 		Session session = getSession();
 		Transaction tx = null;
 		try {
@@ -156,7 +156,7 @@ public class UdpValueDAOHibImpl extends AbstractHibernateDAO implements IUdpValu
 		} finally {
 			session.close();
 		}
-		logger.debug("OUT");
+		LOGGER.debug("OUT");
 	}
 
 	@Override
@@ -167,7 +167,7 @@ public class UdpValueDAOHibImpl extends AbstractHibernateDAO implements IUdpValu
 	@Override
 	@SuppressWarnings("unchecked")
 	public SbiUdpValue findById(Integer id) {
-		logger.debug("IN");
+		LOGGER.debug("IN");
 		SbiUdpValue propValue = null;
 		Session session = getSession();
 		Transaction tx = null;
@@ -184,14 +184,14 @@ public class UdpValueDAOHibImpl extends AbstractHibernateDAO implements IUdpValu
 		} finally {
 			session.close();
 		}
-		logger.debug("OUT");
+		LOGGER.debug("OUT");
 		return propValue;
 	}
 
 	@Override
 	@SuppressWarnings("unchecked")
 	public List findByReferenceId(Integer kpiId, String family) {
-		logger.debug("IN");
+		LOGGER.debug("IN");
 		Session aSession = null;
 		Transaction tx = null;
 		List<UdpValue> toReturn = null;
@@ -199,17 +199,16 @@ public class UdpValueDAOHibImpl extends AbstractHibernateDAO implements IUdpValu
 		try {
 			aSession = getSession();
 			tx = aSession.beginTransaction();
-			String hql = "from SbiUdpValue s " + "	where s.referenceId = ? AND " + "         lower(s.family) = lower(:family) AND "
-					+ "         s.endTs is NULL " + " order by s.label asc";
+			String hql = "from SbiUdpValue s where s.referenceId = ? AND lower(s.family) = lower(:family) AND s.endTs is NULL order by s.label asc";
 			Query hqlQuery = aSession.createQuery(hql);
 			hqlQuery.setParameter("family", family);
 			hqlQuery.setInteger(0, kpiId);
-			List toConvert = hqlQuery.list();
-			for (Iterator iterator = toConvert.iterator(); iterator.hasNext();) {
-				SbiUdpValue sbiUdpValue = (SbiUdpValue) iterator.next();
+			List<SbiUdpValue> toConvert = hqlQuery.list();
+			for (Iterator<SbiUdpValue> iterator = toConvert.iterator(); iterator.hasNext();) {
+				SbiUdpValue sbiUdpValue = iterator.next();
 				UdpValue udpValue = toUdpValue(sbiUdpValue);
 				if (toReturn == null)
-					toReturn = new ArrayList<UdpValue>();
+					toReturn = new ArrayList<>();
 				toReturn.add(udpValue);
 			}
 
@@ -220,9 +219,11 @@ public class UdpValueDAOHibImpl extends AbstractHibernateDAO implements IUdpValu
 			throw e;
 
 		} finally {
-			aSession.close();
+			if (aSession != null) {
+				aSession.close();
+			}
 		}
-		logger.debug("OUT");
+		LOGGER.debug("OUT");
 		return toReturn;
 	}
 
@@ -232,7 +233,7 @@ public class UdpValueDAOHibImpl extends AbstractHibernateDAO implements IUdpValu
 
 	@Override
 	public UdpValue loadById(Integer id) {
-		logger.debug("IN");
+		LOGGER.debug("IN");
 		Session session = getSession();
 		UdpValue udpValue = null;
 		Transaction tx = null;
@@ -251,7 +252,7 @@ public class UdpValueDAOHibImpl extends AbstractHibernateDAO implements IUdpValu
 		} finally {
 			session.close();
 		}
-		logger.debug("OUT");
+		LOGGER.debug("OUT");
 		return udpValue;
 	}
 
@@ -261,14 +262,13 @@ public class UdpValueDAOHibImpl extends AbstractHibernateDAO implements IUdpValu
 
 	@Override
 	public UdpValue loadByReferenceIdAndUdpId(Integer referenceId, Integer udpId, String family) {
-		logger.debug("IN");
+		LOGGER.debug("IN");
 		UdpValue toReturn = null;
 		Session tmpSession = getSession();
 		Transaction tx = null;
 		try {
 			tx = tmpSession.beginTransaction();
-			String hql = "from SbiUdpValue s " + "	where s.referenceId = ? AND " + "         s.sbiUdp.udpId = ? AND " + "         lower(s.family) = lower("
-					+ "?) AND " + "         s.endTs is NULL " + " order by s.label asc";
+			String hql = "from SbiUdpValue s where s.referenceId = ? AND s.sbiUdp.udpId = ? AND lower(s.family) = lower(?) AND s.endTs is NULL order by s.label asc";
 			Query hqlQuery = tmpSession.createQuery(hql);
 			hqlQuery.setInteger(0, referenceId);
 			hqlQuery.setInteger(1, udpId);
@@ -277,8 +277,6 @@ public class UdpValueDAOHibImpl extends AbstractHibernateDAO implements IUdpValu
 			if (hibValueUDP == null)
 				return null;
 			toReturn = toUdpValue(hibValueUDP);
-
-			// tx.commit();
 
 		} catch (HibernateException e) {
 			if (tx != null && tx.isActive()) {
@@ -289,14 +287,14 @@ public class UdpValueDAOHibImpl extends AbstractHibernateDAO implements IUdpValu
 		} finally {
 			tmpSession.close();
 		}
-		logger.debug("OUT");
+		LOGGER.debug("OUT");
 		return toReturn;
 	}
 
 	@Override
 	@SuppressWarnings("unchecked")
 	public List<SbiUdpValue> findAll() {
-		logger.debug("IN");
+		LOGGER.debug("IN");
 		Session session = getSession();
 		List<SbiUdpValue> list = null;
 		Transaction tx = null;
@@ -315,13 +313,13 @@ public class UdpValueDAOHibImpl extends AbstractHibernateDAO implements IUdpValu
 		} finally {
 			session.close();
 		}
-		logger.debug("OUT");
+		LOGGER.debug("OUT");
 		return list;
 
 	}
 
 	public UdpValue toUdpValue(SbiUdpValue sbiUdpValue) {
-		logger.debug("IN");
+		LOGGER.debug("IN");
 		UdpValue toReturn = new UdpValue();
 
 		toReturn.setUdpValueId(sbiUdpValue.getUdpValueId());
@@ -335,7 +333,7 @@ public class UdpValueDAOHibImpl extends AbstractHibernateDAO implements IUdpValu
 			Domain familyDomain = aDomainDAO.loadDomainById(sbiUdpValue.getSbiUdp().getFamilyId());
 			toReturn.setFamily(familyDomain.getValueCd()); // denormilized
 		} catch (Exception he) {
-			logger.error(he);
+			LOGGER.error(he);
 		}
 
 		Integer typeId = sbiUdpValue.getSbiUdp().getTypeId();
@@ -345,7 +343,7 @@ public class UdpValueDAOHibImpl extends AbstractHibernateDAO implements IUdpValu
 				Domain typeDomain = aDomainDAO.loadDomainById(typeId);
 				toReturn.setTypeLabel(typeDomain.getValueCd()); // denormilized
 			} catch (Exception he) {
-				logger.error(he);
+				LOGGER.error(he);
 			}
 		}
 
@@ -354,7 +352,7 @@ public class UdpValueDAOHibImpl extends AbstractHibernateDAO implements IUdpValu
 		toReturn.setBeginTs(sbiUdpValue.getBeginTs());
 		toReturn.setEndTs(sbiUdpValue.getEndTs());
 
-		logger.debug("OUT");
+		LOGGER.debug("OUT");
 		return toReturn;
 	}
 

@@ -117,7 +117,7 @@ public interface IAuditDAO extends ISpagoBIDao {
 	 *
 	 * @throws EMFUserError the EMF user error
 	 */
-	public List getMostPopular(Collection roles, int limit) throws EMFUserError;
+	public List getMostPopular(Collection<String> roles, int limit) throws EMFUserError;
 
 	/**
 	 * Finds the most recent executions for the user with the specified user identifier as a list of <code>HotLink</code> objects.

@@ -432,7 +432,7 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 						DAOFactory.getSbiTagDao().deleteDatasetTag(dsTag);
 					}
 
-					DataSetEventManager.getInstance().notifyDelete(toReturn);
+					DataSetEventManager.getINSTANCE().notifyDelete(toReturn);
 				}
 				// if dataset is of type FILE, delete associated file as well
 				if (sbiDataSet.getType().equals(DataSetConstants.DS_FILE)) {
@@ -514,7 +514,7 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 				if (sbiDataSet != null) {
 					IDataSet toReturn = DataSetFactory.toDataSet(sbiDataSet, this.getUserProfile());
 					session.delete(sbiDataSet);
-					DataSetEventManager.getInstance().notifyDelete(toReturn);
+					DataSetEventManager.getINSTANCE().notifyDelete(toReturn);
 				}
 			}
 
@@ -921,7 +921,7 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 				insertQbeRelations(hibDataSet);
 			}
 
-			DataSetEventManager.getInstance().notifyInsert(dataSet);
+			DataSetEventManager.getINSTANCE().notifyInsert(dataSet);
 
 		} catch (Throwable t) {
 			if (transaction != null && transaction.isActive()) {
@@ -2450,7 +2450,7 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 					// insertQbeRelations(dataSet);
 					insertQbeRelations(hibDataSet);
 				}
-				DataSetEventManager.getInstance().notifyChange(dataSet);
+				DataSetEventManager.getINSTANCE().notifyChange(dataSet);
 			}
 		} catch (Throwable t) {
 			if (transaction != null && transaction.isActive()) {
@@ -2553,7 +2553,7 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 				// toReturn = DataSetFactory.toGuiDataSet(dsDetail);
 				toReturn = DataSetFactory.toDataSet(dsDetail);
 
-				DataSetEventManager.getInstance().notifyRestoreVersion(oldDataSet, toReturn);
+				DataSetEventManager.getINSTANCE().notifyRestoreVersion(oldDataSet, toReturn);
 
 			}
 		} catch (Throwable t) {
