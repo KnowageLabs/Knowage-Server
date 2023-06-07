@@ -47,16 +47,14 @@ import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
 
 public class ExcelExportJob extends AbstractExportJob {
 
+	private static final Logger LOGGER = Logger.getLogger(ExcelExportJob.class);
 	private static final String DATE_FORMAT = "dd/MM/yyyy";
-
-	private static final Logger logger = Logger.getLogger(ExcelExportJob.class);
-
 	private static final String TIMESTAMP_FORMAT = "dd/MM/yyyy HH:mm:ss.SSS";
 
 	@Override
 	protected void export(JobExecutionContext context) throws JobExecutionException {
 
-		logger.debug("Start Excel export for dataSetId " + getDataSetId() + " with id " + getId() + " by user " + getUserProfile().getUserId());
+		LOGGER.debug("Start Excel export for dataSetId " + getDataSetId() + " with id " + getId() + " by user " + getUserProfile().getUserId());
 
 		OutputStream exportFileOS = getDataOutputStream();
 		try {
@@ -183,7 +181,7 @@ public class ExcelExportJob extends AbstractExportJob {
 									}
 								} catch (ParseException e) {
 									String msg = "Error parsing values";
-									logger.error(msg, e);
+									LOGGER.error(msg, e);
 									throw new IllegalStateException(msg, e);
 								}
 
@@ -191,7 +189,7 @@ public class ExcelExportJob extends AbstractExportJob {
 
 						} catch (Exception e) {
 							String msg = "Error generating Excel file";
-							logger.error(msg, e);
+							LOGGER.error(msg, e);
 							throw new IllegalStateException(msg, e);
 						}
 
@@ -205,7 +203,7 @@ public class ExcelExportJob extends AbstractExportJob {
 			}
 		} catch (Exception e) {
 			String msg = String.format("Error writing data file \"%s\"!", getDataFile());
-			logger.error(msg, e);
+			LOGGER.error(msg, e);
 			throw new JobExecutionException(msg, e);
 		} finally {
 			if (exportFileOS != null) {
@@ -217,7 +215,7 @@ public class ExcelExportJob extends AbstractExportJob {
 			}
 		}
 
-		LogMF.info(logger, "XLSX export completed for user {0}. DataSet is {1}. Final file: dimension (in bytes): {2,number}, path: [{3}], ",
+		LogMF.info(LOGGER, "XLSX export completed for user {0}. DataSet is {1}. Final file: dimension (in bytes): {2,number}, path: [{3}], ",
 				this.getUserProfile().getUserId(), this.getDataSet().getLabel(), getDataFile().toFile().length(), getDataFile().toString());
 
 	}

@@ -25,7 +25,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.log4j.Logger;
 import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrServerException;
@@ -54,8 +53,6 @@ import it.eng.spagobi.tools.dataset.solr.SolrDataStore;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 class SolrEvaluationStrategy extends AbstractSolrStrategy {
-
-	private static final Logger logger = Logger.getLogger(SolrEvaluationStrategy.class);
 
 	public SolrEvaluationStrategy(IDataSet dataSet) {
 		super(dataSet);
@@ -156,7 +153,7 @@ class SolrEvaluationStrategy extends AbstractSolrStrategy {
 			for (int i = 0; i < metas.size(); i++) {
 
 				if (metas.get(i).getName().equalsIgnoreCase("id")) {
-					idIndex = new Integer(i);
+					idIndex = i;
 					hasIdOnMeta = true;
 				}
 			}
@@ -176,8 +173,7 @@ class SolrEvaluationStrategy extends AbstractSolrStrategy {
 				datastoresToAdd.setMetaData(pagedMetaData);
 
 				for (int projectionIndex = 0; projectionIndex < pagedDataStore.getRecordsCount(); projectionIndex++) {
-					Record newRecord = new Record();
-					newRecord = (Record) pagedDataStore.getRecordAt(projectionIndex);
+					Record newRecord = (Record) pagedDataStore.getRecordAt(projectionIndex);
 					newRecord.removeFieldAt(idIndex);
 
 					datastoresToAdd.appendRecord(newRecord);

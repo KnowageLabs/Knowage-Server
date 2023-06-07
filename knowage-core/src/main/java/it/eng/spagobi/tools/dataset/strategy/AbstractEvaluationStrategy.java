@@ -30,8 +30,6 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.log4j.Logger;
-
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.common.datastore.DataStore;
 import it.eng.spagobi.tools.dataset.common.datastore.Field;
@@ -55,11 +53,9 @@ public abstract class AbstractEvaluationStrategy implements IDatasetEvaluationSt
 
 	private static final String TOTAL_COUNT_DISTINCT = "TOTAL_COUNT_DISTINCT";
 
-	private static final Logger logger = Logger.getLogger(AbstractEvaluationStrategy.class);
-
 	protected IDataSet dataSet;
 
-	public AbstractEvaluationStrategy(IDataSet dataSet) {
+	protected AbstractEvaluationStrategy(IDataSet dataSet) {
 		this.dataSet = dataSet;
 	}
 
@@ -75,7 +71,7 @@ public abstract class AbstractEvaluationStrategy implements IDatasetEvaluationSt
 			IMetaData newMeta = new MetaData();
 			for (AbstractSelectionField selec : projections) {
 				for (int i = 0; i < metadata.getFieldsMeta().size(); i++) {
-					IFieldMetaData meta = (IFieldMetaData) metadata.getFieldsMeta().get(i);
+					IFieldMetaData meta = metadata.getFieldsMeta().get(i);
 					if (selec.getName().equals(meta.getName())) {
 						if (selec instanceof Projection) {
 							Projection selP = (Projection) selec;
@@ -112,8 +108,8 @@ public abstract class AbstractEvaluationStrategy implements IDatasetEvaluationSt
 	private List<AbstractSelectionField> applyTotalsFunctionsToFormulas(IDataSet dataSet, List<AbstractSelectionField> projections, Filter filter,
 			int maxRowCount, Set<String> indexes) {
 
-		List<AbstractSelectionField> toReturnList = new ArrayList<AbstractSelectionField>();
-		Set<String> totalFunctionsSet = new HashSet<String>();
+		List<AbstractSelectionField> toReturnList = new ArrayList<>();
+		Set<String> totalFunctionsSet = new HashSet<>();
 		for (AbstractSelectionField abstractSelectionField : projections) {
 			if (abstractSelectionField instanceof DataStoreCalculatedField) {
 				String formula = ((DataStoreCalculatedField) abstractSelectionField).getFormula();
@@ -144,7 +140,7 @@ public abstract class AbstractEvaluationStrategy implements IDatasetEvaluationSt
 
 			IDataStore totalsFunctionDataStore = executeTotalsFunctions(dataSet, totalFunctionsSet, filter, maxRowCount, indexes);
 
-			HashMap<String, String> totalsMap = new HashMap<String, String>();
+			HashMap<String, String> totalsMap = new HashMap<>();
 			int i = 0;
 			for (String function : totalFunctionsSet) {
 				totalsMap.put(function, String.valueOf(totalsFunctionDataStore.getRecordAt(0).getFieldAt(i).getValue()));

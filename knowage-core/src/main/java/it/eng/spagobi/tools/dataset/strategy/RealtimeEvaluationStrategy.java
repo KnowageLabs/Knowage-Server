@@ -22,8 +22,6 @@ package it.eng.spagobi.tools.dataset.strategy;
 import java.util.List;
 import java.util.Set;
 
-import org.apache.log4j.Logger;
-
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.tools.dataset.bo.DatasetEvaluationStrategyType;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
@@ -35,8 +33,6 @@ import it.eng.spagobi.tools.dataset.metasql.query.item.Sorting;
 import it.eng.spagobi.utilities.database.DataBaseException;
 
 class RealtimeEvaluationStrategy extends CachedEvaluationStrategy {
-
-	private static final Logger logger = Logger.getLogger(RealtimeEvaluationStrategy.class);
 
 	public RealtimeEvaluationStrategy(UserProfile userProfile, IDataSet dataSet, ICache cache) {
 		super(userProfile, dataSet, cache);

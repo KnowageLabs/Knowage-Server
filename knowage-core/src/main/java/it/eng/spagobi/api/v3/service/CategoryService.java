@@ -38,12 +38,13 @@ import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 
 public class CategoryService {
-	private static final Logger logger = Logger.getLogger(CategoryService.class);
+
+	private static final Logger LOGGER = Logger.getLogger(CategoryService.class);
 
 	public List<CategoryDTO> getCategories(UserProfile profile) {
-		logger.debug("IN");
+		LOGGER.debug("IN");
 		ICategoryDAO categoryDAO = null;
-		List<CategoryDTO> listToReturn = new ArrayList<CategoryDTO>();
+		List<CategoryDTO> listToReturn = new ArrayList<>();
 		try {
 			categoryDAO = DAOFactory.getCategoryDAO();
 			categoryDAO.setUserProfile(profile);
@@ -54,10 +55,10 @@ public class CategoryService {
 						catAPI.getNumberOfCategoryUsages(sbiCategory)));
 			}
 		} catch (Exception ex) {
-			LogMF.error(logger, "Cannot get available categories for user {0}", new Object[] { profile.getUserName() });
+			LogMF.error(LOGGER, "Cannot get available categories for user {0}", new Object[] { profile.getUserName() });
 			throw new SpagoBIServiceException("An unexpected error occured while executing service", ex);
 		} finally {
-			logger.debug("OUT");
+			LOGGER.debug("OUT");
 		}
 		return listToReturn;
 	}

@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,47 +11,51 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package it.eng.spagobi.engines.commonj.process;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
-import java.util.Vector;
 
 import org.apache.log4j.Logger;
 
 import commonj.work.Work;
 
 public class SpagoBIWork implements Work{
-	/** pid of the work */ 
+
+	private static final Logger LOGGER = Logger.getLogger(SpagoBIWork.class);
+
+	/** pid of the work */
 	String pid;
-	/** label of the dcument */ 
+	/** label of the dcument */
 	String sbiLabel;
 	/** boolean to check to see if work has been stopped, set to false by release method*/
 	volatile boolean running=false;
-	/** here are put allr equests parameters */ 
+	/** here are put allr equests parameters */
 	Map sbiParameters=new HashMap();
 	/**names of those in sbiParameters that are analytical drivers*/
-	Vector<String> analyticalParameters;
+	List<String> analyticalParameters;
 	/** Logger */
-	static private Logger logger = Logger.getLogger(SpagoBIWork.class);
-
+	@Override
 	public boolean isDaemon() {
 		// TODO Auto-generated method stub
 		return false;
 	}
 
 
+	@Override
 	public void release() {
 
 		running=false;
 	}
 
+	@Override
 	public void run() {
-		running=true;		
+		running=true;
 	}
 
 
@@ -76,12 +80,12 @@ public class SpagoBIWork implements Work{
 
 
 
-	public Vector<String> getAnalyticalParameters() {
+	public List<String> getAnalyticalParameters() {
 		return analyticalParameters;
 	}
 
 
-	public void setAnalyticalParameters(Vector<String> analyticalParameters) {
+	public void setAnalyticalParameters(List<String> analyticalParameters) {
 		this.analyticalParameters = analyticalParameters;
 	}
 

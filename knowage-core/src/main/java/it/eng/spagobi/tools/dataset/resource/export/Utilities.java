@@ -39,8 +39,7 @@ import it.eng.spagobi.user.UserProfileManager;
 
 public class Utilities {
 
-	private static final Logger logger = Logger.getLogger(Utilities.class);
-
+	private static final Logger LOGGER = Logger.getLogger(Utilities.class);
 	private static final Utilities INSTANCE = new Utilities();
 
 	public static Utilities getInstance() {
@@ -57,7 +56,7 @@ public class Utilities {
 	}
 
 	public List<Entry> getAllExportedFiles(UserProfile userProfile, boolean showAll) throws IOException {
-		List<Entry> ret = new ArrayList<Entry>();
+		List<Entry> ret = new ArrayList<>();
 
 		String resoursePath = SpagoBIUtilities.getResourcePath();
 		java.nio.file.Path perUserExportResourcePath = ExportPathBuilder.getInstance().getPerUserExportResourcePath(resoursePath, userProfile);
@@ -68,7 +67,7 @@ public class Utilities {
 
 			DirectoryStream<java.nio.file.Path> userJobDirectory = null;
 
-			logger.info("Getting list of exported files for user " + userProfile.getUserId() + "...");
+			LOGGER.info("Getting list of exported files for user " + userProfile.getUserId() + "...");
 
 			if (Files.isDirectory(perUserExportResourcePath)) {
 
@@ -123,7 +122,7 @@ public class Utilities {
 		} finally {
 			totalTime.stop();
 		}
-		logger.info("Got list of exported files for user " + userProfile.getUserId());
+		LOGGER.info("Got list of exported files for user " + userProfile.getUserId());
 		return ret;
 	}
 

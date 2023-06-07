@@ -48,7 +48,7 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 abstract class AbstractExportJob implements Job {
 
-	private static final Logger logger = Logger.getLogger(AbstractExportJob.class);
+	private static final Logger LOGGER = Logger.getLogger(AbstractExportJob.class);
 
 	public static final String MAP_KEY_DATA_SET_ID = "dataSetId";
 
@@ -109,7 +109,7 @@ abstract class AbstractExportJob implements Job {
 			Files.createDirectories(resourcePath);
 		} catch (IOException e) {
 			String msg = String.format("Error creating directory \"%s\"!", resourcePath);
-			logger.error(msg, e);
+			LOGGER.error(msg, e);
 			throw new JobExecutionException(e);
 		}
 
@@ -122,7 +122,7 @@ abstract class AbstractExportJob implements Job {
 			deleteJobDirectory();
 
 			String msg = String.format("Error creating file \"%s\"!", dataFile);
-			logger.error(msg, e);
+			LOGGER.error(msg, e);
 			throw new JobExecutionException(e);
 		}
 
@@ -146,7 +146,7 @@ abstract class AbstractExportJob implements Job {
 			deleteJobDirectory();
 
 			String msg = String.format("Error creating file \"%s\"!", metadataFile);
-			logger.error(msg, e);
+			LOGGER.error(msg, e);
 			throw new JobExecutionException(e);
 		}
 
@@ -173,12 +173,12 @@ abstract class AbstractExportJob implements Job {
 			throws JobExecutionException {
 		IDataSetDAO dsDAO = DAOFactory.getDataSetDAO();
 		dsDAO.setUserProfile(userProfile);
-		IDataSet dataSet = dsDAO.loadDataSetById(dataSetId);
-		if (dataSet instanceof VersionedDataSet) {
-			VersionedDataSet vds = (VersionedDataSet) dataSet;
+		IDataSet currDataSet = dsDAO.loadDataSetById(dataSetId);
+		if (currDataSet instanceof VersionedDataSet) {
+			VersionedDataSet vds = (VersionedDataSet) currDataSet;
 			if (vds.getWrappedDataset() instanceof DerivedDataSet) {
-				IDataSet sourcedataSet = this.getDerivedSourceDataset(dataSet);
-				String jsonQuery = this.getJSonQueryDataset(dataSet);
+				IDataSet sourcedataSet = this.getDerivedSourceDataset(currDataSet);
+				String jsonQuery = this.getJSonQueryDataset(currDataSet);
 				if (sourcedataSet != null) {
 					DerivedDataSet dataSetDer = (DerivedDataSet) vds.getWrappedDataset();
 					dataSetDer.setSourceDataset(sourcedataSet);
@@ -187,33 +187,33 @@ abstract class AbstractExportJob implements Job {
 							.setDataSource(dataSetDer.getDataSourceForReading() != null ? dataSetDer.getDataSourceForReading() : sourcedataSet.getDataSource());
 					dataSetDer.setDataSourceForReading(
 							dataSetDer.getDataSourceForReading() != null ? dataSetDer.getDataSourceForReading() : sourcedataSet.getDataSource());
-					dataSet = dataSetDer;
+					currDataSet = dataSetDer;
 				}
 			}
 		}
 
-		logger.debug("Dump drivers:");
+		LOGGER.debug("Dump drivers:");
 		for (Entry<String, Object> entry : drivers.entrySet()) {
 			String msg = String.format("\t%s: %s", entry.getKey(), entry.getValue());
-			logger.debug(msg);
+			LOGGER.debug(msg);
 		}
 
-		logger.debug("Dump parameters:");
+		LOGGER.debug("Dump parameters:");
 		for (java.util.Map.Entry<String, String> entry : parameters.entrySet()) {
 			String msg = String.format("\t%s: %s", entry.getKey(), entry.getValue());
-			logger.debug(msg);
+			LOGGER.debug(msg);
 		}
 
-		dataSet.setDrivers(drivers);
+		currDataSet.setDrivers(drivers);
 		try {
-			dataSet.setParametersMap(parameters);
+			currDataSet.setParametersMap(parameters);
 		} catch (JSONException e) {
 			throw new JobExecutionException("An error occurred when applying parameters into dataset", e);
 		}
-		dataSet.resolveParameters();
+		currDataSet.resolveParameters();
 
-		dataSet.setUserProfileAttributes(userProfile.getUserAttributes());
-		return dataSet;
+		currDataSet.setUserProfileAttributes(userProfile.getUserAttributes());
+		return currDataSet;
 	}
 
 	protected Integer getDataSetId() {

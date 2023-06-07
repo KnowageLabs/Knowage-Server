@@ -17,31 +17,26 @@
  */
 package it.eng.spagobi.engines.commonj;
 
+import java.io.File;
+
+import org.apache.log4j.Logger;
+
 import it.eng.spago.base.SourceBean;
 import it.eng.spagobi.services.common.EnginConf;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
-import java.io.File;
-
-import org.apache.log4j.Logger;
-
 public class CommonjEngineConfig {
+
+	private static final Logger LOGGER = Logger.getLogger(CommonjEngineConfig.class);
+	private static final CommonjEngineConfig INSTANCE = new CommonjEngineConfig();
+
+	public static final String COMMONJ_REPOSITORY_ROOT_DIR = "commonjRepository_root_dir";
 
 	private EnginConf engineConfig;
 
-	private static CommonjEngineConfig instance;
-
-	public static String COMMONJ_REPOSITORY_ROOT_DIR = "commonjRepository_root_dir";
-
-	private static final Logger logger = Logger.getLogger(CommonjEngineConfig.class);
-
 	public static CommonjEngineConfig getInstance() {
-		if (instance == null) {
-			instance = new CommonjEngineConfig();
-		}
-
-		return instance;
+		return INSTANCE;
 	}
 
 	private CommonjEngineConfig() {
@@ -74,10 +69,8 @@ public class CommonjEngineConfig {
 	 * @return the runtime repository root dir
 	 */
 	public File getWorksRepositoryRootDir() {
-		logger.debug("IN");
+		LOGGER.debug("IN");
 		String property = getProperty(COMMONJ_REPOSITORY_ROOT_DIR);
-
-		SourceBean config = EnginConf.getInstance().getConfig();
 
 		File dir = null;
 		if (!isAbsolutePath(property)) {
@@ -86,7 +79,7 @@ public class CommonjEngineConfig {
 
 		if (property != null)
 			dir = new File(property);
-		logger.debug("OUT");
+		LOGGER.debug("OUT");
 		return dir;
 	}
 
@@ -114,7 +107,7 @@ public class CommonjEngineConfig {
 		sourceBeanConf = (SourceBean) getConfigSourceBean().getAttribute(propertName);
 		if (sourceBeanConf != null) {
 			propertyValue = sourceBeanConf.getCharacters();
-			logger.debug("Configuration attribute [" + propertName + "] is equals to: [" + propertyValue + "]");
+			LOGGER.debug("Configuration attribute [" + propertName + "] is equals to: [" + propertyValue + "]");
 		}
 
 		return propertyValue;
@@ -128,20 +121,8 @@ public class CommonjEngineConfig {
 	 */
 	public String getJavaInstallDir() {
 		SourceBean config = EnginConf.getInstance().getConfig();
-		String installDir = config.getCharacters("java_install_dir");
-		return installDir;
+		return config.getCharacters("java_install_dir");
 	}
-
-	// /**
-	// * Gets the word separator.
-	// *
-	// * @return the word separator
-	// */
-	// public String getWordSeparator() {
-	// SourceBean config = EnginConf.getInstance().getConfig();
-	// String wordS= (String)config.getCharacters("wordSeparator");
-	// return wordS;
-	// }
 
 	public EnginConf getEngineConfig() {
 		return engineConfig;

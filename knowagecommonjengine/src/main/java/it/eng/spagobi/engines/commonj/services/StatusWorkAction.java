@@ -17,6 +17,17 @@
  */
 package it.eng.spagobi.engines.commonj.services;
 
+import java.io.IOException;
+
+import javax.servlet.http.HttpSession;
+
+import org.apache.log4j.Logger;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import commonj.work.WorkEvent;
+import commonj.work.WorkItem;
+import de.myfoo.commonj.work.FooRemoteWorkItem;
 import it.eng.spago.base.SourceBean;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.engines.commonj.runtime.CommonjWorkContainer;
@@ -29,39 +40,20 @@ import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceException;
 import it.eng.spagobi.utilities.service.JSONFailure;
 import it.eng.spagobi.utilities.service.JSONSuccess;
 
-import java.io.IOException;
-
-import javax.servlet.http.HttpSession;
-
-import org.apache.log4j.Logger;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import commonj.work.WorkEvent;
-import commonj.work.WorkItem;
-
-import de.myfoo.commonj.work.FooRemoteWorkItem;
-
 public class StatusWorkAction extends AbstractEngineAction {
 
-	private static final Logger logger = Logger.getLogger(StatusWorkAction.class);
-
-	@Override
-	public void init(SourceBean config) {
-		// TODO Auto-generated method stub
-		super.init(config);
-	}
+	private static final Logger LOGGER = Logger.getLogger(StatusWorkAction.class);
 
 	@Override
 	public void service(SourceBean request, SourceBean response) {
-		logger.debug("IN");
+		LOGGER.debug("IN");
 
 		HttpSession session = getHttpSession();
 
 		UserProfile profile = (UserProfile) session.getAttribute("ENG_USER_PROFILE");
 		if (profile != null) {
 			String tenantId = profile.getOrganization();
-			logger.debug("Retrieved tenantId from user profile object : [" + tenantId + "]");
+			LOGGER.debug("Retrieved tenantId from user profile object : [" + tenantId + "]");
 			// putting tenant id on thread local
 			if (tenantId != null) {
 				Tenant tenant = new Tenant(tenantId);
@@ -91,24 +83,9 @@ public class StatusWorkAction extends AbstractEngineAction {
 
 		super.service(request, response);
 
-		// Get document id, must find
-		// String document_id=null;
-		// Object document_idO=null;
-		// document_idO=request.getAttribute("DOCUMENT_ID");
-		// if(document_idO!=null){
-		// document_id=document_idO.toString();
-		// }
-		// else{
-		// document_id="";
-		// logger.error("could not retrieve document id");
-		// throw new SpagoBIEngineServiceException(getActionName(), "could not find document id");
-		// }
-
 		CommonjWorkContainer container = null;
 		ProcessesStatusContainer processesStatusContainer = ProcessesStatusContainer.getInstance();
 		Object o = processesStatusContainer.getPidContainerMap().get(pid);
-		// recover from session, if does not find means work is completed
-		// Object o=session.getAttribute("SBI_PROCESS_"+document_id);
 		try {
 			int statusWI;
 
@@ -123,8 +100,7 @@ public class StatusWorkAction extends AbstractEngineAction {
 					statusWI = wi.getStatus();
 					// if finds that work is finished delete the attribute from session
 					if (statusWI == WorkEvent.WORK_COMPLETED) {
-						logger.debug("Work is finished - remove from session");
-						// session.removeAttribute("SBI_PROCESS_"+document_id);
+						LOGGER.debug("Work is finished - remove from session");
 						processesStatusContainer.getPidContainerMap().remove(pid);
 					}
 				} else {
@@ -137,7 +113,7 @@ public class StatusWorkAction extends AbstractEngineAction {
 			}
 
 			info = GeneralUtils.buildJSONObject(pid, statusWI);
-			logger.debug(GeneralUtils.getEventMessage(statusWI));
+			LOGGER.debug(GeneralUtils.getEventMessage(statusWI));
 			try {
 				writeBackToClient(new JSONSuccess(info));
 			} catch (IOException e) {
@@ -146,18 +122,18 @@ public class StatusWorkAction extends AbstractEngineAction {
 			}
 
 		} catch (Exception e) {
-			logger.error("Error in reading work status");
+			LOGGER.error("Error in reading work status");
 			try {
 				writeBackToClient(new JSONFailure(e));
 			} catch (IOException e1) {
-				logger.error("Error in reading work status and in writing back to client", e);
+				LOGGER.error("Error in reading work status and in writing back to client", e);
 				throw new SpagoBIEngineServiceException(getActionName(), "Error in reading work status and in writing back to client", e1);
 			} catch (JSONException e1) {
-				logger.error("Error in reading work status and in writing back to client", e);
+				LOGGER.error("Error in reading work status and in writing back to client", e);
 				throw new SpagoBIEngineServiceException(getActionName(), "Error in reading work status and in writing back to client", e1);
 			}
 		}
-		logger.debug("OUT");
+		LOGGER.debug("OUT");
 
 	}
 

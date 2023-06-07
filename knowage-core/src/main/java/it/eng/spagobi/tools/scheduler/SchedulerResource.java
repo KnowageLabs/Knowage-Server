@@ -34,9 +34,8 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 @ManageAuthorization
 public class SchedulerResource extends AbstractSpagoBIResource {
 
-	private static final Logger logger = Logger.getLogger(SchedulerResource.class);
-
-	protected static final String canNotFillResponseError = "error.mesage.description.generic.can.not.responce";
+	private static final Logger LOGGER = Logger.getLogger(SchedulerResource.class);
+	private static final String ERROR_CAN_NOT_FILL_RESPONSE = "error.mesage.description.generic.can.not.responce";
 
 	@POST
 	@Path("/pauseTrigger")
@@ -44,7 +43,7 @@ public class SchedulerResource extends AbstractSpagoBIResource {
 	@UserConstraint(functionalities = { CommunityFunctionalityConstants.SCHEDULER_MANAGEMENT })
 	public String pauseTrigger(@Context HttpServletRequest req) {
 		IEngUserProfile profile = (IEngUserProfile) req.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
-		HashMap<String, String> logParam = new HashMap<String, String>();
+		HashMap<String, String> logParam = new HashMap<>();
 		try {
 			String jobGroupName = req.getParameter("jobGroup");
 			String jobName = req.getParameter("jobName");
@@ -70,12 +69,12 @@ public class SchedulerResource extends AbstractSpagoBIResource {
 			return new JSONObject().put("resp", "ok").toString();
 		} catch (Exception e) {
 			updateAudit(req, profile, "SCHED_TRIGGER.PAUSE", logParam, "KO");
-			logger.error("Error while pausing trigger ", e);
-			logger.debug(canNotFillResponseError);
+			LOGGER.error("Error while pausing trigger ", e);
+			LOGGER.debug(ERROR_CAN_NOT_FILL_RESPONSE);
 			try {
-				return (ExceptionUtilities.serializeException(canNotFillResponseError, null));
+				return (ExceptionUtilities.serializeException(ERROR_CAN_NOT_FILL_RESPONSE, null));
 			} catch (Exception ex) {
-				logger.debug("Cannot fill response container.");
+				LOGGER.debug("Cannot fill response container.");
 				throw new SpagoBIRuntimeException("Cannot fill response container", ex);
 			}
 		}
@@ -87,7 +86,7 @@ public class SchedulerResource extends AbstractSpagoBIResource {
 	@UserConstraint(functionalities = { CommunityFunctionalityConstants.SCHEDULER_MANAGEMENT, CommunityFunctionalityConstants.KPI_SCHEDULATION })
 	public String resumeTrigger(@Context HttpServletRequest req) {
 		IEngUserProfile profile = (IEngUserProfile) req.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
-		HashMap<String, String> logParam = new HashMap<String, String>();
+		HashMap<String, String> logParam = new HashMap<>();
 		try {
 			String jobGroup = req.getParameter("jobGroup");
 			String jobName = req.getParameter("jobName");
@@ -107,22 +106,22 @@ public class SchedulerResource extends AbstractSpagoBIResource {
 			return new JSONObject().put("resp", "ok").toString();
 		} catch (Exception e) {
 			updateAudit(req, profile, "SCHED_TRIGGER.RESUME", logParam, "KO");
-			logger.error("Error while resuming trigger ", e);
-			logger.debug(canNotFillResponseError);
+			LOGGER.error("Error while resuming trigger ", e);
+			LOGGER.debug(ERROR_CAN_NOT_FILL_RESPONSE);
 			try {
-				return (ExceptionUtilities.serializeException(canNotFillResponseError, null));
+				return (ExceptionUtilities.serializeException(ERROR_CAN_NOT_FILL_RESPONSE, null));
 			} catch (Exception ex) {
-				logger.debug("Cannot fill response container.");
+				LOGGER.debug("Cannot fill response container.");
 				throw new SpagoBIRuntimeException("Cannot fill response container", ex);
 			}
 		}
 	}
 
-	protected static void updateAudit(HttpServletRequest request, IEngUserProfile profile, String action_code, HashMap<String, String> parameters, String esito) {
+	protected static void updateAudit(HttpServletRequest request, IEngUserProfile profile, String actionCode, HashMap<String, String> parameters, String esito) {
 		try {
-			AuditLogUtilities.updateAudit(request, profile, action_code, parameters, esito);
+			AuditLogUtilities.updateAudit(request, profile, actionCode, parameters, esito);
 		} catch (Exception e) {
-			logger.debug("Error writing audit", e);
+			LOGGER.debug("Error writing audit", e);
 		}
 	}
 }

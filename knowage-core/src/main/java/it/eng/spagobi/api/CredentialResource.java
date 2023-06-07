@@ -19,11 +19,10 @@ package it.eng.spagobi.api;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
-import java.util.Vector;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -115,8 +114,8 @@ class ChangePasswordData {
 @Path("/credential")
 public class CredentialResource {
 
+	private static final Logger LOGGER = Logger.getLogger(CredentialResource.class);
 	private static final String DATE_FORMAT = "yyyy-MM-dd";
-	private static final Logger logger = Logger.getLogger(CredentialResource.class);
 
 	/**
 	 * Change password of an user.
@@ -139,7 +138,7 @@ public class CredentialResource {
 		final String newPasswordConfirm = data.getNewPasswordConfirm();
 
 		if (StringUtils.isEmpty(userId)) {
-			logger.error("Trying to change password with userId");
+			LOGGER.error("Trying to change password with userId");
 			response = Response.status(Response.Status.BAD_REQUEST).build();
 		} else {
 			ISbiUserDAO userDao = DAOFactory.getSbiUserDAO();
@@ -147,7 +146,7 @@ public class CredentialResource {
 
 			Boolean blockedFlag = tmpUser.getFlgPwdBlocked();
 			if (blockedFlag != null && blockedFlag) {
-				logger.error(String.format("Attempt to change the password for the inactive user [%s]", tmpUser.getFullName()));
+				LOGGER.error(String.format("Attempt to change the password for the inactive user [%s]", tmpUser.getFullName()));
 				MessageBuilder msgBuilder = new MessageBuilder();
 				Locale locale = GeneralUtilities.getDefaultLocale();
 
@@ -160,10 +159,10 @@ public class CredentialResource {
 				if (PasswordChecker.getInstance().isValid(tmpUser, oldPassword, newPassword, newPasswordConfirm)) {
 					// getting days number for calculate new expiration date
 					IConfigDAO configDao = DAOFactory.getSbiConfigDAO();
-					List lstConfigChecks = configDao.loadConfigParametersByProperties(SpagoBIConstants.CHANGEPWD_EXPIRED_TIME);
+					List<Config> lstConfigChecks = configDao.loadConfigParametersByProperties(SpagoBIConstants.CHANGEPWD_EXPIRED_TIME);
 					Date beginDate = new Date();
-					if (lstConfigChecks.size() > 0) {
-						Config check = (Config) lstConfigChecks.get(0);
+					if (!lstConfigChecks.isEmpty()) {
+						Config check = lstConfigChecks.get(0);
 						if (check.isActive()) {
 							// define the new expired date
 							SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT);
@@ -173,12 +172,12 @@ public class CredentialResource {
 							cal.add(Calendar.DATE, Integer.parseInt(check.getValueCheck()));
 							try {
 								Date endDate = StringUtilities.stringToDate(sdf.format(cal.getTime()), DATE_FORMAT);
-								logger.debug("End Date for expiration calculeted: " + endDate);
+								LOGGER.debug("End Date for expiration calculeted: " + endDate);
 								tmpUser.setDtPwdBegin(beginDate);
 								tmpUser.setDtPwdEnd(endDate);
 							} catch (Exception e) {
-								logger.error("The control pwd goes on error: " + e);
-								throw new EMFUserError(EMFErrorSeverity.ERROR, 14008, new Vector(), new HashMap());
+								LOGGER.error("The control pwd goes on error: " + e);
+								throw new EMFUserError(EMFErrorSeverity.ERROR, 14008, Collections.emptyList(), Collections.emptyMap());
 							}
 						}
 					}
@@ -186,13 +185,13 @@ public class CredentialResource {
 					tmpUser.setPassword(Password.encriptPassword(newPassword));// SHA encrypt
 					tmpUser.setFlgPwdBlocked(false); // reset blocking flag
 					userDao.updateSbiUser(tmpUser, tmpUser.getId());
-					logger.debug("Updated properties for user with id " + tmpUser.getId() + " - DtLastAccess: " + tmpUser.getDtLastAccess().toString());
+					LOGGER.debug("Updated properties for user with id " + tmpUser.getId() + " - DtLastAccess: " + tmpUser.getDtLastAccess().toString());
 				}
 			} catch (EMFUserError e) {
-				logger.error("Error during retrieving of user " + userId, e);
+				LOGGER.error("Error during retrieving of user " + userId, e);
 				response = Response.status(Response.Status.NOT_FOUND).entity(e.getDescription()).build();
 			} catch (Exception e) {
-				logger.error("Error during password change", e);
+				LOGGER.error("Error during password change", e);
 				response = Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
 			}
 

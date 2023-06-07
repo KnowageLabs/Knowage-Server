@@ -44,7 +44,6 @@ import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.bo.SolrDataSet;
 import it.eng.spagobi.tools.dataset.common.datareader.JSONPathDataReader;
 import it.eng.spagobi.tools.dataset.common.datareader.SolrFacetPivotDataReader;
-import it.eng.spagobi.tools.dataset.common.datareader.XmlDataReader;
 import it.eng.spagobi.tools.dataset.common.datastore.DataStore;
 import it.eng.spagobi.tools.dataset.common.datastore.Field;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
@@ -65,7 +64,7 @@ import it.eng.spagobi.utilities.scripting.SpagoBIScriptManager;
 
 class SolrFacetPivotEvaluationStrategy extends SolrEvaluationStrategy {
 
-	private static final Logger logger = Logger.getLogger(SolrFacetPivotEvaluationStrategy.class);
+	private static final Logger LOGGER = Logger.getLogger(SolrFacetPivotEvaluationStrategy.class);
 
 	public SolrFacetPivotEvaluationStrategy(IDataSet dataSet) {
 		super(dataSet);
@@ -78,10 +77,10 @@ class SolrFacetPivotEvaluationStrategy extends SolrEvaluationStrategy {
 		solrDataSet.setSolrQueryParameters(solrDataSet.getSolrQuery(), solrDataSet.getParamsMap());
 		SolrQuery solrQuery;
 		boolean hasCalculatedFields = false;
-		List<AbstractSelectionField> prjList = new ArrayList<AbstractSelectionField>();
-		List<AbstractSelectionField> grpList = new ArrayList<AbstractSelectionField>();
-		List<AbstractSelectionField> calcuList = new ArrayList<AbstractSelectionField>();
-		List<AbstractSelectionField> calcuGrpList = new ArrayList<AbstractSelectionField>();
+		List<AbstractSelectionField> prjList = new ArrayList<>();
+		List<AbstractSelectionField> grpList = new ArrayList<>();
+		List<AbstractSelectionField> calcuList = new ArrayList<>();
+		List<AbstractSelectionField> calcuGrpList = new ArrayList<>();
 		try {
 			for (AbstractSelectionField entry : projections) {
 				if (entry instanceof DataStoreCalculatedField) {
@@ -142,15 +141,14 @@ class SolrFacetPivotEvaluationStrategy extends SolrEvaluationStrategy {
 
 		// build new datastore calculated fields columns
 
-		XmlDataReader dataReader = new XmlDataReader();
 		SpagoBIScriptManager scriptManager = new SpagoBIScriptManager();
 
-		List<File> imports = new ArrayList<File>();
+		List<File> imports = new ArrayList<>();
 		URL url = Thread.currentThread().getContextClassLoader().getResource("predefinedGroovyScript.groovy");
 		File scriptFile = new File(url.toURI());
 		imports.add(scriptFile);
 
-		Map<String, Object> bindings = new HashMap<String, Object>();
+		Map<String, Object> bindings = new HashMap<>();
 
 		// add columns to result datastore
 
@@ -205,10 +203,9 @@ class SolrFacetPivotEvaluationStrategy extends SolrEvaluationStrategy {
 
 		// build new datastore calculated fields columns
 
-		XmlDataReader dataReader = new XmlDataReader();
 		SpagoBIScriptManager scriptManager = new SpagoBIScriptManager();
 
-		List<File> imports = new ArrayList<File>();
+		List<File> imports = new ArrayList<>();
 		URL url = Thread.currentThread().getContextClassLoader().getResource("predefinedGroovyScript.groovy");
 		File scriptFile = new File(url.toURI());
 		imports.add(scriptFile);
@@ -279,7 +276,7 @@ class SolrFacetPivotEvaluationStrategy extends SolrEvaluationStrategy {
 
 	public Map<String, Object> findBindings(Record record, IMetaData metadata, String formula) {
 
-		Map<String, Object> bindings = new HashMap<String, Object>();
+		Map<String, Object> bindings = new HashMap<>();
 		bindings.put("parameters", new HashMap());
 
 		for (int i = 0; i < metadata.getFieldCount(); i++) {
@@ -301,8 +298,8 @@ class SolrFacetPivotEvaluationStrategy extends SolrEvaluationStrategy {
 	@Override
 	protected IDataStore executeSummaryRow(List<AbstractSelectionField> summaryRowProjections, IMetaData metaData, Filter filter, int maxRowCount) {
 
-		List<AbstractSelectionField> prjList = new ArrayList<AbstractSelectionField>();
-		List<AbstractSelectionField> calcList = new ArrayList<AbstractSelectionField>();
+		List<AbstractSelectionField> prjList = new ArrayList<>();
+		List<AbstractSelectionField> calcList = new ArrayList<>();
 		for (AbstractSelectionField entry : summaryRowProjections) {
 			if (entry instanceof DataStoreCalculatedField) {
 				calcList.add(entry);
@@ -316,7 +313,7 @@ class SolrFacetPivotEvaluationStrategy extends SolrEvaluationStrategy {
 		SolrQuery solrQuery;
 		try {
 			solrQuery = new ExtendedSolrQuery(solrDataSet.getSolrQuery()).fields(prjList).filter(filter).stats(prjList);
-			logger.debug("Solr query for summary row: " + solrQuery);
+			LOGGER.debug("Solr query for summary row: " + solrQuery);
 		} catch (Throwable t) {
 			throw new RuntimeException("An unexpected error occured while loading datastore", t);
 		}

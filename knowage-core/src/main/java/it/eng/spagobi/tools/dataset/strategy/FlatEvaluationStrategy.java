@@ -19,14 +19,10 @@
 
 package it.eng.spagobi.tools.dataset.strategy;
 
-import org.apache.log4j.Logger;
-
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 
 class FlatEvaluationStrategy extends AbstractJdbcEvaluationStrategy {
-
-	private static final Logger logger = Logger.getLogger(FlatEvaluationStrategy.class);
 
 	public FlatEvaluationStrategy(IDataSet dataSet) {
 		super(dataSet);

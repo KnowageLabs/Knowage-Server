@@ -19,13 +19,14 @@
 
 package it.eng.spagobi.tools.dataset.bo;
 
-import it.eng.spagobi.services.dataset.bo.SpagoBiDataSet;
-import it.eng.spagobi.tools.dataset.common.datareader.FacetSolrDataReader;
-import it.eng.spagobi.tools.dataset.constants.SolrDataSetConstants;
+import java.util.Map;
+
 import org.apache.log4j.Logger;
 import org.json.JSONObject;
 
-import java.util.HashMap;
+import it.eng.spagobi.services.dataset.bo.SpagoBiDataSet;
+import it.eng.spagobi.tools.dataset.common.datareader.FacetSolrDataReader;
+import it.eng.spagobi.tools.dataset.constants.SolrDataSetConstants;
 
 public class FacetSolrDataSet extends SolrDataSet {
 
@@ -39,7 +40,7 @@ public class FacetSolrDataSet extends SolrDataSet {
         super(jsonConf);
     }
 
-    public FacetSolrDataSet(JSONObject jsonConf, HashMap<String, String> parametersMap) {
+	public FacetSolrDataSet(JSONObject jsonConf, Map<String, String> parametersMap) {
         super(jsonConf, parametersMap);
     }
 
@@ -53,7 +54,8 @@ public class FacetSolrDataSet extends SolrDataSet {
         }
     }
 
-    protected void initSolrConfiguration(JSONObject jsonConf, boolean resolveParams) {
+    @Override
+	protected void initSolrConfiguration(JSONObject jsonConf, boolean resolveParams) {
         super.initSolrConfiguration(jsonConf, resolveParams);
         setFacetParams(jsonConf, resolveParams);
     }

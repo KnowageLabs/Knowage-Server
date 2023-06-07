@@ -45,6 +45,7 @@ import it.eng.spagobi.commons.bo.UserProfile;
  */
 public class ExportDeleteOldJob implements Job {
 
+	private static final Logger LOGGER = Logger.getLogger(ExportDeleteOldJob.class);
 	/**
 	 * Used to made the job a "exclusive".
 	 *
@@ -54,10 +55,7 @@ public class ExportDeleteOldJob implements Job {
 	 */
 	private static final Lock LOCK = new ReentrantLock();
 
-	private static final Logger logger = Logger.getLogger(ExportDeleteOldJob.class);
-
 	public static final String MAP_KEY_RESOURCE_PATH = "resourcePath";
-
 	public static final String MAP_KEY_USER_PROFILE = "userProfile";
 
 	/**
@@ -76,9 +74,9 @@ public class ExportDeleteOldJob implements Job {
 		Path perUserExportPath = ExportPathBuilder.getInstance().getPerUserExportResourcePath(resourcePathAsStr, userProfile);
 
 		try {
-			logger.debug("Acquiring lock...");
+			LOGGER.debug("Acquiring lock...");
 			LOCK.lock();
-			logger.debug("Acquired!");
+			LOGGER.debug("Acquired!");
 
 			DirectoryStream<Path> downloadedExportStream = null;
 			try {
@@ -91,7 +89,7 @@ public class ExportDeleteOldJob implements Job {
 					}
 				});
 
-				List<Path> downloadedList = new ArrayList<Path>();
+				List<Path> downloadedList = new ArrayList<>();
 				for (Path path : downloadedExportStream) {
 					downloadedList.add(path);
 				}
@@ -106,7 +104,7 @@ public class ExportDeleteOldJob implements Job {
 							return o1LastModifiedTime.compareTo(o2LastModifiedTime);
 						} catch (IOException e) {
 							String msg = String.format("Error comparing last modified time of %s and %s", o1, o2);
-							logger.error(msg, e);
+							LOGGER.error(msg, e);
 							throw new IllegalStateException(msg, e);
 						}
 					}
@@ -121,7 +119,7 @@ public class ExportDeleteOldJob implements Job {
 							FileUtils.deleteDirectory(path.toFile());
 						} catch (IOException e) {
 							String msg = String.format("Error deleting directory %s", path);
-							logger.error(msg, e);
+							LOGGER.error(msg, e);
 							// Yes, i'm not rethrowing original exception
 						}
 					}
@@ -129,7 +127,7 @@ public class ExportDeleteOldJob implements Job {
 
 			} catch (Exception e) {
 				String msg = String.format("Error deleting old exported file in directory %s", perUserExportPath);
-				logger.error(msg, e);
+				LOGGER.error(msg, e);
 				throw new JobExecutionException(msg, e);
 			} finally {
 				if (downloadedExportStream != null) {
@@ -142,9 +140,9 @@ public class ExportDeleteOldJob implements Job {
 			}
 
 		} finally {
-			logger.debug("Releasing lock...");
+			LOGGER.debug("Releasing lock...");
 			LOCK.unlock();
-			logger.debug("Released!");
+			LOGGER.debug("Released!");
 		}
 	}
 

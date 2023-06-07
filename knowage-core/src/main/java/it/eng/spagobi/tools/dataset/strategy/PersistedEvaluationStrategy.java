@@ -19,55 +19,56 @@
 
 package it.eng.spagobi.tools.dataset.strategy;
 
+import java.util.Date;
+
+import org.apache.log4j.Logger;
+
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.tools.scheduler.bo.Trigger;
-import org.apache.log4j.Logger;
-
-import java.util.Date;
 
 class PersistedEvaluationStrategy extends AbstractJdbcEvaluationStrategy {
 
-    private static final Logger logger = Logger.getLogger(PersistedEvaluationStrategy.class);
+	private static final Logger LOGGER = Logger.getLogger(PersistedEvaluationStrategy.class);
 
-    public PersistedEvaluationStrategy(IDataSet dataSet) {
-        super(dataSet);
-    }
+	public PersistedEvaluationStrategy(IDataSet dataSet) {
+		super(dataSet);
+	}
 
-    @Override
-    protected String getTableName() {
-        return dataSet.getPersistTableName();
-    }
+	@Override
+	protected String getTableName() {
+		return dataSet.getPersistTableName();
+	}
 
-    @Override
-    protected IDataSource getDataSource() {
-        return dataSet.getDataSourceForWriting();
-    }
+	@Override
+	protected IDataSource getDataSource() {
+		return dataSet.getDataSourceForWriting();
+	}
 
-    @Override
-    protected Date getDate() {
-        Date toReturn = null;
+	@Override
+	protected Date getDate() {
+		Date toReturn = null;
 
-        Trigger trigger = loadTrigger();
-        Date previousFireTime = null;
-        if (trigger != null) { // dataset is scheduled
-            previousFireTime = trigger.getPreviousFireTime();
-        }
-        if (previousFireTime != null) {
-            toReturn = previousFireTime;
-        } else { // dataset is not scheduled or no previous fire time available
-            toReturn = dataSet.getDateIn();
-        }
+		Trigger trigger = loadTrigger();
+		Date previousFireTime = null;
+		if (trigger != null) { // dataset is scheduled
+			previousFireTime = trigger.getPreviousFireTime();
+		}
+		if (previousFireTime != null) {
+			toReturn = previousFireTime;
+		} else { // dataset is not scheduled or no previous fire time available
+			toReturn = dataSet.getDateIn();
+		}
 
-        return toReturn;
-    }
+		return toReturn;
+	}
 
-    private Trigger loadTrigger() {
-        String triggerGroupName = "DEFAULT";
-        String triggerName = "persist_" + dataSet.getName();
+	private Trigger loadTrigger() {
+		String triggerGroupName = "DEFAULT";
+		String triggerName = "persist_" + dataSet.getName();
 
-        logger.debug("Loading trigger with name [" + triggerName + "] from group [" + triggerGroupName + "]");
-        return DAOFactory.getSchedulerDAO().loadTrigger(triggerGroupName, triggerName);
-    }
+		LOGGER.debug("Loading trigger with name [" + triggerName + "] from group [" + triggerGroupName + "]");
+		return DAOFactory.getSchedulerDAO().loadTrigger(triggerGroupName, triggerName);
+	}
 }

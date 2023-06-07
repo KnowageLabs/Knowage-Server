@@ -47,7 +47,7 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
  */
 public abstract class AbstractNodeJSBasedExporter {
 
-	private static final Logger logger = Logger.getLogger(AbstractNodeJSBasedExporter.class);
+	private static final Logger LOGGER = Logger.getLogger(AbstractNodeJSBasedExporter.class);
 
 	static class SheetImageFileVisitor extends SimpleFileVisitor<Path> {
 
@@ -75,9 +75,9 @@ public abstract class AbstractNodeJSBasedExporter {
 
 		@Override
 		public FileVisitResult visitFile(Path filePath, BasicFileAttributes attributes) {
-			logger.debug("Visit file " + filePath);
+			LOGGER.debug("Visit file " + filePath);
 			if (imagePathMatcher.matches(filePath)) {
-				logger.debug("File " + filePath + " matches the filter!");
+				LOGGER.debug("File " + filePath + " matches the filter!");
 				try {
 					InputStream currImageInputStream = Files.newInputStream(filePath, StandardOpenOption.DELETE_ON_CLOSE);
 					imagesInputStreams.add(currImageInputStream);
@@ -88,7 +88,7 @@ public abstract class AbstractNodeJSBasedExporter {
 
 			return FileVisitResult.CONTINUE;
 		}
-	};
+	}
 
 	protected static final String SCRIPT_NAME = "cockpit-export.js";
 
@@ -105,7 +105,7 @@ public abstract class AbstractNodeJSBasedExporter {
 	protected final boolean pdfBackPage;
 	protected final RenderOptions renderOptions;
 
-	public AbstractNodeJSBasedExporter(int documentId, String userId, String requestUrl, RenderOptions renderOptions, String pdfPageOrientation,
+	protected AbstractNodeJSBasedExporter(int documentId, String userId, String requestUrl, RenderOptions renderOptions, String pdfPageOrientation,
 			boolean pdfFrontPage, boolean pdfBackPage) {
 		super();
 		this.documentId = documentId;
@@ -147,7 +147,7 @@ public abstract class AbstractNodeJSBasedExporter {
 
 	protected int getSheetHeight(BIObject document) {
 		try {
-			int sheetHeight = Integer.valueOf(renderOptions.getDimensions().getHeight());
+			int sheetHeight = Integer.parseInt(renderOptions.getDimensions().getHeight());
 			switch (document.getEngineLabel()) {
 			case "knowagechartengine":
 				break;
@@ -219,7 +219,7 @@ public abstract class AbstractNodeJSBasedExporter {
 
 	protected int getSheetWidth(BIObject document) {
 		try {
-			int sheetWidth = Integer.valueOf(renderOptions.getDimensions().getWidth());
+			int sheetWidth = Integer.parseInt(renderOptions.getDimensions().getWidth());
 			switch (document.getEngineLabel()) {
 			case "knowagechartengine":
 				break;
@@ -316,7 +316,7 @@ public abstract class AbstractNodeJSBasedExporter {
 		final Path outputDir = Files.createTempDirectory("knowage-exporter-2");
 
 		Files.createDirectories(outputDir);
-		logger.info("Files will be placed in: " + outputDir);
+		LOGGER.info("Files will be placed in: " + outputDir);
 
 		BIObject document = DAOFactory.getBIObjectDAO().loadBIObjectById(documentId);
 		int sheetCount = getSheetCount(document);
@@ -325,22 +325,22 @@ public abstract class AbstractNodeJSBasedExporter {
 		double deviceScaleFactor = getDeviceScaleFactor(document);
 		boolean isMultiSheet = getIsMultiSheet(document);
 		String encodedUserId = Base64.encodeBase64String(userId.getBytes(UTF_8));
-		logger.debug("Encoded User Id: " + encodedUserId);
+		LOGGER.debug("Encoded User Id: " + encodedUserId);
 
 		URI url = UriBuilder.fromUri(requestUrl).replaceQueryParam("outputType_description", "HTML").replaceQueryParam("outputType", "HTML")
-				.replaceQueryParam("export", null).build();
-		logger.debug("URL: " + url);
+				.replaceQueryParam("export", (Object) null).build();
+		LOGGER.debug("URL: " + url);
 
 		// Script
 		String cockpitExportScriptPath = SingletonConfig.getInstance().getConfigValue(CONFIG_NAME_FOR_EXPORT_SCRIPT_PATH);
 		Path exportScriptFullPath = Paths.get(cockpitExportScriptPath, SCRIPT_NAME);
-		logger.info("Script Path: " + cockpitExportScriptPath);
+		LOGGER.info("Script Path: " + cockpitExportScriptPath);
 
 		if (!Files.isRegularFile(exportScriptFullPath)) {
 			String msg = String.format("Cannot find export script at \"%s\": did you set the correct value for %s configuration?", exportScriptFullPath,
 					CONFIG_NAME_FOR_EXPORT_SCRIPT_PATH);
 			IllegalStateException ex = new IllegalStateException(msg);
-			logger.error(msg, ex);
+			LOGGER.error(msg, ex);
 			throw ex;
 		}
 
@@ -350,16 +350,16 @@ public abstract class AbstractNodeJSBasedExporter {
 
 		setWorkingDirectory(cockpitExportScriptPath, processBuilder);
 
-		logger.info("Node complete command line: " + processBuilder.command());
+		LOGGER.info("Node complete command line: " + processBuilder.command());
 
-		logger.info("Starting export script");
+		LOGGER.info("Starting export script");
 		Process exec = processBuilder.start();
 
 		logOutputToCoreLog(exec);
 
-		logger.info("Waiting...");
+		LOGGER.info("Waiting...");
 		exec.waitFor();
-		logger.warn("Exit value: " + exec.exitValue());
+		LOGGER.warn("Exit value: " + exec.exitValue());
 
 		final List<InputStream> imagesInputStreams = new ArrayList<>();
 
@@ -389,9 +389,9 @@ public abstract class AbstractNodeJSBasedExporter {
 		InputStreamReader isr = new InputStreamReader(exec.getInputStream());
 		BufferedReader b = new BufferedReader(isr);
 		String line = null;
-		logger.warn("Process output");
+		LOGGER.warn("Process output");
 		while ((line = b.readLine()) != null) {
-			logger.warn(line);
+			LOGGER.warn(line);
 		}
 	}
 

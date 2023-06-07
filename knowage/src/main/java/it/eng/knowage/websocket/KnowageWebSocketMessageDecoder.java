@@ -33,7 +33,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import it.eng.knowage.websocket.bo.WebSocketBO;
 
 public class KnowageWebSocketMessageDecoder implements Decoder.Text<WebSocketBO> {
-	private static final Logger logger = Logger.getLogger(KnowageWebSocketMessageDecoder.class);
+	private static final Logger LOGGER = Logger.getLogger(KnowageWebSocketMessageDecoder.class);
 
 	@Override
 	public WebSocketBO decode(String s) throws DecodeException {
@@ -44,13 +44,13 @@ public class KnowageWebSocketMessageDecoder implements Decoder.Text<WebSocketBO>
 			json = mapper.readValue(s, WebSocketBO.class);
 		} catch (JsonParseException e) {
 			String message = "Error during decoding KnowageWebSocketMessage";
-			logger.error(message);
+			LOGGER.error(message);
 		} catch (JsonMappingException e) {
 			String message = "Error during decoding KnowageWebSocketMessage";
-			logger.error(message);
+			LOGGER.error(message);
 		} catch (IOException e) {
 			String message = "Error during decoding KnowageWebSocketMessage";
-			logger.error(message);
+			LOGGER.error(message);
 		}
 
 		return json;

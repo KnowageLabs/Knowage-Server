@@ -18,24 +18,20 @@
 
 package it.eng.spagobi.tools.dataset.graph.associativity.container;
 
+import java.util.List;
+import java.util.Map;
+
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.metasql.query.SelectQuery;
 import it.eng.spagobi.tools.dataset.metasql.query.item.AndFilter;
 import it.eng.spagobi.tools.dataset.metasql.query.item.SimpleFilter;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
-import org.apache.log4j.Logger;
-
-import java.util.List;
-import java.util.Map;
 
 /**
  * @author Alessandro Portosa (alessandro.portosa@eng.it)
  *
  */
-
 abstract class JdbcDatasetContainer extends AssociativeDatasetContainer {
-
-	private static final Logger logger = Logger.getLogger(JdbcDatasetContainer.class);
 
 	protected JdbcDatasetContainer(IDataSet dataSet, Map<String, String> parameters) {
 		super(dataSet, parameters);

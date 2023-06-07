@@ -18,7 +18,7 @@ import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 public class PdfExporterV2 extends AbstractNodeJSBasedExporter {
 
 	private static final String OUTPUT_PDF = "output.pdf";
-	private static final Logger logger = Logger.getLogger(PdfExporterV2.class);
+	private static final Logger LOGGER = Logger.getLogger(PdfExporterV2.class);
 
 	public PdfExporterV2(int documentId, String userId, String requestUrl, RenderOptions renderOptions, String pageOrientation, boolean pdfFrontPage,
 			boolean pdfBackPage) {
@@ -27,27 +27,27 @@ public class PdfExporterV2 extends AbstractNodeJSBasedExporter {
 
 	@Override
 	protected byte[] handleFile(final Path outputDir, BIObject document, final List<InputStream> imagesInputStreams) throws IOException {
-		logger.debug("IN");
+		LOGGER.debug("IN");
 		final Path outputFile = outputDir.resolve(OUTPUT_PDF);
-		logger.debug("OutputFile: " + OUTPUT_PDF);
+		LOGGER.debug("OutputFile: " + OUTPUT_PDF);
 
-		logger.debug("createPDF - IN");
+		LOGGER.debug("createPDF - IN");
 		PDFCreator.createPDF(imagesInputStreams, outputFile, false, false);
-		logger.debug("createPDF - OUT");
+		LOGGER.debug("createPDF - OUT");
 
-		logger.debug("ExportDetails - getFrontpageDetails - IN");
+		LOGGER.debug("ExportDetails - getFrontpageDetails - IN");
 		ExportDetails details = new ExportDetails(getFrontpageDetails(pdfFrontPage, document), null);
-		logger.debug("ExportDetails - getFrontpageDetails - OUT");
+		LOGGER.debug("ExportDetails - getFrontpageDetails - OUT");
 
-		logger.debug("addInformation - IN");
+		LOGGER.debug("addInformation - IN");
 		PDFCreator.addInformation(outputFile, details);
-		logger.debug("addInformation - OUT");
+		LOGGER.debug("addInformation - OUT");
 
 		byte[] byteArray = null;
 		try (InputStream is = Files.newInputStream(outputFile, StandardOpenOption.DELETE_ON_CLOSE)) {
-			logger.debug("inputStreamToByteArray - IN");
+			LOGGER.debug("inputStreamToByteArray - IN");
 			byteArray = IOUtils.toByteArray(is);
-			logger.debug("inputStreamToByteArray - OUT");
+			LOGGER.debug("inputStreamToByteArray - OUT");
 		}
 
 		return byteArray;

@@ -60,40 +60,38 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
  */
 public class AvroExportJob extends AbstractExportJob {
 
-	private static final Logger logger = Logger.getLogger(AvroExportJob.class);
+	private static final Logger LOGGER = Logger.getLogger(AvroExportJob.class);
 
-	private static final String ready = "ready";
-	private static final String failed = "failed";
-	private static final String data = "data";
+	private static final String FILE_READY = "ready";
+	private static final String FILE_FAILED = "failed";
+	private static final String FILE_DATA = "data";
 
 	private static final String DATE_FORMAT = "yyyy-MM-dd";
-	private static final String TIMESTAMP_FORMAT = "yyyy-MM-dd HH:mm:ss.S";
 	private static final int BIG_DECIMAL_PRECISION = 38;
 	private static final int BIG_DECIMAL_SCALE = 6;
 
 	private IDataSet dataSet;
 	private IMetaData dsMeta;
 	private SimpleDateFormat dateFormatter = new SimpleDateFormat(DATE_FORMAT);
-	private SimpleDateFormat timestampFormatter = new SimpleDateFormat(TIMESTAMP_FORMAT);
 
 	private Path avroExportFolder;
 
 	@Override
 	protected void export(JobExecutionContext context) throws JobExecutionException {
-		logger.debug("Start Avro export for dataSetId " + getDataSetId() + " with id " + getId() + " by user " + getUserProfile().getUserId());
+		LOGGER.debug("Start Avro export for dataSetId " + getDataSetId() + " with id " + getId() + " by user " + getUserProfile().getUserId());
 		try {
 
 			GenericData model = new GenericData();
 			model.addLogicalTypeConversion(new Conversions.DecimalConversion());
 			dataSet = getDataSet();
 			dsMeta = dataSet.getMetadata();
-			Schema schema = getSchema(dataSet);
+			Schema schema = getSchema();
 
 			try (OutputStream exportFileOS = getDataOutputStream()) {
 				clearStatusFiles();
-				DatumWriter<GenericRecord> dout = new GenericDatumWriter<GenericRecord>(schema, model);
+				DatumWriter<GenericRecord> dout = new GenericDatumWriter<>(schema, model);
 
-				try (DataFileWriter<GenericRecord> writer = new DataFileWriter<GenericRecord>(dout)) {
+				try (DataFileWriter<GenericRecord> writer = new DataFileWriter<>(dout)) {
 					writer.create(schema, exportFileOS);
 
 					try (DataIterator iterator = dataSet.iterator()) {
@@ -114,13 +112,13 @@ public class AvroExportJob extends AbstractExportJob {
 				}
 			}
 		} catch (Exception e) {
-			logger.error("Error during Avro file creation", e);
+			LOGGER.error("Error during Avro file creation", e);
 			setStatusFailed(e);
 			throw new JobExecutionException(e);
 		}
 
 		setStatusReady();
-		LogMF.info(logger, "Avro export completed for user {0}. DataSet is {1}. Final file: dimension (in bytes): {2,number}, path: [{3}], ",
+		LogMF.info(LOGGER, "Avro export completed for user {0}. DataSet is {1}. Final file: dimension (in bytes): {2,number}, path: [{3}], ",
 				this.getUserProfile().getUserId(), this.getDataSet().getLabel(), getDataFile().toFile().length(), getDataFile().toString());
 
 	}
@@ -159,7 +157,7 @@ public class AvroExportJob extends AbstractExportJob {
 				value = value.toString();
 			}
 		} catch (Exception e) {
-			logger.error("Error getting Avro value {" + value + "}", e);
+			LOGGER.error("Error getting Avro value {" + value + "}", e);
 			value = value.toString();
 		}
 		return value;
@@ -167,34 +165,34 @@ public class AvroExportJob extends AbstractExportJob {
 
 	private void clearStatusFiles() {
 		try {
-			Files.deleteIfExists(avroExportFolder.resolve(ready));
-			Files.deleteIfExists(avroExportFolder.resolve(failed));
+			Files.deleteIfExists(avroExportFolder.resolve(FILE_READY));
+			Files.deleteIfExists(avroExportFolder.resolve(FILE_FAILED));
 		} catch (IOException e) {
-			logger.error("Error while clearing status files", e);
+			LOGGER.error("Error while clearing status files", e);
 		}
 	}
 
 	private void setStatusReady() {
 		try {
-			Files.createFile(avroExportFolder.resolve(ready));
+			Files.createFile(avroExportFolder.resolve(FILE_READY));
 		} catch (IOException e) {
-			logger.error("Cannot create ready status file", e);
+			LOGGER.error("Cannot create ready status file", e);
 		}
 	}
 
 	private void setStatusFailed(Exception cause) {
-		Path failedStatusFilePath = avroExportFolder.resolve(failed);
+		Path failedStatusFilePath = avroExportFolder.resolve(FILE_FAILED);
 		try {
 			Files.createFile(failedStatusFilePath);
 		} catch (IOException e) {
-			logger.error("Cannot create failed status file");
+			LOGGER.error("Cannot create failed status file");
 		}
 		try {
 			PrintWriter pw = new PrintWriter(failedStatusFilePath.toFile());
 			cause.printStackTrace(pw);
 			pw.close();
 		} catch (IOException e) {
-			logger.error("Error while logging exception inside failed status file");
+			LOGGER.error("Error while logging exception inside failed status file");
 		}
 	}
 
@@ -206,7 +204,7 @@ public class AvroExportJob extends AbstractExportJob {
 		return (Date.class.isAssignableFrom(fieldType) || fieldType.getName().equalsIgnoreCase("oracle.sql.date"));
 	}
 
-	private Schema getSchema(IDataSet dataSet) throws JSONException {
+	private Schema getSchema() throws JSONException {
 		FieldAssembler<Schema> fieldAssembler = SchemaBuilder.record("DataSet").namespace("it.eng.spagobi.api.v2.export.AvroExportJob").fields();
 
 		for (int i = 0; i <= dsMeta.getFieldCount() - 1; i++) {
@@ -220,12 +218,10 @@ public class AvroExportJob extends AbstractExportJob {
 
 		}
 
-		Schema schema = fieldAssembler.endRecord();
-
-		return schema;
+		return fieldAssembler.endRecord();
 	}
 
-	private Schema getType(Class fieldType) {
+	private Schema getType(Class<?> fieldType) {
 		Schema ret = null;
 		if (Integer.class.isAssignableFrom(fieldType)) {
 			ret = Schema.create(Schema.Type.INT);
@@ -251,7 +247,7 @@ public class AvroExportJob extends AbstractExportJob {
 			String dsIdasString = Integer.toString(dataSet.getId());
 			avroExportFolder = Paths.get(resourcePathAsStr, "dataPreparation", (String) userProfile.getUserId(), dsIdasString);
 			Files.createDirectories(avroExportFolder);
-			return Files.newOutputStream(avroExportFolder.resolve(data));
+			return Files.newOutputStream(avroExportFolder.resolve(FILE_DATA));
 		} catch (Exception e) {
 			throw new SpagoBIRuntimeException("Cannot create Avro file", e);
 		}

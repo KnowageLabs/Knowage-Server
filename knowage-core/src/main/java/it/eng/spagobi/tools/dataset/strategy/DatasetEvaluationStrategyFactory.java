@@ -18,8 +18,6 @@
  */
 package it.eng.spagobi.tools.dataset.strategy;
 
-import org.apache.log4j.Logger;
-
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.tools.dataset.bo.DatasetEvaluationStrategyType;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
@@ -30,8 +28,6 @@ import it.eng.spagobi.tools.dataset.cache.SpagoBICacheConfiguration;
 import it.eng.spagobi.utilities.assertion.Assert;
 
 public class DatasetEvaluationStrategyFactory {
-
-	private static final Logger logger = Logger.getLogger(DatasetEvaluationStrategyFactory.class);
 
 	private DatasetEvaluationStrategyFactory() {
 	}

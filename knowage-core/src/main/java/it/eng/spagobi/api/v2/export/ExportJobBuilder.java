@@ -46,7 +46,7 @@ import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
  */
 public class ExportJobBuilder {
 
-	private static final Logger logger = Logger.getLogger(ExportJobBuilder.class);
+	private static final Logger LOGGER = Logger.getLogger(ExportJobBuilder.class);
 
 	private static final String EXPORT_TYPE_XLSX = "xlsx";
 	private static final String EXPORT_TYPE_AVRO = "avro";
@@ -125,7 +125,7 @@ public class ExportJobBuilder {
 	 */
 	public JobDetail build() {
 
-		logger.debug("Building export job for...");
+		LOGGER.debug("Building export job for...");
 
 		if (dataSetId == null) {
 			throw new IllegalArgumentException("Attribute dataSetId cannot be null");
@@ -146,10 +146,10 @@ public class ExportJobBuilder {
 		jobDataMap.put(MAP_KEY_RESOURCE_PATH, resoursePath);
 		jobDataMap.put(MAP_KEY_USER_PROFILE, userProfile);
 
-		logger.debug("\t- Dataset id: " + String.valueOf(dataSetId));
-		logger.debug("\t- UUID: " + String.valueOf(randomUUID));
-		logger.debug("\t- Resource path: " + String.valueOf(resoursePath));
-		logger.debug("\t- Type: " + String.valueOf(type));
+		LOGGER.debug("\t- Dataset id: " + dataSetId);
+		LOGGER.debug("\t- UUID: " + randomUUID);
+		LOGGER.debug("\t- Resource path: " + resoursePath);
+		LOGGER.debug("\t- Type: " + type);
 
 		JobBuilder newJob = newJob().withIdentity(jobName, EXPORT_GROUP).withDescription(jobDescription).usingJobData(jobDataMap).storeDurably(true);
 
@@ -171,7 +171,7 @@ public class ExportJobBuilder {
 
 		JobDetail job = newJob.build();
 
-		logger.debug("Export job built!");
+		LOGGER.debug("Export job built!");
 
 		return job;
 	}

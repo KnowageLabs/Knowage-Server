@@ -24,12 +24,9 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 public class CategoriesInitializer extends SpagoBIInitializer {
 
-	private static final Logger logger = LogManager.getLogger(CategoriesInitializer.class);
-
-	private SourceBean configuration = null;
+	private static final Logger LOGGER = LogManager.getLogger(CategoriesInitializer.class);
 
 	private final List<SbiTenant> tenants = new ArrayList<>();
-
 	private final Map<String, List<Map<String, String>>> configurationAsMap = new LinkedHashMap<>();
 
 	public CategoriesInitializer() {
@@ -59,16 +56,16 @@ public class CategoriesInitializer extends SpagoBIInitializer {
 				initTenant(sbiTenant);
 			}
 
-		} catch (Throwable t) {
-			throw new SpagoBIRuntimeException("Ab unexpected error occured while initializeng Domains", t);
+		} catch (Exception e) {
+			throw new SpagoBIRuntimeException("Ab unexpected error occured while initializeng Domains", e);
 		} finally {
-			logger.debug("OUT");
+			LOGGER.debug("OUT");
 		}
 
 	}
 
 	private void readConfiguration() throws Exception {
-		configuration = getConfiguration();
+		SourceBean configuration = getConfiguration();
 
 		List<SourceBean> categories = configuration.getAttributeAsList("CATEGORY");
 
@@ -83,7 +80,7 @@ public class CategoriesInitializer extends SpagoBIInitializer {
 			element.put("code", code);
 			element.put("name", name);
 
-			configurationAsMap.putIfAbsent(type, new ArrayList<Map<String, String>>());
+			configurationAsMap.putIfAbsent(type, new ArrayList<>());
 
 			configurationAsMap.get(type).add(element);
 		}
@@ -157,7 +154,7 @@ public class CategoriesInitializer extends SpagoBIInitializer {
 	}
 
 	private void initPerType(ICategoryDAO categoryDAO, String type) throws EMFUserError {
-		List<Map<String, String>> businessModelCategoryList = configurationAsMap.getOrDefault(type, Collections.EMPTY_LIST);
+		List<Map<String, String>> businessModelCategoryList = configurationAsMap.getOrDefault(type, Collections.emptyList());
 
 		for (Map<String, String> map : businessModelCategoryList) {
 

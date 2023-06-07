@@ -64,16 +64,17 @@ import it.eng.spagobi.utilities.threadmanager.WorkManager;
 
 public class StartWorkAction extends AbstractEngineAction {
 
-	private static final Logger logger = Logger.getLogger(StartWorkAction.class);
+	private static final Logger LOGGER = Logger.getLogger(StartWorkAction.class);
+
+	private static final Base64.Decoder DECODER = Base64.getDecoder();
 
 	private Content template;
-	private ContentServiceProxy contentProxy;
-	String documentId;
-	String documentLabel;
-	private static final Base64.Decoder DECODER = Base64.getDecoder();
-	String userId = null;
-	HttpSession session = null;
-	HttpServletRequest httpRequest = null;
+	private String documentId;
+	private String documentLabel;
+	private String userId = null;
+	private transient ContentServiceProxy contentProxy;
+	private transient HttpSession session = null;
+	private transient HttpServletRequest httpRequest = null;
 
 	/**
 	 * Reads document Id and user Id, get the template, configure the work, create process Id, start work
@@ -81,15 +82,15 @@ public class StartWorkAction extends AbstractEngineAction {
 
 	@Override
 	public void service(SourceBean request, SourceBean response) {
-		logger.debug("IN");
+		LOGGER.debug("IN");
 		super.service(request, response);
-		HttpSession session = getHttpSession();
-		HttpServletRequest httpRequest = getHttpRequest();
+		HttpSession currSession = getHttpSession();
+		HttpServletRequest currHttpRequest = getHttpRequest();
 
-		UserProfile profile = (UserProfile) session.getAttribute("ENG_USER_PROFILE");
+		UserProfile profile = (UserProfile) currSession.getAttribute("ENG_USER_PROFILE");
 		if (profile != null) {
 			String tenantId = profile.getOrganization();
-			logger.debug("Retrieved tenantId from user profile object : [" + tenantId + "]");
+			LOGGER.debug("Retrieved tenantId from user profile object : [" + tenantId + "]");
 			// putting tenant id on thread local
 			if (tenantId != null) {
 				Tenant tenant = new Tenant(tenantId);
@@ -108,34 +109,33 @@ public class StartWorkAction extends AbstractEngineAction {
 				userId = userIdO.toString();
 			} else {
 				// userId from session
-				userIdO = session.getAttribute("userId");
+				userIdO = currSession.getAttribute("userId");
 
 				if (userIdO != null) {
 					userId = userIdO.toString();
 				} else {
 
-					logger.error("could not retrieve user id");
+					LOGGER.error("could not retrieve user id");
 					return;
 				}
 			}
 		}
 
 		// get DOcument ID
-		Object document_idO = null;
-		document_idO = request.getAttribute("DOCUMENT_ID");
+		Object documentIdO = null;
+		documentIdO = request.getAttribute("DOCUMENT_ID");
 		documentId = null;
 		documentLabel = null;
-		if (document_idO != null) {
-			documentId = document_idO.toString();
+		if (documentIdO != null) {
+			documentId = documentIdO.toString();
 		} else {
-			logger.warn("could not retrieve document id, check for label");
+			LOGGER.warn("could not retrieve document id, check for label");
 
-			Object document_labelO = request.getAttribute("DOCUMENT_LABEL");
-			documentLabel = null;
-			if (document_labelO != null) {
-				documentLabel = document_labelO.toString();
+			Object documentLabelO = request.getAttribute("DOCUMENT_LABEL");
+			if (documentLabelO != null) {
+				documentLabel = documentLabelO.toString();
 			} else {
-				logger.error("could not retrieve neither document id nor document label, exception!");
+				LOGGER.error("could not retrieve neither document id nor document label, exception!");
 				return;
 			}
 
@@ -152,17 +152,17 @@ public class StartWorkAction extends AbstractEngineAction {
 			parameters.put(key, value);
 		}
 
-		serviceStart(userId, documentId, parameters, session, httpRequest, true);
+		serviceStart(userId, documentId, parameters, currSession, currHttpRequest, true);
 
-		logger.debug("OUT");
+		LOGGER.debug("OUT");
 
 	}
 
-	public void serviceStart(String userId, String documentId, Map parameters, HttpSession _session, HttpServletRequest _httpRequest, boolean actionMode) {
-		logger.debug("IN");
+	public void serviceStart(String userId, String documentId, Map parameters, HttpSession inSession, HttpServletRequest inHttpRequest, boolean actionMode) {
+		LOGGER.debug("IN");
 
-		this.session = _session;
-		this.httpRequest = _httpRequest;
+		this.session = inSession;
+		this.httpRequest = inHttpRequest;
 		this.documentId = documentId;
 		this.userId = userId;
 
@@ -180,7 +180,6 @@ public class StartWorkAction extends AbstractEngineAction {
 				isLabel = true;
 				documentUnique = documentLabel;
 			} else if (documentId != null) {
-				isLabel = false;
 				documentUnique = documentId;
 			}
 
@@ -188,20 +187,19 @@ public class StartWorkAction extends AbstractEngineAction {
 			try {
 				work = new CommonjWork(getTemplateAsSourceBean());
 			} catch (SpagoBIEngineException e) {
-				logger.error("Error in reading work template", e);
+				LOGGER.error("Error in reading work template", e);
 				return;
 			}
 
 			// calculate process Id
 			String pId = work.calculatePId();
-			logger.debug("process Id is " + pId);
+			LOGGER.debug("process Id is " + pId);
 			work.setSbiParametersMap(parameters);
 
-			CommonjEngine cm = new CommonjEngine();
 			try {
 				worksRepository = CommonjEngine.getWorksRepository();
 			} catch (SpagoBIEngineException e) {
-				logger.error("Error in reatriving works repository", e);
+				LOGGER.error("Error in reatriving works repository", e);
 				return;
 
 			}
@@ -209,18 +207,13 @@ public class StartWorkAction extends AbstractEngineAction {
 			// call Work configurqations's configure method
 			try {
 				WorkConfiguration workConfiguration = new WorkConfiguration(worksRepository);
-				if (workConfiguration != null) {
-
-					workConfiguration.configure(session, work, parameters, documentUnique, isLabel);
-
-				}
+				workConfiguration.configure(session, work, parameters, documentUnique, isLabel);
 			} catch (Exception e) {
-				logger.error("Error in configuring work", e);
+				LOGGER.error("Error in configuring work", e);
 				return;
 			}
 
 			// Get the container object from session: it MUST be present if start button is enabled
-			// Object o=session.getAttribute("SBI_PROCESS_"+document_id);
 			ProcessesStatusContainer processesStatusContainer = ProcessesStatusContainer.getInstance();
 			Object o = processesStatusContainer.getPidContainerMap().get(pId);
 			CommonjWorkContainer container = (CommonjWorkContainer) o;
@@ -242,7 +235,6 @@ public class StartWorkAction extends AbstractEngineAction {
 				// put new Object in singleton!!!
 
 				processesStatusContainer.getPidContainerMap().put(pId, container);
-				// session.setAttribute("SBI_PROCESS_"+document_id, container);
 
 				// if not in action mode don't send the response
 				if (actionMode) {
@@ -269,21 +261,21 @@ public class StartWorkAction extends AbstractEngineAction {
 			}
 		} catch (Exception e) {
 
-			logger.error("Error in starting the work", e);
+			LOGGER.error("Error in starting the work", e);
 			if (actionMode) {
 				try {
 					writeBackToClient(new JSONFailure(e));
 				} catch (IOException e1) {
-					logger.error("Error in starting the work and in writing back to client", e);
+					LOGGER.error("Error in starting the work and in writing back to client", e);
 					throw new SpagoBIEngineServiceException(getActionName(), "Error in starting the work and in writing back to client", e1);
 				} catch (JSONException e1) {
-					logger.error("Error in starting the work and in writing back to client", e);
+					LOGGER.error("Error in starting the work and in writing back to client", e);
 					throw new SpagoBIEngineServiceException(getActionName(), "Error in starting the work and in writing back to client", e1);
 				}
 			}
 		}
 
-		logger.debug("OUT");
+		LOGGER.debug("OUT");
 	}
 
 	/*

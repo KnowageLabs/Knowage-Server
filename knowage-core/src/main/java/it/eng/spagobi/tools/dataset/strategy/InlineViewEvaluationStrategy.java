@@ -19,16 +19,12 @@
 
 package it.eng.spagobi.tools.dataset.strategy;
 
-import org.apache.log4j.Logger;
-
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.utils.InlineViewUtility;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.database.DataBaseException;
 
 class InlineViewEvaluationStrategy extends AbstractJdbcEvaluationStrategy {
-
-	private static final Logger logger = Logger.getLogger(InlineViewEvaluationStrategy.class);
 
 	public InlineViewEvaluationStrategy(IDataSet dataSet) {
 		super(dataSet);

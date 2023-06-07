@@ -67,14 +67,14 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
  */
 @Path("/3.0/category")
 public class CategoryResource extends AbstractSpagoBIResource {
-// logger component-
-	private static final Logger logger = Logger.getLogger(CategoryResource.class);
+
+	private static final Logger LOGGER = Logger.getLogger(CategoryResource.class);
 
 	@GET
 	@Path("/listByCode/{code}")
 	@Produces(MediaType.APPLICATION_JSON)
 	public List<Domain> getDomainsByCode(@PathParam("code") String type) {
-		logger.debug("IN");
+		LOGGER.debug("IN");
 		ICategoryDAO categoryDAO = null;
 
 		List<Domain> categories;
@@ -86,10 +86,10 @@ public class CategoryResource extends AbstractSpagoBIResource {
 
 		} catch (Exception e) {
 			String message = "Error while getting categories " + type;
-			logger.error(message, e);
+			LOGGER.error(message, e);
 			throw new SpagoBIRuntimeException(message, e);
 		} finally {
-			logger.debug("OUT");
+			LOGGER.debug("OUT");
 		}
 		return categories;
 	}
@@ -99,17 +99,17 @@ public class CategoryResource extends AbstractSpagoBIResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	@UserConstraint(functionalities = { CommunityFunctionalityConstants.CATEGORY_MANAGEMENT })
 	public List<CategoryDTO> getCategoriesDTO() {
-		logger.debug("IN");
+		LOGGER.debug("IN");
 		final UserProfile userProfile = getUserProfile();
-		List<CategoryDTO> listToReturn = new ArrayList<CategoryDTO>();
+		List<CategoryDTO> listToReturn = new ArrayList<>();
 		try {
 			CategoryService cs = new CategoryService();
 			listToReturn = cs.getCategories(userProfile);
 		} catch (Exception ex) {
-			LogMF.error(logger, "Cannot get available categories for user {0}", new Object[] { userProfile.getUserName() });
+			LogMF.error(LOGGER, "Cannot get available categories for user {0}", new Object[] { userProfile.getUserName() });
 			throw new SpagoBIServiceException(this.request.getPathInfo(), "An unexpected error occured while executing service", ex);
 		} finally {
-			logger.debug("OUT");
+			LOGGER.debug("OUT");
 		}
 
 		return listToReturn;
@@ -120,19 +120,19 @@ public class CategoryResource extends AbstractSpagoBIResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	@UserConstraint(functionalities = { CommunityFunctionalityConstants.CATEGORY_MANAGEMENT })
 	public List<SbiCategory> getCategories() {
-		logger.debug("IN");
+		LOGGER.debug("IN");
 		ICategoryDAO categoryDAO = null;
 		final UserProfile userProfile = getUserProfile();
-		List<SbiCategory> listToReturn = new ArrayList<SbiCategory>();
+		List<SbiCategory> listToReturn = new ArrayList<>();
 		try {
 			categoryDAO = DAOFactory.getCategoryDAO();
 			categoryDAO.setUserProfile(getUserProfile());
 			listToReturn = categoryDAO.getCategories().stream().collect(Collectors.toList());
 		} catch (Exception ex) {
-			LogMF.error(logger, "Cannot get available categories for user {0}", new Object[] { userProfile.getUserName() });
+			LogMF.error(LOGGER, "Cannot get available categories for user {0}", new Object[] { userProfile.getUserName() });
 			throw new SpagoBIServiceException(this.request.getPathInfo(), "An unexpected error occured while executing service", ex);
 		} finally {
-			logger.debug("OUT");
+			LOGGER.debug("OUT");
 		}
 
 		return listToReturn;
@@ -143,7 +143,7 @@ public class CategoryResource extends AbstractSpagoBIResource {
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
 	@UserConstraint(functionalities = { CommunityFunctionalityConstants.CATEGORY_MANAGEMENT })
 	public SbiCategory getCategoryById(@PathParam("id") Integer sbiCategoryId) {
-		logger.debug("IN");
+		LOGGER.debug("IN");
 		ICategoryDAO categoryDAO = null;
 		SbiCategory toReturn = null;
 		try {
@@ -153,7 +153,7 @@ public class CategoryResource extends AbstractSpagoBIResource {
 		} catch (Exception e) {
 			throw new SpagoBIServiceException("Error getting category with id " + sbiCategoryId, e);
 		} finally {
-			logger.debug("OUT");
+			LOGGER.debug("OUT");
 		}
 		return toReturn;
 
@@ -164,7 +164,7 @@ public class CategoryResource extends AbstractSpagoBIResource {
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
 	@UserConstraint(functionalities = { CommunityFunctionalityConstants.CATEGORY_MANAGEMENT })
 	public SbiCategory categoryCreate(@Valid SbiCategory sbiCategory) {
-		logger.debug("IN");
+		LOGGER.debug("IN");
 		ICategoryDAO categoryDAO = null;
 		try {
 			categoryDAO = DAOFactory.getCategoryDAO();
@@ -173,7 +173,7 @@ public class CategoryResource extends AbstractSpagoBIResource {
 		} catch (Exception e) {
 			throw new SpagoBIServiceException("Cannot create sbiCategory " + Optional.ofNullable(sbiCategory).map(SbiCategory::getName).orElse("null"), e);
 		} finally {
-			logger.debug("OUT");
+			LOGGER.debug("OUT");
 		}
 		return sbiCategory;
 
@@ -185,16 +185,16 @@ public class CategoryResource extends AbstractSpagoBIResource {
 	@UserConstraint(functionalities = { CommunityFunctionalityConstants.CATEGORY_MANAGEMENT })
 	public SbiCategory categoryUpdate(@Valid SbiCategory newSbiCategory) {
 
-		logger.debug("IN");
+		LOGGER.debug("IN");
 		ICategoryDAO categoryDAO = null;
 		try {
 			categoryDAO = DAOFactory.getCategoryDAO();
 			categoryDAO.setUserProfile(getUserProfile());
 			categoryDAO.update(newSbiCategory);
 		} catch (Exception e) {
-			throw new SpagoBIServiceException("Error updating SbiCategory with id " + String.valueOf(newSbiCategory.getId()), e);
+			throw new SpagoBIServiceException("Error updating SbiCategory with id " + newSbiCategory.getId(), e);
 		} finally {
-			logger.debug("OUT");
+			LOGGER.debug("OUT");
 		}
 		return newSbiCategory;
 
@@ -206,7 +206,7 @@ public class CategoryResource extends AbstractSpagoBIResource {
 	@UserConstraint(functionalities = { CommunityFunctionalityConstants.CATEGORY_MANAGEMENT })
 	public Response categoryDelete(@Valid SbiCategory newSbiCategory) {
 		Response response = null;
-		logger.debug("IN");
+		LOGGER.debug("IN");
 		ICategoryDAO categoryDAO = null;
 		try {
 			categoryDAO = DAOFactory.getCategoryDAO();
@@ -214,9 +214,9 @@ public class CategoryResource extends AbstractSpagoBIResource {
 			categoryDAO.delete(newSbiCategory);
 			response = Response.status(Response.Status.OK).build();
 		} catch (Exception e) {
-			throw new SpagoBIServiceException("Error deleting SbiCategory with id " + String.valueOf(newSbiCategory.getId()), e);
+			throw new SpagoBIServiceException("Error deleting SbiCategory with id " + newSbiCategory.getId(), e);
 		} finally {
-			logger.debug("OUT");
+			LOGGER.debug("OUT");
 		}
 		return response;
 
@@ -242,13 +242,13 @@ public class CategoryResource extends AbstractSpagoBIResource {
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
 	@UserConstraint(functionalities = { CommunityFunctionalityConstants.CATEGORY_MANAGEMENT })
 	public Response getDatasetsById(@PathParam("id") int sbiCategoryId) {
-		logger.debug("IN");
+		LOGGER.debug("IN");
 		Response response = null;
-		List<IDataSet> toReturn = new ArrayList<IDataSet>();
+		List<IDataSet> toReturn = new ArrayList<>();
 		try {
 			CategoryService cs = new CategoryService();
 			toReturn = cs.getDatasetsUsedByCategory(sbiCategoryId);
-			List<CategoryObjectDTO> objToReturn = new ArrayList<CategoryObjectDTO>();
+			List<CategoryObjectDTO> objToReturn = new ArrayList<>();
 			for (IDataSet iDataSet : toReturn) {
 				CategoryObjectDTO co = new CategoryObjectDTO(iDataSet.getLabel());
 				objToReturn.add(co);
@@ -265,7 +265,7 @@ public class CategoryResource extends AbstractSpagoBIResource {
 		} catch (Exception e) {
 			throw new SpagoBIServiceException("Error getting category with id " + sbiCategoryId, e);
 		} finally {
-			logger.debug("OUT");
+			LOGGER.debug("OUT");
 		}
 		return response;
 
@@ -276,13 +276,13 @@ public class CategoryResource extends AbstractSpagoBIResource {
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
 	@UserConstraint(functionalities = { CommunityFunctionalityConstants.CATEGORY_MANAGEMENT })
 	public Response getMetamodelsById(@PathParam("id") int sbiCategoryId) {
-		logger.debug("IN");
-		List<MetaModel> toReturn = new ArrayList<MetaModel>();
+		LOGGER.debug("IN");
+		List<MetaModel> toReturn = new ArrayList<>();
 		Response response = null;
 		try {
 			CategoryService cs = new CategoryService();
 			toReturn = cs.getMetaModelsUsedByCategory(sbiCategoryId);
-			List<CategoryObjectDTO> objToReturn = new ArrayList<CategoryObjectDTO>();
+			List<CategoryObjectDTO> objToReturn = new ArrayList<>();
 			for (MetaModel meta : toReturn) {
 				CategoryObjectDTO co = new CategoryObjectDTO(meta.getName());
 				objToReturn.add(co);
@@ -291,7 +291,7 @@ public class CategoryResource extends AbstractSpagoBIResource {
 		} catch (Exception e) {
 			throw new SpagoBIServiceException("Error getting category with id " + sbiCategoryId, e);
 		} finally {
-			logger.debug("OUT");
+			LOGGER.debug("OUT");
 		}
 		return response;
 
@@ -302,11 +302,11 @@ public class CategoryResource extends AbstractSpagoBIResource {
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
 	@UserConstraint(functionalities = { CommunityFunctionalityConstants.CATEGORY_MANAGEMENT })
 	public Response getGeoLayersById(@PathParam("id") Integer sbiCategoryId) {
-		logger.debug("IN");
+		LOGGER.debug("IN");
 		Response response = null;
-		List<GeoLayer> toReturn = new ArrayList<GeoLayer>();
+		List<GeoLayer> toReturn = new ArrayList<>();
 		try {
-			List<CategoryObjectDTO> objToReturn = new ArrayList<CategoryObjectDTO>();
+			List<CategoryObjectDTO> objToReturn = new ArrayList<>();
 			CategoryService cs = new CategoryService();
 			toReturn = cs.getGeoLayersUsedByCategory(sbiCategoryId);
 			for (GeoLayer geo : toReturn) {
@@ -317,7 +317,7 @@ public class CategoryResource extends AbstractSpagoBIResource {
 		} catch (Exception e) {
 			throw new SpagoBIServiceException("Error getting category with id " + sbiCategoryId, e);
 		} finally {
-			logger.debug("OUT");
+			LOGGER.debug("OUT");
 		}
 		return response;
 
@@ -328,13 +328,13 @@ public class CategoryResource extends AbstractSpagoBIResource {
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
 	@UserConstraint(functionalities = { CommunityFunctionalityConstants.CATEGORY_MANAGEMENT })
 	public Response getKpiById(@PathParam("id") Integer sbiCategoryId) {
-		logger.debug("IN");
-		List<Kpi> toReturn = new ArrayList<Kpi>();
+		LOGGER.debug("IN");
+		List<Kpi> toReturn = new ArrayList<>();
 		Response response = null;
 		try {
 			CategoryService cs = new CategoryService();
 			toReturn = cs.getKPIUsedByCategory(sbiCategoryId);
-			List<CategoryObjectDTO> objToReturn = new ArrayList<CategoryObjectDTO>();
+			List<CategoryObjectDTO> objToReturn = new ArrayList<>();
 			for (Kpi kpi : toReturn) {
 				CategoryObjectDTO co = new CategoryObjectDTO(kpi.getName());
 				objToReturn.add(co);
@@ -343,7 +343,7 @@ public class CategoryResource extends AbstractSpagoBIResource {
 		} catch (Exception e) {
 			throw new SpagoBIServiceException("Error getting category with id " + sbiCategoryId, e);
 		} finally {
-			logger.debug("OUT");
+			LOGGER.debug("OUT");
 		}
 		return response;
 
@@ -354,13 +354,13 @@ public class CategoryResource extends AbstractSpagoBIResource {
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
 	@UserConstraint(functionalities = { CommunityFunctionalityConstants.CATEGORY_MANAGEMENT })
 	public Response getKpiTargetById(@PathParam("id") Integer sbiCategoryId) {
-		logger.debug("IN");
-		List<Target> toReturn = new ArrayList<Target>();
+		LOGGER.debug("IN");
+		List<Target> toReturn = new ArrayList<>();
 		Response response = null;
 		try {
 			CategoryService cs = new CategoryService();
 			toReturn = cs.getKPITargetUsedByCategory(sbiCategoryId);
-			List<CategoryObjectDTO> objToReturn = new ArrayList<CategoryObjectDTO>();
+			List<CategoryObjectDTO> objToReturn = new ArrayList<>();
 			for (Target kpiT : toReturn) {
 				CategoryObjectDTO co = new CategoryObjectDTO(kpiT.getName());
 				objToReturn.add(co);
@@ -369,7 +369,7 @@ public class CategoryResource extends AbstractSpagoBIResource {
 		} catch (Exception e) {
 			throw new SpagoBIServiceException("Error getting category with id " + sbiCategoryId, e);
 		} finally {
-			logger.debug("OUT");
+			LOGGER.debug("OUT");
 		}
 		return response;
 
@@ -380,13 +380,13 @@ public class CategoryResource extends AbstractSpagoBIResource {
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
 	@UserConstraint(functionalities = { CommunityFunctionalityConstants.CATEGORY_MANAGEMENT })
 	public Response getKpiRuleOutputById(@PathParam("id") Integer sbiCategoryId) {
-		logger.debug("IN");
-		List<RuleOutput> toReturn = new ArrayList<RuleOutput>();
+		LOGGER.debug("IN");
+		List<RuleOutput> toReturn = new ArrayList<>();
 		Response response = null;
 		try {
 			CategoryService cs = new CategoryService();
 			toReturn = cs.getKpiRuleOutputUsedByCategory(sbiCategoryId);
-			List<CategoryObjectDTO> objToReturn = new ArrayList<CategoryObjectDTO>();
+			List<CategoryObjectDTO> objToReturn = new ArrayList<>();
 			for (RuleOutput kpi : toReturn) {
 				CategoryObjectDTO co = new CategoryObjectDTO(kpi.getAlias());
 				objToReturn.add(co);
@@ -395,7 +395,7 @@ public class CategoryResource extends AbstractSpagoBIResource {
 		} catch (Exception e) {
 			throw new SpagoBIServiceException("Error getting category with id " + sbiCategoryId, e);
 		} finally {
-			logger.debug("OUT");
+			LOGGER.debug("OUT");
 		}
 		return response;
 

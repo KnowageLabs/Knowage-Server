@@ -19,19 +19,13 @@
 
 package it.eng.spagobi.tools.dataset.graph.associativity.container;
 
-import java.io.IOException;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.naming.NamingException;
-
 import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.Logger;
-import org.apache.solr.client.solrj.SolrServerException;
 
 import it.eng.spagobi.tools.dataset.DatasetManagementAPI;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
@@ -45,12 +39,10 @@ import it.eng.spagobi.tools.dataset.metasql.query.item.MultipleProjectionSimpleF
 import it.eng.spagobi.tools.dataset.metasql.query.item.Projection;
 import it.eng.spagobi.tools.dataset.metasql.query.item.SimpleFilter;
 import it.eng.spagobi.tools.dataset.utils.DataSetUtilities;
-import it.eng.spagobi.utilities.database.DataBaseException;
 import it.eng.spagobi.utilities.parameters.ParametersUtilities;
 
 public abstract class AssociativeDatasetContainer implements IAssociativeDatasetContainer {
 
-	private static final Logger logger = Logger.getLogger(AssociativeDatasetContainer.class);
 	protected final Set<SimpleFilter> filters = new HashSet<>();
 	protected final Set<EdgeGroup> groups = new HashSet<>();
 	protected final Set<EdgeGroup> usedGroups = new HashSet<>();
@@ -58,7 +50,7 @@ public abstract class AssociativeDatasetContainer implements IAssociativeDataset
 	protected Map<String, String> parameters;
 	protected boolean resolved = false;
 
-	public AssociativeDatasetContainer(IDataSet dataSet, Map<String, String> parameters) {
+	protected AssociativeDatasetContainer(IDataSet dataSet, Map<String, String> parameters) {
 		this.dataSet = dataSet;
 		this.parameters = parameters;
 	}
@@ -94,7 +86,6 @@ public abstract class AssociativeDatasetContainer implements IAssociativeDataset
 					}
 
 					parameters.put(ParametersUtilities.getParameterName(parameter), StringUtils.join(values, ","));
-//					new DatasetManagementAPI().setDataSetParameter(dataSet, ParametersUtilities.getParameterName(parameter),StringUtils.join(values, ","));
 					new DatasetManagementAPI().setDataSetParameters(dataSet, parameters, ParametersUtilities.getParameterName(parameter));
 					return true;
 				} else {
@@ -164,24 +155,20 @@ public abstract class AssociativeDatasetContainer implements IAssociativeDataset
 	}
 
 	@Override
-	public abstract Set<Tuple> getTupleOfValues(List<String> columnNames)
-			throws ClassNotFoundException, NamingException, SQLException, DataBaseException, IOException, SolrServerException;
-
-	@Override
 	public Set<Tuple> getTupleOfValues(String parameter) {
 		return AssociativeLogicUtils.getTupleOfValues(parameters.get(ParametersUtilities.getParameterName(parameter)));
 	}
 
 	protected MultipleProjectionSimpleFilter buildInFilter(List<String> columnNames, Set<Tuple> tuples) {
 		int columnCount = columnNames.size();
-		List<Projection> projections = new ArrayList<Projection>(columnCount);
-		List<IFieldMetaData> metaData = new ArrayList<IFieldMetaData>(columnCount);
+		List<Projection> projections = new ArrayList<>(columnCount);
+		List<IFieldMetaData> metaData = new ArrayList<>(columnCount);
 		for (String columnName : columnNames) {
 			projections.add(new Projection(dataSet, columnName));
 			metaData.add(DataSetUtilities.getFieldMetaData(dataSet, columnName));
 		}
 
-		List<Object> values = new ArrayList<Object>();
+		List<Object> values = new ArrayList<>();
 		for (Tuple tuple : tuples) {
 			values.addAll(tuple.getValues());
 		}

@@ -44,7 +44,7 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 public class InlineViewAssociativeDatasetContainer extends JdbcDatasetContainer {
 
-	private static final Logger logger = Logger.getLogger(InlineViewAssociativeDatasetContainer.class);
+	private static final Logger LOGGER = Logger.getLogger(InlineViewAssociativeDatasetContainer.class);
 
 	public InlineViewAssociativeDatasetContainer(IDataSet dataSet, Map<String, String> parameters) {
 		super(dataSet, parameters);
@@ -55,7 +55,7 @@ public class InlineViewAssociativeDatasetContainer extends JdbcDatasetContainer 
 		try {
 			return InlineViewUtility.getTableName(dataSet);
 		} catch (DataBaseException e) {
-			logger.error("Error occured while getting table name", e);
+			LOGGER.error("Error occured while getting table name", e);
 			throw new SpagoBIRuntimeException("Error occured while getting table name", e);
 		}
 	}
@@ -83,13 +83,12 @@ public class InlineViewAssociativeDatasetContainer extends JdbcDatasetContainer 
 		PreparedStatement stmt = null;
 		ResultSet rs = null;
 		try {
-			logger.debug("Executing query: " + query);
+			LOGGER.debug("Executing query: " + query);
 			connection = getDataSource().getConnection();
 			stmt = connection.prepareStatement(query);
 			for (int i = 0; i < values.size(); i++) {
-				int parameterIndex = i + 1;
 				Object value = values.get(i);
-				PersistedTableHelper.addField(stmt, i, value, "", value.getClass().getName(), false, new HashMap<String, Integer>());
+				PersistedTableHelper.addField(stmt, i, value, "", value.getClass().getName(), false, new HashMap<>());
 			}
 			stmt.execute();
 			rs = stmt.getResultSet();
@@ -99,21 +98,21 @@ public class InlineViewAssociativeDatasetContainer extends JdbcDatasetContainer 
 				try {
 					rs.close();
 				} catch (SQLException e) {
-					logger.debug(e);
+					LOGGER.debug(e);
 				}
 			}
 			if (stmt != null) {
 				try {
 					stmt.close();
 				} catch (SQLException e) {
-					logger.debug(e);
+					LOGGER.debug(e);
 				}
 			}
 			if (connection != null) {
 				try {
 					connection.close();
 				} catch (SQLException e) {
-					logger.debug(e);
+					LOGGER.debug(e);
 				}
 			}
 		}

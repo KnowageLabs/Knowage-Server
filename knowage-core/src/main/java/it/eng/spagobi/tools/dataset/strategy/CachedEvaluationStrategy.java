@@ -47,7 +47,7 @@ import it.eng.spagobi.utilities.database.DataBaseException;
 
 class CachedEvaluationStrategy extends AbstractEvaluationStrategy {
 
-	private static final Logger logger = Logger.getLogger(CachedEvaluationStrategy.class);
+	private static final Logger LOGGER = Logger.getLogger(CachedEvaluationStrategy.class);
 
 	private ICache cache;
 	private UserProfile profile;
@@ -106,7 +106,7 @@ class CachedEvaluationStrategy extends AbstractEvaluationStrategy {
 		if (dataSet.getDataStore() != null && dataSet.getDataStore().getMetaData().getFieldCount() == 0) {
 			// update only datasource's metadata from dataset if for some strange cause it hasn't got fields
 			// WTF???
-			logger.debug("Update datastore's metadata with dataset's metadata when no data is found...");
+			LOGGER.debug("Update datastore's metadata with dataset's metadata when no data is found...");
 			return new DataStore(dataSet.getMetadata());
 		}
 
@@ -160,7 +160,7 @@ class CachedEvaluationStrategy extends AbstractEvaluationStrategy {
 			totalFunctionsProjections.toArray(totalFunctionsProjectionsString);
 			String totalFunctionsQuery = new SelectQuery(dataSet).select(totalFunctionsProjectionsString).from(flatDataSet.getFlatTableName()).where(filter)
 					.toSql(flatDataSet.getDataSource());
-			logger.info("Total functions query [ " + totalFunctionsQuery + " ]");
+			LOGGER.info("Total functions query [ " + totalFunctionsQuery + " ]");
 			return flatDataSet.getDataSource().executeStatement(totalFunctionsQuery, -1, -1, maxRowCount, false);
 		} catch (DataBaseException e) {
 			throw new RuntimeException(e);

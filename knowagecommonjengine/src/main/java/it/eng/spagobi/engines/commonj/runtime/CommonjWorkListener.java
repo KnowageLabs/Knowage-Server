@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,15 +11,11 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package it.eng.spagobi.engines.commonj.runtime;
-
-import it.eng.spagobi.engines.commonj.utils.ProcessesStatusContainer;
-import it.eng.spagobi.services.proxy.EventServiceProxy;
-import it.eng.spagobi.utilities.engines.AuditServiceProxy;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -31,10 +27,14 @@ import commonj.work.WorkEvent;
 import commonj.work.WorkException;
 import commonj.work.WorkItem;
 import commonj.work.WorkListener;
+import it.eng.spagobi.engines.commonj.utils.ProcessesStatusContainer;
+import it.eng.spagobi.services.proxy.EventServiceProxy;
+import it.eng.spagobi.utilities.engines.AuditServiceProxy;
 
 
 public class CommonjWorkListener implements WorkListener {
 
+	private static final Logger LOGGER = Logger.getLogger(CommonjWorkListener.class);
 
 	public static final String COMMONJ_ROLES_HANDLER_CLASS_NAME = "it.eng.spagobi.engines.drivers.commonj.CommonjRolesHandler";
 	public static final String COMMONJ_PRESENTAION_HANDLER_CLASS_NAME = "it.eng.spagobi.engines.drivers.commonj.CommonjEventPresentationHandler";
@@ -50,8 +50,6 @@ public class CommonjWorkListener implements WorkListener {
 	String biObjectID;
 	String biObjectLabel;
 	String pid;
-
-	private static final Logger logger = Logger.getLogger(CommonjWorkListener.class);
 
 	public CommonjWorkListener(AuditServiceProxy auditServiceProxy, EventServiceProxy eventServiceProxy) {
 		this.auditServiceProxy = auditServiceProxy;
@@ -77,125 +75,126 @@ public class CommonjWorkListener implements WorkListener {
 		this.workName = workName;
 	}
 
+	@Override
 	public void workAccepted(WorkEvent event) {
-		logger.info("IN.Work "+workName+" accepted");
-		logger.debug("Work "+workName+" accepted");
-		logger.info("OUT");
+		LOGGER.info("IN.Work "+workName+" accepted");
+		LOGGER.debug("Work "+workName+" accepted");
+		LOGGER.info("OUT");
 	}
 
 
+	@Override
 	public void workRejected(WorkEvent event) {
-		logger.info("IN.Work "+workName+" rejected");
+		LOGGER.info("IN.Work "+workName+" rejected");
 		if(auditServiceProxy != null) {
 			auditServiceProxy.notifyServiceErrorEvent("An error occurred while work execution");
 		} else {
-			logger.warn("Impossible to log START-EVENT because the audit proxy has not been instatiated properly");
+			LOGGER.warn("Impossible to log START-EVENT because the audit proxy has not been instatiated properly");
 		}
 		if(eventServiceProxy != null) {
 			String pars=builParametersString();
-			eventServiceProxy.fireEvent("Event of work "+workName+" launching class "+workClass+": Error",pars,COMMONJ_ROLES_HANDLER_CLASS_NAME, COMMONJ_PRESENTAION_HANDLER_CLASS_NAME);	
+			eventServiceProxy.fireEvent("Event of work "+workName+" launching class "+workClass+": Error",pars,COMMONJ_ROLES_HANDLER_CLASS_NAME, COMMONJ_PRESENTAION_HANDLER_CLASS_NAME);
 		} else {
-			logger.warn("Impossible to log ERROR-EVENT because the event proxy has not been instatiated properly");
-		}				
-		logger.debug("Work "+workName+" rejected");
-		logger.info("OUT");
+			LOGGER.warn("Impossible to log ERROR-EVENT because the event proxy has not been instatiated properly");
+		}
+		LOGGER.debug("Work "+workName+" rejected");
+		LOGGER.info("OUT");
 	}
 
 
+	@Override
 	public void workCompleted(WorkEvent event) {
-		logger.info("IN.Entering work "+workName+" completed");
+		LOGGER.info("IN.Entering work "+workName+" completed");
 
 		WorkException workException;
-		//Work commonjWork;
 
-		logger.info("IN");
+		LOGGER.info("IN");
 
 		try {
 			workException = event.getException();
 			if (workException != null) {
-				logger.error(workException); 
+				LOGGER.error(workException);
 			}
 
-			//commonjWork = (Work) event.getWorkItem().getResult();
 			if (workException != null) {
 				if(auditServiceProxy != null) {
 					auditServiceProxy.notifyServiceErrorEvent("An error occurred while work execution");
 				} else {
-					logger.warn("Impossible to log START-EVENT because the audit proxy has not been instatiated properly");
+					LOGGER.warn("Impossible to log START-EVENT because the audit proxy has not been instatiated properly");
 				}
 				if(eventServiceProxy != null) {
-					String pars=builParametersString();					
-					eventServiceProxy.fireEvent("Event of work "+workName+" launching class "+workClass+": Error",pars,COMMONJ_ROLES_HANDLER_CLASS_NAME, COMMONJ_PRESENTAION_HANDLER_CLASS_NAME);	
+					String pars=builParametersString();
+					eventServiceProxy.fireEvent("Event of work "+workName+" launching class "+workClass+": Error",pars,COMMONJ_ROLES_HANDLER_CLASS_NAME, COMMONJ_PRESENTAION_HANDLER_CLASS_NAME);
 				} else {
-					logger.warn("Impossible to log ERROR-EVENT because the event proxy has not been instatiated properly");
-				}				
+					LOGGER.warn("Impossible to log ERROR-EVENT because the event proxy has not been instatiated properly");
+				}
 			} else {
 				if(auditServiceProxy != null) {
 					auditServiceProxy.notifyServiceEndEvent();
 				} else {
-					logger.warn("Impossible to log START-EVENT because the audit proxy has not been instatiated properly");
+					LOGGER.warn("Impossible to log START-EVENT because the audit proxy has not been instatiated properly");
 				}
 				if(eventServiceProxy != null) {
-					String pars=builParametersString();					
-					eventServiceProxy.fireEvent("Event of work "+workName+" launching class "+workClass+": End",pars,COMMONJ_ROLES_HANDLER_CLASS_NAME, COMMONJ_PRESENTAION_HANDLER_CLASS_NAME);	
+					String pars=builParametersString();
+					eventServiceProxy.fireEvent("Event of work "+workName+" launching class "+workClass+": End",pars,COMMONJ_ROLES_HANDLER_CLASS_NAME, COMMONJ_PRESENTAION_HANDLER_CLASS_NAME);
 				} else {
-					logger.warn("Impossible to log END-EVENT because the event proxy has not been instatiated properly");
+					LOGGER.warn("Impossible to log END-EVENT because the event proxy has not been instatiated properly");
 				}
 			}
 
 		} catch (Throwable t) {
 			throw new RuntimeException("An error occurred while handling process completed event");
 		} finally {
-			logger.debug("OUT");
+			LOGGER.debug("OUT");
 		}
 
-		// clean the singleton!!! 
+		// clean the singleton!!!
 		if(pid != null){
 			ProcessesStatusContainer processesStatusContainer = ProcessesStatusContainer.getInstance();
 			processesStatusContainer.getPidContainerMap().remove(pid);
-			logger.debug("removed from singleton process item with pid "+pid);
+			LOGGER.debug("removed from singleton process item with pid "+pid);
 		}
-		logger.info("OUT");
+		LOGGER.info("OUT");
 	}
 
+	@Override
 	public void workStarted(WorkEvent event) {
-		logger.info("IN");
-		logger.debug("Work "+workName+" started");
+		LOGGER.info("IN");
+		LOGGER.debug("Work "+workName+" started");
 
 		if(auditServiceProxy != null) {
 			auditServiceProxy.notifyServiceStartEvent();
 		} else {
-			logger.warn("Impossible to log START-EVENT because the audit proxy has not been instatiated properly");
+			LOGGER.warn("Impossible to log START-EVENT because the audit proxy has not been instatiated properly");
 		}
 
-		WorkItem wi=event.getWorkItem();
+		WorkItem wi = event.getWorkItem();
 
 		if(eventServiceProxy != null) {
-			String pars=builParametersString();			
-			eventServiceProxy.fireEvent("Event of work "+workName+" launching class "+workClass+": Started",pars,COMMONJ_ROLES_HANDLER_CLASS_NAME, COMMONJ_PRESENTAION_HANDLER_CLASS_NAME);	
+			String pars=builParametersString();
+			eventServiceProxy.fireEvent("Event of work "+workName+" launching class "+workClass+": Started",pars,COMMONJ_ROLES_HANDLER_CLASS_NAME, COMMONJ_PRESENTAION_HANDLER_CLASS_NAME);
 		} else {
-			logger.warn("Impossible to log START-EVENT because the event proxy has not been instatiated properly");
+			LOGGER.warn("Impossible to log START-EVENT because the event proxy has not been instatiated properly");
 		}
 
-		logger.info("OUT");
+		LOGGER.info("OUT");
 
 
 	}
 
 
 	private String builParametersString(){
-		logger.debug("IN");
+		LOGGER.debug("IN");
 		Map startEventParams = new HashMap();
-		//startEventParams.put(EVENT_TYPE, DOCUMENT_EXECUTION_START);
 		if(biObjectID!=null){
 			startEventParams.put(BIOBJECT_ID, biObjectID);
 		}
 		if(biObjectLabel != null){
-			startEventParams.put(BIOBJECT_LABEL, biObjectLabel);			
+			startEventParams.put(BIOBJECT_LABEL, biObjectLabel);
 		}
 
 		String startEventParamsStr = getParamsStr(startEventParams);
-		logger.debug("OUT");
+		LOGGER.debug("OUT");
 		return  startEventParamsStr;
 	}
 
@@ -240,8 +239,8 @@ public class CommonjWorkListener implements WorkListener {
 
 
 	private String getParamsStr(Map params) {
-		logger.debug("IN");
-		StringBuffer buffer = new StringBuffer();
+		LOGGER.debug("IN");
+		StringBuilder buffer = new StringBuilder();
 		Iterator it = params.keySet().iterator();
 		boolean isFirstParameter = true;
 		while (it.hasNext()) {
@@ -253,8 +252,8 @@ public class CommonjWorkListener implements WorkListener {
 				isFirstParameter = false;
 			buffer.append(pname + "=" + pvalue);
 		}
-		logger.debug("parameters: " + buffer.toString());
-		logger.debug("OUT");
+		LOGGER.debug("parameters: " + buffer.toString());
+		LOGGER.debug("OUT");
 		return buffer.toString();
 	}
 

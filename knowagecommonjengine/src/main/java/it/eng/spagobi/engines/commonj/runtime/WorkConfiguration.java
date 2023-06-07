@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,11 +11,19 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package it.eng.spagobi.engines.commonj.runtime;
+
+import java.io.File;
+import java.util.Iterator;
+import java.util.Map;
+
+import javax.servlet.http.HttpSession;
+
+import org.apache.log4j.Logger;
 
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.engines.commonj.exception.WorkExecutionException;
@@ -29,14 +37,6 @@ import it.eng.spagobi.utilities.engines.AuditServiceProxy;
 import it.eng.spagobi.utilities.engines.EngineConstants;
 import it.eng.spagobi.utilities.threadmanager.WorkManager;
 
-import java.io.File;
-import java.util.Iterator;
-import java.util.Map;
-
-import javax.servlet.http.HttpSession;
-
-import org.apache.log4j.Logger;
-
 
 /**
  * configurazione ....
@@ -45,23 +45,22 @@ import org.apache.log4j.Logger;
  */
 public class WorkConfiguration {
 
-
-	private WorksRepository worksRepository;
+	private static final Logger LOGGER = Logger.getLogger(WorkConfiguration.class);
 
 	public static final String DEFAULT_CONTEXT = "Default";
 
-	private static final Logger logger = Logger.getLogger(WorkConfiguration.class);
+	private WorksRepository worksRepository;
 
 	public WorkConfiguration(WorksRepository worksRepository) {
 		this.worksRepository = worksRepository;
 	}
 
 
-	/** This function prepare the execution of the new Process, 
+	/** This function prepare the execution of the new Process,
 	 * builds Listener and work manager
 	 *  Loads work class
 	 * Builds WorkCOntainer and adds it to Singleton class, from where will be retrieved by startWorkAction
-	 * 
+	 *
 	 * @param session
 	 * @param work
 	 * @param parameters
@@ -71,131 +70,117 @@ public class WorkConfiguration {
 
 	public void configure(HttpSession session, CommonjWork work, Map parameters, String documentUnique, boolean isLabel)  throws WorkNotFoundException, WorkExecutionException {
 
-		logger.debug("IN");
+		LOGGER.debug("IN");
 
-		File executableWorkDir;    	
+		File executableWorkDir;
 		ProcessesStatusContainer processesStatusContainer = ProcessesStatusContainer.getInstance();
 
 		try {
-			logger.debug("Starting configure method of work : " +
+			LOGGER.debug("Starting configure method of work : " +
 					"name = [" + work.getWorkName() + "] ; " +
 					"to start class= [" + work.getClassName() + "] ; ");
 
 
 			executableWorkDir = worksRepository.getExecutableWorkDir(work);
 
-			if (!worksRepository.containsWork(work)) {	    		
-				logger.error("work [" + 
+			if (!worksRepository.containsWork(work)) {
+				LOGGER.error("work [" +
 						worksRepository.getRootDir().getPath()+"/"+work.getWorkName()+ "] not found in repository");
-				throw new WorkNotFoundException("work [" + 
+				throw new WorkNotFoundException("work [" +
 						worksRepository.getRootDir().getPath()+"/"+work.getWorkName()+ "] not found in repository");
 			}
 
-			logger.debug("Work [" + work.getWorkName() +"] succesfully found in repository");
+			LOGGER.debug("Work [" + work.getWorkName() +"] succesfully found in repository");
 
 			// load in memory all jars found in folder!
 			loadJars(work, executableWorkDir);
 
-			//String classToLoad="prova.Studente";
 			String classToLoad=work.getClassName();
 
 			WorkManager wm = new WorkManager();
-			logger.debug("work manager instanziated");
+			LOGGER.debug("work manager instanziated");
 
 			AuditServiceProxy auditServiceProxy=null;
-			Object auditO=parameters.get(EngineConstants.ENV_AUDIT_SERVICE_PROXY);			
+			Object auditO=parameters.get(EngineConstants.ENV_AUDIT_SERVICE_PROXY);
 			if(auditO!=null) auditServiceProxy=(AuditServiceProxy)auditO;
 			Object eventO=parameters.get(EngineConstants.ENV_EVENT_SERVICE_PROXY);
 			EventServiceProxy eventServiceProxy=null;
 			eventServiceProxy=(EventServiceProxy)eventO;
 
 			Object executionRoleO=parameters.get(SpagoBIConstants.EXECUTION_ROLE);
-			String executionRole=executionRoleO!=null ? executionRoleO.toString() : ""; 
+			String executionRole=executionRoleO!=null ? executionRoleO.toString() : "";
 
 
 			// check if it is already in sessione means it is already running!!
 
 			CommonjWorkContainer container=new CommonjWorkContainer();
-			
-			// no more used check in sesssion!
-			//boolean already=container.isInSession(documentId, session);
-			
-			
-//			if(already==false){
-				CommonjWorkListener listener = new CommonjWorkListener(auditServiceProxy, eventServiceProxy);
 
-				if (documentUnique!=null && isLabel) {
-					listener.setBiObjectLabel(documentUnique);
-				}
-				else if (documentUnique!=null && !isLabel) {
-					listener.setBiObjectID(documentUnique);
-					
-				}
+			CommonjWorkListener listener = new CommonjWorkListener(auditServiceProxy, eventServiceProxy);
 
-				listener.setExecutionRole(executionRole);
-				listener.setWorkName(work.getWorkName());
-				listener.setWorkClass(work.getClassName());
-				logger.info("Class to run "+classToLoad);
+			if (documentUnique != null && isLabel) {
+				listener.setBiObjectLabel(documentUnique);
+			} else if (documentUnique != null && !isLabel) {
+				listener.setBiObjectID(documentUnique);
 
-				logger.debug("listener ready");
+			}
 
-				Class clazz=null;
-				try {
-					clazz = Thread.currentThread().getContextClassLoader().loadClass(classToLoad);
-				} catch (ClassNotFoundException e) {
-					logger.debug("class loaded not foud...",e);
-				}
-				Object obj = clazz.newInstance();
-				logger.debug("class loaded "+classToLoad);
-				SpagoBIWork workToLaunch=null;
-				// class loaded could be instance of CmdExecWork o di Work, testa se è il primo, se no è l'altra
-				if (obj instanceof CmdExecWork) {
-					logger.debug("Class specified extends CmdExecWork");
-					workToLaunch = (CmdExecWork) obj;
+			listener.setExecutionRole(executionRole);
+			listener.setWorkName(work.getWorkName());
+			listener.setWorkClass(work.getClassName());
+			LOGGER.info("Class to run " + classToLoad);
+
+			LOGGER.debug("listener ready");
+
+			Class clazz = null;
+			try {
+				clazz = Thread.currentThread().getContextClassLoader().loadClass(classToLoad);
+			} catch (ClassNotFoundException e) {
+				LOGGER.debug("class loaded not foud...", e);
+			}
+			Object obj = clazz.newInstance();
+			LOGGER.debug("class loaded " + classToLoad);
+			SpagoBIWork workToLaunch = null;
+			// class loaded could be instance of CmdExecWork o di Work, testa se è il primo, se no è l'altra
+			if (obj instanceof CmdExecWork) {
+				LOGGER.debug("Class specified extends CmdExecWork");
+				workToLaunch = (CmdExecWork) obj;
+				workToLaunch.setPid(work.getPId());
+				((CmdExecWork) obj).setCommand(work.getCommand());
+				((CmdExecWork) obj).setCommandEnvironment(work.getCommandEnvironment());
+				((CmdExecWork) obj).setCmdParameters(work.getCmdParameters());
+				((CmdExecWork) obj).setClasspathParameters(work.getClasspathParameters());
+				workToLaunch.setAnalyticalParameters(work.getAnalyticalParameters());
+				workToLaunch.setSbiParameters(work.getSbiParametersMap());
+				if (isLabel)
+					workToLaunch.setSbiLabel(documentUnique);
+			} else if (obj instanceof SpagoBIWork) {
+				LOGGER.debug("Class specified extends Work");
+				workToLaunch = (SpagoBIWork) obj;
 					workToLaunch.setPid(work.getPId());
-					((CmdExecWork)obj).setCommand(work.getCommand());
-					((CmdExecWork)obj).setCommandEnvironment(work.getCommand_environment());
-					((CmdExecWork)obj).setCmdParameters(work.getCmdParameters());			
-					((CmdExecWork)obj).setClasspathParameters(work.getClasspathParameters());
+				workToLaunch.setSbiParameters(work.getSbiParametersMap());
 					workToLaunch.setAnalyticalParameters(work.getAnalyticalParameters());
-					workToLaunch.setSbiParameters(work.getSbiParametersMap());					
 					if(isLabel) workToLaunch.setSbiLabel(documentUnique);
 				}
-				else
-					if (obj instanceof SpagoBIWork) {
-						logger.debug("Class specified extends Work");
-						workToLaunch=(SpagoBIWork)obj;
-						workToLaunch.setPid(work.getPId());
-						workToLaunch.setSbiParameters(work.getSbiParametersMap());
-						workToLaunch.setAnalyticalParameters(work.getAnalyticalParameters());
-						if(isLabel) workToLaunch.setSbiLabel(documentUnique);
-					}
-					else{
-						logger.error("Class you want to launch should extend SpagoBIWork or CmdExecWork");
-						return;
-					}
+				else {
+					LOGGER.error("Class you want to launch should extend SpagoBIWork or CmdExecWork");
+					return;
+				}
 
 				container.setPid(work.getPId());
 				container.setWork(workToLaunch);
 				container.setListener(listener);
 				container.setName(work.getWorkName());
 				container.setWm(wm);
-				//container.setInSession(documentId, session);
 				processesStatusContainer.getPidContainerMap().put(work.getPId(), container);
 
 				for (Iterator iterator = processesStatusContainer.getPidContainerMap().keySet().iterator(); iterator.hasNext();) {
 					String id = (String) iterator.next();
-					logger.debug("ID: "+id);
+					LOGGER.debug("ID: " + id);
 
 				}
-//			}
-//			else{
-//				System.out.println("Work already running");
-//				logger.debug("Work already running");
-//			}
 
 		} catch (Throwable e) {
-			logger.error("An error occurred while starting up execution for work [" + work.getWorkName() + "]");
+			LOGGER.error("An error occurred while starting up execution for work [" + work.getWorkName() + "]");
 			throw new WorkExecutionException("An error occurred while starting up execution for work [" + work.getWorkName() + "]", e);
 		}
 	}
@@ -210,7 +195,7 @@ public class WorkConfiguration {
 	 */
 
 	private void loadJars(CommonjWork work, File workDir) {
-		logger.debug("IN");
+		LOGGER.debug("IN");
 
 		// pass all the .jar into the folder
 		File[] files = workDir.listFiles();
@@ -221,7 +206,7 @@ public class WorkConfiguration {
 			String ext = name.substring(name.lastIndexOf('.')+1, name.length());
 			if(ext.equalsIgnoreCase("jar")){
 				//updateCurrentClassLoader(file);
-				logger.debug("loading file "+file.getName());			
+				LOGGER.debug("loading file "+file.getName());
 				ClassLoader previous = Thread.currentThread().getContextClassLoader();
 				DynamicClassLoader dcl = new DynamicClassLoader(file, previous);
 				Thread.currentThread().setContextClassLoader(dcl);
@@ -229,7 +214,7 @@ public class WorkConfiguration {
 			}
 		}
 
-		logger.debug("OUT");
+		LOGGER.debug("OUT");
 	}
 
 

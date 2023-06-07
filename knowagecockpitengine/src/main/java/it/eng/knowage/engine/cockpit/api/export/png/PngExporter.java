@@ -17,7 +17,7 @@ import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 
 public class PngExporter extends AbstractNodeJSBasedExporter {
 
-	private static final Logger logger = Logger.getLogger(PngExporter.class);
+	private static final Logger LOGGER = Logger.getLogger(PngExporter.class);
 
 	public PngExporter(int documentId, String userId, String requestUrl, RenderOptions renderOptions, String pdfPageOrientation, boolean pdfFrontPage,
 			boolean pdfBackPage) {
@@ -26,7 +26,7 @@ public class PngExporter extends AbstractNodeJSBasedExporter {
 
 	@Override
 	protected byte[] handleFile(Path outputDir, BIObject document, List<InputStream> imagesInputStreams) throws IOException {
-		logger.debug("IN");
+		LOGGER.debug("IN");
 		byte[] bytes = null;
 		if (imagesInputStreams.size() == 1) {
 			bytes = IOUtils.toByteArray(imagesInputStreams.get(0));
