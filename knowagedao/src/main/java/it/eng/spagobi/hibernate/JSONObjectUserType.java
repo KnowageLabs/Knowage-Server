@@ -79,16 +79,14 @@ public class JSONObjectUserType implements UserType {
 	@Override
 	public Object nullSafeGet(ResultSet rs, String[] names, Object owner) throws HibernateException, SQLException {
 		Object ret = null;
-		if (!rs.wasNull()) {
-			try {
-				Optional<String> value = Optional.ofNullable(rs.getString(names[0]));
+		try {
+			Optional<String> value = Optional.ofNullable(rs.getString(names[0]));
 
-				if (value.isPresent()) {
-					ret = new JSONObject(value.get());
-				}
-			} catch (JSONException e) {
-				throw new RuntimeException(e);
+			if (value.isPresent()) {
+				ret = new JSONObject(value.get());
 			}
+		} catch (JSONException e) {
+			throw new RuntimeException(e);
 		}
 		return ret;
 	}
