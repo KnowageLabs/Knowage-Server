@@ -41,14 +41,12 @@ import javax.ws.rs.core.UriBuilder;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.log4j.Logger;
 import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.CreationHelper;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.WorkbookUtil;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
-import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -84,6 +82,9 @@ public class ExcelExporter extends AbstractFormatExporter {
 	private final boolean isSingleWidgetExport;
 	private int uniqueId = 0;
 	private String requestURL = "";
+
+	private static final String INT_CELL_DEFAULT_FORMAT = "0";
+	private static final String FLOAT_CELL_DEFAULT_FORMAT = "#,##0.00";
 
 	// used only for scheduled export
 	public ExcelExporter(String outputType, String userUniqueIdentifier, Map<String, String[]> parameterMap, String requestURL) {
@@ -148,8 +149,7 @@ public class ExcelExporter extends AbstractFormatExporter {
 	}
 
 	private byte[] getByteArrayFromFile(Path excelFile, Path outputDir) {
-		try (FileInputStream fis = new FileInputStream(excelFile.toString());
-				ByteArrayOutputStream bos = new ByteArrayOutputStream()) {
+		try (FileInputStream fis = new FileInputStream(excelFile.toString()); ByteArrayOutputStream bos = new ByteArrayOutputStream()) {
 			byte[] buf = new byte[1024];
 			for (int readNum; (readNum = fis.read(buf)) != -1;) {
 				// Writes len bytes from the specified byte array starting at offset off to this byte array output stream
@@ -641,19 +641,9 @@ public class ExcelExporter extends AbstractFormatExporter {
 			// Cell styles for int and float
 			CreationHelper createHelper = wb.getCreationHelper();
 
-			XSSFCellStyle intCellStyle = (XSSFCellStyle) wb.createCellStyle();
-			intCellStyle.setDataFormat(createHelper.createDataFormat().getFormat("0"));
-
-			XSSFCellStyle floatCellStyle = (XSSFCellStyle) wb.createCellStyle();
-			floatCellStyle.setDataFormat(createHelper.createDataFormat().getFormat("#,##0.00"));
-
 			DateFormat dateFormat = new SimpleDateFormat(DATE_FORMAT, getLocale());
-			XSSFCellStyle dateCellStyle = (XSSFCellStyle) wb.createCellStyle();
-			dateCellStyle.setDataFormat(createHelper.createDataFormat().getFormat(DATE_FORMAT));
 
 			SimpleDateFormat timeStampFormat = new SimpleDateFormat(TIMESTAMP_FORMAT, getLocale());
-			XSSFCellStyle tsCellStyle = (XSSFCellStyle) wb.createCellStyle();
-			tsCellStyle.setDataFormat(createHelper.createDataFormat().getFormat(TIMESTAMP_FORMAT));
 
 			// cell styles for table widget
 			JSONObject[] columnStyles = new JSONObject[columnsOrdered.length() + 10];
@@ -690,26 +680,26 @@ public class ExcelExporter extends AbstractFormatExporter {
 						switch (type) {
 						case "string":
 							cell.setCellValue(s);
-							cell.setCellStyle(getStringCellStyle(wb, createHelper, column, columnStyles[c], floatCellStyle, settings, s, rowObject, mapColumns,
-									mapColumnsTypes, variablesMap, mapParameters));
+							cell.setCellStyle(getStringCellStyle(wb, createHelper, column, columnStyles[c], FLOAT_CELL_DEFAULT_FORMAT, settings, s, rowObject,
+									mapColumns, mapColumnsTypes, variablesMap, mapParameters));
 							break;
 						case "int":
 							if (!s.trim().isEmpty()) {
 								cell.setCellValue(Double.parseDouble(s));
-								cell.setCellStyle(getIntCellStyle(wb, createHelper, column, columnStyles[c], intCellStyle, settings, Integer.parseInt(s),
-										rowObject, mapColumns, mapColumnsTypes, variablesMap, mapParameters));
+								cell.setCellStyle(getIntCellStyle(wb, createHelper, column, columnStyles[c], INT_CELL_DEFAULT_FORMAT, settings,
+										Integer.parseInt(s), rowObject, mapColumns, mapColumnsTypes, variablesMap, mapParameters));
 							} else {
-								cell.setCellStyle(getGenericCellStyle(wb, createHelper, column, columnStyles[c], intCellStyle, settings, rowObject, mapColumns,
-										mapColumnsTypes, variablesMap, mapParameters));
+								cell.setCellStyle(getGenericCellStyle(wb, createHelper, column, columnStyles[c], INT_CELL_DEFAULT_FORMAT, settings, rowObject,
+										mapColumns, mapColumnsTypes, variablesMap, mapParameters));
 							}
 							break;
 						case "float":
 							if (!s.trim().isEmpty()) {
 								cell.setCellValue(Double.parseDouble(s));
-								cell.setCellStyle(getDoubleCellStyle(wb, createHelper, column, columnStyles[c], floatCellStyle, settings, Double.parseDouble(s),
-										rowObject, mapColumns, mapColumnsTypes, variablesMap, mapParameters));
+								cell.setCellStyle(getDoubleCellStyle(wb, createHelper, column, columnStyles[c], FLOAT_CELL_DEFAULT_FORMAT, settings,
+										Double.parseDouble(s), rowObject, mapColumns, mapColumnsTypes, variablesMap, mapParameters));
 							} else {
-								cell.setCellStyle(getGenericCellStyle(wb, createHelper, column, columnStyles[c], floatCellStyle, settings, rowObject,
+								cell.setCellStyle(getGenericCellStyle(wb, createHelper, column, columnStyles[c], FLOAT_CELL_DEFAULT_FORMAT, settings, rowObject,
 										mapColumns, mapColumnsTypes, variablesMap, mapParameters));
 							}
 							break;
@@ -718,8 +708,8 @@ public class ExcelExporter extends AbstractFormatExporter {
 								if (!s.trim().isEmpty()) {
 									Date date = dateFormat.parse(s);
 									cell.setCellValue(date);
-									cell.setCellStyle(getDateCellStyle(wb, createHelper, column, columnStyles[c], dateCellStyle, settings, rowObject,
-											mapColumns, mapColumnsTypes, variablesMap, mapParameters));
+									cell.setCellStyle(getDateCellStyle(wb, createHelper, column, columnStyles[c], DATE_FORMAT, settings, rowObject, mapColumns,
+											mapColumnsTypes, variablesMap, mapParameters));
 								}
 							} catch (Exception e) {
 								LOGGER.debug("Date will be exported as string due to error: ", e);
@@ -731,9 +721,8 @@ public class ExcelExporter extends AbstractFormatExporter {
 								if (!s.trim().isEmpty()) {
 									Date ts = timeStampFormat.parse(s);
 									cell.setCellValue(ts);
-									cell.setCellStyle(tsCellStyle);
-									cell.setCellStyle(getDateCellStyle(wb, createHelper, column, columnStyles[c], tsCellStyle, settings, rowObject, mapColumns,
-											mapColumnsTypes, variablesMap, mapParameters));
+									cell.setCellStyle(getDateCellStyle(wb, createHelper, column, columnStyles[c], TIMESTAMP_FORMAT, settings, rowObject,
+											mapColumns, mapColumnsTypes, variablesMap, mapParameters));
 								}
 							} catch (Exception e) {
 								LOGGER.debug("Timestamp will be exported as string due to error: ", e);
@@ -985,16 +974,16 @@ public class ExcelExporter extends AbstractFormatExporter {
 	 * This method avoids cell style objects number to increase by rows number (see https://production.eng.it/jira/browse/KNOWAGE-6692 and
 	 * https://production.eng.it/jira/browse/KNOWAGE-6693)
 	 */
-	@Override
-	protected CellStyle getCellStyleByFormat(Workbook wb, CreationHelper helper, String format) {
-		if (!format2CellStyle.containsKey(format)) {
-			// if cell style does not exist
-			CellStyle cellStyle = wb.createCellStyle();
-			cellStyle.setDataFormat(helper.createDataFormat().getFormat(format));
-			format2CellStyle.put(format, cellStyle);
-		}
-		return format2CellStyle.get(format);
-	}
+//	@Override
+//	protected CellStyle getCellStyleByFormat(Workbook wb, CreationHelper helper, String format) {
+//		if (!format2CellStyle.containsKey(format)) {
+//			// if cell style does not exist
+//			CellStyle cellStyle = wb.createCellStyle();
+//			cellStyle.setDataFormat(helper.createDataFormat().getFormat(format));
+//			format2CellStyle.put(format, cellStyle);
+//		}
+//		return format2CellStyle.get(format);
+//	}
 
 	private Row createHeaderColumnNames(Sheet sheet, Map<String, String> mapGroupsAndColumns, JSONArray columnsOrdered, int startRowOffset) {
 		try {
@@ -1071,7 +1060,7 @@ public class ExcelExporter extends AbstractFormatExporter {
 		BufferedReader b = new BufferedReader(isr);
 		String line = null;
 		LOGGER.warn("Process output");
-		while((line = b.readLine()) != null) {
+		while ((line = b.readLine()) != null) {
 			LOGGER.warn(line);
 		}
 	}
