@@ -152,7 +152,6 @@ public abstract class AbstractNodeJSBasedExporter {
 			case "knowagechartengine":
 				break;
 			case "knowagecockpitengine":
-
 				ObjTemplate objTemplate = document.getActiveTemplate();
 				if (objTemplate == null) {
 					throw new SpagoBIRuntimeException("Unable to get template for document with id [" + documentId + "]");
@@ -327,8 +326,14 @@ public abstract class AbstractNodeJSBasedExporter {
 		String encodedUserId = Base64.encodeBase64String(userId.getBytes(UTF_8));
 		LOGGER.debug("Encoded User Id: " + encodedUserId);
 
-		URI url = UriBuilder.fromUri(requestUrl).replaceQueryParam("outputType_description", "HTML").replaceQueryParam("outputType", "HTML")
-				.replaceQueryParam("export", (Object) null).build();
+		// @formatter:off
+		URI url = UriBuilder.fromUri(requestUrl)
+				.replaceQueryParam("outputType_description", "HTML")
+				.replaceQueryParam("outputType", "HTML")
+				// Strange way to delete a query param but that's it
+				.replaceQueryParam("export")
+				.build();
+		// @formatter:on
 		LOGGER.debug("URL: " + url);
 
 		// Script
