@@ -19,6 +19,7 @@
 package it.eng.knowage.engine.cockpit.api.export;
 
 import java.awt.Color;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -1321,7 +1322,19 @@ public abstract class AbstractFormatExporter {
 					Integer.valueOf(m.group(2)), // g
 					Integer.valueOf(m.group(3))); // b
 		} else {
-			color = Color.decode(input);
+			try {
+				color = Color.decode(input);
+			} catch (NumberFormatException nfe) {
+				// if we can't decode lets try to get it by name
+				try {
+					// try to get a color by name using reflection
+					final Field f = Color.class.getField(input);
+					return (Color) f.get(null);
+				} catch (Exception ce) {
+					// if we can't get any color return default
+					return defaultColor;
+				}
+			}
 		}
 		return color;
 	}
