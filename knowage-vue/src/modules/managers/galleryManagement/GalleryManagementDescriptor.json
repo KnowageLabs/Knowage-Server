@@ -194,11 +194,7 @@
             },
             {
                 "fieldName": "outputType",
-                "validators": [
-                    {
-                        "key": "required"
-                    }
-                ]
+                "validators": []
             }
         ]
     }
