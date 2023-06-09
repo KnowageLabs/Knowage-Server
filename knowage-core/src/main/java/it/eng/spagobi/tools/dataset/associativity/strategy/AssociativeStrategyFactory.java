@@ -8,7 +8,7 @@ import it.eng.spagobi.tools.dataset.graph.associativity.Config;
 
 public class AssociativeStrategyFactory {
 
-	public final static String OUTER_STRATEGY = "OUTER";
+	public static final String OUTER_STRATEGY = "OUTER";
 
 	static private Logger logger = Logger.getLogger(AssociativeStrategyFactory.class);
 

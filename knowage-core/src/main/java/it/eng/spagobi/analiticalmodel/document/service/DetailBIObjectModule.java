@@ -79,17 +79,17 @@ import it.eng.spagobi.community.mapping.SbiCommunity;
 
 public class DetailBIObjectModule extends AbstractHttpModule {
 	static private Logger logger = Logger.getLogger(DetailBIObjectModule.class);
-	public final static String MODULE_PAGE = "DetailBIObjectPage";
-	public final static String NAME_ATTR_OBJECT = "BIObjects";
-	public final static String NAME_ATTR_LIST_OBJ_TYPES = "types";
-	public final static String NAME_ATTR_LIST_ENGINES = "engines";
-	public final static String NAME_ATTR_LIST_STATES = "states";
-	public final static String NAME_ATTR_OBJECT_PAR = "OBJECT_PAR";
-	public final static String NAME_ATTR_LIST_DS = "datasource";
-	public final static String NAME_ATTR_LIST_LANGUAGES = "languages";
-	public final static String NAME_ATTR_LIST_DATASET = "datasets";
-	public final static String LOADING_PARS_DC = "loadingParsDC";
-	public final static String NAME_ATTR_LIST_COMMUNITIES = "community";
+	public static final String MODULE_PAGE = "DetailBIObjectPage";
+	public static final String NAME_ATTR_OBJECT = "BIObjects";
+	public static final String NAME_ATTR_LIST_OBJ_TYPES = "types";
+	public static final String NAME_ATTR_LIST_ENGINES = "engines";
+	public static final String NAME_ATTR_LIST_STATES = "states";
+	public static final String NAME_ATTR_OBJECT_PAR = "OBJECT_PAR";
+	public static final String NAME_ATTR_LIST_DS = "datasource";
+	public static final String NAME_ATTR_LIST_LANGUAGES = "languages";
+	public static final String NAME_ATTR_LIST_DATASET = "datasets";
+	public static final String LOADING_PARS_DC = "loadingParsDC";
+	public static final String NAME_ATTR_LIST_COMMUNITIES = "community";
 
 	// private String actor = null;
 	private EMFErrorHandler errorHandler = null;

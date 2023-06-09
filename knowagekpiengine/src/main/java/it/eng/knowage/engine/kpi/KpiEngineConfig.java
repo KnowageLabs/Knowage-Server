@@ -17,11 +17,6 @@
  */
 package it.eng.knowage.engine.kpi;
 
-import it.eng.knowage.engine.kpi.model.conf.FullKpiConfig;
-import it.eng.spago.base.SourceBean;
-import it.eng.spago.configuration.ConfigSingleton;
-import it.eng.spagobi.services.common.EnginConf;
-
 import java.io.File;
 import java.util.HashMap;
 import java.util.List;
@@ -29,11 +24,18 @@ import java.util.Map;
 
 import org.apache.log4j.Logger;
 
+import it.eng.knowage.engine.kpi.model.conf.FullKpiConfig;
+import it.eng.spago.base.SourceBean;
+import it.eng.spago.configuration.ConfigSingleton;
+import it.eng.spagobi.services.common.EnginConf;
+
 /**
  * @author
  */
 @SuppressWarnings("unchecked")
 public class KpiEngineConfig {
+
+	private static final Logger LOGGER = Logger.getLogger(KpiEngineConfig.class);
 
 	public static final String CACHE_NAME_PREFIX_CONFIG = "SPAGOBI.CACHE.NAMEPREFIX";
 	public static final String CACHE_SPACE_AVAILABLE_CONFIG = "SPAGOBI.CACHE.SPACE_AVAILABLE";
@@ -43,8 +45,6 @@ public class KpiEngineConfig {
 
 	private static EnginConf engineConfig;
 
-	private static final Logger logger = Logger.getLogger(KpiEngineConfig.class);
-
 	// -- singleton pattern --------------------------------------------
 	private static KpiEngineConfig instance;
 
@@ -53,7 +53,7 @@ public class KpiEngineConfig {
 	}
 
 	static {
-		logger.trace("IN");
+		LOGGER.trace("IN");
 
 		engineConfig = EnginConf.getInstance();
 
@@ -73,7 +73,7 @@ public class KpiEngineConfig {
 				chartLibConf.put(type, new FullKpiConfig(type, name, vmPath, vmName, libIniPath, libIniName, enabledInCockpit));
 			}
 		}
-		logger.trace("OUT");
+		LOGGER.trace("OUT");
 	}
 
 	private KpiEngineConfig() {

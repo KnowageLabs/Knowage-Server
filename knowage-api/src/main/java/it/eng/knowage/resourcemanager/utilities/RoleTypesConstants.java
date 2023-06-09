@@ -30,11 +30,11 @@ public final class RoleTypesConstants {
 	 *
 	 */
 
-	public final static String ADMIN = "ADMIN";
-	public final static String MODEL_ADMIN = "MODEL_ADMIN";
-	public final static String DEV_ROLE = "DEV_ROLE";
-	public final static String TEST_ROLE = "TEST_ROLE";
-	public final static String USER = "USER";
+	public static final String ADMIN = "ADMIN";
+	public static final String MODEL_ADMIN = "MODEL_ADMIN";
+	public static final String DEV_ROLE = "DEV_ROLE";
+	public static final String TEST_ROLE = "TEST_ROLE";
+	public static final String USER = "USER";
 
 	public static int count() {
 		return RoleTypesConstants.class.getDeclaredFields().length;

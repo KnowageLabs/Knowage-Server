@@ -51,19 +51,19 @@ public class HierarchiesDAOFileImpl implements IHierarchiesDAO {
 
 	public static final String HIERARCHIES_FROM_META_FILE_NAME = "hierarchies.xml";
 
-	public final static String ROOT_TAG = "Dimensions";
+	public static final String ROOT_TAG = "Dimensions";
 
-	public final static String DIMENSION_TAG = "Dimension";
-	public final static String HIERARCHIES_TAG = "Hierarchies";
-	public final static String HIERARCHY_TAG = "Hierarchy";
-	public final static String LEVEL_TAG = "Level";
+	public static final String DIMENSION_TAG = "Dimension";
+	public static final String HIERARCHIES_TAG = "Hierarchies";
+	public static final String HIERARCHY_TAG = "Hierarchy";
+	public static final String LEVEL_TAG = "Level";
 
-	public final static String FIELD_TAG = "CFIELD";
-	public final static String FIELD_TAG_ENTIY_ATTR = "entity";
-	public final static String FIELD_TAG_NAME_ATTR = "name";
-	public final static String FIELD_TAG_TYPE_ATTR = "type";
-	public final static String FIELD_TAG_NATURE_ATTR = "nature";
-	public final static String FIELD_TAG_IN_LINE_ATTR = "isInLine";
+	public static final String FIELD_TAG = "CFIELD";
+	public static final String FIELD_TAG_ENTIY_ATTR = "entity";
+	public static final String FIELD_TAG_NAME_ATTR = "name";
+	public static final String FIELD_TAG_TYPE_ATTR = "type";
+	public static final String FIELD_TAG_NATURE_ATTR = "nature";
+	public static final String FIELD_TAG_IN_LINE_ATTR = "isInLine";
 
 	public static transient Logger logger = Logger.getLogger(HierarchiesDAOFileImpl.class);
 

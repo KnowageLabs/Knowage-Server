@@ -47,7 +47,7 @@ public class HMACFilter implements Filter {
 
 	private String key;
 
-	public final static long MAX_TIME_DELTA_DEFAULT_MS = 30000; // 30 seconds
+	public static final long MAX_TIME_DELTA_DEFAULT_MS = 30000; // 30 seconds
 
 	private static final String MAX_DELTA_CONFIG_NAME = "maxDeltaMsToken";
 

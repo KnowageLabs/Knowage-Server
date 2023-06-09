@@ -66,18 +66,18 @@ public class DetailMenuModule extends AbstractHttpModule {
 	static private Logger logger = Logger.getLogger(DetailMenuModule.class);
 
 	private String modality = "";
-	public final static String MODULE_PAGE = "DetailMenuPage";
-	public final static String MENU_OBJ = "MENU_OBJ";
-	public final static String MENU_ID = "MENU_ID";
-	public final static String PARENT_ID = "PARENT_ID";
-	public final static String MENU = "MENU";
-	public final static String ROLES = "ROLES";
-	public final static String LOOKUP = "lookupLoopback";
+	public static final String MODULE_PAGE = "DetailMenuPage";
+	public static final String MENU_OBJ = "MENU_OBJ";
+	public static final String MENU_ID = "MENU_ID";
+	public static final String PARENT_ID = "PARENT_ID";
+	public static final String MENU = "MENU";
+	public static final String ROLES = "ROLES";
+	public static final String LOOKUP = "lookupLoopback";
 	public static final String messageBundle = "MessageFiles.messages";
 
-	public final static String PATH = "PATH";
-	public final static String EXT_APP_URL = "EXT_APP_URL";
-	public final static String PATH_THEME = "PATH_THEME";
+	public static final String PATH = "PATH";
+	public static final String EXT_APP_URL = "EXT_APP_URL";
+	public static final String PATH_THEME = "PATH_THEME";
 	private String typeFunct = null;
 	EMFErrorHandler errorHandler = null;
 

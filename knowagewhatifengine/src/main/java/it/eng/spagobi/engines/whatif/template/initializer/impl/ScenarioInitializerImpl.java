@@ -41,7 +41,7 @@ public class ScenarioInitializerImpl extends AbstractInitializer {
 	public static final String WRITEBACK_TAG = "WRITEBACK";
 	public static final String EDIT_CUBE_ATTRIBUTE = "editCube";
 	public static final String VARIABLE_TAG = "VARIABLE";
-	public final static String MEASURE_TAG = "MEASURE";
+	public static final String MEASURE_TAG = "MEASURE";
 
 	@Override
 	public void init(SourceBean template, WhatIfTemplate toReturn) {

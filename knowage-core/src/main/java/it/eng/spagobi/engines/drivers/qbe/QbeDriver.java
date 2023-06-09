@@ -277,8 +277,8 @@ public class QbeDriver extends AbstractEngineDriver implements IEngineDriver {
 		throw new InvalidOperationRequest();
 	}
 
-	public final static String PARAM_SERVICE_NAME = "ACTION_NAME";
-	public final static String PARAM_NEW_SESSION = "NEW_SESSION";
+	public static final String PARAM_SERVICE_NAME = "ACTION_NAME";
+	public static final String PARAM_NEW_SESSION = "NEW_SESSION";
 
 	private Map applyService(Map parameters, BIObject biObject) {
 		ObjTemplate template;

@@ -73,8 +73,8 @@ public class DatasetMetadataParser {
 	public static final String VALUE = "value";
 	public static final String NAME_P = "name";
 
-	public final static String CURRENT_VERSION = "1";
-	public final static String ATTRIBUTE_VERSION = "version";
+	public static final String CURRENT_VERSION = "1";
+	public static final String ATTRIBUTE_VERSION = "version";
 
 	// Previous version of metadataToXml left only for backup
 	@Deprecated

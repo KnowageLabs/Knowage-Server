@@ -51,7 +51,7 @@ public class DummySSLSocketFactory extends SSLSocketFactory {
 	final String _SSL_STORE_FORMAT = "JKS";
 
 	/** tipo di SSL utilizzato: TLS (TLS 1.0) - da modificare in SSLv3 (SSL 3.0) per backward compatibility */
-	public final static String _SSL_TYPE = "TLS";
+	public static final String _SSL_TYPE = "TLS";
 
 	public DummySSLSocketFactory() {
 		try {

@@ -30,8 +30,8 @@ import org.json.JSONObject;
  */
 public class Version1QbeEngineAnalysisStateLoader extends AbstractQbeEngineAnalysisStateLoader{
 
-	public final static String FROM_VERSION = "1";
-    public final static String TO_VERSION = "2";
+	public static final String FROM_VERSION = "1";
+    public static final String TO_VERSION = "2";
     
 	/** Logger component. */
     private static final Logger logger = Logger.getLogger(Version1QbeEngineAnalysisStateLoader.class);

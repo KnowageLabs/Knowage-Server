@@ -25,8 +25,8 @@ package it.eng.knowage.export.pdf;
 
 public class ExportDetails {
 
-	public final static ExportDetails NONE = new ExportDetails(null, null);
-	public final static ExportDetails NUMBERING_ONLY = new ExportDetails(null, PageNumbering.ALL);
+	public static final ExportDetails NONE = new ExportDetails(null, null);
+	public static final ExportDetails NUMBERING_ONLY = new ExportDetails(null, PageNumbering.ALL);
 
 	private final FrontpageDetails frontpageDetails;
 	private final PageNumbering pageNumbering;

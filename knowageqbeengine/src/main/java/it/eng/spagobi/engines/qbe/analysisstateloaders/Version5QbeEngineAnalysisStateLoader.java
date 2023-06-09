@@ -29,8 +29,8 @@ import org.json.JSONObject;
  */
 public class Version5QbeEngineAnalysisStateLoader extends AbstractQbeEngineAnalysisStateLoader{
 
-	public final static String FROM_VERSION = "5";
-    public final static String TO_VERSION = "6";
+	public static final String FROM_VERSION = "5";
+    public static final String TO_VERSION = "6";
     
 	/** Logger component. */
     private static final Logger logger = Logger.getLogger(Version5QbeEngineAnalysisStateLoader.class);

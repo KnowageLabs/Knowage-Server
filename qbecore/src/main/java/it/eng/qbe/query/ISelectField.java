@@ -21,9 +21,9 @@ package it.eng.qbe.query;
  * @author Andrea Gioia (andrea.gioia@eng.it)
  */
 public interface ISelectField extends IQueryField {
-	public final static String SIMPLE_FIELD = "datamartField";
-	public final static String CALCULATED_FIELD = "calculated.field";
-	public final static String IN_LINE_CALCULATED_FIELD = "inline.calculated.field";
+	public static final String SIMPLE_FIELD = "datamartField";
+	public static final String CALCULATED_FIELD = "calculated.field";
+	public static final String IN_LINE_CALCULATED_FIELD = "inline.calculated.field";
 
 	void setAlias(String alias);
 

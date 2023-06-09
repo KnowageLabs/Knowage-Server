@@ -35,7 +35,7 @@ import org.joda.time.DateTimeZone;
 
 public class PersistedTableHelper {
 
-	private static final Logger logger = Logger.getLogger(PersistedTableHelper.class);
+	private static final Logger LOGGER = Logger.getLogger(PersistedTableHelper.class);
 
 	public static void addField(PreparedStatement insertStatement, int fieldIndex, Object fieldValue, String fieldMetaName, String fieldMetaTypeName,
 			boolean isfieldMetaFieldTypeMeasure, Map<String, Integer> columnSizes) {
@@ -45,7 +45,7 @@ public class PersistedTableHelper {
 			} else if (isfieldMetaFieldTypeMeasure && fieldMetaTypeName.contains("String")) {
 				// in case of a measure with String type, convert it into a Double
 				try {
-					logger.debug("Column type is string but the field is measure: converting it into a double");
+					LOGGER.debug("Column type is string but the field is measure: converting it into a double");
 					// only for primitive type is necessary to use setNull method if value is null
 					String fieldValueString = (String) fieldValue;
 					if (fieldValueString == null || "".equals(fieldValueString.trim())) {
@@ -73,14 +73,14 @@ public class PersistedTableHelper {
 							t);
 				}
 			} else if (fieldMetaTypeName.contains("String")) {
-				Integer lenValue = (fieldValue == null) ? new Integer("0") : new Integer(fieldValue.toString().length());
-				Integer prevValue = columnSizes.get(fieldMetaName) == null ? new Integer("0") : columnSizes.get(fieldMetaName);
+				Integer lenValue = (fieldValue == null) ? new Integer("0") : fieldValue.toString().length();
+				Integer prevValue = columnSizes.get(fieldMetaName) == null ? 0 : columnSizes.get(fieldMetaName);
 				if (lenValue > prevValue) {
 					columnSizes.remove(fieldMetaName);
 					columnSizes.put(fieldMetaName, lenValue);
 				}
 				if (!(fieldValue instanceof String)) {
-					logger.debug("An unexpected error occured while extimating field [" + fieldMetaName + "] memory size whose type is equal to ["
+					LOGGER.debug("An unexpected error occured while extimating field [" + fieldMetaName + "] memory size whose type is equal to ["
 							+ fieldMetaTypeName + "]. Field forced to String");
 					insertStatement.setString(fieldIndex + 1, fieldValue.toString());
 				} else {
@@ -135,7 +135,7 @@ public class PersistedTableHelper {
 					} else if (fieldValue instanceof Short) {
 						insertStatement.setShort(fieldIndex + 1, (Short) fieldValue);
 					} else {
-						logger.debug("Cannot setting the column " + fieldMetaName + " with type " + fieldMetaTypeName);
+						LOGGER.debug("Cannot setting the column " + fieldMetaName + " with type " + fieldMetaTypeName);
 					}
 				}
 			} else if (fieldMetaTypeName.contains("BigInteger")) {
@@ -161,8 +161,7 @@ public class PersistedTableHelper {
 					try {
 						insertStatement.setDouble(fieldIndex + 1, (Double) fieldValue);
 					} catch (ClassCastException e) {
-						logger.debug("the type of field [" + fieldValue + "] is not a double, I'm going to transform it in double ");
-						;
+						LOGGER.debug("the type of field [" + fieldValue + "] is not a double, I'm going to transform it in double ");
 						insertStatement.setDouble(fieldIndex + 1, new Double(fieldValue + ""));
 					}
 				}
@@ -201,7 +200,7 @@ public class PersistedTableHelper {
 				if (fieldValue.getClass().toString().contains("oracle.sql.BLOB")) {
 					insertStatement.setBytes(fieldIndex + 1, ((oracle.sql.BLOB) fieldValue).getBytes());
 				} else {
-					logger.debug("Cannot setting the column " + fieldMetaName + " with type " + fieldMetaTypeName);
+					LOGGER.debug("Cannot setting the column " + fieldMetaName + " with type " + fieldMetaTypeName);
 				}
 			} else if (fieldMetaTypeName.contains("[C")) { // CLOB
 				insertStatement.setBytes(fieldIndex + 1, (byte[]) fieldValue);
@@ -221,23 +220,27 @@ public class PersistedTableHelper {
 					}
 					insertStatement.setString(fieldIndex + 1, sb.toString());
 				} else {
-					logger.debug("Cannot setting the column " + fieldMetaName + " with type " + fieldMetaTypeName);
+					LOGGER.debug("Cannot setting the column " + fieldMetaName + " with type " + fieldMetaTypeName);
 				}
 			} else if (fieldMetaTypeName.contains("JSONArray") || fieldMetaTypeName.contains("JSONObject") || fieldMetaTypeName.contains("Map")
 					|| fieldMetaTypeName.contains("List")) { // JSONObject and JSONArray
 				insertStatement.setString(fieldIndex + 1, fieldValue.toString());
 			} else {
-				logger.error("Cannot setting the column " + fieldMetaName + " with type " + fieldMetaTypeName);
+				LOGGER.error("Cannot setting the column " + fieldMetaName + " with type " + fieldMetaTypeName);
 				insertStatement.setObject(fieldIndex + 1, fieldValue.toString());
 			}
 		} catch (Throwable t) {
 			if (fieldValue == null) {
-				logger.error("FieldValue is null", t);
+				LOGGER.error("FieldValue is null", t);
 			} else {
-				logger.error("FieldValue [" + fieldValue + "] is instance of class [" + fieldValue.getClass().getName() + "]", t);
+				LOGGER.error("FieldValue [" + fieldValue + "] is instance of class [" + fieldValue.getClass().getName() + "]", t);
 			}
 			throw new RuntimeException("An unexpected error occured while adding to statement value [" + fieldValue + "] of field [" + fieldMetaName
 					+ "] whose type is equal to [" + fieldMetaTypeName + "]", t);
 		}
+	}
+
+	private PersistedTableHelper() {
+
 	}
 }

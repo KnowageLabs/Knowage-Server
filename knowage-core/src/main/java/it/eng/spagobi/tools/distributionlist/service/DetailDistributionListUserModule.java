@@ -47,7 +47,7 @@ import org.apache.log4j.Logger;
 public class DetailDistributionListUserModule extends AbstractHttpModule {
 	
 	static private Logger logger = Logger.getLogger(DetailDistributionListUserModule.class);
-	public final static String NAME_ATTR_LIST_DIALECTS = "dialects";
+	public static final String NAME_ATTR_LIST_DIALECTS = "dialects";
 
 	private String modalita = "";
 	

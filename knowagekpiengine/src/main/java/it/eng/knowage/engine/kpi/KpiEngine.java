@@ -24,12 +24,12 @@ import org.apache.log4j.Logger;
 
 public class KpiEngine {
 
+	/** Logger component. */
+	private static final Logger LOGGER = Logger.getLogger(KpiEngine.class);
+
 	private static boolean enabled;
 	private static Date creationDate;
 	private static KpiEngineConfig engineConfig;
-
-	/** Logger component. */
-	private static final Logger logger = Logger.getLogger(KpiEngine.class);
 
 	// init engine
 	static {
@@ -54,9 +54,9 @@ public class KpiEngine {
 	 */
 	public static KpiEngineInstance createInstance(String template, Map<?, ?> env) {
 		KpiEngineInstance fullKpiEngineInstance = null;
-		logger.debug("IN");
+		LOGGER.debug("IN");
 		fullKpiEngineInstance = new KpiEngineInstance(template, env);
-		logger.debug("OUT");
+		LOGGER.debug("OUT");
 		return fullKpiEngineInstance;
 	}
 
@@ -74,5 +74,9 @@ public class KpiEngine {
 
 	public static void setCreationDate(Date creationDate) {
 		KpiEngine.creationDate = creationDate;
+	}
+
+	private KpiEngine() {
+
 	}
 }

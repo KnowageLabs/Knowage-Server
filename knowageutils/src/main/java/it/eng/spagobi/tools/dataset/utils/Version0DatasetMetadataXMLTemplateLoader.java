@@ -31,8 +31,8 @@ import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
 public class Version0DatasetMetadataXMLTemplateLoader extends
 		AbstractDatasetMetadataXMLTemplateLoader {
 
-	public final static String FROM_VERSION = "0";
-    public final static String TO_VERSION = "1";
+	public static final String FROM_VERSION = "0";
+    public static final String TO_VERSION = "1";
     
 	public static final String META = "META"; 
 	public static final String DATASET = "DATASET"; 

@@ -42,7 +42,7 @@ import org.junit.Test;
 
 public class HMACFilterTest {
 
-	public final static String key = "ki98";
+	public static final String key = "ki98";
 
 	private static Server server;
 

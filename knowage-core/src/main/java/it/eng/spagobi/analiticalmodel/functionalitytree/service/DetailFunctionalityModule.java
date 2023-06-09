@@ -63,9 +63,9 @@ import java.util.Vector;
 public class DetailFunctionalityModule extends AbstractHttpModule{
 
 	private String modality = "";
-	public final static String MODULE_PAGE = "DetailFunctionalityPage";
-	public final static String FUNCTIONALITY_OBJ = "FUNCTIONALITY_OBJ";
-	public final static String PATH = "PATH";
+	public static final String MODULE_PAGE = "DetailFunctionalityPage";
+	public static final String FUNCTIONALITY_OBJ = "FUNCTIONALITY_OBJ";
+	public static final String PATH = "PATH";
 	private String typeFunct = null;
 	private IEngUserProfile profile;
 	SessionContainer session = null;

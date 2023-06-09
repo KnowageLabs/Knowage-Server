@@ -67,7 +67,7 @@ import org.apache.commons.validator.GenericValidator;
 public class DetailParameterModule extends AbstractHttpModule {
 
 	private String modalita = "";
-	public final static String MODULE_PAGE = "DetailParameterPage";
+	public static final String MODULE_PAGE = "DetailParameterPage";
 
 	EMFErrorHandler errorHandler = null;
 

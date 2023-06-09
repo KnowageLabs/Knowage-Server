@@ -32,10 +32,10 @@ import it.eng.spagobi.tools.dataset.bo.IDataSet;
 
 public class DataSetEvent {
 	
-	public final static int DELETE=0;
-	public final static int INSERT=1;
-	public final static int CHANGE=2;
-	public final static int RESTORE_OLD_VERSION=3;
+	public static final int DELETE=0;
+	public static final int INSERT=1;
+	public static final int CHANGE=2;
+	public static final int RESTORE_OLD_VERSION=3;
 	
 	/**
 	 * List of datasets involved in the event

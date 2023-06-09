@@ -63,24 +63,24 @@ public class CalculatedFieldsDAOFileImpl implements ICalculatedFieldsDAO {
 	public static final String CFIELDS_FROM_META_FILE_NAME = "cfields_meta.xml";
 	public static final String CFIELDS_FROM_USER_FILE_NAME = "cfields_user.xml";
 
-	public final static String ROOT_TAG = "CFIELDS";
+	public static final String ROOT_TAG = "CFIELDS";
 
-	public final static String FIELD_TAG = "CFIELD";
-	public final static String FIELD_TAG_ENTIY_ATTR = "entity";
-	public final static String FIELD_TAG_NAME_ATTR = "name";
-	public final static String FIELD_TAG_TYPE_ATTR = "type";
-	public final static String FIELD_TAG_NATURE_ATTR = "nature";
-	public final static String FIELD_TAG_IN_LINE_ATTR = "isInLine";
+	public static final String FIELD_TAG = "CFIELD";
+	public static final String FIELD_TAG_ENTIY_ATTR = "entity";
+	public static final String FIELD_TAG_NAME_ATTR = "name";
+	public static final String FIELD_TAG_TYPE_ATTR = "type";
+	public static final String FIELD_TAG_NATURE_ATTR = "nature";
+	public static final String FIELD_TAG_IN_LINE_ATTR = "isInLine";
 
-	public final static String EXPRESSION_TAG = "EXPRESSION";
-	public final static String EXPRESSION_SIMPLE_TAG = "EXPRESSION_SIMPLE";
-	public final static String SLOTS_TAG = "SLOTS";
-	public final static String SLOT_TAG = "SLOT";
+	public static final String EXPRESSION_TAG = "EXPRESSION";
+	public static final String EXPRESSION_SIMPLE_TAG = "EXPRESSION_SIMPLE";
+	public static final String SLOTS_TAG = "SLOTS";
+	public static final String SLOT_TAG = "SLOT";
 
-	public final static String VALUESET_TAG = "VALUESET";
-	public final static String FROM_TAG = "FROM";
-	public final static String TO_TAG = "TO";
-	public final static String VALUE_TAG = "VALUE";
+	public static final String VALUESET_TAG = "VALUESET";
+	public static final String FROM_TAG = "FROM";
+	public static final String TO_TAG = "TO";
+	public static final String VALUE_TAG = "VALUE";
 
 	public static transient Logger logger = Logger.getLogger(CalculatedFieldsDAOFileImpl.class);
 

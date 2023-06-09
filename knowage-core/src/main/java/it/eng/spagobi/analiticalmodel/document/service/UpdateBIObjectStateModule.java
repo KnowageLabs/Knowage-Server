@@ -37,7 +37,7 @@ import org.apache.log4j.Logger;
 public class UpdateBIObjectStateModule extends AbstractModule {
 	
 	static private Logger logger = Logger.getLogger(UpdateBIObjectStateModule.class);
-	public final static String MODULE_PAGE = "UpdateBIObjectStateModule";
+	public static final String MODULE_PAGE = "UpdateBIObjectStateModule";
 	
 	/* (non-Javadoc)
 	 * @see it.eng.spago.dispatching.service.ServiceIFace#service(it.eng.spago.base.SourceBean, it.eng.spago.base.SourceBean)

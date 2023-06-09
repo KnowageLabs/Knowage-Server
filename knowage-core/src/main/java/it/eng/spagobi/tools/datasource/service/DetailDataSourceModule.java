@@ -55,7 +55,7 @@ public class DetailDataSourceModule extends AbstractHttpModule {
 	static private Logger logger = Logger.getLogger(DetailDataSourceModule.class);
 	public static final String MOD_SAVE = "SAVE";
 	public static final String MOD_SAVEBACK = "SAVEBACK";
-	public final static String NAME_ATTR_LIST_DIALECTS = "dialects";
+	public static final String NAME_ATTR_LIST_DIALECTS = "dialects";
 
 	private String modalita = "";
 	private IEngUserProfile profile;

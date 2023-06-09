@@ -47,20 +47,20 @@ public class InLineFunctionsDAOFileImpl implements IInLineFunctionsDAO {
 	public static transient Logger logger = Logger.getLogger(ViewsDAOFileImpl.class);
 
 	public static final String FUNCTIONS_FILE_NAME = "functions.xml";
-	public final static String ROOT_TAG = "INLINE_FUNCTIONS";
-	public final static String FIELD_TAG = "FUNCTION";
-	public final static String FIELD_TAG_GROUP_ATTR = "group";
-	public final static String FIELD_TAG_NAME_ATTR = "name";
-	public final static String FIELD_TAG_DESC_ATTR = "desc";
-	public final static String FIELD_TAG_NPARAMS_ATTR = "nParams";
-	public final static String FIELD_TAG_TYPE_ATTR = "type";
-	public final static String FIELD_TAG_MYSQL_DIALECT = "MySQLInnoDBDialect";
-	public final static String FIELD_TAG_ORACLE_DIALECT = "OracleDialect";
-	public final static String FIELD_TAG_INGRES_DIALECT = "IngresDialect";
-	public final static String FIELD_TAG_POSTGRES_DIALECT = "PostgreSQLDialect";
-	public final static String FIELD_TAG_HQL_DIALECT = "HSQLDialect";
-	public final static String FIELD_TAG_SQLSERVER_DIALECT = "SQLServerDialect";
-	public final static String FIELD_TAG_CODE_ATTR = "code";
+	public static final String ROOT_TAG = "INLINE_FUNCTIONS";
+	public static final String FIELD_TAG = "FUNCTION";
+	public static final String FIELD_TAG_GROUP_ATTR = "group";
+	public static final String FIELD_TAG_NAME_ATTR = "name";
+	public static final String FIELD_TAG_DESC_ATTR = "desc";
+	public static final String FIELD_TAG_NPARAMS_ATTR = "nParams";
+	public static final String FIELD_TAG_TYPE_ATTR = "type";
+	public static final String FIELD_TAG_MYSQL_DIALECT = "MySQLInnoDBDialect";
+	public static final String FIELD_TAG_ORACLE_DIALECT = "OracleDialect";
+	public static final String FIELD_TAG_INGRES_DIALECT = "IngresDialect";
+	public static final String FIELD_TAG_POSTGRES_DIALECT = "PostgreSQLDialect";
+	public static final String FIELD_TAG_HQL_DIALECT = "HSQLDialect";
+	public static final String FIELD_TAG_SQLSERVER_DIALECT = "SQLServerDialect";
+	public static final String FIELD_TAG_CODE_ATTR = "code";
 
 	// =============================================================================
 	// LOAD
