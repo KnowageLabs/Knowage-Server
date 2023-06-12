@@ -42,6 +42,9 @@ public class RegistryEngineStartAction extends AbstractEngineStartAction {
 
 	private static final long serialVersionUID = 4126093829928786409L;
 
+	/** Logger component. */
+	private static final Logger LOGGER = Logger.getLogger(RegistryEngineStartAction.class);
+
 	// INPUT PARAMETERS
 
 	// OUTPUT PARAMETERS
@@ -52,9 +55,6 @@ public class RegistryEngineStartAction extends AbstractEngineStartAction {
 	// SESSION PARAMETRES
 	public static final String ENGINE_INSTANCE = EngineConstants.ENGINE_INSTANCE;
 
-	/** Logger component. */
-	private static final Logger logger = Logger.getLogger(RegistryEngineStartAction.class);
-
 	public static final String ENGINE_NAME = "SpagoBIQbeEngine";
 
 	@Override
@@ -62,25 +62,25 @@ public class RegistryEngineStartAction extends AbstractEngineStartAction {
 		QbeEngineInstance qbeEngineInstance = null;
 		Locale locale;
 
-		logger.debug("IN");
+		LOGGER.debug("IN");
 
 		try {
 			setEngineName(ENGINE_NAME);
 			super.service(serviceRequest, serviceResponse);
 
-			logger.debug("User Id: " + getUserId());
-			logger.debug("Audit Id: " + getAuditId());
-			logger.debug("Document Id: " + getDocumentId());
-			logger.debug("Template: " + getTemplateAsSourceBean());
+			LOGGER.debug("User Id: " + getUserId());
+			LOGGER.debug("Audit Id: " + getAuditId());
+			LOGGER.debug("Document Id: " + getDocumentId());
+			LOGGER.debug("Template: " + getTemplateAsSourceBean());
 
 			if (getAuditServiceProxy() != null) {
-				logger.debug("Audit enabled: [TRUE]");
+				LOGGER.debug("Audit enabled: [TRUE]");
 				getAuditServiceProxy().notifyServiceStartEvent();
 			} else {
-				logger.debug("Audit enabled: [FALSE]");
+				LOGGER.debug("Audit enabled: [FALSE]");
 			}
 
-			logger.debug("Creating engine instance ...");
+			LOGGER.debug("Creating engine instance ...");
 			try {
 				qbeEngineInstance = QbeEngine.createInstance(getTemplateAsSourceBean(), getEnv());
 			} catch (Throwable t) {
@@ -102,7 +102,7 @@ public class RegistryEngineStartAction extends AbstractEngineStartAction {
 
 				throw serviceException;
 			}
-			logger.debug("Engine instance succesfully created");
+			LOGGER.debug("Engine instance succesfully created");
 
 			RegistryConfiguration registryConf = qbeEngineInstance.getRegistryConfiguration();
 			Assert.assertNotNull(registryConf, "Registry configuration not found, check document's template");
@@ -138,7 +138,7 @@ public class RegistryEngineStartAction extends AbstractEngineStartAction {
 			throw serviceException;
 
 		} finally {
-			logger.debug("OUT");
+			LOGGER.debug("OUT");
 		}
 
 	}

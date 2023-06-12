@@ -33,6 +33,7 @@ import it.eng.qbe.logger.QueryAuditLogger;
 import it.eng.qbe.query.HavingField;
 import it.eng.qbe.query.ISelectField;
 import it.eng.qbe.query.Query;
+import it.eng.qbe.query.SimpleSelectField;
 import it.eng.qbe.query.WhereField;
 import it.eng.qbe.query.serializer.SerializerFactory;
 import it.eng.qbe.statement.IStatement;
@@ -58,6 +59,10 @@ import it.eng.spagobi.utilities.sql.SqlUtils;
  */
 public class ExecuteDetailQueryAction extends AbstractQbeEngineAction {
 
+	/** Logger component. */
+	private static final Logger LOGGER = Logger.getLogger(ExecuteDetailQueryAction.class);
+	private static final Logger AUDIT_LOGGER = QueryAuditLogger.LOGGER;
+
 	// INPUT PARAMETERS
 	public static final String LIMIT = "limit";
 	public static final String START = "start";
@@ -68,14 +73,9 @@ public class ExecuteDetailQueryAction extends AbstractQbeEngineAction {
 
 	public static final String LAST_DETAIL_QUERY = "LAST_DETAIL_QUERY";
 
-	/** Logger component. */
-	private static final Logger logger = Logger.getLogger(ExecuteDetailQueryAction.class);
-	private static final Logger auditlogger = QueryAuditLogger.LOGGER;
-
 	@Override
 	public void service(SourceBean request, SourceBean response) {
 
-		String queryId;
 		Integer limit;
 		Integer start;
 		JSONArray filters;
@@ -94,7 +94,7 @@ public class ExecuteDetailQueryAction extends AbstractQbeEngineAction {
 		Monitor totalTimeMonitor = null;
 		Monitor errorHitsMonitor;
 
-		logger.debug("IN");
+		LOGGER.debug("IN");
 
 		try {
 
@@ -103,19 +103,19 @@ public class ExecuteDetailQueryAction extends AbstractQbeEngineAction {
 			totalTimeMonitor = MonitorFactory.start("QbeEngine.executeQueryAction.totalTime");
 
 			start = getAttributeAsInteger(START);
-			logger.debug("Parameter [" + START + "] is equals to [" + start + "]");
+			LOGGER.debug("Parameter [" + START + "] is equals to [" + start + "]");
 
 			limit = getAttributeAsInteger(LIMIT);
-			logger.debug("Parameter [" + LIMIT + "] is equals to [" + limit + "]");
+			LOGGER.debug("Parameter [" + LIMIT + "] is equals to [" + limit + "]");
 
 			filters = getAttributeAsJSONArray(FILTERS);
-			logger.debug("Parameter [" + FILTERS + "] is equals to [" + filters + "]");
+			LOGGER.debug("Parameter [" + FILTERS + "] is equals to [" + filters + "]");
 			Assert.assertNotNull(filters, "Parameter [" + FILTERS + "] cannot be null");
 
 			maxSize = QbeEngineConfig.getInstance().getResultLimit();
-			logger.debug("Configuration setting  [" + "QBE.QBE-SQL-RESULT-LIMIT.value" + "] is equals to [" + (maxSize != null ? maxSize : "none") + "]");
+			LOGGER.debug("Configuration setting  [" + "QBE.QBE-SQL-RESULT-LIMIT.value" + "] is equals to [" + (maxSize != null ? maxSize : "none") + "]");
 			isMaxResultsLimitBlocking = QbeEngineConfig.getInstance().isMaxResultLimitBlocking();
-			logger.debug("Configuration setting  [" + "QBE.QBE-SQL-RESULT-LIMIT.isBlocking" + "] is equals to [" + isMaxResultsLimitBlocking + "]");
+			LOGGER.debug("Configuration setting  [" + "QBE.QBE-SQL-RESULT-LIMIT.isBlocking" + "] is equals to [" + isMaxResultsLimitBlocking + "]");
 
 			Assert.assertNotNull(getEngineInstance(), "It's not possible to execute " + this.getActionName()
 					+ " service before having properly created an instance of EngineInstance class");
@@ -124,25 +124,25 @@ public class ExecuteDetailQueryAction extends AbstractQbeEngineAction {
 			query = getEngineInstance().getQueryCatalogue().getFirstQuery();
 			// ... query transformation goes here
 
-			logger.debug("Making a deep copy of the original query...");
+			LOGGER.debug("Making a deep copy of the original query...");
 			String store = ((JSONObject) SerializerFactory.getSerializer("application/json").serialize(query, getEngineInstance().getDataSource(), getLocale()))
 					.toString();
 			Query copy = SerializerFactory.getDeserializer("application/json").deserializeQuery(store, getEngineInstance().getDataSource());
-			logger.debug("Deep copy of the original query produced");
+			LOGGER.debug("Deep copy of the original query produced");
 
 			String jsonEncodedFormState = getAttributeAsString(FORM_STATE);
-			logger.debug("Form state retrieved as a string: " + jsonEncodedFormState);
+			LOGGER.debug("Form state retrieved as a string: " + jsonEncodedFormState);
 			JSONObject formState = new JSONObject(jsonEncodedFormState);
-			logger.debug("Form state converted into a valid JSONObject: " + formState.toString(3));
+			LOGGER.debug("Form state converted into a valid JSONObject: " + formState.toString(3));
 			JSONObject template = getEngineInstance().getFormState().getConf();
-			logger.debug("Form viewer template retrieved.");
+			LOGGER.debug("Form viewer template retrieved.");
 
 			FormViewerQueryTransformer formViewerQueryTransformer = new FormViewerQueryTransformer();
 			formViewerQueryTransformer.setFormState(formState);
 			formViewerQueryTransformer.setTemplate(template);
-			logger.debug("Applying Form Viewer query transformation...");
+			LOGGER.debug("Applying Form Viewer query transformation...");
 			query = formViewerQueryTransformer.execTransformation(copy);
-			logger.debug("Applying Form Viewer query transformation...");
+			LOGGER.debug("Applying Form Viewer query transformation...");
 
 			updatePromptableFiltersValue(query);
 			getEngineInstance().setActiveQuery(query);
@@ -153,7 +153,7 @@ public class ExecuteDetailQueryAction extends AbstractQbeEngineAction {
 
 			String jpaQueryStr = statement.getQueryString();
 			String sqlQuery = statement.getSqlQueryString();
-			logger.debug("Executable query (HQL/JPQL): [" + jpaQueryStr + "]");
+			LOGGER.debug("Executable query (HQL/JPQL): [" + jpaQueryStr + "]");
 			// logger.debug("Executable query (SQL): [" + sqlQuery + "]");
 			UserProfile userProfile = (UserProfile) getEnv().get(EngineConstants.ENV_USER_PROFILE);
 			// auditlogger.info("[" + userProfile.getUserId() + "]:: HQL: " + hqlQuery);
@@ -163,9 +163,8 @@ public class ExecuteDetailQueryAction extends AbstractQbeEngineAction {
 			FilterQueryTransformer transformer = new FilterQueryTransformer();
 			List selectFields = SqlUtils.getSelectFields(sqlQuery);
 
-			List queryFields = query.getSimpleSelectFields(true);
+			List<SimpleSelectField> queryFields = query.getSimpleSelectFields(true);
 			for (int i = 0; i < queryFields.size(); i++) {
-				ISelectField queryField = (ISelectField) queryFields.get(i);
 				String[] f = (String[]) selectFields.get(i);
 				transformer.addColumn(f[1] != null ? f[1] : f[0], f[1] != null ? f[1] : f[0]);
 			}
@@ -195,8 +194,8 @@ public class ExecuteDetailQueryAction extends AbstractQbeEngineAction {
 			// STEP 4: execute the query
 
 			try {
-				logger.debug("Executing query: [" + sqlQuery + "]");
-				auditlogger.info("[" + userProfile.getUserId() + "]:: SQL: " + sqlQuery);
+				LOGGER.debug("Executing query: [" + sqlQuery + "]");
+				AUDIT_LOGGER.info("[" + userProfile.getUserId() + "]:: SQL: " + sqlQuery);
 
 				dataSet = new JDBCDataSet();
 				IDataSource dataSource = (IDataSource) getDataSource().getConfiguration().loadDataSourceProperties().get("datasource");
@@ -206,11 +205,11 @@ public class ExecuteDetailQueryAction extends AbstractQbeEngineAction {
 				dataStore = dataSet.getDataStore();
 				IMetaData dataStoreMetadata = dataStore.getMetaData();
 				for (int i = 0; i < dataStoreMetadata.getFieldCount(); i++) {
-					ISelectField queryField = (ISelectField) queryFields.get(i);
+					ISelectField queryField = queryFields.get(i);
 					dataStoreMetadata.changeFieldAlias(i, queryField.getAlias());
 				}
 			} catch (Exception e) {
-				logger.debug("Query execution aborted because of an internal exceptian");
+				LOGGER.debug("Query execution aborted because of an internal exceptian");
 				SpagoBIEngineServiceException exception;
 				String message;
 
@@ -222,21 +221,21 @@ public class ExecuteDetailQueryAction extends AbstractQbeEngineAction {
 
 				throw exception;
 			}
-			logger.debug("Query executed succesfully");
+			LOGGER.debug("Query executed succesfully");
 
 			if (dataStore.getMetaData().getProperty("resultNumber") == null) {
-				dataStore.getMetaData().setProperty("resultNumber", new Integer((int) dataStore.getRecordsCount()));
+				dataStore.getMetaData().setProperty("resultNumber", (int) dataStore.getRecordsCount());
 			}
 
 			resultNumber = (Integer) dataStore.getMetaData().getProperty("resultNumber");
 			Assert.assertNotNull(resultNumber, "property [resultNumber] of the dataStore returned by loadData method of the class ["
 					+ dataSet.getClass().getName() + "] cannot be null");
-			logger.debug("Total records: " + resultNumber);
+			LOGGER.debug("Total records: " + resultNumber);
 
 			boolean overflow = maxSize != null && resultNumber >= maxSize;
 			if (overflow) {
-				logger.warn("Query results number [" + resultNumber + "] exceeds max result limit that is [" + maxSize + "]");
-				auditlogger.info("[" + userProfile.getUserId() + "]:: max result limit [" + maxSize + "] exceeded with SQL: " + sqlQuery);
+				LOGGER.warn("Query results number [" + resultNumber + "] exceeds max result limit that is [" + maxSize + "]");
+				AUDIT_LOGGER.info("[" + userProfile.getUserId() + "]:: max result limit [" + maxSize + "] exceeded with SQL: " + sqlQuery);
 			}
 
 			dataSetWriter = new JSONDataWriter();
@@ -258,40 +257,40 @@ public class ExecuteDetailQueryAction extends AbstractQbeEngineAction {
 		} finally {
 			if (totalTimeMonitor != null)
 				totalTimeMonitor.stop();
-			logger.debug("OUT");
+			LOGGER.debug("OUT");
 		}
 
 	}
 
 	private void updatePromptableFiltersValue(Query query) {
-		logger.debug("IN");
-		List whereFields = query.getWhereFields();
-		Iterator whereFieldsIt = whereFields.iterator();
+		LOGGER.debug("IN");
+		List<WhereField> whereFields = query.getWhereFields();
+		Iterator<WhereField> whereFieldsIt = whereFields.iterator();
 		while (whereFieldsIt.hasNext()) {
-			WhereField whereField = (WhereField) whereFieldsIt.next();
+			WhereField whereField = whereFieldsIt.next();
 			if (whereField.isPromptable()) {
 				// getting filter value on request
 				String promptValue = this.getAttributeAsString(whereField.getName());
-				logger.debug("Read prompt value [" + promptValue + "] for promptable filter [" + whereField.getName() + "].");
+				LOGGER.debug("Read prompt value [" + promptValue + "] for promptable filter [" + whereField.getName() + "].");
 				if (promptValue != null) {
 					whereField.getRightOperand().lastValues = new String[] { promptValue }; // TODO how to manage multi-values prompts?;
 				}
 			}
 		}
-		List havingFields = query.getHavingFields();
-		Iterator havingFieldsIt = havingFields.iterator();
+		List<HavingField> havingFields = query.getHavingFields();
+		Iterator<HavingField> havingFieldsIt = havingFields.iterator();
 		while (havingFieldsIt.hasNext()) {
-			HavingField havingField = (HavingField) havingFieldsIt.next();
+			HavingField havingField = havingFieldsIt.next();
 			if (havingField.isPromptable()) {
 				// getting filter value on request
 				String promptValue = this.getAttributeAsString(havingField.getName());
-				logger.debug("Read prompt value [" + promptValue + "] for promptable filter [" + havingField.getName() + "].");
+				LOGGER.debug("Read prompt value [" + promptValue + "] for promptable filter [" + havingField.getName() + "].");
 				if (promptValue != null) {
 					havingField.getRightOperand().lastValues = new String[] { promptValue }; // TODO how to manage multi-values prompts?;
 				}
 			}
 		}
-		logger.debug("OUT");
+		LOGGER.debug("OUT");
 	}
 
 }

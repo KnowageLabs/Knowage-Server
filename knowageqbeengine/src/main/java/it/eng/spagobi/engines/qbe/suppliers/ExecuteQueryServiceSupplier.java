@@ -29,7 +29,6 @@ import it.eng.qbe.statement.IStatement;
 import it.eng.qbe.statement.QbeDatasetFactory;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.engines.qbe.QbeEngineInstance;
-import it.eng.spagobi.engines.qbe.services.core.ExecuteQueryAction;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.utilities.assertion.Assert;
@@ -42,8 +41,8 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 public class ExecuteQueryServiceSupplier {
 
 	/** Logger component. */
-	private static final Logger logger = Logger.getLogger(ExecuteQueryAction.class);
-	private static final Logger auditlogger = QueryAuditLogger.LOGGER;
+	private static final Logger LOGGER = Logger.getLogger(ExecuteQueryServiceSupplier.class);
+	private static final Logger AUDIT_LOGGER = QueryAuditLogger.LOGGER;
 
 	public static void execute(QbeEngineInstance engineInstance) {
 		execute(engineInstance, engineInstance.getStatment());
@@ -76,18 +75,18 @@ public class ExecuteQueryServiceSupplier {
 
 			String jpaQueryStr = statement.getQueryString();
 			//String sqlQuery = statement.getSqlQueryString();
-			logger.debug("Executable query (HQL/JPQL): [" +  jpaQueryStr+ "]");
+			LOGGER.debug("Executable query (HQL/JPQL): [" +  jpaQueryStr+ "]");
 			//logger.debug("Executable query (SQL): [" + sqlQuery + "]");
 			UserProfile userProfile = (UserProfile)engineInstance.getEnv().get(EngineConstants.ENV_USER_PROFILE);
-			auditlogger.info("[" + userProfile.getUserId() + "]:: HQL/JPQL: " + jpaQueryStr);
+			AUDIT_LOGGER.info("[" + userProfile.getUserId() + "]:: HQL/JPQL: " + jpaQueryStr);
 			//auditlogger.info("[" + userProfile.getUserId() + "]:: SQL: " + sqlQuery);
 
 
-			logger.debug("Executing query ...");
+			LOGGER.debug("Executing query ...");
 			dataSet = QbeDatasetFactory.createDataSet(statement);
 			dataSet.setAbortOnOverflow(isMaxResultsLimitBlocking);
 
-			Map userAttributes = new HashMap();
+			Map<String, Object> userAttributes = new HashMap<>();
 			UserProfile profile = (UserProfile)engineInstance.getEnv().get(EngineConstants.ENV_USER_PROFILE);
 			Iterator it = profile.getUserAttributeNames().iterator();
 			while(it.hasNext()) {
@@ -102,20 +101,24 @@ public class ExecuteQueryServiceSupplier {
 			dataStore = dataSet.getDataStore();
 			Assert.assertNotNull(dataStore, "The dataStore returned by loadData method of the class [" + dataSet.getClass().getName()+ "] cannot be null");
 
-			logger.debug("Query executed succesfully");
+			LOGGER.debug("Query executed succesfully");
 
 			resultNumber = (Integer)dataStore.getMetaData().getProperty("resultNumber");
 			Assert.assertNotNull(resultNumber, "property [resultNumber] of the dataStore returned by loadData method of the class [" + dataSet.getClass().getName()+ "] cannot be null");
-			logger.debug("Total records: " + resultNumber);
+			LOGGER.debug("Total records: " + resultNumber);
 
 
 			boolean overflow = maxSize != null && resultNumber >= maxSize;
 			if (overflow) {
-				logger.warn("Query results number [" + resultNumber + "] exceeds max result limit that is [" + maxSize + "]");
+				LOGGER.warn("Query results number [" + resultNumber + "] exceeds max result limit that is [" + maxSize + "]");
 		//		auditlogger.info("[" + userProfile.getUserId() + "]:: max result limit [" + maxSize + "] exceeded with SQL: " + sqlQuery);
 			}
 		} catch (Throwable t) {
 			throw new SpagoBIRuntimeException(t);
 		}
+	}
+
+	private ExecuteQueryServiceSupplier() {
+
 	}
 }

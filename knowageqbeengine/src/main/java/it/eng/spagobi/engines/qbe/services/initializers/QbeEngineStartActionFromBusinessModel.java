@@ -19,8 +19,6 @@ package it.eng.spagobi.engines.qbe.services.initializers;
 
 import java.util.Map;
 
-import org.apache.log4j.Logger;
-
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.base.SourceBeanException;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
@@ -33,8 +31,6 @@ import it.eng.spagobi.utilities.engines.SpagoBIEngineStartupException;
  */
 public class QbeEngineStartActionFromBusinessModel extends QbeEngineStartAction {
 
-	/** Logger component. */
-	private static final Logger logger = Logger.getLogger(QbeEngineStartActionFromBusinessModel.class);
 	public static final String ENGINE_DATASOURCE_LABEL = "ENGINE_DATASOURCE_LABEL";
 
 	private static final String DATA_SOURCE_LABEL = "DATA_SOURCE_LABEL";
@@ -69,8 +65,7 @@ public class QbeEngineStartActionFromBusinessModel extends QbeEngineStartAction 
 		if (dataSourceLabel == null) {
 			dataSourceLabel = this.getAttributeAsString(ENGINE_DATASOURCE_LABEL);
 		}
-		IDataSource dataSource = getDataSourceServiceProxy().getDataSourceByLabel(dataSourceLabel);
-		return dataSource;
+		return getDataSourceServiceProxy().getDataSourceByLabel(dataSourceLabel);
 	}
 
 	public Map getEnvWithProperties() {

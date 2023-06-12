@@ -28,7 +28,6 @@ import it.eng.spago.base.SourceBean;
 import it.eng.spagobi.commons.presentation.DynamicPublisher;
 import it.eng.spagobi.engines.qbe.FormState;
 import it.eng.spagobi.engines.qbe.QbeEngine;
-import it.eng.spagobi.engines.qbe.QbeEngineAnalysisState;
 import it.eng.spagobi.engines.qbe.QbeEngineInstance;
 import it.eng.spagobi.engines.qbe.SmartFilterAnalysisState;
 import it.eng.spagobi.engines.qbe.template.QbeTemplateParseException;
@@ -43,8 +42,11 @@ import it.eng.spagobi.utilities.engines.SpagoBIEngineStartupException;
  */
 public class FormEngineStartAction extends AbstractEngineStartAction {
 
+	/** Logger component. */
+	private static final Logger LOGGER = Logger.getLogger(FormEngineStartAction.class);
+
 	// INPUT PARAMETERS
-	private final static String PARAM_MODALITY = "MODALITY";
+	private static final String PARAM_MODALITY = "MODALITY";
 
 	// OUTPUT PARAMETERS
 	public static final String LANGUAGE = "LANGUAGE";
@@ -53,42 +55,37 @@ public class FormEngineStartAction extends AbstractEngineStartAction {
 	// SESSION PARAMETRES
 	public static final String ENGINE_INSTANCE = EngineConstants.ENGINE_INSTANCE;
 
-
-	/** Logger component. */
-    private static final Logger logger = Logger.getLogger(FormEngineStartAction.class);
-
     public static final String ENGINE_NAME = "SpagoBIFormEngine";
 
     @Override
 	public void service(SourceBean serviceRequest, SourceBean serviceResponse) {
     	QbeEngineInstance qbeEngineInstance = null;
-    	QbeEngineAnalysisState analysisState;
     	SmartFilterAnalysisState analysisFormState = null;
     	Locale locale;
 
 
-    	logger.debug("IN");
+    	LOGGER.debug("IN");
 
     	try {
     		setEngineName(ENGINE_NAME);
 			super.service(serviceRequest, serviceResponse);
 
-			logger.debug("User Id: " + getUserId());
-			logger.debug("Audit Id: " + getAuditId());
-			logger.debug("Document Id: " + getDocumentId());
-			logger.debug("Template: " + getTemplateAsSourceBean());
+			LOGGER.debug("User Id: " + getUserId());
+			LOGGER.debug("Audit Id: " + getAuditId());
+			LOGGER.debug("Document Id: " + getDocumentId());
+			LOGGER.debug("Template: " + getTemplateAsSourceBean());
 
 			if(getAuditServiceProxy() != null) {
-				logger.debug("Audit enabled: [TRUE]");
+				LOGGER.debug("Audit enabled: [TRUE]");
 				getAuditServiceProxy().notifyServiceStartEvent();
 			} else {
-				logger.debug("Audit enabled: [FALSE]");
+				LOGGER.debug("Audit enabled: [FALSE]");
 			}
 
 			// Add the dataset (if any)
 			Map env = addDatasetsToEnv();
 
-			logger.debug("Creating engine instance ...");
+			LOGGER.debug("Creating engine instance ...");
 			try {
 				qbeEngineInstance = QbeEngine.createInstance(getTemplateAsSourceBean(), env );
 
@@ -114,7 +111,7 @@ public class FormEngineStartAction extends AbstractEngineStartAction {
 
 				throw serviceException;
 			}
-			logger.debug("Engine instance succesfully created");
+			LOGGER.debug("Engine instance succesfully created");
 
 			qbeEngineInstance.setAnalysisMetadata( getAnalysisMetadata() );
 
@@ -122,7 +119,7 @@ public class FormEngineStartAction extends AbstractEngineStartAction {
 			// initializes form state, if not already initialized (starting a new form definition)
 			FormState formState = qbeEngineInstance.getFormState();
 			if (formState == null) {
-				logger.debug("Initializing a new form state object...");
+				LOGGER.debug("Initializing a new form state object...");
 				formState = new FormState();
 				formState.setConf(new JSONObject());
 				qbeEngineInstance.setFormState(formState);
@@ -156,7 +153,7 @@ public class FormEngineStartAction extends AbstractEngineStartAction {
 			String publisherName = "VIEW_FORM_ENGINE_PUBLISHER";
 
 			String modality = this.getAttributeAsString(PARAM_MODALITY);
-			logger.debug("Input " + PARAM_MODALITY + " parameter is " + modality);
+			LOGGER.debug("Input " + PARAM_MODALITY + " parameter is " + modality);
 			if (modality != null && modality.trim().equalsIgnoreCase("EDIT")) {
 				// edit template
 				publisherName = "EDIT_FORM_ENGINE_PUBLISHER";
@@ -185,7 +182,7 @@ public class FormEngineStartAction extends AbstractEngineStartAction {
 
 			//throw SpagoBIEngineServiceExceptionHandler.getInstance().getWrappedException(getActionName(), qbeEngineInstance, e);
 		} finally {
-			logger.debug("OUT");
+			LOGGER.debug("OUT");
 		}
 
 
@@ -197,7 +194,7 @@ public class FormEngineStartAction extends AbstractEngineStartAction {
 
 		IDataSource datasource = this.getDataSource();
 		if (datasource == null || datasource.checkIsReadOnly()) {
-			logger.debug("Getting datasource for writing, since the datasource is not defined or it is read-only");
+			LOGGER.debug("Getting datasource for writing, since the datasource is not defined or it is read-only");
 			IDataSource datasourceForWriting = this.getDataSourceForWriting();
 			env.put(EngineConstants.DATASOURCE_FOR_WRITING, datasourceForWriting);
 		} else {
@@ -207,9 +204,8 @@ public class FormEngineStartAction extends AbstractEngineStartAction {
 		return env;
 	}
 
-    public Map addDatasetsToEnv(){
-		Map env = getEnv();
-		return env;
-    }
+	public Map addDatasetsToEnv() {
+		return getEnv();
+	}
 
 }

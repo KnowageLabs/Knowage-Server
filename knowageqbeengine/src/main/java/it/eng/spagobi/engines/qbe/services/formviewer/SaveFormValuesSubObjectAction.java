@@ -41,17 +41,17 @@ import it.eng.spagobi.utilities.service.JSONSuccess;
  */
 public class SaveFormValuesSubObjectAction extends AbstractQbeEngineAction {
 
-	// Service parameter
-	private final String MESSAGE_DET = "MESSAGE_DET";
-	private final String SAVE = "SAVE_SUB_OBJECT";
-
-	private final String NAME = "name";
-	private final String DESCRIPTION = "description";
-	private final String SCOPE = "scope";
-	private final String FORMSTATE = "formState";
-
 	/** Logger component. */
-	private static final Logger logger = Logger.getLogger(SaveFormValuesSubObjectAction.class);
+	private static final Logger LOGGER = Logger.getLogger(SaveFormValuesSubObjectAction.class);
+
+	// Service parameter
+	private static final String MESSAGE_DET = "MESSAGE_DET";
+	private static final String SAVE = "SAVE_SUB_OBJECT";
+
+	private static final String NAME = "name";
+	private static final String DESCRIPTION = "description";
+	private static final String SCOPE = "scope";
+	private static final String FORMSTATE = "formState";
 
 	@Override
 	public void service(SourceBean request, SourceBean response) {
@@ -86,7 +86,7 @@ public class SaveFormValuesSubObjectAction extends AbstractQbeEngineAction {
 		}catch(Throwable t) {
 			throw SpagoBIEngineServiceExceptionHandler.getInstance().getWrappedException(getActionName(), getEngineInstance(), t);
 		} finally {
-			logger.debug("OUT");
+			LOGGER.debug("OUT");
 		}
 
 	}
@@ -136,7 +136,11 @@ public class SaveFormValuesSubObjectAction extends AbstractQbeEngineAction {
 	 */
 	public static JSONObject parseValues(JSONObject formState, Map<String, String> idNameMap){
 		JSONObject parsedForm = new JSONObject();
-		JSONObject newDynamicFilters, newStaticOpenFilters, newStaticClosedFilters, newStaticClosedFiltersAnd, newStaticClosedFiltersXor;
+		JSONObject newDynamicFilters;
+		JSONObject newStaticOpenFilters;
+		JSONObject newStaticClosedFilters;
+		JSONObject newStaticClosedFiltersAnd;
+		JSONObject newStaticClosedFiltersXor;
 		try{
 			JSONObject staticOpenFilters = formState.optJSONObject("staticOpenFilters");
 			newStaticOpenFilters = getPropertyNames(staticOpenFilters, idNameMap, "staticOpenFilters");
@@ -156,9 +160,8 @@ public class SaveFormValuesSubObjectAction extends AbstractQbeEngineAction {
 				newStaticClosedFiltersXor = getPropertyNames(staticClosedFiltersXor, idNameMap, "xorFilters");
 
 				newStaticClosedFilters= new JSONObject();
-				if(newStaticClosedFilters!=null){
-					parsedForm.put("staticClosedFilters", newStaticClosedFilters);
-				}
+
+				parsedForm.put("staticClosedFilters", newStaticClosedFilters);
 
 				if(newStaticClosedFiltersAnd!=null){
 					newStaticClosedFilters.put("onOffFilters", newStaticClosedFiltersAnd);
@@ -172,7 +175,7 @@ public class SaveFormValuesSubObjectAction extends AbstractQbeEngineAction {
 			parsedForm.put("groupingVariables", groupingVariables);
 
 		}catch (Exception e){
-			logger.debug("Error getting the map id-->name of the form fields",e);
+			LOGGER.debug("Error getting the map id-->name of the form fields",e);
 			return formState;
 		}
 		return parsedForm;
@@ -183,7 +186,8 @@ public class SaveFormValuesSubObjectAction extends AbstractQbeEngineAction {
 	private static JSONObject getPropertyNames(JSONObject filters, Map<String, String> idNameMap, String prefix) throws JSONException{
 		if(filters!=null){
 			JSONObject newFilters = new JSONObject();
-			String key, newKey;
+			String key;
+			String newKey;
 			Iterator<String> keys = filters.keys();
 			while(keys.hasNext()){
 				key = keys.next();

@@ -102,31 +102,32 @@ import it.eng.spagobi.utilities.rest.RestUtilities;
 @ManageAuthorization
 public class QbeQueryResource extends AbstractQbeEngineResource {
 
-	private static final Logger auditlogger = QueryAuditLogger.LOGGER;
-	private static final Logger logger = Logger.getLogger(QbeQueryResource.class);
+	private static final Logger AUDIT_LOGGER = QueryAuditLogger.LOGGER;
+	private static final Logger LOGGER = Logger.getLogger(QbeQueryResource.class);
 	private static final String PARAM_VALUE_NAME = "value";
+
 	public static final String DEFAULT_VALUE_PARAM = "defaultValue";
 	public static final String MULTI_PARAM = "multiValue";
 	public static final String SERVICE_NAME = "SPAGOBI_SERVICE";
 	public static final String DRIVERS = "DRIVERS";
 
 	public static void updatePromptableFiltersValue(Query query, boolean useDefault, String promptableFilters) throws JSONException {
-		logger.debug("IN");
-		List whereFields = query.getWhereFields();
-		Iterator whereFieldsIt = whereFields.iterator();
+		LOGGER.debug("IN");
+		List<WhereField> whereFields = query.getWhereFields();
+		Iterator<WhereField> whereFieldsIt = whereFields.iterator();
 		String[] question = { "?" };
 
 		JSONObject requestPromptableFilters = new JSONObject(promptableFilters);
 
 		while (whereFieldsIt.hasNext()) {
-			WhereField whereField = (WhereField) whereFieldsIt.next();
+			WhereField whereField = whereFieldsIt.next();
 			if (whereField.isPromptable()) {
 				// getting filter value on request
 				if (!useDefault || requestPromptableFilters != null) {
 					JSONArray promptValuesList = requestPromptableFilters.optJSONArray(whereField.getName());
 					if (promptValuesList != null) {
 						String[] promptValues = toStringArray(promptValuesList);
-						logger.debug("Read prompts " + promptValues + " for promptable filter " + whereField.getName() + ".");
+						LOGGER.debug("Read prompts " + promptValues + " for promptable filter " + whereField.getName() + ".");
 						whereField.getRightOperand().lastValues = promptValues;
 					}
 				} else {
@@ -134,10 +135,10 @@ public class QbeQueryResource extends AbstractQbeEngineResource {
 				}
 			}
 		}
-		List havingFields = query.getHavingFields();
-		Iterator havingFieldsIt = havingFields.iterator();
+		List<HavingField> havingFields = query.getHavingFields();
+		Iterator<HavingField> havingFieldsIt = havingFields.iterator();
 		while (havingFieldsIt.hasNext()) {
-			HavingField havingField = (HavingField) havingFieldsIt.next();
+			HavingField havingField = havingFieldsIt.next();
 			if (havingField.isPromptable()) {
 				if (!useDefault || requestPromptableFilters != null) {
 					// getting filter value on request
@@ -146,7 +147,7 @@ public class QbeQueryResource extends AbstractQbeEngineResource {
 					JSONArray promptValuesList = requestPromptableFilters.optJSONArray(havingField.getName());
 					if (promptValuesList != null) {
 						String[] promptValues = toStringArray(promptValuesList);
-						logger.debug("Read prompt value " + promptValues + " for promptable filter " + havingField.getName() + ".");
+						LOGGER.debug("Read prompt value " + promptValues + " for promptable filter " + havingField.getName() + ".");
 						havingField.getRightOperand().lastValues = promptValues; // TODO
 																					// how
 																					// to
@@ -159,7 +160,7 @@ public class QbeQueryResource extends AbstractQbeEngineResource {
 				havingField.getRightOperand().lastValues = question;
 			}
 		}
-		logger.debug("OUT");
+		LOGGER.debug("OUT");
 	}
 
 	public static void updatePromptableFiltersValue(Query query, String promptableFilters) throws JSONException {
@@ -208,7 +209,7 @@ public class QbeQueryResource extends AbstractQbeEngineResource {
 			SqlFilterModelAccessModality sqlModality = new SqlFilterModelAccessModality();
 			UserProfile userProfile = (UserProfile) getEnv().get(EngineConstants.ENV_USER_PROFILE);
 
-			logger.debug("Parameter [" + "limit" + "] is equals to [" + limit + "]");
+			LOGGER.debug("Parameter [" + "limit" + "] is equals to [" + limit + "]");
 
 			IModelAccessModality accessModality = getEngineInstance().getDataSource().getModelAccessModality();
 
@@ -241,10 +242,10 @@ public class QbeQueryResource extends AbstractQbeEngineResource {
 			}
 			resultNumber = (Integer) dataStore.getMetaData().getProperty("resultNumber");
 
-			logger.debug("Total records: " + resultNumber);
+			LOGGER.debug("Total records: " + resultNumber);
 			boolean overflow = maxSize != null && resultNumber >= maxSize;
 			if (overflow) {
-				logger.warn("Query results number [" + resultNumber + "] exceeds max result limit that is [" + maxSize + "]");
+				LOGGER.warn("Query results number [" + resultNumber + "] exceeds max result limit that is [" + maxSize + "]");
 				// auditlogger.info("[" + userProfile.getUserId() +
 				// "]:: max result limit [" + maxSize + "] exceeded with SQL: "
 				// + sqlQuery);
@@ -258,7 +259,7 @@ public class QbeQueryResource extends AbstractQbeEngineResource {
 		} finally {
 			if (totalTimeMonitor != null)
 				totalTimeMonitor.stop();
-			logger.debug("OUT");
+			LOGGER.debug("OUT");
 		}
 
 	}
@@ -280,7 +281,7 @@ public class QbeQueryResource extends AbstractQbeEngineResource {
 			drivers = JSONObjectDeserializator.getHashMapFromString(stringDrivers);
 
 		} catch (Exception e) {
-			logger.debug("Drivers cannot be transformed from string to map");
+			LOGGER.debug("Drivers cannot be transformed from string to map");
 			throw new SpagoBIRestServiceException("Drivers cannot be transformed from string to map", buildLocaleFromSession(), e);
 		}
 		dataSet.setDrivers(drivers);
@@ -288,18 +289,18 @@ public class QbeQueryResource extends AbstractQbeEngineResource {
 		QueryGraph graph = statement.getQuery().getQueryGraph();
 		boolean valid = GraphManager.getGraphValidatorInstance(QbeEngineConfig.getInstance().getGraphValidatorImpl()).isValid(graph,
 				statement.getQuery().getQueryEntities(getEngineInstance().getDataSource()));
-		logger.debug("QueryGraph valid = " + valid);
+		LOGGER.debug("QueryGraph valid = " + valid);
 		if (!valid) {
 			throw new SpagoBIEngineServiceException("RELATIONS", "error.mesage.description.relationship.not.enough");
 		}
 		try {
-			logger.debug("Executing query ...");
+			LOGGER.debug("Executing query ...");
 			Integer maxSize = QbeEngineConfig.getInstance().getResultLimit();
-			logger.debug("Configuration setting  [" + "QBE.QBE-SQL-RESULT-LIMIT.value" + "] is equals to [" + (maxSize != null ? maxSize : "none") + "]");
+			LOGGER.debug("Configuration setting  [" + "QBE.QBE-SQL-RESULT-LIMIT.value" + "] is equals to [" + (maxSize != null ? maxSize : "none") + "]");
 
 			String jpaQueryStr = statement.getQueryString();
 
-			logger.debug("Executable query (HQL/JPQL): [" + jpaQueryStr + "]");
+			LOGGER.debug("Executable query (HQL/JPQL): [" + jpaQueryStr + "]");
 
 			logQueryInAudit(qbeDataSet);
 
@@ -307,7 +308,7 @@ public class QbeQueryResource extends AbstractQbeEngineResource {
 			dataStore = dataSet.getDataStore();
 			Assert.assertNotNull(dataStore, "The dataStore returned by loadData method of the class [" + dataSet.getClass().getName() + "] cannot be null");
 		} catch (Exception e) {
-			logger.error("Query execution aborted because of an internal exceptian", e);
+			LOGGER.error("Query execution aborted because of an internal exceptian", e);
 			SpagoBIEngineServiceException exception;
 			String message;
 
@@ -319,7 +320,7 @@ public class QbeQueryResource extends AbstractQbeEngineResource {
 
 			throw exception;
 		}
-		logger.debug("Query executed succesfully");
+		LOGGER.debug("Query executed succesfully");
 		return dataStore;
 	}
 
@@ -373,7 +374,7 @@ public class QbeQueryResource extends AbstractQbeEngineResource {
 				throw new SpagoBIEngineServiceException("DESERIALIZATING QUERY", message, e);
 			}
 		} catch (Exception e) {
-			logger.debug("Impossible to deserialize query");
+			LOGGER.debug("Impossible to deserialize query");
 			throw new SpagoBIRestServiceException("Impossible to deserialize query", buildLocaleFromSession(), e);
 		}
 
@@ -390,7 +391,7 @@ public class QbeQueryResource extends AbstractQbeEngineResource {
 		try {
 			drivers = JSONObjectDeserializator.getHashMapFromString(stringDrivers);
 		} catch (Exception e) {
-			logger.debug("Drivers cannot be transformed from string to map");
+			LOGGER.debug("Drivers cannot be transformed from string to map");
 			throw new SpagoBIRestServiceException("Drivers cannot be transformed from string to map", buildLocaleFromSession(), e);
 		}
 		dataSet.setDrivers(drivers);
@@ -398,7 +399,7 @@ public class QbeQueryResource extends AbstractQbeEngineResource {
 		Assert.assertTrue(dataSet.isIterable(), "Impossible to export a non-iterable data set");
 		DataIterator iterator = null;
 		try {
-			logger.debug("Starting iteration to transfer data");
+			LOGGER.debug("Starting iteration to transfer data");
 			iterator = dataSet.iterator();
 
 			StreamingOutput stream = null;
@@ -424,15 +425,15 @@ public class QbeQueryResource extends AbstractQbeEngineResource {
 			if (iterator != null) {
 				iterator.close();
 			}
-			logger.debug("Query results cannot be exported");
+			LOGGER.debug("Query results cannot be exported");
 			throw new SpagoBIRestServiceException("Query results cannot be exported", buildLocaleFromSession(), e);
 		}
 	}
 
 	public Set<ModelFieldPaths> getAmbiguousFields(Query filteredQuery) {
-		logger.debug("IN");
+		LOGGER.debug("IN");
 
-		Set<ModelFieldPaths> ambiguousModelField = new HashSet<ModelFieldPaths>();
+		Set<ModelFieldPaths> ambiguousModelField = new HashSet<>();
 		try {
 
 			Assert.assertNotNull(getModelFieldsMap(filteredQuery), "No field specified in teh query");
@@ -462,7 +463,7 @@ public class QbeQueryResource extends AbstractQbeEngineResource {
 		} catch (Throwable t) {
 			throw new SpagoBIRuntimeException("Error while getting ambiguous fields", t);
 		} finally {
-			logger.debug("OUT");
+			LOGGER.debug("OUT");
 		}
 	}
 
@@ -470,7 +471,7 @@ public class QbeQueryResource extends AbstractQbeEngineResource {
 	@Path("/domainCategories")
 	@Produces(MediaType.APPLICATION_JSON)
 	public String getCategoriesDomain() {
-		logger.debug("IN");
+		LOGGER.debug("IN");
 		String userId = (String) getUserProfile().getUserUniqueIdentifier();
 		QbeExecutionClient qbeExecutionClient;
 		String categoryDomains = null;
@@ -478,11 +479,11 @@ public class QbeQueryResource extends AbstractQbeEngineResource {
 			qbeExecutionClient = new QbeExecutionClient();
 			categoryDomains = qbeExecutionClient.geCategoryDomain(userId);
 		} catch (Throwable t) {
-			logger.error("An unexpected error occured while executing service: QbeQueryResource.getDomainCategories", t);
+			LOGGER.error("An unexpected error occured while executing service: QbeQueryResource.getDomainCategories", t);
 			throw new SpagoBIServiceException(this.request.getPathInfo(),
 					"An unexpected error occured while executing service: JsonChartTemplateService.getDomainCategories", t);
 		} finally {
-			logger.debug("OUT");
+			LOGGER.debug("OUT");
 		}
 		return categoryDomains;
 
@@ -499,9 +500,7 @@ public class QbeQueryResource extends AbstractQbeEngineResource {
 			query = getQueryFromJson(id, query, RestUtilities.readBodyAsJSONObject(req));
 			entityNames = GraphManager.getQueryEntitiesUniqueNames(dataSource, query);
 
-		} catch (JSONException e) {
-			throw new SpagoBIServiceException(this.request.getPathInfo(), e.getMessage(), e);
-		} catch (IOException e) {
+		} catch (JSONException | IOException e) {
 			throw new SpagoBIServiceException(this.request.getPathInfo(), e.getMessage(), e);
 		}
 
@@ -512,7 +511,7 @@ public class QbeQueryResource extends AbstractQbeEngineResource {
 	@Path("/domainScope")
 	@Produces(MediaType.APPLICATION_JSON)
 	public String getScopessDomain() {
-		logger.debug("IN");
+		LOGGER.debug("IN");
 		String userId = (String) getUserProfile().getUserUniqueIdentifier();
 		QbeExecutionClient qbeExecutionClient;
 		String scopeDomains = null;
@@ -520,11 +519,11 @@ public class QbeQueryResource extends AbstractQbeEngineResource {
 			qbeExecutionClient = new QbeExecutionClient();
 			scopeDomains = qbeExecutionClient.geScopeDomain(userId);
 		} catch (Throwable t) {
-			logger.error("An unexpected error occured while executing service: QbeQueryResource.getDomainScopes", t);
+			LOGGER.error("An unexpected error occured while executing service: QbeQueryResource.getDomainScopes", t);
 			throw new SpagoBIServiceException(this.request.getPathInfo(),
 					"An unexpected error occured while executing service: JsonChartTemplateService.getDomainScopes", t);
 		} finally {
-			logger.debug("OUT");
+			LOGGER.debug("OUT");
 		}
 		return scopeDomains;
 
@@ -534,7 +533,7 @@ public class QbeQueryResource extends AbstractQbeEngineResource {
 	@Path("/persistTableName")
 	@Produces(MediaType.APPLICATION_JSON)
 	public String getPersistTableName(@javax.ws.rs.core.Context HttpServletRequest req, @QueryParam("sourceDatasetName") String sourceDatasetName) {
-		logger.debug("IN");
+		LOGGER.debug("IN");
 		String persistTableName = null;
 		try {
 
@@ -545,11 +544,11 @@ public class QbeQueryResource extends AbstractQbeEngineResource {
 				persistTableName = opt.get().getPersistTableName();
 
 		} catch (Throwable t) {
-			logger.error("An unexpected error occured while executing service: QbeQueryResource.getDomainScopes", t);
+			LOGGER.error("An unexpected error occured while executing service: QbeQueryResource.getDomainScopes", t);
 			throw new SpagoBIServiceException(this.request.getPathInfo(),
 					"An unexpected error occured while executing service: JsonChartTemplateService.getDomainScopes", t);
 		} finally {
-			logger.debug("OUT");
+			LOGGER.debug("OUT");
 		}
 		return persistTableName;
 
@@ -581,7 +580,7 @@ public class QbeQueryResource extends AbstractQbeEngineResource {
 				queries = new JSONArray(catalogue.toString());
 			}
 
-			logger.debug("catalogue" + " = [" + catalogue + "]");
+			LOGGER.debug("catalogue" + " = [" + catalogue + "]");
 
 			try {
 
@@ -625,14 +624,13 @@ public class QbeQueryResource extends AbstractQbeEngineResource {
 		} finally {
 			if (totalTimeMonitor != null)
 				totalTimeMonitor.stop();
-			logger.debug("OUT");
+			LOGGER.debug("OUT");
 		}
 	}
 
 	public JSONObject serializeDataStore(IDataStore dataStore) {
 		JSONDataWriter dataSetWriter = new JSONDataWriter();
-		JSONObject gridDataFeed = (JSONObject) dataSetWriter.write(dataStore);
-		return gridDataFeed;
+		return (JSONObject) dataSetWriter.write(dataStore);
 	}
 
 	private void validateQuery(Query query) {
@@ -676,7 +674,7 @@ public class QbeQueryResource extends AbstractQbeEngineResource {
 					}
 				}
 			} else {
-				logger.debug("Cannot validate field " + fieldName + ": is it a calculated field?");
+				LOGGER.debug("Cannot validate field " + fieldName + ": is it a calculated field?");
 			}
 
 		}
@@ -689,17 +687,15 @@ public class QbeQueryResource extends AbstractQbeEngineResource {
 	private void addParameters(JSONArray parsListJSON) {
 		try {
 			if (hasDuplicates(parsListJSON)) {
-				logger.error("duplicated parameter names");
+				LOGGER.error("duplicated parameter names");
 				throw new SpagoBIServiceException(SERVICE_NAME, "duplicated parameter names");
 			}
-			;
 
 			getEnv().putAll(getParametersMap(parsListJSON));
 
+		} catch (SpagoBIServiceException t) {
+			throw t;
 		} catch (Throwable t) {
-			if (t instanceof SpagoBIServiceException) {
-				throw (SpagoBIServiceException) t;
-			}
 			throw new SpagoBIServiceException(SERVICE_NAME, "An unexpected error occured while deserializing dataset parameters", t);
 		}
 	}
@@ -739,7 +735,7 @@ public class QbeQueryResource extends AbstractQbeEngineResource {
 					boolean hasDefaultValue = obj.has(DEFAULT_VALUE_PARAM);
 					if (hasDefaultValue) {
 						tempVal = obj.getString(DEFAULT_VALUE_PARAM);
-						logger.debug("Value of param not present, use default value: " + tempVal);
+						LOGGER.debug("Value of param not present, use default value: " + tempVal);
 					}
 				}
 
@@ -759,7 +755,7 @@ public class QbeQueryResource extends AbstractQbeEngineResource {
 					value = getSingleValue(tempVal, type);
 				}
 
-				logger.debug("Parameter name: " + name + " / parameter value: " + value);
+				LOGGER.debug("Parameter name: " + name + " / parameter value: " + value);
 
 				parameters.put(name + SpagoBIConstants.PARAMETER_TYPE, type);
 				parameters.put(name, value);
@@ -853,7 +849,7 @@ public class QbeQueryResource extends AbstractQbeEngineResource {
 		newDataset.setOwner(owner);
 
 		String metadata = getMetadataAsString(dataset);
-		logger.debug("Dataset's metadata: [" + metadata + "]");
+		LOGGER.debug("Dataset's metadata: [" + metadata + "]");
 		newDataset.setDsMetadata(metadata);
 
 		newDataset.setDataSource(qbeDataset.getDataSource());
@@ -921,15 +917,14 @@ public class QbeQueryResource extends AbstractQbeEngineResource {
 			newDataset.setDsMetadata(dsMetadata);
 
 		} catch (Exception e) {
-			logger.error("Error in calculating metadata");
+			LOGGER.error("Error in calculating metadata");
 			throw new SpagoBIRuntimeException("Error in calculating metadata", e);
 		}
 
 		return newDataset;
 	}
 
-	private Query deserializeQuery(JSONObject queryJSON) throws SerializationException, JSONException {
-		// queryJSON.put("expression", queryJSON.get("filterExpression"));
+	private Query deserializeQuery(JSONObject queryJSON) throws SerializationException {
 		return SerializerFactory.getDeserializer("application/json").deserializeQuery(queryJSON.toString(), getEngineInstance().getDataSource());
 	}
 
@@ -954,38 +949,10 @@ public class QbeQueryResource extends AbstractQbeEngineResource {
 			dataSet.setParamsMap(this.getEnv());
 
 		} catch (Exception e) {
-			logger.debug("Error getting the data set from the query");
+			LOGGER.debug("Error getting the data set from the query");
 			throw new SpagoBIRuntimeException("Error getting the data set from the query", e);
 		}
-		logger.debug("Dataset correctly taken from the query ");
-		return dataSet;
-
-	}
-
-	private IDataSet getActiveQueryAsDataSet(Query q, IStatement statement) {
-		IDataSet dataSet;
-		try {
-
-			dataSet = QbeDatasetFactory.createDataSet(statement);
-			boolean isMaxResultsLimitBlocking = QbeEngineConfig.getInstance().isMaxResultLimitBlocking();
-			dataSet.setAbortOnOverflow(isMaxResultsLimitBlocking);
-
-			Map userAttributes = new HashMap();
-			UserProfile userProfile = (UserProfile) this.getEnv().get(EngineConstants.ENV_USER_PROFILE);
-			userAttributes.putAll(userProfile.getUserAttributes());
-			userAttributes.put(SsoServiceInterface.USER_ID, userProfile.getUserId().toString());
-
-			dataSet.addBinding("attributes", userAttributes);
-			dataSet.addBinding("parameters", this.getEnv());
-			dataSet.setUserProfileAttributes(userAttributes);
-
-			dataSet.setParamsMap(this.getEnv());
-
-		} catch (Exception e) {
-			logger.debug("Error getting the data set from the query");
-			throw new SpagoBIRuntimeException("Error getting the data set from the query", e);
-		}
-		logger.debug("Dataset correctly taken from the query ");
+		LOGGER.debug("Dataset correctly taken from the query ");
 		return dataSet;
 
 	}
@@ -1003,14 +970,13 @@ public class QbeQueryResource extends AbstractQbeEngineResource {
 		rootEntitiesGraph = spcg.getCoverSubGraph(rootEntitiesGraph, entities);
 		//
 		PathInspector pathInspector = new PathInspector(rootEntitiesGraph, entities);
-		Map<IModelEntity, Set<GraphPath<IModelEntity, Relationship>>> ambiguousMap = pathInspector.getAmbiguousEntitiesAllPathsMap();
-		return ambiguousMap;
+		return pathInspector.getAmbiguousEntitiesAllPathsMap();
 	}
 
 	private IMetaData getDataSetMetadata(IDataSet dataset) {
 		IMetaData metaData = null;
-		Integer start = new Integer(0);
-		Integer limit = new Integer(10);
+		Integer start = 0;
+		Integer limit = 10;
 		Integer maxSize = QbeEngineConfig.getInstance().getResultLimit();
 		try {
 			dataset.loadData(start, limit, maxSize);
@@ -1050,12 +1016,10 @@ public class QbeQueryResource extends AbstractQbeEngineResource {
 			}
 			sb.setAttribute(sb1);
 			parametersString = sb.toXML(false);
+		} catch (SpagoBIServiceException t) {
+			throw t;
 		} catch (Throwable t) {
-			if (t instanceof SpagoBIServiceException) {
-				throw (SpagoBIServiceException) t;
-			}
 			throw new SpagoBIServiceException("ManageDatasets", "An unexpected error occured while deserializing dataset parameters", t);
-
 		}
 		return parametersString;
 	}
@@ -1063,8 +1027,7 @@ public class QbeQueryResource extends AbstractQbeEngineResource {
 	private String getMetadataAsString(IDataSet dataset) {
 		IMetaData metadata = getDataSetMetadata(dataset);
 		DatasetMetadataParser parser = new DatasetMetadataParser();
-		String toReturn = parser.metadataToXML(metadata);
-		return toReturn;
+		return parser.metadataToXML(metadata);
 	}
 
 	/**
@@ -1100,19 +1063,19 @@ public class QbeQueryResource extends AbstractQbeEngineResource {
 	}
 
 	private String getMultiValue(String value, String type) {
-		String toReturn = "";
+		StringBuilder toReturn = new StringBuilder("");
 
 		String[] tempArrayValues = value.split(",");
 		for (int j = 0; j < tempArrayValues.length; j++) {
 			String tempValue = tempArrayValues[j];
 			if (j == 0) {
-				toReturn = getSingleValue(tempValue, type);
+				toReturn.append(getSingleValue(tempValue, type));
 			} else {
-				toReturn = toReturn + ", " + getSingleValue(tempValue, type);
+				toReturn.append(toReturn + ", " + getSingleValue(tempValue, type));
 			}
 		}
 
-		return toReturn;
+		return toReturn.toString();
 	}
 
 	/**
@@ -1138,7 +1101,7 @@ public class QbeQueryResource extends AbstractQbeEngineResource {
 			queries = new JSONArray(catalogue.toString());
 		}
 
-		logger.debug("catalogue" + " = [" + catalogue + "]");
+		LOGGER.debug("catalogue" + " = [" + catalogue + "]");
 
 		try {
 
@@ -1229,25 +1192,24 @@ public class QbeQueryResource extends AbstractQbeEngineResource {
 
 			List<GraphPath<IModelEntity, Relationship>> shortestPaths = getShortestPaths(filteredQuery, modelFields.getKey().getParent());
 			if (shortestPaths.size() > 1) {
-				logger.debug("Dump ambiguos shortest paths:");
+				LOGGER.debug("Dump ambiguos shortest paths:");
 				int i = 1;
 				for (GraphPath<IModelEntity, Relationship> path : shortestPaths) {
-					logger.debug("--- Ambiguos path #" + i);
-					logger.debug("Start vertex: " + path.getStartVertex().getName());
+					LOGGER.debug("--- Ambiguos path #" + i);
+					LOGGER.debug("Start vertex: " + path.getStartVertex().getName());
 					List<Relationship> edgeList = path.getEdgeList();
-					logger.debug("\t   V   ");
+					LOGGER.debug("\t   V   ");
 					for (Relationship rel : edgeList) {
-						logger.debug("\t   .   ");
-						logger.debug("\t " + rel.getSourceEntity().getName() + " -> " + rel.getTargetEntity().getName());
-						logger.debug("\t   .   ");
+						LOGGER.debug("\t   .   ");
+						LOGGER.debug("\t " + rel.getSourceEntity().getName() + " -> " + rel.getTargetEntity().getName());
+						LOGGER.debug("\t   .   ");
 					}
-					logger.debug("\t   X   ");
-					logger.debug("End vertex: " + path.getEndVertex().getName());
+					LOGGER.debug("\t   X   ");
+					LOGGER.debug("End vertex: " + path.getEndVertex().getName());
 					i++;
 				}
 				return true;
 			}
-			;
 		}
 
 		return false;
@@ -1257,22 +1219,22 @@ public class QbeQueryResource extends AbstractQbeEngineResource {
 		UserProfile userProfile = (UserProfile) getEnv().get(EngineConstants.ENV_USER_PROFILE);
 
 		if (dataset instanceof JPQLDataSet) {
-			auditlogger.info("[" + userProfile.getUserId() + "]:: JPQL: " + dataset.getStatement().getQueryString());
-			auditlogger.info("[" + userProfile.getUserId() + "]:: SQL: " + ((JPQLDataSet) dataset).getSQLQuery(false));
+			AUDIT_LOGGER.info("[" + userProfile.getUserId() + "]:: JPQL: " + dataset.getStatement().getQueryString());
+			AUDIT_LOGGER.info("[" + userProfile.getUserId() + "]:: SQL: " + ((JPQLDataSet) dataset).getSQLQuery(false));
 		} else if (dataset instanceof HQLDataSet) {
-			auditlogger.info("[" + userProfile.getUserId() + "]:: HQL: " + dataset.getStatement().getQueryString());
-			auditlogger.info("[" + userProfile.getUserId() + "]:: SQL: " + ((HQLDataSet) dataset).getSQLQuery(false));
+			AUDIT_LOGGER.info("[" + userProfile.getUserId() + "]:: HQL: " + dataset.getStatement().getQueryString());
+			AUDIT_LOGGER.info("[" + userProfile.getUserId() + "]:: SQL: " + ((HQLDataSet) dataset).getSQLQuery(false));
 		} else {
-			auditlogger.info("[" + userProfile.getUserId() + "]:: SQL: " + dataset.getStatement().getSqlQueryString());
+			AUDIT_LOGGER.info("[" + userProfile.getUserId() + "]:: SQL: " + dataset.getStatement().getSqlQueryString());
 		}
 
 	}
 
 	private IDataSet saveNewDataset(IDataSet newDataset) {
 		DataSetServiceProxy proxy = (DataSetServiceProxy) getEnv().get(EngineConstants.ENV_DATASET_PROXY);
-		logger.debug("Saving new dataset ...");
+		LOGGER.debug("Saving new dataset ...");
 		IDataSet saved = proxy.saveDataSet(newDataset);
-		logger.debug("Dataset saved without errors");
+		LOGGER.debug("Dataset saved without errors");
 		return saved;
 	}
 
@@ -1283,24 +1245,23 @@ public class QbeQueryResource extends AbstractQbeEngineResource {
 
 		IDataSet datasetSaved = saveNewDataset(newDataset);
 
-		int datasetId = datasetSaved.getId();
-		return datasetId;
+		return datasetSaved.getId();
 	}
 
 	private void updateQueryGraphInQuery(Query filteredQuery, boolean b, Set<IModelEntity> modelEntities) {
 		boolean isTheOldQueryGraphValid = false;
-		logger.debug("IN");
+		LOGGER.debug("IN");
 		QueryGraph queryGraph = null;
 		try {
 
 			// calculate the default cover graph
-			logger.debug("Calculating the default graph");
+			LOGGER.debug("Calculating the default graph");
 			IModelStructure modelStructure = getEngineInstance().getDataSource().getModelStructure();
 			RootEntitiesGraph rootEntitiesGraph = modelStructure.getRootEntitiesGraph(getModelName(), false);
 			Graph<IModelEntity, Relationship> graph = rootEntitiesGraph.getRootEntitiesGraph();
-			logger.debug("UndirectedGraph retrieved");
+			LOGGER.debug("UndirectedGraph retrieved");
 			Set<IModelEntity> entities = filteredQuery.getQueryEntities(getEngineInstance().getDataSource());
-			if (entities.size() > 0) {
+			if (!entities.isEmpty()) {
 				entities.addAll(modelEntities);
 				queryGraph = GraphManager.getDefaultCoverGraphInstance(QbeEngineConfig.getInstance().getDefaultCoverImpl()).getCoverGraph(graph, entities);
 			}
@@ -1310,7 +1271,7 @@ public class QbeQueryResource extends AbstractQbeEngineResource {
 		} catch (Throwable t) {
 			throw new SpagoBIRuntimeException("Error while loading the not ambigous graph", t);
 		} finally {
-			logger.debug("OUT");
+			LOGGER.debug("OUT");
 		}
 
 	}

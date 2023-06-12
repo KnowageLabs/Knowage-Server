@@ -56,7 +56,7 @@ public class GetSQLQueryAction extends AbstractQbeEngineAction {
 	// AVAILABLE PUBLISHERS
 
 	/** Logger component. */
-	private static final Logger logger = Logger.getLogger(GetSQLQueryAction.class);
+	private static final Logger LOGGER = Logger.getLogger(GetSQLQueryAction.class);
 
 	public static final String ENGINE_NAME = "SpagoBIQbeEngine";
 	public static final String REPLACE_PARAMETERS_WITH_QUESTION = "replaceParametersWithQuestion";
@@ -67,7 +67,7 @@ public class GetSQLQueryAction extends AbstractQbeEngineAction {
 		Query query = null;
 		IStatement statement = null;
 
-		logger.debug("IN");
+		LOGGER.debug("IN");
 
 		try {
 			super.service(request, response);
@@ -75,8 +75,6 @@ public class GetSQLQueryAction extends AbstractQbeEngineAction {
 			boolean replaceParametersWithQuestion = getAttributeAsBoolean("replaceParametersWithQuestion");
 
 			// retrieving query specified by id on request
-
-			;
 			query = getEngineInstance().getQueryCatalogue().getQuery(getAttributeAsString("queryId"));
 			if (query == null) {
 				query = getEngineInstance().getQueryCatalogue().getFirstQuery();
@@ -106,7 +104,7 @@ public class GetSQLQueryAction extends AbstractQbeEngineAction {
 				String sqlQuery = statement.getSqlQueryString();
 				String sqlQueryFormatted = formatQueryString(sqlQuery);
 
-				logger.debug("Executable query (SQL): [" + sqlQuery + "]");
+				LOGGER.debug("Executable query (SQL): [" + sqlQuery + "]");
 
 				toReturn.put("sql", sqlQuery);
 				toReturn.put("sqlFormatted", sqlQueryFormatted);
@@ -116,8 +114,8 @@ public class GetSQLQueryAction extends AbstractQbeEngineAction {
 				String jpaQueryStrFormatted = formatQueryString(addAliasInJqpl(query, jpaQueryStr));
 				String sqlQueryFormatted = formatQueryString(addAliasInSql(query, sqlQuery));
 
-				logger.debug("Executable query (HQL/JPQL): [" + jpaQueryStr + "]");
-				logger.debug("Executable query (SQL): [" + sqlQuery + "]");
+				LOGGER.debug("Executable query (HQL/JPQL): [" + jpaQueryStr + "]");
+				LOGGER.debug("Executable query (SQL): [" + sqlQuery + "]");
 
 				toReturn.put("sql", sqlQuery);
 				toReturn.put("jpqlFormatted", jpaQueryStrFormatted);
@@ -134,7 +132,7 @@ public class GetSQLQueryAction extends AbstractQbeEngineAction {
 		} catch (Throwable t) {
 			throw SpagoBIEngineServiceExceptionHandler.getInstance().getWrappedException(getActionName(), getEngineInstance(), t);
 		} finally {
-			logger.debug("OUT");
+			LOGGER.debug("OUT");
 		}
 
 	}
@@ -151,7 +149,7 @@ public class GetSQLQueryAction extends AbstractQbeEngineAction {
 		BasicFormatterImpl fromatter;
 
 		if (queryString == null || queryString.equals("")) {
-			logger.error("Impossible to get the query string because the query is null");
+			LOGGER.error("Impossible to get the query string because the query is null");
 			return "";
 		}
 

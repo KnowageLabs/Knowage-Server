@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,11 +11,17 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package it.eng.spagobi.engines.qbe.services.formbuilder;
+
+import java.io.IOException;
+
+import org.apache.log4j.Logger;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import it.eng.qbe.query.Query;
 import it.eng.qbe.query.serializer.SerializerFactory;
@@ -28,26 +34,19 @@ import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceException;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceExceptionHandler;
 import it.eng.spagobi.utilities.service.JSONSuccess;
 
-import java.io.IOException;
-
-import org.apache.log4j.Logger;
-import org.json.JSONArray;
-import org.json.JSONObject;
-
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
  */
-public class GetSelectedColumnsAction  extends AbstractQbeEngineAction {	
+public class GetSelectedColumnsAction  extends AbstractQbeEngineAction {
 
 	// INPUT PARAMETERS
 	public static final String QUERY_ID = "queryId";
 
-
-
 	/** Logger component. */
-	private static final Logger logger = Logger.getLogger(GetSelectedColumnsAction.class);
+	private static final Logger LOGGER = Logger.getLogger(GetSelectedColumnsAction.class);
 
-	public void service(SourceBean request, SourceBean response)  {				
+	@Override
+	public void service(SourceBean request, SourceBean response) {
 
 		String queryId;
 		Query query;
@@ -55,30 +54,30 @@ public class GetSelectedColumnsAction  extends AbstractQbeEngineAction {
 		JSONArray fieldsJSON;
 		JSONObject resultsJSON;
 
-		logger.debug("IN");
+		LOGGER.debug("IN");
 
-		try {		
-			super.service(request, response);	
+		try {
+			super.service(request, response);
 
 			queryId = getAttributeAsString( QUERY_ID );
-			logger.debug("Parameter [" + QUERY_ID + "] is equals to [" + queryId + "]");
+			LOGGER.debug("Parameter [" + QUERY_ID + "] is equals to [" + queryId + "]");
 
 			Assert.assertNotNull(getEngineInstance(), "It's not possible to execute " + this.getActionName() + " service before having properly created an instance of EngineInstance class");
 
 			// get query
 			if(queryId != null) {
-				logger.debug("Loading query [" + queryId + "] from catalogue");
+				LOGGER.debug("Loading query [" + queryId + "] from catalogue");
 				query = getEngineInstance().getQueryCatalogue().getQuery(queryId);
 				Assert.assertNotNull(query, "Query object with id [" + queryId + "] does not exist in the catalogue");
 			} else {
-				logger.debug("Loading active query");
+				LOGGER.debug("Loading active query");
 				query = getEngineInstance().getActiveQuery();
-				logger.warn("Active query not available");
-				logger.debug("Loading first query from catalogue");
+				LOGGER.warn("Active query not available");
+				LOGGER.debug("Loading first query from catalogue");
 				query = getEngineInstance().getQueryCatalogue().getFirstQuery();
 				Assert.assertNotNull(query, "Query catalogue is empty");
 			}
-			logger.debug("Query [" + query.getId() + "] succesfully loaded");
+			LOGGER.debug("Query [" + query.getId() + "] succesfully loaded");
 
 
 			// serialize query
@@ -89,11 +88,11 @@ public class GetSelectedColumnsAction  extends AbstractQbeEngineAction {
 			}
 
 
-			fieldsJSON = queryJSON.getJSONArray(QuerySerializationConstants.FIELDS);			
-			resultsJSON = new JSONObject(); 
+			fieldsJSON = queryJSON.getJSONArray(QuerySerializationConstants.FIELDS);
+			resultsJSON = new JSONObject();
 
 
-			// check if mandatory_measure or segment_attribute 
+			// check if mandatory_measure or segment_attribute
 //			boolean mandatory_measure = false;
 //			boolean segment_attribute = false;
 //
@@ -131,8 +130,8 @@ public class GetSelectedColumnsAction  extends AbstractQbeEngineAction {
 
 		} catch(Throwable t) {
 			throw SpagoBIEngineServiceExceptionHandler.getInstance().getWrappedException(getActionName(), getEngineInstance(), t);
-		} finally {			
-			logger.debug("OUT");
-		}	
+		} finally {
+			LOGGER.debug("OUT");
+		}
 	}
 }

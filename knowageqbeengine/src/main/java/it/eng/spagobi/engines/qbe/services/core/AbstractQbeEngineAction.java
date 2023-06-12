@@ -40,7 +40,7 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 public abstract class AbstractQbeEngineAction extends AbstractEngineAction {
 
 	/** Logger component. */
-	private static final Logger logger = Logger.getLogger(AbstractQbeEngineAction.class);
+	private static final Logger LOGGER = Logger.getLogger(AbstractQbeEngineAction.class);
 
 	private static final String PARAM_VALUE_NAME = "value";
 	public static final String DEFAULT_VALUE_PARAM = "defaultValue";
@@ -104,7 +104,7 @@ public abstract class AbstractQbeEngineAction extends AbstractEngineAction {
 						boolean hasDefaultValue = obj.has(DEFAULT_VALUE_PARAM);
 						if (hasDefaultValue) {
 							tempVal = obj.getString(DEFAULT_VALUE_PARAM);
-							logger.debug("Value of param not present, use default value: " + tempVal);
+							LOGGER.debug("Value of param not present, use default value: " + tempVal);
 						}
 					}
 
@@ -124,13 +124,15 @@ public abstract class AbstractQbeEngineAction extends AbstractEngineAction {
 						value = getSingleValue(tempVal, type);
 					}
 
-					logger.debug("name: " + name + " / value: " + value);
+					LOGGER.debug("name: " + name + " / value: " + value);
 
 					getEnv().put(name + SpagoBIConstants.PARAMETER_TYPE, type);
 					getEnv().put(name, value);
 				}
 			}
 
+		} catch (SpagoBIServiceException t) {
+			throw t;
 		} catch (Throwable t) {
 			if (t instanceof SpagoBIServiceException) {
 				throw (SpagoBIServiceException) t;
@@ -140,19 +142,19 @@ public abstract class AbstractQbeEngineAction extends AbstractEngineAction {
 	}
 
 	public String getMultiValue(String value, String type) {
-		String toReturn = "";
+		StringBuilder toReturn = new StringBuilder("");
 
 		String[] tempArrayValues = value.split(",");
 		for (int j = 0; j < tempArrayValues.length; j++) {
 			String tempValue = tempArrayValues[j];
 			if (j == 0) {
-				toReturn = getSingleValue(tempValue, type);
+				toReturn.append(getSingleValue(tempValue, type));
 			} else {
-				toReturn = toReturn + ", " + getSingleValue(tempValue, type);
+				toReturn.append(toReturn + ", " + getSingleValue(tempValue, type));
 			}
 		}
 
-		return toReturn;
+		return toReturn.toString();
 	}
 
 	public String getSingleValue(String value, String type) {

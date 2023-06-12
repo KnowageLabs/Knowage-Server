@@ -17,6 +17,12 @@
  */
 package it.eng.spagobi.engines.qbe.services.initializers;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.log4j.Logger;
+
 import it.eng.qbe.dataset.QbeDataSet;
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.base.SourceBeanException;
@@ -30,37 +36,31 @@ import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.engines.EngineConstants;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
-import org.apache.log4j.Logger;
-
 /**
  * @author Davide Zerbetto (davide.zerbetto@eng.it)
  */
 public class FormEngineFromDatasetStartAction extends FormEngineStartAction {
 
-	// INPUT PARAMETERS
-	private final static String IS_NEW_DOCUMENT = "IS_NEW_DOCUMENT";
-
 	/** Logger component. */
-	private static final Logger logger = Logger.getLogger(FormEngineFromDatasetStartAction.class);
+	private static final Logger LOGGER = Logger.getLogger(FormEngineFromDatasetStartAction.class);
+
+	// INPUT PARAMETERS
+	private static final String IS_NEW_DOCUMENT = "IS_NEW_DOCUMENT";
 
 	private IDataSet dataSet;
 
 	@Override
 	public IDataSet getDataSet() {
-		logger.debug("IN");
+		LOGGER.debug("IN");
 		if (dataSet == null) {
 			// dataset information is coming with the request
 			String datasetLabel = this.getAttributeAsString(QbeEngineFromFederationStartAction.DATASET_LABEL);
-			logger.debug("Parameter [" + QbeEngineFromFederationStartAction.DATASET_LABEL + "]  is equal to [" + datasetLabel + "]");
+			LOGGER.debug("Parameter [" + QbeEngineFromFederationStartAction.DATASET_LABEL + "]  is equal to [" + datasetLabel + "]");
 			Assert.assertNotNull(datasetLabel, "Dataset not specified");
 			dataSet = getDataSetServiceProxy().getDataSetByLabel(datasetLabel);
 			Assert.assertNotNull(dataSet, "Dataset with label [" + datasetLabel + "] not found");
 		}
-		logger.debug("OUT");
+		LOGGER.debug("OUT");
 		return dataSet;
 	}
 
@@ -69,7 +69,7 @@ public class FormEngineFromDatasetStartAction extends FormEngineStartAction {
 		Map env = super.getEnv();
 		env.put(EngineConstants.ENV_LOCALE, getLocale());
 		String datasetLabel = this.getAttributeAsString(QbeEngineFromFederationStartAction.DATASET_LABEL);
-		logger.debug("Parameter [" + QbeEngineFromFederationStartAction.DATASET_LABEL + "] is equals to [" + datasetLabel + "]");
+		LOGGER.debug("Parameter [" + QbeEngineFromFederationStartAction.DATASET_LABEL + "] is equals to [" + datasetLabel + "]");
 		Assert.assertNotNull(datasetLabel, "Missing dataset label");
 
 		env.put(EngineConstants.ENV_DATASET_LABEL, datasetLabel);
@@ -79,7 +79,7 @@ public class FormEngineFromDatasetStartAction extends FormEngineStartAction {
 		// substitute default engine's datasource with dataset one
 		IDataSource dataSource = dataset.getDataSource();
 		if (dataSource == null) {
-			logger.debug("Dataset has no datasource.");
+			LOGGER.debug("Dataset has no datasource.");
 		} else {
 			env.put(EngineConstants.ENV_DATASOURCE, dataSource);
 		}
@@ -89,7 +89,7 @@ public class FormEngineFromDatasetStartAction extends FormEngineStartAction {
 			adjustMetadataForQbeDataset((QbeDataSet) dataset, descriptor);
 		}
 
-		List<IDataSet> dataSets = new ArrayList<IDataSet>();
+		List<IDataSet> dataSets = new ArrayList<>();
 		dataSets.add(dataset);
 		env.put(EngineConstants.ENV_DATASETS, dataSets);
 		return env;
@@ -127,7 +127,7 @@ public class FormEngineFromDatasetStartAction extends FormEngineStartAction {
 	public String getTemplateAsString() {
 		String template = null;
 		boolean isNewDocument = this.getAttributeAsBoolean(IS_NEW_DOCUMENT);
-		logger.debug("Parameter [" + IS_NEW_DOCUMENT + "] is equals to [" + isNewDocument + "]");
+		LOGGER.debug("Parameter [" + IS_NEW_DOCUMENT + "] is equals to [" + isNewDocument + "]");
 		if (isNewDocument) {
 			SourceBean sourceBean;
 			try {
