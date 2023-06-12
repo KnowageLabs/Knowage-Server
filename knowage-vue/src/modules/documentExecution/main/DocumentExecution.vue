@@ -43,7 +43,7 @@
                 v-for="(item, index) in breadcrumbs"
                 :key="index"
                 ref="documentFrame"
-                :name="'documentFrame' + item.iframeKey"
+                :name="'documentFrame' + index"
                 v-show="mode === 'iframe' && filtersData && filtersData.isReadyForExecution && !loading && !schedulationsTableVisible && (item.label === document.name || (crossNavigationContainerData && index === breadcrumbs.length - 1))"
                 class="document-execution-iframe"
             ></iframe>
@@ -793,8 +793,6 @@ export default defineComponent({
         },
         async sendForm(documentLabel: string | null = null, crossNavigationPopupMode: boolean = false) {
             let tempIndex = this.breadcrumbs.findIndex((el: any) => el.label === this.document.name) as any
-            const iframeKey = tempIndex === -1 ? crypto.randomBytes(16).toString('hex') : this.breadcrumbs[tempIndex].iframeKey
-
             const documentUrl = this.urlData?.url + '&timereloadurl=' + new Date().getTime()
             const postObject = {
                 params: { document: null } as any,
@@ -821,7 +819,7 @@ export default defineComponent({
             postForm.action = process.env.VUE_APP_HOST_URL + postObject.url
             postForm.method = 'post'
             const iframeName = crossNavigationPopupMode ? 'documentFramePopup' : 'documentFrame'
-            postForm.target = tempIndex !== -1 ? iframeName + iframeKey : documentLabel
+            postForm.target = tempIndex !== -1 ? iframeName + tempIndex : documentLabel
             postForm.acceptCharset = 'UTF-8'
             document.body.appendChild(postForm)
 
