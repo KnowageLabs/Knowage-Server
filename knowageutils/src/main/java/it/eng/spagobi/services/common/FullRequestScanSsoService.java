@@ -19,7 +19,8 @@ package it.eng.spagobi.services.common;
 
 import java.util.Calendar;
 import java.util.Date;
-import java.util.Enumeration;
+import java.util.Optional;
+import java.util.stream.Stream;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -28,19 +29,25 @@ import org.apache.log4j.Logger;
 
 import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.utilities.assertion.Assert;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 /**
  * SSO system based on request header, suitable when integrating with Shibboleth or any other external system that is providing information on headers
  */
 public class FullRequestScanSsoService extends JWTSsoService {
 
-	static private final String USER_IDENTIFIER_DEFAULT_REQUEST_HEADER_NAME = "REMOTE_USER";
+	private static final String USER_IDENTIFIER_DEFAULT_REQUEST_HEADER_NAME = "REMOTE_USER";
 
-	static private final String USER_IDENTIFIER_PARAMETER_NAME_SYSTEM_PROPERTY = "knowage.sso.request.parameter.name";
+	private static final String USER_IDENTIFIER_PARAMETER_NAME_SYSTEM_PROPERTY = "knowage.sso.request.parameter.name";
 
 	private static int USER_JWT_TOKEN_EXPIRE_HOURS = 10; // JWT token for regular users will expire in 10 HOURS
 
-	static private Logger logger = Logger.getLogger(FullRequestScanSsoService.class);
+	private static Logger logger = Logger.getLogger(FullRequestScanSsoService.class);
+
+	@FunctionalInterface
+	interface OptionalFunction {
+		Optional<String> getUserId();
+	}
 
 	@Override
 	public String readUserIdentifier(HttpServletRequest request) {
@@ -48,44 +55,45 @@ public class FullRequestScanSsoService extends JWTSsoService {
 
 		Assert.assertNotNull(request, "Input parameter [request] cannot be null");
 
+		String jwtToken = null;
+
 		try {
-
 			String headerName = getHeaderName();
-			String userId = request.getHeader(headerName);
-			LogMF.debug(logger, "Request header {0} is equal to [{1}]", headerName, userId);
-			if (userId == null) {
+			String attributeName = headerName;
 
-				LogMF.debug(logger, "Request header {0} not found. Using default JWT SSO system...", headerName);
-				// in case header is not present, defaults to regular JWT SSO system
-				for (Enumeration<?> e = request.getHeaderNames(); e.hasMoreElements();) {
-					String nextHeaderName = (String) e.nextElement();
-					LogMF.debug(logger, "Header nextHeaderName...", nextHeaderName);
-					String headerValue = request.getHeader(nextHeaderName);
-					LogMF.debug(logger, "Header values...", headerValue);
-				}
+			OptionalFunction getUserIdFromHeader = () -> {
+				String userId = request.getHeader(headerName);
+				LogMF.debug(logger, "Request header {0} is equal to [{1}]", headerName, userId);
+				return Optional.ofNullable(userId);
+			};
+			OptionalFunction getUserIdFromAttribute = () -> {
+				String userId = (String) request.getAttribute(attributeName);
+				LogMF.debug(logger, "Request attribute {0} is equal to [{1}]", headerName, userId);
+				return Optional.ofNullable(userId);
+			};
+			OptionalFunction getUserIdFromRemoteUser = () -> {
+				String userId = request.getRemoteUser();
+				LogMF.debug(logger, "Request remote user is equal to [{0}]", userId);
+				return Optional.ofNullable(userId);
+			};
 
-				userId = (String) request.getAttribute(headerName);
-				logger.debug("Request attribute [" + headerName + "] is equal to [" + userId + "]");
+			Stream<OptionalFunction> stream = Stream.of(getUserIdFromHeader, getUserIdFromAttribute, getUserIdFromRemoteUser);
 
-				if (userId == null) {
-					userId = request.getParameter(USER_IDENTIFIER_PARAMETER_NAME_SYSTEM_PROPERTY);
-					logger.debug("Request parameter [" + USER_IDENTIFIER_PARAMETER_NAME_SYSTEM_PROPERTY + "] is equal to [" + userId + "]");
+			Optional<String> userIdOpt = stream.flatMap(opt -> opt.getUserId().map(Stream::of).orElseGet(Stream::empty)).findFirst();
 
-					if (userId == null) {
-						userId = request.getRemoteUser();
-						logger.debug("Remote user is equal to [" + userId + "]");
-					}
-				}
-
+			if (userIdOpt.isPresent()) {
+				String userId = userIdOpt.get();
+				jwtToken = getJWTToken(userId);
+			} else {
+				// in case header / attribute / remote user are not present, defaults to regular JWT SSO system
+				jwtToken = super.readUserIdentifier(request);
 			}
-			String jwtToken = getJWTToken(userId);
-			LogMF.debug(logger, "OUT: returning [{0}]", jwtToken);
 
+			LogMF.debug(logger, "OUT: returning [{0}]", jwtToken);
 			return jwtToken;
 		} catch (Exception t) {
-			// fail fast
 			logger.error("An unpredicted error occurred while reading user identifier", t);
-			throw new RuntimeException("An unpredicted error occurred while reading user identifier", t);
+			throw new SpagoBIRuntimeException("An unpredicted error occurred while reading user identifier", t);
 		}
 	}
 
@@ -93,8 +101,7 @@ public class FullRequestScanSsoService extends JWTSsoService {
 		Calendar calendar = Calendar.getInstance();
 		calendar.add(Calendar.HOUR, USER_JWT_TOKEN_EXPIRE_HOURS);
 		Date expiresAt = calendar.getTime();
-		String jwtToken = JWTSsoService.userId2jwtToken(userId, expiresAt);
-		return jwtToken;
+		return JWTSsoService.userId2jwtToken(userId, expiresAt);
 	}
 
 	private String getHeaderName() {
