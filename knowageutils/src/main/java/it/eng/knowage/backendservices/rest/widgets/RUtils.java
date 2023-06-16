@@ -33,7 +33,7 @@ import it.eng.spagobi.utilities.rest.RestUtilities.Response;
 
 public class RUtils extends MLEngineUtils {
 
-	static protected Logger logger = Logger.getLogger(RUtils.class);
+	protected static Logger logger = Logger.getLogger(RUtils.class);
 
 	static String getFinalResult(Response rEngineResponse, String outputType) {
 		String rString = rEngineResponse.getResponseBody();

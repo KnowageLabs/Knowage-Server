@@ -33,7 +33,7 @@ import it.eng.spagobi.services.security.exceptions.SecurityException;
 @Deprecated
 public class FakeSsoService implements SsoServiceInterface {
 
-	static private Logger logger = Logger.getLogger(FakeSsoService.class);
+	private static Logger logger = Logger.getLogger(FakeSsoService.class);
 
 	/**
 	 * Read user id.

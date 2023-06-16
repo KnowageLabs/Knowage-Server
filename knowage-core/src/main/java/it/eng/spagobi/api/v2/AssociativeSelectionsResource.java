@@ -88,7 +88,7 @@ import it.eng.spagobi.utilities.sql.SqlUtils;
 @Path("/2.0/associativeSelections")
 public class AssociativeSelectionsResource extends AbstractDataSetResource {
 
-	static protected Logger logger = Logger.getLogger(AssociativeSelectionsResource.class);
+	protected static Logger logger = Logger.getLogger(AssociativeSelectionsResource.class);
 
 	@POST
 	@Produces(MediaType.APPLICATION_JSON)

@@ -25,7 +25,7 @@ public class AbstractCachePerfTest extends TestCase {
 	protected List<IDataSource> dataSourceWritings;
 	private static final String query = "select * from store";
 
-	static private Logger logger = Logger.getLogger(AbstractCacheTest.class);
+	private static Logger logger = Logger.getLogger(AbstractCacheTest.class);
 
 	/*
 	 * (non-Javadoc)

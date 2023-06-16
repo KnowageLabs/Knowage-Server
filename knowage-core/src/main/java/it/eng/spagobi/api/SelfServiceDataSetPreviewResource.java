@@ -69,7 +69,7 @@ public class SelfServiceDataSetPreviewResource extends AbstractSpagoBIResource {
 	private static final String DATASET_VALUE_SUCCESS_REQUEST_DISPATCHER_URL = "datasetview.jsp";
 	private static final int MAX_DATASET_PAGE_SIZE = 10;
 
-	static private Logger logger = Logger.getLogger(SelfServiceDataSetPreviewResource.class);
+	private static Logger logger = Logger.getLogger(SelfServiceDataSetPreviewResource.class);
 
 	@GET
 	@Path("/export/{label}")

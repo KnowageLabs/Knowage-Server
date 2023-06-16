@@ -49,7 +49,7 @@ import it.eng.spagobi.metadata.metadata.SbiMetaTableColumn;
  */
 public class SbiMetaTableDAOHibImpl extends AbstractHibernateDAO implements ISbiMetaTableDAO {
 
-	static private Logger logger = Logger.getLogger(SbiMetaTableDAOHibImpl.class);
+	private static Logger logger = Logger.getLogger(SbiMetaTableDAOHibImpl.class);
 
 	/**
 	 * Load table by id.

@@ -54,7 +54,7 @@ public class EventLog implements Serializable {
 	private EventType type;
 	private List roles;
 
-	static private Logger logger = Logger.getLogger(EventLog.class);
+	private static Logger logger = Logger.getLogger(EventLog.class);
 
 	/**
 	 * Gets the date.

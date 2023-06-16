@@ -29,7 +29,7 @@ import it.eng.spagobi.events.dao.EventLogDAOHibImpl;
 
 public class EventsAccessController {
 
-	static private Logger logger = Logger.getLogger(EventsAccessController.class);
+	private static Logger logger = Logger.getLogger(EventsAccessController.class);
 
 	private UserProfile userProfile;
 

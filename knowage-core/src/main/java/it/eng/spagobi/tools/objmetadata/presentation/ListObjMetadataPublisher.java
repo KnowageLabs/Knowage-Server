@@ -34,7 +34,7 @@ import org.apache.log4j.Logger;
  * another error is generated. 
  */
 public class ListObjMetadataPublisher implements PublisherDispatcherIFace {
-	static private Logger logger = Logger.getLogger(ListObjMetadataPublisher.class);
+	private static Logger logger = Logger.getLogger(ListObjMetadataPublisher.class);
 	
 	/**
 	 * Given the request at input, gets the name of the reference publisher,driving

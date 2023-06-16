@@ -32,7 +32,7 @@ import org.apache.log4j.Logger;
  *
  */
 public class ETLMetadata {
-	static private Logger logger = Logger.getLogger(ETLMetadata.class);
+	private static Logger logger = Logger.getLogger(ETLMetadata.class);
 
 	Set<ETLRDBMSSource> rdbmsSources;
 	Set<ETLComponent> sourceTables;

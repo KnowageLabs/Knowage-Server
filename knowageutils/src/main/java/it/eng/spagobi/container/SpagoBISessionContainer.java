@@ -32,7 +32,7 @@ import org.apache.log4j.Logger;
 public class SpagoBISessionContainer extends AbstractContainer implements
 		IBeanContainer {
 
-	static private Logger logger = Logger.getLogger(SpagoBISessionContainer.class);
+	private static Logger logger = Logger.getLogger(SpagoBISessionContainer.class);
 	
 	private SessionContainer _session;
 	

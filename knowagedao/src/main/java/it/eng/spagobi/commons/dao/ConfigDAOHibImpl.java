@@ -46,7 +46,7 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
  */
 public class ConfigDAOHibImpl extends AbstractHibernateDAO implements IConfigDAO {
 
-	static private Logger logger = Logger.getLogger(ConfigDAOHibImpl.class);
+	private static Logger logger = Logger.getLogger(ConfigDAOHibImpl.class);
 
 	/*
 	 * (non-Javadoc)

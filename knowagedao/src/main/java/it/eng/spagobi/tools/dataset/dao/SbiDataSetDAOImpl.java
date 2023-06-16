@@ -59,7 +59,7 @@ import it.eng.spagobi.utilities.assertion.Assert;
 
 public class SbiDataSetDAOImpl extends AbstractHibernateDAO implements ISbiDataSetDAO {
 
-	static private Logger logger = Logger.getLogger(SbiDataSetDAOImpl.class);
+	private static Logger logger = Logger.getLogger(SbiDataSetDAOImpl.class);
 
 	@Override
 	public SbiDataSet loadSbiDataSetByLabel(String label) {

@@ -80,7 +80,7 @@ import it.eng.spagobi.utilities.rest.RestUtilities;
 @Path("/hierarchies")
 public class HierarchyService {
 
-	static private Logger logger = Logger.getLogger(HierarchyService.class);
+	private static Logger logger = Logger.getLogger(HierarchyService.class);
 
 	// get automatic hierarchy structure for tree visualization
 	@GET

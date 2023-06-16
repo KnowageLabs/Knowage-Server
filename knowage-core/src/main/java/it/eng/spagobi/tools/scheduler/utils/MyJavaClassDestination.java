@@ -21,7 +21,7 @@ import org.apache.log4j.Logger;
 
 public class MyJavaClassDestination extends JavaClassDestination {
 
-	static protected Logger logger = Logger.getLogger(MyJavaClassDestination.class);
+	protected static Logger logger = Logger.getLogger(MyJavaClassDestination.class);
 
 	@Override
 	public void execute() {

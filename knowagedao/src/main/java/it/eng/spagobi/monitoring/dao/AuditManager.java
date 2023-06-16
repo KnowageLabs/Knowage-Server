@@ -46,7 +46,7 @@ import it.eng.spagobi.monitoring.metadata.SbiAudit;
 
 public class AuditManager {
 
-	static private Logger logger = Logger.getLogger(AuditManager.class);
+	private static Logger logger = Logger.getLogger(AuditManager.class);
 
 	public static final String MODULE_NAME = "AuditService";
 

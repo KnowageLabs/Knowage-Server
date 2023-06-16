@@ -10,7 +10,7 @@ public class AssociativeStrategyFactory {
 
 	public static final String OUTER_STRATEGY = "OUTER";
 
-	static private Logger logger = Logger.getLogger(AssociativeStrategyFactory.class);
+	private static Logger logger = Logger.getLogger(AssociativeStrategyFactory.class);
 
 	public static IAssociativityManager createStrategyInstance(Config config, UserProfile userProfile) throws Exception {
 		logger.debug("IN");

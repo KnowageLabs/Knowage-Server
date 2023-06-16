@@ -31,7 +31,7 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
  */
 public class OAuth2SecurityInfoProvider implements ISecurityInfoProvider {
 
-	static private Logger logger = Logger.getLogger(OAuth2SecurityInfoProvider.class);
+	private static Logger logger = Logger.getLogger(OAuth2SecurityInfoProvider.class);
 
 	@Override
 	public List getRoles() {

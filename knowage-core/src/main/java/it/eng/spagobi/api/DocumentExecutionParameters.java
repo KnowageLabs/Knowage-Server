@@ -118,7 +118,7 @@ public class DocumentExecutionParameters extends AbstractSpagoBIResource {
 
 	private static final String[] VISIBLE_COLUMNS = new String[] { VALUE_FIELD, LABEL_FIELD, DESCRIPTION_FIELD };
 
-	static protected Logger logger = Logger.getLogger(DocumentExecutionParameters.class);
+	protected static Logger logger = Logger.getLogger(DocumentExecutionParameters.class);
 
 	@POST
 	@Path("/getParameters")

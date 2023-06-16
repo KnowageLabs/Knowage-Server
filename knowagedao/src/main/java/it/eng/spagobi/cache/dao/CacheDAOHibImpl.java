@@ -45,7 +45,7 @@ import it.eng.spagobi.utilities.cache.CacheItem;
 
 public class CacheDAOHibImpl extends AbstractHibernateDAO implements ICacheDAO {
 
-	static private Logger logger = Logger.getLogger(CacheDAOHibImpl.class);
+	private static Logger logger = Logger.getLogger(CacheDAOHibImpl.class);
 
 	// ========================================================================================
 	// READ operations (cRud)

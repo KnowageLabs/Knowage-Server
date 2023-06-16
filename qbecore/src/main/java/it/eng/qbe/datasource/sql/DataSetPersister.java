@@ -44,7 +44,7 @@ public class DataSetPersister extends SimpleRestClient {
 
 	}
 
-	static protected Logger logger = Logger.getLogger(DataSetPersister.class);
+	protected static Logger logger = Logger.getLogger(DataSetPersister.class);
 
 	public JSONObject cacheDataSets(JSONObject datasetLabels, String userId) throws Exception {
 

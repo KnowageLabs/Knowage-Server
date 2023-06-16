@@ -38,7 +38,7 @@ import it.eng.spagobi.tools.dataset.service.ManageDatasets;
 
 public class DataSetSupplier {
 
-	static private Logger logger = Logger.getLogger(DataSetSupplier.class);
+	private static Logger logger = Logger.getLogger(DataSetSupplier.class);
 
 	/**
 	 * Gets the data set.

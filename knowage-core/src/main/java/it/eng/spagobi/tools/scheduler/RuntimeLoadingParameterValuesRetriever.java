@@ -47,7 +47,7 @@ import it.eng.spagobi.commons.dao.DAOFactory;
  */
 public class RuntimeLoadingParameterValuesRetriever extends ParameterValuesRetriever {
 
-	static private Logger logger = Logger.getLogger(RuntimeLoadingParameterValuesRetriever.class);
+	private static Logger logger = Logger.getLogger(RuntimeLoadingParameterValuesRetriever.class);
 
 	private String roleToBeUsed;
 

@@ -63,7 +63,7 @@ public abstract class AbstractCacheTest extends TestCase {
 	protected IDataSource dataSourceReading;
 	protected IDataSource dataSourceWriting;
 
-	static private Logger logger = Logger.getLogger(AbstractCacheTest.class);
+	private static Logger logger = Logger.getLogger(AbstractCacheTest.class);
 
 	/*
 	 * (non-Javadoc)

@@ -40,7 +40,7 @@ public class RestEventJob extends AbstractSpagoBIJob implements Job {
 
 	private static final String TRIGGER_NAME_PREFIX = "schedule_rest_event_";
 
-	static private Logger logger = Logger.getLogger(RestEventJob.class);
+	private static Logger logger = Logger.getLogger(RestEventJob.class);
 
 	@Override
 	public void execute(JobExecutionContext jobExecutionContext) throws JobExecutionException {

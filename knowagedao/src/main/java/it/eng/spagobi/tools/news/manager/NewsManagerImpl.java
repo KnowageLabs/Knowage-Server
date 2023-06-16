@@ -28,7 +28,7 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 public class NewsManagerImpl implements INewsManager {
 
-	static protected Logger logger = Logger.getLogger(NewsManagerImpl.class);
+	protected static Logger logger = Logger.getLogger(NewsManagerImpl.class);
 
 	/*
 	 * public List<BasicNews> getAllNewsUser(UserProfile userProf) { try { List listOfRoles = (List) userProf.getRoles(); IRoleDAO roleDao =

@@ -32,7 +32,7 @@ public class TestJPA {
 
 	private static EntityManagerFactory emf;
 
-	static protected Logger logger = Logger.getLogger(TestJPA.class);
+	protected static Logger logger = Logger.getLogger(TestJPA.class);
 
 	private EntityManagerFactory createEMF() {
 		try {

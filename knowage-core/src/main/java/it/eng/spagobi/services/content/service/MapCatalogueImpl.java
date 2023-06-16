@@ -47,7 +47,7 @@ import it.eng.spagobi.services.security.exceptions.SecurityException;
 
 public class MapCatalogueImpl extends AbstractServiceImpl {
 
-    static private Logger logger = Logger.getLogger(MapCatalogueImpl.class);
+    private static Logger logger = Logger.getLogger(MapCatalogueImpl.class);
 
 	public static final String GET_STANDARD_HIERARCHY = "getStandardHierarchy";
 	public static final String GET_MAPS_BY_FEATURE = "getMapsByFeature";

@@ -47,7 +47,7 @@ public class GeoMap implements Serializable {
 	private String memberName;
 	private int binId;
 
-	static private Logger logger = Logger.getLogger(GeoMap.class);
+	private static Logger logger = Logger.getLogger(GeoMap.class);
 
 	/**
 	 * Gets the descr.

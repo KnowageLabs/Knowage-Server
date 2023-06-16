@@ -46,7 +46,7 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRestServiceException;
 @Path("/")
 public class OutputParametarsResource extends AbstractSpagoBIResource {
 
-	static protected Logger logger = Logger.getLogger(OutputParametarsResource.class);
+	protected static Logger logger = Logger.getLogger(OutputParametarsResource.class);
 
 	@GET
 	@Produces("application/json")

@@ -40,7 +40,7 @@ import it.eng.spagobi.tools.dataset.bo.IDataSet;
 public class DatasetNotificationManager implements INotificationManager {
 
 
-	static private Logger logger = Logger.getLogger(DatasetNotificationManager.class);
+	private static Logger logger = Logger.getLogger(DatasetNotificationManager.class);
 	private IMessageBuilder msgBuilder = null;
 
 	public DatasetNotificationManager(){}

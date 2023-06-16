@@ -28,7 +28,7 @@ import org.apache.log4j.Logger;
 
 public class SubObject implements Serializable {
 	
-	static private Logger logger = Logger.getLogger(SubObject.class);
+	private static Logger logger = Logger.getLogger(SubObject.class);
 	
 	private Integer id = null;
 	private Integer biobjId = null;

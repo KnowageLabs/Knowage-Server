@@ -29,7 +29,7 @@ import org.apache.log4j.Logger;
 
 public class AuditAccessUtils implements Serializable{
 
-    static private Logger logger = Logger.getLogger(AuditAccessUtils.class);
+    private static Logger logger = Logger.getLogger(AuditAccessUtils.class);
     private List _auditIds;
 
     // private boolean _isNewExecution = true;

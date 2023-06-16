@@ -42,7 +42,7 @@ import it.eng.spagobi.services.oauth2.Oauth2SsoService;
  */
 public class OAuth2Filter implements Filter {
 
-	static private Logger logger = Logger.getLogger(OAuth2Filter.class);
+	private static Logger logger = Logger.getLogger(OAuth2Filter.class);
 
 	@Override
 	public void destroy() {

@@ -34,7 +34,7 @@ import it.eng.spagobi.utilities.objects.Couple;
 
 public class DriversValidationAPI {
 
-	static private Logger logger = Logger.getLogger(DriversValidationAPI.class);
+	private static Logger logger = Logger.getLogger(DriversValidationAPI.class);
 	private static final String TREE_INNER_LOV_TYPE = "treeinner";
 
 	private IEngUserProfile userProfile = null;

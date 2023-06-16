@@ -30,7 +30,7 @@ import it.eng.spagobi.utilities.database.DataBaseException;
  */
 public class SQLServerSQLDBCacheTest extends AbstractSQLDBCacheTest {
 
-	static private Logger logger = Logger.getLogger(SQLServerSQLDBCacheTest.class);
+	private static Logger logger = Logger.getLogger(SQLServerSQLDBCacheTest.class);
 
 	// Create Datasources specific for this test
 	@Override

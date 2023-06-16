@@ -29,7 +29,7 @@ import it.eng.spagobi.dataset.cache.test.TestDataSourceFactory;
  */
 public class HsqldbSQLDBCacheTest extends AbstractSQLDBCacheTest {
 	
-	static private Logger logger = Logger.getLogger(HsqldbSQLDBCacheTest.class);
+	private static Logger logger = Logger.getLogger(HsqldbSQLDBCacheTest.class);
 
 
 	//Create Datasources specific for this test

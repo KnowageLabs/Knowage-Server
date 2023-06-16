@@ -40,7 +40,7 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 public class CrosstabBuilder {
 
-	static private Logger logger = Logger.getLogger(CrosstabBuilder.class);
+	private static Logger logger = Logger.getLogger(CrosstabBuilder.class);
 
 	// INPUT PARAMETERS
 	private final Locale locale;

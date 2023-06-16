@@ -42,7 +42,7 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 @Path("1.0/chart/template")
 public class ChartResources extends AbstractChartEngineResource {
 
-	static private Logger logger = Logger.getLogger(ChartResources.class);
+	private static Logger logger = Logger.getLogger(ChartResources.class);
 
 	@POST
 	@Path("/save")

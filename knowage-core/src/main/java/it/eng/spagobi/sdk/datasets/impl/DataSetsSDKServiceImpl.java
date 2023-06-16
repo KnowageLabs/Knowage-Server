@@ -53,7 +53,7 @@ import org.apache.log4j.Logger;
 
 public class DataSetsSDKServiceImpl extends AbstractSDKService implements DataSetsSDKService {
 
-	static private Logger logger = Logger.getLogger(DataSetsSDKServiceImpl.class);
+	private static Logger logger = Logger.getLogger(DataSetsSDKServiceImpl.class);
 
 	@Override
 	public SDKDataSet getDataSet(Integer dataSetId) throws NotAllowedOperationException {

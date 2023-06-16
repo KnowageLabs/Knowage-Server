@@ -43,7 +43,7 @@ import org.json.JSONObject;
 @Path("/restExample")
 public class RestExampleClass {
 
-	static protected Logger logger = Logger.getLogger(RestExampleClass.class);
+	protected static Logger logger = Logger.getLogger(RestExampleClass.class);
 
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)

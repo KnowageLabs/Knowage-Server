@@ -36,7 +36,7 @@ public class AssociationManager {
 
 	List<Association> associations;
 
-	static protected Logger logger = Logger.getLogger(AssociationManager.class);
+	protected static Logger logger = Logger.getLogger(AssociationManager.class);
 
 	public AssociationManager() {
 		associations = new ArrayList<Association>();

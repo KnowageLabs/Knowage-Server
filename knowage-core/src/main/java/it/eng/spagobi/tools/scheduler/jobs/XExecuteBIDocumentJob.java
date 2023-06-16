@@ -83,7 +83,7 @@ import it.eng.spagobi.utilities.mime.MimeUtils;
 
 public class XExecuteBIDocumentJob extends AbstractSpagoBIJob implements Job {
 
-    static private Logger logger = Logger.getLogger(XExecuteBIDocumentJob.class);
+    private static Logger logger = Logger.getLogger(XExecuteBIDocumentJob.class);
 
     @Override
     public void execute(JobExecutionContext jobExecutionContext) throws JobExecutionException {

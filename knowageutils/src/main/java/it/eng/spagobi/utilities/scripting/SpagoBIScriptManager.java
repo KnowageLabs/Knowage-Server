@@ -49,7 +49,7 @@ import it.eng.spagobi.utilities.groovy.GroovySandbox;
 
 public class SpagoBIScriptManager {
 
-	static private Logger logger = Logger.getLogger(SpagoBIScriptManager.class);
+	private static Logger logger = Logger.getLogger(SpagoBIScriptManager.class);
 
 	public Object runScript(String script, String language) {
 		return runScript(script, language, null, null);

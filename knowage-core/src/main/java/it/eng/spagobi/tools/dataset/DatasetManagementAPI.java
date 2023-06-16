@@ -119,7 +119,7 @@ import it.eng.spagobi.utilities.trove.TLongHashSetSerializer;
 
 public class DatasetManagementAPI {
 
-	static private Logger logger = Logger.getLogger(DatasetManagementAPI.class);
+	private static Logger logger = Logger.getLogger(DatasetManagementAPI.class);
 
 	private UserProfile userProfile;
 	private IDataSetDAO dataSetDao;

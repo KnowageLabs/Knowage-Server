@@ -46,7 +46,7 @@ import org.apache.log4j.Logger;
  */
 
 public class ListLookupParametersModule extends AbstractBasicListModule {
-	static private Logger logger = Logger.getLogger(ListLookupParametersModule.class);
+	private static Logger logger = Logger.getLogger(ListLookupParametersModule.class);
 	public static final String MODULE_PAGE = "ParametersLookupPage";
 	EMFErrorHandler errorHandler = null;
 	

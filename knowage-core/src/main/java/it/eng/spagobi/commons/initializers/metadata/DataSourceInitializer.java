@@ -43,7 +43,7 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
  */
 public class DataSourceInitializer extends SpagoBIInitializer {
 
-	static private Logger logger = Logger.getLogger(DataSourceInitializer.class);
+	private static Logger logger = Logger.getLogger(DataSourceInitializer.class);
 
 	public DataSourceInitializer() {
 		targetComponentName = "DataSource";

@@ -42,7 +42,7 @@ public class DAOConfig {
 	 */
 	private static File hibernateConfigurationFileFile;
 
-	static private Logger logger = Logger.getLogger(DAOConfig.class);
+	private static Logger logger = Logger.getLogger(DAOConfig.class);
 
 	public static String getResourcePath() {
 		String resourcePath;

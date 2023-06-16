@@ -39,7 +39,7 @@ import org.apache.log4j.Logger;
  * 
  */
 public class DetailDataSourcePublisher implements PublisherDispatcherIFace {
-	static private Logger logger = Logger.getLogger(DetailDataSourcePublisher.class);
+	private static Logger logger = Logger.getLogger(DetailDataSourcePublisher.class);
 	
 	/**
 	 * Given the request at input, gets the name of the reference publisher,driving

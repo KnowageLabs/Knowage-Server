@@ -36,7 +36,7 @@ public class ChartTemplateClient extends SimpleRestClient {
 
 	}
 
-	static protected Logger logger = Logger.getLogger(ChartTemplateClient.class);
+	protected static Logger logger = Logger.getLogger(ChartTemplateClient.class);
 
 	public JSONObject saveTemplate(JSONObject jsonTemplate, String docLabel, String userId) throws Exception {
 

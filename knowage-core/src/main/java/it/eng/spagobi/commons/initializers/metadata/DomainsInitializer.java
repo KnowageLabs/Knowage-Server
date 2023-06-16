@@ -35,7 +35,7 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
  */
 public class DomainsInitializer extends SpagoBIInitializer {
 
-	static private Logger logger = Logger.getLogger(DomainsInitializer.class);
+	private static Logger logger = Logger.getLogger(DomainsInitializer.class);
 
 	public DomainsInitializer() {
 		targetComponentName = "Domains";

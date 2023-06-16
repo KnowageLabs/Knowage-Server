@@ -138,16 +138,16 @@ import it.eng.spagobi.utilities.json.JSONUtils;
 @Path("/selfservicedataset")
 public class SelfServiceDataSetCRUD extends AbstractSpagoBIResource {
 
-	static private Logger logger = Logger.getLogger(SelfServiceDataSetCRUD.class);
-	static private String deleteNullIdDataSetError = "error.mesage.description.data.set.cannot.be.null";
-	static private String deleteInUseDSError = "error.mesage.description.data.set.deleting.inuse";
-	static private String canNotFillResponseError = "error.mesage.description.generic.can.not.responce";
-	static private String saveDuplicatedDSError = "error.mesage.description.data.set.saving.duplicated";
-	static private String parsingDSError = "error.mesage.description.data.set.parsing.error";
+	private static Logger logger = Logger.getLogger(SelfServiceDataSetCRUD.class);
+	private static String deleteNullIdDataSetError = "error.mesage.description.data.set.cannot.be.null";
+	private static String deleteInUseDSError = "error.mesage.description.data.set.deleting.inuse";
+	private static String canNotFillResponseError = "error.mesage.description.generic.can.not.responce";
+	private static String saveDuplicatedDSError = "error.mesage.description.data.set.saving.duplicated";
+	private static String parsingDSError = "error.mesage.description.data.set.parsing.error";
 
-	static private String previewRowsConfigLabel = "SPAGOBI.DATASET.PREVIEW_ROWS";
+	private static String previewRowsConfigLabel = "SPAGOBI.DATASET.PREVIEW_ROWS";
 
-	static private int ROWS_LIMIT_GUESS_TYPE_HEURISTIC = 10000;
+	private static int ROWS_LIMIT_GUESS_TYPE_HEURISTIC = 10000;
 
 	@Context
 	private HttpServletRequest request;

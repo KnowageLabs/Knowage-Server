@@ -32,7 +32,7 @@ import org.apache.log4j.Logger;
 
 public class InternalSecurityInfoProviderImpl implements ISecurityInfoProvider{
 
-	static private Logger logger = Logger.getLogger(InternalSecurityInfoProviderImpl.class);
+	private static Logger logger = Logger.getLogger(InternalSecurityInfoProviderImpl.class);
 	
 	public List getAllProfileAttributesNames() {
     	logger.debug("IN");

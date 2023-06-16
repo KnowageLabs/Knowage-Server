@@ -44,7 +44,7 @@ public abstract class AbstractQbeTestCase extends TestCase {
 	public static String CONNECTION_USER = "root";
 	public static String CONNECTION_PWD = "root";
 
-	static protected Logger logger = Logger.getLogger(AbstractQbeTestCase.class);
+	protected static Logger logger = Logger.getLogger(AbstractQbeTestCase.class);
 
 	@Override
 	protected void setUp() throws Exception {

@@ -47,7 +47,7 @@ import it.eng.spagobi.utilities.assertion.Assert;
  */
 public class ConsoleDriver extends GenericDriver {
 
-	static private Logger logger = Logger.getLogger(ConsoleDriver.class);
+	private static Logger logger = Logger.getLogger(ConsoleDriver.class);
 
 	/**
 	 * Returns a map of parameters which will be send in the request to the engine application.

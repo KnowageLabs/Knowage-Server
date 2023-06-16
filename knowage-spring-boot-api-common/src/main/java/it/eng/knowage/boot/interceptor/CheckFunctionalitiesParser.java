@@ -30,7 +30,7 @@ import it.eng.spagobi.services.security.SpagoBIUserProfile;
  */
 public class CheckFunctionalitiesParser {
 
-	static private Logger logger = Logger.getLogger(CheckFunctionalitiesParser.class);
+	private static Logger logger = Logger.getLogger(CheckFunctionalitiesParser.class);
 
 	public boolean hasUserConstraints(Method method) throws Exception {
 

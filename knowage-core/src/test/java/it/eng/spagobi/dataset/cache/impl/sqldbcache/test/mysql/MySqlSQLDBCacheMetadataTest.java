@@ -30,7 +30,7 @@ import it.eng.spagobi.dataset.cache.test.TestDataSourceFactory;
  */
 public class MySqlSQLDBCacheMetadataTest extends AbstractSQLDBCacheMetadatTest {
 	
-	static private Logger logger = Logger.getLogger(MySqlSQLDBCacheMetadataTest.class);
+	private static Logger logger = Logger.getLogger(MySqlSQLDBCacheMetadataTest.class);
 
 	//Create Datasources specific for this test
 	@Override

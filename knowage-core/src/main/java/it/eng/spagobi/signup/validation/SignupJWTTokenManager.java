@@ -11,7 +11,7 @@ import it.eng.spagobi.services.security.exceptions.SecurityException;
 public class SignupJWTTokenManager {
 	
 	//Minutes before signup key expirations
-	static private Integer expirationDelay = 10;
+	private static Integer expirationDelay = 10;
 	
 	public static String createJWTToken(String userId) {
 		Date expirationDate = new Date(System.currentTimeMillis()+expirationDelay*60*1000);

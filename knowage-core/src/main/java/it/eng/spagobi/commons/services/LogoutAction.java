@@ -25,7 +25,7 @@ import it.eng.spago.dispatching.action.AbstractHttpAction;
 
 public class LogoutAction extends AbstractHttpAction {
 
-	static private Logger logger = Logger.getLogger(LogoutAction.class);
+	private static Logger logger = Logger.getLogger(LogoutAction.class);
 
 	/*
 	 * (non-Javadoc)

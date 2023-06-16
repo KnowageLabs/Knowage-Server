@@ -16,7 +16,7 @@ public class ZipUtility {
 	private List<String> fileList;
 	private String sourcePath;
 
-	static private Logger logger = Logger.getLogger(ZipUtility.class);
+	private static Logger logger = Logger.getLogger(ZipUtility.class);
 
 	public ZipUtility(String sourcePath) {
 		fileList = new ArrayList<String>();

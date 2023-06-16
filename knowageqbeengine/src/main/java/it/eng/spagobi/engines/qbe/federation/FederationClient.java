@@ -47,7 +47,7 @@ public class FederationClient extends SimpleRestClient {
 
 	}
 
-	static protected Logger logger = Logger.getLogger(DataSetPersister.class);
+	protected static Logger logger = Logger.getLogger(DataSetPersister.class);
 
 	public FederationDefinition getFederation(String federationID, String userId, DataSetServiceProxy proxy) throws Exception {
 

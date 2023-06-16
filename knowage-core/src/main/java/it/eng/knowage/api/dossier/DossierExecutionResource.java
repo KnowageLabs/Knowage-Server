@@ -45,7 +45,7 @@ import it.eng.spagobi.utilities.threadmanager.WorkManager;
 @Path("/1.0/dossier")
 public class DossierExecutionResource extends AbstractSpagoBIResource {
 
-	static private Logger logger = Logger.getLogger(DossierExecutionResource.class);
+	private static Logger logger = Logger.getLogger(DossierExecutionResource.class);
 
 	@POST
 	@Path("/executedocuments")

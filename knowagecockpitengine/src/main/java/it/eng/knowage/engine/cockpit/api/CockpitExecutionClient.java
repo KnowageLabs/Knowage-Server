@@ -30,7 +30,7 @@ import it.eng.spagobi.utilities.engines.rest.SimpleRestClient;
 public class CockpitExecutionClient extends SimpleRestClient {
 
 	private static final String SERVICE_URL = "/restful-services/2.0/datasets";
-	static private Logger logger = Logger.getLogger(CockpitExecutionClient.class);
+	private static Logger logger = Logger.getLogger(CockpitExecutionClient.class);
 
 	public String getDataFromDataset(String aggregations, String label, String userId, Map<String, Object> queryParams) {
 

@@ -63,7 +63,7 @@ public class geoUtils {
 	public static final String LAYER_URL = "layerUrl";
 	public static final String NO_DATASET = "noDataset";
 
-	static private Logger logger = Logger.getLogger(geoUtils.class);
+	private static Logger logger = Logger.getLogger(geoUtils.class);
 
 	public static FieldType getDsFieldType(String xml, String fieldName) throws Exception {
 		FieldType toReturn = IFieldMetaData.FieldType.ATTRIBUTE;

@@ -10,7 +10,7 @@ public class CustomizedFunctionParameter {
 	final static String NAME = "name";
 	final static String TYPE = "type";
 
-	static protected Logger logger = Logger.getLogger(CustomizedFunctionParameter.class);
+	protected static Logger logger = Logger.getLogger(CustomizedFunctionParameter.class);
 
 	public CustomizedFunctionParameter(JSONObject json) {
 		logger.debug("IN");

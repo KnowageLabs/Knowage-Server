@@ -56,7 +56,7 @@ public class ModalitiesValue implements Serializable {
 	 *
 	 */
 	private static final long serialVersionUID = 3600109325988207485L;
-	static protected Logger logger = Logger.getLogger(ModalitiesValue.class);
+	protected static Logger logger = Logger.getLogger(ModalitiesValue.class);
 
 	private Integer id;
 	@NotNull

@@ -34,7 +34,7 @@ import it.eng.spagobi.commons.dao.DAOFactory;
  */
 public class ParameterValuesEncoder {
 
-	static private Logger logger = Logger.getLogger(ParameterValuesEncoder.class);
+	private static Logger logger = Logger.getLogger(ParameterValuesEncoder.class);
 	private String separator;
 	private String openBlockMarker;
 	private String closeBlockMarker;

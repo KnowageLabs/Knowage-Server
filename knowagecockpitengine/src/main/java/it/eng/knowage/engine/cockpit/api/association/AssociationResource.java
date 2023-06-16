@@ -47,7 +47,7 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 @Path("/1.0/associations")
 public class AssociationResource extends AbstractCockpitEngineResource {
 
-	static private Logger logger = Logger.getLogger(AssociationResource.class);
+	private static Logger logger = Logger.getLogger(AssociationResource.class);
 
 	@GET
 	@Path("/")

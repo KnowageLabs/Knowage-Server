@@ -62,7 +62,7 @@ import it.eng.spagobi.utilities.rest.RestUtilities;
 @Path("/hierarchiesBackup")
 public class BackupService {
 
-	static private Logger logger = Logger.getLogger(HierarchyService.class);
+	private static Logger logger = Logger.getLogger(HierarchyService.class);
 
 	@POST
 	@Path("/modifyHierarchyBkps")

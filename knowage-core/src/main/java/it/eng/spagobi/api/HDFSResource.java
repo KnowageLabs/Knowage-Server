@@ -48,7 +48,7 @@ import it.eng.spagobi.utilities.threadmanager.WorkManager;
 @ManageAuthorization
 public class HDFSResource extends AbstractSpagoBIResource {
 
-	static protected Logger logger = Logger.getLogger(HDFSResource.class);
+	protected static Logger logger = Logger.getLogger(HDFSResource.class);
 
 	@POST
 	@Path("/{id}")

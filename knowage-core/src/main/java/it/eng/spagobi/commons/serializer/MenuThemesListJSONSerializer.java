@@ -46,7 +46,7 @@ public class MenuThemesListJSONSerializer implements Serializer {
 	public String contextName = "";
 	public String defaultThemePath = "/themes/sbi_default";
 
-	static protected Logger logger = Logger.getLogger(MenuThemesListJSONSerializer.class);
+	protected static Logger logger = Logger.getLogger(MenuThemesListJSONSerializer.class);
 
 	@Override
 	public Object serialize(Object o, Locale locale) throws SerializationException {

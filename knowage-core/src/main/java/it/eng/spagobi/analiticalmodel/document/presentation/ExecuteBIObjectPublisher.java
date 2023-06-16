@@ -40,7 +40,7 @@ import org.apache.log4j.Logger;
  */
 public class ExecuteBIObjectPublisher implements PublisherDispatcherIFace {
 	
-	static private Logger logger = Logger.getLogger(ExecuteBIObjectPublisher.class);
+	private static Logger logger = Logger.getLogger(ExecuteBIObjectPublisher.class);
 	
 	/**
 	 * Given the request at input, gets the name of the reference

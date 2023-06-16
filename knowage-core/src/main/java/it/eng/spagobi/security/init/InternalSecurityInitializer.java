@@ -64,7 +64,7 @@ public class InternalSecurityInitializer extends SpagoBIInitializer {
 
 	private static String INTERNAL_SECURITY_CONFIG_TAG_NAME = "INTERNAL_PROFILING_INITIALIZER";
 
-	static private Logger logger = Logger.getLogger(InternalSecurityInitializer.class);
+	private static Logger logger = Logger.getLogger(InternalSecurityInitializer.class);
 
 	public InternalSecurityInitializer() {
 		targetComponentName = "InternalSecurity";

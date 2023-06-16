@@ -26,7 +26,7 @@ import it.eng.spago.presentation.PublisherDispatcherIFace;
 
 public class ExecuteDocumentAngularPublisherJava implements PublisherDispatcherIFace {
 
-	static private Logger logger = Logger.getLogger(ExecuteDocumentAngularPublisherJava.class);
+	private static Logger logger = Logger.getLogger(ExecuteDocumentAngularPublisherJava.class);
 
 	@Override
 	public String getPublisherName(RequestContainer requestContainer, ResponseContainer responseContainer) {

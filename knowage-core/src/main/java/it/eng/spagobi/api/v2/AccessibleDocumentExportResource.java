@@ -38,8 +38,8 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 @Path("/2.0/exportAccessibleDocument")
 @ManageAuthorization
 public class AccessibleDocumentExportResource extends AbstractSpagoBIResource {
-	static private String SERVICENAME = "exportAccessibleDocument";
-	static private Logger logger = Logger.getLogger(AccessibleDocumentExportResource.class);
+	private static String SERVICENAME = "exportAccessibleDocument";
+	private static Logger logger = Logger.getLogger(AccessibleDocumentExportResource.class);
 	
 	@GET
 	@Path("/{conversionType}/getResult/{jobId}")

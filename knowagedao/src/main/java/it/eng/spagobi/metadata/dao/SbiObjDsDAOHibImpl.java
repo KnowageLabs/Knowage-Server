@@ -49,7 +49,7 @@ public class SbiObjDsDAOHibImpl extends AbstractHibernateDAO implements ISbiObjD
 
 	private final String[] enginesNoChecked = { "birt", "cockpit", "console", "composit", "kpi", "svgviewer" };
 
-	static private Logger logger = Logger.getLogger(SbiObjDsDAOHibImpl.class);
+	private static Logger logger = Logger.getLogger(SbiObjDsDAOHibImpl.class);
 
 	@Override
 	public List<SbiMetaObjDs> loadObjByDsId(Integer dsId) throws EMFUserError {

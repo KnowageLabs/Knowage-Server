@@ -97,7 +97,7 @@ public class GlossaryDAOImpl extends AbstractHibernateDAO implements IGlossaryDA
 	private static final String VALUE = "value";
 	private static final String ORDER = "order";
 
-	static private Logger logger = Logger.getLogger(GlossaryDAOImpl.class);
+	private static Logger logger = Logger.getLogger(GlossaryDAOImpl.class);
 
 	@Override
 	public SbiGlGlossary loadGlossary(Integer id) {

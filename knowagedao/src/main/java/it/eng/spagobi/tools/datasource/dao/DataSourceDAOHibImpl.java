@@ -77,7 +77,7 @@ import it.eng.spagobi.utilities.json.JSONUtils;
  * Defines the Hibernate implementations for all DAO methods, for a data source.
  */
 public class DataSourceDAOHibImpl extends AbstractHibernateDAO implements IDataSourceDAO {
-	static private Logger logger = Logger.getLogger(DataSourceDAOHibImpl.class);
+	private static Logger logger = Logger.getLogger(DataSourceDAOHibImpl.class);
 
 	/**
 	 * Load data source by id.

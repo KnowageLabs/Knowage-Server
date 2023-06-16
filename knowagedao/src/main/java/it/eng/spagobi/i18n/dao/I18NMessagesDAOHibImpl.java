@@ -39,7 +39,7 @@ import it.eng.spagobi.i18n.metadata.SbiI18NMessages;
 
 public class I18NMessagesDAOHibImpl extends AbstractHibernateDAO implements I18NMessagesDAO {
 
-	static private Logger logger = Logger.getLogger(I18NMessagesDAOHibImpl.class);
+	private static Logger logger = Logger.getLogger(I18NMessagesDAOHibImpl.class);
 
 	@Override
 	public String getI18NMessages(Locale locale, String code) throws EMFUserError {

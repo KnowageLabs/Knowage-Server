@@ -35,7 +35,7 @@ import it.eng.spagobi.utilities.assertion.UnreachableCodeException;
  */
 public class OAuth2HybridSecurityServiceSupplier extends InternalSecurityServiceSupplierImpl {
 
-	static private Logger logger = Logger.getLogger(OAuth2HybridSecurityServiceSupplier.class);
+	private static Logger logger = Logger.getLogger(OAuth2HybridSecurityServiceSupplier.class);
 
 	@Override
 	public SpagoBIUserProfile checkAuthentication(String userId, String psw) {

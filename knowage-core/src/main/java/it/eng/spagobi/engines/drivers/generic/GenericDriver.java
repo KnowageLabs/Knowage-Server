@@ -75,7 +75,7 @@ public class GenericDriver extends AbstractEngineDriver implements IEngineDriver
 	public static final String IS_TECHNICAL_USER = "IS_TECHNICAL_USER";
 	public static final String DOCUMENT_OUTPUT_PARAMETERS = "DOCUMENT_OUTPUT_PARAMETERS";
 
-	static private Logger logger = Logger.getLogger(GenericDriver.class);
+	private static Logger logger = Logger.getLogger(GenericDriver.class);
 
 	/**
 	 * Returns a map of parameters which will be send in the request to the engine application.

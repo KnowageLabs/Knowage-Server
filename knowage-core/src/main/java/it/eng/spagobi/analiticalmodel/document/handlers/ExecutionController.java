@@ -40,7 +40,7 @@ import org.apache.log4j.Logger;
 
 public class ExecutionController {
 
-	static private Logger logger = Logger.getLogger(ExecutionController.class);
+	private static Logger logger = Logger.getLogger(ExecutionController.class);
 	
 	private BIObject biObject = null;
 //	private Map lovResultMap = new HashMap();

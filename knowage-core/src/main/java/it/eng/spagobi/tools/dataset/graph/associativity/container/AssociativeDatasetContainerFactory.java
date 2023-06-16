@@ -37,7 +37,7 @@ import it.eng.spagobi.utilities.database.DataBaseException;
 
 public abstract class AssociativeDatasetContainerFactory {
 
-	static protected Logger logger = Logger.getLogger(AssociativeDatasetContainerFactory.class);
+	protected static Logger logger = Logger.getLogger(AssociativeDatasetContainerFactory.class);
 
 	public static IAssociativeDatasetContainer getContainer(DatasetEvaluationStrategyType evaluationStrategyType, IDataSet dataSet,
 			Map<String, String> parametersValues, UserProfile userProfile) throws DataBaseException {

@@ -40,7 +40,7 @@ import org.apache.log4j.Logger;
  */
 
 public class BIObjectsModule extends AbstractModule {
-	static private Logger logger = Logger.getLogger(BIObjectsModule.class);
+	private static Logger logger = Logger.getLogger(BIObjectsModule.class);
 	public static final String MODULE_PAGE = "BIObjectsPage";
     public static final String MODALITY = "MODALITY";
     public static final String SINGLE_OBJECT = "SINGLE_OBJECT";

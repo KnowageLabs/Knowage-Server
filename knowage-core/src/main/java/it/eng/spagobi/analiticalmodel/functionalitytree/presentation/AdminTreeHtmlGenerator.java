@@ -66,7 +66,7 @@ public class AdminTreeHtmlGenerator implements ITreeHtmlGenerator {
 
 	protected String requestIdentity = null;
 	private String treeName = "treeAdminObj";
-	static private Logger logger = Logger.getLogger(AdminTreeHtmlGenerator.class);
+	private static Logger logger = Logger.getLogger(AdminTreeHtmlGenerator.class);
 
 	/**
 	 * Creates the Dtree configuration, in oder to inser into jsp pages cookies, images, etc.

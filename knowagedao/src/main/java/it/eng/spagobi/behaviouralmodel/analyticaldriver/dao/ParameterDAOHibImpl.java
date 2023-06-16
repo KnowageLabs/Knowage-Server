@@ -50,7 +50,7 @@ import it.eng.spagobi.commons.metadata.SbiDomains;
  * @author zoppello
  */
 public class ParameterDAOHibImpl extends AbstractHibernateDAO implements IParameterDAO {
-	static private Logger logger = Logger.getLogger(ParameterDAOHibImpl.class);
+	private static Logger logger = Logger.getLogger(ParameterDAOHibImpl.class);
 
 	/**
 	 * Load for detail by parameter id.

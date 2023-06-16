@@ -50,7 +50,7 @@ import org.apache.log4j.Logger;
 
 public class DetailDistributionListModule extends AbstractModule {
 
-	static private Logger logger = Logger.getLogger(DetailDistributionListModule.class);
+	private static Logger logger = Logger.getLogger(DetailDistributionListModule.class);
 	public static final String MOD_SAVE = "SAVE";
 	public static final String MOD_SAVEBACK = "SAVEBACK";
 	public static final String NAME_ATTR_LIST_DIALECTS = "dialects";

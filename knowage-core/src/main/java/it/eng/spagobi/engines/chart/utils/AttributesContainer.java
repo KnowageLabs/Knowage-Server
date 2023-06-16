@@ -42,7 +42,7 @@ public class AttributesContainer {
 	String[] attributesToQuery = new String[] { "n_visualization", "categoryAll" };
 	String[] attributesToQueryList = new String[] { "category", "serie", "cat_group" };
 
-	static protected Logger logger = Logger.getLogger(AttributesContainer.class);
+	protected static Logger logger = Logger.getLogger(AttributesContainer.class);
 
 	public HashMap<String, Object> getParameters() {
 		return parameters;

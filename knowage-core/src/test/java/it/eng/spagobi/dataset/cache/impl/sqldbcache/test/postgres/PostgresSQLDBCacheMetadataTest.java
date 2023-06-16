@@ -30,7 +30,7 @@ import it.eng.spagobi.dataset.cache.test.TestDataSourceFactory;
  */
 public class PostgresSQLDBCacheMetadataTest extends AbstractSQLDBCacheMetadatTest {
 	
-	static private Logger logger = Logger.getLogger(PostgresSQLDBCacheMetadataTest.class);
+	private static Logger logger = Logger.getLogger(PostgresSQLDBCacheMetadataTest.class);
 
 	//Create Datasources specific for this test
 	@Override

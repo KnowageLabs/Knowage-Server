@@ -31,7 +31,7 @@ import it.eng.spagobi.tools.catalogue.bo.Content;
 import it.eng.spagobi.tools.catalogue.dao.IArtifactsDAO;
 
 public class ArtifactServiceImplSupplier {
-    static private Logger logger = Logger.getLogger(ArtifactServiceImplSupplier.class);
+    private static Logger logger = Logger.getLogger(ArtifactServiceImplSupplier.class);
 
     /**
 	 * return the artifact by name and type

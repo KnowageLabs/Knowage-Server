@@ -48,7 +48,7 @@ public class RestExceptionMapper implements ExceptionMapper<RuntimeException> {
 	private static final String ERROR_SERVICE = "service";
 	private static final String ERROR_MESSAGES = "errors";
 
-	static private Logger logger = Logger.getLogger(RestExceptionMapper.class);
+	private static Logger logger = Logger.getLogger(RestExceptionMapper.class);
 
 	@Context
 	private HttpServletRequest servletRequest;

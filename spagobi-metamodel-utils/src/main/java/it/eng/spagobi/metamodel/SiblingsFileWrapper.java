@@ -34,7 +34,7 @@ public class SiblingsFileWrapper {
 
 	private Document document;
 
-	static protected Logger logger = Logger.getLogger(SiblingsFileWrapper.class);
+	protected static Logger logger = Logger.getLogger(SiblingsFileWrapper.class);
 
 	public SiblingsFileWrapper(Document document) {
 		this.document = document;

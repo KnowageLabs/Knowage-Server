@@ -87,7 +87,7 @@ public class JSONPathDataReader extends AbstractDataReader {
 
 	private static final String ORION_JSON_PATH_ITEMS = "$";
 
-	static private Logger logger = Logger.getLogger(JSONPathDataReader.class);
+	private static Logger logger = Logger.getLogger(JSONPathDataReader.class);
 
 	public static class JSONPathAttribute {
 		private final String name;

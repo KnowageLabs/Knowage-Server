@@ -34,7 +34,7 @@ import org.apache.log4j.Logger;
 public class FormulaParameterValuesRetriever extends
 		ParameterValuesRetriever {
 	
-	static private Logger logger = Logger.getLogger(FormulaParameterValuesRetriever.class);	
+	private static Logger logger = Logger.getLogger(FormulaParameterValuesRetriever.class);	
 
 	private Formula formula;
 	

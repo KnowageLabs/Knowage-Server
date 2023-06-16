@@ -38,7 +38,7 @@ public class SpagoBIRequestContainer
 	extends AbstractContainer 
 	implements IReadOnlyContainer {
 
-	static private Logger logger = Logger.getLogger(SpagoBIRequestContainer.class);
+	private static Logger logger = Logger.getLogger(SpagoBIRequestContainer.class);
 	
 	private SourceBean request;
 	

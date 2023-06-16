@@ -43,7 +43,7 @@ import it.eng.spagobi.engines.drivers.exceptions.InvalidOperationRequest;
  * Driver Implementation (IEngineDriver Interface) for Birt Report Engine.
  */
 public class BirtReportDriver extends AbstractEngineDriver implements IEngineDriver {
-	static private Logger logger = Logger.getLogger(BirtReportDriver.class);
+	private static Logger logger = Logger.getLogger(BirtReportDriver.class);
 
 	/**
 	 * Returns a map of parameters which will be send in the request to the engine application.

@@ -28,7 +28,7 @@ import it.eng.spagobi.security.RoleSynchronizer;
 
 public class SecurityInitializer implements InitializerIFace {
 	
-	static private Logger logger = Logger.getLogger(SecurityInitializer.class);
+	private static Logger logger = Logger.getLogger(SecurityInitializer.class);
 	private SourceBean _config = null;
 	
 	/* (non-Javadoc)

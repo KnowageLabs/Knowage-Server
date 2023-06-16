@@ -103,7 +103,7 @@ public class AdapterPortlet extends GenericPortlet {
 	private static final String SERVICE_PAGE = "PAGE";
 	private static final String SERVICE_JSP = "JSP";
 
-	static protected Logger logger = Logger.getLogger(AdapterPortlet.class);
+	protected static Logger logger = Logger.getLogger(AdapterPortlet.class);
 
 	@Override
 	public void init() throws PortletException {

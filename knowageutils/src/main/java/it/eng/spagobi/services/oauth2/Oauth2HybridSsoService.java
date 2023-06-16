@@ -59,7 +59,7 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
  */
 public class Oauth2HybridSsoService extends JWTSsoService {
 
-	static private Logger logger = Logger.getLogger(Oauth2HybridSsoService.class);
+	private static Logger logger = Logger.getLogger(Oauth2HybridSsoService.class);
 
 	private static int USER_JWT_TOKEN_EXPIRE_HOURS = 10; // JWT token for regular users will expire in 10 HOURS
 

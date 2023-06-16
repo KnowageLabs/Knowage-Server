@@ -30,7 +30,7 @@ import it.eng.spagobi.utilities.database.DataBaseException;
  */
 public class OracleSQLDBCacheTest extends AbstractSQLDBCacheTest {
 
-	static private Logger logger = Logger.getLogger(OracleSQLDBCacheTest.class);
+	private static Logger logger = Logger.getLogger(OracleSQLDBCacheTest.class);
 
 	// Create Datasources specific for this test
 	@Override

@@ -49,7 +49,7 @@ import org.json.JSONObject;
 @Path("/analyticalDriverUse")
 public class AnalitycalDriverUse {
 
-	static private Logger logger = Logger.getLogger(AnalitycalDriverUse.class);
+	private static Logger logger = Logger.getLogger(AnalitycalDriverUse.class);
 
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)

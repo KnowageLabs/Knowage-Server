@@ -25,7 +25,7 @@ import org.apache.log4j.Logger;
 
 public class SessionExpiredAction extends AbstractAction {
 
-	static private Logger logger = Logger.getLogger(SessionExpiredAction.class);
+	private static Logger logger = Logger.getLogger(SessionExpiredAction.class);
 	
 	/* (non-Javadoc)
 	 * @see it.eng.spago.dispatching.service.ServiceIFace#service(it.eng.spago.base.SourceBean, it.eng.spago.base.SourceBean)

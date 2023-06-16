@@ -52,7 +52,7 @@ import org.hibernate.Transaction;
  */
 public class ImportMetadata extends AbstractHibernateDAO {
 
-	static private Logger logger = Logger.getLogger(ImportMetadata.class);
+	private static Logger logger = Logger.getLogger(ImportMetadata.class);
 	private boolean existElement = false;
 	public static final String FILE_SOURCE_TYPE = "file";
 	public static final String ROLE_SOURCE = "source";

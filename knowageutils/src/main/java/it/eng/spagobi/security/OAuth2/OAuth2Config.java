@@ -36,7 +36,7 @@ public class OAuth2Config {
 		PKCE, AUTHORIZATION_CODE;
 	}
 
-	static private Logger logger = Logger.getLogger(OAuth2Config.class);
+	private static Logger logger = Logger.getLogger(OAuth2Config.class);
 
 	private static OAuth2Config INSTANCE = new OAuth2Config();
 

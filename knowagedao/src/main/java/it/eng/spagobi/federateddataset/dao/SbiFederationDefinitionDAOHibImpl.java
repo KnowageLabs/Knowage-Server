@@ -47,7 +47,7 @@ import it.eng.spagobi.utilities.assertion.Assert;
 
 public class SbiFederationDefinitionDAOHibImpl extends AbstractHibernateDAO implements ISbiFederationDefinitionDAO {
 
-	static private Logger logger = Logger.getLogger(SbiFederationDefinitionDAOHibImpl.class);
+	private static Logger logger = Logger.getLogger(SbiFederationDefinitionDAOHibImpl.class);
 
 	/**
 	 * Saves the FederationDefinition. If already exist one with same label thrown an exception

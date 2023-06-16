@@ -36,7 +36,7 @@ public class ContextManager extends AbstractContainer implements IBeanContainer 
 	protected IBeanContainer contextsContainer;
 	protected IContextRetrieverStrategy contextRetrieverStrategy;
 
-	static private Logger logger = Logger.getLogger(ContextManager.class);
+	private static Logger logger = Logger.getLogger(ContextManager.class);
 
 	public ContextManager(IBeanContainer beanContainer, IContextRetrieverStrategy strategy) {
 		logger.debug("IN");

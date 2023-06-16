@@ -22,6 +22,6 @@ import org.apache.log4j.Logger;
 
 public class Hive2Dialect extends MySQLDialect {
 
-	static protected Logger logger = Logger.getLogger(Hive2Dialect.class);
+	protected static Logger logger = Logger.getLogger(Hive2Dialect.class);
 
 }

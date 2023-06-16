@@ -54,7 +54,7 @@ import org.safehaus.uuid.UUIDGenerator;
  * There are methods to generate tree, configure, insert and modify elements.
  */
 public class FunctionalitiesTreeInsertObjectHtmlGenerator implements ITreeHtmlGenerator {
-	static private Logger logger = Logger.getLogger(FunctionalitiesTreeInsertObjectHtmlGenerator.class);
+	private static Logger logger = Logger.getLogger(FunctionalitiesTreeInsertObjectHtmlGenerator.class);
 	
 	HttpServletRequest httpRequest = null;
 	RequestContainer reqCont = null;

@@ -58,7 +58,7 @@ import it.eng.spagobi.utilities.rest.RestUtilities;
 @ManageAuthorization
 public class CrossNavigationService {
 
-	static protected Logger logger = Logger.getLogger(CrossNavigationService.class);
+	protected static Logger logger = Logger.getLogger(CrossNavigationService.class);
 
 	@GET
 	@Path("/test")

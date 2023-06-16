@@ -38,7 +38,7 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
  */
 public class ConfigurationsInitializer extends SpagoBIInitializer {
 
-	static private Logger logger = Logger.getLogger(ConfigurationsInitializer.class);
+	private static Logger logger = Logger.getLogger(ConfigurationsInitializer.class);
 
 	public ConfigurationsInitializer() {
 		targetComponentName = "Configurations";

@@ -36,7 +36,7 @@ public class AssociationFileDAO implements IAssociationFileDAO {
 
     private final String ASS_DIRECTORY = "Repository_Association_Files";
 
-    static private Logger logger = Logger.getLogger(AssociationFileDAO.class);
+    private static Logger logger = Logger.getLogger(AssociationFileDAO.class);
 
     /* (non-Javadoc)
      * @see it.eng.spagobi.tools.importexport.dao.IAssociationFileDAO#loadFromID(java.lang.String)

@@ -53,7 +53,7 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
  */
 public class EventLogDAOHibImpl extends AbstractHibernateDAO implements IEventLogDAO {
 
-	static private Logger logger = Logger.getLogger(EventLogDAOHibImpl.class);
+	private static Logger logger = Logger.getLogger(EventLogDAOHibImpl.class);
 
 	/**
 	 * Load event log by id.

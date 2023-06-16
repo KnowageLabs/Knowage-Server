@@ -32,7 +32,7 @@ import org.apache.log4j.Logger;
  */
 public class TamSsoService implements SsoServiceInterface {
 
-    static private Logger logger = Logger.getLogger(TamSsoService.class);
+    private static Logger logger = Logger.getLogger(TamSsoService.class);
     
     /**
      * Read user id.

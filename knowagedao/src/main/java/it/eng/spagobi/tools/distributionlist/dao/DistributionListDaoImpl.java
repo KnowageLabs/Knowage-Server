@@ -52,7 +52,7 @@ import it.eng.spagobi.tools.distributionlist.metadata.SbiDistributionListsObject
 
 public class DistributionListDaoImpl extends AbstractHibernateDAO implements IDistributionListDAO {
 
-	static private Logger logger = Logger.getLogger(DistributionListDaoImpl.class);
+	private static Logger logger = Logger.getLogger(DistributionListDaoImpl.class);
 
 	/*
 	 * (non-Javadoc)

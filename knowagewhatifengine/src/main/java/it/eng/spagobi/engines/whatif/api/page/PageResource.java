@@ -42,14 +42,14 @@ import it.eng.spagobi.utilities.engines.rest.AbstractRestService;
 @ManageAuthorization
 public class PageResource extends AbstractRestService {
 
-	static private Map<String, JSONObject> pages;
-	static private Map<String, String> urls;
+	private static Map<String, JSONObject> pages;
+	private static Map<String, String> urls;
 	@Context
 	HttpServletRequest request;
 	@Context
 	HttpServletResponse response;
 
-	static private Logger logger = Logger.getLogger(PageResource.class);
+	private static Logger logger = Logger.getLogger(PageResource.class);
 
 	/**
 	 * TODO Tutte le pagine dell'engine

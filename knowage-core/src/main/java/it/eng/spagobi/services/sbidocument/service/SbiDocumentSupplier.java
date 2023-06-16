@@ -34,7 +34,7 @@ import org.json.JSONObject;
 
 public class SbiDocumentSupplier {
 
-	static private Logger logger = Logger.getLogger(SbiDocumentSupplier.class);
+	private static Logger logger = Logger.getLogger(SbiDocumentSupplier.class);
 
 	/**
 	 * Gets the data set.

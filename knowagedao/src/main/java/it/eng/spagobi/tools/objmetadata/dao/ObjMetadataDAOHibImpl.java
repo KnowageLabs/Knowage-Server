@@ -46,7 +46,7 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
  * Defines the Hibernate implementations for all DAO methods, for a object metadata.
  */
 public class ObjMetadataDAOHibImpl extends AbstractHibernateDAO implements IObjMetadataDAO {
-	static private Logger logger = Logger.getLogger(ObjMetadataDAOHibImpl.class);
+	private static Logger logger = Logger.getLogger(ObjMetadataDAOHibImpl.class);
 
 	/**
 	 * Load object's metadata by type

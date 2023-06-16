@@ -46,7 +46,7 @@ public class GridMetadataContainer {
 	private Map<String, String> metaData;
 	private int results;
 
-	static protected Logger logger = Logger.getLogger(GridMetadataContainer.class);
+	protected static Logger logger = Logger.getLogger(GridMetadataContainer.class);
 
 	public GridMetadataContainer() {
 		rootPropery = "root";

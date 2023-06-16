@@ -37,7 +37,7 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
  */
 public abstract class AbstractServiceImpl {
 
-	static private Logger logger = Logger.getLogger(AbstractServiceImpl.class);
+	private static Logger logger = Logger.getLogger(AbstractServiceImpl.class);
 
 	/**
 	 * Instantiates a new abstract service impl.

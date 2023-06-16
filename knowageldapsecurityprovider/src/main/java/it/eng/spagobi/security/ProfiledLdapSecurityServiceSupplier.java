@@ -30,7 +30,7 @@ import it.eng.spagobi.services.security.service.ISecurityServiceSupplier;
 
 public class ProfiledLdapSecurityServiceSupplier implements ISecurityServiceSupplier {
 
-	static private Logger logger = Logger.getLogger(ProfiledLdapSecurityServiceSupplier.class);
+	private static Logger logger = Logger.getLogger(ProfiledLdapSecurityServiceSupplier.class);
 
 	private InternalSecurityServiceSupplierImpl internalSecurityServiceSupplierImpl = new InternalSecurityServiceSupplierImpl();
 

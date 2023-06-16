@@ -44,7 +44,7 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 @Path("/authorizations")
 public class AuthorizationsService {
 
-	static private Logger logger = Logger.getLogger(AuthorizationsService.class);
+	private static Logger logger = Logger.getLogger(AuthorizationsService.class);
 
 	@GET
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")

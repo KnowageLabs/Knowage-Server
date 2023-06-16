@@ -34,7 +34,7 @@ public class FacetSolrDataReader extends SolrDataReader {
 
     private static final String KEY_HEADER = "key";
     private static final String VALUE_HEADER = "value";
-    static private Logger logger = Logger.getLogger(FacetSolrDataReader.class);
+    private static Logger logger = Logger.getLogger(FacetSolrDataReader.class);
     private boolean hasFacetQuery;
     private String facetField;
 

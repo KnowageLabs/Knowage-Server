@@ -37,7 +37,7 @@ import org.apache.log4j.Logger;
  */
 public class ExecutionContextRetrieverStrategy implements IContextRetrieverStrategy {
 
-	static private Logger logger = Logger.getLogger(ExecutionContextRetrieverStrategy.class);
+	private static Logger logger = Logger.getLogger(ExecutionContextRetrieverStrategy.class);
 
 	private static final String SPAGOBI_SESSION_ATTRIBUTE = "SPAGOBI_SESSION_ATTRIBUTE";
 	public static final String EXECUTION_ID = "SBI_EXECUTION_ID";

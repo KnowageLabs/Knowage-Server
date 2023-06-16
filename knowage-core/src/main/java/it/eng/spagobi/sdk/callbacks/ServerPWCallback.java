@@ -40,7 +40,7 @@ import it.eng.spagobi.services.security.service.SecurityServiceSupplierFactory;
  */
 public class ServerPWCallback implements CallbackHandler {
 
-	static private Logger logger = Logger.getLogger(ServerPWCallback.class);
+	private static Logger logger = Logger.getLogger(ServerPWCallback.class);
 
 	@Override
 	public void handle(Callback[] callbacks) throws IOException, UnsupportedCallbackException {

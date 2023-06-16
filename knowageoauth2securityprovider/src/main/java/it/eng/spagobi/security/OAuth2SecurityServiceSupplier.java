@@ -30,7 +30,7 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
  */
 public class OAuth2SecurityServiceSupplier implements ISecurityServiceSupplier {
 
-	static private Logger logger = Logger.getLogger(OAuth2SecurityServiceSupplier.class);
+	private static Logger logger = Logger.getLogger(OAuth2SecurityServiceSupplier.class);
 
 	@Override
 	public SpagoBIUserProfile createUserProfile(String userUniqueIdentifier) {

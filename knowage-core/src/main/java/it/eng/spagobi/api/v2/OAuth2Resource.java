@@ -21,7 +21,7 @@ import org.json.JSONObject;
 @Path("/2.0/autenticateUser")
 @ManageAuthorization
 public class OAuth2Resource extends AbstractSpagoBIResource {
-	static protected Logger logger = Logger.getLogger(OAuth2Resource.class);
+	protected static Logger logger = Logger.getLogger(OAuth2Resource.class);
 
 	@GET
 	@Path("/")

@@ -34,7 +34,7 @@ import com.fasterxml.jackson.databind.SerializerProvider;
 
 public class GeoLayerJSONSerializer extends JsonSerializer<GeoLayer> {
 
-	static private Logger logger = Logger.getLogger(GeoLayerJSONSerializer.class);
+	private static Logger logger = Logger.getLogger(GeoLayerJSONSerializer.class);
 	private static final String ID = "id";
 	private static final String TYPE = "type";
 	private static final String NAME = "name";

@@ -39,7 +39,7 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
  */
 public class StringUtils {
 
-	static protected Logger logger = Logger.getLogger(StringUtils.class);
+	protected static Logger logger = Logger.getLogger(StringUtils.class);
 
 	private static final String PLAIN_ASCII = "AaEeIiOoUu" // grave
 			+ "AaEeIiOoUuYy" // acute

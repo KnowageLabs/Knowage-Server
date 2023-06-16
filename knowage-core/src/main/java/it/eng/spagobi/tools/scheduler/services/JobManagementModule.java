@@ -66,7 +66,7 @@ public class JobManagementModule extends AbstractHttpModule {
 
 	private static final long serialVersionUID = 1L;
 
-	static private Logger logger = Logger.getLogger(JobManagementModule.class);
+	private static Logger logger = Logger.getLogger(JobManagementModule.class);
 
 	/*
 	 * (non-Javadoc)

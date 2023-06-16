@@ -35,7 +35,7 @@ import org.hibernate.Session;
  */
 public class EnginesInitializer extends SpagoBIInitializer {
 
-	static private Logger logger = Logger.getLogger(EnginesInitializer.class);
+	private static Logger logger = Logger.getLogger(EnginesInitializer.class);
 
 	public EnginesInitializer() {
 		targetComponentName = "Engines";

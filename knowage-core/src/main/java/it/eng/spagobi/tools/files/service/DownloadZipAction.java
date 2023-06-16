@@ -44,7 +44,7 @@ import org.apache.log4j.Logger;
 
 public class DownloadZipAction extends AbstractBaseHttpAction{ //AbstractHttpAction {
 
-	static private Logger logger = Logger.getLogger(DownloadZipAction.class);
+	private static Logger logger = Logger.getLogger(DownloadZipAction.class);
 
 	static byte[] buf = new byte[1024]; 
 

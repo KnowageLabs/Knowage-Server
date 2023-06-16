@@ -47,7 +47,7 @@ import org.apache.log4j.Logger;
  * Presentation tag for Query Wizard details. 
  */
 public class QueryWizardTag extends CommonWizardLovTag {
-	static private Logger logger = Logger.getLogger(QueryWizardTag.class);
+	private static Logger logger = Logger.getLogger(QueryWizardTag.class);
 	private HttpServletRequest httpRequest = null;
     protected RequestContainer requestContainer = null;
 	protected ResponseContainer responseContainer = null;

@@ -17,7 +17,7 @@ import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
  */
 public class FunctionTemplateRegistrator implements IFunctionRegistrator {
 
-	static protected Logger logger = Logger.getLogger(FunctionTemplateRegistrator.class);
+	protected static Logger logger = Logger.getLogger(FunctionTemplateRegistrator.class);
 
 	private final InLineFunction function;
 

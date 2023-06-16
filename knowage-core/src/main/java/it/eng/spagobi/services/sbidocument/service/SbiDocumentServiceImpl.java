@@ -43,7 +43,7 @@ public class SbiDocumentServiceImpl extends AbstractServiceImpl  implements SbiD
 
 	private SbiDocumentSupplier supplier = new SbiDocumentSupplier();
 
-	static private Logger logger = Logger.getLogger(SbiDocumentServiceImpl.class);
+	private static Logger logger = Logger.getLogger(SbiDocumentServiceImpl.class);
 
 	/**
      * Instantiates a new data source service impl.

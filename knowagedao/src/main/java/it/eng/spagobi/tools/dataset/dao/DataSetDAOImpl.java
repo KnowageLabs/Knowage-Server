@@ -98,7 +98,7 @@ import it.eng.spagobi.utilities.json.JSONUtils;
  */
 public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO {
 
-	static private Logger logger = Logger.getLogger(DataSetDAOImpl.class);
+	private static Logger logger = Logger.getLogger(DataSetDAOImpl.class);
 
 	// ========================================================================================
 	// READ operations (cRud)

@@ -35,7 +35,7 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIException;
 
 public class UserFunctionalityDAO extends AbstractHibernateDAO implements IUserFunctionalityDAO {
 
-	static private Logger logger = Logger.getLogger(UserFunctionalityDAO.class);
+	private static Logger logger = Logger.getLogger(UserFunctionalityDAO.class);
 
 	/*
 	 * (non-Javadoc)

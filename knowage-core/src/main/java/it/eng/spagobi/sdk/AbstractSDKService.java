@@ -33,7 +33,7 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 public class AbstractSDKService {
 
-	static private Logger logger = Logger.getLogger(AbstractSDKService.class);
+	private static Logger logger = Logger.getLogger(AbstractSDKService.class);
 
 	protected IEngUserProfile getUserProfile() throws Exception {
 		logger.debug("IN");

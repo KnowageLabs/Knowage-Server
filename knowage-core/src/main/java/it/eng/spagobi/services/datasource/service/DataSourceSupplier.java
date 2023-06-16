@@ -36,7 +36,7 @@ import it.eng.spagobi.tools.dataset.dao.IDataSetDAO;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 
 public class DataSourceSupplier {
-	static private Logger logger = Logger.getLogger(DataSourceSupplier.class);
+	private static Logger logger = Logger.getLogger(DataSourceSupplier.class);
 
 	/**
 	 * Gets the data source.

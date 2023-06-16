@@ -54,7 +54,7 @@ public abstract class SpagoBIInitializer extends AbstractHibernateDAO implements
 	protected String targetComponentName;
 	protected String configurationFileName;
 
-	static private Logger logger = Logger.getLogger(SpagoBIInitializer.class);
+	private static Logger logger = Logger.getLogger(SpagoBIInitializer.class);
 
 	protected SpagoBIInitializer() {
 		targetComponentName = "SpagoBI";

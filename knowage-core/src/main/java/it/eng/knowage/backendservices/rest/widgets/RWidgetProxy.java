@@ -54,7 +54,7 @@ public class RWidgetProxy extends DataSetResource {
 	HttpMethod methodPost = HttpMethod.valueOf("Post");
 	HttpMethod methodGet = HttpMethod.valueOf("Get");
 
-	static protected Logger logger = Logger.getLogger(RWidgetProxy.class);
+	protected static Logger logger = Logger.getLogger(RWidgetProxy.class);
 
 	@POST
 	@Path("/view/{output_type}")

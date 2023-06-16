@@ -34,7 +34,7 @@ import java.util.List;
 
 public class SolrDataReader extends JSONPathDataReader {
 
-	static private Logger logger = Logger.getLogger(SolrDataReader.class);
+	private static Logger logger = Logger.getLogger(SolrDataReader.class);
 	protected int resultNumber = -1;
 
 	public SolrDataReader(String jsonPathItems) {

@@ -34,7 +34,7 @@ import it.eng.spagobi.tools.dataset.cache.SpagoBICacheConfiguration;
 
 public class CleanCacheJob extends AbstractSpagoBIJob implements Job {
 
-	static private Logger logger = Logger.getLogger(CleanCacheJob.class);
+	private static Logger logger = Logger.getLogger(CleanCacheJob.class);
 
 	@Override
 	public void execute(JobExecutionContext jobExecutionContext) throws JobExecutionException {

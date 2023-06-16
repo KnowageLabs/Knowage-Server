@@ -45,7 +45,7 @@ import org.hibernate.Transaction;
 
 public class SubObjectDAOHibImpl extends AbstractHibernateDAO implements ISubObjectDAO {
 
-	static private Logger logger = Logger.getLogger(SubObjectDAOHibImpl.class);
+	private static Logger logger = Logger.getLogger(SubObjectDAOHibImpl.class);
 
 	/*
 	 * (non-Javadoc)

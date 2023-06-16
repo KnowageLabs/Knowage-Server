@@ -38,7 +38,7 @@ import it.eng.spagobi.utilities.service.JSONAcknowledge;
 
 public class SetSessionRoleAction extends AbstractSpagoBIAction {
 
-	static private Logger logger = Logger.getLogger(SetSessionRoleAction.class);
+	private static Logger logger = Logger.getLogger(SetSessionRoleAction.class);
 
 	UserProfile userProfile = null;
 

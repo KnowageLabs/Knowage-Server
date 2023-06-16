@@ -54,7 +54,7 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRestServiceException;
 @ManageAuthorization
 public class WorkspaceSchedulerResource extends AbstractSpagoBIResource {
 
-	static protected Logger logger = Logger.getLogger(WorkspaceSchedulerResource.class);
+	protected static Logger logger = Logger.getLogger(WorkspaceSchedulerResource.class);
 
 	@GET
 	@Path("/{scheduler}")

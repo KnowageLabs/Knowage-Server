@@ -31,7 +31,7 @@ import org.apache.log4j.Logger;
 
 public class DataSourcesSDKServiceImpl extends AbstractSDKService implements it.eng.spagobi.sdk.datasources.DataSourcesSDKService {
 
-	static private Logger logger = Logger.getLogger(DataSourcesSDKServiceImpl.class);
+	private static Logger logger = Logger.getLogger(DataSourcesSDKServiceImpl.class);
 
 	@Override
 	public SDKDataSource getDataSource(Integer dataSourceId) throws NotAllowedOperationException {

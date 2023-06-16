@@ -57,7 +57,7 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 @Path("/2.0/documentdetails")
 public class DocumentResource extends AbstractSpagoBIResource {
 
-	static protected Logger logger = Logger.getLogger(DocumentResource.class);
+	protected static Logger logger = Logger.getLogger(DocumentResource.class);
 
 	@SuppressWarnings("unchecked")
 	@GET

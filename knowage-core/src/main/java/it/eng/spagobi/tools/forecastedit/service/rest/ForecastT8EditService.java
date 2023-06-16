@@ -49,7 +49,7 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 
 @Path("/forecastT8")
 public class ForecastT8EditService {
-	static private Logger logger = Logger.getLogger(ForecastT8EditService.class);
+	private static Logger logger = Logger.getLogger(ForecastT8EditService.class);
 
 	@POST
 	@Produces(MediaType.TEXT_HTML)

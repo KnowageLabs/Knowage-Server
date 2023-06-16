@@ -35,7 +35,7 @@ import it.eng.spagobi.commons.utilities.GeneralUtilities;
 @Path("/2.0/languages")
 public class LanguageResource {
 
-	static private Logger logger = Logger.getLogger(LanguageResource.class);
+	private static Logger logger = Logger.getLogger(LanguageResource.class);
 
 	@GET
 	@Path("/")

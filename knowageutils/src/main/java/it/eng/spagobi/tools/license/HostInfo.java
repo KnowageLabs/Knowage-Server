@@ -14,12 +14,12 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 public class HostInfo implements DataSerializable {
 
-	static private Logger logger = Logger.getLogger(HostInfo.class);
+	private static Logger logger = Logger.getLogger(HostInfo.class);
 
 	private int availableProcessors;
 	private String hardwareFingerprint;
 	private String hardwareId;
-	static protected final String MAC_ADDRESS_LICENSING = "mac.address.licensing";
+	protected static final String MAC_ADDRESS_LICENSING = "mac.address.licensing";
 
 	public HostInfo() {
 		try {

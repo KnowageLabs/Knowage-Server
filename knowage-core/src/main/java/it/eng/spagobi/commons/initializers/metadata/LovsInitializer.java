@@ -40,7 +40,7 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
  */
 public class LovsInitializer extends SpagoBIInitializer {
 
-	static private Logger logger = Logger.getLogger(LovsInitializer.class);
+	private static Logger logger = Logger.getLogger(LovsInitializer.class);
 
 	public LovsInitializer() {
 		targetComponentName = "Lovs";

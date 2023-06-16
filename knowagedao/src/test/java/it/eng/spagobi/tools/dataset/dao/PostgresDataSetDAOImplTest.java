@@ -29,7 +29,7 @@ public class PostgresDataSetDAOImplTest extends DataSetDAOImplTest {
 
 	private final IDataSetDAO dataSetDao = null;
 
-	static private Logger logger = Logger.getLogger(PostgresDataSetDAOImplTest.class);
+	private static Logger logger = Logger.getLogger(PostgresDataSetDAOImplTest.class);
 
 	@Override
 	protected void setUp() throws Exception {

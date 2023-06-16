@@ -40,7 +40,7 @@ import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceException;
 @Provider
 public class RestExceptionMapper extends AbstractWhatIfEngineService implements ExceptionMapper<Throwable> {
 
-	static private Logger logger = Logger.getLogger(RestExceptionMapper.class);
+	private static Logger logger = Logger.getLogger(RestExceptionMapper.class);
 	private static final String LOCALIZED_MESSAGE = "localizedMessage";
 	private static final String ERROR_MESSAGE = "message";
 	private static final String ERROR_SERVICE = "errorService";

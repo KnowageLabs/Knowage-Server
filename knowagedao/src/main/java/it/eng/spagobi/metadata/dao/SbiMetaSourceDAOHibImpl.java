@@ -49,7 +49,7 @@ import com.jamonapi.MonitorFactory;
  */
 public class SbiMetaSourceDAOHibImpl extends AbstractHibernateDAO implements ISbiMetaSourceDAO {
 
-	static private Logger logger = Logger.getLogger(SbiMetaSourceDAOHibImpl.class);
+	private static Logger logger = Logger.getLogger(SbiMetaSourceDAOHibImpl.class);
 
 	/**
 	 * Load source by id.

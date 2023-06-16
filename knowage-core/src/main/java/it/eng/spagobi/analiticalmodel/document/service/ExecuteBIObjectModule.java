@@ -94,7 +94,7 @@ import it.eng.spagobi.tools.scheduler.utils.SchedulerUtilities;
  */
 public class ExecuteBIObjectModule extends AbstractHttpModule {
 
-	static private Logger logger = Logger.getLogger(ExecuteBIObjectModule.class);
+	private static Logger logger = Logger.getLogger(ExecuteBIObjectModule.class);
 
 	EMFErrorHandler errorHandler = null;
 	RequestContainer requestContainer = null;

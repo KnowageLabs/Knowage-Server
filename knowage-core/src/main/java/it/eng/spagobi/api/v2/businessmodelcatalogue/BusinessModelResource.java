@@ -83,7 +83,7 @@ public class BusinessModelResource extends AbstractSpagoBIResource {
 
 	private static final String LOG_SUFFIX = ".log";
 
-	static protected Logger logger = Logger.getLogger(BusinessModelResource.class);
+	protected static Logger logger = Logger.getLogger(BusinessModelResource.class);
 
 	/**
 	 * Get all business models

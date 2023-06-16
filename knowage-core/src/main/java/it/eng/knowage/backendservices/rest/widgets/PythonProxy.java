@@ -54,7 +54,7 @@ public class PythonProxy extends AbstractDataSetResource {
 	HttpMethod methodPost = HttpMethod.valueOf("Post");
 	HttpMethod methodGet = HttpMethod.valueOf("Get");
 
-	static protected Logger logger = Logger.getLogger(PythonProxy.class);
+	protected static Logger logger = Logger.getLogger(PythonProxy.class);
 
 	@POST
 	@Path("/edit/{output_type}")

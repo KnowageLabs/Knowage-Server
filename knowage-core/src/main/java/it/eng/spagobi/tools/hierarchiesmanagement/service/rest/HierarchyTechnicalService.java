@@ -50,7 +50,7 @@ import org.json.JSONObject;
 @Path("/hierarchiesTechnical")
 public class HierarchyTechnicalService {
 
-	static private Logger logger = Logger.getLogger(HierarchyService.class);
+	private static Logger logger = Logger.getLogger(HierarchyService.class);
 
 	@GET
 	@Path("/getHierarchiesTechnical")

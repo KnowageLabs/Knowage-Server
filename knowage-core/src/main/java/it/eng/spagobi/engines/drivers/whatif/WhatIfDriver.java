@@ -56,7 +56,7 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 public class WhatIfDriver extends GenericDriver {
 
-	static private Logger logger = Logger.getLogger(WhatIfDriver.class);
+	private static Logger logger = Logger.getLogger(WhatIfDriver.class);
 
 	@Override
 	public Map getParameterMap(Object biobject, IEngUserProfile profile, String roleName) {

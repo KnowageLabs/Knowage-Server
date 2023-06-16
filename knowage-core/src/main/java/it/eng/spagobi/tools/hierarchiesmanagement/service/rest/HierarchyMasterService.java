@@ -76,7 +76,7 @@ import it.eng.spagobi.utilities.rest.RestUtilities;
 @Path("/hierarchiesMaster")
 public class HierarchyMasterService {
 
-	static private Logger logger = Logger.getLogger(HierarchyService.class);
+	private static Logger logger = Logger.getLogger(HierarchyService.class);
 
 	// get hierarchies names of a dimension
 	@GET

@@ -56,10 +56,10 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 @Path("/1.0/pages")
 public class PageResource extends AbstractFullKpiEngineResource {
 
-	static private Map<String, JSONObject> pages;
-	static private Map<String, String> urls;
+	private static Map<String, JSONObject> pages;
+	private static Map<String, String> urls;
 
-	static private Logger logger = Logger.getLogger(PageResource.class);
+	private static Logger logger = Logger.getLogger(PageResource.class);
 
 	/**
 	 * TODO Tutte le pagine dell'engine

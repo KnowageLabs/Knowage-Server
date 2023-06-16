@@ -40,7 +40,7 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRestServiceException;
 @Path("/2.0/tags")
 public class TagResource extends AbstractSpagoBIResource {
 
-	static protected Logger logger = Logger.getLogger(TagResource.class);
+	protected static Logger logger = Logger.getLogger(TagResource.class);
 
 	private final String CHARSET_UTF8 = "; charset=UTF-8";
 

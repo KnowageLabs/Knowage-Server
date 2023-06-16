@@ -102,7 +102,7 @@ import it.eng.spagobi.utilities.objects.Couple;
  */
 public class ExecutionInstance implements Serializable {
 
-	static private Logger logger = Logger.getLogger(ExecutionInstance.class);
+	private static Logger logger = Logger.getLogger(ExecutionInstance.class);
 	// private static final String TREE_INNER_LOV_TYPE = "treeinner";
 
 	private String flowId = null;

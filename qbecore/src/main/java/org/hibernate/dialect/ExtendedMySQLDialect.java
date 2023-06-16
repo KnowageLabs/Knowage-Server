@@ -32,7 +32,7 @@ import it.eng.qbe.utility.bo.CustomizedFunction;
 
 public class ExtendedMySQLDialect extends MySQLInnoDBDialect {
 
-	static protected Logger logger = Logger.getLogger(ExtendedMySQLDialect.class);
+	protected static Logger logger = Logger.getLogger(ExtendedMySQLDialect.class);
 
 	public ExtendedMySQLDialect() {
 		super();

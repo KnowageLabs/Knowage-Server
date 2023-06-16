@@ -28,7 +28,7 @@ import org.olap4j.metadata.Dimension;
 
 public class SbiDimension {
 
-	static private Logger logger = Logger.getLogger(SbiDimension.class);
+	private static Logger logger = Logger.getLogger(SbiDimension.class);
 
 	private String name;
 	private String uniqueName;

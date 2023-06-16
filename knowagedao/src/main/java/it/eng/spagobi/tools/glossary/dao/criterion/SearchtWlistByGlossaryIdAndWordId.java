@@ -29,7 +29,7 @@ public class SearchtWlistByGlossaryIdAndWordId implements ICriterion<SbiGlWlist>
 	private final Integer glossaryId;
 	private final Integer wordId;
 
-	static protected Logger logger = Logger.getLogger(SearchtWlistByGlossaryIdAndWordId.class);
+	protected static Logger logger = Logger.getLogger(SearchtWlistByGlossaryIdAndWordId.class);
 
 	public SearchtWlistByGlossaryIdAndWordId(Integer glossaryId, Integer wordId) {
 		this.glossaryId = glossaryId;

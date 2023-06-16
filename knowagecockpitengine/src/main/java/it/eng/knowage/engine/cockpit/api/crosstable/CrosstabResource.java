@@ -90,7 +90,7 @@ import it.eng.spagobi.utilities.rest.RestUtilities;
 @Path("/1.0/crosstab")
 public class CrosstabResource extends AbstractCockpitEngineResource {
 
-	static private Logger logger = Logger.getLogger(CrosstabResource.class);
+	private static Logger logger = Logger.getLogger(CrosstabResource.class);
 
 	public static final String OUTPUT_TYPE = "OUTPUT_TYPE";
 

@@ -45,7 +45,7 @@ import org.hibernate.criterion.Expression;
  */
 public class SbiMetaBcAttributeDAOHibImpl extends AbstractHibernateDAO implements ISbiMetaBCAttributeDAO {
 
-	static private Logger logger = Logger.getLogger(SbiMetaBcAttributeDAOHibImpl.class);
+	private static Logger logger = Logger.getLogger(SbiMetaBcAttributeDAOHibImpl.class);
 
 	/**
 	 * Load BCAttribute by id.

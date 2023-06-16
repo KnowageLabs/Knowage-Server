@@ -73,7 +73,7 @@ import it.eng.spagobi.utilities.json.JSONUtils;
 @Path("/certificateddatasets")
 public class GetCertificatedDatasets {
 
-	static private Logger logger = Logger.getLogger(GetCertificatedDatasets.class);
+	private static Logger logger = Logger.getLogger(GetCertificatedDatasets.class);
 
 	@GET
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")

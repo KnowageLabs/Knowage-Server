@@ -78,7 +78,7 @@ import it.eng.spagobi.community.mapping.SbiCommunity;
  */
 
 public class DetailBIObjectModule extends AbstractHttpModule {
-	static private Logger logger = Logger.getLogger(DetailBIObjectModule.class);
+	private static Logger logger = Logger.getLogger(DetailBIObjectModule.class);
 	public static final String MODULE_PAGE = "DetailBIObjectPage";
 	public static final String NAME_ATTR_OBJECT = "BIObjects";
 	public static final String NAME_ATTR_LIST_OBJ_TYPES = "types";

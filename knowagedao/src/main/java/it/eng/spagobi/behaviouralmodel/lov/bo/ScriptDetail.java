@@ -49,7 +49,7 @@ import it.eng.spagobi.utilities.scripting.SpagoBIScriptManager;
  */
 public class ScriptDetail extends DependenciesPostProcessingLov implements ILovDetail {
 
-	static private Logger logger = Logger.getLogger(ScriptDetail.class);
+	private static Logger logger = Logger.getLogger(ScriptDetail.class);
 
 	public static final String SBI_BINDINGS_LANGUAGE = "SBI_LANGUAGE";
 	public static final String SBI_BINDINGS_COUNTRY = "SBI_COUNTRY";

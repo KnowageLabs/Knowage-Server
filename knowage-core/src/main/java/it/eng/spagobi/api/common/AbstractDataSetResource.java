@@ -127,7 +127,7 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 
 	private static final String REGEX_FIELDS_VALIDATION = "(?:\\\"[a-zA-Z0-9\\-\\_\\s]*\\\")";
-	static protected Logger logger = Logger.getLogger(AbstractDataSetResource.class);
+	protected static Logger logger = Logger.getLogger(AbstractDataSetResource.class);
 	private static final int SOLR_FACETS_DEFAULT_LIMIT = 10;
 	private static final String VALIDATION_OK = "OK";
 	private static final String VALIDATION_KO = "KO";

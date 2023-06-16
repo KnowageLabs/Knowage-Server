@@ -28,7 +28,7 @@ import org.apache.axis.attachments.ManagedMemoryDataSource;
 import org.apache.log4j.Logger;
 
 public class MetamodelServiceImplSupplier {
-    static private Logger logger = Logger.getLogger(MetamodelServiceImplSupplier.class);
+    private static Logger logger = Logger.getLogger(MetamodelServiceImplSupplier.class);
 
     /**
 	 * return the metamodel by the name

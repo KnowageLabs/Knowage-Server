@@ -47,8 +47,8 @@ import it.eng.spagobi.utilities.database.DataBaseException;
 public class GenericSQLDBCachePersistTableTest extends AbstractCacheTest {
 
 	private static final String XML_TEST_FILE_SUFFIX = "CachePersistTest.xml";
-	static private final String XML_FOLDER_PATH = "test/resources/dataset/files";
-	static private Logger logger = Logger.getLogger(GenericSQLDBCachePersistTableTest.class);
+	private static final String XML_FOLDER_PATH = "test/resources/dataset/files";
+	private static Logger logger = Logger.getLogger(GenericSQLDBCachePersistTableTest.class);
 
 	private String xmlFileAbsolutePath;
 

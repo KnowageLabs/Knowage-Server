@@ -44,7 +44,7 @@ import org.apache.log4j.Logger;
  */
 public class TestConnectionAction extends AbstractHttpAction {
 
-	static private Logger logger = Logger.getLogger(TestConnectionAction.class);
+	private static Logger logger = Logger.getLogger(TestConnectionAction.class);
 	
 	/* (non-Javadoc)
 	 * @see it.eng.spagobi.commons.services.BaseProfileAction#service(it.eng.spago.base.SourceBean, it.eng.spago.base.SourceBean)

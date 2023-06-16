@@ -53,7 +53,7 @@ import it.eng.spagobi.tools.catalogue.metadata.SbiMetaModel;
  */
 public class SbiMetaBcDAOHibImpl extends AbstractHibernateDAO implements ISbiMetaBCDAO {
 
-	static private Logger logger = Logger.getLogger(SbiMetaBcDAOHibImpl.class);
+	private static Logger logger = Logger.getLogger(SbiMetaBcDAOHibImpl.class);
 
 	/**
 	 * Load BC by id.

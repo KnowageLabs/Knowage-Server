@@ -52,7 +52,7 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 @Path("/1.0/engine")
 public class EngineResource extends AbstractCockpitEngineResource {
 
-	static private Logger logger = Logger.getLogger(EngineResource.class);
+	private static Logger logger = Logger.getLogger(EngineResource.class);
 
 	@GET
 	@Path("/")

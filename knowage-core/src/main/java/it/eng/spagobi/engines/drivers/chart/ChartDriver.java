@@ -61,7 +61,7 @@ import it.eng.spagobi.utilities.assertion.Assert;
  */
 public class ChartDriver extends GenericDriver {
 
-	static private Logger logger = Logger.getLogger(ChartDriver.class);
+	private static Logger logger = Logger.getLogger(ChartDriver.class);
 	private Locale locale;
 
 	/**

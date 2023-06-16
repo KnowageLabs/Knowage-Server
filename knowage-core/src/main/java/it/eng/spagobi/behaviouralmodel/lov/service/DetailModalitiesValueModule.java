@@ -70,7 +70,7 @@ import it.eng.spagobi.security.SecurityInfoProviderFactory;
  */
 
 public class DetailModalitiesValueModule extends AbstractHttpModule {
-	static private Logger logger = Logger.getLogger(DetailModalitiesValueModule.class);
+	private static Logger logger = Logger.getLogger(DetailModalitiesValueModule.class);
 	private EMFErrorHandler errorHandler;
 
 	private SessionContainer session;

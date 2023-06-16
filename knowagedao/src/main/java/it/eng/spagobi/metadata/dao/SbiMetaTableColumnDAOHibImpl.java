@@ -42,7 +42,7 @@ import org.hibernate.criterion.Expression;
  */
 public class SbiMetaTableColumnDAOHibImpl extends AbstractHibernateDAO implements ISbiMetaTableColumnDAO {
 
-	static private Logger logger = Logger.getLogger(SbiMetaTableColumnDAOHibImpl.class);
+	private static Logger logger = Logger.getLogger(SbiMetaTableColumnDAOHibImpl.class);
 
 	/**
 	 * Load table column by id.

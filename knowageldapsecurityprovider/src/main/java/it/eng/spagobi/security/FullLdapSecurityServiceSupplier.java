@@ -52,7 +52,7 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 public class FullLdapSecurityServiceSupplier extends LdapSecurityServiceSupplier implements ISecurityServiceSupplier {
 
-	static private Logger logger = Logger.getLogger(FullLdapSecurityServiceSupplier.class);
+	private static Logger logger = Logger.getLogger(FullLdapSecurityServiceSupplier.class);
 
 	private static final String AUTHENTICATION_FILTER = "AUTHENTICATION_FILTER";
 	private static final String ROLES_ATTRIBUTE = "USER_ROLES_ATTRIBUTE_NAME";

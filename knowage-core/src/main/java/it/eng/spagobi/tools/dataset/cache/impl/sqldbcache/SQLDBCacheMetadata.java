@@ -68,7 +68,7 @@ public class SQLDBCacheMetadata implements ICacheMetadata {
 	private Integer cacheDsLastAccessTtl;
 	private Integer cachePercentageToStore;
 
-	static private Logger logger = Logger.getLogger(SQLDBCacheMetadata.class);
+	private static Logger logger = Logger.getLogger(SQLDBCacheMetadata.class);
 
 	public SQLDBCacheMetadata(SQLDBCacheConfiguration cacheConfiguration) {
 		this.cacheConfiguration = cacheConfiguration;

@@ -59,7 +59,7 @@ import org.json.JSONObject;
  */
 public class SaveLovAction extends AbstractSpagoBIAction {
 
-	static private Logger logger = Logger.getLogger(DetailModalitiesValueModule.class);
+	private static Logger logger = Logger.getLogger(DetailModalitiesValueModule.class);
 	private EMFErrorHandler errorHandler;
 
 	private SessionContainer session;

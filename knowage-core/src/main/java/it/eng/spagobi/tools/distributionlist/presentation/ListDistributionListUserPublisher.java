@@ -36,7 +36,7 @@ import org.apache.log4j.Logger;
  */
 public class ListDistributionListUserPublisher implements PublisherDispatcherIFace{
 	
-	static private Logger logger = Logger.getLogger(ListDistributionListUserPublisher.class);
+	private static Logger logger = Logger.getLogger(ListDistributionListUserPublisher.class);
 	
 	/**
 	 * Given the request at input, gets the name of the reference publisher,driving

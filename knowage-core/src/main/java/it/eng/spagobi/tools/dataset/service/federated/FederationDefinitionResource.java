@@ -49,7 +49,7 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 @ManageAuthorization
 public class FederationDefinitionResource {
 
-	static protected Logger logger = Logger.getLogger(FederationDefinitionResource.class);
+	protected static Logger logger = Logger.getLogger(FederationDefinitionResource.class);
 
 	ISbiFederationDefinitionDAO fdsDAO;
 	List<FederationDefinition> listOfFederations;

@@ -31,7 +31,7 @@ import it.eng.knowage.security.ProductProfiler;
 @Path("/2.0/backendservices/productprofiler")
 public class ProductProfilerResource {
 
-	static protected Logger logger = Logger.getLogger(ProductProfilerResource.class);
+	protected static Logger logger = Logger.getLogger(ProductProfilerResource.class);
 
 	@GET
 	@Path("cockpit/widget")

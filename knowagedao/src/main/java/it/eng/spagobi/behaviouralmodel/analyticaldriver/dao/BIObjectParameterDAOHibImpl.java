@@ -52,7 +52,7 @@ import it.eng.spagobi.user.UserProfileManager;
  * @author Zoppello
  */
 public class BIObjectParameterDAOHibImpl extends AbstractHibernateDAO implements IBIObjectParameterDAO {
-	static private Logger logger = Logger.getLogger(BIObjectParameterDAOHibImpl.class);
+	private static Logger logger = Logger.getLogger(BIObjectParameterDAOHibImpl.class);
 
 	/**
 	 * Load by id.

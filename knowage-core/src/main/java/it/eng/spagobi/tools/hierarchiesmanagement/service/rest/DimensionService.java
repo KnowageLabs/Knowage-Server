@@ -52,7 +52,7 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 @Path("/dimensions")
 public class DimensionService {
 
-	static private Logger logger = Logger.getLogger(DimensionService.class);
+	private static Logger logger = Logger.getLogger(DimensionService.class);
 
 	// get dimensions available (defined into the configurations)
 	@GET

@@ -50,7 +50,7 @@ public class KnowageBusinessExceptionMapper implements ExceptionMapper<KnowageBu
 	private static final String ERROR_CODE = "code";
 	private static final String ERROR_HINTS = "hints";
 
-	static private Logger logger = Logger.getLogger(KnowageBusinessExceptionMapper.class);
+	private static Logger logger = Logger.getLogger(KnowageBusinessExceptionMapper.class);
 
 	@Context
 	private HttpServletRequest servletRequest;

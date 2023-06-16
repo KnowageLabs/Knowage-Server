@@ -35,7 +35,7 @@ public class CustomizedFunction {
 	final static String VALUE = "value";
 	final static String PARAMETERS = "parameters";
 
-	static protected Logger logger = Logger.getLogger(CustomizedFunction.class);
+	protected static Logger logger = Logger.getLogger(CustomizedFunction.class);
 
 	List<CustomizedFunctionParameter> parameters = new ArrayList<CustomizedFunctionParameter>();
 

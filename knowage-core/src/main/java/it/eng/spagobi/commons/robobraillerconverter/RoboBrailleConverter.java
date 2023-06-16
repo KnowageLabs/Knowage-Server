@@ -34,7 +34,7 @@
 //
 //public class RoboBrailleConverter implements AccessibleDocumentConverter {
 //	JobManager jobManager = null;
-//	static protected Logger logger = Logger.getLogger(RoboBrailleConverter.class);
+//	protected static Logger logger = Logger.getLogger(RoboBrailleConverter.class);
 //	public RoboBrailleConverter(ConversionType conversionType) {
 //
 //		RoboBrailleControllerFactory rcFactory = new RoboBrailleControllerFactory();

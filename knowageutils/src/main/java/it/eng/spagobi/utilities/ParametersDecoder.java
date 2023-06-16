@@ -35,7 +35,7 @@ import it.eng.spagobi.container.IContainer;
  *
  */
 public class ParametersDecoder {
-	static private Logger logger = Logger.getLogger(ParametersDecoder.class);
+	private static Logger logger = Logger.getLogger(ParametersDecoder.class);
 
 	private String openBlockMarker;
 	private String closeBlockMarker;

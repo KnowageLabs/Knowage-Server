@@ -37,7 +37,7 @@ public class CoreContextManager extends ContextManager {
 
 
 
-	static private Logger logger = Logger.getLogger(CoreContextManager.class);
+	private static Logger logger = Logger.getLogger(CoreContextManager.class);
 
 	public CoreContextManager(IBeanContainer beanContainer, IContextRetrieverStrategy strategy) {
 		super(beanContainer,strategy);

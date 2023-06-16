@@ -42,7 +42,7 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
  */
 public class ExternalEngineSecurityServerInterceptor extends AbstractSecurityServerInterceptor {
 
-	static private Logger logger = Logger.getLogger(ExternalEngineSecurityServerInterceptor.class);
+	private static Logger logger = Logger.getLogger(ExternalEngineSecurityServerInterceptor.class);
 
 	@Context
 	private HttpServletRequest servletRequest;

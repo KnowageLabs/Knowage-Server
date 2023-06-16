@@ -49,7 +49,7 @@ import org.apache.log4j.Logger;
 public class PortletUtilities {
 	
 	
-	static private Logger logger = Logger.getLogger(PortletUtilities.class);
+	private static Logger logger = Logger.getLogger(PortletUtilities.class);
 	
 	/**
 	 * Starting from the original URL and the request, creates a string representing the

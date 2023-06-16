@@ -70,7 +70,7 @@ import org.safehaus.uuid.UUIDGenerator;
 
 public class ListTag extends TagSupport
 {
-	static private Logger logger = Logger.getLogger(ListTag.class);
+	private static Logger logger = Logger.getLogger(ListTag.class);
 
 	protected String _actionName = null;
 	protected String _moduleName = null;

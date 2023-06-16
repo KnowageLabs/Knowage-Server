@@ -43,7 +43,7 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 @Path("/1.0/document-detail")
 public class DocumentDetailResource extends AbstractSpagoBIResource {
 
-	static private Logger logger = Logger.getLogger(DocumentDetailResource.class);
+	private static Logger logger = Logger.getLogger(DocumentDetailResource.class);
 
 	@GET
 	@Path("/engines")

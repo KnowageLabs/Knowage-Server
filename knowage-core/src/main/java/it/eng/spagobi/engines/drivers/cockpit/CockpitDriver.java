@@ -34,7 +34,7 @@ import it.eng.spagobi.engines.drivers.generic.GenericDriver;
 
 public class CockpitDriver extends GenericDriver {
 
-	static private Logger logger = Logger.getLogger(CockpitDriver.class);
+	private static Logger logger = Logger.getLogger(CockpitDriver.class);
 
 	@Override
 	public ArrayList<String> getDatasetAssociated(byte[] contentTemplate) throws JSONException {

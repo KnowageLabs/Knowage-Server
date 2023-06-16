@@ -41,7 +41,7 @@ import it.eng.spagobi.utilities.assertion.Assert;
 
 public class ArtifactsDAOImpl extends AbstractHibernateDAO implements IArtifactsDAO {
 
-	static private Logger logger = Logger.getLogger(ArtifactsDAOImpl.class);
+	private static Logger logger = Logger.getLogger(ArtifactsDAOImpl.class);
 
 	@Override
 	public Artifact loadArtifactById(Integer id) {

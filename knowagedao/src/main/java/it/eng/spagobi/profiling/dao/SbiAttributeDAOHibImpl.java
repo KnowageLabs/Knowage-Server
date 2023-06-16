@@ -37,7 +37,7 @@ import it.eng.spagobi.profiling.bean.SbiUserAttributes;
 import it.eng.spagobi.profiling.bo.ProfileAttributesValueTypes;
 
 public class SbiAttributeDAOHibImpl extends AbstractHibernateDAO implements ISbiAttributeDAO {
-	static private Logger logger = Logger.getLogger(SbiAttributeDAOHibImpl.class);
+	private static Logger logger = Logger.getLogger(SbiAttributeDAOHibImpl.class);
 
 	@Override
 	public List<SbiUserAttributes> loadSbiUserAttributesById(Integer id) throws EMFUserError {

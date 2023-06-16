@@ -34,7 +34,7 @@ import it.eng.spagobi.utilities.assertion.Assert;
 
 public class SbiFederationUtils {
 
-	static private Logger logger = Logger.getLogger(SbiFederationUtils.class);
+	private static Logger logger = Logger.getLogger(SbiFederationUtils.class);
 
 	public static FederationDefinition toDatasetFederationNoDataset(SbiFederationDefinition hibFd) {
 		return toDatasetFederationWithDataset(hibFd, null);

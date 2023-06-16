@@ -23,7 +23,7 @@ import it.eng.spagobi.commons.robobraillerconverter.restclient.conf.RobobrailleC
 
 public abstract class AbstractRoboBrailleController implements JobManager {
 
-	static protected Logger logger = Logger.getLogger(AbstractRoboBrailleController.class);
+	protected static Logger logger = Logger.getLogger(AbstractRoboBrailleController.class);
 	protected HttpClient httpClient;
 	protected HawkClient hawkClient;
 	// protected ClientExecutor executor;

@@ -46,7 +46,7 @@ public class DocumentsJSONDecorator {
 	public static final String DECORATORS = "decorators";
 	public static final String IS_SAVABLE = "isSavable";
 
-	static private Logger logger = Logger.getLogger(DocumentsJSONDecorator.class);
+	private static Logger logger = Logger.getLogger(DocumentsJSONDecorator.class);
 
 	public static JSONArray decorateDocuments(JSONArray documents, IEngUserProfile profile, LowFunctionality folder) {
 		if (documents != null) {

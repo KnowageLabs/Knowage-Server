@@ -33,7 +33,7 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 
 public abstract class AbstractBIResourceRuntime<T extends AbstractDriver> {
 
-	static private Logger logger = Logger.getLogger(DocumentRuntime.class);
+	private static Logger logger = Logger.getLogger(DocumentRuntime.class);
 	private static final String TREE_INNER_LOV_TYPE = "treeinner";
 
 	private IEngUserProfile userProfile = null;

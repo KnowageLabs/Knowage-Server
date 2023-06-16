@@ -114,7 +114,7 @@ public class DataSetFactory {
 	public static final String SPARQL_DS_TYPE = "SPARQL";
 	public static final String DERIVED_DS_TYPE = "Derived";
 
-	static private Logger logger = Logger.getLogger(DataSetFactory.class);
+	private static Logger logger = Logger.getLogger(DataSetFactory.class);
 
 	public static IDataSet toGuiDataSet(SbiDataSet sbiDataSet) {
 		IDataSet guiDataSet;

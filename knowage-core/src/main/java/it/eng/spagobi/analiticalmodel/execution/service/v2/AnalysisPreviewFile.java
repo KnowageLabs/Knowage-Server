@@ -50,7 +50,7 @@ import org.apache.log4j.Logger;
 @ManageAuthorization
 public class AnalysisPreviewFile extends AbstractSpagoBIResource {
 
-	static protected Logger logger = Logger.getLogger(AnalysisPreviewFile.class);
+	protected static Logger logger = Logger.getLogger(AnalysisPreviewFile.class);
 
 	private static final String DATASET_FILE_MAX_SIZE = "DATASET_FILE_MAX_SIZE";
 	private static final List<String> VALID_FILE_EXTENSIONS = Arrays.asList("BMP", "JPG", "JPEG", "PNG", "GIF");

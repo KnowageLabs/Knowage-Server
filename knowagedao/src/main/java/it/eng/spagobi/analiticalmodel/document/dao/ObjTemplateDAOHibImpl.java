@@ -48,7 +48,7 @@ import it.eng.spagobi.tools.dataset.dao.IBIObjDataSetDAO;
 
 public class ObjTemplateDAOHibImpl extends AbstractHibernateDAO implements IObjTemplateDAO {
 
-	static private Logger logger = Logger.getLogger(ObjTemplateDAOHibImpl.class);
+	private static Logger logger = Logger.getLogger(ObjTemplateDAOHibImpl.class);
 
 	/*
 	 * (non-Javadoc)

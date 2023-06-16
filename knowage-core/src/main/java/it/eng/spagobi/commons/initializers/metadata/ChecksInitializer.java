@@ -40,7 +40,7 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
  */
 public class ChecksInitializer extends SpagoBIInitializer {
 
-	static private Logger logger = Logger.getLogger(ChecksInitializer.class);
+	private static Logger logger = Logger.getLogger(ChecksInitializer.class);
 
 	public ChecksInitializer() {
 		targetComponentName = "Checks";

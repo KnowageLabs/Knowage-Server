@@ -64,7 +64,7 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 @Deprecated
 public class DataSetDriversResource extends AbstractDataSetResource {
 
-	static protected Logger logger = Logger.getLogger(DataSetResource.class);
+	protected static Logger logger = Logger.getLogger(DataSetResource.class);
 
 	@POST
 	@Path("/drivers")

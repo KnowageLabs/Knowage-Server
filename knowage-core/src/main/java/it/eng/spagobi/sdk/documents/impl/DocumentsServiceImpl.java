@@ -115,7 +115,7 @@ public class DocumentsServiceImpl extends AbstractSDKService implements Document
 	public static final String CFIELDS_FILE_NAME = "cfields_meta.xml";
 	public static final String MONDRIAN_SCHEMA_TYPE = "MONDRIAN_SCHEMA";
 
-	static private Logger logger = Logger.getLogger(DocumentsServiceImpl.class);
+	private static Logger logger = Logger.getLogger(DocumentsServiceImpl.class);
 
 	@Override
 	public SDKDocumentParameterValue[] getAdmissibleValues(Integer documentParameterId, String roleName) throws NonExecutableDocumentException {

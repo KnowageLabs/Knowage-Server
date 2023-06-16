@@ -38,7 +38,7 @@ import it.eng.spagobi.container.IBeanContainer;
  */
 public class LightNavigatorContextRetrieverStrategy implements IContextRetrieverStrategy {
 
-	static private Logger logger = Logger.getLogger(LightNavigatorContextRetrieverStrategy.class);
+	private static Logger logger = Logger.getLogger(LightNavigatorContextRetrieverStrategy.class);
 
 	private static final String _sessionAttributeBaseKey = "SPAGOBI_SESSION_ATTRIBUTE";
 	private String _key;

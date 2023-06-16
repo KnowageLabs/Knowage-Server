@@ -35,7 +35,7 @@ extends AbstractContainer implements IBeanContainer {
 	
 	private HttpSession session;
 	
-	static private Logger logger = Logger.getLogger(SpagoBIHttpSessionContainer.class);
+	private static Logger logger = Logger.getLogger(SpagoBIHttpSessionContainer.class);
 	
 	
 	public SpagoBIHttpSessionContainer(HttpSession session) {

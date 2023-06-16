@@ -27,7 +27,7 @@ import it.eng.spagobi.tools.datasource.service.TestConnectionAction;
 
 public class TestInternalEngineAction extends AbstractHttpAction{
 	
-	static private Logger logger = Logger.getLogger(TestInternalEngineAction.class);
+	private static Logger logger = Logger.getLogger(TestInternalEngineAction.class);
 	
 	public void service(SourceBean serviceRequest, SourceBean serviceResponse)
 	throws Exception {

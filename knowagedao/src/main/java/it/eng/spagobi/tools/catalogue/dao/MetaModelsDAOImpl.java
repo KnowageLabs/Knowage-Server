@@ -52,7 +52,7 @@ import it.eng.spagobi.utilities.assertion.Assert;
 
 public class MetaModelsDAOImpl extends AbstractHibernateDAO implements IMetaModelsDAO {
 
-	static private Logger logger = Logger.getLogger(MetaModelsDAOImpl.class);
+	private static Logger logger = Logger.getLogger(MetaModelsDAOImpl.class);
 	private static final String LOG_SUFFIX = ".log";
 
 	@Override

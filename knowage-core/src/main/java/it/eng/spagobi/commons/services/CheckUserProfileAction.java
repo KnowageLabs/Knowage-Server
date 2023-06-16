@@ -37,7 +37,7 @@ import org.apache.log4j.Logger;
  */
 public class CheckUserProfileAction extends AbstractHttpAction {
 
-	static private Logger logger = Logger.getLogger(CheckUserProfileAction.class);
+	private static Logger logger = Logger.getLogger(CheckUserProfileAction.class);
 	
 	public void service(SourceBean request, SourceBean response) throws Exception {
 		logger.debug("IN");

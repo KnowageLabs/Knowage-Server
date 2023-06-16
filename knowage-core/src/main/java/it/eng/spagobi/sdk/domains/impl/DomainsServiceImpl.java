@@ -40,7 +40,7 @@ import org.apache.log4j.Logger;
 
 public class DomainsServiceImpl extends AbstractSDKService implements DomainsService {
 
-	static private Logger logger = Logger.getLogger(DomainsServiceImpl.class);
+	private static Logger logger = Logger.getLogger(DomainsServiceImpl.class);
 
 	public boolean insertDomain(SDKDomain sdkDomain) throws SDKException {
 		logger.error("Service not implemented");

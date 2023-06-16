@@ -37,7 +37,7 @@ import org.opengis.feature.simple.SimpleFeatureType;
 public class geoUtils {
 	public static final String LAYER_URL = "layerUrl";
 
-	static private Logger logger = Logger.getLogger(geoUtils.class);
+	private static Logger logger = Logger.getLogger(geoUtils.class);
 
 	public static String getFileLayerAction(String layerUrl) throws JSONException, IOException, EMFUserError {
 		IFeaturesProviderFileDAO featuresProvider = DAOFactory.getFeaturesProviderFileDAO();

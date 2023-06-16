@@ -29,7 +29,7 @@ import org.apache.log4j.Logger;
 
 public class Formula {
 
-	static private Logger logger = Logger.getLogger(Formula.class);
+	private static Logger logger = Logger.getLogger(Formula.class);
 
 	private String name;
 	private String description;

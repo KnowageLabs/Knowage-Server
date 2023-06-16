@@ -37,7 +37,7 @@ import it.eng.spagobi.services.security.exceptions.SecurityException;
  */
 public final class EventServiceProxy extends AbstractServiceProxy {
 
-	static private final String SERVICE_NAME = "Event Service";
+	private static final String SERVICE_NAME = "Event Service";
 
 	private static final QName SERVICE_QNAME = new QName("http://event.services.spagobi.eng.it/", "EventService");
 
@@ -48,7 +48,7 @@ public final class EventServiceProxy extends AbstractServiceProxy {
 	public static final String DOCUMENT_EXECUTION_START = "biobj-start-execution";
 	public static final String DOCUMENT_EXECUTION_END = "biobj-end-execution";
 
-	static private Logger logger = Logger.getLogger(EventServiceProxy.class);
+	private static Logger logger = Logger.getLogger(EventServiceProxy.class);
 
 	/**
 	 * use it only in engine context.

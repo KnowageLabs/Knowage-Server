@@ -56,7 +56,7 @@ import it.eng.spagobi.commons.metadata.SbiExtRoles;
  */
 public class ParameterUseDAOHibImpl extends AbstractHibernateDAO implements IParameterUseDAO {
 
-	static private Logger logger = Logger.getLogger(ParameterUseDAOHibImpl.class);
+	private static Logger logger = Logger.getLogger(ParameterUseDAOHibImpl.class);
 
 	/**
 	 * Load by id.

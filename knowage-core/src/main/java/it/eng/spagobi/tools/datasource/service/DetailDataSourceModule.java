@@ -52,7 +52,7 @@ import it.eng.spagobi.tools.datasource.dao.IDataSourceDAO;
  * This class implements a module which handles data source management.
  */
 public class DetailDataSourceModule extends AbstractHttpModule {
-	static private Logger logger = Logger.getLogger(DetailDataSourceModule.class);
+	private static Logger logger = Logger.getLogger(DetailDataSourceModule.class);
 	public static final String MOD_SAVE = "SAVE";
 	public static final String MOD_SAVEBACK = "SAVEBACK";
 	public static final String NAME_ATTR_LIST_DIALECTS = "dialects";

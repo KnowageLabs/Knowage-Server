@@ -51,7 +51,7 @@ public abstract class AbstractKnowageMetaTest extends TestCase {
 	protected static PhysicalModel filteredPhysicalModel;
 	protected static BusinessModel filteredBusinessModel;
 
-	static private Logger logger = Logger.getLogger(AbstractKnowageMetaTest.class);
+	private static Logger logger = Logger.getLogger(AbstractKnowageMetaTest.class);
 	protected boolean tearDown = false;
 
 	public AbstractKnowageMetaTest() {

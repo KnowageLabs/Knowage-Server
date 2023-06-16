@@ -30,7 +30,7 @@ import it.eng.spagobi.utilities.engines.rest.SimpleRestClient;
 public class QbeExecutionClient extends SimpleRestClient {
 
 	private static final String SERVICE_URL = "/restful-services/domainsforfinaluser";
-	static private Logger logger = Logger.getLogger(QbeExecutionClient.class);
+	private static Logger logger = Logger.getLogger(QbeExecutionClient.class);
 
 	public String geCategoryDomain(String userId) {
 

@@ -88,14 +88,14 @@ public class PageResource extends AbstractCockpitEngineResource {
 	private static final String PDF_DEVICE_SCALE_FACTOR = "pdfDeviceScaleFactor";
 	private static final String PDF_WAIT_TIME = "pdfWaitTime";
 	private static final String IS_MULTI_SHEET = "isMultiSheet";
-	static private final List<String> PDF_PARAMETERS = Arrays
+	private static final List<String> PDF_PARAMETERS = Arrays
 			.asList(new String[] { OUTPUT_TYPE, PDF_WIDTH, PDF_HEIGHT, PDF_WAIT_TIME, PDF_ZOOM, PDF_PAGE_ORIENTATION });
-	static private final List<String> JPG_PARAMETERS = Arrays.asList(new String[] { OUTPUT_TYPE });
+	private static final List<String> JPG_PARAMETERS = Arrays.asList(new String[] { OUTPUT_TYPE });
 
-	static private Map<String, JSONObject> pages;
-	static private Map<String, String> urls;
+	private static Map<String, JSONObject> pages;
+	private static Map<String, String> urls;
 
-	static private Logger logger = Logger.getLogger(PageResource.class);
+	private static Logger logger = Logger.getLogger(PageResource.class);
 
 	static {
 		pages = new HashMap<String, JSONObject>();

@@ -31,7 +31,7 @@ import org.apache.log4j.Logger;
 public class SpagoBIServletRequestContainer 
 	extends AbstractContainer implements IReadOnlyContainer {
 
-static private Logger logger = Logger.getLogger(SpagoBIRequestContainer.class);
+private static Logger logger = Logger.getLogger(SpagoBIRequestContainer.class);
 	
 	ServletRequest request;
 	

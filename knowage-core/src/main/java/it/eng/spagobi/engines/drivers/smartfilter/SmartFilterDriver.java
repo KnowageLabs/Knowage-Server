@@ -63,7 +63,7 @@ import it.eng.spagobi.utilities.engines.EngineConstants;
  */
 public class SmartFilterDriver extends AbstractEngineDriver implements IEngineDriver {
 
-	static private Logger logger = Logger.getLogger(SmartFilterDriver.class);
+	private static Logger logger = Logger.getLogger(SmartFilterDriver.class);
 
 	/**
 	 * Returns a map of parameters which will be send in the request to the engine application.

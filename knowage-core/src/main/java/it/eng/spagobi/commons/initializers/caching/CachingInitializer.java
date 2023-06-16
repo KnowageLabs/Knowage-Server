@@ -30,7 +30,7 @@ import org.apache.log4j.Logger;
 
 public class CachingInitializer implements InitializerIFace {
 
-	static private Logger logger = Logger.getLogger(CachingInitializer.class);
+	private static Logger logger = Logger.getLogger(CachingInitializer.class);
 	private SourceBean _config;
 
 	@Override

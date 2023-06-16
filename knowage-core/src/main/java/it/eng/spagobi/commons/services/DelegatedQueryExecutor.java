@@ -48,7 +48,7 @@ import it.eng.spago.util.StringUtils;
 import it.eng.spagobi.commons.utilities.HibernateSessionManager;
 
 public class DelegatedQueryExecutor extends QueryExecutor {
-	static private Logger logger = Logger.getLogger(DelegatedQueryExecutor.class);
+	private static Logger logger = Logger.getLogger(DelegatedQueryExecutor.class);
 
 	public static final String CREATE = "CREATE";
 	public static final String READ = "READ";

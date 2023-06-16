@@ -38,7 +38,7 @@ import it.eng.spagobi.metadata.metadata.SbiMetaDsTabRel;
 
 public class SbiMetaDsTabRelDAOHibImpl extends AbstractHibernateDAO implements ISbiMetaDsTabRel {
 
-	static private Logger logger = Logger.getLogger(SbiMetaDsTabRelDAOHibImpl.class);
+	private static Logger logger = Logger.getLogger(SbiMetaDsTabRelDAOHibImpl.class);
 
 	@Override
 	public SbiMetaDsTabRel loadRelationById(Integer relationId) throws EMFUserError {

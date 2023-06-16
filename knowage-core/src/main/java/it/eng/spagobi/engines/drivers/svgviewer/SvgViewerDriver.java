@@ -35,7 +35,7 @@ import it.eng.spagobi.engines.drivers.generic.GenericDriver;
  */
 public class SvgViewerDriver extends GenericDriver {
 
-	static private Logger logger = Logger.getLogger(SvgViewerDriver.class);
+	private static Logger logger = Logger.getLogger(SvgViewerDriver.class);
 
 	@Override
 	public List<DefaultOutputParameter> getDefaultOutputParameters() {

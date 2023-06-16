@@ -35,7 +35,7 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 public class GeoLayerJSONDeserializer {
 
-	static private Logger logger = Logger.getLogger(GeoLayerJSONSerializer.class);
+	private static Logger logger = Logger.getLogger(GeoLayerJSONSerializer.class);
 	private static final String ID = "layerId";
 	private static final String NAME = "name";
 	private static final String LABEL = "label";

@@ -18,7 +18,7 @@ import it.eng.qbe.datasource.configuration.dao.fileimpl.InLineFunctionsDAOFileIm
  */
 public class InlineFunctionRegistrationManager {
 
-	static protected Logger logger = Logger.getLogger(InlineFunctionRegistrationManager.class);
+	protected static Logger logger = Logger.getLogger(InlineFunctionRegistrationManager.class);
 
 	public static void registerInlineFunctions(Dialect dialect) {
 		logger.debug("IN");

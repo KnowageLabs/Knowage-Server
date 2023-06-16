@@ -16,7 +16,7 @@ import org.apache.log4j.Logger;
 
 public class ExtendedPostgresDialect extends PostgreSQLDialect {
 
-	static protected Logger logger = Logger.getLogger(ExtendedPostgresDialect.class);
+	protected static Logger logger = Logger.getLogger(ExtendedPostgresDialect.class);
 
 	public ExtendedPostgresDialect() {
 		super();

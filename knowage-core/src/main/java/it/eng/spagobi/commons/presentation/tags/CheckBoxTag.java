@@ -53,7 +53,7 @@ import org.apache.log4j.Logger;
  *
  */
 public class CheckBoxTag extends TagSupport {
-	static private Logger logger = Logger.getLogger(CheckBoxTag.class);
+	private static Logger logger = Logger.getLogger(CheckBoxTag.class);
 	
 	private HttpServletRequest httpRequest = null;
 	

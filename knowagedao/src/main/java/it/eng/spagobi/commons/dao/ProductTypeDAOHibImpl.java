@@ -40,7 +40,7 @@ import org.hibernate.transform.Transformers;
  *
  */
 public class ProductTypeDAOHibImpl extends AbstractHibernateDAO implements IProductTypeDAO {
-	static private Logger logger = Logger.getLogger(ProductTypeDAOHibImpl.class);
+	private static Logger logger = Logger.getLogger(ProductTypeDAOHibImpl.class);
 
 	@Override
 	public List<SbiProductType> loadAllProductType() {

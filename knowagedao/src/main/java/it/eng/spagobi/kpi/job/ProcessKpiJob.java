@@ -69,7 +69,7 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 public class ProcessKpiJob extends AbstractSuspendableJob {
 	public static final String CARDINALITY_ALL = "ALL";
 
-	static private Logger logger = Logger.getLogger(ProcessKpiJob.class);
+	private static Logger logger = Logger.getLogger(ProcessKpiJob.class);
 
 	// Only SQL is supported.
 	// Getters/setters omitted are from inner classes for readability.

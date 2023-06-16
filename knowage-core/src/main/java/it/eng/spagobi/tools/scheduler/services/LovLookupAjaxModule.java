@@ -71,7 +71,7 @@ import it.eng.spagobi.commons.utilities.messages.MessageBuilderFactory;
 
 public class LovLookupAjaxModule extends AbstractBasicListModule {
 
-	static private Logger logger = Logger.getLogger(LovLookupAjaxModule.class);
+	private static Logger logger = Logger.getLogger(LovLookupAjaxModule.class);
 
 	/**
 	 * Class Constructor.

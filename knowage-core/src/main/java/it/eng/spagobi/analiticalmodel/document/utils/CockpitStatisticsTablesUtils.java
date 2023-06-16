@@ -59,7 +59,7 @@ import it.eng.spagobi.tools.dataset.dao.IDataSetDAO;
  */
 public class CockpitStatisticsTablesUtils {
 
-	static private Logger logger = Logger.getLogger(CockpitStatisticsTablesUtils.class);
+	private static Logger logger = Logger.getLogger(CockpitStatisticsTablesUtils.class);
 
 	public static void deleteCockpitWidgetsTable(BIObject biObject, Session session) {
 		deleteCockpitWidgetsTable(biObject, session, false);

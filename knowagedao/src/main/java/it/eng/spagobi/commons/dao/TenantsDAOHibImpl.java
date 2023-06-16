@@ -89,7 +89,7 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 @SuppressWarnings("all")
 public class TenantsDAOHibImpl extends AbstractHibernateDAO implements ITenantsDAO {
 
-	static private Logger logger = Logger.getLogger(TenantsDAOHibImpl.class);
+	private static Logger logger = Logger.getLogger(TenantsDAOHibImpl.class);
 
 	public static final String ADMIN_USER_ID_SUFFIX = "_admin";
 	public static final String ADMIN_USER_NAME_SUFFIX = " ADMIN";

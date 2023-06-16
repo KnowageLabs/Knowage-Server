@@ -29,7 +29,7 @@ import it.eng.spagobi.commons.bo.UserProfile;
  */
 public class CheckFunctionalitiesParser {
 
-	static private Logger logger = Logger.getLogger(CheckFunctionalitiesParser.class);
+	private static Logger logger = Logger.getLogger(CheckFunctionalitiesParser.class);
 
 	public boolean hasUserConstraints(Method method) throws Exception {
 

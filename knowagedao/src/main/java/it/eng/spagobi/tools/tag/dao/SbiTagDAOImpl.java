@@ -39,7 +39,7 @@ import it.eng.spagobi.tools.tag.SbiTag;
 
 public class SbiTagDAOImpl extends AbstractHibernateDAO implements ISbiTagDAO {
 
-	static private Logger logger = Logger.getLogger(SbiTagDAOImpl.class);
+	private static Logger logger = Logger.getLogger(SbiTagDAOImpl.class);
 
 	@Override
 	public List<SbiTag> loadTags() {

@@ -30,7 +30,7 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 public class FederationDefinitionAccessController {
 
-	static protected Logger logger = Logger.getLogger(FederationDefinitionAccessController.class);
+	protected static Logger logger = Logger.getLogger(FederationDefinitionAccessController.class);
 	private final UserProfile userProfile;
 
 	public FederationDefinitionAccessController(UserProfile userProfile) {

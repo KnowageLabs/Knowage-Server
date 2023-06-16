@@ -29,7 +29,7 @@ public class AbstractSpagoBITestCase extends TestCase {
 
 	protected boolean performTearDown;
 
-	static protected Logger logger = Logger.getLogger(AbstractSpagoBITestCase.class);
+	protected static Logger logger = Logger.getLogger(AbstractSpagoBITestCase.class);
 
 	public AbstractSpagoBITestCase() {
 		super();

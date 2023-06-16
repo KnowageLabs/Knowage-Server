@@ -46,7 +46,7 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 public class OAuth2TenantInitializer extends SpagoBIInitializer {
 
-	static private Logger logger = Logger.getLogger(OAuth2TenantInitializer.class);
+	private static Logger logger = Logger.getLogger(OAuth2TenantInitializer.class);
 
 	private static OAuth2Config config = OAuth2Config.getInstance();
 

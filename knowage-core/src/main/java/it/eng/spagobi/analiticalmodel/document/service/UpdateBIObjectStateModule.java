@@ -36,7 +36,7 @@ import org.apache.log4j.Logger;
 
 public class UpdateBIObjectStateModule extends AbstractModule {
 	
-	static private Logger logger = Logger.getLogger(UpdateBIObjectStateModule.class);
+	private static Logger logger = Logger.getLogger(UpdateBIObjectStateModule.class);
 	public static final String MODULE_PAGE = "UpdateBIObjectStateModule";
 	
 	/* (non-Javadoc)

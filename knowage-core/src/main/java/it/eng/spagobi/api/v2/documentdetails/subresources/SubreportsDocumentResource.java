@@ -43,7 +43,7 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRestServiceException;
 @Path("/")
 public class SubreportsDocumentResource extends AbstractSpagoBIResource {
 
-	static protected Logger logger = Logger.getLogger(SubreportsDocumentResource.class);
+	protected static Logger logger = Logger.getLogger(SubreportsDocumentResource.class);
 
 	@SuppressWarnings("unchecked")
 	@GET

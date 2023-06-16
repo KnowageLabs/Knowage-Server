@@ -43,9 +43,9 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
  */
 public class JWTTokenAsUserUniqueIdentifierSsoService implements SsoServiceInterface {
 
-	static private Logger logger = Logger.getLogger(JWTTokenAsUserUniqueIdentifierSsoService.class);
+	private static Logger logger = Logger.getLogger(JWTTokenAsUserUniqueIdentifierSsoService.class);
 	
-	static private Algorithm algorithm;
+	private static Algorithm algorithm;
 
 	static {
 		try {

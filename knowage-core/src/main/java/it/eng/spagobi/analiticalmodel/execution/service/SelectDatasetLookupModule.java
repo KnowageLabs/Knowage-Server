@@ -45,7 +45,7 @@ import org.hibernate.Session;
 
 public class SelectDatasetLookupModule extends AbstractBasicListModule {
 
-	static private Logger logger = Logger.getLogger(SelectDatasetLookupModule.class);
+	private static Logger logger = Logger.getLogger(SelectDatasetLookupModule.class);
 
 		/* (non-Javadoc)
 		 * @see it.eng.spago.dispatching.service.list.basic.IFaceBasicListService#getList(it.eng.spago.base.SourceBean, it.eng.spago.base.SourceBean)

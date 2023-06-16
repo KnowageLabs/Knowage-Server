@@ -10,8 +10,8 @@ import org.apache.log4j.Logger;
 
 public class AccessibleDocumentConverterFactory {
 
-	static private Logger logger = Logger.getLogger(AccessibleDocumentExportResource.class);
-	static private EnumMap<ConversionType,Class<? extends AccessibleDocumentConverter>> conversionImpelementations = new EnumMap<>(ConversionType.class);
+	private static Logger logger = Logger.getLogger(AccessibleDocumentExportResource.class);
+	private static EnumMap<ConversionType,Class<? extends AccessibleDocumentConverter>> conversionImpelementations = new EnumMap<>(ConversionType.class);
 
 
 	public AccessibleDocumentConverterFactory(){

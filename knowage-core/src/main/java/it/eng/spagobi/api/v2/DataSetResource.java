@@ -148,7 +148,7 @@ import it.eng.spagobi.utilities.rest.RestUtilities;
 @ManageAuthorization
 public class DataSetResource extends AbstractDataSetResource {
 
-	static protected Logger logger = Logger.getLogger(DataSetResource.class);
+	protected static Logger logger = Logger.getLogger(DataSetResource.class);
 
 	public String getNotDerivedDataSets(@QueryParam("callback") String callback) {
 		logger.debug("IN");

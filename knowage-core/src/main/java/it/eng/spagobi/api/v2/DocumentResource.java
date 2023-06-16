@@ -106,7 +106,7 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 @Path("/2.0/documents")
 @ManageAuthorization
 public class DocumentResource extends AbstractDocumentResource {
-	static protected Logger logger = Logger.getLogger(DocumentResource.class);
+	protected static Logger logger = Logger.getLogger(DocumentResource.class);
 
 	@GET
 	@Path("/{label}/parameters")

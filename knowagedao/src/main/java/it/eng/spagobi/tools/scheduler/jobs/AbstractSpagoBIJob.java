@@ -34,7 +34,7 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
  */
 public abstract class AbstractSpagoBIJob {
 
-	static private Logger logger = Logger.getLogger(AbstractSpagoBIJob.class);
+	private static Logger logger = Logger.getLogger(AbstractSpagoBIJob.class);
 
 	protected void setTenant(JobExecutionContext jobExecutionContext) throws JobExecutionException {
 		logger.debug("IN");

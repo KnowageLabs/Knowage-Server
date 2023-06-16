@@ -48,7 +48,7 @@ import sun.security.action.GetLongAction;
 public class SaveRememberMeAction extends AbstractHttpAction {
 
 	private static final long serialVersionUID = 1L;
-	static private Logger logger = Logger.getLogger(SaveRememberMeAction.class);
+	private static Logger logger = Logger.getLogger(SaveRememberMeAction.class);
 	
 	/* (non-Javadoc)
 	 * @see it.eng.spagobi.commons.services.BaseProfileAction#service(it.eng.spago.base.SourceBean, it.eng.spago.base.SourceBean)

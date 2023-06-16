@@ -46,7 +46,7 @@ public class SqlUtils {
 
 	private static Set<String> hiveLikeDatabases = new HashSet<>(Arrays.asList("hive", "cassandra", "neo4j", "spark", "impala"));
 
-	static protected Logger logger = Logger.getLogger(SqlUtils.class);
+	protected static Logger logger = Logger.getLogger(SqlUtils.class);
 
 	public static boolean isSelectSOrWithStatement(String query) {
 		boolean isSelectOrWith = false;

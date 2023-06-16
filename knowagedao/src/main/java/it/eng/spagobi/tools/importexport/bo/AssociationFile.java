@@ -35,7 +35,7 @@ public class AssociationFile implements Serializable {
 	private String description = "";
 	private long dateCreation = 0;
 
-	static private Logger logger = Logger.getLogger(AssociationFile.class);
+	private static Logger logger = Logger.getLogger(AssociationFile.class);
 
 	/**
 	 * Gets the date creation.

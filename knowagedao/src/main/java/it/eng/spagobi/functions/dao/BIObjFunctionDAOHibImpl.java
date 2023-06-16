@@ -20,7 +20,7 @@ import it.eng.spagobi.utilities.assertion.Assert;
 
 public class BIObjFunctionDAOHibImpl extends AbstractHibernateDAO implements IBIObjFunctionDAO {
 
-	static private Logger logger = Logger.getLogger(BIObjFunctionDAOHibImpl.class);
+	private static Logger logger = Logger.getLogger(BIObjFunctionDAOHibImpl.class);
 
 	@Override
 	public ArrayList<BIObject> getBIObjectsUsingFunction(String uuid, Session currSession) throws EMFUserError {

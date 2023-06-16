@@ -43,7 +43,7 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 public class SolrFacetPivotDataReader extends SolrDataReader {
 
-	static private Logger logger = Logger.getLogger(SolrFacetPivotDataReader.class);
+	private static Logger logger = Logger.getLogger(SolrFacetPivotDataReader.class);
 
 	private Map<String, String> nameToAliasMap;
 	private Map<String, Boolean> sortedCategories;

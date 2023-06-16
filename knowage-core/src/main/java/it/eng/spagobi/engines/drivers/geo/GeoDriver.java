@@ -49,7 +49,7 @@ import it.eng.spagobi.engines.drivers.exceptions.InvalidOperationRequest;
  */
 public class GeoDriver extends AbstractEngineDriver implements IEngineDriver {
 
-	static private Logger logger = Logger.getLogger(GeoDriver.class);
+	private static Logger logger = Logger.getLogger(GeoDriver.class);
 
 	public static final String DOCUMENT_ID = "document";
 	public static final String DOCUMENT_LABEL = "DOCUMENT_LABEL";

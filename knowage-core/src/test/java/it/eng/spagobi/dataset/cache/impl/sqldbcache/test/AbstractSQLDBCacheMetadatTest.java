@@ -40,7 +40,7 @@ import com.google.caliper.memory.ObjectGraphMeasurer.Footprint;
  */
 public abstract class AbstractSQLDBCacheMetadatTest extends AbstractCacheTest {
 	
-	static private Logger logger = Logger.getLogger(AbstractSQLDBCacheMetadatTest.class);
+	private static Logger logger = Logger.getLogger(AbstractSQLDBCacheMetadatTest.class);
 	
 	
 	//Test cases

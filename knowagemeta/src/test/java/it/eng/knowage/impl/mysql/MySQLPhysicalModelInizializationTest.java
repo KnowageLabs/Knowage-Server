@@ -39,7 +39,7 @@ import org.junit.Assert;
  */
 public class MySQLPhysicalModelInizializationTest extends AbstractKnowageMetaTest {
 
-	static private Logger logger = Logger.getLogger(MySQLPhysicalModelInizializationTest.class);
+	private static Logger logger = Logger.getLogger(MySQLPhysicalModelInizializationTest.class);
 
 	@Override
 	public void setUp() throws Exception {

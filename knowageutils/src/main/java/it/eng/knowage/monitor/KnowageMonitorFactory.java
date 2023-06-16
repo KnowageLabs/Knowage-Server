@@ -32,7 +32,7 @@ import com.jamonapi.MonitorFactory;
  */
 public class KnowageMonitorFactory {
 
-	static protected Logger logger = Logger.getLogger(KnowageMonitorFactory.class);
+	protected static Logger logger = Logger.getLogger(KnowageMonitorFactory.class);
 
 	private static KnowageMonitorFactory INSTANCE = new KnowageMonitorFactory();
 

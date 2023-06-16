@@ -27,7 +27,7 @@ import org.apache.log4j.Logger;
  */
 public abstract class SsoServiceFactory {
 
-	static private Logger logger = Logger.getLogger(SsoServiceFactory.class);
+	private static Logger logger = Logger.getLogger(SsoServiceFactory.class);
 
 	private SsoServiceFactory() {
 

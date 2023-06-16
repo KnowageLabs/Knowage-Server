@@ -48,7 +48,7 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 import it.eng.spagobi.utilities.themes.ThemesManager;
 
 public class CommunityUtilities {
-	static private Logger logger = Logger.getLogger(CommunityUtilities.class);
+	private static Logger logger = Logger.getLogger(CommunityUtilities.class);
 
 	public boolean dispatchMail(String communityName, SbiUser userToAccept, SbiUser owner, String ownerEmail, HttpServletRequest request) {
 		Locale locale = null;

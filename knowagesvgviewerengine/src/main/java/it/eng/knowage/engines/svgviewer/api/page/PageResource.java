@@ -49,10 +49,10 @@ import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceExceptionHandler;
 @ManageAuthorization
 public class PageResource extends AbstractSvgViewerEngineResource {
 
-	static private Map<String, JSONObject> pages;
-	static private Map<String, String> urls;
+	private static Map<String, JSONObject> pages;
+	private static Map<String, String> urls;
 
-	static private Logger logger = Logger.getLogger(PageResource.class);
+	private static Logger logger = Logger.getLogger(PageResource.class);
 
 	/**
 	 * TODO Tutte le pagine dell'engine

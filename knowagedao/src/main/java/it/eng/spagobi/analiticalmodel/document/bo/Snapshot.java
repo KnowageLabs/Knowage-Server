@@ -25,7 +25,7 @@ import it.eng.spagobi.commons.dao.DAOFactory;
 
 public class Snapshot extends SnapshotMainInfo {
 
-	static private Logger logger = Logger.getLogger(Snapshot.class);
+	private static Logger logger = Logger.getLogger(Snapshot.class);
 
 	private String time = null;
 	private Integer binId = null;

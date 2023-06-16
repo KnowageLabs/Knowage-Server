@@ -24,7 +24,7 @@ import it.eng.spagobi.utilities.rest.RestUtilities;
 @Path("/1.0/cockpit/export")
 public class CockpitExportResource extends AbstractCockpitEngineResource {
 
-	static private Logger logger = Logger.getLogger(CockpitExportResource.class);
+	private static Logger logger = Logger.getLogger(CockpitExportResource.class);
 	private static final String OUTPUT_TYPE = "outputType";
 	private static final String USER_ID = "user_id";
 	private static final String DOCUMENT_ID = "document";

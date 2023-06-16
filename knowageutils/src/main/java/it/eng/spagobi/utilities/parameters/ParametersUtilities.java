@@ -8,7 +8,7 @@ import it.eng.spagobi.commons.utilities.StringUtilities;
 
 public final class ParametersUtilities {
 
-	static private Logger logger = Logger.getLogger(ParametersUtilities.class);
+	private static Logger logger = Logger.getLogger(ParametersUtilities.class);
 
 	public static final String START_PARAMETER = StringUtilities.START_PARAMETER;
 	public static final String END_PARAMETER = "}";

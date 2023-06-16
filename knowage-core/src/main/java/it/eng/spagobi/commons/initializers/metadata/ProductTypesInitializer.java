@@ -39,7 +39,7 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
  *
  */
 public class ProductTypesInitializer extends SpagoBIInitializer {
-	static private Logger logger = Logger.getLogger(ProductTypesInitializer.class);
+	private static Logger logger = Logger.getLogger(ProductTypesInitializer.class);
 
 	public ProductTypesInitializer() {
 		targetComponentName = "ProductType";

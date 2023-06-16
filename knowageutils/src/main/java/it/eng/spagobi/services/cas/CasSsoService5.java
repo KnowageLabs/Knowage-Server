@@ -29,7 +29,7 @@ import org.jasig.cas.client.validation.Assertion;
 import it.eng.spagobi.services.common.JWTSsoService;
 
 public class CasSsoService5 extends JWTSsoService {
-	static private Logger logger = Logger.getLogger(CasSsoService5.class);
+	private static Logger logger = Logger.getLogger(CasSsoService5.class);
 
     public String readUserIdentifier(HttpServletRequest request){
 	    HttpSession session=request.getSession();

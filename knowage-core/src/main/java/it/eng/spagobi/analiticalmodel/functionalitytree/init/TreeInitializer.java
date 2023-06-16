@@ -42,7 +42,7 @@ import org.apache.log4j.Logger;
 
 public class TreeInitializer implements InitializerIFace {
 
-	static private Logger logger = Logger.getLogger(TreeInitializer.class);
+	private static Logger logger = Logger.getLogger(TreeInitializer.class);
 
 	private SourceBean _config;
 

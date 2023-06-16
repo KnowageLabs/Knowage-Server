@@ -65,7 +65,7 @@ import it.eng.spagobi.utilities.parameters.ParametersUtilities;
 
 public class OuterAssociativityManager extends AbstractAssociativityManager {
 
-	static protected Logger logger = Logger.getLogger(OuterAssociativityManager.class);
+	protected static Logger logger = Logger.getLogger(OuterAssociativityManager.class);
 
 	public OuterAssociativityManager(Config config, UserProfile userProfile) throws Exception {
 		init(config, userProfile);

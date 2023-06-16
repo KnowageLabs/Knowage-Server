@@ -33,7 +33,7 @@ import it.eng.spago.configuration.ConfigSingleton;
  *
  */
 public class AuthorizationsBusinessMapper {
-	static private Logger logger = Logger.getLogger(AuthorizationsBusinessMapper.class);
+	private static Logger logger = Logger.getLogger(AuthorizationsBusinessMapper.class);
 
 	private static AuthorizationsBusinessMapper instance = null;
 	private HashMap _mapActions = null;

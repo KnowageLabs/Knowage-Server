@@ -26,7 +26,7 @@ import it.eng.spagobi.engines.drivers.generic.GenericDriver;
  * Driver Implementation for Dossier Engine.
  */
 public class DossierDriver extends GenericDriver {
-	static private Logger logger = Logger.getLogger(DossierDriver.class);
+	private static Logger logger = Logger.getLogger(DossierDriver.class);
 
 	/**
 	 * Returns a map of parameters which will be send in the request to the engine application.

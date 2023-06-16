@@ -36,7 +36,7 @@ import com.license4j.License;
  */
 public class DocumentUtilities {
 
-	static private Logger logger = Logger.getLogger(DocumentUtilities.class);
+	private static Logger logger = Logger.getLogger(DocumentUtilities.class);
 
 	/**
 	 * Method to find available valid licenses searching into EE LicenseManager

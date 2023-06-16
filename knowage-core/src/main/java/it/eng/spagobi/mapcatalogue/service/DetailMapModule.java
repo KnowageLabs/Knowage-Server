@@ -70,7 +70,7 @@ public class DetailMapModule extends AbstractHttpModule {
 	public static final String MOD_RETURN_FROM_LOOKUP = "RETURN_FROM_LOOKUP";
 	public static final String MOD_DOWNLOAD_MAP = "DOWNLOAD_MAP";
 
-	static private Logger logger = Logger.getLogger(DetailMapModule.class);
+	private static Logger logger = Logger.getLogger(DetailMapModule.class);
 
 	private String modalita = "";
 	private byte[] content = null;

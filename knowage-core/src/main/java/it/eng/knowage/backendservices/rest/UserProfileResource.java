@@ -31,7 +31,7 @@ import it.eng.spagobi.user.UserProfileManager;
 @Path("/2.0/backendservices/userprofile")
 public class UserProfileResource {
 
-	static protected Logger logger = Logger.getLogger(UserProfileResource.class);
+	protected static Logger logger = Logger.getLogger(UserProfileResource.class);
 
 	@GET
 	@Path("/")

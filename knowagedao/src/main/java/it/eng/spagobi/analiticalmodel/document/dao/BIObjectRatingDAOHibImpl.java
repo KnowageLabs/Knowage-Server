@@ -36,7 +36,7 @@ import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
 
 public class BIObjectRatingDAOHibImpl extends AbstractHibernateDAO implements IBIObjectRating {
 
-	static private Logger logger = Logger.getLogger(BIObjectRatingDAOHibImpl.class);
+	private static Logger logger = Logger.getLogger(BIObjectRatingDAOHibImpl.class);
 
 	/*
 	 * (non-Javadoc)

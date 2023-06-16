@@ -31,7 +31,7 @@ import it.eng.spagobi.services.rest.annotations.PublicService;
 @Path("/version")
 public class VersionResource extends AbstractSpagoBIResource {
 
-	static protected Logger logger = Logger.getLogger(VersionResource.class);
+	protected static Logger logger = Logger.getLogger(VersionResource.class);
 
 	@GET
 	@Path("/")

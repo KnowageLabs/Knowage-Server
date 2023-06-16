@@ -41,7 +41,7 @@ public class Password {
 	private int contaNum = 0;
 	private int contaNonAlfa = 0;
 
-	static private Logger logger = Logger.getLogger(Password.class);
+	private static Logger logger = Logger.getLogger(Password.class);
 
 	public Password() {
 		value = "";

@@ -50,9 +50,9 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
  */
 public class LdapSecurityServiceSupplier extends InternalSecurityServiceSupplierImpl implements ISecurityServiceSupplier {
 
-	static private Logger logger = Logger.getLogger(LdapSecurityServiceSupplier.class);
+	private static Logger logger = Logger.getLogger(LdapSecurityServiceSupplier.class);
 
-	static protected String LDAP_AUTHENTICATION_CONFIG = "ldap.config";
+	protected static String LDAP_AUTHENTICATION_CONFIG = "ldap.config";
 
 	protected static final String SEARCH_USER_BEFORE_PSW = "SEARCH_USER_BEFORE_PSW";
 	protected static final String SEARCH_USER_BEFORE_USER = "SEARCH_USER_BEFORE_USER";

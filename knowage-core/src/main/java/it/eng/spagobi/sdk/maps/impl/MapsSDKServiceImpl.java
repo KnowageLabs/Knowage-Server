@@ -35,7 +35,7 @@ import org.apache.log4j.Logger;
 
 public class MapsSDKServiceImpl extends AbstractSDKService implements MapsSDKService{
 
-	static private Logger logger = Logger.getLogger(MapsSDKServiceImpl.class);
+	private static Logger logger = Logger.getLogger(MapsSDKServiceImpl.class);
 
 
 	public SDKMap getMapById(Integer mapId) throws RemoteException,

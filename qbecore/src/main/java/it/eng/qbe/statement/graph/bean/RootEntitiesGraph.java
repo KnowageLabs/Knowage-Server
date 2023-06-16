@@ -54,7 +54,7 @@ public class RootEntitiesGraph implements Cloneable {
 	Map<String, IModelEntity> rootEntitiesMap;
 	Graph<IModelEntity, Relationship> rootEntitiesGraph;
 
-	static protected Logger logger = Logger.getLogger(RootEntitiesGraph.class);
+	protected static Logger logger = Logger.getLogger(RootEntitiesGraph.class);
 
 	public RootEntitiesGraph() {
 		relationships = new HashSet<Relationship>();

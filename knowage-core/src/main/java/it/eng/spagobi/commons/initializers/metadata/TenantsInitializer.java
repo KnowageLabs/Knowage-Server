@@ -56,7 +56,7 @@ public class TenantsInitializer extends SpagoBIInitializer {
 		return config;
 	}
 
-	static private Logger logger = Logger.getLogger(TenantsInitializer.class);
+	private static Logger logger = Logger.getLogger(TenantsInitializer.class);
 
 	public TenantsInitializer() {
 		targetComponentName = "Tenants";

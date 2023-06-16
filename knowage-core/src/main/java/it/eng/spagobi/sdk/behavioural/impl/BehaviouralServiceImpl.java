@@ -37,7 +37,7 @@ import org.apache.log4j.Logger;
 
 public class BehaviouralServiceImpl extends AbstractSDKService implements BehaviouralService {
 
-	static private Logger logger = Logger.getLogger(BehaviouralServiceImpl.class);
+	private static Logger logger = Logger.getLogger(BehaviouralServiceImpl.class);
 
 	@Override
 	public SDKAttribute[] getAllAttributes(String roleName) throws NotAllowedOperationException {

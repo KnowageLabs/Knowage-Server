@@ -39,7 +39,7 @@ import it.eng.spagobi.events.dao.EventLogDAOHibImpl;
  */
 public class EventsManager {
 
-	static private Logger logger = Logger.getLogger(EventsManager.class);
+	private static Logger logger = Logger.getLogger(EventsManager.class);
 
 	/**
 	 * Singleton design pattern

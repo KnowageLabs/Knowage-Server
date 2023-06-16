@@ -29,8 +29,8 @@ import org.apache.log4j.Logger;
 import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
 
 public abstract class OrganizationImageManager {
-	static private Logger logger = Logger.getLogger(OrganizationImageManager.class);
-	static private final String ORGANIZATION_IMAGE_FILE_NAME = "organization_image.base64";
+	private static Logger logger = Logger.getLogger(OrganizationImageManager.class);
+	private static final String ORGANIZATION_IMAGE_FILE_NAME = "organization_image.base64";
 
 	public static final String getOrganizationB64Image(String organization) {
 		String organizationImagePath = SpagoBIUtilities.getRootResourcePath() + File.separatorChar + organization + File.separatorChar

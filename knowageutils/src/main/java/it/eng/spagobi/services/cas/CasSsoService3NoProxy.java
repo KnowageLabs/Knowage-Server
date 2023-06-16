@@ -45,7 +45,7 @@ import org.jasig.cas.client.validation.TicketValidationException;
  */
 public class CasSsoService3NoProxy implements SsoServiceInterface {
 
-    static private Logger logger = Logger.getLogger(CasSsoService3NoProxy.class);
+    private static Logger logger = Logger.getLogger(CasSsoService3NoProxy.class);
     
     /**
      * Read user id.

@@ -36,7 +36,7 @@ import it.eng.spagobi.user.UserProfileManager;
 @Path("/2.0/backendservices/documenttemplate")
 public class DocumentTemplateResource {
 
-	static protected Logger logger = Logger.getLogger(DocumentTemplateResource.class);
+	protected static Logger logger = Logger.getLogger(DocumentTemplateResource.class);
 
 	@POST
 	@Path("/{document_id}")

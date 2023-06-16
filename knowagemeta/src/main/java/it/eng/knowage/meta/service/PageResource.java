@@ -80,9 +80,9 @@ import it.eng.spagobi.utilities.engines.EngineStartServletIOManager;
 @Path("/1.0/pages")
 public class PageResource {
 
-	static private Map<String, String> urls;
+	private static Map<String, String> urls;
 
-	static private Logger logger = Logger.getLogger(PageResource.class);
+	private static Logger logger = Logger.getLogger(PageResource.class);
 
 	{
 		urls = new HashMap<String, String>();

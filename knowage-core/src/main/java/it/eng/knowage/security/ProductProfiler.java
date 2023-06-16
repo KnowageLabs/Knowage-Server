@@ -14,7 +14,7 @@ import it.eng.spagobi.engines.config.bo.Engine;
 
 public class ProductProfiler {
 
-	static private Logger logger = Logger.getLogger(ProductProfiler.class);
+	private static Logger logger = Logger.getLogger(ProductProfiler.class);
 
 	private static boolean isCommunity;
 	private static Class licenseManager, productProfilerEE;

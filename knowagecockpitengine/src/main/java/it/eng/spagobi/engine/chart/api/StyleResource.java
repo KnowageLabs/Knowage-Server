@@ -41,7 +41,7 @@ import it.eng.spagobi.services.rest.annotations.UserConstraint;
 
 @Path("/chart/style")
 public class StyleResource {
-	static private Logger logger = Logger.getLogger(StyleResource.class);
+	private static Logger logger = Logger.getLogger(StyleResource.class);
 	private static final String PATH_TO_STYLE = File.separator + "style";
 	private static final String PATH_TO_SFNAS = "/chart/templates/styles/nostyle/default.xml";
 

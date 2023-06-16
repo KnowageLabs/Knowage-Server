@@ -92,7 +92,7 @@ public class DocumentCRUD extends AbstractSpagoBIResource {
 	public static final String DOCUMENT_TYPE = "docType";
 	public static final String DIRECTION = "direction";
 
-	static private Logger logger = Logger.getLogger(DocumentCRUD.class);
+	private static Logger logger = Logger.getLogger(DocumentCRUD.class);
 
 	/**
 	 * Service to clone a document

@@ -27,7 +27,7 @@ import org.apache.log4j.Logger;
 
 public class DateUtils {
 
-	static protected Logger logger = Logger.getLogger(DateUtils.class);
+	protected static Logger logger = Logger.getLogger(DateUtils.class);
 
 	public static String returnLocalizedDateString(Date dateToConvert, Locale locale) {
 

@@ -51,7 +51,7 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 
 @Path("/forecast")
 public class ForecastEditService {
-	static private Logger logger = Logger.getLogger(ForecastEditService.class);
+	private static Logger logger = Logger.getLogger(ForecastEditService.class);
 
 	@POST
 	@Produces(MediaType.TEXT_HTML)

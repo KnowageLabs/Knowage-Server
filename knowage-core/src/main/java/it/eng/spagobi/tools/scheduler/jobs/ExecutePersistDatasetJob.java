@@ -42,7 +42,7 @@ import it.eng.spagobi.tools.dataset.utils.datamart.SpagoBICoreDatamartRetriever;
 
 public class ExecutePersistDatasetJob extends AbstractSpagoBIJob implements Job {
 
-	static private Logger logger = Logger.getLogger(ExecutePersistDatasetJob.class);
+	private static Logger logger = Logger.getLogger(ExecutePersistDatasetJob.class);
 
 	@Override
 	public void execute(JobExecutionContext jobExecutionContext) throws JobExecutionException {

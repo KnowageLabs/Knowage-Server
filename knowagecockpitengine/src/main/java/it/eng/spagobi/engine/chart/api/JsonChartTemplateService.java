@@ -65,7 +65,7 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 
 @Path("/1.0/chart/jsonChartTemplate")
 public class JsonChartTemplateService extends AbstractChartEngineResource {
-    static protected Logger logger = Logger.getLogger(JsonChartTemplateService.class);
+    protected static Logger logger = Logger.getLogger(JsonChartTemplateService.class);
 
     /**
      * We are sending additional information about the web application from which we call the VM. This boolean will tell us if we are coming from the Highcharts

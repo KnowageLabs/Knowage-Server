@@ -30,7 +30,7 @@ import java.util.HashMap;
 import org.apache.log4j.Logger;
 
 public class GisDriver extends GenericDriver {
-	static private Logger logger = Logger.getLogger(GisDriver.class);
+	private static Logger logger = Logger.getLogger(GisDriver.class);
 
 	@Override
 	public EngineURL getEditDocumentTemplateBuildUrl(Object biobject, IEngUserProfile profile) throws InvalidOperationRequest {

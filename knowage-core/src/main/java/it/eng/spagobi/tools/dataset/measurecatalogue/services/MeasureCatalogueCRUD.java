@@ -64,8 +64,8 @@ import it.eng.spagobi.tools.dataset.measurecatalogue.materializer.exception.NoCo
 @Path("/measures")
 public class MeasureCatalogueCRUD {
 	public static transient Logger logger = Logger.getLogger(MeasureCatalogueCRUD.class);
-	static private String noCommonDimensionsRuntimeException = "error.mesage.description.measure.join.no.common.dimension";
-	static private String noCompleteCommonDimensionsRuntimeException = "error.mesage.description.measure.join.no.complete.common.dimension";
+	private static String noCommonDimensionsRuntimeException = "error.mesage.description.measure.join.no.common.dimension";
+	private static String noCompleteCommonDimensionsRuntimeException = "error.mesage.description.measure.join.no.complete.common.dimension";
 
 	@GET
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")

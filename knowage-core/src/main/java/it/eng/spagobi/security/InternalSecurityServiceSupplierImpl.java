@@ -38,7 +38,7 @@ import it.eng.spagobi.services.security.service.ISecurityServiceSupplier;
 
 public class InternalSecurityServiceSupplierImpl implements ISecurityServiceSupplier {
 
-	static private Logger logger = Logger.getLogger(InternalSecurityServiceSupplierImpl.class);
+	private static Logger logger = Logger.getLogger(InternalSecurityServiceSupplierImpl.class);
 
 	private static int USER_JWT_TOKEN_EXPIRE_HOURS = 10; // JWT token for regular users will expire in 10 HOURS
 

@@ -42,7 +42,7 @@ import org.hibernate.Transaction;
  */
 public class SbiDsBcDAOHibImpl extends AbstractHibernateDAO implements ISbiDsBcDAO {
 
-	static private Logger logger = Logger.getLogger(SbiDsBcDAOHibImpl.class);
+	private static Logger logger = Logger.getLogger(SbiDsBcDAOHibImpl.class);
 
 	@Override
 	public List<SbiMetaBc> loadBcByDsId(Integer dsId) throws EMFUserError {

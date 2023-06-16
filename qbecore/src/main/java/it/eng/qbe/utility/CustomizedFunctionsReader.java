@@ -32,7 +32,7 @@ import it.eng.spagobi.commons.bo.UserProfile;
 
 public class CustomizedFunctionsReader {
 
-	static protected Logger logger = Logger.getLogger(CustomizedFunctionsReader.class);
+	protected static Logger logger = Logger.getLogger(CustomizedFunctionsReader.class);
 
 	public JSONObject getJSONCustomFunctionsVariable(UserProfile userProfile) {
 		logger.debug("IN");

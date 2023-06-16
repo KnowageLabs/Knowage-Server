@@ -45,7 +45,7 @@ import org.apache.log4j.Logger;
 @ManageAuthorization
 public class UtilityResource extends AbstractSpagoBIResource {
 
-	static protected Logger logger = Logger.getLogger(UtilityResource.class);
+	protected static Logger logger = Logger.getLogger(UtilityResource.class);
 
 	@GET
 	@Path("/jndi")

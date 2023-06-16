@@ -46,7 +46,7 @@ import it.eng.spagobi.utilities.themes.ThemesManager;
  */
 public class DatasetLovWizardTag extends CommonWizardLovTag {
 
-	static private Logger logger = Logger.getLogger(DatasetLovWizardTag.class);
+	private static Logger logger = Logger.getLogger(DatasetLovWizardTag.class);
 	private String datasetId;
 	private HttpServletRequest httpRequest = null;
 	protected RequestContainer requestContainer = null;

@@ -29,7 +29,7 @@ import it.eng.spagobi.utilities.engines.rest.SimpleRestClient;
 public class ProductProfilerClient extends SimpleRestClient {
 	private final String serviceUrl = "/restful-services/2.0/backendservices/productprofiler/cockpit/widget";
 
-	static protected Logger logger = Logger.getLogger(ProductProfilerClient.class);
+	protected static Logger logger = Logger.getLogger(ProductProfilerClient.class);
 
 	public boolean isAllowedToCreateWidget(String userId, String type) throws Exception {
 		boolean toReturn = false;

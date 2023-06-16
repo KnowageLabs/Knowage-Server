@@ -65,7 +65,7 @@ public class GraphUtilities {
 	public static final String IS_CONSIDERED = "isConsidered";
 	public static final String JOIN_TYPE = "joinType";
 	public static final int maxPathLength = 5;
-	static private Logger logger = Logger.getLogger(GraphUtilities.class);
+	private static Logger logger = Logger.getLogger(GraphUtilities.class);
 
 	/**
 	 * Removes the subpaths

@@ -64,7 +64,7 @@ import it.eng.spagobi.tools.objmetadata.dao.IObjMetacontentDAO;
 
 public class SbiCommunityDAOImpl extends AbstractHibernateDAO implements ISbiCommunityDAO {
 
-	static private Logger logger = Logger.getLogger(SbiCommunityDAOImpl.class);
+	private static Logger logger = Logger.getLogger(SbiCommunityDAOImpl.class);
 
 	@Override
 	public void setUserProfile(IEngUserProfile profile) {

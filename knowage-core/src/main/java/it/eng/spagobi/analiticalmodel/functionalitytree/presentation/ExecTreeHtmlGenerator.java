@@ -71,7 +71,7 @@ public class ExecTreeHtmlGenerator implements ITreeHtmlGenerator {
 	protected String requestIdentity = null;
 	private String currTheme = "";
 
-	static private Logger logger = Logger.getLogger(ExecTreeHtmlGenerator.class);
+	private static Logger logger = Logger.getLogger(ExecTreeHtmlGenerator.class);
 
 	/**
 	 * @see it.eng.spagobi.analiticalmodel.functionalitytree.presentation.AdminTreeHtmlGenerator#makeJSFunctionForMenu(java.lang.StringBuffer)

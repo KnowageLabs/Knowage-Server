@@ -42,7 +42,7 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 @ManageAuthorization
 public class RestDataSetResource extends AbstractDataSetResource {
 
-	static protected Logger logger = Logger.getLogger(RestDataSetResource.class);
+	protected static Logger logger = Logger.getLogger(RestDataSetResource.class);
 
 	@GET
 	@Path("/test/orion")

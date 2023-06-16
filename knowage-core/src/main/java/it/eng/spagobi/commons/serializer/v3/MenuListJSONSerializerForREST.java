@@ -74,7 +74,7 @@ import it.eng.spagobi.wapp.util.MenuUtilities;
  */
 public class MenuListJSONSerializerForREST implements Serializer {
 
-	static private Logger logger = Logger.getLogger(MenuListJSONSerializerForREST.class);
+	private static Logger logger = Logger.getLogger(MenuListJSONSerializerForREST.class);
 
 	private static final String ID = "id";
 	private static final String TO_BE_LICENSED = "toBeLicensed";

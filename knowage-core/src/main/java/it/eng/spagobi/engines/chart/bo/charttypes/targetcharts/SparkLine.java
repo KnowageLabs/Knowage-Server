@@ -64,7 +64,7 @@ public class SparkLine extends TargetCharts{
 	Vector<Double> targets=null;
 	Vector<Double> baselines=null;
 	private int lastIndexMonth=1;
-	static protected Color colorAverage=Color.GRAY;
+	protected static Color colorAverage=Color.GRAY;
 
 	/** avreage line color */
 	public static final String AVG_COLOR = "avg_color";

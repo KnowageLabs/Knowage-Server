@@ -44,7 +44,7 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 
 public class DocumentRuntime extends AbstractBIResourceRuntime<BIObjectParameter> {
 
-	static private Logger logger = Logger.getLogger(DocumentRuntime.class);
+	private static Logger logger = Logger.getLogger(DocumentRuntime.class);
 
 	private final List<DocumentDriverRuntime> drivers = null;
 

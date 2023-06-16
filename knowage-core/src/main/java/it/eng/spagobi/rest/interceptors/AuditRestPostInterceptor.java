@@ -45,7 +45,7 @@ import it.eng.spagobi.services.rest.AbstractKnowageInterceptor;
 @Provider
 public class AuditRestPostInterceptor extends AbstractKnowageInterceptor {
 
-	static private Logger logger = Logger.getLogger(AuditRestPostInterceptor.class);
+	private static Logger logger = Logger.getLogger(AuditRestPostInterceptor.class);
 
 	@Context
 	private ResourceInfo resourceInfo;

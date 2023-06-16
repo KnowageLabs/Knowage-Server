@@ -51,8 +51,8 @@ public class HierarchyTreeNode implements Iterable<HierarchyTreeNode> {
 
 	private HashMap attributes;
 
-	static private final List<HierarchyTreeNode> EMPTY_LIST = Collections.emptyList();
-	static private final Iterator<HierarchyTreeNode> EMPTY_ITERATOR = Collections.<HierarchyTreeNode>emptyList().iterator();
+	private static final List<HierarchyTreeNode> EMPTY_LIST = Collections.emptyList();
+	private static final Iterator<HierarchyTreeNode> EMPTY_ITERATOR = Collections.<HierarchyTreeNode>emptyList().iterator();
 
 	public HierarchyTreeNode(Object obj, String key) {
 		this.obj = obj;

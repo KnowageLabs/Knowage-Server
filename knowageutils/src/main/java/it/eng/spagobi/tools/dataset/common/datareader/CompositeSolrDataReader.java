@@ -28,7 +28,7 @@ import it.eng.spagobi.tools.dataset.solr.SolrDataStore;
 
 public class CompositeSolrDataReader extends SolrDataReader {
 
-	static private Logger logger = Logger.getLogger(CompositeSolrDataReader.class);
+	private static Logger logger = Logger.getLogger(CompositeSolrDataReader.class);
 
 	private List<FacetSolrDataReader> facetSolrDataReaders = new ArrayList<>();
 

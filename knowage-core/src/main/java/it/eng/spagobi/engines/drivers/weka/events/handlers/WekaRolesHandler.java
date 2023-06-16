@@ -31,7 +31,7 @@ import org.apache.log4j.Logger;
 
 public class WekaRolesHandler implements IRolesHandler {
 	
-    static private Logger logger = Logger.getLogger(WekaRolesHandler.class);
+    private static Logger logger = Logger.getLogger(WekaRolesHandler.class);
 
     /**
      * Ritorna i ruoli che possono eseguire il documento tramite il suo ID.

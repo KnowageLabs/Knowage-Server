@@ -16,7 +16,7 @@ import it.eng.spagobi.profiling.bean.SbiAccessibilityPreferences;
 import it.eng.spagobi.profiling.bean.SbiUser;
 
 public class SbiAccessibilityPreferencesDAOHibImpl extends AbstractHibernateDAO implements ISbiAccessibilityPreferencesDAO {
-	static private Logger logger = Logger.getLogger(SbiAccessibilityPreferencesDAOHibImpl.class);
+	private static Logger logger = Logger.getLogger(SbiAccessibilityPreferencesDAOHibImpl.class);
 
 	@Override
 	public SbiAccessibilityPreferences readUserAccessibilityPreferences(String userId) throws EMFUserError {

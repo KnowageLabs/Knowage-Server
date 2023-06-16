@@ -29,13 +29,13 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 public class GoogleSignInConfig {
 
-	static private Logger logger = Logger.getLogger(GoogleSignInConfig.class);
+	private static Logger logger = Logger.getLogger(GoogleSignInConfig.class);
 
-	static protected final String GOOGLE_AUTHENTICATION_CONFIG = "google.signin.config";
+	protected static final String GOOGLE_AUTHENTICATION_CONFIG = "google.signin.config";
 
-	static protected final String GOOGLE_CLIENT_ID = "client_id";
+	protected static final String GOOGLE_CLIENT_ID = "client_id";
 
-	static protected Properties properties = new Properties();
+	protected static Properties properties = new Properties();
 
 	static {
 		try {

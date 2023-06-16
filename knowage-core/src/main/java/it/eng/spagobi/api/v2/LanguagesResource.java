@@ -18,7 +18,7 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 @Path("/2.0/internationalization/languages")
 public class LanguagesResource {
 
-	static protected Logger logger = Logger.getLogger(LanguagesResource.class);
+	protected static Logger logger = Logger.getLogger(LanguagesResource.class);
 
 	@GET
 	@Path("/")

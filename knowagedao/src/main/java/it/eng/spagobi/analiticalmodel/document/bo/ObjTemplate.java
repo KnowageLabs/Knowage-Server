@@ -31,7 +31,7 @@ import it.eng.spagobi.commons.dao.DAOFactory;
 
 public class ObjTemplate implements Serializable, Cloneable {
 
-	static private Logger logger = Logger.getLogger(ObjTemplate.class);
+	private static Logger logger = Logger.getLogger(ObjTemplate.class);
 
 	Integer id = null;
 	Integer biobjId = null;

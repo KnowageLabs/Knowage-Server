@@ -48,7 +48,7 @@ import it.eng.spagobi.utilities.rest.RestUtilities;
 @Path("/")
 public class DatasetTagsResource extends AbstractSpagoBIResource {
 
-	static protected Logger logger = Logger.getLogger(DatasetTagsResource.class);
+	protected static Logger logger = Logger.getLogger(DatasetTagsResource.class);
 
 	private final String CHARSET_UTF8 = "; charset=UTF-8";
 

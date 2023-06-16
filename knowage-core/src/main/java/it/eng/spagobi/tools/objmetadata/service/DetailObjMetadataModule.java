@@ -48,7 +48,7 @@ import it.eng.spagobi.tools.objmetadata.dao.IObjMetadataDAO;
  * This class implements a module which handles data source management.
  */
 public class DetailObjMetadataModule extends AbstractModule {
-	static private Logger logger = Logger.getLogger(DetailObjMetadataModule.class);
+	private static Logger logger = Logger.getLogger(DetailObjMetadataModule.class);
 	public static final String MOD_SAVE = "SAVE";
 	public static final String MOD_SAVEBACK = "SAVEBACK";
 	public static final String OBJMETA_DATA_TYPE = "dataTypes";

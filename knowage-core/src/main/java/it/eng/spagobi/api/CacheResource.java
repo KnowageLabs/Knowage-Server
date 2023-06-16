@@ -46,7 +46,7 @@ import java.util.Map;
 @Path("/1.0/cache")
 public class CacheResource extends AbstractSpagoBIResource {
 
-	static private Logger logger = Logger.getLogger(CacheResource.class);
+	private static Logger logger = Logger.getLogger(CacheResource.class);
 
 	@POST
 	@Path("/clean-datasets")

@@ -42,7 +42,7 @@ import it.eng.spagobi.engines.drivers.exceptions.InvalidOperationRequest;
  */
 public class TalendDriver extends AbstractEngineDriver implements IEngineDriver {
 
-	static private Logger logger = Logger.getLogger(TalendDriver.class);
+	private static Logger logger = Logger.getLogger(TalendDriver.class);
 
 	/**
 	 * Returns a map of parameters which will be send in the request to the engine application.

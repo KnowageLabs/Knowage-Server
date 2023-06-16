@@ -46,7 +46,7 @@ public class KnowageExceptionMapper implements ExceptionMapper<RuntimeException>
 	private static final String ERROR_SERVICE = "service";
 	private static final String ERROR_MESSAGES = "errors";
 
-	static private Logger logger = Logger.getLogger(KnowageExceptionMapper.class);
+	private static Logger logger = Logger.getLogger(KnowageExceptionMapper.class);
 
 	@Context
 	private HttpServletRequest servletRequest;

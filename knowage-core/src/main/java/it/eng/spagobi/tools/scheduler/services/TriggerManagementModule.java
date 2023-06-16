@@ -63,7 +63,7 @@ public class TriggerManagementModule extends AbstractHttpModule {
 	private IEngUserProfile profile = null;
 	
 	private static final long serialVersionUID = 1L;
-	static private Logger logger = Logger.getLogger(TriggerManagementModule.class);
+	private static Logger logger = Logger.getLogger(TriggerManagementModule.class);
 	
 	
 	public void init(SourceBean config) {	

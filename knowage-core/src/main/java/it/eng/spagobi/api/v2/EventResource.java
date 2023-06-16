@@ -39,7 +39,7 @@ import it.eng.spagobi.services.rest.annotations.UserConstraint;
 @Path("/2.0/events")
 public class EventResource extends AbstractSpagoBIResource {
 
-	static protected Logger logger = Logger.getLogger(EventResource.class);
+	protected static Logger logger = Logger.getLogger(EventResource.class);
 
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)

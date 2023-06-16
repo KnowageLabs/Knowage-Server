@@ -35,7 +35,7 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 public class AlertListenerInitializer extends SpagoBIInitializer {
 
 	private static final String TAG_NAME = "LISTENER";
-	static private Logger logger = Logger.getLogger(AlertListenerInitializer.class);
+	private static Logger logger = Logger.getLogger(AlertListenerInitializer.class);
 
 	public AlertListenerInitializer() {
 		targetComponentName = "AlertListener";

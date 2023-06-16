@@ -43,7 +43,7 @@ public class DataStoreStatistics {
 	boolean extimateVarCharMemorySizeUsingSample;
 	int sampleDimension;
 
-	static private Logger logger = Logger.getLogger(DataStoreStatistics.class);
+	private static Logger logger = Logger.getLogger(DataStoreStatistics.class);
 
 	public DataStoreStatistics(IDataStore store) {
 		this.store = store;

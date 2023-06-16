@@ -37,7 +37,7 @@ import org.apache.log4j.Logger;
 @ManageAuthorization
 public class FavoritesResource extends AbstractSpagoBIResource {
 
-	static protected Logger logger = Logger.getLogger(FavoritesResource.class);
+	protected static Logger logger = Logger.getLogger(FavoritesResource.class);
 
 	RememberMe rememberMe = null;
 	List<RememberMe> rememberMeList;

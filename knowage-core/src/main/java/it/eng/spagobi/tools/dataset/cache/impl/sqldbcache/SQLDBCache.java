@@ -77,7 +77,7 @@ public class SQLDBCache implements ICache {
 	private static final long DEFAULT_HAZELCAST_TIMEOUT = 120;
 	private static final long DEFAULT_HAZELCAST_LEASETIME = 240;
 
-	static private Logger logger = Logger.getLogger(SQLDBCache.class);
+	private static Logger logger = Logger.getLogger(SQLDBCache.class);
 
 	public SQLDBCache(IDataSource dataSource, SQLDBCacheMetadata cacheMetadata) {
 		this.dataSource = dataSource;

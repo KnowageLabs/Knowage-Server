@@ -38,7 +38,7 @@ import it.eng.spagobi.utilities.assertion.Assert;
  */
 public class FunctionInputVariableDAOImpl extends AbstractHibernateDAO implements IFunctionInputVariableDAO {
 
-	static private Logger logger = Logger.getLogger(FunctionInputVariableDAOImpl.class);
+	private static Logger logger = Logger.getLogger(FunctionInputVariableDAOImpl.class);
 
 	@Override
 	public List<SbiFunctionInputVariable> loadFunctionInputVariableByFunctionUuid(String functionUuid) {

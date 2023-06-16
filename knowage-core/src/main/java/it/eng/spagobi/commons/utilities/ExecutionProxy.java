@@ -67,8 +67,8 @@ import it.eng.spagobi.utilities.assertion.Assert;
 
 public class ExecutionProxy {
 
-	static private Logger logger = Logger.getLogger(ExecutionProxy.class);
-	static private String backEndExtension = "BackEnd";
+	private static Logger logger = Logger.getLogger(ExecutionProxy.class);
+	private static String backEndExtension = "BackEnd";
 	static public String SEND_MAIL_MODALITY = "SEND_MAIL";
 	static public String EXPORT_MODALITY = "EXPORT";
 	static public String MASSIVE_EXPORT_MODALITY = SpagoBIConstants.MASSIVE_EXPORT_MODALITY;

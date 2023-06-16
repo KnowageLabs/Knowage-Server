@@ -28,7 +28,7 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 public class SQLDialectFactory {
 
-	static protected Logger logger = Logger.getLogger(SQLDialectFactory.class);
+	protected static Logger logger = Logger.getLogger(SQLDialectFactory.class);
 
 	private SQLDialectFactory() {
 	}

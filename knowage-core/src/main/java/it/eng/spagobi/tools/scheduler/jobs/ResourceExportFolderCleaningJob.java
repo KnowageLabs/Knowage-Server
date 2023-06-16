@@ -32,7 +32,7 @@ import it.eng.spagobi.tools.dataset.resource.export.ResourceExportFolderCleaning
 
 public class ResourceExportFolderCleaningJob extends AbstractSpagoBIJob implements Job {
 
-	static private Logger logger = Logger.getLogger(ResourceExportFolderCleaningJob.class);
+	private static Logger logger = Logger.getLogger(ResourceExportFolderCleaningJob.class);
 
 	@Override
 	public void execute(JobExecutionContext jobExecutionContext) throws JobExecutionException {

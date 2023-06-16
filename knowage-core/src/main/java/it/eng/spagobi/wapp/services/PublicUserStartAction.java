@@ -40,7 +40,7 @@ import org.apache.log4j.Logger;
 public class PublicUserStartAction extends AbstractBaseHttpAction{
 	public static final String SERVICE_NAME = "START_ACTION_PUBLIC_USER";
 	
-	static private Logger logger = Logger.getLogger(PublicUserStartAction.class);
+	private static Logger logger = Logger.getLogger(PublicUserStartAction.class);
 
 	/**
 	 *  Creates a publicUserProfile and puts it into the session.

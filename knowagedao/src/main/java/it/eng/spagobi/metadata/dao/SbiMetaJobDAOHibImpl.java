@@ -41,7 +41,7 @@ import org.hibernate.criterion.Expression;
  */
 public class SbiMetaJobDAOHibImpl extends AbstractHibernateDAO implements ISbiMetaJobDAO {
 
-	static private Logger logger = Logger.getLogger(SbiMetaJobDAOHibImpl.class);
+	private static Logger logger = Logger.getLogger(SbiMetaJobDAOHibImpl.class);
 
 	/**
 	 * Load job by id.

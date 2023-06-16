@@ -39,7 +39,7 @@ import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
 @Path("/2.0/folders")
 @ManageAuthorization
 public class FolderResource extends AbstractSpagoBIResource {
-	static protected Logger logger = Logger.getLogger(FolderResource.class);
+	protected static Logger logger = Logger.getLogger(FolderResource.class);
 
 	@GET
 	@Path("/")

@@ -40,7 +40,7 @@ import it.eng.spagobi.images.metadata.SbiImages;
 
 public class ImagesDAOImpl extends AbstractHibernateDAO implements IImagesDAO {
 
-	static protected Logger logger = Logger.getLogger(ImagesDAOImpl.class);
+	protected static Logger logger = Logger.getLogger(ImagesDAOImpl.class);
 
 	@Override
 	public SbiImages loadImage(Integer id) {

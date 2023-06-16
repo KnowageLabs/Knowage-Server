@@ -45,7 +45,7 @@ public class JobXMLSerializer implements Serializer {
 	public static final String JOB_COLLATE_SNAPSHOTS = "jobCollateSnapshots";
 	public static final String USE_VOLATILITY = "jobVolatility";
 
-	static private Logger logger = Logger.getLogger(JobXMLSerializer.class);
+	private static Logger logger = Logger.getLogger(JobXMLSerializer.class);
 
 	public JobXMLSerializer() {
 		properties = new Properties();

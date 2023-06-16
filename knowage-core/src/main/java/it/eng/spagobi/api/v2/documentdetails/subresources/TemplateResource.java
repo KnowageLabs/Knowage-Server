@@ -57,7 +57,7 @@ public class TemplateResource extends AbstractSpagoBIResource {
 		json, xml, bin, rptdesign, sbicockpit, jrxml, pdf, xls, xlsx, doc, docx, ppt, pptx
 	};
 
-	static protected Logger logger = Logger.getLogger(TemplateResource.class);
+	protected static Logger logger = Logger.getLogger(TemplateResource.class);
 
 	@SuppressWarnings("unchecked")
 	@GET

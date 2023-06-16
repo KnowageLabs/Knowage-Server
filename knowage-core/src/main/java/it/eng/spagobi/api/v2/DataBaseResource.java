@@ -52,7 +52,7 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRestServiceException;
 @Path("/2.0/databases")
 public class DataBaseResource extends AbstractSpagoBIResource {
 
-	static protected Logger logger = Logger.getLogger(DataBaseResource.class);
+	protected static Logger logger = Logger.getLogger(DataBaseResource.class);
 
 	@GET
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")

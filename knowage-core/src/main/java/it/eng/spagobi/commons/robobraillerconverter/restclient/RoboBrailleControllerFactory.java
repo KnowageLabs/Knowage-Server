@@ -9,8 +9,8 @@ import it.eng.spagobi.commons.robobraillerconverter.jobmanager.JobManager;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 public class RoboBrailleControllerFactory {
-	static private Logger logger = Logger.getLogger(RoboBrailleControllerFactory.class);
-	static private EnumMap<ConversionType,Class<? extends JobManager>> conversionImpelementations = new EnumMap<>(ConversionType.class);
+	private static Logger logger = Logger.getLogger(RoboBrailleControllerFactory.class);
+	private static EnumMap<ConversionType,Class<? extends JobManager>> conversionImpelementations = new EnumMap<>(ConversionType.class);
 	
 
 	public RoboBrailleControllerFactory(){

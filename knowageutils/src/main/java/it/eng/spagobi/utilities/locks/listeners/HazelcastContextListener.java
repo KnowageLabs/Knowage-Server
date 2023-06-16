@@ -15,7 +15,7 @@ import com.hazelcast.core.IMap;
 
 public class HazelcastContextListener implements ServletContextListener {
 
-	static private Logger logger = Logger.getLogger(HazelcastContextListener.class);
+	private static Logger logger = Logger.getLogger(HazelcastContextListener.class);
 
 	/**
 	 * insert into distributed map info for license

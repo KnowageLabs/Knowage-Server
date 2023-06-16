@@ -113,7 +113,7 @@ public class DocumentExecutionParametersResource extends AbstractSpagoBIResource
 
 	private static final String[] VISIBLE_COLUMNS = new String[] { VALUE_FIELD, LABEL_FIELD, DESCRIPTION_FIELD };
 
-	static protected Logger logger = Logger.getLogger(DocumentExecutionParametersResource.class);
+	protected static Logger logger = Logger.getLogger(DocumentExecutionParametersResource.class);
 
 	@POST
 	@Path("/admissibleValues")

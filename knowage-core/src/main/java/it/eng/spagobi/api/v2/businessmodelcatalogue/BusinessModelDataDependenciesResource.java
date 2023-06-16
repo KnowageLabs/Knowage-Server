@@ -42,7 +42,7 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRestServiceException;
 @Path("/")
 public class BusinessModelDataDependenciesResource extends AbstractSpagoBIResource {
 
-	static protected Logger logger = Logger.getLogger(BusinessModelDataDependenciesResource.class);
+	protected static Logger logger = Logger.getLogger(BusinessModelDataDependenciesResource.class);
 
 	@SuppressWarnings("unchecked")
 	@GET

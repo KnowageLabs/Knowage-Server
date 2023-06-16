@@ -82,7 +82,7 @@ public class SelectParametersLookupModule extends AbstractBasicListModule {
 
 	private static final long serialVersionUID = 1L;
 
-	static private Logger logger = Logger.getLogger(SelectParametersLookupModule.class);
+	private static Logger logger = Logger.getLogger(SelectParametersLookupModule.class);
 
 	// define variable for value column name
 	private String valColName = "";

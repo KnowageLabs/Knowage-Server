@@ -68,7 +68,7 @@ import it.eng.spagobi.utilities.rest.RestUtilities;
 @Path("/layers")
 public class LayerCRUD {
 
-	static private Logger logger = Logger.getLogger(LayerCRUD.class);
+	private static Logger logger = Logger.getLogger(LayerCRUD.class);
 	public static final String LAYER_ID = "id";
 	public static final String LAYER_LABEL = "label";
 	public static final String LAYER_URL = "layerUrl";

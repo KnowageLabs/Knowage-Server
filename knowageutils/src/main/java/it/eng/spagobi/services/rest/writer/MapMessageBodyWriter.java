@@ -50,7 +50,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 public class MapMessageBodyWriter implements MessageBodyWriter<Map<Object,Object>> {
 
 	
-	static private Logger logger = Logger.getLogger(MapMessageBodyWriter.class);
+	private static Logger logger = Logger.getLogger(MapMessageBodyWriter.class);
 	
     @Override
     public boolean isWriteable(Class<?> type, Type genericType,

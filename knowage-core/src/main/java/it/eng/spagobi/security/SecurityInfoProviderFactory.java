@@ -28,7 +28,7 @@ import org.apache.log4j.Logger;
  */
 public class SecurityInfoProviderFactory {
 		
-		static private Logger logger = Logger.getLogger(SecurityInfoProviderFactory.class);
+		private static Logger logger = Logger.getLogger(SecurityInfoProviderFactory.class);
 		
 		/**
 		 * Reads the security provider class from the spagobi.xml file

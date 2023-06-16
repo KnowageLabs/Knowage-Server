@@ -33,7 +33,7 @@ import org.apache.log4j.Logger;
 
 public class InfoTag extends TagSupport {
 
-	static private Logger logger = Logger.getLogger(InfoTag.class);
+	private static Logger logger = Logger.getLogger(InfoTag.class);
 	private HttpServletRequest httpRequest = null;
 	protected RequestContainer requestContainer = null;
 	protected ResponseContainer responseContainer = null;

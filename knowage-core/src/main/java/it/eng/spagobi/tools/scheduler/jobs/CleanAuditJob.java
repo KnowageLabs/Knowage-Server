@@ -32,7 +32,7 @@ import it.eng.spagobi.tenant.Tenant;
 import it.eng.spagobi.tenant.TenantManager;
 
 public class CleanAuditJob extends AbstractSpagoBIJob implements Job {
-	static private Logger logger = Logger.getLogger(CleanAuditJob.class);
+	private static Logger logger = Logger.getLogger(CleanAuditJob.class);
 
 	@Override
 	public void execute(JobExecutionContext jobExecutionContext) throws JobExecutionException {

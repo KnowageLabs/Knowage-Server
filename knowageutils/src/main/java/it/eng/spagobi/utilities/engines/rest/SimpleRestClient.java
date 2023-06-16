@@ -59,7 +59,7 @@ import it.eng.spagobi.utilities.Helper;
 
 public class SimpleRestClient {
 
-	static protected Logger logger = Logger.getLogger(SimpleRestClient.class);
+	protected static Logger logger = Logger.getLogger(SimpleRestClient.class);
 
 	private boolean addServerUrl = true;
 

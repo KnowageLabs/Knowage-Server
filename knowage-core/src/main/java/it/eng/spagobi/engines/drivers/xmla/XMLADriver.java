@@ -56,7 +56,7 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
  */
 public class XMLADriver extends AbstractEngineDriver implements IEngineDriver {
 
-	static private Logger logger = Logger.getLogger(XMLADriver.class);
+	private static Logger logger = Logger.getLogger(XMLADriver.class);
 
 	/**
 	 * Returns a map of parameters which will be send in the request to the engine application.

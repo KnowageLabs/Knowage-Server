@@ -32,7 +32,7 @@ import it.eng.spagobi.utilities.assertion.Assert;
 
 public class CatalogFunctionDAOImpl extends AbstractHibernateDAO implements ICatalogFunctionDAO {
 
-	static private Logger logger = Logger.getLogger(CatalogFunctionDAOImpl.class);
+	private static Logger logger = Logger.getLogger(CatalogFunctionDAOImpl.class);
 
 	@Override
 	public List<SbiCatalogFunction> loadAllCatalogFunctions() {

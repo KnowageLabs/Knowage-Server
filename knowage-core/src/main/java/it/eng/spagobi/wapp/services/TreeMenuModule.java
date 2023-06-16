@@ -35,7 +35,7 @@ import org.apache.log4j.Logger;
  */
 public class TreeMenuModule extends AbstractModule {
 
-	static private Logger logger = Logger.getLogger(TreeMenuModule.class);
+	private static Logger logger = Logger.getLogger(TreeMenuModule.class);
 	
     public static final String MODULE_PAGE ="MenuConfigurationPage";
     

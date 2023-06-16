@@ -27,7 +27,7 @@ import it.eng.spagobi.tools.dataset.dao.IDataSetDAO;
 
 public class DriversRuntimeLoader {
 
-	static private Logger logger = Logger.getLogger(DriversRuntimeLoader.class);
+	private static Logger logger = Logger.getLogger(DriversRuntimeLoader.class);
 
 	public BIObject loadBIObjectForExecutionByLabelAndRole(String label, String role) throws EMFUserError {
 		IBIObjectDAO dao = DAOFactory.getBIObjectDAO();

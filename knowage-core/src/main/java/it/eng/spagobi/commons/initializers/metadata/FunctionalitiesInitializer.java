@@ -40,7 +40,7 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
  */
 public class FunctionalitiesInitializer extends SpagoBIInitializer {
 
-	static private Logger logger = Logger.getLogger(FunctionalitiesInitializer.class);
+	private static Logger logger = Logger.getLogger(FunctionalitiesInitializer.class);
 
 	public FunctionalitiesInitializer() {
 		targetComponentName = "Functionalities";

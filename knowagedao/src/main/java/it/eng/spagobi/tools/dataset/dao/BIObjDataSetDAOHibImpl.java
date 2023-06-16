@@ -48,7 +48,7 @@ import it.eng.spagobi.utilities.assertion.Assert;
  * @author Gavardi
  */
 public class BIObjDataSetDAOHibImpl extends AbstractHibernateDAO implements IBIObjDataSetDAO {
-	static private Logger logger = Logger.getLogger(BIObjDataSetDAOHibImpl.class);
+	private static Logger logger = Logger.getLogger(BIObjDataSetDAOHibImpl.class);
 
 	@Override
 	public void updateObjectNotDetailDatasets(BIObject biObj, ArrayList<String> dsLabels, Session currSession) throws EMFUserError {

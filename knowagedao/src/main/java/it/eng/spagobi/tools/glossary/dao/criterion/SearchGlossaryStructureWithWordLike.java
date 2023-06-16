@@ -30,7 +30,7 @@ public class SearchGlossaryStructureWithWordLike implements ICriterion<SbiGlWlis
 	private final String glossaryId;
 	private final String word;
 
-	static protected Logger logger = Logger.getLogger(SearchGlossaryStructureWithWordLike.class);
+	protected static Logger logger = Logger.getLogger(SearchGlossaryStructureWithWordLike.class);
 
 	public SearchGlossaryStructureWithWordLike(String glossaryId, String word) {
 		this.glossaryId = glossaryId;

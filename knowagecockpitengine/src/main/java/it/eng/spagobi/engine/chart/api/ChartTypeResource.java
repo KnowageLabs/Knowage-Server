@@ -35,7 +35,7 @@ import it.eng.spagobi.services.rest.annotations.UserConstraint;
 @Path("1.0/chart/pages/types")
 public class ChartTypeResource {
 
-	static private Logger logger = Logger.getLogger(ChartTypeResource.class);
+	private static Logger logger = Logger.getLogger(ChartTypeResource.class);
 
 	@GET
 	@UserConstraint(functionalities = { CommunityFunctionalityConstants.CREATE_COCKPIT_FUNCTIONALITY })

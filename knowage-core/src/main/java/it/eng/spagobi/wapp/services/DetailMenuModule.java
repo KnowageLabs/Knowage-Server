@@ -63,7 +63,7 @@ import it.eng.spagobi.wapp.dao.IMenuDAO;
  */
 public class DetailMenuModule extends AbstractHttpModule {
 
-	static private Logger logger = Logger.getLogger(DetailMenuModule.class);
+	private static Logger logger = Logger.getLogger(DetailMenuModule.class);
 
 	private String modality = "";
 	public static final String MODULE_PAGE = "DetailMenuPage";

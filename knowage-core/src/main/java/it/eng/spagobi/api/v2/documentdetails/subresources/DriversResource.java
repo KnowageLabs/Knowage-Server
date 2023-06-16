@@ -44,7 +44,7 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRestServiceException;
 @Path("/")
 public class DriversResource extends AbstractSpagoBIResource {
 
-	static protected Logger logger = Logger.getLogger(DriversResource.class);
+	protected static Logger logger = Logger.getLogger(DriversResource.class);
 
 	@SuppressWarnings("unchecked")
 	@GET

@@ -44,7 +44,7 @@ import org.hibernate.criterion.Expression;
  */
 public class ObjMetacontentDAOHibImpl extends AbstractHibernateDAO implements IObjMetacontentDAO {
 
-	static private Logger logger = Logger.getLogger(ObjMetacontentDAOHibImpl.class);
+	private static Logger logger = Logger.getLogger(ObjMetacontentDAOHibImpl.class);
 
 	/**
 	 * Load object's metadata content by id.

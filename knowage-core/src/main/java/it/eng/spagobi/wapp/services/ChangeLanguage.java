@@ -89,7 +89,7 @@ import it.eng.spagobi.wapp.util.MenuUtilities;
 
 public class ChangeLanguage extends AbstractHttpAction {
 
-	static private Logger logger = Logger.getLogger(ChangeLanguage.class);
+	private static Logger logger = Logger.getLogger(ChangeLanguage.class);
 
 	public static final String LIST_MENU = "LIST_MENU";
 

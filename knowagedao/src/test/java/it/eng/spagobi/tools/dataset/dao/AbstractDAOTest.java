@@ -35,7 +35,7 @@ import junit.framework.TestCase;
  */
 public abstract class AbstractDAOTest extends TestCase {
 
-	static private Logger logger = Logger.getLogger(AbstractDAOTest.class);
+	private static Logger logger = Logger.getLogger(AbstractDAOTest.class);
 
 	/*
 	 * (non-Javadoc)

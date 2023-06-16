@@ -30,7 +30,7 @@ import it.eng.spagobi.utilities.rest.RestUtilities;
 @Path("/1.0/kpisTemplate")
 @ManageAuthorization
 public class KpiResource extends AbstractFullKpiEngineResource {
-	static protected Logger logger = Logger.getLogger(KpiResource.class);
+	protected static Logger logger = Logger.getLogger(KpiResource.class);
 
 	@POST
 	@Path("/getKpiTemplate")

@@ -100,7 +100,7 @@ import it.eng.spagobi.utilities.rest.RestUtilities;
 @ManageAuthorization
 public class LovResource extends AbstractSpagoBIResource {
 
-	static private Logger logger = Logger.getLogger(LovResource.class);
+	private static Logger logger = Logger.getLogger(LovResource.class);
 
 	@SuppressWarnings("unchecked")
 	@GET

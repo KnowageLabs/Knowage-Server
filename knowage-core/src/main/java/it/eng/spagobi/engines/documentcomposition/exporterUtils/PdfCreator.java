@@ -55,7 +55,7 @@ public class PdfCreator {
 
 	float docWidth;
 
-	static private Logger logger = Logger.getLogger(PdfCreator.class);
+	private static Logger logger = Logger.getLogger(PdfCreator.class);
 
 	public FileOutputStream createPdfFile(FileOutputStream fileOutputStream, Map<String, DocumentContainer> documentsMap, boolean defaultStyle)
 			throws MalformedURLException, IOException, DocumentException {

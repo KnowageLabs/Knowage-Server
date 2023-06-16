@@ -32,7 +32,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
  */
 @Deprecated
 public class JSONObjectDeserializator {
-	static protected Logger logger = Logger.getLogger(JSONObjectDeserializator.class);
+	protected static Logger logger = Logger.getLogger(JSONObjectDeserializator.class);
 
 	public static HashMap<String, Object> getHashMapFromJSONObject(JSONObject object) throws IOException {
 

@@ -143,7 +143,7 @@ public class AdapterPortlet extends GenericPortlet {
 	/** The Constant SERVICE_JSP. */
 	private static final String SERVICE_JSP = "JSP";
 
-	static protected Logger logger = Logger.getLogger(AdapterPortlet.class);
+	protected static Logger logger = Logger.getLogger(AdapterPortlet.class);
 
 	/*
 	 * (non-Javadoc)

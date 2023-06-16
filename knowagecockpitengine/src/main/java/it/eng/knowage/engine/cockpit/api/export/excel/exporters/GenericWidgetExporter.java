@@ -29,7 +29,7 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 class GenericWidgetExporter implements IWidgetExporter {
 
-	static private Logger logger = Logger.getLogger(GenericWidgetExporter.class);
+	private static Logger logger = Logger.getLogger(GenericWidgetExporter.class);
 
 	ExcelExporter excelExporter;
 	String widgetType;

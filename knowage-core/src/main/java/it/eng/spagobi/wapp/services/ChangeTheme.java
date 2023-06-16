@@ -57,7 +57,7 @@ import org.apache.log4j.Logger;
 
 public class ChangeTheme extends AbstractHttpAction{
 
-	static private Logger logger = Logger.getLogger(ChangeTheme.class);
+	private static Logger logger = Logger.getLogger(ChangeTheme.class);
 
 	public static final String THEME_NAME="THEME_NAME";
 	

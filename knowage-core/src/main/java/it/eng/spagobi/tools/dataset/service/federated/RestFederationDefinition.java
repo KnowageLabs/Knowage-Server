@@ -56,7 +56,7 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 @Path("/federateddataset")
 public class RestFederationDefinition extends AbstractSpagoBIResource {
 
-	static private Logger logger = Logger.getLogger(RestFederationDefinition.class);
+	private static Logger logger = Logger.getLogger(RestFederationDefinition.class);
 
 	public static final String DATASET_ID = "id";
 	public static final String VERSION_NUM = "versionNum";

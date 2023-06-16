@@ -26,7 +26,7 @@ public class AdvancedNews extends BasicNews {
 	 *
 	 */
 	private static final long serialVersionUID = 1L;
-	static protected Logger logger = Logger.getLogger(AdvancedNews.class);
+	protected static Logger logger = Logger.getLogger(AdvancedNews.class);
 
 	private Date expirationDate;
 	private String html;

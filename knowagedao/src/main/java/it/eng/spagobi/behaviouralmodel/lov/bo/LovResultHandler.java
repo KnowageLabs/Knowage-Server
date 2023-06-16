@@ -30,7 +30,7 @@ import org.apache.log4j.Logger;
  */
 public class LovResultHandler {
 
-	static private Logger logger = Logger.getLogger(LovResultHandler.class);
+	private static Logger logger = Logger.getLogger(LovResultHandler.class);
 
 	/**
 	 * Sourcebean of the lov result

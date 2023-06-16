@@ -66,7 +66,7 @@ public class DomainCRUD extends AbstractSpagoBIResource {
 	private static final String EXT_VERSION = "EXT_VERSION";
 	protected final String charset = "; charset=UTF-8";
 
-	static protected Logger logger = Logger.getLogger(DomainCRUD.class);
+	protected static Logger logger = Logger.getLogger(DomainCRUD.class);
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@GET
