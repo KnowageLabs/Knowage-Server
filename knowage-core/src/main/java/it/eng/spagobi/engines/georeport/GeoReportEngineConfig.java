@@ -126,9 +126,9 @@ public class GeoReportEngineConfig {
 
 	// -- PARSE Methods -------------------------------------------------
 
-	private final static String INCLUDES_TAG = "INCLUDES";
-	private final static String INCLUDE_TAG = "INCLUDE";
-	private final static String URL_TAG = "URL";
+	private static final String INCLUDES_TAG = "INCLUDES";
+	private static final String INCLUDE_TAG = "INCLUDE";
+	private static final String URL_TAG = "URL";
 
 	public void initIncludes() {
 		SourceBean includesSB;

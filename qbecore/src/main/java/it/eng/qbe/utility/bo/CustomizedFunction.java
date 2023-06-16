@@ -30,10 +30,10 @@ public class CustomizedFunction {
 	String label;
 	String value;
 
-	final static String NAME = "name";
-	final static String LABEL = "label";
-	final static String VALUE = "value";
-	final static String PARAMETERS = "parameters";
+	static final String NAME = "name";
+	static final String LABEL = "label";
+	static final String VALUE = "value";
+	static final String PARAMETERS = "parameters";
 
 	protected static Logger logger = Logger.getLogger(CustomizedFunction.class);
 

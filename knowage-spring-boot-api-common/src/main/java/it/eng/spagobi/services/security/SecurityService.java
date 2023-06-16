@@ -34,8 +34,8 @@ import javax.xml.ws.WebServiceFeature;
 @WebServiceClient(name = "SecurityService", targetNamespace = "http://security.services.spagobi.eng.it/", wsdlLocation = "file:/C:/progetti/knowagesecurityservice/src/wsdl/SecurityService.wsdl")
 public class SecurityService extends Service {
 
-	private final static URL SECURITYSERVICE_WSDL_LOCATION;
-	private final static Logger logger = Logger.getLogger(it.eng.spagobi.services.security.SecurityService.class.getName());
+	private static final URL SECURITYSERVICE_WSDL_LOCATION;
+	private static final Logger logger = Logger.getLogger(it.eng.spagobi.services.security.SecurityService.class.getName());
 
 	static {
 		URL url = null;

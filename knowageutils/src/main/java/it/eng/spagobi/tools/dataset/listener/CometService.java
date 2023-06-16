@@ -30,7 +30,7 @@ import it.eng.spagobi.tools.dataset.common.datawriter.CockpitJSONDataWriter;
 
 public class CometService extends AbstractService {
 
-	private final static CockpitJSONDataWriter writer = new CockpitJSONDataWriter();
+	private static final CockpitJSONDataWriter writer = new CockpitJSONDataWriter();
 
 	private final String channelName;
 

@@ -104,25 +104,25 @@ public class WhatIfEngineConfig {
 
 	// -- PARSE Methods -------------------------------------------------
 
-	private final static String INCLUDES_TAG = "INCLUDES";
-	private final static String INCLUDE_TAG = "INCLUDE";
-	private final static String URL_TAG = "URL";
-	private final static String WRITEBACK_TAG = "WRITEBACK";
-	private final static String ALGORITHMS_TAG = "ALGORITHMS";
-	private final static String ALGORITHM_TAG = "ALGORITHM";
-	private final static String NAME_ATTRIBUTE = "name";
-	private final static String CLASS_ATTRIBUTE = "class";
-	private final static String INMEMORY_ATTRIBUTE = "inMemory";
-	private final static String PERSISTENT_ATTRIBUTE = "persistent";
-	private final static String XMLA_URL = "url";
-	private final static String DEFAULT_ATTRIBUTE = "default";
-	private final static String DEPTHLIMIT_TAG = "DEPTHLIMIT";
-	private final static String DRILLTROUGH_MAX_ROWS_TAG = "DRILLTROUGH_MAX_ROWS";
-	private final static String EXPORT_TAG = "EXPORT_TAG";
-	private final static String EXPORT_FONT_SIZE_TAG = "fontSize";
-	private final static String EXPORT_FONT_FAMILY_TAG = "fontFamily";
-	private final static String EXPORT_ORIENTATION_TAG = "orientation";
-	private final static String PIVOT_TABLE_PAGES_LOAD_COUNT = "PIVOT_TABLE_PAGES_LOAD_COUNT";
+	private static final String INCLUDES_TAG = "INCLUDES";
+	private static final String INCLUDE_TAG = "INCLUDE";
+	private static final String URL_TAG = "URL";
+	private static final String WRITEBACK_TAG = "WRITEBACK";
+	private static final String ALGORITHMS_TAG = "ALGORITHMS";
+	private static final String ALGORITHM_TAG = "ALGORITHM";
+	private static final String NAME_ATTRIBUTE = "name";
+	private static final String CLASS_ATTRIBUTE = "class";
+	private static final String INMEMORY_ATTRIBUTE = "inMemory";
+	private static final String PERSISTENT_ATTRIBUTE = "persistent";
+	private static final String XMLA_URL = "url";
+	private static final String DEFAULT_ATTRIBUTE = "default";
+	private static final String DEPTHLIMIT_TAG = "DEPTHLIMIT";
+	private static final String DRILLTROUGH_MAX_ROWS_TAG = "DRILLTROUGH_MAX_ROWS";
+	private static final String EXPORT_TAG = "EXPORT_TAG";
+	private static final String EXPORT_FONT_SIZE_TAG = "fontSize";
+	private static final String EXPORT_FONT_FAMILY_TAG = "fontFamily";
+	private static final String EXPORT_ORIENTATION_TAG = "orientation";
+	private static final String PIVOT_TABLE_PAGES_LOAD_COUNT = "PIVOT_TABLE_PAGES_LOAD_COUNT";
 
 	public String getTemplateFilePath() {
 		String templatePath = "";

@@ -27,7 +27,7 @@ import junit.framework.TestSuite;
  * 
  */
 public class MetaTestSuite extends TestCase {
-	static public Test suite() {
+	public static Test suite() {
 		TestSuite suite = new TestSuite("One test suite to bring them all");
 		suite.addTest(ModelInitializationTestSuite.suite());
 		// suite.addTest(ModelEditingTestSuite.suite());

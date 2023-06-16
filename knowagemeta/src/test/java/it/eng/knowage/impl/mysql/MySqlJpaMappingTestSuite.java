@@ -26,7 +26,7 @@ import junit.framework.TestSuite;
  *
  */
 public class MySqlJpaMappingTestSuite extends TestCase {
-	static public Test suite() {
+	public static Test suite() {
 		TestSuite suite = new TestSuite("Generation tests on MySql");
 
 		suite.addTestSuite(MySqlJpaModelTest.class);

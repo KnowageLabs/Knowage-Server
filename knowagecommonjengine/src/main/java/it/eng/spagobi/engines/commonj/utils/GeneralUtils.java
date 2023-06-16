@@ -32,7 +32,7 @@ public class GeneralUtils {
 	static final String WORK_REJECTED = "work_rejected";
 	static final String WORK_NOT_STARTED = "work_not_started";
 
-	static public String getEventMessage(int status) {
+	public static String getEventMessage(int status) {
 		if (status == WorkEvent.WORK_COMPLETED) {
 			return WORK_COMPLETED;
 		} else if (status == WorkEvent.WORK_STARTED) {
@@ -48,7 +48,7 @@ public class GeneralUtils {
 
 	}
 
-	static public JSONObject buildJSONObject(String pid, int statusCode) throws JSONException {
+	public static JSONObject buildJSONObject(String pid, int statusCode) throws JSONException {
 		String message = GeneralUtils.getEventMessage(statusCode);
 		JSONObject info = new JSONObject();
 		info.put("pid", pid);

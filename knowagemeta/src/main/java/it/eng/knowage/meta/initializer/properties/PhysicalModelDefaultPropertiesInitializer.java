@@ -49,7 +49,7 @@ public class PhysicalModelDefaultPropertiesInitializer implements IPropertiesIni
 
 
 	
-	static public ModelFactory FACTORY = ModelFactory.eINSTANCE;
+	public static ModelFactory FACTORY = ModelFactory.eINSTANCE;
 	
 	public void addProperties(ModelObject o) {
 		

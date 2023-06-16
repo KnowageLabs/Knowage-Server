@@ -64,8 +64,8 @@ public class PhysicalModelPropertiesFromFileInitializer implements IPropertiesIn
 
 	public static final String IS_DELETED = "structural.deleted";
 
-	static public ModelFactory FACTORY = ModelFactory.eINSTANCE;
-	// static public IResourceLocator RL = SpagoBIMetaInitializerPlugin.getInstance().getResourceLocator();
+	public static ModelFactory FACTORY = ModelFactory.eINSTANCE;
+	// public static IResourceLocator RL = SpagoBIMetaInitializerPlugin.getInstance().getResourceLocator();
 
 	private static Logger logger = LoggerFactory.getLogger(PhysicalModelPropertiesFromFileInitializer.class);
 

@@ -122,9 +122,9 @@ public class ConsoleDriver extends GenericDriver {
 		throw new InvalidOperationRequest();
 	}
 
-	private final static String PARAM_SERVICE_NAME = "ACTION_NAME";
-	private final static String PARAM_NEW_SESSION = "NEW_SESSION";
-	private final static String PARAM_MODALITY = "MODALITY";
+	private static final String PARAM_SERVICE_NAME = "ACTION_NAME";
+	private static final String PARAM_NEW_SESSION = "NEW_SESSION";
+	private static final String PARAM_MODALITY = "MODALITY";
 
 	private Map applyService(Map parameters, BIObject biObject) {
 		ObjTemplate template;

@@ -62,8 +62,8 @@ public class OlapModelPropertiesFromFileInitializer implements IPropertiesInitia
 	public static final String HIERARCHY_IS_DEFAULT = "structural.defaultHierarchy";
 	public static final String HIERARCHY_ALL_MEMBER_NAME = "structural.allmembername";
 
-	static public ModelFactory FACTORY = ModelFactory.eINSTANCE;
-	// static public IResourceLocator RL = SpagoBIMetaInitializerPlugin.getInstance().getResourceLocator();
+	public static ModelFactory FACTORY = ModelFactory.eINSTANCE;
+	// public static IResourceLocator RL = SpagoBIMetaInitializerPlugin.getInstance().getResourceLocator();
 
 	private static Logger logger = LoggerFactory.getLogger(OlapModelPropertiesFromFileInitializer.class);
 

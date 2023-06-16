@@ -29,7 +29,7 @@ import org.apache.log4j.Logger;
 
 public class NotifierManager {
 
-	private final static Logger log = Logger.getLogger(NotifierManager.class);
+	private static final Logger log = Logger.getLogger(NotifierManager.class);
 
 	private final ConcurrentMap<Object, INotifierOperator> operators = new ConcurrentHashMap<Object, INotifierOperator>();
 

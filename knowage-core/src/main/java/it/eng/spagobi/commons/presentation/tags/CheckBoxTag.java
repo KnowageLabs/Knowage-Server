@@ -98,7 +98,7 @@ public class CheckBoxTag extends TagSupport {
     protected IUrlBuilder urlBuilder = null;
     protected IMessageBuilder msgBuilder = null;
     
-    final static int END_RANGE_PAGES = 6;  
+    static final int END_RANGE_PAGES = 6;  
     
     private String rowColor="#F5F6BE";
     

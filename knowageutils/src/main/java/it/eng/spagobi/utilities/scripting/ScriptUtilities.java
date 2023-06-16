@@ -39,7 +39,7 @@ public class ScriptUtilities {
 	static String[] groovyAlias={"groovy"};
 
 
-	static public String bindAliasEngine(String alias){
+	public static String bindAliasEngine(String alias){
 		String toReturn=alias;
 		boolean found=false;
 
@@ -69,7 +69,7 @@ public class ScriptUtilities {
 	 *
 	 * @return a map <name of the engine, alias>
 	 */
-	static public Map<String, String> getEngineFactoriesNames(){
+	public static Map<String, String> getEngineFactoriesNames(){
 		logger.debug("IN");
 		ScriptEngineManager mgr = new ScriptEngineManager();
 		List<ScriptEngineFactory> factories = mgr.getEngineFactories();

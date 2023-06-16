@@ -57,7 +57,7 @@ public class BusinessModelDefaultPropertiesInitializer implements IPropertiesIni
 
 	// Relationship property names
 
-	static public ModelFactory FACTORY = ModelFactory.eINSTANCE;
+	public static ModelFactory FACTORY = ModelFactory.eINSTANCE;
 
 	@Override
 	public void addProperties(ModelObject o) {

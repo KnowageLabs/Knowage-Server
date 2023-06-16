@@ -75,7 +75,7 @@ import it.eng.spagobi.utilities.json.JSONUtils;
 
 public class RestUtilities {
 
-	private final static Logger logger = Logger.getLogger(RestUtilities.class);
+	private static final Logger logger = Logger.getLogger(RestUtilities.class);
 	private static final String DEFAULT_CHARSET = UTF_8.name();
 	public static final String CONTENT_TYPE = "Content-Type";
 

@@ -38,7 +38,7 @@ import org.slf4j.LoggerFactory;
  */
 public class BusinessModelNamesInitializer {
 
-	static public ModelFactory FACTORY = ModelFactory.eINSTANCE;
+	public static ModelFactory FACTORY = ModelFactory.eINSTANCE;
 
 	private static Logger logger = LoggerFactory.getLogger(BusinessModelNamesInitializer.class);
 

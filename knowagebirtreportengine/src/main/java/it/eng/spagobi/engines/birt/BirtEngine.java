@@ -48,11 +48,11 @@ public class BirtEngine {
 
 	private static Properties configProps = new Properties();
 
-	private final static String configFile = "BirtLogConfig.properties";
+	private static final String configFile = "BirtLogConfig.properties";
 
 	protected static Logger logger = Logger.getLogger(BirtEngine.class);
 
-	protected final static String engineConfigFile = "engine-config.xml";
+	protected static final String engineConfigFile = "engine-config.xml";
 
 	/**
 	 * Inits the birt config.

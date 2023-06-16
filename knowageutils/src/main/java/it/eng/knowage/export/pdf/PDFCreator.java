@@ -65,9 +65,9 @@ public abstract class PDFCreator {
 	public static final String DEFAULT_FRONT_PAGE_RESOURCE_PATH = "it/eng/knowage/slimerjs/wrapper/Export_Front.pdf";
 	public static final String DEFAULT_BACK_PAGE_RESOURCE_PATH = "it/eng/knowage/slimerjs/wrapper/Export_Back.pdf";
 
-	private final static String TEMP_SUFFIX = ".temp.pdf";
-	private final static String DEFAULT_DATE_FORMAT = "yyyy-MM-dd HH:mm:ss";
-	private final static SimpleDateFormat DEFAULT_DATE_FORMATTER = new SimpleDateFormat(DEFAULT_DATE_FORMAT);
+	private static final String TEMP_SUFFIX = ".temp.pdf";
+	private static final String DEFAULT_DATE_FORMAT = "yyyy-MM-dd HH:mm:ss";
+	private static final SimpleDateFormat DEFAULT_DATE_FORMATTER = new SimpleDateFormat(DEFAULT_DATE_FORMAT);
 
 	private static void createPDF(List<InputStream> inputImages, Path output) throws IOException {
 		PDDocument document = new PDDocument();

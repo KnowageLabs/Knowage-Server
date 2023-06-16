@@ -96,7 +96,7 @@ public class Signup {
 	private static final String defaultPassword = "Password";
 	private static final String defaultTenant = "DEFAULT_TENANT";
 	private static final String MAX_DELTA_CONFIG_NAME = "maxDeltaMsToken";
-	private final static long MAX_TIME_DELTA_DEFAULT_MS = 30000;
+	private static final long MAX_TIME_DELTA_DEFAULT_MS = 30000;
 
 	private static Logger logger = Logger.getLogger(PublisherService.class);
 

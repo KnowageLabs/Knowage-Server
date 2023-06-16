@@ -72,7 +72,7 @@ public class DataSetUtilities {
 	 */
 	private static boolean disableDefaultParams;
 
-	private final static Logger logger = Logger.getLogger(DataSetUtilities.class);
+	private static final Logger logger = Logger.getLogger(DataSetUtilities.class);
 
 	/**
 	 * Check if the dataset is executable by the user

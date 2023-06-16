@@ -30,7 +30,7 @@ import junit.framework.TestSuite;
  *
  */
 public class ModelInitializationTestSuite extends TestCase {
-	static public Test suite() {
+	public static Test suite() {
 		TestSuite suite = new TestSuite("Initialization tests");
 		if (TestConstants.enableTestsOnMySql) {
 			suite.addTestSuite(MySQLPhysicalModelInizializationTest.class);

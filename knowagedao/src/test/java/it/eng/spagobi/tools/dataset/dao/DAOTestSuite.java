@@ -26,7 +26,7 @@ import junit.framework.TestSuite;
  *
  */
 public class DAOTestSuite extends TestCase {
-	static public Test suite() {
+	public static Test suite() {
 		TestSuite suite = new TestSuite("SQLDBCache tests");
 		if(TestConstants.enableTestsOnPostgres){
 			suite.addTestSuite(PostgresDataSetDAOImplTest.class);

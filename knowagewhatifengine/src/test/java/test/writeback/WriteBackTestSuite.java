@@ -34,7 +34,7 @@ import junit.framework.TestSuite;
  */
 /*
 public class WriteBackTestSuite extends TestCase {
-	static public Test suite() {
+	public static Test suite() {
 		TestSuite suite = new TestSuite("Db writeback tests");
 		if (TestConstants.enableTestsOnMySql) {
 			suite.addTestSuite(MySQLTestCase.class);

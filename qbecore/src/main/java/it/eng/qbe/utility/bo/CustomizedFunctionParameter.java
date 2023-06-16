@@ -7,8 +7,8 @@ public class CustomizedFunctionParameter {
 
 	String name;
 	String type;
-	final static String NAME = "name";
-	final static String TYPE = "type";
+	static final String NAME = "name";
+	static final String TYPE = "type";
 
 	protected static Logger logger = Logger.getLogger(CustomizedFunctionParameter.class);
 

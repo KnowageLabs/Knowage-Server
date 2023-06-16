@@ -49,7 +49,7 @@ public class OlapModelInitializer {
 	Model rootModel;
 	private static Logger logger = LoggerFactory.getLogger(OlapModelInitializer.class);
 
-	static public OlapModelFactory FACTORY = OlapModelFactory.eINSTANCE;
+	public static OlapModelFactory FACTORY = OlapModelFactory.eINSTANCE;
 
 	public OlapModelInitializer() {
 		// setPropertiesInitializer(new OlapModelDefaultPropertiesInitializer());

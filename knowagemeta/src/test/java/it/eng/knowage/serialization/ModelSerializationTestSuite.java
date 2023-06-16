@@ -28,7 +28,7 @@ import junit.framework.TestSuite;
  *
  */
 public class ModelSerializationTestSuite extends TestCase {
-	static public Test suite() {
+	public static Test suite() {
 		TestSuite suite = new TestSuite("Serialization tests");
 		if (TestConstants.enableTestsOnMySql)
 			suite.addTestSuite(MySqlBusinessModelSerializationTest.class);

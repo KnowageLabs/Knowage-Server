@@ -28,7 +28,7 @@ import junit.framework.TestSuite;
  *
  */
 public class KeyJpaDataSourceTestSuite extends TestCase {
-	static public Test suite() {
+	public static Test suite() {
 		TestSuite suite = new TestSuite();
 		suite.addTestSuite(NoKeyJpaDataSourceTestCase.class);
 		suite.addTestSuite(SimpleKeyJpaDataSourceTestCase.class);

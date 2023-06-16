@@ -61,10 +61,10 @@ public class BusinessModelInitializer {
 	IPropertiesInitializer propertiesInitializer;
 	BusinessModelNamesInitializer namesInitializer;
 
-	static public String INITIALIZER_NAME = "StandardKnowageBusinessModelInitializer";
-	static public String INITIALIZER_VERSION = "1.0";
+	public static String INITIALIZER_NAME = "StandardKnowageBusinessModelInitializer";
+	public static String INITIALIZER_VERSION = "1.0";
 
-	static public BusinessModelFactory FACTORY = BusinessModelFactory.eINSTANCE;
+	public static BusinessModelFactory FACTORY = BusinessModelFactory.eINSTANCE;
 
 	public BusinessModelInitializer() {
 		setPropertiesInitializer(new BusinessModelPropertiesFromFileInitializer());

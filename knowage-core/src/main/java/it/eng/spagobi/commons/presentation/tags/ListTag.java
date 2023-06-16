@@ -108,9 +108,9 @@ public class ListTag extends TagSupport
 	// the _paramsMap contains all the ADDITIONAL parameters set by the action or module for the navigation buttons ("next", "previous", "filter" and "all" buttons)
 	protected HashMap _paramsMap = null;
 
-	final static int END_RANGE_PAGES = 6;    
-	final static String[] EXCEPTION_MODULES ={"JobManagementPage", "TriggerManagementPage"};
-	final static String[] EXCEPTION_ATTRIBUTES ={"JOBNAME","JOBGROUPNAME"};
+	static final int END_RANGE_PAGES = 6;    
+	static final String[] EXCEPTION_MODULES ={"JobManagementPage", "TriggerManagementPage"};
+	static final String[] EXCEPTION_ATTRIBUTES ={"JOBNAME","JOBGROUPNAME"};
 
 	protected String requestIdentity = null;
 

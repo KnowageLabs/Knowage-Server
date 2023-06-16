@@ -60,7 +60,7 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
  */
 public class GenericDriver extends AbstractEngineDriver implements IEngineDriver {
 
-	private final static String PARAM_NEW_SESSION = "NEW_SESSION";
+	private static final String PARAM_NEW_SESSION = "NEW_SESSION";
 	public static final String DOCUMENT_ID = "document";
 	public static final String DOCUMENT_LABEL = "DOCUMENT_LABEL";
 	public static final String DOCUMENT_VERSION = "DOCUMENT_VERSION";

@@ -45,7 +45,7 @@ import it.eng.spagobi.commons.bo.UserProfile;
 public class CometDSpagoBIAuthenticationPolicy extends DefaultSecurityPolicy {
 
 	private static final String USER_CHANNEL_PROP_NAME = "userChannel";
-	private final static Logger log = Logger.getLogger(CometDSpagoBIAuthenticationPolicy.class);
+	private static final Logger log = Logger.getLogger(CometDSpagoBIAuthenticationPolicy.class);
 
 	@Override
 	public boolean canHandshake(BayeuxServer server, ServerSession session, ServerMessage message) {

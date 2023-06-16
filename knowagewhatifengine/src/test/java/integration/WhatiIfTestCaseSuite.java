@@ -44,7 +44,7 @@ public class WhatiIfTestCaseSuite extends AbstractWhatIfInMemoryTestCase {
 		HSQLDBEnviromentSingleton.getInstance().setLeaveOpen(false);
 	}
 
-	static public Test suite() {
+	public static Test suite() {
 		TestSuite suite = new TestSuite("Db writeback tests");
 
 		suite.addTestSuite(DefaultWeightedAllocationAlgorithmTestCase.class);

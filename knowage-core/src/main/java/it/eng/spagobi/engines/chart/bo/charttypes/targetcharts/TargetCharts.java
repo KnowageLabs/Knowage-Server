@@ -58,7 +58,7 @@ public class TargetCharts extends ChartImpl {
 	public Double mainThreshold=null;
 	Map confParameters=null;
 
-	final protected TimeSeries timeSeries=new TimeSeries("TimeSerie", Month.class);;
+	protected final TimeSeries timeSeries=new TimeSeries("TimeSerie", Month.class);;
 	protected TreeSet<String> yearsDefined=null;
 	// store if specified the maximum bar width
 	Double maxBarWidth=null;

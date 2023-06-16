@@ -43,8 +43,8 @@ public class PublicProfile {
 
 	static Logger logger = Logger.getLogger(PublicProfile.class);
 
-	static public final String PUBLIC_USER_PREFIX = "public-";
-	static public final String PUBLIC_USER_NAME = "sbi.execution.publicProfileName";
+	public static final String PUBLIC_USER_PREFIX = "public-";
+	public static final String PUBLIC_USER_NAME = "sbi.execution.publicProfileName";
 	static final String PUBLIC_PATTERN_MATCH = "public/servlet";
 
 	public static UserProfile evaluatePublicCase(ServletRequest request, HttpSession session, SessionContainer permanentSession) {

@@ -316,7 +316,7 @@ public class DownloadZipAction extends AbstractBaseHttpAction{ //AbstractHttpAct
 	 * @throws ParseException
 	 */
 
-	static public Date extractDate(String fileName, String prefix) throws ParseException{
+	public static Date extractDate(String fileName, String prefix) throws ParseException{
 		// remove prefix
 		//fileName = fileName.substring(1);
 		int prefixToRemove = prefix.length();
@@ -346,7 +346,7 @@ public class DownloadZipAction extends AbstractBaseHttpAction{ //AbstractHttpAct
 	 * @throws ParseException
 	 */
 
-	static public Vector<File> searchDateFiles(File  dir, Date beginDate, Date endDate, String prefix) {
+	public static Vector<File> searchDateFiles(File  dir, Date beginDate, Date endDate, String prefix) {
 
 		Vector<File> toReturn=new Vector<File>();
 
@@ -402,7 +402,7 @@ public class DownloadZipAction extends AbstractBaseHttpAction{ //AbstractHttpAct
 	 * 
 	 * @return File[]
 	 */
-	static public final File[] getSortedArray(File directory, String prefix) {
+	public static final File[] getSortedArray(File directory, String prefix) {
 		File [] allFiles = directory.listFiles();
 		Vector labelFilesVector = new Vector<File>();
 		for (int i = 0; i < allFiles.length; i++) {

@@ -29,7 +29,7 @@ import junit.framework.TestSuite;
  *
  */
 public class SQLDBCacheMetadataTestSuite extends TestCase {
-	static public Test suite() {
+	public static Test suite() {
 		TestSuite suite = new TestSuite("SQLDBCache Metadata tests");
 		if(TestConstants.enableTestsOnMySql){
 			suite.addTestSuite(MySqlSQLDBCacheMetadataTest.class);

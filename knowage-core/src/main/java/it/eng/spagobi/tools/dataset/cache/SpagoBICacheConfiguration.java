@@ -189,9 +189,9 @@ public class SpagoBICacheConfiguration {
 		return dimensionTypes;
 	}
 
-	private final static String CACHE_CONFIG_TAG = "CACHE_CONFIG";
-	private final static String DATA_TYPES_TAG = "DATA_TYPES";
-	private final static String TYPE_TAG = "TYPE";
+	private static final String CACHE_CONFIG_TAG = "CACHE_CONFIG";
+	private static final String DATA_TYPES_TAG = "DATA_TYPES";
+	private static final String TYPE_TAG = "TYPE";
 
 	public static void initCacheConfiguration() {
 		logger.trace("IN");

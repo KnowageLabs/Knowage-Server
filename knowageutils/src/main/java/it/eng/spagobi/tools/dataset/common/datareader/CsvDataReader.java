@@ -45,7 +45,7 @@ import it.eng.spagobi.tools.dataset.common.metadata.MetaData;
 public class CsvDataReader extends AbstractDataReader {
 
 
-	final static String SEPARATOR=";";
+	static final String SEPARATOR=";";
 
 	private static transient Logger logger = Logger.getLogger(CsvDataReader.class);
 

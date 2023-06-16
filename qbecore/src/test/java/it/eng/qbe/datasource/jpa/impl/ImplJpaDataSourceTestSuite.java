@@ -28,7 +28,7 @@ import junit.framework.TestSuite;
  *
  */
 public class ImplJpaDataSourceTestSuite extends TestCase {
-	static public Test suite() {
+	public static Test suite() {
 		TestSuite suite = new TestSuite();
 		suite.addTestSuite(StandardJPAELinkImplDataSourceTestCase.class);
 		suite.addTestSuite(StandardJPAHibernateImplDataSourceTestCase.class);

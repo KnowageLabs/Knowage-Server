@@ -52,7 +52,7 @@ public class JavaKeywordsUtils {
 	 /**
 	  * List of java.lang classes (1.5 JDK).
 	  */
-	 private final static Set<String> JAVA_LANG_NAMES = new HashSet<String>(Arrays.asList(
+	 private static final Set<String> JAVA_LANG_NAMES = new HashSet<String>(Arrays.asList(
 			 new String[]
 	         {
 				// Interfaces

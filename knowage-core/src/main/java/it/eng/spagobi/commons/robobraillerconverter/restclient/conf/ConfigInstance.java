@@ -12,7 +12,7 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 public class ConfigInstance {
 		private static Logger logger = Logger.getLogger(ConfigInstance.class);
-		private final static String CONF_FILE = "robobraille_conf.xml";
+		private static final String CONF_FILE = "robobraille_conf.xml";
 		private static RobobrailleConfiguration robobrailleConfiguration = null;
 		
 		public static RobobrailleConfiguration getRobobrailleConfiguration(){

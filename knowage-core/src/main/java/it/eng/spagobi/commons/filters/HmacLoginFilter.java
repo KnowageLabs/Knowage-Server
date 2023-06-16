@@ -55,7 +55,7 @@ public class HmacLoginFilter implements Filter {
 
 	private String key;
 
-	private final static long MAX_TIME_DELTA_DEFAULT_MS = 30000; // 30 seconds
+	private static final long MAX_TIME_DELTA_DEFAULT_MS = 30000; // 30 seconds
 
 	private static final String MAX_DELTA_CONFIG_NAME = "maxDeltaMsToken";
 

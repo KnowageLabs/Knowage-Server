@@ -6,7 +6,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 
 public final class Subscription {
 
-	private final static String ISO_8601_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSZ";
+	private static final String ISO_8601_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSZ";
 
 	private String description;
 	private Subject subject;

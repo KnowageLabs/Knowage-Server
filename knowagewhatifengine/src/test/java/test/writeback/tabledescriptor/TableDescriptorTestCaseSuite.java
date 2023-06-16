@@ -36,7 +36,7 @@ import junit.framework.TestSuite;
  */
 /*
 public class TableDescriptorTestCaseSuite extends TestCase {
-	static public Test suite() {
+	public static Test suite() {
 		TestSuite suite = new TestSuite("TableDescriptorTestCaseSuite");
 		if(TestConstants.enableTestsOnMySql){
 			suite.addTestSuite(MySqlTestCase.class);

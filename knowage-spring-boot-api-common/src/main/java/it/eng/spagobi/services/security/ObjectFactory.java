@@ -33,12 +33,12 @@ import javax.xml.namespace.QName;
 @XmlRegistry
 public class ObjectFactory {
 
-	private final static QName _CheckAuthorization_QNAME = new QName("http://security.services.spagobi.eng.it/", "checkAuthorization");
-	private final static QName _GetUserProfile_QNAME = new QName("http://security.services.spagobi.eng.it/", "getUserProfile");
-	private final static QName _GetUserProfileResponse_QNAME = new QName("http://security.services.spagobi.eng.it/", "getUserProfileResponse");
-	private final static QName _IsAuthorizedResponse_QNAME = new QName("http://security.services.spagobi.eng.it/", "isAuthorizedResponse");
-	private final static QName _CheckAuthorizationResponse_QNAME = new QName("http://security.services.spagobi.eng.it/", "checkAuthorizationResponse");
-	private final static QName _IsAuthorized_QNAME = new QName("http://security.services.spagobi.eng.it/", "isAuthorized");
+	private static final QName _CheckAuthorization_QNAME = new QName("http://security.services.spagobi.eng.it/", "checkAuthorization");
+	private static final QName _GetUserProfile_QNAME = new QName("http://security.services.spagobi.eng.it/", "getUserProfile");
+	private static final QName _GetUserProfileResponse_QNAME = new QName("http://security.services.spagobi.eng.it/", "getUserProfileResponse");
+	private static final QName _IsAuthorizedResponse_QNAME = new QName("http://security.services.spagobi.eng.it/", "isAuthorizedResponse");
+	private static final QName _CheckAuthorizationResponse_QNAME = new QName("http://security.services.spagobi.eng.it/", "checkAuthorizationResponse");
+	private static final QName _IsAuthorized_QNAME = new QName("http://security.services.spagobi.eng.it/", "isAuthorized");
 
 	/**
 	 * Create a new ObjectFactory that can be used to create new instances of schema derived classes for package: it.eng.spagobi.services.security

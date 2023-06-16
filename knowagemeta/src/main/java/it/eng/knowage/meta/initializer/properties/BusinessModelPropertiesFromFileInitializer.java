@@ -74,7 +74,7 @@ public class BusinessModelPropertiesFromFileInitializer implements IPropertiesIn
 
 	public static final String TABLE_TYPE = "structural.tabletype";
 
-	static public ModelFactory FACTORY = ModelFactory.eINSTANCE;
+	public static ModelFactory FACTORY = ModelFactory.eINSTANCE;
 
 	private static Logger logger = LoggerFactory.getLogger(BusinessModelPropertiesFromFileInitializer.class);
 

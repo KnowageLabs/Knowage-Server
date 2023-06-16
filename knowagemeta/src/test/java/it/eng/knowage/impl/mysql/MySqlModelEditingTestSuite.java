@@ -26,7 +26,7 @@ import junit.framework.TestSuite;
  *
  */
 public class MySqlModelEditingTestSuite extends TestCase {
-	static public Test suite() {
+	public static Test suite() {
 		TestSuite suite = new TestSuite("Editing tests on MySql");
 		suite.addTestSuite(MySqlModelEditingTest.class);
 		return suite;

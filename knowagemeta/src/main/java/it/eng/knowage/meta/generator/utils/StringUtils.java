@@ -114,7 +114,7 @@ public class StringUtils {
 		return pluralised;
 	}
 
-	private final static boolean isVowel(char c) {
+	private static final boolean isVowel(char c) {
 		boolean vowel = false;
 		vowel |= c == 'a';
 		vowel |= c == 'e';

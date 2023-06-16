@@ -29,7 +29,7 @@ import org.cometd.bayeux.server.BayeuxServer;
 
 public class CometServiceManager {
 
-	private final static Logger log = LogManager.getLogger(CometServiceManager.class);
+	private static final Logger log = LogManager.getLogger(CometServiceManager.class);
 
 	private final Map<String, Map<String, Map<String, CometService>>> servicesByIdByLabelByUUId = new HashMap<String, Map<String, Map<String, CometService>>>();
 

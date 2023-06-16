@@ -49,7 +49,7 @@ public class OlapModelDefaultPropertiesInitializer implements IPropertiesInitial
 
 
 	
-	static public ModelFactory FACTORY = ModelFactory.eINSTANCE;
+	public static ModelFactory FACTORY = ModelFactory.eINSTANCE;
 	
 	public void addProperties(ModelObject o) {
 		/*

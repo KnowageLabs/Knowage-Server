@@ -76,8 +76,8 @@ public class PhysicalModelInitializer {
 	private static Logger logger = Logger.getLogger(PhysicalModelInitializer.class);
 	private ECrossReferenceAdapter crossReferenceAdapter;
 
-	static public PhysicalModelFactory FACTORY = PhysicalModelFactory.eINSTANCE;
-	static public String ORACLE_SPATIAL_GEOMETRY = "SDO_GEOMETRY";
+	public static PhysicalModelFactory FACTORY = PhysicalModelFactory.eINSTANCE;
+	public static String ORACLE_SPATIAL_GEOMETRY = "SDO_GEOMETRY";
 
 	public PhysicalModelInitializer() {
 		// setPropertiesInitializer(new PhysicalModelDefaultPropertiesInitializer());

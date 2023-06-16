@@ -768,7 +768,7 @@ public class StringUtilities {
 		}
 	}
 
-	static public String[] convertCollectionInArray(Collection coll) {
+	public static String[] convertCollectionInArray(Collection coll) {
 		String[] array = new String[coll.size()];
 		int i = 0;
 		for (Iterator iterator = coll.iterator(); iterator.hasNext();) {
@@ -780,7 +780,7 @@ public class StringUtilities {
 		return array;
 	}
 
-	static public Collection convertArrayInCollection(String[] array) {
+	public static Collection convertArrayInCollection(String[] array) {
 		Collection coll = new ArrayList();
 
 		for (int i = 0; i < array.length; i++) {

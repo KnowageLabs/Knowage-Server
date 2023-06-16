@@ -34,7 +34,7 @@ public class ExporterFactory {
 	 * 
 	 * @return the exporter
 	 */
-	static public JRExporter getExporter(String format) {
+	public static JRExporter getExporter(String format) {
 		JRExporter exporter = null;
 		
 		SourceBean config = EnginConf.getInstance().getConfig();
@@ -60,7 +60,7 @@ public class ExporterFactory {
 	 * 
 	 * @return the mIME type
 	 */
-	static public String getMIMEType(String format) {
+	public static String getMIMEType(String format) {
 		String mimeType = null;
 		SourceBean config = EnginConf.getInstance().getConfig();
 		SourceBean exporterConfig = (SourceBean) config.getFilteredSourceBeanAttribute ("EXPORTERS.EXPORTER", "format", format);
@@ -74,7 +74,7 @@ public class ExporterFactory {
 	 * 
 	 * @return the default type
 	 */
-	static public String getDefaultType(){
+	public static String getDefaultType(){
 		String defaultType = null;
 		SourceBean config = EnginConf.getInstance().getConfig();
 		defaultType = (String)config.getAttribute("EXPORTERS.default");

@@ -69,9 +69,9 @@ public class ExecutionProxy {
 
 	private static Logger logger = Logger.getLogger(ExecutionProxy.class);
 	private static String backEndExtension = "BackEnd";
-	static public String SEND_MAIL_MODALITY = "SEND_MAIL";
-	static public String EXPORT_MODALITY = "EXPORT";
-	static public String MASSIVE_EXPORT_MODALITY = SpagoBIConstants.MASSIVE_EXPORT_MODALITY;
+	public static String SEND_MAIL_MODALITY = "SEND_MAIL";
+	public static String EXPORT_MODALITY = "EXPORT";
+	public static String MASSIVE_EXPORT_MODALITY = SpagoBIConstants.MASSIVE_EXPORT_MODALITY;
 
 	private BIObject biObject = null;
 

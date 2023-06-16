@@ -52,7 +52,7 @@ public enum DatabaseDialect {
 	SPANNER("Google Spanner","org.hibernate.dialect.SpannerDialect", true, true, true, true);
 	// @formatter:on
 
-	private final static HashMap<String, DatabaseDialect> dialects = new HashMap<>(DatabaseDialect.values().length);
+	private static final HashMap<String, DatabaseDialect> dialects = new HashMap<>(DatabaseDialect.values().length);
 
 	static {
 		for (DatabaseDialect dialect : DatabaseDialect.values()) {
