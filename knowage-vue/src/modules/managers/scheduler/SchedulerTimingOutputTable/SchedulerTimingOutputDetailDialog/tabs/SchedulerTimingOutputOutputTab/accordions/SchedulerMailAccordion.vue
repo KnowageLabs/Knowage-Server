@@ -8,9 +8,9 @@
             </template>
 
             <div v-if="document">
-                <div class="p-m-4" v-tooltip="$t('managers.scheduler.fixedRecipientsListHelp')">
+                <div class="p-m-4">
                     <Checkbox v-model="document.useFixedRecipients" :binary="true" @change="removeDocumentExpressionAndDatasets" />
-                    <span class="p-ml-2">{{ $t('managers.scheduler.fixedRecipientsList') }}</span>
+                    <span v-tooltip.top="$t('managers.scheduler.fixedRecipientsListHelp')" class="p-ml-2">{{ $t('managers.scheduler.fixedRecipientsList') }}</span>
                 </div>
 
                 <div v-if="document.useFixedRecipients" class="p-m-4">
@@ -38,9 +38,9 @@
                 </div>
 
                 <div v-if="drivers.length > 0" class="p-m-4">
-                    <div class="p-my-4" v-tooltip="$t('managers.scheduler.useDatasetListHelp')">
+                    <div class="p-my-4">
                         <Checkbox v-model="document.useDataset" :binary="true" @change="removeDocumentFixedRecipientsAndExpression" />
-                        <span class="p-ml-2" v-html="$t('managers.scheduler.useDatasetList')"></span>
+                        <span v-tooltip.top="$t('managers.scheduler.useDatasetListHelp')" class="p-ml-2" v-html="$t('managers.scheduler.useDatasetList')"></span>
                     </div>
 
                     <div v-if="document.useDataset">
@@ -89,9 +89,9 @@
                     </div>
                 </div>
 
-                <div class="p-m-4" v-tooltip="$t('managers.scheduler.useExpressionHelp')">
+                <div class="p-m-4">
                     <Checkbox v-model="document.useExpression" :binary="true" @change="removeDocumentFixedRecipientsAndDatasets" />
-                    <span class="p-ml-2" v-html="$t('managers.scheduler.useExpression')"></span>
+                    <span v-tooltip.top="$t('managers.scheduler.useExpressionHelp')" class="p-ml-2" v-html="$t('managers.scheduler.useExpression')"></span>
                 </div>
 
                 <div v-if="document.useExpression" class="p-m-4">
