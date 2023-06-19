@@ -26,11 +26,13 @@ import java.util.TreeSet;
  */
 public class FieldStats {
 
+	private final int index;
 	private Object min;
 	private Object max;
 	private final TreeSet<Object> distinct = new TreeSet<>();
 
-	FieldStats() {
+	FieldStats(int index) {
+		this.index = index;
 	}
 
 	public void add(Object value) {
@@ -45,18 +47,15 @@ public class FieldStats {
 		}
 	}
 
-	/**
-	 * @return the min
-	 */
-	public Object getMin() {
-		return min;
+	public int getCardinality() {
+		return distinct.size();
 	}
 
 	/**
-	 * @param min the min to set
+	 * @return the distinct
 	 */
-	void setMin(Object min) {
-		this.min = min;
+	public Set<Object> getDistinct() {
+		return distinct;
 	}
 
 	/**
@@ -67,6 +66,20 @@ public class FieldStats {
 	}
 
 	/**
+	 * @return the min
+	 */
+	public Object getMin() {
+		return min;
+	}
+
+	/**
+	 * @return the name
+	 */
+	public String getName() {
+		return "column_" + index;
+	}
+
+	/**
 	 * @param max the max to set
 	 */
 	void setMax(Object max) {
@@ -74,14 +87,10 @@ public class FieldStats {
 	}
 
 	/**
-	 * @return the distinct
+	 * @param min the min to set
 	 */
-	public Set<Object> getDistinct() {
-		return distinct;
-	}
-
-	public int getCardinality() {
-		return distinct.size();
+	void setMin(Object min) {
+		this.min = min;
 	}
 
 }

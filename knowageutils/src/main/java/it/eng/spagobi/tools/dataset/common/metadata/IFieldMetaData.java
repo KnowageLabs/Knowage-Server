@@ -27,13 +27,13 @@ import java.util.Map;
  */
 public interface IFieldMetaData {
 
-	public static final String DECIMALPRECISION = "decimalPrecision";
-	public static final String ORDERTYPE = "oprdertype";
+	String DECIMALPRECISION = "decimalPrecision";
+	String ORDERTYPE = "oprdertype";
 
-	public static final String PROPERTY_ATTRIBUTE_PRESENTATION = "attributePresentation";
-	public static final String PROPERTY_ATTRIBUTE_PRESENTATION_CODE = "code";
-	public static final String PROPERTY_ATTRIBUTE_PRESENTATION_DESCRIPTION = "description";
-	public static final String PROPERTY_ATTRIBUTE_PRESENTATION_CODE_AND_DESCRIPTION = "both";
+	String PROPERTY_ATTRIBUTE_PRESENTATION = "attributePresentation";
+	String PROPERTY_ATTRIBUTE_PRESENTATION_CODE = "code";
+	String PROPERTY_ATTRIBUTE_PRESENTATION_DESCRIPTION = "description";
+	String PROPERTY_ATTRIBUTE_PRESENTATION_CODE_AND_DESCRIPTION = "both";
 
 	public enum FieldType {
 		SPATIAL_ATTRIBUTE, ATTRIBUTE, MEASURE

@@ -73,7 +73,7 @@ public class DataStore implements IDataStore {
 
 	protected IMetaData metaData = new MetaData();
 	protected List<IRecord> records = new ArrayList<>();
-	private final DataStoreStats stats = new DataStoreStats();
+	private final DataStoreStats stats = new DataStoreStats(this);
 
 	Date cacheDate = null;
 
@@ -290,7 +290,7 @@ public class DataStore implements IDataStore {
 		LOGGER.debug("Initializing structure to contain distinct values for fields with index " + fieldIndexes);
 		Map<Integer, Set<Object>> results = new HashMap<>(fieldIndexes.size());
 		for (Integer fieldIndex : fieldIndexes) {
-			results.put(fieldIndex, new HashSet<Object>());
+			results.put(fieldIndex, new HashSet<>());
 		}
 
 		Iterator<IRecord> it = iterator();
@@ -493,7 +493,7 @@ public class DataStore implements IDataStore {
 
 	@Override
 	public String toString() {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("DataStore: [\n");
 		buffer.append("MetaData:\n");
 		buffer.append(metaData);
@@ -539,9 +539,9 @@ public class DataStore implements IDataStore {
 
 		String[] columnNames = new String[fieldCount];
 		ColumnType[] columnTypes = new ColumnType[fieldCount];
-		HashMap<String, FieldType> fieldTypes = new HashMap<String, FieldType>();
+		HashMap<String, FieldType> fieldTypes = new HashMap<>();
 
-		Collection<Object[]> arrays = new ArrayList<Object[]>();
+		Collection<Object[]> arrays = new ArrayList<>();
 
 		for (int i = 0; i < fieldCount; i++) {
 			String columnName = this.metaData.getFieldName(i);
@@ -649,9 +649,9 @@ public class DataStore implements IDataStore {
 
 		String[] columnNames = new String[fieldCount];
 		ColumnType[] columnTypes = new ColumnType[fieldCount];
-		HashMap<String, FieldType> fieldTypes = new HashMap<String, FieldType>();
+		HashMap<String, FieldType> fieldTypes = new HashMap<>();
 
-		Collection<Object[]> arrays = new ArrayList<Object[]>();
+		Collection<Object[]> arrays = new ArrayList<>();
 
 		for (int i = 0; i < fieldCount; i++) {
 			String columnName = this.metaData.getFieldName(i);
@@ -740,7 +740,7 @@ public class DataStore implements IDataStore {
 
 	@Override
 	public IDataStore aggregateAndFilterRecords(String sqlQuery, int offset, int fetchSize, int maxRowCount, String dateFormatJava) {
-		return aggregateAndFilterRecords(sqlQuery, new ArrayList<Object>(0), offset, fetchSize, maxRowCount, dateFormatJava);
+		return aggregateAndFilterRecords(sqlQuery, new ArrayList<>(0), offset, fetchSize, maxRowCount, dateFormatJava);
 	}
 
 	@Override

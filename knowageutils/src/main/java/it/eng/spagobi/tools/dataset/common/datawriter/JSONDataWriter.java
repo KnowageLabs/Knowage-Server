@@ -210,10 +210,17 @@ public class JSONDataWriter implements IDataWriter {
 	private JSONObject write(FieldStats stats) {
 		JSONObject ret = new JSONObject();
 
+		String name = stats.getName();
 		Object max = stats.getMax();
 		Object min = stats.getMin();
 		Set<Object> distinct = stats.getDistinct();
 		int cardinality = stats.getCardinality();
+
+		try {
+			ret.put("name", name);
+		} catch (JSONException e) {
+			// TODO: handle exception
+		}
 
 		try {
 			ret.put("max", max);
@@ -223,7 +230,7 @@ public class JSONDataWriter implements IDataWriter {
 
 		try {
 			ret.put("min", min);
-		} catch(JSONException e) {
+		} catch (JSONException e) {
 			// TODO: handle exception
 		}
 
@@ -297,7 +304,7 @@ public class JSONDataWriter implements IDataWriter {
 			IFieldMetaData fieldMetaData = metaData.getFieldMeta(i);
 
 			Object propertyRawValue = fieldMetaData.getProperty("visible");
-			if (propertyRawValue != null && (propertyRawValue instanceof Boolean) && ((Boolean) propertyRawValue).booleanValue() == false) {
+			if (propertyRawValue != null && (propertyRawValue instanceof Boolean) && !((Boolean) propertyRawValue).booleanValue()) {
 				continue;
 			}
 
@@ -444,7 +451,7 @@ public class JSONDataWriter implements IDataWriter {
 					IFieldMetaData fieldMetaData = dataStore.getMetaData().getFieldMeta(i);
 
 					propertyRawValue = fieldMetaData.getProperty("visible");
-					if (propertyRawValue != null && (propertyRawValue instanceof Boolean) && ((Boolean) propertyRawValue).booleanValue() == false) {
+					if (propertyRawValue != null && (propertyRawValue instanceof Boolean) && !((Boolean) propertyRawValue).booleanValue()) {
 						continue;
 					}
 
@@ -468,7 +475,7 @@ public class JSONDataWriter implements IDataWriter {
 								|| oracle.sql.CLOB.class.isAssignableFrom(fieldMetaData.getType())) { // Can we add a limit?
 							if (field.getValue() != null) {
 								Reader r = ((Clob) field.getValue()).getCharacterStream();
-								StringBuffer buffer = new StringBuffer();
+								StringBuilder buffer = new StringBuilder();
 								int ch;
 								while ((ch = r.read()) != -1) {
 									buffer.append("" + (char) ch);
@@ -532,7 +539,7 @@ public class JSONDataWriter implements IDataWriter {
 				IFieldMetaData fieldMetaData = metadata.getFieldMeta(i);
 
 				Object propertyRawValue = fieldMetaData.getProperty("visible");
-				if (propertyRawValue != null && (propertyRawValue instanceof Boolean) && ((Boolean) propertyRawValue).booleanValue() == false) {
+				if (propertyRawValue != null && (propertyRawValue instanceof Boolean) && !((Boolean) propertyRawValue).booleanValue()) {
 					continue;
 				}
 
@@ -652,7 +659,7 @@ public class JSONDataWriter implements IDataWriter {
 
 				Boolean calculated = (Boolean) fieldMetaData.getProperty("calculated");
 				calculated = calculated == null ? Boolean.FALSE : calculated;
-				if (calculated.booleanValue() == true) {
+				if (calculated.booleanValue()) {
 					DataSetVariable variable = (DataSetVariable) fieldMetaData.getProperty("variable");
 					if (variable.getType().equalsIgnoreCase(DataSetVariable.HTML)) {
 						fieldMetaDataJSON.put("type", "auto");

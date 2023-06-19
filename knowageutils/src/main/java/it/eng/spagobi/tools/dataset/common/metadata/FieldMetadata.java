@@ -22,28 +22,25 @@ import java.util.Map;
 
 public class FieldMetadata implements IFieldMetaData, Cloneable {
 
-	String name;
-	String alias;
-	Class type;
-	Map properties;
-	FieldType fieldType;
-	boolean multiValue;
-	int precision;
-	int scale;
+	private String name;
+	private String alias;
+	private Class type;
+	private Map properties;
+	private FieldType fieldType;
+	private boolean multiValue;
+	private int precision;
+	private int scale;
 
-	boolean personal;
-	boolean masked;
-	boolean decrypt;
-	boolean subjectId;
+	private boolean personal;
+	private boolean decrypt;
+	private boolean subjectId;
 
 	public FieldMetadata() {
-		super();
 		this.properties = new HashMap();
 		fieldType = FieldType.ATTRIBUTE;
 	}
 
 	public FieldMetadata(String name, Class type) {
-		super();
 		setName(name);
 		setType(type);
 		this.properties = new HashMap();

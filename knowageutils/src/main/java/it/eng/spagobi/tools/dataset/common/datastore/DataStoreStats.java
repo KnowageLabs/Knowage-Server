@@ -26,16 +26,22 @@ import java.util.TreeMap;
 public class DataStoreStats {
 
 	private final Map<Integer, FieldStats> fields = new TreeMap<>();
+	private final DataStore dataStore;
 
-	DataStoreStats() {
+	DataStoreStats(DataStore dataStore) {
+		this.dataStore = dataStore;
 	}
 
-	public void addRecord(IRecord record) {
-		List<IField> recordFields = record.getFields();
+	public void addRecord(IRecord newRecord) {
+		List<IField> recordFields = newRecord.getFields();
 
 		int i = 0;
 		for (IField field : recordFields) {
-			fields.putIfAbsent(i, new FieldStats());
+			/*
+			 * TODO: The datastore contains a fake column called "recNo" in the first position. The "+1" manages this. This is not the right place to do this.
+			 * In the future will be fixed.
+			 */
+			fields.putIfAbsent(i, new FieldStats(i + 1));
 			FieldStats fieldStats = fields.get(i);
 			Object value = field.getValue();
 			fieldStats.add(value);
