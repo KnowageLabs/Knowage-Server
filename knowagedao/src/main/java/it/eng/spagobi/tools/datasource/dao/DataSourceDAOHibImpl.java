@@ -23,6 +23,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactoryConfigurationError;
@@ -37,6 +38,7 @@ import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Expression;
+import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -494,7 +496,7 @@ public class DataSourceDAOHibImpl extends AbstractHibernateDAO implements IDataS
 								cutStart = cutStart + 12;
 								int cutEnd = prov.indexOf("</CONNECTION>");
 								String firstPart = prov.substring(0, cutStart);
-								String secondPart = prov.substring(cutEnd, prov.length());
+								String secondPart = prov.substring(cutEnd);
 								prov = firstPart + aDataSource.getLabel() + secondPart;
 
 								prov = escapeXML(prov, false);
@@ -607,7 +609,7 @@ public class DataSourceDAOHibImpl extends AbstractHibernateDAO implements IDataS
 		// if writeDefault is going to be set to true than must be disabled in
 		// others
 		logger.debug("IN");
-		if (aDataSource.checkIsWriteDefault() == true) {
+		if (aDataSource.checkIsWriteDefault()) {
 			logger.debug("searching for write default datasource to delete flag");
 			SbiDataSource hibModify = loadSbiDataSourceWriteDefault(aSession);
 			if (hibModify != null && !hibModify.getLabel().equals(hibDataSource.getLabel())) {
@@ -627,7 +629,7 @@ public class DataSourceDAOHibImpl extends AbstractHibernateDAO implements IDataS
 		// if writeDefault is going to be set to true than must be disabled in
 		// others
 		logger.debug("IN");
-		if (aDataSource.checkUseForDataprep() == true) {
+		if (aDataSource.checkUseForDataprep()) {
 			logger.debug("searching for write default datasource to delete flag");
 			SbiDataSource hibModify = loadSbiDataSourceUseForDataprep(aSession);
 			if (hibModify != null && !hibModify.getLabel().equals(hibDataSource.getLabel())) {
@@ -955,7 +957,7 @@ public class DataSourceDAOHibImpl extends AbstractHibernateDAO implements IDataS
 	public Map<String, List<String>> returnEntitiesAssociated(Integer dsId) throws EMFUserError {
 		logger.debug("IN");
 		// map to return
-		Map<String, List<String>> mapToReturn = new HashMap<String, List<String>>();
+		Map<String, List<String>> mapToReturn = new HashMap<>();
 
 		List<String> objectNamesAssociatedWithDS = new ArrayList<>();
 		logger.debug("Check for BIObject associated to datasource");
@@ -1050,7 +1052,7 @@ public class DataSourceDAOHibImpl extends AbstractHibernateDAO implements IDataS
 					String lovProvider = sbiLov.getLovProvider();
 					lovProvider = escapeXML(lovProvider, true);
 					lovProvider = removeStatement(lovProvider); // KNOWAGE-6312: removed statement for double quote character issue, if this character is
-																// present, it is unescapable because of xml2json process will roll back it
+																 // present, it is unescapable because of xml2json process will roll back it
 
 					try {
 						String statementString = Xml.xml2json(lovProvider);
@@ -1145,6 +1147,40 @@ public class DataSourceDAOHibImpl extends AbstractHibernateDAO implements IDataS
 
 	}
 
+	@Override
+	public void setCurrentPassword(IDataSource dataSource) throws EMFUserError {
+		logger.debug("IN");
+		Session aSession = null;
+		try {
+			aSession = getSession();
+
+			// @formatter:off
+			Criteria criteria = aSession.createCriteria(SbiDataSource.class)
+					.setProjection(Projections.projectionList()
+							.add(Projections.property("pwd"), "pwd"))
+					.add(Restrictions.eq("dsId", dataSource.getDsId()));
+			// @formatter:on
+
+			String pwd = (String) criteria.uniqueResult();
+
+			if (Objects.nonNull(pwd)) {
+				String decPassword = EncryptionPBEWithMD5AndDESManager.decrypt(pwd);
+				dataSource.setPwd(decPassword);
+			}
+
+		} catch (HibernateException he) {
+			logger.error("Error getting current password for data source " + dataSource, he);
+			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
+		} finally {
+			if (aSession != null) {
+				if (aSession.isOpen())
+					aSession.close();
+				logger.debug("OUT");
+			}
+		}
+
+	}
+
 	private String escapeXML(String prov, boolean escape) {
 		String statement = null;
 		int cutStartIndex = prov.indexOf("<STMT>");
@@ -1162,7 +1198,7 @@ public class DataSourceDAOHibImpl extends AbstractHibernateDAO implements IDataS
 		cutStart = cutStart + 6;
 		int cutEnd = prov.indexOf("</STMT>");
 		String firstPart = prov.substring(0, cutStart);
-		String secondPart = prov.substring(cutEnd, prov.length());
+		String secondPart = prov.substring(cutEnd);
 		prov = firstPart + statement + secondPart;
 		return prov;
 	}
@@ -1192,8 +1228,9 @@ public class DataSourceDAOHibImpl extends AbstractHibernateDAO implements IDataS
 		cutStart = cutStart + 6;
 		int cutEnd = prov.indexOf("</STMT>");
 		String firstPart = prov.substring(0, cutStart);
-		String secondPart = prov.substring(cutEnd, prov.length());
+		String secondPart = prov.substring(cutEnd);
 		prov = firstPart + secondPart;
 		return prov;
 	}
+
 }

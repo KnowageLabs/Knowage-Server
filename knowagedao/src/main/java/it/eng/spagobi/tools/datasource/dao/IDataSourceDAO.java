@@ -40,7 +40,7 @@ public interface IDataSourceDAO extends ISpagoBIDao {
 	 * @return A <code>datasource</code> object containing all loaded information
 	 * @throws EMFUserError If an Exception occurred
 	 */
-	public IDataSource loadDataSourceByID(Integer dsID) throws EMFUserError;
+	IDataSource loadDataSourceByID(Integer dsID) throws EMFUserError;
 
 	/**
 	 * Loads all detail information for data source whose label is equal to <code>label</code>.
@@ -49,9 +49,9 @@ public interface IDataSourceDAO extends ISpagoBIDao {
 	 * @return An <code>datasource</code> object containing all loaded information
 	 * @throws EMFUserError If an Exception occurred
 	 */
-	public IDataSource loadDataSourceByLabel(String label) throws EMFUserError;
+	IDataSource loadDataSourceByLabel(String label) throws EMFUserError;
 
-	public IDataSource findDataSourceByLabel(String label);
+	IDataSource findDataSourceByLabel(String label);
 
 	/**
 	 * Loads all detail information for all data sources. For each of them, detail information is stored into a <code>datasource</code> object. After that, all
@@ -60,7 +60,7 @@ public interface IDataSourceDAO extends ISpagoBIDao {
 	 * @return A list containing all datasource objects
 	 * @throws EMFUserError If an Exception occurred
 	 */
-	public List<IDataSource> loadAllDataSources() throws EMFUserError;
+	List<IDataSource> loadAllDataSources() throws EMFUserError;
 
 	/**
 	 * Load dialect by id.
@@ -69,7 +69,7 @@ public interface IDataSourceDAO extends ISpagoBIDao {
 	 * @return the dialect
 	 * @throws EMFUserError the EMF user error
 	 */
-	public Domain loadDialect(int dialectId) throws EMFUserError;
+	Domain loadDialect(int dialectId) throws EMFUserError;
 
 	/**
 	 * Implements the query to modify a data source. All information needed is stored into the input <code>datasource</code> object.
@@ -78,7 +78,7 @@ public interface IDataSourceDAO extends ISpagoBIDao {
 	 * @throws EMFUserError If an Exception occurred
 	 */
 
-	public void modifyDataSource(IDataSource aDataSource) throws EMFUserError;
+	void modifyDataSource(IDataSource aDataSource) throws EMFUserError;
 
 	/**
 	 * Implements the query to insert a data source. All information needed is stored into the input <code>datasource</code> object.
@@ -87,7 +87,7 @@ public interface IDataSourceDAO extends ISpagoBIDao {
 	 * @return the datasource id
 	 * @throws EMFUserError If an Exception occurred
 	 */
-	public Integer insertDataSource(IDataSource aDataSource, String organization) throws EMFUserError;
+	Integer insertDataSource(IDataSource aDataSource, String organization) throws EMFUserError;
 
 	/**
 	 * Implements the query to erase a data source. All information needed is stored into the input <code>datasource</code> object.
@@ -95,7 +95,7 @@ public interface IDataSourceDAO extends ISpagoBIDao {
 	 * @param aDataSource The object containing all delete information
 	 * @throws EMFUserError If an Exception occurred
 	 */
-	public void eraseDataSource(IDataSource aDataSource) throws EMFUserError;
+	void eraseDataSource(IDataSource aDataSource) throws EMFUserError;
 
 	/**
 	 * Tells if a data source is associated to any BI Object. It is useful because a data source cannot be deleted if it is used by one or more BI Objects.
@@ -104,7 +104,7 @@ public interface IDataSourceDAO extends ISpagoBIDao {
 	 * @return True if the datasource is used by one or more objects, else false
 	 * @throws EMFUserError If any exception occurred
 	 */
-	public boolean hasBIObjAssociated(String dsId) throws EMFUserError;
+	boolean hasBIObjAssociated(String dsId) throws EMFUserError;
 
 	/**
 	 * Return the data source thatr is marked wityh write default
@@ -113,9 +113,9 @@ public interface IDataSourceDAO extends ISpagoBIDao {
 	 * @throws EMFUserError
 	 */
 
-	public IDataSource loadDataSourceWriteDefault() throws EMFUserError;
+	IDataSource loadDataSourceWriteDefault() throws EMFUserError;
 
-	public IDataSource loadDataSourceWriteDefault(Session session) throws EMFUserError;
+	IDataSource loadDataSourceWriteDefault(Session session) throws EMFUserError;
 
 	/**
 	 * Method called by superadmin to associate a datasource to a tenant
@@ -124,7 +124,7 @@ public interface IDataSourceDAO extends ISpagoBIDao {
 	 * @param datasourceId
 	 * @throws EMFUserError
 	 */
-	public void associateToTenant(Integer tenantId, Integer datasourceId) throws EMFUserError;
+	void associateToTenant(Integer tenantId, Integer datasourceId) throws EMFUserError;
 
 	/**
 	 * Method called by superadmin to load all data sources. For each of them, detail information is stored into a <code>datasource</code> object. After that,
@@ -134,7 +134,7 @@ public interface IDataSourceDAO extends ISpagoBIDao {
 	 * @throws EMFUserError If an Exception occurred
 	 */
 
-	public List<IDataSource> loadDataSourcesForSuperAdmin();
+	List<IDataSource> loadDataSourcesForSuperAdmin();
 
 	/**
 	 * Method to return name of BiObjects associated to datasource
@@ -144,10 +144,12 @@ public interface IDataSourceDAO extends ISpagoBIDao {
 	 * @throws EMFUserError
 	 */
 
-	public Map<String, List<String>> returnEntitiesAssociated(Integer dsId) throws EMFUserError;
+	Map<String, List<String>> returnEntitiesAssociated(Integer dsId) throws EMFUserError;
 
 	IDataSource loadDataSourceUseForDataprep(Session aSession) throws EMFUserError;
 
 	IDataSource loadDataSourceUseForDataprep() throws EMFUserError;
+
+	void setCurrentPassword(IDataSource dataSource) throws EMFUserError;
 
 }

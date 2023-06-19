@@ -25,6 +25,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -368,6 +369,12 @@ public class DataSourceResource extends AbstractSpagoBIResource {
 
 		} else {
 
+			// Except for non saved datasource, the password is not present during test
+			if (Objects.isNull(pwd)) {
+				IDataSourceDAO dao = DAOFactory.getDataSourceDAO();
+				dao.setCurrentPassword(dataSource);
+			}
+
 			if (driver.toLowerCase().contains("mongo")) {
 				LOGGER.debug("Checking the connection for MONGODB");
 				int databaseNameStart = url.lastIndexOf("/");
@@ -377,7 +384,7 @@ public class DataSourceResource extends AbstractSpagoBIResource {
 				String databaseUrl = url.substring(0, databaseNameStart);
 				String databaseName = url.substring(databaseNameStart + 1);
 
-				try(MongoClient mongoClient = new MongoClient(databaseUrl)) {
+				try (MongoClient mongoClient = new MongoClient(databaseUrl)) {
 					MongoDatabase database = mongoClient.getDatabase(databaseName);
 					database.listCollectionNames();
 					LOGGER.debug("Connection OK");
@@ -453,9 +460,10 @@ public class DataSourceResource extends AbstractSpagoBIResource {
 	private void checkAuthorizationToManageCacheDataSource(IDataSource dataSource) {
 		UserProfile userProfile = getUserProfile();
 
-		if (Boolean.TRUE.equals(!userProfile.getIsSuperadmin()) && Boolean.TRUE.equals(dataSource.checkIsWriteDefault())) {
+		if (!userProfile.getIsSuperadmin() && Boolean.TRUE.equals(dataSource.checkIsWriteDefault())) {
 			MessageBuilder msgBuilder = new MessageBuilder();
-			throw new SpagoBIRestServiceException(msgBuilder.getMessage("sbi.datasource.notAuthorizedToManageCacheDataSource"), buildLocaleFromSession(), new Throwable());
+			throw new SpagoBIRestServiceException(msgBuilder.getMessage("sbi.datasource.notAuthorizedToManageCacheDataSource"), buildLocaleFromSession(),
+					new Throwable());
 		}
 	}
 
@@ -931,7 +939,8 @@ class _NotOwnedDataSource implements IDataSource {
 	 * @param calculateTotalResultsNumber
 	 * @return
 	 * @throws DataBaseException
-	 * @see it.eng.spagobi.tools.datasource.bo.IDataSource#executeStatement(it.eng.spagobi.tools.dataset.metasql.query.SelectQuery, java.lang.Integer, java.lang.Integer, java.lang.Integer, boolean)
+	 * @see it.eng.spagobi.tools.datasource.bo.IDataSource#executeStatement(it.eng.spagobi.tools.dataset.metasql.query.SelectQuery, java.lang.Integer,
+	 *      java.lang.Integer, java.lang.Integer, boolean)
 	 */
 	@Override
 	public IDataStore executeStatement(SelectQuery selectQuery, Integer start, Integer limit, Integer maxRowCount, boolean calculateTotalResultsNumber)
@@ -979,4 +988,3 @@ class _NotOwnedDataSource implements IDataSource {
 	}
 
 }
-
