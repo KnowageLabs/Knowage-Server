@@ -40,10 +40,9 @@ public class SecurityServiceSupplierFactory {
 	 */
 	private static class _SecurityServiceSupplierDecorator implements ISecurityServiceSupplier {
 
-		final private ISecurityServiceSupplier instance;
+		private final ISecurityServiceSupplier instance;
 
 		public _SecurityServiceSupplierDecorator(ISecurityServiceSupplier instance) {
-			super();
 			this.instance = instance;
 		}
 
@@ -86,8 +85,7 @@ public class SecurityServiceSupplierFactory {
 		}
 
 		private boolean isLoginAttemtpsCounterBelowLimit(String userId) {
-			String configValue =
-					SingletonConfig.getInstance().getConfigValue("internal.security.login.maxFailedLoginAttempts");
+			String configValue = SingletonConfig.getInstance().getConfigValue("internal.security.login.maxFailedLoginAttempts");
 			final int maxFailedLogin = Integer.parseInt(configValue);
 			ISbiUserDAO userDao = DAOFactory.getSbiUserDAO();
 			int failedLoginAttempts = userDao.getFailedLoginAttempts(userId);
@@ -187,8 +185,7 @@ public class SecurityServiceSupplierFactory {
 		String engUserProfileFactoryClass = engUserProfileFactorySB;
 		engUserProfileFactoryClass = engUserProfileFactoryClass.trim();
 		try {
-			String configValue =
-					SingletonConfig.getInstance().getConfigValue("internal.security.login.checkForMaxFailedLoginAttempts");
+			String configValue = SingletonConfig.getInstance().getConfigValue("internal.security.login.checkForMaxFailedLoginAttempts");
 			Boolean enableFailedLoginAttemptsFilter = Boolean.parseBoolean(configValue);
 
 			Class<?> clazz = Class.forName(engUserProfileFactoryClass);

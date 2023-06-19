@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,7 +11,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -21,23 +21,24 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.sql.SQLException;
 
+import org.apache.log4j.Logger;
 import org.hsqldb.Server;
 
 public class HSQLDBEnviromentSingleton {
 
-	private static HSQLDBEnviromentSingleton instance = null;
-	Server hsqlServer = null;
-	private boolean leaveOpen;
+	private static final Logger LOGGER = Logger.getLogger(HSQLDBEnviromentSingleton.class);
 
-	private HSQLDBEnviromentSingleton() {
+	private static final HSQLDBEnviromentSingleton INSTANCE = new HSQLDBEnviromentSingleton();
+
+	public static synchronized HSQLDBEnviromentSingleton getINSTANCE() throws Exception {
+		return INSTANCE;
 	}
 
-	public synchronized static HSQLDBEnviromentSingleton getInstance() throws Exception {
-		if (instance == null) {
-			instance = new HSQLDBEnviromentSingleton();
-		}
+	private boolean leaveOpen;
 
-		return instance;
+	Server hsqlServer = null;
+
+	private HSQLDBEnviromentSingleton() {
 	}
 
 	public synchronized void startDB() throws ClassNotFoundException, SQLException {
@@ -90,16 +91,11 @@ public class HSQLDBEnviromentSingleton {
 	private void clean() throws Exception {
 		File foodmartLog = new File(new File("").getAbsoluteFile(), "\\test\\db\\foodmart.log");
 
-		FileOutputStream fos;
-		try {
-			fos = new FileOutputStream(foodmartLog);
+		try (FileOutputStream fos = new FileOutputStream(foodmartLog)) {
 			fos.write(new byte[0]);
 			fos.flush();
-			fos.close();
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-
+			LOGGER.warn("Non fatal error during clean up", e);
 		}
 
 		foodmartLog.delete();

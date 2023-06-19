@@ -29,30 +29,34 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
  */
 public class HierarchiesSingleton {
 
-	public static Logger logger = Logger.getLogger(HierarchiesSingleton.class);
+	private static final Logger LOGGER = Logger.getLogger(HierarchiesSingleton.class);
+
 	private static Hierarchies instance;
 
-	public synchronized static Hierarchies getInstance() {
-		logger.debug("IN");
+	public static synchronized Hierarchies getInstance() {
+		LOGGER.debug("IN");
 
-		try {// temporarily creates always the instance (for environment test)
-				// if (instance == null)
+		try {
 			instance = new Hierarchies();
 		} catch (Exception e) {
-			logger.error("Impossible to create the Hierarchies object", e);
+			LOGGER.error("Impossible to create the Hierarchies object", e);
 			throw new SpagoBIRuntimeException(e.getMessage(), e);
 		}
-		logger.debug("OUT");
+		LOGGER.debug("OUT");
 
 		return instance;
 	}
 
-	public synchronized static void refreshHierarchies() {
-		logger.debug("IN");
+	public static synchronized void refreshHierarchies() {
+		LOGGER.debug("IN");
 
-		logger.debug("refresh hierarchies");
+		LOGGER.debug("refresh hierarchies");
 		instance = new Hierarchies();
-		logger.debug("OUT");
+		LOGGER.debug("OUT");
+
+	}
+
+	private HierarchiesSingleton() {
 
 	}
 

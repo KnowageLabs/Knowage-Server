@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -14,6 +13,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.SortedSet;
 import java.util.TimeZone;
 import java.util.TreeMap;
 import java.util.TreeSet;
@@ -34,7 +34,6 @@ import it.eng.spago.base.SourceBeanAttribute;
 import it.eng.spago.error.EMFErrorSeverity;
 import it.eng.spago.error.EMFInternalError;
 import it.eng.spago.error.EMFUserError;
-import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail;
 import it.eng.spagobi.behaviouralmodel.lov.bo.LovDetailFactory;
 import it.eng.spagobi.behaviouralmodel.lov.bo.LovResultHandler;
@@ -79,7 +78,7 @@ public class ProcessKpiJob extends AbstractSuspendableJob {
 	// =============================
 
 	private static class ParsedMeasure {
-		public TreeSet<String> attributes;
+		public SortedSet<String> attributes;
 		public int ruleId;
 		public int ruleVersion;
 	}
@@ -93,7 +92,7 @@ public class ProcessKpiJob extends AbstractSuspendableJob {
 		public List<ParsedMeasure> measures;
 
 		private static List<String> jsonArrayToStringList(JSONArray array) throws JSONException {
-			List<String> result = new ArrayList<String>();
+			List<String> result = new ArrayList<>();
 			for (int i = 0; i < array.length(); i++) {
 				result.add(array.getString(i));
 			}
@@ -107,7 +106,7 @@ public class ProcessKpiJob extends AbstractSuspendableJob {
 			formula = definition.getString("formula");
 			measuresNames = jsonArrayToStringList(definition.getJSONArray("measures"));
 			measuresFunctions = jsonArrayToStringList(definition.getJSONArray("functions"));
-			measures = new ArrayList<ParsedMeasure>();
+			measures = new ArrayList<>();
 			JSONObject cardinality = new JSONObject(kpi.getCardinality());
 			JSONArray measureList = cardinality.getJSONArray("measureList");
 			for (int m = 0; m < measureList.length(); m++) {
@@ -115,7 +114,7 @@ public class ProcessKpiJob extends AbstractSuspendableJob {
 				ParsedMeasure parsedMeasure = new ParsedMeasure();
 				parsedMeasure.ruleId = unparsedMeasure.getInt("ruleId");
 				parsedMeasure.ruleVersion = unparsedMeasure.getInt("ruleVersion");
-				parsedMeasure.attributes = new TreeSet<String>(String.CASE_INSENSITIVE_ORDER);
+				parsedMeasure.attributes = new TreeSet<>(String.CASE_INSENSITIVE_ORDER);
 				Iterator<String> ait = unparsedMeasure.getJSONObject("attributes").keys();
 				while (ait.hasNext()) {
 					String attributeName = ait.next();
@@ -133,7 +132,7 @@ public class ProcessKpiJob extends AbstractSuspendableJob {
 		protected String innerSql;
 		protected String aggregateMeasureName;
 		protected String aggregateMeasureFunction;
-		protected Set<String> attributesNames = new TreeSet<String>(String.CASE_INSENSITIVE_ORDER);
+		protected Set<String> attributesNames = new TreeSet<>(String.CASE_INSENSITIVE_ORDER);
 		protected List<String> orderByAttributesNames;
 		protected Map<String, String> quotedParameters = new HashMap<>();
 		protected IMetaData preloadedMetaData = null;
@@ -172,7 +171,7 @@ public class ProcessKpiJob extends AbstractSuspendableJob {
 			// Checking for missing placeholders (if any)
 			Pattern pattern = Pattern.compile("@([^\\p{Punct}\\p{Space}]+)");
 			Matcher matcher = pattern.matcher(innerSql);
-			StringBuffer sb = new StringBuffer();
+			StringBuilder sb = new StringBuilder();
 			while (matcher.find()) {
 				String placeholder = matcher.group(0);
 				sb.append(", ").append(placeholder);
@@ -189,8 +188,8 @@ public class ProcessKpiJob extends AbstractSuspendableJob {
 		}
 
 		public String toString(boolean replacePlaceholders) {
-			StringBuffer sb = new StringBuffer();
-			StringBuffer groupByColumns = new StringBuffer();
+			StringBuilder sb = new StringBuilder();
+			StringBuilder groupByColumns = new StringBuilder();
 			sb.append("SELECT ").append(aggregateMeasureFunction).append("(").append(aggregateMeasureName).append(") AS ").append(aggregateMeasureName);
 			for (String attributeName : attributesNames) {
 				sb.append(", ").append(attributeName);
@@ -205,7 +204,7 @@ public class ProcessKpiJob extends AbstractSuspendableJob {
 			do {
 				derivedTableAlias = "dtable" + (++i);
 			} while (sqlPart1.contains(derivedTableAlias));
-			StringBuffer orderByColumns = new StringBuffer();
+			StringBuilder orderByColumns = new StringBuilder();
 			for (String attributeName : orderByAttributesNames) {
 				if (orderByColumns.length() > 0)
 					orderByColumns.append(", ");
@@ -238,7 +237,7 @@ public class ProcessKpiJob extends AbstractSuspendableJob {
 		public void preload() throws EMFUserError, EMFInternalError, JSONException {
 			if (preloadedData != null)
 				return;
-			List<LinkedHashMap<String, Comparable>> preloadedData = new LinkedList<LinkedHashMap<String, Comparable>>();
+			List<LinkedHashMap<String, Comparable>> preloadedData = new LinkedList<>();
 			QueryResult qr = execute();
 			while (qr.iterator.hasNext()) {
 				preloadedData.add(qr.iterator.next());
@@ -259,7 +258,6 @@ public class ProcessKpiJob extends AbstractSuspendableJob {
 				throws JSONException, EMFUserError, EMFInternalError {
 			// Read measure value
 			int maxItem = 0;
-			IEngUserProfile profile = null;
 
 			IDataSet dataSet = null;
 			String queryScript = "";
@@ -313,7 +311,7 @@ public class ProcessKpiJob extends AbstractSuspendableJob {
 		@Override
 		public LinkedHashMap<String, Comparable> next() {
 			IRecord row = iterator.next();
-			LinkedHashMap<String, Comparable> rowValues = new LinkedHashMap<String, Comparable>();
+			LinkedHashMap<String, Comparable> rowValues = new LinkedHashMap<>();
 			for (int i = 0; i < metaData.getFieldCount(); i++) {
 				IField field = row.getFieldAt(i);
 				rowValues.put(metaData.getFieldMeta(i).getName(), (Comparable) field.getValue());
@@ -438,7 +436,7 @@ public class ProcessKpiJob extends AbstractSuspendableJob {
 		KpiValueExecLog result = new KpiValueExecLog();
 		result.setSchedulerId(kpiSchedulerId);
 		result.setTimeRun(timeRun);
-		Map<String, Integer> temporalTypesPriorities = new TreeMap<String, Integer>(String.CASE_INSENSITIVE_ORDER);
+		Map<String, Integer> temporalTypesPriorities = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
 		temporalTypesPriorities.put("YEAR", 1);
 		temporalTypesPriorities.put("QUARTER", 2);
 		temporalTypesPriorities.put("MONTH", 3);
@@ -451,11 +449,11 @@ public class ProcessKpiJob extends AbstractSuspendableJob {
 
 			// Data needed for each kpi computation
 			boolean replaceMode = !kpiScheduler.getDelta();
-			List<KpiComputationUnit> kpiComputationUnits = new ArrayList<KpiComputationUnit>();
+			List<KpiComputationUnit> kpiComputationUnits = new ArrayList<>();
 
 			// For each kpi, prepare the queries and find the main measure (i.e.
 			// the one with highest cardinality)
-			Map<AggregateMeasureQuery, AggregateMeasureQuery> queriesCache = new HashMap<AggregateMeasureQuery, AggregateMeasureQuery>();
+			Map<AggregateMeasureQuery, AggregateMeasureQuery> queriesCache = new HashMap<>();
 			for (Kpi kpi : kpiScheduler.getKpis()) {
 				// Prepare placeholders
 				Map<String, String> placeholdersMap = new HashMap<>();
@@ -477,7 +475,7 @@ public class ProcessKpiJob extends AbstractSuspendableJob {
 						String lovResult = lovDetail.getLovResult(schedulerUserProfile, null, null, null);
 						LovResultHandler lovResultHandler = new LovResultHandler(lovResult);
 						List<SourceBean> rows = lovResultHandler.getRows();
-						if (rows != null && rows.size() != 0) {
+						if (rows != null && !rows.isEmpty()) {
 							SourceBeanAttribute firstAttribute = (SourceBeanAttribute) rows.get(0).getContainedAttributes().get(0);
 							String firstValue = (String) firstAttribute.getValue();
 							if (firstValue == null)
@@ -490,15 +488,15 @@ public class ProcessKpiJob extends AbstractSuspendableJob {
 						}
 					} else if ("TEMPORAL_FUNCTIONS".equals(type)) {
 						if ("EXECUTION_DAY".equals(schedulerFilter.getValue())) {
-							placeholdersMap.put(schedulerFilter.getPlaceholderName(), "" + GregorianCalendar.getInstance().get(Calendar.DAY_OF_MONTH));
+							placeholdersMap.put(schedulerFilter.getPlaceholderName(), "" + Calendar.getInstance().get(Calendar.DAY_OF_MONTH));
 						} else if ("EXECUTION_MONTH".equals(schedulerFilter.getValue())) {
-							placeholdersMap.put(schedulerFilter.getPlaceholderName(), "" + GregorianCalendar.getInstance().get(Calendar.MONTH));
+							placeholdersMap.put(schedulerFilter.getPlaceholderName(), "" + Calendar.getInstance().get(Calendar.MONTH));
 						} else if ("EXECUTION_WEEK".equals(schedulerFilter.getValue())) {
-							placeholdersMap.put(schedulerFilter.getPlaceholderName(), "" + GregorianCalendar.getInstance().get(Calendar.WEEK_OF_YEAR));
+							placeholdersMap.put(schedulerFilter.getPlaceholderName(), "" + Calendar.getInstance().get(Calendar.WEEK_OF_YEAR));
 						} else if ("EXECUTION_QUARTER".equals(schedulerFilter.getValue())) {
-							placeholdersMap.put(schedulerFilter.getPlaceholderName(), "" + ((GregorianCalendar.getInstance().get(Calendar.MONTH) - 1) / 4 + 1));
+							placeholdersMap.put(schedulerFilter.getPlaceholderName(), "" + ((Calendar.getInstance().get(Calendar.MONTH) - 1) / 4 + 1));
 						} else if ("EXECUTION_YEAR".equals(schedulerFilter.getValue())) {
-							placeholdersMap.put(schedulerFilter.getPlaceholderName(), "" + GregorianCalendar.getInstance().get(Calendar.YEAR));
+							placeholdersMap.put(schedulerFilter.getPlaceholderName(), "" + Calendar.getInstance().get(Calendar.YEAR));
 						} else {
 							throw new KpiComputationException("Unsupported temporal function: " + schedulerFilter.getValue() + " (placeholder name: "
 									+ schedulerFilter.getPlaceholderName() + ")");
@@ -518,14 +516,14 @@ public class ProcessKpiJob extends AbstractSuspendableJob {
 				// For the "order by" section of the query, sort the attributes
 				// by their number of occurrences among the measures
 				// (from the most used attributes to the least used ones)
-				Map<String, Integer> attributesOccurrences = new HashMap<String, Integer>();
+				Map<String, Integer> attributesOccurrences = new HashMap<>();
 				for (ParsedMeasure measure : parsedKpi.measures) {
 					for (String attribute : measure.attributes) {
 						Integer count = attributesOccurrences.get(attribute);
 						attributesOccurrences.put(attribute, count == null ? 1 : count + 1);
 					}
 				}
-				Map<Integer, Set<String>> attributesByOccurrency = new TreeMap<Integer, Set<String>>(Collections.reverseOrder());
+				Map<Integer, Set<String>> attributesByOccurrency = new TreeMap<>(Collections.reverseOrder());
 				for (String attribute : attributesOccurrences.keySet()) {
 					Integer count = attributesOccurrences.get(attribute);
 					Set<String> attributes = attributesByOccurrency.get(count);
@@ -535,13 +533,13 @@ public class ProcessKpiJob extends AbstractSuspendableJob {
 					}
 					attributes.add(attribute);
 				}
-				List<String> orderByAttributes = new ArrayList<String>();
+				List<String> orderByAttributes = new ArrayList<>();
 				for (Set<String> attributes : attributesByOccurrency.values()) {
 					orderByAttributes.addAll(attributes);
 				}
 
 				// Iterate over non-temporal attibutes combinations
-				List<String> ntAttributesAll = new ArrayList<String>();
+				List<String> ntAttributesAll = new ArrayList<>();
 				long ntComb = 0;
 				do {
 					Set<String> ntAttributesToIgnore = new TreeSet<>(String.CASE_INSENSITIVE_ORDER);
@@ -556,9 +554,9 @@ public class ProcessKpiJob extends AbstractSuspendableJob {
 						// Create a query for each measure and find the main measure
 						// (the highest cardinality, i.e. the one with most
 						// attributes in the group-by section)
-						List<AggregateMeasureQuery> queries = new ArrayList<AggregateMeasureQuery>();
-						List<Map<String, String>> queriesAttributesTemporalTypes = new ArrayList<Map<String, String>>();
-						List<Set<String>> queriesIgnoredAttributes = new ArrayList<Set<String>>();
+						List<AggregateMeasureQuery> queries = new ArrayList<>();
+						List<Map<String, String>> queriesAttributesTemporalTypes = new ArrayList<>();
+						List<Set<String>> queriesIgnoredAttributes = new ArrayList<>();
 						int mainMeasure = 0;
 						int realMinTemporalTypePriority = 0;
 						for (int m = 0; m < parsedKpi.measures.size(); m++) {
@@ -576,7 +574,7 @@ public class ProcessKpiJob extends AbstractSuspendableJob {
 							ignoredAttributes.addAll(ntAttributesToIgnore);
 
 							// Find temporal attributes (if any)
-							Map<String, String> attributesTemporalTypes = new TreeMap<String, String>(String.CASE_INSENSITIVE_ORDER);
+							Map<String, String> attributesTemporalTypes = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
 							for (RuleOutput ruleOutput : rule.getRuleOutputs()) {
 								if ("TEMPORAL_ATTRIBUTE".equals(ruleOutput.getType().getValueCd())) {
 									String attributeName = ruleOutput.getAlias();
@@ -610,7 +608,7 @@ public class ProcessKpiJob extends AbstractSuspendableJob {
 							String ruleSql = rule.getDefinition();
 							String aggregateMeasureName = parsedKpi.measuresNames.get(m);
 							String aggregateMeasureFunction = parsedKpi.measuresFunctions.get(m);
-							List<String> queryOrderByAttributes = new ArrayList<String>();
+							List<String> queryOrderByAttributes = new ArrayList<>();
 							for (String attribute : orderByAttributes) {
 								if (groupByAttributes.contains(attribute))
 									queryOrderByAttributes.add(attribute);
@@ -689,19 +687,19 @@ public class ProcessKpiJob extends AbstractSuspendableJob {
 
 			// Read main measure data, preparing a formula for each future insert/update
 			QueryResult mqr = queries.get(mainMeasure).execute();
-			List<String> rowsFormulae = new ArrayList<String>();
-			List<String> attributesNames = new ArrayList<String>();
-			List<List<Comparable>> rowsAttributesValues = new ArrayList<List<Comparable>>();
+			List<String> rowsFormulae = new ArrayList<>();
+			List<String> attributesNames = new ArrayList<>();
+			List<List<Comparable>> rowsAttributesValues = new ArrayList<>();
 			while (mqr.iterator.hasNext()) {
 				Number measureValue = null;
-				List<Comparable> rowAttributesValues = new ArrayList<Comparable>();
+				List<Comparable> rowAttributesValues = new ArrayList<>();
 				LinkedHashMap<String, Comparable> row = mqr.iterator.next();
 				for (String columnName : row.keySet()) {
 					if (columnName.equalsIgnoreCase(queries.get(mainMeasure).aggregateMeasureName)) {
 						measureValue = (Number) row.get(columnName);
 					} else {
 						rowAttributesValues.add(row.get(columnName));
-						if (rowsAttributesValues.size() == 0)
+						if (rowsAttributesValues.isEmpty())
 							attributesNames.add(columnName);
 					}
 					// sb.append("[" + field.getValue() + "]");
@@ -751,16 +749,15 @@ public class ProcessKpiJob extends AbstractSuspendableJob {
 
 			DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mmZ");
 			df.setTimeZone(TimeZone.getTimeZone("UTC"));
-			String isoNow = df.format(timeRun);
 			// long tsNow = date.getTime();
 
 			int lastId = reserveIds(session, "SBI_KPI_VALUE", rowsFormulae.size());
 			for (int r = 0; r < rowsFormulae.size(); r++) {
 				String value = rowsFormulae.get(r);
-				StringBuffer logicalKey = new StringBuffer();
+				StringBuilder logicalKey = new StringBuilder();
 				List<Comparable> rowAttributesValues = rowsAttributesValues.get(r);
-				Map<String, Comparable> temporalValues = new HashMap<String, Comparable>();
-				Map<String, Comparable> logicalKeyPairs = new TreeMap<String, Comparable>();
+				Map<String, Comparable> temporalValues = new HashMap<>();
+				Map<String, Comparable> logicalKeyPairs = new TreeMap<>();
 				// Ignored attributes
 				for (String attributeName : queriesIgnoredAttributes.get(mainMeasure)) {
 					String temporalType = queriesAttributesTemporalTypes.get(mainMeasure).get(attributeName);
@@ -809,8 +806,6 @@ public class ProcessKpiJob extends AbstractSuspendableJob {
 						+ logicalKey.toString().replaceAll("'", "''") + "'" + " AND the_day = '" + theDay + "' AND the_week = '" + theWeek + "'"
 						+ " AND the_month = '" + theMonth + "' AND the_quarter = '" + theQuarter + "' AND the_year = '" + theYear + "'";
 				String deleteSql = "DELETE FROM SBI_KPI_VALUE WHERE :whereCondition";
-				String updateSql = "UPDATE SBI_KPI_VALUE SET computed_value = coalesce(" + (nullValue ? "0" : value) + ", 0) , time_run = ?, state='"
-						+ (nullValue ? '1' : '0') + "' WHERE " + whereCondition; // Currently unused
 
 				session.beginTransaction();
 				if (replaceMode) {
@@ -824,7 +819,6 @@ public class ProcessKpiJob extends AbstractSuspendableJob {
 						.setParameter(6, theDay).setParameter(7, theWeek).setParameter(8, theMonth).setParameter(9, theQuarter).setParameter(10, theYear)
 						.setParameter(11, (nullValue ? '1' : '0')).executeUpdate();
 				session.getTransaction().commit();
-				// break; // TODO remove after debug
 			}
 
 			logger.info(DateFormat.getInstance().format(new Date()) + "...KPI Job PROCESSED");
@@ -836,7 +830,7 @@ public class ProcessKpiJob extends AbstractSuspendableJob {
 		return result;
 	}
 
-	synchronized private static int reserveIds(Session session, String tableName, int newRowsCount) {
+	private static synchronized int reserveIds(Session session, String tableName, int newRowsCount) {
 		String escapedSequenceName = tableName.toUpperCase().replaceAll("'", "''");
 		session.beginTransaction();
 		Number lastId = (Number) session.createSQLQuery("SELECT NEXT_VAL FROM hibernate_sequences WHERE SEQUENCE_NAME = :escapedSequenceName")

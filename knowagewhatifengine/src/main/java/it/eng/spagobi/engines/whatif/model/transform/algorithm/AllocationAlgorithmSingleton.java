@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,47 +11,46 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package it.eng.spagobi.engines.whatif.model.transform.algorithm;
-
-import it.eng.spagobi.commons.SingletonConfig;
-import it.eng.spagobi.engines.whatif.WhatIfEngineConfig;
 
 import java.util.Iterator;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
 
+import it.eng.spagobi.engines.whatif.WhatIfEngineConfig;
+
 public class AllocationAlgorithmSingleton {
 
-	private static AllocationAlgorithmSingleton instance = null;
-	private static final Logger logger = Logger.getLogger(SingletonConfig.class);
+	private static final Logger LOGGER = Logger.getLogger(AllocationAlgorithmSingleton.class);
+	private static AllocationAlgorithmSingleton INSTANCE = null;
 
 	Map<String, AllocationAlgorithmDefinition> allocationAlgorithms;
 
-	public synchronized static AllocationAlgorithmSingleton getInstance() {
+	public static synchronized AllocationAlgorithmSingleton getInstance() {
 		try {
-			if (instance == null) {
-				instance = new AllocationAlgorithmSingleton();
+			if (INSTANCE == null) {
+				INSTANCE = new AllocationAlgorithmSingleton();
 			}
 		} catch (Exception e) {
-			logger.debug("Impossible to load configuration", e);
+			LOGGER.debug("Impossible to load configuration", e);
 		}
-		return instance;
+		return INSTANCE;
 	}
 
 	private AllocationAlgorithmSingleton() {
-		logger.debug("Loading the algorithms");
+		LOGGER.debug("Loading the algorithms");
 		allocationAlgorithms = WhatIfEngineConfig.getInstance().getAllocationAlgorithms();
-		logger.debug("OUT");
+		LOGGER.debug("OUT");
 	}
 
 	/**
 	 * Gets the list of allocation algorithms
-	 * 
+	 *
 	 * @return
 	 */
 	public Map<String, AllocationAlgorithmDefinition> getAllocationAlgorithms() {
@@ -60,7 +59,7 @@ public class AllocationAlgorithmSingleton {
 
 	/**
 	 * Loads the default propagation algorithm
-	 * 
+	 *
 	 * @return
 	 * @throws NoAllocationAlgorithmFoundException
 	 */

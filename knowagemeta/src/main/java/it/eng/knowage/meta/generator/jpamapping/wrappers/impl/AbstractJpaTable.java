@@ -45,14 +45,14 @@ import it.eng.knowage.meta.model.util.JDBCTypeMapper;
  */
 public abstract class AbstractJpaTable implements IJpaTable {
 
+	private static final Logger LOGGER = LoggerFactory.getLogger(AbstractJpaTable.class);
+
 	PhysicalTable physicalTable;
 	protected String quoteString;
 
 	// cache
 	List<IJpaColumn> jpaColumns;
 	HashMap<String, String> columnTypesMap;
-
-	private static Logger logger = LoggerFactory.getLogger(AbstractJpaTable.class);
 
 	public AbstractJpaTable(PhysicalTable physicalTable) {
 		Assert.assertNotNull("Parameter [physicalTable] cannot be null", physicalTable);
@@ -70,7 +70,7 @@ public abstract class AbstractJpaTable implements IJpaTable {
 		if (columnTypesMap != null)
 			return;
 
-		columnTypesMap = new HashMap<String, String>();
+		columnTypesMap = new HashMap<>();
 
 		jpaColumns = getColumns();
 		for (IJpaColumn column : jpaColumns) {
@@ -83,29 +83,6 @@ public abstract class AbstractJpaTable implements IJpaTable {
 		}
 	}
 
-	// protected void initColumnTypesMap() {
-	//
-	// ModelProperty columnDataTypeProperty;
-	// String columnDataType;
-	// String columnJavaDataType;
-	// List<BusinessColumn> businessColumns;
-	//
-	// if(columnTypesMap != null) return;
-	//
-	// columnTypesMap = new HashMap<String, String>();
-	//
-	// businessColumns = getBusinessColumns();
-	// for (BusinessColumn column :businessColumns) {
-	// columnDataTypeProperty = column.getProperties().get(JpaProperties.COLUMN_DATATYPE);
-	// columnDataType = columnDataTypeProperty.getValue();
-	// columnJavaDataType = JDBCTypeMapper.getJavaQualifiedName(columnDataType);
-	// if ( !columnJavaDataType.startsWith("java.lang") && columnJavaDataType.indexOf('.') > 0) {
-	// String simpleJavaType = columnJavaDataType.substring(columnJavaDataType.lastIndexOf('.') + 1);
-	// columnTypesMap.put(columnJavaDataType, simpleJavaType);
-	// }
-	// }
-	// }
-
 	/*
 	 * (non-Javadoc)
 	 *
@@ -116,15 +93,15 @@ public abstract class AbstractJpaTable implements IJpaTable {
 		List<IJpaRelationship> jpaRelationships;
 		JpaRelationship jpaRelationship;
 
-		logger.trace("IN");
+		LOGGER.trace("IN");
 
-		jpaRelationships = new ArrayList<IJpaRelationship>();
+		jpaRelationships = new ArrayList<>();
 
 		for (BusinessRelationship relationship : getBusinessRelationships()) {
 			jpaRelationship = new JpaRelationship(this, relationship);
 			jpaRelationships.add(jpaRelationship);
 		}
-		logger.trace("OUT");
+		LOGGER.trace("OUT");
 		return jpaRelationships;
 	}
 
@@ -146,7 +123,7 @@ public abstract class AbstractJpaTable implements IJpaTable {
 
 	public abstract List<BusinessRelationship> getBusinessRelationships();
 
-	abstract protected BusinessModel getModel();
+	protected abstract BusinessModel getModel();
 
 	/*
 	 * (non-Javadoc)
@@ -158,7 +135,7 @@ public abstract class AbstractJpaTable implements IJpaTable {
 		String packageName;
 		ModelProperty packageProperty;
 
-		logger.trace("IN");
+		LOGGER.trace("IN");
 
 		packageProperty = getModel().getProperties().get(JpaProperties.MODEL_PACKAGE);
 
@@ -169,7 +146,7 @@ public abstract class AbstractJpaTable implements IJpaTable {
 			packageName = packageProperty.getPropertyType().getDefaultValue();
 		}
 
-		logger.trace("OUT");
+		LOGGER.trace("OUT");
 
 		return packageName;
 	}
@@ -215,9 +192,9 @@ public abstract class AbstractJpaTable implements IJpaTable {
 	 */
 	@Override
 	public List<IJpaColumn> getSimpleColumns(boolean genOnly, boolean includePk, boolean includeInherited) {
-		logger.debug("Executing getSimpleColumns");
+		LOGGER.debug("Executing getSimpleColumns");
 
-		List<IJpaColumn> result = new ArrayList<IJpaColumn>();
+		List<IJpaColumn> result = new ArrayList<>();
 		List<IJpaColumn> columns = getColumns();
 
 		for (int i = 0, n = columns.size(); i < n; ++i) {
@@ -234,14 +211,14 @@ public abstract class AbstractJpaTable implements IJpaTable {
 					// continue;
 					// } else {
 					result.add(0, column);
-					logger.debug("Added column(PK) " + column.getName() + " in getSimpleColumns for table " + this.getName());
+					LOGGER.debug("Added column(PK) " + column.getName() + " in getSimpleColumns for table " + this.getName());
 					continue;
 					// }
 				}
 			} else if (column.isColumnInRelationship()) {
 				continue;
 			}
-			logger.debug("Added column " + column.getName() + " in getSimpleColumns for table " + this.getName());
+			LOGGER.debug("Added column " + column.getName() + " in getSimpleColumns for table " + this.getName());
 			result.add(column);
 		}
 
@@ -256,7 +233,7 @@ public abstract class AbstractJpaTable implements IJpaTable {
 			} else if (column.isColumnInRelationshipWithView()) {
 				if (!result.contains(column))
 					result.add(column);
-				logger.debug("Added column " + column.getName() + " in relation with BV, in getSimpleColumns");
+				LOGGER.debug("Added column " + column.getName() + " in relation with BV, in getSimpleColumns");
 			}
 		}
 
@@ -284,7 +261,7 @@ public abstract class AbstractJpaTable implements IJpaTable {
 		Collection<String> packages;
 		StringBuilder importStatement;
 
-		logger.trace("IN");
+		LOGGER.trace("IN");
 
 		packages = columnTypesMap.keySet();
 
@@ -303,7 +280,7 @@ public abstract class AbstractJpaTable implements IJpaTable {
 
 		// logger.debug("Business table [{}] imported statements block is equal to [{}]", businessTable.getName(), importStatement.toString());
 
-		logger.trace("OUT");
+		LOGGER.trace("OUT");
 
 		return importStatement.toString();
 	}
@@ -340,7 +317,7 @@ public abstract class AbstractJpaTable implements IJpaTable {
 	 */
 	@Override
 	public List<IJpaColumn> getPrimaryKeyColumns() {
-		List<IJpaColumn> result = new ArrayList<IJpaColumn>();
+		List<IJpaColumn> result = new ArrayList<>();
 
 		if (hasFakePrimaryKey()) {
 			result = getColumns();
@@ -418,7 +395,7 @@ public abstract class AbstractJpaTable implements IJpaTable {
 	public String getCatalog() {
 		String useCatalog = getUseCatalog();
 		if ((useCatalog != null) && (useCatalog.equalsIgnoreCase("true"))) {
-			logger.debug("Catalog is: " + getModel().getPhysicalModel().getCatalog());
+			LOGGER.debug("Catalog is: " + getModel().getPhysicalModel().getCatalog());
 			String catalog = getModel().getPhysicalModel().getCatalog();
 			if (catalog != null) {
 				if (!quoteString.equals(" ")) {
@@ -436,7 +413,7 @@ public abstract class AbstractJpaTable implements IJpaTable {
 	public String getSchema() {
 		String useSchema = getUseSchema();
 		if ((useSchema != null) && (useSchema.equalsIgnoreCase("true"))) {
-			logger.debug("Schema is: " + getModel().getPhysicalModel().getSchema());
+			LOGGER.debug("Schema is: " + getModel().getPhysicalModel().getSchema());
 			String schema = getModel().getPhysicalModel().getSchema();
 			if (schema != null && !schema.equals("")) {
 				if (!quoteString.equals(" ")) {

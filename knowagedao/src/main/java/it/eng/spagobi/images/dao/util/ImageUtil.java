@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,7 +11,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -30,7 +30,7 @@ import org.imgscalr.Scalr.Mode;
 
 public class ImageUtil {
 
-	synchronized private static String getFormatName(String filename) throws IOException {
+	private static synchronized String getFormatName(String filename) throws IOException {
 		String ext = filename.substring(filename.lastIndexOf(".") + 1);
 		String[] arr = ImageIO.getWriterFormatNames();
 		for (int i = 0; i < arr.length; i++) {
@@ -40,7 +40,7 @@ public class ImageUtil {
 		throw new IOException("file [" + filename + "] has a format not supported [" + ext + "]");
 	}
 
-	synchronized public static void resize(String filename, InputStream orig, OutputStream dest, int width, int height) throws IOException {
+	public static synchronized void resize(String filename, InputStream orig, OutputStream dest, int width, int height) throws IOException {
 		if (width > 0 || height > 0) {
 
 			String formatName = getFormatName(filename);
@@ -62,5 +62,9 @@ public class ImageUtil {
 				throw new IOException("ImageIO.write error");
 			}
 		}
+	}
+
+	private ImageUtil() {
+
 	}
 }

@@ -4,11 +4,15 @@ import org.json.JSONObject;
 
 public class CustomFunctionsSingleton {
 
-	private static CustomFunctionsSingleton instance;
+	private static final CustomFunctionsSingleton INSTANCE = new CustomFunctionsSingleton();
+
+	public static synchronized CustomFunctionsSingleton getInstance() {
+		return INSTANCE;
+	}
 
 	JSONObject customizedFunctionsJSON = null;
 
-	public CustomFunctionsSingleton() {
+	private CustomFunctionsSingleton() {
 	}
 
 	public JSONObject getCustomizedFunctionsJSON() {
@@ -17,13 +21,6 @@ public class CustomFunctionsSingleton {
 
 	public void setCustomizedFunctionsJSON(JSONObject customizedFunctionsJSON) {
 		this.customizedFunctionsJSON = customizedFunctionsJSON;
-	}
-
-	public synchronized static CustomFunctionsSingleton getInstance() {
-		if (instance == null) {
-			instance = new CustomFunctionsSingleton();
-		}
-		return instance;
 	}
 
 }
