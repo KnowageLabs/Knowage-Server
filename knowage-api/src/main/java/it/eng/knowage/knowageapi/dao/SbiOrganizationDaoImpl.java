@@ -40,9 +40,9 @@ public class SbiOrganizationDaoImpl implements SbiOrganizationDao {
 	public List<String> getAllOrganizations() {
 
 		Query query = em.createNativeQuery("SELECT NAME FROM SBI_ORGANIZATIONS");
-		List result = query.getResultList();
+		List<String> result = query.getResultList();
 
-		return new ArrayList<String>(result);
+		return new ArrayList<>(result);
 	}
 
 }

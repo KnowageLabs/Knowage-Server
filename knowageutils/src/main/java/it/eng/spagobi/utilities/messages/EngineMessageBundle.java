@@ -19,16 +19,17 @@ package it.eng.spagobi.utilities.messages;
 
 import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 import java.util.ResourceBundle;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class EngineMessageBundle {
 
+	private static final Logger LOGGER = LogManager.getLogger(EngineMessageBundle.class);
 	private static final String DEFAULT_BUNDLE = "messages";
-	private static HashMap bundles = null;
-
-	static {
-		bundles = new HashMap();
-	}
+	private static final Map<String, ResourceBundle> bundles = new HashMap<>();
 
 	/**
 	 * Returns an internazionalized message.
@@ -45,10 +46,7 @@ public class EngineMessageBundle {
 			return null;
 		if (userLocale == null)
 			return code;
-		// logger.debug("Input parameters: code = [" + code + "] ; bundle = [" + bundle + "] ; " +
-		// "userlocale = [" + userLocale + "]");
 		if (bundle == null || bundle.trim().equals("")) {
-			// logger.debug("Bundle not specified; considering \"" + DEFAULT_BUNDLE + "\" as default value");
 			bundle = DEFAULT_BUNDLE;
 		}
 
@@ -62,7 +60,7 @@ public class EngineMessageBundle {
 		// end modifications by Alessandro Portosa: managing properties files according to Zanata needs
 		ResourceBundle messages = null;
 		if (bundles.containsKey(bundleKey)) {
-			messages = (ResourceBundle) bundles.get(bundleKey);
+			messages = bundles.get(bundleKey);
 		} else {
 			// First access to this bundle
 			try {
@@ -74,8 +72,7 @@ public class EngineMessageBundle {
 				}
 				// end modifications by Alessandro Portosa: managing properties files according to Zanata needs
 			} catch (java.util.MissingResourceException ex) {
-				// logger.error("ResourceBundle with bundle = [" + bundle + "] and locale = " +
-				// "[" + userLocale + "] missing.");
+				LOGGER.atWarn().withThrowable(ex).log("Non fatal error getting message with code {}, bundle {} and locale {}", code, bundleKey, userLocale);
 			}
 
 			// Put bundle in cache
@@ -85,7 +82,7 @@ public class EngineMessageBundle {
 		if (messages == null) {
 			// Bundle non existent
 			return code;
-		} // if (messages == null)
+		}
 
 		String message = null;
 		try {
@@ -93,7 +90,7 @@ public class EngineMessageBundle {
 		} // try
 		catch (Exception ex) {
 			// No trace: may be this is not an error
-		} // catch (Exception ex)
+		}
 		if (message == null)
 			return code;
 		else
@@ -158,19 +155,23 @@ public class EngineMessageBundle {
 			String toParse = messageFormat;
 			String replacing = "%" + iParameter;
 			String replaced = value.toString();
-			StringBuffer parsed = new StringBuffer();
+			StringBuilder parsed = new StringBuilder();
 			int parameterIndex = toParse.indexOf(replacing);
 			while (parameterIndex != -1) {
 				parsed.append(toParse.substring(0, parameterIndex));
 				parsed.append(replaced);
-				toParse = toParse.substring(parameterIndex + replacing.length(), toParse.length());
+				toParse = toParse.substring(parameterIndex + replacing.length());
 				parameterIndex = toParse.indexOf(replacing);
-			} // while (parameterIndex != -1)
+			}
 			parsed.append(toParse);
 			return parsed.toString();
 		} else {
 			return messageFormat;
 		}
+	}
+
+	private EngineMessageBundle() {
+
 	}
 
 }
