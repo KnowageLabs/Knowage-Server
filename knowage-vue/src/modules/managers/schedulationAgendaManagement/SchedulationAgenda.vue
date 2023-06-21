@@ -161,7 +161,7 @@
             async loadPackages() {
                 this.loading = true
                 await this.$http
-                    .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '/scheduleree/listAllJobs')
+                    .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + 'scheduleree/listAllJobs')
                     .then((response: AxiosResponse<any>) => {
                         let rawList = response.data.root
 
