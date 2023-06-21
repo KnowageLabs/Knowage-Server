@@ -8,6 +8,10 @@
             </template>
 
             <div v-if="document">
+                <Message v-show="uniqueMailEnabledOnOtherDocument" class="p-m-4 p-p-1" severity="info" :closable="false">
+                    {{ $t('managers.scheduler.uniqueMailSelectedInfo') }}
+                </Message>
+
                 <div class="p-m-4">
                     <Checkbox v-model="document.useFixedRecipients" :binary="true" @change="removeDocumentExpressionAndDatasets" />
                     <span v-tooltip.top="$t('managers.scheduler.fixedRecipientsListHelp')" class="p-ml-2">{{ $t('managers.scheduler.fixedRecipientsList') }}</span>
@@ -15,12 +19,12 @@
 
                 <div v-if="document.useFixedRecipients" class="p-m-4">
                     <span>
-                        <label class="kn-material-input-label">{{ $t('managers.scheduler.mailTo') }} *</label>
+                        <label class="kn-material-input-label">{{ $t('managers.scheduler.mailTo') }} {{ uniqueMailEnabledOnOtherDocument ? ' ' : '*' }}</label>
                         <InputText
                             class="kn-material-input p-inputtext-sm"
                             v-model="document.mailtos"
                             :class="{
-                                'p-invalid': fixedRecipientsListDirty && (!document.mailtos || document.mailtos.length === 0)
+                                'p-invalid': fixedRecipientsListDirty && (!document.mailtos || document.mailtos.length === 0) && !uniqueMailEnabledOnOtherDocument
                             }"
                             :maxLength="schedulerTimingOutputOutputTabDescriptor.accordion.mail.mailToMaxLength"
                             @input="validateDocument('fixedRecipientsListDirty')"
@@ -46,12 +50,12 @@
                     <div v-if="document.useDataset">
                         <div>
                             <span>
-                                <label class="kn-material-input-label">{{ $t('managers.scheduler.datasetVerification') }} *</label>
+                                <label class="kn-material-input-label">{{ $t('managers.scheduler.datasetVerification') }} {{ uniqueMailEnabledOnOtherDocument ? ' ' : '*' }}</label>
                                 <Dropdown
                                     class="kn-material-input"
                                     v-model="document.datasetLabel"
                                     :class="{
-                                        'p-invalid': datasetLabelDirty && (!document.datasetLabel || document.datasetLabel?.length === 0)
+                                        'p-invalid': datasetLabelDirty && (!document.datasetLabel || document.datasetLabel?.length === 0) && !uniqueMailEnabledOnOtherDocument
                                     }"
                                     :options="datasets"
                                     optionLabel="label"
@@ -70,12 +74,12 @@
 
                         <div class="p-my-2">
                             <span>
-                                <label class="kn-material-input-label">{{ $t('common.parameter') }} *</label>
+                                <label class="kn-material-input-label">{{ $t('common.parameter') }} {{ uniqueMailEnabledOnOtherDocument ? ' ' : '*' }}</label>
                                 <Dropdown
                                     class="kn-material-input"
                                     v-model="document.datasetParameter"
                                     :class="{
-                                        'p-invalid': datasetParameterDirty && (!document.datasetParameter || document.datasetParameter?.length === 0)
+                                        'p-invalid': datasetParameterDirty && (!document.datasetParameter || document.datasetParameter?.length === 0) && !uniqueMailEnabledOnOtherDocument
                                     }"
                                     :options="drivers"
                                     @blur="validateDocument('datasetParameterDirty')"
@@ -96,12 +100,12 @@
 
                 <div v-if="document.useExpression" class="p-m-4">
                     <span>
-                        <label class="kn-material-input-label">{{ $t('managers.scheduler.expression') }} *</label>
+                        <label class="kn-material-input-label">{{ $t('managers.scheduler.expression') }} {{ uniqueMailEnabledOnOtherDocument ? ' ' : '*' }}</label>
                         <InputText
                             class="kn-material-input p-inputtext-sm"
                             v-model="document.expression"
                             :class="{
-                                'p-invalid': expressionDirty && (!document.expression || document.expression.length === 0)
+                                'p-invalid': expressionDirty && (!document.expression || document.expression.length === 0) && !uniqueMailEnabledOnOtherDocument
                             }"
                             :maxLength="schedulerTimingOutputOutputTabDescriptor.accordion.mail.expressionMaxLength"
                             @input="validateDocument('expressionDirty')"
@@ -118,20 +122,20 @@
                     </div>
                 </div>
 
-                <div class="p-m-4">
-                    <Checkbox v-model="document.uniqueMail" :binary="true" />
+                <div v-show="!uniqueMailEnabledOnOtherDocument" class="p-m-4">
+                    <Checkbox v-model="document.uniqueMail" :binary="true" @change="onSendUniqueMailChanged" />
                     <span class="p-ml-2" v-html="$t('managers.scheduler.uniqueMail')"></span>
                 </div>
 
                 <div class="p-m-4">
-                    <Checkbox v-model="document.zipMailDocument" :binary="true" />
+                    <Checkbox v-model="document.zipMailDocument" :binary="true" @change="validateDocument(null)" />
                     <span class="p-ml-2" v-html="$t('managers.scheduler.zipMailDocument')"></span>
                 </div>
 
                 <div v-if="document.zipMailDocument" class="p-m-4">
                     <span>
                         <label class="kn-material-input-label">{{ $t('managers.scheduler.zipFileName') }}</label>
-                        <InputText class="kn-material-input p-inputtext-sm" v-model="document.zipMailName" :maxLength="schedulerTimingOutputOutputTabDescriptor.accordion.mail.zipMailNameMaxLength" />
+                        <InputText class="kn-material-input p-inputtext-sm" v-model="document.zipMailName" :maxLength="schedulerTimingOutputOutputTabDescriptor.accordion.mail.zipMailNameMaxLength" @change="validateDocument(null)" />
                     </span>
                     <div class="p-d-flex p-jc-end">
                         <small>{{ zipMailNameHelp }}</small>
@@ -139,14 +143,14 @@
                 </div>
 
                 <div class="p-m-4">
-                    <Checkbox v-model="document.reportNameInSubject" :binary="true" />
+                    <Checkbox v-model="document.reportNameInSubject" :binary="true" @change="validateDocument(null)" />
                     <span class="p-ml-2" v-html="$t('managers.scheduler.reportNameInSubject')"></span>
                 </div>
 
                 <div class="p-m-4">
                     <span>
                         <label class="kn-material-input-label">{{ $t('managers.scheduler.mailSubject') }}</label>
-                        <InputText class="kn-material-input p-inputtext-sm" v-model="document.mailsubj" :maxLength="schedulerTimingOutputOutputTabDescriptor.accordion.mail.mailSubjectMaxLength" />
+                        <InputText class="kn-material-input p-inputtext-sm" v-model="document.mailsubj" :maxLength="schedulerTimingOutputOutputTabDescriptor.accordion.mail.mailSubjectMaxLength" @change="validateDocument(null)" />
                     </span>
                     <div class="p-d-flex p-flex-row p-jc-between">
                         <p class="max-length-help p-m-0">{{ mailSubjectHelp }}</p>
@@ -156,7 +160,7 @@
                 <div class="p-m-4">
                     <span>
                         <label class="kn-material-input-label">{{ $t('common.fileName') }}</label>
-                        <InputText class="kn-material-input p-inputtext-sm" v-model="document.containedFileName" :maxLength="schedulerTimingOutputOutputTabDescriptor.accordion.mail.fileNameMaxLength" />
+                        <InputText class="kn-material-input p-inputtext-sm" v-model="document.containedFileName" :maxLength="schedulerTimingOutputOutputTabDescriptor.accordion.mail.fileNameMaxLength" @change="validateDocument(null)" />
                     </span>
                     <div class="p-d-flex p-jc-end">
                         <small>{{ fileNameHelp }}</small>
@@ -166,7 +170,7 @@
                 <div class="p-m-4">
                     <span>
                         <label class="kn-material-input-label">{{ $t('managers.scheduler.mailText') }}</label>
-                        <InputText class="kn-material-input p-inputtext-sm" v-model="document.mailtxt" :maxLength="schedulerTimingOutputOutputTabDescriptor.accordion.mail.mailTextMaxLength" :placeholder="$t('managers.scheduler.mailTextMessage')" />
+                        <InputText class="kn-material-input p-inputtext-sm" v-model="document.mailtxt" :maxLength="schedulerTimingOutputOutputTabDescriptor.accordion.mail.mailTextMaxLength" :placeholder="$t('managers.scheduler.mailTextMessage')" @change="validateDocument(null)" />
                     </span>
                     <div class="p-d-flex p-flex-row p-jc-between">
                         <p class="max-length-help p-m-0">{{ mailTextHelp }}</p>
@@ -183,12 +187,14 @@ import Accordion from 'primevue/accordion'
 import AccordionTab from 'primevue/accordiontab'
 import Checkbox from 'primevue/checkbox'
 import Dropdown from 'primevue/dropdown'
+import Message from 'primevue/message'
 import schedulerTimingOutputOutputTabDescriptor from '../SchedulerTimingOutputOutputTabDescriptor.json'
 
 export default defineComponent({
     name: 'scheduler-mail-accordion',
-    components: { Accordion, AccordionTab, Checkbox, Dropdown },
-    props: { propDocument: { type: Object }, functionalities: { type: Array }, datasets: { type: Array }, jobInfo: { type: Object } },
+    components: { Accordion, AccordionTab, Checkbox, Dropdown, Message },
+    props: { propDocument: { type: Object }, functionalities: { type: Array }, datasets: { type: Array }, jobInfo: { type: Object }, documentWithUniqueMail: { type: Object } },
+    emits: ['sendUniqueMailSelected', 'uniqueMailOptionsChanged'],
     data() {
         return {
             schedulerTimingOutputOutputTabDescriptor,
@@ -218,6 +224,9 @@ export default defineComponent({
         },
         mailTextHelp(): string {
             return (this.document.mailtxt?.length ?? '0') + ' / ' + schedulerTimingOutputOutputTabDescriptor.accordion.mail.mailTextMaxLength
+        },
+        uniqueMailEnabledOnOtherDocument(): boolean {
+            return this.documentWithUniqueMail && this.propDocument?.id !== this.documentWithUniqueMail?.id && this.documentWithUniqueMail.uniqueMail
         }
     },
     watch: {
@@ -290,12 +299,20 @@ export default defineComponent({
         validateDocument(dirty: string | null) {
             if (dirty) {
                 this[dirty] = true
+                this.uniqueMailChanged()
             }
-            const fixedRecipientsListInvalid = this.document.useFixedRecipients && (!this.document.mailtos || this.document.mailtos.length === 0)
-            const expressionInvalid = this.document.useExpression && (!this.document.expression || this.document.expression.length === 0)
-            const datasetInvalid = this.document.useDataset && (!this.document.datasetLabel || this.document.datasetLabel?.length === 0 || !this.document.datasetParameter || this.document.datasetParameter?.length === 0)
+
+            const fixedRecipientsListInvalid = this.document.useFixedRecipients && (!this.document.mailtos || (this.document.mailtos.length === 0 && !this.uniqueMailEnabledOnOtherDocument))
+            const expressionInvalid = this.document.useExpression && (!this.document.expression || (this.document.expression.length === 0 && !this.uniqueMailEnabledOnOtherDocument))
+            const datasetInvalid = this.document.useDataset && (!this.document.datasetLabel || this.document.datasetLabel?.length === 0 || !this.document.datasetParameter || this.document.datasetParameter?.length === 0) && !this.uniqueMailEnabledOnOtherDocument
 
             this.document.invalid.invalidMail = fixedRecipientsListInvalid || expressionInvalid || datasetInvalid
+        },
+        onSendUniqueMailChanged() {
+            this.$emit('sendUniqueMailSelected', this.document)
+        },
+        uniqueMailChanged() {
+            if (this.documentWithUniqueMail && this.document?.id === this.documentWithUniqueMail.id && this.documentWithUniqueMail.uniqueMail) this.$emit('uniqueMailOptionsChanged', this.documentWithUniqueMail)
         }
     }
 })
