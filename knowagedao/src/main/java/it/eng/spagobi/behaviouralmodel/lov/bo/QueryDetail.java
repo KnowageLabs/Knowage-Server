@@ -56,6 +56,7 @@ import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.AbstractDriver;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.AbstractParuse;
+import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.ObjParuse;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.Parameter;
 import it.eng.spagobi.commons.bo.Domain;
 import it.eng.spagobi.commons.bo.UserProfile;
@@ -314,13 +315,9 @@ public class QueryDetail extends AbstractLOV implements ILovDetail {
 	public String getLovResult(IEngUserProfile profile, List<? extends AbstractParuse> dependencies, List<? extends AbstractDriver> drivers, Locale locale,
 			boolean getAllColumns) throws Exception {
 		LOGGER.debug("IN");
-		Map<String, String> parameters = getParametersNameToValueMap(drivers);
 		String statement = getWrappedStatement(dependencies, drivers);
 		statement = StringUtilities.substituteProfileAttributesInString(statement, profile);
-		if (parameters != null && !parameters.isEmpty()) {
-			Map<String, String> types = getParametersNameToTypeMap(drivers);
-			statement = StringUtilities.substituteParametersInString(statement, parameters, types, false);
-		}
+		statement = substituteParametersInString(statement, drivers);
 		LOGGER.info("User [" + ((UserProfile) profile).getUserId() + "] is executing sql: " + statement);
 		String result = getLovResult(profile, statement, getAllColumns);
 		LOGGER.debug("OUT.result=" + result);
@@ -809,15 +806,17 @@ public class QueryDetail extends AbstractLOV implements ILovDetail {
 			}
 			result.delAttribute(DataRow.ROW_TAG);
 
-			((List<SourceBean>) rows).stream().filter(rowBean -> colNames.stream().filter(col -> rowBean.getAttribute(col) != null && !String.valueOf(rowBean.getAttribute(col)).trim().equals("")
-					&& !rowBean.getAttribute(col).equals("null")).count() == colNames.size()
-			).forEach(x -> {
-				try {
-					result.setAttribute(x);
-				} catch (SourceBeanException e) {
-					throw new SpagoBIRuntimeException("Error while retrieving data from lov", e);
-				}
-			});
+			((List<SourceBean>) rows).stream()
+					.filter(rowBean -> colNames.stream().filter(col -> rowBean.getAttribute(col) != null
+							&& !String.valueOf(rowBean.getAttribute(col)).trim().equals("") && !rowBean.getAttribute(col).equals("null"))
+							.count() == colNames.size())
+					.forEach(x -> {
+						try {
+							result.setAttribute(x);
+						} catch (SourceBeanException e) {
+							throw new SpagoBIRuntimeException("Error while retrieving data from lov", e);
+						}
+					});
 
 			resStr = result.toXML(false);
 			resStr = resStr.trim();
@@ -840,7 +839,8 @@ public class QueryDetail extends AbstractLOV implements ILovDetail {
 	 * @return a list of errors: it is empty if all values are admissible, otherwise it will contain a EMFUserError for each wrong value
 	 * @throws Exception
 	 */
-	public List validateValues(IEngUserProfile profile, AbstractDriver driver) throws Exception {
+	public List validateValues(IEngUserProfile profile, AbstractDriver driver, List<? extends AbstractDriver> drivers, List<ObjParuse> dependencies)
+			throws Exception {
 		List<String> values = driver.getParameterValues();
 		List parameterValuesDescription = new ArrayList();
 		DataConnection dataConnection = null;
@@ -849,7 +849,7 @@ public class QueryDetail extends AbstractLOV implements ILovDetail {
 		String statement = null;
 		SourceBean result = null;
 		try {
-			statement = getValidationQuery(profile, driver, values);
+			statement = getValidationQuery(profile, driver, values, drivers, dependencies);
 			LOGGER.debug("Executing validation statement [" + statement + "] ...");
 			// gets connection
 			try (Connection conn = getConnection(profile, dataSource)) {
@@ -973,20 +973,23 @@ public class QueryDetail extends AbstractLOV implements ILovDetail {
 	/**
 	 * This methods builds the validation query, see validateValues method.
 	 */
-	private String getValidationQuery(IEngUserProfile profile, AbstractDriver driver, List<String> values) throws Exception {
+	private String getValidationQuery(IEngUserProfile profile, AbstractDriver driver, List<String> values, List<? extends AbstractDriver> drivers,
+			List<ObjParuse> dependencies) throws Exception {
 		if (!lovType.equals("treeinner")) {
-			return getValidationQueryForRegularLOVs(profile, driver, values);
+			return getValidationQueryForRegularLOVs(profile, driver, values, drivers, dependencies);
 		} else {
-			return getValidationQueryForRegularTreeInnerSelectionLOVs(profile, driver, values);
+			return getValidationQueryForRegularTreeInnerSelectionLOVs(profile, driver, values, drivers, dependencies);
 		}
 	}
 
 	/**
 	 * This methods builds the validation query for regular LOVs, i.e. for all LOVs that are NOT trees with inner nodes selection
 	 */
-	private String getValidationQueryForRegularLOVs(IEngUserProfile profile, AbstractDriver driver, List<String> values) throws Exception {
+	private String getValidationQueryForRegularLOVs(IEngUserProfile profile, AbstractDriver driver, List<String> values, List<? extends AbstractDriver> drivers,
+			List<ObjParuse> dependencies) throws Exception {
 		String statement = getQueryDefinition();
 		statement = StringUtilities.substituteProfileAttributesInString(statement, profile);
+		statement = substituteParametersInString(statement, drivers);
 		StringBuilder buffer = new StringBuilder();
 		buffer.append("SELECT ");
 		buffer.append(getColumnSQLName(this.valueColumnName) + " AS \"" + VALUE_ALIAS + "\", ");
@@ -1009,11 +1012,13 @@ public class QueryDetail extends AbstractLOV implements ILovDetail {
 	/**
 	 * This methods builds the validation query for LOVs that are trees with inner nodes selection
 	 */
-	private String getValidationQueryForRegularTreeInnerSelectionLOVs(IEngUserProfile profile, AbstractDriver driver, List<String> values) throws Exception {
+	private String getValidationQueryForRegularTreeInnerSelectionLOVs(IEngUserProfile profile, AbstractDriver driver, List<String> values,
+			List<? extends AbstractDriver> drivers, List<ObjParuse> dependencies) throws Exception {
 		List<Couple<String, String>> levels = this.getTreeLevelsColumns();
 
 		String statement = getQueryDefinition();
 		statement = StringUtilities.substituteProfileAttributesInString(statement, profile);
+		statement = substituteParametersInString(statement, drivers);
 		StringBuilder buffer = new StringBuilder();
 		buffer.append("SELECT ");
 		// we select both value and description for every tree level
@@ -1063,7 +1068,7 @@ public class QueryDetail extends AbstractLOV implements ILovDetail {
 
 	public String convertSpecialChars(String query) {
 
-		query = org.apache.commons.lang3.StringEscapeUtils.unescapeHtml4(query);
+		query = org.apache.commons.text.StringEscapeUtils.unescapeHtml4(query);
 		return query;
 
 	}
@@ -1384,5 +1389,14 @@ public class QueryDetail extends AbstractLOV implements ILovDetail {
 	@Override
 	public boolean isSimpleLovType() {
 		return this.getLovType() == null || this.getLovType().equalsIgnoreCase("simple");
+	}
+
+	private String substituteParametersInString(String statement, List<? extends AbstractDriver> drivers) throws Exception {
+		Map<String, String> parameters = getParametersNameToValueMap(drivers);
+		if (parameters != null && !parameters.isEmpty()) {
+			Map<String, String> types = getParametersNameToTypeMap(drivers);
+			statement = StringUtilities.substituteParametersInString(statement, parameters, types, false);
+		}
+		return statement;
 	}
 }

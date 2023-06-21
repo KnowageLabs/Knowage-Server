@@ -303,21 +303,21 @@ public class DriversValidationAPI {
 			AbstractBIResourceRuntime dum) throws Exception {
 		List toReturn = null;
 		LovResultCacheManager executionCacheManager = new LovResultCacheManager();
+		List<ObjParuse> dependencies = dum.getDependencies(driver, role);
+		List<? extends AbstractDriver> drivers = object.getDrivers();
 		// if query is not in cache, do not execute it as it is!!!
-		String lovResult = executionCacheManager.getLovResultDum(this.userProfile, dum.getLovDetail(driver), dum.getDependencies(driver, role), object, false,
-				this.locale);
+		String lovResult = executionCacheManager.getLovResultDum(this.userProfile, dum.getLovDetail(driver), dependencies, drivers, false, this.locale);
 		if (lovResult == null) {
 			// lov is not in cache: we must validate values
-			toReturn = queryDetail.validateValues(this.userProfile, driver);
+			toReturn = queryDetail.validateValues(this.userProfile, driver, drivers, dependencies);
 		} else {
 			toReturn = getValidationErrorsOnValuesByLovResult(lovResult, driver, queryDetail, role);
 			if (toReturn.isEmpty()) {
 				// values are ok, this should be most often the case
 			} else {
 				// if there are dependencies, we should not consider them since they are not mandatory
-				List<ObjParuse> dependencies = dum.getDependencies(driver, role);
 				if (!dependencies.isEmpty()) {
-					toReturn = queryDetail.validateValues(this.userProfile, driver);
+					toReturn = queryDetail.validateValues(this.userProfile, driver, drivers, dependencies);
 				}
 			}
 		}
@@ -421,7 +421,7 @@ public class DriversValidationAPI {
 
 	private List<String> getNonDefaultQueryValues(AbstractDriver driver, DefaultValuesList defaultValues) {
 		logger.debug("IN");
-		List<String> toReturn = new ArrayList<String>();
+		List<String> toReturn = new ArrayList<>();
 		List<String> values = driver.getParameterValues();
 		if (values != null && values.size() > 0) {
 			for (int i = 0; i < values.size(); i++) {
