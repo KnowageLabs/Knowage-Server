@@ -72,7 +72,7 @@ export default defineComponent({
     },
     computed: {
         saveDisabled(): any {
-            return this.job && (!this.job.jobName || this.job.documents?.length === 0 || (this.job.edit && this.job.triggers?.length === 0))
+            return this.job && (!this.job.jobName || this.job.documents?.length === 0)
         },
         testReadonly(): any {
             return this.job && this.job.edit ? true : false
