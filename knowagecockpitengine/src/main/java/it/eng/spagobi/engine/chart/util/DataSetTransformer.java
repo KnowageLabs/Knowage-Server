@@ -35,7 +35,7 @@ import java.util.OptionalDouble;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang3.StringEscapeUtils;
+import org.apache.commons.text.StringEscapeUtils;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -267,7 +267,7 @@ public class DataSetTransformer {
 
 		String rawColumnNameRow = categoriesColumnNames.get(0); // => column_1
 		String rawColumnNameColumn = categoriesColumnNames.get(1); // =>
-																	// column_2
+																	 // column_2
 
 		/**
 		 * Take all columns of the future perfect matrix (same values in the same order both in rows and columns of the matrix). These are the target items
@@ -923,7 +923,7 @@ public class DataSetTransformer {
 				}
 			}
 		}
-		LinkedHashMap<String, String> pair = new LinkedHashMap<String, String>();
+		LinkedHashMap<String, String> pair = new LinkedHashMap<>();
 		JSONObject jsonPair = null;
 		if (!columnIndex.equals("") && !groupByIndex.equals("")) {
 			for (Object object : dataRows) {
@@ -955,7 +955,7 @@ public class DataSetTransformer {
 		boolean isCockpit = Boolean.parseBoolean(isCockpitEngine);
 		boolean groupSeriesBool = Boolean.parseBoolean(groupSeries);
 		ArrayList<Object> categories = new ArrayList<>();
-		LinkedHashMap<String, ArrayList<JSONObject>> map = new LinkedHashMap<String, ArrayList<JSONObject>>();
+		LinkedHashMap<String, ArrayList<JSONObject>> map = new LinkedHashMap<>();
 		try {
 			String columnForGroupingSerie = "";
 			if (!groupSeriesBool) {
@@ -1002,7 +1002,7 @@ public class DataSetTransformer {
 			Set<Object> categoriesSet = new LinkedHashSet<>(categories);
 			Object[] categoriesList = categoriesSet.toArray(new Object[categoriesSet.size()]);
 
-			Map<Object, Integer> categoriesListIndexMap = new HashMap<Object, Integer>();
+			Map<Object, Integer> categoriesListIndexMap = new HashMap<>();
 			for (int i = 0; i < categoriesList.length; i++) {
 				categoriesListIndexMap.put(categoriesList[i], i);
 			}
@@ -1029,7 +1029,7 @@ public class DataSetTransformer {
 					}
 					ArrayList<JSONObject> newListOfOrderColumnItems = map.get(newCol);
 					if (newListOfOrderColumnItems == null) {
-						newListOfOrderColumnItems = new ArrayList<JSONObject>();
+						newListOfOrderColumnItems = new ArrayList<>();
 						for (int i = 0; i < categoriesList.length; i++) {
 							Object category = categoriesList[i];
 							JSONObject jo = new JSONObject();
@@ -1082,7 +1082,7 @@ public class DataSetTransformer {
 			Map<String, String> categorieColumns, String groupedSerie, String serieForZAxis, String serieForXAxis, String coloredCategory) {
 
 		ArrayList<Object> categories = new ArrayList<>();
-		LinkedHashMap<String, ArrayList<JSONObject>> map = new LinkedHashMap<String, ArrayList<JSONObject>>();
+		LinkedHashMap<String, ArrayList<JSONObject>> map = new LinkedHashMap<>();
 		try {
 			String columnForGroupingSerie = dataColumnsMapper.get(groupedSerie).toLowerCase();
 
@@ -1131,7 +1131,7 @@ public class DataSetTransformer {
 			Set<Object> categoriesSet = new LinkedHashSet<>(categories);// bez duplikata
 			Object[] categoriesList = categoriesSet.toArray(new Object[categoriesSet.size()]);
 
-			Map<Object, Integer> categoriesListIndexMap = new HashMap<Object, Integer>(); // canada 0 maxico 1 usa 2
+			Map<Object, Integer> categoriesListIndexMap = new HashMap<>(); // canada 0 maxico 1 usa 2
 			for (int i = 0; i < categoriesList.length; i++) {
 				categoriesListIndexMap.put(categoriesList[i], i);
 			}
@@ -1158,7 +1158,7 @@ public class DataSetTransformer {
 					if (!"".equals(newCol)) {
 						ArrayList<JSONObject> newListOfOrderColumnItems = map.get(newCol);
 						if (newListOfOrderColumnItems == null) {
-							newListOfOrderColumnItems = new ArrayList<JSONObject>();
+							newListOfOrderColumnItems = new ArrayList<>();
 							for (int i = 0; i < categoriesList.length; i++) {
 								Object category = categoriesList[i];
 								JSONObject jo = new JSONObject();
@@ -1535,7 +1535,7 @@ public class DataSetTransformer {
 
 		ArrayList<String> listColumns = new ArrayList<>();
 
-		Map<String, Object> columnsIndex = new HashMap<String, Object>();
+		Map<String, Object> columnsIndex = new HashMap<>();
 
 		HashMap<Integer, HashMap> firstresult = new HashMap<>();
 
@@ -1782,7 +1782,7 @@ public class DataSetTransformer {
 	public JSONObject getColorObject(int counter) {
 		String[] defaultColors = { "#7cb5ec", "#434348", "#90ed7d", "#f7a35c", "#8085e9", "#f15c80", "#e4d354", "#2b908f", "#f45b5b", "#91e8e1" };
 		JSONObject toReturn = new JSONObject();
-		String name = defaultColors[counter].substring(1, defaultColors[counter].length());
+		String name = defaultColors[counter].substring(1);
 		String value = defaultColors[counter];
 		try {
 			toReturn.put("name", name);

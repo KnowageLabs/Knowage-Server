@@ -3,7 +3,7 @@
         class="kn-list knListBox"
         :options="sortedOptions"
         :class="{ noSorting: !settings.sortFields }"
-        listStyle="max-height:calc(100% - 62px)"
+        listStyle="max-height:calc(100% - 66px)"
         :filter="true"
         :filterPlaceholder="$t('common.search')"
         filterMatchMode="contains"

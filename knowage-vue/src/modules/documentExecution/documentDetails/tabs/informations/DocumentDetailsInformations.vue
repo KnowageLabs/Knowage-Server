@@ -517,9 +517,6 @@ export default defineComponent({
 })
 </script>
 <style lang="scss">
-.p-dropdown-label {
-    text-transform: capitalize;
-}
 .card-0-padding .p-card-body,
 .card-0-padding .p-card-content {
     padding: 0px;

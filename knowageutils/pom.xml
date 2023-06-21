@@ -6,7 +6,7 @@
 	<parent>
 		<groupId>it.eng.knowage</groupId>
 		<artifactId>knowage-ce-parent</artifactId>
-		<version>8.1.10-SNAPSHOT</version>
+		<version>8.1.13-SNAPSHOT</version>
 		<relativePath>../knowage-ce-parent/pom.xml</relativePath>
 	</parent>
 
@@ -530,6 +530,11 @@
 		<dependency>
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-lang3</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-text</artifactId>
 		</dependency>
 
 		<dependency>

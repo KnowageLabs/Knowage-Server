@@ -1073,16 +1073,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                                 } else if (content.type == 'dynamic') {
                                     if (content.column) {
                                         if (model.type != 'static-pivot-table') {
-                                            if (modalValue) {
-                                                var valToAdd = modalValue
-                                            } else {
                                                 var valToAdd = ''
                                                 var columnNameToSearch = columnAliasesMap[content.column] ? columnAliasesMap[content.column] : content.column
                                                 if (row[columnNameToSearch]) valToAdd = row[columnNameToSearch].value || row[columnNameToSearch]
                                                 if (content.column == 'column_name_mode') {
                                                     valToAdd = modalColumn || columnName
                                                 }
-                                            }
                                         } else {
                                             if (content.column == 'MEASURE_COLUMN_NAME' && modalColumn) {
                                                 var valToAdd = modalColumn

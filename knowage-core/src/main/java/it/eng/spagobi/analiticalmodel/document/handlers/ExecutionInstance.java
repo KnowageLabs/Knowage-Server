@@ -43,6 +43,7 @@ import org.safehaus.uuid.UUIDGenerator;
 import com.jamonapi.Monitor;
 import com.jamonapi.MonitorFactory;
 
+import edu.emory.mathcs.backport.java.util.Collections;
 import it.eng.LightNavigationConstants;
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.error.EMFErrorSeverity;
@@ -58,6 +59,7 @@ import it.eng.spagobi.analiticalmodel.document.bo.SubObject;
 import it.eng.spagobi.analiticalmodel.execution.bo.LovValue;
 import it.eng.spagobi.analiticalmodel.execution.bo.defaultvalues.DefaultValuesList;
 import it.eng.spagobi.analiticalmodel.execution.bo.defaultvalues.DefaultValuesRetriever;
+import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.AbstractDriver;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.ObjParuse;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.Parameter;
@@ -943,7 +945,7 @@ public class ExecutionInstance implements Serializable {
 
 	private List<String> getNonDefaultQueryValues(BIObjectParameter analyticalDocumentParameter, DefaultValuesList defaultValues) {
 		logger.debug("IN");
-		List<String> toReturn = new ArrayList<String>();
+		List<String> toReturn = new ArrayList<>();
 		List<String> values = analyticalDocumentParameter.getParameterValues();
 		if (values != null && values.size() > 0) {
 			for (int i = 0; i < values.size(); i++) {
@@ -997,20 +999,21 @@ public class ExecutionInstance implements Serializable {
 	private List getValidationErrorsOnValuesForQueries(QueryDetail queryDetail, BIObjectParameter biparam) throws Exception {
 		List toReturn = null;
 		LovResultCacheManager executionCacheManager = new LovResultCacheManager();
+		List<ObjParuse> dependencies = this.getDependencies(biparam);
+		List<? extends AbstractDriver> drivers = Collections.emptyList();
 		// if query is not in cache, do not execute it as it is!!!
 		String lovResult = executionCacheManager.getLovResult(this.userProfile, this.getLovDetail(biparam), this.getDependencies(biparam), this, false);
 		if (lovResult == null) {
 			// lov is not in cache: we must validate values
-			toReturn = queryDetail.validateValues(this.userProfile, biparam);
+			toReturn = queryDetail.validateValues(this.userProfile, biparam, drivers, dependencies);
 		} else {
 			toReturn = getValidationErrorsOnValuesByLovResult(lovResult, biparam, queryDetail);
 			if (toReturn.isEmpty()) {
 				// values are ok, this should be most often the case
 			} else {
 				// if there are dependencies, we should not consider them since they are not mandatory
-				List<ObjParuse> dependencies = this.getDependencies(biparam);
 				if (!dependencies.isEmpty()) {
-					toReturn = queryDetail.validateValues(this.userProfile, biparam);
+					toReturn = queryDetail.validateValues(this.userProfile, biparam, drivers, dependencies);
 				}
 			}
 		}
@@ -1116,7 +1119,7 @@ public class ExecutionInstance implements Serializable {
 		if (this.snapshot == null) {
 			throw new SpagoBIServiceException("", "no snapshot set");
 		}
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append(GeneralUtilities.getSpagoBIProfileBaseUrl(this.userProfile.getUserUniqueIdentifier().toString()));
 		buffer.append("&ACTION_NAME=GET_SNAPSHOT_CONTENT");
 		buffer.append("&" + SpagoBIConstants.SNAPSHOT_ID + "=" + snapshot.getId());
@@ -1190,13 +1193,13 @@ public class ExecutionInstance implements Serializable {
 		logger.debug("IN");
 		List<BIObjectParameter> listPars = object.getDrivers();
 
-		HashMap<String, List<Object>> parametersMap = new HashMap<String, List<Object>>();
+		HashMap<String, List<Object>> parametersMap = new HashMap<>();
 
 		// create an hashmap of parameters
 		if (parameters != null) {
 			for (int i = 0; i < parameters.length; i++) {
 				SDKDocumentParameter docParameter = parameters[i];
-				List<Object> valuesToInsert = new ArrayList<Object>();
+				List<Object> valuesToInsert = new ArrayList<>();
 
 				for (int j = 0; j < docParameter.getValues().length; j++) {
 					Object ob = docParameter.getValues()[j];
@@ -1278,7 +1281,7 @@ public class ExecutionInstance implements Serializable {
 	}
 
 	public List<ObjParuse> getDependencies(BIObjectParameter parameter) {
-		List<ObjParuse> biParameterExecDependencies = new ArrayList<ObjParuse>();
+		List<ObjParuse> biParameterExecDependencies = new ArrayList<>();
 		try {
 			IParameterUseDAO parusedao = DAOFactory.getParameterUseDAO();
 			ParameterUse biParameterExecModality = parusedao.loadByParameterIdandRole(parameter.getParID(), executionRole);
@@ -1321,7 +1324,7 @@ public class ExecutionInstance implements Serializable {
 		}
 		// IF THE ENGINE IS INTERNAL
 		else {
-			StringBuffer buffer = new StringBuffer();
+			StringBuilder buffer = new StringBuilder();
 			buffer.append(GeneralUtilities.getSpagoBIProfileBaseUrl(((UserProfile) userProfile).getUserId().toString()));
 			buffer.append("&PAGE=ExecuteBIObjectPage");
 			buffer.append("&" + SpagoBIConstants.TITLE_VISIBLE + "=FALSE");
@@ -1496,7 +1499,7 @@ public class ExecutionInstance implements Serializable {
 	@Override
 	public boolean equals(Object another) {
 		if (another instanceof ExecutionInstance) {
-			;
+
 			ExecutionInstance anInstance = (ExecutionInstance) another;
 			return this.executionId.equals(anInstance.executionId);
 		} else

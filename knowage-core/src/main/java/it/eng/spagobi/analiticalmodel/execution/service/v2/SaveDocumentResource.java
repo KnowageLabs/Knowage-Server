@@ -35,6 +35,7 @@ import org.apache.log4j.Logger;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import it.eng.spago.error.EMFInternalError;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.analiticalmodel.document.AnalyticalModelDocumentManagementAPI;
@@ -53,6 +54,7 @@ import it.eng.spagobi.analiticalmodel.functionalitytree.bo.LowFunctionality;
 import it.eng.spagobi.analiticalmodel.functionalitytree.dao.ILowFunctionalityDAO;
 import it.eng.spagobi.api.AbstractSpagoBIResource;
 import it.eng.spagobi.commons.bo.Domain;
+import it.eng.spagobi.commons.bo.Role;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
@@ -221,7 +223,7 @@ public class SaveDocumentResource extends AbstractSpagoBIResource {
 				if ("MAP".equalsIgnoreCase(type)) {
 					id = insertGeoreportDocument(saveDocumentDTO, documentManagementAPI);
 				} else if ("DOCUMENT_COMPOSITE".equalsIgnoreCase(type)) {
-					id = insertCockpitDocument(saveDocumentDTO, documentManagementAPI);
+					id = insertCockpitDocument(saveDocumentDTO, documentManagementAPI, getUserProfile());
 				} else if ("KPI".equalsIgnoreCase(type)) {
 					id = insertKPIDocument(saveDocumentDTO, documentManagementAPI);
 				} else {
@@ -361,7 +363,7 @@ public class SaveDocumentResource extends AbstractSpagoBIResource {
 
 		Assert.assertNotNull(customDataDTO, "Custom data object cannot be null");
 
-		BIObject document = createBaseDocument(documentDTO, filteredFolders, documentManagementAPI);
+		BIObject document = createBaseDocument(documentDTO, filteredFolders, documentManagementAPI, null);
 		ObjTemplate template = buildDocumentTemplate("template.xml", customDataDTO, null);
 
 		documentManagementAPI.saveDocument(document, template);
@@ -386,7 +388,7 @@ public class SaveDocumentResource extends AbstractSpagoBIResource {
 		return filteredFolders;
 	}
 
-	private Integer insertCockpitDocument(SaveDocumentDTO saveDocumentDTO, AnalyticalModelDocumentManagementAPI documentManagementAPI)
+	private Integer insertCockpitDocument(SaveDocumentDTO saveDocumentDTO, AnalyticalModelDocumentManagementAPI documentManagementAPI, UserProfile profile)
 			throws EMFUserError, JSONException {
 
 		List<Integer> filteredFolders = new ArrayList<Integer>();
@@ -394,7 +396,7 @@ public class SaveDocumentResource extends AbstractSpagoBIResource {
 		CustomDataDTO customData = saveDocumentDTO.getCustomDataDTO();
 		Assert.assertNotNull(customData, "Custom data object cannot be null");
 
-		BIObject document = createBaseDocument(saveDocumentDTO.getDocumentDTO(), filteredFolders, documentManagementAPI);
+		BIObject document = createBaseDocument(saveDocumentDTO.getDocumentDTO(), filteredFolders, documentManagementAPI, profile);
 		ObjTemplate template = buildDocumentTemplate("template.sbicockpit", customData, null);
 
 		documentManagementAPI.saveDocument(document, template);
@@ -407,7 +409,7 @@ public class SaveDocumentResource extends AbstractSpagoBIResource {
 		logger.debug("IN");
 
 		String sourceDatasetLabel = null;
-		BIObject document = createBaseDocument(documentDTO, folders, documentManagementAPI);
+		BIObject document = createBaseDocument(documentDTO, folders, documentManagementAPI, null);
 		ObjTemplate template = buildDocumentTemplate("template.sbigeoreport", customData, null);
 
 		IDataSet ISourceDataset = null;
@@ -439,8 +441,8 @@ public class SaveDocumentResource extends AbstractSpagoBIResource {
 	}
 
 	// TODO consolidate the following 2 methods
-	private BIObject createBaseDocument(DocumentDTO documentDTO, List<Integer> folders, AnalyticalModelDocumentManagementAPI documentManagementAPI)
-			throws JSONException, EMFUserError {
+	private BIObject createBaseDocument(DocumentDTO documentDTO, List<Integer> folders, AnalyticalModelDocumentManagementAPI documentManagementAPI,
+			UserProfile profile) throws JSONException, EMFUserError {
 		BIObject sourceDocument = null;
 		String visibility = "true"; // default value
 		String previewFile = "";
@@ -456,12 +458,12 @@ public class SaveDocumentResource extends AbstractSpagoBIResource {
 			// value
 		}
 		return createBaseDocument(documentDTO.getLabel(), documentDTO.getName(), documentDTO.getDescription(), visibility, previewFile, documentDTO.getType(),
-				documentDTO.getEngineId(), folders);
+				documentDTO.getEngineId(), folders, profile);
 
 	}
 
 	private BIObject createBaseDocument(String label, String name, String description, String visibility, String previewFile, String type, String engineId,
-			List<Integer> folders) throws EMFUserError, JSONException {
+			List<Integer> folders, UserProfile profile) throws EMFUserError, JSONException {
 
 		BIObject document = new BIObject();
 
@@ -509,7 +511,7 @@ public class SaveDocumentResource extends AbstractSpagoBIResource {
 //			setDataset(document, sourceDocument);
 //		}
 
-		setDocumentState(document);
+		setDocumentState(document, profile);
 		setFolders(document, folders);
 		setCreationUser(document);
 
@@ -574,6 +576,38 @@ public class SaveDocumentResource extends AbstractSpagoBIResource {
 		document.setStateCode(objState.getValueCd());
 
 		return document;
+	}
+
+	private BIObject setDocumentState(BIObject document, UserProfile profile) throws EMFUserError {
+		boolean isOnlyDevRole = false;
+		try {
+			if (profile != null)
+				isOnlyDevRole = isOnlyDevRole(profile);
+		} catch (EMFInternalError e) {
+			throw new SpagoBIServiceException("setDocumentState", "sbi.document.saveError");
+		}
+		Domain objState = null;
+		if (isOnlyDevRole) {
+			objState = DAOFactory.getDomainDAO().loadDomainByCodeAndValue(SpagoBIConstants.DOC_STATE, SpagoBIConstants.DOC_STATE_DEV);
+		} else
+			objState = DAOFactory.getDomainDAO().loadDomainByCodeAndValue(SpagoBIConstants.DOC_STATE, SpagoBIConstants.DOC_STATE_REL);
+		Integer stateID = objState.getValueId();
+		document.setStateID(stateID);
+		document.setStateCode(objState.getValueCd());
+
+		return document;
+	}
+
+	private boolean isOnlyDevRole(UserProfile profile) throws EMFInternalError, EMFUserError {
+		boolean onlyDev = true;
+		for (Object roleLabel : profile.getRoles()) {
+			Role role = DAOFactory.getRoleDAO().loadByName(roleLabel.toString());
+			if (!role.getRoleTypeCD().equals(SpagoBIConstants.ROLE_TYPE_DEV)) {
+				onlyDev = false;
+			}
+
+		}
+		return onlyDev;
 	}
 
 	private BIObject setFolders(BIObject document, List<Integer> functsList) throws JSONException {

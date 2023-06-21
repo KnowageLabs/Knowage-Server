@@ -24,7 +24,7 @@ import javax.validation.constraints.NotNull;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactoryConfigurationError;
 
-import org.apache.commons.lang3.StringEscapeUtils;
+import org.apache.commons.text.StringEscapeUtils;
 import org.apache.log4j.Logger;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -100,8 +100,7 @@ public class ModalitiesValue implements Serializable {
 	/**
 	 * Sets the description.
 	 *
-	 * @param description
-	 *            The description to set.
+	 * @param description The description to set.
 	 */
 	public void setDescription(String description) {
 		this.description = description;
@@ -119,8 +118,7 @@ public class ModalitiesValue implements Serializable {
 	/**
 	 * Sets the id.
 	 *
-	 * @param id
-	 *            The id to set.
+	 * @param id The id to set.
 	 */
 	public void setId(Integer id) {
 		this.id = id;
@@ -138,8 +136,7 @@ public class ModalitiesValue implements Serializable {
 	/**
 	 * Sets the i type cd.
 	 *
-	 * @param typeCd
-	 *            The iTypeCd to set.
+	 * @param typeCd The iTypeCd to set.
 	 */
 	public void setITypeCd(String typeCd) {
 		iTypeCd = typeCd;
@@ -157,8 +154,7 @@ public class ModalitiesValue implements Serializable {
 	/**
 	 * Sets the lov provider.
 	 *
-	 * @param lovProvider
-	 *            The lovProvider to set.
+	 * @param lovProvider The lovProvider to set.
 	 */
 	public void setLovProvider(String lovProvider) {
 		this.lovProvider = lovProvider;
@@ -195,8 +191,7 @@ public class ModalitiesValue implements Serializable {
 	/**
 	 * Sets the name.
 	 *
-	 * @param name
-	 *            The name to set.
+	 * @param name The name to set.
 	 */
 	// @JsonProperty(value = "lov_name")
 	public void setName(String name) {
@@ -215,8 +210,7 @@ public class ModalitiesValue implements Serializable {
 	/**
 	 * Sets the i type id.
 	 *
-	 * @param typeId
-	 *            The iTypeId to set.
+	 * @param typeId The iTypeId to set.
 	 */
 	public void setITypeId(String typeId) {
 		iTypeId = typeId;
@@ -234,8 +228,7 @@ public class ModalitiesValue implements Serializable {
 	/**
 	 * Sets the label.
 	 *
-	 * @param label
-	 *            the new label
+	 * @param label the new label
 	 */
 	public void setLabel(String label) {
 		this.label = label;
@@ -254,8 +247,7 @@ public class ModalitiesValue implements Serializable {
 	/**
 	 * Sets the selection type.
 	 *
-	 * @param selectionType
-	 *            the new selection type
+	 * @param selectionType the new selection type
 	 */
 	@JsonIgnore
 	public void setSelectionType(String selectionType) {
@@ -275,8 +267,7 @@ public class ModalitiesValue implements Serializable {
 	/**
 	 * Sets the multivalue.
 	 *
-	 * @param multivalue
-	 *            the new multivalue
+	 * @param multivalue the new multivalue
 	 */
 	@JsonIgnore
 	public void setMultivalue(boolean multivalue) {
@@ -293,8 +284,7 @@ public class ModalitiesValue implements Serializable {
 	}
 
 	/**
-	 * @param datasetId
-	 *            the datasetID to set
+	 * @param datasetId the datasetID to set
 	 */
 	@JsonIgnore
 	public void setDatasetID(Integer datasetId) {
@@ -310,8 +300,7 @@ public class ModalitiesValue implements Serializable {
 	}
 
 	/**
-	 * @param dataset
-	 *            the dataset to set
+	 * @param dataset the dataset to set
 	 */
 	@JsonIgnore
 	public void setDataset(SbiDataSet dataset) {

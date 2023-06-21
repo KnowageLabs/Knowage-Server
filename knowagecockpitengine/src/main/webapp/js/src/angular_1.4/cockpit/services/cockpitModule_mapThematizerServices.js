@@ -1024,7 +1024,7 @@
 		}
 
 		mts.getColorFromClassification = function(externalLegend, val, layerName){
-			if (!externalLegend[layerName]) {
+			if (!externalLegend || (externalLegend && !externalLegend[layerName])) {
 				return;
 			}
 

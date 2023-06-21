@@ -41,7 +41,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
-import org.apache.commons.lang3.StringEscapeUtils;
+import org.apache.commons.text.StringEscapeUtils;
 import org.apache.log4j.LogMF;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
@@ -288,7 +288,7 @@ public class LovResource extends AbstractSpagoBIResource {
 		JSONArray profiles = new JSONArray();
 		GridMetadataContainer lovExecutionResult = new GridMetadataContainer();
 		SourceBean rowsSourceBean = null;
-		List<String> colNames = new ArrayList<String>();
+		List<String> colNames = new ArrayList<>();
 		String result = null;
 		String toReturn = null;
 		String typeLov = null;
@@ -768,7 +768,7 @@ public class LovResource extends AbstractSpagoBIResource {
 		if (parameters == null || parameters.isEmpty()) {
 			return null;
 		} else {
-			objParams = new ArrayList<BIObjectParameter>(parameters.size());
+			objParams = new ArrayList<>(parameters.size());
 			for (String parameterName : parameters.keySet()) {
 				String parameterValue = parameters.get(parameterName);
 				if (parameterValue == null) {
@@ -792,7 +792,7 @@ public class LovResource extends AbstractSpagoBIResource {
 	}
 
 	private List<String> findFirstRowAttributes(SourceBean rowsSourceBean) {
-		List<String> columnsNames = new ArrayList<String>();
+		List<String> columnsNames = new ArrayList<>();
 		if (rowsSourceBean != null) {
 			List rows = rowsSourceBean.getAttributeAsList(DataRow.ROW_TAG);
 			if (rows != null && rows.size() != 0) {
@@ -810,7 +810,7 @@ public class LovResource extends AbstractSpagoBIResource {
 
 	private List<Map<String, String>> filterNulls(SourceBean rowsSourceBean, int numCols, Integer start, Integer limit) throws JSONException {
 		Map<String, String> map;
-		List<Map<String, String>> list = new ArrayList<Map<String, String>>();
+		List<Map<String, String>> list = new ArrayList<>();
 		int startIter = 0;
 		int endIter;
 
@@ -833,7 +833,7 @@ public class LovResource extends AbstractSpagoBIResource {
 				for (int i = startIter; i < endIter; i++) {
 					List<SourceBeanAttribute> rowAttrs = (rows.get(i)).getContainedAttributes();
 					Iterator<SourceBeanAttribute> rowAttrsIter = rowAttrs.iterator();
-					map = new HashMap<String, String>();
+					map = new HashMap<>();
 					while (rowAttrsIter.hasNext()) {
 						SourceBeanAttribute rowAttr = rowAttrsIter.next();
 						map.put(rowAttr.getKey(), (rowAttr.getValue()).toString());
@@ -913,8 +913,8 @@ public class LovResource extends AbstractSpagoBIResource {
 		List<ParameterUse> modes = null;
 		IParameterDAO driversDao = null;
 
-		List<Parameter> drivers = new ArrayList<Parameter>();
-		List<Parameter> driversToReturn = new ArrayList<Parameter>();
+		List<Parameter> drivers = new ArrayList<>();
+		List<Parameter> driversToReturn = new ArrayList<>();
 
 		try {
 			useModesDao = DAOFactory.getParameterUseDAO();
