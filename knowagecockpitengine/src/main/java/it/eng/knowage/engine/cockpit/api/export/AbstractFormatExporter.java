@@ -19,6 +19,7 @@
 package it.eng.knowage.engine.cockpit.api.export;
 
 import java.awt.Color;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -26,6 +27,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -52,7 +54,7 @@ import it.eng.spagobi.tools.dataset.bo.VersionedDataSet;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 public abstract class AbstractFormatExporter {
-	static private Logger logger = Logger.getLogger(AbstractFormatExporter.class);
+	private static Logger logger = Logger.getLogger(AbstractFormatExporter.class);
 	protected Locale locale;
 	protected final String userUniqueIdentifier;
 	protected final JSONObject body;
@@ -62,7 +64,7 @@ public abstract class AbstractFormatExporter {
 	// TODO : Do we really need a "state" instance here instead of a local variable?
 	protected List<Integer> hiddenColumns;
 	protected Map<String, String> i18nMessages;
-	protected Map<String, CellStyle> format2CellStyle = new HashMap<String, CellStyle>();
+	protected Map<Integer, XSSFCellStyle> formatHash2CellStyle = new HashMap<Integer, XSSFCellStyle>();
 
 	public AbstractFormatExporter(String userUniqueIdentifier, JSONObject body) {
 		this.userUniqueIdentifier = userUniqueIdentifier;
@@ -663,12 +665,11 @@ public abstract class AbstractFormatExporter {
 		return arr;
 	}
 
-	protected CellStyle getIntCellStyle(Workbook wb, CreationHelper helper, JSONObject column, JSONObject colStyle, XSSFCellStyle defaultStyle,
-			JSONObject settings, Integer value, JSONObject rowObject, HashMap<String, String> mapColumns, HashMap<String, String> mapColumnsTypes,
+	protected CellStyle getIntCellStyle(Workbook wb, CreationHelper helper, JSONObject column, JSONObject colStyle, String defaultFormat, JSONObject settings,
+			Integer value, JSONObject rowObject, HashMap<String, String> mapColumns, HashMap<String, String> mapColumnsTypes,
 			HashMap<String, Object> variablesMap, HashMap<String, Object> parametersMap) {
 		String colName = null;
-		CreationHelper createHelper = wb.getCreationHelper();
-		XSSFCellStyle toReturn = defaultStyle;
+		XSSFCellStyle toReturn = getCellStyleByFormat(wb, helper, defaultFormat, Optional.empty(), Optional.empty());
 		try {
 			colName = column.getString("name");
 			boolean isAvoidSeparator = isAvoidSeparator(colStyle);
@@ -683,22 +684,25 @@ public abstract class AbstractFormatExporter {
 			if ((colStyle != null && colStyle.has("precision")) || isAvoidSeparator) {
 				int precision = (colStyle != null && colStyle.has("precision")) ? colStyle.getInt("precision") : 2;
 				format = getNumberFormatByPrecision(precision, format);
-				CellStyle toReturnn = getCellStyleByFormat(wb, helper, format);
+				CellStyle toReturnn = getCellStyleByFormat(wb, helper, format, Optional.empty(), Optional.empty());
 				return toReturnn;
 			}
 			if (settings != null)
-				setRowStyle(settings, rowObject, mapColumns, toReturn, mapColumnsTypes, variablesMap, parametersMap);
+				toReturn = getRowStyle(wb, helper, settings, rowObject, mapColumns, defaultFormat, mapColumnsTypes, variablesMap, parametersMap);
 
 			if (column.has("ranges")) {
 				JSONArray ranges = column.getJSONArray("ranges");
-				toReturn = (XSSFCellStyle) wb.createCellStyle();
-				toReturn.setDataFormat(createHelper.createDataFormat().getFormat("#,##0.00"));
+//				toReturn = (XSSFCellStyle) wb.createCellStyle();
+//				toReturn.setDataFormat(createHelper.createDataFormat().getFormat("#,##0.00"));
+				String formatStr = "#,##0.00";
+				FillPatternType fillPatternType = null;
+				Color color = null;
 				for (int jj = 0; jj < ranges.length(); jj++) {
 
 					JSONObject threshold = ranges.getJSONObject(jj);
 
 					if (threshold.has("compareValueType")) {
-						Color userColor = parseColor(threshold.getString("background-color"));
+						Color userColor = parseColor(threshold.getString("background-color"), Color.white);
 						if (threshold.has("value")) {
 							Integer valueToPut = null;
 							if (threshold.getString("compareValueType").equals("static"))
@@ -714,43 +718,44 @@ public abstract class AbstractFormatExporter {
 
 								if (value.intValue() > valueToPut.intValue()) {
 
-									toReturn.setFillPattern(FillPatternType.SOLID_FOREGROUND);
-									toReturn.setFillForegroundColor(new XSSFColor(userColor, new DefaultIndexedColorMap()));
+									fillPatternType = FillPatternType.SOLID_FOREGROUND;
+									color = userColor;
+
 								}
 
 							} else if (threshold.getString("operator").equals("<")) {
 
 								if (value.intValue() < valueToPut.intValue()) {
-									toReturn.setFillPattern(FillPatternType.SOLID_FOREGROUND);
-									toReturn.setFillForegroundColor(new XSSFColor(userColor, new DefaultIndexedColorMap()));
+									fillPatternType = FillPatternType.SOLID_FOREGROUND;
+									color = userColor;
 								}
 
 							} else if (threshold.getString("operator").equals("==")) {
 
 								if (value.intValue() == valueToPut.intValue()) {
-									toReturn.setFillPattern(FillPatternType.SOLID_FOREGROUND);
-									toReturn.setFillForegroundColor(new XSSFColor(userColor, new DefaultIndexedColorMap()));
+									fillPatternType = FillPatternType.SOLID_FOREGROUND;
+									color = userColor;
 								}
 
 							} else if (threshold.getString("operator").equals("<=")) {
 
 								if (value.intValue() <= valueToPut.intValue()) {
-									toReturn.setFillPattern(FillPatternType.SOLID_FOREGROUND);
-									toReturn.setFillForegroundColor(new XSSFColor(userColor, new DefaultIndexedColorMap()));
+									fillPatternType = FillPatternType.SOLID_FOREGROUND;
+									color = userColor;
 								}
 
 							} else if (threshold.getString("operator").equals(">=")) {
 
 								if (value.intValue() >= valueToPut.intValue()) {
-									toReturn.setFillPattern(FillPatternType.SOLID_FOREGROUND);
-									toReturn.setFillForegroundColor(new XSSFColor(userColor, new DefaultIndexedColorMap()));
+									fillPatternType = FillPatternType.SOLID_FOREGROUND;
+									color = userColor;
 								}
 
 							} else if (threshold.getString("operator").equals("!=")) {
 
 								if (value.intValue() != valueToPut.intValue()) {
-									toReturn.setFillPattern(FillPatternType.SOLID_FOREGROUND);
-									toReturn.setFillForegroundColor(new XSSFColor(userColor, new DefaultIndexedColorMap()));
+									fillPatternType = FillPatternType.SOLID_FOREGROUND;
+									color = userColor;
 								}
 
 							}
@@ -763,14 +768,16 @@ public abstract class AbstractFormatExporter {
 									numbers[i] = Integer.parseInt(valueArray[i]);
 								}
 								if (containsInt(numbers, value)) {
-									toReturn.setFillPattern(FillPatternType.SOLID_FOREGROUND);
-									toReturn.setFillForegroundColor(new XSSFColor(userColor, new DefaultIndexedColorMap()));
+									fillPatternType = FillPatternType.SOLID_FOREGROUND;
+									color = userColor;
 								}
 							}
 						}
 					}
 
 				}
+
+				toReturn = getCellStyleByFormat(wb, helper, formatStr, Optional.ofNullable(fillPatternType), Optional.ofNullable(color));
 
 			}
 
@@ -781,12 +788,12 @@ public abstract class AbstractFormatExporter {
 		}
 	}
 
-	protected CellStyle getDoubleCellStyle(Workbook wb, CreationHelper helper, JSONObject column, JSONObject colStyle, XSSFCellStyle defaultStyle,
+	protected CellStyle getDoubleCellStyle(Workbook wb, CreationHelper helper, JSONObject column, JSONObject colStyle, String defaultFormat,
 			JSONObject settings, Double value, JSONObject rowObject, HashMap<String, String> mapColumns, HashMap<String, String> mapColumnsTypes,
 			HashMap<String, Object> variablesMap, HashMap<String, Object> parametersMap) {
 		String colName = null;
 		CreationHelper createHelper = wb.getCreationHelper();
-		XSSFCellStyle toReturn = defaultStyle;
+		XSSFCellStyle toReturn = getCellStyleByFormat(wb, helper, defaultFormat, Optional.empty(), Optional.empty());
 		toReturn.setDataFormat(createHelper.createDataFormat().getFormat("#,##0.00"));
 		try {
 			colName = column.getString("name");
@@ -802,22 +809,25 @@ public abstract class AbstractFormatExporter {
 			if ((colStyle != null && colStyle.has("precision")) || isAvoidSeparator) {
 				int precision = (colStyle != null && colStyle.has("precision")) ? colStyle.getInt("precision") : 2;
 				format = getNumberFormatByPrecision(precision, format);
-				CellStyle toReturnFormat = getCellStyleByFormat(wb, helper, format);
+				CellStyle toReturnFormat = getCellStyleByFormat(wb, helper, format, Optional.empty(), Optional.empty());
 				return toReturnFormat;
 			}
 			if (settings != null)
-				setRowStyle(settings, rowObject, mapColumns, toReturn, mapColumnsTypes, variablesMap, parametersMap);
+				toReturn = getRowStyle(wb, helper, settings, rowObject, mapColumns, defaultFormat, mapColumnsTypes, variablesMap, parametersMap);
 
 			if (column.has("ranges")) {
 				JSONArray ranges = column.getJSONArray("ranges");
-				toReturn = (XSSFCellStyle) wb.createCellStyle();
-				toReturn.setDataFormat(createHelper.createDataFormat().getFormat("#,##0.00"));
+//				toReturn = (XSSFCellStyle) wb.createCellStyle();
+//				toReturn.setDataFormat(createHelper.createDataFormat().getFormat("#,##0.00"));
+				String formatStr = "#,##0.00";
+				FillPatternType fillPatternType = null;
+				Color color = null;
 				for (int jj = 0; jj < ranges.length(); jj++) {
 
 					JSONObject threshold = ranges.getJSONObject(jj);
 
 					if (threshold.has("compareValueType") && threshold.has("background-color")) {
-						Color userColor = parseColor(threshold.getString("background-color"));
+						Color userColor = parseColor(threshold.getString("background-color"), Color.white);
 						if (threshold.has("value")) {
 							Double valueToPut = null;
 							if (threshold.getString("compareValueType").equals("static"))
@@ -835,43 +845,43 @@ public abstract class AbstractFormatExporter {
 							if (threshold.getString("operator").equals(">")) {
 
 								if (value.floatValue() > valueToPut.floatValue()) {
-									toReturn.setFillPattern(FillPatternType.SOLID_FOREGROUND);
-									toReturn.setFillForegroundColor(new XSSFColor(userColor, new DefaultIndexedColorMap()));
+									fillPatternType = FillPatternType.SOLID_FOREGROUND;
+									color = userColor;
 								}
 
 							} else if (threshold.getString("operator").equals("<")) {
 
 								if (value.floatValue() < valueToPut.floatValue()) {
-									toReturn.setFillPattern(FillPatternType.SOLID_FOREGROUND);
-									toReturn.setFillForegroundColor(new XSSFColor(userColor, new DefaultIndexedColorMap()));
+									fillPatternType = FillPatternType.SOLID_FOREGROUND;
+									color = userColor;
 								}
 
 							} else if (threshold.getString("operator").equals("==")) {
 
 								if (value.floatValue() == valueToPut.floatValue()) {
-									toReturn.setFillPattern(FillPatternType.SOLID_FOREGROUND);
-									toReturn.setFillForegroundColor(new XSSFColor(userColor, new DefaultIndexedColorMap()));
+									fillPatternType = FillPatternType.SOLID_FOREGROUND;
+									color = userColor;
 								}
 
 							} else if (threshold.getString("operator").equals("<=")) {
 
 								if (value.floatValue() <= valueToPut.floatValue()) {
-									toReturn.setFillPattern(FillPatternType.SOLID_FOREGROUND);
-									toReturn.setFillForegroundColor(new XSSFColor(userColor, new DefaultIndexedColorMap()));
+									fillPatternType = FillPatternType.SOLID_FOREGROUND;
+									color = userColor;
 								}
 
 							} else if (threshold.getString("operator").equals(">=")) {
 
 								if (value.floatValue() >= valueToPut.floatValue()) {
-									toReturn.setFillPattern(FillPatternType.SOLID_FOREGROUND);
-									toReturn.setFillForegroundColor(new XSSFColor(userColor, new DefaultIndexedColorMap()));
+									fillPatternType = FillPatternType.SOLID_FOREGROUND;
+									color = userColor;
 								}
 
 							} else if (threshold.getString("operator").equals("!=")) {
 
 								if (value.floatValue() != valueToPut.floatValue()) {
-									toReturn.setFillPattern(FillPatternType.SOLID_FOREGROUND);
-									toReturn.setFillForegroundColor(new XSSFColor(userColor, new DefaultIndexedColorMap()));
+									fillPatternType = FillPatternType.SOLID_FOREGROUND;
+									color = userColor;
 								}
 
 							}
@@ -884,14 +894,16 @@ public abstract class AbstractFormatExporter {
 									numbers[i] = Double.parseDouble(valueArray[i]);
 								}
 								if (containsDouble(numbers, value)) {
-									toReturn.setFillPattern(FillPatternType.SOLID_FOREGROUND);
-									toReturn.setFillForegroundColor(new XSSFColor(userColor, new DefaultIndexedColorMap()));
+									fillPatternType = FillPatternType.SOLID_FOREGROUND;
+									color = userColor;
 								}
 							}
 						}
 					}
 
 				}
+
+				toReturn = getCellStyleByFormat(wb, helper, formatStr, Optional.ofNullable(fillPatternType), Optional.ofNullable(color));
 
 			}
 
@@ -902,8 +914,14 @@ public abstract class AbstractFormatExporter {
 		}
 	}
 
-	private void setRowStyle(JSONObject settings, JSONObject rowObject, HashMap<String, String> mapColumns, XSSFCellStyle toReturn,
-			HashMap<String, String> mapColumnsTypes, HashMap<String, Object> variablesMap, HashMap<String, Object> parametersMap) throws JSONException {
+	private XSSFCellStyle getRowStyle(Workbook wb, CreationHelper helper, JSONObject settings, JSONObject rowObject, HashMap<String, String> mapColumns,
+			String defaultFormat, HashMap<String, String> mapColumnsTypes, HashMap<String, Object> variablesMap, HashMap<String, Object> parametersMap)
+			throws JSONException {
+
+		String formatStr = defaultFormat;
+		FillPatternType fillPatternType = null;
+		Color color = null;
+
 		if (settings.has("rowThresholds") && settings.getJSONObject("rowThresholds").getString("enabled").equals("true")) {
 
 			JSONArray listOfThresholds = settings.getJSONObject("rowThresholds").getJSONArray("list");
@@ -912,7 +930,7 @@ public abstract class AbstractFormatExporter {
 
 				JSONObject entry = listOfThresholds.getJSONObject(i);
 
-				Color userColor = parseColor(entry.getJSONObject("style").getString("background-color"));
+				Color userColor = parseColor(entry.getJSONObject("style").getString("background-color"), Color.white);
 				Object rowValueOBJ = rowObject.get(mapColumns.get(entry.getString("column")));
 
 				String type = mapColumnsTypes.get(mapColumns.get(entry.getString("column")));
@@ -940,43 +958,43 @@ public abstract class AbstractFormatExporter {
 
 						if (rowValue.floatValue() > valueToPut.floatValue()) {
 
-							toReturn.setFillPattern(FillPatternType.SOLID_FOREGROUND);
-							toReturn.setFillForegroundColor(new XSSFColor(userColor, new DefaultIndexedColorMap()));
+							fillPatternType = FillPatternType.SOLID_FOREGROUND;
+							color = userColor;
 						}
 
 					} else if (entry.getString("condition").equals("<")) {
 
 						if (rowValue.floatValue() < valueToPut.floatValue()) {
-							toReturn.setFillPattern(FillPatternType.SOLID_FOREGROUND);
-							toReturn.setFillForegroundColor(new XSSFColor(userColor, new DefaultIndexedColorMap()));
+							fillPatternType = FillPatternType.SOLID_FOREGROUND;
+							color = userColor;
 						}
 
 					} else if (entry.getString("condition").equals("==")) {
 
 						if (rowValue.floatValue() == valueToPut.floatValue()) {
-							toReturn.setFillPattern(FillPatternType.SOLID_FOREGROUND);
-							toReturn.setFillForegroundColor(new XSSFColor(userColor, new DefaultIndexedColorMap()));
+							fillPatternType = FillPatternType.SOLID_FOREGROUND;
+							color = userColor;
 						}
 
 					} else if (entry.getString("condition").equals("<=")) {
 
 						if (rowValue.floatValue() <= valueToPut.floatValue()) {
-							toReturn.setFillPattern(FillPatternType.SOLID_FOREGROUND);
-							toReturn.setFillForegroundColor(new XSSFColor(userColor, new DefaultIndexedColorMap()));
+							fillPatternType = FillPatternType.SOLID_FOREGROUND;
+							color = userColor;
 						}
 
 					} else if (entry.getString("condition").equals(">=")) {
 
 						if (rowValue.floatValue() >= valueToPut.floatValue()) {
-							toReturn.setFillPattern(FillPatternType.SOLID_FOREGROUND);
-							toReturn.setFillForegroundColor(new XSSFColor(userColor, new DefaultIndexedColorMap()));
+							fillPatternType = FillPatternType.SOLID_FOREGROUND;
+							color = userColor;
 						}
 
 					} else if (entry.getString("condition").equals("!=")) {
 
 						if (rowValue.floatValue() != valueToPut.floatValue()) {
-							toReturn.setFillPattern(FillPatternType.SOLID_FOREGROUND);
-							toReturn.setFillForegroundColor(new XSSFColor(userColor, new DefaultIndexedColorMap()));
+							fillPatternType = FillPatternType.SOLID_FOREGROUND;
+							color = userColor;
 						}
 					} else if (entry.getString("condition").equals("IN")) {
 
@@ -986,8 +1004,8 @@ public abstract class AbstractFormatExporter {
 							numbers[ii] = Double.parseDouble(valueArray[ii]);
 						}
 						if (containsDouble(numbers, rowValue)) {
-							toReturn.setFillPattern(FillPatternType.SOLID_FOREGROUND);
-							toReturn.setFillForegroundColor(new XSSFColor(userColor, new DefaultIndexedColorMap()));
+							fillPatternType = FillPatternType.SOLID_FOREGROUND;
+							color = userColor;
 						}
 					}
 				}
@@ -1011,43 +1029,43 @@ public abstract class AbstractFormatExporter {
 
 						if (rowValue.intValue() > valueToPut.intValue()) {
 
-							toReturn.setFillPattern(FillPatternType.SOLID_FOREGROUND);
-							toReturn.setFillForegroundColor(new XSSFColor(userColor, new DefaultIndexedColorMap()));
+							fillPatternType = FillPatternType.SOLID_FOREGROUND;
+							color = userColor;
 						}
 
 					} else if (entry.getString("condition").equals("<")) {
 
 						if (rowValue.intValue() < valueToPut.intValue()) {
-							toReturn.setFillPattern(FillPatternType.SOLID_FOREGROUND);
-							toReturn.setFillForegroundColor(new XSSFColor(userColor, new DefaultIndexedColorMap()));
+							fillPatternType = FillPatternType.SOLID_FOREGROUND;
+							color = userColor;
 						}
 
 					} else if (entry.getString("condition").equals("==")) {
 
 						if (rowValue.intValue() == valueToPut.intValue()) {
-							toReturn.setFillPattern(FillPatternType.SOLID_FOREGROUND);
-							toReturn.setFillForegroundColor(new XSSFColor(userColor, new DefaultIndexedColorMap()));
+							fillPatternType = FillPatternType.SOLID_FOREGROUND;
+							color = userColor;
 						}
 
 					} else if (entry.getString("condition").equals("<=")) {
 
 						if (rowValue.intValue() <= valueToPut.intValue()) {
-							toReturn.setFillPattern(FillPatternType.SOLID_FOREGROUND);
-							toReturn.setFillForegroundColor(new XSSFColor(userColor, new DefaultIndexedColorMap()));
+							fillPatternType = FillPatternType.SOLID_FOREGROUND;
+							color = userColor;
 						}
 
 					} else if (entry.getString("condition").equals(">=")) {
 
 						if (rowValue.intValue() >= valueToPut.intValue()) {
-							toReturn.setFillPattern(FillPatternType.SOLID_FOREGROUND);
-							toReturn.setFillForegroundColor(new XSSFColor(userColor, new DefaultIndexedColorMap()));
+							fillPatternType = FillPatternType.SOLID_FOREGROUND;
+							color = userColor;
 						}
 
 					} else if (entry.getString("condition").equals("!=")) {
 
 						if (rowValue.intValue() != valueToPut.intValue()) {
-							toReturn.setFillPattern(FillPatternType.SOLID_FOREGROUND);
-							toReturn.setFillForegroundColor(new XSSFColor(userColor, new DefaultIndexedColorMap()));
+							fillPatternType = FillPatternType.SOLID_FOREGROUND;
+							color = userColor;
 						}
 					} else if (entry.getString("condition").equals("IN")) {
 
@@ -1057,8 +1075,8 @@ public abstract class AbstractFormatExporter {
 							numbers[ii] = Integer.parseInt(valueArray[ii]);
 						}
 						if (containsInt(numbers, rowValue)) {
-							toReturn.setFillPattern(FillPatternType.SOLID_FOREGROUND);
-							toReturn.setFillForegroundColor(new XSSFColor(userColor, new DefaultIndexedColorMap()));
+							fillPatternType = FillPatternType.SOLID_FOREGROUND;
+							color = userColor;
 						}
 					}
 				}
@@ -1082,56 +1100,59 @@ public abstract class AbstractFormatExporter {
 
 						if (rowValue.compareTo(valueToPut) > 0) {
 
-							toReturn.setFillPattern(FillPatternType.SOLID_FOREGROUND);
-							toReturn.setFillForegroundColor(new XSSFColor(userColor, new DefaultIndexedColorMap()));
+							fillPatternType = FillPatternType.SOLID_FOREGROUND;
+							color = userColor;
 						}
 
 					} else if (entry.getString("condition").equals("<")) {
 
 						if (rowValue.compareTo(valueToPut) < 0) {
-							toReturn.setFillPattern(FillPatternType.SOLID_FOREGROUND);
-							toReturn.setFillForegroundColor(new XSSFColor(userColor, new DefaultIndexedColorMap()));
+							fillPatternType = FillPatternType.SOLID_FOREGROUND;
+							color = userColor;
 						}
 
 					} else if (entry.getString("condition").equals("==")) {
 
 						if (rowValue.equals(valueToPut)) {
-							toReturn.setFillPattern(FillPatternType.SOLID_FOREGROUND);
-							toReturn.setFillForegroundColor(new XSSFColor(userColor, new DefaultIndexedColorMap()));
+							fillPatternType = FillPatternType.SOLID_FOREGROUND;
+							color = userColor;
 						}
 
 					} else if (entry.getString("condition").equals("<=")) {
 
 						if (rowValue.compareTo(valueToPut) <= 0) {
-							toReturn.setFillPattern(FillPatternType.SOLID_FOREGROUND);
-							toReturn.setFillForegroundColor(new XSSFColor(userColor, new DefaultIndexedColorMap()));
+							fillPatternType = FillPatternType.SOLID_FOREGROUND;
+							color = userColor;
 						}
 
 					} else if (entry.getString("condition").equals(">=")) {
 
 						if (rowValue.compareTo(valueToPut) >= 0) {
-							toReturn.setFillPattern(FillPatternType.SOLID_FOREGROUND);
-							toReturn.setFillForegroundColor(new XSSFColor(userColor, new DefaultIndexedColorMap()));
+							fillPatternType = FillPatternType.SOLID_FOREGROUND;
+							color = userColor;
 						}
 
 					} else if (entry.getString("condition").equals("!=")) {
 
 						if (!rowValue.equals(valueToPut)) {
-							toReturn.setFillPattern(FillPatternType.SOLID_FOREGROUND);
-							toReturn.setFillForegroundColor(new XSSFColor(userColor, new DefaultIndexedColorMap()));
+							fillPatternType = FillPatternType.SOLID_FOREGROUND;
+							color = userColor;
 						}
 					} else if (entry.getString("condition").equals("IN")) {
 
 						String[] valueArray = entry.getString("valueArray").replace("[", "").replace("]", "").replaceAll("\"", "").split(",");
 						if (Arrays.stream(valueArray).anyMatch(rowValue::equals)) {
-							toReturn.setFillPattern(FillPatternType.SOLID_FOREGROUND);
-							toReturn.setFillForegroundColor(new XSSFColor(userColor, new DefaultIndexedColorMap()));
+							fillPatternType = FillPatternType.SOLID_FOREGROUND;
+							color = userColor;
 						}
 					}
 				}
 
 			}
 		}
+		XSSFCellStyle toReturn = getCellStyleByFormat(wb, helper, formatStr, Optional.ofNullable(fillPatternType), Optional.ofNullable(color));
+		return toReturn;
+
 	}
 
 	public boolean containsInt(final int[] array, final int key) {
@@ -1142,11 +1163,11 @@ public abstract class AbstractFormatExporter {
 		return ArrayUtils.contains(array, key);
 	}
 
-	protected CellStyle getStringCellStyle(Workbook wb, CreationHelper helper, JSONObject column, JSONObject colStyle, XSSFCellStyle defaultStyle,
+	protected CellStyle getStringCellStyle(Workbook wb, CreationHelper helper, JSONObject column, JSONObject colStyle, String defaultFormat,
 			JSONObject settings, String value, JSONObject rowObject, HashMap<String, String> mapColumns, HashMap<String, String> mapColumnsTypes,
 			HashMap<String, Object> variablesMap, HashMap<String, Object> parametersMap) {
 		String colName = null;
-		XSSFCellStyle toReturn = defaultStyle;
+		XSSFCellStyle toReturn = getCellStyleByFormat(wb, helper, defaultFormat, Optional.empty(), Optional.empty());
 		try {
 			colName = column.getString("name");
 			boolean isAvoidSeparator = isAvoidSeparator(colStyle);
@@ -1161,21 +1182,25 @@ public abstract class AbstractFormatExporter {
 			if ((colStyle != null && colStyle.has("precision")) || isAvoidSeparator) {
 				int precision = (colStyle != null && colStyle.has("precision")) ? colStyle.getInt("precision") : 2;
 				format = getNumberFormatByPrecision(precision, format);
-				CellStyle toReturnFormat = getCellStyleByFormat(wb, helper, format);
+				CellStyle toReturnFormat = getCellStyleByFormat(wb, helper, format, Optional.empty(), Optional.empty());
 				return toReturnFormat;
 			}
 			if (settings != null)
-				setRowStyle(settings, rowObject, mapColumns, toReturn, mapColumnsTypes, variablesMap, parametersMap);
+				toReturn = getRowStyle(wb, helper, settings, rowObject, mapColumns, defaultFormat, mapColumnsTypes, variablesMap, parametersMap);
 
 			if (column.has("ranges")) {
 				JSONArray ranges = column.getJSONArray("ranges");
-				toReturn = (XSSFCellStyle) wb.createCellStyle();
+//				toReturn = (XSSFCellStyle) wb.createCellStyle();
+				String formatStr = "#,##0.00";
+				FillPatternType fillPatternType = null;
+				Color color = null;
+
 				for (int jj = 0; jj < ranges.length(); jj++) {
 
 					JSONObject threshold = ranges.getJSONObject(jj);
 
 					if (threshold.has("compareValueType") && threshold.has("background-color")) {
-						Color userColor = parseColor(threshold.getString("background-color"));
+						Color userColor = parseColor(threshold.getString("background-color"), Color.white);
 						if (threshold.has("value")) {
 							String valueToPut = null;
 							if (threshold.getString("compareValueType").equals("static"))
@@ -1191,43 +1216,43 @@ public abstract class AbstractFormatExporter {
 							if (threshold.getString("operator").equals(">")) {
 
 								if (value.compareTo(valueToPut) > 0) {
-									toReturn.setFillPattern(FillPatternType.SOLID_FOREGROUND);
-									toReturn.setFillForegroundColor(new XSSFColor(userColor, new DefaultIndexedColorMap()));
+									fillPatternType = FillPatternType.SOLID_FOREGROUND;
+									color = userColor;
 								}
 
 							} else if (threshold.getString("operator").equals("<")) {
 
 								if (value.compareTo(valueToPut) < 0) {
-									toReturn.setFillPattern(FillPatternType.SOLID_FOREGROUND);
-									toReturn.setFillForegroundColor(new XSSFColor(userColor, new DefaultIndexedColorMap()));
+									fillPatternType = FillPatternType.SOLID_FOREGROUND;
+									color = userColor;
 								}
 
 							} else if (threshold.getString("operator").equals("==")) {
 
 								if (value.equals(valueToPut)) {
-									toReturn.setFillPattern(FillPatternType.SOLID_FOREGROUND);
-									toReturn.setFillForegroundColor(new XSSFColor(userColor, new DefaultIndexedColorMap()));
+									fillPatternType = FillPatternType.SOLID_FOREGROUND;
+									color = userColor;
 								}
 
 							} else if (threshold.getString("operator").equals("<=")) {
 
 								if (value.compareTo(valueToPut) <= 0) {
-									toReturn.setFillPattern(FillPatternType.SOLID_FOREGROUND);
-									toReturn.setFillForegroundColor(new XSSFColor(userColor, new DefaultIndexedColorMap()));
+									fillPatternType = FillPatternType.SOLID_FOREGROUND;
+									color = userColor;
 								}
 
 							} else if (threshold.getString("operator").equals(">=")) {
 
 								if (value.compareTo(valueToPut) >= 0) {
-									toReturn.setFillPattern(FillPatternType.SOLID_FOREGROUND);
-									toReturn.setFillForegroundColor(new XSSFColor(userColor, new DefaultIndexedColorMap()));
+									fillPatternType = FillPatternType.SOLID_FOREGROUND;
+									color = userColor;
 								}
 
 							} else if (threshold.getString("operator").equals("!=")) {
 
 								if (!value.equals(valueToPut)) {
-									toReturn.setFillPattern(FillPatternType.SOLID_FOREGROUND);
-									toReturn.setFillForegroundColor(new XSSFColor(userColor, new DefaultIndexedColorMap()));
+									fillPatternType = FillPatternType.SOLID_FOREGROUND;
+									color = userColor;
 								}
 
 							}
@@ -1235,8 +1260,8 @@ public abstract class AbstractFormatExporter {
 							if (threshold.getString("operator").equals("IN")) {
 								String[] valueArray = threshold.getString("valueArray").replace("[", "").replace("]", "").replaceAll("\"", "").split(",");
 								if (Arrays.stream(valueArray).anyMatch(value::equals)) {
-									toReturn.setFillPattern(FillPatternType.SOLID_FOREGROUND);
-									toReturn.setFillForegroundColor(new XSSFColor(userColor, new DefaultIndexedColorMap()));
+									fillPatternType = FillPatternType.SOLID_FOREGROUND;
+									color = userColor;
 								}
 
 							}
@@ -1244,6 +1269,8 @@ public abstract class AbstractFormatExporter {
 					}
 
 				}
+
+				toReturn = getCellStyleByFormat(wb, helper, formatStr, Optional.ofNullable(fillPatternType), Optional.ofNullable(color));
 
 			}
 
@@ -1254,16 +1281,14 @@ public abstract class AbstractFormatExporter {
 		}
 	}
 
-	protected CellStyle getDateCellStyle(Workbook wb, CreationHelper helper, JSONObject column, JSONObject colStyle, XSSFCellStyle defaultStyle,
+	protected CellStyle getDateCellStyle(Workbook wb, CreationHelper helper, JSONObject column, JSONObject colStyle, String defaultDateFormat,
 			JSONObject settings, JSONObject rowObject, HashMap<String, String> mapColumns, HashMap<String, String> mapColumnsTypes,
 			HashMap<String, Object> variablesMap, HashMap<String, Object> parametersMap) {
 		String colName = null;
-		CreationHelper createHelper = wb.getCreationHelper();
-		XSSFCellStyle toReturn = defaultStyle;
-		toReturn.setDataFormat(createHelper.createDataFormat().getFormat(TIMESTAMP_FORMAT));
+		XSSFCellStyle toReturn = getCellStyleByFormat(wb, helper, defaultDateFormat, Optional.empty(), Optional.empty());
 		try {
 			if (settings != null)
-				setRowStyle(settings, rowObject, mapColumns, toReturn, mapColumnsTypes, variablesMap, parametersMap);
+				toReturn = getRowStyle(wb, helper, settings, rowObject, mapColumns, defaultDateFormat, mapColumnsTypes, variablesMap, parametersMap);
 
 			return toReturn;
 		} catch (Exception e) {
@@ -1272,14 +1297,14 @@ public abstract class AbstractFormatExporter {
 		}
 	}
 
-	protected CellStyle getGenericCellStyle(Workbook wb, CreationHelper helper, JSONObject column, JSONObject colStyle, XSSFCellStyle defaultStyle,
+	protected CellStyle getGenericCellStyle(Workbook wb, CreationHelper helper, JSONObject column, JSONObject colStyle, String defaultFormat,
 			JSONObject settings, JSONObject rowObject, HashMap<String, String> mapColumns, HashMap<String, String> mapColumnsTypes,
 			HashMap<String, Object> variablesMap, HashMap<String, Object> parametersMap) {
 		String colName = null;
-		XSSFCellStyle toReturn = defaultStyle;
+		XSSFCellStyle toReturn = getCellStyleByFormat(wb, helper, defaultFormat, Optional.empty(), Optional.empty());
 		try {
 			if (settings != null)
-				setRowStyle(settings, rowObject, mapColumns, toReturn, mapColumnsTypes, variablesMap, parametersMap);
+				toReturn = getRowStyle(wb, helper, settings, rowObject, mapColumns, defaultFormat, mapColumnsTypes, variablesMap, parametersMap);
 
 			return toReturn;
 		} catch (Exception e) {
@@ -1288,7 +1313,7 @@ public abstract class AbstractFormatExporter {
 		}
 	}
 
-	public static Color parseColor(String input) {
+	public static Color parseColor(String input, Color defaultColor) {
 		Pattern c = Pattern.compile("rgb *\\( *([0-9]+), *([0-9]+), *([0-9]+) *\\)");
 		Matcher m = c.matcher(input);
 		Color color = null;
@@ -1297,7 +1322,19 @@ public abstract class AbstractFormatExporter {
 					Integer.valueOf(m.group(2)), // g
 					Integer.valueOf(m.group(3))); // b
 		} else {
-			color = Color.decode(input);
+			try {
+				color = Color.decode(input);
+			} catch (NumberFormatException nfe) {
+				// if we can't decode lets try to get it by name
+				try {
+					// try to get a color by name using reflection
+					final Field f = Color.class.getField(input);
+					return (Color) f.get(null);
+				} catch (Exception ce) {
+					// if we can't get any color return default
+					return defaultColor;
+				}
+			}
 		}
 		return color;
 	}
@@ -1324,14 +1361,33 @@ public abstract class AbstractFormatExporter {
 	 * This method avoids cell style objects number to increase by rows number (see https://production.eng.it/jira/browse/KNOWAGE-6692 and
 	 * https://production.eng.it/jira/browse/KNOWAGE-6693)
 	 */
-	protected CellStyle getCellStyleByFormat(Workbook wb, CreationHelper helper, String format) {
-		if (!format2CellStyle.containsKey(format)) {
-			// if cell style does not exist
-			CellStyle cellStyle = wb.createCellStyle();
-			cellStyle.setDataFormat(helper.createDataFormat().getFormat(format));
-			format2CellStyle.put(format, cellStyle);
+	protected XSSFCellStyle getCellStyleByFormat(Workbook wb, CreationHelper helper, String format, Optional<FillPatternType> fillPatternTypeOpt,
+			Optional<Color> colorOpt) {
+		Integer styleKey = getStyleKey(format, fillPatternTypeOpt, colorOpt);
+		formatHash2CellStyle.computeIfAbsent(styleKey, key -> doCreateCellStyle(wb, helper, format, fillPatternTypeOpt, colorOpt));
+		return formatHash2CellStyle.get(styleKey);
+	}
+
+	private XSSFCellStyle doCreateCellStyle(Workbook wb, CreationHelper helper, String format, Optional<FillPatternType> fillPatternTypeOpt,
+			Optional<Color> colorOpt) {
+		XSSFCellStyle cellStyle = (XSSFCellStyle) wb.createCellStyle();
+		cellStyle.setDataFormat(helper.createDataFormat().getFormat(format));
+		fillPatternTypeOpt.ifPresent(cellStyle::setFillPattern);
+		colorOpt.ifPresent(color -> cellStyle.setFillForegroundColor(new XSSFColor(color, new DefaultIndexedColorMap())));
+		return cellStyle;
+	}
+
+	private Integer getStyleKey(String format, Optional<FillPatternType> fillPatternTypeOpt, Optional<Color> colorOpt) {
+		Integer hashcode = format.hashCode();
+		if (fillPatternTypeOpt.isPresent()) {
+			FillPatternType fillPatternType = fillPatternTypeOpt.get();
+			hashcode += fillPatternType.hashCode();
 		}
-		return format2CellStyle.get(format);
+		if (colorOpt.isPresent()) {
+			Color color = colorOpt.get();
+			hashcode += color.hashCode();
+		}
+		return hashcode;
 	}
 
 	protected String getNumberFormatByPrecision(int precision, String initialFormat) {

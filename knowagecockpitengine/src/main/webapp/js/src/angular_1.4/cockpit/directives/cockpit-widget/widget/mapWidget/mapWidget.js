@@ -2159,7 +2159,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		}
 
 		$scope.getLegendEntries = function() {
-			return Object.values($scope.legend);
+			return Object.values($scope.legend)
+				.filter(function(e) { return $scope.getLayerVisibility(e.layer); });
 		}
 
 	}

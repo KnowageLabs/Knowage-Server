@@ -27,7 +27,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.commons.lang3.StringEscapeUtils;
+import org.apache.commons.text.StringEscapeUtils;
 import org.apache.log4j.Logger;
 
 import it.eng.spago.base.SourceBean;
@@ -200,11 +200,11 @@ public class ScriptDetail extends DependenciesPostProcessingLov implements ILovD
 		logger.debug("IN");
 		String result = null;
 		HashMap attributes = GeneralUtilities.getAllProfileAttributes(profile); // to
-																				// be
-																				// cancelled,
-																				// now
-																				// substitutution
-																				// inline
+																				 // be
+																				 // cancelled,
+																				 // now
+																				 // substitutution
+																				 // inline
 		attributes.putAll(this.getSystemBindings(locale));
 		// Substitute profile attributes with their value
 		String cleanScript = substituteProfileAttributes(getScript(), attributes);
@@ -219,7 +219,7 @@ public class ScriptDetail extends DependenciesPostProcessingLov implements ILovD
 
 		List<Object> imports = null;
 		if ("".equals(languageScript) || "groovy".equals(languageScript)) {
-			imports = new ArrayList<Object>();
+			imports = new ArrayList<>();
 			URL url = Thread.currentThread().getContextClassLoader().getResource("predefinedGroovyScript.groovy");
 			try {
 				logger.debug("predefinedGroovyScript.groovy file URL is equal to [" + url + "]");
@@ -228,7 +228,7 @@ public class ScriptDetail extends DependenciesPostProcessingLov implements ILovD
 				logger.warn("Impossible to load predefinedGroovyScript.groovy", t);
 			}
 		} else if ("ECMAScript".equals(languageScript) || "rhino-nonjdk".equals(languageScript)) {
-			imports = new ArrayList<Object>();
+			imports = new ArrayList<>();
 			URL url = Thread.currentThread().getContextClassLoader().getResource("predefinedJavascriptScript.js");
 			try {
 				logger.debug("predefinedJavascriptScript.js file URL is equal to [" + url + "]");
@@ -259,7 +259,7 @@ public class ScriptDetail extends DependenciesPostProcessingLov implements ILovD
 			logger.debug("Execution instance's locale is null; considering default one: " + locale);
 		}
 		String dateFormat = GeneralUtilities.getLocaleDateFormat(locale);
-		HashMap<String, String> map = new HashMap<String, String>();
+		HashMap<String, String> map = new HashMap<>();
 		map.put(SBI_BINDINGS_LANGUAGE, locale.getLanguage());
 		map.put(SBI_BINDINGS_COUNTRY, locale.getCountry());
 		map.put(SBI_BINDINGS_SCRIPT, locale.getScript());
@@ -387,7 +387,7 @@ public class ScriptDetail extends DependenciesPostProcessingLov implements ILovD
 	 */
 	@Override
 	public Set<String> getParameterNames() throws Exception {
-		Set<String> names = new HashSet<String>();
+		Set<String> names = new HashSet<>();
 		String script = getScript();
 		while (script.indexOf(StringUtilities.START_PARAMETER) != -1) {
 			int startind = script.indexOf(StringUtilities.START_PARAMETER);
@@ -432,7 +432,7 @@ public class ScriptDetail extends DependenciesPostProcessingLov implements ILovD
 	 * @return
 	 */
 	public String convertResult(String result) {
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		sb.append("<ROWS>");
 		sb.append("<ROW VALUE=\"" + result + "\"/>");
 		sb.append("</ROWS>");
