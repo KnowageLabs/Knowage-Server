@@ -27,7 +27,17 @@
             <SchedulerFileAccordion v-if="document.saveasfile" class="p-m-3" :propDocument="document" data-test="file-accordion"></SchedulerFileAccordion>
             <SchedulerDocumentAccordion v-if="document.saveasdocument" class="p-m-3" :propDocument="document" :functionalities="functionalities" :datasets="datasets" :jobInfo="jobInfo" data-test="document-accordion"></SchedulerDocumentAccordion>
             <SchedulerJavaClassAccordion v-if="document.sendtojavaclass" class="p-m-3" :propDocument="document" data-test="java-accordion"></SchedulerJavaClassAccordion>
-            <SchedulerMailAccordion v-if="document.sendmail" class="p-m-3" :propDocument="document" :datasets="datasets" :jobInfo="jobInfo" data-test="mail-accordion"></SchedulerMailAccordion>
+            <SchedulerMailAccordion
+                v-if="document.sendmail"
+                class="p-m-3"
+                :propDocument="document"
+                :datasets="datasets"
+                :jobInfo="jobInfo"
+                :documentWithUniqueMail="documentWithUniqueMail"
+                @sendUniqueMailSelected="setSetUniqueMailSelected"
+                @uniqueMailOptionsChanged="$emit('uniqueMailOptionsChanged', $event)"
+                data-test="mail-accordion"
+            ></SchedulerMailAccordion>
         </div>
     </div>
 </template>
@@ -44,7 +54,8 @@ import SchedulerMailAccordion from './accordions/SchedulerMailAccordion.vue'
 export default defineComponent({
     name: 'scheduler-tming-output-document-detail',
     components: { Checkbox, SchedulerSnapshotAccordion, SchedulerFileAccordion, SchedulerJavaClassAccordion, SchedulerDocumentAccordion, SchedulerMailAccordion },
-    props: { propDocument: { type: Object }, functionalities: { type: Array }, datasets: { type: Array }, jobInfo: { type: Object } },
+    props: { propDocument: { type: Object }, functionalities: { type: Array }, datasets: { type: Array }, jobInfo: { type: Object }, documentWithUniqueMail: { type: Object } },
+    emits: ['sendUniqueMailSelected', 'uniqueMailOptionsChanged'],
     data() {
         return {
             document: null as any
@@ -61,6 +72,7 @@ export default defineComponent({
     methods: {
         loadDocument() {
             this.document = this.propDocument
+            if (this.document.uniqueMail) this.setSetUniqueMailSelected(this.document)
             this.document.invalid = {}
         },
         removeProperty(propName: string) {
@@ -89,6 +101,9 @@ export default defineComponent({
                 case 'sendmail':
                     this.document.invalid.invalidMail = false
             }
+        },
+        setSetUniqueMailSelected(document: any) {
+            this.$emit('sendUniqueMailSelected', document)
         }
     }
 })

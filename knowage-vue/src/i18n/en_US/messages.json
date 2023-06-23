@@ -1987,6 +1987,7 @@
             "title": "Scheduler",
             "triggerAlreadyPresent": "Trigger already existing with this name",
             "uniqueMail": "Send unique mail for all scheduled document (use this tab mail settings)",
+            "uniqueMailSelectedInfo": "A unique mail has been set for all scheduled document, so the settings from that tab will be used. Different settings set in here will be applied over.",
             "useDatasetList": "Use a DataSet as recipients' list",
             "useDatasetListHelp": "Recipients list will be retrieved by the specified dataset: this dataset should be a 2-columns dataset, the former to contain the parameter value to be matched with the specified parameter, the latter to contain a email address.",
             "useExpression": "Use an expression",

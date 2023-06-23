@@ -1255,8 +1255,8 @@ export default defineComponent({
                         return parameter.urlName === crossNavigationDocument.navigationParams[key].value.label
                     })
                     if (sourceParameter) {
-                        navigationParams[key] = sourceParameter.parameterValue[0].value ?? ''
-                        navigationParams[key + '_field_visible_description'] = sourceParameter.parameterValue[0].description ?? ''
+                        navigationParams[key] = sourceParameter.parameterValue[0] && sourceParameter.parameterValue[0].value ? sourceParameter.parameterValue[0].value : ''
+                        navigationParams[key + '_field_visible_description'] = sourceParameter.parameterValue[0] && sourceParameter.parameterValue[0].description ? sourceParameter.parameterValue[0].description : ''
                     }
                 }
             })
