@@ -42,7 +42,6 @@ import java.util.Map;
 import java.util.Random;
 import java.util.regex.Matcher;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
 import it.eng.spago.base.SourceBean;
@@ -277,7 +276,7 @@ public class StringUtilities {
 			current = slashEIndex + 2;
 			sb.append("\\E\\\\E\\Q");
 		}
-		sb.append(s.substring(current, s.length()));
+		sb.append(s.substring(current));
 		sb.append("\\E");
 		logger.debug("OUT");
 		return sb.toString();
@@ -480,11 +479,8 @@ public class StringUtilities {
 	}
 
 	private static String escapeInternalQuotes(String replacement) {
-		return new StringBuilder()
-				.append(replacement.charAt(0))
-				.append(replacement.substring(1, replacement.length() - 1).replaceAll("'","''"))
-				.append(replacement.charAt(replacement.length() - 1))
-				.toString();
+		return new StringBuilder().append(replacement.charAt(0)).append(replacement.substring(1, replacement.length() - 1).replaceAll("'", "''"))
+				.append(replacement.charAt(replacement.length() - 1)).toString();
 	}
 
 	/**
@@ -968,17 +964,6 @@ public class StringUtilities {
 			int prefixLength = prefix.length();
 
 			String[] returnedValues = values.substring(prefixIndex + prefixLength, suffixIndex).split("\\Q" + delimiter + "\\E");
-
-			Character ch1 = values.charAt(values.lastIndexOf(suffix) - 1);
-			Character ch2 = values.charAt(values.lastIndexOf(suffix));
-			if (ch1.equals(ch2)) { // case when '' is present as last value
-				String[] returnedValuesEmpty = new String[returnedValues.length + 1];
-				for (int i = 0; i < returnedValues.length; i++) {
-					returnedValuesEmpty[i] = returnedValues[i];
-				}
-				returnedValuesEmpty[returnedValues.length] = StringUtils.EMPTY;
-				return returnedValuesEmpty;
-			}
 
 			return returnedValues;
 		} else {
