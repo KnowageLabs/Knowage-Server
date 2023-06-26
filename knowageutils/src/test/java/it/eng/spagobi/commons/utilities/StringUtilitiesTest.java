@@ -71,20 +71,22 @@ public class StringUtilitiesTest {
 		String prefix = "'";
 		String delimiter = "','";
 		String suffix = "'";
-		String values = "('D'rink','Fo'od')";
+		String values = "('D'rink','Fo'od','Non-Consumable'')";
 		String[] result = StringUtilities.splitBetween(values, prefix, delimiter, suffix);
-		assertEquals(2, result.length);
+		assertEquals(3, result.length);
 		assertEquals("D'rink", result[0]);
 		assertEquals("Fo'od", result[1]);
+		assertEquals("Non-Consumable'", result[2]);
 
 		prefix = "**";
 		delimiter = "++++";
 		suffix = "###";
-		values = "(**D'rink++++Fo'od###)";
+		values = "(**D'rink++++Fo'od++++Non-Consumable'###)";
 		result = StringUtilities.splitBetween(values, prefix, delimiter, suffix);
-		assertEquals(2, result.length);
+		assertEquals(3, result.length);
 		assertEquals("D'rink", result[0]);
 		assertEquals("Fo'od", result[1]);
+		assertEquals("Non-Consumable'", result[2]);
 	}
 
 	@Test(expected = SpagoBIRuntimeException.class)
