@@ -55,7 +55,7 @@ public class ProductProfiler {
 		if (isCommunity) {
 			return engines;
 		} else {
-			List<Engine> filteredEngines = new ArrayList<Engine>();
+			List<Engine> filteredEngines = new ArrayList<>();
 			try {
 				Method filterEnginesByProductMethod = productProfilerEE.getMethod("filterEnginesByProduct", List.class);
 				filteredEngines = (List<Engine>) filterEnginesByProductMethod.invoke(productProfilerEE, engines);
@@ -98,9 +98,9 @@ public class ProductProfiler {
 
 	public static Set<String> filterAuthorizationsByProduct(List<String> authorizations) {
 		if (isCommunity) {
-			return new HashSet<String>(authorizations);
+			return new HashSet<>(authorizations);
 		} else {
-			Set<String> filteredAuthorizations = new HashSet<String>();
+			Set<String> filteredAuthorizations = new HashSet<>();
 			try {
 				Method filterAuthorizationsByProductMethod = productProfilerEE.getMethod("filterAuthorizationsByProduct", List.class);
 				filteredAuthorizations = (Set<String>) filterAuthorizationsByProductMethod.invoke(productProfilerEE, authorizations);
@@ -141,4 +141,7 @@ public class ProductProfiler {
 		}
 	}
 
+	private ProductProfiler() {
+
+	}
 }

@@ -178,10 +178,10 @@ public class AnalyticalModelDocumentManagementAPI {
 	 *
 	 * @return the list with analitycal drivers associated.
 	 */
-	public List getDocumentParameters(Object docDescriptor) {
+	public List<JSONObject> getDocumentParameters(Object docDescriptor) {
 		logger.debug("IN");
 		try {
-			List<JSONObject> parametersList = new ArrayList<JSONObject>();
+			List<JSONObject> parametersList = new ArrayList<>();
 
 			BIObject document = getDocument(docDescriptor);
 			if (document == null) {
@@ -189,10 +189,10 @@ public class AnalyticalModelDocumentManagementAPI {
 			}
 
 			try {
-				List objParams = document.getDrivers();
-				for (Iterator iterator = objParams.iterator(); iterator.hasNext();) {
+				List<BIObjectParameter> objParams = document.getDrivers();
+				for (Iterator<BIObjectParameter> iterator = objParams.iterator(); iterator.hasNext();) {
 					JSONObject paramJSON = new JSONObject();
-					BIObjectParameter param = (BIObjectParameter) iterator.next();
+					BIObjectParameter param = iterator.next();
 					paramJSON.put("id", param.getId());
 					paramJSON.put("label", param.getLabel());
 					paramJSON.put("url", param.getParameterUrlName());
@@ -621,8 +621,8 @@ public class AnalyticalModelDocumentManagementAPI {
 				}
 
 				ObjMetacontent documentMatadataProperty = documentMetadataPropertyDAO.loadObjMetacontent(metadataPropertyId, document.getId(), subObjectId); // TODO
-																																								// manage
-																																								// subobjects
+																																							 // manage
+																																							 // subobjects
 
 				if (documentMatadataProperty == null) {
 					logger.debug("ObjMetacontent for metadata id = " + metadataPropertyId + ", biobject id = " + document.getId() + ", subobject id = "
@@ -678,12 +678,7 @@ public class AnalyticalModelDocumentManagementAPI {
 			List<BIObjectParameter> parameters = sourceDocument.getDrivers();
 
 			// order parameters on priority value to mantein the same order of the original
-			Comparator<BIObjectParameter> comparator = new Comparator<BIObjectParameter>() {
-				@Override
-				public int compare(BIObjectParameter c1, BIObjectParameter c2) {
-					return c1.getPriority().compareTo(c2.getPriority());
-				}
-			};
+			Comparator<BIObjectParameter> comparator = (c1, c2) -> c1.getPriority().compareTo(c2.getPriority());
 			Collections.sort(parameters, comparator); // use the comparator as much as u want
 
 			if (parameters != null && !parameters.isEmpty()) {
@@ -785,8 +780,8 @@ public class AnalyticalModelDocumentManagementAPI {
 
 		List<OutputParameter> outputParameters = sourceDocument.getOutputParameters();
 
-		for (Iterator iterator = outputParameters.iterator(); iterator.hasNext();) {
-			OutputParameter outputParameter = (OutputParameter) iterator.next();
+		for (Iterator<OutputParameter> iterator = outputParameters.iterator(); iterator.hasNext();) {
+			OutputParameter outputParameter = iterator.next();
 			OutputParameter newOutPar = new OutputParameter();
 			newOutPar.setBiObjectId(destinationDocument.getId());
 			newOutPar.setFormatCode(outputParameter.getFormatCode());
@@ -904,7 +899,7 @@ public class AnalyticalModelDocumentManagementAPI {
 			}
 
 			if (document.getDrivers() == null) {
-				document.setDrivers(new ArrayList<BIObjectParameter>());
+				document.setDrivers(new ArrayList<>());
 			}
 			document.getDrivers().add(documentParameter);
 
@@ -925,13 +920,13 @@ public class AnalyticalModelDocumentManagementAPI {
 
 		logger.debug("IN");
 
-		datasetParameters = new ArrayList<DataSetParameterItem>();
+		datasetParameters = new ArrayList<>();
 
 		try {
 			// datasetDetail = dataset.getActiveDetail();
 			parametersRawData = dataset.getParameters();
 			if (parametersRawData == null) {
-				return new ArrayList<DataSetParameterItem>();
+				return new ArrayList<>();
 			}
 			parametersRawData = parametersRawData.trim();
 

@@ -337,7 +337,7 @@ public class BusinessModelOpenParameters extends AbstractSpagoBIResource {
 				treeLovParentNodeName = lovProvDet.getTreeLevelsColumns().get(treeLovNodeLevel).getFirst();
 			}
 
-			Set<JSONObject> valuesDataJSON = new LinkedHashSet<JSONObject>();
+			Set<JSONObject> valuesDataJSON = new LinkedHashSet<>();
 
 			valueColumn = lovProvDet.getValueColumnName();
 			descriptionColumn = lovProvDet.getDescriptionColumnName();
@@ -349,8 +349,8 @@ public class BusinessModelOpenParameters extends AbstractSpagoBIResource {
 				List columns = row.getContainedAttributes();
 				valueJSON = new JSONObject();
 				boolean notNullNode = false; // if the row does not contain the
-												// value atribute we don't add
-												// the node
+											 // value atribute we don't add
+											 // the node
 				for (int i = 0; i < columns.size(); i++) {
 					SourceBeanAttribute attribute = (SourceBeanAttribute) columns.get(i);
 					if ((treeLovParentNodeName == "lovroot") || (attribute.getKey().equalsIgnoreCase(treeLovParentNodeName)
@@ -516,14 +516,14 @@ public class BusinessModelOpenParameters extends AbstractSpagoBIResource {
 		String name = requestVal.getString("name");
 		String role = requestVal.getString("role");
 		// JSONObject jsonCrossParameters = requestVal.getJSONObject("parameters");
-		Map<String, JSONObject> sessionParametersMap = new HashMap<String, JSONObject>();
+		Map<String, JSONObject> sessionParametersMap = new HashMap<>();
 		if (("true").equals(SingletonConfig.getInstance().getConfigValue("SPAGOBI.SESSION_PARAMETERS_MANAGER.enabled")))
 			sessionParametersMap = getSessionParameters(requestVal);
 
 		// keep track of par coming from cross to get descriptions from admissible values
 		// List<String> parsFromCross = new ArrayList<String>();
 
-		HashMap<String, Object> resultAsMap = new HashMap<String, Object>();
+		HashMap<String, Object> resultAsMap = new HashMap<>();
 
 		IMetaModelsDAO dao = DAOFactory.getMetaModelsDAO();
 		IParameterUseDAO parameterUseDAO = DAOFactory.getParameterUseDAO();
@@ -540,7 +540,7 @@ public class BusinessModelOpenParameters extends AbstractSpagoBIResource {
 			Integer paruseId = objParameter.getParameterUseId();
 			ParameterUse parameterUse = parameterUseDAO.loadByUseID(paruseId);
 
-			HashMap<String, Object> parameterAsMap = new HashMap<String, Object>();
+			HashMap<String, Object> parameterAsMap = new HashMap<>();
 			parameterAsMap.put("id", objParameter.getBiObjectId());
 			parameterAsMap.put("label", objParameter.getLabel());
 			parameterAsMap.put("urlName", objParameter.getId());
@@ -572,7 +572,7 @@ public class BusinessModelOpenParameters extends AbstractSpagoBIResource {
 					List<String> valuesList = (List) paramValues;
 					List<String> descriptionList = (List) paramDescriptionValues;
 					if (paramDescriptionValues == null || !(paramDescriptionValues instanceof List)) {
-						descriptionList = new ArrayList<String>();
+						descriptionList = new ArrayList<>();
 					}
 
 					// String item = null;
@@ -835,7 +835,7 @@ public class BusinessModelOpenParameters extends AbstractSpagoBIResource {
 
 	private Map<String, JSONObject> getSessionParameters(JSONObject requestVal) {
 
-		Map<String, JSONObject> sessionParametersMap = new HashMap<String, JSONObject>();
+		Map<String, JSONObject> sessionParametersMap = new HashMap<>();
 
 		try {
 			Object jsonSessionParametersObject = requestVal.get("sessionParameters");
@@ -953,8 +953,8 @@ public class BusinessModelOpenParameters extends AbstractSpagoBIResource {
 				JSONArray valuesArray = new JSONArray(sessionParameterValue);
 				StringTokenizer st = new StringTokenizer(sessionParameterDescription, ";", false);
 
-				ArrayList<String> values = new ArrayList<String>();
-				ArrayList<String> descriptions = new ArrayList<String>();
+				ArrayList<String> values = new ArrayList<>();
+				ArrayList<String> descriptions = new ArrayList<>();
 
 				int i = 0;
 				while (st.hasMoreTokens()) {
@@ -1089,7 +1089,7 @@ public class BusinessModelOpenParameters extends AbstractSpagoBIResource {
 			String value = type + "_" + quantity;
 			String label = quantity + " " + type;
 			// message properties !!!
-			HashMap<String, Object> obj = new HashMap<String, Object>();
+			HashMap<String, Object> obj = new HashMap<>();
 			obj.put(VALUE_FIELD, value);
 			obj.put(LABEL_FIELD, label);
 			obj.put(DESCRIPTION_FIELD, label);
@@ -1166,12 +1166,12 @@ public class BusinessModelOpenParameters extends AbstractSpagoBIResource {
 
 		// ArrayList<HashMap<String, Object>> result = DocumentExecutionUtils.getLovDefaultValues(
 		// role, biObject, biObjectParameter, requestVal, treeLovNodeLevel, treeLovNodeValue, req);
-		HashMap<String, Object> defaultValuesData = BusinessModelOpenUtils.getLovDefaultValues(role, businessModel, biMetaModelParameter, requestVal,
+		Map<String, Object> defaultValuesData = BusinessModelOpenUtils.getLovDefaultValues(role, businessModel, biMetaModelParameter, requestVal,
 				treeLovNodeLevel, treeLovNodeValue, req);
 
 		ArrayList<HashMap<String, Object>> result = (ArrayList<HashMap<String, Object>>) defaultValuesData.get(BusinessModelOpenUtils.DEFAULT_VALUES);
 
-		HashMap<String, Object> resultAsMap = new HashMap<String, Object>();
+		HashMap<String, Object> resultAsMap = new HashMap<>();
 
 		if (result != null && result.size() > 0) {
 			resultAsMap.put("filterValues", result);

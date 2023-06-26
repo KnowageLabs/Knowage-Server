@@ -36,7 +36,7 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 
 public class DocumentExecutionWork extends AbstractDocumentExecutionWork implements Work {
 
-	private static transient Logger logger = Logger.getLogger(DocumentExecutionWork.class);
+	private static final Logger LOGGER = Logger.getLogger(DocumentExecutionWork.class);
 
 	public static final String OUTPUT_PDF = "application/pdf";
 
@@ -45,7 +45,6 @@ public class DocumentExecutionWork extends AbstractDocumentExecutionWork impleme
 	private boolean completeWithoutError = false;
 
 	public DocumentExecutionWork(List<BIObjectPlaceholdersPair> documents, IEngUserProfile userProfile, Integer progressThreadId, String randomKey) {
-		super();
 		this.documents = documents;
 		this.userProfile = userProfile;
 		this.progressThreadId = progressThreadId;
@@ -63,7 +62,7 @@ public class DocumentExecutionWork extends AbstractDocumentExecutionWork impleme
 	}
 
 	private void runInternal() {
-		logger.debug("IN");
+		LOGGER.debug("IN");
 
 		ProgressThreadManager progressThreadManager = null;
 		IObjMetadataDAO metaDAO = null;
@@ -72,10 +71,10 @@ public class DocumentExecutionWork extends AbstractDocumentExecutionWork impleme
 		Thread thread = Thread.currentThread();
 		Long threadId = thread.getId();
 
-		logger.debug("Started thread Id " + threadId + " from user id: " + ((UserProfile) userProfile).getUserId());
+		LOGGER.debug("Started thread Id " + threadId + " from user id: " + ((UserProfile) userProfile).getUserId());
 
 		Integer totalDocs = documents.size();
-		logger.debug("# of documents: " + totalDocs);
+		LOGGER.debug("# of documents: " + totalDocs);
 
 		progressThreadManager = new ProgressThreadManager();
 		progressThreadManager.setStatusStarted(progressThreadId);
@@ -85,14 +84,14 @@ public class DocumentExecutionWork extends AbstractDocumentExecutionWork impleme
 			contentDAO = DAOFactory.getObjMetacontentDAO();
 
 		} catch (Exception e) {
-			logger.error("Error setting DAO");
+			LOGGER.error("Error setting DAO");
 			progressThreadManager.deleteThread(progressThreadId);
 			throw new SpagoBIServiceException("Error setting DAO", e);
 		}
 
 		String fileExtension = ".pdf";
 
-		logger.debug("Export File extension: " + fileExtension);
+		LOGGER.debug("Export File extension: " + fileExtension);
 
 		for (BIObjectPlaceholdersPair document : documents) {
 
@@ -107,7 +106,7 @@ public class DocumentExecutionWork extends AbstractDocumentExecutionWork impleme
 				listObjMetaContent = getMetaDataAndContent(metaDAO, contentDAO, biObject);
 			} catch (Exception e1) {
 				String message = "Error while retrieving metadata and content of the biObject with id " + biObject.getId();
-				logger.error(message);
+				LOGGER.error(message);
 				throw new SpagoBIRuntimeException(message, e1);
 			}
 			biObject.setObjMetaDataAndContents(listObjMetaContent);
@@ -118,13 +117,13 @@ public class DocumentExecutionWork extends AbstractDocumentExecutionWork impleme
 
 				// update progress table
 				progressThreadManager.incrementPartial(progressThreadId);
-				logger.debug("progress Id incremented");
+				LOGGER.debug("progress Id incremented");
 			} catch (SpagoBIEmptyFileExeception e) {
-				logger.error("Response byte array is empty", e);
+				LOGGER.error("Response byte array is empty", e);
 				progressThreadManager.setStatusError(progressThreadId);
 				throw new SpagoBIServiceException("Exception in  writeing export file for BiObject with label " + biObject.getLabel() + " delete DB row", e);
 			} catch (SpagoBIResponseHasErrorsExeception e) {
-				logger.error("Response has errors", e);
+				LOGGER.error("Response has errors", e);
 				progressThreadManager.setStatusError(progressThreadId);
 				throw new SpagoBIServiceException("Response has errors ", e);
 			}
@@ -132,42 +131,42 @@ public class DocumentExecutionWork extends AbstractDocumentExecutionWork impleme
 		} // close For
 
 		progressThreadManager.setStatusDownload(progressThreadId);
-		logger.debug("Thread row in database set as download state");
+		LOGGER.debug("Thread row in database set as download state");
 
-		logger.debug("OUT");
+		LOGGER.debug("OUT");
 	}
 
 	private List<DocumentMetadataProperty> getMetaDataAndContent(IObjMetadataDAO metaDao, IObjMetacontentDAO metaContentDAO, BIObject obj) throws Exception {
-		logger.debug("IN");
-		List toReturn = null;
+		LOGGER.debug("IN");
+		List<DocumentMetadataProperty> toReturn = null;
 
 		try {
 			DocumentMetadataProperty objMetaDataAndContent = null;
 			List<ObjMetadata> allMetas = metaDao.loadAllObjMetadata();
-			Map<Integer, ObjMetacontent> values = new HashMap<Integer, ObjMetacontent>();
+			Map<Integer, ObjMetacontent> values = new HashMap<>();
 
-			List list = metaContentDAO.loadObjOrSubObjMetacontents(obj.getId(), null);
-			for (Iterator iterator = list.iterator(); iterator.hasNext();) {
-				ObjMetacontent content = (ObjMetacontent) iterator.next();
+			List<ObjMetacontent> list = metaContentDAO.loadObjOrSubObjMetacontents(obj.getId(), null);
+			for (Iterator<ObjMetacontent> iterator = list.iterator(); iterator.hasNext();) {
+				ObjMetacontent content = iterator.next();
 				Integer metaid = content.getObjmetaId();
 				values.put(metaid, content);
 			}
 
-			for (Iterator iterator = allMetas.iterator(); iterator.hasNext();) {
-				ObjMetadata meta = (ObjMetadata) iterator.next();
+			for (Iterator<ObjMetadata> iterator = allMetas.iterator(); iterator.hasNext();) {
+				ObjMetadata meta = iterator.next();
 				objMetaDataAndContent = new DocumentMetadataProperty();
 				objMetaDataAndContent.setMetadataPropertyDefinition(meta);
 				objMetaDataAndContent.setMetadataPropertyValue(values.get(meta.getObjMetaId()));
 				if (toReturn == null)
-					toReturn = new ArrayList<DocumentMetadataProperty>();
+					toReturn = new ArrayList<>();
 				toReturn.add(objMetaDataAndContent);
 			}
 
 		} catch (Exception e) {
-			logger.error("error in retrieving metadata and metacontent for biobj id " + obj.getId(), e);
+			LOGGER.error("error in retrieving metadata and metacontent for biobj id " + obj.getId(), e);
 			throw e;
 		}
-		logger.debug("OUT");
+		LOGGER.debug("OUT");
 		return toReturn;
 	}
 
@@ -177,13 +176,11 @@ public class DocumentExecutionWork extends AbstractDocumentExecutionWork impleme
 	}
 
 	@Override
-	public void release() {
-	}
-
 	public List getBiObjects() {
 		return documents;
 	}
 
+	@Override
 	public void setBiObjects(List biObjects) {
 		this.documents = biObjects;
 	}
@@ -193,22 +190,25 @@ public class DocumentExecutionWork extends AbstractDocumentExecutionWork impleme
 	 *
 	 * @return true, if is complete without error
 	 */
+	@Override
 	public boolean isCompleteWithoutError() {
 		return completeWithoutError;
 	}
 
+	@Override
 	public void setProfile(IEngUserProfile profile) {
 		this.userProfile = profile;
 	}
 
+	@Override
 	public void deleteDBRowInCaseOfError(IProgressThreadDAO threadDAO, Integer progressThreadId) {
-		logger.debug("IN");
+		LOGGER.debug("IN");
 		try {
 			threadDAO.deleteProgressThread(progressThreadId);
 		} catch (EMFUserError e1) {
-			logger.error("Error in deleting the row with the progress id " + progressThreadId);
+			LOGGER.error("Error in deleting the row with the progress id " + progressThreadId);
 		}
-		logger.debug("OUT");
+		LOGGER.debug("OUT");
 
 	}
 

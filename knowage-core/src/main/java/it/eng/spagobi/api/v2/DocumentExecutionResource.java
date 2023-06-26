@@ -428,7 +428,7 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 					if ("lov".equalsIgnoreCase(parameterUse.getValueSelection())
 							&& !objParameter.getSelectionType().equalsIgnoreCase(DocumentExecutionUtils.SELECTION_TYPE_TREE)
 							&& (objParameter.getLovDependencies() == null || objParameter.getLovDependencies().isEmpty())) {
-						HashMap<String, Object> defaultValuesData = DocumentExecutionUtils.getLovDefaultValues(role, obj, objParameter.getDriver(), req);
+						Map<String, Object> defaultValuesData = DocumentExecutionUtils.getLovDefaultValues(role, obj, objParameter.getDriver(), req);
 
 						ArrayList<HashMap<String, Object>> defaultValues = (ArrayList<HashMap<String, Object>>) defaultValuesData
 								.get(DocumentExecutionUtils.DEFAULT_VALUES);
@@ -596,8 +596,8 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 				// get values
 				if (objParameter.getDriver().getParameterValues() != null) {
 
-					List paramValueLst = new ArrayList();
-					List paramDescrLst = new ArrayList();
+					List<String> paramValueLst = new ArrayList<>();
+					List<String> paramDescrLst = new ArrayList<>();
 					Object paramValues = objParameter.getDriver().getParameterValues();
 					Object paramDescriptionValues = objParameter.getDriver().getParameterValuesDescription();
 
@@ -695,8 +695,8 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 					// if parameterValue is not null and is array, check if all element are present in lov
 					Object values = parameterAsMap.get("parameterValue");
 					if (!DocumentExecutionUtils.SELECTION_TYPE_LOOKUP.equals(parameterUse.getSelectionType())
-							&& !DocumentExecutionUtils.SELECTION_TYPE_TREE.equals(parameterUse.getSelectionType())
-							&& values != null && admissibleValues != null) {
+							&& !DocumentExecutionUtils.SELECTION_TYPE_TREE.equals(parameterUse.getSelectionType()) && values != null
+							&& admissibleValues != null) {
 						checkIfValuesAreAdmissible(values, admissibleValues);
 					}
 
@@ -705,7 +705,7 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 				// DATE RANGE DEFAULT VALUE
 				if (objParameter.getParType().equals("DATE_RANGE")) {
 					try {
-						ArrayList<HashMap<String, Object>> defaultValues = manageDataRange(biObject, role, objParameter.getId());
+						List<Map<String, Object>> defaultValues = manageDataRange(biObject, role, objParameter.getId());
 						parameterAsMap.put(PROPERTY_DATA, defaultValues);
 					} catch (SerializationException e) {
 						LOGGER.debug("Filters DATE RANGE ERRORS ", e);
@@ -841,7 +841,7 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 		try {
 			DriversValidationAPI validation = new DriversValidationAPI(profile, locale);
 			validation.getParametersErrors(biObject, role, dum);
-		} catch(Exception e) {
+		} catch (Exception e) {
 			throw new SpagoBIRuntimeException(e);
 		}
 
@@ -938,7 +938,7 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 	}
 
 	private ArrayList<HashMap<String, Object>> filterNullValues(ArrayList<HashMap<String, Object>> admissibleValues) {
-		ArrayList<HashMap<String, Object>> filteredValues = new ArrayList<HashMap<String, Object>>();
+		ArrayList<HashMap<String, Object>> filteredValues = new ArrayList<>();
 		if (admissibleValues != null && !admissibleValues.isEmpty()) {
 			for (Map<String, Object> v : admissibleValues) {
 				if (isNull(v)) {
@@ -1024,9 +1024,9 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 				JSONObject valuesLst = (JSONObject) valueObj;
 				JSONArray ValuesLstDecoded = new JSONArray();
 
-				Iterator keysObject = valuesLst.keys();
+				Iterator<String> keysObject = valuesLst.keys();
 				while (keysObject.hasNext()) {
-					String keyObj = (String) keysObject.next();
+					String keyObj = keysObject.next();
 					Object valueOb = valuesLst.get(keyObj);
 					String value = String.valueOf(valueOb);
 					// if (!value.equals("%7B%3B%7B") && !value.equalsIgnoreCase("%")) {
@@ -1140,7 +1140,7 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 		}
 	}
 
-	private ArrayList<HashMap<String, Object>> manageDataRange(BIObject biObject, String executionRole, String biparameterId)
+	private List<Map<String, Object>> manageDataRange(BIObject biObject, String executionRole, String biparameterId)
 			throws EMFUserError, SerializationException, JSONException, IOException {
 
 		BIObjectParameter biObjectParameter = null;
@@ -1168,40 +1168,25 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 		String options = param.getOptions();
 		Assert.assertNotNull(options, "options");
 
-		ArrayList<HashMap<String, Object>> dateRangeValuesDataJSON = getDateRangeValuesDataJSON(options);
-
-		// TODO
-		// int dataRangeOptionsSize = getDataRangeOptionsSize(options);
-		// JSONObject valuesJSON = (JSONObject) JSONStoreFeedTransformer.getInstance().transform(dateRangeValuesDataJSON, VALUE_FIELD.toUpperCase(),
-		// LABEL_FIELD.toUpperCase(), DESCRIPTION_FIELD.toUpperCase(), VISIBLE_COLUMNS, dataRangeOptionsSize);
-
-		return dateRangeValuesDataJSON;
+		return getDateRangeValuesDataJSON(options);
 
 	}
 
-	// private static int getDataRangeOptionsSize(String options) throws JSONException {
-	// JSONObject json = new JSONObject(options);
-	// JSONArray res = json.getJSONArray(DATE_RANGE_OPTIONS_KEY);
-	// return res.length();
-	// }
-
-	private ArrayList<HashMap<String, Object>> getDateRangeValuesDataJSON(String optionsJson) throws JSONException {
+	private List<Map<String, Object>> getDateRangeValuesDataJSON(String optionsJson) throws JSONException {
 		JSONObject json = new JSONObject(optionsJson);
 		JSONArray options = json.getJSONArray(DATE_RANGE_OPTIONS_KEY);
 		JSONArray res = new JSONArray();
 
-		ArrayList<HashMap<String, Object>> defaultValues = new ArrayList<>();
+		List<Map<String, Object>> defaultValues = new ArrayList<>();
 
 		for (int i = 0; i < options.length(); i++) {
-			// JSONObject opt = new JSONObject();
 			JSONObject optJson = (JSONObject) options.get(i);
 			String type = (String) optJson.get(DATE_RANGE_TYPE_JSON);
-			// String typeDesc = getLocalizedMessage("SBIDev.paramUse." + type);
 			String quantity = (String) optJson.get(DATE_RANGE_QUANTITY_JSON);
 			String value = type + "_" + quantity;
 			String label = quantity + " " + type;
 			// message properties !!!
-			HashMap<String, Object> obj = new HashMap<>();
+			Map<String, Object> obj = new HashMap<>();
 			obj.put(VALUE_FIELD, value);
 			obj.put(LABEL_FIELD, label);
 			obj.put(DESCRIPTION_FIELD, label);
@@ -1481,7 +1466,7 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 		filePath = filePath + "/" + fileName;
 		File file = new File(filePath);
 		byte[] bFile = null;
-		try(FileInputStream fis = new FileInputStream(file)) {
+		try (FileInputStream fis = new FileInputStream(file)) {
 			bFile = new byte[(int) file.length()];
 
 			// convert file into array of bytes

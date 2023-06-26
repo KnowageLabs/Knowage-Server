@@ -141,7 +141,7 @@ public class CrossNavigationDAOImpl extends AbstractHibernateDAO implements ICro
 				cn.setType(nd.getSimpleNavigation().getType());
 				cn.setFromDocId(nd.getSimpleNavigation().getFromDocId());
 				cn.setToDocId(nd.getSimpleNavigation().getToDocId());
-				cn.setSbiCrossNavigationPars(new HashSet<SbiCrossNavigationPar>());
+				cn.setSbiCrossNavigationPars(new HashSet<>());
 				cn.setPopupOptions(nd.getSimpleNavigation().getPopupOptions());
 				if (nd.getToPars() != null) {
 					for (SimpleParameter sp : nd.getToPars()) {
@@ -179,7 +179,7 @@ public class CrossNavigationDAOImpl extends AbstractHibernateDAO implements ICro
 				if (cn.getSbiCrossNavigationPars() != null) {
 					cn.getSbiCrossNavigationPars().clear();
 				} else {
-					cn.setSbiCrossNavigationPars(new HashSet<SbiCrossNavigationPar>());
+					cn.setSbiCrossNavigationPars(new HashSet<>());
 				}
 				if (nd.getToPars() != null) {
 					for (SimpleParameter sp : nd.getToPars()) {
@@ -247,21 +247,18 @@ public class CrossNavigationDAOImpl extends AbstractHibernateDAO implements ICro
 						}
 						for (Object o : fromDoc.getSbiObjPars()) {
 							SbiObjPar op = (SbiObjPar) o;
-							// nd.getFromPars().add(new SimpleParameter(op.getObjParId(), op.getLabel(), TYPE_INPUT));
 							checkAndAddToList(nd.getFromPars(),
 									new SimpleParameter(op.getObjParId(), op.getLabel(), TYPE_INPUT, op.getSbiParameter().getParameterTypeCode()));
 						}
-						List outputParameterList = session.createCriteria(SbiOutputParameter.class).add(Restrictions.eq("biobjId", fromDoc.getBiobjId()))
-								.list();
-						for (Object object : outputParameterList) {
-							SbiOutputParameter outPar = (SbiOutputParameter) object;
-							// nd.getFromPars().add(new SimpleParameter(outPar.getId(), outPar.getLabel(), TYPE_OUTPUT));
+						List<SbiOutputParameter> outputParameterList = session.createCriteria(SbiOutputParameter.class)
+								.add(Restrictions.eq("biobjId", fromDoc.getBiobjId())).list();
+						for (SbiOutputParameter object : outputParameterList) {
+							SbiOutputParameter outPar = object;
 							checkAndAddToList(nd.getFromPars(),
 									new SimpleParameter(outPar.getId(), outPar.getLabel(), TYPE_OUTPUT, outPar.getParameterType().getValueCd()));
 						}
 						for (Object o : toDoc.getSbiObjPars()) {
 							SbiObjPar op = (SbiObjPar) o;
-							// nd.getToPars().add(new SimpleParameter(op.getObjParId(), op.getLabel(), TYPE_INPUT));
 							checkAndAddToList(nd.getToPars(),
 									new SimpleParameter(op.getObjParId(), op.getLabel(), TYPE_INPUT, op.getSbiParameter().getParameterTypeCode()));
 						}
@@ -284,7 +281,7 @@ public class CrossNavigationDAOImpl extends AbstractHibernateDAO implements ICro
 		});
 	}
 
-	private void checkAndAddToList(List list, Object obj) {
+	private void checkAndAddToList(List<SimpleParameter> list, SimpleParameter obj) {
 		if (!list.contains(obj)) {
 			list.add(obj);
 		}
@@ -329,8 +326,7 @@ public class CrossNavigationDAOImpl extends AbstractHibernateDAO implements ICro
 		}
 		disj.add(Restrictions.conjunction().add(Restrictions.eq("_par.fromType", 2)).add(Restrictions.eq("_par.fromKeyId", documentId)));
 
-		List ret = session.createCriteria(SbiCrossNavigation.class).createAlias("sbiCrossNavigationPars", "_par").add(disj).list();
-		return ret;
+		return session.createCriteria(SbiCrossNavigation.class).createAlias("sbiCrossNavigationPars", "_par").add(disj).list();
 	}
 
 	@Override
@@ -345,20 +341,20 @@ public class CrossNavigationDAOImpl extends AbstractHibernateDAO implements ICro
 				}
 
 				// load Input Parameter
-				Map<Integer, crossNavigationParameters> documentInputParams = new HashMap<Integer, crossNavigationParameters>();
-				List docParams = document.getDrivers();
-				for (Iterator iterator = docParams.iterator(); iterator.hasNext();) {
-					BIObjectParameter docParam = (BIObjectParameter) iterator.next();
-					crossNavigationParameters cnParams = new crossNavigationParameters(docParam.getParameterUrlName(), docParam.getParameter().getType());
+				Map<Integer, CrossNavigationParameters> documentInputParams = new HashMap<>();
+				List<BIObjectParameter> docParams = document.getDrivers();
+				for (Iterator<BIObjectParameter> iterator = docParams.iterator(); iterator.hasNext();) {
+					BIObjectParameter docParam = iterator.next();
+					CrossNavigationParameters cnParams = new CrossNavigationParameters(docParam.getParameterUrlName(), docParam.getParameter().getType());
 					cnParams.setIsInput(true);
 					documentInputParams.put(docParam.getId(), cnParams);
 				}
 
 				// Load Output Parameter
-				Map<Integer, crossNavigationParameters> documentOutputParams = new HashMap<Integer, crossNavigationParameters>();
+				Map<Integer, CrossNavigationParameters> documentOutputParams = new HashMap<>();
 				List<OutputParameter> outParams = document.getOutputParameters();
 				for (OutputParameter outParam : outParams) {
-					crossNavigationParameters cnParams = new crossNavigationParameters(outParam.getName(), outParam.getType(), outParam.getFormatValue());
+					CrossNavigationParameters cnParams = new CrossNavigationParameters(outParam.getName(), outParam.getType(), outParam.getFormatValue());
 					cnParams.setIsInput(false);
 					documentOutputParams.put(outParam.getId(), cnParams);
 				}
@@ -377,8 +373,8 @@ public class CrossNavigationDAOImpl extends AbstractHibernateDAO implements ICro
 				Criteria crit = session.createCriteria(SbiCrossNavigationPar.class).add(disjunction);
 				List<SbiCrossNavigationPar> cnParams = crit.list();
 
-				Map<Integer, JSONObject> validCrossNavIdToCrossNavJSON = new HashMap<Integer, JSONObject>(); // valid cross nav id --> cross nav info in JSON
-				List<Integer> nonValidCrossNavIds = new ArrayList<Integer>(); // list of non valid cross nav id
+				Map<Integer, JSONObject> validCrossNavIdToCrossNavJSON = new HashMap<>(); // valid cross nav id --> cross nav info in JSON
+				List<Integer> nonValidCrossNavIds = new ArrayList<>(); // list of non valid cross nav id
 
 				for (SbiCrossNavigationPar cnParam : cnParams) {
 					// from cross navigation item get the document with input params like cross navigation toKeyId value in input params
@@ -433,12 +429,12 @@ public class CrossNavigationDAOImpl extends AbstractHibernateDAO implements ICro
 					switch (type) {
 					case 0:
 						jsonNavParam.put("value",
-								new JSONObject(JsonConverter.objectToJson(documentOutputParams.get(fromKeyId), crossNavigationParameters.class)));
+								new JSONObject(JsonConverter.objectToJson(documentOutputParams.get(fromKeyId), CrossNavigationParameters.class)));
 						jsonNavParam.put("fixed", false);
 						break;
 					case 1:
 						jsonNavParam.put("value",
-								new JSONObject(JsonConverter.objectToJson(documentInputParams.get(fromKeyId), crossNavigationParameters.class)));
+								new JSONObject(JsonConverter.objectToJson(documentInputParams.get(fromKeyId), CrossNavigationParameters.class)));
 						jsonNavParam.put("fixed", false);
 						break;
 					case 2:
@@ -494,7 +490,7 @@ public class CrossNavigationDAOImpl extends AbstractHibernateDAO implements ICro
 	public void deleteByBIObjectParameter(BIObjectParameter biObjectParameter, Session session) {
 
 		List<SbiCrossNavigationPar> cnParToRemove = listNavigationsByInputParameters(biObjectParameter.getId(), session);
-		List<Integer> crossNavigation = new ArrayList<Integer>();
+		List<Integer> crossNavigation = new ArrayList<>();
 		// Delete FROM CROSS_NAVIFATION_PAR
 		for (SbiCrossNavigationPar cn : cnParToRemove) {
 			session.delete(cn);
@@ -504,7 +500,7 @@ public class CrossNavigationDAOImpl extends AbstractHibernateDAO implements ICro
 		// Delete FROM CROSS_NAVIGATION
 		for (Integer scnId : crossNavigation) {
 			List<SbiCrossNavigationPar> sbiCrossPar = listNavigationsByCrossNavParId(scnId, session);
-			if (sbiCrossPar == null || sbiCrossPar.size() == 0) {
+			if (sbiCrossPar == null || sbiCrossPar.isEmpty()) {
 				SbiCrossNavigation snc = loadSbiCrossNavigationById(scnId, session);
 				session.delete(snc);
 			}
@@ -520,7 +516,6 @@ public class CrossNavigationDAOImpl extends AbstractHibernateDAO implements ICro
 
 	@Override
 	public List<SbiCrossNavigationPar> listNavigationsByInputParameters(Integer paramId, Session session) {
-		// return session.createCriteria(SbiCrossNavigationPar.class).add(Restrictions.eq("toKeyId", paramId)).list();
 		Session aSession = session;
 		return aSession.createCriteria(SbiCrossNavigationPar.class).add(
 				Restrictions.or(Restrictions.eq("toKeyId", paramId), Restrictions.and(Restrictions.eq("fromKeyId", paramId), Restrictions.eq("fromType", 1))))
@@ -535,9 +530,6 @@ public class CrossNavigationDAOImpl extends AbstractHibernateDAO implements ICro
 
 	@Override
 	public List listNavigationsByAnalyticalDriverID(Integer analyticalDriverId, Session session) {
-		// return session.createCriteria(SbiCrossNavigationPar.class).add(Restrictions.eq("toKeyId", paramId)).list();
-		Session aSession = session;
-
 		StringBuilder sb = new StringBuilder();
 		sb.append(" select t1");
 		sb.append(" from SbiCrossNavigation t, SbiCrossNavigationPar t1, SbiObjPar t2");
@@ -546,10 +538,7 @@ public class CrossNavigationDAOImpl extends AbstractHibernateDAO implements ICro
 		sb.append(" and t2.sbiParameter.parId=" + analyticalDriverId);
 
 		Query hibQuery = session.createQuery(sb.toString());
-		List hibList = hibQuery.list();
-
-		return hibList;
-
+		return hibQuery.list();
 	}
 
 	@Override
@@ -559,7 +548,6 @@ public class CrossNavigationDAOImpl extends AbstractHibernateDAO implements ICro
 
 	@Override
 	public List<SbiCrossNavigationPar> listNavigationsByOutputParameters(Integer paramId, Session session) {
-		// return session.createCriteria(SbiCrossNavigationPar.class).add(Restrictions.eq("toKeyId", paramId)).list();
 		Session aSession = session;
 		return aSession.createCriteria(SbiCrossNavigationPar.class).add(
 				Restrictions.or(Restrictions.eq("toKeyId", paramId), Restrictions.and(Restrictions.eq("fromKeyId", paramId), Restrictions.eq("fromType", 0))))
@@ -578,7 +566,7 @@ public class CrossNavigationDAOImpl extends AbstractHibernateDAO implements ICro
 	}
 }
 
-class crossNavigationParameters {
+class CrossNavigationParameters {
 	String label;
 	Domain type;
 	String inputParameterType;
@@ -590,8 +578,7 @@ class crossNavigationParameters {
 	 * @param type
 	 * @param dateFormat
 	 */
-	public crossNavigationParameters(String label, Domain type, String dateFormat) {
-		super();
+	public CrossNavigationParameters(String label, Domain type, String dateFormat) {
 		this.label = label;
 		this.type = type;
 		this.dateFormat = dateFormat;
@@ -601,8 +588,7 @@ class crossNavigationParameters {
 	 * @param label
 	 * @param type
 	 */
-	public crossNavigationParameters(String label, Domain type) {
-		super();
+	public CrossNavigationParameters(String label, Domain type) {
 		this.label = label;
 		this.type = type;
 	}
@@ -611,8 +597,7 @@ class crossNavigationParameters {
 	 * @param label
 	 * @param inputParameterType
 	 */
-	public crossNavigationParameters(String label, String inputParameterType) {
-		super();
+	public CrossNavigationParameters(String label, String inputParameterType) {
 		this.label = label;
 		this.inputParameterType = inputParameterType;
 	}
@@ -621,8 +606,7 @@ class crossNavigationParameters {
 	 * @param label
 	 * @param type
 	 */
-	public crossNavigationParameters(String label) {
-		super();
+	public CrossNavigationParameters(String label) {
 		this.label = label;
 	}
 

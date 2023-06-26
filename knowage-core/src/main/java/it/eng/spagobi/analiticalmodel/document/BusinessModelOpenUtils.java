@@ -47,22 +47,21 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 
 public class BusinessModelOpenUtils {
-	public static String MODE_COMPLETE = "complete";
-	public static String NODE_ID_SEPARATOR = "___SEPA__";
-	public static String MODE_SIMPLE = "simple";
-	public static String MASSIVE_EXPORT = "massiveExport";
-	public static String DEFAULT_VALUES = "defaultValues";
-	public static String DEFAULT_VALUES_METADATA = "defaultValuesMetadata";
-	public static String DESCRIPTION_COLUMN_NAME_METADATA = "descriptionColumnNameMetadata";
-	public static String VALUE_COLUMN_NAME_METADATA = "valueColumnNameMetadata";
-	public static final String SERVICE_NAME = "GET_URL_FOR_EXECUTION_ACTION";
+	private static final Logger LOGGER = Logger.getLogger(BusinessModelOpenUtils.class);
 
-	public static transient Logger logger = Logger.getLogger(BusinessModelOpenUtils.class);
+	public static final String MODE_COMPLETE = "complete";
+	public static final String NODE_ID_SEPARATOR = "___SEPA__";
+	public static final String MODE_SIMPLE = "simple";
+	public static final String MASSIVE_EXPORT = "massiveExport";
+	public static final String DEFAULT_VALUES = "defaultValues";
+	public static final String DEFAULT_VALUES_METADATA = "defaultValuesMetadata";
+	public static final String DESCRIPTION_COLUMN_NAME_METADATA = "descriptionColumnNameMetadata";
+	public static final String VALUE_COLUMN_NAME_METADATA = "valueColumnNameMetadata";
+	public static final String SERVICE_NAME = "GET_URL_FOR_EXECUTION_ACTION";
 
 	public static List<BusinessModelDriverRuntime> getParameters(MetaModel businessModel, String executionRole, Locale locale, String modality,
 			BusinessModelRuntime dum) {
-		List<BusinessModelDriverRuntime> toReturn = getParameters(businessModel, executionRole, locale, modality, true, dum);
-		return toReturn;
+		return getParameters(businessModel, executionRole, locale, modality, true, dum);
 	}
 
 	public static List<BusinessModelDriverRuntime> getParameters(MetaModel businessModel, String executionRole, Locale locale, String modality,
@@ -70,9 +69,9 @@ public class BusinessModelOpenUtils {
 		Monitor monitor = MonitorFactory.start("Knowage.DocumentExecutionUtils.getParameters");
 		List<BusinessModelDriverRuntime> parametersForExecution = null;
 		try {
-			parametersForExecution = new ArrayList<BusinessModelDriverRuntime>();
+			parametersForExecution = new ArrayList<>();
 			List<BIMetaModelParameter> parameters = businessModel.getDrivers();
-			if (parameters != null && parameters.size() > 0) {
+			if (parameters != null && !parameters.isEmpty()) {
 				Iterator<BIMetaModelParameter> it = parameters.iterator();
 				while (it.hasNext()) {
 					BIMetaModelParameter parameter = it.next();
@@ -93,14 +92,14 @@ public class BusinessModelOpenUtils {
 	}
 
 	// public static ArrayList<HashMap<String, Object>> getLovDefaultValues(
-	public static HashMap<String, Object> getLovDefaultValues(String executionRole, MetaModel businessModel, BIMetaModelParameter driver, JSONObject requestVal,
+	public static Map<String, Object> getLovDefaultValues(String executionRole, MetaModel businessModel, BIMetaModelParameter driver, JSONObject requestVal,
 			Integer treeLovNodeLevel, String treeLovNodeValue, HttpServletRequest req) {
 
-		ArrayList<HashMap<String, Object>> defaultValues = new ArrayList<HashMap<String, Object>>();
+		ArrayList<HashMap<String, Object>> defaultValues = new ArrayList<>();
 		String lovResult = null;
 		ILovDetail lovProvDet = null;
 		List rows = null;
-		HashMap<String, Object> result = new HashMap<String, Object>();
+		HashMap<String, Object> result = new HashMap<>();
 
 		List<MetaModelParuse> metaModelOpenDependencies = null;
 		try {
@@ -108,7 +107,7 @@ public class BusinessModelOpenUtils {
 			BusinessModelRuntime dum = new BusinessModelRuntime(profile, req.getLocale());
 
 			JSONObject selectedParameterValuesJSON;
-			Map selectedParameterValues = null;
+			Map<String, Object> selectedParameterValues = null;
 
 			String mode = (requestVal != null && requestVal.opt("mode") != null) ? (String) requestVal.opt("mode") : null;
 			String contest = (requestVal != null && requestVal.opt("contest") != null) ? (String) requestVal.opt("contest") : null;
@@ -122,10 +121,10 @@ public class BusinessModelOpenUtils {
 
 				if (selectedParameterValuesJSON != null) {
 					try {
-						selectedParameterValues = new HashMap();
-						Iterator it = selectedParameterValuesJSON.keys();
+						selectedParameterValues = new HashMap<>();
+						Iterator<String> it = selectedParameterValuesJSON.keys();
 						while (it.hasNext()) {
-							String key = (String) it.next();
+							String key = it.next();
 							Object v = selectedParameterValuesJSON.get(key);
 							if (v == JSONObject.NULL) {
 								selectedParameterValues.put(key, null);
@@ -169,7 +168,7 @@ public class BusinessModelOpenUtils {
 
 			JSONArray valuesJSONArray = new JSONArray();
 			if (lovProvDet instanceof DependenciesPostProcessingLov && selectedParameterValues != null && metaModelOpenDependencies != null
-					&& metaModelOpenDependencies.size() > 0 && !contest.equals(MASSIVE_EXPORT)) {
+					&& !metaModelOpenDependencies.isEmpty() && !contest.equals(MASSIVE_EXPORT)) {
 				rows = ((DependenciesPostProcessingLov) lovProvDet).processDependencies(rows, selectedParameterValues, metaModelOpenDependencies);
 			}
 
@@ -188,7 +187,7 @@ public class BusinessModelOpenUtils {
 			for (int i = 0; i < valuesJSONArray.length(); i++) {
 				JSONObject item = valuesJSONArray.getJSONObject(i);
 				if (item.length() > 0) {
-					HashMap<String, Object> itemAsMap = new HashMap<String, Object>();
+					HashMap<String, Object> itemAsMap = new HashMap<>();
 
 					for (int j = 0; j < defaultValuesMetadata.size(); j++) {
 						String key = ((String) defaultValuesMetadata.get(j)).toUpperCase();
@@ -210,7 +209,7 @@ public class BusinessModelOpenUtils {
 					itemAsMap.put("isEnabled", true);
 
 					// CHECH VALID DEFAULT PARAM
-					ArrayList<HashMap<String, Object>> defaultErrorValues = new ArrayList<HashMap<String, Object>>();
+					ArrayList<HashMap<String, Object>> defaultErrorValues = new ArrayList<>();
 					boolean defaultParameterAlreadyExist = false;
 					if (driver.getParameter() != null && driver.getParameter().getModalityValue() != null
 							&& driver.getParameter().getModalityValue().getSelectionType() != null
@@ -222,7 +221,7 @@ public class BusinessModelOpenUtils {
 									defaultParameterAlreadyExist = true;
 									break;
 								} else {
-									HashMap<String, Object> itemErrorMap = new HashMap<String, Object>();
+									HashMap<String, Object> itemErrorMap = new HashMap<>();
 									itemErrorMap.put("error", true);
 									itemErrorMap.put("value", defVal.get("value"));
 									itemErrorMap.put("labelAlreadyExist", defVal.get("label"));
@@ -255,7 +254,7 @@ public class BusinessModelOpenUtils {
 	}
 
 	public static List<MetaModelParuse> getMetaModelDependencies(String executionRole, BIMetaModelParameter metaModelParameter) {
-		List<MetaModelParuse> metaModelOpenDependencies = new ArrayList<MetaModelParuse>();
+		List<MetaModelParuse> metaModelOpenDependencies = new ArrayList<>();
 		try {
 			IParameterUseDAO parusedao = DAOFactory.getParameterUseDAO();
 			ParameterUse parameterOpenModality = parusedao.loadByParameterIdandRole(metaModelParameter.getParID(), executionRole);
@@ -300,14 +299,10 @@ public class BusinessModelOpenUtils {
 	 * in case when the lov is a query and there is correlation, the executed statement if different from the original query (since correlation expression is
 	 * injected inside SQL query using in-line view construct), therefore we should consider the modified query.
 	 *
-	 * @param profile
-	 *            The user profile
-	 * @param lovDefinition
-	 *            The lov original definition
-	 * @param dependencies
-	 *            The dependencies to be considered (if any)
-	 * @param biObject
-	 *            The document object
+	 * @param profile       The user profile
+	 * @param lovDefinition The lov original definition
+	 * @param dependencies  The dependencies to be considered (if any)
+	 * @param biObject      The document object
 	 * @return The key to be used in cache
 	 * @throws Exception
 	 */
@@ -362,7 +357,7 @@ public class BusinessModelOpenUtils {
 				treeLovNodeNameBen = lovProvDet.getTreeLevelsColumns().get(treeLovNodeLevel + 1).getSecond();
 			}
 
-			Set<JSONObject> valuesDataJSON = new LinkedHashSet<JSONObject>();
+			Set<JSONObject> valuesDataJSON = new LinkedHashSet<>();
 
 			valueColumn = lovProvDet.getValueColumnName();
 			descriptionColumn = lovProvDet.getDescriptionColumnName();
@@ -426,8 +421,8 @@ public class BusinessModelOpenUtils {
 
 			JSONArray valuesDataJSONArray = new JSONArray();
 
-			for (Iterator iterator = valuesDataJSON.iterator(); iterator.hasNext();) {
-				JSONObject jsonObject = (JSONObject) iterator.next();
+			for (Iterator<JSONObject> iterator = valuesDataJSON.iterator(); iterator.hasNext();) {
+				JSONObject jsonObject = iterator.next();
 				valuesDataJSONArray.put(jsonObject);
 			}
 
@@ -514,7 +509,7 @@ public class BusinessModelOpenUtils {
 			String modality, JSONObject parametersJson, Locale locale) { // isFromCross,
 		Monitor handleNormalExecutionErrorMonitor = MonitorFactory.start("Knowage.BusinessModelOpenUtils.handleNormalExecutionError");
 
-		HashMap<String, String> logParam = new HashMap<String, String>();
+		HashMap<String, String> logParam = new HashMap<>();
 		logParam.put("NAME", businessModel.getName());
 		logParam.put("PARAMS", parametersJson.toString()); // this.getAttributeAsString(PARAMETERS)
 		BusinessModelRuntime dum = new BusinessModelRuntime(profile, locale);
@@ -529,7 +524,7 @@ public class BusinessModelOpenUtils {
 			}
 
 		} catch (Exception e) {
-			logger.debug("Error in handleNormalExecutionError", e);
+			LOGGER.debug("Error in handleNormalExecutionError", e);
 
 		} finally {
 			handleNormalExecutionErrorMonitor.stop();
@@ -537,4 +532,7 @@ public class BusinessModelOpenUtils {
 		return errors;
 	}
 
+	private BusinessModelOpenUtils() {
+
+	}
 }

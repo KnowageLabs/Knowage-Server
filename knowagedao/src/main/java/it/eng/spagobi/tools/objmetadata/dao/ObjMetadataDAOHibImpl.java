@@ -30,7 +30,7 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.criterion.Criterion;
-import org.hibernate.criterion.Expression;
+import org.hibernate.criterion.Restrictions;
 
 import it.eng.spago.error.EMFErrorSeverity;
 import it.eng.spago.error.EMFUserError;
@@ -39,6 +39,7 @@ import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.metadata.SbiDomains;
 import it.eng.spagobi.tools.objmetadata.bo.ObjMetacontent;
 import it.eng.spagobi.tools.objmetadata.bo.ObjMetadata;
+import it.eng.spagobi.tools.objmetadata.metadata.SbiObjMetacontents;
 import it.eng.spagobi.tools.objmetadata.metadata.SbiObjMetadata;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
@@ -58,9 +59,9 @@ public class ObjMetadataDAOHibImpl extends AbstractHibernateDAO implements IObjM
 	 * @throws EMFUserError the EMF user error
 	 */
 	@Override
-	public List loadObjMetaDataListByType(String type) throws EMFUserError {
+	public List<ObjMetadata> loadObjMetaDataListByType(String type) throws EMFUserError {
 		logger.debug("IN");
-		List toReturn = new ArrayList();
+		List<ObjMetadata> toReturn = new ArrayList<>();
 		Session aSession = null;
 		Transaction tx = null;
 
@@ -72,12 +73,12 @@ public class ObjMetadataDAOHibImpl extends AbstractHibernateDAO implements IObjM
 
 			logger.debug("Type setted: " + (type != null ? type : ""));
 
-			List hibList = hibQuery.list();
+			List<SbiObjMetadata> hibList = hibQuery.list();
 			if (hibList != null && !hibList.isEmpty()) {
-				Iterator it = hibList.iterator();
+				Iterator<SbiObjMetadata> it = hibList.iterator();
 
 				while (it.hasNext()) {
-					toReturn.add(toObjMetadata((SbiObjMetadata) it.next()));
+					toReturn.add(toObjMetadata(it.next()));
 				}
 			}
 
@@ -166,7 +167,7 @@ public class ObjMetadataDAOHibImpl extends AbstractHibernateDAO implements IObjM
 			tmpSession = getSession();
 			tx = tmpSession.beginTransaction();
 			Criterion labelCriterion = null;
-			labelCriterion = Expression.eq("label", label);
+			labelCriterion = Restrictions.eq("label", label);
 			Criteria criteria = tmpSession.createCriteria(SbiObjMetadata.class);
 			criteria.add(labelCriterion);
 			SbiObjMetadata hibMeta = (SbiObjMetadata) criteria.uniqueResult();
@@ -192,10 +193,10 @@ public class ObjMetadataDAOHibImpl extends AbstractHibernateDAO implements IObjM
 	}
 
 	@Override
-	public List loadObjMetadataByBIObjectID(Integer biobjId) throws EMFUserError {
+	public List<ObjMetadata> loadObjMetadataByBIObjectID(Integer biobjId) throws EMFUserError {
 
 		logger.debug("IN");
-		List toReturn = new ArrayList<SbiObjMetadata>();
+		List<ObjMetadata> toReturn = new ArrayList<>();
 		Session aSession = null;
 		Transaction tx = null;
 
@@ -208,9 +209,9 @@ public class ObjMetadataDAOHibImpl extends AbstractHibernateDAO implements IObjM
 			sb.append(" where t1.objMetaId=t2.objmetaId");
 			sb.append(" and t2.sbiObjects.biobjId=" + biobjId);
 
-			List tmpList = aSession.createQuery(sb.toString()).list();
-			for (Object obj : tmpList) {
-				SbiObjMetadata som = (SbiObjMetadata) obj;
+			List<SbiObjMetadata> tmpList = aSession.createQuery(sb.toString()).list();
+			for (SbiObjMetadata obj : tmpList) {
+				SbiObjMetadata som = obj;
 				toReturn.add(toObjMetadata(som));
 			}
 			tx.commit();
@@ -244,23 +245,23 @@ public class ObjMetadataDAOHibImpl extends AbstractHibernateDAO implements IObjM
 	 * @see it.eng.spagobi.tools.objmetadata.dao.IObjMetadataDAO#loadAllObjMetadata()
 	 */
 	@Override
-	public List loadAllObjMetadata() throws EMFUserError {
+	public List<ObjMetadata> loadAllObjMetadata() throws EMFUserError {
 		logger.debug("IN");
 
 		Session aSession = null;
 		Transaction tx = null;
-		List realResult = new ArrayList();
+		List<ObjMetadata> realResult = new ArrayList<>();
 		try {
 			aSession = getSession();
 			tx = aSession.beginTransaction();
 
 			Query hibQuery = aSession.createQuery(" from SbiObjMetadata");
 
-			List hibList = hibQuery.list();
-			Iterator it = hibList.iterator();
+			List<SbiObjMetadata> hibList = hibQuery.list();
+			Iterator<SbiObjMetadata> it = hibList.iterator();
 
 			while (it.hasNext()) {
-				realResult.add(toObjMetadata((SbiObjMetadata) it.next()));
+				realResult.add(toObjMetadata(it.next()));
 			}
 			tx.commit();
 		} catch (HibernateException he) {
@@ -292,9 +293,9 @@ public class ObjMetadataDAOHibImpl extends AbstractHibernateDAO implements IObjM
 	 * @see it.eng.spagobi.tools.objmetadata.dao.IObjMetadataDAO#loadAllObjMetadata()
 	 */
 	@Override
-	public List loadAllObjMetadataByLabelAndCase(String label, boolean caseSensitive) throws EMFUserError {
+	public List<ObjMetadata> loadAllObjMetadataByLabelAndCase(String label, boolean caseSensitive) throws EMFUserError {
 		logger.debug("IN");
-		List toReturn = new ArrayList<SbiObjMetadata>();
+		List<ObjMetadata> toReturn = new ArrayList<>();
 		Session tmpSession = null;
 		Transaction tx = null;
 		try {
@@ -302,20 +303,20 @@ public class ObjMetadataDAOHibImpl extends AbstractHibernateDAO implements IObjM
 			tx = tmpSession.beginTransaction();
 			Criterion labelCriterion = null;
 			if (caseSensitive) {
-				labelCriterion = Expression.eq("label", label);
+				labelCriterion = Restrictions.eq("label", label);
 			} else {
-				labelCriterion = Expression.eq("label", label).ignoreCase();
+				labelCriterion = Restrictions.eq("label", label).ignoreCase();
 
 			}
 			Criteria criteria = tmpSession.createCriteria(SbiObjMetadata.class);
 			criteria.add(labelCriterion);
-			List hibMeta = criteria.list();
+			List<SbiObjMetadata> hibMeta = criteria.list();
 			if (hibMeta == null)
 				return null;
 
-			for (Object object : hibMeta) {
+			for (SbiObjMetadata object : hibMeta) {
 
-				toReturn.add(toObjMetadata((SbiObjMetadata) object));
+				toReturn.add(toObjMetadata(object));
 			}
 
 			tx.commit();
@@ -353,7 +354,7 @@ public class ObjMetadataDAOHibImpl extends AbstractHibernateDAO implements IObjM
 		try {
 			aSession = getSession();
 			tx = aSession.beginTransaction();
-			Criterion aCriterion = Expression.eq("valueId", aObjMetadata.getDataType());
+			Criterion aCriterion = Restrictions.eq("valueId", aObjMetadata.getDataType());
 			Criteria criteria = aSession.createCriteria(SbiDomains.class);
 			criteria.add(aCriterion);
 
@@ -409,7 +410,7 @@ public class ObjMetadataDAOHibImpl extends AbstractHibernateDAO implements IObjM
 			aSession = getSession();
 			tx = aSession.beginTransaction();
 
-			Criterion aCriterion = Expression.eq("valueId", aObjMetadata.getDataType());
+			Criterion aCriterion = Restrictions.eq("valueId", aObjMetadata.getDataType());
 			Criteria criteria = aSession.createCriteria(SbiDomains.class);
 			criteria.add(aCriterion);
 
@@ -455,8 +456,8 @@ public class ObjMetadataDAOHibImpl extends AbstractHibernateDAO implements IObjM
 			aSession = getSession();
 			tx = aSession.beginTransaction();
 
-			Criterion valueCriterion = Expression.eq("valueCd", domain);
-			Criterion domainCriterion = Expression.eq("domainCd", "OBJMETA_DATA_TYPE");
+			Criterion valueCriterion = Restrictions.eq("valueCd", domain);
+			Criterion domainCriterion = Restrictions.eq("domainCd", "OBJMETA_DATA_TYPE");
 			Criteria criteria = aSession.createCriteria(SbiDomains.class);
 			criteria.add(valueCriterion);
 			criteria.add(domainCriterion);
@@ -521,15 +522,15 @@ public class ObjMetadataDAOHibImpl extends AbstractHibernateDAO implements IObjM
 		try {
 			aSession = getSession();
 			tx = aSession.beginTransaction();
-			SbiObjMetadata hibMeta = (SbiObjMetadata) aSession.load(SbiObjMetadata.class, new Integer(aObjMetadata.getObjMetaId()));
+			SbiObjMetadata hibMeta = (SbiObjMetadata) aSession.load(SbiObjMetadata.class, aObjMetadata.getObjMetaId());
 
 			// delete metadatacontents eventually associated
-			List metaContents = DAOFactory.getObjMetacontentDAO().loadAllObjMetacontent();
+			List<ObjMetacontent> metaContents = DAOFactory.getObjMetacontentDAO().loadAllObjMetacontent();
 			IObjMetacontentDAO objMetaContentDAO = DAOFactory.getObjMetacontentDAO();
 			if (metaContents != null && !metaContents.isEmpty()) {
-				Iterator it = metaContents.iterator();
+				Iterator<ObjMetacontent> it = metaContents.iterator();
 				while (it.hasNext()) {
-					ObjMetacontent objMetadataCont = (ObjMetacontent) it.next();
+					ObjMetacontent objMetadataCont = it.next();
 					if (objMetadataCont != null && objMetadataCont.getObjmetaId().equals(hibMeta.getObjMetaId())) {
 						objMetaContentDAO.eraseObjMetadata(objMetadataCont);
 					}
@@ -583,13 +584,13 @@ public class ObjMetadataDAOHibImpl extends AbstractHibernateDAO implements IObjM
 		try {
 			aSession = getSession();
 			tx = aSession.beginTransaction();
-			Integer idInt = Integer.valueOf(id);
+			Integer idInt = Integer.parseInt(id);
 
 			String hql = " from SbiObjMetacontents c where c.objmetaId = ? and c.sbiObjects is not null";
 			Query aQuery = aSession.createQuery(hql);
 			aQuery.setInteger(0, idInt.intValue());
-			List biObjectsAssocitedWithObj = aQuery.list();
-			if (biObjectsAssocitedWithObj.size() > 0)
+			List<SbiObjMetacontents> biObjectsAssocitedWithObj = aQuery.list();
+			if (!biObjectsAssocitedWithObj.isEmpty())
 				bool = true;
 			else
 				bool = false;
@@ -635,13 +636,13 @@ public class ObjMetadataDAOHibImpl extends AbstractHibernateDAO implements IObjM
 		try {
 			aSession = getSession();
 			tx = aSession.beginTransaction();
-			Integer idInt = Integer.valueOf(id);
+			Integer idInt = Integer.parseInt(id);
 
 			String hql = " from SbiObjMetacontents c where c.objmetaId = ? and c.sbiSubObjects is not null";
 			Query aQuery = aSession.createQuery(hql);
 			aQuery.setInteger(0, idInt.intValue());
-			List biObjectsAssocitedWithSubobj = aQuery.list();
-			if (biObjectsAssocitedWithSubobj.size() > 0)
+			List<SbiObjMetacontents> biObjectsAssocitedWithSubobj = aQuery.list();
+			if (!biObjectsAssocitedWithSubobj.isEmpty())
 				bool = true;
 			else
 				bool = false;

@@ -72,22 +72,22 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 
 public class DocumentExecutionUtils {
+	private static final Logger LOGGER = Logger.getLogger(DocumentExecutionUtils.class);
+
 	public static final String SELECTION_TYPE_TREE = "TREE";
 	public static final String SELECTION_TYPE_LOOKUP = "LOOKUP";
 	public static final String PARAMETERS = "PARAMETERS";
 	public static final String SERVICE_NAME = "GET_URL_FOR_EXECUTION_ACTION";
-	public static String NODE_ID_SEPARATOR = "___SEPA__";
-	public static String MODE_SIMPLE = "simple";
-	public static String MODE_COMPLETE = "complete";
-	public static String START = "start";
-	public static String LIMIT = "limit";
-	public static String MASSIVE_EXPORT = "massiveExport";
-	public static String DEFAULT_VALUES = "defaultValues";
-	public static String DEFAULT_VALUES_METADATA = "defaultValuesMetadata";
-	public static String DESCRIPTION_COLUMN_NAME_METADATA = "descriptionColumnNameMetadata";
-	public static String VALUE_COLUMN_NAME_METADATA = "valueColumnNameMetadata";
-
-	public static transient Logger logger = Logger.getLogger(DocumentExecutionUtils.class);
+	public static final String NODE_ID_SEPARATOR = "___SEPA__";
+	public static final String MODE_SIMPLE = "simple";
+	public static final String MODE_COMPLETE = "complete";
+	public static final String START = "start";
+	public static final String LIMIT = "limit";
+	public static final String MASSIVE_EXPORT = "massiveExport";
+	public static final String DEFAULT_VALUES = "defaultValues";
+	public static final String DEFAULT_VALUES_METADATA = "defaultValuesMetadata";
+	public static final String DESCRIPTION_COLUMN_NAME_METADATA = "descriptionColumnNameMetadata";
+	public static final String VALUE_COLUMN_NAME_METADATA = "valueColumnNameMetadata";
 
 	public static ILovDetail getLovDetail(BIObjectParameter parameter) {
 		Parameter par = parameter.getParameter();
@@ -103,8 +103,7 @@ public class DocumentExecutionUtils {
 	}
 
 	public static List<DocumentDriverRuntime> getParameters(BIObject document, String executionRole, Locale locale, String modality, DocumentRuntime dum) {
-		List<DocumentDriverRuntime> toReturn = getParameters(document, executionRole, locale, modality, null, true, dum);
-		return toReturn;
+		return getParameters(document, executionRole, locale, modality, null, true, dum);
 	}
 
 	public static List<DocumentDriverRuntime> getParameters(BIObject document, String executionRole, Locale locale, String modality, List<String> parsFromCross,
@@ -112,9 +111,9 @@ public class DocumentExecutionUtils {
 		Monitor monitor = MonitorFactory.start("Knowage.DocumentExecutionUtils.getParameters");
 		List<DocumentDriverRuntime> parametersForExecution = null;
 		try {
-			parametersForExecution = new ArrayList<DocumentDriverRuntime>();
+			parametersForExecution = new ArrayList<>();
 			List<BIObjectParameter> parameters = document.getDrivers();
-			if (parameters != null && parameters.size() > 0) {
+			if (parameters != null && !parameters.isEmpty()) {
 				Iterator<BIObjectParameter> it = parameters.iterator();
 				while (it.hasNext()) {
 					BIObjectParameter parameter = it.next();
@@ -139,7 +138,7 @@ public class DocumentExecutionUtils {
 			String parametersJson, Locale locale) { // isFromCross,
 
 		JSONObject response = new JSONObject();
-		HashMap<String, String> logParam = new HashMap<String, String>();
+		HashMap<String, String> logParam = new HashMap<>();
 		logParam.put("NAME", obj.getName());
 		logParam.put("ENGINE", obj.getEngine().getName());
 		logParam.put("PARAMS", parametersJson); // this.getAttributeAsString(PARAMETERS)
@@ -151,7 +150,7 @@ public class DocumentExecutionUtils {
 			try {
 				executionInstanceJSON = new JSONObject(parametersJson);
 			} catch (JSONException e2) {
-				logger.debug("Error in handleNormalExecution", e2);
+				LOGGER.debug("Error in handleNormalExecution", e2);
 			}
 			dum.refreshParametersValues(executionInstanceJSON, false, obj);
 			try {
@@ -175,7 +174,7 @@ public class DocumentExecutionUtils {
 				try {
 					AuditLogUtilities.updateAudit(req, profile, "DOCUMENT.GET_URL", logParam, "ERR");
 				} catch (Exception e1) {
-					logger.debug("Error in handleNormalExecution", e1);
+					LOGGER.debug("Error in handleNormalExecution", e1);
 				}
 				throw new SpagoBIServiceException(SERVICE_NAME, "Cannot serialize errors to the client", e);
 			}
@@ -195,19 +194,19 @@ public class DocumentExecutionUtils {
 				try {
 					AuditLogUtilities.updateAudit(req, profile, "DOCUMENT.GET_URL", logParam, "KO");
 				} catch (Exception e1) {
-					logger.debug("Error in handleNormalExecution", e1);
+					LOGGER.debug("Error in handleNormalExecution", e1);
 				}
 				try {
 					AuditLogUtilities.updateAudit(req, profile, "DOCUMENT.GET_URL", logParam, "ERR");
 				} catch (Exception e1) {
-					logger.debug("Error in handleNormalExecution", e1);
+					LOGGER.debug("Error in handleNormalExecution", e1);
 				}
 				throw new SpagoBIServiceException(SERVICE_NAME, "Cannot serialize the url [" + url + "] to the client", e);
 			}
 
 			AuditLogUtilities.updateAudit(req, profile, "DOCUMENT.GET_URL", logParam, "OK");
 		} catch (Exception e) {
-			logger.debug("Error in handleNormalExecution", e);
+			LOGGER.debug("Error in handleNormalExecution", e);
 		}
 		return response;
 	}
@@ -216,7 +215,7 @@ public class DocumentExecutionUtils {
 			JSONObject parametersJson, Locale locale) { // isFromCross,
 		Monitor handleNormalExecutionUrlMonitor = MonitorFactory.start("Knowage.DocumentExecutionResource.handleNormalExecutionUrl");
 
-		HashMap<String, String> logParam = new HashMap<String, String>();
+		HashMap<String, String> logParam = new HashMap<>();
 		logParam.put("NAME", obj.getName());
 		logParam.put("ENGINE", obj.getEngine().getName());
 		logParam.put("PARAMS", parametersJson.toString()); // this.getAttributeAsString(PARAMETERS)
@@ -245,8 +244,8 @@ public class DocumentExecutionUtils {
 		return url;
 	}
 
-	public static <T extends IDrivableBIResource<? extends AbstractDriver>> List handleNormalExecutionError(UserProfile profile, T obj, HttpServletRequest req, String env, String role, String modality,
-			JSONObject parametersJson, Locale locale) { // isFromCross,
+	public static <T extends IDrivableBIResource<? extends AbstractDriver>> List handleNormalExecutionError(UserProfile profile, T obj, HttpServletRequest req,
+			String env, String role, String modality, JSONObject parametersJson, Locale locale) { // isFromCross,
 		Monitor handleNormalExecutionErrorMonitor = MonitorFactory.start("Knowage.DocumentExecutionResource.handleNormalExecutionError");
 
 		DocumentRuntime dum = new DocumentRuntime(profile, locale);
@@ -255,7 +254,7 @@ public class DocumentExecutionUtils {
 		try {
 			errors = validation.getParametersErrors(obj, role, dum);
 		} catch (Exception e) {
-			logger.debug("Error in handleNormalExecutionError", e);
+			LOGGER.debug("Error in handleNormalExecutionError", e);
 			throw new SpagoBIServiceException(SERVICE_NAME, "Cannot evaluate errors on parameters validation", e);
 
 		} finally {
@@ -265,7 +264,7 @@ public class DocumentExecutionUtils {
 	}
 
 	// public static ArrayList<HashMap<String, Object>> getLovDefaultValues(String executionRole, BIObject biObject, BIObjectParameter objParameter,
-	public static HashMap<String, Object> getLovDefaultValues(String executionRole, BIObject biObject, BIObjectParameter objParameter, HttpServletRequest req) {
+	public static Map<String, Object> getLovDefaultValues(String executionRole, BIObject biObject, BIObjectParameter objParameter, HttpServletRequest req) {
 
 		return getLovDefaultValues(executionRole, biObject, objParameter, null, 0, null, req);
 	}
@@ -274,14 +273,14 @@ public class DocumentExecutionUtils {
 	 * @deprecated Replaced by {@link #getLovDefaultValues(String, BIObject, BIObjectParameter, JSONObject, Integer, String, Locale)}
 	 */
 	@Deprecated
-	public static HashMap<String, Object> getLovDefaultValues(String executionRole, BIObject biObject, BIObjectParameter objParameter, JSONObject requestVal,
+	public static Map<String, Object> getLovDefaultValues(String executionRole, BIObject biObject, BIObjectParameter objParameter, JSONObject requestVal,
 			Integer treeLovNodeLevel, String treeLovNodeValue, HttpServletRequest req) {
 
-		ArrayList<HashMap<String, Object>> defaultValues = new ArrayList<HashMap<String, Object>>();
+		ArrayList<HashMap<String, Object>> defaultValues = new ArrayList<>();
 		String lovResult = null;
 		ILovDetail lovProvDet = null;
 		List rows = null;
-		HashMap<String, Object> result = new HashMap<String, Object>();
+		HashMap<String, Object> result = new HashMap<>();
 
 		List<ObjParuse> biParameterExecDependencies = null;
 		try {
@@ -350,7 +349,7 @@ public class DocumentExecutionUtils {
 
 			JSONArray valuesJSONArray = new JSONArray();
 			if (lovProvDet instanceof DependenciesPostProcessingLov && selectedParameterValues != null && biParameterExecDependencies != null
-					&& biParameterExecDependencies.size() > 0 && !contest.equals(MASSIVE_EXPORT)) {
+					&& !biParameterExecDependencies.isEmpty() && !contest.equals(MASSIVE_EXPORT)) {
 				rows = ((DependenciesPostProcessingLov) lovProvDet).processDependencies(rows, selectedParameterValues, biParameterExecDependencies);
 			}
 
@@ -369,7 +368,7 @@ public class DocumentExecutionUtils {
 			for (int i = 0; i < valuesJSONArray.length(); i++) {
 				JSONObject item = valuesJSONArray.getJSONObject(i);
 				if (item.length() > 0) {
-					HashMap<String, Object> itemAsMap = new HashMap<String, Object>();
+					HashMap<String, Object> itemAsMap = new HashMap<>();
 
 					for (int j = 0; j < defaultValuesMetadata.size(); j++) {
 						String key = ((String) defaultValuesMetadata.get(j)).toUpperCase();
@@ -391,7 +390,7 @@ public class DocumentExecutionUtils {
 					itemAsMap.put("isEnabled", true);
 
 					// CHECH VALID DEFAULT PARAM
-					ArrayList<HashMap<String, Object>> defaultErrorValues = new ArrayList<HashMap<String, Object>>();
+					ArrayList<HashMap<String, Object>> defaultErrorValues = new ArrayList<>();
 					boolean defaultParameterAlreadyExist = false;
 					if (objParameter.getParameter() != null && objParameter.getParameter().getModalityValue() != null
 							&& objParameter.getParameter().getModalityValue().getSelectionType() != null
@@ -403,7 +402,7 @@ public class DocumentExecutionUtils {
 									defaultParameterAlreadyExist = true;
 									break;
 								} else {
-									HashMap<String, Object> itemErrorMap = new HashMap<String, Object>();
+									HashMap<String, Object> itemErrorMap = new HashMap<>();
 									itemErrorMap.put("error", true);
 									itemErrorMap.put("value", defVal.get("value"));
 									itemErrorMap.put("labelAlreadyExist", defVal.get("label"));
@@ -440,8 +439,9 @@ public class DocumentExecutionUtils {
 	 * @param executionRole
 	 * @param biObject
 	 * @param objParameter
-	 * @param requestVal Something like:
-	 *   <pre>
+	 * @param requestVal       Something like:
+	 *
+	 *                         <pre>
 	 *   {
 	 *     "label": "KNOWAGE-6401",
 	 *     "role": "admin",
@@ -461,7 +461,8 @@ public class DocumentExecutionUtils {
 	 *       "KNOWAGE-6401-1-3_field_visible_description": ""
 	 *     }
 	 *   }
-	 *   </pre>
+	 *                         </pre>
+	 *
 	 * @param treeLovNodeLevel
 	 * @param treeLovNodeValue
 	 * @param locale
@@ -469,25 +470,19 @@ public class DocumentExecutionUtils {
 	 * @deprecated Where possible, prefer {@link #getLovDefaultValues(String, List, BIObjectParameter, JSONObject, Integer, String, Locale)}
 	 */
 	@Deprecated
-	public static Map<String, Object> getLovDefaultValues(
-			String executionRole,
-			BIObject biObject,
-			BIObjectParameter objParameter,
-			JSONObject requestVal,
-			Integer treeLovNodeLevel,
-			String treeLovNodeValue,
-			Locale locale) {
+	public static Map<String, Object> getLovDefaultValues(String executionRole, BIObject biObject, BIObjectParameter objParameter, JSONObject requestVal,
+			Integer treeLovNodeLevel, String treeLovNodeValue, Locale locale) {
 		List<BIObjectParameter> drivers = biObject.getDrivers();
 		return getLovDefaultValues(executionRole, drivers, objParameter, requestVal, treeLovNodeLevel, treeLovNodeValue, locale);
 	}
 
 	public static Map<String, Object> getLovDefaultValues(String executionRole, List<? extends AbstractDriver> drivers, AbstractDriver objParameter,
 			JSONObject requestVal, Integer treeLovNodeLevel, String treeLovNodeValue, Locale locale) {
-		ArrayList<HashMap<String, Object>> defaultValues = new ArrayList<HashMap<String, Object>>();
+		ArrayList<HashMap<String, Object>> defaultValues = new ArrayList<>();
 		String lovResult = null;
 		ILovDetail lovProvDet = null;
 		List rows = null;
-		HashMap<String, Object> result = new HashMap<String, Object>();
+		HashMap<String, Object> result = new HashMap<>();
 
 		List<ObjParuse> biParameterExecDependencies = null;
 		try {
@@ -524,7 +519,7 @@ public class DocumentExecutionUtils {
 
 			JSONArray valuesJSONArray = new JSONArray();
 			if (lovProvDet instanceof DependenciesPostProcessingLov && selectedParameterValues != null && biParameterExecDependencies != null
-					&& biParameterExecDependencies.size() > 0 && !contest.equals(MASSIVE_EXPORT)) {
+					&& !biParameterExecDependencies.isEmpty() && !contest.equals(MASSIVE_EXPORT)) {
 				rows = ((DependenciesPostProcessingLov) lovProvDet).processDependencies(rows, selectedParameterValues, biParameterExecDependencies);
 			}
 
@@ -543,7 +538,7 @@ public class DocumentExecutionUtils {
 			for (int i = 0; i < valuesJSONArray.length(); i++) {
 				JSONObject item = valuesJSONArray.getJSONObject(i);
 				if (item.length() > 0) {
-					HashMap<String, Object> itemAsMap = new HashMap<String, Object>();
+					HashMap<String, Object> itemAsMap = new HashMap<>();
 
 					for (int j = 0; j < defaultValuesMetadata.size(); j++) {
 						String key = ((String) defaultValuesMetadata.get(j)).toUpperCase();
@@ -566,7 +561,7 @@ public class DocumentExecutionUtils {
 					itemAsMap.put("isEnabled", true);
 
 					// CHECH VALID DEFAULT PARAM
-					ArrayList<HashMap<String, Object>> defaultErrorValues = new ArrayList<HashMap<String, Object>>();
+					ArrayList<HashMap<String, Object>> defaultErrorValues = new ArrayList<>();
 					boolean defaultParameterAlreadyExist = false;
 					if (objParameter.getParameter() != null && objParameter.getParameter().getModalityValue() != null
 							&& objParameter.getParameter().getModalityValue().getSelectionType() != null
@@ -578,7 +573,7 @@ public class DocumentExecutionUtils {
 									defaultParameterAlreadyExist = true;
 									break;
 								} else {
-									HashMap<String, Object> itemErrorMap = new HashMap<String, Object>();
+									HashMap<String, Object> itemErrorMap = new HashMap<>();
 									itemErrorMap.put("error", true);
 									itemErrorMap.put("value", defVal.get("value"));
 									itemErrorMap.put("labelAlreadyExist", defVal.get("label"));
@@ -603,7 +598,6 @@ public class DocumentExecutionUtils {
 			throw new SpagoBIServiceException("Impossible to get parameter's values", e);
 		}
 	}
-
 
 	// Same method as GetParameterValuesForExecutionAction.getChildrenForTreeLov()
 	private static JSONArray getChildrenForTreeLov(ILovDetail lovProvDet, List rows, String mode, Integer treeLovNodeLevel, String treeLovNodeValue) {
@@ -630,7 +624,7 @@ public class DocumentExecutionUtils {
 				treeLovNodeNameBen = lovProvDet.getTreeLevelsColumns().get(treeLovNodeLevel + 1).getSecond();
 			}
 
-			Set<JSONObject> valuesDataJSON = new LinkedHashSet<JSONObject>();
+			Set<JSONObject> valuesDataJSON = new LinkedHashSet<>();
 
 			valueColumn = lovProvDet.getValueColumnName();
 			descriptionColumn = lovProvDet.getDescriptionColumnName();
@@ -706,7 +700,7 @@ public class DocumentExecutionUtils {
 	}
 
 	public static List<ObjParuse> getBiObjectDependencies(String executionRole, AbstractDriver biobjParameter) {
-		List<ObjParuse> biParameterExecDependencies = new ArrayList<ObjParuse>();
+		List<ObjParuse> biParameterExecDependencies = new ArrayList<>();
 		try {
 			IParameterUseDAO parusedao = DAOFactory.getParameterUseDAO();
 			ParameterUse biParameterExecModality = parusedao.loadByParameterIdandRole(biobjParameter.getParID(), executionRole);
@@ -754,8 +748,8 @@ public class DocumentExecutionUtils {
 	 * @deprecated Where possible, prefer #getLovResult
 	 */
 	@Deprecated
-	public static String getLovResult(IEngUserProfile profile, ILovDetail lovDefinition, List<ObjParuse> dependencies, BIObject biObject,
-			Locale locale, boolean retrieveIfNotcached) throws Exception {
+	public static String getLovResult(IEngUserProfile profile, ILovDetail lovDefinition, List<ObjParuse> dependencies, BIObject biObject, Locale locale,
+			boolean retrieveIfNotcached) throws Exception {
 		List<BIObjectParameter> drivers = biObject.getDrivers();
 		return getLovResult(profile, lovDefinition, dependencies, drivers, locale, retrieveIfNotcached);
 	}
@@ -792,14 +786,10 @@ public class DocumentExecutionUtils {
 	 * in case when the lov is a query and there is correlation, the executed statement if different from the original query (since correlation expression is
 	 * injected inside SQL query using in-line view construct), therefore we should consider the modified query.
 	 *
-	 * @param profile
-	 *            The user profile
-	 * @param lovDefinition
-	 *            The lov original definition
-	 * @param dependencies
-	 *            The dependencies to be considered (if any)
-	 * @param biObject
-	 *            The document object
+	 * @param profile       The user profile
+	 * @param lovDefinition The lov original definition
+	 * @param dependencies  The dependencies to be considered (if any)
+	 * @param biObject      The document object
 	 * @return The key to be used in cache
 	 * @throws Exception
 	 * @deprecated Where possible, prefer {@link #getCacheKey(IEngUserProfile, ILovDetail, List, List)}
@@ -911,7 +901,8 @@ public class DocumentExecutionUtils {
 
 	/**
 	 * @param paramsArray Something like:
-	 *   <pre>
+	 *
+	 *                    <pre>
 	 *     [
 	 *       {
 	 *         "urlName": "KNOWAGE-6401-1-1",
@@ -934,7 +925,8 @@ public class DocumentExecutionUtils {
 	 *         "description": ""
 	 *       }
 	 *     ]
-	 *   </pre>
+	 *                    </pre>
+	 *
 	 * @return
 	 */
 	public static Map<String, Object> createParameterValuesMap(JSONArray paramsArray) {
@@ -945,12 +937,12 @@ public class DocumentExecutionUtils {
 			try {
 				ret = new HashMap<>();
 
-				for (int j=0; j<length; j++) {
+				for (int j = 0; j < length; j++) {
 					JSONObject jsonObject = (JSONObject) paramsArray.get(j);
 
 					/*
-					 * WORKAROUND : the right way to match the driver is by comparing the URL but
-					 * in the past we've used the label. This is just for retrocompatibility.
+					 * WORKAROUND : the right way to match the driver is by comparing the URL but in the past we've used the label. This is just for
+					 * retrocompatibility.
 					 */
 					String key = jsonObject.optString("urlName");
 					if (StringUtils.isBlank(key)) {
@@ -991,4 +983,7 @@ public class DocumentExecutionUtils {
 		return ret;
 	}
 
+	private DocumentExecutionUtils() {
+
+	}
 }

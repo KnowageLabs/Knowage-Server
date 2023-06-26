@@ -13,6 +13,6 @@ public class AnalyticalDriverManagementAPI {
 		ICrossNavigationDAO s = DAOFactory.getCrossNavigationDAO();
 		List in = s.listNavigationsByAnalyticalDriverID(driver.getId());
 
-		return in.size() > 0;
+		return !in.isEmpty();
 	}
 }

@@ -60,14 +60,22 @@ public class RWidgetProxy extends DataSetResource {
 	@Path("/view/{output_type}")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
-	public Response view(@PathParam("output_type") String outputType, HashMap<String, String> requestBody) {
+	public Response view(@PathParam("output_type") String outputType, Map<String, String> requestBody) {
 		logger.debug("IN");
 		UserProfile userProfile = UserProfileManager.getProfile();
 		String userId = (String) userProfile.getUserUniqueIdentifier();
 		ContentServiceImplSupplier supplier = new ContentServiceImplSupplier();
 		HashMap drivers;
-		String script = null, documentId = null, outputVariable = null, dsLabel = null, parameters = null, aggregations = null, selections = null,
-				widgetId = null, envLabel = null, driversAsString = null;
+		String script = null;
+		String documentId = null;
+		String outputVariable = null;
+		String dsLabel = null;
+		String parameters = null;
+		String aggregations = null;
+		String selections = null;
+		String widgetId = null;
+		String envLabel = null;
+		String driversAsString = null;
 		try {
 			envLabel = requestBody.get("r_environment");
 			dsLabel = requestBody.get("dataset");
@@ -87,7 +95,7 @@ public class RWidgetProxy extends DataSetResource {
 		String rDataframe = null;
 		if (dsLabel != null) {
 			String knowageDs = getDataStore(dsLabel, parameters, drivers, selections, null, -1, aggregations, null, -1, -1, false, null, null);
-			rDataframe = RUtils.dataStore2DataFrame(knowageDs);
+			rDataframe = MLEngineUtils.dataStore2DataFrame(knowageDs);
 		}
 		it.eng.spagobi.utilities.rest.RestUtilities.Response rEngineResponse = null;
 		try {
@@ -117,13 +125,20 @@ public class RWidgetProxy extends DataSetResource {
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
 	@UserConstraint(functionalities = { CommunityFunctionalityConstants.EDIT_PYTHON_SCRIPTS })
-	public Response edit(@PathParam("output_type") String outputType, HashMap<String, String> requestBody) {
+	public Response edit(@PathParam("output_type") String outputType, Map<String, String> requestBody) {
 		logger.debug("IN");
 		UserProfile userProfile = UserProfileManager.getProfile();
 		String userId = (String) userProfile.getUserUniqueIdentifier();
 		HashMap drivers;
-		String script = null, documentId = null, outputVariable = null, dsLabel = null, parameters = null, aggregations = null, selections = null,
-				envLabel = null, driversAsString = null;
+		String script = null;
+		String documentId = null;
+		String outputVariable = null;
+		String dsLabel = null;
+		String parameters = null;
+		String aggregations = null;
+		String selections = null;
+		String envLabel = null;
+		String driversAsString = null;
 		try {
 			envLabel = requestBody.get("r_environment");
 			dsLabel = requestBody.get("dataset");
@@ -142,7 +157,7 @@ public class RWidgetProxy extends DataSetResource {
 		String rDataframe = null;
 		if (dsLabel != null) {
 			String knowageDs = getDataStore(dsLabel, parameters, drivers, selections, null, -1, aggregations, null, -1, -1, false, null, null);
-			rDataframe = RUtils.dataStore2DataFrame(knowageDs);
+			rDataframe = MLEngineUtils.dataStore2DataFrame(knowageDs);
 		}
 		it.eng.spagobi.utilities.rest.RestUtilities.Response rEngineResponse = null;
 		try {

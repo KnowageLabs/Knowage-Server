@@ -76,7 +76,7 @@ public class AbstractDocumentExecutionWork extends DossierExecutionClient implem
 	public static final String STARTED = "STARTED";
 	public static final String DOWNLOAD = "DOWNLOAD";
 	public static final String ERROR = "ERROR";
-	protected List<String> imageNames = new ArrayList<String>();
+	protected List<String> imageNames = new ArrayList<>();
 	protected IEngUserProfile userProfile;
 	protected List<BIObjectPlaceholdersPair> documents;
 	protected boolean completeWithoutError = false;
@@ -89,15 +89,12 @@ public class AbstractDocumentExecutionWork extends DossierExecutionClient implem
 	@Override
 	public void run() {
 		// TODO Auto-generated method stub
-
 	}
 
 	protected void runInternal(JSONObject jsonObjectTemplate) {
 		logger.debug("IN");
 
 		ProgressThreadManager progressThreadManager = null;
-		IObjMetadataDAO metaDAO = null;
-		IObjMetacontentDAO contentDAO = null;
 
 		Thread thread = Thread.currentThread();
 		Long threadId = thread.getId();
@@ -109,16 +106,6 @@ public class AbstractDocumentExecutionWork extends DossierExecutionClient implem
 
 		progressThreadManager = new ProgressThreadManager();
 		progressThreadManager.setStatusStarted(progressThreadId);
-		try {
-
-			metaDAO = DAOFactory.getObjMetadataDAO();
-			contentDAO = DAOFactory.getObjMetacontentDAO();
-
-		} catch (Exception e) {
-			logger.error("Error setting DAO");
-			progressThreadManager.deleteThread(progressThreadId);
-			throw new SpagoBIServiceException("Error setting DAO", e);
-		}
 
 		BIObject biObject = null;
 		try {
@@ -129,7 +116,7 @@ public class AbstractDocumentExecutionWork extends DossierExecutionClient implem
 			String dossierTemplateJson = objectMapper.writeValueAsString(dossierTemplate);
 			Map<String, String> imagesMap = null;
 
-			Set<String> executedDocuments = new HashSet<String>();
+			Set<String> executedDocuments = new HashSet<>();
 			String path = SpagoBIUtilities.getResourcePath() + File.separator + "dossierExecution" + File.separator;
 
 			this.validImage(dossierTemplate.getReports());
@@ -144,7 +131,7 @@ public class AbstractDocumentExecutionWork extends DossierExecutionClient implem
 			String dbArray = activity.getConfigContent();
 			JSONArray jsonArray = null;
 
-			HashMap<String, String> paramMap = new HashMap<>();
+			Map<String, String> paramMap = new HashMap<>();
 
 			if (dbArray != null && !dbArray.isEmpty()) {
 				jsonArray = new org.json.JSONArray(dbArray);
@@ -211,7 +198,7 @@ public class AbstractDocumentExecutionWork extends DossierExecutionClient implem
 
 					} else {
 
-						File f = FileUtilities.createFile(imageName, ".png", randomKey, new ArrayList<PlaceHolder>());
+						File f = FileUtilities.createFile(imageName, ".png", randomKey, new ArrayList<>());
 						FileOutputStream outputStream = new FileOutputStream(f);
 						outputStream.write(responseAsByteArray);
 						outputStream.close();
@@ -267,8 +254,8 @@ public class AbstractDocumentExecutionWork extends DossierExecutionClient implem
 	 * @throws UnsupportedEncodingException
 	 * @throws JSONException
 	 */
-	private String getDashboardServiceUrl(BIObject biObject, String userUniqueIdentifier, JSONArray jsonArray, HashMap<String, String> paramMap,
-			Report reportToUse, Integer docId, String role) throws UnsupportedEncodingException, JSONException {
+	private String getDashboardServiceUrl(BIObject biObject, String userUniqueIdentifier, JSONArray jsonArray, Map<String, String> paramMap, Report reportToUse,
+			Integer docId, String role) throws UnsupportedEncodingException, JSONException {
 		String docName = biObject.getName();
 
 		StringBuilder serviceUrlBuilder = new StringBuilder();
@@ -353,8 +340,8 @@ public class AbstractDocumentExecutionWork extends DossierExecutionClient implem
 	 * @throws UnsupportedEncodingException
 	 * @throws JSONException
 	 */
-	private String getCockpitServiceUrl(BIObject biObject, String userUniqueIdentifier, JSONArray jsonArray, HashMap<String, String> paramMap,
-			Report reportToUse, String cockpitDocument, Integer docId, String role) throws UnsupportedEncodingException, JSONException {
+	private String getCockpitServiceUrl(BIObject biObject, String userUniqueIdentifier, JSONArray jsonArray, Map<String, String> paramMap, Report reportToUse,
+			String cockpitDocument, Integer docId, String role) throws UnsupportedEncodingException, JSONException {
 		String docName = biObject.getName();
 
 		String hostUrl = getServiceHostUrl();
@@ -532,7 +519,7 @@ public class AbstractDocumentExecutionWork extends DossierExecutionClient implem
 		try (ZipInputStream zis = new ZipInputStream(new ByteArrayInputStream(responseAsByteArray))) {
 			ZipEntry zipEntry = zis.getNextEntry();
 			while (zipEntry != null) {
-				File newFile = FileUtilities.createFile(FilenameUtils.removeExtension(zipEntry.getName()), ".png", randomKey, new ArrayList<PlaceHolder>());
+				File newFile = FileUtilities.createFile(FilenameUtils.removeExtension(zipEntry.getName()), ".png", randomKey, new ArrayList<>());
 				try (FileOutputStream fos = new FileOutputStream(newFile)) {
 					int len;
 					while ((len = zis.read(buffer)) > 0) {
@@ -548,17 +535,13 @@ public class AbstractDocumentExecutionWork extends DossierExecutionClient implem
 		String[] extensions = new String[] { "gif", "png", "bmp" // and other formats you need
 		};
 		// filter to identify images based on their extensions
-		FilenameFilter imageFilter = new FilenameFilter() {
-
-			@Override
-			public boolean accept(final File dir, final String name) {
-				for (final String ext : extensions) {
-					if (name.endsWith("." + ext) && name.startsWith("sheet")) {
-						return (true);
-					}
+		FilenameFilter imageFilter = (dir, name) -> {
+			for (final String ext : extensions) {
+				if (name.endsWith("." + ext) && name.startsWith("sheet")) {
+					return (true);
 				}
-				return (false);
 			}
+			return (false);
 		};
 
 		String documentLabel = reportToUse.getLabel();
@@ -601,27 +584,27 @@ public class AbstractDocumentExecutionWork extends DossierExecutionClient implem
 
 	private List<DocumentMetadataProperty> getMetaDataAndContent(IObjMetadataDAO metaDao, IObjMetacontentDAO metaContentDAO, BIObject obj) throws Exception {
 		logger.debug("IN");
-		List toReturn = null;
+		List<DocumentMetadataProperty> toReturn = null;
 
 		try {
 			DocumentMetadataProperty objMetaDataAndContent = null;
 			List<ObjMetadata> allMetas = metaDao.loadAllObjMetadata();
-			Map<Integer, ObjMetacontent> values = new HashMap<Integer, ObjMetacontent>();
+			Map<Integer, ObjMetacontent> values = new HashMap<>();
 
-			List list = metaContentDAO.loadObjOrSubObjMetacontents(obj.getId(), null);
-			for (Iterator iterator = list.iterator(); iterator.hasNext();) {
-				ObjMetacontent content = (ObjMetacontent) iterator.next();
+			List<ObjMetacontent> list = metaContentDAO.loadObjOrSubObjMetacontents(obj.getId(), null);
+			for (Iterator<ObjMetacontent> iterator = list.iterator(); iterator.hasNext();) {
+				ObjMetacontent content = iterator.next();
 				Integer metaid = content.getObjmetaId();
 				values.put(metaid, content);
 			}
 
-			for (Iterator iterator = allMetas.iterator(); iterator.hasNext();) {
-				ObjMetadata meta = (ObjMetadata) iterator.next();
+			for (Iterator<ObjMetadata> iterator = allMetas.iterator(); iterator.hasNext();) {
+				ObjMetadata meta = iterator.next();
 				objMetaDataAndContent = new DocumentMetadataProperty();
 				objMetaDataAndContent.setMetadataPropertyDefinition(meta);
 				objMetaDataAndContent.setMetadataPropertyValue(values.get(meta.getObjMetaId()));
 				if (toReturn == null)
-					toReturn = new ArrayList<DocumentMetadataProperty>();
+					toReturn = new ArrayList<>();
 				toReturn.add(objMetaDataAndContent);
 			}
 

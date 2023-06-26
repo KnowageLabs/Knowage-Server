@@ -38,7 +38,7 @@ public interface IObjMetadataDAO extends ISpagoBIDao {
 	 *
 	 * @throws EMFUserError If an Exception occurred
 	 */
-	public List loadObjMetaDataListByType(String type) throws EMFUserError;
+	List<ObjMetadata> loadObjMetaDataListByType(String type) throws EMFUserError;
 
 	/**
 	 * Loads all detail information for a metadata identified by its <code>id</code>. All these information, achived by a query to the DB, are stored into a
@@ -50,7 +50,7 @@ public interface IObjMetadataDAO extends ISpagoBIDao {
 	 *
 	 * @throws EMFUserError If an Exception occurred
 	 */
-	public ObjMetadata loadObjMetaDataByID(Integer id) throws EMFUserError;
+	ObjMetadata loadObjMetaDataByID(Integer id) throws EMFUserError;
 
 	/**
 	 * Loads all detail information for object's metadata whose label is equal to <code>label</code>.
@@ -61,7 +61,7 @@ public interface IObjMetadataDAO extends ISpagoBIDao {
 	 *
 	 * @throws EMFUserError If an Exception occurred
 	 */
-	public ObjMetadata loadObjMetadataByLabel(String label) throws EMFUserError;
+	ObjMetadata loadObjMetadataByLabel(String label) throws EMFUserError;
 
 	/**
 	 * Loads all detail information for all object's metadata. For each of them, detail information is stored into a <code>ObjMetadata</code> object. After
@@ -72,7 +72,7 @@ public interface IObjMetadataDAO extends ISpagoBIDao {
 	 * @throws EMFUserError If an Exception occurred
 	 */
 
-	public List loadAllObjMetadata() throws EMFUserError;
+	List<ObjMetadata> loadAllObjMetadata() throws EMFUserError;
 
 	/**
 	 * Implements the query to modify an object's metadata. All information needed is stored into the input <code>ObjMetadata</code> object.
@@ -82,7 +82,7 @@ public interface IObjMetadataDAO extends ISpagoBIDao {
 	 * @throws EMFUserError If an Exception occurred
 	 */
 
-	public void modifyObjMetadata(ObjMetadata aObjMetadata) throws EMFUserError;
+	void modifyObjMetadata(ObjMetadata aObjMetadata) throws EMFUserError;
 
 	/**
 	 * Implements the query to insert an object's metadata. All information needed is stored into the input <code>ObjMetadata</code> object.
@@ -91,9 +91,9 @@ public interface IObjMetadataDAO extends ISpagoBIDao {
 	 *
 	 * @throws EMFUserError If an Exception occurred
 	 */
-	public int insertObjMetadata(ObjMetadata aObjMetadata) throws EMFUserError;
+	int insertObjMetadata(ObjMetadata aObjMetadata) throws EMFUserError;
 
-	public int insertOrUpdateObjMetadata(ObjMetadata aObjMetadata) throws EMFUserError;
+	int insertOrUpdateObjMetadata(ObjMetadata aObjMetadata) throws EMFUserError;
 
 	/**
 	 * Implements the query to erase an object's metadata. All information needed is stored into the input <code>ObjMetadata</code> object.
@@ -102,9 +102,9 @@ public interface IObjMetadataDAO extends ISpagoBIDao {
 	 *
 	 * @throws EMFUserError If an Exception occurred
 	 */
-	public void eraseObjMetadata(ObjMetadata aObjMetadata) throws EMFUserError;
+	void eraseObjMetadata(ObjMetadata aObjMetadata) throws EMFUserError;
 
-	public void eraseObjMetadataById(int id) throws EMFUserError;
+	void eraseObjMetadataById(int id) throws EMFUserError;
 
 	/**
 	 * Tells if a objMetadata is associated to any BI Objects. It is useful because a metadata cannot be deleted if it is used by one or more BI Objects.
@@ -115,7 +115,7 @@ public interface IObjMetadataDAO extends ISpagoBIDao {
 	 *
 	 * @throws EMFUserError If any exception occurred
 	 */
-	public boolean hasBIObjAssociated(String id) throws EMFUserError;
+	boolean hasBIObjAssociated(String id) throws EMFUserError;
 
 	/**
 	 * Tells if a objMetadata is associated to any BI SubObjects. It is useful because a metadata cannot be deleted if it is used by one or more BI SubObjects.
@@ -126,9 +126,9 @@ public interface IObjMetadataDAO extends ISpagoBIDao {
 	 *
 	 * @throws EMFUserError If any exception occurred
 	 */
-	public boolean hasSubObjAssociated(String id) throws EMFUserError;
+	boolean hasSubObjAssociated(String id) throws EMFUserError;
 
-	public List loadObjMetadataByBIObjectID(Integer biobjId) throws EMFUserError;
+	List<ObjMetadata> loadObjMetadataByBIObjectID(Integer biobjId) throws EMFUserError;
 
 	/**
 	 * Load all metadata filtered by label comparison.
@@ -139,6 +139,6 @@ public interface IObjMetadataDAO extends ISpagoBIDao {
 	 *
 	 * @see it.eng.spagobi.tools.objmetadata.dao.IObjMetadataDAO#loadAllObjMetadata()
 	 */
-	public List loadAllObjMetadataByLabelAndCase(String label, boolean caseSensitive) throws EMFUserError;
+	List<ObjMetadata> loadAllObjMetadataByLabelAndCase(String label, boolean caseSensitive) throws EMFUserError;
 
 }
