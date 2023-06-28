@@ -37,6 +37,7 @@ import { iFile, iNode } from '../Scheduler'
 import Dialog from 'primevue/dialog'
 import schedulerDocumentsSelectionDialogDescriptor from './SchedulerDocumentsSelectionDialogDescriptor.json'
 import Tree from 'primevue/tree'
+import deepcopy from 'deepcopy'
 
 export default defineComponent({
     name: 'scheduler-documents-selection-dialog',
@@ -69,6 +70,9 @@ export default defineComponent({
         },
         loadFiles() {
             this.files = this.propFiles as iFile[]
+            this.files?.sort((a: any, b: any) => {
+                return a.id - b.id
+            })
         },
         createNodeTree() {
             this.nodes = []
@@ -108,6 +112,7 @@ export default defineComponent({
                 for (let i = 0; i < foldersWithMissingParent.length; i++) {
                     if (folder.parentId === foldersWithMissingParent[i].id) {
                         foldersWithMissingParent[i].children?.push(folder)
+                        parentFolder = foldersWithMissingParent[i]
                         break
                     }
                 }
@@ -115,6 +120,7 @@ export default defineComponent({
                     parentFolder = this.findParentFolder(folder, this.nodes[i])
                     if (parentFolder && !parentFolder.data.stateCode) {
                         parentFolder.children?.push(folder)
+                        parentFolder.children?.push(deepcopy(folder))
                         break
                     }
                 }
@@ -126,7 +132,7 @@ export default defineComponent({
             }
         },
         findParentFolder(folderToAdd: iNode, folderToSearch: iNode) {
-            if (folderToAdd.parentId === folderToSearch.id && folderToSearch.data.stateCode) {
+            if (folderToAdd.parentId === folderToSearch.id && !folderToSearch.data.stateCode) {
                 return folderToSearch
             } else {
                 let tempFolder = null as iNode | null
