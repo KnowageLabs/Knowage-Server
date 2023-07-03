@@ -52,7 +52,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 									<table class="kn-table" ng-if="tmpAvaiableDataset.length > 0">									
 										<thead>
 											<tr>
-												<th ng-repeat="column in cockpitDatasetColumns" ng-class="{'tableAction':column.type=='expand'}">{{column.label}}</th>
+												<th ng-repeat="(key, value) in cockpitDatasetColumns" ng-class="{'tableAction':column.type=='expand'}" ng-style="(key !== 3) ? {'min-width':'150px'} : {'min-width':'50px'}">{{value.label}}</th>
 												<th></th>
 											</tr>
 										</thead>
