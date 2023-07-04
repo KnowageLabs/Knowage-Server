@@ -31,6 +31,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.zip.ZipInputStream;
 
 import javax.servlet.http.HttpServletRequest;
@@ -45,6 +46,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.apache.axis.encoding.Base64;
+import org.apache.jena.ext.com.google.common.collect.Iterables;
 import org.apache.log4j.Logger;
 import org.jboss.resteasy.plugins.providers.html.View;
 import org.json.JSONArray;
@@ -52,6 +54,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import edu.emory.mathcs.backport.java.util.Arrays;
+import edu.emory.mathcs.backport.java.util.Collections;
 import it.eng.knowage.engine.cockpit.CockpitEngine;
 import it.eng.knowage.engine.cockpit.CockpitEngineInstance;
 import it.eng.knowage.engine.cockpit.api.AbstractCockpitEngineResource;
@@ -62,6 +65,7 @@ import it.eng.knowage.export.wrapper.beans.RenderOptions;
 import it.eng.knowage.export.wrapper.beans.ViewportDimensions;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
+import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
 import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.utilities.GeneralUtilities;
@@ -98,8 +102,8 @@ public class PageResource extends AbstractCockpitEngineResource {
 	private static Logger logger = Logger.getLogger(PageResource.class);
 
 	static {
-		pages = new HashMap<String, JSONObject>();
-		urls = new HashMap<String, String>();
+		pages = new HashMap<>();
+		urls = new HashMap<>();
 
 		try {
 			pages.put("edit", new JSONObject("{name: 'execute', description: 'the cockpit edit page', parameters: []}"));
@@ -147,37 +151,37 @@ public class PageResource extends AbstractCockpitEngineResource {
 
 	@GET
 	@Path("/{pagename}/pdf")
-	public Response openPageGetPdf(@PathParam("pagename") String pageName) throws EMFUserError, IOException, InterruptedException {
+	public Response openPageGetPdf(@PathParam("pagename") String pageName) throws EMFUserError, IOException, InterruptedException, JSONException {
 		return openPagePdfInternal(pageName);
 	}
 
 	@POST
 	@Path("/{pagename}/pdf")
-	public Response openPagePostPdf(@PathParam("pagename") String pageName) throws EMFUserError, IOException, InterruptedException {
+	public Response openPagePostPdf(@PathParam("pagename") String pageName) throws EMFUserError, IOException, InterruptedException, JSONException {
 		return openPagePdfInternal(pageName);
 	}
 
 	@GET
 	@Path("/{pagename}/spreadsheet")
-	public Response openPageGetSpreadsheet(@PathParam("pagename") String pageName) throws EMFUserError, IOException, InterruptedException {
+	public Response openPageGetSpreadsheet(@PathParam("pagename") String pageName) throws EMFUserError, IOException, InterruptedException, JSONException {
 		return openPageSpreadsheetInternal(pageName);
 	}
 
 	@POST
 	@Path("/{pagename}/spreadsheet")
-	public Response openPagePostSpreadsheet(@PathParam("pagename") String pageName) throws EMFUserError, IOException, InterruptedException {
+	public Response openPagePostSpreadsheet(@PathParam("pagename") String pageName) throws EMFUserError, IOException, InterruptedException, JSONException {
 		return openPageSpreadsheetInternal(pageName);
 	}
 
 	@GET
 	@Path("/{pagename}/png")
-	public Response openPageGetPng(@PathParam("pagename") String pageName) throws EMFUserError, IOException, InterruptedException {
+	public Response openPageGetPng(@PathParam("pagename") String pageName) throws EMFUserError, IOException, InterruptedException, JSONException {
 		return openPagePngInternal(pageName);
 	}
 
 	@POST
 	@Path("/{pagename}/png")
-	public Response openPagePostPng(@PathParam("pagename") String pageName) throws EMFUserError, IOException, InterruptedException {
+	public Response openPagePostPng(@PathParam("pagename") String pageName) throws EMFUserError, IOException, InterruptedException, JSONException {
 		return openPagePngInternal(pageName);
 	}
 
@@ -285,7 +289,7 @@ public class PageResource extends AbstractCockpitEngineResource {
 		return newLocation;
 	}
 
-	private Response openPagePdfInternal(String pageName) throws EMFUserError, IOException, InterruptedException {
+	private Response openPagePdfInternal(String pageName) throws EMFUserError, IOException, InterruptedException, JSONException {
 		String requestURL = getRequestUrlForPdfExport(request);
 		RenderOptions renderOptions = getRenderOptionsForPdfExporter(request);
 
@@ -302,7 +306,7 @@ public class PageResource extends AbstractCockpitEngineResource {
 				.header("Content-Disposition", "attachment; fileName=" + request.getParameter("DOCUMENT_LABEL") + ".pdf").build();
 	}
 
-	private Response openPageSpreadsheetInternal(String pageName) throws EMFUserError, IOException, InterruptedException {
+	private Response openPageSpreadsheetInternal(String pageName) throws EMFUserError, IOException, InterruptedException, JSONException {
 		String requestURL = getRequestUrlForExcelExport(request);
 
 		request.setAttribute("template", getIOManager().getTemplateAsString());
@@ -321,13 +325,12 @@ public class PageResource extends AbstractCockpitEngineResource {
 				.header("Content-Disposition", "attachment; fileName=" + documentLabel + ".xlsx").build();
 	}
 
-	private Response openPagePngInternal(String pageName) throws EMFUserError, IOException, InterruptedException {
+	private Response openPagePngInternal(String pageName) throws EMFUserError, IOException, InterruptedException, JSONException {
 		String requestURL = null;
 		String documentLabel = request.getParameter("DOCUMENT_LABEL");
 		String viewName = request.getParameter("viewName");
 		String viewId = request.getParameter("viewId");
 		if (viewName != null && viewId != null) {
-
 			requestURL = getRequestUrlWithViewHandling(documentLabel);
 		} else {
 			requestURL = getRequestUrlForPdfExport(request);
@@ -398,7 +401,7 @@ public class PageResource extends AbstractCockpitEngineResource {
 	private RenderOptions getRenderOptionsForPdfExporter(HttpServletRequest request) throws UnsupportedEncodingException {
 		String userId = (String) getUserProfile().getUserUniqueIdentifier();
 		String encodedUserId = Base64.encode(userId.getBytes(UTF_8));
-		Map<String, String> headers = new HashMap<String, String>(1);
+		Map<String, String> headers = new HashMap<>(1);
 		headers.put("Authorization", "Direct " + encodedUserId);
 
 		RenderOptions defaultRenderOptions = RenderOptions.defaultOptions();
@@ -436,7 +439,7 @@ public class PageResource extends AbstractCockpitEngineResource {
 		return renderOptions;
 	}
 
-	private String getRequestUrlForPdfExport(HttpServletRequest request) throws UnsupportedEncodingException {
+	private String getRequestUrlForPdfExport(HttpServletRequest request) throws UnsupportedEncodingException, JSONException {
 
 		String documentLabel = request.getParameter("DOCUMENT_LABEL");
 		BIObject biObject = null;
@@ -449,29 +452,16 @@ public class PageResource extends AbstractCockpitEngineResource {
 		String externalUrl = GeneralUtilities.getExternalEngineUrl(eng);
 
 		StringBuilder sb = new StringBuilder(externalUrl);
-		if ("knowagedashboardengine".equals(eng.getLabel())) {
-			sb.append("knowage-vue/document-browser/dashboard/");
-			sb.append(documentLabel);
-		}
-		String sep = "?";
-		Map<String, String[]> parameterMap = request.getParameterMap();
-		for (String parameter : parameterMap.keySet()) {
-			if (!PDF_PARAMETERS.contains(parameter)) {
-				String[] values = parameterMap.get(parameter);
-				if (values != null && values.length > 0) {
-					sb.append(sep);
-					sb.append(URLEncoder.encode(parameter, UTF_8.name()));
-					sb.append("=");
-					sb.append(URLEncoder.encode(values[0], UTF_8.name()));
-					sep = "&";
-				}
-			}
+		if (isDashboard(eng)) {
+			manageParametersForDashbaords(biObject, documentLabel, sb);
+		} else {
+			manageParametersForEverythingElse(sb);
 		}
 		sb.append("&export=true");
 		return sb.toString();
 	}
 
-	private String getRequestUrlForExcelExport(HttpServletRequest request) throws UnsupportedEncodingException {
+	private String getRequestUrlForExcelExport(HttpServletRequest request) throws UnsupportedEncodingException, JSONException {
 
 		String documentLabel = request.getParameter("DOCUMENT_LABEL");
 		BIObject biObject = null;
@@ -484,21 +474,10 @@ public class PageResource extends AbstractCockpitEngineResource {
 		String externalUrl = GeneralUtilities.getExternalEngineUrl(eng);
 
 		StringBuilder sb = new StringBuilder(externalUrl);
-		if (eng.getLabel().equals("knowagedashboardengine")) {
-			sb.append("knowage-vue/document-browser/dashboard/");
-			sb.append(documentLabel);
-		}
-		String sep = "?";
-		Map<String, String[]> parameterMap = request.getParameterMap();
-		for (String parameter : parameterMap.keySet()) {
-			String[] values = parameterMap.get(parameter);
-			if (values != null && values.length > 0) {
-				sb.append(sep);
-				sb.append(URLEncoder.encode(parameter, UTF_8.name()));
-				sb.append("=");
-				sb.append(URLEncoder.encode(values[0], UTF_8.name()));
-				sep = "&";
-			}
+		if (isDashboard(eng)) {
+			manageParametersForDashbaords(biObject, documentLabel, sb);
+		} else {
+			manageParametersForEverythingElse(sb);
 		}
 		sb.append("&scheduledexport=true");
 		return sb.toString();
@@ -541,4 +520,85 @@ public class PageResource extends AbstractCockpitEngineResource {
 
 		return template;
 	}
+
+	private void manageParametersForDashbaords(BIObject biObject, String documentLabel, StringBuilder sb) throws JSONException {
+		// /knowage-vue/dashboard/KNOWAGE-8005?toolbar=false&menu=false&params=W3sidmFsdWUiOlt7InZhbHVlIjoiUERGIiwiZGVzY3JpcHRpb24iOiJQREYifV0sInVybE5hbWUiOiJvdXRwdXRUeXBlIiwibXVsdGl2YWx1ZSI6ZmFsc2V9XQ==&role=admin
+		// /knowage-vue/dashboard
+		sb.append("knowage-vue/dashboard/");
+		// KNOWAGE-8005
+		sb.append(documentLabel);
+		sb.append("?toolbar=false");
+		sb.append("&menu=false");
+		// &params=W3sidmFsdWUiOlt7InZhbHVlIjoiUERGIiwiZGVzY3JpcHRpb24iOiJQREYifV0sInVybE5hbWUiOiJvdXRwdXRUeXBlIiwibXVsdGl2YWx1ZSI6ZmFsc2V9XQ==&role=admin
+		sb.append("&params=");
+		sb.append(createJsonFromParemeters(biObject));
+		// &role=admin
+		sb.append("&role=");
+		sb.append(getExecutionRole());
+	}
+
+	private void manageParametersForEverythingElse(StringBuilder sb) throws UnsupportedEncodingException {
+		String sep = "?";
+		Map<String, String[]> parameterMap = request.getParameterMap();
+		for (String parameter : parameterMap.keySet()) {
+			String[] values = parameterMap.get(parameter);
+			if (values != null && values.length > 0) {
+				sb.append(sep);
+				sb.append(URLEncoder.encode(parameter, UTF_8.name()));
+				sb.append("=");
+				sb.append(URLEncoder.encode(values[0], UTF_8.name()));
+				sep = "&";
+			}
+		}
+	}
+
+	private String getExecutionRole() {
+		Map<String, String[]> parameterMap = request.getParameterMap();
+		List<String> values = Arrays.asList(parameterMap.getOrDefault("SBI_EXECUTION_ROLE", new String[0]));
+		return Iterables.get(values, 0, "");
+	}
+
+	private String createJsonFromParemeters(BIObject biObject) throws JSONException {
+		List<BIObjectParameter> drivers = biObject.getDrivers();
+		Map<String, String[]> parameterMap = request.getParameterMap();
+		JSONArray parametersAsJson = new JSONArray();
+
+		for (BIObjectParameter driver : drivers) {
+			String urlName = driver.getParameterUrlName();
+			boolean isMultivalue = driver.isMultivalue();
+
+			List<Object> values = Optional.ofNullable(parameterMap.get(urlName)).map(Arrays::asList).orElse(Collections.emptyList());
+			List<Object> descriptions = Optional.ofNullable(parameterMap.get(urlName + "_description")).map(Arrays::asList).orElse(Collections.emptyList());
+
+			JSONObject currentDriverJson = new JSONObject();
+
+			JSONArray valuesAsJSONArray = new JSONArray();
+
+			for (int i = 0; i < Math.max(values.size(), descriptions.size()); i++) {
+				Object value = Iterables.get(values, i, "");
+				Object description = Iterables.get(descriptions, i, "");
+
+				JSONObject currValue = new JSONObject();
+
+				currValue.put("value", value);
+				currValue.put("description", description);
+
+				valuesAsJSONArray.put(currValue);
+			}
+
+			currentDriverJson.put("value", valuesAsJSONArray);
+			currentDriverJson.put("urlName", urlName);
+			currentDriverJson.put("multivalue", isMultivalue);
+
+			parametersAsJson.put(currentDriverJson);
+		}
+
+		String parametersAsString = parametersAsJson.toString();
+		return java.util.Base64.getEncoder().encodeToString(parametersAsString.getBytes());
+	}
+
+	private boolean isDashboard(Engine eng) {
+		return "knowagedashboardengine".equals(eng.getLabel());
+	}
+
 }
