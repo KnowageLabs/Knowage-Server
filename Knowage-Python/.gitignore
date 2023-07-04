@@ -7,3 +7,10 @@
 /src/hmackey
 /src/cert.pem
 /src/key.pem
+
+# Python Virtual envs
+venv*/
+
+# Test files
+gunicorn.conf.py
+logs/
