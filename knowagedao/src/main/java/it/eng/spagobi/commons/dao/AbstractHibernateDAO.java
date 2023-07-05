@@ -20,6 +20,7 @@ package it.eng.spagobi.commons.dao;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 import org.apache.log4j.LogMF;
 import org.apache.log4j.Logger;
@@ -76,20 +77,6 @@ public class AbstractHibernateDAO {
 		return profile;
 	}
 
-	// public Boolean isSuperadmin(){
-	// Boolean isSuperadmin = false;
-	// // look in the user profile
-	// IEngUserProfile profile = this.getUserProfile();
-	// if (profile != null) {
-	// UserProfile userProfile = (UserProfile) profile;
-	// isSuperadmin = userProfile.getIsSuperadmin();
-	//
-	// } else {
-	// logger.debug("User profile object not found");
-	// }
-	// return isSuperadmin;
-	// }
-
 	public String getTenant() {
 		// if a tenant is set into the DAO object, it wins
 		String tenantId = this.tenant;
@@ -98,9 +85,9 @@ public class AbstractHibernateDAO {
 		if (tenantId == null) {
 			logger.debug("Tenant id not find in this DAO object instance; looking for it in the user profile object ... ");
 			// look in the user profile
-			IEngUserProfile profile = this.getUserProfile();
-			if (profile != null) {
-				UserProfile userProfile = (UserProfile) profile;
+			IEngUserProfile currProfile = this.getUserProfile();
+			if (currProfile != null) {
+				UserProfile userProfile = (UserProfile) currProfile;
 				tenantId = userProfile.getOrganization();
 				logger.debug("User profile tenant = [{0}]" + tenantId);
 			} else {
@@ -111,9 +98,9 @@ public class AbstractHibernateDAO {
 		if (tenantId == null) {
 			logger.debug("Tenant id not find in this DAO object instance nor in the user profile object; " + "looking for it using TenantManager ... ");
 			// look for tenant using TenantManager
-			Tenant tenant = TenantManager.getTenant();
-			if (tenant != null) {
-				tenantId = tenant.getName();
+			Tenant currTenant = TenantManager.getTenant();
+			if (currTenant != null) {
+				tenantId = currTenant.getName();
 				logger.debug("TenantManager returns tenant = [{0}]" + tenantId);
 			} else {
 				logger.debug("TenantManager did not return any Tenant");
@@ -154,21 +141,6 @@ public class AbstractHibernateDAO {
 			session.disableFilter(FILTER_TENANT);
 		}
 	}
-
-	// //enable specific filter
-	//
-	// public void enableFilter(String filterName, String parameterName,String parameterValue) {
-	// Filter filter = this.getSession().enableFilter(filterName);
-	// filter.setParameter(parameterName, parameterValue);
-	// }
-	//
-	// public void disableFilter(String filterName) {
-	// Session sess=this.getSession();
-	// Filter filter = sess.getEnabledFilter(filterName);
-	// if (filter != null) {
-	// sess.disableFilter(filterName);
-	// }
-	// }
 
 	/**
 	 * usefull to update some property
@@ -365,7 +337,8 @@ public class AbstractHibernateDAO {
 			if (tx != null) {
 				tx.rollback();
 			}
-			throw new SpagoBIDAOException("Error saving a new object of type [" + obj.getClass() + "] ", t);
+			throw new SpagoBIDAOException(
+					"Error saving a new object of type [" + Optional.ofNullable(obj).map(Object::getClass).map(Class::getName).orElse("n.d.") + "] ", t);
 		} finally {
 			if (session != null && session.isOpen()) {
 				session.close();
@@ -404,7 +377,8 @@ public class AbstractHibernateDAO {
 		} catch (Throwable t) {
 			if (tx != null)
 				tx.rollback();
-			throw new SpagoBIDAOException("Error updating an object of type [" + obj.getClass() + "] ", t);
+			throw new SpagoBIDAOException(
+					"Error updating an object of type [" + Optional.ofNullable(obj).map(Object::getClass).map(Class::getName).orElse("n.d.") + "] ", t);
 		} finally {
 			if (session != null && session.isOpen()) {
 				session.close();

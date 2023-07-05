@@ -141,7 +141,7 @@ public class ArtifactsDAOImpl extends AbstractHibernateDAO implements IArtifacts
 	public List<Artifact> loadAllArtifacts(String type) {
 		LogMF.debug(logger, "IN: type = [{0}]", type);
 
-		List<Artifact> toReturn = new ArrayList<Artifact>();
+		List<Artifact> toReturn = new ArrayList<>();
 		Session session = null;
 		Transaction transaction = null;
 
@@ -162,10 +162,10 @@ public class ArtifactsDAOImpl extends AbstractHibernateDAO implements IArtifacts
 
 			Query query = session.createQuery(" from SbiArtifact a where a.type = ?");
 			query.setString(0, type);
-			List list = query.list();
-			Iterator it = list.iterator();
+			List<SbiArtifact> list = query.list();
+			Iterator<SbiArtifact> it = list.iterator();
 			while (it.hasNext()) {
-				toReturn.add(toArtifact((SbiArtifact) it.next(), session));
+				toReturn.add(toArtifact(it.next(), session));
 			}
 			logger.debug("Artifacts loaded");
 
@@ -190,7 +190,7 @@ public class ArtifactsDAOImpl extends AbstractHibernateDAO implements IArtifacts
 	public List<SbiArtifact> loadAllSbiArtifacts(String type) {
 		LogMF.debug(logger, "IN: type = [{0}]", type);
 
-		List<SbiArtifact> toReturn = new ArrayList<SbiArtifact>();
+		List<SbiArtifact> toReturn = new ArrayList<>();
 		Session session = null;
 		Transaction transaction = null;
 
@@ -211,10 +211,10 @@ public class ArtifactsDAOImpl extends AbstractHibernateDAO implements IArtifacts
 
 			Query query = session.createQuery(" from SbiArtifact a where a.type = ?");
 			query.setString(0, type);
-			List list = query.list();
-			Iterator it = list.iterator();
+			List<SbiArtifact> list = query.list();
+			Iterator<SbiArtifact> it = list.iterator();
 			while (it.hasNext()) {
-				toReturn.add((SbiArtifact) it.next());
+				toReturn.add(it.next());
 			}
 			logger.debug("Artifacts loaded");
 
@@ -440,22 +440,22 @@ public class ArtifactsDAOImpl extends AbstractHibernateDAO implements IArtifacts
 			hql = " select max(mmc.prog) as maxprog from SbiArtifactContent mmc where mmc.artifact.id = ? ";
 			query = session.createQuery(hql);
 			query.setInteger(0, artifactId.intValue());
-			List result = query.list();
-			Iterator it = result.iterator();
+			List<Integer> result = query.list();
+			Iterator<Integer> it = result.iterator();
 			while (it.hasNext()) {
-				maxProg = (Integer) it.next();
+				maxProg = it.next();
 			}
 			logger.debug("Current max prog : " + maxProg);
 			if (maxProg == null) {
-				nextProg = new Integer(1);
+				nextProg = 1;
 			} else {
-				nextProg = new Integer(maxProg.intValue() + 1);
+				nextProg = maxProg.intValue() + 1;
 			}
 			logger.debug("Next prog: " + nextProg);
 
 			// store the artifact content
 			SbiArtifactContent hibContent = new SbiArtifactContent();
-			hibContent.setActive(new Boolean(true));
+			hibContent.setActive(true);
 			hibContent.setCreationDate(new Date());
 			hibContent.setFileName(content.getFileName());
 			hibContent.setProg(nextProg);
@@ -635,7 +635,7 @@ public class ArtifactsDAOImpl extends AbstractHibernateDAO implements IArtifacts
 	public List<Content> loadArtifactVersions(Integer artifactId) {
 		LogMF.debug(logger, "IN: id = [{0}]", artifactId);
 
-		List<Content> toReturn = new ArrayList<Content>();
+		List<Content> toReturn = new ArrayList<>();
 		Session session = null;
 		Transaction transaction = null;
 
@@ -873,7 +873,6 @@ public class ArtifactsDAOImpl extends AbstractHibernateDAO implements IArtifacts
 				logger.debug("Unlock the artifact with id " + artifactId + "");
 				query.executeUpdate();
 
-				userLocking = null;
 				transaction.commit();
 
 			} else {
@@ -911,7 +910,7 @@ public class ArtifactsDAOImpl extends AbstractHibernateDAO implements IArtifacts
 			Boolean locked = art.getModelLocked();
 			String locker = art.getModelLocker();
 
-			if (locked == false) {
+			if (!Boolean.TRUE.equals(locked)) {
 				logger.debug("Artifact with id " + artifactId + " is unlocked");
 				statusToReturn = "unlocked";
 			} else {
