@@ -40,6 +40,7 @@ import org.apache.log4j.Logger;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 
+import it.eng.knowage.commons.security.KnowageSystemConfiguration;
 import it.eng.knowage.commons.utilities.KnLanguageCookie;
 import it.eng.knowage.monitor.IKnowageMonitor;
 import it.eng.knowage.monitor.KnowageMonitorFactory;
@@ -409,10 +410,10 @@ public class LoginModule extends AbstractHttpModule {
 
 	private void redirectToKnowageVue() throws IOException {
 		if (isProduction) {
-			getHttpResponse().sendRedirect("/knowage-vue");
+			getHttpResponse().sendRedirect(KnowageSystemConfiguration.getKnowageVueContext());
 		} else {
 			URL url = new URL(getHttpRequest().getRequestURL().toString());
-			URL newUrl = new URL(url.getProtocol(), url.getHost(), 3000, "/knowage-vue");
+			URL newUrl = new URL(url.getProtocol(), url.getHost(), 3000, KnowageSystemConfiguration.getKnowageVueContext());
 
 			getHttpResponse().sendRedirect(newUrl.toString());
 		}

@@ -27,6 +27,7 @@ import java.util.List;
 import org.apache.log4j.Logger;
 import org.xml.sax.InputSource;
 
+import it.eng.knowage.commons.security.KnowageSystemConfiguration;
 import it.eng.spago.base.SourceBean;
 import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
 
@@ -91,23 +92,22 @@ public class WhiteList implements IWhiteList {
 	public List<String> getRelativePaths() {
 		List<String> ret = getProperties("relativepath");
 
-		ret.add("/knowage");
-		ret.add("/knowage-api");
-		ret.add("/knowagebirtreportengine");
-		ret.add("/knowagecockpitengine");
-		ret.add("/knowagecommonjengine");
-		ret.add("/knowage-data-preparation");
-		ret.add("/knowagedossierengine");
-		ret.add("/knowagegeoreportengine");
-		ret.add("/knowagejasperreportengine");
-		ret.add("/knowagekpiengine");
-		ret.add("/knowagemeta");
-		ret.add("/knowageqbeengine");
-		ret.add("/knowagesdk");
-		ret.add("/knowagesvgviewerengine");
-		ret.add("/knowagetalendengine");
-		ret.add("/knowage-vue");
-		ret.add("/knowagewhatifengine");
+		ret.add(KnowageSystemConfiguration.getKnowageContext());
+		ret.add(KnowageSystemConfiguration.getKnowageAPIContext());
+		ret.add(KnowageSystemConfiguration.getKnowageBirtReportEngineContext());
+		ret.add(KnowageSystemConfiguration.getKnowageCockpitEngineContext());
+		ret.add(KnowageSystemConfiguration.getKnowageCommonjEngineContext());
+		ret.add(KnowageSystemConfiguration.getKnowageDataPreparationContext());
+		ret.add(KnowageSystemConfiguration.getKnowageDossierEngineContext());
+		ret.add(KnowageSystemConfiguration.getKnowageGeoReportEngineContext());
+		ret.add(KnowageSystemConfiguration.getKnowageJasperReportEngineContext());
+		ret.add(KnowageSystemConfiguration.getKnowageKpiEngineContext());
+		ret.add(KnowageSystemConfiguration.getKnowageMetaContext());
+		ret.add(KnowageSystemConfiguration.getKnowageQbeEngineContext());
+		ret.add(KnowageSystemConfiguration.getKnowageSvgViewerEngineContext());
+		ret.add(KnowageSystemConfiguration.getKnowageTalendEngineContext());
+		ret.add(KnowageSystemConfiguration.getKnowageVueContext());
+		ret.add(KnowageSystemConfiguration.getKnowageWhatifEngineContext());
 
 		return ret;
 	}
