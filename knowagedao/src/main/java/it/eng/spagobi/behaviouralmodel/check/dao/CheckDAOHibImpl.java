@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,7 +11,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -31,6 +31,7 @@ import org.hibernate.criterion.Restrictions;
 
 import it.eng.spago.error.EMFErrorSeverity;
 import it.eng.spago.error.EMFUserError;
+import it.eng.spagobi.behaviouralmodel.analyticaldriver.metadata.SbiParuseCk;
 import it.eng.spagobi.behaviouralmodel.check.bo.Check;
 import it.eng.spagobi.behaviouralmodel.check.metadata.SbiChecks;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
@@ -39,8 +40,7 @@ import it.eng.spagobi.commons.metadata.SbiDomains;
 import it.eng.spagobi.commons.utilities.SpagoBITracer;
 
 /**
- * Defines the Hibernate implementations for all DAO methods, for a value
- * constraint.
+ * Defines the Hibernate implementations for all DAO methods, for a value constraint.
  *
  * @author Zoppello
  */
@@ -51,30 +51,29 @@ public class CheckDAOHibImpl extends AbstractHibernateDAO implements ICheckDAO {
 	 *
 	 * @return the list
 	 *
-	 * @throws EMFUserError
-	 *             the EMF user error
+	 * @throws EMFUserError the EMF user error
 	 *
 	 * @see it.eng.spagobi.behaviouralmodel.check.dao.ICheckDAO#loadAllChecks()
 	 */
 	@Override
-	public List loadAllChecks() throws EMFUserError {
+	public List<Check> loadAllChecks() throws EMFUserError {
 		Session aSession = null;
 		Transaction tx = null;
 
-		List realResult = new ArrayList();
+		List<Check> realResult = new ArrayList<>();
 		try {
 			aSession = getSession();
 			tx = aSession.beginTransaction();
 
 			Query hibQuery = aSession.createQuery(" from SbiChecks");
-			List hibList = hibQuery.list();
+			List<SbiChecks> hibList = hibQuery.list();
 
 			tx.commit();
 
-			Iterator it = hibList.iterator();
+			Iterator<SbiChecks> it = hibList.iterator();
 
 			while (it.hasNext()) {
-				realResult.add(toCheck((SbiChecks) it.next()));
+				realResult.add(toCheck(it.next()));
 			}
 		} catch (HibernateException he) {
 			logException(he);
@@ -85,10 +84,7 @@ public class CheckDAOHibImpl extends AbstractHibernateDAO implements ICheckDAO {
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 
 		} finally {
-			if (aSession != null) {
-				if (aSession.isOpen())
-					aSession.close();
-			}
+			closeSession(aSession);
 		}
 		return realResult;
 	}
@@ -96,13 +92,11 @@ public class CheckDAOHibImpl extends AbstractHibernateDAO implements ICheckDAO {
 	/**
 	 * Load check by id.
 	 *
-	 * @param id
-	 *            the id
+	 * @param id the id
 	 *
 	 * @return the check
 	 *
-	 * @throws EMFUserError
-	 *             the EMF user error
+	 * @throws EMFUserError the EMF user error
 	 *
 	 * @see it.eng.spagobi.behaviouralmodel.check.dao.ICheckDAO#loadCheckByID(java.lang.Integer)
 	 */
@@ -130,10 +124,7 @@ public class CheckDAOHibImpl extends AbstractHibernateDAO implements ICheckDAO {
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 
 		} finally {
-			if (aSession != null) {
-				if (aSession.isOpen())
-					aSession.close();
-			}
+			closeSession(aSession);
 		}
 
 		return toReturn;
@@ -142,11 +133,9 @@ public class CheckDAOHibImpl extends AbstractHibernateDAO implements ICheckDAO {
 	/**
 	 * Erase check.
 	 *
-	 * @param check
-	 *            the check
+	 * @param check the check
 	 *
-	 * @throws EMFUserError
-	 *             the EMF user error
+	 * @throws EMFUserError the EMF user error
 	 *
 	 * @see it.eng.spagobi.behaviouralmodel.check.dao.ICheckDAO#eraseCheck(it.eng.spagobi.behaviouralmodel.check.bo.Check)
 	 */
@@ -159,7 +148,7 @@ public class CheckDAOHibImpl extends AbstractHibernateDAO implements ICheckDAO {
 			aSession = getSession();
 			tx = aSession.beginTransaction();
 
-			SbiChecks hibCheck = (SbiChecks) aSession.load(SbiChecks.class, check.getCheckId().intValue());
+			SbiChecks hibCheck = (SbiChecks) aSession.load(SbiChecks.class, check.getCheckId());
 
 			aSession.delete(hibCheck);
 			tx.commit();
@@ -172,10 +161,7 @@ public class CheckDAOHibImpl extends AbstractHibernateDAO implements ICheckDAO {
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 
 		} finally {
-			if (aSession != null) {
-				if (aSession.isOpen())
-					aSession.close();
-			}
+			closeSession(aSession);
 		}
 
 	}
@@ -183,11 +169,9 @@ public class CheckDAOHibImpl extends AbstractHibernateDAO implements ICheckDAO {
 	/**
 	 * Insert check.
 	 *
-	 * @param check
-	 *            the check
+	 * @param check the check
 	 *
-	 * @throws EMFUserError
-	 *             the EMF user error
+	 * @throws EMFUserError the EMF user error
 	 *
 	 * @see it.eng.spagobi.behaviouralmodel.check.dao.ICheckDAO#insertCheck(it.eng.spagobi.behaviouralmodel.check.bo.Check)
 	 */
@@ -233,12 +217,7 @@ public class CheckDAOHibImpl extends AbstractHibernateDAO implements ICheckDAO {
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 
 		} finally {
-
-			if (aSession != null) {
-				if (aSession.isOpen())
-					aSession.close();
-			}
-
+			closeSession(aSession);
 		}
 
 	}
@@ -246,11 +225,9 @@ public class CheckDAOHibImpl extends AbstractHibernateDAO implements ICheckDAO {
 	/**
 	 * Modify check.
 	 *
-	 * @param check
-	 *            the check
+	 * @param check the check
 	 *
-	 * @throws EMFUserError
-	 *             the EMF user error
+	 * @throws EMFUserError the EMF user error
 	 *
 	 * @see it.eng.spagobi.behaviouralmodel.check.dao.ICheckDAO#modifyCheck(it.eng.spagobi.behaviouralmodel.check.bo.Check)
 	 */
@@ -263,10 +240,10 @@ public class CheckDAOHibImpl extends AbstractHibernateDAO implements ICheckDAO {
 			aSession = getSession();
 			tx = aSession.beginTransaction();
 
-			SbiChecks hibCheck = (SbiChecks) aSession.load(SbiChecks.class, check.getCheckId().intValue());
+			SbiChecks hibCheck = (SbiChecks) aSession.load(SbiChecks.class, check.getCheckId());
 
 			Criteria criteria = aSession.createCriteria(SbiDomains.class);
-			Criterion aCriterion = Restrictions.and(Restrictions.eq("valueId".trim(), check.getValueTypeId().intValue()),
+			Criterion aCriterion = Restrictions.and(Restrictions.eq("valueId".trim(), check.getValueTypeId()),
 					Restrictions.eq("valueCd".trim(), check.getValueTypeCd()).ignoreCase());
 
 			criteria.add(aCriterion);
@@ -298,22 +275,15 @@ public class CheckDAOHibImpl extends AbstractHibernateDAO implements ICheckDAO {
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 
 		} finally {
-
-			if (aSession != null) {
-				if (aSession.isOpen())
-					aSession.close();
-			}
-
+			closeSession(aSession);
 		}
 
 	}
 
 	/**
-	 * From the hibernate BI value constraint at input, gives the corrispondent
-	 * <code>Check</code> object.
+	 * From the hibernate BI value constraint at input, gives the corrispondent <code>Check</code> object.
 	 *
-	 * @param hibCheck
-	 *            The hybernate value constraint at input
+	 * @param hibCheck The hybernate value constraint at input
 	 *
 	 * @return The corrispondent <code>Check</code> object
 	 */
@@ -333,13 +303,11 @@ public class CheckDAOHibImpl extends AbstractHibernateDAO implements ICheckDAO {
 	/**
 	 * Checks if is referenced.
 	 *
-	 * @param checkId
-	 *            the check id
+	 * @param checkId the check id
 	 *
 	 * @return true, if checks if is referenced
 	 *
-	 * @throws EMFUserError
-	 *             the EMF user error
+	 * @throws EMFUserError the EMF user error
 	 *
 	 * @see it.eng.spagobi.behaviouralmodel.check.dao.ICheckDAO#isReferenced(java.lang.String)
 	 */
@@ -353,15 +321,11 @@ public class CheckDAOHibImpl extends AbstractHibernateDAO implements ICheckDAO {
 			aSession = getSession();
 			tx = aSession.beginTransaction();
 
-			Integer checkIdInt = Integer.valueOf(checkId);
-
-			// String hql = "from SbiParuseCk s where s.id.sbiChecks.checkId =
-			// "+checkIdInt;
 			String hql = "from SbiParuseCk s where s.id.sbiChecks.checkId = ?";
 			Query aQuery = aSession.createQuery(hql);
-			aQuery.setInteger(0, Integer.valueOf(checkId).intValue());
-			List list = aQuery.list();
-			if (list.size() > 0)
+			aQuery.setInteger(0, Integer.parseInt(checkId));
+			List<SbiParuseCk> list = aQuery.list();
+			if (!list.isEmpty())
 				ref = true;
 			else
 				ref = false;
@@ -375,12 +339,7 @@ public class CheckDAOHibImpl extends AbstractHibernateDAO implements ICheckDAO {
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 
 		} finally {
-
-			if (aSession != null) {
-				if (aSession.isOpen())
-					aSession.close();
-			}
-
+			closeSession(aSession);
 		}
 		return ref;
 	}
@@ -390,8 +349,7 @@ public class CheckDAOHibImpl extends AbstractHibernateDAO implements ICheckDAO {
 	 *
 	 * @return the list
 	 *
-	 * @throws EMFUserError
-	 *             the EMF user error
+	 * @throws EMFUserError the EMF user error
 	 *
 	 * @see it.eng.spagobi.behaviouralmodel.check.dao.ICheckDAO#loadPredefinedChecks()
 	 */
@@ -400,18 +358,18 @@ public class CheckDAOHibImpl extends AbstractHibernateDAO implements ICheckDAO {
 		Session aSession = null;
 		Transaction tx = null;
 
-		List<Check> realResult = new ArrayList<Check>();
+		List<Check> realResult = new ArrayList<>();
 		try {
 			aSession = getSession();
 			tx = aSession.beginTransaction();
 
 			Query hibQuery = aSession.createQuery("select s from SbiChecks s,SbiDomains d where d.domainCd='PRED_CHECK' and s.valueTypeCd = d.valueCd");
-			List hibList = hibQuery.list();
+			List<SbiChecks> hibList = hibQuery.list();
 			tx.commit();
-			Iterator it = hibList.iterator();
+			Iterator<SbiChecks> it = hibList.iterator();
 
 			while (it.hasNext()) {
-				realResult.add(toCheck((SbiChecks) it.next()));
+				realResult.add(toCheck(it.next()));
 			}
 
 		} catch (HibernateException he) {
@@ -423,10 +381,7 @@ public class CheckDAOHibImpl extends AbstractHibernateDAO implements ICheckDAO {
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 
 		} finally {
-			if (aSession != null) {
-				if (aSession.isOpen())
-					aSession.close();
-			}
+			closeSession(aSession);
 		}
 		return realResult;
 	}
@@ -436,8 +391,7 @@ public class CheckDAOHibImpl extends AbstractHibernateDAO implements ICheckDAO {
 	 *
 	 * @return the list
 	 *
-	 * @throws EMFUserError
-	 *             the EMF user error
+	 * @throws EMFUserError the EMF user error
 	 *
 	 * @see it.eng.spagobi.behaviouralmodel.check.dao.ICheckDAO#loadCustomChecks()
 	 */
@@ -446,20 +400,20 @@ public class CheckDAOHibImpl extends AbstractHibernateDAO implements ICheckDAO {
 		Session aSession = null;
 		Transaction tx = null;
 
-		List<Check> realResult = new ArrayList<Check>();
+		List<Check> realResult = new ArrayList<>();
 		try {
 			aSession = getSession();
 			tx = aSession.beginTransaction();
 
 			Query hibQuery = aSession.createQuery("select s from SbiChecks s,SbiDomains d where d.domainCd='CHECK' and s.valueTypeCd = d.valueCd");
-			List hibList = hibQuery.list();
+			List<SbiChecks> hibList = hibQuery.list();
 
 			tx.commit();
 
-			Iterator it = hibList.iterator();
+			Iterator<SbiChecks> it = hibList.iterator();
 
 			while (it.hasNext()) {
-				realResult.add(toCheck((SbiChecks) it.next()));
+				realResult.add(toCheck(it.next()));
 			}
 		} catch (HibernateException he) {
 			logException(he);
@@ -470,10 +424,7 @@ public class CheckDAOHibImpl extends AbstractHibernateDAO implements ICheckDAO {
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 
 		} finally {
-			if (aSession != null) {
-				if (aSession.isOpen())
-					aSession.close();
-			}
+			closeSession(aSession);
 		}
 		return realResult;
 	}

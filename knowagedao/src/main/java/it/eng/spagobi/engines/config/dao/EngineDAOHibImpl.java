@@ -87,10 +87,7 @@ public class EngineDAOHibImpl extends AbstractHibernateDAO implements IEngineDAO
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 
 		} finally {
-			if (aSession != null) {
-				if (aSession.isOpen())
-					aSession.close();
-			}
+			closeSession(aSession);
 		}
 		LOGGER.debug("OUT");
 		return toReturn;
@@ -151,10 +148,7 @@ public class EngineDAOHibImpl extends AbstractHibernateDAO implements IEngineDAO
 				tx.rollback();
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		} finally {
-			if (aSession != null) {
-				if (aSession.isOpen())
-					aSession.close();
-			}
+			closeSession(aSession);
 		}
 		if (engine == null) {
 			LOGGER.debug("A null engine has been returned for label " + engineLabel);
@@ -187,12 +181,6 @@ public class EngineDAOHibImpl extends AbstractHibernateDAO implements IEngineDAO
 			aSession = getSession();
 			tx = aSession.beginTransaction();
 
-			// Criterion labelCriterrion = Expression.eq("driverNm",
-			// driver);
-			// Criteria criteria = aSession.createCriteria(SbiEngines.class);
-			// criteria.add(labelCriterrion);
-			// SbiEngines hibEngine = (SbiEngines) criteria.uniqueResult();
-
 			Query hibQueryProd = aSession
 					.createQuery("select opt.sbiProductType from SbiOrganizationProductType opt " + "where opt.sbiOrganizations.name = :tenant ");
 			hibQueryProd.setString("tenant", getTenant());
@@ -224,10 +212,7 @@ public class EngineDAOHibImpl extends AbstractHibernateDAO implements IEngineDAO
 				tx.rollback();
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		} finally {
-			if (aSession != null) {
-				if (aSession.isOpen())
-					aSession.close();
-			}
+			closeSession(aSession);
 		}
 		if (engine == null) {
 			LOGGER.debug("No engine with driver [" + driver + "] was found.");
@@ -271,10 +256,7 @@ public class EngineDAOHibImpl extends AbstractHibernateDAO implements IEngineDAO
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 
 		} finally {
-			if (aSession != null) {
-				if (aSession.isOpen())
-					aSession.close();
-			}
+			closeSession(aSession);
 		}
 		LOGGER.debug("OUT");
 		return realResult;
@@ -337,10 +319,7 @@ public class EngineDAOHibImpl extends AbstractHibernateDAO implements IEngineDAO
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 
 		} finally {
-			if (aSession != null) {
-				if (aSession.isOpen())
-					aSession.close();
-			}
+			closeSession(aSession);
 		}
 		LOGGER.debug("OUT");
 		return realResult;
@@ -391,10 +370,7 @@ public class EngineDAOHibImpl extends AbstractHibernateDAO implements IEngineDAO
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 
 		} finally {
-			if (aSession != null) {
-				if (aSession.isOpen())
-					aSession.close();
-			}
+			closeSession(aSession);
 		}
 		if (realResult.isEmpty()) {
 			LOGGER.debug("No engines was found.");
@@ -442,10 +418,7 @@ public class EngineDAOHibImpl extends AbstractHibernateDAO implements IEngineDAO
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 
 		} finally {
-			if (aSession != null) {
-				if (aSession.isOpen())
-					aSession.close();
-			}
+			closeSession(aSession);
 		}
 		LOGGER.debug("OUT");
 		return realResult;
@@ -500,10 +473,7 @@ public class EngineDAOHibImpl extends AbstractHibernateDAO implements IEngineDAO
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 
 		} finally {
-			if (aSession != null) {
-				if (aSession.isOpen())
-					aSession.close();
-			}
+			closeSession(aSession);
 		}
 		if (realResult.isEmpty()) {
 			LOGGER.debug("No engines was found.");
@@ -560,10 +530,7 @@ public class EngineDAOHibImpl extends AbstractHibernateDAO implements IEngineDAO
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 
 		} finally {
-			if (aSession != null) {
-				if (aSession.isOpen())
-					aSession.close();
-			}
+			closeSession(aSession);
 		}
 		LOGGER.debug("OUT");
 
@@ -615,10 +582,7 @@ public class EngineDAOHibImpl extends AbstractHibernateDAO implements IEngineDAO
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 
 		} finally {
-			if (aSession != null) {
-				if (aSession.isOpen())
-					aSession.close();
-			}
+			closeSession(aSession);
 		}
 		LOGGER.debug("OUT");
 	}
@@ -653,10 +617,7 @@ public class EngineDAOHibImpl extends AbstractHibernateDAO implements IEngineDAO
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 
 		} finally {
-			if (aSession != null) {
-				if (aSession.isOpen())
-					aSession.close();
-			}
+			closeSession(aSession);
 		}
 		LOGGER.debug("OUT");
 	}
@@ -720,7 +681,6 @@ public class EngineDAOHibImpl extends AbstractHibernateDAO implements IEngineDAO
 			tx = aSession.beginTransaction();
 			Integer engineIdInt = Integer.valueOf(engineId);
 
-			// String hql = " from SbiObjects s where s.sbiEngines.engineId = "+ engineIdInt;
 			String hql = " from SbiObjects s where s.sbiEngines.engineId = ?";
 			Query aQuery = aSession.createQuery(hql);
 			aQuery.setInteger(0, engineIdInt);
@@ -739,10 +699,7 @@ public class EngineDAOHibImpl extends AbstractHibernateDAO implements IEngineDAO
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 
 		} finally {
-			if (aSession != null) {
-				if (aSession.isOpen())
-					aSession.close();
-			}
+			closeSession(aSession);
 		}
 		LOGGER.debug("OUT");
 		return bool;
@@ -780,10 +737,7 @@ public class EngineDAOHibImpl extends AbstractHibernateDAO implements IEngineDAO
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 
 		} finally {
-			if (aSession != null) {
-				if (aSession.isOpen())
-					aSession.close();
-			}
+			closeSession(aSession);
 		}
 
 	}
@@ -811,11 +765,7 @@ public class EngineDAOHibImpl extends AbstractHibernateDAO implements IEngineDAO
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 9104);
 
 		} finally {
-			if (aSession != null) {
-				if (aSession.isOpen())
-					aSession.close();
-				LOGGER.debug("OUT");
-			}
+			closeSession(aSession);
 		}
 		return resultNumber;
 	}

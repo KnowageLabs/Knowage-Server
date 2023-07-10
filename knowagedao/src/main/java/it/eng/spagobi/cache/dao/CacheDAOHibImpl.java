@@ -55,7 +55,7 @@ public class CacheDAOHibImpl extends AbstractHibernateDAO implements ICacheDAO {
 	public List<CacheItem> loadAllCacheItems() {
 		logger.debug("IN");
 
-		List<CacheItem> toReturn = new ArrayList<CacheItem>();
+		List<CacheItem> toReturn = new ArrayList<>();
 		Session session = null;
 		Transaction transaction = null;
 		try {
@@ -63,10 +63,10 @@ public class CacheDAOHibImpl extends AbstractHibernateDAO implements ICacheDAO {
 			transaction = session.beginTransaction();
 
 			Query hibQuery = session.createQuery("from SbiCacheItem");
-			List hibList = hibQuery.list();
-			Iterator it = hibList.iterator();
+			List<SbiCacheItem> hibList = hibQuery.list();
+			Iterator<SbiCacheItem> it = hibList.iterator();
 			while (it.hasNext()) {
-				SbiCacheItem hibMap = (SbiCacheItem) it.next();
+				SbiCacheItem hibMap = it.next();
 				if (hibMap != null) {
 					CacheItem cacheItem = toCacheItem(hibMap);
 					toReturn.add(cacheItem);
@@ -80,9 +80,7 @@ public class CacheDAOHibImpl extends AbstractHibernateDAO implements ICacheDAO {
 			throw new SpagoBIDAOException("An unexpected error occured while loading all cache items", t);
 
 		} finally {
-			if (session != null && session.isOpen()) {
-				session.close();
-			}
+			closeSession(session);
 			logger.debug("OUT");
 		}
 		return toReturn;
@@ -128,9 +126,7 @@ public class CacheDAOHibImpl extends AbstractHibernateDAO implements ICacheDAO {
 			}
 			throw new SpagoBIDAOException("An unexpected error occured while loading cache item whose table name is equal to [" + tableName + "]", t);
 		} finally {
-			if (session != null && session.isOpen()) {
-				session.close();
-			}
+			closeSession(session);
 			logger.debug("OUT");
 		}
 
@@ -177,9 +173,7 @@ public class CacheDAOHibImpl extends AbstractHibernateDAO implements ICacheDAO {
 			}
 			throw new SpagoBIDAOException("An unexpected error occured while loading cache item whose signature is equal to [" + signature + "]", t);
 		} finally {
-			if (session != null && session.isOpen()) {
-				session.close();
-			}
+			closeSession(session);
 			logger.debug("OUT");
 		}
 
@@ -223,9 +217,7 @@ public class CacheDAOHibImpl extends AbstractHibernateDAO implements ICacheDAO {
 
 			throw new SpagoBIDAOException("An unexpected error occured while inserting cache item", t);
 		} finally {
-			if (session != null && session.isOpen()) {
-				session.close();
-			}
+			closeSession(session);
 			logger.debug("OUT");
 		}
 
@@ -267,9 +259,7 @@ public class CacheDAOHibImpl extends AbstractHibernateDAO implements ICacheDAO {
 
 			throw new SpagoBIDAOException("An unexpected error occured while update cache item", t);
 		} finally {
-			if (session != null && session.isOpen()) {
-				session.close();
-			}
+			closeSession(session);
 			logger.debug("OUT");
 		}
 	}
@@ -284,13 +274,11 @@ public class CacheDAOHibImpl extends AbstractHibernateDAO implements ICacheDAO {
 	public List<SbiCacheItem> deleteCacheItemByTableName(String tableName) {
 		Session session;
 		Transaction transaction;
-		boolean deleted;
 
 		logger.debug("IN");
 
 		session = null;
 		transaction = null;
-		deleted = false;
 
 		try {
 			if (tableName == null) {
@@ -327,9 +315,7 @@ public class CacheDAOHibImpl extends AbstractHibernateDAO implements ICacheDAO {
 					: "An unexpected error occured while deleting cache item " + "whose tableName is equal to [" + tableName + "]";
 			throw new SpagoBIDAOException(msg, t);
 		} finally {
-			if (session != null && session.isOpen()) {
-				session.close();
-			}
+			closeSession(session);
 			logger.debug("OUT");
 		}
 	}
@@ -382,9 +368,7 @@ public class CacheDAOHibImpl extends AbstractHibernateDAO implements ICacheDAO {
 					: "An unexpected error occured while deleting cache item " + "whose signature is equal to [" + signature + "]";
 			throw new SpagoBIDAOException(msg, t);
 		} finally {
-			if (session != null && session.isOpen()) {
-				session.close();
-			}
+			closeSession(session);
 			logger.debug("OUT");
 		}
 	}
@@ -397,13 +381,11 @@ public class CacheDAOHibImpl extends AbstractHibernateDAO implements ICacheDAO {
 
 		Session session;
 		Transaction transaction;
-		boolean deleted;
 
 		logger.debug("IN");
 
 		session = null;
 		transaction = null;
-		deleted = false;
 		List<SbiCacheItem> toBeDeleted = Collections.emptyList();
 
 		try {
@@ -419,16 +401,15 @@ public class CacheDAOHibImpl extends AbstractHibernateDAO implements ICacheDAO {
 
 			Query hibernateQuery = session.createQuery("from SbiCacheItem");
 			toBeDeleted = hibernateQuery.list();
-			if (toBeDeleted != null && toBeDeleted.isEmpty() == false) {
-				Iterator it = toBeDeleted.iterator();
+			if (toBeDeleted != null && !toBeDeleted.isEmpty()) {
+				Iterator<SbiCacheItem> it = toBeDeleted.iterator();
 				while (it.hasNext()) {
-					SbiCacheItem sbiCacheItem = (SbiCacheItem) it.next();
+					SbiCacheItem sbiCacheItem = it.next();
 					if (sbiCacheItem != null) {
 						session.delete(sbiCacheItem);
 					}
 				}
 				transaction.commit();
-				deleted = true;
 			}
 
 		} catch (Throwable t) {
@@ -438,9 +419,7 @@ public class CacheDAOHibImpl extends AbstractHibernateDAO implements ICacheDAO {
 			String msg = (t.getMessage() != null) ? t.getMessage() : "An unexpected error occured while deleting all cache items ";
 			throw new SpagoBIDAOException(msg, t);
 		} finally {
-			if (session != null && session.isOpen()) {
-				session.close();
-			}
+			closeSession(session);
 			logger.debug("OUT");
 		}
 		return toBeDeleted;

@@ -29,7 +29,7 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.criterion.Criterion;
-import org.hibernate.criterion.Expression;
+import org.hibernate.criterion.Restrictions;
 import org.hibernate.exception.ConstraintViolationException;
 
 import it.eng.spago.error.EMFErrorSeverity;
@@ -52,7 +52,8 @@ import it.eng.spagobi.user.UserProfileManager;
  * @author Zoppello
  */
 public class BIObjectParameterDAOHibImpl extends AbstractHibernateDAO implements IBIObjectParameterDAO {
-	private static Logger logger = Logger.getLogger(BIObjectParameterDAOHibImpl.class);
+
+	private static final Logger LOGGER = Logger.getLogger(BIObjectParameterDAOHibImpl.class);
 
 	/**
 	 * Load by id.
@@ -81,10 +82,7 @@ public class BIObjectParameterDAOHibImpl extends AbstractHibernateDAO implements
 				tx.rollback();
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		} finally {
-			if (aSession != null) {
-				if (aSession.isOpen())
-					aSession.close();
-			}
+			closeSession(aSession);
 		}
 		return hibObjPar;
 	}
@@ -108,10 +106,7 @@ public class BIObjectParameterDAOHibImpl extends AbstractHibernateDAO implements
 				tx.rollback();
 			throw new HibernateException(he.getLocalizedMessage(), he);
 		} finally {
-			if (aSession != null) {
-				if (aSession.isOpen())
-					aSession.close();
-			}
+			closeSession(aSession);
 		}
 		return objPar;
 	}
@@ -125,8 +120,8 @@ public class BIObjectParameterDAOHibImpl extends AbstractHibernateDAO implements
 			aSession = getSession();
 			tx = aSession.beginTransaction();
 
-			Criterion idCriterrion = Expression.eq("sbiObject.biobjId", objId);
-			Criterion labelCriterrion = Expression.eq("label", label);
+			Criterion idCriterrion = Restrictions.eq("sbiObject.biobjId", objId);
+			Criterion labelCriterrion = Restrictions.eq("label", label);
 			Criteria criteria = aSession.createCriteria(SbiObjPar.class);
 			criteria.add(idCriterrion);
 			criteria.add(labelCriterrion);
@@ -142,10 +137,7 @@ public class BIObjectParameterDAOHibImpl extends AbstractHibernateDAO implements
 				tx.rollback();
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		} finally {
-			if (aSession != null) {
-				if (aSession.isOpen())
-					aSession.close();
-			}
+			closeSession(aSession);
 		}
 		return objPar;
 	}
@@ -181,10 +173,7 @@ public class BIObjectParameterDAOHibImpl extends AbstractHibernateDAO implements
 				tx.rollback();
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		} finally {
-			if (aSession != null) {
-				if (aSession.isOpen())
-					aSession.close();
-			}
+			closeSession(aSession);
 		}
 		return toReturn;
 	}
@@ -210,7 +199,7 @@ public class BIObjectParameterDAOHibImpl extends AbstractHibernateDAO implements
 			SbiObjPar hibObjPar = (SbiObjPar) aSession.load(SbiObjPar.class, aBIObjectParameter.getId());
 
 			if (hibObjPar == null) {
-				logger.error("the BIObjectParameter with id=" + aBIObjectParameter.getId() + " does not exist.");
+				LOGGER.error("the BIObjectParameter with id=" + aBIObjectParameter.getId() + " does not exist.");
 			}
 
 			SbiObjects aSbiObject = (SbiObjects) aSession.load(SbiObjects.class, aBIObjectParameter.getBiObjectID());
@@ -219,10 +208,10 @@ public class BIObjectParameterDAOHibImpl extends AbstractHibernateDAO implements
 			hibObjPar.setSbiObject(aSbiObject);
 			hibObjPar.setSbiParameter(aSbiParameter);
 			hibObjPar.setLabel(aBIObjectParameter.getLabel());
-			hibObjPar.setReqFl(new Short(aBIObjectParameter.getRequired().shortValue()));
-			hibObjPar.setModFl(new Short(aBIObjectParameter.getModifiable().shortValue()));
-			hibObjPar.setViewFl(new Short(aBIObjectParameter.getVisible().shortValue()));
-			hibObjPar.setMultFl(new Short(aBIObjectParameter.getMultivalue().shortValue()));
+			hibObjPar.setReqFl(aBIObjectParameter.getRequired().shortValue());
+			hibObjPar.setModFl(aBIObjectParameter.getModifiable().shortValue());
+			hibObjPar.setViewFl(aBIObjectParameter.getVisible().shortValue());
+			hibObjPar.setMultFl(aBIObjectParameter.getMultivalue().shortValue());
 			hibObjPar.setParurlNm(aBIObjectParameter.getParameterUrlName());
 
 			Integer colSpan = aBIObjectParameter.getColSpan();
@@ -250,7 +239,7 @@ public class BIObjectParameterDAOHibImpl extends AbstractHibernateDAO implements
 				query.executeUpdate();
 			}
 			hibObjPar.setPriority(newPriority);
-			hibObjPar.setProg(new Integer(1));
+			hibObjPar.setProg(1);
 			hibObjPar.setColSpan(colSpan);
 			hibObjPar.setThickPerc(thickPerc);
 
@@ -262,10 +251,7 @@ public class BIObjectParameterDAOHibImpl extends AbstractHibernateDAO implements
 				tx.rollback();
 			throw new HibernateException(he.getLocalizedMessage(), he);
 		} finally {
-			if (aSession != null) {
-				if (aSession.isOpen())
-					aSession.close();
-			}
+			closeSession(aSession);
 		}
 	}
 
@@ -292,12 +278,12 @@ public class BIObjectParameterDAOHibImpl extends AbstractHibernateDAO implements
 			SbiObjPar hibObjectParameterNew = new SbiObjPar();
 			hibObjectParameterNew.setSbiObject(aSbiObject);
 			hibObjectParameterNew.setSbiParameter(aSbiParameter);
-			hibObjectParameterNew.setProg(new Integer(1));
+			hibObjectParameterNew.setProg(1);
 			hibObjectParameterNew.setLabel(aBIObjectParameter.getLabel());
-			hibObjectParameterNew.setReqFl(new Short(aBIObjectParameter.getRequired().shortValue()));
-			hibObjectParameterNew.setModFl(new Short(aBIObjectParameter.getModifiable().shortValue()));
-			hibObjectParameterNew.setViewFl(new Short(aBIObjectParameter.getVisible().shortValue()));
-			hibObjectParameterNew.setMultFl(new Short(aBIObjectParameter.getMultivalue().shortValue()));
+			hibObjectParameterNew.setReqFl(aBIObjectParameter.getRequired().shortValue());
+			hibObjectParameterNew.setModFl(aBIObjectParameter.getModifiable().shortValue());
+			hibObjectParameterNew.setViewFl(aBIObjectParameter.getVisible().shortValue());
+			hibObjectParameterNew.setMultFl(aBIObjectParameter.getMultivalue().shortValue());
 			hibObjectParameterNew.setParurlNm(aBIObjectParameter.getParameterUrlName());
 			hibObjectParameterNew.setColSpan(aBIObjectParameter.getColSpan());
 			hibObjectParameterNew.setThickPerc(aBIObjectParameter.getThickPerc());
@@ -323,12 +309,7 @@ public class BIObjectParameterDAOHibImpl extends AbstractHibernateDAO implements
 			throw new HibernateException(he.getLocalizedMessage(), he);
 
 		} finally {
-
-			if (aSession != null) {
-				if (aSession.isOpen())
-					aSession.close();
-			}
-
+			closeSession(aSession);
 		}
 
 	}
@@ -362,109 +343,106 @@ public class BIObjectParameterDAOHibImpl extends AbstractHibernateDAO implements
 				tx.rollback();
 			throw new HibernateException(he.getLocalizedMessage(), he);
 		} finally {
-			if (aSession != null) {
-				if (aSession.isOpen())
-					aSession.close();
-			}
+			closeSession(aSession);
 		}
 	}
 
 	@Override
 	public void eraseBIObjectParameterDependencies(BIObjectParameter aBIObjectParameter, Session aSession) throws EMFUserError {
-		logger.debug("IN");
-		logger.debug("Delete dependencies for object parameter with id " + aBIObjectParameter.getId());
+		LOGGER.debug("IN");
+		LOGGER.debug("Delete dependencies for object parameter with id " + aBIObjectParameter.getId());
 		SbiObjPar hibObjPar = (SbiObjPar) aSession.load(SbiObjPar.class, aBIObjectParameter.getId());
 
 		if (hibObjPar == null) {
-			logger.error("the BIObjectParameter with id=" + aBIObjectParameter.getId() + " does not exist.");
+			LOGGER.error("the BIObjectParameter with id=" + aBIObjectParameter.getId() + " does not exist.");
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 1034);
 		}
 
 		// deletes all ObjParuse object (dependencies) of the biObjectParameter
 		ObjParuseDAOHibImpl objParuseDAO = new ObjParuseDAOHibImpl();
-		List objParuses = objParuseDAO.loadObjParuses(hibObjPar.getObjParId());
-		Iterator itObjParuses = objParuses.iterator();
+		List<ObjParuse> objParuses = objParuseDAO.loadObjParuses(hibObjPar.getObjParId());
+		Iterator<ObjParuse> itObjParuses = objParuses.iterator();
 		while (itObjParuses.hasNext()) {
-			ObjParuse aObjParuse = (ObjParuse) itObjParuses.next();
+			ObjParuse aObjParuse = itObjParuses.next();
 			objParuseDAO.eraseObjParuse(aObjParuse, aSession);
 		}
 
 		// delete also all ObjParView (visibility dependencies) of the biObjectParameter
 		IObjParviewDAO objParviewDAO = DAOFactory.getObjParviewDAO();
-		List objParview = objParviewDAO.loadObjParviews(hibObjPar.getObjParId());
-		Iterator itObjParviews = objParview.iterator();
+		List<ObjParview> objParview = objParviewDAO.loadObjParviews(hibObjPar.getObjParId());
+		Iterator<ObjParview> itObjParviews = objParview.iterator();
 		while (itObjParviews.hasNext()) {
-			ObjParview aObjParview = (ObjParview) itObjParviews.next();
+			ObjParview aObjParview = itObjParviews.next();
 			objParviewDAO.eraseObjParview(aObjParview, aSession);
 		}
-		logger.debug("OUT");
+		LOGGER.debug("OUT");
 
 	}
 
 	@Override
 	public void eraseBIObjectParametersByObjectId(Integer biObjId, Session currSession) throws EMFUserError {
-		logger.debug("IN");
+		LOGGER.debug("IN");
 		SbiObjects hibObjects = null;
 		try {
 			hibObjects = (SbiObjects) currSession.load(SbiObjects.class, biObjId);
 			Set<SbiObjPar> setObjPars = hibObjects.getSbiObjPars();
 
-			logger.debug("delete all objParameters for obj with label " + hibObjects.getLabel());
+			LOGGER.debug("delete all objParameters for obj with label " + hibObjects.getLabel());
 
-			for (Iterator iterator = setObjPars.iterator(); iterator.hasNext();) {
-				SbiObjPar sbiObjPar = (SbiObjPar) iterator.next();
+			for (Iterator<SbiObjPar> iterator = setObjPars.iterator(); iterator.hasNext();) {
+				SbiObjPar sbiObjPar = iterator.next();
 				BIObjectParameter biObjPar = toBIObjectParameter(sbiObjPar);
-				logger.debug("delete biObjPar with label " + sbiObjPar.getLabel() + " and url name " + sbiObjPar.getParurlNm());
+				LOGGER.debug("delete biObjPar with label " + sbiObjPar.getLabel() + " and url name " + sbiObjPar.getParurlNm());
 				eraseBIObjectParameter(biObjPar, currSession, true);
 			}
 		} catch (Exception he) {
-			logger.error("Erro while deleting obj pars associated to document with label = " + hibObjects != null ? hibObjects.getLabel() : "null", he);
+			LOGGER.error("Erro while deleting obj pars associated to document with label = " + hibObjects != null ? hibObjects.getLabel() : "null", he);
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		}
 
 		// aaa
-		logger.debug("OUT");
+		LOGGER.debug("OUT");
 	}
 
 	public void eraseBIObjectParameter(BIObjectParameter aBIObjectParameter, Session aSession, boolean alsoDependencies) throws HibernateException {
 		SbiObjPar hibObjPar = (SbiObjPar) aSession.load(SbiObjPar.class, aBIObjectParameter.getId());
 
 		if (hibObjPar == null) {
-			logger.error("the BIObjectParameter with id=" + aBIObjectParameter.getId() + " does not exist.");
+			LOGGER.error("the BIObjectParameter with id=" + aBIObjectParameter.getId() + " does not exist.");
 		}
 
 		if (alsoDependencies) {
 			// deletes all ObjParuse object (dependencies) of the biObjectParameter
 			ObjParuseDAOHibImpl objParuseDAO = new ObjParuseDAOHibImpl();
-			List objParuses = objParuseDAO.loadObjParuses(hibObjPar.getObjParId());
-			Iterator itObjParuses = objParuses.iterator();
+			List<ObjParuse> objParuses = objParuseDAO.loadObjParuses(hibObjPar.getObjParId());
+			Iterator<ObjParuse> itObjParuses = objParuses.iterator();
 			while (itObjParuses.hasNext()) {
-				ObjParuse aObjParuse = (ObjParuse) itObjParuses.next();
+				ObjParuse aObjParuse = itObjParuses.next();
 				objParuseDAO.eraseObjParuseIfExists(aObjParuse, aSession);
 			}
 
 			// deletes all ObjParuse object (dependencies) of the biObjectParameter that have a father relationship
-			List objParusesFather = objParuseDAO.loadObjParusesFather(hibObjPar.getObjParId());
-			Iterator itObjParusesFather = objParusesFather.iterator();
+			List<ObjParuse> objParusesFather = objParuseDAO.loadObjParusesFather(hibObjPar.getObjParId());
+			Iterator<ObjParuse> itObjParusesFather = objParusesFather.iterator();
 			while (itObjParusesFather.hasNext()) {
-				ObjParuse aObjParuseFather = (ObjParuse) itObjParusesFather.next();
+				ObjParuse aObjParuseFather = itObjParusesFather.next();
 				objParuseDAO.eraseObjParuseIfExists(aObjParuseFather, aSession);
 			}
 
 			// delete also all ObjParView (visibility dependencies) of the biObjectParameter
 			IObjParviewDAO objParviewDAO = DAOFactory.getObjParviewDAO();
-			List objParview = objParviewDAO.loadObjParviews(hibObjPar.getObjParId());
-			Iterator itObjParviews = objParview.iterator();
+			List<ObjParview> objParview = objParviewDAO.loadObjParviews(hibObjPar.getObjParId());
+			Iterator<ObjParview> itObjParviews = objParview.iterator();
 			while (itObjParviews.hasNext()) {
-				ObjParview aObjParview = (ObjParview) itObjParviews.next();
+				ObjParview aObjParview = itObjParviews.next();
 				objParviewDAO.eraseObjParviewIfExists(aObjParview, aSession);
 			}
 
 			// delete also all ObjParView (visibility dependencies) of the biObjectParameter father
-			List objParviewFather = objParviewDAO.loadObjParviewsFather(hibObjPar.getObjParId());
-			Iterator itObjParviewsFather = objParviewFather.iterator();
+			List<ObjParview> objParviewFather = objParviewDAO.loadObjParviewsFather(hibObjPar.getObjParId());
+			Iterator<ObjParview> itObjParviewsFather = objParviewFather.iterator();
 			while (itObjParviewsFather.hasNext()) {
-				ObjParview aObjParviewFather = (ObjParview) itObjParviewsFather.next();
+				ObjParview aObjParviewFather = itObjParviewsFather.next();
 				objParviewDAO.eraseObjParviewIfExists(aObjParviewFather, aSession);
 			}
 
@@ -507,8 +485,7 @@ public class BIObjectParameterDAOHibImpl extends AbstractHibernateDAO implements
 			aSession = getSession();
 			tx = aSession.beginTransaction();
 
-			String hql = "select " + "	distinct(obj.label) " + "from " + "	SbiObjects obj, SbiObjPar objPar " + "where "
-					+ "	obj.biobjId = objPar.sbiObject.biobjId and " + "	objPar.sbiParameter.parId = :parId";
+			String hql = "select distinct(obj.label) from SbiObjects obj, SbiObjPar objPar where obj.biobjId = objPar.sbiObject.biobjId and objPar.sbiParameter.parId = :parId";
 			Query query = aSession.createQuery(hql);
 			query.setParameter("parId", parId);
 			List result = query.list();
@@ -522,10 +499,7 @@ public class BIObjectParameterDAOHibImpl extends AbstractHibernateDAO implements
 				tx.rollback();
 			throw new HibernateException(he.getLocalizedMessage(), he);
 		} finally {
-			if (aSession != null) {
-				if (aSession.isOpen())
-					aSession.close();
-			}
+			closeSession(aSession);
 		}
 		return toReturn;
 	}
@@ -555,12 +529,12 @@ public class BIObjectParameterDAOHibImpl extends AbstractHibernateDAO implements
 
 			Query hqlQuery = aSession.createQuery(hql);
 			hqlQuery.setParameter("biObjectID", biObjectID);
-			List hibObjectPars = hqlQuery.list();
+			List<SbiObjPar> hibObjectPars = hqlQuery.list();
 
-			Iterator it = hibObjectPars.iterator();
+			Iterator<SbiObjPar> it = hibObjectPars.iterator();
 			int count = 1;
 			while (it.hasNext()) {
-				BIObjectParameter aBIObjectParameter = toBIObjectParameter((SbiObjPar) it.next());
+				BIObjectParameter aBIObjectParameter = toBIObjectParameter(it.next());
 				// *****************************************************************
 				// **************** START PRIORITY CONTROL *************************
 				// *****************************************************************
@@ -568,11 +542,11 @@ public class BIObjectParameterDAOHibImpl extends AbstractHibernateDAO implements
 				// if the priority is different from the value expected,
 				// recalculates it for all the parameter of the document
 				if (priority == null || priority.intValue() != count) {
-					logger.error(
+					LOGGER.error(
 							"The priorities of the biparameters for the document with id = " + biObjectID + " are not sorted. Priority recalculation starts.");
 					recalculateBiParametersPriority(biObjectID, aSession);
 					// restarts this method in order to load updated priorities
-					aBIObjectParameter.setPriority(new Integer(count));
+					aBIObjectParameter.setPriority(count);
 				}
 				count++;
 				// *****************************************************************
@@ -587,10 +561,7 @@ public class BIObjectParameterDAOHibImpl extends AbstractHibernateDAO implements
 				tx.rollback();
 			throw new HibernateException(he.getLocalizedMessage(), he);
 		} finally {
-			if (aSession != null) {
-				if (aSession.isOpen())
-					aSession.close();
-			}
+			closeSession(aSession);
 		}
 		return resultList;
 	}
@@ -605,12 +576,12 @@ public class BIObjectParameterDAOHibImpl extends AbstractHibernateDAO implements
 		String hql = "from SbiObjPar s where s.sbiObject.biobjId = :biObjectID order by s.priority asc";
 		Query hqlQuery = aSession.createQuery(hql);
 		hqlQuery.setParameter("biObjectID", biObjectID);
-		List hibObjectPars = hqlQuery.list();
-		Iterator it = hibObjectPars.iterator();
+		List<SbiObjPar> hibObjectPars = hqlQuery.list();
+		Iterator<SbiObjPar> it = hibObjectPars.iterator();
 		int count = 1;
 		while (it.hasNext()) {
-			SbiObjPar aSbiObjPar = (SbiObjPar) it.next();
-			aSbiObjPar.setPriority(new Integer(count));
+			SbiObjPar aSbiObjPar = it.next();
+			aSbiObjPar.setPriority(count);
 			count++;
 			aSession.save(aSbiObjPar);
 		}
@@ -627,13 +598,13 @@ public class BIObjectParameterDAOHibImpl extends AbstractHibernateDAO implements
 		BIObjectParameter aBIObjectParameter = new BIObjectParameter();
 		aBIObjectParameter.setId(hiObjPar.getObjParId());
 		aBIObjectParameter.setLabel(hiObjPar.getLabel());
-		aBIObjectParameter.setModifiable(new Integer(hiObjPar.getModFl().intValue()));
-		aBIObjectParameter.setMultivalue(new Integer(hiObjPar.getMultFl().intValue()));
+		aBIObjectParameter.setModifiable(hiObjPar.getModFl().intValue());
+		aBIObjectParameter.setMultivalue(hiObjPar.getMultFl().intValue());
 		aBIObjectParameter.setBiObjectID(hiObjPar.getSbiObject().getBiobjId());
 		aBIObjectParameter.setParameterUrlName(hiObjPar.getParurlNm());
 		aBIObjectParameter.setParID(hiObjPar.getSbiParameter().getParId());
-		aBIObjectParameter.setRequired(new Integer(hiObjPar.getReqFl().intValue()));
-		aBIObjectParameter.setVisible(new Integer(hiObjPar.getViewFl().intValue()));
+		aBIObjectParameter.setRequired(hiObjPar.getReqFl().intValue());
+		aBIObjectParameter.setVisible(hiObjPar.getViewFl().intValue());
 		aBIObjectParameter.setPriority(hiObjPar.getPriority());
 		aBIObjectParameter.setProg(hiObjPar.getProg());
 		aBIObjectParameter.setColSpan(hiObjPar.getColSpan());

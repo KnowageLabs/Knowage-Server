@@ -45,7 +45,7 @@ public class BIObjectRatingDAOHibImpl extends AbstractHibernateDAO implements IB
 	 */
 	@Override
 	public Double calculateBIObjectRating(BIObject obj) throws EMFUserError {
-		Double rating = new Double(0);
+		Double rating = 0.0;
 
 		Session aSession = null;
 		Transaction tx = null;
@@ -56,19 +56,19 @@ public class BIObjectRatingDAOHibImpl extends AbstractHibernateDAO implements IB
 			String hql = "from SbiObjectsRating s where s.id.objId = ?";
 			Query query = aSession.createQuery(hql);
 			query.setInteger(0, obj.getId().intValue());
-			List l = query.list();
+			List<SbiObjectsRating> l = query.list();
 			double totalVotes = 0;
 			double sumVotes = 0;
 
-			Iterator it = l.iterator();
+			Iterator<SbiObjectsRating> it = l.iterator();
 			while (it.hasNext()) {
-				SbiObjectsRating temp = (SbiObjectsRating) it.next();
+				SbiObjectsRating temp = it.next();
 				Integer rat = temp.getRating();
 				sumVotes = sumVotes + rat.doubleValue();
 				totalVotes++;
 			}
 			if (totalVotes != 0) {
-				rating = new Double(sumVotes / totalVotes);
+				rating = sumVotes / totalVotes;
 			}
 			tx.commit();
 			return rating;
@@ -133,11 +133,11 @@ public class BIObjectRatingDAOHibImpl extends AbstractHibernateDAO implements IB
 			SbiObjectsRating hibBIObjectsRating = new SbiObjectsRating();
 
 			hibBIObjectsRating = loadBIObjectRatingById(obj, userid);
-			Integer newRating = new Integer(rating);
+			Integer newRating = rating;
 			if (newRating != null && newRating.intValue() > 5) {
-				newRating = new Integer(5);
+				newRating = 5;
 			} else if (newRating != null && newRating.intValue() < 0) {
-				newRating = new Integer(0);
+				newRating = 0;
 			}
 			if (hibBIObjectsRating != null) {
 
@@ -199,9 +199,9 @@ public class BIObjectRatingDAOHibImpl extends AbstractHibernateDAO implements IB
 			hibBIObjectsRating = loadBIObjectRatingById(obj, userid);
 			Integer newRating = new Integer(rating);
 			if (newRating != null && newRating.intValue() > 5) {
-				newRating = new Integer(5);
+				newRating = 5;
 			} else if (newRating != null && newRating.intValue() < 0) {
-				newRating = new Integer(0);
+				newRating = 0;
 			}
 			if (hibBIObjectsRating != null) {
 

@@ -81,9 +81,7 @@ public class CategoryDAOHibImpl extends AbstractHibernateDAO implements ICategor
 
 		aSession = getSession();
 
-		SbiCategory ret = getCategory(aSession, id);
-
-		return ret;
+		return getCategory(aSession, id);
 	}
 
 	@Override
@@ -154,9 +152,7 @@ public class CategoryDAOHibImpl extends AbstractHibernateDAO implements ICategor
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 
 		} finally {
-			if (aSession != null && aSession.isOpen()) {
-				aSession.close();
-			}
+			closeSession(aSession);
 		}
 
 		return category;
@@ -185,9 +181,7 @@ public class CategoryDAOHibImpl extends AbstractHibernateDAO implements ICategor
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 
 		} finally {
-			if (aSession != null && aSession.isOpen()) {
-				aSession.close();
-			}
+			closeSession(aSession);
 		}
 
 	}
@@ -215,9 +209,7 @@ public class CategoryDAOHibImpl extends AbstractHibernateDAO implements ICategor
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 
 		} finally {
-			if (aSession != null && aSession.isOpen()) {
-				aSession.close();
-			}
+			closeSession(aSession);
 		}
 
 	}
@@ -249,7 +241,7 @@ public class CategoryDAOHibImpl extends AbstractHibernateDAO implements ICategor
 	@Override
 	public List<SbiExtRoles> getRolesByCategory(Integer categoryId) throws EMFUserError {
 
-		List roles = null;
+		List<SbiExtRoles> roles = null;
 		Session aSession = null;
 		Transaction tx = null;
 
@@ -270,9 +262,7 @@ public class CategoryDAOHibImpl extends AbstractHibernateDAO implements ICategor
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 
 		} finally {
-			if (aSession != null && aSession.isOpen()) {
-				aSession.close();
-			}
+			closeSession(aSession);
 		}
 
 		return roles;
@@ -280,10 +270,8 @@ public class CategoryDAOHibImpl extends AbstractHibernateDAO implements ICategor
 
 	private List getRoles(Session aSession, Integer categoryId) {
 
-		List l = aSession.createCriteria(SbiExtRoles.class).createAlias("sbiMetaModelCategories", "_tCategory")
-				.add(Restrictions.eq("_tCategory.id", categoryId)).list();
-
-		return l;
+		return aSession.createCriteria(SbiExtRoles.class).createAlias("sbiMetaModelCategories", "_tCategory").add(Restrictions.eq("_tCategory.id", categoryId))
+				.list();
 
 	}
 

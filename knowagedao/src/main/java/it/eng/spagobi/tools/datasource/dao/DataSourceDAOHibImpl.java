@@ -37,7 +37,6 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.criterion.Criterion;
-import org.hibernate.criterion.Expression;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.json.JSONException;
@@ -112,11 +111,7 @@ public class DataSourceDAOHibImpl extends AbstractHibernateDAO implements IDataS
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 
 		} finally {
-			if (aSession != null) {
-				if (aSession.isOpen())
-					aSession.close();
-				logger.debug("OUT");
-			}
+			closeSession(aSession);
 		}
 		logger.debug("OUT");
 		return toReturn;
@@ -160,10 +155,7 @@ public class DataSourceDAOHibImpl extends AbstractHibernateDAO implements IDataS
 				tx.rollback();
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		} finally {
-			if (tmpSession != null) {
-				if (tmpSession.isOpen())
-					tmpSession.close();
-			}
+			closeSession(tmpSession);
 		}
 		logger.debug("OUT");
 		return biDS;
@@ -196,10 +188,7 @@ public class DataSourceDAOHibImpl extends AbstractHibernateDAO implements IDataS
 				tx.rollback();
 			throw e;
 		} finally {
-			if (tmpSession != null) {
-				if (tmpSession.isOpen())
-					tmpSession.close();
-			}
+			closeSession(tmpSession);
 		}
 		logger.debug("OUT");
 		return biDS;
@@ -223,10 +212,7 @@ public class DataSourceDAOHibImpl extends AbstractHibernateDAO implements IDataS
 				tx.rollback();
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		} finally {
-			if (tmpSession != null) {
-				if (tmpSession.isOpen())
-					tmpSession.close();
-			}
+			closeSession(tmpSession);
 		}
 		logger.debug("OUT");
 		return toReturn;
@@ -261,10 +247,7 @@ public class DataSourceDAOHibImpl extends AbstractHibernateDAO implements IDataS
 			logger.error("Error while loading data source for data prep", he);
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		} finally {
-			if (aSession != null) {
-				if (aSession.isOpen())
-					aSession.close();
-			}
+			closeSession(aSession);
 		}
 		return toReturn;
 	}
@@ -316,11 +299,11 @@ public class DataSourceDAOHibImpl extends AbstractHibernateDAO implements IDataS
 
 			c.add(eqOnOrganizationName);
 
-			List hibList = c.list();
-			Iterator it = hibList.iterator();
+			List<SbiDataSource> hibList = c.list();
+			Iterator<SbiDataSource> it = hibList.iterator();
 
 			while (it.hasNext()) {
-				realResult.add(toDataSource((SbiDataSource) it.next()));
+				realResult.add(toDataSource(it.next()));
 			}
 			tx.commit();
 		} catch (HibernateException he) {
@@ -332,11 +315,7 @@ public class DataSourceDAOHibImpl extends AbstractHibernateDAO implements IDataS
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 
 		} finally {
-			if (aSession != null) {
-				if (aSession.isOpen()) {
-					aSession.close();
-				}
-			}
+			closeSession(aSession);
 		}
 		logger.debug("OUT");
 		return realResult;
@@ -365,11 +344,11 @@ public class DataSourceDAOHibImpl extends AbstractHibernateDAO implements IDataS
 
 			c.add(eqOnOrganization);
 
-			List hibList = c.list();
-			Iterator it = hibList.iterator();
+			List<SbiDataSource> hibList = c.list();
+			Iterator<SbiDataSource> it = hibList.iterator();
 
 			while (it.hasNext()) {
-				realResult.add(toDataSource((SbiDataSource) it.next()));
+				realResult.add(toDataSource(it.next()));
 			}
 			tx.commit();
 		} catch (HibernateException he) {
@@ -381,11 +360,7 @@ public class DataSourceDAOHibImpl extends AbstractHibernateDAO implements IDataS
 			throw new SpagoBIRuntimeException("Error while loading data sources", he);
 
 		} finally {
-			if (aSession != null) {
-				if (aSession.isOpen()) {
-					aSession.close();
-				}
-			}
+			closeSession(aSession);
 		}
 		logger.debug("OUT");
 		return realResult;
@@ -416,8 +391,7 @@ public class DataSourceDAOHibImpl extends AbstractHibernateDAO implements IDataS
 			logger.error("Error while loading the dialect with id " + dialectId, e);
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		} finally {
-			if (session != null && session.isOpen())
-				session.close();
+			closeSession(session);
 		}
 	}
 
@@ -437,7 +411,7 @@ public class DataSourceDAOHibImpl extends AbstractHibernateDAO implements IDataS
 			aSession = getSession();
 			tx = aSession.beginTransaction();
 
-			Criterion aCriterion = Expression.and(Expression.eq("domainCd", "DIALECT_HIB"), Expression.eq("valueCd", aDataSource.getDialectName()));
+			Criterion aCriterion = Restrictions.and(Restrictions.eq("domainCd", "DIALECT_HIB"), Restrictions.eq("valueCd", aDataSource.getDialectName()));
 			Criteria criteria = aSession.createCriteria(SbiDomains.class);
 			criteria.add(aCriterion);
 
@@ -450,7 +424,7 @@ public class DataSourceDAOHibImpl extends AbstractHibernateDAO implements IDataS
 
 			// If DataSource Label has changed all LOVS with that DS need to be
 			// changed
-			SbiDataSource hibDataSource = (SbiDataSource) aSession.load(SbiDataSource.class, new Integer(aDataSource.getDsId()));
+			SbiDataSource hibDataSource = (SbiDataSource) aSession.load(SbiDataSource.class, aDataSource.getDsId());
 
 			// If datasource has a null pwd, get the old value from DB
 			if (StringUtils.isEmpty(aDataSource.getPwd())) {
@@ -462,11 +436,11 @@ public class DataSourceDAOHibImpl extends AbstractHibernateDAO implements IDataS
 					logger.debug("DataSource label is changed- update lovs and dataset referring to it");
 
 					Query hibQuery = aSession.createQuery(" from SbiLov s where s.inputTypeCd = 'QUERY'");
-					List hibList = hibQuery.list();
+					List<SbiLov> hibList = hibQuery.list();
 					if (!hibList.isEmpty()) {
-						Iterator it = hibList.iterator();
+						Iterator<SbiLov> it = hibList.iterator();
 						while (it.hasNext()) {
-							SbiLov lov = (SbiLov) it.next();
+							SbiLov lov = it.next();
 							String prov = lov.getLovProvider();
 							String conne = null;
 
@@ -517,11 +491,11 @@ public class DataSourceDAOHibImpl extends AbstractHibernateDAO implements IDataS
 					Query listQuery = aSession.createQuery("from SbiDataSet h where h.active = ? and h.configuration like :previousDataSource");
 					listQuery.setBoolean(0, true);
 					listQuery.setParameter("previousDataSource", "%dataSource%:%" + previousDataSourceLabel + "\"%");
-					List dsList = listQuery.list();
+					List<SbiDataSet> dsList = listQuery.list();
 
 					// iterate the dataset, (only the active ones)
-					for (Iterator iterator = dsList.iterator(); iterator.hasNext();) {
-						SbiDataSet ds = (SbiDataSet) iterator.next();
+					for (Iterator<SbiDataSet> iterator = dsList.iterator(); iterator.hasNext();) {
+						SbiDataSet ds = iterator.next();
 						logger.debug("dataset - " + ds.getLabel());
 						if (ds.getConfiguration() != null) {
 							String config = JSONUtils.escapeJsonString(ds.getConfiguration());
@@ -596,11 +570,7 @@ public class DataSourceDAOHibImpl extends AbstractHibernateDAO implements IDataS
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 
 		} finally {
-			if (aSession != null) {
-				if (aSession.isOpen())
-					aSession.close();
-				logger.debug("OUT");
-			}
+			closeSession(aSession);
 		}
 
 	}
@@ -609,7 +579,7 @@ public class DataSourceDAOHibImpl extends AbstractHibernateDAO implements IDataS
 		// if writeDefault is going to be set to true than must be disabled in
 		// others
 		logger.debug("IN");
-		if (aDataSource.checkIsWriteDefault()) {
+		if (Boolean.TRUE.equals(aDataSource.checkIsWriteDefault())) {
 			logger.debug("searching for write default datasource to delete flag");
 			SbiDataSource hibModify = loadSbiDataSourceWriteDefault(aSession);
 			if (hibModify != null && !hibModify.getLabel().equals(hibDataSource.getLabel())) {
@@ -629,7 +599,7 @@ public class DataSourceDAOHibImpl extends AbstractHibernateDAO implements IDataS
 		// if writeDefault is going to be set to true than must be disabled in
 		// others
 		logger.debug("IN");
-		if (aDataSource.checkUseForDataprep()) {
+		if (Boolean.TRUE.equals(aDataSource.checkUseForDataprep())) {
 			logger.debug("searching for write default datasource to delete flag");
 			SbiDataSource hibModify = loadSbiDataSourceUseForDataprep(aSession);
 			if (hibModify != null && !hibModify.getLabel().equals(hibDataSource.getLabel())) {
@@ -646,7 +616,7 @@ public class DataSourceDAOHibImpl extends AbstractHibernateDAO implements IDataS
 	}
 
 	private SbiDataSource loadSbiDataSourceWriteDefault(Session aSession) {
-		Criterion labelCriterrion = Expression.eq("writeDefault", true);
+		Criterion labelCriterrion = Restrictions.eq("writeDefault", true);
 		Criteria criteria = aSession.createCriteria(SbiDataSource.class);
 		criteria.add(labelCriterrion);
 		SbiDataSource hibDataSource = (SbiDataSource) criteria.uniqueResult();
@@ -655,7 +625,7 @@ public class DataSourceDAOHibImpl extends AbstractHibernateDAO implements IDataS
 	}
 
 	private SbiDataSource loadSbiDataSourceUseForDataprep(Session aSession) {
-		Criterion labelCriterrion = Expression.eq("useForDataprep", true);
+		Criterion labelCriterrion = Restrictions.eq("useForDataprep", true);
 		Criteria criteria = aSession.createCriteria(SbiDataSource.class);
 		criteria.add(labelCriterrion);
 		SbiDataSource hibDataSource = (SbiDataSource) criteria.uniqueResult();
@@ -680,7 +650,7 @@ public class DataSourceDAOHibImpl extends AbstractHibernateDAO implements IDataS
 			aSession = getSession();
 			tx = aSession.beginTransaction();
 
-			Criterion aCriterion = Expression.and(Expression.eq("domainCd", "DIALECT_HIB"), Expression.eq("valueCd", aDataSource.getDialectName()));
+			Criterion aCriterion = Restrictions.and(Restrictions.eq("domainCd", "DIALECT_HIB"), Restrictions.eq("valueCd", aDataSource.getDialectName()));
 			Criteria criteria = aSession.createCriteria(SbiDomains.class);
 			criteria.add(aCriterion);
 
@@ -736,12 +706,7 @@ public class DataSourceDAOHibImpl extends AbstractHibernateDAO implements IDataS
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 
 		} finally {
-			if (aSession != null) {
-				if (aSession.isOpen())
-					aSession.close();
-				logger.debug("OUT");
-			}
-
+			closeSession(aSession);
 		}
 		return id;
 	}
@@ -766,13 +731,13 @@ public class DataSourceDAOHibImpl extends AbstractHibernateDAO implements IDataS
 			Query hibQuery2 = aSession.createQuery("from SbiOrganizationDatasource ds where ds.id.datasourceId = :dsId");
 			hibQuery2.setInteger("dsId", aDataSource.getDsId());
 			ArrayList<SbiOrganizationDatasource> dsOrganizations = (ArrayList<SbiOrganizationDatasource>) hibQuery2.list();
-			for (Iterator iterator = dsOrganizations.iterator(); iterator.hasNext();) {
-				SbiOrganizationDatasource sbiOrganizationDatasource = (SbiOrganizationDatasource) iterator.next();
+			for (Iterator<SbiOrganizationDatasource> iterator = dsOrganizations.iterator(); iterator.hasNext();) {
+				SbiOrganizationDatasource sbiOrganizationDatasource = iterator.next();
 				aSession.delete(sbiOrganizationDatasource);
 				aSession.flush();
 			}
 
-			SbiDataSource hibDataSource = (SbiDataSource) aSession.load(SbiDataSource.class, new Integer(aDataSource.getDsId()));
+			SbiDataSource hibDataSource = (SbiDataSource) aSession.load(SbiDataSource.class, aDataSource.getDsId());
 			aSession.delete(hibDataSource);
 			tx.commit();
 		} catch (HibernateException he) {
@@ -784,11 +749,7 @@ public class DataSourceDAOHibImpl extends AbstractHibernateDAO implements IDataS
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 8007);
 
 		} finally {
-			if (aSession != null) {
-				if (aSession.isOpen())
-					aSession.close();
-				logger.debug("OUT");
-			}
+			closeSession(aSession);
 		}
 
 	}
@@ -917,7 +878,7 @@ public class DataSourceDAOHibImpl extends AbstractHibernateDAO implements IDataS
 		try {
 			aSession = getSession();
 			tx = aSession.beginTransaction();
-			Integer dsIdInt = Integer.valueOf(dsId);
+			Integer dsIdInt = Integer.parseInt(dsId);
 
 			// String hql = " from SbiObjects s where s.dataSource.dsId = "+
 			// dsIdInt;
@@ -925,7 +886,7 @@ public class DataSourceDAOHibImpl extends AbstractHibernateDAO implements IDataS
 			Query aQuery = aSession.createQuery(hql);
 			aQuery.setInteger(0, dsIdInt.intValue());
 			List biObjectsAssocitedWithDs = aQuery.list();
-			if (biObjectsAssocitedWithDs.size() > 0)
+			if (!biObjectsAssocitedWithDs.isEmpty())
 				bool = true;
 			else
 				bool = false;
@@ -939,10 +900,7 @@ public class DataSourceDAOHibImpl extends AbstractHibernateDAO implements IDataS
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 
 		} finally {
-			if (aSession != null) {
-				if (aSession.isOpen())
-					aSession.close();
-			}
+			closeSession(aSession);
 		}
 		logger.debug("OUT");
 		return bool;
@@ -975,13 +933,13 @@ public class DataSourceDAOHibImpl extends AbstractHibernateDAO implements IDataS
 				String hql = " from SbiObjects s where s.dataSource.dsId = ?";
 				Query aQuery = aSession.createQuery(hql);
 				aQuery.setInteger(0, dsId.intValue());
-				List biObjectsAssocitedWithDs = aQuery.list();
-				for (Iterator iterator = biObjectsAssocitedWithDs.iterator(); iterator.hasNext();) {
-					SbiObjects sbiObj = (SbiObjects) iterator.next();
+				List<SbiObjects> biObjectsAssocitedWithDs = aQuery.list();
+				for (Iterator<SbiObjects> iterator = biObjectsAssocitedWithDs.iterator(); iterator.hasNext();) {
+					SbiObjects sbiObj = iterator.next();
 					objectNamesAssociatedWithDS.add(sbiObj.getName() != null ? sbiObj.getName() : sbiObj.getLabel());
 				}
 
-				if (objectNamesAssociatedWithDS.size() > 0) {
+				if (!objectNamesAssociatedWithDS.isEmpty()) {
 					mapToReturn.put("sbi.datasource.usedby.biobject", objectNamesAssociatedWithDS);
 					logger.debug("there are objects using datasource, return them");
 				}
@@ -991,13 +949,13 @@ public class DataSourceDAOHibImpl extends AbstractHibernateDAO implements IDataS
 				hql = " from SbiMetaModel s where s.dataSource.dsId = ?";
 				aQuery = aSession.createQuery(hql);
 				aQuery.setInteger(0, dsId.intValue());
-				List metaModelsAssocitedWithDs = aQuery.list();
-				for (Iterator iterator = metaModelsAssocitedWithDs.iterator(); iterator.hasNext();) {
-					SbiMetaModel sbiMetaModel = (SbiMetaModel) iterator.next();
+				List<SbiMetaModel> metaModelsAssocitedWithDs = aQuery.list();
+				for (Iterator<SbiMetaModel> iterator = metaModelsAssocitedWithDs.iterator(); iterator.hasNext();) {
+					SbiMetaModel sbiMetaModel = iterator.next();
 					metaModelNamesAssociatedWithDS.add(sbiMetaModel.getName());
 				}
 
-				if (metaModelNamesAssociatedWithDS.size() > 0) {
+				if (!metaModelNamesAssociatedWithDS.isEmpty()) {
 					mapToReturn.put("sbi.datasource.usedby.metamodel", metaModelNamesAssociatedWithDS);
 					logger.debug("there are meta models using datasource, return them");
 				}
@@ -1014,9 +972,9 @@ public class DataSourceDAOHibImpl extends AbstractHibernateDAO implements IDataS
 				aQuery = aSession.createQuery(hql);
 				aQuery.setBoolean(0, true);
 				try {
-					List dataSetAssocitedWithDs = aQuery.list();
-					for (Iterator iterator = dataSetAssocitedWithDs.iterator(); iterator.hasNext();) {
-						SbiDataSet sbiDataSet = (SbiDataSet) iterator.next();
+					List<SbiDataSet> dataSetAssocitedWithDs = aQuery.list();
+					for (Iterator<SbiDataSet> iterator = dataSetAssocitedWithDs.iterator(); iterator.hasNext();) {
+						SbiDataSet sbiDataSet = iterator.next();
 						String configuration = sbiDataSet.getConfiguration();
 						JSONObject configurationJSON = new JSONObject(configuration);
 						String ds = configurationJSON.optString("dataSource");
@@ -1033,7 +991,7 @@ public class DataSourceDAOHibImpl extends AbstractHibernateDAO implements IDataS
 					throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 				}
 
-				if (dataSetNamesAssociatedWithDS.size() > 0) {
+				if (!dataSetNamesAssociatedWithDS.isEmpty()) {
 					mapToReturn.put("sbi.datasource.usedby.dataset", dataSetNamesAssociatedWithDS);
 					logger.debug("there are datasets using datasource, return them");
 				}
@@ -1045,10 +1003,10 @@ public class DataSourceDAOHibImpl extends AbstractHibernateDAO implements IDataS
 				aQuery = aSession.createQuery(hql);
 				aQuery.setString(0, "QUERY");
 
-				List lovAssocitedWithDs = aQuery.list();
+				List<SbiLov> lovAssocitedWithDs = aQuery.list();
 				SbiLov sbiLov = null;
-				for (Iterator iterator = lovAssocitedWithDs.iterator(); iterator.hasNext();) {
-					sbiLov = (SbiLov) iterator.next();
+				for (Iterator<SbiLov> iterator = lovAssocitedWithDs.iterator(); iterator.hasNext();) {
+					sbiLov = iterator.next();
 					String lovProvider = sbiLov.getLovProvider();
 					lovProvider = escapeXML(lovProvider, true);
 					lovProvider = removeStatement(lovProvider); // KNOWAGE-6312: removed statement for double quote character issue, if this character is
@@ -1065,7 +1023,7 @@ public class DataSourceDAOHibImpl extends AbstractHibernateDAO implements IDataS
 							lovNamesAssociatedWithDS.add(sbiLov.getName() != null ? sbiLov.getName() : sbiLov.getLabel());
 						}
 
-						if (lovNamesAssociatedWithDS.size() > 0) {
+						if (!lovNamesAssociatedWithDS.isEmpty()) {
 							mapToReturn.put("sbi.datasource.usedby.lov", lovNamesAssociatedWithDS);
 							logger.debug("there are lovs using datasource, return them");
 						}
@@ -1093,10 +1051,7 @@ public class DataSourceDAOHibImpl extends AbstractHibernateDAO implements IDataS
 			}
 
 		} finally {
-			if (aSession != null) {
-				if (aSession.isOpen())
-					aSession.close();
-			}
+			closeSession(aSession);
 		}
 
 		logger.debug("OUT");
@@ -1138,11 +1093,7 @@ public class DataSourceDAOHibImpl extends AbstractHibernateDAO implements IDataS
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 
 		} finally {
-			if (aSession != null) {
-				if (aSession.isOpen())
-					aSession.close();
-				logger.debug("OUT");
-			}
+			closeSession(aSession);
 		}
 
 	}
@@ -1172,11 +1123,7 @@ public class DataSourceDAOHibImpl extends AbstractHibernateDAO implements IDataS
 			logger.error("Error getting current password for data source " + dataSource, he);
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		} finally {
-			if (aSession != null) {
-				if (aSession.isOpen())
-					aSession.close();
-				logger.debug("OUT");
-			}
+			closeSession(aSession);
 		}
 
 	}
@@ -1201,18 +1148,6 @@ public class DataSourceDAOHibImpl extends AbstractHibernateDAO implements IDataS
 		String secondPart = prov.substring(cutEnd);
 		prov = firstPart + statement + secondPart;
 		return prov;
-	}
-
-	private String getStatement(String prov) {
-		String statement = null;
-		int cutStartIndex = prov.indexOf("<STMT>");
-		cutStartIndex = cutStartIndex + 6;
-		int cutEndIndex = prov.indexOf("</STMT>");
-		statement = prov.substring(cutStartIndex, cutEndIndex);
-
-		statement = StringEscapeUtils.escapeXml(statement);
-		return statement;
-
 	}
 
 	private String removeStatement(String prov) {

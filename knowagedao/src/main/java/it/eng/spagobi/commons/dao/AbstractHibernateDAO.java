@@ -235,18 +235,14 @@ public class AbstractHibernateDAO {
 		if (tx != null && tx.isActive()) {
 			tx.rollback();
 		}
-		if (aSession != null && aSession.isOpen()) {
-			aSession.close();
-		}
+		closeSession(aSession);
 	}
 
 	public void commitIfActiveAndClose(Transaction tx, Session aSession) {
 		if (tx != null && tx.isActive()) {
 			tx.commit();
 		}
-		if (aSession != null && aSession.isOpen()) {
-			aSession.close();
-		}
+		closeSession(aSession);
 	}
 
 	/**
@@ -558,6 +554,12 @@ public class AbstractHibernateDAO {
 		int total = results.getRowNumber() + 1;
 		results.close();
 		return total;
+	}
+
+	protected void closeSession(Session aSession) {
+		if (aSession != null && aSession.isOpen()) {
+			aSession.close();
+		}
 	}
 
 }

@@ -213,9 +213,7 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 				tx.rollback();
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		} finally {
-			if (aSession != null && aSession.isOpen()) {
-				aSession.close();
-			}
+			closeSession(aSession);
 		}
 		logger.debug("OUT");
 		return biObject;
@@ -251,9 +249,7 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 				tx.rollback();
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		} finally {
-			if (aSession != null && aSession.isOpen()) {
-				aSession.close();
-			}
+			closeSession(aSession);
 		}
 		logger.debug("OUT");
 		return toReturn;
@@ -293,9 +289,7 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 				tx.rollback();
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		} finally {
-			if (aSession != null && aSession.isOpen()) {
-				aSession.close();
-			}
+			closeSession(aSession);
 		}
 		logger.debug("OUT");
 		monitor.stop();
@@ -335,9 +329,7 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 				tx.rollback();
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		} finally {
-			if (aSession != null && aSession.isOpen()) {
-				aSession.close();
-			}
+			closeSession(aSession);
 		}
 		logger.debug("OUT");
 		return biObject;
@@ -376,9 +368,7 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 				tx.rollback();
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		} finally {
-			if (aSession != null && aSession.isOpen()) {
-				aSession.close();
-			}
+			closeSession(aSession);
 		}
 		logger.debug("OUT");
 		return biObject;
@@ -422,9 +412,7 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 			logger.error("hibernate exception", he);
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		} finally {
-			if (aSession != null && aSession.isOpen()) {
-				aSession.close();
-			}
+			closeSession(aSession);
 			logger.debug("OUT.end method with input id:" + id);
 		}
 		return biObject;
@@ -613,7 +601,7 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 				for (Iterator iterator = hibBIObject.getSbiOutputParameters().iterator(); iterator.hasNext();) {
 					SbiOutputParameter sbiOutPar = (SbiOutputParameter) iterator.next();
 					// if (sbiOutPar.getIsUserDefined() != null && sbiOutPar.getIsUserDefined() == true) {
-					if (sbiOutPar.getIsUserDefined() == null || sbiOutPar.getIsUserDefined() == false) {
+					if (sbiOutPar.getIsUserDefined() == null || !sbiOutPar.getIsUserDefined()) {
 						cleanedOutPars.add(sbiOutPar);
 					}
 				}
@@ -681,9 +669,7 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 				tx.rollback();
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		} finally {
-			if (aSession != null && aSession.isOpen()) {
-				aSession.close();
-			}
+			closeSession(aSession);
 		}
 	}
 
@@ -830,9 +816,7 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 				tx.rollback();
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		} finally {
-			if (aSession != null && aSession.isOpen()) {
-				aSession.close();
-			}
+			closeSession(aSession);
 		}
 	}
 
@@ -975,9 +959,7 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 				tx.rollback();
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		} finally {
-			if (aSession != null && aSession.isOpen()) {
-				aSession.close();
-			}
+			closeSession(aSession);
 		}
 	}
 
@@ -1185,9 +1167,7 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 				tx.rollback();
 			throw new HibernateException(he.getLocalizedMessage(), he);
 		} finally {
-			if (aSession != null && aSession.isOpen()) {
-				aSession.close();
-			}
+			closeSession(aSession);
 		}
 		logger.debug("OUT");
 		return idToReturn;
@@ -1366,9 +1346,7 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 				tx.rollback();
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		} finally {
-			if (aSession != null && aSession.isOpen()) {
-				aSession.close();
-			}
+			closeSession(aSession);
 		}
 	}
 
@@ -1452,9 +1430,7 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 					tx.rollback();
 				throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 			} finally {
-				if (aSession != null && aSession.isOpen()) {
-					aSession.close();
-				}
+				closeSession(aSession);
 			}
 			logger.debug("OUT");
 		} catch (EMFInternalError emfie) {
@@ -1561,9 +1537,7 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 				tx.rollback();
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		} finally {
-			if (aSession != null && aSession.isOpen()) {
-				aSession.close();
-			}
+			closeSession(aSession);
 		}
 		logger.debug("OUT");
 		return correctRoles;
@@ -1647,8 +1621,8 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 				Integer functionalityId = aSbiObjFunc.getId().getSbiFunctions().getFunctId();
 				functionlities.add(functionalityId);
 				if (!isPublic) { // optimization: this ensure that the following
-									// code is executed only once in the for
-									// cycle (during the second execution of the
+								 // code is executed only once in the for
+								 // cycle (during the second execution of the
 					// cycle we already know that the document is public)
 					String folderType = aSbiObjFunc.getId().getSbiFunctions().getFunctTypeCd();
 					// if document belongs to another folder or the folder is
@@ -1797,9 +1771,7 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 				tx.rollback();
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		} finally {
-			if (aSession != null && aSession.isOpen()) {
-				aSession.close();
-			}
+			closeSession(aSession);
 		}
 		logger.debug("OUT");
 		return realResult;
@@ -1814,19 +1786,13 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 			public List execute(Session session) throws Exception {
 				List sbiObjects = session.createCriteria(SbiObjects.class).createAlias("sbiObjFuncs", "_sbiObjFunc").createAlias("state", "_sbiDomain")
 						.add(Restrictions.eq("_sbiObjFunc.id.sbiFunctions.functId", folderId))
-						.setProjection(Projections.projectionList().add(org.hibernate.criterion.Property.forName("biobjId").as("biobjId"))
-								.add(org.hibernate.criterion.Property.forName("name").as("name"))
-								.add(org.hibernate.criterion.Property.forName("creationUser").as("creationUser"))
-								.add(org.hibernate.criterion.Property.forName("creationDate").as("creationDate"))
-								.add(org.hibernate.criterion.Property.forName("objectTypeCode").as("objectTypeCode"))
-								.add(org.hibernate.criterion.Property.forName("descr").as("descr"))
-								.add(org.hibernate.criterion.Property.forName("stateCode").as("stateCode"))
-								.add(org.hibernate.criterion.Property.forName("sbiEngines").as("sbiEngines"))
-								.add(org.hibernate.criterion.Property.forName("label").as("label"))
-								.add(org.hibernate.criterion.Property.forName("state").as("state"))
-								.add(org.hibernate.criterion.Property.forName("visible").as("visible"))
-								.add(org.hibernate.criterion.Property.forName("profiledVisibility").as("profiledVisibility"))
-								.add(org.hibernate.criterion.Property.forName("previewFile").as("previewFile")))
+						.setProjection(Projections.projectionList().add(Property.forName("biobjId").as("biobjId")).add(Property.forName("name").as("name"))
+								.add(Property.forName("creationUser").as("creationUser")).add(Property.forName("creationDate").as("creationDate"))
+								.add(Property.forName("objectTypeCode").as("objectTypeCode")).add(Property.forName("descr").as("descr"))
+								.add(Property.forName("stateCode").as("stateCode")).add(Property.forName("sbiEngines").as("sbiEngines"))
+								.add(Property.forName("label").as("label")).add(Property.forName("state").as("state"))
+								.add(Property.forName("visible").as("visible")).add(Property.forName("profiledVisibility").as("profiledVisibility"))
+								.add(Property.forName("previewFile").as("previewFile")))
 						.setResultTransformer(Transformers.aliasToBean(SbiObjects.class)).list();
 
 				Iterator it = sbiObjects.iterator();
@@ -1894,9 +1860,7 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 				tx.rollback();
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		} finally {
-			if (aSession != null && aSession.isOpen()) {
-				aSession.close();
-			}
+			closeSession(aSession);
 		}
 		logger.debug("OUT");
 		return realResult;
@@ -1938,9 +1902,7 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 				tx.rollback();
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		} finally {
-			if (aSession != null && aSession.isOpen()) {
-				aSession.close();
-			}
+			closeSession(aSession);
 		}
 		logger.debug("OUT");
 		return realResult;
@@ -2004,9 +1966,7 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 				tx.rollback();
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		} finally {
-			if (aSession != null && aSession.isOpen()) {
-				aSession.close();
-			}
+			closeSession(aSession);
 		}
 		logger.debug("OUT");
 		return realResult;
@@ -2071,9 +2031,7 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 
 		} finally {
-			if (aSession != null && aSession.isOpen()) {
-				aSession.close();
-			}
+			closeSession(aSession);
 		}
 		logger.debug("OUT");
 		return realResult;
@@ -2123,9 +2081,7 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 
 		} finally {
-			if (aSession != null && aSession.isOpen()) {
-				aSession.close();
-			}
+			closeSession(aSession);
 		}
 		logger.debug("OUT");
 		return realResult;
@@ -2164,9 +2120,7 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 				tx.rollback();
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		} finally {
-			if (aSession != null && aSession.isOpen()) {
-				aSession.close();
-			}
+			closeSession(aSession);
 		}
 		logger.debug("OUT");
 		return biObject;
@@ -2282,10 +2236,7 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 			logger.error("Error while creating parameter for document composition.", e);
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		} finally {
-			if (aSession != null && aSession.isOpen()) {
-				aSession.close();
-			}
-
+			closeSession(aSession);
 		}
 		logger.debug("OUT");
 
@@ -2373,10 +2324,7 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 			logger.error("Error while creating parameter for document composition.", e);
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		} finally {
-			if (aSession != null && aSession.isOpen()) {
-				aSession.close();
-			}
-
+			closeSession(aSession);
 		}
 		logger.debug("OUT");
 	}
@@ -2455,10 +2403,7 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 				tx.rollback();
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		} finally {
-			if (aSession != null && aSession.isOpen()) {
-				aSession.close();
-			}
-
+			closeSession(aSession);
 		}
 		logger.debug("OUT");
 		return realResult;
@@ -2573,10 +2518,7 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 				tx.rollback();
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		} finally {
-			if (aSession != null && aSession.isOpen()) {
-				aSession.close();
-			}
-
+			closeSession(aSession);
 		}
 		logger.debug("OUT");
 		return realResult;
@@ -2612,10 +2554,7 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 
 		} finally {
-			if (aSession != null && aSession.isOpen()) {
-				aSession.close();
-			}
-
+			closeSession(aSession);
 			logger.debug("OUT");
 		}
 		return realResult;
@@ -2650,10 +2589,7 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 
 		} finally {
-			if (aSession != null && aSession.isOpen()) {
-				aSession.close();
-			}
-
+			closeSession(aSession);
 			logger.debug("OUT");
 		}
 		return realResult;
@@ -2708,9 +2644,7 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 			}
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		} finally {
-			if (aSession != null && aSession.isOpen()) {
-				aSession.close();
-			}
+			closeSession(aSession);
 			logger.debug("OUT");
 		}
 		return result;
@@ -2886,10 +2820,7 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 				tx.rollback();
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		} finally {
-			if (aSession != null && aSession.isOpen()) {
-				aSession.close();
-			}
-
+			closeSession(aSession);
 		}
 		logger.debug("OUT");
 		return realResult;
@@ -2936,11 +2867,7 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 9104);
 
 		} finally {
-			if (aSession != null) {
-				if (aSession.isOpen())
-					aSession.close();
-				logger.debug("OUT");
-			}
+			closeSession(aSession);
 		}
 		return resultNumber;
 	}
@@ -2963,7 +2890,7 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 			String hql = "select count(*) from SbiObjects ";
 			Query hqlQuery = aSession.createQuery(hql);
 			Long temp = (Long) hqlQuery.uniqueResult();
-			resultNumber = new Integer(temp.intValue());
+			resultNumber = temp.intValue();
 
 			offset = offset < 0 ? 0 : offset;
 			if (resultNumber > 0) {
@@ -2989,11 +2916,7 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 9104);
 
 		} finally {
-			if (aSession != null) {
-				if (aSession.isOpen())
-					aSession.close();
-				logger.debug("OUT");
-			}
+			closeSession(aSession);
 		}
 		return toReturn;
 	}
@@ -3021,18 +2944,18 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 			if (hibObject.getLockedByUser() != null && !hibObject.getLockedByUser().equals(""))
 				isLocked = true;
 
-			if (isLocked == true && hibObject.getLockedByUser().equals(currentUser)) {
+			if (isLocked && hibObject.getLockedByUser().equals(currentUser)) {
 				hibObject.setLockedByUser(null);
 				aSession.save(hibObject);
 				tx.commit();
 				toReturn = hibObject.getLockedByUser();
-			} else if (isLocked == false) {
+			} else if (!isLocked) {
 				// if its not lcked change
 				hibObject.setLockedByUser(currentUser);
 				aSession.save(hibObject);
 				tx.commit();
 				toReturn = hibObject.getLockedByUser();
-			} else if (isLocked == true && !hibObject.getLockedByUser().equals(currentUser) && isUserAdmin == true) {
+			} else if (isLocked && !hibObject.getLockedByUser().equals(currentUser) && isUserAdmin) {
 				hibObject.setLockedByUser(null);
 				aSession.save(hibObject);
 				tx.commit();
@@ -3047,10 +2970,7 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 				tx.rollback();
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		} finally {
-			if (aSession != null && aSession.isOpen()) {
-				aSession.close();
-			}
-
+			closeSession(aSession);
 		}
 		logger.debug("OUT");
 		return toReturn;
@@ -3087,10 +3007,7 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 				tx.rollback();
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		} finally {
-			if (aSession != null && aSession.isOpen()) {
-				aSession.close();
-			}
-
+			closeSession(aSession);
 		}
 		logger.debug("OUT");
 		return toReturn;

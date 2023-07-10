@@ -34,74 +34,63 @@ public interface IDomainDAO extends ISpagoBIDao {
 	 * Loads all possible domain that refer to a given domain type, storing each of them into a <code>Domain</objects> and after putting all objects into a list
 	 * filtered by tenant, which is returned.
 	 *
-	 * @param domainType
-	 *            The String identifying the domain type
+	 * @param domainType The String identifying the domain type
 	 *
 	 * @return The list of all domains
 	 *
-	 * @throws EMFUserError
-	 *             If an Exception occurred
+	 * @throws EMFUserError If an Exception occurred
 	 */
 
-	public List loadListDomainsByTypeAndTenant(String domainType) throws EMFUserError;
+	List<Domain> loadListDomainsByTypeAndTenant(String domainType) throws EMFUserError;
 
 	/**
 	 * Loads all possible domain that refer to a given domain type, storing each of them into a <code>Domain</objects> and after putting all objects into a
 	 * list, which is returned.
 	 *
-	 * @param domainType
-	 *            The String identifying the domain type
+	 * @param domainType The String identifying the domain type
 	 *
 	 * @return The list of all domains
 	 *
-	 * @throws EMFUserError
-	 *             If an Exception occurred
+	 * @throws EMFUserError If an Exception occurred
 	 */
 
-	public List<Domain> loadListDomainsByType(String domainType) throws EMFUserError;
+	List<Domain> loadListDomainsByType(String domainType) throws EMFUserError;
 
-	public List<Integer> loadListMetaModelDomainsByRole(Integer roleId) throws SpagoBIRuntimeException;
+	List<Integer> loadListMetaModelDomainsByRole(Integer roleId) throws SpagoBIRuntimeException;
 
 	/**
 	 * Returns the domain identified by the input parameter <code>id</code>, storing it in a <code>Domain</code> object.
 	 *
-	 * @param id
-	 *            The identifier domain id
+	 * @param id The identifier domain id
 	 *
 	 * @return The <code>Domain</code> object storing the domain
 	 *
-	 * @throws EMFUserError
-	 *             if an Exception occurs
+	 * @throws EMFUserError if an Exception occurs
 	 */
-	public Domain loadDomainById(Integer id) throws EMFUserError;
+	Domain loadDomainById(Integer id) throws EMFUserError;
 
 	/**
 	 * Returns the domain identified by the input parameter <code>id</code>, storing it in a <code>Domain</code> object.
 	 *
-	 * @param id
-	 *            The identifier domain id
+	 * @param id The identifier domain id
 	 *
 	 * @return The <code>SbiDomains</code> object storing the domain
 	 *
-	 * @throws EMFUserError
-	 *             if an Exception occurs
+	 * @throws EMFUserError if an Exception occurs
 	 */
-	public SbiDomains loadSbiDomainById(Integer id) throws EMFUserError;
+	SbiDomains loadSbiDomainById(Integer id) throws EMFUserError;
 
 	/**
 	 * Returns the domain identified by the two input parameters <code>codeDomain</code> and <code>codeValue</code>, storing it in a <code>Domain</code> object.
 	 *
-	 * @param codeDomain
-	 *            The identifier domain code
-	 * @param codeValue
-	 *            The identifier domain value code
+	 * @param codeDomain The identifier domain code
+	 * @param codeValue  The identifier domain value code
 	 *
 	 * @return The <code>Domain</code> object storing the domain
 	 *
-	 * @throws EMFUserError
-	 *             if an Exception occurs
+	 * @throws EMFUserError if an Exception occurs
 	 */
-	public Domain loadDomainByCodeAndValue(String codeDomain, String codeValue) throws EMFUserError;
+	Domain loadDomainByCodeAndValue(String codeDomain, String codeValue) throws EMFUserError;
 
 	/**
 	 * Same as loadDomainByCodeAndValue but with (optional) external session
@@ -112,43 +101,38 @@ public interface IDomainDAO extends ISpagoBIDao {
 	 * @return
 	 * @throws EMFUserError
 	 */
-	public Domain loadDomainByCodeAndValue(String codeDomain, String codeValue, Session session) throws EMFUserError;
+	Domain loadDomainByCodeAndValue(String codeDomain, String codeValue, Session session) throws EMFUserError;
 
 	/**
 	 * Returns the domain identified by the two input parameters <code>codeDomain</code> and <code>codeValue</code>, storing it in a <code>Domain</code> object.
 	 *
-	 * @param codeDomain
-	 *            The identifier domain code
-	 * @param codeValue
-	 *            The identifier domain value code
+	 * @param codeDomain The identifier domain code
+	 * @param codeValue  The identifier domain value code
 	 *
 	 * @return The <code>Domain</code> object storing the domain
 	 *
-	 * @throws EMFUserError
-	 *             if an Exception occurs
+	 * @throws EMFUserError if an Exception occurs
 	 */
-	public SbiDomains loadSbiDomainByCodeAndValue(String codeDomain, String codeValue) throws EMFUserError;
+	SbiDomains loadSbiDomainByCodeAndValue(String codeDomain, String codeValue) throws EMFUserError;
 
 	/**
 	 * Loads all possible domain, storing each of them into a <code>Domain</objects> and after putting all objects into a list, which is returned.
 	 *
 	 * @return The list of all domains
 	 *
-	 * @throws EMFUserError
-	 *             If an Exception occurred
+	 * @throws EMFUserError If an Exception occurred
 	 */
 
-	public List loadListDomains() throws EMFUserError;
+	List<Domain> loadListDomains() throws EMFUserError;
 
 	/**
 	 * Save a domain
 	 *
 	 * @return Save domains
 	 *
-	 * @throws EMFUserError
-	 *             If an Exception occurred
+	 * @throws EMFUserError If an Exception occurred
 	 */
-	public void saveDomain(Domain d) throws EMFUserError;
+	void saveDomain(Domain d) throws EMFUserError;
 
 	/**
 	 * Save a domain using an optional session and return an id
@@ -158,16 +142,15 @@ public interface IDomainDAO extends ISpagoBIDao {
 	 * @return
 	 * @throws EMFUserError
 	 */
-	public Integer saveDomain(Domain d, Session session) throws EMFUserError;
+	Integer saveDomain(Domain d, Session session) throws EMFUserError;
 
 	/**
 	 * Delete a domain
 	 *
 	 * @return Delete domains
 	 *
-	 * @throws EMFUserError
-	 *             If an Exception occurred
+	 * @throws EMFUserError If an Exception occurred
 	 */
-	public void delete(Integer idDomain) throws EMFUserError;
+	void delete(Integer idDomain) throws EMFUserError;
 
 }
