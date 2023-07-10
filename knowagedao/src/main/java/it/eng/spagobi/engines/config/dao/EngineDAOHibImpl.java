@@ -19,9 +19,11 @@ package it.eng.spagobi.engines.config.dao;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
@@ -719,7 +721,8 @@ public class EngineDAOHibImpl extends AbstractHibernateDAO implements IEngineDAO
 			String engineLabel = engine.getLabel();
 			String configLabel = ConfigurationConstants.DOCUMENT_EXPORTER_PREFIX + engineLabel;
 			Config exportersConfig = sbiConfigDAO.loadConfigParametersByLabel(configLabel);
-			List<String> exporters = Arrays.asList(exportersConfig.getValueCheck().split(ConfigurationConstants.DOCUMENT_EXPORTER_SEPARATOR));
+			List<String> exporters = Optional.ofNullable(exportersConfig.getValueCheck())
+					.map(e -> Arrays.asList(e.split(ConfigurationConstants.DOCUMENT_EXPORTER_SEPARATOR))).orElse(Collections.emptyList());
 
 			for (String exporter : exporters) {
 				toReturn.add(exporter);

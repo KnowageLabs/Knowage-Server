@@ -42,7 +42,7 @@ public interface ILowFunctionalityDAO extends ISpagoBIDao {
 	 *
 	 * @throws EMFUserError the EMF user error
 	 */
-	public boolean checkUserRootExists(String username) throws EMFUserError;
+	boolean checkUserRootExists(String username) throws EMFUserError;
 
 	/**
 	 * Insert user functionality.
@@ -51,11 +51,11 @@ public interface ILowFunctionalityDAO extends ISpagoBIDao {
 	 *
 	 * @throws EMFUserError the EMF user error
 	 */
-	public void insertUserFunctionality(UserFunctionality userfunct) throws EMFUserError;
+	void insertUserFunctionality(UserFunctionality userfunct) throws EMFUserError;
 
 	/* ********* end luca changes ***************** */
 
-	public List<LowFunctionality> loadFunctionalitiesForSharing(Integer docId);
+	List<LowFunctionality> loadFunctionalitiesForSharing(Integer docId);
 
 	/**
 	 * Loads all information for a low functionality identified by its <code>functionalityID</code>. All these information, are stored into a
@@ -68,7 +68,7 @@ public interface ILowFunctionalityDAO extends ISpagoBIDao {
 	 *
 	 * @throws EMFUserError If an Exception occurred
 	 */
-	public LowFunctionality loadLowFunctionalityByID(Integer functionalityID, boolean recoverBIObjects) throws EMFUserError;
+	LowFunctionality loadLowFunctionalityByID(Integer functionalityID, boolean recoverBIObjects) throws EMFUserError;
 
 	/**
 	 * Loads all information for a low functionality identified by its <code>code</code>. All these information, are stored into a <code>LowFunctionality</code>
@@ -81,7 +81,7 @@ public interface ILowFunctionalityDAO extends ISpagoBIDao {
 	 *
 	 * @throws EMFUserError If an Exception occurred
 	 */
-	public LowFunctionality loadLowFunctionalityByCode(String code, boolean recoverBIObjects) throws EMFUserError;
+	LowFunctionality loadLowFunctionalityByCode(String code, boolean recoverBIObjects) throws EMFUserError;
 
 	/**
 	 * Load low functionality list by id List
@@ -94,7 +94,7 @@ public interface ILowFunctionalityDAO extends ISpagoBIDao {
 	 *
 	 * @see it.eng.spagobi.analiticalmodel.functionalitytree.dao.ILowFunctionalityDAO#loadLowFunctionalityByID(java.lang.Integer)
 	 */
-	public List loadLowFunctionalityList(List functionalityIDs) throws EMFUserError;
+	List<LowFunctionality> loadLowFunctionalityList(List<Integer> functionalityIDs) throws EMFUserError;
 
 	/**
 	 * Loads all information for a low functionality identified by its <code>functionalityPath</code>. All these information, are stored into a
@@ -107,7 +107,7 @@ public interface ILowFunctionalityDAO extends ISpagoBIDao {
 	 *
 	 * @throws EMFUserError If an Exception occurred
 	 */
-	public LowFunctionality loadLowFunctionalityByPath(String functionalityPath, boolean recoverBIObjects) throws EMFUserError;
+	LowFunctionality loadLowFunctionalityByPath(String functionalityPath, boolean recoverBIObjects) throws EMFUserError;
 
 	/**
 	 * Implements the query to modify a low functionality. All information needed is stored into the input <code>LowFunctionality</code> object.
@@ -116,7 +116,7 @@ public interface ILowFunctionalityDAO extends ISpagoBIDao {
 	 *
 	 * @throws EMFUserError If an Exception occurred
 	 */
-	public void modifyLowFunctionality(LowFunctionality aLowFunctionality) throws EMFUserError;
+	void modifyLowFunctionality(LowFunctionality aLowFunctionality) throws EMFUserError;
 
 	/**
 	 * Implements the query to insert a low functionality. All information needed is stored into the input <code>LowFunctionality</code> object.
@@ -126,7 +126,7 @@ public interface ILowFunctionalityDAO extends ISpagoBIDao {
 	 *
 	 * @throws EMFUserError If an Exception occurred
 	 */
-	public LowFunctionality insertLowFunctionality(LowFunctionality aLowFunctionality, IEngUserProfile profile) throws EMFUserError;
+	LowFunctionality insertLowFunctionality(LowFunctionality aLowFunctionality, IEngUserProfile profile) throws EMFUserError;
 
 	/**
 	 * Implements the query to erase a low functionality. All information needed is stored into the input <code>LowFunctionality</code> object.
@@ -136,7 +136,7 @@ public interface ILowFunctionalityDAO extends ISpagoBIDao {
 	 *
 	 * @throws EMFUserError If an Exception occurred
 	 */
-	public void eraseLowFunctionality(LowFunctionality aLowFunctionality, IEngUserProfile profile) throws EMFUserError;
+	void eraseLowFunctionality(LowFunctionality aLowFunctionality, IEngUserProfile profile) throws EMFUserError;
 
 	/**
 	 * Control if exist a functionality with the given code.
@@ -147,7 +147,7 @@ public interface ILowFunctionalityDAO extends ISpagoBIDao {
 	 *
 	 * @throws EMFUserError the EMF user error
 	 */
-	public Integer existByCode(String code) throws EMFUserError;
+	Integer existByCode(String code) throws EMFUserError;
 
 	/**
 	 * Control if the functionality with the given id has childs.
@@ -158,7 +158,7 @@ public interface ILowFunctionalityDAO extends ISpagoBIDao {
 	 *
 	 * @throws EMFUserError the EMF user error
 	 */
-	public boolean hasChild(Integer id) throws EMFUserError;
+	boolean hasChild(Integer id) throws EMFUserError;
 
 	/**
 	 * Delete inconsistent roles.
@@ -167,7 +167,7 @@ public interface ILowFunctionalityDAO extends ISpagoBIDao {
 	 *
 	 * @throws EMFUserError the EMF user error
 	 */
-	public void deleteInconsistentRoles(Set set) throws EMFUserError;
+	void deleteInconsistentRoles(Set set) throws EMFUserError;
 
 	/**
 	 * Loads all the functionalities.
@@ -178,7 +178,7 @@ public interface ILowFunctionalityDAO extends ISpagoBIDao {
 	 *
 	 * @throws EMFUserError the EMF user error
 	 */
-	public List loadAllLowFunctionalities(boolean recoverBIObjects) throws EMFUserError;
+	List<LowFunctionality> loadAllLowFunctionalities(boolean recoverBIObjects) throws EMFUserError;
 
 	/**
 	 * Loads all the functionalities.
@@ -189,7 +189,7 @@ public interface ILowFunctionalityDAO extends ISpagoBIDao {
 	 *
 	 * @throws EMFUserError the EMF user error
 	 */
-	public List loadAllLowFunctionalities(boolean recoverBIObjects, List<String> allowedDocTypes) throws EMFUserError;
+	List<LowFunctionality> loadAllLowFunctionalities(boolean recoverBIObjects, List<String> allowedDocTypes) throws EMFUserError;
 
 	/**
 	 * Loads all the sub functionalities of the given initial path.
@@ -201,7 +201,7 @@ public interface ILowFunctionalityDAO extends ISpagoBIDao {
 	 *
 	 * @throws EMFUserError the EMF user error
 	 */
-	public List loadSubLowFunctionalities(String initialPath, boolean recoverBIObjects) throws EMFUserError;
+	List<LowFunctionality> loadSubLowFunctionalities(String initialPath, boolean recoverBIObjects) throws EMFUserError;
 
 	/**
 	 * Loads all the child functionalities of the given parent functionality.
@@ -213,7 +213,7 @@ public interface ILowFunctionalityDAO extends ISpagoBIDao {
 	 *
 	 * @throws EMFUserError the EMF user error
 	 */
-	public List loadChildFunctionalities(Integer parentId, boolean recoverBIObjects) throws EMFUserError;
+	List<LowFunctionality> loadChildFunctionalities(Integer parentId, boolean recoverBIObjects) throws EMFUserError;
 
 	/**
 	 * Loads the root functionality.
@@ -224,7 +224,7 @@ public interface ILowFunctionalityDAO extends ISpagoBIDao {
 	 *
 	 * @throws EMFUserError the EMF user error
 	 */
-	public LowFunctionality loadRootLowFunctionality(boolean recoverBIObjects) throws EMFUserError;
+	LowFunctionality loadRootLowFunctionality(boolean recoverBIObjects) throws EMFUserError;
 
 	/**
 	 * Moves up the functionality specified by the id at input in the functionalities tree.
@@ -233,7 +233,7 @@ public interface ILowFunctionalityDAO extends ISpagoBIDao {
 	 *
 	 * @throws EMFUserError the EMF user error
 	 */
-	public void moveUpLowFunctionality(Integer functionalityID) throws EMFUserError;
+	void moveUpLowFunctionality(Integer functionalityID) throws EMFUserError;
 
 	/**
 	 * Moves down the functionality specified by the id at input in the functionalities tree.
@@ -242,7 +242,7 @@ public interface ILowFunctionalityDAO extends ISpagoBIDao {
 	 *
 	 * @throws EMFUserError the EMF user error
 	 */
-	public void moveDownLowFunctionality(Integer functionalityID) throws EMFUserError;
+	void moveDownLowFunctionality(Integer functionalityID) throws EMFUserError;
 
 	/**
 	 * Loads the user's functionalities.
@@ -255,7 +255,7 @@ public interface ILowFunctionalityDAO extends ISpagoBIDao {
 	 *
 	 * @throws EMFUserError the EMF user error
 	 */
-	public List loadUserFunctionalities(Integer parentId, boolean recoverBIObjects, IEngUserProfile profile) throws EMFUserError;
+	List<LowFunctionality> loadUserFunctionalities(Integer parentId, boolean recoverBIObjects, IEngUserProfile profile) throws EMFUserError;
 
 	/**
 	 * Load all functionalities associated the user roles.
@@ -269,7 +269,8 @@ public interface ILowFunctionalityDAO extends ISpagoBIDao {
 	 *
 	 * @see it.eng.spagobi.analiticalmodel.functionalitytree.dao.ILowFunctionalityDAO#loadAllLowFunctionalities(boolean)
 	 */
-	public List loadUserFunctionalitiesFiltered(Integer parentId, boolean recoverBIObjects, IEngUserProfile profile, String permission) throws EMFUserError;
+	List<LowFunctionality> loadUserFunctionalitiesFiltered(Integer parentId, boolean recoverBIObjects, IEngUserProfile profile, String permission)
+			throws EMFUserError;
 
 	/**
 	 * Load all fathers functionalities to root level.
@@ -280,7 +281,7 @@ public interface ILowFunctionalityDAO extends ISpagoBIDao {
 	 * @throws EMFUserError the EMF user error
 	 *
 	 */
-	public List loadParentFunctionalities(Integer functId, Integer rootFolderID) throws EMFUserError;
+	List<LowFunctionality> loadParentFunctionalities(Integer functId, Integer rootFolderID) throws EMFUserError;
 
 	/**
 	 * Load all functionalities with type USER_FUNCT
@@ -290,7 +291,7 @@ public interface ILowFunctionalityDAO extends ISpagoBIDao {
 	 * @throws EMFUserError the EMF user error
 	 *
 	 */
-	public List loadAllUserFunct() throws EMFUserError;
+	List<LowFunctionality> loadAllUserFunct() throws EMFUserError;
 
 	/**
 	 * Implements the query to insert a community functionality. All information needed is stored into the input <code>LowFunctionality</code> object.
@@ -299,9 +300,9 @@ public interface ILowFunctionalityDAO extends ISpagoBIDao {
 	 *
 	 * @throws EMFUserError If an Exception occurred
 	 */
-	public Integer insertCommunityFunctionality(LowFunctionality aLowFunctionality) throws EMFUserError;
+	Integer insertCommunityFunctionality(LowFunctionality aLowFunctionality) throws EMFUserError;
 
-	public List loadAllLowFunctionalities(String dateFilter) throws EMFUserError;
+	List<LowFunctionality> loadAllLowFunctionalities(String dateFilter) throws EMFUserError;
 
-	public List loadAllLowFunctionalities(boolean recoverBIObjects, List<String> allowedDocTypes, String date, String status) throws EMFUserError;
+	List<LowFunctionality> loadAllLowFunctionalities(boolean recoverBIObjects, List<String> allowedDocTypes, String date, String status) throws EMFUserError;
 }

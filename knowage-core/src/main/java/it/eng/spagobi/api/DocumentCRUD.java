@@ -201,7 +201,7 @@ public class DocumentCRUD extends AbstractSpagoBIResource {
 	@GET
 	@Path("/myAnalysisDocsList")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
-	public String getMyAnalysisDocuments(@Context HttpServletRequest req) {
+	public String getMyAnalysisDocuments(@Context HttpServletRequest req) throws JSONException, EMFUserError, SerializationException {
 		logger.debug("IN");
 		String user = req.getParameter(USER);
 		String docType = req.getParameter(DOCUMENT_TYPE);
@@ -209,112 +209,102 @@ public class DocumentCRUD extends AbstractSpagoBIResource {
 		logger.debug("Searching documents inside personal folder of user [" + user + "]");
 
 		IEngUserProfile profile = this.getUserProfile();
-		List userFunctionalties;
 		LowFunctionality personalFolder = null;
-		try {
 
-			// Search personal folder of current user
-			ILowFunctionalityDAO functionalitiesDAO = DAOFactory.getLowFunctionalityDAO();
+		// Search personal folder of current user
+		ILowFunctionalityDAO functionalitiesDAO = DAOFactory.getLowFunctionalityDAO();
 
-			userFunctionalties = functionalitiesDAO.loadAllUserFunct();
-			for (Iterator it = userFunctionalties.iterator(); it.hasNext();) {
-				LowFunctionality funct = (LowFunctionality) it.next();
-				if (UserUtilities.isPersonalFolder(funct, (UserProfile) profile)) {
-					personalFolder = funct;
-					break;
-				}
+		List<LowFunctionality> userFunctionalties = functionalitiesDAO.loadAllUserFunct();
+		for (Iterator<LowFunctionality> it = userFunctionalties.iterator(); it.hasNext();) {
+			LowFunctionality funct = it.next();
+			if (UserUtilities.isPersonalFolder(funct, (UserProfile) profile)) {
+				personalFolder = funct;
+				break;
+			}
+		}
+
+		List myObjects = new ArrayList();
+		if (personalFolder != null) {
+			Engine geoEngine = null;
+			Engine cockpitEngine = null;
+			Engine kpiEngine = null;
+			Engine dossierEngine = null;
+
+			try {
+				geoEngine = ExecuteAdHocUtility.getGeoreportEngine();
+			} catch (SpagoBIRuntimeException r) {
+				// the geo engine is not found
+				logger.info("Engine not found. ", r);
 			}
 
-			List myObjects = new ArrayList();
-			if (personalFolder != null) {
-				Engine geoEngine = null;
-				Engine cockpitEngine = null;
-				Engine kpiEngine = null;
-				Engine dossierEngine = null;
-
-				try {
-					geoEngine = ExecuteAdHocUtility.getGeoreportEngine();
-				} catch (SpagoBIRuntimeException r) {
-					// the geo engine is not found
-					logger.info("Engine not found. ", r);
-				}
-
-				try {
-					cockpitEngine = ExecuteAdHocUtility.getCockpitEngine();
-				} catch (SpagoBIRuntimeException r) {
-					// the cockpit engine is not found
-					logger.info("Engine not found. ", r);
-				}
-
-				try {
-					kpiEngine = ExecuteAdHocUtility.getKPIEngine();
-				} catch (SpagoBIRuntimeException r) {
-					// the kpi engine is not found
-					logger.info("Engine not found. ", r);
-				}
-
-				try {
-					dossierEngine = ExecuteAdHocUtility.getDossierEngine();
-				} catch (SpagoBIRuntimeException r) {
-					// the geo engine is not found
-					logger.info("Engine not found. ", r);
-				}
-
-				// return all documents inside the personal folder
-				if ((docType == null) || (docType.equalsIgnoreCase("ALL"))) {
-					List filteredMyObjects = new ArrayList();
-					myObjects = DAOFactory.getBIObjectDAO().loadBIObjects(Integer.valueOf(personalFolder.getId()), profile, true);
-					// Get only documents of type Cockpit and Map
-					for (Iterator it = myObjects.iterator(); it.hasNext();) {
-						BIObject biObject = (BIObject) it.next();
-						String biObjectType = biObject.getBiObjectTypeCode();
-						if ((geoEngine != null && biObject.getEngine().getId().equals(geoEngine.getId()))
-								|| (cockpitEngine != null && biObject.getEngine().getId().equals(cockpitEngine.getId()))
-								|| (kpiEngine != null && biObject.getEngine().getId().equals(kpiEngine.getId()))
-								|| (dossierEngine != null && biObject.getEngine().getId().equals(dossierEngine.getId()))) {
-							filteredMyObjects.add(biObject);
-						}
-					}
-					myObjects = filteredMyObjects;
-
-				} else if (docType.equalsIgnoreCase("Map") && geoEngine != null) {
-					// return only Geo Map (GIS) documents inside the personal
-					// folder
-					myObjects = DAOFactory.getBIObjectDAO().loadBIObjects("MAP", "REL", personalFolder.getPath());
-
-				} else if (docType.equalsIgnoreCase("Cockpit") && cockpitEngine != null) {
-					// return only Cockpits inside the personal folder
-					List filteredMyObjects = new ArrayList();
-					myObjects = DAOFactory.getBIObjectDAO().loadBIObjects("DOCUMENT_COMPOSITE", "REL", personalFolder.getPath());
-					for (Iterator it = myObjects.iterator(); it.hasNext();) {
-						BIObject biObject = (BIObject) it.next();
-						if (biObject.getEngine().getId().equals(cockpitEngine.getId())) {
-							filteredMyObjects.add(biObject);
-						}
-					}
-					myObjects = filteredMyObjects;
-				}
-
-				// Serialize documents list
-				MessageBuilder m = new MessageBuilder();
-				Locale locale = m.getLocale(req);
-				JSONArray documentsJSON = (JSONArray) SerializerFactory.getSerializer("application/json").serialize(myObjects, locale);
-				DocumentsJSONDecorator.decorateDocuments(documentsJSON, profile, personalFolder);
-				JSONObject documentsResponseJSON = createJSONResponseDocuments(documentsJSON);
-
-				return documentsResponseJSON.toString();
+			try {
+				cockpitEngine = ExecuteAdHocUtility.getCockpitEngine();
+			} catch (SpagoBIRuntimeException r) {
+				// the cockpit engine is not found
+				logger.info("Engine not found. ", r);
 			}
 
-		} catch (EMFUserError e) {
-			logger.error("Error in myAnalysisDocsList Service: " + e);
-		} catch (SerializationException e) {
-			logger.error("Serializing Error in myAnalysisDocsList Service: " + e);
-		} catch (JSONException e) {
-			logger.error("JSONException Error in myAnalysisDocsList Service: " + e);
+			try {
+				kpiEngine = ExecuteAdHocUtility.getKPIEngine();
+			} catch (SpagoBIRuntimeException r) {
+				// the kpi engine is not found
+				logger.info("Engine not found. ", r);
+			}
+
+			try {
+				dossierEngine = ExecuteAdHocUtility.getDossierEngine();
+			} catch (SpagoBIRuntimeException r) {
+				// the geo engine is not found
+				logger.info("Engine not found. ", r);
+			}
+
+			// return all documents inside the personal folder
+			if ((docType == null) || (docType.equalsIgnoreCase("ALL"))) {
+				List filteredMyObjects = new ArrayList();
+				myObjects = DAOFactory.getBIObjectDAO().loadBIObjects(personalFolder.getId(), profile, true);
+				// Get only documents of type Cockpit and Map
+				for (Iterator it = myObjects.iterator(); it.hasNext();) {
+					BIObject biObject = (BIObject) it.next();
+					if ((geoEngine != null && biObject.getEngine().getId().equals(geoEngine.getId()))
+							|| (cockpitEngine != null && biObject.getEngine().getId().equals(cockpitEngine.getId()))
+							|| (kpiEngine != null && biObject.getEngine().getId().equals(kpiEngine.getId()))
+							|| (dossierEngine != null && biObject.getEngine().getId().equals(dossierEngine.getId()))) {
+						filteredMyObjects.add(biObject);
+					}
+				}
+				myObjects = filteredMyObjects;
+
+			} else if (docType.equalsIgnoreCase("Map") && geoEngine != null) {
+				// return only Geo Map (GIS) documents inside the personal
+				// folder
+				myObjects = DAOFactory.getBIObjectDAO().loadBIObjects("MAP", "REL", personalFolder.getPath());
+
+			} else if (docType.equalsIgnoreCase("Cockpit") && cockpitEngine != null) {
+				// return only Cockpits inside the personal folder
+				List filteredMyObjects = new ArrayList();
+				myObjects = DAOFactory.getBIObjectDAO().loadBIObjects("DOCUMENT_COMPOSITE", "REL", personalFolder.getPath());
+				for (Iterator it = myObjects.iterator(); it.hasNext();) {
+					BIObject biObject = (BIObject) it.next();
+					if (biObject.getEngine().getId().equals(cockpitEngine.getId())) {
+						filteredMyObjects.add(biObject);
+					}
+				}
+				myObjects = filteredMyObjects;
+			}
+
+			// Serialize documents list
+			MessageBuilder m = new MessageBuilder();
+			Locale locale = m.getLocale(req);
+			JSONArray documentsJSON = (JSONArray) SerializerFactory.getSerializer("application/json").serialize(myObjects, locale);
+			DocumentsJSONDecorator.decorateDocuments(documentsJSON, profile, personalFolder);
+			JSONObject documentsResponseJSON = createJSONResponseDocuments(documentsJSON);
+
+			return documentsResponseJSON.toString();
 		}
 
 		logger.debug("OUT");
 		return "{\"root\": []}";
+
 	}
 
 	/**
@@ -416,7 +406,7 @@ public class DocumentCRUD extends AbstractSpagoBIResource {
 	private void moveStateUp(Integer id) throws EMFUserError {
 
 		if (id != null) {
-			BIObject obj = DAOFactory.getBIObjectDAO().loadBIObjectById(new Integer(id));
+			BIObject obj = DAOFactory.getBIObjectDAO().loadBIObjectById(id);
 			if (obj != null) {
 				String state = obj.getStateCode();
 				if (state != null && state.equals("DEV")) {
@@ -436,7 +426,7 @@ public class DocumentCRUD extends AbstractSpagoBIResource {
 	private void moveStateDown(Integer id) throws EMFUserError {
 
 		if (id != null) {
-			BIObject obj = DAOFactory.getBIObjectDAO().loadBIObjectById(new Integer(id));
+			BIObject obj = DAOFactory.getBIObjectDAO().loadBIObjectById(id);
 			if (obj != null) {
 				String state = obj.getStateCode();
 				if (state != null && state.equals("REL")) {
