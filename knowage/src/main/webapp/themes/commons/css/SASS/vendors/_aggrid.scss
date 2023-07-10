@@ -534,3 +534,11 @@ $exportBarHeight : 36px;
 		height: 100% !important;
 	}
 }
+
+@supports (-moz-appearance: none) {
+    .ag-theme-balham {
+        .ag-center-cols-viewport {
+            overflow-x: auto;
+        }
+    }
+}
