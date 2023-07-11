@@ -721,8 +721,8 @@ public class EngineDAOHibImpl extends AbstractHibernateDAO implements IEngineDAO
 			String engineLabel = engine.getLabel();
 			String configLabel = ConfigurationConstants.DOCUMENT_EXPORTER_PREFIX + engineLabel;
 			Config exportersConfig = sbiConfigDAO.loadConfigParametersByLabel(configLabel);
-			List<String> exporters = Optional.ofNullable(exportersConfig.getValueCheck())
-					.map(e -> Arrays.asList(e.split(ConfigurationConstants.DOCUMENT_EXPORTER_SEPARATOR))).orElse(Collections.emptyList());
+			List<String> exporters = Optional.ofNullable(exportersConfig).map(e -> e.getValueCheck())
+					.map(e -> e.split(ConfigurationConstants.DOCUMENT_EXPORTER_SEPARATOR)).map(e -> Arrays.asList(e)).orElse(Collections.emptyList());
 
 			for (String exporter : exporters) {
 				toReturn.add(exporter);
