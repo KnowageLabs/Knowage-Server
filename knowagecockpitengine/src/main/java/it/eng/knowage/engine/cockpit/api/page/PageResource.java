@@ -565,10 +565,17 @@ public class PageResource extends AbstractCockpitEngineResource {
 
 		for (BIObjectParameter driver : drivers) {
 			String urlName = driver.getParameterUrlName();
+
 			boolean isMultivalue = driver.isMultivalue();
 
 			List<Object> values = Optional.ofNullable(parameterMap.get(urlName)).map(Arrays::asList).orElse(Collections.emptyList());
 			List<Object> descriptions = Optional.ofNullable(parameterMap.get(urlName + "_description")).map(Arrays::asList).orElse(Collections.emptyList());
+
+			if ("outputType".equals(urlName)) {
+				logger.debug("Forcing outputType to HTML");
+				values = Arrays.asList(new String[] { "HTML" });
+				descriptions = Arrays.asList(new String[] { "HTML" });
+			}
 
 			JSONObject currentDriverJson = new JSONObject();
 
