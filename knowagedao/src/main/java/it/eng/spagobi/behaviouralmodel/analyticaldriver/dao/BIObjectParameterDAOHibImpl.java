@@ -476,9 +476,9 @@ public class BIObjectParameterDAOHibImpl extends AbstractHibernateDAO implements
 	 * @see it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IBIObjectParameterDAO#getDocumentLabelsListUsingParameter(java.lang.Integer)
 	 */
 	@Override
-	public List getDocumentLabelsListUsingParameter(Integer parId) throws HibernateException {
+	public List<String> getDocumentLabelsListUsingParameter(Integer parId) throws HibernateException {
 
-		List toReturn = new ArrayList();
+		List<String> toReturn = new ArrayList<>();
 		Session aSession = null;
 		Transaction tx = null;
 		try {
@@ -488,7 +488,7 @@ public class BIObjectParameterDAOHibImpl extends AbstractHibernateDAO implements
 			String hql = "select distinct(obj.label) from SbiObjects obj, SbiObjPar objPar where obj.biobjId = objPar.sbiObject.biobjId and objPar.sbiParameter.parId = :parId";
 			Query query = aSession.createQuery(hql);
 			query.setParameter("parId", parId);
-			List result = query.list();
+			List<String> result = query.list();
 
 			toReturn = result;
 
@@ -516,11 +516,11 @@ public class BIObjectParameterDAOHibImpl extends AbstractHibernateDAO implements
 	 * @see it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IBIObjectParameterDAO#loadBIObjectParametersById(java.lang.Integer)
 	 */
 	@Override
-	public List loadBIObjectParametersById(Integer biObjectID) throws HibernateException {
+	public List<BIObjectParameter> loadBIObjectParametersById(Integer biObjectID) throws HibernateException {
 
 		Session aSession = null;
 		Transaction tx = null;
-		List resultList = new ArrayList();
+		List<BIObjectParameter> resultList = new ArrayList<>();
 		try {
 			aSession = getSession();
 			tx = aSession.beginTransaction();
