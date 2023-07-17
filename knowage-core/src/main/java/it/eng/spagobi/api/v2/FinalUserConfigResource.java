@@ -44,7 +44,7 @@ public class FinalUserConfigResource extends AbstractSpagoBIResource {
 	 * label of the config. ex: Arrays.asList("a", "b", "c");
 	 */
 	private static final List<String> userConfigLabels = Arrays.asList("SPAGOBI.SESSION_PARAMETERS_MANAGER.enabled", "SPAGOBI.DATE-FORMAT-SERVER.format",
-			"SPAGOBI.TIMESTAMP-FORMAT.format");
+			"SPAGOBI.TIMESTAMP-FORMAT.format","KNOWAGE.EMBEDDING_APPLICATION_VALUE");
 
 	private static Logger logger = Logger.getLogger(ConfigResource.class);
 
@@ -60,7 +60,7 @@ public class FinalUserConfigResource extends AbstractSpagoBIResource {
 
 			for (String label : userConfigLabels) {
 				Config cfg = configsDao.loadConfigParametersByLabel(label);
-				if (cfg.isActive())
+				if (cfg != null && cfg.isActive())
 					userConfigs.put(cfg.getLabel(), cfg.getValueCheck());
 			}
 
