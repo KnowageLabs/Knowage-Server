@@ -69,10 +69,7 @@ public class SnapshotDAOHibImpl extends AbstractHibernateDAO implements ISnapsho
 				tx.rollback();
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		} finally {
-			if (aSession != null) {
-				if (aSession.isOpen())
-					aSession.close();
-			}
+			closeSession(aSession);
 		}
 	}
 
@@ -82,8 +79,8 @@ public class SnapshotDAOHibImpl extends AbstractHibernateDAO implements ISnapsho
 	 * @see it.eng.spagobi.analiticalmodel.document.dao.ISnapshotDAO#getSnapshots(java.lang.Integer)
 	 */
 	@Override
-	public List getSnapshots(Integer idBIObj) throws EMFUserError {
-		List snaps = new ArrayList();
+	public List<Snapshot> getSnapshots(Integer idBIObj) throws EMFUserError {
+		List<Snapshot> snaps = new ArrayList<>();
 		Session aSession = null;
 		Transaction tx = null;
 		try {
@@ -126,17 +123,14 @@ public class SnapshotDAOHibImpl extends AbstractHibernateDAO implements ISnapsho
 				tx.rollback();
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		} finally {
-			if (aSession != null) {
-				if (aSession.isOpen())
-					aSession.close();
-			}
+			closeSession(aSession);
 		}
 		return snaps;
 	}
 
 	@Override
 	public List<SnapshotMainInfo> getSnapshotMainInfos(Integer idBIObj) throws EMFUserError {
-		List<SnapshotMainInfo> snaps = new ArrayList<SnapshotMainInfo>();
+		List<SnapshotMainInfo> snaps = new ArrayList<>();
 		Session aSession = null;
 		Transaction tx = null;
 		try {
@@ -170,25 +164,21 @@ public class SnapshotDAOHibImpl extends AbstractHibernateDAO implements ISnapsho
 				tx.rollback();
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		} finally {
-			if (aSession != null) {
-				if (aSession.isOpen())
-					aSession.close();
-			}
+			closeSession(aSession);
 		}
 		return snaps;
 	}
 
 	@Override
 	public List getSnapshotsForSchedulationAndDocument(Integer idBIObj, String scheduler, boolean loadContent) throws EMFUserError {
-		List snaps = new ArrayList();
+		List<Snapshot> snaps = new ArrayList<>();
 		Session aSession = null;
 		Transaction tx = null;
 		try {
 			aSession = getSession();
 			tx = aSession.beginTransaction();
-			// String hql = "from SbiSnapshots ss where ss.sbiObject.biobjId = " + idBIObj;
 			String hql = "";
-			if (loadContent == true) {
+			if (loadContent) {
 				hql = "from SbiSnapshots ss where ss.sbiObject.biobjId = ? and ss.scheduler = ?";
 			} else {
 				hql = "select distinct snap.snapId, snap.name, snap.description, snap.creationDate, snap.sbiObject " + "from SbiSnapshots as snap"
@@ -239,10 +229,7 @@ public class SnapshotDAOHibImpl extends AbstractHibernateDAO implements ISnapsho
 				tx.rollback();
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		} finally {
-			if (aSession != null) {
-				if (aSession.isOpen())
-					aSession.close();
-			}
+			closeSession(aSession);
 		}
 		return snaps;
 	}
@@ -289,10 +276,7 @@ public class SnapshotDAOHibImpl extends AbstractHibernateDAO implements ISnapsho
 				tx.rollback();
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		} finally {
-			if (aSession != null) {
-				if (aSession.isOpen())
-					aSession.close();
-			}
+			closeSession(aSession);
 		}
 	}
 
@@ -336,10 +320,7 @@ public class SnapshotDAOHibImpl extends AbstractHibernateDAO implements ISnapsho
 				tx.rollback();
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		} finally {
-			if (aSession != null) {
-				if (aSession.isOpen())
-					aSession.close();
-			}
+			closeSession(aSession);
 		}
 		return snap;
 	}
@@ -360,10 +341,7 @@ public class SnapshotDAOHibImpl extends AbstractHibernateDAO implements ISnapsho
 
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		} finally {
-			if (aSession != null) {
-				if (aSession.isOpen())
-					aSession.close();
-			}
+			closeSession(aSession);
 		}
 
 	}
@@ -376,7 +354,6 @@ public class SnapshotDAOHibImpl extends AbstractHibernateDAO implements ISnapsho
 		try {
 			aSession = getSession();
 			tx = aSession.beginTransaction();
-			// String hql = "from SbiSnapshots ss where ss.sbiObject.biobjId = " + idBIObj;
 			String hql = "from SbiSnapshots ss where ss.sbiObject.biobjId = ? and ss.creationDate = (select max(s.creationDate) from SbiSnapshots s where s.sbiObject.biobjId = ?)";
 
 			Query query = aSession.createQuery(hql);
@@ -396,10 +373,7 @@ public class SnapshotDAOHibImpl extends AbstractHibernateDAO implements ISnapsho
 				tx.rollback();
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		} finally {
-			if (aSession != null) {
-				if (aSession.isOpen())
-					aSession.close();
-			}
+			closeSession(aSession);
 		}
 		return snap;
 	}
@@ -418,7 +392,7 @@ public class SnapshotDAOHibImpl extends AbstractHibernateDAO implements ISnapsho
 			while (iter2.hasNext()) {
 				Integer aInteger = iter2.next();
 				List<Snapshot> snapshots = aMap.get(aInteger);
-				if (snapshots.size() > 0) {
+				if (!snapshots.isEmpty()) {
 					Date creationDate = snapshots.get(0).getDateCreation();
 					if (lastDate == null || creationDate.compareTo(lastDate) > 0) {
 						lastDate = creationDate;
@@ -434,9 +408,9 @@ public class SnapshotDAOHibImpl extends AbstractHibernateDAO implements ISnapsho
 	@Override
 	public Map<String, Map<Integer, List<Snapshot>>> getSnapshotsBySchedulation(String schedulationName, boolean collate, boolean loadContent)
 			throws EMFUserError {
-		Map<String, Map<Integer, List<Snapshot>>> snaps = new HashMap<String, Map<Integer, List<Snapshot>>>();
-		List<List<Snapshot>> documentLIstLIst = new ArrayList<List<Snapshot>>();// supporting list that is the copy of the lists in snaps. it is used to
-																				// fascicolate
+		Map<String, Map<Integer, List<Snapshot>>> snaps = new HashMap<>();
+		List<List<Snapshot>> documentLIstLIst = new ArrayList<>();// supporting list that is the copy of the lists in snaps. it is used to
+																	// fascicolate
 
 		Session aSession = null;
 
@@ -507,7 +481,7 @@ public class SnapshotDAOHibImpl extends AbstractHibernateDAO implements ISnapsho
 				Integer schedulationTime = snap.getSchedulationStartDate();
 				List<Snapshot> snapForSchedulationAndTime = snapForSchedulation.get(schedulationTime);
 				if (snapForSchedulationAndTime == null) {
-					snapForSchedulationAndTime = new ArrayList<Snapshot>();
+					snapForSchedulationAndTime = new ArrayList<>();
 					snapForSchedulation.put(schedulationTime, snapForSchedulationAndTime);
 					documentLIstLIst.add(snapForSchedulationAndTime);
 				}
@@ -523,10 +497,7 @@ public class SnapshotDAOHibImpl extends AbstractHibernateDAO implements ISnapsho
 			logException(he);
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		} finally {
-			if (aSession != null) {
-				if (aSession.isOpen())
-					aSession.close();
-			}
+			closeSession(aSession);
 		}
 		return snaps;
 	}
@@ -540,18 +511,18 @@ public class SnapshotDAOHibImpl extends AbstractHibernateDAO implements ISnapsho
 	private void collateSnapshot(List<List<Snapshot>> documentLIstLIst) {
 		for (Iterator iterator = documentLIstLIst.iterator(); iterator.hasNext();) {
 			List<Snapshot> aLits = (List<Snapshot>) iterator.next();
-			Map<Integer, List<Snapshot>> documetSnapMap = new TreeMap<Integer, List<Snapshot>>();
+			Map<Integer, List<Snapshot>> documetSnapMap = new TreeMap<>();
 			for (Iterator iterator2 = aLits.iterator(); iterator2.hasNext();) {
 				Snapshot snapshot = (Snapshot) iterator2.next();
 				List<Snapshot> listOfDOc = documetSnapMap.get(snapshot.getBiobjId());
 				if (listOfDOc == null) {
-					listOfDOc = new ArrayList<Snapshot>();
+					listOfDOc = new ArrayList<>();
 					documetSnapMap.put(snapshot.getBiobjId(), listOfDOc);
 				}
 				listOfDOc.add(snapshot);
 			}
 
-			List<Snapshot> sortedList = new ArrayList<Snapshot>();
+			List<Snapshot> sortedList = new ArrayList<>();
 
 			Collection<List<Snapshot>> documentsSnap = documetSnapMap.values();
 			int documentListSize = -1;

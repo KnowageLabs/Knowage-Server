@@ -68,9 +68,9 @@ public class SbiUserDAOHibImpl extends AbstractHibernateDAO implements ISbiUserD
 
 	private static final Logger LOGGER = Logger.getLogger(SbiUserDAOHibImpl.class);
 
-	private static enum AvailableFiltersOnUsersList {
+	private enum AvailableFiltersOnUsersList {
 		userId, fullName
-	};
+	}
 
 	private UserEventsEmettingCommand eventEmittingCommand = new NoEventEmitting();
 
@@ -106,10 +106,7 @@ public class SbiUserDAOHibImpl extends AbstractHibernateDAO implements ISbiUserD
 				tx.rollback();
 			throw new SpagoBIDAOException("Error while loading user by id " + id, he);
 		} finally {
-			if (aSession != null) {
-				if (aSession.isOpen())
-					aSession.close();
-			}
+			closeSession(aSession);
 		}
 		LOGGER.debug("OUT");
 		return toReturn;
@@ -118,7 +115,7 @@ public class SbiUserDAOHibImpl extends AbstractHibernateDAO implements ISbiUserD
 	@Override
 	public List<UserBO> loadUsers(QueryFilters filters, String dateFilter) {
 		LOGGER.debug("IN");
-		List<UserBO> results = new ArrayList<UserBO>();
+		List<UserBO> results = new ArrayList<>();
 		Session aSession = null;
 		Transaction tx = null;
 
@@ -155,10 +152,7 @@ public class SbiUserDAOHibImpl extends AbstractHibernateDAO implements ISbiUserD
 			throw new SpagoBIDAOException("Error while loading users ", he);
 		} finally {
 			LOGGER.debug("OUT");
-			if (aSession != null) {
-				if (aSession.isOpen())
-					aSession.close();
-			}
+			closeSession(aSession);
 		}
 	}
 
@@ -200,10 +194,7 @@ public class SbiUserDAOHibImpl extends AbstractHibernateDAO implements ISbiUserD
 			throw new SpagoBIDAOException("Error while reading failed login attempts counter for user " + userId, he);
 		} finally {
 			LOGGER.debug("OUT");
-			if (aSession != null) {
-				if (aSession.isOpen())
-					aSession.close();
-			}
+			closeSession(aSession);
 		}
 	}
 
@@ -236,10 +227,7 @@ public class SbiUserDAOHibImpl extends AbstractHibernateDAO implements ISbiUserD
 				tx.rollback();
 			throw new SpagoBIDAOException("Error while inserting user " + user, he);
 		} finally {
-			if (aSession != null) {
-				if (aSession.isOpen())
-					aSession.close();
-			}
+			closeSession(aSession);
 		}
 	}
 
@@ -268,10 +256,7 @@ public class SbiUserDAOHibImpl extends AbstractHibernateDAO implements ISbiUserD
 				tx.rollback();
 			throw new SpagoBIDAOException("Error while update user [" + user + "] with id " + userID, he);
 		} finally {
-			if (aSession != null) {
-				if (aSession.isOpen())
-					aSession.close();
-			}
+			closeSession(aSession);
 		}
 	}
 
@@ -293,10 +278,7 @@ public class SbiUserDAOHibImpl extends AbstractHibernateDAO implements ISbiUserD
 				tx.rollback();
 			throw new SpagoBIDAOException("Error while update user attribute " + attribute, he);
 		} finally {
-			if (aSession != null) {
-				if (aSession.isOpen())
-					aSession.close();
-			}
+			closeSession(aSession);
 		}
 	}
 
@@ -318,10 +300,7 @@ public class SbiUserDAOHibImpl extends AbstractHibernateDAO implements ISbiUserD
 				tx.rollback();
 			throw new SpagoBIDAOException("Error while updating user with role " + role, he);
 		} finally {
-			if (aSession != null) {
-				if (aSession.isOpen())
-					aSession.close();
-			}
+			closeSession(aSession);
 		}
 	}
 
@@ -367,10 +346,7 @@ public class SbiUserDAOHibImpl extends AbstractHibernateDAO implements ISbiUserD
 			throw new SpagoBIDAOException("Error while loading user attribute with id " + id, he);
 		} finally {
 			LOGGER.debug("OUT");
-			if (aSession != null) {
-				if (aSession.isOpen())
-					aSession.close();
-			}
+			closeSession(aSession);
 		}
 	}
 
@@ -395,10 +371,7 @@ public class SbiUserDAOHibImpl extends AbstractHibernateDAO implements ISbiUserD
 			throw new SpagoBIDAOException("Error while loading user role with id " + id, he);
 		} finally {
 			LOGGER.debug("OUT");
-			if (aSession != null) {
-				if (aSession.isOpen())
-					aSession.close();
-			}
+			closeSession(aSession);
 		}
 	}
 
@@ -422,10 +395,7 @@ public class SbiUserDAOHibImpl extends AbstractHibernateDAO implements ISbiUserD
 			throw new SpagoBIDAOException("Error while loading users", he);
 		} finally {
 			LOGGER.debug("OUT");
-			if (aSession != null) {
-				if (aSession.isOpen())
-					aSession.close();
-			}
+			closeSession(aSession);
 		}
 	}
 
@@ -488,8 +458,8 @@ public class SbiUserDAOHibImpl extends AbstractHibernateDAO implements ISbiUserD
 			queryR.setInteger("id", id);
 			List<SbiExtUserRoles> userRoles = queryR.list();
 
-			Set<String> actualRoles = new HashSet<String>();
-			Set<String> addedRoles = new HashSet<String>();
+			Set<String> actualRoles = new HashSet<>();
+			Set<String> addedRoles = new HashSet<>();
 			Set<String> deletedRoles = null;
 
 			if (userRoles != null && !userRoles.isEmpty()) {
@@ -502,7 +472,7 @@ public class SbiUserDAOHibImpl extends AbstractHibernateDAO implements ISbiUserD
 				addedRoles.add(sbiExtRoles.getExtRoleId().toString());
 			}
 
-			deletedRoles = new HashSet<String>(actualRoles);
+			deletedRoles = new HashSet<>(actualRoles);
 
 			deletedRoles.removeAll(addedRoles);
 			addedRoles.removeAll(actualRoles);
@@ -560,8 +530,8 @@ public class SbiUserDAOHibImpl extends AbstractHibernateDAO implements ISbiUserD
 			List<SbiUserAttributes> userAttributes = queryR.list();
 			Set<SbiUserAttributes> newAttributes = user.getSbiUserAttributeses();
 
-			Set<Integer> actualAttrs = new HashSet<Integer>();
-			Set<Integer> addedAttrs = new HashSet<Integer>();
+			Set<Integer> actualAttrs = new HashSet<>();
+			Set<Integer> addedAttrs = new HashSet<>();
 			Set<Integer> deletedAttrs = null;
 			Set<Integer> alreadyPresentAttrs = null;
 
@@ -575,8 +545,8 @@ public class SbiUserDAOHibImpl extends AbstractHibernateDAO implements ISbiUserD
 				addedAttrs.add(sbiUserAttributes.getId().getAttributeId());
 			}
 
-			deletedAttrs = new HashSet<Integer>(actualAttrs);
-			alreadyPresentAttrs = new HashSet<Integer>(actualAttrs);
+			deletedAttrs = new HashSet<>(actualAttrs);
+			alreadyPresentAttrs = new HashSet<>(actualAttrs);
 
 			alreadyPresentAttrs.retainAll(addedAttrs);
 			deletedAttrs.removeAll(addedAttrs);
@@ -663,10 +633,7 @@ public class SbiUserDAOHibImpl extends AbstractHibernateDAO implements ISbiUserD
 			throw new SpagoBIDAOException("Error while saving user " + user, he);
 		} finally {
 			LOGGER.debug("OUT");
-			if (aSession != null) {
-				if (aSession.isOpen())
-					aSession.close();
-			}
+			closeSession(aSession);
 		}
 		return id;
 
@@ -706,10 +673,7 @@ public class SbiUserDAOHibImpl extends AbstractHibernateDAO implements ISbiUserD
 			throw new SpagoBIDAOException("Error while reading failed login attempts counter for user " + userId, he);
 		} finally {
 			LOGGER.debug("OUT");
-			if (aSession != null) {
-				if (aSession.isOpen())
-					aSession.close();
-			}
+			closeSession(aSession);
 		}
 	}
 
@@ -746,10 +710,7 @@ public class SbiUserDAOHibImpl extends AbstractHibernateDAO implements ISbiUserD
 			throw new SpagoBIDAOException("Error while reading failed login attempts counter for user " + userId, he);
 		} finally {
 			LOGGER.debug("OUT");
-			if (aSession != null) {
-				if (aSession.isOpen())
-					aSession.close();
-			}
+			closeSession(aSession);
 		}
 	}
 
@@ -794,7 +755,7 @@ public class SbiUserDAOHibImpl extends AbstractHibernateDAO implements ISbiUserD
 
 			ArrayList<SbiUser> result = (ArrayList<SbiUser>) crit.list();
 			if (result != null && !result.isEmpty()) {
-				users = new ArrayList<UserBO>();
+				users = new ArrayList<>();
 				for (int i = 0; i < result.size(); i++) {
 					users.add(toUserBO(result.get(i)));
 				}
@@ -807,10 +768,7 @@ public class SbiUserDAOHibImpl extends AbstractHibernateDAO implements ISbiUserD
 			throw new SpagoBIDAOException("Error while loading users", he);
 		} finally {
 			LOGGER.debug("OUT");
-			if (aSession != null) {
-				if (aSession.isOpen())
-					aSession.close();
-			}
+			closeSession(aSession);
 		}
 	}
 
@@ -859,13 +817,13 @@ public class SbiUserDAOHibImpl extends AbstractHibernateDAO implements ISbiUserD
 		}
 		userBO.setSbiExtUserRoleses(userRoles);
 
-		HashMap<Integer, HashMap<String, String>> userAttributes = new HashMap<Integer, HashMap<String, String>>();
+		HashMap<Integer, HashMap<String, String>> userAttributes = new HashMap<>();
 		Set<SbiUserAttributes> attributes = sbiUser.getSbiUserAttributeses();
 
 		for (Iterator<SbiUserAttributes> it = attributes.iterator(); it.hasNext();) {
 			SbiUserAttributes attr = it.next();
 			Integer attrId = attr.getSbiAttribute().getAttributeId();
-			HashMap<String, String> nameValueAttr = new HashMap<String, String>();
+			HashMap<String, String> nameValueAttr = new HashMap<>();
 
 			nameValueAttr.put(attr.getSbiAttribute().getAttributeName(), attr.getAttributeValue());
 			userAttributes.put(attrId, nameValueAttr);
@@ -913,8 +871,7 @@ public class SbiUserDAOHibImpl extends AbstractHibernateDAO implements ISbiUserD
 			Criteria criteria = aSession.createCriteria(SbiUser.class);
 
 			/*
-			 * Here we use ignoreCase() because some sort of problem with
-			 * collations coming from SpagoBI.
+			 * Here we use ignoreCase() because some sort of problem with collations coming from SpagoBI.
 			 *
 			 * See also other occurrences of this comment.
 			 *
@@ -937,10 +894,7 @@ public class SbiUserDAOHibImpl extends AbstractHibernateDAO implements ISbiUserD
 			if (tx != null) {
 				tx.rollback();
 			}
-			if (aSession != null) {
-				if (aSession.isOpen())
-					aSession.close();
-			}
+			closeSession(aSession);
 			LOGGER.debug("OUT");
 		}
 
@@ -965,11 +919,11 @@ public class SbiUserDAOHibImpl extends AbstractHibernateDAO implements ISbiUserD
 			total = users.size();
 			int indexStart = offset < 0 ? 0 : Math.min(offset, total - 1); // if totale = 0 --> indexStart = -1
 			int indexEnd = (fetchSize > 0) ? Math.min(indexStart + fetchSize - 1, total - 1) : total - 1; // if totale =
-																											// 0 -->
-																											// indexEnd
-																											// = -1
+																											 // 0 -->
+																											 // indexEnd
+																											 // = -1
 
-			List<UserBO> results = new ArrayList<UserBO>();
+			List<UserBO> results = new ArrayList<>();
 			if (total > 0) {
 				for (int c = indexStart; c <= indexEnd; c++) {
 					SbiUser hibuser = (SbiUser) users.get(c);
@@ -977,7 +931,7 @@ public class SbiUserDAOHibImpl extends AbstractHibernateDAO implements ISbiUserD
 				}
 			}
 
-			toReturn = new PagedList<UserBO>();
+			toReturn = new PagedList<>();
 			toReturn.setStart(indexStart + 1);
 			toReturn.setTotal(total);
 			toReturn.setResults(results);
@@ -998,7 +952,7 @@ public class SbiUserDAOHibImpl extends AbstractHibernateDAO implements ISbiUserD
 	}
 
 	private Query getQueryForUsersList(Session aSession, QueryFilters filters) {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append(" from SbiUser ");
 		if (!filters.isEmpty()) {
 			buffer.append(" where ");
@@ -1031,15 +985,15 @@ public class SbiUserDAOHibImpl extends AbstractHibernateDAO implements ISbiUserD
 			String[] rightHandValues = new String[] { "'" + (ignoreCase ? escapedValue.toUpperCase() : escapedValue) + "'" };
 			return conditionalOperator.apply(leftHandValue, rightHandValues);
 		} else if (filter instanceof FinalUsersFilter) {
-			StringBuffer buffer = new StringBuffer();
+			StringBuilder buffer = new StringBuilder();
 			buffer.append(" id in (");
 			buffer.append(" select ur.id.id ");
-			buffer.append("	from ");
-			buffer.append("		SbiExtUserRoles ur, SbiExtRoles r ");
-			buffer.append("	where ");
-			buffer.append("		ur.id.extRoleId = r.extRoleId ");
-			buffer.append("	group by ur.id.id ");
-			buffer.append("	having sum(case when r.roleType.valueCd = 'USER' then 0 else 1 end) = 0) ");
+			buffer.append(" from ");
+			buffer.append("   SbiExtUserRoles ur, SbiExtRoles r ");
+			buffer.append(" where ");
+			buffer.append("   ur.id.extRoleId = r.extRoleId ");
+			buffer.append(" group by ur.id.id ");
+			buffer.append(" having sum(case when r.roleType.valueCd = 'USER' then 0 else 1 end) = 0) ");
 			buffer.append(") ");
 			return buffer.toString();
 		} else {
@@ -1058,9 +1012,7 @@ public class SbiUserDAOHibImpl extends AbstractHibernateDAO implements ISbiUserD
 			disableTenantFilter(aSession);
 			tx = aSession.beginTransaction();
 
-			Number count = (Number) aSession.createCriteria(SbiUser.class)
-				.setProjection(Projections.rowCount())
-				.uniqueResult();
+			Number count = (Number) aSession.createCriteria(SbiUser.class).setProjection(Projections.rowCount()).uniqueResult();
 
 			return count.longValue() > 0;
 
@@ -1068,11 +1020,7 @@ public class SbiUserDAOHibImpl extends AbstractHibernateDAO implements ISbiUserD
 			if (tx != null) {
 				tx.rollback();
 			}
-			if (aSession != null) {
-				if (aSession.isOpen()) {
-					aSession.close();
-				}
-			}
+			closeSession(aSession);
 			LOGGER.debug("OUT");
 		}
 
@@ -1134,10 +1082,7 @@ public class SbiUserDAOHibImpl extends AbstractHibernateDAO implements ISbiUserD
 			throw new SpagoBIDAOException("Error while deleting user with id " + id, he);
 		} finally {
 			LOGGER.debug("OUT");
-			if (aSession != null) {
-				if (aSession.isOpen())
-					aSession.close();
-			}
+			closeSession(aSession);
 		}
 	}
 
@@ -1165,10 +1110,7 @@ public class SbiUserDAOHibImpl extends AbstractHibernateDAO implements ISbiUserD
 			throw new SpagoBIDAOException("Error while deleting attribute " + attributeId + " of user with id " + id);
 		} finally {
 			LOGGER.debug("OUT");
-			if (aSession != null) {
-				if (aSession.isOpen())
-					aSession.close();
-			}
+			closeSession(aSession);
 		}
 
 	}

@@ -35,41 +35,39 @@ import it.eng.spagobi.profiling.bean.SbiUser;
 
 public interface ITenantsDAO extends ISpagoBIDao {
 
-	public List<SbiTenant> loadAllTenants();
+	List<SbiTenant> loadAllTenants();
 
-	public SbiTenant loadTenantByName(String name) throws EMFUserError;
+	SbiTenant loadTenantByName(String name) throws EMFUserError;
 
-	public SbiTenant loadTenantById(Integer id) throws EMFUserError;
+	SbiTenant loadTenantById(Integer id) throws EMFUserError;
 
-	// public List<SbiOrganizationEngine> loadSelectedEngines(String tenant) throws EMFUserError;
+	List<SbiOrganizationDatasource> loadSelectedDS(String tenant) throws EMFUserError;
 
-	public List<SbiOrganizationDatasource> loadSelectedDS(String tenant) throws EMFUserError;
+	List<SbiOrganizationProductType> loadSelectedProductTypes(String tenant) throws EMFUserError;
 
-	public List<SbiOrganizationProductType> loadSelectedProductTypes(String tenant) throws EMFUserError;
+	void insertTenant(SbiTenant aTenant) throws EMFUserError;
 
-	public void insertTenant(SbiTenant aTenant) throws EMFUserError;
+	void modifyTenant(SbiTenant aTenant) throws EMFUserError, Exception;
 
-	public void modifyTenant(SbiTenant aTenant) throws EMFUserError, Exception;
+	void deleteTenant(SbiTenant aTenant) throws EMFUserError;
 
-	public void deleteTenant(SbiTenant aTenant) throws EMFUserError;
+	SbiUser initializeAdminUser(SbiTenant aTenant);
 
-	public SbiUser initializeAdminUser(SbiTenant aTenant);
-
-	public List<Integer> loadSelectedProductTypesIds(String tenant) throws EMFUserError;
+	List<Integer> loadSelectedProductTypesIds(String tenant) throws EMFUserError;
 
 	/**
 	 * @param name
 	 * @return
 	 * @throws EMFUserError
 	 */
-	public Set loadThemesByTenantName(String name) throws EMFUserError;
+	Set loadThemesByTenantName(String name) throws EMFUserError;
 
 	/**
 	 *
 	 */
 
-	public String updateThemes(IEngUserProfile profile, String uuid, String themeName, JSONObject newThemeConfig, boolean isActive) throws EMFUserError;
+	String updateThemes(IEngUserProfile profile, String uuid, String themeName, JSONObject newThemeConfig, boolean isActive) throws EMFUserError;
 
-	public void deleteTheme(IEngUserProfile profile, String uuid) throws EMFUserError;
+	void deleteTheme(IEngUserProfile profile, String uuid) throws EMFUserError;
 
 }

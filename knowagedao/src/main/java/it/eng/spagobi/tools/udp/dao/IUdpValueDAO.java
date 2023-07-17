@@ -32,30 +32,30 @@ import it.eng.spagobi.tools.udp.metadata.SbiUdpValue;
  */
 public interface IUdpValueDAO extends ISpagoBIDao {
 
-	public Integer insert(SbiUdpValue prop);
+	Integer insert(SbiUdpValue prop);
 
-	public void insert(Session session, SbiUdpValue propValue);
+	void insert(Session session, SbiUdpValue propValue);
 
-	public void update(SbiUdpValue propValue);
+	void update(SbiUdpValue propValue);
 
-	public void update(Session session, SbiUdpValue propValue);
+	void update(Session session, SbiUdpValue propValue);
 
-	public void delete(SbiUdpValue propValue);
+	void delete(SbiUdpValue propValue);
 
-	public void delete(Session session, SbiUdpValue propValue);
+	void delete(Session session, SbiUdpValue propValue);
 
-	public void delete(Integer id);
+	void delete(Integer id);
 
-	public void delete(Session session, Integer id);
+	void delete(Session session, Integer id);
 
-	public SbiUdpValue findById(Integer id);
+	SbiUdpValue findById(Integer id);
 
-	public List<SbiUdpValue> findAll();
+	List<SbiUdpValue> findAll();
 
-	public UdpValue loadById(Integer id);
+	UdpValue loadById(Integer id);
 
-	public List findByReferenceId(Integer kpiId, String family);
+	List<UdpValue> findByReferenceId(Integer kpiId, String family);
 
-	public UdpValue loadByReferenceIdAndUdpId(Integer referenceId, Integer udpId, String family);
+	UdpValue loadByReferenceIdAndUdpId(Integer referenceId, Integer udpId, String family);
 
 }

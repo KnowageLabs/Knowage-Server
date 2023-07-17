@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,11 +11,22 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package it.eng.spagobi.analiticalmodel.document.dao;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
+
+import org.apache.log4j.Logger;
+import org.hibernate.HibernateException;
+import org.hibernate.Query;
+import org.hibernate.Session;
+import org.hibernate.Transaction;
 
 import it.eng.spago.error.EMFErrorSeverity;
 import it.eng.spago.error.EMFInternalError;
@@ -32,36 +43,23 @@ import it.eng.spagobi.tools.objmetadata.bo.ObjMetacontent;
 import it.eng.spagobi.tools.objmetadata.bo.ObjMetadata;
 import it.eng.spagobi.tools.objmetadata.dao.IObjMetacontentDAO;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
-
-import org.apache.log4j.Logger;
-import org.hibernate.HibernateException;
-import org.hibernate.Query;
-import org.hibernate.Session;
-import org.hibernate.Transaction;
-
 public class SubObjectDAOHibImpl extends AbstractHibernateDAO implements ISubObjectDAO {
 
 	private static Logger logger = Logger.getLogger(SubObjectDAOHibImpl.class);
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.analiticalmodel.document.dao.ISubObjectDAO#getAccessibleSubObjects(java.lang.Integer, it.eng.spago.security.IEngUserProfile)
 	 */
 	@Override
-	public List getAccessibleSubObjects(Integer idBIObj, IEngUserProfile profile) throws EMFUserError {
-		List subs = new ArrayList();
+	public List<SubObject> getAccessibleSubObjects(Integer idBIObj, IEngUserProfile profile) throws EMFUserError {
+		List<SubObject> subs = new ArrayList<>();
 		Session aSession = null;
 		Transaction tx = null;
 		try {
 			aSession = getSession();
 			tx = aSession.beginTransaction();
-			// String hql = "from SbiSubObjects sso where sso.sbiObject.biobjId="+idBIObj + " " +
-			// "and (isPublic = true or owner = '"+((UserProfile)profile).getUserId().toString()+"')";
 
 			String hql = "from SbiSubObjects sso where sso.sbiObject.biobjId= ? " + "and (isPublic = true or owner = ? )";
 
@@ -69,10 +67,10 @@ public class SubObjectDAOHibImpl extends AbstractHibernateDAO implements ISubObj
 			query.setInteger(0, idBIObj.intValue());
 			query.setString(1, ((UserProfile) profile).getUserId().toString());
 
-			List result = query.list();
-			Iterator it = result.iterator();
+			List<SbiSubObjects> result = query.list();
+			Iterator<SbiSubObjects> it = result.iterator();
 			while (it.hasNext()) {
-				subs.add(toSubobject((SbiSubObjects) it.next()));
+				subs.add(toSubobject(it.next()));
 			}
 			tx.commit();
 		} catch (HibernateException he) {
@@ -81,38 +79,33 @@ public class SubObjectDAOHibImpl extends AbstractHibernateDAO implements ISubObj
 				tx.rollback();
 			throw new EMFUserError(EMFErrorSeverity.ERROR, "100");
 		} finally {
-			if (aSession != null) {
-				if (aSession.isOpen())
-					aSession.close();
-			}
+			closeSession(aSession);
 		}
 		return subs;
 	}
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.analiticalmodel.document.dao.ISubObjectDAO#getPublicSubObjects(java.lang.Integer)
 	 */
 	@Override
-	public List getPublicSubObjects(Integer idBIObj) throws EMFUserError {
-		List subs = new ArrayList();
+	public List<SubObject> getPublicSubObjects(Integer idBIObj) throws EMFUserError {
+		List<SubObject> subs = new ArrayList<>();
 		Session aSession = null;
 		Transaction tx = null;
 		try {
 			aSession = getSession();
 			tx = aSession.beginTransaction();
-			// String hql = "from SbiSubObjects sso where sso.sbiObject.biobjId="+idBIObj + " " +
-			// "and isPublic = true";
 			String hql = "from SbiSubObjects sso where sso.sbiObject.biobjId= ?" + "and isPublic = true";
 
 			Query query = aSession.createQuery(hql);
 			query.setInteger(0, idBIObj.intValue());
 
-			List result = query.list();
-			Iterator it = result.iterator();
+			List<SbiSubObjects> result = query.list();
+			Iterator<SbiSubObjects> it = result.iterator();
 			while (it.hasNext()) {
-				subs.add(toSubobject((SbiSubObjects) it.next()));
+				subs.add(toSubobject(it.next()));
 			}
 			tx.commit();
 		} catch (HibernateException he) {
@@ -121,37 +114,33 @@ public class SubObjectDAOHibImpl extends AbstractHibernateDAO implements ISubObj
 				tx.rollback();
 			throw new EMFUserError(EMFErrorSeverity.ERROR, "100");
 		} finally {
-			if (aSession != null) {
-				if (aSession.isOpen())
-					aSession.close();
-			}
+			closeSession(aSession);
 		}
 		return subs;
 	}
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.analiticalmodel.document.dao.ISubObjectDAO#getSubObjects(java.lang.Integer)
 	 */
 	@Override
-	public List getSubObjects(Integer idBIObj) throws EMFUserError {
-		List subs = new ArrayList();
+	public List<SubObject> getSubObjects(Integer idBIObj) throws EMFUserError {
+		List<SubObject> subs = new ArrayList<>();
 		Session aSession = null;
 		Transaction tx = null;
 		try {
 			aSession = getSession();
 			tx = aSession.beginTransaction();
-			// String hql = "from SbiSubObjects sso where sso.sbiObject.biobjId="+idBIObj;
 			String hql = "from SbiSubObjects sso where sso.sbiObject.biobjId=?";
 
 			Query query = aSession.createQuery(hql);
 			query.setInteger(0, idBIObj.intValue());
 
-			List result = query.list();
-			Iterator it = result.iterator();
+			List<SbiSubObjects> result = query.list();
+			Iterator<SbiSubObjects> it = result.iterator();
 			while (it.hasNext()) {
-				subs.add(toSubobject((SbiSubObjects) it.next()));
+				subs.add(toSubobject(it.next()));
 			}
 			tx.commit();
 		} catch (HibernateException he) {
@@ -160,17 +149,14 @@ public class SubObjectDAOHibImpl extends AbstractHibernateDAO implements ISubObj
 				tx.rollback();
 			throw new EMFUserError(EMFErrorSeverity.ERROR, "100");
 		} finally {
-			if (aSession != null) {
-				if (aSession.isOpen())
-					aSession.close();
-			}
+			closeSession(aSession);
 		}
 		return subs;
 	}
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.analiticalmodel.document.dao.ISubObjectDAO#deleteSubObject(java.lang.Integer)
 	 */
 	@Override
@@ -184,12 +170,12 @@ public class SubObjectDAOHibImpl extends AbstractHibernateDAO implements ISubObj
 			SbiBinContents hibBinCont = hibSubobject.getSbiBinContents();
 
 			// delete metadata eventually associated
-			List metadata = DAOFactory.getObjMetadataDAO().loadAllObjMetadata();
+			List<ObjMetadata> metadata = DAOFactory.getObjMetadataDAO().loadAllObjMetadata();
 			IObjMetacontentDAO objMetaContentDAO = DAOFactory.getObjMetacontentDAO();
 			if (metadata != null && !metadata.isEmpty()) {
-				Iterator it = metadata.iterator();
+				Iterator<ObjMetadata> it = metadata.iterator();
 				while (it.hasNext()) {
-					ObjMetadata objMetadata = (ObjMetadata) it.next();
+					ObjMetadata objMetadata = it.next();
 					ObjMetacontent objMetacontent = DAOFactory.getObjMetacontentDAO().loadObjMetacontent(objMetadata.getObjMetaId(),
 							hibSubobject.getSbiObject().getBiobjId(), hibSubobject.getSubObjId());
 					if (objMetacontent != null) {
@@ -207,16 +193,13 @@ public class SubObjectDAOHibImpl extends AbstractHibernateDAO implements ISubObj
 				tx.rollback();
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		} finally {
-			if (aSession != null) {
-				if (aSession.isOpen())
-					aSession.close();
-			}
+			closeSession(aSession);
 		}
 	}
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.analiticalmodel.document.dao.ISubObjectDAO#deleteSubObject(java.lang.Integer)
 	 */
 	@Override
@@ -229,12 +212,12 @@ public class SubObjectDAOHibImpl extends AbstractHibernateDAO implements ISubObj
 			SbiBinContents hibBinCont = hibSubobject.getSbiBinContents();
 
 			// delete metadata eventually associated
-			List metadata = DAOFactory.getObjMetadataDAO().loadAllObjMetadata();
+			List<ObjMetadata> metadata = DAOFactory.getObjMetadataDAO().loadAllObjMetadata();
 			IObjMetacontentDAO objMetaContentDAO = DAOFactory.getObjMetacontentDAO();
 			if (metadata != null && !metadata.isEmpty()) {
-				Iterator it = metadata.iterator();
+				Iterator<ObjMetadata> it = metadata.iterator();
 				while (it.hasNext()) {
-					ObjMetadata objMetadata = (ObjMetadata) it.next();
+					ObjMetadata objMetadata = it.next();
 					ObjMetacontent objMetacontent = DAOFactory.getObjMetacontentDAO().loadObjMetacontent(objMetadata.getObjMetaId(),
 							hibSubobject.getSbiObject().getBiobjId(), hibSubobject.getSubObjId());
 					if (objMetacontent != null) {
@@ -252,16 +235,11 @@ public class SubObjectDAOHibImpl extends AbstractHibernateDAO implements ISubObj
 				tx.rollback();
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		}
-		// finally {
-		// if (aSession!=null){
-		// if (aSession.isOpen()) aSession.close();
-		// }
-		// }
 	}
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.analiticalmodel.document.dao.ISubObjectDAO#getSubObject(java.lang.Integer)
 	 */
 	@Override
@@ -281,17 +259,14 @@ public class SubObjectDAOHibImpl extends AbstractHibernateDAO implements ISubObj
 				tx.rollback();
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		} finally {
-			if (aSession != null) {
-				if (aSession.isOpen())
-					aSession.close();
-			}
+			closeSession(aSession);
 		}
 		return sub;
 	}
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.analiticalmodel.document.dao.ISubObjectDAO#saveSubObject(java.lang.Integer, it.eng.spagobi.analiticalmodel.document.bo.SubObject)
 	 */
 	@Override
@@ -337,10 +312,7 @@ public class SubObjectDAOHibImpl extends AbstractHibernateDAO implements ISubObj
 				tx.rollback();
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		} finally {
-			if (aSession != null) {
-				if (aSession.isOpen())
-					aSession.close();
-			}
+			closeSession(aSession);
 		}
 		return subObjId;
 	}
@@ -362,7 +334,7 @@ public class SubObjectDAOHibImpl extends AbstractHibernateDAO implements ISubObj
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.spagobi.analiticalmodel.document.dao.ISubObjectDAO#modifySubObject(java.lang.Integer, it.eng.spagobi.analiticalmodel.document.bo.SubObject)
 	 */
 	@Override
@@ -409,10 +381,7 @@ public class SubObjectDAOHibImpl extends AbstractHibernateDAO implements ISubObj
 				tx.rollback();
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		} finally {
-			if (aSession != null) {
-				if (aSession.isOpen())
-					aSession.close();
-			}
+			closeSession(aSession);
 		}
 		return subObjId;
 	}
@@ -420,11 +389,11 @@ public class SubObjectDAOHibImpl extends AbstractHibernateDAO implements ISubObj
 	@Override
 	public SubObject getSubObjectByNameAndBIObjectId(String subobjectName, Integer idBIObj) throws EMFUserError {
 		SubObject subObject = null;
-		List subObjects = this.getSubObjects(idBIObj);
-		if (subObjects != null && subObjects.size() > 0) {
-			Iterator it = subObjects.iterator();
+		List<SubObject> subObjects = this.getSubObjects(idBIObj);
+		if (subObjects != null && !subObjects.isEmpty()) {
+			Iterator<SubObject> it = subObjects.iterator();
 			while (it.hasNext()) {
-				SubObject temp = (SubObject) it.next();
+				SubObject temp = it.next();
 				if (temp.getName().equalsIgnoreCase(subobjectName)) {
 					subObject = temp;
 					break;

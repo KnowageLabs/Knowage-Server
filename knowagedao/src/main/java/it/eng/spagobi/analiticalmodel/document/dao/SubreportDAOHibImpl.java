@@ -46,10 +46,10 @@ public class SubreportDAOHibImpl extends AbstractHibernateDAO implements ISubrep
 	 * @see it.eng.spagobi.analiticalmodel.document.dao.ISubreportDAO#loadSubreportsByMasterRptId(java.lang.Integer)
 	 */
 	@Override
-	public List loadSubreportsByMasterRptId(Integer master_rpt_id) throws EMFUserError {
+	public List<Subreport> loadSubreportsByMasterRptId(Integer masterRptId) throws EMFUserError {
 		Session aSession = null;
 		Transaction tx = null;
-		List realResult = new ArrayList();
+		List<Subreport> realResult = new ArrayList<>();
 		String hql = null;
 		Query hqlQuery = null;
 
@@ -57,19 +57,16 @@ public class SubreportDAOHibImpl extends AbstractHibernateDAO implements ISubrep
 			aSession = getSession();
 			tx = aSession.beginTransaction();
 
-			// hql = " from SbiSubreports as subreport " +
-			// "where subreport.id.masterReport.biobjId = " + master_rpt_id.toString();
-
-			hql = " from SbiSubreports as subreport " + "where subreport.id.masterReport.biobjId = ?";
+			hql = " from SbiSubreports as subreport where subreport.id.masterReport.biobjId = ?";
 
 			hqlQuery = aSession.createQuery(hql);
-			hqlQuery.setInteger(0, master_rpt_id.intValue());
-			List hibList = hqlQuery.list();
+			hqlQuery.setInteger(0, masterRptId.intValue());
+			List<SbiSubreports> hibList = hqlQuery.list();
 
-			Iterator it = hibList.iterator();
+			Iterator<SbiSubreports> it = hibList.iterator();
 
 			while (it.hasNext()) {
-				realResult.add(toSubreport((SbiSubreports) it.next()));
+				realResult.add(toSubreport(it.next()));
 			}
 			tx.commit();
 		} catch (HibernateException he) {
@@ -81,10 +78,7 @@ public class SubreportDAOHibImpl extends AbstractHibernateDAO implements ISubrep
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 
 		} finally {
-			if (aSession != null) {
-				if (aSession.isOpen())
-					aSession.close();
-			}
+			closeSession(aSession);
 		}
 		return realResult;
 	}
@@ -95,10 +89,10 @@ public class SubreportDAOHibImpl extends AbstractHibernateDAO implements ISubrep
 	 * @see it.eng.spagobi.analiticalmodel.document.dao.ISubreportDAO#loadSubreportsBySubRptId(java.lang.Integer)
 	 */
 	@Override
-	public List loadSubreportsBySubRptId(Integer sub_rpt_id) throws EMFUserError {
+	public List<Subreport> loadSubreportsBySubRptId(Integer subRptId) throws EMFUserError {
 		Session aSession = null;
 		Transaction tx = null;
-		List realResult = new ArrayList();
+		List<Subreport> realResult = new ArrayList<>();
 		String hql = null;
 		Query hqlQuery = null;
 
@@ -106,19 +100,16 @@ public class SubreportDAOHibImpl extends AbstractHibernateDAO implements ISubrep
 			aSession = getSession();
 			tx = aSession.beginTransaction();
 
-			// hql = " from SbiSubreports as subreport " +
-			// "where subreport.id.subReport.biobjId = " + sub_rpt_id.toString();
-
 			hql = " from SbiSubreports as subreport " + "where subreport.id.subReport.biobjId = ?";
 
 			hqlQuery = aSession.createQuery(hql);
-			hqlQuery.setInteger(0, sub_rpt_id.intValue());
-			List hibList = hqlQuery.list();
+			hqlQuery.setInteger(0, subRptId.intValue());
+			List<SbiSubreports> hibList = hqlQuery.list();
 
-			Iterator it = hibList.iterator();
+			Iterator<SbiSubreports> it = hibList.iterator();
 
 			while (it.hasNext()) {
-				realResult.add(toSubreport((SbiSubreports) it.next()));
+				realResult.add(toSubreport(it.next()));
 			}
 			tx.commit();
 		} catch (HibernateException he) {
@@ -130,10 +121,7 @@ public class SubreportDAOHibImpl extends AbstractHibernateDAO implements ISubrep
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 
 		} finally {
-			if (aSession != null) {
-				if (aSession.isOpen())
-					aSession.close();
-			}
+			closeSession(aSession);
 		}
 		return realResult;
 	}
@@ -160,10 +148,7 @@ public class SubreportDAOHibImpl extends AbstractHibernateDAO implements ISubrep
 			aSession.save(hibSubreport);
 			tx.commit();
 		} finally {
-			if (aSession != null) {
-				if (aSession.isOpen())
-					aSession.close();
-			}
+			closeSession(aSession);
 		}
 	}
 
@@ -173,26 +158,22 @@ public class SubreportDAOHibImpl extends AbstractHibernateDAO implements ISubrep
 	 * @see it.eng.spagobi.analiticalmodel.document.dao.ISubreportDAO#eraseSubreportByMasterRptId(java.lang.Integer)
 	 */
 	@Override
-	public void eraseSubreportByMasterRptId(Integer master_rpt_id) throws EMFUserError {
+	public void eraseSubreportByMasterRptId(Integer masterRptId) throws EMFUserError {
 		Session aSession = null;
 		Transaction tx = null;
 		String hql = null;
 		Query hqlQuery = null;
-		List subreports = null;
 		try {
 			aSession = getSession();
 			tx = aSession.beginTransaction();
 
-			// hql = " from SbiSubreports as subreport " +
-			// "where subreport.id.masterReport.biobjId = " + master_rpt_id.toString();
-
 			hql = " from SbiSubreports as subreport where subreport.id.masterReport.biobjId = ?";
 
 			hqlQuery = aSession.createQuery(hql);
-			hqlQuery.setInteger(0, master_rpt_id.intValue());
-			subreports = hqlQuery.list();
+			hqlQuery.setInteger(0, masterRptId.intValue());
+			List<SbiSubreports> subreports = hqlQuery.list();
 
-			Iterator it = subreports.iterator();
+			Iterator<SbiSubreports> it = subreports.iterator();
 			while (it.hasNext()) {
 				aSession.delete(it.next());
 			}
@@ -208,10 +189,7 @@ public class SubreportDAOHibImpl extends AbstractHibernateDAO implements ISubrep
 				tx.rollback();
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		} finally {
-			if (aSession != null) {
-				if (aSession.isOpen())
-					aSession.close();
-			}
+			closeSession(aSession);
 		}
 	}
 
@@ -221,26 +199,22 @@ public class SubreportDAOHibImpl extends AbstractHibernateDAO implements ISubrep
 	 * @see it.eng.spagobi.analiticalmodel.document.dao.ISubreportDAO#eraseSubreportBySubRptId(java.lang.Integer)
 	 */
 	@Override
-	public void eraseSubreportBySubRptId(Integer sub_rpt_id) throws EMFUserError {
+	public void eraseSubreportBySubRptId(Integer subRptId) throws EMFUserError {
 		Session aSession = null;
 		Transaction tx = null;
 		String hql = null;
 		Query hqlQuery = null;
-		List subreports = null;
 		try {
 			aSession = getSession();
 			tx = aSession.beginTransaction();
 
-			// hql = " from SbiSubreports as subreport " +
-			// "where subreport.id.subReport.biobjId = " + sub_rpt_id.toString();
-
 			hql = " from SbiSubreports as subreport " + "where subreport.id.subReport.biobjId = ?";
 
 			hqlQuery = aSession.createQuery(hql);
-			hqlQuery.setInteger(0, sub_rpt_id.intValue());
-			subreports = hqlQuery.list();
+			hqlQuery.setInteger(0, subRptId.intValue());
+			List<SbiSubreports> subreports = hqlQuery.list();
 
-			Iterator it = subreports.iterator();
+			Iterator<SbiSubreports> it = subreports.iterator();
 			while (it.hasNext()) {
 				aSession.delete(it.next());
 			}
@@ -256,18 +230,14 @@ public class SubreportDAOHibImpl extends AbstractHibernateDAO implements ISubrep
 				tx.rollback();
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		} finally {
-			if (aSession != null) {
-				if (aSession.isOpen())
-					aSession.close();
-			}
+			closeSession(aSession);
 		}
 	}
 
 	/**
 	 * From the hibernate subreports at input, gives the corrispondent <code>Subreports</code> object.
 	 *
-	 * @param hibSubreport
-	 *            the hib subreport
+	 * @param hibSubreport the hib subreport
 	 *
 	 * @return The corrispondent <code>Parameter</code> object
 	 */
