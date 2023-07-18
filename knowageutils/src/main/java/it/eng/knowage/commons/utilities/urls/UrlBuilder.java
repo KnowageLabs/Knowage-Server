@@ -20,7 +20,8 @@ package it.eng.knowage.commons.utilities.urls;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import it.eng.knowage.wapp.Environment;
 import it.eng.knowage.wapp.Version;
@@ -34,7 +35,7 @@ import it.eng.knowage.wapp.Version;
  */
 public class UrlBuilder {
 
-	private static transient Logger logger = Logger.getLogger(UrlBuilder.class);
+	private static final Logger LOGGER = LogManager.getLogger(UrlBuilder.class);
 
 	private String KNOWAGE_VERSION = Version.getCompleteVersion();
 	private Environment ENVIRONMENT = Version.getEnvironment();
@@ -43,11 +44,6 @@ public class UrlBuilder {
 	private String currentEngineContext;
 
 	private String[] regExpResources = { "/js/(src)", "/themes/commons/(css)/" };
-
-	// Do not use default constructor
-	private UrlBuilder() {
-
-	}
 
 	public UrlBuilder(String baseEngineContext) {
 		this.baseEngineContext = baseEngineContext;
@@ -58,27 +54,27 @@ public class UrlBuilder {
 		this.currentEngineContext = currentEngineContext;
 	}
 
-	public String getResourcePath(String contextpath, String url) {
-		logger.debug("IN");
+	public String getResourcePath(String contextPath, String url) {
+		LOGGER.debug("Get resource path for {} context and {} URL", contextPath, url);
 		String fullUrl = null;
 		try {
 			if (!url.startsWith("/"))
 				url = "/" + url;
 
-			fullUrl = contextpath + url;
+			fullUrl = contextPath + url;
 			// In production mode create src-[version]
 			if (ENVIRONMENT == Environment.PRODUCTION)
 				fullUrl = concatSrcWithKnowageVersion(fullUrl);
 		} catch (Exception e) {
-			logger.error("Cannot build a resource url path", e);
+			LOGGER.error("Cannot build a resource url path for {} context and {} URL", contextPath, url, e);
 		}
 
-		logger.debug("OUT");
+		LOGGER.debug("Full URL for {} context and {} URL is: {}", contextPath, url, fullUrl);
 		return fullUrl;
 	}
 
 	private String concatSrcWithKnowageVersion(String url) {
-		logger.debug("IN");
+		LOGGER.debug("Concat KNOWAGE version to {}", url);
 		for (int i = 0; i < regExpResources.length; i++) {
 			String pattern = regExpResources[i];
 			Pattern srcPattern = Pattern.compile(pattern);
@@ -89,7 +85,7 @@ public class UrlBuilder {
 				url = url.replaceFirst(src, src + "-" + KNOWAGE_VERSION);
 			}
 		}
-		logger.debug("OUT");
+		LOGGER.debug("Concatenation of KNOWAGE version is {}", url);
 		return url;
 	}
 
@@ -114,13 +110,17 @@ public class UrlBuilder {
 	}
 
 	private String createDynamicResourcesPath(String sourceEngineContext) {
-		StringBuffer dynamicResourcesPath = new StringBuffer(sourceEngineContext);
-		if (ENVIRONMENT == Environment.PRODUCTION)
+		LOGGER.debug("Create dynamic resource path for {}", sourceEngineContext);
+		StringBuilder dynamicResourcesPath = new StringBuilder(sourceEngineContext);
+		if (ENVIRONMENT == Environment.PRODUCTION) {
 			dynamicResourcesPath.append("/js/src-").append(KNOWAGE_VERSION);
-		else
+		} else {
 			dynamicResourcesPath.append("/js/src");
+		}
 
-		return dynamicResourcesPath.toString();
+		String ret = dynamicResourcesPath.toString();
+		LOGGER.debug("Dynamic resource path for {} is {}", sourceEngineContext, ret);
+		return ret;
 	}
 
 }
