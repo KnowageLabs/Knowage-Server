@@ -133,7 +133,7 @@ public abstract class AbstractDriverRuntime<T extends AbstractDriver> {
 
 	public abstract class DriverDependencyRuntime {
 		public String urlName;
-	};
+	}
 
 	public class DataDependencyRuntime extends DriverDependencyRuntime {
 	}
@@ -163,7 +163,7 @@ public abstract class AbstractDriverRuntime<T extends AbstractDriver> {
 
 		loadDefaultValues(driver);
 		loadMaxValue(driver);
-		objParameterIds = new ArrayList<Integer>();
+		objParameterIds = new ArrayList<>();
 	}
 
 	public AbstractDriverRuntime(T driver2, String exeRole, Locale loc, IDrivableBIResource doc, boolean _isFromCross, boolean loadAdmissible,
@@ -181,7 +181,7 @@ public abstract class AbstractDriverRuntime<T extends AbstractDriver> {
 		}
 		loadDefaultValues(driver);
 		loadMaxValue(driver);
-		objParameterIds = new ArrayList<Integer>();
+		objParameterIds = new ArrayList<>();
 	}
 
 	public void initDAO() {
@@ -236,7 +236,7 @@ public abstract class AbstractDriverRuntime<T extends AbstractDriver> {
 
 	protected void initLovDependencies(AbstractDriver driver, List<? extends AbstractDriver> objParameters) {
 		if (dependencies == null) {
-			dependencies = new HashMap<String, List<DriverDependencyRuntime>>();
+			dependencies = new HashMap<>();
 		}
 		AbstractBIResourceRuntime dum = null;
 		if (driver instanceof BIObjectParameter) {
@@ -267,7 +267,7 @@ public abstract class AbstractDriverRuntime<T extends AbstractDriver> {
 					}
 
 					if (!dependencies.containsKey(lovDependency.urlName)) {
-						dependencies.put(lovDependency.urlName, new ArrayList<DriverDependencyRuntime>());
+						dependencies.put(lovDependency.urlName, new ArrayList<>());
 					}
 					List<DriverDependencyRuntime> depList = dependencies.get(lovDependency.urlName);
 					depList.add(lovDependency);
@@ -303,21 +303,14 @@ public abstract class AbstractDriverRuntime<T extends AbstractDriver> {
 				lovDescriptionColumnName = lovProvDet.getDescriptionColumnName();
 				lovValueColumnName = lovProvDet.getValueColumnName();
 
-//				colName2colPlaceholder.put("_col0", lovValueColumnName);
-//				colName2colPlaceholder.put("_col1", lovDescriptionColumnName);
-
 				AtomicInteger colCount = new AtomicInteger(0);
 
 				lovVisibleColumnsNames.forEach(e -> {
-					if (!colPlaceholder2ColName.containsValue(e)) {
-						colPlaceholder2ColName.put("_col" + colCount.getAndIncrement(), e);
-					}
+					colPlaceholder2ColName.putIfAbsent("_col" + colCount.getAndIncrement(), e);
 				});
 
 				lovInvisibleColumnsNames.forEach(e -> {
-					if (!colPlaceholder2ColName.containsValue(e)) {
-						colPlaceholder2ColName.put("_col" + colCount.getAndIncrement(), e);
-					}
+					colPlaceholder2ColName.putIfAbsent("_col" + colCount.getAndIncrement(), e);
 				});
 			}
 
@@ -339,7 +332,7 @@ public abstract class AbstractDriverRuntime<T extends AbstractDriver> {
 				logger.debug("Loaded " + valuesCount + "values");
 
 				// field
-				admissibleValues = new ArrayList<HashMap<String, Object>>();
+				admissibleValues = new ArrayList<>();
 
 				// if the parameter is mandatory and there is only one admissible value set it to BiObjectParameter
 				if (getValuesCount() == 1 && this.isMandatory()) {
@@ -361,7 +354,7 @@ public abstract class AbstractDriverRuntime<T extends AbstractDriver> {
 
 						HashMap<String, Object> itemAsMap = fromJSONtoMap(item);
 
-						ArrayList<HashMap<String, Object>> defaultErrorValues = new ArrayList<HashMap<String, Object>>();
+						ArrayList<HashMap<String, Object>> defaultErrorValues = new ArrayList<>();
 						boolean defaultParameterAlreadyExist = false;
 						// if it is a LOOKUP
 						if (driver.getParameter() != null && driver.getParameter().getModalityValue() != null
@@ -376,7 +369,7 @@ public abstract class AbstractDriverRuntime<T extends AbstractDriver> {
 											defaultParameterAlreadyExist = true;
 											break;
 										} else {
-											HashMap<String, Object> itemErrorMap = new HashMap<String, Object>();
+											HashMap<String, Object> itemErrorMap = new HashMap<>();
 											itemErrorMap.put("error", true);
 											itemErrorMap.put("value", defVal.get("value"));
 											itemErrorMap.put("labelAlreadyExist", defVal.get("label"));
@@ -407,7 +400,7 @@ public abstract class AbstractDriverRuntime<T extends AbstractDriver> {
 						driver.setParameterValues(new ArrayList());
 					}
 					// add values description search for description
-					List<String> descriptions = new ArrayList<String>();
+					List<String> descriptions = new ArrayList<>();
 					for (Iterator iterator = driver.getParameterValues().iterator(); iterator.hasNext();) {
 						Object parameterValue = iterator.next();
 						String value = parameterValue != null && parameterValue instanceof String ? parameterValue.toString() : null;
@@ -463,7 +456,7 @@ public abstract class AbstractDriverRuntime<T extends AbstractDriver> {
 	}
 
 	private HashMap<String, Object> fromJSONtoMap(JSONObject item) throws JSONException {
-		HashMap<String, Object> itemAsMap = new HashMap<String, Object>();
+		HashMap<String, Object> itemAsMap = new HashMap<>();
 
 		for (int j = 0; j < lovVisibleColumnsNames.size(); j++) {
 			String colKey = lovVisibleColumnsNames.get(j);
