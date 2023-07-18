@@ -521,11 +521,15 @@ public class MetaUtils {
 		JSONArray valuesDataJSON = new JSONArray();
 
 		visibleColumnNames.forEach(e -> {
-			colName2colPlaceholder.putIfAbsent("_col" + colCount.getAndIncrement(), e);
+			if (!colName2colPlaceholder.containsValue(e)) {
+				colName2colPlaceholder.put("_col" + colCount.getAndIncrement(), e);
+			}
 		});
 
 		invisibleColumnNames.forEach(e -> {
-			colName2colPlaceholder.putIfAbsent("_col" + colCount.getAndIncrement(), e);
+			if (!colName2colPlaceholder.containsValue(e)) {
+				colName2colPlaceholder.put("_col" + colCount.getAndIncrement(), e);
+			}
 		});
 
 		metadata.put("colsMap", colName2colPlaceholder);
