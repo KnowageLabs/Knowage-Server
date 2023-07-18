@@ -38,14 +38,13 @@ import it.eng.spago.configuration.ConfigSingleton;
  */
 public class WebUrlBuilder implements IUrlBuilder {
 
-	private static transient Logger logger = Logger.getLogger(WebUrlBuilder.class);
+	private static final Logger LOGGER = Logger.getLogger(WebUrlBuilder.class);
+	private static final String KNOWAGE_VERSION = Version.getCompleteVersion();
+	private static final Environment ENVIRONMENT = Version.getEnvironment();
+	private static final String[] REG_EXP_RESOURCES = { "/js/(src)", "/themes/commons/(css)/" };
 
 	private String baseURL = "";
 	private String baseResourceURL = "";
-	private String KNOWAGE_VERSION = Version.getCompleteVersion();
-	private Environment ENVIRONMENT = Version.getEnvironment();
-
-	private String[] regExpResources = { "/js/(src)", "/themes/commons/(css)/" };
 
 	/**
 	 * Inits the.
@@ -53,11 +52,11 @@ public class WebUrlBuilder implements IUrlBuilder {
 	 * @param aHttpServletRequest the a http servlet request
 	 */
 	public void init(HttpServletRequest aHttpServletRequest) {
-		logger.debug("IN");
+		LOGGER.debug("IN");
 		baseResourceURL = KnowageSystemConfiguration.getKnowageContext() + "/";
-		logger.debug("baseResourceURL" + baseResourceURL);
+		LOGGER.debug("baseResourceURL" + baseResourceURL);
 		baseURL = baseResourceURL + "servlet/AdapterHTTP";
-		logger.debug("OUT.baseURL=" + baseURL);
+		LOGGER.debug("OUT.baseURL=" + baseURL);
 	}
 
 	/*
@@ -67,10 +66,10 @@ public class WebUrlBuilder implements IUrlBuilder {
 	 */
 	@Override
 	public String getUrl(HttpServletRequest aHttpServletRequest, Map parameters) {
-		logger.debug("IN");
+		LOGGER.debug("IN");
 		init(aHttpServletRequest);
 		// ConfigSingleton.getInstance().getAttribute(dal master fin qua SPAGO_ADAPTERHTTP_URL)
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		sb.append(baseURL);
 		if (parameters != null) {
 			Iterator keysIt = parameters.keySet().iterator();
@@ -81,7 +80,7 @@ public class WebUrlBuilder implements IUrlBuilder {
 				paramName = (String) keysIt.next();
 				paramValue = parameters.get(paramName);
 				if (paramValue == null) {
-					logger.warn("Parameter with name " + paramName + " has null value. This parameter will be not considered.");
+					LOGGER.warn("Parameter with name " + paramName + " has null value. This parameter will be not considered.");
 					continue;
 				}
 				if (isFirst) {
@@ -104,7 +103,7 @@ public class WebUrlBuilder implements IUrlBuilder {
 		}
 		String url = sb.toString();
 
-		logger.debug("OUT.url=" + url);
+		LOGGER.debug("OUT.url=" + url);
 		return url;
 	}
 
@@ -115,7 +114,7 @@ public class WebUrlBuilder implements IUrlBuilder {
 	 */
 	@Override
 	public String getResourceLink(HttpServletRequest aHttpServletRequest, String originalUrl) {
-		logger.debug("IN.originalUrl=" + originalUrl);
+		LOGGER.debug("IN.originalUrl=" + originalUrl);
 		init(aHttpServletRequest);
 		originalUrl = originalUrl.trim();
 		if (originalUrl.startsWith("/")) {
@@ -124,17 +123,15 @@ public class WebUrlBuilder implements IUrlBuilder {
 		originalUrl = baseResourceURL + originalUrl;
 		if (ENVIRONMENT == Environment.PRODUCTION)
 			originalUrl = concatSrcWithKnowageVersion(originalUrl);
-		logger.debug("OUT.originalUrl=" + originalUrl);
+		LOGGER.debug("OUT.originalUrl=" + originalUrl);
 		return originalUrl;
 	}
 
 	@Override
 	public String getResourceLinkByTheme(HttpServletRequest aHttpServletRequest, String originalUrl, String theme) {
-		logger.debug("IN");
-		ConfigSingleton config = ConfigSingleton.getInstance();
-		String rootPath = config.getRootPath();
-		String urlByTheme = originalUrl;
-		originalUrl.trim();
+		LOGGER.debug("IN");
+		String rootPath = ConfigSingleton.getRootPath();
+		String urlByTheme = originalUrl.trim();
 		if (originalUrl.startsWith("/"))
 			originalUrl = originalUrl.substring(1);
 
@@ -158,14 +155,14 @@ public class WebUrlBuilder implements IUrlBuilder {
 			}
 		}
 
-		logger.debug("OUT");
+		LOGGER.debug("OUT");
 		return getResourceLink(aHttpServletRequest, urlByTheme);
 	}
 
 	private String concatSrcWithKnowageVersion(String url) {
-		logger.debug("IN");
-		for (int i = 0; i < regExpResources.length; i++) {
-			String pattern = regExpResources[i];
+		LOGGER.debug("IN");
+		for (int i = 0; i < REG_EXP_RESOURCES.length; i++) {
+			String pattern = REG_EXP_RESOURCES[i];
 			Pattern srcPattern = Pattern.compile(pattern);
 			Matcher srcMatcher = srcPattern.matcher(url);
 
@@ -175,7 +172,7 @@ public class WebUrlBuilder implements IUrlBuilder {
 			}
 		}
 
-		logger.debug("OUT");
+		LOGGER.debug("OUT");
 		return url;
 	}
 

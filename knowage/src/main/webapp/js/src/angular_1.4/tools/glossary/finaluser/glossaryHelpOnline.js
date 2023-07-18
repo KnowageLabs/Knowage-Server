@@ -127,7 +127,6 @@ function funzione(sbiModule_translate, sbiModule_config, $filter, sbiModule_rest
 		console.log("loadDatasetInfo");
 		if(value=="null"){
 			//alter the context path because this services is called also from a services with context path = knowagecockpit...
-//			sbiModule_restServices.alterContextPath('/knowage');
 			sbiModule_restServices.alterContextPath(sbiModule_config.contextName);
 			s.loadDataset("DATASET_LABEL="+label);
 		}else{
@@ -138,7 +137,6 @@ function funzione(sbiModule_translate, sbiModule_config, $filter, sbiModule_rest
 		ite += "&DATAMART=" + parameter1 ;
 		s.loadDatamart(ite);
 	}else if(type=='WORD'){
-//		sbiModule_restServices.alterContextPath('/knowage');
 		sbiModule_restServices.alterContextPath(sbiModule_config.contextName);
 		s.loadWord("WORD_NAME="+label);
 	}

@@ -50,15 +50,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		});
 
 		// GET ALL CATALOG FUNCTIONS
-		$http.get('/knowage-api/api/1.0/functioncatalog/completelist',
-				{headers:{
-					"x-Kn-Authorization":"Bearer "+ sbiModule_user.userUniqueIdentifier
-				}}
-		).then(function(result){
-			self.allCatalogFunctions = result.data;
-		},
-		function(error){
-		})
-
+		sbiModule_restServices.restToKnowageAPI();
+		sbiModule_restServices.get("1.0/functioncatalog/completelist", "", "", {headers:{"X-Kn-Authorization":"Bearer "+ sbiModule_user.userUniqueIdentifier}}).then(
+			function(result){
+				self.allCatalogFunctions = result.data;
+			},
+			function(error){
+			}
+		);
 	}
 })();

@@ -39,7 +39,6 @@ app.directive('exportVersionFileWizard',
 		return{
 			restrict:'E',
 			replace:true,
-//			templateUrl: '/knowagewhatifengine/html/template/right/export/exportWizardFile.html'
 			templateUrl: function(){
 		    	 return sbiModule_config.contextName+'/html/template/right/export/exportWizardFile.html';
 		    	  
@@ -53,7 +52,6 @@ app.directive('exportVersionTableWizard',
 		return{
 			restrict:'E',
 			replace:true,
-//			templateUrl: '/knowagewhatifengine/html/template/right/export/exportWizardTable.html'
 			templateUrl: function(){
 		    	 return sbiModule_config.contextName+'/html/template/right/export/exportWizardTable.html';
 		    	  
@@ -67,7 +65,6 @@ app.directive('exportVersionMsg',
 		return{
 			restrict:'E',
 			replace:true,
-//			templateUrl: '/knowagewhatifengine/html/template/right/export/exportWizardMessage.html'
 			templateUrl: function(){
 		    	 return sbiModule_config.contextName+'/html/template/right/export/exportWizardMessage.html';
 		    	  

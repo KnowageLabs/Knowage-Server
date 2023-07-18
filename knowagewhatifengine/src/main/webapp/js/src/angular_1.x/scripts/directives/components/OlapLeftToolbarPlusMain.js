@@ -20,7 +20,6 @@ angular.module('olap_left_toolbar_plus_main',['sbiModule'])
 		 return {
 		      restrict: 'E',
 		      replace: 'true',
-//		      templateUrl: '/knowagewhatifengine/html/template/main/olap/leftToolbarPlusMain.html'
 		      templateUrl: function() {
 				return sbiModule_config.contextName + '/html/template/main/olap/leftToolbarPlusMain.html'
 			}

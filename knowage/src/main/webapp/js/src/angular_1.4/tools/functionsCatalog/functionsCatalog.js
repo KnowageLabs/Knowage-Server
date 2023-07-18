@@ -135,17 +135,17 @@ function functionsCatalogFunction(sbiModule_config, sbiModule_translate,
 	}
 
 	$scope.obtainCatalogFunctionsRESTcall = function() {
-		$http.get('/knowage-api/api/1.0/functioncatalog/completelist',
-				{headers:{
-					"x-Kn-Authorization":"Bearer "+ sbiModule_user.userUniqueIdentifier
-				}}
-		).then(function(result){
-			$scope.functionsList = result.data;
-			$scope.functionsList_bck = angular.copy(result.data);
-		},
-		function(error){
-		})
+		sbiModule_restServices.restToKnowageAPI();
+		sbiModule_restServices.get("1.0/functioncatalog/completelist", "", "", {headers:{"X-Kn-Authorization":"Bearer "+ sbiModule_user.userUniqueIdentifier}}).then(
+			function(result){
+				$scope.functionsList = result.data;
+				$scope.functionsList_bck = angular.copy(result.data);
+			},
+			function(error){
+			}
+		);
 
+		sbiModule_restServices.restToRootProject();
 		sbiModule_restServices.get("2.0/functions-catalog/keywords", "").then(
 			function(result) {
 				$scope.tagsList_bck = angular.copy(result.data);
@@ -183,52 +183,48 @@ function functionsCatalogFunction(sbiModule_config, sbiModule_translate,
 			if ($scope.saveOrUpdateFlag == "save") {
 				body = $scope.shownFunction;
 
-				$http.post('/knowage-api/api/1.0/functioncatalog/new',body,
-						{headers:{
-							"x-Kn-Authorization":"Bearer "+ sbiModule_user.userUniqueIdentifier
-						}}
-				).then(function(result){
-					$scope.obtainCatalogFunctionsRESTcall();
-					$scope.cleanNewFunction = function() {
-						$scope.newFunction = {
-							"id" : "",
-							"name" : "",
-							"inputColumns" : [],
-							"inputVariables" : [],
-							"outputColumns" : [],
-							"language" : "Python",
-							"onlineScript" : "",
-							"offlineScriptTrain" : "",
-							"offlineScriptUse" : "",
-							"description" : "",
-							"benchmark" : "",
-							"owner" : $scope.ownerUserName,
-							"tags" : [],
-							"label" : "",
-							"type" : "",
-							"family": "online"
-						};
-					}
-					$scope.shownFunction = $scope.newFunction;
-					$mdToast.show($mdToast.simple()
-						.textContent(sbiModule_translate.load("sbi.functionscatalog.save.success"))
-						.position("top left")
-						.hideDelay(5000));
-				},
-				function(error){
-					$mdToast.show($mdToast.simple()
-							.textContent(sbiModule_translate.load("sbi.functionscatalog.save.error"))
+				sbiModule_restServices.restToKnowageAPI();
+				sbiModule_restServices.get("1.0/functioncatalog/new", "", body, {headers:{"X-Kn-Authorization":"Bearer "+ sbiModule_user.userUniqueIdentifier}}).then(
+					function(result){
+						$scope.obtainCatalogFunctionsRESTcall();
+						$scope.cleanNewFunction = function() {
+							$scope.newFunction = {
+								"id" : "",
+								"name" : "",
+								"inputColumns" : [],
+								"inputVariables" : [],
+								"outputColumns" : [],
+								"language" : "Python",
+								"onlineScript" : "",
+								"offlineScriptTrain" : "",
+								"offlineScriptUse" : "",
+								"description" : "",
+								"benchmark" : "",
+								"owner" : $scope.ownerUserName,
+								"tags" : [],
+								"label" : "",
+								"type" : "",
+								"family": "online"
+							};
+						}
+						$scope.shownFunction = $scope.newFunction;
+						$mdToast.show($mdToast.simple()
+							.textContent(sbiModule_translate.load("sbi.functionscatalog.save.success"))
 							.position("top left")
 							.hideDelay(5000));
-				})
+					},
+					function(error){
+						$mdToast.show($mdToast.simple()
+								.textContent(sbiModule_translate.load("sbi.functionscatalog.save.error"))
+								.position("top left")
+								.hideDelay(5000));
+					}
+				)
 			} else if ($scope.saveOrUpdateFlag == "update") {
 				body = $scope.shownFunction;
 
-				$http.patch('/knowage-api/api/1.0/functioncatalog',body,
-						{headers:{
-							"x-Kn-Authorization":"Bearer "+ sbiModule_user.userUniqueIdentifier
-						}}
-				).then(
+				sbiModule_restServices.restToKnowageAPI();
+				sbiModule_restServices.get("1.0/functioncatalog", "", body, {headers:{"X-Kn-Authorization":"Bearer "+ sbiModule_user.userUniqueIdentifier}}).then(
 					function(result) {
 						$scope.obtainCatalogFunctionsRESTcall();
 						$mdToast.show($mdToast.simple()
@@ -379,11 +375,8 @@ function functionsCatalogFunction(sbiModule_config, sbiModule_translate,
 		$scope.shownFunction = angular.copy(item);
 		var functionId = $scope.shownFunction.id;
 
-		$http.delete('/knowage-api/api/1.0/functioncatalog/'+functionId,
-				{headers:{
-					"x-Kn-Authorization":"Bearer "+ sbiModule_user.userUniqueIdentifier
-				}}
-		).then(function(resolve){
+		sbiModule_restServices.restToKnowageAPI();
+		sbiModule_restServices.delete("1.0/functioncatalog/" + functionId, "", "", {headers:{"X-Kn-Authorization":"Bearer "+ sbiModule_user.userUniqueIdentifier}}).then(function(resolve){
 			$scope.obtainCatalogFunctionsRESTcall();
 			$scope.cleanNewFunction();
 			$scope.shownFunction = $scope.newFunction;

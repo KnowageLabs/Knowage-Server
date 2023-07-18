@@ -21,7 +21,6 @@ angular.module('main_toolbar',['sbiModule'])
 		return{
 			restrict: "E",
 			replace: 'true',
-//			templateUrl: '/knowagewhatifengine/html/template/main/toolbar/mainToolbar.html',
 			templateUrl: function() {
 				return sbiModule_config.contextName + '/html/template/main/toolbar/mainToolbar.html'
 			},

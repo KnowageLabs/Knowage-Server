@@ -1,6 +1,6 @@
 (function () {
 	angular.module('cockpitModule')
-	.directive('gallerySelector',function(sbiModule_config){
+	.directive('gallerySelector',function(sbiModule_config, sbiModule_restServices){
 		return{
 			templateUrl: sbiModule_config.dynamicResourcesEnginePath + '/angular_1.4/cockpit/directives/commons/gallery-selector/template/gallerySelector.html',
 			scope: {
@@ -22,11 +22,9 @@
 						image: "",
 						tags: []
 					};
-				$http.get('/knowage-api/api/1.0/widgetgallery/widgets/' + $scope.widgetType,
-						{headers:{
-							"x-Kn-Authorization":"Bearer "+ sbiModule_user.userUniqueIdentifier
-						}}
-				).then(function(resolve){
+				
+				sbiModule_restServices.restToKnowageAPI();
+				sbiModule_restServices.get("1.0/widgetgallery/widgets/" + $scope.widgetType, "", "", {headers:{"X-Kn-Authorization":"Bearer "+ sbiModule_user.userUniqueIdentifier}}).then(function(resolve){
 					$scope.availableGallery = resolve.data;
 					if($scope.availableGallery.length == 0 && $scope.noItems) $scope.noItems(); 
 					$scope.availableGallery.splice(0,0,$scope.emptyTemplate);

@@ -38,6 +38,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import commonj.work.Work;
 import it.eng.knowage.api.dossier.utils.FileUtilities;
+import it.eng.knowage.commons.security.KnowageSystemConfiguration;
 import it.eng.knowage.engine.dossier.activity.bo.DossierActivity;
 import it.eng.knowage.engines.dossier.template.AbstractDossierTemplate;
 import it.eng.knowage.engines.dossier.template.parameter.Parameter;
@@ -262,7 +263,7 @@ public class AbstractDocumentExecutionWork extends DossierExecutionClient implem
 		String hostUrl = getServiceHostUrl();
 
 		serviceUrlBuilder.append(hostUrl);
-		serviceUrlBuilder.append("/knowagecockpitengine/api/1.0/pages/execute/png?");
+		serviceUrlBuilder.append(KnowageSystemConfiguration.getKnowageCockpitEngineContext() + "/api/1.0/pages/execute/png?");
 		serviceUrlBuilder.append("user_id=");
 		serviceUrlBuilder.append(userUniqueIdentifier);
 		serviceUrlBuilder.append("&document=");
@@ -348,7 +349,7 @@ public class AbstractDocumentExecutionWork extends DossierExecutionClient implem
 
 		StringBuilder serviceUrlBuilder = new StringBuilder();
 		serviceUrlBuilder.append(hostUrl);
-		serviceUrlBuilder.append("/knowagecockpitengine/api/1.0/pages/execute/png?");
+		serviceUrlBuilder.append(KnowageSystemConfiguration.getKnowageCockpitEngineContext() + "/api/1.0/pages/execute/png?");
 		serviceUrlBuilder.append("user_id=");
 		serviceUrlBuilder.append(userUniqueIdentifier);
 		serviceUrlBuilder.append("&DOCUMENT_LABEL=");

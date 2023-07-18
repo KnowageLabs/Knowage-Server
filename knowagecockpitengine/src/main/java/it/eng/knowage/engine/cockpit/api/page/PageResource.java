@@ -522,17 +522,12 @@ public class PageResource extends AbstractCockpitEngineResource {
 	}
 
 	private void manageParametersForDashbaords(BIObject biObject, String documentLabel, StringBuilder sb) throws JSONException {
-		// /knowage-vue/dashboard/KNOWAGE-8005?toolbar=false&menu=false&params=W3sidmFsdWUiOlt7InZhbHVlIjoiUERGIiwiZGVzY3JpcHRpb24iOiJQREYifV0sInVybE5hbWUiOiJvdXRwdXRUeXBlIiwibXVsdGl2YWx1ZSI6ZmFsc2V9XQ==&role=admin
-		// /knowage-vue/dashboard
 		sb.append("knowage-vue/dashboard/");
-		// KNOWAGE-8005
 		sb.append(documentLabel);
 		sb.append("?toolbar=false");
 		sb.append("&menu=false");
-		// &params=W3sidmFsdWUiOlt7InZhbHVlIjoiUERGIiwiZGVzY3JpcHRpb24iOiJQREYifV0sInVybE5hbWUiOiJvdXRwdXRUeXBlIiwibXVsdGl2YWx1ZSI6ZmFsc2V9XQ==&role=admin
 		sb.append("&params=");
 		sb.append(createJsonFromParemeters(biObject));
-		// &role=admin
 		sb.append("&role=");
 		sb.append(getExecutionRole());
 	}

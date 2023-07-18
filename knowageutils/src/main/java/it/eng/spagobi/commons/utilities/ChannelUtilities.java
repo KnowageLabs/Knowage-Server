@@ -23,6 +23,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.log4j.Logger;
 
+import it.eng.knowage.commons.security.KnowageSystemConfiguration;
 import it.eng.spago.base.PortletAccess;
 import it.eng.spago.base.RequestContainer;
 import it.eng.spago.base.RequestContainerAccess;
@@ -41,8 +42,7 @@ public class ChannelUtilities {
 	/**
 	 * Gets the request container.
 	 *
-	 * @param httpRequest
-	 *            the http request
+	 * @param httpRequest the http request
 	 *
 	 * @return the request container
 	 */
@@ -58,8 +58,7 @@ public class ChannelUtilities {
 	/**
 	 * Gets the response container.
 	 *
-	 * @param httpRequest
-	 *            the http request
+	 * @param httpRequest the http request
 	 *
 	 * @return the response container
 	 */
@@ -75,12 +74,9 @@ public class ChannelUtilities {
 	/**
 	 * Gets the preference value.
 	 *
-	 * @param requestContainer
-	 *            the request container
-	 * @param preferenceName
-	 *            the preference name
-	 * @param defaultValue
-	 *            the default value
+	 * @param requestContainer the request container
+	 * @param preferenceName   the preference name
+	 * @param defaultValue     the default value
 	 *
 	 * @return the preference value
 	 */
@@ -118,8 +114,7 @@ public class ChannelUtilities {
 	/**
 	 * Gets the spago bi context name.
 	 *
-	 * @param httpRequest
-	 *            the http request
+	 * @param httpRequest the http request
 	 *
 	 * @return the spago bi context name
 	 * @throws EMFUserError
@@ -134,7 +129,7 @@ public class ChannelUtilities {
 			sbiMode = "WEB";
 		}
 		SingletonConfig spagoConfig = SingletonConfig.getInstance();
-		String path = spagoConfig.getConfigValue("SPAGOBI.SPAGOBI_CONTEXT");
+		String path = KnowageSystemConfiguration.getKnowageContext(); // spagoConfig.getConfigValue("SPAGOBI.SPAGOBI_CONTEXT");
 		if (path == null || path.length() == 0) {
 			path = httpRequest.getContextPath();
 		}

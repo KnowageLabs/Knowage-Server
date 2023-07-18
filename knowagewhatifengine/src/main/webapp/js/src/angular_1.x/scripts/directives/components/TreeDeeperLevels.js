@@ -26,7 +26,6 @@ angular.module('filter_tree_deeper_levels',['sbiModule'])
 		 return {
 		      restrict: 'E',
 		      replace: 'true',
-//		      templateUrl: '/knowagewhatifengine/html/template/main/filter/treeDeeperLevels.html'
 		      templateUrl: function(){
 		    	  return sbiModule_config.contextName + '/html/template/main/filter/treeDeeperLevels.html'
 		    	  }

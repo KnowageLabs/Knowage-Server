@@ -43,10 +43,6 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.rest.RestUtilities;
 import it.eng.spagobi.utilities.rest.RestUtilities.HttpMethod;
 
-/*
- https://localhost:8080/knowage/restful-services/2.0/backendservices/widgets/python
- */
-
 @Path("/2.0/backendservices/widgets/python")
 public class PythonProxy extends AbstractDataSetResource {
 

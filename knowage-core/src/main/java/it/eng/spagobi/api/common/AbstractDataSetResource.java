@@ -56,6 +56,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jamonapi.Monitor;
 import com.jamonapi.MonitorFactory;
 
+import it.eng.knowage.commons.security.KnowageSystemConfiguration;
 import it.eng.knowage.encryption.DecryptionDataStoreTransformer;
 import it.eng.knowage.functionscatalog.utils.CatalogFunctionException;
 import it.eng.knowage.functionscatalog.utils.CatalogFunctionRuntimeConfigDTO;
@@ -142,7 +143,7 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 	}
 
 	protected Map<String, Object> getDataSetWriterProperties() throws JSONException {
-		Map<String, Object> properties = new HashMap<String, Object>();
+		Map<String, Object> properties = new HashMap<>();
 		JSONArray fieldOptions = new JSONArray("[{id: 1, options: {measureScaleFactor: 0.5}}]");
 		properties.put(JSONDataWriter.PROPERTY_FIELD_OPTION, fieldOptions);
 		return properties;
@@ -219,10 +220,10 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 			timing.stop();
 			timing = MonitorFactory.start("Knowage.AbstractDataSetResource.getDataStore:getQueryDetails");
 
-			List<AbstractSelectionField> projections = new ArrayList<AbstractSelectionField>(0);
-			List<AbstractSelectionField> groups = new ArrayList<AbstractSelectionField>(0);
-			List<Sorting> sortings = new ArrayList<Sorting>(0);
-			Map<String, String> columnAliasToName = new HashMap<String, String>();
+			List<AbstractSelectionField> projections = new ArrayList<>(0);
+			List<AbstractSelectionField> groups = new ArrayList<>(0);
+			List<Sorting> sortings = new ArrayList<>(0);
+			Map<String, String> columnAliasToName = new HashMap<>();
 			if (aggregations != null && !aggregations.isEmpty()) {
 				JSONObject aggregationsObject = new JSONObject(aggregations);
 				JSONArray categoriesObject = aggregationsObject.getJSONArray("categories");
@@ -350,7 +351,7 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 			throws JSONException {
 		if (summaryJson != null && !summaryJson.isEmpty()) {
 
-			List<List<AbstractSelectionField>> returnList = new ArrayList<List<AbstractSelectionField>>();
+			List<List<AbstractSelectionField>> returnList = new ArrayList<>();
 			JSONArray summaryRowObject = new JSONArray(summaryJson);
 
 			if (summaryRowObject != null && summaryRowObject.length() == 1) {
@@ -360,7 +361,7 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 				JSONObject summaryRowObjectArray = summaryRowObject.getJSONObject(0);
 				JSONArray summaryRowMeasuresObject = summaryRowObjectArray.getJSONArray("measures");
 
-				List<AbstractSelectionField> summaryRowProjections = new ArrayList<AbstractSelectionField>(0);
+				List<AbstractSelectionField> summaryRowProjections = new ArrayList<>(0);
 
 				summaryRowProjections.addAll(getProjections(dataSet, new JSONArray(), summaryRowMeasuresObject, columnAliasToName));
 
@@ -376,7 +377,7 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 
 					JSONArray summaryRowMeasuresObject = jsonObj.getJSONArray("measures");
 
-					List<AbstractSelectionField> summaryRowProjections = new ArrayList<AbstractSelectionField>(0);
+					List<AbstractSelectionField> summaryRowProjections = new ArrayList<>(0);
 
 					summaryRowProjections.addAll(getProjections(dataSet, new JSONArray(), summaryRowMeasuresObject, columnAliasToName));
 
@@ -440,7 +441,7 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 
 	protected List<AbstractSelectionField> getProjectionsSummary(IDataSet dataSet, JSONArray categories, JSONArray measures,
 			Map<String, String> columnAliasToName) throws JSONException {
-		ArrayList<AbstractSelectionField> projections = new ArrayList<AbstractSelectionField>(categories.length() + measures.length());
+		ArrayList<AbstractSelectionField> projections = new ArrayList<>(categories.length() + measures.length());
 
 		for (int i = 0; i < categories.length(); i++) {
 			JSONObject category = categories.getJSONObject(i);
@@ -719,7 +720,7 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 
 	protected List<Sorting> getSortings(IDataSet dataSet, JSONArray categories, JSONArray measures, Map<String, String> columnAliasToName)
 			throws JSONException {
-		ArrayList<Sorting> sortings = new ArrayList<Sorting>(0);
+		ArrayList<Sorting> sortings = new ArrayList<>(0);
 
 		for (int i = 0; i < categories.length(); i++) {
 			JSONObject categoryObject = categories.getJSONObject(i);
@@ -1012,7 +1013,8 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 			String dsType = datasetJSON.optString(DataSetConstants.DS_TYPE_CD);
 			if (dsType == null || !dsType.equals(DataSetFactory.FEDERATED_DS_TYPE)) {
 				if (qbeEngine != null && (typeDocWizard == null || typeDocWizard.equalsIgnoreCase("REPORT"))) {
-					if (profile.getFunctionalities() != null && profile.getFunctionalities().contains(CommunityFunctionalityConstants.BUILD_QBE_QUERIES_FUNCTIONALITY)) {
+					if (profile.getFunctionalities() != null
+							&& profile.getFunctionalities().contains(CommunityFunctionalityConstants.BUILD_QBE_QUERIES_FUNCTIONALITY)) {
 						actions.put(qbeAction);
 					}
 				}
@@ -1077,14 +1079,15 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 				serviceUrlAsURL = new URL(serviceUrlAsURL.getProtocol(), serviceUrlAsURL.getHost(), serviceUrlAsURL.getPort(), "", null);
 				String token = getUserProfile().getUserUniqueIdentifier().toString();
 				// delete Avro resources
-				Response response = restClient.target(serviceUrlAsURL + "/knowage-data-preparation/api/1.0/instance/" + instanceId).request()
+				Response response = restClient
+						.target(serviceUrlAsURL + KnowageSystemConfiguration.getKnowageDataPreparationContext() + "/api/1.0/instance/" + instanceId).request()
 						.header("X-Kn-Authorization", token).get();
 				JSONObject instance = new JSONObject(response.readEntity(String.class));
 				int sourceDsId = instance.getInt("dataSetId");
 				deleteAvroFolder(sourceDsId);
 				// delete data preparation process instance
-				restClient.target(serviceUrlAsURL + "/knowage-data-preparation/api/1.0/instance/" + instanceId).request().header("X-Kn-Authorization", token)
-						.delete();
+				restClient.target(serviceUrlAsURL + KnowageSystemConfiguration.getKnowageDataPreparationContext() + "/api/1.0/instance/" + instanceId).request()
+						.header("X-Kn-Authorization", token).delete();
 			}
 		} catch (Exception e) {
 			logger.error("Cannot delete PreparedDataSet related resources (process instance, avro file) for dataset " + label, e);

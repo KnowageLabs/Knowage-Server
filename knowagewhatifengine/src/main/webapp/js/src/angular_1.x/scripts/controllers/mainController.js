@@ -44,7 +44,6 @@ function olapFunction($scope, $rootScope,$timeout, $window, $mdDialog, $http, $s
 	$scope.members = [];
 	$scope.selectedMember = {};
 
-	//templateRoot = "/knowagewhatifengine/html/template";
 	templateRoot = sbiModule_config.contextName + "/html/template";
 	$scope.sendMdxDial = "/main/toolbar/sendMdx.html";
 	$scope.saveSubObjectDial = "/main/savesubobject/saving_subobject_dialog.html";

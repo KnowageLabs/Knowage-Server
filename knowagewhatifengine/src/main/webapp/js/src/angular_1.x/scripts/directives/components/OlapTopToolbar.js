@@ -26,7 +26,6 @@ angular.module('olap_top_toolbar',['sbiModule'])
 		 return {
 		      restrict: 'E',
 		      replace: 'true',
-//		      templateUrl: '/knowagewhatifengine/html/template/main/olap/topToolbar.html'
 		      templateUrl: function(){
 		    	  return sbiModule_config.contextName + '/html/template/main/olap/topToolbar.html'  
 		      }

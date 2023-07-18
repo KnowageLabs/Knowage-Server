@@ -49,6 +49,7 @@ import org.pivot4j.ui.table.TableRenderContext;
 import org.pivot4j.util.CssWriter;
 import org.pivot4j.util.RenderPropertyUtils;
 
+import it.eng.knowage.commons.security.KnowageSystemConfiguration;
 import it.eng.spagobi.engines.whatif.crossnavigation.CrossNavigationManager;
 import it.eng.spagobi.engines.whatif.crossnavigation.SpagoBICrossNavigationConfig;
 import it.eng.spagobi.engines.whatif.crossnavigation.TargetClickable;
@@ -64,14 +65,14 @@ public class WhatIfHTMLRendereCallback extends HtmlRenderCallback {
 	private Map<Integer, String> positionMeasureMap;
 	private boolean initialized = false;
 	private final Map<String, Object> properties;
-	private static final String pathToImages = "../../../../knowage/themes/commons/img/olap/";
+	private static final String PATH_TO_IMAGES = "../../../.." + KnowageSystemConfiguration.getKnowageContext() + "/themes/commons/img/olap/";
 
 	public WhatIfHTMLRendereCallback(Writer writer) {
 		super(writer);
-		memberPositions = new HashMap<Member, Integer>();
+		memberPositions = new HashMap<>();
 		showProperties = true;
 		setRowHeaderLevelPadding(20);
-		properties = new HashMap<String, Object>();
+		properties = new HashMap<>();
 	}
 
 	public Object getProperty(String key) {
@@ -195,8 +196,8 @@ public class WhatIfHTMLRendereCallback extends HtmlRenderCallback {
 
 				if (context.getRenderer().getEnableDrillThrough()) {
 
-					Map<String, String> attributes = new TreeMap<String, String>();
-					attributes.put("src", pathToImages + "ico_search.gif");
+					Map<String, String> attributes = new TreeMap<>();
+					attributes.put("src", PATH_TO_IMAGES + "ico_search.gif");
 					attributes.put("id", "drillt");
 					attributes.put("drillThrough", "(" + ordinal + ")");
 					startElement("img", attributes);
@@ -206,13 +207,13 @@ public class WhatIfHTMLRendereCallback extends HtmlRenderCallback {
 
 			if (context.getMember() != null && context.getMember().getMemberType() != null
 					&& !context.getMember().getMemberType().name().equalsIgnoreCase("Measure")) {
-				Map<String, String> attributes = new TreeMap<String, String>();
+				Map<String, String> attributes = new TreeMap<>();
 				NonInternalPropertyCollector np = new NonInternalPropertyCollector();
 				List<Property> properties = np.getProperties(context.getMember().getLevel());
 
 				if (properties != null && !properties.isEmpty()) {
-					Map<String, String> attributes1 = new TreeMap<String, String>();
-					attributes.put("src", pathToImages + "show_props.png");
+					Map<String, String> attributes1 = new TreeMap<>();
+					attributes.put("src", PATH_TO_IMAGES + "show_props.png");
 					attributes1.put("getProps", "('" + context.getMember().getUniqueName() + "')");
 					startElement("img", attributes1);
 					endElement("img");
@@ -239,7 +240,7 @@ public class WhatIfHTMLRendereCallback extends HtmlRenderCallback {
 							if ((cmd.equalsIgnoreCase("collapsePosition") || cmd.equalsIgnoreCase("drillUp") || cmd.equalsIgnoreCase("collapseMember"))
 									&& !drillMode.equals(DrillDownCommand.MODE_REPLACE)) {
 
-								Map<String, String> drillUpAttributes = new TreeMap<String, String>();
+								Map<String, String> drillUpAttributes = new TreeMap<>();
 								drillUpAttributes.put("axis", String.valueOf(commandParams.getAxisOrdinal()));
 								drillUpAttributes.put("position", String.valueOf(commandParams.getMemberOrdinal()));
 								drillUpAttributes.put("memberOrdinal", String.valueOf(memb));
@@ -251,7 +252,7 @@ public class WhatIfHTMLRendereCallback extends HtmlRenderCallback {
 							} else if ((cmd.equalsIgnoreCase("expandPosition") || cmd.equalsIgnoreCase("drillDown") || cmd.equalsIgnoreCase("expandMember"))
 									&& commandParams.getMemberOrdinal() > -1) {
 
-								Map<String, String> drillDownAttributes = new TreeMap<String, String>();
+								Map<String, String> drillDownAttributes = new TreeMap<>();
 								drillDownAttributes.put("axis", String.valueOf(axis));
 								drillDownAttributes.put("position", String.valueOf(commandParams.getMemberOrdinal()));
 								drillDownAttributes.put("memberOrdinal", String.valueOf(memb));
@@ -262,7 +263,7 @@ public class WhatIfHTMLRendereCallback extends HtmlRenderCallback {
 							} else {
 								if (context.getAxis() == Axis.ROWS && !isPropertyCell(context)) {
 
-									attributes.put("src", pathToImages + "nodrill.png");
+									attributes.put("src", PATH_TO_IMAGES + "nodrill.png");
 									attributes.put("style", "padding : 2px");
 									startElement("img", attributes);
 									endElement("img");
@@ -279,7 +280,7 @@ public class WhatIfHTMLRendereCallback extends HtmlRenderCallback {
 				} else {
 					if (context.getAxis() == Axis.ROWS && !isPropertyCell(context)) {
 
-						attributes.put("src", pathToImages + "nodrill.png");
+						attributes.put("src", PATH_TO_IMAGES + "nodrill.png");
 						attributes.put("style", "padding : 2px");
 						startElement("img", attributes);
 						endElement("img");
@@ -312,7 +313,7 @@ public class WhatIfHTMLRendereCallback extends HtmlRenderCallback {
 		link = propertyUtils.getString("link", propertyCategory, null);
 
 		if (link == null) {
-			Map<String, String> attributes = new TreeMap<String, String>();
+			Map<String, String> attributes = new TreeMap<>();
 			String drillMode = context.getRenderer().getDrillDownMode();
 			if ((context.getCellType() == "title") && !label.equalsIgnoreCase("Measures")) {
 
@@ -363,7 +364,7 @@ public class WhatIfHTMLRendereCallback extends HtmlRenderCallback {
 
 					if (d != 0) {
 						context.getMember();
-						attributes.put("src", pathToImages + "arrow-up.png");
+						attributes.put("src", PATH_TO_IMAGES + "arrow-up.png");
 						attributes.put("drillUp",
 								"(" + axis + " , " + pos + " , " + memb + ",'" + uniqueName + "','" + context.getHierarchy().getUniqueName() + "' )");
 						startElement("img", attributes);
@@ -386,7 +387,7 @@ public class WhatIfHTMLRendereCallback extends HtmlRenderCallback {
 					int rowId = context.getRowIndex();
 					int positionId = getOrdinalNoSubset(context.getCell().getOrdinal());
 					String id = positionId + "!" + rowId + "!" + colId + "!" + System.currentTimeMillis() % 1000;
-					attributes.put("src", pathToImages + "cross-navigation.png");
+					attributes.put("src", PATH_TO_IMAGES + "cross-navigation.png");
 					String coordinatesAsString = StringUtils.join(context.getCell().getCoordinateList(), ",");
 					attributes.put("cellClickCreateCrossNavigationMenu", "('" + coordinatesAsString + "')");
 					attributes.put("id", id);
@@ -426,7 +427,7 @@ public class WhatIfHTMLRendereCallback extends HtmlRenderCallback {
 
 			}
 		} else {
-			Map<String, String> attributes = new HashMap<String, String>(1);
+			Map<String, String> attributes = new HashMap<>(1);
 			attributes.put("href", link);
 
 			startElement("a", attributes);
@@ -496,7 +497,7 @@ public class WhatIfHTMLRendereCallback extends HtmlRenderCallback {
 		if (!this.initialized) {
 			this.measureOnRows = true;
 			this.initialized = true;
-			this.positionMeasureMap = new HashMap<Integer, String>();
+			this.positionMeasureMap = new HashMap<>();
 
 			// check if the measures are in the rows or in the columns
 			List<Member> columnMembers = null;
@@ -533,16 +534,16 @@ public class WhatIfHTMLRendereCallback extends HtmlRenderCallback {
 			axisToSort = Axis.ROWS.axisOrdinal();
 		}
 
-		Map<String, String> attributes = new TreeMap<String, String>();
+		Map<String, String> attributes = new TreeMap<>();
 
 		if (context.getRenderer().getEnableSort()) {
 			if (context.getModel().isSorting(context.getPosition()) && context.getModel().getSortCriteria() != null) {
 				if (context.getModel().getSortCriteria().equals(SortCriteria.ASC) || context.getModel().getSortCriteria().equals(SortCriteria.BASC)
 						|| context.getModel().getSortCriteria().equals(SortCriteria.TOPCOUNT)) {
 					if (axisToSort == Axis.ROWS.axisOrdinal()) {
-						attributes.put("src", pathToImages + "DESC-rows.png");
+						attributes.put("src", PATH_TO_IMAGES + "DESC-rows.png");
 					} else {
-						attributes.put("src", pathToImages + "DESC-columns.png");
+						attributes.put("src", PATH_TO_IMAGES + "DESC-columns.png");
 					}
 
 					attributes.put("sort", "(" + axisToSort + " , " + axis + " , '" + context.getPosition().getMembers().toString() + "' )");
@@ -552,9 +553,9 @@ public class WhatIfHTMLRendereCallback extends HtmlRenderCallback {
 						|| context.getModel().getSortCriteria().equals(SortCriteria.BOTTOMCOUNT)) {
 
 					if (axisToSort == Axis.ROWS.axisOrdinal()) {
-						attributes.put("src", pathToImages + "ASC-rows.png");
+						attributes.put("src", PATH_TO_IMAGES + "ASC-rows.png");
 					} else {
-						attributes.put("src", pathToImages + "ASC-columns.png");
+						attributes.put("src", PATH_TO_IMAGES + "ASC-columns.png");
 					}
 
 					attributes.put("sort", "(" + axisToSort + " , " + axis + " , '" + context.getPosition().getMembers().toString() + "' )");
@@ -564,9 +565,9 @@ public class WhatIfHTMLRendereCallback extends HtmlRenderCallback {
 			} else {
 				context.getModel().setSorting(false);
 				if (axisToSort == Axis.ROWS.axisOrdinal()) {
-					attributes.put("src", pathToImages + "noSortRows.png");
+					attributes.put("src", PATH_TO_IMAGES + "noSortRows.png");
 				} else {
-					attributes.put("src", pathToImages + "noSortColumns.png");
+					attributes.put("src", PATH_TO_IMAGES + "noSortColumns.png");
 				}
 
 				attributes.put("sort", "(" + axisToSort + " , " + axis + " , '" + context.getPosition().getMembers().toString() + "' )");
@@ -580,7 +581,7 @@ public class WhatIfHTMLRendereCallback extends HtmlRenderCallback {
 	}
 
 	public static ArrayList<String> trimStyle(String formatedValue) {
-		ArrayList<String> result = new ArrayList<String>();
+		ArrayList<String> result = new ArrayList<>();
 		String results[] = formatedValue.split("\\s*\\|\\s*");
 
 		for (int i = 0; i < results.length; i++) {

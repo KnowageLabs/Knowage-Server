@@ -326,8 +326,6 @@ public class DocumentCompositionUtils {
 
 			String className = obj.getEngine().getClassName();
 			if (className == null || className.trim().equals("")) {
-				// external engine: if url contains /api/.... (ie: /knowagegeoreportengine/api/1.0/pages/execute)
-				// clean the url to call the specific Test servlet (ie: /knowagegeoreportengine/Test)
 				baseUrlReturn = obj.getEngine().getUrl();
 				int restURLPos = baseUrlReturn.indexOf("/api/");
 				if (restURLPos < 0)

@@ -23,7 +23,6 @@
 		 return {
 		      restrict: 'E',
 		      replace: 'true',
-//		      templateUrl: '/knowagewhatifengine/html/template/main/filter/filterCard.html',
 		      templateUrl: function(){
 			    	 return sbiModule_config.contextName+'/html/template/main/filter/filterCard.html';
 			    	  

@@ -203,7 +203,6 @@
 			var deferred = $q.defer();
 			$mdDialog.show({
 				controller: DialogController,
-//				templateUrl: '/knowagekpiengine/js/angular_1.x/kpi-widget/template/kpi-widget-editValue.jsp',
 				templateUrl: sbiModule_config.contextName + '/js/angular_1.x/kpi-widget/template/kpi-widget-editValue.jsp',
 				clickOutsideToClose:true,
 				preserveScope:true,

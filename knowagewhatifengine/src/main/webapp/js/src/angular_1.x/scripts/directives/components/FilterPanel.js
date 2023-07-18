@@ -23,7 +23,6 @@ angular.module('filter_panel',['sbiModule','olap.services'])
 	return{
 		restrict: "E",
 		replace: 'true',
-//		templateUrl: '/knowagewhatifengine/html/template/main/filter/filterPanel.html',
 		templateUrl: function(){
 	    	 return sbiModule_config.contextName+'/html/template/main/filter/filterPanel.html';
 

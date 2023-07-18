@@ -36,50 +36,48 @@ import org.apache.log4j.Logger;
  */
 public class Version {
 
-	private static transient Logger logger = Logger.getLogger(Version.class);
-
-	private static String COMPLETE_VERSION;
-	private static String MAJOR_VERSION;
-	private static String MINOR_VERSION;
-	private static String PATCH_VERSION;
-	private static String OPTIONAL;
-	private static String RELEASE_DATE;
-	private static Environment ENVIRONMENT;
-	private static String VERSION_FOR_DATABASE;
+	private static final Logger LOGGER = Logger.getLogger(Version.class);
 
 	private static final String KNOWAGE_APPLICATION_PROPERTIES = "application.properties";
 	private static final String KNOWAGE_APPLICATION_VERSION_PROPERTY = "application.version";
 	private static final String KNOWAGE_APPLICATION_REALEASEDATE_PROPERTY = "application.releasedate";
 	private static final String KNOWAGE_APPLICATION_ENVIRONMENT_PROPERTY = "application.environment";
-
-	// map for short optional versions ("S", "RC")
-	private static Map<String, String> optionalVersions = new HashMap<String, String>();
 	private static final String SNAPSHOT = "SNAPSHOT"; // shorten will be "S"
 	private static final String RELEASE_CANDIDATE = "RELEASE-CANDIDATE"; // shorten will be "RC"
-
 	public static final String VERSION_SEPARATOR = ".";
-	public static String VERSION_FOR_EXPORT = Version.MAJOR_VERSION + Version.VERSION_SEPARATOR + Version.MINOR_VERSION;
+
+	private static String completeVersion;
+	private static String majorVersion;
+	private static String minorVersion;
+	private static String patchVersion;
+	private static String optional;
+	private static String releaseDate;
+	private static Environment environment;
+	private static String versionForDatabase;
+	// map for short optional versions ("S", "RC")
+	private static Map<String, String> optionalVersions = new HashMap<>();
+	private static String versionForExport = Version.majorVersion + Version.VERSION_SEPARATOR + Version.minorVersion;
 
 	static {
 		try (InputStream inputStream = Thread.currentThread().getContextClassLoader().getResourceAsStream(KNOWAGE_APPLICATION_PROPERTIES)) {
 			Properties properties = new Properties();
 			properties.load(inputStream);
-			COMPLETE_VERSION = properties.getProperty(KNOWAGE_APPLICATION_VERSION_PROPERTY);
-			MAJOR_VERSION = separateCompleteVersion(COMPLETE_VERSION, "MAJOR");
-			MINOR_VERSION = separateCompleteVersion(COMPLETE_VERSION, "MINOR");
-			PATCH_VERSION = separateCompleteVersion(COMPLETE_VERSION, "PATCH");
-			OPTIONAL = separateCompleteVersion(COMPLETE_VERSION, "OPTIONAL");
-			RELEASE_DATE = properties.getProperty(KNOWAGE_APPLICATION_REALEASEDATE_PROPERTY);
-			ENVIRONMENT = Environment.valueOf(properties.getProperty(KNOWAGE_APPLICATION_ENVIRONMENT_PROPERTY).toUpperCase());
+			completeVersion = properties.getProperty(KNOWAGE_APPLICATION_VERSION_PROPERTY);
+			majorVersion = separateCompleteVersion(completeVersion, "MAJOR");
+			minorVersion = separateCompleteVersion(completeVersion, "MINOR");
+			patchVersion = separateCompleteVersion(completeVersion, "PATCH");
+			optional = separateCompleteVersion(completeVersion, "OPTIONAL");
+			releaseDate = properties.getProperty(KNOWAGE_APPLICATION_REALEASEDATE_PROPERTY);
+			environment = Environment.valueOf(properties.getProperty(KNOWAGE_APPLICATION_ENVIRONMENT_PROPERTY).toUpperCase());
 
 			optionalVersions.put(SNAPSHOT, "S");
 			optionalVersions.put(RELEASE_CANDIDATE, "RC");
-			VERSION_FOR_DATABASE = Version.getCompleteVersion();
-			if (VERSION_FOR_DATABASE.length() > 10) {
-				VERSION_FOR_DATABASE = getVersionForDB();
+			versionForDatabase = Version.getCompleteVersion();
+			if (versionForDatabase.length() > 10) {
+				versionForDatabase = getVersionForDB();
 			}
 		} catch (Exception e) {
-			logger.error("Cannot read " + KNOWAGE_APPLICATION_PROPERTIES + " file", e);
+			LOGGER.error("Cannot read " + KNOWAGE_APPLICATION_PROPERTIES + " file", e);
 			throw new RuntimeException("Cannot read " + KNOWAGE_APPLICATION_PROPERTIES + " file", e);
 		}
 	}
@@ -89,31 +87,31 @@ public class Version {
 	 * @return Maven ${project.version} variable
 	 */
 	public static String getCompleteVersion() {
-		return COMPLETE_VERSION;
+		return completeVersion;
 	}
 
 	public static String getMajorVersion() {
-		return MAJOR_VERSION;
+		return majorVersion;
 	}
 
 	public static String getMinorVersion() {
-		return MINOR_VERSION;
+		return minorVersion;
 	}
 
 	public static String getPatchVersion() {
-		return PATCH_VERSION;
+		return patchVersion;
 	}
 
 	public static String getOptional() {
-		return OPTIONAL;
+		return optional;
 	}
 
 	public static String getReleaseDate() {
-		return RELEASE_DATE;
+		return releaseDate;
 	}
 
 	public static Environment getEnvironment() {
-		return ENVIRONMENT;
+		return environment;
 	}
 
 	/**
@@ -121,11 +119,11 @@ public class Version {
 	 * @return Knowage Version for Database. It is a shorten version, like [7.0.0-S] instead of [7.0.0-SNAPSHOT]
 	 */
 	public static String getVersionForDatabase() {
-		return VERSION_FOR_DATABASE;
+		return versionForDatabase;
 	}
 
 	private static String separateCompleteVersion(String completeVersion, String part) {
-		logger.debug("IN");
+		LOGGER.debug("IN");
 		String toReturn = "";
 		// Find all digits separated by dot (.) + optional i.e. [7.0.0-SNAPSHOT]
 		Pattern regexPattern = Pattern.compile("([\\d]+)\\.([\\d]+)\\.([\\d]+)(-(.+))?");
@@ -149,7 +147,7 @@ public class Version {
 				break;
 			}
 		}
-		logger.debug("OUT");
+		LOGGER.debug("OUT");
 		return toReturn;
 	}
 

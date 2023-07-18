@@ -156,7 +156,6 @@ angular.module('member_directive',['sbiModule'])
 	    				preserveScope : true,
 	    				parent: angular.element(document.body),
 	    				controllerAs : 'olapCtrl',
-//	    				templateUrl : '/knowagewhatifengine/html/template/main/toolbar/properties.html',
 	    				templateUrl : function() {
 							return sbiModule_config.contextName + '/html/template/main/toolbar/properties.html'
 						},

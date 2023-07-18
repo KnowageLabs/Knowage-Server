@@ -31,17 +31,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <html ng-app="profileAttributesManagementModule">
 <head>
 <%@include file="/WEB-INF/jsp/commons/angular/angularImport.jsp"%>
-
-<!-- Styles -->
-<!--  link rel="stylesheet" type="text/css"	href="/knowage/themes/glossary/css/generalStyle.css"-->
-<!--  link rel="stylesheet" type="text/css"	href="/knowage/themes/catalogue/css/catalogue.css"-->
-
 <link rel="stylesheet" type="text/css"    href="<%=urlBuilder.getResourceLink(request, "themes/commons/css/customStyle.css")%>">
-<%-- 
-<script type="text/javascript" src="/knowage/js/src/angular_1.4/tools/commons/angular-table/AngularTable.js"></script>
-
-<script type="text/javascript" src="/knowage/js/src/angular_1.4/tools/catalogues/profileAttributesManagement.js"></script> 
---%>
 <script type="text/javascript" src="<%=urlBuilder.getResourceLink(request, "js/src/angular_1.4/tools/commons/angular-table/AngularTable.js")%>"></script>
 
 <script type="text/javascript" src="<%=urlBuilder.getResourceLink(request, "js/src/angular_1.4/tools/catalogues/profileAttributesManagement.js")%>"></script>

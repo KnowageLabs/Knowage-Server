@@ -870,17 +870,7 @@ public class GeneralUtilities extends SpagoBIUtilities {
 
 	public static String getExternalEngineUrl(Engine eng) {
 		LOGGER.debug("IN");
-		// in case there is a Secondary URL, use it
-		String urlEngine = eng.getSecondaryUrl();
-		if (urlEngine == null || urlEngine.trim().equals("")) {
-			LOGGER.debug("Secondary url is not defined for engine " + eng.getLabel() + "; main url will be used.");
-			// in case there is not a Secondary URL, use the main url
-			if (!"it.eng.spagobi.engines.drivers.dashboard.DashboardDriver".equals(eng.getDriverName())) {
-				urlEngine = eng.getUrl();
-			} else {
-				urlEngine = "/";
-			}
-		}
+		String urlEngine = getExternalEngineContextPath(eng);
 		LOGGER.debug("Engine url is " + urlEngine);
 		if (!"it.eng.spagobi.engines.drivers.dashboard.DashboardDriver".equals(eng.getDriverName())) {
 			Assert.assertTrue(urlEngine != null && !urlEngine.trim().equals(""), "External engine url is not defined!!");
@@ -957,4 +947,18 @@ public class GeneralUtilities extends SpagoBIUtilities {
 		return "/js/lib/angular-localization/" + getAngularPropertiesFileName(locale, separator) + ".js";
 	}
 
+	public static String getExternalEngineContextPath(Engine engine) {
+		// in case there is a Secondary URL, use it
+		String urlEngine = engine.getSecondaryUrl();
+		if (StringUtils.isEmpty(urlEngine)) {
+			LOGGER.debug("Secondary url is not defined for engine " + engine.getLabel() + "; main url will be used.");
+			// in case there is not a Secondary URL, use the main url
+			if (!"it.eng.spagobi.engines.drivers.dashboard.DashboardDriver".equals(engine.getDriverName())) {
+				urlEngine = engine.getUrl();
+			} else {
+				urlEngine = "/";
+			}
+		}
+		return urlEngine;
+	}
 }

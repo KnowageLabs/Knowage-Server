@@ -26,7 +26,6 @@ angular.module('sbi_side_nav',['sbiModule'])
 	return{
 		restrict: "E",
 		replace: 'true',
-//		templateUrl: '/knowagewhatifengine/html/template/right/sideNavigation.html',
 		templateUrl: function(){
 	    	  return sbiModule_config.contextName  + '/html/template/right/sideNavigation.html'
 	    	  },

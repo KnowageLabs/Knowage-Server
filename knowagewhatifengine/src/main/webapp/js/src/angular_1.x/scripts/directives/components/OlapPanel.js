@@ -388,7 +388,6 @@ if ($scope.dtAssociatedLevels.length == 0 && $scope.dtMaxRows == 0) {
 										preserveScope : true,
 										parent : angular.element(document.body),
 										controllerAs : 'olapCtrl',
-//										templateUrl : '/knowagewhatifengine/html/template/main/toolbar/properties.html',
 										templateUrl : sbiModule_config.contextName + '/html/template/main/toolbar/properties.html',
 										clickOutsideToClose : false,
 										hasBackdrop : false
@@ -681,7 +680,6 @@ if ($scope.dtAssociatedLevels.length == 0 && $scope.dtMaxRows == 0) {
 
 					},
 					template : "<md-dialog style='min-height: 30px;position: absolute;left: 0;top:0'><input md-autofocus ng-model='cellValue' type='text' style='width: 190px;transform:translateX(50px);' ng-keypress='closeDialog($event)'><input type='button'  ng-click='showFormulaDialog()' style='position:absolute;left:0px;top:0px' value='f(x)'></md-dialog>",
-					//'/knowagewhatifengine/html/template/main/toolbar/writeBackCellSmall.html'
 					onRemoving : function() {
 						cell.css('width', 'inherit');
 						cell[0].style.setProperty('position', 'relative',
@@ -721,7 +719,6 @@ if ($scope.dtAssociatedLevels.length == 0 && $scope.dtMaxRows == 0) {
 
 					},
 					controllerAs : 'olapCtrl',
-//					templateUrl : '/knowagewhatifengine/html/template/main/toolbar/writeBackCell.html',
 					templateUrl :  sbiModule_config.contextName + '/html/template/main/toolbar/writeBackCell.html',
 					// targetEvent : ev,
 					clickOutsideToClose : false,
@@ -791,7 +788,6 @@ if ($scope.dtAssociatedLevels.length == 0 && $scope.dtMaxRows == 0) {
 					scope : $scope,
 					preserveScope : true,
 					controllerAs : 'olapCtrl',
-//					templateUrl : '/knowagewhatifengine/html/template/main/toolbar/drillThrough.html',
 					templateUrl : sbiModule_config.contextName + '/html/template/main/toolbar/drillThrough.html',
 					targetEvent : ev,
 					clickOutsideToClose : true
@@ -826,7 +822,6 @@ if ($scope.dtAssociatedLevels.length == 0 && $scope.dtMaxRows == 0) {
 					preserveScope : true,
 					parent : angular.element(document.body),
 					controllerAs : 'olapCtrl',
-//					templateUrl : '/knowagewhatifengine/html/template/main/calculatedfields/calculatedFields.html',
 					templateUrl : sbiModule_config.contextName + '/html/template/main/calculatedfields/calculatedFields.html',
 					clickOutsideToClose : false,
 					hasBackdrop : false
@@ -889,7 +884,6 @@ if ($scope.dtAssociatedLevels.length == 0 && $scope.dtMaxRows == 0) {
 					preserveScope : true,
 					parent : angular.element(document.body),
 					controllerAs : 'olapCtrl',
-//					templateUrl : '/knowagewhatifengine/html/template/main/calculatedfields/argumentsDialog.html',
 					templateUrl : sbiModule_config.contextName + '/html/template/main/calculatedfields/argumentsDialog.html',
 					clickOutsideToClose : false,
 					hasBackdrop : false
@@ -905,7 +899,6 @@ if ($scope.dtAssociatedLevels.length == 0 && $scope.dtMaxRows == 0) {
 					preserveScope : true,
 					parent : angular.element(document.body),
 					controllerAs : 'olapCtrl',
-//					templateUrl : '/knowagewhatifengine/html/template/main/calculatedfields/savedSets.html',
 					templateUrl : sbiModule_config.contextName + '/html/template/main/calculatedfields/savedSets.html',
 					clickOutsideToClose : true,
 					hasBackdrop : false

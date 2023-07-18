@@ -2,7 +2,8 @@ package it.eng.knowage.commons.security;
 
 import java.util.Optional;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  *
@@ -62,212 +63,212 @@ public class KnowageSystemConfiguration {
 	private static final String KNOWAGEWHATIFENGINE_DEFAULT_CONTEXT = "/knowagewhatifengine";
 	private static final String KNOWAGEWHATIFENGINE_CONTEXT = "knowagewhatifengine.context";
 
-	private static Logger logger = Logger.getLogger(KnowageSystemConfiguration.class);
+	private static final Logger LOGGER = LogManager.getLogger(KnowageSystemConfiguration.class);
 
 	private KnowageSystemConfiguration() {
 	}
 
 	public static String getKnowageContext() {
-		logger.debug("IN");
+		LOGGER.debug("IN");
 		String path = "";
 		try {
 			path = Optional.ofNullable(System.getProperty(KNOWAGE_CORE_CONTEXT, System.getenv(KNOWAGE_CORE_CONTEXT))).orElse(KNOWAGE_CORE_DEFAULT_CONTEXT);
 		} catch (Exception e) {
-			logger.error("Error while recovering knowage context address", e);
+			LOGGER.error("Error while recovering knowage context address", e);
 		}
-		logger.debug("OUT:" + path);
+		LOGGER.debug("OUT:" + path);
 		return path;
 	}
 
 	public static String getKnowageAPIContext() {
-		logger.debug("IN");
+		LOGGER.debug("IN");
 		String path = "";
 		try {
 			path = Optional.ofNullable(System.getProperty(KNOWAGE_API_CONTEXT, System.getenv(KNOWAGE_API_CONTEXT))).orElse(KNOWAGE_API_DEFAULT_CONTEXT);
 		} catch (Exception e) {
-			logger.error("Error while recovering knowage-api context address", e);
+			LOGGER.error("Error while recovering knowage-api context address", e);
 		}
-		logger.debug("OUT:" + path);
+		LOGGER.debug("OUT:" + path);
 		return path;
 	}
 
 	public static String getKnowageBirtReportEngineContext() {
-		logger.debug("IN");
+		LOGGER.debug("IN");
 		String path = "";
 		try {
 			path = Optional.ofNullable(System.getProperty(KNOWAGEBIRTREPORTENGINE_CONTEXT, System.getenv(KNOWAGEBIRTREPORTENGINE_CONTEXT)))
 					.orElse(KNOWAGEBIRTREPORTENGINE_DEFAULT_CONTEXT);
 		} catch (Exception e) {
-			logger.error("Error while recovering knowagebirtreportengine context address", e);
+			LOGGER.error("Error while recovering knowagebirtreportengine context address", e);
 		}
-		logger.debug("OUT:" + path);
+		LOGGER.debug("OUT:" + path);
 		return path;
 	}
 
 	public static String getKnowageCockpitEngineContext() {
-		logger.debug("IN");
+		LOGGER.debug("IN");
 		String path = "";
 		try {
 			path = Optional.ofNullable(System.getProperty(KNOWAGECOCKPITENGINE_CONTEXT, System.getenv(KNOWAGECOCKPITENGINE_CONTEXT)))
 					.orElse(KNOWAGECOCKPITENGINE_DEFAULT_CONTEXT);
 		} catch (Exception e) {
-			logger.error("Error while recovering knowagecockpitengine context address", e);
+			LOGGER.error("Error while recovering knowagecockpitengine context address", e);
 		}
-		logger.debug("OUT:" + path);
+		LOGGER.debug("OUT:" + path);
 		return path;
 	}
 
 	public static String getKnowageCommonjEngineContext() {
-		logger.debug("IN");
+		LOGGER.debug("IN");
 		String path = "";
 		try {
 			path = Optional.ofNullable(System.getProperty(KNOWAGECOMMONJENGINE_CONTEXT, System.getenv(KNOWAGECOMMONJENGINE_CONTEXT)))
 					.orElse(KNOWAGECOMMONJENGINE_DEFAULT_CONTEXT);
 		} catch (Exception e) {
-			logger.error("Error while recovering knowagecommonjengine context address", e);
+			LOGGER.error("Error while recovering knowagecommonjengine context address", e);
 		}
-		logger.debug("OUT:" + path);
+		LOGGER.debug("OUT:" + path);
 		return path;
 	}
 
 	public static String getKnowageDataPreparationContext() {
-		logger.debug("IN");
+		LOGGER.debug("IN");
 		String path = "";
 		try {
 			path = Optional.ofNullable(System.getProperty(KNOWAGEDATAPREPARATION_CONTEXT, System.getenv(KNOWAGEDATAPREPARATION_CONTEXT)))
 					.orElse(KNOWAGEDATAPREPARATION_DEFAULT_CONTEXT);
 		} catch (Exception e) {
-			logger.error("Error while recovering knowage-data-preparation context address", e);
+			LOGGER.error("Error while recovering knowage-data-preparation context address", e);
 		}
-		logger.debug("OUT:" + path);
+		LOGGER.debug("OUT:" + path);
 		return path;
 	}
 
 	public static String getKnowageDossierEngineContext() {
-		logger.debug("IN");
+		LOGGER.debug("IN");
 		String path = "";
 		try {
 			path = Optional.ofNullable(System.getProperty(KNOWAGEDOSSIERENGINE_CONTEXT, System.getenv(KNOWAGEDOSSIERENGINE_CONTEXT)))
 					.orElse(KNOWAGEDOSSIERENGINE_DEFAULT_CONTEXT);
 		} catch (Exception e) {
-			logger.error("Error while recovering knowagedossierengine context address", e);
+			LOGGER.error("Error while recovering knowagedossierengine context address", e);
 		}
-		logger.debug("OUT:" + path);
+		LOGGER.debug("OUT:" + path);
 		return path;
 	}
 
 	public static String getKnowageGeoReportEngineContext() {
-		logger.debug("IN");
+		LOGGER.debug("IN");
 		String path = "";
 		try {
 			path = Optional.ofNullable(System.getProperty(KNOWAGEGEOREPORTENGINE_CONTEXT, System.getenv(KNOWAGEGEOREPORTENGINE_CONTEXT)))
 					.orElse(KNOWAGEGEOREPORTENGINE_DEFAULT_CONTEXT);
 		} catch (Exception e) {
-			logger.error("Error while recovering knowagegeoreportengine context address", e);
+			LOGGER.error("Error while recovering knowagegeoreportengine context address", e);
 		}
-		logger.debug("OUT:" + path);
+		LOGGER.debug("OUT:" + path);
 		return path;
 	}
 
 	public static String getKnowageJasperReportEngineContext() {
-		logger.debug("IN");
+		LOGGER.debug("IN");
 		String path = "";
 		try {
 			path = Optional.ofNullable(System.getProperty(KNOWAGEJASPERREPORTENGINE_CONTEXT, System.getenv(KNOWAGEJASPERREPORTENGINE_CONTEXT)))
 					.orElse(KNOWAGEJASPERREPORTENGINE_DEFAULT_CONTEXT);
 		} catch (Exception e) {
-			logger.error("Error while recovering knowagejasperreportengine context address", e);
+			LOGGER.error("Error while recovering knowagejasperreportengine context address", e);
 		}
-		logger.debug("OUT:" + path);
+		LOGGER.debug("OUT:" + path);
 		return path;
 	}
 
 	public static String getKnowageKpiEngineContext() {
-		logger.debug("IN");
+		LOGGER.debug("IN");
 		String path = "";
 		try {
 			path = Optional.ofNullable(System.getProperty(KNOWAGEKPIENGINE_CONTEXT, System.getenv(KNOWAGEKPIENGINE_CONTEXT)))
 					.orElse(KNOWAGEKPIENGINE_DEFAULT_CONTEXT);
 		} catch (Exception e) {
-			logger.error("Error while recovering knowagekpiengine context address", e);
+			LOGGER.error("Error while recovering knowagekpiengine context address", e);
 		}
-		logger.debug("OUT:" + path);
+		LOGGER.debug("OUT:" + path);
 		return path;
 	}
 
 	public static String getKnowageMetaContext() {
-		logger.debug("IN");
+		LOGGER.debug("IN");
 		String path = "";
 		try {
 			path = Optional.ofNullable(System.getProperty(KNOWAGEMETA_CONTEXT, System.getenv(KNOWAGEMETA_CONTEXT))).orElse(KNOWAGEMETA_DEFAULT_CONTEXT);
 		} catch (Exception e) {
-			logger.error("Error while recovering knowagemeta context address", e);
+			LOGGER.error("Error while recovering knowagemeta context address", e);
 		}
-		logger.debug("OUT:" + path);
+		LOGGER.debug("OUT:" + path);
 		return path;
 	}
 
 	public static String getKnowageQbeEngineContext() {
-		logger.debug("IN");
+		LOGGER.debug("IN");
 		String path = "";
 		try {
 			path = Optional.ofNullable(System.getProperty(KNOWAGEQBEENGINE_CONTEXT, System.getenv(KNOWAGEQBEENGINE_CONTEXT)))
 					.orElse(KNOWAGEQBEENGINE_DEFAULT_CONTEXT);
 		} catch (Exception e) {
-			logger.error("Error while recovering knowageqbeengine context address", e);
+			LOGGER.error("Error while recovering knowageqbeengine context address", e);
 		}
-		logger.debug("OUT:" + path);
+		LOGGER.debug("OUT:" + path);
 		return path;
 	}
 
 	public static String getKnowageSvgViewerEngineContext() {
-		logger.debug("IN");
+		LOGGER.debug("IN");
 		String path = "";
 		try {
 			path = Optional.ofNullable(System.getProperty(KNOWAGESVGVIEWERENGINE_CONTEXT, System.getenv(KNOWAGESVGVIEWERENGINE_CONTEXT)))
 					.orElse(KNOWAGESVGVIEWERENGINE_DEFAULT_CONTEXT);
 		} catch (Exception e) {
-			logger.error("Error while recovering knowagesvgviewerengine context address", e);
+			LOGGER.error("Error while recovering knowagesvgviewerengine context address", e);
 		}
-		logger.debug("OUT:" + path);
+		LOGGER.debug("OUT:" + path);
 		return path;
 	}
 
 	public static String getKnowageTalendEngineContext() {
-		logger.debug("IN");
+		LOGGER.debug("IN");
 		String path = "";
 		try {
 			path = Optional.ofNullable(System.getProperty(KNOWAGETALENDENGINE_CONTEXT, System.getenv(KNOWAGETALENDENGINE_CONTEXT)))
 					.orElse(KNOWAGETALENDENGINE_DEFAULT_CONTEXT);
 		} catch (Exception e) {
-			logger.error("Error while recovering knowagetalendengine context address", e);
+			LOGGER.error("Error while recovering knowagetalendengine context address", e);
 		}
-		logger.debug("OUT:" + path);
+		LOGGER.debug("OUT:" + path);
 		return path;
 	}
 
 	public static String getKnowageVueContext() {
-		logger.debug("IN");
+		LOGGER.debug("IN");
 		String path = "";
 		try {
 			path = Optional.ofNullable(System.getProperty(KNOWAGE_VUE_CONTEXT, System.getenv(KNOWAGE_VUE_CONTEXT))).orElse(KNOWAGE_VUE_DEFAULT_CONTEXT);
 		} catch (Exception e) {
-			logger.error("Error while recovering knowage-vue context address", e);
+			LOGGER.error("Error while recovering knowage-vue context address", e);
 		}
-		logger.debug("OUT:" + path);
+		LOGGER.debug("OUT:" + path);
 		return path;
 	}
 
 	public static String getKnowageWhatifEngineContext() {
-		logger.debug("IN");
+		LOGGER.debug("IN");
 		String path = "";
 		try {
 			path = Optional.ofNullable(System.getProperty(KNOWAGEWHATIFENGINE_CONTEXT, System.getenv(KNOWAGEWHATIFENGINE_CONTEXT)))
 					.orElse(KNOWAGEWHATIFENGINE_DEFAULT_CONTEXT);
 		} catch (Exception e) {
-			logger.error("Error while recovering knowagewhatifengine context address", e);
+			LOGGER.error("Error while recovering knowagewhatifengine context address", e);
 		}
-		logger.debug("OUT:" + path);
+		LOGGER.debug("OUT:" + path);
 		return path;
 	}
 

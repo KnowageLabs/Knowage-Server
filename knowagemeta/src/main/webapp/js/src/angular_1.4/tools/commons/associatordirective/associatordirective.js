@@ -7,7 +7,6 @@ var associatorDirective = angular.module('associator-directive', ['ngMaterial'])
 associatorDirective.directive("associatorDirective",function(){
 		return {
 //			restrict: 'E',
-//			templateUrl:'/knowagemeta/js/src/angular_1.4/tools/commons/associatordirective/template/associatorDirectiveTemplate.jsp',
 			templateUrl: currentScriptPath + 'template/associatorDirectiveTemplate.jsp',
 			controller: associatorDirectiveController,
 			scope: {

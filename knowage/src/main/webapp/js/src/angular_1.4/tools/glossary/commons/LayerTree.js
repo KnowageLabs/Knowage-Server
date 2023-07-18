@@ -1,7 +1,6 @@
 angular.module('layer_tree', ['ng-context-menu','ngMaterial','ui.tree', 'angular_rest'])
 .directive('layerTree', function() {
 	return {
-		// templateUrl: '/knowage/js/src/angular_1.4/tools/glossary/commons/templates/glossary-tree.html',
 		controller: controllerFunction,
 		scope: {
 			treeId: '@',
@@ -217,7 +216,6 @@ function controllerFunction($scope,restServices,translate,$mdDialog,$mdToast,$ti
 
 						})
 			},
-			//	templateUrl : '/knowage/js/src/angular_1.4/tools/glossary/commons/templates/info_word.html',
 			clickOutsideToClose :true
 		});
 	};
@@ -241,7 +239,6 @@ function controllerFunction($scope,restServices,translate,$mdDialog,$mdToast,$ti
 
 						})
 			},
-			//	templateUrl : '/knowage/js/src/angular_1.4/tools/glossary/commons/templates/info_content.html',
 			clickOutsideToClose :true
 		});
 	};

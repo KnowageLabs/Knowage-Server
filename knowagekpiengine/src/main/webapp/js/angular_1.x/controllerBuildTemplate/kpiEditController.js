@@ -113,7 +113,6 @@ function templateBuildControllerFunction(
 
 		$mdDialog.show({
 			controller: DialogControllerScorecard,
-//			templateUrl: '/knowagekpiengine/js/angular_1.x/controllerBuildTemplate/templateScorecard/templateScorecardDialog.html',
 			templateUrl: sbiModule_config.contextName + '/js/angular_1.x/controllerBuildTemplate/templateScorecard/templateScorecardDialog.html',
 			clickOutsideToClose:true,
 			preserveScope:true,

@@ -43,6 +43,7 @@ sbiM.factory('sbiModule_config',function(){
 		clientServerDateFormat: '<%= GeneralUtilities.getServerDateFormatExtJs() %>',  // the date format to be used when communicating with server
 		clientServerTimestampFormat: '<%= GeneralUtilities.getServerTimestampFormatExtJs() %>',   // the timestamp format to be used when communicating with server
 		externalBasePath:"<%= KnowageSystemConfiguration.getKnowageContext()%>",
+		externalBasePath02:"<%= KnowageSystemConfiguration.getKnowageAPIContext()%>",
 		chartEngineContextName:"<%=chartEngineContextName%>",
 		dynamicResourcesBasePath: "<%=dynamicResourcesBasePath%>",  	//  /knowage/js/src
 		dynamicResourcesEnginePath: "<%=dynamicResourcesEnginePath%>"   //  /cockpitengine/js/src
@@ -441,6 +442,10 @@ sbiM.service('sbiModule_restServices', function($http, $q, sbiModule_translate, 
 		alteredContextPath=sbiModule_config.externalBasePath+"/restful-services";
 	}
 
+	this.restToKnowageAPI=function(){
+		alteredContextPath=sbiModule_config.externalBasePath02+"/api";
+	}
+
 	function getBaseUrl(endP_path) {
 		var burl= alteredContextPath==null? sbiModule_config.contextName +'/api/'+ endP_path+"/"  : alteredContextPath+"/" + endP_path+"/" 
 		alteredContextPath=null;
@@ -473,6 +478,11 @@ sbiM.service('sbiModule_restServices', function($http, $q, sbiModule_translate, 
 	this.put = function(endP_path, req_Path, item, conf) {
 		sbiModule_logger.trace("PUT: "+endP_path+"/"+req_Path,item,conf);
 		return $http.put(getBaseUrl(endP_path) + "" + req_Path, item, conf);
+	};
+	
+	this.patch = function(endP_path, req_Path, item, conf) {
+		sbiModule_logger.trace("PATCH: "+endP_path+"/"+req_Path,item,conf);
+		return $http.patch(getBaseUrl(endP_path) + "" + req_Path, item, conf);
 	};
 	
 	this.delete = function(endP_path, req_Path, item, conf) {

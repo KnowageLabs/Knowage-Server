@@ -119,7 +119,7 @@ public class DocumentRuntime extends AbstractBIResourceRuntime<BIObjectParameter
 		}
 		// IF THE ENGINE IS INTERNAL
 		else {
-			StringBuffer buffer = new StringBuffer();
+			StringBuilder buffer = new StringBuilder();
 			buffer.append(GeneralUtilities.getSpagoBIProfileBaseUrl(((UserProfile) this.getUserProfile()).getUserId().toString()));
 			buffer.append("&PAGE=ExecuteBIObjectPage");
 			buffer.append("&" + SpagoBIConstants.TITLE_VISIBLE + "=FALSE");
@@ -186,7 +186,7 @@ public class DocumentRuntime extends AbstractBIResourceRuntime<BIObjectParameter
 	@Override
 	public List<ObjParuse> getDependencies(AbstractDriver driver, String role) {
 
-		List<ObjParuse> biParameterExecDependencies = new ArrayList<ObjParuse>();
+		List<ObjParuse> biParameterExecDependencies = new ArrayList<>();
 		try {
 			IParameterUseDAO parusedao = DAOFactory.getParameterUseDAO();
 			ParameterUse biParameterExecModality = parusedao.loadByParameterIdandRole(driver.getParID(), role);
