@@ -6,6 +6,14 @@ $aggrid-border-color: #d9dcde;
     }
 }
 
+@-moz-document url-prefix() {
+	.ag-theme-balham  {
+		.ag-center-cols-viewport {
+			overflow-x: auto;
+		}
+	}
+  }
+
 .ag-theme-balham {
     font: 400 $mediumFontSize $defaultFontFamily;
     .editableCell {
