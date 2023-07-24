@@ -1009,6 +1009,10 @@ public class DAOFactory {
 		return (ISbiViewForDocDAO) createDAOInstance("ISbiViewForDocDAO");
 	}
 
+	public static IDashboardThemeDAO getDashboardThemeDAO() {
+		return (IDashboardThemeDAO) createDAOInstance("DashboardThemeDAO");
+	}
+
 	private static boolean isAuthorizationEventsEmissionEnable() {
 		SingletonConfig config = SingletonConfig.getInstance();
 		String configValue = config.getConfigValue(CONFIG_EMIT_AUTHORIZATION_EVENTS);

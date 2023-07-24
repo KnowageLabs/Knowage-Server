@@ -247,6 +247,9 @@
 		<mapping resource="it/eng/spagobi/view/metadata/mapping/SbiViewHierarchy.hbm.xml" />
 		<mapping resource="it/eng/spagobi/view/metadata/mapping/SbiView.hbm.xml" />
 		<mapping resource="it/eng/spagobi/view/metadata/mapping/SbiViewForDoc.hbm.xml" />
+		
+		<!-- Dashboard theme -->
+		<mapping resource="it/eng/spagobi/commons/metadata/mapping/SbiDashboardTheme.hbm.xml" />
 
 		<!-- end mapping -->
 

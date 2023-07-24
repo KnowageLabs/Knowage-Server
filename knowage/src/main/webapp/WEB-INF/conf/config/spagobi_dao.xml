@@ -259,6 +259,9 @@
 		<DAO name="ISbiViewForDocDAO"
 			implementation="it.eng.spagobi.view.dao.SbiViewForDocHIBDAOImpl"></DAO>
 
+		<DAO name="DashboardThemeDAO"
+			implementation="it.eng.spagobi.commons.dao.DashboardThemeDAOHibImpl"></DAO>
+
 	</DAO-CONF>
 
 	<!-- ********************* END DAO CONFIGURATION ************************ -->
