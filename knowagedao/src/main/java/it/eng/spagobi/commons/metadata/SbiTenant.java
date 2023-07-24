@@ -22,15 +22,12 @@ import java.util.Set;
 
 public class SbiTenant extends SbiHibernateModel {
 
-	// Fields
-
 	private Integer id;
 	private String name;
 	private String theme;
-	private Set sbiOrganizationDatasources = new HashSet(0);
-	private Set sbiOrganizationProductType = new HashSet(0);
-	private Set sbiOrganizationThemes = new HashSet(0);
-	// Constructors
+	private Set<SbiOrganizationDatasource> sbiOrganizationDatasources = new HashSet<>(0);
+	private Set<SbiOrganizationProductType> sbiOrganizationProductType = new HashSet<>(0);
+	private Set<SbiOrganizationTheme> sbiOrganizationThemes = new HashSet<>(0);
 
 	/**
 	 * default constructor.
@@ -46,8 +43,6 @@ public class SbiTenant extends SbiHibernateModel {
 	public SbiTenant(Integer id) {
 		this.id = id;
 	}
-
-	// Property accessors
 
 	public Integer getId() {
 		return id;
@@ -73,27 +68,27 @@ public class SbiTenant extends SbiHibernateModel {
 		this.theme = theme;
 	}
 
-	public Set getSbiOrganizationDatasources() {
+	public Set<SbiOrganizationDatasource> getSbiOrganizationDatasources() {
 		return this.sbiOrganizationDatasources;
 	}
 
-	public void setSbiOrganizationDatasources(Set sbiOrganizationDatasources) {
+	public void setSbiOrganizationDatasources(Set<SbiOrganizationDatasource> sbiOrganizationDatasources) {
 		this.sbiOrganizationDatasources = sbiOrganizationDatasources;
 	}
 
-	public Set getSbiOrganizationProductType() {
+	public Set<SbiOrganizationProductType> getSbiOrganizationProductType() {
 		return sbiOrganizationProductType;
 	}
 
-	public void setSbiOrganizationProductType(Set sbiOrganizationProductType) {
+	public void setSbiOrganizationProductType(Set<SbiOrganizationProductType> sbiOrganizationProductType) {
 		this.sbiOrganizationProductType = sbiOrganizationProductType;
 	}
 
-	public Set getSbiOrganizationThemes() {
+	public Set<SbiOrganizationTheme> getSbiOrganizationThemes() {
 		return sbiOrganizationThemes;
 	}
 
-	public void setSbiOrganizationThemes(Set sbiOrganizationThemes) {
+	public void setSbiOrganizationThemes(Set<SbiOrganizationTheme> sbiOrganizationThemes) {
 		this.sbiOrganizationThemes = sbiOrganizationThemes;
 	}
 }

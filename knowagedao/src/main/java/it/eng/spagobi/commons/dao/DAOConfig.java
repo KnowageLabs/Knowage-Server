@@ -17,17 +17,17 @@
  */
 package it.eng.spagobi.commons.dao;
 
-import it.eng.spago.base.SourceBean;
-import it.eng.spago.configuration.ConfigSingleton;
-import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
-import it.eng.spagobi.services.common.EnginConf;
-
 import java.io.File;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
+
+import it.eng.spago.base.SourceBean;
+import it.eng.spago.configuration.ConfigSingleton;
+import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
+import it.eng.spagobi.services.common.EnginConf;
 
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
@@ -61,7 +61,7 @@ public class DAOConfig {
 
 	public static Map<String, String> getMappings() {
 		if (DAOConfig.mappings == null) {
-			DAOConfig.mappings = new HashMap<String, String>();
+			DAOConfig.mappings = new HashMap<>();
 			ConfigSingleton configSingleton = ConfigSingleton.getInstance();
 			List<SourceBean> daoConfigSourceBeans = configSingleton.getAttributeAsList("SPAGOBI.DAO-CONF.DAO");
 			for (SourceBean daoConfigSourceBean : daoConfigSourceBeans) {
@@ -90,5 +90,9 @@ public class DAOConfig {
 
 	public static void setHibernateConfigurationFileFile(File hibernateConfigurationFileFile) {
 		DAOConfig.hibernateConfigurationFileFile = hibernateConfigurationFileFile;
+	}
+
+	private DAOConfig() {
+
 	}
 }
