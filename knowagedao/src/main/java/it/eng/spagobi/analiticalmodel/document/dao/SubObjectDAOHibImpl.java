@@ -74,12 +74,11 @@ public class SubObjectDAOHibImpl extends AbstractHibernateDAO implements ISubObj
 			}
 			tx.commit();
 		} catch (HibernateException he) {
+			rollbackIfActive(tx);
 			logger.error(he);
-			if (tx != null)
-				tx.rollback();
 			throw new EMFUserError(EMFErrorSeverity.ERROR, "100");
 		} finally {
-			closeSession(aSession);
+			closeSessionIfOpen(aSession);
 		}
 		return subs;
 	}
@@ -109,12 +108,11 @@ public class SubObjectDAOHibImpl extends AbstractHibernateDAO implements ISubObj
 			}
 			tx.commit();
 		} catch (HibernateException he) {
+			rollbackIfActive(tx);
 			logger.error(he);
-			if (tx != null)
-				tx.rollback();
 			throw new EMFUserError(EMFErrorSeverity.ERROR, "100");
 		} finally {
-			closeSession(aSession);
+			closeSessionIfOpen(aSession);
 		}
 		return subs;
 	}
@@ -144,12 +142,11 @@ public class SubObjectDAOHibImpl extends AbstractHibernateDAO implements ISubObj
 			}
 			tx.commit();
 		} catch (HibernateException he) {
+			rollbackIfActive(tx);
 			logger.error(he);
-			if (tx != null)
-				tx.rollback();
 			throw new EMFUserError(EMFErrorSeverity.ERROR, "100");
 		} finally {
-			closeSession(aSession);
+			closeSessionIfOpen(aSession);
 		}
 		return subs;
 	}
@@ -188,12 +185,11 @@ public class SubObjectDAOHibImpl extends AbstractHibernateDAO implements ISubObj
 			aSession.delete(hibBinCont);
 			tx.commit();
 		} catch (HibernateException he) {
+			rollbackIfActive(tx);
 			logger.error(he);
-			if (tx != null)
-				tx.rollback();
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		} finally {
-			closeSession(aSession);
+			closeSessionIfOpen(aSession);
 		}
 	}
 
@@ -230,9 +226,8 @@ public class SubObjectDAOHibImpl extends AbstractHibernateDAO implements ISubObj
 			aSession.delete(hibBinCont);
 			tx.commit();
 		} catch (HibernateException he) {
+			rollbackIfActive(tx);
 			logger.error(he);
-			if (tx != null)
-				tx.rollback();
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		}
 	}
@@ -254,12 +249,11 @@ public class SubObjectDAOHibImpl extends AbstractHibernateDAO implements ISubObj
 			sub = toSubobject(hibSub);
 			tx.commit();
 		} catch (HibernateException he) {
+			rollbackIfActive(tx);
 			logger.error(he);
-			if (tx != null)
-				tx.rollback();
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		} finally {
-			closeSession(aSession);
+			closeSessionIfOpen(aSession);
 		}
 		return sub;
 	}
@@ -307,12 +301,11 @@ public class SubObjectDAOHibImpl extends AbstractHibernateDAO implements ISubObj
 			subObjId = hibSub.getSubObjId();
 			tx.commit();
 		} catch (HibernateException he) {
+			rollbackIfActive(tx);
 			logger.error(he);
-			if (tx != null)
-				tx.rollback();
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		} finally {
-			closeSession(aSession);
+			closeSessionIfOpen(aSession);
 		}
 		return subObjId;
 	}
@@ -376,12 +369,11 @@ public class SubObjectDAOHibImpl extends AbstractHibernateDAO implements ISubObj
 
 			tx.commit();
 		} catch (HibernateException he) {
+			rollbackIfActive(tx);
 			logger.error(he);
-			if (tx != null)
-				tx.rollback();
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		} finally {
-			closeSession(aSession);
+			closeSessionIfOpen(aSession);
 		}
 		return subObjId;
 	}

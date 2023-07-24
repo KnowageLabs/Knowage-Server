@@ -19,7 +19,6 @@
 package it.eng.spagobi.view.dao;
 
 import java.util.List;
-import java.util.Objects;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -53,14 +52,10 @@ public class SbiViewHierarchyHIBDAOImpl extends AbstractHibernateDAO implements 
 			tx.commit();
 
 		} catch (Exception ex) {
-			if (Objects.nonNull(tx)) {
-				tx.rollback();
-			}
+			rollbackIfActive(tx);
 			throw ex;
 		} finally {
-			if (Objects.nonNull(session)) {
-				session.close();
-			}
+			closeSessionIfOpen(session);
 		}
 
 		return e;
@@ -82,14 +77,10 @@ public class SbiViewHierarchyHIBDAOImpl extends AbstractHibernateDAO implements 
 			tx.commit();
 
 		} catch (Exception ex) {
-			if (Objects.nonNull(tx)) {
-				tx.rollback();
-			}
+			rollbackIfActive(tx);
 			throw ex;
 		} finally {
-			if (Objects.nonNull(session)) {
-				session.close();
-			}
+			closeSessionIfOpen(session);
 		}
 
 		return e;
@@ -106,9 +97,7 @@ public class SbiViewHierarchyHIBDAOImpl extends AbstractHibernateDAO implements 
 			e = (SbiViewHierarchy) session.load(SbiViewHierarchy.class, id);
 
 		} finally {
-			if (Objects.nonNull(session)) {
-				session.close();
-			}
+			closeSessionIfOpen(session);
 		}
 
 		return e;
@@ -131,14 +120,10 @@ public class SbiViewHierarchyHIBDAOImpl extends AbstractHibernateDAO implements 
 			tx.commit();
 
 		} catch (Exception ex) {
-			if (Objects.nonNull(tx)) {
-				tx.rollback();
-			}
+			rollbackIfActive(tx);
 			throw ex;
 		} finally {
-			if (Objects.nonNull(session)) {
-				session.close();
-			}
+			closeSessionIfOpen(session);
 		}
 
 		return e;
@@ -160,9 +145,7 @@ public class SbiViewHierarchyHIBDAOImpl extends AbstractHibernateDAO implements 
 			e.addAll(list);
 
 		} finally {
-			if (Objects.nonNull(session)) {
-				session.close();
-			}
+			closeSessionIfOpen(session);
 		}
 
 		return e;

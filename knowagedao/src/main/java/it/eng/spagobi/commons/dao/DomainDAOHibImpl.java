@@ -73,15 +73,11 @@ public class DomainDAOHibImpl extends AbstractHibernateDAO implements IDomainDAO
 			}
 			tx.commit();
 		} catch (HibernateException he) {
+			rollbackIfActive(tx);
 			logException(he);
-
-			if (tx != null)
-				tx.rollback();
-
 			throw new SpagoBIRuntimeException(he.getMessage());
-
 		} finally {
-			closeSession(aSession);
+			closeSessionIfOpen(aSession);
 		}
 
 		return realResult;
@@ -128,15 +124,11 @@ public class DomainDAOHibImpl extends AbstractHibernateDAO implements IDomainDAO
 			}
 			tx.commit();
 		} catch (HibernateException he) {
+			rollbackIfActive(tx);
 			logException(he);
-
-			if (tx != null)
-				tx.rollback();
-
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
-
 		} finally {
-			closeSession(aSession);
+			closeSessionIfOpen(aSession);
 		}
 
 		return realResult;
@@ -193,15 +185,11 @@ public class DomainDAOHibImpl extends AbstractHibernateDAO implements IDomainDAO
 			}
 			tx.commit();
 		} catch (HibernateException he) {
+			rollbackIfActive(tx);
 			logException(he);
-
-			if (tx != null)
-				tx.rollback();
-
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
-
 		} finally {
-			closeSession(aSession);
+			closeSessionIfOpen(aSession);
 		}
 
 		return realResult;
@@ -237,15 +225,11 @@ public class DomainDAOHibImpl extends AbstractHibernateDAO implements IDomainDAO
 
 			tx.commit();
 		} catch (HibernateException he) {
+			rollbackIfActive(tx);
 			logException(he);
-
-			if (tx != null)
-				tx.rollback();
-
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
-
 		} finally {
-			closeSession(aSession);
+			closeSessionIfOpen(aSession);
 		}
 
 		return aDomain;
@@ -315,15 +299,11 @@ public class DomainDAOHibImpl extends AbstractHibernateDAO implements IDomainDAO
 
 			tx.commit();
 		} catch (HibernateException he) {
+			rollbackIfActive(tx);
 			logException(he);
-
-			if (tx != null)
-				tx.rollback();
-
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
-
 		} finally {
-			closeSession(aSession);
+			closeSessionIfOpen(aSession);
 		}
 
 		return aSbiDomains;
@@ -375,15 +355,11 @@ public class DomainDAOHibImpl extends AbstractHibernateDAO implements IDomainDAO
 			tx.commit();
 
 		} catch (HibernateException he) {
+			rollbackIfActive(tx);
 			logException(he);
-
-			if (tx != null)
-				tx.rollback();
-
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
-
 		} finally {
-			closeSession(aSession);
+			closeSessionIfOpen(aSession);
 		}
 
 		return toReturn;
@@ -417,15 +393,11 @@ public class DomainDAOHibImpl extends AbstractHibernateDAO implements IDomainDAO
 			tx.commit();
 
 		} catch (HibernateException he) {
+			rollbackIfActive(tx);
 			logException(he);
-
-			if (tx != null)
-				tx.rollback();
-
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
-
 		} finally {
-			closeSession(aSession);
+			closeSessionIfOpen(aSession);
 		}
 
 		return toReturn;
@@ -453,12 +425,11 @@ public class DomainDAOHibImpl extends AbstractHibernateDAO implements IDomainDAO
 			}
 			tx.commit();
 		} catch (HibernateException he) {
+			rollbackIfActive(tx);
 			logException(he);
-			if (tx != null)
-				tx.rollback();
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		} finally {
-			closeSession(aSession);
+			closeSessionIfOpen(aSession);
 		}
 		return domains;
 	}
@@ -509,15 +480,11 @@ public class DomainDAOHibImpl extends AbstractHibernateDAO implements IDomainDAO
 			domain.setValueId(newId);
 
 		} catch (HibernateException he) {
+			rollbackIfActive(tx);
 			logException(he);
-
-			if (tx != null)
-				tx.rollback();
-
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
-
 		} finally {
-			closeSession(aSession);
+			closeSessionIfOpen(aSession);
 			LOGGER.debug("OUT");
 		}
 
@@ -584,14 +551,11 @@ public class DomainDAOHibImpl extends AbstractHibernateDAO implements IDomainDAO
 			tx.commit();
 
 		} catch (HibernateException he) {
+			rollbackIfActive(tx);
 			logException(he);
-
-			if (tx != null)
-				tx.rollback();
 			throw new RuntimeException("Impossible to delete domain [" + idDomain + "]", he);
-
 		} finally {
-			closeSession(aSession);
+			closeSessionIfOpen(aSession);
 		}
 	}
 

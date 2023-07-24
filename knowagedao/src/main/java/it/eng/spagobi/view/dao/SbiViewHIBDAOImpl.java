@@ -19,7 +19,6 @@
 package it.eng.spagobi.view.dao;
 
 import java.util.List;
-import java.util.Objects;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -54,14 +53,10 @@ public class SbiViewHIBDAOImpl extends AbstractHibernateDAO implements ISbiViewD
 			tx.commit();
 
 		} catch (Exception ex) {
-			if (Objects.nonNull(tx)) {
-				tx.rollback();
-			}
+			rollbackIfActive(tx);
 			throw ex;
 		} finally {
-			if (Objects.nonNull(session)) {
-				session.close();
-			}
+			closeSessionIfOpen(session);
 		}
 
 		return e;
@@ -83,14 +78,10 @@ public class SbiViewHIBDAOImpl extends AbstractHibernateDAO implements ISbiViewD
 			tx.commit();
 
 		} catch (Exception ex) {
-			if (Objects.nonNull(tx)) {
-				tx.rollback();
-			}
+			rollbackIfActive(tx);
 			throw ex;
 		} finally {
-			if (Objects.nonNull(session)) {
-				session.close();
-			}
+			closeSessionIfOpen(session);
 		}
 
 		return e;
@@ -107,9 +98,7 @@ public class SbiViewHIBDAOImpl extends AbstractHibernateDAO implements ISbiViewD
 			e = (SbiView) session.load(SbiView.class, id);
 
 		} finally {
-			if (Objects.nonNull(session)) {
-				session.close();
-			}
+			closeSessionIfOpen(session);
 		}
 
 		return e;
@@ -131,14 +120,10 @@ public class SbiViewHIBDAOImpl extends AbstractHibernateDAO implements ISbiViewD
 			tx.commit();
 
 		} catch (Exception ex) {
-			if (Objects.nonNull(tx)) {
-				tx.rollback();
-			}
+			rollbackIfActive(tx);
 			throw ex;
 		} finally {
-			if (Objects.nonNull(session)) {
-				session.close();
-			}
+			closeSessionIfOpen(session);
 		}
 
 		return e;
@@ -156,17 +141,12 @@ public class SbiViewHIBDAOImpl extends AbstractHibernateDAO implements ISbiViewD
 			Filter filter = session.enableFilter(FILTER_USER);
 			filter.setParameter(FILTER_USER_PARAM_USER, userProfile.getUserId());
 
-			List<SbiView> list = session.createCriteria(SbiView.class)
-				.createAlias("parent", "parent")
-				.add(Restrictions.eq("parent.id", id))
-				.list();
+			List<SbiView> list = session.createCriteria(SbiView.class).createAlias("parent", "parent").add(Restrictions.eq("parent.id", id)).list();
 
 			ret.addAll(list);
 
 		} finally {
-			if (Objects.nonNull(session)) {
-				session.close();
-			}
+			closeSessionIfOpen(session);
 		}
 
 		return ret;
@@ -184,16 +164,12 @@ public class SbiViewHIBDAOImpl extends AbstractHibernateDAO implements ISbiViewD
 			Filter filter = session.enableFilter(FILTER_USER);
 			filter.setParameter(FILTER_USER_PARAM_USER, userProfile.getUserId());
 
-			List<SbiView> list = session.createCriteria(SbiView.class)
-				.add(Restrictions.eq("biObjId", biObjectId))
-				.list();
+			List<SbiView> list = session.createCriteria(SbiView.class).add(Restrictions.eq("biObjId", biObjectId)).list();
 
 			ret.addAll(list);
 
 		} finally {
-			if (Objects.nonNull(session)) {
-				session.close();
-			}
+			closeSessionIfOpen(session);
 		}
 
 		return ret;

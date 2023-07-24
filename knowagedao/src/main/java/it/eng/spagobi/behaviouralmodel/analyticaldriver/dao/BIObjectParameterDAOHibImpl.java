@@ -77,12 +77,11 @@ public class BIObjectParameterDAOHibImpl extends AbstractHibernateDAO implements
 			hibObjPar = (SbiObjPar) aSession.load(SbiObjPar.class, id);
 			tx.commit();
 		} catch (HibernateException he) {
+			rollbackIfActive(tx);
 			logException(he);
-			if (tx != null)
-				tx.rollback();
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		} finally {
-			closeSession(aSession);
+			closeSessionIfOpen(aSession);
 		}
 		return hibObjPar;
 	}
@@ -101,12 +100,11 @@ public class BIObjectParameterDAOHibImpl extends AbstractHibernateDAO implements
 
 			tx.commit();
 		} catch (HibernateException he) {
+			rollbackIfActive(tx);
 			logException(he);
-			if (tx != null)
-				tx.rollback();
 			throw new HibernateException(he.getLocalizedMessage(), he);
 		} finally {
-			closeSession(aSession);
+			closeSessionIfOpen(aSession);
 		}
 		return objPar;
 	}
@@ -132,12 +130,11 @@ public class BIObjectParameterDAOHibImpl extends AbstractHibernateDAO implements
 
 			tx.commit();
 		} catch (HibernateException he) {
+			rollbackIfActive(tx);
 			logException(he);
-			if (tx != null)
-				tx.rollback();
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		} finally {
-			closeSession(aSession);
+			closeSessionIfOpen(aSession);
 		}
 		return objPar;
 	}
@@ -168,12 +165,11 @@ public class BIObjectParameterDAOHibImpl extends AbstractHibernateDAO implements
 			toReturn = toBIObjectParameter(hibObjPar);
 			tx.commit();
 		} catch (HibernateException he) {
+			rollbackIfActive(tx);
 			logException(he);
-			if (tx != null)
-				tx.rollback();
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		} finally {
-			closeSession(aSession);
+			closeSessionIfOpen(aSession);
 		}
 		return toReturn;
 	}
@@ -246,12 +242,11 @@ public class BIObjectParameterDAOHibImpl extends AbstractHibernateDAO implements
 			updateSbiCommonInfo4Update(hibObjPar);
 			tx.commit();
 		} catch (HibernateException he) {
+			rollbackIfActive(tx);
 			logException(he);
-			if (tx != null)
-				tx.rollback();
 			throw new HibernateException(he.getLocalizedMessage(), he);
 		} finally {
-			closeSession(aSession);
+			closeSessionIfOpen(aSession);
 		}
 	}
 
@@ -302,14 +297,11 @@ public class BIObjectParameterDAOHibImpl extends AbstractHibernateDAO implements
 			tx.commit();
 			return id;
 		} catch (HibernateException he) {
+			rollbackIfActive(tx);
 			logException(he);
-			if (tx != null)
-				tx.rollback();
-
 			throw new HibernateException(he.getLocalizedMessage(), he);
-
 		} finally {
-			closeSession(aSession);
+			closeSessionIfOpen(aSession);
 		}
 
 	}
@@ -338,12 +330,11 @@ public class BIObjectParameterDAOHibImpl extends AbstractHibernateDAO implements
 		} catch (ConstraintViolationException e) {
 			throw new HibernateException(e.getLocalizedMessage(), e);
 		} catch (HibernateException he) {
+			rollbackIfActive(tx);
 			logException(he);
-			if (tx != null)
-				tx.rollback();
 			throw new HibernateException(he.getLocalizedMessage(), he);
 		} finally {
-			closeSession(aSession);
+			closeSessionIfOpen(aSession);
 		}
 	}
 
@@ -494,12 +485,11 @@ public class BIObjectParameterDAOHibImpl extends AbstractHibernateDAO implements
 
 			tx.commit();
 		} catch (HibernateException he) {
+			rollbackIfActive(tx);
 			logException(he);
-			if (tx != null)
-				tx.rollback();
 			throw new HibernateException(he.getLocalizedMessage(), he);
 		} finally {
-			closeSession(aSession);
+			closeSessionIfOpen(aSession);
 		}
 		return toReturn;
 	}
@@ -556,12 +546,11 @@ public class BIObjectParameterDAOHibImpl extends AbstractHibernateDAO implements
 			}
 			tx.commit();
 		} catch (HibernateException he) {
+			rollbackIfActive(tx);
 			logException(he);
-			if (tx != null)
-				tx.rollback();
 			throw new HibernateException(he.getLocalizedMessage(), he);
 		} finally {
-			closeSession(aSession);
+			closeSessionIfOpen(aSession);
 		}
 		return resultList;
 	}

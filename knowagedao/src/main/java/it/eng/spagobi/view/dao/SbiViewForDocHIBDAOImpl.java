@@ -54,14 +54,10 @@ public class SbiViewForDocHIBDAOImpl extends AbstractHibernateDAO implements ISb
 			tx.commit();
 
 		} catch (Exception ex) {
-			if (Objects.nonNull(tx)) {
-				tx.rollback();
-			}
+			rollbackIfActive(tx);
 			throw ex;
 		} finally {
-			if (Objects.nonNull(session)) {
-				session.close();
-			}
+			closeSessionIfOpen(session);
 		}
 
 		return e;
@@ -83,14 +79,10 @@ public class SbiViewForDocHIBDAOImpl extends AbstractHibernateDAO implements ISb
 			tx.commit();
 
 		} catch (Exception ex) {
-			if (Objects.nonNull(tx)) {
-				tx.rollback();
-			}
+			rollbackIfActive(tx);
 			throw ex;
 		} finally {
-			if (Objects.nonNull(session)) {
-				session.close();
-			}
+			closeSessionIfOpen(session);
 		}
 
 		return e;
@@ -107,9 +99,7 @@ public class SbiViewForDocHIBDAOImpl extends AbstractHibernateDAO implements ISb
 			e = (SbiViewForDoc) session.load(SbiViewForDoc.class, id);
 
 		} finally {
-			if (Objects.nonNull(session)) {
-				session.close();
-			}
+			closeSessionIfOpen(session);
 		}
 
 		return e;
@@ -131,14 +121,10 @@ public class SbiViewForDocHIBDAOImpl extends AbstractHibernateDAO implements ISb
 			tx.commit();
 
 		} catch (Exception ex) {
-			if (Objects.nonNull(tx)) {
-				tx.rollback();
-			}
+			rollbackIfActive(tx);
 			throw ex;
 		} finally {
-			if (Objects.nonNull(session)) {
-				session.close();
-			}
+			closeSessionIfOpen(session);
 		}
 
 		return e;
@@ -156,10 +142,7 @@ public class SbiViewForDocHIBDAOImpl extends AbstractHibernateDAO implements ISb
 			Filter filter = session.enableFilter(FILTER_USER);
 			filter.setParameter(FILTER_USER_PARAM_USER, userProfile.getUserId());
 
-			List<SbiViewForDoc> list = session.createCriteria(SbiViewForDoc.class)
-				.createAlias("parent", "parent")
-				.add(Restrictions.eq("parent.id", id))
-				.list();
+			List<SbiViewForDoc> list = session.createCriteria(SbiViewForDoc.class).createAlias("parent", "parent").add(Restrictions.eq("parent.id", id)).list();
 
 			ret.addAll(list);
 

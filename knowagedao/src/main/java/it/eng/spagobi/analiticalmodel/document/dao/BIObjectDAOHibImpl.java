@@ -208,12 +208,11 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 			biObject.setDrivers(biObjectParameters);
 			tx.commit();
 		} catch (HibernateException he) {
+			rollbackIfActive(tx);
 			logger.error("Error loading BI Object for execution by id " + id + " and role " + role, he);
-			if (tx != null)
-				tx.rollback();
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		} finally {
-			closeSession(aSession);
+			closeSessionIfOpen(aSession);
 		}
 		logger.debug("OUT");
 		return biObject;
@@ -244,12 +243,11 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 			}
 			tx.commit();
 		} catch (HibernateException he) {
+			rollbackIfActive(tx);
 			logger.error("Error loading BI Object by id " + biObjectID, he);
-			if (tx != null)
-				tx.rollback();
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		} finally {
-			closeSession(aSession);
+			closeSessionIfOpen(aSession);
 		}
 		logger.debug("OUT");
 		return toReturn;
@@ -284,12 +282,11 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 			}
 			tx.commit();
 		} catch (HibernateException he) {
+			rollbackIfActive(tx);
 			logger.error("Error loading BI Object for detail by id " + id, he);
-			if (tx != null)
-				tx.rollback();
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		} finally {
-			closeSession(aSession);
+			closeSessionIfOpen(aSession);
 		}
 		logger.debug("OUT");
 		monitor.stop();
@@ -324,12 +321,11 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 			}
 			tx.commit();
 		} catch (HibernateException he) {
+			rollbackIfActive(tx);
 			logger.error("Error loading BI Object by label " + label, he);
-			if (tx != null)
-				tx.rollback();
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		} finally {
-			closeSession(aSession);
+			closeSessionIfOpen(aSession);
 		}
 		logger.debug("OUT");
 		return biObject;
@@ -363,12 +359,11 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 			}
 			tx.commit();
 		} catch (HibernateException he) {
+			rollbackIfActive(tx);
 			logger.error("Error loading BI Object by name " + name, he);
-			if (tx != null)
-				tx.rollback();
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		} finally {
-			closeSession(aSession);
+			closeSessionIfOpen(aSession);
 		}
 		logger.debug("OUT");
 		return biObject;
@@ -406,13 +401,12 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 			}
 			tx.commit();
 		} catch (HibernateException he) {
+			rollbackIfActive(tx);
 			logger.error("Error loading BI Object for tree by id " + id, he);
-			if (tx != null)
-				tx.rollback();
 			logger.error("hibernate exception", he);
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		} finally {
-			closeSession(aSession);
+			closeSessionIfOpen(aSession);
 			logger.debug("OUT.end method with input id:" + id);
 		}
 		return biObject;
@@ -660,16 +654,15 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 
 			logger.debug("OUT");
 		} catch (HibernateException he) {
+			rollbackIfActive(tx);
 			logger.error("Error modifing BI Object " + String.valueOf(biObject) + " using template " + String.valueOf(objTemp)
 					+ " with load parameters equals to " + loadParsDC, he);
 			if (he.getCause().getMessage().contains("constraint")) {
 				throw new SpagoBIDAOException("Document already exists", he);
 			}
-			if (tx != null)
-				tx.rollback();
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		} finally {
-			closeSession(aSession);
+			closeSessionIfOpen(aSession);
 		}
 	}
 
@@ -810,13 +803,12 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 
 			logger.debug("OUT");
 		} catch (HibernateException he) {
+			rollbackIfActive(tx);
 			logger.error("Error modifing BI Object " + String.valueOf(biObject) + " using template " + String.valueOf(objTemp)
 					+ " with load parameters equals to " + loadParsDC, he);
-			if (tx != null)
-				tx.rollback();
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		} finally {
-			closeSession(aSession);
+			closeSessionIfOpen(aSession);
 		}
 	}
 
@@ -953,13 +945,12 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 
 			logger.debug("OUT");
 		} catch (HibernateException he) {
+			rollbackIfActive(tx);
 			logger.error("Error modifing BI Object " + String.valueOf(biObject) + " using template " + String.valueOf(objTemp)
 					+ " with load parameters equals to " + loadParsDC, he);
-			if (tx != null)
-				tx.rollback();
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		} finally {
-			closeSession(aSession);
+			closeSessionIfOpen(aSession);
 		}
 	}
 
@@ -1161,13 +1152,12 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 				insertParametersDocComposition(id);
 			}
 		} catch (HibernateException he) {
+			rollbackIfActive(tx);
 			logger.error("Error inserting BI Object " + String.valueOf(obj) + " using template " + String.valueOf(objTemp) + " with load parameters equals to "
 					+ loadParsDC, he);
-			if (tx != null)
-				tx.rollback();
 			throw new HibernateException(he.getLocalizedMessage(), he);
 		} finally {
-			closeSession(aSession);
+			closeSessionIfOpen(aSession);
 		}
 		logger.debug("OUT");
 		return idToReturn;
@@ -1346,7 +1336,7 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 				tx.rollback();
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		} finally {
-			closeSession(aSession);
+			closeSessionIfOpen(aSession);
 		}
 	}
 
@@ -1425,12 +1415,11 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 
 				tx.rollback();
 			} catch (HibernateException he) {
+				rollbackIfActive(tx);
 				logger.error("Error getting correct roles for execution for object id " + id + " and user profile " + profile, he);
-				if (tx != null)
-					tx.rollback();
 				throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 			} finally {
-				closeSession(aSession);
+				closeSessionIfOpen(aSession);
 			}
 			logger.debug("OUT");
 		} catch (EMFInternalError emfie) {
@@ -1532,12 +1521,11 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 
 			tx.rollback();
 		} catch (HibernateException he) {
+			rollbackIfActive(tx);
 			logger.error("Error getting correct roles for execution for object id " + id, he);
-			if (tx != null)
-				tx.rollback();
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		} finally {
-			closeSession(aSession);
+			closeSessionIfOpen(aSession);
 		}
 		logger.debug("OUT");
 		return correctRoles;
@@ -1766,12 +1754,11 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 			}
 			tx.commit();
 		} catch (HibernateException he) {
+			rollbackIfActive(tx);
 			logger.error("Error loading all BI Objects", he);
-			if (tx != null)
-				tx.rollback();
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		} finally {
-			closeSession(aSession);
+			closeSessionIfOpen(aSession);
 		}
 		logger.debug("OUT");
 		return realResult;
@@ -1855,12 +1842,11 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 
 			tx.commit();
 		} catch (HibernateException he) {
+			rollbackIfActive(tx);
 			logger.error("Error loading documents before date " + data, he);
-			if (tx != null)
-				tx.rollback();
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		} finally {
-			closeSession(aSession);
+			closeSessionIfOpen(aSession);
 		}
 		logger.debug("OUT");
 		return realResult;
@@ -1897,12 +1883,11 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 			}
 			tx.commit();
 		} catch (HibernateException he) {
+			rollbackIfActive(tx);
 			logger.error("Error loading all BI Objects with following filter: " + filterOrder, he);
-			if (tx != null)
-				tx.rollback();
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		} finally {
-			closeSession(aSession);
+			closeSessionIfOpen(aSession);
 		}
 		logger.debug("OUT");
 		return realResult;
@@ -1961,12 +1946,11 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 
 			tx.commit();
 		} catch (HibernateException he) {
+			rollbackIfActive(tx);
 			logger.error("Error loading paginated search for BI Objects", he);
-			if (tx != null)
-				tx.rollback();
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		} finally {
-			closeSession(aSession);
+			closeSessionIfOpen(aSession);
 		}
 		logger.debug("OUT");
 		return realResult;
@@ -2023,15 +2007,11 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 			}
 			tx.commit();
 		} catch (HibernateException he) {
+			rollbackIfActive(tx);
 			logger.error("Error loading all BI Objects from initial path " + initialPath, he);
-
-			if (tx != null)
-				tx.rollback();
-
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
-
 		} finally {
-			closeSession(aSession);
+			closeSessionIfOpen(aSession);
 		}
 		logger.debug("OUT");
 		return realResult;
@@ -2073,15 +2053,11 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 			}
 			tx.commit();
 		} catch (HibernateException he) {
+			rollbackIfActive(tx);
 			logger.error("Error loading all BI Objects from initial path " + initialPath + " and filter " + filterOrder, he);
-
-			if (tx != null)
-				tx.rollback();
-
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
-
 		} finally {
-			closeSession(aSession);
+			closeSessionIfOpen(aSession);
 		}
 		logger.debug("OUT");
 		return realResult;
@@ -2115,12 +2091,11 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 			}
 			tx.commit();
 		} catch (HibernateException he) {
+			rollbackIfActive(tx);
 			logger.error("Error loading BI Object for detail in path " + path, he);
-			if (tx != null)
-				tx.rollback();
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		} finally {
-			closeSession(aSession);
+			closeSessionIfOpen(aSession);
 		}
 		logger.debug("OUT");
 		return biObject;
@@ -2225,10 +2200,9 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 			}
 			tx.commit();
 		} catch (HibernateException he) {
+			rollbackIfActive(tx);
 			logger.error("Error inserting parameters in doc composition for BI Object " + biObject + ", Obj Template " + template
 					+ " and flag delete equals to " + flgDelete, he);
-			if (tx != null)
-				tx.rollback();
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		} catch (EMFUserError eu) {
 			throw eu;
@@ -2236,7 +2210,7 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 			logger.error("Error while creating parameter for document composition.", e);
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		} finally {
-			closeSession(aSession);
+			closeSessionIfOpen(aSession);
 		}
 		logger.debug("OUT");
 
@@ -2316,15 +2290,14 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 		} catch (EMFUserError e) {
 			throw e;
 		} catch (HibernateException he) {
+			rollbackIfActive(tx);
 			logger.error("Error inserting parameters in doc composition for BI Object id " + biobjectId, he);
-			if (tx != null)
-				tx.rollback();
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		} catch (Exception e) {
 			logger.error("Error while creating parameter for document composition.", e);
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		} finally {
-			closeSession(aSession);
+			closeSessionIfOpen(aSession);
 		}
 		logger.debug("OUT");
 	}
@@ -2398,12 +2371,11 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 			}
 			tx.commit();
 		} catch (HibernateException he) {
+			rollbackIfActive(tx);
 			logger.error("Error loading BI Objects by type " + type + ", state " + state + " and folder " + folderPath, he);
-			if (tx != null)
-				tx.rollback();
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		} finally {
-			closeSession(aSession);
+			closeSessionIfOpen(aSession);
 		}
 		logger.debug("OUT");
 		return realResult;
@@ -2506,19 +2478,17 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 			}
 			tx.commit();
 		} catch (HibernateException he) {
+			rollbackIfActive(tx);
 			logger.error("Error loading BI Objects for folder id " + folderID + ", suer profile " + profile + " and is personal folder equals to "
 					+ isPersonalFolder, he);
-			if (tx != null)
-				tx.rollback();
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		} catch (Exception e) {
+			rollbackIfActive(tx);
 			logger.error("Error loading BI Objects for folder id " + folderID + ", suer profile " + profile + " and is personal folder equals to "
 					+ isPersonalFolder, e);
-			if (tx != null)
-				tx.rollback();
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		} finally {
-			closeSession(aSession);
+			closeSessionIfOpen(aSession);
 		}
 		logger.debug("OUT");
 		return realResult;
@@ -2546,15 +2516,11 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 			}
 			tx.commit();
 		} catch (HibernateException he) {
+			rollbackIfActive(tx);
 			logger.error("Error loading BI Objects by lov id " + idLov, he);
-
-			if (tx != null)
-				tx.rollback();
-
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
-
 		} finally {
-			closeSession(aSession);
+			closeSessionIfOpen(aSession);
 			logger.debug("OUT");
 		}
 		return realResult;
@@ -2581,15 +2547,11 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 			}
 			tx.commit();
 		} catch (HibernateException he) {
+			rollbackIfActive(tx);
 			logger.error("Error loading BI Objects by paramter id " + idParameter, he);
-
-			if (tx != null)
-				tx.rollback();
-
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
-
 		} finally {
-			closeSession(aSession);
+			closeSessionIfOpen(aSession);
 			logger.debug("OUT");
 		}
 		return realResult;
@@ -2638,13 +2600,11 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 
 			tx.commit();
 		} catch (HibernateException he) {
+			rollbackIfActive(tx);
 			logger.error("Error loading all BI Objects by search key " + searchKey + " and attributes " + attributes, he);
-			if (tx != null) {
-				tx.rollback();
-			}
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		} finally {
-			closeSession(aSession);
+			closeSessionIfOpen(aSession);
 			logger.debug("OUT");
 		}
 		return result;
@@ -2808,19 +2768,17 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 			}
 			tx.commit();
 		} catch (HibernateException he) {
+			rollbackIfActive(tx);
 			logger.error("Error searching BI Objects by value filter " + valueFilter + ", type filter " + typeFilter + ", column filter " + columnFilter
 					+ ", scope " + scope + ", node filter " + nodeFilter + " and profile " + profile, he);
-			if (tx != null)
-				tx.rollback();
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		} catch (Exception e) {
+			rollbackIfActive(tx);
 			logger.error("Error searching BI Objects by value filter " + valueFilter + ", type filter " + typeFilter + ", column filter " + columnFilter
 					+ ", scope " + scope + ", node filter " + nodeFilter + " and profile " + profile, e);
-			if (tx != null)
-				tx.rollback();
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		} finally {
-			closeSession(aSession);
+			closeSessionIfOpen(aSession);
 		}
 		logger.debug("OUT");
 		return realResult;
@@ -2861,13 +2819,11 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 			resultNumber = new Integer(temp.intValue());
 
 		} catch (HibernateException he) {
+			rollbackIfActive(tx);
 			logger.error("Error while loading the list of BIObjects", he);
-			if (tx != null)
-				tx.rollback();
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 9104);
-
 		} finally {
-			closeSession(aSession);
+			closeSessionIfOpen(aSession);
 		}
 		return resultNumber;
 	}
@@ -2910,13 +2866,11 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 				toReturn.add(toBIObject(object, aSession));
 			}
 		} catch (HibernateException he) {
+			rollbackIfActive(tx);
 			logger.error("Error while loading the list of Resources", he);
-			if (tx != null)
-				tx.rollback();
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 9104);
-
 		} finally {
-			closeSession(aSession);
+			closeSessionIfOpen(aSession);
 		}
 		return toReturn;
 	}
@@ -2965,12 +2919,11 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 			}
 
 		} catch (HibernateException he) {
+			rollbackIfActive(tx);
 			logger.error("Error changing lock status for document with label " + documentLabel + " and isUserAdmin value equals to " + isUserAdmin, he);
-			if (tx != null)
-				tx.rollback();
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		} finally {
-			closeSession(aSession);
+			closeSessionIfOpen(aSession);
 		}
 		logger.debug("OUT");
 		return toReturn;
@@ -3002,12 +2955,11 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 			}
 			tx.commit();
 		} catch (HibernateException he) {
+			rollbackIfActive(tx);
 			logger.error("Error loading document drivers for BI Object id " + biObject + " and role " + role, he);
-			if (tx != null)
-				tx.rollback();
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		} finally {
-			closeSession(aSession);
+			closeSessionIfOpen(aSession);
 		}
 		logger.debug("OUT");
 		return toReturn;

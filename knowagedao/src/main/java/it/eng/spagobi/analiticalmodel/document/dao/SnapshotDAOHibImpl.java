@@ -64,12 +64,11 @@ public class SnapshotDAOHibImpl extends AbstractHibernateDAO implements ISnapsho
 			aSession.delete(hibBinCont);
 			tx.commit();
 		} catch (HibernateException he) {
+			rollbackIfActive(tx);
 			logException(he);
-			if (tx != null)
-				tx.rollback();
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		} finally {
-			closeSession(aSession);
+			closeSessionIfOpen(aSession);
 		}
 	}
 
@@ -118,12 +117,11 @@ public class SnapshotDAOHibImpl extends AbstractHibernateDAO implements ISnapsho
 			tx.commit();
 
 		} catch (HibernateException he) {
+			rollbackIfActive(tx);
 			logException(he);
-			if (tx != null)
-				tx.rollback();
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		} finally {
-			closeSession(aSession);
+			closeSessionIfOpen(aSession);
 		}
 		return snaps;
 	}
@@ -159,12 +157,11 @@ public class SnapshotDAOHibImpl extends AbstractHibernateDAO implements ISnapsho
 			tx.commit();
 
 		} catch (HibernateException he) {
+			rollbackIfActive(tx);
 			logException(he);
-			if (tx != null)
-				tx.rollback();
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		} finally {
-			closeSession(aSession);
+			closeSessionIfOpen(aSession);
 		}
 		return snaps;
 	}
@@ -224,12 +221,11 @@ public class SnapshotDAOHibImpl extends AbstractHibernateDAO implements ISnapsho
 
 			tx.commit();
 		} catch (HibernateException he) {
+			rollbackIfActive(tx);
 			logException(he);
-			if (tx != null)
-				tx.rollback();
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		} finally {
-			closeSession(aSession);
+			closeSessionIfOpen(aSession);
 		}
 		return snaps;
 	}
@@ -271,12 +267,11 @@ public class SnapshotDAOHibImpl extends AbstractHibernateDAO implements ISnapsho
 			aSession.save(hibSnap);
 			tx.commit();
 		} catch (HibernateException he) {
+			rollbackIfActive(tx);
 			logException(he);
-			if (tx != null)
-				tx.rollback();
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		} finally {
-			closeSession(aSession);
+			closeSessionIfOpen(aSession);
 		}
 	}
 
@@ -315,12 +310,11 @@ public class SnapshotDAOHibImpl extends AbstractHibernateDAO implements ISnapsho
 			snap = toSnapshot(hibSnap);
 			tx.commit();
 		} catch (HibernateException he) {
+			rollbackIfActive(tx);
 			logException(he);
-			if (tx != null)
-				tx.rollback();
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		} finally {
-			closeSession(aSession);
+			closeSessionIfOpen(aSession);
 		}
 		return snap;
 	}
@@ -341,7 +335,7 @@ public class SnapshotDAOHibImpl extends AbstractHibernateDAO implements ISnapsho
 
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		} finally {
-			closeSession(aSession);
+			closeSessionIfOpen(aSession);
 		}
 
 	}
@@ -368,12 +362,11 @@ public class SnapshotDAOHibImpl extends AbstractHibernateDAO implements ISnapsho
 			}
 			tx.commit();
 		} catch (HibernateException he) {
+			rollbackIfActive(tx);
 			logException(he);
-			if (tx != null)
-				tx.rollback();
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		} finally {
-			closeSession(aSession);
+			closeSessionIfOpen(aSession);
 		}
 		return snap;
 	}
@@ -497,7 +490,7 @@ public class SnapshotDAOHibImpl extends AbstractHibernateDAO implements ISnapsho
 			logException(he);
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		} finally {
-			closeSession(aSession);
+			closeSessionIfOpen(aSession);
 		}
 		return snaps;
 	}

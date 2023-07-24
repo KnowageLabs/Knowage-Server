@@ -74,13 +74,11 @@ public class CacheDAOHibImpl extends AbstractHibernateDAO implements ICacheDAO {
 			}
 			transaction.commit();
 		} catch (Throwable t) {
-			if (transaction != null && transaction.isActive()) {
-				transaction.rollback();
-			}
+			rollbackIfActive(transaction);
 			throw new SpagoBIDAOException("An unexpected error occured while loading all cache items", t);
 
 		} finally {
-			closeSession(session);
+			closeSessionIfOpen(session);
 			logger.debug("OUT");
 		}
 		return toReturn;
@@ -121,12 +119,10 @@ public class CacheDAOHibImpl extends AbstractHibernateDAO implements ICacheDAO {
 			transaction.commit();
 
 		} catch (Throwable t) {
-			if (transaction != null && transaction.isActive()) {
-				transaction.rollback();
-			}
+			rollbackIfActive(transaction);
 			throw new SpagoBIDAOException("An unexpected error occured while loading cache item whose table name is equal to [" + tableName + "]", t);
 		} finally {
-			closeSession(session);
+			closeSessionIfOpen(session);
 			logger.debug("OUT");
 		}
 
@@ -168,12 +164,10 @@ public class CacheDAOHibImpl extends AbstractHibernateDAO implements ICacheDAO {
 			transaction.commit();
 
 		} catch (Throwable t) {
-			if (transaction != null && transaction.isActive()) {
-				transaction.rollback();
-			}
+			rollbackIfActive(transaction);
 			throw new SpagoBIDAOException("An unexpected error occured while loading cache item whose signature is equal to [" + signature + "]", t);
 		} finally {
-			closeSession(session);
+			closeSessionIfOpen(session);
 			logger.debug("OUT");
 		}
 
@@ -211,13 +205,10 @@ public class CacheDAOHibImpl extends AbstractHibernateDAO implements ICacheDAO {
 			transaction.commit();
 
 		} catch (Throwable t) {
-			if (transaction != null && transaction.isActive()) {
-				transaction.rollback();
-			}
-
+			rollbackIfActive(transaction);
 			throw new SpagoBIDAOException("An unexpected error occured while inserting cache item", t);
 		} finally {
-			closeSession(session);
+			closeSessionIfOpen(session);
 			logger.debug("OUT");
 		}
 
@@ -253,13 +244,10 @@ public class CacheDAOHibImpl extends AbstractHibernateDAO implements ICacheDAO {
 			transaction.commit();
 
 		} catch (Throwable t) {
-			if (transaction != null && transaction.isActive()) {
-				transaction.rollback();
-			}
-
+			rollbackIfActive(transaction);
 			throw new SpagoBIDAOException("An unexpected error occured while update cache item", t);
 		} finally {
-			closeSession(session);
+			closeSessionIfOpen(session);
 			logger.debug("OUT");
 		}
 	}
@@ -308,14 +296,12 @@ public class CacheDAOHibImpl extends AbstractHibernateDAO implements ICacheDAO {
 			return sbiCacheItemList;
 
 		} catch (Throwable t) {
-			if (transaction != null && transaction.isActive()) {
-				transaction.rollback();
-			}
+			rollbackIfActive(transaction);
 			String msg = (t.getMessage() != null) ? t.getMessage()
 					: "An unexpected error occured while deleting cache item " + "whose tableName is equal to [" + tableName + "]";
 			throw new SpagoBIDAOException(msg, t);
 		} finally {
-			closeSession(session);
+			closeSessionIfOpen(session);
 			logger.debug("OUT");
 		}
 	}
@@ -361,14 +347,12 @@ public class CacheDAOHibImpl extends AbstractHibernateDAO implements ICacheDAO {
 			return sbiCacheItemList;
 
 		} catch (Throwable t) {
-			if (transaction != null && transaction.isActive()) {
-				transaction.rollback();
-			}
+			rollbackIfActive(transaction);
 			String msg = (t.getMessage() != null) ? t.getMessage()
 					: "An unexpected error occured while deleting cache item " + "whose signature is equal to [" + signature + "]";
 			throw new SpagoBIDAOException(msg, t);
 		} finally {
-			closeSession(session);
+			closeSessionIfOpen(session);
 			logger.debug("OUT");
 		}
 	}
@@ -413,13 +397,11 @@ public class CacheDAOHibImpl extends AbstractHibernateDAO implements ICacheDAO {
 			}
 
 		} catch (Throwable t) {
-			if (transaction != null && transaction.isActive()) {
-				transaction.rollback();
-			}
+			rollbackIfActive(transaction);
 			String msg = (t.getMessage() != null) ? t.getMessage() : "An unexpected error occured while deleting all cache items ";
 			throw new SpagoBIDAOException(msg, t);
 		} finally {
-			closeSession(session);
+			closeSessionIfOpen(session);
 			logger.debug("OUT");
 		}
 		return toBeDeleted;

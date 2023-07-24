@@ -115,12 +115,11 @@ public class LowFunctionalityDAOHibImpl extends AbstractHibernateDAO implements 
 				exists = true;
 			tx.commit();
 		} catch (HibernateException he) {
+			rollbackIfActive(tx);
 			LOGGER.error("HibernateException", he);
-			if (tx != null)
-				tx.rollback();
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		} finally {
-			closeSession(aSession);
+			closeSessionIfOpen(aSession);
 		}
 		LOGGER.debug("OUT");
 		return exists;
@@ -211,12 +210,11 @@ public class LowFunctionalityDAOHibImpl extends AbstractHibernateDAO implements 
 
 			tx.commit();
 		} catch (HibernateException he) {
+			rollbackIfActive(tx);
 			LOGGER.error("HibernateException", he);
-			if (tx != null)
-				tx.rollback();
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		} finally {
-			closeSession(aSession);
+			closeSessionIfOpen(aSession);
 			LOGGER.debug("OUT");
 		}
 
@@ -256,12 +254,11 @@ public class LowFunctionalityDAOHibImpl extends AbstractHibernateDAO implements 
 				}
 				tx.commit();
 			} catch (HibernateException he) {
+				rollbackIfActive(tx);
 				LOGGER.error("HibernateException", he);
-				if (tx != null)
-					tx.rollback();
 				throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 			} finally {
-				closeSession(aSession);
+				closeSessionIfOpen(aSession);
 			}
 			putIntoCache(String.valueOf(functionalityID), funct);
 		}
@@ -302,12 +299,11 @@ public class LowFunctionalityDAOHibImpl extends AbstractHibernateDAO implements 
 					return null;
 				tx.commit();
 			} catch (HibernateException he) {
+				rollbackIfActive(tx);
 				LOGGER.error("HibernateException", he);
-				if (tx != null)
-					tx.rollback();
 				throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 			} finally {
-				closeSession(aSession);
+				closeSessionIfOpen(aSession);
 			}
 			putIntoCache(code, funct);
 		}
@@ -375,12 +371,11 @@ public class LowFunctionalityDAOHibImpl extends AbstractHibernateDAO implements 
 			tx.commit();
 
 		} catch (HibernateException he) {
+			rollbackIfActive(tx);
 			LOGGER.error("HibernateException", he);
-			if (tx != null)
-				tx.rollback();
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		} finally {
-			closeSession(aSession);
+			closeSessionIfOpen(aSession);
 		}
 		LOGGER.debug("OUT.Size=" + lowFunctList.size());
 		return lowFunctList;
@@ -420,12 +415,11 @@ public class LowFunctionalityDAOHibImpl extends AbstractHibernateDAO implements 
 				funct = toLowFunctionality(hibFunct, recoverBIObjects);
 				tx.commit();
 			} catch (HibernateException he) {
+				rollbackIfActive(tx);
 				LOGGER.error("HibernateException", he);
-				if (tx != null)
-					tx.rollback();
 				throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 			} finally {
-				closeSession(aSession);
+				closeSessionIfOpen(aSession);
 			}
 			putIntoCache(ROOT, funct);
 		}
@@ -465,12 +459,11 @@ public class LowFunctionalityDAOHibImpl extends AbstractHibernateDAO implements 
 				funct = toLowFunctionality(hibFunct, recoverBIObjects);
 				tx.commit();
 			} catch (HibernateException he) {
+				rollbackIfActive(tx);
 				LOGGER.error("HibernateException", he);
-				if (tx != null)
-					tx.rollback();
 				throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 			} finally {
-				closeSession(aSession);
+				closeSessionIfOpen(aSession);
 			}
 			putIntoCache(functionalityPath, funct);
 		}
@@ -577,15 +570,11 @@ public class LowFunctionalityDAOHibImpl extends AbstractHibernateDAO implements 
 			// commit all changes
 			tx.commit();
 		} catch (HibernateException he) {
+			rollbackIfActive(tx);
 			LOGGER.error("HibernateException", he);
-
-			if (tx != null)
-				tx.rollback();
-
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
-
 		} finally {
-			closeSession(aSession);
+			closeSessionIfOpen(aSession);
 			LOGGER.debug("The [modifyLowFunctionality] occurs. LowFunctionality cache will be cleaned.");
 			this.clearCache();
 		}
@@ -739,15 +728,11 @@ public class LowFunctionalityDAOHibImpl extends AbstractHibernateDAO implements 
 
 			tx.commit();
 		} catch (HibernateException he) {
+			rollbackIfActive(tx);
 			LOGGER.error("HibernateException", he);
-
-			if (tx != null)
-				tx.rollback();
-
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
-
 		} finally {
-			closeSession(aSession);
+			closeSessionIfOpen(aSession);
 			LOGGER.debug("The [insertLowFunctionality] occurs. LowFunctionality cache will be cleaned.");
 			this.clearCache();
 			LOGGER.debug("OUT");
@@ -808,24 +793,18 @@ public class LowFunctionalityDAOHibImpl extends AbstractHibernateDAO implements 
 
 			tx.commit();
 		} catch (HibernateException he) {
+			rollbackIfActive(tx);
 			LOGGER.error("HibernateException", he);
-
-			if (tx != null)
-				tx.rollback();
-
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
-
 		} catch (EMFUserError emfue) {
-			if (tx != null)
-				tx.rollback();
+			rollbackIfActive(tx);
 			throw emfue;
 		} catch (Exception e) {
 			logException(e);
-			if (tx != null)
-				tx.rollback();
+			rollbackIfActive(tx);
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		} finally {
-			closeSession(aSession);
+			closeSessionIfOpen(aSession);
 			LOGGER.debug("The [eraseLowFunctionality] occurs. LowFunctionality cache will be cleaned.");
 			this.clearCache();
 			LOGGER.debug("OUT");
@@ -1021,15 +1000,11 @@ public class LowFunctionalityDAOHibImpl extends AbstractHibernateDAO implements 
 			}
 			tx.commit();
 		} catch (HibernateException he) {
+			rollbackIfActive(tx);
 			LOGGER.error("HibernateException", he);
-
-			if (tx != null)
-				tx.rollback();
-
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
-
 		} finally {
-			closeSession(aSession);
+			closeSessionIfOpen(aSession);
 		}
 		return id;
 	}
@@ -1143,15 +1118,11 @@ public class LowFunctionalityDAOHibImpl extends AbstractHibernateDAO implements 
 			}
 			tx.commit();
 		} catch (HibernateException he) {
+			rollbackIfActive(tx);
 			LOGGER.error("HibernateException", he);
-
-			if (tx != null)
-				tx.rollback();
-
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
-
 		} finally {
-			closeSession(aSession);
+			closeSessionIfOpen(aSession);
 		}
 		LOGGER.debug("OUT");
 		return realResult;
@@ -1263,15 +1234,11 @@ public class LowFunctionalityDAOHibImpl extends AbstractHibernateDAO implements 
 			}
 			tx.commit();
 		} catch (HibernateException he) {
+			rollbackIfActive(tx);
 			LOGGER.error("HibernateException", he);
-
-			if (tx != null)
-				tx.rollback();
-
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
-
 		} finally {
-			closeSession(aSession);
+			closeSessionIfOpen(aSession);
 		}
 		LOGGER.debug("OUT");
 		return realResult;
@@ -1322,15 +1289,11 @@ public class LowFunctionalityDAOHibImpl extends AbstractHibernateDAO implements 
 
 			return false;
 		} catch (HibernateException he) {
+			rollbackIfActive(tx);
 			LOGGER.error("HibernateException", he);
-
-			if (tx != null)
-				tx.rollback();
-
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
-
 		} finally {
-			closeSession(aSession);
+			closeSessionIfOpen(aSession);
 			LOGGER.debug("OUT");
 		}
 	}
@@ -1383,17 +1346,15 @@ public class LowFunctionalityDAOHibImpl extends AbstractHibernateDAO implements 
 			}
 			tx.commit();
 		} catch (HibernateException he) {
+			rollbackIfActive(tx);
 			LOGGER.error("HibernateException", he);
-			if (tx != null)
-				tx.rollback();
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		} catch (Exception ex) {
+			rollbackIfActive(tx);
 			logException(ex);
-			if (tx != null)
-				tx.rollback();
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		} finally {
-			closeSession(aSession);
+			closeSessionIfOpen(aSession);
 			LOGGER.debug("The [deleteInconsistentRoles] occurs. LowFunctionality cache will be cleaned.");
 			this.clearCache();
 			LOGGER.debug("OUT");
@@ -1428,15 +1389,11 @@ public class LowFunctionalityDAOHibImpl extends AbstractHibernateDAO implements 
 			}
 			tx.commit();
 		} catch (HibernateException he) {
+			rollbackIfActive(tx);
 			LOGGER.error("HibernateException", he);
-
-			if (tx != null)
-				tx.rollback();
-
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
-
 		} finally {
-			closeSession(aSession);
+			closeSessionIfOpen(aSession);
 		}
 		LOGGER.debug("OUT");
 		return realResult;
@@ -1482,15 +1439,11 @@ public class LowFunctionalityDAOHibImpl extends AbstractHibernateDAO implements 
 
 			tx.commit();
 		} catch (HibernateException he) {
+			rollbackIfActive(tx);
 			LOGGER.error("HibernateException", he);
-
-			if (tx != null)
-				tx.rollback();
-
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
-
 		} finally {
-			closeSession(aSession);
+			closeSessionIfOpen(aSession);
 			LOGGER.debug("The [moveDownLowFunctionality] occurs. LowFunctionality cache will be cleaned.");
 			this.clearCache();
 			LOGGER.debug("OUT");
@@ -1533,15 +1486,11 @@ public class LowFunctionalityDAOHibImpl extends AbstractHibernateDAO implements 
 
 			tx.commit();
 		} catch (HibernateException he) {
+			rollbackIfActive(tx);
 			LOGGER.error("HibernateException", he);
-
-			if (tx != null)
-				tx.rollback();
-
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
-
 		} finally {
-			closeSession(aSession);
+			closeSessionIfOpen(aSession);
 			LOGGER.debug("The [moveUpLowFunctionality] occurs. LowFunctionality cache will be cleaned.");
 			this.clearCache();
 			LOGGER.debug("OUT");
@@ -1571,7 +1520,7 @@ public class LowFunctionalityDAOHibImpl extends AbstractHibernateDAO implements 
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 
 		} finally {
-			closeSession(aSession);
+			closeSessionIfOpen(aSession);
 		}
 		LOGGER.debug("OUT");
 		return userfunct;
@@ -1716,15 +1665,11 @@ public class LowFunctionalityDAOHibImpl extends AbstractHibernateDAO implements 
 			}
 			tx.commit();
 		} catch (HibernateException he) {
+			rollbackIfActive(tx);
 			LOGGER.error("HibernateException", he);
-
-			if (tx != null)
-				tx.rollback();
-
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
-
 		} finally {
-			closeSession(aSession);
+			closeSessionIfOpen(aSession);
 		}
 		LOGGER.debug("OUT");
 		return realResult;
@@ -1861,15 +1806,11 @@ public class LowFunctionalityDAOHibImpl extends AbstractHibernateDAO implements 
 				realResult.add(funct);
 			}
 		} catch (HibernateException he) {
+			rollbackIfActive(tx);
 			LOGGER.error("HibernateException", he);
-
-			if (tx != null)
-				tx.rollback();
-
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
-
 		} finally {
-			closeSession(aSession);
+			closeSessionIfOpen(aSession);
 		}
 		LOGGER.debug("OUT");
 		return realResult;
@@ -1937,15 +1878,11 @@ public class LowFunctionalityDAOHibImpl extends AbstractHibernateDAO implements 
 
 			tx.commit();
 		} catch (HibernateException he) {
+			rollbackIfActive(tx);
 			LOGGER.error("HibernateException", he);
-
-			if (tx != null)
-				tx.rollback();
-
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
-
 		} finally {
-			closeSession(aSession);
+			closeSessionIfOpen(aSession);
 		}
 		LOGGER.debug("OUT");
 		return realResult;
@@ -2014,12 +1951,11 @@ public class LowFunctionalityDAOHibImpl extends AbstractHibernateDAO implements 
 
 			tx.commit();
 		} catch (HibernateException he) {
+			rollbackIfActive(tx);
 			LOGGER.error("HibernateException", he);
-			if (tx != null)
-				tx.rollback();
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		} finally {
-			closeSession(aSession);
+			closeSessionIfOpen(aSession);
 			LOGGER.debug("The [insertCommunityFunctionality] occurs. LowFunctionality cache will be cleaned.");
 			this.clearCache();
 			LOGGER.debug("OUT");

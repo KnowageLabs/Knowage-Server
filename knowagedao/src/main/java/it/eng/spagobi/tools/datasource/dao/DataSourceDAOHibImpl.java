@@ -103,15 +103,12 @@ public class DataSourceDAOHibImpl extends AbstractHibernateDAO implements IDataS
 			tx.commit();
 
 		} catch (HibernateException he) {
+			rollbackIfActive(tx);
 			logger.error("Error while loading the data source with id " + dsID.toString(), he);
-
-			if (tx != null)
-				tx.rollback();
-
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 
 		} finally {
-			closeSession(aSession);
+			closeSessionIfOpen(aSession);
 		}
 		logger.debug("OUT");
 		return toReturn;
@@ -150,12 +147,11 @@ public class DataSourceDAOHibImpl extends AbstractHibernateDAO implements IDataS
 
 			tx.commit();
 		} catch (HibernateException he) {
+			rollbackIfActive(tx);
 			logger.error("Error while loading the data source with label " + label, he);
-			if (tx != null)
-				tx.rollback();
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		} finally {
-			closeSession(tmpSession);
+			closeSessionIfOpen(tmpSession);
 		}
 		logger.debug("OUT");
 		return biDS;
@@ -184,11 +180,10 @@ public class DataSourceDAOHibImpl extends AbstractHibernateDAO implements IDataS
 			biDS = toDataSource(hibDS);
 			tx.commit();
 		} catch (HibernateException e) {
-			if (tx != null)
-				tx.rollback();
+			rollbackIfActive(tx);
 			throw e;
 		} finally {
-			closeSession(tmpSession);
+			closeSessionIfOpen(tmpSession);
 		}
 		logger.debug("OUT");
 		return biDS;
@@ -207,12 +202,11 @@ public class DataSourceDAOHibImpl extends AbstractHibernateDAO implements IDataS
 			logger.debug("Datasource write default found : " + toReturn);
 			tx.commit();
 		} catch (HibernateException he) {
+			rollbackIfActive(tx);
 			logger.error("Error while loading the data source with write default = true: check there are no more than one (incorrect situation)", he);
-			if (tx != null)
-				tx.rollback();
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		} finally {
-			closeSession(tmpSession);
+			closeSessionIfOpen(tmpSession);
 		}
 		logger.debug("OUT");
 		return toReturn;
@@ -247,7 +241,7 @@ public class DataSourceDAOHibImpl extends AbstractHibernateDAO implements IDataS
 			logger.error("Error while loading data source for data prep", he);
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		} finally {
-			closeSession(aSession);
+			closeSessionIfOpen(aSession);
 		}
 		return toReturn;
 	}
@@ -307,15 +301,11 @@ public class DataSourceDAOHibImpl extends AbstractHibernateDAO implements IDataS
 			}
 			tx.commit();
 		} catch (HibernateException he) {
+			rollbackIfActive(tx);
 			logger.error("Error while loading all data sources ", he);
-
-			if (tx != null)
-				tx.rollback();
-
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
-
 		} finally {
-			closeSession(aSession);
+			closeSessionIfOpen(aSession);
 		}
 		logger.debug("OUT");
 		return realResult;
@@ -352,15 +342,11 @@ public class DataSourceDAOHibImpl extends AbstractHibernateDAO implements IDataS
 			}
 			tx.commit();
 		} catch (HibernateException he) {
+			rollbackIfActive(tx);
 			logger.error("Error while loading all data sources ", he);
-
-			if (tx != null)
-				tx.rollback();
-
 			throw new SpagoBIRuntimeException("Error while loading data sources", he);
-
 		} finally {
-			closeSession(aSession);
+			closeSessionIfOpen(aSession);
 		}
 		logger.debug("OUT");
 		return realResult;
@@ -391,7 +377,7 @@ public class DataSourceDAOHibImpl extends AbstractHibernateDAO implements IDataS
 			logger.error("Error while loading the dialect with id " + dialectId, e);
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		} finally {
-			closeSession(session);
+			closeSessionIfOpen(session);
 		}
 	}
 
@@ -562,15 +548,11 @@ public class DataSourceDAOHibImpl extends AbstractHibernateDAO implements IDataS
 			aSession.update(hibDataSource);
 			tx.commit();
 		} catch (HibernateException he) {
+			rollbackIfActive(tx);
 			logger.error("Error while modifing the data source with id " + ((aDataSource == null) ? "" : String.valueOf(aDataSource.getDsId())), he);
-
-			if (tx != null)
-				tx.rollback();
-
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
-
 		} finally {
-			closeSession(aSession);
+			closeSessionIfOpen(aSession);
 		}
 
 	}
@@ -698,15 +680,11 @@ public class DataSourceDAOHibImpl extends AbstractHibernateDAO implements IDataS
 
 			tx.commit();
 		} catch (HibernateException he) {
+			rollbackIfActive(tx);
 			logger.error("Error while inserting the data source with id " + ((aDataSource == null) ? "" : String.valueOf(aDataSource.getDsId())), he);
-
-			if (tx != null)
-				tx.rollback();
-
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
-
 		} finally {
-			closeSession(aSession);
+			closeSessionIfOpen(aSession);
 		}
 		return id;
 	}
@@ -741,15 +719,11 @@ public class DataSourceDAOHibImpl extends AbstractHibernateDAO implements IDataS
 			aSession.delete(hibDataSource);
 			tx.commit();
 		} catch (HibernateException he) {
+			rollbackIfActive(tx);
 			logger.error("Error while erasing the data source with id " + ((aDataSource == null) ? "" : String.valueOf(aDataSource.getDsId())), he);
-
-			if (tx != null)
-				tx.rollback();
-
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 8007);
-
 		} finally {
-			closeSession(aSession);
+			closeSessionIfOpen(aSession);
 		}
 
 	}
@@ -892,15 +866,11 @@ public class DataSourceDAOHibImpl extends AbstractHibernateDAO implements IDataS
 				bool = false;
 			tx.commit();
 		} catch (HibernateException he) {
+			rollbackIfActive(tx);
 			logger.error("Error while getting the objects associated with the data source with id " + dsId, he);
-
-			if (tx != null)
-				tx.rollback();
-
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
-
 		} finally {
-			closeSession(aSession);
+			closeSessionIfOpen(aSession);
 		}
 		logger.debug("OUT");
 		return bool;
@@ -985,9 +955,8 @@ public class DataSourceDAOHibImpl extends AbstractHibernateDAO implements IDataS
 						}
 					}
 				} catch (JSONException he) {
+					rollbackIfActive(tx);
 					logger.error("Error while converting dataset configuration to JSON: dataset id = " + dsId, he);
-					if (tx != null)
-						tx.rollback();
 					throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 				}
 
@@ -1040,18 +1009,16 @@ public class DataSourceDAOHibImpl extends AbstractHibernateDAO implements IDataS
 					}
 				}
 
-				tx.rollback();
+				rollbackIfActive(tx);
 
 			} catch (HibernateException he) {
+				rollbackIfActive(tx);
 				logger.error("Error while getting the entities associated with the data source with id " + dsId, he);
-				if (tx != null)
-					tx.rollback();
 				throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
-
 			}
 
 		} finally {
-			closeSession(aSession);
+			closeSessionIfOpen(aSession);
 		}
 
 		logger.debug("OUT");
@@ -1085,15 +1052,11 @@ public class DataSourceDAOHibImpl extends AbstractHibernateDAO implements IDataS
 
 			tx.commit();
 		} catch (HibernateException he) {
+			rollbackIfActive(tx);
 			logger.error("Error while inserting realationship for data source with id " + datasourceId + " and the tenant with id " + tenantId, he);
-
-			if (tx != null)
-				tx.rollback();
-
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
-
 		} finally {
-			closeSession(aSession);
+			closeSessionIfOpen(aSession);
 		}
 
 	}
@@ -1123,7 +1086,7 @@ public class DataSourceDAOHibImpl extends AbstractHibernateDAO implements IDataS
 			logger.error("Error getting current password for data source " + dataSource, he);
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		} finally {
-			closeSession(aSession);
+			closeSessionIfOpen(aSession);
 		}
 
 	}

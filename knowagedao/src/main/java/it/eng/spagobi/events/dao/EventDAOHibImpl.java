@@ -58,15 +58,11 @@ public class EventDAOHibImpl extends AbstractHibernateDAO implements IEventDAO {
 			realResult = toEvent(hibEvent);
 			tx.commit();
 		} catch (HibernateException he) {
+			rollbackIfActive(tx);
 			logException(he);
-
-			if (tx != null)
-				tx.rollback();
-
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
-
 		} finally {
-			closeSession(aSession);
+			closeSessionIfOpen(aSession);
 		}
 		return realResult;
 	}
@@ -101,15 +97,11 @@ public class EventDAOHibImpl extends AbstractHibernateDAO implements IEventDAO {
 			}
 			tx.commit();
 		} catch (HibernateException he) {
+			rollbackIfActive(tx);
 			logException(he);
-
-			if (tx != null)
-				tx.rollback();
-
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
-
 		} finally {
-			closeSession(aSession);
+			closeSessionIfOpen(aSession);
 		}
 		return realResult;
 	}
@@ -133,15 +125,11 @@ public class EventDAOHibImpl extends AbstractHibernateDAO implements IEventDAO {
 			tx.commit();
 			return hibEvent.getId();
 		} catch (HibernateException he) {
+			rollbackIfActive(tx);
 			logException(he);
-
-			if (tx != null)
-				tx.rollback();
-
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
-
 		} finally {
-			closeSession(aSession);
+			closeSessionIfOpen(aSession);
 		}
 	}
 
@@ -162,17 +150,15 @@ public class EventDAOHibImpl extends AbstractHibernateDAO implements IEventDAO {
 			aSession.delete(hibEvent);
 			tx.commit();
 		} catch (HibernateException he) {
+			rollbackIfActive(tx);
 			logException(he);
-			if (tx != null)
-				tx.rollback();
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		} catch (Exception ex) {
+			rollbackIfActive(tx);
 			logException(ex);
-			if (tx != null)
-				tx.rollback();
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		} finally {
-			closeSession(aSession);
+			closeSessionIfOpen(aSession);
 		}
 	}
 
@@ -214,17 +200,15 @@ public class EventDAOHibImpl extends AbstractHibernateDAO implements IEventDAO {
 			}
 			tx.commit();
 		} catch (HibernateException he) {
+			rollbackIfActive(tx);
 			logException(he);
-			if (tx != null)
-				tx.rollback();
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		} catch (Exception ex) {
+			rollbackIfActive(tx);
 			logException(ex);
-			if (tx != null)
-				tx.rollback();
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		} finally {
-			closeSession(aSession);
+			closeSessionIfOpen(aSession);
 		}
 	}
 

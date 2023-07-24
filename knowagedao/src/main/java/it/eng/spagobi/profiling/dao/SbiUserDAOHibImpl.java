@@ -102,11 +102,10 @@ public class SbiUserDAOHibImpl extends AbstractHibernateDAO implements ISbiUserD
 
 			tx.commit();
 		} catch (HibernateException he) {
-			if (tx != null)
-				tx.rollback();
+			rollbackIfActive(tx);
 			throw new SpagoBIDAOException("Error while loading user by id " + id, he);
 		} finally {
-			closeSession(aSession);
+			closeSessionIfOpen(aSession);
 		}
 		LOGGER.debug("OUT");
 		return toReturn;
@@ -147,12 +146,11 @@ public class SbiUserDAOHibImpl extends AbstractHibernateDAO implements ISbiUserD
 
 			return results;
 		} catch (HibernateException he) {
-			if (tx != null)
-				tx.rollback();
+			rollbackIfActive(tx);
 			throw new SpagoBIDAOException("Error while loading users ", he);
 		} finally {
 			LOGGER.debug("OUT");
-			closeSession(aSession);
+			closeSessionIfOpen(aSession);
 		}
 	}
 
@@ -189,12 +187,11 @@ public class SbiUserDAOHibImpl extends AbstractHibernateDAO implements ISbiUserD
 			}
 
 		} catch (HibernateException he) {
-			if (tx != null)
-				tx.rollback();
+			rollbackIfActive(tx);
 			throw new SpagoBIDAOException("Error while reading failed login attempts counter for user " + userId, he);
 		} finally {
 			LOGGER.debug("OUT");
-			closeSession(aSession);
+			closeSessionIfOpen(aSession);
 		}
 	}
 
@@ -223,11 +220,10 @@ public class SbiUserDAOHibImpl extends AbstractHibernateDAO implements ISbiUserD
 			return id;
 
 		} catch (HibernateException he) {
-			if (tx != null)
-				tx.rollback();
+			rollbackIfActive(tx);
 			throw new SpagoBIDAOException("Error while inserting user " + user, he);
 		} finally {
-			closeSession(aSession);
+			closeSessionIfOpen(aSession);
 		}
 	}
 
@@ -252,11 +248,10 @@ public class SbiUserDAOHibImpl extends AbstractHibernateDAO implements ISbiUserD
 			aSession.flush();
 			tx.commit();
 		} catch (HibernateException he) {
-			if (tx != null)
-				tx.rollback();
+			rollbackIfActive(tx);
 			throw new SpagoBIDAOException("Error while update user [" + user + "] with id " + userID, he);
 		} finally {
-			closeSession(aSession);
+			closeSessionIfOpen(aSession);
 		}
 	}
 
@@ -274,11 +269,10 @@ public class SbiUserDAOHibImpl extends AbstractHibernateDAO implements ISbiUserD
 			aSession.flush();
 			tx.commit();
 		} catch (HibernateException he) {
-			if (tx != null)
-				tx.rollback();
+			rollbackIfActive(tx);
 			throw new SpagoBIDAOException("Error while update user attribute " + attribute, he);
 		} finally {
-			closeSession(aSession);
+			closeSessionIfOpen(aSession);
 		}
 	}
 
@@ -296,11 +290,10 @@ public class SbiUserDAOHibImpl extends AbstractHibernateDAO implements ISbiUserD
 			aSession.flush();
 			tx.commit();
 		} catch (HibernateException he) {
-			if (tx != null)
-				tx.rollback();
+			rollbackIfActive(tx);
 			throw new SpagoBIDAOException("Error while updating user with role " + role, he);
 		} finally {
-			closeSession(aSession);
+			closeSessionIfOpen(aSession);
 		}
 	}
 
@@ -341,12 +334,11 @@ public class SbiUserDAOHibImpl extends AbstractHibernateDAO implements ISbiUserD
 			return result;
 
 		} catch (HibernateException he) {
-			if (tx != null)
-				tx.rollback();
+			rollbackIfActive(tx);
 			throw new SpagoBIDAOException("Error while loading user attribute with id " + id, he);
 		} finally {
 			LOGGER.debug("OUT");
-			closeSession(aSession);
+			closeSessionIfOpen(aSession);
 		}
 	}
 
@@ -366,12 +358,11 @@ public class SbiUserDAOHibImpl extends AbstractHibernateDAO implements ISbiUserD
 			ArrayList<SbiExtRoles> result = (ArrayList<SbiExtRoles>) query.list();
 			return result;
 		} catch (HibernateException he) {
-			if (tx != null)
-				tx.rollback();
+			rollbackIfActive(tx);
 			throw new SpagoBIDAOException("Error while loading user role with id " + id, he);
 		} finally {
 			LOGGER.debug("OUT");
-			closeSession(aSession);
+			closeSessionIfOpen(aSession);
 		}
 	}
 
@@ -390,12 +381,11 @@ public class SbiUserDAOHibImpl extends AbstractHibernateDAO implements ISbiUserD
 			ArrayList<SbiUser> result = (ArrayList<SbiUser>) query.list();
 			return result;
 		} catch (HibernateException he) {
-			if (tx != null)
-				tx.rollback();
+			rollbackIfActive(tx);
 			throw new SpagoBIDAOException("Error while loading users", he);
 		} finally {
 			LOGGER.debug("OUT");
-			closeSession(aSession);
+			closeSessionIfOpen(aSession);
 		}
 	}
 
@@ -628,12 +618,11 @@ public class SbiUserDAOHibImpl extends AbstractHibernateDAO implements ISbiUserD
 
 			tx.commit();
 		} catch (Exception he) {
-			if (tx != null)
-				tx.rollback();
+			rollbackIfActive(tx);
 			throw new SpagoBIDAOException("Error while saving user " + user, he);
 		} finally {
 			LOGGER.debug("OUT");
-			closeSession(aSession);
+			closeSessionIfOpen(aSession);
 		}
 		return id;
 
@@ -668,12 +657,11 @@ public class SbiUserDAOHibImpl extends AbstractHibernateDAO implements ISbiUserD
 
 			return result;
 		} catch (HibernateException he) {
-			if (tx != null)
-				tx.rollback();
+			rollbackIfActive(tx);
 			throw new SpagoBIDAOException("Error while reading failed login attempts counter for user " + userId, he);
 		} finally {
 			LOGGER.debug("OUT");
-			closeSession(aSession);
+			closeSessionIfOpen(aSession);
 		}
 	}
 
@@ -705,12 +693,11 @@ public class SbiUserDAOHibImpl extends AbstractHibernateDAO implements ISbiUserD
 			}
 
 		} catch (HibernateException he) {
-			if (tx != null)
-				tx.rollback();
+			rollbackIfActive(tx);
 			throw new SpagoBIDAOException("Error while reading failed login attempts counter for user " + userId, he);
 		} finally {
 			LOGGER.debug("OUT");
-			closeSession(aSession);
+			closeSessionIfOpen(aSession);
 		}
 	}
 
@@ -763,12 +750,11 @@ public class SbiUserDAOHibImpl extends AbstractHibernateDAO implements ISbiUserD
 
 			return users;
 		} catch (HibernateException he) {
-			if (tx != null)
-				tx.rollback();
+			rollbackIfActive(tx);
 			throw new SpagoBIDAOException("Error while loading users", he);
 		} finally {
 			LOGGER.debug("OUT");
-			closeSession(aSession);
+			closeSessionIfOpen(aSession);
 		}
 	}
 
@@ -891,10 +877,8 @@ public class SbiUserDAOHibImpl extends AbstractHibernateDAO implements ISbiUserD
 			LogMF.debug(LOGGER, "OUT : returning [{0}]", user);
 			return user;
 		} finally {
-			if (tx != null) {
-				tx.rollback();
-			}
-			closeSession(aSession);
+			rollbackIfActive(tx);
+			closeSessionIfOpen(aSession);
 			LOGGER.debug("OUT");
 		}
 
@@ -937,9 +921,7 @@ public class SbiUserDAOHibImpl extends AbstractHibernateDAO implements ISbiUserD
 			toReturn.setResults(results);
 
 		} catch (HibernateException he) {
-			if (tx != null) {
-				tx.rollback();
-			}
+			rollbackIfActive(tx);
 			throw new SpagoBIDAOException("Error while loading the list of users", he);
 		} finally {
 			if (aSession != null) {
@@ -1017,10 +999,8 @@ public class SbiUserDAOHibImpl extends AbstractHibernateDAO implements ISbiUserD
 			return count.longValue() > 0;
 
 		} finally {
-			if (tx != null) {
-				tx.rollback();
-			}
-			closeSession(aSession);
+			rollbackIfActive(tx);
+			closeSessionIfOpen(aSession);
 			LOGGER.debug("OUT");
 		}
 
@@ -1077,12 +1057,11 @@ public class SbiUserDAOHibImpl extends AbstractHibernateDAO implements ISbiUserD
 			aSession.flush();
 			tx.commit();
 		} catch (HibernateException he) {
-			if (tx != null)
-				tx.rollback();
+			rollbackIfActive(tx);
 			throw new SpagoBIDAOException("Error while deleting user with id " + id, he);
 		} finally {
 			LOGGER.debug("OUT");
-			closeSession(aSession);
+			closeSessionIfOpen(aSession);
 		}
 	}
 
@@ -1105,12 +1084,11 @@ public class SbiUserDAOHibImpl extends AbstractHibernateDAO implements ISbiUserD
 			aSession.flush();
 			tx.commit();
 		} catch (HibernateException he) {
-			if (tx != null)
-				tx.rollback();
+			rollbackIfActive(tx);
 			throw new SpagoBIDAOException("Error while deleting attribute " + attributeId + " of user with id " + id);
 		} finally {
 			LOGGER.debug("OUT");
-			closeSession(aSession);
+			closeSessionIfOpen(aSession);
 		}
 
 	}

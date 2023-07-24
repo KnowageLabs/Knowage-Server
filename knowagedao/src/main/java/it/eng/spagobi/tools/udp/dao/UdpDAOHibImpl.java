@@ -62,13 +62,11 @@ public class UdpDAOHibImpl extends AbstractHibernateDAO implements IUdpDAO {
 			id = (Integer) session.save(prop);
 			tx.commit();
 		} catch (HibernateException e) {
-			if (tx != null && tx.isActive()) {
-				tx.rollback();
-			}
+			rollbackIfActive(tx);
 			throw e;
 
 		} finally {
-			closeSession(session);
+			closeSessionIfOpen(session);
 			LOGGER.debug("OUT");
 		}
 		return id;
@@ -86,13 +84,11 @@ public class UdpDAOHibImpl extends AbstractHibernateDAO implements IUdpDAO {
 			tx.commit();
 
 		} catch (HibernateException e) {
-			if (tx != null && tx.isActive()) {
-				tx.rollback();
-			}
+			rollbackIfActive(tx);
 			throw e;
 
 		} finally {
-			session.close();
+			closeSessionIfOpen(session);
 		}
 		LOGGER.debug("OUT");
 	}
@@ -108,13 +104,11 @@ public class UdpDAOHibImpl extends AbstractHibernateDAO implements IUdpDAO {
 			tx.commit();
 
 		} catch (HibernateException e) {
-			if (tx != null && tx.isActive()) {
-				tx.rollback();
-			}
+			rollbackIfActive(tx);
 			throw e;
 
 		} finally {
-			session.close();
+			closeSessionIfOpen(session);
 		}
 		LOGGER.debug("OUT");
 	}
@@ -130,13 +124,11 @@ public class UdpDAOHibImpl extends AbstractHibernateDAO implements IUdpDAO {
 			tx.commit();
 
 		} catch (HibernateException e) {
-			if (tx != null && tx.isActive()) {
-				tx.rollback();
-			}
+			rollbackIfActive(tx);
 			throw e;
 
 		} finally {
-			session.close();
+			closeSessionIfOpen(session);
 		}
 		LOGGER.debug("OUT");
 	}
@@ -154,13 +146,11 @@ public class UdpDAOHibImpl extends AbstractHibernateDAO implements IUdpDAO {
 			tx.commit();
 
 		} catch (HibernateException e) {
-			if (tx != null && tx.isActive()) {
-				tx.rollback();
-			}
+			rollbackIfActive(tx);
 			throw e;
 
 		} finally {
-			session.close();
+			closeSessionIfOpen(session);
 		}
 		LOGGER.debug("OUT");
 		return prop;
@@ -178,13 +168,11 @@ public class UdpDAOHibImpl extends AbstractHibernateDAO implements IUdpDAO {
 			tx.commit();
 			udp = toUdp(prop);
 		} catch (HibernateException e) {
-			if (tx != null && tx.isActive()) {
-				tx.rollback();
-			}
+			rollbackIfActive(tx);
 			throw e;
 
 		} finally {
-			session.close();
+			closeSessionIfOpen(session);
 		}
 		LOGGER.debug("OUT");
 		return udp;
@@ -215,15 +203,11 @@ public class UdpDAOHibImpl extends AbstractHibernateDAO implements IUdpDAO {
 
 			tx.commit();
 		} catch (HibernateException he) {
+			rollbackIfActive(tx);
 			LOGGER.error("Error while loading the udp with label " + label, he);
-			if (tx != null)
-				tx.rollback();
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		} finally {
-			if (tmpSession != null) {
-				if (tmpSession.isOpen())
-					tmpSession.close();
-			}
+			closeSessionIfOpen(tmpSession);
 		}
 		LOGGER.debug("OUT");
 		return udp;
@@ -268,15 +252,11 @@ public class UdpDAOHibImpl extends AbstractHibernateDAO implements IUdpDAO {
 
 			tx.commit();
 		} catch (HibernateException he) {
+			rollbackIfActive(tx);
 			LOGGER.error("Error while loading the udp with label " + label, he);
-			if (tx != null)
-				tx.rollback();
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		} finally {
-			if (tmpSession != null) {
-				if (tmpSession.isOpen())
-					tmpSession.close();
-			}
+			closeSessionIfOpen(tmpSession);
 		}
 		LOGGER.debug("OUT");
 		return udp;
@@ -296,13 +276,11 @@ public class UdpDAOHibImpl extends AbstractHibernateDAO implements IUdpDAO {
 			return list;
 
 		} catch (HibernateException e) {
-			if (tx != null && tx.isActive()) {
-				tx.rollback();
-			}
+			rollbackIfActive(tx);
 			throw e;
 
 		} finally {
-			session.close();
+			closeSessionIfOpen(session);
 		}
 	}
 
@@ -353,9 +331,7 @@ public class UdpDAOHibImpl extends AbstractHibernateDAO implements IUdpDAO {
 			tx.commit();
 
 		} catch (HibernateException e) {
-			if (tx != null && tx.isActive()) {
-				tx.rollback();
-			}
+			rollbackIfActive(tx);
 			throw e;
 
 		} catch (EMFUserError e) {
@@ -366,7 +342,7 @@ public class UdpDAOHibImpl extends AbstractHibernateDAO implements IUdpDAO {
 			throw e;
 
 		} finally {
-			closeSession(session);
+			closeSessionIfOpen(session);
 		}
 		LOGGER.debug("OUT");
 		return toReturn;
@@ -407,21 +383,13 @@ public class UdpDAOHibImpl extends AbstractHibernateDAO implements IUdpDAO {
 			}
 			tx.commit();
 
-		} catch (HibernateException e) {
-			if (tx != null && tx.isActive()) {
-				tx.rollback();
-			}
-			throw e;
-
-		} catch (EMFUserError e) {
+		} catch (HibernateException | EMFUserError e) {
+			rollbackIfActive(tx);
 			LOGGER.error("error probably in getting asked UDP_FAMILY domain", e);
-			if (tx != null && tx.isActive()) {
-				tx.rollback();
-			}
 			throw e;
 
 		} finally {
-			closeSession(session);
+			closeSessionIfOpen(session);
 		}
 		LOGGER.debug("OUT");
 		return toReturn;
@@ -470,13 +438,12 @@ public class UdpDAOHibImpl extends AbstractHibernateDAO implements IUdpDAO {
 			resultNumber = temp.intValue();
 
 		} catch (HibernateException he) {
+			rollbackIfActive(tx);
 			LOGGER.error("Error while loading the list of SbiUdp", he);
-			if (tx != null)
-				tx.rollback();
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 9104);
 
 		} finally {
-			closeSession(aSession);
+			closeSessionIfOpen(aSession);
 			LOGGER.debug("OUT");
 		}
 		return resultNumber;
@@ -514,13 +481,12 @@ public class UdpDAOHibImpl extends AbstractHibernateDAO implements IUdpDAO {
 			toReturn = hibernateQuery.list();
 
 		} catch (HibernateException he) {
+			rollbackIfActive(tx);
 			LOGGER.error("Error while loading the list of Resources", he);
-			if (tx != null)
-				tx.rollback();
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 9104);
 
 		} finally {
-			closeSession(aSession);
+			closeSessionIfOpen(aSession);
 			LOGGER.debug("OUT");
 		}
 		return toReturn;

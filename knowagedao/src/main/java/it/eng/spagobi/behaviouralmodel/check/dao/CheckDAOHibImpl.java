@@ -76,15 +76,11 @@ public class CheckDAOHibImpl extends AbstractHibernateDAO implements ICheckDAO {
 				realResult.add(toCheck(it.next()));
 			}
 		} catch (HibernateException he) {
+			rollbackIfActive(tx);
 			logException(he);
-
-			if (tx != null)
-				tx.rollback();
-
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
-
 		} finally {
-			closeSession(aSession);
+			closeSessionIfOpen(aSession);
 		}
 		return realResult;
 	}
@@ -116,15 +112,11 @@ public class CheckDAOHibImpl extends AbstractHibernateDAO implements ICheckDAO {
 			tx.commit();
 
 		} catch (HibernateException he) {
+			rollbackIfActive(tx);
 			logException(he);
-
-			if (tx != null)
-				tx.rollback();
-
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
-
 		} finally {
-			closeSession(aSession);
+			closeSessionIfOpen(aSession);
 		}
 
 		return toReturn;
@@ -153,15 +145,11 @@ public class CheckDAOHibImpl extends AbstractHibernateDAO implements ICheckDAO {
 			aSession.delete(hibCheck);
 			tx.commit();
 		} catch (HibernateException he) {
+			rollbackIfActive(tx);
 			logException(he);
-
-			if (tx != null)
-				tx.rollback();
-
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
-
 		} finally {
-			closeSession(aSession);
+			closeSessionIfOpen(aSession);
 		}
 
 	}
@@ -209,15 +197,11 @@ public class CheckDAOHibImpl extends AbstractHibernateDAO implements ICheckDAO {
 			tx.commit();
 			return hibCheck.getCheckId();
 		} catch (HibernateException he) {
+			rollbackIfActive(tx);
 			logException(he);
-
-			if (tx != null)
-				tx.rollback();
-
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
-
 		} finally {
-			closeSession(aSession);
+			closeSessionIfOpen(aSession);
 		}
 
 	}
@@ -267,15 +251,11 @@ public class CheckDAOHibImpl extends AbstractHibernateDAO implements ICheckDAO {
 			tx.commit();
 
 		} catch (HibernateException he) {
+			rollbackIfActive(tx);
 			logException(he);
-
-			if (tx != null)
-				tx.rollback();
-
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
-
 		} finally {
-			closeSession(aSession);
+			closeSessionIfOpen(aSession);
 		}
 
 	}
@@ -331,15 +311,11 @@ public class CheckDAOHibImpl extends AbstractHibernateDAO implements ICheckDAO {
 				ref = false;
 			tx.commit();
 		} catch (HibernateException he) {
+			rollbackIfActive(tx);
 			logException(he);
-
-			if (tx != null)
-				tx.rollback();
-
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
-
 		} finally {
-			closeSession(aSession);
+			closeSessionIfOpen(aSession);
 		}
 		return ref;
 	}
@@ -373,15 +349,11 @@ public class CheckDAOHibImpl extends AbstractHibernateDAO implements ICheckDAO {
 			}
 
 		} catch (HibernateException he) {
+			rollbackIfActive(tx);
 			logException(he);
-
-			if (tx != null)
-				tx.rollback();
-
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
-
 		} finally {
-			closeSession(aSession);
+			closeSessionIfOpen(aSession);
 		}
 		return realResult;
 	}
@@ -416,15 +388,11 @@ public class CheckDAOHibImpl extends AbstractHibernateDAO implements ICheckDAO {
 				realResult.add(toCheck(it.next()));
 			}
 		} catch (HibernateException he) {
+			rollbackIfActive(tx);
 			logException(he);
-
-			if (tx != null)
-				tx.rollback();
-
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
-
 		} finally {
-			closeSession(aSession);
+			closeSessionIfOpen(aSession);
 		}
 		return realResult;
 	}

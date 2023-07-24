@@ -143,16 +143,11 @@ public class CategoryDAOHibImpl extends AbstractHibernateDAO implements ICategor
 
 			tx.commit();
 		} catch (HibernateException he) {
+			rollbackIfActive(tx);
 			logException(he);
-
-			if (tx != null) {
-				tx.rollback();
-			}
-
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
-
 		} finally {
-			closeSession(aSession);
+			closeSessionIfOpen(aSession);
 		}
 
 		return category;
@@ -172,16 +167,11 @@ public class CategoryDAOHibImpl extends AbstractHibernateDAO implements ICategor
 
 			tx.commit();
 		} catch (HibernateException he) {
+			rollbackIfActive(tx);
 			logException(he);
-
-			if (tx != null) {
-				tx.rollback();
-			}
-
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
-
 		} finally {
-			closeSession(aSession);
+			closeSessionIfOpen(aSession);
 		}
 
 	}
@@ -200,16 +190,11 @@ public class CategoryDAOHibImpl extends AbstractHibernateDAO implements ICategor
 
 			tx.commit();
 		} catch (HibernateException he) {
+			rollbackIfActive(tx);
 			logException(he);
-
-			if (tx != null) {
-				tx.rollback();
-			}
-
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
-
 		} finally {
-			closeSession(aSession);
+			closeSessionIfOpen(aSession);
 		}
 
 	}
@@ -253,16 +238,11 @@ public class CategoryDAOHibImpl extends AbstractHibernateDAO implements ICategor
 
 			tx.commit();
 		} catch (HibernateException he) {
+			rollbackIfActive(tx);
 			logException(he);
-
-			if (tx != null) {
-				tx.rollback();
-			}
-
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
-
 		} finally {
-			closeSession(aSession);
+			closeSessionIfOpen(aSession);
 		}
 
 		return roles;

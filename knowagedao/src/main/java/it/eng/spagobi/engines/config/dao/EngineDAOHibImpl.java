@@ -81,15 +81,12 @@ public class EngineDAOHibImpl extends AbstractHibernateDAO implements IEngineDAO
 			tx.commit();
 
 		} catch (HibernateException he) {
+			rollbackIfActive(tx);
 			logException(he);
-
-			if (tx != null)
-				tx.rollback();
 			LOGGER.error("error in loading engine by Id", he);
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
-
 		} finally {
-			closeSession(aSession);
+			closeSessionIfOpen(aSession);
 		}
 		LOGGER.debug("OUT");
 		return toReturn;
@@ -144,13 +141,11 @@ public class EngineDAOHibImpl extends AbstractHibernateDAO implements IEngineDAO
 			}
 			tx.commit();
 		} catch (HibernateException he) {
+			rollbackIfActive(tx);
 			LOGGER.error("Error in retrieving engine by label " + engineLabel, he);
-
-			if (tx != null)
-				tx.rollback();
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		} finally {
-			closeSession(aSession);
+			closeSessionIfOpen(aSession);
 		}
 		if (engine == null) {
 			LOGGER.debug("A null engine has been returned for label " + engineLabel);
@@ -208,13 +203,11 @@ public class EngineDAOHibImpl extends AbstractHibernateDAO implements IEngineDAO
 			}
 			tx.commit();
 		} catch (HibernateException he) {
+			rollbackIfActive(tx);
 			LOGGER.error("Error in retrieving engine by label " + driver, he);
-
-			if (tx != null)
-				tx.rollback();
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		} finally {
-			closeSession(aSession);
+			closeSessionIfOpen(aSession);
 		}
 		if (engine == null) {
 			LOGGER.debug("No engine with driver [" + driver + "] was found.");
@@ -250,15 +243,12 @@ public class EngineDAOHibImpl extends AbstractHibernateDAO implements IEngineDAO
 			}
 			tx.commit();
 		} catch (HibernateException he) {
+			rollbackIfActive(tx);
 			logException(he);
 			LOGGER.error("Error in loading all engines", he);
-			if (tx != null)
-				tx.rollback();
-
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
-
 		} finally {
-			closeSession(aSession);
+			closeSessionIfOpen(aSession);
 		}
 		LOGGER.debug("OUT");
 		return realResult;
@@ -313,15 +303,12 @@ public class EngineDAOHibImpl extends AbstractHibernateDAO implements IEngineDAO
 			}
 			tx.commit();
 		} catch (HibernateException he) {
+			rollbackIfActive(tx);
 			logException(he);
 			LOGGER.error("Error in loading all engines", he);
-			if (tx != null)
-				tx.rollback();
-
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
-
 		} finally {
-			closeSession(aSession);
+			closeSessionIfOpen(aSession);
 		}
 		LOGGER.debug("OUT");
 		return realResult;
@@ -364,15 +351,12 @@ public class EngineDAOHibImpl extends AbstractHibernateDAO implements IEngineDAO
 			}
 			tx.commit();
 		} catch (HibernateException he) {
+			rollbackIfActive(tx);
 			logException(he);
 			LOGGER.error("Error in loading all engines", he);
-			if (tx != null)
-				tx.rollback();
-
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
-
 		} finally {
-			closeSession(aSession);
+			closeSessionIfOpen(aSession);
 		}
 		if (realResult.isEmpty()) {
 			LOGGER.debug("No engines was found.");
@@ -411,16 +395,12 @@ public class EngineDAOHibImpl extends AbstractHibernateDAO implements IEngineDAO
 				realResult.add(toEngine(it.next()));
 			}
 		} catch (HibernateException he) {
+			rollbackIfActive(tx);
 			LOGGER.debug("Error in loading ecgines for biObject Type " + biobjectType, he);
 			logException(he);
-
-			if (tx != null)
-				tx.rollback();
-
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
-
 		} finally {
-			closeSession(aSession);
+			closeSessionIfOpen(aSession);
 		}
 		LOGGER.debug("OUT");
 		return realResult;
@@ -466,16 +446,12 @@ public class EngineDAOHibImpl extends AbstractHibernateDAO implements IEngineDAO
 			}
 			tx.commit();
 		} catch (HibernateException he) {
+			rollbackIfActive(tx);
 			LOGGER.debug("Error in loading ecgines for biObject Type " + biobjectType, he);
 			logException(he);
-
-			if (tx != null)
-				tx.rollback();
-
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
-
 		} finally {
-			closeSession(aSession);
+			closeSessionIfOpen(aSession);
 		}
 		if (realResult.isEmpty()) {
 			LOGGER.debug("No engines was found.");
@@ -524,15 +500,12 @@ public class EngineDAOHibImpl extends AbstractHibernateDAO implements IEngineDAO
 			updateSbiCommonInfo4Update(hibEngine, true);
 			tx.commit();
 		} catch (HibernateException he) {
+			rollbackIfActive(tx);
 			logException(he);
 			LOGGER.error("Error in modifying engine ", he);
-			if (tx != null)
-				tx.rollback();
-
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
-
 		} finally {
-			closeSession(aSession);
+			closeSessionIfOpen(aSession);
 		}
 		LOGGER.debug("OUT");
 
@@ -576,15 +549,12 @@ public class EngineDAOHibImpl extends AbstractHibernateDAO implements IEngineDAO
 			aSession.save(hibEngine);
 			tx.commit();
 		} catch (HibernateException he) {
+			rollbackIfActive(tx);
 			logException(he);
 			LOGGER.error("Inserting new engine ", he);
-			if (tx != null)
-				tx.rollback();
-
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
-
 		} finally {
-			closeSession(aSession);
+			closeSessionIfOpen(aSession);
 		}
 		LOGGER.debug("OUT");
 	}
@@ -610,16 +580,12 @@ public class EngineDAOHibImpl extends AbstractHibernateDAO implements IEngineDAO
 			aSession.delete(hibEngine);
 			tx.commit();
 		} catch (HibernateException he) {
+			rollbackIfActive(tx);
 			logException(he);
 			LOGGER.error("Error in erasing engine ", he);
-
-			if (tx != null)
-				tx.rollback();
-
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
-
 		} finally {
-			closeSession(aSession);
+			closeSessionIfOpen(aSession);
 		}
 		LOGGER.debug("OUT");
 	}
@@ -693,15 +659,12 @@ public class EngineDAOHibImpl extends AbstractHibernateDAO implements IEngineDAO
 				bool = false;
 			tx.commit();
 		} catch (HibernateException he) {
+			rollbackIfActive(tx);
 			logException(he);
 			LOGGER.error("HAs biObject associated", he);
-			if (tx != null)
-				tx.rollback();
-
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
-
 		} finally {
-			closeSession(aSession);
+			closeSessionIfOpen(aSession);
 		}
 		LOGGER.debug("OUT");
 		return bool;
@@ -732,15 +695,12 @@ public class EngineDAOHibImpl extends AbstractHibernateDAO implements IEngineDAO
 			return toReturn;
 
 		} catch (Exception he) {
+			rollbackIfActive(tx);
 			logException(he);
 			LOGGER.error("error in getting Associated Exporters", he);
-			if (tx != null)
-				tx.rollback();
-
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
-
 		} finally {
-			closeSession(aSession);
+			closeSessionIfOpen(aSession);
 		}
 
 	}
@@ -762,13 +722,12 @@ public class EngineDAOHibImpl extends AbstractHibernateDAO implements IEngineDAO
 			resultNumber = temp.intValue();
 
 		} catch (HibernateException he) {
+			rollbackIfActive(tx);
 			LOGGER.error("Error while loading the list of BIEngines", he);
-			if (tx != null)
-				tx.rollback();
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 9104);
 
 		} finally {
-			closeSession(aSession);
+			closeSessionIfOpen(aSession);
 		}
 		return resultNumber;
 	}

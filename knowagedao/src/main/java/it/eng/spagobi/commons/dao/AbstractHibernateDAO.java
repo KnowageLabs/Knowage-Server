@@ -232,17 +232,25 @@ public class AbstractHibernateDAO {
 	}
 
 	public void rollbackIfActiveAndClose(Transaction tx, Session aSession) {
+		rollbackIfActive(tx);
+		closeSessionIfOpen(aSession);
+	}
+
+	public void rollbackIfActive(Transaction tx) {
 		if (tx != null && tx.isActive()) {
 			tx.rollback();
 		}
-		closeSession(aSession);
 	}
 
 	public void commitIfActiveAndClose(Transaction tx, Session aSession) {
+		commitIfActive(tx);
+		closeSessionIfOpen(aSession);
+	}
+
+	public void commitIfActive(Transaction tx) {
 		if (tx != null && tx.isActive()) {
 			tx.commit();
 		}
-		closeSession(aSession);
 	}
 
 	/**
@@ -273,9 +281,7 @@ public class AbstractHibernateDAO {
 		} catch (Throwable t) {
 			throw new SpagoBIDAOException("An unexpected error occured while loading " + clazz.getName() + " whose id is equal to [" + id + "]", t);
 		} finally {
-			if (session != null && session.isOpen()) {
-				session.close();
-			}
+			closeSessionIfOpen(session);
 			logger.debug("OUT");
 		}
 
@@ -336,9 +342,7 @@ public class AbstractHibernateDAO {
 			throw new SpagoBIDAOException(
 					"Error saving a new object of type [" + Optional.ofNullable(obj).map(Object::getClass).map(Class::getName).orElse("n.d.") + "] ", t);
 		} finally {
-			if (session != null && session.isOpen()) {
-				session.close();
-			}
+			closeSessionIfOpen(session);
 			logger.debug("OUT");
 		}
 
@@ -376,9 +380,7 @@ public class AbstractHibernateDAO {
 			throw new SpagoBIDAOException(
 					"Error updating an object of type [" + Optional.ofNullable(obj).map(Object::getClass).map(Class::getName).orElse("n.d.") + "] ", t);
 		} finally {
-			if (session != null && session.isOpen()) {
-				session.close();
-			}
+			closeSessionIfOpen(session);
 			logger.debug("OUT");
 		}
 	}
@@ -419,9 +421,7 @@ public class AbstractHibernateDAO {
 				tx.rollback();
 			throw new SpagoBIDAOException("An unexpected error occured while deleting object of type [" + clazz + "] whose id is equal to [" + id + "]", t);
 		} finally {
-			if (session != null && session.isOpen()) {
-				session.close();
-			}
+			closeSessionIfOpen(session);
 			logger.debug("OUT");
 		}
 	}
@@ -471,9 +471,7 @@ public class AbstractHibernateDAO {
 		} catch (Throwable t) {
 			throw new SpagoBIDAOException("An unexpected error occured while fetching objects of type [" + clazz + "] ", t);
 		} finally {
-			if (session != null && session.isOpen()) {
-				session.close();
-			}
+			closeSessionIfOpen(session);
 			logger.debug("OUT");
 		}
 		return ret;
@@ -519,9 +517,7 @@ public class AbstractHibernateDAO {
 			}
 			throw new SpagoBIDAOException("Error executing on transaction ", t);
 		} finally {
-			if (session != null) {
-				session.close();
-			}
+			closeSessionIfOpen(session);
 			logger.debug("OUT: executeOnTransaction");
 		}
 		return returnObj;
@@ -556,7 +552,15 @@ public class AbstractHibernateDAO {
 		return total;
 	}
 
+	/**
+	 * @deprecated Replace with {@link #closeSessionIfOpen(Session)}
+	 */
+	@Deprecated
 	protected void closeSession(Session aSession) {
+		closeSessionIfOpen(aSession);
+	}
+
+	protected void closeSessionIfOpen(Session aSession) {
 		if (aSession != null && aSession.isOpen()) {
 			aSession.close();
 		}

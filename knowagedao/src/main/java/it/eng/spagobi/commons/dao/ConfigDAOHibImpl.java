@@ -76,15 +76,11 @@ public class ConfigDAOHibImpl extends AbstractHibernateDAO implements IConfigDAO
 			}
 			tx.commit();
 		} catch (HibernateException he) {
+			rollbackIfActive(tx);
 			LOGGER.error("HibernateException during query", he);
-
-			if (tx != null)
-				tx.rollback();
-
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
-
 		} finally {
-			closeSession(aSession);
+			closeSessionIfOpen(aSession);
 			LOGGER.debug("OUT");
 		}
 		return toReturn;
@@ -117,15 +113,11 @@ public class ConfigDAOHibImpl extends AbstractHibernateDAO implements IConfigDAO
 			tx.commit();
 
 		} catch (HibernateException he) {
+			rollbackIfActive(tx);
 			logException(he);
-
-			if (tx != null)
-				tx.rollback();
-
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
-
 		} finally {
-			closeSession(tmpSession);
+			closeSessionIfOpen(tmpSession);
 			LOGGER.debug("OUT");
 		}
 		return toReturn;
@@ -162,12 +154,11 @@ public class ConfigDAOHibImpl extends AbstractHibernateDAO implements IConfigDAO
 
 			tx.commit();
 		} catch (HibernateException he) {
+			rollbackIfActive(tx);
 			logException(he);
-			if (tx != null)
-				tx.rollback();
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		} finally {
-			closeSession(tmpSession);
+			closeSessionIfOpen(tmpSession);
 			LOGGER.debug("OUT");
 		}
 		return toReturn;
@@ -285,15 +276,11 @@ public class ConfigDAOHibImpl extends AbstractHibernateDAO implements IConfigDAO
 			config.setId(newId);
 
 		} catch (HibernateException he) {
+			rollbackIfActive(tx);
 			LOGGER.error("HibernateException", he);
-
-			if (tx != null)
-				tx.rollback();
-
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
-
 		} finally {
-			closeSession(aSession);
+			closeSessionIfOpen(aSession);
 		}
 		ConfigurationCache.getCache().clear();
 		LOGGER.debug("OUT");
@@ -328,15 +315,11 @@ public class ConfigDAOHibImpl extends AbstractHibernateDAO implements IConfigDAO
 			tx.commit();
 
 		} catch (HibernateException he) {
+			rollbackIfActive(tx);
 			LOGGER.error("HibernateException", he);
-
-			if (tx != null)
-				tx.rollback();
-
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
-
 		} finally {
-			closeSession(sess);
+			closeSessionIfOpen(sess);
 		}
 		LOGGER.debug("OUT");
 	}
@@ -367,11 +350,10 @@ public class ConfigDAOHibImpl extends AbstractHibernateDAO implements IConfigDAO
 			tx.commit();
 		} catch (HibernateException he) {
 			logException(he);
-			if (tx != null)
-				tx.rollback();
+			rollbackIfActive(tx);
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		} finally {
-			closeSession(tmpSession);
+			closeSessionIfOpen(tmpSession);
 			LOGGER.debug("OUT");
 		}
 		return ret;
