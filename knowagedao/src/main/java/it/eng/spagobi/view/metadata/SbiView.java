@@ -63,9 +63,12 @@ public class SbiView extends SbiHibernateModel implements Comparable<SbiView>, S
 
 	@Override
 	public int compareTo(SbiView o) {
+		// @formatter:off
 		return new CompareToBuilder()
 				.append(this.name, o.name)
+				.append(this.id, o.id)
 				.toComparison();
+		// @formatter:on
 	}
 
 	@Override

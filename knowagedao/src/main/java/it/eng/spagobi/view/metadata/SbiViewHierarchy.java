@@ -55,11 +55,13 @@ public class SbiViewHierarchy extends SbiHibernateModel implements Comparable<Sb
 
 	@Override
 	public int compareTo(SbiViewHierarchy o) {
+		// @formatter:off
 		return new CompareToBuilder()
 				.append(this.parent, o.parent)
 				.append(this.progr, o.progr)
 				.append(this.id, o.id)
 				.toComparison();
+		// @formatter:on
 	}
 
 	@Override

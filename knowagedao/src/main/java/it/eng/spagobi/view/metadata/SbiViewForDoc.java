@@ -46,9 +46,11 @@ public class SbiViewForDoc extends SbiHibernateModel implements Comparable<SbiVi
 
 	@Override
 	public int compareTo(SbiViewForDoc o) {
+		// @formatter:off
 		return new CompareToBuilder()
 				.append(this.id, o.id)
 				.toComparison();
+		// @formatter:on
 	}
 
 	@Override
@@ -80,7 +82,6 @@ public class SbiViewForDoc extends SbiHibernateModel implements Comparable<SbiVi
 
 		return true;
 	}
-
 
 	/**
 	 * @return the id
