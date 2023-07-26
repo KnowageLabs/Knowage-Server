@@ -22,26 +22,27 @@ function setI18nLanguage(lang) {
 }
 
 export function loadLanguageAsync(lang) {
-    // If the same language
-    if (i18n.locale === lang) {
-        return Promise.resolve(setI18nLanguage(lang))
-    }
+    return new Promise((resolve) => {
+        // If the same language
+        if (i18n.locale === lang) {
+            resolve(setI18nLanguage(lang))
+        }
 
-    // If the language was already loaded
-    if (loadedLanguages.includes(lang)) {
-        return Promise.resolve(setI18nLanguage(lang))
-    }
+        // If the language was already loaded
+        if (loadedLanguages.includes(lang)) {
+            resolve(setI18nLanguage(lang))
+        }
 
-    // If the language hasn't been loaded yet
-    return import(`@/i18n/${lang}/messages.json`).then((messages) => {
-        require(`@/i18n/${lang}/helper-messages.json`)
-        import(`@/i18n/${lang}/helper-messages.json`).then((m) => {
-            // eslint-disable-next-line
-            // @ts-ignore
-            i18n.global.setLocaleMessage(lang, messages.default)
-            i18n.global.mergeLocaleMessage(lang, m.default)
-            loadedLanguages.push(lang)
-            return setI18nLanguage(lang)
+        // If the language hasn't been loaded yet
+        import(`./i18n/${lang}/messages.json`).then((messages) => {
+            import(`./i18n/${lang}/helper-messages.json`).then((m) => {
+                // eslint-disable-next-line
+                // @ts-ignore
+                i18n.global.setLocaleMessage(lang, messages.default)
+                i18n.global.mergeLocaleMessage(lang, m.default)
+                loadedLanguages.push(lang)
+                resolve(setI18nLanguage(lang))
+            })
         })
     })
 }

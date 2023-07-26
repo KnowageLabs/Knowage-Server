@@ -43,7 +43,7 @@ export default defineComponent({
     async beforeCreate() {
         await this.$http
             .get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + '2.0/currentuser')
-            .then((response) => {
+            .then(async (response) => {
                 let currentUser = response.data
                 if (localStorage.getItem('sessionRole')) {
                     currentUser.sessionRole = localStorage.getItem('sessionRole')
@@ -62,6 +62,7 @@ export default defineComponent({
                 store.commit('setLocale', storedLocale)
                 this.$i18n.locale = storedLocale
 
+                await loadLanguageAsync(localStorage.getItem('locale'))
                 // @ts-ignore
                 if (this.$i18n.messages[this.$i18n.locale.replaceAll('-', '_')]) {
                     // @ts-ignore
@@ -93,7 +94,6 @@ export default defineComponent({
                 } else {
                     this.showMenu = true
                 }
-                loadLanguageAsync(localStorage.getItem('locale'))
                 this.$store.commit('setLoading', false)
             })
             .catch(function(error) {
