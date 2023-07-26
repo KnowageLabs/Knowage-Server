@@ -77,6 +77,7 @@ export default defineComponent({
         createNodeTree() {
             this.nodes = []
             const foldersWithMissingParent = [] as iNode[]
+
             this.files.forEach((file: iFile) => {
                 const node = {
                     key: file.id,
@@ -92,7 +93,6 @@ export default defineComponent({
 
                 const temp = foldersWithMissingParent.filter((folder: iNode) => node.id === folder.parentId)
                 temp.forEach((el: any) => node.children.push(el))
-
                 this.attachFolderToTree(node, foldersWithMissingParent)
             })
         },
@@ -119,7 +119,6 @@ export default defineComponent({
                 for (let i = 0; i < this.nodes.length; i++) {
                     parentFolder = this.findParentFolder(folder, this.nodes[i])
                     if (parentFolder && !parentFolder.data.stateCode) {
-                        parentFolder.children?.push(folder)
                         parentFolder.children?.push(deepcopy(folder))
                         break
                     }
