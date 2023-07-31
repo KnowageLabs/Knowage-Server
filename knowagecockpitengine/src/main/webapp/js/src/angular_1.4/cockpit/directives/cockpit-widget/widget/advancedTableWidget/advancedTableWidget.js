@@ -110,7 +110,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			return text;
 		}
 
-		var _rowHeight;
 		if(!$scope.ngModel.settings){
 			$scope.ngModel.settings = cockpitModule_defaultTheme.table.settings;
 		}else $scope.ngModel.settings.page = 1;
@@ -713,10 +712,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				$scope.totalRows = datasetRecords.results;
 				$scope.tempRows = datasetRecords.rows;
 				if($scope.ngModel.style && $scope.ngModel.style.tr && $scope.ngModel.style.tr.height){
-					_rowHeight = $scope.ngModel.style.tr.height;
+					$scope.advancedTableGrid.rowHeight = $scope.ngModel.style.tr.height;
 					$scope.advancedTableGrid.api.resetRowHeights();
 				}else {
-					_rowHeight = 0;
+					$scope.advancedTableGrid.rowHeight = 28;
 					$scope.advancedTableGrid.api.resetRowHeights();
 				}
 				if($scope.ngModel.style && $scope.ngModel.style.th){
@@ -853,7 +852,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			        agColumnHeader: CustomHeader
 			    },
 				onColumnResized: columnResized,
-				getRowHeight: getRowHeight,
+				rowHeight: 28,
 				getRowStyle: function(params) {
 					if($scope.ngModel.settings.rowThresholds && $scope.ngModel.settings.rowThresholds.enabled){
 						if(rowThresholdComparer(mapRow(params.data))) return rowThresholdComparer(mapRow(params.data));
@@ -873,10 +872,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 		if($scope.ngModel.settings.norows && $scope.ngModel.settings.norows.message) $scope.advancedTableGrid.localeText.noRowsToShow = $filter('i18n')($scope.ngModel.settings.norows.message);
 
-		function getRowHeight(params) {
-			if(_rowHeight > 0) return _rowHeight;
-			else return 28;
-		}
 		function changeSorting(){
 			if($scope.ngModel.settings.pagination && $scope.ngModel.settings.pagination.enabled && !$scope.ngModel.settings.pagination.frontEnd){
 				$scope.showWidgetSpinner();
