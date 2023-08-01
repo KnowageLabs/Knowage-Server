@@ -165,21 +165,23 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 							var previousValue;
 							var previousIndex;
 							for(var r in $scope.tempRows){
+								if(!$scope.tempRows[r].span)$scope.tempRows[r].span = {}
 								if(previousValue != $scope.tempRows[r][fields[f].name] || ($scope.ngModel.settings?.summary?.enabled && r >= ($scope.tempRows.length - $scope.ngModel.settings?.summary?.list.length))){
 									previousValue = $scope.tempRows[r][fields[f].name];
 									previousIndex = r;
-									$scope.tempRows[r].span = 1;
+									$scope.tempRows[r].span[fields[f].name] = 1;
 								}else {
-									$scope.tempRows[previousIndex].span ++;
+									$scope.tempRows[previousIndex].span[fields[f].name] ++;
 								}
 							}
 							tempCol.rowSpan = RowSpanCalculator;
 							tempCol.cellClassRules = {
 								'cell-span': function(params) {
-									return $scope.tempRows[params.rowIndex].span > 1
+									return $scope.tempRows[params.rowIndex].span[params.colDef.field] > 1
 								}
 					        }
 						}
+
 
 						//VARIABLES MANAGEMENT
 						if($scope.ngModel.content.columnSelectedOfDataset[c].variables && $scope.ngModel.content.columnSelectedOfDataset[c].variables.length>0){
@@ -681,10 +683,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		}
 
 		function RowSpanCalculator(params) {
-			if(params.data.span > 1){
-				return params.data.span;
+			if(params.data.span && params.data.span[params.colDef.field] > 1){
+				return params.data.span[params.colDef.field];
 			}else return 1;
-        };
+		};
+
 
 		$scope.init=function(element,width,height){
 			for(var k in $scope.ngModel.content.columnSelectedOfDataset){
