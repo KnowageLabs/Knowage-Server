@@ -22,7 +22,6 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 
-import org.junit.Assert;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,6 +36,7 @@ import it.eng.knowage.meta.model.business.BusinessModel;
 import it.eng.knowage.meta.model.business.BusinessRelationship;
 import it.eng.knowage.meta.model.physical.PhysicalTable;
 import it.eng.knowage.meta.model.util.JDBCTypeMapper;
+import it.eng.spagobi.utilities.assertion.Assert;
 
 /**
  * Abstract class extended by <code>JpaTable</code> and <code>JpaViewInnerTable</code>
@@ -55,7 +55,7 @@ public abstract class AbstractJpaTable implements IJpaTable {
 	HashMap<String, String> columnTypesMap;
 
 	public AbstractJpaTable(PhysicalTable physicalTable) {
-		Assert.assertNotNull("Parameter [physicalTable] cannot be null", physicalTable);
+		Assert.assertNotNull(physicalTable, "Parameter [physicalTable] cannot be null");
 		this.physicalTable = physicalTable;
 	}
 
@@ -211,7 +211,8 @@ public abstract class AbstractJpaTable implements IJpaTable {
 					// continue;
 					// } else {
 					result.add(0, column);
-					LOGGER.debug("Added column(PK) " + column.getName() + " in getSimpleColumns for table " + this.getName());
+					LOGGER.debug("Added column(PK) " + column.getName() + " in getSimpleColumns for table "
+							+ this.getName());
 					continue;
 					// }
 				}
@@ -348,9 +349,11 @@ public abstract class AbstractJpaTable implements IJpaTable {
 		for (int i = 0, n = columns.size(); i < n; ++i) {
 			IJpaColumn column = columns.get(i);
 			if (equalsClause == null)
-				equalsClause = "( this." + column.getPropertyName() + ".equals(castOther." + column.getPropertyName() + ") )";
+				equalsClause = "( this." + column.getPropertyName() + ".equals(castOther." + column.getPropertyName()
+						+ ") )";
 			else
-				equalsClause += " \n && ( this." + column.getPropertyName() + ".equals(castOther." + column.getPropertyName() + ") )";
+				equalsClause += " \n && ( this." + column.getPropertyName() + ".equals(castOther."
+						+ column.getPropertyName() + ") )";
 		}
 
 		if (equalsClause == null)
@@ -375,7 +378,8 @@ public abstract class AbstractJpaTable implements IJpaTable {
 			if (hashcodeClause == null)
 				hashcodeClause = " hash = hash * prime + this." + column.getPropertyName() + ".hashCode() ;\n";
 			else
-				hashcodeClause = hashcodeClause + " hash = hash * prime + this." + column.getPropertyName() + ".hashCode() ;\n";
+				hashcodeClause = hashcodeClause + " hash = hash * prime + this." + column.getPropertyName()
+						+ ".hashCode() ;\n";
 		}
 
 		if (hashcodeClause == null)

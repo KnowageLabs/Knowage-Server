@@ -24,13 +24,14 @@ import java.io.IOException;
 import java.util.jar.JarEntry;
 import java.util.jar.JarOutputStream;
 
-import org.junit.Assert;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import it.eng.spagobi.utilities.assertion.Assert;
+
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
- * 
+ *
  */
 public class Zipper {
 
@@ -38,7 +39,7 @@ public class Zipper {
 
 	/**
 	 * This method compress all the content of targetDir into jar file outFile. If outFile alredy exist it will be overwritten.
-	 * 
+	 *
 	 * @throws IOException
 	 * @params targetDir the folder that must be compressed into a jar
 	 * @params outFile the output jar file generated compressing targetDir content
@@ -48,17 +49,20 @@ public class Zipper {
 		logger.trace("IN");
 
 		// try {
-		Assert.assertNotNull("Input parametr [targetDir] cannot be null", targetDir);
-		Assert.assertTrue("Input parametr [targetDir] must be a valid folder", targetDir.exists() && targetDir.isDirectory());
-		Assert.assertNotNull("Input parametr [outFile] cannot be null", outFile);
+		Assert.assertNotNull(targetDir, "Input parametr [targetDir] cannot be null");
+		Assert.assertTrue(targetDir.exists() && targetDir.isDirectory(),
+				"Input parametr [targetDir] must be a valid folder");
+		Assert.assertNotNull(outFile, "Input parametr [outFile] cannot be null");
 
 		if (!outFile.getParentFile().exists()) {
-			logger.warn("Output folder [{}] does not exist. It will be created", outFile.getParentFile().getAbsolutePath());
+			logger.warn("Output folder [{}] does not exist. It will be created",
+					outFile.getParentFile().getAbsolutePath());
 			outFile.getParentFile().mkdir();
 		}
 
 		if (outFile.exists()) {
-			logger.warn("A mapping jar file named [{}] alredy exists. It will be overwritten", outFile.getAbsoluteFile());
+			logger.warn("A mapping jar file named [{}] alredy exists. It will be overwritten",
+					outFile.getAbsoluteFile());
 			outFile.delete();
 		}
 

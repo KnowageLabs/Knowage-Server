@@ -20,7 +20,6 @@ package it.eng.knowage.meta.generator.jpamapping.wrappers.impl;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.junit.Assert;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,6 +40,7 @@ import it.eng.knowage.meta.model.business.SimpleBusinessColumn;
 import it.eng.knowage.meta.model.physical.PhysicalColumn;
 import it.eng.knowage.meta.model.physical.PhysicalModel;
 import it.eng.knowage.meta.model.physical.PhysicalTable;
+import it.eng.spagobi.utilities.assertion.Assert;
 
 /**
  *
@@ -58,16 +58,15 @@ public class JpaViewInnerTable extends AbstractJpaTable {
 	private static Logger logger = LoggerFactory.getLogger(JpaViewInnerTable.class);
 
 	/**
-	 * @param businessView
-	 *            The business view that contains the physical table
-	 * @param physicalTable
-	 *            The physical table used to write this java class
+	 * @param businessView  The business view that contains the physical table
+	 * @param physicalTable The physical table used to write this java class
 	 */
 	protected JpaViewInnerTable(BusinessView businessView, PhysicalTable physicalTable) {
 		super(physicalTable);
 
-		Assert.assertNotNull("Parameter [businessView] cannot be null", businessView);
-		Assert.assertTrue("Parameter [physicalTable] is not contained in parameter [businessView]", businessView.getPhysicalTables().contains(physicalTable));
+		Assert.assertNotNull(businessView, "Parameter [businessView] cannot be null");
+		Assert.assertTrue(businessView.getPhysicalTables().contains(physicalTable),
+				"Parameter [physicalTable] is not contained in parameter [businessView]");
 
 		logger.debug("Inner table [" + physicalTable.getName() + "] of view [" + businessView.getName() + "]");
 
@@ -75,7 +74,8 @@ public class JpaViewInnerTable extends AbstractJpaTable {
 		this.physicalTable = physicalTable;
 
 		PhysicalModel physicalModel = physicalTable.getModel();
-		ModelProperty modelProperty = physicalModel.getProperties().get(PhysicalModelPropertiesFromFileInitializer.CONNECTION_DATABASE_QUOTESTRING);
+		ModelProperty modelProperty = physicalModel.getProperties()
+				.get(PhysicalModelPropertiesFromFileInitializer.CONNECTION_DATABASE_QUOTESTRING);
 		if (modelProperty != null) {
 			quoteString = modelProperty.getValue();
 		} else {
@@ -87,7 +87,7 @@ public class JpaViewInnerTable extends AbstractJpaTable {
 
 	@Override
 	public List<BusinessColumn> getBusinessColumns() {
-		List<BusinessColumn> businessColumns = new ArrayList<BusinessColumn>();
+		List<BusinessColumn> businessColumns = new ArrayList<>();
 		businessColumns.addAll(businessView.getSimpleBusinessColumns());
 		return businessColumns;
 	}
@@ -116,7 +116,7 @@ public class JpaViewInnerTable extends AbstractJpaTable {
 		logger.trace("IN");
 
 		if (jpaColumns == null) {
-			jpaColumns = new ArrayList<IJpaColumn>();
+			jpaColumns = new ArrayList<>();
 
 			for (PhysicalColumn physicalColumn : physicalTable.getColumns()) {
 				BusinessColumn businessColumn = findColumnInBusinessView(physicalColumn);
@@ -125,7 +125,8 @@ public class JpaViewInnerTable extends AbstractJpaTable {
 					if (businessColumn instanceof SimpleBusinessColumn) {
 						JpaColumn jpaColumn = new JpaColumn(this, (SimpleBusinessColumn) businessColumn);
 						jpaColumns.add(jpaColumn);
-						logger.info("Add " + jpaColumn.getSqlName() + " real column to the BV " + businessView.getName());
+						logger.info(
+								"Add " + jpaColumn.getSqlName() + " real column to the BV " + businessView.getName());
 					}
 				} else {
 					JpaFakeColumn fakeColumn = new JpaFakeColumn(this, physicalColumn);
@@ -145,7 +146,7 @@ public class JpaViewInnerTable extends AbstractJpaTable {
 		logger.trace("IN");
 
 		if (businessColumnOfInnerTable == null) {
-			businessColumnOfInnerTable = new ArrayList<BusinessColumn>();
+			businessColumnOfInnerTable = new ArrayList<>();
 
 			for (PhysicalColumn physicalColumn : physicalTable.getColumns()) {
 				BusinessColumn businessColumn = findColumnInBusinessView(physicalColumn);
@@ -167,11 +168,12 @@ public class JpaViewInnerTable extends AbstractJpaTable {
 	@Override
 	public List<IJpaCalculatedColumn> getCalculatedColumns() {
 		if (jpaCalculatedColumns == null) {
-			jpaCalculatedColumns = new ArrayList<IJpaCalculatedColumn>();
+			jpaCalculatedColumns = new ArrayList<>();
 			for (CalculatedBusinessColumn calculatedBusinessColumn : businessView.getCalculatedBusinessColumns()) {
 				JpaCalculatedColumn jpaCalculatedColumn = new JpaCalculatedColumn(this, calculatedBusinessColumn);
 				jpaCalculatedColumns.add(jpaCalculatedColumn);
-				logger.debug("Business table [{}] contains calculated column [{}]", businessView.getName(), calculatedBusinessColumn.getName());
+				logger.debug("Business table [{}] contains calculated column [{}]", businessView.getName(),
+						calculatedBusinessColumn.getName());
 
 			}
 		}
@@ -217,10 +219,9 @@ public class JpaViewInnerTable extends AbstractJpaTable {
 		/*
 		 * boolean hasCompositeKey = false;
 		 *
-		 * if(physicalTable.getPrimaryKey() != null) { // if there's a key... if(physicalTable.getPrimaryKey().getColumns().size() > 1) { // ...and it is
-		 * composed by more then one column hasCompositeKey = true; } } else { // if there isn't a key hasCompositeKey = true; // we return true because we are
-		 * going to generate a fake key composed by // all columns in the table in order to keep jpa runtime happy (in jpa as in // hibernate any persisted
-		 * object must have a key) }
+		 * if(physicalTable.getPrimaryKey() != null) { // if there's a key... if(physicalTable.getPrimaryKey().getColumns().size() > 1) { // ...and it is composed by
+		 * more then one column hasCompositeKey = true; } } else { // if there isn't a key hasCompositeKey = true; // we return true because we are going to generate a
+		 * fake key composed by // all columns in the table in order to keep jpa runtime happy (in jpa as in // hibernate any persisted object must have a key) }
 		 *
 		 * return hasCompositeKey;
 		 */
@@ -232,7 +233,8 @@ public class JpaViewInnerTable extends AbstractJpaTable {
 
 		name = null;
 		try {
-			name = JavaKeywordsUtils.transformToJavaClassName(businessView.getUniqueName() + "_" + physicalTable.getName());
+			name = JavaKeywordsUtils
+					.transformToJavaClassName(businessView.getUniqueName() + "_" + physicalTable.getName());
 		} catch (Throwable t) {
 			logger.error("Impossible to get class name", t);
 		}
@@ -251,7 +253,7 @@ public class JpaViewInnerTable extends AbstractJpaTable {
 
 		logger.trace("IN");
 
-		jpaRelationships = new ArrayList<IJpaRelationship>();
+		jpaRelationships = new ArrayList<>();
 
 		for (BusinessRelationship relationship : getBusinessRelationships()) {
 			PhysicalTable sourceTable;
@@ -320,7 +322,7 @@ public class JpaViewInnerTable extends AbstractJpaTable {
 
 	@Override
 	public List<IJpaSubEntity> getSubEntities() {
-		List<IJpaSubEntity> subEntities = new ArrayList<IJpaSubEntity>();
+		List<IJpaSubEntity> subEntities = new ArrayList<>();
 
 		for (BusinessRelationship relationship : businessView.getRelationships()) {
 			if (relationship.getSourceTable() != businessView)
