@@ -21,7 +21,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-import org.junit.Assert;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -44,6 +43,7 @@ import it.eng.knowage.meta.model.business.CalculatedBusinessColumn;
 import it.eng.knowage.meta.model.business.SimpleBusinessColumn;
 import it.eng.knowage.meta.model.physical.PhysicalColumn;
 import it.eng.knowage.meta.model.physical.PhysicalTable;
+import it.eng.spagobi.utilities.assertion.Assert;
 
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
@@ -53,12 +53,11 @@ public class JpaView implements IJpaView {
 	private final BusinessView businessView;
 	List<BusinessColumnSet> parents;
 	private static Logger logger = LoggerFactory.getLogger(JpaViewInnerTable.class);
-	List<IJpaSubEntity> allSubEntities = new ArrayList<IJpaSubEntity>();
+	List<IJpaSubEntity> allSubEntities = new ArrayList<>();
 	List<IJpaCalculatedColumn> jpaCalculatedColumns;
 
 	protected JpaView(BusinessView businessView) {
-		super();
-		Assert.assertNotNull("Parameter [businessView] cannot be null", businessView);
+		Assert.assertNotNull(businessView, "Parameter [businessView] cannot be null");
 		this.businessView = businessView;
 	}
 
@@ -117,7 +116,7 @@ public class JpaView implements IJpaView {
 
 		physiscalTables = businessView.getPhysicalTables();
 
-		innerTables = new ArrayList<IJpaTable>();
+		innerTables = new ArrayList<>();
 		for (PhysicalTable physicaltable : physiscalTables) {
 			innerTables.add(new JpaViewInnerTable(businessView, physicaltable));
 		}
@@ -133,13 +132,14 @@ public class JpaView implements IJpaView {
 	 * @return
 	 */
 	public List<IJpaColumn> getColumns() {
-		List<IJpaColumn> jpaColumns = new ArrayList<IJpaColumn>();
+		List<IJpaColumn> jpaColumns = new ArrayList<>();
 		List<IJpaTable> innerTables = getInnerTables();
 
 		List<BusinessColumn> businessColumns = businessView.getColumns();
 		for (BusinessColumn businessColumn : businessColumns) {
 			if (businessColumn instanceof SimpleBusinessColumn) {
-				JpaViewInnerTable correspondingInnerTable = getCorrespondingInnerTable(innerTables, (SimpleBusinessColumn) businessColumn);
+				JpaViewInnerTable correspondingInnerTable = getCorrespondingInnerTable(innerTables,
+						(SimpleBusinessColumn) businessColumn);
 				JpaColumn jpaColumn = new JpaColumn(correspondingInnerTable, (SimpleBusinessColumn) businessColumn);
 				jpaColumns.add(jpaColumn);
 			}
@@ -147,7 +147,8 @@ public class JpaView implements IJpaView {
 		return jpaColumns;
 	}
 
-	private JpaViewInnerTable getCorrespondingInnerTable(List<IJpaTable> innerTables, SimpleBusinessColumn businessColumn) {
+	private JpaViewInnerTable getCorrespondingInnerTable(List<IJpaTable> innerTables,
+			SimpleBusinessColumn businessColumn) {
 
 		PhysicalColumn physicalColumn = businessColumn.getPhysicalColumn();
 		for (IJpaTable innerTable : innerTables) {
@@ -169,11 +170,12 @@ public class JpaView implements IJpaView {
 	 */
 	@Override
 	public List<IJpaColumn> getColumns(JpaViewInnerTable table) {
-		List<IJpaColumn> jpaColumns = new ArrayList<IJpaColumn>();
+		List<IJpaColumn> jpaColumns = new ArrayList<>();
 		List<SimpleBusinessColumn> businessColumns = businessView.getSimpleBusinessColumns();
 		for (SimpleBusinessColumn businessColumn : businessColumns) {
 			if (businessColumn.getPhysicalColumn().getTable() == table.getPhysicalTable()) {
-				JpaViewInnerTable jpaTable = new JpaViewInnerTable(businessView, businessColumn.getPhysicalColumn().getTable());
+				JpaViewInnerTable jpaTable = new JpaViewInnerTable(businessView,
+						businessColumn.getPhysicalColumn().getTable());
 				JpaColumn jpaColumn = new JpaColumn(jpaTable, businessColumn);
 				jpaColumns.add(jpaColumn);
 			}
@@ -185,7 +187,7 @@ public class JpaView implements IJpaView {
 	public List<IJpaCalculatedColumn> getCalculatedColumns() {
 		try {
 			if (jpaCalculatedColumns == null) {
-				jpaCalculatedColumns = new ArrayList<IJpaCalculatedColumn>();
+				jpaCalculatedColumns = new ArrayList<>();
 				for (CalculatedBusinessColumn calculatedBusinessColumn : businessView.getCalculatedBusinessColumns()) {
 					IJpaTable foundTable = null;
 					Set<SimpleBusinessColumn> referencedColumns = calculatedBusinessColumn.getReferencedColumns();
@@ -193,16 +195,19 @@ public class JpaView implements IJpaView {
 					// check if all the referenced columns are contained in an inner table
 					for (IJpaTable innerTable : innerTables) {
 						System.out.println("Checking table: " + innerTable.getName());
-						if (((JpaViewInnerTable) innerTable).getBusinessColumnsOfInnerTable().containsAll(referencedColumns)) {
+						if (((JpaViewInnerTable) innerTable).getBusinessColumnsOfInnerTable()
+								.containsAll(referencedColumns)) {
 							foundTable = innerTable;
 							System.out.println("Found table: " + foundTable.getName());
 							break;
 						}
 					}
 					if (foundTable != null) {
-						JpaCalculatedColumn jpaCalculatedColumn = new JpaCalculatedColumn((AbstractJpaTable) foundTable, calculatedBusinessColumn);
+						JpaCalculatedColumn jpaCalculatedColumn = new JpaCalculatedColumn((AbstractJpaTable) foundTable,
+								calculatedBusinessColumn);
 						jpaCalculatedColumns.add(jpaCalculatedColumn);
-						logger.debug("Business table [{}] contains calculated column [{}]", businessView.getName(), calculatedBusinessColumn.getName());
+						logger.debug("Business table [{}] contains calculated column [{}]", businessView.getName(),
+								calculatedBusinessColumn.getName());
 					}
 
 				}
@@ -229,10 +234,11 @@ public class JpaView implements IJpaView {
 		List<JpaViewInnerJoinRelatioship> jpaViewInnerJoinRelatioships;
 		List<BusinessViewInnerJoinRelationship> joinRelationships;
 
-		jpaViewInnerJoinRelatioships = new ArrayList<JpaViewInnerJoinRelatioship>();
+		jpaViewInnerJoinRelatioships = new ArrayList<>();
 		joinRelationships = businessView.getJoinRelationships();
 		for (BusinessViewInnerJoinRelationship joinRealtionship : joinRelationships) {
-			JpaViewInnerJoinRelatioship jpaViewInnerJoinRelatioship = new JpaViewInnerJoinRelatioship(businessView, joinRealtionship);
+			JpaViewInnerJoinRelatioship jpaViewInnerJoinRelatioship = new JpaViewInnerJoinRelatioship(businessView,
+					joinRealtionship);
 			jpaViewInnerJoinRelatioships.add(jpaViewInnerJoinRelatioship);
 		}
 
@@ -253,10 +259,11 @@ public class JpaView implements IJpaView {
 		// logger.trace("OUT");
 		// return businessView.getRelationships();
 
-		List<JpaViewOuterRelationship> viewRelationships = new ArrayList<JpaViewOuterRelationship>();
+		List<JpaViewOuterRelationship> viewRelationships = new ArrayList<>();
 
 		for (BusinessRelationship relationship : businessView.getRelationships()) {
-			logger.debug("Business view [{}] contains relationship  [{}] ", businessView.getName(), relationship.getName());
+			logger.debug("Business view [{}] contains relationship  [{}] ", businessView.getName(),
+					relationship.getName());
 			boolean isOutbound = false;
 			// check if this is an outbound relationship from businessView to another businessColumnSet
 			if (relationship.getSourceTable().equals(businessView)) {
@@ -305,14 +312,14 @@ public class JpaView implements IJpaView {
 				continue;
 
 			// List of parents to avoid cyclic exploration
-			parents = new ArrayList<BusinessColumnSet>();
+			parents = new ArrayList<>();
 
 			JpaSubEntity subEntity = new JpaSubEntity(businessView, null, relationship);
 			// subEntities.add(subEntity);
 			allSubEntities.add(subEntity);
 			parents.add(businessView);
 
-			List<IJpaSubEntity> levelEntities = new ArrayList<IJpaSubEntity>();
+			List<IJpaSubEntity> levelEntities = new ArrayList<>();
 			levelEntities.addAll(subEntity.getChildren());
 
 			allSubEntities.addAll(levelEntities);
@@ -329,7 +336,7 @@ public class JpaView implements IJpaView {
 	}
 
 	public List<IJpaSubEntity> getSubLevelEntities(List<IJpaSubEntity> entities) {
-		List<IJpaSubEntity> subEntities = new ArrayList<IJpaSubEntity>();
+		List<IJpaSubEntity> subEntities = new ArrayList<>();
 		for (IJpaSubEntity entity : entities) {
 			BusinessColumnSet businessColumnSet = ((JpaSubEntity) entity).getBusinessColumnSet();
 			if (!parents.contains(businessColumnSet)) {

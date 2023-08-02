@@ -17,14 +17,6 @@
  */
 package it.eng.knowage.meta.generator.mondrianschema;
 
-import it.eng.knowage.meta.generator.GenerationException;
-import it.eng.knowage.meta.generator.IGenerator;
-import it.eng.knowage.meta.generator.mondrianschema.wrappers.IMondrianCube;
-import it.eng.knowage.meta.generator.mondrianschema.wrappers.IMondrianDimension;
-import it.eng.knowage.meta.generator.mondrianschema.wrappers.MondrianModel;
-import it.eng.knowage.meta.model.ModelObject;
-import it.eng.knowage.meta.model.olap.OlapModel;
-
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -34,9 +26,17 @@ import java.util.List;
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.Velocity;
-import org.junit.Assert;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import it.eng.knowage.meta.generator.GenerationException;
+import it.eng.knowage.meta.generator.IGenerator;
+import it.eng.knowage.meta.generator.mondrianschema.wrappers.IMondrianCube;
+import it.eng.knowage.meta.generator.mondrianschema.wrappers.IMondrianDimension;
+import it.eng.knowage.meta.generator.mondrianschema.wrappers.MondrianModel;
+import it.eng.knowage.meta.model.ModelObject;
+import it.eng.knowage.meta.model.olap.OlapModel;
+import it.eng.spagobi.utilities.assertion.Assert;
 
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it), Marco Cortella (marco.cortella@eng.it)
@@ -74,11 +74,12 @@ public class MondrianSchemaGenerator implements IGenerator {
 			// templatesDirRelativePath = RL.getPropertyAsString("mondrianschema.templates.dir", defaultTemplateFolderPath);
 
 			logger.debug("Template dir is equal to [{}]", templateDir);
-			Assert.assertTrue("Template dir [" + templateDir + "] does not exist", templateDir.exists());
+			Assert.assertTrue(templateDir.exists(), "Template dir [" + templateDir + "] does not exist");
 
 			mondrianTemplate = new File(templateDir, "mondrian_template.vm");
 			logger.trace("[Mondrian] template file is equal to [{}]", mondrianTemplate);
-			Assert.assertTrue("[Mondrian] template file [" + mondrianTemplate + "] does not exist", mondrianTemplate.exists());
+			Assert.assertTrue(mondrianTemplate.exists(),
+					"[Mondrian] template file [" + mondrianTemplate + "] does not exist");
 		} catch (Throwable t) {
 			logger.error("Impossible to resolve folder [" + templatesDirRelativePath + "]", t);
 		} finally {
@@ -95,7 +96,8 @@ public class MondrianSchemaGenerator implements IGenerator {
 			model = (OlapModel) o;
 			generateMondrianSchema(model, outputdir);
 		} else {
-			throw new GenerationException("Impossible to create Mondrian Template from an object of type [" + o.getClass().getName() + "]");
+			throw new GenerationException(
+					"Impossible to create Mondrian Template from an object of type [" + o.getClass().getName() + "]");
 		}
 	}
 
@@ -112,10 +114,10 @@ public class MondrianSchemaGenerator implements IGenerator {
 			logger.debug("Create Mondrian Template");
 
 			context = new VelocityContext();
-			List<IMondrianCube> cubes = new ArrayList<IMondrianCube>();
+			List<IMondrianCube> cubes = new ArrayList<>();
 			cubes.addAll(mondrianModel.getCubes());
 
-			List<IMondrianDimension> dimensions = new ArrayList<IMondrianDimension>();
+			List<IMondrianDimension> dimensions = new ArrayList<>();
 			dimensions.addAll(mondrianModel.getDimensions());
 
 			// **** Check Model validity
@@ -127,7 +129,8 @@ public class MondrianSchemaGenerator implements IGenerator {
 						throw new GenerationException("Must define at least one measure for each cube");
 					}
 					if (cube.getCubeDimensions().isEmpty()) {
-						throw new GenerationException("Cannot find dimensions linked to a cube, must define at least one dimension for cube");
+						throw new GenerationException(
+								"Cannot find dimensions linked to a cube, must define at least one dimension for cube");
 					}
 				}
 			}
@@ -184,7 +187,8 @@ public class MondrianSchemaGenerator implements IGenerator {
 			fileWriter.close();
 		} catch (IOException e) {
 			logger.error("Impossible to generate output file from template file [" + templateFile + "]", e);
-			throw new GenerationException("Impossible to generate output file from template file [" + templateFile + "]");
+			throw new GenerationException(
+					"Impossible to generate output file from template file [" + templateFile + "]");
 		}
 	}
 
@@ -208,11 +212,12 @@ public class MondrianSchemaGenerator implements IGenerator {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see it.eng.knowage.meta.generator.IGenerator#generate(it.eng.knowage.meta.model.ModelObject, java.lang.String, boolean)
 	 */
 	@Override
-	public void generate(ModelObject o, String outputDir, boolean isUpdatableMapping, boolean includeSources, File libsDir, byte[] fileModel) {
+	public void generate(ModelObject o, String outputDir, boolean isUpdatableMapping, boolean includeSources,
+			File libsDir, byte[] fileModel) {
 		// TODO Auto-generated method stub
 
 	}

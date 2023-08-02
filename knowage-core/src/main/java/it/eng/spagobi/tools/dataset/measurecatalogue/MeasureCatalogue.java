@@ -47,14 +47,14 @@ import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
 import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
 import it.eng.spagobi.tools.dataset.dao.IDataSetDAO;
 import it.eng.spagobi.tools.dataset.event.DataSetEvent;
+import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
-import junit.framework.Assert;
 
 public class MeasureCatalogue implements Observer {
 
 	public static transient Logger logger = Logger.getLogger(MeasureCatalogue.class);
 	private MetaModelWrapper metamodelWrapper;
-	private Set<MeasureCatalogueMeasure> measures = new HashSet<MeasureCatalogueMeasure>();
+	private Set<MeasureCatalogueMeasure> measures = new HashSet<>();
 	private boolean valid;
 
 	public MeasureCatalogue() {
@@ -96,17 +96,18 @@ public class MeasureCatalogue implements Observer {
 			throw new SpagoBIRuntimeException("Error loading the name of the model that contains the hierarchies", e);
 		}
 
-		Assert.assertNotNull(
-				"The model with the definition of the cube must be difined in the configs (property " + MeasureCatalogueCostants.modelConfigLabel + ")",
-				modelConfig);
+		Assert.assertNotNull(modelConfig,
+				"The model with the definition of the cube must be difined in the configs (property "
+						+ MeasureCatalogueCostants.modelConfigLabel + ")");
 
 		String modelname = modelConfig.getValueCheck();
 		logger.debug("Initilaizing model [" + modelname + "]");
 
-		File modelFile = new File(SpagoBIUtilities.getResourcePath() + File.separator + "qbe" + File.separator + "datamarts" + File.separator + modelname
-				+ File.separator + modelname + ".sbimodel");
-		Assert.assertNotNull("The model with the definition of the cube must be uploaded in the server. The name of the model in the configs is " + modelname,
-				modelFile);
+		File modelFile = new File(SpagoBIUtilities.getResourcePath() + File.separator + "qbe" + File.separator
+				+ "datamarts" + File.separator + modelname + File.separator + modelname + ".sbimodel");
+		Assert.assertNotNull(modelFile,
+				"The model with the definition of the cube must be uploaded in the server. The name of the model in the configs is "
+						+ modelname);
 
 		if (modelFile == null) {
 			valid = false;
@@ -140,15 +141,15 @@ public class MeasureCatalogue implements Observer {
 			throw new SpagoBIRuntimeException("Error loading the name of the model that contains the hierarchies", e);
 		}
 
-		Assert.assertNotNull(
-				"The model with the definition of the cube must be difined in the configs (property " + MeasureCatalogueCostants.modelConfigLabel + ")",
-				modelConfig);
+		Assert.assertNotNull(modelConfig,
+				"The model with the definition of the cube must be difined in the configs (property "
+						+ MeasureCatalogueCostants.modelConfigLabel + ")");
 
 		String modelname = modelConfig.getValueCheck();
 		logger.debug("Loading Siblings File [" + modelname + ".siblings ]");
 
-		File siblingsFile = new File(SpagoBIUtilities.getResourcePath() + File.separator + "qbe" + File.separator + "datamarts" + File.separator + modelname
-				+ File.separator + modelname + ".siblings");
+		File siblingsFile = new File(SpagoBIUtilities.getResourcePath() + File.separator + "qbe" + File.separator
+				+ "datamarts" + File.separator + modelname + File.separator + modelname + ".siblings");
 
 		if (siblingsFile.exists()) {
 			logger.debug("Siblings file name is equal to [" + modelname + "]");
@@ -173,8 +174,8 @@ public class MeasureCatalogue implements Observer {
 	 */
 	public void initMeasures() {
 
-		measures = new HashSet<MeasureCatalogueMeasure>();
-		List<IDataSet> datasets = new ArrayList<IDataSet>();
+		measures = new HashSet<>();
+		List<IDataSet> datasets = new ArrayList<>();
 
 		try {
 			IDataSetDAO dataSetDao = DAOFactory.getDataSetDAO();
@@ -213,19 +214,25 @@ public class MeasureCatalogue implements Observer {
 								 * The measures has not been already saved, so we create it
 								 */
 								logger.debug("The measure is new.. Create a new MeasureCatalogueMeasureObject");
-								aDsMeasure = new MeasureCatalogueMeasure(aDsMeasures.get(j), metamodelWrapper, aDs, datasetDimension);
+								aDsMeasure = new MeasureCatalogueMeasure(aDsMeasures.get(j), metamodelWrapper, aDs,
+										datasetDimension);
 								measures.add(aDsMeasure);
 								datasetDimension = aDsMeasure.getDatasetDimension();
 							}
 						} catch (Throwable t) {
-							logger.error("Impossible to handle [" + j + "] measure from dataset [" + aDs.getName() + "]", t);
+							logger.error(
+									"Impossible to handle [" + j + "] measure from dataset [" + aDs.getName() + "]", t);
 							continue;
 						}
 
 					}
 				} catch (Throwable t) {
-					logger.error("An unexpected error occured while extracting measures from dataset [" + aDs.getLabel() + "]", t);
-					throw new SpagoBIRuntimeException("An unexpected error occured while extracting measures from dataset [" + aDs.getLabel() + "]", t);
+					logger.error("An unexpected error occured while extracting measures from dataset [" + aDs.getLabel()
+							+ "]", t);
+					throw new SpagoBIRuntimeException(
+							"An unexpected error occured while extracting measures from dataset [" + aDs.getLabel()
+									+ "]",
+							t);
 				}
 			}
 		}
@@ -240,7 +247,7 @@ public class MeasureCatalogue implements Observer {
 	public static List<IFieldMetaData> getMeasures(IDataSet ds) {
 		logger.debug("IN");
 		IMetaData md = ds.getMetadata();
-		List<IFieldMetaData> measures = new ArrayList<IFieldMetaData>();
+		List<IFieldMetaData> measures = new ArrayList<>();
 		if (md != null) {
 			for (int i = 0; i < md.getFieldCount(); i++) {
 				if (MeasureCatalogueMeasure.isMeasure(md.getFieldMeta(i))) {
@@ -259,7 +266,7 @@ public class MeasureCatalogue implements Observer {
 	 * @return
 	 */
 	public List<MeasureCatalogueMeasure> getMeasureCatalogueMeasure(IDataSet ds) {
-		List<MeasureCatalogueMeasure> measuresToReturn = new ArrayList<MeasureCatalogueMeasure>();
+		List<MeasureCatalogueMeasure> measuresToReturn = new ArrayList<>();
 		if (this.measures != null) {
 			Iterator<MeasureCatalogueMeasure> it = this.measures.iterator();
 			while (it.hasNext()) {
@@ -362,7 +369,7 @@ public class MeasureCatalogue implements Observer {
 	}
 
 	private Set<MeasureCatalogueMeasure> filterMeasuresByUserVisibility(String owner, boolean isAdminUser) {
-		Set<MeasureCatalogueMeasure> filteredMeasures = new HashSet<MeasureCatalogueMeasure>();
+		Set<MeasureCatalogueMeasure> filteredMeasures = new HashSet<>();
 		for (Iterator iterator = measures.iterator(); iterator.hasNext();) {
 			MeasureCatalogueMeasure measureCatalogueMeasure = (MeasureCatalogueMeasure) iterator.next();
 			if (isAdminUser || (owner != null && owner.equals(measureCatalogueMeasure.getDataSet().getOwner()))) {

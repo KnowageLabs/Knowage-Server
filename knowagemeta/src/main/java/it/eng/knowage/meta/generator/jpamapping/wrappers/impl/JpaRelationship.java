@@ -20,7 +20,6 @@ package it.eng.knowage.meta.generator.jpamapping.wrappers.impl;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.junit.Assert;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,6 +35,7 @@ import it.eng.knowage.meta.model.business.SimpleBusinessColumn;
 import it.eng.knowage.meta.model.physical.PhysicalColumn;
 import it.eng.knowage.meta.model.physical.PhysicalModel;
 import it.eng.knowage.meta.model.physical.PhysicalTable;
+import it.eng.spagobi.utilities.assertion.Assert;
 
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
@@ -52,16 +52,19 @@ public class JpaRelationship extends AbstractJpaRelationship {
 
 	protected JpaRelationship(AbstractJpaTable jpaTable, BusinessRelationship businessRelationship) {
 
-		Assert.assertNotNull("Parameter [jpaTable] cannot be null", jpaTable);
-		Assert.assertNotNull("Parameter [businessRelationship] cannot be null", businessRelationship);
-		Assert.assertNotNull("Parameter [businessRelationship] must have a source table", businessRelationship.getSourceTable());
-		Assert.assertNotNull("Parameter [businessRelationship] must have a destination table", businessRelationship.getDestinationTable());
+		Assert.assertNotNull(jpaTable, "Parameter [jpaTable] cannot be null");
+		Assert.assertNotNull(businessRelationship, "Parameter [businessRelationship] cannot be null");
+		Assert.assertNotNull(businessRelationship.getSourceTable(),
+				"Parameter [businessRelationship] must have a source table");
+		Assert.assertNotNull(businessRelationship.getDestinationTable(),
+				"Parameter [businessRelationship] must have a destination table");
 
 		this.jpaTable = jpaTable;
 		this.businessRelationship = businessRelationship;
 
 		PhysicalModel physicalModel = jpaTable.getModel().getPhysicalModel();
-		ModelProperty modelProperty = physicalModel.getProperties().get(PhysicalModelPropertiesFromFileInitializer.CONNECTION_DATABASE_QUOTESTRING);
+		ModelProperty modelProperty = physicalModel.getProperties()
+				.get(PhysicalModelPropertiesFromFileInitializer.CONNECTION_DATABASE_QUOTESTRING);
 		if (modelProperty != null) {
 			quoteString = modelProperty.getValue();
 		} else {
@@ -69,8 +72,7 @@ public class JpaRelationship extends AbstractJpaRelationship {
 		}
 
 		/*
-		 * if ( isSourceRole() ){ this.cardinality = JpaRelationship.MANY_TO_ONE; } else if ( isDestinationRole() ){ this.cardinality =
-		 * JpaRelationship.ONE_TO_MANY; }
+		 * if ( isSourceRole() ){ this.cardinality = JpaRelationship.MANY_TO_ONE; } else if ( isDestinationRole() ){ this.cardinality = JpaRelationship.ONE_TO_MANY; }
 		 */
 
 		// Set Cardinality
@@ -131,7 +133,8 @@ public class JpaRelationship extends AbstractJpaRelationship {
 		if (jpaTable instanceof JpaTable) {
 			isSourceRole = businessRelationship.getDestinationTable().equals(((JpaTable) jpaTable).getBusinessTable());
 		} else {
-			isSourceRole = businessRelationship.getDestinationTable().equals(((JpaViewInnerTable) jpaTable).getBusinessView());
+			isSourceRole = businessRelationship.getDestinationTable()
+					.equals(((JpaViewInnerTable) jpaTable).getBusinessView());
 		}
 
 		return isSourceRole;
@@ -144,7 +147,8 @@ public class JpaRelationship extends AbstractJpaRelationship {
 		if (jpaTable instanceof JpaTable) {
 			isSourceRole = businessRelationship.getSourceTable().equals(((JpaTable) jpaTable).getBusinessTable());
 		} else {
-			isSourceRole = businessRelationship.getSourceTable().equals(((JpaViewInnerTable) jpaTable).getBusinessView());
+			isSourceRole = businessRelationship.getSourceTable()
+					.equals(((JpaViewInnerTable) jpaTable).getBusinessView());
 		}
 
 		return isSourceRole;
@@ -228,27 +232,29 @@ public class JpaRelationship extends AbstractJpaRelationship {
 	@Override
 	public String getPropertyName() {
 		if (getBusinessRelationship().getSourceColumns() != null) {
-			return JavaKeywordsUtils.transformToJavaPropertyName("rel_" + getBusinessRelationship().getSourceColumns().get(0).getUniqueName()
-					+ "_in_" + getBusinessRelationship().getDestinationTable().getUniqueName());
+			return JavaKeywordsUtils.transformToJavaPropertyName(
+					"rel_" + getBusinessRelationship().getSourceColumns().get(0).getUniqueName() + "_in_"
+							+ getBusinessRelationship().getDestinationTable().getUniqueName());
 		} else
 			return "";
 	}
 
 	@Override
 	public String getOppositeRoleName() {
-		return JavaKeywordsUtils.transformToJavaPropertyName("rel_" + getBusinessRelationship().getSourceColumns().get(0).getUniqueName() + "_in_"
-				+ getBusinessRelationship().getDestinationTable().getUniqueName());
+		return JavaKeywordsUtils.transformToJavaPropertyName(
+				"rel_" + getBusinessRelationship().getSourceColumns().get(0).getUniqueName() + "_in_"
+						+ getBusinessRelationship().getDestinationTable().getUniqueName());
 	}
 
 	@Override
 	public String getBidirectionalPropertyName() {
-		return StringUtils.pluralise(JavaKeywordsUtils
-				.transformToJavaPropertyName(getBusinessRelationship().getName() + "_" + getBusinessRelationship().getSourceTable().getName()));
+		return StringUtils.pluralise(JavaKeywordsUtils.transformToJavaPropertyName(
+				getBusinessRelationship().getName() + "_" + getBusinessRelationship().getSourceTable().getName()));
 	}
 
 	@Override
 	public List<IJpaColumn> getSourceColumns() {
-		List<IJpaColumn> jpaSourceColumns = new ArrayList<IJpaColumn>();
+		List<IJpaColumn> jpaSourceColumns = new ArrayList<>();
 		List<SimpleBusinessColumn> sourceColumns = getBusinessRelationship().getSourceSimpleBusinessColumns();
 		for (SimpleBusinessColumn column : sourceColumns) {
 			jpaSourceColumns.add(new JpaColumn(getJpaTable(), column));
@@ -258,7 +264,7 @@ public class JpaRelationship extends AbstractJpaRelationship {
 
 	@Override
 	public List<IJpaColumn> getDestinationColumns() {
-		List<IJpaColumn> jpaDestinationColumns = new ArrayList<IJpaColumn>();
+		List<IJpaColumn> jpaDestinationColumns = new ArrayList<>();
 		List<SimpleBusinessColumn> destinationColumns = getBusinessRelationship().getDestinationSimpleBusinessColumns();
 		for (SimpleBusinessColumn column : destinationColumns) {
 			jpaDestinationColumns.add(new JpaColumn(this.getReferencedTable(), column));
@@ -267,8 +273,8 @@ public class JpaRelationship extends AbstractJpaRelationship {
 	}
 
 	/**
-	 * true if the relationship involve more than one column from the source table (and so also at the destination table because the number of source columns
-	 * must be always equal to the number of destination columns
+	 * true if the relationship involve more than one column from the source table (and so also at the destination table because the number of source columns must
+	 * be always equal to the number of destination columns
 	 */
 	@Override
 	public boolean isMultipleRelationship() {
@@ -285,11 +291,13 @@ public class JpaRelationship extends AbstractJpaRelationship {
 	@Override
 	public String getSimpleSourceColumnName() {
 
-		return StringUtils.doubleQuote("`" + getBusinessRelationship().getSourceSimpleBusinessColumns().get(0).getPhysicalColumn().getName() + "`");
+		return StringUtils.doubleQuote(
+				"`" + getBusinessRelationship().getSourceSimpleBusinessColumns().get(0).getPhysicalColumn().getName()
+						+ "`");
 	}
 
 	public List<String> getSimpleSourceColumnsNames() {
-		List<String> sourceColumnsNames = new ArrayList<String>();
+		List<String> sourceColumnsNames = new ArrayList<>();
 		if (isMultipleRelationship()) {
 			List<SimpleBusinessColumn> sourceColumns = getBusinessRelationship().getSourceSimpleBusinessColumns();
 			for (SimpleBusinessColumn column : sourceColumns) {
@@ -300,9 +308,10 @@ public class JpaRelationship extends AbstractJpaRelationship {
 	}
 
 	public List<String> getSimpleDestinationColumnsNames() {
-		List<String> destinationColumnsNames = new ArrayList<String>();
+		List<String> destinationColumnsNames = new ArrayList<>();
 		if (isMultipleRelationship()) {
-			List<SimpleBusinessColumn> destinationColumns = getBusinessRelationship().getDestinationSimpleBusinessColumns();
+			List<SimpleBusinessColumn> destinationColumns = getBusinessRelationship()
+					.getDestinationSimpleBusinessColumns();
 			for (SimpleBusinessColumn column : destinationColumns) {
 				destinationColumnsNames.add(StringUtils.doubleQuote(column.getPhysicalColumn().getName()));
 			}
@@ -313,16 +322,20 @@ public class JpaRelationship extends AbstractJpaRelationship {
 	@Override
 	public List<JpaRelationshipColumnsNames> getRelationshipColumnsNames() {
 
-		List<JpaRelationshipColumnsNames> relationshipColumnsNames = new ArrayList<JpaRelationshipColumnsNames>();
+		List<JpaRelationshipColumnsNames> relationshipColumnsNames = new ArrayList<>();
 		if (isMultipleRelationship()) {
-			List<SimpleBusinessColumn> destinationColumns = getBusinessRelationship().getDestinationSimpleBusinessColumns();
+			List<SimpleBusinessColumn> destinationColumns = getBusinessRelationship()
+					.getDestinationSimpleBusinessColumns();
 			List<SimpleBusinessColumn> sourceColumns = getBusinessRelationship().getSourceSimpleBusinessColumns();
 
 			for (int i = 0; i < sourceColumns.size(); i++) {
 
-				String sourceColumnName = StringUtils.doubleQuote("`" + sourceColumns.get(i).getPhysicalColumn().getName() + "`");
-				String destinationColumnName = StringUtils.doubleQuote("`" + destinationColumns.get(i).getPhysicalColumn().getName() + "`");
-				JpaRelationshipColumnsNames relationshipNames = new JpaRelationshipColumnsNames(sourceColumnName, destinationColumnName);
+				String sourceColumnName = StringUtils
+						.doubleQuote("`" + sourceColumns.get(i).getPhysicalColumn().getName() + "`");
+				String destinationColumnName = StringUtils
+						.doubleQuote("`" + destinationColumns.get(i).getPhysicalColumn().getName() + "`");
+				JpaRelationshipColumnsNames relationshipNames = new JpaRelationshipColumnsNames(sourceColumnName,
+						destinationColumnName);
 				relationshipColumnsNames.add(relationshipNames);
 			}
 		}

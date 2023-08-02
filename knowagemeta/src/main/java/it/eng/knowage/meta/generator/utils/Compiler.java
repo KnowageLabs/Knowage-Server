@@ -34,14 +34,12 @@ import javax.tools.StandardJavaFileManager;
 import javax.tools.StandardLocation;
 import javax.tools.ToolProvider;
 
-import org.junit.Assert;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.io.Files;
 
-import it.eng.spagobi.utilities.engines.SpagoBIEngineException;
-import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
+import it.eng.spagobi.utilities.assertion.Assert;
 
 /**
  * This class is used by Knowage Meta to compile generated java class and to create JAR file.
@@ -67,14 +65,10 @@ public class Compiler {
 	/**
 	 * Costructor
 	 *
-	 * @param srcDir
-	 *            Source directory
-	 * @param binDir
-	 *            Class files directory
-	 * @param libDir
-	 *            Libraries directory
-	 * @param srcPackage
-	 *            the package of the source code
+	 * @param srcDir     Source directory
+	 * @param binDir     Class files directory
+	 * @param libDir     Libraries directory
+	 * @param srcPackage the package of the source code
 	 */
 	public Compiler(File srcDir, File binDir, File libDir, String srcPackage, PrintWriter log) {
 		if (log == null) {
@@ -92,7 +86,7 @@ public class Compiler {
 		this.libDir = libDir.getAbsoluteFile();
 		logger.debug("lib dir set to [{}]", this.libDir);
 
-		libs = new ArrayList<File>();
+		libs = new ArrayList<>();
 	}
 
 	/**
@@ -117,12 +111,13 @@ public class Compiler {
 			}
 		}
 		logger.debug("Initialize diagnostic collector");
-		DiagnosticCollector<JavaFileObject> diagnostics = new DiagnosticCollector<JavaFileObject>();
+		DiagnosticCollector<JavaFileObject> diagnostics = new DiagnosticCollector<>();
 		logger.debug("Searching java system compiler");
 		JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
 		logger.debug("Java system compiler is: " + compiler);
 		if (compiler == null) {
-			logger.error("Cannot find Java System compiler during compilation of jpa classes, check if JDK is correctly installed.");
+			logger.error(
+					"Cannot find Java System compiler during compilation of jpa classes, check if JDK is correctly installed.");
 		}
 		StandardJavaFileManager fileManager = compiler.getStandardFileManager(diagnostics, null, null);
 
@@ -131,7 +126,7 @@ public class Compiler {
 		try {
 			binDir.mkdir();
 			fileManager.setLocation(StandardLocation.CLASS_OUTPUT, Arrays.asList(binDir));
-			fileManager.setLocation(StandardLocation.CLASS_PATH,libs);
+			fileManager.setLocation(StandardLocation.CLASS_PATH, libs);
 		} catch (IOException e) {
 			logger.error("Cannot set output directory / classpath for compiler ");
 		}
@@ -145,8 +140,11 @@ public class Compiler {
 		if (!diagnostics.getDiagnostics().isEmpty()) {
 			logger.error("Found compilation errors during metamodel generation");
 			for (Diagnostic<? extends JavaFileObject> diagnostic : diagnostics.getDiagnostics()) {
-				logger.error("Found error on " + diagnostic.getSource().toUri() + "- line " + diagnostic.getLineNumber() + "- Error: "+diagnostic.getMessage(null));
-				log.append(MessageFormat.format(diagnostic.getKind().toString()+" on line {0} in {1}\n  Detail: {2} \n", diagnostic.getLineNumber(),diagnostic.getSource().toUri(),diagnostic.getMessage(null)));
+				logger.error("Found error on " + diagnostic.getSource().toUri() + "- line " + diagnostic.getLineNumber()
+						+ "- Error: " + diagnostic.getMessage(null));
+				log.append(MessageFormat.format(
+						diagnostic.getKind().toString() + " on line {0} in {1}\n  Detail: {2} \n",
+						diagnostic.getLineNumber(), diagnostic.getSource().toUri(), diagnostic.getMessage(null)));
 				log.append("--------------------------------------------- \n");
 				try {
 					diagnostic.getSource().getCharContent(true);
@@ -163,7 +161,7 @@ public class Compiler {
 	private String getClasspath() {
 		String classPath = ".";
 		for (File lib : libs) {
-			Assert.assertTrue("Impossible to locate lib [" + lib + "]", lib.exists() && lib.isFile());
+			Assert.assertTrue(lib.exists() && lib.isFile(), "Impossible to locate lib [" + lib + "]");
 			// classPath = classPath + ";" + lib;
 			classPath = classPath + java.io.File.pathSeparator + lib;
 		}
@@ -172,8 +170,6 @@ public class Compiler {
 
 		return classPath;
 	}
-	
-
 
 	// ==========================================================================================
 	// ACCESSOR METHODS
