@@ -27,7 +27,8 @@ import javax.ws.rs.core.Response;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
-import org.apache.log4j.LogMF;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -67,11 +68,12 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 
 public class AbstractDocumentExecutionWork extends DossierExecutionClient implements Work {
 
+	private static final Logger LOGGER = LogManager.getLogger(AbstractDocumentExecutionWork.class);
 	public static final String PREPARED = "PREPARED";
 	public static final String STARTED = "STARTED";
 	public static final String DOWNLOAD = "DOWNLOAD";
 	public static final String ERROR = "ERROR";
-	protected List<String> imageNames = new ArrayList<String>();
+	protected List<String> imageNames = new ArrayList<>();
 	protected IEngUserProfile userProfile;
 	protected List<BIObjectPlaceholdersPair> documents;
 	protected boolean completeWithoutError = false;
@@ -88,7 +90,7 @@ public class AbstractDocumentExecutionWork extends DossierExecutionClient implem
 	}
 
 	protected void runInternal(JSONObject jsonObjectTemplate) {
-		logger.debug("IN");
+		LOGGER.debug("IN");
 
 		ProgressThreadManager progressThreadManager = null;
 		IObjMetadataDAO metaDAO = null;
@@ -97,10 +99,10 @@ public class AbstractDocumentExecutionWork extends DossierExecutionClient implem
 		Thread thread = Thread.currentThread();
 		Long threadId = thread.getId();
 
-		logger.debug("Started thread Id " + threadId + " from user id: " + ((UserProfile) userProfile).getUserId());
+		LOGGER.debug("Started thread Id {} from user id: {}", threadId, ((UserProfile) userProfile).getUserId());
 
 		Integer totalDocs = documents.size();
-		logger.debug("# of documents: " + totalDocs);
+		LOGGER.debug("# of documents: {}", totalDocs);
 
 		progressThreadManager = new ProgressThreadManager();
 		progressThreadManager.setStatusStarted(progressThreadId);
@@ -110,7 +112,7 @@ public class AbstractDocumentExecutionWork extends DossierExecutionClient implem
 			contentDAO = DAOFactory.getObjMetacontentDAO();
 
 		} catch (Exception e) {
-			logger.error("Error setting DAO");
+			LOGGER.error("Error setting DAO");
 			progressThreadManager.deleteThread(progressThreadId);
 			throw new SpagoBIServiceException("Error setting DAO", e);
 		}
@@ -124,7 +126,7 @@ public class AbstractDocumentExecutionWork extends DossierExecutionClient implem
 			String dossierTemplateJson = objectMapper.writeValueAsString(dossierTemplate);
 			Map<String, String> imagesMap = null;
 
-			Set<String> executedDocuments = new HashSet<String>();
+			Set<String> executedDocuments = new HashSet<>();
 			String path = SpagoBIUtilities.getResourcePath() + File.separator + "dossierExecution" + File.separator;
 
 			this.validImage(dossierTemplate.getReports());
@@ -139,7 +141,7 @@ public class AbstractDocumentExecutionWork extends DossierExecutionClient implem
 			String dbArray = activity.getConfigContent();
 			JSONArray jsonArray = null;
 
-			HashMap<String, String> paramMap = new HashMap<String, String>();
+			HashMap<String, String> paramMap = new HashMap<>();
 
 			if (dbArray != null && !dbArray.isEmpty()) {
 				jsonArray = new org.json.JSONArray(dbArray);
@@ -154,11 +156,12 @@ public class AbstractDocumentExecutionWork extends DossierExecutionClient implem
 
 				String imageName = reportToUse.getImageName(); // image format is .png
 
-				logger.debug("executing post service to execute documents");
+				LOGGER.debug("executing post service to execute documents");
 				biObject = DAOFactory.getBIObjectDAO().loadBIObjectByLabel(cockpitDocument);
 
 				if (biObject == null) { // it should mean that a cockpit doesn't exist: template error
-					throw new SpagoBIRuntimeException("Template error: the cockpit " + cockpitDocument + " doesn't exist, check the template");
+					throw new SpagoBIRuntimeException(
+							"Template error: the cockpit " + cockpitDocument + " doesn't exist, check the template");
 				}
 				Integer docId = biObject.getId();
 
@@ -166,7 +169,8 @@ public class AbstractDocumentExecutionWork extends DossierExecutionClient implem
 				for (String role : roles) {
 
 					if (!ObjectsAccessVerifier.canExec(biObject, userProfile)) {
-						String message = "user " + ((UserProfile) userProfile).getUserName() + " cannot execute document " + biObject.getName();
+						String message = "user " + ((UserProfile) userProfile).getUserName()
+								+ " cannot execute document " + biObject.getName();
 						throw new SpagoBIRuntimeException(message);
 					}
 
@@ -181,13 +185,15 @@ public class AbstractDocumentExecutionWork extends DossierExecutionClient implem
 					serviceUrlBuilder.append(userUniqueIdentifier);
 					serviceUrlBuilder.append("&DOCUMENT_LABEL=");
 					serviceUrlBuilder.append(cockpitDocument);
-					serviceUrlBuilder.append("&DOCUMENT_OUTPUT_PARAMETERS=%5B%5D&DOCUMENT_IS_VISIBLE=true&SBI_EXECUTION_ROLE=");
+					serviceUrlBuilder
+							.append("&DOCUMENT_OUTPUT_PARAMETERS=%5B%5D&DOCUMENT_IS_VISIBLE=true&SBI_EXECUTION_ROLE=");
 					serviceUrlBuilder.append(URLEncoder.encode(role, StandardCharsets.UTF_8.toString()));
 					serviceUrlBuilder.append("&DOCUMENT_DESCRIPTION=&document=");
 					serviceUrlBuilder.append(docId);
 					serviceUrlBuilder.append("&IS_TECHNICAL_USER=true&DOCUMENT_NAME=");
 					serviceUrlBuilder.append(docName);
-					serviceUrlBuilder.append("&NEW_SESSION=TRUE&SBI_ENVIRONMENT=DOCBROWSER&IS_FOR_EXPORT=true&documentMode=VIEW&export=true&outputType=PNG");
+					serviceUrlBuilder.append(
+							"&NEW_SESSION=TRUE&SBI_ENVIRONMENT=DOCBROWSER&IS_FOR_EXPORT=true&documentMode=VIEW&export=true&outputType=PNG");
 
 					Locale locale = GeneralUtilities.getDefaultLocale();
 
@@ -199,16 +205,18 @@ public class AbstractDocumentExecutionWork extends DossierExecutionClient implem
 					serviceUrlBuilder.append("&SBI_SCRIPT=" + locale.getScript());
 
 					RenderOptions renderOptions = RenderOptions.defaultOptions();
-					if (reportToUse.getSheetHeight() != null && !reportToUse.getSheetHeight().isEmpty() && reportToUse.getSheetWidth() != null
-							&& !reportToUse.getSheetWidth().isEmpty()) {
+					if (reportToUse.getSheetHeight() != null && !reportToUse.getSheetHeight().isEmpty()
+							&& reportToUse.getSheetWidth() != null && !reportToUse.getSheetWidth().isEmpty()) {
 						serviceUrlBuilder.append("&pdfWidth=" + Integer.valueOf(reportToUse.getSheetWidth()));
 						serviceUrlBuilder.append("&pdfHeight=" + Integer.valueOf(reportToUse.getSheetHeight()));
 					}
 
 					if (reportToUse.getDeviceScaleFactor() != null && !reportToUse.getDeviceScaleFactor().isEmpty()) {
-						serviceUrlBuilder.append("&pdfDeviceScaleFactor=" + Double.valueOf(reportToUse.getDeviceScaleFactor()));
+						serviceUrlBuilder
+								.append("&pdfDeviceScaleFactor=" + Double.valueOf(reportToUse.getDeviceScaleFactor()));
 					} else {
-						serviceUrlBuilder.append("&pdfDeviceScaleFactor=" + Double.valueOf(renderOptions.getDimensions().getDeviceScaleFactor()));
+						serviceUrlBuilder.append("&pdfDeviceScaleFactor="
+								+ Double.valueOf(renderOptions.getDimensions().getDeviceScaleFactor()));
 					}
 					JSONObject templateJSON = new JSONObject(new String(biObject.getActiveTemplate().getContent()));
 					boolean isMultiSheet = false;
@@ -216,7 +224,8 @@ public class AbstractDocumentExecutionWork extends DossierExecutionClient implem
 						isMultiSheet = true;
 					}
 					serviceUrlBuilder.append("&isMultiSheet=" + isMultiSheet);
-					String serviceUrl = addParametersToServiceUrl(progressThreadId, biObject, reportToUse, serviceUrlBuilder, jsonArray, paramMap);
+					String serviceUrl = addParametersToServiceUrl(progressThreadId, biObject, reportToUse,
+							serviceUrlBuilder, jsonArray, paramMap);
 
 					if (executedDocuments.contains(serviceUrl)) {
 						progressThreadManager.incrementPartial(progressThreadId);
@@ -224,7 +233,8 @@ public class AbstractDocumentExecutionWork extends DossierExecutionClient implem
 					}
 
 					// Images creation
-					Response images = executePostService(null, serviceUrl, userUniqueIdentifier, MediaType.TEXT_HTML, dossierTemplateJson);
+					Response images = executePostService(null, serviceUrl, userUniqueIdentifier, MediaType.TEXT_HTML,
+							dossierTemplateJson);
 					byte[] responseAsByteArray = images.readEntity(byte[].class);
 
 					List<Object> list = images.getMetadata().get("Content-Type");
@@ -239,15 +249,15 @@ public class AbstractDocumentExecutionWork extends DossierExecutionClient implem
 					}
 
 					// DOC with images replaced creation
-					imagesMap = new HashMap<String, String>();
+					imagesMap = new HashMap<>();
 					if (isZipped) {
 						String message = "Document has more than one single sheet. Screenshot is replaced with an empty image.";
-						logger.debug(message);
+						LOGGER.debug(message);
 						handleAllPicturesFromZipFile(responseAsByteArray, randomKey, imagesMap, reportToUse);
 
 					} else {
 
-						File f = FileUtilities.createFile(imageName, ".png", randomKey, new ArrayList<PlaceHolder>());
+						File f = FileUtilities.createFile(imageName, ".png", randomKey, new ArrayList<>());
 						FileOutputStream outputStream = new FileOutputStream(f);
 						outputStream.write(responseAsByteArray);
 						outputStream.close();
@@ -255,7 +265,7 @@ public class AbstractDocumentExecutionWork extends DossierExecutionClient implem
 					}
 
 					progressThreadManager.incrementPartial(progressThreadId);
-					logger.debug("progress Id incremented");
+					LOGGER.debug("progress Id incremented");
 					executedDocuments.add(serviceUrl);
 					break;
 				}
@@ -275,29 +285,29 @@ public class AbstractDocumentExecutionWork extends DossierExecutionClient implem
 			daoAct.updateActivity(activity);
 
 			progressThreadManager.setStatusDownload(progressThreadId);
-			logger.debug("Thread row in database set as download state");
+			LOGGER.debug("Thread row in database set as download state");
 
-			logger.debug("OUT");
+			LOGGER.debug("OUT");
 
 			/**/
 		} catch (Exception e) {
 			progressThreadManager.setStatusError(progressThreadId);
 			createErrorFile(biObject, e);
-			logger.error("Error while creating dossier activity", e);
+			LOGGER.error("Error while creating dossier activity", e);
 			throw new SpagoBIRuntimeException(e.getMessage(), e);
 		} finally {
-			logger.debug("OUT");
+			LOGGER.debug("OUT");
 		}
 
 	}
 
 	protected void setTenant() {
-		logger.debug("IN");
+		LOGGER.debug("IN");
 		UserProfile profile = (UserProfile) this.getProfile();
 		String tenant = profile.getOrganization();
-		LogMF.debug(logger, "Tenant : [{0}]", tenant);
+		LOGGER.debug("Tenant : [{}]", tenant);
 		TenantManager.setTenant(new Tenant(tenant));
-		logger.debug("OUT");
+		LOGGER.debug("OUT");
 	}
 
 	public void validImage(List<Report> reports) {
@@ -311,13 +321,15 @@ public class AbstractDocumentExecutionWork extends DossierExecutionClient implem
 		}
 	}
 
-	public String addParametersToServiceUrl(Integer progressthreadId, BIObject biObject, Report reportToUse, StringBuilder serviceUrlBuilder,
-			JSONArray jsonArray, HashMap<String, String> paramMap) throws UnsupportedEncodingException, JSONException {
+	public String addParametersToServiceUrl(Integer progressthreadId, BIObject biObject, Report reportToUse,
+			StringBuilder serviceUrlBuilder, JSONArray jsonArray, HashMap<String, String> paramMap)
+			throws UnsupportedEncodingException, JSONException {
 		List<BIObjectParameter> drivers = biObject.getDrivers();
 		if (drivers != null) {
 			List<Parameter> parameter = reportToUse.getParameters();
 			if (drivers.size() != parameter.size()) {
-				throw new SpagoBIRuntimeException("There are a different number of parameters/drivers between document and template");
+				throw new SpagoBIRuntimeException(
+						"There are a different number of parameters/drivers between document and template");
 			}
 			Collections.sort(drivers);
 			ParametersDecoder decoder = new ParametersDecoder();
@@ -339,20 +351,24 @@ public class AbstractDocumentExecutionWork extends DossierExecutionClient implem
 
 							if (biObjectParameter.getParameterUrlName().equals(templateParameter.getUrlName())) {
 								paramName = templateParameter.getUrlName();
-								serviceUrlBuilder.append(String.format("&%s=%s", biObjectParameter.getParameterUrlName(),
-										URLEncoder.encode(value, StandardCharsets.UTF_8.toString())));
+								serviceUrlBuilder
+										.append(String.format("&%s=%s", biObjectParameter.getParameterUrlName(),
+												URLEncoder.encode(value, StandardCharsets.UTF_8.toString())));
 
 								// description
-								serviceUrlBuilder.append(String.format("&%s_description=%s", biObjectParameter.getParameterUrlName(),
-										URLEncoder.encode(templateParameter.getUrlNameDescription(), StandardCharsets.UTF_8.toString())));
+								serviceUrlBuilder.append(
+										String.format("&%s_description=%s", biObjectParameter.getParameterUrlName(),
+												URLEncoder.encode(templateParameter.getUrlNameDescription(),
+														StandardCharsets.UTF_8.toString())));
 								found = true;
 								break;
 							}
 						}
 					} else {
 						if (biObjectParameter.getParameterUrlName().equals(templateParameter.getUrlName())) {
-							serviceUrlBuilder.append(String.format("&%s=%s", biObjectParameter.getParameterUrlName(),
-									URLEncoder.encode(templateParameter.getValue(), StandardCharsets.UTF_8.toString())));
+							serviceUrlBuilder
+									.append(String.format("&%s=%s", biObjectParameter.getParameterUrlName(), URLEncoder
+											.encode(templateParameter.getValue(), StandardCharsets.UTF_8.toString())));
 							value = templateParameter.getValue();
 							paramName = templateParameter.getUrlName();
 							if (templateParameter.getUrlNameDescription() == null) {
@@ -361,8 +377,10 @@ public class AbstractDocumentExecutionWork extends DossierExecutionClient implem
 
 							}
 							// description
-							serviceUrlBuilder.append(String.format("&%s_description=%s", biObjectParameter.getParameterUrlName(),
-									URLEncoder.encode(templateParameter.getUrlNameDescription(), StandardCharsets.UTF_8.toString())));
+							serviceUrlBuilder
+									.append(String.format("&%s_description=%s", biObjectParameter.getParameterUrlName(),
+											URLEncoder.encode(templateParameter.getUrlNameDescription(),
+													StandardCharsets.UTF_8.toString())));
 
 							found = true;
 							break;
@@ -372,7 +390,8 @@ public class AbstractDocumentExecutionWork extends DossierExecutionClient implem
 				}
 				paramMap.put(paramName, value);
 				if (!found && biObjectParameter.isRequired()) {
-					throw new SpagoBIRuntimeException("There is no match between document parameters and template parameters.");
+					throw new SpagoBIRuntimeException(
+							"There is no match between document parameters and template parameters.");
 				}
 			}
 		}
@@ -380,15 +399,17 @@ public class AbstractDocumentExecutionWork extends DossierExecutionClient implem
 	}
 
 	public String getServiceHostUrl() {
-		String serviceURL = SpagoBIUtilities.readJndiResource(SingletonConfig.getInstance().getConfigValue("SPAGOBI.SPAGOBI_SERVICE_JNDI"));
+		String serviceURL = SpagoBIUtilities
+				.readJndiResource(SingletonConfig.getInstance().getConfigValue("SPAGOBI.SPAGOBI_SERVICE_JNDI"));
 		serviceURL = serviceURL.substring(0, serviceURL.lastIndexOf('/'));
 		return serviceURL;
 	}
 
-	protected void handleAllPicturesFromZipFile(byte[] responseAsByteArray, String randomKey, Map<String, String> imagesMap, Report reportToUse)
-			throws IOException {
+	protected void handleAllPicturesFromZipFile(byte[] responseAsByteArray, String randomKey,
+			Map<String, String> imagesMap, Report reportToUse) throws IOException {
 
-		String outFolderPath = SpagoBIUtilities.getResourcePath() + File.separator + "dossierExecution" + File.separator + randomKey + File.separator;
+		String outFolderPath = SpagoBIUtilities.getResourcePath() + File.separator + "dossierExecution" + File.separator
+				+ randomKey + File.separator;
 		File dossierExDir = new File(SpagoBIUtilities.getResourcePath() + File.separator + "dossierExecution");
 		if (!dossierExDir.exists()) {
 			dossierExDir.mkdir();
@@ -399,7 +420,8 @@ public class AbstractDocumentExecutionWork extends DossierExecutionClient implem
 		ZipInputStream zis = new ZipInputStream(new ByteArrayInputStream(responseAsByteArray));
 		ZipEntry zipEntry = zis.getNextEntry();
 		while (zipEntry != null) {
-			File newFile = FileUtilities.createFile(FilenameUtils.removeExtension(zipEntry.getName()), ".png", randomKey, new ArrayList<PlaceHolder>());
+			File newFile = FileUtilities.createFile(FilenameUtils.removeExtension(zipEntry.getName()), ".png",
+					randomKey, new ArrayList<>());
 			FileOutputStream fos = new FileOutputStream(newFile);
 			int len;
 			while ((len = zis.read(buffer)) > 0) {
@@ -435,8 +457,8 @@ public class AbstractDocumentExecutionWork extends DossierExecutionClient implem
 
 				try {
 
-					File to = FileUtilities.createFile(FilenameUtils.removeExtension(documentLabel + "_" + f.getName()), ".png", randomKey,
-							new ArrayList<PlaceHolder>());
+					File to = FileUtilities.createFile(FilenameUtils.removeExtension(documentLabel + "_" + f.getName()),
+							".png", randomKey, new ArrayList<>());
 
 					FileUtils.copyFile(f, to);
 					if (reportToUse.getImageName().contains(FilenameUtils.removeExtension(f.getName()))) {
@@ -467,14 +489,15 @@ public class AbstractDocumentExecutionWork extends DossierExecutionClient implem
 		return destFile;
 	}
 
-	private List<DocumentMetadataProperty> getMetaDataAndContent(IObjMetadataDAO metaDao, IObjMetacontentDAO metaContentDAO, BIObject obj) throws Exception {
-		logger.debug("IN");
+	private List<DocumentMetadataProperty> getMetaDataAndContent(IObjMetadataDAO metaDao,
+			IObjMetacontentDAO metaContentDAO, BIObject obj) throws Exception {
+		LOGGER.debug("IN");
 		List toReturn = null;
 
 		try {
 			DocumentMetadataProperty objMetaDataAndContent = null;
 			List<ObjMetadata> allMetas = metaDao.loadAllObjMetadata();
-			Map<Integer, ObjMetacontent> values = new HashMap<Integer, ObjMetacontent>();
+			Map<Integer, ObjMetacontent> values = new HashMap<>();
 
 			List list = metaContentDAO.loadObjOrSubObjMetacontents(obj.getId(), null);
 			for (Iterator iterator = list.iterator(); iterator.hasNext();) {
@@ -494,10 +517,10 @@ public class AbstractDocumentExecutionWork extends DossierExecutionClient implem
 			}
 
 		} catch (Exception e) {
-			logger.error("error in retrieving metadata and metacontent for biobj id " + obj.getId(), e);
+			LOGGER.error("error in retrieving metadata and metacontent for biobj id {}", obj.getId(), e);
 			throw e;
 		}
-		logger.debug("OUT");
+		LOGGER.debug("OUT");
 		return toReturn;
 	}
 
@@ -536,22 +559,22 @@ public class AbstractDocumentExecutionWork extends DossierExecutionClient implem
 	}
 
 	public void deleteDBRowInCaseOfError(IProgressThreadDAO threadDAO, Integer progressThreadId) {
-		logger.debug("IN");
+		LOGGER.debug("IN");
 		try {
 			threadDAO.deleteProgressThread(progressThreadId);
 		} catch (EMFUserError e1) {
-			logger.error("Error in deleting the row with the progress id " + progressThreadId);
+			LOGGER.error("Error in deleting the row with the progress id {}", progressThreadId);
 		}
-		logger.debug("OUT");
+		LOGGER.debug("OUT");
 
 	}
 
 	public File createErrorFile(BIObject biObj, Throwable error) {
 //		public File createErrorFile(BIObject biObj, Throwable error, Map randomNamesToName) {
-		logger.debug("IN");
+		LOGGER.debug("IN");
 		File toReturn = null;
 		FileWriter fw = null;
-		ArrayList<PlaceHolder> list = new ArrayList<PlaceHolder>();
+		ArrayList<PlaceHolder> list = new ArrayList<>();
 		PlaceHolder p = new PlaceHolder();
 		p.setValue("ERROR");
 		list.add(p);
@@ -585,7 +608,7 @@ public class AbstractDocumentExecutionWork extends DossierExecutionClient implem
 				fw.flush();
 			}
 		} catch (Exception e) {
-			logger.error("Error in wirting error file for biObj " + biObj.getLabel());
+			LOGGER.error("Error in wirting error file for biObj {}", biObj.getLabel());
 			deleteDBRowInCaseOfError(progressThreadDAO, progressThreadId);
 			throw new SpagoBIServiceException("Error in wirting error file for biObj " + biObj.getLabel(), e);
 		} finally {
@@ -597,7 +620,7 @@ public class AbstractDocumentExecutionWork extends DossierExecutionClient implem
 				}
 			}
 		}
-		logger.debug("OUT");
+		LOGGER.debug("OUT");
 		return toReturn;
 	}
 
