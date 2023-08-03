@@ -22,7 +22,8 @@ import java.util.Map;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.json.JSONObject;
 
 import it.eng.spagobi.utilities.engines.rest.SimpleRestClient;
@@ -34,30 +35,32 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
  */
 
 public class ExporterClient extends SimpleRestClient {
-	private final String serviceUrl = "/restful-services/2.0/datasets/%s/data";
 
-	protected static Logger logger = Logger.getLogger(ExporterClient.class);
+	private static final String SERVICE_URL = "/restful-services/2.0/datasets/%s/data";
+	private static final Logger LOGGER = LogManager.getLogger(ExporterClient.class);
 
-	public JSONObject getDataStore(Map<String, Object> parameters, String datasetLabel, String userId, String body) throws Exception {
+	public JSONObject getDataStore(Map<String, Object> parameters, String datasetLabel, String userId, String body)
+			throws Exception {
 		// if pagination is disabled offset = 0, fetchSize = -1
 		return getDataStore(parameters, datasetLabel, userId, body, 0, -1);
 	}
 
-	public JSONObject getDataStore(Map<String, Object> parameters, String datasetLabel, String userId, String body, int offset, int fetchSize)
-			throws Exception {
-		logger.debug("IN");
+	public JSONObject getDataStore(Map<String, Object> parameters, String datasetLabel, String userId, String body,
+			int offset, int fetchSize) throws Exception {
 		parameters.put("offset", offset);
 		parameters.put("size", fetchSize);
-		logger.debug("parameters: [" + parameters + "], serviceUrl: [" + serviceUrl + "], datasetLabel: [" + datasetLabel + "], body: [" + body + "]");
+		String url = String.format(SERVICE_URL, datasetLabel);
 
-		Response resp = executePostService(parameters, String.format(serviceUrl, datasetLabel), userId, MediaType.APPLICATION_JSON, body);
+		Response resp = executePostService(parameters, url, userId, MediaType.APPLICATION_JSON, body);
 		String resultString = resp.readEntity(String.class);
 		JSONObject result = new JSONObject(resultString);
 
-		logger.debug("Response: [" + result + "]");
-		logger.debug("OUT");
-		if (result.has("errors"))
+		if (result.has("errors")) {
+			LOGGER.error("Error calling {} with parameters {} and body {} returned: {}", url, parameters, body, result);
 			throw new SpagoBIRuntimeException("Error in data service for dataset: " + datasetLabel);
+		} else {
+			LOGGER.debug("Call to {} with parameters {} and body {} returned: {}", url, parameters, body, result);
+		}
 		return result;
 	}
 }

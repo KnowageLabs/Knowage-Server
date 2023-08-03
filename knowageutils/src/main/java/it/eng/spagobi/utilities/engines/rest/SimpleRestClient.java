@@ -43,7 +43,6 @@ import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.log4j.LogMF;
 import org.apache.log4j.Logger;
 
-import it.eng.knowage.export.wrapper.beans.RenderOptions;
 import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
 import it.eng.spagobi.commons.utilities.StringUtilities;
@@ -59,7 +58,7 @@ import it.eng.spagobi.utilities.Helper;
 
 public class SimpleRestClient {
 
-	protected static Logger logger = Logger.getLogger(SimpleRestClient.class);
+	private static final Logger LOGGER = Logger.getLogger(SimpleRestClient.class);
 
 	private boolean addServerUrl = true;
 
@@ -85,17 +84,19 @@ public class SimpleRestClient {
 	private String loadHmacKey() {
 		String hmacKey = EnginConf.getInstance().getHmacKey();
 		if (StringUtilities.isEmpty(hmacKey)) {
-			hmacKey = SpagoBIUtilities.readJndiResource(SingletonConfig.getInstance().getConfigValue(HMACUtils.HMAC_JNDI_LOOKUP));
+			hmacKey = SpagoBIUtilities
+					.readJndiResource(SingletonConfig.getInstance().getConfigValue(HMACUtils.HMAC_JNDI_LOOKUP));
 		}
 		return hmacKey;
 	}
 
 	private String loadServerUrl() {
-		String serverUrl = EnginConf.getInstance().getSpagoBiServerUrl();
-		if (StringUtilities.isEmpty(serverUrl)) {
-			serverUrl = SpagoBIUtilities.readJndiResource(SingletonConfig.getInstance().getConfigValue("SPAGOBI.SPAGOBI_SERVICE_JNDI"));
+		String ret = EnginConf.getInstance().getSpagoBiServerUrl();
+		if (StringUtilities.isEmpty(ret)) {
+			ret = SpagoBIUtilities
+					.readJndiResource(SingletonConfig.getInstance().getConfigValue("SPAGOBI.SPAGOBI_SERVICE_JNDI"));
 		}
-		return serverUrl;
+		return ret;
 	}
 
 	/**
@@ -107,7 +108,8 @@ public class SimpleRestClient {
 	 * @return
 	 * @throws Exception
 	 */
-	protected Response executeGetService(Map<String, Object> parameters, String serviceUrl, String userId) throws Exception {
+	protected Response executeGetService(Map<String, Object> parameters, String serviceUrl, String userId)
+			throws Exception {
 		return executeService(parameters, serviceUrl, userId, RequestTypeEnum.GET, null, null);
 	}
 
@@ -122,7 +124,8 @@ public class SimpleRestClient {
 	 * @return
 	 * @throws Exception
 	 */
-	protected Response executePostService(Map<String, Object> parameters, String serviceUrl, String userId, String mediaType, Object data) throws Exception {
+	protected Response executePostService(Map<String, Object> parameters, String serviceUrl, String userId,
+			String mediaType, Object data) throws Exception {
 		return executeService(parameters, serviceUrl, userId, RequestTypeEnum.POST, mediaType, data);
 	}
 
@@ -137,49 +140,36 @@ public class SimpleRestClient {
 	 * @return
 	 * @throws Exception
 	 */
-	protected Response executePostService(Map<String, Object> parameters, String serviceUrl, String userId, String mediaType, Object data,
-			RenderOptions renderOptions) throws Exception {
-		return executeService(parameters, serviceUrl, userId, RequestTypeEnum.POST, mediaType, data);
-	}
-
-	/**
-	 * Invokes a rest service in post and return response
-	 *
-	 * @param parameters the parameters of the request
-	 * @param serviceUrl the relative (refers always to core application context) path of the service
-	 * @param userId
-	 * @param mediaType
-	 * @param data
-	 * @return
-	 * @throws Exception
-	 */
-	protected Response executePutService(Map<String, Object> parameters, String serviceUrl, String userId, String mediaType, Object data) throws Exception {
+	protected Response executePutService(Map<String, Object> parameters, String serviceUrl, String userId,
+			String mediaType, Object data) throws Exception {
 		return executeService(parameters, serviceUrl, userId, RequestTypeEnum.PUT, mediaType, data);
 	}
 
-	protected HttpResponse executePostServiceWithFormParams(Map<String, Object> parameters, byte[] form, String serviceUrl, String userId) throws Exception {
+	protected HttpResponse executePostServiceWithFormParams(Map<String, Object> parameters, byte[] form,
+			String serviceUrl, String userId) throws Exception {
 		return executeServiceMultipart(parameters, form, serviceUrl, userId);
 	}
 
 	@SuppressWarnings({ "rawtypes" })
-	private HttpResponse executeServiceMultipart(Map<String, Object> parameters, byte[] form, String serviceUrl, String userId) throws Exception {
-		logger.debug("IN");
+	private HttpResponse executeServiceMultipart(Map<String, Object> parameters, byte[] form, String serviceUrl,
+			String userId) throws Exception {
+		LOGGER.debug("IN");
 		CloseableHttpClient client = null;
-		MultivaluedMap<String, Object> myHeaders = new MultivaluedHashMap<String, Object>();
+		MultivaluedMap<String, Object> myHeaders = new MultivaluedHashMap<>();
 
 		if (!serviceUrl.contains("http") && addServerUrl) {
-			logger.debug("Adding the server URL");
+			LOGGER.debug("Adding the server URL");
 			if (serverUrl != null) {
-				logger.debug("Executing the dataset from the core so use relative path to service");
+				LOGGER.debug("Executing the dataset from the core so use relative path to service");
 				serviceUrl = serverUrl + serviceUrl;
 			}
-			logger.debug("Call service URL " + serviceUrl);
+			LOGGER.debug("Call service URL " + serviceUrl);
 		}
 
 		try {
 
 			if (parameters != null) {
-				logger.debug("adding parameters in the request");
+				LOGGER.debug("adding parameters in the request");
 				StringBuilder sb = new StringBuilder(serviceUrl);
 				sb.append("?");
 				for (Iterator iterator = parameters.keySet().iterator(); iterator.hasNext();) {
@@ -188,7 +178,7 @@ public class SimpleRestClient {
 					sb.append("=");
 					sb.append(parameters.get(key));
 				}
-				logger.debug("finish to add parameters in the request");
+				LOGGER.debug("finish to add parameters in the request");
 			}
 
 			MultipartEntityBuilder builder = MultipartEntityBuilder.create();
@@ -205,13 +195,13 @@ public class SimpleRestClient {
 			HttpResponse response1 = client.execute(request);
 
 			if (response1.getStatusLine().getStatusCode() >= 400) {
-				throw new RuntimeException("Request failed with HTTP error code : " + response1.getStatusLine().getStatusCode());
+				throw new RuntimeException(
+						"Request failed with HTTP error code : " + response1.getStatusLine().getStatusCode());
 			}
 
-			logger.debug("Rest query status " + response1.getStatusLine().getStatusCode());
-			// logger.debug("Rest query status info "+response.getStatusInfo());
-			logger.debug("Rest query status getReasonPhrase " + response1.getStatusLine().getReasonPhrase());
-			logger.debug("OUT");
+			LOGGER.debug("Rest query status " + response1.getStatusLine().getStatusCode());
+			LOGGER.debug("Rest query status getReasonPhrase " + response1.getStatusLine().getReasonPhrase());
+			LOGGER.debug("OUT");
 			return response1;
 		} finally {
 			if (client != null) {
@@ -220,42 +210,42 @@ public class SimpleRestClient {
 		}
 	}
 
-	private Response executeService(Map<String, Object> parameters, String serviceUrl, String userId, RequestTypeEnum type, String mediaType, Object data)
-			throws Exception {
-		logger.debug("IN");
+	private Response executeService(Map<String, Object> parameters, String serviceUrl, String userId,
+			RequestTypeEnum type, String mediaType, Object data) throws Exception {
+		LOGGER.debug("IN");
 
-		MultivaluedMap<String, Object> myHeaders = new MultivaluedHashMap<String, Object>();
+		MultivaluedMap<String, Object> myHeaders = new MultivaluedHashMap<>();
 
 		if (!serviceUrl.contains("http") && addServerUrl) {
-			logger.debug("Adding the server URL");
+			LOGGER.debug("Adding the server URL");
 			if (serverUrl != null) {
-				logger.debug("Executing the dataset from the core so use relative path to service");
+				LOGGER.debug("Executing the dataset from the core so use relative path to service");
 				serviceUrl = serverUrl + serviceUrl;
 			}
 		}
 
 		Client client = ClientBuilder.newBuilder().sslContext(SSLContext.getDefault()).build();
 
-		logger.debug("Service URL to be invoked : " + serviceUrl);
+		LOGGER.debug("Service URL to be invoked : " + serviceUrl);
 		WebTarget target = client.target(serviceUrl);
 
 		if (parameters != null) {
 			Iterator<String> iter = parameters.keySet().iterator();
 			while (iter.hasNext()) {
 				String param = iter.next();
-				LogMF.debug(logger, "Adding parameter [{0}] : [{1}]", param, parameters.get(param));
+				LogMF.debug(LOGGER, "Adding parameter [{0}] : [{1}]", param, parameters.get(param));
 				target = target.queryParam(param, parameters.get(param));
 			}
 		}
 
-		logger.debug("Media type : " + mediaType);
+		LOGGER.debug("Media type : " + mediaType);
 		Builder request = target.request(mediaType);
 
-		logger.debug("adding headers");
+		LOGGER.debug("adding headers");
 
 		addAuthorizations(request, userId, myHeaders);
 
-		logger.debug("Call service");
+		LOGGER.debug("Call service");
 		Response response = null;
 
 		// provide authentication exactly before of call
@@ -269,18 +259,17 @@ public class SimpleRestClient {
 			response = request.get();
 		}
 
-		logger.debug("Rest query status " + response.getStatus());
-		// logger.debug("Rest query status info "+response.getStatusInfo());
-		logger.debug("Rest query status getReasonPhrase " + response.getStatusInfo().getReasonPhrase());
-		logger.debug("OUT");
+		LOGGER.debug("Rest query status " + response.getStatus());
+		LOGGER.debug("Rest query status getReasonPhrase " + response.getStatusInfo().getReasonPhrase());
+		LOGGER.debug("OUT");
 		return response;
 	}
 
 	/*
 	 * TODO: verify if it is possible to configure headers externally
 	 */
-	private void addAuthorizations(Builder request, String userId, MultivaluedMap<String, Object> myHeaders) throws Exception {
-		logger.debug("Adding auth for user " + userId);
+	private void addAuthorizations(Builder request, String userId, MultivaluedMap<String, Object> myHeaders) {
+		LOGGER.debug("Adding auth for user " + userId);
 
 		String encodedBytes = Base64.getEncoder().encodeToString(userId.getBytes(UTF_8));
 		request.header("Authorization", "Direct " + encodedBytes);
