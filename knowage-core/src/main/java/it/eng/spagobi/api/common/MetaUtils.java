@@ -112,9 +112,8 @@ public class MetaUtils {
 		return parametersArrayList;
 	}
 
-
-
-	private ArrayList<HashMap<String, Object>> getDatasetDriversByModelName(UserProfile userProfile, Locale locale, String businessModelName, Boolean loadDSwithDrivers) {
+	private ArrayList<HashMap<String, Object>> getDatasetDriversByModelName(UserProfile userProfile, Locale locale, String businessModelName,
+			Boolean loadDSwithDrivers) {
 		ArrayList<HashMap<String, Object>> parametersArrList = new ArrayList<>();
 		IMetaModelsDAO dao = DAOFactory.getMetaModelsDAO();
 		IParameterUseDAO parameterUseDAO = DAOFactory.getParameterUseDAO();
@@ -153,7 +152,7 @@ public class MetaUtils {
 				throw new SpagoBIRuntimeException(e1.getMessage(), e1);
 			}
 
-			HashMap<String, Object> parameterAsMap = new HashMap<String, Object>();
+			HashMap<String, Object> parameterAsMap = new HashMap<>();
 			parameterAsMap.put("id", objParameter.getBiObjectId());
 			parameterAsMap.put("label", objParameter.getLabel());
 			parameterAsMap.put("urlName", objParameter.getId());
@@ -185,7 +184,7 @@ public class MetaUtils {
 					List<String> valuesList = (List) paramValues;
 					List<String> descriptionList = (List) paramDescriptionValues;
 					if (paramDescriptionValues == null || !(paramDescriptionValues instanceof List)) {
-						descriptionList = new ArrayList<String>();
+						descriptionList = new ArrayList<>();
 					}
 
 					// String item = null;
@@ -415,7 +414,7 @@ public class MetaUtils {
 				treeLovParentNodeName = lovProvDet.getTreeLevelsColumns().get(treeLovNodeLevel).getFirst();
 			}
 
-			Set<JSONObject> valuesDataJSON = new LinkedHashSet<JSONObject>();
+			Set<JSONObject> valuesDataJSON = new LinkedHashSet<>();
 
 			valueColumn = lovProvDet.getValueColumnName();
 			descriptionColumn = lovProvDet.getDescriptionColumnName();
@@ -522,11 +521,15 @@ public class MetaUtils {
 		JSONArray valuesDataJSON = new JSONArray();
 
 		visibleColumnNames.forEach(e -> {
-			colName2colPlaceholder.put("_col" + colCount.getAndIncrement(), e);
+			if (!colName2colPlaceholder.containsValue(e)) {
+				colName2colPlaceholder.put("_col" + colCount.getAndIncrement(), e);
+			}
 		});
 
 		invisibleColumnNames.forEach(e -> {
-			colName2colPlaceholder.put("_col" + colCount.getAndIncrement(), e);
+			if (!colName2colPlaceholder.containsValue(e)) {
+				colName2colPlaceholder.put("_col" + colCount.getAndIncrement(), e);
+			}
 		});
 
 		metadata.put("colsMap", colName2colPlaceholder);
@@ -583,6 +586,5 @@ public class MetaUtils {
 		// END building JSON object to be returned
 
 	}
-
 
 }

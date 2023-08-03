@@ -104,6 +104,7 @@ export default defineComponent({
                 node.children = foldersWithMissingParent.filter((folder: iNode) => node.id === folder.parentId && folder.data.codType !== 'LOW_FUNCT')
                 this.attachFolderToTree(node, foldersWithMissingParent, personalFolder)
             })
+            while (foldersWithMissingParent.length !== 0) this.attachFoldersFromMissngParentArrayToTheTree(foldersWithMissingParent, personalFolder)
             this.sortNodesAndChildren(this.nodes)
         },
         sortNodesAndChildren(nodes: iNode[]) {
@@ -159,6 +160,12 @@ export default defineComponent({
                     }
                 }
                 return tempFolder
+            }
+        },
+        attachFoldersFromMissngParentArrayToTheTree(foldersWithMissingParent: iNode[], personalFolder: iNode) {
+            for (let i = foldersWithMissingParent.length - 1; i >= 0; i--) {
+                this.attachFolderToTree(foldersWithMissingParent[i], foldersWithMissingParent, personalFolder)
+                foldersWithMissingParent.splice(i)
             }
         },
         setSelectedFolder(node: iNode) {

@@ -245,7 +245,7 @@ export default defineComponent({
         loadDocument() {
             this.document = this.propDocument
             if (!this.document.useFixedRecipients && !this.document.useExpression && !this.document.useDataset) {
-                this.document.useFixedRecipients = true
+                this.document.useFixedRecipients = false
             }
             this.document.invalid.invalidMail = false
             this.validateDocument(null)

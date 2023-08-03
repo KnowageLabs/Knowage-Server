@@ -6,7 +6,7 @@
 	<parent>
 		<groupId>it.eng.knowage</groupId>
 		<artifactId>knowage-ce-parent</artifactId>
-		<version>8.1.13</version>
+		<version>8.1.14</version>
 		<relativePath>../knowage-ce-parent/pom.xml</relativePath>
 	</parent>
 
@@ -403,8 +403,6 @@
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
-			<version>4.13.1</version>
-			<scope>test</scope>
 		</dependency>
 
 		<dependency>

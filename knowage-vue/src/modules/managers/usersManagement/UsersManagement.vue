@@ -11,9 +11,7 @@
                     </template>
                 </Toolbar>
                 <ProgressBar mode="indeterminate" class="kn-progress-bar" v-if="loading" data-test="progress-bar" />
-                <div v-if="!loading">
-                    <UsersListBox :users="users" :loading="loading" @selectedUser="onUserSelect" @deleteUser="onUserDelete" data-test="users-list"></UsersListBox>
-                </div>
+                <KnListBox :options="users" :settings="usersManagementDescriptor.knListSettings" @click="onUserSelect" @delete.stop="onUserDelete" />
             </div>
 
             <KnHint :title="'managers.usersManagement.title'" :hint="'managers.usersManagement.hint'" v-if="hiddenForm"></KnHint>
@@ -69,14 +67,15 @@ import KnFabButton from '@/components/UI/KnFabButton.vue'
 import KnHint from '@/components/UI/KnHint.vue'
 import RolesTab from './UserRolesTab/RolesTab.vue'
 import DetailFormTab from './UserDetailTab/DetailFormTab.vue'
-import UsersListBox from './UsersListBox.vue'
+import KnListBox from '@/components/UI/KnListBox/KnListBox.vue'
 import UserAttributesForm from './UserAttributesTab/UserAttributesForm.vue'
 import detailFormTabValidationDescriptor from './UserDetailTab/DetailFormTabValidationDescriptor.json'
+import usersManagementDescriptor from './UsersManagementDescriptor.json'
 import { sameAs } from '@vuelidate/validators'
 
 export default defineComponent({
     name: 'user-management',
-    components: { UsersListBox, TabView, TabPanel, KnFabButton, KnHint, RolesTab, DetailFormTab, UserAttributesForm },
+    components: { KnListBox, TabView, TabPanel, KnFabButton, KnHint, RolesTab, DetailFormTab, UserAttributesForm },
     data() {
         return {
             v$: useValidate() as any,
@@ -94,7 +93,8 @@ export default defineComponent({
             hiddenForm: true,
             disableUsername: true,
             loading: false,
-            selectedRoles: [] as iRole[]
+            selectedRoles: [] as iRole[],
+            usersManagementDescriptor: usersManagementDescriptor
         }
     },
     validations() {
@@ -224,40 +224,48 @@ export default defineComponent({
                 return user.id === id
             })
             if (selectedUser) {
-                this.onUserSelect(selectedUser)
+                this.onUserSelect(null, selectedUser)
             }
             this.$store.commit('setInfo', {
                 title: this.userDetailsForm.id ? this.$t('common.toast.updateTitle') : this.$t('managers.usersManagement.info.createTitle'),
                 msg: this.userDetailsForm.id ? this.$t('common.toast.updateSuccess') : this.$t('managers.usersManagement.info.createMessage')
             })
         },
-        onUserDelete(id: number) {
-            this.loading = true
-            this.$http
-                .delete(`${process.env.VUE_APP_RESTFUL_SERVICES_PATH}2.0/users/${id}`)
-                .then(() => {
-                    this.loadAllUsers()
-                    this.$store.commit('setInfo', {
-                        title: this.$t('managers.usersManagement.info.deleteTitle'),
-                        msg: this.$t('managers.usersManagement.info.deleteMessage')
-                    })
-                })
-                .catch((error) => {
-                    this.$store.commit('setError', {
-                        title: error.title,
-                        msg: error.msg
-                    })
-                })
-                .finally(() => {
-                    this.hiddenForm = true
-                    this.loading = false
-                })
+        onUserDelete(event: any) {
+            this.$confirm.require({
+                message: this.$t('common.toast.deleteMessage'),
+                header: this.$t('common.uppercaseDelete'),
+                icon: 'pi pi-exclamation-triangle',
+                accept: () => {
+                    this.loading = true
+                    this.$http
+                        .delete(`${process.env.VUE_APP_RESTFUL_SERVICES_PATH}2.0/users/${event.item.id}`)
+                        .then(() => {
+                            this.loadAllUsers()
+                            this.$store.commit('setInfo', {
+                                title: this.$t('managers.usersManagement.info.deleteTitle'),
+                                msg: this.$t('managers.usersManagement.info.deleteMessage')
+                            })
+                        })
+                        .catch((error) => {
+                            this.$store.commit('setError', {
+                                title: error.title,
+                                msg: error.msg
+                            })
+                        })
+                        .finally(() => {
+                            this.hiddenForm = true
+                            this.loading = false
+                        })
+                }
+            })
         },
         async unlockUser() {
             this.userDetailsForm.failedLoginAttempts = 0
             await this.saveUser()
         },
-        async onUserSelect(userSelected: any) {
+        async onUserSelect(event, userSelected: any) {
+            const user = userSelected || event.item
             this.formInsert = false
             if (this.dirty) {
                 this.$confirm.require({
@@ -265,13 +273,13 @@ export default defineComponent({
                     header: this.$t('common.toast.unsavedChangesHeader'),
                     icon: 'pi pi-exclamation-triangle',
                     accept: () => {
-                        this.populateForms(userSelected)
+                        this.populateForms(user)
                         this.dirty = false
                     },
                     reject: () => {}
                 })
             } else {
-                this.populateForms(userSelected)
+                this.populateForms(user)
             }
         },
         populateForms(userObj: any) {

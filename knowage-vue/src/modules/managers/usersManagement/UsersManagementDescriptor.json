@@ -1,27 +1,49 @@
 {
   "columns": [
-    { "field": "userId", "header": "User ID" },
-    { "field": "fullName", "header": "Full Name" }
-  ],
-  "globalFilterFields": [
-    "userId",
-    "fullName"
-  ],
-  "table": {
-    "column": {
-      "style": {
-        "width": "40%"
+      {
+          "field": "userId",
+          "header": "User ID"
+      },
+      {
+          "field": "fullName",
+          "header": "Full Name"
       }
-    },
-    "iconColumn": {
-      "style": {
-        "text-align": "end"
-      }
-    }
-  },
+  ],
   "form": {
-    "style": {
-      "width": "60vw"
-    }
+      "style": {
+          "width": "60vw"
+      }
+  },
+  "globalFilterFields": ["userId", "fullName"],
+  "knListSettings": {
+      "buttons": [
+          {
+              "emits": "delete",
+              "icon": "far fa-trash-alt",
+              "label": "common.delete"
+          }
+      ],
+      "defaultSortField": "userId",
+      "filterFields": ["userId", "fullName"],
+      "interaction": {
+          "parameterLabel": "id",
+          "parameterValue": "id",
+          "type": "event"
+      },
+      "sortFields": ["userId", "fullName"],
+      "textField": "userId",
+      "titleField": "fullName"
+  },
+  "table": {
+      "column": {
+          "style": {
+              "width": "40%"
+          }
+      },
+      "iconColumn": {
+          "style": {
+              "text-align": "end"
+          }
+      }
   }
 }
