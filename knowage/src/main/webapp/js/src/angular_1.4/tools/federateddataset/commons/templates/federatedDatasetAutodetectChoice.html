@@ -1,0 +1,57 @@
+<md-card layout-fill layout="column" class="flexCard" style="position:absolute" >
+	<md-card-content flex layout="column" class="noPadding">
+		<md-toolbar >
+			<div class="md-toolbar-tools">{{translate.load("sbi.federationdefinition.autodetect")}}</div>
+		</md-toolbar>
+		
+		<md-content flex layout="column">
+			
+			<div layout="row" flex layout-align="center center" ng-show="false">
+				<md-progress-circular md-mode="indeterminate" md-diameter="70"></md-progress-circular>
+			</div>
+			
+			<md-card ng-show="true">
+				<md-card-content layout="row" layout-padding layout-align="space-around center">
+		
+					<md-input-container flex="20" style="margin-bottom:0px;">
+						<label>{{translate.load("sbi.federationdefinition.autodetect.minSimilarity")}}</label>
+						<md-select ng-model="selectedMinSimilarityValue">
+							<md-option ng-repeat="similarity in minSimilarityValues" ng-value="similarity">{{similarity * 100 | number:0}}%</md-option>
+						</md-select>
+					</md-input-container>
+					
+					<md-switch flex="20" ng-model="directionLeftToRight" aria-label="Direction left to right">
+						{{directionLeftToRight ? translate.load("sbi.federationdefinition.autodetect.leftToRight")
+							: translate.load("sbi.federationdefinition.autodetect.rightToLeft")}}
+					</md-switch>
+				
+				</md-card-content>
+			</md-card>
+			
+			<angular-table flex ng-show="true"
+				id="autodetectChoice"
+				ng-model="autodetectFilteredRows"
+				columns="autodetectColumns"
+				sortable-column="[]"
+				columns-search="autodetectColumnsSearch"
+				show-search-bar="true"
+				multi-select="false"
+				comparison-column="___id"
+				highlights-selected-item="true"
+				no-pagination="false"
+				selected-item="autodetectSelectedRow"
+				>
+			</angular-table>
+			
+			<div layout="row" layout-align="center center">
+				<div>{{autodetectSelectedRowObj.string ? autodetectSelectedRowObj.string : '&nbsp;'}}</div>
+			</div>
+			
+		</md-content>
+	</md-card-content>
+	
+	<md-card-actions layout="row" layout-align="end center">
+		<md-button ng-click="closeDialog()">{{translate.load("sbi.generic.cancel")}}</md-button>
+		<md-button ng-click="saveAutodetect()" ng-disabled="!autodetectSelectedRow">{{translate.load("sbi.generic.save")}}</md-button>
+	</md-card-actions>
+</md-card>

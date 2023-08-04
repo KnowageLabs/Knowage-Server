@@ -1,0 +1,92 @@
+<md-dialog class="flex2" style="height:100%; width:100%; max-height:100%; max-width:100%" ng-cloak>
+   <md-toolbar class="primaryToolbar">
+      <div class="md-toolbar-tools">
+         <h2>
+            <span>{{translate.load("sbi.behavioural.lov.test.title")}}</span>
+         </h2>
+      </div>
+   </md-toolbar>
+   <md-dialog-content class="mdDialogSize">
+      <div class="md-dialog-content" layout="column" style="height: calc(100% - 40px);">
+      <md-input-container class="md-block">
+         <label>{{translate.load("sbi.behavioural.lov.test.treeType")}}</label>
+         <md-select  aria-label="dropdown" placeholder ="Tree Type"
+            name ="dropdown" 
+            ng-model="treeListTypeModel.LOVTYPE"
+            ng-change="changeTreeType(treeListTypeModel.LOVTYPE)"
+            >
+            <md-option 
+               ng-repeat="l in TreeListType track by $index" value="{{l.value}}">{{l.name}} </md-option>
+         </md-select>
+      </md-input-container>
+      <div ng-if="treeListTypeModel.LOVTYPE == 'simple'">
+         <angular-table 
+            id='testLovTable'
+            flex
+            ng-model="testLovModel"
+            columns="testLovColumns" 
+            no-pagination=true
+            show-search-bar=false
+            scope-functions=tableFunction
+            >
+         </angular-table>
+      </div>
+      <div ng-if="treeListTypeModel.LOVTYPE != 'simple'" style="height:100%">
+         <div layout="row" flex = 100 style="height: 90%;">
+            <div flex = 20 class="datasetBox" style="height: 90%;">
+               <md-card >
+                  <md-toolbar class="miniheadfedsmall"  >
+                     <div class="md-toolbar-tools">
+                        <h2 class="md-flex" >{{translate.load("sbi.behavioural.lov.test.fields")}}</h2>
+                        <span flex=""></span>					
+                     </div>
+                  </md-toolbar>
+                  <md-content  layout-padding>
+                     <angular-list
+                        layout-fill 
+                        id="testLovTable_list" 
+                        ng-model="testLovModel" 
+                        item-name="name"
+                        show-search-bar=true
+                        click-function="moveToTree(item)"
+                        >					
+                     </angular-list>
+                  </md-content>
+               </md-card>
+            </div>
+            <div flex=80 class="datasetBox">
+               <md-card>
+                  <md-toolbar class="miniheadfedsmall"  >
+                     <div class="md-toolbar-tools">
+                        <h2 class="md-flex" >{{translate.load("sbi.behavioural.lov.test.definition")}}</h2>
+                        <span flex=""></span>					
+                     </div>
+                  </md-toolbar>
+                  <md-content  layout-padding>
+                     <angular-table 
+                        id='testLovTable_tree'
+                        flex
+                        ng-model="testLovTreeModel"
+                        columns="testLovTreeRightColumns"
+                        scope-functions=testTreeScopeFunctions 
+                        no-pagination=true
+                        show-search-bar=false
+                        speed-menu-option="treeSpeedMenu"
+                        >
+                     </angular-table>
+                  </md-content>
+               </md-card>
+            </div>
+         </div>
+      </div>
+   </md-dialog-content>
+   <md-dialog-actions layout="row">
+      <span flex></span>
+      <md-button class="md-raised" ng-click="closeDialogFromLOV()">
+         {{translate.load("sbi.generic.cancel");}}
+      </md-button>
+      <md-button class="md-raised" ng-click="saveLov()" >
+         {{translate.load("sbi.generic.save")}}
+      </md-button>
+   </md-dialog-actions>
+</md-dialog>

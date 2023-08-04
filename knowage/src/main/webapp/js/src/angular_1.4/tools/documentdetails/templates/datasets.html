@@ -1,0 +1,39 @@
+<!--
+Knowage, Open Source Business Intelligence suite
+Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
+
+Knowage is free software: you can redistribute it and/or modify
+it under the terms of the GNU Affero General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+ (at your option) any later version.
+
+Knowage is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU Affero General Public License for more details.
+
+You should have received a copy of the GNU Affero General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+-->
+<md-card layout-fill layout="column" class="flexCard" style="position:absolute" >
+
+	<md-toolbar >
+		<div class="md-toolbar-tools">
+			{{::translate.load('sbi.behavioural.lov.placeholder.dataset')}}
+		</div>
+	</md-toolbar>
+	
+	<div>
+		<md-input-container md-no-float class="md-block">
+	      <md-icon md-font-icon="fa fa-search"></md-icon>
+	      <input ng-model="datasetSearchText" ng-change="filterDataset()" type="text" placeholder="{{::translate.load('sbi.generic.search.title')}}">
+	    </md-input-container>
+    </div>
+	<div id="documentDetailDatasets" ag-grid="datasetGridTable" flex class="ag-theme-balham noMargin ag-theme-knowage-default ag-full-dimensions small-padding"></div>	
+		
+	<md-card-actions layout="row" layout-align="end center">
+		<md-button ng-click="closeDialog()" class="md-raised">{{::translate.load('sbi.generic.cancel')}}</md-button>
+		<md-button ng-click="saveDataset()" class="md-raised md-primary">{{::translate.load('sbi.generic.save')}}</md-button>
+	</md-card-actions>
+	
+</md-card>

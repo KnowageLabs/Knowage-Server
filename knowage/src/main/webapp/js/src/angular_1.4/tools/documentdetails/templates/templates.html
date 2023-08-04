@@ -1,0 +1,120 @@
+<div ng-cloak layout="row" ng-controller="TemplatesController as dh" class="" layout-fill ng-form name="templates">
+    <div flex="40" class="templateHistory">
+        <md-toolbar class="secondaryToolbar">
+            <div class="md-toolbar-tools" layout="row">
+                <h2>{{translate.load("sbi.documentdetails.templates.history")}}</h2>
+                <span flex></span>
+            </div>
+        </md-toolbar>
+        <div layout="column " >
+            <div class="kn-info " layout-align="center center ">
+                {{translate.load("sbi.documentdetails.templates.upload")}}
+            </div>
+            <file-upload ng-model="dh.templateService.file" flex></file-upload>            
+        </div>
+        <md-content layout="column" class="tabContainer">
+            <div ng-if="!dh.templateService.listOfTemplates || dh.templateService.listOfTemplates==0">
+                <div class="kn-noItems" layout-align="center center ">
+                    {{translate.load("sbi.documentdetails.templates.notemplates")}}
+                </div>
+            </div>
+            <div class="kn-custom-list h42">            
+
+                <div class="kn-list-item selectable" ng-repeat="template in dh.templateService.listOfTemplates track by $index" ng-click="dh.selectTemplate(template)" ng-class="{'selected':template.$$hashKey == dh.selectedTemplate}" ng-style="{'background-color': template.active ? '#cddcea' : ''}">
+                    <md-icon ng-if="template.active == false" md-font-icon="kn-list-preicon fa fa-history"></md-icon>
+                    <md-icon ng-if="template.active == true" md-font-icon="kn-list-preicon fa fa-check"></md-icon>
+                    
+                    <div class="kn-list-text" layout="column">                        
+                        <h3>{{ template.name }}</h3>
+                        <p>{{ template.creationDate | date:'yyyy-MM-dd HH:mm:ss Z'}}</p>
+                    </div>
+                    <md-button ng-if="template.active == true" class="md-secondary md-icon-button" ng-click="dh.downloadTemplate(template)" aria-label="download template" >
+                        <md-icon md-font-icon="fa fa-download">
+                            <md-tooltip>{{translate.load("sbi.documentdetails.templates.download")}}</md-tooltip>
+                        </md-icon>
+                    </md-button>	
+                    <md-menu class="kn-list-menu-button" ng-if="template.active == false">
+                    	<md-button class="kn-list-action-button md-icon-button" ng-click="dh.openMenu($mdOpenMenu,$event)" aria-label="open menu" >
+                        	<md-icon md-menu-origin md-font-icon="fa fa-ellipsis-v"></md-icon>
+                    	</md-button>
+                    	<md-menu-content width="4">
+                    	
+                    		<md-menu-item> 
+                    			<md-button ng-click="dh.setActive(template)">
+			                  		<div layout="row" flex>
+			                  			<md-icon md-menu-align-target md-font-icon="fa fa-check-circle" class="md-secondary md-icon-button"  aria-label="set active template"></md-icon>
+				                    	<p flex>{{translate.load("sbi.documentdetails.templates.setactive")}}</p>
+				                  	</div>
+				              	</md-button>          
+                        	</md-menu-item>
+                        	
+                    		<md-menu-item> 
+                    			<md-button ng-click="dh.downloadTemplate(template)">
+			                  		<div layout="row" flex>
+			                  			<md-icon md-menu-align-target md-font-icon="fa fa-download" class="md-secondary md-icon-button"  aria-label="download template"></md-icon>
+				                    	<p flex>{{translate.load("sbi.documentdetails.templates.download")}}</p>
+				                  	</div>
+				              	</md-button>
+				            </md-menu-item>
+                        	
+                    		<md-menu-item>      
+                    			<md-button ng-click="dh.removeTemplateFromList($index)">
+			                  		<div layout="row" flex>
+			                  			<md-icon md-menu-align-target md-font-icon="fa fa-trash" class="md-secondary md-icon-button"  aria-label="delete template"></md-icon>
+				                    	<p flex>{{translate.load("sbi.documentdetails.templates.delete")}}</p>
+				                  	</div>
+				              	</md-button>              			
+                        	</md-menu-item>
+                    		
+                    	</md-menu-content>
+                    </md-menu>
+                </div>
+            </div>
+            
+        </md-content>
+    </div>
+    <div flex="60" style="border-left:1px solid #ccc">     
+    
+        <md-toolbar class="secondaryToolbar">
+            <div class="md-toolbar-tools" layout="row">
+                <h2>{{translate.load("sbi.documentdetails.templates")}}</h2>
+                <span flex></span>
+                <md-button ng-click="dh.openTemplateDesigner(dh.document.typeCode)" ng-if="dh.document.typeCode=='OLAP' || dh.document.typeCode=='KPI' || (dh.document.typeCode=='MAP' && dh.document.engine == 'knowagegisengine')">{{translate.load('sbi.documentdetails.opendesigner')}}</md-button>
+            </div>
+        </md-toolbar>
+        
+        <md-content ng-if="dh.filetype!='json' && dh.filetype!='xml'">
+        	<div class="kn-info " flex>
+        		Content of this type of file can't be shown.
+        	</div>
+        </md-content>
+        
+        <md-content layout="column" ng-if="dh.filetype=='json' || dh.filetype=='xml'">
+            <div layout="row " layout-align="center center ">
+                <div class="kn-info " flex="80 " ng-if="dh.filetype=='json'">
+                    {{translate.load("sbi.documentdetails.templates.templatenavigation")}}
+                </div>
+            </div>
+            <md-card ng-if="dh.selectedTemplate">
+                <md-toolbar class="ternaryToolbar">
+                    <div class="md-toolbar-tools" layout="row">
+                        <h2>{{translate.load("sbi.documentdetails.templates.current")}}</h2>
+                        <span flex></span>
+                        <md-switch ng-model="dh.showIndented" ng-if="dh.filetype=='json'">{{translate.load("sbi.documentdetails.templates.smartvisualization")}}</md-switch>
+                    </div>
+                </md-toolbar>
+
+                <md-card-content style="overflow-x:auto" ng-if="dh.filetype=='json'">
+                    <pre><json-formatter json="dh.content" open="3" ng-if="dh.showIndented"></json-formatter></pre>
+                    <pre ng-if="!dh.showIndented">{{dh.content | json}}</pre>
+                </md-card-content>
+                
+                <md-card-content style="overflow-x:auto" ng-if="dh.filetype=='xml'">
+					<pre>{{dh.content}}</pre>
+                </md-card-content>
+                
+            </md-card>
+        </md-content>
+    </div>
+
+</div>

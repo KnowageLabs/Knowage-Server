@@ -1,0 +1,19 @@
+angular-time-picker {
+	span.dividerTime {
+		line-height:68px !important;
+	}
+	.md-button.spinButton {
+		height: 24px !important;
+	}
+}
+.cronFrequency {
+	.weekCheckbox {
+		md-checkbox {
+			margin-bottom: 0;
+			margin-left: 5px;
+		}
+	}
+	md-datepicker {
+		margin: 0;
+	}
+}

@@ -1,0 +1,116 @@
+<div class="kpi-color-indicator perspectivesContainer" layout="row" layout-wrap flex>
+	<!--  PERSPECTIVES  -->
+	<div flex-xs="100" flex-gt-sm="33" flex="50" ng-repeat="p in perspectives">
+	<md-card class="perspective"  >
+		<md-toolbar class="md-toolbar-tools" ng-class="getClass(p.status,false)">
+			<i class="fa" ng-class="getClass(p.status,true)"></i>
+			<input-rename item="p" ng-if="definition"></input-rename>
+			<span ng-if="!definition">{{p.name}}</span>
+			<div flex></div>
+			
+			<!-- perspective dropdown menu -->
+			<md-menu ng-if="definition">
+				<md-button aria-label="Menu List" class="md-icon-button" ng-click="$mdOpenMenu($event)">
+		        	<md-icon md-menu-origin md-font-icon="fa fa-ellipsis-v"></md-icon>
+		      	</md-button>
+		      	<md-menu-content width="4">
+		        	<md-menu-item>
+		          		<md-button ng-click="addTarget(p)">
+		            		<md-icon md-font-icon="fa fa-pencil-square-o" md-menu-align-target></md-icon>
+		            		Add Target
+	          			</md-button>
+		        	</md-menu-item>
+		        	<md-menu-item>
+		          		<md-button ng-click="deletePerspective(p.id)">
+		            		<md-icon md-font-icon="fa fa-trash"></md-icon>
+		            		Delete Perspective
+		          		</md-button>
+		        	</md-menu-item>
+		   		</md-menu-content>
+		    </md-menu>
+
+		</md-toolbar>
+		<md-card-content class="miniContentPadding">
+		<div layout="row">
+			<md-input-container class="md-block" flex> 
+				<label>{{translate.load('sbi.kpi.scorecard.perspective.criterion')}}</label> 
+				<md-select ng-model="p.criterion" ng-if="definition" ng-model-options="{trackBy: '$value.translatedValueName'}">
+					<md-option ng-repeat="crit in criterion" ng-value="crit" >{{crit.translatedValueName}}</md-option>
+				</md-select>
+				<input ng-model="p.criterion.translatedValueName" disabled ng-if="!definition" style="margin-bottom:5px;"/>
+			</md-input-container> 
+			<md-input-container flex='50' class="md-block" ng-if="p.criterion.valueCd!=='MAJORITY'" > 
+				<label>{{translate.load('sbi.kpi.scorecard.priority.target')}}</label>
+				<md-select ng-model="p.options.criterionPriority" ng-disabled="!definition" ng-model-options="{trackBy: '$value.name'}" multiple=true> 
+					<md-option	ng-repeat="tar in p.targets" ng-value="{{tar}}">	{{tar.name}} </md-option> 
+				</md-select> 
+			</md-input-container>
+			</div>
+			<!-- TARGETS  -->
+			<div class="target" ng-repeat="t in p.targets" ng-class="getClass(t.status,false)" layout="row" layout-align="start center" ng-click="showKpis(p.id,t.id,definition)">
+				<input-rename item="t" ng-if="definition"></input-rename>
+				<span ng-if="!definition">{{t.name}}</span>
+				<div flex></div>
+				<div ng-repeat="kpi in t.groupedKpis" class="kpiColorValue" layout="row" layout-align="start center">
+					<span>{{kpi.count}}</span>
+					<div class="kpiColorBox" ng-class="getClass(kpi.status,false)" layout="row" layout-align="center center">
+						<i class="fa" flex ng-class="getClass(kpi.status,true)"></i>
+					</div>
+				</div>
+				<md-button class="md-icon-button" ng-click="openTarget(p,t)" ng-if="definition">
+			        <md-icon md-font-icon="fa fa-list"></md-icon>
+			      </md-button>
+			      <md-button class="md-icon-button" ng-click="deleteTarget(p,t)" ng-if="definition">
+			        <md-icon md-font-icon="fa fa-trash"></md-icon>
+			      </md-button>
+				
+			</div>
+			<div class="addTarget" layout="row" layout-align="center center" ng-click="addTarget(p)" ng-if="definition">
+				Add Target
+			</div>
+		</md-card-content>
+	</md-card>
+	</div>
+	<md-sidenav class="md-sidenav-right md-whiteframe-4dp" md-component-id="right">
+
+      <md-toolbar class="md-theme-light" layout="row" layout-align="start center" style="padding-left:10px;">
+      <input-rename item="perspectives[cp].targets[ct]" ng-if="definition"></input-rename>
+      <span ng-if="!definition">{{perspectives[cp].targets[ct].name}}</span>
+        <div flex></div>
+        <md-button class="md-fab md-mini noPadding" aria-label="add Target" ng-click=addKpiToTarget()>
+            <md-icon md-font-icon="fa fa-plus"></md-icon>
+        </md-button>
+      </md-toolbar>
+      <div layout="row" layout-padding>
+      <md-input-container class="md-block" flex> 
+				<label>{{translate.load('sbi.kpi.scorecard.perspective.criterion')}}</label> 
+				<md-select ng-model="perspectives[cp].targets[ct].criterion" ng-disabled="!definition" ng-model-options="{trackBy: '$value.translatedValueName'}">
+					<md-option ng-repeat="crit in criterion" ng-value="crit" >{{crit.translatedValueName}}</md-option>
+				</md-select>
+			
+			</md-input-container> 
+			<md-input-container flex class="md-block" ng-if="perspectives[cp].targets[ct].criterion.valueCd!=='MAJORITY'" > 
+				<label>{{translate.load('sbi.kpi.scorecard.priority.kpi')}}</label> 
+				<md-select ng-model="perspectives[cp].targets[ct].options.criterionPriority" ng-disabled="!definition" ng-model-options="{trackBy: '$value.name'}" multiple=true> 
+					<md-option	ng-repeat="kpi in perspectives[cp].targets[ct].kpis" ng-value="{{kpi}}">	{{kpi.name}} </md-option> 
+				</md-select> 
+			</md-input-container>
+			</div>
+        <md-list class="noPadding">
+        	<md-subheader class="md-no-sticky">Kpi List</md-subheader>
+        	<md-list-item class="singleKpiColorValue" ng-repeat="kpi in perspectives[cp].targets[ct].kpis">
+			    <div class="kpiColorBox" ng-class="getClass(kpi.status,false)" layout="row" layout-align="center center">
+					<i class="fa" flex ng-class="getClass(kpi.status,true)"></i>
+				</div>
+			    <p> {{ kpi.name }} </p>
+			    <md-button class="md-secondary md-icon-button" aria-label="remove kpi from target" ng-click=removeKpiFromTarget(cp,ct,$index)>
+		            <md-icon md-font-icon="fa fa-trash"></md-icon>
+		        </md-button>
+        	</md-list-item>
+        	<span layout-padding ng-if="!perspectives[cp].targets[ct].kpis || perspectives[cp].targets[ct].kpis.length == 0">No kpi</span>
+        	
+        </md-list>
+
+    </md-sidenav>
+	
+</div>

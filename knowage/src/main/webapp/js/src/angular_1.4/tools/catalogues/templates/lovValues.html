@@ -1,0 +1,22 @@
+<md-dialog aria-label="driver visualization" style="height:60%">
+				<angular-table  flex  id="lovObjects_id" ng-model="lovObjects"
+				columns='[
+							{"label":"VALUE","name":"column","size":"100px"},
+							 ]'
+							 columns-search='["column"]'
+							 show-search-bar=true
+							 no-pagination=false
+				selected-item="columnsSelected" highlights-selected-item="true"
+				multi-select="attribute.multivalue" >
+					 </angular-table>
+        <md-dialog-actions layout="row">
+            <span flex></span>
+            <md-button class="md-raised" ng-click="close()">
+                Cancel
+            </md-button>
+            <md-button class="md-raised md-primary" ng-click="hide()">
+                Save
+            </md-button>
+        </md-dialog-actions>
+   
+</md-dialog>

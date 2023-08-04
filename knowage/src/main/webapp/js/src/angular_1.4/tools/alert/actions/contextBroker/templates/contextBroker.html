@@ -1,0 +1,20 @@
+<md-content layout="column" ng-controller="contextBrokerController" flex action-maker-validator="{model:ngModel,validator:validate}" ng-init="initNgModel()">
+
+
+    <div class="md-whiteframe-4dp" style="overflow:scroll;" layout-margin layout-padding layout="column" flex >
+             
+            <md-input-container  class="md-block" >
+                  <label>{{translate.load("sbi.scheduler.schedulation.contextBrokerUrl")}}</label>
+                  <input ng-model="ngModel.contextBrokerUrl"  >
+            </md-input-container>
+
+            <md-input-container  class="md-block" >
+                  <label>{{translate.load("sbi.scheduler.schedulation.contextBrokerType")}}</label>
+                  <input ng-model="ngModel.contextBrokerType"  >
+            </md-input-container>
+
+            
+            
+        </div>
+          
+      </md-content>

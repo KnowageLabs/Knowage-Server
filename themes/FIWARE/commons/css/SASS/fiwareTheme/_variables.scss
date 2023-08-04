@@ -1,0 +1,78 @@
+/* COLORS */
+$baseColor: 				#002365;
+$secondaryColor: 			#4DB8C8;
+$ternaryColor:				#e2e2e2;
+$bordersColor:				$ternaryColor;
+$darkTextColor:				lighten(#000,15%);
+$lightTextColor:			white;		
+$smallTextColor: 			lighten(#000, 50%);
+$fabPrimaryColor: 			$secondaryColor;
+$negativeColor:				#F44336;
+$positiveColor:				#4CAF50;
+$headerBackground: 			$baseColor;
+$contentBackground: 		#fafafa;
+$pageBackground: 			#eceff1;
+$inputLineColor: 			$baseColor;
+$inactiveLabelColor: 		$secondaryColor;
+$activeLabelColor: 			$baseColor;
+$toolbarButtonColor: 		white;
+$listBackground:	 		$pageBackground;
+$detailBackground: 			#f6f6f6;
+$tabBackground: 			white;
+$tableLineSeparator: 		#c3d4df;
+$tableSelectedElementColor: $secondaryColor;
+$federatedDatasetBackground: $pageBackground;
+$raisedButtonTextColor: 	white;
+$inputInvalidLineColor: 	#c70751;
+$invalidLabelColor: 		$inputInvalidLineColor;
+$importExportBackground: 	$pageBackground;
+$calendarHeaderBackground: 	$baseColor;
+$calendarHeaderTextColor: 	white;
+$cardActionIconsColor: 		$toolbarButtonColor;
+$tooltipBackgroundColor: 	#fcefbd;
+$shadowsColor:				#ccc;
+$warningColor:				lighten($secondaryColor,20%);
+
+$listRightBorder: 2px solid $ternaryColor;
+
+
+/* FONTS AND ICONS */
+$headerFontWeight: 	600;
+$tabFontWeight: 	300;
+$baseFontSize: 		.8rem;
+$fabIconSize: 		1.3rem;
+$smallFontSize:		.6rem;
+$headerFontSize: 	.8rem;
+$tableFontSize: 	.8rem;
+
+/* PADDINGS */
+$standardPadding: 		10px;
+$tabPadding: 			8px;
+$standardLeftPadding: 	1.5rem;
+
+/* DIMENSIONS */
+$toolbarHeight: 			2rem;
+$fabHeight:					3rem;
+$inputHeight: 				2rem;
+$browseButtonLineHeight : 	4rem;
+$angularTableTRHeight: 		2rem;
+$angularTableDenseTRHeight:	1rem;
+$standardLineHeight: 		2rem;
+$biggerLineHeight:			3rem;
+$smallLineHeight: 			1.5rem;
+$standardMarginTop: 		.5rem;
+$fabTop: 					.6em;
+$fontIconHeight:			24px;
+
+/* WORKSPACE */
+$progCirculWorkspaceDiam: 75;
+
+/* KPI */
+$kpiGreyColor: 		#9E9E9E;
+$kpiRedColor: 		#F44336;
+$kpiGreenColor:		#4CAF50;
+$kpiYellowColor:	#FFEB3B;
+$kpiToolbarColor: 	#fff;
+
+/* COCKPIT */
+$cockpitDefaultBorder: 1px solid $ternaryColor;

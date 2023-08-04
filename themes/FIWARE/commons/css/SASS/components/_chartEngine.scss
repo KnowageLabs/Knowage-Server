@@ -1,0 +1,210 @@
+.kn-chartdesigner{
+
+.vertical-divider {
+  border-top-width: 0;
+  border-right-width: 1px;
+  border-right-style: solid;
+  height: 100%;
+}
+
+.chart-tab-margin-top {
+	margin-top:40px
+}
+
+.knowage-grey-color {
+	background-color:#FAFAFA
+}
+
+.whiteframe-element{
+	background-color:#FFFFFF;
+}
+
+.whiteframe-element-padding {
+	padding:15px
+}
+
+.whiteframe-element-center-margin-left {
+	margin-left:8px;
+}
+
+.whiteframe-element-center-margin-right {
+	margin-right:8px;
+}
+
+.colorpaletteItem{
+	height:40px;
+	min-height:40px;
+}
+.presetButtons{
+	color:black !important;
+	font-size:12px;
+}
+
+.bar{
+	@include custom-background-image('../../sbi_default/img/chart/types/chart_bar.png');
+}
+
+.pie{
+	@include custom-background-image('../../sbi_default/img/chart/types/chart_pie.png');
+}
+
+.line{
+	@include custom-background-image('../../sbi_default/img/chart/types/chart_line.png');
+}
+
+.sunburst{
+	@include custom-background-image('../../sbi_default/img/chart/types/chart_sunburst.png');
+}
+
+.scatter{
+	@include custom-background-image('../../sbi_default/img/chart/types/chart_scatter.png');
+}
+
+.parallel{
+	@include custom-background-image('../../sbi_default/img/chart/types/chart_parallel.png');
+}
+
+.radar{
+	@include custom-background-image('../../sbi_default/img/chart/types/chart_radar.png');
+}
+
+.gauge{
+	@include custom-background-image('../../sbi_default/img/chart/types/chart_gauge.png');
+}
+
+.treemap{
+	@include custom-background-image('../../sbi_default/img/chart/types/chart_treemap.png');
+}
+
+.heatmap{
+	@include custom-background-image('../../sbi_default/img/chart/types/chart_heatmap.png');
+}
+
+.wordcloud{
+	@include custom-background-image('../../sbi_default/img/chart/types/chart_wordcloud.png');
+}
+
+.chord{
+	@include custom-background-image('../../sbi_default/img/chart/types/chart_chord.png');
+}
+
+.bar_preview{
+	@include custom-preview-image('../../sbi_default/img/chart/preview/bar chart (double).png');
+}
+
+.pie_preview{
+	@include custom-preview-image('../../sbi_default/img/chart/preview/pie chart.png');
+}
+
+.line_preview{
+	@include custom-preview-image('../../sbi_default/img/chart/preview/line chart.png');
+}
+
+.sunburst_preview{
+	@include custom-preview-image('../../sbi_default/img/chart/preview/sunburst.png');
+}
+
+.scatter_preview{
+	@include custom-preview-image('../../sbi_default/img/chart/preview/scatter chart.png');
+}
+
+.parallel_preview{
+	@include custom-preview-image('../../sbi_default/img/chart/preview/parallel chart.png');
+}
+
+.radar_preview{
+	@include custom-preview-image('../../sbi_default/img/chart/preview/Radar chart.png');
+}
+
+.gauge_preview{
+	@include custom-preview-image('../../sbi_default/img/chart/preview/Gauge chart.png');
+}
+
+.treemap_preview{
+	@include custom-preview-image('../../sbi_default/img/chart/preview/tree map chart.png');
+}
+
+.heatmap_preview{
+	@include custom-preview-image('../../sbi_default/img/chart/preview/heatmap.png');
+}
+
+.wordcloud_preview{
+	@include custom-preview-image('../../sbi_default/img/chart/preview/wordcloud chart.png');
+}
+
+.chord_preview{
+	@include custom-preview-image('../../sbi_default/img/chart/preview/chord.png');
+}
+
+/* configuration */
+.generic_config{
+	@include custom-background-image('../../sbi_default/img/chart/configuration/configuration_generic.png');
+}
+
+.title_and_subtitle_config{
+	@include custom-background-image('../../sbi_default/img/chart/configuration/configuration_title_and_subtitle.png');
+}
+
+.no_data_config{
+	@include custom-background-image('../../sbi_default/img/chart/configuration/configuration_no_data_message.png');
+}
+
+.legend_title_config{
+	@include custom-background-image('../../sbi_default/img/chart/configuration/configuration_legend_title.png');
+}
+
+.legend_items_config{
+	@include custom-background-image('../../sbi_default/img/chart/configuration/configuration_legend_items.png');
+}
+
+.palette_config{
+	@include custom-background-image('../../sbi_default/img/chart/configuration/configuration_color_palette.png');
+}
+
+.pane_config{
+	@include custom-background-image('../../sbi_default/img/chart/configuration/configuration_pane.png');
+}
+
+.tooltip_config{
+	@include custom-background-image('../../sbi_default/img/chart/configuration/configuration_tooltip.png');
+}
+
+.limit_config{
+	@include custom-background-image('../../sbi_default/img/chart/configuration/configuration_limit.png');
+}
+
+.axis_lines_config{
+	@include custom-background-image('../../sbi_default/img/chart/configuration/configuration_axes_lines.png');
+}
+
+.ticks_and_labels_config{
+	@include custom-background-image('../../sbi_default/img/chart/configuration/configuration_ticks_and_labels.png');
+}
+
+.sequence_config{
+	@include custom-background-image('../../sbi_default/img/chart/configuration/configuration_sequence.png');
+}
+
+.explanation_config{
+	@include custom-background-image('../../sbi_default/img/chart/configuration/configuration_explanation.png');
+}
+
+.word_settings_config{
+	@include custom-background-image('../../sbi_default/img/chart/configuration/configuration_words_settings.png');
+}
+
+.advancedSerieConfBar_config{
+	@include custom-background-image('../../sbi_default/img/chart/configuration/configuration_advanced_serie.png');
+}
+
+.dangerBorder {
+	border: 2px solid $negativeColor;
+}
+
+@-moz-document url-prefix() {
+    .firefoxPreviewFix {
+        min-height: 350px;
+    }
+}
+
+}

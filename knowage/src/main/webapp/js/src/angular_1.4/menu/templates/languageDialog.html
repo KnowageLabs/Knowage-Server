@@ -1,0 +1,22 @@
+<md-dialog aria-label="List dialog" ng-cloak flex=10 id="languageDialog"> 
+	<md-toolbar>
+		<div class="md-toolbar-tools">
+	    	<h2>Select Language</h2>
+	  	</div>
+	</md-toolbar>
+	<md-dialog-content>
+		<md-list class="md-dense">
+			<md-list-item class="md-2-line" ng-repeat="language in languages" ng-click="menuCall($event,language.href,language.linkType)">
+				<img ng-src="/knowage/themes/commons/img/flagImages/{{language.iconCls}}.png" class="md-avatar" alt="{{license.product}}" />
+				<div class="md-list-item-text">
+	          		<h3>{{language.text}}</h3>
+	         	</div>
+			</md-list-item>
+		</md-list>
+ 	</md-dialog-content>
+ 	 <md-dialog-actions layout="row">
+      <md-button class="md-raised" ng-click="closeDialog()" >
+          Close
+      </md-button>
+    </md-dialog-actions>
+</md-dialog>

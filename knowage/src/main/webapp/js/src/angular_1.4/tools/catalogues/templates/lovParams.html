@@ -1,0 +1,43 @@
+<md-dialog style='width:40%;'>
+
+
+<md-toolbar class="primaryToolbar">
+      <div class="md-toolbar-tools">
+        <h2>
+          <span>{{translate.load("sbi.behavioural.lov.dependencies.title");}}</span>
+        </h2>
+      </div>
+</md-toolbar>
+
+<md-dialog-content>
+    
+ <div ng-if = "dependenciesList.length > 0" style="padding: 5px;">
+  <div layout="row" layout-wrap ng-repeat="dependency in dependenciesList">
+  
+  <p ng-if="dependency.type == 'profile'" class="md-body-1" style="padding: 5px;">{{translate.load("sbi.behavioural.lov.profile.popup.text");}}</p>
+  <p ng-if="dependency.type == 'parameter'" class="md-body-1" style="padding: 5px;">{{translate.load("sbi.behavioural.lov.parameter.popup.text");}}</p>
+  
+						<div flex=100>
+							<md-input-container class="md-block">
+							<label>{{dependency.name}}</label>
+							<input ng-model="dependency.value"> 
+							</md-input-container>
+						</div>
+					</div>    
+   </div>
+
+</md-dialog-content>
+	
+		<md-dialog-actions layout="row" style="margin-top:25px;">
+		
+			<md-button class="md-raised" ng-click="previewLov(dependenciesList)">
+				{{translate.load("sbi.ds.test");}}
+			</md-button>
+			<md-button class="md-raised" ng-click="closeDialogFromLOV()">
+				{{translate.load("sbi.generic.cancel");}}
+			</md-button>
+			
+		</md-dialog-actions>
+	
+	
+</md-dialog>

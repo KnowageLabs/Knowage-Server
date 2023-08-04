@@ -1,0 +1,30 @@
+@mixin custom-background-image($url) {
+	background: {
+		image: url($url) !important;
+		repeat: no-repeat;
+		size: 70%;
+		position: center center;
+	}
+	filter: grayscale(100%);
+	opacity: 0.5;
+	&:hover {
+		background-color:$ternaryColor;
+		opacity: 0.8;
+		filter: grayscale(50%);
+	}
+	&.active {
+		opacity: 1;
+		outline: none;
+		filter: grayscale(0%);
+	}
+}
+
+@mixin custom-preview-image($url){
+	background: {
+		image: url($url) !important;
+		repeat: no-repeat;
+		size: contain;
+		position: center center;
+	}
+	height: 100%;
+}

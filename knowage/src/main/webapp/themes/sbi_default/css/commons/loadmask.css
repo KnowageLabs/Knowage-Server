@@ -1,0 +1,34 @@
+.sbi-el-mask {
+    z-index: 20000;
+    position: absolute;
+    top:0;
+    left:0;
+    background-color: #FFF;
+    width: 100%;
+    height: 100%;
+    zoom: 1;
+}
+.sbi-el-mask-msg {
+    z-index: 20001;
+    position: absolute;
+    top: 0;
+    left: 0;
+    border:0px solid #6593cf;
+    background: #FFF url( '../../img/commons/loading/loading.gif' ) no-repeat 5px 5px;
+}
+.sbi-el-mask-msg div {
+    padding:5px 5px 5px 5px;
+    margin-left: 47px;
+    background: #FFF;
+    border:1px solid #a3bad9;
+    color:#444;
+    font: bold 13px tahoma,arial,helvetica;
+    cursor:wait;
+}
+
+.x-mask-loading div {
+    border:0px solid #6CCCcf;
+    padding:0px;
+    line-height: 42px;
+}
+

@@ -1,0 +1,93 @@
+<div ng-controller="Controller as ctrl" class="h100">
+<div class="preloader" ng-show="ctrl.showPreloader">
+<md-progress-circular class="md-hue-2" md-mode="indeterminate"></md-progress-circular>
+		</div>
+<div layout="row" layout-wrap class="h100">
+	<!-- 			LEFT BOX document -->
+	<div flex="20"  class="boxItemGlo"  >
+		<div layout="column" class="documentListBox">
+		
+			<md-toolbar class="md-blue xs-head">
+				<div class="md-toolbar-tools">
+					<div>{{translate.load("sbi.kpis.documents");}}</div>
+				</div>
+			</md-toolbar>
+			
+		
+			<md-content layout-padding class="ToolbarBox xsToolbar noBorder ">
+				<angular-list layout-fill 
+						id='document' 
+                		ng-model=ctrl.listDoc
+                		item-name='DOCUMENT_LABEL '
+                		click-function="ctrl.loadDocumentInfo(item)"
+                		show-search-bar=true  
+                		search-function="ctrl.DocumentLike(searchValue,itemsPerPage)"
+                		show-search-preloader="ctrl.showSearchDocPreloader"
+                		page-canged-function="ctrl.ChangeDocPage(newPageNumber,itemsPerPage,searchValue)"
+                		total-item-count=ctrl.sizeDoc
+                		selected-item=ctrl.selectedDocument
+                		highlights-selected-item=true
+                ></angular-list>                		
+			</md-content>		
+		</div>
+	</div>
+
+
+	<!-- 			center BOX WORD -->
+	<div flex="20" class="boxItemGlo" >
+		<div layout="column" class="documentListBox">
+
+			<md-toolbar class="md-blue xs-head">
+			<div class="md-toolbar-tools">
+				<div>{{translate.load("sbi.glossary.word");}}</div>
+			</div>
+			</md-toolbar>
+
+
+			<md-content layout-padding class="ToolbarBox xsToolbar noBorder ">
+				<angular-list layout-fill 
+						id='documentWord' 
+                		ng-model=ctrl.words
+                		item-name='WORD'
+                		enable-drag=false
+						enable-clone=true
+						drag-drop-options=ctrl.TreeOptionsWord
+						show-empty-placeholder=true
+						speed-menu-option=ctrl.docWordSpeedMenuOpt
+						show-search-bar=false
+               ></angular-list>
+	        </md-content>
+		
+		</div>
+	</div>
+
+	<!--  tree  -->
+	
+	<div flex  class="boxItemGlo" >
+	
+		<div layout="column" class="documentListBox">
+	
+			<md-toolbar class="md-blue xs-head">
+				<div class="md-toolbar-tools">
+					<div >{{translate.load("sbi.glossary.glossary");}}</div>
+				</div>
+			</md-toolbar>
+	
+			<md-content layout-padding> 
+				<glossary-tree tree-id="GlossTreeDOC" 
+								tree-options=ctrl.TreeOptions 
+								show-root=false
+								glossary={}
+								show-select-glossary="ctrl.selectedDocument==undefined"
+								show-search-bar=true
+		        				drag-word-node=true
+		        				clone-item=true 
+		        				>
+		       </glossary-tree>
+		     </md-content>	
+		</div>
+	</div>
+
+</div>
+
+</div>

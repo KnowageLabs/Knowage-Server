@@ -1,0 +1,22 @@
+<md-dialog aria-label="Role selection">
+    <md-toolbar>
+      <div class="md-toolbar-tools">
+        <h2>{{title}}</h2>
+        <span flex></span>
+      </div>
+    </md-toolbar>
+  <md-dialog-content layout-padding layout-margin>
+        <md-input-container class="md-block">
+          <md-select ng-model="sessionRole">
+            <md-option value=""><em>{{noDefaultRole}}</em></md-option>
+            <md-option ng-repeat="role in roles" ng-value="role">
+              {{role}}
+            </md-option>
+          </md-select>
+        </md-input-container>
+  </md-dialog-content>
+  <md-dialog-actions>
+  	<md-button ng-click="closeDialog()" class="md-raised">{{translate.load('sbi.accessibility.settings.close')}}</md-button>
+  	<md-button ng-click="save()" class="md-raised md-primary">{{translate.load('sbi.accessibility.settings.save')}}</md-button>
+  </md-dialog-actions>
+</md-dialog>

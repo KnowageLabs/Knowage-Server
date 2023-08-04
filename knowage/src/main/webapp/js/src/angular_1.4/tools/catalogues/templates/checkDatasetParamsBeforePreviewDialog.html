@@ -1,0 +1,35 @@
+<md-dialog style='width:50%;'>
+      
+   <md-toolbar class="miniheadfederation">
+		<div class="md-toolbar-tools">
+			<h2 class="md-flex">{{translate.load("sbi.ds.set.param.values")}}  </h2>
+			<span flex=""></span>
+		</div>	
+	</md-toolbar>
+   
+   <md-dialog-content>
+	 
+	   <angular-table
+				id="datasetParametersTable"
+				style="padding:8px;"
+				ng-model=parameterPreviewItems
+				columns=parametersPreviewColumns
+				show-search-bar=false
+				scope-functions=paramScopeFunctions
+				no-pagination=true >
+		</angular-table>
+   	<div>
+    		  		   
+    		
+   			</div>
+   </md-dialog-content>
+	
+    <md-dialog-actions layout="row">
+     <md-button ng-click="applyValueOfParameterAndContinuePreviewExecution()" class="md-raised"  md-autofocus>
+         {{translate.load("sbi.ds.test")}}
+      </md-button>
+      <md-button ng-click="closeScript()" class="md-raised" style="margin-right:20px;" >
+        {{translate.load("sbi.federationdefinition.template.button.close")}}
+      </md-button>
+    </md-dialog-actions>
+</md-dialog>

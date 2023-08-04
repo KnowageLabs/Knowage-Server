@@ -1,0 +1,85 @@
+<md-dialog aria-label="table configuration"  class="catalogFunctionDialog" ng-cloak layout="column" style="min-width:90%; min-height:90%;">
+	<md-toolbar class="_md md-knowage-theme _md-toolbar-transitions">
+    	<div class="md-toolbar-tools">
+        	<h2 class="ng-binding">{{::translate.load('sbi.functionscatalog.functionpreview')}}</h2>
+        </div>
+    </md-toolbar>
+    
+    <md-dialog-content layout="row" flex>
+	    <md-tabs flex md-selected="selectedIndex">
+	    	<md-tab label="configurator">
+		    	<div layout="row" layout-fill>
+			    	<md-card flex-sm="30" flex-xs="40" class="left">
+			        	<md-card-content class="noPadding">
+			   		   		<div ag-grid="datasetsGrid" class="ag-theme-balham ag-theme-knowage ag-theme-knowage-secondary ag-full-dimensions"></div>
+			        	</md-card-content>
+			    	</md-card>
+			    	<md-card layout="column" flex class="right" ng-class="{'icon-r': selectedFunction.language=='R', 'icon-python': selectedFunction.language=='Python'}">
+			        	<md-card-content layout="column" class="noPadding">
+			        		<div ng-show="selectedDataset">
+			        			<div ng-show="selectedFunction.description">
+				        			<md-subheader> {{::translate.load('sbi.functionscatalog.functionpreview.function.description')}} </md-subheader>
+				        			<p layout-padding> {{selectedFunction.description}} </p>
+				        		</div>
+				        		<div ng-show="selectedFunction.benchmarks">
+				        			<md-subheader> {{::translate.load('sbi.functionscatalog.functionpreview.function.benchmarks')}} </md-subheader>
+			        				<p layout-padding> {{selectedFunction.benchmarks}} </p>
+			        			</div>
+			        			<div ng-show="selectedFunction.inputColumns.length>0" style="min-height:200px;">
+			        				<md-subheader> {{::translate.load('sbi.functionscatalog.functionpreview.function.columnsSettings')}} </md-subheader>
+				            		<div ag-grid="columnsGrid" class="ag-theme-balham ag-theme-knowage ag-theme-knowage-secondary ag-full-dimensions"></div>
+				            	</div>
+				            	<div ng-show="selectedFunction.inputVariables.length>0">
+				            		<md-subheader> {{::translate.load('sbi.functionscatalog.functionpreview.function.variablesSettings')}} </md-subheader>
+				            		<div ag-grid="variablesGrid" class="ag-theme-balham ag-theme-knowage ag-theme-knowage-secondary"></div>
+			        			</div>
+			        			<div ng-show="selectedFunction.id">
+			        			<md-subheader> {{::translate.load('sbi.functionscatalog.functionpreview.function.environment')}} </md-subheader>
+						     		<md-input-container flex class="md-block">
+									  	<md-select placeholder="Choose environment" ng-if="selectedFunction.language=='Python'" ng-model="selectedFunction.environment" ng-change="setLibraries()">   
+						        			<md-option ng-repeat="e in pythonEnvironments" value="{{e}}">{{e.label}}</md-option>
+										</md-select> 
+										<md-select placeholder="Choose environment" ng-if="selectedFunction.language=='R'" ng-model="selectedFunction.environment" ng-change="setLibraries()"> 
+								        	<md-option ng-repeat="e in rEnvironments" value="{{e}}">{{e.label}}</md-option>
+								        </md-select> 
+									</md-input-container>
+									<div ag-grid="librariesGrid" ng-if="selectedFunction.environment" class="ag-theme-balham ag-theme-knowage ag-theme-knowage-secondary ag-full-dimensions" style="height: 300px"></div>
+								</div>
+			        		</div>
+			        		<div ng-show="!selectedDataset" layout="row" layout-align="center center" flex>
+			        			<div class="kn-info truncated" layout="row" layout-align="center center" style="height:50px" flex="50"> {{::translate.load('sbi.functionscatalog.functionpreview.function.noDatasetSelected')}} </div>
+			        		</div>
+			        	</md-card-content>
+			    	</md-card>
+			    	<md-card ng-if="selectedDataset && selectedDataset.pars.length > 0" flex="20">
+			        	<md-card-content class="noPadding"> 
+			        		<md-subheader> {{::translate.load('sbi.functionscatalog.functionpreview.parameters.cardheader')}} </md-subheader>
+				 			<md-input-container ng-repeat="par in selectedDataset.pars">
+							    <label>{{par.name}}</label>
+							    <input ng-model="par.value" ng-init="par.value = par.defaultValue" type="text"/>
+							</md-input-container>
+			        	</md-card-content>
+			    	</md-card>
+			    </div>    	
+		    </md-tab>
+		    <md-tab label="preview" ng-disabled="disablePreview">
+			    <md-content>
+	   		   		<div ag-grid="resultDataGrid" class="ag-theme-balham ag-theme-knowage ag-theme-knowage-secondary ag-full-dimensions"></div>
+			    </md-content>
+		    </md-tab>
+	   	</md-tabs>
+    </md-dialog-content>
+    
+    <md-dialog-actions layout="row" style="box-shadow:0px -1px 2px #ccc">
+      	<span flex></span>
+      	<md-button class="md-raised" ng-click="cancelPreview()">
+        	{{::translate.load('sbi.generic.cancel')}}
+      	</md-button>
+      	<md-button class="md-raised md-primary" ng-click="goToPreview()" ng-if="selectedIndex==0">
+        	{{::translate.load('sbi.generic.next')}}
+    	</md-button>
+    	<md-button class="md-raised md-primary" ng-click="goToConfigurator()" ng-if="selectedIndex==1">
+        	{{::translate.load('sbi.generic.back')}}
+    	</md-button>
+	</md-dialog-actions>
+</md-dialog>
