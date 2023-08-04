@@ -1,0 +1,30 @@
+.measure-detail-measure{
+	background: url('../../img/tools/measure/measures-big.png') no-repeat;
+	width: 90px;
+	background-position:5px 10px;
+}
+
+.measure-detail-dataset{
+	background: url('../../img/dataset/csv-xls-smallest.png') no-repeat;
+	width: 90px;
+	background-position:5px 20px;
+}
+
+.htmltable p{
+	line-height:13px;
+	 font-family: tahoma,arial,verdana,sans-serif; 
+	 font-size: 11px;
+	 margin: 3px;
+}
+
+.measure-detail-container{
+	float: left;
+	padding-left: 10px;
+	width: 50%
+}
+
+.dataset-detail-container{
+	float: right;
+	padding-right: 10px;
+	width: 50%
+}

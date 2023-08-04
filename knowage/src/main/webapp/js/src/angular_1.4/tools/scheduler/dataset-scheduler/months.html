@@ -1,0 +1,31 @@
+
+<md-whiteframe  layout="row">
+<span flex=5></span>
+		<h4 ng-if="!scheduling.monthsCustom"  flex><strong>{{translate.load('sbi.ds.persist.cron.everymonth')}}</strong></h4>
+		<md-input-container ng-if="scheduling.monthsCustom" flex>
+			<label >{{translate.load('sbi.ds.persist.cron.months')}}:</label>
+			<md-select placeholder ="{{translate.load('sbi.ds.persist.cron.select.months')}}"
+					   ng-required="model.isScheduled" ng-if="scheduling.monthsCustom" multiple=true
+					   ng-model="scheduling.monthsSelected"  title="{{scheduling.monthsSelected}}"
+			>   
+				<md-option ng-repeat="l in months track by $index" value="{{$index}}" ng-mousedown="setFormDirty()">
+					{{$index}}
+				</md-option>
+			</md-select> 
+		</md-input-container>	
+		<md-input-container >
+		   <md-checkbox 	aria-label="Checkbox 2" ng-model="scheduling.monthsCustom"								                     						
+			                ng-mousedown="setFormDirty()">
+				{{translate.load('sbi.general.custom')}}
+			</md-checkbox>
+		</md-input-container>
+		<md-card-actions >
+       		<md-button 	ng-if=scheduling.monthsCustom 
+       					aria-label="menu" 
+       					class="md-icon-button" 
+       					ng-click="monthsClearSelections();setFormDirty()" 
+					    ng-mousedown="setFormDirty()" >
+				<md-icon md-font-icon="fa fa-trash" ></md-icon>
+			</md-button>
+        </md-card-actions>
+</md-whiteframe>

@@ -1,0 +1,96 @@
+<div ng-controller="ControllerDataSet as ctrl" class="h100">
+	<div class="preloader" ng-show="ctrl.showPreloader">
+		<md-progress-circular class="md-hue-2" md-mode="indeterminate"></md-progress-circular>
+	</div>
+	<div layout="row" layout-wrap class="h100">
+		<!-- 			LEFT BOX document -->
+		<div flex="20" class="boxItemGlo">
+			<div layout="column" class="documentListBox">
+				<md-toolbar class="md-blue xs-head">
+					<div class="md-toolbar-tools">
+						<div>{{translate.load("sbi.kpi.kpiguidescription.dataset");}}</div>
+					</div>
+				</md-toolbar>
+
+				<md-content layout-padding class="ToolbarBox xsToolbar noBorder ">
+					<angular-list  layout-fill id='dataset' ng-model=ctrl.listDataset
+							item-name='label ' click-function="ctrl.loadDatasetInfo(item)"
+							show-search-bar=true
+							search-function="ctrl.DatasetLike(searchValue,itemsPerPage)"
+							show-search-preloader="ctrl.showSearchDatasetPreloader"
+							page-canged-function="ctrl.ChangeDatasetPage(newPageNumber,itemsPerPage,searchValue)"
+							total-item-count=ctrl.sizeDataset
+							selected-item=ctrl.selectedDataset highlights-selected-item=true></angular-list>
+				</md-content>
+			</div>
+		</div>
+
+		<!-- 			center BOX WORD -->
+		<div flex="25" class="boxItemGlo">
+			<div layout="column" class="documentListBox">
+				<div flex="50" layout="column">
+					<md-toolbar class="md-blue xs-head">
+						<div class="md-toolbar-tools">
+							<div>
+								{{translate.load("sbi.kpi.kpiguidescription.dataset");}} /
+								{{translate.load("sbi.glossary.word");}}</div>
+						</div>
+					</md-toolbar>
+
+					<md-content flex layout-padding class="ToolbarBox xsToolbar noBorder ">
+						<angular-list layout-fill id='wordDS' ng-model=ctrl.SelfWords
+								item-name='WORD' enable-drag=false enable-clone=true
+								drag-drop-options=ctrl.TreeOptionsDataset_Word
+								show-empty-placeholder=true
+								speed-menu-option=ctrl.datasetWordSpeedMenuOpt></angular-list>
+					</md-content>
+				</div>
+				<div flex="50" layout="column">
+					<md-toolbar class="md-blue xs-head">
+						<div class="md-toolbar-tools">
+							<div>{{translate.load("sbi.ds.metadata.column.column");}} /
+								{{translate.load("sbi.glossary.word");}}</div>
+						</div>
+					</md-toolbar>
+
+					<md-content layout-padding flex style=" padding-bottom: 8px;">
+	
+						<p ng-if="ctrl.words.length==0 && ctrl.selectedDataset!=undefined">{{translate.load("sbi.mydata.notbookmarkeddataset");}}</p>
+						<p ng-if="ctrl.words.length==0 && ctrl.selectedDataset==undefined ">{{translate.load("sbi.widgets.datastorepanel.grid.emptymsg");}}</p>
+	
+						<div ng-if="ctrl.words.length!=0" id="Tree-Word-Dataset"
+								ui-tree="ctrl.TreeOptionsWord" data-drag-enabled="true"
+								data-clone-enabled="true">
+							<ol ui-tree-nodes ng-model="ctrl.words"
+									ng-class="{hideChildren: collapsed}">
+								<li ng-repeat="item in ctrl.words" data-nodrag ui-tree-node
+										data-collapsed="true"
+										ng-include="'<%=urlBuilder.getResourceLink(request, "js/src/angular_1.4/tools/glossary/commons/templates/neasted_tree_dataset_word.html")%>'"
+										class="noBorder"></li>
+							</ol>
+						</div>
+					</md-content>
+				</div>
+			</div>
+		</div>
+
+		<!--  tree  -->
+
+		<div flex class="boxItemGlo">
+			<div layout="column" class="documentListBox h100">
+				<md-toolbar class="md-blue xs-head">
+					<div class="md-toolbar-tools">
+						<div>{{translate.load("sbi.glossary.glossary");}}</div>
+					</div>
+				</md-toolbar>
+
+				<md-content layout-padding>
+					<glossary-tree
+							tree-id="GlossTreeDS" tree-options=ctrl.TreeOptions show-root=false
+							glossary={} show-select-glossary="ctrl.selectedDataset==undefined"
+							show-search-bar=true drag-word-node=true clone-item=true></glossary-tree>
+				</md-content>
+			</div>
+		</div>
+	</div>
+</div>

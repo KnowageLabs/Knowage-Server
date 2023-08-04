@@ -1,0 +1,42 @@
+<md-dialog style='width:50%;'>
+      
+   <md-toolbar class="miniheadfederation">
+		<div class="md-toolbar-tools">
+			<h2 class="md-flex">{{translate.load("sbi.ds.metadata")}}</h2>
+			<span flex=""></span>
+		</div>	
+	</md-toolbar>
+   
+   <md-dialog-content>
+   
+		<md-content flex class="ToolbarBox miniToolbar noBorder mozTable">
+			<md-card layout-padding> 
+	 			<angular-table
+		 			flex
+				 	id="fieldsMetadataId" 
+				 	ng-model="fieldsMetadata"
+				 	style="height:60%;"
+				 	no-pagination=true
+					columns=fieldsMetadataColumns
+					scope-functions=fieldsMetadataScopeFunctions
+					show-search-bar=false
+					highlights-selected-item=true >
+				</angular-table>		
+ 			</md-card>
+		</md-content>
+   		
+   </md-dialog-content>
+    
+    <md-dialog-actions layout="row">
+    
+      	<md-button ng-click="closeScript('fieldsMetadata')" class="md-raised" style="margin-right:20px;" >
+       		{{translate.load("sbi.federationdefinition.template.button.close")}}
+      	</md-button>
+      	
+      	<md-button ng-click="saveFieldsMetadata()" class="md-raised" style="margin-right:20px;" >
+       		{{translate.load("sbi.federationdefinition.template.button.save")}}
+      	</md-button>
+      	
+    </md-dialog-actions>
+    
+</md-dialog>

@@ -1,0 +1,42 @@
+<md-dialog  layout="column" flex class="kn-lovPreview" ng-cloak>
+  	
+   	<md-toolbar>
+ 
+     <div class="md-toolbar-tools layout-align-center-center layout-row">
+      	
+      	
+       	<h2>Preview</h2> 
+       	
+       <span flex></span>
+       <md-button id="close-preview" ng-click="closeDialogFromLOV()">
+         {{translate.load('sbi.general.close')}}
+       </md-button>
+     </div>   
+   </md-toolbar>
+   
+<md-toolbar class="documentBrowserToolbar secondaryToolbar" >
+			<div class="md-toolbar-tools" layout="row" layout-align="center center">
+			   <md-button class="md-fab md-mini" aria-label="backPagination" ng-disabled="checkArrows('back')" ng-click="getBackPreviewSet()">
+         <md-icon class="fa fa-angle-double-left"></md-icon>
+       </md-button>
+       <span flex></span>
+       <div>{{paginationObj.paginationStart+1 +'&nbsp-&nbsp'+ paginationObj.paginationEnd + '&nbsp/&nbsp'+paginationObj.size}} </div>
+       <span flex></span>
+            <md-button class="md-fab md-mini" aria-label="forwardPagination" ng-disabled="checkArrows('next')" ng-click="getNextPreviewSet()">
+         <md-icon class="fa fa-angle-double-right"></md-icon>
+       </md-button>
+   </div>
+   </md-toolbar>
+   <br>
+   <div layout="row" layout-align="center center"><div class="kn-info truncated" flex=60>{{translate.load("sbi.behavioural.lov.filterNullValues");}}</div></div>
+   <br>
+	<angular-table
+	 			flex
+				id='previewLovTable'
+	            ng-model="previewLovModel"
+				columns="previewLovColumns" 
+				no-pagination=true
+				show-search-bar=false
+				>
+	</angular-table>	
+</md-dialog>

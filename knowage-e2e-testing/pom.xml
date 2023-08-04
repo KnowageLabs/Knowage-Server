@@ -1,0 +1,122 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  	<modelVersion>4.0.0</modelVersion>
+  
+  	<parent>
+		<groupId>it.eng.knowage</groupId>
+		<artifactId>knowage-ce-parent</artifactId>
+		<version>7.0.0-SNAPSHOT</version>
+		<relativePath>../knowage-ce-parent/pom.xml</relativePath>
+	</parent>
+
+  	<artifactId>knowage-e2e-testing</artifactId>
+  	<packaging>war</packaging>
+  	<name>knowage-e2e-testing</name>
+ 
+  	<dependencies>
+    	
+  	</dependencies>
+  	
+  	<build>
+    	<finalName>knowage-e2e-testing</finalName>
+    	
+    	<plugins>
+    		<plugin>
+	            <artifactId>maven-war-plugin</artifactId>
+	            <configuration>
+	                <attachClasses>true</attachClasses>
+	                <classesClassifier>classes</classesClassifier>
+	            </configuration>
+	        </plugin>
+    		<plugin>
+        		<groupId>com.github.eirslett</groupId>
+        		<artifactId>frontend-maven-plugin</artifactId>
+       			 <!-- Use the latest released version:
+        		https://repo1.maven.org/maven2/com/github/eirslett/frontend-maven-plugin/ -->
+       			 <version>1.6</version>
+       			 <configuration>
+        			<workingDirectory>./src/main/webapp</workingDirectory>
+        			<installDirectory>./src/main/webapp/node</installDirectory>
+    			</configuration> 
+       			 <executions>
+       			 	
+       			 	<execution>
+       			 		<id>Install node and npm</id>
+       			 			<goals>
+       			 				<goal>install-node-and-npm</goal>
+       			 			</goals>
+       			 			<configuration>
+       			 				<nodeDownloadRoot>https://nodejs.org/dist/</nodeDownloadRoot>
+       			 				<nodeVersion>v7.5.0</nodeVersion>
+       			 				<npmVersion>4.1.2</npmVersion>
+       			 				
+       			 			</configuration>
+       			 	
+       			 	</execution>
+       			 	<execution>
+       			 		<id>npm install</id>
+       			 		<goals>
+       			 			<goal>npm</goal>
+       			 		</goals>
+       			 		
+       			 		<!-- optional: default phase is "generate-resources" -->
+    					
+    					
+    					<configuration>
+    						 <!-- optional: The default argument is actually
+        					"install", so unless you need to run some other npm command,
+        					you can remove this whole <configuration> section.
+       						 -->
+       						
+    						<agruments>install</agruments> 
+    					</configuration>
+    					<phase>generate-resources</phase>
+       			 	</execution>
+       			 	
+       			 	
+       			 	<execution> 
+    					<id>grunt test</id>
+ 					  <phase>integration-test</phase> 
+    					<goals>
+        					<goal>grunt</goal>
+        					
+    					</goals>
+<!-- 						<phase>generate-resources</phase> -->
+   						<!-- optional: the default phase is "generate-resources" -->
+    					
+
+    					<configuration>
+       						 <!-- optional: if not specified, it will run Grunt's default
+       					 	task (and you can remove this whole <configuration> section.) -->
+        					<arguments>test</arguments>
+    					</configuration>
+					</execution>
+       			 
+       			 </executions>
+    		</plugin>
+    		<plugin>
+    			<groupId>org.codehaus.mojo</groupId>
+    			<artifactId>exec-maven-plugin</artifactId>
+    			<version>1.6.0</version>
+    			<configuration>
+        			<workingDirectory>./src/main/webapp/</workingDirectory>
+    			</configuration>
+    			<executions>
+        			<execution>
+            			<id>npm prune</id>
+            			<goals>
+                			<goal>exec</goal>
+            			</goals>
+            			
+            			<configuration>
+                			<executable>./node/npm</executable>
+               					<arguments>
+                   					<argument>prune</argument>
+                				</arguments>
+            			</configuration>
+        			</execution>
+    			</executions>
+			</plugin>
+    	</plugins>
+ 	 </build>
+</project>

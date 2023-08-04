@@ -1,0 +1,76 @@
+<div ng-controller="GTTableController" layout-fill layout="row">
+	<div flex="20" layout="column" class="boxItemGlo">
+		<md-toolbar class=" xs-head">
+			<div class="md-toolbar-tools">
+				<div>{{translate.load("sbi.glossary.tables");}}</div>
+			</div>
+		</md-toolbar>
+		<md-content flex layout >
+			<angular-list style="position: absolute;" flex id='table' ng-model=listTable
+							item-name='name ' click-function="loadTableInfo(item)"
+							show-search-bar=true
+							search-function="tableLike(searchValue,itemsPerPage)"
+							show-search-preloader="showSearchTablePreloader"
+							page-canged-function="changeTablePage(newPageNumber,itemsPerPage,searchValue)"
+							total-item-count=sizeTable
+							selected-item=selectedTable highlights-selected-item=true></angular-list>
+		</md-content>
+	</div>
+	
+	<div flex="25" layout="column" class="boxItemGlo">
+		<div flex="50" layout="column">
+			<md-toolbar class=" xs-head">
+				<div class="md-toolbar-tools">
+					<div>{{translate.load("sbi.glossary.tables");}} / {{translate.load("sbi.glossary.word");}}</div>
+				</div>
+			</md-toolbar>
+			<md-content flex  >
+				<angular-list layout-fill style="position: absolute;" id='wordTable' ng-model=tableWords
+					item-name='WORD' enable-drag=false enable-clone=true
+					drag-drop-options=treeOptionsTable_Word
+					show-empty-placeholder=true
+					speed-menu-option=tableWordSpeedMenuOpt>
+				</angular-list>
+			</md-content>
+		</div>
+		
+		<div flex="50" layout="column">
+			<md-toolbar class=" xs-head">
+				<div class="md-toolbar-tools">
+					<div>{{translate.load("sbi.glossary.tables");}}-{{translate.load("sbi.ds.metadata.column.column");}} / {{translate.load("sbi.glossary.word");}}</div>
+				</div>
+			</md-toolbar>
+			<md-content flex>
+<!-- 				<p ng-if="ctrl.words.length==0 && ctrl.selectedDataset!=undefined">{{translate.load("sbi.mydata.notbookmarkeddataset");}}</p> -->
+<!-- 				<p ng-if="ctrl.words.length==0 && ctrl.selectedDataset==undefined ">{{translate.load("sbi.widgets.datastorepanel.grid.emptymsg");}}</p> -->
+			
+				<div   id="TreeColumn-Word-Table" ui-tree="tableColumnTreeOptionsWord" data-drag-enabled="true" data-clone-enabled="true">
+					<ol ui-tree-nodes ng-model="sbiGlTableWlist" ng-class="{hideChildren: collapsed}">
+						<li ng-repeat="item in sbiGlTableWlist" data-nodrag ui-tree-node data-collapsed="true" class="noBorder"
+								ng-include="'<%=urlBuilder.getResourceLink(request, "js/src/angular_1.4/tools/glossary/commons/templates/nested_tree_meta_Table_or_Bc_word.html")%>'" >
+						</li>
+					</ol>
+				</div>
+			</md-content>
+		</div>
+		
+	</div>
+	
+	<div flex class="boxItemGlo" layout="column">
+		<md-toolbar class=" xs-head">
+			<div class="md-toolbar-tools">
+				<div>{{translate.load("sbi.glossary.glossary");}}</div>
+			</div>
+		</md-toolbar>
+
+		<md-content flex>
+			<glossary-tree layout-fill style="position: absolute;"
+					tree-id="GlossTreeTAB" tree-options=TreeOptions show-root=false
+					glossary={} show-select-glossary="selectedTable==undefined"
+					show-search-bar=true drag-word-node=true clone-item=true></glossary-tree>
+		</md-content>
+	</div>
+
+
+
+</div>

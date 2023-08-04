@@ -1,0 +1,34 @@
+<md-dialog style='width:50%;'>
+      
+   <md-toolbar class="miniheadfederation">
+		<div class="md-toolbar-tools">
+			<h2 class="md-flex">{{translate.load("sbi.ds.python.availableLibraries")}}</h2>
+			<span flex=""></span>
+		</div>	
+	</md-toolbar>
+   
+   <md-dialog-content>
+   
+	   <table flex class="kn-table kn-table-alternated-rows kn-table-medium-rows">
+			<thead>
+				<tr>
+					<th>{{translate.load('sbi.ds.python.library')}}</th>
+					<th>{{translate.load('sbi.ds.python.library')}}</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr ng-repeat="lib in libraries" ng-if="libraries">
+					<td>{{lib.name}}</td>
+					<td>{{lib.version}}</td>
+				</tr>
+			</tbody>
+		</table>
+   		
+   </md-dialog-content>
+
+    <md-dialog-actions layout="row">
+	    <md-button ng-click="closeScript()" class="md-raised md-primary" >
+	    	{{translate.load("sbi.federationdefinition.template.button.close")}}
+	    </md-button>
+    </md-dialog-actions>
+</md-dialog>

@@ -1,0 +1,42 @@
+<md-dialog style="min-width:40%;" class="iconSelector">
+    <md-toolbar>
+      <div class="md-toolbar-tools">
+        <h2>Choose Icon</h2>
+        <span flex></span>
+      </div>
+    </md-toolbar>
+
+    <md-dialog-content layout-padding>
+    	<div>
+	    	<md-input-container class="md-block">
+	    		<label>{{translate.load('sbi.menu.chooseIcon');}}</label>
+				<input name="searchVal" ng-maxlength="100" ng-model="searchVal">
+			</md-input-container>
+		</div>
+		<div>
+			<input type="file" id="files" name="files" onclick="this.value=null" onchange="angular.element(this).scope().insertMenu(this)"/>
+			<img ng-if="selectedIcon.src" src="{{selectedIcon.src}}" width="26" height="26"/>
+		</div>
+	   	<div ng-repeat="family in availableIcons" class="iconGallery"> 
+    		<h3>{{family.name}}</h3>
+	    	<md-grid-list md-cols="12" md-row-height="1:1" md-gutter="4px" style="font-family:family.name">
+		      <md-grid-tile 
+		      	ng-repeat="icon in family.icons | filter: searchVal track by $index"
+		      	class="iconContainer" 
+		      	ng-class="{'selected':icon == selectedIcon}"
+		      	ng-click="setIcon(family,icon)"
+		      	title="{{icon.label}}">
+		      	<i ng-class="[family.className, icon.className]"></i>
+		      </md-grid-tile>
+		    </md-grid-list>
+	    </div>
+	</md-dialog-content>
+    <md-dialog-actions layout="row">
+      <md-button class="md-raised" ng-click="cancel()">
+        {{translate.load('kn.generic.cancel');}}
+      </md-button>
+      <md-button class="md-raised md-primary" ng-click="chooseIcon()">
+        {{translate.load('sbi.menu.choose');}}
+      </md-button>
+    </md-dialog-actions>
+</md-dialog>

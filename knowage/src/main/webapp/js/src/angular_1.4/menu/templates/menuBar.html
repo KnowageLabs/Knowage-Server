@@ -1,0 +1,88 @@
+<div class="kn-mainMenu">
+	<input id="hamburger" class="hamburger" type="checkbox" ng-model="openedMenu" ng-change="closeMenu()"/> <label
+		for="hamburger" class="hamburger"> <i></i> 
+		<text> 
+			<close>{{translate.load('kn.generic.close')}}</close>
+			<open>{{translate.load('kn.mainmenu.menu')}}</open> 
+		</text>
+	</label>
+	<nav class="primnav" ng-scrollbars>
+		<ul>
+			<li>
+				<a href="#" ng-click="toggleAdminMenu($event)"> 
+					<md-tooltip md-delay="500">{{userName}}</md-tooltip> 
+					<div class="icon userImage" ng-style="getImageBackgroundStyle(userPicture)" ng-click="goHome($event)"></div>
+					<span flex>{{userName}}</span>
+					<md-button class="md-icon-button" >
+						<md-icon ng-if="!adminOpened" md-font-icon="fa fa-chevron-down"></md-icon>
+						<md-icon ng-if="adminOpened" md-font-icon="fa fa-chevron-down"></md-icon>
+					</md-button>
+					
+				</a>
+				<input id="sysadmin" class="sysadmin" type="checkbox" ng-model="adminOpened"/>
+				<ul class="secnav">
+					<li ng-repeat="fix in fixed" ng-click="menuCall($event,fix.firstUrl,fix.linkType)">
+						<a href="#">
+							<md-tooltip md-delay="500">{{fix.tooltip}}</md-tooltip> 
+							{{fix.tooltip}}
+						</a>
+					</li>
+				</ul>
+			</li>
+			<li ng-repeat="link in links" ng-if="(link.linkType!='news' && link.linkType!='downloads') || (link.linkType=='news' && totalNewsNumber && totalNewsNumber != 0) || (link.linkType=='downloads' && downloadsList.length > 0)">
+				<a href="#" ng-click="menuCall($event,link.firstUrl,link.linkType)"> 
+					<i ng-if="link.iconCls" ng-class="['icon', link.iconCls]"></i> 
+					<i ng-if="!link.iconCls" class="icon fa fa-2x fa-link"></i> 
+					<span>{{link.tooltip}}</span>
+					<md-tooltip md-delay="500">{{link.tooltip}}</md-tooltip>
+				</a>
+				<div class="tag" ng-if="link.linkType == 'news' && unreadNewsNumber">{{unreadNewsNumber}}</div>
+				<div class="tag" ng-if="link.linkType == 'downloads' && downloadsList.length > 0 && newDownloadsNumber > 0">{{newDownloadsNumber}}</div>
+			</li>
+			
+			<li ng-repeat="custom in customs track by $index">
+				<a href="#" ng-click="menuCall($event,custom.src,custom.linkType,custom.menu,$index)" layout="row">
+				
+					<img ng-if="custom.custIcon && custom.custIcon.src" ng-src="{{custom.custIcon.src}}" class="icon"/>
+					<i ng-if="!custom.custIcon && custom.icon" class="icon {{custom.icon.className}} fa-2x"></i>
+					<i ng-if="!custom.custIcon && !custom.icon && custom.menu" class="icon fa fa-2x fa-list-ul"></i> 
+					<i ng-if="!custom.custIcon && !custom.icon && !custom.menu" class="icon fa fa-2x fa-file-o"></i>
+					
+					<span ng-if="custom.descr && custom.descr.length>0">{{ custom.descr | i18n }}</span>
+					<md-tooltip ng-if="custom.descr && custom.descr.length>0" md-delay="500">{{ custom.descr | i18n }}</md-tooltip>
+				
+					<span ng-if="(!custom.descr || custom.descr.length==0) && custom.text">{{ custom.text | i18n }}</span>
+					<md-tooltip ng-if="(!custom.descr || custom.descr.length==0) && custom.text" md-delay="500">{{ custom.text | i18n }}</md-tooltip>
+				
+					<span flex></span>
+					<md-button class="md-icon-button" ng-if="custom.menu" ng-click="openMenu($event,$index)">
+						<md-icon md-font-icon="fa fa-chevron-right"></md-icon>
+					</md-button>
+				</a>
+			</li>
+			<li class="spacer"></li>
+		</ul>
+	</nav>
+	
+	<nav class="secondLevelContainer" ng-if="selectedCustom">
+		<div layout="row" layout-align="center center">
+			<md-button class="md-icon-button" ng-click="backMenu($event,selectedCustom)">
+				<md-icon md-font-icon="fa fa-arrow-left"></md-icon>
+			</md-button>
+			<span flex></span>
+		</div>
+		<ul ng-animate-swap="selectedCustom" ng-class="{'reverseAnim' : tempAnimateClass, 'forwardAnim' : !tempAnimateClass}">
+			<li ng-repeat="item in selectedCustom.menu track by $index" ng-click="menuCall($event,item.src,item.linkType,item.menu,$index, true)" layout="row" layout-align="start center">
+				<span flex> 
+					{{item.text}}
+				</span>
+				<md-tooltip md-delay="500">{{item.text}}</md-tooltip>
+				<md-button class="md-icon-button" ng-if="item.menu" ng-click="nextMenu($event,$index)">
+					<md-icon md-font-icon="fa fa-chevron-right"></md-icon>
+				</md-button>
+			</li>
+		</ul>
+	</nav>
+	
+	<div class="menuOverlay" ng-click="toggleCheck()"></div>
+</div>

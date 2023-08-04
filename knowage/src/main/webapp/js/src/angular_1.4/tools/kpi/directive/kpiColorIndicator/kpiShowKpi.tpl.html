@@ -1,0 +1,37 @@
+<md-dialog class="scorecardDialog">
+	<md-toolbar>
+		<div class="md-toolbar-tools">
+			<span>{{translate.load('sbi.kpi.scorecard.list.kpi.toolbar')}} {{target.name}}</span>
+		</div>
+	</md-toolbar>
+    <md-dialog-content layout-padding>
+    	<div layout="row">
+			<md-input-container class="md-block" flex> 
+				<label>{{translate.load('sbi.kpi.scorecard.perspective.criterion')}}</label> 
+				<input ng-model="target.criterion.translatedValueName" disabled />
+			</md-input-container> 
+			<md-input-container flex='50' class="md-block" ng-if="target.criterion.valueCd!=='MAJORITY'" > 
+				<label>{{translate.load('sbi.kpi.scorecard.priority.kpi')}}</label> 
+				<input ng-model="target.options.criterionPriority[0]" title="{{target.options.criterionPriority[0]}}" disabled/> 
+
+			</md-input-container>
+		</div>
+        <md-list class="noPadding">
+        	<md-list-item class="singleKpiColorValue" ng-repeat="kpi in target.kpis">
+			    <div class="kpiColorBox" ng-class="getClass(kpi.status,false)" layout="row" layout-align="center center">
+					<i class="fa" flex ng-class="getClass(kpi.status,true)"></i>
+				</div>
+			    <p> {{ kpi.name }} </p>
+        	</md-list-item>
+        	<span layout-padding ng-if="!target.kpis || target.kpis.length == 0">{{traslate.load('sbi.kpi.list.none')}}</span>
+        	
+        </md-list>
+    </md-dialog-content>
+    
+
+    <div class="md-actions" layout="row" layout-align="end center">
+      <md-button ng-click="close('close')">
+        {{translate.load('sbi.general.close')}}
+      </md-button>
+    </div>
+</md-dialog>

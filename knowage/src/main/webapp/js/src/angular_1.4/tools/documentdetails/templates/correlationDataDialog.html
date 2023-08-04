@@ -1,0 +1,75 @@
+<md-dialog aria-label="driver visualization"  style="min-width:60%" ng-form name="dataDependency">
+    <form ng-cloak>
+        <md-toolbar>
+            <div class="md-toolbar-tools">
+                <h2>{{translate.load("sbi.documentdetails.datadependency")}}</h2>
+            </div>
+        </md-toolbar>
+        <md-dialog-content style="padding:16px" layout="column" layout-align="start stretch">            
+            <div layout="row" layout-align="center center">
+			  <div class="kn-info"  flex>
+			    {{::translate.load("sbi.documentdetails.datadependency.operatorinfo1")}} <i>{{driverName}}</i> {{translate.load("sbi.documentdetails.datadependency.operatorinfo2")}}
+			  </div>
+			</div>
+            	<div layout="row">            		                
+	                <md-input-container flex=30>
+	                	<label>{{translate.load("sbi.documentdetails.datadependency.ad")}} <i>{{driverName}}</i> {{translate.load("sbi.documentdetails.datadependency.depends")}}</label>
+                    	<md-select ng-model="selectedDataCondition[0].parFatherId">
+	                        <md-option value="{{option.id}}" ng-repeat="option in drivers track by $index">
+	                            {{ option.label }}
+	                        </md-option>
+                    	</md-select>
+                	</md-input-container>
+		            
+					<div layout="column" flex=50>		                
+		                <md-input-container>
+		                	<label>{{translate.load("sbi.documentdetails.datadependency.operator")}}</label>
+		                    <md-select ng-model="selectedDataCondition[0].filterOperation">
+		                        <md-option ng-value="option" ng-repeat="option in availableOperators track by $index">
+		                            {{ option }}
+		                        </md-option>
+		                    </md-select>		                    
+		                </md-input-container>
+		                
+	                </div>
+	                <md-input-container flex>
+	            		<label>{{translate.load("sbi.documentdetails.datadependency.logicaloperator")}}</label>
+	                    <md-select ng-model="selectedDataCondition[0].logicOperator">
+	                        <md-option ng-value="option" ng-repeat="option in connectingOperators track by $index">
+	                            {{ option }}
+	                        </md-option>
+	                    </md-select>
+	                </md-input-container>
+	            </div>
+				
+					<div ng-repeat="paruse in dependencyParuses">	
+					<md-divider></md-divider>
+					<md-subheader class="smallerSubheader">{{translate.load("sbi.documentdetails.datadependency.usename")}} {{paruse.name}}</md-subheader>
+						<div layout="row">
+							<md-input-container flex=50>								
+								<md-checkbox ng-model="useModeIds[paruse.useID]" aria-label='translate.load("sbi.documentdetails.datadependency.check")'>{{translate.load("sbi.documentdetails.datadependency.check")}}</md-checkbox>								
+							</md-input-container>
+							
+							<md-input-container flex>
+							 	<label>{{translate.load("sbi.documentdetails.datadependency.columns")}}</label>
+							 	<md-select ng-model="paruseColumns[selectedDriver.id][paruse.useID]" ng-disabled="!useModeIds[paruse.useID]">	           
+				                    <md-option ng-value="option" ng-repeat="option in getLovColumnsForParuse(paruse) track by $index">
+				                    	{{ option }}
+				                    </md-option>
+		             			</md-select> 
+		             		</md-input-container>														
+             			</div>             				                 
+	            	</div>	            	
+			
+	        </md-dialog-content>
+	        <md-dialog-actions layout="row">
+	            <span flex></span>
+	            <md-button class="md-raised" ng-click="close(dataDependency);">
+	                 {{translate.load("sbi.documentdetails.visualdependency.cancel")}}
+	            </md-button>
+	            <md-button class="md-raised md-primary"  ng-disabled="visualDependency.$invalid" ng-click="hide()">
+	                 {{translate.load("sbi.documentdetails.visualdependency.save")}}
+	            </md-button>
+	        </md-dialog-actions>
+	    </form>
+	</md-dialog>

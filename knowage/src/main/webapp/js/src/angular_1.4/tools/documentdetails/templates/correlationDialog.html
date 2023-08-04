@@ -1,0 +1,54 @@
+
+<md-dialog aria-label="driver visualization"  style="min-width:60%" ng-form name="visualDependency">
+    <form ng-cloak>
+        <md-toolbar>
+            <div class="md-toolbar-tools">
+                <h2>{{translate.load("sbi.documentdetails.visualdependency")}}</h2>
+            </div>
+        </md-toolbar>
+        <md-dialog-content style="padding:16px" layout="column" layout-align="start stretch">
+            <div layout="row" layout-align="center center">
+                <div class="kn-info" flex="60">
+                  {{translate.load("sbi.documentdetails.visualdependency.set")}}
+                </div>
+            </div>
+            <md-input-container>
+                <label> {{translate.load("sbi.documentdetails.visualdependency.title")}}</label>
+                <input ng-required = "'true'" name="label" ng-model="selectedCondition.viewLabel" type="text" ng-change="addToChangedVisualDepedencies(selectedCondition)">
+            </md-input-container>
+            <div layout="row">
+                <md-input-container flex  >
+                    <label>{{translate.load("sbi.documentdetails.visualdependency.analyticaldriver")}}</label>
+                    <md-select ng-model="selectedCondition.parFatherId" ng-change="addToChangedVisualDepedencies(selectedCondition)">
+                        <md-option ng-value="option.id" ng-repeat="option in drivers track by $index">
+                            {{ option.label }}
+                        </md-option>
+                    </md-select>
+                </md-input-container>
+                <md-input-container>
+                    <label>{{translate.load("sbi.documentdetails.visualdependency.operator")}}</label>
+                    <md-select ng-model="selectedCondition.operation" ng-change="addToChangedVisualDepedencies(selectedCondition)">
+                        <md-option ng-value="option" ng-repeat="option in availableOperators track by $index">
+                            {{ option }}
+                        </md-option>
+                    </md-select>
+                </md-input-container>
+
+                <md-input-container flex>
+                    <label>{{translate.load("sbi.documentdetails.visualdependency.value")}}</label>
+                    <input ng-required = "'true'" name="value" ng-model="selectedCondition.compareValue" type="text" ng-change="addToChangedVisualDepedencies(selectedCondition)">
+                </md-input-container>
+            </div>
+
+        </md-dialog-content>
+        <md-dialog-actions layout="row">
+            <span flex></span>
+            <md-button class="md-raised" ng-click="close(visualDependency)">
+                {{translate.load("sbi.documentdetails.visualdependency.cancel")}}
+            </md-button>
+            <md-button class="md-raised md-primary" ng-disabled="visualDependency.$invalid"ng-click="hide()">
+                {{translate.load("sbi.documentdetails.visualdependency.save")}}
+            </md-button>
+        </md-dialog-actions>
+    </form>
+</md-dialog>

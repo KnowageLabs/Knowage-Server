@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Facet Query</title>
+</head>
+<body bgcolor="#0000ff">
+    <div style='width: 600px; font-size: 10px; font-family: verdana;'>
+    If you want to specify a single facet.query parameter just define in this way
+    <pre>
+    	price:[500 TO *]
+    </pre>
+    
+        If you want to specify multiple facet.query parameters you need to add also the prefix facet.query= and separate the values with &. You should also use same encoding like you are writing an URL. For example
+        
+    <pre>
+    	facet.query=price:[*+TO+500]&facet.query=price:[500+TO+*]
+    </pre>
+
+    </div>
+
+</body>
+</html>

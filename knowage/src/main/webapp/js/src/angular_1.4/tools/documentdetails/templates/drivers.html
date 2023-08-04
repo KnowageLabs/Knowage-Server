@@ -1,0 +1,173 @@
+<div flex ng-cloak layout="row" ng-controller="DocumentDetailsDriversController as dd" layout-fill ng-form name="drivers">
+    <div flex="40" style="border-right:1px solid #ccc">
+        <md-toolbar class="secondaryToolbar">
+            <div class="md-toolbar-tools" layout="row">
+                <h2> {{dd.translate.load("sbi.documentdetails.drivers")}}</h2>
+                <span flex></span>
+                <md-button ng-click="dd.addDriver()" aria-label="add driver ">
+                    {{dd.translate.load("sbi.documentdetails.drivers.add")}}
+                </md-button>           
+                 </div>
+        </md-toolbar>
+        <md-content layout="column" class="tabContainer">
+            <div layout="row" layout-align="center center" ng-if="!dd.drivers || dd.drivers.length == 0">
+                <div class="kn-noItems">
+                   {{dd.translate.load("sbi.documentdetails.drivers.nodriver")}}
+                </div>
+            </div>
+            <md-list class="md-dense" flex>
+                <md-list-item class=" md-2-line " ng-repeat="driver in dd.drivers | orderBy:'priority' " ng-click="dd.selectDriver($index+1)">
+                    <div class="md-list-item-text ">
+                   
+                        <h3> {{ driver.label }} </h3>
+                        <p> {{ driver.parameterUrlName }} </p>
+                    </div>
+                    <md-button class="md-secondary md-icon-button" ng-if="!$first" ng-click="dd.movePriority(driver.priority,'up')" aria-label="move up driver ">
+                        <md-icon md-font-icon="fa fa-arrow-up"></md-icon>
+                    </md-button>
+                    <md-button class="md-secondary md-icon-button" ng-if="!$last" ng-click="dd.movePriority(driver.priority,'down')" aria-label="move down driver ">
+                        <md-icon md-font-icon="fa fa-arrow-down"></md-icon>
+                    </md-button>
+                    <md-button class="md-secondary md-icon-button" ng-click="dd.deleteDriver(driver,'driver') " aria-label="delete driver ">
+                        <md-icon md-font-icon="fa fa-trash "></md-icon>
+                    </md-button>
+                    <md-divider></md-divider>
+                </md-list-item>
+            </md-list>
+        </md-content>
+    </div>
+    <div flex="60" >
+        <md-toolbar class="secondaryToolbar ">
+            <div class="md-toolbar-tools " layout="row ">
+                <h2> {{dd.translate.load("sbi.documentdetails.drivers.details")}}</h2>
+            </div>
+        </md-toolbar>
+        <div layout="row" layout-align="center center" ng-if="!dd.selectedDriver">
+            <div class="kn-noItems">
+                {{dd.translate.load("sbi.documentdetails.drivers.noselected")}}
+            </div>
+        </div>
+       
+        <md-card ng-if="dd.selectedDriver">
+            <md-card-content layout="column">
+                <md-input-container class="md-block">
+                    <label>{{dd.translate.load("sbi.documentdetails.visualdependency.title")}}</label>
+                    <input name="label" ng-required="true" ng-model="dd.selectedDriver.label" ng-change="dd.addToChangedDrivers(dd.selectedDriver)" type="text"
+                    		ng-required="true" ng-maxlength="40" ng-pattern="dd.regex.extendedAlphanumeric" />
+                    <div ng-messages="drivers.label.$error" role="alert" ng-messages-multiple>
+						<div ng-message="required">{{dd.translate.load("sbi.catalogues.generic.reqired")}}</div>
+						<div ng-message="pattern">{{dd.translate.load("sbi.config.manage.fields.validation.extendedAlphanumericRegex")}}</div>
+						<div ng-message="maxlength">{{dd.translate.load("sbi.config.manage.fields.validation.maximumCharacters")}} 40</div>
+ 					</div>
+                </md-input-container>
+                <md-input-container class="md-block">               
+                    <label>{{dd.translate.load("sbi.documentdetails.drivers.analyticaldriver")}}</label>
+					<md-select ng-required="dd.required" name="analyticalDriver" ng-model="dd.selectedDriver.parameter.label"  ng-change="dd.addToChangedDrivers(dd.selectedDriver)" md-on-close="dd.clearSearch()">
+							  <md-select-header>
+					            <input flex ng-model="dd.searchTerm"
+					                   type="text"
+					                   placeholder="Search for analytical driver"
+					                   onkeydown="event.stopPropagation()"
+					                   >
+		         			</md-select-header>
+                        <md-option ng-repeat="analyticaldriver in dd.analyticalDrivers | filter: dd.searchTerm track by analyticaldriver" ng-value="analyticaldriver" >
+                        {{analyticaldriver}}
+                        </md-option>
+                    </md-select>
+                </md-input-container>
+
+                <md-input-container>
+                    <label>{{dd.translate.load("sbi.documentdetails.drivers.url")}}</label> 
+                    <input name="url" ng-model="dd.selectedDriver.parameterUrlName" ng-change="dd.addToChangedDrivers(dd.selectedDriver)" type="text" 
+                    		ng-required="true" ng-maxlength="20" ng-pattern="dd.regex.alphanumericNoSpaces" unique-url-name />
+                    <div ng-messages="drivers.url.$error" role="alert" ng-messages-multiple>
+						<div ng-message="required">{{dd.translate.load("sbi.catalogues.generic.reqired")}}</div>
+						<div ng-message="pattern">{{dd.translate.load("sbi.config.manage.fields.validation.alphanumericNoSpacesRegex")}}</div>
+						<div ng-message="maxlength">{{dd.translate.load("sbi.config.manage.fields.validation.maximumCharacters")}} 20</div>
+						<div ng-message="notUnique">{{dd.translate.load("sbi.documentdetails.drivers.notUnique")}}</div>
+ 					</div>
+                </md-input-container>
+
+                <div layout="row ">
+                    <md-switch ng-if="dd.driverRelatedObject.engine" ng-model="dd.selectedDriver.visible " ng-change="dd.addToChangedDrivers(dd.selectedDriver)" aria-label="document visibility " flex="33 ">
+                        <md-icon md-font-icon="fa fa-eye"></md-icon> {{dd.translate.load("sbi.documentdetails.drivers.visible")}}
+                    </md-switch>
+                    <md-switch ng-if="dd.driverRelatedObject.engine" ng-model="dd.selectedDriver.required " ng-change="dd.addToChangedDrivers(dd.selectedDriver)" aria-label="document locked " flex="33 ">
+                        <md-icon md-font-icon="fa fa-asterisk"></md-icon> {{dd.translate.load("sbi.documentdetails.drivers.required")}}
+                    </md-switch>
+                    <md-switch ng-model="dd.selectedDriver.multivalue " ng-change="dd.addToChangedDrivers(dd.selectedDriver)" aria-label="document locked " flex="33 ">
+                        <md-icon md-font-icon="fa fa-list"></md-icon> {{dd.translate.load("sbi.documentdetails.drivers.multivalue")}}
+                    </md-switch>
+                </div>
+            </md-card-content>
+        </md-card>
+       
+        <div flex ng-if="dd.driversNum" layout="row">
+        
+          <div flex = "50" layout="row " ><!--  -->
+            <md-card ng-if="dd.selectedDriver " flex>
+  
+             <md-toolbar class="ternaryToolbar ">
+         
+                <div class="md-toolbar-tools " layout="row ">
+                    <h2 >{{dd.translate.load("sbi.documentdetails.drivers.data")}}</h2>
+                    <span flex></span>
+                    <md-button ng-disabled="!dd.selectedDriver.id" ng-click="dd.editDataCondition($event,dd.selectedDriver)">{{dd.translate.load("sbi.documentdetails.drivers.addcondition")}}</md-button>
+                </div>
+            </md-toolbar>
+            <md-card-content layout="column" class="noPadding">
+                <div layout="row" layout-align="center center" ng-if="dd.isEmpty(dd.transformedObj)">
+                    <div class="kn-noItems">               
+                       {{dd.translate.load("sbi.documentdetails.drivers.nodata")}}
+                    </div>
+                </div>
+                <md-list class="md-dense">
+                    <md-list-item class=" md-2-line "  ng-repeat="(key, value) in dd.transformedObj track by $index" ng-form="dataDependency" ng-click="dd.editDataCondition($event, dd.selectedDriver, key)">                         
+                        <div class="md-list-item-text ">
+                            <h3><strong>{{ value[0].filterOperation }} {{dd.translate.load("sbi.documentdetails.drivers.value")}} </strong> {{value[0].parFatherUrlName}} </h3>
+                        </div>                       
+                        <md-button class="md-secondary md-icon-button" ng-click="dd.deleteDataCondition(key)" aria-label="delete driver ">
+                            <md-icon md-font-icon="fa fa-trash "></md-icon>
+                        </md-button>
+                        <md-divider></md-divider>
+                    </md-list-item>
+                </md-list>                             
+            </md-card-content>
+ 
+        </md-card>
+        </div>
+        <div flex  layout="row" ng-if="dd.driverRelatedObject.engine">
+        <md-card ng-if="dd.selectedDriver" flex>
+            <md-toolbar class="ternaryToolbar ">
+            <div >
+                <div class="md-toolbar-tools "  layout="row ">
+                    <h2 >{{dd.translate.load("sbi.documentdetails.drivers.visibility")}}</h2>
+                    <span flex></span>
+                    <md-button ng-disabled="!dd.selectedDriver.id" ng-click="dd.editCondition($event,dd.selectedDriver)">{{dd.translate.load("sbi.documentdetails.drivers.addcondition")}}</md-button>
+                </div>
+                </div>
+            </md-toolbar>
+           
+            <md-card-content layout="column" class="noPadding">
+                <div layout="row" layout-align="center center" ng-if=" !dd.visibilityConditions[dd.selectedDriver.id].length > 0">
+                    <div class="kn-noItems">
+                        {{dd.translate.load("sbi.documentdetails.drivers.novisibility")}}
+                    </div>
+                </div>
+                <md-list class="md-dense">
+                    <md-list-item class=" md-2-line " ng-repeat="correlation in dd.visibilityConditions[dd.selectedDriver.id] track by $index" ng-form="visualDependency" ng-click="dd.editCondition($event,dd.selectedDriver,$index)">
+                        <div class="md-list-item-text ">
+                            <h3><strong>{{ correlation.viewLabel }}</strong> {{correlation.parFatherUrlName}} {{correlation.operation}} {{correlation.compareValue}}</h3>
+                        </div>
+                        <md-button class="md-secondary md-icon-button" ng-click="dd.deleteVisualCondition($index,'visual',dd.selectedDriver) " aria-label="delete driver ">
+                            <md-icon md-font-icon="fa fa-trash "></md-icon>
+                        </md-button>
+                        <md-divider></md-divider>
+                    </md-list-item>
+                </md-list>
+            </md-card-content>
+         </md-card>
+       </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,25 @@
+
+ <div flex=100>
+  		<md-input-container class="md-block" > 
+  			<label>Tags</label>		
+  			<md-chips ng-model="tags" md-transform-chip="addNewTagToList($chip)"
+  					  md-separator-keys="separators" md-on-remove="removeTag($chip,tags)"
+              		  md-removable="true" md-enable-chip-edit="true"
+              	 	  input-aria-label="Tags">
+	              <md-autocomplete
+			          md-selected-item="selectedItem"
+			          md-search-text="searchText"
+			          md-items="item in allTags | filter: searchText"
+			          md-item-text="item.name"
+			          input-aria-describedby="Tags"
+			          placeholder="Search for a tag">
+	       		  		<span md-highlight-text="searchText">{{item.name}}</span>
+	    		  </md-autocomplete>
+             	 <md-chip-template>
+					 {{$chip.name}}
+        		</md-chip-template>
+              </md-chips>
+  			
+  		</md-input-container>
+ </div>
+ 

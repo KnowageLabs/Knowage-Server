@@ -1,0 +1,43 @@
+<div flex ng-cloak layout="row" ng-controller="DataLineageController as dl" layout-fill ng-form name="datalineage">
+    <div flex>
+        <md-toolbar class="secondaryToolbar">
+            <div class="md-toolbar-tools" layout="row">
+                <h2>Data Lineage</h2>
+            </div>
+        </md-toolbar>
+        <md-content class="tabContainer">
+            <md-card>
+                <md-toolbar class="ternaryToolbar">
+                    <div class="md-toolbar-tools" layout="row">
+                        <h2>Available Tables</h2>
+                    </div>
+                </md-toolbar>
+                <md-card-content layout="column" layout-align="start stretch">
+                    <md-input-container>
+                        <label>Select Source</label>
+                        <md-select ng-model="dataSource">
+                            <md-option ng-value="dataSource" ng-repeat="dataSource in dl.sourceList" ng-click="dl.getTablesBySourceID(dataSource.sourceId)">
+                                {{ dataSource.name }}
+                            </md-option>
+                        </md-select>
+                    </md-input-container>
+                    <div layout="row" layout-align="center center" ng-if="!dl.sourceList || dl.sourceList.length == 0">
+                        <div class="kn-noItems">
+                            No data source present, add some
+                        </div>
+                    </div>
+                    
+                    <div layout="column">
+                        <div class="" ng-repeat="table in dl.tablesList" >                        
+                            <div class="md-list-item-text ">                                
+                                <md-checkbox class="md-secondary" ng-model="table.wanted">{{ table.name }}</md-checkbox>
+                            </div>                            
+                        </div>                        
+                    </div>                    
+
+                </md-card-content>
+            </md-card>
+
+        </md-content>
+    </div>
+</div>
