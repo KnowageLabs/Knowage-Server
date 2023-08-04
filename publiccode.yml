@@ -1,8 +1,8 @@
-# This repository adheres to the publiccode.yml standard by including this 
+# This repository adheres to the publiccode.yml standard by including this
 # metadata file that makes public software easily discoverable.
 # More info at https://github.com/italia/publiccode.yml
 
-publiccodeYmlVersion: '0.2'
+publiccodeYmlVersion: "0.2"
 applicationSuite: Knowage Suite
 categories:
   - data-analytics
@@ -12,18 +12,18 @@ dependsOn:
   open:
     - name: Java
       optional: false
-      version: '8'
-      versionMax: ''
-      versionMin: ''
+      version: "8"
+      versionMax: ""
+      versionMin: ""
 description:
   it:
-    apiDocumentation: 'https://knowage.docs.apiary.io/'
+    apiDocumentation: "https://knowage.docs.apiary.io/"
     awards:
       - OW2CON '18 Best Project - Market Award
       - OW2CON '20 best Project - Technology Award
-    documentation: 'https://knowage-suite.readthedocs.io/'
+    documentation: "https://knowage-suite.readthedocs.io/"
     features:
-      - 'KNOWAGE è composto di due moduli autonomi:'
+      - "KNOWAGE è composto di due moduli autonomi:"
       - ENTERPRISE REPORTING per la produzione e distribuzione di report statici
       - |-
         SMART INTELLIGENCE per la tipica BI su dati strutturati, incentrata su
@@ -61,38 +61,38 @@ description:
       America.
     screenshots:
       - |-
-        https://raw.githubusercontent.com/KnowageLabs/Knowage-Server/master/screenshots/knowage_market_cockpit.jpg
+        https://raw.githubusercontent.com/KnowageLabs/Knowage-Server/master/images/screenshots/knowage_market_cockpit.jpg
       - |-
-        https://raw.githubusercontent.com/KnowageLabs/Knowage-Server/master/screenshots/knowage-advanced-analytics.jpg
+        https://raw.githubusercontent.com/KnowageLabs/Knowage-Server/master/images/screenshots/knowage-advanced-analytics.jpg
       - |-
-        https://raw.githubusercontent.com/KnowageLabs/Knowage-Server/master/screenshots/knowage-alert.jpg
+        https://raw.githubusercontent.com/KnowageLabs/Knowage-Server/master/images/screenshots/knowage-alert.jpg
       - |-
-        https://raw.githubusercontent.com/KnowageLabs/Knowage-Server/master/screenshots/knowage-customization.jpg
+        https://raw.githubusercontent.com/KnowageLabs/Knowage-Server/master/images/screenshots/knowage-customization.jpg
       - |-
-        https://raw.githubusercontent.com/KnowageLabs/Knowage-Server/master/screenshots/knowage-dashboard-transportation.jpg
+        https://raw.githubusercontent.com/KnowageLabs/Knowage-Server/master/images/screenshots/knowage-dashboard-transportation.jpg
       - |-
-        https://raw.githubusercontent.com/KnowageLabs/Knowage-Server/master/screenshots/knowage-healthcare1-cockpit.jpg
+        https://raw.githubusercontent.com/KnowageLabs/Knowage-Server/master/images/screenshots/knowage-healthcare1-cockpit.jpg
       - |-
-        https://raw.githubusercontent.com/KnowageLabs/Knowage-Server/master/screenshots/knowage-retail-cockpit.jpg
+        https://raw.githubusercontent.com/KnowageLabs/Knowage-Server/master/images/screenshots/knowage-retail-cockpit.jpg
       - |-
-        https://raw.githubusercontent.com/KnowageLabs/Knowage-Server/master/screenshots/knowage-sintesi-homenergia.jpg
+        https://raw.githubusercontent.com/KnowageLabs/Knowage-Server/master/images/screenshots/knowage-sintesi-homenergia.jpg
       - |-
-        https://raw.githubusercontent.com/KnowageLabs/Knowage-Server/master/screenshots/knowage-developments-homenergia.jpg
+        https://raw.githubusercontent.com/KnowageLabs/Knowage-Server/master/images/screenshots/knowage-developments-homenergia.jpg
       - |-
-        https://raw.githubusercontent.com/KnowageLabs/Knowage-Server/master/screenshots/knowage-covid-italy-regional.png
+        https://raw.githubusercontent.com/KnowageLabs/Knowage-Server/master/images/screenshots/knowage-covid-italy-regional.png
       - |-
-        https://raw.githubusercontent.com/KnowageLabs/Knowage-Server/master/screenshots/knowage-cockpit2.jpg
+        https://raw.githubusercontent.com/KnowageLabs/Knowage-Server/master/images/screenshots/knowage-cockpit2.jpg
       - |-
-        https://raw.githubusercontent.com/KnowageLabs/Knowage-Server/master/screenshots/knowage-cockpit.jpg
+        https://raw.githubusercontent.com/KnowageLabs/Knowage-Server/master/images/screenshots/knowage-cockpit.jpg
       - |-
-        https://raw.githubusercontent.com/KnowageLabs/Knowage-Server/master/screenshots/knowage-map.jpg
+        https://raw.githubusercontent.com/KnowageLabs/Knowage-Server/master/images/screenshots/knowage-map.jpg
       - |-
-        https://raw.githubusercontent.com/KnowageLabs/Knowage-Server/master/screenshots/knowage-responsive2.jpg
+        https://raw.githubusercontent.com/KnowageLabs/Knowage-Server/master/images/screenshots/knowage-responsive2.jpg
     shortDescription: Suite open source completa per la Business Intelligence e gli Analytics
     videos:
-      - 'https://www.youtube.com/watch?v=-fZIsVh_qsc'
-      - 'https://www.youtube.com/watch?v=59SAgrY_Hoo'
-      - 'https://www.youtube.com/watch?v=0r7opJ9P0jc'
+      - "https://www.youtube.com/watch?v=-fZIsVh_qsc"
+      - "https://www.youtube.com/watch?v=59SAgrY_Hoo"
+      - "https://www.youtube.com/watch?v=0r7opJ9P0jc"
 developmentStatus: stable
 intendedAudience:
   scope:
@@ -121,13 +121,13 @@ it:
     lineeGuidaDesign: false
     misureMinimeSicurezza: false
     modelloInteroperabilita: false
-  countryExtensionVersion: '0.2'
+  countryExtensionVersion: "0.2"
   piattaforme:
     anpr: false
     cie: false
     pagopa: false
     spid: false
-landingURL: 'https://www.knowage-suite.com/site/home/'
+landingURL: "https://www.knowage-suite.com/site/home/"
 legal:
   license: AGPL-3.0-only
   mainCopyrightOwner: Engineering Ingegneria Informatica S.p.A.
@@ -160,8 +160,8 @@ maintenance:
       name: Davide Zerbetto
   contractors:
     - name: Engineering Ingegneria Informatica S.p.A.
-      until: '2050-12-31'
-      website: 'https://www.eng.it/'
+      until: "2050-12-31"
+      website: "https://www.eng.it/"
   type: contract
 name: Knowage Server
 platforms:
@@ -169,11 +169,11 @@ platforms:
   - windows
   - mac
   - linux
-releaseDate: '2022-07-16'
-roadmap: 'https://github.com/KnowageLabs/Knowage-Server/blob/master/ROADMAP.md'
+releaseDate: "2022-07-16"
+roadmap: "https://github.com/KnowageLabs/Knowage-Server/blob/master/ROADMAP.md"
 softwareType: standalone/web
-softwareVersion: '8.1'
-url: 'https://github.com/KnowageLabs/Knowage-Server.git'
+softwareVersion: "8.1"
+url: "https://github.com/KnowageLabs/Knowage-Server.git"
 usedBy:
   - Azienda Unità Locale Sanitaria di Modena
   - Enav S.p.A.
