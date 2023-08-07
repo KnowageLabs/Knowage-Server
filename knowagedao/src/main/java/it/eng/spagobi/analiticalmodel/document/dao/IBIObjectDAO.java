@@ -37,82 +37,82 @@ import it.eng.spagobi.commons.dao.ISpagoBIDao;
 public interface IBIObjectDAO extends ISpagoBIDao {
 
 	/**
-	 * Loads all information for the execution of a BI Object identified by its <code>id</code> and its <code>role</code>. All these information, achived by a
-	 * query to the DB, are stored into a <code>BIObject</code> object, which is returned.
+	 * Loads all information for the execution of a BI Object identified by its <code>id</code> and its <code>role</code>. All these information, achived by a query
+	 * to the DB, are stored into a <code>BIObject</code> object, which is returned.
 	 *
 	 * @param id   The BI object id
 	 * @param role The BI object role
 	 * @return The BIobject execution information, stored into a <code>BIObject</code>
 	 * @throws EMFUserError If an Exception occurs
 	 */
-	public BIObject loadBIObjectForExecutionByIdAndRole(Integer id, String role) throws EMFUserError;
+	BIObject loadBIObjectForExecutionByIdAndRole(Integer id, String role) throws EMFUserError;
 
 	/**
-	 * Loads all information for the execution of a BI Object identified by its <code>label</code> and its <code>role</code>. All these information, achived by
-	 * a query to the DB, are stored into a <code>BIObject</code> object, which is returned.
+	 * Loads all information for the execution of a BI Object identified by its <code>label</code> and its <code>role</code>. All these information, achived by a
+	 * query to the DB, are stored into a <code>BIObject</code> object, which is returned.
 	 *
 	 * @param label The BI object label
 	 * @param role  The BI object role
 	 * @return The BIobject execution information, stored into a <code>BIObject</code>
 	 * @throws EMFUserError If an Exception occurs
 	 */
-	public List<BIObjectParameter> loadDocumentDrivers(BIObject biObject, String role) throws EMFUserError;
+	List<BIObjectParameter> loadDocumentDrivers(BIObject biObject, String role) throws EMFUserError;
 
 	/**
-	 * Loads all detail information for a BI Object identified by its <code>label</code> identifier. All these information, achived by a query to the DB, are
-	 * stored into a <code>BIObject</code> object, which is returned.
+	 * Loads all detail information for a BI Object identified by its <code>label</code> identifier. All these information, achived by a query to the DB, are stored
+	 * into a <code>BIObject</code> object, which is returned.
 	 *
 	 * @param label The BI object label identifier
 	 * @return The BI object detail information, stored into a <code>BIObject</code>
 	 * @throws EMFUserError If an Exception occurs
 	 */
-	public BIObject loadBIObjectByLabel(String label) throws EMFUserError;
+	BIObject loadBIObjectByLabel(String label) throws EMFUserError;
 
 	/**
-	 * Loads all detail information for a BI Object identified by its <code>name</code> identifier. All these information, achived by a query to the DB, are
-	 * stored into a <code>BIObject</code> object, which is returned.
+	 * Loads all detail information for a BI Object identified by its <code>name</code> identifier. All these information, achived by a query to the DB, are stored
+	 * into a <code>BIObject</code> object, which is returned.
 	 *
 	 * @param name The BI object name identifier
 	 * @return The BI object detail information, stored into a <code>BIObject</code>
 	 * @throws EMFUserError If an Exception occurs
 	 */
-	public BIObject loadBIObjectByName(String name) throws EMFUserError;
+	BIObject loadBIObjectByName(String name) throws EMFUserError;
 
 	/**
-	 * Loads all detail information for a BI Object identified by its <code>biObjectID</code> identifier. All these information, achived by a query to the DB,
-	 * are stored into a <code>BIObject</code> object, which is returned.
+	 * Loads all detail information for a BI Object identified by its <code>biObjectID</code> identifier. All these information, achived by a query to the DB, are
+	 * stored into a <code>BIObject</code> object, which is returned.
 	 *
 	 * @param biObjectID the BI object identifier
 	 * @return The BI object detail information, stored into a <code>BIObject</code>
 	 * @throws EMFUserError If an Exception occurs
 	 */
-	public BIObject loadBIObjectById(Integer biObjectID) throws EMFUserError;
+	BIObject loadBIObjectById(Integer biObjectID) throws EMFUserError;
 
-	public List<BIObject> loadBIObjectsByLovId(Integer idLov) throws EMFUserError;
+	List<BIObject> loadBIObjectsByLovId(Integer idLov) throws EMFUserError;
 
-	public List<BIObject> loadBIObjectsByParamterId(Integer idParameter) throws EMFUserError;
+	List<BIObject> loadBIObjectsByParamterId(Integer idParameter) throws EMFUserError;
 
-	public List<BIObject> loadAllBIObjectsBySearchKey(String searchKey, String attributes) throws EMFUserError;
+	List<BIObject> loadAllBIObjectsBySearchKey(String searchKey, String attributes) throws EMFUserError;
 
 	/**
-	 * Loads all detail information for a BI Object identified by its <code>id</code> identifier integer. All these information, achived by a query to the DB,
-	 * are stored into a <code>BIObject</code> object, which is returned.
+	 * Loads all detail information for a BI Object identified by its <code>id</code> identifier integer. All these information, achived by a query to the DB, are
+	 * stored into a <code>BIObject</code> object, which is returned.
 	 *
 	 * @param id the id
 	 * @return The BI object detail information, stored into a <code>BIObject</code>
 	 * @throws EMFUserError If an Exception occurs
 	 */
-	public BIObject loadBIObjectForDetail(Integer id) throws EMFUserError;
+	BIObject loadBIObjectForDetail(Integer id) throws EMFUserError;
 
 	/**
-	 * Loads all detail information for a BI Object identified by its <code>path</code> in the cms. All these information, achived by a query to the DB, are
-	 * stored into a <code>BIObject</code> object, which is returned.
+	 * Loads all detail information for a BI Object identified by its <code>path</code> in the cms. All these information, achived by a query to the DB, are stored
+	 * into a <code>BIObject</code> object, which is returned.
 	 *
 	 * @param path the path
 	 * @return The BI object detail information, stored into a <code>BIObject</code>
 	 * @throws EMFUserError If an Exception occurs
 	 */
-	public BIObject loadBIObjectForDetail(String path) throws EMFUserError;
+	BIObject loadBIObjectForDetail(String path) throws EMFUserError;
 
 	/**
 	 * Loads all tree information for a BI Object identified by its <code>id</code> identifier Integer. All these information, achived by a query to the DB, are
@@ -122,7 +122,7 @@ public interface IBIObjectDAO extends ISpagoBIDao {
 	 * @return The BI object tree information, stored into a <code>BIObject</code>
 	 * @throws EMFUserError If an Exception occurs
 	 */
-	public BIObject loadBIObjectForTree(Integer id) throws EMFUserError;
+	BIObject loadBIObjectForTree(Integer id) throws EMFUserError;
 
 	/**
 	 * Implements the query to modify a BI Object. All information needed is stored into the input <code>BIObject</code> object.
@@ -131,7 +131,7 @@ public interface IBIObjectDAO extends ISpagoBIDao {
 	 * @throws EMFUserError If an Exception occurred
 	 */
 
-	public void modifyBIObject(BIObject obj) throws EMFUserError;
+	void modifyBIObject(BIObject obj) throws EMFUserError;
 
 	/**
 	 * Implements the query to modify a BI Object. All information needed is stored into the input <code>BIObject</code> object.
@@ -141,7 +141,7 @@ public interface IBIObjectDAO extends ISpagoBIDao {
 	 * @throws EMFUserError If an Exception occurred
 	 */
 
-	public void modifyBIObject(BIObject obj, boolean loadParsDC) throws EMFUserError;
+	void modifyBIObject(BIObject obj, boolean loadParsDC) throws EMFUserError;
 
 	/**
 	 * Implements the query to modify a BI Object and its template. All information needed is stored into the input <code>BIObject</code> and
@@ -151,7 +151,7 @@ public interface IBIObjectDAO extends ISpagoBIDao {
 	 * @param obj     the obj
 	 * @throws EMFUserError If an Exception occurred
 	 */
-	public void modifyBIObject(BIObject obj, ObjTemplate objTemp) throws EMFUserError;
+	void modifyBIObject(BIObject obj, ObjTemplate objTemp) throws EMFUserError;
 
 	/**
 	 * Implements the query to modify a BI Object and its template. All information needed is stored into the input <code>BIObject</code> and
@@ -162,7 +162,7 @@ public interface IBIObjectDAO extends ISpagoBIDao {
 	 * @param loadParsDC the boolean that permit the loading of parameters of a document composition
 	 * @throws EMFUserError If an Exception occurred
 	 */
-	public void modifyBIObject(BIObject obj, ObjTemplate objTemp, boolean loadParsDC) throws EMFUserError;
+	void modifyBIObject(BIObject obj, ObjTemplate objTemp, boolean loadParsDC) throws EMFUserError;
 
 	/**
 	 * Implements the query to insert a BIObject. All information needed is stored into the input <code>BIObject</code> object.
@@ -170,7 +170,7 @@ public interface IBIObjectDAO extends ISpagoBIDao {
 	 * @param obj The object containing all insert information
 	 * @throws EMFUserError If an Exception occurred
 	 */
-	public Integer insertBIObject(BIObject obj) throws EMFUserError;
+	Integer insertBIObject(BIObject obj) throws EMFUserError;
 
 	/**
 	 * Implements the query to insert a BIObject and its template. All information needed is stored into the input <code>BIObject</code> and
@@ -180,7 +180,7 @@ public interface IBIObjectDAO extends ISpagoBIDao {
 	 * @param loadParsDC the boolean that permit the loading of parameters of a document composition
 	 * @throws EMFUserError If an Exception occurred
 	 */
-	public void insertBIObject(BIObject obj, boolean loadParsDC) throws EMFUserError;
+	void insertBIObject(BIObject obj, boolean loadParsDC) throws EMFUserError;
 
 	/**
 	 * Implements the query to insert a BIObject and its template. All information needed is stored into the input <code>BIObject</code> and
@@ -190,7 +190,7 @@ public interface IBIObjectDAO extends ISpagoBIDao {
 	 * @param objTemp The template of the biobject
 	 * @throws EMFUserError If an Exception occurred
 	 */
-	public Integer insertBIObject(BIObject obj, ObjTemplate objTemp) throws EMFUserError;
+	Integer insertBIObject(BIObject obj, ObjTemplate objTemp) throws EMFUserError;
 
 	/**
 	 * Implements the query to insert a BIObject and its template. All information needed is stored into the input <code>BIObject</code> and
@@ -201,7 +201,7 @@ public interface IBIObjectDAO extends ISpagoBIDao {
 	 * @param loadParsDC the boolean that permit the loading of parameters of a document composition
 	 * @throws EMFUserError If an Exception occurred
 	 */
-	public void insertBIObject(BIObject obj, ObjTemplate objTemp, boolean loadParsDC) throws EMFUserError;
+	void insertBIObject(BIObject obj, ObjTemplate objTemp, boolean loadParsDC) throws EMFUserError;
 
 	/**
 	 * Implements the query to insert a BIObject and its template. All information needed is stored into the input <code>BIObject</code> and
@@ -213,7 +213,7 @@ public interface IBIObjectDAO extends ISpagoBIDao {
 	 *
 	 * @throws EMFUserError If an Exception occurred
 	 */
-	public Integer insertBIObjectForClone(BIObject obj, ObjTemplate objTemp) throws EMFUserError;
+	Integer insertBIObjectForClone(BIObject obj, ObjTemplate objTemp) throws EMFUserError;
 
 	/**
 	 * Deletes a BIObject from a functionality. If the functionality is not specified (i.e. idFunct == null), the method deletes the BIObject from all the
@@ -223,7 +223,7 @@ public interface IBIObjectDAO extends ISpagoBIDao {
 	 * @param idFunct The Integer representing the functionality id
 	 * @throws EMFUserError If an Exception occurred
 	 */
-	public void eraseBIObject(BIObject obj, Integer idFunct) throws EMFUserError;
+	void eraseBIObject(BIObject obj, Integer idFunct) throws EMFUserError;
 
 	/**
 	 * Given the id for a report and the user profile, gets the corret roles for execution.
@@ -233,7 +233,7 @@ public interface IBIObjectDAO extends ISpagoBIDao {
 	 * @return The list of correct roles for execution
 	 * @throws EMFUserError If an Exception occurred
 	 */
-	public List getCorrectRolesForExecution(Integer id, IEngUserProfile profile) throws EMFUserError;
+	List getCorrectRolesForExecution(Integer id, IEngUserProfile profile) throws EMFUserError;
 
 	/**
 	 * Gets the correct roles for Report execution, given only the Report's id.
@@ -242,7 +242,7 @@ public interface IBIObjectDAO extends ISpagoBIDao {
 	 * @return The list of correct roles for execution
 	 * @throws EMFUserError If an Exception occurred
 	 */
-	public List getCorrectRolesForExecution(Integer id) throws EMFUserError;
+	List getCorrectRolesForExecution(Integer id) throws EMFUserError;
 
 	/**
 	 * Gets the biparameters associated with to a biobject.
@@ -251,7 +251,7 @@ public interface IBIObjectDAO extends ISpagoBIDao {
 	 * @return List, list of the biparameters associated with the biobject
 	 * @throws EMFUserError the EMF user error
 	 */
-	public List getBIObjectParameters(BIObject aBIObject) throws EMFUserError;
+	List<BIObjectParameter> getBIObjectParameters(BIObject aBIObject) throws EMFUserError;
 
 	/**
 	 * Loads all the BIObjects.
@@ -259,7 +259,7 @@ public interface IBIObjectDAO extends ISpagoBIDao {
 	 * @return the list of BIObjects
 	 * @throws EMFUserError If an Exception occurred
 	 */
-	public List loadAllBIObjects() throws EMFUserError;
+	List<BIObject> loadAllBIObjects() throws EMFUserError;
 
 	/**
 	 * Loads all the BIObjects ordered by parameter column.
@@ -268,28 +268,28 @@ public interface IBIObjectDAO extends ISpagoBIDao {
 	 * @return the list of BIObjects
 	 * @throws EMFUserError If an Exception occurred
 	 */
-	public List loadDocumentsBeforeDate(String data) throws EMFUserError;
+	List<BIObject> loadDocumentsBeforeDate(String data) throws EMFUserError;
 
-	public List loadAllBIObjects(String filterOrder) throws EMFUserError;
+	List<BIObject> loadAllBIObjects(String filterOrder) throws EMFUserError;
 
 	/**
 	 * Loads all BIObjects filtered by parameters specified in 'restrictions' (AND condition) and in 'disjunctions' (OR condition) with capability of pagination
 	 *
 	 * @param page
-	 * @param item_per_page
+	 * @param itemPerPage
 	 * @param disjunctions
 	 * @param restrictions
 	 * @return
 	 * @throws EMFUserError
 	 */
-	public List<BIObject> loadPaginatedSearchBIObjects(Integer page, Integer item_per_page, Collection<CriteriaParameter> disjunctions,
-			Collection<CriteriaParameter> restrictions) throws EMFUserError;
+	List<BIObject> loadPaginatedSearchBIObjects(Integer page, Integer itemPerPage,
+			Collection<CriteriaParameter> disjunctions, Collection<CriteriaParameter> restrictions) throws EMFUserError;
 
-	public BIObject toBIObject(SbiObjects hibBIObject, Session session) throws EMFUserError;
+	BIObject toBIObject(SbiObjects hibBIObject, Session session) throws EMFUserError;
 
-	public List loadPagedObjectsList(Integer offset, Integer fetchSize) throws EMFUserError;
+	List<BIObject> loadPagedObjectsList(Integer offset, Integer fetchSize) throws EMFUserError;
 
-	public Integer countBIObjects(String search, String user) throws EMFUserError;
+	Integer countBIObjects(String search, String user) throws EMFUserError;
 
 	/**
 	 * Loads all the BIObjects that belong to sub functionalities of the given functionality path.
@@ -298,7 +298,7 @@ public interface IBIObjectDAO extends ISpagoBIDao {
 	 * @return the list of BIObjects
 	 * @throws EMFUserError If an Exception occurred
 	 */
-	public List loadAllBIObjectsFromInitialPath(String initialPath) throws EMFUserError;
+	List<BIObject> loadAllBIObjectsFromInitialPath(String initialPath) throws EMFUserError;
 
 	/**
 	 * Loads all the BIObjects that belong to sub functionalities of the given functionality path and ordered by parameter column.
@@ -308,7 +308,7 @@ public interface IBIObjectDAO extends ISpagoBIDao {
 	 * @return the list of BIObjects
 	 * @throws EMFUserError If an Exception occurred
 	 */
-	public List loadAllBIObjectsFromInitialPath(String initialPath, String filterOrder) throws EMFUserError;
+	List<BIObject> loadAllBIObjectsFromInitialPath(String initialPath, String filterOrder) throws EMFUserError;
 
 	/**
 	 * Loads all the BIObjects filtering with the input parameters.
@@ -319,7 +319,7 @@ public interface IBIObjectDAO extends ISpagoBIDao {
 	 * @return the list of BIObjects
 	 * @throws EMFUserError If an Exception occurred
 	 */
-	public List loadBIObjects(String type, String state, String folderPath) throws EMFUserError;
+	List<BIObject> loadBIObjects(String type, String state, String folderPath) throws EMFUserError;
 
 	/**
 	 * Loads all the BIObjects filtering with the input parameters.
@@ -329,7 +329,8 @@ public interface IBIObjectDAO extends ISpagoBIDao {
 	 * @return the list of BIObjects
 	 * @throws EMFUserError If an Exception occurred
 	 */
-	public List loadBIObjects(Integer folderID, IEngUserProfile profile, boolean isPersonalFolder) throws EMFUserError;
+	List<BIObject> loadBIObjects(Integer folderID, IEngUserProfile profile, boolean isPersonalFolder)
+			throws EMFUserError;
 
 	/**
 	 * Search objects with the features specified.
@@ -342,12 +343,12 @@ public interface IBIObjectDAO extends ISpagoBIDao {
 	 * @return the list of BIObjects
 	 * @throws EMFUserError If an Exception occurred
 	 */
-	public List searchBIObjects(String valueFilter, String typeFilter, String columnFilter, String isGlobal, Integer nodeFilter, IEngUserProfile profile)
-			throws EMFUserError;
+	List<BIObject> searchBIObjects(String valueFilter, String typeFilter, String columnFilter, String isGlobal,
+			Integer nodeFilter, IEngUserProfile profile) throws EMFUserError;
 
-	public List loadAllBIObjectsByFolderId(Integer folderId) throws EMFUserError;
+	List loadAllBIObjectsByFolderId(Integer folderId) throws EMFUserError;
 
-	public String changeLockStatus(String documentLabel, boolean isUserAdmin) throws EMFUserError;
+	String changeLockStatus(String documentLabel, boolean isUserAdmin) throws EMFUserError;
 
 	/**
 	 * Specially provided method for custom-made output category parameters for the SUNBURST chart.

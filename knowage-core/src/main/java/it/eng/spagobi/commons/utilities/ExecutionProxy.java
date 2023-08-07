@@ -24,12 +24,11 @@ import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Base64;
-import java.util.GregorianCalendar;
+import java.util.Calendar;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Vector;
 
 import org.apache.commons.httpclient.Header;
 import org.apache.commons.httpclient.HttpClient;
@@ -37,7 +36,8 @@ import org.apache.commons.httpclient.HttpMethod;
 import org.apache.commons.httpclient.NameValuePair;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.methods.PostMethod;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.safehaus.uuid.UUID;
 import org.safehaus.uuid.UUIDGenerator;
 
@@ -67,11 +67,13 @@ import it.eng.spagobi.utilities.assertion.Assert;
 
 public class ExecutionProxy {
 
-	private static Logger logger = Logger.getLogger(ExecutionProxy.class);
-	private static String backEndExtension = "BackEnd";
-	public static String SEND_MAIL_MODALITY = "SEND_MAIL";
-	public static String EXPORT_MODALITY = "EXPORT";
-	public static String MASSIVE_EXPORT_MODALITY = SpagoBIConstants.MASSIVE_EXPORT_MODALITY;
+	private static final Logger LOGGER = LogManager.getLogger(ExecutionProxy.class);
+
+	private static final String BACK_END_EXTENSION = "BackEnd";
+
+	public static final String SEND_MAIL_MODALITY = "SEND_MAIL";
+	public static final String EXPORT_MODALITY = "EXPORT";
+	public static final String MASSIVE_EXPORT_MODALITY = SpagoBIConstants.MASSIVE_EXPORT_MODALITY;
 
 	private BIObject biObject = null;
 
@@ -106,7 +108,8 @@ public class ExecutionProxy {
 	 * @return the byte[]
 	 */
 	public byte[] exec(IEngUserProfile profile, String modality, String defaultOutputFormat) {
-		logger.debug("IN");
+		LOGGER.debug("Executing document with profile {}, modality {}, defaultOutputFormat {}", profile, modality,
+				defaultOutputFormat);
 		byte[] response = new byte[0];
 		try {
 			if (biObject == null)
@@ -135,16 +138,14 @@ public class ExecutionProxy {
 					resContainer.setErrorHandler(new EMFErrorHandler());
 					RequestContainer.setRequestContainer(reqContainer);
 					ResponseContainer.setResponseContainer(resContainer);
-					Locale locale = new Locale("it", "IT", "");
 					SessionContainer session = new SessionContainer(true);
 					reqContainer.setSessionContainer(session);
 					SessionContainer permSession = session.getPermanentContainer();
-					// IEngUserProfile profile = new AnonymousCMSUserProfile();
 					permSession.setAttribute(IEngUserProfile.ENG_USER_PROFILE, profile);
 					errorHandler = defaultRequestContext.getErrorHandler();
 
 					String className = eng.getClassName();
-					logger.debug("Try instantiating class " + className + " for internal engine " + eng.getName() + "...");
+					LOGGER.debug("Try instantiating class {} for internal engine {}...", className, eng.getName());
 					InternalEngineIFace internalEngine = null;
 					// tries to instantiate the class for the internal engine
 					try {
@@ -152,14 +153,15 @@ public class ExecutionProxy {
 							throw new ClassNotFoundException();
 						internalEngine = (InternalEngineIFace) Class.forName(className).newInstance();
 					} catch (ClassNotFoundException cnfe) {
-						logger.error("The class ['" + className + "'] for internal engine " + eng.getName() + " was not found.", cnfe);
-						Vector params = new Vector();
+						LOGGER.error("The class ['{}'] for internal engine {} was not found.", className, eng.getName(),
+								cnfe);
+						List<String> params = new ArrayList<>();
 						params.add(className);
 						params.add(eng.getName());
 						errorHandler.addError(new EMFUserError(EMFErrorSeverity.ERROR, 2001, params));
 						return response;
 					} catch (Exception e) {
-						logger.error("Error while instantiating class " + className, e);
+						LOGGER.error("Error while instantiating class {}", className, e);
 						errorHandler.addError(new EMFUserError(EMFErrorSeverity.ERROR, 100));
 						return response;
 					}
@@ -167,21 +169,14 @@ public class ExecutionProxy {
 						reqContainer.setAttribute("scheduledExecution", "true");
 						internalEngine.execute(reqContainer, biObject, resp);
 					} catch (EMFUserError e) {
-						logger.error("Error during engine execution", e);
+						LOGGER.error("Error during engine execution", e);
 						errorHandler.addError(e);
 					} catch (Exception e) {
-						logger.error("Error while engine execution", e);
+						LOGGER.error("Error while engine execution", e);
 						errorHandler.addError(new EMFUserError(EMFErrorSeverity.ERROR, 100));
 					}
 					return response;
 				} else if (eng.getClassName().equals("it.eng.spagobi.engines.chart.SpagoBIChartInternalEngine")) {
-					SourceBean request = null;
-					EMFErrorHandler errorHandler = null;
-					try {
-						request = new SourceBean("");
-					} catch (SourceBeanException e1) {
-						e1.printStackTrace();
-					}
 					RequestContainer reqContainer = new RequestContainer();
 					SpagoBIChartInternalEngine sbcie = new SpagoBIChartInternalEngine();
 
@@ -195,7 +190,7 @@ public class ExecutionProxy {
 						long length = file.length();
 
 						if (length > Integer.MAX_VALUE) {
-							logger.error("file too large");
+							LOGGER.error("File too large: {}", length);
 							return null;
 						}
 
@@ -205,13 +200,14 @@ public class ExecutionProxy {
 						// Read in the bytes
 						int offset = 0;
 						int numRead = 0;
-						while (offset < bytes.length && (numRead = is.read(bytes, offset, bytes.length - offset)) >= 0) {
+						while (offset < bytes.length
+								&& (numRead = is.read(bytes, offset, bytes.length - offset)) >= 0) {
 							offset += numRead;
 						}
 
 						// Ensure all the bytes have been read in
 						if (offset < bytes.length) {
-							logger.warn("Could not read all the file");
+							LOGGER.warn("Could not read all the file");
 						}
 
 						return bytes;
@@ -230,15 +226,15 @@ public class ExecutionProxy {
 			// get the map of parameter to send to the engine
 			Map mapPars = aEngineDriver.getParameterMap(biObject, profile, "");
 			if (defaultOutputFormat != null && !defaultOutputFormat.trim().equals("")) {
-				List params = biObject.getDrivers();
-				Iterator iterParams = params.iterator();
+				List<BIObjectParameter> params = biObject.getDrivers();
+				Iterator<BIObjectParameter> iterParams = params.iterator();
 				boolean findOutPar = false;
 				while (iterParams.hasNext()) {
-					BIObjectParameter par = (BIObjectParameter) iterParams.next();
+					BIObjectParameter par = iterParams.next();
 					String parUrlName = par.getParameterUrlName();
 					List values = par.getParameterValues();
-					logger.debug("processing biparameter with url name " + parUrlName);
-					if (parUrlName.equalsIgnoreCase("outputType") && values != null && values.size() > 0) {
+					LOGGER.debug("Processing BIObjectParameter with url name {}", parUrlName);
+					if (parUrlName.equalsIgnoreCase("outputType") && values != null && !values.isEmpty()) {
 						findOutPar = true;
 						break;
 					}
@@ -269,7 +265,8 @@ public class ExecutionProxy {
 			}
 
 			// set userId in particular cases (backend operations)
-			if (SEND_MAIL_MODALITY.equals(modality) || EXPORT_MODALITY.equals(modality) || SpagoBIConstants.MASSIVE_EXPORT_MODALITY.equals(modality)) {
+			if (SEND_MAIL_MODALITY.equals(modality) || EXPORT_MODALITY.equals(modality)
+					|| SpagoBIConstants.MASSIVE_EXPORT_MODALITY.equals(modality)) {
 				mapPars.put(SsoServiceInterface.USER_ID, ((UserProfile) profile).getUserUniqueIdentifier());
 			}
 
@@ -293,12 +290,14 @@ public class ExecutionProxy {
 			// get the url of the engine
 			String urlEngine = getExternalEngineUrl(eng);
 
+			LOGGER.debug("The URL is {}", urlEngine);
+
 			// built the request to sent to the engine
 			HttpMethod httpMethod;
 			if ("it.eng.spagobi.engines.drivers.cockpit.CockpitDriver".equals(eng.getDriverName())
 					|| "it.eng.spagobi.engines.drivers.chart.ChartDriver".equals(eng.getDriverName())) {
 				GetMethod getMethod = new GetMethod(urlEngine);
-				List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
+				List<NameValuePair> nameValuePairs = new ArrayList<>();
 				Iterator iterMapPar = mapPars.keySet().iterator();
 				while (iterMapPar.hasNext()) {
 					String parurlname = (String) iterMapPar.next();
@@ -328,9 +327,10 @@ public class ExecutionProxy {
 			httpMethod.addRequestHeader("Authorization", "Direct " + encodedUserId);
 
 			// sent request to the engine
+			LOGGER.debug("Calling {} with headers {}", httpMethod.getURI(), httpMethod.getRequestHeaders());
 			HttpClient client = new HttpClient();
 			int statusCode = client.executeMethod(httpMethod);
-			logger.debug("statusCode=" + statusCode);
+			LOGGER.debug("Resposne status code {}", statusCode);
 			response = httpMethod.getResponseBody();
 
 			Header headContetType = httpMethod.getResponseHeader("Content-Type");
@@ -340,25 +340,26 @@ public class ExecutionProxy {
 				returnedContentType = "application/octet-stream";
 			}
 
-			auditManager.updateAudit(auditId, null, new Long(GregorianCalendar.getInstance().getTimeInMillis()), "EXECUTION_PERFORMED", null, null);
+			auditManager.updateAudit(auditId, null, Calendar.getInstance().getTimeInMillis(), "EXECUTION_PERFORMED",
+					null, null);
 			httpMethod.releaseConnection();
 		} catch (Exception e) {
-			logger.error("Error while executing object ", e);
+			LOGGER.error("Error while executing object ", e);
 		}
-		logger.debug("OUT");
+		LOGGER.debug("OUT");
 		return response;
 	}
 
 	private String getExternalEngineUrl(Engine eng) {
-		logger.debug("IN");
+		LOGGER.debug("IN");
 		// in case there is a Secondary URL, use it
 		String urlEngine = eng.getSecondaryUrl();
 		if (urlEngine == null || urlEngine.trim().equals("")) {
-			logger.debug("Secondary url is not defined for engine " + eng.getLabel() + "; main url will be used.");
+			LOGGER.debug("Secondary url is not defined for engine {}; main url will be used.", eng.getLabel());
 			// in case there is not a Secondary URL, use the main url
 			urlEngine = eng.getUrl();
 		}
-		logger.debug("Engine url is " + urlEngine);
+		LOGGER.debug("Engine url is {}", urlEngine);
 		Assert.assertTrue(urlEngine != null && !urlEngine.trim().equals(""), "External engine url is not defined!!");
 		urlEngine = resolveRelativeUrls(urlEngine);
 
@@ -367,27 +368,28 @@ public class ExecutionProxy {
 
 		) {
 			// ADD this extension because this is a BackEnd engine invocation
-			urlEngine = urlEngine + backEndExtension;
+			urlEngine = urlEngine + BACK_END_EXTENSION;
 		}
-		logger.debug("OUT: returning " + urlEngine);
+		LOGGER.debug("Returned URL is {}", urlEngine);
 		return urlEngine;
 	}
 
 	private String resolveRelativeUrls(String url) {
-		logger.debug("IN: url = " + url);
+		LOGGER.debug("Resolving relative ULR {}", url);
 		if (url.startsWith("/")) {
-			logger.debug("Url is relative");
+			LOGGER.debug("Url is relative");
 			String domain = getServiceHostUrl();
-			logger.debug("SpagoBI domain is " + domain);
+			LOGGER.debug("SpagoBI domain is {}", domain);
 			url = domain + url;
-			logger.debug("Absolute url is " + url);
+			LOGGER.debug("Absolute url is {}", url);
 		}
-		logger.debug("OUT: returning " + url);
+		LOGGER.debug("Returning {}", url);
 		return url;
 	}
 
 	public String getServiceHostUrl() {
-		String serviceURL = SpagoBIUtilities.readJndiResource(SingletonConfig.getInstance().getConfigValue("SPAGOBI.SPAGOBI_SERVICE_JNDI"));
+		String serviceURL = SpagoBIUtilities
+				.readJndiResource(SingletonConfig.getInstance().getConfigValue("SPAGOBI.SPAGOBI_SERVICE_JNDI"));
 		serviceURL = serviceURL.substring(0, serviceURL.lastIndexOf('/'));
 		return serviceURL;
 	}
@@ -418,7 +420,7 @@ public class ExecutionProxy {
 	 * @return the file extension from cont type
 	 */
 	public String getFileExtensionFromContType(String contentType) {
-		logger.debug("IN: contentType = " + contentType);
+		LOGGER.debug("Getting file extension from content type {}", contentType);
 		String extension = "";
 		if (contentType != null) {
 			if (contentType.equalsIgnoreCase("text/html")) {
@@ -449,7 +451,7 @@ public class ExecutionProxy {
 				extension = ".svg";
 			}
 		}
-		logger.debug("OUT");
+		LOGGER.debug("OUT");
 		return extension;
 	}
 
@@ -466,21 +468,6 @@ public class ExecutionProxy {
 			mapPars.put("outputType", "JPEG");
 		}
 	}
-
-	private String getTemporaryTableName() {
-		UUIDGenerator uuidGen = UUIDGenerator.getInstance();
-		UUID uuidObj = uuidGen.generateTimeBasedUUID();
-		String executionId = uuidObj.toString();
-		return executionId.replaceAll("-", "");
-	}
-
-	// public boolean isSplittingFilter() {
-	// return splittingFilter;
-	// }
-	//
-	// public void setSplittingFilter(boolean splittingFilter) {
-	// this.splittingFilter = splittingFilter;
-	// }
 
 	public String getMimeType() {
 		return mimeType;
