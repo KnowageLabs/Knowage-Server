@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,7 +11,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -64,14 +64,10 @@ public class SchedulerTreeHtmlGenerator implements ITreeHtmlGenerator {
 	/**
 	 * Creates the Dtree configuration, in oder to inser into jsp pages cookies, images, etc.
 	 *
-	 * @param objectsList
-	 *            the objects list
-	 * @param httpRequest
-	 *            the http request
-	 * @param initialPath
-	 *            the initial path
-	 * @param treename
-	 *            the treename
+	 * @param objectsList the objects list
+	 * @param httpRequest the http request
+	 * @param initialPath the initial path
+	 * @param treename    the treename
 	 *
 	 * @return the string buffer
 	 */
@@ -107,7 +103,8 @@ public class SchedulerTreeHtmlGenerator implements ITreeHtmlGenerator {
 	 */
 
 	@Override
-	public StringBuffer makeTree(List objectsList, HttpServletRequest httpRequest, String initialPath, String treename) {
+	public StringBuffer makeTree(List objectsList, HttpServletRequest httpRequest, String initialPath,
+			String treename) {
 		return makeTree(objectsList, httpRequest, initialPath);
 	}
 
@@ -140,13 +137,14 @@ public class SchedulerTreeHtmlGenerator implements ITreeHtmlGenerator {
 		SessionContainer permanentSession = sessionContainer.getPermanentContainer();
 		profile = (IEngUserProfile) permanentSession.getAttribute(IEngUserProfile.ENG_USER_PROFILE);
 		StringBuffer htmlStream = new StringBuffer();
-		htmlStream
-				.append("<LINK rel='StyleSheet' href='" + urlBuilder.getResourceLinkByTheme(httpRequest, "/css/dtree.css", currTheme) + "' type='text/css' />");
+		htmlStream.append("<LINK rel='StyleSheet' href='"
+				+ urlBuilder.getResourceLinkByTheme(httpRequest, "/css/dtree.css", currTheme) + "' type='text/css' />");
 		// makeConfigurationDtree(htmlStream);
 		String nameTree = msgBuilder.getMessage("tree.objectstree.name", "messages", httpRequest);
-		htmlStream.append("<SCRIPT language='JavaScript' src='" + urlBuilder.getResourceLinkByTheme(httpRequest, "/js/dtree.js", currTheme) + "'></SCRIPT>");
-		htmlStream.append(
-				"<SCRIPT language='JavaScript' src='" + urlBuilder.getResourceLinkByTheme(httpRequest, "/js/contextMenu.js", currTheme) + "'></SCRIPT>");
+		htmlStream.append("<SCRIPT language='JavaScript' src='"
+				+ urlBuilder.getResourceLinkByTheme(httpRequest, "/js/dtree.js", currTheme) + "'></SCRIPT>");
+		htmlStream.append("<SCRIPT language='JavaScript' src='"
+				+ urlBuilder.getResourceLinkByTheme(httpRequest, "/js/contextMenu.js", currTheme) + "'></SCRIPT>");
 		htmlStream.append("<table width='100%'>");
 		htmlStream.append("	<tr height='1px'>");
 		htmlStream.append("		<td width='10px'>&nbsp;</td>");
@@ -154,7 +152,8 @@ public class SchedulerTreeHtmlGenerator implements ITreeHtmlGenerator {
 		htmlStream.append("	</tr>");
 		htmlStream.append("	<tr>");
 		htmlStream.append("		<td>&nbsp;</td>");
-		htmlStream.append("		<td id='treeSchedulerObjTd" + requestIdentity + "' name='treeSchedulerObjTd" + requestIdentity + "'>&nbsp;</td>");
+		htmlStream.append("		<td id='treeSchedulerObjTd" + requestIdentity + "' name='treeSchedulerObjTd"
+				+ requestIdentity + "'>&nbsp;</td>");
 		htmlStream.append("			<script language=\"JavaScript1.2\">\n");
 		htmlStream.append("				var nameTree = 'treeCMS';\n");
 		String context = httpRequest.getContextPath();
@@ -180,14 +179,16 @@ public class SchedulerTreeHtmlGenerator implements ITreeHtmlGenerator {
 			}
 		}
 		// htmlStream.append(" document.write(treeCMS);\n");
-		htmlStream.append("				document.getElementById('treeSchedulerObjTd" + requestIdentity + "').innerHTML = treeCMS;\n");
+		htmlStream.append("				document.getElementById('treeSchedulerObjTd" + requestIdentity
+				+ "').innerHTML = treeCMS;\n");
 		htmlStream.append("			</script>\n");
 		htmlStream.append("	</tr>");
 		htmlStream.append("</table>");
 		return htmlStream;
 	}
 
-	private void addItemForJSTree(StringBuffer htmlStream, LowFunctionality folder, boolean isRoot, boolean isInitialPath) {
+	private void addItemForJSTree(StringBuffer htmlStream, LowFunctionality folder, boolean isRoot,
+			boolean isInitialPath) {
 		String nameLabel = folder.getName();
 		String name = msgBuilder.getMessage(nameLabel, "messages", httpRequest);
 		String codeType = folder.getCodType();
@@ -199,26 +200,29 @@ public class SchedulerTreeHtmlGenerator implements ITreeHtmlGenerator {
 			parentId = folder.getParentId();
 
 		if (isRoot) {
-			htmlStream.append("	treeCMS.add(" + idFolder + ", " + dTreeRootId + ",'" + name + "', '', '', '', '', '', 'true');\n");
+			htmlStream.append("	treeCMS.add(" + idFolder + ", " + dTreeRootId + ",'" + name
+					+ "', '', '', '', '', '', 'true');\n");
 		} else {
 			if (codeType.equalsIgnoreCase(SpagoBIConstants.LOW_FUNCTIONALITY_TYPE_CODE)) {
 				String imgFolder = urlBuilder.getResourceLinkByTheme(httpRequest, "/img/treefolder.gif", currTheme);
-				String imgFolderOp = urlBuilder.getResourceLinkByTheme(httpRequest, "/img/treefolderopen.gif", currTheme);
-				htmlStream.append(
-						"	treeCMS.add(" + idFolder + ", " + parentId + ",'" + name + "', '', '', '', '" + imgFolder + "', '" + imgFolderOp + "', '', '');\n");
+				String imgFolderOp = urlBuilder.getResourceLinkByTheme(httpRequest, "/img/treefolderopen.gif",
+						currTheme);
+				htmlStream.append("	treeCMS.add(" + idFolder + ", " + parentId + ",'" + name + "', '', '', '', '"
+						+ imgFolder + "', '" + imgFolderOp + "', '', '');\n");
 				List objects = folder.getBiObjects();
 				for (Iterator it = objects.iterator(); it.hasNext();) {
 					BIObject obj = (BIObject) it.next();
 					Engine engine = obj.getEngine();
 
 					if (engine != null) {
-						if (!EngineUtilities.isExternal(obj.getEngine())
-								&& !engine.getClassName().equals("it.eng.spagobi.engines.kpi.SpagoBIKpiInternalEngine")) {
+						if (!EngineUtilities.isExternal(obj.getEngine()) && !engine.getClassName()
+								.equals("it.eng.spagobi.engines.kpi.SpagoBIKpiInternalEngine")) {
 							continue;
 						}
 						if (!(engine.getDriverName().equals("it.eng.spagobi.engines.drivers.birt.BirtReportDriver")
 								|| engine.getDriverName().equals("it.eng.spagobi.engines.drivers.commonj.CommonjDriver")
-								|| engine.getDriverName().equals("it.eng.spagobi.engines.drivers.talend.TalendDriver"))) {
+								|| engine.getDriverName()
+										.equals("it.eng.spagobi.engines.drivers.talend.TalendDriver"))) {
 							continue;
 
 						}
@@ -236,8 +240,9 @@ public class SchedulerTreeHtmlGenerator implements ITreeHtmlGenerator {
 						if (biobjIds.contains(obj.getId())) {
 							checked = "checked";
 						}
-						htmlStream.append("	treeCMS.add(" + dTreeObjects-- + ", " + idFolder + ",'<img src=\\'" + stateIcon + "\\' /> " + obj.getName()
-								+ "', '', '', '', '" + userIcon + "', '', '', '', 'biobject', '" + obj.getId() + "', '" + checked + "' );\n");
+						htmlStream.append("	treeCMS.add(" + dTreeObjects-- + ", " + idFolder + ",'<img src=\\'"
+								+ stateIcon + "\\' /> " + obj.getName() + "', '', '', '', '" + userIcon
+								+ "', '', '', '', 'biobject', '" + obj.getId() + "', '" + checked + "' );\n");
 					}
 				}
 			}

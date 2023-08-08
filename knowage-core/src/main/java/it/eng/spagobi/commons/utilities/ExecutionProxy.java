@@ -294,8 +294,7 @@ public class ExecutionProxy {
 
 			// built the request to sent to the engine
 			HttpMethod httpMethod;
-			if ("it.eng.spagobi.engines.drivers.cockpit.CockpitDriver".equals(eng.getDriverName())
-					|| "it.eng.spagobi.engines.drivers.chart.ChartDriver".equals(eng.getDriverName())) {
+			if (!EngineUtilities.hasBackEndService(eng)) {
 				GetMethod getMethod = new GetMethod(urlEngine);
 				List<NameValuePair> nameValuePairs = new ArrayList<>();
 				Iterator iterMapPar = mapPars.keySet().iterator();
@@ -327,10 +326,11 @@ public class ExecutionProxy {
 			httpMethod.addRequestHeader("Authorization", "Direct " + encodedUserId);
 
 			// sent request to the engine
-			LOGGER.debug("Calling {} with headers {}", httpMethod.getURI(), httpMethod.getRequestHeaders());
+			LOGGER.debug("Calling {} with parameters {} and headers {}", httpMethod.getURI(), httpMethod.getParams(),
+					httpMethod.getRequestHeaders());
 			HttpClient client = new HttpClient();
 			int statusCode = client.executeMethod(httpMethod);
-			LOGGER.debug("Resposne status code {}", statusCode);
+			LOGGER.debug("Response status code {}", statusCode);
 			response = httpMethod.getResponseBody();
 
 			Header headContetType = httpMethod.getResponseHeader("Content-Type");
@@ -363,10 +363,8 @@ public class ExecutionProxy {
 		Assert.assertTrue(urlEngine != null && !urlEngine.trim().equals(""), "External engine url is not defined!!");
 		urlEngine = resolveRelativeUrls(urlEngine);
 
-		if (!"it.eng.spagobi.engines.drivers.cockpit.CockpitDriver".equals(eng.getDriverName())
-				&& !"it.eng.spagobi.engines.drivers.chart.ChartDriver".equals(eng.getDriverName())
-
-		) {
+		String driverName = eng.getDriverName();
+		if (EngineUtilities.hasBackEndService(eng)) {
 			// ADD this extension because this is a BackEnd engine invocation
 			urlEngine = urlEngine + BACK_END_EXTENSION;
 		}

@@ -111,7 +111,8 @@ public class WhatIfDriver extends GenericDriver {
 	}
 
 	@Override
-	public EngineURL getEditDocumentTemplateBuildUrl(Object biobject, IEngUserProfile profile) throws InvalidOperationRequest {
+	public EngineURL getEditDocumentTemplateBuildUrl(Object biobject, IEngUserProfile profile)
+			throws InvalidOperationRequest {
 		logger.debug("IN");
 		BIObject obj = null;
 		try {
@@ -154,7 +155,8 @@ public class WhatIfDriver extends GenericDriver {
 	}
 
 	@Override
-	public EngineURL getNewDocumentTemplateBuildUrl(Object biobject, IEngUserProfile profile) throws InvalidOperationRequest {
+	public EngineURL getNewDocumentTemplateBuildUrl(Object biobject, IEngUserProfile profile)
+			throws InvalidOperationRequest {
 		logger.debug("IN");
 		BIObject obj = null;
 		try {
@@ -187,7 +189,8 @@ public class WhatIfDriver extends GenericDriver {
 		return engineURL;
 	}
 
-	protected Map addArtifactVersionId(byte[] template, Map pars, IEngUserProfile profile, int documentId, Engine engine) {
+	protected Map addArtifactVersionId(byte[] template, Map pars, IEngUserProfile profile, int documentId,
+			Engine engine) {
 		SourceBean sb = null;
 		try {
 			sb = SourceBean.fromXMLString(new String(template));
@@ -198,8 +201,8 @@ public class WhatIfDriver extends GenericDriver {
 		SourceBean cubeSb = (SourceBean) sb.getAttribute(SpagoBIConstants.MONDRIAN_CUBE);
 		Assert.assertNotNull(cubeSb, "Template is missing \"" + SpagoBIConstants.MONDRIAN_CUBE + "\" definition");
 		String reference = (String) cubeSb.getAttribute(SpagoBIConstants.MONDRIAN_REFERENCE);
-		Assert.assertNotNull(reference,
-				"Template is missing \"" + SpagoBIConstants.MONDRIAN_REFERENCE + "\" property, that is the reference to the Mondrian schema");
+		Assert.assertNotNull(reference, "Template is missing \"" + SpagoBIConstants.MONDRIAN_REFERENCE
+				+ "\" property, that is the reference to the Mondrian schema");
 		IArtifactsDAO dao = DAOFactory.getArtifactsDAO();
 		Artifact artifact = dao.loadArtifactByNameAndType(reference, SpagoBIConstants.MONDRIAN_SCHEMA);
 		Assert.assertNotNull(artifact, "Mondrian schema with name [" + reference + "] was not found");
@@ -247,8 +250,8 @@ public class WhatIfDriver extends GenericDriver {
 		SourceBean cubeSb = (SourceBean) sb.getAttribute(SpagoBIConstants.MONDRIAN_CUBE);
 		Assert.assertNotNull(cubeSb, "Template is missing \"" + SpagoBIConstants.MONDRIAN_CUBE + "\" definition");
 		String reference = (String) cubeSb.getAttribute(SpagoBIConstants.MONDRIAN_REFERENCE);
-		Assert.assertNotNull(reference,
-				"Template is missing \"" + SpagoBIConstants.MONDRIAN_REFERENCE + "\" property, that is the reference to the Mondrian schema");
+		Assert.assertNotNull(reference, "Template is missing \"" + SpagoBIConstants.MONDRIAN_REFERENCE
+				+ "\" property, that is the reference to the Mondrian schema");
 		IArtifactsDAO dao = DAOFactory.getArtifactsDAO();
 		Artifact artifact = dao.loadArtifactByNameAndType(reference, SpagoBIConstants.MONDRIAN_SCHEMA);
 		Assert.assertNotNull(artifact, "Mondrian schema with name [" + reference + "] was not found");
@@ -302,7 +305,6 @@ public class WhatIfDriver extends GenericDriver {
 
 				}
 			}
-			;
 		} catch (EMFInternalError e) {
 			logger.error("Error checking functionality", e);
 			throw new SpagoBIRuntimeException("Error checking functionality", e);

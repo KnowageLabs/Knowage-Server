@@ -168,7 +168,8 @@ public class GeneralUtilities extends SpagoBIUtilities {
 	 * @throws Exception        the exception
 	 * @throws EMFInternalError the EMF internal error
 	 */
-	public static void subsituteBIObjectParametersLovProfileAttributes(BIObject obj, SessionContainer session) throws Exception {
+	public static void subsituteBIObjectParametersLovProfileAttributes(BIObject obj, SessionContainer session)
+			throws Exception {
 		LOGGER.trace("IN");
 		List<BIObjectParameter> biparams = obj.getDrivers();
 		Iterator<BIObjectParameter> iterParams = biparams.iterator();
@@ -182,8 +183,10 @@ public class GeneralUtilities extends SpagoBIUtilities {
 				String value = modVal.getLovProvider();
 				int profileAttributeStartIndex = value.indexOf("${");
 				if (profileAttributeStartIndex != -1) {
-					IEngUserProfile profile = (IEngUserProfile) session.getPermanentContainer().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
-					value = StringUtilities.substituteProfileAttributesInString(value, profile, profileAttributeStartIndex);
+					IEngUserProfile profile = (IEngUserProfile) session.getPermanentContainer()
+							.getAttribute(IEngUserProfile.ENG_USER_PROFILE);
+					value = StringUtilities.substituteProfileAttributesInString(value, profile,
+							profileAttributeStartIndex);
 					biparam.getParameter().getModalityValue().setLovProvider(value);
 				}
 			}
@@ -202,8 +205,8 @@ public class GeneralUtilities extends SpagoBIUtilities {
 	 * public static String getLovMapResult(Map lovs) { logger.debug("IN"); String toReturn = "<DATA>"; Set keys = lovs.keySet(); Iterator keyIter =
 	 * keys.iterator(); while (keyIter.hasNext()) { String key = (String) keyIter.next(); String lovname = (String) lovs.get(key); String lovResult = ""; try {
 	 * lovResult = getLovResult(lovname); } catch (Exception e) { logger.error("Error while getting result of the lov " + lovname +
-	 * ", the result of the won't be inserted into the response", e); continue; } toReturn = toReturn + "<" + key + ">"; toReturn = toReturn + lovResult;
-	 * toReturn = toReturn + "</" + key + ">"; } toReturn = toReturn + "</DATA>"; logger.debug("OUT:" + toReturn); return toReturn; }
+	 * ", the result of the won't be inserted into the response", e); continue; } toReturn = toReturn + "<" + key + ">"; toReturn = toReturn + lovResult; toReturn =
+	 * toReturn + "</" + key + ">"; } toReturn = toReturn + "</DATA>"; logger.debug("OUT:" + toReturn); return toReturn; }
 	 */
 
 	/**
@@ -216,9 +219,9 @@ public class GeneralUtilities extends SpagoBIUtilities {
 	 * @throws Exception the exception
 	 */
 	/*
-	 * public static String getLovResult(String lovLabel) throws Exception { logger.debug("IN"); IModalitiesValueDAO lovDAO =
-	 * DAOFactory.getModalitiesValueDAO(); ModalitiesValue lov = lovDAO.loadModalitiesValueByLabel(lovLabel); String toReturn = getLovResult(lov, null);
-	 * logger.debug("OUT:" + toReturn); return toReturn; }
+	 * public static String getLovResult(String lovLabel) throws Exception { logger.debug("IN"); IModalitiesValueDAO lovDAO = DAOFactory.getModalitiesValueDAO();
+	 * ModalitiesValue lov = lovDAO.loadModalitiesValueByLabel(lovLabel); String toReturn = getLovResult(lov, null); logger.debug("OUT:" + toReturn); return
+	 * toReturn; }
 	 */
 
 	/**
@@ -238,9 +241,9 @@ public class GeneralUtilities extends SpagoBIUtilities {
 	 */
 
 	/*
-	 * private static String getLovResult(ModalitiesValue lov, IEngUserProfile profile) throws Exception { logger.debug("IN"); if (profile == null) { profile =
-	 * new UserProfile("anonymous"); } String dataProv = lov.getLovProvider(); ILovDetail lovDetail = LovDetailFactory.getLovFromXML(dataProv); String lovResult
-	 * = lovDetail.getLovResult(profile, null, null); logger.debug("OUT:" + lovResult); return lovResult; }
+	 * private static String getLovResult(ModalitiesValue lov, IEngUserProfile profile) throws Exception { logger.debug("IN"); if (profile == null) { profile = new
+	 * UserProfile("anonymous"); } String dataProv = lov.getLovProvider(); ILovDetail lovDetail = LovDetailFactory.getLovFromXML(dataProv); String lovResult =
+	 * lovDetail.getLovResult(profile, null, null); logger.debug("OUT:" + lovResult); return lovResult; }
 	 */
 
 	/**
@@ -328,8 +331,8 @@ public class GeneralUtilities extends SpagoBIUtilities {
 	}
 
 	/**
-	 * Gets the default locale from SpagoBI configuration file, the behaviors is the same of getDefaultLocale() function, with difference that if not finds
-	 * returns null
+	 * Gets the default locale from SpagoBI configuration file, the behaviors is the same of getDefaultLocale() function, with difference that if not finds returns
+	 * null
 	 *
 	 * TODO : merge its behaviour with GetDefaultLocale (not done know cause today is release date). Gets the default locale.
 	 *
@@ -358,7 +361,8 @@ public class GeneralUtilities extends SpagoBIUtilities {
 		LOGGER.trace("IN");
 		Locale locale = null;
 		try {
-			String defaultLanguageTag = SingletonConfig.getInstance().getConfigValue("SPAGOBI.LANGUAGE_SUPPORTED.LANGUAGE.default");
+			String defaultLanguageTag = SingletonConfig.getInstance()
+					.getConfigValue("SPAGOBI.LANGUAGE_SUPPORTED.LANGUAGE.default");
 			String languageTag = StringUtils.isNotBlank(defaultLanguageTag) ? defaultLanguageTag : "en-US";
 			LOGGER.trace("Default locale found: " + languageTag);
 			locale = Locale.forLanguageTag(languageTag);
@@ -372,12 +376,13 @@ public class GeneralUtilities extends SpagoBIUtilities {
 	public static List<Locale> getSupportedLocales() {
 		LOGGER.trace("IN");
 		List<Locale> toReturn = new ArrayList<>();
-		String supportedLanguages = SingletonConfig.getInstance().getConfigValue("SPAGOBI.LANGUAGE_SUPPORTED.LANGUAGES");
+		String supportedLanguages = SingletonConfig.getInstance()
+				.getConfigValue("SPAGOBI.LANGUAGE_SUPPORTED.LANGUAGES");
 		if (StringUtils.isNotBlank(supportedLanguages)) {
 			for (String supportedLanguageTag : supportedLanguages.split(",", -1)) {
 				Locale locale = Locale.forLanguageTag(supportedLanguageTag);
-				LOGGER.trace("Found locale with language = [" + locale.getLanguage() + "] and script = [" + locale.getScript() + "] and country = ["
-						+ locale.getCountry() + "]");
+				LOGGER.trace("Found locale with language = [" + locale.getLanguage() + "] and script = ["
+						+ locale.getScript() + "] and country = [" + locale.getCountry() + "]");
 				toReturn.add(locale);
 			}
 
@@ -509,7 +514,8 @@ public class GeneralUtilities extends SpagoBIUtilities {
 		String format = null;
 		// if a particular language is specified take the corrisponding date-format
 		if (locale != null) {
-			format = SingletonConfig.getInstance().getConfigValue("SPAGOBI.DATE-FORMAT-" + locale.toLanguageTag() + ".format");
+			format = SingletonConfig.getInstance()
+					.getConfigValue("SPAGOBI.DATE-FORMAT-" + locale.toLanguageTag() + ".format");
 		}
 		if (format == null) {
 			format = SingletonConfig.getInstance().getConfigValue("SPAGOBI.DATE-FORMAT.format");
@@ -755,14 +761,16 @@ public class GeneralUtilities extends SpagoBIUtilities {
 			try {
 				parameterValue = URLDecoder.decode(parameterValueEncoded, UTF_8.name());
 			} catch (UnsupportedEncodingException e) {
-				LOGGER.error("Error in decoding parameter: UTF 8 not supported " + parameterName + "; use preceding value " + parameterValueEncoded, e);
+				LOGGER.error("Error in decoding parameter: UTF 8 not supported " + parameterName
+						+ "; use preceding value " + parameterValueEncoded, e);
 				parameterValue = parameterValueEncoded;
 			} catch (java.lang.IllegalArgumentException e) { // can happen when in document composition a '%' char is given
-				LOGGER.warn("Error in decoding parameter, illegal argument for " + parameterName + " (probably value % is present); use preceding value "
-						+ parameterValueEncoded);
+				LOGGER.warn("Error in decoding parameter, illegal argument for " + parameterName
+						+ " (probably value % is present); use preceding value " + parameterValueEncoded);
 				parameterValue = parameterValueEncoded;
 			} catch (Exception e) {
-				LOGGER.warn("Generic Error in decoding parameter " + parameterName + " ; use preceding value " + parameterValueEncoded);
+				LOGGER.warn("Generic Error in decoding parameter " + parameterName + " ; use preceding value "
+						+ parameterValueEncoded);
 				parameterValue = parameterValueEncoded;
 			}
 
@@ -795,7 +803,8 @@ public class GeneralUtilities extends SpagoBIUtilities {
 		if (maxResultsStr != null) {
 			maxResults = Integer.parseInt(maxResultsStr);
 		} else {
-			LOGGER.warn("Dataset max results configuration not found. Check spagobi.xml, SPAGOBI.DATASET.maxResults attribute");
+			LOGGER.warn(
+					"Dataset max results configuration not found. Check spagobi.xml, SPAGOBI.DATASET.maxResults attribute");
 			LOGGER.debug("Using default value that is Integer.MAX_VALUE = " + Integer.MAX_VALUE);
 		}
 		return maxResults;
@@ -864,7 +873,8 @@ public class GeneralUtilities extends SpagoBIUtilities {
 			}
 			return propertyValue;
 		} catch (Throwable t) {
-			throw new SpagoBIRuntimeException("An unexpected exception occured while loading spagobi property [" + propertyName + "]", t);
+			throw new SpagoBIRuntimeException(
+					"An unexpected exception occured while loading spagobi property [" + propertyName + "]", t);
 		}
 	}
 
@@ -873,16 +883,15 @@ public class GeneralUtilities extends SpagoBIUtilities {
 		String urlEngine = getExternalEngineContextPath(eng);
 		LOGGER.debug("Engine url is " + urlEngine);
 		if (!"it.eng.spagobi.engines.drivers.dashboard.DashboardDriver".equals(eng.getDriverName())) {
-			Assert.assertTrue(urlEngine != null && !urlEngine.trim().equals(""), "External engine url is not defined!!");
+			Assert.assertTrue(urlEngine != null && !urlEngine.trim().equals(""),
+					"External engine url is not defined!!");
 		}
 		if ("it.eng.spagobi.engines.drivers.dashboard.DashboardDriver".equals(eng.getDriverName())) {
 			urlEngine = resolveRelativeUrlsForVue(urlEngine);
 		} else
 			urlEngine = resolveRelativeUrls(urlEngine);
 
-		if (!"it.eng.spagobi.engines.drivers.cockpit.CockpitDriver".equals(eng.getDriverName())
-				&& !"it.eng.spagobi.engines.drivers.chart.ChartDriver".equals(eng.getDriverName())
-				&& !"it.eng.spagobi.engines.drivers.dashboard.DashboardDriver".equals(eng.getDriverName())) {
+		if (EngineUtilities.hasBackEndService(eng)) {
 			// ADD this extension because this is a BackEnd engine invocation
 			urlEngine = urlEngine + BACKEND_EXTENSION;
 		}
@@ -919,7 +928,8 @@ public class GeneralUtilities extends SpagoBIUtilities {
 	}
 
 	public static String getServiceHostUrl() {
-		String serviceURL = SpagoBIUtilities.readJndiResource(SingletonConfig.getInstance().getConfigValue("SPAGOBI.SPAGOBI_SERVICE_JNDI"));
+		String serviceURL = SpagoBIUtilities
+				.readJndiResource(SingletonConfig.getInstance().getConfigValue("SPAGOBI.SPAGOBI_SERVICE_JNDI"));
 		serviceURL = serviceURL.substring(0, serviceURL.lastIndexOf('/'));
 
 		return serviceURL;
@@ -942,7 +952,8 @@ public class GeneralUtilities extends SpagoBIUtilities {
 		return sb.toString();
 	}
 
-	public static String getAngularPropertiesFileName(String currLanguage, String currScript, String currCountry, String separator) {
+	public static String getAngularPropertiesFileName(String currLanguage, String currScript, String currCountry,
+			String separator) {
 		Locale locale = new Builder().setLanguage(currLanguage).setRegion(currCountry).setScript(currScript).build();
 		return "/js/lib/angular-localization/" + getAngularPropertiesFileName(locale, separator) + ".js";
 	}
