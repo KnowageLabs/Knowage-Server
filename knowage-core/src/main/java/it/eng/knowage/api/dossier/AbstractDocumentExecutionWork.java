@@ -1,5 +1,7 @@
 package it.eng.knowage.api.dossier;
 
+import static org.apache.commons.lang3.StringUtils.isEmpty;
+
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -49,7 +51,6 @@ import it.eng.knowage.export.wrapper.beans.RenderOptions;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
-import it.eng.spagobi.analiticalmodel.document.bo.DocumentMetadataProperty;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
 import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.commons.bo.UserProfile;
@@ -61,10 +62,6 @@ import it.eng.spagobi.dossier.dao.ISbiDossierActivityDAO;
 import it.eng.spagobi.tenant.Tenant;
 import it.eng.spagobi.tenant.TenantManager;
 import it.eng.spagobi.tools.massiveExport.dao.IProgressThreadDAO;
-import it.eng.spagobi.tools.objmetadata.bo.ObjMetacontent;
-import it.eng.spagobi.tools.objmetadata.bo.ObjMetadata;
-import it.eng.spagobi.tools.objmetadata.dao.IObjMetacontentDAO;
-import it.eng.spagobi.tools.objmetadata.dao.IObjMetadataDAO;
 import it.eng.spagobi.user.UserProfileManager;
 import it.eng.spagobi.utilities.ParametersDecoder;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
@@ -391,10 +388,6 @@ public class AbstractDocumentExecutionWork extends DossierExecutionClient implem
 		addParametersToServiceUrl(progressThreadId, biObject, reportToUse, serviceUrlBuilder, jsonArray, paramMap,
 				false);
 
-//					if (executedDocuments.contains(serviceUrl)) {
-//						progressThreadManager.incrementPartial(progressThreadId);
-//						break;
-//					}
 		return serviceUrlBuilder.toString();
 	}
 
@@ -446,9 +439,6 @@ public class AbstractDocumentExecutionWork extends DossierExecutionClient implem
 
 							// filled by fillParametersValues in DossierExecutionResource
 							value = templateParameter.getValue();
-							if (decoder.isMultiValues(value) && value.contains("STRING"))
-								value.replaceAll("'", "");
-
 							if (biObjectParameter.getParameterUrlName().equals(templateParameter.getUrlName())) {
 								paramName = templateParameter.getUrlName();
 								if (dashboard) {
@@ -493,10 +483,9 @@ public class AbstractDocumentExecutionWork extends DossierExecutionClient implem
 											.encode(templateParameter.getValue(), StandardCharsets.UTF_8.toString())));
 							value = templateParameter.getValue();
 							paramName = templateParameter.getUrlName();
-							if (templateParameter.getUrlNameDescription() == null) {
-								throw new SpagoBIRuntimeException(
-										"There is no description field inside template parameters. It is mandatory for static types.");
-
+							// We need a description for static parameter, we force the value if it's missing
+							if (isEmpty(templateParameter.getUrlNameDescription())) {
+								templateParameter.setUrlNameDescription(templateParameter.getValue());
 							}
 							// description
 							serviceUrlBuilder
@@ -614,41 +603,6 @@ public class AbstractDocumentExecutionWork extends DossierExecutionClient implem
 		return destFile;
 	}
 
-	private List<DocumentMetadataProperty> getMetaDataAndContent(IObjMetadataDAO metaDao,
-			IObjMetacontentDAO metaContentDAO, BIObject obj) throws Exception {
-		LOGGER.debug("IN");
-		List<DocumentMetadataProperty> toReturn = null;
-
-		try {
-			DocumentMetadataProperty objMetaDataAndContent = null;
-			List<ObjMetadata> allMetas = metaDao.loadAllObjMetadata();
-			Map<Integer, ObjMetacontent> values = new HashMap<>();
-
-			List<ObjMetacontent> list = metaContentDAO.loadObjOrSubObjMetacontents(obj.getId(), null);
-			for (Iterator<ObjMetacontent> iterator = list.iterator(); iterator.hasNext();) {
-				ObjMetacontent content = iterator.next();
-				Integer metaid = content.getObjmetaId();
-				values.put(metaid, content);
-			}
-
-			for (Iterator<ObjMetadata> iterator = allMetas.iterator(); iterator.hasNext();) {
-				ObjMetadata meta = iterator.next();
-				objMetaDataAndContent = new DocumentMetadataProperty();
-				objMetaDataAndContent.setMetadataPropertyDefinition(meta);
-				objMetaDataAndContent.setMetadataPropertyValue(values.get(meta.getObjMetaId()));
-				if (toReturn == null)
-					toReturn = new ArrayList<>();
-				toReturn.add(objMetaDataAndContent);
-			}
-
-		} catch (Exception e) {
-			LOGGER.error("error in retrieving metadata and metacontent for biobj id " + obj.getId(), e);
-			throw e;
-		}
-		LOGGER.debug("OUT");
-		return toReturn;
-	}
-
 	@Override
 	public boolean isDaemon() {
 		return false;
@@ -688,7 +642,7 @@ public class AbstractDocumentExecutionWork extends DossierExecutionClient implem
 		try {
 			threadDAO.deleteProgressThread(progressThreadId);
 		} catch (EMFUserError e1) {
-			LOGGER.error("Error in deleting the row with the progress id " + progressThreadId);
+			LOGGER.error("Error in deleting the row with the progress id {}", progressThreadId);
 		}
 		LOGGER.debug("OUT");
 
@@ -732,7 +686,7 @@ public class AbstractDocumentExecutionWork extends DossierExecutionClient implem
 				}
 			}
 		} catch (Exception e) {
-			LOGGER.error("Error in wirting error file for biObj " + biObj.getLabel());
+			LOGGER.error("Error in wirting error file for biObj {}", biObj.getLabel());
 			deleteDBRowInCaseOfError(progressThreadDAO, progressThreadId);
 			throw new SpagoBIServiceException("Error in wirting error file for biObj " + biObj.getLabel(), e);
 		}
