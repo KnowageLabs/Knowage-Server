@@ -18,12 +18,17 @@
 
 package it.eng.spagobi.utilities.engines.rest;
 
+import javax.xml.bind.DatatypeConverter;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import it.eng.spagobi.services.content.bo.Content;
 import it.eng.spagobi.utilities.engines.EngineAnalysisMetadata;
 
-import javax.xml.bind.DatatypeConverter;
-
 public abstract class AbstractEngineStartRestService extends AbstractEngineRestService {
+
+	private static final Logger LOGGER = LogManager.getLogger(AbstractEngineRestService.class);
 
 	/**
 	 * Gets the analysis metadata.
@@ -35,29 +40,29 @@ public abstract class AbstractEngineStartRestService extends AbstractEngineRestS
 			return analysisMetadata;
 		}
 
-		logger.debug("IN");
-
 		analysisMetadata = new EngineAnalysisMetadata();
 
 		if (requestContainsAttribute(SUBOBJ_ID)) {
 
 			Integer id = getAttributeAsInteger(SUBOBJ_ID);
 			if (id == null) {
-				logger.warn("Value [" + getAttribute(SUBOBJ_ID).toString() + "] is not a valid subobject id");
+				LOGGER.warn("Value [{}] is not a valid subobject id", getAttribute(SUBOBJ_ID).toString());
 			}
 			analysisMetadata.setId(id);
 
 			if (requestContainsAttribute(SUBOBJ_NAME)) {
 				analysisMetadata.setName(getAttributeAsString(SUBOBJ_NAME));
 			} else {
-				logger.warn("No name attribute available in request for subobject [" + getAttributeAsString(SUBOBJ_ID) + "]");
+				LOGGER.warn("No name attribute available in request for subobject [{}]",
+						getAttributeAsString(SUBOBJ_ID));
 				analysisMetadata.setName(getAttributeAsString(SUBOBJ_ID));
 			}
 
 			if (requestContainsAttribute(SUBOBJ_DESCRIPTION)) {
 				analysisMetadata.setDescription(getAttributeAsString(SUBOBJ_DESCRIPTION));
 			} else {
-				logger.warn("No description attribute available in request for subobject [" + getAttributeAsString(SUBOBJ_ID) + "]");
+				LOGGER.warn("No description attribute available in request for subobject [{}]",
+						getAttributeAsString(SUBOBJ_ID));
 				analysisMetadata.setDescription("");
 			}
 
@@ -65,13 +70,12 @@ public abstract class AbstractEngineStartRestService extends AbstractEngineRestS
 				if (requestContainsAttribute(SUBOBJ_VISIBILITY, "Public")) {
 					analysisMetadata.setScope(EngineAnalysisMetadata.PUBLIC_SCOPE);
 				} else {
-					logger.warn("No visibility attribute available in request for subobject [" + getAttributeAsString(SUBOBJ_ID) + "]");
+					LOGGER.warn("No visibility attribute available in request for subobject [{}]",
+							getAttributeAsString(SUBOBJ_ID));
 					analysisMetadata.setScope(EngineAnalysisMetadata.PRIVATE_SCOPE);
 				}
 			}
 		}
-
-		logger.debug("OUT");
 
 		return analysisMetadata;
 	}
@@ -87,13 +91,10 @@ public abstract class AbstractEngineStartRestService extends AbstractEngineRestS
 
 		if (analysisStateRowData == null && getAnalysisMetadata().getId() != null) {
 
-			logger.debug("IN");
-
 			spagoBISubObject = getContentServiceProxy().readSubObjectContent(getAnalysisMetadata().getId().toString());
 			rowData = DatatypeConverter.parseBase64Binary(spagoBISubObject.getContent());
 			analysisStateRowData = rowData;
 
-			logger.debug("OUT");
 		}
 
 		return analysisStateRowData;

@@ -92,8 +92,6 @@ public class AbstractDocumentExecutionWork extends DossierExecutionClient implem
 	}
 
 	protected void runInternal(JSONObject jsonObjectTemplate) {
-		LOGGER.debug("IN");
-
 		ProgressThreadManager progressThreadManager = null;
 
 		Thread thread = Thread.currentThread();
@@ -233,16 +231,11 @@ public class AbstractDocumentExecutionWork extends DossierExecutionClient implem
 			progressThreadManager.setStatusDownload(progressThreadId);
 			LOGGER.debug("Thread row in database set as download state");
 
-			LOGGER.debug("OUT");
-
-			/**/
 		} catch (Exception e) {
 			progressThreadManager.setStatusError(progressThreadId);
 			createErrorFile(biObject, e);
 			LOGGER.error("Error while creating dossier activity", e);
 			throw new SpagoBIRuntimeException(e.getMessage(), e);
-		} finally {
-			LOGGER.debug("OUT");
 		}
 
 	}
@@ -392,12 +385,10 @@ public class AbstractDocumentExecutionWork extends DossierExecutionClient implem
 	}
 
 	protected void setTenant() {
-		LOGGER.debug("IN");
 		UserProfile profile = (UserProfile) this.getProfile();
 		String tenant = profile.getOrganization();
 		LOGGER.debug("Tenant : {}", tenant);
 		TenantManager.setTenant(new Tenant(tenant));
-		LOGGER.debug("OUT");
 	}
 
 	public void validImage(List<Report> reports) {
@@ -638,18 +629,14 @@ public class AbstractDocumentExecutionWork extends DossierExecutionClient implem
 	}
 
 	public void deleteDBRowInCaseOfError(IProgressThreadDAO threadDAO, Integer progressThreadId) {
-		LOGGER.debug("IN");
 		try {
 			threadDAO.deleteProgressThread(progressThreadId);
 		} catch (EMFUserError e1) {
 			LOGGER.error("Error in deleting the row with the progress id {}", progressThreadId);
 		}
-		LOGGER.debug("OUT");
-
 	}
 
 	public File createErrorFile(BIObject biObj, Throwable error) {
-		LOGGER.debug("IN");
 		File toReturn = null;
 		ArrayList<PlaceHolder> list = new ArrayList<>();
 		PlaceHolder p = new PlaceHolder();
@@ -690,7 +677,6 @@ public class AbstractDocumentExecutionWork extends DossierExecutionClient implem
 			deleteDBRowInCaseOfError(progressThreadDAO, progressThreadId);
 			throw new SpagoBIServiceException("Error in wirting error file for biObj " + biObj.getLabel(), e);
 		}
-		LOGGER.debug("OUT");
 		return toReturn;
 	}
 

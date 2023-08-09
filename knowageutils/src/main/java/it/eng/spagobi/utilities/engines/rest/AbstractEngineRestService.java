@@ -19,11 +19,11 @@
 package it.eng.spagobi.utilities.engines.rest;
 
 import java.util.HashMap;
-import java.util.Locale;
 
 import javax.xml.bind.DatatypeConverter;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -36,8 +36,6 @@ import it.eng.spagobi.services.proxy.ArtifactServiceProxy;
 import it.eng.spagobi.services.proxy.ContentServiceProxy;
 import it.eng.spagobi.services.proxy.DataSetServiceProxy;
 import it.eng.spagobi.services.proxy.DataSourceServiceProxy;
-import it.eng.spagobi.services.proxy.MetamodelServiceProxy;
-import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.user.UserProfileManager;
 import it.eng.spagobi.utilities.ParametersDecoder;
@@ -59,15 +57,13 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
  */
 public abstract class AbstractEngineRestService extends AbstractRestService {
 
-	public static transient Logger logger = Logger.getLogger(AbstractEngineRestService.class);
+	private static final Logger LOGGER = LogManager.getLogger(AbstractEngineRestService.class);
 
 	private String userId;
 	private String userUniqueIdentifier;
 	private String auditId;
 	private String documentId;
 	private IDataSource dataSource;
-	private IDataSet dataSet;
-	private Locale locale;
 	protected EngineAnalysisMetadata analysisMetadata;
 	protected byte[] analysisStateRowData;
 
@@ -77,7 +73,6 @@ public abstract class AbstractEngineRestService extends AbstractRestService {
 	private AuditServiceProxy auditProxy;
 	private DataSourceServiceProxy datasourceProxy;
 	private DataSetServiceProxy datasetProxy;
-	private MetamodelServiceProxy metamodelProxy;
 	private ArtifactServiceProxy artifactProxy;
 
 	public static final String AUDIT_ID = "SPAGOBI_AUDIT_ID";
@@ -103,7 +98,8 @@ public abstract class AbstractEngineRestService extends AbstractRestService {
 		try {
 			templateSB = SourceBean.fromXMLString(getTemplateAsString());
 		} catch (SourceBeanException e) {
-			SpagoBIEngineStartupException engineException = new SpagoBIEngineStartupException(getEngineName(), "Impossible to parse template's content", e);
+			SpagoBIEngineStartupException engineException = new SpagoBIEngineStartupException(getEngineName(),
+					"Impossible to parse template's content", e);
 			engineException.setDescription("Impossible to parse template's content:  " + e.getMessage());
 			engineException.addHint("Check if the document's template is a well formed xml file");
 			throw engineException;
@@ -117,7 +113,7 @@ public abstract class AbstractEngineRestService extends AbstractRestService {
 		if (temp != null)
 			return new String(temp);
 		else
-			return new String("");
+			return "";
 	}
 
 	private byte[] getTemplate() {
@@ -127,8 +123,9 @@ public abstract class AbstractEngineRestService extends AbstractRestService {
 		if (template == null) {
 			contentProxy = getContentServiceProxy();
 			if (contentProxy == null) {
-				throw new SpagoBIEngineStartupException("SpagoBIQbeEngine", "Impossible to instatiate proxy class [" + ContentServiceProxy.class.getName()
-						+ "] " + "in order to retrive the template of document [" + documentId + "]");
+				throw new SpagoBIEngineStartupException("SpagoBIQbeEngine",
+						"Impossible to instatiate proxy class [" + ContentServiceProxy.class.getName() + "] "
+								+ "in order to retrive the template of document [" + documentId + "]");
 			}
 
 			requestParameters = ParametersDecoder.getDecodedRequestParameters(this.getServletRequest());
@@ -136,10 +133,12 @@ public abstract class AbstractEngineRestService extends AbstractRestService {
 		}
 		try {
 			if (template == null)
-				throw new SpagoBIEngineRuntimeException("There are no template associated to document [" + documentId + "]");
+				throw new SpagoBIEngineRuntimeException(
+						"There are no template associated to document [" + documentId + "]");
 			templateContent = DatatypeConverter.parseBase64Binary(template.getContent());
 		} catch (Throwable e) {
-			SpagoBIEngineStartupException engineException = new SpagoBIEngineStartupException(getEngineName(), "Impossible to get template's content", e);
+			SpagoBIEngineStartupException engineException = new SpagoBIEngineStartupException(getEngineName(),
+					"Impossible to get template's content", e);
 			engineException.setDescription("Impossible to get template's content:  " + e.getMessage());
 			engineException.addHint("Check the document's template");
 			throw engineException;
@@ -213,14 +212,8 @@ public abstract class AbstractEngineRestService extends AbstractRestService {
 	 */
 	public String getAuditId() {
 
-		logger.debug("IN");
-
-		try {
-			if (auditId == null) {
-				auditId = getServletRequest().getParameter(AUDIT_ID);
-			}
-		} finally {
-			logger.debug("OUT");
+		if (auditId == null) {
+			auditId = getServletRequest().getParameter(AUDIT_ID);
 		}
 
 		return auditId;
@@ -234,31 +227,26 @@ public abstract class AbstractEngineRestService extends AbstractRestService {
 	public String getDocumentId() {
 		String documentIdInSection = null;
 
-		logger.debug("IN");
+		if (documentId == null) {
+			documentIdInSection = getAttributeFromSessionAsString(DOCUMENT_ID);
+			LOGGER.debug("The documentId in Session: {}", documentIdInSection);
 
-		try {
-			if (documentId == null) {
-				documentIdInSection = getAttributeFromSessionAsString(DOCUMENT_ID);
-				logger.debug("documentId in Session:" + documentIdInSection);
-
-				if (requestContainsAttribute(DOCUMENT_ID)) {
-					documentId = getAttributeAsString(DOCUMENT_ID);
-				} else {
-					documentId = documentIdInSection;
-					logger.debug("documentId has been taken from session");
-				}
+			if (requestContainsAttribute(DOCUMENT_ID)) {
+				documentId = getAttributeAsString(DOCUMENT_ID);
+			} else {
+				documentId = documentIdInSection;
+				LOGGER.debug("documentId has been taken from session");
 			}
+		}
 
-			if (documentId == null) {
-				SpagoBIEngineStartupException e = new SpagoBIEngineStartupException(getEngineName(), "Impossible to retrive document id");
-				e.setDescription("The engine is unable to retrive the id of the document to execute from request");
-				e.addHint(
-						"Check on SpagoBI Server if the analytical document you want to execute have a valid template associated. Maybe you have saved the analytical document without "
-								+ "uploading a valid template file");
-				throw e;
-			}
-		} finally {
-			logger.debug("OUT");
+		if (documentId == null) {
+			SpagoBIEngineStartupException e = new SpagoBIEngineStartupException(getEngineName(),
+					"Impossible to retrive document id");
+			e.setDescription("The engine is unable to retrive the id of the document to execute from request");
+			e.addHint(
+					"Check on SpagoBI Server if the analytical document you want to execute have a valid template associated. Maybe you have saved the analytical document without "
+							+ "uploading a valid template file");
+			throw e;
 		}
 
 		return documentId;
@@ -268,31 +256,24 @@ public abstract class AbstractEngineRestService extends AbstractRestService {
 		String documentLabelInSection = null;
 		String documentLabel = null;
 
-		logger.debug("IN");
+		documentLabelInSection = getAttributeFromSessionAsString(ENV_DOCUMENT_LABEL);
+		LOGGER.debug("The documentLabel in session: {}", documentLabelInSection);
 
-		try {
-			if (documentLabel == null) {
-				documentLabelInSection = getAttributeFromSessionAsString(ENV_DOCUMENT_LABEL);
-				logger.debug("documentLabel in Session:" + documentLabelInSection);
+		if (requestContainsAttribute(ENV_DOCUMENT_LABEL)) {
+			documentLabel = getAttributeAsString(ENV_DOCUMENT_LABEL);
+		} else {
+			documentLabel = documentLabelInSection;
+			LOGGER.debug("The documentLabel has been taken from session");
+		}
 
-				if (requestContainsAttribute(ENV_DOCUMENT_LABEL)) {
-					documentLabel = getAttributeAsString(ENV_DOCUMENT_LABEL);
-				} else {
-					documentLabel = documentLabelInSection;
-					logger.debug("documentLabel has been taken from session");
-				}
-			}
-
-			if (documentLabel == null) {
-				SpagoBIEngineStartupException e = new SpagoBIEngineStartupException(getEngineName(), "Impossible to retrive document label");
-				e.setDescription("The engine is unable to retrive the label of the document to execute from request");
-				e.addHint(
-						"Check on SpagoBI Server if the analytical document you want to execute have a valid template associated. Maybe you have saved the analytical document without "
-								+ "uploading a valid template file");
-				throw e;
-			}
-		} finally {
-			logger.debug("OUT");
+		if (documentLabel == null) {
+			SpagoBIEngineStartupException e = new SpagoBIEngineStartupException(getEngineName(),
+					"Impossible to retrive document label");
+			e.setDescription("The engine is unable to retrive the label of the document to execute from request");
+			e.addHint(
+					"Check on SpagoBI Server if the analytical document you want to execute have a valid template associated. Maybe you have saved the analytical document without "
+							+ "uploading a valid template file");
+			throw e;
 		}
 
 		return documentLabel;
@@ -311,28 +292,33 @@ public abstract class AbstractEngineRestService extends AbstractRestService {
 		if (dataSource == null) {
 			dataSource = getDataSourceServiceProxy().getDataSource(getDocumentId());
 			if (dataSource == null) {
-				logger.warn("Datasource is not defined.");
+				LOGGER.warn("Datasource is not defined.");
 				if (!this.tolerateMissingDatasource()) {
-					logger.error("The datasource is mandatory but it is not defined");
+					LOGGER.error("The datasource is mandatory but it is not defined");
 					throw new SpagoBIEngineRuntimeException("Datasource is not defined.");
 				}
 
 			} else {
 				if (dataSource.checkIsMultiSchema()) {
-					logger.debug("Datasource [" + dataSource.getLabel() + "] is defined on multi schema");
+					LOGGER.debug("Datasource [{}] is defined on multi schema", dataSource.getLabel());
 					try {
-						logger.debug("Retriving target schema for datasource [" + dataSource.getLabel() + "]");
+						LOGGER.debug("Retriving target schema for datasource [{}]", dataSource.getLabel());
 						attrname = dataSource.getSchemaAttribute();
-						logger.debug("Datasource's schema attribute name is equals to [" + attrname + "]");
-						Assert.assertNotNull(attrname, "Datasource's schema attribute name cannot be null in order to retrive the target schema");
+						LOGGER.debug("Datasource's schema attribute name is equals to [{}]", attrname);
+						Assert.assertNotNull(attrname,
+								"Datasource's schema attribute name cannot be null in order to retrive the target schema");
 						schema = (String) getUserProfile().getUserAttribute(attrname);
-						Assert.assertNotNull(schema, "Impossible to retrive the value of attribute [" + attrname + "] form user profile");
+						Assert.assertNotNull(schema,
+								"Impossible to retrive the value of attribute [" + attrname + "] form user profile");
 						dataSource.setJndi(dataSource.getJndi() + schema);
-						logger.debug("Target schema for datasource  [" + dataSource.getLabel() + "] is [" + dataSource.getJndi() + "]");
+						LOGGER.debug("Target schema for datasource [{}] is [{}]", dataSource.getLabel(),
+								dataSource.getJndi());
 					} catch (Throwable t) {
-						throw new SpagoBIEngineRuntimeException("Impossible to retrive target schema for datasource [" + dataSource.getLabel() + "]", t);
+						throw new SpagoBIEngineRuntimeException(
+								"Impossible to retrive target schema for datasource [" + dataSource.getLabel() + "]",
+								t);
 					}
-					logger.debug("Target schema for datasource  [" + dataSource.getLabel() + "] retrieved succesfully");
+					LOGGER.debug("Target schema for datasource [{}] retrieved succesfully", dataSource.getLabel());
 				}
 			}
 		}
@@ -360,7 +346,7 @@ public abstract class AbstractEngineRestService extends AbstractRestService {
 			try {
 				obj.put("result", "ok");
 			} catch (JSONException e) {
-				logger.error("Error building the success string");
+				LOGGER.error("Error building the success string");
 				throw new SpagoBIRuntimeException("Error building the success string");
 			}
 			successString = obj.toString();
@@ -379,7 +365,7 @@ public abstract class AbstractEngineRestService extends AbstractRestService {
 			try {
 				obj.put("success", true);
 			} catch (JSONException e) {
-				logger.error("Error building the success string");
+				LOGGER.error("Error building the success string");
 				throw new SpagoBIRuntimeException("Error building the success string");
 			}
 			successString = obj.toString();
@@ -398,7 +384,7 @@ public abstract class AbstractEngineRestService extends AbstractRestService {
 			try {
 				obj.put("result", "ko");
 			} catch (JSONException e) {
-				logger.error("Error building the success string");
+				LOGGER.error("Error building the success string");
 				throw new SpagoBIRuntimeException("Error building the success string");
 			}
 			successString = obj.toString();
@@ -415,22 +401,20 @@ public abstract class AbstractEngineRestService extends AbstractRestService {
 	 * @return
 	 */
 	public String saveAnalysisState(String name, String description, String scope) {
-		EngineAnalysisMetadata analysisMetadata = null;
+		EngineAnalysisMetadata locaAnalysisMetadata = null;
 
-		logger.debug("IN");
+		LOGGER.debug("Subobject Name: {}", name);
+		LOGGER.debug("Subobject description: {}", description);
+		LOGGER.debug("Subobject scope: {}", scope);
 
-		logger.debug("Subobject Name: " + name);
-		logger.debug("Subobject description: " + description);
-		logger.debug("Subobject scope: " + scope);
-
-		analysisMetadata = getEngineInstance().getAnalysisMetadata();
-		analysisMetadata.setName(name);
-		analysisMetadata.setDescription(description);
+		locaAnalysisMetadata = getEngineInstance().getAnalysisMetadata();
+		locaAnalysisMetadata.setName(name);
+		locaAnalysisMetadata.setDescription(description);
 
 		if (EngineAnalysisMetadata.PUBLIC_SCOPE.equalsIgnoreCase(scope)) {
-			analysisMetadata.setScope(EngineAnalysisMetadata.PUBLIC_SCOPE);
+			locaAnalysisMetadata.setScope(EngineAnalysisMetadata.PUBLIC_SCOPE);
 		} else if (EngineAnalysisMetadata.PRIVATE_SCOPE.equalsIgnoreCase(scope)) {
-			analysisMetadata.setScope(EngineAnalysisMetadata.PRIVATE_SCOPE);
+			locaAnalysisMetadata.setScope(EngineAnalysisMetadata.PRIVATE_SCOPE);
 		} else {
 			Assert.assertUnreachable("Value [" + scope + "] is not valid for the input parameter scope");
 		}
@@ -439,12 +423,14 @@ public abstract class AbstractEngineRestService extends AbstractRestService {
 		try {
 			result = saveAnalysisState();
 		} catch (SpagoBIEngineException e) {
-			logger.error("Error saving the subobject", e);
-			throw new SpagoBIRestServiceException("sbi.olap.save.analysis.error", getLocale(), "Error saving the subobject", e);
+			LOGGER.error("Error saving the subobject", e);
+			throw new SpagoBIRestServiceException("sbi.olap.save.analysis.error", getLocale(),
+					"Error saving the subobject", e);
 		}
 		if (!result.trim().toLowerCase().startsWith("ok")) {
-			logger.error("Error saving the subobject " + result);
-			throw new SpagoBIRestServiceException("sbi.olap.save.analysis.error", getLocale(), "Error saving the subobject");
+			LOGGER.error("Error saving the subobject {}", result);
+			throw new SpagoBIRestServiceException("sbi.olap.save.analysis.error", getLocale(),
+					"Error saving the subobject");
 		}
 
 		return getJsonSuccess();
@@ -458,14 +444,14 @@ public abstract class AbstractEngineRestService extends AbstractRestService {
 	 */
 	public String saveAnalysisState() throws SpagoBIEngineException {
 		IEngineInstance engineInstance = null;
-		String documentId = null;
-		EngineAnalysisMetadata analysisMetadata = null;
+		String localDocumentId = null;
+		EngineAnalysisMetadata localAnalysisMetadata = null;
 		IEngineAnalysisState analysisState = null;
 		ContentServiceProxy contentServiceProxy = null;
 		String serviceResponse = null;
 
 		engineInstance = getEngineInstance();
-		analysisMetadata = engineInstance.getAnalysisMetadata();
+		localAnalysisMetadata = engineInstance.getAnalysisMetadata();
 		analysisState = engineInstance.getAnalysisState();
 
 		if (getEnv() == null) {
@@ -477,17 +463,17 @@ public abstract class AbstractEngineRestService extends AbstractRestService {
 			return "KO - Missing content service proxy";
 		}
 
-		documentId = (String) getEnv().get(EngineConstants.ENV_DOCUMENT_ID);
-		if (documentId == null) {
+		localDocumentId = (String) getEnv().get(EngineConstants.ENV_DOCUMENT_ID);
+		if (localDocumentId == null) {
 			return "KO - Missing document id";
 		}
 
 		String isPublic = "false";
-		if (AbstractEngineAction.PUBLIC_SCOPE.equalsIgnoreCase(analysisMetadata.getScope()))
+		if (AbstractEngineAction.PUBLIC_SCOPE.equalsIgnoreCase(localAnalysisMetadata.getScope()))
 			isPublic = "true";
 
-		serviceResponse = contentServiceProxy.saveSubObject(documentId, analysisMetadata.getName(), analysisMetadata.getDescription(), isPublic,
-				new String(analysisState.store()));
+		serviceResponse = contentServiceProxy.saveSubObject(localDocumentId, localAnalysisMetadata.getName(),
+				localAnalysisMetadata.getDescription(), isPublic, new String(analysisState.store()));
 
 		return serviceResponse;
 	}
