@@ -408,8 +408,10 @@ public class AbstractDocumentExecutionWork extends DossierExecutionClient implem
 		JSONArray jsonParams = new JSONArray();
 
 		List<BIObjectParameter> drivers = biObject.getDrivers();
+		String viewId = reportToUse.getViewId();
 
-		if (drivers != null) {
+		// This control doesn't make sense for parameters which use a view
+		if (StringUtils.isEmpty(viewId) && drivers != null) {
 			List<Parameter> parameter = reportToUse.getParameters();
 			if (drivers.size() != parameter.size()) {
 				throw new SpagoBIRuntimeException(
