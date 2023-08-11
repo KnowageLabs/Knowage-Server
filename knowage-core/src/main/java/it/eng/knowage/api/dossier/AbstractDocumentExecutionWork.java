@@ -127,6 +127,7 @@ public class AbstractDocumentExecutionWork extends DossierExecutionClient implem
 				activity = daoAct.loadActivityByProgressThreadId(progressThreadId);
 			}
 			String dbArray = activity.getConfigContent();
+			String executionRole = activity.getExecutionRole();
 			JSONArray jsonArray = null;
 
 			Map<String, String> paramMap = new HashMap<>();
@@ -154,6 +155,12 @@ public class AbstractDocumentExecutionWork extends DossierExecutionClient implem
 				Integer docId = biObject.getId();
 
 				Collection<String> roles = userProfile.getRoles();
+
+				// If execution role was specified, we'll use it
+				if (StringUtils.isNotEmpty(executionRole)) {
+					roles.retainAll(Collections.singletonList(executionRole));
+				}
+
 				for (String role : roles) {
 
 					if (!ObjectsAccessVerifier.canExec(biObject, userProfile)) {
