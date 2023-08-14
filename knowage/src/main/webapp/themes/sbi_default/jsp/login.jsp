@@ -208,7 +208,7 @@
   	<body class="kn-login">
   		<div class="container-fluid" style="height:100%;">
         	<!--  div class="card card-container"-->
-        	<div class="col-sm-5 offset-sm-7 row align-items-center justify-content-center" style="height:100%;background-color:white;padding:20px;">
+        	<div class="col-12 col-lg-5 offset-lg-7" style="height:100%;display:flex;align-items:center;justify-content:center;background-color:white;padding:20px;">
 <div class="col-8">
             	<img id="profile-img" src='<%=urlBuilder.getResourceLinkByTheme(request, "../commons/img/defaultTheme/logoCover.svg", currTheme)%>' />
             	<p id="profile-name" class="profile-name-card"></p>
