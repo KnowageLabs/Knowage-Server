@@ -208,8 +208,9 @@
   	<body class="kn-login">
   		<div class="container-fluid" style="height:100%;">
         	<!--  div class="card card-container"-->
-        	<div class="col-sm-5 col-sm-offset-7" style="height:100%;background-color:white;display:flex;flex-direction:column;padding:20px;justify-content:center;align-items:center">
-            	<img id="profile-img" class="col-xs-8" src='<%=urlBuilder.getResourceLinkByTheme(request, "../commons/img/defaultTheme/logoCover.svg", currTheme)%>' />
+        	<div class="col-sm-5 offset-sm-7 row align-items-center justify-content-center" style="height:100%;background-color:white;padding:20px;">
+<div class="col-8">
+            	<img id="profile-img" src='<%=urlBuilder.getResourceLinkByTheme(request, "../commons/img/defaultTheme/logoCover.svg", currTheme)%>' />
             	<p id="profile-name" class="profile-name-card"></p>
             	
             	
@@ -225,7 +226,6 @@
 	           		
             	<% } else { %>
             	
-            	<div class="col-xs-8">
            			<form class="form-signin"  id="formId" name="login" action="<%=contextName%>/servlet/AdapterHTTP?PAGE=LoginPage&NEW_SESSION=TRUE" method="POST" onsubmit="return escapeUserName()">
 		        		<input type="hidden" id="<%=roleToCheckLbl%>" name="<%=roleToCheckLbl%>" value="<%=roleToCheckVal%>" />
 		        		<%	
@@ -256,7 +256,7 @@
 		               	<button class="btn btn-lg btn-primary btn-block btn-signup" onclick="signup();" ><%=msgBuilder.getMessage("signup")%></button>
 					<%} %> 
             	</div>
-            	<!-- img class="col-xs-8 col-sm-offset-4 col-sm-4" src='<%=urlBuilder.getResourceLink(request, "themes/commons/img/defaultTheme/poweredBy.svg")%>' / -->
+            	<!-- img class="col-xs-8 offset-sm-4 col-sm-4" src='<%=urlBuilder.getResourceLink(request, "themes/commons/img/defaultTheme/poweredBy.svg")%>' / -->
             	<% } %>
             	
             	
