@@ -28,7 +28,9 @@
 	
 	<head>
 		<%@include file="/WEB-INF/jsp/commons/angular/angularImport.jsp"%>
-		<%@include file="/WEB-INF/jsp/commons/angular/svgViewerImport.jsp"%>
+		<%@include file="/WEB-INF/jsp/commons/angular/svgViewerResource.jsp"%>
+		<script type="text/javascript" src="${pageContext.request.contextPath}/js/lib/svg-widgets/jquery_2.2.4.min.js"></script>
+		<script type="text/javascript"	src="${pageContext.request.contextPath}/js/lib/svg-widgets/Chart.bundle.min.js"></script>
 	
 		<script type="text/javascript" src="${pageContext.request.contextPath}/js/src/angular_1.x/svgviewer/svgViewerController.js"></script>
 		<script>var _requestParameterMap = <%=new ObjectMapper().writeValueAsString(request.getParameterMap())%>;</script>
