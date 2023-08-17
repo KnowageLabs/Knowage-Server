@@ -131,7 +131,6 @@
 		<module>../knowagemeta</module>
 		<module>../knowageqbeengine</module>
 		<module>../knowagesvgviewerengine</module>
-		<module>../knowagetalendenginclientapi</module>
 		<module>../knowagetalendengine</module>
 		<module>../knowagewhatifengine</module>
 		<module>../knowagejasperreportengine</module>

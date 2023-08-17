@@ -102,7 +102,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       <script type="text/javascript" src="<%=urlBuilder.getResourceLink(request,"/js/lib/angular/angular-material_1.1.0/angular-material.min.js")%>"></script> 
       <link rel='StyleSheet' href='<%=urlBuilder.getResourceLink(request, "themes/commons/css/reset_2018.css")%>' type='text/css' />
       <link rel="stylesheet" href="<%=urlBuilder.getResourceLink(request,"/js/lib/angular/angular-material_1.1.0/angular-material.min.css")%>">
-      <link rel="stylesheet" href="<%=urlBuilder.getResourceLink(request, "js/lib/bootstrap/css/bootstrap.min.css")%>">
+	<link rel="stylesheet" href="<%=urlBuilder.getResourceLink(request, "node_modules/bootstrap/dist/css/bootstrap.min.css")%>">
 	  <link rel='StyleSheet' href='<%=urlBuilder.getResourceLink(request, "themes/commons/css/customStyle.css")%>' type='text/css' />
       <script>
          var app = angular.module('changePwdApp', ['ngMaterial']);
@@ -170,8 +170,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
       </div>
       <!-- /container -->
       <!-- Include all compiled plugins (below), or include individual files as needed -->
-      <script src="<%=urlBuilder.getResourceLink(request, "js/lib/jquery-1.11.3/jquery-1.11.3.min.js")%>"></script>
-      <script src="<%=urlBuilder.getResourceLink(request, "js/lib/bootstrap/bootstrap.min.js")%>"></script>
+	  <script src="<%=urlBuilder.getResourceLink(request, "node_modules/jquery/dist/jquery.min.js")%>"></script>
+ 		<script src="<%=urlBuilder.getResourceLink(request, "node_modules/bootstrap/dist/js/bootstrap.min.js")%>"></script>
       <script>
          $(document).ready(function(){
             // Select all elements with data-toggle="tooltips" in the document
