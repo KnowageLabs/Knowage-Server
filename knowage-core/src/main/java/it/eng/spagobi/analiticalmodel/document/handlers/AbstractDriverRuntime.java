@@ -77,7 +77,7 @@ public abstract class AbstractDriverRuntime<T extends AbstractDriver> {
 	T driver;
 	Parameter analyticalDriver;
 	ParameterUse analyticalDriverExecModality;
-	List<AbstractParuse> dataDependencies;
+	List<? extends AbstractParuse> dataDependencies;
 	List<AbstractParview> visualDependencies;
 	List lovDependencies;
 
@@ -106,7 +106,7 @@ public abstract class AbstractDriverRuntime<T extends AbstractDriver> {
 	String lovDescriptionColumnName;
 	List<String> lovVisibleColumnsNames;
 	List<String> lovInvisibleColumnsNames;
-	private BiMap<String, String> colPlaceholder2ColName = HashBiMap.create();
+	private final BiMap<String, String> colPlaceholder2ColName = HashBiMap.create();
 
 	int valuesCount;
 	// used to comunicate to the client the unique
@@ -148,8 +148,8 @@ public abstract class AbstractDriverRuntime<T extends AbstractDriver> {
 	public AbstractDriverRuntime() {
 	}
 
-	public AbstractDriverRuntime(T driver2, String exeRole, Locale loc, IDrivableBIResource doc, AbstractBIResourceRuntime dum,
-			List<? extends AbstractDriver> objParameters) {
+	public AbstractDriverRuntime(T driver2, String exeRole, Locale loc, IDrivableBIResource doc,
+			AbstractBIResourceRuntime dum, List<? extends AbstractDriver> objParameters) {
 		driver = driver2;
 		executionRole = exeRole;
 		biResource = doc;
@@ -166,8 +166,8 @@ public abstract class AbstractDriverRuntime<T extends AbstractDriver> {
 		objParameterIds = new ArrayList<>();
 	}
 
-	public AbstractDriverRuntime(T driver2, String exeRole, Locale loc, IDrivableBIResource doc, boolean _isFromCross, boolean loadAdmissible,
-			AbstractBIResourceRuntime dum, List<? extends AbstractDriver> objParameters) {
+	public AbstractDriverRuntime(T driver2, String exeRole, Locale loc, IDrivableBIResource doc, boolean _isFromCross,
+			boolean loadAdmissible, AbstractBIResourceRuntime dum, List<? extends AbstractDriver> objParameters) {
 		driver = driver2;
 		executionRole = exeRole;
 		biResource = doc;
@@ -215,13 +215,17 @@ public abstract class AbstractDriverRuntime<T extends AbstractDriver> {
 		thickPerc = driver.getThickPerc() != null ? driver.getThickPerc() : 0;
 
 		try {
-			analyticalDriverExecModality = ANALYTICAL_DRIVER_USE_MODALITY_DAO.loadByParameterIdandRole(driver.getParID(), executionRole);
+			analyticalDriverExecModality = ANALYTICAL_DRIVER_USE_MODALITY_DAO
+					.loadByParameterIdandRole(driver.getParID(), executionRole);
 		} catch (Exception e) {
 			throw new SpagoBIServiceException(SERVICE_NAME,
-					"Impossible to find any valid execution modality for parameter [" + id + "] and role [" + executionRole + "]", e);
+					"Impossible to find any valid execution modality for parameter [" + id + "] and role ["
+							+ executionRole + "]",
+					e);
 		}
 		Assert.assertNotNull(analyticalDriverExecModality,
-				"Impossible to find any valid execution modality for parameter [" + id + "] and role [" + executionRole + "]");
+				"Impossible to find any valid execution modality for parameter [" + id + "] and role [" + executionRole
+						+ "]");
 		parameterUseId = analyticalDriverExecModality.getUseID();
 		enableMaximizer = analyticalDriverExecModality.isMaximizerEnabled();
 	}
@@ -254,16 +258,19 @@ public abstract class AbstractDriverRuntime<T extends AbstractDriver> {
 					LovDependencyRuntime lovDependency = new LovDependencyRuntime();
 					lovDependencies = new ArrayList<>();
 					for (AbstractDriver objParameter : objParameters) {
-						Parameter objAnalyticalDriver = ANALYTICAL_DRIVER_DAO.loadForDetailByParameterID(objParameter.getParameter().getId());
+						Parameter objAnalyticalDriver = ANALYTICAL_DRIVER_DAO
+								.loadForDetailByParameterID(objParameter.getParameter().getId());
 						if (objAnalyticalDriver != null && lovParameters.contains(objAnalyticalDriver.getLabel())) {
-							logger.debug("Found the analytical driver [" + objAnalyticalDriver.getLabel() + "] associated to the placeholder in the LOV");
+							logger.debug("Found the analytical driver [" + objAnalyticalDriver.getLabel()
+									+ "] associated to the placeholder in the LOV");
 							lovDependency.urlName = objParameter.getParameterUrlName();
 							lovDependencies.add(lovDependency.urlName);
 						}
 					}
 					if (lovDependency.urlName == null || lovDependency.urlName.isEmpty()) {
 						throw new SpagoBIRuntimeException(
-								"Impossible to found a parameter to satisfy the dependecy associated with the placeholder in the LOV [" + id + "]");
+								"Impossible to found a parameter to satisfy the dependecy associated with the placeholder in the LOV ["
+										+ id + "]");
 					}
 
 					if (!dependencies.containsKey(lovDependency.urlName)) {
@@ -274,7 +281,8 @@ public abstract class AbstractDriverRuntime<T extends AbstractDriver> {
 				}
 			}
 		} catch (Exception e) {
-			throw new SpagoBIServiceException("An error occurred while loading parameter lov dependecies for parameter [" + id + "]", e);
+			throw new SpagoBIServiceException(
+					"An error occurred while loading parameter lov dependecies for parameter [" + id + "]", e);
 		}
 	}
 
@@ -347,7 +355,8 @@ public abstract class AbstractDriverRuntime<T extends AbstractDriver> {
 					driver.setParameterValuesDescription(new ArrayList<>(Arrays.asList(description)));
 				}
 
-				JSONObject valuesJSON = DocumentExecutionUtils.buildJSONForLOV(dum.getLovDetail(driver), rows, DocumentExecutionUtils.MODE_SIMPLE);
+				JSONObject valuesJSON = DocumentExecutionUtils.buildJSONForLOV(dum.getLovDetail(driver), rows,
+						DocumentExecutionUtils.MODE_SIMPLE);
 				JSONArray valuesJSONArray = valuesJSON.getJSONArray("root");
 
 				for (int i = 0; i < valuesJSONArray.length(); i++) {
@@ -367,9 +376,11 @@ public abstract class AbstractDriverRuntime<T extends AbstractDriver> {
 
 							for (HashMap<String, Object> defVal : admissibleValues) {
 								if (item.has("value") && item.has("description")) {
-									if (defVal.get("value") != null && defVal.get("value").equals(item.get("value")) && !item.isNull("label")) {
-										if (defVal.get("label").equals(item.get("label")) && defVal.get("description") != null
-												&& item.opt("description") != null && defVal.get("description").equals(item.get("description"))) {
+									if (defVal.get("value") != null && defVal.get("value").equals(item.get("value"))
+											&& !item.isNull("label")) {
+										if (defVal.get("label").equals(item.get("label"))
+												&& defVal.get("description") != null && item.opt("description") != null
+												&& defVal.get("description").equals(item.get("description"))) {
 											defaultParameterAlreadyExist = true;
 											break;
 										} else {
@@ -407,21 +418,29 @@ public abstract class AbstractDriverRuntime<T extends AbstractDriver> {
 					List<String> descriptions = new ArrayList<>();
 					for (Iterator iterator = driver.getParameterValues().iterator(); iterator.hasNext();) {
 						Object parameterValue = iterator.next();
-						String value = parameterValue != null && parameterValue instanceof String ? parameterValue.toString() : null;
+						String value = parameterValue != null && parameterValue instanceof String
+								? parameterValue.toString()
+								: null;
 						if (value != null) {
 							boolean found = false;
 							for (Iterator iterator2 = admissibleValues.iterator(); iterator2.hasNext() && !found;) {
 								Map map = (Map) iterator2.next();
-								String valueD = map.get("value") != null && map.get("value") instanceof String ? map.get("value").toString() : null;
+								String valueD = map.get("value") != null && map.get("value") instanceof String
+										? map.get("value").toString()
+										: null;
 								if (valueD != null && valueD.equals(value)) {
-									String description = map.get("description") != null && map.get("description") instanceof String
-											? map.get("description").toString()
-											: null;
+									String description = map.get("description") != null
+											&& map.get("description") instanceof String
+													? map.get("description").toString()
+													: null;
 									if (description != null) {
-										logger.debug("Description found for cross navigation parameter: " + description);
+										logger.debug(
+												"Description found for cross navigation parameter: " + description);
 										descriptions.add(description);
 									} else {
-										logger.debug("No description found for cross navigation parameter use value as default: " + value);
+										logger.debug(
+												"No description found for cross navigation parameter use value as default: "
+														+ value);
 										descriptions.add(value);
 									}
 									found = true;
@@ -453,7 +472,8 @@ public abstract class AbstractDriverRuntime<T extends AbstractDriver> {
 
 	public boolean areAdmissibleValuesToBePreloaded(AbstractDriver driver) {
 		boolean preloadAdmissibleValues = true;
-		if ("LOOKUP".equalsIgnoreCase(selectionType) || "TREE".equalsIgnoreCase(selectionType) || selectionType.isEmpty()) {
+		if ("LOOKUP".equalsIgnoreCase(selectionType) || "TREE".equalsIgnoreCase(selectionType)
+				|| selectionType.isEmpty()) {
 			preloadAdmissibleValues = false;
 		}
 		return preloadAdmissibleValues;
@@ -511,9 +531,10 @@ public abstract class AbstractDriverRuntime<T extends AbstractDriver> {
 		// DocumentRuntime dum = new DocumentRuntime(profile, this.locale);
 		List<AbstractParuse> biParameterExecDependencies = dum.getDependencies(driver, this.executionRole);
 		ILovDetail lovProvDet = dum.getLovDetail(driver);
-		if (lovProvDet instanceof DependenciesPostProcessingLov && selectedParameterValues != null && biParameterExecDependencies != null
-				&& biParameterExecDependencies.size() > 0) {
-			rows = ((DependenciesPostProcessingLov) lovProvDet).processDependencies(rows, selectedParameterValues, biParameterExecDependencies);
+		if (lovProvDet instanceof DependenciesPostProcessingLov && selectedParameterValues != null
+				&& biParameterExecDependencies != null && biParameterExecDependencies.size() > 0) {
+			rows = ((DependenciesPostProcessingLov) lovProvDet).processDependencies(rows, selectedParameterValues,
+					biParameterExecDependencies);
 		}
 		return rows;
 	}
@@ -532,9 +553,11 @@ public abstract class AbstractDriverRuntime<T extends AbstractDriver> {
 		try {
 			DefaultValuesRetriever retriever = new DefaultValuesRetriever();
 			IEngUserProfile profile = UserProfileManager.getProfile();
-			defaultValues = retriever.getDefaultValuesDum(driver, this.biResource, profile, this.locale, this.executionRole);
+			defaultValues = retriever.getDefaultValuesDum(driver, this.biResource, profile, this.locale,
+					this.executionRole);
 
-			if (defaultValues.size() > 0 && (driver.getParameterValues() == null || driver.getParameterValues().isEmpty())) {
+			if (defaultValues.size() > 0
+					&& (driver.getParameterValues() == null || driver.getParameterValues().isEmpty())) {
 				// if parameter has no values set, but it has default values, those values are considered as values
 				defaultValues = buildDefaultValueList();
 				if (defaultValues != null) {
@@ -570,13 +593,15 @@ public abstract class AbstractDriverRuntime<T extends AbstractDriver> {
 	}
 
 	private DefaultValuesList buildDefaultValueList() {
-		SimpleDateFormat serverDateFormat = new SimpleDateFormat(SingletonConfig.getInstance().getConfigValue("SPAGOBI.DATE-FORMAT-SERVER.format"));
+		SimpleDateFormat serverDateFormat = new SimpleDateFormat(
+				SingletonConfig.getInstance().getConfigValue("SPAGOBI.DATE-FORMAT-SERVER.format"));
 
 		if (parType != null && (parType.equals("DATE") || parType.equals("DATE_RANGE"))) {
 			String valueDate = this.getDefaultValues().get(0).getValue().toString();
 			String[] date = valueDate.split("#");
 			if (date.length < 2) {
-				throw new SpagoBIServiceException(SERVICE_NAME, "Illegal format for Value List Date Type [" + valueDate + "], unable to find symbol [#]");
+				throw new SpagoBIServiceException(SERVICE_NAME,
+						"Illegal format for Value List Date Type [" + valueDate + "], unable to find symbol [#]");
 			}
 			SimpleDateFormat format = new SimpleDateFormat(date[1]);
 			DefaultValuesList valueList = new DefaultValuesList();
@@ -623,14 +648,16 @@ public abstract class AbstractDriverRuntime<T extends AbstractDriver> {
 	 * @author Marco Libanori
 	 */
 	private LovValue buildMaxValue() {
-		SimpleDateFormat serverDateFormat = new SimpleDateFormat(SingletonConfig.getInstance().getConfigValue("SPAGOBI.DATE-FORMAT-SERVER.format"));
+		SimpleDateFormat serverDateFormat = new SimpleDateFormat(
+				SingletonConfig.getInstance().getConfigValue("SPAGOBI.DATE-FORMAT-SERVER.format"));
 
 		if (maxValue.getValue() != null) {
 			if (parType != null && (parType.equals("DATE") || parType.equals("DATE_RANGE"))) {
 				String valueDate = maxValue.getValue().toString();
 				String[] date = valueDate.split("#");
 				if (date.length < 2) {
-					throw new SpagoBIServiceException(SERVICE_NAME, "Illegal format for Value List Date Type [" + valueDate + "], unable to find symbol [#]");
+					throw new SpagoBIServiceException(SERVICE_NAME,
+							"Illegal format for Value List Date Type [" + valueDate + "], unable to find symbol [#]");
 				}
 				SimpleDateFormat format = new SimpleDateFormat(date[1]);
 				LovValue ret = new LovValue();
@@ -680,8 +707,8 @@ public abstract class AbstractDriverRuntime<T extends AbstractDriver> {
 
 			// DocumentRuntime dum = new DocumentRuntime(UserProfileManager.getProfile(), locale);
 
-			lovResult = executionCacheManager.getLovResultDum(profile, dum.getLovDetail(driver), dum.getDependencies(driver, this.executionRole),
-					this.biResource, true, this.locale);
+			lovResult = executionCacheManager.getLovResultDum(profile, dum.getLovDetail(driver),
+					dum.getDependencies(driver, this.executionRole), this.biResource, true, this.locale);
 			// get all the rows of the result
 			LovResultHandler lovResultHandler = new LovResultHandler(lovResult);
 			rows = lovResultHandler.getRows();
@@ -702,7 +729,8 @@ public abstract class AbstractDriverRuntime<T extends AbstractDriver> {
 			try {
 				parameterNames = lovDetail.getParameterNames();
 			} catch (Exception e) {
-				throw new SpagoBIServiceException(SERVICE_NAME, "Impossible to find in context execution lov parameters for execution of document", e);
+				throw new SpagoBIServiceException(SERVICE_NAME,
+						"Impossible to find in context execution lov parameters for execution of document", e);
 			}
 			if (parameterNames != null && !parameterNames.isEmpty()) {
 				return true;
