@@ -17,6 +17,7 @@
  */
 package it.eng.qbe.statement.jpa;
 
+import java.beans.PropertyDescriptor;
 import java.lang.reflect.Field;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
@@ -59,7 +60,7 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 public class JPQL2SQLStatementRewriter {
 
 	/** The entity manager. */
-	private EntityManager entityManager;
+	private final EntityManager entityManager;
 
 	/** Logger component. */
 	public static transient Logger logger = Logger.getLogger(JPQL2SQLStatementRewriter.class);
@@ -67,8 +68,7 @@ public class JPQL2SQLStatementRewriter {
 	/**
 	 * Instantiates a new hql to sql query rewriter.
 	 *
-	 * @param session
-	 *            the session
+	 * @param session the session
 	 */
 	public JPQL2SQLStatementRewriter(EntityManager em) {
 		this.entityManager = em;
@@ -98,8 +98,7 @@ public class JPQL2SQLStatementRewriter {
 	/**
 	 * Rewrite the JPQL query string in a SQL String (The persistence provider implementation in use is EclipseLink)
 	 *
-	 * @param query
-	 *            The String of the JPQL query
+	 * @param query The String of the JPQL query
 	 * @return the string of the JPQL query translated in SQL
 	 */
 	private String rewriteEclipseLink(String query) {
@@ -110,8 +109,7 @@ public class JPQL2SQLStatementRewriter {
 	/**
 	 * Rewrite the JPQL query in a SQL String (The persistence provider implementation in use is EclipseLink)
 	 *
-	 * @param query
-	 *            The JPQL query
+	 * @param query The JPQL query
 	 * @return the string of the JPQL query translated in SQL
 	 */
 	private String rewriteEclipseLink(Query query) {
@@ -123,7 +121,7 @@ public class JPQL2SQLStatementRewriter {
 
 		// ADD THE ALIAS in the select statement (necessary for the temporary table construction..)
 		int fromPosition = sqlString.indexOf("FROM");
-		StringBuffer sqlQuery2 = new StringBuffer();
+		StringBuilder sqlQuery2 = new StringBuilder();
 		String SelectStatement = sqlString.substring(0, fromPosition - 1);
 		StringTokenizer SelectStatementStk = new StringTokenizer(SelectStatement, ",");
 		int i = 0;
@@ -145,8 +143,7 @@ public class JPQL2SQLStatementRewriter {
 	/**
 	 * Rewrite the JPQL query string in a SQL String (The persistence provider implementation in use is Hibernate)
 	 *
-	 * @param query
-	 *            The String of the JPQL query
+	 * @param query The String of the JPQL query
 	 * @return the string of the JPQL query translated in SQL
 	 */
 	private String rewriteHibernate(String query) {
@@ -167,7 +164,7 @@ public class JPQL2SQLStatementRewriter {
 		/*
 		 * Replace parameters in query
 		 */
-		List<Object> values = new ArrayList<Object>();
+		List<Object> values = new ArrayList<>();
 		getFiltersValues(session, collectedParameterSpecifications, values);
 		fixQueryParameters(sessionFactory, values);
 		replaceQueryParameters(finalSqlStringBuilder, values);
@@ -180,7 +177,7 @@ public class JPQL2SQLStatementRewriter {
 		Iterator<Object> iterator = values.iterator();
 		while ((indexOf = finalSqlStringBuilder.indexOf("?")) != -1) {
 			Object value = iterator.next();
-			finalSqlStringBuilder.replace(indexOf, indexOf+1, value.toString());
+			finalSqlStringBuilder.replace(indexOf, indexOf + 1, value.toString());
 		}
 	}
 
@@ -190,23 +187,22 @@ public class JPQL2SQLStatementRewriter {
 		 */
 		Field filterNameField = null;
 		Field parameterNameField = null;
+		Class<?> clas = DynamicFilterParameterSpecification.class;
 		try {
-			filterNameField = DynamicFilterParameterSpecification.class.getDeclaredField("filterName");
-			parameterNameField = DynamicFilterParameterSpecification.class.getDeclaredField("parameterName");
+			filterNameField = clas.getDeclaredField("filterName");
+			parameterNameField = clas.getDeclaredField("parameterName");
 		} catch (Exception e) {
 			throw new SpagoBIRuntimeException(e);
 		}
-		filterNameField.setAccessible(true);
-		parameterNameField.setAccessible(true);
 
 		/*
 		 * Get values of parameters managing multivalues value
 		 */
 		for (Object currParameter : collectedParameterSpecifications) {
 			try {
-				String filterName = (String) filterNameField.get(currParameter);
-				String parameterName = (String) parameterNameField.get(currParameter);
-				Object value = session.getLoadQueryInfluencers().getFilterParameterValue( filterName + '.' + parameterName );
+				String filterName = (String) new PropertyDescriptor(filterNameField.getName(), clas).getReadMethod().invoke(currParameter);
+				String parameterName = (String) new PropertyDescriptor(parameterNameField.getName(), clas).getReadMethod().invoke(currParameter);
+				Object value = session.getLoadQueryInfluencers().getFilterParameterValue(filterName + '.' + parameterName);
 
 				if (value instanceof Collection) {
 					Collection<?> coll = (Collection) value;
@@ -263,8 +259,7 @@ public class JPQL2SQLStatementRewriter {
 	/**
 	 * Rewrite the JPQL query in a SQL String (The persistence provider implementation in use is Hibernate)
 	 *
-	 * @param query
-	 *            The JPQL query
+	 * @param query The JPQL query
 	 * @return the string of the JPQL query translated in SQL
 	 */
 	private String rewriteHibernate(Query query) {
@@ -279,8 +274,8 @@ public class JPQL2SQLStatementRewriter {
 	/**
 	 * Fixes SQL values.
 	 *
-	 * WORKAROUND This code is present because of the way {@link it.eng.qbe.statement.jpa.JPQLDataSet} does the count
-	 * TODO Remove this and fix the count in {@link it.eng.qbe.statement.jpa.JPQLDataSet}6
+	 * WORKAROUND This code is present because of the way {@link it.eng.qbe.statement.jpa.JPQLDataSet} does the count TODO Remove this and fix the count in
+	 * {@link it.eng.qbe.statement.jpa.JPQLDataSet}6
 	 *
 	 * @param value Value to fix
 	 * @return Fixed value
@@ -294,8 +289,8 @@ public class JPQL2SQLStatementRewriter {
 	}
 
 	/**
-	 * WORKAROUND This code is present because of the way {@link it.eng.qbe.statement.jpa.JPQLDataSet} does the count
-	 * TODO Remove this and fix the count in {@link it.eng.qbe.statement.jpa.JPQLDataSet}6
+	 * WORKAROUND This code is present because of the way {@link it.eng.qbe.statement.jpa.JPQLDataSet} does the count TODO Remove this and fix the count in
+	 * {@link it.eng.qbe.statement.jpa.JPQLDataSet}6
 	 */
 	private String escapeString(String value) {
 		return value.toString().replace("'", "''");
