@@ -20,9 +20,6 @@ package it.eng.spagobi.tools.dataset.common.dataproxy;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.security.MessageDigest;
-import java.util.Base64;
 
 import org.apache.log4j.Logger;
 
@@ -100,51 +97,6 @@ public class FileDataProxy extends AbstractDataProxy {
 		this.fileName = fileName;
 	}
 
-	private byte[] createChecksum() {
-		logger.debug("IN");
-		byte[] toReturn = null;
-		InputStream fis = null;
-		try {
-			String filePath = this.getCompleteFilePath();
-			fis = new FileInputStream(filePath);
-
-			byte[] buffer = new byte[1024];
-			MessageDigest complete = MessageDigest.getInstance("MD5");
-			int numRead;
-
-			do {
-				numRead = fis.read(buffer);
-				if (numRead > 0) {
-					complete.update(buffer, 0, numRead);
-				}
-			} while (numRead != -1);
-
-			toReturn = complete.digest();
-
-		} catch (Exception e) {
-			throw new SpagoBIRuntimeException("Cannot get file checksum", e);
-		} finally {
-			if (fis != null) {
-				try {
-					fis.close();
-				} catch (IOException e) {
-					logger.error("Error closing input stream", e);
-				}
-			}
-			logger.debug("OUT");
-		}
-		return toReturn;
-	}
-
-	public String getMD5Checksum() {
-		logger.debug("IN");
-		byte[] checksum = this.createChecksum();
-		Base64.Encoder encoder = Base64.getEncoder();
-		String encoded = encoder.encodeToString(checksum);
-		logger.debug("OUT: returning [" + encoded + "]");
-		return encoded;
-	}
-
 	/**
 	 * @return the useTempFile
 	 */
@@ -153,8 +105,7 @@ public class FileDataProxy extends AbstractDataProxy {
 	}
 
 	/**
-	 * @param useTempFile
-	 *            the useTempFile to set
+	 * @param useTempFile the useTempFile to set
 	 */
 	public void setUseTempFile(boolean useTempFile) {
 		this.useTempFile = useTempFile;
