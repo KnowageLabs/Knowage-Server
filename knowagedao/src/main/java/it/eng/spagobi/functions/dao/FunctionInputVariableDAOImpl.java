@@ -52,9 +52,10 @@ public class FunctionInputVariableDAOImpl extends AbstractHibernateDAO implement
 
 			StringBuilder query = new StringBuilder();
 			query.append("from SbiFunctionInputVariable sfiv ");
-			query.append("where sfiv.id.functionUuid = " + functionUuid);
+			query.append("where sfiv.id.functionUuid = = :functionUuid");
 
 			Query hibQuery = session.createQuery(query.toString());
+			hibQuery.setString("functionUuid", functionUuid);
 
 			sbiFunctionInputVariableList = hibQuery.list();
 		} catch (Throwable t) {

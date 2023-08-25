@@ -52,9 +52,10 @@ public class FunctionOutputColumnDAOImpl extends AbstractHibernateDAO implements
 
 			StringBuilder query = new StringBuilder();
 			query.append("from SbiFunctionOutputColumn sfiv ");
-			query.append("where sfiv.sbiCatalogFunction.functionUuid =" + functionUuid);
+			query.append("where sfiv.sbiCatalogFunction.functionUuid = :functionUuid");
 
 			Query hibQuery = session.createQuery(query.toString());
+			hibQuery.setString("functionUuid", functionUuid);
 
 			sbiFunctionOutputColumnList = hibQuery.list();
 		} catch (Throwable t) {

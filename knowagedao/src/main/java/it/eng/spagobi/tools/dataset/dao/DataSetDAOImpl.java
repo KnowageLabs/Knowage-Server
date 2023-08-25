@@ -25,9 +25,11 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -214,7 +216,7 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 		try {
 			session = getSession();
 			transaction = session.beginTransaction();
-			List<Domain> devCategories = new LinkedList<Domain>();
+			List<Domain> devCategories = new LinkedList<>();
 			boolean isDev = fillDevCategories(devCategories);
 			if (isDev) {
 				List idsCat = createIdsCatogriesList(devCategories);
@@ -291,7 +293,7 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 
 			List toBeDeleted = query.list();
 
-			if (toBeDeleted != null && toBeDeleted.isEmpty() == false) {
+			if (toBeDeleted != null && !toBeDeleted.isEmpty()) {
 				Iterator it = toBeDeleted.iterator();
 				while (it.hasNext()) {
 					SbiDataSet sbiDataSet = (SbiDataSet) it.next();
@@ -379,13 +381,13 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 				// throw new SpagoBIDOAException(message);
 				DatasetInUseException diue = new DatasetInUseException(message);
 				diue.setLov(bLovs);
-				ArrayList<String> objs = new ArrayList<String>();
+				ArrayList<String> objs = new ArrayList<>();
 				for (int i = 0; i < objectsAssociated.size(); i++) {
 					BIObject obj = objectsAssociated.get(i);
 					objs.add(obj.getLabel());
 				}
 				diue.setObjectsLabel(objs);
-				ArrayList<String> federations = new ArrayList<String>();
+				ArrayList<String> federations = new ArrayList<>();
 				for (int i = 0; i < federationsAssociated.size(); i++) {
 					FederationDefinition fedDef = federationsAssociated.get(i);
 					federations.add(fedDef.getLabel());
@@ -575,7 +577,7 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 			countQuery.setInteger(1, datasetVersionNum);
 			countQuery.setInteger(2, dsId);
 			SbiDataSet sbiDataSet = (SbiDataSet) countQuery.uniqueResult();
-			if (sbiDataSet != null && sbiDataSet.isActive() == false) {
+			if (sbiDataSet != null && !sbiDataSet.isActive()) {
 				session.delete(sbiDataSet);
 				transaction.commit();
 				deleted = true;
@@ -781,7 +783,7 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 		transaction = null;
 		try {
 
-			if (keepPreviousSession == false) {
+			if (!keepPreviousSession) {
 				try {
 					session = getSession();
 					Assert.assertNotNull(session, "session cannot be null");
@@ -911,7 +913,7 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 
 			idToReturn = hibDataSet.getId().getDsId();
 
-			if (keepPreviousSession == false && transaction != null) {
+			if (!keepPreviousSession && transaction != null) {
 				transaction.commit();
 			}
 
@@ -929,7 +931,7 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 			}
 			throw new SpagoBIDAOException("An unexpected error occured while inserting dataset", t);
 		} finally {
-			if (keepPreviousSession == false && session != null && session.isOpen()) {
+			if (!keepPreviousSession && session != null && session.isOpen()) {
 				session.close();
 			}
 			logger.debug("OUT");
@@ -1134,7 +1136,7 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 
 	@Override
 	public List<IDataSet> loadDatasetOwnedAndShared(UserProfile user) {
-		List<IDataSet> results = new ArrayList<IDataSet>();
+		List<IDataSet> results = new ArrayList<>();
 
 		List<IDataSet> owened = loadDataSetsOwnedByUser(user, true);
 		results.addAll(owened);
@@ -1166,19 +1168,26 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 
 		logger.debug("IN");
 
-		results = new ArrayList<IDataSet>();
+		results = new ArrayList<>();
 		try {
 			// open session
 			session = getSession();
 
 			// create statement
-			StringBuffer statement = new StringBuffer("from SbiDataSet h where h.active = ?");
+			StringBuilder statement = new StringBuilder("from SbiDataSet h where h.active = :active");
+			Map<String, Object> parameters = new HashMap<>();
+			parameters.put("active", true);
+
 			if (owner != null) {
-				String ownedCondition = includeOwned ? "h.owner = ?" : "h.owner != ?";
+				String ownedCondition = includeOwned ? "h.owner = :owner" : "h.owner != :owner";
 				statement.append(" and " + ownedCondition + " ");
+				parameters.put("owner", owner);
 			}
-			if (type != null)
-				statement.append(" and h.scope.valueCd = ? ");
+
+			if (type != null) {
+				statement.append(" and h.scope.valueCd = :type ");
+				parameters.put("type", type);
+			}
 
 			if (categoryList != null) {
 				logger.debug("We'll take in consideration categories");
@@ -1188,49 +1197,38 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 						logger.debug("The owner can see all it's datasets");
 						// the owner of the dataset can see dataste even if category is null
 					} else {
-						statement.append("and (");
-
-						statement.append("  h.category.code in (");
-						for (int i = 0; i < categoryList.size(); i++) {
-							statement.append("?,");
+						statement.append(" and h.category.code in (:categoryList)");
+						Set<String> categoryValues = new HashSet<>();
+						for (Domain category : categoryList) {
+							categoryValues.add(category.getValueName());
 						}
-						statement.replace(statement.length() - 1, statement.length(), "");
-						statement.append(")) ");
+						parameters.put("categoryList", categoryValues);
 					}
 				} else {
 					logger.debug("No categories for the user so we take just it's own datasets");
 					if (owner == null || !includeOwned) {
 						logger.debug("Owner is not specified on the service so we should return no datasets");
-						return new ArrayList<IDataSet>();
+						return new ArrayList<>();
 					}
 				}
 
 			}
 
-			if (implementation != null)
-				statement.append(" and h.type = ? ");
-			if (showDerivedDatasets == false) {
+			if (implementation != null) {
+				statement.append(" and h.type = :implementation ");
+				parameters.put("implementation", implementation);
+			}
+
+			if (!showDerivedDatasets) {
 				statement.append(" and h.federation is null ");
 			}
 
 			// inject parameters
-			int paramIndex = 0;
 			Query query = session.createQuery(statement.toString());
-			query.setBoolean(paramIndex++, true);
-			if (owner != null) {
-				query.setString(paramIndex++, owner);
+
+			for (Map.Entry<String, Object> entry : parameters.entrySet()) {
+				query.setParameter(entry.getKey(), entry.getValue());
 			}
-			if (type != null)
-				query.setString(paramIndex++, type);
-			if (categoryList != null && categoryList.size() > 0 && (owner == null || !includeOwned)) {
-				Iterator<Domain> it = categoryList.iterator();
-				while (it.hasNext()) {
-					Domain type2 = it.next();
-					query.setString(paramIndex++, type2.getValueName());
-				}
-			}
-			if (implementation != null)
-				query.setString(paramIndex++, implementation);
 
 			results = executeQuery(query, session);
 		} catch (Throwable t) {
@@ -1323,7 +1321,7 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 		try {
 			Assert.assertNotNull(user, "UserProfile object cannot be null");
 
-			StringBuffer statement = new StringBuffer("select distinct(dst.dataSet) from SbiDatasetTag dst where dst.dataSet.active = ? ");
+			StringBuilder statement = new StringBuilder("select distinct(dst.dataSet) from SbiDatasetTag dst where dst.dataSet.active = ? ");
 
 			if (scope.equalsIgnoreCase("owned") || scope.equalsIgnoreCase("shared")) {
 				owner = user.getUserId().toString();
@@ -1462,8 +1460,8 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 		List<IDataSet> toReturn = new ArrayList<>();
 		Session session = null;
 		Transaction transaction = null;
-		StringBuffer sb;
-		StringBuffer sbTag;
+		StringBuilder sb;
+		StringBuilder sbTag = new StringBuilder();
 		String entityName = "";
 		String valuefilter = null;
 		String typeFilter = null;
@@ -1484,7 +1482,7 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 			}
 
 			if (!isAdmin) {
-				List<Domain> devCategories = new LinkedList<Domain>();
+				List<Domain> devCategories = new LinkedList<>();
 				fillDevCategories(devCategories);
 				idsCat = createIdsCatogriesList(devCategories);
 			}
@@ -1503,11 +1501,11 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 				}
 			}
 
-			sb = new StringBuffer("from SbiDataSet ds where ds.active = true ");
+			sb = new StringBuilder("from SbiDataSet ds where ds.active = true ");
 			entityName = "ds.";
 			if (!tagIds.isEmpty()) {
-				sbTag = new StringBuffer("select tag.dataSet.label from SbiDatasetTag tag  where tag.dsTagId.tagId in (:tagIds) group by  tag.dataSet.label");
-				sb.append(" and ds.label in ( " + sbTag.toString() + " )");
+				sbTag = new StringBuilder("select tag.dataSet.label from SbiDatasetTag tag  where tag.dsTagId.tagId in (:tagIds) group by  tag.dataSet.label");
+				sb.append(" and ds.label in ( :sbTag )");
 			}
 
 			if (!isAdmin) {
@@ -1553,6 +1551,7 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 			}
 			if (!tagIds.isEmpty()) {
 				listQuery.setParameterList("tagIds", tagIds);
+				listQuery.setParameter("sbTag", sbTag.toString());
 			}
 
 			listQuery.setFirstResult(offset);
@@ -1593,7 +1592,7 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 		session = null;
 		transaction = null;
 		try {
-			toReturn = new ArrayList<IDataSet>();
+			toReturn = new ArrayList<>();
 
 			if (offset == null) {
 				logger.warn("Input parameter [offset] is null. It will be set to [0]");
@@ -1628,7 +1627,7 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 				listQuery.setMaxResults(fetchSize);
 			List<SbiDataSet> sbiDatasetVersions = listQuery.list();
 
-			if (sbiDatasetVersions != null && sbiDatasetVersions.isEmpty() == false) {
+			if (sbiDatasetVersions != null && !sbiDatasetVersions.isEmpty()) {
 				for (SbiDataSet sbiDatasetVersion : sbiDatasetVersions) {
 					IDataSet guiDataSet = DataSetFactory.toDataSet(sbiDatasetVersion, this.getUserProfile());
 
@@ -1684,7 +1683,7 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 		session = null;
 		transaction = null;
 		try {
-			toReturn = new ArrayList<IDataSet>();
+			toReturn = new ArrayList<>();
 			boolean isAdmin = getUserProfile().isAbleToExecuteAction(CommunityFunctionalityConstants.DOCUMENT_MANAGEMENT_ADMIN);
 
 			int orderByPos = hsql.indexOf("order by");
@@ -1715,7 +1714,7 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 			// if not admin filter by category and owner
 			List idsCat = null;
 			if (!isAdmin) {
-				List<Domain> devCategories = new LinkedList<Domain>();
+				List<Domain> devCategories = new LinkedList<>();
 				fillDevCategories(devCategories);
 
 				idsCat = createIdsCatogriesList(devCategories);
@@ -1771,8 +1770,8 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 		session = null;
 		transaction = null;
 		try {
-			StringBuffer statement = new StringBuffer("from SbiDataSet h where h.active = true");
-			toReturn = new ArrayList<IDataSet>();
+			StringBuilder statement = new StringBuilder("from SbiDataSet h where h.active = true");
+			toReturn = new ArrayList<>();
 			boolean isAdmin = getUserProfile().isAbleToExecuteAction(CommunityFunctionalityConstants.DOCUMENT_MANAGEMENT_ADMIN);
 			try {
 				session = getSession();
@@ -1786,7 +1785,7 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 			// if not admin filter by category and owner
 			List idsCat = null;
 			if (!isAdmin) {
-				List<Domain> devCategories = new LinkedList<Domain>();
+				List<Domain> devCategories = new LinkedList<>();
 				fillDevCategories(devCategories);
 
 				idsCat = createIdsCatogriesList(devCategories);
@@ -1828,7 +1827,7 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 	}
 
 	private void addGuiDataSet(List<IDataSet> toReturn, List<SbiDataSet> sbiDatasetVersions) {
-		if (sbiDatasetVersions != null && sbiDatasetVersions.isEmpty() == false) {
+		if (sbiDatasetVersions != null && !sbiDatasetVersions.isEmpty()) {
 			for (SbiDataSet sbiDatasetVersion : sbiDatasetVersions) {
 				IDataSet guiDataSet = DataSetFactory.toDataSet(sbiDatasetVersion, this.getUserProfile());
 				toReturn.add(guiDataSet);
@@ -1849,7 +1848,7 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 		Session session = null;
 		Set<Domain> categoryList;
 		List<Integer> categoryIds = null;
-		StringBuffer statement = new StringBuffer("from SbiDataSet ds where ds.active = :active and (ds.owner = :owner or (");
+		StringBuilder statement = new StringBuilder("from SbiDataSet ds where ds.active = :active and (ds.owner = :owner or (");
 		try {
 			session = getSession();
 			categoryList = UserUtilities.getDataSetCategoriesByUser(userProfile);
@@ -1885,7 +1884,7 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 
 	@Override
 	public List<IDataSet> loadNotDerivedDatasetOwnedAndShared(UserProfile user) {
-		List<IDataSet> results = new ArrayList<IDataSet>();
+		List<IDataSet> results = new ArrayList<>();
 
 		List<IDataSet> owened = loadDataSetsOwnedByUser(user, false);
 		results.addAll(owened);
@@ -1897,7 +1896,7 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 
 	@Override
 	public List<IDataSet> loadNotDerivedDataSets(UserProfile user) {
-		List<IDataSet> results = new ArrayList<IDataSet>();
+		List<IDataSet> results = new ArrayList<>();
 
 		List<IDataSet> owened = loadDataSetsOwnedByUser(user, false);
 		// results.addAll(owened);
@@ -1953,7 +1952,7 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 		session = null;
 		transaction = null;
 		try {
-			toReturn = new ArrayList<IDataSet>();
+			toReturn = new ArrayList<>();
 
 			if (offset == null) {
 				logger.warn("Input parameter [offset] is null. It will be set to [0]");
@@ -1973,7 +1972,7 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 				throw new SpagoBIDAOException("An error occured while creating the new transaction", t);
 			}
 
-			List<Domain> devCategories = new LinkedList<Domain>();
+			List<Domain> devCategories = new LinkedList<>();
 			boolean isDev = fillDevCategories(devCategories);
 			Query listQuery;
 			if (isDev) {
@@ -2089,7 +2088,7 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 		session = null;
 		transaction = null;
 		try {
-			toReturn = new ArrayList<IDataSet>();
+			toReturn = new ArrayList<>();
 
 			if (offset == null) {
 				logger.warn("Input parameter [offset] is null. It will be set to [0]");
@@ -2193,7 +2192,7 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 		session = null;
 		transaction = null;
 		try {
-			toReturn = new ArrayList<SbiDataSet>();
+			toReturn = new ArrayList<>();
 
 			if (offset == null) {
 				logger.warn("Input parameter [offset] is null. It will be set to [0]");
@@ -2301,7 +2300,7 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 		session = null;
 		transaction = null;
 		try {
-			if (keepPreviousSession == false) {
+			if (!keepPreviousSession) {
 				try {
 					session = getSession();
 					Assert.assertNotNull(session, "session cannot be null");
@@ -2441,7 +2440,7 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 					updateOlderVersions(dataSet);
 				}
 
-				if (keepPreviousSession == false && transaction != null) {
+				if (!keepPreviousSession && transaction != null) {
 					transaction.commit();
 				}
 
@@ -2458,7 +2457,7 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 			}
 			throw new SpagoBIDAOException("Error while modifing the data Set with id " + ((dataSet == null) ? "" : String.valueOf(dataSet.getId())), t);
 		} finally {
-			if (keepPreviousSession == false && session != null && session.isOpen()) {
+			if (!keepPreviousSession && session != null && session.isOpen()) {
 				session.close();
 			}
 			logger.debug("OUT");
@@ -2613,7 +2612,7 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 	// ========================================================================================
 
 	private List createIdsCatogriesList(List<Domain> devCategories) {
-		List<Integer> idsCat = new LinkedList<Integer>();
+		List<Integer> idsCat = new LinkedList<>();
 		for (Domain dom : devCategories) {
 			idsCat.add(dom.getValueId());
 		}
@@ -2626,7 +2625,7 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 
 		logger.debug("IN");
 
-		results = new ArrayList<IDataSet>();
+		results = new ArrayList<>();
 		transaction = null;
 		try {
 			transaction = beginTransaction(session);
@@ -2785,7 +2784,7 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 			JSONObject JSONQuery = ObjectUtils.toJSONObject(configJSON.getString("qbeJSONQuery"));
 			JSONObject JSONCatalogue = ObjectUtils.toJSONObject(JSONQuery.getString("catalogue"));
 			JSONArray queries = ObjectUtils.toJSONArray(JSONCatalogue.getString("queries"));
-			HashMap<String, Boolean> insertedMap = new HashMap<String, Boolean>();
+			HashMap<String, Boolean> insertedMap = new HashMap<>();
 
 			SbiMetaSource sbiMS = DAOFactory.getSbiMetaSourceDAO().loadSourceByNameAndType(qbeDataSource.toLowerCase(), "database");
 			if (sbiMS == null) {
@@ -2869,7 +2868,7 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 	private List<IDataSet> parseResult(List<SbiDataSet> sbiDataSetList) {
 		List<IDataSet> results = null;
 
-		results = new ArrayList<IDataSet>();
+		results = new ArrayList<>();
 		for (SbiDataSet sbiDataSet : sbiDataSetList) {
 			if (sbiDataSet != null) {
 				IDataSet dataSet = DataSetFactory.toDataSet(sbiDataSet, this.getUserProfile());
@@ -2961,7 +2960,7 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 
 		logger.debug("IN");
 
-		toReturn = new ArrayList<IDataSet>();
+		toReturn = new ArrayList<>();
 		session = null;
 		transaction = null;
 		try {
@@ -3087,7 +3086,7 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 
 		logger.debug("IN");
 
-		toReturn = new ArrayList<IDataSet>();
+		toReturn = new ArrayList<>();
 		session = null;
 		transaction = null;
 		try {
