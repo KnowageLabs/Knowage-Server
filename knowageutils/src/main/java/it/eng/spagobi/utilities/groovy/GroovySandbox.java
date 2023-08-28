@@ -41,7 +41,10 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.Vector;
 
+import javax.net.ssl.SSLException;
+
 import org.apache.commons.io.IOUtils;
+import org.apache.log4j.Logger;
 import org.codehaus.groovy.control.CompilationFailedException;
 import org.codehaus.groovy.control.CompilerConfiguration;
 import org.codehaus.groovy.control.customizers.ImportCustomizer;
@@ -65,13 +68,14 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
  *
  */
 public class GroovySandbox {
+	private static transient Logger logger = Logger.getLogger(GroovySandbox.class);
 
 	private static final Class<?>[] CLASSES_WHITELIST = new Class[] { Date.class, List.class, ArrayList.class, Vector.class, Collection.class, HashSet.class,
 			HashMap.class, Set.class, Map.class, Math.class, TreeSet.class, Arrays.class, Collections.class, DateFormat.class, SimpleDateFormat.class,
 			DecimalFormat.class, NumberFormat.class, MessageFormat.class, TreeSet.class, TreeMap.class, DataSetVariable.class, java.sql.Date.class, Time.class,
 			Timestamp.class, Blob.class, NClob.class, StringBuilder.class, StringBuffer.class, Float.class, Double.class, Long.class, BigDecimal.class,
-			String.class, BigInteger.class, Integer.class, Character.class, Byte.class, LocalDate.class, LocalTime.class, LocalDateTime.class, ZonedDateTime.class,
-			Instant.class, Period.class, DateTimeFormatter.class };
+			String.class, BigInteger.class, Integer.class, Character.class, Byte.class, LocalDate.class, LocalTime.class, LocalDateTime.class,
+			ZonedDateTime.class, Instant.class, Period.class, DateTimeFormatter.class };
 
 	private static final Class<?>[] CONSTANT_TYTPE_CLASSES_WHITELIST = new Class[] { Integer.class, Float.class, Long.class, Double.class, BigDecimal.class,
 			Integer.TYPE, Long.TYPE, Float.TYPE, Double.TYPE, Character.TYPE, Byte.TYPE, String.class, BigInteger.class, Object.class, Character.class,
@@ -79,7 +83,7 @@ public class GroovySandbox {
 
 	private final Class<?>[] addedClasses;
 
-	private Map<String, Object> bindings = new HashMap<String, Object>();
+	private Map<String, Object> bindings = new HashMap<>();
 
 	public GroovySandbox() {
 		this(new Class<?>[0]);
@@ -87,8 +91,7 @@ public class GroovySandbox {
 
 	/**
 	 *
-	 * @param addedClasses
-	 *            add classes to permitted classes
+	 * @param addedClasses add classes to permitted classes
 	 */
 	public GroovySandbox(Class<?>[] addedClasses) {
 		Helper.checkNotNull(addedClasses, "addedClasses");
@@ -120,19 +123,26 @@ public class GroovySandbox {
 		GroovyShell sandboxShell = getSandboxShell();
 		setBindingsOnShell(sandboxShell);
 
-		URLConnection conn = url.openConnection();
 		BufferedReader br = null;
-
 		Object res;
+
 		try {
+			URLConnection conn = url.openConnection();
 			br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
 			res = sandboxShell.evaluate(br);
+		} catch (SSLException sslException) {
+			logger.error("SSLException occurred while creating socket in GroovySandbox: ", sslException);
+			throw sslException;
+		} catch (IOException ioException) {
+			logger.error("IOException occurred while creating socket in GroovySandbox: ", ioException);
+			throw ioException;
 		} finally {
 			if (br != null) {
 				br.close();
 			}
 
 		}
+
 		return res;
 	}
 
@@ -144,12 +154,12 @@ public class GroovySandbox {
 	public void setBindings(Map<String, Object> bindings) {
 		Helper.checkNotNull(bindings, "bindings");
 		// shallow copy
-		this.bindings = new HashMap<String, Object>(bindings);
+		this.bindings = new HashMap<>(bindings);
 	}
 
 	public Map<String, Object> getBindings() {
 		// shallow copy
-		return new HashMap<String, Object>(bindings);
+		return new HashMap<>(bindings);
 	}
 
 	private void setBindingsOnShell(GroovyShell shell) {
@@ -207,7 +217,7 @@ public class GroovySandbox {
 	}
 
 	private static List<String> getStaticImportMethods(Class<?>[]... classeses) {
-		List<String> res = new ArrayList<String>();
+		List<String> res = new ArrayList<>();
 		for (Class<?>[] classes : classeses) {
 			for (Class<?> clazz : classes) {
 				for (Method m : clazz.getMethods()) {
@@ -225,7 +235,7 @@ public class GroovySandbox {
 
 	@SuppressWarnings("rawtypes")
 	private static List<Class> getClasses(Class[]... az) {
-		List<Class> res = new ArrayList<Class>();
+		List<Class> res = new ArrayList<>();
 		for (Class[] classes : az) {
 			for (Class clazz : classes) {
 				res.add(clazz);
@@ -237,7 +247,7 @@ public class GroovySandbox {
 
 	@SuppressWarnings("rawtypes")
 	private static List<String> getStringClasses(String add, Class<?>[]... classesWhitelists) {
-		List<String> res = new ArrayList<String>();
+		List<String> res = new ArrayList<>();
 		for (Class<?>[] classesWhitelist : classesWhitelists) {
 			for (Class clazz : classesWhitelist) {
 				res.add(clazz.getName() + add);

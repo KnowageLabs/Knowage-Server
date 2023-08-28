@@ -17,8 +17,6 @@
  */
 package it.eng.spagobi.engines.georeport;
 
-import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
-
 import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
@@ -29,17 +27,16 @@ import java.net.URL;
 import java.net.URLConnection;
 
 import javax.imageio.ImageIO;
-import javax.net.ssl.HttpsURLConnection;
-import javax.net.ssl.SSLContext;
-import javax.net.ssl.TrustManager;
-import javax.net.ssl.X509TrustManager;
+import javax.net.ssl.SSLException;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 
-import org.json.JSONException;
+import org.apache.log4j.Logger;
+
+import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
 
 /**
  * @authors Giovanni Luca Ulivo (GiovanniLuca.Ulivo@eng.it)
@@ -49,69 +46,51 @@ import org.json.JSONException;
 @Path("1.0/geo")
 @ManageAuthorization
 public class GeoResource {
+	private static transient Logger logger = Logger.getLogger(GeoResource.class);
 
 	@Path("/getWMSlayer")
 	@GET
-	public Response getWMSlayer(@Context HttpServletRequest req) throws IOException, JSONException {
+	public Response getWMSlayer(@Context HttpServletRequest req) throws IOException {
 
-		String layerUrl = req.getParameter("layerURL");
-		String reqString = req.getQueryString();
-
-		String finalWMSUrl = layerUrl + "?" + reqString.replaceAll("layerURL[^&]*&", "");
-
-		// Create a trust manager that does not validate certificate chains
-		TrustManager[] trustAllCerts = new TrustManager[] { new X509TrustManager() {
-			@Override
-			public java.security.cert.X509Certificate[] getAcceptedIssuers() {
-				return null;
-			}
-
-			@Override
-			public void checkClientTrusted(java.security.cert.X509Certificate[] certs, String authType) {
-			}
-
-			@Override
-			public void checkServerTrusted(java.security.cert.X509Certificate[] certs, String authType) {
-			}
-		} };
-
-		// Install the all-trusting trust manager
 		try {
-			SSLContext sc = SSLContext.getInstance("SSL");
-			sc.init(null, trustAllCerts, new java.security.SecureRandom());
-			HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
-		} catch (Exception e) {
-		}
+			String layerUrl = req.getParameter("layerURL");
+			String reqString = req.getQueryString();
 
-		// Now you can access an https URL without having the certificate in the truststore
+			String finalWMSUrl = layerUrl + "?" + reqString.replaceAll("layerURL[^&]*&", "");
 
-		URL url = new URL(finalWMSUrl);
-		if (req.getParameter("REQUEST").equals("GetFeatureInfo")) {
+			URL url = new URL(finalWMSUrl);
+			if (req.getParameter("REQUEST").equals("GetFeatureInfo")) {
+				URLConnection conn = url.openConnection();
 
-			URLConnection conn = url.openConnection();
+				// open the stream and put it into BufferedReader
+				BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+				StringBuilder stringBuilder = new StringBuilder();
 
-			// open the stream and put it into BufferedReader
-			BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-			StringBuilder stringBuilder = new StringBuilder();
+				String line = null;
+				while ((line = br.readLine()) != null) {
+					stringBuilder.append(line).append("\n");
+				}
 
-			String line = null;
-			while ((line = br.readLine()) != null) {
-				stringBuilder.append(line + "\n");
-			}
-
-			return Response.ok(stringBuilder.toString()).build();
-		} else {
-			BufferedImage image = ImageIO.read(url);
-
-			byte[] imageData = new byte[0];
-			if (image != null) {
-				ByteArrayOutputStream baos = new ByteArrayOutputStream();
-				ImageIO.write(image, "png", baos);
-				imageData = baos.toByteArray();
+				return Response.ok(stringBuilder.toString()).build();
 			} else {
-				System.out.println("getWMSlayer return a null image");
+				BufferedImage image = ImageIO.read(url);
+
+				byte[] imageData = new byte[0];
+				if (image != null) {
+					ByteArrayOutputStream baos = new ByteArrayOutputStream();
+					ImageIO.write(image, "png", baos);
+					imageData = baos.toByteArray();
+				} else {
+					System.out.println("getWMSlayer returned a null image");
+				}
+				return Response.ok(new ByteArrayInputStream(imageData)).build();
 			}
-			return Response.ok(new ByteArrayInputStream(imageData)).build();
+		} catch (SSLException sslException) {
+			logger.error("SSLException occurred while creating socket in GeoResource: ", sslException);
+			throw sslException;
+		} catch (IOException ioException) {
+			logger.error("IOException occurred while creating socket in GeoResource: ", ioException);
+			throw ioException;
 		}
 	}
 

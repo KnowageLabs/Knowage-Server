@@ -29,38 +29,49 @@ import java.util.PropertyResourceBundle;
 import java.util.ResourceBundle;
 import java.util.ResourceBundle.Control;
 
+import javax.net.ssl.SSLException;
+
+import org.apache.log4j.Logger;
+
 public class UTF8Control extends Control {
+	private static transient Logger logger = Logger.getLogger(UTF8Control.class);
 
 	@Override
-	public ResourceBundle newBundle(String baseName, Locale locale,
-			String format, ClassLoader loader, boolean reload)
+	public ResourceBundle newBundle(String baseName, Locale locale, String format, ClassLoader loader, boolean reload)
 			throws IllegalAccessException, InstantiationException, IOException {
-		// The below is a copy of the default implementation.
 		String bundleName = toBundleName(baseName, locale);
 		String resourceName = toResourceName(bundleName, "properties");
 		ResourceBundle bundle = null;
 		InputStream stream = null;
-		if (reload) {
-			URL url = loader.getResource(resourceName);
-			if (url != null) {
-				URLConnection connection = url.openConnection();
-				if (connection != null) {
-					connection.setUseCaches(false);
-					stream = connection.getInputStream();
+		try {
+			if (reload) {
+				URL url = loader.getResource(resourceName);
+				if (url != null) {
+					URLConnection connection = url.openConnection();
+					if (connection != null) {
+						connection.setUseCaches(false);
+						stream = connection.getInputStream();
+					}
+				}
+			} else {
+				stream = loader.getResourceAsStream(resourceName);
+			}
+			if (stream != null) {
+				try {
+					// Only this line is changed to read properties files as UTF-8.
+					bundle = new PropertyResourceBundle(new InputStreamReader(stream, UTF_8));
+				} finally {
+					if (stream != null) {
+						stream.close();
+					}
 				}
 			}
-		} else {
-			stream = loader.getResourceAsStream(resourceName);
-		}
-		if (stream != null) {
-			try {
-				// Only this line is changed to make it to read properties files
-				// as UTF-8.
-				bundle = new PropertyResourceBundle(new InputStreamReader(
-						stream, UTF_8));
-			} finally {
-				stream.close();
-			}
+		} catch (SSLException sslException) {
+			logger.error("SSLException occurred while creating socket in UTF8Control: ", sslException);
+			throw sslException;
+		} catch (IOException ioException) {
+			logger.error("IOException occurred while creating socket in UTF8Control: ", ioException);
+			throw ioException;
 		}
 		return bundle;
 	}
