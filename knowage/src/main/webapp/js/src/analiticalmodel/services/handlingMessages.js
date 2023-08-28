@@ -16,16 +16,16 @@
 	along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-
-	angular.module('TemplateBuildModule', [])
-		.service('handlingMessages', function() {    		  
-    		   
-			this.catchMessage = function() {    			   
-				window.addEventListener("message", function(e){    					
-					window.parent.postMessage("close", "*");
-				}, false);				
-    		}    		       		   
-    		       		   
-		});
-
-
+angular
+  .module("TemplateBuildModule", [])
+  .service("handlingMessages", function () {
+    this.catchMessage = function () {
+      window.addEventListener(
+        "message",
+        function (e) {
+          window.parent.postMessage("close", location.origin);
+        },
+        false
+      );
+    };
+  });

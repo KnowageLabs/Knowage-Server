@@ -16,13 +16,8 @@
 	along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-	angular.module('templateBuild')
-		.service('channelMessaging', function() {
-		
-			this.sendMessage = function() {
-				window.parent.postMessage("close", "*");
-			}
-			
-		});
-
-
+angular.module("templateBuild").service("channelMessaging", function () {
+  this.sendMessage = function () {
+    window.parent.postMessage("close", location.origin);
+  };
+});
