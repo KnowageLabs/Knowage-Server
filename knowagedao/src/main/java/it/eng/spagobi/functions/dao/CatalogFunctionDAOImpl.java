@@ -68,9 +68,10 @@ public class CatalogFunctionDAOImpl extends AbstractHibernateDAO implements ICat
 			query.append("select sbf from SbiCatalogFunction sbf ");
 			query.append(", SbiObjFunction sof ");
 			query.append("where sbf.functionUuid=sof.functionUuid ");
-			query.append("and sof.sbiObject.biobjId = " + biobjId);
+			query.append("and sof.sbiObject.biobjId = :biobjId");
 
 			Query hibQuery = session.createQuery(query.toString());
+			hibQuery.setInteger("biobjId", biobjId);
 
 			sbiCatalogFunctions = hibQuery.list();
 		} catch (Throwable t) {
@@ -139,7 +140,7 @@ public class CatalogFunctionDAOImpl extends AbstractHibernateDAO implements ICat
 	private Set<SbiFunctionInputVariable> getSbiFunctionInputVariablesSet(Map<String, ? extends IInputVariable> inputVariables,
 			SbiCatalogFunction sbiCatalogFunction) {
 
-		Set<SbiFunctionInputVariable> inputVarSet = new HashSet<SbiFunctionInputVariable>();
+		Set<SbiFunctionInputVariable> inputVarSet = new HashSet<>();
 		SbiFunctionInputVariable var = null;
 
 		for (String varName : inputVariables.keySet()) {
@@ -155,7 +156,7 @@ public class CatalogFunctionDAOImpl extends AbstractHibernateDAO implements ICat
 
 	private Set<SbiFunctionInputColumn> getSbiFunctionInputColumnsSet(Map<String, String> inputColumns, SbiCatalogFunction sbiCatalogFunction) {
 
-		Set<SbiFunctionInputColumn> inputColSet = new HashSet<SbiFunctionInputColumn>();
+		Set<SbiFunctionInputColumn> inputColSet = new HashSet<>();
 		SbiFunctionInputColumn col = null;
 
 		for (String colName : inputColumns.keySet()) {
@@ -171,7 +172,7 @@ public class CatalogFunctionDAOImpl extends AbstractHibernateDAO implements ICat
 	private Set<SbiFunctionOutputColumn> getSbiFunctionOutputColumnsSet(Map<String, ? extends IOutputColumn> outputColumns,
 			SbiCatalogFunction sbiCatalogFunction) {
 
-		Set<SbiFunctionOutputColumn> outputColSet = new HashSet<SbiFunctionOutputColumn>();
+		Set<SbiFunctionOutputColumn> outputColSet = new HashSet<>();
 		SbiFunctionOutputColumn col = null;
 
 		for (String colName : outputColumns.keySet()) {
@@ -271,7 +272,7 @@ public class CatalogFunctionDAOImpl extends AbstractHibernateDAO implements ICat
 	private void updateInputColumns(SbiCatalogFunction hibCatFunction, Session session, CatalogFunction updatedCatalogFunction) {
 
 		// delete columns not reinserted and update columns that are already present (and delete them from updateColumnsList in updatedCatalogFunction)
-		List<SbiFunctionInputColumn> colsToRemove = new ArrayList<SbiFunctionInputColumn>();
+		List<SbiFunctionInputColumn> colsToRemove = new ArrayList<>();
 		for (Object o : hibCatFunction.getSbiFunctionInputColumns()) {
 			SbiFunctionInputColumn ci = (SbiFunctionInputColumn) o;
 			boolean delete = true;
@@ -308,7 +309,7 @@ public class CatalogFunctionDAOImpl extends AbstractHibernateDAO implements ICat
 	private void updateOutputColumns(SbiCatalogFunction hibCatFunction, Session session, CatalogFunction updatedCatalogFunction) {
 
 		// delete columns not reinserted and update columns that are already present (and delete them from updateColumnsList in updatedCatalogFunction)
-		List<SbiFunctionOutputColumn> colsToRemove = new ArrayList<SbiFunctionOutputColumn>();
+		List<SbiFunctionOutputColumn> colsToRemove = new ArrayList<>();
 		for (Object o : hibCatFunction.getSbiFunctionOutputColumns()) {
 			SbiFunctionOutputColumn ci = (SbiFunctionOutputColumn) o;
 			boolean delete = true;
@@ -347,7 +348,7 @@ public class CatalogFunctionDAOImpl extends AbstractHibernateDAO implements ICat
 	private void updateInputVariables(SbiCatalogFunction hibCatFunction, Session session, CatalogFunction updatedCatalogFunction) {
 
 		// delete vars not reinserted and update variables that are already presents (and delete them from updateVariablesList in updatedCatalogFunction)
-		List<SbiFunctionInputVariable> varToRemove = new ArrayList<SbiFunctionInputVariable>();
+		List<SbiFunctionInputVariable> varToRemove = new ArrayList<>();
 		for (Object o : hibCatFunction.getSbiFunctionInputVariables()) {
 			SbiFunctionInputVariable vi = (SbiFunctionInputVariable) o;
 			boolean delete = true;
@@ -408,7 +409,7 @@ public class CatalogFunctionDAOImpl extends AbstractHibernateDAO implements ICat
 				}
 				String message = "[deleteInUseFunctionError]: Function with uuid [" + uuid + "] " + "cannot be deleted because it is referenced by documents";
 				FunctionInUseException fiue = new FunctionInUseException(message);
-				ArrayList<String> objs = new ArrayList<String>();
+				ArrayList<String> objs = new ArrayList<>();
 				for (int i = 0; i < objectsAssociated.size(); i++) {
 					BIObject obj = objectsAssociated.get(i);
 					objs.add(obj.getLabel());

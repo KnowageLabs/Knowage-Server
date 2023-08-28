@@ -264,33 +264,32 @@ public class SbiDataSetDAOImpl extends AbstractHibernateDAO implements ISbiDataS
 			session = getSession();
 
 			// create statement
-			String statement = "from SbiDataSet h where h.active = ?";
+			String statement = "from SbiDataSet h where h.active = :active";
 			if (owner != null) {
-				String ownedCondition = includeOwned ? "h.owner = ?" : "h.owner != ?";
+				String ownedCondition = includeOwned ? "h.owner = :owner" : "h.owner != :owner";
 				statement += " and " + ownedCondition + " ";
 			}
 			if (type != null)
-				statement += " and h.scope.valueCd = ? ";
+				statement += " and h.scope.valueCd = :type ";
 			if (category != null)
-				statement += " and h.category.code = ? ";
+				statement += " and h.category.code = :category ";
 			if (implementation != null)
-				statement += " and h.type = ? ";
-			if (showDerivedDatasets == null || showDerivedDatasets.equals(false))
+				statement += " and h.type = :implementation ";
+			if (showDerivedDatasets == null || !showDerivedDatasets)
 				statement += " and h.federation is null ";
 
 			// inject parameters
-			int paramIndex = 0;
 			Query query = session.createQuery(statement);
-			query.setBoolean(paramIndex++, true);
+			query.setBoolean("active", true);
 			if (owner != null) {
-				query.setString(paramIndex++, owner);
+				query.setString("owner", owner);
 			}
 			if (type != null)
-				query.setString(paramIndex++, type);
+				query.setString("type", type);
 			if (category != null)
-				query.setString(paramIndex++, category);
+				query.setString("category", category);
 			if (implementation != null)
-				query.setString(paramIndex++, implementation);
+				query.setString("implementation", implementation);
 
 			List<SbiDataSet> datasets = executeQuery(query, session);
 			initialize(datasets);
@@ -557,7 +556,7 @@ public class SbiDataSetDAOImpl extends AbstractHibernateDAO implements ISbiDataS
 	}
 
 	private void withDerived(Criteria cr, Boolean showDerivedDatasets) {
-		if (showDerivedDatasets == false) {
+		if (!showDerivedDatasets) {
 			cr.add(Restrictions.isNull("federation"));
 		}
 	}
