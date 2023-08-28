@@ -130,34 +130,34 @@ Password: <input type="password" id="password" name="password" size="30" value="
 <div id="examples" style="display:none">
 <b>Examples</b>
 <dl>
-	<dt> <a target="_blank" href="example1.jsp">Example 1 : getDocumentUrl</a>
+	<dt> <a target="_blank" href="example1.jsp" rel="noopener noreferrer">Example 1 : getDocumentUrl</a>
 	<dd> Use <i>getDocumentUrl</i> function to create the invocation url used to call execution service asking for a 
 	specific execution (i.e. document + execution role + parameters).
 	<p>
-	<dt> <a target="_blank" href="example2.jsp">Example 2 : getDocumentHtml</a>
+	<dt> <a target="_blank" href="example2.jsp" rel="noopener noreferrer">Example 2 : getDocumentHtml</a>
 	<dd> Use <i>getDocumentHtml</i> function to get an html string that contains the definition of an iframe 
 	pointing to the execution service. <br>The src property of the iframe is internally populated using <i>getDocumentUrl</i> function.
 	<p>
-	<dt> <a target="_blank" href="example3.jsp">Example 3 : injectDocument into existing div</a>
+	<dt> <a target="_blank" href="example3.jsp" rel="noopener noreferrer">Example 3 : injectDocument into existing div</a>
 	<dd>  Use <i>injectDocument</i> function to inject into an existing div an html string that contains the definition of an iframe 
 	pointing to the execution service. <br>The html string is generated internally using <i>getDocumentHtml</i> function.
 	<p>
-	<dt> <a target="_blank" href="example4.jsp">Example 4 : injectDocument into existing div using ExtJs UI</a>
+	<dt> <a target="_blank" href="example4.jsp" rel="noopener noreferrer">Example 4 : injectDocument into existing div using ExtJs UI</a>
 	<dd>  Use <i>injectDocument</i> function to inject into an existing div an html string that contains the definition of an iframe 
 	pointing to the execution service. <br>The html string is generated internally using <i>getDocumentHtml</i> function. In this example 
 	differently from the previous the new execution module, fully based on ajax technology, is invoked.
 	<p>
-	<dt> <a target="_blank" href="example5.jsp">Example 5 : injectDocument into non-existing div</a>
+	<dt> <a target="_blank" href="example5.jsp" rel="noopener noreferrer">Example 5 : injectDocument into non-existing div</a>
 	<dd>  Use <i>injectDocument</i> function to inject into a div an html string that contains the definition of an iframe 
 	pointing to the execution service. <br>In this example the specified target div does not exist so it is created on the fly by the function.
 	<p>
-	<dt> <a target="_blank" href="example6.jsp">Example 6 : getDataSetList</a>
+	<dt> <a target="_blank" href="example6.jsp" rel="noopener noreferrer">Example 6 : getDataSetList</a>
 	<dd>  Use <i>getDataSetList</i> function to retrieve the list of all datasets.
 	<p>
-	<dt> <a target="_blank" href="example7.jsp">Example 7 : executeDataSet</a>
+	<dt> <a target="_blank" href="example7.jsp" rel="noopener noreferrer">Example 7 : executeDataSet</a>
 	<dd>  Use <i>executeDataSet</i> function to get the content of a specific dataset
 	<p>
-	<dt> <a target="_blank" href="example8.jsp">Example 8 : injectQbe into non-existing div</a>
+	<dt> <a target="_blank" href="example8.jsp" rel="noopener noreferrer">Example 8 : injectQbe into non-existing div</a>
 	<dd>  Use <i>injectQbe</i> function to inject into a div an html string that contains the definition of an iframe 
 	pointing to the url of qbe start action. In this example the specified target div does not exist so it is created on the fly by the function.
 </dl>
