@@ -165,7 +165,7 @@ public class FieldMetadata implements IFieldMetaData, Cloneable {
 	}
 
 	@Override
-	public FieldMetadata clone() throws CloneNotSupportedException {
+	public final FieldMetadata clone() throws CloneNotSupportedException {
 		FieldMetadata clone = (FieldMetadata) super.clone();
 		clone.setProperties((Map) ((HashMap) properties).clone());
 		return clone;

@@ -57,8 +57,7 @@ public class ObjTemplate implements Serializable, Cloneable {
 	/**
 	 * Sets the name.
 	 *
-	 * @param name
-	 *            the new name
+	 * @param name the new name
 	 */
 	public void setName(String name) {
 		this.name = name;
@@ -76,8 +75,7 @@ public class ObjTemplate implements Serializable, Cloneable {
 	/**
 	 * Sets the prog.
 	 *
-	 * @param prog
-	 *            the new prog
+	 * @param prog the new prog
 	 */
 	public void setProg(Integer prog) {
 		this.prog = prog;
@@ -95,8 +93,7 @@ public class ObjTemplate implements Serializable, Cloneable {
 	/**
 	 * Sets the creation date.
 	 *
-	 * @param creationDate
-	 *            the new creation date
+	 * @param creationDate the new creation date
 	 */
 	public void setCreationDate(Date creationDate) {
 		this.creationDate = creationDate;
@@ -114,8 +111,7 @@ public class ObjTemplate implements Serializable, Cloneable {
 	/**
 	 * Sets the active.
 	 *
-	 * @param activeP
-	 *            the new active
+	 * @param activeP the new active
 	 */
 	public void setActive(Boolean activeP) {
 		this.active = activeP;
@@ -133,8 +129,7 @@ public class ObjTemplate implements Serializable, Cloneable {
 	/**
 	 * Sets the id.
 	 *
-	 * @param id
-	 *            the new id
+	 * @param id the new id
 	 */
 	public void setId(Integer id) {
 		this.id = id;
@@ -152,8 +147,7 @@ public class ObjTemplate implements Serializable, Cloneable {
 	/**
 	 * Sets the biobj id.
 	 *
-	 * @param biobjId
-	 *            the new biobj id
+	 * @param biobjId the new biobj id
 	 */
 	public void setBiobjId(Integer biobjId) {
 		this.biobjId = biobjId;
@@ -171,8 +165,7 @@ public class ObjTemplate implements Serializable, Cloneable {
 	/**
 	 * Sets the bin id.
 	 *
-	 * @param binId
-	 *            the new bin id
+	 * @param binId the new bin id
 	 */
 	public void setBinId(Integer binId) {
 		this.binId = binId;
@@ -183,10 +176,8 @@ public class ObjTemplate implements Serializable, Cloneable {
 	 *
 	 * @return The binary content of this instance; if it is null, it tries to load it from database if binary content identifier is available
 	 *
-	 * @throws EMFUserError
-	 *             if some errors while reading from db occurs
-	 * @throws EMFInternalError
-	 *             if some errors while reading from db occurs
+	 * @throws EMFUserError     if some errors while reading from db occurs
+	 * @throws EMFInternalError if some errors while reading from db occurs
 	 */
 	public byte[] getContent() throws HibernateException {
 		if (content == null) {
@@ -209,8 +200,7 @@ public class ObjTemplate implements Serializable, Cloneable {
 	/**
 	 * Sets the content.
 	 *
-	 * @param content
-	 *            the new content
+	 * @param content the new content
 	 */
 	public void setContent(byte[] content) {
 		this.content = content;
@@ -228,8 +218,7 @@ public class ObjTemplate implements Serializable, Cloneable {
 	/**
 	 * Sets the dimension.
 	 *
-	 * @param dimension
-	 *            the new dimension
+	 * @param dimension the new dimension
 	 */
 	public void setDimension(String dimension) {
 		this.dimension = dimension;
@@ -247,8 +236,7 @@ public class ObjTemplate implements Serializable, Cloneable {
 	/**
 	 * Sets the creation user.
 	 *
-	 * @param creationUser
-	 *            the new creation user
+	 * @param creationUser the new creation user
 	 */
 	public void setCreationUser(String creationUser) {
 		this.creationUser = creationUser;
@@ -258,7 +246,7 @@ public class ObjTemplate implements Serializable, Cloneable {
 	 * Clone the object.. NOTE: it does not clone the id property
 	 */
 	@Override
-	public ObjTemplate clone() {
+	public final ObjTemplate clone() {
 		ObjTemplate clone = new ObjTemplate();
 		clone.setBiobjId(biobjId);
 		clone.setBinId(binId);

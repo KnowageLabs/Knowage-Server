@@ -559,7 +559,7 @@ public class BIObject implements Serializable, Cloneable, IDrivableBIResource<BI
 	@JsonProperty(value = "functionalities")
 	public List getFunctionalitiesNames() throws EMFUserError {
 		ILowFunctionalityDAO functionalitiesDao = DAOFactory.getLowFunctionalityDAO();
-		List<String> list = new ArrayList<String>();
+		List<String> list = new ArrayList<>();
 
 		for (Integer functionalityID : (List<Integer>) functionalities) {
 			list.add(functionalitiesDao.loadLowFunctionalityByID(functionalityID, false).getPath());
@@ -815,7 +815,7 @@ public class BIObject implements Serializable, Cloneable, IDrivableBIResource<BI
 	 * Clone the object.. NOTE: it does not clone the id property
 	 */
 	@Override
-	public BIObject clone() {
+	public final BIObject clone() {
 		BIObject clone = new BIObject();
 		clone.setEngine(this.engine);
 		clone.setDataSourceId(dataSourceId);
