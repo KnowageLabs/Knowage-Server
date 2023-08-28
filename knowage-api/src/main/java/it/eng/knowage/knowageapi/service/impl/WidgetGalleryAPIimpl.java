@@ -19,6 +19,9 @@ package it.eng.knowage.knowageapi.service.impl;
 
 import static java.util.stream.Collectors.toList;
 
+import java.security.NoSuchAlgorithmException;
+import java.security.NoSuchProviderException;
+import java.security.SecureRandom;
 import java.sql.Timestamp;
 import java.time.Duration;
 import java.time.Instant;
@@ -55,16 +58,14 @@ public class WidgetGalleryAPIimpl implements WidgetGalleryAPI {
 	private static final String GALLERY_FUNCTION = "WidgetGalleryManagement";
 	private static final Random RANDOM = new Random();
 
-	private XSSUtils xssUtils = new XSSUtils();
+	private final XSSUtils xssUtils = new XSSUtils();
 
 	/**
 	 * This method gets all widgets within all tenants
 	 */
 	@Override
 	public List<WidgetGalleryDTO> getWidgets() throws JSONException {
-		return sbiWidgetGalleryDao.findAll()
-				.stream()
-				.collect(toList());
+		return sbiWidgetGalleryDao.findAll().stream().collect(toList());
 	}
 
 	/**
@@ -74,9 +75,7 @@ public class WidgetGalleryAPIimpl implements WidgetGalleryAPI {
 	public List<WidgetGalleryDTO> getWidgetsByTenant(SpagoBIUserProfile profile) throws JSONException {
 		List<WidgetGalleryDTO> ret = null;
 		if (this.canSeeGallery(profile)) {
-			ret = sbiWidgetGalleryDao.findAllByTenant(profile.getOrganization())
-					.stream()
-					.collect(toList());
+			ret = sbiWidgetGalleryDao.findAllByTenant(profile.getOrganization()).stream().collect(toList());
 		}
 
 		return ret;
@@ -254,9 +253,15 @@ public class WidgetGalleryAPIimpl implements WidgetGalleryAPI {
 	}
 
 	private static long get64LeastSignificantBitsForVersion1() {
-		long random63BitLong = RANDOM.nextLong() & 0x3FFFFFFFFFFFFFFFL;
-		long variant3BitFlag = 0x8000000000000000L;
-		return random63BitLong + variant3BitFlag;
+		try {
+			SecureRandom sr = SecureRandom.getInstance("SHA1PRNG", "SUN");
+			long random63BitLong = sr.nextLong() & 0x3FFFFFFFFFFFFFFFL;
+			long variant3BitFlag = 0x8000000000000000L;
+			return random63BitLong + variant3BitFlag;
+		} catch (NoSuchAlgorithmException | NoSuchProviderException e) {
+			e.printStackTrace();
+		}
+		return 0;
 	}
 
 	private static long get64MostSignificantBitsForVersion1() {
@@ -288,9 +293,7 @@ public class WidgetGalleryAPIimpl implements WidgetGalleryAPI {
 	public List<WidgetGalleryDTO> getWidgetsByTenantType(SpagoBIUserProfile profile, String type) throws JSONException {
 		List<WidgetGalleryDTO> ret = null;
 		// TODO: add a check for widget type permissions (functionality)
-		ret = sbiWidgetGalleryDao.findAllByTenantAndType(profile.getOrganization(), type)
-				.stream()
-				.collect(toList());
+		ret = sbiWidgetGalleryDao.findAllByTenantAndType(profile.getOrganization(), type).stream().collect(toList());
 		return ret;
 	}
 
