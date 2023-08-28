@@ -18,16 +18,10 @@
 package it.eng.spagobi.api;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 
-import javax.mail.Message;
-import javax.mail.Multipart;
-import javax.mail.internet.InternetAddress;
-import javax.mail.internet.MimeBodyPart;
-import javax.mail.internet.MimeMultipart;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -43,8 +37,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import it.eng.knowage.mail.MailSessionBuilder;
-import it.eng.knowage.mail.MailSessionBuilder.SessionFacade;
 /* SpagoBI, the Open Source Business Intelligence suite
 
  * Copyright (C) 2012 Engineering Ingegneria Informatica S.p.A. - SpagoBI Competency Center
@@ -54,7 +46,6 @@ import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.analiticalmodel.document.AnalyticalModelDocumentManagementAPI;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
-import it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO;
 import it.eng.spagobi.analiticalmodel.execution.service.ExecuteAdHocUtility;
 import it.eng.spagobi.analiticalmodel.functionalitytree.bo.LowFunctionality;
 import it.eng.spagobi.analiticalmodel.functionalitytree.dao.ILowFunctionalityDAO;
@@ -65,14 +56,8 @@ import it.eng.spagobi.commons.serializer.DocumentsJSONDecorator;
 import it.eng.spagobi.commons.serializer.SerializationException;
 import it.eng.spagobi.commons.serializer.SerializerFactory;
 import it.eng.spagobi.commons.utilities.UserUtilities;
-import it.eng.spagobi.commons.utilities.messages.IMessageBuilder;
 import it.eng.spagobi.commons.utilities.messages.MessageBuilder;
-import it.eng.spagobi.commons.utilities.messages.MessageBuilderFactory;
 import it.eng.spagobi.engines.config.bo.Engine;
-import it.eng.spagobi.services.exceptions.ExceptionUtilities;
-import it.eng.spagobi.services.security.bo.SpagoBIUserProfile;
-import it.eng.spagobi.services.security.service.ISecurityServiceSupplier;
-import it.eng.spagobi.services.security.service.SecurityServiceSupplierFactory;
 import it.eng.spagobi.services.serialization.JsonConverter;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.json.JSONUtils;
@@ -122,80 +107,6 @@ public class DocumentCRUD extends AbstractSpagoBIResource {
 		logger.debug("OUT");
 		String toBeReturned = JsonConverter.objectToJson(cloned, BIObject.class);
 		return Response.ok(toBeReturned).build();
-	}
-
-	/**
-	 * Service to send e-mail Feedback about a document
-	 *
-	 * @param req
-	 * @return
-	 */
-	@POST
-	@Path("/sendFeedback")
-	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
-	public String sendFeedback(@Context HttpServletRequest req) {
-
-		logger.debug("IN");
-		IMessageBuilder msgBuilder = MessageBuilderFactory.getMessageBuilder();
-
-		// 1- Label of current document
-		String label = req.getParameter("label");
-		// Author of the document
-		String documentCreationUser = null;
-		// 2 - email address of creation user
-		String emailAddressdocumentCreationUser = null;
-		IBIObjectDAO biObjectDao;
-		try {
-			biObjectDao = DAOFactory.getBIObjectDAO();
-			if ((label != null) && (!label.isEmpty())) {
-				BIObject document = biObjectDao.loadBIObjectByLabel(label);
-				documentCreationUser = document.getCreationUser();
-
-				ISecurityServiceSupplier supplier = SecurityServiceSupplierFactory.createISecurityServiceSupplier();
-				SpagoBIUserProfile userProfile = supplier.createUserProfile(documentCreationUser);
-				HashMap userAttributes = userProfile.getAttributes();
-				if (userAttributes.get("email") != null) {
-					emailAddressdocumentCreationUser = (String) userAttributes.get("email");
-				}
-
-			}
-			// 3 - content of the email to send
-			String message = req.getParameter("msg");
-
-			// 4 - User sending the feedback (from session)
-			IEngUserProfile profile = this.getUserProfile();
-			String userSendingFeedback = ((UserProfile) profile).getUserId().toString();
-
-			// Check if all the informations to send a mail are valorized
-			if ((emailAddressdocumentCreationUser != null) && (!emailAddressdocumentCreationUser.isEmpty())) {
-				if ((label != null) && (!label.isEmpty())) {
-					if ((userSendingFeedback != null) && (!userSendingFeedback.isEmpty())) {
-						String subject = msgBuilder.getMessage("document.feedback.msg.1", "messages") + " " + userSendingFeedback + " "
-								+ msgBuilder.getMessage("document.feedback.msg.2", "messages") + "  " + label;
-						sendMail(emailAddressdocumentCreationUser, subject, message);
-					}
-				}
-			}
-		} catch (EMFUserError ex) {
-			logger.error("Error sending feedback for document " + label, ex);
-			try {
-				return (ExceptionUtilities.serializeException("Feedback not sent: " + ex.toString(), null));
-			} catch (Exception e) {
-				logger.debug("Error sending feedback for document " + label, e);
-				throw new SpagoBIRuntimeException("Error sending feedback for document " + label, e);
-			}
-		} catch (Exception ex) {
-			logger.error("Error sending feedback for document " + label, ex);
-			try {
-				return (ExceptionUtilities.serializeException("Feedback not sent: " + ex.toString(), null));
-			} catch (Exception e) {
-				logger.debug("Error sending feedback for document " + label, e);
-				throw new SpagoBIRuntimeException("Error sending feedback for document " + label, e);
-			}
-		}
-
-		logger.debug("OUT");
-		return "{}";
 	}
 
 	@GET
@@ -496,34 +407,6 @@ public class DocumentCRUD extends AbstractSpagoBIResource {
 		// results.put("icon", "document.png");
 		results.put("root", rows);
 		return results;
-	}
-
-	// sending email to emailAddress with passed subject and emailContent
-	private void sendMail(String emailAddress, String subject, String emailContent) throws Exception {
-
-		SessionFacade facade = MailSessionBuilder.newInstance().usingUserProfile().withTimeout(5000).withConnectionTimeout(5000).build();
-
-		// create a message
-		Message msg = facade.createNewMimeMessage();
-
-		InternetAddress addressTo = new InternetAddress(emailAddress);
-
-		msg.setRecipient(Message.RecipientType.TO, addressTo);
-
-		// Setting the Subject and Content Type
-		msg.setSubject(subject);
-		// create and fill the first message part
-		MimeBodyPart mbp1 = new MimeBodyPart();
-		mbp1.setText(emailContent);
-		// create the Multipart and add its parts to it
-		Multipart mp = new MimeMultipart();
-		mp.addBodyPart(mbp1);
-		// add the Multipart to the message
-		msg.setContent(mp);
-
-		// send message
-		facade.sendMessage(msg);
-
 	}
 
 }
