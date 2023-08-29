@@ -160,7 +160,7 @@
 			  });
 			}
 		</script>
-		<script src="https://apis.google.com/js/platform.js" async defer></script>
+		<script src="https://apis.google.com/js/platform.js" integrity="sha384-7x5LN+Nbq7nTCr7PgfSQr7QDeQ6TY8PXrnhvDJ2GNTx0n9nq5pnpiPHpAOxtK90Q" crossorigin="anonymous" async defer></script>
 		<meta name="google-signin-client_id" content="<%= GoogleSignInConfig.getClientId() %>">
 		<% } %>
 		

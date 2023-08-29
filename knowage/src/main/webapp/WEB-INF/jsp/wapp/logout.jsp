@@ -196,7 +196,7 @@ function setTimeoutToRedirect() {
 <% if (GoogleSignInConfig.isEnabled()) { %>
 
 	<%-- Resources for Google Sign-In authentication --%>
-	<script src="https://apis.google.com/js/platform.js?onload=onLoad" async defer></script>
+	<script src="https://apis.google.com/js/platform.js?onload=onLoad" integrity="sha384-fBHYKW9XITLCNgIcncoFDPVNgXM13acpBnoyrSLLofA2M23TguiQAr4WoUKQoEjV" crossorigin="anonymous" async defer></script>
 	<meta name="google-signin-client_id" content="<%= GoogleSignInConfig.getClientId() %>">
 	<script>
 	function googleSignOut(callback, fail) {
