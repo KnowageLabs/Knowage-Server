@@ -37,6 +37,8 @@ import java.util.regex.Pattern;
 
 import javax.naming.InitialContext;
 import javax.validation.ValidationException;
+import javax.ws.rs.DELETE;
+import javax.ws.rs.GET;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.core.Response;
@@ -1048,6 +1050,7 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 		}
 	}
 
+	@DELETE
 	public Response deleteDataset(String label) {
 		IDataSetDAO datasetDao = DAOFactory.getDataSetDAO();
 		IDataSet dataset = getDatasetManagementAPI().getDataSet(label);
@@ -1121,6 +1124,7 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 		}
 	}
 
+	@GET
 	public Response execute(String label, String body) {
 		SDKDataSetParameter[] parameters = null;
 
