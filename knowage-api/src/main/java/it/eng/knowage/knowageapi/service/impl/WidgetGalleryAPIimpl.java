@@ -32,6 +32,7 @@ import java.util.Random;
 import java.util.UUID;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.log4j.Logger;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,6 +52,8 @@ import it.eng.spagobi.services.security.SpagoBIUserProfile;
 
 @Component
 public class WidgetGalleryAPIimpl implements WidgetGalleryAPI {
+
+	private static Logger logger = Logger.getLogger(WidgetGalleryAPIimpl.class);
 
 	@Autowired
 	private SbiWidgetGalleryDao sbiWidgetGalleryDao;
@@ -259,9 +262,9 @@ public class WidgetGalleryAPIimpl implements WidgetGalleryAPI {
 			long variant3BitFlag = 0x8000000000000000L;
 			return random63BitLong + variant3BitFlag;
 		} catch (NoSuchAlgorithmException | NoSuchProviderException e) {
-			e.printStackTrace();
+			logger.debug("An exception occurred while generating a random number using SecureRandom.");
+			throw new KnowageRuntimeException(e.getMessage());
 		}
-		return 0;
 	}
 
 	private static long get64MostSignificantBitsForVersion1() {
