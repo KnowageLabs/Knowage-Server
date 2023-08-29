@@ -19,13 +19,8 @@ package it.eng.knowage.knowageapi.service.impl;
 
 import static java.util.stream.Collectors.toList;
 
-import java.security.NoSuchAlgorithmException;
-import java.security.NoSuchProviderException;
-import java.security.SecureRandom;
 import java.sql.Timestamp;
-import java.time.Duration;
 import java.time.Instant;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -101,7 +96,7 @@ public class WidgetGalleryAPIimpl implements WidgetGalleryAPI {
 	public WidgetGalleryDTO makeNewWidget(WidgetGalleryDTO widgetGalleryDTO, SpagoBIUserProfile profile, boolean create) {
 		if (this.canSeeGallery(profile)) {
 			if (create) {
-				widgetGalleryDTO.setId(generateType1UUID().toString());
+				widgetGalleryDTO.setId(UUID.randomUUID().toString());
 			}
 
 			// Validating CODES with whitelist
@@ -245,37 +240,6 @@ public class WidgetGalleryAPIimpl implements WidgetGalleryAPI {
 			}
 		}
 		return tagList;
-	}
-
-	public static UUID generateType1UUID() {
-
-		long most64SigBits = get64MostSignificantBitsForVersion1();
-		long least64SigBits = get64LeastSignificantBitsForVersion1();
-
-		return new UUID(most64SigBits, least64SigBits);
-	}
-
-	private static long get64LeastSignificantBitsForVersion1() {
-		try {
-			SecureRandom sr = SecureRandom.getInstance("SHA1PRNG", "SUN");
-			long random63BitLong = sr.nextLong() & 0x3FFFFFFFFFFFFFFFL;
-			long variant3BitFlag = 0x8000000000000000L;
-			return random63BitLong + variant3BitFlag;
-		} catch (NoSuchAlgorithmException | NoSuchProviderException e) {
-			logger.debug("An exception occurred while generating a random number using SecureRandom.");
-			throw new KnowageRuntimeException(e.getMessage());
-		}
-	}
-
-	private static long get64MostSignificantBitsForVersion1() {
-		LocalDateTime start = LocalDateTime.of(1582, 10, 15, 0, 0, 0);
-		Duration duration = Duration.between(start, LocalDateTime.now());
-		long seconds = duration.getSeconds();
-		long nanos = duration.getNano();
-		long timeForUuidIn100Nanos = seconds * 10000000 + nanos * 100;
-		long least12SignificatBitOfTime = (timeForUuidIn100Nanos & 0x000000000000FFFFL) >> 4;
-		long version = 1 << 12;
-		return (timeForUuidIn100Nanos & 0xFFFFFFFFFFFF0000L) + version + least12SignificatBitOfTime;
 	}
 
 	/*
