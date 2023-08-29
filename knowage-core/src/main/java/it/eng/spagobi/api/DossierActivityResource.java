@@ -20,7 +20,6 @@ package it.eng.spagobi.api;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -131,11 +130,9 @@ public class DossierActivityResource extends AbstractSpagoBIResource {
 		String separator = File.separator;
 		if (fileName.endsWith("?"))
 			fileName = fileName.substring(0, fileName.length() - 1);
-
-		java.nio.file.Path outputPath = Paths.get(SpagoBIUtilities.getResourcePath(), "dossier", String.valueOf(documentId), fileName);
-		File file = outputPath.toFile();
+		String outPath = SpagoBIUtilities.getResourcePath() + separator + "dossier" + separator + documentId + separator + fileName;
 		ResponseBuilder responseBuilder = null;
-
+		File file = new File(outPath);
 		JSONObject response = new JSONObject();
 		File dossierDir = new File(SpagoBIUtilities.getResourcePath() + separator + "dossier" + separator + documentId + separator);
 		try {
