@@ -20,13 +20,20 @@ public class KnowageCaptchaServlet extends HttpServlet {
 	 */
 	private static final long serialVersionUID = -1268155968745374787L;
 
+	protected int width;
+	protected int height;
+
 	@Override
 	public void doGet(HttpServletRequest httpservletrequest, HttpServletResponse httpservletresponse) throws ServletException, IOException {
-		int width = getWidthParameter(httpservletrequest);
-		int height = getHeightParameter(httpservletrequest);
+		int width = 200;
+		int height = 50;
+
+		if (getInitParameter("height") != null)
+			height = Integer.valueOf(getInitParameter("height")).intValue();
+		if (getInitParameter("width") != null)
+			width = Integer.valueOf(getInitParameter("width")).intValue();
 
 		ImageCaptcha imageCaptcha = new ImageCaptcha.Builder(width, height).addContent().addBackground().addFilter(new FishEyeImageFilter()).addBackground()
-//				.addBackground(new SquigglesBackgroundProducer())
 				.build();
 		writeImage(httpservletresponse, imageCaptcha.getImage());
 		httpservletrequest.getSession().setAttribute("simpleCaptcha", imageCaptcha);
@@ -49,16 +56,6 @@ public class KnowageCaptchaServlet extends HttpServlet {
 		} catch (IOException ioexception) {
 			ioexception.printStackTrace();
 		}
-	}
-
-	private int getWidthParameter(HttpServletRequest request) {
-		String widthParam = request.getParameter("width");
-		return widthParam != null ? Integer.parseInt(widthParam) : 200;
-	}
-
-	private int getHeightParameter(HttpServletRequest request) {
-		String heightParam = request.getParameter("height");
-		return heightParam != null ? Integer.parseInt(heightParam) : 50;
 	}
 
 }
