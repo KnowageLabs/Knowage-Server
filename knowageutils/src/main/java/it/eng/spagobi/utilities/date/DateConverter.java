@@ -1,30 +1,34 @@
 package it.eng.spagobi.utilities.date;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
+import java.sql.Timestamp;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 
 import javax.ws.rs.ext.ParamConverter;
 
 public class DateConverter implements ParamConverter<Date> {
-	
-	private SimpleDateFormat formatter;
-	
+
+	private final DateTimeFormatter formatter;
+
 	public DateConverter(String format) {
-		formatter = new SimpleDateFormat(format);
+		formatter = DateTimeFormatter.ofPattern(format);
 	}
 
 	@Override
 	public Date fromString(String str) {
 		try {
-			return formatter.parse(str);
-		} catch (ParseException e) {
+			LocalDateTime localDateTime = LocalDateTime.parse(str, formatter);
+			return Timestamp.valueOf(localDateTime);
+		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
 	}
 
 	@Override
 	public String toString(Date date) {
-		return formatter.format(date);
+		Instant instant = date.toInstant();
+		return formatter.format(instant);
 	}
 }

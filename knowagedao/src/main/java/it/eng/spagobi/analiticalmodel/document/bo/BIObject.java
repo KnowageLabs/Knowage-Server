@@ -18,8 +18,7 @@
 package it.eng.spagobi.analiticalmodel.document.bo;
 
 import java.io.Serializable;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -158,7 +157,7 @@ public class BIObject implements Serializable, Cloneable, IDrivableBIResource<BI
 
 	private String stateCodeStr = null;
 
-	private static final DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+	private static final DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
 	/**
 	 * Gets the id.
@@ -559,7 +558,7 @@ public class BIObject implements Serializable, Cloneable, IDrivableBIResource<BI
 	@JsonProperty(value = "functionalities")
 	public List getFunctionalitiesNames() throws EMFUserError {
 		ILowFunctionalityDAO functionalitiesDao = DAOFactory.getLowFunctionalityDAO();
-		List<String> list = new ArrayList<String>();
+		List<String> list = new ArrayList<>();
 
 		for (Integer functionalityID : (List<Integer>) functionalities) {
 			list.add(functionalitiesDao.loadLowFunctionalityByID(functionalityID, false).getPath());
@@ -625,7 +624,7 @@ public class BIObject implements Serializable, Cloneable, IDrivableBIResource<BI
 	public String getFormattedDate() {
 		String formattedDate = null;
 		if (creationDate != null) {
-			formattedDate = dateFormat.format(creationDate);
+			formattedDate = dateFormat.format(creationDate.toInstant());
 		}
 		return formattedDate;
 	}

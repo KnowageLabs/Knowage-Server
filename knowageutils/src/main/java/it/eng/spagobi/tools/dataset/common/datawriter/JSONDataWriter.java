@@ -23,7 +23,6 @@ import java.math.BigInteger;
 import java.sql.Clob;
 import java.sql.Time;
 import java.sql.Timestamp;
-import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.OffsetDateTime;
@@ -85,29 +84,10 @@ public class JSONDataWriter implements IDataWriter {
 	private boolean useIdProperty;
 	private boolean preserveOriginalDataTypes = false;
 
-	/**
-	 * @deprecated Replace it with {@link DateTimeFormatter}
-	 */
-	@Deprecated
-	protected final SimpleDateFormat DATE_FORMATTER = new SimpleDateFormat(DATE_FORMAT);
-	/**
-	 * @deprecated Replace it with {@link DateTimeFormatter}
-	 */
-	@Deprecated
-	protected final SimpleDateFormat TIMESTAMP_FORMATTER = new SimpleDateFormat(TIMESTAMP_FORMAT);
-	/**
-	 * @deprecated Replace it with {@link DateTimeFormatter}
-	 */
-	@Deprecated
-	protected final SimpleDateFormat CACHE_TIMESTAMP_FORMATTER = new SimpleDateFormat(CACHE_TIMESTAMP_FORMAT);
-	/**
-	 * @deprecated Replace it with {@link DateTimeFormatter}
-	 */
-	@Deprecated
-	protected final SimpleDateFormat CACHE_TIMEONLY_FORMATTER = new SimpleDateFormat(TIME_FORMAT);
-
-	protected final DateTimeFormatter DATE_FORMATTER_V2 = DateTimeFormatter.ofPattern(DATE_FORMAT);
-	protected final DateTimeFormatter TIMESTAMP_FORMATTER_V2 = DateTimeFormatter.ofPattern(TIMESTAMP_FORMAT);
+	protected final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern(DATE_FORMAT);
+	protected final DateTimeFormatter TIMESTAMP_FORMATTER = DateTimeFormatter.ofPattern(TIMESTAMP_FORMAT);
+	protected final DateTimeFormatter CACHE_TIMESTAMP_FORMATTER = DateTimeFormatter.ofPattern(CACHE_TIMESTAMP_FORMAT);
+	protected final DateTimeFormatter CACHE_TIMEONLY_FORMATTER = DateTimeFormatter.ofPattern(TIME_FORMAT);
 
 	// public static final String WORKSHEETS_ADDITIONAL_DATA_FIELDS_OPTIONS_OPTIONS = "options";
 	// public static final String WORKSHEETS_ADDITIONAL_DATA_FIELDS_OPTIONS_SCALE_FACTOR = "measureScaleFactor";
@@ -347,11 +327,11 @@ public class JSONDataWriter implements IDataWriter {
 					}
 					result = _result;
 				} else if (Timestamp.class.isAssignableFrom(fieldMetaData.getType())) {
-					result = TIMESTAMP_FORMATTER.format(field.getValue());
+					result = TIMESTAMP_FORMATTER.format((TemporalAccessor) field.getValue());
 				} else if (Time.class.isAssignableFrom(fieldMetaData.getType())) {
-					result = CACHE_TIMEONLY_FORMATTER.format(field.getValue());
+					result = CACHE_TIMEONLY_FORMATTER.format((TemporalAccessor) field.getValue());
 				} else if (Date.class.isAssignableFrom(fieldMetaData.getType())) {
-					result = DATE_FORMATTER.format(field.getValue());
+					result = DATE_FORMATTER.format((TemporalAccessor) field.getValue());
 				} else if (Boolean.class.isAssignableFrom(fieldMetaData.getType())) {
 					result = Boolean.valueOf(field.getValue().toString());
 				} else if (Byte.class.isAssignableFrom(fieldMetaData.getType())) {
@@ -371,15 +351,15 @@ public class JSONDataWriter implements IDataWriter {
 				} else if (BigDecimal.class.isAssignableFrom(fieldMetaData.getType())) {
 					result = new BigDecimal(field.getValue().toString());
 				} else if (LocalTime.class.isAssignableFrom(fieldMetaData.getType())) {
-					result = TIMESTAMP_FORMATTER_V2.format((TemporalAccessor) field.getValue());
+					result = TIMESTAMP_FORMATTER.format((TemporalAccessor) field.getValue());
 				} else if (LocalDateTime.class.isAssignableFrom(fieldMetaData.getType())) {
-					result = TIMESTAMP_FORMATTER_V2.format((TemporalAccessor) field.getValue());
+					result = TIMESTAMP_FORMATTER.format((TemporalAccessor) field.getValue());
 				} else if (OffsetTime.class.isAssignableFrom(fieldMetaData.getType())) {
-					result = TIMESTAMP_FORMATTER_V2.format((TemporalAccessor) field.getValue());
+					result = TIMESTAMP_FORMATTER.format((TemporalAccessor) field.getValue());
 				} else if (OffsetDateTime.class.isAssignableFrom(fieldMetaData.getType())) {
-					result = TIMESTAMP_FORMATTER_V2.format((TemporalAccessor) field.getValue());
+					result = TIMESTAMP_FORMATTER.format((TemporalAccessor) field.getValue());
 				} else if (ZonedDateTime.class.isAssignableFrom(fieldMetaData.getType())) {
-					result = TIMESTAMP_FORMATTER_V2.format((TemporalAccessor) field.getValue());
+					result = TIMESTAMP_FORMATTER.format((TemporalAccessor) field.getValue());
 				} else {
 					result = field.getValue().toString();
 				}
@@ -411,7 +391,7 @@ public class JSONDataWriter implements IDataWriter {
 
 			Date cacheDate = dataStore.getCacheDate();
 			if (cacheDate != null) {
-				String date = CACHE_TIMESTAMP_FORMATTER.format(cacheDate);
+				String date = CACHE_TIMESTAMP_FORMATTER.format(cacheDate.toInstant());
 				metadata.put("cacheDate", date);
 			}
 

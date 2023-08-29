@@ -30,7 +30,7 @@ import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.text.SimpleDateFormat;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 import javax.imageio.ImageIO;
@@ -67,7 +67,7 @@ public abstract class PDFCreator {
 
 	private static final String TEMP_SUFFIX = ".temp.pdf";
 	private static final String DEFAULT_DATE_FORMAT = "yyyy-MM-dd HH:mm:ss";
-	private static final SimpleDateFormat DEFAULT_DATE_FORMATTER = new SimpleDateFormat(DEFAULT_DATE_FORMAT);
+	private static final DateTimeFormatter DEFAULT_DATE_FORMATTER = DateTimeFormatter.ofPattern(DEFAULT_DATE_FORMAT);
 
 	private static void createPDF(List<InputStream> inputImages, Path output) throws IOException {
 		PDDocument document = new PDDocument();
@@ -142,13 +142,10 @@ public abstract class PDFCreator {
 	/**
 	 * create the second sample document from the PDF file format specification.
 	 *
-	 * @param input
-	 *            The PDF path to add the information to.
-	 * @param details
-	 *            The details to be added.
+	 * @param input   The PDF path to add the information to.
+	 * @param details The details to be added.
 	 *
-	 * @throws IOException
-	 *             If there is an error writing the data.
+	 * @throws IOException If there is an error writing the data.
 	 */
 	public static void addInformation(Path input, ExportDetails details) throws IOException {
 		try (PDDocument doc = PDDocument.load(input.toFile())) {
@@ -229,7 +226,7 @@ public abstract class PDFCreator {
 	private static void writeFrontpageDetails(PDDocument doc, PDFont font, float fontSize, FrontpageDetails details) throws IOException {
 		String name = "Name: " + details.getName();
 		String description = "Description: " + details.getDescription();
-		String date = "Date: " + DEFAULT_DATE_FORMATTER.format(details.getDate());
+		String date = "Date: " + DEFAULT_DATE_FORMATTER.format(details.getDate().toInstant());
 		PDPage page = doc.getPage(0);
 		PDRectangle pageSize = page.getMediaBox();
 		float stringWidth = font.getStringWidth(StringUtilities.findLongest(name, description, date)) * fontSize / 1000f;

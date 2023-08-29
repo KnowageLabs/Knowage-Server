@@ -2,8 +2,8 @@ package it.eng.knowage.tools.utils;
 
 import java.sql.SQLException;
 import java.sql.Timestamp;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.time.format.DateTimeFormatter;
 
 import org.apache.log4j.Logger;
 
@@ -26,12 +26,12 @@ public class DatabaseUtils {
 				Timestamp timestamp = (Timestamp) value;
 				return timestamp.getTime();
 			} else {
-				SimpleDateFormat timestampFormatter = new SimpleDateFormat(TIMESTAMP_FORMAT);
+				DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern(TIMESTAMP_FORMAT);
+				Instant instant = dateTimeFormatter.parse((String) value, Instant::from);
 				LOGGER.debug("value will be parsed as a String");
-				value = timestampFormatter.parse((String) value).getTime();
+				value = instant.toEpochMilli();
 			}
-
-		} catch (ParseException | SQLException e) {
+		} catch (SQLException e) {
 			throw new RuntimeException(e);
 		}
 

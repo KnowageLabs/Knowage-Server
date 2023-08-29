@@ -19,7 +19,7 @@ package it.eng.spagobi.tools.dataset.common.datareader;
 
 import java.math.BigInteger;
 import java.sql.Timestamp;
-import java.text.SimpleDateFormat;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 
 import org.apache.log4j.Logger;
@@ -41,13 +41,12 @@ import it.eng.spagobi.tools.dataset.common.metadata.MetaData;
  */
 public class JSONDataReader extends AbstractDataReader {
 
-	private static final SimpleDateFormat DATE_FORMATTER = new SimpleDateFormat("dd/MM/yyyy");
-	private static final SimpleDateFormat TIMESTAMP_FORMATTER = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+	private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+	private static final DateTimeFormatter TIMESTAMP_FORMATTER = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
 
 	private static transient Logger logger = Logger.getLogger(JSONDataReader.class);
 
 	public JSONDataReader() {
-		super();
 	}
 
 	@Override
