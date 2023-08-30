@@ -25,6 +25,9 @@ import java.util.Iterator;
 import java.util.Map;
 
 import javax.net.ssl.SSLContext;
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
@@ -84,8 +87,7 @@ public class SimpleRestClient {
 	private String loadHmacKey() {
 		String hmacKey = EnginConf.getInstance().getHmacKey();
 		if (StringUtilities.isEmpty(hmacKey)) {
-			hmacKey = SpagoBIUtilities
-					.readJndiResource(SingletonConfig.getInstance().getConfigValue(HMACUtils.HMAC_JNDI_LOOKUP));
+			hmacKey = SpagoBIUtilities.readJndiResource(SingletonConfig.getInstance().getConfigValue(HMACUtils.HMAC_JNDI_LOOKUP));
 		}
 		return hmacKey;
 	}
@@ -93,8 +95,7 @@ public class SimpleRestClient {
 	private String loadServerUrl() {
 		String ret = EnginConf.getInstance().getSpagoBiServerUrl();
 		if (StringUtilities.isEmpty(ret)) {
-			ret = SpagoBIUtilities
-					.readJndiResource(SingletonConfig.getInstance().getConfigValue("SPAGOBI.SPAGOBI_SERVICE_JNDI"));
+			ret = SpagoBIUtilities.readJndiResource(SingletonConfig.getInstance().getConfigValue("SPAGOBI.SPAGOBI_SERVICE_JNDI"));
 		}
 		return ret;
 	}
@@ -108,8 +109,8 @@ public class SimpleRestClient {
 	 * @return
 	 * @throws Exception
 	 */
-	protected Response executeGetService(Map<String, Object> parameters, String serviceUrl, String userId)
-			throws Exception {
+	@GET
+	protected Response executeGetService(Map<String, Object> parameters, String serviceUrl, String userId) throws Exception {
 		return executeService(parameters, serviceUrl, userId, RequestTypeEnum.GET, null, null);
 	}
 
@@ -124,8 +125,8 @@ public class SimpleRestClient {
 	 * @return
 	 * @throws Exception
 	 */
-	protected Response executePostService(Map<String, Object> parameters, String serviceUrl, String userId,
-			String mediaType, Object data) throws Exception {
+	@POST
+	protected Response executePostService(Map<String, Object> parameters, String serviceUrl, String userId, String mediaType, Object data) throws Exception {
 		return executeService(parameters, serviceUrl, userId, RequestTypeEnum.POST, mediaType, data);
 	}
 
@@ -140,19 +141,18 @@ public class SimpleRestClient {
 	 * @return
 	 * @throws Exception
 	 */
-	protected Response executePutService(Map<String, Object> parameters, String serviceUrl, String userId,
-			String mediaType, Object data) throws Exception {
+	@PUT
+	protected Response executePutService(Map<String, Object> parameters, String serviceUrl, String userId, String mediaType, Object data) throws Exception {
 		return executeService(parameters, serviceUrl, userId, RequestTypeEnum.PUT, mediaType, data);
 	}
 
-	protected HttpResponse executePostServiceWithFormParams(Map<String, Object> parameters, byte[] form,
-			String serviceUrl, String userId) throws Exception {
+	@POST
+	protected HttpResponse executePostServiceWithFormParams(Map<String, Object> parameters, byte[] form, String serviceUrl, String userId) throws Exception {
 		return executeServiceMultipart(parameters, form, serviceUrl, userId);
 	}
 
 	@SuppressWarnings({ "rawtypes" })
-	private HttpResponse executeServiceMultipart(Map<String, Object> parameters, byte[] form, String serviceUrl,
-			String userId) throws Exception {
+	private HttpResponse executeServiceMultipart(Map<String, Object> parameters, byte[] form, String serviceUrl, String userId) throws Exception {
 		LOGGER.debug("IN");
 		CloseableHttpClient client = null;
 		MultivaluedMap<String, Object> myHeaders = new MultivaluedHashMap<>();
@@ -195,8 +195,7 @@ public class SimpleRestClient {
 			HttpResponse response1 = client.execute(request);
 
 			if (response1.getStatusLine().getStatusCode() >= 400) {
-				throw new RuntimeException(
-						"Request failed with HTTP error code : " + response1.getStatusLine().getStatusCode());
+				throw new RuntimeException("Request failed with HTTP error code : " + response1.getStatusLine().getStatusCode());
 			}
 
 			LOGGER.debug("Rest query status " + response1.getStatusLine().getStatusCode());
@@ -210,8 +209,8 @@ public class SimpleRestClient {
 		}
 	}
 
-	private Response executeService(Map<String, Object> parameters, String serviceUrl, String userId,
-			RequestTypeEnum type, String mediaType, Object data) throws Exception {
+	private Response executeService(Map<String, Object> parameters, String serviceUrl, String userId, RequestTypeEnum type, String mediaType, Object data)
+			throws Exception {
 		LOGGER.debug("IN");
 
 		MultivaluedMap<String, Object> myHeaders = new MultivaluedHashMap<>();
