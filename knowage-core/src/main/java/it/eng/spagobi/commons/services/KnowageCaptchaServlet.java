@@ -20,9 +20,6 @@ public class KnowageCaptchaServlet extends HttpServlet {
 	 */
 	private static final long serialVersionUID = -1268155968745374787L;
 
-	protected int width;
-	protected int height;
-
 	@Override
 	public void doGet(HttpServletRequest httpservletrequest, HttpServletResponse httpservletresponse) throws ServletException, IOException {
 		int width = 200;
