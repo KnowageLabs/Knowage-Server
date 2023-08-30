@@ -9,11 +9,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
+        with:
+          submodules: true
       - name: Test using Node.js
         uses: actions/setup-node@v1
         with:
           node-version: '12'
       - run: npm install
-        working-directory: ./knowage-vue
+        working-directory: ./knowage-vue/src/vue
       - run: npm run test:ci
-        working-directory: ./knowage-vue
+        working-directory: ./knowage-vue/src/vue
