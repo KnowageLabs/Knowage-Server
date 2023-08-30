@@ -10,7 +10,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
         with:
-          submodules: 'true'
+          submodules: 'recursive'
       - name: Test using Node.js
         uses: actions/setup-node@v1
         with:
