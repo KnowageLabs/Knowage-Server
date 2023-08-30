@@ -1,20 +1,20 @@
 package it.eng.spagobi.utilities;
 
-import it.eng.spagobi.commons.utilities.messages.MessageBuilderFactory;
-
-import java.text.MessageFormat;
+import java.util.Locale;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import it.eng.spagobi.commons.utilities.messages.MessageBuilderFactory;
+
 public class JSError {
 	private static final String MESSAGE = "message";
 	private final JSONObject jsError = new JSONObject();
 
-	private static enum MSG_TYPE {
+	private enum MSG_TYPE {
 		errors, warnings
-	};
+	}
 
 	public JSError() {
 	}
@@ -79,7 +79,7 @@ public class JSError {
 	private static String getMessage(String key, String... args) {
 		String msg = MessageBuilderFactory.getMessageBuilder().getMessage(key);
 		if (args.length > 0) {
-			msg = MessageFormat.format(msg, args);
+			msg = String.format(Locale.getDefault(), msg, (Object[]) args);
 		}
 		return msg;
 	}
