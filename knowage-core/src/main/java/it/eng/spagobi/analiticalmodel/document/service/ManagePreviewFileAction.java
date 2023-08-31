@@ -80,7 +80,7 @@ public class ManagePreviewFileAction extends AbstractSpagoBIAction {
 
 				File file = getFile(fileName);
 				if (!file.exists()) {
-					writeBackToClient(404, "Error getting file with name, not found", false, null, "text/plain");
+					writeBackToClient(404, "File not found.", false, null, "text/plain");
 				}
 
 				FileInputStream fis = new FileInputStream(file);
@@ -154,7 +154,7 @@ public class ManagePreviewFileAction extends AbstractSpagoBIAction {
 			checkRequiredFile(fileName);
 			toReturn = new File(targetDirectory, fileName);
 			if (!toReturn.exists() || !toReturn.isFile()) {
-				throw new SpagoBIServiceException(getActionName(), "File not found.");
+				throw new SpagoBIServiceException(getActionName(), "Required file does not exist");
 			}
 		} catch (Exception e) {
 			logger.error("Error while uploading file", e);
