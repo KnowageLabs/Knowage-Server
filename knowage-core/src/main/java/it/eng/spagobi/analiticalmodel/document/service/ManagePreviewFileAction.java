@@ -154,7 +154,7 @@ public class ManagePreviewFileAction extends AbstractSpagoBIAction {
 			checkRequiredFile(fileName);
 			toReturn = new File(targetDirectory, fileName);
 			if (!toReturn.exists() || !toReturn.isFile()) {
-				throw new SpagoBIServiceException(getActionName(), "Required file does not exist");
+				throw new SpagoBIServiceException(getActionName(), "File not found.");
 			}
 		} catch (Exception e) {
 			logger.error("Error while uploading file", e);
