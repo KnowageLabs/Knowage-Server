@@ -1179,8 +1179,9 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 			parameters.put("active", true);
 
 			if (owner != null) {
-				String ownedCondition = includeOwned ? "h.owner = :owner" : "h.owner != :owner";
-				statement.append(" and " + ownedCondition + " ");
+				statement.append(" and (");
+				statement.append(includeOwned ? "h.owner = :owner" : "h.owner != :owner");
+				statement.append(") ");
 				parameters.put("owner", owner);
 			}
 
@@ -1502,7 +1503,7 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 			}
 
 			sb = new StringBuilder("from SbiDataSet ds where ds.active = true ");
-			entityName = "ds.";
+			entityName = ":entityName";
 			if (!tagIds.isEmpty()) {
 				sbTag = new StringBuilder("select tag.dataSet.label from SbiDatasetTag tag  where tag.dsTagId.tagId in (:tagIds) group by  tag.dataSet.label");
 				sb.append(" and ds.label in ( :sbTag )");
@@ -1539,6 +1540,7 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 			transaction = session.beginTransaction();
 
 			Query listQuery = session.createQuery(sb.toString());
+			listQuery.setParameter(":entityName", "ds.");
 
 			if (idsCat != null && idsCat.size() > 0) {
 				listQuery.setParameterList("idsCat", idsCat);
