@@ -82,13 +82,14 @@ public class ManagePreviewFileAction extends AbstractSpagoBIAction {
 				if (!file.exists()) {
 					writeBackToClient(404, "File not found.", false, null, "text/plain");
 				} else {
-					FileInputStream fis = new FileInputStream(file);
-					HttpServletResponse response = getHttpResponse();
-					response.setHeader("Content-Disposition", "attachment; filename=\"" + file.getName() + "\";");
-					byte[] content = SpagoBIUtilities.getByteArrayFromInputStream(fis);
-					response.setContentLength(content.length);
-					response.getOutputStream().write(content);
-					response.getOutputStream().flush();
+					try (FileInputStream fis = new FileInputStream(file)) {
+						HttpServletResponse response = getHttpResponse();
+						response.setHeader("Content-Disposition", "attachment; filename=" + file.getName() + ";");
+						byte[] content = SpagoBIUtilities.getByteArrayFromInputStream(fis);
+						response.setContentLength(content.length);
+						response.getOutputStream().write(content);
+						response.getOutputStream().flush();
+					}
 				}
 
 			} else {
