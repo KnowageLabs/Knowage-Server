@@ -19,6 +19,7 @@ package it.eng.qbe.datasource.jpa;
 
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.sql.Clob;
@@ -83,7 +84,6 @@ public class JPAPersistenceManager implements IPersistenceManager {
 	public static final String TIMESTAMP_ISO_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSSZ";
 
 	public JPAPersistenceManager(JPADataSource dataSource) {
-		super();
 		this.dataSource = dataSource;
 	}
 
@@ -228,7 +228,7 @@ public class JPAPersistenceManager implements IPersistenceManager {
 			}
 
 			// calculate PK
-			if (true || autoLoadPK == false) {
+			if (true || !autoLoadPK) {
 
 				Integer pkValue = null;
 				// check if an alternative table and column has been specified
@@ -322,7 +322,7 @@ public class JPAPersistenceManager implements IPersistenceManager {
 			// just to count the number of changes
 			int changesCounter = 0;
 			// list used to track processed attributes
-			List<String> processedAttributes = new ArrayList<String>();
+			List<String> processedAttributes = new ArrayList<>();
 
 			while (it.hasNext()) {
 				String attributeName = (String) it.next();
@@ -636,9 +636,12 @@ public class JPAPersistenceManager implements IPersistenceManager {
 
 				Class clas = targetEntity.getJavaType();
 				Field f = clas.getDeclaredField(subKey);
-				f.setAccessible(true);
-				// entityManager.refresh(referenced);
-				f.set(obj, referenced);
+				PropertyDescriptor propertyDescriptor = new PropertyDescriptor(f.getName(), clas);
+				Method writeMethod = propertyDescriptor.getWriteMethod();
+				if (writeMethod != null)
+					writeMethod.invoke(obj, referenced);
+				else
+					throw new SpagoBIRuntimeException("Cannot find setter for property " + f.getName() + " for the value " + obj);
 			} catch (Exception e) {
 				throw new SpagoBIRuntimeException("Error setting sub-entity", e);
 			}
@@ -653,9 +656,13 @@ public class JPAPersistenceManager implements IPersistenceManager {
 			Attribute a = targetEntity.getAttribute(aKey);
 			Class clas = targetEntity.getJavaType();
 			Field f = clas.getDeclaredField(aKey);
-			f.setAccessible(true);
 			Object valueConverted = this.convertValue(newValue, a);
-			f.set(obj, valueConverted);
+			PropertyDescriptor propertyDescriptor = new PropertyDescriptor(f.getName(), clas);
+			Method writeMethod = propertyDescriptor.getWriteMethod();
+			if (writeMethod != null)
+				writeMethod.invoke(obj, valueConverted);
+			else
+				throw new SpagoBIRuntimeException("Cannot find setter for property " + f.getName() + " for the value " + valueConverted);
 		} catch (Exception e) {
 			throw new SpagoBIRuntimeException("Error setting Field " + aKey + "", e);
 		} finally {
@@ -671,9 +678,13 @@ public class JPAPersistenceManager implements IPersistenceManager {
 			Attribute a = targetEntity.getAttribute(aKey);
 			Class clas = targetEntity.getJavaType();
 			Field f = clas.getDeclaredField(aKey);
-			f.setAccessible(true);
 			Object valueConverted = this.convertValue(value, a);
-			f.set(obj, valueConverted);
+			PropertyDescriptor propertyDescriptor = new PropertyDescriptor(f.getName(), clas);
+			Method writeMethod = propertyDescriptor.getWriteMethod();
+			if (writeMethod != null)
+				writeMethod.invoke(obj, valueConverted);
+			else
+				throw new SpagoBIRuntimeException("Cannot find setter for property " + f.getName() + " for the value " + valueConverted);
 		} catch (Exception e) {
 			throw new SpagoBIRuntimeException("Error setting Field " + aKey + "", e);
 		} finally {
@@ -848,7 +859,7 @@ public class JPAPersistenceManager implements IPersistenceManager {
 			IModelField field = it.next();
 			query.addSelectFiled(field.getUniqueName(), "NONE", field.getName(), true, true, false, null, null);
 		}
-		ArrayList<ExpressionNode> expressionNodes = new ArrayList<ExpressionNode>();
+		ArrayList<ExpressionNode> expressionNodes = new ArrayList<>();
 		for (Iterator iterator = subEntityAttributes.keySet().iterator(); iterator.hasNext();) {
 			String key = (String) iterator.next();
 			Object value = subEntityAttributes.get(key);

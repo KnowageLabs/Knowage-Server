@@ -54,11 +54,12 @@ public class ManagePreviewFileAction extends AbstractSpagoBIAction {
 	private static final List<String> VALID_FILE_EXTENSIONS = Arrays.asList("BMP", "JPG", "JPEG", "PNG", "GIF");
 
 	@Override
-	public String getActionName() { return SERVICE_NAME; }
-
+	public String getActionName() {
+		return SERVICE_NAME;
+	}
 
 	@Override
-	public void doService()  {
+	public void doService() {
 		logger.debug("IN");
 
 		try {
@@ -66,8 +67,7 @@ public class ManagePreviewFileAction extends AbstractSpagoBIAction {
 			String operation = (String) getAttribute(OPERATION);
 			logger.debug("Manage operation: " + operation);
 			if (operation == null) {
-				throw new SpagoBIServiceException(getActionName(),
-						"No operation [UPLOAD, DOWNLAOD] is defined. ");
+				throw new SpagoBIServiceException(getActionName(), "No operation [UPLOAD, DOWNLAOD] is defined. ");
 			}
 
 			JSONObject jsonToReturn = new JSONObject();
@@ -77,26 +77,27 @@ public class ManagePreviewFileAction extends AbstractSpagoBIAction {
 			} else if (OPER_DOWNLOAD.equalsIgnoreCase(operation)) {
 				freezeHttpResponse();
 				String fileName = (String) getAttribute("fileName");
+
 				File file = getFile(fileName);
-				try (FileInputStream fis = new FileInputStream(file)) {
-					HttpServletResponse response = getHttpResponse();
-					response.setHeader("Content-Disposition",
-							"attachment; filename=\"" + fileName + "\";");
-					byte[] content = SpagoBIUtilities
-							.getByteArrayFromInputStream(fis);
-					response.setContentLength(content.length);
-					response.getOutputStream().write(content);
-					response.getOutputStream().flush();
+				if (!file.exists()) {
+					writeBackToClient(404, "File not found.", false, null, "text/plain");
+				} else {
+					try (FileInputStream fis = new FileInputStream(file)) {
+						HttpServletResponse response = getHttpResponse();
+						response.setHeader("Content-Disposition", "attachment; filename=" + file.getName() + ";");
+						byte[] content = SpagoBIUtilities.getByteArrayFromInputStream(fis);
+						response.setContentLength(content.length);
+						response.getOutputStream().write(content);
+						response.getOutputStream().flush();
+					}
 				}
 
 			} else {
-				throw new SpagoBIServiceException(getActionName(),
-						"No valid operation [UPLOAD, DOWNLAOD] was specified.");
+				throw new SpagoBIServiceException(getActionName(), "No valid operation [UPLOAD, DOWNLAOD] was specified.");
 			}
 		} catch (Throwable t) {
 			logger.error("Error while uploading file", t);
-			SpagoBIServiceException e = SpagoBIServiceExceptionHandler
-					.getInstance().getWrappedException(this.getActionName(), t);
+			SpagoBIServiceException e = SpagoBIServiceExceptionHandler.getInstance().getWrappedException(this.getActionName(), t);
 			replayToClient(e, null);
 		} finally {
 			logger.debug("OUT");
@@ -117,16 +118,16 @@ public class ManagePreviewFileAction extends AbstractSpagoBIAction {
 		}
 
 		UserProfile userProfile = (UserProfile) this.getUserProfile();
-		logger.info("User [id : " + userProfile.getUserId() + ", name : " + userProfile.getUserName() + "] " +
-				"is uploading file [" + uploaded.getName() + "] with size [" + uploaded.getSize() + "]");
+		logger.info("User [id : " + userProfile.getUserId() + ", name : " + userProfile.getUserName() + "] " + "is uploading file [" + uploaded.getName()
+				+ "] with size [" + uploaded.getSize() + "]");
 
-		int maxSize = Integer.parseInt( SingletonConfig.getInstance().getConfigValue("SPAGOBI.DOCUMENTS.MAX_PREVIEW_IMAGE_SIZE") );
+		int maxSize = Integer.parseInt(SingletonConfig.getInstance().getConfigValue("SPAGOBI.DOCUMENTS.MAX_PREVIEW_IMAGE_SIZE"));
 		FileUtils.checkUploadedFile(uploaded, maxSize, VALID_FILE_EXTENSIONS);
 
 		File targetDirectory = GeneralUtilities.getPreviewFilesStorageDirectoryPath();
 
 		// check if number of existing images is the max allowed
-		int maxFilesAllowed = Integer.parseInt( SingletonConfig.getInstance().getConfigValue("SPAGOBI.DOCUMENTS.MAX_PREVIEW_IMAGES_NUM") );
+		int maxFilesAllowed = Integer.parseInt(SingletonConfig.getInstance().getConfigValue("SPAGOBI.DOCUMENTS.MAX_PREVIEW_IMAGES_NUM"));
 		FileUtils.checkIfFilesNumberExceedsInDirectory(targetDirectory, maxFilesAllowed);
 
 		logger.debug("Saving file...");
@@ -136,7 +137,7 @@ public class ManagePreviewFileAction extends AbstractSpagoBIAction {
 		JSONObject toReturn = new JSONObject();
 		try {
 			toReturn.put("success", true);
-			toReturn.put("file","null");
+			toReturn.put("file", "null");
 			toReturn.put("fileName", saved.getName());
 		} catch (JSONException jSONException) {
 			logger.error(jSONException);
@@ -153,25 +154,25 @@ public class ManagePreviewFileAction extends AbstractSpagoBIAction {
 			// checks for path traversal attack
 			checkRequiredFile(fileName);
 			toReturn = new File(targetDirectory, fileName);
-			if (!toReturn.exists() || !toReturn.isFile()){
+			if (!toReturn.exists() || !toReturn.isFile()) {
 				throw new SpagoBIServiceException(getActionName(), "Required file does not exist");
 			}
 		} catch (Exception e) {
 			logger.error("Error while uploading file", e);
 			SpagoBIServiceException e2 = SpagoBIServiceExceptionHandler.getInstance().getWrappedException(this.getActionName(), e);
-			replayToClient( e2, null);
+			replayToClient(e2, null);
 		}
 		return toReturn;
 	}
 
-	 /*
-     * see Ext.form.BasicForm for file upload
-     */
+	/*
+	 * see Ext.form.BasicForm for file upload
+	 */
 	private void replayToClient(final SpagoBIServiceException e, final JSONObject jr) {
 
 		try {
 
-			writeBackToClient(  new IServiceResponse() {
+			writeBackToClient(new IServiceResponse() {
 
 				@Override
 				public boolean isInline() {
@@ -180,7 +181,7 @@ public class ManagePreviewFileAction extends AbstractSpagoBIAction {
 
 				@Override
 				public int getStatusCode() {
-					if ( e != null) {
+					if (e != null) {
 						return JSONResponse.FAILURE;
 					}
 					return JSONResponse.SUCCESS;
@@ -198,7 +199,7 @@ public class ManagePreviewFileAction extends AbstractSpagoBIAction {
 
 				@Override
 				public String getContent() throws IOException {
-					if ( e != null) {
+					if (e != null) {
 						try {
 							JSONObject toReturn = new JSONObject();
 							toReturn.put("success", false);
@@ -208,7 +209,7 @@ public class ManagePreviewFileAction extends AbstractSpagoBIAction {
 							logger.error(jSONException);
 						}
 					}
-					if ( jr != null) {
+					if (jr != null) {
 						return jr.toString();
 					}
 					return "{success:true, file:null}";

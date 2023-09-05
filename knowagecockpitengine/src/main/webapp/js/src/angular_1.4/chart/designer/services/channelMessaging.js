@@ -16,12 +16,8 @@
 	along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-	app.service('channelMessaging', function() {
-		
-			this.sendMessage = function() {
-				window.parent.postMessage("close", "*");
-			}
-			
-		});
-
-
+app.service("channelMessaging", function () {
+  this.sendMessage = function () {
+    window.parent.postMessage("close", location.origin);
+  };
+});

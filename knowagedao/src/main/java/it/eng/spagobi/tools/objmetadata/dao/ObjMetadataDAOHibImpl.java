@@ -206,10 +206,13 @@ public class ObjMetadataDAOHibImpl extends AbstractHibernateDAO implements IObjM
 			StringBuilder sb = new StringBuilder();
 			sb.append(" select t1 ");
 			sb.append(" from SbiObjMetadata t1, SbiObjMetacontents t2");
-			sb.append(" where t1.objMetaId=t2.objmetaId");
-			sb.append(" and t2.sbiObjects.biobjId=" + biobjId);
+			sb.append(" where t1.objMetaId = t2.objmetaId");
+			sb.append(" and t2.sbiObjects.biobjId = :biobjId");
 
-			List<SbiObjMetadata> tmpList = aSession.createQuery(sb.toString()).list();
+			Query query = aSession.createQuery(sb.toString());
+			query.setInteger("biobjId", biobjId);
+
+			List<SbiObjMetadata> tmpList = query.list();
 			for (SbiObjMetadata obj : tmpList) {
 				SbiObjMetadata som = obj;
 				toReturn.add(toObjMetadata(som));

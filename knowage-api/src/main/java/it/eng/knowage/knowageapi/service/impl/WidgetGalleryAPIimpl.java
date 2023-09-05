@@ -20,15 +20,13 @@ package it.eng.knowage.knowageapi.service.impl;
 import static java.util.stream.Collectors.toList;
 
 import java.sql.Timestamp;
-import java.time.Duration;
 import java.time.Instant;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 import java.util.UUID;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.log4j.Logger;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,22 +47,21 @@ import it.eng.spagobi.services.security.SpagoBIUserProfile;
 @Component
 public class WidgetGalleryAPIimpl implements WidgetGalleryAPI {
 
+	private static Logger logger = Logger.getLogger(WidgetGalleryAPIimpl.class);
+
 	@Autowired
 	private SbiWidgetGalleryDao sbiWidgetGalleryDao;
 
 	private static final String GALLERY_FUNCTION = "WidgetGalleryManagement";
-	private static final Random RANDOM = new Random();
 
-	private XSSUtils xssUtils = new XSSUtils();
+	private final XSSUtils xssUtils = new XSSUtils();
 
 	/**
 	 * This method gets all widgets within all tenants
 	 */
 	@Override
 	public List<WidgetGalleryDTO> getWidgets() throws JSONException {
-		return sbiWidgetGalleryDao.findAll()
-				.stream()
-				.collect(toList());
+		return sbiWidgetGalleryDao.findAll().stream().collect(toList());
 	}
 
 	/**
@@ -74,9 +71,7 @@ public class WidgetGalleryAPIimpl implements WidgetGalleryAPI {
 	public List<WidgetGalleryDTO> getWidgetsByTenant(SpagoBIUserProfile profile) throws JSONException {
 		List<WidgetGalleryDTO> ret = null;
 		if (this.canSeeGallery(profile)) {
-			ret = sbiWidgetGalleryDao.findAllByTenant(profile.getOrganization())
-					.stream()
-					.collect(toList());
+			ret = sbiWidgetGalleryDao.findAllByTenant(profile.getOrganization()).stream().collect(toList());
 		}
 
 		return ret;
@@ -99,7 +94,7 @@ public class WidgetGalleryAPIimpl implements WidgetGalleryAPI {
 	public WidgetGalleryDTO makeNewWidget(WidgetGalleryDTO widgetGalleryDTO, SpagoBIUserProfile profile, boolean create) {
 		if (this.canSeeGallery(profile)) {
 			if (create) {
-				widgetGalleryDTO.setId(generateType1UUID().toString());
+				widgetGalleryDTO.setId(UUID.randomUUID().toString());
 			}
 
 			// Validating CODES with whitelist
@@ -245,31 +240,6 @@ public class WidgetGalleryAPIimpl implements WidgetGalleryAPI {
 		return tagList;
 	}
 
-	public static UUID generateType1UUID() {
-
-		long most64SigBits = get64MostSignificantBitsForVersion1();
-		long least64SigBits = get64LeastSignificantBitsForVersion1();
-
-		return new UUID(most64SigBits, least64SigBits);
-	}
-
-	private static long get64LeastSignificantBitsForVersion1() {
-		long random63BitLong = RANDOM.nextLong() & 0x3FFFFFFFFFFFFFFFL;
-		long variant3BitFlag = 0x8000000000000000L;
-		return random63BitLong + variant3BitFlag;
-	}
-
-	private static long get64MostSignificantBitsForVersion1() {
-		LocalDateTime start = LocalDateTime.of(1582, 10, 15, 0, 0, 0);
-		Duration duration = Duration.between(start, LocalDateTime.now());
-		long seconds = duration.getSeconds();
-		long nanos = duration.getNano();
-		long timeForUuidIn100Nanos = seconds * 10000000 + nanos * 100;
-		long least12SignificatBitOfTime = (timeForUuidIn100Nanos & 0x000000000000FFFFL) >> 4;
-		long version = 1 << 12;
-		return (timeForUuidIn100Nanos & 0xFFFFFFFFFFFF0000L) + version + least12SignificatBitOfTime;
-	}
-
 	/*
 	 * Permission methods
 	 */
@@ -288,9 +258,7 @@ public class WidgetGalleryAPIimpl implements WidgetGalleryAPI {
 	public List<WidgetGalleryDTO> getWidgetsByTenantType(SpagoBIUserProfile profile, String type) throws JSONException {
 		List<WidgetGalleryDTO> ret = null;
 		// TODO: add a check for widget type permissions (functionality)
-		ret = sbiWidgetGalleryDao.findAllByTenantAndType(profile.getOrganization(), type)
-				.stream()
-				.collect(toList());
+		ret = sbiWidgetGalleryDao.findAllByTenantAndType(profile.getOrganization(), type).stream().collect(toList());
 		return ret;
 	}
 
