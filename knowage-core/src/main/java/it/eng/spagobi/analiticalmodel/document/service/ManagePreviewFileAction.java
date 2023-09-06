@@ -30,6 +30,8 @@ import org.apache.log4j.Logger;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import it.eng.knowage.commons.security.PathTraversalChecker;
+import it.eng.knowage.commons.security.exceptions.PathTraversalAttackException;
 import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.services.AbstractSpagoBIAction;
@@ -107,6 +109,11 @@ public class ManagePreviewFileAction extends AbstractSpagoBIAction {
 	// checks for path traversal attacks
 	private void checkRequiredFile(String fileName) {
 		File targetDirectory = GeneralUtilities.getPreviewFilesStorageDirectoryPath();
+		try {
+			PathTraversalChecker.get(fileName, targetDirectory.getName());
+		} catch (Exception e) {
+			throw new PathTraversalAttackException("Error managing preview file for file: " + fileName);
+		}
 		FileUtils.checkPathTraversalAttack(fileName, targetDirectory);
 	}
 

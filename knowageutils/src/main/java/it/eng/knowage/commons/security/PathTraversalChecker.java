@@ -37,6 +37,25 @@ public class PathTraversalChecker {
 		throw new IllegalStateException("This class provides utility methods. It cannot be instantiated");
 	}
 
+	public static void get(String firstDirectory, String... otherFolders) throws PathTraversalAttackException {
+		File previousFolderFile = new File(firstDirectory);
+
+		for (String currentFolder : otherFolders) {
+			try {
+				isValidFileName(currentFolder);
+
+				File currentFolderFile = new File(currentFolder);
+
+				preventPathTraversalAttack(currentFolderFile, previousFolderFile);
+
+				previousFolderFile = currentFolderFile;
+			} catch (Exception e) {
+				logger.error(e);
+				throw new PathTraversalAttackException(e.getMessage());
+			}
+		}
+	}
+
 	/**
 	 * Utility method for Path Traversal Attacks prevention. It checks that input fine is inside the desired directory or within sub-directory of the desired
 	 * directory. In case this is not satisfied, a PathTraversalAttackException is thrown. It is useful when desiredDirectory is known and safe, while file to

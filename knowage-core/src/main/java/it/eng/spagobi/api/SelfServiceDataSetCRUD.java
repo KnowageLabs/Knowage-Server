@@ -58,6 +58,7 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
 import it.eng.knowage.commons.security.PathTraversalChecker;
+import it.eng.knowage.commons.security.exceptions.PathTraversalAttackException;
 import it.eng.qbe.dataset.QbeDataSet;
 import it.eng.spago.base.SourceBeanException;
 import it.eng.spago.error.EMFInternalError;
@@ -1621,9 +1622,18 @@ public class SelfServiceDataSetCRUD extends AbstractSpagoBIResource {
 		String filePath = resourcePath + File.separatorChar + "dataset" + File.separatorChar + "files" + File.separatorChar + "temp" + File.separatorChar;
 		String fileNewPath = resourcePath + File.separatorChar + "dataset" + File.separatorChar + "files" + File.separatorChar;
 
-		File originalDatasetFile = new File(filePath + originalFileName);
-		File newDatasetFile = new File(fileNewPath + newFileName + "." + fileType.toLowerCase());
-		if (originalDatasetFile.exists()) {
+		File originalDatasetFile = null;
+		File newDatasetFile = null;
+		try {
+			PathTraversalChecker.get(filePath, originalFileName);
+			originalDatasetFile = new File(filePath + originalFileName);
+			PathTraversalChecker.get(fileNewPath, newFileName + "." + fileType.toLowerCase());
+			newDatasetFile = new File(fileNewPath + newFileName + "." + fileType.toLowerCase());
+		} catch (Exception e) {
+			throw new PathTraversalAttackException(
+					"Error getting removind/moving dataset file for orginal file " + originalFileName + " and new file " + newFileName);
+		}
+		if (newDatasetFile != null && originalDatasetFile != null && originalDatasetFile.exists()) {
 			/*
 			 * This method copies the contents of the specified source file to the specified destination file. The directory holding the destination file is
 			 * created if it does not exist. If the destination file exists, then this method will overwrite it.
@@ -1741,8 +1751,15 @@ public class SelfServiceDataSetCRUD extends AbstractSpagoBIResource {
 	private void deleteDatasetFile(String fileName, String resourcePath, String fileType) {
 		String filePath = resourcePath + File.separatorChar + "dataset" + File.separatorChar + "files" + File.separatorChar + "temp" + File.separatorChar;
 
-		File datasetFile = new File(filePath + fileName);
-		if (datasetFile.exists()) {
+		File datasetFile = null;
+		try {
+			PathTraversalChecker.get(filePath, fileName);
+			datasetFile = new File(filePath + fileName);
+		} catch (Exception e) {
+			throw new PathTraversalAttackException("Error deleting dataset file " + fileName);
+		}
+
+		if (datasetFile != null && datasetFile.exists()) {
 			datasetFile.delete();
 		}
 	}
@@ -1796,10 +1813,7 @@ public class SelfServiceDataSetCRUD extends AbstractSpagoBIResource {
 
 			try {
 				ICategoryDAO categoryDao = DAOFactory.getCategoryDAO();
-				categories = categoryDao.getCategoriesForDataset()
-					.stream()
-					.map(Domain::fromCategory)
-					.collect(toList());
+				categories = categoryDao.getCategoriesForDataset().stream().map(Domain::fromCategory).collect(toList());
 			} catch (Throwable t) {
 				throw new SpagoBIRuntimeException("An unexpected error occured while loading categories types from database", t);
 			}
@@ -2174,10 +2188,7 @@ public class SelfServiceDataSetCRUD extends AbstractSpagoBIResource {
 			ICategoryDAO categoryDao = DAOFactory.getCategoryDAO();
 
 			// TODO : Makes sense?
-			List<Domain> dialects = categoryDao.getCategoriesForDataset()
-					.stream()
-					.map(Domain::fromCategory)
-					.collect(toList());
+			List<Domain> dialects = categoryDao.getCategoriesForDataset().stream().map(Domain::fromCategory).collect(toList());
 			if (dialects == null || dialects.size() == 0) {
 				return null;
 			}
@@ -2191,10 +2202,7 @@ public class SelfServiceDataSetCRUD extends AbstractSpagoBIResource {
 
 				List<RoleMetaModelCategory> aRoleCategories = roledao.getMetaModelCategoriesForRole(role.getId());
 				List<RoleMetaModelCategory> resp = new ArrayList<>();
-				List<Domain> array = categoryDao.getCategoriesForDataset()
-						.stream()
-						.map(Domain::fromCategory)
-						.collect(toList());
+				List<Domain> array = categoryDao.getCategoriesForDataset().stream().map(Domain::fromCategory).collect(toList());
 				for (RoleMetaModelCategory r : aRoleCategories) {
 					for (Domain dom : array) {
 						if (r.getCategoryId().equals(dom.getValueId())) {

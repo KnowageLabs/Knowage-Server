@@ -136,8 +136,7 @@ public class DossierActivityResource extends AbstractSpagoBIResource {
 		JSONObject response = new JSONObject();
 		File dossierDir = new File(SpagoBIUtilities.getResourcePath() + separator + "dossier" + separator + documentId + separator);
 		try {
-			PathTraversalChecker.isValidFileName(fileName);
-			PathTraversalChecker.preventPathTraversalAttack(file, dossierDir);
+			PathTraversalChecker.get(fileName, dossierDir.getName());
 			byte[] bytes = Files.readAllBytes(file.toPath());
 			responseBuilder = Response.ok(bytes);
 			responseBuilder.header("Content-Disposition", "attachment; filename=" + fileName);
@@ -168,8 +167,7 @@ public class DossierActivityResource extends AbstractSpagoBIResource {
 		File dossierDir = new File(SpagoBIUtilities.getResourcePath() + separator + "dossier" + separator + documentId + separator);
 		JSONObject response = new JSONObject();
 		try {
-			PathTraversalChecker.isValidFileName(fileName);
-			PathTraversalChecker.preventPathTraversalAttack(file, dossierDir);
+			PathTraversalChecker.get(fileName, dossierDir.getName());
 			Files.readAllBytes(file.toPath());
 			response.put("STATUS", "OK");
 		} catch (Exception e) {

@@ -30,6 +30,8 @@ import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import it.eng.knowage.commons.security.PathTraversalChecker;
+import it.eng.knowage.commons.security.exceptions.PathTraversalAttackException;
 import it.eng.knowage.meta.generator.GenerationException;
 import it.eng.knowage.meta.generator.jpamapping.wrappers.JpaProperties;
 import it.eng.knowage.meta.generator.utils.Compiler;
@@ -58,7 +60,6 @@ public class JpaMappingClassesGenerator extends JpaMappingCodeGenerator {
 	private String[] libs;
 
 	public JpaMappingClassesGenerator() {
-		super();
 	}
 
 	@Override
@@ -76,7 +77,15 @@ public class JpaMappingClassesGenerator extends JpaMappingCodeGenerator {
 
 		super.generate(o, outputDir, isUpdatableMapping, includeSources, libsDir, null);
 
-		binDir = (binDir == null) ? new File(outputDir, DEFAULT_BIN_DIR) : binDir;
+		if (binDir == null) {
+			try {
+				PathTraversalChecker.get(outputDir, DEFAULT_BIN_DIR);
+			} catch (Exception e) {
+				throw new PathTraversalAttackException("Error generating outputDir for: " + outputDir);
+			}
+			binDir = new File(outputDir, DEFAULT_BIN_DIR);
+		}
+
 		LOGGER.debug("src dir is equal to [{}]", getSrcDir());
 		// libDir = (libDir == null) ? new File(outputDir, DEFAULT_LIB_DIR) : libDir;
 		libDir = (libsDir == null) ? new File(outputDir, DEFAULT_LIB_DIR) : libsDir;
@@ -93,13 +102,9 @@ public class JpaMappingClassesGenerator extends JpaMappingCodeGenerator {
 		Compiler compiler;
 
 		if (libs == null) {
-			try(Stream<Path> paths = Files.list(libDir.toPath())) {
+			try (Stream<Path> paths = Files.list(libDir.toPath())) {
 
-				libs = paths
-						.map(e -> libDir.toPath().relativize(e))
-						.map(Path::toString)
-						.collect(toList())
-						.toArray(new String[0]);
+				libs = paths.map(e -> libDir.toPath().relativize(e)).map(Path::toString).collect(toList()).toArray(new String[0]);
 
 			} catch (IOException e) {
 				throw new GenerationException("Impossible to compile mapping code. Please download errors log", e);
@@ -181,8 +186,7 @@ public class JpaMappingClassesGenerator extends JpaMappingCodeGenerator {
 	}
 
 	/**
-	 * @param errorLog
-	 *            the errorLog to set
+	 * @param errorLog the errorLog to set
 	 */
 	public void setErrorLog(PrintWriter errorLog) {
 		this.errorLog = errorLog;
