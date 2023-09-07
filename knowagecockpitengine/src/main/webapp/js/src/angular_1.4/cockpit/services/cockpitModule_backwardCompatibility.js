@@ -146,7 +146,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						for(var k in model.content.columnSelectedOfDataset){
 							if(model.content.columnSelectedOfDataset[k].isCalculated) {
 								model.content.columnSelectedOfDataset[k].aggregationSelected = "NONE";
-								if(!model.content.columnSelectedOfDataset[k].formula.match(/(AVG|SUM|MIN|MAX|COUNT|COUNT DISTINCT|TOTAL_SUM|TOTAL_AVG|TOTAL_MIN|TOTAL_MAX|TOTAL_COUNT)\(\"+[\D\+\-\*\/\w]*\)/gm)){
+								if(!model.content.columnSelectedOfDataset[k].formula.match(/(AVG|SUM|MIN|MAX|COUNT|COUNT DISTINCT|TOTAL_SUM|TOTAL_AVG|TOTAL_MIN|TOTAL_MAX|TOTAL_COUNT)\(\"+[\D+\-*\/\w]*\)/gm)){
 									model.content.columnSelectedOfDataset[k].formula = "SUM(" + model.content.columnSelectedOfDataset[k].formula + ")";
 									model.content.columnSelectedOfDataset[k].formulaEditor = "SUM(" + model.content.columnSelectedOfDataset[k].formulaEditor + ")";
 								}
