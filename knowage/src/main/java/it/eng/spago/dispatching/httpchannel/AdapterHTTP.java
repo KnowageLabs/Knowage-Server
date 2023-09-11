@@ -143,10 +143,6 @@ public class AdapterHTTP extends HttpServlet {
 
 	private static final String SERIALIZE_SESSION_ATTRIBUTE = "COMMON.SERIALIZE_SESSION";
 
-	// Atributo della configurazione che indica se serializzare il contenuto
-	// della sessione
-	private boolean serializeSession = false;
-
 	private void handleQueryStringField(HttpServletRequest request, SourceBean serviceReq, String queryStringFieldName) throws SourceBeanException {
 
 		String queryString = queryStringFieldName.substring(queryStringFieldName.indexOf("{") + 1, queryStringFieldName.indexOf("}"));
@@ -288,6 +284,8 @@ public class AdapterHTTP extends HttpServlet {
 
 	@Override
 	public void service(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
+		boolean serializeSession = this.getSerializedSession();
+
 		Monitor monitor = null;
 		IEventNotifier eventNotifier = null;
 		RequestContextIFace requestContext = null;
@@ -579,19 +577,11 @@ public class AdapterHTTP extends HttpServlet {
 
 	// RequestContainer requestContainer)
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see javax.servlet.GenericServlet#init()
-	 */
-	@Override
-	public void init() throws ServletException {
-		super.init();
-
+	private boolean getSerializedSession() {
 		String serializeSessionStr = (String) ConfigSingleton.getInstance().getAttribute(SERIALIZE_SESSION_ATTRIBUTE);
 		if ((serializeSessionStr != null) && (serializeSessionStr.equalsIgnoreCase("TRUE"))) {
-			serializeSession = true;
+			return true;
 		}
+		return false;
 	}
-
 } // public class ActionServlet extends HttpServlet
