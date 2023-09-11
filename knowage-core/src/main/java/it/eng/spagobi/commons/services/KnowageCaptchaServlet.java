@@ -19,27 +19,18 @@ public class KnowageCaptchaServlet extends HttpServlet {
 	 *
 	 */
 	private static final long serialVersionUID = -1268155968745374787L;
-	protected int width;
-	protected int height;
-
-	public KnowageCaptchaServlet() {
-		width = 200;
-		height = 50;
-	}
 
 	@Override
-	public void init() throws ServletException {
+	public void doGet(HttpServletRequest httpservletrequest, HttpServletResponse httpservletresponse) throws ServletException, IOException {
+		int width = 200;
+		int height = 50;
+
 		if (getInitParameter("height") != null)
 			height = Integer.valueOf(getInitParameter("height")).intValue();
 		if (getInitParameter("width") != null)
 			width = Integer.valueOf(getInitParameter("width")).intValue();
-	}
-
-	@Override
-	public void doGet(HttpServletRequest httpservletrequest, HttpServletResponse httpservletresponse) throws ServletException, IOException {
 
 		ImageCaptcha imageCaptcha = new ImageCaptcha.Builder(width, height).addContent().addBackground().addFilter(new FishEyeImageFilter()).addBackground()
-//				.addBackground(new SquigglesBackgroundProducer())
 				.build();
 		writeImage(httpservletresponse, imageCaptcha.getImage());
 		httpservletrequest.getSession().setAttribute("simpleCaptcha", imageCaptcha);
