@@ -29,8 +29,6 @@ import java.util.PropertyResourceBundle;
 import java.util.ResourceBundle;
 import java.util.ResourceBundle.Control;
 
-import javax.net.ssl.SSLException;
-
 import org.apache.log4j.Logger;
 
 public class UTF8Control extends Control {
@@ -66,9 +64,6 @@ public class UTF8Control extends Control {
 					}
 				}
 			}
-		} catch (SSLException sslException) {
-			logger.error("SSLException occurred while creating socket in UTF8Control: ", sslException);
-			throw sslException;
 		} catch (IOException ioException) {
 			logger.error("IOException occurred while creating socket in UTF8Control: ", ioException);
 			throw ioException;
