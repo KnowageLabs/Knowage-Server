@@ -971,9 +971,9 @@ public class DataSourceDAOHibImpl extends AbstractHibernateDAO implements IDataS
 				List<String> lovNamesAssociatedWithDS = new ArrayList<>();
 				logger.debug("Check for Lov associated to datasource");
 
-				hql = " from SbiLov s where inputTypeCd = :query";
+				hql = " from SbiLov s where inputTypeCd = :inputTypeCd";
 				aQuery = aSession.createQuery(hql);
-				aQuery.setString("query", "QUERY");
+				aQuery.setString("inputTypeCd", "QUERY");
 
 				List<SbiLov> lovAssocitedWithDs = aQuery.list();
 				SbiLov sbiLov = null;
