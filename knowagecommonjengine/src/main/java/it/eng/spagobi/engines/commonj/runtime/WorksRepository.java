@@ -22,7 +22,6 @@ import java.io.File;
 import org.apache.log4j.Logger;
 
 import it.eng.knowage.commons.security.PathTraversalChecker;
-import it.eng.knowage.commons.security.exceptions.PathTraversalAttackException;
 
 public class WorksRepository {
 	private static final Logger LOGGER = Logger.getLogger(WorksRepository.class);
@@ -80,14 +79,11 @@ public class WorksRepository {
 	 */
 	public File getExecutableWorkDir(CommonjWork work) {
 		LOGGER.debug("IN");
-		File workDir = null;
+
 		String fileName = work.getWorkName();
-		try {
-			PathTraversalChecker.get(rootDir.getName(), fileName);
-			workDir = new File(rootDir, fileName);
-		} catch (Exception e) {
-			throw new PathTraversalAttackException("Error getting executable work direktory for work: " + fileName);
-		}
+		PathTraversalChecker.get(rootDir.getName(), fileName);
+		File workDir = new File(rootDir, fileName);
+
 		LOGGER.debug("OUT");
 		return workDir;
 	}
@@ -111,14 +107,10 @@ public class WorksRepository {
 	 * @return true, if successful
 	 */
 	public boolean containsWork(CommonjWork work) {
-		File workFolder = null;
 		String fileName = work.getWorkName();
-		try {
-			PathTraversalChecker.get(rootDir.getName(), fileName);
-			workFolder = new File(rootDir, fileName);
-		} catch (Exception e) {
-			throw new PathTraversalAttackException("Error getting work: " + fileName);
-		}
+
+		PathTraversalChecker.get(rootDir.getName(), fileName);
+		File workFolder = new File(rootDir, fileName);
 
 		return workFolder != null && workFolder.exists();
 	}

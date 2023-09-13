@@ -32,7 +32,6 @@ import java.util.zip.ZipFile;
 import org.apache.log4j.Logger;
 
 import it.eng.knowage.commons.security.PathTraversalChecker;
-import it.eng.knowage.commons.security.exceptions.PathTraversalAttackException;
 
 /**
  * This class has been created to provide SpagoBI Access Utils, in order to customize operations with clients.
@@ -74,11 +73,7 @@ public class SpagoBIAccessUtils {
 					file.mkdirs();
 
 					String fileName = newDirectory.getPath() + File.separator + entry.getName();
-					try {
-						PathTraversalChecker.isValidFileName(fileName);
-					} catch (Exception e) {
-						throw new PathTraversalAttackException("Error unzipping file " + fileName + ". Invalid filename.");
-					}
+					PathTraversalChecker.isValidFileName(fileName);
 
 					try (FileOutputStream fileout = new FileOutputStream(fileName);
 							BufferedOutputStream bufout = new BufferedOutputStream(fileout);
@@ -109,13 +104,9 @@ public class SpagoBIAccessUtils {
 	 * @return true, if successful
 	 */
 	public boolean deleteDirectory(String pathdest) {
-		try {
-			PathTraversalChecker.isValidFileName(pathdest);
-			File directory = new File(pathdest);
-			return deleteDirectory(directory);
-		} catch (Exception e) {
-			throw new PathTraversalAttackException("Error deleting directory " + pathdest + ". Invalid filename.");
-		}
+		PathTraversalChecker.isValidFileName(pathdest);
+		File directory = new File(pathdest);
+		return deleteDirectory(directory);
 	}
 
 	/**

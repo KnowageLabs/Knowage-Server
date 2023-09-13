@@ -31,7 +31,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import it.eng.knowage.commons.security.PathTraversalChecker;
-import it.eng.knowage.commons.security.exceptions.PathTraversalAttackException;
 import it.eng.knowage.meta.generator.GenerationException;
 import it.eng.knowage.meta.generator.jpamapping.wrappers.JpaProperties;
 import it.eng.knowage.meta.generator.utils.Compiler;
@@ -78,11 +77,7 @@ public class JpaMappingClassesGenerator extends JpaMappingCodeGenerator {
 		super.generate(o, outputDir, isUpdatableMapping, includeSources, libsDir, null);
 
 		if (binDir == null) {
-			try {
-				PathTraversalChecker.get(outputDir, DEFAULT_BIN_DIR);
-			} catch (Exception e) {
-				throw new PathTraversalAttackException("Error generating outputDir for: " + outputDir);
-			}
+			PathTraversalChecker.get(outputDir, DEFAULT_BIN_DIR);
 			binDir = new File(outputDir, DEFAULT_BIN_DIR);
 		}
 

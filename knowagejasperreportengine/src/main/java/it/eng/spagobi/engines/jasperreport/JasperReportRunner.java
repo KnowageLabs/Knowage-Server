@@ -70,7 +70,6 @@ import com.jamonapi.MonitorFactory;
 //import com.sun.image.codec.jpeg.JPEGImageEncoder;
 
 import it.eng.knowage.commons.security.PathTraversalChecker;
-import it.eng.knowage.commons.security.exceptions.PathTraversalAttackException;
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.commons.bo.UserProfile;
@@ -217,42 +216,29 @@ public class JasperReportRunner {
 			boolean propertiesLoaded = false;
 			if (flgTemplateStandard.equalsIgnoreCase("false")) {
 				logger.debug("The template is a .ZIP file");
-				File fileZip = null;
 				String fileName = JS_FILE_ZIP + JS_EXT_ZIP;
 				File directory = getJRTempDir(servletContext, prefixDirTemplate);
-				try {
-					PathTraversalChecker.get(directory.getName(), fileName);
-					fileZip = new File(directory, fileName);
-					FileOutputStream foZip = new FileOutputStream(fileZip);
-					foZip.write(templateContent);
-					foZip.close();
-				} catch (Exception e) {
-					throw new PathTraversalAttackException("Error running jasper report for zip file: " + fileName);
-				}
+
+				PathTraversalChecker.get(directory.getName(), fileName);
+				File fileZip = new File(directory, fileName);
+				FileOutputStream foZip = new FileOutputStream(fileZip);
+				foZip.write(templateContent);
+				foZip.close();
 
 				util.unzip(fileZip, getJRTempDir(servletContext, prefixDirTemplate));
 
-				JarFile zipFile = null;
 				fileName = fileZip.getName();
-				try {
-					PathTraversalChecker.isValidFileName(fileName);
-					zipFile = new JarFile(fileZip);
+				PathTraversalChecker.isValidFileName(fileName);
+				JarFile zipFile = new JarFile(fileZip);
 
-				} catch (Exception e) {
-					throw new PathTraversalAttackException("Error running jasper report. Invalid zip file name: " + fileName);
-				}
 				Enumeration totalZipEntries = zipFile.entries();
 				File jarFile = null;
 				while (totalZipEntries.hasMoreElements()) {
 					ZipEntry entry = (ZipEntry) totalZipEntries.nextElement();
 					if (entry.getName().endsWith(".jar")) {
 						fileName = getJRTempDirName(servletContext, prefixDirTemplate) + entry.getName();
-						try {
-							PathTraversalChecker.isValidFileName(fileName);
-							jarFile = new File(getJRTempDirName(servletContext, prefixDirTemplate) + entry.getName());
-						} catch (Exception e) {
-							throw new PathTraversalAttackException("Error running jasper report. Invalid jar file: " + fileName);
-						}
+						PathTraversalChecker.isValidFileName(fileName);
+						jarFile = new File(getJRTempDirName(servletContext, prefixDirTemplate) + entry.getName());
 
 						// set classloader with jar
 						ClassLoader previous = Thread.currentThread().getContextClassLoader();
@@ -260,14 +246,9 @@ public class JasperReportRunner {
 						Thread.currentThread().setContextClassLoader(dcl);
 					} else if (entry.getName().endsWith(".jrxml")) {
 						// set InputStream with jrxml
-						File jrxmlFile = null;
 						fileName = getJRTempDirName(servletContext, prefixDirTemplate) + entry.getName();
-						try {
-							PathTraversalChecker.isValidFileName(fileName);
-							jrxmlFile = new File(fileName);
-						} catch (Exception e) {
-							throw new PathTraversalAttackException("Error running jasper report. Invalid jrxml file: " + fileName);
-						}
+						PathTraversalChecker.isValidFileName(fileName);
+						File jrxmlFile = new File(fileName);
 
 						InputStream isJrxml = new FileInputStream(jrxmlFile);
 						byte[] templateJrxml = new byte[0];
@@ -839,18 +820,14 @@ public class JasperReportRunner {
 
 	private File getJRTempDir(ServletContext servletContext, String prefixTemplate) {
 		logger.debug("IN");
-		File jrTempDir = null;
 
 		String jrTempDirStr = getJRTempDirName(servletContext, prefixTemplate);
 		String fileName = jrTempDirStr.substring(0, jrTempDirStr.length() - 1);
-		try {
-			PathTraversalChecker.isValidFileName(fileName);
-			jrTempDir = new File(fileName);
-			jrTempDir.mkdirs();
 
-		} catch (Exception e) {
-			throw new PathTraversalAttackException("Error getting jasper temp directory for file name: " + fileName);
-		}
+		PathTraversalChecker.isValidFileName(fileName);
+		File jrTempDir = new File(fileName);
+		jrTempDir.mkdirs();
+
 		logger.debug("OUT");
 		return jrTempDir;
 	}
@@ -1083,14 +1060,9 @@ public class JasperReportRunner {
 					}
 
 					if (flgTemplateStandard.equalsIgnoreCase("false")) {
-						File fileZip = null;
 						String fileName = JS_FILE_ZIP + i + JS_EXT_ZIP;
-						try {
-							PathTraversalChecker.get(destDir.getName(), fileName);
-							fileZip = new File(destDir, fileName);
-						} catch (Exception e) {
-							throw new PathTraversalAttackException("Error compiling subreports for file: " + fileName);
-						}
+						PathTraversalChecker.get(destDir.getName(), fileName);
+						File fileZip = new File(destDir, fileName);
 
 						FileOutputStream foZip = new FileOutputStream(fileZip);
 						foZip.write(templateContent);

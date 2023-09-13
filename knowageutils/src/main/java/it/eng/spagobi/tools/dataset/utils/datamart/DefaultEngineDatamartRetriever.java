@@ -30,7 +30,6 @@ import javax.activation.DataHandler;
 import org.apache.log4j.Logger;
 
 import it.eng.knowage.commons.security.PathTraversalChecker;
-import it.eng.knowage.commons.security.exceptions.PathTraversalAttackException;
 import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.services.common.EnginConf;
 import it.eng.spagobi.services.proxy.MetamodelServiceProxy;
@@ -81,24 +80,18 @@ public class DefaultEngineDatamartRetriever implements IQbeDataSetDatamartRetrie
 	@Override
 	public File retrieveDatamartFile(String metamodelName) {
 
-		File metamodelJarFile;
+		File metamodelJarFile = null;
 
 		LOGGER.debug("IN");
 
-		metamodelJarFile = null;
 		try {
 			Assert.assertTrue(StringUtilities.isNotEmpty(metamodelName), "Input parameter [metamodelName] cannot be null");
 			LOGGER.debug("Load metamodel jar file for model [" + metamodelName + "]");
 
 			File targetMetamodelFolder = null;
-			try {
-				File directory = getDataMartDir();
-				PathTraversalChecker.get(directory.getName(), metamodelName);
-				targetMetamodelFolder = new File(directory, metamodelName);
-			} catch (Exception e) {
-				throw new PathTraversalAttackException(
-						"Error retrieveing datamart file for metamodel name: " + metamodelName + ". Target metamodel folder is invalid.");
-			}
+			File directory = getDataMartDir();
+			PathTraversalChecker.get(directory.getName(), metamodelName);
+			targetMetamodelFolder = new File(directory, metamodelName);
 
 			metamodelJarFile = new File(targetMetamodelFolder, "datamart.jar");
 

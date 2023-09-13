@@ -19,11 +19,7 @@ public class PasswordEncryptionToolController {
 		completeFilePathAndName = args[0];
 		plainTextPassword = args[1];
 
-		try {
-			PathTraversalChecker.isValidFileName(completeFilePathAndName);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		PathTraversalChecker.isValidFileName(completeFilePathAndName);
 
 		boolean exists = new File(completeFilePathAndName).exists();
 

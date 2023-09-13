@@ -130,7 +130,9 @@ public class DossierActivityResource extends AbstractSpagoBIResource {
 		String separator = File.separator;
 		if (fileName.endsWith("?"))
 			fileName = fileName.substring(0, fileName.length() - 1);
-		String outPath = SpagoBIUtilities.getResourcePath() + separator + "dossier" + separator + documentId + separator + fileName;
+		String safeDirectory = SpagoBIUtilities.getResourcePath() + separator + "dossier" + separator + documentId;
+		PathTraversalChecker.get(safeDirectory, fileName);
+		String outPath = safeDirectory + separator + fileName;
 		ResponseBuilder responseBuilder = null;
 		File file = new File(outPath);
 		JSONObject response = new JSONObject();

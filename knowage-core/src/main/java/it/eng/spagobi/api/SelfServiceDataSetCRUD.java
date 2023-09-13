@@ -58,7 +58,6 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
 import it.eng.knowage.commons.security.PathTraversalChecker;
-import it.eng.knowage.commons.security.exceptions.PathTraversalAttackException;
 import it.eng.qbe.dataset.QbeDataSet;
 import it.eng.spago.base.SourceBeanException;
 import it.eng.spago.error.EMFInternalError;
@@ -1622,17 +1621,11 @@ public class SelfServiceDataSetCRUD extends AbstractSpagoBIResource {
 		String filePath = resourcePath + File.separatorChar + "dataset" + File.separatorChar + "files" + File.separatorChar + "temp" + File.separatorChar;
 		String fileNewPath = resourcePath + File.separatorChar + "dataset" + File.separatorChar + "files" + File.separatorChar;
 
-		File originalDatasetFile = null;
-		File newDatasetFile = null;
-		try {
-			PathTraversalChecker.get(filePath, originalFileName);
-			originalDatasetFile = new File(filePath + originalFileName);
-			PathTraversalChecker.get(fileNewPath, newFileName + "." + fileType.toLowerCase());
-			newDatasetFile = new File(fileNewPath + newFileName + "." + fileType.toLowerCase());
-		} catch (Exception e) {
-			throw new PathTraversalAttackException(
-					"Error getting removind/moving dataset file for orginal file " + originalFileName + " and new file " + newFileName);
-		}
+		PathTraversalChecker.get(filePath, originalFileName);
+		File originalDatasetFile = new File(filePath + originalFileName);
+		PathTraversalChecker.get(fileNewPath, newFileName + "." + fileType.toLowerCase());
+		File newDatasetFile = new File(fileNewPath + newFileName + "." + fileType.toLowerCase());
+
 		if (newDatasetFile != null && originalDatasetFile != null && originalDatasetFile.exists()) {
 			/*
 			 * This method copies the contents of the specified source file to the specified destination file. The directory holding the destination file is
@@ -1751,13 +1744,8 @@ public class SelfServiceDataSetCRUD extends AbstractSpagoBIResource {
 	private void deleteDatasetFile(String fileName, String resourcePath, String fileType) {
 		String filePath = resourcePath + File.separatorChar + "dataset" + File.separatorChar + "files" + File.separatorChar + "temp" + File.separatorChar;
 
-		File datasetFile = null;
-		try {
-			PathTraversalChecker.get(filePath, fileName);
-			datasetFile = new File(filePath + fileName);
-		} catch (Exception e) {
-			throw new PathTraversalAttackException("Error deleting dataset file " + fileName);
-		}
+		PathTraversalChecker.get(filePath, fileName);
+		File datasetFile = new File(filePath + fileName);
 
 		if (datasetFile != null && datasetFile.exists()) {
 			datasetFile.delete();

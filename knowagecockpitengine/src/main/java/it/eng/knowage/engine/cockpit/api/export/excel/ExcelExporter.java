@@ -54,7 +54,6 @@ import org.json.JSONObject;
 import com.google.gson.Gson;
 
 import it.eng.knowage.commons.security.PathTraversalChecker;
-import it.eng.knowage.commons.security.exceptions.PathTraversalAttackException;
 import it.eng.knowage.engine.cockpit.api.export.AbstractFormatExporter;
 import it.eng.knowage.engine.cockpit.api.export.ExporterClient;
 import it.eng.knowage.engine.cockpit.api.export.excel.exporters.IWidgetExporter;
@@ -152,11 +151,8 @@ public class ExcelExporter extends AbstractFormatExporter {
 
 	private byte[] getByteArrayFromFile(Path excelFile, Path outputDir) {
 		String fileName = excelFile.toString();
-		try {
-			PathTraversalChecker.isValidFileName(fileName);
-		} catch (Exception e) {
-			throw new PathTraversalAttackException("Error getting byte array from file: " + excelFile);
-		}
+
+		PathTraversalChecker.isValidFileName(fileName);
 
 		try (FileInputStream fis = new FileInputStream(fileName); ByteArrayOutputStream bos = new ByteArrayOutputStream()) {
 			byte[] buf = new byte[1024];

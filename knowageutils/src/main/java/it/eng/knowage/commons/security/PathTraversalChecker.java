@@ -37,22 +37,17 @@ public class PathTraversalChecker {
 		throw new IllegalStateException("This class provides utility methods. It cannot be instantiated");
 	}
 
-	public static void get(String firstDirectory, String... otherFolders) throws PathTraversalAttackException {
-		File previousFolderFile = new File(firstDirectory);
+	public static void get(String safeDirectory, String... otherFolders) throws PathTraversalAttackException {
+		File previousFolderFile = new File(safeDirectory);
 
 		for (String currentFolder : otherFolders) {
-			try {
-				isValidFileName(currentFolder);
+			isValidFileName(currentFolder);
 
-				File currentFolderFile = new File(currentFolder);
+			File currentFolderFile = new File(currentFolder);
 
-				preventPathTraversalAttack(currentFolderFile, previousFolderFile);
+			preventPathTraversalAttack(currentFolderFile, previousFolderFile);
 
-				previousFolderFile = currentFolderFile;
-			} catch (Exception e) {
-				logger.error(e);
-				throw new PathTraversalAttackException(e.getMessage());
-			}
+			previousFolderFile = currentFolderFile;
 		}
 	}
 

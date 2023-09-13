@@ -12,7 +12,6 @@ import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
 
 import it.eng.knowage.commons.security.PathTraversalChecker;
-import it.eng.knowage.commons.security.exceptions.PathTraversalAttackException;
 import it.eng.spagobi.engines.talend.exception.ContextNotFoundException;
 import it.eng.spagobi.engines.talend.exception.JobExecutionException;
 import it.eng.spagobi.engines.talend.exception.JobNotFoundException;
@@ -124,13 +123,9 @@ public class RuntimeRepository {
 	 */
 	public File getExecutableJobDir(Job job) {
 		File projectDir = getExecutableJobProjectDir(job);
-		File jobDir = null;
-		try {
-			PathTraversalChecker.get(job.getName(), projectDir.getName());
-			jobDir = new File(getExecutableJobProjectDir(job), job.getName());
-		} catch (Exception e) {
-			throw new PathTraversalAttackException("Error getting executable job directory for job: " + job);
-		}
+		PathTraversalChecker.get(job.getName(), projectDir.getName());
+		File jobDir = new File(getExecutableJobProjectDir(job), job.getName());
+
 		return jobDir;
 	}
 

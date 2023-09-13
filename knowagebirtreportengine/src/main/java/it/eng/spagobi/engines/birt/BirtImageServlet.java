@@ -36,7 +36,6 @@ import javax.servlet.http.HttpSession;
 import org.apache.log4j.Logger;
 
 import it.eng.knowage.commons.security.PathTraversalChecker;
-import it.eng.knowage.commons.security.exceptions.PathTraversalAttackException;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.services.proxy.DocumentExecuteServiceProxy;
 import it.eng.spagobi.utilities.mime.MimeUtils;
@@ -81,22 +80,8 @@ public class BirtImageServlet extends HttpServlet {
 
 			File parent = imageFile.getParentFile();
 			String fileName = imageFile.toString();
-			try {
-				PathTraversalChecker.get(parent.toString(), fileName);
-			} catch (Exception e) {
-				throw new PathTraversalAttackException("Error executing birt image service for image file: " + fileName);
-			}
 
-			// Prevent directory traversal (path traversal) attacks
-			if (!imageTmpDir.equals(parent)) {
-				logger.error("Trying to access the file [" + imageFile.getAbsolutePath() + "] that is not inside ${java.io.tmpdir}/birt!!!");
-				throw new SecurityException("Trying to access the file [" + imageFile.getAbsolutePath() + "] that is not inside ${java.io.tmpdir}/birt!!!");
-			}
-
-			if (!imageFile.exists()) {
-				logger.error("File " + imageFile.getPath() + " not found");
-				return;
-			}
+			PathTraversalChecker.get(parent.toString(), fileName);
 
 			try {
 				fis = new FileInputStream(imageFile);

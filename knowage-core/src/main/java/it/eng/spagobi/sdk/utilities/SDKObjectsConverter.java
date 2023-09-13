@@ -35,7 +35,6 @@ import org.apache.log4j.Logger;
 import org.json.JSONObject;
 
 import it.eng.knowage.commons.security.PathTraversalChecker;
-import it.eng.knowage.commons.security.exceptions.PathTraversalAttackException;
 import it.eng.qbe.dataset.QbeDataSet;
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.base.SourceBeanException;
@@ -231,13 +230,9 @@ public class SDKObjectsConverter {
 			if (dh != null && dh.getName() != null) {
 				LOGGER.debug("Deleting attachment file ...");
 				String fileName = dh.getName();
-				File attachment = null;
-				try {
-					PathTraversalChecker.isValidFileName(fileName);
-					attachment = new File(fileName);
-				} catch (Exception e) {
-					throw new PathTraversalAttackException("Error converting SDKTemplate " + sdkTemplate + ". File name " + fileName + " is not valid.");
-				}
+				PathTraversalChecker.isValidFileName(fileName);
+				File attachment = new File(fileName);
+
 				if (attachment != null && attachment.exists() && attachment.isFile()) {
 					boolean attachmentFileDeleted;
 					try {
