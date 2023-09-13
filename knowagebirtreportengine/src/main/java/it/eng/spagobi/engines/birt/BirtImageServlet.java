@@ -43,7 +43,7 @@ import it.eng.spagobi.utilities.mime.MimeUtils;
 
 public class BirtImageServlet extends HttpServlet {
 
-	private transient Logger logger = Logger.getLogger(this.getClass());
+	private static final Logger logger = Logger.getLogger(BirtImageServlet.class);
 	private static final String CHART_LABEL = "chart_label";
 
 	/*
