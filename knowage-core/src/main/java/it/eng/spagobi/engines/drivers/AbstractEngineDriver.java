@@ -24,8 +24,10 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.log4j.Logger;
 import org.json.JSONException;
@@ -50,6 +52,7 @@ import it.eng.spagobi.services.common.SsoServiceInterface;
  */
 public class AbstractEngineDriver {
 
+	private static final Logger LOGGER = Logger.getLogger(AbstractEngineDriver.class);
 	private static final String DESCRIPTION_SUFFIX = "_description";
 
 	static Logger logger = Logger.getLogger(AbstractEngineDriver.class);
@@ -58,7 +61,6 @@ public class AbstractEngineDriver {
 	 *
 	 */
 	public AbstractEngineDriver() {
-		super();
 	}
 
 	/**
@@ -257,7 +259,8 @@ public class AbstractEngineDriver {
 
 			try {
 				String contentStr = new String(contentTemplate);
-				DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+
+				DocumentBuilder builder = getFactory().newDocumentBuilder();
 				InputSource src = new InputSource();
 				src.setCharacterStream(new StringReader(contentStr));
 
@@ -280,11 +283,27 @@ public class AbstractEngineDriver {
 		return content;
 	}
 
+	private static DocumentBuilderFactory getFactory() {
+		DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+		try {
+			dbf.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
+			dbf.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
+			dbf.setFeature("http://xml.org/sax/features/external-parameterentities", false);
+			dbf.setFeature("http://xml.org/sax/features/external-generalentities", false);
+		} catch (ParserConfigurationException e) {
+			LOGGER.error("Error loading XML document: " + e.getMessage(), e);
+		}
+
+		dbf.setXIncludeAware(false);
+		dbf.setExpandEntityReferences(false);
+		return dbf;
+	}
+
 	public ArrayList<String> getFunctionsAssociated(byte[] contentTemplate) throws JSONException {
 		// catalog functions can be used only inside cockpits
 		// therefore the default implementation is to return an empty list
 		// CockpitEngine will have its own implementation
-		return new ArrayList<String>();
+		return new ArrayList<>();
 	}
 
 	public List<DefaultOutputParameter> getDefaultOutputParameters() {

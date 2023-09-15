@@ -18,10 +18,21 @@ package it.eng.spagobi.commons.utilities;
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
+import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamReader;
+import javax.xml.transform.stream.StreamSource;
+
+import org.apache.log4j.Logger;
 
 /**
  * This class is used to wrap unmarshalling operation ( conversion from xml file to appropriate java object)
@@ -32,6 +43,8 @@ import javax.xml.bind.Unmarshaller;
  */
 
 public class SpagoBIUnmarshallerWrapper<T> {
+
+	private static final Logger LOGGER = Logger.getLogger(SpagoBIUnmarshallerWrapper.class);
 
 	/**
 	 *
@@ -44,6 +57,28 @@ public class SpagoBIUnmarshallerWrapper<T> {
 	public T unmarshall(File xmlFile, Class<T> clazz) throws JAXBException {
 
 		JAXBContext jc = JAXBContext.newInstance(clazz);
+		XMLInputFactory xif = XMLInputFactory.newFactory();
+		xif.setProperty(XMLInputFactory.SUPPORT_DTD, false);
+		xif.setProperty(XMLInputFactory.IS_REPLACING_ENTITY_REFERENCES, false);
+		xif.setProperty(XMLInputFactory.IS_SUPPORTING_EXTERNAL_ENTITIES, false);
+
+		FileInputStream inputStream = null;
+		try {
+			inputStream = new FileInputStream(xmlFile);
+			InputStreamReader reader = new InputStreamReader(inputStream, StandardCharsets.UTF_8);
+			XMLStreamReader xsr = xif.createXMLStreamReader(new StreamSource(reader));
+
+			return (T) jc.createUnmarshaller().unmarshal(xsr);
+		} catch (FileNotFoundException | XMLStreamException e) {
+			LOGGER.error("Error loading XML document: " + e.getMessage(), e);
+		} finally {
+			try {
+				inputStream.close();
+			} catch (IOException e) {
+				LOGGER.error("Error loading XML document: " + e.getMessage(), e);
+			}
+		}
+
 		Unmarshaller unmarshaller = jc.createUnmarshaller();
 		return (T) unmarshaller.unmarshal(xmlFile);
 

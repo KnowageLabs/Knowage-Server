@@ -26,8 +26,10 @@ import java.util.Locale.Builder;
 import java.util.Map;
 import java.util.StringTokenizer;
 
+import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -191,7 +193,7 @@ public class ChartDriver extends GenericDriver {
 		String family = null;
 		try {
 			template = getTemplate(biObject);
-			DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+			DocumentBuilder builder = getFactory().newDocumentBuilder();
 			Document doc = builder.parse(new ByteArrayInputStream(template.getContent()));
 			family = doc.getChildNodes().item(0).getNodeName();
 		} catch (Throwable t) {
@@ -222,6 +224,23 @@ public class ChartDriver extends GenericDriver {
 			logger.debug("OUT");
 		}
 		return parameters;
+	}
+
+	private static DocumentBuilderFactory getFactory() {
+		DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+		try {
+			dbf.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
+			dbf.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
+			dbf.setFeature("http://xml.org/sax/features/external-parameterentities", false);
+			dbf.setFeature("http://xml.org/sax/features/external-generalentities", false);
+		} catch (ParserConfigurationException e) {
+			logger.error("Error loading XML document: " + e.getMessage(), e);
+			throw new SecurityException("Error loading XML document: " + e.getMessage(), e);
+		}
+
+		dbf.setXIncludeAware(false);
+		dbf.setExpandEntityReferences(false);
+		return dbf;
 	}
 
 	@Override
@@ -325,7 +344,7 @@ public class ChartDriver extends GenericDriver {
 	}
 
 	private String replaceMessagesInString(String targetString) {
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 
 		IMessageBuilder engineMessageBuilder = MessageBuilderFactory.getMessageBuilder();
 
@@ -365,7 +384,7 @@ public class ChartDriver extends GenericDriver {
 	}
 
 	private String replaceMessagesInValue(String valueString, boolean addFinalSpace) {
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		StringTokenizer st = new StringTokenizer(valueString);
 		IMessageBuilder engineMessageBuilder = MessageBuilderFactory.getMessageBuilder();
 		while (st.hasMoreTokens()) {

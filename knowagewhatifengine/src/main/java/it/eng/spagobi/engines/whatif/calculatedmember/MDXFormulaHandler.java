@@ -18,7 +18,12 @@
 package it.eng.spagobi.engines.whatif.calculatedmember;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -27,6 +32,10 @@ import java.util.Map;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
+import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamReader;
+import javax.xml.transform.stream.StreamSource;
 
 import org.apache.log4j.Logger;
 import org.olap4j.OlapException;
@@ -40,11 +49,11 @@ import it.eng.spagobi.engines.whatif.model.SpagoBIPivotModel;
 
 public class MDXFormulaHandler {
 
-	private static final String SERVER_RESOURCE_FILE_PATH = WhatIfEngineConfig.getInstance().getEngineResourcePath() + "Olap/formulas.xml";;
+	private static final String SERVER_RESOURCE_FILE_PATH = WhatIfEngineConfig.getInstance().getEngineResourcePath() + "Olap/formulas.xml";
 	private static final String JAVA_RESOURCE_FILE_PATH = File.separatorChar + "calculated_fields_formulas" + File.separatorChar + "formulas.xml";
 	private static File xmlFile;
 	private static MDXFormulas formulas;
-	private static Map<String, String> placeHolders = new HashMap<String, String>();
+	private static Map<String, String> placeHolders = new HashMap<>();
 	private static String TIME_DIMENSION = "TimeDimension";
 	private static SpagoBIPivotModel model;
 	private static ModelConfig modelConfig;
@@ -101,10 +110,10 @@ public class MDXFormulaHandler {
 		}
 		return formulas;
 
-	};
+	}
 
 	private static MDXFormulas getFormulasFromXML2() throws JAXBException, InstantiationException, IllegalAccessException {
-		Box<MDXFormulas> box = new Box<MDXFormulas>();
+		Box<MDXFormulas> box = new Box<>();
 		formulas = box.unmarshalFile(xmlFile, MDXFormulas.class);
 		return formulas;
 	}
@@ -196,10 +205,34 @@ public class MDXFormulaHandler {
 
 class Box<T> {
 
+	private static final Logger LOGGER = Logger.getLogger(Box.class);
+
 	@SuppressWarnings("unchecked")
 	public T unmarshalFile(File file, Class<T> clazz) throws JAXBException {
 
 		JAXBContext jc = JAXBContext.newInstance(clazz);
+		XMLInputFactory xif = XMLInputFactory.newFactory();
+		xif.setProperty(XMLInputFactory.SUPPORT_DTD, false);
+		xif.setProperty(XMLInputFactory.IS_REPLACING_ENTITY_REFERENCES, false);
+		xif.setProperty(XMLInputFactory.IS_SUPPORTING_EXTERNAL_ENTITIES, false);
+
+		FileInputStream inputStream = null;
+		try {
+			inputStream = new FileInputStream(file);
+			InputStreamReader reader = new InputStreamReader(inputStream, StandardCharsets.UTF_8);
+			XMLStreamReader xsr = xif.createXMLStreamReader(new StreamSource(reader));
+
+			return (T) jc.createUnmarshaller().unmarshal(xsr);
+		} catch (FileNotFoundException | XMLStreamException e) {
+			LOGGER.error("Error loading XML document: " + e.getMessage(), e);
+		} finally {
+			try {
+				inputStream.close();
+			} catch (IOException e) {
+				LOGGER.error("Error loading XML document: " + e.getMessage(), e);
+			}
+		}
+
 		Unmarshaller unmarshaller = jc.createUnmarshaller();
 		return (T) unmarshaller.unmarshal(file);
 
