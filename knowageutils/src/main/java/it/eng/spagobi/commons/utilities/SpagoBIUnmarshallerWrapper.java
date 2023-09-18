@@ -26,7 +26,6 @@ import java.nio.charset.StandardCharsets;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
-import javax.xml.bind.Unmarshaller;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
@@ -71,6 +70,7 @@ public class SpagoBIUnmarshallerWrapper<T> {
 			return (T) jc.createUnmarshaller().unmarshal(xsr);
 		} catch (FileNotFoundException | XMLStreamException e) {
 			LOGGER.error("Error loading XML document: " + e.getMessage(), e);
+			throw new RuntimeException("Error loading XML document: " + e.getMessage(), e);
 		} finally {
 			try {
 				inputStream.close();
@@ -78,9 +78,6 @@ public class SpagoBIUnmarshallerWrapper<T> {
 				LOGGER.error("Error loading XML document: " + e.getMessage(), e);
 			}
 		}
-
-		Unmarshaller unmarshaller = jc.createUnmarshaller();
-		return (T) unmarshaller.unmarshal(xmlFile);
 
 	}
 }
