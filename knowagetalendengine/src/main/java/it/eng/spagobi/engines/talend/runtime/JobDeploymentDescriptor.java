@@ -75,8 +75,8 @@ public class JobDeploymentDescriptor {
 			reader.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
 			reader.setFeature("http://xml.org/sax/features/external-general-entities", false);
 		} catch (SAXException | SecurityException e) {
-			LOGGER.error("Error loading XML document: " + e.getMessage(), e);
-			throw new SecurityException("Error loading XML document: " + e.getMessage(), e);
+			LOGGER.error("Error configuring the SAX Reader: " + e.getMessage(), e);
+			throw new SecurityException("Error configuring the SAX Reader: " + e.getMessage(), e);
 		}
 
 		Document document = null;
