@@ -169,7 +169,7 @@ public class DossierActivityResource extends AbstractSpagoBIResource {
 		File dossierDir = new File(SpagoBIUtilities.getResourcePath() + separator + "dossier" + separator + documentId + separator);
 		JSONObject response = new JSONObject();
 		try {
-			PathTraversalChecker.get(fileName, dossierDir.getName());
+			PathTraversalChecker.get(dossierDir.getName(), fileName);
 			Files.readAllBytes(file.toPath());
 			response.put("STATUS", "OK");
 		} catch (Exception e) {
