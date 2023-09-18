@@ -225,6 +225,7 @@ class Box<T> {
 			return (T) jc.createUnmarshaller().unmarshal(xsr);
 		} catch (FileNotFoundException | XMLStreamException e) {
 			LOGGER.error("Error loading XML document: " + e.getMessage(), e);
+			throw new RuntimeException("Error loading XML document: " + e.getMessage(), e);
 		} finally {
 			try {
 				inputStream.close();
@@ -232,9 +233,5 @@ class Box<T> {
 				LOGGER.error("Error loading XML document: " + e.getMessage(), e);
 			}
 		}
-
-		Unmarshaller unmarshaller = jc.createUnmarshaller();
-		return (T) unmarshaller.unmarshal(file);
-
 	}
 }
