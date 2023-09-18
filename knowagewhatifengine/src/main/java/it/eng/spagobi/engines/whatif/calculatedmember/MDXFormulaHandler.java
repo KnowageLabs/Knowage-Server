@@ -230,7 +230,7 @@ class Box<T> {
 			try {
 				inputStream.close();
 			} catch (IOException e) {
-				LOGGER.error("Error loading XML document: " + e.getMessage(), e);
+				LOGGER.error("Error while closing the input stream: " + e.getMessage(), e);
 			}
 		}
 	}
