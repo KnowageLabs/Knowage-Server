@@ -108,7 +108,7 @@ public class ManagePreviewFileAction extends AbstractSpagoBIAction {
 	// checks for path traversal attacks
 	private void checkRequiredFile(String fileName) {
 		File targetDirectory = GeneralUtilities.getPreviewFilesStorageDirectoryPath();
-		PathTraversalChecker.get(fileName, targetDirectory.getName());
+		PathTraversalChecker.get(targetDirectory.getName(), fileName);
 	}
 
 	private JSONObject uploadFile() throws Exception {

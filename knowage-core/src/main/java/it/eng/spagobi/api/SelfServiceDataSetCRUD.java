@@ -1747,7 +1747,7 @@ public class SelfServiceDataSetCRUD extends AbstractSpagoBIResource {
 		PathTraversalChecker.get(filePath, fileName);
 		File datasetFile = new File(filePath + fileName);
 
-		if (datasetFile != null && datasetFile.exists()) {
+		if (datasetFile.exists()) {
 			datasetFile.delete();
 		}
 	}

@@ -233,7 +233,7 @@ public class SDKObjectsConverter {
 				PathTraversalChecker.isValidFileName(fileName);
 				File attachment = new File(fileName);
 
-				if (attachment != null && attachment.exists() && attachment.isFile()) {
+				if (attachment.exists() && attachment.isFile()) {
 					boolean attachmentFileDeleted;
 					try {
 						attachmentFileDeleted = Files.deleteIfExists(attachment.toPath());

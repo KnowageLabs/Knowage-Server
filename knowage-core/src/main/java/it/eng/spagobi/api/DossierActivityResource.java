@@ -138,7 +138,7 @@ public class DossierActivityResource extends AbstractSpagoBIResource {
 		JSONObject response = new JSONObject();
 		File dossierDir = new File(SpagoBIUtilities.getResourcePath() + separator + "dossier" + separator + documentId + separator);
 		try {
-			PathTraversalChecker.get(fileName, dossierDir.getName());
+			PathTraversalChecker.get(dossierDir.getName(), fileName);
 			byte[] bytes = Files.readAllBytes(file.toPath());
 			responseBuilder = Response.ok(bytes);
 			responseBuilder.header("Content-Disposition", "attachment; filename=" + fileName);
