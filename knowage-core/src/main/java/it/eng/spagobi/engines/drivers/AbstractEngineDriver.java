@@ -291,7 +291,7 @@ public class AbstractEngineDriver {
 			dbf.setFeature("http://xml.org/sax/features/external-parameterentities", false);
 			dbf.setFeature("http://xml.org/sax/features/external-generalentities", false);
 		} catch (ParserConfigurationException e) {
-			LOGGER.error("Error loading XML document: " + e.getMessage(), e);
+			LOGGER.error("Error configuring DocumentBuilderFactory: " + e.getMessage(), e);
 		}
 
 		dbf.setXIncludeAware(false);
