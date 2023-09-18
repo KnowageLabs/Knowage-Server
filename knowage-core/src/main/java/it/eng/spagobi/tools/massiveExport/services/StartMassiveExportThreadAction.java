@@ -130,38 +130,41 @@ public class StartMassiveExportThreadAction extends AbstractSpagoBIAction {
 			documentsToExport = Utilities.getContainedObjFilteredbyType(folder, documentType);
 			fillDriverValues(documentsToExport, parametersJSON);
 
-			logger.debug("Check if userid " + ((UserProfile) getUserProfile()).getUserId() + " and functionality " + folder.getCode()
-					+ " has already a work in execution");
+			logger.debug("Check if userid " + ((UserProfile) getUserProfile()).getUserId() + " and functionality "
+					+ folder.getCode() + " has already a work in execution");
 			// search if already exists
-			ProgressThread t = progressThreadDAO.loadActiveProgressThreadByUserIdAndFuncCd(((UserProfile) getUserProfile()).getUserId().toString(),
-					folder.getCode());
+			ProgressThread t = progressThreadDAO.loadActiveProgressThreadByUserIdAndFuncCd(
+					((UserProfile) getUserProfile()).getUserId().toString(), folder.getCode());
 			if (t != null) {
-				logger.warn("A massive export process is still opened for userId " + ((UserProfile) getUserProfile()).getUserId() + " on functionality "
-						+ folder.getCode());
+				logger.warn("A massive export process is still opened for userId "
+						+ ((UserProfile) getUserProfile()).getUserId() + " on functionality " + folder.getCode());
 				throw new SpagoBIServiceException(SERVICE_NAME, "A massive export process is still opened for userId "
 						+ ((UserProfile) getUserProfile()).getUserId() + " on functionality " + folder.getCode());
 			}
 
 			String randomName = getRandomName();
-			ProgressThread progressThread = new ProgressThread(((UserProfile) getUserProfile()).getUserId().toString(), documentsToExport.size(),
-					folder.getCode(), null, randomName, ProgressThread.TYPE_MASSIVE_EXPORT);
+			ProgressThread progressThread = new ProgressThread(((UserProfile) getUserProfile()).getUserId().toString(),
+					documentsToExport.size(), folder.getCode(), null, randomName, ProgressThread.TYPE_MASSIVE_EXPORT,
+					null);
 			progressThreadId = progressThreadDAO.insertProgressThread(progressThread);
 
 			Config config = configDAO.loadConfigParametersByLabel(SpagoBIConstants.JNDI_THREAD_MANAGER);
 			if (config == null) {
 				throw new SpagoBIServiceException(SERVICE_NAME,
-						"Impossible to retrive from the configuration the property [" + SpagoBIConstants.JNDI_THREAD_MANAGER + "]");
+						"Impossible to retrive from the configuration the property ["
+								+ SpagoBIConstants.JNDI_THREAD_MANAGER + "]");
 			}
 
 			WorkManager workManager = new WorkManager(config.getValueCheck());
-			MassiveExportWork massiveExportWork = new MassiveExportWork(documentsToExport, getUserProfile(), folder, progressThreadId, randomName,
-					splittingFilter, output);
+			MassiveExportWork massiveExportWork = new MassiveExportWork(documentsToExport, getUserProfile(), folder,
+					progressThreadId, randomName, splittingFilter, output);
 			FooRemoteWorkItem remoteWorkItem = workManager.buildFooRemoteWorkItem(massiveExportWork, null);
 
 			// Check if work was accepted
 			if (remoteWorkItem.getStatus() != WorkEvent.WORK_ACCEPTED) {
 				int statusWI = remoteWorkItem.getStatus();
-				throw new SpagoBIServiceException(SERVICE_NAME, "Massive export Work thread was rejected with status " + statusWI);
+				throw new SpagoBIServiceException(SERVICE_NAME,
+						"Massive export Work thread was rejected with status " + statusWI);
 			} else {
 				logger.debug("run work item");
 				// WorkItem workItem=(WorkItem)wm.runWithReturnWI(mew, mewListener);
@@ -178,7 +181,8 @@ public class StartMassiveExportThreadAction extends AbstractSpagoBIAction {
 			if (progressThreadId != null) {
 				deleteDBRowInCaseOfError(progressThreadId);
 			}
-			throw new SpagoBIServiceException(SERVICE_NAME, "An unexpected error occuerd while executing service [" + SERVICE_NAME + "]", t);
+			throw new SpagoBIServiceException(SERVICE_NAME,
+					"An unexpected error occuerd while executing service [" + SERVICE_NAME + "]", t);
 		} finally {
 			logger.debug("OUT");
 		}
@@ -194,7 +198,9 @@ public class StartMassiveExportThreadAction extends AbstractSpagoBIAction {
 			threadDAO.deleteProgressThread(progressThreadId);
 		} catch (Throwable t) {
 			throw new SpagoBIServiceException(SERVICE_NAME,
-					"An unexpected error occuerd while edeleting the row with progress id equal to [" + progressThreadId + "]", t);
+					"An unexpected error occuerd while edeleting the row with progress id equal to [" + progressThreadId
+							+ "]",
+					t);
 		} finally {
 			logger.debug("OUT");
 		}
@@ -209,10 +215,11 @@ public class StartMassiveExportThreadAction extends AbstractSpagoBIAction {
 			List<BIObjectParameter> documentParameters = document.getDrivers();
 			for (BIObjectParameter documentParameter : documentParameters) {
 				logger.debug("search value for obj par with id  " + documentParameter.getId());
-				String documentParameterLabel = parametersJSON.getString(documentParameter.getId().toString() + "_objParameterId");
+				String documentParameterLabel = parametersJSON
+						.getString(documentParameter.getId().toString() + "_objParameterId");
 
-				List<String> documentParameterValues = new ArrayList<String>();
-				List<String> documentParameterValuesDescription = new ArrayList<String>();
+				List<String> documentParameterValues = new ArrayList<>();
+				List<String> documentParameterValuesDescription = new ArrayList<>();
 				boolean isMultivalueParameter = false;
 
 				if (documentParameterLabel != null) {
@@ -228,7 +235,7 @@ public class StartMassiveExportThreadAction extends AbstractSpagoBIAction {
 							logger.debug("multivalue, value is " + ob);
 						}
 					}
-					if (isMultivalueParameter == false) {
+					if (!isMultivalueParameter) {
 						String value = parametersJSON.getString(documentParameterLabel);
 						if (value != null) {
 							documentParameterValues.add(value);
@@ -239,7 +246,8 @@ public class StartMassiveExportThreadAction extends AbstractSpagoBIAction {
 					}
 
 					// get also descriptions
-					String valuesDescr = parametersJSON.optString(documentParameterLabel + "_field_visible_description");
+					String valuesDescr = parametersJSON
+							.optString(documentParameterLabel + "_field_visible_description");
 					if (valuesDescr != null) {
 						documentParameterValuesDescription.add(valuesDescr);
 						logger.debug("multivalue, description value is " + valuesDescr);
@@ -251,7 +259,8 @@ public class StartMassiveExportThreadAction extends AbstractSpagoBIAction {
 
 				// check for mandatory violation
 				isMandatoryViolation(documentParameter, parametersJSON, documentParameterValues, isMultivalueParameter);
-				logger.debug("insert for " + documentParameter.getLabel() + " value" + documentParameterValues.toString());
+				logger.debug(
+						"insert for " + documentParameter.getLabel() + " value" + documentParameterValues.toString());
 				documentParameter.setParameterValues(documentParameterValues);
 				documentParameter.setParameterValuesDescription(documentParameterValuesDescription);
 
@@ -272,8 +281,8 @@ public class StartMassiveExportThreadAction extends AbstractSpagoBIAction {
 
 	}
 
-	private void isMandatoryViolation(BIObjectParameter parameter, JSONObject parametersJSON, List<String> values, boolean isMultivalueParameter)
-			throws JSONException {
+	private void isMandatoryViolation(BIObjectParameter parameter, JSONObject parametersJSON, List<String> values,
+			boolean isMultivalueParameter) throws JSONException {
 		logger.debug("IN");
 		boolean mandatory = false;
 		Boolean mandatoryString = parametersJSON.optBoolean(parameter.getLabel() + "_isMandatory");
@@ -286,7 +295,8 @@ public class StartMassiveExportThreadAction extends AbstractSpagoBIAction {
 			logger.debug("value of parameter " + parameter.getLabel() + " is " + values);
 			if (values == null || values.size() == 0 || values.get(0).equals("") || values.get(0).equals("[]")) {
 				logger.error("Mandatory parameter " + parameter.getLabel() + " must be filled");
-				throw new SpagoBIServiceException(SERVICE_NAME, "Mandatory parameter " + parameter.getLabel() + " must be filled", null);
+				throw new SpagoBIServiceException(SERVICE_NAME,
+						"Mandatory parameter " + parameter.getLabel() + " must be filled", null);
 			}
 		}
 

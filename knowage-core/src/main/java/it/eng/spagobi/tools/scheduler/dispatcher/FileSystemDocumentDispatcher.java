@@ -17,15 +17,6 @@
  */
 package it.eng.spagobi.tools.scheduler.dispatcher;
 
-import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
-import it.eng.spagobi.commons.dao.DAOFactory;
-import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
-import it.eng.spagobi.tools.massiveExport.bo.ProgressThread;
-import it.eng.spagobi.tools.massiveExport.dao.IProgressThreadDAO;
-import it.eng.spagobi.tools.scheduler.to.DispatchContext;
-import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
-import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -40,6 +31,15 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 import org.apache.log4j.Logger;
+
+import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
+import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
+import it.eng.spagobi.tools.massiveExport.bo.ProgressThread;
+import it.eng.spagobi.tools.massiveExport.dao.IProgressThreadDAO;
+import it.eng.spagobi.tools.scheduler.to.DispatchContext;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
+import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
@@ -63,9 +63,9 @@ public class FileSystemDocumentDispatcher implements IDocumentDispatchChannel {
 
 	public FileSystemDocumentDispatcher(DispatchContext dispatchContext) {
 		this.dispatchContext = dispatchContext;
-		this.filesToZip = new ArrayList<File>();
+		this.filesToZip = new ArrayList<>();
 		// this.zipFileName = generateZipFileName();
-		this.randomNamesToName = new HashMap<String, String>();
+		this.randomNamesToName = new HashMap<>();
 	}
 
 	@Override
@@ -81,11 +81,14 @@ public class FileSystemDocumentDispatcher implements IDocumentDispatchChannel {
 
 		try {
 
-			fileName = dispatchContext.getFileName() != null && !dispatchContext.getFileName().equals("") ? dispatchContext.getFileName() : document.getName();
+			fileName = dispatchContext.getFileName() != null && !dispatchContext.getFileName().equals("")
+					? dispatchContext.getFileName()
+					: document.getName();
 			fileName = fileName + dispatchContext.getNameSuffix();
 			fileName = fileName.replace(':', '-');
 
-			zipFileName = dispatchContext.getZipFileName() != null && !dispatchContext.getZipFileName().equals("") ? dispatchContext.getZipFileName()
+			zipFileName = dispatchContext.getZipFileName() != null && !dispatchContext.getZipFileName().equals("")
+					? dispatchContext.getZipFileName()
 					: document.getName();
 			zipFileName = zipFileName + dispatchContext.getNameSuffix();
 			zipFileName = zipFileName.replace(':', '-');
@@ -98,8 +101,10 @@ public class FileSystemDocumentDispatcher implements IDocumentDispatchChannel {
 				progressThreadDAO = DAOFactory.getProgressThreadDAO();
 
 				if (progressThread == null) {
-					progressThread = new ProgressThread(dispatchContext.getOwner(), dispatchContext.getTotalNumberOfDocumentsToDispatch(),
-							dispatchContext.getFunctionalityTreeFolderLabel(), null, zipFileName, ProgressThread.TYPE_MASSIVE_SCHEDULE);
+					progressThread = new ProgressThread(dispatchContext.getOwner(),
+							dispatchContext.getTotalNumberOfDocumentsToDispatch(),
+							dispatchContext.getFunctionalityTreeFolderLabel(), null, zipFileName,
+							ProgressThread.TYPE_MASSIVE_SCHEDULE, null);
 
 					progressThreadId = progressThreadDAO.insertProgressThread(progressThread);
 					progressThreadDAO.setStartedProgressThread(progressThreadId);
@@ -138,7 +143,8 @@ public class FileSystemDocumentDispatcher implements IDocumentDispatchChannel {
 				}
 			}
 		} catch (Exception e) {
-			throw new SpagoBIServiceException("Exception in  writeing export file for BiObject with label " + document.getLabel() + " delete DB row", e);
+			throw new SpagoBIServiceException("Exception in  writeing export file for BiObject with label "
+					+ document.getLabel() + " delete DB row", e);
 		}
 
 		return true;

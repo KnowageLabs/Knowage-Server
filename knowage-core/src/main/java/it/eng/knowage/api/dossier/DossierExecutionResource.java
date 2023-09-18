@@ -67,17 +67,19 @@ public class DossierExecutionResource extends AbstractSpagoBIResource {
 				List<BIObjectPlaceholdersPair> documentsToExecute = getBIObjectFromTemplate(dossierTemplate);
 
 				String randomName = getRandomName();
-				ProgressThread progressThread = new ProgressThread(profile.getUserId().toString(), documentsToExecute.size(), null, null, randomName,
-						ProgressThread.TYPE_DOSSIER_EXECUTION);
+				ProgressThread progressThread = new ProgressThread(profile.getUserId().toString(),
+						documentsToExecute.size(), null, null, randomName, ProgressThread.TYPE_DOSSIER_EXECUTION,
+						dossierTemplate.getExecutionRole());
 				IProgressThreadDAO progressThreadDAO = DAOFactory.getProgressThreadDAO();
 				progressThreadId = progressThreadDAO.insertProgressThread(progressThread);
 
 				IConfigDAO configDAO = DAOFactory.getSbiConfigDAO();
 				Config config = configDAO.loadConfigParametersByLabel(SpagoBIConstants.JNDI_THREAD_MANAGER);
 				if (config == null) {
-					logger.debug("Impossible to retrive from the configuration the property [" + SpagoBIConstants.JNDI_THREAD_MANAGER + "]");
-					throw new SpagoBIRuntimeException(
-							"Impossible to retrive from the configuration the property [" + SpagoBIConstants.JNDI_THREAD_MANAGER + "]");
+					logger.debug("Impossible to retrive from the configuration the property ["
+							+ SpagoBIConstants.JNDI_THREAD_MANAGER + "]");
+					throw new SpagoBIRuntimeException("Impossible to retrive from the configuration the property ["
+							+ SpagoBIConstants.JNDI_THREAD_MANAGER + "]");
 				}
 				WorkManager workManager = new WorkManager(config.getValueCheck());
 				String type = DossierDocumentType.PPT.name();
@@ -87,13 +89,15 @@ public class DossierExecutionResource extends AbstractSpagoBIResource {
 					type = DossierDocumentType.PPTV2.name();
 				}
 
-				Work documentExportWork = getExecutionWork(dossierTemplate, documentsToExecute, profile, progressThreadId, randomName, type);
+				Work documentExportWork = getExecutionWork(dossierTemplate, documentsToExecute, profile,
+						progressThreadId, randomName, type);
 				FooRemoteWorkItem remoteWorkItem = workManager.buildFooRemoteWorkItem(documentExportWork, null);
 
 				// Check if work was accepted
 				if (remoteWorkItem.getStatus() != WorkEvent.WORK_ACCEPTED) {
 					int statusWI = remoteWorkItem.getStatus();
-					throw new SpagoBIRuntimeException("Dossier Execution Work thread with id [" + progressThreadId + "] was rejected with status " + statusWI);
+					throw new SpagoBIRuntimeException("Dossier Execution Work thread with id [" + progressThreadId
+							+ "] was rejected with status " + statusWI);
 				} else {
 					logger.debug("Running (Dossier) Work Item with id: " + progressThreadId);
 					WorkItem workItem = workManager.runWithReturnWI(documentExportWork, null);
@@ -122,18 +126,21 @@ public class DossierExecutionResource extends AbstractSpagoBIResource {
 
 	}
 
-	public Work getExecutionWork(AbstractDossierTemplate dossierTemplate, List<BIObjectPlaceholdersPair> documentsToExecute, UserProfile profile,
-			Integer progressThreadId, String randomName, String type) {
+	public Work getExecutionWork(AbstractDossierTemplate dossierTemplate,
+			List<BIObjectPlaceholdersPair> documentsToExecute, UserProfile profile, Integer progressThreadId,
+			String randomName, String type) {
 		Work work = null;
 		switch (type) {
 		case "DOC":
-			work = new DocumentExecutionWorkForDoc(dossierTemplate, documentsToExecute, profile, progressThreadId, randomName);
+			work = new DocumentExecutionWorkForDoc(dossierTemplate, documentsToExecute, profile, progressThreadId,
+					randomName);
 			break;
 		case "PPT":
 			work = new DocumentExecutionWork(documentsToExecute, profile, progressThreadId, randomName);
 			break;
 		case "PPTV2":
-			work = new DocumentExecutionWorkForPPTV2(dossierTemplate, documentsToExecute, profile, progressThreadId, randomName);
+			work = new DocumentExecutionWorkForPPTV2(dossierTemplate, documentsToExecute, profile, progressThreadId,
+					randomName);
 			;
 			break;
 		default:
@@ -157,8 +164,8 @@ public class DossierExecutionResource extends AbstractSpagoBIResource {
 			String parameterUrl = documentParameter.getParameterUrlName();
 			logger.debug("search value for obj par with label  " + parameterUrl);
 			boolean hasValue = false;
-			List<String> documentParameterValues = new ArrayList<String>();
-			List<String> documentParameterValuesDescription = new ArrayList<String>();
+			List<String> documentParameterValues = new ArrayList<>();
+			List<String> documentParameterValuesDescription = new ArrayList<>();
 			for (Parameter parameter : parameters) {
 				if (parameter.getUrlName().equals(parameterUrl)) {
 					String value = parameter.getValue();
@@ -180,7 +187,8 @@ public class DossierExecutionResource extends AbstractSpagoBIResource {
 				logger.warn("Value not defined for parameter with url: " + parameterUrl);
 				// check for mandatory violation
 				if (documentParameter.isRequired()) {
-					throw new SpagoBIRuntimeException("Parameter " + documentParameter.getParameterUrlName() + " must have a value");
+					throw new SpagoBIRuntimeException(
+							"Parameter " + documentParameter.getParameterUrlName() + " must have a value");
 
 				}
 			}
@@ -194,8 +202,9 @@ public class DossierExecutionResource extends AbstractSpagoBIResource {
 		logger.debug("OUT");
 	}
 
-	private List<BIObjectPlaceholdersPair> getBIObjectFromTemplate(AbstractDossierTemplate dossierTemplate) throws EMFUserError {
-		List<BIObjectPlaceholdersPair> documentsToExecute = new ArrayList<BIObjectPlaceholdersPair>();
+	private List<BIObjectPlaceholdersPair> getBIObjectFromTemplate(AbstractDossierTemplate dossierTemplate)
+			throws EMFUserError {
+		List<BIObjectPlaceholdersPair> documentsToExecute = new ArrayList<>();
 		IBIObjectDAO biobjectDAO = DAOFactory.getBIObjectDAO();
 		List<Report> reports = dossierTemplate.getReports();
 		for (Report report : reports) {
@@ -230,7 +239,10 @@ public class DossierExecutionResource extends AbstractSpagoBIResource {
 			threadDAO = DAOFactory.getProgressThreadDAO();
 			threadDAO.deleteProgressThread(progressThreadId);
 		} catch (Throwable t) {
-			throw new SpagoBIRuntimeException("An unexpected error occuerd while deleting the row with progress id equal to [" + progressThreadId + "]", t);
+			throw new SpagoBIRuntimeException(
+					"An unexpected error occuerd while deleting the row with progress id equal to [" + progressThreadId
+							+ "]",
+					t);
 		} finally {
 			logger.debug("OUT");
 		}
@@ -257,7 +269,8 @@ public class DossierExecutionResource extends AbstractSpagoBIResource {
 			zip = ZipUtility.generateZipFile(path, randomKey + ".zip");
 		} else {
 			logger.error("Cannot find dossier documents directory for specific execution: " + path);
-			throw new SpagoBIRuntimeException("Cannot find dossier documents directory for specific execution: " + path);
+			throw new SpagoBIRuntimeException(
+					"Cannot find dossier documents directory for specific execution: " + path);
 		}
 		logger.debug("OUT");
 		return zip;
