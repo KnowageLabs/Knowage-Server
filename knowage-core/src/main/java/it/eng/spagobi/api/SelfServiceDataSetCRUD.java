@@ -1626,7 +1626,7 @@ public class SelfServiceDataSetCRUD extends AbstractSpagoBIResource {
 		PathTraversalChecker.get(fileNewPath, newFileName + "." + fileType.toLowerCase());
 		File newDatasetFile = new File(fileNewPath + newFileName + "." + fileType.toLowerCase());
 
-		if (newDatasetFile != null && originalDatasetFile != null && originalDatasetFile.exists()) {
+		if (originalDatasetFile.exists()) {
 			/*
 			 * This method copies the contents of the specified source file to the specified destination file. The directory holding the destination file is
 			 * created if it does not exist. If the destination file exists, then this method will overwrite it.
