@@ -234,8 +234,8 @@ public class ChartDriver extends GenericDriver {
 			dbf.setFeature("http://xml.org/sax/features/external-parameterentities", false);
 			dbf.setFeature("http://xml.org/sax/features/external-generalentities", false);
 		} catch (ParserConfigurationException e) {
-			logger.error("Error loading XML document: " + e.getMessage(), e);
-			throw new SecurityException("Error loading XML document: " + e.getMessage(), e);
+			logger.error("Error configuring DocumentBuilderFactory: " + e.getMessage(), e);
+			throw new SecurityException("Error configuring DocumentBuilderFactory: " + e.getMessage(), e);
 		}
 
 		dbf.setXIncludeAware(false);
