@@ -127,18 +127,15 @@ public class DossierActivityResource extends AbstractSpagoBIResource {
 	@GET
 	@Path("/resourcePath")
 	public Response getresourcePath(@QueryParam("templateName") String fileName, @QueryParam("documentId") Integer documentId) throws JSONException {
-		String separator = File.separator;
 		if (fileName.endsWith("?"))
 			fileName = fileName.substring(0, fileName.length() - 1);
-		String safeDirectory = SpagoBIUtilities.getResourcePath() + separator + "dossier" + separator + documentId;
-		PathTraversalChecker.get(safeDirectory, fileName);
-		String outPath = safeDirectory + separator + fileName;
+
+		File file = PathTraversalChecker.get(SpagoBIUtilities.getResourcePath(), "dossier", "" + documentId, fileName);
+
 		ResponseBuilder responseBuilder = null;
-		File file = new File(outPath);
+
 		JSONObject response = new JSONObject();
-		File dossierDir = new File(SpagoBIUtilities.getResourcePath() + separator + "dossier" + separator + documentId + separator);
 		try {
-			PathTraversalChecker.get(dossierDir.getName(), fileName);
 			byte[] bytes = Files.readAllBytes(file.toPath());
 			responseBuilder = Response.ok(bytes);
 			responseBuilder.header("Content-Disposition", "attachment; filename=" + fileName);
@@ -160,16 +157,13 @@ public class DossierActivityResource extends AbstractSpagoBIResource {
 	@GET
 	@Path("/checkPathFile")
 	public Response checkPathFile(@QueryParam("templateName") String fileName, @QueryParam("documentId") Integer documentId) throws JSONException {
-		String separator = File.separator;
 		if (fileName.endsWith("?"))
 			fileName = fileName.substring(0, fileName.length() - 1);
-		String outPath = SpagoBIUtilities.getResourcePath() + separator + "dossier" + separator + documentId + separator + fileName;
-		byte[] bytes;
-		File file = new File(outPath);
-		File dossierDir = new File(SpagoBIUtilities.getResourcePath() + separator + "dossier" + separator + documentId + separator);
+
+		File file = PathTraversalChecker.get(SpagoBIUtilities.getResourcePath(), "dossier", "" + documentId, fileName);
+
 		JSONObject response = new JSONObject();
 		try {
-			PathTraversalChecker.get(dossierDir.getName(), fileName);
 			Files.readAllBytes(file.toPath());
 			response.put("STATUS", "OK");
 		} catch (Exception e) {
@@ -212,8 +206,6 @@ public class DossierActivityResource extends AbstractSpagoBIResource {
 			if (!dossierDir.exists()) {
 				dossierDir.mkdir();
 			}
-
-			PathTraversalChecker.get(dossierDir.getName(), f.getName());
 
 			try (FileOutputStream outputStream = new FileOutputStream(f)) {
 				outputStream.write(archiveBytes);
