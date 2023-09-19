@@ -37,18 +37,21 @@ public class PathTraversalChecker {
 		throw new IllegalStateException("This class provides utility methods. It cannot be instantiated");
 	}
 
-	public static void get(String safeDirectory, String... otherFolders) throws PathTraversalAttackException {
+	public static File get(String safeDirectory, String... otherFolders) throws PathTraversalAttackException {
 		File previousFolderFile = new File(safeDirectory);
 
+		File currentFolderFile = null;
 		for (String currentFolder : otherFolders) {
 			isValidFileName(currentFolder);
 
-			File currentFolderFile = new File(currentFolder);
+			currentFolderFile = new File(previousFolderFile, currentFolder);
 
-			preventPathTraversalAttack(currentFolderFile, previousFolderFile);
+			preventPathTraversalAttack(previousFolderFile, currentFolderFile);
 
 			previousFolderFile = currentFolderFile;
 		}
+
+		return currentFolderFile;
 	}
 
 	/**
@@ -56,10 +59,10 @@ public class PathTraversalChecker {
 	 * directory. In case this is not satisfied, a PathTraversalAttackException is thrown. It is useful when desiredDirectory is known and safe, while file to
 	 * be checked is created combining some user inputs.
 	 *
-	 * @param fileToBeChecked  the file to be checked
 	 * @param desiredDirectory the desired directory that is supposed to contain (at any sub-level) the file
+	 * @param fileToBeChecked  the file to be checked
 	 */
-	public static void preventPathTraversalAttack(File fileToBeChecked, File desiredDirectory) {
+	private static void preventPathTraversalAttack(File desiredDirectory, File fileToBeChecked) {
 		LogMF.debug(logger, "IN : fileToBeChecked = [{0}], desiredDirectory = [{1}]", fileToBeChecked, desiredDirectory);
 		try {
 			Assert.assertNotNull(fileToBeChecked, "File to be checked cannot be null");

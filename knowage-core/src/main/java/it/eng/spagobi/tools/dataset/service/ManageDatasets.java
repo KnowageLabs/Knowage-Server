@@ -1505,12 +1505,9 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 	// This method rename a file and move it from resources\dataset\files\temp
 	// to resources\dataset\files
 	private void renameAndMoveDatasetFile(String originalFileName, String newFileName, String resourcePath, String fileType) {
-		String filePath = resourcePath + File.separatorChar + "dataset" + File.separatorChar + "files" + File.separatorChar + "temp" + File.separatorChar;
-		String fileNewPath = resourcePath + File.separatorChar + "dataset" + File.separatorChar + "files" + File.separatorChar;
+		File originalDatasetFile = PathTraversalChecker.get(resourcePath, "dataset", "files", "temp", originalFileName);
+		File newDatasetFile = PathTraversalChecker.get(resourcePath, "dataset", "files", newFileName + "." + fileType.toLowerCase());
 
-		File originalDatasetFile = new File(filePath + originalFileName);
-		File newDatasetFile = new File(fileNewPath + newFileName + "." + fileType.toLowerCase());
-		PathTraversalChecker.preventPathTraversalAttack(newDatasetFile, new File(fileNewPath));
 		if (originalDatasetFile.exists()) {
 			/*
 			 * This method copies the contents of the specified source file to the specified destination file. The directory holding the destination file is

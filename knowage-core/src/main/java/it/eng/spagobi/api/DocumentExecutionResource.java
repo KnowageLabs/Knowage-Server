@@ -1227,9 +1227,10 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 				if (!(saveDirectory.exists() && saveDirectory.isDirectory())) {
 					saveDirectory.mkdirs();
 				}
-				String tempFile = Paths.get(saveDirectoryPath.toString(), file.getFileName()).toString();
-				File tempFileToSave = new File(tempFile);
-				PathTraversalChecker.preventPathTraversalAttack(tempFileToSave, saveDirectory);
+
+				File tempFileToSave = PathTraversalChecker.get(SpagoBIUtilities.getResourcePath(), METADATA_DIR, getUserProfile().getUserId().toString(),
+						file.getFileName());
+
 				tempFileToSave.createNewFile();
 				DataOutputStream os = new DataOutputStream(new FileOutputStream(tempFileToSave));
 				os.write(bytes);

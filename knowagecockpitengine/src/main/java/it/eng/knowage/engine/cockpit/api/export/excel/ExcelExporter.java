@@ -141,7 +141,9 @@ public class ExcelExporter extends AbstractFormatExporter {
 			LOGGER.warn("Exit value: " + exec.exitValue());
 
 			// the script creates the resulting xls and saves it to outputFile
+			// TODO - Change here
 			Path outputFile = outputDir.resolve(documentLabel + ".xlsx");
+
 			return getByteArrayFromFile(outputFile, outputDir);
 		} catch (Exception e) {
 			LOGGER.error("Error during scheduled export execution", e);

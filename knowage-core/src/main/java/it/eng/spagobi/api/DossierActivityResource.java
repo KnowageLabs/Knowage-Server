@@ -212,9 +212,10 @@ public class DossierActivityResource extends AbstractSpagoBIResource {
 			if (!dossierDir.exists()) {
 				dossierDir.mkdir();
 			}
-			PathTraversalChecker.isValidFileName(fileName);
 			File f = new File(path + fileName);
-			PathTraversalChecker.preventPathTraversalAttack(f, dossierDir);
+
+			PathTraversalChecker.get(dossierDir.getName(), f.getName());
+
 			try (FileOutputStream outputStream = new FileOutputStream(f)) {
 				outputStream.write(archiveBytes);
 			}

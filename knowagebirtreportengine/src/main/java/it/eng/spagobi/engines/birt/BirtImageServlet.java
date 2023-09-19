@@ -63,25 +63,27 @@ public class BirtImageServlet extends HttpServlet {
 		String mimeType = null;
 
 		if (chartLabel == null) {
-			String tmpDir = System.getProperty("java.io.tmpdir");
-			String imageDirectory = tmpDir.endsWith(File.separator) ? tmpDir + "birt" : tmpDir + File.separator + "birt";
-			imageTmpDir = new File(imageDirectory);
-
 			String imageFileName = request.getParameter("imageID");
 			if (imageFileName == null) {
 				logger.error("Image directory or image file name missing.");
 				throw new RuntimeException("Image file name missing.");
 			}
 
+			imageFile = PathTraversalChecker.get(System.getProperty("java.io.tmpdir"), "birt", imageFileName);
+
+			// String tmpDir = System.getProperty("java.io.tmpdir");
+			// String imageDirectory = tmpDir.endsWith(File.separator) ? tmpDir + "birt" : tmpDir + File.separator + "birt";
+			// imageTmpDir = new File(imageDirectory);
+
 			// gets complete image file name:
-			completeImageFileName = imageDirectory + File.separator + imageFileName;
+			// completeImageFileName = imageDirectory + File.separator + imageFileName;
 
-			imageFile = new File(completeImageFileName);
+			// imageFile = new File(completeImageFileName);
 
-			File parent = imageFile.getParentFile();
-			String fileName = imageFile.toString();
+			// File parent = imageFile.getParentFile();
+			// String fileName = imageFile.toString();
 
-			PathTraversalChecker.get(parent.toString(), fileName);
+			// PathTraversalChecker.get(parent.toString(), fileName);
 
 			try {
 				fis = new FileInputStream(imageFile);

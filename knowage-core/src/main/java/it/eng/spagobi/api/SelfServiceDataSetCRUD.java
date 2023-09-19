@@ -362,9 +362,7 @@ public class SelfServiceDataSetCRUD extends AbstractSpagoBIResource {
 				FileDataSet fileDataset = (FileDataSet) wrappedDataset;
 				String resourcePath = fileDataset.getResourcePath();
 				String fileName = fileDataset.getFileName();
-				String filePath = resourcePath + File.separatorChar + "dataset" + File.separatorChar + "files" + File.separatorChar;
-				File datasetFile = new File(filePath + fileName);
-				PathTraversalChecker.preventPathTraversalAttack(datasetFile, new File(filePath));
+				File datasetFile = PathTraversalChecker.get(resourcePath, "dataset", "files", fileName);
 				if (datasetFile.exists()) {
 					boolean isDeleted = datasetFile.delete();
 					if (isDeleted) {
