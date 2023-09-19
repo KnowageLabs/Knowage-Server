@@ -1264,11 +1264,12 @@ CREATE TABLE SBI_PROGRESS_THREAD (
        PROGRESS_THREAD_ID   INTEGER NOT NULL,
        USER_ID              VARCHAR2(100) NOT NULL,
        PARTIAL              INTEGER,
-       TOTAL        	      INTEGER,
-       FUNCTION_CD         VARCHAR2(200),
-       STATUS              VARCHAR2(4000),
+       TOTAL        	    INTEGER,
+       FUNCTION_CD          VARCHAR2(200),
+       STATUS               VARCHAR2(4000),
        RANDOM_KEY			VARCHAR2(4000),
        TYPE 				VARCHAR2(200),
+       EXECUTION_ROLE       VARCHAR2(100) NULL,
        PRIMARY KEY (PROGRESS_THREAD_ID)
 );
 

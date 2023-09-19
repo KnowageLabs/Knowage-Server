@@ -10,10 +10,14 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 
+import javax.xml.XMLConstants;
+
+import org.apache.log4j.Logger;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.Node;
 import org.dom4j.io.SAXReader;
+import org.xml.sax.SAXException;
 
 import it.eng.knowage.commons.security.PathTraversalChecker;
 import it.eng.knowage.commons.security.exceptions.PathTraversalAttackException;
@@ -23,6 +27,9 @@ import it.eng.knowage.commons.security.exceptions.PathTraversalAttackException;
  *
  */
 public class JobDeploymentDescriptor {
+
+	private static final Logger LOGGER = Logger.getLogger(JobDeploymentDescriptor.class);
+
 	String project;
 	String language;
 
@@ -65,6 +72,17 @@ public class JobDeploymentDescriptor {
 	 */
 	public void load(InputStream is) throws DocumentException {
 		SAXReader reader = new org.dom4j.io.SAXReader();
+
+		try {
+			reader.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
+			reader.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
+			reader.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
+			reader.setFeature("http://xml.org/sax/features/external-general-entities", false);
+		} catch (SAXException | SecurityException e) {
+			LOGGER.error("Error configuring the SAX Reader: " + e.getMessage(), e);
+			throw new SecurityException("Error configuring the SAX Reader: " + e.getMessage(), e);
+		}
+
 		Document document = null;
 
 		document = reader.read(is);

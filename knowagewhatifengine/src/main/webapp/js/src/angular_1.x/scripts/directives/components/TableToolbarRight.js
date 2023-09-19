@@ -212,7 +212,7 @@ function tableToolobarController($scope, $timeout, $window, $mdDialog, $http, $s
 	//Getting all buttons from XML and moving them inside grids(arrays) where they need to be
 	filterXMLResult = function(res) {
 
-		var regEx = /([A-Z]+_*)+/g;
+		var regEx = /[A-Z]+_*/g;
 		var i;
 		while (i = regEx.exec(res)){
 			var btn = {};
@@ -251,7 +251,7 @@ function tableToolobarController($scope, $timeout, $window, $mdDialog, $http, $s
 
 	//Getting clicked buttons trough XML (clicked="true")
 	filterClickedButtons = function(data){
-		var regEx = /([A-Z]+_*)+/g;
+		var regEx = /(?:[A-Z]+_*){1,4}/g;
 		var i;
 		while (i = regEx.exec(data)){
 			$scope.clickedButtons.push(i[0]);
