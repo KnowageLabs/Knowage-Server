@@ -141,9 +141,7 @@ public class ExcelExporter extends AbstractFormatExporter {
 			LOGGER.warn("Exit value: " + exec.exitValue());
 
 			// the script creates the resulting xls and saves it to outputFile
-			// TODO - Change here
-			Path outputFile = outputDir.resolve(documentLabel + ".xlsx");
-
+			Path outputFile = PathTraversalChecker.get(outputDir.toString(), documentLabel + ".xlsx").toPath();
 			return getByteArrayFromFile(outputFile, outputDir);
 		} catch (Exception e) {
 			LOGGER.error("Error during scheduled export execution", e);
@@ -153,8 +151,6 @@ public class ExcelExporter extends AbstractFormatExporter {
 
 	private byte[] getByteArrayFromFile(Path excelFile, Path outputDir) {
 		String fileName = excelFile.toString();
-
-		PathTraversalChecker.isValidFileName(fileName);
 
 		try (FileInputStream fis = new FileInputStream(fileName); ByteArrayOutputStream bos = new ByteArrayOutputStream()) {
 			byte[] buf = new byte[1024];

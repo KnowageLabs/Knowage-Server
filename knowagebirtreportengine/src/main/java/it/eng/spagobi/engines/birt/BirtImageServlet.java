@@ -57,7 +57,6 @@ public class BirtImageServlet extends HttpServlet {
 
 		ServletOutputStream ouputStream = null;
 		InputStream fis = null;
-		File imageTmpDir = null;
 		File imageFile = null;
 		String completeImageFileName = null;
 		String mimeType = null;
@@ -70,20 +69,6 @@ public class BirtImageServlet extends HttpServlet {
 			}
 
 			imageFile = PathTraversalChecker.get(System.getProperty("java.io.tmpdir"), "birt", imageFileName);
-
-			// String tmpDir = System.getProperty("java.io.tmpdir");
-			// String imageDirectory = tmpDir.endsWith(File.separator) ? tmpDir + "birt" : tmpDir + File.separator + "birt";
-			// imageTmpDir = new File(imageDirectory);
-
-			// gets complete image file name:
-			// completeImageFileName = imageDirectory + File.separator + imageFileName;
-
-			// imageFile = new File(completeImageFileName);
-
-			// File parent = imageFile.getParentFile();
-			// String fileName = imageFile.toString();
-
-			// PathTraversalChecker.get(parent.toString(), fileName);
 
 			try {
 				fis = new FileInputStream(imageFile);
