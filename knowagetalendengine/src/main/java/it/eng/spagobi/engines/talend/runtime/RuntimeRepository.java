@@ -123,7 +123,7 @@ public class RuntimeRepository {
 	 */
 	public File getExecutableJobDir(Job job) {
 		File projectDir = getExecutableJobProjectDir(job);
-		PathTraversalChecker.get(job.getName(), projectDir.getName());
+		PathTraversalChecker.get(projectDir.getName(), job.getName());
 		File jobDir = new File(getExecutableJobProjectDir(job), job.getName());
 
 		return jobDir;

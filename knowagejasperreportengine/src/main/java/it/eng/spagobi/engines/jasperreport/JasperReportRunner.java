@@ -219,8 +219,7 @@ public class JasperReportRunner {
 				String fileName = JS_FILE_ZIP + JS_EXT_ZIP;
 				File directory = getJRTempDir(servletContext, prefixDirTemplate);
 
-				PathTraversalChecker.get(directory.getName(), fileName);
-				File fileZip = new File(directory, fileName);
+				File fileZip = PathTraversalChecker.get(directory.getName(), fileName);
 				FileOutputStream foZip = new FileOutputStream(fileZip);
 				foZip.write(templateContent);
 				foZip.close();
@@ -1061,8 +1060,7 @@ public class JasperReportRunner {
 
 					if (flgTemplateStandard.equalsIgnoreCase("false")) {
 						String fileName = JS_FILE_ZIP + i + JS_EXT_ZIP;
-						PathTraversalChecker.get(destDir.getName(), fileName);
-						File fileZip = new File(destDir, fileName);
+						File fileZip = PathTraversalChecker.get(destDir.getName(), fileName);
 
 						FileOutputStream foZip = new FileOutputStream(fileZip);
 						foZip.write(templateContent);
@@ -1079,8 +1077,7 @@ public class JasperReportRunner {
 							ZipEntry entry = (ZipEntry) totalZipEntries.nextElement();
 							if (entry.getName().endsWith(".jar")) {
 								// set classloader with jar
-								PathTraversalChecker.get(destDir.getName(), entry.getName());
-								jarFile = new File(destDir + entry.getName());
+								jarFile = PathTraversalChecker.get(destDir.getName(), entry.getName());
 								ClassLoader previous = Thread.currentThread().getContextClassLoader();
 								DynamicClassLoader dcl = new DynamicClassLoader(jarFile, previous);
 								// ClassLoader current = URLClassLoader.newInstance(new URL[]{jarFile.toURI().toURL()}, previous);
@@ -1088,8 +1085,7 @@ public class JasperReportRunner {
 							}
 							if (entry.getName().endsWith(".jrxml")) {
 								// set InputStream with jrxml
-								PathTraversalChecker.get(destDir.getName(), entry.getName());
-								File jrxmlFile = new File(destDir + System.getProperty("file.separator") + entry.getName());
+								File jrxmlFile = PathTraversalChecker.get(destDir.getName(), entry.getName());
 								InputStream isJrxml = new FileInputStream(jrxmlFile);
 								templateContent = util.getByteArrayFromInputStream(isJrxml);
 								is = new java.io.ByteArrayInputStream(templateContent);

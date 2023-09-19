@@ -77,8 +77,7 @@ public class JpaMappingClassesGenerator extends JpaMappingCodeGenerator {
 		super.generate(o, outputDir, isUpdatableMapping, includeSources, libsDir, null);
 
 		if (binDir == null) {
-			PathTraversalChecker.get(outputDir, DEFAULT_BIN_DIR);
-			binDir = new File(outputDir, DEFAULT_BIN_DIR);
+			binDir = PathTraversalChecker.get(outputDir, DEFAULT_BIN_DIR);
 		}
 
 		LOGGER.debug("src dir is equal to [{}]", getSrcDir());
