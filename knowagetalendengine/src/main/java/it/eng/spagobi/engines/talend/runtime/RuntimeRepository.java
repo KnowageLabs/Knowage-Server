@@ -6,9 +6,7 @@
 package it.eng.spagobi.engines.talend.runtime;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.Map;
-import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
 
 import it.eng.knowage.commons.security.PathTraversalChecker;
@@ -123,8 +121,7 @@ public class RuntimeRepository {
 	 */
 	public File getExecutableJobDir(Job job) {
 		File projectDir = getExecutableJobProjectDir(job);
-		PathTraversalChecker.get(projectDir.getName(), job.getName());
-		File jobDir = new File(getExecutableJobProjectDir(job), job.getName());
+		File jobDir = PathTraversalChecker.get(projectDir.getName(), job.getName());
 
 		return jobDir;
 	}
@@ -137,7 +134,8 @@ public class RuntimeRepository {
 	 * @return the executable job file
 	 */
 	public File getExecutableJobFile(Job job) {
-		File jobExecutableFile = new File(getExecutableJobDir(job), TalendScriptAccessUtils.getExecutableFileName(job));
+		File jobExecutableFile = PathTraversalChecker.get(getExecutableJobDir(job).getAbsolutePath(), TalendScriptAccessUtils.getExecutableFileName(job));
+
 		return jobExecutableFile;
 	}
 
@@ -150,21 +148,5 @@ public class RuntimeRepository {
 	 */
 	public boolean containsJob(Job job) {
 		return getExecutableJobFile(job).exists();
-	}
-
-	/**
-	 * The main method.
-	 *
-	 * @param args the arguments
-	 *
-	 * @throws ZipException the zip exception
-	 * @throws IOException  Signals that an I/O exception has occurred.
-	 */
-	public static void main(String[] args) throws ZipException, IOException {
-		File rootDir = new File("C:\\Prototipi\\SpagoBI-Demo-1.9.2\\webapps\\SpagoBITalendEngine\\RuntimeRepository");
-		File zipFile = new File("C:\\Prototipi\\TalendJob2.zip");
-		RuntimeRepository runtimeRepository = new RuntimeRepository(rootDir);
-		JobDeploymentDescriptor jobDeploymentDescriptor = new JobDeploymentDescriptor("PP2", "perl");
-		runtimeRepository.deployJob(jobDeploymentDescriptor, new ZipFile(zipFile));
 	}
 }

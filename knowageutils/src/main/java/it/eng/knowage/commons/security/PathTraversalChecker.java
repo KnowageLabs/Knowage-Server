@@ -76,7 +76,7 @@ public class PathTraversalChecker {
 			Assert.assertNotNull(desiredDirectory, "Desired directory cannot be null");
 			Assert.assertTrue(desiredDirectory.exists() && desiredDirectory.isDirectory(), "Desired directory must be an existing folder");
 
-			boolean isInDesiredDirectory = isInDesiredDirectory(fileToBeChecked, desiredDirectory);
+			boolean isInDesiredDirectory = isDescendentOfDirectory(fileToBeChecked, desiredDirectory);
 
 			if (!isInDesiredDirectory) {
 				UserProfile profile = UserProfileManager.getProfile();
@@ -90,19 +90,28 @@ public class PathTraversalChecker {
 		}
 	}
 
-	private static boolean isInDesiredDirectory(File fileToBeChecked, File desiredDirectory) {
+	public static void checkDescendentOfDirectory(File descendentFile, File ancestorDirectory) {
+		boolean isDescendent = isDescendentOfDirectory(descendentFile, ancestorDirectory);
+		if (!isDescendent) {
+			UserProfile profile = UserProfileManager.getProfile();
+			throw new PathTraversalAttackException("User [" + profile + "] is trying to access the file [" + descendentFile.getAbsolutePath()
+					+ "] that is not inside [" + ancestorDirectory.getAbsolutePath() + "]!!!");
+		}
+	}
+
+	private static boolean isDescendentOfDirectory(File descendentFile, File ancestorDirectory) {
 		try {
-			fileToBeChecked = fileToBeChecked.getCanonicalFile();
-			desiredDirectory = desiredDirectory.getCanonicalFile();
+			descendentFile = descendentFile.getCanonicalFile();
+			ancestorDirectory = ancestorDirectory.getCanonicalFile();
 		} catch (IOException e) {
 			throw new SpagoBIRuntimeException("Error while converting input files into canonical ones", e);
 		}
 
-		File parent = fileToBeChecked.getParentFile();
+		File parent = descendentFile.getParentFile();
 		boolean toReturn = false;
 		while (parent != null) {
-			if (desiredDirectory.equals(parent)) {
-				LogMF.debug(logger, "Desired directory [{0} matches parent folder of input file]", desiredDirectory);
+			if (ancestorDirectory.equals(parent)) {
+				LogMF.debug(logger, "Desired directory [{0} matches parent folder of input file]", ancestorDirectory);
 				toReturn = true;
 				break;
 			}

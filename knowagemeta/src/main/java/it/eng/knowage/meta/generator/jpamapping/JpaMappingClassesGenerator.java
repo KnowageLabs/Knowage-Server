@@ -30,7 +30,6 @@ import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import it.eng.knowage.commons.security.PathTraversalChecker;
 import it.eng.knowage.meta.generator.GenerationException;
 import it.eng.knowage.meta.generator.jpamapping.wrappers.JpaProperties;
 import it.eng.knowage.meta.generator.utils.Compiler;
@@ -76,9 +75,7 @@ public class JpaMappingClassesGenerator extends JpaMappingCodeGenerator {
 
 		super.generate(o, outputDir, isUpdatableMapping, includeSources, libsDir, null);
 
-		if (binDir == null) {
-			binDir = PathTraversalChecker.get(outputDir, DEFAULT_BIN_DIR);
-		}
+		binDir = (binDir == null) ? new File(outputDir, DEFAULT_BIN_DIR) : binDir;
 
 		LOGGER.debug("src dir is equal to [{}]", getSrcDir());
 		// libDir = (libDir == null) ? new File(outputDir, DEFAULT_LIB_DIR) : libDir;

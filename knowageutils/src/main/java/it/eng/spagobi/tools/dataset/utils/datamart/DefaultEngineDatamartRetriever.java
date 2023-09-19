@@ -90,8 +90,7 @@ public class DefaultEngineDatamartRetriever implements IQbeDataSetDatamartRetrie
 
 			File targetMetamodelFolder = null;
 			File directory = getDataMartDir();
-			PathTraversalChecker.get(directory.getName(), metamodelName);
-			targetMetamodelFolder = new File(directory, metamodelName);
+			targetMetamodelFolder = PathTraversalChecker.get(directory.getName(), metamodelName);
 
 			metamodelJarFile = new File(targetMetamodelFolder, "datamart.jar");
 

@@ -219,7 +219,7 @@ public class JasperReportRunner {
 				String fileName = JS_FILE_ZIP + JS_EXT_ZIP;
 				File directory = getJRTempDir(servletContext, prefixDirTemplate);
 
-				File fileZip = PathTraversalChecker.get(directory.getName(), fileName);
+				File fileZip = new File(getJRTempDir(servletContext, prefixDirTemplate), JS_FILE_ZIP + JS_EXT_ZIP);
 				FileOutputStream foZip = new FileOutputStream(fileZip);
 				foZip.write(templateContent);
 				foZip.close();
@@ -227,7 +227,7 @@ public class JasperReportRunner {
 				util.unzip(fileZip, getJRTempDir(servletContext, prefixDirTemplate));
 
 				fileName = fileZip.getName();
-				PathTraversalChecker.isValidFileName(fileName);
+				PathTraversalChecker.checkDescendentOfDirectory(fileZip, directory);
 				JarFile zipFile = new JarFile(fileZip);
 
 				Enumeration totalZipEntries = zipFile.entries();
@@ -236,8 +236,8 @@ public class JasperReportRunner {
 					ZipEntry entry = (ZipEntry) totalZipEntries.nextElement();
 					if (entry.getName().endsWith(".jar")) {
 						fileName = getJRTempDirName(servletContext, prefixDirTemplate) + entry.getName();
-						PathTraversalChecker.isValidFileName(fileName);
 						jarFile = new File(getJRTempDirName(servletContext, prefixDirTemplate) + entry.getName());
+						PathTraversalChecker.checkDescendentOfDirectory(jarFile, directory);
 
 						// set classloader with jar
 						ClassLoader previous = Thread.currentThread().getContextClassLoader();
@@ -246,8 +246,8 @@ public class JasperReportRunner {
 					} else if (entry.getName().endsWith(".jrxml")) {
 						// set InputStream with jrxml
 						fileName = getJRTempDirName(servletContext, prefixDirTemplate) + entry.getName();
-						PathTraversalChecker.isValidFileName(fileName);
 						File jrxmlFile = new File(fileName);
+						PathTraversalChecker.checkDescendentOfDirectory(jrxmlFile, directory);
 
 						InputStream isJrxml = new FileInputStream(jrxmlFile);
 						byte[] templateJrxml = new byte[0];
@@ -823,7 +823,6 @@ public class JasperReportRunner {
 		String jrTempDirStr = getJRTempDirName(servletContext, prefixTemplate);
 		String fileName = jrTempDirStr.substring(0, jrTempDirStr.length() - 1);
 
-		PathTraversalChecker.isValidFileName(fileName);
 		File jrTempDir = new File(fileName);
 		jrTempDir.mkdirs();
 
@@ -1059,17 +1058,13 @@ public class JasperReportRunner {
 					}
 
 					if (flgTemplateStandard.equalsIgnoreCase("false")) {
-						String fileName = JS_FILE_ZIP + i + JS_EXT_ZIP;
-						File fileZip = PathTraversalChecker.get(destDir.getName(), fileName);
-
+						File fileZip = new File(destDir, this.JS_FILE_ZIP + i + JS_EXT_ZIP);
+						PathTraversalChecker.checkDescendentOfDirectory(fileZip, destDir);
 						FileOutputStream foZip = new FileOutputStream(fileZip);
 						foZip.write(templateContent);
 						foZip.close();
 						util.unzip(fileZip, destDir);
-						try {
-						} catch (Exception e) {
-							// TODO: handle exception
-						}
+
 						JarFile zipFile = new JarFile(fileZip);
 						Enumeration totalZipEntries = zipFile.entries();
 						File jarFile = null;
@@ -1077,7 +1072,8 @@ public class JasperReportRunner {
 							ZipEntry entry = (ZipEntry) totalZipEntries.nextElement();
 							if (entry.getName().endsWith(".jar")) {
 								// set classloader with jar
-								jarFile = PathTraversalChecker.get(destDir.getName(), entry.getName());
+								jarFile = new File(destDir + entry.getName());
+								PathTraversalChecker.checkDescendentOfDirectory(jarFile, destDir);
 								ClassLoader previous = Thread.currentThread().getContextClassLoader();
 								DynamicClassLoader dcl = new DynamicClassLoader(jarFile, previous);
 								// ClassLoader current = URLClassLoader.newInstance(new URL[]{jarFile.toURI().toURL()}, previous);
@@ -1085,7 +1081,8 @@ public class JasperReportRunner {
 							}
 							if (entry.getName().endsWith(".jrxml")) {
 								// set InputStream with jrxml
-								File jrxmlFile = PathTraversalChecker.get(destDir.getName(), entry.getName());
+								File jrxmlFile = new File(destDir, entry.getName());
+								PathTraversalChecker.checkDescendentOfDirectory(jrxmlFile, destDir);
 								InputStream isJrxml = new FileInputStream(jrxmlFile);
 								templateContent = util.getByteArrayFromInputStream(isJrxml);
 								is = new java.io.ByteArrayInputStream(templateContent);

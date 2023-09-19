@@ -5,9 +5,6 @@
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.engines.talend.runtime;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.InputStream;
 
 import javax.xml.XMLConstants;
@@ -18,9 +15,6 @@ import org.dom4j.DocumentException;
 import org.dom4j.Node;
 import org.dom4j.io.SAXReader;
 import org.xml.sax.SAXException;
-
-import it.eng.knowage.commons.security.PathTraversalChecker;
-import it.eng.knowage.commons.security.exceptions.PathTraversalAttackException;
 
 /**
  * @author Andrea Gioia
@@ -48,19 +42,6 @@ public class JobDeploymentDescriptor {
 	public JobDeploymentDescriptor(String project, String language) {
 		this.project = project;
 		this.language = language;
-	}
-
-	/**
-	 * Load.
-	 *
-	 * @param file the file
-	 *
-	 * @throws FileNotFoundException the file not found exception
-	 * @throws DocumentException     the document exception
-	 */
-	public void load(File file) throws FileNotFoundException, DocumentException, PathTraversalAttackException {
-		PathTraversalChecker.isValidFileName(file.getName());
-		load(new FileInputStream(file));
 	}
 
 	/**

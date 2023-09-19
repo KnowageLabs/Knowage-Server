@@ -63,6 +63,7 @@ public class SpagoBIAccessUtils {
 				name = entry.getName();
 				path = newDirectory.getPath() + File.separator + name;
 				file = new File(path);
+				PathTraversalChecker.checkDescendentOfDirectory(file, newDirectory);
 
 				// if file already exists, deletes it
 				if (file.exists() && file.isFile())
@@ -73,7 +74,6 @@ public class SpagoBIAccessUtils {
 					file.mkdirs();
 
 					String fileName = newDirectory.getPath() + File.separator + entry.getName();
-					PathTraversalChecker.isValidFileName(fileName);
 
 					try (FileOutputStream fileout = new FileOutputStream(fileName);
 							BufferedOutputStream bufout = new BufferedOutputStream(fileout);
