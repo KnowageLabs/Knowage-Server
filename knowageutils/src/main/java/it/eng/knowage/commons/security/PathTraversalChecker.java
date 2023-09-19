@@ -37,6 +37,13 @@ public class PathTraversalChecker {
 		throw new IllegalStateException("This class provides utility methods. It cannot be instantiated");
 	}
 
+	/**
+	 * Utility method for Path Traversal Attacks prevention. It checks if the sub-directories and files are safe using name and path traversal attack
+	 * validation. The safe directory must be explicitly defined, not dependent on user input, and known to be safe.
+	 *
+	 * @param safeDirectory directory that should be considered safe, it should be defined in configuration
+	 * @param otherFolders  folders and files that need to be checked
+	 */
 	public static File get(String safeDirectory, String... otherFolders) throws PathTraversalAttackException {
 		File previousFolderFile = new File(safeDirectory);
 
