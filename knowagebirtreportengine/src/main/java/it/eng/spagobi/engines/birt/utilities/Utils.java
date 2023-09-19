@@ -87,10 +87,8 @@ public class Utils {
 		String completeImageFileName = null;
 		String mimeType = "text/html";
 
-		String directory = BirtReportServlet.OUTPUT_FOLDER + File.separator + reportExecutionId;
 		String fileName = BirtReportServlet.PAGE_FILE_NAME + pageNumber + ".html";
-		PathTraversalChecker.get(fileName, directory);
-		htmlFile = new File(directory, fileName);
+		htmlFile = PathTraversalChecker.get(BirtReportServlet.OUTPUT_FOLDER, reportExecutionId, fileName);
 
 		try (InputStream fis = new FileInputStream(htmlFile);) {
 			writeToOutput(response, mimeType, fis);
