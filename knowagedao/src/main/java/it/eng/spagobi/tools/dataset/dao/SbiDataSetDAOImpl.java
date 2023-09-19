@@ -266,8 +266,9 @@ public class SbiDataSetDAOImpl extends AbstractHibernateDAO implements ISbiDataS
 			// create statement
 			String statement = "from SbiDataSet h where h.active = :active";
 			if (owner != null) {
-				String ownedCondition = includeOwned ? "h.owner = :owner" : "h.owner != :owner";
-				statement += " and " + ownedCondition + " ";
+				statement += " and (";
+				statement += includeOwned ? "h.owner = :owner" : "h.owner != :owner";
+				statement += ") ";
 			}
 			if (type != null)
 				statement += " and h.scope.valueCd = :type ";

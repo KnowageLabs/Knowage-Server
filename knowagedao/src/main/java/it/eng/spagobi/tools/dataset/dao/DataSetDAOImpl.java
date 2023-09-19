@@ -1179,8 +1179,9 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 			parameters.put("active", true);
 
 			if (owner != null) {
-				String ownedCondition = includeOwned ? "h.owner = :owner" : "h.owner != :owner";
-				statement.append(" and " + ownedCondition + " ");
+				statement.append(" and (");
+				statement.append(includeOwned ? "h.owner = :owner" : "h.owner != :owner");
+				statement.append(") ");
 				parameters.put("owner", owner);
 			}
 
@@ -1502,7 +1503,6 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 			}
 
 			sb = new StringBuilder("from SbiDataSet ds where ds.active = true ");
-			entityName = "ds.";
 			if (!tagIds.isEmpty()) {
 				sbTag = new StringBuilder("select tag.dataSet.label from SbiDatasetTag tag  where tag.dsTagId.tagId in (:tagIds) group by  tag.dataSet.label");
 				sb.append(" and ds.label in ( :sbTag )");
@@ -1510,23 +1510,23 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 
 			if (!isAdmin) {
 				if (idsCat == null || idsCat.size() == 0) {
-					sb.append("and ").append(entityName).append("owner = :owner ");
+					sb.append("and ds.owner = :owner ");
 				} else {
-					sb.append("and (").append(entityName).append("category.id in (:idsCat) or ").append(entityName).append("owner = :owner) ");
+					sb.append("and (ds.category.id in (:idsCat) or ds.owner = :owner) ");
 				}
 			}
 
 			if (filters != null) {
 				if (typeFilter.equals("=")) {
-					sb.append("and ").append(entityName).append(columnFilter).append(" = :search ");
+					sb.append("and ds.").append(columnFilter).append(" = :search ");
 				} else if (typeFilter.equals("like")) {
-					sb.append("and upper(").append(entityName).append(columnFilter).append(") like :search ");
+					sb.append("and upper(ds.").append(columnFilter).append(") like :search ");
 				}
 			}
 
 			if (ordering != null) {
 				if (columnOrdering != null && !columnOrdering.isEmpty()) {
-					sb.append(" order by ").append(entityName).append(columnOrdering.toLowerCase());
+					sb.append(" order by ds.").append(columnOrdering.toLowerCase());
 					if (reverseOrdering) {
 						sb.append(" desc");
 					}
