@@ -1616,13 +1616,8 @@ public class SelfServiceDataSetCRUD extends AbstractSpagoBIResource {
 	// This method rename a file and move it from resources\dataset\files\temp
 	// to resources\dataset\files
 	private void renameAndMoveDatasetFile(String originalFileName, String newFileName, String resourcePath, String fileType) {
-		String filePath = resourcePath + File.separatorChar + "dataset" + File.separatorChar + "files" + File.separatorChar + "temp" + File.separatorChar;
-		String fileNewPath = resourcePath + File.separatorChar + "dataset" + File.separatorChar + "files" + File.separatorChar;
-
-		PathTraversalChecker.get(filePath, originalFileName);
-		File originalDatasetFile = new File(filePath + originalFileName);
-		PathTraversalChecker.get(fileNewPath, newFileName + "." + fileType.toLowerCase());
-		File newDatasetFile = new File(fileNewPath + newFileName + "." + fileType.toLowerCase());
+		File originalDatasetFile = PathTraversalChecker.get(resourcePath, "dataset", "files", "temp", originalFileName);
+		File newDatasetFile = PathTraversalChecker.get(resourcePath, "dataset", "files", newFileName + "." + fileType.toLowerCase());
 
 		if (originalDatasetFile.exists()) {
 			/*
@@ -1740,10 +1735,7 @@ public class SelfServiceDataSetCRUD extends AbstractSpagoBIResource {
 	}
 
 	private void deleteDatasetFile(String fileName, String resourcePath, String fileType) {
-		String filePath = resourcePath + File.separatorChar + "dataset" + File.separatorChar + "files" + File.separatorChar + "temp" + File.separatorChar;
-
-		PathTraversalChecker.get(filePath, fileName);
-		File datasetFile = new File(filePath + fileName);
+		File datasetFile = PathTraversalChecker.get(resourcePath, "dataset", "files", "temp", fileName);
 
 		if (datasetFile.exists()) {
 			datasetFile.delete();
