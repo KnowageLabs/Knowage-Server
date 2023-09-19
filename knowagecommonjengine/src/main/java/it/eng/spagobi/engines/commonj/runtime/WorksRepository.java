@@ -81,8 +81,7 @@ public class WorksRepository {
 		LOGGER.debug("IN");
 
 		String fileName = work.getWorkName();
-		PathTraversalChecker.get(rootDir.getName(), fileName);
-		File workDir = new File(rootDir, fileName);
+		File workDir = PathTraversalChecker.get(rootDir.getName(), fileName);
 
 		LOGGER.debug("OUT");
 		return workDir;
@@ -108,9 +107,7 @@ public class WorksRepository {
 	 */
 	public boolean containsWork(CommonjWork work) {
 		String fileName = work.getWorkName();
-
-		PathTraversalChecker.get(rootDir.getName(), fileName);
-		File workFolder = new File(rootDir, fileName);
+		File workFolder = PathTraversalChecker.get(rootDir.getName(), fileName);
 
 		return workFolder != null && workFolder.exists();
 	}
