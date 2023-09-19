@@ -192,27 +192,26 @@ public class DossierActivityResource extends AbstractSpagoBIResource {
 		byte[] archiveBytes = null;
 		JSONObject response = new JSONObject();
 		try {
-			String separator = File.separator;
 			final FormFile file = multipartFormDataInput.getFormFileParameterValues("file")[0];
 			ParameterValue[] documentIdArray = multipartFormDataInput.getParameteValues("documentId");
 			String identifier = "";
-			String path = null;
-			if (documentIdArray.length == 1) {
-				identifier = documentIdArray[0].toString();
-				path = SpagoBIUtilities.getResourcePath() + separator + "dossier" + separator + identifier + separator;
-			} else {
-				identifier = multipartFormDataInput.getParameteValues("uuid")[0].toString();
-				path = Files.createTempDirectory("prefix").getParent().resolve(identifier).toString() + separator;
-			}
 
 			String fileName = file.getFileName();
 			archiveBytes = file.getContent();
 
-			File dossierDir = new File(path);
+			File f = null;
+			if (documentIdArray.length == 1) {
+				identifier = documentIdArray[0].toString();
+				f = PathTraversalChecker.get(SpagoBIUtilities.getResourcePath(), "dossier", identifier, fileName);
+			} else {
+				identifier = multipartFormDataInput.getParameteValues("uuid")[0].toString();
+				f = PathTraversalChecker.get(SpagoBIUtilities.getResourcePath(), "dossier", identifier, fileName);
+			}
+
+			File dossierDir = new File(f.getPath());
 			if (!dossierDir.exists()) {
 				dossierDir.mkdir();
 			}
-			File f = new File(path + fileName);
 
 			PathTraversalChecker.get(dossierDir.getName(), f.getName());
 
