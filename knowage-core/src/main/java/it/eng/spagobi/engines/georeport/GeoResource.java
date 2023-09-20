@@ -51,7 +51,7 @@ public class GeoResource {
 	@Path("/getWMSlayer")
 	@GET
 	public Response getWMSlayer(@Context HttpServletRequest req) throws IOException {
-
+		BufferedReader br = null;
 		try {
 			String layerUrl = req.getParameter("layerURL");
 			String reqString = req.getQueryString();
@@ -63,7 +63,7 @@ public class GeoResource {
 				URLConnection conn = url.openConnection();
 
 				// open the stream and put it into BufferedReader
-				BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+				br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
 				StringBuilder stringBuilder = new StringBuilder();
 
 				String line = null;
@@ -91,6 +91,10 @@ public class GeoResource {
 		} catch (IOException ioException) {
 			logger.error("IOException occurred while creating socket in GeoResource: ", ioException);
 			throw ioException;
+		} finally {
+			if (br != null) {
+				br.close();
+			}
 		}
 	}
 
