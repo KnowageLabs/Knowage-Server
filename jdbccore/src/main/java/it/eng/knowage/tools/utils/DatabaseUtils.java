@@ -27,7 +27,7 @@ public class DatabaseUtils {
 				return timestamp.getTime();
 			} else {
 				DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern(TIMESTAMP_FORMAT);
-				Instant instant = Instant.from(dateTimeFormatter.parse((String) value));
+				Instant instant = dateTimeFormatter.parse((String) value, Instant::from);
 				LOGGER.debug("value will be parsed as a String");
 				value = instant.toEpochMilli();
 			}

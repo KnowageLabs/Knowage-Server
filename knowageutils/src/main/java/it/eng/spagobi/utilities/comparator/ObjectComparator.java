@@ -111,16 +111,12 @@ public class ObjectComparator {
 		Instant instant1;
 		Instant instant2;
 		if (type.isAssignableFrom(Date.class)) {
-			Date date = (Date) dateFormatter.parse(obj1);
-			instant1 = date.toInstant();
-			date = (Date) dateFormatter.parse(obj2);
-			instant2 = date.toInstant();
+			instant1 = dateFormatter.parse(obj1, Instant::from);
+			instant2 = dateFormatter.parse(obj2, Instant::from);
 			return instant1.compareTo(instant2);
 		} else if (type.isAssignableFrom(Timestamp.class)) {
-			Date date = (Date) timestampFormatter.parse(obj1);
-			instant1 = date.toInstant();
-			date = (Date) timestampFormatter.parse(obj2);
-			instant2 = date.toInstant();
+			instant1 = timestampFormatter.parse(obj1, Instant::from);
+			instant2 = timestampFormatter.parse(obj2, Instant::from);
 			return instant1.compareTo(instant2);
 		}
 
