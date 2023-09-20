@@ -16,13 +16,8 @@
 	along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-	angular.module('olap_designer')
-		.service('channelMessaging', function() {
-		
-			this.sendMessage = function() {
-				window.parent.postMessage("close", "*");
-			}
-			
-		});
-
-
+angular.module("olap_designer").service("channelMessaging", function () {
+  this.sendMessage = function () {
+    window.parent.postMessage("close", location.origin);
+  };
+});

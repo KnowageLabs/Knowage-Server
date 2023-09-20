@@ -19,6 +19,7 @@ package it.eng.spagobi.tools.datasource.dao;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -854,8 +855,6 @@ public class DataSourceDAOHibImpl extends AbstractHibernateDAO implements IDataS
 			tx = aSession.beginTransaction();
 			Integer dsIdInt = Integer.parseInt(dsId);
 
-			// String hql = " from SbiObjects s where s.dataSource.dsId = "+
-			// dsIdInt;
 			String hql = " from SbiObjects s where s.dataSource.dsId = ?";
 			Query aQuery = aSession.createQuery(hql);
 			aQuery.setInteger(0, dsIdInt.intValue());
@@ -900,9 +899,11 @@ public class DataSourceDAOHibImpl extends AbstractHibernateDAO implements IDataS
 				aSession = getSession();
 				tx = aSession.beginTransaction();
 				logger.debug("Check for Objects associated to datasource");
-				String hql = " from SbiObjects s where s.dataSource.dsId = ?";
+
+				String hql = " from SbiObjects s where s.dataSource.dsId = :dsId";
 				Query aQuery = aSession.createQuery(hql);
-				aQuery.setInteger(0, dsId.intValue());
+				aQuery.setInteger("dsId", dsId.intValue());
+
 				List<SbiObjects> biObjectsAssocitedWithDs = aQuery.list();
 				for (Iterator<SbiObjects> iterator = biObjectsAssocitedWithDs.iterator(); iterator.hasNext();) {
 					SbiObjects sbiObj = iterator.next();
@@ -916,9 +917,9 @@ public class DataSourceDAOHibImpl extends AbstractHibernateDAO implements IDataS
 
 				logger.debug("Check for Meta Model associated to datasource");
 				List<String> metaModelNamesAssociatedWithDS = new ArrayList<>();
-				hql = " from SbiMetaModel s where s.dataSource.dsId = ?";
+				hql = " from SbiMetaModel s where s.dataSource.dsId = :dsId";
 				aQuery = aSession.createQuery(hql);
-				aQuery.setInteger(0, dsId.intValue());
+				aQuery.setInteger("dsId", dsId.intValue());
 				List<SbiMetaModel> metaModelsAssocitedWithDs = aQuery.list();
 				for (Iterator<SbiMetaModel> iterator = metaModelsAssocitedWithDs.iterator(); iterator.hasNext();) {
 					SbiMetaModel sbiMetaModel = iterator.next();
@@ -938,9 +939,11 @@ public class DataSourceDAOHibImpl extends AbstractHibernateDAO implements IDataS
 				SbiDataSource dSource = (SbiDataSource) aSession.load(SbiDataSource.class, dsId);
 				dataSourceLabel = dSource.getLabel();
 
-				hql = " from SbiDataSet s where s.active = ? AND s.type IN " + " ('" + DataSetConstants.DS_QUERY + "','" + DataSetConstants.DS_QBE + "')";
+				hql = " from SbiDataSet s where s.active = :active AND s.type IN (:types)";
 				aQuery = aSession.createQuery(hql);
-				aQuery.setBoolean(0, true);
+				List<String> types = Arrays.asList(DataSetConstants.DS_QUERY, DataSetConstants.DS_QBE);
+				aQuery.setParameterList("types", types);
+				aQuery.setBoolean("active", true);
 				try {
 					List<SbiDataSet> dataSetAssocitedWithDs = aQuery.list();
 					for (Iterator<SbiDataSet> iterator = dataSetAssocitedWithDs.iterator(); iterator.hasNext();) {
@@ -968,9 +971,9 @@ public class DataSourceDAOHibImpl extends AbstractHibernateDAO implements IDataS
 				List<String> lovNamesAssociatedWithDS = new ArrayList<>();
 				logger.debug("Check for Lov associated to datasource");
 
-				hql = " from SbiLov s where inputTypeCd = ?";
+				hql = " from SbiLov s where inputTypeCd = :inputTypeCd";
 				aQuery = aSession.createQuery(hql);
-				aQuery.setString(0, "QUERY");
+				aQuery.setString("inputTypeCd", "QUERY");
 
 				List<SbiLov> lovAssocitedWithDs = aQuery.list();
 				SbiLov sbiLov = null;
@@ -979,7 +982,7 @@ public class DataSourceDAOHibImpl extends AbstractHibernateDAO implements IDataS
 					String lovProvider = sbiLov.getLovProvider();
 					lovProvider = escapeXML(lovProvider, true);
 					lovProvider = removeStatement(lovProvider); // KNOWAGE-6312: removed statement for double quote character issue, if this character is
-																 // present, it is unescapable because of xml2json process will roll back it
+																// present, it is unescapable because of xml2json process will roll back it
 
 					try {
 						String statementString = Xml.xml2json(lovProvider);

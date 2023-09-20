@@ -107,7 +107,7 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
  **/
 public class BirtReportServlet extends HttpServlet {
 
-	private IReportEngine birtReportEngine = null;
+	// private IReportEngine birtReportEngine = null;
 	protected static Logger logger = Logger.getLogger(BirtReportServlet.class);
 	private static final String CONNECTION_NAME = "connectionName";
 	public static final String JS_EXT_ZIP = ".zip";
@@ -287,7 +287,7 @@ public class BirtReportServlet extends HttpServlet {
 		return renderOption;
 	}
 
-	private InputStream getTemplateContent(HttpServletRequest servletRequest) throws IOException {
+	private InputStream getTemplateContent(HttpServletRequest servletRequest, IReportEngine birtReportEngine) throws IOException {
 		logger.debug("IN");
 		HttpSession session = servletRequest.getSession();
 		IEngUserProfile profile = (IEngUserProfile) session.getAttribute(IEngUserProfile.ENG_USER_PROFILE);
@@ -358,14 +358,14 @@ public class BirtReportServlet extends HttpServlet {
 			}
 			String resourcePath = getBirtExecutionTempDirName(executionId);
 			if (resourcePath != null) {
-				this.birtReportEngine.getConfig().setResourcePath(resourcePath);
+				birtReportEngine.getConfig().setResourcePath(resourcePath);
 			}
 
 		} else {
 			String resPath = BirtEngineConfig.getEngineResourcePath();
 			if (resPath != null) {
 				logger.debug("Resource path is [" + resPath + "]");
-				this.birtReportEngine.getConfig().setResourcePath(resPath);
+				birtReportEngine.getConfig().setResourcePath(resPath);
 			} else {
 				logger.debug("Resource path is null");
 				// TODO: should I throw an exception here?
@@ -376,7 +376,7 @@ public class BirtReportServlet extends HttpServlet {
 		return is;
 	}
 
-	protected Map findReportParams(HttpServletRequest request, IReportRunnable design) throws ConnectionDefinitionException {
+	protected Map findReportParams(HttpServletRequest request, IReportRunnable design, IReportEngine birtReportEngine) throws ConnectionDefinitionException {
 		logger.debug("IN");
 		String dateformat = request.getParameter("dateformat");
 		if (dateformat != null) {
@@ -502,11 +502,11 @@ public class BirtReportServlet extends HttpServlet {
 		logger.debug("documentId=" + documentId);
 
 		ServletContext servletContext = getServletContext();
-		this.birtReportEngine = BirtEngine.getBirtEngine(request, servletContext);
+		IReportEngine birtReportEngine = BirtEngine.getBirtEngine(request, servletContext);
 		IReportRunnable design = null;
 
 		// retrieve once in order to convert into string and check if contains javascript for progressive view
-		InputStream isToString = getTemplateContent(request);
+		InputStream isToString = getTemplateContent(request, birtReportEngine);
 		int n = isToString.available();
 		byte[] bytes = new byte[n];
 		isToString.read(bytes, 0, n);
@@ -515,7 +515,7 @@ public class BirtReportServlet extends HttpServlet {
 
 		// reds again in order to make template
 
-		InputStream is = getTemplateContent(request);
+		InputStream is = getTemplateContent(request, birtReportEngine);
 		logger.debug("runReport(): template document retrieved.");
 		// Open the report design
 		design = birtReportEngine.openReportDesign(is);
@@ -600,7 +600,7 @@ public class BirtReportServlet extends HttpServlet {
 		logger.debug("runReport(): RunAndRenderTask created successfully.");
 
 		// Set parameters for the report
-		Map reportParams = findReportParams(request, design);
+		Map reportParams = findReportParams(request, design, birtReportEngine);
 
 		String requestConnectionName = request.getParameter(CONNECTION_NAME);
 		logger.debug("requestConnectionName:" + requestConnectionName);
@@ -711,7 +711,7 @@ public class BirtReportServlet extends HttpServlet {
 			response.setHeader("Content-disposition", "inline; filename=" + templateFileName + ".ps");
 		} else if (outputFormat != null && outputFormat.equalsIgnoreCase(DataExtractionParameterUtil.EXTRACTION_FORMAT_CSV)) {
 			logger.debug(" Output format parameter is CSV. Create document obj .");
-			prepareCSVRender(reportParams, request, design, userId, documentId, profile, kpiUrl, response, context);
+			prepareCSVRender(reportParams, request, design, userId, documentId, profile, kpiUrl, response, context, birtReportEngine);
 			return;
 
 		} else {
@@ -726,7 +726,7 @@ public class BirtReportServlet extends HttpServlet {
 		IRunAndRenderTask runAndRenderTask = null;
 		IRunTask runTask = null;
 
-		if (progressiveViewing == false) { // Traditional run and rendering
+		if (!progressiveViewing) { // Traditional run and rendering
 			// Create task to run and render the report,
 			runAndRenderTask = birtReportEngine.createRunAndRenderTask(design);
 			runAndRenderTask.setLocale(locale);
@@ -737,7 +737,7 @@ public class BirtReportServlet extends HttpServlet {
 			runAndRenderTask.setRenderOption(renderOption);
 			logger.debug("runReport(): RunAndRenderTask created successfully.");
 		} else { // progressive run
-			ProgressiveCustomPageHandler myPageHandler = new ProgressiveCustomPageHandler((String) context.get(REPORT_EXECUTION_ID));
+			ProgressiveCustomPageHandler myPageHandler = new ProgressiveCustomPageHandler((String) context.get(REPORT_EXECUTION_ID), birtReportEngine);
 			runTask = birtReportEngine.createRunTask(design);
 			runTask.setLocale(locale);
 			runTask.setPageHandler(myPageHandler);
@@ -756,7 +756,7 @@ public class BirtReportServlet extends HttpServlet {
 		logger.debug("Execution id is : " + reportExecutionId);
 
 		try {
-			if (progressiveViewing == false) {
+			if (!progressiveViewing) {
 				runAndRenderTask.run();
 			} else {
 				String file = OUTPUT_FOLDER + reportExecutionId + ".rptdocument";
@@ -911,7 +911,7 @@ public class BirtReportServlet extends HttpServlet {
 	 */
 
 	private void prepareCSVRender(Map reportParams, HttpServletRequest request, IReportRunnable design, String userId, String documentId,
-			IEngUserProfile profile, String kpiUrl, HttpServletResponse response, Map context) throws Exception {
+			IEngUserProfile profile, String kpiUrl, HttpServletResponse response, Map context, IReportEngine birtReportEngine) throws Exception {
 
 		logger.debug("IN");
 
@@ -919,7 +919,7 @@ public class BirtReportServlet extends HttpServlet {
 
 		try {
 
-			reportDocument = getReportDocument(design, reportParams, context);
+			reportDocument = getReportDocument(design, reportParams, context, birtReportEngine);
 
 			logger.debug("Report document obtained for report " + design.getReportName() + "; pages count = " + reportDocument.getPageCount());
 
@@ -1086,7 +1086,7 @@ public class BirtReportServlet extends HttpServlet {
 		return encoding;
 	}
 
-	protected IReportDocument getReportDocument(IReportRunnable design, Map reportParams, Map context) throws EngineException {
+	protected IReportDocument getReportDocument(IReportRunnable design, Map reportParams, Map context, IReportEngine birtReportEngine) throws EngineException {
 		logger.debug("IN");
 		IReportDocument toReturn = null;
 		IRunTask runTask = null;
@@ -1165,12 +1165,13 @@ public class BirtReportServlet extends HttpServlet {
 		// Define local variables for the callback class
 		private int lastCheckpoint = 0;
 		private String reportExecutionId = null;
+		private IReportEngine birtReportEngine = null;
 
-		public ProgressiveCustomPageHandler(String reportExecutionId) {
+		public ProgressiveCustomPageHandler(String reportExecutionId, IReportEngine birtReportEngine) {
 			this.reportExecutionId = reportExecutionId;
+			this.birtReportEngine = birtReportEngine;
 		}
 
-		// @Override
 		@Override
 		public void onPage(int pageNumber, boolean readyForViewing, IReportDocumentInfo reportDocument) {
 			// we only want to do something if this is a checkpoint event

@@ -33,6 +33,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import java.util.zip.ZipInputStream;
 
 import javax.servlet.http.HttpServletRequest;
@@ -47,6 +48,8 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.apache.axis.encoding.Base64;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.http.client.utils.URIBuilder;
 import org.apache.jena.ext.com.google.common.collect.Iterables;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -383,24 +386,26 @@ public class PageResource extends AbstractCockpitEngineResource {
 	 * @return
 	 */
 	private String getRequestUrlWithViewHandling(String documentLabel) {
-		String requestURL;
-		String externalUrl = getExternalUrl(documentLabel);
+		URIBuilder externalUrl = getExternalUrl(documentLabel);
 
-		StringBuilder sb = new StringBuilder(externalUrl);
-		sb.append("knowage-vue/workspace/dashboard-view/");
-		sb.append(documentLabel);
-		sb.append("?");
-		sb.append(request.getQueryString());
+		externalUrl.setPath("/knowage-vue/workspace/dashboard-view/" + documentLabel);
 
-		requestURL = sb.toString();
-		return requestURL;
+		request.getParameterMap().forEach((k, v) -> {
+
+			List<String> asList = Arrays.asList(v);
+			String collect = asList.stream().collect(Collectors.joining(","));
+
+			externalUrl.addParameter(k, collect);
+		});
+
+		return externalUrl.toString();
 	}
 
 	/**
 	 * @param documentLabel
 	 * @return
 	 */
-	private String getExternalUrl(String documentLabel) {
+	private URIBuilder getExternalUrl(String documentLabel) {
 		BIObject biObject = null;
 		try {
 			biObject = DAOFactory.getBIObjectDAO().loadBIObjectByLabel(documentLabel);
@@ -408,7 +413,7 @@ public class PageResource extends AbstractCockpitEngineResource {
 			throw new SpagoBIRuntimeException("Error retrieving document with label " + documentLabel, e);
 		}
 		Engine eng = biObject.getEngine();
-		return GeneralUtilities.getExternalEngineUrl(eng);
+		return GeneralUtilities.getBE2BEEngineUrl(eng);
 	}
 
 	private RenderOptions getRenderOptionsForPdfExporter(HttpServletRequest request) {
@@ -463,16 +468,15 @@ public class PageResource extends AbstractCockpitEngineResource {
 			throw new SpagoBIRuntimeException("Error retrieving document with label " + documentLabel, e);
 		}
 		Engine eng = biObject.getEngine();
-		String externalUrl = GeneralUtilities.getExternalEngineUrl(eng);
+		URIBuilder externalUrl = GeneralUtilities.getBE2BEEngineUrl(eng);
 
-		StringBuilder sb = new StringBuilder(externalUrl);
 		if (isDashboard(eng)) {
-			manageParametersForDashbaords(biObject, documentLabel, sb);
+			manageParametersForDashboards(biObject, documentLabel, externalUrl);
 		} else {
-			manageParametersForEverythingElse(sb);
+			manageParametersForEverythingElse(externalUrl);
 		}
-		sb.append("&export=true");
-		return sb.toString();
+		externalUrl.addParameter("export", "true");
+		return externalUrl.toString();
 	}
 
 	private String getRequestUrlForExcelExport(HttpServletRequest request)
@@ -486,16 +490,15 @@ public class PageResource extends AbstractCockpitEngineResource {
 			throw new SpagoBIRuntimeException("Error retrieving document with label " + documentLabel, e);
 		}
 		Engine eng = biObject.getEngine();
-		String externalUrl = GeneralUtilities.getExternalEngineUrl(eng);
+		URIBuilder externalUrl = GeneralUtilities.getBE2BEEngineUrl(eng);
 
-		StringBuilder sb = new StringBuilder(externalUrl);
 		if (isDashboard(eng)) {
-			manageParametersForDashbaords(biObject, documentLabel, sb);
+			manageParametersForDashboards(biObject, documentLabel, externalUrl);
 		} else {
-			manageParametersForEverythingElse(sb);
+			manageParametersForEverythingElse(externalUrl);
 		}
-		sb.append("&scheduledexport=true");
-		return sb.toString();
+		externalUrl.addParameter("scheduledexport", "true");
+		return externalUrl.toString();
 	}
 
 	public String getServiceHostUrl() {
@@ -536,7 +539,8 @@ public class PageResource extends AbstractCockpitEngineResource {
 		return template;
 	}
 
-	private void manageParametersForDashbaords(BIObject biObject, String documentLabel, StringBuilder sb)
+	@Deprecated
+	private void manageParametersForDashboards(BIObject biObject, String documentLabel, StringBuilder sb)
 			throws JSONException {
 		sb.append("knowage-vue/dashboard/");
 		sb.append(documentLabel);
@@ -545,9 +549,20 @@ public class PageResource extends AbstractCockpitEngineResource {
 		sb.append("&params=");
 		sb.append(createJsonFromParemeters(biObject));
 		sb.append("&role=");
-		sb.append(getExecutionRole());
+		sb.append(getExecutionRoleForDashboard());
 	}
 
+	private void manageParametersForDashboards(BIObject biObject, String documentLabel, URIBuilder uriBuilder)
+			throws JSONException {
+
+		uriBuilder.setPath("/knowage-vue/dashboard/" + documentLabel);
+		uriBuilder.addParameter("toolbar", "false");
+		uriBuilder.addParameter("menu", "false");
+		uriBuilder.addParameter("params", createJsonFromParemeters(biObject));
+		uriBuilder.addParameter("role", getExecutionRoleForDashboard());
+	}
+
+	@Deprecated
 	private void manageParametersForEverythingElse(StringBuilder sb) throws UnsupportedEncodingException {
 		String sep = "?";
 		Map<String, String[]> parameterMap = request.getParameterMap();
@@ -564,10 +579,24 @@ public class PageResource extends AbstractCockpitEngineResource {
 		}
 	}
 
-	private String getExecutionRole() {
+	private void manageParametersForEverythingElse(URIBuilder uriBuilder) throws UnsupportedEncodingException {
 		Map<String, String[]> parameterMap = request.getParameterMap();
-		List<String> values = Arrays.asList(parameterMap.getOrDefault("SBI_EXECUTION_ROLE", new String[0]));
-		return Iterables.get(values, 0, "");
+		for (Entry<String, String[]> parameter : parameterMap.entrySet()) {
+			String key = parameter.getKey();
+			String[] value = parameter.getValue();
+			if (value != null && value.length > 0) {
+				uriBuilder.addParameter(key, value[0]);
+			}
+		}
+	}
+
+	private String getExecutionRoleForDashboard() {
+		Map<String, String[]> parameterMap = request.getParameterMap();
+		String role = Optional.ofNullable(parameterMap.get("SBI_EXECUTION_ROLE")).map(e -> e[0]).orElse("");
+		if (StringUtils.isEmpty(role)) {
+			role = Optional.ofNullable(parameterMap.get("role")).map(e -> e[0]).orElse("");
+		}
+		return role;
 	}
 
 	private String createJsonFromParemeters(BIObject biObject) throws JSONException {

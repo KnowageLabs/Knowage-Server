@@ -535,9 +535,11 @@ public class CrossNavigationDAOImpl extends AbstractHibernateDAO implements ICro
 		sb.append(" from SbiCrossNavigation t, SbiCrossNavigationPar t1, SbiObjPar t2");
 		sb.append(" where t.id=t1.sbiCrossNavigation.id");
 		sb.append(" and t1.toKey=t2.objParId");
-		sb.append(" and t2.sbiParameter.parId=" + analyticalDriverId);
+		sb.append(" and t2.sbiParameter.parId = :analyticalDriverId");
 
 		Query hibQuery = session.createQuery(sb.toString());
+		hibQuery.setInteger("analyticalDriverId", analyticalDriverId);
+
 		return hibQuery.list();
 	}
 
