@@ -933,7 +933,6 @@ public class DataSetResource {
 		return qbeDatamart;
 	}
 
-	@POST
 	private Response getDriversFromQbeDataSet(final String role, final Map<String, Object> resultAsMap, String businessModelName) {
 		final List<HashMap<String, Object>> parametersArrayList = (List<HashMap<String, Object>>) resultAsMap.get("filterStatus");
 		final List<BusinessModelDriverRuntime> parameters = new ArrayList<>();

@@ -182,7 +182,6 @@ public class PageResource extends AbstractCockpitEngineResource {
 	/**
 	 * @return Could be either a {@link View}, for HTML output type and error, or a {@link Response}, for PDF, PNG and Excel.
 	 */
-	@GET
 	private Object openPageInternal(String pageName) {
 		CockpitEngineInstance engineInstance;
 		String dispatchUrl = null;
@@ -263,7 +262,6 @@ public class PageResource extends AbstractCockpitEngineResource {
 		}
 	}
 
-	@GET
 	private Response createRedirect(String suffix) throws URISyntaxException {
 		URI newLocation = createNewLocation(suffix);
 
@@ -284,7 +282,6 @@ public class PageResource extends AbstractCockpitEngineResource {
 		return new URI(sb.toString());
 	}
 
-	@GET
 	private Response openPagePdfInternal(String pageName) throws EMFUserError, IOException, InterruptedException, JSONException {
 		String requestURL = getRequestUrlForPdfExport(request);
 		RenderOptions renderOptions = getRenderOptionsForPdfExporter(request);
@@ -302,7 +299,6 @@ public class PageResource extends AbstractCockpitEngineResource {
 				.header("Content-Disposition", "attachment; fileName=" + request.getParameter("DOCUMENT_LABEL") + ".pdf").build();
 	}
 
-	@GET
 	private Response openPageSpreadsheetInternal(String pageName) throws IOException, InterruptedException, JSONException {
 		String requestURL = getRequestUrlForExcelExport(request);
 
@@ -322,7 +318,6 @@ public class PageResource extends AbstractCockpitEngineResource {
 				.header("Content-Disposition", "attachment; fileName=" + documentLabel + ".xlsx").build();
 	}
 
-	@GET
 	private Response openPagePngInternal(String pageName) throws EMFUserError, IOException, InterruptedException, JSONException {
 		String requestURL = null;
 		String documentLabel = request.getParameter("DOCUMENT_LABEL");

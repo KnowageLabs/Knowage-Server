@@ -79,7 +79,6 @@ public class PythonProxy extends AbstractDataSetResource {
 		return executeWidget(outputType, pythonWidgetDTO);
 	}
 
-	@POST
 	private Response executeWidget(String outputType, PythonWidgetDTO pythonWidgetDTO) {
 		String pythonAddress = null, body = null, datastore = null;
 		it.eng.spagobi.utilities.rest.RestUtilities.Response pythonResponse = null;
