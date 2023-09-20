@@ -3,7 +3,7 @@ package it.eng.spagobi.kpi.bo;
 import java.util.Date;
 
 // TODO: remove the old class it.eng.spagobi.kpi.bo.config.KpiValue
-public class KpiValue implements Cloneable {
+public final class KpiValue implements Cloneable {
 
 	private int id;
 	private int kpiId;

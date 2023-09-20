@@ -234,7 +234,7 @@ public class MetaData implements IMetaData, Cloneable {
 	}
 
 	@Override
-	public Object clone() throws CloneNotSupportedException {
+	public final Object clone() throws CloneNotSupportedException {
 		// MetaData toReturn = new MetaData();
 		// toReturn.setProperties(this.getProperties());
 		//

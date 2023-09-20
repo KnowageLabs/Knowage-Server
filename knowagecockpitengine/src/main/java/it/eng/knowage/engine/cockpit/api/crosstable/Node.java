@@ -66,7 +66,7 @@ public class Node implements Cloneable, Comparable<Node> {
 		this.value = value;
 		this.description = value;
 		measure = false;
-		children = new ArrayList<Node>();
+		children = new ArrayList<>();
 		jsonObject = null;
 	}
 
@@ -74,7 +74,7 @@ public class Node implements Cloneable, Comparable<Node> {
 		this.value = value;
 		this.description = description;
 		measure = false;
-		children = new ArrayList<Node>();
+		children = new ArrayList<>();
 		jsonObject = null;
 	}
 
@@ -83,7 +83,7 @@ public class Node implements Cloneable, Comparable<Node> {
 		this.value = value;
 		this.description = description;
 		measure = false;
-		children = new ArrayList<Node>();
+		children = new ArrayList<>();
 		jsonObject = null;
 	}
 
@@ -92,7 +92,7 @@ public class Node implements Cloneable, Comparable<Node> {
 		this.value = value;
 		this.description = description;
 		this.measure = measure;
-		children = new ArrayList<Node>();
+		children = new ArrayList<>();
 		jsonObject = null;
 	}
 
@@ -101,7 +101,7 @@ public class Node implements Cloneable, Comparable<Node> {
 		this.value = value;
 		this.description = description;
 		this.measure = false;
-		children = new ArrayList<Node>();
+		children = new ArrayList<>();
 		this.jsonObject = jsonObject;
 	}
 
@@ -266,7 +266,7 @@ public class Node implements Cloneable, Comparable<Node> {
 	 * @return
 	 */
 	public List<Node> getLevel(int level) {
-		List<Node> nodes = new ArrayList<Node>();
+		List<Node> nodes = new ArrayList<>();
 		if (level == 0) {
 			nodes.add(this);
 		} else {
@@ -342,7 +342,7 @@ public class Node implements Cloneable, Comparable<Node> {
 	 * @return
 	 */
 	public List<Node> getLeafs() {
-		List<Node> list = new ArrayList<Node>();
+		List<Node> list = new ArrayList<>();
 		if (children.size() == 0) {
 			list.add(this);
 		} else {
@@ -400,7 +400,7 @@ public class Node implements Cloneable, Comparable<Node> {
 	 * Clone only the value and the children
 	 */
 	@Override
-	public Node clone() {
+	public final Node clone() {
 		Node n = new Node(columnName, value, description, measure);
 		if (children.size() > 0) {
 			for (int j = 0; j < children.size(); j++) {
