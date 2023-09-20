@@ -182,18 +182,13 @@ public class AdapterHTTP extends HttpServlet {
 	/** The Constant SERIALIZE_SESSION_ATTRIBUTE. */
 	private static final String SERIALIZE_SESSION_ATTRIBUTE = "COMMON.SERIALIZE_SESSION";
 
-	// Atributo della configurazione che indica se serializzare il contenuto
-	// della sessione
-	/** The serialize session. */
-	private boolean serializeSession = false;
-
 	/**
 	 * Handle query string field.
-	 * 
+	 *
 	 * @param request              the request
 	 * @param serviceReq           the service req
 	 * @param queryStringFieldName the query string field name
-	 * 
+	 *
 	 * @throws SourceBeanException the source bean exception
 	 */
 	private void handleQueryStringField(HttpServletRequest request, SourceBean serviceReq, String queryStringFieldName) throws SourceBeanException {
@@ -220,7 +215,7 @@ public class AdapterHTTP extends HttpServlet {
 
 	/**
 	 * Make the service name available in request also if the service was invoked with the .action or .page URL
-	 * 
+	 *
 	 * @param requestContainer Current RequestContainer
 	 * @param serviceRequest   Current request
 	 */
@@ -239,10 +234,10 @@ public class AdapterHTTP extends HttpServlet {
 
 	/**
 	 * Handle suspend resume.
-	 * 
+	 *
 	 * @param serviceRequest   the service request
 	 * @param requestContainer the request container
-	 * 
+	 *
 	 * @throws SourceBeanException the source bean exception
 	 */
 	private void handleSuspendResume(SourceBean serviceRequest, RequestContainer requestContainer) throws SourceBeanException {
@@ -288,10 +283,10 @@ public class AdapterHTTP extends HttpServlet {
 
 	/**
 	 * Handle multipart form.
-	 * 
+	 *
 	 * @param request        the request
 	 * @param requestContext the request context
-	 * 
+	 *
 	 * @throws Exception the exception
 	 */
 	private void handleMultipartForm(HttpServletRequest request, RequestContextIFace requestContext) throws Exception {
@@ -321,10 +316,10 @@ public class AdapterHTTP extends HttpServlet {
 
 	/**
 	 * Handle simple form.
-	 * 
+	 *
 	 * @param request        the request
 	 * @param requestContext the request context
-	 * 
+	 *
 	 * @throws SourceBeanException the source bean exception
 	 */
 	private void handleSimpleForm(HttpServletRequest request, RequestContextIFace requestContext) throws SourceBeanException {
@@ -346,11 +341,13 @@ public class AdapterHTTP extends HttpServlet {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see javax.servlet.http.HttpServlet#service(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
 	 */
 	@Override
 	public void service(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
+		boolean serializeSession = this.getSerializedSession();
+
 		Monitor monitor = null;
 		IEventNotifier eventNotifier = null;
 		RequestContextIFace requestContext = null;
@@ -522,10 +519,10 @@ public class AdapterHTTP extends HttpServlet {
 
 	/**
 	 * Process file field.
-	 * 
+	 *
 	 * @param item           the item
 	 * @param requestContext the request context
-	 * 
+	 *
 	 * @throws Exception the exception
 	 */
 	private void processFileField(final FileItem item, RequestContextIFace requestContext) throws Exception {
@@ -543,10 +540,10 @@ public class AdapterHTTP extends HttpServlet {
 
 	/**
 	 * Check session.
-	 * 
+	 *
 	 * @param session        the session
 	 * @param requestContext the request context
-	 * 
+	 *
 	 * @throws SessionExpiredException the session expired exception
 	 */
 	private void checkSession(HttpSession session, RequestContextIFace requestContext) throws SessionExpiredException {
@@ -589,10 +586,10 @@ public class AdapterHTTP extends HttpServlet {
 
 	/**
 	 * Render.
-	 * 
+	 *
 	 * @param requestContext   the request context
 	 * @param serviceException the service exception
-	 * 
+	 *
 	 * @throws Exception the exception
 	 */
 	private void render(RequestContextIFace requestContext, Exception serviceException) throws Exception {
@@ -629,7 +626,7 @@ public class AdapterHTTP extends HttpServlet {
 
 	/**
 	 * Sets the http request data.
-	 * 
+	 *
 	 * @param request          the request
 	 * @param requestContainer the request container
 	 */
@@ -671,19 +668,12 @@ public class AdapterHTTP extends HttpServlet {
 
 	// RequestContainer requestContainer)
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see javax.servlet.GenericServlet#init()
-	 */
-	@Override
-	public void init() throws ServletException {
-		super.init();
-
+	private boolean getSerializedSession() {
 		String serializeSessionStr = (String) ConfigSingleton.getInstance().getAttribute(SERIALIZE_SESSION_ATTRIBUTE);
 		if ((serializeSessionStr != null) && (serializeSessionStr.equalsIgnoreCase("TRUE"))) {
-			serializeSession = true;
+			return true;
 		}
+		return false;
 	}
 
 } // public class ActionServlet extends HttpServlet

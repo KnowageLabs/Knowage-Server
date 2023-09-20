@@ -545,7 +545,7 @@ public class PageResource extends AbstractCockpitEngineResource {
 		sb.append("&params=");
 		sb.append(createJsonFromParemeters(biObject));
 		sb.append("&role=");
-		sb.append(getExecutionRole());
+		sb.append(getExecutionRoleForDashboard());
 	}
 
 	private void manageParametersForEverythingElse(StringBuilder sb) throws UnsupportedEncodingException {
@@ -564,9 +564,9 @@ public class PageResource extends AbstractCockpitEngineResource {
 		}
 	}
 
-	private String getExecutionRole() {
+	private String getExecutionRoleForDashboard() {
 		Map<String, String[]> parameterMap = request.getParameterMap();
-		List<String> values = Arrays.asList(parameterMap.getOrDefault("SBI_EXECUTION_ROLE", new String[0]));
+		List<String> values = Arrays.asList(parameterMap.getOrDefault("role", new String[0]));
 		return Iterables.get(values, 0, "");
 	}
 
