@@ -17,6 +17,7 @@
  */
 package it.eng.spagobi.analiticalmodel.document.dao;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -210,7 +211,11 @@ public class SnapshotDAOHibImpl extends AbstractHibernateDAO implements ISnapsho
 					}
 					if (snapValues[3] != null) {
 						newSnap.setDateCreation((Date) snapValues[3]);
-						newSnap.setTime(DATE_FORMATTER.format((Date) snapValues[3]));
+						try {
+							newSnap.setTime(getFormattedDate((Date) snapValues[3]));
+						} catch (ParseException e) {
+							throw new RuntimeException(e);
+						}
 					}
 					if (snapValues[4] != null) {
 						newSnap.setBiobjId(((SbiObjects) snapValues[4]).getBiobjId());
@@ -289,7 +294,11 @@ public class SnapshotDAOHibImpl extends AbstractHibernateDAO implements ISnapsho
 		snap.setSchedulationStartDate(hibSnap.getSchedulationStartDate());
 		snap.setScheduler(hibSnap.getScheduler());
 		snap.setSchedulationStartDate(hibSnap.getSchedulationStartDate());
-		snap.setTime(DATE_FORMATTER.format(hibSnap.getCreationDate()));
+		try {
+			snap.setTime(getFormattedDate(hibSnap.getCreationDate()));
+		} catch (ParseException e) {
+			throw new RuntimeException(e);
+		}
 		return snap;
 	}
 
@@ -447,7 +456,11 @@ public class SnapshotDAOHibImpl extends AbstractHibernateDAO implements ISnapsho
 					}
 					if (snapValues[3] != null) {
 						snap.setDateCreation(((Date) snapValues[3]));
-						snap.setTime(DATE_FORMATTER.format((Date) snapValues[3]));
+						try {
+							snap.setTime(getFormattedDate((Date) snapValues[3]));
+						} catch (ParseException e) {
+							throw new RuntimeException(e);
+						}
 					}
 					if (snapValues[4] != null) {
 						snap.setBiobjId(((SbiObjects) snapValues[4]).getBiobjId());
@@ -540,6 +553,12 @@ public class SnapshotDAOHibImpl extends AbstractHibernateDAO implements ISnapsho
 			}
 			aLits.clear();
 			aLits.addAll(sortedList);
+		}
+	}
+
+	private static String getFormattedDate(Date date) throws ParseException {
+		synchronized (DATE_FORMATTER) {
+			return DATE_FORMATTER.format(date);
 		}
 	}
 

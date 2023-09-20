@@ -27,6 +27,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.sql.Date;
 import java.sql.Timestamp;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 
 import org.apache.avro.Conversions;
@@ -72,7 +73,7 @@ public class AvroExportJob extends AbstractExportJob {
 
 	private IDataSet dataSet;
 	private IMetaData dsMeta;
-	private SimpleDateFormat dateFormatter = new SimpleDateFormat(DATE_FORMAT);
+	private static final SimpleDateFormat DATE_FORMATTER = new SimpleDateFormat(DATE_FORMAT);
 
 	private Path avroExportFolder;
 
@@ -134,7 +135,7 @@ public class AvroExportJob extends AbstractExportJob {
 		try {
 			Class<?> type = dsMeta.getFieldType(i);
 			if (isDate(type)) {
-				value = dateFormatter.parse(value.toString()).getTime();
+				value = getNumberOfMillisecondsFromDate(value);
 			} else if (isTimestamp(type)) {
 				value = DatabaseUtils.timestampFormatter(value);
 			} else if (BigDecimal.class.isAssignableFrom(type)) {
@@ -152,7 +153,7 @@ public class AvroExportJob extends AbstractExportJob {
 				value = String.valueOf(value);
 			} else {
 				if (value instanceof java.util.Date) {
-					value = dateFormatter.format(value);
+					value = getFormattedDate(value);
 				}
 				value = value.toString();
 			}
@@ -161,6 +162,18 @@ public class AvroExportJob extends AbstractExportJob {
 			value = value.toString();
 		}
 		return value;
+	}
+
+	private static long getNumberOfMillisecondsFromDate(Object value) throws ParseException {
+		synchronized (DATE_FORMATTER) {
+			return DATE_FORMATTER.parse(value.toString()).getTime();
+		}
+	}
+
+	private static String getFormattedDate(Object value) throws ParseException {
+		synchronized (DATE_FORMATTER) {
+			return DATE_FORMATTER.format(value);
+		}
 	}
 
 	private void clearStatusFiles() {

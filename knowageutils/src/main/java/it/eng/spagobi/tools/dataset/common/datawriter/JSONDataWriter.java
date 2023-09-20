@@ -89,22 +89,22 @@ public class JSONDataWriter implements IDataWriter {
 	 * @deprecated Replace it with {@link DateTimeFormatter}
 	 */
 	@Deprecated
-	protected final SimpleDateFormat DATE_FORMATTER = new SimpleDateFormat(DATE_FORMAT);
+	protected static final SimpleDateFormat DATE_FORMATTER = new SimpleDateFormat(DATE_FORMAT);
 	/**
 	 * @deprecated Replace it with {@link DateTimeFormatter}
 	 */
 	@Deprecated
-	protected final SimpleDateFormat TIMESTAMP_FORMATTER = new SimpleDateFormat(TIMESTAMP_FORMAT);
+	protected static final SimpleDateFormat TIMESTAMP_FORMATTER = new SimpleDateFormat(TIMESTAMP_FORMAT);
 	/**
 	 * @deprecated Replace it with {@link DateTimeFormatter}
 	 */
 	@Deprecated
-	protected final SimpleDateFormat CACHE_TIMESTAMP_FORMATTER = new SimpleDateFormat(CACHE_TIMESTAMP_FORMAT);
+	protected static final SimpleDateFormat CACHE_TIMESTAMP_FORMATTER = new SimpleDateFormat(CACHE_TIMESTAMP_FORMAT);
 	/**
 	 * @deprecated Replace it with {@link DateTimeFormatter}
 	 */
 	@Deprecated
-	protected final SimpleDateFormat CACHE_TIMEONLY_FORMATTER = new SimpleDateFormat(TIME_FORMAT);
+	protected static final SimpleDateFormat CACHE_TIMEONLY_FORMATTER = new SimpleDateFormat(TIME_FORMAT);
 
 	protected final DateTimeFormatter DATE_FORMATTER_V2 = DateTimeFormatter.ofPattern(DATE_FORMAT);
 	protected final DateTimeFormatter TIMESTAMP_FORMATTER_V2 = DateTimeFormatter.ofPattern(TIMESTAMP_FORMAT);
@@ -347,11 +347,11 @@ public class JSONDataWriter implements IDataWriter {
 					}
 					result = _result;
 				} else if (Timestamp.class.isAssignableFrom(fieldMetaData.getType())) {
-					result = TIMESTAMP_FORMATTER.format(field.getValue());
+					result = getFormattedTimestamp(field.getValue());
 				} else if (Time.class.isAssignableFrom(fieldMetaData.getType())) {
-					result = CACHE_TIMEONLY_FORMATTER.format(field.getValue());
+					result = getFormattedCacheTimeonly(field.getValue());
 				} else if (Date.class.isAssignableFrom(fieldMetaData.getType())) {
-					result = DATE_FORMATTER.format(field.getValue());
+					result = getFormattedDate(field.getValue());
 				} else if (Boolean.class.isAssignableFrom(fieldMetaData.getType())) {
 					result = Boolean.valueOf(field.getValue().toString());
 				} else if (Byte.class.isAssignableFrom(fieldMetaData.getType())) {
@@ -411,7 +411,7 @@ public class JSONDataWriter implements IDataWriter {
 
 			Date cacheDate = dataStore.getCacheDate();
 			if (cacheDate != null) {
-				String date = CACHE_TIMESTAMP_FORMATTER.format(cacheDate);
+				String date = getFormattedCacheTimestamp(cacheDate);
 				metadata.put("cacheDate", date);
 			}
 
@@ -723,5 +723,29 @@ public class JSONDataWriter implements IDataWriter {
 
 	public void setPreserveOriginalDataTypes(boolean preserveOriginalDataTypes) {
 		this.preserveOriginalDataTypes = preserveOriginalDataTypes;
+	}
+
+	private static Object getFormattedDate(Object obj) {
+		synchronized (DATE_FORMATTER) {
+			return DATE_FORMATTER.format(obj);
+		}
+	}
+
+	private static Object getFormattedTimestamp(Object obj) {
+		synchronized (TIMESTAMP_FORMATTER) {
+			return TIMESTAMP_FORMATTER.format(obj);
+		}
+	}
+
+	private static Object getFormattedCacheTimeonly(Object obj) {
+		synchronized (CACHE_TIMEONLY_FORMATTER) {
+			return CACHE_TIMEONLY_FORMATTER.format(obj);
+		}
+	}
+
+	private static String getFormattedCacheTimestamp(Date date) {
+		synchronized (CACHE_TIMESTAMP_FORMATTER) {
+			return CACHE_TIMESTAMP_FORMATTER.format(date);
+		}
 	}
 }

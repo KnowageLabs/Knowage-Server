@@ -19,6 +19,7 @@ package it.eng.spagobi.tools.dataset.common.datareader;
 
 import java.math.BigInteger;
 import java.sql.Timestamp;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -47,7 +48,6 @@ public class JSONDataReader extends AbstractDataReader {
 	private static transient Logger logger = Logger.getLogger(JSONDataReader.class);
 
 	public JSONDataReader() {
-		super();
 	}
 
 	@Override
@@ -144,9 +144,9 @@ public class JSONDataReader extends AbstractDataReader {
 					} else if (fieldType == Double.class) {
 						value = new Double(columnValue);
 					} else if (fieldType == Timestamp.class) {
-						value = TIMESTAMP_FORMATTER.parse(columnValue);
+						value = getFormattedTimestamp(columnValue);
 					} else if (fieldType == Date.class) {
-						value = DATE_FORMATTER.parse(columnValue);
+						value = getFormattedDate(columnValue);
 					} else if (fieldType == Boolean.class) {
 						value = new Boolean(columnValue);
 					} else {
@@ -165,5 +165,17 @@ public class JSONDataReader extends AbstractDataReader {
 		}
 
 		return dataStore;
+	}
+
+	private static Object getFormattedTimestamp(String value) throws ParseException {
+		synchronized (TIMESTAMP_FORMATTER) {
+			return TIMESTAMP_FORMATTER.parse(value);
+		}
+	}
+
+	private static Object getFormattedDate(String value) throws ParseException {
+		synchronized (DATE_FORMATTER) {
+			return DATE_FORMATTER.parse(value);
+		}
 	}
 }

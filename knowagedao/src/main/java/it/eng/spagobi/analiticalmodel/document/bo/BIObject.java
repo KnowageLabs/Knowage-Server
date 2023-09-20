@@ -559,7 +559,7 @@ public class BIObject implements Serializable, Cloneable, IDrivableBIResource<BI
 	@JsonProperty(value = "functionalities")
 	public List getFunctionalitiesNames() throws EMFUserError {
 		ILowFunctionalityDAO functionalitiesDao = DAOFactory.getLowFunctionalityDAO();
-		List<String> list = new ArrayList<String>();
+		List<String> list = new ArrayList<>();
 
 		for (Integer functionalityID : (List<Integer>) functionalities) {
 			list.add(functionalitiesDao.loadLowFunctionalityByID(functionalityID, false).getPath());
@@ -625,9 +625,15 @@ public class BIObject implements Serializable, Cloneable, IDrivableBIResource<BI
 	public String getFormattedDate() {
 		String formattedDate = null;
 		if (creationDate != null) {
-			formattedDate = dateFormat.format(creationDate);
+			formattedDate = getFormattedDate(creationDate);
 		}
 		return formattedDate;
+	}
+
+	private static String getFormattedDate(Date date) {
+		synchronized (dateFormat) {
+			return dateFormat.format(date);
+		}
 	}
 
 	/**

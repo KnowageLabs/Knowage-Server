@@ -31,6 +31,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 import javax.imageio.ImageIO;
@@ -142,13 +143,10 @@ public abstract class PDFCreator {
 	/**
 	 * create the second sample document from the PDF file format specification.
 	 *
-	 * @param input
-	 *            The PDF path to add the information to.
-	 * @param details
-	 *            The details to be added.
+	 * @param input   The PDF path to add the information to.
+	 * @param details The details to be added.
 	 *
-	 * @throws IOException
-	 *             If there is an error writing the data.
+	 * @throws IOException If there is an error writing the data.
 	 */
 	public static void addInformation(Path input, ExportDetails details) throws IOException {
 		try (PDDocument doc = PDDocument.load(input.toFile())) {
@@ -229,7 +227,7 @@ public abstract class PDFCreator {
 	private static void writeFrontpageDetails(PDDocument doc, PDFont font, float fontSize, FrontpageDetails details) throws IOException {
 		String name = "Name: " + details.getName();
 		String description = "Description: " + details.getDescription();
-		String date = "Date: " + DEFAULT_DATE_FORMATTER.format(details.getDate());
+		String date = "Date: " + getFormattedDate(details.getDate());
 		PDPage page = doc.getPage(0);
 		PDRectangle pageSize = page.getMediaBox();
 		float stringWidth = font.getStringWidth(StringUtilities.findLongest(name, description, date)) * fontSize / 1000f;
@@ -246,6 +244,12 @@ public abstract class PDFCreator {
 		try (PDPageContentStream contentStream = new PDPageContentStream(doc, page, AppendMode.APPEND, true, true)) {
 			// draw rectangle
 			writeText(contentStream, new Color(4, 44, 86), font, fontSize, rotate, startX, startY, name, description, date);
+		}
+	}
+
+	private static String getFormattedDate(Date date) {
+		synchronized (DEFAULT_DATE_FORMATTER) {
+			return DEFAULT_DATE_FORMATTER.format(date);
 		}
 	}
 

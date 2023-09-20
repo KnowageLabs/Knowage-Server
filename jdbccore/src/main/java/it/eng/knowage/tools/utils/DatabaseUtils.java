@@ -11,6 +11,7 @@ public class DatabaseUtils {
 
 	private static final Logger LOGGER = Logger.getLogger(DatabaseUtils.class);
 	private static final String TIMESTAMP_FORMAT = "yyyy-MM-dd HH:mm:ss.S";
+	private static final SimpleDateFormat TIMESTAMP_FORMATTER = new SimpleDateFormat(TIMESTAMP_FORMAT);
 
 	public static Object timestampFormatter(Object value) {
 
@@ -26,9 +27,8 @@ public class DatabaseUtils {
 				Timestamp timestamp = (Timestamp) value;
 				return timestamp.getTime();
 			} else {
-				SimpleDateFormat timestampFormatter = new SimpleDateFormat(TIMESTAMP_FORMAT);
 				LOGGER.debug("value will be parsed as a String");
-				value = timestampFormatter.parse((String) value).getTime();
+				value = getFormattedDate(value);
 			}
 
 		} catch (ParseException | SQLException e) {
@@ -40,6 +40,12 @@ public class DatabaseUtils {
 	}
 
 	private DatabaseUtils() {
+	}
+
+	private static long getFormattedDate(Object value) throws ParseException {
+		synchronized (TIMESTAMP_FORMATTER) {
+			return TIMESTAMP_FORMATTER.parse((String) value).getTime();
+		}
 	}
 
 }

@@ -40,7 +40,7 @@ public class MeasureFormatter {
 	List<MeasureInfo> measuresInfo;
 	// String[][] measureMetadata;
 	boolean measureOnRow;
-	DecimalFormat numberFormat;
+	private static DecimalFormat numberFormat;
 	String pattern;
 
 	public MeasureFormatter(JSONObject crosstabDefinitionJSON, DecimalFormat numberFormat, String pattern) throws SerializationException, JSONException {
@@ -48,9 +48,9 @@ public class MeasureFormatter {
 		JSONArray measuresJSON = crosstabDefinitionJSON.optJSONArray(CrosstabSerializationConstants.MEASURES);
 		JSONObject config = crosstabDefinitionJSON.optJSONObject(CrosstabSerializationConstants.CONFIG);
 		this.pattern = pattern;
-		this.numberFormat = numberFormat;
+		MeasureFormatter.numberFormat = numberFormat;
 		if (measuresJSON != null) {
-			measuresInfo = new ArrayList<MeasureInfo>();
+			measuresInfo = new ArrayList<>();
 			for (int i = 0; i < measuresJSON.length(); i++) {
 				JSONObject obj = (JSONObject) measuresJSON.get(i);
 				MeasureInfo mi = new MeasureInfo(obj.getString("name"), "", obj.getString("type"), obj.getString("format"), obj.getString("format"),
@@ -83,12 +83,18 @@ public class MeasureFormatter {
 				DecimalFormat numberFormat = new DecimalFormat(pattern);
 				numberFormat.setMinimumFractionDigits(new Integer(decimalPrecision));
 				numberFormat.setMaximumFractionDigits(new Integer(decimalPrecision));
-				formatted = numberFormat.format(f);
+				formatted = getFormattedNumber(f);
 			}
 		} catch (Exception e) {
-			formatted = numberFormat.format(f);
+			formatted = getFormattedNumber(f);
 		}
 		return formatted;
+	}
+
+	private static String getFormattedNumber(Float number) {
+		synchronized (numberFormat) {
+			return numberFormat.format(number);
+		}
 	}
 
 	public int getFormatXLS(int positionI, int positionJ) {
