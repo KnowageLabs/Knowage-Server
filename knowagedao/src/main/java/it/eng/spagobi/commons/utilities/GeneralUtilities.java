@@ -22,6 +22,7 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 import java.io.File;
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
@@ -38,7 +39,9 @@ import java.util.Set;
 import java.util.StringTokenizer;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.http.client.utils.URIBuilder;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -73,27 +76,23 @@ import it.eng.spagobi.utilities.file.FileUtils;
  */
 public class GeneralUtilities extends SpagoBIUtilities {
 
-	private static final Logger LOGGER = Logger.getLogger(GeneralUtilities.class);
+	private static final Logger LOGGER = LogManager.getLogger(GeneralUtilities.class);
 	private static final String PREVIEW_FILE_STORAGE_DIRECTORY = "preview" + File.separatorChar + "images";
 	private static final String BACKEND_EXTENSION = "BackEnd";
 	private static final String VUE_ENVIRONMENT = "vue.environment";
+	private static final int MAX_DEFAULT_FILE_5M_SIZE = 5242880;
+	private static final int MAX_DEFAULT_FILE_10M_SIZE = 10485760; // 10 mega byte
 
 	private static boolean isProduction = true;
 
-	public static final int MAX_DEFAULT_FILE_5M_SIZE = 5242880;
-	public static final int MAX_DEFAULT_FILE_10M_SIZE = 10485760; // 10 mega byte
-
-	static DecimalFormat decFormat = new DecimalFormat();
-	static DecimalFormatSymbols decSymbols = decFormat.getDecimalFormatSymbols();
 	static {
 		String vueEnvironment = System.getProperty(VUE_ENVIRONMENT);
-		LOGGER.info("Retrieved " + VUE_ENVIRONMENT + " system property. Vue environment is: [" + vueEnvironment + "]");
+		LOGGER.info("Retrieved {} system property. Vue environment is: [{}]", VUE_ENVIRONMENT, vueEnvironment);
 		if (vueEnvironment != null && vueEnvironment.equalsIgnoreCase("development")) {
 			LOGGER.info("Setting production mode to off. Development mode is now enabled.");
 			isProduction = false;
 		}
 	}
-	// private static String SPAGOBI_DOMAIN = null;
 
 	/**
 	 * Substitutes the substrings with sintax "${code,bundle}" or "${code}" (in the second case bundle is assumed to be the default value "messages") with the
@@ -104,22 +103,25 @@ public class GeneralUtilities extends SpagoBIUtilities {
 	 * @return The message with the internationalized substrings replaced.
 	 */
 	public static String replaceInternationalizedMessages(String message) {
-		if (message == null)
+		if (message == null) {
 			return null;
+		}
 		int startIndex = message.indexOf("${");
-		if (startIndex == -1)
+		if (startIndex == -1) {
 			return message;
-		else
+		} else {
 			return replaceInternationalizedMessages(message, startIndex);
+		}
 	}
 
 	public static String trim(String s) {
-		if (s != null)
+		if (s != null) {
 			if (s.trim().length() == 0) {
 				return null;
 			} else {
 				return s.trim();
 			}
+		}
 		return null;
 	}
 
@@ -127,8 +129,9 @@ public class GeneralUtilities extends SpagoBIUtilities {
 		LOGGER.trace("IN");
 		IMessageBuilder msgBuilder = MessageBuilderFactory.getMessageBuilder();
 		int endIndex = message.indexOf("}", startIndex);
-		if (endIndex == -1 || endIndex < startIndex)
+		if (endIndex == -1 || endIndex < startIndex) {
 			return message;
+		}
 		String toBeReplaced = message.substring(startIndex + 2, endIndex).trim();
 		String key = "";
 		String bundle = "messages";
@@ -137,8 +140,6 @@ public class GeneralUtilities extends SpagoBIUtilities {
 			key = splitted[0].trim();
 			if (splitted.length == 1) {
 				String replacement = msgBuilder.getMessage(key, bundle);
-				// if (!replacement.equalsIgnoreCase(key)) message =
-				// message.replaceAll("${" + toBeReplaced + "}", replacement);
 				if (!replacement.equalsIgnoreCase(key))
 					message = message.replaceAll("\\$\\{" + toBeReplaced + "\\}", replacement);
 			}
@@ -146,15 +147,14 @@ public class GeneralUtilities extends SpagoBIUtilities {
 				if (splitted[1] != null && !splitted[1].trim().equals(""))
 					bundle = splitted[1].trim();
 				String replacement = msgBuilder.getMessage(key, bundle);
-				// if (!replacement.equalsIgnoreCase(key)) message =
-				// message.replaceAll("${" + toBeReplaced + "}", replacement);
 				if (!replacement.equalsIgnoreCase(key))
 					message = message.replaceAll("\\$\\{" + toBeReplaced + "\\}", replacement);
 			}
 		}
 		startIndex = message.indexOf("${", endIndex);
-		if (startIndex != -1)
+		if (startIndex != -1) {
 			message = replaceInternationalizedMessages(message, startIndex);
+		}
 		LOGGER.trace("OUT");
 		return message;
 	}
@@ -195,58 +195,6 @@ public class GeneralUtilities extends SpagoBIUtilities {
 	}
 
 	/**
-	 * Gets the lov map result.
-	 *
-	 * @param lovs the lovs
-	 *
-	 * @return the lov map result
-	 */
-	/*
-	 * public static String getLovMapResult(Map lovs) { logger.debug("IN"); String toReturn = "<DATA>"; Set keys = lovs.keySet(); Iterator keyIter =
-	 * keys.iterator(); while (keyIter.hasNext()) { String key = (String) keyIter.next(); String lovname = (String) lovs.get(key); String lovResult = ""; try {
-	 * lovResult = getLovResult(lovname); } catch (Exception e) { logger.error("Error while getting result of the lov " + lovname +
-	 * ", the result of the won't be inserted into the response", e); continue; } toReturn = toReturn + "<" + key + ">"; toReturn = toReturn + lovResult; toReturn =
-	 * toReturn + "</" + key + ">"; } toReturn = toReturn + "</DATA>"; logger.debug("OUT:" + toReturn); return toReturn; }
-	 */
-
-	/**
-	 * Gets the lov result.
-	 *
-	 * @param lovLabel the lov label
-	 *
-	 * @return the lov result
-	 *
-	 * @throws Exception the exception
-	 */
-	/*
-	 * public static String getLovResult(String lovLabel) throws Exception { logger.debug("IN"); IModalitiesValueDAO lovDAO = DAOFactory.getModalitiesValueDAO();
-	 * ModalitiesValue lov = lovDAO.loadModalitiesValueByLabel(lovLabel); String toReturn = getLovResult(lov, null); logger.debug("OUT:" + toReturn); return
-	 * toReturn; }
-	 */
-
-	/**
-	 * Gets the lov result.
-	 *
-	 * @param lovLabel the lov label
-	 * @param profile  the profile
-	 *
-	 * @return the lov result
-	 *
-	 * @throws Exception the exception
-	 */
-	/*
-	 * public static String getLovResult(String lovLabel, IEngUserProfile profile) throws Exception { logger.debug("IN"); IModalitiesValueDAO lovDAO =
-	 * DAOFactory.getModalitiesValueDAO(); ModalitiesValue lov = lovDAO.loadModalitiesValueByLabel(lovLabel); String toReturn = getLovResult(lov, profile);
-	 * logger.debug("OUT" + toReturn); return toReturn; }
-	 */
-
-	/*
-	 * private static String getLovResult(ModalitiesValue lov, IEngUserProfile profile) throws Exception { logger.debug("IN"); if (profile == null) { profile = new
-	 * UserProfile("anonymous"); } String dataProv = lov.getLovProvider(); ILovDetail lovDetail = LovDetailFactory.getLovFromXML(dataProv); String lovResult =
-	 * lovDetail.getLovResult(profile, null, null); logger.debug("OUT:" + lovResult); return lovResult; }
-	 */
-
-	/**
 	 * Creates a new user profile, given his identifier.
 	 *
 	 * @param userId The user identifier
@@ -267,7 +215,7 @@ public class GeneralUtilities extends SpagoBIUtilities {
 	 * @return A String with complete HTTP Url
 	 */
 	public static String getSpagoBIProfileBaseUrl(String userId) {
-		LOGGER.debug("IN.Trying to recover spago Adapter HTTP Url. userId=" + userId);
+		LOGGER.debug("Trying to recover Spago Adapter HTTP Url. userId = {}", userId);
 		String url = "";
 		String path = "";
 		String adapUrlStr = "";
@@ -279,12 +227,10 @@ public class GeneralUtilities extends SpagoBIUtilities {
 			} else {
 				url = path + adapUrlStr + "?NEW_SESSION=TRUE&" + SsoServiceInterface.USER_ID + "=" + userId;
 			}
-
-			LOGGER.debug("using URL: " + url);
 		} catch (Exception e) {
 			LOGGER.error("Error while recovering complete HTTP Url", e);
 		}
-		LOGGER.debug("OUT");
+		LOGGER.debug("Using URL: {}", url);
 		return url;
 	}
 
@@ -296,37 +242,29 @@ public class GeneralUtilities extends SpagoBIUtilities {
 	public static boolean isSSOEnabled() {
 		boolean toReturn;
 		SingletonConfig config = SingletonConfig.getInstance();
-		String active = config.getConfigValue("SPAGOBI_SSO.ACTIVE");
-		LOGGER.debug("active SSO: " + active);
-		if (active != null && active.equalsIgnoreCase("true")) {
+		String activeSso = config.getConfigValue("SPAGOBI_SSO.ACTIVE");
+		LOGGER.debug("Active SSO: {}", activeSso);
+		if (activeSso != null && activeSso.equalsIgnoreCase("true")) {
 			toReturn = true;
 		} else {
 			toReturn = false;
 		}
-		LOGGER.debug("returning " + toReturn);
+		LOGGER.debug("Returning: {}", toReturn);
 		return toReturn;
 	}
 
-	/*
-	 * public static String getSpagoBiDomain() { logger.debug("IN"); if (SPAGOBI_DOMAIN == null) { try {
-	 * logger.debug("Trying to recover SpagoBI domain from ConfigSingleton"); ConfigSingleton spagoConfig = ConfigSingleton.getInstance(); SourceBean sbTmp =
-	 * (SourceBean) spagoConfig.getAttribute("SPAGOBI.SPAGOBI_DOMAIN_JNDI_NAME"); if (sbTmp != null) { String jndi = sbTmp.getCharacters(); SPAGOBI_DOMAIN =
-	 * readJndiResource(jndi); } if (SPAGOBI_DOMAIN == null) { logger.debug("SPAGOBI_DOMAIN not set, using the default value "); SPAGOBI_DOMAIN =
-	 * "http://localhost:8080"; } } catch (Exception e) { logger.error("Error while recovering getSpagoBiHost", e); } } logger.debug("OUT:" + SPAGOBI_DOMAIN);
-	 * return SPAGOBI_DOMAIN; }
-	 */
-
 	/**
-	 * Gets the spago adapter http url.
+	 * Gets the Spago Adapter HTTP URL.
 	 *
-	 * @return the spago adapter http url
+	 * @return the Spago Adapter HTTP URL
 	 */
 	public static String getSpagoAdapterHttpUrl() {
-		LOGGER.debug("IN");
+		LOGGER.debug("Getting Spago Adapter HTTP URL");
 		String adapUrlStr = SingletonConfig.getInstance().getConfigValue("SPAGOBI.SPAGO_ADAPTERHTTP_URL");
-		if (adapUrlStr != null)
+		if (adapUrlStr != null) {
 			adapUrlStr = adapUrlStr.trim();
-		LOGGER.debug("OUT:" + adapUrlStr);
+		}
+		LOGGER.debug("Returning: {}", adapUrlStr);
 		return adapUrlStr;
 	}
 
@@ -339,16 +277,14 @@ public class GeneralUtilities extends SpagoBIUtilities {
 	 * @return the default locale
 	 */
 	public static Locale getStartingDefaultLocale() {
-		LOGGER.trace("IN");
+		LOGGER.trace("Getting starting default locale");
 		Locale locale = null;
 		SingletonConfig config = SingletonConfig.getInstance();
 		String languageConfig = config.getConfigValue("SPAGOBI.LANGUAGE_SUPPORTED.LANGUAGE.default");
 		if (languageConfig != null) {
 			locale = Locale.forLanguageTag(languageConfig);
-			LOGGER.trace("locale set to " + locale);
 		}
-
-		LOGGER.trace("OUT");
+		LOGGER.trace("Locale is: {}", locale);
 		return locale;
 	}
 
@@ -358,43 +294,43 @@ public class GeneralUtilities extends SpagoBIUtilities {
 	 * @return the default locale
 	 */
 	public static Locale getDefaultLocale() {
-		LOGGER.trace("IN");
+		LOGGER.trace("Getting default locale");
 		Locale locale = null;
 		try {
 			String defaultLanguageTag = SingletonConfig.getInstance()
 					.getConfigValue("SPAGOBI.LANGUAGE_SUPPORTED.LANGUAGE.default");
 			String languageTag = StringUtils.isNotBlank(defaultLanguageTag) ? defaultLanguageTag : "en-US";
-			LOGGER.trace("Default locale found: " + languageTag);
+			LOGGER.trace("Default locale found: {}", languageTag);
 			locale = Locale.forLanguageTag(languageTag);
 		} catch (Throwable t) {
 			throw new SpagoBIRuntimeException("Error while getting default locale", t);
 		}
-		LOGGER.debug("OUT:" + locale.toString());
+		LOGGER.debug("Default locale is: {}", locale);
 		return locale;
 	}
 
 	public static List<Locale> getSupportedLocales() {
-		LOGGER.trace("IN");
-		List<Locale> toReturn = new ArrayList<>();
+		LOGGER.trace("Getting supported locales");
+		List<Locale> ret = new ArrayList<>();
 		String supportedLanguages = SingletonConfig.getInstance()
 				.getConfigValue("SPAGOBI.LANGUAGE_SUPPORTED.LANGUAGES");
 		if (StringUtils.isNotBlank(supportedLanguages)) {
 			for (String supportedLanguageTag : supportedLanguages.split(",", -1)) {
 				Locale locale = Locale.forLanguageTag(supportedLanguageTag);
-				LOGGER.trace("Found locale with language = [" + locale.getLanguage() + "] and script = ["
-						+ locale.getScript() + "] and country = [" + locale.getCountry() + "]");
-				toReturn.add(locale);
+				LOGGER.trace("Found locale with language = [{}] and script = [{}] and country = [{}]",
+						locale.getLanguage(), locale.getScript(), locale.getCountry());
+				ret.add(locale);
 			}
 
 		} else {
 			LOGGER.error("NO LOCALES CONFIGURED!!!");
 		}
-		LOGGER.trace("OUT");
-		return toReturn;
+		LOGGER.trace("Returning supported locales: {}", ret);
+		return ret;
 	}
 
 	public static String getCountry(String language) {
-		LOGGER.trace("IN");
+		LOGGER.trace("Getting country for language: {}", language);
 		String country = null;
 		List<Locale> locales = GeneralUtilities.getSupportedLocales();
 		Iterator<Locale> iter = locales.iterator();
@@ -403,16 +339,15 @@ public class GeneralUtilities extends SpagoBIUtilities {
 			String languageTmp = localeTmp.getLanguage();
 			country = localeTmp.getCountry();
 			if (languageTmp.equals(language)) {
-				LOGGER.trace("OUT:" + country);
-				return country;
+				break;
 			}
 		}
-		LOGGER.trace("OUT:" + country);
+		LOGGER.trace("Country is: {}", country);
 		return country;
 	}
 
 	public static String getScript(String language) {
-		LOGGER.trace("IN");
+		LOGGER.trace("Getting script for language: {}" + language);
 		String script = null;
 		List<Locale> locales = GeneralUtilities.getSupportedLocales();
 		Iterator<Locale> iter = locales.iterator();
@@ -421,17 +356,16 @@ public class GeneralUtilities extends SpagoBIUtilities {
 			String languageTmp = localeTmp.getLanguage();
 			if (languageTmp.equals(language)) {
 				script = localeTmp.getScript();
-				LOGGER.trace("OUT:" + script);
-				return script;
+				break;
 			}
 		}
-		LOGGER.trace("OUT:" + script);
+		LOGGER.trace("Script is: {}", script);
 		return script;
 	}
 
 	public static JSONArray getSupportedLocalesAsJSONArray() {
-		LOGGER.trace("IN");
-		JSONArray toReturn = new JSONArray();
+		LOGGER.trace("Getting supported locales as JSONArray");
+		JSONArray ret = new JSONArray();
 		try {
 			List<Locale> locales = getSupportedLocales();
 			Iterator<Locale> it = locales.iterator();
@@ -440,43 +374,45 @@ public class GeneralUtilities extends SpagoBIUtilities {
 				JSONObject localeJSON = new JSONObject();
 				localeJSON.put("language", locale.getLanguage());
 				localeJSON.put("country", locale.getCountry());
-				toReturn.put(localeJSON);
+				ret.put(localeJSON);
 			}
 		} catch (Exception e) {
 			LOGGER.error("Error while retrieving supported locales as JSONArray", e);
 		}
-		LOGGER.trace("OUT");
-		return toReturn;
+		LOGGER.trace("Supported locales as JSONArray: {}", ret);
+		return ret;
 	}
 
 	public static Locale getCurrentLocale(RequestContainer requestContainer) {
-		Locale locale = null;
+		LOGGER.trace("Getting current locale from request");
+		Locale ret = null;
 		if (requestContainer != null) {
 			SessionContainer permSession = requestContainer.getSessionContainer().getPermanentContainer();
 			if (permSession != null) {
 				String languageTag = (String) permSession.getAttribute(SpagoBIConstants.AF_LANGUAGE_TAG);
 				if (StringUtils.isNotBlank(languageTag)) {
-					locale = Locale.forLanguageTag(languageTag);
+					ret = Locale.forLanguageTag(languageTag);
 				} else {
 					String language = (String) permSession.getAttribute(SpagoBIConstants.AF_LANGUAGE);
 					String country = (String) permSession.getAttribute(SpagoBIConstants.AF_COUNTRY);
 					String script = (String) permSession.getAttribute(SpagoBIConstants.AF_SCRIPT);
 
-					locale = new Builder().setLanguage(language).setRegion(country).setScript(script).build();
+					ret = new Builder().setLanguage(language).setRegion(country).setScript(script).build();
 				}
 			}
 		}
-		if (locale == null)
-			locale = getDefaultLocale();
-		return locale;
+		if (ret == null) {
+			ret = getDefaultLocale();
+		}
+		LOGGER.trace("Current locale from request: {}", ret);
+		return ret;
 	}
 
 	public static String getLocaleDateFormat(SessionContainer permSess) {
-//		String language = (String) permSess.getAttribute("AF_LANGUAGE");
-//		String country = (String) permSess.getAttribute("AF_COUNTRY");
+		LOGGER.debug("Getting locale date format from session");
 		String languageTag = (String) permSess.getAttribute(SpagoBIConstants.AF_LANGUAGE_TAG);
 		// if a particular language is specified take the corrisponding date-format
-		String format = null;
+		String ret = null;
 
 		if (StringUtils.isBlank(languageTag)) {
 
@@ -488,13 +424,13 @@ public class GeneralUtilities extends SpagoBIUtilities {
 			languageTag = locale.toLanguageTag();
 		}
 		if (languageTag != null) {
-			format = SingletonConfig.getInstance().getConfigValue("SPAGOBI.DATE-FORMAT-" + languageTag + ".format");
+			ret = SingletonConfig.getInstance().getConfigValue("SPAGOBI.DATE-FORMAT-" + languageTag + ".format");
 		}
-		if (format == null) {
-			format = SingletonConfig.getInstance().getConfigValue("SPAGOBI.DATE-FORMAT.format");
+		if (ret == null) {
+			ret = SingletonConfig.getInstance().getConfigValue("SPAGOBI.DATE-FORMAT.format");
 		}
-		LOGGER.debug("DATE FORMAT.format:" + format);
-		return format;
+		LOGGER.debug("Locale date format from session: {}", ret);
+		return ret;
 
 	}
 
@@ -511,23 +447,25 @@ public class GeneralUtilities extends SpagoBIUtilities {
 	}
 
 	public static String getLocaleDateFormat(Locale locale) {
-		String format = null;
+		LOGGER.debug("Getting date format from locale");
+		String ret = null;
 		// if a particular language is specified take the corrisponding date-format
 		if (locale != null) {
-			format = SingletonConfig.getInstance()
+			ret = SingletonConfig.getInstance()
 					.getConfigValue("SPAGOBI.DATE-FORMAT-" + locale.toLanguageTag() + ".format");
 		}
-		if (format == null) {
-			format = SingletonConfig.getInstance().getConfigValue("SPAGOBI.DATE-FORMAT.format");
+		if (ret == null) {
+			ret = SingletonConfig.getInstance().getConfigValue("SPAGOBI.DATE-FORMAT.format");
 		}
-		LOGGER.debug("DATE FORMAT.format:" + format);
-		return format;
+		LOGGER.debug("Date format from locale: {}", ret);
+		return ret;
 
 	}
 
 	public static String getLocaleDateFormatForExtJs(SessionContainer permSess) {
+		LOGGER.debug("Getting date format from locale for ExtJS");
 		String languageTag = (String) permSess.getAttribute(SpagoBIConstants.AF_LANGUAGE_TAG);
-		String format = null;
+		String ret = null;
 
 		if (StringUtils.isBlank(languageTag)) {
 
@@ -540,133 +478,133 @@ public class GeneralUtilities extends SpagoBIUtilities {
 		}
 		// if a particular language is specified take the corrisponding date-format
 		if (languageTag != null) {
-			format = SingletonConfig.getInstance().getConfigValue("SPAGOBI.DATE-FORMAT-" + languageTag + ".format");
+			ret = SingletonConfig.getInstance().getConfigValue("SPAGOBI.DATE-FORMAT-" + languageTag + ".format");
 		}
-		if (format == null) {
-			format = SingletonConfig.getInstance().getConfigValue("SPAGOBI.DATE-FORMAT.extJsFormat");
+		if (ret == null) {
+			ret = SingletonConfig.getInstance().getConfigValue("SPAGOBI.DATE-FORMAT.extJsFormat");
 		}
-		if (format == null) {
-			LOGGER.warn("Locale date format for ExtJs not found, using d/m/Y as deafult");
-			format = "d/m/Y";
+		if (ret == null) {
+			LOGGER.warn("Locale date format for ExtJs not found, using d/m/Y as default");
+			ret = "d/m/Y";
 		}
-		LOGGER.debug("DATE FORMAT.extJsFormat:" + format);
-		return format;
+		LOGGER.debug("Date format from locale for ExtJS: {}", ret);
+		return ret;
 
 	}
 
 	public static String getServerDateFormat() {
-		LOGGER.debug("IN");
-		String format = SingletonConfig.getInstance().getConfigValue("SPAGOBI.DATE-FORMAT-SERVER.format");
-		LOGGER.debug("OUT");
-		return format;
+		LOGGER.debug("Getting server date format");
+		String ret = SingletonConfig.getInstance().getConfigValue("SPAGOBI.DATE-FORMAT-SERVER.format");
+		LOGGER.debug("Server date format is: {}", ret);
+		return ret;
 	}
 
 	public static String getServerTimeStampFormat() {
-		LOGGER.debug("IN");
-		String format = SingletonConfig.getInstance().getConfigValue("SPAGOBI.TIMESTAMP-FORMAT.format");
-		LOGGER.debug("OUT");
-		return format;
+		LOGGER.debug("Getting server timestamp format");
+		String ret = SingletonConfig.getInstance().getConfigValue("SPAGOBI.TIMESTAMP-FORMAT.format");
+		LOGGER.debug("Server timestamp format is: {}", ret);
+		return ret;
 	}
 
 	public static String getServerDateFormatExtJs() {
-		LOGGER.debug("IN");
-		String format = SingletonConfig.getInstance().getConfigValue("SPAGOBI.DATE-FORMAT-SERVER.extJsFormat");
-		LOGGER.debug("OUT");
-		return format;
+		LOGGER.debug("Getting server date format for ExtJS");
+		String ret = SingletonConfig.getInstance().getConfigValue("SPAGOBI.DATE-FORMAT-SERVER.extJsFormat");
+		LOGGER.debug("Server date format for ExtJS is: {}", ret);
+		return ret;
 	}
 
 	public static String getServerTimestampFormatExtJs() {
-		LOGGER.debug("IN");
-		String format = SingletonConfig.getInstance().getConfigValue("SPAGOBI.TIMESTAMP-FORMAT.extJsFormat");
-		LOGGER.debug("OUT");
-		return format;
+		LOGGER.debug("Getting server timestamp format for ExtJS");
+		String ret = SingletonConfig.getInstance().getConfigValue("SPAGOBI.TIMESTAMP-FORMAT.extJsFormat");
+		LOGGER.debug("Server timestamp format for ExtJS is: {}", ret);
+		return ret;
 	}
 
 	public static char getDecimalSeparator(Locale locale) {
+		LOGGER.debug("Getting decimal separator for locale: {}", locale);
 		DecimalFormat df = (DecimalFormat) DecimalFormat.getInstance(locale);
 		DecimalFormatSymbols decimalFormatSymbols = df.getDecimalFormatSymbols();
-		LOGGER.debug("IN");
-		char decimals = decimalFormatSymbols.getDecimalSeparator();
+		char ret = decimalFormatSymbols.getDecimalSeparator();
 
-		LOGGER.debug("OUT");
-		return decimals;
+		LOGGER.debug("Decimal separator is: {}", ret);
+		return ret;
 	}
 
 	public static char getGroupingSeparator(Locale locale) {
+		LOGGER.debug("Getting grouping separator for locale: {}", locale);
 		DecimalFormat df = (DecimalFormat) DecimalFormat.getInstance(locale);
 		DecimalFormatSymbols decimalFormatSymbols = df.getDecimalFormatSymbols();
-		LOGGER.debug("IN");
-		char thousands = decimalFormatSymbols.getGroupingSeparator();
+		char ret = decimalFormatSymbols.getGroupingSeparator();
 
-		LOGGER.debug("OUT");
-		return thousands;
+		LOGGER.debug("Grouping separator for locale is: {}", ret);
+		return ret;
 	}
 
 	public static int getTemplateMaxSize() {
-		LOGGER.debug("IN");
-		int toReturn = MAX_DEFAULT_FILE_5M_SIZE;
+		LOGGER.debug("Getting template max size");
+		int ret = MAX_DEFAULT_FILE_5M_SIZE;
 		try {
 			SingletonConfig serverConfig = SingletonConfig.getInstance();
 			String maxSizeStr = serverConfig.getConfigValue("SPAGOBI.TEMPLATE_MAX_SIZE");
 			if (maxSizeStr != null) {
-				LOGGER.debug("Configuration found for max template size: " + maxSizeStr);
-				toReturn = Integer.parseInt(maxSizeStr);
+				LOGGER.debug("Configuration found for max template size: {}", maxSizeStr);
+				ret = Integer.parseInt(maxSizeStr);
 			} else {
 				LOGGER.debug("No configuration found for max template size");
 			}
 		} catch (Exception e) {
 			LOGGER.error("Error while retrieving max template size", e);
-			LOGGER.debug("Considering default value " + MAX_DEFAULT_FILE_5M_SIZE);
-			toReturn = MAX_DEFAULT_FILE_5M_SIZE;
+			LOGGER.debug("Considering default value {}", MAX_DEFAULT_FILE_5M_SIZE);
+			ret = MAX_DEFAULT_FILE_5M_SIZE;
 		}
-		LOGGER.debug("OUT: max size = " + toReturn);
-		return toReturn;
+		LOGGER.debug("Template max size is: {}", ret);
+		return ret;
 	}
 
 	public static int getDataSetFileMaxSize() {
-		LOGGER.debug("IN");
+		LOGGER.debug("Getting dataset file max size");
 		int toReturn = MAX_DEFAULT_FILE_10M_SIZE;
 		try {
 			SingletonConfig serverConfig = SingletonConfig.getInstance();
 			String maxSizeStr = serverConfig.getConfigValue("SPAGOBI.DATASET_FILE_MAX_SIZE");
 			if (maxSizeStr != null) {
-				LOGGER.debug("Configuration found for max dataset file size: " + maxSizeStr);
+				LOGGER.debug("Configuration found for max dataset file size: {}", maxSizeStr);
 				toReturn = Integer.parseInt(maxSizeStr);
 			} else {
 				LOGGER.debug("No configuration found for max dataset file size");
 			}
 		} catch (Exception e) {
 			LOGGER.error("Error while retrieving max dataset file size", e);
-			LOGGER.debug("Considering default value " + MAX_DEFAULT_FILE_10M_SIZE);
+			LOGGER.debug("Considering default value {}", MAX_DEFAULT_FILE_10M_SIZE);
 			toReturn = MAX_DEFAULT_FILE_10M_SIZE;
 		}
-		LOGGER.debug("OUT: max size = " + toReturn);
+		LOGGER.debug("Dataset file max size is: {}", toReturn);
 		return toReturn;
 	}
 
 	public static int getGisLayerFileMaxSize() {
-		LOGGER.debug("IN");
-		int toReturn = (2 * MAX_DEFAULT_FILE_10M_SIZE);
+		LOGGER.debug("Getting GIS layer file max size");
+		int ret = (2 * MAX_DEFAULT_FILE_10M_SIZE);
 		try {
 			SingletonConfig serverConfig = SingletonConfig.getInstance();
 			String maxSizeStr = serverConfig.getConfigValue("GIS_LAYER_FILE_MAX_SIZE");
 			if (maxSizeStr != null) {
-				LOGGER.debug("Configuration found for max layer gis file size: " + maxSizeStr);
-				toReturn = Integer.parseInt(maxSizeStr);
+				LOGGER.debug("Configuration found for max layer gis file size: {}", maxSizeStr);
+				ret = Integer.parseInt(maxSizeStr);
 			} else {
 				LOGGER.debug("No configuration found for max layer gis file size");
 			}
 		} catch (Exception e) {
 			LOGGER.error("Error while retrieving max dataset file size", e);
 			LOGGER.debug("Considering default value " + (2 * MAX_DEFAULT_FILE_10M_SIZE));
-			toReturn = (2 * MAX_DEFAULT_FILE_10M_SIZE); // 20M
+			ret = (2 * MAX_DEFAULT_FILE_10M_SIZE); // 20M
 		}
-		LOGGER.debug("OUT: max size = " + toReturn);
-		return toReturn;
+		LOGGER.debug("GIS layer file max size is: {}", ret);
+		return ret;
 	}
 
 	public static String getSessionExpiredURL() {
-		LOGGER.debug("IN");
+		LOGGER.debug("Getting session expired URL");
 		String sessionExpiredUrl = null;
 		try {
 			LOGGER.debug("Trying to recover SpagoBI session expired url from ConfigSingleton");
@@ -675,7 +613,7 @@ public class GeneralUtilities extends SpagoBIUtilities {
 		} catch (Exception e) {
 			LOGGER.error("Error while recovering SpagoBI session expired url", e);
 		}
-		LOGGER.debug("OUT: SpagoBI session expired url is " + sessionExpiredUrl);
+		LOGGER.debug("Session expired URL: {}", sessionExpiredUrl);
 		return sessionExpiredUrl;
 	}
 
@@ -688,11 +626,11 @@ public class GeneralUtilities extends SpagoBIUtilities {
 	 * @return an url starting with the given base url and adding parameters retrieved by the input parameters map
 	 */
 	public static String getUrl(String baseUrl, Map mapPars) {
-		LOGGER.debug("IN");
+		LOGGER.debug("Getting URL (???) from {} base URL and parameters {}", baseUrl, mapPars);
 		Assert.assertNotNull(baseUrl, "Base url in input is null");
-		StringBuilder buffer = new StringBuilder();
-		buffer.append(baseUrl);
-		buffer.append(baseUrl.indexOf("?") == -1 ? "?" : "&");
+		StringBuilder sb = new StringBuilder();
+		sb.append(baseUrl);
+		sb.append(baseUrl.indexOf("?") == -1 ? "?" : "&");
 		if (mapPars != null && !mapPars.isEmpty()) {
 			Set keys = mapPars.keySet();
 			Iterator iterKeys = keys.iterator();
@@ -717,15 +655,15 @@ public class GeneralUtilities extends SpagoBIUtilities {
 						value = URLEncoder.encode(value);
 					}
 
-					buffer.append(key + "=" + value);
+					sb.append(key + "=" + value);
 					if (iterKeys.hasNext()) {
-						buffer.append("&");
+						sb.append("&");
 					}
 				}
 			}
 		}
-		LOGGER.debug("OUT: " + buffer.toString());
-		return buffer.toString();
+		LOGGER.debug("URL is: {}", sb);
+		return sb.toString();
 	}
 
 	/**
@@ -736,13 +674,13 @@ public class GeneralUtilities extends SpagoBIUtilities {
 	 */
 
 	public static Map getParametersFromURL(String urlString) {
-		LOGGER.debug("IN");
-		Map<String, Object> toReturn = new HashMap<>();
+		LOGGER.debug("Getting parameters from URL: {}", urlString);
+		Map<String, Object> ret = new HashMap<>();
 		URL url;
 		try {
 			url = new URL(urlString);
 		} catch (MalformedURLException e) {
-			LOGGER.error("Malformed URL Exception " + urlString, e);
+			LOGGER.error("Malformed URL Exception {}", urlString, e);
 			return null;
 		}
 		// get parameters string
@@ -761,22 +699,23 @@ public class GeneralUtilities extends SpagoBIUtilities {
 			try {
 				parameterValue = URLDecoder.decode(parameterValueEncoded, UTF_8.name());
 			} catch (UnsupportedEncodingException e) {
-				LOGGER.error("Error in decoding parameter: UTF 8 not supported " + parameterName
-						+ "; use preceding value " + parameterValueEncoded, e);
+				LOGGER.error("Error in decoding parameter: UTF 8 not supported {}; use previous value {}",
+						parameterName, parameterValueEncoded, e);
 				parameterValue = parameterValueEncoded;
 			} catch (java.lang.IllegalArgumentException e) { // can happen when in document composition a '%' char is given
-				LOGGER.warn("Error in decoding parameter, illegal argument for " + parameterName
-						+ " (probably value % is present); use preceding value " + parameterValueEncoded);
+				LOGGER.warn(
+						"Error in decoding parameter, illegal argument for (probably value % is present); use preceding value {}",
+						parameterName, parameterValueEncoded);
 				parameterValue = parameterValueEncoded;
 			} catch (Exception e) {
-				LOGGER.warn("Generic Error in decoding parameter " + parameterName + " ; use preceding value "
-						+ parameterValueEncoded);
+				LOGGER.warn("Generic Error in decoding parameter {} ; use previous value {}", parameterName,
+						parameterValueEncoded);
 				parameterValue = parameterValueEncoded;
 			}
 
 			// if is already present create a list
-			if (toReturn.keySet().contains(parameterName)) {
-				Object prevValue = toReturn.get(parameterName).toString();
+			if (ret.keySet().contains(parameterName)) {
+				Object prevValue = ret.get(parameterName).toString();
 				List<String> toInsert = null;
 				// if was alrady a list
 				if (prevValue instanceof List) {
@@ -788,13 +727,13 @@ public class GeneralUtilities extends SpagoBIUtilities {
 					toInsert.add(parameterValue);
 				}
 				// put list
-				toReturn.put(parameterName, toInsert);
+				ret.put(parameterName, toInsert);
 			} else { // case single value
-				toReturn.put(parameterName, parameterValue);
+				ret.put(parameterName, parameterValue);
 			}
 		}
-		LOGGER.debug("OUT");
-		return toReturn;
+		LOGGER.debug("Map is: {}", ret);
+		return ret;
 	}
 
 	public static int getDatasetMaxResults() {
@@ -805,7 +744,7 @@ public class GeneralUtilities extends SpagoBIUtilities {
 		} else {
 			LOGGER.warn(
 					"Dataset max results configuration not found. Check spagobi.xml, SPAGOBI.DATASET.maxResults attribute");
-			LOGGER.debug("Using default value that is Integer.MAX_VALUE = " + Integer.MAX_VALUE);
+			LOGGER.debug("Using default value that is Integer.MAX_VALUE = {}", Integer.MAX_VALUE);
 		}
 		return maxResults;
 	}
@@ -817,8 +756,7 @@ public class GeneralUtilities extends SpagoBIUtilities {
 		} else {
 			resourcePath += File.separatorChar + PREVIEW_FILE_STORAGE_DIRECTORY;
 		}
-		File file = FileUtils.checkAndCreateDir(resourcePath);
-		return file;
+		return FileUtils.checkAndCreateDir(resourcePath);
 	}
 
 	/**
@@ -878,25 +816,32 @@ public class GeneralUtilities extends SpagoBIUtilities {
 		}
 	}
 
-	public static String getExternalEngineUrl(Engine eng) {
-		LOGGER.debug("IN");
+	public static URIBuilder getBE2BEEngineUrl(Engine eng) {
+		LOGGER.debug("Generating BE2BE for engine: {}", eng);
 		String urlEngine = getExternalEngineContextPath(eng);
-		LOGGER.debug("Engine url is " + urlEngine);
+		LOGGER.debug("Engine url is {}", urlEngine);
 		if (!"it.eng.spagobi.engines.drivers.dashboard.DashboardDriver".equals(eng.getDriverName())) {
 			Assert.assertTrue(urlEngine != null && !urlEngine.trim().equals(""),
 					"External engine url is not defined!!");
 		}
 		if ("it.eng.spagobi.engines.drivers.dashboard.DashboardDriver".equals(eng.getDriverName())) {
 			urlEngine = resolveRelativeUrlsForVue(urlEngine);
-		} else
+		} else {
 			urlEngine = resolveRelativeUrls(urlEngine);
+		}
 
 		if (EngineUtilities.hasBackEndService(eng)) {
 			// ADD this extension because this is a BackEnd engine invocation
 			urlEngine = urlEngine + BACKEND_EXTENSION;
 		}
-		LOGGER.debug("OUT: returning " + urlEngine);
-		return urlEngine;
+		URIBuilder ret = null;
+		try {
+			ret = new URIBuilder(urlEngine);
+		} catch (URISyntaxException e) {
+			throw new SpagoBIRuntimeException("The URL " + urlEngine + " is not valid", e);
+		}
+		LOGGER.debug("BE2BE for engine is: {}", ret);
+		return ret;
 	}
 
 	private static String resolveRelativeUrlsForVue(String url) {
