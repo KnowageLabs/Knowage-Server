@@ -17,8 +17,7 @@
  */
 package it.eng.spagobi.analiticalmodel.document.dao;
 
-import java.time.Instant;
-import java.time.format.DateTimeFormatter;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -45,7 +44,7 @@ import it.eng.spagobi.commons.metadata.SbiBinContents;
 
 public class SnapshotDAOHibImpl extends AbstractHibernateDAO implements ISnapshotDAO {
 
-	public static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+	public static final SimpleDateFormat DATE_FORMATTER = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
 	/*
 	 * (non-Javadoc)
@@ -209,11 +208,9 @@ public class SnapshotDAOHibImpl extends AbstractHibernateDAO implements ISnapsho
 					if (snapValues[2] != null) {
 						newSnap.setDescription((String) snapValues[2]);
 					}
-					if (snapValues[3] != null && snapValues[3] instanceof Date) {
-						Date date = (Date) snapValues[3];
-						Instant instant = date.toInstant();
-						newSnap.setDateCreation(date);
-						newSnap.setTime(DATE_FORMATTER.format(instant));
+					if (snapValues[3] != null) {
+						newSnap.setDateCreation((Date) snapValues[3]);
+						newSnap.setTime(DATE_FORMATTER.format((Date) snapValues[3]));
 					}
 					if (snapValues[4] != null) {
 						newSnap.setBiobjId(((SbiObjects) snapValues[4]).getBiobjId());
@@ -292,8 +289,7 @@ public class SnapshotDAOHibImpl extends AbstractHibernateDAO implements ISnapsho
 		snap.setSchedulationStartDate(hibSnap.getSchedulationStartDate());
 		snap.setScheduler(hibSnap.getScheduler());
 		snap.setSchedulationStartDate(hibSnap.getSchedulationStartDate());
-		Instant instant = hibSnap.getCreationDate().toInstant();
-		snap.setTime(DATE_FORMATTER.format(instant));
+		snap.setTime(DATE_FORMATTER.format(hibSnap.getCreationDate()));
 		return snap;
 	}
 
@@ -449,11 +445,9 @@ public class SnapshotDAOHibImpl extends AbstractHibernateDAO implements ISnapsho
 					if (snapValues[2] != null) {
 						snap.setDescription((String) snapValues[2]);
 					}
-					if (snapValues[3] != null && snapValues[3] instanceof java.util.Date) {
-						Date date = (java.util.Date) snapValues[3];
-						snap.setDateCreation(date);
-						Instant instant = date.toInstant();
-						snap.setTime(DATE_FORMATTER.format(instant));
+					if (snapValues[3] != null) {
+						snap.setDateCreation(((Date) snapValues[3]));
+						snap.setTime(DATE_FORMATTER.format((Date) snapValues[3]));
 					}
 					if (snapValues[4] != null) {
 						snap.setBiobjId(((SbiObjects) snapValues[4]).getBiobjId());

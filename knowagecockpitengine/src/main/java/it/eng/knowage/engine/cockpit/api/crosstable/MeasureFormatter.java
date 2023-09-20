@@ -50,7 +50,7 @@ public class MeasureFormatter {
 		this.pattern = pattern;
 		this.numberFormat = numberFormat;
 		if (measuresJSON != null) {
-			measuresInfo = new ArrayList<>();
+			measuresInfo = new ArrayList<MeasureInfo>();
 			for (int i = 0; i < measuresJSON.length(); i++) {
 				JSONObject obj = (JSONObject) measuresJSON.get(i);
 				MeasureInfo mi = new MeasureInfo(obj.getString("name"), "", obj.getString("type"), obj.getString("format"), obj.getString("format"),
@@ -69,7 +69,7 @@ public class MeasureFormatter {
 		this.measureOnRow = crosstab.isMeasureOnRow();
 	}
 
-	public synchronized String getFormat(Float f, int positionI, int positionJ) {
+	public String getFormat(Float f, int positionI, int positionJ) {
 		int pos;
 		String formatted = "";
 		if (measureOnRow) {

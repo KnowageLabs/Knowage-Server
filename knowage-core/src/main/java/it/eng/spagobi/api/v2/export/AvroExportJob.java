@@ -27,8 +27,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.sql.Date;
 import java.sql.Timestamp;
-import java.time.Instant;
-import java.time.format.DateTimeFormatter;
+import java.text.SimpleDateFormat;
 
 import org.apache.avro.Conversions;
 import org.apache.avro.LogicalTypes;
@@ -73,7 +72,7 @@ public class AvroExportJob extends AbstractExportJob {
 
 	private IDataSet dataSet;
 	private IMetaData dsMeta;
-	private final DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern(DATE_FORMAT);
+	private SimpleDateFormat dateFormatter = new SimpleDateFormat(DATE_FORMAT);
 
 	private Path avroExportFolder;
 
@@ -135,8 +134,7 @@ public class AvroExportJob extends AbstractExportJob {
 		try {
 			Class<?> type = dsMeta.getFieldType(i);
 			if (isDate(type)) {
-				Instant instant = dateFormatter.parse(value.toString(), Instant::from);
-				value = instant.toEpochMilli();
+				value = dateFormatter.parse(value.toString()).getTime();
 			} else if (isTimestamp(type)) {
 				value = DatabaseUtils.timestampFormatter(value);
 			} else if (BigDecimal.class.isAssignableFrom(type)) {
@@ -154,8 +152,7 @@ public class AvroExportJob extends AbstractExportJob {
 				value = String.valueOf(value);
 			} else {
 				if (value instanceof java.util.Date) {
-					Instant instant = ((java.util.Date) value).toInstant();
-					value = dateFormatter.format(instant);
+					value = dateFormatter.format(value);
 				}
 				value = value.toString();
 			}
