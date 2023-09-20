@@ -70,6 +70,11 @@ public class BirtImageServlet extends HttpServlet {
 
 			imageFile = PathTraversalChecker.get(System.getProperty("java.io.tmpdir"), "birt", imageFileName);
 
+			if (!imageFile.exists()) {
+				logger.error("File " + imageFile.getPath() + " not found");
+				return;
+			}
+
 			try {
 				fis = new FileInputStream(imageFile);
 			} catch (FileNotFoundException e) {

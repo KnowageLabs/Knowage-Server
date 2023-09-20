@@ -74,7 +74,6 @@ public class PathTraversalChecker {
 		try {
 			Assert.assertNotNull(fileToBeChecked, "File to be checked cannot be null");
 			Assert.assertNotNull(desiredDirectory, "Desired directory cannot be null");
-			Assert.assertTrue(desiredDirectory.exists() && desiredDirectory.isDirectory(), "Desired directory must be an existing folder");
 
 			boolean isInDesiredDirectory = isDescendentOfDirectory(fileToBeChecked, desiredDirectory);
 

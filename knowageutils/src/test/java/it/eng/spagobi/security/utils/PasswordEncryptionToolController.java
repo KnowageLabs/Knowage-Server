@@ -6,7 +6,6 @@ import java.nio.file.Files;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 
-import it.eng.knowage.commons.security.PathTraversalChecker;
 import it.eng.spagobi.security.PasswordEncrypter;
 
 public class PasswordEncryptionToolController {
@@ -18,8 +17,6 @@ public class PasswordEncryptionToolController {
 
 		completeFilePathAndName = args[0];
 		plainTextPassword = args[1];
-
-		PathTraversalChecker.isValidFileName(completeFilePathAndName);
 
 		boolean exists = new File(completeFilePathAndName).exists();
 

@@ -104,7 +104,6 @@ public class SpagoBIAccessUtils {
 	 * @return true, if successful
 	 */
 	public boolean deleteDirectory(String pathdest) {
-		PathTraversalChecker.isValidFileName(pathdest);
 		File directory = new File(pathdest);
 		return deleteDirectory(directory);
 	}

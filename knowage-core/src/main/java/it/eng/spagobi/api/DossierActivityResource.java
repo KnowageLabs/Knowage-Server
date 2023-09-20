@@ -193,19 +193,20 @@ public class DossierActivityResource extends AbstractSpagoBIResource {
 			String fileName = file.getFileName();
 			archiveBytes = file.getContent();
 
-			File f = null;
+			File dossierDir = null;
 			if (documentIdArray.length == 1) {
 				identifier = documentIdArray[0].toString();
-				f = PathTraversalChecker.get(SpagoBIUtilities.getResourcePath(), "dossier", identifier, fileName);
+				dossierDir = PathTraversalChecker.get(SpagoBIUtilities.getResourcePath(), "dossier", identifier);
 			} else {
 				identifier = multipartFormDataInput.getParameteValues("uuid")[0].toString();
-				f = PathTraversalChecker.get(SpagoBIUtilities.getResourcePath(), "dossier", identifier, fileName);
+				dossierDir = PathTraversalChecker.get(System.getProperty("java.io.tmpdir"), identifier);
 			}
 
-			File dossierDir = new File(f.getPath());
 			if (!dossierDir.exists()) {
 				dossierDir.mkdir();
 			}
+
+			File f = PathTraversalChecker.get(dossierDir.getAbsolutePath(), fileName);
 
 			try (FileOutputStream outputStream = new FileOutputStream(f)) {
 				outputStream.write(archiveBytes);

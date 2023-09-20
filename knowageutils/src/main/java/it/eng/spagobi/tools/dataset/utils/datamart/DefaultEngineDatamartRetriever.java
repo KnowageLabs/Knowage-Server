@@ -88,9 +88,8 @@ public class DefaultEngineDatamartRetriever implements IQbeDataSetDatamartRetrie
 			Assert.assertTrue(StringUtilities.isNotEmpty(metamodelName), "Input parameter [metamodelName] cannot be null");
 			LOGGER.debug("Load metamodel jar file for model [" + metamodelName + "]");
 
-			File targetMetamodelFolder = null;
 			File directory = getDataMartDir();
-			targetMetamodelFolder = PathTraversalChecker.get(directory.getName(), metamodelName);
+			File targetMetamodelFolder = PathTraversalChecker.get(directory.getAbsolutePath(), metamodelName);
 
 			metamodelJarFile = new File(targetMetamodelFolder, "datamart.jar");
 
