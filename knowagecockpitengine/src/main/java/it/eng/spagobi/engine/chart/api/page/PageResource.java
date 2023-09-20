@@ -20,7 +20,6 @@ package it.eng.spagobi.engine.chart.api.page;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
 import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -37,6 +36,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
 import org.apache.axis.encoding.Base64;
+import org.apache.http.client.utils.URIBuilder;
 import org.apache.log4j.Logger;
 import org.jboss.resteasy.plugins.providers.html.View;
 import org.json.JSONArray;
@@ -66,7 +66,7 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 /**
  * @authors
  *
- * TODO Could be deleted
+ *          TODO Could be deleted
  */
 
 @Path("/1.0/chart/pages")
@@ -98,24 +98,27 @@ public class PageResource extends AbstractChartEngineResource {
 	 *
 	 */
 	static {
-		pages = new HashMap<String, JSONObject>();
-		urls = new HashMap<String, String>();
+		pages = new HashMap<>();
+		urls = new HashMap<>();
 
 		try {
 			pages.put("edit", new JSONObject("{name: 'edit', description: 'the chart edit page', parameters: []}"));
 			urls.put("edit", "/WEB-INF/jsp/chart/designer/chartDesigner.jsp");
-			pages.put("execute", new JSONObject("{name: 'execute', description: 'the chart execution page', parameters: ['template']}"));
+			pages.put("execute", new JSONObject(
+					"{name: 'execute', description: 'the chart execution page', parameters: ['template']}"));
 
 			/* The old (ExtJS) chart execution page (chart.jsp file) is commented, whilst the new one (AngularJS) is used. (danristo) */
 			// urls.put("execute", "/WEB-INF/jsp/chart.jsp");
 			urls.put("execute", "/WEB-INF/jsp/chart/chartAngular.jsp");
 
-			pages.put("test", new JSONObject("{name: 'test', description: 'the chart test page', parameters: ['template']}"));
+			pages.put("test",
+					new JSONObject("{name: 'test', description: 'the chart test page', parameters: ['template']}"));
 			urls.put("test", "/WEB-INF/jsp/test4.jsp");
-			pages.put("edit_cockpit", new JSONObject("{name: 'edit_cockpit', description: 'the chart edit page from cockpit', parameters: []}"));
+			pages.put("edit_cockpit", new JSONObject(
+					"{name: 'edit_cockpit', description: 'the chart edit page from cockpit', parameters: []}"));
 			urls.put("edit_cockpit", "/WEB-INF/jsp/chart/designer/chartDesigner.jsp");
-			pages.put("execute_cockpit",
-					new JSONObject("{name: 'execute_cockpit', description: 'the chart execution page from cockpit', parameters: ['template']}"));
+			pages.put("execute_cockpit", new JSONObject(
+					"{name: 'execute_cockpit', description: 'the chart execution page from cockpit', parameters: ['template']}"));
 
 			/* The old (ExtJS) chart execution page (chart.jsp file) is commented, whilst the new one (AngularJS) is used. (danristo) */
 			// urls.put("execute_cockpit", "/WEB-INF/jsp/chart.jsp");
@@ -186,9 +189,8 @@ public class PageResource extends AbstractChartEngineResource {
 					engineInstance = ChartEngine.createInstance(savedTemplate, getIOManager().getEnv());
 
 					/*
-					 * The use of the above commented snippet had led to https://production.eng.it/jira/browse/KNOWAGE-678 and
-					 * https://production.eng.it/jira/browse/KNOWAGE-552. The chart engine is stateful, thus the http session is not the place to store and
-					 * retrive the engine instance, otherwise concurrency issues are raised.
+					 * The use of the above commented snippet had led to https://production.eng.it/jira/browse/KNOWAGE-678 and https://production.eng.it/jira/browse/KNOWAGE-552.
+					 * The chart engine is stateful, thus the http session is not the place to store and retrive the engine instance, otherwise concurrency issues are raised.
 					 *
 					 * @author: Alessandro Portosa (alessandro.portosa@eng.it)
 					 */
@@ -206,11 +208,11 @@ public class PageResource extends AbstractChartEngineResource {
 				// create a new engine instance
 				engineInstance = ChartEngine.createInstance(templateString, getIOManager().getEnv());
 
-				engineInstance.getEnv().put(EngineConstants.ENV_DOCUMENT_LABEL, getIOManager().getRequest().getParameter("document"));
+				engineInstance.getEnv().put(EngineConstants.ENV_DOCUMENT_LABEL,
+						getIOManager().getRequest().getParameter("document"));
 				/*
-				 * The use of the above commented snippet had led to https://production.eng.it/jira/browse/KNOWAGE-678 and
-				 * https://production.eng.it/jira/browse/KNOWAGE-552. The chart engine is stateful, thus the http session is not the place to store and retrive
-				 * the engine instance, otherwise concurrency issues are raised.
+				 * The use of the above commented snippet had led to https://production.eng.it/jira/browse/KNOWAGE-678 and https://production.eng.it/jira/browse/KNOWAGE-552.
+				 * The chart engine is stateful, thus the http session is not the place to store and retrive the engine instance, otherwise concurrency issues are raised.
 				 *
 				 * @author: Alessandro Portosa (alessandro.portosa@eng.it)
 				 */
@@ -218,8 +220,8 @@ public class PageResource extends AbstractChartEngineResource {
 				getExecutionSession().setAttributeInSession(EngineConstants.ENGINE_INSTANCE, engineInstance);
 
 				/**
-				 * These two lines are responsible for setting all chart styles that are available on the server (through their XML files) into the session and
-				 * forwarding them to the Designer.js which will take them and put inside of the chart style combo box on the top left of the Designer page.
+				 * These two lines are responsible for setting all chart styles that are available on the server (through their XML files) into the session and forwarding them
+				 * to the Designer.js which will take them and put inside of the chart style combo box on the top left of the Designer page.
 				 *
 				 * @author: atomic (ana.tomic@mht.net)
 				 * @commentBy: danristo (danilo.ristovski@mht.net)
@@ -245,7 +247,8 @@ public class PageResource extends AbstractChartEngineResource {
 		}
 	}
 
-	private RenderOptions getRenderOptionsForPdfExporter(HttpServletRequest request) throws UnsupportedEncodingException {
+	private RenderOptions getRenderOptionsForPdfExporter(HttpServletRequest request)
+			throws UnsupportedEncodingException {
 		String userId = (String) getUserProfile().getUserUniqueIdentifier();
 		String encodedUserId = Base64.encode(userId.getBytes(UTF_8));
 		Map<String, String> headers = new HashMap<>(1);
@@ -273,12 +276,14 @@ public class PageResource extends AbstractChartEngineResource {
 		}
 
 		ViewportDimensions dimensions = ViewportDimensions.builder().withWidth(pdfWidth).withHeight(pdfHeight).build();
-		RenderOptions renderOptions = RenderOptions.defaultOptions().withDimensions(dimensions).withJavaScriptExecutionDetails(pdfRenderingWaitTime, 5000L);
+		RenderOptions renderOptions = RenderOptions.defaultOptions().withDimensions(dimensions)
+				.withJavaScriptExecutionDetails(pdfRenderingWaitTime, 5000L);
 		return renderOptions;
 	}
 
 	public String getServiceHostUrl() {
-		String serviceURL = SpagoBIUtilities.readJndiResource(SingletonConfig.getInstance().getConfigValue("SPAGOBI.SPAGOBI_SERVICE_JNDI"));
+		String serviceURL = SpagoBIUtilities
+				.readJndiResource(SingletonConfig.getInstance().getConfigValue("SPAGOBI.SPAGOBI_SERVICE_JNDI"));
 		serviceURL = serviceURL.substring(0, serviceURL.lastIndexOf('/'));
 		return serviceURL;
 	}
@@ -292,26 +297,20 @@ public class PageResource extends AbstractChartEngineResource {
 			throw new SpagoBIRuntimeException("Error retrieving document with label " + documentLabel, e);
 		}
 		Engine eng = biObject.getEngine();
-		String externalUrl = GeneralUtilities.getExternalEngineUrl(eng);
+		URIBuilder externalUrl = GeneralUtilities.getBE2BEEngineUrl(eng);
 
-		StringBuilder sb = new StringBuilder(externalUrl);
-		String sep = "?";
 		Map<String, String[]> parameterMap = request.getParameterMap();
 
 		for (String parameter : parameterMap.keySet()) {
 			if (!PDF_PARAMETERS.contains(parameter)) {
 				String[] values = parameterMap.get(parameter);
 				if (values != null && values.length > 0) {
-					sb.append(sep);
-					sb.append(URLEncoder.encode(parameter, UTF_8.name()));
-					sb.append("=");
-					sb.append(URLEncoder.encode(values[0], UTF_8.name()));
-					sep = "&";
+					externalUrl.addParameter(parameter, values[0]);
 				}
 			}
 		}
-		sb.append("&export=true");
-		return sb.toString();
+		externalUrl.addParameter("export", "true");
+		return externalUrl.toString();
 	}
 
 	@GET

@@ -814,7 +814,7 @@ public class BIObject implements Serializable, Cloneable, IDrivableBIResource<BI
 	 * Clone the object.. NOTE: it does not clone the id property
 	 */
 	@Override
-	public BIObject clone() {
+	public final BIObject clone() {
 		BIObject clone = new BIObject();
 		clone.setEngine(this.engine);
 		clone.setDataSourceId(dataSourceId);
