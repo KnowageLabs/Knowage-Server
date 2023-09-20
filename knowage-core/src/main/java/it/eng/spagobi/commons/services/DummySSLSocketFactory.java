@@ -27,6 +27,7 @@ import javax.net.SocketFactory;
 import javax.net.ssl.KeyManager;
 import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLException;
 import javax.net.ssl.SSLSocketFactory;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.TrustManagerFactory;
@@ -126,32 +127,80 @@ public class DummySSLSocketFactory extends SSLSocketFactory {
 
 	@Override
 	public Socket createSocket() throws IOException {
-		return factory.createSocket();
+		try {
+			return factory.createSocket();
+		} catch (SSLException sslException) {
+			logger.error("SSLException occurred while creating socket in DummySSLSocketFactory: ", sslException);
+			throw sslException;
+		} catch (IOException ioException) {
+			logger.error("IOException occurred while creating socket in DummySSLSocketFactory: ", ioException);
+			throw ioException;
+		}
 	}
 
 	@Override
 	public Socket createSocket(Socket socket, String s, int i, boolean flag) throws IOException {
-		return factory.createSocket(socket, s, i, flag);
+		try {
+			return factory.createSocket(socket, s, i, flag);
+		} catch (SSLException sslException) {
+			logger.error("SSLException occurred while creating socket in DummySSLSocketFactory: ", sslException);
+			throw sslException;
+		} catch (IOException ioException) {
+			logger.error("IOException occurred while creating socket in DummySSLSocketFactory: ", ioException);
+			throw ioException;
+		}
 	}
 
 	@Override
 	public Socket createSocket(InetAddress inaddr, int i, InetAddress inaddr1, int j) throws IOException {
-		return factory.createSocket(inaddr, i, inaddr1, j);
+		try {
+			return factory.createSocket(inaddr, i, inaddr1, j);
+		} catch (SSLException sslException) {
+			logger.error("SSLException occurred while creating socket in DummySSLSocketFactory: ", sslException);
+			throw sslException;
+		} catch (IOException ioException) {
+			logger.error("IOException occurred while creating socket in DummySSLSocketFactory: ", ioException);
+			throw ioException;
+		}
 	}
 
 	@Override
 	public Socket createSocket(InetAddress inaddr, int i) throws IOException {
-		return factory.createSocket(inaddr, i);
+		try {
+			return factory.createSocket(inaddr, i);
+		} catch (SSLException sslException) {
+			logger.error("SSLException occurred while creating socket in DummySSLSocketFactory: ", sslException);
+			throw sslException;
+		} catch (IOException ioException) {
+			logger.error("IOException occurred while creating socket in DummySSLSocketFactory: ", ioException);
+			throw ioException;
+		}
 	}
 
 	@Override
 	public Socket createSocket(String s, int i, InetAddress inaddr, int j) throws IOException {
-		return factory.createSocket(s, i, inaddr, j);
+		try {
+			return factory.createSocket(s, i, inaddr, j);
+		} catch (SSLException sslException) {
+			logger.error("SSLException occurred while creating socket in DummySSLSocketFactory: ", sslException);
+			throw sslException;
+		} catch (IOException ioException) {
+			logger.error("IOException occurred while creating socket in DummySSLSocketFactory: ", ioException);
+			throw ioException;
+		}
 	}
 
 	@Override
 	public Socket createSocket(String s, int i) throws IOException {
-		return factory.createSocket(s, i);
+		try {
+			return factory.createSocket(s, i);
+		} catch (SSLException sslException) {
+			logger.error("SSLException occurred while creating socket in DummySSLSocketFactory: ", sslException);
+			throw sslException;
+		} catch (IOException ioException) {
+			logger.error("IOException occurred while creating socket in DummySSLSocketFactory: ", ioException);
+			throw ioException;
+		}
 	}
 
 	@Override
