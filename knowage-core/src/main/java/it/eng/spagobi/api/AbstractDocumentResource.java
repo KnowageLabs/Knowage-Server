@@ -23,10 +23,6 @@ import java.net.URI;
 import java.net.URLEncoder;
 import java.util.List;
 
-import javax.ws.rs.DELETE;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
@@ -54,8 +50,7 @@ public abstract class AbstractDocumentResource extends AbstractSpagoBIResource {
 
 	private static final Logger LOGGER = LogManager.getLogger(AbstractDocumentResource.class);
 
-	@POST
-	public Response insertDocument(String body) {
+	protected Response insertDocument(String body) {
 		BIObject document = (BIObject) JsonConverter.jsonToValidObject(body, BIObject.class);
 
 		AnalyticalModelDocumentManagementAPI documentManager = new AnalyticalModelDocumentManagementAPI(getUserProfile());
@@ -93,8 +88,7 @@ public abstract class AbstractDocumentResource extends AbstractSpagoBIResource {
 		}
 	}
 
-	@GET
-	public Response getDocumentDetails(Object documentIdentifier) {
+	protected Response getDocumentDetails(Object documentIdentifier) {
 
 		AnalyticalModelDocumentManagementAPI documentManager = new AnalyticalModelDocumentManagementAPI(getUserProfile());
 		BIObject document = documentManager.getDocument(documentIdentifier);
@@ -121,8 +115,7 @@ public abstract class AbstractDocumentResource extends AbstractSpagoBIResource {
 
 	}
 
-	@PUT
-	public Response updateDocument(String label, String body) {
+	protected Response updateDocument(String label, String body) {
 		AnalyticalModelDocumentManagementAPI documentManager = new AnalyticalModelDocumentManagementAPI(getUserProfile());
 		BIObject oldDocument = documentManager.getDocument(label);
 		if (oldDocument == null)
@@ -140,8 +133,7 @@ public abstract class AbstractDocumentResource extends AbstractSpagoBIResource {
 		return Response.ok().build();
 	}
 
-	@DELETE
-	public Response deleteDocument(@PathParam("label") String label) {
+	protected Response deleteDocument(@PathParam("label") String label) {
 		AnalyticalModelDocumentManagementAPI documentManager = new AnalyticalModelDocumentManagementAPI(getUserProfile());
 		BIObject document = documentManager.getDocument(label);
 		if (document == null)
@@ -175,8 +167,7 @@ public abstract class AbstractDocumentResource extends AbstractSpagoBIResource {
 		return documentIdentifier;
 	}
 
-	@GET
-	public Response getDocumentTemplate(String label) {
+	protected Response getDocumentTemplate(String label) {
 		AnalyticalModelDocumentManagementAPI documentManager = new AnalyticalModelDocumentManagementAPI(getUserProfile());
 		BIObject document = documentManager.getDocument(label);
 		if (document == null)
@@ -203,8 +194,7 @@ public abstract class AbstractDocumentResource extends AbstractSpagoBIResource {
 		return rb.build();
 	}
 
-	@POST
-	public Response addDocumentTemplate(String label, MultiPartBody input) {
+	protected Response addDocumentTemplate(String label, MultiPartBody input) {
 		AnalyticalModelDocumentManagementAPI documentManager = new AnalyticalModelDocumentManagementAPI(getUserProfile());
 		BIObject document = documentManager.getDocument(label);
 		if (document == null)
@@ -239,8 +229,7 @@ public abstract class AbstractDocumentResource extends AbstractSpagoBIResource {
 
 	}
 
-	@DELETE
-	public Response deleteCurrentTemplate(String documentLabel) {
+	protected Response deleteCurrentTemplate(String documentLabel) {
 		AnalyticalModelDocumentManagementAPI documentManager = new AnalyticalModelDocumentManagementAPI(getUserProfile());
 		BIObject document = documentManager.getDocument(documentLabel);
 		if (document == null)
@@ -268,8 +257,7 @@ public abstract class AbstractDocumentResource extends AbstractSpagoBIResource {
 		return Response.ok().build();
 	}
 
-	@DELETE
-	public Response deleteTemplateById(String documentLabel, Integer templateId) {
+	protected Response deleteTemplateById(String documentLabel, Integer templateId) {
 		AnalyticalModelDocumentManagementAPI documentManager = new AnalyticalModelDocumentManagementAPI(getUserProfile());
 		BIObject document = documentManager.getDocument(documentLabel);
 		if (document == null)
