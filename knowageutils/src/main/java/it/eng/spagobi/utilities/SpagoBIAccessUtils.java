@@ -31,6 +31,8 @@ import java.util.zip.ZipFile;
 
 import org.apache.log4j.Logger;
 
+import it.eng.knowage.commons.security.PathTraversalChecker;
+
 /**
  * This class has been created to provide SpagoBI Access Utils, in order to customize operations with clients.
  *
@@ -43,15 +45,11 @@ public class SpagoBIAccessUtils {
 	/**
 	 * Unzip.
 	 *
-	 * @param repositoryZip
-	 *            the repository_zip
-	 * @param newDirectory
-	 *            the new directory
+	 * @param repositoryZip the repository_zip
+	 * @param newDirectory  the new directory
 	 *
-	 * @throws ZipException
-	 *             the zip exception
-	 * @throws IOException
-	 *             Signals that an I/O exception has occurred.
+	 * @throws ZipException the zip exception
+	 * @throws IOException  Signals that an I/O exception has occurred.
 	 */
 	public void unzip(File repositoryZip, File newDirectory) throws ZipException, IOException {
 		try (ZipFile zipFile = new ZipFile(repositoryZip)) {
@@ -65,6 +63,7 @@ public class SpagoBIAccessUtils {
 				name = entry.getName();
 				path = newDirectory.getPath() + File.separator + name;
 				file = new File(path);
+				PathTraversalChecker.checkDescendentOfDirectory(file, newDirectory);
 
 				// if file already exists, deletes it
 				if (file.exists() && file.isFile())
@@ -73,7 +72,10 @@ public class SpagoBIAccessUtils {
 				if (!entry.isDirectory()) {
 					file = file.getParentFile();
 					file.mkdirs();
-					try (FileOutputStream fileout = new FileOutputStream(newDirectory.getPath() + File.separator + entry.getName());
+
+					String fileName = newDirectory.getPath() + File.separator + entry.getName();
+
+					try (FileOutputStream fileout = new FileOutputStream(fileName);
 							BufferedOutputStream bufout = new BufferedOutputStream(fileout);
 							InputStream in = zipFile.getInputStream(entry)) {
 						copyInputStream(in, bufout);
@@ -97,8 +99,7 @@ public class SpagoBIAccessUtils {
 	/**
 	 * Delete directory.
 	 *
-	 * @param pathdest
-	 *            the pathdest
+	 * @param pathdest the pathdest
 	 *
 	 * @return true, if successful
 	 */
@@ -110,8 +111,7 @@ public class SpagoBIAccessUtils {
 	/**
 	 * Delete directory.
 	 *
-	 * @param directory
-	 *            the directory
+	 * @param directory the directory
 	 *
 	 * @return true, if successful
 	 */
@@ -139,10 +139,8 @@ public class SpagoBIAccessUtils {
 	/**
 	 * Delete file.
 	 *
-	 * @param fileName
-	 *            the file name
-	 * @param path
-	 *            the path
+	 * @param fileName the file name
+	 * @param path     the path
 	 *
 	 * @return true, if successful
 	 */
@@ -160,8 +158,7 @@ public class SpagoBIAccessUtils {
 	/**
 	 * Given an <code>InputStream</code> as input, gets the correspondent bytes array.
 	 *
-	 * @param is
-	 *            The input straeam
+	 * @param is The input straeam
 	 *
 	 * @return An array of bytes obtained from the input stream.
 	 */
@@ -194,12 +191,9 @@ public class SpagoBIAccessUtils {
 	/**
 	 * Given an <code>InputStream</code> as input flushs the content into an OutputStream and then close the input and output stream.
 	 *
-	 * @param is
-	 *            The input stream
-	 * @param os
-	 *            The output stream
-	 * @param closeStreams
-	 *            the close streams
+	 * @param is           The input stream
+	 * @param os           The output stream
+	 * @param closeStreams the close streams
 	 */
 	public void flushFromInputStreamToOutputStream(InputStream is, OutputStream os, boolean closeStreams) {
 		try {

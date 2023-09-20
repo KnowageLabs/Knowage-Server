@@ -240,7 +240,7 @@ public class DataSetResource extends AbstractDataSetResource {
 		ISbiDataSetDAO dsDAO = DAOFactory.getSbiDataSetDAO();
 
 		List<SbiDataSet> dataSets = dsDAO.loadSbiDataSets();
-		List<SbiDataSet> toBeReturned = new ArrayList<SbiDataSet>();
+		List<SbiDataSet> toBeReturned = new ArrayList<>();
 
 		for (SbiDataSet dataset : dataSets) {
 			IDataSet iDataSet = DataSetFactory.toDataSet(dataset);
@@ -389,10 +389,7 @@ public class DataSetResource extends AbstractDataSetResource {
 		try {
 			String fileName = getFileNameFromDatasetConfiguration(myDataset);
 			String resourcePath = SpagoBIUtilities.getResourcePath();
-			File fileDirectory = new File(resourcePath + File.separatorChar + "dataset" + File.separatorChar + "files");
-			file = new File(fileDirectory, fileName);
-
-			PathTraversalChecker.preventPathTraversalAttack(file, fileDirectory);
+			file = PathTraversalChecker.get(resourcePath, "dataset", "files", fileName);
 
 			if (file == null || !file.exists()) {
 				logger.error("File cannot be found");
@@ -583,7 +580,7 @@ public class DataSetResource extends AbstractDataSetResource {
 		if (SimpleFilterOperator.EQUALS_TO_MIN.equals(operator) || SimpleFilterOperator.EQUALS_TO_MAX.equals(operator)) {
 			List<Object> operands = inFilter.getOperands();
 			Object result = operands.get(0);
-			if (result instanceof Comparable == false) {
+			if (!(result instanceof Comparable)) {
 				throw new SpagoBIRuntimeException("Unable to compare operands of type [" + result.getClass().getName() + "]");
 			}
 			Comparable comparableResult = (Comparable) result;
@@ -728,7 +725,7 @@ public class DataSetResource extends AbstractDataSetResource {
 			Set<String> columns = null;
 
 			if (jsonIndexes != null && jsonIndexes.length() > 0) {
-				columns = new HashSet<String>();
+				columns = new HashSet<>();
 
 				for (int k = 0; k < jsonIndexes.length(); k++) {
 					JSONArray columnsArrayTemp = jsonIndexes.getJSONObject(k).getJSONArray("fields");
@@ -845,7 +842,7 @@ public class DataSetResource extends AbstractDataSetResource {
 						JSONObject columnsArray = columnsArrayTemp.getJSONObject(0);
 
 						if (columnsArray.getString("store").equals(label)) {
-							columns = new HashSet<String>(columnsArray.length());
+							columns = new HashSet<>(columnsArray.length());
 							columns.add(columnsArray.getString("column"));
 						}
 					}
@@ -878,7 +875,7 @@ public class DataSetResource extends AbstractDataSetResource {
 	}
 
 	private Set<String> getQbeDataSetHiddenColumns(IDataSet dataSet) {
-		Set<String> hiddenColumns = new HashSet<String>();
+		Set<String> hiddenColumns = new HashSet<>();
 		if (dataSet.getDsType().equals("SbiQbeDataSet")) {
 			try {
 				JSONObject dsConfig = new JSONObject(dataSet.getConfiguration());
@@ -886,7 +883,7 @@ public class DataSetResource extends AbstractDataSetResource {
 				JSONArray fields = qbeQuery.getJSONObject("catalogue").getJSONArray("queries").getJSONObject(0).getJSONArray("fields");
 				for (int i = 0; i < fields.length(); i++) {
 					JSONObject field = fields.getJSONObject(i);
-					if (field.has("visible") && field.getBoolean("visible") == false)
+					if (field.has("visible") && !field.getBoolean("visible"))
 						hiddenColumns.add(field.getString("alias"));
 				}
 			} catch (Exception e) {
@@ -901,7 +898,7 @@ public class DataSetResource extends AbstractDataSetResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	@UserConstraint(functionalities = { CommunityFunctionalityConstants.SELF_SERVICE_DATASET_MANAGEMENT })
 	public Response addDatasetInCache(@Context HttpServletRequest req) {
-		Set<String> columns = new HashSet<String>();
+		Set<String> columns = new HashSet<>();
 
 		logger.debug("IN");
 		try {
@@ -959,7 +956,7 @@ public class DataSetResource extends AbstractDataSetResource {
 
 				formulaString = jsonBody.getString("formula");
 				JSONArray columns = jsonBody.getJSONArray("measuresList");
-				List<SimpleSelectionField> l = new ArrayList<SimpleSelectionField>();
+				List<SimpleSelectionField> l = new ArrayList<>();
 
 				for (int i = 0; i < columns.length(); i++) {
 					SimpleSelectionField a = new SimpleSelectionField();
@@ -998,7 +995,7 @@ public class DataSetResource extends AbstractDataSetResource {
 				throw new SpagoBIRuntimeException(e1.getMessage(), e1);
 			}
 
-			HashMap<String, Object> parameterAsMap = new HashMap<String, Object>();
+			HashMap<String, Object> parameterAsMap = new HashMap<>();
 			parameterAsMap.put("id", objParameter.getBiObjectId());
 			parameterAsMap.put("label", objParameter.getLabel());
 			parameterAsMap.put("urlName", objParameter.getId());
@@ -1030,7 +1027,7 @@ public class DataSetResource extends AbstractDataSetResource {
 					List<String> valuesList = (List) paramValues;
 					List<String> descriptionList = (List) paramDescriptionValues;
 					if (paramDescriptionValues == null || !(paramDescriptionValues instanceof List)) {
-						descriptionList = new ArrayList<String>();
+						descriptionList = new ArrayList<>();
 					}
 
 					// String item = null;

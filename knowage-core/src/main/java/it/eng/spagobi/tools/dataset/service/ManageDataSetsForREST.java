@@ -958,12 +958,9 @@ public class ManageDataSetsForREST {
 	// This method rename a file and move it from resources\dataset\files\temp
 	// to resources\dataset\files
 	private void renameAndMoveDatasetFile(String originalFileName, String newFileName, String resourcePath, String fileType) {
-		String filePath = resourcePath + File.separatorChar + "dataset" + File.separatorChar + "files" + File.separatorChar + "temp" + File.separatorChar;
-		String fileNewPath = resourcePath + File.separatorChar + "dataset" + File.separatorChar + "files" + File.separatorChar;
+		File originalDatasetFile = PathTraversalChecker.get(resourcePath, "dataset", "files", "temp", originalFileName);
+		File newDatasetFile = PathTraversalChecker.get(resourcePath, "dataset", "files", newFileName + "." + fileType.toLowerCase());
 
-		File originalDatasetFile = new File(filePath + originalFileName);
-		File newDatasetFile = new File(fileNewPath + newFileName + "." + fileType.toLowerCase());
-		PathTraversalChecker.preventPathTraversalAttack(newDatasetFile, new File(fileNewPath));
 		String filePathCloning = resourcePath + File.separatorChar + "dataset" + File.separatorChar + "files" + File.separatorChar;
 		File originalDatasetFileCloning = new File(filePathCloning + originalFileName);
 
@@ -1423,7 +1420,7 @@ public class ManageDataSetsForREST {
 				File source = new File(
 						SpagoBIUtilities.getResourcePath() + File.separatorChar + "dataset" + File.separatorChar + "files" + File.separatorChar + realName);
 
-				if (!source.getCanonicalPath().equals(dest.getCanonicalPath()) && savingDataset && Boolean.TRUE.equals(!newFileUploaded)) {
+				if (!source.getCanonicalPath().equals(dest.getCanonicalPath()) && savingDataset && !newFileUploaded) {
 					LOGGER.debug("Source and destination are not the same. Copying from source to dest");
 					FileUtils.copyFile(source, dest);
 				}

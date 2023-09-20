@@ -58,7 +58,6 @@ public class JpaMappingClassesGenerator extends JpaMappingCodeGenerator {
 	private String[] libs;
 
 	public JpaMappingClassesGenerator() {
-		super();
 	}
 
 	@Override
@@ -77,6 +76,7 @@ public class JpaMappingClassesGenerator extends JpaMappingCodeGenerator {
 		super.generate(o, outputDir, isUpdatableMapping, includeSources, libsDir, null);
 
 		binDir = (binDir == null) ? new File(outputDir, DEFAULT_BIN_DIR) : binDir;
+
 		LOGGER.debug("src dir is equal to [{}]", getSrcDir());
 		// libDir = (libDir == null) ? new File(outputDir, DEFAULT_LIB_DIR) : libDir;
 		libDir = (libsDir == null) ? new File(outputDir, DEFAULT_LIB_DIR) : libsDir;
@@ -93,13 +93,9 @@ public class JpaMappingClassesGenerator extends JpaMappingCodeGenerator {
 		Compiler compiler;
 
 		if (libs == null) {
-			try(Stream<Path> paths = Files.list(libDir.toPath())) {
+			try (Stream<Path> paths = Files.list(libDir.toPath())) {
 
-				libs = paths
-						.map(e -> libDir.toPath().relativize(e))
-						.map(Path::toString)
-						.collect(toList())
-						.toArray(new String[0]);
+				libs = paths.map(e -> libDir.toPath().relativize(e)).map(Path::toString).collect(toList()).toArray(new String[0]);
 
 			} catch (IOException e) {
 				throw new GenerationException("Impossible to compile mapping code. Please download errors log", e);
@@ -181,8 +177,7 @@ public class JpaMappingClassesGenerator extends JpaMappingCodeGenerator {
 	}
 
 	/**
-	 * @param errorLog
-	 *            the errorLog to set
+	 * @param errorLog the errorLog to set
 	 */
 	public void setErrorLog(PrintWriter errorLog) {
 		this.errorLog = errorLog;
