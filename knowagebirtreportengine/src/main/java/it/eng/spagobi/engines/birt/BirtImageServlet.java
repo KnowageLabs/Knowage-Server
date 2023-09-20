@@ -41,7 +41,7 @@ import it.eng.spagobi.utilities.mime.MimeUtils;
 
 public class BirtImageServlet extends HttpServlet {
 
-	private transient Logger logger = Logger.getLogger(this.getClass());
+	private static final Logger logger = Logger.getLogger(BirtImageServlet.class);
 	private static final String CHART_LABEL = "chart_label";
 
 	/*
@@ -161,12 +161,11 @@ public class BirtImageServlet extends HttpServlet {
 
 	/**
 	 * This method execute the engine chart and returns its image in byte[]
-	 * 
+	 *
 	 * @param userId
 	 * @param session
 	 *
-	 * @param request
-	 *            the httpRequest
+	 * @param request the httpRequest
 	 * @return the chart in inputstream form
 	 */
 	private InputStream executeEngineChart(Map parametersMap, HttpSession session, String userId) {

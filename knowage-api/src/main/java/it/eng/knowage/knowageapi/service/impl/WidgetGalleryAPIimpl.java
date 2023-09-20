@@ -23,7 +23,6 @@ import java.sql.Timestamp;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 import java.util.UUID;
 
 import org.apache.commons.lang3.StringUtils;
@@ -54,7 +53,6 @@ public class WidgetGalleryAPIimpl implements WidgetGalleryAPI {
 	private SbiWidgetGalleryDao sbiWidgetGalleryDao;
 
 	private static final String GALLERY_FUNCTION = "WidgetGalleryManagement";
-	private static final Random RANDOM = new Random();
 
 	private final XSSUtils xssUtils = new XSSUtils();
 

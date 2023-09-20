@@ -17,6 +17,8 @@
  */
 package it.eng.spagobi.tools.massiveExport.bo;
 
+import org.apache.commons.lang3.builder.ToStringBuilder;
+
 public class ProgressThread {
 
 	private Integer progressThreadId;
@@ -27,6 +29,7 @@ public class ProgressThread {
 	private String status;
 	private String randomKey;
 	private String type;
+	private String executionRole;
 
 	public static final String TYPE_MASSIVE_SCHEDULE = "MASSIVE_SCHEDULE";
 	public static final String TYPE_MASSIVE_EXPORT = "MASSIVE_EXPORT";
@@ -80,18 +83,18 @@ public class ProgressThread {
 		this.status = status;
 	}
 
-	public ProgressThread(String userId, Integer total, String functionCd, String status, String randomKey, String type) {
-		super();
+	public ProgressThread(String userId, Integer total, String functionCd, String status, String randomKey, String type,
+			String executionRole) {
 		this.userId = userId;
 		this.total = total;
 		this.functionCd = functionCd;
 		this.status = status;
 		this.randomKey = randomKey;
 		this.type = type;
+		this.executionRole = executionRole;
 	}
 
 	public ProgressThread() {
-		super();
 
 	}
 
@@ -111,11 +114,17 @@ public class ProgressThread {
 		this.type = type;
 	}
 
+	public String getExecutionRole() {
+		return executionRole;
+	}
+
+	public void setExecutionRole(String executionRole) {
+		this.executionRole = executionRole;
+	}
+
 	@Override
 	public String toString() {
-		// TODO Auto-generated method stub
-		return "userID: " + getUserId() + " functionCd: " + getFunctionCd() + "Partial/Total:" + getPartial() + "/" + getTotal() + " Messgae: " + getStatus()
-				+ " Type:" + type;
+		return ToStringBuilder.reflectionToString(this);
 	}
 
 }
