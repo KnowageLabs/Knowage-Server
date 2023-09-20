@@ -75,12 +75,14 @@ String result = null;
 String urlWms = request.getParameter("urlWms");
 urlWms = urlWms + "?" + "request=getCapabilities";
 String result = "";
+InputStream is = null;
 
 try {
 	//File file = new File("c:\\MyXMLFile.xml");
 
 	URL url = new URL(urlWms);
 	URLConnection conn = url.openConnection();
+	is = conn.getInputStream();
 
 	// DOM way:
 	DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
@@ -94,7 +96,7 @@ try {
 	dbf.setExpandEntityReferences(false);
 
 	DocumentBuilder db = dbf.newDocumentBuilder();
-	Document doc = db.parse(url.openStream());
+	Document doc = db.parse(is);
 
 	doc.getDocumentElement().normalize();
 	//out.println("Root element " + doc.getDocumentElement().getNodeName());
@@ -145,5 +147,9 @@ try {
 	logger.error("SSLException occurred while creating socket in LayerWMS: ", sslException);
 } catch (IOException ioException) {
 	logger.error("IOException occurred while creating socket in LayerWMS: ", ioException);
+} finally {
+	if(is != null) {
+		is.close()
+	}
 }
 %>
