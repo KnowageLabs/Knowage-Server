@@ -398,6 +398,8 @@ public class PageResource extends AbstractCockpitEngineResource {
 			externalUrl.addParameter(k, collect);
 		});
 
+		addParametersToHideToolbarAndMenuInVue(externalUrl);
+
 		return externalUrl.toString();
 	}
 
@@ -556,10 +558,9 @@ public class PageResource extends AbstractCockpitEngineResource {
 			throws JSONException {
 
 		uriBuilder.setPath("/knowage-vue/dashboard/" + documentLabel);
-		uriBuilder.addParameter("toolbar", "false");
-		uriBuilder.addParameter("menu", "false");
 		uriBuilder.addParameter("params", createJsonFromParemeters(biObject));
 		uriBuilder.addParameter("role", getExecutionRoleForDashboard());
+		addParametersToHideToolbarAndMenuInVue(uriBuilder);
 	}
 
 	@Deprecated
@@ -649,6 +650,11 @@ public class PageResource extends AbstractCockpitEngineResource {
 
 	private boolean isDashboard(Engine eng) {
 		return "knowagedashboardengine".equals(eng.getLabel());
+	}
+
+	private void addParametersToHideToolbarAndMenuInVue(URIBuilder uriBuilder) {
+		uriBuilder.addParameter("toolbar", "false");
+		uriBuilder.addParameter("menu", "false");
 	}
 
 }
