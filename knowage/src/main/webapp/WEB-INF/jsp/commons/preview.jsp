@@ -220,7 +220,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		  	};
 		  	
 		  	customFilter.prototype.setModel = function(model) {
-		  	    this.eFilterText.value = model.value;
+		  	    if(model) this.eFilterText.value = model.value;
 		  	};
 		
 		  	//Defining custom sorting for backend 
