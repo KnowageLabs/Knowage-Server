@@ -499,7 +499,7 @@ public class AbstractDocumentExecutionWork extends DossierExecutionClient implem
 		}
 		if (dashboard) {
 			byte[] jsonParamsByteArray = jsonParams.toString().getBytes();
-			String encodedJsonParams = new String(Base64.getEncoder().encode(jsonParamsByteArray));
+			String encodedJsonParams = new String(Base64.getEncoder().withoutPadding().encode(jsonParamsByteArray));
 			serviceUrlBuilder.addParameter("params", encodedJsonParams);
 		}
 
