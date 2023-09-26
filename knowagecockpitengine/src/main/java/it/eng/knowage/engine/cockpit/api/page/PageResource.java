@@ -645,7 +645,7 @@ public class PageResource extends AbstractCockpitEngineResource {
 		}
 
 		String parametersAsString = parametersAsJson.toString();
-		return java.util.Base64.getEncoder().encodeToString(parametersAsString.getBytes());
+		return java.util.Base64.getEncoder().withoutPadding().encodeToString(parametersAsString.getBytes());
 	}
 
 	private boolean isDashboard(Engine eng) {
