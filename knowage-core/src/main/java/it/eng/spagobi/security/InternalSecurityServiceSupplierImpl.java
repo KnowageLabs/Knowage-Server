@@ -40,7 +40,7 @@ public class InternalSecurityServiceSupplierImpl implements ISecurityServiceSupp
 
 	static private Logger logger = Logger.getLogger(InternalSecurityServiceSupplierImpl.class);
 
-	private static int USER_JWT_TOKEN_EXPIRE_HOURS = 10; // JWT token for regular users will expire in 10 HOURS
+	public static int USER_JWT_TOKEN_EXPIRE_HOURS = 10; // JWT token for regular users will expire in 10 HOURS
 
 	private SpagoBIUserProfile checkAuthentication(SbiUser user, String userId, String psw) {
 		logger.debug("IN - userId: " + userId);

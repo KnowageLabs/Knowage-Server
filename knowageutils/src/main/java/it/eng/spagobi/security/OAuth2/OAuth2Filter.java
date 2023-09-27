@@ -56,6 +56,19 @@ public class OAuth2Filter implements Filter {
 		HttpSession session = ((HttpServletRequest) request).getSession();
 		HttpServletRequest httpRequest = (HttpServletRequest) request;
 
+		switch (OAuth2Config.getInstance().getFlowType()) {
+		case OIDC_IMPLICIT:
+			manageOIDCImplicitFlow(request, response, chain, session, httpRequest);
+			break;
+		default:
+			manageOAuth2Flow(request, response, chain, session, httpRequest);
+		}
+
+		logger.debug("OUT");
+	}
+
+	private void manageOAuth2Flow(ServletRequest request, ServletResponse response, FilterChain chain, HttpSession session, HttpServletRequest httpRequest)
+			throws IOException, ServletException {
 		String accessToken = httpRequest.getParameter("access_token");
 
 		if (accessToken != null) {
@@ -73,8 +86,27 @@ public class OAuth2Filter implements Filter {
 				chain.doFilter(request, response);
 			}
 		}
+	}
 
-		logger.debug("OUT");
+	private void manageOIDCImplicitFlow(ServletRequest request, ServletResponse response, FilterChain chain, HttpSession session,
+			HttpServletRequest httpRequest) throws IOException, ServletException {
+		String idToken = httpRequest.getParameter("id_token");
+
+		if (idToken != null) {
+			// request contains id token --> set it in session and continue with filters chain
+			LogMF.debug(logger, "ID token found: [{0}]", idToken);
+			session.setAttribute(Oauth2SsoService.ID_TOKEN, idToken);
+			chain.doFilter(request, response);
+		} else {
+			if (session.isNew() || session.getAttribute(Oauth2SsoService.ID_TOKEN) == null) {
+				// OAuth2 flow must take place --> stop filters chain
+				logger.debug("ID token not found, starting OIDC flow...");
+				request.getRequestDispatcher(getFlowJSPPath()).forward(request, response);
+			} else {
+				// session is already initialized --> continue with filters chain
+				chain.doFilter(request, response);
+			}
+		}
 	}
 
 	private String getFlowJSPPath() {
@@ -86,6 +118,9 @@ public class OAuth2Filter implements Filter {
 			break;
 		case PKCE:
 			toReturn = "/oauth2/pkce/flow.jsp";
+			break;
+		case OIDC_IMPLICIT:
+			toReturn = "/oauth2/oidc_implicit/flow.jsp";
 			break;
 		}
 		return toReturn;
