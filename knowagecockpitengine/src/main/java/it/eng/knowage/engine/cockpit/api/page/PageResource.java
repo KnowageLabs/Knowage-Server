@@ -21,10 +21,9 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.net.URLEncoder;
+import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -459,8 +458,7 @@ public class PageResource extends AbstractCockpitEngineResource {
 				5000L);
 	}
 
-	private String getRequestUrlForPdfExport(HttpServletRequest request)
-			throws UnsupportedEncodingException, JSONException {
+	private String getRequestUrlForPdfExport(HttpServletRequest request) throws JSONException {
 
 		String documentLabel = request.getParameter("DOCUMENT_LABEL");
 		BIObject biObject = null;
@@ -481,8 +479,7 @@ public class PageResource extends AbstractCockpitEngineResource {
 		return externalUrl.toString();
 	}
 
-	private String getRequestUrlForExcelExport(HttpServletRequest request)
-			throws UnsupportedEncodingException, JSONException {
+	private String getRequestUrlForExcelExport(HttpServletRequest request) throws JSONException {
 
 		String documentLabel = request.getParameter("DOCUMENT_LABEL");
 		BIObject biObject = null;
@@ -541,19 +538,6 @@ public class PageResource extends AbstractCockpitEngineResource {
 		return template;
 	}
 
-	@Deprecated
-	private void manageParametersForDashboards(BIObject biObject, String documentLabel, StringBuilder sb)
-			throws JSONException {
-		sb.append("knowage-vue/dashboard/");
-		sb.append(documentLabel);
-		sb.append("?toolbar=false");
-		sb.append("&menu=false");
-		sb.append("&params=");
-		sb.append(createJsonFromParemeters(biObject));
-		sb.append("&role=");
-		sb.append(getExecutionRoleForDashboard());
-	}
-
 	private void manageParametersForDashboards(BIObject biObject, String documentLabel, URIBuilder uriBuilder)
 			throws JSONException {
 
@@ -563,24 +547,7 @@ public class PageResource extends AbstractCockpitEngineResource {
 		addParametersToHideToolbarAndMenuInVue(uriBuilder);
 	}
 
-	@Deprecated
-	private void manageParametersForEverythingElse(StringBuilder sb) throws UnsupportedEncodingException {
-		String sep = "?";
-		Map<String, String[]> parameterMap = request.getParameterMap();
-		for (Entry<String, String[]> parameter : parameterMap.entrySet()) {
-			String key = parameter.getKey();
-			String[] value = parameter.getValue();
-			if (value != null && value.length > 0) {
-				sb.append(sep);
-				sb.append(URLEncoder.encode(key, UTF_8.name()));
-				sb.append("=");
-				sb.append(URLEncoder.encode(value[0], UTF_8.name()));
-				sep = "&";
-			}
-		}
-	}
-
-	private void manageParametersForEverythingElse(URIBuilder uriBuilder) throws UnsupportedEncodingException {
+	private void manageParametersForEverythingElse(URIBuilder uriBuilder) {
 		Map<String, String[]> parameterMap = request.getParameterMap();
 		for (Entry<String, String[]> parameter : parameterMap.entrySet()) {
 			String key = parameter.getKey();
@@ -602,8 +569,11 @@ public class PageResource extends AbstractCockpitEngineResource {
 
 	private String createJsonFromParemeters(BIObject biObject) throws JSONException {
 		List<BIObjectParameter> drivers = biObject.getDrivers();
-		Map<String, String[]> parameterMap = request.getParameterMap();
+		// We wrap parameters map because it could be updated here below
+		Map<String, String[]> parameterMap = new HashMap<>(request.getParameterMap());
 		JSONArray parametersAsJson = new JSONArray();
+
+		reconcileParametersWithParamsV2FromUrl(parameterMap);
 
 		for (BIObjectParameter driver : drivers) {
 			String urlName = driver.getParameterUrlName();
@@ -655,6 +625,38 @@ public class PageResource extends AbstractCockpitEngineResource {
 	private void addParametersToHideToolbarAndMenuInVue(URIBuilder uriBuilder) {
 		uriBuilder.addParameter("toolbar", "false");
 		uriBuilder.addParameter("menu", "false");
+	}
+
+	private void reconcileParametersWithParamsV2FromUrl(Map<String, String[]> parameterMap) throws JSONException {
+		// Manage new parameters format in Base64
+		String parametersV2FromUrl = Optional.ofNullable(request.getParameter("params"))
+				.map(e -> new String(java.util.Base64.getDecoder().decode(e))).orElse("[]");
+		JSONArray parametersV2FromUrlAsJSONArray = new JSONArray(parametersV2FromUrl);
+		for (int i = 0; i < parametersV2FromUrlAsJSONArray.length(); i++) {
+			JSONObject currParameterFromParametersV2 = (JSONObject) parametersV2FromUrlAsJSONArray.get(i);
+
+			String urlName = currParameterFromParametersV2.getString("urlName");
+
+			if (!parameterMap.containsKey(urlName)) {
+				List<String> values = new ArrayList<>();
+				List<String> descriptions = new ArrayList<>();
+
+				JSONArray value = currParameterFromParametersV2.getJSONArray("value");
+
+				for (int k = 0; k < value.length(); k++) {
+					JSONObject currentParameterValue = (JSONObject) value.get(k);
+
+					String cValue = currentParameterValue.getString("value");
+					String cDesc = currentParameterValue.getString("description");
+
+					values.add(cValue);
+					descriptions.add(cDesc);
+				}
+
+				parameterMap.put(urlName, values.toArray(new String[0]));
+				parameterMap.put(urlName + "_description", descriptions.toArray(new String[0]));
+			}
+		}
 	}
 
 }
