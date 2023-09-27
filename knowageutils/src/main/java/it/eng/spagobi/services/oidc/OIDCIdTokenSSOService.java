@@ -15,26 +15,31 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package it.eng.spagobi.services.oauth2;
+package it.eng.spagobi.services.oidc;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import org.apache.log4j.LogMF;
+import org.apache.log4j.Logger;
+
 import it.eng.spagobi.services.common.JWTSsoService;
-import it.eng.spagobi.services.common.SsoServiceInterface;
+import it.eng.spagobi.services.oauth2.Oauth2SsoService;
 
-public class Oauth2SsoService extends JWTSsoService {
+public class OIDCIdTokenSSOService extends JWTSsoService {
 
-	public static final String ACCESS_TOKEN = "access_token";
-	public static final String ID_TOKEN = "id_token";
+	private static Logger logger = Logger.getLogger(OIDCIdTokenSSOService.class);
 
 	@Override
 	public String readUserIdentifier(HttpServletRequest request) {
 		HttpSession session = request.getSession();
-		String userId = (String) session.getAttribute(ACCESS_TOKEN);
-		if (userId == null)
-			userId = request.getParameter(SsoServiceInterface.USER_ID);
-		return userId;
+		String idToken = (String) session.getAttribute(Oauth2SsoService.ID_TOKEN);
+		if (idToken == null) {
+			logger.debug("ID token not found.");
+			return super.readUserIdentifier(request);
+		}
+		LogMF.debug(logger, "ID token found: [{0}]", idToken);
+		return idToken;
 	}
 
 }

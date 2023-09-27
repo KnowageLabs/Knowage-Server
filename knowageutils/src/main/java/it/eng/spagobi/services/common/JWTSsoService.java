@@ -18,10 +18,14 @@
 package it.eng.spagobi.services.common;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.stream.Collectors;
 
 import javax.portlet.PortletSession;
 import javax.servlet.http.HttpServletRequest;
@@ -35,9 +39,11 @@ import com.auth0.jwt.JWTCreator.Builder;
 import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTVerificationException;
+import com.auth0.jwt.impl.PublicClaims;
 import com.auth0.jwt.interfaces.Claim;
 import com.auth0.jwt.interfaces.DecodedJWT;
 
+import it.eng.spagobi.services.security.bo.SpagoBIUserProfile;
 import it.eng.spagobi.services.security.exceptions.SecurityException;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
@@ -50,6 +56,14 @@ public class JWTSsoService implements SsoServiceInterface {
 	private static Logger logger = Logger.getLogger(JWTSsoService.class);
 
 	private static final JWTSsoServiceAlgorithmFactory ALGORITHM_FACTORY = JWTSsoServiceAlgorithmFactory.getInstance();
+
+	public static final String KNOWAGE_ISSUER = "knowage";
+	public static final String USERNAME_CLAIM = "kn_username";
+	public static final String ROLES_CLAIM = "kn_roles";
+	public static final String IS_SUPER_ADMIN_CLAIM = "kn_is_super_admin";
+
+	protected static final List<String> PREDEFINED_CLAIMS_LIST = Arrays.asList(SsoServiceInterface.USER_ID, USERNAME_CLAIM, ROLES_CLAIM, IS_SUPER_ADMIN_CLAIM,
+			PublicClaims.ISSUER, PublicClaims.EXPIRES_AT);
 
 	@Override
 	public String readUserIdentifier(HttpServletRequest request) {
@@ -88,7 +102,7 @@ public class JWTSsoService implements SsoServiceInterface {
 		LogMF.debug(logger, "JWT token will expire at [{0}]", expiresAt);
 		// @formatter:off
 		String token = JWT.create()
-				.withIssuer("knowage")
+				.withIssuer(KNOWAGE_ISSUER)
 				.withExpiresAt(expiresAt)
 				.sign(algorithm);
 		// @formatter:on
@@ -102,7 +116,7 @@ public class JWTSsoService implements SsoServiceInterface {
 			Algorithm algorithm = ALGORITHM_FACTORY.getAlgorithm();
 			String jwtToken = ticket;
 			logger.debug("JWT token in input : [" + jwtToken + "]");
-			JWTVerifier verifier = JWT.require(algorithm).withIssuer("knowage").build();
+			JWTVerifier verifier = JWT.require(algorithm).withIssuer(KNOWAGE_ISSUER).build();
 			verifier.verify(jwtToken);
 			logger.debug("JWT token verified properly");
 		} catch (JWTVerificationException e) {
@@ -241,6 +255,65 @@ public class JWTSsoService implements SsoServiceInterface {
 		toReturn.put("dn", dn);
 		toReturn.put("psw", psw);
 		return toReturn;
+	}
+
+	public static String getFullJWTToken(String userId, String userName, String[] roles, Map<String, String> attributes, boolean isSuperAdmin, Date expiresAt) {
+		Algorithm algorithm = ALGORITHM_FACTORY.getAlgorithm();
+		// @formatter:off
+		Builder builder = JWT.create()
+				.withClaim(SsoServiceInterface.USER_ID, userId)
+				.withClaim(USERNAME_CLAIM, userName)
+				.withArrayClaim(ROLES_CLAIM, roles)
+				.withClaim(IS_SUPER_ADMIN_CLAIM, isSuperAdmin)
+				.withIssuer(KNOWAGE_ISSUER)
+				.withExpiresAt(expiresAt);
+		// @formatter:on
+		// attributes cannot be nested at the moment (https://github.com/auth0/java-jwt/issues/163)
+		attributes.forEach(builder::withClaim);
+
+		return builder.sign(algorithm);
+	}
+
+	public static SpagoBIUserProfile fullJWTToken2UserProfile(String jwtToken) {
+		LogMF.debug(logger, "JWT token in input is [{0}]", jwtToken);
+
+		SpagoBIUserProfile profile = new SpagoBIUserProfile();
+		profile.setUniqueIdentifier(jwtToken);
+
+		Algorithm algorithm = ALGORITHM_FACTORY.getAlgorithm();
+		JWTVerifier verifier = JWT.require(algorithm).build();
+		DecodedJWT decodedJWT = verifier.verify(jwtToken);
+		logger.debug("JWT token verified properly");
+
+		Claim userIdClaim = decodedJWT.getClaim(SsoServiceInterface.USER_ID);
+		LogMF.debug(logger, "User id detected is [{0}]", userIdClaim.asString());
+		assertNotEmpty(userIdClaim, "User id information is missing!!!");
+		profile.setUserId(userIdClaim.asString());
+
+		Claim usernameClaim = decodedJWT.getClaim(USERNAME_CLAIM);
+		LogMF.debug(logger, "User name detected is [{0}]", usernameClaim.asString());
+		assertNotEmpty(usernameClaim, "User name information is missing!!!");
+		profile.setUserName(usernameClaim.asString());
+
+		Claim rolesClaim = decodedJWT.getClaim(ROLES_CLAIM);
+		LogMF.debug(logger, "Roles claim detected is [{0}]", rolesClaim.asString());
+		profile.setRoles(rolesClaim.asArray(String.class));
+
+		Claim isSuperAdminClaim = decodedJWT.getClaim(IS_SUPER_ADMIN_CLAIM);
+		LogMF.debug(logger, "Super admin flag detected is [{0}]", isSuperAdminClaim.asBoolean());
+		profile.setIsSuperadmin(isSuperAdminClaim.asBoolean());
+
+		// @formatter:off
+		HashMap<String, String> attributes = decodedJWT.getClaims()
+				.entrySet()
+				.stream()
+				.filter(entry -> !PREDEFINED_CLAIMS_LIST.contains(entry.getKey()))
+				.collect(Collectors.toMap(Entry::getKey, e -> e.getValue().asString(), (prev, next) -> next, HashMap::new));
+		// @formatter:on
+		LogMF.debug(logger, "Attributs detected are [{0}]", attributes);
+		profile.setAttributes(attributes);
+
+		return profile;
 	}
 
 }

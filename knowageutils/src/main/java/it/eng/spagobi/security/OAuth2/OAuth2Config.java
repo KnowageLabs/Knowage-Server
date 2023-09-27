@@ -32,8 +32,8 @@ import org.apache.log4j.Logger;
  */
 public class OAuth2Config {
 
-	public static enum FLOWTYPE {
-		PKCE, AUTHORIZATION_CODE;
+	public enum FLOWTYPE {
+		PKCE, AUTHORIZATION_CODE, OIDC_IMPLICIT;
 	}
 
 	private static Logger logger = Logger.getLogger(OAuth2Config.class);
@@ -61,6 +61,8 @@ public class OAuth2Config {
 	private final String applicationId;
 	private final String tokenPath;
 	private final String tokenBody;
+	private final String jwtTokenIssuer;
+	private final String idTokenJsonRolesPath;
 
 	public OAuth2Config() {
 
@@ -132,6 +134,10 @@ public class OAuth2Config {
 
 		this.tokenBody = Optional.ofNullable(System.getProperty("oauth2_token_body", System.getenv("OAUTH2_TOKEN_BODY")))
 				.orElse("{\"name\": \"{0}\",\"password\": \"{1}\"}");
+
+		this.jwtTokenIssuer = System.getProperty("oauth2_jwt_token_issuer", System.getenv("OAUTH2_JWT_TOKEN_ISSUER"));
+
+		this.idTokenJsonRolesPath = System.getProperty("oauth2_id_token_roles_json_path", System.getenv("OAUTH2_ID_TOKEN_ROLES_JSON_PATH"));
 
 		logger.debug("constructed OAuth2Config: " + this.toString());
 	}
@@ -228,13 +234,22 @@ public class OAuth2Config {
 		return StringUtils.isNotBlank(this.userInfoUrl);
 	}
 
+	public String getJwtTokenIssuer() {
+		return jwtTokenIssuer;
+	}
+
+	public String getIdTokenJsonRolesPath() {
+		return idTokenJsonRolesPath;
+	}
+
 	@Override
 	public String toString() {
-		return "OAuth2Config [type=" + type + ", authorizeUrl=" + authorizeUrl + ", redirectUrl=" + redirectUrl + ", clientId=" + clientId + ", accessTokenUrl="
-				+ accessTokenUrl + ", jwksUrl=" + jwksUrl + ", userInfoUrl=" + userInfoUrl + ", adminId=" + adminId + ", adminEmail=" + adminEmail + ", scopes="
-				+ scopes + ", userIdClaim=" + userIdClaim + ", userNameClaim=" + userNameClaim + ", profileAttributes=" + profileAttributes
-				+ ", restApiBaseUrl=" + restApiBaseUrl + ", organizationInfoPath=" + organizationInfoPath + ", rolesPath=" + rolesPath + ", applicationId="
-				+ applicationId + ", tokenPath=" + tokenPath + ", tokenBody=" + tokenBody + "]";
+		return "OAuth2Config [type=" + type + ", authorizeUrl=" + authorizeUrl + ", redirectUrl=" + redirectUrl + ", clientId=" + clientId + ", clientSecret="
+				+ clientSecret + ", accessTokenUrl=" + accessTokenUrl + ", jwksUrl=" + jwksUrl + ", userInfoUrl=" + userInfoUrl + ", adminId=" + adminId
+				+ ", adminEmail=" + adminEmail + ", adminPassword=" + adminPassword + ", scopes=" + scopes + ", userIdClaim=" + userIdClaim + ", userNameClaim="
+				+ userNameClaim + ", profileAttributes=" + profileAttributes + ", restApiBaseUrl=" + restApiBaseUrl + ", organizationInfoPath="
+				+ organizationInfoPath + ", rolesPath=" + rolesPath + ", applicationId=" + applicationId + ", tokenPath=" + tokenPath + ", tokenBody="
+				+ tokenBody + ", jwtTokenIssuer=" + jwtTokenIssuer + ", idTokenJsonRolesPath=" + idTokenJsonRolesPath + "]";
 	}
 
 }
