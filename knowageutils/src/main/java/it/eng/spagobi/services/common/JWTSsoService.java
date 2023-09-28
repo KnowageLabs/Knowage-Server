@@ -202,17 +202,26 @@ public class JWTSsoService implements SsoServiceInterface {
 	}
 
 	public static String jwtToken2userId(String jwtToken) throws JWTVerificationException {
-		Algorithm algorithm = ALGORITHM_FACTORY.getAlgorithm();
-		LogMF.debug(logger, "JWT token in input is [{0}]", jwtToken);
-		JWTVerifier verifier = JWT.require(algorithm).build();
-		DecodedJWT decodedJWT = verifier.verify(jwtToken);
-		logger.debug("JWT token verified properly");
-		Claim userIdClaim = decodedJWT.getClaim(SsoServiceInterface.USER_ID);
+		Map<String, Claim> claims = getClaims(jwtToken);
+		Claim userIdClaim = claims.get(SsoServiceInterface.USER_ID);
 		LogMF.debug(logger, "User id detected is [{0}]", userIdClaim.asString());
 		assertNotEmpty(userIdClaim, "User id information is missing!!!");
 		String userId = userIdClaim.asString();
 		LogMF.debug(logger, "User id is [{0}]", userId);
 		return userId;
+	}
+
+	public static Map<String, Claim> getClaims(String jwtToken) throws JWTVerificationException {
+		Algorithm algorithm = ALGORITHM_FACTORY.getAlgorithm();
+		LogMF.debug(logger, "JWT token in input is [{0}]", jwtToken);
+		JWTVerifier verifier = JWT.require(algorithm).build();
+		DecodedJWT decodedJWT = verifier.verify(jwtToken);
+		logger.debug("JWT token verified properly");
+		return decodedJWT.getClaims();
+	}
+
+	public static String map2jwtToken(Map<String, String> claims, Date expiresAt) {
+		return map2jwtToken(claims, expiresAt, KNOWAGE_ISSUER);
 	}
 
 	public static String map2jwtToken(Map<String, String> claims, Date expiresAt, String issuer) {
