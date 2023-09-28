@@ -26,10 +26,11 @@ import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.apache.log4j.LogMF;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import it.eng.spagobi.services.oauth2.Oauth2SsoService;
 
@@ -42,95 +43,130 @@ import it.eng.spagobi.services.oauth2.Oauth2SsoService;
  */
 public class OAuth2Filter implements Filter {
 
-	static private Logger logger = Logger.getLogger(OAuth2Filter.class);
+	private static final Logger LOGGER = LogManager.getLogger(OAuth2Filter.class);
+
+	private OAuth2FlowManager flowManager = new NoFlowManager();
+
+	private interface OAuth2FlowManager {
+		void manage(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
+				throws ServletException, IOException;
+	}
+
+	private static class ImplicitFlowManager implements OAuth2FlowManager {
+
+		@Override
+		public void manage(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
+				throws ServletException, IOException {
+
+			LOGGER.debug("Managing OAuth2 in implicit way");
+
+			HttpSession session = request.getSession();
+			OAuth2Config config = OAuth2Config.getInstance();
+			String idToken = request.getParameter("id_token");
+
+			if (idToken != null) {
+				// request contains id token --> set it in session and continue with filters chain
+				LOGGER.debug("ID token found: [{}]", idToken);
+				session.setAttribute(Oauth2SsoService.ID_TOKEN, idToken);
+				chain.doFilter(request, response);
+			} else {
+				if (session.isNew() || session.getAttribute(Oauth2SsoService.ID_TOKEN) == null) {
+					// OAuth2 flow must take place --> stop filters chain
+					LOGGER.debug("ID token not found, starting OIDC flow...");
+					request.getRequestDispatcher(config.getFlowJSPPath()).forward(request, response);
+				} else {
+					// session is already initialized --> continue with filters chain
+					chain.doFilter(request, response);
+				}
+			}
+		}
+
+	}
+
+	private static class ClassicFlowManager implements OAuth2FlowManager {
+
+		@Override
+		public void manage(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
+				throws ServletException, IOException {
+
+			LOGGER.debug("Managing OAuth2 in a classic way");
+
+			HttpSession session = request.getSession();
+			OAuth2Config config = OAuth2Config.getInstance();
+			String accessToken = request.getParameter("access_token");
+
+			if (accessToken != null) {
+				// request contains access token --> set it in session and continue with filters chain
+				LOGGER.debug("Access token found: [{}]", accessToken);
+				session.setAttribute(Oauth2SsoService.ACCESS_TOKEN, accessToken);
+				chain.doFilter(request, response);
+			} else {
+				if (session.isNew() || session.getAttribute(Oauth2SsoService.ACCESS_TOKEN) == null) {
+					// OAuth2 flow must take place --> stop filters chain
+					LOGGER.debug("Access token not found, starting OAuth2 flow...");
+					request.getRequestDispatcher(config.getFlowJSPPath()).forward(request, response);
+				} else {
+					// session is already initialized --> continue with filters chain
+					chain.doFilter(request, response);
+				}
+			}
+		}
+
+	}
+
+	private static class NoFlowManager implements OAuth2FlowManager {
+
+		@Override
+		public void manage(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
+				throws ServletException, IOException {
+
+			LOGGER.debug("No OAuth2 management");
+
+			chain.doFilter(request, response);
+		}
+
+	}
+
+	@Override
+	public void init(FilterConfig fConfig) throws ServletException {
+		OAuth2Config config = OAuth2Config.getInstance();
+		OAuth2Config.FlowType flowType = config.getFlowType();
+
+		switch (flowType) {
+		case OIDC_IMPLICIT:
+			flowManager = new ImplicitFlowManager();
+			break;
+		case PKCE:
+		case AUTHORIZATION_CODE:
+			flowManager = new ClassicFlowManager();
+			break;
+		case NONE:
+		default:
+			flowManager = new NoFlowManager();
+		}
+	}
 
 	@Override
 	public void destroy() {
-		// TODO Auto-generated method stub
 	}
 
 	@Override
-	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
-		logger.debug("IN");
-
-		HttpSession session = ((HttpServletRequest) request).getSession();
-		HttpServletRequest httpRequest = (HttpServletRequest) request;
-
-		switch (OAuth2Config.getInstance().getFlowType()) {
-		case OIDC_IMPLICIT:
-			manageOIDCImplicitFlow(request, response, chain, session, httpRequest);
-			break;
-		default:
-			manageOAuth2Flow(request, response, chain, session, httpRequest);
-		}
-
-		logger.debug("OUT");
-	}
-
-	private void manageOAuth2Flow(ServletRequest request, ServletResponse response, FilterChain chain, HttpSession session, HttpServletRequest httpRequest)
+	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
 			throws IOException, ServletException {
-		String accessToken = httpRequest.getParameter("access_token");
 
-		if (accessToken != null) {
-			// request contains access token --> set it in session and continue with filters chain
-			LogMF.debug(logger, "Access token found: [{0}]", accessToken);
-			session.setAttribute(Oauth2SsoService.ACCESS_TOKEN, accessToken);
-			chain.doFilter(request, response);
+		LOGGER.debug("Executing OAuth2 filter");
+
+		if (request instanceof HttpServletRequest) {
+			HttpServletRequest httpRequest = (HttpServletRequest) request;
+			HttpServletResponse httpResponse = (HttpServletResponse) response;
+
+			flowManager.manage(httpRequest, httpResponse, chain);
+
 		} else {
-			if (session.isNew() || session.getAttribute(Oauth2SsoService.ACCESS_TOKEN) == null) {
-				// OAuth2 flow must take place --> stop filters chain
-				logger.debug("Access token not found, starting OAuth2 flow...");
-				request.getRequestDispatcher(getFlowJSPPath()).forward(request, response);
-			} else {
-				// session is already initialized --> continue with filters chain
-				chain.doFilter(request, response);
-			}
+			LOGGER.warn("Non HTTP request. We ignore it...");
 		}
+
+		LOGGER.debug("Ending OAuth2 filter");
 	}
 
-	private void manageOIDCImplicitFlow(ServletRequest request, ServletResponse response, FilterChain chain, HttpSession session,
-			HttpServletRequest httpRequest) throws IOException, ServletException {
-		String idToken = httpRequest.getParameter("id_token");
-
-		if (idToken != null) {
-			// request contains id token --> set it in session and continue with filters chain
-			LogMF.debug(logger, "ID token found: [{0}]", idToken);
-			session.setAttribute(Oauth2SsoService.ID_TOKEN, idToken);
-			chain.doFilter(request, response);
-		} else {
-			if (session.isNew() || session.getAttribute(Oauth2SsoService.ID_TOKEN) == null) {
-				// OAuth2 flow must take place --> stop filters chain
-				logger.debug("ID token not found, starting OIDC flow...");
-				request.getRequestDispatcher(getFlowJSPPath()).forward(request, response);
-			} else {
-				// session is already initialized --> continue with filters chain
-				chain.doFilter(request, response);
-			}
-		}
-	}
-
-	private String getFlowJSPPath() {
-		String toReturn = null;
-		OAuth2Config.FLOWTYPE type = OAuth2Config.getInstance().getFlowType();
-		switch (type) {
-		case AUTHORIZATION_CODE:
-			toReturn = "/oauth2/authorization_code/flow.jsp";
-			break;
-		case PKCE:
-			toReturn = "/oauth2/pkce/flow.jsp";
-			break;
-		case OIDC_IMPLICIT:
-			toReturn = "/oauth2/oidc_implicit/flow.jsp";
-			break;
-		}
-		return toReturn;
-	}
-
-	/**
-	 * @see Filter#init(FilterConfig)
-	 */
-	@Override
-	public void init(FilterConfig fConfig) throws ServletException {
-		OAuth2Config.getInstance();
-	}
 }
