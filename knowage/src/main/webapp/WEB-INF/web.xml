@@ -108,12 +108,10 @@
 	</filter>
 	${enable.cas.start} END-CAS -->
 
-	<!-- START OAUTH 2
  	<filter>
 		<filter-name>OAuthFilter</filter-name>
 		<filter-class>it.eng.spagobi.security.OAuth2.OAuth2Filter</filter-class>
 	</filter>
- 	END OAUTH 2 -->
 
 	<!-- This filter tries to create the user profile object before AdapterHTTP servlet execution -->
 	<filter>
@@ -155,12 +153,10 @@
 	</filter-mapping>
 	${enable.cas.start} END-CAS -->
 
-	<!-- START OAUTH 2
 	<filter-mapping>
 		<filter-name>OAuthFilter</filter-name>
 		<url-pattern>/servlet/AdapterHTTP</url-pattern>
 	</filter-mapping>
- 	END OAUTH 2 -->
 
 	<!-- HmacLoginFilter -->
 	<filter>
