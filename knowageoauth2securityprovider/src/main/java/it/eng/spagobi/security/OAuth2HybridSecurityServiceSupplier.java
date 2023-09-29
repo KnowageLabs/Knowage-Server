@@ -17,7 +17,11 @@
  */
 package it.eng.spagobi.security;
 
+import java.util.Map;
+
 import org.apache.log4j.Logger;
+
+import com.auth0.jwt.interfaces.Claim;
 
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.profiling.bean.SbiUser;
@@ -35,7 +39,7 @@ import it.eng.spagobi.utilities.assertion.UnreachableCodeException;
  */
 public class OAuth2HybridSecurityServiceSupplier extends InternalSecurityServiceSupplierImpl {
 
-	static private Logger logger = Logger.getLogger(OAuth2HybridSecurityServiceSupplier.class);
+	private static Logger logger = Logger.getLogger(OAuth2HybridSecurityServiceSupplier.class);
 
 	@Override
 	public SpagoBIUserProfile checkAuthentication(String userId, String psw) {
@@ -64,7 +68,17 @@ public class OAuth2HybridSecurityServiceSupplier extends InternalSecurityService
 		SpagoBIUserProfile profile = new SpagoBIUserProfile();
 		profile.setUniqueIdentifier(jwtToken);
 		profile.setUserId(userId);
-		profile.setUserName(userId);
+
+		String userName;
+		Map<String, Claim> claims = JWTSsoService.getClaims(jwtToken);
+		Claim userNameClaim = claims.get(JWTSsoService.USERNAME_CLAIM);
+		if (userNameClaim.isNull()) {
+			userName = userId;
+		} else {
+			userName = userNameClaim.asString();
+		}
+
+		profile.setUserName(userName);
 		profile.setIsSuperadmin(false);
 		return profile;
 	}

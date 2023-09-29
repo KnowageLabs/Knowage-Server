@@ -28,7 +28,7 @@ import it.eng.spagobi.profiling.bean.SbiUserAttributes;
 import it.eng.spagobi.services.security.bo.SpagoBIUserProfile;
 import it.eng.spagobi.services.security.service.ISecurityServiceSupplier;
 
-public class ProfiledLdapSecurityServiceSupplier implements ISecurityServiceSupplier {
+public class ProfiledLdapSecurityServiceSupplier extends InternalSecurityServiceSupplierImpl implements ISecurityServiceSupplier {
 
 	static private Logger logger = Logger.getLogger(ProfiledLdapSecurityServiceSupplier.class);
 
@@ -101,11 +101,6 @@ public class ProfiledLdapSecurityServiceSupplier implements ISecurityServiceSupp
 
 	@Override
 	public boolean checkAuthorization(String userId, String function) {
-		throw new UnsupportedOperationException();
-	}
-
-	@Override
-	public SpagoBIUserProfile checkAuthenticationToken(String token) {
 		throw new UnsupportedOperationException();
 	}
 

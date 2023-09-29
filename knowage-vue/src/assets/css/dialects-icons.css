@@ -1,189 +1,114 @@
+@charset "UTF-8";
+
 @font-face {
-    font-family: 'icomoon';
-    src: url('~@/assets/fonts/dialects/dialects.eot');
-    src: url('~@/assets/fonts/dialects/dialects.eot') format('embedded-opentype'), url('~@/assets/fonts/dialects/dialects.ttf') format('truetype'), url('~@/assets/fonts/dialects/dialects.woff') format('woff'), url('~@/assets/fonts/dialects/dialects.svg') format('svg');
-    font-weight: normal;
-    font-style: normal;
-    font-display: block;
+  font-family: "dialects";
+  src: url("/fonts/dialects/dialects.eot");
+  src: url("/fonts/dialects/dialects.eot?#iefix") format("embedded-opentype"),
+    url("/fonts/dialects/dialects.woff") format("woff"),
+    url("/fonts/dialects/dialects.ttf") format("truetype"),
+    url("/fonts/dialects/dialects.svg#dialects") format("svg");
+  font-weight: normal;
+  font-style: normal;
 }
 
-[class^='db-'],
-[class*=' db-'] {
-    /* use !important to prevent issues with browser extensions that change fonts */
-    font-family: 'icomoon' !important;
-    speak: never;
-    font-style: normal;
-    font-weight: normal;
-    font-variant: normal;
-    text-transform: none;
-    line-height: 1;
-
-    /* Better Font Rendering =========== */
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
+[data-icon]:before {
+  font-family: "dialects" !important;
+  content: attr(data-icon);
+  font-style: normal !important;
+  font-weight: normal !important;
+  font-variant: normal !important;
+  text-transform: none !important;
+  speak: none;
+  line-height: 1;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
-.db-microsoft-sql:before {
-    content: '\e900';
+[class^="db-"]:before,
+[class*=" db-"]:before {
+  font-family: "dialects" !important;
+  font-style: normal !important;
+  font-weight: normal !important;
+  font-variant: normal !important;
+  text-transform: none !important;
+  speak: none;
+  line-height: 1;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
-.db-azure-synapse:before {
-    content: '\e901';
+
+.db-db:before {
+  content: "\61";
 }
-.db-apache-spark:before {
-    content: '\e902';
+.db-archivenetwork-add:before {
+  content: "\62";
 }
-.db-apache-impala:before {
-    content: '\e903';
+.db-network-add:before {
+  content: "\63";
 }
-.db-apache-hive:before {
-    content: '\e904';
+.db-network-edit:before {
+  content: "\64";
 }
-.db-apache-cassandra:before {
-    content: '\e905';
+.db-network-remove:before {
+  content: "\65";
 }
-.db-AWS-Redshift:before {
-    content: '\e906';
+.db-network-security:before {
+  content: "\66";
 }
-.db-google-spanner:before {
-    content: '\e907';
-}
-.db-google-big-query .path1:before {
-    content: '\e908';
-    color: rgb(0, 0, 0);
-}
-.db-google-big-query .path2:before {
-    content: '\e909';
-    margin-left: -1em;
-    color: rgb(255, 255, 255);
-}
-.db-google-big-query .path3:before {
-    content: '\e90a';
-    margin-left: -1em;
-    color: rgb(255, 255, 255);
-}
-.db-google-big-query .path4:before {
-    content: '\e90b';
-    margin-left: -1em;
-    color: rgb(255, 255, 255);
-}
-.db-Teradata .path1:before {
-    content: '\e90c';
-    color: rgb(61, 73, 82);
-}
-.db-teradata .path2:before {
-    content: '\e90d';
-    margin-left: -1em;
-    color: rgb(61, 73, 82);
-}
-.db-teradata .path3:before {
-    content: '\e90e';
-    margin-left: -1em;
-    color: rgb(61, 73, 82);
-}
-.db-teradata .path4:before {
-    content: '\e90f';
-    margin-left: -1em;
-    color: rgb(61, 73, 82);
-}
-.db-teradata .path5:before {
-    content: '\e910';
-    margin-left: -1em;
-    color: rgb(61, 73, 82);
-}
-.db-teradata .path6:before {
-    content: '\e911';
-    margin-left: -1em;
-    color: rgb(61, 73, 82);
-}
-.db-teradata .path7:before {
-    content: '\e912';
-    margin-left: -1em;
-    color: rgb(61, 73, 82);
-}
-.db-teradata .path8:before {
-    content: '\e913';
-    margin-left: -1em;
-    color: rgb(61, 73, 82);
-}
-.db-teradata .path9:before {
-    content: '\e914';
-    margin-left: -1em;
-    color: rgb(240, 111, 55);
-}
-.db-vertica:before {
-    content: '\e915';
-}
-.db-orientDB:before {
-    content: '\e916';
-}
-.db-Postgresql:before {
-    content: '\e917';
-}
-.db-mariadb:before {
-    content: '\e918';
-}
-.db-oracle:before {
-    content: '\e919';
+.db-network:before {
+  content: "\67";
 }
 .db-database:before {
-    content: '\e964';
+  content: "\6a";
 }
-
-.material-icons {
-    font-family: 'Material Icons';
-    font-weight: normal;
-    font-style: normal;
-    font-size: 16px; /* Preferred icon size */
-    display: inline-block;
-    line-height: 1;
-    text-transform: none;
-    letter-spacing: normal;
-    word-wrap: normal;
-    white-space: nowrap;
-    direction: ltr;
-
-    /* Support for all WebKit browsers. */
-    -webkit-font-smoothing: antialiased;
-    /* Support for Safari and Chrome. */
-    text-rendering: optimizeLegibility;
-
-    /* Support for Firefox. */
-    -moz-osx-font-smoothing: grayscale;
-
-    /* Support for IE. */
-    font-feature-settings: 'liga';
+.db-table:before {
+  content: "\6b";
 }
-
-/* Rules for sizing the icon. */
-
-.material-icons.md-16 {
-    font-size: 16px;
+.db-postgresql:before {
+  content: "\6c";
 }
-.material-icons.md-18 {
-    font-size: 18px;
+.db-orientdb:before {
+  content: "\6d";
 }
-.material-icons.md-24 {
-    font-size: 24px;
+.db-oracle:before {
+  content: "\6e";
 }
-.material-icons.md-36 {
-    font-size: 36px;
+.db-microsoft-sql:before {
+  content: "\6f";
 }
-.material-icons.md-48 {
-    font-size: 48px;
+.db-mariadb:before {
+  content: "\70";
 }
-
-/* Rules for using icons as black on a light background. */
-.material-icons.md-dark {
-    color: rgba(0, 0, 0, 0.54);
+.db-google-spanner:before {
+  content: "\71";
 }
-.material-icons.md-dark.md-inactive {
-    color: rgba(0, 0, 0, 0.26);
+.db-google-big-query:before {
+  content: "\72";
 }
-
-/* Rules for using icons as white on a dark background. */
-.material-icons.md-light {
-    color: rgba(255, 255, 255, 1);
+.db-azure-synapse:before {
+  content: "\73";
 }
-.material-icons.md-light.md-inactive {
-    color: rgba(255, 255, 255, 0.3);
+.db-aws-redshift:before {
+  content: "\74";
+}
+.db-apache-spark:before {
+  content: "\75";
+}
+.db-apache-impala:before {
+  content: "\76";
+}
+.db-apache-hive:before {
+  content: "\77";
+}
+.db-apache-cassandra:before {
+  content: "\78";
+}
+.db-solr-logo-on-white:before {
+  content: "\79";
+}
+.db-teradata:before {
+  content: "\7a";
+}
+.db-vertica:before {
+  content: "\41";
 }
