@@ -66,10 +66,10 @@ public class OAuth2Config {
 	public OAuth2Config() {
 
 		String typeStr = Optional.ofNullable(System.getProperty("oauth2_flow_type", System.getenv("OAUTH2_FLOW_TYPE")))
-				.orElse("");
+				.orElse("").toUpperCase();
 
-		if (EnumUtils.isValidEnum(FlowType.class, typeStr.toUpperCase())) {
-			type = FlowType.valueOf(typeStr.toUpperCase());
+		if (EnumUtils.isValidEnum(FlowType.class, typeStr) && FlowType.valueOf(typeStr) != FlowType.NONE) {
+			type = FlowType.valueOf(typeStr);
 
 			clientId = Optional.ofNullable(System.getProperty("oauth2_client_id", System.getenv("OAUTH2_CLIENT_ID")))
 					.orElseThrow(() -> new RuntimeException("Missing OAUTH2_CLIENT_ID"));
@@ -90,13 +90,13 @@ public class OAuth2Config {
 
 			jwksUrl = System.getProperty("oauth2_jwks_url", System.getenv("OAUTH2_JWKS_URL"));
 
-//		userInfoUrl = Optional.ofNullable(System.getProperty("oauth2_user_info_url", System.getenv("OAUTH2_USER_INFO_URL")))
-//				.orElseThrow(() -> new RuntimeException("missing OAUTH2_USER_INFO_URL"));
+//	userInfoUrl = Optional.ofNullable(System.getProperty("oauth2_user_info_url", System.getenv("OAUTH2_USER_INFO_URL")))
+//			.orElseThrow(() -> new RuntimeException("missing OAUTH2_USER_INFO_URL"));
 
 			userInfoUrl = System.getProperty("oauth2_user_info_url", System.getenv("OAUTH2_USER_INFO_URL"));
 
-//		adminEmail = Optional.ofNullable(System.getProperty("oauth2_admin_email", System.getenv("OAUTH2_ADMIN_EMAIL")))
-//				.orElseThrow(() -> new RuntimeException("missing OAUTH2_ADMIN_EMAIL"));
+//	adminEmail = Optional.ofNullable(System.getProperty("oauth2_admin_email", System.getenv("OAUTH2_ADMIN_EMAIL")))
+//			.orElseThrow(() -> new RuntimeException("missing OAUTH2_ADMIN_EMAIL"));
 
 			adminId = System.getProperty("oauth2_admin_id", System.getenv("OAUTH2_ADMIN_ID"));
 
@@ -115,10 +115,10 @@ public class OAuth2Config {
 					.ofNullable(System.getProperty("oauth2_user_name_claim", System.getenv("OAUTH2_USER_NAME_CLAIM")))
 					.orElse("preferred_username");
 
-			final Optional<String> _attributes = Optional.ofNullable(
+			final Optional<String> attributes = Optional.ofNullable(
 					System.getProperty("oauth2_profile_attributes", System.getenv("OAUTH2_PROFILE_ATTRIBUTES")));
-			if (_attributes.isPresent()) {
-				String[] parts = _attributes.get().split(",");
+			if (attributes.isPresent()) {
+				String[] parts = attributes.get().split(",");
 				for (int i = 0; i < parts.length; i++) {
 					profileAttributes.add(parts[i]);
 				}
@@ -145,6 +145,7 @@ public class OAuth2Config {
 
 			idTokenJsonRolesPath = System.getProperty("oauth2_id_token_roles_json_path",
 					System.getenv("OAUTH2_ID_TOKEN_ROLES_JSON_PATH"));
+
 		} else {
 			type = FlowType.NONE;
 			authorizeUrl = null;
@@ -170,7 +171,7 @@ public class OAuth2Config {
 			idTokenJsonRolesPath = null;
 		}
 
-		LOGGER.debug("Constructed OAuth2Config: " + toString());
+		LOGGER.debug("Constructed OAuth2Config: {}", this);
 	}
 
 	public static OAuth2Config getInstance() {
@@ -298,6 +299,9 @@ public class OAuth2Config {
 		case OIDC_IMPLICIT:
 			ret = "/oauth2/oidc_implicit/flow.jsp";
 			break;
+		case NONE:
+		default:
+			ret = null;
 		}
 		return ret;
 	}
