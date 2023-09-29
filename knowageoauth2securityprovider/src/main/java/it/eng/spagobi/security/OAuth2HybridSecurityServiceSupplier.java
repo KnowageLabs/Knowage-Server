@@ -71,11 +71,11 @@ public class OAuth2HybridSecurityServiceSupplier extends InternalSecurityService
 
 		String userName;
 		Map<String, Claim> claims = JWTSsoService.getClaims(jwtToken);
-		Claim userNameClaim = claims.get(JWTSsoService.USERNAME_CLAIM);
-		if (userNameClaim.isNull()) {
-			userName = userId;
-		} else {
+		if (claims.containsKey(JWTSsoService.USERNAME_CLAIM)) {
+			Claim userNameClaim = claims.get(JWTSsoService.USERNAME_CLAIM);
 			userName = userNameClaim.asString();
+		} else {
+			userName = userId;
 		}
 
 		profile.setUserName(userName);
