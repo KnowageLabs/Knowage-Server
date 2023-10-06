@@ -148,7 +148,7 @@ public class ParameterValuesEncoder {
 			return null;
 		}
 
-		if (parameterValues.size() == 0) {
+		if (parameterValues.isEmpty()) {
 			return "";
 		}
 
@@ -231,7 +231,7 @@ public class ParameterValuesEncoder {
 				}
 			} else {
 				List values = biobjPar.getParameterValuesDescription();
-				if (values != null && values.size() > 0) {
+				if (values != null && !values.isEmpty()) {
 					if (values.size() == 1)
 						return (String) biobjPar.getParameterValuesDescription().get(0);
 					else
@@ -254,7 +254,7 @@ public class ParameterValuesEncoder {
 				}
 			}
 			List values = biobjPar.getParameterValuesDescription();
-			if (values != null && values.size() > 0) {
+			if (values != null && !values.isEmpty()) {
 				if (values.size() == 1)
 					return (String) biobjPar.getParameterValuesDescription().get(0);
 				else
@@ -277,40 +277,40 @@ public class ParameterValuesEncoder {
 	 */
 	private String encodeMultivaluesParam(List values, String parameterType) {
 		logger.debug("IN");
-		String value = "";
+		StringBuilder value = new StringBuilder("");
 
-		if (values == null || values.size() == 0)
-			return value;
+		if (values == null || values.isEmpty())
+			return value.toString();
 
-		value += openBlockMarker;
-		value += separator;
-		value += openBlockMarker;
+		value.append(openBlockMarker);
+		value.append(separator);
+		value.append(openBlockMarker);
 		for (int i = 0; i < values.size(); i++) {
 			String valueToBeAppended = (values.get(i) == null) ? "" : (String) values.get(i);
-			value += (i > 0) ? separator : "";
-			value += valueToBeAppended;
+			value.append((i > 0) ? separator : "");
+			value.append(valueToBeAppended);
 		}
-		value += closeBlockMarker;
-		value += parameterType;
-		value += closeBlockMarker;
+		value.append(closeBlockMarker);
+		value.append(parameterType);
+		value.append(closeBlockMarker);
 		logger.debug("IN.value=" + value);
-		return value;
+		return value.toString();
 	}
 
 	private String encodeMultivalueParamsDesciption(List values) {
 		logger.debug("IN");
-		String value = "";
+		StringBuilder value = new StringBuilder("");
 
-		if (values == null || values.size() == 0)
-			return value;
+		if (values == null || values.isEmpty())
+			return value.toString();
 
 		for (int i = 0; i < values.size(); i++) {
 			String valueToBeAppended = (values.get(i) == null) ? "" : (String) values.get(i);
-			value += (i > 0) ? separator : "";
-			value += valueToBeAppended;
+			value.append((i > 0) ? separator : "");
+			value.append(valueToBeAppended);
 		}
 
 		logger.debug("IN.value=" + value);
-		return value;
+		return value.toString();
 	}
 }

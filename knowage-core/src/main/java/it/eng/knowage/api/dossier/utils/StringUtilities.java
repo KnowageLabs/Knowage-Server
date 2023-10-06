@@ -7,6 +7,7 @@ import java.util.List;
  */
 @Deprecated
 public class StringUtilities {
+
 	public static String join(List<String> list, String delim) {
 
 		StringBuilder sb = new StringBuilder();
@@ -22,5 +23,9 @@ public class StringUtilities {
 		}
 
 		return sb.toString();
+	}
+
+	private StringUtilities() {
+
 	}
 }
