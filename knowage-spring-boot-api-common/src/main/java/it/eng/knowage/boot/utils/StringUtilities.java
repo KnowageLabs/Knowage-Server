@@ -46,8 +46,9 @@ import org.apache.log4j.Logger;
 
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
- *
+ * @deprecated Duplicated
  */
+@Deprecated
 public class StringUtilities {
 
 	// this should be moved to ParametersUtilities.java
@@ -109,7 +110,8 @@ public class StringUtilities {
 	 *
 	 * @throws Exception
 	 */
-	public static String substituteParametersInString(String statement, Map parameters, int parametersStartIndex) throws Exception {
+	public static String substituteParametersInString(String statement, Map parameters, int parametersStartIndex)
+			throws Exception {
 		logger.debug("IN.statement=" + statement);
 		int profileAttributeEndIndex = statement.indexOf("}", parametersStartIndex);
 		if (profileAttributeEndIndex == -1)
@@ -141,7 +143,8 @@ public class StringUtilities {
 			prefix = configSplitted[0];
 			split = configSplitted[1];
 			suffix = configSplitted[2];
-			logger.debug("Multi-value attribute profile configuration found: prefix: '" + prefix + "'; split: '" + split + "'; suffix: '" + suffix + "'.");
+			logger.debug("Multi-value attribute profile configuration found: prefix: '" + prefix + "'; split: '" + split
+					+ "'; suffix: '" + suffix + "'.");
 			attributeName = attribute.substring(0, startConfigIndex);
 			logger.debug("Expected multi-value attribute profile name: '" + attributeName + "'");
 		} else {
@@ -167,7 +170,8 @@ public class StringUtilities {
 					newListOfValues = newListOfValues + split + values[i];
 				}
 			} else {
-				logger.warn("The attribute value has not the sintax of a multi value attribute; considering it as a single value.");
+				logger.warn(
+						"The attribute value has not the sintax of a multi value attribute; considering it as a single value.");
 				newListOfValues = attributeValue;
 			}
 		} else {
@@ -183,7 +187,9 @@ public class StringUtilities {
 						newListOfValues = newListOfValues + attributeValue.charAt(1) + values[i];
 					}
 				} catch (Exception e) {
-					logger.error("The attribute value does not respect the sintax of a multi value attribute; considering it as a single value.", e);
+					logger.error(
+							"The attribute value does not respect the sintax of a multi value attribute; considering it as a single value.",
+							e);
 					newListOfValues = attributeValue;
 				}
 			} else {
@@ -249,7 +255,7 @@ public class StringUtilities {
 		if (slashEIndex == -1)
 			return "\\Q" + s + "\\E";
 
-		StringBuffer sb = new StringBuffer(s.length() * 2);
+		StringBuilder sb = new StringBuilder(s.length() * 2);
 		sb.append("\\Q");
 		slashEIndex = 0;
 		int current = 0;
@@ -258,7 +264,7 @@ public class StringUtilities {
 			current = slashEIndex + 2;
 			sb.append("\\E\\\\E\\Q");
 		}
-		sb.append(s.substring(current, s.length()));
+		sb.append(s.substring(current));
 		sb.append("\\E");
 		logger.debug("OUT");
 		return sb.toString();
@@ -275,7 +281,8 @@ public class StringUtilities {
 	 *
 	 * @throws Exception the exception
 	 */
-	public static String substituteParametersInString(String statement, Map valuesMap, Map parType, boolean surroundWithQuotes) throws Exception {
+	public static String substituteParametersInString(String statement, Map valuesMap, Map parType,
+			boolean surroundWithQuotes) throws Exception {
 		logger.debug("IN");
 
 		boolean changePars = true;
@@ -283,7 +290,8 @@ public class StringUtilities {
 			// int profileAttributeStartIndex = statement.indexOf("$P{");
 			int profileAttributeStartIndex = statement.indexOf("$P{");
 			if (profileAttributeStartIndex != -1)
-				statement = substituteParametersInString(statement, valuesMap, parType, profileAttributeStartIndex, surroundWithQuotes);
+				statement = substituteParametersInString(statement, valuesMap, parType, profileAttributeStartIndex,
+						surroundWithQuotes);
 			else
 				changePars = false;
 
@@ -338,8 +346,8 @@ public class StringUtilities {
 	 * @return The statement with parameters replaced by their values.
 	 * @throws Exception
 	 */
-	private static String substituteParametersInString(String statement, Map valuesMap, Map parTypeMap, int profileAttributeStartIndex,
-			boolean surroundWithQuotes) throws Exception {
+	private static String substituteParametersInString(String statement, Map valuesMap, Map parTypeMap,
+			int profileAttributeStartIndex, boolean surroundWithQuotes) throws Exception {
 		logger.debug("IN");
 		int profileAttributeEndIndex = statement.indexOf("}", profileAttributeStartIndex);
 		if (profileAttributeEndIndex == -1)
@@ -365,7 +373,8 @@ public class StringUtilities {
 			attributeExcpetedToBeMultiValue = true;
 			int endConfigIndex = attribute.length() - 1;
 			if (attribute.charAt(endConfigIndex) != ')')
-				throw new Exception("Sintax error: \")\" missing. The expected sintax for " + "parameter is  $P{parameters} for singlevalue parameters. ");
+				throw new Exception("Sintax error: \")\" missing. The expected sintax for "
+						+ "parameter is  $P{parameters} for singlevalue parameters. ");
 			String configuration = attribute.substring(startConfigIndex + 1, endConfigIndex);
 			String[] configSplitted = configuration.split(";");
 			if (configSplitted == null || configSplitted.length != 3)
@@ -375,7 +384,8 @@ public class StringUtilities {
 			prefix = configSplitted[0];
 			split = configSplitted[1];
 			suffix = configSplitted[2];
-			logger.debug("Multi-value parametet configuration found: prefix: '" + prefix + "'; split: '" + split + "'; suffix: '" + suffix + "'.");
+			logger.debug("Multi-value parametet configuration found: prefix: '" + prefix + "'; split: '" + split
+					+ "'; suffix: '" + suffix + "'.");
 			attributeName = attribute.substring(0, startConfigIndex);
 			logger.debug("Expected multi-value parameter name: '" + attributeName + "'");
 		} else {
@@ -407,7 +417,8 @@ public class StringUtilities {
 						newListOfValues = newListOfValues + split + values[i];
 					}
 				} else {
-					logger.warn("The attribute value has not the sintax of a multi value parameter; considering it as a single value.");
+					logger.warn(
+							"The attribute value has not the sintax of a multi value parameter; considering it as a single value.");
 					newListOfValues = value;
 				}
 			} else {
@@ -423,7 +434,9 @@ public class StringUtilities {
 							newListOfValues = newListOfValues + value.charAt(1) + values[i];
 						}
 					} catch (Exception e) {
-						logger.error("The attribute value does not respect the sintax of a multi value attribute; considering it as a single value.", e);
+						logger.error(
+								"The attribute value does not respect the sintax of a multi value attribute; considering it as a single value.",
+								e);
 						newListOfValues = value;
 					}
 				} else {
@@ -459,8 +472,8 @@ public class StringUtilities {
 	}
 
 	/**
-	 * Substitutes parameters with sintax "$P{parameter_name}" whose value is set in the map. This is only for dataset, had to duplicate to handle null values,
-	 * in case ogf null does not throw an exception but substitute null!
+	 * Substitutes parameters with sintax "$P{parameter_name}" whose value is set in the map. This is only for dataset, had to duplicate to handle null values, in
+	 * case ogf null does not throw an exception but substitute null!
 	 *
 	 * @param statement          The string to be modified (tipically a query)
 	 * @param valuesMap          Map name-value
@@ -470,7 +483,8 @@ public class StringUtilities {
 	 *
 	 * @throws Exception the exception
 	 */
-	public static String substituteDatasetParametersInString(String statement, Map valuesMap, Map parType, boolean surroundWithQuotes) throws Exception {
+	public static String substituteDatasetParametersInString(String statement, Map valuesMap, Map parType,
+			boolean surroundWithQuotes) throws Exception {
 		logger.debug("IN");
 
 		boolean changePars = true;
@@ -478,7 +492,8 @@ public class StringUtilities {
 			// int profileAttributeStartIndex = statement.indexOf("$P{");
 			int profileAttributeStartIndex = statement.indexOf("$P{");
 			if (profileAttributeStartIndex != -1)
-				statement = substituteDatasetParametersInString(statement, valuesMap, parType, profileAttributeStartIndex, surroundWithQuotes);
+				statement = substituteDatasetParametersInString(statement, valuesMap, parType,
+						profileAttributeStartIndex, surroundWithQuotes);
 			else
 				changePars = false;
 
@@ -488,8 +503,8 @@ public class StringUtilities {
 	}
 
 	/**
-	 * Substitutes the parameters with sintax "$P{attribute_name}" with the correspondent value in the string passed at input. Only for dataset parameters, had
-	 * to duplicate to handle null values, not throw an exception but put null!
+	 * Substitutes the parameters with sintax "$P{attribute_name}" with the correspondent value in the string passed at input. Only for dataset parameters, had to
+	 * duplicate to handle null values, not throw an exception but put null!
 	 *
 	 * @param statement                  The string to be modified (tipically a query)
 	 * @param userProfile                The IEngUserProfile object
@@ -499,8 +514,8 @@ public class StringUtilities {
 	 * @return The statement with parameters replaced by their values.
 	 * @throws Exception
 	 */
-	private static String substituteDatasetParametersInString(String statement, Map valuesMap, Map parTypeMap, int profileAttributeStartIndex,
-			boolean surroundWithQuotes) throws Exception {
+	private static String substituteDatasetParametersInString(String statement, Map valuesMap, Map parTypeMap,
+			int profileAttributeStartIndex, boolean surroundWithQuotes) throws Exception {
 		logger.debug("IN");
 
 		int profileAttributeEndIndex = statement.indexOf("}", profileAttributeStartIndex);
@@ -527,7 +542,8 @@ public class StringUtilities {
 			attributeExcpetedToBeMultiValue = true;
 			int endConfigIndex = attribute.length() - 1;
 			if (attribute.charAt(endConfigIndex) != ')')
-				throw new Exception("Sintax error: \")\" missing. The expected sintax for " + "parameter is  $P{parameters} for singlevalue parameters. ");
+				throw new Exception("Sintax error: \")\" missing. The expected sintax for "
+						+ "parameter is  $P{parameters} for singlevalue parameters. ");
 			String configuration = attribute.substring(startConfigIndex + 1, endConfigIndex);
 			// check the configuration content and add empty prefix/suffix as default if they are null
 			if (configuration.equals(";,;"))
@@ -540,7 +556,8 @@ public class StringUtilities {
 			prefix = configSplitted[0];
 			split = configSplitted[1];
 			suffix = configSplitted[2];
-			logger.debug("Multi-value parameter configuration found: prefix: '" + prefix + "'; split: '" + split + "'; suffix: '" + suffix + "'.");
+			logger.debug("Multi-value parameter configuration found: prefix: '" + prefix + "'; split: '" + split
+					+ "'; suffix: '" + suffix + "'.");
 			attributeName = attribute.substring(0, startConfigIndex);
 			logger.debug("Expected multi-value parameter name: '" + attributeName + "'");
 		} else {
@@ -578,15 +595,18 @@ public class StringUtilities {
 				String[] values = findAttributeValues(value);
 				logger.debug("N. " + values.length + " parameter values found: '" + values + "'");
 				// newListOfValues = values[0];
-				newListOfValues = ((values[0].startsWith(prefix))) ? "" : prefix + values[0] + ((values[0].endsWith(suffix)) ? "" : suffix);
+				newListOfValues = ((values[0].startsWith(prefix))) ? ""
+						: prefix + values[0] + ((values[0].endsWith(suffix)) ? "" : suffix);
 				for (int i = 1; i < values.length; i++) {
 					// newListOfValues = newListOfValues + split + values[i];
-					String singleValue = ((values[i].startsWith(prefix))) ? "" : prefix + values[i] + ((values[i].endsWith(suffix)) ? "" : suffix);
+					String singleValue = ((values[i].startsWith(prefix))) ? ""
+							: prefix + values[i] + ((values[i].endsWith(suffix)) ? "" : suffix);
 					singleValue = checkParType(singleValue, parType, attribute);
 					newListOfValues = newListOfValues + split + singleValue;
 				}
 			} else {
-				logger.warn("The attribute value has not the sintax of a multi value parameter; considering it as a single value.");
+				logger.warn(
+						"The attribute value has not the sintax of a multi value parameter; considering it as a single value.");
 				newListOfValues = value;
 			}
 
@@ -603,7 +623,9 @@ public class StringUtilities {
 						newListOfValues = newListOfValues + value.charAt(1) + values[i];
 					}
 				} catch (Exception e) {
-					logger.error("The attribute value does not respect the sintax of a multi value attribute; considering it as a single value.", e);
+					logger.error(
+							"The attribute value does not respect the sintax of a multi value attribute; considering it as a single value.",
+							e);
 					newListOfValues = value;
 				}
 			} else {
@@ -629,7 +651,8 @@ public class StringUtilities {
 //			}
 
 		}
-		replacement = ((newListOfValues.startsWith(prefix)) ? "" : prefix) + newListOfValues + ((newListOfValues.endsWith(suffix)) ? "" : suffix);
+		replacement = ((newListOfValues.startsWith(prefix)) ? "" : prefix) + newListOfValues
+				+ ((newListOfValues.endsWith(suffix)) ? "" : suffix);
 
 		if (!attributeExcpetedToBeMultiValue)
 			replacement = checkParType(replacement, parType, attribute);
@@ -698,7 +721,8 @@ public class StringUtilities {
 	 * @param attribute   : the attribute
 	 * @return
 	 */
-	private static String checkParType(String replacement, String parType, String attribute) throws NumberFormatException {
+	private static String checkParType(String replacement, String parType, String attribute)
+			throws NumberFormatException {
 		logger.debug("IN");
 		String toReturn = replacement;
 		// check if numbers are number otherwise throw exception
@@ -917,7 +941,8 @@ public class StringUtilities {
 			}
 			return arrayList.toArray(new String[0]);
 		} catch (IndexOutOfBoundsException e) {
-			throw new RuntimeException("Unable to tokenize string [" + values + "] with delimiter [" + delimiter + "]", e);
+			throw new RuntimeException("Unable to tokenize string [" + values + "] with delimiter [" + delimiter + "]",
+					e);
 		}
 	}
 

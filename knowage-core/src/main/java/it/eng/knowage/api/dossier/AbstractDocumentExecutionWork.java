@@ -428,39 +428,55 @@ public class AbstractDocumentExecutionWork extends DossierExecutionClient implem
 
 			for (BIObjectParameter biObjectParameter : drivers) {
 				boolean found = false;
-				String value = "";
-				String paramName = "";
+				String outParamValue = "";
+				String outParamName = "";
 				for (Parameter templateParameter : parameter) {
 
-					if (templateParameter.getType().equals("dynamic")) {
+					String currParamType = templateParameter.getType();
+					String currParamValue = templateParameter.getValue();
 
-						if (templateParameter.getValue() != null && !templateParameter.getValue().isEmpty()) {
+					if (currParamType.equals("dynamic")) {
+
+						if (currParamValue != null && !currParamValue.isEmpty()) {
 
 							// filled by fillParametersValues in DossierExecutionResource
-							value = templateParameter.getValue();
+							outParamValue = currParamValue;
+
+							List<?> currParamValueDecoded = decoder.decode(outParamValue);
+
 							if (biObjectParameter.getParameterUrlName().equals(templateParameter.getUrlName())) {
-								paramName = templateParameter.getUrlName();
+								outParamName = templateParameter.getUrlName();
 								if (dashboard) {
 
 									JSONObject param = new JSONObject();
-									param.put("multivalue", decoder.isMultiValues(value));
+									param.put("multivalue", decoder.isMultiValues(outParamValue));
 									param.put("urlName", biObjectParameter.getParameterUrlName());
 
 									JSONArray paramValueArray = new JSONArray();
-									JSONObject paramValue = new JSONObject();
+									for (Object currValue2 : currParamValueDecoded) {
+										JSONObject paramValue = new JSONObject();
 
-									paramValue.put("value",
-											URLEncoder.encode(value, StandardCharsets.UTF_8.toString()));
-									paramValue.put("description",
-											URLEncoder.encode(templateParameter.getUrlNameDescription(),
-													StandardCharsets.UTF_8.toString()));
+										String currValue2AsString = currValue2.toString();
 
-									paramValueArray.put(paramValue);
+										if (currValue2AsString.startsWith("'") && currValue2AsString.endsWith("'")) {
+											currValue2AsString = currValue2AsString.substring(1,
+													currValue2AsString.length() - 1);
+										}
+
+										paramValue.put("value", URLEncoder.encode(currValue2AsString,
+												StandardCharsets.UTF_8.toString()));
+										paramValue.put("description",
+												URLEncoder.encode(templateParameter.getUrlNameDescription(),
+														StandardCharsets.UTF_8.toString()));
+
+										paramValueArray.put(paramValue);
+									}
 									param.put("value", paramValueArray);
 
 									jsonParams.put(param);
 								} else {
-									serviceUrlBuilder.addParameter(biObjectParameter.getParameterUrlName(), value);
+									serviceUrlBuilder.addParameter(biObjectParameter.getParameterUrlName(),
+											outParamValue);
 									serviceUrlBuilder.addParameter(biObjectParameter.getParameterUrlName(),
 											templateParameter.getUrlNameDescription());
 								}
@@ -471,13 +487,12 @@ public class AbstractDocumentExecutionWork extends DossierExecutionClient implem
 						}
 					} else {
 						if (biObjectParameter.getParameterUrlName().equals(templateParameter.getUrlName())) {
-							serviceUrlBuilder.addParameter(biObjectParameter.getParameterUrlName(),
-									templateParameter.getValue());
-							value = templateParameter.getValue();
-							paramName = templateParameter.getUrlName();
+							serviceUrlBuilder.addParameter(biObjectParameter.getParameterUrlName(), currParamValue);
+							outParamValue = currParamValue;
+							outParamName = templateParameter.getUrlName();
 							// We need a description for static parameter, we force the value if it's missing
 							if (isEmpty(templateParameter.getUrlNameDescription())) {
-								templateParameter.setUrlNameDescription(templateParameter.getValue());
+								templateParameter.setUrlNameDescription(currParamValue);
 							}
 							// description
 							serviceUrlBuilder.addParameter(biObjectParameter.getParameterUrlName(),
@@ -489,7 +504,7 @@ public class AbstractDocumentExecutionWork extends DossierExecutionClient implem
 						}
 					}
 				}
-				paramMap.put(paramName, value);
+				paramMap.put(outParamName, outParamValue);
 				if (!found && biObjectParameter.isRequired()) {
 					throw new SpagoBIRuntimeException(
 							"There is no match between document parameters and template parameters.");

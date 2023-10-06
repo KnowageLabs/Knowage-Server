@@ -2,6 +2,10 @@ package it.eng.knowage.api.dossier.utils;
 
 import java.util.List;
 
+/**
+ * @deprecated An entire class for a string join?
+ */
+@Deprecated
 public class StringUtilities {
 	public static String join(List<String> list, String delim) {
 
