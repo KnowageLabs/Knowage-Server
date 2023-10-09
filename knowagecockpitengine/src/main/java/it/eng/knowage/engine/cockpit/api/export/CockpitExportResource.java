@@ -19,6 +19,7 @@ import it.eng.knowage.engine.cockpit.api.export.excel.ExcelExporter;
 import it.eng.knowage.engine.cockpit.api.export.pdf.PdfExporter;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceExceptionHandler;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
+import it.eng.spagobi.utilities.mime.MimeUtils;
 import it.eng.spagobi.utilities.rest.RestUtilities;
 
 @Path("/1.0/cockpit/export")
@@ -68,6 +69,10 @@ public class CockpitExportResource extends AbstractCockpitEngineResource {
 			String userId = body.getString(USER_ID);
 			ExcelExporter excelExporter = new ExcelExporter(outputType, userId, body);
 			String mimeType = excelExporter.getMimeType();
+
+			if (!MimeUtils.isValidMimeType(mimeType))
+				throw new SpagoBIRuntimeException("Invalid mime type: " + mimeType);
+
 			if (mimeType != null) {
 				Integer documentId = body.optInt(DOCUMENT_ID);
 				String documentLabel = body.optString(DOCUMENT_LABEL);
