@@ -128,7 +128,7 @@ public class OIDCFullIdTokenSecurityServiceSupplier implements ISecurityServiceS
 			sbiAttributes.forEach(sbiAttribute -> {
 				String claimName = sbiAttribute.getAttributeName();
 				Claim valueClaim = decodedJWT.getClaim(claimName);
-				if (valueClaim != null) {
+				if (!valueClaim.isNull()) {
 					LogMF.debug(logger, "Got attribute/claim with name [{0}] and value [{1}]", claimName, valueClaim.asString());
 					attributes.put(claimName, valueClaim.asString());
 				} else {
