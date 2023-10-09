@@ -56,17 +56,18 @@ public class PublisherService extends AbstractSpagoBIResource {
 		try {
 
 			String publisher = request.getParameter(PUBLISHER);
-			String logicKey = publisher.split("\\?")[0];
+			String[] split = publisher.split("\\?");
+			String logicKey = split[0];
 
-			if (logicKey != null) {
+			if (split[0] != null) {
 				String resourcePath = ResourcePublisherMapping.get(logicKey);
 				if (resourcePath == null) {
 					logger.error("The user " + getUserProfile().getUserId() + "is trying to read a secured file content using publisher");
 					throw new IllegalAccessException("Unauthorized access to a system resource");
 				}
-				String fullPath = publisher.replaceFirst(logicKey, resourcePath);
+				split[0] = resourcePath;
 
-				return new View(fullPath);
+				return new View(String.join("?", split));
 			}
 
 		} catch (Exception e) {
