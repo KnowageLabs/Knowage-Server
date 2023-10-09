@@ -107,8 +107,8 @@ public class RuntimeRepository {
 	 * @return the executable job project dir
 	 */
 	public File getExecutableJobProjectDir(Job job) {
-		File jobsDir = new File(rootDir, job.getLanguage().toLowerCase());
-		File projectDir = new File(jobsDir, job.getProject());
+		File jobsDir = PathTraversalChecker.get(rootDir.getAbsolutePath(), job.getLanguage().toLowerCase());
+		File projectDir = PathTraversalChecker.get(jobsDir.getAbsolutePath(), job.getProject());
 		return projectDir;
 	}
 
