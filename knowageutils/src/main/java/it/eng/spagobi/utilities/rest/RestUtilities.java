@@ -31,12 +31,14 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Properties;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -304,8 +306,7 @@ public class RestUtilities {
 		HttpMethodBase method = getMethod(httpMethod, address);
 		if (requestHeaders != null) {
 			for (Entry<String, String> entry : requestHeaders.entrySet()) {
-				RestUtilities.validateValueFromRequestHeader(entry.getValue());
-				method.addRequestHeader(entry.getKey(), entry.getValue());
+				RestUtilities.addHeadersToRequest(entry, method);
 			}
 		}
 		if (queryParams != null && !queryParams.isEmpty()) {
@@ -349,8 +350,7 @@ public class RestUtilities {
 		final HttpMethodBase method = getMethod(httpMethod, address);
 		if (requestHeaders != null) {
 			for (Entry<String, String> entry : requestHeaders.entrySet()) {
-				RestUtilities.validateValueFromRequestHeader(entry.getValue());
-				method.addRequestHeader(entry.getKey(), entry.getValue());
+				RestUtilities.addHeadersToRequest(entry, method);
 			}
 		}
 		if (queryParams != null) {
@@ -495,8 +495,44 @@ public class RestUtilities {
 		return headers;
 	}
 
-	private static String validateValueFromRequestHeader(String value) {
+	private static void addHeadersToRequest(Entry<String, String> entry, HttpMethodBase method) {
+		String headerValue = entry.getValue();
+		String headerKey = entry.getKey();
+		headerValue = RestUtilities.sanitizeValueFromRequestHeader(headerValue);
+		RestUtilities.checkIfValueFromRequestHeaderIsInWhitelistFromPropertiesFile(headerKey);
+		method.addRequestHeader(headerKey, headerValue);
+	}
+
+	private static String sanitizeValueFromRequestHeader(String value) {
 		return value.replaceAll("\r", "").replaceAll("%0d", "").replaceAll("%0D", "").replaceAll("\n", "").replaceAll("%0a", "").replaceAll("%0A", "");
+	}
+
+	private static void checkIfValueFromRequestHeaderIsInWhitelistFromPropertiesFile(String value) {
+		List<String> whitelist = RestUtilities.getWhitelistFromPropertiesFile();
+		if (!whitelist.contains(value))
+			throw new SpagoBIRuntimeException("Header value " + value + " is not in the list of allowed headers.");
+	}
+
+	private static List<String> getWhitelistFromPropertiesFile() {
+		Properties properties = new Properties();
+		List<String> whitelist = new ArrayList<>();
+
+		try (InputStream inputStream = RestUtilities.class.getClassLoader().getResourceAsStream("headers.properties")) {
+			if (inputStream != null) {
+				properties.load(inputStream);
+
+				String allowedHeaders = properties.getProperty("allowed.headers");
+				if (allowedHeaders != null && !allowedHeaders.isEmpty()) {
+					whitelist.addAll(Arrays.asList(allowedHeaders.split(",")));
+				}
+			} else {
+				throw new RuntimeException("headers.properties file not found.");
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+		return whitelist;
 	}
 
 }
