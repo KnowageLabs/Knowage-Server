@@ -236,7 +236,7 @@ public class RestUtilities {
 		return o;
 	}
 
-	public static enum HttpMethod {
+	public enum HttpMethod {
 		Get, Post, Put, Delete
 	}
 
@@ -304,13 +304,14 @@ public class RestUtilities {
 		HttpMethodBase method = getMethod(httpMethod, address);
 		if (requestHeaders != null) {
 			for (Entry<String, String> entry : requestHeaders.entrySet()) {
+				RestUtilities.validateValueFromRequestHeader(entry.getValue());
 				method.addRequestHeader(entry.getKey(), entry.getValue());
 			}
 		}
 		if (queryParams != null && !queryParams.isEmpty()) {
 			// add uri query params to provided query params present in query
 			List<NameValuePair> addressPairs = getAddressPairs(address);
-			List<NameValuePair> totalPairs = new ArrayList<NameValuePair>(addressPairs);
+			List<NameValuePair> totalPairs = new ArrayList<>(addressPairs);
 			totalPairs.addAll(queryParams);
 			method.setQueryString(totalPairs.toArray(new NameValuePair[queryParams.size()]));
 		}
@@ -348,13 +349,14 @@ public class RestUtilities {
 		final HttpMethodBase method = getMethod(httpMethod, address);
 		if (requestHeaders != null) {
 			for (Entry<String, String> entry : requestHeaders.entrySet()) {
+				RestUtilities.validateValueFromRequestHeader(entry.getValue());
 				method.addRequestHeader(entry.getKey(), entry.getValue());
 			}
 		}
 		if (queryParams != null) {
 			// add uri query params to provided query params present in query
 			List<NameValuePair> addressPairs = getAddressPairs(address);
-			List<NameValuePair> totalPairs = new ArrayList<NameValuePair>(addressPairs);
+			List<NameValuePair> totalPairs = new ArrayList<>(addressPairs);
 			totalPairs.addAll(queryParams);
 			method.setQueryString(totalPairs.toArray(new NameValuePair[queryParams.size()]));
 		}
@@ -454,7 +456,7 @@ public class RestUtilities {
 		try {
 			String query = URIUtil.getQuery(address);
 			List<NameValuePair> params = new ParameterParser().parse(query, '&');
-			List<NameValuePair> res = new ArrayList<NameValuePair>();
+			List<NameValuePair> res = new ArrayList<>();
 			for (NameValuePair nvp : params) {
 				res.add(new NameValuePair(URIUtil.decode(nvp.getName(), DEFAULT_CHARSET), URIUtil.decode(nvp.getValue(), DEFAULT_CHARSET)));
 			}
@@ -465,7 +467,7 @@ public class RestUtilities {
 	}
 
 	public static Map<String, String> getJSONHeaders() {
-		Map<String, String> res = new HashMap<String, String>(2);
+		Map<String, String> res = new HashMap<>(2);
 		res.put("Content-Type", "application/json");
 		res.put("Accept", "application/json");
 		return res;
@@ -491,6 +493,10 @@ public class RestUtilities {
 			headers.put(key, value);
 		}
 		return headers;
+	}
+
+	private static String validateValueFromRequestHeader(String value) {
+		return value.replaceAll("\r", "").replaceAll("%0d", "").replaceAll("%0D", "").replaceAll("\n", "").replaceAll("%0a", "").replaceAll("%0A", "");
 	}
 
 }
