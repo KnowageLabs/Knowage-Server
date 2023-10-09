@@ -47,30 +47,29 @@ public class ViewpointDAOHimpl extends AbstractHibernateDAO implements IViewpoin
 	 *
 	 * @return the list
 	 *
-	 * @throws EMFUserError
-	 *             the EMF user error
+	 * @throws EMFUserError the EMF user error
 	 *
 	 * @see it.eng.spagobi.analiticalmodel.document.dao.IViewpointDAO#loadAllViewpoints()
 	 */
 	@Override
-	public List loadAllViewpoints() throws EMFUserError {
+	public List<Viewpoint> loadAllViewpoints() throws EMFUserError {
 		Session aSession = null;
 		Transaction tx = null;
 
-		List realResult = new ArrayList();
+		List<Viewpoint> realResult = new ArrayList<>();
 		try {
 			aSession = getSession();
 			tx = aSession.beginTransaction();
 
 			Query hibQuery = aSession.createQuery(" from SbiViewpoints");
-			List hibList = hibQuery.list();
+			List<SbiViewpoints> hibList = hibQuery.list();
 
 			tx.commit();
 
-			Iterator it = hibList.iterator();
+			Iterator<SbiViewpoints> it = hibList.iterator();
 
 			while (it.hasNext()) {
-				realResult.add(toViewpoint((SbiViewpoints) it.next()));
+				realResult.add(toViewpoint(it.next()));
 			}
 		} catch (HibernateException he) {
 			logException(he);
@@ -92,39 +91,36 @@ public class ViewpointDAOHimpl extends AbstractHibernateDAO implements IViewpoin
 	/**
 	 * Load all viewpoints by obj id.
 	 *
-	 * @param objId
-	 *            the obj id
+	 * @param objId the obj id
 	 *
 	 * @return the list
 	 *
-	 * @throws EMFUserError
-	 *             the EMF user error
+	 * @throws EMFUserError the EMF user error
 	 *
 	 * @see it.eng.spagobi.analiticalmodel.document.dao.IViewpointDAO#loadAllViewpoints()
 	 */
 	@Override
-	public List loadAllViewpointsByObjID(Integer objId) throws EMFUserError {
+	public List<Viewpoint> loadAllViewpointsByObjID(Integer objId) throws EMFUserError {
 		Session aSession = null;
 		Transaction tx = null;
 
-		List realResult = new ArrayList();
+		List<Viewpoint> realResult = new ArrayList<>();
 		try {
 			aSession = getSession();
 			tx = aSession.beginTransaction();
 
-			// String hql = "from SbiViewpoints vp where vp.sbiObject.biobjId = " + objId;
 			String hql = "from SbiViewpoints vp where vp.sbiObject.biobjId = ?";
 
 			Query hqlQuery = aSession.createQuery(hql);
 			hqlQuery.setInteger(0, objId.intValue());
 
-			List hibList = hqlQuery.list();
+			List<SbiViewpoints> hibList = hqlQuery.list();
 
 			tx.commit();
 
-			Iterator it = hibList.iterator();
+			Iterator<SbiViewpoints> it = hibList.iterator();
 			while (it.hasNext()) {
-				realResult.add(toViewpoint((SbiViewpoints) it.next()));
+				realResult.add(toViewpoint(it.next()));
 			}
 		} catch (HibernateException he) {
 			logException(he);
@@ -153,13 +149,11 @@ public class ViewpointDAOHimpl extends AbstractHibernateDAO implements IViewpoin
 	/**
 	 * Load viewpoint by id.
 	 *
-	 * @param id
-	 *            the id
+	 * @param id the id
 	 *
 	 * @return the viewpoint
 	 *
-	 * @throws EMFUserError
-	 *             the EMF user error
+	 * @throws EMFUserError the EMF user error
 	 *
 	 * @see it.eng.spagobi.analiticalmodel.document.dao.IViewpointDAO#loadViewpointByID(java.lang.Integer)
 	 */
@@ -199,15 +193,12 @@ public class ViewpointDAOHimpl extends AbstractHibernateDAO implements IViewpoin
 	/**
 	 * Load viewpoint by name and document identifier.
 	 *
-	 * @param name
-	 *            the name of the viewpoint
-	 * @param name
-	 *            The id of the document
+	 * @param name the name of the viewpoint
+	 * @param name The id of the document
 	 *
 	 * @return the viewpoint
 	 *
-	 * @throws EMFUserError
-	 *             the EMF user error
+	 * @throws EMFUserError the EMF user error
 	 *
 	 * @see it.eng.spagobi.analiticalmodel.document.dao.IViewpointDAO#loadViewpointByName(java.lang.String)
 	 */
@@ -253,11 +244,9 @@ public class ViewpointDAOHimpl extends AbstractHibernateDAO implements IViewpoin
 	/**
 	 * Erase viewpoint.
 	 *
-	 * @param id
-	 *            the id
+	 * @param id the id
 	 *
-	 * @throws EMFUserError
-	 *             the EMF user error
+	 * @throws EMFUserError the EMF user error
 	 *
 	 * @see it.eng.spagobi.analiticalmodel.document.dao.IViewpointDAO#eraseViewpoint(it.eng.spagobi.analiticalmodel.document.bo.Viewpoint)
 	 */
@@ -294,11 +283,9 @@ public class ViewpointDAOHimpl extends AbstractHibernateDAO implements IViewpoin
 	/**
 	 * Insert viewpoint.
 	 *
-	 * @param viewpoint
-	 *            the viewpoint
+	 * @param viewpoint the viewpoint
 	 *
-	 * @throws EMFUserError
-	 *             the EMF user error
+	 * @throws EMFUserError the EMF user error
 	 *
 	 * @see it.eng.spagobi.analiticalmodel.document.dao.IViewpointDAO#insertViewpoint(it.eng.spagobi.analiticalmodel.document.bo.Viewpoint)
 	 */
@@ -311,7 +298,6 @@ public class ViewpointDAOHimpl extends AbstractHibernateDAO implements IViewpoin
 			tx = aSession.beginTransaction();
 			SbiViewpoints hibViewpoint = new SbiViewpoints();
 
-			// hibViewpoint.setVpId(vpId);
 			SbiObjects aSbiObject = (SbiObjects) aSession.load(SbiObjects.class, viewpoint.getBiobjId());
 			hibViewpoint.setSbiObject(aSbiObject);
 			hibViewpoint.setVpDesc(viewpoint.getVpDesc());
@@ -343,47 +329,9 @@ public class ViewpointDAOHimpl extends AbstractHibernateDAO implements IViewpoin
 	}
 
 	/**
-	 * To viewpoint.
-	 *
-	 * @param hibViewpoint
-	 *            the hib viewpoint
-	 *
-	 * @return the viewpoint
-	 *
-	 * @see it.eng.spagobi.bo.dao.IViewpointDAO#modifyViewpoint(it.eng.spagobi.bo.Viewpoint)
-	 */
-	/*
-	 * public void modifyViewpoint(Viewpoint viewpoint) throws EMFUserError { Session aSession = null; Transaction tx = null; try {
-	 *
-	 * aSession = getSession(); tx = aSession.beginTransaction();
-	 *
-	 * SbiViewpoints hibViewpoint = (SbiViewpoints) aSession.load(SbiViewpoints.class, viewpoint.getVpId());
-	 *
-	 * // hibViewpoint.setVpId(vpId); SbiObjects aSbiObject = (SbiObjects) aSession.load(SbiObjects.class, viewpoint.getBiobjId());
-	 * hibViewpoint.setSbiObject(aSbiObject); hibViewpoint.setVpDesc(viewpoint.getVpDesc()); hibViewpoint.setVpName(viewpoint.getVpName());
-	 * hibViewpoint.setVpScope(viewpoint.getVpScope()); hibViewpoint.setVpValueParams(viewpoint.getVpValueParams());
-	 *
-	 * tx.commit();
-	 *
-	 * } catch (HibernateException he) { logException(he);
-	 *
-	 * if (tx != null) tx.rollback();
-	 *
-	 * throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
-	 *
-	 * } finally {
-	 *
-	 * if (aSession!=null){ if (aSession.isOpen()) aSession.close(); }
-	 *
-	 * }
-	 *
-	 * }
-	 */
-	/**
 	 * From the hibernate BI value viewpoint at input, gives the corrispondent <code>Viepoint</code> object.
 	 *
-	 * @param hibViewpoint
-	 *            The hybernate viewpoint at input
+	 * @param hibViewpoint The hybernate viewpoint at input
 	 * @return The corrispondent <code>Viewpoint</code> object
 	 */
 	public Viewpoint toViewpoint(SbiViewpoints hibViewpoint) {
@@ -405,31 +353,30 @@ public class ViewpointDAOHimpl extends AbstractHibernateDAO implements IViewpoin
 	 * @see it.eng.spagobi.analiticalmodel.document.dao.IViewpointDAO#loadAccessibleViewpointsByObjId(java.lang.Integer, it.eng.spago.security.IEngUserProfile)
 	 */
 	@Override
-	public List loadAccessibleViewpointsByObjId(Integer objId, IEngUserProfile userProfile) throws EMFUserError {
+	public List<Viewpoint> loadAccessibleViewpointsByObjId(Integer objId, IEngUserProfile userProfile)
+			throws EMFUserError {
 		Session aSession = null;
 		Transaction tx = null;
 
-		List realResult = new ArrayList();
+		List<Viewpoint> realResult = new ArrayList<>();
 		try {
 			aSession = getSession();
 			tx = aSession.beginTransaction();
 
-			// String hql = "from SbiViewpoints vp where vp.sbiObject.biobjId = " + objId + " and (vp.vpScope = 'Public' or " +
-			// "vp.vpOwner = '" + ((UserProfile)userProfile).getUserId().toString() + "')";
-
-			String hql = "from SbiViewpoints vp where vp.sbiObject.biobjId = ? and (vp.vpScope = 'Public' or vp.vpScope = 'PUBLIC' or  " + "vp.vpOwner = ?)";
+			String hql = "from SbiViewpoints vp where vp.sbiObject.biobjId = ? and (vp.vpScope = 'Public' or vp.vpScope = 'PUBLIC' or  "
+					+ "vp.vpOwner = ?)";
 
 			Query hqlQuery = aSession.createQuery(hql);
 			hqlQuery.setInteger(0, objId.intValue());
 			hqlQuery.setString(1, (String) ((UserProfile) userProfile).getUserId());
 
-			List hibList = hqlQuery.list();
+			List<SbiViewpoints> hibList = hqlQuery.list();
 
 			tx.commit();
 
-			Iterator it = hibList.iterator();
+			Iterator<SbiViewpoints> it = hibList.iterator();
 			while (it.hasNext()) {
-				realResult.add(toViewpoint((SbiViewpoints) it.next()));
+				realResult.add(toViewpoint(it.next()));
 			}
 		} catch (HibernateException he) {
 			logException(he);
