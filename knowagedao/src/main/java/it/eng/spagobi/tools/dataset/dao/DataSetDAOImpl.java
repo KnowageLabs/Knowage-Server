@@ -1518,15 +1518,15 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 
 			if (filters != null) {
 				if (typeFilter.equals("=")) {
-					sb.append("and ds.").append(columnFilter).append(" = :search ");
+					sb.append("and ds.").append(":columnFilter").append(" = :search ");
 				} else if (typeFilter.equals("like")) {
-					sb.append("and upper(ds.").append(columnFilter).append(") like :search ");
+					sb.append("and upper(ds.").append(":columnFilter").append(") like :search ");
 				}
 			}
 
 			if (ordering != null) {
 				if (columnOrdering != null && !columnOrdering.isEmpty()) {
-					sb.append(" order by ds.").append(columnOrdering.toLowerCase());
+					sb.append(" order by ds.").append(":columnOrdering");
 					if (reverseOrdering) {
 						sb.append(" desc");
 					}
@@ -1552,6 +1552,12 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 			if (!tagIds.isEmpty()) {
 				listQuery.setParameterList("tagIds", tagIds);
 				listQuery.setParameter("sbTag", sbTag.toString());
+			}
+
+			if (filters != null)
+				listQuery.setString("columnFilter", columnFilter);
+			if (ordering != null && columnOrdering != null && !columnOrdering.isEmpty()) {
+				listQuery.setString("columnOrdering", columnOrdering.toLowerCase());
 			}
 
 			listQuery.setFirstResult(offset);
