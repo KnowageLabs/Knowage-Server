@@ -592,8 +592,11 @@ public class ExecutionInstance implements Serializable {
 
 					paramsValueV2.putIfAbsent(currUrlName, new ArrayList<>());
 
-					for (int j = 0; i < jsonArray.length(); j++) {
+					int numOfValues = jsonArray.length();
+					LOGGER.debug("Found {} values", numOfValues);
+					for (int j = 0; i < numOfValues; j++) {
 						JSONObject currValue = (JSONObject) jsonArray.get(j);
+						LOGGER.debug("The current value is {}", currValue);
 						Object currValueValue = currValue.get("value");
 
 						paramsValueV2.get(currUrlName).add(currValueValue);
