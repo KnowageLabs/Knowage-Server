@@ -582,6 +582,7 @@ public class ExecutionInstance implements Serializable {
 			String parametersV2FromUrlAsString = (String) parametersMap.get("params");
 			String parametersV2FromUrl = Optional.ofNullable(parametersV2FromUrlAsString)
 					.map(e -> new String(java.util.Base64.getDecoder().decode(e))).orElse("[]");
+			LOGGER.debug("The JSON of the params in the query is {}", parametersV2FromUrl);
 			try {
 				JSONArray parametersV2FromUrlAsJSONArray = new JSONArray(parametersV2FromUrl);
 				for (int i = 0; i < parametersV2FromUrlAsJSONArray.length(); i++) {
@@ -598,9 +599,9 @@ public class ExecutionInstance implements Serializable {
 						paramsValueV2.get(currUrlName).add(currValueValue);
 					}
 				}
-			} catch (JSONException e1) {
+			} catch (JSONException e) {
 				LOGGER.error("Non-Fatal error. The new params structure in query param is not a JSONArray: {}",
-						parametersV2FromUrlAsString);
+						parametersV2FromUrl, e);
 			}
 		}
 		List values = null;
