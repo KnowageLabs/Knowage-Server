@@ -631,6 +631,7 @@ public class ExecutionInstance implements Serializable {
 			List<Object> paramsV2Values = paramsValueV2.get(nameUrl);
 			LOGGER.debug("Setting parameter with label {} with values {} from new params query param",
 					biparam.getLabel(), paramsV2Values);
+			values = new ArrayList();
 			values.addAll(paramsV2Values);
 		} else {
 			LOGGER.debug("No attribute found on input map for biparameter with name {}", biparam.getLabel());
