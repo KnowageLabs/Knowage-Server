@@ -394,7 +394,7 @@ public class PageResource extends AbstractCockpitEngineResource {
 			List<String> asList = Arrays.asList(v);
 			String collect = asList.stream().collect(Collectors.joining(","));
 
-			externalUrl.addParameter(k, collect);
+			externalUrl.setParameter(k, collect);
 		});
 
 		addParametersToHideToolbarAndMenuInVue(externalUrl);
@@ -475,7 +475,7 @@ public class PageResource extends AbstractCockpitEngineResource {
 		} else {
 			manageParametersForEverythingElse(externalUrl);
 		}
-		externalUrl.addParameter("export", "true");
+		externalUrl.setParameter("export", "true");
 		return externalUrl.toString();
 	}
 
@@ -496,7 +496,7 @@ public class PageResource extends AbstractCockpitEngineResource {
 		} else {
 			manageParametersForEverythingElse(externalUrl);
 		}
-		externalUrl.addParameter("scheduledexport", "true");
+		externalUrl.setParameter("scheduledexport", "true");
 		return externalUrl.toString();
 	}
 
@@ -542,8 +542,8 @@ public class PageResource extends AbstractCockpitEngineResource {
 			throws JSONException {
 
 		uriBuilder.setPath("/knowage-vue/dashboard/" + documentLabel);
-		uriBuilder.addParameter("params", createJsonFromParemeters(biObject));
-		uriBuilder.addParameter("role", getExecutionRoleForDashboard());
+		uriBuilder.setParameter("params", createJsonFromParemeters(biObject));
+		uriBuilder.setParameter("role", getExecutionRoleForDashboard());
 		addParametersToHideToolbarAndMenuInVue(uriBuilder);
 	}
 
@@ -553,7 +553,7 @@ public class PageResource extends AbstractCockpitEngineResource {
 			String key = parameter.getKey();
 			String[] value = parameter.getValue();
 			if (value != null && value.length > 0) {
-				uriBuilder.addParameter(key, value[0]);
+				uriBuilder.setParameter(key, value[0]);
 			}
 		}
 	}
@@ -623,8 +623,8 @@ public class PageResource extends AbstractCockpitEngineResource {
 	}
 
 	private void addParametersToHideToolbarAndMenuInVue(URIBuilder uriBuilder) {
-		uriBuilder.addParameter("toolbar", "false");
-		uriBuilder.addParameter("menu", "false");
+		uriBuilder.setParameter("toolbar", "false");
+		uriBuilder.setParameter("menu", "false");
 	}
 
 	private void reconcileParametersWithParamsV2FromUrl(Map<String, String[]> parameterMap) throws JSONException {
