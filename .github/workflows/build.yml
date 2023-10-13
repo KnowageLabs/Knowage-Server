@@ -22,6 +22,11 @@ jobs:
         java-version: '8'
         distribution: 'adopt'
 
+    - name: Setup Node
+      uses: actions/setup-node@v3
+      with:
+        node-version: '16'
+
     - name: Set up Maven
       uses: stCarolas/setup-maven@v4.5
       with:
@@ -41,7 +46,7 @@ jobs:
             "id": "knowage-group",
             "name": "KNOWAGE Nexus",
             "mirrorOf": "*",
-            "url": "${{ vars.KNOWAGE_NEXUS_URL_KNOWAGE_GROUP }}"
+            "url": "${{ secrets.KNOWAGE_NEXUS_URL_KNOWAGE_GROUP }}"
           }]
 
     - name: Build
