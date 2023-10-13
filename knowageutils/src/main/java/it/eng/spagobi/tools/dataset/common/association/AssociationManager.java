@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,12 +11,13 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package it.eng.spagobi.tools.dataset.common.association;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -32,14 +33,15 @@ import org.jgrapht.graph.SimpleGraph;
  * @author Andrea Gioia (andrea.gioia@eng.it)
  *
  */
-public class AssociationManager {
+public class AssociationManager implements Serializable {
 
-	List<Association> associations;
+	private static final long serialVersionUID = -7952645147077233635L;
+	private static final Logger LOGGER = Logger.getLogger(AssociationManager.class);
 
-	protected static Logger logger = Logger.getLogger(AssociationManager.class);
+	private final List<Association> associations;
 
 	public AssociationManager() {
-		associations = new ArrayList<Association>();
+		associations = new ArrayList<>();
 	}
 
 	public List<Association> getAssociations() {
@@ -47,7 +49,7 @@ public class AssociationManager {
 	}
 
 	public List<Association> getAssociations(String dataset) {
-		List<Association> datasetAssociations = new ArrayList<Association>();
+		List<Association> datasetAssociations = new ArrayList<>();
 		for (Association association : associations) {
 			if (association.containsDataset(dataset)) {
 				datasetAssociations.add(association);
@@ -65,15 +67,15 @@ public class AssociationManager {
 	}
 
 	public List<AssociationGroup> getAssociationGroups() {
-		List<AssociationGroup> associationGroups = new ArrayList<AssociationGroup>();
+		List<AssociationGroup> associationGroups = new ArrayList<>();
 		UndirectedGraph<String, DefaultEdge> g = buildGraph();
 		ConnectivityInspector ci = new ConnectivityInspector(g);
 		List<Set> connectedSet = ci.connectedSets();
 		for (Set<String> datasets : connectedSet) {
 			AssociationGroup associationGroup = new AssociationGroup();
 			for (String dataset : datasets) {
-				List<Association> associations = getAssociations(dataset);
-				associationGroup.addAssociations(associations);
+				List<Association> currAssociations = getAssociations(dataset);
+				associationGroup.addAssociations(currAssociations);
 			}
 			associationGroups.add(associationGroup);
 		}
@@ -81,7 +83,7 @@ public class AssociationManager {
 	}
 
 	public Set<String> getDataSets() {
-		Set<String> datasets = new HashSet<String>();
+		Set<String> datasets = new HashSet<>();
 		for (Association association : associations) {
 			for (Association.Field field : association.getFields()) {
 				datasets.add(field.getLabel());
@@ -95,7 +97,7 @@ public class AssociationManager {
 	// ===========================================================================
 
 	private UndirectedGraph<String, DefaultEdge> buildGraph() {
-		UndirectedGraph<String, DefaultEdge> g = new SimpleGraph<String, DefaultEdge>(DefaultEdge.class);
+		UndirectedGraph<String, DefaultEdge> g = new SimpleGraph<>(DefaultEdge.class);
 
 		Set<String> datasets = getDataSets();
 		for (String dataset : datasets) {
@@ -122,7 +124,7 @@ public class AssociationManager {
 	 */
 	private static UndirectedGraph<String, DefaultEdge> createStringGraph() {
 
-		UndirectedGraph<String, DefaultEdge> g = new SimpleGraph<String, DefaultEdge>(DefaultEdge.class);
+		UndirectedGraph<String, DefaultEdge> g = new SimpleGraph<>(DefaultEdge.class);
 
 		String v1 = "v1";
 		String v2 = "v2";
@@ -139,9 +141,7 @@ public class AssociationManager {
 
 		// add edges to create a circuit
 		g.addEdge(v1, v2);
-		// g.addEdge(v2, v3);
 		g.addEdge(v3, v4);
-		// g.addEdge(v4, v1);
 
 		return g;
 	}
@@ -153,10 +153,10 @@ public class AssociationManager {
 		for (Object o : connectedSet) {
 			Set vertexes = (Set) o;
 			for (Object vertex : vertexes) {
-				logger.debug(vertex.toString());
+				LOGGER.debug(vertex.toString());
 			}
-			logger.debug("-----------------------------");
+			LOGGER.debug("-----------------------------");
 		}
-		logger.debug(connectedSet.size());
+		LOGGER.debug(connectedSet.size());
 	}
 }

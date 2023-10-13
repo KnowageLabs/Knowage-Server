@@ -30,6 +30,7 @@ import org.apache.log4j.Logger;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import it.eng.knowage.commons.security.PathTraversalChecker;
 import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.services.AbstractSpagoBIAction;
@@ -107,7 +108,7 @@ public class ManagePreviewFileAction extends AbstractSpagoBIAction {
 	// checks for path traversal attacks
 	private void checkRequiredFile(String fileName) {
 		File targetDirectory = GeneralUtilities.getPreviewFilesStorageDirectoryPath();
-		FileUtils.checkPathTraversalAttack(fileName, targetDirectory);
+		PathTraversalChecker.get(targetDirectory.getAbsolutePath(), fileName);
 	}
 
 	private JSONObject uploadFile() throws Exception {

@@ -29,7 +29,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
-import java.nio.file.Paths;
 import java.text.Format;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -1218,18 +1217,17 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 		try {
 
 			if (input != null) {
+				File saveDirectory = PathTraversalChecker.get(SpagoBIUtilities.getResourcePath(), METADATA_DIR, getUserProfile().getUserId().toString());
 
-				java.nio.file.Path saveDirectoryPath = Paths.get(SpagoBIUtilities.getResourcePath(), METADATA_DIR, getUserProfile().getUserId().toString());
 				final FormFile file = input.getFormFileParameterValues("file")[0];
 				bytes = file.getContent();
 
-				File saveDirectory = saveDirectoryPath.toFile();
 				if (!(saveDirectory.exists() && saveDirectory.isDirectory())) {
 					saveDirectory.mkdirs();
 				}
-				String tempFile = Paths.get(saveDirectoryPath.toString(), file.getFileName()).toString();
-				File tempFileToSave = new File(tempFile);
-				PathTraversalChecker.preventPathTraversalAttack(tempFileToSave, saveDirectory);
+
+				File tempFileToSave = PathTraversalChecker.get(saveDirectory.getAbsolutePath(), file.getFileName());
+
 				tempFileToSave.createNewFile();
 				DataOutputStream os = new DataOutputStream(new FileOutputStream(tempFileToSave));
 				os.write(bytes);

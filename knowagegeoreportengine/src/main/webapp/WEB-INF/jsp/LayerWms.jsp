@@ -28,6 +28,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <%@ page import="org.w3c.dom.Element"%>
 <%@ page import="org.w3c.dom.Node"%>
 <%@ page import="org.w3c.dom.NodeList"%>
+<%@ page import="java.io.IOException"%>
+<%@ page import="javax.net.ssl.SSLException"%>
 <%
 // TEST
 //String result = "[{id:'0',layername:'TEST_1',srs:'EPSG:32632',imglegend:'http://wms.pcn.minambiente.it/cgi-bin/mapserv.exe?map=/ms_ogc/service/aanp_f32.map&SERVICE=WMS&VERSION=1.1.1&layer=aanp_32&REQUEST=getlegendgraphic&FORMAT=image/png'},{id:'1',layername:'TEST_2',srs:'EPSG:32632',imglegend:'http://wms.pcn.minambiente.it/cgi-bin/mapserv.exe?map=/ms_ogc/service/aanp_f32.map&SERVICE=WMS&VERSION=1.1.1&layer=aanp_32&REQUEST=getlegendgraphic&FORMAT=image/png'}]";
@@ -73,12 +75,14 @@ String result = null;
 String urlWms = request.getParameter("urlWms");
 urlWms = urlWms + "?" + "request=getCapabilities";
 String result = "";
+InputStream is = null;
 
 try {
 	//File file = new File("c:\\MyXMLFile.xml");
 
 	URL url = new URL(urlWms);
 	URLConnection conn = url.openConnection();
+	is = conn.getInputStream();
 
 	// DOM way:
 	DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
@@ -92,7 +96,7 @@ try {
 	dbf.setExpandEntityReferences(false);
 
 	DocumentBuilder db = dbf.newDocumentBuilder();
-	Document doc = db.parse(url.openStream());
+	Document doc = db.parse(is);
 
 	doc.getDocumentElement().normalize();
 	//out.println("Root element " + doc.getDocumentElement().getNodeName());
@@ -139,7 +143,13 @@ try {
 		}
 
 	}
-} catch (Exception e) {
-	e.printStackTrace();
+} catch (SSLException sslException) {
+	logger.error("SSLException occurred while creating socket in LayerWMS: ", sslException);
+} catch (IOException ioException) {
+	logger.error("IOException occurred while creating socket in LayerWMS: ", ioException);
+} finally {
+	if(is != null) {
+		is.close()
+	}
 }
 %>

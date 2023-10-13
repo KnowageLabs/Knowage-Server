@@ -27,16 +27,14 @@ import java.util.List;
 public class Record implements IRecord, Serializable, Cloneable {
 
 	IDataStore dataStore;
-	List<IField> fields = new ArrayList<IField>();
+	List<IField> fields = new ArrayList<>();
 
 	public Record() {
-		super();
-		this.fields = new ArrayList<IField>();
+		this.fields = new ArrayList<>();
 	}
 
 	public Record(IDataStore dataStore) {
-		super();
-		this.fields = new ArrayList<IField>();
+		this.fields = new ArrayList<>();
 		this.setDataStore(dataStore);
 	}
 
@@ -110,7 +108,7 @@ public class Record implements IRecord, Serializable, Cloneable {
 	}
 
 	@Override
-	protected Object clone() throws CloneNotSupportedException {
+	protected final Object clone() throws CloneNotSupportedException {
 		Record clone = new Record();
 		clone.setDataStore(dataStore);
 		for (IField field : fields) {

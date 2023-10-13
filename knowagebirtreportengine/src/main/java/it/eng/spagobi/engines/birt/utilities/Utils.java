@@ -27,6 +27,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
 
+import it.eng.knowage.commons.security.PathTraversalChecker;
 import it.eng.spagobi.engines.birt.BirtReportServlet;
 
 public class Utils {
@@ -36,8 +37,7 @@ public class Utils {
 	/**
 	 * Resolve system properties.
 	 *
-	 * @param logDir
-	 *            the log dir
+	 * @param logDir the log dir
 	 *
 	 * @return the string
 	 */
@@ -54,10 +54,8 @@ public class Utils {
 	/**
 	 * Resolve system properties.
 	 *
-	 * @param logDir
-	 *            the log dir
-	 * @param startIndex
-	 *            the start index
+	 * @param logDir     the log dir
+	 * @param startIndex the start index
 	 *
 	 * @return the string
 	 */
@@ -89,14 +87,8 @@ public class Utils {
 		String completeImageFileName = null;
 		String mimeType = "text/html";
 
-		htmlFile = new File(BirtReportServlet.OUTPUT_FOLDER + File.separator + reportExecutionId, BirtReportServlet.PAGE_FILE_NAME + pageNumber + ".html");
-
-		// file path traversal security check
-		if (!((htmlFile.getParentFile().getParent() + File.separator).equals(BirtReportServlet.OUTPUT_FOLDER))) {
-			logger.error("Security exception: parent folder " + htmlFile.getParent() + " is not equal to expected folder " + BirtReportServlet.OUTPUT_FOLDER);
-			throw new RuntimeException(
-					"Security exception: parent folder " + htmlFile.getParent() + " is not equal to expected folder " + BirtReportServlet.OUTPUT_FOLDER);
-		}
+		String fileName = BirtReportServlet.PAGE_FILE_NAME + pageNumber + ".html";
+		htmlFile = PathTraversalChecker.get(BirtReportServlet.OUTPUT_FOLDER, reportExecutionId, fileName);
 
 		try (InputStream fis = new FileInputStream(htmlFile);) {
 			writeToOutput(response, mimeType, fis);

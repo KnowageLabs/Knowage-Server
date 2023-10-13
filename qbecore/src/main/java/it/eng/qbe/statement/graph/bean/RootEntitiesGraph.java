@@ -57,9 +57,9 @@ public class RootEntitiesGraph implements Cloneable {
 	protected static Logger logger = Logger.getLogger(RootEntitiesGraph.class);
 
 	public RootEntitiesGraph() {
-		relationships = new HashSet<Relationship>();
-		rootEntitiesMap = new HashMap<String, IModelEntity>();
-		rootEntitiesGraph = new DirectedMultigraph<IModelEntity, Relationship>(Relationship.class);
+		relationships = new HashSet<>();
+		rootEntitiesMap = new HashMap<>();
+		rootEntitiesGraph = new DirectedMultigraph<>(Relationship.class);
 	}
 
 	public void addRootEntity(IModelEntity entity) {
@@ -72,7 +72,7 @@ public class RootEntitiesGraph implements Cloneable {
 	}
 
 	public List<IModelEntity> getAllRootEntities() {
-		List<IModelEntity> list = new ArrayList<IModelEntity>();
+		List<IModelEntity> list = new ArrayList<>();
 		Iterator<String> it = rootEntitiesMap.keySet().iterator();
 		while (it.hasNext()) {
 			String entityName = it.next();
@@ -102,7 +102,7 @@ public class RootEntitiesGraph implements Cloneable {
 			Set<IModelEntity> connectedEntitySet = inspector.connectedSetOf(entity);
 			while (it.hasNext()) {
 				entity = it.next();
-				if (connectedEntitySet.contains(entity) == false) {
+				if (!connectedEntitySet.contains(entity)) {
 					areConnected = false;
 					break;
 				}
@@ -150,7 +150,7 @@ public class RootEntitiesGraph implements Cloneable {
 	}
 
 	@Override
-	public RootEntitiesGraph clone() {
+	public final RootEntitiesGraph clone() {
 		RootEntitiesGraph reg = new RootEntitiesGraph();
 		reg.setRootEntitiesMap(rootEntitiesMap);
 		reg.setRelationships(relationships);
@@ -165,7 +165,7 @@ public class RootEntitiesGraph implements Cloneable {
 	 * @return the list of entities reached by an out bound relation
 	 */
 	public Set<Relationship> getRootEntityDirectConnections(IModelEntity entity) {
-		Set<Relationship> targetEnities = new HashSet<Relationship>();
+		Set<Relationship> targetEnities = new HashSet<>();
 
 		IModelEntity entityToCheck = entity;
 		if (entity instanceof FilteredModelEntity) {
@@ -192,7 +192,7 @@ public class RootEntitiesGraph implements Cloneable {
 	 * @return the sets of direct relations from source to target
 	 */
 	public Set<Relationship> getDirectConnections(IModelEntity source, IModelEntity target) {
-		Set<Relationship> conections = new HashSet<Relationship>();
+		Set<Relationship> conections = new HashSet<>();
 
 		IModelEntity sourceEntityToCheck = source;
 		if (source instanceof FilteredModelEntity) {
@@ -219,9 +219,9 @@ public class RootEntitiesGraph implements Cloneable {
 
 	public Set<Relationship> getConnectingRelatiosnhips(Set<IModelEntity> entities) {
 
-		Set<Relationship> connectingRelatiosnhips = new HashSet<Relationship>();
+		Set<Relationship> connectingRelatiosnhips = new HashSet<>();
 
-		Set<IModelEntity> connectedEntities = new HashSet<IModelEntity>();
+		Set<IModelEntity> connectedEntities = new HashSet<>();
 
 		Iterator<IModelEntity> it = entities.iterator();
 		connectedEntities.add(it.next());

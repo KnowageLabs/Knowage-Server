@@ -17,6 +17,7 @@
  */
 package it.eng.spagobi.tools.dataset.common.association;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,16 +29,18 @@ import java.util.List;
  *
  * @author Andrea Gioia (andrea.gioia@eng.it)
  */
-public class Association {
+public class Association implements Serializable {
 
-	String id;
-	String description;
-	List<Field> fields;
+	private static final long serialVersionUID = -2252418966402313311L;
+
+	private String id;
+	private String description;
+	private final List<Field> fields;
 
 	public Association(String id, String description) {
 		this.id = id;
 		this.description = description;
-		this.fields = new ArrayList<Field>();
+		this.fields = new ArrayList<>();
 	}
 
 	public Association(String id, String description, List<Field> fields) {
@@ -89,14 +92,16 @@ public class Association {
 	/**
 	 * A filed have a unique name withing the dataset/document it belongs to
 	 */
-	public static class Field {
+	public static class Field implements Serializable {
 
-		public static String DATASET_TYPE = "dataset";
-		public static String DOCUMENT_TYPE = "document";
+		private static final long serialVersionUID = -1897937148214003640L;
 
-		String label;
-		String name;
-		String type;
+		public static final String DATASET_TYPE = "dataset";
+		public static final String DOCUMENT_TYPE = "document";
+
+		private String label;
+		private String name;
+		private String type;
 
 		public Field(String label, String name, String type) {
 			setLabel(label);

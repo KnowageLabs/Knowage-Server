@@ -2,7 +2,7 @@ package it.eng.spagobi.kpi.bo;
 
 import java.util.Date;
 
-public class KpiValueExecLog implements Cloneable {
+public final class KpiValueExecLog implements Cloneable {
 
 	private int id;
 	private int schedulerId;

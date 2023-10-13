@@ -30,8 +30,11 @@ import it.eng.spagobi.commons.dao.DAOFactory;
 
 /**
  * @author Gioia
- *
+ * @deprecated Too much coupling: this class should be used by all the WARs which need it but it's not movable outside knowage-core because of the coupling with
+ *             {@link DAOFactory}, {@link BIObjectParameter} and {@link Parameter}; we need to reduce the coupling because the code to encode multivalue
+ *             parameters is currently copy-pasted in many places.
  */
+@Deprecated
 public class ParameterValuesEncoder {
 
 	private static Logger logger = Logger.getLogger(ParameterValuesEncoder.class);
@@ -57,12 +60,9 @@ public class ParameterValuesEncoder {
 	/**
 	 * Instantiates a new parameter values encoder.
 	 *
-	 * @param separator
-	 *            the separator
-	 * @param openBlockMarker
-	 *            the open block marker
-	 * @param closeBlockMarker
-	 *            the close block marker
+	 * @param separator        the separator
+	 * @param openBlockMarker  the open block marker
+	 * @param closeBlockMarker the close block marker
 	 */
 	public ParameterValuesEncoder(String separator, String openBlockMarker, String closeBlockMarker) {
 		this.separator = separator;
@@ -86,8 +86,7 @@ public class ParameterValuesEncoder {
 	/**
 	 * Sets the close block marker.
 	 *
-	 * @param closeBlockMarker
-	 *            the new close block marker
+	 * @param closeBlockMarker the new close block marker
 	 */
 	public void setCloseBlockMarker(String closeBlockMarker) {
 		this.closeBlockMarker = closeBlockMarker;
@@ -105,8 +104,7 @@ public class ParameterValuesEncoder {
 	/**
 	 * Sets the open block marker.
 	 *
-	 * @param openBlockMarker
-	 *            the new open block marker
+	 * @param openBlockMarker the new open block marker
 	 */
 	public void setOpenBlockMarker(String openBlockMarker) {
 		this.openBlockMarker = openBlockMarker;
@@ -124,8 +122,7 @@ public class ParameterValuesEncoder {
 	/**
 	 * Sets the separator.
 	 *
-	 * @param separator
-	 *            the new separator
+	 * @param separator the new separator
 	 */
 	public void setSeparator(String separator) {
 		this.separator = separator;
@@ -138,8 +135,7 @@ public class ParameterValuesEncoder {
 	/**
 	 * Encode.
 	 *
-	 * @param biobjPar
-	 *            the biobj par
+	 * @param biobjPar the biobj par
 	 *
 	 * @return the string
 	 */
@@ -152,7 +148,7 @@ public class ParameterValuesEncoder {
 			return null;
 		}
 
-		if (parameterValues.size() == 0) {
+		if (parameterValues.isEmpty()) {
 			return "";
 		}
 
@@ -160,8 +156,8 @@ public class ParameterValuesEncoder {
 		if (parameter == null) {
 			Integer parId = biobjPar.getParID();
 			if (parId == null) {
-				logger.warn("Parameter object nor parameter id are set into BIObjectParameter with label = " + biobjPar.getLabel() + " of document with id = "
-						+ biobjPar.getBiObjectID());
+				logger.warn("Parameter object nor parameter id are set into BIObjectParameter with label = "
+						+ biobjPar.getLabel() + " of document with id = " + biobjPar.getBiObjectID());
 			} else {
 				try {
 					parameter = DAOFactory.getParameterDAO().loadForDetailByParameterID(parId);
@@ -172,8 +168,8 @@ public class ParameterValuesEncoder {
 		}
 
 		if (parameter == null) {
-			logger.error("Unable to load parameter from BIObjectParameter with label = " + biobjPar.getLabel() + " of document with id = "
-					+ +biobjPar.getBiObjectID());
+			logger.error("Unable to load parameter from BIObjectParameter with label = " + biobjPar.getLabel()
+					+ " of document with id = " + +biobjPar.getBiObjectID());
 			return null;
 		}
 
@@ -198,11 +194,10 @@ public class ParameterValuesEncoder {
 	}
 
 	/**
-	 * Get the description of a BIObjectParameter and encode it's description.. In this way we create a new parameter with the description of the parameter to
-	 * pass at the engine
+	 * Get the description of a BIObjectParameter and encode it's description.. In this way we create a new parameter with the description of the parameter to pass
+	 * at the engine
 	 *
-	 * @param biobjPar
-	 *            the parameter
+	 * @param biobjPar the parameter
 	 * @return a string with the encoded description
 	 */
 	public String encodeDescription(BIObjectParameter biobjPar) {
@@ -236,7 +231,7 @@ public class ParameterValuesEncoder {
 				}
 			} else {
 				List values = biobjPar.getParameterValuesDescription();
-				if (values != null && values.size() > 0) {
+				if (values != null && !values.isEmpty()) {
 					if (values.size() == 1)
 						return (String) biobjPar.getParameterValuesDescription().get(0);
 					else
@@ -248,8 +243,8 @@ public class ParameterValuesEncoder {
 			Integer parId = biobjPar.getParID();
 			String type = null;
 			if (parId == null) {
-				logger.warn("Parameter object nor parameter id are set into BiObjectPrameter with label = " + biobjPar.getLabel() + " of document with id = "
-						+ biobjPar.getBiObjectID());
+				logger.warn("Parameter object nor parameter id are set into BiObjectPrameter with label = "
+						+ biobjPar.getLabel() + " of document with id = " + biobjPar.getBiObjectID());
 			} else {
 				try {
 					Parameter aParameter = DAOFactory.getParameterDAO().loadForDetailByParameterID(parId);
@@ -259,7 +254,7 @@ public class ParameterValuesEncoder {
 				}
 			}
 			List values = biobjPar.getParameterValuesDescription();
-			if (values != null && values.size() > 0) {
+			if (values != null && !values.isEmpty()) {
 				if (values.size() == 1)
 					return (String) biobjPar.getParameterValuesDescription().get(0);
 				else
@@ -282,40 +277,40 @@ public class ParameterValuesEncoder {
 	 */
 	private String encodeMultivaluesParam(List values, String parameterType) {
 		logger.debug("IN");
-		String value = "";
+		StringBuilder value = new StringBuilder("");
 
-		if (values == null || values.size() == 0)
-			return value;
+		if (values == null || values.isEmpty())
+			return value.toString();
 
-		value += openBlockMarker;
-		value += separator;
-		value += openBlockMarker;
+		value.append(openBlockMarker);
+		value.append(separator);
+		value.append(openBlockMarker);
 		for (int i = 0; i < values.size(); i++) {
 			String valueToBeAppended = (values.get(i) == null) ? "" : (String) values.get(i);
-			value += (i > 0) ? separator : "";
-			value += valueToBeAppended;
+			value.append((i > 0) ? separator : "");
+			value.append(valueToBeAppended);
 		}
-		value += closeBlockMarker;
-		value += parameterType;
-		value += closeBlockMarker;
+		value.append(closeBlockMarker);
+		value.append(parameterType);
+		value.append(closeBlockMarker);
 		logger.debug("IN.value=" + value);
-		return value;
+		return value.toString();
 	}
 
 	private String encodeMultivalueParamsDesciption(List values) {
 		logger.debug("IN");
-		String value = "";
+		StringBuilder value = new StringBuilder("");
 
-		if (values == null || values.size() == 0)
-			return value;
+		if (values == null || values.isEmpty())
+			return value.toString();
 
 		for (int i = 0; i < values.size(); i++) {
 			String valueToBeAppended = (values.get(i) == null) ? "" : (String) values.get(i);
-			value += (i > 0) ? separator : "";
-			value += valueToBeAppended;
+			value.append((i > 0) ? separator : "");
+			value.append(valueToBeAppended);
 		}
 
 		logger.debug("IN.value=" + value);
-		return value;
+		return value.toString();
 	}
 }
