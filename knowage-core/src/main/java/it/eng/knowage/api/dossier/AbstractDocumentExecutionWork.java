@@ -264,7 +264,7 @@ public class AbstractDocumentExecutionWork extends DossierExecutionClient implem
 	private String getDashboardServiceUrl(BIObject biObject, String userUniqueIdentifier, JSONArray jsonArray,
 			Map<String, String> paramMap, Report reportToUse, Integer docId, String role)
 			throws UnsupportedEncodingException, JSONException, URISyntaxException {
-		String docName = biObject.getName();
+		String docLabel = biObject.getLabel();
 		String hostUrl = getServiceHostUrl();
 
 		URIBuilder serviceUrlBuilder = new URIBuilder(hostUrl);
@@ -272,7 +272,7 @@ public class AbstractDocumentExecutionWork extends DossierExecutionClient implem
 				.setPath(KnowageSystemConfiguration.getKnowageCockpitEngineContext() + "/api/1.0/pages/execute/png");
 		serviceUrlBuilder.setParameter("user_id", userUniqueIdentifier);
 		serviceUrlBuilder.setParameter("document", Integer.toString(docId));
-		serviceUrlBuilder.setParameter("DOCUMENT_LABEL", docName);
+		serviceUrlBuilder.setParameter("DOCUMENT_LABEL", docLabel);
 		serviceUrlBuilder.setParameter("toolbar", "false");
 		serviceUrlBuilder.setParameter("role", role);
 		serviceUrlBuilder.setParameter("menu", "false");
