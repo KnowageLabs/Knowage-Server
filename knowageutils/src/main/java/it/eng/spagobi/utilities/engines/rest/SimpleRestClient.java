@@ -25,9 +25,6 @@ import java.util.Iterator;
 import java.util.Map;
 
 import javax.net.ssl.SSLContext;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
@@ -109,7 +106,6 @@ public class SimpleRestClient {
 	 * @return
 	 * @throws Exception
 	 */
-	@GET
 	protected Response executeGetService(Map<String, Object> parameters, String serviceUrl, String userId) throws Exception {
 		return executeService(parameters, serviceUrl, userId, RequestTypeEnum.GET, null, null);
 	}
@@ -125,7 +121,6 @@ public class SimpleRestClient {
 	 * @return
 	 * @throws Exception
 	 */
-	@POST
 	protected Response executePostService(Map<String, Object> parameters, String serviceUrl, String userId, String mediaType, Object data) throws Exception {
 		return executeService(parameters, serviceUrl, userId, RequestTypeEnum.POST, mediaType, data);
 	}
@@ -141,12 +136,10 @@ public class SimpleRestClient {
 	 * @return
 	 * @throws Exception
 	 */
-	@PUT
 	protected Response executePutService(Map<String, Object> parameters, String serviceUrl, String userId, String mediaType, Object data) throws Exception {
 		return executeService(parameters, serviceUrl, userId, RequestTypeEnum.PUT, mediaType, data);
 	}
 
-	@POST
 	protected HttpResponse executePostServiceWithFormParams(Map<String, Object> parameters, byte[] form, String serviceUrl, String userId) throws Exception {
 		return executeServiceMultipart(parameters, form, serviceUrl, userId);
 	}
