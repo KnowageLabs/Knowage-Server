@@ -31,11 +31,7 @@ import org.apache.log4j.LogMF;
 import org.apache.log4j.Logger;
 
 import com.auth0.jwt.interfaces.DecodedJWT;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
-import com.jayway.jsonpath.Configuration;
 import com.jayway.jsonpath.JsonPath;
-import com.jayway.jsonpath.spi.json.GsonJsonProvider;
 
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
@@ -53,14 +49,13 @@ public class PNTSecurityServiceSupplier extends OIDCFullIdTokenSecurityServiceSu
 
 	private static final String REGIONE_ATTRIBUTE = "REGIONE";
 	private static final String STRUTTURA_ATTRIBUTE = "STRUTTURA";
-	private static final String ORGANIZATIONS_JSON_ATTRIBUTE = "organizations";
 	private static final String ROLE_KN_ADMIN = "KN_ADMIN";
 	private static final String ROLE_KN_DEV = "KN_DEV";
 	private static final String ROLE_KN_GOVERNO = "KN_GOVERNO";
 	private static final String FULL_VISILIBITY_ATTRIBUTE_VALUE = "*";
 	private static final String NO_VISILIBITY_ATTRIBUTE_VALUE = "";
 
-	private static final String PROFILES_JSON_PATH = "$.applications[?(@.name == 'Knowage')].profiles[*]";
+	private static final String ORGANIZATIONS_JSON_PATH = "$.applications[?(@.name == 'Knowage')].profiles[*].organizations[*]";
 
 	@Override
 	protected Map<String, String> getUserAttributes(DecodedJWT decodedJWT) {
@@ -92,27 +87,24 @@ public class PNTSecurityServiceSupplier extends OIDCFullIdTokenSecurityServiceSu
 		try {
 			String payload = decodedJWT.getPayload();
 			String decodedPayload = new String(Base64.getDecoder().decode(payload));
-			Configuration conf = Configuration.builder().jsonProvider(new GsonJsonProvider()).build();
-			JsonArray profiles = JsonPath.using(conf).parse(decodedPayload).read(PROFILES_JSON_PATH);
-			if (profiles != null) {
-				profiles.forEach(profileElem -> {
-					JsonObject profile = profileElem.getAsJsonObject();
-					Object organizationsObj = profile.getAsJsonArray(ORGANIZATIONS_JSON_ATTRIBUTE);
-					if (organizationsObj != null) {
-						JsonArray organizations = (JsonArray) organizationsObj;
-						organizations.forEach(elem -> {
-							String organization = elem.getAsString();
-							if (allRegioni.contains(organization)) { // if it is a valid regione, put it inside the list
-								regioni.add(organization);
-							} else if (allStrutture.contains(organization)) { // if it is a valid struttura, put it inside the list
-								strutture.add(organization);
-							} else {
-								logger.warn("Organization [" + organization + "] not recognized neither as a 'regione' nor as a 'struttura'");
-							}
-						});
-					}
-				});
+
+			net.minidev.json.JSONArray parsed = JsonPath.read(decodedPayload, ORGANIZATIONS_JSON_PATH);
+			LogMF.debug(logger, "Got parsed organizations [{0}]", parsed);
+			if (parsed == null || parsed.isEmpty()) {
+				logger.debug("No organizations detected");
+				return getNoVisibilityAttributes();
 			}
+
+			parsed.forEach(elem -> {
+				String organization = (String) elem;
+				if (allRegioni.contains(organization)) { // if it is a valid regione, put it inside the list
+					regioni.add(organization);
+				} else if (allStrutture.contains(organization)) { // if it is a valid struttura, put it inside the list
+					strutture.add(organization);
+				} else {
+					logger.warn("Organization [" + organization + "] not recognized neither as a 'regione' nor as a 'struttura'");
+				}
+			});
 		} catch (Exception e) {
 			throw new SpagoBIRuntimeException("An error occurred while parsing json", e);
 		}
