@@ -97,9 +97,10 @@ public class PNTSecurityServiceSupplier extends OIDCFullIdTokenSecurityServiceSu
 
 			parsed.forEach(elem -> {
 				String organization = (String) elem;
-				if (allRegioni.contains(organization)) { // if it is a valid regione, put it inside the list
+				if (allRegioni.stream().anyMatch(organization::equalsIgnoreCase)) { // if it is a valid regione (case insensitive check), put it inside the list
 					regioni.add(organization);
-				} else if (allStrutture.contains(organization)) { // if it is a valid struttura, put it inside the list
+				} else if (allStrutture.stream().anyMatch(organization::equalsIgnoreCase)) { // if it is a valid struttura (case insensitive check), put it
+																								// inside the list
 					strutture.add(organization);
 				} else {
 					logger.warn("Organization [" + organization + "] not recognized neither as a 'regione' nor as a 'struttura'");
