@@ -22,6 +22,8 @@ public abstract class AbstractSelectionField {
 
 	protected String name;
 
+	public abstract String getAlias();
+
 	public String getName() {
 		return name;
 	}
