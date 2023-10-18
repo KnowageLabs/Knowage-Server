@@ -136,14 +136,14 @@ public class BusinessModelResource {
 		JSONObject requestVal = RestUtilities.readBodyAsJSONObject(request);
 		String role = requestVal.getString("role");
 
-		Map<String, Object> ret = new LinkedHashMap<String, Object>();
+		Map<String, Object> ret = new LinkedHashMap<>();
 		final List<HashMap<String, Object>> parametersArrayList = new ArrayList<>();
 
 		ret.put("filterStatus", parametersArrayList);
 
 		try {
 			getDriversFromQbeDataSet(role, ret, qbeDatamart);
-		} catch(Exception ex) {
+		} catch (Exception ex) {
 			// TODO : Remove this
 		}
 
@@ -394,7 +394,6 @@ public class BusinessModelResource {
 				throw new SpagoBIServiceException(SERVICE_NAME, "Impossible to get document Execution Parameter EMFUserError", e1);
 			}
 
-
 		} catch (IOException e2) {
 			throw new SpagoBIServiceException(SERVICE_NAME, "Impossible to get document Execution Parameter IOException", e2);
 		} catch (JSONException e2) {
@@ -408,9 +407,10 @@ public class BusinessModelResource {
 	@POST
 	@Path("/{qbeDatamart}/admissibleValuesTree")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
-	public Response admissibleValuesTree(@Context HttpServletRequest req, @PathParam("qbeDatamart") String qbeDatamart) throws EMFUserError, IOException, JSONException {
+	public Response admissibleValuesTree(@Context HttpServletRequest req, @PathParam("qbeDatamart") String qbeDatamart)
+			throws EMFUserError, IOException, JSONException {
 
-		Map<String, Object> resultAsMap = new HashMap<String, Object>();
+		Map<String, Object> resultAsMap = new HashMap<>();
 
 		RequestContainer aRequestContainer = RequestContainerAccess.getRequestContainer(req);
 		Locale locale = GeneralUtilities.getCurrentLocale(aRequestContainer);
@@ -426,7 +426,6 @@ public class BusinessModelResource {
 		biparameterId = (String) requestVal.opt("parameterId");
 		treeLovNode = (String) requestVal.opt("treeLovNode");
 		mode = (String) requestVal.opt("mode");
-
 
 		DriversRuntimeLoader driversRuntimeLoader = DriversRuntimeLoaderFactory.getDriversRuntimeLoader();
 		MetaModel datasetMetaModel = DAOFactory.getMetaModelsDAO().loadMetaModelByName(qbeDatamart);
@@ -472,7 +471,6 @@ public class BusinessModelResource {
 
 		logger.debug("OUT");
 
-
 		return Response.ok(resultAsMap).build();
 	}
 
@@ -500,7 +498,7 @@ public class BusinessModelResource {
 			String defaultValue = e.getDefaultValue();
 			boolean multivalue = e.isMultivalue();
 
-			Map<String, Object> parameterAsMap = new LinkedHashMap<String, Object>();
+			Map<String, Object> parameterAsMap = new LinkedHashMap<>();
 			parameterAsMap.put("id", null);
 			parameterAsMap.put("label", name);
 			parameterAsMap.put("urlName", name);
@@ -517,8 +515,7 @@ public class BusinessModelResource {
 			Map<String, String> colPlaceholder2ColName = new HashMap<>();
 
 			/*
-			 * Here "data" is a dummy column just to simulate that
-			 * a parameter is driver.
+			 * Here "data" is a dummy column just to simulate that a parameter is driver.
 			 */
 			colPlaceholder2ColName.put("_col0", "data");
 
@@ -573,7 +570,7 @@ public class BusinessModelResource {
 				throw new SpagoBIRuntimeException(e1.getMessage(), e1);
 			}
 
-			HashMap<String, Object> parameterAsMap = new HashMap<String, Object>();
+			HashMap<String, Object> parameterAsMap = new HashMap<>();
 			parameterAsMap.put("id", objParameter.getBiObjectId());
 			parameterAsMap.put("label", objParameter.getLabel());
 			parameterAsMap.put("urlName", objParameter.getId());
@@ -603,7 +600,7 @@ public class BusinessModelResource {
 					List<String> valuesList = (List) paramValues;
 					List<String> descriptionList = (List) paramDescriptionValues;
 					if (paramDescriptionValues == null || !(paramDescriptionValues instanceof List)) {
-						descriptionList = new ArrayList<String>();
+						descriptionList = new ArrayList<>();
 					}
 
 					// String item = null;
@@ -786,36 +783,34 @@ public class BusinessModelResource {
 				valueList = objParameter.getDefaultValues();
 
 				if (!valueList.isEmpty()) {
-					defValue = valueList.stream()
-						.map(e -> {
+					defValue = valueList.stream().map(e -> {
 
-							BiMap<String, String> inverse = colPlaceholder2ColName.inverse();
-							String valColName = inverse.get(lovValueColumnName);
-							String descColName = inverse.get(lovDescriptionColumnName);
+						BiMap<String, String> inverse = colPlaceholder2ColName.inverse();
+						String valColName = inverse.get(lovValueColumnName);
+						String descColName = inverse.get(lovDescriptionColumnName);
 
-							// TODO : workaround
-							valColName = Optional.ofNullable(valColName).orElse("value");
-							descColName = Optional.ofNullable(descColName).orElse("desc");
+						// TODO : workaround
+						valColName = Optional.ofNullable(valColName).orElse("value");
+						descColName = Optional.ofNullable(descColName).orElse("desc");
 
-							Map<String, Object> ret = new LinkedHashMap<>();
+						Map<String, Object> ret = new LinkedHashMap<>();
 
-							ret.put(valColName, e.getValue());
+						ret.put(valColName, e.getValue());
 
-							if (!valColName.equals(descColName)) {
-								ret.put(descColName, e.getDescription());
-							}
+						if (!valColName.equals(descColName)) {
+							ret.put(descColName, e.getDescription());
+						}
 
-							return ret;
-						})
-						.collect(Collectors.toList());
+						return ret;
+					}).collect(Collectors.toList());
 				}
 
 				// if (jsonCrossParameters.isNull(objParameter.getId())
-				// 		// && !sessionParametersMap.containsKey(objParameter.getId())) {
-				// 		&& !sessionParametersMap.containsKey(sessionKey)) {
-				// 	if (valueList != null) {
-				// 		parameterAsMap.put("parameterValue", valueList);
-				// 	}
+				// // && !sessionParametersMap.containsKey(objParameter.getId())) {
+				// && !sessionParametersMap.containsKey(sessionKey)) {
+				// if (valueList != null) {
+				// parameterAsMap.put("parameterValue", valueList);
+				// }
 				// }
 
 				// in every case fill default values!

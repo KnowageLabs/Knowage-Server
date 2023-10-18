@@ -233,7 +233,7 @@ public interface IBIObjectDAO extends ISpagoBIDao {
 	 * @return The list of correct roles for execution
 	 * @throws EMFUserError If an Exception occurred
 	 */
-	List getCorrectRolesForExecution(Integer id, IEngUserProfile profile) throws EMFUserError;
+	List<String> getCorrectRolesForExecution(Integer id, IEngUserProfile profile) throws EMFUserError;
 
 	/**
 	 * Gets the correct roles for Report execution, given only the Report's id.
@@ -242,7 +242,7 @@ public interface IBIObjectDAO extends ISpagoBIDao {
 	 * @return The list of correct roles for execution
 	 * @throws EMFUserError If an Exception occurred
 	 */
-	List getCorrectRolesForExecution(Integer id) throws EMFUserError;
+	List<String> getCorrectRolesForExecution(Integer id) throws EMFUserError;
 
 	/**
 	 * Gets the biparameters associated with to a biobject.
@@ -346,7 +346,7 @@ public interface IBIObjectDAO extends ISpagoBIDao {
 	List<BIObject> searchBIObjects(String valueFilter, String typeFilter, String columnFilter, String isGlobal,
 			Integer nodeFilter, IEngUserProfile profile) throws EMFUserError;
 
-	List loadAllBIObjectsByFolderId(Integer folderId) throws EMFUserError;
+	List<BIObject> loadAllBIObjectsByFolderId(Integer folderId) throws EMFUserError;
 
 	String changeLockStatus(String documentLabel, boolean isUserAdmin) throws EMFUserError;
 

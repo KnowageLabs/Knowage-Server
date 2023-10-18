@@ -52,8 +52,8 @@ public class SbiObjects extends SbiHibernateModel {
 	private String descr;
 	private String path;
 	private String relName;
-	private Set sbiObjPars;
-	private Set sbiObjFuncs;
+	private Set<SbiObjPar> sbiObjPars;
+	private Set<SbiObjFunc> sbiObjFuncs;
 	private Set sbiObjStates;
 	private String uuid;
 	private Date creationDate = null;
@@ -66,7 +66,7 @@ public class SbiObjects extends SbiHibernateModel {
 	private String organization;
 	private String lockedByUser;
 
-	private Set<SbiOutputParameter> sbiOutputParameters = new HashSet<SbiOutputParameter>();
+	private Set<SbiOutputParameter> sbiOutputParameters = new HashSet<>();
 
 	// Constructors
 
@@ -475,7 +475,7 @@ public class SbiObjects extends SbiHibernateModel {
 	 *
 	 * @return the sbi obj pars
 	 */
-	public Set getSbiObjPars() {
+	public Set<SbiObjPar> getSbiObjPars() {
 		return this.sbiObjPars;
 	}
 
@@ -484,7 +484,7 @@ public class SbiObjects extends SbiHibernateModel {
 	 *
 	 * @param sbiObjPars the new sbi obj pars
 	 */
-	public void setSbiObjPars(Set sbiObjPars) {
+	public void setSbiObjPars(Set<SbiObjPar> sbiObjPars) {
 		this.sbiObjPars = sbiObjPars;
 	}
 
@@ -493,7 +493,7 @@ public class SbiObjects extends SbiHibernateModel {
 	 *
 	 * @return the sbi obj funcs
 	 */
-	public Set getSbiObjFuncs() {
+	public Set<SbiObjFunc> getSbiObjFuncs() {
 		return this.sbiObjFuncs;
 	}
 
@@ -502,7 +502,7 @@ public class SbiObjects extends SbiHibernateModel {
 	 *
 	 * @param sbiObjFuncs the new sbi obj funcs
 	 */
-	public void setSbiObjFuncs(Set sbiObjFuncs) {
+	public void setSbiObjFuncs(Set<SbiObjFunc> sbiObjFuncs) {
 		this.sbiObjFuncs = sbiObjFuncs;
 	}
 

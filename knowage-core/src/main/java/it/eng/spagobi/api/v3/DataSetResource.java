@@ -432,7 +432,7 @@ public class DataSetResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	@UserConstraint(functionalities = { CommunityFunctionalityConstants.SELF_SERVICE_DATASET_MANAGEMENT })
 	public List<String> getAvroDataSets() {
-		List<String> avroDataSets = new ArrayList<String>();
+		List<String> avroDataSets = new ArrayList<>();
 		try {
 			final UserProfile userProfile = getUserProfile();
 			java.nio.file.Path avroExportFolder = Paths.get(SpagoBIUtilities.getRootResourcePath(), userProfile.getOrganization(), "dataPreparation",
@@ -464,7 +464,7 @@ public class DataSetResource {
 			}
 		} catch (Exception e) {
 			logger.error("Cannot get list of Avro datasets", e);
-			return new ArrayList<String>();
+			return new ArrayList<>();
 		}
 		return avroDataSets;
 	}
@@ -502,7 +502,7 @@ public class DataSetResource {
 		JSONObject requestVal = RestUtilities.readBodyAsJSONObject(request);
 		String role = requestVal.getString("role");
 
-		Map<String, Object> ret = new LinkedHashMap<String, Object>();
+		Map<String, Object> ret = new LinkedHashMap<>();
 		final List<HashMap<String, Object>> parametersArrayList = new ArrayList<>();
 
 		ret.put("filterStatus", parametersArrayList);
@@ -795,7 +795,7 @@ public class DataSetResource {
 	public Response admissibleValuesTree(@Context HttpServletRequest req, @PathParam("dsLabel") String dsLabel)
 			throws EMFUserError, IOException, JSONException {
 
-		Map<String, Object> resultAsMap = new HashMap<String, Object>();
+		Map<String, Object> resultAsMap = new HashMap<>();
 
 		RequestContainer aRequestContainer = RequestContainerAccess.getRequestContainer(req);
 		Locale locale = GeneralUtilities.getCurrentLocale(aRequestContainer);
@@ -893,7 +893,7 @@ public class DataSetResource {
 			String defaultValue = e.getDefaultValue();
 			boolean multivalue = e.isMultivalue();
 
-			Map<String, Object> parameterAsMap = new LinkedHashMap<String, Object>();
+			Map<String, Object> parameterAsMap = new LinkedHashMap<>();
 			parameterAsMap.put("id", null);
 			parameterAsMap.put("label", name);
 			parameterAsMap.put("urlName", name);
@@ -965,7 +965,7 @@ public class DataSetResource {
 				throw new SpagoBIRuntimeException(e1.getMessage(), e1);
 			}
 
-			HashMap<String, Object> parameterAsMap = new HashMap<String, Object>();
+			HashMap<String, Object> parameterAsMap = new HashMap<>();
 			parameterAsMap.put("id", objParameter.getBiObjectId());
 			parameterAsMap.put("label", objParameter.getLabel());
 			parameterAsMap.put("urlName", objParameter.getId());
@@ -995,7 +995,7 @@ public class DataSetResource {
 					List<String> valuesList = (List) paramValues;
 					List<String> descriptionList = (List) paramDescriptionValues;
 					if (paramDescriptionValues == null || !(paramDescriptionValues instanceof List)) {
-						descriptionList = new ArrayList<String>();
+						descriptionList = new ArrayList<>();
 					}
 
 					// String item = null;

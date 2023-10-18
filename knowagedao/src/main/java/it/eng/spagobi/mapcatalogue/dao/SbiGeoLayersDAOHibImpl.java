@@ -35,10 +35,6 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
-import javax.net.ssl.HostnameVerifier;
-import javax.net.ssl.HttpsURLConnection;
-import javax.net.ssl.SSLContext;
-import javax.net.ssl.SSLSession;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 
@@ -582,26 +578,6 @@ public class SbiGeoLayersDAOHibImpl extends AbstractHibernateDAO implements ISbi
 					public void checkServerTrusted(java.security.cert.X509Certificate[] certs, String authType) {
 					}
 				} };
-
-				// Install the all-trusting trust manager
-				try {
-					SSLContext sc = SSLContext.getInstance("TLS");
-					sc.init(null, trustAllCerts, new java.security.SecureRandom());
-					HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
-					// Create all-trusting host name verifier
-					HostnameVerifier allHostsValid = new HostnameVerifier() {
-
-						@Override
-						public boolean verify(String hostname, SSLSession session) {
-							return true;
-						}
-					};
-
-					// Install the all-trusting host verifier
-					HttpsURLConnection.setDefaultHostnameVerifier(allHostsValid);
-				} catch (Exception e) {
-					throw new IllegalArgumentException("Error during loading properties : " + e.getLocalizedMessage(), e);
-				}
 
 				// Now you can access an https URL without having the certificate in the truststore
 				URL url = new URL(urlDescribeFeature);

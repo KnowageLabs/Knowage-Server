@@ -18,7 +18,6 @@
 package it.eng.qbe.datasource.jpa;
 
 import java.beans.PropertyDescriptor;
-import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -635,13 +634,12 @@ public class JPAPersistenceManager implements IPersistenceManager {
 				Object referenced = getReferencedObjectJPA(entityManager, entityJavaType, mewSubEntityAttributes);
 
 				Class clas = targetEntity.getJavaType();
-				Field f = clas.getDeclaredField(subKey);
-				PropertyDescriptor propertyDescriptor = new PropertyDescriptor(f.getName(), clas);
+				PropertyDescriptor propertyDescriptor = new PropertyDescriptor(subKey, clas);
 				Method writeMethod = propertyDescriptor.getWriteMethod();
 				if (writeMethod != null)
 					writeMethod.invoke(obj, referenced);
 				else
-					throw new SpagoBIRuntimeException("Cannot find setter for property " + f.getName() + " for the value " + obj);
+					throw new SpagoBIRuntimeException("Cannot find setter for property " + subKey + " for the value " + obj);
 			} catch (Exception e) {
 				throw new SpagoBIRuntimeException("Error setting sub-entity", e);
 			}
@@ -655,14 +653,13 @@ public class JPAPersistenceManager implements IPersistenceManager {
 		try {
 			Attribute a = targetEntity.getAttribute(aKey);
 			Class clas = targetEntity.getJavaType();
-			Field f = clas.getDeclaredField(aKey);
 			Object valueConverted = this.convertValue(newValue, a);
-			PropertyDescriptor propertyDescriptor = new PropertyDescriptor(f.getName(), clas);
+			PropertyDescriptor propertyDescriptor = new PropertyDescriptor(aKey, clas);
 			Method writeMethod = propertyDescriptor.getWriteMethod();
 			if (writeMethod != null)
 				writeMethod.invoke(obj, valueConverted);
 			else
-				throw new SpagoBIRuntimeException("Cannot find setter for property " + f.getName() + " for the value " + valueConverted);
+				throw new SpagoBIRuntimeException("Cannot find setter for property " + aKey + " for the value " + valueConverted);
 		} catch (Exception e) {
 			throw new SpagoBIRuntimeException("Error setting Field " + aKey + "", e);
 		} finally {
@@ -677,14 +674,13 @@ public class JPAPersistenceManager implements IPersistenceManager {
 		try {
 			Attribute a = targetEntity.getAttribute(aKey);
 			Class clas = targetEntity.getJavaType();
-			Field f = clas.getDeclaredField(aKey);
 			Object valueConverted = this.convertValue(value, a);
-			PropertyDescriptor propertyDescriptor = new PropertyDescriptor(f.getName(), clas);
+			PropertyDescriptor propertyDescriptor = new PropertyDescriptor(aKey, clas);
 			Method writeMethod = propertyDescriptor.getWriteMethod();
 			if (writeMethod != null)
 				writeMethod.invoke(obj, valueConverted);
 			else
-				throw new SpagoBIRuntimeException("Cannot find setter for property " + f.getName() + " for the value " + valueConverted);
+				throw new SpagoBIRuntimeException("Cannot find setter for property " + aKey + " for the value " + valueConverted);
 		} catch (Exception e) {
 			throw new SpagoBIRuntimeException("Error setting Field " + aKey + "", e);
 		} finally {

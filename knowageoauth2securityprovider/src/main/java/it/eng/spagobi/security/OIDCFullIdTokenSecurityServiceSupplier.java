@@ -121,14 +121,14 @@ public class OIDCFullIdTokenSecurityServiceSupplier implements ISecurityServiceS
 		}
 	}
 
-	private Map<String, String> getUserAttributes(DecodedJWT decodedJWT) {
+	protected Map<String, String> getUserAttributes(DecodedJWT decodedJWT) {
 		Map<String, String> attributes = new HashMap<>();
 		try {
 			List<SbiAttribute> sbiAttributes = DAOFactory.getSbiAttributeDAO().loadSbiAttributes();
 			sbiAttributes.forEach(sbiAttribute -> {
 				String claimName = sbiAttribute.getAttributeName();
 				Claim valueClaim = decodedJWT.getClaim(claimName);
-				if (valueClaim != null) {
+				if (!valueClaim.isNull()) {
 					LogMF.debug(logger, "Got attribute/claim with name [{0}] and value [{1}]", claimName, valueClaim.asString());
 					attributes.put(claimName, valueClaim.asString());
 				} else {
@@ -142,7 +142,7 @@ public class OIDCFullIdTokenSecurityServiceSupplier implements ISecurityServiceS
 	}
 
 	// this is promoting admin users to superadmins
-	private boolean isSuperAdmin(String[] roles) {
+	protected boolean isSuperAdmin(String[] roles) {
 		IRoleDAO dao = DAOFactory.getRoleDAO();
 		for (String roleName : roles) {
 			try {
@@ -157,7 +157,7 @@ public class OIDCFullIdTokenSecurityServiceSupplier implements ISecurityServiceS
 		return false;
 	}
 
-	private String[] getUserRoles(DecodedJWT decodedJWT) {
+	protected String[] getUserRoles(DecodedJWT decodedJWT) {
 		IRoleDAO dao = DAOFactory.getRoleDAO();
 		// we get all roles coming from JWT token
 		String[] rolesInJWTToken = getUserRolesFromJWTToken(decodedJWT);
@@ -179,6 +179,10 @@ public class OIDCFullIdTokenSecurityServiceSupplier implements ISecurityServiceS
 			String decodedPayload = new String(Base64.getDecoder().decode(payload));
 			net.minidev.json.JSONArray parsed = JsonPath.read(decodedPayload, OAuth2Config.getInstance().getIdTokenJsonRolesPath());
 			LogMF.debug(logger, "Got parsed roles [{0}]", parsed);
+			if (parsed == null || parsed.isEmpty()) {
+				logger.debug("No roles detected");
+				return new String[0];
+			}
 			String[] roles = new String[parsed.size()];
 			for (int i = 0; i < roles.length; i++) {
 				roles[i] = (String) parsed.get(i);
@@ -189,7 +193,7 @@ public class OIDCFullIdTokenSecurityServiceSupplier implements ISecurityServiceS
 		}
 	}
 
-	private String getUserName(DecodedJWT decodedJWT) {
+	protected String getUserName(DecodedJWT decodedJWT) {
 		String userNameClaimsConfig = OAuth2Config.getInstance().getUserNameClaim();
 		String[] userNameClaims = userNameClaimsConfig.split(" ");
 		// @formatter:off
