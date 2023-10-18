@@ -26,7 +26,8 @@ import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.validator.GenericValidator;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.jamonapi.Monitor;
 import com.jamonapi.MonitorFactory;
@@ -59,7 +60,8 @@ import it.eng.spagobi.utilities.engines.EngineStartServletIOManager;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 public class ContentServiceImplSupplier {
-	private static Logger logger = Logger.getLogger(ContentServiceImplSupplier.class);
+
+	private static final Logger logger = LogManager.getLogger(ContentServiceImplSupplier.class);
 
 	/**
 	 * Read template.
@@ -73,18 +75,16 @@ public class ContentServiceImplSupplier {
 	 * @throws EMFUserError      the EMF user error
 	 * @throws EMFInternalError  the EMF internal error
 	 */
-	public Content readTemplate(String user, String document, Map<String, ?> parameters) throws SecurityException, EMFUserError, EMFInternalError {
+	public Content readTemplate(String user, String document, Map<String, ?> parameters)
+			throws SecurityException, EMFUserError, EMFInternalError {
 		Content content;
 		BIObject biobj;
 
-		logger.debug("IN");
-
-		logger.debug("user: [" + user + "]");
-		logger.debug("document: [" + document + "]");
+		logger.debug("Reading template of the document {} for user {} with parameters {}", document, user, parameters);
 
 		if (parameters == null) {
 			logger.debug("Input parameters map is null. It will be considered as an empty map");
-			parameters = new HashMap();
+			parameters = new HashMap<>();
 		}
 
 		content = new Content();
@@ -114,7 +114,7 @@ public class ContentServiceImplSupplier {
 			IObjTemplateDAO tempdao = DAOFactory.getObjTemplateDAO();
 			ObjTemplate temp = tempdao.getBIObjectActiveTemplate(biobj.getId());
 			if (temp == null) {
-				logger.warn("The template dor document [" + id + "] is NULL");
+				logger.warn("The template for document {} is NULL", id);
 				if (biobj.getEngine().getDriverName().equals(ChartDriver.class.getName())
 						|| biobj.getEngine().getDriverName().equals(KpiDriver.class.getName())) {
 					temp = new ObjTemplate();
@@ -127,14 +127,14 @@ public class ContentServiceImplSupplier {
 				// only for external engine calls the elaborateTemplate method (ie. to internationalize template)
 				try {
 					String driverClassName = biobj.getEngine().getDriverName();
-					logger.warn("The driver used is [" + driverClassName + "]");
+					logger.debug("The driver used is {}", driverClassName);
 					IEngineDriver aEngineDriver = (IEngineDriver) Class.forName(driverClassName).newInstance();
 					String language = (String) parameters.get(SpagoBIConstants.SBI_LANGUAGE);
 					String country = (String) parameters.get(SpagoBIConstants.SBI_COUNTRY);
 					if (language == null || country == null) {
 						logger.debug("Not locale informations found in parameters... Not setted it at this time.");
 					} else {
-						logger.debug("Language retrieved: [" + language + "]; country retrieved: [" + country + "]");
+						logger.debug("Language and counry are {}; country retrieved: {}", language, country);
 						Builder builder = new Builder().setLanguage(language).setRegion(country);
 						String script = (String) parameters.get(SpagoBIConstants.SBI_SCRIPT);
 						if (StringUtils.isNotBlank(script)) {
@@ -153,7 +153,7 @@ public class ContentServiceImplSupplier {
 					logger.warn("Finished elaborateTemplate method defined into the driver. ");
 					template = elabTemplate;
 				} catch (Exception ex) {
-					logger.error("Error while getting template: " + ex);
+					logger.error("Error while getting template", ex);
 					return null;
 				}
 			}
@@ -170,10 +170,7 @@ public class ContentServiceImplSupplier {
 		} catch (NumberFormatException e) {
 			logger.error("NumberFormatException", e);
 			throw e;
-		} catch (EMFUserError e) {
-			logger.error("EMFUserError", e);
-			throw e;
-		} catch (EMFInternalError e) {
+		} catch (EMFUserError | EMFInternalError e) {
 			logger.error("EMFUserError", e);
 			throw e;
 		} catch (Exception e) {
@@ -198,14 +195,12 @@ public class ContentServiceImplSupplier {
 	 * @throws EMFUserError      the EMF user error
 	 * @throws EMFInternalError  the EMF internal error
 	 */
-	public Content readTemplateByLabel(String user, String label, Map<String, ?> parameters) throws SecurityException, EMFUserError, EMFInternalError {
+	public Content readTemplateByLabel(String user, String label, Map<String, ?> parameters)
+			throws SecurityException, EMFUserError, EMFInternalError {
 		Content content;
 		BIObject biobj;
 
-		logger.debug("IN");
-
-		logger.debug("user: [" + user + "]");
-		logger.debug("document: [" + label + "]");
+		logger.debug("Reading template by label {} for user {} with paramaters {}", label, user, parameters);
 
 		content = new Content();
 		try {
@@ -220,8 +215,8 @@ public class ContentServiceImplSupplier {
 			IObjTemplateDAO tempdao = DAOFactory.getObjTemplateDAO();
 			ObjTemplate temp = tempdao.getBIObjectActiveTemplate(biobj.getId());
 			if (temp == null) {
-				logger.warn("The template dor document [" + label + "] is NULL");
-				throw new SecurityException("The template dor document [" + label + "] is NULL");
+				logger.warn("The template for document {} is NULL", label);
+				throw new SecurityException("The template for document [" + label + "] is NULL");
 			}
 			byte[] template = temp.getContent();
 
@@ -229,14 +224,14 @@ public class ContentServiceImplSupplier {
 				// only for external engine calls the elaborateTemplate method (ie. to internationalize template)
 				try {
 					String driverClassName = biobj.getEngine().getDriverName();
-					logger.warn("The driver used is [" + driverClassName + "]");
+					logger.debug("The driver used is {}", driverClassName);
 					IEngineDriver aEngineDriver = (IEngineDriver) Class.forName(driverClassName).newInstance();
 					String language = (String) parameters.get(SpagoBIConstants.SBI_LANGUAGE);
 					String country = (String) parameters.get(SpagoBIConstants.SBI_COUNTRY);
 					if (language == null || country == null) {
 						logger.debug("Not locale informations found in parameters... Not setted it at this time.");
 					} else {
-						logger.debug("Language retrieved: [" + language + "]; country retrieved: [" + country + "]");
+						logger.debug("Language and country are {} and {}", language, country);
 						Builder builder = new Builder().setLanguage(language).setRegion(country);
 						String script = (String) parameters.get(SpagoBIConstants.SBI_SCRIPT);
 						if (StringUtils.isNotBlank(script)) {
@@ -249,14 +244,14 @@ public class ContentServiceImplSupplier {
 					logger.warn("Finished elaborateTemplate method defined into the driver. ");
 					template = elabTemplate;
 				} catch (Exception ex) {
-					logger.error("Error while getting template: " + ex);
+					logger.error("Error while getting template", ex);
 					return null;
 				}
 			}
 
 			Base64.Encoder bASE64Encoder = Base64.getEncoder();
 			content.setContent(bASE64Encoder.encodeToString(template));
-			logger.debug("template read");
+			logger.debug("Template read");
 			content.setFileName(temp.getName());
 		} catch (NumberFormatException e) {
 			logger.error("NumberFormatException", e);
@@ -275,9 +270,9 @@ public class ContentServiceImplSupplier {
 	}
 
 	/**
-	 * Since SpagoBIJasperReportEngine invokes the readTemplate method also for subreports, subreport parameters are managed by Jasper. In order to understand
-	 * if the required document is a valid subreport, take a look at execution parameters: the parameter document should be the document id of the master
-	 * document and the required document should be a subreport of its.
+	 * Since SpagoBIJasperReportEngine invokes the readTemplate method also for subreports, subreport parameters are managed by Jasper. In order to understand if
+	 * the required document is a valid subreport, take a look at execution parameters: the parameter document should be the document id of the master document and
+	 * the required document should be a subreport of its.
 	 *
 	 * @param biobj      The required biobject
 	 * @param parameters The execution parameters.
@@ -295,12 +290,12 @@ public class ContentServiceImplSupplier {
 					// document
 					return false;
 				}
-				logger.debug("Jasper master report id: " + masterReportIdStr + ". Looking for subreports...");
+				logger.debug("Jasper master report id {}. Looking for subreports...", masterReportIdStr);
 				ISubreportDAO subrptdao = DAOFactory.getSubreportDAO();
-				List subreportList = subrptdao.loadSubreportsByMasterRptId(masterReportId);
+				List<Subreport> subreportList = subrptdao.loadSubreportsByMasterRptId(masterReportId);
 				boolean subreportFound = false;
 				for (int i = 0; i < subreportList.size(); i++) {
-					Subreport subreport = (Subreport) subreportList.get(i);
+					Subreport subreport = subreportList.get(i);
 					if (subreport.getSub_rpt_id().equals(biobj.getId())) {
 						subreportFound = true;
 						break;
@@ -326,28 +321,31 @@ public class ContentServiceImplSupplier {
 	}
 
 	/**
-	 * TODO
-	 *
 	 * @param profile    TODO
 	 * @param biobjectId TODO
 	 * @param roleName   TODO
 	 * @param parameters TODO
 	 * @throws SecurityException Map parameters is not compatible with the document in relation to profile e role
 	 */
-	private void checkParametersCorrectness(IEngUserProfile profile, Integer biobjectId, String roleName, Map parameters) throws SecurityException {
-		logger.debug("IN: user id = [" + ((UserProfile) profile).getUserId() + "], biobjectid = [" + biobjectId + "], " + "roleName = [" + roleName
-				+ "], parameters = [" + parameters + "]");
+	private void checkParametersCorrectness(IEngUserProfile profile, Integer biobjectId, String roleName,
+			Map parameters) throws SecurityException {
+		logger.debug("Checking parameters correctness for biObjectId {}, role name {} and user {}", biobjectId,
+				roleName, profile.getUserUniqueIdentifier());
+		logger.trace("User profile is {}", profile);
+		logger.trace("Parameters are {}", parameters);
+
 		Monitor monitor = MonitorFactory.start("spagobi.service.ContentSupplier.checkParametersErrors");
 		try {
 
 			String modality = (String) parameters.get(SpagoBIConstants.EXECUTION_MODALITY);
-			logger.debug("Execution modality retrieved : " + modality);
-			ExecutionInstance instance = new ExecutionInstance(profile, "", "", biobjectId, roleName, modality, true, true, null);
+			logger.debug("Execution modality retrieved {}", modality);
+			ExecutionInstance instance = new ExecutionInstance(profile, "", "", biobjectId, roleName, modality, true,
+					true, null);
 
 			instance.refreshParametersValues(parameters, true);
 			boolean onEditMode = (parameters.get(EngineStartServletIOManager.ON_EDIT_MODE) != null);
 			List errors = instance.getParametersErrors(onEditMode);
-			if (errors != null && errors.size() > 0) {
+			if (errors != null && !errors.isEmpty()) {
 				String msg = String.format(
 						"Document with id %s cannot be executed by the user [%s] with role [%s] with the input parameters [%s]. With following errors: [%s]",
 						biobjectId, profile, roleName, parameters, errors);
@@ -355,7 +353,8 @@ public class ContentServiceImplSupplier {
 				throw new SecurityException(msg);
 			}
 		} catch (Exception e) {
-			String msg = String.format("Error during execution of document with id %s by the user [%s] with role [%s] with the input parameters [%s]",
+			String msg = String.format(
+					"Error during execution of document with id %s by the user [%s] with role [%s] with the input parameters [%s]",
 					biobjectId, profile, roleName, parameters);
 			logger.error(msg, e);
 			throw new SecurityException(msg, e);
@@ -367,8 +366,8 @@ public class ContentServiceImplSupplier {
 
 	/**
 	 * Check the correctness of the request, i.e.: 1. if the user is able to see the required document 2. if there is a correct role for execution (if a role is
-	 * specified on the parameters map, it must be a valid role) 3. if parameters are correct for the user In case the request is not valid (the previuos
-	 * conditions are not satisfied), an exception is thrown.
+	 * specified on the parameters map, it must be a valid role) 3. if parameters are correct for the user In case the request is not valid (the previuos conditions
+	 * are not satisfied), an exception is thrown.
 	 *
 	 * @param user       The user identifier
 	 * @param biobj      The document
@@ -377,48 +376,54 @@ public class ContentServiceImplSupplier {
 	 * @throws EMFInternalError
 	 * @throws EMFUserError
 	 */
-	private void checkRequestCorrectness(String user, BIObject biobj, Map<String, ?> parameters) throws SecurityException, EMFInternalError, EMFUserError {
-		logger.debug("IN: user = [" + user + "], biobjectid = [" + biobj + "], parameters = [" + parameters + "]");
+	private void checkRequestCorrectness(String user, BIObject biobj, Map<String, ?> parameters)
+			throws SecurityException, EMFInternalError, EMFUserError {
+		logger.debug("Checking request correctnes for biObject id {}, user {} and parameters {}", biobj.getId(), user,
+				parameters);
+		logger.trace("BiObject is {}", biobj);
+
 		Monitor monitor = MonitorFactory.start("spagobi.service.ContentSupplier.checkRequestCorrectness");
 		try {
 			if (biobj == null) {
 				logger.error("No document specified");
 				return;
 			}
-			logger.debug("Input document: id=[" + biobj.getId() + "], name=[" + biobj.getName() + "], label=[" + biobj.getLabel() + "]");
 			// creates the user profile
-			IEngUserProfile profile = null;
-			UserProfile _profile = null;
+			IEngUserProfile engUserprofile = null;
+			UserProfile userProfile = null;
 			try {
-				profile = UserUtilities.getUserProfile(user);
-				_profile = (UserProfile) profile;
+				engUserprofile = UserUtilities.getUserProfile(user);
+				userProfile = (UserProfile) engUserprofile;
 			} catch (Exception e) {
-				logger.error("An error occurred while creating the profile of user [" + user + "]");
+				logger.error("An error occurred while creating the profile of user {}", user);
 				throw new SecurityException("An error occurred while creating the profile of user [" + user + "]", e);
 			}
 
 			// Check if the user can execute the document
-			boolean canExec = ObjectsAccessVerifier.canExec(biobj, profile);
+			boolean canExec = ObjectsAccessVerifier.canExec(biobj, engUserprofile);
 			if (!canExec) {
-				logger.error("Current user [" + _profile.getUserId() + "] cannot execute the required document [" + biobj.getLabel() + "] for tenant [" + TenantManager.getTenant() + "]");
-				throw new SecurityException("Current user [" + _profile.getUserId() + "] cannot execute the required document [" + biobj.getLabel() + "] for tenant [" + TenantManager.getTenant() + "]");
+				logger.error("Current user {} cannot execute the required document {} for tenant {}",
+						userProfile.getUserId(), biobj.getLabel(), TenantManager.getTenant());
+				throw new SecurityException(
+						"Current user [" + userProfile.getUserId() + "] cannot execute the required document ["
+								+ biobj.getLabel() + "] for tenant [" + TenantManager.getTenant() + "]");
 			}
 
 			Integer id = biobj.getId();
 			// get the correct roles for execution
-			List correctRoles = null;
-			if (profile.isAbleToExecuteAction(CommunityFunctionalityConstants.DOCUMENT_MANAGEMENT_DEV)
-					|| profile.isAbleToExecuteAction(CommunityFunctionalityConstants.DOCUMENT_MANAGEMENT_USER)
-					|| profile.isAbleToExecuteAction(CommunityFunctionalityConstants.DOCUMENT_MANAGEMENT_ADMIN))
-				correctRoles = DAOFactory.getBIObjectDAO().getCorrectRolesForExecution(id, profile);
+			List<String> correctRoles = null;
+			if (engUserprofile.isAbleToExecuteAction(CommunityFunctionalityConstants.DOCUMENT_MANAGEMENT_DEV)
+					|| engUserprofile.isAbleToExecuteAction(CommunityFunctionalityConstants.DOCUMENT_MANAGEMENT_USER)
+					|| engUserprofile.isAbleToExecuteAction(CommunityFunctionalityConstants.DOCUMENT_MANAGEMENT_ADMIN))
+				correctRoles = DAOFactory.getBIObjectDAO().getCorrectRolesForExecution(id, engUserprofile);
 			else
 				correctRoles = DAOFactory.getBIObjectDAO().getCorrectRolesForExecution(id);
-			logger.debug("correct roles for execution retrived " + correctRoles);
+			logger.debug("Correct roles for execution retrived {}", correctRoles);
 			// at this point correctRoles must contains at least one role, since the user can execute the document
 
 			if (parameters == null) {
 				logger.debug("Input parameters map is null. It will be considered as an empty map");
-				parameters = new HashMap();
+				parameters = new HashMap<>();
 			}
 
 			if (isOLAPSubObjectExecution(parameters)) {
@@ -432,30 +437,31 @@ public class ContentServiceImplSupplier {
 			if (roleName != null) {
 				// if a role is specified, check if it is a valid role for
 				// execution
-				logger.debug("Execution role specified: " + roleName);
+				logger.debug("Execution role specified {}", roleName);
 				if (!correctRoles.contains(roleName)) {
-					if (correctRoles == null || correctRoles.size() == 0) {
-						logger.error("Role [] is not a valid role for the execution of document with id = [" + biobj.getId() + "], label = [" + biobj.getLabel()
-								+ "]");
-						throw new SecurityException("Role [] is not a valid role for the execution of document with id = [" + biobj.getId() + "], label = ["
-								+ biobj.getLabel() + "]");
+					if (correctRoles.isEmpty()) {
+						logger.error("No valid roles for the execution of document with id {} and label {}",
+								biobj.getId(), biobj.getLabel());
+						throw new SecurityException(
+								"Role [] is not a valid role for the execution of document with id = [" + biobj.getId()
+										+ "], label = [" + biobj.getLabel() + "]");
 					}
 				}
 				// check if parameter values are correct for the role
-				checkParametersCorrectness(profile, biobj.getId(), roleName, parameters);
+				checkParametersCorrectness(engUserprofile, biobj.getId(), roleName, parameters);
 			} else {
 				// if a role is not specified, iterate on valid roles
 				logger.debug("Execution role not specified: iterating on all available roles...");
-				Iterator it = correctRoles.iterator();
+				Iterator<String> it = correctRoles.iterator();
 				while (it.hasNext()) {
-					roleName = it.next().toString();
+					roleName = it.next();
 					// check if parameter values are correct for the role
-					checkParametersCorrectness(profile, biobj.getId(), roleName, parameters);
+					checkParametersCorrectness(engUserprofile, biobj.getId(), roleName, parameters);
 				}
 
 			}
 
-			logger.debug("Role " + roleName + " is compatible with input parameters");
+			logger.debug("Role {} is compatible with input parameters", roleName);
 		} finally {
 			monitor.stop();
 			logger.debug("OUT");
@@ -466,7 +472,7 @@ public class ContentServiceImplSupplier {
 		Object subObjectId = parameters.get(AbstractEngineStartAction.SUBOBJ_ID);
 		// in case subobject id is there and it is an integer, then it is an OLAP subobject execution request
 		boolean toReturn = subObjectId != null && GenericValidator.isInt(subObjectId.toString());
-		logger.debug("Current request is for OLAP subobject? " + toReturn);
+		logger.debug("Current request is for OLAP subobject? {}", toReturn);
 		return toReturn;
 	}
 

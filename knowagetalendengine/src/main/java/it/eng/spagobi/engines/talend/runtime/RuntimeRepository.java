@@ -6,11 +6,10 @@
 package it.eng.spagobi.engines.talend.runtime;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.Map;
-import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
 
+import it.eng.knowage.commons.security.PathTraversalChecker;
 import it.eng.spagobi.engines.talend.exception.ContextNotFoundException;
 import it.eng.spagobi.engines.talend.exception.JobExecutionException;
 import it.eng.spagobi.engines.talend.exception.JobNotFoundException;
@@ -27,8 +26,7 @@ public class RuntimeRepository {
 	/**
 	 * Instantiates a new runtime repository.
 	 *
-	 * @param rootDir
-	 *            the root dir
+	 * @param rootDir the root dir
 	 */
 	public RuntimeRepository(File rootDir) {
 		this.rootDir = rootDir;
@@ -37,10 +35,8 @@ public class RuntimeRepository {
 	/**
 	 * Deploy job.
 	 *
-	 * @param jobDeploymentDescriptor
-	 *            the job deployment descriptor
-	 * @param executableJobFiles
-	 *            the executable job files
+	 * @param jobDeploymentDescriptor the job deployment descriptor
+	 * @param executableJobFiles      the executable job files
 	 */
 	public void deployJob(JobDeploymentDescriptor jobDeploymentDescriptor, ZipFile executableJobFiles) {
 		File jobsDir = new File(rootDir, jobDeploymentDescriptor.getLanguage().toLowerCase());
@@ -51,18 +47,13 @@ public class RuntimeRepository {
 	/**
 	 * Run job.
 	 *
-	 * @param job
-	 *            the job
-	 * @param env
-	 *            the environment
+	 * @param job the job
+	 * @param env the environment
 	 *
 	 *
-	 * @throws JobNotFoundException
-	 *             the job not found exception
-	 * @throws ContextNotFoundException
-	 *             the context not found exception
-	 * @throws JobExecutionException
-	 *             the job execution exception
+	 * @throws JobNotFoundException     the job not found exception
+	 * @throws ContextNotFoundException the context not found exception
+	 * @throws JobExecutionException    the job execution exception
 	 */
 	public void runJob(Job job, Map env) throws JobNotFoundException, ContextNotFoundException, JobExecutionException {
 		IJobRunner jobRunner;
@@ -76,8 +67,7 @@ public class RuntimeRepository {
 	/**
 	 * Gets the job runner.
 	 *
-	 * @param jobLanguage
-	 *            the job language
+	 * @param jobLanguage the job language
 	 *
 	 * @return the job runner
 	 */
@@ -103,8 +93,7 @@ public class RuntimeRepository {
 	/**
 	 * Sets the root dir.
 	 *
-	 * @param rootDir
-	 *            the new root dir
+	 * @param rootDir the new root dir
 	 */
 	public void setRootDir(File rootDir) {
 		this.rootDir = rootDir;
@@ -113,8 +102,7 @@ public class RuntimeRepository {
 	/**
 	 * Gets the executable job project dir.
 	 *
-	 * @param job
-	 *            the job
+	 * @param job the job
 	 *
 	 * @return the executable job project dir
 	 */
@@ -127,57 +115,38 @@ public class RuntimeRepository {
 	/**
 	 * Gets the executable job dir.
 	 *
-	 * @param job
-	 *            the job
+	 * @param job the job
 	 *
 	 * @return the executable job dir
 	 */
 	public File getExecutableJobDir(Job job) {
-		File jobDir = new File(getExecutableJobProjectDir(job), job.getName());
+		File projectDir = getExecutableJobProjectDir(job);
+		File jobDir = PathTraversalChecker.get(projectDir.getAbsolutePath(), job.getName());
+
 		return jobDir;
 	}
 
 	/**
 	 * Gets the executable job file.
 	 *
-	 * @param job
-	 *            the job
+	 * @param job the job
 	 *
 	 * @return the executable job file
 	 */
 	public File getExecutableJobFile(Job job) {
-		File jobExecutableFile = new File(getExecutableJobDir(job), TalendScriptAccessUtils.getExecutableFileName(job));
+		File jobExecutableFile = PathTraversalChecker.get(getExecutableJobDir(job).getAbsolutePath(), TalendScriptAccessUtils.getExecutableFileName(job));
+
 		return jobExecutableFile;
 	}
 
 	/**
 	 * Contains job.
 	 *
-	 * @param job
-	 *            the job
+	 * @param job the job
 	 *
 	 * @return true, if successful
 	 */
 	public boolean containsJob(Job job) {
 		return getExecutableJobFile(job).exists();
-	}
-
-	/**
-	 * The main method.
-	 *
-	 * @param args
-	 *            the arguments
-	 *
-	 * @throws ZipException
-	 *             the zip exception
-	 * @throws IOException
-	 *             Signals that an I/O exception has occurred.
-	 */
-	public static void main(String[] args) throws ZipException, IOException {
-		File rootDir = new File("C:\\Prototipi\\SpagoBI-Demo-1.9.2\\webapps\\SpagoBITalendEngine\\RuntimeRepository");
-		File zipFile = new File("C:\\Prototipi\\TalendJob2.zip");
-		RuntimeRepository runtimeRepository = new RuntimeRepository(rootDir);
-		JobDeploymentDescriptor jobDeploymentDescriptor = new JobDeploymentDescriptor("PP2", "perl");
-		runtimeRepository.deployJob(jobDeploymentDescriptor, new ZipFile(zipFile));
 	}
 }

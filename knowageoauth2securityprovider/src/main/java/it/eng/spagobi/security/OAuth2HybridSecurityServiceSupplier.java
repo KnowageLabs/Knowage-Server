@@ -17,7 +17,11 @@
  */
 package it.eng.spagobi.security;
 
+import java.util.Map;
+
 import org.apache.log4j.Logger;
+
+import com.auth0.jwt.interfaces.Claim;
 
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.profiling.bean.SbiUser;
@@ -64,7 +68,17 @@ public class OAuth2HybridSecurityServiceSupplier extends InternalSecurityService
 		SpagoBIUserProfile profile = new SpagoBIUserProfile();
 		profile.setUniqueIdentifier(jwtToken);
 		profile.setUserId(userId);
-		profile.setUserName(userId);
+
+		String userName;
+		Map<String, Claim> claims = JWTSsoService.getClaims(jwtToken);
+		if (claims.containsKey(JWTSsoService.USERNAME_CLAIM)) {
+			Claim userNameClaim = claims.get(JWTSsoService.USERNAME_CLAIM);
+			userName = userNameClaim.asString();
+		} else {
+			userName = userId;
+		}
+
+		profile.setUserName(userName);
 		profile.setIsSuperadmin(false);
 		return profile;
 	}

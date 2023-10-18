@@ -362,9 +362,7 @@ public class SelfServiceDataSetCRUD extends AbstractSpagoBIResource {
 				FileDataSet fileDataset = (FileDataSet) wrappedDataset;
 				String resourcePath = fileDataset.getResourcePath();
 				String fileName = fileDataset.getFileName();
-				String filePath = resourcePath + File.separatorChar + "dataset" + File.separatorChar + "files" + File.separatorChar;
-				File datasetFile = new File(filePath + fileName);
-				PathTraversalChecker.preventPathTraversalAttack(datasetFile, new File(filePath));
+				File datasetFile = PathTraversalChecker.get(resourcePath, "dataset", "files", fileName);
 				if (datasetFile.exists()) {
 					boolean isDeleted = datasetFile.delete();
 					if (isDeleted) {
@@ -1618,11 +1616,9 @@ public class SelfServiceDataSetCRUD extends AbstractSpagoBIResource {
 	// This method rename a file and move it from resources\dataset\files\temp
 	// to resources\dataset\files
 	private void renameAndMoveDatasetFile(String originalFileName, String newFileName, String resourcePath, String fileType) {
-		String filePath = resourcePath + File.separatorChar + "dataset" + File.separatorChar + "files" + File.separatorChar + "temp" + File.separatorChar;
-		String fileNewPath = resourcePath + File.separatorChar + "dataset" + File.separatorChar + "files" + File.separatorChar;
+		File originalDatasetFile = PathTraversalChecker.get(resourcePath, "dataset", "files", "temp", originalFileName);
+		File newDatasetFile = PathTraversalChecker.get(resourcePath, "dataset", "files", newFileName + "." + fileType.toLowerCase());
 
-		File originalDatasetFile = new File(filePath + originalFileName);
-		File newDatasetFile = new File(fileNewPath + newFileName + "." + fileType.toLowerCase());
 		if (originalDatasetFile.exists()) {
 			/*
 			 * This method copies the contents of the specified source file to the specified destination file. The directory holding the destination file is
@@ -1739,9 +1735,8 @@ public class SelfServiceDataSetCRUD extends AbstractSpagoBIResource {
 	}
 
 	private void deleteDatasetFile(String fileName, String resourcePath, String fileType) {
-		String filePath = resourcePath + File.separatorChar + "dataset" + File.separatorChar + "files" + File.separatorChar + "temp" + File.separatorChar;
+		File datasetFile = PathTraversalChecker.get(resourcePath, "dataset", "files", "temp", fileName);
 
-		File datasetFile = new File(filePath + fileName);
 		if (datasetFile.exists()) {
 			datasetFile.delete();
 		}
@@ -1796,10 +1791,7 @@ public class SelfServiceDataSetCRUD extends AbstractSpagoBIResource {
 
 			try {
 				ICategoryDAO categoryDao = DAOFactory.getCategoryDAO();
-				categories = categoryDao.getCategoriesForDataset()
-					.stream()
-					.map(Domain::fromCategory)
-					.collect(toList());
+				categories = categoryDao.getCategoriesForDataset().stream().map(Domain::fromCategory).collect(toList());
 			} catch (Throwable t) {
 				throw new SpagoBIRuntimeException("An unexpected error occured while loading categories types from database", t);
 			}
@@ -2174,10 +2166,7 @@ public class SelfServiceDataSetCRUD extends AbstractSpagoBIResource {
 			ICategoryDAO categoryDao = DAOFactory.getCategoryDAO();
 
 			// TODO : Makes sense?
-			List<Domain> dialects = categoryDao.getCategoriesForDataset()
-					.stream()
-					.map(Domain::fromCategory)
-					.collect(toList());
+			List<Domain> dialects = categoryDao.getCategoriesForDataset().stream().map(Domain::fromCategory).collect(toList());
 			if (dialects == null || dialects.size() == 0) {
 				return null;
 			}
@@ -2191,10 +2180,7 @@ public class SelfServiceDataSetCRUD extends AbstractSpagoBIResource {
 
 				List<RoleMetaModelCategory> aRoleCategories = roledao.getMetaModelCategoriesForRole(role.getId());
 				List<RoleMetaModelCategory> resp = new ArrayList<>();
-				List<Domain> array = categoryDao.getCategoriesForDataset()
-						.stream()
-						.map(Domain::fromCategory)
-						.collect(toList());
+				List<Domain> array = categoryDao.getCategoriesForDataset().stream().map(Domain::fromCategory).collect(toList());
 				for (RoleMetaModelCategory r : aRoleCategories) {
 					for (Domain dom : array) {
 						if (r.getCategoryId().equals(dom.getValueId())) {

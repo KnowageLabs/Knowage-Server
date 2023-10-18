@@ -305,11 +305,11 @@ public class PageResource extends AbstractChartEngineResource {
 			if (!PDF_PARAMETERS.contains(parameter)) {
 				String[] values = parameterMap.get(parameter);
 				if (values != null && values.length > 0) {
-					externalUrl.addParameter(parameter, values[0]);
+					externalUrl.setParameter(parameter, values[0]);
 				}
 			}
 		}
-		externalUrl.addParameter("export", "true");
+		externalUrl.setParameter("export", "true");
 		return externalUrl.toString();
 	}
 

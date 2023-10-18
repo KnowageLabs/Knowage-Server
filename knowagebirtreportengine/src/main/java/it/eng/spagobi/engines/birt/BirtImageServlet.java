@@ -35,6 +35,7 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.log4j.Logger;
 
+import it.eng.knowage.commons.security.PathTraversalChecker;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.services.proxy.DocumentExecuteServiceProxy;
 import it.eng.spagobi.utilities.mime.MimeUtils;
@@ -56,33 +57,18 @@ public class BirtImageServlet extends HttpServlet {
 
 		ServletOutputStream ouputStream = null;
 		InputStream fis = null;
-		File imageTmpDir = null;
 		File imageFile = null;
 		String completeImageFileName = null;
 		String mimeType = null;
 
 		if (chartLabel == null) {
-			String tmpDir = System.getProperty("java.io.tmpdir");
-			String imageDirectory = tmpDir.endsWith(File.separator) ? tmpDir + "birt" : tmpDir + File.separator + "birt";
-			imageTmpDir = new File(imageDirectory);
-
 			String imageFileName = request.getParameter("imageID");
 			if (imageFileName == null) {
 				logger.error("Image directory or image file name missing.");
 				throw new RuntimeException("Image file name missing.");
 			}
 
-			// gets complete image file name:
-			completeImageFileName = imageDirectory + File.separator + imageFileName;
-
-			imageFile = new File(completeImageFileName);
-
-			File parent = imageFile.getParentFile();
-			// Prevent directory traversal (path traversal) attacks
-			if (!imageTmpDir.equals(parent)) {
-				logger.error("Trying to access the file [" + imageFile.getAbsolutePath() + "] that is not inside ${java.io.tmpdir}/birt!!!");
-				throw new SecurityException("Trying to access the file [" + imageFile.getAbsolutePath() + "] that is not inside ${java.io.tmpdir}/birt!!!");
-			}
+			imageFile = PathTraversalChecker.get(System.getProperty("java.io.tmpdir"), "birt", imageFileName);
 
 			if (!imageFile.exists()) {
 				logger.error("File " + imageFile.getPath() + " not found");

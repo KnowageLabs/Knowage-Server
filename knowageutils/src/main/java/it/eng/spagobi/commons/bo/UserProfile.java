@@ -561,6 +561,9 @@ public class UserProfile implements IEngUserProfile {
 		toReturn.setAttributes(attributes);
 		toReturn.setFunctionalities(functionalities);
 
+		setSpagoBiUserProfileIntoUserProfile(toReturn, userUniqueIdentifier, userId, organization, roles,
+				functionalities);
+
 		logger.debug("OUT");
 		return toReturn;
 	}
