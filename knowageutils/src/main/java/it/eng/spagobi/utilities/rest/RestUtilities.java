@@ -31,14 +31,12 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Properties;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -508,31 +506,8 @@ public class RestUtilities {
 	}
 
 	private static void checkIfValueFromRequestHeaderIsInWhitelistFromPropertiesFile(String value) {
-		List<String> whitelist = RestUtilities.getWhitelistFromPropertiesFile();
+		List<String> whitelist = WhitelistCache.getInstance().getWhitelist();
 		if (!whitelist.contains(value))
 			throw new SpagoBIRuntimeException("Header value " + value + " is not in the list of allowed headers.");
 	}
-
-	private static List<String> getWhitelistFromPropertiesFile() {
-		Properties properties = new Properties();
-		List<String> whitelist = new ArrayList<>();
-
-		try (InputStream inputStream = RestUtilities.class.getClassLoader().getResourceAsStream("headers.properties")) {
-			if (inputStream != null) {
-				properties.load(inputStream);
-
-				String allowedHeaders = properties.getProperty("allowed.headers");
-				if (allowedHeaders != null && !allowedHeaders.isEmpty()) {
-					whitelist.addAll(Arrays.asList(allowedHeaders.split(",")));
-				}
-			} else {
-				throw new RuntimeException("headers.properties file not found.");
-			}
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-
-		return whitelist;
-	}
-
 }
