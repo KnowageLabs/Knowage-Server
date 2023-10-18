@@ -2,6 +2,18 @@ name: "Build"
 on:
   push:
   pull_request:
+    types:
+    - opened
+    - edited
+    - reopened
+    - synchronize
+    - ready_for_review
+    - review_requested
+  pull_request_review:
+    types:
+    - submitted
+    - edited
+
 
 jobs:
   build:
@@ -12,27 +24,18 @@ jobs:
       with:
         submodules: recursive
 
-    - uses: actions/cache@v2
-      with:
-        path: ~/.m2/repository
-        key: maven-${{ hashFiles('**/pom.xml') }}
-        restore-keys: maven-
-
     - name: Setup Java
       uses: actions/setup-java@v3
       with:
-        java-version: '8'
         distribution: 'adopt'
+        java-version: '8'
+        cache: 'maven'
 
     - name: Setup Node
       uses: actions/setup-node@v3
       with:
         node-version: '16'
-
-    - name: Set up Maven
-      uses: stCarolas/setup-maven@v4.5
-      with:
-        maven-version: 3.8.2
+        cache: 'npm'
 
     - name: Setting up 
       uses: s4u/maven-settings-action@v2.8.0
