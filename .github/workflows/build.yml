@@ -55,4 +55,4 @@ jobs:
           }]
 
     - name: Build
-      run: mvn compile -q -f knowage-ce-parent/pom.xml
+      run: mvn compile -pl -knowage-vue -q -f knowage-ce-parent/pom.xml
