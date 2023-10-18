@@ -502,7 +502,7 @@ public class RestUtilities {
 	}
 
 	private static String sanitizeValueFromRequestHeader(String value) {
-		return value.replaceAll("\r", "").replaceAll("%0d", "").replaceAll("%0D", "").replaceAll("\n", "").replaceAll("%0a", "").replaceAll("%0A", "");
+		return value.replace("\r", "").replace("%0d", "").replace("%0D", "").replace("\n", "").replace("%0a", "").replace("%0A", "");
 	}
 
 	private static void checkIfValueFromRequestHeaderIsInWhitelistFromPropertiesFile(String value) {
