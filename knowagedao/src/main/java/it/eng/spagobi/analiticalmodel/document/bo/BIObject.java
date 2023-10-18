@@ -18,8 +18,7 @@
 package it.eng.spagobi.analiticalmodel.document.bo;
 
 import java.io.Serializable;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -132,7 +131,7 @@ public class BIObject implements Serializable, Cloneable, IDrivableBIResource<BI
 
 	private String uuid = null;
 
-	private List<Integer> functionalities = null;
+	private List functionalities = null;
 
 	// add this properties for metadata
 	private Date creationDate = null;
@@ -158,7 +157,7 @@ public class BIObject implements Serializable, Cloneable, IDrivableBIResource<BI
 
 	private String stateCodeStr = null;
 
-	private static final DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+	private static final DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
 	/**
 	 * Gets the id.
@@ -543,7 +542,7 @@ public class BIObject implements Serializable, Cloneable, IDrivableBIResource<BI
 	 * @return the functionalities
 	 */
 	@JsonIgnore
-	public List<Integer> getFunctionalities() {
+	public List getFunctionalities() {
 		return functionalities;
 	}
 
@@ -552,7 +551,7 @@ public class BIObject implements Serializable, Cloneable, IDrivableBIResource<BI
 	 *
 	 * @param functionalities the new functionalities
 	 */
-	public void setFunctionalities(List<Integer> functionalities) {
+	public void setFunctionalities(List functionalities) {
 		this.functionalities = functionalities;
 	}
 
@@ -561,7 +560,7 @@ public class BIObject implements Serializable, Cloneable, IDrivableBIResource<BI
 		ILowFunctionalityDAO functionalitiesDao = DAOFactory.getLowFunctionalityDAO();
 		List<String> list = new ArrayList<>();
 
-		for (Integer functionalityID : functionalities) {
+		for (Integer functionalityID : (List<Integer>) functionalities) {
 			list.add(functionalitiesDao.loadLowFunctionalityByID(functionalityID, false).getPath());
 		}
 
@@ -570,7 +569,7 @@ public class BIObject implements Serializable, Cloneable, IDrivableBIResource<BI
 
 	public void setFunctionalitiesNames(List<String> paths) throws EMFUserError {
 		ILowFunctionalityDAO functionalitiesDao = DAOFactory.getLowFunctionalityDAO();
-		this.functionalities = new ArrayList<>();
+		this.functionalities = new ArrayList<Integer>();
 
 		for (String path : paths) {
 			this.functionalities.add(functionalitiesDao.loadLowFunctionalityByPath(path, false).getId());
@@ -589,8 +588,7 @@ public class BIObject implements Serializable, Cloneable, IDrivableBIResource<BI
 			IObjTemplateDAO objtempdao = DAOFactory.getObjTemplateDAO();
 			template = objtempdao.getBIObjectActiveTemplate(this.getId());
 		} catch (Exception e) {
-			SpagoBITracer.major(SpagoBIConstants.NAME_MODULE, this.getClass().getName(), "getActiveTemplate",
-					"Error while recovering current template \n", e);
+			SpagoBITracer.major(SpagoBIConstants.NAME_MODULE, this.getClass().getName(), "getActiveTemplate", "Error while recovering current template \n", e);
 		}
 		return template;
 	}
@@ -607,8 +605,7 @@ public class BIObject implements Serializable, Cloneable, IDrivableBIResource<BI
 			IObjTemplateDAO objtempdao = DAOFactory.getObjTemplateDAO();
 			templates = objtempdao.getBIObjectTemplateList(this.getId());
 		} catch (Exception e) {
-			SpagoBITracer.major(SpagoBIConstants.NAME_MODULE, this.getClass().getName(), "getTemplateList",
-					"Error while recovering template list\n", e);
+			SpagoBITracer.major(SpagoBIConstants.NAME_MODULE, this.getClass().getName(), "getTemplateList", "Error while recovering template list\n", e);
 		}
 		return templates;
 	}
@@ -627,15 +624,9 @@ public class BIObject implements Serializable, Cloneable, IDrivableBIResource<BI
 	public String getFormattedDate() {
 		String formattedDate = null;
 		if (creationDate != null) {
-			formattedDate = getFormattedDate(creationDate);
+			formattedDate = dateFormat.format(creationDate.toInstant());
 		}
 		return formattedDate;
-	}
-
-	private static String getFormattedDate(Date date) {
-		synchronized (dateFormat) {
-			return dateFormat.format(date);
-		}
 	}
 
 	/**
@@ -823,7 +814,7 @@ public class BIObject implements Serializable, Cloneable, IDrivableBIResource<BI
 	 * Clone the object.. NOTE: it does not clone the id property
 	 */
 	@Override
-	public final BIObject clone() {
+	public BIObject clone() {
 		BIObject clone = new BIObject();
 		clone.setEngine(this.engine);
 		clone.setDataSourceId(dataSourceId);

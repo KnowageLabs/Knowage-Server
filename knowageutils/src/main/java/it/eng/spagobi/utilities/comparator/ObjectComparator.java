@@ -20,8 +20,9 @@ package it.eng.spagobi.utilities.comparator;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.sql.Timestamp;
-import java.text.DateFormat;
 import java.text.ParseException;
+import java.time.Instant;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 
 /**
@@ -30,8 +31,8 @@ import java.util.Date;
 public class ObjectComparator {
 
 	public static final int DESCENDING = 1;
-	private static DateFormat DATE_FORMATTER;
-	private static DateFormat TIMESTAMP_FORMATTER;
+	private final DateTimeFormatter dateFormatter;
+	private final DateTimeFormatter timestampFormatter;
 
 	/**
 	 * Build the comparator object
@@ -39,9 +40,9 @@ public class ObjectComparator {
 	 * @param dateFormatter      the date formatter for the dates
 	 * @param timestampFormatter the date formatter for the timestamps
 	 */
-	public ObjectComparator(DateFormat dateFormatter, DateFormat timestampFormatter) {
-		ObjectComparator.DATE_FORMATTER = dateFormatter;
-		ObjectComparator.TIMESTAMP_FORMATTER = timestampFormatter;
+	public ObjectComparator(DateTimeFormatter dateFormatter, DateTimeFormatter timestampFormatter) {
+		this.dateFormatter = dateFormatter;
+		this.timestampFormatter = timestampFormatter;
 	}
 
 	/**
@@ -106,27 +107,23 @@ public class ObjectComparator {
 			Long d2 = new Long(obj2);
 			return rc * d1.compareTo(d2);
 		}
+
+		Instant instant1;
+		Instant instant2;
 		if (type.isAssignableFrom(Date.class)) {
-			Date d1 = getFormattedDate(obj1);
-			Date d2 = getFormattedDate(obj2);
-			return rc * d1.compareTo(d2);
+			Date date = (Date) dateFormatter.parse(obj1);
+			instant1 = date.toInstant();
+			date = (Date) dateFormatter.parse(obj2);
+			instant2 = date.toInstant();
+			return instant1.compareTo(instant2);
 		} else if (type.isAssignableFrom(Timestamp.class)) {
-			Date d1 = getFormattedTimestamp(obj1);
-			Date d2 = getFormattedTimestamp(obj2);
-			return rc * d1.compareTo(d2);
+			Date date = (Date) timestampFormatter.parse(obj1);
+			instant1 = date.toInstant();
+			date = (Date) timestampFormatter.parse(obj2);
+			instant2 = date.toInstant();
+			return instant1.compareTo(instant2);
 		}
+
 		return rc * obj1.compareTo(obj2);
-	}
-
-	private static Date getFormattedTimestamp(String value) throws ParseException {
-		synchronized (TIMESTAMP_FORMATTER) {
-			return TIMESTAMP_FORMATTER.parse(value);
-		}
-	}
-
-	private static Date getFormattedDate(String str) throws ParseException {
-		synchronized (DATE_FORMATTER) {
-			return DATE_FORMATTER.parse(str);
-		}
 	}
 }

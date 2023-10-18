@@ -2,8 +2,8 @@ package it.eng.knowage.tools.utils;
 
 import java.sql.SQLException;
 import java.sql.Timestamp;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.time.format.DateTimeFormatter;
 
 import org.apache.log4j.Logger;
 
@@ -11,7 +11,6 @@ public class DatabaseUtils {
 
 	private static final Logger LOGGER = Logger.getLogger(DatabaseUtils.class);
 	private static final String TIMESTAMP_FORMAT = "yyyy-MM-dd HH:mm:ss.S";
-	private static final SimpleDateFormat TIMESTAMP_FORMATTER = new SimpleDateFormat(TIMESTAMP_FORMAT);
 
 	public static Object timestampFormatter(Object value) {
 
@@ -27,11 +26,12 @@ public class DatabaseUtils {
 				Timestamp timestamp = (Timestamp) value;
 				return timestamp.getTime();
 			} else {
+				DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern(TIMESTAMP_FORMAT);
+				Instant instant = Instant.from(dateTimeFormatter.parse((String) value));
 				LOGGER.debug("value will be parsed as a String");
-				value = getFormattedDate(value);
+				value = instant.toEpochMilli();
 			}
-
-		} catch (ParseException | SQLException e) {
+		} catch (SQLException e) {
 			throw new RuntimeException(e);
 		}
 
@@ -40,12 +40,6 @@ public class DatabaseUtils {
 	}
 
 	private DatabaseUtils() {
-	}
-
-	private static long getFormattedDate(Object value) throws ParseException {
-		synchronized (TIMESTAMP_FORMATTER) {
-			return TIMESTAMP_FORMATTER.parse((String) value).getTime();
-		}
 	}
 
 }

@@ -20,8 +20,7 @@ package it.eng.knowage.engine.cockpit.api.crosstable;
 
 import java.math.BigInteger;
 import java.sql.Timestamp;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -112,8 +111,8 @@ public class CrossTab {
 	 */
 	@Deprecated
 	private static final String DATA_MATRIX_NA = "";
-	private static final SimpleDateFormat DATE_FORMATTER = new SimpleDateFormat("dd/MM/yyyy");
-	private static final SimpleDateFormat TIMESTAMP_FORMATTER = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+	private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+	private static final DateTimeFormatter TIMESTAMP_FORMATTER = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
 
 	private static Logger logger = Logger.getLogger(CrossTab.class);
 
@@ -1286,33 +1285,16 @@ public class CrossTab {
 		if (clazz == null) {
 			clazz = String.class;
 		}
-
-		try {
-			if (Timestamp.class.isAssignableFrom(clazz)) {
-				fieldValue = getFormattedTimestamp(obj);
-			} else if (Date.class.isAssignableFrom(clazz)) {
-				fieldValue = getFormattedDate(obj);
-			} else {
-				fieldValue = obj.toString();
-			}
-		} catch (ParseException e) {
-			throw new RuntimeException(e);
+		if (Timestamp.class.isAssignableFrom(clazz)) {
+			fieldValue = TIMESTAMP_FORMATTER.format(((Timestamp) obj).toInstant());
+		} else if (Date.class.isAssignableFrom(clazz)) {
+			fieldValue = DATE_FORMATTER.format(((Date) obj).toInstant());
+		} else {
+			fieldValue = obj.toString();
 		}
 
 		return fieldValue;
 
-	}
-
-	private static String getFormattedTimestamp(Object obj) throws ParseException {
-		synchronized (TIMESTAMP_FORMATTER) {
-			return TIMESTAMP_FORMATTER.format(obj);
-		}
-	}
-
-	private static String getFormattedDate(Object obj) throws ParseException {
-		synchronized (DATE_FORMATTER) {
-			return DATE_FORMATTER.format(obj);
-		}
 	}
 
 	private MeasureInfo getMeasureInfo(IFieldMetaData fieldMeta, Measure measure) {

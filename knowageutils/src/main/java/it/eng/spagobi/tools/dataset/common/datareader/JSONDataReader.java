@@ -19,8 +19,7 @@ package it.eng.spagobi.tools.dataset.common.datareader;
 
 import java.math.BigInteger;
 import java.sql.Timestamp;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 
 import org.apache.log4j.Logger;
@@ -42,8 +41,8 @@ import it.eng.spagobi.tools.dataset.common.metadata.MetaData;
  */
 public class JSONDataReader extends AbstractDataReader {
 
-	private static final SimpleDateFormat DATE_FORMATTER = new SimpleDateFormat("dd/MM/yyyy");
-	private static final SimpleDateFormat TIMESTAMP_FORMATTER = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+	private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+	private static final DateTimeFormatter TIMESTAMP_FORMATTER = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
 
 	private static transient Logger logger = Logger.getLogger(JSONDataReader.class);
 
@@ -144,9 +143,9 @@ public class JSONDataReader extends AbstractDataReader {
 					} else if (fieldType == Double.class) {
 						value = new Double(columnValue);
 					} else if (fieldType == Timestamp.class) {
-						value = getFormattedTimestamp(columnValue);
+						value = TIMESTAMP_FORMATTER.parse(columnValue);
 					} else if (fieldType == Date.class) {
-						value = getFormattedDate(columnValue);
+						value = DATE_FORMATTER.parse(columnValue);
 					} else if (fieldType == Boolean.class) {
 						value = new Boolean(columnValue);
 					} else {
@@ -165,17 +164,5 @@ public class JSONDataReader extends AbstractDataReader {
 		}
 
 		return dataStore;
-	}
-
-	private static Object getFormattedTimestamp(String value) throws ParseException {
-		synchronized (TIMESTAMP_FORMATTER) {
-			return TIMESTAMP_FORMATTER.parse(value);
-		}
-	}
-
-	private static Object getFormattedDate(String value) throws ParseException {
-		synchronized (DATE_FORMATTER) {
-			return DATE_FORMATTER.parse(value);
-		}
 	}
 }

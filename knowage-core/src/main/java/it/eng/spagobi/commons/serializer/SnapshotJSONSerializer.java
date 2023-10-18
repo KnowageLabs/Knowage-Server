@@ -17,8 +17,7 @@
  */
 package it.eng.spagobi.commons.serializer;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.time.format.DateTimeFormatter;
 import java.util.Locale;
 
 import org.json.JSONObject;
@@ -38,7 +37,7 @@ public class SnapshotJSONSerializer implements Serializer {
 	public static final String CREATION_DATE = "creationDate";
 
 	// dates are sent to the client using a fixed format, the one returned by GeneralUtilities.getServerDateFormat()
-	private static final SimpleDateFormat DATE_FORMATTER = new SimpleDateFormat(GeneralUtilities.getServerTimeStampFormat());
+	private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern(GeneralUtilities.getServerTimeStampFormat());
 
 	@Override
 	public Object serialize(Object o, Locale locale) throws SerializationException {
@@ -54,7 +53,7 @@ public class SnapshotJSONSerializer implements Serializer {
 			result.put(ID, snapshot.getId());
 			result.put(NAME, snapshot.getName());
 			result.put(DESCRIPTION, snapshot.getDescription());
-			result.put(CREATION_DATE, getFormattedDate(snapshot.getDateCreation()));
+			result.put(CREATION_DATE, DATE_FORMATTER.format(snapshot.getDateCreation().toInstant()));
 		} catch (Throwable t) {
 			throw new SerializationException("An error occurred while serializing object: " + o, t);
 		} finally {
@@ -62,12 +61,6 @@ public class SnapshotJSONSerializer implements Serializer {
 		}
 
 		return result;
-	}
-
-	private static String getFormattedDate(Date date) {
-		synchronized (DATE_FORMATTER) {
-			return DATE_FORMATTER.format(date);
-		}
 	}
 
 }

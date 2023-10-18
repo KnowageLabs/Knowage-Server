@@ -17,8 +17,7 @@
  */
 package it.eng.spagobi.commons.serializer;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.time.format.DateTimeFormatter;
 import java.util.Locale;
 
 import org.json.JSONObject;
@@ -41,7 +40,7 @@ public class ViewpointJSONSerializer implements Serializer {
 	private static final String CREATION_DATE = "creationDate";
 
 	// dates are sent to the client using a fixed format, the one returned by GeneralUtilities.getServerDateFormat()
-	private static final SimpleDateFormat DATE_FORMATTER = new SimpleDateFormat(GeneralUtilities.getServerTimeStampFormat());
+	private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern(GeneralUtilities.getServerTimeStampFormat());
 
 	@Override
 	public Object serialize(Object o, Locale locale) throws SerializationException {
@@ -63,7 +62,7 @@ public class ViewpointJSONSerializer implements Serializer {
 			result.put(DESCRIPTION, viewpoint.getVpDesc());
 			result.put(SCOPE, viewpoint.getVpScope());
 
-			result.put(CREATION_DATE, getFormattedDate(viewpoint.getVpCreationDate()));
+			result.put(CREATION_DATE, DATE_FORMATTER.format(viewpoint.getVpCreationDate().toInstant()));
 
 			JSONObject parametersJSON = new JSONObject();
 			String str = viewpoint.getVpValueParams();
@@ -84,12 +83,6 @@ public class ViewpointJSONSerializer implements Serializer {
 		}
 
 		return result;
-	}
-
-	private static String getFormattedDate(Date date) {
-		synchronized (DATE_FORMATTER) {
-			return DATE_FORMATTER.format(date);
-		}
 	}
 
 }

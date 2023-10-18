@@ -19,8 +19,7 @@ package it.eng.spagobi.tools.dataset.crosstab;
 
 import java.math.BigInteger;
 import java.sql.Timestamp;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -79,9 +78,6 @@ public class CrossTab {
 
 	private static final String DATE_FORMAT_DATE = "dd/MM/yyyy";
 	private static final String DATE_FORMAT_TIMESTAMP = "dd/MM/yyyy HH:mm:ss";
-
-	private static final SimpleDateFormat DATE_FORMATTER = new SimpleDateFormat(DATE_FORMAT_DATE);
-	private static final SimpleDateFormat TIMESTAMP_FORMATTER = new SimpleDateFormat(DATE_FORMAT_TIMESTAMP);
 
 	public enum CellType {
 		DATA("data"), CF("cf"), SUBTOTAL("partialsum"), TOTAL("totals");
@@ -475,33 +471,18 @@ public class CrossTab {
 		if (clazz == null) {
 			clazz = String.class;
 		}
-
-		try {
-			if (Timestamp.class.isAssignableFrom(clazz)) {
-				fieldValue = getFormattedTimestamp(obj);
-			} else if (Date.class.isAssignableFrom(clazz)) {
-				fieldValue = getFormattedDate(obj);
-			} else {
-				fieldValue = obj.toString();
-			}
-		} catch (ParseException e) {
-			throw new RuntimeException(e);
+		if (Timestamp.class.isAssignableFrom(clazz)) {
+			DateTimeFormatter timestampFormatter = DateTimeFormatter.ofPattern(DATE_FORMAT_TIMESTAMP);
+			fieldValue = timestampFormatter.format(((Timestamp) obj).toInstant());
+		} else if (Date.class.isAssignableFrom(clazz)) {
+			DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern(DATE_FORMAT_DATE);
+			fieldValue = dateFormatter.format(((Date) obj).toInstant());
+		} else {
+			fieldValue = obj.toString();
 		}
 
 		return fieldValue;
 
-	}
-
-	private static String getFormattedTimestamp(Object obj) throws ParseException {
-		synchronized (TIMESTAMP_FORMATTER) {
-			return TIMESTAMP_FORMATTER.format(obj);
-		}
-	}
-
-	private static String getFormattedDate(Object obj) throws ParseException {
-		synchronized (DATE_FORMATTER) {
-			return DATE_FORMATTER.format(obj);
-		}
 	}
 
 	private MeasureInfo getMeasureInfo(IFieldMetaData fieldMeta, Measure measure) {
