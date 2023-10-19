@@ -321,7 +321,7 @@ export default defineComponent({
     },
     methods: {
         isInDocBrowser() {
-            return this.$router.currentRoute.value.name === 'document-browser' || this.$router.currentRoute.value.name === 'document-execution-workspace'
+            return this.$router.currentRoute.value.matched.some((i) => i.name === 'document-browser' || i.name === 'document-execution-workspace')
         },
         iframeEventsListener(event) {
             if (event.data.type === 'crossNavigation') {
