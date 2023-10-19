@@ -268,7 +268,7 @@ export default defineComponent({
             return parameterVisible
         },
         isInDocBrowser() {
-            return this.$route.matched.some((i) => i.name === 'document-browser' || i.name === 'document-execution-workspace')
+            return this.$router.currentRoute.value.name === 'document-browser' || this.$router.currentRoute.value.name === 'document-execution-workspace'
         }
     },
     async created() {
