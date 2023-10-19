@@ -14,7 +14,7 @@
                     <Button icon="fa fa-filter" class="p-button-text p-button-rounded p-button-plain p-mx-2" v-if="isParameterSidebarVisible" v-tooltip.left="$t('common.parameters')" @click="parameterSidebarVisible = !parameterSidebarVisible" data-test="parameter-sidebar-icon"></Button>
                     <Button icon="fa fa-ellipsis-v" class="p-button-text p-button-rounded p-button-plain p-mx-2" v-tooltip.left="$t('common.menu')" @click="toggle"></Button>
                     <TieredMenu ref="menu" :model="toolbarMenuItems" :popup="true" />
-                    <Button v-if="isInDocBrowser" icon="fa fa-times" class="p-button-text p-button-rounded p-button-plain p-mx-2" v-tooltip.left="$t('common.close')" @click="closeDocumentConfirm"></Button>
+                    <Button v-if="isInDocBrowser()" icon="fa fa-times" class="p-button-text p-button-rounded p-button-plain p-mx-2" v-tooltip.left="$t('common.close')" @click="closeDocumentConfirm"></Button>
                 </div>
             </template>
         </Toolbar>
@@ -267,9 +267,7 @@ export default defineComponent({
 
             return parameterVisible
         },
-        isInDocBrowser() {
-            return this.$router.currentRoute.value.name === 'document-browser' || this.$router.currentRoute.value.name === 'document-execution-workspace'
-        }
+        
     },
     async created() {
         window.addEventListener('message', this.iframeEventsListener)
@@ -322,6 +320,9 @@ export default defineComponent({
         })
     },
     methods: {
+        isInDocBrowser() {
+            return this.$router.currentRoute.value.name === 'document-browser' || this.$router.currentRoute.value.name === 'document-execution-workspace'
+        },
         iframeEventsListener(event) {
             if (event.data.type === 'crossNavigation') {
                 this.executeCrossNavigation(event)
