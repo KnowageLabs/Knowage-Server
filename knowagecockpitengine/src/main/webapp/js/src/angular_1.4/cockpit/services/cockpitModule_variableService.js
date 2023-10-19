@@ -85,7 +85,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		this.getVariablePlaceholders = function(textToParse){
 			var tempText = angular.copy(textToParse);
 			if(tempText){
-				tempText = tempText.replace(/\$V\{([a-zA-Z0-9\-\_]*)(?:.([a-zA-Z0-9\-\_]*))?\}/,function(match,p1,p2){
+				tempText = tempText.replace(/\$V\{([a-zA-Z0-9\-\_]{1,255})(?:.([a-zA-Z0-9\-\_]{1,255}))?\}/,function(match,p1,p2){
 					return p2 ? cockpitModule_properties.VARIABLES[p1][p2] : cockpitModule_properties.VARIABLES[p1];
 				})
 			}

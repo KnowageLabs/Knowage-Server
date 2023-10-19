@@ -86,7 +86,7 @@
 	var replaceStringVariables = function (obj){
 		var objString = angular.copy(obj);
 		objString = JSON.stringify(objString);
-  		  objString = objString.replace(/\$V\{([a-zA-Z0-9\-\_]*)(?:.([a-zA-Z0-9\-\_]*))?\}/,function(match,p1,p2){
+  		  objString = objString.replace(/\$V\{([a-zA-Z0-9\-\_]{1,255})(?:.([a-zA-Z0-9\-\_]{1,255}))?\}/,function(match,p1,p2){
 					return p2 ? cockpitModule_properties.VARIABLES[p1][p2] : cockpitModule_properties.VARIABLES[p1];
 				})
 				
