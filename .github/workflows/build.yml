@@ -1,10 +1,9 @@
 name: "Build"
 on:
   push:
-  pull_request:
+  pull_request_target:
     types:
     - opened
-    - edited
     - reopened
     - synchronize
     - ready_for_review
@@ -13,7 +12,6 @@ on:
     types:
     - submitted
     - edited
-
 
 jobs:
   build:
