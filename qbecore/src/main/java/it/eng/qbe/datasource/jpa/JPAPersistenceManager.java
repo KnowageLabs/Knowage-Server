@@ -799,13 +799,7 @@ public class JPAPersistenceManager implements IPersistenceManager {
 		// we create a dataset object to apply profiled visibility constraints
 		JPQLDataSet dataset = buildJPQLDatasetToReferenceObject(query);
 		IStatement filteredStatement = dataset.getFilteredStatement();
-		String jpaQueryStr = filteredStatement.getQueryString();
-		/*
-		 * At this point, we have a query that is like: "select t_0.id, t_0.someOtherProperty from Entity where..." that is returning an object array but we
-		 * need to get a JPA object instead, therefore we are transforming the statement into "select t_0 from Entity t_0 where ..."
-		 */
-//		jpaQueryStr = transformToEntityQuery(jpaQueryStr);
-		return jpaQueryStr;
+		return filteredStatement.getQueryString();
 	}
 
 	protected JPQLDataSet buildJPQLDatasetToReferenceObject(it.eng.qbe.query.Query query) {
@@ -864,14 +858,6 @@ public class JPAPersistenceManager implements IPersistenceManager {
 		}
 		return query;
 	}
-
-//	private String transformToEntityQuery(String jpaQueryStr) {
-//		// query at this point is : select <something> from <table> <alias> ... to be replaced by select <alias> from <table> <alias> ...
-//		// The following replacement works also in case query is containing joins to other entities, but MAIN entity must be the first one in the FROM clause!!!
-//		// TODO refactor this code to be more reliable
-//		String toReturn = jpaQueryStr.replaceAll("(?i)select (.*) from (\\w+) (\\w+)", "select $3 from $2 $3");
-//		return toReturn;
-//	}
 
 	private void logQuery(String jpqlQuery) {
 		UserProfile userProfile = UserProfileManager.getProfile();
