@@ -17,6 +17,7 @@
  */
 package it.eng.qbe.model.structure.builder.jpa;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -24,6 +25,7 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.persistence.EntityManager;
+import javax.persistence.Id;
 import javax.persistence.metamodel.Attribute;
 import javax.persistence.metamodel.Attribute.PersistentAttributeType;
 import javax.persistence.metamodel.EmbeddableType;
@@ -405,12 +407,19 @@ public class JPAModelStructureBuilder extends AbstractModelStructureBuilder {
 	private void addField(Attribute attr, IModelEntity dataMartEntity, String keyPrefix) {
 		Class c = attr.getJavaType();
 		String type = c.getName();
+		boolean isKey = ((Field) attr.getJavaMember()).isAnnotationPresent(Id.class);
 
 		// TODO: SCALE E PREC
 		int scale = 0;
 		int precision = 0;
 
-		IModelField modelField = dataMartEntity.addNormalField(keyPrefix + attr.getName());
+		IModelField modelField = null;
+		if (isKey) {
+			modelField = dataMartEntity.addKeyField(keyPrefix + attr.getName());
+		} else {
+			modelField = dataMartEntity.addNormalField(keyPrefix + attr.getName());
+		}
+
 		modelField.setType(type);
 		modelField.setPrecision(precision);
 		modelField.setLength(scale);
