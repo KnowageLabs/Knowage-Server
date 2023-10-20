@@ -8,10 +8,11 @@ on:
     - synchronize
     - ready_for_review
     - review_requested
-  pull_request_review:
-    types:
-    - submitted
-    - edited
+# TODO : secrets are not accessible here
+#  pull_request_review:
+#    types:
+#    - submitted
+#    - edited
 
 jobs:
   build:
