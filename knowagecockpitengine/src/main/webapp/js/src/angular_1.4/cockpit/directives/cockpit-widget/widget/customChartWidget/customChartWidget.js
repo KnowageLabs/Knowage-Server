@@ -42,6 +42,7 @@ function cockpitCustomChartControllerFunction(
 		$timeout,
 		$mdPanel,
 		$q,
+		$rootScope,
 		$sce,
 		$filter,
 		cockpitModule_analyticalDrivers,
