@@ -506,7 +506,7 @@ public class RestUtilities {
 	}
 
 	private static void checkIfValueFromRequestHeaderIsInWhitelistFromPropertiesFile(String value) {
-		List<String> whitelist = WhitelistCache.getInstance().getWhitelist();
+		List<String> whitelist = HttpHeadersWhitelist.getInstance().getWhitelist();
 		if (!whitelist.contains(value))
 			throw new SpagoBIRuntimeException("Header value " + value + " is not in the list of allowed headers.");
 	}
