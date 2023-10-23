@@ -4,6 +4,8 @@ import static java.util.Objects.isNull;
 
 import java.io.IOException;
 import java.util.UUID;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -94,10 +96,22 @@ public class LoggerSetupFilter implements Filter {
 
 		LOGGER.debug("Correlation id is {}", correlationId);
 
+		LoggerSetupFilter.validateCorrelationId(correlationId);
+
 		ThreadContext.put(THREAD_CONTEXT_KEY_CORRELATION_ID, correlationId);
 		ThreadContext.put(THREAD_CONTEXT_KEY_JSESSION_ID, jSessionId);
 
 		httpResponse.setHeader(HTTP_HEADER_X_KN_CORRELATION_ID, correlationId);
+	}
+
+	private static void validateCorrelationId(String correlationId) {
+		String regexPattern = "^[A-Za-z0-9-]{1,128}$";
+		Pattern pattern = Pattern.compile(regexPattern);
+
+		Matcher matcher = pattern.matcher(correlationId);
+
+		if (!matcher.matches())
+			throw new RuntimeException("Invalid correlation id: " + correlationId);
 	}
 
 	private void postDoFilterForTenant() {
