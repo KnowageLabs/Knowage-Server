@@ -97,7 +97,7 @@ module.exports = {
         appleMobileWebAppCapable: 'yes',
         appleMobileWebAppStatusBarStyle: 'black',
         workboxOptions: {
-            globPatterns: ['index.html'],
+            exclude: [/^.*knowage-vue\/.*$/],
             runtimeCaching: [
                 {
                     urlPattern: /^.+\.(ttf|woff2)/i,
