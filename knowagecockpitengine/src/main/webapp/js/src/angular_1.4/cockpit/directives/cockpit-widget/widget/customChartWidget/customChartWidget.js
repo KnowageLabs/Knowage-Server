@@ -48,6 +48,7 @@ function cockpitCustomChartControllerFunction(
 		cockpitModule_generalServices,
 		cockpitModule_properties,
 		cockpitModule_template,
+		cockpitModule_widgetSelection,
 		sbiModule_user,
 		sbiModule_translate,
 		datastore
