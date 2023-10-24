@@ -2,7 +2,7 @@
     <div class="layout-menu-container" id="kn-main-menu" ref="mainMenu">
         <InfoDialog v-model:visibility="display"></InfoDialog>
         <LanguageDialog v-model:visibility="languageDisplay"></LanguageDialog>
-        <RoleDialog v-model:visibility="roleDisplay"></RoleDialog>
+        <RoleDialog v-model:visibility="roleDisplay" :mandatory="mandatoryRole"></RoleDialog>
         <DownloadsDialog v-model:visibility="downloadsDisplay"></DownloadsDialog>
         <NewsDialog v-model:visibility="newsDisplay"></NewsDialog>
         <LicenseDialog v-model:visibility="licenseDisplay" v-if="user && user.isSuperadmin && isEnterprise"></LicenseDialog>
@@ -105,7 +105,8 @@ export default defineComponent({
             newsDisplay: false,
             licenseDisplay: false,
             selectedCustomMenu: {},
-            hoverTimer: false as any
+            hoverTimer: false as any,
+            mandatoryRole: false as boolean
         }
     },
     emits: ['update:visibility', 'menuItemSelected'],
@@ -304,6 +305,10 @@ export default defineComponent({
 
     async mounted() {
         await this.loadMenu()
+        if (this.configurations['KNOWAGE.MANDATORY-ROLE'] && !this.user.defaultRole) {
+            this.roleDisplay = true
+            this.mandatoryRole = this.configurations['KNOWAGE.MANDATORY-ROLE']
+        }
     },
     unmounted() {
         window.removeEventListener('resize', this.getDimensions)
@@ -316,7 +321,8 @@ export default defineComponent({
             news: 'news',
             stateHomePage: 'homePage',
             isEnterprise: 'isEnterprise',
-            licenses: 'licenses'
+            licenses: 'licenses',
+            configurations: 'configurations'
         })
     },
     watch: {

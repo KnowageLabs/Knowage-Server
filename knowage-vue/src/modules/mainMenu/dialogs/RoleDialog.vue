@@ -1,9 +1,10 @@
 <template>
     <Dialog class="kn-dialog--toolbar--primary RoleDialog" v-bind:visible="visibility" footer="footer" :header="$t('role.roleSelection')" :closable="false" modal>
+        <Message v-if="mandatory" severity="warn">{{ $t('role.mandatoryRoleWarning') }}</Message>
         <Dropdown v-model="user.sessionRole" class="kn-material-input" @change="setDirty" :options="[$t('role.defaultRolePlaceholder'), ...user.roles]" :placeholder="$t('role.defaultRolePlaceholder')" />
         <template #footer>
-            <Button class="p-button-text kn-button" v-t="'common.close'" @click="closeDialog" />
-            <Button class="kn-button kn-button--primary" v-t="'common.save'" @click="changeRole" />
+            <Button v-if="!mandatory" v-t="'common.close'" class="p-button-text kn-button" @click="closeDialog" />
+            <Button v-t="'common.save'" class="kn-button kn-button--primary" :disabled="!user.sessionRole" @click="changeRole" />
         </template>
     </Dialog>
 </template>
@@ -13,15 +14,18 @@
     import { mapState } from 'vuex'
     import Dialog from 'primevue/dialog'
     import Dropdown from 'primevue/dropdown'
+    import Message from 'primevue/message'
 
     export default defineComponent({
         name: 'role-dialog',
         components: {
             Dialog,
-            Dropdown
+            Dropdown,
+            Message
         },
         props: {
-            visibility: Boolean
+            visibility: Boolean,
+            mandatory: Boolean
         },
         emits: ['update:visibility'],
         methods: {
