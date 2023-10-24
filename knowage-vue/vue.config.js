@@ -97,7 +97,7 @@ module.exports = {
         appleMobileWebAppCapable: 'yes',
         appleMobileWebAppStatusBarStyle: 'black',
         workboxOptions: {
-            staticFileGlobs: ['**/*.html'],
+            globPatterns: ['index.html'],
             runtimeCaching: [
                 {
                     urlPattern: /^.+\.(ttf|woff2)/i,
