@@ -19,12 +19,14 @@ package it.eng.spagobi.services.rest;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 
+import java.util.Base64;
+import java.util.Base64.Decoder;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 
-import org.apache.axis.encoding.Base64;
 import org.apache.log4j.Logger;
 
 import it.eng.spago.security.IEngUserProfile;
@@ -47,6 +49,8 @@ public class ExternalEngineSecurityServerInterceptor extends AbstractSecuritySer
 	@Context
 	private HttpServletRequest servletRequest;
 
+	private final Decoder base64Decoder = Base64.getDecoder();
+
 	@Override
 	protected void notAuthenticated(ContainerRequestContext requestContext) {
 		requestContext.abortWith(Response.status(401).build());
@@ -64,7 +68,7 @@ public class ExternalEngineSecurityServerInterceptor extends AbstractSecuritySer
 				int position = auto.indexOf("Direct");
 				if (position > -1 && position < 5) {// Direct stay at the beginning of the header
 					String encodedUser = auto.replaceFirst("Direct ", "");
-					byte[] decodedBytes = Base64.decode(encodedUser);
+					byte[] decodedBytes = base64Decoder.decode(encodedUser);
 					String userId = new String(decodedBytes, UTF_8);
 					SecurityServiceProxy proxy = new SecurityServiceProxy(userId, servletRequest.getSession());
 					profile = (UserProfile) proxy.getUserProfile();
@@ -101,7 +105,8 @@ public class ExternalEngineSecurityServerInterceptor extends AbstractSecuritySer
 				authenticated = false;
 			}
 		} catch (Exception e) {
-			logger.debug("Error while attempt to find user profile in session or authenticate user. Returning [false]", e);
+			logger.debug("Error while attempt to find user profile in session or authenticate user. Returning [false]",
+					e);
 			authenticated = false;
 		}
 

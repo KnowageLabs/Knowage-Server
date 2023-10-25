@@ -17,6 +17,7 @@
  */
 package it.eng.spagobi.sdk.utilities;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -30,7 +31,6 @@ import java.util.Optional;
 
 import javax.activation.DataHandler;
 
-import org.apache.axis.attachments.ManagedMemoryDataSource;
 import org.apache.log4j.Logger;
 import org.json.JSONObject;
 
@@ -185,8 +185,9 @@ public class SDKObjectsConverter {
 			byte[] templateContent = objTemplate.getContent();
 			toReturn = new SDKTemplate();
 			toReturn.setFileName(objTemplate.getName());
-			MemoryOnlyDataSource mods = new MemoryOnlyDataSource(templateContent, null);
-			DataHandler dhSource = new DataHandler(mods);
+			ByteArrayInputStream bais = new ByteArrayInputStream(templateContent);
+			KnowageSoapDataSource ds = new KnowageSoapDataSource(bais);
+			DataHandler dhSource = new DataHandler(ds);
 			toReturn.setContent(dhSource);
 		} catch (Exception e) {
 			LOGGER.error("Error while converting ObjTemplate into SDKTemplate.", e);
@@ -272,7 +273,8 @@ public class SDKObjectsConverter {
 				newConstraints.add(constraint);
 			}
 		}
-		it.eng.spagobi.sdk.documents.bo.SDKConstraint[] constraintsArray = new it.eng.spagobi.sdk.documents.bo.SDKConstraint[newConstraints.size()];
+		it.eng.spagobi.sdk.documents.bo.SDKConstraint[] constraintsArray = new it.eng.spagobi.sdk.documents.bo.SDKConstraint[newConstraints
+				.size()];
 		constraintsArray = (it.eng.spagobi.sdk.documents.bo.SDKConstraint[]) newConstraints.toArray(constraintsArray);
 		aDocParameter.setConstraints(constraintsArray);
 		LOGGER.debug("OUT");
@@ -429,11 +431,10 @@ public class SDKObjectsConverter {
 			/*
 			 * String type = null;
 			 *
-			 * if ( ScriptDataSet.DS_TYPE.equals( spagoBiDataSet.getType() ) ) { type = "SCRIPT"; } else if ( JDBCDataSet.DS_TYPE.equals(
-			 * spagoBiDataSet.getType() ) ) { type = "JDBC_QUERY"; } else if ( JavaClassDataSet.DS_TYPE.equals( spagoBiDataSet.getType() ) ) { type =
-			 * "JAVA_CLASS"; } else if ( WebServiceDataSet.DS_TYPE.equals( spagoBiDataSet.getType() ) ) { type = "WEB_SERVICE"; } else if (
-			 * FileDataSet.DS_TYPE.equals( spagoBiDataSet.getType() ) ) { type = "FILE"; } else { logger.error("Dataset type [" + spagoBiDataSet.getType() +
-			 * "] unknown."); type = "UNKNOWN"; }
+			 * if ( ScriptDataSet.DS_TYPE.equals( spagoBiDataSet.getType() ) ) { type = "SCRIPT"; } else if ( JDBCDataSet.DS_TYPE.equals( spagoBiDataSet.getType() ) ) {
+			 * type = "JDBC_QUERY"; } else if ( JavaClassDataSet.DS_TYPE.equals( spagoBiDataSet.getType() ) ) { type = "JAVA_CLASS"; } else if (
+			 * WebServiceDataSet.DS_TYPE.equals( spagoBiDataSet.getType() ) ) { type = "WEB_SERVICE"; } else if ( FileDataSet.DS_TYPE.equals( spagoBiDataSet.getType() ) ) {
+			 * type = "FILE"; } else { logger.error("Dataset type [" + spagoBiDataSet.getType() + "] unknown."); type = "UNKNOWN"; }
 			 *
 			 * toReturn.setType(type);
 			 */
@@ -479,14 +480,16 @@ public class SDKObjectsConverter {
 		SDKDataSetParameter[] toReturn = new SDKDataSetParameter[dataSetParameterItemList.size()];
 		for (int i = 0; i < dataSetParameterItemList.size(); i++) {
 			DataSetParameterItem aDataSetParameterItem = (DataSetParameterItem) dataSetParameterItemList.get(i);
-			SDKDataSetParameter aSDKDataSetParameter = this.fromDataSetParameterItemToSDKDataSetParameter(aDataSetParameterItem);
+			SDKDataSetParameter aSDKDataSetParameter = this
+					.fromDataSetParameterItemToSDKDataSetParameter(aDataSetParameterItem);
 			toReturn[i] = aSDKDataSetParameter;
 		}
 		LOGGER.debug("OUT");
 		return toReturn;
 	}
 
-	public String fromSDKDataSetParameterArrayToBIDataSetParameterList(SDKDataSetParameter[] dataSetParameterArray) throws SourceBeanException {
+	public String fromSDKDataSetParameterArrayToBIDataSetParameterList(SDKDataSetParameter[] dataSetParameterArray)
+			throws SourceBeanException {
 		LOGGER.debug("IN");
 		if (dataSetParameterArray == null) {
 			LOGGER.warn("dataSetParameterArray in input is null!!");
@@ -496,7 +499,8 @@ public class SDKObjectsConverter {
 		List paramsList = new ArrayList<String>();
 		for (int i = 0; i < dataSetParameterArray.length; i++) {
 			SDKDataSetParameter aDataSetParameterItem = (dataSetParameterArray[i]);
-			DataSetParameterItem aBIDataSetParameter = this.fromSDKDataSetParameterItemToBIDataSetParameter(aDataSetParameterItem);
+			DataSetParameterItem aBIDataSetParameter = this
+					.fromSDKDataSetParameterItemToBIDataSetParameter(aDataSetParameterItem);
 			paramsList.add(aBIDataSetParameter);
 		}
 		toReturn = this.deserializeSKDatasetParametersArray(paramsList);
@@ -505,7 +509,8 @@ public class SDKObjectsConverter {
 		return toReturn;
 	}
 
-	public SDKDataSetParameter fromDataSetParameterItemToSDKDataSetParameter(DataSetParameterItem dataSetParameterItem) {
+	public SDKDataSetParameter fromDataSetParameterItemToSDKDataSetParameter(
+			DataSetParameterItem dataSetParameterItem) {
 
 		LOGGER.debug("IN");
 
@@ -520,7 +525,8 @@ public class SDKObjectsConverter {
 		return toReturn;
 	}
 
-	public DataSetParameterItem fromSDKDataSetParameterItemToBIDataSetParameter(SDKDataSetParameter sdkDataSetParameterItem) {
+	public DataSetParameterItem fromSDKDataSetParameterItemToBIDataSetParameter(
+			SDKDataSetParameter sdkDataSetParameterItem) {
 
 		LOGGER.debug("IN");
 
@@ -577,7 +583,8 @@ public class SDKObjectsConverter {
 				}
 
 				DataSourceDAOHibImpl dataSourceDao = new DataSourceDAOHibImpl();
-				IDataSource dataSource = dataSourceDao.loadDataSourceByLabel(jsonConf.getString(DataSetConstants.DATA_SOURCE));
+				IDataSource dataSource = dataSourceDao
+						.loadDataSourceByLabel(jsonConf.getString(DataSetConstants.DATA_SOURCE));
 				((JDBCDataSet) ds).setDataSource(dataSource);
 			} else if (dataset.getType().equalsIgnoreCase(DataSetConstants.DS_QBE)) {
 				ds = new QbeDataSet();
@@ -590,7 +597,8 @@ public class SDKObjectsConverter {
 				DataSourceDAOHibImpl dataSourceDao = new DataSourceDAOHibImpl();
 
 				if (!jsonConf.isNull(DataSetConstants.QBE_DATA_SOURCE)) {
-					IDataSource dataSource = dataSourceDao.loadDataSourceByLabel(jsonConf.getString(DataSetConstants.QBE_DATA_SOURCE));
+					IDataSource dataSource = dataSourceDao
+							.loadDataSourceByLabel(jsonConf.getString(DataSetConstants.QBE_DATA_SOURCE));
 					((QbeDataSet) ds).setDataSource(dataSource);
 					if (dataSource != null) {
 						((QbeDataSet) ds).setDataSource(dataSource);
@@ -690,7 +698,8 @@ public class SDKObjectsConverter {
 		SDKDataStoreMetadata toReturn = new SDKDataStoreMetadata();
 		Map<String, Object> properties = aDataStoreMetaData.getProperties();
 		toReturn.setProperties(new HashMap<>(properties));
-		SDKDataStoreFieldMetadata[] fieldsMetadata = this.fromFieldMetadataListToSDKDataStoreFieldMetadataArray(aDataStoreMetaData.getFieldsMeta());
+		SDKDataStoreFieldMetadata[] fieldsMetadata = this
+				.fromFieldMetadataListToSDKDataStoreFieldMetadataArray(aDataStoreMetaData.getFieldsMeta());
 		toReturn.setFieldsMetadata(fieldsMetadata);
 		LOGGER.debug("OUT");
 		return toReturn;
@@ -705,7 +714,8 @@ public class SDKObjectsConverter {
 		SDKDataStoreFieldMetadata[] toReturn = new SDKDataStoreFieldMetadata[fieldsMeta.size()];
 		for (int i = 0; i < fieldsMeta.size(); i++) {
 			FieldMetadata aFieldMetadata = (FieldMetadata) fieldsMeta.get(i);
-			SDKDataStoreFieldMetadata aSDKDataStoreFieldMetadata = this.fromFieldMetadataToSDKDataStoreFieldMetadata(aFieldMetadata);
+			SDKDataStoreFieldMetadata aSDKDataStoreFieldMetadata = this
+					.fromFieldMetadataToSDKDataStoreFieldMetadata(aFieldMetadata);
 			toReturn[i] = aSDKDataStoreFieldMetadata;
 		}
 		LOGGER.debug("OUT");
@@ -725,22 +735,6 @@ public class SDKObjectsConverter {
 		toReturn.setClassName(fieldMetadata.getType().getName());
 		LOGGER.debug("OUT");
 		return toReturn;
-	}
-
-	public class MemoryOnlyDataSource extends ManagedMemoryDataSource {
-
-		public MemoryOnlyDataSource(byte[] in, String contentType) throws java.io.IOException {
-			super(new java.io.ByteArrayInputStream(in), Integer.MAX_VALUE - 2, contentType, true);
-		}
-
-		public MemoryOnlyDataSource(InputStream in, String contentType) throws java.io.IOException {
-			super(in, Integer.MAX_VALUE - 2, contentType, true);
-		}
-
-		public MemoryOnlyDataSource(String in, String contentType) throws java.io.IOException {
-			this(in.getBytes(), contentType);
-		}
-
 	}
 
 	public SbiGeoFeatures fromSDKFeatureToSbiGeoFeatures(SDKFeature feature) {

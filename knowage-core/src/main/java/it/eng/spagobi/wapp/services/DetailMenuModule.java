@@ -29,7 +29,7 @@ import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.axis.utils.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 
 import it.eng.spago.base.RequestContainer;
@@ -78,7 +78,7 @@ public class DetailMenuModule extends AbstractHttpModule {
 	public static final String PATH = "PATH";
 	public static final String EXT_APP_URL = "EXT_APP_URL";
 	public static final String PATH_THEME = "PATH_THEME";
-	private String typeFunct = null;
+	private final String typeFunct = null;
 	EMFErrorHandler errorHandler = null;
 
 	/*
@@ -121,7 +121,8 @@ public class DetailMenuModule extends AbstractHttpModule {
 
 			if (message == null) {
 				EMFUserError userError = new EMFUserError(EMFErrorSeverity.ERROR, 101);
-				SpagoBITracer.debug(AdmintoolsConstants.NAME_MODULE, "DetailFunctionalityModule", "service", "The message parameter is null");
+				SpagoBITracer.debug(AdmintoolsConstants.NAME_MODULE, "DetailFunctionalityModule", "service",
+						"The message parameter is null");
 				throw userError;
 			}
 			if (documentLookup != null) {
@@ -149,8 +150,8 @@ public class DetailMenuModule extends AbstractHttpModule {
 	}
 
 	/**
-	 * Gets the detail of a menu choosed by the user from the low functionalities list. It reaches the key from the request and asks to the DB all detail
-	 * parameter use mode information, by calling the method <code>loadLowFunctionalityByPath</code>.
+	 * Gets the detail of a menu choosed by the user from the low functionalities list. It reaches the key from the request and asks to the DB all detail parameter
+	 * use mode information, by calling the method <code>loadLowFunctionalityByPath</code>.
 	 *
 	 * @param key      The choosed low functionality id key
 	 * @param response The response Source Bean
@@ -182,9 +183,9 @@ public class DetailMenuModule extends AbstractHttpModule {
 	}
 
 	/**
-	 * Inserts/Modifies the detail of a menu according to the user request. When a parameter use mode is modified, the <code>modifyLowFunctionality</code>
-	 * method is called; when a new parameter use mode is added, the <code>insertLowFunctionality</code> method is called. These two cases are differentiated by
-	 * the <code>mod</code> String input value .
+	 * Inserts/Modifies the detail of a menu according to the user request. When a parameter use mode is modified, the <code>modifyLowFunctionality</code> method is
+	 * called; when a new parameter use mode is added, the <code>insertLowFunctionality</code> method is called. These two cases are differentiated by the
+	 * <code>mod</code> String input value .
 	 *
 	 * @param request  The request information contained in a SourceBean Object
 	 * @param mod      A request string used to differentiate insert/modify operations
@@ -192,7 +193,8 @@ public class DetailMenuModule extends AbstractHttpModule {
 	 * @throws EMFUserError        If an exception occurs
 	 * @throws SourceBeanException If a SourceBean exception occurs
 	 */
-	private void modDetailMenu(SourceBean request, String mod, SourceBean response) throws EMFUserError, SourceBeanException {
+	private void modDetailMenu(SourceBean request, String mod, SourceBean response)
+			throws EMFUserError, SourceBeanException {
 		HashMap<String, String> logParam = new HashMap();
 
 		// **********************************************************************
@@ -513,8 +515,8 @@ public class DetailMenuModule extends AbstractHttpModule {
 	/**
 	 * Defines all roles that have to be erased in order to keep functionalities tree consistence. When we leave some permissions to a functionality, those
 	 * permissions will not be assignable to all the children functionality. If any child has a permission that his parent anymore has, this permission mus be
-	 * deleted for all father's children and descendants. This metod recusively scans all father's descendants and saves inside a Set all roles that must be
-	 * erased from the Database.
+	 * deleted for all father's children and descendants. This metod recusively scans all father's descendants and saves inside a Set all roles that must be erased
+	 * from the Database.
 	 *
 	 * @param lowFuncParent the parent Functionality
 	 * @param rolesToErase  the set containing all roles to erase
@@ -528,26 +530,24 @@ public class DetailMenuModule extends AbstractHttpModule {
 	 * DAOFactory.getFunctionalityCMSDAO().recoverChilds(parentPath); List childs = DAOFactory.getLowFunctionalityDAO().loadSubLowFunctionalities(parentPath,
 	 * false); if(childs.size()!= 0) { Iterator i = childs.iterator(); while (i.hasNext()){ LowFunctionality childNode = (LowFunctionality) i.next(); String
 	 * childPath = childNode.getPath(); //LowFunctionality lowFuncParent = DAOFactory.getLowFunctionalityDAO().loadLowFunctionalityByPath(parentPath);
-	 * LowFunctionality lowFuncChild = DAOFactory.getLowFunctionalityDAO().loadLowFunctionalityByPath(childPath, false); if(lowFuncChild != null){ //control
-	 * childs permissions and fathers permissions //remove from childs those persmissions that are not present in the fathers //control for test Roles Role[]
+	 * LowFunctionality lowFuncChild = DAOFactory.getLowFunctionalityDAO().loadLowFunctionalityByPath(childPath, false); if(lowFuncChild != null){ //control childs
+	 * permissions and fathers permissions //remove from childs those persmissions that are not present in the fathers //control for test Roles Role[]
 	 * testChildRoles = lowFuncChild.getTestRoles(); //Role[] testParentRoles = lowFuncParent.getTestRoles(); //ArrayList newTestChildRoles = new ArrayList();
 	 * //HashMap rolesToErase = new HashMap(); for(int j = 0; j < testChildRoles.length; j++) { String rule = testChildRoles[j].getId().toString();
-	 * if(!isParentRule(rule, lowFuncParent,"TEST")){ ArrayList roles = new ArrayList(); roles.add(0,lowFuncChild.getId());
-	 * roles.add(1,testChildRoles[j].getId()); roles.add(2,"TEST"); rolesToErase.add(roles); lowFuncChild =
-	 * eraseRolesFromFunctionality(lowFuncChild,rule,"TEST"); //rolesToErase.put(lowFuncChild.getId(),testChildRoles[j].getId());
+	 * if(!isParentRule(rule, lowFuncParent,"TEST")){ ArrayList roles = new ArrayList(); roles.add(0,lowFuncChild.getId()); roles.add(1,testChildRoles[j].getId());
+	 * roles.add(2,"TEST"); rolesToErase.add(roles); lowFuncChild = eraseRolesFromFunctionality(lowFuncChild,rule,"TEST");
+	 * //rolesToErase.put(lowFuncChild.getId(),testChildRoles[j].getId());
 	 * //DAOFactory.getLowFunctionalityDAO().deleteFunctionalityRole(lowFuncChild,testChildRoles[j].getId()); } } //control for development roles Role[]
-	 * devChildRoles = lowFuncChild.getDevRoles(); //Role[] devParentRoles = lowFuncParent.getDevRoles(); //ArrayList newDevChildRoles = new ArrayList();
-	 * for(int j = 0; j < devChildRoles.length; j++) { String rule = devChildRoles[j].getId().toString(); if(!isParentRule(rule, lowFuncParent,"DEV")){
-	 * ArrayList roles = new ArrayList(); roles.add(0,lowFuncChild.getId()); roles.add(1,devChildRoles[j].getId()); roles.add(2,"DEV"); rolesToErase.add(roles);
-	 * lowFuncChild = eraseRolesFromFunctionality(lowFuncChild,rule,"DEV"); //rolesToErase.put(lowFuncChild.getId(),devChildRoles[j].getId());
-	 * //DAOFactory.getLowFunctionalityDAO().deleteFunctionalityRole(lowFuncChild,devChildRoles[j].getId()); } } //control for execution roles Role[]
-	 * execChildRoles = lowFuncChild.getExecRoles(); //Role[] execParentRoles = lowFuncParent.getExecRoles(); //ArrayList newExecChildRoles = new ArrayList();
-	 * for(int j = 0; j < execChildRoles.length; j++) { String rule = execChildRoles[j].getId().toString(); if(!isParentRule(rule, lowFuncParent,"EXEC")){
-	 * ArrayList roles = new ArrayList(); roles.add(0,lowFuncChild.getId()); roles.add(1,execChildRoles[j].getId()); roles.add(2,"REL");
-	 * rolesToErase.add(roles); lowFuncChild = eraseRolesFromFunctionality(lowFuncChild,rule,"EXEC");
-	 * //rolesToErase.put(lowFuncChild.getId(),execChildRoles[j].getId());
-	 * //DAOFactory.getLowFunctionalityDAO().deleteFunctionalityRole(lowFuncChild,execChildRoles[j].getId()); } } //loadRolesToErase(lowFuncChild,rolesToErase);
-	 * }
+	 * devChildRoles = lowFuncChild.getDevRoles(); //Role[] devParentRoles = lowFuncParent.getDevRoles(); //ArrayList newDevChildRoles = new ArrayList(); for(int j
+	 * = 0; j < devChildRoles.length; j++) { String rule = devChildRoles[j].getId().toString(); if(!isParentRule(rule, lowFuncParent,"DEV")){ ArrayList roles = new
+	 * ArrayList(); roles.add(0,lowFuncChild.getId()); roles.add(1,devChildRoles[j].getId()); roles.add(2,"DEV"); rolesToErase.add(roles); lowFuncChild =
+	 * eraseRolesFromFunctionality(lowFuncChild,rule,"DEV"); //rolesToErase.put(lowFuncChild.getId(),devChildRoles[j].getId());
+	 * //DAOFactory.getLowFunctionalityDAO().deleteFunctionalityRole(lowFuncChild,devChildRoles[j].getId()); } } //control for execution roles Role[] execChildRoles
+	 * = lowFuncChild.getExecRoles(); //Role[] execParentRoles = lowFuncParent.getExecRoles(); //ArrayList newExecChildRoles = new ArrayList(); for(int j = 0; j <
+	 * execChildRoles.length; j++) { String rule = execChildRoles[j].getId().toString(); if(!isParentRule(rule, lowFuncParent,"EXEC")){ ArrayList roles = new
+	 * ArrayList(); roles.add(0,lowFuncChild.getId()); roles.add(1,execChildRoles[j].getId()); roles.add(2,"REL"); rolesToErase.add(roles); lowFuncChild =
+	 * eraseRolesFromFunctionality(lowFuncChild,rule,"EXEC"); //rolesToErase.put(lowFuncChild.getId(),execChildRoles[j].getId());
+	 * //DAOFactory.getLowFunctionalityDAO().deleteFunctionalityRole(lowFuncChild,execChildRoles[j].getId()); } } //loadRolesToErase(lowFuncChild,rolesToErase); }
 	 *
 	 * //loadRolesToErase(childPath,rolesToErase); }
 	 *
@@ -577,7 +577,8 @@ public class DetailMenuModule extends AbstractHttpModule {
 		return menu;
 	}
 
-	private void lookupLoadHandler(SourceBean request, String modality, SourceBean response) throws EMFUserError, SourceBeanException {
+	private void lookupLoadHandler(SourceBean request, String modality, SourceBean response)
+			throws EMFUserError, SourceBeanException {
 
 		RequestContainer requestContainer = this.getRequestContainer();
 		SessionContainer session = requestContainer.getSessionContainer();
@@ -605,8 +606,8 @@ public class DetailMenuModule extends AbstractHttpModule {
 			url = "/img/wapp/application_link16.png";
 			return url;
 		} else if (menu.getFunctionality() != null && !menu.getFunctionality().equals("")) {
-			SourceBean config = (SourceBean) ConfigSingleton.getInstance().getFilteredSourceBeanAttribute("FINAL_USER_FUNCTIONALITIES.APPLICATION",
-					"functionality", menu.getFunctionality());
+			SourceBean config = (SourceBean) ConfigSingleton.getInstance().getFilteredSourceBeanAttribute(
+					"FINAL_USER_FUNCTIONALITIES.APPLICATION", "functionality", menu.getFunctionality());
 			if (config != null) {
 				String iconUrl = (String) config.getAttribute("iconUrl");
 				iconUrl = iconUrl.replaceAll("\\$\\{SPAGOBI_CONTEXT\\}", "");
@@ -632,8 +633,8 @@ public class DetailMenuModule extends AbstractHttpModule {
 			if (functionality == null || functionality.trim().equals("")) {
 				logger.error("Input menu is not associated to a SpagoBI functionality");
 			} else {
-				SourceBean config = (SourceBean) ConfigSingleton.getInstance().getFilteredSourceBeanAttribute("FINAL_USER_FUNCTIONALITIES.APPLICATION",
-						"functionality", functionality);
+				SourceBean config = (SourceBean) ConfigSingleton.getInstance().getFilteredSourceBeanAttribute(
+						"FINAL_USER_FUNCTIONALITIES.APPLICATION", "functionality", functionality);
 				if (config != null) {
 					url = (String) config.getAttribute("link");
 					url = url.replaceAll("\\$\\{SPAGOBI_CONTEXT\\}", contextPath);
@@ -685,7 +686,8 @@ public class DetailMenuModule extends AbstractHttpModule {
 					toMerge.add(funct);
 					Integer parentId = funct.getParentId();
 					while (parentId != null) {
-						LowFunctionality more = DAOFactory.getLowFunctionalityDAO().loadLowFunctionalityByID(parentId, false);
+						LowFunctionality more = DAOFactory.getLowFunctionalityDAO().loadLowFunctionalityByID(parentId,
+								false);
 						if (more != null) {
 							toMerge.add(more);
 							parentId = more.getParentId();

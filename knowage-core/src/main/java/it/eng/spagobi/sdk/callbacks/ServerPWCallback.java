@@ -23,12 +23,12 @@ import javax.security.auth.callback.Callback;
 import javax.security.auth.callback.CallbackHandler;
 import javax.security.auth.callback.UnsupportedCallbackException;
 
-import org.apache.axis.MessageContext;
 import org.apache.log4j.Logger;
 import org.apache.ws.security.WSPasswordCallback;
 import org.apache.ws.security.WSSecurityException;
 import org.apache.ws.security.handler.WSHandlerConstants;
 
+import it.eng.spagobi.sdk.utilities.KnowageSoapMessageContext;
 import it.eng.spagobi.services.security.bo.SpagoBIUserProfile;
 import it.eng.spagobi.services.security.service.ISecurityServiceSupplier;
 import it.eng.spagobi.services.security.service.SecurityServiceSupplierFactory;
@@ -71,10 +71,11 @@ public class ServerPWCallback implements CallbackHandler {
 					userId = profile.getUniqueIdentifier();
 				} else {
 					logger.error("WSPasswordCallback usage [" + pc.getUsage() + "] not treated.");
-					throw new UnsupportedCallbackException(callbacks[i], "WSPasswordCallback usage [" + pc.getUsage() + "] not treated.");
+					throw new UnsupportedCallbackException(callbacks[i],
+							"WSPasswordCallback usage [" + pc.getUsage() + "] not treated.");
 				}
 				// Put userId into MessageContext (for services that depend on profiling)
-				MessageContext mc = MessageContext.getCurrentContext();
+				KnowageSoapMessageContext.Context mc = KnowageSoapMessageContext.getCurrentContext();
 				logger.debug("Setting userId to " + userId);
 				mc.setProperty(WSHandlerConstants.USER, userId);
 			} else {

@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,266 +11,181 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-
 package it.eng.spagobi.services.artifact.bo;
 
-public class SpagoBIArtifact  implements java.io.Serializable {
-    private java.lang.Integer contentId;
+public class SpagoBIArtifact implements java.io.Serializable {
+	private Integer contentId;
 
-    private java.lang.String description;
+	private String description;
 
-    private java.lang.Integer id;
+	private Integer id;
 
-    private java.lang.String name;
+	private String name;
 
-    private java.lang.String type;
+	private String type;
 
-    public SpagoBIArtifact() {
-    }
+	public SpagoBIArtifact() {
+	}
 
-    public SpagoBIArtifact(
-           java.lang.Integer id,
-           java.lang.String name,
-           java.lang.String description,
-           java.lang.String type,
-           java.lang.Integer contentId
-           ) {
-           this.contentId = contentId;
-           this.description = description;
-           this.id = id;
-           this.name = name;
-           this.type = type;
-    }
+	public SpagoBIArtifact(Integer id, String name, String description, String type, Integer contentId) {
+		this.contentId = contentId;
+		this.description = description;
+		this.id = id;
+		this.name = name;
+		this.type = type;
+	}
 
+	/**
+	 * Gets the contentId value for this SpagoBIArtifact.
+	 *
+	 * @return contentId
+	 */
+	public Integer getContentId() {
+		return contentId;
+	}
 
-    /**
-     * Gets the contentId value for this SpagoBIArtifact.
-     * 
-     * @return contentId
-     */
-    public java.lang.Integer getContentId() {
-        return contentId;
-    }
+	/**
+	 * Sets the contentId value for this SpagoBIArtifact.
+	 *
+	 * @param contentId
+	 */
+	public void setContentId(Integer contentId) {
+		this.contentId = contentId;
+	}
 
+	/**
+	 * Gets the description value for this SpagoBIArtifact.
+	 *
+	 * @return description
+	 */
+	public String getDescription() {
+		return description;
+	}
 
-    /**
-     * Sets the contentId value for this SpagoBIArtifact.
-     * 
-     * @param contentId
-     */
-    public void setContentId(java.lang.Integer contentId) {
-        this.contentId = contentId;
-    }
+	/**
+	 * Sets the description value for this SpagoBIArtifact.
+	 *
+	 * @param description
+	 */
+	public void setDescription(String description) {
+		this.description = description;
+	}
 
+	/**
+	 * Gets the id value for this SpagoBIArtifact.
+	 *
+	 * @return id
+	 */
+	public Integer getId() {
+		return id;
+	}
 
-    /**
-     * Gets the description value for this SpagoBIArtifact.
-     * 
-     * @return description
-     */
-    public java.lang.String getDescription() {
-        return description;
-    }
+	/**
+	 * Sets the id value for this SpagoBIArtifact.
+	 *
+	 * @param id
+	 */
+	public void setId(Integer id) {
+		this.id = id;
+	}
 
+	/**
+	 * Gets the name value for this SpagoBIArtifact.
+	 *
+	 * @return name
+	 */
+	public String getName() {
+		return name;
+	}
 
-    /**
-     * Sets the description value for this SpagoBIArtifact.
-     * 
-     * @param description
-     */
-    public void setDescription(java.lang.String description) {
-        this.description = description;
-    }
+	/**
+	 * Sets the name value for this SpagoBIArtifact.
+	 *
+	 * @param name
+	 */
+	public void setName(String name) {
+		this.name = name;
+	}
 
+	/**
+	 * Gets the type value for this SpagoBIArtifact.
+	 *
+	 * @return type
+	 */
+	public String getType() {
+		return type;
+	}
 
-    /**
-     * Gets the id value for this SpagoBIArtifact.
-     * 
-     * @return id
-     */
-    public java.lang.Integer getId() {
-        return id;
-    }
+	/**
+	 * Sets the type value for this SpagoBIArtifact.
+	 *
+	 * @param type
+	 */
+	public void setType(String type) {
+		this.type = type;
+	}
 
+	private Object __equalsCalc = null;
 
-    /**
-     * Sets the id value for this SpagoBIArtifact.
-     * 
-     * @param id
-     */
-    public void setId(java.lang.Integer id) {
-        this.id = id;
-    }
+	@Override
+	public synchronized boolean equals(Object obj) {
+		if (!(obj instanceof SpagoBIArtifact))
+			return false;
+		SpagoBIArtifact other = (SpagoBIArtifact) obj;
+		if (obj == null)
+			return false;
+		if (this == obj)
+			return true;
+		if (__equalsCalc != null) {
+			return (__equalsCalc == obj);
+		}
+		__equalsCalc = obj;
+		boolean _equals;
+		_equals = true
+				&& ((this.contentId == null && other.getContentId() == null)
+						|| (this.contentId != null && this.contentId.equals(other.getContentId())))
+				&& ((this.description == null && other.getDescription() == null)
+						|| (this.description != null && this.description.equals(other.getDescription())))
+				&& ((this.id == null && other.getId() == null) || (this.id != null && this.id.equals(other.getId())))
+				&& ((this.name == null && other.getName() == null)
+						|| (this.name != null && this.name.equals(other.getName())))
+				&& ((this.type == null && other.getType() == null)
+						|| (this.type != null && this.type.equals(other.getType())));
+		__equalsCalc = null;
+		return _equals;
+	}
 
+	private boolean __hashCodeCalc = false;
 
-    /**
-     * Gets the name value for this SpagoBIArtifact.
-     * 
-     * @return name
-     */
-    public java.lang.String getName() {
-        return name;
-    }
-
-
-    /**
-     * Sets the name value for this SpagoBIArtifact.
-     * 
-     * @param name
-     */
-    public void setName(java.lang.String name) {
-        this.name = name;
-    }
-
-
-    /**
-     * Gets the type value for this SpagoBIArtifact.
-     * 
-     * @return type
-     */
-    public java.lang.String getType() {
-        return type;
-    }
-
-
-    /**
-     * Sets the type value for this SpagoBIArtifact.
-     * 
-     * @param type
-     */
-    public void setType(java.lang.String type) {
-        this.type = type;
-    }
-
-    private java.lang.Object __equalsCalc = null;
-    public synchronized boolean equals(java.lang.Object obj) {
-        if (!(obj instanceof SpagoBIArtifact)) return false;
-        SpagoBIArtifact other = (SpagoBIArtifact) obj;
-        if (obj == null) return false;
-        if (this == obj) return true;
-        if (__equalsCalc != null) {
-            return (__equalsCalc == obj);
-        }
-        __equalsCalc = obj;
-        boolean _equals;
-        _equals = true && 
-            ((this.contentId==null && other.getContentId()==null) || 
-             (this.contentId!=null &&
-              this.contentId.equals(other.getContentId()))) &&
-            ((this.description==null && other.getDescription()==null) || 
-             (this.description!=null &&
-              this.description.equals(other.getDescription()))) &&
-            ((this.id==null && other.getId()==null) || 
-             (this.id!=null &&
-              this.id.equals(other.getId()))) &&
-            ((this.name==null && other.getName()==null) || 
-             (this.name!=null &&
-              this.name.equals(other.getName()))) &&
-            ((this.type==null && other.getType()==null) || 
-             (this.type!=null &&
-              this.type.equals(other.getType())));
-        __equalsCalc = null;
-        return _equals;
-    }
-
-    private boolean __hashCodeCalc = false;
-    public synchronized int hashCode() {
-        if (__hashCodeCalc) {
-            return 0;
-        }
-        __hashCodeCalc = true;
-        int _hashCode = 1;
-        if (getContentId() != null) {
-            _hashCode += getContentId().hashCode();
-        }
-        if (getDescription() != null) {
-            _hashCode += getDescription().hashCode();
-        }
-        if (getId() != null) {
-            _hashCode += getId().hashCode();
-        }
-        if (getName() != null) {
-            _hashCode += getName().hashCode();
-        }
-        if (getType() != null) {
-            _hashCode += getType().hashCode();
-        }
-        __hashCodeCalc = false;
-        return _hashCode;
-    }
-
-    // Type metadata
-    private static org.apache.axis.description.TypeDesc typeDesc =
-        new org.apache.axis.description.TypeDesc(SpagoBIArtifact.class, true);
-
-    static {
-        typeDesc.setXmlType(new javax.xml.namespace.QName("http://bo.artifact.services.spagobi.eng.it", "SpagoBIArtifact"));
-        org.apache.axis.description.ElementDesc elemField = new org.apache.axis.description.ElementDesc();
-        elemField.setFieldName("contentId");
-        elemField.setXmlName(new javax.xml.namespace.QName("", "contentId"));
-        elemField.setXmlType(new javax.xml.namespace.QName("http://schemas.xmlsoap.org/soap/encoding/", "int"));
-        elemField.setNillable(true);
-        typeDesc.addFieldDesc(elemField);
-        elemField = new org.apache.axis.description.ElementDesc();
-        elemField.setFieldName("description");
-        elemField.setXmlName(new javax.xml.namespace.QName("", "description"));
-        elemField.setXmlType(new javax.xml.namespace.QName("http://schemas.xmlsoap.org/soap/encoding/", "string"));
-        elemField.setNillable(true);
-        typeDesc.addFieldDesc(elemField);
-        elemField = new org.apache.axis.description.ElementDesc();
-        elemField.setFieldName("id");
-        elemField.setXmlName(new javax.xml.namespace.QName("", "id"));
-        elemField.setXmlType(new javax.xml.namespace.QName("http://schemas.xmlsoap.org/soap/encoding/", "int"));
-        elemField.setNillable(true);
-        typeDesc.addFieldDesc(elemField);
-        elemField = new org.apache.axis.description.ElementDesc();
-        elemField.setFieldName("name");
-        elemField.setXmlName(new javax.xml.namespace.QName("", "name"));
-        elemField.setXmlType(new javax.xml.namespace.QName("http://schemas.xmlsoap.org/soap/encoding/", "string"));
-        elemField.setNillable(true);
-        typeDesc.addFieldDesc(elemField);
-        elemField = new org.apache.axis.description.ElementDesc();
-        elemField.setFieldName("type");
-        elemField.setXmlName(new javax.xml.namespace.QName("", "type"));
-        elemField.setXmlType(new javax.xml.namespace.QName("http://schemas.xmlsoap.org/soap/encoding/", "string"));
-        elemField.setNillable(true);
-        typeDesc.addFieldDesc(elemField);
-    }
-
-    /**
-     * Return type metadata object
-     */
-    public static org.apache.axis.description.TypeDesc getTypeDesc() {
-        return typeDesc;
-    }
-
-    /**
-     * Get Custom Serializer
-     */
-    public static org.apache.axis.encoding.Serializer getSerializer(
-           java.lang.String mechType, 
-           java.lang.Class _javaType,  
-           javax.xml.namespace.QName _xmlType) {
-        return 
-          new  org.apache.axis.encoding.ser.BeanSerializer(
-            _javaType, _xmlType, typeDesc);
-    }
-
-    /**
-     * Get Custom Deserializer
-     */
-    public static org.apache.axis.encoding.Deserializer getDeserializer(
-           java.lang.String mechType, 
-           java.lang.Class _javaType,  
-           javax.xml.namespace.QName _xmlType) {
-        return 
-          new  org.apache.axis.encoding.ser.BeanDeserializer(
-            _javaType, _xmlType, typeDesc);
-    }
+	@Override
+	public synchronized int hashCode() {
+		if (__hashCodeCalc) {
+			return 0;
+		}
+		__hashCodeCalc = true;
+		int _hashCode = 1;
+		if (getContentId() != null) {
+			_hashCode += getContentId().hashCode();
+		}
+		if (getDescription() != null) {
+			_hashCode += getDescription().hashCode();
+		}
+		if (getId() != null) {
+			_hashCode += getId().hashCode();
+		}
+		if (getName() != null) {
+			_hashCode += getName().hashCode();
+		}
+		if (getType() != null) {
+			_hashCode += getType().hashCode();
+		}
+		__hashCodeCalc = false;
+		return _hashCode;
+	}
 
 }

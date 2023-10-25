@@ -400,7 +400,6 @@
 				<version>4.0.9</version>
 			</dependency>
 			
-			<!-- Replace Axis 1.4 -->
 			<dependency>
 				<groupId>com.sun.xml.ws</groupId>
 				<artifactId>jaxws-rt</artifactId>

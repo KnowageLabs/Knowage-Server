@@ -24,6 +24,8 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.Base64;
+import java.util.Base64.Encoder;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -46,7 +48,6 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import org.apache.axis.encoding.Base64;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.client.utils.URIBuilder;
 import org.apache.jena.ext.com.google.common.collect.Iterables;
@@ -101,13 +102,18 @@ public class PageResource extends AbstractCockpitEngineResource {
 
 	private static Map<String, JSONObject> pages;
 
+	private final Encoder base64Encoder = Base64.getEncoder().withoutPadding();
+
 	static {
 		pages = new HashMap<>();
 
 		try {
-			pages.put("edit", new JSONObject("{name: 'execute', description: 'the cockpit edit page', parameters: []}"));
-			pages.put("execute", new JSONObject("{name: 'execute', description: 'the cockpit execution page', parameters: ['template']}"));
-			pages.put("test", new JSONObject("{name: 'test', description: 'the cockpit test page', parameters: ['template']}"));
+			pages.put("edit",
+					new JSONObject("{name: 'execute', description: 'the cockpit edit page', parameters: []}"));
+			pages.put("execute", new JSONObject(
+					"{name: 'execute', description: 'the cockpit execution page', parameters: ['template']}"));
+			pages.put("test",
+					new JSONObject("{name: 'test', description: 'the cockpit test page', parameters: ['template']}"));
 		} catch (JSONException t) {
 			LOGGER.error(t);
 		}
@@ -147,37 +153,43 @@ public class PageResource extends AbstractCockpitEngineResource {
 
 	@GET
 	@Path("/{pagename}/pdf")
-	public Response openPageGetPdf(@PathParam("pagename") String pageName) throws EMFUserError, IOException, InterruptedException, JSONException {
+	public Response openPageGetPdf(@PathParam("pagename") String pageName)
+			throws EMFUserError, IOException, InterruptedException, JSONException {
 		return openPagePdfInternal(pageName);
 	}
 
 	@POST
 	@Path("/{pagename}/pdf")
-	public Response openPagePostPdf(@PathParam("pagename") String pageName) throws EMFUserError, IOException, InterruptedException, JSONException {
+	public Response openPagePostPdf(@PathParam("pagename") String pageName)
+			throws EMFUserError, IOException, InterruptedException, JSONException {
 		return openPagePdfInternal(pageName);
 	}
 
 	@GET
 	@Path("/{pagename}/spreadsheet")
-	public Response openPageGetSpreadsheet(@PathParam("pagename") String pageName) throws IOException, InterruptedException, JSONException {
+	public Response openPageGetSpreadsheet(@PathParam("pagename") String pageName)
+			throws IOException, InterruptedException, JSONException {
 		return openPageSpreadsheetInternal(pageName);
 	}
 
 	@POST
 	@Path("/{pagename}/spreadsheet")
-	public Response openPagePostSpreadsheet(@PathParam("pagename") String pageName) throws IOException, InterruptedException, JSONException {
+	public Response openPagePostSpreadsheet(@PathParam("pagename") String pageName)
+			throws IOException, InterruptedException, JSONException {
 		return openPageSpreadsheetInternal(pageName);
 	}
 
 	@GET
 	@Path("/{pagename}/png")
-	public Response openPageGetPng(@PathParam("pagename") String pageName) throws EMFUserError, IOException, InterruptedException, JSONException {
+	public Response openPageGetPng(@PathParam("pagename") String pageName)
+			throws EMFUserError, IOException, InterruptedException, JSONException {
 		return openPagePngInternal(pageName);
 	}
 
 	@POST
 	@Path("/{pagename}/png")
-	public Response openPagePostPng(@PathParam("pagename") String pageName) throws EMFUserError, IOException, InterruptedException, JSONException {
+	public Response openPagePostPng(@PathParam("pagename") String pageName)
+			throws EMFUserError, IOException, InterruptedException, JSONException {
 		return openPagePngInternal(pageName);
 	}
 
@@ -201,9 +213,9 @@ public class PageResource extends AbstractCockpitEngineResource {
 		try {
 
 			/**
-			 * Setting the encoding type to the response object, so the Cockpit engine when calling the rendering of the chart (chart.jsp) can display the real
-			 * content of the chart template. If this is not set, specific Italian letters, such as ù and à are going to be displayed as black squared question
-			 * marks - they will not be displayed as they are specified by the user.
+			 * Setting the encoding type to the response object, so the Cockpit engine when calling the rendering of the chart (chart.jsp) can display the real content of
+			 * the chart template. If this is not set, specific Italian letters, such as ù and à are going to be displayed as black squared question marks - they will not
+			 * be displayed as they are specified by the user.
 			 *
 			 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 			 */
@@ -221,7 +233,8 @@ public class PageResource extends AbstractCockpitEngineResource {
 				} else if ("PNG".equalsIgnoreCase(outputType)) {
 					return createRedirect("/png");
 				} else {
-					engineInstance = CockpitEngine.createInstance(getIOManager().getTemplateAsString(), getIOManager().getEnv());
+					engineInstance = CockpitEngine.createInstance(getIOManager().getTemplateAsString(),
+							getIOManager().getEnv());
 					getIOManager().getHttpSession().setAttribute(EngineConstants.ENGINE_INSTANCE, engineInstance);
 
 					String editMode = request.getParameter("documentMode");
@@ -233,7 +246,8 @@ public class PageResource extends AbstractCockpitEngineResource {
 						String documentLabel = request.getParameter("DOCUMENT_LABEL");
 						BIObject obj = DAOFactory.getBIObjectDAO().loadBIObjectByLabel(documentLabel);
 						if (!ObjectsAccessVerifier.canEdit(obj, getUserProfile())) {
-							String message = String.format("User [%s] cannot edit this document", (String) getUserProfile().getUserId());
+							String message = String.format("User [%s] cannot edit this document",
+									(String) getUserProfile().getUserId());
 							LOGGER.error(message);
 							throw new Exception(message);
 
@@ -284,7 +298,8 @@ public class PageResource extends AbstractCockpitEngineResource {
 		return new URI(sb.toString());
 	}
 
-	private Response openPagePdfInternal(String pageName) throws EMFUserError, IOException, InterruptedException, JSONException {
+	private Response openPagePdfInternal(String pageName)
+			throws EMFUserError, IOException, InterruptedException, JSONException {
 		String requestURL = getRequestUrlForPdfExport(request);
 		RenderOptions renderOptions = getRenderOptionsForPdfExporter(request);
 
@@ -294,14 +309,18 @@ public class PageResource extends AbstractCockpitEngineResource {
 		boolean pdfFrontPage = Boolean.parseBoolean(request.getParameter(PDF_FRONT_PAGE));
 		boolean pdfBackPage = Boolean.parseBoolean(request.getParameter(PDF_BACK_PAGE));
 
-		PdfExporterV2 pdfExporter = new PdfExporterV2(documentId, userId, requestURL, renderOptions, pdfPageOrientation, pdfFrontPage, pdfBackPage);
+		PdfExporterV2 pdfExporter = new PdfExporterV2(documentId, userId, requestURL, renderOptions, pdfPageOrientation,
+				pdfFrontPage, pdfBackPage);
 		byte[] data = pdfExporter.getBinaryData();
 
 		return Response.ok(data, "application/pdf").header("Content-Length", Integer.toString(data.length))
-				.header("Content-Disposition", "attachment; fileName=" + request.getParameter("DOCUMENT_LABEL") + ".pdf").build();
+				.header("Content-Disposition",
+						"attachment; fileName=" + request.getParameter("DOCUMENT_LABEL") + ".pdf")
+				.build();
 	}
 
-	private Response openPageSpreadsheetInternal(String pageName) throws IOException, InterruptedException, JSONException {
+	private Response openPageSpreadsheetInternal(String pageName)
+			throws IOException, InterruptedException, JSONException {
 		String requestURL = getRequestUrlForExcelExport(request);
 
 		request.setAttribute("template", getIOManager().getTemplateAsString());
@@ -320,7 +339,8 @@ public class PageResource extends AbstractCockpitEngineResource {
 				.header("Content-Disposition", "attachment; fileName=" + documentLabel + ".xlsx").build();
 	}
 
-	private Response openPagePngInternal(String pageName) throws EMFUserError, IOException, InterruptedException, JSONException {
+	private Response openPagePngInternal(String pageName)
+			throws EMFUserError, IOException, InterruptedException, JSONException {
 		String requestURL = null;
 		String documentLabel = request.getParameter("DOCUMENT_LABEL");
 		String viewName = request.getParameter("viewName");
@@ -335,10 +355,13 @@ public class PageResource extends AbstractCockpitEngineResource {
 		int documentId = Integer.parseInt(request.getParameter("document"));
 		String userId = request.getParameter("user_id");
 		String pdfPageOrientation = request.getParameter(PDF_PAGE_ORIENTATION);
-		boolean pdfFrontPage = request.getParameter(PDF_FRONT_PAGE) != null && Boolean.valueOf(request.getParameter(PDF_FRONT_PAGE));
-		boolean pdfBackPage = request.getParameter(PDF_BACK_PAGE) != null && Boolean.valueOf(request.getParameter(PDF_BACK_PAGE));
+		boolean pdfFrontPage = request.getParameter(PDF_FRONT_PAGE) != null
+				&& Boolean.valueOf(request.getParameter(PDF_FRONT_PAGE));
+		boolean pdfBackPage = request.getParameter(PDF_BACK_PAGE) != null
+				&& Boolean.valueOf(request.getParameter(PDF_BACK_PAGE));
 
-		PngExporter pngExporter = new PngExporter(documentId, userId, requestURL, renderOptions, pdfPageOrientation, pdfFrontPage, pdfBackPage);
+		PngExporter pngExporter = new PngExporter(documentId, userId, requestURL, renderOptions, pdfPageOrientation,
+				pdfFrontPage, pdfBackPage);
 		byte[] data = pngExporter.getBinaryData();
 
 		boolean isZipped = new ZipInputStream(new ByteArrayInputStream(data)).getNextEntry() != null;
@@ -354,7 +377,8 @@ public class PageResource extends AbstractCockpitEngineResource {
 			contentDisposition = "attachment; fileName=" + documentLabel + ".zip";
 		}
 
-		return Response.ok(data, mimeType).header("Content-length", Integer.toString(data.length)).header("Content-Disposition", contentDisposition).build();
+		return Response.ok(data, mimeType).header("Content-length", Integer.toString(data.length))
+				.header("Content-Disposition", contentDisposition).build();
 	}
 
 	/**
@@ -398,7 +422,7 @@ public class PageResource extends AbstractCockpitEngineResource {
 
 	private RenderOptions getRenderOptionsForPdfExporter(HttpServletRequest request) {
 		String userId = (String) getUserProfile().getUserUniqueIdentifier();
-		String encodedUserId = Base64.encode(userId.getBytes(UTF_8));
+		String encodedUserId = new String(base64Encoder.encode(userId.getBytes(UTF_8)));
 		Map<String, String> headers = new HashMap<>(1);
 		headers.put("Authorization", "Direct " + encodedUserId);
 
@@ -431,9 +455,10 @@ public class PageResource extends AbstractCockpitEngineResource {
 			pdfDeviceScaleFactor = Double.valueOf(deviceScaleFactorVal);
 		}
 
-		ViewportDimensions dimensions = ViewportDimensions.builder().withWidth(pdfWidth).withHeight(pdfHeight).withDeviceScaleFactor(pdfDeviceScaleFactor)
-				.withIsMultiSheet(isMultiSheet).build();
-		return defaultRenderOptions.withDimensions(dimensions).withJavaScriptExecutionDetails(pdfRenderingWaitTime, 5000L);
+		ViewportDimensions dimensions = ViewportDimensions.builder().withWidth(pdfWidth).withHeight(pdfHeight)
+				.withDeviceScaleFactor(pdfDeviceScaleFactor).withIsMultiSheet(isMultiSheet).build();
+		return defaultRenderOptions.withDimensions(dimensions).withJavaScriptExecutionDetails(pdfRenderingWaitTime,
+				5000L);
 	}
 
 	private String getRequestUrlForPdfExport(HttpServletRequest request) throws JSONException {
@@ -479,7 +504,8 @@ public class PageResource extends AbstractCockpitEngineResource {
 	}
 
 	public String getServiceHostUrl() {
-		String serviceURL = SpagoBIUtilities.readJndiResource(SingletonConfig.getInstance().getConfigValue("SPAGOBI.SPAGOBI_SERVICE_JNDI"));
+		String serviceURL = SpagoBIUtilities
+				.readJndiResource(SingletonConfig.getInstance().getConfigValue("SPAGOBI.SPAGOBI_SERVICE_JNDI"));
 		serviceURL = serviceURL.substring(0, serviceURL.lastIndexOf('/'));
 		return serviceURL;
 	}
@@ -557,8 +583,10 @@ public class PageResource extends AbstractCockpitEngineResource {
 
 			boolean isMultivalue = driver.isMultivalue();
 
-			List<Object> values = Optional.ofNullable(parameterMap.get(urlName)).map(Arrays::asList).orElse(Collections.emptyList());
-			List<Object> descriptions = Optional.ofNullable(parameterMap.get(urlName + "_description")).map(Arrays::asList).orElse(Collections.emptyList());
+			List<Object> values = Optional.ofNullable(parameterMap.get(urlName)).map(Arrays::asList)
+					.orElse(Collections.emptyList());
+			List<Object> descriptions = Optional.ofNullable(parameterMap.get(urlName + "_description"))
+					.map(Arrays::asList).orElse(Collections.emptyList());
 
 			if (OUTPUT_TYPE.equals(urlName)) {
 				LOGGER.debug("Forcing outputType to HTML");
