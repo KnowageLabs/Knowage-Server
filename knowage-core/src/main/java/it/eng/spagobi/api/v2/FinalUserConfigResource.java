@@ -22,13 +22,15 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import it.eng.spagobi.api.AbstractSpagoBIResource;
 import it.eng.spagobi.commons.bo.Config;
@@ -39,37 +41,44 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 @Path("/1.0/user-configs")
 public class FinalUserConfigResource extends AbstractSpagoBIResource {
 
-	/*
-	 * In order to add new configurations to the list of the ones visible to the final user just add an item to the following list that contains the string
-	 * label of the config. ex: Arrays.asList("a", "b", "c");
-	 */
-	private static final List<String> userConfigLabels = Arrays.asList("SPAGOBI.SESSION_PARAMETERS_MANAGER.enabled", "SPAGOBI.DATE-FORMAT-SERVER.format",
-			"SPAGOBI.TIMESTAMP-FORMAT.format","KNOWAGE.MANDATORY-ROLE");
+	private static final Logger LOGGER = LogManager.getLogger(FinalUserConfigResource.class);
 
-	private static Logger logger = Logger.getLogger(ConfigResource.class);
+	/**
+	 * In order to add new configurations to the list of the ones visible to the final user just add an item to the following list that contains the string label of
+	 * the config.
+	 */
+	private static final List<String> USER_CONFIG_LABELS = Arrays.asList("SPAGOBI.SESSION_PARAMETERS_MANAGER.enabled",
+			"SPAGOBI.DATE-FORMAT-SERVER.format", "SPAGOBI.TIMESTAMP-FORMAT.format",
+			"KNOWAGE.EMBEDDING_APPLICATION_VALUE", "KNOWAGE.RESOURCE.UPLOAD.MAX_SIZE");
 
 	@GET
 	@Path("/")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Map<String, String> getConfigs() {
-		logger.debug("IN");
+		LOGGER.debug("Loading configurations");
 		try {
-			Map<String, String> userConfigs = new HashMap<String, String>();
+			Map<String, String> userConfigs = new HashMap<>();
 			IConfigDAO configsDao = DAOFactory.getSbiConfigDAO();
 			configsDao.setUserProfile(getUserProfile());
 
-			for (String label : userConfigLabels) {
-				Config cfg = configsDao.loadConfigParametersByLabel(label);
-				if (cfg.isActive())
-					userConfigs.put(cfg.getLabel(), cfg.getValueCheck());
+			for (String label : USER_CONFIG_LABELS) {
+				Optional<Config> cfg = configsDao.loadConfigParametersByLabelIfExist(label);
+				if (cfg.isPresent()) {
+					Config currCfg = cfg.get();
+					if (currCfg.isActive()) {
+						userConfigs.put(currCfg.getLabel(), currCfg.getValueCheck());
+					}
+				} else {
+					LOGGER.warn("Configuration with label {} not found: it is required by /1.0/user-configs", label);
+				}
 			}
 
 			return userConfigs;
 		} catch (Exception e) {
-			logger.error("Error while getting the list of user configs", e);
+			LOGGER.error("Error loading configurations", e);
 			throw new SpagoBIRuntimeException("Error while getting the list of user configs", e);
 		} finally {
-			logger.debug("OUT");
+			LOGGER.debug("End loading configurations");
 		}
 	}
 }
