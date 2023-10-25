@@ -35,14 +35,3 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     
     response.sendRedirect(redirectURL);
 %>
-<%@page import="it.eng.spagobi.commons.constants.SpagoBIConstants"%>
-<%@page import="it.eng.spagobi.commons.constants.CommunityFunctionalityConstants"%>
-<HTML>
-<HEAD>
-<TITLE>Redirect...</TITLE> 
-
-</HEAD>
-<BODY>
-Redirect in corso...
-</BODY>
-</HTML>
