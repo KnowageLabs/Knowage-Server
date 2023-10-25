@@ -96,63 +96,9 @@ module.exports = {
         msTileColor: '#3b678c',
         appleMobileWebAppCapable: 'yes',
         appleMobileWebAppStatusBarStyle: 'black',
+        workboxPluginMode: 'InjectManifest',
         workboxOptions: {
-            exclude: [/^.*knowage-vue\/.*$/],
-            runtimeCaching: [
-                {
-                    urlPattern: /^.+\.(ttf|woff2)/i,
-                    handler: 'CacheFirst',
-                    options: {
-                        cacheName: 'fonts',
-                        expiration: {
-                            maxEntries: 10,
-                            maxAgeSeconds: 60 * 60 * 24 * 365 // <== 365 days
-                        },
-                        cacheableResponse: {
-                            statuses: [0, 200]
-                        }
-                    }
-                },
-                {
-                    urlPattern: /^.+\.css/i,
-                    handler: 'CacheFirst',
-                    options: {
-                        cacheName: 'styles',
-                        expiration: {
-                            maxAgeSeconds: 60 * 60 * 24 * 365 // <== 365 days
-                        },
-                        cacheableResponse: {
-                            statuses: [0, 200]
-                        }
-                    }
-                },
-                {
-                    urlPattern: /^.+\.js/i,
-                    handler: 'CacheFirst',
-                    options: {
-                        cacheName: 'scripts',
-                        expiration: {
-                            maxAgeSeconds: 60 * 60 * 24 * 10 // <== 365 days
-                        },
-                        cacheableResponse: {
-                            statuses: [0, 200]
-                        }
-                    }
-                },
-                {
-                    urlPattern: /^.+\.(svg|png|jpg)/i,
-                    handler: 'CacheFirst',
-                    options: {
-                        cacheName: 'images',
-                        expiration: {
-                            maxAgeSeconds: 60 * 60 * 24 * 10 // <== 365 days
-                        },
-                        cacheableResponse: {
-                            statuses: [0, 200]
-                        }
-                    }
-                }
-            ]
+            swSrc: 'src/knowage-sw.js'
         },
         manifestCrossorigin: 'use-credentials'
     }

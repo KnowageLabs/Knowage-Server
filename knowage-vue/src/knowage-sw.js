@@ -1,0 +1,6 @@
+importScripts("https://storage.googleapis.com/workbox-cdn/releases/4.3.1/workbox-sw.js");
+
+workbox.routing.registerRoute(/^.+\.(ttf|woff2)/i, new workbox.strategies.CacheFirst({ "cacheName":"fonts", plugins: [new workbox.expiration.Plugin({ maxEntries: 10, maxAgeSeconds: 31536000, purgeOnQuotaError: false }), new workbox.cacheableResponse.Plugin({ statuses: [ 0, 200 ] })] }), 'GET');
+workbox.routing.registerRoute(/^.+\.css/i, new workbox.strategies.CacheFirst({ "cacheName":"styles", plugins: [new workbox.expiration.Plugin({ maxAgeSeconds: 31536000, purgeOnQuotaError: false }), new workbox.cacheableResponse.Plugin({ statuses: [ 0, 200 ] })] }), 'GET');
+workbox.routing.registerRoute(/^.+\.js/i, new workbox.strategies.CacheFirst({ "cacheName":"scripts", plugins: [new workbox.expiration.Plugin({ maxAgeSeconds: 864000, purgeOnQuotaError: false }), new workbox.cacheableResponse.Plugin({ statuses: [ 0, 200 ] })] }), 'GET');
+workbox.routing.registerRoute(/^.+\.(svg|png|jpg)/i, new workbox.strategies.CacheFirst({ "cacheName":"images", plugins: [new workbox.expiration.Plugin({ maxAgeSeconds: 864000, purgeOnQuotaError: false }), new workbox.cacheableResponse.Plugin({ statuses: [ 0, 200 ] })] }), 'GET');
