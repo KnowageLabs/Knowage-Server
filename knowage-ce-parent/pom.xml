@@ -64,6 +64,7 @@
 			<url>https://xss-html-filter.sf.net/releases/</url>
 		</repository>
 <<<<<<< Upstream, based on branch 'master' of git@github.com:KnowageLabs/Knowage-Server.git
+<<<<<<< Upstream, based on branch 'master' of git@github.com:KnowageLabs/Knowage-Server.git
 		
 		<!-- We use OW2 third party repository for com.jamon:fdsapi, needed by knowage CE; this library is not available on Maven Central -->
 		<repository>
@@ -73,6 +74,16 @@
 =======
 >>>>>>> 6c63a4f Cleaning dependencies repositories
 
+=======
+		
+		<!-- We use OW2 third party repository for com.jamon:fdsapi, needed by knowage CE; this library is not available on Maven Central -->
+		<repository>
+			<id>ow2-third-party</id>
+			<url>https://repository.ow2.org/nexus/content/repositories/3rd-party/</url>
+		</repository>
+		
+>>>>>>> 612a92371d (Add a repository to get com.jamon:fdsapi)
+>>>>>>> 006c1a6 Add a repository to get com.jamon:fdsapi
 	</repositories>
 
 	<properties>
