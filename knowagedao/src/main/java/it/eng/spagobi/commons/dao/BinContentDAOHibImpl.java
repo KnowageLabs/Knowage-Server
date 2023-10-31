@@ -49,14 +49,10 @@ public class BinContentDAOHibImpl extends AbstractHibernateDAO implements IBinCo
 			tx.commit();
 		} catch (HibernateException he) {
 			LOGGER.error("HibernateException", he);
-			if (tx != null)
-				tx.rollback();
+			rollbackIfActive(tx);
 			throw new HibernateException(he.getLocalizedMessage(), he);
 		} finally {
-			if (aSession != null) {
-				if (aSession.isOpen())
-					aSession.close();
-			}
+			closeSessionIfOpen(aSession);
 			LOGGER.debug("OUT");
 		}
 		return content;

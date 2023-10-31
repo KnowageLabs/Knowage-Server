@@ -74,14 +74,10 @@ public class BIObjectRatingDAOHibImpl extends AbstractHibernateDAO implements IB
 			return rating;
 		} catch (HibernateException he) {
 			logger.error(he);
-			if (tx != null)
-				tx.rollback();
+			rollbackIfActive(tx);
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		} finally {
-			if (aSession != null) {
-				if (aSession.isOpen())
-					aSession.close();
-			}
+			closeSessionIfOpen(aSession);
 		}
 
 	}
@@ -108,14 +104,10 @@ public class BIObjectRatingDAOHibImpl extends AbstractHibernateDAO implements IB
 			return hibBIObjectsRating;
 		} catch (HibernateException he) {
 			logger.error(he);
-			if (tx != null)
-				tx.rollback();
+			rollbackIfActive(tx);
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		} finally {
-			if (aSession != null) {
-				if (aSession.isOpen())
-					aSession.close();
-			}
+			closeSessionIfOpen(aSession);
 		}
 
 	}
@@ -163,17 +155,13 @@ public class BIObjectRatingDAOHibImpl extends AbstractHibernateDAO implements IB
 		} catch (HibernateException he) {
 			logger.error("Error while inserting the Distribution List with name ", he);
 
-			if (tx != null)
-				tx.rollback();
+			rollbackIfActive(tx);
 
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 9100);
 
 		} finally {
-			if (aSession != null) {
-				if (aSession.isOpen())
-					aSession.close();
-				logger.debug("OUT");
-			}
+			closeSessionIfOpen(aSession);
+			logger.debug("OUT");
 		}
 
 	}
@@ -227,17 +215,13 @@ public class BIObjectRatingDAOHibImpl extends AbstractHibernateDAO implements IB
 		} catch (HibernateException he) {
 			logger.error("Error while inserting the Distribution List with name ", he);
 
-			if (tx != null)
-				tx.rollback();
+			rollbackIfActive(tx);
 
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 9100);
 
 		} finally {
-			if (aSession != null) {
-				if (aSession.isOpen())
-					aSession.close();
-				logger.debug("OUT");
-			}
+			closeSessionIfOpen(aSession);
+			logger.debug("OUT");
 		}
 
 	}

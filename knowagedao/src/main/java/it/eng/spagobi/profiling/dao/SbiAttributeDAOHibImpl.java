@@ -57,14 +57,10 @@ public class SbiAttributeDAOHibImpl extends AbstractHibernateDAO implements ISbi
 			tx.commit();
 		} catch (HibernateException he) {
 			logger.error(he.getMessage(), he);
-			if (tx != null)
-				tx.rollback();
+			rollbackIfActive(tx);
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		} finally {
-			if (aSession != null) {
-				if (aSession.isOpen())
-					aSession.close();
-			}
+			closeSessionIfOpen(aSession);
 		}
 		logger.debug("OUT");
 		return toReturn;
@@ -90,14 +86,10 @@ public class SbiAttributeDAOHibImpl extends AbstractHibernateDAO implements ISbi
 			tx.commit();
 		} catch (HibernateException he) {
 			logger.error(he.getMessage(), he);
-			if (tx != null)
-				tx.rollback();
+			rollbackIfActive(tx);
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		} finally {
-			if (aSession != null) {
-				if (aSession.isOpen())
-					aSession.close();
-			}
+			closeSessionIfOpen(aSession);
 		}
 		logger.debug("OUT");
 		return toReturn;
@@ -120,14 +112,10 @@ public class SbiAttributeDAOHibImpl extends AbstractHibernateDAO implements ISbi
 			return id;
 		} catch (HibernateException he) {
 			logger.error(he.getMessage(), he);
-			if (tx != null)
-				tx.rollback();
+			rollbackIfActive(tx);
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		} finally {
-			if (aSession != null) {
-				if (aSession.isOpen())
-					aSession.close();
-			}
+			closeSessionIfOpen(aSession);
 		}
 
 	}
@@ -195,14 +183,10 @@ public class SbiAttributeDAOHibImpl extends AbstractHibernateDAO implements ISbi
 			logger.debug("OUT");
 		} catch (HibernateException he) {
 			logger.error(he.getMessage(), he);
-			if (tx != null)
-				tx.rollback();
+			rollbackIfActive(tx);
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		} finally {
-			if (aSession != null) {
-				if (aSession.isOpen())
-					aSession.close();
-			}
+			closeSessionIfOpen(aSession);
 		}
 		return idToReturn;
 
@@ -225,17 +209,13 @@ public class SbiAttributeDAOHibImpl extends AbstractHibernateDAO implements ISbi
 		} catch (HibernateException he) {
 			logException(he);
 
-			if (tx != null)
-				tx.rollback();
+			rollbackIfActive(tx);
 
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 
 		} finally {
+			closeSessionIfOpen(aSession);
 			logger.debug("OUT");
-			if (aSession != null) {
-				if (aSession.isOpen())
-					aSession.close();
-			}
 		}
 
 	}
@@ -258,14 +238,10 @@ public class SbiAttributeDAOHibImpl extends AbstractHibernateDAO implements ISbi
 			tx.commit();
 		} catch (HibernateException he) {
 			logger.error(he.getMessage(), he);
-			if (tx != null)
-				tx.rollback();
+			rollbackIfActive(tx);
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		} finally {
-			if (aSession != null) {
-				if (aSession.isOpen())
-					aSession.close();
-			}
+			closeSessionIfOpen(aSession);
 		}
 		logger.debug("OUT");
 		return toReturn;
@@ -285,14 +261,10 @@ public class SbiAttributeDAOHibImpl extends AbstractHibernateDAO implements ISbi
 			tx.commit();
 		} catch (HibernateException he) {
 			logger.error(he.getMessage(), he);
-			if (tx != null)
-				tx.rollback();
+			rollbackIfActive(tx);
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		} finally {
-			if (aSession != null) {
-				if (aSession.isOpen())
-					aSession.close();
-			}
+			closeSessionIfOpen(aSession);
 		}
 		logger.debug("OUT");
 		return toReturn;
@@ -309,7 +281,7 @@ public class SbiAttributeDAOHibImpl extends AbstractHibernateDAO implements ISbi
 			aSession = getSession();
 			tx = aSession.beginTransaction();
 
-			StringBuffer q = new StringBuffer("from SbiUserAttributes att where ");
+			StringBuilder q = new StringBuilder("from SbiUserAttributes att where ");
 			q.append(" att.id in (");
 			for (int i = 0; i < ids.size(); i++) {
 				q.append(" :id" + i);
@@ -326,7 +298,7 @@ public class SbiAttributeDAOHibImpl extends AbstractHibernateDAO implements ISbi
 
 			dbResult = query.list();
 			if (dbResult != null && !dbResult.isEmpty()) {
-				toReturn = new HashMap<Integer, String>();
+				toReturn = new HashMap<>();
 				for (int i = 0; i < dbResult.size(); i++) {
 					SbiUserAttributes res = dbResult.get(i);
 					toReturn.put(res.getId().getAttributeId(), res.getAttributeValue());
@@ -336,14 +308,10 @@ public class SbiAttributeDAOHibImpl extends AbstractHibernateDAO implements ISbi
 			tx.commit();
 		} catch (HibernateException he) {
 			logger.error(he.getMessage(), he);
-			if (tx != null)
-				tx.rollback();
+			rollbackIfActive(tx);
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		} finally {
-			if (aSession != null) {
-				if (aSession.isOpen())
-					aSession.close();
-			}
+			closeSessionIfOpen(aSession);
 		}
 		logger.debug("OUT");
 		return toReturn;
@@ -363,15 +331,11 @@ public class SbiAttributeDAOHibImpl extends AbstractHibernateDAO implements ISbi
 			tx.commit();
 		} catch (HibernateException he) {
 			logger.error(he.getMessage(), he);
-			if (tx != null)
-				tx.rollback();
+			rollbackIfActive(tx);
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		} finally {
+			closeSessionIfOpen(aSession);
 			logger.debug("OUT");
-			if (aSession != null) {
-				if (aSession.isOpen())
-					aSession.close();
-			}
 		}
 
 	}

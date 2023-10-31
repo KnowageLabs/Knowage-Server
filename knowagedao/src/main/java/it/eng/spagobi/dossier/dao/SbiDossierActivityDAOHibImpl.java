@@ -60,22 +60,16 @@ public class SbiDossierActivityDAOHibImpl extends AbstractHibernateDAO implement
 			LOGGER.debug("Dossier activity created correctly with id: " + id);
 
 		} catch (HibernateException he) {
-			if (tx != null)
-				tx.rollback();
+			rollbackIfActive(tx);
 			LOGGER.error("Exception creating a new dossier activity", he);
 			throw new SpagoBIRuntimeException("Exception creating a new dossier activity", he);
 		} catch (Exception e) {
-			if (tx != null)
-				tx.rollback();
+			rollbackIfActive(tx);
 			LOGGER.error("Exception creating a new dossier activity", e);
 			throw new SpagoBIRuntimeException("Exception creating a new dossier activity", e);
 
 		} finally {
-
-			if (aSession != null) {
-				if (aSession.isOpen())
-					aSession.close();
-			}
+			closeSessionIfOpen(aSession);
 		}
 
 		return id;
@@ -109,16 +103,12 @@ public class SbiDossierActivityDAOHibImpl extends AbstractHibernateDAO implement
 			LOGGER.debug("Dossier activity updated correctly. Id of activity: " + dossierActivity.getId());
 
 		} catch (HibernateException he) {
-			if (tx != null)
-				tx.rollback();
+			rollbackIfActive(tx);
 			LOGGER.error("Exception while updating a dossier activity with id: " + dossierActivity.getId(), he);
 			throw new SpagoBIRuntimeException(
 					"Exception while updating a dossier activity with id: " + dossierActivity.getId(), he);
 		} finally {
-			if (aSession != null) {
-				if (aSession.isOpen())
-					aSession.close();
-			}
+			closeSessionIfOpen(aSession);
 		}
 		return id;
 	}
@@ -146,10 +136,7 @@ public class SbiDossierActivityDAOHibImpl extends AbstractHibernateDAO implement
 			LOGGER.error("Exception while laoding all dossier activities", he);
 			throw new SpagoBIRuntimeException("Exception while laoding all dossier activities", he);
 		} finally {
-			if (aSession != null) {
-				if (aSession.isOpen())
-					aSession.close();
-			}
+			closeSessionIfOpen(aSession);
 		}
 		return listOfDossierActivities;
 	}
@@ -178,11 +165,7 @@ public class SbiDossierActivityDAOHibImpl extends AbstractHibernateDAO implement
 			LOGGER.error("Exception while loading dossier activity with id: " + activityId, he);
 			throw new SpagoBIRuntimeException("Exception while loading dossier activity with id: " + activityId, he);
 		} finally {
-
-			if (aSession != null) {
-				if (aSession.isOpen())
-					aSession.close();
-			}
+			closeSessionIfOpen(aSession);
 		}
 		return da;
 	}
@@ -202,16 +185,12 @@ public class SbiDossierActivityDAOHibImpl extends AbstractHibernateDAO implement
 
 			tx.commit();
 		} catch (HibernateException he) {
-			if (tx != null)
-				tx.rollback();
+			rollbackIfActive(tx);
 			LOGGER.error("Exception creating a new dossier activity", he);
 			throw new SpagoBIRuntimeException("Exception creating a new dossier activity", he);
 		} finally {
+			closeSessionIfOpen(aSession);
 			LOGGER.debug("Dossier activity created correctly");
-			if (aSession != null) {
-				if (aSession.isOpen())
-					aSession.close();
-			}
 		}
 	}
 
@@ -304,11 +283,7 @@ public class SbiDossierActivityDAOHibImpl extends AbstractHibernateDAO implement
 			throw new SpagoBIRuntimeException("Exception while loading dossier activity with id: " + progressthreadId,
 					he);
 		} finally {
-
-			if (aSession != null) {
-				if (aSession.isOpen())
-					aSession.close();
-			}
+			closeSessionIfOpen(aSession);
 		}
 		return da;
 	}
@@ -332,16 +307,12 @@ public class SbiDossierActivityDAOHibImpl extends AbstractHibernateDAO implement
 			LOGGER.debug("Dossier activity updated correctly. Id of activity: " + dossierActivity.getId());
 
 		} catch (HibernateException he) {
-			if (tx != null)
-				tx.rollback();
+			rollbackIfActive(tx);
 			LOGGER.error("Exception while updating a dossier activity with id: " + dossierActivity.getId(), he);
 			throw new SpagoBIRuntimeException(
 					"Exception while updating a dossier activity with id: " + dossierActivity.getId(), he);
 		} finally {
-			if (aSession != null) {
-				if (aSession.isOpen())
-					aSession.close();
-			}
+			closeSessionIfOpen(aSession);
 		}
 		return id;
 	}

@@ -36,6 +36,7 @@ import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
 import it.eng.spagobi.commons.metadata.SbiDomains;
 import it.eng.spagobi.i18n.metadata.SbiI18NMessageBody;
 import it.eng.spagobi.i18n.metadata.SbiI18NMessages;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 public class I18NMessagesDAOHibImpl extends AbstractHibernateDAO implements I18NMessagesDAO {
 
@@ -89,10 +90,7 @@ public class I18NMessagesDAOHibImpl extends AbstractHibernateDAO implements I18N
 				tx.rollback();
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		} finally {
-			if (aSession != null) {
-				if (aSession.isOpen())
-					aSession.close();
-			}
+			closeSessionIfOpen(aSession);
 		}
 		logger.debug("OUT.toReturn=" + toReturn);
 		return toReturn;
@@ -102,7 +100,7 @@ public class I18NMessagesDAOHibImpl extends AbstractHibernateDAO implements I18N
 	public Map<String, String> getAllI18NMessages(Locale locale) throws EMFUserError {
 		logger.debug("IN");
 
-		Map<String, String> toReturn = new HashMap<String, String>();
+		Map<String, String> toReturn = new HashMap<>();
 
 		Session aSession = null;
 		Transaction tx = null;
@@ -156,10 +154,7 @@ public class I18NMessagesDAOHibImpl extends AbstractHibernateDAO implements I18N
 				tx.rollback();
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		} finally {
-			if (aSession != null) {
-				if (aSession.isOpen())
-					aSession.close();
-			}
+			closeSessionIfOpen(aSession);
 		}
 		logger.debug("OUT.toReturn=" + toReturn);
 		return toReturn;
@@ -192,12 +187,9 @@ public class I18NMessagesDAOHibImpl extends AbstractHibernateDAO implements I18N
 			logger.error(he.getMessage(), he);
 			if (tx != null)
 				tx.rollback();
-			throw new RuntimeException();
+			throw new SpagoBIRuntimeException(he);
 		} finally {
-			if (aSession != null) {
-				if (aSession.isOpen())
-					aSession.close();
-			}
+			closeSessionIfOpen(aSession);
 		}
 		logger.debug("OUT.toReturn=" + toReturn);
 		return toReturn;
@@ -217,12 +209,9 @@ public class I18NMessagesDAOHibImpl extends AbstractHibernateDAO implements I18N
 			toReturn = (SbiI18NMessages) query.uniqueResult();
 		} catch (HibernateException e) {
 			logException(e);
-			throw new RuntimeException();
+			throw new SpagoBIRuntimeException(e);
 		} finally {
-			if (session != null) {
-				if (session.isOpen())
-					session.close();
-			}
+			closeSessionIfOpen(session);
 		}
 		logger.debug("OUT");
 		return toReturn;
@@ -252,12 +241,9 @@ public class I18NMessagesDAOHibImpl extends AbstractHibernateDAO implements I18N
 			logException(e);
 			if (tx != null)
 				tx.rollback();
-			throw new RuntimeException();
+			throw new SpagoBIRuntimeException(e);
 		} finally {
-			if (session != null) {
-				if (session.isOpen())
-					session.close();
-			}
+			closeSessionIfOpen(session);
 		}
 		logger.debug("OUT");
 	}
@@ -285,12 +271,9 @@ public class I18NMessagesDAOHibImpl extends AbstractHibernateDAO implements I18N
 			logException(e);
 			if (tx != null)
 				tx.rollback();
-			throw new RuntimeException();
+			throw new SpagoBIRuntimeException(e);
 		} finally {
-			if (session != null) {
-				if (session.isOpen())
-					session.close();
-			}
+			closeSessionIfOpen(session);
 		}
 		logger.debug("OUT");
 	}
@@ -318,12 +301,9 @@ public class I18NMessagesDAOHibImpl extends AbstractHibernateDAO implements I18N
 			logException(e);
 			if (tx != null)
 				tx.rollback();
-			throw new RuntimeException();
+			throw new SpagoBIRuntimeException(e);
 		} finally {
-			if (session != null) {
-				if (session.isOpen())
-					session.close();
-			}
+			closeSessionIfOpen(session);
 		}
 		logger.debug("OUT");
 	}
@@ -350,12 +330,9 @@ public class I18NMessagesDAOHibImpl extends AbstractHibernateDAO implements I18N
 			logException(e);
 			if (tx != null)
 				tx.rollback();
-			throw new RuntimeException();
+			throw new SpagoBIRuntimeException(e);
 		} finally {
-			if (session != null) {
-				if (session.isOpen())
-					session.close();
-			}
+			closeSessionIfOpen(session);
 		}
 		logger.debug("OUT");
 	}
@@ -381,12 +358,9 @@ public class I18NMessagesDAOHibImpl extends AbstractHibernateDAO implements I18N
 			logException(e);
 			if (tx != null)
 				tx.rollback();
-			throw new RuntimeException();
+			throw new SpagoBIRuntimeException(e);
 		} finally {
-			if (session != null) {
-				if (session.isOpen())
-					session.close();
-			}
+			closeSessionIfOpen(session);
 		}
 		logger.debug("OUT");
 	}
@@ -405,15 +379,16 @@ public class I18NMessagesDAOHibImpl extends AbstractHibernateDAO implements I18N
 			domainId = domain.getValueId();
 		} catch (HibernateException e) {
 			logException(e);
-			throw new RuntimeException();
+			throw new SpagoBIRuntimeException(e);
 		}
 		logger.debug("OUT");
 		return domainId;
 	}
 
-	private List<SbiI18NMessages> getSbiI18NMessagesByLabel(SbiI18NMessages message, String tenant, Session curSession) {
+	private List<SbiI18NMessages> getSbiI18NMessagesByLabel(SbiI18NMessages message, String tenant,
+			Session curSession) {
 		logger.debug("IN");
-		List<SbiI18NMessages> toReturn = new ArrayList<SbiI18NMessages>();
+		List<SbiI18NMessages> toReturn = new ArrayList<>();
 		try {
 			String hql = "from SbiI18NMessages m where m.label = :label and m.commonInfo.organization = :organization and m.languageCd != :languageCd";
 			Query query = curSession.createQuery(hql);
@@ -423,7 +398,7 @@ public class I18NMessagesDAOHibImpl extends AbstractHibernateDAO implements I18N
 			toReturn = query.list();
 		} catch (HibernateException e) {
 			logException(e);
-			throw new RuntimeException();
+			throw new SpagoBIRuntimeException(e);
 		}
 		logger.debug("OUT");
 		return toReturn;

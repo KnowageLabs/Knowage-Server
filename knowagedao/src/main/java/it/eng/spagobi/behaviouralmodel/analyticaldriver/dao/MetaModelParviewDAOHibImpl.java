@@ -38,14 +38,10 @@ public class MetaModelParviewDAOHibImpl extends AbstractHibernateDAO implements 
 			tx.commit();
 		} catch (HibernateException he) {
 			logException(he);
-			if (tx != null)
-				tx.rollback();
+			rollbackIfActive(tx);
 			throw new HibernateException(he.getLocalizedMessage(), he);
 		} finally {
-			if (aSession != null) {
-				if (aSession.isOpen())
-					aSession.close();
-			}
+			closeSessionIfOpen(aSession);
 		}
 		return toReturn;
 	}
@@ -72,8 +68,10 @@ public class MetaModelParviewDAOHibImpl extends AbstractHibernateDAO implements 
 			// delete the existing object
 			aSession.delete(sbiMetaModelParview);
 			// create the new object
-			SbiMetaModelParameter sbiMetaModelPar = (SbiMetaModelParameter) aSession.load(SbiMetaModelParameter.class, metaModelParview.getParId());
-			SbiMetaModelParameter sbiMetaModelParFather = (SbiMetaModelParameter) aSession.load(SbiMetaModelParameter.class, metaModelParview.getParFatherId());
+			SbiMetaModelParameter sbiMetaModelPar = (SbiMetaModelParameter) aSession.load(SbiMetaModelParameter.class,
+					metaModelParview.getParId());
+			SbiMetaModelParameter sbiMetaModelParFather = (SbiMetaModelParameter) aSession
+					.load(SbiMetaModelParameter.class, metaModelParview.getParFatherId());
 			if (sbiMetaModelParFather == null) {
 				SpagoBITracer.major(SpagoBIConstants.NAME_MODULE, this.getClass().getName(), "modifyMetaModelParview",
 						"the BIMetaModelParameter with " + " does not exist.");
@@ -94,14 +92,10 @@ public class MetaModelParviewDAOHibImpl extends AbstractHibernateDAO implements 
 			tx.commit();
 		} catch (HibernateException he) {
 			logException(he);
-			if (tx != null)
-				tx.rollback();
+			rollbackIfActive(tx);
 			throw new HibernateException(he.getLocalizedMessage(), he);
 		} finally {
-			if (aSession != null) {
-				if (aSession.isOpen())
-					aSession.close();
-			}
+			closeSessionIfOpen(aSession);
 		}
 
 	}
@@ -115,11 +109,14 @@ public class MetaModelParviewDAOHibImpl extends AbstractHibernateDAO implements 
 		try {
 			aSession = getSession();
 			tx = aSession.beginTransaction();
-			SbiMetaModelParameter sbiMetaModelPar = (SbiMetaModelParameter) aSession.load(SbiMetaModelParameter.class, metaModelParview.getParId());
-			SbiMetaModelParameter sbiMetaModelParFather = (SbiMetaModelParameter) aSession.load(SbiMetaModelParameter.class, metaModelParview.getParFatherId());
+			SbiMetaModelParameter sbiMetaModelPar = (SbiMetaModelParameter) aSession.load(SbiMetaModelParameter.class,
+					metaModelParview.getParId());
+			SbiMetaModelParameter sbiMetaModelParFather = (SbiMetaModelParameter) aSession
+					.load(SbiMetaModelParameter.class, metaModelParview.getParFatherId());
 			if (sbiMetaModelParFather == null) {
 				SpagoBITracer.major(SpagoBIConstants.NAME_MODULE, this.getClass().getName(), "modifyMetaModelParview",
-						"the MetaModelParameter with " + "id=" + metaModelParview.getParFatherId() + " does not exist.");
+						"the MetaModelParameter with " + "id=" + metaModelParview.getParFatherId()
+								+ " does not exist.");
 
 			}
 			SbiMetaModelParview view = new SbiMetaModelParview();
@@ -135,14 +132,10 @@ public class MetaModelParviewDAOHibImpl extends AbstractHibernateDAO implements 
 			tx.commit();
 		} catch (HibernateException he) {
 			logException(he);
-			if (tx != null)
-				tx.rollback();
+			rollbackIfActive(tx);
 			throw new HibernateException(he.getLocalizedMessage(), he);
 		} finally {
-			if (aSession != null) {
-				if (aSession.isOpen())
-					aSession.close();
-			}
+			closeSessionIfOpen(aSession);
 			return id;
 		}
 
@@ -171,14 +164,10 @@ public class MetaModelParviewDAOHibImpl extends AbstractHibernateDAO implements 
 			tx.commit();
 		} catch (HibernateException he) {
 			logException(he);
-			if (tx != null)
-				tx.rollback();
+			rollbackIfActive(tx);
 			throw new HibernateException(he.getLocalizedMessage(), he);
 		} finally {
-			if (aSession != null) {
-				if (aSession.isOpen())
-					aSession.close();
-			}
+			closeSessionIfOpen(aSession);
 		}
 	}
 
@@ -201,14 +190,10 @@ public class MetaModelParviewDAOHibImpl extends AbstractHibernateDAO implements 
 			tx.commit();
 		} catch (HibernateException he) {
 			logException(he);
-			if (tx != null)
-				tx.rollback();
+			rollbackIfActive(tx);
 			throw new HibernateException(he.getLocalizedMessage(), he);
 		} finally {
-			if (aSession != null) {
-				if (aSession.isOpen())
-					aSession.close();
-			}
+			closeSessionIfOpen(aSession);
 		}
 		return toReturn;
 	}
@@ -248,14 +233,10 @@ public class MetaModelParviewDAOHibImpl extends AbstractHibernateDAO implements 
 			tx.commit();
 		} catch (HibernateException he) {
 			logException(he);
-			if (tx != null)
-				tx.rollback();
+			rollbackIfActive(tx);
 			throw new HibernateException(he.getLocalizedMessage(), he);
 		} finally {
-			if (aSession != null) {
-				if (aSession.isOpen())
-					aSession.close();
-			}
+			closeSessionIfOpen(aSession);
 		}
 		return toReturn;
 	}
@@ -279,14 +260,10 @@ public class MetaModelParviewDAOHibImpl extends AbstractHibernateDAO implements 
 			tx.commit();
 		} catch (HibernateException he) {
 			logException(he);
-			if (tx != null)
-				tx.rollback();
+			rollbackIfActive(tx);
 			throw new HibernateException(he.getLocalizedMessage(), he);
 		} finally {
-			if (aSession != null) {
-				if (aSession.isOpen())
-					aSession.close();
-			}
+			closeSessionIfOpen(aSession);
 		}
 		return toReturn;
 	}

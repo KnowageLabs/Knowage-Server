@@ -68,7 +68,8 @@ public class ObjMetadataDAOHibImpl extends AbstractHibernateDAO implements IObjM
 		try {
 			aSession = getSession();
 			tx = aSession.beginTransaction();
-			Query hibQuery = aSession.createQuery(" from SbiObjMetadata meta where meta.dataType.valueCd = ? and meta.dataType.domainCd='OBJMETA_DATA_TYPE'");
+			Query hibQuery = aSession.createQuery(
+					" from SbiObjMetadata meta where meta.dataType.valueCd = ? and meta.dataType.domainCd='OBJMETA_DATA_TYPE'");
 			hibQuery.setString(0, type);
 
 			logger.debug("Type setted: " + (type != null ? type : ""));
@@ -85,17 +86,13 @@ public class ObjMetadataDAOHibImpl extends AbstractHibernateDAO implements IObjM
 		} catch (HibernateException he) {
 			logger.error("Error while loading the metadata with type " + (type != null ? type : ""), he);
 
-			if (tx != null)
-				tx.rollback();
+			rollbackIfActive(tx);
 
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 
 		} finally {
-			if (aSession != null) {
-				if (aSession.isOpen())
-					aSession.close();
-				logger.debug("OUT");
-			}
+			closeSessionIfOpen(aSession);
+			logger.debug("OUT");
 		}
 		logger.debug("OUT");
 		return toReturn;
@@ -130,17 +127,13 @@ public class ObjMetadataDAOHibImpl extends AbstractHibernateDAO implements IObjM
 		} catch (HibernateException he) {
 			logger.error("Error while loading the metadata with id " + id.toString(), he);
 
-			if (tx != null)
-				tx.rollback();
+			rollbackIfActive(tx);
 
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 
 		} finally {
-			if (aSession != null) {
-				if (aSession.isOpen())
-					aSession.close();
-				logger.debug("OUT");
-			}
+			logger.debug("OUT");
+			closeSessionIfOpen(aSession);
 		}
 		logger.debug("OUT");
 		return toReturn;
@@ -178,14 +171,10 @@ public class ObjMetadataDAOHibImpl extends AbstractHibernateDAO implements IObjM
 			tx.commit();
 		} catch (HibernateException he) {
 			logger.error("Error while loading the metadata with label " + label, he);
-			if (tx != null)
-				tx.rollback();
+			rollbackIfActive(tx);
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		} finally {
-			if (tmpSession != null) {
-				if (tmpSession.isOpen())
-					tmpSession.close();
-			}
+			closeSessionIfOpen(tmpSession);
 		}
 		logger.debug("OUT");
 		return toReturn;
@@ -222,17 +211,13 @@ public class ObjMetadataDAOHibImpl extends AbstractHibernateDAO implements IObjM
 		} catch (HibernateException he) {
 			logger.error("Error while loading the metadata with biobjId " + biobjId.toString(), he);
 
-			if (tx != null)
-				tx.rollback();
+			rollbackIfActive(tx);
 
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 
 		} finally {
-			if (aSession != null) {
-				if (aSession.isOpen())
-					aSession.close();
-				logger.debug("OUT");
-			}
+			closeSessionIfOpen(aSession);
+			logger.debug("OUT");
 		}
 		logger.debug("OUT");
 		return toReturn;
@@ -270,16 +255,12 @@ public class ObjMetadataDAOHibImpl extends AbstractHibernateDAO implements IObjM
 		} catch (HibernateException he) {
 			logger.error("Error while loading all metadata ", he);
 
-			if (tx != null)
-				tx.rollback();
+			rollbackIfActive(tx);
 
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 
 		} finally {
-			if (aSession != null) {
-				if (aSession.isOpen())
-					aSession.close();
-			}
+			closeSessionIfOpen(aSession);
 		}
 		logger.debug("OUT");
 		return realResult;
@@ -325,14 +306,10 @@ public class ObjMetadataDAOHibImpl extends AbstractHibernateDAO implements IObjM
 			tx.commit();
 		} catch (HibernateException he) {
 			logger.error("Error while loading the metadata with label " + label, he);
-			if (tx != null)
-				tx.rollback();
+			rollbackIfActive(tx);
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		} finally {
-			if (tmpSession != null) {
-				if (tmpSession.isOpen())
-					tmpSession.close();
-			}
+			closeSessionIfOpen(tmpSession);
 		}
 		logger.debug("OUT");
 		return toReturn;
@@ -377,17 +354,13 @@ public class ObjMetadataDAOHibImpl extends AbstractHibernateDAO implements IObjM
 			tx.commit();
 		} catch (HibernateException he) {
 			logException(he);
-			if (tx != null)
-				tx.rollback();
+			rollbackIfActive(tx);
 			if (he instanceof ObjectNotFoundException)
 				throw he;
 			else
 				throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		} finally {
-			if (aSession != null) {
-				if (aSession.isOpen())
-					aSession.close();
-			}
+			closeSessionIfOpen(aSession);
 			logger.debug("OUT");
 		}
 
@@ -436,14 +409,10 @@ public class ObjMetadataDAOHibImpl extends AbstractHibernateDAO implements IObjM
 			tx.commit();
 		} catch (HibernateException he) {
 			logException(he);
-			if (tx != null)
-				tx.rollback();
+			rollbackIfActive(tx);
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		} finally {
-			if (aSession != null) {
-				if (aSession.isOpen())
-					aSession.close();
-			}
+			closeSessionIfOpen(aSession);
 			logger.debug("OUT");
 		}
 		return toReturn;
@@ -476,14 +445,10 @@ public class ObjMetadataDAOHibImpl extends AbstractHibernateDAO implements IObjM
 			tx.commit();
 		} catch (HibernateException he) {
 			logException(he);
-			if (tx != null)
-				tx.rollback();
+			rollbackIfActive(tx);
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		} finally {
-			if (aSession != null) {
-				if (aSession.isOpen())
-					aSession.close();
-			}
+			closeSessionIfOpen(aSession);
 			logger.debug("OUT");
 		}
 		return toReturn;
@@ -498,7 +463,8 @@ public class ObjMetadataDAOHibImpl extends AbstractHibernateDAO implements IObjM
 				modifyObjMetadata(objMetadata);
 				toReturn = objMetadata.getObjMetaId();
 			} catch (ObjectNotFoundException e) {
-				String message = "Cannot update item with id {" + objMetadata.getObjMetaId() + "} because it doesn't exist";
+				String message = "Cannot update item with id {" + objMetadata.getObjMetaId()
+						+ "} because it doesn't exist";
 				logger.error(message);
 				throw new SpagoBIRuntimeException(message);
 			}
@@ -543,19 +509,16 @@ public class ObjMetadataDAOHibImpl extends AbstractHibernateDAO implements IObjM
 			aSession.delete(hibMeta);
 			tx.commit();
 		} catch (HibernateException he) {
-			logger.error("Error while erasing the metadata with id " + ((aObjMetadata == null) ? "" : String.valueOf(aObjMetadata.getObjMetaId())), he);
+			logger.error("Error while erasing the metadata with id "
+					+ ((aObjMetadata == null) ? "" : String.valueOf(aObjMetadata.getObjMetaId())), he);
 
-			if (tx != null)
-				tx.rollback();
+			rollbackIfActive(tx);
 
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 
 		} finally {
-			if (aSession != null) {
-				if (aSession.isOpen())
-					aSession.close();
-				logger.debug("OUT");
-			}
+			closeSessionIfOpen(aSession);
+			logger.debug("OUT");
 		}
 	}
 
@@ -601,16 +564,12 @@ public class ObjMetadataDAOHibImpl extends AbstractHibernateDAO implements IObjM
 		} catch (HibernateException he) {
 			logger.error("Error while getting the objects associated with the metadata with id " + id, he);
 
-			if (tx != null)
-				tx.rollback();
+			rollbackIfActive(tx);
 
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 
 		} finally {
-			if (aSession != null) {
-				if (aSession.isOpen())
-					aSession.close();
-			}
+			closeSessionIfOpen(aSession);
 		}
 
 		logger.debug("OUT");
@@ -653,16 +612,12 @@ public class ObjMetadataDAOHibImpl extends AbstractHibernateDAO implements IObjM
 		} catch (HibernateException he) {
 			logger.error("Error while getting the engines associated with the data source with id " + id, he);
 
-			if (tx != null)
-				tx.rollback();
+			rollbackIfActive(tx);
 
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 
 		} finally {
-			if (aSession != null) {
-				if (aSession.isOpen())
-					aSession.close();
-			}
+			closeSessionIfOpen(aSession);
 		}
 
 		logger.debug("OUT");

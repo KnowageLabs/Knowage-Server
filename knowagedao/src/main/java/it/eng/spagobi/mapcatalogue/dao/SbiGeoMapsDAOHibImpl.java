@@ -61,13 +61,11 @@ public class SbiGeoMapsDAOHibImpl extends AbstractHibernateDAO implements ISbiGe
 	/**
 	 * Load map by id.
 	 *
-	 * @param mapID
-	 *            the map id
+	 * @param mapID the map id
 	 *
 	 * @return the geo map
 	 *
-	 * @throws EMFUserError
-	 *             the EMF user error
+	 * @throws EMFUserError the EMF user error
 	 *
 	 * @see it.eng.spagobi.mapcatalogue.dao.geo.bo.dao.ISbiGeoMapsDAO#loadMapByID(integer)
 	 */
@@ -93,11 +91,7 @@ public class SbiGeoMapsDAOHibImpl extends AbstractHibernateDAO implements ISbiGe
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 
 		} finally {
-			if (tmpSession != null) {
-				if (tmpSession.isOpen())
-					tmpSession.close();
-
-			}
+			closeSessionIfOpen(tmpSession);
 		}
 		return toReturn;
 	}
@@ -105,13 +99,11 @@ public class SbiGeoMapsDAOHibImpl extends AbstractHibernateDAO implements ISbiGe
 	/**
 	 * Load map by name.
 	 *
-	 * @param name
-	 *            the name
+	 * @param name the name
 	 *
 	 * @return the geo map
 	 *
-	 * @throws EMFUserError
-	 *             the EMF user error
+	 * @throws EMFUserError the EMF user error
 	 *
 	 * @see it.eng.spagobi.mapcatalogue.dao.geo.bo.dao.ISbiGeoMapsDAO#loadMapByName(string)
 	 */
@@ -142,10 +134,7 @@ public class SbiGeoMapsDAOHibImpl extends AbstractHibernateDAO implements ISbiGe
 				tx.rollback();
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		} finally {
-			if (tmpSession != null) {
-				if (tmpSession.isOpen())
-					tmpSession.close();
-			}
+			closeSessionIfOpen(tmpSession);
 		}
 		return biMap;
 	}
@@ -153,16 +142,13 @@ public class SbiGeoMapsDAOHibImpl extends AbstractHibernateDAO implements ISbiGe
 	/**
 	 * Load map by name and level.
 	 *
-	 * @param name
-	 *            the name
+	 * @param name  the name
 	 *
-	 * @param level
-	 *            the level
+	 * @param level the level
 	 *
 	 * @return the geo map
 	 *
-	 * @throws EMFUserError
-	 *             the EMF user error
+	 * @throws EMFUserError the EMF user error
 	 *
 	 * @see it.eng.spagobi.mapcatalogue.dao.geo.bo.dao.ISbiGeoMapsDAO#loadMapByNameLevel(string)
 	 */
@@ -175,7 +161,8 @@ public class SbiGeoMapsDAOHibImpl extends AbstractHibernateDAO implements ISbiGe
 			tmpSession = getSession();
 			tx = tmpSession.beginTransaction();
 
-			Query hqlQuery = tmpSession.createQuery(" from SbiGeoMaps m " + "where m.hierarchyName=:hierarchy and m.memberName = :member and m.level = :level");
+			Query hqlQuery = tmpSession.createQuery(" from SbiGeoMaps m "
+					+ "where m.hierarchyName=:hierarchy and m.memberName = :member and m.level = :level");
 
 			hqlQuery.setString("hierarchy", hierarchy);
 			hqlQuery.setString("member", member);
@@ -184,9 +171,10 @@ public class SbiGeoMapsDAOHibImpl extends AbstractHibernateDAO implements ISbiGe
 			SbiGeoMaps hibMap = (SbiGeoMaps) hqlQuery.uniqueResult();
 
 			if (hibMap == null) {
-				LOGGER.error("SVG with hierarchyName [" + hierarchy + "] and memberName[" + member + "] and level [" + level + "] non found in catalogue. ");
-				throw new SpagoBIRuntimeException("SVG with hierarchyName [" + hierarchy + "] and memberName[" + member + "] and level [" + level
-						+ "] non found in catalogue.");
+				LOGGER.error("SVG with hierarchyName [" + hierarchy + "] and memberName[" + member + "] and level ["
+						+ level + "] non found in catalogue. ");
+				throw new SpagoBIRuntimeException("SVG with hierarchyName [" + hierarchy + "] and memberName[" + member
+						+ "] and level [" + level + "] non found in catalogue.");
 			}
 			biMap = hibMap.toGeoMap();
 
@@ -195,18 +183,16 @@ public class SbiGeoMapsDAOHibImpl extends AbstractHibernateDAO implements ISbiGe
 			logException(nhe);
 			if (tx != null)
 				tx.rollback();
-			throw new SpagoBIRuntimeException("There are more than one SVG loaded with Hierarchy [" + hierarchy + "] - Member [" + member + "] - Level ["
-					+ level + "]. Please verify the univocity of the hierarchy keys of the SVG documents!", nhe);
+			throw new SpagoBIRuntimeException("There are more than one SVG loaded with Hierarchy [" + hierarchy
+					+ "] - Member [" + member + "] - Level [" + level
+					+ "]. Please verify the univocity of the hierarchy keys of the SVG documents!", nhe);
 		} catch (HibernateException he) {
 			logException(he);
 			if (tx != null)
 				tx.rollback();
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		} finally {
-			if (tmpSession != null) {
-				if (tmpSession.isOpen())
-					tmpSession.close();
-			}
+			closeSessionIfOpen(tmpSession);
 		}
 		return biMap;
 	}
@@ -214,13 +200,10 @@ public class SbiGeoMapsDAOHibImpl extends AbstractHibernateDAO implements ISbiGe
 	/**
 	 * Modify map.
 	 *
-	 * @param aMap
-	 *            the a map
-	 * @param content
-	 *            the content file svg
+	 * @param aMap    the a map
+	 * @param content the content file svg
 	 *
-	 * @throws EMFUserError
-	 *             the EMF user error
+	 * @throws EMFUserError the EMF user error
 	 *
 	 * @see it.eng.spagobi.geo.bo.dao.IEngineDAO#modifyEngine(it.eng.spagobi.bo.Engine)
 	 */
@@ -270,10 +253,7 @@ public class SbiGeoMapsDAOHibImpl extends AbstractHibernateDAO implements ISbiGe
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 
 		} finally {
-			if (tmpSession != null) {
-				if (tmpSession.isOpen())
-					tmpSession.close();
-			}
+			closeSessionIfOpen(tmpSession);
 		}
 
 	}
@@ -281,11 +261,9 @@ public class SbiGeoMapsDAOHibImpl extends AbstractHibernateDAO implements ISbiGe
 	/**
 	 * Insert map.
 	 *
-	 * @param aMap
-	 *            the a map
+	 * @param aMap the a map
 	 *
-	 * @throws EMFUserError
-	 *             the EMF user error
+	 * @throws EMFUserError the EMF user error
 	 *
 	 * @see it.eng.spagobi.geo.bo.dao.IEngineDAO#insertEngine(it.eng.spagobi.bo.Engine)
 	 */
@@ -326,23 +304,16 @@ public class SbiGeoMapsDAOHibImpl extends AbstractHibernateDAO implements ISbiGe
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 
 		} finally {
-
-			if (tmpSession != null) {
-				if (tmpSession.isOpen())
-					tmpSession.close();
-			}
-
+			closeSessionIfOpen(tmpSession);
 		}
 	}
 
 	/**
 	 * Erase map.
 	 *
-	 * @param aMap
-	 *            the a map
+	 * @param aMap the a map
 	 *
-	 * @throws EMFUserError
-	 *             the EMF user error
+	 * @throws EMFUserError the EMF user error
 	 *
 	 * @see it.eng.spagobi.geo.bo.dao.IEngineDAO#eraseEngine(it.eng.spagobi.bo.Engine)
 	 */
@@ -374,12 +345,7 @@ public class SbiGeoMapsDAOHibImpl extends AbstractHibernateDAO implements ISbiGe
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 
 		} finally {
-
-			if (tmpSession != null) {
-				if (tmpSession.isOpen())
-					tmpSession.close();
-			}
-
+			closeSessionIfOpen(tmpSession);
 		}
 	}
 
@@ -388,8 +354,7 @@ public class SbiGeoMapsDAOHibImpl extends AbstractHibernateDAO implements ISbiGe
 	 *
 	 * @return the list
 	 *
-	 * @throws EMFUserError
-	 *             the EMF user error
+	 * @throws EMFUserError the EMF user error
 	 */
 	@Override
 	public List loadAllMaps() throws EMFUserError {
@@ -421,12 +386,7 @@ public class SbiGeoMapsDAOHibImpl extends AbstractHibernateDAO implements ISbiGe
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 
 		} finally {
-
-			if (tmpSession != null) {
-				if (tmpSession.isOpen())
-					tmpSession.close();
-			}
-
+			closeSessionIfOpen(tmpSession);
 		}
 		return realResult;
 	}
@@ -434,13 +394,11 @@ public class SbiGeoMapsDAOHibImpl extends AbstractHibernateDAO implements ISbiGe
 	/**
 	 * Checks for features associated.
 	 *
-	 * @param mapId
-	 *            the map id
+	 * @param mapId the map id
 	 *
 	 * @return true, if checks for features associated
 	 *
-	 * @throws EMFUserError
-	 *             the EMF user error
+	 * @throws EMFUserError the EMF user error
 	 *
 	 * @see it.eng.spagobi.mapcatalogue.dao.geo.bo.dao.ISbiGeoMapsDAO#hasFeaturesAssociated(java.lang.String)
 	 */
@@ -474,10 +432,7 @@ public class SbiGeoMapsDAOHibImpl extends AbstractHibernateDAO implements ISbiGe
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 
 		} finally {
-			if (tmpSession != null) {
-				if (tmpSession.isOpen())
-					tmpSession.close();
-			}
+			closeSessionIfOpen(tmpSession);
 		}
 		return bool;
 
@@ -486,13 +441,11 @@ public class SbiGeoMapsDAOHibImpl extends AbstractHibernateDAO implements ISbiGe
 	/**
 	 * Gets the features (tag <g>) from the SVG File.
 	 *
-	 * @param content
-	 *            the content of svg file
+	 * @param content the content of svg file
 	 *
 	 * @return the features from svg
 	 *
-	 * @throws Exception
-	 *             raised If there are some problems
+	 * @throws Exception raised If there are some problems
 	 */
 	@Override
 	public List getFeaturesFromSVG(byte[] content) throws Exception {

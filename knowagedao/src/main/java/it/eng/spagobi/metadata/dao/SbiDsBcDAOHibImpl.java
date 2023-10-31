@@ -17,15 +17,6 @@
  */
 package it.eng.spagobi.metadata.dao;
 
-import it.eng.spago.error.EMFErrorSeverity;
-import it.eng.spago.error.EMFUserError;
-import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
-import it.eng.spagobi.commons.dao.DAOFactory;
-import it.eng.spagobi.metadata.metadata.SbiMetaBc;
-import it.eng.spagobi.metadata.metadata.SbiMetaDsBc;
-import it.eng.spagobi.metadata.metadata.SbiMetaDsBcId;
-import it.eng.spagobi.tools.dataset.metadata.SbiDataSet;
-
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -35,6 +26,15 @@ import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+
+import it.eng.spago.error.EMFErrorSeverity;
+import it.eng.spago.error.EMFUserError;
+import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
+import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.metadata.metadata.SbiMetaBc;
+import it.eng.spagobi.metadata.metadata.SbiMetaDsBc;
+import it.eng.spagobi.metadata.metadata.SbiMetaDsBcId;
+import it.eng.spagobi.tools.dataset.metadata.SbiDataSet;
 
 /**
  * @author Antonella Giachino (antonella.giachino@eng.it)
@@ -79,10 +79,7 @@ public class SbiDsBcDAOHibImpl extends AbstractHibernateDAO implements ISbiDsBcD
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 
 		} finally {
-			if (aSession != null) {
-				if (aSession.isOpen())
-					aSession.close();
-			}
+			closeSessionIfOpen(aSession);
 		}
 		logger.debug("OUT");
 		return toReturn;
@@ -108,7 +105,8 @@ public class SbiDsBcDAOHibImpl extends AbstractHibernateDAO implements ISbiDsBcD
 			Iterator it = hibList.iterator();
 			while (it.hasNext()) {
 				SbiMetaDsBc tmpRel = (SbiMetaDsBc) it.next();
-				SbiDataSet tmpDS = DAOFactory.getSbiDataSetDAO().loadSbiDataSetByIdAndOrganiz(new Integer(tmpRel.getId().getDsId()), null);
+				SbiDataSet tmpDS = DAOFactory.getSbiDataSetDAO()
+						.loadSbiDataSetByIdAndOrganiz(new Integer(tmpRel.getId().getDsId()), null);
 
 				if (tmpDS != null)
 					toReturn.add(tmpDS);
@@ -123,10 +121,7 @@ public class SbiDsBcDAOHibImpl extends AbstractHibernateDAO implements ISbiDsBcD
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 
 		} finally {
-			if (aSession != null) {
-				if (aSession.isOpen())
-					aSession.close();
-			}
+			closeSessionIfOpen(aSession);
 		}
 		logger.debug("OUT");
 		return toReturn;
@@ -160,10 +155,7 @@ public class SbiDsBcDAOHibImpl extends AbstractHibernateDAO implements ISbiDsBcD
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 
 		} finally {
-			if (aSession != null) {
-				if (aSession.isOpen())
-					aSession.close();
-			}
+			closeSessionIfOpen(aSession);
 		}
 		logger.debug("OUT");
 		return toReturn;
@@ -182,7 +174,8 @@ public class SbiDsBcDAOHibImpl extends AbstractHibernateDAO implements ISbiDsBcD
 			aSession = getSession();
 			tx = aSession.beginTransaction();
 
-			hqlQuery = aSession.createQuery(" from SbiMetaDsBc as db where db.id.dsId = ? and db.id.bcId = ? and db.id.organization = ?");
+			hqlQuery = aSession.createQuery(
+					" from SbiMetaDsBc as db where db.id.dsId = ? and db.id.bcId = ? and db.id.organization = ?");
 			hqlQuery.setInteger(0, dsBcId.getDsId());
 			hqlQuery.setInteger(1, dsBcId.getBcId());
 			hqlQuery.setString(2, dsBcId.getOrganization());
@@ -198,10 +191,7 @@ public class SbiDsBcDAOHibImpl extends AbstractHibernateDAO implements ISbiDsBcD
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 
 		} finally {
-			if (aSession != null) {
-				if (aSession.isOpen())
-					aSession.close();
-			}
+			closeSessionIfOpen(aSession);
 		}
 		logger.debug("OUT");
 		return toReturn;
@@ -233,11 +223,7 @@ public class SbiDsBcDAOHibImpl extends AbstractHibernateDAO implements ISbiDsBcD
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 
 		} finally {
-			if (aSession != null) {
-				if (aSession.isOpen())
-					aSession.close();
-			}
-
+			closeSessionIfOpen(aSession);
 		}
 		logger.debug("OUT");
 	}
@@ -265,10 +251,7 @@ public class SbiDsBcDAOHibImpl extends AbstractHibernateDAO implements ISbiDsBcD
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 
 		} finally {
-			if (aSession != null) {
-				if (aSession.isOpen())
-					aSession.close();
-			}
+			closeSessionIfOpen(aSession);
 		}
 		logger.debug("OUT");
 	}
@@ -300,10 +283,7 @@ public class SbiDsBcDAOHibImpl extends AbstractHibernateDAO implements ISbiDsBcD
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 
 		} finally {
-			if (aSession != null) {
-				if (aSession.isOpen())
-					aSession.close();
-			}
+			closeSessionIfOpen(aSession);
 		}
 
 	}

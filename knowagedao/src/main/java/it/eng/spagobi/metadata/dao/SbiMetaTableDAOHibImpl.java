@@ -30,7 +30,6 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.criterion.Criterion;
-import org.hibernate.criterion.Expression;
 import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
@@ -83,18 +82,11 @@ public class SbiMetaTableDAOHibImpl extends AbstractHibernateDAO implements ISbi
 
 		} catch (HibernateException he) {
 			logException(he);
-
-			if (tx != null)
-				tx.rollback();
-
+			rollbackIfActive(tx);
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 
 		} finally {
-			if (tmpSession != null) {
-				if (tmpSession.isOpen())
-					tmpSession.close();
-
-			}
+			closeSessionIfOpen(tmpSession);
 		}
 		logger.debug("OUT");
 		return toReturn;
@@ -133,7 +125,7 @@ public class SbiMetaTableDAOHibImpl extends AbstractHibernateDAO implements ISbi
 			sms.setUrl(smt.getSbiMetaSource().getUrl());
 			toReturn.setSbiMetaSource(sms);
 
-			Set<SbiMetaTableColumn> smtc = new HashSet<SbiMetaTableColumn>();
+			Set<SbiMetaTableColumn> smtc = new HashSet<>();
 			for (Iterator<SbiMetaTableColumn> iterator = smt.getSbiMetaTableColumns().iterator(); iterator.hasNext();) {
 				SbiMetaTableColumn smc = iterator.next();
 				SbiMetaTableColumn tmp = new SbiMetaTableColumn();
@@ -149,18 +141,11 @@ public class SbiMetaTableDAOHibImpl extends AbstractHibernateDAO implements ISbi
 
 		} catch (HibernateException he) {
 			logException(he);
-
-			if (tx != null)
-				tx.rollback();
-
+			rollbackIfActive(tx);
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 
 		} finally {
-			if (tmpSession != null) {
-				if (tmpSession.isOpen())
-					tmpSession.close();
-
-			}
+			closeSessionIfOpen(tmpSession);
 		}
 		logger.debug("OUT");
 		return toReturn;
@@ -182,18 +167,11 @@ public class SbiMetaTableDAOHibImpl extends AbstractHibernateDAO implements ISbi
 
 		} catch (HibernateException he) {
 			logException(he);
-
-			if (tx != null)
-				tx.rollback();
-
+			rollbackIfActive(tx);
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 
 		} finally {
-			if (tmpSession != null) {
-				if (tmpSession.isOpen())
-					tmpSession.close();
-
-			}
+			closeSessionIfOpen(tmpSession);
 		}
 		logger.debug("OUT");
 		return toReturn;
@@ -221,7 +199,7 @@ public class SbiMetaTableDAOHibImpl extends AbstractHibernateDAO implements ISbi
 		try {
 			tmpSession = getSession();
 			tx = tmpSession.beginTransaction();
-			Criterion labelCriterrion = Expression.eq("name", name);
+			Criterion labelCriterrion = Restrictions.eq("name", name);
 			Criteria criteria = tmpSession.createCriteria(SbiMetaTable.class);
 			criteria.add(labelCriterrion);
 			toReturn = (SbiMetaTable) criteria.uniqueResult();
@@ -231,14 +209,10 @@ public class SbiMetaTableDAOHibImpl extends AbstractHibernateDAO implements ISbi
 
 		} catch (HibernateException he) {
 			logException(he);
-			if (tx != null)
-				tx.rollback();
+			rollbackIfActive(tx);
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		} finally {
-			if (tmpSession != null) {
-				if (tmpSession.isOpen())
-					tmpSession.close();
-			}
+			closeSessionIfOpen(tmpSession);
 		}
 
 		logger.debug("OUT");
@@ -276,19 +250,11 @@ public class SbiMetaTableDAOHibImpl extends AbstractHibernateDAO implements ISbi
 			tx.commit();
 		} catch (HibernateException he) {
 			logException(he);
-
-			if (tx != null)
-				tx.rollback();
-
+			rollbackIfActive(tx);
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 
 		} finally {
-
-			if (tmpSession != null) {
-				if (tmpSession.isOpen())
-					tmpSession.close();
-			}
-
+			closeSessionIfOpen(tmpSession);
 		}
 		logger.debug("OUT");
 		return toReturn;
@@ -304,7 +270,8 @@ public class SbiMetaTableDAOHibImpl extends AbstractHibernateDAO implements ISbi
 	 * @see it.eng.spagobi.metadata.dao.ISbiMetaTableDAOHibImpl#loadAllTables()
 	 */
 	@Override
-	public List<SbiMetaTable> loadPaginatedTables(Integer page, Integer item_per_page, String search) throws EMFUserError {
+	public List<SbiMetaTable> loadPaginatedTables(Integer page, Integer item_per_page, String search)
+			throws EMFUserError {
 		logger.debug("IN");
 
 		Session tmpSession = null;
@@ -325,19 +292,11 @@ public class SbiMetaTableDAOHibImpl extends AbstractHibernateDAO implements ISbi
 			toReturn = c.list();
 		} catch (HibernateException he) {
 			logException(he);
-
-			if (tx != null)
-				tx.rollback();
-
+			rollbackIfActive(tx);
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 
 		} finally {
-
-			if (tmpSession != null) {
-				if (tmpSession.isOpen())
-					tmpSession.close();
-			}
-
+			closeSessionIfOpen(tmpSession);
 		}
 		logger.debug("OUT");
 		return toReturn;
@@ -355,7 +314,7 @@ public class SbiMetaTableDAOHibImpl extends AbstractHibernateDAO implements ISbi
 			tmpSession = getSession();
 			tx = tmpSession.beginTransaction();
 
-			Criterion labelCriterrion = Expression.eq("sourceid", sourceId);
+			Criterion labelCriterrion = Restrictions.eq("sourceid", sourceId);
 			Criteria criteria = tmpSession.createCriteria(SbiMetaTable.class);
 			criteria.add(labelCriterrion);
 
@@ -366,14 +325,10 @@ public class SbiMetaTableDAOHibImpl extends AbstractHibernateDAO implements ISbi
 
 		} catch (HibernateException he) {
 			logException(he);
-			if (tx != null)
-				tx.rollback();
+			rollbackIfActive(tx);
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		} finally {
-			if (tmpSession != null) {
-				if (tmpSession.isOpen())
-					tmpSession.close();
-			}
+			closeSessionIfOpen(tmpSession);
 		}
 
 		logger.debug("OUT");
@@ -407,12 +362,13 @@ public class SbiMetaTableDAOHibImpl extends AbstractHibernateDAO implements ISbi
 
 			SbiMetaSource metaSource = null;
 			if (aMetaTable.getSbiMetaSource().getSourceId() < 0) {
-				Criterion aCriterion = Expression.eq("valueId", aMetaTable.getSbiMetaSource().getSourceId());
+				Criterion aCriterion = Restrictions.eq("valueId", aMetaTable.getSbiMetaSource().getSourceId());
 				Criteria criteria = tmpSession.createCriteria(SbiMetaSource.class);
 				criteria.add(aCriterion);
 				metaSource = (SbiMetaSource) criteria.uniqueResult();
 				if (metaSource == null) {
-					throw new SpagoBIDAOException("The Domain with value_id= " + aMetaTable.getSbiMetaSource().getSourceId() + " does not exist");
+					throw new SpagoBIDAOException("The Domain with value_id= "
+							+ aMetaTable.getSbiMetaSource().getSourceId() + " does not exist");
 				}
 				hibMeta.setSbiMetaSource(metaSource);
 			}
@@ -422,17 +378,11 @@ public class SbiMetaTableDAOHibImpl extends AbstractHibernateDAO implements ISbi
 
 		} catch (HibernateException he) {
 			logException(he);
-
-			if (tx != null)
-				tx.rollback();
-
+			rollbackIfActive(tx);
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 
 		} finally {
-			if (tmpSession != null) {
-				if (tmpSession.isOpen())
-					tmpSession.close();
-			}
+			closeSessionIfOpen(tmpSession);
 		}
 		logger.debug("OUT");
 
@@ -465,12 +415,13 @@ public class SbiMetaTableDAOHibImpl extends AbstractHibernateDAO implements ISbi
 
 			SbiMetaSource metaSource = null;
 			if (aMetaTable.getSbiMetaSource() != null) {
-				Criterion aCriterion = Expression.eq("sourceId", aMetaTable.getSbiMetaSource().getSourceId());
+				Criterion aCriterion = Restrictions.eq("sourceId", aMetaTable.getSbiMetaSource().getSourceId());
 				Criteria criteria = tmpSession.createCriteria(SbiMetaSource.class);
 				criteria.add(aCriterion);
 				metaSource = (SbiMetaSource) criteria.uniqueResult();
 				if (metaSource == null) {
-					throw new SpagoBIDAOException("The Domain with value_id= " + aMetaTable.getSbiMetaSource().getSourceId() + " does not exist");
+					throw new SpagoBIDAOException("The Domain with value_id= "
+							+ aMetaTable.getSbiMetaSource().getSourceId() + " does not exist");
 				}
 				hibMeta.setSbiMetaSource(metaSource);
 			}
@@ -481,19 +432,11 @@ public class SbiMetaTableDAOHibImpl extends AbstractHibernateDAO implements ISbi
 
 		} catch (HibernateException he) {
 			logException(he);
-
-			if (tx != null)
-				tx.rollback();
-
+			rollbackIfActive(tx);
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 
 		} finally {
-
-			if (tmpSession != null) {
-				if (tmpSession.isOpen())
-					tmpSession.close();
-			}
-
+			closeSessionIfOpen(tmpSession);
 		}
 		logger.debug("OUT");
 		return idToReturn;
@@ -538,26 +481,19 @@ public class SbiMetaTableDAOHibImpl extends AbstractHibernateDAO implements ISbi
 			//
 			// }
 
-			SbiMetaTable hibMeta = (SbiMetaTable) tmpSession.load(SbiMetaTable.class, new Integer(aMetaTable.getTableId()));
+			SbiMetaTable hibMeta = (SbiMetaTable) tmpSession.load(SbiMetaTable.class,
+					new Integer(aMetaTable.getTableId()));
 
 			tmpSession.delete(hibMeta);
 
 			tx.commit();
 		} catch (HibernateException he) {
 			logException(he);
-
-			if (tx != null)
-				tx.rollback();
-
+			rollbackIfActive(tx);
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 
 		} finally {
-
-			if (tmpSession != null) {
-				if (tmpSession.isOpen())
-					tmpSession.close();
-			}
-
+			closeSessionIfOpen(tmpSession);
 		}
 		logger.debug("OUT");
 
@@ -596,17 +532,11 @@ public class SbiMetaTableDAOHibImpl extends AbstractHibernateDAO implements ISbi
 			tx.commit();
 		} catch (HibernateException he) {
 			logException(he);
-
-			if (tx != null)
-				tx.rollback();
-
+			rollbackIfActive(tx);
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 
 		} finally {
-			if (tmpSession != null) {
-				if (tmpSession.isOpen())
-					tmpSession.close();
-			}
+			closeSessionIfOpen(tmpSession);
 		}
 		return bool;
 
@@ -635,16 +565,12 @@ public class SbiMetaTableDAOHibImpl extends AbstractHibernateDAO implements ISbi
 		} catch (HibernateException he) {
 			logException(he);
 
-			if (tx != null)
-				tx.rollback();
+			rollbackIfActive(tx);
 
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 
 		} finally {
-			if (tmpSession != null) {
-				if (tmpSession.isOpen())
-					tmpSession.close();
-			}
+			closeSessionIfOpen(tmpSession);
 		}
 		return bool;
 	}
@@ -676,7 +602,7 @@ public class SbiMetaTableDAOHibImpl extends AbstractHibernateDAO implements ISbi
 		Session tmpSession = session;
 
 		try {
-			Criterion labelCriterrion = Expression.eq("name", name);
+			Criterion labelCriterrion = Restrictions.eq("name", name);
 			Criteria criteria = tmpSession.createCriteria(SbiMetaTable.class);
 			criteria.add(labelCriterrion);
 			toReturn = (SbiMetaTable) criteria.uniqueResult();
@@ -730,12 +656,13 @@ public class SbiMetaTableDAOHibImpl extends AbstractHibernateDAO implements ISbi
 
 			SbiMetaSource metaSource = null;
 			if (aMetaTable.getSbiMetaSource().getSourceId() < 0) {
-				Criterion aCriterion = Expression.eq("valueId", aMetaTable.getSbiMetaSource().getSourceId());
+				Criterion aCriterion = Restrictions.eq("valueId", aMetaTable.getSbiMetaSource().getSourceId());
 				Criteria criteria = tmpSession.createCriteria(SbiMetaSource.class);
 				criteria.add(aCriterion);
 				metaSource = (SbiMetaSource) criteria.uniqueResult();
 				if (metaSource == null) {
-					throw new SpagoBIDAOException("The Domain with value_id= " + aMetaTable.getSbiMetaSource().getSourceId() + " does not exist");
+					throw new SpagoBIDAOException("The Domain with value_id= "
+							+ aMetaTable.getSbiMetaSource().getSourceId() + " does not exist");
 				}
 				hibMeta.setSbiMetaSource(metaSource);
 			}
@@ -764,12 +691,13 @@ public class SbiMetaTableDAOHibImpl extends AbstractHibernateDAO implements ISbi
 
 			SbiMetaSource metaSource = null;
 			if (aMetaTable.getSbiMetaSource() != null) {
-				Criterion aCriterion = Expression.eq("sourceId", aMetaTable.getSbiMetaSource().getSourceId());
+				Criterion aCriterion = Restrictions.eq("sourceId", aMetaTable.getSbiMetaSource().getSourceId());
 				Criteria criteria = tmpSession.createCriteria(SbiMetaSource.class);
 				criteria.add(aCriterion);
 				metaSource = (SbiMetaSource) criteria.uniqueResult();
 				if (metaSource == null) {
-					throw new SpagoBIDAOException("The Domain with value_id= " + aMetaTable.getSbiMetaSource().getSourceId() + " does not exist");
+					throw new SpagoBIDAOException("The Domain with value_id= "
+							+ aMetaTable.getSbiMetaSource().getSourceId() + " does not exist");
 				}
 				hibMeta.setSbiMetaSource(metaSource);
 			}
@@ -805,16 +733,12 @@ public class SbiMetaTableDAOHibImpl extends AbstractHibernateDAO implements ISbi
 
 		} catch (HibernateException he) {
 			logger.error("Error while loading the list of SbiMetaTable", he);
-			if (tx != null)
-				tx.rollback();
+			rollbackIfActive(tx);
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 9104);
 
 		} finally {
-			if (aSession != null) {
-				if (aSession.isOpen())
-					aSession.close();
-				logger.debug("OUT");
-			}
+			closeSessionIfOpen(aSession);
+			logger.debug("OUT");
 		}
 		return resultNumber;
 	}

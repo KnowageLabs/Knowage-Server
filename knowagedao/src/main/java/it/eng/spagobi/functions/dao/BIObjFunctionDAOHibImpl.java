@@ -80,9 +80,7 @@ public class BIObjFunctionDAOHibImpl extends AbstractHibernateDAO implements IBI
 			}
 			throw new SpagoBIDAOException("Error while deleting the objDataset associated with object" + biObjId, t);
 		} finally {
-			if (session != null && session.isOpen()) {
-				session.close();
-			}
+			closeSessionIfOpen(session);
 		}
 		logger.debug("OUT");
 	}
@@ -106,7 +104,8 @@ public class BIObjFunctionDAOHibImpl extends AbstractHibernateDAO implements IBI
 	}
 
 	@Override
-	public void updateObjectFunctions(BIObject biObj, List<String> functionsToInsert, Session currSession) throws EMFUserError {
+	public void updateObjectFunctions(BIObject biObj, List<String> functionsToInsert, Session currSession)
+			throws EMFUserError {
 		logger.debug("IN");
 		logger.debug("update catalog functions associations for biObj " + biObj.getId());
 
