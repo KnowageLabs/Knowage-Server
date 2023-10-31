@@ -72,12 +72,8 @@ public class SbiDsBcDAOHibImpl extends AbstractHibernateDAO implements ISbiDsBcD
 			tx.commit();
 		} catch (HibernateException he) {
 			logException(he);
-
-			if (tx != null)
-				tx.rollback();
-
+			rollbackIfActive(tx);
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
-
 		} finally {
 			closeSessionIfOpen(aSession);
 		}
@@ -114,12 +110,8 @@ public class SbiDsBcDAOHibImpl extends AbstractHibernateDAO implements ISbiDsBcD
 			tx.commit();
 		} catch (HibernateException he) {
 			logException(he);
-
-			if (tx != null)
-				tx.rollback();
-
+			rollbackIfActive(tx);
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
-
 		} finally {
 			closeSessionIfOpen(aSession);
 		}
@@ -148,12 +140,8 @@ public class SbiDsBcDAOHibImpl extends AbstractHibernateDAO implements ISbiDsBcD
 			tx.commit();
 		} catch (HibernateException he) {
 			logException(he);
-
-			if (tx != null)
-				tx.rollback();
-
+			rollbackIfActive(tx);
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
-
 		} finally {
 			closeSessionIfOpen(aSession);
 		}
@@ -184,12 +172,8 @@ public class SbiDsBcDAOHibImpl extends AbstractHibernateDAO implements ISbiDsBcD
 			tx.commit();
 		} catch (HibernateException he) {
 			logException(he);
-
-			if (tx != null)
-				tx.rollback();
-
+			rollbackIfActive(tx);
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
-
 		} finally {
 			closeSessionIfOpen(aSession);
 		}
@@ -216,12 +200,8 @@ public class SbiDsBcDAOHibImpl extends AbstractHibernateDAO implements ISbiDsBcD
 			tx.commit();
 		} catch (HibernateException he) {
 			logException(he);
-
-			if (tx != null)
-				tx.rollback();
-
+			rollbackIfActive(tx);
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
-
 		} finally {
 			closeSessionIfOpen(aSession);
 		}
@@ -244,12 +224,8 @@ public class SbiDsBcDAOHibImpl extends AbstractHibernateDAO implements ISbiDsBcD
 			tx.commit();
 		} catch (HibernateException he) {
 			logException(he);
-
-			if (tx != null)
-				tx.rollback();
-
+			rollbackIfActive(tx);
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
-
 		} finally {
 			closeSessionIfOpen(aSession);
 		}
@@ -276,12 +252,8 @@ public class SbiDsBcDAOHibImpl extends AbstractHibernateDAO implements ISbiDsBcD
 			tx.commit();
 		} catch (HibernateException he) {
 			logException(he);
-
-			if (tx != null)
-				tx.rollback();
-
+			rollbackIfActive(tx);
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
-
 		} finally {
 			closeSessionIfOpen(aSession);
 		}

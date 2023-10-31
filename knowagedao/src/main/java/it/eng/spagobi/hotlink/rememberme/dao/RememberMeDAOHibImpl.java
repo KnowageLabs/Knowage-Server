@@ -74,8 +74,7 @@ public class RememberMeDAOHibImpl extends AbstractHibernateDAO implements IRemem
 			tx.commit();
 		} catch (HibernateException he) {
 			logException(he);
-			if (tx != null)
-				tx.rollback();
+			rollbackIfActive(tx);
 			throw new EMFInternalError(EMFErrorSeverity.ERROR, "100");
 		} finally {
 			closeSessionIfOpen(aSession);
@@ -110,8 +109,7 @@ public class RememberMeDAOHibImpl extends AbstractHibernateDAO implements IRemem
 			return toReturn;
 		} catch (HibernateException he) {
 			logException(he);
-			if (tx != null)
-				tx.rollback();
+			rollbackIfActive(tx);
 			throw new EMFInternalError(EMFErrorSeverity.ERROR, "100");
 		} finally {
 			closeSessionIfOpen(aSession);
@@ -195,8 +193,7 @@ public class RememberMeDAOHibImpl extends AbstractHibernateDAO implements IRemem
 
 		} catch (HibernateException he) {
 			logException(he);
-			if (tx != null)
-				tx.rollback();
+			rollbackIfActive(tx);
 			throw new EMFInternalError(EMFErrorSeverity.ERROR, "100");
 		} finally {
 			closeSessionIfOpen(aSession);
@@ -225,8 +222,7 @@ public class RememberMeDAOHibImpl extends AbstractHibernateDAO implements IRemem
 			return toReturn;
 		} catch (HibernateException he) {
 			logException(he);
-			if (tx != null)
-				tx.rollback();
+			rollbackIfActive(tx);
 			throw new EMFInternalError(EMFErrorSeverity.ERROR, "100");
 		} finally {
 			closeSessionIfOpen(aSession);

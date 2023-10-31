@@ -75,9 +75,7 @@ public class BIObjFunctionDAOHibImpl extends AbstractHibernateDAO implements IBI
 
 			transaction.commit();
 		} catch (Throwable t) {
-			if (transaction != null && transaction.isActive()) {
-				transaction.rollback();
-			}
+			rollbackIfActive(transaction);
 			throw new SpagoBIDAOException("Error while deleting the objDataset associated with object" + biObjId, t);
 		} finally {
 			closeSessionIfOpen(session);

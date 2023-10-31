@@ -74,12 +74,8 @@ public class SbiMetaBcAttributeDAOHibImpl extends AbstractHibernateDAO implement
 
 		} catch (HibernateException he) {
 			logException(he);
-
-			if (tx != null)
-				tx.rollback();
-
+			rollbackIfActive(tx);
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
-
 		} finally {
 			closeSessionIfOpen(tmpSession);
 		}
@@ -119,8 +115,7 @@ public class SbiMetaBcAttributeDAOHibImpl extends AbstractHibernateDAO implement
 
 		} catch (HibernateException he) {
 			logException(he);
-			if (tx != null)
-				tx.rollback();
+			rollbackIfActive(tx);
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		} finally {
 			closeSessionIfOpen(tmpSession);
@@ -161,12 +156,8 @@ public class SbiMetaBcAttributeDAOHibImpl extends AbstractHibernateDAO implement
 			tx.commit();
 		} catch (HibernateException he) {
 			logException(he);
-
-			if (tx != null)
-				tx.rollback();
-
+			rollbackIfActive(tx);
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
-
 		} finally {
 			closeSessionIfOpen(tmpSession);
 		}
@@ -197,8 +188,7 @@ public class SbiMetaBcAttributeDAOHibImpl extends AbstractHibernateDAO implement
 
 		} catch (HibernateException he) {
 			logException(he);
-			if (tx != null)
-				tx.rollback();
+			rollbackIfActive(tx);
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		} finally {
 			closeSessionIfOpen(tmpSession);
@@ -231,8 +221,7 @@ public class SbiMetaBcAttributeDAOHibImpl extends AbstractHibernateDAO implement
 
 		} catch (HibernateException he) {
 			logException(he);
-			if (tx != null)
-				tx.rollback();
+			rollbackIfActive(tx);
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		} finally {
 			closeSessionIfOpen(tmpSession);
@@ -268,12 +257,8 @@ public class SbiMetaBcAttributeDAOHibImpl extends AbstractHibernateDAO implement
 
 		} catch (HibernateException he) {
 			logException(he);
-
-			if (tx != null)
-				tx.rollback();
-
+			rollbackIfActive(tx);
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
-
 		} finally {
 			closeSessionIfOpen(tmpSession);
 		}
@@ -307,12 +292,8 @@ public class SbiMetaBcAttributeDAOHibImpl extends AbstractHibernateDAO implement
 
 		} catch (HibernateException he) {
 			logException(he);
-
-			if (tx != null)
-				tx.rollback();
-
+			rollbackIfActive(tx);
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
-
 		} finally {
 			closeSessionIfOpen(tmpSession);
 		}
@@ -361,12 +342,8 @@ public class SbiMetaBcAttributeDAOHibImpl extends AbstractHibernateDAO implement
 			tx.commit();
 		} catch (HibernateException he) {
 			logException(he);
-
-			if (tx != null)
-				tx.rollback();
-
+			rollbackIfActive(tx);
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
-
 		} finally {
 			closeSessionIfOpen(tmpSession);
 		}

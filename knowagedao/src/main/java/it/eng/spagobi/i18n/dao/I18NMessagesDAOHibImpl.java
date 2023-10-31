@@ -86,8 +86,7 @@ public class I18NMessagesDAOHibImpl extends AbstractHibernateDAO implements I18N
 			tx.commit();
 		} catch (HibernateException he) {
 			logger.error(he.getMessage(), he);
-			if (tx != null)
-				tx.rollback();
+			rollbackIfActive(tx);
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		} finally {
 			closeSessionIfOpen(aSession);
@@ -150,8 +149,7 @@ public class I18NMessagesDAOHibImpl extends AbstractHibernateDAO implements I18N
 
 		} catch (HibernateException he) {
 			logger.error(he.getMessage(), he);
-			if (tx != null)
-				tx.rollback();
+			rollbackIfActive(tx);
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		} finally {
 			closeSessionIfOpen(aSession);
@@ -185,8 +183,7 @@ public class I18NMessagesDAOHibImpl extends AbstractHibernateDAO implements I18N
 
 		} catch (HibernateException he) {
 			logger.error(he.getMessage(), he);
-			if (tx != null)
-				tx.rollback();
+			rollbackIfActive(tx);
 			throw new SpagoBIRuntimeException(he);
 		} finally {
 			closeSessionIfOpen(aSession);
@@ -239,8 +236,7 @@ public class I18NMessagesDAOHibImpl extends AbstractHibernateDAO implements I18N
 			session.flush();
 		} catch (HibernateException e) {
 			logException(e);
-			if (tx != null)
-				tx.rollback();
+			rollbackIfActive(tx);
 			throw new SpagoBIRuntimeException(e);
 		} finally {
 			closeSessionIfOpen(session);
@@ -269,8 +265,7 @@ public class I18NMessagesDAOHibImpl extends AbstractHibernateDAO implements I18N
 			session.flush();
 		} catch (HibernateException e) {
 			logException(e);
-			if (tx != null)
-				tx.rollback();
+			rollbackIfActive(tx);
 			throw new SpagoBIRuntimeException(e);
 		} finally {
 			closeSessionIfOpen(session);
@@ -299,8 +294,7 @@ public class I18NMessagesDAOHibImpl extends AbstractHibernateDAO implements I18N
 			tx.commit();
 		} catch (HibernateException e) {
 			logException(e);
-			if (tx != null)
-				tx.rollback();
+			rollbackIfActive(tx);
 			throw new SpagoBIRuntimeException(e);
 		} finally {
 			closeSessionIfOpen(session);
@@ -328,8 +322,7 @@ public class I18NMessagesDAOHibImpl extends AbstractHibernateDAO implements I18N
 			session.flush();
 		} catch (HibernateException e) {
 			logException(e);
-			if (tx != null)
-				tx.rollback();
+			rollbackIfActive(tx);
 			throw new SpagoBIRuntimeException(e);
 		} finally {
 			closeSessionIfOpen(session);
@@ -356,8 +349,7 @@ public class I18NMessagesDAOHibImpl extends AbstractHibernateDAO implements I18N
 			tx.commit();
 		} catch (HibernateException e) {
 			logException(e);
-			if (tx != null)
-				tx.rollback();
+			rollbackIfActive(tx);
 			throw new SpagoBIRuntimeException(e);
 		} finally {
 			closeSessionIfOpen(session);

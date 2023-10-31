@@ -84,12 +84,8 @@ public class SbiGeoMapsDAOHibImpl extends AbstractHibernateDAO implements ISbiGe
 
 		} catch (HibernateException he) {
 			logException(he);
-
-			if (tx != null)
-				tx.rollback();
-
+			rollbackIfActive(tx);
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
-
 		} finally {
 			closeSessionIfOpen(tmpSession);
 		}
@@ -130,8 +126,7 @@ public class SbiGeoMapsDAOHibImpl extends AbstractHibernateDAO implements ISbiGe
 			tx.commit();
 		} catch (HibernateException he) {
 			logException(he);
-			if (tx != null)
-				tx.rollback();
+			rollbackIfActive(tx);
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		} finally {
 			closeSessionIfOpen(tmpSession);
@@ -181,15 +176,13 @@ public class SbiGeoMapsDAOHibImpl extends AbstractHibernateDAO implements ISbiGe
 			tx.commit();
 		} catch (org.hibernate.NonUniqueResultException nhe) {
 			logException(nhe);
-			if (tx != null)
-				tx.rollback();
+			rollbackIfActive(tx);
 			throw new SpagoBIRuntimeException("There are more than one SVG loaded with Hierarchy [" + hierarchy
 					+ "] - Member [" + member + "] - Level [" + level
 					+ "]. Please verify the univocity of the hierarchy keys of the SVG documents!", nhe);
 		} catch (HibernateException he) {
 			logException(he);
-			if (tx != null)
-				tx.rollback();
+			rollbackIfActive(tx);
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		} finally {
 			closeSessionIfOpen(tmpSession);
@@ -246,12 +239,8 @@ public class SbiGeoMapsDAOHibImpl extends AbstractHibernateDAO implements ISbiGe
 
 		} catch (HibernateException he) {
 			logException(he);
-
-			if (tx != null)
-				tx.rollback();
-
+			rollbackIfActive(tx);
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
-
 		} finally {
 			closeSessionIfOpen(tmpSession);
 		}
@@ -297,12 +286,8 @@ public class SbiGeoMapsDAOHibImpl extends AbstractHibernateDAO implements ISbiGe
 			tx.commit();
 		} catch (HibernateException he) {
 			logException(he);
-
-			if (tx != null)
-				tx.rollback();
-
+			rollbackIfActive(tx);
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
-
 		} finally {
 			closeSessionIfOpen(tmpSession);
 		}
@@ -338,12 +323,8 @@ public class SbiGeoMapsDAOHibImpl extends AbstractHibernateDAO implements ISbiGe
 			tx.commit();
 		} catch (HibernateException he) {
 			logException(he);
-
-			if (tx != null)
-				tx.rollback();
-
+			rollbackIfActive(tx);
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
-
 		} finally {
 			closeSessionIfOpen(tmpSession);
 		}
@@ -379,12 +360,8 @@ public class SbiGeoMapsDAOHibImpl extends AbstractHibernateDAO implements ISbiGe
 			tx.commit();
 		} catch (HibernateException he) {
 			logException(he);
-
-			if (tx != null)
-				tx.rollback();
-
+			rollbackIfActive(tx);
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
-
 		} finally {
 			closeSessionIfOpen(tmpSession);
 		}
@@ -425,12 +402,8 @@ public class SbiGeoMapsDAOHibImpl extends AbstractHibernateDAO implements ISbiGe
 			tx.commit();
 		} catch (HibernateException he) {
 			logException(he);
-
-			if (tx != null)
-				tx.rollback();
-
+			rollbackIfActive(tx);
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
-
 		} finally {
 			closeSessionIfOpen(tmpSession);
 		}

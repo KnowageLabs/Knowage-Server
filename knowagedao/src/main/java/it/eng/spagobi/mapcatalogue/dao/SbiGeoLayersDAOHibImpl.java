@@ -86,11 +86,9 @@ public class SbiGeoLayersDAOHibImpl extends AbstractHibernateDAO implements ISbi
 	public GeoLayer loadLayerByID(Integer layerID) throws EMFUserError {
 		GeoLayer toReturn = null;
 		Session tmpSession = null;
-		// Transaction tx = null;
 
 		try {
 			tmpSession = getSession();
-			// tx = tmpSession.beginTransaction();
 			SbiGeoLayers hibLayer = (SbiGeoLayers) tmpSession.load(SbiGeoLayers.class, layerID);
 			toReturn = hibLayer.toGeoLayer();
 
@@ -103,16 +101,9 @@ public class SbiGeoLayersDAOHibImpl extends AbstractHibernateDAO implements ISbi
 				}
 			}
 
-			// tx.commit();
-
 		} catch (HibernateException he) {
 			logException(he);
-
-			// if (tx != null)
-			// tx.rollback();
-
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
-
 		} finally {
 			closeSessionIfOpen(tmpSession);
 		}
@@ -135,11 +126,9 @@ public class SbiGeoLayersDAOHibImpl extends AbstractHibernateDAO implements ISbi
 	public GeoLayer loadLayerByLabel(String label) throws EMFUserError {
 		GeoLayer biLayer = null;
 		Session tmpSession = null;
-		// Transaction tx = null;
 
 		try {
 			tmpSession = getSession();
-			// tx = tmpSession.beginTransaction();
 			Criterion labelCriterrion = Restrictions.eq("label", label);
 			Criteria criteria = tmpSession.createCriteria(SbiGeoLayers.class);
 			criteria.add(labelCriterrion);
@@ -157,11 +146,8 @@ public class SbiGeoLayersDAOHibImpl extends AbstractHibernateDAO implements ISbi
 				}
 			}
 
-			// tx.commit();
 		} catch (HibernateException he) {
 			logException(he);
-			// if (tx != null)
-			// tx.rollback();
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		} finally {
 			closeSessionIfOpen(tmpSession);
@@ -301,12 +287,8 @@ public class SbiGeoLayersDAOHibImpl extends AbstractHibernateDAO implements ISbi
 
 		} catch (HibernateException he) {
 			logException(he);
-
-			if (tx != null)
-				tx.rollback();
-
+			rollbackIfActive(tx);
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
-
 		} finally {
 			closeSessionIfOpen(tmpSession);
 		}
@@ -462,12 +444,8 @@ public class SbiGeoLayersDAOHibImpl extends AbstractHibernateDAO implements ISbi
 
 		HibernateException he) {
 			logException(he);
-
-			if (tx != null)
-				tx.rollback();
-
+			rollbackIfActive(tx);
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
-
 		} finally {
 			closeSessionIfOpen(tmpSession);
 		}
@@ -648,12 +626,8 @@ public class SbiGeoLayersDAOHibImpl extends AbstractHibernateDAO implements ISbi
 			tx.commit();
 		} catch (HibernateException he) {
 			logException(he);
-
-			if (tx != null)
-				tx.rollback();
-
+			rollbackIfActive(tx);
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
-
 		} finally {
 			closeSessionIfOpen(tmpSession);
 		}
@@ -674,12 +648,8 @@ public class SbiGeoLayersDAOHibImpl extends AbstractHibernateDAO implements ISbi
 			tx.commit();
 		} catch (HibernateException he) {
 			logException(he);
-
-			if (tx != null)
-				tx.rollback();
-
+			rollbackIfActive(tx);
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
-
 		} finally {
 			closeSessionIfOpen(tmpSession);
 		}
@@ -894,12 +864,8 @@ public class SbiGeoLayersDAOHibImpl extends AbstractHibernateDAO implements ISbi
 			tx.commit();
 		} catch (HibernateException he) {
 			logException(he);
-
-			if (tx != null)
-				tx.rollback();
-
+			rollbackIfActive(tx);
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
-
 		} finally {
 			closeSessionIfOpen(tmpSession);
 		}
@@ -993,9 +959,7 @@ public class SbiGeoLayersDAOHibImpl extends AbstractHibernateDAO implements ISbi
 			resultNumber = ((Long) aQuery.uniqueResult()).intValue();
 
 		} catch (Throwable t) {
-			if (transaction != null && transaction.isActive()) {
-				transaction.rollback();
-			}
+			rollbackIfActive(transaction);
 			throw new SpagoBIDAOException("Error while getting the category with the geo layer with id " + catId, t);
 		} finally {
 			closeSessionIfOpen(session);
@@ -1007,11 +971,9 @@ public class SbiGeoLayersDAOHibImpl extends AbstractHibernateDAO implements ISbi
 	@Override
 	public List<GeoLayer> loadLayerByCategoryId(Integer catId) throws EMFUserError {
 		Session tmpSession = null;
-		// Transaction tx = null;
 		List<GeoLayer> retLayers = new ArrayList<>();
 		try {
 			tmpSession = getSession();
-			// tx = tmpSession.beginTransaction();
 			Criterion labelCriterrion = Restrictions.eq("category.id", catId);
 			Criteria criteria = tmpSession.createCriteria(SbiGeoLayers.class);
 			criteria.add(labelCriterrion);
@@ -1023,11 +985,8 @@ public class SbiGeoLayersDAOHibImpl extends AbstractHibernateDAO implements ISbi
 				retLayers.add(hibLayer.toGeoLayer());
 			}
 
-			// tx.commit();
 		} catch (HibernateException he) {
 			logException(he);
-			// if (tx != null)
-			// tx.rollback();
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		} finally {
 			closeSessionIfOpen(tmpSession);

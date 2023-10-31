@@ -72,12 +72,8 @@ public class SbiJobSourceDAOHibImpl extends AbstractHibernateDAO implements ISbi
 			tx.commit();
 		} catch (HibernateException he) {
 			logException(he);
-
-			if (tx != null)
-				tx.rollback();
-
+			rollbackIfActive(tx);
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
-
 		} finally {
 			closeSessionIfOpen(aSession);
 		}
@@ -114,12 +110,8 @@ public class SbiJobSourceDAOHibImpl extends AbstractHibernateDAO implements ISbi
 			tx.commit();
 		} catch (HibernateException he) {
 			logException(he);
-
-			if (tx != null)
-				tx.rollback();
-
+			rollbackIfActive(tx);
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
-
 		} finally {
 			closeSessionIfOpen(aSession);
 		}
@@ -172,12 +164,8 @@ public class SbiJobSourceDAOHibImpl extends AbstractHibernateDAO implements ISbi
 			tx.commit();
 		} catch (HibernateException he) {
 			logException(he);
-
-			if (tx != null)
-				tx.rollback();
-
+			rollbackIfActive(tx);
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
-
 		} finally {
 			closeSessionIfOpen(aSession);
 		}
@@ -199,12 +187,8 @@ public class SbiJobSourceDAOHibImpl extends AbstractHibernateDAO implements ISbi
 			tx.commit();
 		} catch (HibernateException he) {
 			logException(he);
-
-			if (tx != null)
-				tx.rollback();
-
+			rollbackIfActive(tx);
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
-
 		} finally {
 			closeSessionIfOpen(aSession);
 		}
@@ -254,12 +238,8 @@ public class SbiJobSourceDAOHibImpl extends AbstractHibernateDAO implements ISbi
 			tx.commit();
 		} catch (HibernateException he) {
 			logException(he);
-
-			if (tx != null)
-				tx.rollback();
-
+			rollbackIfActive(tx);
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
-
 		} finally {
 			closeSessionIfOpen(aSession);
 		}

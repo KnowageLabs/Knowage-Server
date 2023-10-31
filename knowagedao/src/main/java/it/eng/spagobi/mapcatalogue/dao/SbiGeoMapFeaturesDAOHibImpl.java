@@ -90,12 +90,8 @@ public class SbiGeoMapFeaturesDAOHibImpl extends AbstractHibernateDAO implements
 			tx.commit();
 		} catch (HibernateException he) {
 			logException(he);
-
-			if (tx != null)
-				tx.rollback();
-
+			rollbackIfActive(tx);
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
-
 		} finally {
 			closeSessionIfOpen(aSession);
 		}
@@ -150,12 +146,8 @@ public class SbiGeoMapFeaturesDAOHibImpl extends AbstractHibernateDAO implements
 			tx.commit();
 		} catch (HibernateException he) {
 			logException(he);
-
-			if (tx != null)
-				tx.rollback();
-
+			rollbackIfActive(tx);
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
-
 		} finally {
 			closeSessionIfOpen(aSession);
 		}
@@ -209,12 +201,8 @@ public class SbiGeoMapFeaturesDAOHibImpl extends AbstractHibernateDAO implements
 			tx.commit();
 		} catch (HibernateException he) {
 			logException(he);
-
-			if (tx != null)
-				tx.rollback();
-
+			rollbackIfActive(tx);
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
-
 		} finally {
 			closeSessionIfOpen(aSession);
 		}
@@ -268,12 +256,8 @@ public class SbiGeoMapFeaturesDAOHibImpl extends AbstractHibernateDAO implements
 			tx.commit();
 		} catch (HibernateException he) {
 			logException(he);
-
-			if (tx != null)
-				tx.rollback();
-
+			rollbackIfActive(tx);
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
-
 		} finally {
 			closeSessionIfOpen(aSession);
 		}
@@ -318,8 +302,7 @@ public class SbiGeoMapFeaturesDAOHibImpl extends AbstractHibernateDAO implements
 			tx.commit();
 		} catch (HibernateException he) {
 			logException(he);
-			if (tx != null)
-				tx.rollback();
+			rollbackIfActive(tx);
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		} finally {
 			closeSessionIfOpen(aSession);
@@ -354,12 +337,8 @@ public class SbiGeoMapFeaturesDAOHibImpl extends AbstractHibernateDAO implements
 			tx.commit();
 		} catch (HibernateException he) {
 			logException(he);
-
-			if (tx != null)
-				tx.rollback();
-
+			rollbackIfActive(tx);
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
-
 		} finally {
 			closeSessionIfOpen(aSession);
 		}
@@ -395,12 +374,8 @@ public class SbiGeoMapFeaturesDAOHibImpl extends AbstractHibernateDAO implements
 			tx.commit();
 		} catch (HibernateException he) {
 			logException(he);
-
-			if (tx != null)
-				tx.rollback();
-
+			rollbackIfActive(tx);
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
-
 		} finally {
 			closeSessionIfOpen(aSession);
 		}
@@ -434,12 +409,8 @@ public class SbiGeoMapFeaturesDAOHibImpl extends AbstractHibernateDAO implements
 			tx.commit();
 		} catch (HibernateException he) {
 			logException(he);
-
-			if (tx != null)
-				tx.rollback();
-
+			rollbackIfActive(tx);
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
-
 		} finally {
 			closeSessionIfOpen(aSession);
 		}

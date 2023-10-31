@@ -81,12 +81,8 @@ public class SbiMetaBcDAOHibImpl extends AbstractHibernateDAO implements ISbiMet
 
 		} catch (HibernateException he) {
 			logException(he);
-
-			if (tx != null)
-				tx.rollback();
-
+			rollbackIfActive(tx);
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
-
 		} finally {
 			closeSessionIfOpen(tmpSession);
 		}
@@ -121,8 +117,7 @@ public class SbiMetaBcDAOHibImpl extends AbstractHibernateDAO implements ISbiMet
 
 		} catch (HibernateException he) {
 			logException(he);
-			if (tx != null)
-				tx.rollback();
+			rollbackIfActive(tx);
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		} finally {
 			closeSessionIfOpen(tmpSession);
@@ -159,8 +154,7 @@ public class SbiMetaBcDAOHibImpl extends AbstractHibernateDAO implements ISbiMet
 
 		} catch (HibernateException he) {
 			logException(he);
-			if (tx != null)
-				tx.rollback();
+			rollbackIfActive(tx);
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		} finally {
 			closeSessionIfOpen(tmpSession);
@@ -201,12 +195,8 @@ public class SbiMetaBcDAOHibImpl extends AbstractHibernateDAO implements ISbiMet
 			tx.commit();
 		} catch (HibernateException he) {
 			logException(he);
-
-			if (tx != null)
-				tx.rollback();
-
+			rollbackIfActive(tx);
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
-
 		} finally {
 			closeSessionIfOpen(tmpSession);
 		}
@@ -237,8 +227,7 @@ public class SbiMetaBcDAOHibImpl extends AbstractHibernateDAO implements ISbiMet
 
 		} catch (HibernateException he) {
 			logException(he);
-			if (tx != null)
-				tx.rollback();
+			rollbackIfActive(tx);
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		} finally {
 			closeSessionIfOpen(tmpSession);
@@ -276,8 +265,7 @@ public class SbiMetaBcDAOHibImpl extends AbstractHibernateDAO implements ISbiMet
 
 		} catch (HibernateException he) {
 			logException(he);
-			if (tx != null)
-				tx.rollback();
+			rollbackIfActive(tx);
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		} finally {
 			closeSessionIfOpen(tmpSession);
@@ -312,12 +300,8 @@ public class SbiMetaBcDAOHibImpl extends AbstractHibernateDAO implements ISbiMet
 
 		} catch (HibernateException he) {
 			logException(he);
-
-			if (tx != null)
-				tx.rollback();
-
+			rollbackIfActive(tx);
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
-
 		} finally {
 			closeSessionIfOpen(tmpSession);
 		}
@@ -351,12 +335,8 @@ public class SbiMetaBcDAOHibImpl extends AbstractHibernateDAO implements ISbiMet
 
 		} catch (HibernateException he) {
 			logException(he);
-
-			if (tx != null)
-				tx.rollback();
-
+			rollbackIfActive(tx);
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
-
 		} finally {
 			closeSessionIfOpen(tmpSession);
 		}
