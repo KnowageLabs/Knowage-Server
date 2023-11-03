@@ -19,8 +19,9 @@
 package it.eng.knowage.rest;
 
 import java.io.IOException;
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -53,8 +54,12 @@ public class FeatureFlagProvider implements ContainerRequestFilter {
 		if (annotation != null && !isFeatureEnabled(annotation)) {
 			Map<String, Object> response = new HashMap<>();
 
-			response.put("message", "not-enabled-to-call-service");
-			response.put("errors", Collections.emptyList());
+			List<Map<String, Object>> messages = new ArrayList<>();
+			Map<String, Object> message = new HashMap<>();
+			message.put("message", "not-enabled-to-call-service");
+			messages.add(message);
+
+			response.put("errors", messages);
 
 			requestContext.abortWith(
 					Response.status(Status.FORBIDDEN).type(MediaType.APPLICATION_JSON).entity(response).build());
