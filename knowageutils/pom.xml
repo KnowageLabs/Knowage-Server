@@ -90,14 +90,18 @@
 			<groupId>it.eng.knowage</groupId>
 			<artifactId>knowage-jdbc-core</artifactId>
 			<version>${project.version}</version>
-			<scope>compile</scope>
 		</dependency>
 
 		<dependency>
 			<groupId>it.eng.knowage</groupId>
 			<artifactId>knowage-utils-json</artifactId>
 			<version>${project.version}</version>
-			<scope>compile</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>it.eng.knowage</groupId>
+			<artifactId>knowage-common</artifactId>
+			<version>${project.version}</version>
 		</dependency>
 
 		<dependency>
