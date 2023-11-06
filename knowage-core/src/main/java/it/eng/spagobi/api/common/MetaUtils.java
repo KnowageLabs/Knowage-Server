@@ -80,7 +80,7 @@ public class MetaUtils {
 		IBIMetaModelParameterDAO driversDao = DAOFactory.getBIMetaModelParameterDAO();
 		String businessModelName = null;
 		MetaModel businessModel = null;
-		ArrayList<BIObjDataSet> biObjDataSetList = null;
+		List<BIObjDataSet> biObjDataSetList = null;
 		ArrayList<HashMap<String, Object>> parametersArrayList = new ArrayList<>();
 		try {
 
@@ -90,7 +90,8 @@ public class MetaUtils {
 				biObjDataSet = (BIObjDataSet) itDs.next();
 				dsId = biObjDataSet.getDataSetId();
 				dataset = datasetDao.loadDataSetById(dsId);
-				dataset = dataset instanceof VersionedDataSet ? ((VersionedDataSet) dataset).getWrappedDataset() : dataset;
+				dataset = dataset instanceof VersionedDataSet ? ((VersionedDataSet) dataset).getWrappedDataset()
+						: dataset;
 				if (dataset != null && dataset.getDsType() == "SbiQbeDataSet") {
 					String config = dataset.getConfiguration();
 					JSONObject jsonConfig = new JSONObject(dataset.getConfiguration());
@@ -108,14 +109,15 @@ public class MetaUtils {
 		return parametersArrayList;
 	}
 
-	public ArrayList<HashMap<String, Object>> getQbeDrivers(UserProfile userProfile, Locale locale, String businessModelName) {
+	public ArrayList<HashMap<String, Object>> getQbeDrivers(UserProfile userProfile, Locale locale,
+			String businessModelName) {
 		ArrayList<HashMap<String, Object>> parametersArrayList;
 		parametersArrayList = getDatasetDriversByModelName(userProfile, locale, businessModelName, false);
 		return parametersArrayList;
 	}
 
-	private ArrayList<HashMap<String, Object>> getDatasetDriversByModelName(UserProfile userProfile, Locale locale, String businessModelName,
-			Boolean loadDSwithDrivers) {
+	private ArrayList<HashMap<String, Object>> getDatasetDriversByModelName(UserProfile userProfile, Locale locale,
+			String businessModelName, Boolean loadDSwithDrivers) {
 		ArrayList<HashMap<String, Object>> parametersArrList = new ArrayList<>();
 		IMetaModelsDAO dao = DAOFactory.getMetaModelsDAO();
 		IParameterUseDAO parameterUseDAO = DAOFactory.getParameterUseDAO();
@@ -123,13 +125,15 @@ public class MetaUtils {
 		BusinessModelOpenParameters BMOP = new BusinessModelOpenParameters();
 		String role;
 		try {
-			role = userProfile.getRoles().contains("admin") ? "admin" : (String) userProfile.getRoles().iterator().next();
+			role = userProfile.getRoles().contains("admin") ? "admin"
+					: (String) userProfile.getRoles().iterator().next();
 		} catch (EMFInternalError e2) {
 			// TODO : Return a significative error message
 			LOGGER.debug(e2.getCause(), e2);
 			throw new SpagoBIRuntimeException(e2.getMessage(), e2);
 		}
-		MetaModel businessModel = dao.loadMetaModelForExecutionByNameAndRole(businessModelName, role, loadDSwithDrivers);
+		MetaModel businessModel = dao.loadMetaModelForExecutionByNameAndRole(businessModelName, role,
+				loadDSwithDrivers);
 		if (businessModel == null) {
 			return null;
 		}
@@ -140,8 +144,8 @@ public class MetaUtils {
 		return parametersArrList;
 	}
 
-	private ArrayList<HashMap<String, Object>> transformRuntimeDrivers(List<BusinessModelDriverRuntime> parameters, IParameterUseDAO parameterUseDAO,
-			String role, MetaModel businessModel, BusinessModelOpenParameters BMOP) {
+	private ArrayList<HashMap<String, Object>> transformRuntimeDrivers(List<BusinessModelDriverRuntime> parameters,
+			IParameterUseDAO parameterUseDAO, String role, MetaModel businessModel, BusinessModelOpenParameters BMOP) {
 		ArrayList<HashMap<String, Object>> parametersArrayList = new ArrayList<>();
 		ParameterUse parameterUse;
 		for (BusinessModelDriverRuntime objParameter : parameters) {
@@ -194,7 +198,9 @@ public class MetaUtils {
 
 						String itemVal = valuesList.get(k);
 
-						String itemDescr = descriptionList.size() > k && descriptionList.get(k) != null ? descriptionList.get(k) : itemVal;
+						String itemDescr = descriptionList.size() > k && descriptionList.get(k) != null
+								? descriptionList.get(k)
+								: itemVal;
 
 						try {
 							// % character breaks decode method
@@ -236,7 +242,8 @@ public class MetaUtils {
 					}
 					paramValueLst.add(paramValues.toString());
 
-					String parDescrVal = paramDescriptionValues != null && paramDescriptionValues instanceof String ? paramDescriptionValues.toString()
+					String parDescrVal = paramDescriptionValues != null && paramDescriptionValues instanceof String
+							? paramDescriptionValues.toString()
 							: paramValues.toString();
 					if (!parDescrVal.contains("%")) {
 						try {
@@ -267,11 +274,14 @@ public class MetaUtils {
 					parameterAsMap.put("defaultValues", new ArrayList<>());
 				}
 				parameterAsMap.put("defaultValuesMeta", objParameter.getLovVisibleColumnsNames());
-				parameterAsMap.put(DocumentExecutionUtils.VALUE_COLUMN_NAME_METADATA, objParameter.getLovValueColumnName());
-				parameterAsMap.put(DocumentExecutionUtils.DESCRIPTION_COLUMN_NAME_METADATA, objParameter.getLovDescriptionColumnName());
+				parameterAsMap.put(DocumentExecutionUtils.VALUE_COLUMN_NAME_METADATA,
+						objParameter.getLovValueColumnName());
+				parameterAsMap.put(DocumentExecutionUtils.DESCRIPTION_COLUMN_NAME_METADATA,
+						objParameter.getLovDescriptionColumnName());
 
 				// hide the parameter if is mandatory and have one value in lov (no error parameter)
-				if (admissibleValues != null && admissibleValues.size() == 1 && objParameter.isMandatory() && !admissibleValues.get(0).containsKey("error")
+				if (admissibleValues != null && admissibleValues.size() == 1 && objParameter.isMandatory()
+						&& !admissibleValues.get(0).containsKey("error")
 						&& (objParameter.getDataDependencies() == null || objParameter.getDataDependencies().isEmpty())
 						&& (objParameter.getLovDependencies() == null || objParameter.getLovDependencies().isEmpty())) {
 					showParameterLov = false;
@@ -287,7 +297,8 @@ public class MetaUtils {
 			// DATE RANGE DEFAULT VALUE
 			if (objParameter.getParType().equals("DATE_RANGE")) {
 				try {
-					ArrayList<HashMap<String, Object>> defaultValues = BMOP.manageDataRange(businessModel, role, objParameter.getId());
+					ArrayList<HashMap<String, Object>> defaultValues = BMOP.manageDataRange(businessModel, role,
+							objParameter.getId());
 					parameterAsMap.put("defaultValues", defaultValues);
 				} catch (SerializationException | EMFUserError | JSONException | IOException e) {
 					LOGGER.debug("Filters DATE RANGE ERRORS ", e);
@@ -297,12 +308,15 @@ public class MetaUtils {
 			// convert the parameterValue from array of string in array of object
 			DefaultValuesList parameterValueList = new DefaultValuesList();
 			Object oVals = parameterAsMap.get("parameterValue");
-			Object oDescr = parameterAsMap.get("parameterDescription") != null ? parameterAsMap.get("parameterDescription") : new ArrayList<String>();
+			Object oDescr = parameterAsMap.get("parameterDescription") != null
+					? parameterAsMap.get("parameterDescription")
+					: new ArrayList<String>();
 
 			if (oVals != null) {
 				if (oVals instanceof List) {
 					// CROSS NAV : INPUT PARAM PARAMETER TARGET DOC IS STRING
-					if (oVals.toString().startsWith("[") && oVals.toString().endsWith("]") && parameterUse.getValueSelection().equals("man_in")) {
+					if (oVals.toString().startsWith("[") && oVals.toString().endsWith("]")
+							&& parameterUse.getValueSelection().equals("man_in")) {
 						List<String> valList = (ArrayList) oVals;
 						String stringResult = "";
 						for (int k = 0; k < valList.size(); k++) {
@@ -339,7 +353,9 @@ public class MetaUtils {
 			parameterAsMap.put("dependsOn", objParameter.getDependencies());
 			parameterAsMap.put("dataDependencies", objParameter.getDataDependencies());
 			parameterAsMap.put("visualDependencies", objParameter.getVisualDependencies());
-			parameterAsMap.put("lovDependencies", (objParameter.getLovDependencies() != null) ? objParameter.getLovDependencies() : new ArrayList<>());
+			parameterAsMap.put("lovDependencies",
+					(objParameter.getLovDependencies() != null) ? objParameter.getLovDependencies()
+							: new ArrayList<>());
 
 			// load DEFAULT VALUE if present and if the parameter value is empty
 			if (objParameter.getDefaultValues() != null && objParameter.getDefaultValues().size() > 0
@@ -353,7 +369,9 @@ public class MetaUtils {
 				String parLab = objParameter.getDriver() != null && objParameter.getDriver().getParameter() != null
 						? objParameter.getDriver().getParameter().getLabel()
 						: "";
-				String useModLab = objParameter.getAnalyticalDriverExecModality() != null ? objParameter.getAnalyticalDriverExecModality().getLabel() : "";
+				String useModLab = objParameter.getAnalyticalDriverExecModality() != null
+						? objParameter.getAnalyticalDriverExecModality().getLabel()
+						: "";
 				String sessionKey = parLab + "_" + useModLab;
 
 				valueList = objParameter.getDefaultValues();
@@ -388,7 +406,8 @@ public class MetaUtils {
 		return parametersArrayList;
 	}
 
-	public JSONArray getChildrenForTreeLov(ILovDetail lovProvDet, List rows, int treeLovNodeLevel, String treeLovNodeValue) {
+	public JSONArray getChildrenForTreeLov(ILovDetail lovProvDet, List rows, int treeLovNodeLevel,
+			String treeLovNodeValue) {
 		String valueColumn;
 		String descriptionColumn;
 		boolean addNode;
@@ -432,8 +451,9 @@ public class MetaUtils {
 				// the node
 				for (int i = 0; i < columns.size(); i++) {
 					SourceBeanAttribute attribute = (SourceBeanAttribute) columns.get(i);
-					if ((treeLovParentNodeName == "lovroot") || (attribute.getKey().equalsIgnoreCase(treeLovParentNodeName)
-							&& (attribute.getValue().toString()).equalsIgnoreCase(treeLovNodeValue))) {
+					if ((treeLovParentNodeName == "lovroot")
+							|| (attribute.getKey().equalsIgnoreCase(treeLovParentNodeName)
+									&& (attribute.getValue().toString()).equalsIgnoreCase(treeLovNodeValue))) {
 						addNode = true;
 					}
 
@@ -490,7 +510,8 @@ public class MetaUtils {
 
 	public static String NODE_ID_SEPARATOR = "___SEPA__";
 
-	public JSONObject buildJsonResult(String status, String error, JSONObject obj, JSONArray objArr, String biparameterId) {
+	public JSONObject buildJsonResult(String status, String error, JSONObject obj, JSONArray objArr,
+			String biparameterId) {
 		JSONObject jsonObj = new JSONObject();
 		try {
 			jsonObj.put("status", status);

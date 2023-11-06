@@ -53,6 +53,7 @@ import com.fasterxml.jackson.databind.module.SimpleModule;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.commons.bo.Role;
+import it.eng.spagobi.commons.constants.CommunityFunctionalityConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
 import it.eng.spagobi.mapcatalogue.bo.GeoLayer;
@@ -60,6 +61,7 @@ import it.eng.spagobi.mapcatalogue.dao.ISbiGeoLayersDAO;
 import it.eng.spagobi.mapcatalogue.serializer.GeoLayerJSONDeserializer;
 import it.eng.spagobi.mapcatalogue.serializer.GeoLayerJSONSerializer;
 import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
+import it.eng.spagobi.services.rest.annotations.UserConstraint;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.rest.RestUtilities;
@@ -75,6 +77,7 @@ public class LayerCRUD {
 
 	@GET
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.GEO_LAYERS_MANAGEMENT })
 	public String loadLayers(@Context HttpServletRequest req) throws JSONException, UnsupportedEncodingException {
 		ISbiGeoLayersDAO dao = DAOFactory.getSbiGeoLayerDao();
 		List<GeoLayer> layers = null;
@@ -108,6 +111,7 @@ public class LayerCRUD {
 	@GET
 	@Path("/getFilter")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.GEO_LAYERS_MANAGEMENT })
 	public String getFilter(@Context HttpServletRequest req) throws JSONException {
 		Object id = null;
 		Integer layerId = null;
@@ -130,8 +134,8 @@ public class LayerCRUD {
 			properties = dao.getProperties(layerId);
 		} catch (Exception e2) {
 			logger.error("Error loading the properties for the layer with id " + id, e2);
-			throw new SpagoBIRuntimeException(
-					"Error loading the properties for the layer with id [" + id + "]. Please check the layer configuration or the file content.", e2);
+			throw new SpagoBIRuntimeException("Error loading the properties for the layer with id [" + id
+					+ "]. Please check the layer configuration or the file content.", e2);
 		}
 		ArrayList<JSONObject> prop = new ArrayList<>();
 		for (int i = 0; i < properties.size(); i++) {
@@ -150,6 +154,7 @@ public class LayerCRUD {
 	@Path("/getDownload")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
 	@Deprecated
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.GEO_LAYERS_MANAGEMENT })
 	public String getDownload(@Context HttpServletRequest req) throws JSONException {
 		Object id = null;
 		Integer layerId = null;
@@ -179,7 +184,9 @@ public class LayerCRUD {
 	@GET
 	@Path("/{layerId}/download/{typeWFS}")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
-	public Response getDownload(@PathParam("layerId") int layerId, @PathParam("typeWFS") String typeWFS) throws JSONException {
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.GEO_LAYERS_MANAGEMENT })
+	public Response getDownload(@PathParam("layerId") int layerId, @PathParam("typeWFS") String typeWFS)
+			throws JSONException {
 		ISbiGeoLayersDAO dao = DAOFactory.getSbiGeoLayerDao();
 		JSONObject content = dao.getContentforDownload(layerId, typeWFS);
 		if (content == null) {
@@ -199,13 +206,14 @@ public class LayerCRUD {
 	@GET
 	@Path("/getroles")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.GEO_LAYERS_MANAGEMENT })
 	public String getRoles(@Context HttpServletRequest req) throws JSONException, IOException {
 		IEngUserProfile profile = (IEngUserProfile) req.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
 
 		// get roles from database
 		List<Role> roles = null;
 		Role aRole = null;
-		ArrayList<JSONObject> roles_get = new ArrayList<JSONObject>();
+		ArrayList<JSONObject> roles_get = new ArrayList<>();
 		try {
 			roles = DAOFactory.getRoleDAO().loadAllRolesFiltereByTenant();
 		} catch (EMFUserError e) {
@@ -235,7 +243,9 @@ public class LayerCRUD {
 	@GET
 	@Path("/GetLayer")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
-	public String getLayer(@Context HttpServletRequest req) throws EMFUserError, UnsupportedEncodingException, JSONException {
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.GEO_LAYERS_MANAGEMENT })
+	public String getLayer(@Context HttpServletRequest req)
+			throws EMFUserError, UnsupportedEncodingException, JSONException {
 		Object id = null;
 		Integer layerId = null;
 
@@ -270,10 +280,11 @@ public class LayerCRUD {
 	@POST
 	@Path("/postitem")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.GEO_LAYERS_MANAGEMENT })
 	public String postItem(@Context HttpServletRequest req) throws EMFUserError, JSONException {
 
 		JSONObject requestBodyJSON = null;
-		ArrayList<JSONObject> roles_get = new ArrayList<JSONObject>();
+		ArrayList<JSONObject> roles_get = new ArrayList<>();
 		try {
 			requestBodyJSON = RestUtilities.readBodyAsJSONObject(req);
 		} catch (Exception e) {
@@ -312,6 +323,7 @@ public class LayerCRUD {
 	@POST
 	@Path("/deleteLayer")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.GEO_LAYERS_MANAGEMENT })
 	public String deleteLayer(@Context HttpServletRequest req) throws JSONException {
 		Object id = null;
 		Integer layerId = null;
@@ -340,6 +352,7 @@ public class LayerCRUD {
 
 	@POST
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.GEO_LAYERS_MANAGEMENT })
 	public String saveLayer(@Context HttpServletRequest req) throws JSONException, EMFUserError, IOException {
 		JSONObject requestBodyJSON = null;
 		Integer id;
@@ -375,6 +388,7 @@ public class LayerCRUD {
 	@Path("/addData")
 	@Consumes("multipart/form-data")
 	@Produces(MediaType.TEXT_PLAIN)
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.GEO_LAYERS_MANAGEMENT })
 	public String saveLayer2(MultiPartBody input, @Context HttpServletRequest req) {
 		JSONObject requestBodyJSON = null;
 		Integer id;
@@ -408,6 +422,7 @@ public class LayerCRUD {
 	@POST
 	@Path("/deleterole")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.GEO_LAYERS_MANAGEMENT })
 	public String deleteRole(@Context HttpServletRequest req) throws JSONException {
 		JSONObject requestBodyJSON = null;
 		Integer id_role = null;
@@ -437,6 +452,7 @@ public class LayerCRUD {
 	@Path("/updateData")
 	@Consumes("multipart/form-data")
 	@Produces(MediaType.TEXT_PLAIN)
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.GEO_LAYERS_MANAGEMENT })
 	public String modifyLayerwithFile(MultiPartBody input, @Context HttpServletRequest req) {
 		JSONObject requestBodyJSON = null;
 
@@ -469,7 +485,9 @@ public class LayerCRUD {
 
 	@PUT
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
-	public String modifyLayer(@Context HttpServletRequest req) throws EMFUserError, JSONException, UnsupportedEncodingException {
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.GEO_LAYERS_MANAGEMENT })
+	public String modifyLayer(@Context HttpServletRequest req)
+			throws EMFUserError, JSONException, UnsupportedEncodingException {
 		JSONObject requestBodyJSON = null;
 		try {
 			requestBodyJSON = RestUtilities.readBodyAsJSONObject(req);
@@ -498,16 +516,18 @@ public class LayerCRUD {
 	@Path("/getLayerProperties")
 	@Consumes("application/x-www-form-urlencoded")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.GEO_LAYERS_MANAGEMENT })
 	public String getLayerProperties(@Context HttpServletRequest req, MultivaluedMap<String, String> form) {
 
 		String s = "[]";
 		List<String> labels = form.get("labels");
-		List<GeoLayer> layers = new ArrayList<GeoLayer>();
+		List<GeoLayer> layers = new ArrayList<>();
 
 		for (int i = 0; i < labels.size(); i++) {
 			try {
 				ISbiGeoLayersDAO geoLayersDAO = DAOFactory.getSbiGeoLayerDao();
-				geoLayersDAO.setUserProfile((IEngUserProfile) req.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE));
+				geoLayersDAO.setUserProfile(
+						(IEngUserProfile) req.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE));
 				GeoLayer geoLayer = geoLayersDAO.loadLayerByLabel(labels.get(i));
 
 				if (geoLayer != null) {
@@ -565,6 +585,7 @@ public class LayerCRUD {
 	@POST
 	@Path("/getLayerFromList")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.GEO_LAYERS_MANAGEMENT })
 	public String getLayerFromList(@Context HttpServletRequest req)
 			throws JSONException, EMFUserError, JsonGenerationException, JsonMappingException, IOException {
 		ISbiGeoLayersDAO dao = DAOFactory.getSbiGeoLayerDao();

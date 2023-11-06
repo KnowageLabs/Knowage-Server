@@ -21,7 +21,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Vector;
+import java.util.Map;
 
 import org.apache.commons.validator.GenericValidator;
 import org.apache.log4j.Logger;
@@ -52,6 +52,7 @@ import it.eng.spagobi.analiticalmodel.functionalitytree.bo.LowFunctionality;
 import it.eng.spagobi.analiticalmodel.functionalitytree.dao.ILowFunctionalityDAO;
 import it.eng.spagobi.analiticalmodel.functionalitytree.service.TreeObjectsModule;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
+import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.ObjParuse;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.Parameter;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IBIObjectParameterDAO;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IObjParuseDAO;
@@ -91,7 +92,6 @@ public class DetailBIObjectModule extends AbstractHttpModule {
 	public static final String LOADING_PARS_DC = "loadingParsDC";
 	public static final String NAME_ATTR_LIST_COMMUNITIES = "community";
 
-	// private String actor = null;
 	private EMFErrorHandler errorHandler = null;
 	private IEngUserProfile profile;
 	private String initialPath = null;
@@ -111,12 +111,9 @@ public class DetailBIObjectModule extends AbstractHttpModule {
 	/**
 	 * Reads the operation asked by the user and calls the insertion, modify, detail and deletion methods.
 	 *
-	 * @param request
-	 *            The Source Bean containing all request parameters
-	 * @param response
-	 *            The Source Bean containing all response parameters
-	 * @throws Exception
-	 *             the exception
+	 * @param request  The Source Bean containing all request parameters
+	 * @param response The Source Bean containing all response parameters
+	 * @throws Exception the exception
 	 */
 	@Override
 	public void service(SourceBean request, SourceBean response) throws Exception {
@@ -138,7 +135,8 @@ public class DetailBIObjectModule extends AbstractHttpModule {
 		String modality = ChannelUtilities.getPreferenceValue(this.getRequestContainer(), BIObjectsModule.MODALITY, "");
 		initialPath = null;
 		if (modality != null && modality.equalsIgnoreCase(BIObjectsModule.FILTER_TREE)) {
-			initialPath = ChannelUtilities.getPreferenceValue(this.getRequestContainer(), TreeObjectsModule.PATH_SUBTREE, "");
+			initialPath = ChannelUtilities.getPreferenceValue(this.getRequestContainer(),
+					TreeObjectsModule.PATH_SUBTREE, "");
 		}
 		// GET MESSAGE FROM REQUEST
 		String message = (String) request.getAttribute("MESSAGEDET");
@@ -160,7 +158,6 @@ public class DetailBIObjectModule extends AbstractHttpModule {
 			} else if (message.trim().equalsIgnoreCase(ObjectsTreeConstants.DETAIL_INS)) {
 				modBIObject(request, ObjectsTreeConstants.DETAIL_INS, response);
 			} else if (message.trim().equalsIgnoreCase(ObjectsTreeConstants.DETAIL_DEL)) {
-				// delDetailObject(request, ObjectsTreeConstants.DETAIL_DEL, response);
 				delDetailObject(request, ObjectsTreeConstants.DETAIL_DEL, response, profile);
 			} else if (message.trim().equalsIgnoreCase(SpagoBIConstants.ERASE_VERSION)) {
 				eraseVersion(request, response);
@@ -207,26 +204,27 @@ public class DetailBIObjectModule extends AbstractHttpModule {
 		return id;
 	}
 
-	private void startParametersLookupHandler(SourceBean request, String message, SourceBean response) throws EMFUserError, SourceBeanException {
+	private void startParametersLookupHandler(SourceBean request, String message, SourceBean response)
+			throws EMFUserError, SourceBeanException {
 		setLoopbackContext(request, message);
 		response.setAttribute("parametersLookup", "true");
 	}
 
-	private void startLinksLookupHandler(SourceBean request, String message, SourceBean response) throws EMFUserError, SourceBeanException {
+	private void startLinksLookupHandler(SourceBean request, String message, SourceBean response)
+			throws EMFUserError, SourceBeanException {
 		modBIObject(request, ObjectsTreeConstants.DETAIL_MOD, response);
 		String idStr = (String) request.getAttribute("id");
 		session.setAttribute("SUBJECT_ID", idStr);
 		response.setAttribute("linksLookup", "true");
 	}
 
-	private void startDependenciesLookupHandler(SourceBean request, String message, SourceBean response) throws Exception {
-		// fillRequestContainer(request, errorHandler);
+	private void startDependenciesLookupHandler(SourceBean request, String message, SourceBean response)
+			throws Exception {
 		BIObject obj = null;
 		try {
 			obj = helper.recoverBIObjectDetails(message);
 		} catch (Exception e) {
 			logger.error("Exception", e);
-			// TODO manage exception
 		}
 
 		BIObjectParameter biObjPar = helper.recoverBIObjectParameterDetails(obj.getId());
@@ -240,7 +238,8 @@ public class DetailBIObjectModule extends AbstractHttpModule {
 			verifyForDependencies(biObjPar);
 			if (!errorHandler.isOKByCategory(EMFErrorCategory.VALIDATION_ERROR)) {
 				helper.fillResponse(initialPath);
-				prepareBIObjectDetailPage(request, response, obj, biObjPar, biObjPar.getId().toString(), ObjectsTreeConstants.DETAIL_MOD, false, false);
+				prepareBIObjectDetailPage(request, response, obj, biObjPar, biObjPar.getId().toString(),
+						ObjectsTreeConstants.DETAIL_MOD, false, false);
 				return;
 			}
 			IBIObjectParameterDAO dao = DAOFactory.getBIObjectParameterDAO();
@@ -260,7 +259,8 @@ public class DetailBIObjectModule extends AbstractHttpModule {
 		response.setAttribute("dependenciesLookup", "true");
 	}
 
-	private void lookupReturnBackHandler(SourceBean request, SourceBean response) throws SourceBeanException, EMFUserError {
+	private void lookupReturnBackHandler(SourceBean request, SourceBean response)
+			throws SourceBeanException, EMFUserError {
 
 		BIObject obj = (BIObject) session.getAttribute("LookupBIObject");
 		BIObjectParameter biObjPar = (BIObjectParameter) session.getAttribute("LookupBIObjectParameter");
@@ -273,7 +273,8 @@ public class DetailBIObjectModule extends AbstractHttpModule {
 		session.delAttribute("modality");
 		session.delAttribute("modalityBkp");
 		helper.fillResponse(initialPath);
-		prepareBIObjectDetailPage(request, response, obj, biObjPar, biObjPar.getId().toString(), modality, false, false);
+		prepareBIObjectDetailPage(request, response, obj, biObjPar, biObjPar.getId().toString(), modality, false,
+				false);
 
 	}
 
@@ -300,7 +301,8 @@ public class DetailBIObjectModule extends AbstractHttpModule {
 		delateLoopbackContext();
 
 		helper.fillResponse(initialPath);
-		prepareBIObjectDetailPage(request, response, obj, biObjPar, biObjPar.getId().toString(), modality, false, false);
+		prepareBIObjectDetailPage(request, response, obj, biObjPar, biObjPar.getId().toString(), modality, false,
+				false);
 		session.delAttribute("PAR_ID");
 	}
 
@@ -308,14 +310,12 @@ public class DetailBIObjectModule extends AbstractHttpModule {
 	 * Gets the detail of a BI object choosed by the user from the BI objects list. It reaches the key from the request and asks to the DB all detail BI objects
 	 * information, by calling the method <code>loadBIObjectForDetail</code>.
 	 *
-	 * @param request
-	 *            The request Source Bean
-	 * @param response
-	 *            The response Source Bean
+	 * @param request  The request Source Bean
+	 * @param response The response Source Bean
 	 * @throws Exception
 	 */
 	private void getDetailObject(SourceBean request, SourceBean response) throws Exception {
-		HashMap<String, String> logParam = new HashMap();
+		Map<String, String> logParam = new HashMap<>();
 		try {
 			String idStr = (String) request.getAttribute(ObjectsTreeConstants.OBJECT_ID);
 			Integer id = new Integer(idStr);
@@ -331,9 +331,10 @@ public class DetailBIObjectModule extends AbstractHttpModule {
 			String selectedObjParIdStr = "";
 			if (selectedObjParIdObj != null) {
 				int selectedObjParId = DetBIObjModHelper.findBIObjParId(selectedObjParIdObj);
-				selectedObjParIdStr = new Integer(selectedObjParId).toString();
+				selectedObjParIdStr = Integer.toString(selectedObjParId);
 			}
-			prepareBIObjectDetailPage(request, response, obj, null, selectedObjParIdStr, ObjectsTreeConstants.DETAIL_MOD, true, true);
+			prepareBIObjectDetailPage(request, response, obj, null, selectedObjParIdStr,
+					ObjectsTreeConstants.DETAIL_MOD, true, true);
 		} catch (Exception ex) {
 			logger.error("Cannot fill response container", ex);
 			AuditLogUtilities.updateAudit(getHttpRequest(), profile, "DOCUMENT.MODIFY", logParam, "ERR");
@@ -344,31 +345,29 @@ public class DetailBIObjectModule extends AbstractHttpModule {
 	/**
 	 * Controls if there are some BIObjectParameter objects that depend by the BIObjectParameter object at input, given its id.
 	 *
-	 * @param objParFatherId
-	 *            The id of the BIObjectParameter object to check
+	 * @param objParFatherId The id of the BIObjectParameter object to check
 	 * @throws EMFUserError
 	 */
 	public static EMFValidationError checkForDependancies(Integer objParFatherId) throws EMFUserError {
 		EMFValidationError error = null;
 		IObjParuseDAO objParuseDAO = DAOFactory.getObjParuseDAO();
-		List objParametersCorrelated = objParuseDAO.getDependencies(objParFatherId);
-		if (objParametersCorrelated != null && objParametersCorrelated.size() > 0) {
-			HashMap params = new HashMap();
+		List<String> objParametersCorrelated = objParuseDAO.getDependencies(objParFatherId);
+		if (objParametersCorrelated != null && !objParametersCorrelated.isEmpty()) {
+			Map<Object, Object> params = new HashMap<>();
 			params.put(AdmintoolsConstants.PAGE, DetailBIObjectModule.MODULE_PAGE);
-			Vector v = new Vector();
-			v.add(objParametersCorrelated.toString());
-			error = new EMFValidationError(EMFErrorSeverity.ERROR, 1049, v, params);
+			List<Object> l = new ArrayList<>();
+			l.add(objParametersCorrelated.toString());
+			error = new EMFValidationError(EMFErrorSeverity.ERROR, 1049, l, params);
 		}
 		return error;
 	}
 
 	/**
-	 * Before modifing a BIObjectParameter (not inserting), this method must be invoked in order to verify that the BIObjectParameter stored into db (to be
-	 * modified as per the BIObjectParameter in input) has dependencies associated; if it is the case, verifies that the associated Parameter was not changed.
-	 * In case of changed Parameter adds a EMFValidationError into the error handler.
+	 * Before modifing a BIObjectParameter (not inserting), this method must be invoked in order to verify that the BIObjectParameter stored into db (to be modified
+	 * as per the BIObjectParameter in input) has dependencies associated; if it is the case, verifies that the associated Parameter was not changed. In case of
+	 * changed Parameter adds a EMFValidationError into the error handler.
 	 *
-	 * @param objPar
-	 *            The BIObjectParameter to verify
+	 * @param objPar The BIObjectParameter to verify
 	 * @throws EMFUserError
 	 */
 	private void verifyForDependencies(BIObjectParameter objPar) throws EMFUserError {
@@ -379,16 +378,16 @@ public class DetailBIObjectModule extends AbstractHttpModule {
 		}
 		// Controls that, if the are some dependencies for the BIObjectParameter, the associated parameter was not changed
 		IObjParuseDAO objParuseDAO = DAOFactory.getObjParuseDAO();
-		List correlations = objParuseDAO.loadObjParuses(objParId);
-		if (correlations != null && correlations.size() > 0) {
+		List<ObjParuse> correlations = objParuseDAO.loadObjParuses(objParId);
+		if (correlations != null && !correlations.isEmpty()) {
 			IBIObjectParameterDAO objParDAO = DAOFactory.getBIObjectParameterDAO();
 			BIObjectParameter initialObjPar = objParDAO.loadForDetailByObjParId(objParId);
 			if (initialObjPar.getParID().intValue() != objPar.getParID().intValue()) {
 				// the ParameterUse was changed to manual input or the lov id was changed
-				HashMap params = new HashMap();
+				Map<Object, Object> params = new HashMap<>();
 				params.put(AdmintoolsConstants.PAGE, "DetailBIObjectPage");
-				Vector vector = new Vector();
-				EMFValidationError error = new EMFValidationError(EMFErrorSeverity.ERROR, 1061, vector, params);
+				List<Object> l = new ArrayList<>();
+				EMFValidationError error = new EMFValidationError(EMFErrorSeverity.ERROR, 1061, l, params);
 				errorHandler.addError(error);
 				return;
 			}
@@ -398,24 +397,24 @@ public class DetailBIObjectModule extends AbstractHttpModule {
 	/**
 	 * Controls that the BIObjectParameter url name is not in use by another BIObjectParameter
 	 *
-	 * @param objId
-	 *            The id of the document
-	 * @param biObjPar
-	 *            The BIObjectParameter to control before inserting/modifying
+	 * @param objId    The id of the document
+	 * @param biObjPar The BIObjectParameter to control before inserting/modifying
 	 */
 	private void urlNameControl(Integer objId, BIObjectParameter biObjPar) {
 		if (objId == null || objId.intValue() < 0 || biObjPar == null || biObjPar.getParameterUrlName() == null)
 			return;
 		try {
 			IBIObjectParameterDAO objParDAO = DAOFactory.getBIObjectParameterDAO();
-			List paruses = objParDAO.loadBIObjectParametersById(objId);
-			Iterator it = paruses.iterator();
+			List<BIObjectParameter> paruses = objParDAO.loadBIObjectParametersById(objId);
+			Iterator<BIObjectParameter> it = paruses.iterator();
 			while (it.hasNext()) {
-				BIObjectParameter aBIObjectParameter = (BIObjectParameter) it.next();
-				if (aBIObjectParameter.getParameterUrlName().equals(biObjPar.getParameterUrlName()) && !aBIObjectParameter.getId().equals(biObjPar.getId())) {
-					HashMap params = new HashMap();
+				BIObjectParameter aBIObjectParameter = it.next();
+				if (aBIObjectParameter.getParameterUrlName().equals(biObjPar.getParameterUrlName())
+						&& !aBIObjectParameter.getId().equals(biObjPar.getId())) {
+					Map<Object, Object> params = new HashMap<>();
 					params.put(AdmintoolsConstants.PAGE, DetailBIObjectModule.MODULE_PAGE);
-					EMFValidationError error = new EMFValidationError(EMFErrorSeverity.ERROR, 1046, new Vector(), params);
+					List<Object> l = new ArrayList<>();
+					EMFValidationError error = new EMFValidationError(EMFErrorSeverity.ERROR, 1046, l, params);
 					errorHandler.addError(error);
 				}
 			}
@@ -425,16 +424,17 @@ public class DetailBIObjectModule extends AbstractHttpModule {
 
 	}
 
-	private BIObjectParameter reloadBIObjectParameter(Integer objId, String objParUrlName) throws EMFInternalError, EMFUserError {
+	private BIObjectParameter reloadBIObjectParameter(Integer objId, String objParUrlName) throws EMFInternalError {
 		if (objId == null || objId.intValue() < 0 || objParUrlName == null || objParUrlName.trim().equals(""))
-			throw new EMFInternalError(EMFErrorSeverity.ERROR, "Invalid input data for method reloadBIObjectParameter in DetailBIObjectModule");
+			throw new EMFInternalError(EMFErrorSeverity.ERROR,
+					"Invalid input data for method reloadBIObjectParameter in DetailBIObjectModule");
 		BIObjectParameter objPar = null;
 		try {
 			IBIObjectParameterDAO objParDAO = DAOFactory.getBIObjectParameterDAO();
-			List paruses = objParDAO.loadBIObjectParametersById(objId);
-			Iterator it = paruses.iterator();
+			List<BIObjectParameter> paruses = objParDAO.loadBIObjectParametersById(objId);
+			Iterator<BIObjectParameter> it = paruses.iterator();
 			while (it.hasNext()) {
-				BIObjectParameter aBIObjectParameter = (BIObjectParameter) it.next();
+				BIObjectParameter aBIObjectParameter = it.next();
 				if (aBIObjectParameter.getParameterUrlName().equals(objParUrlName)) {
 					objPar = aBIObjectParameter;
 					break;
@@ -451,7 +451,8 @@ public class DetailBIObjectModule extends AbstractHttpModule {
 	}
 
 	private BIObject manageCommunities(BIObject obj, SourceBean request) throws SourceBeanException, EMFUserError {
-		List<SbiCommunity> communities = DAOFactory.getCommunityDAO().loadSbiCommunityByUser(((UserProfile) profile).getUserId().toString());
+		List<SbiCommunity> communities = DAOFactory.getCommunityDAO()
+				.loadSbiCommunityByUser(((UserProfile) profile).getUserId().toString());
 		ILowFunctionalityDAO functDao = DAOFactory.getLowFunctionalityDAO();
 		String codeFcomm = (String) request.getAttribute(NAME_ATTR_LIST_COMMUNITIES);
 		if (codeFcomm != null && !codeFcomm.equals("")) {
@@ -462,7 +463,7 @@ public class DetailBIObjectModule extends AbstractHttpModule {
 					if (codeFcomm.equals(functCode)) {
 						LowFunctionality funct = functDao.loadLowFunctionalityByCode(functCode, false);
 						Integer functId = funct.getId();
-						List functIds = obj.getFunctionalities();
+						List<Integer> functIds = obj.getFunctionalities();
 						functIds.add(functId);
 					}
 				}
@@ -472,39 +473,34 @@ public class DetailBIObjectModule extends AbstractHttpModule {
 	}
 
 	/**
-	 * Fills the response SourceBean with the elements that will be displayed in the BIObject detail page: the BIObject itself and the required
-	 * BIObjectParameter.
+	 * Fills the response SourceBean with the elements that will be displayed in the BIObject detail page: the BIObject itself and the required BIObjectParameter.
 	 *
-	 * @param response
-	 *            The response SourceBean to be filled
-	 * @param obj
-	 *            The BIObject to be displayed
-	 * @param biObjPar
-	 *            The BIObjectParameter to be displayed: if it is null the selectedObjParIdStr will be considered.
-	 * @param selectedObjParIdStr
-	 *            The id of the BIObjectParameter to be displayed. If it is blank or null the first BIObjectParameter will be diplayed but in case the BIObject
-	 *            has no BIObjectParameter a new empty BIObjectParameter will be displayed. If it is "-1" a new empty BIObjectParameter will be displayed.
-	 * @param detail_mod
-	 *            The modality
-	 * @param initialBIObject
-	 *            Boolean: if true the BIObject to be visualized is the initial BIObject and a clone will be put in session.
-	 * @param initialBIObjectParameter
-	 *            Boolean: if true the BIObjectParameter to be visualized is the initial BIObjectParameter and a clone will be put in session.
+	 * @param response                 The response SourceBean to be filled
+	 * @param obj                      The BIObject to be displayed
+	 * @param biObjPar                 The BIObjectParameter to be displayed: if it is null the selectedObjParIdStr will be considered.
+	 * @param selectedObjParIdStr      The id of the BIObjectParameter to be displayed. If it is blank or null the first BIObjectParameter will be diplayed but in
+	 *                                 case the BIObject has no BIObjectParameter a new empty BIObjectParameter will be displayed. If it is "-1" a new empty
+	 *                                 BIObjectParameter will be displayed.
+	 * @param detail_mod               The modality
+	 * @param initialBIObject          Boolean: if true the BIObject to be visualized is the initial BIObject and a clone will be put in session.
+	 * @param initialBIObjectParameter Boolean: if true the BIObjectParameter to be visualized is the initial BIObjectParameter and a clone will be put in session.
 	 * @throws SourceBeanException
 	 * @throws EMFUserError
 	 */
-	private void prepareBIObjectDetailPage(SourceBean request, SourceBean response, BIObject obj, BIObjectParameter biObjPar, String selectedObjParIdStr,
-			String detail_mod, boolean initialBIObject, boolean initialBIObjectParameter) throws SourceBeanException, EMFUserError {
+	private void prepareBIObjectDetailPage(SourceBean request, SourceBean response, BIObject obj,
+			BIObjectParameter biObjPar, String selectedObjParIdStr, String detail_mod, boolean initialBIObject,
+			boolean initialBIObjectParameter) throws SourceBeanException, EMFUserError {
 
-		List biObjParams = DAOFactory.getBIObjectParameterDAO().loadBIObjectParametersById(obj.getId());
+		List<BIObjectParameter> biObjParams = DAOFactory.getBIObjectParameterDAO()
+				.loadBIObjectParametersById(obj.getId());
 		obj.setDrivers(biObjParams);
 		if (biObjPar == null) {
 			if (selectedObjParIdStr == null || "".equals(selectedObjParIdStr)) {
-				if (biObjParams == null || biObjParams.size() == 0) {
+				if (biObjParams == null || biObjParams.isEmpty()) {
 					biObjPar = DetBIObjModHelper.createNewBIObjectParameter(obj.getId());
 					selectedObjParIdStr = "-1";
 				} else {
-					biObjPar = (BIObjectParameter) biObjParams.get(0);
+					biObjPar = biObjParams.get(0);
 					selectedObjParIdStr = biObjPar.getId().toString();
 				}
 			} else if ("-1".equals(selectedObjParIdStr)) {
@@ -512,17 +508,18 @@ public class DetailBIObjectModule extends AbstractHttpModule {
 				selectedObjParIdStr = "-1";
 			} else {
 				int selectedObjParId = Integer.parseInt(selectedObjParIdStr);
-				Iterator it = biObjParams.iterator();
+				Iterator<BIObjectParameter> it = biObjParams.iterator();
 				while (it.hasNext()) {
-					biObjPar = (BIObjectParameter) it.next();
-					if (biObjPar.getId().equals(new Integer(selectedObjParId)))
+					biObjPar = it.next();
+					if (biObjPar.getId().equals(selectedObjParId))
 						break;
 				}
 			}
 		}
 
 		// if going on Drivers List keep track of current infos
-		if (biObjPar != null && request.getAttribute("toDriversList") != null && request.getAttribute("toDriversList").equals("true")) {
+		if (biObjPar != null && request.getAttribute("toDriversList") != null
+				&& request.getAttribute("toDriversList").equals("true")) {
 			getTemporaryParDataFromRequestDetailCase(request, biObjPar);
 		}
 
@@ -531,7 +528,6 @@ public class DetailBIObjectModule extends AbstractHttpModule {
 		response.setAttribute(NAME_ATTR_OBJECT_PAR, biObjPar);
 
 		response.setAttribute(ObjectsTreeConstants.MODALITY, detail_mod);
-		// prepareCommunities(response);
 
 		if (initialBIObject) {
 			BIObject objClone = DetBIObjModHelper.clone(obj);
@@ -547,11 +543,14 @@ public class DetailBIObjectModule extends AbstractHttpModule {
 	void getTemporaryParDataFromRequestDetailCase(SourceBean request, BIObjectParameter biObjPar) {
 		logger.debug("IN");
 
-		String parUrlName = request.getAttribute("parurl_nm") != null ? request.getAttribute("parurl_nm").toString() : null;
+		String parUrlName = request.getAttribute("parurl_nm") != null ? request.getAttribute("parurl_nm").toString()
+				: null;
 		if (parUrlName != null) {
 			biObjPar.setParameterUrlName(parUrlName);
 		}
-		String objParLabel = request.getAttribute("objParLabel") != null ? request.getAttribute("objParLabel").toString() : null;
+		String objParLabel = request.getAttribute("objParLabel") != null
+				? request.getAttribute("objParLabel").toString()
+				: null;
 		if (objParLabel != null) {
 			biObjPar.setLabel(objParLabel);
 		}
@@ -581,58 +580,19 @@ public class DetailBIObjectModule extends AbstractHttpModule {
 	}
 
 	/**
-	 * Deletes a BI Object choosed by user. If the folder id is specified, it deletes only the instance of the object in that folder. If the folder id is not
-	 * specified: if the user is an administrator the object is deleted from all the folders, else it is deleted from the folder on which the user is a
-	 * developer.
-	 *
-	 * @param request
-	 *            The request SourceBean
-	 * @param mod
-	 *            A request string used to differentiate delete operation
-	 * @param response
-	 *            The response SourceBean
-	 * @throws EMFUserError
-	 *             If an Exception occurs
-	 * @throws SourceBeanException
-	 *             If a SourceBean Exception occurs
-	 * @deprecated
-	 */
-	/*
-	 * private void delDetailObject(SourceBean request, String mod, SourceBean response) throws EMFUserError, SourceBeanException { BIObject obj = null; try {
-	 * String idObjStr = (String) request.getAttribute(ObjectsTreeConstants.OBJECT_ID); Integer idObj = new Integer(idObjStr); IBIObjectDAO objdao = biobjDAO;
-	 * obj = objdao.loadBIObjectById(idObj); String idFunctStr = (String) request.getAttribute(ObjectsTreeConstants.FUNCT_ID); if (idFunctStr != null) { Integer
-	 * idFunct = new Integer(idFunctStr); if (SpagoBIConstants.ADMIN_ACTOR.equals(actor)) { // deletes the document from the specified folder, no matter the
-	 * permissions objdao.eraseBIObject(obj, idFunct); } else { // deletes the document from the specified folder if the profile is a developer for that folder
-	 * if (ObjectsAccessVerifier.canDev(obj.getStateCode(), idFunct, profile)) { objdao.eraseBIObject(obj, idFunct); } } } else { if
-	 * (SpagoBIConstants.ADMIN_ACTOR.equals(actor)) { if (initialPath != null && !initialPath.trim().equals("")) { // in case of local administrator, deletes
-	 * the document in the folders where he can admin List funcsId = obj.getFunctionalities(); for (Iterator it = funcsId.iterator(); it.hasNext(); ) { Integer
-	 * idFunct = (Integer) it.next(); LowFunctionality folder = DAOFactory.getLowFunctionalityDAO().loadLowFunctionalityByID(idFunct, false); String folderPath
-	 * = folder.getPath(); if (folderPath.equalsIgnoreCase(initialPath) || folderPath.startsWith(initialPath + "/")) { objdao.eraseBIObject(obj, idFunct); } } }
-	 * else { // deletes the document from all the folders, no matter the permissions objdao.eraseBIObject(obj, null); } } else { // deletes the document from
-	 * all the folders on which the profile is a developer List funcsId = obj.getFunctionalities(); for (Iterator it = funcsId.iterator(); it.hasNext(); ) {
-	 * Integer idFunct = (Integer) it.next(); if (ObjectsAccessVerifier.canDev(obj.getStateCode(), idFunct, profile)) { objdao.eraseBIObject(obj, idFunct); } }
-	 * } } } catch (Exception ex) { logger.error("Cannot erase object", ex ); throw new EMFUserError(EMFErrorSeverity.ERROR, 100); }
-	 * response.setAttribute("loopback", "true"); response.setAttribute(SpagoBIConstants.ACTOR, actor); }
-	 */
-	/**
 	 * Deletes a BI Object chosen by user. If the folder id is specified, it deletes only the instance of the object in that folder. If the folder id is not
-	 * specified: if the user is an administrator the object is deleted from all the folders, else it is deleted from the folder on which the user is a
-	 * developer.
+	 * specified: if the user is an administrator the object is deleted from all the folders, else it is deleted from the folder on which the user is a developer.
 	 *
-	 * @param request
-	 *            The request SourceBean
-	 * @param mod
-	 *            A request string used to differentiate delete operation
-	 * @param response
-	 *            The response SourceBean
-	 * @throws EMFUserError
-	 *             If an Exception occurs
-	 * @throws SourceBeanException
-	 *             If a SourceBean Exception occurs
+	 * @param request  The request SourceBean
+	 * @param mod      A request string used to differentiate delete operation
+	 * @param response The response SourceBean
+	 * @throws EMFUserError        If an Exception occurs
+	 * @throws SourceBeanException If a SourceBean Exception occurs
 	 */
-	private void delDetailObject(SourceBean request, String mod, SourceBean response, IEngUserProfile profile) throws EMFUserError, SourceBeanException {
+	private void delDetailObject(SourceBean request, String mod, SourceBean response, IEngUserProfile profile)
+			throws EMFUserError, SourceBeanException {
 		BIObject obj = null;
-		HashMap<String, String> logParam = new HashMap();
+		Map<String, String> logParam = new HashMap<>();
 
 		try {
 			String idObjStr = (String) request.getAttribute(ObjectsTreeConstants.OBJECT_ID);
@@ -661,10 +621,11 @@ public class DetailBIObjectModule extends AbstractHttpModule {
 				if (profile.isAbleToExecuteAction(CommunityFunctionalityConstants.DOCUMENT_MANAGEMENT_ADMIN)) {
 					if (initialPath != null && !initialPath.trim().equals("")) {
 						// in case of local administrator, deletes the document in the folders where he can admin
-						List funcsId = obj.getFunctionalities();
-						for (Iterator it = funcsId.iterator(); it.hasNext();) {
-							Integer idFunct = (Integer) it.next();
-							LowFunctionality folder = DAOFactory.getLowFunctionalityDAO().loadLowFunctionalityByID(idFunct, false);
+						List<Integer> funcsId = obj.getFunctionalities();
+						for (Iterator<Integer> it = funcsId.iterator(); it.hasNext();) {
+							Integer idFunct = it.next();
+							LowFunctionality folder = DAOFactory.getLowFunctionalityDAO()
+									.loadLowFunctionalityByID(idFunct, false);
 							String folderPath = folder.getPath();
 							if (folderPath.equalsIgnoreCase(initialPath) || folderPath.startsWith(initialPath + "/")) {
 								objdao.eraseBIObject(obj, idFunct);
@@ -676,9 +637,9 @@ public class DetailBIObjectModule extends AbstractHttpModule {
 					}
 				} else {
 					// deletes the document from all the folders on which the profile is a developer
-					List funcsId = obj.getFunctionalities();
-					for (Iterator it = funcsId.iterator(); it.hasNext();) {
-						Integer idFunct = (Integer) it.next();
+					List<Integer> funcsId = obj.getFunctionalities();
+					for (Iterator<Integer> it = funcsId.iterator(); it.hasNext();) {
+						Integer idFunct = it.next();
 						if (ObjectsAccessVerifier.canDev(obj.getStateCode(), idFunct, profile)) {
 							objdao.eraseBIObject(obj, idFunct);
 						}
@@ -708,36 +669,34 @@ public class DetailBIObjectModule extends AbstractHttpModule {
 	/**
 	 * Instantiates a new <code>BIObject<code> object when a new BI object insertion is required, in order to prepare the page for the insertion.
 	 *
-	 * @param response
-	 *            The response SourceBean
-	 * @throws EMFUserError
-	 *             If an Exception occurred
+	 * @param response The response SourceBean
+	 * @throws EMFUserError If an Exception occurred
 	 */
 	private void newBIObject(SourceBean request, SourceBean response) throws EMFUserError {
 		try {
 
 			response.setAttribute(ObjectsTreeConstants.MODALITY, ObjectsTreeConstants.DETAIL_INS);
 			BIObject obj = new BIObject();
-			obj.setId(new Integer(0));
+			obj.setId(0);
 			obj.setEngine(null);
 			obj.setDataSourceId(null);
 			obj.setDataSetId(null);
 			obj.setDescription("");
 			obj.setLabel("");
 			obj.setName("");
-			obj.setEncrypt(new Integer(0));
-			obj.setVisible(new Integer(1));
+			obj.setEncrypt(0);
+			obj.setVisible(1);
 			obj.setRelName("");
 			obj.setStateID(null);
 			obj.setStateCode("");
 			obj.setBiObjectTypeID(null);
 			obj.setBiObjectTypeCode("");
-			obj.setRefreshSeconds(new Integer(0));
+			obj.setRefreshSeconds(0);
 			obj.setLockedByUser(null);
 			Domain state = DAOFactory.getDomainDAO().loadDomainByCodeAndValue("STATE", "DEV");
 			obj.setStateCode(state.getValueCd());
 			obj.setStateID(state.getValueId());
-			List functionalitites = new ArrayList();
+			List<Integer> functionalitites = new ArrayList<>();
 
 			obj.setFunctionalities(functionalitites);
 
@@ -751,12 +710,9 @@ public class DetailBIObjectModule extends AbstractHttpModule {
 	/**
 	 * Erase version.
 	 *
-	 * @param request
-	 *            the request
-	 * @param response
-	 *            the response
-	 * @throws EMFUserError
-	 *             the EMF user error
+	 * @param request  the request
+	 * @param response the response
+	 * @throws EMFUserError the EMF user error
 	 */
 	public void eraseVersion(SourceBean request, SourceBean response) throws EMFUserError {
 		// get object' id and name version
@@ -779,10 +735,8 @@ public class DetailBIObjectModule extends AbstractHttpModule {
 	/**
 	 * Clean the SessionContainer from no more useful objects.
 	 *
-	 * @param request
-	 *            The request SourceBean
-	 * @param response
-	 *            The response SourceBean
+	 * @param request  The request SourceBean
+	 * @param response The response SourceBean
 	 * @throws SourceBeanException
 	 */
 	private void exitFromDetail(SourceBean request, SourceBean response) throws SourceBeanException {
@@ -794,22 +748,18 @@ public class DetailBIObjectModule extends AbstractHttpModule {
 
 	/**
 	 * Inserts/Modifies the detail of a BI Object according to the user request. When a BI Object is modified, the <code>modifyBIObject</code> method is called;
-	 * when a new BI Object is added, the <code>insertBIObject</code>method is called. These two cases are differentiated by the <code>mod</code> String input
-	 * value .
+	 * when a new BI Object is added, the <code>insertBIObject</code>method is called. These two cases are differentiated by the <code>mod</code> String input value
+	 * .
 	 *
-	 * @param request
-	 *            The request information contained in a SourceBean Object
-	 * @param mod
-	 *            A request string used to differentiate insert/modify operations
-	 * @param response
-	 *            The response SourceBean
-	 * @throws EMFUserError
-	 *             If an exception occurs
-	 * @throws SourceBeanException
-	 *             If a SourceBean exception occurs
+	 * @param request  The request information contained in a SourceBean Object
+	 * @param mod      A request string used to differentiate insert/modify operations
+	 * @param response The response SourceBean
+	 * @throws EMFUserError        If an exception occurs
+	 * @throws SourceBeanException If a SourceBean exception occurs
 	 */
-	private void modBIObject(SourceBean request, String mod, SourceBean response) throws EMFUserError, SourceBeanException {
-		HashMap<String, String> logParam = new HashMap();
+	private void modBIObject(SourceBean request, String mod, SourceBean response)
+			throws EMFUserError, SourceBeanException {
+		Map<String, String> logParam = new HashMap<>();
 		try {
 
 			// build a biobject using data in request
@@ -853,9 +803,10 @@ public class DetailBIObjectModule extends AbstractHttpModule {
 						objTemp = DAOFactory.getObjTemplateDAO().getBIObjectActiveTemplate(obj.getId());
 						if (objTemp.getId().compareTo(idCurTempVer) != 0) {
 							flgReloadTemp = true;
-							List lstTemplatesObj = DAOFactory.getObjTemplateDAO().getBIObjectTemplateList(obj.getId());
+							List<ObjTemplate> lstTemplatesObj = DAOFactory.getObjTemplateDAO()
+									.getBIObjectTemplateList(obj.getId());
 							for (int i = 0; i < lstTemplatesObj.size(); i++) {
-								objTemp = (ObjTemplate) lstTemplatesObj.get(i);
+								objTemp = lstTemplatesObj.get(i);
 								if (objTemp.getId().compareTo(idCurTempVer) == 0)
 									break;
 							}
@@ -870,19 +821,14 @@ public class DetailBIObjectModule extends AbstractHttpModule {
 				helper.fillResponse(initialPath);
 				prepareBIObjectDetailPage(request, response, obj, null, selectedObjParIdStr, mod, false, false);
 
-				AuditLogUtilities.updateAudit(getHttpRequest(), profile, "DOCUMENT.MODIFY_VALIDATION_ERROR", logParam, "ERR");
+				AuditLogUtilities.updateAudit(getHttpRequest(), profile, "DOCUMENT.MODIFY_VALIDATION_ERROR", logParam,
+						"ERR");
 				return;
 			}
 			// manage communities
 			manageCommunities(obj, request);
 			// based on the modality do different tasks
 			if (mod.equalsIgnoreCase(SpagoBIConstants.DETAIL_INS)) {
-				// if data source value is not specified, it gets the default data source associated at the engine
-				// if (obj.getDataSourceId() == null){
-				// Engine engine = obj.getEngine();
-				// Integer dsId = engine.getDataSourceId();
-				// obj.setDataSourceId(dsId);
-				// }
 				// inserts into DB the new BIObject
 				if (objTemp == null) {
 					biobjDAO.insertBIObject(obj, loadParsDCClicked);
@@ -900,7 +846,7 @@ public class DetailBIObjectModule extends AbstractHttpModule {
 
 					// it is requested to view another BIObjectParameter than the one visible
 					int selectedObjParId = helper.findBIObjParId(selectedObjParIdObj);
-					selectedObjParIdStr = new Integer(selectedObjParId).toString();
+					selectedObjParIdStr = Integer.toString(selectedObjParId);
 					String saveBIObjectParameter = (String) request.getAttribute("saveBIObjectParameter");
 					if (saveBIObjectParameter != null && saveBIObjectParameter.equalsIgnoreCase("yes")) {
 						// it is requested to save the visible BIObjectParameter
@@ -914,10 +860,11 @@ public class DetailBIObjectModule extends AbstractHttpModule {
 						// if there are some validation errors into the errorHandler does not write into DB
 						if (!errorHandler.isOKByCategory(EMFErrorCategory.VALIDATION_ERROR)) {
 							helper.fillResponse(initialPath);
-							prepareBIObjectDetailPage(request, response, obj, biObjPar, biObjPar.getId().toString(), ObjectsTreeConstants.DETAIL_MOD, false,
-									false);
+							prepareBIObjectDetailPage(request, response, obj, biObjPar, biObjPar.getId().toString(),
+									ObjectsTreeConstants.DETAIL_MOD, false, false);
 
-							AuditLogUtilities.updateAudit(getHttpRequest(), profile, "DOCUMENT.MODIFY_DETAIL_MOD", logParam, "OK");
+							AuditLogUtilities.updateAudit(getHttpRequest(), profile, "DOCUMENT.MODIFY_DETAIL_MOD",
+									logParam, "OK");
 							return;
 						}
 						IBIObjectParameterDAO objParDAO = DAOFactory.getBIObjectParameterDAO();
@@ -929,18 +876,22 @@ public class DetailBIObjectModule extends AbstractHttpModule {
 							// it is requested to modify a BIObjectParameter
 							objParDAO.modifyBIObjectParameter(biObjPar);
 						}
-						prepareBIObjectDetailPage(request, response, obj, null, selectedObjParIdStr, ObjectsTreeConstants.DETAIL_MOD, false, true);
+						prepareBIObjectDetailPage(request, response, obj, null, selectedObjParIdStr,
+								ObjectsTreeConstants.DETAIL_MOD, false, true);
 
 						logParam.put("Document_name", obj.getName());
-						AuditLogUtilities.updateAudit(getHttpRequest(), profile, "DOCUMENT.MODIFY_DETAIL_MOD", logParam, "OK");
+						AuditLogUtilities.updateAudit(getHttpRequest(), profile, "DOCUMENT.MODIFY_DETAIL_MOD", logParam,
+								"OK");
 						return;
 					} else {
 						helper.fillResponse(initialPath);
-						prepareBIObjectDetailPage(request, response, obj, null, selectedObjParIdStr, ObjectsTreeConstants.DETAIL_MOD, false, true);
+						prepareBIObjectDetailPage(request, response, obj, null, selectedObjParIdStr,
+								ObjectsTreeConstants.DETAIL_MOD, false, true);
 						// exits without writing into DB
 
 						logParam.put("Document_name", obj.getName());
-						AuditLogUtilities.updateAudit(getHttpRequest(), profile, "DOCUMENT.MODIFY_DETAIL_MOD", logParam, "OK");
+						AuditLogUtilities.updateAudit(getHttpRequest(), profile, "DOCUMENT.MODIFY_DETAIL_MOD", logParam,
+								"OK");
 						return;
 					}
 
@@ -948,29 +899,34 @@ public class DetailBIObjectModule extends AbstractHttpModule {
 
 					// it is requested to delete the visible BIObjectParameter
 					int objParId = helper.findBIObjParId(deleteBIObjectParameter);
-					Integer objParIdInt = new Integer(objParId);
+					Integer objParIdInt = objParId;
 					EMFValidationError error = checkForDependancies(objParIdInt);
 					if (error != null) {
 						errorHandler.addError(error);
-						AuditLogUtilities.updateAudit(getHttpRequest(), profile, "DOCUMENT.MODIFY_DETAIL_MOD", logParam, "KO");
+						AuditLogUtilities.updateAudit(getHttpRequest(), profile, "DOCUMENT.MODIFY_DETAIL_MOD", logParam,
+								"KO");
 					}
 					helper.fillResponse(initialPath);
 					// if there are some validation errors into the errorHandler does not write into DB
 					if (!errorHandler.isOKByCategory(EMFErrorCategory.VALIDATION_ERROR)) {
 						helper.fillResponse(initialPath);
-						prepareBIObjectDetailPage(request, response, obj, biObjPar, biObjPar.getId().toString(), ObjectsTreeConstants.DETAIL_MOD, false, false);
-						AuditLogUtilities.updateAudit(getHttpRequest(), profile, "DOCUMENT.MODIFY_DETAIL_MOD", logParam, "KO");
+						prepareBIObjectDetailPage(request, response, obj, biObjPar, biObjPar.getId().toString(),
+								ObjectsTreeConstants.DETAIL_MOD, false, false);
+						AuditLogUtilities.updateAudit(getHttpRequest(), profile, "DOCUMENT.MODIFY_DETAIL_MOD", logParam,
+								"KO");
 						return;
 					}
 					// deletes the BIObjectParameter
 					IBIObjectParameterDAO objParDAO = DAOFactory.getBIObjectParameterDAO();
-					BIObjectParameter objPar = objParDAO.loadForDetailByObjParId(new Integer(objParId));
+					BIObjectParameter objPar = objParDAO.loadForDetailByObjParId(objParId);
 					objParDAO.eraseBIObjectParameter(objPar, true);
 					selectedObjParIdStr = "";
-					prepareBIObjectDetailPage(request, response, obj, null, selectedObjParIdStr, ObjectsTreeConstants.DETAIL_MOD, false, true);
+					prepareBIObjectDetailPage(request, response, obj, null, selectedObjParIdStr,
+							ObjectsTreeConstants.DETAIL_MOD, false, true);
 
 					logParam.put("Document_name", obj.getName());
-					AuditLogUtilities.updateAudit(getHttpRequest(), profile, "DOCUMENT.MODIFY_DETAIL_MOD", logParam, "OK");
+					AuditLogUtilities.updateAudit(getHttpRequest(), profile, "DOCUMENT.MODIFY_DETAIL_MOD", logParam,
+							"OK");
 					return;
 
 				} else {
@@ -979,9 +935,11 @@ public class DetailBIObjectModule extends AbstractHttpModule {
 					biObjPar = helper.recoverBIObjectParameterDetails(obj.getId());
 					// If a new BIParameter was visualized and no fields were inserted, the BIParameter is not validated and saved
 					boolean biParameterToBeSaved = true;
-					if ((obj.getBiObjectTypeCode().equalsIgnoreCase(SpagoBIConstants.DOCUMENT_COMPOSITE_TYPE) && flgReloadTemp)
+					if ((obj.getBiObjectTypeCode().equalsIgnoreCase(SpagoBIConstants.DOCUMENT_COMPOSITE_TYPE)
+							&& flgReloadTemp)
 							|| (GenericValidator.isBlankOrNull(biObjPar.getLabel()) && biObjPar.getId().intValue() == -1
-									&& GenericValidator.isBlankOrNull(biObjPar.getParameterUrlName()) && biObjPar.getParID().intValue() == -1))
+									&& GenericValidator.isBlankOrNull(biObjPar.getParameterUrlName())
+									&& biObjPar.getParID().intValue() == -1))
 						biParameterToBeSaved = false;
 					if (biParameterToBeSaved) {
 						ValidationCoordinator.validate("PAGE", "BIObjectParameterValidation", this);
@@ -994,10 +952,12 @@ public class DetailBIObjectModule extends AbstractHttpModule {
 					// if there are some validation errors into the errorHandler does not write into DB
 					if (!errorHandler.isOKByCategory(EMFErrorCategory.VALIDATION_ERROR)) {
 						helper.fillResponse(initialPath);
-						prepareBIObjectDetailPage(request, response, obj, biObjPar, biObjPar.getId().toString(), ObjectsTreeConstants.DETAIL_MOD, false, false);
+						prepareBIObjectDetailPage(request, response, obj, biObjPar, biObjPar.getId().toString(),
+								ObjectsTreeConstants.DETAIL_MOD, false, false);
 
 						logParam.put("Document_name", obj.getName());
-						AuditLogUtilities.updateAudit(getHttpRequest(), profile, "DOCUMENT.MODIFY_DETAIL_MOD", logParam, "OK");
+						AuditLogUtilities.updateAudit(getHttpRequest(), profile, "DOCUMENT.MODIFY_DETAIL_MOD", logParam,
+								"OK");
 						return;
 					}
 
@@ -1035,7 +995,6 @@ public class DetailBIObjectModule extends AbstractHttpModule {
 			obj = biobjDAO.loadBIObjectForDetail(obj.getId());
 
 			// Save relation between dataset and document (1:1) (for Data Lineage/Impact Analysis)
-			// DAOFactory.getSbiObjDsDAO().insertUniqueRelationFromObj(obj);
 			DAOFactory.getSbiObjDsDAO().insertRelationsFromObj(obj);
 
 			// based on the kind of back put different data into response

@@ -9,6 +9,7 @@ import java.util.Set;
 import org.apache.log4j.Logger;
 
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
+import it.eng.spagobi.commons.bo.Domain;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.engines.config.bo.Engine;
 
@@ -17,7 +18,8 @@ public class ProductProfiler {
 	private static Logger logger = Logger.getLogger(ProductProfiler.class);
 
 	private static boolean isCommunity;
-	private static Class licenseManager, productProfilerEE;
+	private static Class<?> licenseManager;
+	private static Class<?> productProfilerEE;
 
 	static {
 		try {
@@ -36,14 +38,15 @@ public class ProductProfiler {
 		}
 	}
 
-	public static List filterDocumentTypesByProduct(List types) {
+	public static List<Domain> filterDocumentTypesByProduct(List<Domain> types) {
 		if (isCommunity) {
 			return types;
 		} else {
-			List filteredTypes = new ArrayList();
+			List<Domain> filteredTypes = new ArrayList<>();
 			try {
-				Method filterDocumentTypesByProductMethod = productProfilerEE.getMethod("filterDocumentTypesByProduct", List.class);
-				filteredTypes = (List) filterDocumentTypesByProductMethod.invoke(productProfilerEE, types);
+				Method filterDocumentTypesByProductMethod = productProfilerEE.getMethod("filterDocumentTypesByProduct",
+						List.class);
+				filteredTypes = (List<Domain>) filterDocumentTypesByProductMethod.invoke(productProfilerEE, types);
 			} catch (Exception e) {
 				logger.error("Error while filtering document types by product: ", e);
 			}
@@ -87,7 +90,8 @@ public class ProductProfiler {
 		} else {
 			boolean toReturn = false;
 			try {
-				Method canCreateDatasetMethod = productProfilerEE.getMethod("canCreateDataset", String.class, UserProfile.class);
+				Method canCreateDatasetMethod = productProfilerEE.getMethod("canCreateDataset", String.class,
+						UserProfile.class);
 				toReturn = (boolean) canCreateDatasetMethod.invoke(productProfilerEE, type, profile);
 			} catch (Exception e) {
 				logger.error("Error while filtering datasets by product: ", e);
@@ -102,8 +106,10 @@ public class ProductProfiler {
 		} else {
 			Set<String> filteredAuthorizations = new HashSet<>();
 			try {
-				Method filterAuthorizationsByProductMethod = productProfilerEE.getMethod("filterAuthorizationsByProduct", List.class);
-				filteredAuthorizations = (Set<String>) filterAuthorizationsByProductMethod.invoke(productProfilerEE, authorizations);
+				Method filterAuthorizationsByProductMethod = productProfilerEE
+						.getMethod("filterAuthorizationsByProduct", List.class);
+				filteredAuthorizations = (Set<String>) filterAuthorizationsByProductMethod.invoke(productProfilerEE,
+						authorizations);
 			} catch (Exception e) {
 				logger.error("Error while filtering authorizations by product: ", e);
 			}

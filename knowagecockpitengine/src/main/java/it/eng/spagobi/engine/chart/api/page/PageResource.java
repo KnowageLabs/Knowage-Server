@@ -20,6 +20,8 @@ package it.eng.spagobi.engine.chart.api.page;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
 import java.io.UnsupportedEncodingException;
+import java.util.Base64;
+import java.util.Base64.Encoder;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -35,7 +37,6 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
-import org.apache.axis.encoding.Base64;
 import org.apache.http.client.utils.URIBuilder;
 import org.apache.log4j.Logger;
 import org.jboss.resteasy.plugins.providers.html.View;
@@ -92,6 +93,8 @@ public class PageResource extends AbstractChartEngineResource {
 	protected HttpServletRequest request;
 	@Context
 	protected HttpServletResponse response;
+
+	private final Encoder base64Encoder = Base64.getEncoder().withoutPadding();
 
 	/**
 	 * TODO Tutte le pagine dell'engine
@@ -250,7 +253,7 @@ public class PageResource extends AbstractChartEngineResource {
 	private RenderOptions getRenderOptionsForPdfExporter(HttpServletRequest request)
 			throws UnsupportedEncodingException {
 		String userId = (String) getUserProfile().getUserUniqueIdentifier();
-		String encodedUserId = Base64.encode(userId.getBytes(UTF_8));
+		String encodedUserId = new String(base64Encoder.encode(userId.getBytes(UTF_8)));
 		Map<String, String> headers = new HashMap<>(1);
 		headers.put("Authorization", "Direct " + encodedUserId);
 
@@ -305,11 +308,11 @@ public class PageResource extends AbstractChartEngineResource {
 			if (!PDF_PARAMETERS.contains(parameter)) {
 				String[] values = parameterMap.get(parameter);
 				if (values != null && values.length > 0) {
-					externalUrl.addParameter(parameter, values[0]);
+					externalUrl.setParameter(parameter, values[0]);
 				}
 			}
 		}
-		externalUrl.addParameter("export", "true");
+		externalUrl.setParameter("export", "true");
 		return externalUrl.toString();
 	}
 

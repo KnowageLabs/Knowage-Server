@@ -166,7 +166,8 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 				datasetDelete(dsDao, locale);
 			} else if (serviceType != null && serviceType.equalsIgnoreCase(DataSetConstants.DATASET_VERSION_DELETE)) {
 				datasetVersionDelete(dsDao, locale);
-			} else if (serviceType != null && serviceType.equalsIgnoreCase(DataSetConstants.DATASET_ALL_VERSIONS_DELETE)) {
+			} else if (serviceType != null
+					&& serviceType.equalsIgnoreCase(DataSetConstants.DATASET_ALL_VERSIONS_DELETE)) {
 				datasetAllVersionsDelete(dsDao, locale);
 			} else if (serviceType != null && serviceType.equalsIgnoreCase(DataSetConstants.DATASET_VERSION_RESTORE)) {
 				datasetVersionRestore(dsDao, locale);
@@ -185,7 +186,8 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 			Integer totalItemsNum = dsDao.countDatasets();
 			List<SbiDataSet> items = getListOfGenericDatasetsForKpi(dsDao);
 			LOGGER.debug("Loaded items list");
-			JSONArray itemsJSON = (JSONArray) SerializerFactory.getSerializer("application/json").serialize(items, locale);
+			JSONArray itemsJSON = (JSONArray) SerializerFactory.getSerializer("application/json").serialize(items,
+					locale);
 			JSONObject responseJSON = createJSONResponse(itemsJSON, totalItemsNum);
 			writeBackToClient(new JSONSuccess(responseJSON));
 
@@ -201,7 +203,8 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 			Integer totalItemsNum = dsDao.countDatasets();
 			List<IDataSet> items = getListOfGenericDatasets(dsDao);
 			LOGGER.debug("Loaded items list");
-			JSONArray itemsJSON = (JSONArray) SerializerFactory.getSerializer("application/json").serialize(items, locale);
+			JSONArray itemsJSON = (JSONArray) SerializerFactory.getSerializer("application/json").serialize(items,
+					locale);
 			ISchedulerDAO schedulerDAO;
 			try {
 				schedulerDAO = DAOFactory.getSchedulerDAO();
@@ -230,12 +233,14 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 								} else {
 									itemsJSON.getJSONObject(i).put("endDate", "");
 								}
-								itemsJSON.getJSONObject(i).put("schedulingCronLine", trigger.getChronExpression().getExpression());
+								itemsJSON.getJSONObject(i).put("schedulingCronLine",
+										trigger.getChronExpression().getExpression());
 							}
 						}
 					}
 					// Check if dataset is used by objects or by federations
-					ArrayList<BIObject> objectsUsing = DAOFactory.getBIObjDataSetDAO().getBIObjectsUsingDataset(items.get(i).getId());
+					List<BIObject> objectsUsing = DAOFactory.getBIObjDataSetDAO()
+							.getBIObjectsUsingDataset(items.get(i).getId());
 					String documentsNames = "";
 					if (objectsUsing != null && objectsUsing.size() > 1) {
 						for (int o = 0; o < objectsUsing.size(); o++) {
@@ -247,7 +252,8 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 						itemsJSON.getJSONObject(i).put("hasDocumentsAssociated", documentsNames);
 					}
 
-					List<FederationDefinition> federationsAssociated = DAOFactory.getFedetatedDatasetDAO().loadFederationsUsingDataset(items.get(i).getId());
+					List<FederationDefinition> federationsAssociated = DAOFactory.getFedetatedDatasetDAO()
+							.loadFederationsUsingDataset(items.get(i).getId());
 					if (federationsAssociated != null && federationsAssociated.size() > 0)
 						itemsJSON.getJSONObject(i).put("hasFederationsAssociated", "true");
 
@@ -256,7 +262,8 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 				writeBackToClient(new JSONSuccess(responseJSON));
 
 			} catch (Throwable t) {
-				throw new SpagoBIRuntimeException("An unexpected error occured while loading trigger list for datasets", t);
+				throw new SpagoBIRuntimeException("An unexpected error occured while loading trigger list for datasets",
+						t);
 			} finally {
 				LOGGER.debug("OUT");
 			}
@@ -271,7 +278,8 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 		IDataSet ds = getGuiGenericDatasetToInsert();
 	}
 
-	protected void datasetInsert(IDataSetDAO dsDao, Locale locale) throws NamingException, WorkException, InterruptedException {
+	protected void datasetInsert(IDataSetDAO dsDao, Locale locale)
+			throws NamingException, WorkException, InterruptedException {
 		IDataSet ds = getGuiGenericDatasetToInsert();
 		datasetInsert(ds, dsDao, locale);
 		calculateDomainValues(ds);
@@ -302,7 +310,8 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 					attributesResponseSuccessJSON.put("id", id);
 					attributesResponseSuccessJSON.put("dateIn", ds.getDateIn());
 					attributesResponseSuccessJSON.put("userIn", ds.getUserIn());
-					attributesResponseSuccessJSON.put("meta", new DataSetMetadataJSONSerializer().metadataSerializerChooser(ds.getDsMetadata()));
+					attributesResponseSuccessJSON.put("meta",
+							new DataSetMetadataJSONSerializer().metadataSerializerChooser(ds.getDsMetadata()));
 				} else {
 					IDataSet existingByLabel = dsDao.loadDataSetByLabel(ds.getLabel());
 					if (existingByLabel != null) {
@@ -324,10 +333,12 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 						attributesResponseSuccessJSON.put("dateIn", dsSaved.getDateIn());
 						attributesResponseSuccessJSON.put("userIn", dsSaved.getUserIn());
 						attributesResponseSuccessJSON.put("versNum", dsSaved.getVersionNum());
-						attributesResponseSuccessJSON.put("meta", new DataSetMetadataJSONSerializer().metadataSerializerChooser(dsSaved.getDsMetadata()));
+						attributesResponseSuccessJSON.put("meta",
+								new DataSetMetadataJSONSerializer().metadataSerializerChooser(dsSaved.getDsMetadata()));
 					}
 				}
-				String operation = (id != null && !id.equals("") && !id.equals("0")) ? "DATA_SET.MODIFY" : "DATA_SET.ADD";
+				String operation = (id != null && !id.equals("") && !id.equals("0")) ? "DATA_SET.MODIFY"
+						: "DATA_SET.ADD";
 				Boolean isFromSaveNoMetadata = getAttributeAsBoolean(DataSetConstants.IS_FROM_SAVE_NO_METADATA);
 				// handle insert of persistence and scheduling
 				if (!isFromSaveNoMetadata) {
@@ -383,7 +394,8 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 			AUDIT_LOGGER.info("LABEL: " + ds.getLabel());
 			AUDIT_LOGGER.info("NAME: " + ds.getName());
 			AUDIT_LOGGER.info("ORGANIZATION: " + ds.getOrganization());
-			AUDIT_LOGGER.info("PERSIST TABLE NAME FOR DATASET WITH ID " + ds.getId() + " : " + ds.getPersistTableName());
+			AUDIT_LOGGER
+					.info("PERSIST TABLE NAME FOR DATASET WITH ID " + ds.getId() + " : " + ds.getPersistTableName());
 			AUDIT_LOGGER.info("-------------");
 			IDataSetDAO iDatasetDao = DAOFactory.getDataSetDAO();
 			iDatasetDao.setUserProfile(profile);
@@ -418,11 +430,13 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 					String outcome = (String) execOutSB.getAttribute("outcome");
 					if (outcome.equalsIgnoreCase("fault")) {
 						try {
-							AuditLogUtilities.updateAudit(getHttpRequest(), profile, "SCHED_JOB.DELETE", logParam, "KO");
+							AuditLogUtilities.updateAudit(getHttpRequest(), profile, "SCHED_JOB.DELETE", logParam,
+									"KO");
 						} catch (Exception e) {
 							e.printStackTrace();
 						}
-						throw new SpagoBIServiceException(SERVICE_NAME, "Job " + ds.getLabel() + " not deleted by the web service");
+						throw new SpagoBIServiceException(SERVICE_NAME,
+								"Job " + ds.getLabel() + " not deleted by the web service");
 					}
 				}
 				AuditLogUtilities.updateAudit(getHttpRequest(), profile, "SCHED_TRIGGER.DELETE", logParam, "OK");
@@ -454,11 +468,13 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 					String outcome = (String) execOutSB.getAttribute("outcome");
 					if (outcome.equalsIgnoreCase("fault")) {
 						try {
-							AuditLogUtilities.updateAudit(getHttpRequest(), profile, "SCHED_JOB.DELETE", logParam, "KO");
+							AuditLogUtilities.updateAudit(getHttpRequest(), profile, "SCHED_JOB.DELETE", logParam,
+									"KO");
 						} catch (Exception e) {
 							LOGGER.error(e);
 						}
-						throw new SpagoBIServiceException(SERVICE_NAME, "Job " + previousDataset.getLabel() + " not deleted by the web service");
+						throw new SpagoBIServiceException(SERVICE_NAME,
+								"Job " + previousDataset.getLabel() + " not deleted by the web service");
 					}
 				}
 				AuditLogUtilities.updateAudit(getHttpRequest(), profile, "SCHED_TRIGGER.DELETE", logParam, "OK");
@@ -487,11 +503,13 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 					String outcome = (String) execOutSB.getAttribute("outcome");
 					if (outcome.equalsIgnoreCase("fault")) {
 						try {
-							AuditLogUtilities.updateAudit(getHttpRequest(), profile, "SCHED_JOB.DELETE", logParam, "KO");
+							AuditLogUtilities.updateAudit(getHttpRequest(), profile, "SCHED_JOB.DELETE", logParam,
+									"KO");
 						} catch (Exception e) {
 							LOGGER.error(e);
 						}
-						throw new SpagoBIServiceException(SERVICE_NAME, "Job " + ds.getLabel() + " not deleted by the web service");
+						throw new SpagoBIServiceException(SERVICE_NAME,
+								"Job " + ds.getLabel() + " not deleted by the web service");
 					}
 				}
 				AuditLogUtilities.updateAudit(getHttpRequest(), profile, "SCHED_TRIGGER.DELETE", logParam, "OK");
@@ -544,7 +562,8 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 					} catch (Exception e) {
 						e.printStackTrace();
 					}
-					throw new SpagoBIServiceException(SERVICE_NAME, "Job " + ds.getLabel() + " not deleted by the web service");
+					throw new SpagoBIServiceException(SERVICE_NAME,
+							"Job " + ds.getLabel() + " not deleted by the web service");
 				}
 			}
 			try {
@@ -567,8 +586,9 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 				MessageBuilder msgBuild = new MessageBuilder();
 				String errorDescription = msgBuild.getMessage("sbi.ds.deleteDsInUseError", getLocale());
 
-				errorDescription = errorDescription.replaceAll("%0", duie.getBiObjectMessage()).replaceAll("%1", duie.getFederationsMessage())
-						.replaceAll("%2", duie.getKpiMessage()).replaceAll("%3", duie.getLovMessage());
+				errorDescription = errorDescription.replaceAll("%0", duie.getBiObjectMessage())
+						.replaceAll("%1", duie.getFederationsMessage()).replaceAll("%2", duie.getKpiMessage())
+						.replaceAll("%3", duie.getLovMessage());
 
 				throw new SpagoBIServiceException(SERVICE_NAME, errorDescription, e);
 			} else {
@@ -616,7 +636,8 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 			calculateDomainValues(dsNewDetail);
 			List temp = new ArrayList();
 			temp.add(dsNewDetail);
-			JSONArray itemJSON = (JSONArray) SerializerFactory.getSerializer("application/json").serialize(temp, locale);
+			JSONArray itemJSON = (JSONArray) SerializerFactory.getSerializer("application/json").serialize(temp,
+					locale);
 			JSONObject version = itemJSON.getJSONObject(0);
 			JSONObject attributesResponseSuccessJSON = new JSONObject();
 			attributesResponseSuccessJSON.put("success", true);
@@ -688,7 +709,8 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 					String roleName = itRoles.next();
 					role = rolesDao.loadByName(roleName);
 					List<RoleMetaModelCategory> ds = rolesDao.getMetaModelCategoriesForRole(role.getId());
-					List<Domain> array = categoryDao.getCategoriesForDataset().stream().map(Domain::fromCategory).collect(toList());
+					List<Domain> array = categoryDao.getCategoriesForDataset().stream().map(Domain::fromCategory)
+							.collect(toList());
 					for (RoleMetaModelCategory r : ds) {
 						for (Domain dom : array) {
 							if (r.getCategoryId().equals(dom.getValueId())) {
@@ -804,15 +826,18 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 					Integer scopeID = domainScopeIds.get(scopeCode.toUpperCase());
 					if (scopeID == null) {
 						LOGGER.error("Impossible to save Data Set. The scope in not set");
-						throw new SpagoBIServiceException(SERVICE_NAME, "Impossible to save Data Set. The scope in not set");
+						throw new SpagoBIServiceException(SERVICE_NAME,
+								"Impossible to save Data Set. The scope in not set");
 					} else {
 						ds.setScopeCd(scopeCode);
 						ds.setScopeId(scopeID);
 					}
 
-					if (scopeCode.equalsIgnoreCase(SpagoBIConstants.DS_SCOPE_ENTERPRISE) || scopeCode.equalsIgnoreCase(SpagoBIConstants.DS_SCOPE_TECHNICAL)) {
+					if (scopeCode.equalsIgnoreCase(SpagoBIConstants.DS_SCOPE_ENTERPRISE)
+							|| scopeCode.equalsIgnoreCase(SpagoBIConstants.DS_SCOPE_TECHNICAL)) {
 						if (catTypeCd == null || catTypeCd.equals("")) {
-							LOGGER.error("Impossible to save DataSet. The category is mandatory for Data Set Enterprise or Technical");
+							LOGGER.error(
+									"Impossible to save DataSet. The category is mandatory for Data Set Enterprise or Technical");
 							throw new SpagoBIServiceException(SERVICE_NAME,
 									"Impossible to save DataSet. The category is mandatory for Data Set Enterprise or Technical");
 						}
@@ -845,10 +870,11 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 							if (trasfTypeCd != null && !trasfTypeCd.equals("")) {
 								dsRecalc = setTransformer(dsRecalc, trasfTypeCd);
 							}
-							String recalculateMetadata = this.getAttributeAsString(DataSetConstants.RECALCULATE_METADATA);
+							String recalculateMetadata = this
+									.getAttributeAsString(DataSetConstants.RECALCULATE_METADATA);
 							String dsMetadata = null;
-							if ((recalculateMetadata == null || recalculateMetadata.trim().equals("yes") || recalculateMetadata.trim().equals("true"))
-									&& (!isFromSaveNoMetadata)) {
+							if ((recalculateMetadata == null || recalculateMetadata.trim().equals("yes")
+									|| recalculateMetadata.trim().equals("true")) && (!isFromSaveNoMetadata)) {
 								// recalculate metadata
 								LOGGER.debug("Recalculating dataset's metadata: executing the dataset...");
 								HashMap parametersMap = new HashMap();
@@ -862,7 +888,8 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 								try {
 									currentMetadata = getDatasetTestMetadata(dsRecalc, parametersMap, profile, meta);
 								} catch (Exception e) {
-									LOGGER.error("Error while recovering dataset metadata: check dataset definition ", e);
+									LOGGER.error("Error while recovering dataset metadata: check dataset definition ",
+											e);
 									throw new SpagoBIServiceException(SERVICE_NAME, "sbi.ds.test.error.metadata", e);
 								}
 
@@ -872,8 +899,10 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 									String alias = currentMetadata.getFieldAlias(i);
 									if (aliases.contains(alias)) {
 										LOGGER.error(
-												"Cannot save dataset cause preview revealed that two columns with name " + alias + " exist; change aliases");
-										throw new SpagoBIServiceException(SERVICE_NAME, "sbi.ds.test.error.duplication");
+												"Cannot save dataset cause preview revealed that two columns with name "
+														+ alias + " exist; change aliases");
+										throw new SpagoBIServiceException(SERVICE_NAME,
+												"sbi.ds.test.error.duplication");
 									}
 									aliases.add(alias);
 								}
@@ -892,16 +921,18 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 										// Check if dataset is used by objects
 										// or by federations
 
-										ArrayList<BIObject> objectsUsing = null;
+										List<BIObject> objectsUsing = null;
 										try {
-											objectsUsing = DAOFactory.getBIObjDataSetDAO().getBIObjectsUsingDataset(previousIdInteger);
+											objectsUsing = DAOFactory.getBIObjDataSetDAO()
+													.getBIObjectsUsingDataset(previousIdInteger);
 										} catch (Exception e) {
 											LOGGER.error("Error while getting dataset metadataa", e);
 											throw e;
 										}
 										// check if dataset is used by document
 										// by querying SBI_OBJ_DATA_SET table
-										List<FederationDefinition> federationsAssociated = DAOFactory.getFedetatedDatasetDAO()
+										List<FederationDefinition> federationsAssociated = DAOFactory
+												.getFedetatedDatasetDAO()
 												.loadFederationsUsingDataset(previousIdInteger);
 
 										// if (!objectsUsing.isEmpty() ||
@@ -909,7 +940,8 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 										// block save action ONLY for
 										// federations (if metadata are changed)
 										if (!federationsAssociated.isEmpty()) {
-											LOGGER.debug("dataset " + ds.getLabel() + " is used by some " + objectsUsing.size() + "objects or some "
+											LOGGER.debug("dataset " + ds.getLabel() + " is used by some "
+													+ objectsUsing.size() + "objects or some "
 													+ federationsAssociated.size() + " federations");
 											// get the previous dataset
 											IDataSet dataSet = null;
@@ -921,12 +953,14 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 											}
 
 											IMetaData previousMetadata = dataSet.getMetadata();
-											boolean isRemoving = isRemovingMetadataFields(previousMetadata, currentMetadata);
+											boolean isRemoving = isRemovingMetadataFields(previousMetadata,
+													currentMetadata);
 											if (isRemoving) {
 												// TODO: better would be not to
 												// have log tracing of this
 												// warning
-												throw new SpagoBIServiceException(SERVICE_NAME, "sbi.ds.deleteOrRenameMetadata");
+												throw new SpagoBIServiceException(SERVICE_NAME,
+														"sbi.ds.deleteOrRenameMetadata");
 
 											}
 										}
@@ -956,7 +990,8 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 									dsMetadata = "";
 								}
 							} else {// just isFromSaveNoMetadata
-								LOGGER.debug("Saving dataset without metadata. I'll add empty metadata with version = -1");
+								LOGGER.debug(
+										"Saving dataset without metadata. I'll add empty metadata with version = -1");
 								DatasetMetadataParser dsp = new DatasetMetadataParser();
 								dsMetadata = dsp.buildNoMetadataXML();
 							}
@@ -986,7 +1021,8 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 
 		} catch (Exception e) {
 			LOGGER.error("Erro while updating dataset metadata, cannot save the dataset", e);
-			throw new SpagoBIServiceException(SERVICE_NAME, "Error while updating dataset metadata, cannot save the dataset");
+			throw new SpagoBIServiceException(SERVICE_NAME,
+					"Error while updating dataset metadata, cannot save the dataset");
 
 		}
 		return ds;
@@ -1064,7 +1100,8 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 				try {
 					datasetTypes = DAOFactory.getDomainDAO().loadListDomainsByType(DataSetConstants.DATA_SET_TYPE);
 				} catch (Throwable t) {
-					throw new SpagoBIRuntimeException("An unexpected error occured while loading dataset types from database", t);
+					throw new SpagoBIRuntimeException(
+							"An unexpected error occured while loading dataset types from database", t);
 				}
 			}
 
@@ -1082,7 +1119,9 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 			if (t instanceof SpagoBIRuntimeException) {
 				throw (SpagoBIRuntimeException) t;
 			}
-			throw new SpagoBIRuntimeException("An unexpected error occured while resolving dataset type name from dataset type code [" + datasetTypeCode + "]");
+			throw new SpagoBIRuntimeException(
+					"An unexpected error occured while resolving dataset type name from dataset type code ["
+							+ datasetTypeCode + "]");
 		}
 
 		return datasetTypeName;
@@ -1095,14 +1134,16 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 
 			String datasetTypeName = getDatasetTypeName(datasetTypeCode);
 			if (datasetTypeName == null) {
-				throw new SpagoBIServiceException(SERVICE_NAME, "Impossible to resolve dataset type whose code is equal to [" + datasetTypeCode + "]");
+				throw new SpagoBIServiceException(SERVICE_NAME,
+						"Impossible to resolve dataset type whose code is equal to [" + datasetTypeCode + "]");
 			}
 			dataSet = getDataSet(datasetTypeName, false);
 		} catch (Throwable t) {
 			if (t instanceof SpagoBIServiceException) {
 				throw (SpagoBIServiceException) t;
 			}
-			throw new SpagoBIServiceException(SERVICE_NAME, "An unexpected error occured while retriving dataset from request", t);
+			throw new SpagoBIServiceException(SERVICE_NAME,
+					"An unexpected error occured while retriving dataset from request", t);
 		}
 		return dataSet;
 	}
@@ -1182,10 +1223,11 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 				String realName = configuration.getString("fileName");
 				if (dsLabel != null && !realName.equals(dsLabel)) {
 
-					File dest = new File(SpagoBIUtilities.getResourcePath() + File.separatorChar + "dataset" + File.separatorChar + "files" + File.separatorChar
-							+ dsLabel + "." + configuration.getString("fileType").toLowerCase());
-					File source = new File(
-							SpagoBIUtilities.getResourcePath() + File.separatorChar + "dataset" + File.separatorChar + "files" + File.separatorChar + realName);
+					File dest = new File(SpagoBIUtilities.getResourcePath() + File.separatorChar + "dataset"
+							+ File.separatorChar + "files" + File.separatorChar + dsLabel + "."
+							+ configuration.getString("fileType").toLowerCase());
+					File source = new File(SpagoBIUtilities.getResourcePath() + File.separatorChar + "dataset"
+							+ File.separatorChar + "files" + File.separatorChar + realName);
 
 					if (!source.getCanonicalPath().equals(dest.getCanonicalPath())) {
 						LOGGER.debug("Source and destination are not the same. Copying from source to dest");
@@ -1306,7 +1348,8 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 			} else {
 				// fileName can be empty if you preview it as administrator
 				if (fileName.isEmpty()) {
-					((CkanDataSet) dataSet).setFileName(CkanDataSetConstants.CKAN_DUMMY_FILENAME + "." + fileType.toLowerCase());
+					((CkanDataSet) dataSet)
+							.setFileName(CkanDataSetConstants.CKAN_DUMMY_FILENAME + "." + fileType.toLowerCase());
 				} else {
 					((CkanDataSet) dataSet).setFileName(fileName);
 				}
@@ -1389,12 +1432,15 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 			try {
 				dataSet = customDs.instantiate();
 			} catch (Exception e) {
-				LOGGER.error("Cannot instantiate class " + customDs.getJavaClassName() + ": go on with CustomDatasetClass");
-				throw new SpagoBIServiceException("Manage Dataset", "Cannot instantiate class " + javaClassName + ": check it extends AbstractCustomDataSet");
+				LOGGER.error(
+						"Cannot instantiate class " + customDs.getJavaClassName() + ": go on with CustomDatasetClass");
+				throw new SpagoBIServiceException("Manage Dataset",
+						"Cannot instantiate class " + javaClassName + ": check it extends AbstractCustomDataSet");
 			}
 		}
 
-		if (datasetTypeName.equalsIgnoreCase(DataSetConstants.DS_QBE) || datasetTypeName.equalsIgnoreCase(DataSetConstants.DS_DERIVED)) {
+		if (datasetTypeName.equalsIgnoreCase(DataSetConstants.DS_QBE)
+				|| datasetTypeName.equalsIgnoreCase(DataSetConstants.DS_DERIVED)) {
 
 			dataSet = new QbeDataSet();
 			QbeDataSet qbeDataSet = (QbeDataSet) dataSet;
@@ -1430,7 +1476,8 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 				try {
 					sourceDataset = DAOFactory.getDataSetDAO().loadDataSetByLabel(sourceDatasetLabel);
 					if (sourceDataset == null) {
-						throw new SpagoBIRuntimeException("Dataset with label [" + sourceDatasetLabel + "] does not exist");
+						throw new SpagoBIRuntimeException(
+								"Dataset with label [" + sourceDatasetLabel + "] does not exist");
 					}
 					qbeDataSet.setSourceDataset(sourceDataset);
 					qbeDataSet.setDataSource(sourceDataset.getDataSource());
@@ -1504,14 +1551,16 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 
 	// This method rename a file and move it from resources\dataset\files\temp
 	// to resources\dataset\files
-	private void renameAndMoveDatasetFile(String originalFileName, String newFileName, String resourcePath, String fileType) {
+	private void renameAndMoveDatasetFile(String originalFileName, String newFileName, String resourcePath,
+			String fileType) {
 		File originalDatasetFile = PathTraversalChecker.get(resourcePath, "dataset", "files", "temp", originalFileName);
-		File newDatasetFile = PathTraversalChecker.get(resourcePath, "dataset", "files", newFileName + "." + fileType.toLowerCase());
+		File newDatasetFile = PathTraversalChecker.get(resourcePath, "dataset", "files",
+				newFileName + "." + fileType.toLowerCase());
 
 		if (originalDatasetFile.exists()) {
 			/*
-			 * This method copies the contents of the specified source file to the specified destination file. The directory holding the destination file is
-			 * created if it does not exist. If the destination file exists, then this method will overwrite it.
+			 * This method copies the contents of the specified source file to the specified destination file. The directory holding the destination file is created if it
+			 * does not exist. If the destination file exists, then this method will overwrite it.
 			 */
 			try {
 				FileUtils.copyFile(originalDatasetFile, newDatasetFile);
@@ -1535,7 +1584,8 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 				FileDataSet fileDataset = (FileDataSet) wrappedDataset;
 				String resourcePath = fileDataset.getResourcePath();
 				String fileName = fileDataset.getFileName();
-				String filePath = resourcePath + File.separatorChar + "dataset" + File.separatorChar + "files" + File.separatorChar;
+				String filePath = resourcePath + File.separatorChar + "dataset" + File.separatorChar + "files"
+						+ File.separatorChar;
 				File datasetFile = new File(filePath + fileName);
 
 				if (datasetFile.exists()) {
@@ -1550,7 +1600,8 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 	}
 
 	private void deleteDatasetFile(String fileName, String resourcePath, String fileType) {
-		String filePath = resourcePath + File.separatorChar + "dataset" + File.separatorChar + "files" + File.separatorChar + "temp" + File.separatorChar;
+		String filePath = resourcePath + File.separatorChar + "dataset" + File.separatorChar + "files"
+				+ File.separatorChar + "temp" + File.separatorChar;
 
 		File datasetFile = new File(filePath + fileName);
 		if (datasetFile.exists()) {
@@ -1598,7 +1649,8 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 		ds.setTransformerId(transformerId);
 
 		if (ds.getPivotColumnName() != null && ds.getPivotColumnValue() != null && ds.getPivotRowName() != null) {
-			ds.addDataStoreTransformer(new PivotDataSetTransformer(ds.getPivotColumnName(), ds.getPivotColumnValue(), ds.getPivotRowName(), ds.isNumRows()));
+			ds.addDataStoreTransformer(new PivotDataSetTransformer(ds.getPivotColumnName(), ds.getPivotColumnValue(),
+					ds.getPivotRowName(), ds.isNumRows()));
 		}
 		return ds;
 	}
@@ -1645,7 +1697,8 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 			if (t instanceof SpagoBIServiceException) {
 				throw (SpagoBIServiceException) t;
 			}
-			throw new SpagoBIServiceException(SERVICE_NAME, "An unexpected error occured while deserializing dataset parameters", t);
+			throw new SpagoBIServiceException(SERVICE_NAME,
+					"An unexpected error occured while deserializing dataset parameters", t);
 		}
 		return parametersString;
 	}
@@ -1702,7 +1755,8 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 			if (t instanceof SpagoBIServiceException) {
 				throw (SpagoBIServiceException) t;
 			}
-			throw new SpagoBIServiceException(SERVICE_NAME, "An unexpected error occured while deserializing dataset parameters", t);
+			throw new SpagoBIServiceException(SERVICE_NAME,
+					"An unexpected error occured while deserializing dataset parameters", t);
 		}
 		return parametersMap;
 	}
@@ -1794,7 +1848,8 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 	// return toReturn;
 	// }
 
-	public IMetaData getDatasetTestMetadata(IDataSet dataSet, HashMap parametersFilled, IEngUserProfile profile, String metadata) throws Exception {
+	public IMetaData getDatasetTestMetadata(IDataSet dataSet, HashMap parametersFilled, IEngUserProfile profile,
+			String metadata) throws Exception {
 		LOGGER.debug("IN");
 
 		IDataStore dataStore = null;
@@ -1818,9 +1873,11 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 				IFieldMetaData ifmd = metaData.getFieldMeta(i);
 				for (int j = 0; j < metadataArray.length(); j++) {
 					if (ifmd.getName().equals((metadataArray.getJSONObject(j)).getString("name"))) {
-						if (IFieldMetaData.FieldType.MEASURE.toString().equals((metadataArray.getJSONObject(j)).getString("fieldType"))) {
+						if (IFieldMetaData.FieldType.MEASURE.toString()
+								.equals((metadataArray.getJSONObject(j)).getString("fieldType"))) {
 							ifmd.setFieldType(IFieldMetaData.FieldType.MEASURE);
-						} else if (IFieldMetaData.FieldType.SPATIAL_ATTRIBUTE.toString().equals((metadataArray.getJSONObject(j)).getString("fieldType"))) {
+						} else if (IFieldMetaData.FieldType.SPATIAL_ATTRIBUTE.toString()
+								.equals((metadataArray.getJSONObject(j)).getString("fieldType"))) {
 							ifmd.setFieldType(IFieldMetaData.FieldType.SPATIAL_ATTRIBUTE);
 						} else {
 							ifmd.setFieldType(IFieldMetaData.FieldType.ATTRIBUTE);
@@ -1841,7 +1898,8 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 		return dataStore.getMetaData();
 	}
 
-	public JSONObject getDatasetTestResultList(IDataSet dataSet, HashMap<String, String> parametersFilled, IEngUserProfile profile) {
+	public JSONObject getDatasetTestResultList(IDataSet dataSet, HashMap<String, String> parametersFilled,
+			IEngUserProfile profile) {
 
 		JSONObject dataSetJSON;
 
@@ -1881,17 +1939,20 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 				while (rootException.getCause() != null) {
 					rootException = rootException.getCause();
 				}
-				String rootErrorMsg = rootException.getMessage() != null ? rootException.getMessage() : rootException.getClass().getName();
+				String rootErrorMsg = rootException.getMessage() != null ? rootException.getMessage()
+						: rootException.getClass().getName();
 				if (dataSet instanceof JDBCDataSet) {
 					JDBCDataSet jdbcDataSet = (JDBCDataSet) dataSet;
 					if (jdbcDataSet.getQueryScript() != null) {
-						QuerableBehaviour querableBehaviour = (QuerableBehaviour) jdbcDataSet.getBehaviour(QuerableBehaviour.class.getName());
+						QuerableBehaviour querableBehaviour = (QuerableBehaviour) jdbcDataSet
+								.getBehaviour(QuerableBehaviour.class.getName());
 						String statement = querableBehaviour.getStatement();
 						rootErrorMsg += "\nQuery statement: [" + statement + "]";
 					}
 				}
 
-				throw new SpagoBIServiceException(SERVICE_NAME, "An unexpected error occured while executing dataset: " + rootErrorMsg, t);
+				throw new SpagoBIServiceException(SERVICE_NAME,
+						"An unexpected error occured while executing dataset: " + rootErrorMsg, t);
 			}
 
 			try {
@@ -1901,13 +1962,15 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 					throw new SpagoBIServiceException(SERVICE_NAME, "Impossible to read serialized resultset");
 				}
 			} catch (Exception t) {
-				throw new SpagoBIServiceException(SERVICE_NAME, "An unexpected error occured while serializing resultset", t);
+				throw new SpagoBIServiceException(SERVICE_NAME,
+						"An unexpected error occured while serializing resultset", t);
 			}
 		} catch (Throwable t) {
 			if (t instanceof SpagoBIServiceException) {
 				throw (SpagoBIServiceException) t;
 			}
-			throw new SpagoBIServiceException(SERVICE_NAME, "An unexpected error occured while getting dataset results", t);
+			throw new SpagoBIServiceException(SERVICE_NAME, "An unexpected error occured while getting dataset results",
+					t);
 		} finally {
 			LOGGER.debug("OUT");
 		}

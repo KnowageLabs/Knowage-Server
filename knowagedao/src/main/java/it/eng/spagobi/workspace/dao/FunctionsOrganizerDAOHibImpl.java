@@ -37,8 +37,7 @@ import it.eng.spagobi.workspace.bo.FunctionsOrganizer;
 import it.eng.spagobi.workspace.metadata.SbiFunctionsOrganizer;
 
 /**
- * @deprecated Replaced by KNOWAGE_TM-513
- * TODO : Delete
+ * @deprecated Replaced by KNOWAGE_TM-513 TODO : Delete
  */
 @Deprecated
 public class FunctionsOrganizerDAOHibImpl extends AbstractHibernateDAO implements IFunctionsOrganizerDAO {
@@ -76,10 +75,7 @@ public class FunctionsOrganizerDAOHibImpl extends AbstractHibernateDAO implement
 		} catch (HibernateException he) {
 			LOGGER.error("HibernateException", he);
 		} finally {
-			if (aSession != null) {
-				if (aSession.isOpen())
-					aSession.close();
-			}
+			closeSessionIfOpen(aSession);
 		}
 		LOGGER.debug("OUT");
 		return realResult;
@@ -110,24 +106,19 @@ public class FunctionsOrganizerDAOHibImpl extends AbstractHibernateDAO implement
 
 			LOGGER.error("HibernateException", he);
 
-			if (tx != null)
-				tx.rollback();
+			rollbackIfActive(tx);
 
 			/**
-			 * Throw this specific exception so the service that called the Hibernate method can handle it and forward the information about the error towards
-			 * the client (final user).
+			 * Throw this specific exception so the service that called the Hibernate method can handle it and forward the information about the error towards the client
+			 * (final user).
 			 *
 			 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 			 */
 			throw new HibernateException(he);
 
 		} finally {
-			if (aSession != null) {
-				if (aSession.isOpen()) {
-					aSession.close();
-				}
-				LOGGER.debug("OUT");
-			}
+			closeSessionIfOpen(aSession);
+			LOGGER.debug("OUT");
 		}
 		return hibFunct;
 	}
@@ -146,14 +137,10 @@ public class FunctionsOrganizerDAOHibImpl extends AbstractHibernateDAO implement
 		} catch (Exception he) {
 			logException(he);
 			LOGGER.error("Error in deleting the folder from organizer", he);
-			if (tx != null)
-				tx.rollback();
+			rollbackIfActive(tx);
 			throw new SpagoBIRuntimeException("Could not delete folder", he);
 		} finally {
-			if (aSession != null) {
-				if (aSession.isOpen())
-					aSession.close();
-			}
+			closeSessionIfOpen(aSession);
 		}
 	}
 
@@ -202,16 +189,11 @@ public class FunctionsOrganizerDAOHibImpl extends AbstractHibernateDAO implement
 		} catch (HibernateException he) {
 			LOGGER.error("HibernateException", he);
 
-			if (tx != null)
-				tx.rollback();
+			rollbackIfActive(tx);
 
 		} finally {
-			if (aSession != null) {
-				if (aSession.isOpen()) {
-					aSession.close();
-				}
-				LOGGER.debug("OUT");
-			}
+			closeSessionIfOpen(aSession);
+			LOGGER.debug("OUT");
 		}
 		return hibFunct;
 	}

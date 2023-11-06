@@ -32,6 +32,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import it.eng.knowage.security.ProductProfiler;
 import it.eng.spagobi.api.AbstractSpagoBIResource;
+import it.eng.spagobi.commons.bo.Domain;
 import it.eng.spagobi.commons.constants.CommunityFunctionalityConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.dao.IDomainDAO;
@@ -48,7 +49,8 @@ public class DocumentDetailResource extends AbstractSpagoBIResource {
 	@GET
 	@Path("/engines")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
-	@UserConstraint(functionalities = { CommunityFunctionalityConstants.READ_ENGINES_MANAGEMENT, CommunityFunctionalityConstants.DOCUMENT_MANAGEMENT_DEV })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.READ_ENGINES_MANAGEMENT,
+			CommunityFunctionalityConstants.DOCUMENT_MANAGEMENT_DEV })
 	public Response getEngines() {
 		logger.debug("IN");
 
@@ -73,7 +75,8 @@ public class DocumentDetailResource extends AbstractSpagoBIResource {
 
 		try {
 			IDomainDAO domainDao = DAOFactory.getDomainDAO();
-			List docTypes = ProductProfiler.filterDocumentTypesByProduct(domainDao.loadListDomainsByTypeAndTenant("BIOBJ_TYPE"));
+			List<Domain> biObjTypes = domainDao.loadListDomainsByTypeAndTenant("BIOBJ_TYPE");
+			List<Domain> docTypes = ProductProfiler.filterDocumentTypesByProduct(biObjTypes);
 			ObjectMapper mapper = new ObjectMapper();
 			return Response.ok(mapper.writeValueAsString(docTypes)).build();
 		} catch (Exception e) {

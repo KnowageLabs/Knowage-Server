@@ -24,6 +24,8 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.Base64;
+import java.util.Base64.Encoder;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -46,7 +48,6 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import org.apache.axis.encoding.Base64;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.client.utils.URIBuilder;
 import org.apache.jena.ext.com.google.common.collect.Iterables;
@@ -100,6 +101,8 @@ public class PageResource extends AbstractCockpitEngineResource {
 	private static final String IS_MULTI_SHEET = "isMultiSheet";
 
 	private static Map<String, JSONObject> pages;
+
+	private final Encoder base64Encoder = Base64.getEncoder().withoutPadding();
 
 	static {
 		pages = new HashMap<>();
@@ -394,7 +397,7 @@ public class PageResource extends AbstractCockpitEngineResource {
 			List<String> asList = Arrays.asList(v);
 			String collect = asList.stream().collect(Collectors.joining(","));
 
-			externalUrl.addParameter(k, collect);
+			externalUrl.setParameter(k, collect);
 		});
 
 		addParametersToHideToolbarAndMenuInVue(externalUrl);
@@ -419,7 +422,7 @@ public class PageResource extends AbstractCockpitEngineResource {
 
 	private RenderOptions getRenderOptionsForPdfExporter(HttpServletRequest request) {
 		String userId = (String) getUserProfile().getUserUniqueIdentifier();
-		String encodedUserId = Base64.encode(userId.getBytes(UTF_8));
+		String encodedUserId = new String(base64Encoder.encode(userId.getBytes(UTF_8)));
 		Map<String, String> headers = new HashMap<>(1);
 		headers.put("Authorization", "Direct " + encodedUserId);
 
@@ -475,7 +478,7 @@ public class PageResource extends AbstractCockpitEngineResource {
 		} else {
 			manageParametersForEverythingElse(externalUrl);
 		}
-		externalUrl.addParameter("export", "true");
+		externalUrl.setParameter("export", "true");
 		return externalUrl.toString();
 	}
 
@@ -496,7 +499,7 @@ public class PageResource extends AbstractCockpitEngineResource {
 		} else {
 			manageParametersForEverythingElse(externalUrl);
 		}
-		externalUrl.addParameter("scheduledexport", "true");
+		externalUrl.setParameter("scheduledexport", "true");
 		return externalUrl.toString();
 	}
 
@@ -542,8 +545,8 @@ public class PageResource extends AbstractCockpitEngineResource {
 			throws JSONException {
 
 		uriBuilder.setPath("/knowage-vue/dashboard/" + documentLabel);
-		uriBuilder.addParameter("params", createJsonFromParemeters(biObject));
-		uriBuilder.addParameter("role", getExecutionRoleForDashboard());
+		uriBuilder.setParameter("params", createJsonFromParemeters(biObject));
+		uriBuilder.setParameter("role", getExecutionRoleForDashboard());
 		addParametersToHideToolbarAndMenuInVue(uriBuilder);
 	}
 
@@ -553,7 +556,7 @@ public class PageResource extends AbstractCockpitEngineResource {
 			String key = parameter.getKey();
 			String[] value = parameter.getValue();
 			if (value != null && value.length > 0) {
-				uriBuilder.addParameter(key, value[0]);
+				uriBuilder.setParameter(key, value[0]);
 			}
 		}
 	}
@@ -623,8 +626,8 @@ public class PageResource extends AbstractCockpitEngineResource {
 	}
 
 	private void addParametersToHideToolbarAndMenuInVue(URIBuilder uriBuilder) {
-		uriBuilder.addParameter("toolbar", "false");
-		uriBuilder.addParameter("menu", "false");
+		uriBuilder.setParameter("toolbar", "false");
+		uriBuilder.setParameter("menu", "false");
 	}
 
 	private void reconcileParametersWithParamsV2FromUrl(Map<String, String[]> parameterMap) throws JSONException {

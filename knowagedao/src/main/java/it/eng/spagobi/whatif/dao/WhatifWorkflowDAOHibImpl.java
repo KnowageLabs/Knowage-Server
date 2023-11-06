@@ -61,16 +61,12 @@ public class WhatifWorkflowDAOHibImpl extends AbstractHibernateDAO implements IW
 			}
 			tx.commit();
 		} catch (HibernateException he) {
-			if (tx != null)
-				tx.rollback();
+			rollbackIfActive(tx);
 			LOGGER.error("Exception creating workflow", he);
 			throw new SpagoBIRuntimeException("Exception creating workflow", he);
 		} finally {
 			LOGGER.debug("Workflow created correctly");
-			if (aSession != null) {
-				if (aSession.isOpen())
-					aSession.close();
-			}
+			closeSessionIfOpen(aSession);
 		}
 	}
 
@@ -105,10 +101,7 @@ public class WhatifWorkflowDAOHibImpl extends AbstractHibernateDAO implements IW
 			LOGGER.error("Exception loading the active user in the worflow", he);
 			throw new SpagoBIRuntimeException("Exception loading the active user in the worflow", he);
 		} finally {
-			if (aSession != null) {
-				if (aSession.isOpen())
-					aSession.close();
-			}
+			closeSessionIfOpen(aSession);
 			LOGGER.debug("OUT");
 		}
 	}
@@ -134,10 +127,7 @@ public class WhatifWorkflowDAOHibImpl extends AbstractHibernateDAO implements IW
 			LOGGER.error("Error loading workflow for model" + modelId, he);
 			throw new SpagoBIRuntimeException("Error loading workflow for model" + modelId, he);
 		} finally {
-			if (aSession != null) {
-				if (aSession.isOpen())
-					aSession.close();
-			}
+			closeSessionIfOpen(aSession);
 			LOGGER.debug("OUT");
 		}
 
@@ -166,10 +156,7 @@ public class WhatifWorkflowDAOHibImpl extends AbstractHibernateDAO implements IW
 			LOGGER.error("Exception loading workflow users", he);
 			throw new SpagoBIRuntimeException("Exception loading workflow users", he);
 		} finally {
-			if (aSession != null) {
-				if (aSession.isOpen())
-					aSession.close();
-			}
+			closeSessionIfOpen(aSession);
 			LOGGER.debug("OUT");
 		}
 		return resultArray;
@@ -199,10 +186,7 @@ public class WhatifWorkflowDAOHibImpl extends AbstractHibernateDAO implements IW
 			LOGGER.error("Exception loading workflow users", he);
 			return 0;
 		} finally {
-			if (aSession != null) {
-				if (aSession.isOpen())
-					aSession.close();
-			}
+			closeSessionIfOpen(aSession);
 			LOGGER.debug("OUT");
 		}
 
@@ -234,13 +218,9 @@ public class WhatifWorkflowDAOHibImpl extends AbstractHibernateDAO implements IW
 			tx.commit();
 		} catch (HibernateException he) {
 			LOGGER.error(he.getMessage(), he);
-			if (tx != null)
-				tx.rollback();
+			rollbackIfActive(tx);
 		} finally {
-			if (aSession != null) {
-				if (aSession.isOpen())
-					aSession.close();
-			}
+			closeSessionIfOpen(aSession);
 		}
 
 	}
@@ -278,13 +258,9 @@ public class WhatifWorkflowDAOHibImpl extends AbstractHibernateDAO implements IW
 			tx.commit();
 		} catch (HibernateException he) {
 			LOGGER.error(he.getMessage(), he);
-			if (tx != null)
-				tx.rollback();
+			rollbackIfActive(tx);
 		} finally {
-			if (aSession != null) {
-				if (aSession.isOpen())
-					aSession.close();
-			}
+			closeSessionIfOpen(aSession);
 
 			if (!wfToAdd.isEmpty())
 				createNewWorkflow(wfToAdd);
@@ -311,13 +287,9 @@ public class WhatifWorkflowDAOHibImpl extends AbstractHibernateDAO implements IW
 			tx.commit();
 		} catch (HibernateException he) {
 			LOGGER.error(he.getMessage(), he);
-			if (tx != null)
-				tx.rollback();
+			rollbackIfActive(tx);
 		} finally {
-			if (aSession != null) {
-				if (aSession.isOpen())
-					aSession.close();
-			}
+			closeSessionIfOpen(aSession);
 		}
 	}
 
@@ -414,14 +386,10 @@ public class WhatifWorkflowDAOHibImpl extends AbstractHibernateDAO implements IW
 
 		} catch (Exception he) {
 			LOGGER.error("Error setting passing the control to next user", he);
-			if (tx != null)
-				tx.rollback();
+			rollbackIfActive(tx);
 			throw new SpagoBIRuntimeException("Error setting passing the control to next user", he);
 		} finally {
-			if (aSession != null) {
-				if (aSession.isOpen())
-					aSession.close();
-			}
+			closeSessionIfOpen(aSession);
 			LOGGER.debug("Successfully pass controll to next user for model" + modelId);
 		}
 		return null;
@@ -444,7 +412,7 @@ public class WhatifWorkflowDAOHibImpl extends AbstractHibernateDAO implements IW
 
 			if (list.isEmpty())
 				return -1; // in case there is new user inserted on update
-							// action
+							 // action
 			else
 				return list.get(0).getId();
 
@@ -452,10 +420,7 @@ public class WhatifWorkflowDAOHibImpl extends AbstractHibernateDAO implements IW
 			LOGGER.error("Exception loading the active user in the worflow", he);
 			throw new SpagoBIRuntimeException("Exception loading the active user in the worflow", he);
 		} finally {
-			if (aSession != null) {
-				if (aSession.isOpen())
-					aSession.close();
-			}
+			closeSessionIfOpen(aSession);
 			LOGGER.debug("OUT");
 		}
 	}

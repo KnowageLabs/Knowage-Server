@@ -25,7 +25,7 @@ import javax.portlet.PortletPreferences;
 import javax.portlet.PortletRequest;
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.axis.utils.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.LogMF;
 import org.apache.log4j.Logger;
 import org.hibernate.HibernateException;
@@ -140,7 +140,8 @@ public class UserDocumentsBrowserPortletStartAction extends PortletLoginAction {
 				if (subTree != null) {
 
 					if (!StringUtils.isEmpty(subTree)) {
-						LowFunctionality funct = DAOFactory.getLowFunctionalityDAO().loadLowFunctionalityByPath(subTree, false);
+						LowFunctionality funct = DAOFactory.getLowFunctionalityDAO().loadLowFunctionalityByPath(subTree,
+								false);
 						if (funct != null) {
 							functID = String.valueOf(funct.getId());
 
@@ -203,7 +204,8 @@ public class UserDocumentsBrowserPortletStartAction extends PortletLoginAction {
 
 		} catch (Throwable t) {
 			logger.error("[DAJS]:: error", t);
-			throw new SpagoBIException("An unexpected error occured while executing UserDocumentsBrowserPortletStartAction", t);
+			throw new SpagoBIException(
+					"An unexpected error occured while executing UserDocumentsBrowserPortletStartAction", t);
 		} finally {
 			logger.debug("OUT");
 		}
@@ -217,7 +219,8 @@ public class UserDocumentsBrowserPortletStartAction extends PortletLoginAction {
 		Engine georeportEngine = ExecuteAdHocUtility.getGeoreportEngine();
 		// GeoReportEngineStartEditAction
 
-		String baseEditUrl = georeportEngine.getUrl().replace("GeoReportEngineStartAction", "GeoReportEngineStartEditAction");
+		String baseEditUrl = georeportEngine.getUrl().replace("GeoReportEngineStartAction",
+				"GeoReportEngineStartEditAction");
 		String georeportEditActionUrl = GeneralUtilities.getUrl(baseEditUrl, parametersMap);
 		LogMF.debug(logger, "Georeport edit service invocation url is equal to [{}]", georeportEditActionUrl);
 
@@ -255,7 +258,7 @@ public class UserDocumentsBrowserPortletStartAction extends PortletLoginAction {
 	}
 
 	protected Map<String, String> buildServiceBaseParametersMap() {
-		HashMap<String, String> parametersMap = new HashMap<String, String>();
+		HashMap<String, String> parametersMap = new HashMap<>();
 
 		parametersMap.put("NEW_SESSION", "TRUE");
 

@@ -336,9 +336,7 @@ public class UdpDAOHibImpl extends AbstractHibernateDAO implements IUdpDAO {
 
 		} catch (EMFUserError e) {
 			LOGGER.error("error probably in getting asked UDP_FAMILY domain", e);
-			if (tx != null && tx.isActive()) {
-				tx.rollback();
-			}
+			rollbackIfActive(tx);
 			throw e;
 
 		} finally {

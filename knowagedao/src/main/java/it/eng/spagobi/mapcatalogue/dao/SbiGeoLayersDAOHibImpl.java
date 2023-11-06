@@ -86,11 +86,9 @@ public class SbiGeoLayersDAOHibImpl extends AbstractHibernateDAO implements ISbi
 	public GeoLayer loadLayerByID(Integer layerID) throws EMFUserError {
 		GeoLayer toReturn = null;
 		Session tmpSession = null;
-		// Transaction tx = null;
 
 		try {
 			tmpSession = getSession();
-			// tx = tmpSession.beginTransaction();
 			SbiGeoLayers hibLayer = (SbiGeoLayers) tmpSession.load(SbiGeoLayers.class, layerID);
 			toReturn = hibLayer.toGeoLayer();
 
@@ -103,21 +101,11 @@ public class SbiGeoLayersDAOHibImpl extends AbstractHibernateDAO implements ISbi
 				}
 			}
 
-			// tx.commit();
-
 		} catch (HibernateException he) {
 			logException(he);
-
-			// if (tx != null)
-			// tx.rollback();
-
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
-
 		} finally {
-
-			if (tmpSession != null && tmpSession.isOpen()) {
-				tmpSession.close();
-			}
+			closeSessionIfOpen(tmpSession);
 		}
 
 		return toReturn;
@@ -138,11 +126,9 @@ public class SbiGeoLayersDAOHibImpl extends AbstractHibernateDAO implements ISbi
 	public GeoLayer loadLayerByLabel(String label) throws EMFUserError {
 		GeoLayer biLayer = null;
 		Session tmpSession = null;
-		// Transaction tx = null;
 
 		try {
 			tmpSession = getSession();
-			// tx = tmpSession.beginTransaction();
 			Criterion labelCriterrion = Restrictions.eq("label", label);
 			Criteria criteria = tmpSession.createCriteria(SbiGeoLayers.class);
 			criteria.add(labelCriterrion);
@@ -160,19 +146,11 @@ public class SbiGeoLayersDAOHibImpl extends AbstractHibernateDAO implements ISbi
 				}
 			}
 
-			// tx.commit();
 		} catch (HibernateException he) {
 			logException(he);
-			// if (tx != null)
-			// tx.rollback();
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		} finally {
-
-			if (tmpSession != null) {
-				if (tmpSession.isOpen())
-					tmpSession.close();
-			}
-
+			closeSessionIfOpen(tmpSession);
 		}
 		return biLayer;
 	}
@@ -189,7 +167,8 @@ public class SbiGeoLayersDAOHibImpl extends AbstractHibernateDAO implements ISbi
 	 * @see it.eng.spagobi.geo.bo.dao.IEngineDAO#modifyEngine(it.eng.spagobi.bo.Engine)
 	 */
 	@Override
-	public void modifyLayer(GeoLayer aLayer, Boolean modified) throws EMFUserError, JSONException, UnsupportedEncodingException {
+	public void modifyLayer(GeoLayer aLayer, Boolean modified)
+			throws EMFUserError, JSONException, UnsupportedEncodingException {
 
 		Session tmpSession = null;
 		Transaction tx = null;
@@ -297,7 +276,8 @@ public class SbiGeoLayersDAOHibImpl extends AbstractHibernateDAO implements ISbi
 				for (SbiExtRoles r : aLayer.getRoles()) {
 
 					// add roles
-					SbiGeoLayersRoles hibLayRol = new SbiGeoLayersRoles(aLayer.getLayerId(), r.getExtRoleId().intValue());
+					SbiGeoLayersRoles hibLayRol = new SbiGeoLayersRoles(aLayer.getLayerId(),
+							r.getExtRoleId().intValue());
 					updateSbiCommonInfo4Update(hibLayRol);
 					tmpSession.save(hibLayRol);
 
@@ -307,17 +287,10 @@ public class SbiGeoLayersDAOHibImpl extends AbstractHibernateDAO implements ISbi
 
 		} catch (HibernateException he) {
 			logException(he);
-
-			if (tx != null)
-				tx.rollback();
-
+			rollbackIfActive(tx);
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
-
 		} finally {
-
-			if (tmpSession != null && tmpSession.isOpen()) {
-				tmpSession.close();
-			}
+			closeSessionIfOpen(tmpSession);
 		}
 
 	}
@@ -330,8 +303,8 @@ public class SbiGeoLayersDAOHibImpl extends AbstractHibernateDAO implements ISbi
 		File newDatasetFile = new File(fileNewPath + newName);
 		if (originalDatasetFile.exists()) {
 			/*
-			 * This method copies the contents of the specified source file to the specified destination file. The directory holding the destination file is
-			 * created if it does not exist. If the destination file exists, then this method will overwrite it.
+			 * This method copies the contents of the specified source file to the specified destination file. The directory holding the destination file is created if it
+			 * does not exist. If the destination file exists, then this method will overwrite it.
 			 */
 			try {
 				Files.copy(originalDatasetFile.toPath(), newDatasetFile.toPath());
@@ -405,7 +378,8 @@ public class SbiGeoLayersDAOHibImpl extends AbstractHibernateDAO implements ISbi
 					String resourcePath = SpagoBIUtilities.getResourcePath();
 					new File(resourcePath + File.separator + "Layer").mkdirs();
 					String name = aLayer.getLabel();
-					try (OutputStreamWriter out = new FileWriter(resourcePath + File.separator + "Layer" + File.separator + name)) {
+					try (OutputStreamWriter out = new FileWriter(
+							resourcePath + File.separator + "Layer" + File.separator + name)) {
 						String content = new String(aLayer.getFilebody());
 						content = content.replaceAll("\t", "").replaceAll("\n", "").replaceAll("\r", "");
 						out.write(content);
@@ -470,18 +444,10 @@ public class SbiGeoLayersDAOHibImpl extends AbstractHibernateDAO implements ISbi
 
 		HibernateException he) {
 			logException(he);
-
-			if (tx != null)
-				tx.rollback();
-
+			rollbackIfActive(tx);
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
-
 		} finally {
-
-			if (tmpSession != null && tmpSession.isOpen()) {
-				tmpSession.close();
-			}
-
+			closeSessionIfOpen(tmpSession);
 		}
 		return id;
 	}
@@ -559,7 +525,8 @@ public class SbiGeoLayersDAOHibImpl extends AbstractHibernateDAO implements ISbi
 					urlDescribeFeature = getDescribeFeatureTypeURL(layerDef.getString("layer_url"));
 					break;
 				case "WMS":
-					urlDescribeFeature = getWMSDescribeFeatureTypeURL(layerDef.getString("layer_url"), layerDef.getString("layerName"));
+					urlDescribeFeature = getWMSDescribeFeatureTypeURL(layerDef.getString("layer_url"),
+							layerDef.getString("layerName"));
 					break;
 				}
 
@@ -584,7 +551,8 @@ public class SbiGeoLayersDAOHibImpl extends AbstractHibernateDAO implements ISbi
 				URLConnection connection = url.openConnection();
 
 				try (InputStream inputStream = connection.getInputStream();
-						BufferedReader br = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8))) {
+						BufferedReader br = new BufferedReader(
+								new InputStreamReader(inputStream, StandardCharsets.UTF_8))) {
 					String inputLine;
 					while ((inputLine = br.readLine()) != null) {
 						JSONObject obj = new JSONObject(inputLine);
@@ -606,9 +574,7 @@ public class SbiGeoLayersDAOHibImpl extends AbstractHibernateDAO implements ISbi
 		} catch (Exception e) {
 			throw new IllegalArgumentException("Error during loading properties : " + e.getLocalizedMessage(), e);
 		} finally {
-			if (tmpSession != null && tmpSession.isOpen()) {
-				tmpSession.close();
-			}
+			closeSessionIfOpen(tmpSession);
 		}
 		return keys;
 	}
@@ -660,18 +626,10 @@ public class SbiGeoLayersDAOHibImpl extends AbstractHibernateDAO implements ISbi
 			tx.commit();
 		} catch (HibernateException he) {
 			logException(he);
-
-			if (tx != null)
-				tx.rollback();
-
+			rollbackIfActive(tx);
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
-
 		} finally {
-
-			if (tmpSession != null && tmpSession.isOpen()) {
-				tmpSession.close();
-			}
-
+			closeSessionIfOpen(tmpSession);
 		}
 	}
 
@@ -690,18 +648,10 @@ public class SbiGeoLayersDAOHibImpl extends AbstractHibernateDAO implements ISbi
 			tx.commit();
 		} catch (HibernateException he) {
 			logException(he);
-
-			if (tx != null)
-				tx.rollback();
-
+			rollbackIfActive(tx);
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
-
 		} finally {
-
-			if (tmpSession != null && tmpSession.isOpen()) {
-				tmpSession.close();
-			}
-
+			closeSessionIfOpen(tmpSession);
 		}
 	}
 
@@ -725,7 +675,8 @@ public class SbiGeoLayersDAOHibImpl extends AbstractHibernateDAO implements ISbi
 				}
 				File doc = new File(aLayer.getPathFile());
 				URL path = doc.toURI().toURL();
-				try (InputStream inputstream = path.openStream(); BufferedReader br = new BufferedReader(new InputStreamReader(inputstream))) {
+				try (InputStream inputstream = path.openStream();
+						BufferedReader br = new BufferedReader(new InputStreamReader(inputstream))) {
 					String c;
 					c = br.readLine();
 					obj = new JSONObject(c);
@@ -758,8 +709,8 @@ public class SbiGeoLayersDAOHibImpl extends AbstractHibernateDAO implements ISbi
 				int httpResult = connection.getResponseCode();
 				if (httpResult == HttpURLConnection.HTTP_OK) {
 
-					try (InputStreamReader isr = new InputStreamReader(connection.getInputStream(), StandardCharsets.UTF_8);
-							BufferedReader br = new BufferedReader(isr)) {
+					try (InputStreamReader isr = new InputStreamReader(connection.getInputStream(),
+							StandardCharsets.UTF_8); BufferedReader br = new BufferedReader(isr)) {
 						String inputLine;
 						while ((inputLine = br.readLine()) != null) {
 							obj = new JSONObject(inputLine);
@@ -774,11 +725,7 @@ public class SbiGeoLayersDAOHibImpl extends AbstractHibernateDAO implements ISbi
 		} catch (Exception e) {
 			logException(e);
 		} finally {
-
-			if (tmpSession != null && tmpSession.isOpen()) {
-				tmpSession.close();
-			}
-
+			closeSessionIfOpen(tmpSession);
 		}
 		return obj;
 	}
@@ -801,10 +748,7 @@ public class SbiGeoLayersDAOHibImpl extends AbstractHibernateDAO implements ISbi
 		} catch (HibernateException he) {
 			logException(he);
 		} finally {
-
-			if (tmpSession != null && tmpSession.isOpen()) {
-				tmpSession.close();
-			}
+			closeSessionIfOpen(tmpSession);
 		}
 		return roles;
 	}
@@ -840,7 +784,8 @@ public class SbiGeoLayersDAOHibImpl extends AbstractHibernateDAO implements ISbi
 	 */
 	@SuppressWarnings("rawtypes")
 	@Override
-	public List<GeoLayer> loadAllLayers(String[] listLabel, IEngUserProfile profile) throws EMFUserError, JSONException, UnsupportedEncodingException {
+	public List<GeoLayer> loadAllLayers(String[] listLabel, IEngUserProfile profile)
+			throws EMFUserError, JSONException, UnsupportedEncodingException {
 		Session tmpSession = null;
 		Transaction tx = null;
 		List<GeoLayer> realResult = new ArrayList<>();
@@ -919,18 +864,10 @@ public class SbiGeoLayersDAOHibImpl extends AbstractHibernateDAO implements ISbi
 			tx.commit();
 		} catch (HibernateException he) {
 			logException(he);
-
-			if (tx != null)
-				tx.rollback();
-
+			rollbackIfActive(tx);
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
-
 		} finally {
-
-			if (tmpSession != null && tmpSession.isOpen()) {
-				tmpSession.close();
-			}
-
+			closeSessionIfOpen(tmpSession);
 		}
 		return realResult;
 	}
@@ -991,7 +928,8 @@ public class SbiGeoLayersDAOHibImpl extends AbstractHibernateDAO implements ISbi
 	public String getOutputFormatKML(String url) {
 		int indexOfRequest = url.indexOf("&outputFormat=application%2Fjson");
 		if (indexOfRequest > 0) {
-			url = url.replaceAll("&outputFormat=application%2Fjson", "&outputFormat=application%2Fvnd.google-earth.kml%2Bxml");
+			url = url.replaceAll("&outputFormat=application%2Fjson",
+					"&outputFormat=application%2Fvnd.google-earth.kml%2Bxml");
 		}
 		return url;
 	}
@@ -1021,14 +959,10 @@ public class SbiGeoLayersDAOHibImpl extends AbstractHibernateDAO implements ISbi
 			resultNumber = ((Long) aQuery.uniqueResult()).intValue();
 
 		} catch (Throwable t) {
-			if (transaction != null && transaction.isActive()) {
-				transaction.rollback();
-			}
+			rollbackIfActive(transaction);
 			throw new SpagoBIDAOException("Error while getting the category with the geo layer with id " + catId, t);
 		} finally {
-			if (session != null && session.isOpen()) {
-				session.close();
-			}
+			closeSessionIfOpen(session);
 			LOGGER.debug("OUT");
 		}
 		return resultNumber;
@@ -1037,11 +971,9 @@ public class SbiGeoLayersDAOHibImpl extends AbstractHibernateDAO implements ISbi
 	@Override
 	public List<GeoLayer> loadLayerByCategoryId(Integer catId) throws EMFUserError {
 		Session tmpSession = null;
-		// Transaction tx = null;
 		List<GeoLayer> retLayers = new ArrayList<>();
 		try {
 			tmpSession = getSession();
-			// tx = tmpSession.beginTransaction();
 			Criterion labelCriterrion = Restrictions.eq("category.id", catId);
 			Criteria criteria = tmpSession.createCriteria(SbiGeoLayers.class);
 			criteria.add(labelCriterrion);
@@ -1053,19 +985,11 @@ public class SbiGeoLayersDAOHibImpl extends AbstractHibernateDAO implements ISbi
 				retLayers.add(hibLayer.toGeoLayer());
 			}
 
-			// tx.commit();
 		} catch (HibernateException he) {
 			logException(he);
-			// if (tx != null)
-			// tx.rollback();
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		} finally {
-
-			if (tmpSession != null) {
-				if (tmpSession.isOpen())
-					tmpSession.close();
-			}
-
+			closeSessionIfOpen(tmpSession);
 		}
 		return retLayers;
 	}

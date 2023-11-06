@@ -329,18 +329,6 @@
 	</servlet>
 	EXO -->
 
-	<!-- start axis servlet -->
-	<servlet>
-		<servlet-name>AxisServlet</servlet-name>
-		<servlet-class>org.apache.axis.transport.http.AxisServlet</servlet-class>
-	</servlet>
-	<servlet>
-		<servlet-name>AdminServlet</servlet-name>
-		<servlet-class>org.apache.axis.transport.http.AdminServlet</servlet-class>
-		<load-on-startup>100</load-on-startup>
-	</servlet>
-	<!-- end axis servlet -->
-
 	<servlet>
 		<servlet-name>StickyCaptcha</servlet-name>
 		<servlet-class>it.eng.spagobi.commons.services.KnowageCaptchaServlet</servlet-class>
@@ -381,28 +369,6 @@
 		<servlet-name>AdapterHTTP</servlet-name>
 		<url-pattern>/servlet/AdapterHTTP</url-pattern>
 	</servlet-mapping>
-	<servlet-mapping>
-		<servlet-name>AxisServlet</servlet-name>
-		<url-pattern>/servlet/AxisServlet</url-pattern>
-	</servlet-mapping>
-	<servlet-mapping>
-		<servlet-name>AxisServlet</servlet-name>
-		<url-pattern>*.jws</url-pattern>
-	</servlet-mapping>
-	<servlet-mapping>
-		<servlet-name>AxisServlet</servlet-name>
-		<url-pattern>/services/*</url-pattern>
-	</servlet-mapping>
-	<servlet-mapping>
-		<servlet-name>AxisServlet</servlet-name>
-		<url-pattern>/sdk/*</url-pattern>
-	</servlet-mapping>
-	<servlet-mapping>
-		<servlet-name>AdminServlet</servlet-name>
-		<url-pattern>/servlet/AdminServlet</url-pattern>
-	</servlet-mapping>
-	<!-- end axis servlet -->
-
 
 	<!-- END SERVLET MAPPINGS -->
 

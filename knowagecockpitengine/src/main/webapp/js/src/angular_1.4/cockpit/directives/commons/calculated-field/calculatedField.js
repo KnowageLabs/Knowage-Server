@@ -235,7 +235,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 		$scope.validateFormula = function(save) {
 			return $q(function(resolve, reject) {
-				$scope.calculatedField.formula =  $scope.calculatedField.formulaEditor.replace(/\$V\{([a-zA-Z0-9\-\_]*){1}(?:.([a-zA-Z0-9\-\_]*){1})?\}/g,function(match,p1,p2){
+				$scope.calculatedField.formula =  $scope.calculatedField.formulaEditor.replace(/\$V\{([a-zA-Z0-9\-\_]{1,255})(?:.([a-zA-Z0-9\-\_]{1,255}))?\}/g,function(match,p1,p2){
 					return p2 ? cockpitModule_properties.VARIABLES[p1][p2] : cockpitModule_properties.VARIABLES[p1];
 				})
 				$scope.calculatedField.formula = $scope.calculatedField.formula.replace(/\n/g,'');

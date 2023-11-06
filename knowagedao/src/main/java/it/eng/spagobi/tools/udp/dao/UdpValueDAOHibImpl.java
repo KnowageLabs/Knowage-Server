@@ -57,9 +57,7 @@ public class UdpValueDAOHibImpl extends AbstractHibernateDAO implements IUdpValu
 			id = (Integer) session.save(propValue);
 			tx.commit();
 		} catch (HibernateException e) {
-			if (tx != null && tx.isActive()) {
-				tx.rollback();
-			}
+			rollbackIfActive(tx);
 			throw e;
 		} finally {
 			if (session != null) {
@@ -88,9 +86,7 @@ public class UdpValueDAOHibImpl extends AbstractHibernateDAO implements IUdpValu
 			tx.commit();
 
 		} catch (HibernateException e) {
-			if (tx != null && tx.isActive()) {
-				tx.rollback();
-			}
+			rollbackIfActive(tx);
 			throw e;
 
 		} finally {
@@ -119,9 +115,7 @@ public class UdpValueDAOHibImpl extends AbstractHibernateDAO implements IUdpValu
 			tx.commit();
 
 		} catch (HibernateException e) {
-			if (tx != null && tx.isActive()) {
-				tx.rollback();
-			}
+			rollbackIfActive(tx);
 			throw e;
 
 		} finally {
@@ -148,9 +142,7 @@ public class UdpValueDAOHibImpl extends AbstractHibernateDAO implements IUdpValu
 			tx.commit();
 
 		} catch (HibernateException e) {
-			if (tx != null && tx.isActive()) {
-				tx.rollback();
-			}
+			rollbackIfActive(tx);
 			throw e;
 
 		} finally {
@@ -176,9 +168,7 @@ public class UdpValueDAOHibImpl extends AbstractHibernateDAO implements IUdpValu
 			propValue = (SbiUdpValue) session.get(SbiUdpValue.class, id);
 			tx.commit();
 		} catch (HibernateException e) {
-			if (tx != null && tx.isActive()) {
-				tx.rollback();
-			}
+			rollbackIfActive(tx);
 			throw e;
 
 		} finally {
@@ -213,9 +203,7 @@ public class UdpValueDAOHibImpl extends AbstractHibernateDAO implements IUdpValu
 			}
 
 		} catch (HibernateException e) {
-			if (tx != null && tx.isActive()) {
-				tx.rollback();
-			}
+			rollbackIfActive(tx);
 			throw e;
 
 		} finally {
@@ -244,9 +232,7 @@ public class UdpValueDAOHibImpl extends AbstractHibernateDAO implements IUdpValu
 			udpValue = toUdpValue(prop);
 
 		} catch (HibernateException e) {
-			if (tx != null && tx.isActive()) {
-				tx.rollback();
-			}
+			rollbackIfActive(tx);
 			throw e;
 
 		} finally {
@@ -279,9 +265,7 @@ public class UdpValueDAOHibImpl extends AbstractHibernateDAO implements IUdpValu
 			toReturn = toUdpValue(hibValueUDP);
 
 		} catch (HibernateException e) {
-			if (tx != null && tx.isActive()) {
-				tx.rollback();
-			}
+			rollbackIfActive(tx);
 			throw e;
 
 		} finally {
@@ -305,9 +289,7 @@ public class UdpValueDAOHibImpl extends AbstractHibernateDAO implements IUdpValu
 			tx.commit();
 
 		} catch (HibernateException e) {
-			if (tx != null && tx.isActive()) {
-				tx.rollback();
-			}
+			rollbackIfActive(tx);
 			throw e;
 
 		} finally {

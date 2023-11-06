@@ -400,7 +400,6 @@
 				<version>4.0.9</version>
 			</dependency>
 			
-			<!-- Replace Axis 1.4 -->
 			<dependency>
 				<groupId>com.sun.xml.ws</groupId>
 				<artifactId>jaxws-rt</artifactId>
@@ -440,6 +439,12 @@
 			<dependency>
 				<groupId>org.apache.logging.log4j</groupId>
 				<artifactId>log4j-jcl</artifactId>
+				<version>${log4j.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>org.apache.logging.log4j</groupId>
+				<artifactId>log4j-iostreams</artifactId>
 				<version>${log4j.version}</version>
 			</dependency>
 

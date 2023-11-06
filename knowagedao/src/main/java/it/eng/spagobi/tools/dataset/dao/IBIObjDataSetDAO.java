@@ -18,6 +18,7 @@
 package it.eng.spagobi.tools.dataset.dao;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.hibernate.Session;
 
@@ -44,25 +45,26 @@ public interface IBIObjDataSetDAO extends ISpagoBIDao {
 	 * @throws EMFUserError
 	 */
 
-	public void updateObjectNotDetailDatasets(BIObject biObj, ArrayList<String> dsLabels, Session currSession) throws EMFUserError;
+	void updateObjectNotDetailDatasets(BIObject biObj, ArrayList<String> dsLabels, Session currSession)
+			throws EMFUserError;
 
-	public void updateObjectDetailDataset(Integer objectId, Integer dsId, Session currSession) throws EMFUserError;
+	void updateObjectDetailDataset(Integer objectId, Integer dsId, Session currSession) throws EMFUserError;
 
-	public ArrayList<BIObject> getBIObjectsUsingDataset(Integer datasetId, Session currSession) throws EMFUserError;
+	List<BIObject> getBIObjectsUsingDataset(Integer datasetId, Session currSession) throws EMFUserError;
 
-	public ArrayList<BIObject> getBIObjectsUsingDataset(Integer datasetId) throws EMFUserError;
+	List<BIObject> getBIObjectsUsingDataset(Integer datasetId) throws EMFUserError;
 
-	public ArrayList<BIObjDataSet> getBiObjDataSets(Integer biObjId, Session currSession) throws EMFUserError;
+	List<BIObjDataSet> getBiObjDataSets(Integer biObjId, Session currSession) throws EMFUserError;
 
-	public ArrayList<BIObjDataSet> getBiObjDataSets(Integer biObjId) throws EMFUserError;
+	List<BIObjDataSet> getBiObjDataSets(Integer biObjId) throws EMFUserError;
 
-	public BIObjDataSet getObjectDetailDataset(Integer objectId, Session currSession) throws EMFUserError;
+	BIObjDataSet getObjectDetailDataset(Integer objectId, Session currSession) throws EMFUserError;
 
-	public ArrayList<BIObjDataSet> getObjectNotDetailDataset(Integer objectId, Session currSession) throws EMFUserError;
+	List<BIObjDataSet> getObjectNotDetailDataset(Integer objectId, Session currSession) throws EMFUserError;
 
-	public void eraseBIObjDataSetByObjectId(Integer biObjId) throws EMFUserError;
+	void eraseBIObjDataSetByObjectId(Integer biObjId) throws EMFUserError;
 
-	public void eraseBIObjDataSetByObjectId(Integer biObjId, Session currSession) throws EMFUserError;
+	void eraseBIObjDataSetByObjectId(Integer biObjId, Session currSession) throws EMFUserError;
 
-	public void insertOrUpdateDatasetDependencies(BIObject biObject, ObjTemplate template, Session session);
+	void insertOrUpdateDatasetDependencies(BIObject biObject, ObjTemplate template, Session session);
 }

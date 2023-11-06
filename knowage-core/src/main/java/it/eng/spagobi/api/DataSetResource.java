@@ -114,14 +114,15 @@ public class DataSetResource extends AbstractDataSetResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	@UserConstraint(functionalities = { CommunityFunctionalityConstants.SELF_SERVICE_DATASET_MANAGEMENT })
 	@Deprecated
-	public String getDataSets(@QueryParam("typeDoc") String typeDoc, @QueryParam("callback") String callback, @QueryParam("ids") String ids) {
+	public String getDataSets(@QueryParam("typeDoc") String typeDoc, @QueryParam("callback") String callback,
+			@QueryParam("ids") String ids) {
 		logger.debug("IN");
 
 		try {
 
 			// The old implementation. (commented by: danristo)
 			List<IDataSet> dataSets = getDatasetManagementAPI().getDataSets();
-			List<IDataSet> toBeReturned = new ArrayList<IDataSet>();
+			List<IDataSet> toBeReturned = new ArrayList<>();
 
 			List<Integer> idList = null;
 			Integer[] idArray = getIdsAsIntegers(ids);
@@ -130,13 +131,15 @@ public class DataSetResource extends AbstractDataSetResource {
 			}
 
 			for (IDataSet dataset : dataSets) {
-				if (DataSetUtilities.isExecutableByUser(dataset, getUserProfile()) && (idList == null || idList.contains(dataset.getId())))
+				if (DataSetUtilities.isExecutableByUser(dataset, getUserProfile())
+						&& (idList == null || idList.contains(dataset.getId())))
 					toBeReturned.add(dataset);
 			}
 
 			return serializeDataSets(toBeReturned, typeDoc);
 		} catch (Throwable t) {
-			throw new SpagoBIServiceException(this.request.getPathInfo(), "An unexpected error occured while executing service", t);
+			throw new SpagoBIServiceException(this.request.getPathInfo(),
+					"An unexpected error occured while executing service", t);
 		} finally {
 			logger.debug("OUT");
 		}
@@ -153,15 +156,16 @@ public class DataSetResource extends AbstractDataSetResource {
 			toReturn = getDatasetManagementAPI().getDatasetsForLov();
 			return Response.ok(toReturn).build();
 		} catch (Throwable t) {
-			throw new SpagoBIServiceException(this.request.getPathInfo(), "An unexpected error occured while executing service", t);
+			throw new SpagoBIServiceException(this.request.getPathInfo(),
+					"An unexpected error occured while executing service", t);
 		} finally {
 			logger.debug("OUT");
 		}
 	}
 
 	/**
-	 * The new implementation that, besides other useful information about datasets, provides also an information about old dataset versions for particular
-	 * dataset. This information was missing before.
+	 * The new implementation that, besides other useful information about datasets, provides also an information about old dataset versions for particular dataset.
+	 * This information was missing before.
 	 *
 	 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 	 * @author Nikola Simovic (nsimovic, nikola.simovic@mht.net)
@@ -173,8 +177,9 @@ public class DataSetResource extends AbstractDataSetResource {
 	@Path("/pagopt/")
 	@Produces(MediaType.APPLICATION_JSON)
 	@UserConstraint(functionalities = { CommunityFunctionalityConstants.SELF_SERVICE_DATASET_MANAGEMENT })
-	public String getDataSetsPaginationOption(@QueryParam("typeDoc") String typeDoc, @QueryParam("callback") String callback,
-			@QueryParam("offset") Integer offsetInput, @QueryParam("fetchSize") Integer fetchSizeInput, @QueryParam("filters") JSONObject filters,
+	public String getDataSetsPaginationOption(@QueryParam("typeDoc") String typeDoc,
+			@QueryParam("callback") String callback, @QueryParam("offset") Integer offsetInput,
+			@QueryParam("fetchSize") Integer fetchSizeInput, @QueryParam("filters") JSONObject filters,
 			@QueryParam("ordering") JSONObject ordering, @QueryParam("tags") List<Integer> tags) {
 
 		logger.debug("IN");
@@ -189,7 +194,7 @@ public class DataSetResource extends AbstractDataSetResource {
 
 			List<IDataSet> dataSets = getListOfGenericDatasets(dsDao, offset, fetchSize, filters, ordering, tags);
 
-			List<IDataSet> toBeReturned = new ArrayList<IDataSet>();
+			List<IDataSet> toBeReturned = new ArrayList<>();
 
 			for (IDataSet dataset : dataSets) {
 
@@ -206,7 +211,8 @@ public class DataSetResource extends AbstractDataSetResource {
 			return serializeDataSets(toBeReturned, typeDoc);
 
 		} catch (Throwable t) {
-			throw new SpagoBIServiceException(this.request.getPathInfo(), "An unexpected error occured while executing service", t);
+			throw new SpagoBIServiceException(this.request.getPathInfo(),
+					"An unexpected error occured while executing service", t);
 		} finally {
 			logger.debug("OUT");
 		}
@@ -260,7 +266,8 @@ public class DataSetResource extends AbstractDataSetResource {
 		} catch (SpagoBIRuntimeException ex) {
 			throw ex;
 		} catch (Exception e) {
-			throw new SpagoBIServiceException(this.request.getPathInfo(), "An unexpected error occured while executing service", e);
+			throw new SpagoBIServiceException(this.request.getPathInfo(),
+					"An unexpected error occured while executing service", e);
 		}
 
 		return toReturn.toString();
@@ -333,7 +340,8 @@ public class DataSetResource extends AbstractDataSetResource {
 			if (datasetToReturn.isPersisted()) {
 				schedulerDAO = DAOFactory.getSchedulerDAO();
 
-				List<Trigger> triggers = schedulerDAO.loadTriggers("PersistDatasetExecutions", datasetToReturn.getLabel());
+				List<Trigger> triggers = schedulerDAO.loadTriggers("PersistDatasetExecutions",
+						datasetToReturn.getLabel());
 
 				if (triggers.isEmpty()) {
 					datasetToReturn.setScheduled(false);
@@ -364,7 +372,8 @@ public class DataSetResource extends AbstractDataSetResource {
 				}
 			}
 		} catch (Exception e) {
-			throw new SpagoBIServiceException(this.request.getPathInfo(), "An unexpected error occured while executing service", e);
+			throw new SpagoBIServiceException(this.request.getPathInfo(),
+					"An unexpected error occured while executing service", e);
 		}
 
 		return serializeDataSet(datasetToReturn, null);
@@ -382,7 +391,8 @@ public class DataSetResource extends AbstractDataSetResource {
 			String category = dataset.getCategoryCd();
 			return category;
 		} catch (Exception e) {
-			throw new SpagoBIServiceException(this.request.getPathInfo(), "An unexpected error occured while executing service", e);
+			throw new SpagoBIServiceException(this.request.getPathInfo(),
+					"An unexpected error occured while executing service", e);
 		}
 	}
 
@@ -399,7 +409,8 @@ public class DataSetResource extends AbstractDataSetResource {
 				return true;
 			return false;
 		} catch (Exception e) {
-			throw new SpagoBIServiceException(this.request.getPathInfo(), "An unexpected error occured while executing service", e);
+			throw new SpagoBIServiceException(this.request.getPathInfo(),
+					"An unexpected error occured while executing service", e);
 		}
 	}
 
@@ -416,7 +427,8 @@ public class DataSetResource extends AbstractDataSetResource {
 	@Path("/{id}/restore")
 	@Produces(MediaType.APPLICATION_JSON)
 	@UserConstraint(functionalities = { CommunityFunctionalityConstants.SELF_SERVICE_DATASET_MANAGEMENT })
-	public String restoreCurrentDatasetVersion(@PathParam("id") String datasetId, @QueryParam("versionId") String versionId) throws JSONException {
+	public String restoreCurrentDatasetVersion(@PathParam("id") String datasetId,
+			@QueryParam("versionId") String versionId) throws JSONException {
 
 		logger.debug("IN");
 
@@ -486,9 +498,12 @@ public class DataSetResource extends AbstractDataSetResource {
 		try {
 			new DatasetManagementAPI(getUserProfile()).canLoadData(dataSet);
 		} catch (ActionNotPermittedException e) {
-			logger.error("User " + getUserProfile().getUserId() + " cannot export the dataset with label " + dataSet.getLabel());
-			throw new SpagoBIRestServiceException(e.getI18NCode(), buildLocaleFromSession(),
-					"User " + getUserProfile().getUserId() + " cannot export the dataset with label " + dataSet.getLabel(), e, "MessageFiles.messages");
+			logger.error("User " + getUserProfile().getUserId() + " cannot export the dataset with label "
+					+ dataSet.getLabel());
+			throw new SpagoBIRestServiceException(
+					e.getI18NCode(), buildLocaleFromSession(), "User " + getUserProfile().getUserId()
+							+ " cannot export the dataset with label " + dataSet.getLabel(),
+					e, "MessageFiles.messages");
 		}
 		dataSet.setDrivers(drivers);
 		dataSet.setParamsMap(parameters);
@@ -549,7 +564,8 @@ public class DataSetResource extends AbstractDataSetResource {
 		IDataSetDAO datasetDao = DAOFactory.getDataSetDAO();
 		datasetDao.setUserProfile(getUserProfile());
 
-		boolean deleted = datasetDao.deleteInactiveDataSetVersion(Integer.parseInt(versionId), Integer.parseInt(datasetId));
+		boolean deleted = datasetDao.deleteInactiveDataSetVersion(Integer.parseInt(versionId),
+				Integer.parseInt(datasetId));
 
 		if (deleted) {
 			logger.debug("Dataset Version deleted");
@@ -600,7 +616,8 @@ public class DataSetResource extends AbstractDataSetResource {
 
 			return resultsJSON.toString();
 		} catch (Throwable t) {
-			throw new SpagoBIServiceException(this.request.getPathInfo(), "An unexpected error occured while executing service", t);
+			throw new SpagoBIServiceException(this.request.getPathInfo(),
+					"An unexpected error occured while executing service", t);
 		} finally {
 			logger.debug("OUT");
 		}
@@ -623,7 +640,8 @@ public class DataSetResource extends AbstractDataSetResource {
 			resultsJSON.put("results", paramsJSON);
 			return resultsJSON.toString();
 		} catch (Throwable t) {
-			throw new SpagoBIServiceException(this.request.getPathInfo(), "An unexpected error occured while executing service", t);
+			throw new SpagoBIServiceException(this.request.getPathInfo(),
+					"An unexpected error occured while executing service", t);
 		} finally {
 			logger.debug("OUT");
 		}
@@ -643,7 +661,8 @@ public class DataSetResource extends AbstractDataSetResource {
 
 			return Response.ok(toReturn).build();
 		} catch (Throwable t) {
-			throw new SpagoBIServiceException(this.request.getPathInfo(), "An unexpected error occured while executing service", t);
+			throw new SpagoBIServiceException(this.request.getPathInfo(),
+					"An unexpected error occured while executing service", t);
 		} finally {
 			logger.debug("OUT");
 		}
@@ -663,7 +682,8 @@ public class DataSetResource extends AbstractDataSetResource {
 			List<IDataSet> dataSets = getDatasetManagementAPI().getEnterpriseDataSet();
 			return serializeDataSets(dataSets, typeDoc);
 		} catch (Throwable t) {
-			throw new SpagoBIServiceException(this.request.getPathInfo(), "An unexpected error occured while executing service", t);
+			throw new SpagoBIServiceException(this.request.getPathInfo(),
+					"An unexpected error occured while executing service", t);
 		} finally {
 			logger.debug("OUT");
 		}
@@ -683,7 +703,8 @@ public class DataSetResource extends AbstractDataSetResource {
 			List<IDataSet> dataSets = getDatasetManagementAPI().getOwnedDataSet();
 			return serializeDataSets(dataSets, typeDoc);
 		} catch (Throwable t) {
-			throw new SpagoBIServiceException(this.request.getPathInfo(), "An unexpected error occured while executing service", t);
+			throw new SpagoBIServiceException(this.request.getPathInfo(),
+					"An unexpected error occured while executing service", t);
 		} finally {
 			logger.debug("OUT");
 		}
@@ -703,7 +724,8 @@ public class DataSetResource extends AbstractDataSetResource {
 			List<IDataSet> dataSets = getDatasetManagementAPI().getSharedDataSet();
 			return serializeDataSets(dataSets, typeDoc);
 		} catch (Throwable t) {
-			throw new SpagoBIServiceException(this.request.getPathInfo(), "An unexpected error occured while executing service", t);
+			throw new SpagoBIServiceException(this.request.getPathInfo(),
+					"An unexpected error occured while executing service", t);
 		} finally {
 			logger.debug("OUT");
 		}
@@ -723,7 +745,8 @@ public class DataSetResource extends AbstractDataSetResource {
 			List<IDataSet> dataSets = getDatasetManagementAPI().getUncertifiedDataSet();
 			return serializeDataSets(dataSets, typeDoc);
 		} catch (Throwable t) {
-			throw new SpagoBIServiceException(this.request.getPathInfo(), "An unexpected error occured while executing service", t);
+			throw new SpagoBIServiceException(this.request.getPathInfo(),
+					"An unexpected error occured while executing service", t);
 		} finally {
 			logger.debug("OUT");
 		}
@@ -745,7 +768,8 @@ public class DataSetResource extends AbstractDataSetResource {
 			List<IDataSet> dataSets = getDatasetManagementAPI().getMyDataDataSet();
 			return serializeDataSets(dataSets, typeDoc);
 		} catch (Throwable t) {
-			throw new SpagoBIServiceException(this.request.getPathInfo(), "An unexpected error occured while executing service", t);
+			throw new SpagoBIServiceException(this.request.getPathInfo(),
+					"An unexpected error occured while executing service", t);
 		} finally {
 			logger.debug("OUT");
 		}
@@ -759,7 +783,7 @@ public class DataSetResource extends AbstractDataSetResource {
 		logger.debug("IN");
 		try {
 			List<IDataSet> dataSets;
-			List<IDataSet> dataSetsNoParams = new ArrayList<IDataSet>(0);
+			List<IDataSet> dataSetsNoParams = new ArrayList<>(0);
 			if (UserUtilities.isAdministrator(getUserProfile())) {
 				dataSets = getDatasetManagementAPI().getAllDataSet();
 			} else {
@@ -778,7 +802,8 @@ public class DataSetResource extends AbstractDataSetResource {
 
 			return serializeDataSets(dataSetsNoParams, typeDoc);
 		} catch (Throwable t) {
-			throw new SpagoBIServiceException(this.request.getPathInfo(), "An unexpected error occured while executing service", t);
+			throw new SpagoBIServiceException(this.request.getPathInfo(),
+					"An unexpected error occured while executing service", t);
 		} finally {
 			logger.debug("OUT");
 		}
@@ -794,7 +819,8 @@ public class DataSetResource extends AbstractDataSetResource {
 			List<IDataSet> dataSets = DAOFactory.getDataSetDAO().loadDatasetsByTags(getUserProfile(), tagIds, "owned");
 			return serializeDataSets(dataSets, null);
 		} catch (Throwable t) {
-			throw new SpagoBIServiceException(this.request.getPathInfo(), "An unexpected error occured while executing service", t);
+			throw new SpagoBIServiceException(this.request.getPathInfo(),
+					"An unexpected error occured while executing service", t);
 		} finally {
 			logger.debug("OUT");
 		}
@@ -807,10 +833,12 @@ public class DataSetResource extends AbstractDataSetResource {
 	public String filterEnterpriseDatasetsByTags(@QueryParam("tags") List<Integer> tagIds) {
 		logger.debug("IN");
 		try {
-			List<IDataSet> dataSets = DAOFactory.getDataSetDAO().loadDatasetsByTags(getUserProfile(), tagIds, "enterprise");
+			List<IDataSet> dataSets = DAOFactory.getDataSetDAO().loadDatasetsByTags(getUserProfile(), tagIds,
+					"enterprise");
 			return serializeDataSets(dataSets, null);
 		} catch (Throwable t) {
-			throw new SpagoBIServiceException(this.request.getPathInfo(), "An unexpected error occured while executing service", t);
+			throw new SpagoBIServiceException(this.request.getPathInfo(),
+					"An unexpected error occured while executing service", t);
 		} finally {
 			logger.debug("OUT");
 		}
@@ -826,7 +854,8 @@ public class DataSetResource extends AbstractDataSetResource {
 			List<IDataSet> dataSets = DAOFactory.getDataSetDAO().loadDatasetsByTags(getUserProfile(), tagIds, "shared");
 			return serializeDataSets(dataSets, null);
 		} catch (Throwable t) {
-			throw new SpagoBIServiceException(this.request.getPathInfo(), "An unexpected error occured while executing service", t);
+			throw new SpagoBIServiceException(this.request.getPathInfo(),
+					"An unexpected error occured while executing service", t);
 		} finally {
 			logger.debug("OUT");
 		}
@@ -835,6 +864,7 @@ public class DataSetResource extends AbstractDataSetResource {
 	@POST
 	@Path("/")
 	@Produces(MediaType.APPLICATION_JSON)
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.DATASET_MANAGEMENT })
 	public String persistDataSets(@Context HttpServletRequest req) throws IOException, JSONException {
 		IDataSetDAO dsDao;
 		String toReturnString = null;
@@ -846,7 +876,8 @@ public class DataSetResource extends AbstractDataSetResource {
 
 			toReturnString = mdsfr.insertDataset(json.toString(), dsDao, null, getUserProfile(), req);
 		} catch (Exception e) {
-			throw new SpagoBIServiceException(this.request.getPathInfo(), "An unexpected error occured while executing service", e);
+			throw new SpagoBIServiceException(this.request.getPathInfo(),
+					"An unexpected error occured while executing service", e);
 			// throw new SpagoBIRestServiceException(getLocale(), e);
 		}
 
@@ -856,7 +887,8 @@ public class DataSetResource extends AbstractDataSetResource {
 	@POST
 	@Path("/preview")
 	@Produces(MediaType.APPLICATION_JSON)
-	@UserConstraint(functionalities = { CommunityFunctionalityConstants.DOCUMENT_MANAGEMENT_ADMIN, CommunityFunctionalityConstants.DOCUMENT_MANAGEMENT_DEV })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.DOCUMENT_MANAGEMENT_ADMIN,
+			CommunityFunctionalityConstants.DOCUMENT_MANAGEMENT_DEV })
 	public String previewDataSet(@Context HttpServletRequest req) throws IOException, JSONException {
 		JSONObject json = RestUtilities.readBodyAsJSONObject(req);
 		ManageDataSetsForREST mdsfr = ManageDataSetsForREST.getInstance();
@@ -881,9 +913,9 @@ public class DataSetResource extends AbstractDataSetResource {
 		// field's meta
 		JSONArray fieldsMetaDataJSON = new JSONArray();
 
-		List<JSONObject> spatialAttributesList = new ArrayList<JSONObject>();
-		List<JSONObject> attributesList = new ArrayList<JSONObject>();
-		List<JSONObject> measuresList = new ArrayList<JSONObject>();
+		List<JSONObject> spatialAttributesList = new ArrayList<>();
+		List<JSONObject> attributesList = new ArrayList<>();
+		List<JSONObject> measuresList = new ArrayList<>();
 
 		int fieldCount = fieldsMetaData.size();
 		logger.debug("Number of fields = " + fieldCount);
@@ -891,7 +923,8 @@ public class DataSetResource extends AbstractDataSetResource {
 
 		for (IFieldMetaData fieldMetaData : fieldsMetaData) {
 
-			logger.debug("Evaluating field with name [" + fieldMetaData.getName() + "], alias [" + fieldMetaData.getAlias() + "] ...");
+			logger.debug("Evaluating field with name [" + fieldMetaData.getName() + "], alias ["
+					+ fieldMetaData.getAlias() + "] ...");
 
 			Boolean isCalculatedExpert = (Boolean) fieldMetaData.getProperty(PROPERTY_CALCULATED_EXPERT);
 
@@ -903,7 +936,8 @@ public class DataSetResource extends AbstractDataSetResource {
 			Object propertyRawValue = fieldMetaData.getProperty(PROPERTY_VISIBLE);
 			logger.debug("Read property " + PROPERTY_VISIBLE + ": its value is [" + propertyRawValue + "]");
 
-			if (propertyRawValue != null && !propertyRawValue.toString().equals("") && (Boolean.parseBoolean(propertyRawValue.toString()) == false)) {
+			if (propertyRawValue != null && !propertyRawValue.toString().equals("")
+					&& !Boolean.parseBoolean(propertyRawValue.toString())) {
 				logger.debug("The field is not visible");
 				continue;
 			} else {
@@ -922,9 +956,10 @@ public class DataSetResource extends AbstractDataSetResource {
 			switch (type) {
 			case ATTRIBUTE:
 				Object isSegmentAttributeObj = fieldMetaData.getProperty(PROPERTY_IS_SEGMENT_ATTRIBUTE);
-				logger.debug("Read property " + PROPERTY_IS_SEGMENT_ATTRIBUTE + ": its value is [" + propertyRawValue + "]");
-				String attributeNature = (isSegmentAttributeObj != null && Boolean.parseBoolean(isSegmentAttributeObj.toString())) ? "segment_attribute"
-						: "attribute";
+				logger.debug(
+						"Read property " + PROPERTY_IS_SEGMENT_ATTRIBUTE + ": its value is [" + propertyRawValue + "]");
+				String attributeNature = (isSegmentAttributeObj != null
+						&& Boolean.parseBoolean(isSegmentAttributeObj.toString())) ? "segment_attribute" : "attribute";
 
 				logger.debug("The nature of the attribute is recognized as " + attributeNature);
 				fieldMetaDataJSON.put("nature", attributeNature);
@@ -935,13 +970,16 @@ public class DataSetResource extends AbstractDataSetResource {
 				break;
 			case MEASURE:
 				Object isMandatoryMeasureObj = fieldMetaData.getProperty(PROPERTY_IS_MANDATORY_MEASURE);
-				logger.debug("Read property " + PROPERTY_IS_MANDATORY_MEASURE + ": its value is [" + isMandatoryMeasureObj + "]");
-				String measureNature = (isMandatoryMeasureObj != null && (Boolean.parseBoolean(isMandatoryMeasureObj.toString()) == true)) ? "mandatory_measure"
-						: "measure";
+				logger.debug("Read property " + PROPERTY_IS_MANDATORY_MEASURE + ": its value is ["
+						+ isMandatoryMeasureObj + "]");
+				String measureNature = (isMandatoryMeasureObj != null
+						&& Boolean.parseBoolean(isMandatoryMeasureObj.toString())) ? "mandatory_measure"
+								: "measure";
 				logger.debug("The nature of the measure is recognized as " + measureNature);
 				fieldMetaDataJSON.put("nature", measureNature);
 				String aggregationFunction = (String) fieldMetaData.getProperty(PROPERTY_AGGREGATION_FUNCTION);
-				logger.debug("Read property " + PROPERTY_AGGREGATION_FUNCTION + ": its value is [" + aggregationFunction + "]");
+				logger.debug("Read property " + PROPERTY_AGGREGATION_FUNCTION + ": its value is [" + aggregationFunction
+						+ "]");
 				fieldMetaDataJSON.put("funct", AggregationFunctions.get(aggregationFunction).getName());
 				fieldMetaDataJSON.put("iconCls", measureNature);
 				String decimalPrecision = (String) fieldMetaData.getProperty(IFieldMetaData.DECIMALPRECISION);
@@ -955,10 +993,11 @@ public class DataSetResource extends AbstractDataSetResource {
 				break;
 			case SPATIAL_ATTRIBUTE:
 				Object isSegmentSpatialAttributeObj = fieldMetaData.getProperty(PROPERTY_IS_SEGMENT_ATTRIBUTE);
-				logger.debug("Read property " + PROPERTY_IS_SEGMENT_ATTRIBUTE + ": its value is [" + propertyRawValue + "]");
-				String spatialAttributeNature = (isSegmentSpatialAttributeObj != null && Boolean.parseBoolean(isSegmentSpatialAttributeObj.toString()))
-						? "segment_attribute"
-						: "attribute";
+				logger.debug(
+						"Read property " + PROPERTY_IS_SEGMENT_ATTRIBUTE + ": its value is [" + propertyRawValue + "]");
+				String spatialAttributeNature = (isSegmentSpatialAttributeObj != null
+						&& Boolean.parseBoolean(isSegmentSpatialAttributeObj.toString())) ? "segment_attribute"
+								: "attribute";
 
 				logger.debug("The nature of the attribute is recognized as " + spatialAttributeNature);
 				fieldMetaDataJSON.put("nature", spatialAttributeNature);
@@ -1011,7 +1050,8 @@ public class DataSetResource extends AbstractDataSetResource {
 
 	protected String serializeDataSets(List<IDataSet> dataSets, String typeDocWizard) {
 		try {
-			JSONArray datasetsJSONArray = (JSONArray) SerializerFactory.getSerializer("application/json").serialize(dataSets, buildLocaleFromSession());
+			JSONArray datasetsJSONArray = (JSONArray) SerializerFactory.getSerializer("application/json")
+					.serialize(dataSets, buildLocaleFromSession());
 			JSONArray datasetsJSONReturn = putActions(getUserProfile(), datasetsJSONArray, typeDocWizard);
 			JSONObject resultJSON = new JSONObject();
 			resultJSON.put("root", datasetsJSONReturn);
@@ -1079,7 +1119,8 @@ public class DataSetResource extends AbstractDataSetResource {
 			toReturn.put("valid", true);
 
 		} catch (Exception e) {
-			throw new SpagoBIServiceException(this.request.getPathInfo(), "Error while checking association " + association, e);
+			throw new SpagoBIServiceException(this.request.getPathInfo(),
+					"Error while checking association " + association, e);
 		} finally {
 			logger.debug("OUT");
 		}
@@ -1127,11 +1168,14 @@ public class DataSetResource extends AbstractDataSetResource {
 				}
 				SQLDBCache cache = (SQLDBCache) CacheFactory.getCache(SpagoBICacheConfiguration.getInstance());
 				String tableName = null;
-				if (dataSet.isPersisted() && dataSet.getDataSourceForWriting().getDsId() == cache.getDataSource().getDsId()) {
+				if (dataSet.isPersisted()
+						&& dataSet.getDataSourceForWriting().getDsId() == cache.getDataSource().getDsId()) {
 					tableName = dataSet.getTableNameForReading();
-				} else if (dataSet.isFlatDataset() && dataSet.getDataSource().getDsId() == cache.getDataSource().getDsId()) {
+				} else if (dataSet.isFlatDataset()
+						&& dataSet.getDataSource().getDsId() == cache.getDataSource().getDsId()) {
 					tableName = dataSet.getTableNameForReading();
-				} else if (dataSet.isPreparedDataSet() && dataSet.getDataSource().getDsId() == cache.getDataSource().getDsId()) {
+				} else if (dataSet.isPreparedDataSet()
+						&& dataSet.getDataSource().getDsId() == cache.getDataSource().getDsId()) {
 					tableName = dataSet.getTableNameForReading();
 				} else {
 					DatasetManagementAPI dataSetManagementAPI = getDatasetManagementAPI();
@@ -1141,7 +1185,7 @@ public class DataSetResource extends AbstractDataSetResource {
 					if (tableName != null) {
 						if (!labels.isNull(label)) {
 							JSONArray columnsArray = labels.getJSONArray(label);
-							Set<String> columns = new HashSet<String>(columnsArray.length());
+							Set<String> columns = new HashSet<>(columnsArray.length());
 							for (int i = 0; i < columnsArray.length(); i++) {
 								String column = columnsArray.getString(i);
 								columns.add(column);
@@ -1174,8 +1218,8 @@ public class DataSetResource extends AbstractDataSetResource {
 	 * @deprecated TODO ML-DATASOURCE-V3 Delete
 	 */
 	@Deprecated
-	protected List<IDataSet> getListOfGenericDatasets(IDataSetDAO dsDao, Integer start, Integer limit, JSONObject filters, JSONObject ordering,
-			List<Integer> tags) throws JSONException, EMFUserError {
+	protected List<IDataSet> getListOfGenericDatasets(IDataSetDAO dsDao, Integer start, Integer limit,
+			JSONObject filters, JSONObject ordering, List<Integer> tags) throws JSONException, EMFUserError {
 		logger.debug("IN");
 		if (start == null) {
 			start = DataSetConstants.START_DEFAULT;
@@ -1190,7 +1234,8 @@ public class DataSetResource extends AbstractDataSetResource {
 				String hsql = getCommonQuery(ordering);
 				items = dsDao.loadFilteredDatasetList(hsql, start, limit, getUserProfile().getUserId().toString());
 			} else {
-				items = dsDao.loadFilteredDatasetList(start, limit, getUserProfile().getUserId().toString(), filters, ordering, tags);
+				items = dsDao.loadFilteredDatasetList(start, limit, getUserProfile().getUserId().toString(), filters,
+						ordering, tags);
 			}
 		} catch (Throwable t) {
 			logger.error("Error has occured while getting list of Datasets", t);
@@ -1206,7 +1251,7 @@ public class DataSetResource extends AbstractDataSetResource {
 	@Deprecated
 	private String getCommonQuery(JSONObject ordering) throws JSONException {
 		logger.debug("IN");
-		StringBuffer sb = new StringBuffer("from SbiDataSet h where h.active = true ");
+		StringBuilder sb = new StringBuilder("from SbiDataSet h where h.active = true ");
 
 		if (ordering != null) {
 			boolean reverseOrdering = ordering.optBoolean("reverseOrdering");

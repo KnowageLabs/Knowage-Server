@@ -17,6 +17,21 @@
  */
 package it.eng.spagobi.analiticalmodel.documentsbrowser.utils;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Locale;
+import java.util.Set;
+
+import javax.servlet.http.HttpServletRequest;
+
+import org.apache.commons.lang3.StringUtils;
+import org.apache.log4j.Logger;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import it.eng.spago.base.SessionContainer;
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.error.EMFInternalError;
@@ -33,21 +48,6 @@ import it.eng.spagobi.commons.utilities.ObjectsAccessVerifier;
 import it.eng.spagobi.commons.utilities.UserUtilities;
 import it.eng.spagobi.commons.utilities.messages.MessageBuilder;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
-
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Locale;
-import java.util.Set;
-
-import javax.servlet.http.HttpServletRequest;
-
-import org.apache.axis.utils.StringUtils;
-import org.apache.log4j.Logger;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 public class FolderContentUtil {
 
@@ -70,15 +70,16 @@ public class FolderContentUtil {
 	private JSONObject documents;
 	private JSONObject folders;
 
-	public JSONObject getFolderContent(LowFunctionality folder, SourceBean request, SourceBean response, HttpServletRequest httpRequest,
-			SessionContainer sessCont) throws Exception {
+	public JSONObject getFolderContent(LowFunctionality folder, SourceBean request, SourceBean response,
+			HttpServletRequest httpRequest, SessionContainer sessCont) throws Exception {
 
 		List functionalities;
 		List objects;
 		boolean isHome = false;
 		// Check if there is folder specified as home for the document browser (Property in SBI_CONFIG with label SPAGOBI.DOCUMENTBROWSER.HOME)
 		if (folder == null) {
-			Config documentBrowserHomeConfig = DAOFactory.getSbiConfigDAO().loadConfigParametersByLabel("SPAGOBI.DOCUMENTBROWSER.HOME");
+			Config documentBrowserHomeConfig = DAOFactory.getSbiConfigDAO()
+					.loadConfigParametersByLabel("SPAGOBI.DOCUMENTBROWSER.HOME");
 			if (documentBrowserHomeConfig != null) {
 				if (documentBrowserHomeConfig.isActive()) {
 
@@ -112,7 +113,8 @@ public class FolderContentUtil {
 
 		// Recursive view Management: Get all the documents inside a folder and his subfolders with a recursive visit
 		List allSubDocuments = null;
-		Config documentBrowserRecursiveConfig = DAOFactory.getSbiConfigDAO().loadConfigParametersByLabel("SPAGOBI.DOCUMENTBROWSER.RECURSIVE");
+		Config documentBrowserRecursiveConfig = DAOFactory.getSbiConfigDAO()
+				.loadConfigParametersByLabel("SPAGOBI.DOCUMENTBROWSER.RECURSIVE");
 		if (documentBrowserRecursiveConfig.isActive()) {
 			String propertyValue = documentBrowserRecursiveConfig.getValueCheck();
 			if ((!StringUtils.isEmpty(propertyValue)) && (propertyValue.equalsIgnoreCase("true"))) {
@@ -141,7 +143,8 @@ public class FolderContentUtil {
 
 		MessageBuilder m = new MessageBuilder();
 		Locale locale = m.getLocale(httpRequest);
-		JSONArray documentsJSON = (JSONArray) SerializerFactory.getSerializer("application/json").serialize(objects, locale);
+		JSONArray documentsJSON = (JSONArray) SerializerFactory.getSerializer("application/json").serialize(objects,
+				locale);
 		DocumentsJSONDecorator.decorateDocuments(documentsJSON, profile, folder);
 
 		JSONObject documentsResponseJSON = createJSONResponseDocuments(documentsJSON);
@@ -154,7 +157,8 @@ public class FolderContentUtil {
 
 		functionalities = DAOFactory.getLowFunctionalityDAO().loadUserFunctionalities(folder.getId(), false, profile);
 
-		JSONArray foldersJSON = (JSONArray) SerializerFactory.getSerializer("application/json").serialize(functionalities, locale);
+		JSONArray foldersJSON = (JSONArray) SerializerFactory.getSerializer("application/json")
+				.serialize(functionalities, locale);
 
 		JSONObject exportAction = new JSONObject();
 		exportAction.put("name", "export");
@@ -166,7 +170,8 @@ public class FolderContentUtil {
 
 		// Flat View Management: show only documents inside a folder and no subfolders
 		JSONObject foldersResponseJSON;
-		Config documentBrowserFlatConfig = DAOFactory.getSbiConfigDAO().loadConfigParametersByLabel("SPAGOBI.DOCUMENTBROWSER.FLAT");
+		Config documentBrowserFlatConfig = DAOFactory.getSbiConfigDAO()
+				.loadConfigParametersByLabel("SPAGOBI.DOCUMENTBROWSER.FLAT");
 		if (documentBrowserFlatConfig.isActive()) {
 			String propertyValue = documentBrowserFlatConfig.getValueCheck();
 			if ((!StringUtils.isEmpty(propertyValue)) && (propertyValue.equalsIgnoreCase("true"))) {
@@ -185,7 +190,8 @@ public class FolderContentUtil {
 	}
 
 	// Get All Documents inside a folder and his sub-folders with recursive visit
-	private List getAllSubDocuments(String functID, IEngUserProfile profile, Boolean isHome) throws NumberFormatException, EMFUserError, EMFInternalError {
+	private List getAllSubDocuments(String functID, IEngUserProfile profile, Boolean isHome)
+			throws NumberFormatException, EMFUserError, EMFInternalError {
 		List allDocuments = new ArrayList();
 
 		List tmpObjects;
@@ -202,7 +208,8 @@ public class FolderContentUtil {
 
 		allDocuments.addAll(objects);
 
-		List<LowFunctionality> functionalities = DAOFactory.getLowFunctionalityDAO().loadUserFunctionalities(Integer.valueOf(functID), true, profile);
+		List<LowFunctionality> functionalities = DAOFactory.getLowFunctionalityDAO()
+				.loadUserFunctionalities(Integer.valueOf(functID), true, profile);
 		for (LowFunctionality functionality : functionalities) {
 			Set folderDocuments = new HashSet();
 			Set subDocuments = visitFolder(functionality.getId(), folderDocuments, profile);
@@ -213,7 +220,8 @@ public class FolderContentUtil {
 
 	}
 
-	public Set visitFolder(Integer functID, Set allDocuments, IEngUserProfile profile) throws EMFUserError, EMFInternalError, NumberFormatException {
+	public Set visitFolder(Integer functID, Set allDocuments, IEngUserProfile profile)
+			throws EMFUserError, EMFInternalError, NumberFormatException {
 		List tmpObjects;
 
 		tmpObjects = DAOFactory.getBIObjectDAO().loadBIObjects(Integer.valueOf(functID), profile, false);
@@ -228,7 +236,8 @@ public class FolderContentUtil {
 
 		allDocuments.addAll(objects);
 
-		List<LowFunctionality> functionalities = DAOFactory.getLowFunctionalityDAO().loadUserFunctionalities(Integer.valueOf(functID), true, profile);
+		List<LowFunctionality> functionalities = DAOFactory.getLowFunctionalityDAO()
+				.loadUserFunctionalities(Integer.valueOf(functID), true, profile);
 		for (LowFunctionality functionality : functionalities) {
 			Set subDocuments = visitFolder(functionality.getId(), allDocuments, profile);
 			allDocuments.addAll(subDocuments);
@@ -295,7 +304,8 @@ public class FolderContentUtil {
 	 * @return
 	 * @throws JSONException
 	 */
-	public JSONObject createJSONResponse(JSONObject folders, JSONObject documents, JSONObject canAdd) throws JSONException {
+	public JSONObject createJSONResponse(JSONObject folders, JSONObject documents, JSONObject canAdd)
+			throws JSONException {
 		JSONObject results = new JSONObject();
 		JSONArray folderContent = new JSONArray();
 
@@ -312,10 +322,8 @@ public class FolderContentUtil {
 	/**
 	 * Returns true if the folder specified by folderIdStr exists and the user can see it, false otherwise
 	 *
-	 * @param folderIdStr
-	 *            The string representing the folder id
-	 * @param profile
-	 *            The user profile object
+	 * @param folderIdStr The string representing the folder id
+	 * @param profile     The user profile object
 	 * @return true if the folder specified by folderIdStr exists and the user can see it, false otherwise
 	 */
 	public boolean checkRequiredFolder(String folderIdStr, IEngUserProfile profile) {
@@ -337,10 +345,8 @@ public class FolderContentUtil {
 	/**
 	 * Returns true if the folder specified by folderIdStr exists and the user can see it, false otherwise
 	 *
-	 * @param folderIdStr
-	 *            The string representing the folder id
-	 * @param profile
-	 *            The user profile object
+	 * @param folderIdStr The string representing the folder id
+	 * @param profile     The user profile object
 	 * @return true if the folder specified by folderIdStr exists and the user can see it, false otherwise
 	 */
 	public boolean checkRequiredFolder(LowFunctionality folder, IEngUserProfile profile) {

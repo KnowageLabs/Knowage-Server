@@ -25,8 +25,8 @@ import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
-import javax.ws.rs.PATCH;
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -43,6 +43,7 @@ import it.eng.knowage.boot.error.KnowageRuntimeException;
 import it.eng.knowage.knowageapi.resource.dto.FunctionCompleteDTO;
 import it.eng.knowage.knowageapi.resource.dto.FunctionDTO;
 import it.eng.knowage.knowageapi.service.FunctionCatalogAPI;
+import it.eng.knowage.rest.annotation.FeatureFlag;
 
 /**
  * @author Marco Libanori
@@ -102,7 +103,8 @@ public class FunctionCatalogResource {
 			FunctionCompleteDTO create = api.create(function);
 			return Response.ok(create).build();
 		} catch (Exception e) {
-			LOGGER.error("Error getting function with id " + Optional.ofNullable(function).map(FunctionCompleteDTO::getName).orElse("null"), e);
+			LOGGER.error("Error getting function with id "
+					+ Optional.ofNullable(function).map(FunctionCompleteDTO::getName).orElse("null"), e);
 			return Response.serverError().build();
 		}
 	}
@@ -111,6 +113,7 @@ public class FunctionCatalogResource {
 	@Path("/new")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
+	@FeatureFlag("knowage.feature.newFunctionInCatalog")
 	public Response createWithNewUuid(FunctionCompleteDTO function) {
 		try {
 			function.setId(UUID.randomUUID());
@@ -120,7 +123,8 @@ public class FunctionCatalogResource {
 			// TODO : I did this because catching Exception is not right
 			throw e;
 		} catch (Exception e) {
-			LOGGER.error("Error getting function with id " + Optional.ofNullable(function).map(FunctionCompleteDTO::getName).orElse("null"), e);
+			LOGGER.error("Error getting function with id "
+					+ Optional.ofNullable(function).map(FunctionCompleteDTO::getName).orElse("null"), e);
 			return Response.serverError().build();
 		}
 	}
@@ -138,7 +142,7 @@ public class FunctionCatalogResource {
 		}
 	}
 
-	@PATCH
+	@PUT
 	@Path("/")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
@@ -147,7 +151,8 @@ public class FunctionCatalogResource {
 			FunctionCompleteDTO ret = api.update(function);
 			return Response.ok(ret).build();
 		} catch (Exception e) {
-			LOGGER.error("Error updating function with id " + Optional.ofNullable(function).map(FunctionCompleteDTO::getName).orElse("null"), e);
+			LOGGER.error("Error updating function with id "
+					+ Optional.ofNullable(function).map(FunctionCompleteDTO::getName).orElse("null"), e);
 			throw e;
 		}
 	}

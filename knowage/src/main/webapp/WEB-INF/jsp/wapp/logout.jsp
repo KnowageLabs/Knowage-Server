@@ -121,6 +121,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                  frameborder='0' >
 </iframe>
 
+<iframe id='invalidSessionDossier'
+                 name='invalidSessionDossier'
+                 src='<%=KnowageSystemConfiguration.getKnowageContext()%>dossierengine/invalidateSession.jsp'
+                 height='0'
+                 width='0'
+                 frameborder='0' >
+</iframe>
+
 <%
 
 boolean backUrlB=false;

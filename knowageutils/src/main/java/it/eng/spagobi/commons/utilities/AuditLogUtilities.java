@@ -26,7 +26,6 @@ import java.text.SimpleDateFormat;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Formatter;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
@@ -63,17 +62,15 @@ public class AuditLogUtilities {
 	/**
 	 * Substitutes the profile attributes with sintax "${attribute_name}" with the correspondent value in the string passed at input.
 	 *
-	 * @param statement
-	 *            The string to be modified (tipically a query)
-	 * @param profile
-	 *            The IEngUserProfile object
+	 * @param statement The string to be modified (tipically a query)
+	 * @param profile   The IEngUserProfile object
 	 *
 	 * @return The statement with profile attributes replaced by their values.
 	 *
-	 * @throws Exception
-	 *             the exception
+	 * @throws Exception the exception
 	 */
-	public static void updateAudit(HttpServletRequest request, IEngUserProfile profile, String action_code, HashMap<String, String> parameters, String esito) {
+	public static void updateAudit(HttpServletRequest request, IEngUserProfile profile, String action_code,
+			Map<String, String> parameters, String esito) {
 		logger.debug("IN");
 
 		try {

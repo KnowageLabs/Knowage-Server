@@ -41,11 +41,9 @@ public class MetaModelViewpointDAOHibImpl extends AbstractHibernateDAO implement
 	/**
 	 * Insert viewpoint.
 	 *
-	 * @param viewpoint
-	 *            the viewpoint
+	 * @param viewpoint the viewpoint
 	 *
-	 * @throws EMFUserError
-	 *             the EMF user error
+	 * @throws EMFUserError the EMF user error
 	 *
 	 * @see it.eng.spagobi.analiticalmodel.document.dao.IMetaModelViewpointDAO#insertViewpoint(it.eng.spagobi.analiticalmodel.document.bo.Viewpoint)
 	 */
@@ -72,18 +70,11 @@ public class MetaModelViewpointDAOHibImpl extends AbstractHibernateDAO implement
 			tx.commit();
 		} catch (HibernateException he) {
 			logException(he);
-
-			if (tx != null)
-				tx.rollback();
-
+			rollbackIfActive(tx);
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
-
 		} finally {
 
-			if (aSession != null) {
-				if (aSession.isOpen())
-					aSession.close();
-			}
+			closeSessionIfOpen(aSession);
 
 		}
 
@@ -92,15 +83,12 @@ public class MetaModelViewpointDAOHibImpl extends AbstractHibernateDAO implement
 	/**
 	 * Load viewpoint by name and meta model identifier.
 	 *
-	 * @param name
-	 *            the name of the viewpoint
-	 * @param name
-	 *            The id of the meta model
+	 * @param name the name of the viewpoint
+	 * @param name The id of the meta model
 	 *
 	 * @return the viewpoint
 	 *
-	 * @throws EMFUserError
-	 *             the EMF user error
+	 * @throws EMFUserError the EMF user error
 	 *
 	 * @see it.eng.spagobi.analiticalmodel.document.dao.IViewpointDAO#loadViewpointByName(java.lang.String)
 	 */
@@ -127,17 +115,10 @@ public class MetaModelViewpointDAOHibImpl extends AbstractHibernateDAO implement
 
 		} catch (HibernateException he) {
 			logException(he);
-
-			if (tx != null)
-				tx.rollback();
-
+			rollbackIfActive(tx);
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
-
 		} finally {
-			if (aSession != null) {
-				if (aSession.isOpen())
-					aSession.close();
-			}
+			closeSessionIfOpen(aSession);
 		}
 
 		return toReturn;
@@ -146,13 +127,11 @@ public class MetaModelViewpointDAOHibImpl extends AbstractHibernateDAO implement
 	/**
 	 * Load viewpoint by id.
 	 *
-	 * @param id
-	 *            the id
+	 * @param id the id
 	 *
 	 * @return the viewpoint
 	 *
-	 * @throws EMFUserError
-	 *             the EMF user error
+	 * @throws EMFUserError the EMF user error
 	 *
 	 * @see it.eng.spagobi.analiticalmodel.document.dao.IMetaModelViewpointDAO#loadViewpointByID(java.lang.Integer)
 	 */
@@ -166,24 +145,18 @@ public class MetaModelViewpointDAOHibImpl extends AbstractHibernateDAO implement
 			aSession = getSession();
 			tx = aSession.beginTransaction();
 
-			SbiMetaModelViewpoints hibViewpoint = (SbiMetaModelViewpoints) aSession.load(SbiMetaModelViewpoints.class, id);
+			SbiMetaModelViewpoints hibViewpoint = (SbiMetaModelViewpoints) aSession.load(SbiMetaModelViewpoints.class,
+					id);
 
 			toReturn = toMetaModelViewpoint(hibViewpoint);
 			tx.commit();
 
 		} catch (HibernateException he) {
 			logException(he);
-
-			if (tx != null)
-				tx.rollback();
-
+			rollbackIfActive(tx);
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
-
 		} finally {
-			if (aSession != null) {
-				if (aSession.isOpen())
-					aSession.close();
-			}
+			closeSessionIfOpen(aSession);
 		}
 
 		return toReturn;
@@ -192,11 +165,9 @@ public class MetaModelViewpointDAOHibImpl extends AbstractHibernateDAO implement
 	/**
 	 * Erase viewpoint.
 	 *
-	 * @param id
-	 *            the id
+	 * @param id the id
 	 *
-	 * @throws EMFUserError
-	 *             the EMF user error
+	 * @throws EMFUserError the EMF user error
 	 *
 	 * @see it.eng.spagobi.analiticalmodel.document.dao.IMetaModelViewpointDAO#eraseViewpoint(it.eng.spagobi.analiticalmodel.document.bo.Viewpoint)
 	 */
@@ -209,29 +180,24 @@ public class MetaModelViewpointDAOHibImpl extends AbstractHibernateDAO implement
 			aSession = getSession();
 			tx = aSession.beginTransaction();
 
-			SbiMetaModelViewpoints hibViewpoint = (SbiMetaModelViewpoints) aSession.load(SbiMetaModelViewpoints.class, id);
+			SbiMetaModelViewpoints hibViewpoint = (SbiMetaModelViewpoints) aSession.load(SbiMetaModelViewpoints.class,
+					id);
 
 			aSession.delete(hibViewpoint);
 			tx.commit();
 		} catch (HibernateException he) {
 			logException(he);
-
-			if (tx != null)
-				tx.rollback();
-
+			rollbackIfActive(tx);
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
-
 		} finally {
-			if (aSession != null) {
-				if (aSession.isOpen())
-					aSession.close();
-			}
+			closeSessionIfOpen(aSession);
 		}
 
 	}
 
 	@Override
-	public List loadAccessibleViewpointsByMetaModelId(Integer metaModelId, IEngUserProfile userProfile) throws EMFUserError {
+	public List loadAccessibleViewpointsByMetaModelId(Integer metaModelId, IEngUserProfile userProfile)
+			throws EMFUserError {
 		Session aSession = null;
 		Transaction tx = null;
 
@@ -260,17 +226,10 @@ public class MetaModelViewpointDAOHibImpl extends AbstractHibernateDAO implement
 			}
 		} catch (HibernateException he) {
 			logException(he);
-
-			if (tx != null)
-				tx.rollback();
-
+			rollbackIfActive(tx);
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
-
 		} finally {
-			if (aSession != null) {
-				if (aSession.isOpen())
-					aSession.close();
-			}
+			closeSessionIfOpen(aSession);
 		}
 		return realResult;
 	}
@@ -278,8 +237,7 @@ public class MetaModelViewpointDAOHibImpl extends AbstractHibernateDAO implement
 	/**
 	 * From the hibernate BI value viewpoint at input, gives the corrispondent <code>Viepoint</code> object.
 	 *
-	 * @param hibViewpoint
-	 *            The hybernate viewpoint at input
+	 * @param hibViewpoint The hybernate viewpoint at input
 	 * @return The corrispondent <code>Viewpoint</code> object
 	 */
 	public Viewpoint toMetaModelViewpoint(SbiMetaModelViewpoints hibViewpoint) {

@@ -22,6 +22,17 @@ import static it.eng.spagobi.commons.constants.SpagoBIConstants.DATE_RANGE_QUANT
 import static it.eng.spagobi.commons.constants.SpagoBIConstants.DATE_RANGE_TYPE;
 import static it.eng.spagobi.commons.constants.SpagoBIConstants.DATE_RANGE_TYPE_JSON;
 import static it.eng.spagobi.commons.constants.SpagoBIConstants.DATE_RANGE_VALID_TYPES;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.StringTokenizer;
+import java.util.Vector;
+
+import org.apache.commons.validator.GenericValidator;
+
 import it.eng.spago.base.RequestContainer;
 import it.eng.spago.base.SessionContainer;
 import it.eng.spago.base.SourceBean;
@@ -39,7 +50,9 @@ import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.ParameterUse;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IObjParuseDAO;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IParameterDAO;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IParameterUseDAO;
+import it.eng.spagobi.behaviouralmodel.check.bo.Check;
 import it.eng.spagobi.commons.bo.Domain;
+import it.eng.spagobi.commons.bo.Role;
 import it.eng.spagobi.commons.constants.AdmintoolsConstants;
 import it.eng.spagobi.commons.constants.ObjectsTreeConstants;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
@@ -47,16 +60,6 @@ import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.utilities.AuditLogUtilities;
 import it.eng.spagobi.commons.utilities.SpagoBITracer;
 import it.eng.spagobi.utilities.assertion.Assert;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.StringTokenizer;
-import java.util.Vector;
-
-import org.apache.commons.validator.GenericValidator;
 
 /**
  * Implements a module which handles all parameters management: has methods for parameters load detail, modify/insertion and deleting operations. The
@@ -86,15 +89,11 @@ public class DetailParameterModule extends AbstractHttpModule {
 	/**
 	 * Reads the operation asked by the user and calls the insertion, modify, detail and deletion methods.
 	 *
-	 * @param request
-	 *            The Source Bean containing all request parameters
-	 * @param response
-	 *            The Source Bean containing all response parameters
+	 * @param request  The Source Bean containing all request parameters
+	 * @param response The Source Bean containing all response parameters
 	 *
-	 * @throws exception
-	 *             If an exception occurs
-	 * @throws Exception
-	 *             the exception
+	 * @throws exception If an exception occurs
+	 * @throws Exception the exception
 	 */
 	@Override
 	public void service(SourceBean request, SourceBean response) throws Exception {
@@ -114,7 +113,8 @@ public class DetailParameterModule extends AbstractHttpModule {
 		try {
 			if (message == null) {
 				EMFUserError userError = new EMFUserError(EMFErrorSeverity.ERROR, 101);
-				SpagoBITracer.debug(AdmintoolsConstants.NAME_MODULE, "DetailParameterModule", "service", "The message parameter is null");
+				SpagoBITracer.debug(AdmintoolsConstants.NAME_MODULE, "DetailParameterModule", "service",
+						"The message parameter is null");
 				throw userError;
 			}
 			if (lovLookup != null) {
@@ -154,12 +154,9 @@ public class DetailParameterModule extends AbstractHttpModule {
 	 * Gets the detail of a parameter choosed by the user from the parameters list. It reaches the key from the request and asks to the DB all detail parameter
 	 * information, by calling the method <code>loadForDetailByParameterID</code>.
 	 *
-	 * @param key
-	 *            The choosed engine id key
-	 * @param response
-	 *            The response Source Bean
-	 * @throws EMFUserError
-	 *             If an exception occurs
+	 * @param key      The choosed engine id key
+	 * @param response The response Source Bean
+	 * @throws EMFUserError If an exception occurs
 	 */
 
 	private void getDetailParameter(String key, SourceBean response) throws EMFUserError {
@@ -169,7 +166,8 @@ public class DetailParameterModule extends AbstractHttpModule {
 				Parameter parameter = (Parameter) session.getAttribute("LookupParameter");
 				ParameterUse paruse = (ParameterUse) session.getAttribute("LookupParuse");
 				String modality = (String) session.getAttribute("modality");
-				prepareParameterDetailPage(response, parameter, paruse, paruse.getUseID().toString(), modality, false, false);
+				prepareParameterDetailPage(response, parameter, paruse, paruse.getUseID().toString(), modality, false,
+						false);
 				session.delAttribute("LookupParameter");
 				session.delAttribute("LookupParUse");
 				session.delAttribute("modality");
@@ -180,7 +178,8 @@ public class DetailParameterModule extends AbstractHttpModule {
 				prepareParameterDetailPage(response, parameter, null, "", modalita, true, true);
 			}
 		} catch (Exception ex) {
-			SpagoBITracer.major(AdmintoolsConstants.NAME_MODULE, "DetailParameterModule", "getDetailParameter", "Cannot fill response container", ex);
+			SpagoBITracer.major(AdmintoolsConstants.NAME_MODULE, "DetailParameterModule", "getDetailParameter",
+					"Cannot fill response container", ex);
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		}
 	}
@@ -188,26 +187,21 @@ public class DetailParameterModule extends AbstractHttpModule {
 	/**
 	 * Fills the response SourceBean with the elements that will be displayed in the Parameter detail page: the Parameter itself and the required ParameterUse.
 	 *
-	 * @param response
-	 *            The response SourceBean to be filled
-	 * @param parameter
-	 *            The Parameter to be displayed
-	 * @param paruse
-	 *            The ParameterUse to be displayed: if it is null the selected_paruse_idStr will be considered.
-	 * @param selected_paruse_idStr
-	 *            The id of the ParameterUse to be displayed. If it is blank or null the first ParameterUse will be diplayed but in case the Parameter has no
-	 *            ParameterUse a new empty ParameterUse will be displayed. If it is "-1" a new empty ParameterUse will be displayed.
-	 * @param initialParameter
-	 *            Boolean: if true the Parameter to be visualized is the initial Parameter and a clone will be put in session.
-	 * @param initialParameterUse
-	 *            Boolean: if true the ParameterUse to be visualized is the initial ParameterUse and a clone will be put in session.
-	 * @param detail_mod
-	 *            The modality
+	 * @param response              The response SourceBean to be filled
+	 * @param parameter             The Parameter to be displayed
+	 * @param paruse                The ParameterUse to be displayed: if it is null the selected_paruse_idStr will be considered.
+	 * @param selected_paruse_idStr The id of the ParameterUse to be displayed. If it is blank or null the first ParameterUse will be diplayed but in case the
+	 *                              Parameter has no ParameterUse a new empty ParameterUse will be displayed. If it is "-1" a new empty ParameterUse will be
+	 *                              displayed.
+	 * @param initialParameter      Boolean: if true the Parameter to be visualized is the initial Parameter and a clone will be put in session.
+	 * @param initialParameterUse   Boolean: if true the ParameterUse to be visualized is the initial ParameterUse and a clone will be put in session.
+	 * @param detail_mod            The modality
 	 * @throws EMFUserError
 	 * @throws SourceBeanException
 	 */
-	private void prepareParameterDetailPage(SourceBean response, Parameter parameter, ParameterUse paruse, String selected_paruse_idStr, String modality,
-			boolean initialParameter, boolean initialParameterUse) throws EMFUserError, SourceBeanException {
+	private void prepareParameterDetailPage(SourceBean response, Parameter parameter, ParameterUse paruse,
+			String selected_paruse_idStr, String modality, boolean initialParameter, boolean initialParameterUse)
+			throws EMFUserError, SourceBeanException {
 		loadValuesDomain(response);
 		loadSelectionTypesDomain(response);
 
@@ -292,16 +286,16 @@ public class DetailParameterModule extends AbstractHttpModule {
 		paruseClone.setIdLov(paruse.getIdLov());
 		paruseClone.setManualInput(paruse.getManualInput());
 
-		List checks = paruse.getAssociatedChecks();
-		List checksClone = new ArrayList();
-		Iterator itChecks = checks.iterator();
+		List<Check> checks = paruse.getAssociatedChecks();
+		List<Check> checksClone = new ArrayList<>();
+		Iterator<Check> itChecks = checks.iterator();
 		while (itChecks.hasNext())
 			checksClone.add(itChecks.next());
 		paruseClone.setAssociatedChecks(checksClone);
 
-		List roles = paruse.getAssociatedRoles();
-		List rolesClone = new ArrayList();
-		Iterator itRoles = roles.iterator();
+		List<Role> roles = paruse.getAssociatedRoles();
+		List<Role> rolesClone = new ArrayList<>();
+		Iterator<Role> itRoles = roles.iterator();
 		while (itRoles.hasNext())
 			rolesClone.add(itRoles.next());
 		paruseClone.setAssociatedRoles(rolesClone);
@@ -328,22 +322,18 @@ public class DetailParameterModule extends AbstractHttpModule {
 	}
 
 	/**
-	 * Inserts/Modifies the detail of a parameter according to the user request. When a parameter is modified, the <code>modifyParameter</code> method is
-	 * called; when a new parameter is added, the <code>insertParameter</code>method is called. These two cases are differentiated by the <code>mod</code>
-	 * String input value
+	 * Inserts/Modifies the detail of a parameter according to the user request. When a parameter is modified, the <code>modifyParameter</code> method is called;
+	 * when a new parameter is added, the <code>insertParameter</code>method is called. These two cases are differentiated by the <code>mod</code> String input
+	 * value
 	 *
-	 * @param request
-	 *            The request information contained in a SourceBean Object
-	 * @param mod
-	 *            A request string used to differentiate insert/modify operations
-	 * @param response
-	 *            The response SourceBean
-	 * @throws EMFUserError
-	 *             If an exception occurs
-	 * @throws SourceBeanException
-	 *             If a SourceBean exception occurs
+	 * @param request  The request information contained in a SourceBean Object
+	 * @param mod      A request string used to differentiate insert/modify operations
+	 * @param response The response SourceBean
+	 * @throws EMFUserError        If an exception occurs
+	 * @throws SourceBeanException If a SourceBean exception occurs
 	 */
-	private void modDetailParameter(SourceBean request, String mod, SourceBean response) throws EMFUserError, SourceBeanException {
+	private void modDetailParameter(SourceBean request, String mod, SourceBean response)
+			throws EMFUserError, SourceBeanException {
 
 		HashMap<String, String> logParam = new HashMap();
 
@@ -380,8 +370,10 @@ public class DetailParameterModule extends AbstractHttpModule {
 							while (iterator.hasNext()) {
 								Object error = iterator.next();
 								if (error instanceof EMFValidationError) {
-									AuditLogUtilities.updateAudit(getHttpRequest(), profile, "DRIVER.MODIFY", logParam, "KO");
-									prepareParameterDetailPage(response, parameter, paruse, paruseIdStr, ObjectsTreeConstants.DETAIL_MOD, false, false);
+									AuditLogUtilities.updateAudit(getHttpRequest(), profile, "DRIVER.MODIFY", logParam,
+											"KO");
+									prepareParameterDetailPage(response, parameter, paruse, paruseIdStr,
+											ObjectsTreeConstants.DETAIL_MOD, false, false);
 									return;
 								}
 							}
@@ -389,7 +381,8 @@ public class DetailParameterModule extends AbstractHttpModule {
 
 						IParameterUseDAO paruseDAO = DAOFactory.getParameterUseDAO();
 						SessionContainer permSess = getRequestContainer().getSessionContainer().getPermanentContainer();
-						IEngUserProfile profile = (IEngUserProfile) permSess.getAttribute(IEngUserProfile.ENG_USER_PROFILE);
+						IEngUserProfile profile = (IEngUserProfile) permSess
+								.getAttribute(IEngUserProfile.ENG_USER_PROFILE);
 						paruseDAO.setUserProfile(profile);
 						if (paruseIdInt.intValue() == -1) {
 							// it is requested to insert a new ParameterUse
@@ -398,10 +391,12 @@ public class DetailParameterModule extends AbstractHttpModule {
 							// it is requested to modify a ParameterUse.
 							paruseDAO.modifyParameterUse(paruse);
 						}
-						prepareParameterDetailPage(response, parameter, null, selectedParuseIdStr, ObjectsTreeConstants.DETAIL_MOD, false, true);
+						prepareParameterDetailPage(response, parameter, null, selectedParuseIdStr,
+								ObjectsTreeConstants.DETAIL_MOD, false, true);
 						return;
 					} else {
-						prepareParameterDetailPage(response, parameter, null, selectedParuseIdStr, ObjectsTreeConstants.DETAIL_MOD, false, true);
+						prepareParameterDetailPage(response, parameter, null, selectedParuseIdStr,
+								ObjectsTreeConstants.DETAIL_MOD, false, true);
 						return;
 					}
 
@@ -416,9 +411,11 @@ public class DetailParameterModule extends AbstractHttpModule {
 						while (iterator.hasNext()) {
 							Object error = iterator.next();
 							if (error instanceof EMFValidationError) {
-								prepareParameterDetailPage(response, parameter, paruse, paruseIdStr, ObjectsTreeConstants.DETAIL_MOD, false, false);
+								prepareParameterDetailPage(response, parameter, paruse, paruseIdStr,
+										ObjectsTreeConstants.DETAIL_MOD, false, false);
 
-								AuditLogUtilities.updateAudit(getHttpRequest(), profile, "DRIVER.MODIFY", logParam, "KO");
+								AuditLogUtilities.updateAudit(getHttpRequest(), profile, "DRIVER.MODIFY", logParam,
+										"KO");
 								return;
 							}
 						}
@@ -428,16 +425,18 @@ public class DetailParameterModule extends AbstractHttpModule {
 					paruse = paruseDAO.loadByUseID(new Integer(paruseId));
 					paruseDAO.eraseParameterUse(paruse);
 					selectedParuseIdStr = "";
-					prepareParameterDetailPage(response, parameter, null, selectedParuseIdStr, ObjectsTreeConstants.DETAIL_MOD, false, true);
+					prepareParameterDetailPage(response, parameter, null, selectedParuseIdStr,
+							ObjectsTreeConstants.DETAIL_MOD, false, true);
 					return;
 
 				} else {
 					// It is request to save the Parameter with also the visible ParameterUse
 					// If a new ParameterUse was visualized and no fields were inserted, the ParameterUse is not validated and saved
 					boolean paruseToBeSaved = true;
-					if (GenericValidator.isBlankOrNull(paruse.getLabel()) && GenericValidator.isBlankOrNull(paruse.getName())
-							&& paruse.getUseID().intValue() == -1 && paruse.getIdLov().intValue() == -1 && paruse.getAssociatedChecks().size() == 0
-							&& paruse.getAssociatedRoles().size() == 0 && (paruse.getOptions() == null))
+					if (GenericValidator.isBlankOrNull(paruse.getLabel())
+							&& GenericValidator.isBlankOrNull(paruse.getName()) && paruse.getUseID().intValue() == -1
+							&& paruse.getIdLov().intValue() == -1 && paruse.getAssociatedChecks().isEmpty()
+							&& paruse.getAssociatedRoles().isEmpty() && (paruse.getOptions() == null))
 						paruseToBeSaved = false;
 					if (paruseToBeSaved) {
 						ValidationCoordinator.validate("PAGE", "ParameterUseValidation", this);
@@ -455,9 +454,11 @@ public class DetailParameterModule extends AbstractHttpModule {
 						while (iterator.hasNext()) {
 							Object error = iterator.next();
 							if (error instanceof EMFValidationError) {
-								prepareParameterDetailPage(response, parameter, paruse, paruseIdInt.toString(), ObjectsTreeConstants.DETAIL_MOD, false, false);
+								prepareParameterDetailPage(response, parameter, paruse, paruseIdInt.toString(),
+										ObjectsTreeConstants.DETAIL_MOD, false, false);
 
-								AuditLogUtilities.updateAudit(getHttpRequest(), profile, "DRIVER.MODIFY", logParam, "KO");
+								AuditLogUtilities.updateAudit(getHttpRequest(), profile, "DRIVER.MODIFY", logParam,
+										"KO");
 								return;
 							}
 						}
@@ -469,7 +470,8 @@ public class DetailParameterModule extends AbstractHttpModule {
 					if (paruseToBeSaved) {
 						IParameterUseDAO paruseDAO = DAOFactory.getParameterUseDAO();
 						SessionContainer permSess = getRequestContainer().getSessionContainer().getPermanentContainer();
-						IEngUserProfile profile = (IEngUserProfile) permSess.getAttribute(IEngUserProfile.ENG_USER_PROFILE);
+						IEngUserProfile profile = (IEngUserProfile) permSess
+								.getAttribute(IEngUserProfile.ENG_USER_PROFILE);
 						paruseDAO.setUserProfile(profile);
 						if (paruseIdInt.intValue() == -1) {
 							// it is requested to insert a new ParameterUse
@@ -492,7 +494,8 @@ public class DetailParameterModule extends AbstractHttpModule {
 					exitFromDetail(request, response);
 				} else {
 					// it is requested to save and remain in the Parameter detail page
-					prepareParameterDetailPage(response, parameter, null, selectedParuseIdStr, ObjectsTreeConstants.DETAIL_MOD, true, true);
+					prepareParameterDetailPage(response, parameter, null, selectedParuseIdStr,
+							ObjectsTreeConstants.DETAIL_MOD, true, true);
 				}
 
 			} else {
@@ -508,7 +511,8 @@ public class DetailParameterModule extends AbstractHttpModule {
 					while (iterator.hasNext()) {
 						Object error = iterator.next();
 						if (error instanceof EMFValidationError) {
-							prepareParameterDetailPage(response, parameter, null, selectedParuseIdStr, ObjectsTreeConstants.DETAIL_INS, false, false);
+							prepareParameterDetailPage(response, parameter, null, selectedParuseIdStr,
+									ObjectsTreeConstants.DETAIL_INS, false, false);
 
 							AuditLogUtilities.updateAudit(getHttpRequest(), profile, "DRIVER.ADD", logParam, "KO");
 							return;
@@ -540,7 +544,8 @@ public class DetailParameterModule extends AbstractHttpModule {
 			}
 
 		} catch (Exception ex) {
-			SpagoBITracer.major(AdmintoolsConstants.NAME_MODULE, "DetailParameterModule", "modDetailParameter", "Cannot fill response container", ex);
+			SpagoBITracer.major(AdmintoolsConstants.NAME_MODULE, "DetailParameterModule", "modDetailParameter",
+					"Cannot fill response container", ex);
 			HashMap params = new HashMap();
 			params.put(AdmintoolsConstants.PAGE, ListParametersModule.MODULE_PAGE);
 			AuditLogUtilities.updateAudit(getHttpRequest(), profile, "DRIVER.ADD/MODIFY", null, "ERR");
@@ -550,12 +555,11 @@ public class DetailParameterModule extends AbstractHttpModule {
 	}
 
 	/**
-	 * Before modifing a ParameterUse (not inserting), this method must be invoked in order to verify that the ParameterUse stored into db (to be modified as
-	 * per the ParameterUse in input) has dependencies associated; if it is the case, verifies that the associated Lov was not changed or that the selection
-	 * type is not COMBOBOX. In such cases adds the method a EMFValidationError into the error handler.
+	 * Before modifing a ParameterUse (not inserting), this method must be invoked in order to verify that the ParameterUse stored into db (to be modified as per
+	 * the ParameterUse in input) has dependencies associated; if it is the case, verifies that the associated Lov was not changed or that the selection type is not
+	 * COMBOBOX. In such cases adds the method a EMFValidationError into the error handler.
 	 *
-	 * @param paruse
-	 *            The ParameterUse to verify
+	 * @param paruse The ParameterUse to verify
 	 * @throws EMFUserError
 	 */
 	private void verifyForDependencies(ParameterUse paruse) throws EMFUserError {
@@ -570,13 +574,15 @@ public class DetailParameterModule extends AbstractHttpModule {
 		List documents = objParuseDAO.getDocumentLabelsListWithAssociatedDependencies(paruseIdInt);
 		if (documents.size() > 0) {
 			// there are some correlations
-			if (paruse.getManualInput().intValue() == 1 || paruse.getIdLov().intValue() != initialParuse.getIdLov().intValue()) {
+			if (paruse.getManualInput().intValue() == 1
+					|| paruse.getIdLov().intValue() != initialParuse.getIdLov().intValue()) {
 				// the ParameterUse was changed to manual input or the lov id was changed
 				HashMap params = new HashMap();
 				params.put(AdmintoolsConstants.PAGE, "DetailParameterPage");
 				Vector vector = new Vector();
 				vector.add(documents.toString());
-				EMFValidationError error = new EMFValidationError(EMFErrorSeverity.ERROR, "paruseLovId", "1060", vector, params);
+				EMFValidationError error = new EMFValidationError(EMFErrorSeverity.ERROR, "paruseLovId", "1060", vector,
+						params);
 				errorHandler.addError(error);
 			}
 			// if (paruse.getManualInput().intValue() == 0 && "COMBOBOX".equalsIgnoreCase(paruse.getSelectionType())) {
@@ -595,16 +601,15 @@ public class DetailParameterModule extends AbstractHttpModule {
 	/**
 	 * Reload a ParameterUse from its Parameter id and its label.
 	 *
-	 * @param parIdInt
-	 *            The Parameter id
-	 * @param label
-	 *            The ParameterUse label
+	 * @param parIdInt The Parameter id
+	 * @param label    The ParameterUse label
 	 * @return The reloaded ParameterUse
 	 * @throws EMFInternalError
 	 */
 	private ParameterUse reloadParuse(Integer parIdInt, String label) throws EMFInternalError {
 		if (parIdInt == null || parIdInt.intValue() < 0 || label == null || label.trim().equals(""))
-			throw new EMFInternalError(EMFErrorSeverity.ERROR, "Invalid input data for method relaodParuse in DetailParameterModule");
+			throw new EMFInternalError(EMFErrorSeverity.ERROR,
+					"Invalid input data for method relaodParuse in DetailParameterModule");
 		ParameterUse paruse = null;
 		try {
 			IParameterUseDAO paruseDAO = DAOFactory.getParameterUseDAO();
@@ -618,10 +623,12 @@ public class DetailParameterModule extends AbstractHttpModule {
 				}
 			}
 		} catch (EMFUserError e) {
-			SpagoBITracer.major(AdmintoolsConstants.NAME_MODULE, "DetailParameterModule", "relaodParuse", "Cannot reload ParameterUse", e);
+			SpagoBITracer.major(AdmintoolsConstants.NAME_MODULE, "DetailParameterModule", "relaodParuse",
+					"Cannot reload ParameterUse", e);
 		}
 		if (paruse == null) {
-			SpagoBITracer.major(AdmintoolsConstants.NAME_MODULE, "DetailParameterModule", "relaodParuse", "ParameterUse with label '" + label + "' not found.");
+			SpagoBITracer.major(AdmintoolsConstants.NAME_MODULE, "DetailParameterModule", "relaodParuse",
+					"ParameterUse with label '" + label + "' not found.");
 			paruse = createNewParameterUse(parIdInt);
 		}
 		return paruse;
@@ -630,14 +637,14 @@ public class DetailParameterModule extends AbstractHttpModule {
 	/**
 	 * Reload a Parameter from its label.
 	 *
-	 * @param label
-	 *            The Parameter label
+	 * @param label The Parameter label
 	 * @return The reloaded Parameter
 	 * @throws EMFInternalError
 	 */
 	private Parameter reloadParameter(String label) throws EMFInternalError {
 		if (label == null || label.trim().equals(""))
-			throw new EMFInternalError(EMFErrorSeverity.ERROR, "Invalid input data for method relaodParameter in DetailParameterModule");
+			throw new EMFInternalError(EMFErrorSeverity.ERROR,
+					"Invalid input data for method relaodParameter in DetailParameterModule");
 		Parameter parameter = null;
 		try {
 			IParameterDAO parareterDAO = DAOFactory.getParameterDAO();
@@ -651,16 +658,19 @@ public class DetailParameterModule extends AbstractHttpModule {
 				}
 			}
 		} catch (EMFUserError e) {
-			SpagoBITracer.major(AdmintoolsConstants.NAME_MODULE, "DetailParameterModule", "reloadParameter", "Cannot reload Parameter", e);
+			SpagoBITracer.major(AdmintoolsConstants.NAME_MODULE, "DetailParameterModule", "reloadParameter",
+					"Cannot reload Parameter", e);
 		}
 		if (parameter == null) {
-			SpagoBITracer.major(AdmintoolsConstants.NAME_MODULE, "DetailParameterModule", "reloadParameter", "Parameter with label '" + label + "' not found.");
+			SpagoBITracer.major(AdmintoolsConstants.NAME_MODULE, "DetailParameterModule", "reloadParameter",
+					"Parameter with label '" + label + "' not found.");
 			parameter = createNewParameter();
 		}
 		return parameter;
 	}
 
-	private ParameterUse recoverParameterUseDetails(SourceBean request, Integer parIdInt, Integer paruseIdInt) throws NumberFormatException, EMFUserError {
+	private ParameterUse recoverParameterUseDetails(SourceBean request, Integer parIdInt, Integer paruseIdInt)
+			throws NumberFormatException, EMFUserError {
 
 		ParameterUse paruse = new ParameterUse();
 		paruse.setUseID(paruseIdInt);
@@ -729,7 +739,8 @@ public class DetailParameterModule extends AbstractHttpModule {
 		} else { // Selected "Lov"
 			paruse.setManualInput(Integer.valueOf("0"));
 			paruse.setSelectionType(selectionType);
-			if (selectionType != null && (selectionType.equalsIgnoreCase("LIST") || selectionType.equalsIgnoreCase("COMBOBOX")))
+			if (selectionType != null
+					&& (selectionType.equalsIgnoreCase("LIST") || selectionType.equalsIgnoreCase("COMBOBOX")))
 				paruse.setMultivalue(false);
 			else
 				paruse.setMultivalue(true);
@@ -751,7 +762,7 @@ public class DetailParameterModule extends AbstractHttpModule {
 	 * @return
 	 */
 	private String getDateRangeOptions(SourceBean request) {
-		List<String[]> options = new ArrayList<String[]>();
+		List<String[]> options = new ArrayList<>();
 		String type = null;
 		int curr = 0;
 		while ((type = (String) request.getAttribute(SpagoBIConstants.DATE_RANGE_OPTION_TYPE_PREFIX + curr)) != null) {
@@ -799,8 +810,7 @@ public class DetailParameterModule extends AbstractHttpModule {
 	/**
 	 * Find paruse id.
 	 *
-	 * @param paruseIdObj
-	 *            the paruse id obj
+	 * @param paruseIdObj the paruse id obj
 	 *
 	 * @return the int
 	 */
@@ -873,19 +883,15 @@ public class DetailParameterModule extends AbstractHttpModule {
 	/**
 	 * Deletes a parameter choosed by user from the parameters list.
 	 *
-	 * @param request
-	 *            The request SourceBean
-	 * @param mod
-	 *            A request string used to differentiate delete operation
-	 * @param response
-	 *            The response SourceBean
-	 * @throws EMFUserError
-	 *             If an Exception occurs
-	 * @throws SourceBeanException
-	 *             If a SourceBean Exception occurs
+	 * @param request  The request SourceBean
+	 * @param mod      A request string used to differentiate delete operation
+	 * @param response The response SourceBean
+	 * @throws EMFUserError        If an Exception occurs
+	 * @throws SourceBeanException If a SourceBean Exception occurs
 	 */
 
-	private void delDetailParameter(SourceBean request, String mod, SourceBean response) throws EMFUserError, SourceBeanException {
+	private void delDetailParameter(SourceBean request, String mod, SourceBean response)
+			throws EMFUserError, SourceBeanException {
 		HashMap<String, String> logParam = new HashMap();
 
 		try {
@@ -893,7 +899,8 @@ public class DetailParameterModule extends AbstractHttpModule {
 			IParameterUseDAO parUseDAO = DAOFactory.getParameterUseDAO();
 			String id = (String) request.getAttribute("id");
 			// controls if the parameter has any object associated
-			List objectsLabels = DAOFactory.getBIObjectParameterDAO().getDocumentLabelsListUsingParameter(new Integer(id));
+			List objectsLabels = DAOFactory.getBIObjectParameterDAO()
+					.getDocumentLabelsListUsingParameter(new Integer(id));
 			if (objectsLabels != null && objectsLabels.size() > 0) {
 				HashMap params = new HashMap();
 				params.put(AdmintoolsConstants.PAGE, ListParametersModule.MODULE_PAGE);
@@ -919,7 +926,8 @@ public class DetailParameterModule extends AbstractHttpModule {
 
 		} catch (Exception ex) {
 			AuditLogUtilities.updateAudit(getHttpRequest(), profile, "DRIVER.DELETE", logParam, "ERR");
-			SpagoBITracer.major(AdmintoolsConstants.NAME_MODULE, "DetailParameterModule", "delDetailParameter", "Cannot fill response container", ex);
+			SpagoBITracer.major(AdmintoolsConstants.NAME_MODULE, "DetailParameterModule", "delDetailParameter",
+					"Cannot fill response container", ex);
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		}
 		response.setAttribute("loopback", "true");
@@ -928,13 +936,10 @@ public class DetailParameterModule extends AbstractHttpModule {
 	}
 
 	/**
-	 * Instantiates a new <code>Parameter<code> object when a new parameter insertion is required, in order
-	 * to prepare the page for the insertion.
+	 * Instantiates a new <code>Parameter<code> object when a new parameter insertion is required, in order to prepare the page for the insertion.
 	 *
-	 * @param response
-	 *            The response SourceBean
-	 * @throws EMFUserError
-	 *             If an Exception occurred
+	 * @param response The response SourceBean
+	 * @throws EMFUserError If an Exception occurred
 	 */
 
 	private void newDetailParameter(SourceBean request, SourceBean response) throws EMFUserError {
@@ -951,7 +956,8 @@ public class DetailParameterModule extends AbstractHttpModule {
 			}
 			response.setAttribute("parametersObj", parameter);
 		} catch (Exception ex) {
-			SpagoBITracer.major(AdmintoolsConstants.NAME_MODULE, "DetailParameterModule", "newDetailParameter", "Cannot prepare page for the insertion", ex);
+			SpagoBITracer.major(AdmintoolsConstants.NAME_MODULE, "DetailParameterModule", "newDetailParameter",
+					"Cannot prepare page for the insertion", ex);
 			AuditLogUtilities.updateAudit(getHttpRequest(), profile, "DRIVER.ADD", null, "ERR");
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		}
@@ -981,18 +987,16 @@ public class DetailParameterModule extends AbstractHttpModule {
 	 * Loads all possible domain values which can be choosed for a parameter. Each of them is stored in a list of <code>Domain</code> objects put into response.
 	 * When the isertion/modify parameters page is loaded, the user selects a domain value for the parameter by the Data Selection CD Check Button.
 	 *
-	 * @param response
-	 *            The response SourceBean
-	 * @throws EMFUserError
-	 *             If an Exception occurred
+	 * @param response The response SourceBean
+	 * @throws EMFUserError If an Exception occurred
 	 */
 	private void loadSelectionTypesDomain(SourceBean response) throws EMFUserError {
 		try {
 			List list = DAOFactory.getDomainDAO().loadListDomainsByType("SELECTION_TYPE");
 			response.setAttribute("listSelType", list);
 		} catch (Exception ex) {
-			SpagoBITracer.major(AdmintoolsConstants.NAME_MODULE, "DetailParameterModule", "loadSelectionTypesDomain", "Cannot prepare page for the insertion",
-					ex);
+			SpagoBITracer.major(AdmintoolsConstants.NAME_MODULE, "DetailParameterModule", "loadSelectionTypesDomain",
+					"Cannot prepare page for the insertion", ex);
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		}
 	}
@@ -1001,17 +1005,16 @@ public class DetailParameterModule extends AbstractHttpModule {
 	 * Loads all possible domain values which can be choosed for a parameter. Each of them is stored in a list of <code>Domain</code> objects put into response.
 	 * When the isertion/modify parameters page is loaded, the user selects a domain value for the parameter by the Data Selection CD Check Button.
 	 *
-	 * @param response
-	 *            The response SourceBean
-	 * @throws EMFUserError
-	 *             If an Exception occurred
+	 * @param response The response SourceBean
+	 * @throws EMFUserError If an Exception occurred
 	 */
 	private void loadValuesDomain(SourceBean response) throws EMFUserError {
 		try {
 			List list = DAOFactory.getDomainDAO().loadListDomainsByType("PAR_TYPE");
 			response.setAttribute("listObj", list);
 		} catch (Exception ex) {
-			SpagoBITracer.major(AdmintoolsConstants.NAME_MODULE, "DetailParameterModule", "loadValuesDomain", "Cannot prepare page for the insertion", ex);
+			SpagoBITracer.major(AdmintoolsConstants.NAME_MODULE, "DetailParameterModule", "loadValuesDomain",
+					"Cannot prepare page for the insertion", ex);
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		}
 	}
@@ -1019,12 +1022,9 @@ public class DetailParameterModule extends AbstractHttpModule {
 	/**
 	 * Controls if the name of the Parameter is already in use.
 	 *
-	 * @param parameter
-	 *            The Parameter to check
-	 * @param operation
-	 *            Defines if the operation is of insertion or modify
-	 * @throws EMFUserError
-	 *             If any Exception occurred
+	 * @param parameter The Parameter to check
+	 * @param operation Defines if the operation is of insertion or modify
+	 * @throws EMFUserError If any Exception occurred
 	 */
 	private void parameterLabelControl(Parameter parameter, String operation) throws EMFUserError {
 		String labelToCheck = parameter.getLabel();
@@ -1037,7 +1037,8 @@ public class DetailParameterModule extends AbstractHttpModule {
 				if (label.equals(labelToCheck)) {
 					HashMap params = new HashMap();
 					params.put(AdmintoolsConstants.PAGE, ListParametersModule.MODULE_PAGE);
-					EMFValidationError error = new EMFValidationError(EMFErrorSeverity.ERROR, "label", "1031", new Vector(), params);
+					EMFValidationError error = new EMFValidationError(EMFErrorSeverity.ERROR, "label", "1031",
+							new Vector(), params);
 					errorHandler.addError(error);
 				}
 			}
@@ -1051,7 +1052,8 @@ public class DetailParameterModule extends AbstractHttpModule {
 				if (label.equals(labelToCheck) && (!id.equals(currentId))) {
 					HashMap params = new HashMap();
 					params.put(AdmintoolsConstants.PAGE, ListParametersModule.MODULE_PAGE);
-					EMFValidationError error = new EMFValidationError(EMFErrorSeverity.ERROR, "label", "1031", new Vector(), params);
+					EMFValidationError error = new EMFValidationError(EMFErrorSeverity.ERROR, "label", "1031",
+							new Vector(), params);
 					errorHandler.addError(error);
 				}
 			}
@@ -1061,12 +1063,9 @@ public class DetailParameterModule extends AbstractHttpModule {
 	/**
 	 * Controls if the name of the ParameterUse is already in use.
 	 *
-	 * @param paruse
-	 *            The paruse to check
-	 * @param operation
-	 *            Defines if the operation is of insertion or modify
-	 * @throws EMFUserError
-	 *             If any Exception occurred
+	 * @param paruse    The paruse to check
+	 * @param operation Defines if the operation is of insertion or modify
+	 * @throws EMFUserError If any Exception occurred
 	 */
 	private void parameterUseLabelControl(ParameterUse paruse, String operation) throws EMFUserError {
 
@@ -1083,7 +1082,8 @@ public class DetailParameterModule extends AbstractHttpModule {
 					HashMap params = new HashMap();
 					params.put(AdmintoolsConstants.PAGE, ListParametersModule.MODULE_PAGE);
 					params.put(AdmintoolsConstants.ID_DOMAIN, parId);
-					EMFValidationError error = new EMFValidationError(EMFErrorSeverity.ERROR, "paruseLabel", "1025", new Vector(), params);
+					EMFValidationError error = new EMFValidationError(EMFErrorSeverity.ERROR, "paruseLabel", "1025",
+							new Vector(), params);
 					errorHandler.addError(error);
 				}
 			}
@@ -1099,15 +1099,16 @@ public class DetailParameterModule extends AbstractHttpModule {
 					HashMap params = new HashMap();
 					params.put(AdmintoolsConstants.PAGE, ListParametersModule.MODULE_PAGE);
 					params.put(AdmintoolsConstants.ID_DOMAIN, parId);
-					EMFValidationError error = new EMFValidationError(EMFErrorSeverity.ERROR, "paruseLabel", "1025", new Vector(), params);
+					EMFValidationError error = new EMFValidationError(EMFErrorSeverity.ERROR, "paruseLabel", "1025",
+							new Vector(), params);
 					errorHandler.addError(error);
 				}
 			}
 		}
 	}
 
-	private void lookupForLovLoadHandler(SourceBean request, String modality, SourceBean response, Boolean isForDefault) throws EMFUserError,
-			SourceBeanException {
+	private void lookupForLovLoadHandler(SourceBean request, String modality, SourceBean response, Boolean isForDefault)
+			throws EMFUserError, SourceBeanException {
 
 		RequestContainer requestContainer = this.getRequestContainer();
 		SessionContainer session = requestContainer.getSessionContainer();
@@ -1136,7 +1137,8 @@ public class DetailParameterModule extends AbstractHttpModule {
 		response.setAttribute(SpagoBIConstants.PUBLISHER_NAME, "exitLovLookupLoop");
 	}
 
-	private void lookupReturnBackHandler(SourceBean request, SourceBean response) throws SourceBeanException, EMFUserError {
+	private void lookupReturnBackHandler(SourceBean request, SourceBean response)
+			throws SourceBeanException, EMFUserError {
 		session.delAttribute("isForDefault");
 		session.setAttribute("exitLovLookupLoop", Boolean.TRUE);
 		response.setAttribute(SpagoBIConstants.PUBLISHER_NAME, "exitLovLookupLoop");
@@ -1145,10 +1147,8 @@ public class DetailParameterModule extends AbstractHttpModule {
 	/**
 	 * Clean the SessionContainer from no more useful objects.
 	 *
-	 * @param request
-	 *            The request SourceBean
-	 * @param response
-	 *            The response SourceBean
+	 * @param request  The request SourceBean
+	 * @param response The response SourceBean
 	 * @throws SourceBeanException
 	 */
 	private void exitFromDetail(SourceBean request, SourceBean response) throws SourceBeanException {
@@ -1161,8 +1161,7 @@ public class DetailParameterModule extends AbstractHttpModule {
 	/**
 	 * Controls if there are some BIObjectParameter objects that depend by the ParameterUse object at input, given its id.
 	 *
-	 * @param objParFatherId
-	 *            The id of the BIObjectParameter object to check
+	 * @param objParFatherId The id of the BIObjectParameter object to check
 	 * @throws EMFUserError
 	 */
 	private void checkForDependancies(Integer paruseId) throws EMFUserError {

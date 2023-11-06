@@ -17,11 +17,6 @@
  */
 package it.eng.spagobi.metadata.dao;
 
-import it.eng.spago.error.EMFErrorSeverity;
-import it.eng.spago.error.EMFUserError;
-import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
-import it.eng.spagobi.metadata.metadata.SbiMetaJob;
-
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -33,7 +28,12 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.criterion.Criterion;
-import org.hibernate.criterion.Expression;
+import org.hibernate.criterion.Restrictions;
+
+import it.eng.spago.error.EMFErrorSeverity;
+import it.eng.spago.error.EMFUserError;
+import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
+import it.eng.spagobi.metadata.metadata.SbiMetaJob;
 
 /**
  * @author Antonella Giachino (antonella.giachino@eng.it)
@@ -46,13 +46,11 @@ public class SbiMetaJobDAOHibImpl extends AbstractHibernateDAO implements ISbiMe
 	/**
 	 * Load job by id.
 	 *
-	 * @param id
-	 *            the job id
+	 * @param id the job id
 	 *
 	 * @return the meta job
 	 *
-	 * @throws EMFUserError
-	 *             the EMF user error
+	 * @throws EMFUserError the EMF user error
 	 *
 	 * @see it.eng.spagobi.metadata.dao.ISbiMetaJobDAOHibImpl#loadJobByID(integer)
 	 */
@@ -72,18 +70,11 @@ public class SbiMetaJobDAOHibImpl extends AbstractHibernateDAO implements ISbiMe
 
 		} catch (HibernateException he) {
 			logException(he);
-
-			if (tx != null)
-				tx.rollback();
-
+			rollbackIfActive(tx);
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 
 		} finally {
-			if (tmpSession != null) {
-				if (tmpSession.isOpen())
-					tmpSession.close();
-
-			}
+			closeSessionIfOpen(tmpSession);
 		}
 		logger.debug("OUT");
 		return toReturn;
@@ -92,13 +83,11 @@ public class SbiMetaJobDAOHibImpl extends AbstractHibernateDAO implements ISbiMe
 	/**
 	 * Load job by name.
 	 *
-	 * @param name
-	 *            the job name
+	 * @param name the job name
 	 *
 	 * @return the meta job
 	 *
-	 * @throws EMFUserError
-	 *             the EMF user error
+	 * @throws EMFUserError the EMF user error
 	 *
 	 * @see it.eng.spagobi.metadata.dao.ISbiMetaJobDAOHibImpl#loadJobByName(string)
 	 */
@@ -119,14 +108,10 @@ public class SbiMetaJobDAOHibImpl extends AbstractHibernateDAO implements ISbiMe
 
 		} catch (HibernateException he) {
 			logException(he);
-			if (tx != null)
-				tx.rollback();
+			rollbackIfActive(tx);
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		} finally {
-			if (tmpSession != null) {
-				if (tmpSession.isOpen())
-					tmpSession.close();
-			}
+			closeSessionIfOpen(tmpSession);
 		}
 
 		return toReturn;
@@ -140,7 +125,7 @@ public class SbiMetaJobDAOHibImpl extends AbstractHibernateDAO implements ISbiMe
 		Session tmpSession = session;
 
 		try {
-			Criterion labelCriterrion = Expression.eq("name", name);
+			Criterion labelCriterrion = Restrictions.eq("name", name);
 			Criteria criteria = tmpSession.createCriteria(SbiMetaJob.class);
 			criteria.add(labelCriterrion);
 			toReturn = (SbiMetaJob) criteria.uniqueResult();
@@ -162,8 +147,7 @@ public class SbiMetaJobDAOHibImpl extends AbstractHibernateDAO implements ISbiMe
 	 *
 	 * @return List of meta jobs
 	 *
-	 * @throws EMFUserError
-	 *             the EMF user error
+	 * @throws EMFUserError the EMF user error
 	 *
 	 * @see it.eng.spagobi.metadata.dao.ISbiMetaJobDAOHibImpl#loadAllJobs()
 	 */
@@ -189,19 +173,11 @@ public class SbiMetaJobDAOHibImpl extends AbstractHibernateDAO implements ISbiMe
 			tx.commit();
 		} catch (HibernateException he) {
 			logException(he);
-
-			if (tx != null)
-				tx.rollback();
-
+			rollbackIfActive(tx);
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 
 		} finally {
-
-			if (tmpSession != null) {
-				if (tmpSession.isOpen())
-					tmpSession.close();
-			}
-
+			closeSessionIfOpen(tmpSession);
 		}
 		logger.debug("OUT");
 		return toReturn;
@@ -210,11 +186,9 @@ public class SbiMetaJobDAOHibImpl extends AbstractHibernateDAO implements ISbiMe
 	/**
 	 * Modify a metajob.
 	 *
-	 * @param aMetaJob
-	 *            the sbimetajob changed
+	 * @param aMetaJob the sbimetajob changed
 	 *
-	 * @throws EMFUserError
-	 *             the EMF user error
+	 * @throws EMFUserError the EMF user error
 	 *
 	 * @see it.eng.spagobi.metadata.dao.ISbiMetaJobDAOHibImpl#modifyJob(SbiMetaJob)
 	 */
@@ -234,17 +208,11 @@ public class SbiMetaJobDAOHibImpl extends AbstractHibernateDAO implements ISbiMe
 
 		} catch (HibernateException he) {
 			logException(he);
-
-			if (tx != null)
-				tx.rollback();
-
+			rollbackIfActive(tx);
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 
 		} finally {
-			if (tmpSession != null) {
-				if (tmpSession.isOpen())
-					tmpSession.close();
-			}
+			closeSessionIfOpen(tmpSession);
 		}
 		logger.debug("OUT");
 
@@ -279,11 +247,9 @@ public class SbiMetaJobDAOHibImpl extends AbstractHibernateDAO implements ISbiMe
 	/**
 	 * Insert a metajob.
 	 *
-	 * @param aMetaSource
-	 *            the sbimetajob to insert
+	 * @param aMetaSource the sbimetajob to insert
 	 *
-	 * @throws EMFUserError
-	 *             the EMF user error
+	 * @throws EMFUserError the EMF user error
 	 *
 	 * @see it.eng.spagobi.metadata.dao.ISbiMetaJobDAOHibImpl#insertJob(SbiMetaJob)
 	 */
@@ -304,19 +270,11 @@ public class SbiMetaJobDAOHibImpl extends AbstractHibernateDAO implements ISbiMe
 
 		} catch (HibernateException he) {
 			logException(he);
-
-			if (tx != null)
-				tx.rollback();
-
+			rollbackIfActive(tx);
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 
 		} finally {
-
-			if (tmpSession != null) {
-				if (tmpSession.isOpen())
-					tmpSession.close();
-			}
-
+			closeSessionIfOpen(tmpSession);
 		}
 		logger.debug("OUT");
 		return idToReturn;
@@ -353,11 +311,9 @@ public class SbiMetaJobDAOHibImpl extends AbstractHibernateDAO implements ISbiMe
 	/**
 	 * Delete a metajob.
 	 *
-	 * @param aMetaJob
-	 *            the sbimetajob to delete
+	 * @param aMetaJob the sbimetajob to delete
 	 *
-	 * @throws EMFUserError
-	 *             the EMF user error
+	 * @throws EMFUserError the EMF user error
 	 *
 	 * @see it.eng.spagobi.metadata.dao.ISbiMetaJobDAOHibImpl#deleteJob(SbiMetaJob)
 	 */
@@ -392,19 +348,11 @@ public class SbiMetaJobDAOHibImpl extends AbstractHibernateDAO implements ISbiMe
 			tx.commit();
 		} catch (HibernateException he) {
 			logException(he);
-
-			if (tx != null)
-				tx.rollback();
-
+			rollbackIfActive(tx);
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 
 		} finally {
-
-			if (tmpSession != null) {
-				if (tmpSession.isOpen())
-					tmpSession.close();
-			}
-
+			closeSessionIfOpen(tmpSession);
 		}
 		logger.debug("OUT");
 
@@ -413,13 +361,11 @@ public class SbiMetaJobDAOHibImpl extends AbstractHibernateDAO implements ISbiMe
 	/**
 	 * Checks for sources associated.
 	 *
-	 * @param sourceId
-	 *            the metasource id
+	 * @param sourceId the metasource id
 	 *
 	 * @return true, if checks for sources associated
 	 *
-	 * @throws EMFUserError
-	 *             the EMF user error
+	 * @throws EMFUserError the EMF user error
 	 *
 	 * @see it.eng.spagobi.metadata.dao.ISbiMetaJobDAOHibImpl#hasSourcesAssociated(int)
 	 */
@@ -445,17 +391,11 @@ public class SbiMetaJobDAOHibImpl extends AbstractHibernateDAO implements ISbiMe
 			tx.commit();
 		} catch (HibernateException he) {
 			logException(he);
-
-			if (tx != null)
-				tx.rollback();
-
+			rollbackIfActive(tx);
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 
 		} finally {
-			if (tmpSession != null) {
-				if (tmpSession.isOpen())
-					tmpSession.close();
-			}
+			closeSessionIfOpen(tmpSession);
 		}
 		return bool;
 
@@ -464,13 +404,11 @@ public class SbiMetaJobDAOHibImpl extends AbstractHibernateDAO implements ISbiMe
 	/**
 	 * Checks for tables associated.
 	 *
-	 * @param sourceId
-	 *            the metatable id
+	 * @param sourceId the metatable id
 	 *
 	 * @return true, if checks for tables associated
 	 *
-	 * @throws EMFUserError
-	 *             the EMF user error
+	 * @throws EMFUserError the EMF user error
 	 *
 	 * @see it.eng.spagobi.metadata.dao.ISbiMetaJobDAOHibImpl#hasTablesAssociated(int)
 	 */
@@ -496,17 +434,11 @@ public class SbiMetaJobDAOHibImpl extends AbstractHibernateDAO implements ISbiMe
 			tx.commit();
 		} catch (HibernateException he) {
 			logException(he);
-
-			if (tx != null)
-				tx.rollback();
-
+			rollbackIfActive(tx);
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 
 		} finally {
-			if (tmpSession != null) {
-				if (tmpSession.isOpen())
-					tmpSession.close();
-			}
+			closeSessionIfOpen(tmpSession);
 		}
 		return bool;
 	}
