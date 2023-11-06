@@ -15,242 +15,242 @@ GNU Affero General Public License for more details.
 You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
-<li gridster-item="ngModel" id="w{{ngModel.id}}" ng-cloak ng-class="{'hideUserMenu': cockpitModule_template.configuration.hideUserMenu, 'topPosition' : widExp || gridsterItem.gridster.isMobile, 'hasCrossNavigation':ngModel.cross.cross.enable, 'expandedWidget':widExp, 'fixedLeft':ngModel.type === 'selection', 'screenShottingWidget':cockpitModule_properties.LOADING_SCREENSHOT}"  ng-mouseleave="closeWidgetActionButtons()"
-	action-button-position-handler widget-x-position=ngModel.col  action-button-class-container="widgetActionButton" ng-mouseover="enter($event)" >
-	
-	<div ng-if="checkType(ngModel.type, ['selector']) && ngModel.settings.modalityValue!='multiDropdown' && mouseHover && (showUnlock || showInfoBar)" class="selectorUtilities">
-		<md-button ng-if="showInfoBar" class="md-icon-button noMargin" ng-click="bulkSelect()">
-			<md-tooltip md-delay="500">{{::translate.load('sbi.cockpit.widgets.table.selection.launchselection')}}</md-tooltip>
-			<md-icon md-font-icon="fa fa-play"></md-icon>
-		</md-button>
-		<md-button ng-if="showUnlock" class="md-icon-button noMargin" ng-click="unlock()">
-			<md-tooltip md-delay="500">{{::translate.load('kn.cockpit.selector.unlock')}}</md-tooltip>
-			<md-icon md-font-icon="fa fa-unlock"></md-icon>
-		</md-button>
-	</div>
-	
-	<div id="editModeMenuSpeedDial" style="position:absolute;bottom:0;left:0" ng-if="cockpitModule_properties.EDIT_MODE">
- 		<md-fab-speed-dial md-direction="{{coords()}}" class="md-scale">
-	        <md-fab-trigger>
-	          <md-button aria-label="menu" class="md-fab md-mini">
-	            <md-icon md-font-icon="fa fa-ellipsis-v"></md-icon>
-	          </md-button>
-	        </md-fab-trigger>
+<li
+  gridster-item="ngModel"
+  id="w{{ngModel.id}}"
+  ng-cloak
+  ng-class="{'hideUserMenu': cockpitModule_template.configuration.hideUserMenu, 'topPosition' : widExp || gridsterItem.gridster.isMobile, 'hasCrossNavigation':ngModel.cross.cross.enable, 'expandedWidget':widExp, 'fixedLeft':ngModel.type === 'selection', 'screenShottingWidget':cockpitModule_properties.LOADING_SCREENSHOT}"
+  ng-mouseleave="closeWidgetActionButtons()"
+  action-button-position-handler
+  widget-x-position="ngModel.col"
+  action-button-class-container="widgetActionButton"
+  ng-mouseover="enter($event)"
+>
+  <div ng-if="checkType(ngModel.type, ['selector']) && ngModel.settings.modalityValue!='multiDropdown' && mouseHover && (showUnlock || showInfoBar)" class="selectorUtilities">
+    <md-button ng-if="showInfoBar" class="md-icon-button noMargin" ng-click="bulkSelect()">
+      <md-tooltip md-delay="500">{{::translate.load('sbi.cockpit.widgets.table.selection.launchselection')}}</md-tooltip>
+      <md-icon md-font-icon="fa fa-play"></md-icon>
+    </md-button>
+    <md-button ng-if="showUnlock" class="md-icon-button noMargin" ng-click="unlock()">
+      <md-tooltip md-delay="500">{{::translate.load('kn.cockpit.selector.unlock')}}</md-tooltip>
+      <md-icon md-font-icon="fa fa-unlock"></md-icon>
+    </md-button>
+  </div>
 
-        	<md-fab-actions>
-        		<!-- DRAG BUTTON -->
-	        	<md-button class="md-fab md-raised md-mini dragCursor draggableToolbar" ng-if="!widExp"  aria-label="drag cursor">
-			 		<md-tooltip md-direction="top" md-delay="1000">Drag</md-tooltip>
-					<md-icon md-font-icon="fa fa-arrows"></md-icon>
-			 	</md-button>
-		 
-		 		<!-- EDIT BUTTON -->
-				<md-button class="md-fab md-raised md-mini" aria-label="edit button" ng-if="cockpitModule_properties.EDIT_MODE" ng-click="doEditWidget();$event.stopPropagation();">
-					<md-tooltip md-direction="top" md-delay="1000">{{::translate.load("sbi.cockpit.editor.widget.widgeteditorgenericconfpanel.edit")}}</md-tooltip>
-					<md-icon md-font-icon="fa fa-pencil-square-o"></md-icon>
-				</md-button>
-			
-				<!-- EXPAND BUTTON -->
-				<md-button class="md-fab md-raised md-mini" aria-label="expand button" ng-if="cockpitModule_properties.EDIT_MODE && checkType(ngModel.type, ['table','chart','static-pivot-table', 'document'])" ng-click="expandWidget();$event.stopPropagation();" >
-					<md-tooltip md-direction="top" md-delay="1000">{{::translate.load("sbi.cockpit.editor.widget.widgeteditorgenericconfpanel.expandall")}}</md-tooltip>
-					<md-icon md-font-icon="fa" ng-class="{'fa-compress':widExp ,' fa-expand':!widExp }"></md-icon>
-				</md-button>
-				
-				<md-button class="md-fab md-raised md-mini"  ng-class="{'activeSearch':activeSearch}" ng-click="showChartTypes($event);$event.stopPropagation();" ng-if="enterpriseEdition && checkType(ngModel.type, ['chart'])">
-					<md-tooltip md-direction="bottom" md-delay="1000">{{::translate.load("sbi.cockpit.editor.widget.widgeteditorgenericconfpanel.chartType")}}</md-tooltip>
-					<md-icon md-font-icon="fa fa-bar-chart"></md-icon>
-				</md-button>
-			
-				<!-- SEARCH BUTTON for table widget only -->
-				<md-button class="md-fab md-raised md-mini" aria-label="search button" ng-class="{'md-primary':activeSearch}" ng-if="cockpitModule_properties.EDIT_MODE && checkType(ngModel.type, ['table'])" ng-click="openSearchBar($event);$event.stopPropagation();" >
-					<md-tooltip md-direction="top" md-delay="1000">{{::translate.load("sbi.cockpit.editor.widget.widgeteditorgenericconfpanel.search")}}</md-tooltip>
-					<md-icon md-font-icon="fa fa-search"></md-icon>
-				</md-button>
+  <div id="editModeMenuSpeedDial" style="position: absolute; bottom: 0; left: 0" ng-if="cockpitModule_properties.EDIT_MODE">
+    <md-fab-speed-dial md-direction="{{coords()}}" class="md-scale">
+      <md-fab-trigger>
+        <md-button aria-label="menu" class="md-fab md-mini">
+          <md-icon md-font-icon="fa fa-ellipsis-v"></md-icon>
+        </md-button>
+      </md-fab-trigger>
 
-				<!-- CLONE BUTTON -->
-				<md-button class="md-fab md-raised md-mini" aria-label="clone button" ng-if="cockpitModule_properties.EDIT_MODE" ng-click="cloneWidget();$event.stopPropagation();">
-					<md-tooltip md-direction="top" md-delay="1000">{{::translate.load("sbi.cockpit.editor.widget.widgeteditorgenericconfpanel.clone")}}</md-tooltip>
-					<md-icon md-font-icon="fa fa-clone"></md-icon>
-				</md-button>
-			
-				<!--  MOVE BUTTON -->
-				<md-button class="md-fab md-raised md-mini" aria-label="clone button" ng-if="cockpitModule_properties.EDIT_MODE && cockpitModule_template.sheets.length > 1 " ng-click="moveWidget($event);$event.stopPropagation();">
-					<md-tooltip md-direction="top" md-delay="1000">{{::translate.load("sbi.cockpit.editor.widget.widgeteditorgenericconfpanel.move")}}</md-tooltip>
-					<md-icon md-font-icon="fa fa-arrows-h "></md-icon>
-				</md-button>
-				
-				<!-- UPDATBLE BUTTON -->
-				 <md-button class="md-fab md-raised md-mini" aria-label="updateable button" ng-if="updateble==true && cockpitModule_properties.EDIT_MODE && !checkType(ngModel.type, ['selector','selection'])" ng-click="ngModel.updateble=!ngModel.updateble;$event.stopPropagation();" ng-init="ngModel.updateble=ngModel.updateble==undefined? true : ngModel.updateble">
-					<md-tooltip md-direction="top" md-delay="1000">
-			          {{::translate.load("sbi.cockpit.editor.widget.widgeteditorgenericconfpanel.incomingeventsenabled.description")}}
-			        </md-tooltip>
-					<span class="fa-stack" style="transform:translateY(10%)">
-					  <md-icon md-font-icon="fa fa-refresh fa-stack-1x"></md-icon>
-					  <md-icon ng-if="ngModel.updateble==false" md-font-icon="fa fa-ban fa-stack-2x fa-negative"></md-icon>
-					</span>
-				</md-button>
-				
-				<!-- clickable BUTTON -->
-				<md-button class="md-fab md-raised md-mini stackedIcons" aria-label="unselectable button" ng-if="cliccable==true && cockpitModule_properties.EDIT_MODE && (chartsForDrill.indexOf(ngModel.content.chartTemplate.CHART.type.toLowerCase())==-1)" 
-					ng-click="ngModel.cliccable=!ngModel.cliccable;$event.stopPropagation();" ng-init="ngModel.cliccable=ngModel.cliccable==undefined? true : ngModel.cliccable">
-					<md-tooltip md-direction="top" md-delay="1000">
-			          {{::translate.load("sbi.cockpit.editor.widget.widgeteditorgenericconfpanel.outcomingeventsenabled.description")}}
-			        </md-tooltip>
-					<span class="fa-stack" style="transform:translateX(-10%) translateY(10%)">
-					  <md-icon class="fa fa-hand-o-up fa-stack-1x"></md-icon>
-					  <md-icon ng-if="ngModel.cliccable==false" class="fa fa-ban fa-stack-2x fa-negative"></md-icon>
-					</span>
-				</md-button>
-			
-				<md-button class="md-fab md-raised md-mini" aria-label="unselectable button" 
-			ng-if="highcharts && cliccable==true && checkType(ngModel.type, ['chart']) && (chartsForDrill.indexOf(ngModel.content.chartTemplate.CHART.type.toLowerCase())>-1)" 
-					ng-click="changeClickability()" ng-init="ngModel.cliccable=ngModel.cliccable==undefined? true : ngModel.cliccable">
-					<md-icon md-font-icon="fa fa-mouse-pointer" ng-show="ngModel.cliccable && !ngModel.drillable"></md-icon>
-					<md-tooltip md-direction="top" md-delay="1000" ng-show="ngModel.cliccable">
-	          		{{translate.load("sbi.cockpit.editor.widget.widgeteditorgenericconfpanel.description.notcliccable")}}
-	       			 </md-tooltip>
-	       			 
-	       			 <md-icon md-font-icon="fa fa-filter" ng-show="!ngModel.cliccable && ngModel.drillable"></md-icon>
-	       			 <md-tooltip md-direction="top" md-delay="1000" ng-show="!ngModel.cliccable">
-	       			 {{translate.load("sbi.cockpit.editor.widget.widgeteditorgenericconfpanel.description.cliccable")}}	          			
-	       			 </md-tooltip>	       			 
-	
-	       			 <md-icon md-font-icon="fa fa-ban fa-negativer" ng-show="!ngModel.cliccable && !ngModel.drillable"></md-icon>
-	       			   			 <md-tooltip md-direction="top" md-delay="1000" ng-show="!ngModel.cliccable">
-	       			 {{translate.load("sbi.cockpit.editor.widget.widgeteditorgenericconfpanel.description.noInteraction")}}	          			
-	       			 </md-tooltip>	
-				</md-button>
-			
-				<!-- XOR BUTTON -->
-				<md-button class="md-fab md-raised md-mini" ng-init="ngModel.mutualExclusion=false" ng-if="ngModel.type=='map'" aria-label="mutual exclusion button" ng-click="mutualExclusionToggle();$event.stopPropagation();" >
-					<md-tooltip md-direction="top" md-delay="1000">View only one layer at time</md-tooltip>
-					<md-icon md-font-icon="fa fa-long-arrow-right" ng-if="ngModel.mutualExclusion==false"></md-icon>
-					<md-icon md-font-icon="fa fa-arrows-h" ng-if="ngModel.mutualExclusion==true"></md-icon>
-				</md-button>
-				
-				<!-- quick widget BUTTON -->
-				<md-button class="md-fab md-raised md-mini" ng-if="checkType(ngModel.type, ['table','chart','map'])" aria-label="expand button" ng-click="modalQuickWidget($event);$event.stopPropagation();" >
-					<md-tooltip md-direction="top" md-delay="1000">Add quick widget</md-tooltip>
-					<md-icon md-font-icon="fa fa-magic" ></md-icon>
-				</md-button>
-				
-				<!-- DELETE BUTTON -->
-				<md-button class="md-fab md-raised md-mini md-warning" aria-label="delete button" ng-if="cockpitModule_properties.EDIT_MODE" ng-click="deleteWidget();$event.stopPropagation();">
-					<md-tooltip md-direction="top" md-delay="1000">{{::translate.load("sbi.cockpit.editor.widget.widgeteditorgenericconfpanel.delete")}}</md-tooltip>
-					<md-icon md-font-icon="fa fa-trash"></md-icon>
-				</md-button>
-        
-        </md-fab-actions>
-      </md-fab-speed-dial>
-	
-	</div>
-	<div id="viewModeMenuSpeedDial" style="position:absolute;bottom:0;left:0" ng-if="!cockpitModule_properties.EDIT_MODE && checkMenuVisibility()">
- 		<md-fab-speed-dial md-direction="{{coords()}}" class="md-scale">
-	        <md-fab-trigger>
-	          <md-button aria-label="menu" class="md-fab md-mini">
-	            <md-icon md-font-icon="fa fa-ellipsis-v"></md-icon>
-	          </md-button>
-	        </md-fab-trigger>
+      <md-fab-actions>
+        <!-- DRAG BUTTON -->
+        <md-button class="md-fab md-raised md-mini dragCursor draggableToolbar" ng-if="!widExp" aria-label="drag cursor">
+          <md-tooltip md-direction="top" md-delay="1000">Drag</md-tooltip>
+          <md-icon md-font-icon="fa fa-arrows"></md-icon>
+        </md-button>
 
-        	<md-fab-actions>
-        		<md-button class="md-fab md-raised md-mini" ng-if="ngModel.type == 'table' && activeSearch" ng-click="resetSearch();$event.stopPropagation();" style="transform:translateX(-10%) translateY(10%)">
-					<md-tooltip md-direction="bottom" md-delay="1000">Filtered table, click to reset search</md-tooltip>
-					<span class="fa-stack" style="transform:translateY(10%)">
-				  		<md-icon md-font-icon="fa fa-filter fa-stack-1x"></md-icon>
-						<md-icon md-font-icon="fa fa-ban fa-stack-2x ban"></md-icon>
-					</span>
-				</md-button>
-			
-				<md-button class="md-fab md-raised md-mini" ng-click="expandWidget();$event.stopPropagation();" ng-if="checkType(ngModel.type, ['table','chart','static-pivot-table', 'map', 'customchart'])">
-					<md-tooltip md-direction="bottom" ng-if="!widExp" md-delay="1000">{{::translate.load("sbi.cockpit.editor.widget.widgeteditorgenericconfpanel.expandall")}}</md-tooltip>
-					<md-tooltip md-direction="bottom" ng-if="widExp" md-delay="1000">{{::translate.load("sbi.cockpit.editor.widget.widgeteditorgenericconfpanel.collapse")}}</md-tooltip>
-					<md-icon md-font-icon="fa" ng-class="{'fa-compress':widExp ,' fa-expand':!widExp }"></md-icon>
-				</md-button>
-				
-				<!-- REMOVE EMPTY FIELDS for static pivot table widget only -->
-				<md-button class="md-fab md-raised md-mini" ng-if="checkType(ngModel.type, ['static-pivot-table'])" ng-click="removeEmptyRows($event);$event.stopPropagation();" >
-					<md-tooltip md-direction="top" md-delay="1000">{{::translate.load("sbi.cockpit.editor.widget.widgeteditorgenericconfpanel.removeemptyfields")}}</md-tooltip>
-					<md-icon md-font-icon="fas fa-align-left"></md-icon>		
-				</md-button>
-				
-				<!-- COLLAPSE ALL ROWS for static pivot table widget only -->
-				<md-button class="md-fab md-raised md-mini" ng-if="checkType(ngModel.type, ['static-pivot-table']) && ngModel.content.crosstabDefinition.config.expandCollapseRows" ng-click="collapseAll($event);$event.stopPropagation();" >
-					<md-tooltip md-direction="top" md-delay="1000">{{::translate.load("sbi.cockpit.editor.widget.widgeteditorgenericconfpanel.collapseallrows")}}</md-tooltip>
-					<md-icon md-font-icon="fas fa-minus-square"></md-icon>
-				</md-button>
-				
-				<!-- EXPAND ALL ROWS for static pivot table widget only -->
-				<md-button class="md-fab md-raised md-mini" ng-if="checkType(ngModel.type, ['static-pivot-table']) && ngModel.content.crosstabDefinition.config.expandCollapseRows" ng-click="expandAll($event);$event.stopPropagation();" >
-					<md-tooltip md-direction="top" md-delay="1000">{{::translate.load("sbi.cockpit.editor.widget.widgeteditorgenericconfpanel.expandallrows")}}</md-tooltip>
-					<md-icon md-font-icon="fas fa-plus-square"></md-icon>
-				</md-button>
-			
-				<md-button class="md-fab md-raised md-mini" ng-if="checkType(ngModel.type, ['table']) && !widExp" ng-class="{'activeSearch':activeSearch}" ng-click="openSearchBar($event);$event.stopPropagation();">
-					<md-tooltip md-direction="bottom" md-delay="1000">{{::translate.load("sbi.cockpit.editor.widget.widgeteditorgenericconfpanel.search")}}</md-tooltip>
-					<md-icon md-font-icon="fa fa-search"></md-icon>
-				</md-button>
-				
-				<md-button class="md-fab md-raised md-mini"  ng-class="{'activeSearch':activeSearch}" ng-click="showChartTypes($event);$event.stopPropagation();" ng-if="enterpriseEdition && checkType(ngModel.type, ['chart'])">
-					<md-tooltip md-direction="bottom" md-delay="1000">{{::translate.load("sbi.cockpit.editor.widget.widgeteditorgenericconfpanel.chartType")}}</md-tooltip>
-					<md-icon md-font-icon="fa fa-bar-chart"></md-icon>
-				</md-button>
-				<md-button class="md-fab md-raised md-mini" aria-label="unselectable button" 
-					ng-if="highcharts && cliccable==true && checkType(ngModel.type, ['chart']) &&  (chartsForDrill.indexOf(ngModel.content.chartTemplate.CHART.type.toLowerCase())>-1) && showNegativer"
-					ng-click="changeClickability();" ng-init="ngModel.cliccable=ngModel.cliccable==undefined? true : ngModel.cliccable">
-					<md-icon md-font-icon="fa fa-mouse-pointer" ng-show="ngModel.cliccable && !ngModel.drillable"></md-icon> 
-					<md-tooltip md-direction="top" md-delay="1000" ng-if="ngModel.cliccable && !ngModel.drillable"> 
-	          		{{translate.load("sbi.cockpit.editor.widget.widgeteditorgenericconfpanel.description.notcliccable")}} 
-	       			 </md-tooltip>
-	       			 
-	       			 <md-icon md-font-icon="fa fa-filter" ng-show="!ngModel.cliccable && ngModel.drillable"></md-icon>
-	       			 <md-tooltip md-direction="top" md-delay="1000" ng-if="!ngModel.cliccable && ngModel.drillable"> 
-	       			 {{translate.load("sbi.cockpit.editor.widget.widgeteditorgenericconfpanel.description.cliccable")}}	      			
-	       			 </md-tooltip>	       			 
-	
-	       			 <md-icon md-font-icon="fa fa-ban fa-negativer" ng-show="!ngModel.cliccable && !ngModel.drillable"></md-icon>
-	       			   <md-tooltip md-direction="top" md-delay="1000" ng-if="!ngModel.cliccable && !ngModel.drillable">
-	       			 {{translate.load("sbi.cockpit.editor.widget.widgeteditorgenericconfpanel.description.noInteraction")}}	     			
-	       			 </md-tooltip>	
-				</md-button>
-	
-				<md-button class="md-fab md-raised md-mini" ng-click="captureScreenShot($event,ngModel);$event.stopPropagation();" ng-disabled="ngModel.loadingScreen" ng-if="showScreenshotButton()">
-					<md-tooltip md-direction="bottom" md-delay="1000">Capture Screenshot</md-tooltip>
-					<md-icon md-font-icon="fa fa-spinner fa-spin" ng-if="ngModel.loadingScreen"></md-icon>
-					<md-icon md-font-icon="fa fa-camera-retro" ng-if="!ngModel.loadingScreen"></md-icon>
-				</md-button>
-				
-				<md-button class="md-fab md-raised md-mini" ng-click="exportToExcel($event,ngModel,options)" ng-disabled="ngModel.loadingScreen" ng-if="showExcelExportButton() && checkType(ngModel.type, ['table','chart','static-pivot-table','discovery','map','customchart', 'python'])">
-					<md-tooltip md-direction="bottom" md-delay="1000">{{::translate.load("sbi.cockpit.widgets.tooltip.export.excel")}}</md-tooltip>					
-					<md-icon md-font-icon="fa fa-file-excel-o" ng-if="!ngModel.loadingScreen"></md-icon>
-				</md-button>
-				<md-button class="md-fab md-raised md-mini" ng-click="exportToPdf($event,ngModel,options)" ng-disabled="ngModel.loadingScreen" ng-if="checkType(ngModel.type, ['table']) && isExportPdfEnabled()">
-					<md-tooltip md-direction="bottom" md-delay="1000">{{::translate.load("sbi.cockpit.widgets.tooltip.export.pdf")}}</md-tooltip>					
-					<md-icon md-font-icon="fa fa-file-pdf" ng-if="!ngModel.loadingScreen"></md-icon>
-				</md-button>
-        	</md-fab-actions>
-       	</md-fab-speed-dial>
- 	</div>
+        <!-- EDIT BUTTON -->
+        <md-button class="md-fab md-raised md-mini" aria-label="edit button" ng-if="cockpitModule_properties.EDIT_MODE" ng-click="doEditWidget();$event.stopPropagation();">
+          <md-tooltip md-direction="top" md-delay="1000">{{::translate.load("sbi.cockpit.editor.widget.widgeteditorgenericconfpanel.edit")}}</md-tooltip>
+          <md-icon md-font-icon="fa fa-pencil-square-o"></md-icon>
+        </md-button>
 
-  	<div ng-show="widgetSpinner" class="widgetSpinner" layout-fill>
-       <md-progress-circular  md-diameter="20px" md-mode='indeterminate'></md-progress-circular>
-    </div>
-    
-    
-    
-	<md-card class="placedWidget flexCard" ng-style="borderShadowStyle" ng-class="{'shadowedBox': extendedStyle.shadows, 'editWidgetMode':cockpitModule_properties.EDIT_MODE}" layout="column" layout-fill>
-		<md-card-title layout="row" layout-align="start center" ng-show="extendedStyle.titles" ng-style="extendedStyle.title" >
-			<md-toolbar class="widgetToolbar" layout="row" layout-align="start center">
-				<div class="md-toolbar-tools" ng-class="{'dragCursor': (cockpitModule_properties.EDIT_MODE && !widExp),'draggableToolbar':editingWidgetName!=true}" layout="row">
-					<span  flex ng-style="extendedStyle.title.font" ng-if="extendedStyle.title.label">{{extendedStyle.title.label | i18n | parameter_fill}}</span>
-					<span  flex ng-style="extendedStyle.title.font" ng-if="!extendedStyle.title.label">{{::translate.load("kn.cockpit.widget.title")}}</span>
-				</div>
-			</md-toolbar>
-		</md-card-title>
-			<md-card-content flex layout="column" class="noPadding" id="{{ngModel.id}}" layout-fill ng-style="paddingStyle">
-				<div layout="row" ng-if="areParametersAndDriversNotSet()" class="errorContainer" layout-align="center center" layout-fill>
-					<div class="kn-infoerror" flex="60">{{translate.load('sbi.cockpit.parameter.and.driver')}}</div>
-				</div>
-			</md-card-content>
-	</md-card>
-	
+        <!-- EXPAND BUTTON -->
+        <md-button class="md-fab md-raised md-mini" aria-label="expand button" ng-if="cockpitModule_properties.EDIT_MODE && checkType(ngModel.type, ['table','chart','static-pivot-table', 'document'])" ng-click="expandWidget();$event.stopPropagation();">
+          <md-tooltip md-direction="top" md-delay="1000">{{::translate.load("sbi.cockpit.editor.widget.widgeteditorgenericconfpanel.expandall")}}</md-tooltip>
+          <md-icon md-font-icon="fa" ng-class="{'fa-compress':widExp ,' fa-expand':!widExp }"></md-icon>
+        </md-button>
+
+        <md-button class="md-fab md-raised md-mini" ng-class="{'activeSearch':activeSearch}" ng-click="showChartTypes($event);$event.stopPropagation();" ng-if="enterpriseEdition && checkType(ngModel.type, ['chart']) && !cockpitModule_template.configuration.hideChartChange">
+          <md-tooltip md-direction="bottom" md-delay="1000">{{::translate.load("sbi.cockpit.editor.widget.widgeteditorgenericconfpanel.chartType")}}</md-tooltip>
+          <md-icon md-font-icon="fa fa-bar-chart"></md-icon>
+        </md-button>
+
+        <!-- SEARCH BUTTON for table widget only -->
+        <md-button class="md-fab md-raised md-mini" aria-label="search button" ng-class="{'md-primary':activeSearch}" ng-if="cockpitModule_properties.EDIT_MODE && checkType(ngModel.type, ['table'])" ng-click="openSearchBar($event);$event.stopPropagation();">
+          <md-tooltip md-direction="top" md-delay="1000">{{::translate.load("sbi.cockpit.editor.widget.widgeteditorgenericconfpanel.search")}}</md-tooltip>
+          <md-icon md-font-icon="fa fa-search"></md-icon>
+        </md-button>
+
+        <!-- CLONE BUTTON -->
+        <md-button class="md-fab md-raised md-mini" aria-label="clone button" ng-if="cockpitModule_properties.EDIT_MODE" ng-click="cloneWidget();$event.stopPropagation();">
+          <md-tooltip md-direction="top" md-delay="1000">{{::translate.load("sbi.cockpit.editor.widget.widgeteditorgenericconfpanel.clone")}}</md-tooltip>
+          <md-icon md-font-icon="fa fa-clone"></md-icon>
+        </md-button>
+
+        <!--  MOVE BUTTON -->
+        <md-button class="md-fab md-raised md-mini" aria-label="clone button" ng-if="cockpitModule_properties.EDIT_MODE && cockpitModule_template.sheets.length > 1 " ng-click="moveWidget($event);$event.stopPropagation();">
+          <md-tooltip md-direction="top" md-delay="1000">{{::translate.load("sbi.cockpit.editor.widget.widgeteditorgenericconfpanel.move")}}</md-tooltip>
+          <md-icon md-font-icon="fa fa-arrows-h "></md-icon>
+        </md-button>
+
+        <!-- UPDATBLE BUTTON -->
+        <md-button class="md-fab md-raised md-mini" aria-label="updateable button" ng-if="updateble==true && cockpitModule_properties.EDIT_MODE && !checkType(ngModel.type, ['selector','selection'])" ng-click="ngModel.updateble=!ngModel.updateble;$event.stopPropagation();" ng-init="ngModel.updateble=ngModel.updateble==undefined? true : ngModel.updateble">
+          <md-tooltip md-direction="top" md-delay="1000"> {{::translate.load("sbi.cockpit.editor.widget.widgeteditorgenericconfpanel.incomingeventsenabled.description")}} </md-tooltip>
+          <span class="fa-stack" style="transform: translateY(10%)">
+            <md-icon md-font-icon="fa fa-refresh fa-stack-1x"></md-icon>
+            <md-icon ng-if="ngModel.updateble==false" md-font-icon="fa fa-ban fa-stack-2x fa-negative"></md-icon>
+          </span>
+        </md-button>
+
+        <!-- clickable BUTTON -->
+        <md-button
+          class="md-fab md-raised md-mini stackedIcons"
+          aria-label="unselectable button"
+          ng-if="cliccable==true && cockpitModule_properties.EDIT_MODE && (chartsForDrill.indexOf(ngModel.content.chartTemplate.CHART.type.toLowerCase())==-1)"
+          ng-click="ngModel.cliccable=!ngModel.cliccable;$event.stopPropagation();"
+          ng-init="ngModel.cliccable=ngModel.cliccable==undefined? true : ngModel.cliccable"
+        >
+          <md-tooltip md-direction="top" md-delay="1000"> {{::translate.load("sbi.cockpit.editor.widget.widgeteditorgenericconfpanel.outcomingeventsenabled.description")}} </md-tooltip>
+          <span class="fa-stack" style="transform: translateX(-10%) translateY(10%)">
+            <md-icon class="fa fa-hand-o-up fa-stack-1x"></md-icon>
+            <md-icon ng-if="ngModel.cliccable==false" class="fa fa-ban fa-stack-2x fa-negative"></md-icon>
+          </span>
+        </md-button>
+
+        <md-button
+          class="md-fab md-raised md-mini"
+          aria-label="unselectable button"
+          ng-if="highcharts && cliccable==true && checkType(ngModel.type, ['chart']) && (chartsForDrill.indexOf(ngModel.content.chartTemplate.CHART.type.toLowerCase())>-1)"
+          ng-click="changeClickability()"
+          ng-init="ngModel.cliccable=ngModel.cliccable==undefined? true : ngModel.cliccable"
+        >
+          <md-icon md-font-icon="fa fa-mouse-pointer" ng-show="ngModel.cliccable && !ngModel.drillable"></md-icon>
+          <md-tooltip md-direction="top" md-delay="1000" ng-show="ngModel.cliccable"> {{translate.load("sbi.cockpit.editor.widget.widgeteditorgenericconfpanel.description.notcliccable")}} </md-tooltip>
+
+          <md-icon md-font-icon="fa fa-filter" ng-show="!ngModel.cliccable && ngModel.drillable"></md-icon>
+          <md-tooltip md-direction="top" md-delay="1000" ng-show="!ngModel.cliccable"> {{translate.load("sbi.cockpit.editor.widget.widgeteditorgenericconfpanel.description.cliccable")}} </md-tooltip>
+
+          <md-icon md-font-icon="fa fa-ban fa-negativer" ng-show="!ngModel.cliccable && !ngModel.drillable"></md-icon>
+          <md-tooltip md-direction="top" md-delay="1000" ng-show="!ngModel.cliccable"> {{translate.load("sbi.cockpit.editor.widget.widgeteditorgenericconfpanel.description.noInteraction")}} </md-tooltip>
+        </md-button>
+
+        <!-- XOR BUTTON -->
+        <md-button class="md-fab md-raised md-mini" ng-init="ngModel.mutualExclusion=false" ng-if="ngModel.type=='map'" aria-label="mutual exclusion button" ng-click="mutualExclusionToggle();$event.stopPropagation();">
+          <md-tooltip md-direction="top" md-delay="1000">View only one layer at time</md-tooltip>
+          <md-icon md-font-icon="fa fa-long-arrow-right" ng-if="ngModel.mutualExclusion==false"></md-icon>
+          <md-icon md-font-icon="fa fa-arrows-h" ng-if="ngModel.mutualExclusion==true"></md-icon>
+        </md-button>
+
+        <!-- quick widget BUTTON -->
+        <md-button class="md-fab md-raised md-mini" ng-if="checkType(ngModel.type, ['table','chart','map'])" aria-label="expand button" ng-click="modalQuickWidget($event);$event.stopPropagation();">
+          <md-tooltip md-direction="top" md-delay="1000">Add quick widget</md-tooltip>
+          <md-icon md-font-icon="fa fa-magic"></md-icon>
+        </md-button>
+
+        <!-- DELETE BUTTON -->
+        <md-button class="md-fab md-raised md-mini md-warning" aria-label="delete button" ng-if="cockpitModule_properties.EDIT_MODE" ng-click="deleteWidget();$event.stopPropagation();">
+          <md-tooltip md-direction="top" md-delay="1000">{{::translate.load("sbi.cockpit.editor.widget.widgeteditorgenericconfpanel.delete")}}</md-tooltip>
+          <md-icon md-font-icon="fa fa-trash"></md-icon>
+        </md-button>
+      </md-fab-actions>
+    </md-fab-speed-dial>
+  </div>
+  <div id="viewModeMenuSpeedDial" style="position: absolute; bottom: 0; left: 0" ng-if="!cockpitModule_properties.EDIT_MODE && checkMenuVisibility()">
+    <md-fab-speed-dial md-direction="{{coords()}}" class="md-scale">
+      <md-fab-trigger>
+        <md-button aria-label="menu" class="md-fab md-mini">
+          <md-icon md-font-icon="fa fa-ellipsis-v"></md-icon>
+        </md-button>
+      </md-fab-trigger>
+
+      <md-fab-actions>
+        <md-button class="md-fab md-raised md-mini" ng-if="ngModel.type == 'table' && activeSearch" ng-click="resetSearch();$event.stopPropagation();" style="transform: translateX(-10%) translateY(10%)">
+          <md-tooltip md-direction="bottom" md-delay="1000">Filtered table, click to reset search</md-tooltip>
+          <span class="fa-stack" style="transform: translateY(10%)">
+            <md-icon md-font-icon="fa fa-filter fa-stack-1x"></md-icon>
+            <md-icon md-font-icon="fa fa-ban fa-stack-2x ban"></md-icon>
+          </span>
+        </md-button>
+
+        <md-button class="md-fab md-raised md-mini" ng-click="expandWidget();$event.stopPropagation();" ng-if="checkType(ngModel.type, ['table','chart','static-pivot-table', 'map', 'customchart'])">
+          <md-tooltip md-direction="bottom" ng-if="!widExp" md-delay="1000">{{::translate.load("sbi.cockpit.editor.widget.widgeteditorgenericconfpanel.expandall")}}</md-tooltip>
+          <md-tooltip md-direction="bottom" ng-if="widExp" md-delay="1000">{{::translate.load("sbi.cockpit.editor.widget.widgeteditorgenericconfpanel.collapse")}}</md-tooltip>
+          <md-icon md-font-icon="fa" ng-class="{'fa-compress':widExp ,' fa-expand':!widExp }"></md-icon>
+        </md-button>
+
+        <!-- REMOVE EMPTY FIELDS for static pivot table widget only -->
+        <md-button class="md-fab md-raised md-mini" ng-if="checkType(ngModel.type, ['static-pivot-table'])" ng-click="removeEmptyRows($event);$event.stopPropagation();">
+          <md-tooltip md-direction="top" md-delay="1000">{{::translate.load("sbi.cockpit.editor.widget.widgeteditorgenericconfpanel.removeemptyfields")}}</md-tooltip>
+          <md-icon md-font-icon="fas fa-align-left"></md-icon>
+        </md-button>
+
+        <!-- COLLAPSE ALL ROWS for static pivot table widget only -->
+        <md-button class="md-fab md-raised md-mini" ng-if="checkType(ngModel.type, ['static-pivot-table']) && ngModel.content.crosstabDefinition.config.expandCollapseRows" ng-click="collapseAll($event);$event.stopPropagation();">
+          <md-tooltip md-direction="top" md-delay="1000">{{::translate.load("sbi.cockpit.editor.widget.widgeteditorgenericconfpanel.collapseallrows")}}</md-tooltip>
+          <md-icon md-font-icon="fas fa-minus-square"></md-icon>
+        </md-button>
+
+        <!-- EXPAND ALL ROWS for static pivot table widget only -->
+        <md-button class="md-fab md-raised md-mini" ng-if="checkType(ngModel.type, ['static-pivot-table']) && ngModel.content.crosstabDefinition.config.expandCollapseRows" ng-click="expandAll($event);$event.stopPropagation();">
+          <md-tooltip md-direction="top" md-delay="1000">{{::translate.load("sbi.cockpit.editor.widget.widgeteditorgenericconfpanel.expandallrows")}}</md-tooltip>
+          <md-icon md-font-icon="fas fa-plus-square"></md-icon>
+        </md-button>
+
+        <md-button class="md-fab md-raised md-mini" ng-if="checkType(ngModel.type, ['table']) && !widExp" ng-class="{'activeSearch':activeSearch}" ng-click="openSearchBar($event);$event.stopPropagation();">
+          <md-tooltip md-direction="bottom" md-delay="1000">{{::translate.load("sbi.cockpit.editor.widget.widgeteditorgenericconfpanel.search")}}</md-tooltip>
+          <md-icon md-font-icon="fa fa-search"></md-icon>
+        </md-button>
+
+        <md-button class="md-fab md-raised md-mini" ng-class="{'activeSearch':activeSearch}" ng-click="showChartTypes($event);$event.stopPropagation();" ng-if="enterpriseEdition && checkType(ngModel.type, ['chart']) && !cockpitModule_template.configuration.hideChartChange">
+          <md-tooltip md-direction="bottom" md-delay="1000">{{::translate.load("sbi.cockpit.editor.widget.widgeteditorgenericconfpanel.chartType")}}</md-tooltip>
+          <md-icon md-font-icon="fa fa-bar-chart"></md-icon>
+        </md-button>
+        <md-button
+          class="md-fab md-raised md-mini"
+          aria-label="unselectable button"
+          ng-if="highcharts && cliccable==true && checkType(ngModel.type, ['chart']) &&  (chartsForDrill.indexOf(ngModel.content.chartTemplate.CHART.type.toLowerCase())>-1) && showNegativer"
+          ng-click="changeClickability();"
+          ng-init="ngModel.cliccable=ngModel.cliccable==undefined? true : ngModel.cliccable"
+        >
+          <md-icon md-font-icon="fa fa-mouse-pointer" ng-show="ngModel.cliccable && !ngModel.drillable"></md-icon>
+          <md-tooltip md-direction="top" md-delay="1000" ng-if="ngModel.cliccable && !ngModel.drillable"> {{translate.load("sbi.cockpit.editor.widget.widgeteditorgenericconfpanel.description.notcliccable")}} </md-tooltip>
+
+          <md-icon md-font-icon="fa fa-filter" ng-show="!ngModel.cliccable && ngModel.drillable"></md-icon>
+          <md-tooltip md-direction="top" md-delay="1000" ng-if="!ngModel.cliccable && ngModel.drillable"> {{translate.load("sbi.cockpit.editor.widget.widgeteditorgenericconfpanel.description.cliccable")}} </md-tooltip>
+
+          <md-icon md-font-icon="fa fa-ban fa-negativer" ng-show="!ngModel.cliccable && !ngModel.drillable"></md-icon>
+          <md-tooltip md-direction="top" md-delay="1000" ng-if="!ngModel.cliccable && !ngModel.drillable"> {{translate.load("sbi.cockpit.editor.widget.widgeteditorgenericconfpanel.description.noInteraction")}} </md-tooltip>
+        </md-button>
+
+        <md-button class="md-fab md-raised md-mini" ng-click="captureScreenShot($event,ngModel);$event.stopPropagation();" ng-disabled="ngModel.loadingScreen" ng-if="showScreenshotButton()">
+          <md-tooltip md-direction="bottom" md-delay="1000">Capture Screenshot</md-tooltip>
+          <md-icon md-font-icon="fa fa-spinner fa-spin" ng-if="ngModel.loadingScreen"></md-icon>
+          <md-icon md-font-icon="fa fa-camera-retro" ng-if="!ngModel.loadingScreen"></md-icon>
+        </md-button>
+
+        <md-button class="md-fab md-raised md-mini" ng-click="exportToExcel($event,ngModel,options)" ng-disabled="ngModel.loadingScreen" ng-if="showExcelExportButton() && checkType(ngModel.type, ['table','chart','static-pivot-table','discovery','map','customchart', 'python'])">
+          <md-tooltip md-direction="bottom" md-delay="1000">{{::translate.load("sbi.cockpit.widgets.tooltip.export.excel")}}</md-tooltip>
+          <md-icon md-font-icon="fa fa-file-excel-o" ng-if="!ngModel.loadingScreen"></md-icon>
+        </md-button>
+        <md-button class="md-fab md-raised md-mini" ng-click="exportToPdf($event,ngModel,options)" ng-disabled="ngModel.loadingScreen" ng-if="checkType(ngModel.type, ['table']) && isExportPdfEnabled()">
+          <md-tooltip md-direction="bottom" md-delay="1000">{{::translate.load("sbi.cockpit.widgets.tooltip.export.pdf")}}</md-tooltip>
+          <md-icon md-font-icon="fa fa-file-pdf" ng-if="!ngModel.loadingScreen"></md-icon>
+        </md-button>
+      </md-fab-actions>
+    </md-fab-speed-dial>
+  </div>
+
+  <div ng-show="widgetSpinner" class="widgetSpinner" layout-fill>
+    <md-progress-circular md-diameter="20px" md-mode="indeterminate"></md-progress-circular>
+  </div>
+
+  <md-card class="placedWidget flexCard" ng-style="borderShadowStyle" ng-class="{'shadowedBox': extendedStyle.shadows, 'editWidgetMode':cockpitModule_properties.EDIT_MODE}" layout="column" layout-fill>
+    <md-card-title layout="row" layout-align="start center" ng-show="extendedStyle.titles" ng-style="extendedStyle.title">
+      <md-toolbar class="widgetToolbar" layout="row" layout-align="start center">
+        <div class="md-toolbar-tools" ng-class="{'dragCursor': (cockpitModule_properties.EDIT_MODE && !widExp),'draggableToolbar':editingWidgetName!=true}" layout="row">
+          <span flex ng-style="extendedStyle.title.font" ng-if="extendedStyle.title.label">{{extendedStyle.title.label | i18n | parameter_fill}}</span>
+          <span flex ng-style="extendedStyle.title.font" ng-if="!extendedStyle.title.label">{{::translate.load("kn.cockpit.widget.title")}}</span>
+        </div>
+      </md-toolbar>
+    </md-card-title>
+    <md-card-content flex layout="column" class="noPadding" id="{{ngModel.id}}" layout-fill ng-style="paddingStyle">
+      <div layout="row" ng-if="areParametersAndDriversNotSet()" class="errorContainer" layout-align="center center" layout-fill>
+        <div class="kn-infoerror" flex="60">{{translate.load('sbi.cockpit.parameter.and.driver')}}</div>
+      </div>
+    </md-card-content>
+  </md-card>
 </li>
