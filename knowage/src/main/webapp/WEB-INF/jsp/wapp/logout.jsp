@@ -107,7 +107,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <iframe id='invalidSessionSvg'
                  name='invalidSessionSvg'
-                 src='<%=KnowageSystemConfiguration.getKnowageContext()%>svgengine/invalidateSession.jsp'
+                 src='<%=KnowageSystemConfiguration.getKnowageContext()%>svgviewerengine/invalidateSession.jsp'
                  height='0'
                  width='0'
                  frameborder='0' >
