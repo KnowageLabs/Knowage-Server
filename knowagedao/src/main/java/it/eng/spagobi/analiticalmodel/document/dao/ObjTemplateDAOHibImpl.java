@@ -162,8 +162,8 @@ public class ObjTemplateDAOHibImpl extends AbstractHibernateDAO implements IObjT
 	 * @see it.eng.spagobi.analiticalmodel.document.dao.IObjTemplateDAO#getBIObjectTemplateList(java.lang.Integer)
 	 */
 	@Override
-	public List getBIObjectTemplateList(Integer biobjId) throws EMFInternalError {
-		List templates = new ArrayList();
+	public List<ObjTemplate> getBIObjectTemplateList(Integer biobjId) throws EMFInternalError {
+		List<ObjTemplate> templates = new ArrayList<>();
 		Session aSession = null;
 		Transaction tx = null;
 		try {
@@ -174,10 +174,10 @@ public class ObjTemplateDAOHibImpl extends AbstractHibernateDAO implements IObjT
 
 			Query query = aSession.createQuery(hql);
 			query.setInteger(0, biobjId.intValue());
-			List result = query.list();
-			Iterator it = result.iterator();
+			List<SbiObjTemplates> result = query.list();
+			Iterator<SbiObjTemplates> it = result.iterator();
 			while (it.hasNext()) {
-				templates.add(toObjTemplate((SbiObjTemplates) it.next()));
+				templates.add(toObjTemplate(it.next()));
 			}
 			tx.commit();
 		} catch (HibernateException he) {

@@ -92,17 +92,20 @@ public class CrossNavigationDAOImpl extends AbstractHibernateDAO implements ICro
 						case TYPE_INPUT:
 							SbiObjPar op = (SbiObjPar) session.get(SbiObjPar.class, cnp.getFromKeyId());
 							if (op == null) {
-								logger.error("Cross Navigation Error! id[" + cn.getId() + "] - Input type parameter not found with fromKeyId ["
-										+ cnp.getFromKeyId() + "]");
+								logger.error("Cross Navigation Error! id[" + cn.getId()
+										+ "] - Input type parameter not found with fromKeyId [" + cnp.getFromKeyId()
+										+ "]");
 								continue;
 							}
 							sn.setFromDoc(op.getSbiObject().getLabel());
 							break;
 						case TYPE_OUTPUT:
-							SbiOutputParameter o2 = (SbiOutputParameter) session.get(SbiOutputParameter.class, cnp.getFromKeyId());
+							SbiOutputParameter o2 = (SbiOutputParameter) session.get(SbiOutputParameter.class,
+									cnp.getFromKeyId());
 							if (o2 == null) {
-								logger.error("Cross Navigation Error! id[" + cn.getId() + "] - Output type parameter not found with fromKeyId ["
-										+ cnp.getFromKeyId() + "]");
+								logger.error("Cross Navigation Error! id[" + cn.getId()
+										+ "] - Output type parameter not found with fromKeyId [" + cnp.getFromKeyId()
+										+ "]");
 								continue;
 							}
 							sn.setFromDoc(o2.getSbiObject().getLabel());
@@ -110,7 +113,8 @@ public class CrossNavigationDAOImpl extends AbstractHibernateDAO implements ICro
 						case TYPE_FIXED:
 							SbiObjects obj = (SbiObjects) session.load(SbiObjects.class, cnp.getFromKeyId());
 							if (obj == null) {
-								logger.error("Cross Navigation Error! id[" + cn.getId() + "] - Document not found with id [" + cnp.getFromKeyId() + "]");
+								logger.error("Cross Navigation Error! id[" + cn.getId()
+										+ "] - Document not found with id [" + cnp.getFromKeyId() + "]");
 								continue;
 							}
 							sn.setFromDoc(obj.getLabel());
@@ -165,7 +169,8 @@ public class CrossNavigationDAOImpl extends AbstractHibernateDAO implements ICro
 		executeOnTransaction(new IExecuteOnTransaction<Boolean>() {
 			@Override
 			public Boolean execute(Session session) throws JSONException {
-				SbiCrossNavigation cn = (SbiCrossNavigation) session.get(SbiCrossNavigation.class, nd.getSimpleNavigation().getId());
+				SbiCrossNavigation cn = (SbiCrossNavigation) session.get(SbiCrossNavigation.class,
+						nd.getSimpleNavigation().getId());
 				if (cn == null) {
 					throw new SpagoBIDAOException("Write error: record not found");
 				}
@@ -226,7 +231,8 @@ public class CrossNavigationDAOImpl extends AbstractHibernateDAO implements ICro
 							}
 							break;
 						case TYPE_OUTPUT:
-							SbiOutputParameter outputParameter = (SbiOutputParameter) session.get(SbiOutputParameter.class, cnp.getFromKeyId());
+							SbiOutputParameter outputParameter = (SbiOutputParameter) session
+									.get(SbiOutputParameter.class, cnp.getFromKeyId());
 							fromSp.setName(outputParameter.getLabel());
 							fromSp.setParType(outputParameter.getParameterType().getValueCd());
 							if (fromDoc == null) {
@@ -241,26 +247,27 @@ public class CrossNavigationDAOImpl extends AbstractHibernateDAO implements ICro
 							}
 							break;
 						}
-						SimpleParameter toSp = new SimpleParameter(cnp.getToKey().getObjParId(), cnp.getToKey().getLabel(), TYPE_INPUT);
+						SimpleParameter toSp = new SimpleParameter(cnp.getToKey().getObjParId(),
+								cnp.getToKey().getLabel(), TYPE_INPUT);
 						if (toDoc == null) {
 							toDoc = cnp.getToKey().getSbiObject();
 						}
-						for (Object o : fromDoc.getSbiObjPars()) {
-							SbiObjPar op = (SbiObjPar) o;
-							checkAndAddToList(nd.getFromPars(),
-									new SimpleParameter(op.getObjParId(), op.getLabel(), TYPE_INPUT, op.getSbiParameter().getParameterTypeCode()));
+						for (SbiObjPar o : fromDoc.getSbiObjPars()) {
+							SbiObjPar op = o;
+							checkAndAddToList(nd.getFromPars(), new SimpleParameter(op.getObjParId(), op.getLabel(),
+									TYPE_INPUT, op.getSbiParameter().getParameterTypeCode()));
 						}
 						List<SbiOutputParameter> outputParameterList = session.createCriteria(SbiOutputParameter.class)
 								.add(Restrictions.eq("biobjId", fromDoc.getBiobjId())).list();
 						for (SbiOutputParameter object : outputParameterList) {
 							SbiOutputParameter outPar = object;
-							checkAndAddToList(nd.getFromPars(),
-									new SimpleParameter(outPar.getId(), outPar.getLabel(), TYPE_OUTPUT, outPar.getParameterType().getValueCd()));
+							checkAndAddToList(nd.getFromPars(), new SimpleParameter(outPar.getId(), outPar.getLabel(),
+									TYPE_OUTPUT, outPar.getParameterType().getValueCd()));
 						}
-						for (Object o : toDoc.getSbiObjPars()) {
-							SbiObjPar op = (SbiObjPar) o;
-							checkAndAddToList(nd.getToPars(),
-									new SimpleParameter(op.getObjParId(), op.getLabel(), TYPE_INPUT, op.getSbiParameter().getParameterTypeCode()));
+						for (SbiObjPar o : toDoc.getSbiObjPars()) {
+							SbiObjPar op = o;
+							checkAndAddToList(nd.getToPars(), new SimpleParameter(op.getObjParId(), op.getLabel(),
+									TYPE_INPUT, op.getSbiParameter().getParameterTypeCode()));
 						}
 
 						int i = nd.getToPars().indexOf(toSp);
@@ -272,8 +279,9 @@ public class CrossNavigationDAOImpl extends AbstractHibernateDAO implements ICro
 						}
 					}
 
-					nd.setSimpleNavigation(new SimpleNavigation(cn.getId(), cn.getName(), cn.getDescription(), cn.getBreadcrumb(), cn.getType(),
-							fromDoc.getLabel(), fromDoc.getBiobjId(), toDoc.getLabel(), toDoc.getBiobjId(), cn.getPopupOptions()));
+					nd.setSimpleNavigation(new SimpleNavigation(cn.getId(), cn.getName(), cn.getDescription(),
+							cn.getBreadcrumb(), cn.getType(), fromDoc.getLabel(), fromDoc.getBiobjId(),
+							toDoc.getLabel(), toDoc.getBiobjId(), cn.getPopupOptions()));
 
 				}
 				return nd;
@@ -306,27 +314,32 @@ public class CrossNavigationDAOImpl extends AbstractHibernateDAO implements ICro
 				outputParameters.add(outputParameter.getId());
 			}
 		}
-		List<SbiCrossNavigation> cnToRemove = listNavigationsByDocumentAndParameters(obj.getId(), inputParameters, outputParameters, session);
+		List<SbiCrossNavigation> cnToRemove = listNavigationsByDocumentAndParameters(obj.getId(), inputParameters,
+				outputParameters, session);
 		for (SbiCrossNavigation cn : cnToRemove) {
 			session.delete(cn);
 		}
 	}
 
 	@Override
-	public List<SbiCrossNavigation> listNavigationsByDocumentAndParameters(Integer documentId, List<Integer> inputParameters, List<Integer> outputParameters,
-			Session session) {
+	public List<SbiCrossNavigation> listNavigationsByDocumentAndParameters(Integer documentId,
+			List<Integer> inputParameters, List<Integer> outputParameters, Session session) {
 		// load cross navigation item
 		Disjunction disj = Restrictions.disjunction();
 		if (!inputParameters.isEmpty()) {
-			disj.add(Restrictions.conjunction().add(Restrictions.eq("_par.fromType", 1)).add(Restrictions.in("_par.fromKeyId", inputParameters)));
+			disj.add(Restrictions.conjunction().add(Restrictions.eq("_par.fromType", 1))
+					.add(Restrictions.in("_par.fromKeyId", inputParameters)));
 			disj.add(Restrictions.in("_par.toKeyId", inputParameters));
 		}
 		if (!outputParameters.isEmpty()) {
-			disj.add(Restrictions.conjunction().add(Restrictions.eq("_par.fromType", 0)).add(Restrictions.in("_par.fromKeyId", outputParameters)));
+			disj.add(Restrictions.conjunction().add(Restrictions.eq("_par.fromType", 0))
+					.add(Restrictions.in("_par.fromKeyId", outputParameters)));
 		}
-		disj.add(Restrictions.conjunction().add(Restrictions.eq("_par.fromType", 2)).add(Restrictions.eq("_par.fromKeyId", documentId)));
+		disj.add(Restrictions.conjunction().add(Restrictions.eq("_par.fromType", 2))
+				.add(Restrictions.eq("_par.fromKeyId", documentId)));
 
-		return session.createCriteria(SbiCrossNavigation.class).createAlias("sbiCrossNavigationPars", "_par").add(disj).list();
+		return session.createCriteria(SbiCrossNavigation.class).createAlias("sbiCrossNavigationPars", "_par").add(disj)
+				.list();
 	}
 
 	@Override
@@ -345,7 +358,8 @@ public class CrossNavigationDAOImpl extends AbstractHibernateDAO implements ICro
 				List<BIObjectParameter> docParams = document.getDrivers();
 				for (Iterator<BIObjectParameter> iterator = docParams.iterator(); iterator.hasNext();) {
 					BIObjectParameter docParam = iterator.next();
-					CrossNavigationParameters cnParams = new CrossNavigationParameters(docParam.getParameterUrlName(), docParam.getParameter().getType());
+					CrossNavigationParameters cnParams = new CrossNavigationParameters(docParam.getParameterUrlName(),
+							docParam.getParameter().getType());
 					cnParams.setIsInput(true);
 					documentInputParams.put(docParam.getId(), cnParams);
 				}
@@ -354,7 +368,8 @@ public class CrossNavigationDAOImpl extends AbstractHibernateDAO implements ICro
 				Map<Integer, CrossNavigationParameters> documentOutputParams = new HashMap<>();
 				List<OutputParameter> outParams = document.getOutputParameters();
 				for (OutputParameter outParam : outParams) {
-					CrossNavigationParameters cnParams = new CrossNavigationParameters(outParam.getName(), outParam.getType(), outParam.getFormatValue());
+					CrossNavigationParameters cnParams = new CrossNavigationParameters(outParam.getName(),
+							outParam.getType(), outParam.getFormatValue());
 					cnParams.setIsInput(false);
 					documentOutputParams.put(outParam.getId(), cnParams);
 				}
@@ -362,14 +377,15 @@ public class CrossNavigationDAOImpl extends AbstractHibernateDAO implements ICro
 				// load cross navigation parameters
 				Disjunction disjunction = Restrictions.disjunction();
 				if (!documentInputParams.isEmpty()) {
-					disjunction.add(
-							Restrictions.conjunction().add(Restrictions.eq("fromType", 1)).add(Restrictions.in("fromKeyId", documentInputParams.keySet())));
+					disjunction.add(Restrictions.conjunction().add(Restrictions.eq("fromType", 1))
+							.add(Restrictions.in("fromKeyId", documentInputParams.keySet())));
 				}
 				if (!documentOutputParams.isEmpty()) {
-					disjunction.add(
-							Restrictions.conjunction().add(Restrictions.eq("fromType", 0)).add(Restrictions.in("fromKeyId", documentOutputParams.keySet())));
+					disjunction.add(Restrictions.conjunction().add(Restrictions.eq("fromType", 0))
+							.add(Restrictions.in("fromKeyId", documentOutputParams.keySet())));
 				}
-				disjunction.add(Restrictions.conjunction().add(Restrictions.eq("fromType", 2)).add(Restrictions.eq("fromKeyId", document.getId())));
+				disjunction.add(Restrictions.conjunction().add(Restrictions.eq("fromType", 2))
+						.add(Restrictions.eq("fromKeyId", document.getId())));
 				Criteria crit = session.createCriteria(SbiCrossNavigationPar.class).add(disjunction);
 				List<SbiCrossNavigationPar> cnParams = crit.list();
 
@@ -394,13 +410,16 @@ public class CrossNavigationDAOImpl extends AbstractHibernateDAO implements ICro
 						try {
 							canExecute = ObjectsAccessVerifier.canExec(biObject, userProfile);
 						} catch (EMFInternalError e) {
-							throw new SpagoBIRuntimeException("Error while trying to see if user can execute the target document [" + biObject.getLabel() + "]",
+							throw new SpagoBIRuntimeException(
+									"Error while trying to see if user can execute the target document ["
+											+ biObject.getLabel() + "]",
 									e);
 						}
 
 						if (canExecute) {
 							JSONObject jsonCnParam = new JSONObject();
-							jsonCnParam.put("document", new JSONObject(JsonConverter.objectToJson(biObject, biObject.getClass())));
+							jsonCnParam.put("document",
+									new JSONObject(JsonConverter.objectToJson(biObject, biObject.getClass())));
 							jsonCnParam.put("documentId", sbiObj.getBiobjId());
 							jsonCnParam.put("crossName", cnParam.getSbiCrossNavigation().getName());
 							jsonCnParam.put("crossText", cnParam.getSbiCrossNavigation().getDescription());
@@ -412,8 +431,8 @@ public class CrossNavigationDAOImpl extends AbstractHibernateDAO implements ICro
 							validCrossNavIdToCrossNavJSON.put(crossId, jsonCnParam);
 						} else {
 							// user cannot execute target document, we put it in a list to avoid further iterations on it
-							logger.debug("User " + userProfile.getUserId() + " cannot execute document " + biObject.getLabel()
-									+ ", skipping relevant cross navigation option.");
+							logger.debug("User " + userProfile.getUserId() + " cannot execute document "
+									+ biObject.getLabel() + ", skipping relevant cross navigation option.");
 							nonValidCrossNavIds.add(crossId);
 							continue;
 						}
@@ -428,13 +447,13 @@ public class CrossNavigationDAOImpl extends AbstractHibernateDAO implements ICro
 					int type = cnParam.getFromType().intValue();
 					switch (type) {
 					case 0:
-						jsonNavParam.put("value",
-								new JSONObject(JsonConverter.objectToJson(documentOutputParams.get(fromKeyId), CrossNavigationParameters.class)));
+						jsonNavParam.put("value", new JSONObject(JsonConverter
+								.objectToJson(documentOutputParams.get(fromKeyId), CrossNavigationParameters.class)));
 						jsonNavParam.put("fixed", false);
 						break;
 					case 1:
-						jsonNavParam.put("value",
-								new JSONObject(JsonConverter.objectToJson(documentInputParams.get(fromKeyId), CrossNavigationParameters.class)));
+						jsonNavParam.put("value", new JSONObject(JsonConverter
+								.objectToJson(documentInputParams.get(fromKeyId), CrossNavigationParameters.class)));
 						jsonNavParam.put("fixed", false);
 						break;
 					case 2:
@@ -489,7 +508,8 @@ public class CrossNavigationDAOImpl extends AbstractHibernateDAO implements ICro
 	@Override
 	public void deleteByBIObjectParameter(BIObjectParameter biObjectParameter, Session session) {
 
-		List<SbiCrossNavigationPar> cnParToRemove = listNavigationsByInputParameters(biObjectParameter.getId(), session);
+		List<SbiCrossNavigationPar> cnParToRemove = listNavigationsByInputParameters(biObjectParameter.getId(),
+				session);
 		List<Integer> crossNavigation = new ArrayList<>();
 		// Delete FROM CROSS_NAVIFATION_PAR
 		for (SbiCrossNavigationPar cn : cnParToRemove) {
@@ -517,8 +537,9 @@ public class CrossNavigationDAOImpl extends AbstractHibernateDAO implements ICro
 	@Override
 	public List<SbiCrossNavigationPar> listNavigationsByInputParameters(Integer paramId, Session session) {
 		Session aSession = session;
-		return aSession.createCriteria(SbiCrossNavigationPar.class).add(
-				Restrictions.or(Restrictions.eq("toKeyId", paramId), Restrictions.and(Restrictions.eq("fromKeyId", paramId), Restrictions.eq("fromType", 1))))
+		return aSession.createCriteria(SbiCrossNavigationPar.class)
+				.add(Restrictions.or(Restrictions.eq("toKeyId", paramId),
+						Restrictions.and(Restrictions.eq("fromKeyId", paramId), Restrictions.eq("fromType", 1))))
 				.list();
 
 	}
@@ -551,20 +572,23 @@ public class CrossNavigationDAOImpl extends AbstractHibernateDAO implements ICro
 	@Override
 	public List<SbiCrossNavigationPar> listNavigationsByOutputParameters(Integer paramId, Session session) {
 		Session aSession = session;
-		return aSession.createCriteria(SbiCrossNavigationPar.class).add(
-				Restrictions.or(Restrictions.eq("toKeyId", paramId), Restrictions.and(Restrictions.eq("fromKeyId", paramId), Restrictions.eq("fromType", 0))))
+		return aSession.createCriteria(SbiCrossNavigationPar.class)
+				.add(Restrictions.or(Restrictions.eq("toKeyId", paramId),
+						Restrictions.and(Restrictions.eq("fromKeyId", paramId), Restrictions.eq("fromType", 0))))
 				.list();
 
 	}
 
 	@Override
 	public List<SbiCrossNavigationPar> listNavigationsByCrossNavParId(Integer crossNavId, Session session) {
-		return session.createCriteria(SbiCrossNavigationPar.class).add(Restrictions.eq("sbiCrossNavigation.id", crossNavId)).list();
+		return session.createCriteria(SbiCrossNavigationPar.class)
+				.add(Restrictions.eq("sbiCrossNavigation.id", crossNavId)).list();
 	}
 
 	@Override
 	public SbiCrossNavigation loadSbiCrossNavigationById(Integer id, Session session) {
-		return (SbiCrossNavigation) session.createCriteria(SbiCrossNavigation.class).add(Restrictions.eq("id", id)).uniqueResult();
+		return (SbiCrossNavigation) session.createCriteria(SbiCrossNavigation.class).add(Restrictions.eq("id", id))
+				.uniqueResult();
 	}
 }
 

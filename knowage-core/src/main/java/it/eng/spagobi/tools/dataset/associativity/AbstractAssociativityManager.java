@@ -72,7 +72,8 @@ public abstract class AbstractAssociativityManager implements IAssociativityMana
 
 	protected abstract void initProcess();
 
-	protected abstract void calculateDatasets(String dataset, EdgeGroup fromEdgeGroup, SimpleFilter filter) throws Exception;
+	protected abstract void calculateDatasets(String dataset, EdgeGroup fromEdgeGroup, SimpleFilter filter)
+			throws Exception;
 
 	@Override
 	public void process() throws Exception {
@@ -135,7 +136,7 @@ public abstract class AbstractAssociativityManager implements IAssociativityMana
 				datasetFilters.put(datasetFilter, listaTemp);
 
 			} else {
-				List<SimpleFilter> listaTemp = new ArrayList();
+				List<SimpleFilter> listaTemp = new ArrayList<>();
 				listaTemp.add(fil);
 				datasetFilters.put(datasetFilter, listaTemp);
 			}
@@ -159,8 +160,8 @@ public abstract class AbstractAssociativityManager implements IAssociativityMana
 				boolean isNearRealtime = config.getNearRealtimeDatasets().contains(v1);
 				DatasetEvaluationStrategyType evaluationStrategyType = dataSet.getEvaluationStrategy(isNearRealtime);
 
-				IAssociativeDatasetContainer container = AssociativeDatasetContainerFactory.getContainer(evaluationStrategyType, dataSet, parametersValues,
-						userProfile);
+				IAssociativeDatasetContainer container = AssociativeDatasetContainerFactory
+						.getContainer(evaluationStrategyType, dataSet, parametersValues, userProfile);
 				associativeDatasetContainers.put(v1, container);
 			}
 		}
@@ -171,14 +172,15 @@ public abstract class AbstractAssociativityManager implements IAssociativityMana
 	}
 
 	protected void addEdgeGroup(String v1, Set<LabeledEdge<String>> edges, IAssociativeDatasetContainer container) {
-		EdgeGroup group = AssociativeLogicUtils.getOrCreate(result.getEdgeGroupToDataset().keySet(), new EdgeGroup(edges));
+		EdgeGroup group = AssociativeLogicUtils.getOrCreate(result.getEdgeGroupToDataset().keySet(),
+				new EdgeGroup(edges));
 		result.getDatasetToEdgeGroup().get(v1).add(group);
 
 		if (!documentsAndExcludedDatasets.contains(v1)) {
 			container.addGroup(group);
 
 			if (!result.getEdgeGroupToDataset().containsKey(group)) {
-				result.getEdgeGroupToDataset().put(group, new HashSet<String>());
+				result.getEdgeGroupToDataset().put(group, new HashSet<>());
 				result.getEdgeGroupToDataset().get(group).add(v1);
 			} else {
 				result.getEdgeGroupToDataset().get(group).add(v1);
@@ -233,8 +235,9 @@ public abstract class AbstractAssociativityManager implements IAssociativityMana
 
 							if (associativeDatasetContainers.get(dataset) != null) { // dataset case
 
-								String value = associativeDatasetContainers.get(dataset).getParameters().get(missingParameter);
-								HashSet<Tuple> tuples = new HashSet<Tuple>();
+								String value = associativeDatasetContainers.get(dataset).getParameters()
+										.get(missingParameter);
+								HashSet<Tuple> tuples = new HashSet<>();
 								if (value != null) {
 
 									if (value.startsWith("'") && value.endsWith("'")) {
@@ -242,7 +245,7 @@ public abstract class AbstractAssociativityManager implements IAssociativityMana
 
 									}
 									String[] valueArray = value.split("','");
-									List<String> finalVals = new ArrayList<String>();
+									List<String> finalVals = new ArrayList<>();
 									for (int i = 0; i < valueArray.length; i++) {
 										String val = valueArray[i];
 										val = val.replaceAll("''", "\'");
@@ -270,7 +273,7 @@ public abstract class AbstractAssociativityManager implements IAssociativityMana
 													if (edgeGr.getEdgeNames().contains(edgeName)) {
 
 														Set<Tuple> tuples = result.getEdgeGroupValues().get(edgeGr); // set of associative values linked to a
-																														// param and edgegroup
+																													 // param and edgegroup
 
 														groupToValues.put(missingColumn, tuples);
 													}

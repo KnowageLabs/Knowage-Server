@@ -163,7 +163,8 @@ public class ManageDataSetsForREST {
 			json = new JSONObject(jsonString);
 		} catch (JSONException e) {
 			LOGGER.error("Cannot get values from JSON object while previewing dataset", e);
-			throw new SpagoBIServiceException(SERVICE_NAME, "Impossible to preview Data Set due to bad formated json of data set.");
+			throw new SpagoBIServiceException(SERVICE_NAME,
+					"Impossible to preview Data Set due to bad formated json of data set.");
 
 		}
 
@@ -179,14 +180,16 @@ public class ManageDataSetsForREST {
 	 * @return
 	 * @throws JSONException
 	 */
-	public String insertDataset(String jsonString, IDataSetDAO dsDao, Locale locale, UserProfile userProfile, HttpServletRequest req) throws JSONException {
+	public String insertDataset(String jsonString, IDataSetDAO dsDao, Locale locale, UserProfile userProfile,
+			HttpServletRequest req) throws JSONException {
 		LOGGER.debug("IN");
 		JSONObject json = new JSONObject(jsonString);
 		LOGGER.debug("OUT");
 		return datasetInsert(json, dsDao, locale, userProfile, req);
 	}
 
-	protected String datasetInsert(JSONObject json, IDataSetDAO dsDao, Locale locale, UserProfile userProfile, HttpServletRequest req) throws JSONException {
+	protected String datasetInsert(JSONObject json, IDataSetDAO dsDao, Locale locale, UserProfile userProfile,
+			HttpServletRequest req) throws JSONException {
 		IDataSet ds = getGuiGenericDatasetToInsert(json, userProfile);
 
 		try {
@@ -194,7 +197,8 @@ public class ManageDataSetsForREST {
 		} catch (ActionNotPermittedException e) {
 			LOGGER.error("User " + userProfile.getUserId() + " cannot save the dataset with label " + ds.getLabel());
 			throw new SpagoBIRestServiceException(e.getI18NCode(), locale,
-					"User " + userProfile.getUserId() + " cannot save the dataset with label " + ds.getLabel(), e, "MessageFiles.messages");
+					"User " + userProfile.getUserId() + " cannot save the dataset with label " + ds.getLabel(), e,
+					"MessageFiles.messages");
 		}
 
 		return datasetInsert(ds, dsDao, locale, userProfile, json, req);
@@ -281,9 +285,11 @@ public class ManageDataSetsForREST {
 				ds.setScopeId(scopeID);
 			}
 
-			if (scopeCode.equalsIgnoreCase(SpagoBIConstants.DS_SCOPE_ENTERPRISE) || scopeCode.equalsIgnoreCase(SpagoBIConstants.DS_SCOPE_TECHNICAL)) {
+			if (scopeCode.equalsIgnoreCase(SpagoBIConstants.DS_SCOPE_ENTERPRISE)
+					|| scopeCode.equalsIgnoreCase(SpagoBIConstants.DS_SCOPE_TECHNICAL)) {
 				if (catTypeCd == null || catTypeCd.equals("")) {
-					LOGGER.error("Impossible to save DataSet. The category is mandatory for Data Set Enterprise or Technical");
+					LOGGER.error(
+							"Impossible to save DataSet. The category is mandatory for Data Set Enterprise or Technical");
 					throw new SpagoBIServiceException(SERVICE_NAME,
 							"Impossible to save DataSet. The category is mandatory for Data Set Enterprise or Technical");
 				}
@@ -312,8 +318,9 @@ public class ManageDataSetsForREST {
 			// this.getAttributeAsString(DataSetConstants.RECALCULATE_METADATA);
 			String recalculateMetadata = json.optString("recalculateMetadata");
 			String dsMetadata = null;
-			if ((recalculateMetadata == null || recalculateMetadata.trim().equals("yes") || recalculateMetadata.trim().equals("")
-					|| recalculateMetadata.trim().equals("true")) && (!isFromSaveNoMetadata)) {
+			if ((recalculateMetadata == null || recalculateMetadata.trim().equals("yes")
+					|| recalculateMetadata.trim().equals("") || recalculateMetadata.trim().equals("true"))
+					&& (!isFromSaveNoMetadata)) {
 				// recalculate metadata
 				LOGGER.debug("Recalculating dataset's metadata: executing the dataset...");
 				Map<String, String> parametersMap = getDataSetParametersAsMap(json);
@@ -333,7 +340,8 @@ public class ManageDataSetsForREST {
 							try {
 								sourceDataset = DAOFactory.getDataSetDAO().loadDataSetByLabel(sourceDatasetLabel);
 								if (sourceDataset == null) {
-									throw new SpagoBIRuntimeException("Dataset with label [" + sourceDatasetLabel + "] does not exist");
+									throw new SpagoBIRuntimeException(
+											"Dataset with label [" + sourceDatasetLabel + "] does not exist");
 								}
 
 								// TODO Add file not persisted management. Use another variable instead of persistTableName
@@ -344,7 +352,8 @@ public class ManageDataSetsForREST {
 //									sourceDataset.setPersisted(true);
 //									((DerivedDataSet) dsRecalc).setSourceDataset(sourceDataset);
 //								}
-								if (sourceDataset.getDataSourceForReading() == null && sourceDataset.getDataSourceForWriting() != null) {
+								if (sourceDataset.getDataSourceForReading() == null
+										&& sourceDataset.getDataSourceForWriting() != null) {
 									sourceDataset.setDataSourceForReading(sourceDataset.getDataSource());
 								}
 								((DerivedDataSet) ds).setSourceDataset(sourceDataset);
@@ -356,21 +365,26 @@ public class ManageDataSetsForREST {
 								if (sourceDataset instanceof VersionedDataSet) {
 									VersionedDataSet vds = (VersionedDataSet) sourceDataset;
 									if (!(vds.getWrappedDataset() instanceof FileDataSet)) {
-										dsJsonConfig.put(DataSetConstants.SOURCE_DATA_SOURCE, sourceDataset.getDataSource().getLabel());
+										dsJsonConfig.put(DataSetConstants.SOURCE_DATA_SOURCE,
+												sourceDataset.getDataSource().getLabel());
 									} else {
-										dsJsonConfig.put(DataSetConstants.SOURCE_DATA_SOURCE, sourceDataset.getDataSourceForReading().getLabel());
+										dsJsonConfig.put(DataSetConstants.SOURCE_DATA_SOURCE,
+												sourceDataset.getDataSourceForReading().getLabel());
 									}
 									if (vds.getWrappedDataset() instanceof AbstractJDBCDataset) {
-										String sqlQuery = ((DerivedDataSet) ds).getStatement().getQuerySQLString(sourceJsonConfig.getString("Query"));
+										String sqlQuery = ((DerivedDataSet) ds).getStatement()
+												.getQuerySQLString(sourceJsonConfig.getString("Query"));
 										dsJsonConfig.put("sqlQuery", sqlQuery);
 									} else {
-										dsJsonConfig.put("sqlQuery", ((DerivedDataSet) ds).getStatement().getQueryString());
+										dsJsonConfig.put("sqlQuery",
+												((DerivedDataSet) ds).getStatement().getQueryString());
 									}
 								}
 								dsJsonConfig.put(DataSetConstants.SOURCE_DS_LABEL, sourceDatasetLabel);
 								ds.setConfiguration(dsJsonConfig.toString());
 							} catch (Exception e) {
-								throw new SpagoBIServiceException(SERVICE_NAME, "Cannot retrieve source dataset information", e);
+								throw new SpagoBIServiceException(SERVICE_NAME,
+										"Cannot retrieve source dataset information", e);
 							}
 						}
 					} else {
@@ -387,7 +401,8 @@ public class ManageDataSetsForREST {
 				for (int i = 0; i < currentMetadata.getFieldCount(); i++) {
 					String alias = currentMetadata.getFieldAlias(i);
 					if (aliases.contains(alias)) {
-						LOGGER.error("Cannot save dataset cause preview revealed that two columns with name " + alias + " exist; change aliases");
+						LOGGER.error("Cannot save dataset cause preview revealed that two columns with name " + alias
+								+ " exist; change aliases");
 						throw new SpagoBIServiceException(SERVICE_NAME, "sbi.ds.test.error.duplication");
 					}
 					aliases.add(alias);
@@ -409,7 +424,7 @@ public class ManageDataSetsForREST {
 						// Check if dataset is used by objects
 						// or by federations
 
-						ArrayList<BIObject> objectsUsing = null;
+						List<BIObject> objectsUsing = null;
 						try {
 							objectsUsing = DAOFactory.getBIObjDataSetDAO().getBIObjectsUsingDataset(previousIdInteger);
 						} catch (Exception e) {
@@ -418,15 +433,16 @@ public class ManageDataSetsForREST {
 						}
 						// check if dataset is used by document
 						// by querying SBI_OBJ_DATA_SET table
-						List<FederationDefinition> federationsAssociated = DAOFactory.getFedetatedDatasetDAO().loadFederationsUsingDataset(previousIdInteger);
+						List<FederationDefinition> federationsAssociated = DAOFactory.getFedetatedDatasetDAO()
+								.loadFederationsUsingDataset(previousIdInteger);
 
 						// if (!objectsUsing.isEmpty() ||
 						// !federationsAssociated.isEmpty()) {
 						// block save action ONLY for
 						// federations (if metadata are changed)
 						if (!federationsAssociated.isEmpty()) {
-							LOGGER.debug("dataset " + ds.getLabel() + " is used by some " + objectsUsing.size() + "objects or some "
-									+ federationsAssociated.size() + " federations");
+							LOGGER.debug("dataset " + ds.getLabel() + " is used by some " + objectsUsing.size()
+									+ "objects or some " + federationsAssociated.size() + " federations");
 							// get the previous dataset
 							IDataSet dataSet = null;
 							try {
@@ -487,7 +503,8 @@ public class ManageDataSetsForREST {
 				throw (SpagoBIServiceException) e;
 			}
 			LOGGER.error("Erro while updating dataset metadata, cannot save the dataset", e);
-			throw new SpagoBIServiceException(SERVICE_NAME, "Error while updating dataset metadata, cannot save the dataset");
+			throw new SpagoBIServiceException(SERVICE_NAME,
+					"Error while updating dataset metadata, cannot save the dataset");
 
 		}
 		return ds;
@@ -555,13 +572,17 @@ public class ManageDataSetsForREST {
 				}
 			}
 		} catch (Exception e) {
-			throw new SpagoBIException("An unexpected error occured while resolving dataset type name from dataset type code [" + datasetTypeCode + "]", e);
+			throw new SpagoBIException(
+					"An unexpected error occured while resolving dataset type name from dataset type code ["
+							+ datasetTypeCode + "]",
+					e);
 		}
 
 		return datasetTypeName;
 	}
 
-	private IDataSet getDataSet(String datasetTypeName, boolean savingDataset, JSONObject json, UserProfile userProfile) throws Exception {
+	private IDataSet getDataSet(String datasetTypeName, boolean savingDataset, JSONObject json, UserProfile userProfile)
+			throws Exception {
 
 		IDataSet toReturn = null;
 		JSONObject jsonDsConfig = new JSONObject();
@@ -620,7 +641,8 @@ public class ManageDataSetsForREST {
 					String roleName = itRoles.next();
 					role = rolesDao.loadByName(roleName);
 					List<RoleMetaModelCategory> ds = rolesDao.getMetaModelCategoriesForRole(role.getId());
-					List<Domain> array = categoryDao.getCategoriesForDataset().stream().map(Domain::fromCategory).collect(Collectors.toList());
+					List<Domain> array = categoryDao.getCategoriesForDataset().stream().map(Domain::fromCategory)
+							.collect(Collectors.toList());
 					for (RoleMetaModelCategory r : ds) {
 						for (Domain dom : array) {
 							if (r.getCategoryId().equals(dom.getValueId())) {
@@ -631,7 +653,8 @@ public class ManageDataSetsForREST {
 				}
 				return categoriesDev;
 			} else {
-				return categoryDao.getCategoriesForDataset().stream().map(Domain::fromCategory).collect(Collectors.toList());
+				return categoryDao.getCategoriesForDataset().stream().map(Domain::fromCategory)
+						.collect(Collectors.toList());
 			}
 		} catch (Exception e) {
 			LOGGER.error("Role with selected id: " + role.getId() + " doesn't exists", e);
@@ -687,7 +710,8 @@ public class ManageDataSetsForREST {
 		} catch (SpagoBIServiceException e) {
 			throw e;
 		} catch (Exception t) {
-			throw new SpagoBIServiceException(SERVICE_NAME, "An unexpected error occured while deserializing dataset parameters", t);
+			throw new SpagoBIServiceException(SERVICE_NAME,
+					"An unexpected error occured while deserializing dataset parameters", t);
 		}
 		return parametersString;
 	}
@@ -732,7 +756,8 @@ public class ManageDataSetsForREST {
 		ds.setTransformerId(transformerId);
 
 		if (ds.getPivotColumnName() != null && ds.getPivotColumnValue() != null && ds.getPivotRowName() != null) {
-			ds.addDataStoreTransformer(new PivotDataSetTransformer(ds.getPivotColumnName(), ds.getPivotColumnValue(), ds.getPivotRowName(), ds.isNumRows()));
+			ds.addDataStoreTransformer(new PivotDataSetTransformer(ds.getPivotColumnName(), ds.getPivotColumnValue(),
+					ds.getPivotRowName(), ds.isNumRows()));
 		}
 		return ds;
 	}
@@ -759,7 +784,8 @@ public class ManageDataSetsForREST {
 				String defaultValue = obj.optString(DEFAULT_VALUE_PARAM);
 				String retValue = "";
 
-				retValue = ParameterManagerFactory.getInstance().defaultManager().fromFeToBe(type, value, defaultValue, multiValue);
+				retValue = ParameterManagerFactory.getInstance().defaultManager().fromFeToBe(type, value, defaultValue,
+						multiValue);
 
 				LOGGER.debug("name: " + name + " / value: " + retValue);
 				parametersMap.put(name, retValue);
@@ -773,7 +799,8 @@ public class ManageDataSetsForREST {
 		} catch (SpagoBIServiceException e) {
 			throw e;
 		} catch (Exception t) {
-			throw new SpagoBIServiceException(SERVICE_NAME, "An unexpected error occured while deserializing dataset parameters", t);
+			throw new SpagoBIServiceException(SERVICE_NAME,
+					"An unexpected error occured while deserializing dataset parameters", t);
 		}
 		return parametersMap;
 	}
@@ -800,7 +827,8 @@ public class ManageDataSetsForREST {
 				String defaultValue = obj.optString(DEFAULT_VALUE_PARAM);
 				String retValue = "";
 
-				retValue = ParameterManagerFactory.getInstance().solrManager().fromFeToBe(type, value, defaultValue, multivalue);
+				retValue = ParameterManagerFactory.getInstance().solrManager().fromFeToBe(type, value, defaultValue,
+						multivalue);
 
 				LOGGER.debug("name: " + name + " / value: " + retValue);
 				parametersMap.put(name, retValue);
@@ -808,12 +836,14 @@ public class ManageDataSetsForREST {
 		} catch (SpagoBIServiceException e) {
 			throw e;
 		} catch (Exception t) {
-			throw new SpagoBIServiceException(SERVICE_NAME, "An unexpected error occured while deserializing dataset parameters", t);
+			throw new SpagoBIServiceException(SERVICE_NAME,
+					"An unexpected error occured while deserializing dataset parameters", t);
 		}
 		return parametersMap;
 	}
 
-	public IMetaData getDatasetTestMetadata(IDataSet dataSet, Map parametersFilled, IEngUserProfile profile, String metadata) throws Exception {
+	public IMetaData getDatasetTestMetadata(IDataSet dataSet, Map parametersFilled, IEngUserProfile profile,
+			String metadata) throws Exception {
 		LOGGER.debug("IN");
 
 		IDataStore dataStore = null;
@@ -843,7 +873,8 @@ public class ManageDataSetsForREST {
 					if (dataSet instanceof FileDataSet) {
 						for (int j = 0; j < metadataArray.length(); j++) {
 							if (ifmd.getName().equals((metadataArray.getJSONObject(j)).getString("name"))) {
-								ifmd.setType(MetaDataMapping.getMetaDataType(metadataArray.getJSONObject(j).getString("type")));
+								ifmd.setType(MetaDataMapping
+										.getMetaDataType(metadataArray.getJSONObject(j).getString("type")));
 								break;
 							}
 
@@ -856,7 +887,8 @@ public class ManageDataSetsForREST {
 						if (ifmd.getName().equals(metadataJSONObject.getString("name"))) {
 							if ("MEASURE".equals(metadataJSONObject.getString("fieldType"))) {
 								ifmd.setFieldType(IFieldMetaData.FieldType.MEASURE);
-							} else if (IFieldMetaData.FieldType.SPATIAL_ATTRIBUTE.toString().equals(metadataJSONObject.getString("fieldType"))) {
+							} else if (IFieldMetaData.FieldType.SPATIAL_ATTRIBUTE.toString()
+									.equals(metadataJSONObject.getString("fieldType"))) {
 								ifmd.setFieldType(IFieldMetaData.FieldType.SPATIAL_ATTRIBUTE);
 							} else {
 								ifmd.setFieldType(IFieldMetaData.FieldType.ATTRIBUTE);
@@ -957,17 +989,20 @@ public class ManageDataSetsForREST {
 
 	// This method rename a file and move it from resources\dataset\files\temp
 	// to resources\dataset\files
-	private void renameAndMoveDatasetFile(String originalFileName, String newFileName, String resourcePath, String fileType) {
+	private void renameAndMoveDatasetFile(String originalFileName, String newFileName, String resourcePath,
+			String fileType) {
 		File originalDatasetFile = PathTraversalChecker.get(resourcePath, "dataset", "files", "temp", originalFileName);
-		File newDatasetFile = PathTraversalChecker.get(resourcePath, "dataset", "files", newFileName + "." + fileType.toLowerCase());
+		File newDatasetFile = PathTraversalChecker.get(resourcePath, "dataset", "files",
+				newFileName + "." + fileType.toLowerCase());
 
-		String filePathCloning = resourcePath + File.separatorChar + "dataset" + File.separatorChar + "files" + File.separatorChar;
+		String filePathCloning = resourcePath + File.separatorChar + "dataset" + File.separatorChar + "files"
+				+ File.separatorChar;
 		File originalDatasetFileCloning = new File(filePathCloning + originalFileName);
 
 		if (originalDatasetFile.exists()) {
 			/*
-			 * This method copies the contents of the specified source file to the specified destination file. The directory holding the destination file is
-			 * created if it does not exist. If the destination file exists, then this method will overwrite it.
+			 * This method copies the contents of the specified source file to the specified destination file. The directory holding the destination file is created if it
+			 * does not exist. If the destination file exists, then this method will overwrite it.
 			 */
 			try {
 				FileUtils.copyFile(originalDatasetFile, newDatasetFile);
@@ -994,7 +1029,8 @@ public class ManageDataSetsForREST {
 	}
 
 	private void deleteDatasetFile(String fileName, String resourcePath, String fileType) {
-		String filePath = resourcePath + File.separatorChar + "dataset" + File.separatorChar + "files" + File.separatorChar + "temp" + File.separatorChar;
+		String filePath = resourcePath + File.separatorChar + "dataset" + File.separatorChar + "files"
+				+ File.separatorChar + "temp" + File.separatorChar;
 
 		File datasetFile = new File(filePath + fileName);
 		if (datasetFile.exists()) {
@@ -1010,7 +1046,8 @@ public class ManageDataSetsForREST {
 		FileDataSet fileDataset = (FileDataSet) dataset;
 		String resourcePath = fileDataset.getResourcePath();
 		String fileName = fileDataset.getFileName();
-		String filePath = resourcePath + File.separatorChar + "dataset" + File.separatorChar + "files" + File.separatorChar;
+		String filePath = resourcePath + File.separatorChar + "dataset" + File.separatorChar + "files"
+				+ File.separatorChar;
 		File datasetFile = new File(filePath + fileName);
 
 		if (datasetFile.exists()) {
@@ -1021,7 +1058,8 @@ public class ManageDataSetsForREST {
 		}
 	}
 
-	private FlatDataSet manageFlatDataSet(boolean savingDataset, JSONObject jsonDsConfig, JSONObject json) throws JSONException, EMFUserError {
+	private FlatDataSet manageFlatDataSet(boolean savingDataset, JSONObject jsonDsConfig, JSONObject json)
+			throws JSONException, EMFUserError {
 		FlatDataSet dataSet = new FlatDataSet();
 		manageDataSetMetadata(json, dataSet);
 		String tableName = json.optString(DataSetConstants.FLAT_TABLE_NAME);
@@ -1034,7 +1072,8 @@ public class ManageDataSetsForREST {
 		return dataSet;
 	}
 
-	private PreparedDataSet managePreparedDataSet(boolean savingDataset, JSONObject jsonDsConfig, JSONObject json) throws JSONException, EMFUserError {
+	private PreparedDataSet managePreparedDataSet(boolean savingDataset, JSONObject jsonDsConfig, JSONObject json)
+			throws JSONException, EMFUserError {
 		PreparedDataSet dataSet = new PreparedDataSet();
 		manageDataSetMetadata(json, dataSet);
 		String tableName = json.optString(DataSetConstants.TABLE_NAME);
@@ -1050,20 +1089,21 @@ public class ManageDataSetsForREST {
 		return dataSet;
 	}
 
-	private DerivedDataSet manageDerivedDataSet(boolean savingDataset, JSONObject jsonDsConfig, JSONObject json, UserProfile userProfile)
-			throws JSONException, EMFUserError, IOException {
+	private DerivedDataSet manageDerivedDataSet(boolean savingDataset, JSONObject jsonDsConfig, JSONObject json,
+			UserProfile userProfile) throws JSONException, EMFUserError, IOException {
 		// KNOWAGE-7575
 		DerivedDataSet dataset = new DerivedDataSet();
 		createQbeOrDerivedDataset(jsonDsConfig, json, dataset);
 		return dataset;
 	}
 
-	private QbeDataSet manageQbeDataSet(boolean savingDataset, JSONObject jsonDsConfig, JSONObject json, UserProfile userProfile)
-			throws JSONException, EMFUserError, IOException {
+	private QbeDataSet manageQbeDataSet(boolean savingDataset, JSONObject jsonDsConfig, JSONObject json,
+			UserProfile userProfile) throws JSONException, EMFUserError, IOException {
 		QbeDataSet dataSet = null;
 		String federationId = json.optString("federation_id");
 		if (StringUtils.isNoneEmpty(federationId)) {
-			FederationDefinition federation = DAOFactory.getFedetatedDatasetDAO().loadFederationDefinition(Integer.parseInt(federationId));
+			FederationDefinition federation = DAOFactory.getFedetatedDatasetDAO()
+					.loadFederationDefinition(Integer.parseInt(federationId));
 			dataSet = new FederatedDataSet(federation, userProfile.getUserId().toString());
 
 			IDataSource defaultCacheDataSource = DAOFactory.getDataSourceDAO().loadDataSourceWriteDefault();
@@ -1079,7 +1119,8 @@ public class ManageDataSetsForREST {
 		return dataSet;
 	}
 
-	private void createQbeOrDerivedDataset(JSONObject jsonDsConfig, JSONObject json, QbeDataSet dataSet) throws JSONException, EMFUserError {
+	private void createQbeOrDerivedDataset(JSONObject jsonDsConfig, JSONObject json, QbeDataSet dataSet)
+			throws JSONException, EMFUserError {
 		manageDataSetMetadata(json, dataSet);
 		String qbeDatamarts = json.optString(DataSetConstants.QBE_DATAMARTS);
 		String dataSourceLabel = json.optString(DataSetConstants.QBE_DATA_SOURCE);
@@ -1132,7 +1173,8 @@ public class ManageDataSetsForREST {
 		}
 	}
 
-	private IDataSet manageCustomDataSet(boolean savingDataset, JSONObject jsonDsConfig, JSONObject json) throws JSONException {
+	private IDataSet manageCustomDataSet(boolean savingDataset, JSONObject jsonDsConfig, JSONObject json)
+			throws JSONException {
 		CustomDataSet customDs = new CustomDataSet();
 		manageDataSetMetadata(json, customDs);
 		String customData = json.getString(DataSetConstants.CUSTOM_DATA);
@@ -1144,7 +1186,8 @@ public class ManageDataSetsForREST {
 		return customDs.instantiate();
 	}
 
-	private IDataSet manageFederatedDataSet(boolean savingDataset, JSONObject jsonDsConfig, JSONObject json, UserProfile userProfile) throws Exception {
+	private IDataSet manageFederatedDataSet(boolean savingDataset, JSONObject jsonDsConfig, JSONObject json,
+			UserProfile userProfile) throws Exception {
 		Integer id = json.getInt(DataSetConstants.ID);
 		Assert.assertNotNull(id, "The federated dataset id is null");
 		IDataSetDAO dao = DAOFactory.getDataSetDAO();
@@ -1169,7 +1212,8 @@ public class ManageDataSetsForREST {
 		return dataSet;
 	}
 
-	private JavaClassDataSet manageJavaClassDataSet(boolean savingDataset, JSONObject jsonDsConfig, JSONObject json) throws JSONException {
+	private JavaClassDataSet manageJavaClassDataSet(boolean savingDataset, JSONObject jsonDsConfig, JSONObject json)
+			throws JSONException {
 		JavaClassDataSet dataSet = new JavaClassDataSet();
 		manageDataSetMetadata(json, dataSet);
 		String jclassName = json.getString(DataSetConstants.JCLASS_NAME);
@@ -1178,7 +1222,8 @@ public class ManageDataSetsForREST {
 		return dataSet;
 	}
 
-	private ScriptDataSet manageScriptDataSet(boolean savingDataset, JSONObject jsonDsConfig, JSONObject json) throws JSONException {
+	private ScriptDataSet manageScriptDataSet(boolean savingDataset, JSONObject jsonDsConfig, JSONObject json)
+			throws JSONException {
 		ScriptDataSet dataSet = new ScriptDataSet();
 		manageDataSetMetadata(json, dataSet);
 		String script = json.optString("script");
@@ -1190,7 +1235,8 @@ public class ManageDataSetsForREST {
 		return dataSet;
 	}
 
-	private IDataSet manageQueryDataSet(boolean savingDataset, JSONObject jsonDsConfig, JSONObject json) throws JSONException, EMFUserError {
+	private IDataSet manageQueryDataSet(boolean savingDataset, JSONObject jsonDsConfig, JSONObject json)
+			throws JSONException, EMFUserError {
 		IDataSet dataSet;
 		String query = json.optString((DataSetConstants.QUERY).toLowerCase());
 		String queryScript = json.optString(DataSetConstants.QUERY_SCRIPT);
@@ -1214,7 +1260,8 @@ public class ManageDataSetsForREST {
 				try {
 					if (SqlUtils.isSelectSOrWithStatement(query)) {
 						LOGGER.info("SQL is a SELECT statement.");
-						if (query.toLowerCase().contains(" update ") || query.toLowerCase().contains(" delete ") || query.toLowerCase().contains(" insert ")) {
+						if (query.toLowerCase().contains(" update ") || query.toLowerCase().contains(" delete ")
+								|| query.toLowerCase().contains(" insert ")) {
 							isSelect = false;
 						} else {
 							isSelect = true;
@@ -1246,7 +1293,8 @@ public class ManageDataSetsForREST {
 		return dataSet;
 	}
 
-	private CkanDataSet manageCkanDataSet(boolean savingDataset, JSONObject jsonDsConfig, JSONObject json) throws JSONException {
+	private CkanDataSet manageCkanDataSet(boolean savingDataset, JSONObject jsonDsConfig, JSONObject json)
+			throws JSONException {
 
 		String dsId = json.optString(DataSetConstants.DS_ID);
 		String dsLabel = json.getString(DataSetConstants.LABEL);
@@ -1340,7 +1388,8 @@ public class ManageDataSetsForREST {
 		return dataSet;
 	}
 
-	private FileDataSet manageFileDataSet(boolean savingDataset, JSONObject jsonDsConfig, JSONObject json) throws JSONException, IOException {
+	private FileDataSet manageFileDataSet(boolean savingDataset, JSONObject jsonDsConfig, JSONObject json)
+			throws JSONException, IOException {
 		String dsId = json.optString(DataSetConstants.ID);
 		String dsLabel = json.getString(DataSetConstants.LABEL);
 		String fileType = json.getString(DataSetConstants.FILE_TYPE);
@@ -1407,7 +1456,8 @@ public class ManageDataSetsForREST {
 				}
 			}
 		} else {
-			LOGGER.debug("Reading or modifying a existing dataset. If change the label then the name of the file should be changed");
+			LOGGER.debug(
+					"Reading or modifying a existing dataset. If change the label then the name of the file should be changed");
 
 			JSONObject configuration;
 			Integer currDsId = json.getInt(DataSetConstants.ID);
@@ -1415,10 +1465,11 @@ public class ManageDataSetsForREST {
 			String realName = configuration.getString("fileName");
 			if (dsLabel != null && !realName.equals(dsLabel)) {
 
-				File dest = new File(SpagoBIUtilities.getResourcePath() + File.separatorChar + "dataset" + File.separatorChar + "files" + File.separatorChar
-						+ dsLab + "." + configuration.getString("fileType").toLowerCase());
-				File source = new File(
-						SpagoBIUtilities.getResourcePath() + File.separatorChar + "dataset" + File.separatorChar + "files" + File.separatorChar + realName);
+				File dest = new File(SpagoBIUtilities.getResourcePath() + File.separatorChar + "dataset"
+						+ File.separatorChar + "files" + File.separatorChar + dsLab + "."
+						+ configuration.getString("fileType").toLowerCase());
+				File source = new File(SpagoBIUtilities.getResourcePath() + File.separatorChar + "dataset"
+						+ File.separatorChar + "files" + File.separatorChar + realName);
 
 				if (!source.getCanonicalPath().equals(dest.getCanonicalPath()) && savingDataset && !newFileUploaded) {
 					LOGGER.debug("Source and destination are not the same. Copying from source to dest");
@@ -1458,10 +1509,12 @@ public class ManageDataSetsForREST {
 	}
 
 	private void manageDataSetMetadata(JSONObject json, IDataSet dataSet) throws JSONException {
-		if (json.optJSONObject(DataSetConstants.METADATA) != null && json.optJSONObject(DataSetConstants.METADATA).optJSONArray("columns") != null) {
+		if (json.optJSONObject(DataSetConstants.METADATA) != null
+				&& json.optJSONObject(DataSetConstants.METADATA).optJSONArray("columns") != null) {
 			JSONArray dsMeta = json.optJSONObject(DataSetConstants.METADATA).getJSONArray("columns");
 			manageDataSetMetadata(dsMeta, dataSet);
-		} else if (json.optJSONArray(DataSetConstants.METADATA) != null && json.optJSONArray(DataSetConstants.METADATA).length() > 0) {
+		} else if (json.optJSONArray(DataSetConstants.METADATA) != null
+				&& json.optJSONArray(DataSetConstants.METADATA).length() > 0) {
 			JSONArray dsMeta = json.optJSONArray(DataSetConstants.METADATA);
 			manageDataSetMetadataV2(dsMeta, dataSet);
 		}
@@ -1679,7 +1732,8 @@ public class ManageDataSetsForREST {
 			throw new SpagoBIRuntimeException("Couldn't map field type <" + fieldType + ">");
 	}
 
-	private RESTDataSet manageRESTDataSet(boolean savingDataset, JSONObject config, JSONObject json) throws JSONException {
+	private RESTDataSet manageRESTDataSet(boolean savingDataset, JSONObject config, JSONObject json)
+			throws JSONException {
 		for (String sa : RESTDataSetConstants.REST_STRING_ATTRIBUTES) {
 			config.put(sa, json.optString(sa));
 		}
@@ -1695,7 +1749,8 @@ public class ManageDataSetsForREST {
 		return res;
 	}
 
-	private PythonDataSet managePythonDataSet(boolean savingDataset, JSONObject config, JSONObject json) throws JSONException {
+	private PythonDataSet managePythonDataSet(boolean savingDataset, JSONObject config, JSONObject json)
+			throws JSONException {
 		for (String sa : PythonDataSetConstants.PYTHON_STRING_ATTRIBUTES) {
 			config.put(sa, json.optString(sa));
 		}
@@ -1706,7 +1761,8 @@ public class ManageDataSetsForREST {
 		return res;
 	}
 
-	private SPARQLDataSet manageSPARQLDataSet(boolean savingDataset, JSONObject config, JSONObject json) throws JSONException {
+	private SPARQLDataSet manageSPARQLDataSet(boolean savingDataset, JSONObject config, JSONObject json)
+			throws JSONException {
 		for (String sa : SPARQLDatasetConstants.SPARQL_ATTRIBUTES) {
 			config.put(sa, json.optString(sa));
 		}
@@ -1715,7 +1771,8 @@ public class ManageDataSetsForREST {
 		return res;
 	}
 
-	private SolrDataSet manageSolrDataSet(boolean savingDataset, JSONObject config, JSONObject json, UserProfile userProfile) throws JSONException {
+	private SolrDataSet manageSolrDataSet(boolean savingDataset, JSONObject config, JSONObject json,
+			UserProfile userProfile) throws JSONException {
 		for (String ja : RESTDataSetConstants.REST_JSON_OBJECT_ATTRIBUTES) {
 			String prop = json.optString(ja);
 			if (prop != null && !prop.trim().isEmpty()) {
@@ -1737,7 +1794,8 @@ public class ManageDataSetsForREST {
 		Map<String, String> parametersMap = getSolrDataSetParametersAsMap(json, userProfile);
 		String solrType = config.getString(SolrDataSetConstants.SOLR_TYPE);
 		Assert.assertNotNull(solrType, "Solr type cannot be null");
-		SolrDataSet res = solrType.equalsIgnoreCase(SolrDataSetConstants.TYPE.DOCUMENTS.name()) ? new SolrDataSet(config, parametersMap, userProfile)
+		SolrDataSet res = solrType.equalsIgnoreCase(SolrDataSetConstants.TYPE.DOCUMENTS.name())
+				? new SolrDataSet(config, parametersMap, userProfile)
 				: new FacetSolrDataSet(config, parametersMap);
 		manageDataSetMetadata(json, res);
 
@@ -1753,8 +1811,8 @@ public class ManageDataSetsForREST {
 		}
 	}
 
-	protected String datasetInsert(IDataSet ds, IDataSetDAO dsDao, Locale locale, UserProfile userProfile, JSONObject json, HttpServletRequest req)
-			throws JSONException {
+	protected String datasetInsert(IDataSet ds, IDataSetDAO dsDao, Locale locale, UserProfile userProfile,
+			JSONObject json, HttpServletRequest req) throws JSONException {
 		JSONObject attributesResponseSuccessJSON = new JSONObject();
 		HashMap<String, String> logParam = new HashMap<>();
 
@@ -1780,7 +1838,8 @@ public class ManageDataSetsForREST {
 					attributesResponseSuccessJSON.put("id", id);
 					attributesResponseSuccessJSON.put("dateIn", ds.getDateIn());
 					attributesResponseSuccessJSON.put("userIn", ds.getUserIn());
-					attributesResponseSuccessJSON.put("meta", new DataSetMetadataJSONSerializer().metadataSerializerChooser(ds.getDsMetadata()));
+					attributesResponseSuccessJSON.put("meta",
+							new DataSetMetadataJSONSerializer().metadataSerializerChooser(ds.getDsMetadata()));
 				} else {
 					validateLabelAndName(id, dsName, dsLabel, existingByName, existingByLabel);
 					Integer dsID = dsDao.insertDataSet(ds);
@@ -1794,10 +1853,12 @@ public class ManageDataSetsForREST {
 						attributesResponseSuccessJSON.put("dateIn", dsSaved.getDateIn());
 						attributesResponseSuccessJSON.put("userIn", dsSaved.getUserIn());
 						attributesResponseSuccessJSON.put("versNum", dsSaved.getVersionNum());
-						attributesResponseSuccessJSON.put("meta", new DataSetMetadataJSONSerializer().metadataSerializerChooser(dsSaved.getDsMetadata()));
+						attributesResponseSuccessJSON.put("meta",
+								new DataSetMetadataJSONSerializer().metadataSerializerChooser(dsSaved.getDsMetadata()));
 					}
 				}
-				String operation = (id != null && !id.equals("") && !id.equals("0")) ? "DATA_SET.MODIFY" : "DATA_SET.ADD";
+				String operation = (id != null && !id.equals("") && !id.equals("0")) ? "DATA_SET.MODIFY"
+						: "DATA_SET.ADD";
 				Boolean isFromSaveNoMetadata = json.optBoolean(DataSetConstants.IS_FROM_SAVE_NO_METADATA);
 				validateLabelAndName(id, dsName, dsLabel, existingByName, existingByLabel);
 				// handle insert of persistence and scheduling
@@ -1821,7 +1882,8 @@ public class ManageDataSetsForREST {
 		}
 	}
 
-	private void validateLabelAndName(String id, String dsName, String dsLabel, IDataSet existingByName, IDataSet existingByLabel) {
+	private void validateLabelAndName(String id, String dsName, String dsLabel, IDataSet existingByName,
+			IDataSet existingByLabel) {
 		String regex = "[!*'\\(\\);:@&=+$,\\/?%#\\[\\]]";
 		Pattern p = Pattern.compile(regex);
 		Matcher m = p.matcher(dsLabel);
@@ -1875,7 +1937,8 @@ public class ManageDataSetsForREST {
 		LOGGER.debug("OUT");
 	}
 
-	public void insertPersistence(IDataSet ds, Map<String, String> logParam, JSONObject json, UserProfile userProfile) throws Exception {
+	public void insertPersistence(IDataSet ds, Map<String, String> logParam, JSONObject json, UserProfile userProfile)
+			throws Exception {
 		LOGGER.debug("IN");
 
 		if (ds.isPersisted()) {
@@ -1890,7 +1953,8 @@ public class ManageDataSetsForREST {
 			AUDIT_LOGGER.info("LABEL: " + ds.getLabel());
 			AUDIT_LOGGER.info("NAME: " + ds.getName());
 			AUDIT_LOGGER.info("ORGANIZATION: " + ds.getOrganization());
-			AUDIT_LOGGER.info("PERSIST TABLE NAME FOR DATASET WITH ID " + ds.getId() + " : " + ds.getPersistTableName());
+			AUDIT_LOGGER
+					.info("PERSIST TABLE NAME FOR DATASET WITH ID " + ds.getId() + " : " + ds.getPersistTableName());
 			AUDIT_LOGGER.info("-------------");
 			IDataSetDAO iDatasetDao = DAOFactory.getDataSetDAO();
 
@@ -1901,7 +1965,8 @@ public class ManageDataSetsForREST {
 
 			if (ds.getDsType().equals(DataSetConstants.DS_DERIVED)) {
 				if (((DerivedDataSet) ds).getSourceDataset() != null) {
-					if (((VersionedDataSet) dataset).getWrappedDataset().getDsType().equals(DataSetConstants.DS_DERIVED)) {
+					if (((VersionedDataSet) dataset).getWrappedDataset().getDsType()
+							.equals(DataSetConstants.DS_DERIVED)) {
 						DerivedDataSet dsDerived = (DerivedDataSet) ((VersionedDataSet) dataset).getWrappedDataset();
 						dsDerived.setSourceDataset(((DerivedDataSet) ds).getSourceDataset());
 						dsDerived.setJsonQuery((((DerivedDataSet) ds).getJsonQuery()));
@@ -1943,7 +2008,8 @@ public class ManageDataSetsForREST {
 		}
 	}
 
-	private JSONObject getDataSetResultsAsJSON(JSONObject json, UserProfile userProfile) throws EMFUserError, SpagoBIException {
+	private JSONObject getDataSetResultsAsJSON(JSONObject json, UserProfile userProfile)
+			throws EMFUserError, SpagoBIException {
 
 		JSONObject dataSetJSON = null;
 		JSONArray parsJSON = json.optJSONArray(DataSetConstants.PARS);
@@ -1974,7 +2040,8 @@ public class ManageDataSetsForREST {
 		return dataSetJSON;
 	}
 
-	public JSONObject getDatasetTestResultList(IDataSet dataSet, Map<String, String> parametersFilled, IEngUserProfile profile, JSONObject json) {
+	public JSONObject getDatasetTestResultList(IDataSet dataSet, Map<String, String> parametersFilled,
+			IEngUserProfile profile, JSONObject json) {
 
 		JSONObject dataSetJSON;
 
@@ -2011,17 +2078,20 @@ public class ManageDataSetsForREST {
 				while (rootException.getCause() != null) {
 					rootException = rootException.getCause();
 				}
-				String rootErrorMsg = rootException.getMessage() != null ? rootException.getMessage() : rootException.getClass().getName();
+				String rootErrorMsg = rootException.getMessage() != null ? rootException.getMessage()
+						: rootException.getClass().getName();
 				if (dataSet instanceof JDBCDataSet) {
 					JDBCDataSet jdbcDataSet = (JDBCDataSet) dataSet;
 					if (jdbcDataSet.getQueryScript() != null) {
-						QuerableBehaviour querableBehaviour = (QuerableBehaviour) jdbcDataSet.getBehaviour(QuerableBehaviour.class.getName());
+						QuerableBehaviour querableBehaviour = (QuerableBehaviour) jdbcDataSet
+								.getBehaviour(QuerableBehaviour.class.getName());
 						String statement = querableBehaviour.getStatement();
 						rootErrorMsg += "\nQuery statement: [" + statement + "]";
 					}
 				}
 
-				throw new SpagoBIServiceException(SERVICE_NAME, "An unexpected error occured while executing dataset: " + rootErrorMsg, t);
+				throw new SpagoBIServiceException(SERVICE_NAME,
+						"An unexpected error occured while executing dataset: " + rootErrorMsg, t);
 			}
 
 			try {
@@ -2031,12 +2101,14 @@ public class ManageDataSetsForREST {
 					throw new SpagoBIServiceException(SERVICE_NAME, "Impossible to read serialized resultset");
 				}
 			} catch (Exception t) {
-				throw new SpagoBIServiceException(SERVICE_NAME, "An unexpected error occured while serializing resultset", t);
+				throw new SpagoBIServiceException(SERVICE_NAME,
+						"An unexpected error occured while serializing resultset", t);
 			}
 		} catch (SpagoBIServiceException e) {
 			throw e;
 		} catch (Exception t) {
-			throw new SpagoBIServiceException(SERVICE_NAME, "An unexpected error occured while getting dataset results", t);
+			throw new SpagoBIServiceException(SERVICE_NAME, "An unexpected error occured while getting dataset results",
+					t);
 		} finally {
 			LOGGER.debug("OUT");
 		}
@@ -2051,13 +2123,15 @@ public class ManageDataSetsForREST {
 
 			String datasetTypeName = getDatasetTypeName(datasetTypeCode, userProfile);
 			if (datasetTypeName == null) {
-				throw new SpagoBIServiceException(SERVICE_NAME, "Impossible to resolve dataset type whose code is equal to [" + datasetTypeCode + "]");
+				throw new SpagoBIServiceException(SERVICE_NAME,
+						"Impossible to resolve dataset type whose code is equal to [" + datasetTypeCode + "]");
 			}
 			dataSet = getDataSet(datasetTypeName, false, json, userProfile);
 		} catch (SpagoBIServiceException e) {
 			throw e;
 		} catch (Throwable t) {
-			throw new SpagoBIServiceException(SERVICE_NAME, "An unexpected error occured while retriving dataset from request", t);
+			throw new SpagoBIServiceException(SERVICE_NAME,
+					"An unexpected error occured while retriving dataset from request", t);
 		}
 		return dataSet;
 	}

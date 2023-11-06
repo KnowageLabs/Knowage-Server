@@ -61,8 +61,8 @@ public class BIObjDataSetDAOHibImpl extends AbstractHibernateDAO implements IBIO
 		ArrayList<Integer> idsToInsert = new ArrayList<>();
 
 		// Load Dataset to insert
-		for (Iterator iterator = dsLabels.iterator(); iterator.hasNext();) {
-			String label = (String) iterator.next();
+		for (Iterator<String> iterator = dsLabels.iterator(); iterator.hasNext();) {
+			String label = iterator.next();
 			if (!datasetsToInsert.keySet().contains(label)) {
 				IDataSet dataSet = DAOFactory.getDataSetDAO().loadDataSetByLabel(label);
 				if (dataSet == null) {
@@ -82,8 +82,8 @@ public class BIObjDataSetDAOHibImpl extends AbstractHibernateDAO implements IBIO
 
 		// load all associations, also detial one to avoid re-insert the same association again
 		ArrayList<BIObjDataSet> previousAllAssociatedDatasets = getBiObjDataSets(biObj.getId(), currSession);
-		for (Iterator iterator = previousAllAssociatedDatasets.iterator(); iterator.hasNext();) {
-			BIObjDataSet biObjDataSet = (BIObjDataSet) iterator.next();
+		for (Iterator<BIObjDataSet> iterator = previousAllAssociatedDatasets.iterator(); iterator.hasNext();) {
+			BIObjDataSet biObjDataSet = iterator.next();
 			if (!idsToInsert.contains(biObjDataSet.getDataSetId())) {
 				// erase only if it is not detail
 				if (!biObjDataSet.getIsDetail()) {
@@ -97,8 +97,8 @@ public class BIObjDataSetDAOHibImpl extends AbstractHibernateDAO implements IBIO
 		}
 
 		logger.debug("Insert new dataset associations");
-		for (Iterator iterator = datasetsToInsert.keySet().iterator(); iterator.hasNext();) {
-			String dsLabel = (String) iterator.next();
+		for (Iterator<String> iterator = datasetsToInsert.keySet().iterator(); iterator.hasNext();) {
+			String dsLabel = iterator.next();
 			IDataSet dataSet = datasetsToInsert.get(dsLabel);
 
 			// don't insert if it is already present (also as detail)
@@ -114,42 +114,6 @@ public class BIObjDataSetDAOHibImpl extends AbstractHibernateDAO implements IBIO
 		logger.debug("OUT");
 
 	}
-
-	// public void updateObjectDatasets(BIObject biObj, ArrayList<String> dsLabels, Session currSession) throws EMFUserError {
-	// logger.debug("IN");
-	// logger.debug("update associations for biObj " + biObj.getId());
-	//
-	// Map<String, Boolean> labelsToInsert = new HashMap<String, Boolean>();
-	// String innerDs = biObj.getDataSetLabel();
-	// if (innerDs != null)
-	// labelsToInsert.put(innerDs, Boolean.TRUE);
-	//
-	// for (Iterator iterator = dsLabels.iterator(); iterator.hasNext();) {
-	// String string = (String) iterator.next();
-	// if (!labelsToInsert.containsKey(string)) {
-	// labelsToInsert.put(string, Boolean.FALSE);
-	// }
-	// }
-	//
-	// // delete previous relationships and insert new one
-	// logger.debug("Delete previous dataset associations");
-	// ArrayList<BIObjDataSet> associatedDatasets = getBiObjDataSets(biObj.getId(), currSession);
-	// for (Iterator iterator = associatedDatasets.iterator(); iterator.hasNext();) {
-	// BIObjDataSet biObjDataSet = (BIObjDataSet) iterator.next();
-	// eraseBIObjDataSet(biObjDataSet, currSession);
-	// }
-	//
-	// logger.debug("Insert new dataset associations");
-	// for (Iterator iterator = labelsToInsert.keySet().iterator(); iterator.hasNext();) {
-	// String dsLabel = (String) iterator.next();
-	// IDataSet dataSet = DAOFactory.getDataSetDAO().loadDataSetByLabel(dsLabel);
-	// Boolean isDetail = labelsToInsert.get(dsLabel);
-	// insertBiObjDataSet(biObj.getId(), dataSet.getId(), isDetail, currSession);
-	// }
-	//
-	// logger.debug("OUT");
-	//
-	// }
 
 	@Override
 	public ArrayList<BIObjDataSet> getBiObjDataSets(Integer biObjId) throws EMFUserError {
@@ -187,12 +151,12 @@ public class BIObjDataSetDAOHibImpl extends AbstractHibernateDAO implements IBIO
 		String hql = "from SbiObjDataSet s where s.sbiObject.biobjId = :biObjId";
 		Query hqlQuery = currSession.createQuery(hql);
 		hqlQuery.setParameter("biObjId", biObjId);
-		List hibObjectPars = hqlQuery.list();
+		List<SbiObjDataSet> hibObjectPars = hqlQuery.list();
 
-		Iterator it = hibObjectPars.iterator();
-		int count = 1;
+		Iterator<SbiObjDataSet> it = hibObjectPars.iterator();
+
 		while (it.hasNext()) {
-			BIObjDataSet aBIObjectDataSet = toBIObjDataSet((SbiObjDataSet) it.next());
+			BIObjDataSet aBIObjectDataSet = toBIObjDataSet(it.next());
 			toReturn.add(aBIObjectDataSet);
 		}
 
@@ -200,7 +164,7 @@ public class BIObjDataSetDAOHibImpl extends AbstractHibernateDAO implements IBIO
 		return toReturn;
 	}
 
-	public ArrayList<BIObjDataSet> getBiObjNotDetailDataSets(Integer biObjId, Session currSession) throws EMFUserError {
+	public List<BIObjDataSet> getBiObjNotDetailDataSets(Integer biObjId, Session currSession) throws EMFUserError {
 		logger.debug("IN");
 
 		ArrayList<BIObjDataSet> toReturn = new ArrayList<>();
@@ -208,12 +172,12 @@ public class BIObjDataSetDAOHibImpl extends AbstractHibernateDAO implements IBIO
 		String hql = "from SbiObjDataSet s where s.sbiObject.biobjId =  :biObjId   AND (isDetail=false OR isDetail is null)";
 		Query hqlQuery = currSession.createQuery(hql);
 		hqlQuery.setParameter("biObjId", biObjId);
-		List hibObjectPars = hqlQuery.list();
+		List<SbiObjDataSet> hibObjectPars = hqlQuery.list();
 
-		Iterator it = hibObjectPars.iterator();
-		int count = 1;
+		Iterator<SbiObjDataSet> it = hibObjectPars.iterator();
+
 		while (it.hasNext()) {
-			BIObjDataSet aBIObjectDataSet = toBIObjDataSet((SbiObjDataSet) it.next());
+			BIObjDataSet aBIObjectDataSet = toBIObjDataSet(it.next());
 			toReturn.add(aBIObjectDataSet);
 		}
 
@@ -221,8 +185,7 @@ public class BIObjDataSetDAOHibImpl extends AbstractHibernateDAO implements IBIO
 		return toReturn;
 	}
 
-	public void insertBiObjDataSet(Integer biObjId, Integer dsId, boolean isDetail, Session currSession)
-			throws EMFUserError {
+	public void insertBiObjDataSet(Integer biObjId, Integer dsId, boolean isDetail, Session currSession) {
 		logger.debug("IN");
 
 		SbiObjDataSet toInsert = new SbiObjDataSet();
@@ -262,7 +225,7 @@ public class BIObjDataSetDAOHibImpl extends AbstractHibernateDAO implements IBIO
 
 	}
 
-	public void eraseBIObjDataSet(BIObjDataSet aBIObjDataSet, Session currSession) throws EMFUserError {
+	public void eraseBIObjDataSet(BIObjDataSet aBIObjDataSet, Session currSession) {
 
 		logger.debug("IN");
 		SbiObjDataSet hibObjDataSet = (SbiObjDataSet) currSession.load(SbiObjDataSet.class,
@@ -305,10 +268,10 @@ public class BIObjDataSetDAOHibImpl extends AbstractHibernateDAO implements IBIO
 		String hql = "from SbiObjDataSet s where s.sbiObject.biobjId = :biObjId  ";
 		Query hqlQuery = currSession.createQuery(hql);
 		hqlQuery.setParameter("biObjId", biObjId);
-		List hibObjectPars = hqlQuery.list();
+		List<SbiObjDataSet> hibObjectPars = hqlQuery.list();
 
-		for (Iterator iterator = hibObjectPars.iterator(); iterator.hasNext();) {
-			SbiObjDataSet sbiObjDataSet = (SbiObjDataSet) iterator.next();
+		for (Iterator<SbiObjDataSet> iterator = hibObjectPars.iterator(); iterator.hasNext();) {
+			SbiObjDataSet sbiObjDataSet = iterator.next();
 			currSession.delete(sbiObjDataSet);
 
 		}
@@ -324,12 +287,12 @@ public class BIObjDataSetDAOHibImpl extends AbstractHibernateDAO implements IBIO
 		String hql = "from SbiObjDataSet s where s.dsId = :datasetId";
 		Query hqlQuery = currSession.createQuery(hql);
 		hqlQuery.setParameter("datasetId", datasetId);
-		List hibObjectPars = hqlQuery.list();
+		List<SbiObjDataSet> hibObjectPars = hqlQuery.list();
 
-		Iterator it = hibObjectPars.iterator();
-		int count = 1;
+		Iterator<SbiObjDataSet> it = hibObjectPars.iterator();
+
 		while (it.hasNext()) {
-			BIObjDataSet aBIObjectDataSet = toBIObjDataSet((SbiObjDataSet) it.next());
+			BIObjDataSet aBIObjectDataSet = toBIObjDataSet(it.next());
 			BIObject obj = aBIObjectDataSet.getBiObject();
 			toReturn.add(obj);
 		}
@@ -391,12 +354,12 @@ public class BIObjDataSetDAOHibImpl extends AbstractHibernateDAO implements IBIO
 		hqlQuery.setParameter("objectId", objectId);
 		hqlQuery.setParameter("isDetail", false);
 
-		List hibObjectPars = hqlQuery.list();
+		List<SbiObjDataSet> hibObjectPars = hqlQuery.list();
 
-		Iterator it = hibObjectPars.iterator();
-		int count = 1;
+		Iterator<SbiObjDataSet> it = hibObjectPars.iterator();
+
 		while (it.hasNext()) {
-			BIObjDataSet aBIObjectDataSet = toBIObjDataSet((SbiObjDataSet) it.next());
+			BIObjDataSet aBIObjectDataSet = toBIObjDataSet(it.next());
 			toReturn.add(aBIObjectDataSet);
 		}
 
@@ -451,8 +414,8 @@ public class BIObjDataSetDAOHibImpl extends AbstractHibernateDAO implements IBIO
 
 						DAOFactory.getSbiObjDsDAO().deleteObjDsbyObjId(biObject.getId());
 
-						for (Iterator iterator = datasetsAssociated.iterator(); iterator.hasNext();) {
-							String string = (String) iterator.next();
+						for (Iterator<String> iterator = datasetsAssociated.iterator(); iterator.hasNext();) {
+							String string = iterator.next();
 							logger.debug(
 									"Dataset associated to biObject with label " + biObject.getLabel() + ": " + string);
 						}
@@ -473,7 +436,6 @@ public class BIObjDataSetDAOHibImpl extends AbstractHibernateDAO implements IBIO
 		} catch (Throwable t) {
 			throw new SpagoBIDAOException(
 					"Error while deleting the objDataset associated with object" + biObject.getId(), t);
-		} finally {
 		}
 		logger.debug("OUT");
 

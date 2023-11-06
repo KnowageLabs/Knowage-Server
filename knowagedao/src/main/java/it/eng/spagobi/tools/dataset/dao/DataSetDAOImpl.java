@@ -349,7 +349,7 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 			}
 
 			// check if dataset is used by document by querying SBI_OBJ_DATA_SET table
-			ArrayList<BIObject> objectsAssociated = DAOFactory.getBIObjDataSetDAO().getBIObjectsUsingDataset(datasetId,
+			List<BIObject> objectsAssociated = DAOFactory.getBIObjDataSetDAO().getBIObjectsUsingDataset(datasetId,
 					session);
 			if (!objectsAssociated.isEmpty()) {
 				for (Iterator iterator = objectsAssociated.iterator(); iterator.hasNext();) {
@@ -743,7 +743,7 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 
 			Integer dsIdInt = Integer.valueOf(dsId);
 
-			ArrayList<BIObject> objectsAssociated = DAOFactory.getBIObjDataSetDAO().getBIObjectsUsingDataset(dsIdInt,
+			List<BIObject> objectsAssociated = DAOFactory.getBIObjDataSetDAO().getBIObjectsUsingDataset(dsIdInt,
 					session);
 
 			if (objectsAssociated.isEmpty())
