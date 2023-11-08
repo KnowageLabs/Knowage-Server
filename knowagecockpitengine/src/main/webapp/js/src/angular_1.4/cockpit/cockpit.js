@@ -125,7 +125,14 @@ function cockpitMasterControllerWrapper(
 cockpitApp.controller("cockpitMasterController",cockpitMasterControllerFunction);
 function cockpitMasterControllerFunction($scope,cockpitModule_widgetServices,cockpitModule_template,cockpitModule_backwardCompatibility,cockpitModule_datasetServices,cockpitModule_documentServices,cockpitModule_crossServices,cockpitModule_nearRealtimeServices,cockpitModule_realtimeServices,cockpitModule_properties,cockpitModule_templateServices,$rootScope,$q,sbiModule_device,accessibility_preferences,$sce, cockpitModule_variableService, cockpitModule_widgetSelection){
 	$scope.cockpitModule_widgetServices=cockpitModule_widgetServices;
-	$scope.imageBackgroundUrl=cockpitModule_template.configuration.style.imageBackgroundUrl;
+	$scope.cockpitBackgroundStyle = {
+		"background-size":cockpitModule_template.configuration.style.imageBackgroundSize||'contain',
+		"background-repeat": "no-repeat",
+		"background-position": "center"
+	}
+	if(cockpitModule_template.configuration.style && cockpitModule_template.configuration.style.imageBackgroundUrl ){
+		$scope.cockpitBackgroundStyle["background-image"] = "url("+cockpitModule_template.configuration.style.imageBackgroundUrl+")"
+	}
 	cockpitModule_template = cockpitModule_backwardCompatibility.updateCockpitModel(cockpitModule_template);
 	cockpitModule_template.getSelections();
 	

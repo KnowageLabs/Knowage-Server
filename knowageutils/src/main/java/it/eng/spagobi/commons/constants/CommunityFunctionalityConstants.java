@@ -88,10 +88,6 @@ public class CommunityFunctionalityConstants {
 	public static final String FUNCTIONALITIES_MANAGEMENT = "FunctionalitiesManagement";
 	public static final String FUNCTIONS_CATALOG_MANAGEMENT = "FunctionsCatalogManagement";
 	public static final String FUNCTIONS_CATALOG_USAGE = "FunctionsCatalogUsage";
-	/**
-	 * @deprecated Only used in it.eng.spagobi.commons.bo.UserProfile.getSchedulerUserFunctionalities()
-	 */
-	@Deprecated
 	public static final String GEO_LAYERS_MANAGEMENT = "GeoLayersManagement";
 	/**
 	 * @deprecated Only used in it.eng.spagobi.commons.bo.UserProfile.getSchedulerUserFunctionalities()
@@ -189,6 +185,8 @@ public class CommunityFunctionalityConstants {
 	public static final String WORKLIST_MANAGEMENT = "WorklistManagement";
 	public static final String WORKSPACE_MANAGEMENT = "WorkspaceManagement";
 	public static final String CATEGORY_MANAGEMENT = "CategoryManagement";
+
+	public static final String MONDRIAN_SCHEMA_MANAGEMENT = "MondrianSchemaManagement";
 
 	private CommunityFunctionalityConstants() {
 	}

@@ -107,7 +107,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 <iframe id='invalidSessionSvg'
                  name='invalidSessionSvg'
-                 src='<%=KnowageSystemConfiguration.getKnowageContext()%>svgengine/invalidateSession.jsp'
+                 src='<%=KnowageSystemConfiguration.getKnowageContext()%>svgviewerengine/invalidateSession.jsp'
                  height='0'
                  width='0'
                  frameborder='0' >
@@ -116,6 +116,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <iframe id='invalidSessionCommonj'
                  name='invalidSessionCommonj'
                  src='<%=KnowageSystemConfiguration.getKnowageContext()%>commonjengine/invalidateSession.jsp'
+                 height='0'
+                 width='0'
+                 frameborder='0' >
+</iframe>
+
+<iframe id='invalidSessionDossier'
+                 name='invalidSessionDossier'
+                 src='<%=KnowageSystemConfiguration.getKnowageContext()%>dossierengine/invalidateSession.jsp'
                  height='0'
                  width='0'
                  frameborder='0' >

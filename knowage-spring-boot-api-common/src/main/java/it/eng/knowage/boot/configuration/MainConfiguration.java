@@ -42,7 +42,7 @@ import it.eng.knowage.boot.utils.ConfigSingleton;
 
 @Configuration
 @Profile("production")
-@ComponentScan({"it.eng.knowage.boot"})
+@ComponentScan({ "it.eng.knowage.boot" })
 public class MainConfiguration {
 
 	@Bean("knowage-config")
@@ -91,21 +91,17 @@ public class MainConfiguration {
 	 */
 	@Bean
 	@Qualifier("perUserBe2Be")
-	public RestTemplate perUserBe2BeRestTemplate(RestTemplateBuilder builder, Context context, PerUserBe2BeRequestCustomizer customizer) throws NamingException, MalformedURLException {
+	public RestTemplate perUserBe2BeRestTemplate(RestTemplateBuilder builder, Context context,
+			PerUserBe2BeRequestCustomizer customizer) throws NamingException, MalformedURLException {
 
 		String serviceUrl = (String) context.lookup("java:comp/env/service_url");
 
 		URL serviceUrlAsURL = new URL(serviceUrl);
-		serviceUrlAsURL = new URL(serviceUrlAsURL.getProtocol(),
-				serviceUrlAsURL.getHost(),
-				serviceUrlAsURL.getPort(),
-				"",
-				null);
+		serviceUrlAsURL = new URL(serviceUrlAsURL.getProtocol(), serviceUrlAsURL.getHost(), serviceUrlAsURL.getPort(),
+				"", null);
 
-		RestTemplate template = builder.rootUri(serviceUrlAsURL.toString())
-			.additionalRequestCustomizers(customizer)
-			.requestFactory(() -> clientHttpRequestFactoryWithoutCookies())
-			.build();
+		RestTemplate template = builder.rootUri(serviceUrlAsURL.toString()).additionalRequestCustomizers(customizer)
+				.requestFactory(() -> clientHttpRequestFactoryWithoutCookies()).build();
 
 		return template;
 	}
@@ -116,9 +112,7 @@ public class MainConfiguration {
 		factory.setConnectTimeout(5000);
 		factory.setReadTimeout(10000);
 
-		HttpClient httpClient = HttpClientBuilder.create()
-				.disableCookieManagement()
-				.build();
+		HttpClient httpClient = HttpClientBuilder.create().disableCookieManagement().build();
 		factory.setHttpClient(httpClient);
 
 		return factory;

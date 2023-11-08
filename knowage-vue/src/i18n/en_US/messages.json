@@ -2505,6 +2505,7 @@
     },
     "role": {
         "defaultRolePlaceholder": "No default role selected",
+        "mandatoryRoleWarning": "Role selection is mandatory. Select a role to proceed.",
         "roleSelection": "Role Selection"
     },
     "workspace": {

@@ -2,7 +2,7 @@
     <div class="layout-menu-container" id="kn-main-menu" ref="mainMenu">
         <InfoDialog v-model:visibility="display"></InfoDialog>
         <LanguageDialog v-model:visibility="languageDisplay"></LanguageDialog>
-        <RoleDialog v-model:visibility="roleDisplay"></RoleDialog>
+        <RoleDialog v-model:visibility="roleDisplay" :mandatory="mandatoryRole()"></RoleDialog>
         <DownloadsDialog v-model:visibility="downloadsDisplay"></DownloadsDialog>
         <NewsDialog v-model:visibility="newsDisplay"></NewsDialog>
         <LicenseDialog v-model:visibility="licenseDisplay" v-if="user && user.isSuperadmin && isEnterprise"></LicenseDialog>
@@ -112,6 +112,13 @@ export default defineComponent({
     methods: {
         info() {
             this.display = !this.display
+        },
+        mandatoryRole() {
+            if (this.configurations && this.configurations['KNOWAGE.MANDATORY-ROLE']  && this.user?.roles?.length > 1 && !this.user.defaultRole) {
+                this.roleDisplay = true
+                return true
+            }
+            return false
         },
         logout() {
             auth.logout()
@@ -316,7 +323,8 @@ export default defineComponent({
             news: 'news',
             stateHomePage: 'homePage',
             isEnterprise: 'isEnterprise',
-            licenses: 'licenses'
+            licenses: 'licenses',
+            configurations: 'configurations'
         })
     },
     watch: {
