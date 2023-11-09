@@ -50,7 +50,7 @@
 			<id>pentaho</id>
 			<url>http://nexus.pentaho.org/content/groups/omni</url>
 		</repository>
-		
+
 		<!-- We use xss-html-filter repository for xss-html-filter, needed by knowage CE; this library is not available on Maven Central -->
 		<repository>
 			<id>xss-html-filter releases</id>
@@ -61,15 +61,14 @@
 			<id>bidlink</id>
 			<url>http://repo.bidlink.cn/nexus/content/repositories/</url>
 		</repository>
-		
-		
+
 	</repositories>
-  
+
 	<properties>
 		<maven.compiler.source>1.8</maven.compiler.source>
 		<maven.compiler.target>1.8</maven.compiler.target>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		
+
 		<!-- if you want run tests overwrite this property with: mvn test -DskipTests=false -->
 		<skipTests>true</skipTests>
 
@@ -93,14 +92,15 @@
 		<jasypt.version>1.9.3</jasypt.version>
 		<commons-text.version>1.10.0</commons-text.version>
 		<junit4.version>4.13.2</junit4.version>
-		
+		<hsqldb.version>1.8.0.10</hsqldb.version>
+
 		<checkstyle.config.location>../checkstyle/checkstyle.xml</checkstyle.config.location>
 		<checkstyle.header.file>../LICENSE</checkstyle.header.file>
 		<mpir.skip>true</mpir.skip>
-		
+
 		<!--
 			Exlude some types from Sonar analisys for now.
-			
+
 			In the future they can be included too.
 		 -->
 		<sonar.exclusions>**/*.css, **/*.js, **/*.ts, **/*.xml, **/dist/**/*, **/node_modules/**/*</sonar.exclusions>
@@ -125,7 +125,7 @@
 		<module>../knowagecockpitengine</module>
 		<module>../knowagekpiengine</module>
 		<module>../knowagesdk</module>
-		
+
 		<module>../knowagecommonjengine</module>
 		<module>../knowagegeoreportengine</module>
 		<module>../knowagemeta</module>
@@ -163,7 +163,7 @@
 						</archive>
 					</configuration>
 				</plugin>
-				
+
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-war-plugin</artifactId>
@@ -243,7 +243,7 @@
 				</plugins>
 			</build>
 		</profile>
-		
+
 		<profile>
 			<id>mysql</id>
 			<activation>
@@ -348,7 +348,7 @@
 				</resources>
 			</build>
 		</profile>
-		
+
 			<profile>
 			<id>mssql</id>
 			<properties>
@@ -382,7 +382,7 @@
 				</resources>
 			</build>
 		</profile>
-		
+
 	</profiles>
 
 	<dependencyManagement>
@@ -399,7 +399,7 @@
 				<artifactId>cometd-java-server</artifactId>
 				<version>4.0.9</version>
 			</dependency>
-			
+
 			<dependency>
 				<groupId>com.sun.xml.ws</groupId>
 				<artifactId>jaxws-rt</artifactId>
@@ -453,19 +453,19 @@
 				<artifactId>logstash-gelf</artifactId>
 				<version>${logstash-gelf.version}</version>
 			</dependency>
-			
+
 			<dependency>
 				<groupId>com.oracle.database.jdbc</groupId>
 				<artifactId>ojdbc8</artifactId>
 				<version>${ojdbc.version}</version>
 			</dependency>
-			
+
 			<dependency>
 				<groupId>com.googlecode.owasp-java-html-sanitizer</groupId>
 				<artifactId>owasp-java-html-sanitizer</artifactId>
 				<version>${owasp-java-html-sanitizer.version}</version>
 			</dependency>
-			
+
 			<dependency>
 				<groupId>org.apache.commons</groupId>
 				<artifactId>commons-lang3</artifactId>
@@ -491,12 +491,18 @@
 				<version>
 					${jasypt.version}</version>
 			</dependency>
-			
+
 			<dependency>
 				<groupId>junit</groupId>
 				<artifactId>junit</artifactId>
 				<version>${junit4.version}</version>
 				<scope>test</scope>
+			</dependency>
+
+			<dependency>
+				<groupId>org.hsqldb</groupId>
+				<artifactId>hsqldb</artifactId>
+				<version>${hsqldb.version}</version>
 			</dependency>
 
 		</dependencies>
