@@ -18,6 +18,7 @@
 package it.eng.spagobi.dataset.cache.impl.sqldbcache.test;
 
 import java.math.BigDecimal;
+import java.security.SecureRandom;
 import java.util.Random;
 
 import org.apache.log4j.Logger;
@@ -51,7 +52,7 @@ public abstract class AbstractSQLDBCacheTest extends AbstractCacheTest {
 
 	private static final Logger LOGGER = Logger.getLogger(AbstractSQLDBCacheTest.class);
 
-	private final Random random = new Random();
+	private static final Random RANDOM = new SecureRandom();
 
 	// Test cases
 
@@ -109,7 +110,8 @@ public abstract class AbstractSQLDBCacheTest extends AbstractCacheTest {
 	public void testCacheDimension() throws DataBaseException {
 		assertTrue(cache.getMetadata().getAvailableMemory().compareTo(TestConstants.CACHE_CONFIG_CACHE_DIMENSION) == 0);
 		assertEquals(new Integer(100), cache.getMetadata().getAvailableMemoryAsPercentage());
-		assertEquals(new Integer(TestConstants.CACHE_CONFIG_PERCENTAGE_TO_CLEAN), cache.getMetadata().getCleaningQuota());
+		assertEquals(new Integer(TestConstants.CACHE_CONFIG_PERCENTAGE_TO_CLEAN),
+				cache.getMetadata().getCleaningQuota());
 		assertEquals(new Integer(0), cache.getMetadata().getNumberOfObjects());
 	}
 
@@ -129,7 +131,7 @@ public abstract class AbstractSQLDBCacheTest extends AbstractCacheTest {
 		fileDataset.loadData();
 		resultset = fileDataset.getDataStore();
 		cache.put(fileDataset, resultset, null);
-		;
+
 		assertNotNull(cache.get(fileDataset.getSignature()));
 		LOGGER.debug("FileDataSet inserted inside cache");
 	}
@@ -347,7 +349,8 @@ public abstract class AbstractSQLDBCacheTest extends AbstractCacheTest {
 			exception = true;
 		} finally {
 			assertTrue("Wrong behavior: Exception expected but not catched", exception);
-			assertNull("Wrong behavior: dataset cached even if the space available is zero", cacheZero.get(sqlDataset.getSignature()));
+			assertNull("Wrong behavior: dataset cached even if the space available is zero",
+					cacheZero.get(sqlDataset.getSignature()));
 			cacheZero.deleteAll();
 		}
 
@@ -425,7 +428,8 @@ public abstract class AbstractSQLDBCacheTest extends AbstractCacheTest {
 			IDataStore dataStore = dataSourceWriting.executeStatement("SELECT * FROM " + tableName, 0, 0);
 
 		} else {
-			IDataStore dataStore = dataSourceWriting.executeStatement("SELECT * FROM " + schemaName + "." + tableName, 0, 0);
+			IDataStore dataStore = dataSourceWriting.executeStatement("SELECT * FROM " + schemaName + "." + tableName,
+					0, 0);
 		}
 
 	}
@@ -453,7 +457,7 @@ public abstract class AbstractSQLDBCacheTest extends AbstractCacheTest {
 		DatabaseDialect dialect = DatabaseDialect.get(dataSourceWriting.getHibDialectClass());
 		PersistedTableManager persistedTableManager = new PersistedTableManager();
 		persistedTableManager.setDialect(dialect);
-		int x = random.nextInt(100);
+		int x = RANDOM.nextInt(100);
 		String tableName = "SbiTest" + x;
 		persistedTableManager.setTableName(tableName);
 

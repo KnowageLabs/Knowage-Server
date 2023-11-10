@@ -20,6 +20,7 @@ package it.eng.spagobi.tools.dataset.persist;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
+import java.security.SecureRandom;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -78,7 +79,7 @@ public class PersistedTableManager implements IPersistedManager {
 
 	private static final Logger LOGGER = Logger.getLogger(PersistedTableManager.class);
 	private static final int BATCH_SIZE = 1000;
-	private static final Random RANDOM = new Random();
+	private static final Random RANDOM = new SecureRandom();
 	private static final String ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
 	private DatabaseDialect dialect = null;
@@ -104,8 +105,9 @@ public class PersistedTableManager implements IPersistedManager {
 		// get data source for writing not only getDataSource
 		IDataSource dsPersist = dataset.getDataSourceForWriting();
 		if (dsPersist == null) {
-			LOGGER.error("No data source for writing found: check the datasource associated to dataset " + dataset.getLabel()
-					+ " is read and write or there is one and only one datasource marked as write default");
+			LOGGER.error(
+					"No data source for writing found: check the datasource associated to dataset " + dataset.getLabel()
+							+ " is read and write or there is one and only one datasource marked as write default");
 			throw new SpagoBIServiceException("", "sbi.ds.noDataSourceForWriting");
 		}
 		persistDataSet(dataset, dsPersist, tableName);
@@ -117,7 +119,8 @@ public class PersistedTableManager implements IPersistedManager {
 		IDataBase database = DataBaseFactory.getDataBase(dsPersist);
 		if (!database.isCacheSupported()) {
 			LOGGER.error("Persistence management not implemented for dialect " + getDialect() + ".");
-			throw new SpagoBIRuntimeException("Persistence management not implemented for dialect " + getDialect() + ".");
+			throw new SpagoBIRuntimeException(
+					"Persistence management not implemented for dialect " + getDialect() + ".");
 		}
 
 		setTableName(tableName);
@@ -180,7 +183,8 @@ public class PersistedTableManager implements IPersistedManager {
 					recordCount++;
 				}
 				if (!records.isEmpty()) {
-					LOGGER.debug("There are still " + records.size() + " records left that need to be copied into the cache");
+					LOGGER.debug("There are still " + records.size()
+							+ " records left that need to be copied into the cache");
 					insertRecords(records, iterator.getMetaData(), statement);
 					records.clear();
 				}
@@ -208,7 +212,8 @@ public class PersistedTableManager implements IPersistedManager {
 
 	}
 
-	public void persistDataset(IDataSet dataSet, IDataStore datastore, IDataSource datasource, String tableName) throws Exception {
+	public void persistDataset(IDataSet dataSet, IDataStore datastore, IDataSource datasource, String tableName)
+			throws Exception {
 		setTableNameAndDialect(datasource, tableName);
 
 		if (dataSet instanceof VersionedDataSet) {
@@ -244,7 +249,8 @@ public class PersistedTableManager implements IPersistedManager {
 
 		Connection connection = null;
 		try {
-			LOGGER.debug("The datastore metadata object contains # [" + datastore.getMetaData().getFieldCount() + "] fields");
+			LOGGER.debug("The datastore metadata object contains # [" + datastore.getMetaData().getFieldCount()
+					+ "] fields");
 			if (datastore.getMetaData().getFieldCount() == 0) {
 				LOGGER.debug("The datastore has no fields. Unable to update dataset.");
 				return;
@@ -313,7 +319,8 @@ public class PersistedTableManager implements IPersistedManager {
 		return ids;
 	}
 
-	private PreparedStatement[] getInsertOrUpdateStatements(IDataStore datastore, IDataSource datasource, Connection connection, Set<Object> insertIds) {
+	private PreparedStatement[] getInsertOrUpdateStatements(IDataStore datastore, IDataSource datasource,
+			Connection connection, Set<Object> insertIds) {
 		IMetaData storeMeta = datastore.getMetaData();
 		int fieldCount = storeMeta.getFieldCount();
 		int recordCount = (int) datastore.getRecordsCount();
@@ -388,7 +395,8 @@ public class PersistedTableManager implements IPersistedManager {
 		insertValuesSB.append(") ");
 
 		updateSB.append(" WHERE ");
-		updateSB.append(AbstractJDBCDataset.encapsulateColumnName(getSQLColumnName(storeMeta.getFieldMeta(idFieldIndex)), datasource));
+		updateSB.append(AbstractJDBCDataset
+				.encapsulateColumnName(getSQLColumnName(storeMeta.getFieldMeta(idFieldIndex)), datasource));
 		updateSB.append("=?");
 
 		String insertQuery = insertSB.toString() + insertValuesSB.toString();
@@ -433,8 +441,8 @@ public class PersistedTableManager implements IPersistedManager {
 
 						Map<String, Integer> newColumnSizes = new HashMap<>();
 						int fieldIndex = isRowCountColumIncluded() ? j + 1 : j;
-						PersistedTableHelper.addField(statement, fieldIndex, fieldValue, fieldMetaName, fieldMetaTypeName, isFieldMetaFieldTypeMeasure,
-								newColumnSizes);
+						PersistedTableHelper.addField(statement, fieldIndex, fieldValue, fieldMetaName,
+								fieldMetaTypeName, isFieldMetaFieldTypeMeasure, newColumnSizes);
 
 						Integer oldColumnSize = columnSize.get(fieldMetaName);
 						Integer newColumnSize = newColumnSizes.get(fieldMetaName);
@@ -448,7 +456,8 @@ public class PersistedTableManager implements IPersistedManager {
 							}
 						}
 					} catch (Exception e) {
-						throw new RuntimeException("An unexpected error occurred while preparing statement for record [" + i + "]", e);
+						throw new RuntimeException(
+								"An unexpected error occurred while preparing statement for record [" + i + "]", e);
 					}
 				}
 				statement.addBatch();
@@ -498,7 +507,8 @@ public class PersistedTableManager implements IPersistedManager {
 							}
 							field.setValue(intValue);
 						} catch (Throwable t) {
-							LOGGER.error("Error trying to convert value [" + field.getValue() + "] into an Integer value. Considering it as null...");
+							LOGGER.error("Error trying to convert value [" + field.getValue()
+									+ "] into an Integer value. Considering it as null...");
 							field.setValue(null);
 						}
 					} else if (fmd.getType().toString().contains("Double")) {
@@ -513,7 +523,8 @@ public class PersistedTableManager implements IPersistedManager {
 							field.setValue(doubleValue);
 
 						} catch (Throwable t) {
-							LOGGER.error("Error trying to convert value [" + field.getValue() + "] into a Double value. Considering it as null...");
+							LOGGER.error("Error trying to convert value [" + field.getValue()
+									+ "] into a Double value. Considering it as null...");
 							field.setValue(null);
 						}
 					} else if (fmd.getType().toString().contains("String")) {
@@ -521,7 +532,8 @@ public class PersistedTableManager implements IPersistedManager {
 							String stringValue = field.getValue().toString();
 							field.setValue(stringValue);
 						} catch (Throwable t) {
-							LOGGER.error("Error trying to convert value [" + field.getValue() + "] into a String value. Considering it as null...");
+							LOGGER.error("Error trying to convert value [" + field.getValue()
+									+ "] into a String value. Considering it as null...");
 							field.setValue(null);
 						}
 					}
@@ -537,7 +549,8 @@ public class PersistedTableManager implements IPersistedManager {
 		Connection connection = null;
 		String dialect = datasource.getHibDialectClass();
 		try {
-			LOGGER.debug("The datastore metadata object contains # [" + datastore.getMetaData().getFieldCount() + "] fields");
+			LOGGER.debug("The datastore metadata object contains # [" + datastore.getMetaData().getFieldCount()
+					+ "] fields");
 			if (datastore.getMetaData().getFieldCount() == 0) {
 				LOGGER.debug("The datastore metadata object hasn't fields. Dataset doesn't persisted!!");
 				return;
@@ -586,7 +599,8 @@ public class PersistedTableManager implements IPersistedManager {
 		LOGGER.debug("OUT");
 	}
 
-	private PreparedStatement[] defineStatements(IDataStore datastore, IDataSource datasource, Connection connection) throws DataBaseException {
+	private PreparedStatement[] defineStatements(IDataStore datastore, IDataSource datasource, Connection connection)
+			throws DataBaseException {
 		int batchCount = (int) ((datastore.getRecordsCount() + BATCH_SIZE - 1) / BATCH_SIZE);
 		PreparedStatement[] toReturn = new PreparedStatement[batchCount];
 
@@ -608,7 +622,8 @@ public class PersistedTableManager implements IPersistedManager {
 		if (this.isRowCountColumIncluded()) {
 			CacheDataBase dataBase = DataBaseFactory.getCacheDataBase(datasource);
 			insertQuery += separator + AbstractJDBCDataset.encapsulateColumnName(getRowCountColumnName(), datasource);
-			createQuery += separator + AbstractJDBCDataset.encapsulateColumnName(getRowCountColumnName(), datasource) + dataBase.getDataBaseType(Long.class);
+			createQuery += separator + AbstractJDBCDataset.encapsulateColumnName(getRowCountColumnName(), datasource)
+					+ dataBase.getDataBaseType(Long.class);
 			values += separator + "?";
 			separator = ",";
 		}
@@ -654,13 +669,16 @@ public class PersistedTableManager implements IPersistedManager {
 						String fieldMetaTypeName = fieldMeta.getType().toString();
 						boolean isfieldMetaFieldTypeMeasure = fieldMeta.getFieldType().equals(FieldType.MEASURE);
 						if (this.isRowCountColumIncluded()) {
-							PersistedTableHelper.addField(statement, j + 1, fieldValue, fieldMetaName, fieldMetaTypeName, isfieldMetaFieldTypeMeasure,
-									columnSize);
+							PersistedTableHelper.addField(statement, j + 1, fieldValue, fieldMetaName,
+									fieldMetaTypeName, isfieldMetaFieldTypeMeasure, columnSize);
 						} else {
-							PersistedTableHelper.addField(statement, j, fieldValue, fieldMetaName, fieldMetaTypeName, isfieldMetaFieldTypeMeasure, columnSize);
+							PersistedTableHelper.addField(statement, j, fieldValue, fieldMetaName, fieldMetaTypeName,
+									isfieldMetaFieldTypeMeasure, columnSize);
 						}
 					} catch (Throwable t) {
-						throw new RuntimeException("An unexpecetd error occured while preparing insert statemenet for record [" + i + "]", t);
+						throw new RuntimeException(
+								"An unexpecetd error occured while preparing insert statemenet for record [" + i + "]",
+								t);
 					}
 				}
 				statement.addBatch();
@@ -695,11 +713,13 @@ public class PersistedTableManager implements IPersistedManager {
 			String fieldMetaName = fieldMeta.getName();
 			String fieldMetaTypeName = fieldMeta.getType().toString();
 			boolean isfieldMetaFieldTypeMeasure = fieldMeta.getFieldType().equals(FieldType.MEASURE);
-			PersistedTableHelper.addField(statement, j, fieldValue, fieldMetaName, fieldMetaTypeName, isfieldMetaFieldTypeMeasure, getColumnSize());
+			PersistedTableHelper.addField(statement, j, fieldValue, fieldMetaName, fieldMetaTypeName,
+					isfieldMetaFieldTypeMeasure, getColumnSize());
 		}
 	}
 
-	public boolean createIndexesOnTable(IDataSet dataset, IDataSource datasource, String tablename, Set<String> columns) {
+	public boolean createIndexesOnTable(IDataSet dataset, IDataSource datasource, String tablename,
+			Set<String> columns) {
 		boolean result = false;
 		/* INDEXES CREATION */
 		if (columns != null && !columns.isEmpty()) {
@@ -714,7 +734,8 @@ public class PersistedTableManager implements IPersistedManager {
 		return result;
 	}
 
-	private boolean indexAlreadyOnTable(IDataSource datasource, String tableName, Set<String> columns, String indexName) {
+	private boolean indexAlreadyOnTable(IDataSource datasource, String tableName, Set<String> columns,
+			String indexName) {
 		boolean result = false;
 
 		try (Connection conn = getConnection(datasource)) {
@@ -732,13 +753,15 @@ public class PersistedTableManager implements IPersistedManager {
 				result = count > 0;
 			}
 		} catch (SQLException e) {
-			LOGGER.debug("Impossible to retrieve index for table [" + tableName + "] and columns [" + columns.iterator().next() + "]", e);
+			LOGGER.debug("Impossible to retrieve index for table [" + tableName + "] and columns ["
+					+ columns.iterator().next() + "]", e);
 		}
 
 		return result;
 	}
 
-	public void createIndexes(IDataSet dataset, IDataSource datasource, String tableName, Set<String> columns) throws Exception {
+	public void createIndexes(IDataSet dataset, IDataSource datasource, String tableName, Set<String> columns)
+			throws Exception {
 		LOGGER.debug("IN - Dataset label " + tableName);
 		String signature = tableName;
 		LOGGER.debug("Retrieve table name for signature " + signature);
@@ -759,14 +782,17 @@ public class PersistedTableManager implements IPersistedManager {
 								stmt.executeUpdate(query);
 							}
 						} else {
-							LOGGER.debug("Impossible to build the index statement and thus creating the index. Tablename and/or column are null or empty.");
+							LOGGER.debug(
+									"Impossible to build the index statement and thus creating the index. Tablename and/or column are null or empty.");
 						}
 					} else {
-						LOGGER.debug("Index on table " + tableName + " (" + columns.iterator().next() + ")already present in database");
+						LOGGER.debug("Index on table " + tableName + " (" + columns.iterator().next()
+								+ ")already present in database");
 					}
 				}
 			} catch (SQLException e) {
-				LOGGER.debug("Impossible to build index for table [" + tableName + "] and columns [" + columns + "]", e);
+				LOGGER.debug("Impossible to build index for table [" + tableName + "] and columns [" + columns + "]",
+						e);
 			}
 		}
 
@@ -894,7 +920,8 @@ public class PersistedTableManager implements IPersistedManager {
 		return statement;
 	}
 
-	public PreparedStatement defineStatement(IMetaData storeMeta, IDataSource datasource, Connection connection) throws DataBaseException {
+	public PreparedStatement defineStatement(IMetaData storeMeta, IDataSource datasource, Connection connection)
+			throws DataBaseException {
 		PreparedStatement statement;
 
 		int fieldCount = storeMeta.getFieldCount();
@@ -962,7 +989,8 @@ public class PersistedTableManager implements IPersistedManager {
 		return dataBase.getDataBaseType(type);
 	}
 
-	private String getDBFieldTypeFromAlias(IDataSource dataSource, IFieldMetaData fieldMetaData) throws DataBaseException {
+	private String getDBFieldTypeFromAlias(IDataSource dataSource, IFieldMetaData fieldMetaData)
+			throws DataBaseException {
 		CacheDataBase dataBase = DataBaseFactory.getCacheDataBase(dataSource);
 		Integer alias = getColumnSize().get(fieldMetaData.getAlias());
 		if (alias != null) {
@@ -986,7 +1014,8 @@ public class PersistedTableManager implements IPersistedManager {
 
 			if (this.isRowCountColumIncluded()) {
 				CacheDataBase dataBase = DataBaseFactory.getCacheDataBase(dataSource);
-				toReturn += " " + AbstractJDBCDataset.encapsulateColumnName(PersistedTableManager.getRowCountColumnName(), dataSource) + " "
+				toReturn += " " + AbstractJDBCDataset
+						.encapsulateColumnName(PersistedTableManager.getRowCountColumnName(), dataSource) + " "
 						+ dataBase.getDataBaseType(Long.class) + " , ";
 			}
 
@@ -995,7 +1024,8 @@ public class PersistedTableManager implements IPersistedManager {
 				IFieldMetaData fmd = md.getFieldMeta(i);
 				String columnName = getSQLColumnName(fmd);
 				LOGGER.debug("Adding field #" + i + " with column name [" + columnName + "]");
-				toReturn += " " + AbstractJDBCDataset.encapsulateColumnName(columnName, dataSource) + getDBFieldType(dataSource, fmd);
+				toReturn += " " + AbstractJDBCDataset.encapsulateColumnName(columnName, dataSource)
+						+ getDBFieldType(dataSource, fmd);
 				toReturn += " " + (md.getIdFieldIndex() == i ? "NOT NULL PRIMARY KEY" : "");
 				toReturn += ((i < l - 1) ? " , " : "");
 			}
@@ -1072,10 +1102,12 @@ public class PersistedTableManager implements IPersistedManager {
 
 		// get the list of tables names
 		if (dialect.equals(DatabaseDialect.ORACLE) || dialect.equals(DatabaseDialect.ORACLE_9I10G)) {
-			statement = "SELECT TABLE_NAME " + "FROM USER_TABLES " + "WHERE TABLE_NAME LIKE '" + prefix.toUpperCase() + "%'";
-		} else if (dialect.equals(DatabaseDialect.SQLSERVER) || dialect.equals(DatabaseDialect.MYSQL) || dialect.equals(DatabaseDialect.MYSQL_INNODB)
-				|| dialect.equals(DatabaseDialect.POSTGRESQL)) {
-			statement = "SELECT TABLE_NAME " + "FROM INFORMATION_SCHEMA.TABLES " + "WHERE TABLE_NAME LIKE '" + prefix.toLowerCase() + "%'";
+			statement = "SELECT TABLE_NAME " + "FROM USER_TABLES " + "WHERE TABLE_NAME LIKE '" + prefix.toUpperCase()
+					+ "%'";
+		} else if (dialect.equals(DatabaseDialect.SQLSERVER) || dialect.equals(DatabaseDialect.MYSQL)
+				|| dialect.equals(DatabaseDialect.MYSQL_INNODB) || dialect.equals(DatabaseDialect.POSTGRESQL)) {
+			statement = "SELECT TABLE_NAME " + "FROM INFORMATION_SCHEMA.TABLES " + "WHERE TABLE_NAME LIKE '"
+					+ prefix.toLowerCase() + "%'";
 		}
 
 		if ((statement != null) && (!statement.isEmpty())) {
@@ -1217,7 +1249,8 @@ public class PersistedTableManager implements IPersistedManager {
 
 	}
 
-	public void insertRecords(List<IRecord> records, IMetaData metadata, PreparedStatement statement) throws SQLException {
+	public void insertRecords(List<IRecord> records, IMetaData metadata, PreparedStatement statement)
+			throws SQLException {
 		LOGGER.debug("IN");
 		statement.clearBatch();
 		for (IRecord record : records) {
@@ -1264,12 +1297,14 @@ public class PersistedTableManager implements IPersistedManager {
 
 					} catch (Throwable t) {
 						LOGGER.error("An unexpecetd error occured while ajusting metadata for record [" + j + "]", t);
-						throw new RuntimeException("An unexpecetd error occured while ajusting metadata for record [" + j + "]", t);
+						throw new RuntimeException(
+								"An unexpecetd error occured while ajusting metadata for record [" + j + "]", t);
 					}
 				}
 			} catch (Throwable t) {
 				LOGGER.error("An unexpecetd error occured while ajusting metadata for record [" + i + "]", t);
-				throw new RuntimeException("An unexpecetd error occured while ajusting metadata for record [" + i + "]", t);
+				throw new RuntimeException("An unexpecetd error occured while ajusting metadata for record [" + i + "]",
+						t);
 			}
 		}
 	}
@@ -1284,17 +1319,24 @@ public class PersistedTableManager implements IPersistedManager {
 				cons = c.getConstructor(String.class);
 			} catch (NoSuchMethodException | SecurityException e) {
 				LOGGER.error("Error while creating construnctor for dynamically instancing class type", e);
-				throw new SpagoBIEngineRuntimeException("Error while creating construnctor for dynamically instancing class type. Table name:" + tableName, e);
+				throw new SpagoBIEngineRuntimeException(
+						"Error while creating construnctor for dynamically instancing class type. Table name:"
+								+ tableName,
+						e);
 			}
 			try {
 				Object value = field.getValue();
 				if (value != null) {
 					field.setValue(cons.newInstance(String.valueOf(value)));
 				}
-			} catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-				LOGGER.error("Error while changing field value to different type that is comming from data set wizard", e);
+			} catch (InstantiationException | IllegalAccessException | IllegalArgumentException
+					| InvocationTargetException e) {
+				LOGGER.error("Error while changing field value to different type that is comming from data set wizard",
+						e);
 				throw new SpagoBIEngineRuntimeException(
-						"Error while changing field value to different type that is comming from data set wizard. Table name:" + tableName, e);
+						"Error while changing field value to different type that is comming from data set wizard. Table name:"
+								+ tableName,
+						e);
 			}
 		}
 	}

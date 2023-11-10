@@ -17,6 +17,7 @@
  */
 package it.eng.spagobi.dataset.cache.test;
 
+import java.security.SecureRandom;
 import java.util.Random;
 
 import it.eng.spagobi.tools.datasource.bo.DataSourceFactory;
@@ -28,7 +29,7 @@ import it.eng.spagobi.tools.datasource.bo.IDataSource;
  */
 public class TestDataSourceFactory {
 
-	private static final Random RANDOM = new Random();
+	private static final Random RANDOM = new SecureRandom();
 
 	public static IDataSource createDataSource(TestConstants.DatabaseType type, boolean isWritingDatasource) {
 		IDataSource dataSource;
@@ -37,58 +38,68 @@ public class TestDataSourceFactory {
 		switch (type) {
 		case MYSQL:
 			if (isWritingDatasource) {
-				dataSource = createDataSource(TestConstants.MYSQL_LABEL_WRITING, TestConstants.MYSQL_URL_WRITING, TestConstants.MYSQL_USER_WRITING,
-						TestConstants.MYSQL_PWD_WRITING, TestConstants.MYSQL_DRIVER, TestConstants.MYSQL_DIALECT_CLASS, TestConstants.MYSQL_DIALECT_NAME, false,
-						true, false);
+				dataSource = createDataSource(TestConstants.MYSQL_LABEL_WRITING, TestConstants.MYSQL_URL_WRITING,
+						TestConstants.MYSQL_USER_WRITING, TestConstants.MYSQL_PWD_WRITING, TestConstants.MYSQL_DRIVER,
+						TestConstants.MYSQL_DIALECT_CLASS, TestConstants.MYSQL_DIALECT_NAME, false, true, false);
 			} else {
-				dataSource = createDataSource(TestConstants.MYSQL_LABEL_READING, TestConstants.MYSQL_URL_READING, TestConstants.MYSQL_USER_READING,
-						TestConstants.MYSQL_PWD_READING, TestConstants.MYSQL_DRIVER, TestConstants.MYSQL_DIALECT_CLASS, TestConstants.MYSQL_DIALECT_NAME, true,
-						false, false);
+				dataSource = createDataSource(TestConstants.MYSQL_LABEL_READING, TestConstants.MYSQL_URL_READING,
+						TestConstants.MYSQL_USER_READING, TestConstants.MYSQL_PWD_READING, TestConstants.MYSQL_DRIVER,
+						TestConstants.MYSQL_DIALECT_CLASS, TestConstants.MYSQL_DIALECT_NAME, true, false, false);
 			}
 			break;
 		case POSTGRES:
 			if (isWritingDatasource) {
-				dataSource = createDataSource(TestConstants.POSTGRES_LABEL_WRITING, TestConstants.POSTGRES_URL_WRITING, TestConstants.POSTGRES_USER_WRITING,
-						TestConstants.POSTGRES_PWD_WRITING, TestConstants.POSTGRES_DRIVER, TestConstants.POSTGRES_DIALECT_CLASS,
+				dataSource = createDataSource(TestConstants.POSTGRES_LABEL_WRITING, TestConstants.POSTGRES_URL_WRITING,
+						TestConstants.POSTGRES_USER_WRITING, TestConstants.POSTGRES_PWD_WRITING,
+						TestConstants.POSTGRES_DRIVER, TestConstants.POSTGRES_DIALECT_CLASS,
 						TestConstants.POSTGRES_DIALECT_NAME, false, true, false);
 			} else {
-				dataSource = createDataSource(TestConstants.POSTGRES_LABEL_READING, TestConstants.POSTGRES_URL_READING, TestConstants.POSTGRES_USER_READING,
-						TestConstants.POSTGRES_PWD_READING, TestConstants.POSTGRES_DRIVER, TestConstants.POSTGRES_DIALECT_CLASS,
+				dataSource = createDataSource(TestConstants.POSTGRES_LABEL_READING, TestConstants.POSTGRES_URL_READING,
+						TestConstants.POSTGRES_USER_READING, TestConstants.POSTGRES_PWD_READING,
+						TestConstants.POSTGRES_DRIVER, TestConstants.POSTGRES_DIALECT_CLASS,
 						TestConstants.POSTGRES_DIALECT_NAME, true, false, false);
 			}
 			break;
 
 		case ORACLE:
 			if (isWritingDatasource) {
-				dataSource = createDataSource(TestConstants.ORACLE_LABEL_WRITING, TestConstants.ORACLE_URL_WRITING, TestConstants.ORACLE_USER_WRITING,
-						TestConstants.ORACLE_PWD_WRITING, TestConstants.ORACLE_DRIVER, TestConstants.ORACLE_DIALECT_CLASS, TestConstants.ORACLE_DIALECT_NAME,
-						false, true, false);
+				dataSource = createDataSource(TestConstants.ORACLE_LABEL_WRITING, TestConstants.ORACLE_URL_WRITING,
+						TestConstants.ORACLE_USER_WRITING, TestConstants.ORACLE_PWD_WRITING,
+						TestConstants.ORACLE_DRIVER, TestConstants.ORACLE_DIALECT_CLASS,
+						TestConstants.ORACLE_DIALECT_NAME, false, true, false);
 			} else {
-				dataSource = createDataSource(TestConstants.ORACLE_LABEL_READING, TestConstants.ORACLE_URL_READING, TestConstants.ORACLE_USER_READING,
-						TestConstants.ORACLE_PWD_READING, TestConstants.ORACLE_DRIVER, TestConstants.ORACLE_DIALECT_CLASS, TestConstants.ORACLE_DIALECT_NAME,
-						true, false, false);
+				dataSource = createDataSource(TestConstants.ORACLE_LABEL_READING, TestConstants.ORACLE_URL_READING,
+						TestConstants.ORACLE_USER_READING, TestConstants.ORACLE_PWD_READING,
+						TestConstants.ORACLE_DRIVER, TestConstants.ORACLE_DIALECT_CLASS,
+						TestConstants.ORACLE_DIALECT_NAME, true, false, false);
 			}
 			break;
 		case SQLSERVER:
 			if (isWritingDatasource) {
-				dataSource = createDataSource(TestConstants.SQLSERVER_LABEL_WRITING, TestConstants.SQLSERVER_URL_WRITING, TestConstants.SQLSERVER_USER_WRITING,
-						TestConstants.SQLSERVER_PWD_WRITING, TestConstants.SQLSERVER_DRIVER, TestConstants.SQLSERVER_DIALECT_CLASS,
-						TestConstants.SQLSERVER_DIALECT_NAME, false, true, false);
+				dataSource = createDataSource(TestConstants.SQLSERVER_LABEL_WRITING,
+						TestConstants.SQLSERVER_URL_WRITING, TestConstants.SQLSERVER_USER_WRITING,
+						TestConstants.SQLSERVER_PWD_WRITING, TestConstants.SQLSERVER_DRIVER,
+						TestConstants.SQLSERVER_DIALECT_CLASS, TestConstants.SQLSERVER_DIALECT_NAME, false, true,
+						false);
 			} else {
-				dataSource = createDataSource(TestConstants.SQLSERVER_LABEL_READING, TestConstants.SQLSERVER_URL_READING, TestConstants.SQLSERVER_USER_READING,
-						TestConstants.SQLSERVER_PWD_READING, TestConstants.SQLSERVER_DRIVER, TestConstants.SQLSERVER_DIALECT_CLASS,
-						TestConstants.SQLSERVER_DIALECT_NAME, true, false, false);
+				dataSource = createDataSource(TestConstants.SQLSERVER_LABEL_READING,
+						TestConstants.SQLSERVER_URL_READING, TestConstants.SQLSERVER_USER_READING,
+						TestConstants.SQLSERVER_PWD_READING, TestConstants.SQLSERVER_DRIVER,
+						TestConstants.SQLSERVER_DIALECT_CLASS, TestConstants.SQLSERVER_DIALECT_NAME, true, false,
+						false);
 			}
 			break;
 		case HSQLDB:
 			if (isWritingDatasource) {
-				dataSource = createDataSource(TestConstants.HSQLDB_LABEL_WRITING, TestConstants.HSQLDB_URL_WRITING, TestConstants.HSQLDB_USER_WRITING,
-						TestConstants.HSQLDB_PWD_WRITING, TestConstants.HSQLDB_DRIVER, TestConstants.HSQLDB_DIALECT_CLASS, TestConstants.HSQLDB_DIALECT_NAME,
-						false, true, false);
+				dataSource = createDataSource(TestConstants.HSQLDB_LABEL_WRITING, TestConstants.HSQLDB_URL_WRITING,
+						TestConstants.HSQLDB_USER_WRITING, TestConstants.HSQLDB_PWD_WRITING,
+						TestConstants.HSQLDB_DRIVER, TestConstants.HSQLDB_DIALECT_CLASS,
+						TestConstants.HSQLDB_DIALECT_NAME, false, true, false);
 			} else {
-				dataSource = createDataSource(TestConstants.HSQLDB_LABEL_READING, TestConstants.HSQLDB_URL_READING, TestConstants.HSQLDB_USER_READING,
-						TestConstants.HSQLDB_PWD_READING, TestConstants.HSQLDB_DRIVER, TestConstants.HSQLDB_DIALECT_CLASS, TestConstants.HSQLDB_DIALECT_NAME,
-						true, false, false);
+				dataSource = createDataSource(TestConstants.HSQLDB_LABEL_READING, TestConstants.HSQLDB_URL_READING,
+						TestConstants.HSQLDB_USER_READING, TestConstants.HSQLDB_PWD_READING,
+						TestConstants.HSQLDB_DRIVER, TestConstants.HSQLDB_DIALECT_CLASS,
+						TestConstants.HSQLDB_DIALECT_NAME, true, false, false);
 			}
 			break;
 		}
@@ -96,8 +107,9 @@ public class TestDataSourceFactory {
 		return dataSource;
 	}
 
-	public static IDataSource createDataSource(String label, String url, String user, String password, String driver, String hibDialectClass,
-			String hibDialectName, boolean isReadOnly, boolean isWriteDefault, boolean useForDataprep) {
+	public static IDataSource createDataSource(String label, String url, String user, String password, String driver,
+			String hibDialectClass, String hibDialectName, boolean isReadOnly, boolean isWriteDefault,
+			boolean useForDataprep) {
 		IDataSource dataSource = DataSourceFactory.getDataSource();
 
 		int id = RANDOM.nextInt(999999) + 1;
@@ -123,9 +135,9 @@ public class TestDataSourceFactory {
 		 * dataSourceFoodmart.setJndi(""); dataSourceFoodmart.setUrlConnection("jdbc:mysql://localhost:3306/foodmart"); dataSourceFoodmart.setUser("root");
 		 * dataSourceFoodmart.setPwd("root"); dataSourceFoodmart.setDriver("com.mysql.jdbc.Driver");
 		 * //dataSourceFoodmart.setDialectId(hibDataSource.getDialect().getValueId()); //dataSourceFoodmart.setEngines(hibDataSource.getSbiEngineses());
-		 * //dataSourceFoodmart.setObjects(hibDataSource.getSbiObjectses()); dataSourceFoodmart.setSchemaAttribute("");
-		 * dataSourceFoodmart.setMultiSchema(false); dataSourceFoodmart.setHibDialectClass("org.hibernate.dialect.MySQLInnoDBDialect");
-		 * dataSourceFoodmart.setHibDialectName("sbidomains.nm.mysql"); dataSourceFoodmart.setReadOnly(false); dataSourceFoodmart.setWriteDefault(false);
+		 * //dataSourceFoodmart.setObjects(hibDataSource.getSbiObjectses()); dataSourceFoodmart.setSchemaAttribute(""); dataSourceFoodmart.setMultiSchema(false);
+		 * dataSourceFoodmart.setHibDialectClass("org.hibernate.dialect.MySQLInnoDBDialect"); dataSourceFoodmart.setHibDialectName("sbidomains.nm.mysql");
+		 * dataSourceFoodmart.setReadOnly(false); dataSourceFoodmart.setWriteDefault(false);
 		 */
 
 		return dataSource;

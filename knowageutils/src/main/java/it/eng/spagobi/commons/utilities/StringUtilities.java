@@ -28,6 +28,7 @@ import java.io.StringWriter;
 import java.io.Writer;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -62,7 +63,7 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 public class StringUtilities {
 
 	private static final Logger LOGGER = Logger.getLogger(StringUtilities.class);
-	private static final Random RANDOM = new Random();
+	private static final Random RANDOM = new SecureRandom();
 
 	// this should be moved to ParametersUtilities.java
 	public static final String START_PARAMETER = "$P{";
