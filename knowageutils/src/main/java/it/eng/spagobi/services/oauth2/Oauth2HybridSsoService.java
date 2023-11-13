@@ -20,8 +20,12 @@ package it.eng.spagobi.services.oauth2;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.security.interfaces.RSAPublicKey;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -31,6 +35,7 @@ import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.log4j.LogMF;
 import org.apache.log4j.Logger;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.auth0.jwk.Jwk;
@@ -44,9 +49,12 @@ import com.auth0.jwt.interfaces.Claim;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.auth0.jwt.interfaces.Verification;
 
+import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.security.OAuth2.OAuth2Client;
 import it.eng.spagobi.security.OAuth2.OAuth2Config;
 import it.eng.spagobi.services.common.JWTSsoService;
+import it.eng.spagobi.services.common.SsoServiceInterface;
+import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 /**
@@ -59,14 +67,13 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
  */
 public class Oauth2HybridSsoService extends JWTSsoService {
 
-	static private Logger logger = Logger.getLogger(Oauth2HybridSsoService.class);
+	private static Logger logger = Logger.getLogger(Oauth2HybridSsoService.class);
 
 	private static int USER_JWT_TOKEN_EXPIRE_HOURS = 10; // JWT token for regular users will expire in 10 HOURS
 
 	@Override
 	public String readUserIdentifier(HttpServletRequest request) {
-		String toReturn = null;
-		String clearTextUserId = null;
+		String jwtToken = null;
 		HttpSession session = request.getSession();
 		String accessToken = (String) session.getAttribute(Oauth2SsoService.ACCESS_TOKEN);
 		if (accessToken == null) {
@@ -76,23 +83,24 @@ public class Oauth2HybridSsoService extends JWTSsoService {
 		LogMF.debug(logger, "Access token found: [{0}]", accessToken);
 		if (OAuth2Config.getInstance().hasUserInfoUrl()) {
 			logger.debug("User info URL found from config [" + OAuth2Config.getInstance().getUserInfoUrl() + "]; getting user id from it ...");
-			clearTextUserId = getUserIdFromProfileInfoURL(accessToken, OAuth2Config.getInstance().getUserInfoUrl());
+			jwtToken = getJWTTokenFromProfileInfoURL(accessToken, OAuth2Config.getInstance().getUserInfoUrl());
 		} else {
 			logger.debug("User info URL not found from config; getting user id from access token as JWT token ....");
-			clearTextUserId = getUserIdFromAccessToken(accessToken);
+			jwtToken = getJWTTokenFromAccessToken(accessToken);
 		}
 
-		LogMF.debug(logger, "User id detected [{0}]", clearTextUserId);
+		LogMF.debug(logger, "OUT: returning [{0}]", jwtToken);
+		return jwtToken;
+	}
+
+	private String createJWTToken(Map<String, String> claims) {
 		Calendar calendar = Calendar.getInstance();
 		calendar.add(Calendar.HOUR, USER_JWT_TOKEN_EXPIRE_HOURS);
 		Date expiresAt = calendar.getTime();
-		toReturn = JWTSsoService.userId2jwtToken(clearTextUserId, expiresAt);
-
-		LogMF.debug(logger, "OUT: returning [{0}]", toReturn);
-		return toReturn;
+		return JWTSsoService.map2jwtToken(claims, expiresAt);
 	}
 
-	private String getUserIdFromProfileInfoURL(String accessToken, String userInfoUrl) {
+	private String getJWTTokenFromProfileInfoURL(String accessToken, String userInfoUrl) {
 		try {
 			OAuth2Client oauth2Client = new OAuth2Client();
 
@@ -114,14 +122,29 @@ public class Oauth2HybridSsoService extends JWTSsoService {
 			JSONObject jsonObject = new JSONObject(responseStr);
 
 			String userId = jsonObject.getString(OAuth2Config.getInstance().getUserIdClaim());
+			Assert.assertNotEmpty(userId, "User id was not found");
 			logger.debug("User id is [" + userId + "]");
-			return userId;
+
+			Map<String, String> claims = new HashMap<>();
+			claims.put(SsoServiceInterface.USER_ID, userId);
+
+			String userName = getUserName(jsonObject);
+			if (StringUtilities.isNotEmpty(userName)) {
+				logger.debug("User name is [" + userName + "]");
+				claims.put(JWTSsoService.USERNAME_CLAIM, userName);
+			} else {
+				logger.debug("User name not found");
+			}
+
+			String jwtToken = createJWTToken(claims);
+			LogMF.debug(logger, "JWT token created:\n{0}", jwtToken);
+			return jwtToken;
 		} catch (Exception e) {
 			throw new SpagoBIRuntimeException("Cannot get user id from access token [" + accessToken + "] by user profile info URL [" + userInfoUrl + "]", e);
 		}
 	}
 
-	private String getUserIdFromAccessToken(String accessToken) {
+	private String getJWTTokenFromAccessToken(String accessToken) {
 		try {
 			DecodedJWT decodedJWT = JWT.decode(accessToken);
 			logger.debug("Access token properly decoded as JWT token");
@@ -137,11 +160,54 @@ public class Oauth2HybridSsoService extends JWTSsoService {
 			if (userIdClaim.isNull()) {
 				throw new SpagoBIRuntimeException("Claim [" + claimName + "] not found on access token.");
 			}
-			String userId = decodedJWT.getClaim(claimName).asString();
-			return userId;
+			String userId = userIdClaim.asString();
+			logger.debug("User id is [" + userId + "]");
+
+			Map<String, String> claims = new HashMap<>();
+			claims.put(SsoServiceInterface.USER_ID, userId);
+
+			String userName = getUserName(decodedJWT);
+			if (StringUtilities.isNotEmpty(userName)) {
+				logger.debug("User name is [" + userName + "]");
+				claims.put(JWTSsoService.USERNAME_CLAIM, userName);
+			} else {
+				logger.debug("User name not found");
+			}
+
+			String jwtToken = createJWTToken(claims);
+			LogMF.debug(logger, "JWT token created:\n{0}", jwtToken);
+			return jwtToken;
 		} catch (JWTVerificationException | JwkException | MalformedURLException e) {
 			throw new SpagoBIRuntimeException("Cannot get user id from access token [" + accessToken + "]", e);
 		}
+	}
+
+	private String getUserName(DecodedJWT decodedJWT) {
+		String userNameClaimsConfig = OAuth2Config.getInstance().getUserNameClaim();
+		String[] userNameClaims = userNameClaimsConfig.split(" "); // configuration may be something like "name surname" i.e. a composition of different claims
+		// @formatter:off
+		return Arrays.asList(userNameClaims).stream() // iterate over all claims (for example "name" and "surname")
+				.filter(claimName -> !decodedJWT.getClaim(claimName).isNull()) // we filter out claim names that are not available in input JWT token
+				.map(claimName -> decodedJWT.getClaim(claimName).asString()) // for each claim get its value from JWT token
+				.collect(Collectors.joining(" ")); // join values
+		// @formatter:on
+	}
+
+	private String getUserName(JSONObject jsonObject) {
+		String userNameClaimsConfig = OAuth2Config.getInstance().getUserNameClaim();
+		String[] userNameClaims = userNameClaimsConfig.split(" "); // configuration may be something like "name surname" i.e. a composition of different claims
+		// @formatter:off
+		return Arrays.asList(userNameClaims).stream() // iterate over all claims (for example "name" and "surname")
+				.filter(jsonObject::has) // we filter out claim names that are not available in input JSON object
+				.map(claimName -> {
+					try {
+						return jsonObject.getString(claimName); // for each claim get its value from JSON object
+					} catch (JSONException e) {
+						throw new SpagoBIRuntimeException("An error occurred while getting user name, parsing JSON object:\n" + jsonObject, e);
+					}
+				})
+				.collect(Collectors.joining(" ")); // join values
+		// @formatter:on
 	}
 
 }

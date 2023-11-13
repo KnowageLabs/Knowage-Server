@@ -18,13 +18,13 @@
 package it.eng.spagobi.security.OAuth2;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
 import org.apache.commons.lang3.EnumUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  * @author Jeremy Branham (jeremy@savantly.net), Davide Zerbetto (davide.zerbetto@eng.it)
@@ -32,15 +32,14 @@ import org.apache.log4j.Logger;
  */
 public class OAuth2Config {
 
-	public static enum FLOWTYPE {
-		PKCE, AUTHORIZATION_CODE;
+	public enum FlowType {
+		PKCE, AUTHORIZATION_CODE, OIDC_IMPLICIT, NONE;
 	}
 
-	static private Logger logger = Logger.getLogger(OAuth2Config.class);
+	private static final Logger LOGGER = LogManager.getLogger(OAuth2Config.class);
+	private static final OAuth2Config INSTANCE = new OAuth2Config();
 
-	private static OAuth2Config INSTANCE = new OAuth2Config();
-
-	private final FLOWTYPE type;
+	private final FlowType type;
 	private final String authorizeUrl;
 	private final String redirectUrl;
 	private final String clientId;
@@ -61,131 +60,170 @@ public class OAuth2Config {
 	private final String applicationId;
 	private final String tokenPath;
 	private final String tokenBody;
+	private final String jwtTokenIssuer;
+	private final String idTokenJsonRolesPath;
 
 	public OAuth2Config() {
 
 		String typeStr = Optional.ofNullable(System.getProperty("oauth2_flow_type", System.getenv("OAUTH2_FLOW_TYPE")))
-				.orElseThrow(() -> new RuntimeException("Missing both oauth2_flow_type system property and OAUTH2_FLOW_TYPE environment variable"));
+				.orElse("").toUpperCase();
 
-		if (!EnumUtils.isValidEnum(FLOWTYPE.class, typeStr.toUpperCase())) {
-			throw new RuntimeException("Specified OAUTH2_FLOW_TYPE [" + typeStr + "] is not valid. Valid values are " + Arrays.toString(FLOWTYPE.values())
-					+ " and check is case insensitive.");
-		}
+		if (EnumUtils.isValidEnum(FlowType.class, typeStr) && FlowType.valueOf(typeStr) != FlowType.NONE) {
+			type = FlowType.valueOf(typeStr);
 
-		this.type = FLOWTYPE.valueOf(typeStr.toUpperCase());
+			clientId = Optional.ofNullable(System.getProperty("oauth2_client_id", System.getenv("OAUTH2_CLIENT_ID")))
+					.orElseThrow(() -> new RuntimeException("Missing OAUTH2_CLIENT_ID"));
 
-		this.clientId = Optional.ofNullable(System.getProperty("oauth2_client_id", System.getenv("OAUTH2_CLIENT_ID")))
-				.orElseThrow(() -> new RuntimeException("Missing OAUTH2_CLIENT_ID"));
+			clientSecret = System.getProperty("oauth2_client_secret", System.getenv("OAUTH2_CLIENT_SECRET"));
 
-		this.clientSecret = System.getProperty("oauth2_client_secret", System.getenv("OAUTH2_CLIENT_SECRET"));
+			authorizeUrl = Optional
+					.ofNullable(System.getProperty("oauth2_authorize_url", System.getenv("OAUTH2_AUTHORIZE_URL")))
+					.orElseThrow(() -> new RuntimeException("Missing OAUTH2_AUTHORIZE_URL"));
 
-		this.authorizeUrl = Optional.ofNullable(System.getProperty("oauth2_authorize_url", System.getenv("OAUTH2_AUTHORIZE_URL")))
-				.orElseThrow(() -> new RuntimeException("Missing OAUTH2_AUTHORIZE_URL"));
+			redirectUrl = Optional
+					.ofNullable(System.getProperty("oauth2_redirect_url", System.getenv("OAUTH2_REDIRECT_URL")))
+					.orElseThrow(() -> new RuntimeException("Missing OAUTH2_REDIRECT_URL"));
 
-		this.redirectUrl = Optional.ofNullable(System.getProperty("oauth2_redirect_url", System.getenv("OAUTH2_REDIRECT_URL")))
-				.orElseThrow(() -> new RuntimeException("Missing OAUTH2_REDIRECT_URL"));
+			accessTokenUrl = Optional
+					.ofNullable(System.getProperty("oauth2_access_token_url", System.getenv("OAUTH2_ACCESS_TOKEN_URL")))
+					.orElseThrow(() -> new RuntimeException("Missing OAUTH2_TOKEN_URL"));
 
-		this.accessTokenUrl = Optional.ofNullable(System.getProperty("oauth2_access_token_url", System.getenv("OAUTH2_ACCESS_TOKEN_URL")))
-				.orElseThrow(() -> new RuntimeException("Missing OAUTH2_TOKEN_URL"));
+			jwksUrl = System.getProperty("oauth2_jwks_url", System.getenv("OAUTH2_JWKS_URL"));
 
-		this.jwksUrl = System.getProperty("oauth2_jwks_url", System.getenv("OAUTH2_JWKS_URL"));
+//	userInfoUrl = Optional.ofNullable(System.getProperty("oauth2_user_info_url", System.getenv("OAUTH2_USER_INFO_URL")))
+//			.orElseThrow(() -> new RuntimeException("missing OAUTH2_USER_INFO_URL"));
 
-//		this.userInfoUrl = Optional.ofNullable(System.getProperty("oauth2_user_info_url", System.getenv("OAUTH2_USER_INFO_URL")))
-//				.orElseThrow(() -> new RuntimeException("missing OAUTH2_USER_INFO_URL"));
+			userInfoUrl = System.getProperty("oauth2_user_info_url", System.getenv("OAUTH2_USER_INFO_URL"));
 
-		this.userInfoUrl = System.getProperty("oauth2_user_info_url", System.getenv("OAUTH2_USER_INFO_URL"));
+//	adminEmail = Optional.ofNullable(System.getProperty("oauth2_admin_email", System.getenv("OAUTH2_ADMIN_EMAIL")))
+//			.orElseThrow(() -> new RuntimeException("missing OAUTH2_ADMIN_EMAIL"));
 
-//		this.adminEmail = Optional.ofNullable(System.getProperty("oauth2_admin_email", System.getenv("OAUTH2_ADMIN_EMAIL")))
-//				.orElseThrow(() -> new RuntimeException("missing OAUTH2_ADMIN_EMAIL"));
+			adminId = System.getProperty("oauth2_admin_id", System.getenv("OAUTH2_ADMIN_ID"));
 
-		this.adminId = System.getProperty("oauth2_admin_id", System.getenv("OAUTH2_ADMIN_ID"));
+			adminEmail = System.getProperty("oauth2_admin_email", System.getenv("OAUTH2_ADMIN_EMAIL"));
 
-		this.adminEmail = System.getProperty("oauth2_admin_email", System.getenv("OAUTH2_ADMIN_EMAIL"));
+			adminPassword = System.getProperty("oauth2_admin_password", System.getenv("OAUTH2_ADMIN_PASSWORD"));
 
-		this.adminPassword = System.getProperty("oauth2_admin_password", System.getenv("OAUTH2_ADMIN_PASSWORD"));
+			scopes = Optional.ofNullable(System.getProperty("oauth2_scopes", System.getenv("OAUTH2_SCOPES")))
+					.orElse("openid profile");
 
-		this.scopes = Optional.ofNullable(System.getProperty("oauth2_scopes", System.getenv("OAUTH2_SCOPES"))).orElse("openid profile");
+			userIdClaim = Optional
+					.ofNullable(System.getProperty("oauth2_user_id_claim", System.getenv("OAUTH2_USER_ID_CLAIM")))
+					.orElse("sub");
 
-		this.userIdClaim = Optional.ofNullable(System.getProperty("oauth2_user_id_claim", System.getenv("OAUTH2_USER_ID_CLAIM"))).orElse("sub");
+			userNameClaim = Optional
+					.ofNullable(System.getProperty("oauth2_user_name_claim", System.getenv("OAUTH2_USER_NAME_CLAIM")))
+					.orElse("preferred_username");
 
-		this.userNameClaim = Optional.ofNullable(System.getProperty("oauth2_user_name_claim", System.getenv("OAUTH2_USER_NAME_CLAIM")))
-				.orElse("preferred_username");
-
-		final Optional<String> _attributes = Optional.ofNullable(System.getProperty("oauth2_profile_attributes", System.getenv("OAUTH2_PROFILE_ATTRIBUTES")));
-		if (_attributes.isPresent()) {
-			String[] parts = _attributes.get().split(",");
-			for (int i = 0; i < parts.length; i++) {
-				this.profileAttributes.add(parts[i]);
+			final Optional<String> attributes = Optional.ofNullable(
+					System.getProperty("oauth2_profile_attributes", System.getenv("OAUTH2_PROFILE_ATTRIBUTES")));
+			if (attributes.isPresent()) {
+				String[] parts = attributes.get().split(",");
+				for (int i = 0; i < parts.length; i++) {
+					profileAttributes.add(parts[i]);
+				}
 			}
+
+			restApiBaseUrl = System.getProperty("oauth2_rest_base_url", System.getenv("OAUTH2_REST_BASE_URL"));
+
+			organizationInfoPath = Optional.ofNullable(
+					System.getProperty("oauth2_organization_info_path", System.getenv("OAUTH2_ORGANIZATION_INFO_PATH")))
+					.orElse("projects/");
+
+			rolesPath = Optional.ofNullable(System.getProperty("oauth2_roles_path", System.getenv("OAUTH2_ROLES_PATH")))
+					.orElse("applications/{0}/roles");
+
+			applicationId = System.getProperty("oauth2_application_id", System.getenv("OAUTH2_APPLICATION_ID"));
+
+			tokenPath = Optional.ofNullable(System.getProperty("oauth2_token_path", System.getenv("OAUTH2_TOKEN_PATH")))
+					.orElse("auth/tokens");
+
+			tokenBody = Optional.ofNullable(System.getProperty("oauth2_token_body", System.getenv("OAUTH2_TOKEN_BODY")))
+					.orElse("{\"name\": \"{0}\",\"password\": \"{1}\"}");
+
+			jwtTokenIssuer = System.getProperty("oauth2_jwt_token_issuer", System.getenv("OAUTH2_JWT_TOKEN_ISSUER"));
+
+			idTokenJsonRolesPath = System.getProperty("oauth2_id_token_roles_json_path",
+					System.getenv("OAUTH2_ID_TOKEN_ROLES_JSON_PATH"));
+
+		} else {
+			type = FlowType.NONE;
+			authorizeUrl = null;
+			redirectUrl = null;
+			clientId = null;
+			clientSecret = null;
+			accessTokenUrl = null;
+			jwksUrl = null;
+			userInfoUrl = null;
+			adminId = null;
+			adminEmail = null;
+			adminPassword = null;
+			scopes = null;
+			userIdClaim = null;
+			userNameClaim = null;
+			restApiBaseUrl = null;
+			organizationInfoPath = null;
+			rolesPath = null;
+			applicationId = null;
+			tokenPath = null;
+			tokenBody = null;
+			jwtTokenIssuer = null;
+			idTokenJsonRolesPath = null;
 		}
 
-		this.restApiBaseUrl = System.getProperty("oauth2_rest_base_url", System.getenv("OAUTH2_REST_BASE_URL"));
-
-		this.organizationInfoPath = Optional.ofNullable(System.getProperty("oauth2_organization_info_path", System.getenv("OAUTH2_ORGANIZATION_INFO_PATH")))
-				.orElse("projects/");
-
-		this.rolesPath = Optional.ofNullable(System.getProperty("oauth2_roles_path", System.getenv("OAUTH2_ROLES_PATH"))).orElse("applications/{0}/roles");
-
-		this.applicationId = System.getProperty("oauth2_application_id", System.getenv("OAUTH2_APPLICATION_ID"));
-
-		this.tokenPath = Optional.ofNullable(System.getProperty("oauth2_token_path", System.getenv("OAUTH2_TOKEN_PATH"))).orElse("auth/tokens");
-
-		this.tokenBody = Optional.ofNullable(System.getProperty("oauth2_token_body", System.getenv("OAUTH2_TOKEN_BODY")))
-				.orElse("{\"name\": \"{0}\",\"password\": \"{1}\"}");
-
-		logger.debug("constructed OAuth2Config: " + this.toString());
+		LOGGER.debug("Constructed OAuth2Config: {}", this);
 	}
 
 	public static OAuth2Config getInstance() {
 		return INSTANCE;
 	}
 
-	public FLOWTYPE getFlowType() {
-		return this.type;
+	public FlowType getFlowType() {
+		return type;
 	}
 
 	public String getAuthorizeUrl() {
-		return this.authorizeUrl;
+		return authorizeUrl;
 	}
 
 	public String getRedirectUrl() {
-		return this.redirectUrl;
+		return redirectUrl;
 	}
 
 	public String getClientId() {
-		return this.clientId;
+		return clientId;
 	}
 
 	public String getClientSecret() {
-		return this.clientSecret;
+		return clientSecret;
 	}
 
 	public String getAccessTokenUrl() {
-		return this.accessTokenUrl;
+		return accessTokenUrl;
 	}
 
 	public String getUserInfoUrl() {
-		return this.userInfoUrl;
+		return userInfoUrl;
 	}
 
 	public String getJWKSUrl() {
-		return this.jwksUrl;
+		return jwksUrl;
 	}
 
 	public String getScopes() {
-		return this.scopes;
+		return scopes;
 	}
 
 	public String getAdminId() {
-		return this.adminId;
+		return adminId;
 	}
 
 	public String getAdminEmail() {
-		return this.adminEmail;
+		return adminEmail;
 	}
 
 	public String getAdminPassword() {
-		return this.adminPassword;
+		return adminPassword;
 	}
 
 	public String getUserIdClaim() {
@@ -197,44 +235,74 @@ public class OAuth2Config {
 	}
 
 	public List<String> getProfileAttributes() {
-		return this.profileAttributes;
+		return profileAttributes;
 	}
 
 	public String getRestAPIBaseUrl() {
-		return this.restApiBaseUrl;
+		return restApiBaseUrl;
 	}
 
 	public String getOrganizationInfoPath() {
-		return this.organizationInfoPath;
+		return organizationInfoPath;
 	}
 
 	public String getRolesPath() {
-		return this.rolesPath;
+		return rolesPath;
 	}
 
 	public String getApplicationId() {
-		return this.applicationId;
+		return applicationId;
 	}
 
 	public String getTokenPath() {
-		return this.tokenPath;
+		return tokenPath;
 	}
 
 	public String getTokenBody() {
-		return this.tokenBody;
+		return tokenBody;
 	}
 
 	public boolean hasUserInfoUrl() {
-		return StringUtils.isNotBlank(this.userInfoUrl);
+		return StringUtils.isNotBlank(userInfoUrl);
+	}
+
+	public String getJwtTokenIssuer() {
+		return jwtTokenIssuer;
+	}
+
+	public String getIdTokenJsonRolesPath() {
+		return idTokenJsonRolesPath;
 	}
 
 	@Override
 	public String toString() {
-		return "OAuth2Config [type=" + type + ", authorizeUrl=" + authorizeUrl + ", redirectUrl=" + redirectUrl + ", clientId=" + clientId + ", accessTokenUrl="
-				+ accessTokenUrl + ", jwksUrl=" + jwksUrl + ", userInfoUrl=" + userInfoUrl + ", adminId=" + adminId + ", adminEmail=" + adminEmail + ", scopes="
-				+ scopes + ", userIdClaim=" + userIdClaim + ", userNameClaim=" + userNameClaim + ", profileAttributes=" + profileAttributes
-				+ ", restApiBaseUrl=" + restApiBaseUrl + ", organizationInfoPath=" + organizationInfoPath + ", rolesPath=" + rolesPath + ", applicationId="
-				+ applicationId + ", tokenPath=" + tokenPath + ", tokenBody=" + tokenBody + "]";
+		return "OAuth2Config [type=" + type + ", authorizeUrl=" + authorizeUrl + ", redirectUrl=" + redirectUrl
+				+ ", clientId=" + clientId + ", clientSecret=" + clientSecret + ", accessTokenUrl=" + accessTokenUrl
+				+ ", jwksUrl=" + jwksUrl + ", userInfoUrl=" + userInfoUrl + ", adminId=" + adminId + ", adminEmail="
+				+ adminEmail + ", adminPassword=" + adminPassword + ", scopes=" + scopes + ", userIdClaim="
+				+ userIdClaim + ", userNameClaim=" + userNameClaim + ", profileAttributes=" + profileAttributes
+				+ ", restApiBaseUrl=" + restApiBaseUrl + ", organizationInfoPath=" + organizationInfoPath
+				+ ", rolesPath=" + rolesPath + ", applicationId=" + applicationId + ", tokenPath=" + tokenPath
+				+ ", tokenBody=" + tokenBody + ", jwtTokenIssuer=" + jwtTokenIssuer + ", idTokenJsonRolesPath="
+				+ idTokenJsonRolesPath + "]";
 	}
 
+	public String getFlowJSPPath() {
+		String ret = null;
+		switch (type) {
+		case AUTHORIZATION_CODE:
+			ret = "/oauth2/authorization_code/flow.jsp";
+			break;
+		case PKCE:
+			ret = "/oauth2/pkce/flow.jsp";
+			break;
+		case OIDC_IMPLICIT:
+			ret = "/oauth2/oidc_implicit/flow.jsp";
+			break;
+		case NONE:
+		default:
+			ret = null;
+		}
+		return ret;
+	}
 }

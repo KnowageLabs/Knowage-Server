@@ -39,10 +39,14 @@ import javax.ws.rs.core.UriInfo;
 
 import org.apache.clerezza.jaxrs.utils.form.FormFile;
 import org.apache.clerezza.jaxrs.utils.form.MultiPartBody;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import it.eng.spagobi.api.AbstractSpagoBIResource;
+import it.eng.spagobi.commons.constants.CommunityFunctionalityConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
+import it.eng.spagobi.services.rest.annotations.UserConstraint;
 import it.eng.spagobi.tools.catalogue.bo.Artifact;
 import it.eng.spagobi.tools.catalogue.bo.Content;
 import it.eng.spagobi.tools.catalogue.dao.IArtifactsDAO;
@@ -53,13 +57,15 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 @ManageAuthorization
 public class MondrianResource extends AbstractSpagoBIResource {
 
+	private static final Logger LOGGER = LogManager.getLogger(MondrianResource.class);
+
 	@Context
 	private UriInfo uri;
 
-	// TODO insert correct Functionalities
 	@GET
 	@Path("/")
 	@Produces(MediaType.APPLICATION_JSON)
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.MONDRIAN_SCHEMA_MANAGEMENT })
 	public List<Artifact> getAll() {
 
 		List<Artifact> mondrians;
@@ -71,17 +77,16 @@ public class MondrianResource extends AbstractSpagoBIResource {
 			return mondrians;
 
 		} catch (Exception e) {
-
-			e.printStackTrace();
+			LOGGER.error("Non-fatal error getting mondrians", e);
 		}
 
-		return new ArrayList<Artifact>();
+		return new ArrayList<>();
 	}
 
-	// TODO insert correct Functionalities
 	@GET
 	@Path("/{ID}")
 	@Produces(MediaType.APPLICATION_JSON)
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.MONDRIAN_SCHEMA_MANAGEMENT })
 	public Artifact getById(@PathParam("ID") int id) {
 
 		Artifact artifact = null;
@@ -92,10 +97,9 @@ public class MondrianResource extends AbstractSpagoBIResource {
 			artifact = artifactDAO.loadArtifactById(id);
 
 		} catch (Exception e) {
-			logger.error("Error while getting artifact with id: " + id, e);
-
+			LOGGER.error("Non-fatal error while getting artifact with id: " + id, e);
 		} finally {
-			logger.debug("OUT");
+			LOGGER.debug("OUT");
 		}
 		return artifact;
 	}
@@ -103,6 +107,7 @@ public class MondrianResource extends AbstractSpagoBIResource {
 	@GET
 	@Path("/name={name}")
 	@Produces(MediaType.APPLICATION_JSON)
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.MONDRIAN_SCHEMA_MANAGEMENT })
 	public Artifact getByName(@PathParam("name") String name) {
 		Artifact artifact = null;
 		try {
@@ -110,18 +115,19 @@ public class MondrianResource extends AbstractSpagoBIResource {
 			artifactDAO.setUserProfile(getUserProfile());
 			artifact = artifactDAO.loadArtifactByNameAndType(name, "MONDRIAN_SCHEMA");
 		} catch (Exception e) {
-			logger.error("Error while getting artifact with name: " + name, e);
-			throw new SpagoBIServiceException(this.request.getPathInfo(), "Error while getting artifact with name: " + name, e);
+			LOGGER.error("Non-fatal error while getting artifact with name: " + name, e);
+			throw new SpagoBIServiceException(this.request.getPathInfo(),
+					"Error while getting artifact with name: " + name, e);
 		} finally {
-			logger.debug("OUT");
+			LOGGER.debug("OUT");
 		}
 		return artifact;
 	}
 
-	// TODO insert correct Functionalities
 	@GET
 	@Path("/{ID}/versions")
 	@Produces(MediaType.APPLICATION_JSON)
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.MONDRIAN_SCHEMA_MANAGEMENT })
 	public List<Content> getAllContent(@PathParam("ID") int id) {
 
 		List<Content> versions = null;
@@ -133,18 +139,17 @@ public class MondrianResource extends AbstractSpagoBIResource {
 			versions = artifactDAO.loadArtifactVersions(id);
 
 		} catch (Exception e) {
-			logger.error("Error while getting artifact versions with id: " + id, e);
-
+			LOGGER.error("Non-fatal error while getting artifact versions with id: " + id, e);
 		} finally {
-			logger.debug("OUT");
+			LOGGER.debug("OUT");
 		}
 		return versions;
 	}
 
-	// TODO insert correct Functionalities
 	@GET
 	@Path("/{ID}/versions/{contentID}")
 	@Produces(MediaType.APPLICATION_JSON)
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.MONDRIAN_SCHEMA_MANAGEMENT })
 	public Content getContent(@PathParam("ID") int id, @PathParam("contentID") int contentId) {
 
 		try {
@@ -156,18 +161,16 @@ public class MondrianResource extends AbstractSpagoBIResource {
 					return content;
 				}
 			}
-
 		} catch (Exception e) {
-			logger.error("Error while getting artifact versions with id: " + id, e);
-
+			LOGGER.error("Non-fatal error while getting artifact versions with id: " + id, e);
 		}
 		return null;
 	}
 
-	// TODO insert correct Functionalities
 	@GET
 	@Path("/{ID}/versions/{contentID}/file")
 	@Produces({ MediaType.APPLICATION_OCTET_STREAM })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.MONDRIAN_SCHEMA_MANAGEMENT })
 	public Response getContentFile(@PathParam("ID") Integer id, @PathParam("contentID") Integer contentId) {
 
 		IArtifactsDAO artifactDAO = DAOFactory.getArtifactsDAO();
@@ -184,16 +187,15 @@ public class MondrianResource extends AbstractSpagoBIResource {
 			return response.build();
 
 		} catch (Exception e) {
-			logger.error("Error while getting artifact versions with id: " + id, e);
-
+			LOGGER.error("Non-fatal error while getting artifact versions with id: " + id, e);
 		}
 		return Response.status(Status.BAD_REQUEST).entity("Error ").build();
 	}
 
-	// TODO insert correct Functionalities
 	@POST
 	@Path("/")
 	@Consumes(MediaType.APPLICATION_JSON)
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.MONDRIAN_SCHEMA_MANAGEMENT })
 	public Response add(@Valid Artifact artifact) {
 
 		if (artifact == null) {
@@ -212,17 +214,16 @@ public class MondrianResource extends AbstractSpagoBIResource {
 			return Response.ok(artifact).build();
 
 		} catch (Exception e) {
-
 			Response.notModified().build();
-			logger.error("Error while adding new artifact", e);
+			LOGGER.error("Error while adding new artifact", e);
 			throw new SpagoBIRuntimeException("Error while adding new artifact", e);
 		}
 
 	}
 
-	// TODO insert correct Functionalities
 	@POST
 	@Path("/{ID}/versions")
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.MONDRIAN_SCHEMA_MANAGEMENT })
 	public Response uploadFile(MultiPartBody input, @PathParam("ID") int artifactId) {
 
 		Content content = new Content();
@@ -244,27 +245,27 @@ public class MondrianResource extends AbstractSpagoBIResource {
 
 		} else {
 			return Response.status(Status.BAD_REQUEST).build();
-
 		}
 
 		return Response.status(200).build();
 
 	}
 
-	// TODO insert correct Functionalities
 	@PUT
 	@Path("/{ID}")
 	@Consumes(MediaType.APPLICATION_JSON)
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.MONDRIAN_SCHEMA_MANAGEMENT })
 	public Response update(@PathParam("ID") int artifactId, @Valid Artifact artifact) {
 
-		logger.debug("IN");
+		LOGGER.debug("IN");
 
 		if (artifact == null) {
 			return Response.status(Status.BAD_REQUEST).entity("Error JSON parsing").build();
 		}
 
 		if (artifact.getId() == null) {
-			return Response.status(Status.NOT_FOUND).entity("The artifact with id " + artifactId + " doesn't exist").build();
+			return Response.status(Status.NOT_FOUND).entity("The artifact with id " + artifactId + " doesn't exist")
+					.build();
 		}
 
 		try {
@@ -278,7 +279,8 @@ public class MondrianResource extends AbstractSpagoBIResource {
 					artifactDAO.setActiveVersion(artifactId, artifact.getCurrentContentId());
 				}
 
-			} else if (artifactDAO.loadArtifactById(artifactId).getModelLocked() && !artifact.getModelLocked() && artifact.getModelLocker() != null) {
+			} else if (artifactDAO.loadArtifactById(artifactId).getModelLocked() && !artifact.getModelLocked()
+					&& artifact.getModelLocker() != null) {
 
 				Artifact temp = artifactDAO.loadArtifactById(artifactId);
 				temp.setModelLocked(false);
@@ -291,14 +293,13 @@ public class MondrianResource extends AbstractSpagoBIResource {
 			return Response.ok(savedArtifact).build();
 
 		} catch (Exception e) {
-			logger.error("Error while updating url of the new resource", e);
+			LOGGER.error("Error while updating url of the new resource", e);
 			throw new SpagoBIRuntimeException("Error while updating url of the new resource", e);
 
 		}
 
 	}
 
-	// TODO insert correct Functionalities
 	@DELETE
 	@Path("/{ID}")
 	public Response delete(@PathParam("ID") int artifactId) {
@@ -314,32 +315,12 @@ public class MondrianResource extends AbstractSpagoBIResource {
 
 			return Response.ok().build();
 		} catch (Exception e) {
-			logger.error("Error while deleting url of the new resource", e);
+			LOGGER.error("Error while deleting url of the new resource", e);
 			throw new SpagoBIRuntimeException("Error while deleting url of the new resource", e);
 		}
 
 	}
 
-	/*
-	 * Multiple delete artifacts
-	 *
-	 * @DELETE
-	 *
-	 * @Path("/")
-	 *
-	 * @UserConstraint(functionalities = { SpagoBIConstants.DOMAIN_MANAGEMENT })
-	 *
-	 * @Consumes(MediaType.APPLICATION_JSON) public Response deleteSelectedArtifacts(Integer[] selectedIds) {
-	 *
-	 * try { for (Integer selectedId : selectedIds) { delete(selectedId); }
-	 *
-	 * return Response.ok().build(); } catch (Exception e) { logger.error("Error while deleting url of the new resource", e); throw new
-	 * SpagoBIRestServiceException(getLocale(), e); }
-	 *
-	 * }
-	 */
-
-	// TODO insert correct Functionalities
 	@DELETE
 	@Path("/{ID}/versions/{contentID}")
 	public Response deleteContent(@PathParam("ID") int artifactId, @PathParam("contentID") int contentId) {
@@ -363,30 +344,11 @@ public class MondrianResource extends AbstractSpagoBIResource {
 			}
 
 		} catch (Exception e) {
-			logger.error("Error while deleting url of the new resource", e);
+			LOGGER.error("Error while deleting url of the new resource", e);
 			throw new SpagoBIRuntimeException("Error while deleting url of the new resource", e);
 
 		}
 		return Response.notModified().build();
 	}
-
-	/*
-	 * Multiple delete versions
-	 *
-	 * @DELETE
-	 *
-	 * @Path("/{ID}/versions")
-	 *
-	 * @UserConstraint(functionalities = { SpagoBIConstants.DOMAIN_MANAGEMENT })
-	 *
-	 * @Consumes(MediaType.APPLICATION_JSON) public Response deleteSelectedVersions(@PathParam("ID") int id, Integer[] selectedIds) {
-	 *
-	 * try { for (Integer selectedId : selectedIds) { deleteContent(id, selectedId); }
-	 *
-	 * return Response.ok().build(); } catch (Exception e) { logger.error("Error while deleting url of the new resource", e); throw new
-	 * SpagoBIRuntimeException("Error while deleting url of the new resource", e); }
-	 *
-	 * }
-	 */
 
 }

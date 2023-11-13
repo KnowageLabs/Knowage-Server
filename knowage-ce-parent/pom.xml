@@ -2,7 +2,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>it.eng.knowage</groupId>
 	<artifactId>knowage-ce-parent</artifactId>
-	<version>8.1.14-SNAPSHOT</version>
+	<version>8.1.17-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<name>knowage-ce-parent</name>
 
@@ -38,7 +38,7 @@
 		<!-- We use Enonic Repository because it contains simplecaptcha 1.2.1 library, needed by knowage CE core; this library is not available on Maven Central -->
 		<repository>
 			<id>enonic</id>
-			<url>http://repo.enonic.com/public/</url>
+			<url>https://repo.enonic.com/public/</url>
 		</repository>
 		<!-- We use jaspersoft Repository because it contains jasperreports library, needed by knowagejasperreportengine CE; this library is not available on Maven Central -->
 		<repository>
@@ -54,7 +54,7 @@
 		<!-- We use xss-html-filter repository for xss-html-filter, needed by knowage CE; this library is not available on Maven Central -->
 		<repository>
 			<id>xss-html-filter releases</id>
-			<url>http://xss-html-filter.sf.net/releases/</url>
+			<url>https://xss-html-filter.sf.net/releases/</url>
 		</repository>
 		<!-- We use bidlink Repository for com.jamon:fdsapi, needed by knowage CE; this library is not available on Maven Central -->
 		<repository>
@@ -92,6 +92,7 @@
 		<commons-lang3.version>3.12.0</commons-lang3.version>
 		<jasypt.version>1.9.3</jasypt.version>
 		<commons-text.version>1.10.0</commons-text.version>
+		<junit4.version>4.13.2</junit4.version>
 	</properties>
 
 	<modules>
@@ -129,6 +130,7 @@
 		<module>../knowage-api</module>
 		<module>../knowage-vue</module>
 		<module>../knowage-spring-boot-api-common</module>
+		<module>../knowage-common</module>
 	</modules>
 
 	<build>
@@ -446,6 +448,13 @@
 				<artifactId>jasypt-hibernate3</artifactId>
 				<version>
 					${jasypt.version}</version>
+			</dependency>
+			
+			<dependency>
+				<groupId>junit</groupId>
+				<artifactId>junit</artifactId>
+				<version>${junit4.version}</version>
+				<scope>test</scope>
 			</dependency>
 
 		</dependencies>
