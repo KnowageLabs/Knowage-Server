@@ -6,14 +6,30 @@
 <module name="Checker">
 	<property name="charset" value="UTF-8"/>
 
-	<property name="severity" value="warning"/>
+	<property name="severity" value="error"/>
 
 	<property name="fileExtensions" value="java"/>
 
 	<module name="TreeWalker">
-		<module name="RedundantModifier"/>
+		<module name="SuppressionCommentFilter"/>
+
 		<module name="ModifierOrderCheck"/>
-		<module name="ConstantName"/>
+		<module name="IllegalInstantiationCheck">
+			<!-- 
+				- java.util.Random replaced by java.security.SecureRandom
+			 -->
+			<property name="classes" value="java.util.Random"/>
+		</module>
+
+		<module name="MissingOverride"/>
+
+		<module name="UnnecessarySemicolonInTryWithResources"/>
+
+		<!-- <module name="RedundantModifier"/> -->
+		<!-- <module name="ConstantName"/> -->
+		<!-- <module name="SingleLineJavadoc"/> -->
+		<!-- <module name="StringLiteralEquality"/> -->
+
 	</module>
 
 </module>

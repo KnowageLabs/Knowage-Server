@@ -93,6 +93,7 @@
 		<commons-text.version>1.10.0</commons-text.version>
 		<junit4.version>4.13.2</junit4.version>
 		<hsqldb.version>1.8.0.10</hsqldb.version>
+		<checkstyle-maven-plugin.version>3.3.0</checkstyle-maven-plugin.version>
 
 		<checkstyle.config.location>../checkstyle/checkstyle.xml</checkstyle.config.location>
 		<checkstyle.header.file>../LICENSE</checkstyle.header.file>
@@ -211,6 +212,27 @@
 				</plugin>
 			</plugins>
 		</pluginManagement>
+		
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-checkstyle-plugin</artifactId>
+				<version>${checkstyle-maven-plugin.version}</version>
+				<executions>
+					<execution>
+						<id>validate</id>
+						<phase>validate</phase>
+						<configuration>
+							<failsOnError>false</failsOnError>
+							<failOnViolation>true</failOnViolation>
+						</configuration>
+						<goals>
+							<goal>check</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
 	</build>	
 
 	<profiles>
@@ -529,7 +551,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-checkstyle-plugin</artifactId>
-				<version>3.2.1</version>
+				<version>${checkstyle-maven-plugin.version}</version>
 				<reportSets>
 					<reportSet>
 						<id>checkstyle</id>
@@ -543,7 +565,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-checkstyle-plugin</artifactId>
-				<version>3.2.1</version>
+				<version>${checkstyle-maven-plugin.version}</version>
 				<reportSets>
 					<reportSet>
 						<id>checkstyle-aggregate</id>

@@ -90,7 +90,7 @@ public class Utils {
 		String fileName = BirtReportServlet.PAGE_FILE_NAME + pageNumber + ".html";
 		htmlFile = PathTraversalChecker.get(BirtReportServlet.OUTPUT_FOLDER, reportExecutionId, fileName);
 
-		try (InputStream fis = new FileInputStream(htmlFile);) {
+		try (InputStream fis = new FileInputStream(htmlFile)) {
 			writeToOutput(response, mimeType, fis);
 		} catch (IOException e) {
 			logger.warn(completeImageFileName + " file not found, probably end of the file");

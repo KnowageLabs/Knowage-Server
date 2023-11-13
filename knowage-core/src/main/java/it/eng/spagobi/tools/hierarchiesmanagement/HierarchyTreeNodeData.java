@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,7 +11,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -19,6 +19,7 @@ package it.eng.spagobi.tools.hierarchiesmanagement;
 
 import java.sql.Date;
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author Marco Cortella (marco.cortella@eng.it)
@@ -36,7 +37,7 @@ public class HierarchyTreeNodeData {
 	String depth;
 	Date beginDt;
 	Date endDt;
-	HashMap attributes;
+	Map attributes;
 
 	/**
 	 * @param nodeCode
@@ -46,9 +47,8 @@ public class HierarchyTreeNodeData {
 		this(nodeCode, nodeName, "", "", "", "", new HashMap());
 	}
 
-	public HierarchyTreeNodeData(String nodeCode, String nodeName, String leafId, String leafParentCode, String leafParentName, String leafOriginalParentCode,
-			HashMap attributes) {
-		super();
+	public HierarchyTreeNodeData(String nodeCode, String nodeName, String leafId, String leafParentCode,
+			String leafParentName, String leafOriginalParentCode, Map attributes) {
 		this.nodeCode = nodeCode;
 		this.nodeName = nodeName;
 		this.leafId = leafId;
@@ -66,8 +66,7 @@ public class HierarchyTreeNodeData {
 	}
 
 	/**
-	 * @param nodeCode
-	 *            the nodeCode to set
+	 * @param nodeCode the nodeCode to set
 	 */
 	public void setNodeCode(String nodeCode) {
 		this.nodeCode = nodeCode;
@@ -81,8 +80,7 @@ public class HierarchyTreeNodeData {
 	}
 
 	/**
-	 * @param nodeName
-	 *            the nodeName to set
+	 * @param nodeName the nodeName to set
 	 */
 	public void setNodeName(String nodeName) {
 		this.nodeName = nodeName;
@@ -96,8 +94,7 @@ public class HierarchyTreeNodeData {
 	}
 
 	/**
-	 * @param leafId
-	 *            the leafId to set
+	 * @param leafId the leafId to set
 	 */
 	public void setLeafId(String leafId) {
 		this.leafId = leafId;
@@ -111,8 +108,7 @@ public class HierarchyTreeNodeData {
 	}
 
 	/**
-	 * @param leafParentCode
-	 *            the leafParentCode to set
+	 * @param leafParentCode the leafParentCode to set
 	 */
 	public void setLeafParentCode(String leafParentCode) {
 		this.leafParentCode = leafParentCode;
@@ -126,8 +122,7 @@ public class HierarchyTreeNodeData {
 	}
 
 	/**
-	 * @param leafParentNm
-	 *            the leafParentNm to set
+	 * @param leafParentNm the leafParentNm to set
 	 */
 	public void setLeafParentName(String leafParentName) {
 		this.leafParentName = leafParentName;
@@ -141,8 +136,7 @@ public class HierarchyTreeNodeData {
 	}
 
 	/**
-	 * @param leafOriginalParentCode
-	 *            the leafOriginalParentCode to set
+	 * @param leafOriginalParentCode the leafOriginalParentCode to set
 	 */
 	public void setLeafOriginalParentCode(String leafOriginalParentCode) {
 		this.leafOriginalParentCode = leafOriginalParentCode;
@@ -156,8 +150,7 @@ public class HierarchyTreeNodeData {
 	}
 
 	/**
-	 * @param depth
-	 *            the depth to set
+	 * @param depth the depth to set
 	 */
 	public void setDepth(String depth) {
 		this.depth = depth;
@@ -171,8 +164,7 @@ public class HierarchyTreeNodeData {
 	}
 
 	/**
-	 * @param beginDt
-	 *            the beginDt to set
+	 * @param beginDt the beginDt to set
 	 */
 	public void setBeginDt(Date beginDt) {
 		this.beginDt = beginDt;
@@ -186,8 +178,7 @@ public class HierarchyTreeNodeData {
 	}
 
 	/**
-	 * @param endDt
-	 *            the endDt to set
+	 * @param endDt the endDt to set
 	 */
 	public void setEndDt(Date endDt) {
 		this.endDt = endDt;
@@ -196,15 +187,14 @@ public class HierarchyTreeNodeData {
 	/**
 	 * @return the attributes
 	 */
-	public HashMap getAttributes() {
+	public Map getAttributes() {
 		return attributes;
 	}
 
 	/**
-	 * @param attributes
-	 *            the attributes to set
+	 * @param attributes the attributes to set
 	 */
-	public void setAttributes(HashMap attributes) {
+	public void setAttributes(Map attributes) {
 		this.attributes = attributes;
 	}
 

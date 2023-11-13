@@ -221,7 +221,7 @@ class Box<T> {
 		xif.setProperty(XMLInputFactory.IS_SUPPORTING_EXTERNAL_ENTITIES, false);
 
 		try (FileInputStream inputStream = new FileInputStream(file);
-				InputStreamReader reader = new InputStreamReader(inputStream, StandardCharsets.UTF_8);) {
+				InputStreamReader reader = new InputStreamReader(inputStream, StandardCharsets.UTF_8)) {
 			XMLStreamReader xsr = xif.createXMLStreamReader(new StreamSource(reader));
 
 			return (T) jc.createUnmarshaller().unmarshal(xsr);
