@@ -47,7 +47,7 @@ export async function dataDependencyCheck(loadedParameters: { filterStatus: iPar
 }
 
 export function resetParameterValueToEmptyValues(parameter: any) {
-    if (parameter.parameterValue[0]) {
+    if (parameter.parameterValue[0] && !parameter.multivalue) {
         parameter.parameterValue[0] = { value: '', description: '' }
     } else {
         parameter.parameterValue = parameter.multivalue ? [] : [{ value: '', description: '' }]
