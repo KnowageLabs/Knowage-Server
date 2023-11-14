@@ -178,18 +178,13 @@
 	</welcome-file-list>
 
 	<error-page>
-		<exception-type>java.lang.Throwable</exception-type>
-		<location>/WEB-INF/jsp/commons/genericError.jsp</location>
-	</error-page>
-
-	<error-page>
 		<error-code>404</error-code>
-		<location>/WEB-INF/jsp/commons/genericError.jsp</location>
+		<location>/jsp/errors/error404.jsp</location>
 	</error-page>
 
 	<error-page>
-		<error-code>500</error-code>
-		<location>/WEB-INF/jsp/commons/genericError.jsp</location>
+		<exception-type>java.lang.Throwable</exception-type>
+		<location>/html/error.html</location>
 	</error-page>
 
 	<session-config>
