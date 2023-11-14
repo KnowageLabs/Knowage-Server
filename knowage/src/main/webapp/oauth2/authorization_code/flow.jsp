@@ -57,14 +57,17 @@ String code = request.getParameter("code");
         		}
         		
         		var lastRedirectUri = window.location.href.split('?')[0];
+        		var extraParameters = popSavedExtraQueryParameters();
+        		
             	var args = new URLSearchParams({
             		PAGE : "LoginPage",
             		NEW_SESSION : "TRUE",
                     access_token: access_token
                 });
-                window.location = lastRedirectUri + "?" + args;
+                window.location = lastRedirectUri + "?" + args + "&" + extraParameters;
 
             } else {
+            	saveExtraQueryParameters();
             	startOauth2Flow();
             }
         }
@@ -93,6 +96,33 @@ String code = request.getParameter("code");
             }
 
             return text;
+        }
+        
+        function saveExtraQueryParameters() {
+        	var args = new URLSearchParams();
+        	if (window.location.search) {
+                args = new URLSearchParams(window.location.search);
+                // removing unnecessary parameters
+                args.delete('PAGE');
+                args.delete('NEW_SESSION');
+                args.delete('ACTION_NAME');
+        	}
+        	// storing extra-query-parameters for later usage (when user is redirected into knowage)
+        	window.sessionStorage.setItem("extra-query-parameters", args);
+        }
+        
+        function getSavedExtraQueryParameters() {
+        	return window.sessionStorage.getItem("extra-query-parameters");
+        }
+        
+        function removeSavedExtraQueryParameters() {
+        	window.sessionStorage.removeItem("extra-query-parameters");
+        }
+        
+        function popSavedExtraQueryParameters() {
+        	var toReturn = getSavedExtraQueryParameters();
+        	removeSavedExtraQueryParameters();
+        	return toReturn;
         }
         
     </script>
