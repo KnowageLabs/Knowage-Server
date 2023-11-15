@@ -139,7 +139,7 @@
 		</script>
 		<link rel="shortcut icon" href="<%=urlBuilder.getResourceLink(request, "themes/sbi_default/img/favicon.ico")%>" />
 		   <!-- Bootstrap -->
-		<link rel="stylesheet" href="<%=urlBuilder.getResourceLink(request, "js/lib/bootstrap/css/bootstrap.min.css")%>">
+		<link rel="stylesheet" href="<%=urlBuilder.getResourceLink(request, "node_modules/bootstrap/dist/css/bootstrap.min.css")%>">
 		<link rel='StyleSheet' href='<%=urlBuilder.getResourceLink(request, "themes/commons/css/customStyle.css")%>' type='text/css' />
 		
 		<% if (GoogleSignInConfig.isEnabled()) {%>
@@ -206,80 +206,80 @@
 		<% } %>
 	</head>
 
-  	<body class="kn-login">
-  		<div class="container-fluid" style="height:100%;">
-        	<!--  div class="card card-container"-->
-        	<div class="col-sm-5 col-sm-offset-7" style="height:100%;background-color:white;display:flex;flex-direction:column;padding:20px;justify-content:center;align-items:center">
-            	<img id="profile-img" class="col-xs-8" src='<%=urlBuilder.getResourceLinkByTheme(request, "../commons/img/defaultTheme/logoCover.svg", currTheme)%>' />
-            	<p id="profile-name" class="profile-name-card"></p>
-            	
-            	
-            	<% if (GoogleSignInConfig.isEnabled()) { %>
-            		<%-- Google button for authentication --%>
-	           		<div class="g-signin2" data-onsuccess="onSignIn"></div>
-	           	
-                <% } else if (AzureSignInConfig.isEnabled()){ %>
-            		<%-- Azure button for authentication --%>
-	           		<button class="btn-signin-azure" onclick="onAzureSignIn()">
-						<svg xmlns="http://www.w3.org/2000/svg" width="21" height="21" viewBox="0 0 21 21" style="height: 1em; width: 1em; top: .125em; position: relative;"><title>MS-SymbolLockup</title><rect x="1" y="1" width="9" height="9" fill="#f25022"/><rect x="1" y="11" width="9" height="9" fill="#00a4ef"/><rect x="11" y="1" width="9" height="9" fill="#7fba00"/><rect x="11" y="11" width="9" height="9" fill="#ffb900"/></svg> Sign In
-	           		</button>
-	           		
-            	<% } else { %>
-            	
-            	<div class="col-xs-8">
-           			<form class="form-signin"  id="formId" name="login" action="<%=contextName%>/servlet/AdapterHTTP?PAGE=LoginPage&NEW_SESSION=TRUE" method="POST" onsubmit="return escapeUserName()">
-		        		<input type="hidden" id="<%=roleToCheckLbl%>" name="<%=roleToCheckLbl%>" value="<%=roleToCheckVal%>" />
-		        		<%	
-		        		
-		        		if(request.getParameter("targetService") != null) {
-		        			%>
-							<input type="hidden" name="<%= "targetService" %>" value="<%= StringEscapeUtils.escapeHtml(request.getParameter("targetService")) %>" />
-							<%
-		        		}
-		        		%>	
-				        	
-		                <input type="text" id="userID" name="userID" class="form-control" placeholder="<%=msgBuilder.getMessage("username")%>" required autofocus>
-		                <input type="password" id="password" name="password" class="form-control" placeholder="<%=msgBuilder.getMessage("password")%>" required>
-					
-						<% if(activationMsg != null){
-							String style = null;
-							if(activationMsg.contains("KO")){
-								style ="'color:red;font-size:12pt;'";
-							}
-							else{style ="'font-size:12pt;'";}
-			             %>
-		             	<br/><div style=<%=style%> ><%=msgBuilder.getMessage(activationMsg)%></div><br/>
-	                	<% } %>
-				
-	            		<button class="btn btn-lg btn-primary btn-block btn-signin" type="submit"><%=msgBuilder.getMessage("login")%></button>
-	            	</form>
-	            	<% if (activeSignup){ %>
-		               	<button class="btn btn-lg btn-primary btn-block btn-signup" onclick="signup();" ><%=msgBuilder.getMessage("signup")%></button>
-					<%} %> 
-            	</div>
-            	<!-- img class="col-xs-8 col-sm-offset-4 col-sm-4" src='<%=urlBuilder.getResourceLink(request, "themes/commons/img/defaultTheme/poweredBy.svg")%>' / -->
-            	<% } %>
-            	
-            	
-            	<%-- Box that can be reused to display error messages, initially empty --%>
-            	<div class="row" id="kn-infoerror-message" style="display:none">
-            		<div class="kn-infoerror">
-            		</div>
-            	</div>
-            	
-				<div>
-					<div class="row">					
-						<!-- Uncomment this to add the Change Password Link -->
-						<!-- <div class="col-sm-12"><a href="<%=contextName %>/ChangePwdServlet">	<%=msgBuilder.getMessage("changePwd")%> </a></div> -->
-					</div>
-			
-		 			<spagobi:error/>
-				</div><!-- /card-container -->
-				<div class="version"><span>Version:</span> <%=it.eng.knowage.wapp.Version.getVersionForDatabase()%></div>
-			</div><!-- /container -->
-		</div>
- 		<script src="<%=urlBuilder.getResourceLink(request, "js/lib/jquery-1.11.3/jquery-1.11.3.min.js")%>"></script>
- 		<script src="<%=urlBuilder.getResourceLink(request, "js/lib/bootstrap/bootstrap.min.js")%>"></script>
+	<body class="kn-login">
+		<div class="container-fluid" style="height:100%;">
+		  <!--  div class="card card-container"-->
+		  <div class="col-12 col-lg-5 offset-lg-7" style="height:100%;display:flex;align-items:center;justify-content:center;background-color:white;padding:20px;">
+<div class="col-8">
+			  <img id="profile-img" src='<%=urlBuilder.getResourceLinkByTheme(request, "../commons/img/defaultTheme/logoCover.svg", currTheme)%>' />
+			  <p id="profile-name" class="profile-name-card"></p>
+			  
+			  
+			  <% if (GoogleSignInConfig.isEnabled()) { %>
+				  <%-- Google button for authentication --%>
+					 <div class="g-signin2" data-onsuccess="onSignIn"></div>
+				 
+			  <% } else if (AzureSignInConfig.isEnabled()){ %>
+				  <%-- Azure button for authentication --%>
+					 <button class="btn-signin-azure" onclick="onAzureSignIn()">
+					  <svg xmlns="http://www.w3.org/2000/svg" width="21" height="21" viewBox="0 0 21 21" style="height: 1em; width: 1em; top: .125em; position: relative;"><title>MS-SymbolLockup</title><rect x="1" y="1" width="9" height="9" fill="#f25022"/><rect x="1" y="11" width="9" height="9" fill="#00a4ef"/><rect x="11" y="1" width="9" height="9" fill="#7fba00"/><rect x="11" y="11" width="9" height="9" fill="#ffb900"/></svg> Sign In
+					 </button>
+					 
+			  <% } else { %>
+			  
+					 <form class="form-signin"  id="formId" name="login" action="<%=contextName%>/servlet/AdapterHTTP?PAGE=LoginPage&NEW_SESSION=TRUE" method="POST" onsubmit="return escapeUserName()">
+					  <input type="hidden" id="<%=roleToCheckLbl%>" name="<%=roleToCheckLbl%>" value="<%=roleToCheckVal%>" />
+					  <%	
+					  
+					  if(request.getParameter("targetService") != null) {
+						  %>
+						  <input type="hidden" name="<%= "targetService" %>" value="<%= StringEscapeUtils.escapeHtml(request.getParameter("targetService")) %>" />
+						  <%
+					  }
+					  %>	
+						  
+					  <input type="text" id="userID" name="userID" class="form-control" placeholder="<%=msgBuilder.getMessage("username")%>" required autofocus>
+					  <input type="password" id="password" name="password" class="form-control" placeholder="<%=msgBuilder.getMessage("password")%>" required>
+				  
+					  <% if(activationMsg != null){
+						  String style = null;
+						  if(activationMsg.contains("KO")){
+							  style ="'color:red;font-size:12pt;'";
+						  }
+						  else{style ="'font-size:12pt;'";}
+					   %>
+					   <br/><div style=<%=style%> ><%=msgBuilder.getMessage(activationMsg)%></div><br/>
+					  <% } %>
+			  
+					  <button class="btn btn-lg btn-primary btn-block btn-signin" type="submit"><%=msgBuilder.getMessage("login")%></button>
+				  </form>
+				  <% if (activeSignup){ %>
+						 <button class="btn btn-lg btn-primary btn-block btn-signup" onclick="signup();" ><%=msgBuilder.getMessage("signup")%></button>
+				  <%} %> 
+			  </div>
+			  <!-- img class="col-xs-8 offset-sm-4 col-sm-4" src='<%=urlBuilder.getResourceLink(request, "themes/commons/img/defaultTheme/poweredBy.svg")%>' / -->
+			  <% } %>
+			  
+			  
+			  <%-- Box that can be reused to display error messages, initially empty --%>
+			  <div class="row" id="kn-infoerror-message" style="display:none">
+				  <div class="kn-infoerror">
+				  </div>
+			  </div>
+			  
+			  <div>
+				  <div class="row">					
+					  <!-- Uncomment this to add the Change Password Link -->
+					  <!-- <div class="col-sm-12"><a href="<%=contextName %>/ChangePwdServlet">	<%=msgBuilder.getMessage("changePwd")%> </a></div> -->
+				  </div>
+		  
+				   <spagobi:error/>
+			  </div><!-- /card-container -->
+			  <div class="version"><span>Version:</span> <%=it.eng.knowage.wapp.Version.getVersionForDatabase()%></div>
+		  </div><!-- /container -->
+	  </div>
+	   <script src="<%=urlBuilder.getResourceLink(request, "node_modules/jquery/dist/jquery.min.js")%>"></script>
+	   <script src="<%=urlBuilder.getResourceLink(request, "node_modules/bootstrap/dist/js/bootstrap.min.js")%>"></script>
 	
 		<script>
 			$(document).ready(function(){

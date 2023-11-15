@@ -212,12 +212,18 @@ public class JWTSsoService implements SsoServiceInterface {
 	}
 
 	public static Map<String, Claim> getClaims(String jwtToken) throws JWTVerificationException {
-		Algorithm algorithm = ALGORITHM_FACTORY.getAlgorithm();
-		LogMF.debug(logger, "JWT token in input is [{0}]", jwtToken);
-		JWTVerifier verifier = JWT.require(algorithm).build();
-		DecodedJWT decodedJWT = verifier.verify(jwtToken);
+		DecodedJWT decodedJWT = getDecodedJWT(jwtToken);
 		logger.debug("JWT token verified properly");
 		return decodedJWT.getClaims();
+	}
+
+	public static DecodedJWT getDecodedJWT(String jwtToken) throws JWTVerificationException {
+		LogMF.debug(logger, "JWT token in input is [{0}]", jwtToken);
+		Algorithm algorithm = ALGORITHM_FACTORY.getAlgorithm();
+		JWTVerifier verifier = JWT.require(algorithm).build();
+		DecodedJWT decodedJWT = verifier.verify(jwtToken);
+		logger.debug("JWT token verified and decoded properly");
+		return decodedJWT;
 	}
 
 	public static String map2jwtToken(Map<String, String> claims, Date expiresAt) {

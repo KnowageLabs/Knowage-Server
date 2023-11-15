@@ -27,12 +27,8 @@ export async function updateDataDependency(loadedParameters: { filterStatus: iPa
 
 export async function dataDependencyCheck(loadedParameters: { filterStatus: iParameter[]; isReadyForExecution: boolean }, parameter: iParameter, loading: boolean, document: any, sessionRole: string | null, $http: any, mode: string, resetValue: boolean, userDateFormat: string) {
     loading = true
-    if (parameter.parameterValue[0]) {
-        parameter.parameterValue[0] = { value: '', description: '' }
-    } else {
-        parameter.parameterValue = [{ value: '', description: '' }]
-    }
 
+    resetParameterValueToEmptyValues(parameter)
     if (resetValue) return
 
     const postData = { label: document?.label, parameters: getFormattedParameters(loadedParameters, userDateFormat), paramId: parameter.urlName, role: sessionRole }
@@ -48,6 +44,14 @@ export async function dataDependencyCheck(loadedParameters: { filterStatus: iPar
         formatParameterAfterDataDependencyCheck(parameter)
     })
     loading = false
+}
+
+export function resetParameterValueToEmptyValues(parameter: any) {
+    if (parameter.parameterValue[0] && !parameter.multivalue) {
+        parameter.parameterValue[0] = { value: '', description: '' }
+    } else {
+        parameter.parameterValue = parameter.multivalue ? [] : [{ value: '', description: '' }]
+    }
 }
 
 export function formatParameterAfterDataDependencyCheck(parameter: any) {
