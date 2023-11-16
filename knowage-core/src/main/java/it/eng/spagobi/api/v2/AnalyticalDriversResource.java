@@ -272,15 +272,8 @@ public class AnalyticalDriversResource extends AbstractSpagoBIResource {
 	@Path("/modes")
 	@UserConstraint(functionalities = { CommunityFunctionalityConstants.PARAMETER_MANAGEMENT })
 	@Consumes(MediaType.APPLICATION_JSON)
-	public Response insertUseMode(String body) {
+	public Response insertUseMode(ParameterUse useMode) {
 		ObjectMapper mapper = new ObjectMapper();
-		ParameterUse useMode = null;
-		try {
-			useMode = mapper.readValue(body, ParameterUse.class);
-		} catch (Exception e1) {
-			LOGGER.error(e1);
-			throw new SpagoBIRestServiceException("Error while inserting resource", buildLocaleFromSession(), e1);
-		}
 		IParameterUseDAO useModesDao = null;
 
 		List<Role> roles = useMode.getAssociatedRoles();
@@ -486,42 +479,42 @@ public class AnalyticalDriversResource extends AbstractSpagoBIResource {
 		role.setRoleTypeCD(bo.getRoleTypeCD());
 		role.setRoleTypeID(bo.getRoleTypeID());
 
-		role.setIsAbleToSaveIntoPersonalFolder(bo.isAbleToSaveIntoPersonalFolder());
-		role.setIsAbleToEnableDatasetPersistence(bo.isAbleToEnableDatasetPersistence());
-		role.setIsAbleToEnableFederatedDataset(bo.isAbleToEnableFederatedDataset());
-		role.setIsAbleToEnableRate(bo.isAbleToEnableRate());
-		role.setIsAbleToEnablePrint(bo.isAbleToEnablePrint());
-		role.setIsAbleToEnableCopyAndEmbed(bo.isAbleToEnableCopyAndEmbed());
+		role.setAbleToSaveIntoPersonalFolder(bo.isAbleToSaveIntoPersonalFolder());
+		role.setAbleToEnableDatasetPersistence(bo.isAbleToEnableDatasetPersistence());
+		role.setAbleToEnableFederatedDataset(bo.isAbleToEnableFederatedDataset());
+		role.setAbleToEnableRate(bo.isAbleToEnableRate());
+		role.setAbleToEnablePrint(bo.isAbleToEnablePrint());
+		role.setAbleToEnableCopyAndEmbed(bo.isAbleToEnableCopyAndEmbed());
 		role.setAbleToManageGlossaryBusiness(bo.isAbleToManageGlossaryBusiness());
 		role.setAbleToManageGlossaryTechnical(bo.isAbleToManageGlossaryTechnical());
 		role.setAbleToManageKpiValue(bo.isAbleToManageKpiValue());
 		role.setAbleToManageCalendar(bo.isAbleToManageCalendar());
 		role.setAbleToUseFunctionsCatalog(bo.isAbleToUseFunctionsCatalog());
-		role.setIsAbleToEditPythonScripts(bo.isAbleToEditPythonScripts());
-		role.setIsAbleToCreateCustomChart(bo.isAbleToCreateCustomChart());
-		role.setIsAbleToSaveSubobjects(bo.isAbleToSaveSubobjects());
-		role.setIsAbleToSeeSubobjects(bo.isAbleToSeeSubobjects());
-		role.setIsAbleToSeeViewpoints(bo.isAbleToSeeViewpoints());
-		role.setIsAbleToSeeSnapshots(bo.isAbleToSeeSnapshots());
-		role.setIsAbleToRunSnapshots(bo.isAbleToRunSnapshots());
-		role.setIsAbleToSeeNotes(bo.isAbleToSeeNotes());
-		role.setIsAbleToSendMail(bo.isAbleToSendMail());
-		role.setIsAbleToSaveRememberMe(bo.isAbleToSaveRememberMe());
-		role.setIsAbleToSeeMetadata(bo.isAbleToSeeMetadata());
-		role.setIsAbleToSaveMetadata(bo.isAbleToSaveMetadata());
-		role.setIsAbleToBuildQbeQuery(bo.isAbleToBuildQbeQuery());
-		role.setIsAbleToDoMassiveExport(bo.isAbleToDoMassiveExport());
-		role.setIsAbleToManageUsers(bo.isAbleToManageUsers());
-		role.setIsAbleToSeeDocumentBrowser(bo.isAbleToSeeDocumentBrowser());
-		role.setIsAbleToSeeFavourites(bo.isAbleToSeeFavourites());
-		role.setIsAbleToSeeSubscriptions(bo.isAbleToSeeSubscriptions());
-		role.setIsAbleToSeeMyData(bo.isAbleToSeeMyData());
-		role.setIsAbleToSeeMyWorkspace(bo.isAbleToSeeMyWorkspace());
-		role.setIsAbleToSeeToDoList(bo.isAbleToSeeToDoList());
-		role.setIsAbleToCreateDocuments(bo.isAbleToCreateDocuments());
-		role.setIsAbleToCreateSocialAnalysis(bo.isAbleToCreateSocialAnalysis());
-		role.setIsAbleToViewSocialAnalysis(bo.isAbleToViewSocialAnalysis());
-		role.setIsAbleToHierarchiesManagement(bo.isAbleToHierarchiesManagement());
+		role.setAbleToEditPythonScripts(bo.isAbleToEditPythonScripts());
+		role.setAbleToCreateCustomChart(bo.isAbleToCreateCustomChart());
+		role.setAbleToSaveSubobjects(bo.isAbleToSaveSubobjects());
+		role.setAbleToSeeSubobjects(bo.isAbleToSeeSubobjects());
+		role.setAbleToSeeViewpoints(bo.isAbleToSeeViewpoints());
+		role.setAbleToSeeSnapshots(bo.isAbleToSeeSnapshots());
+		role.setAbleToRunSnapshots(bo.isAbleToRunSnapshots());
+		role.setAbleToSeeNotes(bo.isAbleToSeeNotes());
+		role.setAbleToSendMail(bo.isAbleToSendMail());
+		role.setAbleToSaveRememberMe(bo.isAbleToSaveRememberMe());
+		role.setAbleToSeeMetadata(bo.isAbleToSeeMetadata());
+		role.setAbleToSaveMetadata(bo.isAbleToSaveMetadata());
+		role.setAbleToBuildQbeQuery(bo.isAbleToBuildQbeQuery());
+		role.setAbleToDoMassiveExport(bo.isAbleToDoMassiveExport());
+		role.setAbleToManageUsers(bo.isAbleToManageUsers());
+		role.setAbleToSeeDocumentBrowser(bo.isAbleToSeeDocumentBrowser());
+		role.setAbleToSeeFavourites(bo.isAbleToSeeFavourites());
+		role.setAbleToSeeSubscriptions(bo.isAbleToSeeSubscriptions());
+		role.setAbleToSeeMyData(bo.isAbleToSeeMyData());
+		role.setAbleToSeeMyWorkspace(bo.isAbleToSeeMyWorkspace());
+		role.setAbleToSeeToDoList(bo.isAbleToSeeToDoList());
+		role.setAbleToCreateDocuments(bo.isAbleToCreateDocuments());
+		role.setAbleToCreateSocialAnalysis(bo.isAbleToCreateSocialAnalysis());
+		role.setAbleToViewSocialAnalysis(bo.isAbleToViewSocialAnalysis());
+		role.setAbleToHierarchiesManagement(bo.isAbleToHierarchiesManagement());
 		role.setAbleToEditAllKpiComm(bo.isAbleToEditAllKpiComm());
 		role.setAbleToEditMyKpiComm(bo.isAbleToEditMyKpiComm());
 		role.setAbleToDeleteKpiComm(bo.isAbleToDeleteKpiComm());

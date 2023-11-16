@@ -70,7 +70,8 @@ public class RolesResource extends AbstractSpagoBIResource {
 	private static final String CHARSET = "; charset=UTF-8";
 
 	@GET
-	@UserConstraint(functionalities = { CommunityFunctionalityConstants.PROFILE_MANAGEMENT, CommunityFunctionalityConstants.FINAL_USERS_MANAGEMENT, CommunityFunctionalityConstants.READ_ROLES })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.PROFILE_MANAGEMENT,
+			CommunityFunctionalityConstants.FINAL_USERS_MANAGEMENT, CommunityFunctionalityConstants.READ_ROLES })
 	@Path("/")
 	@Produces(MediaType.APPLICATION_JSON + CHARSET)
 	public Response getRoles() {
@@ -85,7 +86,8 @@ public class RolesResource extends AbstractSpagoBIResource {
 			fullList = rolesDao.loadAllRoles();
 
 			IEngUserProfile profile = this.getUserProfile();
-			if (profile.isAbleToExecuteAction(CommunityFunctionalityConstants.PROFILE_MANAGEMENT) || profile.isAbleToExecuteAction(CommunityFunctionalityConstants.READ_ROLES)) {
+			if (profile.isAbleToExecuteAction(CommunityFunctionalityConstants.PROFILE_MANAGEMENT)
+					|| profile.isAbleToExecuteAction(CommunityFunctionalityConstants.READ_ROLES)) {
 				filteredList = fullList;
 			} else {
 				// user with FINAL_USERS_MANAGEMENT (users with neither
@@ -127,7 +129,8 @@ public class RolesResource extends AbstractSpagoBIResource {
 			return Response.ok(role).build();
 		} catch (Exception e) {
 			LOGGER.error("Role with selected id: " + id + " doesn't exists", e);
-			throw new SpagoBIRestServiceException("Item with selected id: " + id + " doesn't exists", buildLocaleFromSession(), e);
+			throw new SpagoBIRestServiceException("Item with selected id: " + id + " doesn't exists",
+					buildLocaleFromSession(), e);
 		}
 	}
 
@@ -149,7 +152,8 @@ public class RolesResource extends AbstractSpagoBIResource {
 			return Response.ok(roles).build();
 		} catch (Exception e) {
 			LOGGER.error("Role with selected id: " + roles + " doesn't exists", e);
-			throw new SpagoBIRestServiceException("Item with selected id: " + roles + " doesn't exists", buildLocaleFromSession(), e);
+			throw new SpagoBIRestServiceException("Item with selected id: " + roles + " doesn't exists",
+					buildLocaleFromSession(), e);
 		}
 	}
 
@@ -169,7 +173,8 @@ public class RolesResource extends AbstractSpagoBIResource {
 			return Response.ok(meta).build();
 		} catch (Exception e) {
 			LOGGER.error("Role with selected id: " + id + " doesn't exists", e);
-			throw new SpagoBIRestServiceException("Item with selected id: " + id + " doesn't exists", buildLocaleFromSession(), e);
+			throw new SpagoBIRestServiceException("Item with selected id: " + id + " doesn't exists",
+					buildLocaleFromSession(), e);
 		}
 	}
 
@@ -187,10 +192,8 @@ public class RolesResource extends AbstractSpagoBIResource {
 			Collection<String> roles = up.getRoles();
 
 			ICategoryDAO categoryDao = DAOFactory.getCategoryDAO();
-			List<Domain> array = categoryDao.getCategoriesForDataset()
-				.stream()
-				.map(Domain::fromCategory)
-				.collect(toList());
+			List<Domain> array = categoryDao.getCategoriesForDataset().stream().map(Domain::fromCategory)
+					.collect(toList());
 
 			if (UserUtilities.isAdministrator(up)) {
 				resp = array;
@@ -214,7 +217,8 @@ public class RolesResource extends AbstractSpagoBIResource {
 			return DomainCRUD.translate(resp, null).toString();
 		} catch (Exception e) {
 			LOGGER.error("Error loading the list of dataset categories associated to user", e);
-			throw new SpagoBIRestServiceException("Error loading the list of dataset categories associated to user", buildLocaleFromSession(), e);
+			throw new SpagoBIRestServiceException("Error loading the list of dataset categories associated to user",
+					buildLocaleFromSession(), e);
 		}
 	}
 
@@ -262,24 +266,15 @@ public class RolesResource extends AbstractSpagoBIResource {
 			rolesDao.modifyRole(role);
 
 			// update Business Model categories
-			listAll = categoryDao.getCategoriesForBusinessModel()
-				.stream()
-				.map(Domain::fromCategory)
-				.collect(toList());
+			listAll = categoryDao.getCategoriesForBusinessModel().stream().map(Domain::fromCategory).collect(toList());
 			for (Domain domain : listAll) {
 				rolesDao.removeRoleMetaModelCategory(role.getId(), domain.getValueId());
 			}
-			listAll = categoryDao.getCategoriesForKpi()
-				.stream()
-				.map(Domain::fromCategory)
-				.collect(toList());
+			listAll = categoryDao.getCategoriesForKpi().stream().map(Domain::fromCategory).collect(toList());
 			for (Domain domain : listAll) {
 				rolesDao.removeRoleMetaModelCategory(role.getId(), domain.getValueId());
 			}
-			listAll = categoryDao.getCategoriesForDataset()
-				.stream()
-				.map(Domain::fromCategory)
-				.collect(toList());
+			listAll = categoryDao.getCategoriesForDataset().stream().map(Domain::fromCategory).collect(toList());
 			for (Domain domain : listAll) {
 				rolesDao.removeRoleMetaModelCategory(role.getId(), domain.getValueId());
 			}
@@ -289,10 +284,7 @@ public class RolesResource extends AbstractSpagoBIResource {
 				}
 			}
 			// update Data Set categories
-			listAll = categoryDao.getCategoriesForDataset()
-					.stream()
-					.map(Domain::fromCategory)
-					.collect(toList());
+			listAll = categoryDao.getCategoriesForDataset().stream().map(Domain::fromCategory).collect(toList());
 			for (Domain domain : listAll) {
 				rolesDao.removeRoleDataSetCategory(role.getId(), domain.getValueId());
 			}
@@ -301,7 +293,8 @@ public class RolesResource extends AbstractSpagoBIResource {
 			return Response.created(new URI("2.0/roles/" + encodedRole)).entity(encodedRole).build();
 		} catch (Exception e) {
 			LOGGER.error("Error while modifying resource with id: " + id, e);
-			throw new SpagoBIRestServiceException("Error while modifying resource with id: " + id, buildLocaleFromSession(), e);
+			throw new SpagoBIRestServiceException("Error while modifying resource with id: " + id,
+					buildLocaleFromSession(), e);
 		}
 	}
 
@@ -320,7 +313,8 @@ public class RolesResource extends AbstractSpagoBIResource {
 			// Remove Role - Business Model Categories Associations
 			List<RoleMetaModelCategory> roleMetaModelCategories = rolesDao.getMetaModelCategoriesForRole(id);
 			for (RoleMetaModelCategory roleMetaModelCategory : roleMetaModelCategories) {
-				rolesDao.removeRoleMetaModelCategory(roleMetaModelCategory.getRoleId(), roleMetaModelCategory.getCategoryId());
+				rolesDao.removeRoleMetaModelCategory(roleMetaModelCategory.getRoleId(),
+						roleMetaModelCategory.getCategoryId());
 			}
 
 			rolesDao.eraseRole(role);
@@ -328,7 +322,8 @@ public class RolesResource extends AbstractSpagoBIResource {
 			return Response.ok().entity(encodedRole).build();
 		} catch (Exception e) {
 			LOGGER.error("Error with deleting resource with id: " + id, e);
-			throw new SpagoBIRestServiceException("Error with deleting resource with id: " + id, buildLocaleFromSession(), e);
+			throw new SpagoBIRestServiceException("Error with deleting resource with id: " + id,
+					buildLocaleFromSession(), e);
 		}
 	}
 
@@ -340,12 +335,12 @@ public class RolesResource extends AbstractSpagoBIResource {
 		role.setRoleTypeCD(bo.getRoleTypeCD());
 		role.setRoleTypeID(bo.getRoleTypeID());
 		role.setIsPublic(bo.getIsPublic());
-		role.setIsAbleToSaveIntoPersonalFolder(bo.isAbleToSaveIntoPersonalFolder());
-		role.setIsAbleToEnableDatasetPersistence(bo.isAbleToEnableDatasetPersistence());
-		role.setIsAbleToEnableFederatedDataset(bo.isAbleToEnableFederatedDataset());
-		role.setIsAbleToEnableRate(bo.isAbleToEnableRate());
-		role.setIsAbleToEnablePrint(bo.isAbleToEnablePrint());
-		role.setIsAbleToEnableCopyAndEmbed(bo.isAbleToEnableCopyAndEmbed());
+		role.setAbleToSaveIntoPersonalFolder(bo.isAbleToSaveIntoPersonalFolder());
+		role.setAbleToEnableDatasetPersistence(bo.isAbleToEnableDatasetPersistence());
+		role.setAbleToEnableFederatedDataset(bo.isAbleToEnableFederatedDataset());
+		role.setAbleToEnableRate(bo.isAbleToEnableRate());
+		role.setAbleToEnablePrint(bo.isAbleToEnablePrint());
+		role.setAbleToEnableCopyAndEmbed(bo.isAbleToEnableCopyAndEmbed());
 		role.setAbleToManageGlossaryBusiness(bo.isAbleToManageGlossaryBusiness());
 		role.setAbleToManageGlossaryTechnical(bo.isAbleToManageGlossaryTechnical());
 		role.setAbleToManageKpiValue(bo.isAbleToManageKpiValue());
@@ -355,31 +350,31 @@ public class RolesResource extends AbstractSpagoBIResource {
 		role.setAbleToCreateSelfServiceGeoreport(bo.isAbleToCreateSelfServiceGeoreport());
 		role.setAbleToCreateSelfServiceKpi(bo.isAbleToCreateSelfServiceKpi());
 		role.setAbleToUseFunctionsCatalog(bo.isAbleToUseFunctionsCatalog());
-		role.setIsAbleToEditPythonScripts(bo.isAbleToEditPythonScripts());
-		role.setIsAbleToCreateCustomChart(bo.isAbleToCreateCustomChart());
-		role.setIsAbleToSaveSubobjects(bo.isAbleToSaveSubobjects());
-		role.setIsAbleToSeeSubobjects(bo.isAbleToSeeSubobjects());
-		role.setIsAbleToSeeViewpoints(bo.isAbleToSeeViewpoints());
-		role.setIsAbleToSeeSnapshots(bo.isAbleToSeeSnapshots());
-		role.setIsAbleToRunSnapshots(bo.isAbleToRunSnapshots());
-		role.setIsAbleToSeeNotes(bo.isAbleToSeeNotes());
-		role.setIsAbleToSendMail(bo.isAbleToSendMail());
-		role.setIsAbleToSaveRememberMe(bo.isAbleToSaveRememberMe());
-		role.setIsAbleToSeeMetadata(bo.isAbleToSeeMetadata());
-		role.setIsAbleToSaveMetadata(bo.isAbleToSaveMetadata());
-		role.setIsAbleToBuildQbeQuery(bo.isAbleToBuildQbeQuery());
-		role.setIsAbleToDoMassiveExport(bo.isAbleToDoMassiveExport());
-		role.setIsAbleToManageUsers(bo.isAbleToManageUsers());
-		role.setIsAbleToSeeDocumentBrowser(bo.isAbleToSeeDocumentBrowser());
-		role.setIsAbleToSeeFavourites(bo.isAbleToSeeFavourites());
-		role.setIsAbleToSeeSubscriptions(bo.isAbleToSeeSubscriptions());
-		role.setIsAbleToSeeMyData(bo.isAbleToSeeMyData());
-		role.setIsAbleToSeeMyWorkspace(bo.isAbleToSeeMyWorkspace());
-		role.setIsAbleToSeeToDoList(bo.isAbleToSeeToDoList());
-		role.setIsAbleToCreateDocuments(bo.isAbleToCreateDocuments());
-		role.setIsAbleToCreateSocialAnalysis(bo.isAbleToCreateSocialAnalysis());
-		role.setIsAbleToViewSocialAnalysis(bo.isAbleToViewSocialAnalysis());
-		role.setIsAbleToHierarchiesManagement(bo.isAbleToHierarchiesManagement());
+		role.setAbleToEditPythonScripts(bo.isAbleToEditPythonScripts());
+		role.setAbleToCreateCustomChart(bo.isAbleToCreateCustomChart());
+		role.setAbleToSaveSubobjects(bo.isAbleToSaveSubobjects());
+		role.setAbleToSeeSubobjects(bo.isAbleToSeeSubobjects());
+		role.setAbleToSeeViewpoints(bo.isAbleToSeeViewpoints());
+		role.setAbleToSeeSnapshots(bo.isAbleToSeeSnapshots());
+		role.setAbleToRunSnapshots(bo.isAbleToRunSnapshots());
+		role.setAbleToSeeNotes(bo.isAbleToSeeNotes());
+		role.setAbleToSendMail(bo.isAbleToSendMail());
+		role.setAbleToSaveRememberMe(bo.isAbleToSaveRememberMe());
+		role.setAbleToSeeMetadata(bo.isAbleToSeeMetadata());
+		role.setAbleToSaveMetadata(bo.isAbleToSaveMetadata());
+		role.setAbleToBuildQbeQuery(bo.isAbleToBuildQbeQuery());
+		role.setAbleToDoMassiveExport(bo.isAbleToDoMassiveExport());
+		role.setAbleToManageUsers(bo.isAbleToManageUsers());
+		role.setAbleToSeeDocumentBrowser(bo.isAbleToSeeDocumentBrowser());
+		role.setAbleToSeeFavourites(bo.isAbleToSeeFavourites());
+		role.setAbleToSeeSubscriptions(bo.isAbleToSeeSubscriptions());
+		role.setAbleToSeeMyData(bo.isAbleToSeeMyData());
+		role.setAbleToSeeMyWorkspace(bo.isAbleToSeeMyWorkspace());
+		role.setAbleToSeeToDoList(bo.isAbleToSeeToDoList());
+		role.setAbleToCreateDocuments(bo.isAbleToCreateDocuments());
+		role.setAbleToCreateSocialAnalysis(bo.isAbleToCreateSocialAnalysis());
+		role.setAbleToViewSocialAnalysis(bo.isAbleToViewSocialAnalysis());
+		role.setAbleToHierarchiesManagement(bo.isAbleToHierarchiesManagement());
 		role.setAbleToEditAllKpiComm(bo.isAbleToEditAllKpiComm());
 		role.setAbleToEditMyKpiComm(bo.isAbleToEditMyKpiComm());
 		role.setAbleToDeleteKpiComm(bo.isAbleToDeleteKpiComm());
@@ -394,7 +389,8 @@ public class RolesResource extends AbstractSpagoBIResource {
 	 */
 
 	@GET
-	@UserConstraint(functionalities = { CommunityFunctionalityConstants.PROFILE_MANAGEMENT, CommunityFunctionalityConstants.FINAL_USERS_MANAGEMENT })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.PROFILE_MANAGEMENT,
+			CommunityFunctionalityConstants.FINAL_USERS_MANAGEMENT })
 	@Path("/short")
 	@Produces(MediaType.APPLICATION_JSON + CHARSET)
 	public Response getRolesSimeple() {

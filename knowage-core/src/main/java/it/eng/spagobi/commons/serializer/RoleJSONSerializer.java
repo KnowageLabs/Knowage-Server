@@ -87,7 +87,8 @@ public class RoleJSONSerializer implements Serializer {
 		JSONObject result = null;
 
 		if (!(o instanceof Role)) {
-			throw new SerializationException("RoleJSONSerializer is unable to serialize object of type: " + o.getClass().getName());
+			throw new SerializationException(
+					"RoleJSONSerializer is unable to serialize object of type: " + o.getClass().getName());
 		}
 
 		try {
@@ -100,44 +101,44 @@ public class RoleJSONSerializer implements Serializer {
 			result.put(ROLE_CODE, role.getCode());
 			result.put(ROLE_TYPE_ID, role.getRoleTypeID());
 			result.put(ROLE_TYPE_CD, role.getRoleTypeCD());
-			result.put(SAVE_PERSONAL_FOLDER, role.isAbleToSaveIntoPersonalFolder());
-			result.put(SAVE_META, role.isAbleToSaveMetadata());
-			result.put(SAVE_REMEMBER, role.isAbleToSaveRememberMe());
-			result.put(SAVE_SUBOBJ, role.isAbleToSaveSubobjects());
-			result.put(SEE_META, role.isAbleToSeeMetadata());
-			result.put(SEE_NOTES, role.isAbleToSeeNotes());
-			result.put(SEE_SNAPSHOT, role.isAbleToSeeSnapshots());
-			result.put(RUN_SNAPSHOT, role.isAbleToRunSnapshots());
-			result.put(SEE_SUBOBJ, role.isAbleToSeeSubobjects());
-			result.put(SEE_VIEWPOINTS, role.isAbleToSeeViewpoints());
-			result.put(SEND_MAIL, role.isAbleToSendMail());
-			result.put(BUILD_QBE, role.isAbleToBuildQbeQuery());
-			result.put(DO_MASSIVE_EXPORT, role.isAbleToDoMassiveExport());
-			result.put(MANAGE_USERS, role.isAbleToManageUsers());
+			result.put(SAVE_PERSONAL_FOLDER, role.getAbleToSaveIntoPersonalFolder());
+			result.put(SAVE_META, role.getAbleToSaveMetadata());
+			result.put(SAVE_REMEMBER, role.getAbleToSaveRememberMe());
+			result.put(SAVE_SUBOBJ, role.getAbleToSaveSubobjects());
+			result.put(SEE_META, role.getAbleToSeeMetadata());
+			result.put(SEE_NOTES, role.getAbleToSeeNotes());
+			result.put(SEE_SNAPSHOT, role.getAbleToSeeSnapshots());
+			result.put(RUN_SNAPSHOT, role.getAbleToRunSnapshots());
+			result.put(SEE_SUBOBJ, role.getAbleToSeeSubobjects());
+			result.put(SEE_VIEWPOINTS, role.getAbleToSeeViewpoints());
+			result.put(SEND_MAIL, role.getAbleToSendMail());
+			result.put(BUILD_QBE, role.getAbleToBuildQbeQuery());
+			result.put(DO_MASSIVE_EXPORT, role.getAbleToDoMassiveExport());
+			result.put(MANAGE_USERS, role.getAbleToManageUsers());
 			result.put(DEFAULT_ROLE, role.isDefaultRole());
-			result.put(SEE_DOC_BROWSER, role.isAbleToSeeDocumentBrowser());
-			result.put(SEE_MY_DATA, role.isAbleToSeeMyData());
-			result.put(SEE_MY_WORKSPACE, role.isAbleToSeeMyWorkspace());
-			result.put(SEE_FAVOURITES, role.isAbleToSeeFavourites());
-			result.put(SEE_SUBSCRIPTIONS, role.isAbleToSeeSubscriptions());
-			result.put(SEE_TODO_LIST, role.isAbleToSeeToDoList());
-			result.put(CREATE_DOCUMENT, role.isAbleToCreateDocuments());
-			result.put(KPI_COMMENT_EDIT_ALL, role.isAbleToEditAllKpiComm());
-			result.put(KPI_COMMENT_EDIT_MY, role.isAbleToEditMyKpiComm());
-			result.put(KPI_COMMENT_DELETE, role.isAbleToDeleteKpiComm());
-			result.put(CREATE_SOCIAL_ANALYSIS, role.isAbleToCreateSocialAnalysis());
-			result.put(VIEW_SOCIAL_ANALYSIS, role.isAbleToViewSocialAnalysis());
-			result.put(HIERARCHIES_MANAGEMENT, role.isAbleToHierarchiesManagement());
-			result.put(MANAGE_GLOSSARY_BUSINESS, role.isAbleToManageGlossaryBusiness());
-			result.put(MANAGE_GLOSSARY_TECHNICAL, role.isAbleToManageGlossaryTechnical());
-			result.put(MANAGE_KPI_VALUE, role.isAbleToManageKpiValue());
-			result.put(MANAGE_CALENDAR, role.isAbleToManageCalendar());
-			result.put(FUNCTIONS_CATALOG_USAGE, role.isAbleToUseFunctionsCatalog());
-			result.put(ENABLE_DATASET_PERSISTENCE, role.isAbleToEnableDatasetPersistence());
-			result.put(ENABLE_FEDERATED_DATASET, role.isAbleToEnableFederatedDataset());
-			result.put(ENABLE_TO_RATE, role.isAbleToEnableRate());
-			result.put(ENABLE_TO_PRINT, role.isAbleToEnablePrint());
-			result.put(ENABLE_TO_COPY_AND_EMBED, role.isAbleToEnableCopyAndEmbed());
+			result.put(SEE_DOC_BROWSER, role.getAbleToSeeDocumentBrowser());
+			result.put(SEE_MY_DATA, role.getAbleToSeeMyData());
+			result.put(SEE_MY_WORKSPACE, role.getAbleToSeeMyWorkspace());
+			result.put(SEE_FAVOURITES, role.getAbleToSeeFavourites());
+			result.put(SEE_SUBSCRIPTIONS, role.getAbleToSeeSubscriptions());
+			result.put(SEE_TODO_LIST, role.getAbleToSeeToDoList());
+			result.put(CREATE_DOCUMENT, role.getAbleToCreateDocuments());
+			result.put(KPI_COMMENT_EDIT_ALL, role.getAbleToEditAllKpiComm());
+			result.put(KPI_COMMENT_EDIT_MY, role.getAbleToEditMyKpiComm());
+			result.put(KPI_COMMENT_DELETE, role.getAbleToDeleteKpiComm());
+			result.put(CREATE_SOCIAL_ANALYSIS, role.getAbleToCreateSocialAnalysis());
+			result.put(VIEW_SOCIAL_ANALYSIS, role.getAbleToViewSocialAnalysis());
+			result.put(HIERARCHIES_MANAGEMENT, role.getAbleToHierarchiesManagement());
+			result.put(MANAGE_GLOSSARY_BUSINESS, role.getAbleToManageGlossaryBusiness());
+			result.put(MANAGE_GLOSSARY_TECHNICAL, role.getAbleToManageGlossaryTechnical());
+			result.put(MANAGE_KPI_VALUE, role.getAbleToManageKpiValue());
+			result.put(MANAGE_CALENDAR, role.getAbleToManageCalendar());
+			result.put(FUNCTIONS_CATALOG_USAGE, role.getAbleToUseFunctionsCatalog());
+			result.put(ENABLE_DATASET_PERSISTENCE, role.getAbleToEnableDatasetPersistence());
+			result.put(ENABLE_FEDERATED_DATASET, role.getAbleToEnableFederatedDataset());
+			result.put(ENABLE_TO_RATE, role.getAbleToEnableRate());
+			result.put(ENABLE_TO_PRINT, role.getAbleToEnablePrint());
+			result.put(ENABLE_TO_COPY_AND_EMBED, role.getAbleToEnableCopyAndEmbed());
 
 			// create an array for Business Model Categories Ids
 			JSONArray bmCategories = new JSONArray();

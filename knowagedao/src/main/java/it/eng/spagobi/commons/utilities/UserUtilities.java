@@ -322,7 +322,8 @@ public class UserUtilities {
 	}
 
 	private static boolean importUsersIsEnabled() {
-		String importUserIsEnabled = SingletonConfig.getInstance().getConfigValue(ConfigurationConstants.INTERNAL_SECURITY_LOGIN_IMPORT_USER_IF_NOT_EXISTING);
+		String importUserIsEnabled = SingletonConfig.getInstance()
+				.getConfigValue(ConfigurationConstants.INTERNAL_SECURITY_LOGIN_IMPORT_USER_IF_NOT_EXISTING);
 		return "true".equalsIgnoreCase(importUserIsEnabled);
 	}
 
@@ -336,7 +337,8 @@ public class UserUtilities {
 	 * @param user the user profile object to be initialized with the default role
 	 */
 	private static void setDefaultRole(SpagoBIUserProfile user) {
-		String defaultRole = SingletonConfig.getInstance().getConfigValue(ConfigurationConstants.INTERNAL_SECURITY_USERS_DEFAULT_ROLE);
+		String defaultRole = SingletonConfig.getInstance()
+				.getConfigValue(ConfigurationConstants.INTERNAL_SECURITY_USERS_DEFAULT_ROLE);
 		if (ArrayUtils.isEmpty(user.getRoles()) && StringUtils.isNotEmpty(defaultRole)) {
 			logger.debug("User profile object has no roles, setting the default one that is [" + defaultRole + "]");
 			user.setRoles(new String[] { defaultRole });
@@ -398,7 +400,8 @@ public class UserUtilities {
 			for (String role : roles) {
 				Role r = roleDAO.loadByName(role);
 				String roleCode = r.getRoleTypeCD();
-				if (roleCode.equalsIgnoreCase(SpagoBIConstants.ROLE_TYPE_DEV) || roleCode.equalsIgnoreCase(SpagoBIConstants.ROLE_TYPE_TEST)) {
+				if (roleCode.equalsIgnoreCase(SpagoBIConstants.ROLE_TYPE_DEV)
+						|| roleCode.equalsIgnoreCase(SpagoBIConstants.ROLE_TYPE_TEST)) {
 					return true;
 				}
 			}
@@ -417,7 +420,8 @@ public class UserUtilities {
 			for (String role : roles) {
 				Role r = roleDAO.loadByName(role);
 				String roleCode = r.getRoleTypeCD();
-				if (roleCode.equalsIgnoreCase(SpagoBIConstants.ADMIN_ROLE_TYPE) || roleCode.equalsIgnoreCase(SpagoBIConstants.ROLE_TYPE_MODEL_ADMIN)) {
+				if (roleCode.equalsIgnoreCase(SpagoBIConstants.ADMIN_ROLE_TYPE)
+						|| roleCode.equalsIgnoreCase(SpagoBIConstants.ROLE_TYPE_MODEL_ADMIN)) {
 					return true;
 				}
 			}
@@ -544,8 +548,8 @@ public class UserUtilities {
 	}
 
 	/**
-	 * Load the user personal folder as a LowFunctionality object. If the personal folder exists, it is returned; if it does not exist and create is false, null
-	 * is returned, otherwise the personal folder is created and then returned.
+	 * Load the user personal folder as a LowFunctionality object. If the personal folder exists, it is returned; if it does not exist and create is false, null is
+	 * returned, otherwise the personal folder is created and then returned.
 	 *
 	 * @param userProfile         UserProfile the user profile object
 	 * @param createIfNotExisting Boolean that specifies if the personal folder must be created if it doesn't exist
@@ -558,7 +562,8 @@ public class UserUtilities {
 			try {
 				createUserFunctionalityRoot(userProfile);
 			} catch (Exception e) {
-				throw new SpagoBIRuntimeException("Cannot create personal functionality for user with id [" + userId + "]", e);
+				throw new SpagoBIRuntimeException(
+						"Cannot create personal functionality for user with id [" + userId + "]", e);
 			}
 		}
 		LowFunctionality lf = null;
@@ -695,137 +700,137 @@ public class UserUtilities {
 			List<String> roleFunctionalities = new ArrayList<>();
 			Role virtualRole = getVirtualRole(roles, organization);
 
-			if (virtualRole.isAbleToSaveSubobjects()) {
+			if (virtualRole.getAbleToSaveSubobjects()) {
 				roleFunctionalities.add(CommunityFunctionalityConstants.SAVE_SUBOBJECT_FUNCTIONALITY);
 			}
-			if (virtualRole.isAbleToSeeSubobjects()) {
+			if (virtualRole.getAbleToSeeSubobjects()) {
 				roleFunctionalities.add(CommunityFunctionalityConstants.SEE_SUBOBJECTS_FUNCTIONALITY);
 			}
-			if (virtualRole.isAbleToSeeSnapshots()) {
+			if (virtualRole.getAbleToSeeSnapshots()) {
 				roleFunctionalities.add(CommunityFunctionalityConstants.SEE_SNAPSHOTS_FUNCTIONALITY);
 			}
-			if (virtualRole.isAbleToRunSnapshots()) {
+			if (virtualRole.getAbleToRunSnapshots()) {
 				roleFunctionalities.add(CommunityFunctionalityConstants.RUN_SNAPSHOTS_FUNCTIONALITY);
 			}
-			if (virtualRole.isAbleToSeeViewpoints()) {
+			if (virtualRole.getAbleToSeeViewpoints()) {
 				roleFunctionalities.add(CommunityFunctionalityConstants.SEE_VIEWPOINTS_FUNCTIONALITY);
 			}
-			if (virtualRole.isAbleToSeeNotes()) {
+			if (virtualRole.getAbleToSeeNotes()) {
 				roleFunctionalities.add(CommunityFunctionalityConstants.SEE_NOTES_FUNCTIONALITY);
 			}
-			if (virtualRole.isAbleToSendMail()) {
+			if (virtualRole.getAbleToSendMail()) {
 				roleFunctionalities.add(CommunityFunctionalityConstants.SEND_MAIL_FUNCTIONALITY);
 			}
-			if (virtualRole.isAbleToSaveIntoPersonalFolder()) {
+			if (virtualRole.getAbleToSaveIntoPersonalFolder()) {
 				roleFunctionalities.add(CommunityFunctionalityConstants.SAVE_INTO_FOLDER_FUNCTIONALITY);
 			}
-			if (virtualRole.isAbleToSaveRememberMe()) {
+			if (virtualRole.getAbleToSaveRememberMe()) {
 				roleFunctionalities.add(CommunityFunctionalityConstants.SAVE_REMEMBER_ME_FUNCTIONALITY);
 			}
-			if (virtualRole.isAbleToSeeMetadata()) {
+			if (virtualRole.getAbleToSeeMetadata()) {
 				roleFunctionalities.add(CommunityFunctionalityConstants.SEE_METADATA_FUNCTIONALITY);
 			}
-			if (virtualRole.isAbleToSaveMetadata()) {
+			if (virtualRole.getAbleToSaveMetadata()) {
 				roleFunctionalities.add(CommunityFunctionalityConstants.SAVE_METADATA_FUNCTIONALITY);
 			}
-			if (virtualRole.isAbleToBuildQbeQuery()) {
+			if (virtualRole.getAbleToBuildQbeQuery()) {
 				roleFunctionalities.add(CommunityFunctionalityConstants.BUILD_QBE_QUERIES_FUNCTIONALITY);
 			}
-			if (virtualRole.isAbleToDoMassiveExport()) {
+			if (virtualRole.getAbleToDoMassiveExport()) {
 				roleFunctionalities.add(CommunityFunctionalityConstants.DO_MASSIVE_EXPORT_FUNCTIONALITY);
 			}
-			if (virtualRole.isAbleToManageUsers()) {
+			if (virtualRole.getAbleToManageUsers()) {
 				roleFunctionalities.add(CommunityFunctionalityConstants.FINAL_USERS_MANAGEMENT);
 			}
-			if (virtualRole.isAbleToSeeDocumentBrowser()) {
+			if (virtualRole.getAbleToSeeDocumentBrowser()) {
 				roleFunctionalities.add(CommunityFunctionalityConstants.SEE_DOCUMENT_BROWSER);
 			}
-			if (virtualRole.isAbleToSeeMyData()) {
+			if (virtualRole.getAbleToSeeMyData()) {
 				roleFunctionalities.add(CommunityFunctionalityConstants.SEE_MY_DATA);
 			}
-			if (virtualRole.isAbleToSeeMyWorkspace()) {
+			if (virtualRole.getAbleToSeeMyWorkspace()) {
 				roleFunctionalities.add(CommunityFunctionalityConstants.SEE_MY_WORKSPACE);
 			}
-			if (virtualRole.isAbleToSeeFavourites()) {
+			if (virtualRole.getAbleToSeeFavourites()) {
 				roleFunctionalities.add(CommunityFunctionalityConstants.SEE_FAVOURITES);
 			}
-			if (virtualRole.isAbleToSeeSubscriptions()) {
+			if (virtualRole.getAbleToSeeSubscriptions()) {
 				roleFunctionalities.add(CommunityFunctionalityConstants.SEE_SUBSCRIPTIONS);
 			}
-			if (virtualRole.isAbleToSeeToDoList()) {
+			if (virtualRole.getAbleToSeeToDoList()) {
 				roleFunctionalities.add(CommunityFunctionalityConstants.SEE_TODO_LIST);
 			}
-			if (virtualRole.isAbleToCreateDocuments()) {
+			if (virtualRole.getAbleToCreateDocuments()) {
 				roleFunctionalities.add(CommunityFunctionalityConstants.CREATE_DOCUMENT);
 			}
-			if (virtualRole.isAbleToEditAllKpiComm()) {
+			if (virtualRole.getAbleToEditAllKpiComm()) {
 				roleFunctionalities.add(CommunityFunctionalityConstants.KPI_COMMENT_EDIT_ALL);
 			}
-			if (virtualRole.isAbleToEditMyKpiComm()) {
+			if (virtualRole.getAbleToEditMyKpiComm()) {
 				roleFunctionalities.add(CommunityFunctionalityConstants.KPI_COMMENT_EDIT_MY);
 			}
-			if (virtualRole.isAbleToDeleteKpiComm()) {
+			if (virtualRole.getAbleToDeleteKpiComm()) {
 				roleFunctionalities.add(CommunityFunctionalityConstants.KPI_COMMENT_DELETE);
 			}
-			if (virtualRole.isAbleToCreateSocialAnalysis()) {
+			if (virtualRole.getAbleToCreateSocialAnalysis()) {
 				roleFunctionalities.add(CommunityFunctionalityConstants.CREATE_SOCIAL_ANALYSIS);
 			}
-			if (virtualRole.isAbleToViewSocialAnalysis()) {
+			if (virtualRole.getAbleToViewSocialAnalysis()) {
 				roleFunctionalities.add(CommunityFunctionalityConstants.VIEW_SOCIAL_ANALYSIS);
 			}
-			if (virtualRole.isAbleToHierarchiesManagement()) {
+			if (virtualRole.getAbleToHierarchiesManagement()) {
 				roleFunctionalities.add(CommunityFunctionalityConstants.HIERARCHIES_MANAGEMENT);
 			}
-			if (virtualRole.isAbleToEnableDatasetPersistence()) {
+			if (virtualRole.getAbleToEnableDatasetPersistence()) {
 				roleFunctionalities.add(CommunityFunctionalityConstants.ENABLE_DATASET_PERSISTENCE);
 			}
-			if (virtualRole.isAbleToEnableFederatedDataset()) {
+			if (virtualRole.getAbleToEnableFederatedDataset()) {
 				roleFunctionalities.add(CommunityFunctionalityConstants.ENABLE_FEDERATED_DATASET);
 			}
-			if (virtualRole.isAbleToEnableRate()) {
+			if (virtualRole.getAbleToEnableRate()) {
 				roleFunctionalities.add(CommunityFunctionalityConstants.ENABLE_TO_RATE);
 			}
-			if (virtualRole.isAbleToEnablePrint()) {
+			if (virtualRole.getAbleToEnablePrint()) {
 				roleFunctionalities.add(CommunityFunctionalityConstants.ENABLE_TO_PRINT);
 			}
-			if (virtualRole.isAbleToEnableCopyAndEmbed()) {
+			if (virtualRole.getAbleToEnableCopyAndEmbed()) {
 				roleFunctionalities.add(CommunityFunctionalityConstants.ENABLE_TO_COPY_AND_EMBED);
 			}
-			if (virtualRole.isAbleToManageGlossaryBusiness()) {
+			if (virtualRole.getAbleToManageGlossaryBusiness()) {
 				roleFunctionalities.add(CommunityFunctionalityConstants.MANAGE_GLOSSARY_BUSINESS);
 			}
-			if (virtualRole.isAbleToManageGlossaryTechnical()) {
+			if (virtualRole.getAbleToManageGlossaryTechnical()) {
 				roleFunctionalities.add(CommunityFunctionalityConstants.MANAGE_GLOSSARY_TECHNICAL);
 			}
-			if (virtualRole.isAbleToManageKpiValue()) {
+			if (virtualRole.getAbleToManageKpiValue()) {
 				roleFunctionalities.add(CommunityFunctionalityConstants.MANAGE_KPI_VALUE);
 			}
-			if (virtualRole.isAbleToManageCalendar()) {
+			if (virtualRole.getAbleToManageCalendar()) {
 				roleFunctionalities.add(CommunityFunctionalityConstants.MANAGE_CALENDAR);
 			}
-			if (virtualRole.isAbleToUseFunctionsCatalog()) {
+			if (virtualRole.getAbleToUseFunctionsCatalog()) {
 				roleFunctionalities.add(CommunityFunctionalityConstants.FUNCTIONS_CATALOG_USAGE);
 			}
-			if (virtualRole.isAbleToManageInternationalization()) {
+			if (virtualRole.getAbleToManageInternationalization()) {
 				roleFunctionalities.add(CommunityFunctionalityConstants.MANAGE_INTERNATIONALIZATION);
 			}
 
-			if (virtualRole.isAbleToCreateSelfServiceCockpit()) {
+			if (virtualRole.getAbleToCreateSelfServiceCockpit()) {
 				roleFunctionalities.add(CommunityFunctionalityConstants.CREATE_SELF_SERVICE_COCKPIT);
 			}
 
-			if (virtualRole.isAbleToCreateSelfServiceGeoreport()) {
+			if (virtualRole.getAbleToCreateSelfServiceGeoreport()) {
 				roleFunctionalities.add(CommunityFunctionalityConstants.CREATE_SELF_SERVICE_GEOREPORT);
 			}
 
-			if (virtualRole.isAbleToCreateSelfServiceKpi()) {
+			if (virtualRole.getAbleToCreateSelfServiceKpi()) {
 				roleFunctionalities.add(CommunityFunctionalityConstants.CREATE_SELF_SERVICE_KPI);
 			}
 
-			if (virtualRole.isAbleToEditPythonScripts()) {
+			if (virtualRole.getAbleToEditPythonScripts()) {
 				roleFunctionalities.add(CommunityFunctionalityConstants.EDIT_PYTHON_SCRIPTS);
 			}
-			if (virtualRole.isAbleToCreateCustomChart()) {
+			if (virtualRole.getAbleToCreateCustomChart()) {
 				roleFunctionalities.add(CommunityFunctionalityConstants.CREATE_CUSTOM_CHART);
 			}
 			if (!roleFunctionalities.isEmpty()) {
@@ -862,7 +867,8 @@ public class UserUtilities {
 		List<String> licenseFunctionalities = new ArrayList<>();
 		try {
 			Class<?> licenseManager = Class.forName("it.eng.knowage.tools.servermanager.utils.LicenseManager");
-			Method readFunctionalitiesMethod = licenseManager.getMethod("readFunctionalityByLicense", SpagoBIUserProfile.class);
+			Method readFunctionalitiesMethod = licenseManager.getMethod("readFunctionalityByLicense",
+					SpagoBIUserProfile.class);
 			Set<String> functionalities = (Set<String>) readFunctionalitiesMethod.invoke(null, user);
 			if (functionalities != null) {
 				licenseFunctionalities.addAll(functionalities);
@@ -908,175 +914,176 @@ public class UserUtilities {
 				roleDAO.setTenant(organization);
 				Role anotherRole = roleDAO.loadByName(roleName);
 				if (anotherRole != null) {
-					if (anotherRole.isAbleToEditPythonScripts()) {
+					if (anotherRole.getAbleToEditPythonScripts()) {
 						logger.debug("User has role " + roleName + " that is able to edit python scripts.");
-						virtualRole.setIsAbleToEditPythonScripts(true);
+						virtualRole.setAbleToEditPythonScripts(true);
 					}
-					if (anotherRole.isAbleToCreateCustomChart()) {
+					if (anotherRole.getAbleToCreateCustomChart()) {
 						logger.debug("User has role " + roleName + " that is able to create custom chart.");
-						virtualRole.setIsAbleToCreateCustomChart(true);
+						virtualRole.setAbleToCreateCustomChart(true);
 					}
-					if (anotherRole.isAbleToSaveSubobjects()) {
+					if (anotherRole.getAbleToSaveSubobjects()) {
 						logger.debug("User has role " + roleName + " that is able to save subobjects.");
-						virtualRole.setIsAbleToSaveSubobjects(true);
+						virtualRole.setAbleToSaveSubobjects(true);
 					}
-					if (anotherRole.isAbleToSeeSubobjects()) {
+					if (anotherRole.getAbleToSeeSubobjects()) {
 						logger.debug("User has role " + roleName + " that is able to see subobjects.");
-						virtualRole.setIsAbleToSeeSubobjects(true);
+						virtualRole.setAbleToSeeSubobjects(true);
 					}
-					if (anotherRole.isAbleToSeeViewpoints()) {
+					if (anotherRole.getAbleToSeeViewpoints()) {
 						logger.debug("User has role " + roleName + " that is able to see viewpoints.");
-						virtualRole.setIsAbleToSeeViewpoints(true);
+						virtualRole.setAbleToSeeViewpoints(true);
 					}
-					if (anotherRole.isAbleToSeeSnapshots()) {
+					if (anotherRole.getAbleToSeeSnapshots()) {
 						logger.debug("User has role " + roleName + " that is able to see snapshots.");
-						virtualRole.setIsAbleToSeeSnapshots(true);
+						virtualRole.setAbleToSeeSnapshots(true);
 					}
-					if (anotherRole.isAbleToRunSnapshots()) {
+					if (anotherRole.getAbleToRunSnapshots()) {
 						logger.debug("User has role " + roleName + " that is able to run snapshots.");
-						virtualRole.setIsAbleToRunSnapshots(true);
+						virtualRole.setAbleToRunSnapshots(true);
 					}
-					if (anotherRole.isAbleToSeeMetadata()) {
+					if (anotherRole.getAbleToSeeMetadata()) {
 						logger.debug("User has role " + roleName + " that is able to see metadata.");
-						virtualRole.setIsAbleToSeeMetadata(true);
+						virtualRole.setAbleToSeeMetadata(true);
 					}
-					if (anotherRole.isAbleToSaveMetadata()) {
+					if (anotherRole.getAbleToSaveMetadata()) {
 						logger.debug("User has role " + roleName + " that is able to save metadata.");
-						virtualRole.setIsAbleToSaveMetadata(true);
+						virtualRole.setAbleToSaveMetadata(true);
 					}
-					if (anotherRole.isAbleToSendMail()) {
+					if (anotherRole.getAbleToSendMail()) {
 						logger.debug("User has role " + roleName + " that is able to send mail.");
-						virtualRole.setIsAbleToSendMail(true);
+						virtualRole.setAbleToSendMail(true);
 					}
-					if (anotherRole.isAbleToSeeNotes()) {
+					if (anotherRole.getAbleToSeeNotes()) {
 						logger.debug("User has role " + roleName + " that is able to see notes.");
-						virtualRole.setIsAbleToSeeNotes(true);
+						virtualRole.setAbleToSeeNotes(true);
 					}
-					if (anotherRole.isAbleToSaveRememberMe()) {
+					if (anotherRole.getAbleToSaveRememberMe()) {
 						logger.debug("User has role " + roleName + " that is able to save remember me.");
-						virtualRole.setIsAbleToSaveRememberMe(true);
+						virtualRole.setAbleToSaveRememberMe(true);
 					}
-					if (anotherRole.isAbleToSaveIntoPersonalFolder()) {
+					if (anotherRole.getAbleToSaveIntoPersonalFolder()) {
 						logger.debug("User has role " + roleName + " that is able to save into personal folder.");
-						virtualRole.setIsAbleToSaveIntoPersonalFolder(true);
+						virtualRole.setAbleToSaveIntoPersonalFolder(true);
 					}
-					if (anotherRole.isAbleToBuildQbeQuery()) {
+					if (anotherRole.getAbleToBuildQbeQuery()) {
 						logger.debug("User has role " + roleName + " that is able to build QBE queries.");
-						virtualRole.setIsAbleToBuildQbeQuery(true);
+						virtualRole.setAbleToBuildQbeQuery(true);
 					}
-					if (anotherRole.isAbleToDoMassiveExport()) {
+					if (anotherRole.getAbleToDoMassiveExport()) {
 						logger.debug("User has role " + roleName + " that is able to do massive export.");
-						virtualRole.setIsAbleToDoMassiveExport(true);
+						virtualRole.setAbleToDoMassiveExport(true);
 					}
-					if (anotherRole.isAbleToManageUsers()) {
+					if (anotherRole.getAbleToManageUsers()) {
 						logger.debug("User has role " + roleName + " that is able to manage users.");
-						virtualRole.setIsAbleToManageUsers(true);
+						virtualRole.setAbleToManageUsers(true);
 					}
-					if (anotherRole.isAbleToSeeDocumentBrowser()) {
+					if (anotherRole.getAbleToSeeDocumentBrowser()) {
 						logger.debug("User has role " + roleName + " that is able to see document browser.");
-						virtualRole.setIsAbleToSeeDocumentBrowser(true);
+						virtualRole.setAbleToSeeDocumentBrowser(true);
 					}
-					if (anotherRole.isAbleToSeeMyData()) {
+					if (anotherRole.getAbleToSeeMyData()) {
 						logger.debug("User has role " + roleName + " that is able to see MyData.");
-						virtualRole.setIsAbleToSeeMyData(true);
+						virtualRole.setAbleToSeeMyData(true);
 					}
-					if (anotherRole.isAbleToSeeMyWorkspace()) {
+					if (anotherRole.getAbleToSeeMyWorkspace()) {
 						logger.debug("User has role " + roleName + " that is able to see MyWorkspace.");
-						virtualRole.setIsAbleToSeeMyWorkspace(true);
+						virtualRole.setAbleToSeeMyWorkspace(true);
 					}
-					if (anotherRole.isAbleToSeeFavourites()) {
+					if (anotherRole.getAbleToSeeFavourites()) {
 						logger.debug("User has role " + roleName + " that is able to see Favourites.");
-						virtualRole.setIsAbleToSeeFavourites(true);
+						virtualRole.setAbleToSeeFavourites(true);
 					}
-					if (anotherRole.isAbleToSeeSubscriptions()) {
+					if (anotherRole.getAbleToSeeSubscriptions()) {
 						logger.debug("User has role " + roleName + " that is able to see Subscriptions.");
-						virtualRole.setIsAbleToSeeSubscriptions(true);
+						virtualRole.setAbleToSeeSubscriptions(true);
 					}
-					if (anotherRole.isAbleToSeeToDoList()) {
+					if (anotherRole.getAbleToSeeToDoList()) {
 						logger.debug("User has role " + roleName + " that is able to see To Do List.");
-						virtualRole.setIsAbleToSeeToDoList(true);
+						virtualRole.setAbleToSeeToDoList(true);
 					}
-					if (anotherRole.isAbleToCreateDocuments()) {
+					if (anotherRole.getAbleToCreateDocuments()) {
 						logger.debug("User has role " + roleName + " that is able to create documents.");
-						virtualRole.setIsAbleToCreateDocuments(true);
+						virtualRole.setAbleToCreateDocuments(true);
 					}
-					if (anotherRole.isAbleToEditAllKpiComm()) {
+					if (anotherRole.getAbleToEditAllKpiComm()) {
 						logger.debug("User has role " + roleName + " that is able to edit all kpi comments.");
 						virtualRole.setAbleToEditAllKpiComm(true);
 					}
-					if (anotherRole.isAbleToEditMyKpiComm()) {
+					if (anotherRole.getAbleToEditMyKpiComm()) {
 						logger.debug("User has role " + roleName + " that is able to edit owned kpi comments.");
 						virtualRole.setAbleToEditMyKpiComm(true);
 					}
-					if (anotherRole.isAbleToEditAllKpiComm()) {
+					if (anotherRole.getAbleToEditAllKpiComm()) {
 						logger.debug("User has role " + roleName + " that is able to delete kpi comments.");
 						virtualRole.setAbleToDeleteKpiComm(true);
 					}
-					if (anotherRole.isAbleToCreateSocialAnalysis()) {
+					if (anotherRole.getAbleToCreateSocialAnalysis()) {
 						logger.debug("User has role " + roleName + " that is able to create social analysis.");
-						virtualRole.setIsAbleToCreateSocialAnalysis(true);
+						virtualRole.setAbleToCreateSocialAnalysis(true);
 					}
-					if (anotherRole.isAbleToViewSocialAnalysis()) {
+					if (anotherRole.getAbleToViewSocialAnalysis()) {
 						logger.debug("User has role " + roleName + " that is able to view social analysis.");
-						virtualRole.setIsAbleToViewSocialAnalysis(true);
+						virtualRole.setAbleToViewSocialAnalysis(true);
 					}
-					if (anotherRole.isAbleToHierarchiesManagement()) {
+					if (anotherRole.getAbleToHierarchiesManagement()) {
 						logger.debug("User has role " + roleName + " that is able to manage hierarchies");
-						virtualRole.setIsAbleToHierarchiesManagement(true);
+						virtualRole.setAbleToHierarchiesManagement(true);
 					}
-					if (anotherRole.isAbleToEnableDatasetPersistence()) {
+					if (anotherRole.getAbleToEnableDatasetPersistence()) {
 						logger.debug("User has role " + roleName + " that is able to persist dataset.");
-						virtualRole.setIsAbleToEnableDatasetPersistence(true);
+						virtualRole.setAbleToEnableDatasetPersistence(true);
 					}
-					if (anotherRole.isAbleToEnableFederatedDataset()) {
+					if (anotherRole.getAbleToEnableFederatedDataset()) {
 						logger.debug("User has role " + roleName + " that is able to manage federated dataset.");
-						virtualRole.setIsAbleToEnableFederatedDataset(true);
+						virtualRole.setAbleToEnableFederatedDataset(true);
 					}
-					if (anotherRole.isAbleToEnableRate()) {
+					if (anotherRole.getAbleToEnableRate()) {
 						logger.debug("User has role " + roleName + " that is able to enable rating.");
-						virtualRole.setIsAbleToEnableRate(true);
+						virtualRole.setAbleToEnableRate(true);
 					}
-					if (anotherRole.isAbleToEnablePrint()) {
+					if (anotherRole.getAbleToEnablePrint()) {
 						logger.debug("User has role " + roleName + " that is able to print documents.");
-						virtualRole.setIsAbleToEnablePrint(true);
+						virtualRole.setAbleToEnablePrint(true);
 					}
-					if (anotherRole.isAbleToEnableCopyAndEmbed()) {
+					if (anotherRole.getAbleToEnableCopyAndEmbed()) {
 						logger.debug("User has role " + roleName + " that is able to copy or embed link.");
-						virtualRole.setIsAbleToEnableCopyAndEmbed(true);
+						virtualRole.setAbleToEnableCopyAndEmbed(true);
 					}
-					if (anotherRole.isAbleToManageGlossaryBusiness()) {
+					if (anotherRole.getAbleToManageGlossaryBusiness()) {
 						logger.debug("User has role " + roleName + " that is able to manage glossary business.");
 						virtualRole.setAbleToManageGlossaryBusiness(true);
 					}
-					if (anotherRole.isAbleToManageGlossaryTechnical()) {
+					if (anotherRole.getAbleToManageGlossaryTechnical()) {
 						logger.debug("User has role " + roleName + " that is able to manage glossary technical.");
 						virtualRole.setAbleToManageGlossaryTechnical(true);
 					}
-					if (anotherRole.isAbleToManageKpiValue()) {
+					if (anotherRole.getAbleToManageKpiValue()) {
 						logger.debug("User has role " + roleName + " that is able to manage kpi value.");
 						virtualRole.setAbleToManageKpiValue(true);
 					}
-					if (anotherRole.isAbleToManageCalendar()) {
+					if (anotherRole.getAbleToManageCalendar()) {
 						logger.debug("User has role " + roleName + " that is able to manage Calendar.");
 						virtualRole.setAbleToManageCalendar(true);
 					}
-					if (anotherRole.isAbleToUseFunctionsCatalog()) {
+					if (anotherRole.getAbleToUseFunctionsCatalog()) {
 						logger.debug("User has role " + roleName + " that is able to use functions catalog.");
 						virtualRole.setAbleToUseFunctionsCatalog(true);
 					}
-					if (anotherRole.isAbleToManageInternationalization()) {
+					if (anotherRole.getAbleToManageInternationalization()) {
 						logger.debug("User has role " + roleName + " that is able to manage Internationalization.");
 						virtualRole.setAbleToManageInternationalization(true);
 					}
-					if (anotherRole.isAbleToCreateSelfServiceCockpit()) {
+					if (anotherRole.getAbleToCreateSelfServiceCockpit()) {
 						logger.debug("User has role " + roleName + " that is able to create self service cockpit.");
 						virtualRole.setAbleToCreateSelfServiceCockpit(true);
 					}
-					if (anotherRole.isAbleToCreateSelfServiceGeoreport()) {
-						logger.debug("User has role " + roleName + " that is able to create self service geographic report.");
+					if (anotherRole.getAbleToCreateSelfServiceGeoreport()) {
+						logger.debug("User has role " + roleName
+								+ " that is able to create self service geographic report.");
 						virtualRole.setAbleToCreateSelfServiceGeoreport(true);
 					}
-					if (anotherRole.isAbleToCreateSelfServiceKpi()) {
+					if (anotherRole.getAbleToCreateSelfServiceKpi()) {
 						logger.debug("User has role " + roleName + " that is able to create self service kpi.");
 						virtualRole.setAbleToCreateSelfServiceKpi(true);
 					}
@@ -1095,8 +1102,8 @@ public class UserUtilities {
 				throw new SpagoBIRuntimeException("No tenants found on database");
 			}
 			if (tenants.size() > 1) {
-				throw new SpagoBIRuntimeException(
-						"Tenants are more than one, cannot associate input user profile [" + profile.getUserId() + "] to a single tenant!!!");
+				throw new SpagoBIRuntimeException("Tenants are more than one, cannot associate input user profile ["
+						+ profile.getUserId() + "] to a single tenant!!!");
 			}
 			SbiTenant tenant = tenants.get(0);
 			logger.warn("Associating user profile [" + profile.getUserId() + "] to tenant [" + tenant.getName() + "]");
@@ -1118,13 +1125,16 @@ public class UserUtilities {
 
 		try {
 			SingletonConfig configSingleton = SingletonConfig.getInstance();
-			engUserProfileFactoryClass = configSingleton.getConfigValue("SPAGOBI.SECURITY.USER-PROFILE-FACTORY-CLASS.className");
+			engUserProfileFactoryClass = configSingleton
+					.getConfigValue("SPAGOBI.SECURITY.USER-PROFILE-FACTORY-CLASS.className");
 			if (engUserProfileFactoryClass != null) {
 				engUserProfileFactoryClass = engUserProfileFactoryClass.trim();
 				try {
-					securityServiceSupplier = (ISecurityServiceSupplier) Class.forName(engUserProfileFactoryClass).newInstance();
+					securityServiceSupplier = (ISecurityServiceSupplier) Class.forName(engUserProfileFactoryClass)
+							.newInstance();
 				} catch (Throwable t) {
-					throw new DAORuntimeException("Impossible to instatiate supplier class [" + engUserProfileFactoryClass + "]", t);
+					throw new DAORuntimeException(
+							"Impossible to instatiate supplier class [" + engUserProfileFactoryClass + "]", t);
 				}
 			} else {
 				throw new DAORuntimeException(
@@ -1134,15 +1144,16 @@ public class UserUtilities {
 			if (t instanceof DAORuntimeException)
 				throw (DAORuntimeException) t;
 			else
-				throw new DAORuntimeException("Impossible to instatiate supplier class [" + engUserProfileFactoryClass + "]", t);
+				throw new DAORuntimeException(
+						"Impossible to instatiate supplier class [" + engUserProfileFactoryClass + "]", t);
 		}
 
 		return securityServiceSupplier;
 	}
 
 	/**
-	 * Clones the input profile object. We don't implement the SpagoBIUserProfile.clone method because SpagoBIUserProfile is created by Axis tools, and
-	 * therefore, when generating the class we may lost that method.
+	 * Clones the input profile object. We don't implement the SpagoBIUserProfile.clone method because SpagoBIUserProfile is created by Axis tools, and therefore,
+	 * when generating the class we may lost that method.
 	 *
 	 * @param profile The input SpagoBIUserProfile object
 	 * @return a clone of the input SpagoBIUserProfile object
@@ -1207,7 +1218,8 @@ public class UserUtilities {
 				rolesDao = DAOFactory.getRoleDAO();
 				rolesDao.setUserProfile(profile);
 				ICategoryDAO categoryDao = DAOFactory.getCategoryDAO();
-				List<Domain> array = categoryDao.getCategoriesForDataset().stream().map(Domain::fromCategory).collect(toList());
+				List<Domain> array = categoryDao.getCategoriesForDataset().stream().map(Domain::fromCategory)
+						.collect(toList());
 				for (String roleName : roleNames) {
 					Role role = rolesDao.loadByName(roleName);
 					List<RoleMetaModelCategory> ds = rolesDao.getMetaModelCategoriesForRole(role.getId());
@@ -1225,7 +1237,8 @@ public class UserUtilities {
 			return categories;
 		} catch (Exception e) {
 			logger.error("Impossible to get role dataset categories for user [" + profile + "]", e);
-			throw new SpagoBIRuntimeException("Impossible to get role dataset categories for user [" + profile + "]", e);
+			throw new SpagoBIRuntimeException("Impossible to get role dataset categories for user [" + profile + "]",
+					e);
 		}
 	}
 
@@ -1242,7 +1255,8 @@ public class UserUtilities {
 				rolesDao.setUserProfile(profile);
 				IDomainDAO domainDao = DAOFactory.getDomainDAO();
 				ICategoryDAO categoryDao = DAOFactory.getCategoryDAO();
-				List<Domain> allCategories = categoryDao.getCategoriesForBusinessModel().stream().map(Domain::fromCategory).collect(toList());
+				List<Domain> allCategories = categoryDao.getCategoriesForBusinessModel().stream()
+						.map(Domain::fromCategory).collect(toList());
 				for (String roleName : roleNames) {
 					Role role = rolesDao.loadByName(roleName);
 					List<RoleMetaModelCategory> roles = rolesDao.getMetaModelCategoriesForRole(role.getId());
@@ -1260,7 +1274,8 @@ public class UserUtilities {
 			return toReturn;
 		} catch (Exception e) {
 			logger.error("Impossible to get role dataset categories for user [" + profile + "]", e);
-			throw new SpagoBIRuntimeException("Impossible to get role dataset categories for user [" + profile + "]", e);
+			throw new SpagoBIRuntimeException("Impossible to get role dataset categories for user [" + profile + "]",
+					e);
 		}
 	}
 
@@ -1271,7 +1286,8 @@ public class UserUtilities {
 			String userId = (String) ((UserProfile) user).getUserId();
 
 			try {
-				it.eng.spagobi.profiling.dao.ISbiAccessibilityPreferencesDAO dao = DAOFactory.getSiAccessibilityPreferencesDAO();
+				it.eng.spagobi.profiling.dao.ISbiAccessibilityPreferencesDAO dao = DAOFactory
+						.getSiAccessibilityPreferencesDAO();
 				SbiAccessibilityPreferences ap = dao.readUserAccessibilityPreferences(userId);
 				if (ap != null) {
 					preferences = new AccessibilityPreferences();
@@ -1326,7 +1342,8 @@ public class UserUtilities {
 			for (String role : roles) {
 				Role r = roleDAO.loadByName(role);
 				String roleCode = r.getRoleTypeCD();
-				if (roleCode.equalsIgnoreCase(SpagoBIConstants.ADMIN_ROLE_TYPE) || roleCode.equalsIgnoreCase(SpagoBIConstants.ROLE_TYPE_MODEL_ADMIN)) {
+				if (roleCode.equalsIgnoreCase(SpagoBIConstants.ADMIN_ROLE_TYPE)
+						|| roleCode.equalsIgnoreCase(SpagoBIConstants.ROLE_TYPE_MODEL_ADMIN)) {
 					listRoles.add(r);
 				}
 			}
@@ -1348,7 +1365,8 @@ public class UserUtilities {
 			for (String role : roles) {
 				Role r = roleDAO.loadByName(role);
 				String roleCode = r.getRoleTypeCD();
-				if (roleCode.equalsIgnoreCase(SpagoBIConstants.ADMIN_ROLE_TYPE) || roleCode.equalsIgnoreCase(SpagoBIConstants.ROLE_TYPE_MODEL_ADMIN)) {
+				if (roleCode.equalsIgnoreCase(SpagoBIConstants.ADMIN_ROLE_TYPE)
+						|| roleCode.equalsIgnoreCase(SpagoBIConstants.ROLE_TYPE_MODEL_ADMIN)) {
 					listRoles.add(r.getName());
 				}
 			}
