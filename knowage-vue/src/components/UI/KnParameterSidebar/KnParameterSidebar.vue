@@ -538,10 +538,10 @@ export default defineComponent({
             let parameters = [] as any[]
             Object.keys(this.parameters.filterStatus).forEach((key: any) => {
                 const parameter = this.parameters.filterStatus[key]
-                if (!parameter.multivalue) {
+                if (!parameter.multivalue && parameter.parameterValue[0]) {
                     parameters.push({
                         urlName: parameter.urlName,
-                        value: parameter.parameterValue[0].value,
+                        value: parameter.parameterValue[0].value ?? '',
                         description: parameter.parameterValue[0].description ?? ''
                     })
                 } else {
