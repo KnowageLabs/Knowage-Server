@@ -30,7 +30,8 @@ import java.util.Optional;
 import java.util.Set;
 
 import org.apache.commons.lang.ArrayUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.CreationHelper;
 import org.apache.poi.ss.usermodel.FillPatternType;
@@ -52,7 +53,8 @@ import it.eng.spagobi.tools.dataset.bo.VersionedDataSet;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 public abstract class AbstractFormatExporter {
-	private static Logger LOGGER = Logger.getLogger(AbstractFormatExporter.class);
+	private static final Logger LOGGER = LogManager.getLogger(AbstractFormatExporter.class);
+
 	protected Locale locale;
 	protected final String userUniqueIdentifier;
 	protected final JSONObject body;
@@ -62,7 +64,7 @@ public abstract class AbstractFormatExporter {
 	// TODO : Do we really need a "state" instance here instead of a local variable?
 	protected List<Integer> hiddenColumns;
 	protected Map<String, String> i18nMessages;
-	protected Map<Integer, XSSFCellStyle> formatHash2CellStyle = new HashMap<Integer, XSSFCellStyle>();
+	protected Map<Integer, XSSFCellStyle> formatHash2CellStyle = new HashMap<>();
 
 	protected static final CssColorParser CSS_COLOR_PARSER = CssColorParser.getInstance();
 
@@ -128,9 +130,9 @@ public abstract class AbstractFormatExporter {
 				}
 			}
 		} catch (Exception e) {
-			LOGGER.error("Couldn't get widget " + widgetId + " type, it will be exported as a normal widget.");
+			LOGGER.error("Couldn't get widget {} type, it will be exported as a normal widget.", widgetId);
 		}
-		LOGGER.error("Couldn't get widget " + widgetId + " type, it will be exported as a normal widget.");
+		LOGGER.error("Couldn't get widget {} type, it will be exported as a normal widget.", widgetId);
 		return "";
 	}
 
@@ -330,16 +332,18 @@ public abstract class AbstractFormatExporter {
 			datastore.put("widgetData", widget);
 
 		} catch (Exception e) {
-			throw new SpagoBIRuntimeException("Error getting datastore for widget [type=" + widget.optString("type") + "] [id=" + widget.optLong("id") + "]",
-					e);
+			throw new SpagoBIRuntimeException("Error getting datastore for widget [type=" + widget.optString("type")
+					+ "] [id=" + widget.optLong("id") + "]", e);
 		}
 		return datastore;
 	}
 
-	protected JSONObject getDatastore(String datasetLabel, Map<String, Object> map, String selections, int offset, int fetchSize) {
+	protected JSONObject getDatastore(String datasetLabel, Map<String, Object> map, String selections, int offset,
+			int fetchSize) {
 		ExporterClient client = new ExporterClient();
 		try {
-			JSONObject datastore = client.getDataStore(map, datasetLabel, userUniqueIdentifier, selections, offset, fetchSize);
+			JSONObject datastore = client.getDataStore(map, datasetLabel, userUniqueIdentifier, selections, offset,
+					fetchSize);
 			return datastore;
 		} catch (Exception e) {
 			String message = "Unable to get data";
@@ -376,7 +380,8 @@ public abstract class AbstractFormatExporter {
 				JSONObject orderedCol = columnsOrdered.getJSONObject(i);
 				for (int j = 0; j < columns.length(); j++) {
 					JSONObject col = columns.getJSONObject(j);
-					if (col.has("aliasToShow") && orderedCol.getString("header").equals(getTableColumnHeaderValue(col))) {
+					if (col.has("aliasToShow")
+							&& orderedCol.getString("header").equals(getTableColumnHeaderValue(col))) {
 						if (col.has("style")) {
 							toReturn[i] = col.getJSONObject("style");
 						}
@@ -422,7 +427,8 @@ public abstract class AbstractFormatExporter {
 													measure.put("alias", column.getString("aliasToShow"));
 
 													String formula = column.optString("formula");
-													String name = formula.isEmpty() ? column.optString("name") : formula;
+													String name = formula.isEmpty() ? column.optString("name")
+															: formula;
 													if (column.has("formula")) {
 														measure.put("formula", name);
 													} else
@@ -439,7 +445,8 @@ public abstract class AbstractFormatExporter {
 
 															String hideSummary = style.optString("hideSummary");
 
-															if (hideSummary != null && !hideSummary.isEmpty() && hideSummary.equalsIgnoreCase("true")) {
+															if (hideSummary != null && !hideSummary.isEmpty()
+																	&& hideSummary.equalsIgnoreCase("true")) {
 																hidden = true;
 															}
 
@@ -478,7 +485,8 @@ public abstract class AbstractFormatExporter {
 													measure.put("alias", column.getString("aliasToShow"));
 
 													String formula = column.optString("formula");
-													String name = formula.isEmpty() ? column.optString("name") : formula;
+													String name = formula.isEmpty() ? column.optString("name")
+															: formula;
 													if (column.has("formula")) {
 														measure.put("formula", name);
 													} else
@@ -495,7 +503,8 @@ public abstract class AbstractFormatExporter {
 
 															String hideSummary = style.optString("hideSummary");
 
-															if (hideSummary != null && !hideSummary.isEmpty() && hideSummary.equalsIgnoreCase("true")) {
+															if (hideSummary != null && !hideSummary.isEmpty()
+																	&& hideSummary.equalsIgnoreCase("true")) {
 																hidden = true;
 															}
 
@@ -553,7 +562,8 @@ public abstract class AbstractFormatExporter {
 
 													String hideSummary = style.optString("hideSummary");
 
-													if (hideSummary != null && !hideSummary.isEmpty() && hideSummary.equalsIgnoreCase("true")) {
+													if (hideSummary != null && !hideSummary.isEmpty()
+															&& hideSummary.equalsIgnoreCase("true")) {
 														hidden = true;
 													}
 
@@ -664,8 +674,9 @@ public abstract class AbstractFormatExporter {
 		return arr;
 	}
 
-	protected CellStyle getIntCellStyle(Workbook wb, CreationHelper helper, JSONObject column, JSONObject colStyle, String defaultFormat, JSONObject settings,
-			Integer value, JSONObject rowObject, HashMap<String, String> mapColumns, HashMap<String, String> mapColumnsTypes,
+	protected CellStyle getIntCellStyle(Workbook wb, CreationHelper helper, JSONObject column, JSONObject colStyle,
+			String defaultFormat, JSONObject settings, Integer value, JSONObject rowObject,
+			HashMap<String, String> mapColumns, HashMap<String, String> mapColumnsTypes,
 			HashMap<String, Object> variablesMap, HashMap<String, Object> parametersMap) {
 		String colName = null;
 		XSSFCellStyle toReturn = getCellStyleByFormat(wb, helper, defaultFormat, Optional.empty(), Optional.empty());
@@ -688,7 +699,8 @@ public abstract class AbstractFormatExporter {
 			}
 
 			if (settings != null)
-				toReturn = getRowStyle(wb, helper, settings, rowObject, mapColumns, defaultFormat, mapColumnsTypes, variablesMap, parametersMap);
+				toReturn = getRowStyle(wb, helper, settings, rowObject, mapColumns, defaultFormat, mapColumnsTypes,
+						variablesMap, parametersMap);
 
 			if (column.has("ranges")) {
 				JSONArray ranges = column.getJSONArray("ranges");
@@ -708,9 +720,12 @@ public abstract class AbstractFormatExporter {
 							if (threshold.getString("compareValueType").equals("static"))
 								valueToPut = threshold.getInt("value");
 							else if (threshold.getString("compareValueType").equals("variable")) {
-								valueToPut = Integer.parseInt(variablesMap.get(threshold.getString("value")).toString());
-							} else if (threshold.getString("compareValueType").equals("parameter") && parametersMap.get(threshold.getString("value")) != null) {
-								valueToPut = Integer.parseInt(parametersMap.get(threshold.getString("value")).toString());
+								valueToPut = Integer
+										.parseInt(variablesMap.get(threshold.getString("value")).toString());
+							} else if (threshold.getString("compareValueType").equals("parameter")
+									&& parametersMap.get(threshold.getString("value")) != null) {
+								valueToPut = Integer
+										.parseInt(parametersMap.get(threshold.getString("value")).toString());
 							} else {
 								break;
 							}
@@ -762,7 +777,8 @@ public abstract class AbstractFormatExporter {
 						} else {
 							if (threshold.getString("operator").equals("IN")) {
 
-								String[] valueArray = threshold.getString("valueArray").replace("[", "").replace("]", "").replaceAll("\"", "").split(",");
+								String[] valueArray = threshold.getString("valueArray").replace("[", "")
+										.replace("]", "").replaceAll("\"", "").split(",");
 								int[] numbers = new int[valueArray.length];
 								for (int i = 0; i < valueArray.length; i++) {
 									numbers[i] = Integer.parseInt(valueArray[i]);
@@ -777,19 +793,21 @@ public abstract class AbstractFormatExporter {
 
 				}
 
-				toReturn = getCellStyleByFormat(wb, helper, formatStr, Optional.ofNullable(fillPatternType), Optional.ofNullable(color));
+				toReturn = getCellStyleByFormat(wb, helper, formatStr, Optional.ofNullable(fillPatternType),
+						Optional.ofNullable(color));
 
 			}
 
 			return toReturn;
 		} catch (Exception e) {
-			LOGGER.error("Error while building column {" + colName + "} CellStyle. Default style will be used.", e);
+			LOGGER.error("Error while building column {} CellStyle. Default style will be used.", colName, e);
 			return toReturn;
 		}
 	}
 
-	protected CellStyle getDoubleCellStyle(Workbook wb, CreationHelper helper, JSONObject column, JSONObject colStyle, String defaultFormat,
-			JSONObject settings, Double value, JSONObject rowObject, HashMap<String, String> mapColumns, HashMap<String, String> mapColumnsTypes,
+	protected CellStyle getDoubleCellStyle(Workbook wb, CreationHelper helper, JSONObject column, JSONObject colStyle,
+			String defaultFormat, JSONObject settings, Double value, JSONObject rowObject,
+			HashMap<String, String> mapColumns, HashMap<String, String> mapColumnsTypes,
 			HashMap<String, Object> variablesMap, HashMap<String, Object> parametersMap) {
 		String colName = null;
 		CreationHelper createHelper = wb.getCreationHelper();
@@ -814,7 +832,8 @@ public abstract class AbstractFormatExporter {
 			}
 
 			if (settings != null)
-				toReturn = getRowStyle(wb, helper, settings, rowObject, mapColumns, defaultFormat, mapColumnsTypes, variablesMap, parametersMap);
+				toReturn = getRowStyle(wb, helper, settings, rowObject, mapColumns, defaultFormat, mapColumnsTypes,
+						variablesMap, parametersMap);
 
 			if (column.has("ranges")) {
 				JSONArray ranges = column.getJSONArray("ranges");
@@ -834,9 +853,12 @@ public abstract class AbstractFormatExporter {
 							if (threshold.getString("compareValueType").equals("static"))
 								valueToPut = threshold.getDouble("value");
 							else if (threshold.getString("compareValueType").equals("variable")) {
-								valueToPut = Double.parseDouble(variablesMap.get(threshold.getString("value")).toString());
-							} else if (threshold.getString("compareValueType").equals("parameter") && parametersMap.get(threshold.getString("value")) != null) {
-								valueToPut = Double.parseDouble(parametersMap.get(threshold.getString("value")).toString());
+								valueToPut = Double
+										.parseDouble(variablesMap.get(threshold.getString("value")).toString());
+							} else if (threshold.getString("compareValueType").equals("parameter")
+									&& parametersMap.get(threshold.getString("value")) != null) {
+								valueToPut = Double
+										.parseDouble(parametersMap.get(threshold.getString("value")).toString());
 							} else {
 								break;
 							}
@@ -886,7 +908,8 @@ public abstract class AbstractFormatExporter {
 						} else {
 							if (threshold.getString("operator").equals("IN")) {
 
-								String[] valueArray = threshold.getString("valueArray").replace("[", "").replace("]", "").replaceAll("\"", "").split(",");
+								String[] valueArray = threshold.getString("valueArray").replace("[", "")
+										.replace("]", "").replaceAll("\"", "").split(",");
 								double[] numbers = new double[valueArray.length];
 								for (int i = 0; i < valueArray.length; i++) {
 									numbers[i] = Double.parseDouble(valueArray[i]);
@@ -901,26 +924,27 @@ public abstract class AbstractFormatExporter {
 
 				}
 
-				toReturn = getCellStyleByFormat(wb, helper, formatStr, Optional.ofNullable(fillPatternType), Optional.ofNullable(color));
+				toReturn = getCellStyleByFormat(wb, helper, formatStr, Optional.ofNullable(fillPatternType),
+						Optional.ofNullable(color));
 
 			}
 
 			return toReturn;
 		} catch (Exception e) {
-			LOGGER.error("Error while building column {" + colName + "} CellStyle. Default style will be used.", e);
+			LOGGER.error("Error while building column {} CellStyle. Default style will be used.", colName, e);
 			return toReturn;
 		}
 	}
 
-	private XSSFCellStyle getRowStyle(Workbook wb, CreationHelper helper, JSONObject settings, JSONObject rowObject, HashMap<String, String> mapColumns,
-			String defaultFormat, HashMap<String, String> mapColumnsTypes, HashMap<String, Object> variablesMap, HashMap<String, Object> parametersMap)
-			throws JSONException {
+	private XSSFCellStyle getRowStyle(Workbook wb, CreationHelper helper, JSONObject settings, JSONObject rowObject,
+			HashMap<String, String> mapColumns, String defaultFormat, HashMap<String, String> mapColumnsTypes,
+			HashMap<String, Object> variablesMap, HashMap<String, Object> parametersMap) throws JSONException {
 
-		String formatStr = defaultFormat;
 		FillPatternType fillPatternType = null;
 		Color color = null;
 
-		if (settings.has("rowThresholds") && settings.getJSONObject("rowThresholds").getString("enabled").equals("true")) {
+		if (settings.has("rowThresholds")
+				&& settings.getJSONObject("rowThresholds").getString("enabled").equals("true")) {
 
 			JSONArray listOfThresholds = settings.getJSONObject("rowThresholds").getJSONArray("list");
 
@@ -942,7 +966,8 @@ public abstract class AbstractFormatExporter {
 						valueToPut = entry.getDouble("compareValue");
 					} else if (entry.getString("compareValueType").equals("variable")) {
 						valueToPut = Double.parseDouble(variablesMap.get(entry.getString("compareValue")).toString());
-					} else if (entry.getString("compareValueType").equals("parameter") && parametersMap.get(entry.getString("compareValue")) != null) {
+					} else if (entry.getString("compareValueType").equals("parameter")
+							&& parametersMap.get(entry.getString("compareValue")) != null) {
 						valueToPut = Double.parseDouble(parametersMap.get(entry.getString("compareValue")).toString());
 					} else {
 						break;
@@ -996,7 +1021,8 @@ public abstract class AbstractFormatExporter {
 						}
 					} else if (entry.getString("condition").equals("IN")) {
 
-						String[] valueArray = entry.getString("valueArray").replace("[", "").replace("]", "").replaceAll("\"", "").split(",");
+						String[] valueArray = entry.getString("valueArray").replace("[", "").replace("]", "")
+								.replaceAll("\"", "").split(",");
 						double[] numbers = new double[valueArray.length];
 						for (int ii = 0; ii < valueArray.length; ii++) {
 							numbers[ii] = Double.parseDouble(valueArray[ii]);
@@ -1016,7 +1042,8 @@ public abstract class AbstractFormatExporter {
 						valueToPut = entry.getInt("compareValue");
 					} else if (entry.getString("compareValueType").equals("variable")) {
 						valueToPut = Integer.parseInt(variablesMap.get(entry.getString("compareValue")).toString());
-					} else if (entry.getString("compareValueType").equals("parameter") && parametersMap.get(entry.getString("compareValue")) != null) {
+					} else if (entry.getString("compareValueType").equals("parameter")
+							&& parametersMap.get(entry.getString("compareValue")) != null) {
 						valueToPut = Integer.parseInt(parametersMap.get(entry.getString("compareValue")).toString());
 					} else {
 						break;
@@ -1067,7 +1094,8 @@ public abstract class AbstractFormatExporter {
 						}
 					} else if (entry.getString("condition").equals("IN")) {
 
-						String[] valueArray = entry.getString("valueArray").replace("[", "").replace("]", "").replaceAll("\"", "").split(",");
+						String[] valueArray = entry.getString("valueArray").replace("[", "").replace("]", "")
+								.replaceAll("\"", "").split(",");
 						int[] numbers = new int[valueArray.length];
 						for (int ii = 0; ii < valueArray.length; ii++) {
 							numbers[ii] = Integer.parseInt(valueArray[ii]);
@@ -1087,7 +1115,8 @@ public abstract class AbstractFormatExporter {
 						valueToPut = entry.getString("compareValue");
 					} else if (entry.getString("compareValueType").equals("variable")) {
 						valueToPut = variablesMap.get(entry.getString("compareValue")).toString();
-					} else if (entry.getString("compareValueType").equals("parameter") && parametersMap.get(entry.getString("compareValue")) != null) {
+					} else if (entry.getString("compareValueType").equals("parameter")
+							&& parametersMap.get(entry.getString("compareValue")) != null) {
 						valueToPut = parametersMap.get(entry.getString("compareValue")).toString();
 					} else {
 						break;
@@ -1138,7 +1167,8 @@ public abstract class AbstractFormatExporter {
 						}
 					} else if (entry.getString("condition").equals("IN")) {
 
-						String[] valueArray = entry.getString("valueArray").replace("[", "").replace("]", "").replaceAll("\"", "").split(",");
+						String[] valueArray = entry.getString("valueArray").replace("[", "").replace("]", "")
+								.replaceAll("\"", "").split(",");
 						if (Arrays.stream(valueArray).anyMatch(rowValue::equals)) {
 							fillPatternType = FillPatternType.SOLID_FOREGROUND;
 							color = userColor;
@@ -1148,7 +1178,8 @@ public abstract class AbstractFormatExporter {
 
 			}
 		}
-		XSSFCellStyle toReturn = getCellStyleByFormat(wb, helper, formatStr, Optional.ofNullable(fillPatternType), Optional.ofNullable(color));
+		XSSFCellStyle toReturn = getCellStyleByFormat(wb, helper, defaultFormat, Optional.ofNullable(fillPatternType),
+				Optional.ofNullable(color));
 		return toReturn;
 
 	}
@@ -1161,8 +1192,9 @@ public abstract class AbstractFormatExporter {
 		return ArrayUtils.contains(array, key);
 	}
 
-	protected CellStyle getStringCellStyle(Workbook wb, CreationHelper helper, JSONObject column, JSONObject colStyle, String defaultFormat,
-			JSONObject settings, String value, JSONObject rowObject, HashMap<String, String> mapColumns, HashMap<String, String> mapColumnsTypes,
+	protected CellStyle getStringCellStyle(Workbook wb, CreationHelper helper, JSONObject column, JSONObject colStyle,
+			String defaultFormat, JSONObject settings, String value, JSONObject rowObject,
+			HashMap<String, String> mapColumns, HashMap<String, String> mapColumnsTypes,
 			HashMap<String, Object> variablesMap, HashMap<String, Object> parametersMap) {
 		String colName = null;
 		XSSFCellStyle toReturn = getCellStyleByFormat(wb, helper, defaultFormat, Optional.empty(), Optional.empty());
@@ -1185,7 +1217,8 @@ public abstract class AbstractFormatExporter {
 			}
 
 			if (settings != null)
-				toReturn = getRowStyle(wb, helper, settings, rowObject, mapColumns, defaultFormat, mapColumnsTypes, variablesMap, parametersMap);
+				toReturn = getRowStyle(wb, helper, settings, rowObject, mapColumns, defaultFormat, mapColumnsTypes,
+						variablesMap, parametersMap);
 
 			if (column.has("ranges")) {
 				JSONArray ranges = column.getJSONArray("ranges");
@@ -1206,7 +1239,8 @@ public abstract class AbstractFormatExporter {
 								valueToPut = threshold.getString("value");
 							else if (threshold.getString("compareValueType").equals("variable")) {
 								valueToPut = variablesMap.get(threshold.getString("value")).toString();
-							} else if (threshold.getString("compareValueType").equals("parameter") && parametersMap.get(threshold.getString("value")) != null) {
+							} else if (threshold.getString("compareValueType").equals("parameter")
+									&& parametersMap.get(threshold.getString("value")) != null) {
 								valueToPut = parametersMap.get(threshold.getString("value")).toString();
 							} else {
 								break;
@@ -1257,7 +1291,8 @@ public abstract class AbstractFormatExporter {
 							}
 						} else {
 							if (threshold.getString("operator").equals("IN")) {
-								String[] valueArray = threshold.getString("valueArray").replace("[", "").replace("]", "").replaceAll("\"", "").split(",");
+								String[] valueArray = threshold.getString("valueArray").replace("[", "")
+										.replace("]", "").replaceAll("\"", "").split(",");
 								if (Arrays.stream(valueArray).anyMatch(value::equals)) {
 									fillPatternType = FillPatternType.SOLID_FOREGROUND;
 									color = userColor;
@@ -1269,44 +1304,50 @@ public abstract class AbstractFormatExporter {
 
 				}
 
-				toReturn = getCellStyleByFormat(wb, helper, formatStr, Optional.ofNullable(fillPatternType), Optional.ofNullable(color));
+				toReturn = getCellStyleByFormat(wb, helper, formatStr, Optional.ofNullable(fillPatternType),
+						Optional.ofNullable(color));
 
 			}
 
 			return toReturn;
 		} catch (Exception e) {
-			LOGGER.error("Error while building column {" + colName + "} CellStyle. Default style will be used.", e);
+			LOGGER.error("Error while building column {} CellStyle. Default style will be used.", colName, e);
 			return toReturn;
 		}
 	}
 
-	protected CellStyle getDateCellStyle(Workbook wb, CreationHelper helper, JSONObject column, JSONObject colStyle, String defaultDateFormat,
-			JSONObject settings, JSONObject rowObject, HashMap<String, String> mapColumns, HashMap<String, String> mapColumnsTypes,
-			HashMap<String, Object> variablesMap, HashMap<String, Object> parametersMap) {
+	protected CellStyle getDateCellStyle(Workbook wb, CreationHelper helper, JSONObject column, JSONObject colStyle,
+			String defaultDateFormat, JSONObject settings, JSONObject rowObject, HashMap<String, String> mapColumns,
+			HashMap<String, String> mapColumnsTypes, HashMap<String, Object> variablesMap,
+			HashMap<String, Object> parametersMap) {
 		String colName = null;
-		XSSFCellStyle toReturn = getCellStyleByFormat(wb, helper, defaultDateFormat, Optional.empty(), Optional.empty());
+		XSSFCellStyle toReturn = getCellStyleByFormat(wb, helper, defaultDateFormat, Optional.empty(),
+				Optional.empty());
 		try {
 			if (settings != null)
-				toReturn = getRowStyle(wb, helper, settings, rowObject, mapColumns, defaultDateFormat, mapColumnsTypes, variablesMap, parametersMap);
+				toReturn = getRowStyle(wb, helper, settings, rowObject, mapColumns, defaultDateFormat, mapColumnsTypes,
+						variablesMap, parametersMap);
 			return toReturn;
 		} catch (Exception e) {
-			LOGGER.error("Error while building column {" + colName + "} CellStyle. Default style will be used.", e);
+			LOGGER.error("Error while building column {} CellStyle. Default style will be used.", colName, e);
 			return toReturn;
 		}
 	}
 
-	protected CellStyle getGenericCellStyle(Workbook wb, CreationHelper helper, JSONObject column, JSONObject colStyle, String defaultFormat,
-			JSONObject settings, JSONObject rowObject, HashMap<String, String> mapColumns, HashMap<String, String> mapColumnsTypes,
-			HashMap<String, Object> variablesMap, HashMap<String, Object> parametersMap) {
+	protected CellStyle getGenericCellStyle(Workbook wb, CreationHelper helper, JSONObject column, JSONObject colStyle,
+			String defaultFormat, JSONObject settings, JSONObject rowObject, HashMap<String, String> mapColumns,
+			HashMap<String, String> mapColumnsTypes, HashMap<String, Object> variablesMap,
+			HashMap<String, Object> parametersMap) {
 		String colName = null;
 		XSSFCellStyle toReturn = getCellStyleByFormat(wb, helper, defaultFormat, Optional.empty(), Optional.empty());
 		try {
 			if (settings != null)
-				toReturn = getRowStyle(wb, helper, settings, rowObject, mapColumns, defaultFormat, mapColumnsTypes, variablesMap, parametersMap);
+				toReturn = getRowStyle(wb, helper, settings, rowObject, mapColumns, defaultFormat, mapColumnsTypes,
+						variablesMap, parametersMap);
 
 			return toReturn;
 		} catch (Exception e) {
-			LOGGER.error("Error while building column {" + colName + "} CellStyle. Default style will be used.", e);
+			LOGGER.error("Error while building column {} CellStyle. Default style will be used.", colName, e);
 			return toReturn;
 		}
 	}
@@ -1328,23 +1369,33 @@ public abstract class AbstractFormatExporter {
 	 * This method avoids cell style objects number to increase by rows number (see https://production.eng.it/jira/browse/KNOWAGE-6692 and
 	 * https://production.eng.it/jira/browse/KNOWAGE-6693)
 	 */
-	protected XSSFCellStyle getCellStyleByFormat(Workbook wb, CreationHelper helper, String format, Optional<FillPatternType> fillPatternTypeOpt,
-			Optional<Color> colorOpt) {
+	protected final XSSFCellStyle getCellStyleByFormat(Workbook wb, CreationHelper helper, String format,
+			Optional<FillPatternType> fillPatternTypeOpt, Optional<Color> colorOpt) {
 		Integer styleKey = getStyleKey(format, fillPatternTypeOpt, colorOpt);
-		formatHash2CellStyle.computeIfAbsent(styleKey, key -> doCreateCellStyle(wb, helper, format, fillPatternTypeOpt, colorOpt));
+		formatHash2CellStyle.computeIfAbsent(styleKey,
+				key -> doCreateCellStyle(wb, helper, format, fillPatternTypeOpt, colorOpt));
 		return formatHash2CellStyle.get(styleKey);
 	}
 
-	private XSSFCellStyle doCreateCellStyle(Workbook wb, CreationHelper helper, String format, Optional<FillPatternType> fillPatternTypeOpt,
-			Optional<Color> colorOpt) {
+	private final XSSFCellStyle doCreateCellStyle(Workbook wb, CreationHelper helper, String format,
+			Optional<FillPatternType> fillPatternTypeOpt, Optional<Color> colorOpt) {
+
+		LOGGER.debug("New style created for format {}, fill pattern {} and color {}", format, fillPatternTypeOpt,
+				colorOpt);
+
 		XSSFCellStyle cellStyle = (XSSFCellStyle) wb.createCellStyle();
 		cellStyle.setDataFormat(helper.createDataFormat().getFormat(format));
 		fillPatternTypeOpt.ifPresent(cellStyle::setFillPattern);
-		colorOpt.ifPresent(color -> cellStyle.setFillForegroundColor(new XSSFColor(color, new DefaultIndexedColorMap())));
+		colorOpt.ifPresent(
+				color -> cellStyle.setFillForegroundColor(new XSSFColor(color, new DefaultIndexedColorMap())));
+
+		LOGGER.debug("New style is {}", cellStyle);
+
 		return cellStyle;
 	}
 
-	private Integer getStyleKey(String format, Optional<FillPatternType> fillPatternTypeOpt, Optional<Color> colorOpt) {
+	private final Integer getStyleKey(String format, Optional<FillPatternType> fillPatternTypeOpt,
+			Optional<Color> colorOpt) {
 		Integer hashcode = format.hashCode();
 		if (fillPatternTypeOpt.isPresent()) {
 			FillPatternType fillPatternType = fillPatternTypeOpt.get();
@@ -1354,6 +1405,9 @@ public abstract class AbstractFormatExporter {
 			Color color = colorOpt.get();
 			hashcode += color.hashCode();
 		}
+
+		LOGGER.debug("Getting style for {}, {} and {} return {}", format, fillPatternTypeOpt, colorOpt, hashcode);
+
 		return hashcode;
 	}
 

@@ -82,8 +82,11 @@
 			<url>https://repository.ow2.org/nexus/content/repositories/3rd-party/</url>
 		</repository>
 		
+<<<<<<< Upstream, based on branch 'master' of git@github.com:KnowageLabs/Knowage-Server.git
 >>>>>>> 612a92371d (Add a repository to get com.jamon:fdsapi)
 >>>>>>> 006c1a6 Add a repository to get com.jamon:fdsapi
+=======
+>>>>>>> ddc1f4f SQUASH
 	</repositories>
 
 	<properties>
