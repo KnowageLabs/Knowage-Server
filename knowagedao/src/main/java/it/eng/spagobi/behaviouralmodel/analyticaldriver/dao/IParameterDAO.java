@@ -21,6 +21,7 @@ import java.util.List;
 
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.Parameter;
+import it.eng.spagobi.behaviouralmodel.analyticaldriver.metadata.SbiParameters;
 import it.eng.spagobi.commons.dao.ISpagoBIDao;
 
 /**
@@ -34,46 +35,40 @@ public interface IParameterDAO extends ISpagoBIDao {
 	 * Loads all detail information for a parameter identified by its <code>parameterID</code>. All these information, are stored into a <code>Parameter</code>
 	 * object, which is returned.
 	 *
-	 * @param parameterID
-	 *            The id for the parameter to load
+	 * @param parameterID The id for the parameter to load
 	 *
 	 * @return A <code>Parameter</code> object containing all loaded information
 	 *
-	 * @throws EMFUserError
-	 *             If an Exception occurred
+	 * @throws EMFUserError If an Exception occurred
 	 */
 
-	public Parameter loadForDetailByParameterID(Integer parameterID) throws EMFUserError;
+	Parameter loadForDetailByParameterID(Integer parameterID) throws EMFUserError;
 
 	/**
-	 * Loads all detail information for a parameter identified by its <code>label</code>. All these information, are stored into a <code>Parameter</code>
-	 * object, which is returned.
+	 * Loads all detail information for a parameter identified by its <code>label</code>. All these information, are stored into a <code>Parameter</code> object,
+	 * which is returned.
 	 *
-	 * @param label
-	 *            The label for the parameter to load
+	 * @param label The label for the parameter to load
 	 *
 	 * @return A <code>Parameter</code> object containing all loaded information
 	 *
-	 * @throws EMFUserError
-	 *             If an Exception occurred
+	 * @throws EMFUserError If an Exception occurred
 	 */
 
-	public Parameter loadForDetailByParameterLabel(String Label) throws EMFUserError;
+	Parameter loadForDetailByParameterLabel(String label) throws EMFUserError;
 
 	/**
 	 * Load for execution by parameter i dand role name.
 	 *
-	 * @param parameterID
-	 *            the parameter id
-	 * @param roleName
-	 *            the role name
+	 * @param parameterID the parameter id
+	 * @param roleName    the role name
 	 *
 	 * @return the parameter
 	 *
-	 * @throws EMFUserError
-	 *             the EMF user error
+	 * @throws EMFUserError the EMF user error
 	 */
-	public Parameter loadForExecutionByParameterIDandRoleName(Integer parameterID, String roleName, Boolean loadDSwithDrivers) throws EMFUserError;
+	Parameter loadForExecutionByParameterIDandRoleName(Integer parameterID, String roleName, Boolean loadDSwithDrivers)
+			throws EMFUserError;
 
 	/**
 	 * Loads all detail information for all parameters. For each of them, detail information is stored into a <code>Parameter</code> object. After that, all
@@ -81,10 +76,9 @@ public interface IParameterDAO extends ISpagoBIDao {
 	 *
 	 * @return A list containing all parameters objects
 	 *
-	 * @throws EMFUserError
-	 *             If an Exception occurred
+	 * @throws EMFUserError If an Exception occurred
 	 */
-	public List loadAllParameters() throws EMFUserError;
+	List<Parameter> loadAllParameters() throws EMFUserError;
 
 	/**
 	 * Loads all detail information for all parameters. For each of them, detail information is stored into a <code>SbiParameter</code> hibernate object. After
@@ -92,46 +86,39 @@ public interface IParameterDAO extends ISpagoBIDao {
 	 *
 	 * @return A list containing all hibernate parameters objects
 	 *
-	 * @throws EMFUserError
-	 *             If an Exception occurred
+	 * @throws EMFUserError If an Exception occurred
 	 */
-	public List loadAllSbiParameters() throws EMFUserError;
+	List<SbiParameters> loadAllSbiParameters() throws EMFUserError;
 
 	/**
 	 * Implements the query to modify a parameter. All information needed is stored into the input <code>Parameter</code> object.
 	 *
-	 * @param aParameter
-	 *            The object containing all modify information
+	 * @param aParameter The object containing all modify information
 	 *
-	 * @throws EMFUserError
-	 *             If an Exception occurred
+	 * @throws EMFUserError If an Exception occurred
 	 */
-	public void modifyParameter(Parameter aParameter) throws EMFUserError;
+	void modifyParameter(Parameter aParameter) throws EMFUserError;
 
 	/**
 	 * Implements the query to insert a parameter. All information needed is stored into the input <code>Parameter</code> object.
 	 *
-	 * @param aParameter
-	 *            The object containing all insert information
+	 * @param aParameter The object containing all insert information
 	 * @return
 	 *
-	 * @throws EMFUserError
-	 *             If an Exception occurred
+	 * @throws EMFUserError If an Exception occurred
 	 */
-	public Parameter insertParameter(Parameter aParameter) throws EMFUserError;
+	Parameter insertParameter(Parameter aParameter) throws EMFUserError;
 
 	/**
 	 * Implements the query to erase a parameter. All information needed is stored into the input <code>Parameter</code> object.
 	 *
-	 * @param aParameter
-	 *            The object containing all delete information
+	 * @param aParameter The object containing all delete information
 	 *
-	 * @throws EMFUserError
-	 *             If an Exception occurred
+	 * @throws EMFUserError If an Exception occurred
 	 */
-	public void eraseParameter(Parameter aParameter) throws EMFUserError;
+	void eraseParameter(Parameter aParameter) throws EMFUserError;
 
-	public List<Parameter> loadParametersByLovId(Integer lovId) throws EMFUserError;
+	List<Parameter> loadParametersByLovId(Integer lovId) throws EMFUserError;
 
-	public List<Parameter> loadParametersByBIObjectLabel(String label) throws EMFUserError;
+	List<Parameter> loadParametersByBIObjectLabel(String label) throws EMFUserError;
 }

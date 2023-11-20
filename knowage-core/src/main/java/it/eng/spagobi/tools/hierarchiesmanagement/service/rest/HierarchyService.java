@@ -87,10 +87,12 @@ public class HierarchyService {
 	@Path("/getHierarchyTree")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
 	@UserConstraint(functionalities = { CommunityFunctionalityConstants.HIERARCHIES_MANAGEMENT })
-	public String getHierarchyTree(@QueryParam("dimension") String dimension, @QueryParam("filterType") String hierarchyType,
-			@QueryParam("filterHierarchy") String hierarchyName, @QueryParam("validityDate") String hierarchyDate,
-			@QueryParam("filterDimension") String filterDimension, @QueryParam("filterDate") String filterDate, @QueryParam("optionDate") String optionDate,
-			@QueryParam("optionHierarchy") String optionHierarchy, @QueryParam("optionHierType") String optionHierType) {
+	public String getHierarchyTree(@QueryParam("dimension") String dimension,
+			@QueryParam("filterType") String hierarchyType, @QueryParam("filterHierarchy") String hierarchyName,
+			@QueryParam("validityDate") String hierarchyDate, @QueryParam("filterDimension") String filterDimension,
+			@QueryParam("filterDate") String filterDate, @QueryParam("optionDate") String optionDate,
+			@QueryParam("optionHierarchy") String optionHierarchy,
+			@QueryParam("optionHierType") String optionHierType) {
 		logger.debug("START");
 
 		HierarchyTreeNode hierarchyTree;
@@ -113,8 +115,9 @@ public class HierarchyService {
 			// 2 - get datastore with all hierachies' leafs
 			IMetaData metadata = null;
 			boolean excludeDimLeaf = (filterDimension != null || optionHierarchy != null) ? true : false;
-			IDataStore dataStore = HierarchyUtils.getHierarchyDataStore(dataSource, dimension, hierarchyType, hierarchyName, hierarchyDate, filterDate,
-					filterDimension, optionDate, optionHierarchy, optionHierType, excludeDimLeaf);
+			IDataStore dataStore = HierarchyUtils.getHierarchyDataStore(dataSource, dimension, hierarchyType,
+					hierarchyName, hierarchyDate, filterDate, filterDimension, optionDate, optionHierarchy,
+					optionHierType, excludeDimLeaf);
 
 			// 4 - Create ADT for Tree from datastore
 			hierarchyTree = createHierarchyTreeStructure(dataStore, dimension, metadata);
@@ -158,7 +161,8 @@ public class HierarchyService {
 	@Path("/nodeMetadata")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
 	@UserConstraint(functionalities = { CommunityFunctionalityConstants.HIERARCHIES_MANAGEMENT })
-	public String getHierarchyNodeFields(@QueryParam("dimension") String dimensionName, @QueryParam("excludeLeaf") boolean excludeLeaf) {
+	public String getHierarchyNodeFields(@QueryParam("dimension") String dimensionName,
+			@QueryParam("excludeLeaf") boolean excludeLeaf) {
 
 		logger.debug("START");
 
@@ -187,21 +191,25 @@ public class HierarchyService {
 
 			JSONObject requestVal = RestUtilities.readBodyAsJSONObject(req);
 
-			HashMap<String, Object> paramsMap = new HashMap<String, Object>();
+			Map<String, Object> paramsMap = new HashMap<>();
 
 			String validityDate = (!requestVal.isNull("dateValidity")) ? requestVal.getString("dateValidity") : null;
 			paramsMap.put("validityDate", validityDate);
-			boolean doBackup = (!requestVal.isNull("doBackup")) ? requestVal.getBoolean("doBackup") : new Boolean("false");
+			boolean doBackup = (!requestVal.isNull("doBackup")) ? requestVal.getBoolean("doBackup")
+					: new Boolean("false");
 			paramsMap.put("doBackup", doBackup);
 			boolean isInsert = Boolean.valueOf(req.getParameter("isInsert"));
 			paramsMap.put("isInsert", isInsert);
 			String dimension = requestVal.getString("dimension");
 			paramsMap.put("dimension", dimension);
-			String hierSourceCode = (!requestVal.isNull("hierSourceCode")) ? requestVal.getString("hierSourceCode") : null;
+			String hierSourceCode = (!requestVal.isNull("hierSourceCode")) ? requestVal.getString("hierSourceCode")
+					: null;
 			paramsMap.put("hierSourceCode", hierSourceCode);
-			String hierSourceName = (!requestVal.isNull("hierSourceName")) ? requestVal.getString("hierSourceName") : null;
+			String hierSourceName = (!requestVal.isNull("hierSourceName")) ? requestVal.getString("hierSourceName")
+					: null;
 			paramsMap.put("hierSourceName", hierSourceName);
-			String hierSourceType = (!requestVal.isNull("hierSourceType")) ? requestVal.getString("hierSourceType") : null;
+			String hierSourceType = (!requestVal.isNull("hierSourceType")) ? requestVal.getString("hierSourceType")
+					: null;
 			paramsMap.put("hierSourceType", hierSourceType);
 
 			String root = requestVal.getString("root"); // tree
@@ -223,7 +231,7 @@ public class HierarchyService {
 			String hierarchyFK = hierarchies.getHierarchyTableForeignKeyName(dimension);
 			paramsMap.put("hierarchyFK", hierarchyFK);
 			Hierarchy hierarchyFields = hierarchies.getHierarchy(dimension);
-			HashMap<String, Object> hierConfig = hierarchies.getConfig(dimension);
+			Map<String, Object> hierConfig = hierarchies.getConfig(dimension);
 			paramsMap.put(HierarchyConstants.NUM_LEVELS, hierConfig.get(HierarchyConstants.NUM_LEVELS));
 			paramsMap.put(HierarchyConstants.TREE_NODE_CD, hierConfig.get(HierarchyConstants.TREE_NODE_CD));
 			paramsMap.put(HierarchyConstants.TREE_NODE_NM, hierConfig.get(HierarchyConstants.TREE_NODE_NM));
@@ -231,21 +239,23 @@ public class HierarchyService {
 
 			// 2 - Definition of the context (ex. manage propagations ONLY when the sourceHierType is MASTER and the targtHierType is TECHNICAL)
 			boolean doPropagation = false;
-			if (hierSourceType != null && hierSourceType.equals(HierarchyConstants.HIER_TP_MASTER) && hierTargetType != null
-					&& hierTargetType.equals(HierarchyConstants.HIER_TP_TECHNICAL)) {
+			if (hierSourceType != null && hierSourceType.equals(HierarchyConstants.HIER_TP_MASTER)
+					&& hierTargetType != null && hierTargetType.equals(HierarchyConstants.HIER_TP_TECHNICAL)) {
 				doPropagation = true;
 				paramsMap.put("doPropagation", doPropagation);
 			}
 
 			// 3 - get all paths from the input json tree
-			Collection<List<HierarchyTreeNodeData>> paths = findRootToLeavesPaths(rootJSONObject, dimension, hierTargetName, hierTargetName, 1);
+			Collection<List<HierarchyTreeNodeData>> paths = findRootToLeavesPaths(rootJSONObject, dimension,
+					hierTargetName, hierTargetName, 1);
 
 			// 4 - get datasource label name
 			String dataSourceName = hierarchies.getDataSourceOfDimension(dimension);
 			IDataSourceDAO dataSourceDAO = DAOFactory.getDataSourceDAO();
 			IDataSource dataSource = dataSourceDAO.loadDataSourceByLabel(dataSourceName);
 			if (dataSource == null) {
-				throw new SpagoBIServiceException("An unexpected error occured while saving custom hierarchy", "No datasource found for saving hierarchy");
+				throw new SpagoBIServiceException("An unexpected error occured while saving custom hierarchy",
+						"No datasource found for saving hierarchy");
 			}
 
 			// get one ONLY connection for all statements (transactional logic)
@@ -275,7 +285,7 @@ public class HierarchyService {
 
 			// propagate new leaves through the relations MT
 			String relationsMT = (!requestVal.isNull("relationsMT")) ? requestVal.getString("relationsMT") : null; // relations MASTER-TECHNICAL (propagation
-																													// management)
+																													 // management)
 			if (relationsMT != null && relationsMT.length() > 0) {
 				JSONArray relationsMTJSONObject = ObjectUtils.toJSONArray(relationsMT);
 				propagateNewLeaves(connection, dataSource, paramsMap, relationsMTJSONObject, hierarchyFields);
@@ -290,7 +300,8 @@ public class HierarchyService {
 					connection.rollback();
 				}
 			} catch (SQLException sqle) {
-				throw new SpagoBIServiceException("An unexpected error occured while saving custom hierarchy structure", sqle);
+				throw new SpagoBIServiceException("An unexpected error occured while saving custom hierarchy structure",
+						sqle);
 			}
 			throw new SpagoBIServiceException("An unexpected error occured while saving custom hierarchy structure", t);
 		} finally {
@@ -299,7 +310,8 @@ public class HierarchyService {
 					connection.close();
 				}
 			} catch (SQLException sqle) {
-				throw new SpagoBIServiceException("An unexpected error occured while saving custom hierarchy structure", sqle);
+				throw new SpagoBIServiceException("An unexpected error occured while saving custom hierarchy structure",
+						sqle);
 			}
 		}
 	}
@@ -344,13 +356,14 @@ public class HierarchyService {
 	@Path("/getRelationsMasterTechnical")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
 	@UserConstraint(functionalities = { CommunityFunctionalityConstants.HIERARCHIES_MANAGEMENT })
-	public String getRelationsMasterTechnical(@QueryParam("dimension") String dimension, @QueryParam("hierSourceCode") String hierSourceCode,
-			@QueryParam("hierSourceName") String hierSourceName, @QueryParam("nodeSourceCode") String nodeSourceCode) throws SQLException {
+	public String getRelationsMasterTechnical(@QueryParam("dimension") String dimension,
+			@QueryParam("hierSourceCode") String hierSourceCode, @QueryParam("hierSourceName") String hierSourceName,
+			@QueryParam("nodeSourceCode") String nodeSourceCode) throws SQLException {
 		// get relations between master and technical nodes
 		Connection connection = null;
 		JSONObject result = new JSONObject();
 		try {
-			HashMap<String, Object> paramsMap = new HashMap<String, Object>();
+			Map<String, Object> paramsMap = new HashMap<>();
 			paramsMap.put(HierarchyConstants.DIMENSION, dimension);
 			paramsMap.put(HierarchyConstants.HIER_CD_M, hierSourceCode);
 			paramsMap.put(HierarchyConstants.HIER_NM_M, hierSourceName);
@@ -405,22 +418,23 @@ public class HierarchyService {
 		Assert.assertNotNull(hierarchies, "Impossible to find valid hierarchies config");
 
 		Hierarchy hierarchy = hierarchies.getHierarchy(dimensionName);
-		Assert.assertNotNull(hierarchy, "Impossible to find a hierarchy for the dimension called [" + dimensionName + "]");
+		Assert.assertNotNull(hierarchy,
+				"Impossible to find a hierarchy for the dimension called [" + dimensionName + "]");
 
 		JSONObject configs = HierarchyUtils.createJSONArrayFromHashMap(hierarchies.getConfig(dimensionName), null);
 		result.put(HierarchyConstants.CONFIGS, configs);
 
-		List<Field> generalMetadataFields = new ArrayList<Field>(hierarchy.getMetadataGeneralFields());
+		List<Field> generalMetadataFields = new ArrayList<>(hierarchy.getMetadataGeneralFields());
 		JSONArray generalFieldsJSONArray = HierarchyUtils.createJSONArrayFromFieldsList(generalMetadataFields, true);
 		result.put(HierarchyConstants.GENERAL_FIELDS, generalFieldsJSONArray);
 
-		List<Field> nodeMetadataFields = new ArrayList<Field>(hierarchy.getMetadataNodeFields());
+		List<Field> nodeMetadataFields = new ArrayList<>(hierarchy.getMetadataNodeFields());
 
 		JSONArray nodeFieldsJSONArray = HierarchyUtils.createJSONArrayFromFieldsList(nodeMetadataFields, true);
 		result.put(HierarchyConstants.NODE_FIELDS, nodeFieldsJSONArray);
 
 		if (!excludeLeaf) { // add leaf fields
-			List<Field> leafMetadataFields = new ArrayList<Field>(hierarchy.getMetadataLeafFields());
+			List<Field> leafMetadataFields = new ArrayList<>(hierarchy.getMetadataLeafFields());
 
 			JSONArray leafFieldsJSONArray = HierarchyUtils.createJSONArrayFromFieldsList(leafMetadataFields, true);
 			result.put(HierarchyConstants.LEAF_FIELDS, leafFieldsJSONArray);
@@ -438,19 +452,22 @@ public class HierarchyService {
 	 * @param paramsMap
 	 * @return
 	 */
-	private String createQueryRelationsHierarchy(IDataSource dataSource, HashMap<String, Object> paramsMap) {
+	private String createQueryRelationsHierarchy(IDataSource dataSource, Map<String, Object> paramsMap) {
 
 		// 1 - defines select clause and where informations
 		String selectClause = HierarchyUtils.getRelationalColumns(dataSource);
-		String hierDimensionColumn = AbstractJDBCDataset.encapsulateColumnName(HierarchyConstants.DIMENSION, dataSource);
+		String hierDimensionColumn = AbstractJDBCDataset.encapsulateColumnName(HierarchyConstants.DIMENSION,
+				dataSource);
 		String hierNameMColumn = AbstractJDBCDataset.encapsulateColumnName(HierarchyConstants.HIER_NM_M, dataSource);
 		String hierNodeCdMColumn = AbstractJDBCDataset.encapsulateColumnName(HierarchyConstants.NODE_CD_M, dataSource);
 		String hierBackupColumn = AbstractJDBCDataset.encapsulateColumnName(HierarchyConstants.BKP_COLUMN, dataSource);
 
-		StringBuffer query = new StringBuffer("SELECT DISTINCT " + selectClause + " FROM " + HierarchyConstants.REL_MASTER_TECH_TABLE_NAME + " WHERE "
-				+ hierDimensionColumn + " = '" + paramsMap.get(HierarchyConstants.DIMENSION) + "' AND " + hierNameMColumn + " = '"
-				+ paramsMap.get(HierarchyConstants.HIER_NM_M) + "' AND " + hierNodeCdMColumn + " = '" + paramsMap.get(HierarchyConstants.NODE_CD_M) + "' AND ("
-				+ hierBackupColumn + " = 0 OR " + hierBackupColumn + " IS NULL )");
+		StringBuilder query = new StringBuilder(
+				"SELECT DISTINCT " + selectClause + " FROM " + HierarchyConstants.REL_MASTER_TECH_TABLE_NAME + " WHERE "
+						+ hierDimensionColumn + " = '" + paramsMap.get(HierarchyConstants.DIMENSION) + "' AND "
+						+ hierNameMColumn + " = '" + paramsMap.get(HierarchyConstants.HIER_NM_M) + "' AND "
+						+ hierNodeCdMColumn + " = '" + paramsMap.get(HierarchyConstants.NODE_CD_M) + "' AND ("
+						+ hierBackupColumn + " = 0 OR " + hierBackupColumn + " IS NULL )");
 
 		logger.debug("Query for get hierarchies relations: " + query);
 		return query.toString();
@@ -466,30 +483,30 @@ public class HierarchyService {
 	 */
 	private HierarchyTreeNode createHierarchyTreeStructure(IDataStore dataStore, String dimension, IMetaData metadata) {
 		// ONLY FOR DEBUG
-		Set<String> allNodeCodes = new HashSet<String>();
+		Set<String> allNodeCodes = new HashSet<>();
 
 		metadata = dataStore.getMetaData(); // saving metadata for next using
 
 		Hierarchies hierarchies = HierarchiesSingleton.getInstance();
 		String prefix = hierarchies.getPrefix(dimension);
-		HashMap hierConfig = hierarchies.getConfig(dimension);
+		Map hierConfig = hierarchies.getConfig(dimension);
 		int numLevels = Integer.parseInt((String) hierConfig.get(HierarchyConstants.NUM_LEVELS));
 		String rootCode = null;
 		// contains the code of the last level node (not null) inserted in the tree
 		IMetaData dsMeta = dataStore.getMetaData();
 
 		HierarchyTreeNode root = null;
-		Map<String, HierarchyTreeNode> attachedNodesMap = new HashMap<String, HierarchyTreeNode>();
+		Map<String, HierarchyTreeNode> attachedNodesMap = new HashMap<>();
 
 		for (Iterator iterator = dataStore.iterator(); iterator.hasNext();) {
 			String lastLevelCodeFound = null;
 			String lastLevelNameFound = null;
 
-			IRecord record = (IRecord) iterator.next();
-			List<IField> recordFields = record.getFields();
+			IRecord currRecord = (IRecord) iterator.next();
+			List<IField> recordFields = currRecord.getFields();
 
 			// MAX_DEPTH, must be equal to the level of the leaf (that we skip)
-			IField maxDepthField = record.getFieldAt(dsMeta.getFieldIndex(HierarchyConstants.MAX_DEPTH));
+			IField maxDepthField = currRecord.getFieldAt(dsMeta.getFieldIndex(HierarchyConstants.MAX_DEPTH));
 			int maxDepth = 0;
 			if (maxDepthField.getValue() instanceof Integer) {
 				Integer maxDepthValue = (Integer) maxDepthField.getValue();
@@ -505,28 +522,32 @@ public class HierarchyService {
 
 			int lastValorizedLevel = 0;
 
-			Map<Integer, String> map = new TreeMap<Integer, String>();
+			Map<Integer, String> map = new TreeMap<>();
 			for (int i = numLevels; i > 0; i--) {
-				String value = (String) record.getFieldAt(dsMeta.getFieldIndex(prefix + HierarchyConstants.SUFFIX_NM_LEV + i)).getValue();
+				String value = (String) currRecord
+						.getFieldAt(dsMeta.getFieldIndex(prefix + HierarchyConstants.SUFFIX_NM_LEV + i)).getValue();
 				if (value != null && !value.isEmpty()) {
 					map.put(i, value);
 				}
 			}
 
 			HierarchyTreeNodeData data = null;
-			IField codeField = record.getFieldAt(dsMeta.getFieldIndex((String) hierConfig.get(HierarchyConstants.TREE_NODE_CD) + 1)); // NODE CODE
-			IField nameField = record.getFieldAt(dsMeta.getFieldIndex((String) hierConfig.get(HierarchyConstants.TREE_NODE_NM) + 1)); // NAME CODE
+			IField codeField = currRecord
+					.getFieldAt(dsMeta.getFieldIndex((String) hierConfig.get(HierarchyConstants.TREE_NODE_CD) + 1)); // NODE CODE
+			IField nameField = currRecord
+					.getFieldAt(dsMeta.getFieldIndex((String) hierConfig.get(HierarchyConstants.TREE_NODE_NM) + 1)); // NAME CODE
 			String nodeCode = (String) codeField.getValue();
 			String nodeName = (String) nameField.getValue();
 
 			/* SETTING ROOT NODE */
 			if (root == null) {
 				// get root attribute for automatic edit node GUI
-				HashMap rootAttrs = new HashMap();
+				Map rootAttrs = new HashMap();
 				ArrayList<Field> generalFields = hierarchies.getHierarchy(dimension).getMetadataGeneralFields();
 				for (int f = 0, lf = generalFields.size(); f < lf; f++) {
 					Field fld = generalFields.get(f);
-					IField fldValue = record.getFieldAt(metadata.getFieldIndex(fld.getId() + ((fld.isSingleValue()) ? "" : 1)));
+					IField fldValue = currRecord
+							.getFieldAt(metadata.getFieldIndex(fld.getId() + ((fld.isSingleValue()) ? "" : 1)));
 					rootAttrs.put(fld.getId(), (fld.getFixValue() != null) ? fld.getFixValue() : fldValue.getValue());
 				}
 				rootCode = (String) rootAttrs.get(HierarchyConstants.HIER_CD);
@@ -548,10 +569,12 @@ public class HierarchyService {
 			while (it.hasNext()) {
 				Entry<Integer, String> entry = it.next();
 
-				HashMap mapAttrs = null;
+				Map mapAttrs = null;
 				int i = entry.getKey();
-				codeField = record.getFieldAt(dsMeta.getFieldIndex((String) hierConfig.get(HierarchyConstants.TREE_NODE_CD) + i)); // NODE CODE
-				nameField = record.getFieldAt(dsMeta.getFieldIndex((String) hierConfig.get(HierarchyConstants.TREE_NODE_NM) + i)); // NAME CODE
+				codeField = currRecord
+						.getFieldAt(dsMeta.getFieldIndex((String) hierConfig.get(HierarchyConstants.TREE_NODE_CD) + i)); // NODE CODE
+				nameField = currRecord
+						.getFieldAt(dsMeta.getFieldIndex((String) hierConfig.get(HierarchyConstants.TREE_NODE_NM) + i)); // NAME CODE
 				nodeCode = (String) codeField.getValue();
 				nodeName = (String) nameField.getValue();
 				data = new HierarchyTreeNodeData(nodeCode, nodeName);
@@ -568,7 +591,8 @@ public class HierarchyService {
 
 					for (int f = 0; f < nodeFields.size(); f++) {
 						Field fld = nodeFields.get(f);
-						IField fldValue = record.getFieldAt(metadata.getFieldIndex(fld.getId() + ((fld.isSingleValue()) ? "" : i)));
+						IField fldValue = currRecord
+								.getFieldAt(metadata.getFieldIndex(fld.getId() + ((fld.isSingleValue()) ? "" : i)));
 						if (fld.isOrderField()) {
 							Object value = (fld.getFixValue() != null) ? fld.getFixValue() : fldValue.getValue();
 							logger.debug("id: [" + (fld.getId() + i) + "], value: [" + value + "]");
@@ -579,20 +603,20 @@ public class HierarchyService {
 						logger.debug("id: [" + (fld.getId()) + "], value: [" + value + "]");
 					}
 					data.setAttributes(mapAttrs);
-					attachNodeToLevel(root, nodeCode, lastLevelCodeFound, lastValorizedLevel, data, allNodeCodes, false, record, dsMeta, prefix,
-							attachedNodesMap);
+					attachNodeToLevel(root, nodeCode, lastLevelCodeFound, lastValorizedLevel, data, allNodeCodes, false,
+							currRecord, dsMeta, prefix, attachedNodesMap);
 					lastValorizedLevel = i;
 					lastLevelCodeFound = nodeCode;
 					lastLevelNameFound = nodeName;
 				} else {
-					data = HierarchyUtils.setDataValues(dimension, nodeCode, data, record, metadata);
+					data = HierarchyUtils.setDataValues(dimension, nodeCode, data, currRecord, metadata);
 					// update LEVEL informations
 					mapAttrs = data.getAttributes();
 					mapAttrs.put(HierarchyConstants.LEVEL, i);
 					mapAttrs.put(HierarchyConstants.MAX_DEPTH, maxDepth);
 					data.setAttributes(mapAttrs);
-					attachNodeToLevel(root, nodeCode, lastLevelCodeFound, lastValorizedLevel, data, allNodeCodes, true, record, dsMeta, prefix,
-							attachedNodesMap);
+					attachNodeToLevel(root, nodeCode, lastLevelCodeFound, lastValorizedLevel, data, allNodeCodes, true,
+							currRecord, dsMeta, prefix, attachedNodesMap);
 					lastValorizedLevel = i;
 					lastLevelCodeFound = nodeCode;
 					lastLevelNameFound = nodeName;
@@ -618,10 +642,11 @@ public class HierarchyService {
 	 * @param lastLevelFound
 	 * @param data
 	 * @param allNodeCodes   : codes list for debug
-	 * @param record
+	 * @param currRecord
 	 */
-	private void attachNodeToLevel(HierarchyTreeNode root, String nodeCode, String lastLevelFound, int lastValorizedLevel, HierarchyTreeNodeData data,
-			Set<String> allNodeCodes, boolean isLeaf, IRecord record, IMetaData dsMeta, String prefix, Map<String, HierarchyTreeNode> attachedNodesMap) {
+	private void attachNodeToLevel(HierarchyTreeNode root, String nodeCode, String lastLevelFound,
+			int lastValorizedLevel, HierarchyTreeNodeData data, Set<String> allNodeCodes, boolean isLeaf,
+			IRecord currRecord, IMetaData dsMeta, String prefix, Map<String, HierarchyTreeNode> attachedNodesMap) {
 
 		HierarchyTreeNode aNode = null;
 		HierarchyTreeNode treeNode = null;
@@ -631,21 +656,28 @@ public class HierarchyService {
 		String recordCdLev = null;
 		String recordCdNodeLevel = null;
 		if (lastValorizedLevel > 0)
-			recordCdLev = ((String) record.getFieldAt(dsMeta.getFieldIndex(prefix + HierarchyConstants.SUFFIX_CD_LEV + lastValorizedLevel)).getValue()).trim();
-		recordCdNodeLevel = ((String) record.getFieldAt(dsMeta.getFieldIndex(prefix + HierarchyConstants.SUFFIX_CD_LEV + nodeLevel)).getValue()).trim();
+			recordCdLev = ((String) currRecord
+					.getFieldAt(dsMeta.getFieldIndex(prefix + HierarchyConstants.SUFFIX_CD_LEV + lastValorizedLevel))
+					.getValue()).trim();
+		recordCdNodeLevel = ((String) currRecord
+				.getFieldAt(dsMeta.getFieldIndex(prefix + HierarchyConstants.SUFFIX_CD_LEV + nodeLevel)).getValue())
+						.trim();
 		if (recordCdLev != null && attachedNodesMap.containsKey(recordCdLev)) {
 			treeNode = attachedNodesMap.get(recordCdLev);
 		} else {
-			treeNode = root.getHierarchyNode(lastLevelFound, true, lastValorizedLevel, data, record, dsMeta, prefix);
+			treeNode = root.getHierarchyNode(lastLevelFound, true, lastValorizedLevel, data, currRecord, dsMeta,
+					prefix);
 		}
 		if (lastValorizedLevel < nodeLevel && !isLeaf) {
 			// then check if node was already added as a child of this parent
 
-			if (recordCdNodeLevel != null && !recordCdNodeLevel.isEmpty() && !attachedNodesMap.containsKey(recordCdNodeLevel)) {
+			if (recordCdNodeLevel != null && !recordCdNodeLevel.isEmpty()
+					&& !attachedNodesMap.containsKey(recordCdNodeLevel)) {
 				// node not already attached to the level
 				aNode = new HierarchyTreeNode(data, nodeCode);
 				treeNode.add(aNode, nodeCode);
-				String aNodeCdLev = (String) ((HierarchyTreeNodeData) aNode.getObject()).getAttributes().get(prefix + HierarchyConstants.SUFFIX_CD_LEV);
+				String aNodeCdLev = (String) ((HierarchyTreeNodeData) aNode.getObject()).getAttributes()
+						.get(prefix + HierarchyConstants.SUFFIX_CD_LEV);
 				if (aNodeCdLev != null)
 					attachedNodesMap.put(aNodeCdLev, aNode);
 			}
@@ -653,7 +685,8 @@ public class HierarchyService {
 			// attach the leaf to the last node
 			aNode = new HierarchyTreeNode(data, nodeCode);
 			treeNode.add(aNode, nodeCode);
-			String aNodeCdLev = (String) ((HierarchyTreeNodeData) aNode.getObject()).getAttributes().get(prefix + HierarchyConstants.SUFFIX_CD_LEV);
+			String aNodeCdLev = (String) ((HierarchyTreeNodeData) aNode.getObject()).getAttributes()
+					.get(prefix + HierarchyConstants.SUFFIX_CD_LEV);
 			if (aNodeCdLev != null)
 				attachedNodesMap.put(aNodeCdLev, aNode);
 		}
@@ -680,7 +713,7 @@ public class HierarchyService {
 
 		try {
 			Hierarchies hierarchies = HierarchiesSingleton.getInstance();
-			HashMap hierConfig = hierarchies.getConfig(dimension);
+			Map hierConfig = hierarchies.getConfig(dimension);
 
 			HierarchyTreeNodeData rootData = (HierarchyTreeNodeData) root.getObject();
 			JSONArray childrenJSONArray = new JSONArray();
@@ -703,7 +736,7 @@ public class HierarchyService {
 			mainObject.put("root", true);
 			mainObject.put("children", childrenJSONArray);
 			mainObject.put("leaf", false);
-			HashMap rootAttrs = root.getAttributes();
+			Map rootAttrs = root.getAttributes();
 			HierarchyUtils.createJSONArrayFromHashMap(rootAttrs, mainObject);
 
 			return mainObject;
@@ -720,7 +753,7 @@ public class HierarchyService {
 	 * @param node the root of the subtree
 	 * @return JSONObject representing the subtree
 	 */
-	private JSONObject getSubTreeJSONObject(HierarchyTreeNode node, HashMap hierConfig, String hierTp, String hierNm) {
+	private JSONObject getSubTreeJSONObject(HierarchyTreeNode node, Map hierConfig, String hierTp, String hierNm) {
 
 		try {
 			HierarchyTreeNodeData nodeData = (HierarchyTreeNodeData) node.getObject();
@@ -776,7 +809,8 @@ public class HierarchyService {
 
 			}
 		} catch (Throwable t) {
-			throw new SpagoBIServiceException("An unexpected error occured while serializing hierarchy structure to JSON", t);
+			throw new SpagoBIServiceException(
+					"An unexpected error occured while serializing hierarchy structure to JSON", t);
 		}
 
 	}
@@ -790,7 +824,8 @@ public class HierarchyService {
 	 * @param paramsMap
 	 * @throws SQLException
 	 */
-	private void persistHierarchyPath(Connection connection, IDataSource dataSource, HashMap<String, Object> paramsMap) throws SQLException {
+	private void persistHierarchyPath(Connection connection, IDataSource dataSource, Map<String, Object> paramsMap)
+			throws SQLException {
 
 		try {
 			Hierarchy hierarchyFields = (Hierarchy) paramsMap.get("hierarchyFields");
@@ -798,9 +833,9 @@ public class HierarchyService {
 			List<HierarchyTreeNodeData> path = (List<HierarchyTreeNodeData>) paramsMap.get("path");
 
 			// 1 - get fields structure
-			List<Field> generalMetadataFields = new ArrayList<Field>(hierarchyFields.getMetadataGeneralFields());
-			List<Field> nodeMetadataFields = new ArrayList<Field>(hierarchyFields.getMetadataNodeFields());
-			List<Field> leafMetadataFields = new ArrayList<Field>(hierarchyFields.getMetadataLeafFields());
+			List<Field> generalMetadataFields = new ArrayList<>(hierarchyFields.getMetadataGeneralFields());
+			List<Field> nodeMetadataFields = new ArrayList<>(hierarchyFields.getMetadataNodeFields());
+			List<Field> leafMetadataFields = new ArrayList<>(hierarchyFields.getMetadataLeafFields());
 
 			// 2 - get total columns number
 			int totalColumns = 0;
@@ -813,8 +848,9 @@ public class HierarchyService {
 			int numLevels = totalLevels;
 			// 3 - Insert prepared statement construction
 			// ------------------------------------------
-			LinkedHashMap<String, String> lstFields = new LinkedHashMap<String, String>();
-			String columns = getHierarchyColumns(dataSource, generalMetadataFields, nodeMetadataFields, leafMetadataFields, numLevels, lstFields);
+			Map<String, String> lstFields = new LinkedHashMap<>();
+			String columns = getHierarchyColumns(dataSource, generalMetadataFields, nodeMetadataFields,
+					leafMetadataFields, numLevels, lstFields);
 			// get the primary key counter if is present a primary key column
 			int countId = -1;
 			if (primaryKey != null) {
@@ -828,7 +864,8 @@ public class HierarchyService {
 				paramsMap.put("primaryKeyCount", countId);
 			}
 
-			String insertQuery = "insert into " + (String) paramsMap.get("hierarchyTable") + "(" + columns + ") values (";
+			String insertQuery = "insert into " + (String) paramsMap.get("hierarchyTable") + "(" + columns
+					+ ") values (";
 			for (int c = 0, lc = totalColumns; c < lc; c++) {
 				insertQuery += "?" + ((c < lc - 1) ? ", " : " ");
 			}
@@ -847,7 +884,7 @@ public class HierarchyService {
 			// 4 - Explore the path and set the corresponding columns for insert hier
 			// -----------------------------------------------
 			logger.debug("Explore the path and set the corresponding columns for insert hier");
-			HashMap<String, Object> lstMTFieldsValue = new HashMap<String, Object>();
+			Map<String, Object> lstMTFieldsValue = new HashMap<>();
 			String hierGeneralInfos = null;
 			for (int i = 0; i < path.size(); i++) {
 				HierarchyTreeNodeData node = path.get(i);
@@ -855,10 +892,11 @@ public class HierarchyService {
 //						&& path.get(4).getNodeCode() != null && !path.get(4).getNodeCode().isEmpty() && path.get(4).getNodeCode().equals("BU PROD E&U")
 //						&&
 				if (path.size() == 9 && path.get(8).getLeafId() != null && !path.get(8).getLeafId().isEmpty()
-						&& Integer.valueOf(path.get(8).getLeafId()).equals(new Integer(65239))) {
+						&& Integer.valueOf(path.get(8).getLeafId()).equals(65239)) {
 					boolean banana = true;
 				}
-				hierPreparedStatement = valorizeHierPlaceholdersFromNode(hierPreparedStatement, node, lstFields, paramsMap, lstMTFieldsValue);
+				hierPreparedStatement = valorizeHierPlaceholdersFromNode(hierPreparedStatement, node, lstFields,
+						paramsMap, lstMTFieldsValue);
 				lstMTFieldsValue = getMTvalues(lstMTFieldsValue, node, paramsMap);
 				Boolean isRoot = (Boolean) node.getAttributes().get("isRoot");
 				if (isRoot) {
@@ -873,7 +911,8 @@ public class HierarchyService {
 			if (paramsMap.get("doPropagation") != null && (boolean) paramsMap.get("doPropagation")) {
 				// adds only distinct values
 				List lstRelMTInserted = (List) paramsMap.get("lstRelMTInserted");
-				if (lstRelMTInserted != null && !lstRelMTInserted.contains(lstMTFieldsValue.get(HierarchyConstants.PATH_CD_T))) {
+				if (lstRelMTInserted != null
+						&& !lstRelMTInserted.contains(lstMTFieldsValue.get(HierarchyConstants.PATH_CD_T))) {
 					lstMTFieldsValue.put(HierarchyConstants.GENERAL_INFO_T, hierGeneralInfos);
 					HierarchyUtils.persistRelationMasterTechnical(connection, lstMTFieldsValue, dataSource, paramsMap);
 				}
@@ -892,7 +931,8 @@ public class HierarchyService {
 			hierPreparedStatement.execute();
 			hierPreparedStatement.close();
 		} catch (Throwable t) {
-			throw new SpagoBIServiceException("An unexpected error occured while persisting hierarchy structure", t.getMessage());
+			throw new SpagoBIServiceException("An unexpected error occured while persisting hierarchy structure",
+					t.getMessage());
 		}
 	}
 
@@ -907,11 +947,12 @@ public class HierarchyService {
 	 * @param lstFields
 	 * @return : string with the list of the columns
 	 */
-	private String getHierarchyColumns(IDataSource dataSource, List<Field> generalMetadataFields, List<Field> nodeMetadataFields,
-			List<Field> leafMetadataFields, int numLevels, LinkedHashMap<String, String> lstFields) {
+	private String getHierarchyColumns(IDataSource dataSource, List<Field> generalMetadataFields,
+			List<Field> nodeMetadataFields, List<Field> leafMetadataFields, int numLevels,
+			Map<String, String> lstFields) {
 
 		String toReturn = "";
-		StringBuffer sbColumns = new StringBuffer();
+		StringBuilder sbColumns = new StringBuilder();
 
 		for (int i = 0, l = generalMetadataFields.size(); i < l; i++) {
 			String column = "";
@@ -980,22 +1021,24 @@ public class HierarchyService {
 	 * @param paramsMap
 	 * @param relationsMTJSONObject
 	 */
-	private void propagateNewLeaves(Connection connection, IDataSource dataSource, HashMap paramsMap, JSONArray relationsMTJSONObject,
-			Hierarchy hierarchyFields) {
+	private void propagateNewLeaves(Connection connection, IDataSource dataSource, Map paramsMap,
+			JSONArray relationsMTJSONObject, Hierarchy hierarchyFields) {
 		logger.debug("START");
 
 		try {
 			// 1 - get fields structure
-			List<Field> generalMetadataFields = new ArrayList<Field>(hierarchyFields.getMetadataGeneralFields());
-			List<Field> nodeMetadataFields = new ArrayList<Field>(hierarchyFields.getMetadataNodeFields());
-			List<Field> leafMetadataFields = new ArrayList<Field>(hierarchyFields.getMetadataLeafFields());
+			List<Field> generalMetadataFields = new ArrayList<>(hierarchyFields.getMetadataGeneralFields());
+			List<Field> nodeMetadataFields = new ArrayList<>(hierarchyFields.getMetadataNodeFields());
+			List<Field> leafMetadataFields = new ArrayList<>(hierarchyFields.getMetadataLeafFields());
 			int numLevels = Integer.valueOf((String) paramsMap.get(HierarchyConstants.NUM_LEVELS));
 
 			// 2 - define insert statement with placeholders
 			// -----------------------------------------------
-			LinkedHashMap<String, String> lstFields = new LinkedHashMap<String, String>();
-			String columns = getHierarchyColumns(dataSource, generalMetadataFields, nodeMetadataFields, leafMetadataFields, numLevels, lstFields);
-			String insertQuery = "insert into " + (String) paramsMap.get("hierarchyTable") + "(" + columns + ") values (";
+			Map<String, String> lstFields = new LinkedHashMap<>();
+			String columns = getHierarchyColumns(dataSource, generalMetadataFields, nodeMetadataFields,
+					leafMetadataFields, numLevels, lstFields);
+			String insertQuery = "insert into " + (String) paramsMap.get("hierarchyTable") + "(" + columns
+					+ ") values (";
 
 			for (int c = 0, lc = lstFields.size(); c < lc; c++) {
 				insertQuery += "?" + ((c < lc - 1) ? ", " : " ");
@@ -1021,17 +1064,20 @@ public class HierarchyService {
 					// -----------------------------------------------
 					JSONObject relationData = (JSONObject) relationsArray.get(r);
 					paramsMap.put("generalMetadataFields", generalMetadataFields);
-					hierPreparedStatement = valorizeHierPlaceholdersFromRelation(hierPreparedStatement, lstFields, relationData, leafData, paramsMap);
+					hierPreparedStatement = valorizeHierPlaceholdersFromRelation(hierPreparedStatement, lstFields,
+							relationData, leafData, paramsMap);
 					hierPreparedStatement.executeUpdate();
 					hierPreparedStatement.close();
 				}
 			}
 		} catch (JSONException je) {
 			logger.error("An unexpected error occured while propaging leaves to technical hierarchies");
-			throw new SpagoBIServiceException("An unexpected error occured while propaging leaves to technical hierarchies", je);
+			throw new SpagoBIServiceException(
+					"An unexpected error occured while propaging leaves to technical hierarchies", je);
 		} catch (Throwable t) {
 			logger.error("An unexpected error occured while propaging leaves to technical hierarchies");
-			throw new SpagoBIServiceException("An unexpected error occured while propaging leaves to technical hierarchies", t);
+			throw new SpagoBIServiceException(
+					"An unexpected error occured while propaging leaves to technical hierarchies", t);
 		}
 		logger.debug("END");
 	}
@@ -1047,12 +1093,12 @@ public class HierarchyService {
 	 * @return the prepared stmt with all placeholders (?) valorized getting values from the tree node
 	 * @throws SQLException
 	 */
-	private PreparedStatement valorizeHierPlaceholdersFromNode(PreparedStatement preparedStatement, HierarchyTreeNodeData node, LinkedHashMap lstFields,
-			HashMap paramsMap, HashMap lstMTFieldsValue) throws SQLException {
+	private PreparedStatement valorizeHierPlaceholdersFromNode(PreparedStatement preparedStatement,
+			HierarchyTreeNodeData node, Map lstFields, Map paramsMap, Map lstMTFieldsValue) throws SQLException {
 
 		logger.debug("IN");
 		PreparedStatement toReturn = preparedStatement;
-		HashMap values = new HashMap();
+		Map values = new HashMap();
 
 		try {
 			boolean isRoot = ((Boolean) node.getAttributes().get("isRoot")).booleanValue();
@@ -1066,9 +1112,11 @@ public class HierarchyService {
 			level = (strLevel != null) ? Integer.parseInt(strLevel) : 0;
 			logger.debug("level: " + level);
 			if (level == 0 && !isRoot) {
-				logger.error("Property LEVEL non found for node element with code: [" + node.getNodeCode() + "] - name: [" + node.getNodeName() + "]");
+				logger.error("Property LEVEL non found for node element with code: [" + node.getNodeCode()
+						+ "] - name: [" + node.getNodeName() + "]");
 				throw new SpagoBIServiceException("persistService",
-						"Property LEVEL non found for node element with code " + node.getNodeCode() + " and name " + node.getNodeName());
+						"Property LEVEL non found for node element with code " + node.getNodeCode() + " and name "
+								+ node.getNodeName());
 			}
 			// get other node's attributes (not mandatory ie sign)
 			Iterator iter = node.getAttributes().keySet().iterator();
@@ -1095,41 +1143,61 @@ public class HierarchyService {
 			}
 			if (isLeaf) {
 				// it's a leaf
-				toReturn.setString(HierarchyUtils.getPosField(lstFields, hierarchyPrefix + HierarchyConstants.SUFFIX_CD_LEAF), node.getNodeCode());
+				toReturn.setString(
+						HierarchyUtils.getPosField(lstFields, hierarchyPrefix + HierarchyConstants.SUFFIX_CD_LEAF),
+						node.getNodeCode());
 				values.put(hierarchyPrefix + HierarchyConstants.SUFFIX_CD_LEAF, node.getNodeCode());
-				toReturn.setString(HierarchyUtils.getPosField(lstFields, hierarchyPrefix + HierarchyConstants.SUFFIX_NM_LEAF), node.getNodeName());
+				toReturn.setString(
+						HierarchyUtils.getPosField(lstFields, hierarchyPrefix + HierarchyConstants.SUFFIX_NM_LEAF),
+						node.getNodeName());
 				values.put(hierarchyPrefix + HierarchyConstants.SUFFIX_NM_LEAF, node.getNodeName());
 				if (node.getDepth() != null) {
-					toReturn.setString(HierarchyUtils.getPosField(lstFields, (String) paramsMap.get(HierarchyConstants.TREE_NODE_CD) + node.getDepth()),
+					toReturn.setString(
+							HierarchyUtils.getPosField(lstFields,
+									(String) paramsMap.get(HierarchyConstants.TREE_NODE_CD) + node.getDepth()),
 							node.getNodeCode());
 					values.put(paramsMap.get(HierarchyConstants.TREE_NODE_CD), node.getNodeCode());
-					toReturn.setString(HierarchyUtils.getPosField(lstFields, (String) paramsMap.get(HierarchyConstants.TREE_NODE_NM) + node.getDepth()),
+					toReturn.setString(
+							HierarchyUtils.getPosField(lstFields,
+									(String) paramsMap.get(HierarchyConstants.TREE_NODE_NM) + node.getDepth()),
 							node.getNodeName());
 					values.put(paramsMap.get(HierarchyConstants.TREE_NODE_NM), node.getNodeName());
 				} else if (!isRoot) {
-					logger.error("Property LEVEL non found for leaf element with code " + node.getNodeCode() + " and name " + node.getNodeName());
+					logger.error("Property LEVEL non found for leaf element with code " + node.getNodeCode()
+							+ " and name " + node.getNodeName());
 					throw new SpagoBIServiceException("persistService",
-							"Property LEVEL non found for leaf element with code " + node.getNodeCode() + " and name " + node.getNodeName());
+							"Property LEVEL non found for leaf element with code " + node.getNodeCode() + " and name "
+									+ node.getNodeName());
 				}
-				toReturn.setString(HierarchyUtils.getPosField(lstFields, hierarchyPrefix + HierarchyConstants.SUFFIX_NM_LEAF), node.getNodeName());
+				toReturn.setString(
+						HierarchyUtils.getPosField(lstFields, hierarchyPrefix + HierarchyConstants.SUFFIX_NM_LEAF),
+						node.getNodeName());
 				values.put(hierarchyPrefix + HierarchyConstants.SUFFIX_NM_LEAF, node.getNodeName());
-				toReturn.setObject(HierarchyUtils.getPosField(lstFields, hierarchyPrefix + "_" + HierarchyConstants.LEAF_ID), node.getLeafId());
+				toReturn.setObject(
+						HierarchyUtils.getPosField(lstFields, hierarchyPrefix + "_" + HierarchyConstants.LEAF_ID),
+						node.getLeafId());
 				values.put(hierarchyPrefix + "_" + HierarchyConstants.LEAF_ID, node.getLeafId());
-				toReturn.setObject(HierarchyUtils.getPosField(lstFields, HierarchyConstants.LEAF_PARENT_CD), node.getLeafParentCode());
+				toReturn.setObject(HierarchyUtils.getPosField(lstFields, HierarchyConstants.LEAF_PARENT_CD),
+						node.getLeafParentCode());
 				values.put(HierarchyConstants.LEAF_PARENT_CD, node.getLeafParentCode());
-				toReturn.setObject(HierarchyUtils.getPosField(lstFields, HierarchyConstants.LEAF_PARENT_NM), node.getLeafParentName());
+				toReturn.setObject(HierarchyUtils.getPosField(lstFields, HierarchyConstants.LEAF_PARENT_NM),
+						node.getLeafParentName());
 				values.put(HierarchyConstants.LEAF_PARENT_NM, node.getLeafParentName());
-				toReturn.setObject(HierarchyUtils.getPosField(lstFields, HierarchyConstants.MAX_DEPTH), node.getDepth());
+				toReturn.setObject(HierarchyUtils.getPosField(lstFields, HierarchyConstants.MAX_DEPTH),
+						node.getDepth());
 				values.put(HierarchyConstants.MAX_DEPTH, node.getDepth());
-				toReturn.setObject(HierarchyUtils.getPosField(lstFields, HierarchyConstants.BEGIN_DT), node.getBeginDt(), java.sql.Types.DATE);
+				toReturn.setObject(HierarchyUtils.getPosField(lstFields, HierarchyConstants.BEGIN_DT),
+						node.getBeginDt(), java.sql.Types.DATE);
 				values.put(HierarchyConstants.BEGIN_DT, node.getBeginDt());
-				toReturn.setObject(HierarchyUtils.getPosField(lstFields, HierarchyConstants.END_DT), node.getEndDt(), java.sql.Types.DATE);
+				toReturn.setObject(HierarchyUtils.getPosField(lstFields, HierarchyConstants.END_DT), node.getEndDt(),
+						java.sql.Types.DATE);
 				values.put(HierarchyConstants.END_DT, node.getEndDt());
 
 			}
 
 		} catch (Throwable t) {
-			String errMsg = "Error while inserting element with code: [" + node.getNodeCode() + "] and name: [" + node.getNodeName() + "]";
+			String errMsg = "Error while inserting element with code: [" + node.getNodeCode() + "] and name: ["
+					+ node.getNodeName() + "]";
 			if (values.size() > 0) {
 				errMsg += " with next values: [";
 				Iterator iter = values.keySet().iterator();
@@ -1140,7 +1208,8 @@ public class HierarchyService {
 				}
 				logger.error(errMsg, t);
 			}
-			throw new SpagoBIServiceException("An unexpected error occured while persisting hierarchy structure", t.getMessage() + " - " + errMsg);
+			throw new SpagoBIServiceException("An unexpected error occured while persisting hierarchy structure",
+					t.getMessage() + " - " + errMsg);
 		}
 		// TEST : DA CANCELLARE!
 		// String errMsg = node.getNodeName() + "\n";
@@ -1168,17 +1237,18 @@ public class HierarchyService {
 	 * @return the prepared stmt on the with all placeholders (?) valorized
 	 * @throws SQLException
 	 */
-	private PreparedStatement valorizeHierPlaceholdersFromRelation(PreparedStatement preparedStatement, LinkedHashMap<String, String> lstFields,
-			JSONObject relationData, JSONObject leafData, HashMap paramsMap) throws SQLException {
+	private PreparedStatement valorizeHierPlaceholdersFromRelation(PreparedStatement preparedStatement,
+			Map<String, String> lstFields, JSONObject relationData, JSONObject leafData, Map paramsMap)
+			throws SQLException {
 
 		logger.debug("IN");
 		PreparedStatement toReturn = preparedStatement;
-		HashMap values = new HashMap();
+		Map values = new HashMap();
 
 		try {
 
 			String prefix = (String) paramsMap.get("hierarchyPrefix");
-			int maxDepth = Integer.valueOf(relationData.getString(HierarchyConstants.NODE_LEV_T)).intValue() + 1;
+			int maxDepth = Integer.parseInt(relationData.getString(HierarchyConstants.NODE_LEV_T)) + 1;
 
 			// generic hierarchy informations
 			String generalInfoStr = relationData.getString(HierarchyConstants.GENERAL_INFO_T);
@@ -1192,16 +1262,21 @@ public class HierarchyService {
 			}
 
 			// leaf values (unique for all relations: XXX_CD, XXX_NM, BEGIN_DT and END_DT)
-			toReturn.setString(HierarchyUtils.getPosField(lstFields, prefix + HierarchyConstants.SUFFIX_CD_LEAF), leafData.getString(prefix + "_CD"));
+			toReturn.setString(HierarchyUtils.getPosField(lstFields, prefix + HierarchyConstants.SUFFIX_CD_LEAF),
+					leafData.getString(prefix + "_CD"));
 			values.put(prefix + HierarchyConstants.SUFFIX_CD_LEAF, leafData.getString(prefix + "_CD"));
-			toReturn.setString(HierarchyUtils.getPosField(lstFields, prefix + HierarchyConstants.SUFFIX_NM_LEAF), leafData.getString(prefix + "_NM"));
+			toReturn.setString(HierarchyUtils.getPosField(lstFields, prefix + HierarchyConstants.SUFFIX_NM_LEAF),
+					leafData.getString(prefix + "_NM"));
 			values.put(prefix + HierarchyConstants.SUFFIX_NM_LEAF, leafData.getString(prefix + "_NM"));
 			toReturn.setString(HierarchyUtils.getPosField(lstFields, prefix + "_" + HierarchyConstants.LEAF_ID),
 					leafData.getString(prefix + "_" + HierarchyConstants.FIELD_ID));
-			values.put(prefix + "_" + HierarchyConstants.LEAF_ID, leafData.getString(prefix + "_" + HierarchyConstants.FIELD_ID));
-			toReturn.setObject(HierarchyUtils.getPosField(lstFields, HierarchyConstants.BEGIN_DT), leafData.getString(HierarchyConstants.BEGIN_DT));
+			values.put(prefix + "_" + HierarchyConstants.LEAF_ID,
+					leafData.getString(prefix + "_" + HierarchyConstants.FIELD_ID));
+			toReturn.setObject(HierarchyUtils.getPosField(lstFields, HierarchyConstants.BEGIN_DT),
+					leafData.getString(HierarchyConstants.BEGIN_DT));
 			values.put(HierarchyConstants.BEGIN_DT, leafData.getString(HierarchyConstants.BEGIN_DT));
-			toReturn.setObject(HierarchyUtils.getPosField(lstFields, HierarchyConstants.END_DT), leafData.getString(HierarchyConstants.END_DT));
+			toReturn.setObject(HierarchyUtils.getPosField(lstFields, HierarchyConstants.END_DT),
+					leafData.getString(HierarchyConstants.END_DT));
 			values.put(HierarchyConstants.END_DT, leafData.getString(HierarchyConstants.END_DT));
 
 			// node values
@@ -1219,27 +1294,38 @@ public class HierarchyService {
 				if (pathCd[i].equals(""))
 					continue; // skip the first empty element
 				level++;
-				toReturn.setString(HierarchyUtils.getPosField(lstFields, (String) paramsMap.get(HierarchyConstants.TREE_NODE_CD) + level), pathCd[i]);
+				toReturn.setString(HierarchyUtils.getPosField(lstFields,
+						(String) paramsMap.get(HierarchyConstants.TREE_NODE_CD) + level), pathCd[i]);
 				values.put(paramsMap.get(HierarchyConstants.TREE_NODE_CD), pathCd[i]);
-				toReturn.setString(HierarchyUtils.getPosField(lstFields, (String) paramsMap.get(HierarchyConstants.TREE_NODE_NM) + level), pathNm[i]);
+				toReturn.setString(HierarchyUtils.getPosField(lstFields,
+						(String) paramsMap.get(HierarchyConstants.TREE_NODE_NM) + level), pathNm[i]);
 				values.put(paramsMap.get(HierarchyConstants.TREE_NODE_NM), pathNm[i]);
 				// if it's the last level before the leaf set parent references
 				if (i == pathCd.length - 1) {
-					toReturn.setObject(HierarchyUtils.getPosField(lstFields, HierarchyConstants.LEAF_PARENT_CD), pathCd[i]);
+					toReturn.setObject(HierarchyUtils.getPosField(lstFields, HierarchyConstants.LEAF_PARENT_CD),
+							pathCd[i]);
 					values.put(HierarchyConstants.LEAF_PARENT_CD, pathCd[i]);
-					toReturn.setObject(HierarchyUtils.getPosField(lstFields, HierarchyConstants.LEAF_PARENT_NM), pathNm[i]);
+					toReturn.setObject(HierarchyUtils.getPosField(lstFields, HierarchyConstants.LEAF_PARENT_NM),
+							pathNm[i]);
 					values.put(HierarchyConstants.LEAF_PARENT_NM, pathNm[i]);
 				}
 			}
 			// add the leaf as the last level
-			toReturn.setString(HierarchyUtils.getPosField(lstFields, (String) paramsMap.get(HierarchyConstants.TREE_NODE_CD) + maxDepth),
+			toReturn.setString(
+					HierarchyUtils.getPosField(lstFields,
+							(String) paramsMap.get(HierarchyConstants.TREE_NODE_CD) + maxDepth),
 					leafData.getString(prefix + "_CD"));
-			values.put((String) paramsMap.get(HierarchyConstants.TREE_NODE_CD) + maxDepth, leafData.getString(prefix + "_CD"));
-			toReturn.setString(HierarchyUtils.getPosField(lstFields, (String) paramsMap.get(HierarchyConstants.TREE_NODE_NM) + maxDepth),
+			values.put((String) paramsMap.get(HierarchyConstants.TREE_NODE_CD) + maxDepth,
+					leafData.getString(prefix + "_CD"));
+			toReturn.setString(
+					HierarchyUtils.getPosField(lstFields,
+							(String) paramsMap.get(HierarchyConstants.TREE_NODE_NM) + maxDepth),
 					leafData.getString(prefix + "_NM"));
-			values.put((String) paramsMap.get(HierarchyConstants.TREE_NODE_NM) + maxDepth, leafData.getString(prefix + "_NM"));
+			values.put((String) paramsMap.get(HierarchyConstants.TREE_NODE_NM) + maxDepth,
+					leafData.getString(prefix + "_NM"));
 		} catch (Throwable t) {
-			String errMsg = "Error while insert for propagation of element with code: [" + values.get(HierarchyConstants.NODE_CD_T) + "] and name: ["
+			String errMsg = "Error while insert for propagation of element with code: ["
+					+ values.get(HierarchyConstants.NODE_CD_T) + "] and name: ["
 					+ values.get(HierarchyConstants.NODE_NM_T) + "]";
 			if (values.size() > 0) {
 				errMsg += " with next values: [";
@@ -1267,11 +1353,11 @@ public class HierarchyService {
 	 * @param paramsMap
 	 * @return hashmap
 	 */
-	private HashMap getMTvalues(HashMap<String, Object> lstMTFieldsValue, HierarchyTreeNodeData node, HashMap paramsMap) {
+	private Map getMTvalues(Map<String, Object> lstMTFieldsValue, HierarchyTreeNodeData node, Map paramsMap) {
 
-		HashMap<String, Object> values = lstMTFieldsValue;
+		Map<String, Object> values = lstMTFieldsValue;
 		if (values == null)
-			values = new HashMap<String, Object>();
+			values = new HashMap<>();
 
 		// get level : is null if the node is the root
 		Integer level = (node.getAttributes().get(HierarchyConstants.LEVEL) != null)
@@ -1298,11 +1384,15 @@ public class HierarchyService {
 		}
 		if (!isLeaf && level != null) {
 			// update complete path references
-			String pathCodes = (values.get(HierarchyConstants.PATH_CD_T) != null) ? (String) values.get(HierarchyConstants.PATH_CD_T) : "";
+			String pathCodes = (values.get(HierarchyConstants.PATH_CD_T) != null)
+					? (String) values.get(HierarchyConstants.PATH_CD_T)
+					: "";
 			pathCodes += "/" + node.getNodeCode();
 			values.put(HierarchyConstants.PATH_CD_T, pathCodes);
 
-			String pathNames = (values.get(HierarchyConstants.PATH_NM_T) != null) ? (String) values.get(HierarchyConstants.PATH_NM_T) : "";
+			String pathNames = (values.get(HierarchyConstants.PATH_NM_T) != null)
+					? (String) values.get(HierarchyConstants.PATH_NM_T)
+					: "";
 			pathNames += "/" + node.getNodeName();
 			values.put(HierarchyConstants.PATH_NM_T, pathNames);
 		}
@@ -1317,17 +1407,18 @@ public class HierarchyService {
 	 * @param dimension
 	 * @return collection with all tree paths
 	 */
-	private Collection<List<HierarchyTreeNodeData>> findRootToLeavesPaths(JSONObject node, String dimension, String uniqueCode, String hierName, int position) {
-		Collection<List<HierarchyTreeNodeData>> collectionOfPaths = new HashSet<List<HierarchyTreeNodeData>>();
+	private Collection<List<HierarchyTreeNodeData>> findRootToLeavesPaths(JSONObject node, String dimension,
+			String uniqueCode, String hierName, int position) {
+		Collection<List<HierarchyTreeNodeData>> collectionOfPaths = new HashSet<>();
 		try {
 			Hierarchies hierarchies = HierarchiesSingleton.getInstance();
 			String hierarchyPrefix = hierarchies.getPrefix(dimension);
-			HashMap<String, Object> hierConfig = hierarchies.getConfig(dimension);
+			Map<String, Object> hierConfig = hierarchies.getConfig(dimension);
 			String uniqueCodeLocal = uniqueCode;
 
 			String nodeName = node.getString(HierarchyConstants.TREE_NAME);
 			String nodeCode = node.getString(HierarchyConstants.ID);
-			HashMap mapAttrs = new HashMap();
+			Map mapAttrs = new HashMap();
 
 			// current node is a root?
 			boolean isRoot = (node.isNull("root")) ? false : node.getBoolean("root");
@@ -1340,7 +1431,8 @@ public class HierarchyService {
 			if (!node.isNull(HierarchyConstants.LEVEL)) {
 				mapAttrs.put(HierarchyConstants.LEVEL, node.getString(HierarchyConstants.LEVEL));
 			}
-			if (!node.isNull(HierarchyConstants.ID) && node.getString(HierarchyConstants.ID).equals(HierarchyConstants.ROOT)) {
+			if (!node.isNull(HierarchyConstants.ID)
+					&& node.getString(HierarchyConstants.ID).equals(HierarchyConstants.ROOT)) {
 				hierName = uniqueCode;
 			}
 
@@ -1365,7 +1457,8 @@ public class HierarchyService {
 					Field fld = nodeFields.get(f);
 					String idFld = fld.getId();
 					// if the column must be unique, get the MD5 value otherwise set value if it isn't null
-					if (Boolean.parseBoolean((String) hierConfig.get(HierarchyConstants.UNIQUE_NODE)) && fld.isUniqueCode()) {
+					if (Boolean.parseBoolean((String) hierConfig.get(HierarchyConstants.UNIQUE_NODE))
+							&& fld.isUniqueCode()) {
 						// generate hashcode
 						uniqueCodeLocal = uniqueCodeLocal + nodeName;
 						// String hashCode = Helper.sha256(uniqueCode);
@@ -1408,7 +1501,8 @@ public class HierarchyService {
 			if (generalInfoJSON.length() > 0)
 				mapAttrs.put(HierarchyConstants.GENERAL_INFO_T, generalInfoJSON.toString());
 
-			String nodeLeafId = !node.isNull(HierarchyConstants.LEAF_ID) ? node.getString(HierarchyConstants.LEAF_ID) : "";
+			String nodeLeafId = !node.isNull(HierarchyConstants.LEAF_ID) ? node.getString(HierarchyConstants.LEAF_ID)
+					: "";
 			if (nodeLeafId.equals("")) {
 				nodeLeafId = (mapAttrs.get(hierarchyPrefix + "_" + HierarchyConstants.LEAF_ID) != null)
 						? (String) mapAttrs.get(hierarchyPrefix + "_" + HierarchyConstants.LEAF_ID)
@@ -1418,13 +1512,14 @@ public class HierarchyService {
 				nodeLeafId = node.getString(hierarchyPrefix + "_" + HierarchyConstants.FIELD_ID); // dimension id (ie: ACCOUNT_ID)
 			}
 			// create node
-			HierarchyTreeNodeData nodeData = new HierarchyTreeNodeData(nodeCode, nodeName, nodeLeafId, "", "", "", mapAttrs);
+			HierarchyTreeNodeData nodeData = new HierarchyTreeNodeData(nodeCode, nodeName, nodeLeafId, "", "", "",
+					mapAttrs);
 
 			if (isLeaf) {
 				// reset unique key
 				uniqueCodeLocal = hierName;
 
-				List<HierarchyTreeNodeData> aPath = new ArrayList<HierarchyTreeNodeData>();
+				List<HierarchyTreeNodeData> aPath = new ArrayList<>();
 				if (!node.isNull(hierarchyPrefix + HierarchyConstants.SUFFIX_CD_LEAF))
 					nodeData.setNodeCode(node.getString(hierarchyPrefix + HierarchyConstants.SUFFIX_CD_LEAF));
 				if (!node.isNull(hierarchyPrefix + HierarchyConstants.SUFFIX_NM_LEAF))
@@ -1465,7 +1560,8 @@ public class HierarchyService {
 					}
 					// 0-i is used to store the inverse order nodes, this solution is used to put the leaves (order index = null) to the end of array when is
 					// executed the 'ORDER BY field DESC'. Storing the nodes with negative num and using DESC, the final order will be ascendent [0 -1 -2..NULL]
-					Collection<List<HierarchyTreeNodeData>> childPaths = findRootToLeavesPaths(child, dimension, uniqueCodeLocal, hierName, 0 - i);
+					Collection<List<HierarchyTreeNodeData>> childPaths = findRootToLeavesPaths(child, dimension,
+							uniqueCodeLocal, hierName, 0 - i);
 
 					for (List<HierarchyTreeNodeData> path : childPaths) {
 						// add this node to start of the path
@@ -1478,10 +1574,12 @@ public class HierarchyService {
 			return collectionOfPaths;
 		} catch (JSONException je) {
 			logger.error("An unexpected error occured while retriving hierarchy root-leafs paths");
-			throw new SpagoBIServiceException("An unexpected error occured while retriving custom hierarchy root-leafs paths", je);
+			throw new SpagoBIServiceException(
+					"An unexpected error occured while retriving custom hierarchy root-leafs paths", je);
 		} catch (Throwable t) {
 			logger.error("An unexpected error occured while retriving hierarchy root-leafs paths");
-			throw new SpagoBIServiceException("An unexpected error occured while retriving hierarchy root-leafs paths", t);
+			throw new SpagoBIServiceException("An unexpected error occured while retriving hierarchy root-leafs paths",
+					t);
 		}
 
 	}

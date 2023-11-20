@@ -19,6 +19,7 @@ package it.eng.spagobi.tools.datasource.dao;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -938,8 +939,10 @@ public class DataSourceDAOHibImpl extends AbstractHibernateDAO implements IDataS
 				SbiDataSource dSource = (SbiDataSource) aSession.load(SbiDataSource.class, dsId);
 				dataSourceLabel = dSource.getLabel();
 
-				hql = " from SbiDataSet s where s.active = :active AND s.type IN " + " ('" + DataSetConstants.DS_QUERY + "','" + DataSetConstants.DS_QBE + "')";
+				hql = " from SbiDataSet s where s.active = :active AND s.type IN (:types)";
 				aQuery = aSession.createQuery(hql);
+				List<String> types = Arrays.asList(DataSetConstants.DS_QUERY, DataSetConstants.DS_QBE);
+				aQuery.setParameterList("types", types);
 				aQuery.setBoolean("active", true);
 				try {
 					List<SbiDataSet> dataSetAssocitedWithDs = aQuery.list();
@@ -968,9 +971,9 @@ public class DataSourceDAOHibImpl extends AbstractHibernateDAO implements IDataS
 				List<String> lovNamesAssociatedWithDS = new ArrayList<>();
 				logger.debug("Check for Lov associated to datasource");
 
-				hql = " from SbiLov s where inputTypeCd = ?";
+				hql = " from SbiLov s where inputTypeCd = :inputTypeCd";
 				aQuery = aSession.createQuery(hql);
-				aQuery.setString(0, "QUERY");
+				aQuery.setString("inputTypeCd", "QUERY");
 
 				List<SbiLov> lovAssocitedWithDs = aQuery.list();
 				SbiLov sbiLov = null;

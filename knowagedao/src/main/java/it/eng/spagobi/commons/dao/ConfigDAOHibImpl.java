@@ -20,9 +20,11 @@ package it.eng.spagobi.commons.dao;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Optional;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
@@ -46,7 +48,7 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
  */
 public class ConfigDAOHibImpl extends AbstractHibernateDAO implements IConfigDAO {
 
-	private static final Logger LOGGER = Logger.getLogger(ConfigDAOHibImpl.class);
+	private static final Logger LOGGER = LogManager.getLogger(ConfigDAOHibImpl.class);
 
 	/*
 	 * (non-Javadoc)
@@ -55,7 +57,7 @@ public class ConfigDAOHibImpl extends AbstractHibernateDAO implements IConfigDAO
 	 */
 	@Override
 	public List<Config> loadAllConfigParameters() throws Exception {
-		LOGGER.debug("IN");
+		LOGGER.debug("Loading all configurations");
 
 		ArrayList<Config> toReturn = new ArrayList<>();
 		Session aSession = null;
@@ -77,11 +79,11 @@ public class ConfigDAOHibImpl extends AbstractHibernateDAO implements IConfigDAO
 			tx.commit();
 		} catch (HibernateException he) {
 			rollbackIfActive(tx);
-			LOGGER.error("HibernateException during query", he);
+			LOGGER.error("Error loading all configurations", he);
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		} finally {
 			closeSessionIfOpen(aSession);
-			LOGGER.debug("OUT");
+			LOGGER.debug("End loading all configurations");
 		}
 		return toReturn;
 
@@ -100,7 +102,7 @@ public class ConfigDAOHibImpl extends AbstractHibernateDAO implements IConfigDAO
 	 */
 	@Override
 	public Config loadConfigParametersById(int id) throws Exception {
-		LOGGER.debug("IN");
+		LOGGER.debug("Load configuration by id {}", id);
 		Config toReturn = null;
 		Session tmpSession = null;
 		Transaction tx = null;
@@ -118,7 +120,7 @@ public class ConfigDAOHibImpl extends AbstractHibernateDAO implements IConfigDAO
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		} finally {
 			closeSessionIfOpen(tmpSession);
-			LOGGER.debug("OUT");
+			LOGGER.debug("End loading configuration by id {}", id);
 		}
 		return toReturn;
 	}
@@ -136,7 +138,7 @@ public class ConfigDAOHibImpl extends AbstractHibernateDAO implements IConfigDAO
 	 */
 	@Override
 	public Config loadConfigParametersByLabel(String label) throws Exception {
-		LOGGER.debug("IN");
+		LOGGER.debug("Loading configuration by label {}", label);
 		Config toReturn = null;
 		Session tmpSession = null;
 		Transaction tx = null;
@@ -148,8 +150,9 @@ public class ConfigDAOHibImpl extends AbstractHibernateDAO implements IConfigDAO
 			criteria.add(labelCriterrion);
 
 			SbiConfig hibConfig = (SbiConfig) criteria.uniqueResult();
-			if (hibConfig == null)
+			if (hibConfig == null) {
 				return null;
+			}
 			toReturn = hibConfig.toConfig();
 
 			tx.commit();
@@ -159,7 +162,7 @@ public class ConfigDAOHibImpl extends AbstractHibernateDAO implements IConfigDAO
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		} finally {
 			closeSessionIfOpen(tmpSession);
-			LOGGER.debug("OUT");
+			LOGGER.debug("End loading configuration by label {}", label);
 		}
 		return toReturn;
 	}
@@ -177,7 +180,7 @@ public class ConfigDAOHibImpl extends AbstractHibernateDAO implements IConfigDAO
 	 */
 	@Override
 	public List<Config> loadConfigParametersByProperties(String prop) throws Exception {
-		LOGGER.debug("IN");
+		LOGGER.debug("Loading configuration by property {}", prop);
 
 		ArrayList<Config> toReturn = new ArrayList<>();
 		List<Config> allConfig = loadAllConfigParameters();
@@ -189,6 +192,7 @@ public class ConfigDAOHibImpl extends AbstractHibernateDAO implements IConfigDAO
 				toReturn.add(tmpConf);
 		}
 
+		LOGGER.debug("End loading configuration by property {}", prop);
 		return toReturn;
 	}
 
@@ -216,7 +220,7 @@ public class ConfigDAOHibImpl extends AbstractHibernateDAO implements IConfigDAO
 	 */
 	@Override
 	public void saveConfig(Config config) throws EMFUserError {
-		LOGGER.debug("IN");
+		LOGGER.debug("Saving configuration {}", config);
 		Session aSession = null;
 		Transaction tx = null;
 
@@ -235,7 +239,7 @@ public class ConfigDAOHibImpl extends AbstractHibernateDAO implements IConfigDAO
 
 			if (id != null) {
 				// modification
-				LOGGER.debug("Update Config");
+				LOGGER.debug("Updating configuration by id {}", id);
 				hibConfig = (SbiConfig) aSession.load(SbiConfig.class, id);
 				updateSbiCommonInfo4Update(hibConfig);
 				hibConfig.setLabel(config.getLabel());
@@ -250,7 +254,10 @@ public class ConfigDAOHibImpl extends AbstractHibernateDAO implements IConfigDAO
 							valueCheck = (existingConfig == null) ? null : existingConfig.getValueCheck();
 
 						} catch (Exception e) {
-							throw new SpagoBIRuntimeException("An error occurred while getting configuration with label [" + config.getLabel() + "]", e);
+							throw new SpagoBIRuntimeException(
+									"An error occurred while getting configuration with label [" + config.getLabel()
+											+ "]",
+									e);
 						}
 					} else {
 						valueCheck = EncryptionPBEWithMD5AndDESManager.encrypt(valueCheck);
@@ -263,7 +270,7 @@ public class ConfigDAOHibImpl extends AbstractHibernateDAO implements IConfigDAO
 				hibConfig.setCategory(config.getCategory());
 			} else {
 				// insertion
-				LOGGER.debug("Insert new Config");
+				LOGGER.debug("Inserting new configuration");
 				hibConfig = fromConfig(config);
 				updateSbiCommonInfo4Insert(hibConfig);
 				hibConfig.setSbiDomains(hibDomains);
@@ -277,13 +284,13 @@ public class ConfigDAOHibImpl extends AbstractHibernateDAO implements IConfigDAO
 
 		} catch (HibernateException he) {
 			rollbackIfActive(tx);
-			LOGGER.error("HibernateException", he);
+			LOGGER.error("Error saving configuration {}", config, he);
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		} finally {
 			closeSessionIfOpen(aSession);
 		}
 		ConfigurationCache.getCache().clear();
-		LOGGER.debug("OUT");
+		LOGGER.debug("End saving configuration {}", config);
 	}
 
 	/**
@@ -298,7 +305,7 @@ public class ConfigDAOHibImpl extends AbstractHibernateDAO implements IConfigDAO
 	 */
 	@Override
 	public void delete(Integer idConfig) throws EMFUserError {
-		LOGGER.debug("IN");
+		LOGGER.debug("Deleting configuration by id {}", idConfig);
 		Session sess = null;
 		Transaction tx = null;
 
@@ -316,17 +323,17 @@ public class ConfigDAOHibImpl extends AbstractHibernateDAO implements IConfigDAO
 
 		} catch (HibernateException he) {
 			rollbackIfActive(tx);
-			LOGGER.error("HibernateException", he);
+			LOGGER.error("Error deleting configuration by id {}", idConfig, he);
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		} finally {
 			closeSessionIfOpen(sess);
 		}
-		LOGGER.debug("OUT");
+		LOGGER.debug("End deleting configuration by id {}", idConfig);
 	}
 
 	@Override
 	public List<Config> loadConfigParametersByCategory(String category) throws Exception {
-		LOGGER.debug("IN");
+		LOGGER.debug("Loading configurations by category {}", category);
 
 		if (StringUtils.isEmpty(category)) {
 			throw new IllegalArgumentException("Category cannot be null");
@@ -354,9 +361,14 @@ public class ConfigDAOHibImpl extends AbstractHibernateDAO implements IConfigDAO
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		} finally {
 			closeSessionIfOpen(tmpSession);
-			LOGGER.debug("OUT");
+			LOGGER.debug("End loading configurations by category {}", category);
 		}
 		return ret;
+	}
+
+	@Override
+	public Optional<Config> loadConfigParametersByLabelIfExist(String label) throws Exception {
+		return Optional.ofNullable(loadConfigParametersByLabel(label));
 	}
 
 }

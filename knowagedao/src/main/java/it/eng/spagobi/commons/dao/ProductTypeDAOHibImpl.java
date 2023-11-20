@@ -17,11 +17,6 @@
  */
 package it.eng.spagobi.commons.dao;
 
-import it.eng.spagobi.commons.metadata.SbiProductType;
-import it.eng.spagobi.commons.metadata.SbiProductTypeEngine;
-import it.eng.spagobi.engines.config.metadata.SbiEngines;
-import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -34,6 +29,11 @@ import org.hibernate.Transaction;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.Transformers;
+
+import it.eng.spagobi.commons.metadata.SbiProductType;
+import it.eng.spagobi.commons.metadata.SbiProductTypeEngine;
+import it.eng.spagobi.engines.config.metadata.SbiEngines;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 /**
  * @author Marco Cortella (marco.cortella@eng.it)
@@ -56,15 +56,11 @@ public class ProductTypeDAOHibImpl extends AbstractHibernateDAO implements IProd
 			return result;
 		} catch (HibernateException he) {
 			logger.error(he.getMessage(), he);
-			if (tx != null)
-				tx.rollback();
+			rollbackIfActive(tx);
 			throw new SpagoBIRuntimeException("Error getting product types", he);
 		} finally {
+			closeSessionIfOpen(aSession);
 			logger.debug("OUT");
-			if (aSession != null) {
-				if (aSession.isOpen())
-					aSession.close();
-			}
 		}
 	}
 
@@ -77,21 +73,18 @@ public class ProductTypeDAOHibImpl extends AbstractHibernateDAO implements IProd
 		try {
 			aSession = getSession();
 			tx = aSession.beginTransaction();
-			Query hibQuery = aSession.createQuery("from SbiProductTypeEngine pe where pe.sbiProductType.label = :productTypeLabel");
+			Query hibQuery = aSession
+					.createQuery("from SbiProductTypeEngine pe where pe.sbiProductType.label = :productTypeLabel");
 			hibQuery.setString("productTypeLabel", productType);
 			ArrayList<SbiProductTypeEngine> result = (ArrayList<SbiProductTypeEngine>) hibQuery.list();
 			return result;
 		} catch (HibernateException he) {
 			logger.error(he.getMessage(), he);
-			if (tx != null)
-				tx.rollback();
+			rollbackIfActive(tx);
 			throw new SpagoBIRuntimeException("Error getting Product type Engines", he);
 		} finally {
+			closeSessionIfOpen(aSession);
 			logger.debug("OUT");
-			if (aSession != null) {
-				if (aSession.isOpen())
-					aSession.close();
-			}
 		}
 	}
 
@@ -101,16 +94,16 @@ public class ProductTypeDAOHibImpl extends AbstractHibernateDAO implements IProd
 		List orgEngs = list(new ICriterion() {
 			@Override
 			public Criteria evaluate(Session session) {
-				return session
-						.createCriteria(SbiEngines.class)
+				return session.createCriteria(SbiEngines.class)
 						.createAlias("sbiProductTypeEngine", "_sbiProductTypeEngine")
 						.createAlias("_sbiProductTypeEngine.sbiProductType", "_sbiProductType")
 						.createAlias("_sbiProductType.sbiOrganizationProductType", "_sbiOrganizationProductType")
 						.createAlias("_sbiOrganizationProductType.sbiOrganizations", "_sbiOrganizations")
 						.add(Restrictions.eq("_sbiOrganizations.name", tenant))
-						.setProjection(
-								Projections.projectionList().add(org.hibernate.criterion.Property.forName("label").as("engineLabel"))
-										.add(org.hibernate.criterion.Property.forName("_sbiProductType.label").as("productTypeLabel")))
+						.setProjection(Projections.projectionList()
+								.add(org.hibernate.criterion.Property.forName("label").as("engineLabel"))
+								.add(org.hibernate.criterion.Property.forName("_sbiProductType.label")
+										.as("productTypeLabel")))
 						.setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP);
 			}
 		});
@@ -123,12 +116,15 @@ public class ProductTypeDAOHibImpl extends AbstractHibernateDAO implements IProd
 		List<String> orgEngs = list(new ICriterion() {
 			@Override
 			public Criteria evaluate(Session session) {
-				return session.createCriteria(SbiEngines.class).createAlias("sbiProductTypeEngine", "_sbiProductTypeEngine")
+				return session.createCriteria(SbiEngines.class)
+						.createAlias("sbiProductTypeEngine", "_sbiProductTypeEngine")
 						.createAlias("_sbiProductTypeEngine.sbiProductType", "_sbiProductType")
 						.createAlias("_sbiProductType.sbiOrganizationProductType", "_sbiOrganizationProductType")
 						.createAlias("_sbiOrganizationProductType.sbiOrganizations", "_sbiOrganizations")
-						.add(Restrictions.eq("_sbiOrganizations.name", tenant)).add(Restrictions.eq("_sbiProductType.label", productTypeLabel))
-						.setProjection(Projections.projectionList().add(org.hibernate.criterion.Property.forName("label").as("engineLabel")));
+						.add(Restrictions.eq("_sbiOrganizations.name", tenant))
+						.add(Restrictions.eq("_sbiProductType.label", productTypeLabel))
+						.setProjection(Projections.projectionList()
+								.add(org.hibernate.criterion.Property.forName("label").as("engineLabel")));
 			}
 		});
 		return orgEngs;
@@ -145,7 +141,8 @@ public class ProductTypeDAOHibImpl extends AbstractHibernateDAO implements IProd
 				criteria.createAlias("sbiOrganizationProductType", "_sbiOrganizationProductType");
 				criteria.createAlias("_sbiOrganizationProductType.sbiOrganizations", "_sbiOrganizations");
 				criteria.add(Restrictions.eq("_sbiOrganizations.name", getTenant()));
-				return criteria.setProjection(Projections.projectionList().add(org.hibernate.criterion.Property.forName("label").as("productLabel")));
+				return criteria.setProjection(Projections.projectionList()
+						.add(org.hibernate.criterion.Property.forName("label").as("productLabel")));
 			}
 		});
 		return orgEngs;

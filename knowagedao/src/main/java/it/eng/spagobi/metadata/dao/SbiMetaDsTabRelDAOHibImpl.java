@@ -28,7 +28,6 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.criterion.Criterion;
-import org.hibernate.criterion.Expression;
 import org.hibernate.criterion.Restrictions;
 
 import it.eng.spago.error.EMFErrorSeverity;
@@ -69,19 +68,11 @@ public class SbiMetaDsTabRelDAOHibImpl extends AbstractHibernateDAO implements I
 			tx.commit();
 		} catch (HibernateException he) {
 			logException(he);
-
-			if (tx != null)
-				tx.rollback();
-
+			rollbackIfActive(tx);
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 
 		} finally {
-
-			if (tmpSession != null) {
-				if (tmpSession.isOpen())
-					tmpSession.close();
-			}
-
+			closeSessionIfOpen(tmpSession);
 		}
 		logger.debug("OUT");
 		return toReturn;
@@ -115,20 +106,11 @@ public class SbiMetaDsTabRelDAOHibImpl extends AbstractHibernateDAO implements I
 
 		} catch (HibernateException he) {
 			logException(he);
-
-			if (tx != null)
-				tx.rollback();
-
+			rollbackIfActive(tx);
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 
 		} finally {
-
-			if (tmpSession != null) {
-				if (tmpSession.isOpen())
-					tmpSession.close();
-
-			}
-
+			closeSessionIfOpen(tmpSession);
 		}
 		logger.debug("OUT");
 
@@ -145,26 +127,19 @@ public class SbiMetaDsTabRelDAOHibImpl extends AbstractHibernateDAO implements I
 			tmpSession = getSession();
 			tx = tmpSession.beginTransaction();
 
-			SbiMetaDsTabRel hibMeta = (SbiMetaDsTabRel) tmpSession.load(SbiMetaDsTabRel.class, new Integer(SbiMetaDsTabRel.getRelationId()));
+			SbiMetaDsTabRel hibMeta = (SbiMetaDsTabRel) tmpSession.load(SbiMetaDsTabRel.class,
+					new Integer(SbiMetaDsTabRel.getRelationId()));
 
 			tmpSession.delete(hibMeta);
 
 			tx.commit();
 		} catch (HibernateException he) {
 			logException(he);
-
-			if (tx != null)
-				tx.rollback();
-
+			rollbackIfActive(tx);
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 
 		} finally {
-
-			if (tmpSession != null) {
-				if (tmpSession.isOpen())
-					tmpSession.close();
-			}
-
+			closeSessionIfOpen(tmpSession);
 		}
 		logger.debug("OUT");
 
@@ -183,7 +158,7 @@ public class SbiMetaDsTabRelDAOHibImpl extends AbstractHibernateDAO implements I
 			tmpSession = getSession();
 			tx = tmpSession.beginTransaction();
 
-			Criterion labelCriterrion = Expression.eq("datasetId", datasetId);
+			Criterion labelCriterrion = Restrictions.eq("datasetId", datasetId);
 			Criteria criteria = tmpSession.createCriteria(SbiMetaDsTabRel.class);
 			criteria.add(labelCriterrion);
 
@@ -194,14 +169,10 @@ public class SbiMetaDsTabRelDAOHibImpl extends AbstractHibernateDAO implements I
 
 		} catch (HibernateException he) {
 			logException(he);
-			if (tx != null)
-				tx.rollback();
+			rollbackIfActive(tx);
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		} finally {
-			if (tmpSession != null) {
-				if (tmpSession.isOpen())
-					tmpSession.close();
-			}
+			closeSessionIfOpen(tmpSession);
 		}
 
 		logger.debug("OUT");
@@ -225,8 +196,8 @@ public class SbiMetaDsTabRelDAOHibImpl extends AbstractHibernateDAO implements I
 			// Criterion labelCriterrion1 = Expression.eq("datasetId",
 			// datasetId);
 			// Criterion labelCriterrion2 = Expression.eq("tableId", tableId);
-			List<SbiMetaDsTabRel> relations = tmpSession.createCriteria(SbiMetaDsTabRel.class).add(Restrictions.eq("datasetId", datasetId))
-					.add(Restrictions.eq("tableId", tableId)).list();
+			List<SbiMetaDsTabRel> relations = tmpSession.createCriteria(SbiMetaDsTabRel.class)
+					.add(Restrictions.eq("datasetId", datasetId)).add(Restrictions.eq("tableId", tableId)).list();
 			toReturn = relations.get(0);
 			if (toReturn == null)
 				return null;
@@ -234,14 +205,10 @@ public class SbiMetaDsTabRelDAOHibImpl extends AbstractHibernateDAO implements I
 
 		} catch (HibernateException he) {
 			logException(he);
-			if (tx != null)
-				tx.rollback();
+			rollbackIfActive(tx);
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		} finally {
-			if (tmpSession != null) {
-				if (tmpSession.isOpen())
-					tmpSession.close();
-			}
+			closeSessionIfOpen(tmpSession);
 		}
 
 		logger.debug("OUT");

@@ -38,8 +38,8 @@ public class Node implements Cloneable, Comparable<Node> {
 	public static final String CROSSTAB_NODE_COLUMN_ROOT = "rootC";
 	public static final String CROSSTAB_NODE_ROW_ROOT = "rootR";
 
-	private String value;// the value of the node
-	private String description;// the value of the node
+	private final String value;// the value of the node
+	private final String description;// the value of the node
 	private CellType cellType;// the value of the node
 	private List<Node> childs;// list of childs
 	private int leafPosition = -1;// position of the leafs in the tree.. If this is the right most leaf the value is 0 and so on
@@ -50,13 +50,13 @@ public class Node implements Cloneable, Comparable<Node> {
 	public Node(String value) {
 		this.value = value;
 		this.description = value;
-		childs = new ArrayList<Node>();
+		childs = new ArrayList<>();
 	}
 
 	public Node(String value, String description) {
 		this.value = value;
 		this.description = description;
-		childs = new ArrayList<Node>();
+		childs = new ArrayList<>();
 	}
 
 	public String getValue() {
@@ -93,7 +93,7 @@ public class Node implements Cloneable, Comparable<Node> {
 
 	/**
 	 * Get the number of leafs in the tree
-	 * 
+	 *
 	 * @return
 	 */
 	public int getLeafsNumber() {
@@ -110,7 +110,7 @@ public class Node implements Cloneable, Comparable<Node> {
 
 	/**
 	 * Serialize the node and the subtree
-	 * 
+	 *
 	 * @return
 	 * @throws JSONException
 	 */
@@ -168,12 +168,12 @@ public class Node implements Cloneable, Comparable<Node> {
 
 	/**
 	 * return the list of nodes of the passed level
-	 * 
+	 *
 	 * @param level
 	 * @return
 	 */
 	public List<Node> getLevel(int level) {
-		List<Node> nodes = new ArrayList<Node>();
+		List<Node> nodes = new ArrayList<>();
 		if (level == 0) {
 			nodes.add(this);
 		} else {
@@ -189,7 +189,7 @@ public class Node implements Cloneable, Comparable<Node> {
 
 	/**
 	 * Returns the depth level of the node: root is depth 0, its children are depth 1 and so on...
-	 * 
+	 *
 	 * @return the depth level of the node: root is depth 0, its children are depth 1 and so on...
 	 */
 	public int getDistanceFromRoot() {
@@ -203,7 +203,7 @@ public class Node implements Cloneable, Comparable<Node> {
 	/**
 	 * Returns the level distance between the node and its leaves (it is assumed that the tree is balanced, therefore every leaf has the same distance to this
 	 * node). If the node is a leaf, 0 is returned.
-	 * 
+	 *
 	 * @return the level distance between the node and its leaves (it is assumed that the tree is balanced, therefore every leaf has the same distance to this
 	 *         node). If the node is a leaf, 0 is returned.
 	 */
@@ -217,11 +217,11 @@ public class Node implements Cloneable, Comparable<Node> {
 
 	/**
 	 * Return the list of leafs of the subtree with this node as radix
-	 * 
+	 *
 	 * @return
 	 */
 	public List<Node> getLeafs() {
-		List<Node> list = new ArrayList<Node>();
+		List<Node> list = new ArrayList<>();
 		if (childs.size() == 0) {
 			list.add(this);
 		} else {
@@ -279,7 +279,7 @@ public class Node implements Cloneable, Comparable<Node> {
 	 * Clone only the value and the children
 	 */
 	@Override
-	public Node clone() {
+	public final Node clone() {
 		Node n = new Node(value, description);
 		if (childs.size() > 0) {
 			for (int j = 0; j < childs.size(); j++) {
@@ -307,7 +307,7 @@ public class Node implements Cloneable, Comparable<Node> {
 
 	/**
 	 * For test
-	 * 
+	 *
 	 * @param height
 	 * @param branch
 	 */
@@ -360,7 +360,7 @@ public class Node implements Cloneable, Comparable<Node> {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see java.lang.Comparable#compareTo(java.lang.Object) order always for value
 	 */
 	@Override

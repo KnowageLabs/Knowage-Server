@@ -18,6 +18,7 @@
 package it.eng.spagobi.commons.dao;
 
 import java.util.List;
+import java.util.Optional;
 
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.commons.bo.Config;
@@ -29,34 +30,38 @@ import it.eng.spagobi.commons.bo.Config;
  */
 public interface IConfigDAO extends ISpagoBIDao {
 
-	public List<Config> loadAllConfigParameters() throws Exception;
+	List<Config> loadAllConfigParameters() throws Exception;
 
-	public Config loadConfigParametersById(int id) throws Exception;
+	Config loadConfigParametersById(int id) throws Exception;
 
-	public Config loadConfigParametersByLabel(String label) throws Exception;
+	/**
+	 * @deprecated Replaced by {@link #loadConfigParametersByLabelIfExist(String)}
+	 */
+	@Deprecated
+	Config loadConfigParametersByLabel(String label) throws Exception;
 
-	public List<Config> loadConfigParametersByProperties(String prop) throws Exception;
+	Optional<Config> loadConfigParametersByLabelIfExist(String label) throws Exception;
 
-	public List<Config> loadConfigParametersByCategory(String category) throws Exception;
+	List<Config> loadConfigParametersByProperties(String prop) throws Exception;
+
+	List<Config> loadConfigParametersByCategory(String category) throws Exception;
 
 	/**
 	 * Save a Config
 	 *
 	 * @return Save config
 	 *
-	 * @throws EMFUserError
-	 *             If an Exception occurred
+	 * @throws EMFUserError If an Exception occurred
 	 */
-	public void saveConfig(Config c) throws EMFUserError;
+	void saveConfig(Config c) throws EMFUserError;
 
 	/**
 	 * Delete a config
 	 *
 	 * @return Delete config
 	 *
-	 * @throws EMFUserError
-	 *             If an Exception occurred
+	 * @throws EMFUserError If an Exception occurred
 	 */
-	public void delete(Integer idConfig) throws EMFUserError;
+	void delete(Integer idConfig) throws EMFUserError;
 
 }

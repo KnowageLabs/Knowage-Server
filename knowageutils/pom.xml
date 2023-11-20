@@ -140,6 +140,11 @@
 		</dependency>
 
 		<dependency>
+			<groupId>org.apache.logging.log4j</groupId>
+			<artifactId>log4j-iostreams</artifactId>
+		</dependency>
+
+		<dependency>
 			<groupId>it.eng.spago</groupId>
 			<artifactId>spago-core</artifactId>
 			<version>2.3.0</version>
@@ -216,23 +221,6 @@
 			<scope>compile</scope>
 		</dependency>
 
-		<!-- TODO : Deprecated! Replace it with Metro after the code is refactored -->
-		<dependency>
-			<groupId>org.apache.axis</groupId>
-			<artifactId>axis</artifactId>
-			<version>1.4</version>
-			<scope>compile</scope>
-		</dependency>
-
-		<!-- TODO : Deprecated! Replace it with Metro after the code is refactored -->
-		<dependency>
-			<groupId>axis</groupId>
-			<artifactId>axis-wsdl4j</artifactId>
-			<version>1.5.1</version>
-			<scope>runtime</scope>
-		</dependency>
-
-		<!-- Replace Axis 1.4 -->
 		<dependency>
 			<groupId>com.sun.xml.ws</groupId>
 			<artifactId>jaxws-rt</artifactId>

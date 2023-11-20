@@ -21,6 +21,8 @@ import java.io.File;
 
 import org.apache.log4j.Logger;
 
+import it.eng.knowage.commons.security.PathTraversalChecker;
+
 public class WorksRepository {
 	private static final Logger LOGGER = Logger.getLogger(WorksRepository.class);
 
@@ -68,7 +70,6 @@ public class WorksRepository {
 		return worksDir;
 	}
 
-
 	/**
 	 * Gets the executable work dir.
 	 *
@@ -78,11 +79,13 @@ public class WorksRepository {
 	 */
 	public File getExecutableWorkDir(CommonjWork work) {
 		LOGGER.debug("IN");
-		File workDir = new File(rootDir, work.getWorkName());
+
+		String fileName = work.getWorkName();
+		File workDir = PathTraversalChecker.get(rootDir.getName(), fileName);
+
 		LOGGER.debug("OUT");
 		return workDir;
 	}
-
 
 	/**
 	 * Gets the executable work file.
@@ -103,9 +106,10 @@ public class WorksRepository {
 	 * @return true, if successful
 	 */
 	public boolean containsWork(CommonjWork work) {
+		String fileName = work.getWorkName();
+		File workFolder = PathTraversalChecker.get(rootDir.getName(), fileName);
 
-		File workFolder=new File(rootDir, work.getWorkName());
-		return workFolder.exists();
+		return workFolder != null && workFolder.exists();
 	}
 
 }

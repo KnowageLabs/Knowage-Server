@@ -29,6 +29,7 @@ import javax.activation.DataHandler;
 
 import org.apache.log4j.Logger;
 
+import it.eng.knowage.commons.security.PathTraversalChecker;
 import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.services.common.EnginConf;
 import it.eng.spagobi.services.proxy.MetamodelServiceProxy;
@@ -79,16 +80,17 @@ public class DefaultEngineDatamartRetriever implements IQbeDataSetDatamartRetrie
 	@Override
 	public File retrieveDatamartFile(String metamodelName) {
 
-		File metamodelJarFile;
+		File metamodelJarFile = null;
 
 		LOGGER.debug("IN");
 
-		metamodelJarFile = null;
 		try {
 			Assert.assertTrue(StringUtilities.isNotEmpty(metamodelName), "Input parameter [metamodelName] cannot be null");
 			LOGGER.debug("Load metamodel jar file for model [" + metamodelName + "]");
 
-			File targetMetamodelFolder = new File(getDataMartDir(), metamodelName);
+			File directory = getDataMartDir();
+			File targetMetamodelFolder = PathTraversalChecker.get(directory.getAbsolutePath(), metamodelName);
+
 			metamodelJarFile = new File(targetMetamodelFolder, "datamart.jar");
 
 			if (metamodelJarFile.exists()) {
@@ -116,10 +118,8 @@ public class DefaultEngineDatamartRetriever implements IQbeDataSetDatamartRetrie
 	/**
 	 * Download the jarFile from SpagoBI server and store it on the local filesystem in the specified folder
 	 *
-	 * @param metamodelName
-	 *            the name of the metamodel to download
-	 * @param destinationFolder
-	 *            the destination folder on the local filesystem
+	 * @param metamodelName     the name of the metamodel to download
+	 * @param destinationFolder the destination folder on the local filesystem
 	 */
 	private void downloadJarFile(String metamodelName, File destinationFolder) {
 		DataHandler handler = null;
@@ -141,10 +141,8 @@ public class DefaultEngineDatamartRetriever implements IQbeDataSetDatamartRetrie
 	/**
 	 * Store the jarFile on local filesystem
 	 *
-	 * @param dataHandler
-	 *            the jarFile content
-	 * @param destinationFolder
-	 *            the destination folder on the local filesystem
+	 * @param dataHandler       the jarFile content
+	 * @param destinationFolder the destination folder on the local filesystem
 	 */
 	private void storeJarFile(DataHandler dataHandler, File destinationFolder) {
 

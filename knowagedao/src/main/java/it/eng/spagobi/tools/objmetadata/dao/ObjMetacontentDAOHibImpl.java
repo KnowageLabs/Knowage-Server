@@ -74,14 +74,10 @@ public class ObjMetacontentDAOHibImpl extends AbstractHibernateDAO implements IO
 			tx.rollback();
 		} catch (HibernateException he) {
 			logger.error("Error while loading the metadata content with id = " + id, he);
-			if (tx != null)
-				tx.rollback();
+			rollbackIfActive(tx);
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		} finally {
-			if (aSession != null) {
-				if (aSession.isOpen())
-					aSession.close();
-			}
+			closeSessionIfOpen(aSession);
 		}
 		logger.debug("OUT");
 		return toReturn;
@@ -122,14 +118,10 @@ public class ObjMetacontentDAOHibImpl extends AbstractHibernateDAO implements IO
 			tx.rollback();
 		} catch (HibernateException he) {
 			logger.error("Error while loading the metadata content list with metadata id = " + objMetaId, he);
-			if (tx != null)
-				tx.rollback();
+			rollbackIfActive(tx);
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		} finally {
-			if (session != null) {
-				if (session.isOpen())
-					session.close();
-			}
+			closeSessionIfOpen(session);
 		}
 		logger.debug("OUT");
 		return realResult;
@@ -182,15 +174,14 @@ public class ObjMetacontentDAOHibImpl extends AbstractHibernateDAO implements IO
 			}
 			tx.rollback();
 		} catch (HibernateException he) {
-			logger.error("Error while loading the metadata content referring to object or subobject (check log before) with id = " + id, he);
-			if (tx != null)
-				tx.rollback();
+			logger.error(
+					"Error while loading the metadata content referring to object or subobject (check log before) with id = "
+							+ id,
+					he);
+			rollbackIfActive(tx);
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		} finally {
-			if (session != null) {
-				if (session.isOpen())
-					session.close();
-			}
+			closeSessionIfOpen(session);
 		}
 		logger.debug("OUT");
 		return realResult;
@@ -238,17 +229,12 @@ public class ObjMetacontentDAOHibImpl extends AbstractHibernateDAO implements IO
 			}
 			tx.rollback();
 		} catch (HibernateException he) {
-			logger.error(
-					"Error while loading the metadata content with metadata id = " + objMetaId + ", biobject id = " + biObjId + ", subobject id = " + subObjId,
-					he);
-			if (tx != null)
-				tx.rollback();
+			logger.error("Error while loading the metadata content with metadata id = " + objMetaId + ", biobject id = "
+					+ biObjId + ", subobject id = " + subObjId, he);
+			rollbackIfActive(tx);
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		} finally {
-			if (session != null) {
-				if (session.isOpen())
-					session.close();
-			}
+			closeSessionIfOpen(session);
 		}
 		logger.debug("OUT");
 		return realResult;
@@ -287,14 +273,10 @@ public class ObjMetacontentDAOHibImpl extends AbstractHibernateDAO implements IO
 			tx.rollback();
 		} catch (HibernateException he) {
 			logger.error("Error while loading all meta contents ", he);
-			if (tx != null)
-				tx.rollback();
+			rollbackIfActive(tx);
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		} finally {
-			if (aSession != null) {
-				if (aSession.isOpen())
-					aSession.close();
-			}
+			closeSessionIfOpen(aSession);
 		}
 		logger.debug("OUT");
 		return realResult;
@@ -321,7 +303,8 @@ public class ObjMetacontentDAOHibImpl extends AbstractHibernateDAO implements IO
 			aSession = getSession();
 			tx = aSession.beginTransaction();
 
-			SbiObjMetacontents hibContents = (SbiObjMetacontents) aSession.load(SbiObjMetacontents.class, aObjMetacontent.getObjMetacontentId());
+			SbiObjMetacontents hibContents = (SbiObjMetacontents) aSession.load(SbiObjMetacontents.class,
+					aObjMetacontent.getObjMetacontentId());
 
 			// update biobject reference
 			if (!Objects.equals(hibContents.getSbiObjects().getBiobjId(), aObjMetacontent.getBiobjId())) {
@@ -337,7 +320,8 @@ public class ObjMetacontentDAOHibImpl extends AbstractHibernateDAO implements IO
 				hibContents.setSbiSubObjects(null);
 			} else {
 				SbiSubObjects previousSubobject = hibContents.getSbiSubObjects();
-				if (previousSubobject == null || !Objects.equals(previousSubobject.getSubObjId(), aObjMetacontent.getSubobjId())) {
+				if (previousSubobject == null
+						|| !Objects.equals(previousSubobject.getSubObjId(), aObjMetacontent.getSubobjId())) {
 					aCriterion = Restrictions.eq("subObjId", aObjMetacontent.getSubobjId());
 					criteria = aSession.createCriteria(SbiSubObjects.class);
 					criteria.add(aCriterion);
@@ -370,16 +354,13 @@ public class ObjMetacontentDAOHibImpl extends AbstractHibernateDAO implements IO
 			tx.commit();
 		} catch (HibernateException he) {
 			logger.error(
-					"Error while modifing the meta content with id " + ((aObjMetacontent == null) ? "" : String.valueOf(aObjMetacontent.getObjMetacontentId())),
+					"Error while modifing the meta content with id "
+							+ ((aObjMetacontent == null) ? "" : String.valueOf(aObjMetacontent.getObjMetacontentId())),
 					he);
-			if (tx != null)
-				tx.rollback();
+			rollbackIfActive(tx);
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		} finally {
-			if (aSession != null) {
-				if (aSession.isOpen())
-					aSession.close();
-			}
+			closeSessionIfOpen(aSession);
 		}
 		logger.debug("OUT");
 
@@ -444,20 +425,18 @@ public class ObjMetacontentDAOHibImpl extends AbstractHibernateDAO implements IO
 			aSession.save(hibContents);
 			tx.commit();
 		} catch (HibernateException he) {
-			logger.error("Error while inserting the metadata content with id "
-					+ ((aObjMetacontent == null) ? "" : String.valueOf(aObjMetacontent.getObjMetacontentId())), he);
+			logger.error(
+					"Error while inserting the metadata content with id "
+							+ ((aObjMetacontent == null) ? "" : String.valueOf(aObjMetacontent.getObjMetacontentId())),
+					he);
 
-			if (tx != null)
-				tx.rollback();
+			rollbackIfActive(tx);
 
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 
 		} finally {
-			if (aSession != null) {
-				if (aSession.isOpen())
-					aSession.close();
-				logger.debug("OUT");
-			}
+			closeSessionIfOpen(aSession);
+			logger.debug("OUT");
 		}
 
 	}
@@ -479,26 +458,24 @@ public class ObjMetacontentDAOHibImpl extends AbstractHibernateDAO implements IO
 		try {
 			aSession = getSession();
 			tx = aSession.beginTransaction();
-			SbiObjMetacontents hibContents = (SbiObjMetacontents) aSession.load(SbiObjMetacontents.class, aObjMetacontent.getObjMetacontentId());
+			SbiObjMetacontents hibContents = (SbiObjMetacontents) aSession.load(SbiObjMetacontents.class,
+					aObjMetacontent.getObjMetacontentId());
 
 			aSession.delete(hibContents);
 			tx.commit();
 		} catch (HibernateException he) {
 			logger.error(
-					"Error while erasing the data source with id " + ((aObjMetacontent == null) ? "" : String.valueOf(aObjMetacontent.getObjMetacontentId())),
+					"Error while erasing the data source with id "
+							+ ((aObjMetacontent == null) ? "" : String.valueOf(aObjMetacontent.getObjMetacontentId())),
 					he);
 
-			if (tx != null)
-				tx.rollback();
+			rollbackIfActive(tx);
 
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 
 		} finally {
-			if (aSession != null) {
-				if (aSession.isOpen())
-					aSession.close();
-				logger.debug("OUT");
-			}
+			closeSessionIfOpen(aSession);
+			logger.debug("OUT");
 		}
 
 	}

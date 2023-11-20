@@ -8,7 +8,7 @@ public class ResourcePublisherMapping {
 	private static final Map<String, String> resourceMap = new HashMap<String, String>() {
 		{
 			// Sorted by alphabetical order
-
+			put("documentExecutionNg", "/WEB-INF/jsp/tools/documentexecution/documentExecutionNg.jsp"); // Temporary restored
 			put("importExportAlerts", "/WEB-INF/jsp/tools/servermanager/importExportAlerts/importExportAlerts.jsp");
 			put("importExportAnalyticalDrivers", "/WEB-INF/jsp/tools/servermanager/importExportAnalyticalDrivers/importExportAnalyticalDrivers.jsp");
 			put("importExportCatalog", "/WEB-INF/jsp/tools/servermanager/importExportCatalog/importExportCatalog.jsp");

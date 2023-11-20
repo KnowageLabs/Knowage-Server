@@ -18,6 +18,7 @@
 package it.eng.spagobi.commons.bo;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -95,14 +96,14 @@ public class Role implements Serializable {
 
 	private boolean defaultRole;
 
-	private List<RoleMetaModelCategory> roleMetaModelCategories;
+	private List<RoleMetaModelCategory> roleMetaModelCategories = new ArrayList<>();
 
 	/**
 	 * Checks if is able to edit python scripts.
 	 *
 	 * @return true, if is able to edit python scripts
 	 */
-	public boolean isAbleToEditPythonScripts() {
+	public boolean getAbleToEditPythonScripts() {
 		return isAbleToEditPythonScripts;
 	}
 
@@ -111,7 +112,7 @@ public class Role implements Serializable {
 	 *
 	 * @return true, if is able to custom chart
 	 */
-	public boolean isAbleToCreateCustomChart() {
+	public boolean getAbleToCreateCustomChart() {
 		return isAbleToCreateCustomChart;
 	}
 
@@ -120,17 +121,16 @@ public class Role implements Serializable {
 	 *
 	 * @return true, if is able to save subobjects
 	 */
-	public boolean isAbleToSaveSubobjects() {
+	public boolean getAbleToSaveSubobjects() {
 		return isAbleToSaveSubobjects;
 	}
 
 	/**
 	 * Sets the checks if is able to save subobjects.
 	 *
-	 * @param isAbleToSaveSubobjects
-	 *            the new checks if is able to save subobjects
+	 * @param isAbleToSaveSubobjects the new checks if is able to save subobjects
 	 */
-	public void setIsAbleToSaveSubobjects(boolean isAbleToSaveSubobjects) {
+	public void setAbleToSaveSubobjects(boolean isAbleToSaveSubobjects) {
 		this.isAbleToSaveSubobjects = isAbleToSaveSubobjects;
 	}
 
@@ -139,37 +139,34 @@ public class Role implements Serializable {
 	 *
 	 * @return true, if is able to see subobjects
 	 */
-	public boolean isAbleToSeeSubobjects() {
+	public boolean getAbleToSeeSubobjects() {
 		return isAbleToSeeSubobjects;
 	}
 
 	/**
 	 * Sets the check if is able to edit python scripts.
 	 *
-	 * @param isAbleToEditPythonScripts
-	 *            the new check if is able to edit python scripts
+	 * @param isAbleToEditPythonScripts the new check if is able to edit python scripts
 	 */
-	public void setIsAbleToEditPythonScripts(boolean isAbleToEditPythonScripts) {
+	public void setAbleToEditPythonScripts(boolean isAbleToEditPythonScripts) {
 		this.isAbleToEditPythonScripts = isAbleToEditPythonScripts;
 	}
 
 	/**
 	 * Sets the check if is able to create custom chart.
 	 *
-	 * @param isAbleToCreateCustomChart
-	 *            the new check if is able to create custom chart
+	 * @param isAbleToCreateCustomChart the new check if is able to create custom chart
 	 */
-	public void setIsAbleToCreateCustomChart(boolean isAbleToCreateCustomChart) {
+	public void setAbleToCreateCustomChart(boolean isAbleToCreateCustomChart) {
 		this.isAbleToCreateCustomChart = isAbleToCreateCustomChart;
 	}
 
 	/**
 	 * Sets the checks if is able to see subobjects.
 	 *
-	 * @param isAbleToSeeSubobjects
-	 *            the new checks if is able to see subobjects
+	 * @param isAbleToSeeSubobjects the new checks if is able to see subobjects
 	 */
-	public void setIsAbleToSeeSubobjects(boolean isAbleToSeeSubobjects) {
+	public void setAbleToSeeSubobjects(boolean isAbleToSeeSubobjects) {
 		this.isAbleToSeeSubobjects = isAbleToSeeSubobjects;
 	}
 
@@ -178,17 +175,16 @@ public class Role implements Serializable {
 	 *
 	 * @return true, if is able to see viewpoints
 	 */
-	public boolean isAbleToSeeViewpoints() {
+	public boolean getAbleToSeeViewpoints() {
 		return isAbleToSeeViewpoints;
 	}
 
 	/**
 	 * Sets the checks if is able to see viewpoints.
 	 *
-	 * @param isAbleToSeeViewpoints
-	 *            the new checks if is able to see viewpoints
+	 * @param isAbleToSeeViewpoints the new checks if is able to see viewpoints
 	 */
-	public void setIsAbleToSeeViewpoints(boolean isAbleToSeeViewpoints) {
+	public void setAbleToSeeViewpoints(boolean isAbleToSeeViewpoints) {
 		this.isAbleToSeeViewpoints = isAbleToSeeViewpoints;
 	}
 
@@ -197,17 +193,16 @@ public class Role implements Serializable {
 	 *
 	 * @return true, if is able to see snapshots
 	 */
-	public boolean isAbleToSeeSnapshots() {
+	public boolean getAbleToSeeSnapshots() {
 		return isAbleToSeeSnapshots;
 	}
 
 	/**
 	 * Sets the checks if is able to see snapshots.
 	 *
-	 * @param isAbleToSeeSnapshots
-	 *            the new checks if is able to see snapshots
+	 * @param isAbleToSeeSnapshots the new checks if is able to see snapshots
 	 */
-	public void setIsAbleToSeeSnapshots(boolean isAbleToSeeSnapshots) {
+	public void setAbleToSeeSnapshots(boolean isAbleToSeeSnapshots) {
 		this.isAbleToSeeSnapshots = isAbleToSeeSnapshots;
 	}
 
@@ -216,17 +211,16 @@ public class Role implements Serializable {
 	 *
 	 * @return true, if is able to run snapshots
 	 */
-	public boolean isAbleToRunSnapshots() {
+	public boolean getAbleToRunSnapshots() {
 		return isAbleToRunSnapshots;
 	}
 
 	/**
 	 * Sets the checks if is able to run snapshots.
 	 *
-	 * @param isAbleToRunSnapshots
-	 *            the new checks if is able to run snapshots
+	 * @param isAbleToRunSnapshots the new checks if is able to run snapshots
 	 */
-	public void setIsAbleToRunSnapshots(boolean isAbleToRunSnapshots) {
+	public void setAbleToRunSnapshots(boolean isAbleToRunSnapshots) {
 		this.isAbleToRunSnapshots = isAbleToRunSnapshots;
 	}
 
@@ -235,17 +229,16 @@ public class Role implements Serializable {
 	 *
 	 * @return true, if is able to see notes
 	 */
-	public boolean isAbleToSeeNotes() {
+	public boolean getAbleToSeeNotes() {
 		return isAbleToSeeNotes;
 	}
 
 	/**
 	 * Sets the checks if is able to see notes.
 	 *
-	 * @param isAbleToSeeNotes
-	 *            the new checks if is able to see notes
+	 * @param isAbleToSeeNotes the new checks if is able to see notes
 	 */
-	public void setIsAbleToSeeNotes(boolean isAbleToSeeNotes) {
+	public void setAbleToSeeNotes(boolean isAbleToSeeNotes) {
 		this.isAbleToSeeNotes = isAbleToSeeNotes;
 	}
 
@@ -254,17 +247,16 @@ public class Role implements Serializable {
 	 *
 	 * @return true, if is able to send mail
 	 */
-	public boolean isAbleToSendMail() {
+	public boolean getAbleToSendMail() {
 		return isAbleToSendMail;
 	}
 
 	/**
 	 * Sets the checks if is able to send mail.
 	 *
-	 * @param isAbleToSendMail
-	 *            the new checks if is able to send mail
+	 * @param isAbleToSendMail the new checks if is able to send mail
 	 */
-	public void setIsAbleToSendMail(boolean isAbleToSendMail) {
+	public void setAbleToSendMail(boolean isAbleToSendMail) {
 		this.isAbleToSendMail = isAbleToSendMail;
 	}
 
@@ -273,17 +265,16 @@ public class Role implements Serializable {
 	 *
 	 * @return true, if is able to save into personal folder
 	 */
-	public boolean isAbleToSaveIntoPersonalFolder() {
+	public boolean getAbleToSaveIntoPersonalFolder() {
 		return isAbleToSaveIntoPersonalFolder;
 	}
 
 	/**
 	 * Sets the checks if is able to save into personal folder.
 	 *
-	 * @param isAbleToSaveIntoPersonalFolder
-	 *            the new checks if is able to save into personal folder
+	 * @param isAbleToSaveIntoPersonalFolder the new checks if is able to save into personal folder
 	 */
-	public void setIsAbleToSaveIntoPersonalFolder(boolean isAbleToSaveIntoPersonalFolder) {
+	public void setAbleToSaveIntoPersonalFolder(boolean isAbleToSaveIntoPersonalFolder) {
 		this.isAbleToSaveIntoPersonalFolder = isAbleToSaveIntoPersonalFolder;
 	}
 
@@ -292,17 +283,16 @@ public class Role implements Serializable {
 	 *
 	 * @return true, if is able to save remember me
 	 */
-	public boolean isAbleToSaveRememberMe() {
+	public boolean getAbleToSaveRememberMe() {
 		return isAbleToSaveRememberMe;
 	}
 
 	/**
 	 * Sets the checks if is able to save remember me.
 	 *
-	 * @param isAbleToSaveRememberMe
-	 *            the new checks if is able to save remember me
+	 * @param isAbleToSaveRememberMe the new checks if is able to save remember me
 	 */
-	public void setIsAbleToSaveRememberMe(boolean isAbleToSaveRememberMe) {
+	public void setAbleToSaveRememberMe(boolean isAbleToSaveRememberMe) {
 		this.isAbleToSaveRememberMe = isAbleToSaveRememberMe;
 	}
 
@@ -311,17 +301,16 @@ public class Role implements Serializable {
 	 *
 	 * @return true, if is able to see metadata
 	 */
-	public boolean isAbleToSeeMetadata() {
+	public boolean getAbleToSeeMetadata() {
 		return isAbleToSeeMetadata;
 	}
 
 	/**
 	 * Sets the checks if is able to see metadata.
 	 *
-	 * @param isAbleToSeeMetadata
-	 *            the new checks if is able to see metadata
+	 * @param isAbleToSeeMetadata the new checks if is able to see metadata
 	 */
-	public void setIsAbleToSeeMetadata(boolean isAbleToSeeMetadata) {
+	public void setAbleToSeeMetadata(boolean isAbleToSeeMetadata) {
 		this.isAbleToSeeMetadata = isAbleToSeeMetadata;
 	}
 
@@ -330,17 +319,16 @@ public class Role implements Serializable {
 	 *
 	 * @return the isAbleToSaveMetadata
 	 */
-	public boolean isAbleToSaveMetadata() {
+	public boolean getAbleToSaveMetadata() {
 		return isAbleToSaveMetadata;
 	}
 
 	/**
 	 * Sets the checks if is able to save metadata.
 	 *
-	 * @param isAbleToSaveMetadata
-	 *            the new checks if is able to save metadata
+	 * @param isAbleToSaveMetadata the new checks if is able to save metadata
 	 */
-	public void setIsAbleToSaveMetadata(boolean isAbleToSaveMetadata) {
+	public void setAbleToSaveMetadata(boolean isAbleToSaveMetadata) {
 		this.isAbleToSaveMetadata = isAbleToSaveMetadata;
 	}
 
@@ -349,7 +337,7 @@ public class Role implements Serializable {
 	 *
 	 * @return true, if role is able to build and modify QBE queries
 	 */
-	public Boolean isAbleToBuildQbeQuery() {
+	public boolean getAbleToBuildQbeQuery() {
 		return isAbleToBuildQbeQuery;
 	}
 
@@ -358,7 +346,7 @@ public class Role implements Serializable {
 	 *
 	 * @param isAbleToBuildQbeQuery
 	 */
-	public void setIsAbleToBuildQbeQuery(Boolean isAbleToBuildQbeQuery) {
+	public void setAbleToBuildQbeQuery(boolean isAbleToBuildQbeQuery) {
 		this.isAbleToBuildQbeQuery = isAbleToBuildQbeQuery;
 	}
 
@@ -366,20 +354,16 @@ public class Role implements Serializable {
 	 * Class constructor.
 	 */
 	public Role() {
-		super();
 
 	}
 
 	/**
 	 * Constructor.
 	 *
-	 * @param name
-	 *            the name
-	 * @param description
-	 *            the description
+	 * @param name        the name
+	 * @param description the description
 	 */
 	public Role(String name, String description) {
-		super();
 		this.name = name;
 		this.description = description;
 	}
@@ -397,8 +381,7 @@ public class Role implements Serializable {
 	/**
 	 * Sets the description.
 	 *
-	 * @param description
-	 *            the description to set
+	 * @param description the description to set
 	 */
 	public void setDescription(String description) {
 		this.description = description;
@@ -416,8 +399,7 @@ public class Role implements Serializable {
 	/**
 	 * Sets the id.
 	 *
-	 * @param id
-	 *            the role id to set
+	 * @param id the role id to set
 	 */
 	public void setId(Integer id) {
 		this.id = id;
@@ -435,8 +417,7 @@ public class Role implements Serializable {
 	/**
 	 * Sets the name.
 	 *
-	 * @param name
-	 *            the name to set
+	 * @param name the name to set
 	 */
 	public void setName(String name) {
 		this.name = name;
@@ -454,8 +435,7 @@ public class Role implements Serializable {
 	/**
 	 * Sets the role type cd.
 	 *
-	 * @param roleTypeCD
-	 *            The roleTypeCD to set.
+	 * @param roleTypeCD The roleTypeCD to set.
 	 */
 	public void setRoleTypeCD(String roleTypeCD) {
 		this.roleTypeCD = roleTypeCD;
@@ -473,8 +453,7 @@ public class Role implements Serializable {
 	/**
 	 * Sets the role type id.
 	 *
-	 * @param roleTypeID
-	 *            The roleTypeID to set.
+	 * @param roleTypeID The roleTypeID to set.
 	 */
 	public void setRoleTypeID(Integer roleTypeID) {
 		this.roleTypeID = roleTypeID;
@@ -492,8 +471,7 @@ public class Role implements Serializable {
 	/**
 	 * Sets the code.
 	 *
-	 * @param code
-	 *            The code to set.
+	 * @param code The code to set.
 	 */
 	public void setCode(String code) {
 		this.code = code;
@@ -507,124 +485,117 @@ public class Role implements Serializable {
 		this.defaultRole = defaultRole;
 	}
 
-	public boolean isAbleToDoMassiveExport() {
+	public boolean getAbleToDoMassiveExport() {
 		return isAbleToDoMassiveExport;
 	}
 
-	public void setIsAbleToDoMassiveExport(boolean isAbleToDoMassiveExport) {
+	public void setAbleToDoMassiveExport(boolean isAbleToDoMassiveExport) {
 		this.isAbleToDoMassiveExport = isAbleToDoMassiveExport;
 	}
 
-	public boolean isAbleToManageUsers() {
+	public boolean getAbleToManageUsers() {
 		return isAbleToManageUsers;
 	}
 
-	public void setIsAbleToManageUsers(boolean isAbleToManageUsers) {
+	public void setAbleToManageUsers(boolean isAbleToManageUsers) {
 		this.isAbleToManageUsers = isAbleToManageUsers;
 	}
 
 	/**
 	 * @return the isAbleToSeeDocumentBrowser
 	 */
-	public boolean isAbleToSeeDocumentBrowser() {
+	public boolean getAbleToSeeDocumentBrowser() {
 		return isAbleToSeeDocumentBrowser;
 	}
 
 	/**
-	 * @param isAbleToSeeDocumentBrowser
-	 *            the isAbleToSeeDocumentBrowser to set
+	 * @param isAbleToSeeDocumentBrowser the isAbleToSeeDocumentBrowser to set
 	 */
-	public void setIsAbleToSeeDocumentBrowser(boolean isAbleToSeeDocumentBrowser) {
+	public void setAbleToSeeDocumentBrowser(boolean isAbleToSeeDocumentBrowser) {
 		this.isAbleToSeeDocumentBrowser = isAbleToSeeDocumentBrowser;
 	}
 
 	/**
 	 * @return the isAbleToSeeFavourites
 	 */
-	public boolean isAbleToSeeFavourites() {
+	public boolean getAbleToSeeFavourites() {
 		return isAbleToSeeFavourites;
 	}
 
 	/**
-	 * @param isAbleToSeeFavourites
-	 *            the isAbleToSeeFavourites to set
+	 * @param isAbleToSeeFavourites the isAbleToSeeFavourites to set
 	 */
-	public void setIsAbleToSeeFavourites(boolean isAbleToSeeFavourites) {
+	public void setAbleToSeeFavourites(boolean isAbleToSeeFavourites) {
 		this.isAbleToSeeFavourites = isAbleToSeeFavourites;
 	}
 
 	/**
 	 * @return the isAbleToSeeSubscriptions
 	 */
-	public boolean isAbleToSeeSubscriptions() {
+	public boolean getAbleToSeeSubscriptions() {
 		return isAbleToSeeSubscriptions;
 	}
 
 	/**
-	 * @param isAbleToSeeSubscriptions
-	 *            the isAbleToSeeSubscriptions to set
+	 * @param isAbleToSeeSubscriptions the isAbleToSeeSubscriptions to set
 	 */
-	public void setIsAbleToSeeSubscriptions(boolean isAbleToSeeSubscriptions) {
+	public void setAbleToSeeSubscriptions(boolean isAbleToSeeSubscriptions) {
 		this.isAbleToSeeSubscriptions = isAbleToSeeSubscriptions;
 	}
 
 	/**
 	 * @return the isAbleToSeeMyData
 	 */
-	public boolean isAbleToSeeMyData() {
+	public boolean getAbleToSeeMyData() {
 		return isAbleToSeeMyData;
 	}
 
 	/**
-	 * @param isAbleToSeeMyData
-	 *            the isAbleToSeeMyData to set
+	 * @param isAbleToSeeMyData the isAbleToSeeMyData to set
 	 */
-	public void setIsAbleToSeeMyData(boolean isAbleToSeeMyData) {
+	public void setAbleToSeeMyData(boolean isAbleToSeeMyData) {
 		this.isAbleToSeeMyData = isAbleToSeeMyData;
 	}
 
 	/**
 	 * @return the isAbleToSeeMyWorkspace
 	 */
-	public boolean isAbleToSeeMyWorkspace() {
+	public boolean getAbleToSeeMyWorkspace() {
 		return isAbleToSeeMyWorkspace;
 	}
 
 	/**
-	 * @param isAbleToSeeMyWorkspace
-	 *            the isAbleToSeeMyWorkspace to set
+	 * @param isAbleToSeeMyWorkspace the isAbleToSeeMyWorkspace to set
 	 */
-	public void setIsAbleToSeeMyWorkspace(boolean isAbleToSeeMyWorkspace) {
+	public void setAbleToSeeMyWorkspace(boolean isAbleToSeeMyWorkspace) {
 		this.isAbleToSeeMyWorkspace = isAbleToSeeMyWorkspace;
 	}
 
 	/**
 	 * @return the isAbleToSeeToDoList
 	 */
-	public boolean isAbleToSeeToDoList() {
+	public boolean getAbleToSeeToDoList() {
 		return isAbleToSeeToDoList;
 	}
 
 	/**
-	 * @param isAbleToSeeToDoList
-	 *            the isAbleToSeeToDoList to set
+	 * @param isAbleToSeeToDoList the isAbleToSeeToDoList to set
 	 */
-	public void setIsAbleToSeeToDoList(boolean isAbleToSeeToDoList) {
+	public void setAbleToSeeToDoList(boolean isAbleToSeeToDoList) {
 		this.isAbleToSeeToDoList = isAbleToSeeToDoList;
 	}
 
 	/**
 	 * @return the isAbleToCreateDocuments
 	 */
-	public boolean isAbleToCreateDocuments() {
+	public boolean getAbleToCreateDocuments() {
 		return isAbleToCreateDocuments;
 	}
 
 	/**
-	 * @param isAbleToCreateDocuments
-	 *            the isAbleToCreateDocuments to set
+	 * @param isAbleToCreateDocuments the isAbleToCreateDocuments to set
 	 */
-	public void setIsAbleToCreateDocuments(boolean isAbleToCreateDocuments) {
+	public void setAbleToCreateDocuments(boolean isAbleToCreateDocuments) {
 		this.isAbleToCreateDocuments = isAbleToCreateDocuments;
 	}
 
@@ -644,14 +615,13 @@ public class Role implements Serializable {
 	}
 
 	/**
-	 * @param roleMetaModelCategories
-	 *            the roleMetaModelCategories to set
+	 * @param roleMetaModelCategories the roleMetaModelCategories to set
 	 */
 	public void setRoleMetaModelCategories(List<RoleMetaModelCategory> roleMetaModelCategories) {
 		this.roleMetaModelCategories = roleMetaModelCategories;
 	}
 
-	public boolean isAbleToEditAllKpiComm() {
+	public boolean getAbleToEditAllKpiComm() {
 		return isAbleToEditAllKpiComm;
 	}
 
@@ -659,7 +629,7 @@ public class Role implements Serializable {
 		this.isAbleToEditAllKpiComm = isAbleToEditAllKpiComm;
 	}
 
-	public boolean isAbleToEditMyKpiComm() {
+	public boolean getAbleToEditMyKpiComm() {
 		return isAbleToEditMyKpiComm;
 	}
 
@@ -667,7 +637,7 @@ public class Role implements Serializable {
 		this.isAbleToEditMyKpiComm = isAbleToEditMyKpiComm;
 	}
 
-	public boolean isAbleToDeleteKpiComm() {
+	public boolean getAbleToDeleteKpiComm() {
 		return isAbleToDeleteKpiComm;
 	}
 
@@ -675,39 +645,39 @@ public class Role implements Serializable {
 		this.isAbleToDeleteKpiComm = isAbleToDeleteKpiComm;
 	}
 
-	public boolean isAbleToCreateSocialAnalysis() {
+	public boolean getAbleToCreateSocialAnalysis() {
 		return isAbleToCreateSocialAnalysis;
 	}
 
-	public void setIsAbleToCreateSocialAnalysis(boolean isAbleToCreateSocialAnalysis) {
+	public void setAbleToCreateSocialAnalysis(boolean isAbleToCreateSocialAnalysis) {
 		this.isAbleToCreateSocialAnalysis = isAbleToCreateSocialAnalysis;
 	}
 
-	public boolean isAbleToViewSocialAnalysis() {
+	public boolean getAbleToViewSocialAnalysis() {
 		return isAbleToViewSocialAnalysis;
 	}
 
-	public void setIsAbleToViewSocialAnalysis(boolean isAbleToViewSocialAnalysis) {
+	public void setAbleToViewSocialAnalysis(boolean isAbleToViewSocialAnalysis) {
 		this.isAbleToViewSocialAnalysis = isAbleToViewSocialAnalysis;
 	}
 
-	public boolean isAbleToHierarchiesManagement() {
+	public boolean getAbleToHierarchiesManagement() {
 		return isAbleToHierarchiesManagement;
 	}
 
-	public void setIsAbleToHierarchiesManagement(boolean isAbleToHierarchiesManagement) {
+	public void setAbleToHierarchiesManagement(boolean isAbleToHierarchiesManagement) {
 		this.isAbleToHierarchiesManagement = isAbleToHierarchiesManagement;
 	}
 
-	public boolean isAbleToEnableDatasetPersistence() {
+	public boolean getAbleToEnableDatasetPersistence() {
 		return isAbleToEnableDatasetPersistence;
 	}
 
-	public void setIsAbleToEnableDatasetPersistence(boolean isAbleToEnableDatasetPersistence) {
+	public void setAbleToEnableDatasetPersistence(boolean isAbleToEnableDatasetPersistence) {
 		this.isAbleToEnableDatasetPersistence = isAbleToEnableDatasetPersistence;
 	}
 
-	public boolean isAbleToManageGlossaryBusiness() {
+	public boolean getAbleToManageGlossaryBusiness() {
 		return isAbleToManageGlossaryBusiness;
 	}
 
@@ -715,15 +685,15 @@ public class Role implements Serializable {
 		this.isAbleToManageGlossaryBusiness = isAbleToManageGlossaryBusiness;
 	}
 
-	public boolean isAbleToManageGlossaryTechnical() {
+	public boolean getAbleToManageGlossaryTechnical() {
 		return isAbleToManageGlossaryTechnical;
 	}
 
-	public boolean isAbleToManageKpiValue() {
+	public boolean getAbleToManageKpiValue() {
 		return isAbleToManageKpiValue;
 	}
 
-	public boolean isAbleToManageCalendar() {
+	public boolean getAbleToManageCalendar() {
 		return isAbleToManageCalendar;
 	}
 
@@ -731,7 +701,7 @@ public class Role implements Serializable {
 		this.isAbleToManageCalendar = isAbleToManageCalendar;
 	}
 
-	public boolean isAbleToUseFunctionsCatalog() {
+	public boolean getAbleToUseFunctionsCatalog() {
 		return isAbleToUseFunctionsCatalog;
 	}
 
@@ -747,35 +717,35 @@ public class Role implements Serializable {
 		this.isAbleToManageKpiValue = isAbleToManageKpiValue;
 	}
 
-	public boolean isAbleToEnableFederatedDataset() {
+	public boolean getAbleToEnableFederatedDataset() {
 		return isAbleToEnableFederatedDataset;
 	}
 
-	public void setIsAbleToEnableFederatedDataset(boolean isAbleToEnableFederatedDataset) {
+	public void setAbleToEnableFederatedDataset(boolean isAbleToEnableFederatedDataset) {
 		this.isAbleToEnableFederatedDataset = isAbleToEnableFederatedDataset;
 	}
 
-	public boolean isAbleToEnableRate() {
+	public boolean getAbleToEnableRate() {
 		return isAbleToEnableRate;
 	}
 
-	public void setIsAbleToEnableRate(boolean isAbleToEnableRate) {
+	public void setAbleToEnableRate(boolean isAbleToEnableRate) {
 		this.isAbleToEnableRate = isAbleToEnableRate;
 	}
 
-	public boolean isAbleToEnablePrint() {
+	public boolean getAbleToEnablePrint() {
 		return isAbleToEnablePrint;
 	}
 
-	public void setIsAbleToEnablePrint(boolean isAbleToEnablePrint) {
+	public void setAbleToEnablePrint(boolean isAbleToEnablePrint) {
 		this.isAbleToEnablePrint = isAbleToEnablePrint;
 	}
 
-	public boolean isAbleToEnableCopyAndEmbed() {
+	public boolean getAbleToEnableCopyAndEmbed() {
 		return isAbleToEnableCopyAndEmbed;
 	}
 
-	public void setIsAbleToEnableCopyAndEmbed(boolean isAbleToEnableCopyAndEmbed) {
+	public void setAbleToEnableCopyAndEmbed(boolean isAbleToEnableCopyAndEmbed) {
 		this.isAbleToEnableCopyAndEmbed = isAbleToEnableCopyAndEmbed;
 	}
 
@@ -787,7 +757,7 @@ public class Role implements Serializable {
 		this.isPublic = isPublic;
 	}
 
-	public boolean isAbleToManageInternationalization() {
+	public boolean getAbleToManageInternationalization() {
 		return isAbleToManageInternationalization;
 	}
 
@@ -795,7 +765,7 @@ public class Role implements Serializable {
 		this.isAbleToManageInternationalization = isAbleToManageInternationalization;
 	}
 
-	public boolean isAbleToCreateSelfServiceCockpit() {
+	public boolean getAbleToCreateSelfServiceCockpit() {
 		return ableToCreateSelfServiceCockpit;
 	}
 
@@ -803,7 +773,7 @@ public class Role implements Serializable {
 		this.ableToCreateSelfServiceCockpit = ableToCreateSelfServiceCockpit;
 	}
 
-	public boolean isAbleToCreateSelfServiceGeoreport() {
+	public boolean getAbleToCreateSelfServiceGeoreport() {
 		return ableToCreateSelfServiceGeoreport;
 	}
 
@@ -811,7 +781,7 @@ public class Role implements Serializable {
 		this.ableToCreateSelfServiceGeoreport = ableToCreateSelfServiceGeoreport;
 	}
 
-	public boolean isAbleToCreateSelfServiceKpi() {
+	public boolean getAbleToCreateSelfServiceKpi() {
 		return ableToCreateSelfServiceKpi;
 	}
 

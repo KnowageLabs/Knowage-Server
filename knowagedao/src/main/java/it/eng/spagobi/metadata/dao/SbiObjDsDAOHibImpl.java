@@ -72,16 +72,12 @@ public class SbiObjDsDAOHibImpl extends AbstractHibernateDAO implements ISbiObjD
 		} catch (HibernateException he) {
 			logException(he);
 
-			if (tx != null)
-				tx.rollback();
+			rollbackIfActive(tx);
 
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 
 		} finally {
-			if (aSession != null) {
-				if (aSession.isOpen())
-					aSession.close();
-			}
+			closeSessionIfOpen(aSession);
 		}
 		logger.debug("OUT");
 		return toReturn;
@@ -108,16 +104,12 @@ public class SbiObjDsDAOHibImpl extends AbstractHibernateDAO implements ISbiObjD
 		} catch (HibernateException he) {
 			logException(he);
 
-			if (tx != null)
-				tx.rollback();
+			rollbackIfActive(tx);
 
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 
 		} finally {
-			if (aSession != null) {
-				if (aSession.isOpen())
-					aSession.close();
-			}
+			closeSessionIfOpen(aSession);
 		}
 		logger.debug("OUT");
 		return toReturn;
@@ -136,8 +128,8 @@ public class SbiObjDsDAOHibImpl extends AbstractHibernateDAO implements ISbiObjD
 			aSession = getSession();
 			tx = aSession.beginTransaction();
 
-			hqlQuery = aSession
-					.createQuery(" from SbiMetaObjDs as db where db.id.objId = ? and db.id.dsId = ? and db.id.versionNum = ? and db.id.organization = ?");
+			hqlQuery = aSession.createQuery(
+					" from SbiMetaObjDs as db where db.id.objId = ? and db.id.dsId = ? and db.id.versionNum = ? and db.id.organization = ?");
 			hqlQuery.setInteger(0, objDsId.getObjId());
 			hqlQuery.setInteger(1, objDsId.getDsId());
 			hqlQuery.setInteger(2, objDsId.getVersionNum());
@@ -148,16 +140,12 @@ public class SbiObjDsDAOHibImpl extends AbstractHibernateDAO implements ISbiObjD
 		} catch (HibernateException he) {
 			logException(he);
 
-			if (tx != null)
-				tx.rollback();
+			rollbackIfActive(tx);
 
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 
 		} finally {
-			if (aSession != null) {
-				if (aSession.isOpen())
-					aSession.close();
-			}
+			closeSessionIfOpen(aSession);
 		}
 		logger.debug("OUT");
 		return toReturn;
@@ -181,17 +169,12 @@ public class SbiObjDsDAOHibImpl extends AbstractHibernateDAO implements ISbiObjD
 		} catch (HibernateException he) {
 			logException(he);
 
-			if (tx != null)
-				tx.rollback();
+			rollbackIfActive(tx);
 
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 
 		} finally {
-			if (aSession != null) {
-				if (aSession.isOpen())
-					aSession.close();
-			}
-
+			closeSessionIfOpen(aSession);
 		}
 		logger.debug("OUT");
 	}
@@ -213,23 +196,19 @@ public class SbiObjDsDAOHibImpl extends AbstractHibernateDAO implements ISbiObjD
 		} catch (HibernateException he) {
 			logException(he);
 
-			if (tx != null)
-				tx.rollback();
+			rollbackIfActive(tx);
 
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 
 		} finally {
-			if (aSession != null) {
-				if (aSession.isOpen())
-					aSession.close();
-			}
+			closeSessionIfOpen(aSession);
 		}
 		logger.debug("OUT");
 	}
 
 	/**
-	 * Store the relation between the BI document and its dataset into the SBI_META_OBJ_DS (Only objects with UNIQUE relation 1 to 1 with the dataset: NO
-	 * COCKPIT, CONSOLE, DOCUMENT COMPOSITION, ... )
+	 * Store the relation between the BI document and its dataset into the SBI_META_OBJ_DS (Only objects with UNIQUE relation 1 to 1 with the dataset: NO COCKPIT,
+	 * CONSOLE, DOCUMENT COMPOSITION, ... )
 	 *
 	 * @param biObj the document object
 	 */
@@ -249,7 +228,8 @@ public class SbiObjDsDAOHibImpl extends AbstractHibernateDAO implements ISbiObjD
 
 				if (dsId == null) {
 					// if the dataset isn't chosen don't insert the relation...
-					logger.debug("Dataset is not setted for the document with id [" + objId + "]. Relation with document impossible to save.");
+					logger.debug("Dataset is not setted for the document with id [" + objId
+							+ "]. Relation with document impossible to save.");
 					// ... and delete relations if they are present (for old save action)
 					logger.debug("Removing old relations with the object...");
 					List<SbiMetaObjDs> lstRels = DAOFactory.getSbiObjDsDAO().loadDsByObjId(objId);
@@ -318,11 +298,12 @@ public class SbiObjDsDAOHibImpl extends AbstractHibernateDAO implements ISbiObjD
 				if (template != null)
 					datasetsAssociated = driver.getDatasetAssociated(template.getContent());
 				if (datasetsAssociated != null) {
-					HashMap<Integer, Boolean> lstDsInsertedForObj = new HashMap<Integer, Boolean>();
+					HashMap<Integer, Boolean> lstDsInsertedForObj = new HashMap<>();
 					for (Iterator<String> iterator = datasetsAssociated.iterator(); iterator.hasNext();) {
 						String dsLabel = iterator.next();
 						logger.debug("Insert relation for dataset with label [" + dsLabel + "]");
-						VersionedDataSet ds = ((VersionedDataSet) DAOFactory.getDataSetDAO().loadDataSetByLabel(dsLabel));
+						VersionedDataSet ds = ((VersionedDataSet) DAOFactory.getDataSetDAO()
+								.loadDataSetByLabel(dsLabel));
 						// insert only relations with new ds
 						if (lstDsInsertedForObj.get(ds.getId()) != null) {
 							continue;
@@ -349,7 +330,8 @@ public class SbiObjDsDAOHibImpl extends AbstractHibernateDAO implements ISbiObjD
 				logger.debug("The document doesn't use any dataset! ");
 			}
 		} catch (Exception e) {
-			logger.error("An error occured while inserting relation between cockpit document and its datasets. Error:  " + e);
+			logger.error("An error occured while inserting relation between cockpit document and its datasets. Error:  "
+					+ e);
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		}
 
@@ -376,7 +358,7 @@ public class SbiObjDsDAOHibImpl extends AbstractHibernateDAO implements ISbiObjD
 			}
 			SourceBean templateSB = SourceBean.fromXMLString(template);
 
-			HashMap<Integer, Boolean> lstDsInsertedForObj = new HashMap<Integer, Boolean>();
+			HashMap<Integer, Boolean> lstDsInsertedForObj = new HashMap<>();
 			// 1. search used datasets
 			SourceBean dmSB = (SourceBean) templateSB.getAttribute("DATAMART_PROVIDER");
 			SourceBean hierarchySB = (SourceBean) dmSB.getAttribute("HIERARCHY");
@@ -423,7 +405,7 @@ public class SbiObjDsDAOHibImpl extends AbstractHibernateDAO implements ISbiObjD
 					DAOFactory.getSbiObjDsDAO().insertObjDs(relMetaObjDs);
 
 					// creating relation object
-					ArrayList<String> arr = new ArrayList<String>();
+					ArrayList<String> arr = new ArrayList<>();
 					arr.add(dsLabel);
 
 					Session currentSession = getSession();
@@ -453,8 +435,8 @@ public class SbiObjDsDAOHibImpl extends AbstractHibernateDAO implements ISbiObjD
 	}
 
 	/**
-	 * Store the relation between the BI document and its dataset into the SBI_META_OBJ_DS (Only objects with UNIQUE relation 1 to 1 with the dataset: NO
-	 * COCKPIT, CONSOLE, DOCUMENT COMPOSITION, ... )
+	 * Store the relation between the BI document and its dataset into the SBI_META_OBJ_DS (Only objects with UNIQUE relation 1 to 1 with the dataset: NO COCKPIT,
+	 * CONSOLE, DOCUMENT COMPOSITION, ... )
 	 *
 	 * @param biObj the document object
 	 */
@@ -508,16 +490,12 @@ public class SbiObjDsDAOHibImpl extends AbstractHibernateDAO implements ISbiObjD
 		} catch (HibernateException he) {
 			logException(he);
 
-			if (tx != null)
-				tx.rollback();
+			rollbackIfActive(tx);
 
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 
 		} finally {
-			if (aSession != null) {
-				if (aSession.isOpen())
-					aSession.close();
-			}
+			closeSessionIfOpen(aSession);
 		}
 		logger.debug("OUT");
 	}
@@ -552,16 +530,12 @@ public class SbiObjDsDAOHibImpl extends AbstractHibernateDAO implements ISbiObjD
 		} catch (HibernateException he) {
 			logException(he);
 
-			if (tx != null)
-				tx.rollback();
+			rollbackIfActive(tx);
 
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 
 		} finally {
-			if (aSession != null) {
-				if (aSession.isOpen())
-					aSession.close();
-			}
+			closeSessionIfOpen(aSession);
 		}
 		logger.debug("OUT");
 	}

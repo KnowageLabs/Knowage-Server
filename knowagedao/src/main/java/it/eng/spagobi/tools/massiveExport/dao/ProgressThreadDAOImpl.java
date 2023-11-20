@@ -5,13 +5,6 @@
  * If a copy of the MPL was not distributed with this file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 package it.eng.spagobi.tools.massiveExport.dao;
 
-import it.eng.spago.error.EMFErrorSeverity;
-import it.eng.spago.error.EMFUserError;
-import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
-import it.eng.spagobi.tools.massiveExport.bo.ProgressThread;
-import it.eng.spagobi.tools.massiveExport.metadata.SbiProgressThread;
-//import it.eng.spagobi.tools.massiveExport.work.MassiveExportWork;
-
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -21,6 +14,13 @@ import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+
+import it.eng.spago.error.EMFErrorSeverity;
+import it.eng.spago.error.EMFUserError;
+import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
+import it.eng.spagobi.tools.massiveExport.bo.ProgressThread;
+import it.eng.spagobi.tools.massiveExport.metadata.SbiProgressThread;
+//import it.eng.spagobi.tools.massiveExport.work.MassiveExportWork;
 
 public class ProgressThreadDAOImpl extends AbstractHibernateDAO implements IProgressThreadDAO {
 
@@ -80,13 +80,13 @@ public class ProgressThreadDAOImpl extends AbstractHibernateDAO implements IProg
 			aSession = getSession();
 			tx = aSession.beginTransaction();
 
-			Query hibPT = aSession.createQuery("from SbiProgressThread h where h.userId = ? AND (h.status = '" + STARTED + "' OR h.status = '" + PREPARED
-					+ "')");
+			Query hibPT = aSession.createQuery("from SbiProgressThread h where h.userId = ? AND (h.status = '" + STARTED
+					+ "' OR h.status = '" + PREPARED + "')");
 			hibPT.setString(0, userId);
 
 			List sbiProgressThreadList = hibPT.list();
 			if (sbiProgressThreadList != null) {
-				toReturn = new ArrayList<ProgressThread>();
+				toReturn = new ArrayList<>();
 				for (Iterator iterator = sbiProgressThreadList.iterator(); iterator.hasNext();) {
 					SbiProgressThread sbiPT = (SbiProgressThread) iterator.next();
 					ProgressThread pT = toProgressThread(sbiPT);
@@ -97,7 +97,9 @@ public class ProgressThreadDAOImpl extends AbstractHibernateDAO implements IProg
 			tx.commit();
 
 		} catch (HibernateException he) {
-			logger.error("Error while loading Progress Threads with userId" + userId + " and status STARTED or prepared", he);
+			logger.error(
+					"Error while loading Progress Threads with userId" + userId + " and status STARTED or prepared",
+					he);
 			if (tx != null)
 				tx.rollback();
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
@@ -129,7 +131,7 @@ public class ProgressThreadDAOImpl extends AbstractHibernateDAO implements IProg
 
 			List sbiProgressThreadList = hibPT.list();
 			if (sbiProgressThreadList != null) {
-				toReturn = new ArrayList<ProgressThread>();
+				toReturn = new ArrayList<>();
 				for (Iterator iterator = sbiProgressThreadList.iterator(); iterator.hasNext();) {
 					SbiProgressThread sbiPT = (SbiProgressThread) iterator.next();
 					ProgressThread pT = toProgressThread(sbiPT);
@@ -167,8 +169,9 @@ public class ProgressThreadDAOImpl extends AbstractHibernateDAO implements IProg
 			aSession = getSession();
 			tx = aSession.beginTransaction();
 
-			Query hibPT = aSession.createQuery("from SbiProgressThread h where h.userId = ? AND h.functionCd = ? AND (h.status = '" + STARTED
-					+ "' OR h.status ='" + PREPARED + "') ");
+			Query hibPT = aSession
+					.createQuery("from SbiProgressThread h where h.userId = ? AND h.functionCd = ? AND (h.status = '"
+							+ STARTED + "' OR h.status ='" + PREPARED + "') ");
 			hibPT.setString(0, userId);
 			hibPT.setString(1, functCd);
 
@@ -251,13 +254,13 @@ public class ProgressThreadDAOImpl extends AbstractHibernateDAO implements IProg
 			sbiPT.setStatus(PREPARED);
 			sbiPT.setType(progThread.getType());
 			sbiPT.setRandomKey(progThread.getRandomKey());
+			sbiPT.setExecutionRole(progThread.getExecutionRole());
 
 			aSession.save(sbiPT);
 			tx.commit();
 		} catch (HibernateException he) {
-			logger.error(
-					"Error while inserting the progress thread with user id " + progThread.getUserId() + " and on functionality " + progThread.getFunctionCd(),
-					he);
+			logger.error("Error while inserting the progress thread with user id " + progThread.getUserId()
+					+ " and on functionality " + progThread.getFunctionCd(), he);
 
 			if (tx != null)
 				tx.rollback();
@@ -275,7 +278,6 @@ public class ProgressThreadDAOImpl extends AbstractHibernateDAO implements IProg
 	}
 
 	public ProgressThread toProgressThread(SbiProgressThread sbiPT) {
-		// logger.debug("IN");
 		ProgressThread toReturn = new ProgressThread();
 
 		toReturn.setUserId(sbiPT.getUserId());
@@ -284,10 +286,10 @@ public class ProgressThreadDAOImpl extends AbstractHibernateDAO implements IProg
 		toReturn.setType(sbiPT.getType());
 		toReturn.setProgressThreadId(sbiPT.getProgressThreadId());
 		toReturn.setRandomKey(sbiPT.getRandomKey());
-
 		toReturn.setTotal(sbiPT.getTotal());
 		toReturn.setPartial(sbiPT.getPartial());
-		// logger.debug("OUT");
+		toReturn.setExecutionRole(sbiPT.getExecutionRole());
+
 		return toReturn;
 	}
 

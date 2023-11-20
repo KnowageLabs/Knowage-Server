@@ -21,6 +21,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
+import java.security.SecureRandom;
 import java.util.List;
 import java.util.Locale;
 import java.util.Locale.Builder;
@@ -131,7 +132,8 @@ import it.eng.spagobi.utilities.assertion.Assert;
 @Path("/fileservicedataset")
 public class FileServiceDataSetCRUD {
 
-	private static final Logger LOGGER = Logger.getLogger(it.eng.spagobi.tools.dataset.service.FileServiceDataSetCRUD.class);
+	private static final Logger LOGGER = Logger
+			.getLogger(it.eng.spagobi.tools.dataset.service.FileServiceDataSetCRUD.class);
 
 	// the name of the data file expected to download inside the zip
 	private static final String DATA_FILE_NAME = "data.csv";
@@ -140,7 +142,7 @@ public class FileServiceDataSetCRUD {
 	//
 	private static final String PARAMETERS_URL = "parametersUrl";
 
-	private final Random random = new Random();
+	private static final Random RANDOM = new SecureRandom();
 
 	IEngUserProfile profile = null;
 
@@ -323,7 +325,8 @@ public class FileServiceDataSetCRUD {
 		Assert.assertNotNull(host, "Host not present in sbi configs");
 		Assert.assertNotNull(domain, "Domain not present in sbi configs");
 
-		String url = protocol + "://" + host + ((port != null && !port.equalsIgnoreCase("")) ? (":" + port) : "") + domain + "?" + parameters;
+		String url = protocol + "://" + host + ((port != null && !port.equalsIgnoreCase("")) ? (":" + port) : "")
+				+ domain + "?" + parameters;
 
 		LOGGER.debug("OUT");
 
@@ -378,7 +381,7 @@ public class FileServiceDataSetCRUD {
 		LOGGER.debug("IN");
 		// write byteArray
 		File dir = new File(System.getProperty("java.io.tmpdir"));
-		int randomInt = random.nextInt();
+		int randomInt = RANDOM.nextInt();
 		String fileName = Integer.toString(randomInt);
 		File zipFile = File.createTempFile(fileName, ".zip", dir);
 
@@ -524,7 +527,8 @@ public class FileServiceDataSetCRUD {
 			String newType = oracleTypetoJava(type);
 			SourceBeanAttribute attT = new SourceBeanAttribute(DatasetMetadataParser.TYPE, newType);
 			SourceBeanAttribute attA = name != null ? new SourceBeanAttribute(DatasetMetadataParser.ALIAS, name) : null;
-			SourceBeanAttribute attF = role != null ? new SourceBeanAttribute(DatasetMetadataParser.FIELD_TYPE, role) : null;
+			SourceBeanAttribute attF = role != null ? new SourceBeanAttribute(DatasetMetadataParser.FIELD_TYPE, role)
+					: null;
 			sbMeta.setAttribute(attN);
 			sbMeta.setAttribute(attT);
 			if (attA != null)
@@ -562,13 +566,15 @@ public class FileServiceDataSetCRUD {
 		Engine qbeEngine = null;
 		try {
 			Assert.assertNotNull(DAOFactory.getEngineDAO(), "EngineDao cannot be null");
-			List<Engine> engines = DAOFactory.getEngineDAO().loadAllEnginesForBIObjectType(SpagoBIConstants.DATAMART_TYPE_CODE);
+			List<Engine> engines = DAOFactory.getEngineDAO()
+					.loadAllEnginesForBIObjectType(SpagoBIConstants.DATAMART_TYPE_CODE);
 			if (engines == null || engines.isEmpty()) {
 				throw new Exception("There are no engines for documents of type [DATAMART] available");
 			} else {
 				qbeEngine = engines.get(0);
 				if (engines.size() > 1) {
-					LogMF.warn(LOGGER, "There are more than one engine for document of type [DATAMART]. We will use the one whose label is equal to [{0}]",
+					LogMF.warn(LOGGER,
+							"There are more than one engine for document of type [DATAMART]. We will use the one whose label is equal to [{0}]",
 							qbeEngine.getLabel());
 				} else {
 					LogMF.debug(LOGGER, "Using qbe engine with label [{0}]", qbeEngine.getLabel());

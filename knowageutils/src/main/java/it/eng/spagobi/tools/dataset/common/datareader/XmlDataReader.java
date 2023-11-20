@@ -17,6 +17,26 @@
  */
 package it.eng.spagobi.tools.dataset.common.datareader;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.StringBufferInputStream;
+import java.util.List;
+
+import javax.xml.XMLConstants;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathExpression;
+import javax.xml.xpath.XPathFactory;
+
+import org.apache.log4j.Logger;
+import org.w3c.dom.Document;
+import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.dbaccess.sql.DataRow;
 import it.eng.spagobi.tools.dataset.common.datastore.DataStore;
@@ -29,24 +49,6 @@ import it.eng.spagobi.tools.dataset.common.metadata.FieldMetadata;
 import it.eng.spagobi.tools.dataset.common.metadata.MetaData;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.StringBufferInputStream;
-import java.util.List;
-
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.xpath.XPath;
-import javax.xml.xpath.XPathConstants;
-import javax.xml.xpath.XPathExpression;
-import javax.xml.xpath.XPathFactory;
-
-import org.apache.log4j.Logger;
-import org.w3c.dom.Document;
-import org.w3c.dom.NamedNodeMap;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-
 /**
  * @authors Angelo Bernabei (angelo.bernabei@eng.it) Andrea Gioia (andrea.gioia@eng.it)
  */
@@ -57,7 +59,6 @@ public class XmlDataReader extends AbstractDataReader {
 	private static transient Logger logger = Logger.getLogger(XmlDataReader.class);
 
 	public XmlDataReader() {
-		super();
 		domFactory = DocumentBuilderFactory.newInstance();
 
 	}
@@ -82,7 +83,7 @@ public class XmlDataReader extends AbstractDataReader {
 				throw new IllegalArgumentException("Input parameter [data] cannot be null");
 
 			dataStream = openStream(data);
-			DocumentBuilder documentBuilder = domFactory.newDocumentBuilder();
+			DocumentBuilder documentBuilder = getFactory().newDocumentBuilder();
 			Document document = null;
 			try {
 				document = documentBuilder.parse(dataStream);
@@ -118,7 +119,8 @@ public class XmlDataReader extends AbstractDataReader {
 			boolean firstRow = true;
 			for (int i = 0; i < rowNumber; i++, firstRow = false) {
 				if ((!paginated && (!checkMaxResults || (rowFetched < maxResults)))
-						|| ((paginated && (rowFetched >= offset) && (rowFetched - offset < fetchSize)) && (!checkMaxResults || (rowFetched - offset < maxResults)))) {
+						|| ((paginated && (rowFetched >= offset) && (rowFetched - offset < fetchSize))
+								&& (!checkMaxResults || (rowFetched - offset < maxResults)))) {
 					IRecord record = new Record(dataStore);
 
 					NamedNodeMap nodeAttributes = nodes.item(i).getAttributes();
@@ -128,7 +130,7 @@ public class XmlDataReader extends AbstractDataReader {
 						String columnValue = attribute.getNodeValue();
 						Class columnType = attribute.getNodeValue().getClass();
 
-						if (firstRow == true) {
+						if (firstRow) {
 							FieldMetadata fieldMeta = new FieldMetadata();
 							fieldMeta.setName(columnName);
 							fieldMeta.setType(columnType);
@@ -168,6 +170,23 @@ public class XmlDataReader extends AbstractDataReader {
 		return dataStore;
 	}
 
+	private static DocumentBuilderFactory getFactory() {
+		DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+		try {
+			dbf.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
+			dbf.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
+			dbf.setFeature("http://xml.org/sax/features/external-parameterentities", false);
+			dbf.setFeature("http://xml.org/sax/features/external-generalentities", false);
+		} catch (ParserConfigurationException e) {
+			logger.error("Error configuring DocumentBuilderFactory: " + e.getMessage(), e);
+			throw new SecurityException("Error configuring DocumentBuilderFactory: " + e.getMessage(), e);
+		}
+
+		dbf.setXIncludeAware(false);
+		dbf.setExpandEntityReferences(false);
+		return dbf;
+	}
+
 	public boolean isSyntaxCorrect(String data) {
 
 		logger.debug("IN");
@@ -203,7 +222,7 @@ public class XmlDataReader extends AbstractDataReader {
 		document = null;
 		dataStream = null;
 		try {
-			StringBuffer dataBuffer = new StringBuffer();
+			StringBuilder dataBuffer = new StringBuilder();
 			dataBuffer.append("<ROWS>");
 			dataBuffer.append("<ROW value=\"" + data + "\"/>");
 			dataBuffer.append("</ROWS>");

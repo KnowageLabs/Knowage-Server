@@ -1221,11 +1221,12 @@ CREATE TABLE SBI_PROGRESS_THREAD (
        PROGRESS_THREAD_ID   INTEGER NOT NULL,
        USER_ID              VARCHAR(100) NOT NULL,
        PARTIAL              INTEGER,
-       TOTAL        	      INTEGER,
-       FUNCTION_CD         VARCHAR(200),
-       STATUS             VARCHAR(4000),
-       RANDOM_KEY			    VARCHAR(4000),
-       TYPE               VARCHAR(200),
+       TOTAL        	    INTEGER,
+       FUNCTION_CD          VARCHAR(200),
+       STATUS               VARCHAR(4000),
+       RANDOM_KEY			VARCHAR(4000),
+       TYPE                 VARCHAR(200),
+       EXECTUION_ROLE       VARCHAR(100),
        PRIMARY KEY (PROGRESS_THREAD_ID)
 ) WITHOUT OIDS;
 

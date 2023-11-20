@@ -19,6 +19,8 @@ package it.eng.spagobi.rest.interceptors;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 
+import java.util.Base64;
+import java.util.Base64.Decoder;
 import java.util.Optional;
 import java.util.StringTokenizer;
 
@@ -28,7 +30,6 @@ import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.Provider;
 
-import org.apache.axis.encoding.Base64;
 import org.apache.log4j.Logger;
 
 import it.eng.spago.security.IEngUserProfile;
@@ -62,11 +63,13 @@ public class SecurityServerInterceptor extends AbstractSecurityServerInterceptor
 	 */
 	private String authorizationHeaderName;
 
+	private final Decoder base64Decoder = Base64.getDecoder();
+
 	@Override
 	protected void notAuthenticated(ContainerRequestContext requestContext) {
 		/*
-		 * This response is standard in Basic authentication. If the header with credentials is missing the server send the response asking for the header. The
-		 * browser will show a popup that requires the user credential.
+		 * This response is standard in Basic authentication. If the header with credentials is missing the server send the response asking for the header. The browser
+		 * will show a popup that requires the user credential.
 		 */
 		requestContext.abortWith(Response.status(401).build());
 	}
@@ -103,13 +106,13 @@ public class SecurityServerInterceptor extends AbstractSecurityServerInterceptor
 				int position = auto.indexOf("Direct");
 				if (position > -1 && position < 5) {// Direct stay at the beginning of the header
 					String encodedUser = auto.replaceFirst("Direct ", "");
-					byte[] decodedBytes = Base64.decode(encodedUser);
+					byte[] decodedBytes = base64Decoder.decode(encodedUser);
 					String user = new String(decodedBytes, UTF_8);
 					profile = (UserProfile) UserUtilities.getUserProfile(user);
 				} else {
 					String encodedUserPassword = auto.replaceFirst("Basic ", "");
 					String credentials = null;
-					byte[] decodedBytes = Base64.decode(encodedUserPassword);
+					byte[] decodedBytes = base64Decoder.decode(encodedUserPassword);
 					credentials = new String(decodedBytes, UTF_8);
 
 					StringTokenizer tokenizer = new StringTokenizer(credentials, ":");
@@ -204,7 +207,8 @@ public class SecurityServerInterceptor extends AbstractSecurityServerInterceptor
 	 */
 	public String getAuthorizationHeaderName() {
 		if (authorizationHeaderName == null) {
-			authorizationHeaderName = Optional.ofNullable(System.getenv(KNOWAGE_AUTHORIZATION_HEADER_NAME)).orElse("X-Kn-Authorization");
+			authorizationHeaderName = Optional.ofNullable(System.getenv(KNOWAGE_AUTHORIZATION_HEADER_NAME))
+					.orElse("X-Kn-Authorization");
 		}
 		return authorizationHeaderName;
 	}

@@ -18,15 +18,24 @@
 package it.eng.spagobi.engines.whatif.calculatedmember;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
+import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamReader;
+import javax.xml.transform.stream.StreamSource;
 
 import org.apache.log4j.Logger;
 import org.olap4j.OlapException;
@@ -40,18 +49,21 @@ import it.eng.spagobi.engines.whatif.model.SpagoBIPivotModel;
 
 public class MDXFormulaHandler {
 
-	private static final String SERVER_RESOURCE_FILE_PATH = WhatIfEngineConfig.getInstance().getEngineResourcePath() + "Olap/formulas.xml";;
-	private static final String JAVA_RESOURCE_FILE_PATH = File.separatorChar + "calculated_fields_formulas" + File.separatorChar + "formulas.xml";
+	private static final Logger LOGGER = Logger.getLogger(MDXFormulaHandler.class);
+	private static final String SERVER_RESOURCE_FILE_PATH = WhatIfEngineConfig.getInstance().getEngineResourcePath()
+			+ "Olap/formulas.xml";
+	private static final String JAVA_RESOURCE_FILE_PATH = File.separatorChar + "calculated_fields_formulas"
+			+ File.separatorChar + "formulas.xml";
+	private static final String TIME_DIMENSION = "TimeDimension";
+
 	private static File xmlFile;
 	private static MDXFormulas formulas;
-	private static Map<String, String> placeHolders = new HashMap<String, String>();
-	private static String TIME_DIMENSION = "TimeDimension";
+	private static Map<String, String> placeHolders = new HashMap<>();
 	private static SpagoBIPivotModel model;
 	private static ModelConfig modelConfig;
 	private static ClassLoader classLoader = MDXFormulaHandler.class.getClassLoader();
-	private static Logger logger = Logger.getLogger(MDXFormulaHandler.class);
 
-	public static void main(String[] args) throws JAXBException, InstantiationException, IllegalAccessException {
+	public static void main(String[] args) throws JAXBException {
 		loadFile();
 		getFormulasFromXML2();
 	}
@@ -84,7 +96,7 @@ public class MDXFormulaHandler {
 
 			}
 		} catch (Exception e) {
-			logger.error("Can not load MDX formulas", e);
+			LOGGER.error("Can not load MDX formulas", e);
 		}
 
 		return xmlFile.exists();
@@ -101,10 +113,10 @@ public class MDXFormulaHandler {
 		}
 		return formulas;
 
-	};
+	}
 
-	private static MDXFormulas getFormulasFromXML2() throws JAXBException, InstantiationException, IllegalAccessException {
-		Box<MDXFormulas> box = new Box<MDXFormulas>();
+	private static MDXFormulas getFormulasFromXML2() throws JAXBException {
+		Box<MDXFormulas> box = new Box<>();
 		formulas = box.unmarshalFile(xmlFile, MDXFormulas.class);
 		return formulas;
 	}
@@ -131,7 +143,8 @@ public class MDXFormulaHandler {
 		for (Dimension dimension : dimensions) {
 			try {
 				if (dimension.getDimensionType().name().equalsIgnoreCase("Time")) {
-					String selectedHierarchyName = modelConfig.getDimensionHierarchyMap().get(dimension.getUniqueName());
+					String selectedHierarchyName = modelConfig.getDimensionHierarchyMap()
+							.get(dimension.getUniqueName());
 
 					if (selectedHierarchyName == null) {
 						h = dimension.getDefaultHierarchy();
@@ -163,11 +176,11 @@ public class MDXFormulaHandler {
 			for (int j = 0; j < formulas.getFormulas().get(i).getArguments().size(); j++) {
 
 				String defaultAgumentValue = formulas.getFormulas().get(i).getArguments().get(j).getDefault_value();
-				Iterator it = placeHolders.entrySet().iterator();
+				Iterator<Entry<String, String>> it = placeHolders.entrySet().iterator();
 				while (it.hasNext()) {
-					Map.Entry pair = (Map.Entry) it.next();
+					Entry<String, String> pair = it.next();
 
-					defaultAgumentValue = defaultAgumentValue.replaceAll(pair.getKey().toString(), pair.getValue().toString());
+					defaultAgumentValue = defaultAgumentValue.replaceAll(pair.getKey(), pair.getValue());
 					formulas.getFormulas().get(i).getArguments().get(j).setDefault_value(defaultAgumentValue);
 
 				}
@@ -181,11 +194,11 @@ public class MDXFormulaHandler {
 		for (int i = 0; i < formulas.getFormulas().size(); i++) {
 
 			String body = formulas.getFormulas().get(i).getBody();
-			Iterator it = placeHolders.entrySet().iterator();
+			Iterator<Entry<String, String>> it = placeHolders.entrySet().iterator();
 			while (it.hasNext()) {
-				Map.Entry pair = (Map.Entry) it.next();
+				Entry<String, String> pair = it.next();
 				if (body != null) {
-					body = body.replaceAll(pair.getKey().toString(), pair.getValue().toString());
+					body = body.replaceAll(pair.getKey(), pair.getValue());
 					formulas.getFormulas().get(i).setBody(body);
 				}
 			}
@@ -196,12 +209,25 @@ public class MDXFormulaHandler {
 
 class Box<T> {
 
+	private static final Logger LOGGER = Logger.getLogger(Box.class);
+
 	@SuppressWarnings("unchecked")
 	public T unmarshalFile(File file, Class<T> clazz) throws JAXBException {
 
 		JAXBContext jc = JAXBContext.newInstance(clazz);
-		Unmarshaller unmarshaller = jc.createUnmarshaller();
-		return (T) unmarshaller.unmarshal(file);
+		XMLInputFactory xif = XMLInputFactory.newInstance();
+		xif.setProperty(XMLInputFactory.SUPPORT_DTD, false);
+		xif.setProperty(XMLInputFactory.IS_REPLACING_ENTITY_REFERENCES, false);
+		xif.setProperty(XMLInputFactory.IS_SUPPORTING_EXTERNAL_ENTITIES, false);
 
+		try (FileInputStream inputStream = new FileInputStream(file);
+				InputStreamReader reader = new InputStreamReader(inputStream, StandardCharsets.UTF_8)) {
+			XMLStreamReader xsr = xif.createXMLStreamReader(new StreamSource(reader));
+
+			return (T) jc.createUnmarshaller().unmarshal(xsr);
+		} catch (IOException | XMLStreamException e) {
+			LOGGER.error("Error loading XML document: " + e.getMessage(), e);
+			throw new RuntimeException("Error loading XML document: " + e.getMessage(), e);
+		}
 	}
 }

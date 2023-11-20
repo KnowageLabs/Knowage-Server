@@ -18,7 +18,6 @@
 package it.eng.qbe.datasource.jpa;
 
 import java.beans.PropertyDescriptor;
-import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -635,13 +634,12 @@ public class JPAPersistenceManager implements IPersistenceManager {
 				Object referenced = getReferencedObjectJPA(entityManager, entityJavaType, mewSubEntityAttributes);
 
 				Class clas = targetEntity.getJavaType();
-				Field f = clas.getDeclaredField(subKey);
-				PropertyDescriptor propertyDescriptor = new PropertyDescriptor(f.getName(), clas);
+				PropertyDescriptor propertyDescriptor = new PropertyDescriptor(subKey, clas);
 				Method writeMethod = propertyDescriptor.getWriteMethod();
 				if (writeMethod != null)
 					writeMethod.invoke(obj, referenced);
 				else
-					throw new SpagoBIRuntimeException("Cannot find setter for property " + f.getName() + " for the value " + obj);
+					throw new SpagoBIRuntimeException("Cannot find setter for property " + subKey + " for the value " + obj);
 			} catch (Exception e) {
 				throw new SpagoBIRuntimeException("Error setting sub-entity", e);
 			}
@@ -655,14 +653,13 @@ public class JPAPersistenceManager implements IPersistenceManager {
 		try {
 			Attribute a = targetEntity.getAttribute(aKey);
 			Class clas = targetEntity.getJavaType();
-			Field f = clas.getDeclaredField(aKey);
 			Object valueConverted = this.convertValue(newValue, a);
-			PropertyDescriptor propertyDescriptor = new PropertyDescriptor(f.getName(), clas);
+			PropertyDescriptor propertyDescriptor = new PropertyDescriptor(aKey, clas);
 			Method writeMethod = propertyDescriptor.getWriteMethod();
 			if (writeMethod != null)
 				writeMethod.invoke(obj, valueConverted);
 			else
-				throw new SpagoBIRuntimeException("Cannot find setter for property " + f.getName() + " for the value " + valueConverted);
+				throw new SpagoBIRuntimeException("Cannot find setter for property " + aKey + " for the value " + valueConverted);
 		} catch (Exception e) {
 			throw new SpagoBIRuntimeException("Error setting Field " + aKey + "", e);
 		} finally {
@@ -677,14 +674,13 @@ public class JPAPersistenceManager implements IPersistenceManager {
 		try {
 			Attribute a = targetEntity.getAttribute(aKey);
 			Class clas = targetEntity.getJavaType();
-			Field f = clas.getDeclaredField(aKey);
 			Object valueConverted = this.convertValue(value, a);
-			PropertyDescriptor propertyDescriptor = new PropertyDescriptor(f.getName(), clas);
+			PropertyDescriptor propertyDescriptor = new PropertyDescriptor(aKey, clas);
 			Method writeMethod = propertyDescriptor.getWriteMethod();
 			if (writeMethod != null)
 				writeMethod.invoke(obj, valueConverted);
 			else
-				throw new SpagoBIRuntimeException("Cannot find setter for property " + f.getName() + " for the value " + valueConverted);
+				throw new SpagoBIRuntimeException("Cannot find setter for property " + aKey + " for the value " + valueConverted);
 		} catch (Exception e) {
 			throw new SpagoBIRuntimeException("Error setting Field " + aKey + "", e);
 		} finally {
@@ -802,14 +798,29 @@ public class JPAPersistenceManager implements IPersistenceManager {
 		// Getting list of records...
 		final List result = tmpQuery.getResultList();
 
-		if (result == null || result.size() == 0) {
+		if (result == null || result.isEmpty()) {
 			throw new SpagoBIRuntimeException("Record with attributes [" + subEntityAttributes + "] not found for entity " + entityJavaType);
 		}
 		if (result.size() > 1) {
 			throw new SpagoBIRuntimeException("More than 1 record with attributes [" + subEntityAttributes + "] were found in entity " + entityJavaType);
 		}
 
-		return result.get(0);
+		// load the object key
+		Object key = result.get(0);
+
+		int lastPkgDotSub = entityJavaType.lastIndexOf(".");
+		String entityNameNoPkgSub = entityJavaType.substring(lastPkgDotSub + 1);
+		Class<?> clazz = getEntityClass(em, entityNameNoPkgSub);
+		// load the entire object corresponding to the key
+		return em.find(clazz, key);
+	}
+
+	protected Class<?> getEntityClass(EntityManager entityManager, String entityName) {
+		EntityType entityType = getEntityByName(entityManager, entityName);
+		if (entityType == null) {
+			throw new SpagoBIRuntimeException("Cannot find entity type for entity [" + entityName + "]");
+		}
+		return entityType.getJavaType();
 	}
 
 	private String buildReferencedObjectQuery(String entityJavaType, Map<String, Object> subEntityAttributes) {
@@ -817,13 +828,7 @@ public class JPAPersistenceManager implements IPersistenceManager {
 		// we create a dataset object to apply profiled visibility constraints
 		JPQLDataSet dataset = buildJPQLDatasetToReferenceObject(query);
 		IStatement filteredStatement = dataset.getFilteredStatement();
-		String jpaQueryStr = filteredStatement.getQueryString();
-		/*
-		 * At this point, we have a query that is like: "select t_0.id, t_0.someOtherProperty from Entity where..." that is returning an object array but we
-		 * need to get a JPA object instead, therefore we are transforming the statement into "select t_0 from Entity t_0 where ..."
-		 */
-		jpaQueryStr = transformToEntityQuery(jpaQueryStr);
-		return jpaQueryStr;
+		return filteredStatement.getQueryString();
 	}
 
 	protected JPQLDataSet buildJPQLDatasetToReferenceObject(it.eng.qbe.query.Query query) {
@@ -854,7 +859,7 @@ public class JPAPersistenceManager implements IPersistenceManager {
 		int lastPkgDotSub = entityJavaType.lastIndexOf(".");
 		String entityNameNoPkgSub = entityJavaType.substring(lastPkgDotSub + 1);
 		IModelEntity entity = dataSource.getModelStructure().getEntityByName(entityNameNoPkgSub);
-		List<IModelField> fields = entity.getAllFields();
+		List<IModelField> fields = entity.getKeyFields();
 		for (Iterator<IModelField> it = fields.iterator(); it.hasNext();) {
 			IModelField field = it.next();
 			query.addSelectFiled(field.getUniqueName(), "NONE", field.getName(), true, true, false, null, null);
@@ -881,14 +886,6 @@ public class JPAPersistenceManager implements IPersistenceManager {
 			query.setWhereClauseStructure(exprNodeAnd);
 		}
 		return query;
-	}
-
-	private String transformToEntityQuery(String jpaQueryStr) {
-		// query at this point is : select <something> from <table> <alias> ... to be replaced by select <alias> from <table> <alias> ...
-		// The following replacement works also in case query is containing joins to other entities, but MAIN entity must be the first one in the FROM clause!!!
-		// TODO refactor this code to be more reliable
-		String toReturn = jpaQueryStr.replaceAll("(?i)select (.*) from (\\w+) (\\w+)", "select $3 from $2 $3");
-		return toReturn;
 	}
 
 	private void logQuery(String jpqlQuery) {

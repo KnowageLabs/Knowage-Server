@@ -38,21 +38,44 @@ public class PathTraversalChecker {
 	}
 
 	/**
+	 * Utility method for Path Traversal Attacks prevention. It checks if the sub-directories and files are safe using name and path traversal attack
+	 * validation. The safe directory must be explicitly defined, not dependent on user input, and known to be safe.
+	 *
+	 * @param safeDirectory directory that should be considered safe, it should be defined in configuration
+	 * @param otherFolders  folders and files that need to be checked
+	 */
+	public static File get(String safeDirectory, String... otherFolders) throws PathTraversalAttackException {
+		File previousFolderFile = new File(safeDirectory);
+
+		File currentFolderFile = null;
+		for (String currentFolder : otherFolders) {
+			isValidFileName(currentFolder);
+
+			currentFolderFile = new File(previousFolderFile, currentFolder);
+
+			preventPathTraversalAttack(previousFolderFile, currentFolderFile);
+
+			previousFolderFile = currentFolderFile;
+		}
+
+		return currentFolderFile;
+	}
+
+	/**
 	 * Utility method for Path Traversal Attacks prevention. It checks that input fine is inside the desired directory or within sub-directory of the desired
 	 * directory. In case this is not satisfied, a PathTraversalAttackException is thrown. It is useful when desiredDirectory is known and safe, while file to
 	 * be checked is created combining some user inputs.
 	 *
-	 * @param fileToBeChecked  the file to be checked
 	 * @param desiredDirectory the desired directory that is supposed to contain (at any sub-level) the file
+	 * @param fileToBeChecked  the file to be checked
 	 */
-	public static void preventPathTraversalAttack(File fileToBeChecked, File desiredDirectory) {
+	private static void preventPathTraversalAttack(File desiredDirectory, File fileToBeChecked) {
 		LogMF.debug(logger, "IN : fileToBeChecked = [{0}], desiredDirectory = [{1}]", fileToBeChecked, desiredDirectory);
 		try {
 			Assert.assertNotNull(fileToBeChecked, "File to be checked cannot be null");
 			Assert.assertNotNull(desiredDirectory, "Desired directory cannot be null");
-			Assert.assertTrue(desiredDirectory.exists() && desiredDirectory.isDirectory(), "Desired directory must be an existing folder");
 
-			boolean isInDesiredDirectory = isInDesiredDirectory(fileToBeChecked, desiredDirectory);
+			boolean isInDesiredDirectory = isDescendentOfDirectory(fileToBeChecked, desiredDirectory);
 
 			if (!isInDesiredDirectory) {
 				UserProfile profile = UserProfileManager.getProfile();
@@ -66,19 +89,28 @@ public class PathTraversalChecker {
 		}
 	}
 
-	private static boolean isInDesiredDirectory(File fileToBeChecked, File desiredDirectory) {
+	public static void checkDescendentOfDirectory(File descendentFile, File ancestorDirectory) {
+		boolean isDescendent = isDescendentOfDirectory(descendentFile, ancestorDirectory);
+		if (!isDescendent) {
+			UserProfile profile = UserProfileManager.getProfile();
+			throw new PathTraversalAttackException("User [" + profile + "] is trying to access the file [" + descendentFile.getAbsolutePath()
+					+ "] that is not inside [" + ancestorDirectory.getAbsolutePath() + "]!!!");
+		}
+	}
+
+	private static boolean isDescendentOfDirectory(File descendentFile, File ancestorDirectory) {
 		try {
-			fileToBeChecked = fileToBeChecked.getCanonicalFile();
-			desiredDirectory = desiredDirectory.getCanonicalFile();
+			descendentFile = descendentFile.getCanonicalFile();
+			ancestorDirectory = ancestorDirectory.getCanonicalFile();
 		} catch (IOException e) {
 			throw new SpagoBIRuntimeException("Error while converting input files into canonical ones", e);
 		}
 
-		File parent = fileToBeChecked.getParentFile();
+		File parent = descendentFile.getParentFile();
 		boolean toReturn = false;
 		while (parent != null) {
-			if (desiredDirectory.equals(parent)) {
-				LogMF.debug(logger, "Desired directory [{0} matches parent folder of input file]", desiredDirectory);
+			if (ancestorDirectory.equals(parent)) {
+				LogMF.debug(logger, "Desired directory [{0} matches parent folder of input file]", ancestorDirectory);
 				toReturn = true;
 				break;
 			}

@@ -26,6 +26,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -55,10 +56,11 @@ public class DocumentCompositionExporter {
 
 	private static final Logger LOGGER = Logger.getLogger(DocumentCompositionExporter.class);
 
-	private final Random random = new Random();
+	private static final Random RANDOM = new SecureRandom();
 
-	public File exportDocumentCompositionPDF(File tmpFile, DocumentCompositionConfiguration dcConf, BIObject document, IEngUserProfile profile,
-			Map<String, CurrentConfigurationDocComp> currentConfs, Map<String, DocumentContainer> documentsMap, boolean defaultStyle) throws Exception {
+	public File exportDocumentCompositionPDF(File tmpFile, DocumentCompositionConfiguration dcConf, BIObject document,
+			IEngUserProfile profile, Map<String, CurrentConfigurationDocComp> currentConfs,
+			Map<String, DocumentContainer> documentsMap, boolean defaultStyle) throws Exception {
 
 		LOGGER.debug("IN");
 		String output = null;
@@ -118,7 +120,7 @@ public class DocumentCompositionExporter {
 					String svg = tmpContent;
 					svgInputStream = new ByteArrayInputStream(svg.getBytes(UTF_8));
 					File dir = new File(System.getProperty("java.io.tmpdir"));
-					int randomInt = random.nextInt();
+					int randomInt = RANDOM.nextInt();
 					File pdfFile = File.createTempFile(Integer.toString(randomInt), ".pdf", dir);
 					svgOutputStream = new FileOutputStream(pdfFile);
 					ExportHighCharts.transformSVGIntoPDF(svgInputStream, svgOutputStream);
@@ -141,7 +143,8 @@ public class DocumentCompositionExporter {
 					int offset = 0;
 					int numRead = 0;
 
-					while (offset < returnByteArray.length && (numRead = pngInputStream.read(returnByteArray, offset, returnByteArray.length - offset)) >= 0) {
+					while (offset < returnByteArray.length && (numRead = pngInputStream.read(returnByteArray, offset,
+							returnByteArray.length - offset)) >= 0) {
 						offset += numRead;
 					}
 
@@ -250,7 +253,7 @@ public class DocumentCompositionExporter {
 
 					Object valueObj = currentParameters.get(urlName);
 					if (valueObj instanceof List) { // if it is a list put it
-													// into parAss
+													 // into parAss
 						List val = (List) valueObj;
 						parAss.setParameterValues(val);
 					} else { // else it is a String
@@ -281,7 +284,7 @@ public class DocumentCompositionExporter {
 
 				Object valueObj = currentParameters.get(lab);
 				if (valueObj instanceof List) { // if it is a list put it into
-												// parAss
+												 // parAss
 					List val = (List) valueObj;
 					biObjPar.setParameterValues(val);
 				} else {

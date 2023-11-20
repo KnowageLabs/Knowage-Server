@@ -170,7 +170,7 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 			BIObjectParameter tmpBIObjectParameter = null;
 			BIObjectParameterDAOHibImpl aBIObjectParameterDAOHibImpl = new BIObjectParameterDAOHibImpl();
 			IParameterDAO aParameterDAO = DAOFactory.getParameterDAO();
-			List biObjectParameters = new ArrayList();
+			List<BIObjectParameter> biObjectParameters = new ArrayList<>();
 			Parameter aParameter = null;
 			int count = 1;
 			while (it.hasNext()) {
@@ -547,8 +547,8 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 			hibBIObject.setPreviewFile(biObject.getPreviewFile());
 
 			// functionalities erasing
-			Set hibFunctionalities = hibBIObject.getSbiObjFuncs();
-			for (Iterator it = hibFunctionalities.iterator(); it.hasNext();) {
+			Set<SbiObjFunc> hibFunctionalities = hibBIObject.getSbiObjFuncs();
+			for (Iterator<SbiObjFunc> it = hibFunctionalities.iterator(); it.hasNext();) {
 				aSession.delete(it.next());
 			}
 			// functionalities storing
@@ -588,21 +588,15 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 				for (Iterator<SbiOutputParameter> iterator = hibBIObject.getSbiOutputParameters().iterator(); iterator
 						.hasNext();) {
 					SbiOutputParameter sbiOutPar = iterator.next();
-					// if (sbiOutPar.getIsUserDefined() != null && sbiOutPar.getIsUserDefined() == true) {
 					if (sbiOutPar.getIsUserDefined() == null || !sbiOutPar.getIsUserDefined()) {
 						cleanedOutPars.add(sbiOutPar);
 					}
 				}
 				hibBIObject.setSbiOutputParameters(cleanedOutPars);
-				// hibBIObject.getSbiOutputParameters().clear();
 				DAOFactory.getOutputParameterDAO().removeSystemDefinedParametersByBiobjId(hibBIObject.getBiobjId(),
 						aSession);
 				aSession.flush();
 			}
-			// }
-
-			// If there are no output parameters persisted already for this document, create new ones for it. (danristo)
-			// if (hibBIObject.getSbiOutputParameters() == null || hibBIObject.getSbiOutputParameters().isEmpty()) {
 
 			List<SbiOutputParameter> op = loadDriverSpecificOutputParameters(hibBIObject);
 
@@ -612,7 +606,6 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 			}
 
 			hibBIObject.getSbiOutputParameters().addAll(op);
-			// }
 
 			tx.commit();
 
@@ -726,15 +719,15 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 			hibBIObject.setPreviewFile(biObject.getPreviewFile());
 
 			// functionalities erasing
-			Set hibFunctionalities = hibBIObject.getSbiObjFuncs();
-			for (Iterator it = hibFunctionalities.iterator(); it.hasNext();) {
+			Set<SbiObjFunc> hibFunctionalities = hibBIObject.getSbiObjFuncs();
+			for (Iterator<SbiObjFunc> it = hibFunctionalities.iterator(); it.hasNext();) {
 				aSession.delete(it.next());
 			}
 			// functionalities storing
-			Set hibObjFunc = new HashSet();
-			List functionalities = biObject.getFunctionalities();
-			for (Iterator it = functionalities.iterator(); it.hasNext();) {
-				Integer functId = (Integer) it.next();
+			Set<SbiObjFunc> hibObjFunc = new HashSet<>();
+			List<Integer> functionalities = biObject.getFunctionalities();
+			for (Iterator<Integer> it = functionalities.iterator(); it.hasNext();) {
+				Integer functId = it.next();
 				SbiFunctions aSbiFunctions = (SbiFunctions) aSession.load(SbiFunctions.class, functId);
 				SbiObjFuncId aSbiObjFuncId = new SbiObjFuncId();
 				aSbiObjFuncId.setSbiFunctions(aSbiFunctions);
@@ -751,7 +744,6 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 					aSession);
 
 			if (!categories.isEmpty()) {
-				// hibBIObject.getSbiOutputParameters().removeAll(loadDriverSpecificOutputParameters(hibBIObject));
 
 				// delete SbiOutputParameters
 				if (hibBIObject.getSbiOutputParameters() != null && !hibBIObject.getSbiOutputParameters().isEmpty()) {
@@ -763,8 +755,8 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 				// Persist the dataset
 				List<SbiOutputParameter> op = loadDriverSpecificOutputParameters(hibBIObject, categories);
 
-				for (Iterator iterator = op.iterator(); iterator.hasNext();) {
-					SbiOutputParameter sbiOutputParameter = (SbiOutputParameter) iterator.next();
+				for (Iterator<SbiOutputParameter> iterator = op.iterator(); iterator.hasNext();) {
+					SbiOutputParameter sbiOutputParameter = iterator.next();
 					aSession.save(sbiOutputParameter);
 				}
 
@@ -876,15 +868,15 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 			hibBIObject.setPreviewFile(biObject.getPreviewFile());
 
 			// functionalities erasing
-			Set hibFunctionalities = hibBIObject.getSbiObjFuncs();
-			for (Iterator it = hibFunctionalities.iterator(); it.hasNext();) {
+			Set<SbiObjFunc> hibFunctionalities = hibBIObject.getSbiObjFuncs();
+			for (Iterator<SbiObjFunc> it = hibFunctionalities.iterator(); it.hasNext();) {
 				aSession.delete(it.next());
 			}
 			// functionalities storing
-			Set hibObjFunc = new HashSet();
-			List functionalities = biObject.getFunctionalities();
-			for (Iterator it = functionalities.iterator(); it.hasNext();) {
-				Integer functId = (Integer) it.next();
+			Set<SbiObjFunc> hibObjFunc = new HashSet<>();
+			List<Integer> functionalities = biObject.getFunctionalities();
+			for (Iterator<Integer> it = functionalities.iterator(); it.hasNext();) {
+				Integer functId = it.next();
 				SbiFunctions aSbiFunctions = (SbiFunctions) aSession.load(SbiFunctions.class, functId);
 				SbiObjFuncId aSbiObjFuncId = new SbiObjFuncId();
 				aSbiObjFuncId.setSbiFunctions(aSbiFunctions);
@@ -908,8 +900,8 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 
 				List<SbiOutputParameter> op = loadDriverSpecificOutputParameters(hibBIObject, specificChartTypes);
 
-				for (Iterator iterator = op.iterator(); iterator.hasNext();) {
-					SbiOutputParameter sbiOutputParameter = (SbiOutputParameter) iterator.next();
+				for (Iterator<SbiOutputParameter> iterator = op.iterator(); iterator.hasNext();) {
+					SbiOutputParameter sbiOutputParameter = iterator.next();
 					aSession.save(sbiOutputParameter);
 				}
 
@@ -1099,12 +1091,11 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 			hibBIObject = (SbiObjects) aSession.load(SbiObjects.class, id);
 
 			// Saving output parameters
-			// hibBIObject.getSbiOutputParameters().addAll(loadDriverSpecificOutputParameters(hibBIObject));
 			if (loadOP) {
 				List<SbiOutputParameter> op = loadDriverSpecificOutputParameters(hibBIObject);
 
-				for (Iterator iterator = op.iterator(); iterator.hasNext();) {
-					SbiOutputParameter sbiOutputParameter = (SbiOutputParameter) iterator.next();
+				for (Iterator<SbiOutputParameter> iterator = op.iterator(); iterator.hasNext();) {
+					SbiOutputParameter sbiOutputParameter = iterator.next();
 					aSession.save(sbiOutputParameter);
 				}
 
@@ -1112,10 +1103,10 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 			}
 
 			// functionalities storing
-			Set hibObjFunc = new HashSet();
-			List functionalities = obj.getFunctionalities();
-			for (Iterator it = functionalities.iterator(); it.hasNext();) {
-				Integer functId = (Integer) it.next();
+			Set<SbiObjFunc> hibObjFunc = new HashSet<>();
+			List<Integer> functionalities = obj.getFunctionalities();
+			for (Iterator<Integer> it = functionalities.iterator(); it.hasNext();) {
+				Integer functId = it.next();
 				SbiFunctions aSbiFunctions = (SbiFunctions) aSession.load(SbiFunctions.class, functId);
 				SbiObjFuncId aSbiObjFuncId = new SbiObjFuncId();
 				aSbiObjFuncId.setSbiFunctions(aSbiFunctions);
@@ -1185,10 +1176,10 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 			// load object
 			SbiObjects hibBIObject = (SbiObjects) aSession.load(SbiObjects.class, obj.getId());
 			// erase object from functionalities
-			Set hibObjFuncs = hibBIObject.getSbiObjFuncs();
-			Iterator itObjFunc = hibObjFuncs.iterator();
+			Set<SbiObjFunc> hibObjFuncs = hibBIObject.getSbiObjFuncs();
+			Iterator<SbiObjFunc> itObjFunc = hibObjFuncs.iterator();
 			while (itObjFunc.hasNext()) {
-				SbiObjFunc aSbiObjFunc = (SbiObjFunc) itObjFunc.next();
+				SbiObjFunc aSbiObjFunc = itObjFunc.next();
 				if (idFunct == null
 						|| aSbiObjFunc.getId().getSbiFunctions().getFunctId().intValue() == idFunct.intValue()) {
 					LOGGER.debug("Deleting object [{}] from folder [{}]", obj.getName(),
@@ -1214,10 +1205,10 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 				String hql = "from SbiObjTemplates sot where sot.sbiObject.biobjId=:biobjId";
 				Query query = aSession.createQuery(hql);
 				query.setParameter("biobjId", obj.getId());
-				List templs = query.list();
-				Iterator iterTempls = templs.iterator();
+				List<SbiObjTemplates> templs = query.list();
+				Iterator<SbiObjTemplates> iterTempls = templs.iterator();
 				while (iterTempls.hasNext()) {
-					SbiObjTemplates hibObjTemp = (SbiObjTemplates) iterTempls.next();
+					SbiObjTemplates hibObjTemp = iterTempls.next();
 					SbiBinContents hibBinCont = hibObjTemp.getSbiBinContents();
 					aSession.delete(hibObjTemp);
 					aSession.delete(hibBinCont);
@@ -1226,27 +1217,25 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 
 				// delete subobjects eventually associated
 				ISubObjectDAO subobjDAO = DAOFactory.getSubObjectDAO();
-				List subobjects = subobjDAO.getSubObjects(obj.getId());
+				List<SubObject> subobjects = subobjDAO.getSubObjects(obj.getId());
 				for (int i = 0; i < subobjects.size(); i++) {
-					SubObject s = (SubObject) subobjects.get(i);
-					// subobjDAO.deleteSubObject(s.getId());
+					SubObject s = subobjects.get(i);
 					subobjDAO.deleteSubObjectSameConnection(s.getId(), aSession);
 				}
 
 				// delete viewpoints eventually associated
-				List viewpoints = new ArrayList();
 				IViewpointDAO biVPDAO = DAOFactory.getViewpointDAO();
-				viewpoints = biVPDAO.loadAllViewpointsByObjID(obj.getId());
+				List<Viewpoint> viewpoints = biVPDAO.loadAllViewpointsByObjID(obj.getId());
 				for (int i = 0; i < viewpoints.size(); i++) {
-					Viewpoint vp = (Viewpoint) viewpoints.get(i);
+					Viewpoint vp = viewpoints.get(i);
 					biVPDAO.eraseViewpoint(vp.getVpId());
 				}
 
 				// delete snapshots eventually associated
 				ISnapshotDAO snapshotsDAO = DAOFactory.getSnapshotDAO();
-				List snapshots = snapshotsDAO.getSnapshots(obj.getId());
+				List<Snapshot> snapshots = snapshotsDAO.getSnapshots(obj.getId());
 				for (int i = 0; i < snapshots.size(); i++) {
-					Snapshot aSnapshots = (Snapshot) snapshots.get(i);
+					Snapshot aSnapshots = snapshots.get(i);
 					snapshotsDAO.deleteSnapshot(aSnapshots.getId());
 				}
 
@@ -1255,12 +1244,12 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 				objNoteDAO.eraseNotes(obj.getId());
 
 				// delete metadata eventually associated
-				List metadata = DAOFactory.getObjMetadataDAO().loadAllObjMetadata();
+				List<ObjMetadata> metadata = DAOFactory.getObjMetadataDAO().loadAllObjMetadata();
 				IObjMetacontentDAO objMetaContentDAO = DAOFactory.getObjMetacontentDAO();
 				if (metadata != null && !metadata.isEmpty()) {
-					Iterator it = metadata.iterator();
+					Iterator<ObjMetadata> it = metadata.iterator();
 					while (it.hasNext()) {
-						ObjMetadata objMetadata = (ObjMetadata) it.next();
+						ObjMetadata objMetadata = it.next();
 						ObjMetacontent objMetacontent = DAOFactory.getObjMetacontentDAO()
 								.loadObjMetacontent(objMetadata.getObjMetaId(), obj.getId(), null);
 						if (objMetacontent != null) {
@@ -1286,20 +1275,20 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 				DAOFactory.getCrossNavigationDAO().deleteByDocument(obj, aSession);
 				aSession.flush();
 
-				Set objPars = hibBIObject.getSbiObjPars();
+				Set<SbiObjPar> objPars = hibBIObject.getSbiObjPars();
 
-				Iterator itObjParDep = objPars.iterator();
+				Iterator<SbiObjPar> itObjParDep = objPars.iterator();
 				BIObjectParameterDAOHibImpl objParDAO = new BIObjectParameterDAOHibImpl();
 				while (itObjParDep.hasNext()) {
-					SbiObjPar aSbiObjPar = (SbiObjPar) itObjParDep.next();
+					SbiObjPar aSbiObjPar = itObjParDep.next();
 					BIObjectParameter aBIObjectParameter = new BIObjectParameter();
 					aBIObjectParameter.setId(aSbiObjPar.getObjParId());
 					objParDAO.eraseBIObjectParameterDependencies(aBIObjectParameter, aSession);
 				}
 
-				Iterator itObjPar = objPars.iterator();
+				Iterator<SbiObjPar> itObjPar = objPars.iterator();
 				while (itObjPar.hasNext()) {
-					SbiObjPar aSbiObjPar = (SbiObjPar) itObjPar.next();
+					SbiObjPar aSbiObjPar = itObjPar.next();
 					BIObjectParameter aBIObjectParameter = new BIObjectParameter();
 					aBIObjectParameter.setId(aSbiObjPar.getObjParId());
 
@@ -1355,9 +1344,9 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 	 * @see it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO#getCorrectRolesForExecution(java.lang.Integer, it.eng.spago.security.IEngUserProfile)
 	 */
 	@Override
-	public List getCorrectRolesForExecution(Integer id, IEngUserProfile profile) throws EMFUserError {
+	public List<String> getCorrectRolesForExecution(Integer id, IEngUserProfile profile) throws EMFUserError {
 		LOGGER.debug("Getting correct roles for execution on biObject with id {} and profile {}", id, profile);
-		List correctRoles = new ArrayList();
+		List<String> correctRoles = new ArrayList<>();
 		try {
 			Session aSession = null;
 			Transaction tx = null;
@@ -1445,10 +1434,10 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 	 * @see it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO#getCorrectRolesForExecution(java.lang.Integer)
 	 */
 	@Override
-	public List getCorrectRolesForExecution(Integer id) throws EMFUserError {
+	public List<String> getCorrectRolesForExecution(Integer id) throws EMFUserError {
 		LOGGER.debug("Getting correct roles for execution on biObject with id {}", id);
 		List<Role> roles = DAOFactory.getRoleDAO().loadAllRoles();
-		List nameRoles = new ArrayList();
+		List<String> nameRoles = new ArrayList();
 		Iterator<Role> iterRoles = roles.iterator();
 		Role role = null;
 		while (iterRoles.hasNext()) {
@@ -1466,11 +1455,11 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 	 * @return The correct roles list
 	 * @throws EMFUserError if any exception occurred
 	 */
-	private List getCorrectRoles(Integer id, Collection roles) throws EMFUserError {
+	private List<String> getCorrectRoles(Integer id, Collection roles) throws EMFUserError {
 		LOGGER.debug("Getting correct roles on biObject with id {} giving following roles {}", id, roles);
 		Session aSession = null;
 		Transaction tx = null;
-		List correctRoles = new ArrayList();
+		List<String> correctRoles = new ArrayList<>();
 
 		try {
 			aSession = getSession();
@@ -1508,11 +1497,11 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 					rolesHqlQuery.setParameter("permission", permission);
 					// get the list of roles that can see the document (in REL
 					// or TEST state) in that functionality
-					List rolesNames = new ArrayList();
+					List<String> rolesNames = new ArrayList();
 					rolesNames = rolesHqlQuery.list();
 					allRolesWithPermission.addAll(rolesNames);
 				} else {
-					List l = new ArrayList();
+					List<String> l = new ArrayList<>();
 					l.addAll(roles);
 					return l;
 				}
@@ -1608,7 +1597,7 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 			aBIObject.setStateCodeStr(hibBIObject.getState().getValueNm());
 		}
 
-		List functionlities = new ArrayList();
+		List<Integer> functionlities = new ArrayList<>();
 		boolean isPublic = false;
 		if (hibBIObject.getSbiObjFuncs() != null) {
 			Set<SbiObjFunc> hibObjFuncs = hibBIObject.getSbiObjFuncs();
@@ -1775,7 +1764,7 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 	}
 
 	@Override
-	public List loadAllBIObjectsByFolderId(final Integer folderId) throws EMFUserError {
+	public List<BIObject> loadAllBIObjectsByFolderId(final Integer folderId) throws EMFUserError {
 		LOGGER.debug("Loading all biObjects in folder with id {}", folderId);
 
 		List<BIObject> realResult = executeOnTransaction(new IExecuteOnTransaction<List>() {
@@ -2119,10 +2108,10 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 			// if flag flgDelete is true delete all parameters associated to
 			// document composition
 			if (flgDelete) {
-				List lstDocParameters = DAOFactory.getBIObjectParameterDAO()
+				List<BIObjectParameter> lstDocParameters = DAOFactory.getBIObjectParameterDAO()
 						.loadBIObjectParametersById(biObject.getId());
 				for (int i = 0; i < lstDocParameters.size(); i++) {
-					BIObjectParameter docParam = (BIObjectParameter) lstDocParameters.get(i);
+					BIObjectParameter docParam = lstDocParameters.get(i);
 					SbiObjects aSbiObject = new SbiObjects();
 					aSbiObject.setBiobjId(biObject.getId());
 
@@ -2153,10 +2142,10 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 					throw new EMFUserError(EMFErrorSeverity.ERROR, "1005", lstLabel,
 							"component_spagobidocumentcompositionIE_messages");
 				} else {
-					List lstDocChildParameters = DAOFactory.getBIObjectParameterDAO()
+					List<BIObjectParameter> lstDocChildParameters = DAOFactory.getBIObjectParameterDAO()
 							.loadBIObjectParametersById(docChild.getId());
 					for (int j = 0; j < lstDocChildParameters.size(); j++) {
-						BIObjectParameter objPar = (BIObjectParameter) lstDocChildParameters.get(j);
+						BIObjectParameter objPar = lstDocChildParameters.get(j);
 						if (!totalParameters.contains(objPar.getLabel())) {
 							SbiObjects aSbiObject = new SbiObjects();
 							Integer objId = biObject.getId();
@@ -2248,7 +2237,6 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 						BIObjectParameter objPar = lstDocChildParameters.get(j);
 						if (!totalParameters.contains(objPar.getLabel())) {
 							SbiObjects aSbiObject = new SbiObjects();
-							// aSbiObject.setBiobjId(biObject.getId());
 							Integer objId = biobjectId;
 							if (objId == null || objId.compareTo(new Integer("0")) == 0)
 								objId = biobjectId;
@@ -2520,7 +2508,7 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 		LOGGER.debug("IN");
 		Session aSession = null;
 		Transaction tx = null;
-		List realResult = new ArrayList();
+		List<BIObject> realResult = new ArrayList<>();
 		try {
 			aSession = getSession();
 			tx = aSession.beginTransaction();
@@ -2551,7 +2539,7 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 		LOGGER.debug("IN");
 		Session aSession = null;
 		Transaction tx = null;
-		List result = new ArrayList();
+		List<BIObject> result = new ArrayList<>();
 		try {
 			aSession = getSession();
 			tx = aSession.beginTransaction();
@@ -2921,7 +2909,7 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 	@Override
 	public List<BIObjectParameter> loadDocumentDrivers(BIObject biObject, String role) throws EMFUserError {
 		LOGGER.debug("IN");
-		List toReturn = new ArrayList<BIObjectParameter>();
+		List<BIObjectParameter> toReturn = new ArrayList<>();
 		Session aSession = getSession();
 		Transaction tx = aSession.beginTransaction();
 		try {
@@ -2935,7 +2923,7 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 			int count = 1;
 			while (it.hasNext()) {
 				SbiObjPar hibObjPar = it.next();
-				AbstractDriver tmpBIObjectParameter = aBIObjectParameterDAOHibImpl.toBIObjectParameter(hibObjPar);
+				BIObjectParameter tmpBIObjectParameter = aBIObjectParameterDAOHibImpl.toBIObjectParameter(hibObjPar);
 				recalculateParameterPriority(aSession, biObject, tmpBIObjectParameter, aBIObjectParameterDAOHibImpl,
 						count);
 				Parameter aParameter = aParameterDAO
@@ -3141,7 +3129,7 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 		return SpagoBIConstants.ROLE_TYPE_TEST.equals(roleType);
 	}
 
-	private List filterUsableRolesByObjectParameters(Integer id, List correctRoles, Session aSession,
+	private List<String> filterUsableRolesByObjectParameters(Integer id, List<String> correctRoles, Session aSession,
 			Set<String> userRolesWithPermission) {
 		Query hqlQuery;
 		String hql;

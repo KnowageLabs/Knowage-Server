@@ -8,72 +8,89 @@
 <%@ page import="org.w3c.dom.Element"%>
 <%@ page import="org.w3c.dom.Node"%>
 <%@ page import="org.w3c.dom.NodeList"%>
+<%@ page import="java.io.IOException"%>
+<%@ page import="javax.net.ssl.SSLException"%>
 <%
-
 // Read XML (getCapabilities response from WMS server) and create a new JSON output
 
-
 String urlWms = request.getParameter("urlWms");
-urlWms = urlWms + "?"+ "request=getCapabilities";
+urlWms = urlWms + "?" + "request=getCapabilities";
 String result = "";
+InputStream is = null;
 
 try {
-  //File file = new File("c:\\MyXMLFile.xml");
-  
-  URL url = new URL(urlWms);
-  URLConnection conn = url.openConnection ();
-  
-  // DOM way:
-  DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-  DocumentBuilder db = dbf.newDocumentBuilder();
-  Document doc = db.parse(url.openStream());
+	//File file = new File("c:\\MyXMLFile.xml");
 
-  doc.getDocumentElement().normalize();
-  //out.println("Root element " + doc.getDocumentElement().getNodeName());
-  NodeList nodeLst = doc.getElementsByTagName("Layer");
-  
-  int n = (nodeLst.getLength());
-  //out.println(n);
+	URL url = new URL(urlWms);
+	URLConnection conn = url.openConnection();
+	is = conn.getInputStream();
 
-for (int s = 0; s < n; s++) {
-  
-    Node fstNode = nodeLst.item(s);
+	// DOM way:
+	DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
 
-    if (fstNode.getNodeType() == Node.ELEMENT_NODE) {
-    
-      Element fstElmnt = (Element) fstNode;
-           
-      NodeList fstNmElmntLst = fstElmnt.getElementsByTagName("Name");
-      Element fstNmElmnt = (Element) fstNmElmntLst.item(0);            
-      NodeList fstNm = fstNmElmnt.getChildNodes();
-           
-      NodeList srsNmElmntLst = fstElmnt.getElementsByTagName("SRS");
-      Element srsNmElmnt = (Element) srsNmElmntLst.item(0);     
-      NodeList srsNm = srsNmElmnt.getChildNodes();
-      
-      /*NodeList titleNmElmntLst = fstElmnt.getElementsByTagName("Title");
-      Element titleNmElmnt = (Element) titleNmElmntLst.item(0);     
-      NodeList titleNm = titleNmElmnt.getChildNodes();
-      */
+	dbf.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
+	dbf.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
+	dbf.setFeature("http://xml.org/sax/features/external-parameterentities", false);
+	dbf.setFeature("http://xml.org/sax/features/external-generalentities", false);
 
-      if(s == n-1){
+	dbf.setXIncludeAware(false);
+	dbf.setExpandEntityReferences(false);
 
-      result = "{id:"+'\"'+s+'\"'+", layername:"+'\"'+((Node) fstNm.item(0)).getNodeValue()+'\"'+", srs:"+'\"'+((Node) srsNm.item(0)).getNodeValue()+'\"'+"}]" ;
-       }
-      else if (s == 1){
-      result = "[{id:"+'\"'+s+'\"'+", layername:"+'\"'+((Node) fstNm.item(0)).getNodeValue()+'\"'+", srs:"+'\"'+((Node) srsNm.item(0)).getNodeValue()+'\"'+"}"+ ",";
-      
-      }
-      else {
-      result = "{id:"+'\"'+s+'\"'+", layername:"+'\"'+((Node) fstNm.item(0)).getNodeValue()+'\"'+", srs:"+'\"'+((Node) srsNm.item(0)).getNodeValue()+'\"'+"}"+ ",";
-      
-      }
-            out.println(result);
-    }            
-                 
-  }
-  } catch (Exception e) {
-    e.printStackTrace();
-  }
+	DocumentBuilder db = dbf.newDocumentBuilder();
+	Document doc = db.parse(is);
 
+	doc.getDocumentElement().normalize();
+	//out.println("Root element " + doc.getDocumentElement().getNodeName());
+	NodeList nodeLst = doc.getElementsByTagName("Layer");
+
+	int n = (nodeLst.getLength());
+	//out.println(n);
+
+	for (int s = 0; s < n; s++) {
+
+		Node fstNode = nodeLst.item(s);
+
+		if (fstNode.getNodeType() == Node.ELEMENT_NODE) {
+
+	Element fstElmnt = (Element) fstNode;
+
+	NodeList fstNmElmntLst = fstElmnt.getElementsByTagName("Name");
+	Element fstNmElmnt = (Element) fstNmElmntLst.item(0);
+	NodeList fstNm = fstNmElmnt.getChildNodes();
+
+	NodeList srsNmElmntLst = fstElmnt.getElementsByTagName("SRS");
+	Element srsNmElmnt = (Element) srsNmElmntLst.item(0);
+	NodeList srsNm = srsNmElmnt.getChildNodes();
+
+	/*NodeList titleNmElmntLst = fstElmnt.getElementsByTagName("Title");
+	Element titleNmElmnt = (Element) titleNmElmntLst.item(0);     
+	NodeList titleNm = titleNmElmnt.getChildNodes();
+	*/
+
+	if (s == n - 1) {
+
+		result = "{id:" + '\"' + s + '\"' + ", layername:" + '\"' + ((Node) fstNm.item(0)).getNodeValue() + '\"' + ", srs:" + '\"'
+				+ ((Node) srsNm.item(0)).getNodeValue() + '\"' + "}]";
+	} else if (s == 1) {
+		result = "[{id:" + '\"' + s + '\"' + ", layername:" + '\"' + ((Node) fstNm.item(0)).getNodeValue() + '\"' + ", srs:" + '\"'
+				+ ((Node) srsNm.item(0)).getNodeValue() + '\"' + "}" + ",";
+
+	} else {
+		result = "{id:" + '\"' + s + '\"' + ", layername:" + '\"' + ((Node) fstNm.item(0)).getNodeValue() + '\"' + ", srs:" + '\"'
+				+ ((Node) srsNm.item(0)).getNodeValue() + '\"' + "}" + ",";
+
+	}
+	out.println(result);
+		}
+
+	}
+} catch (SSLException sslException) {
+	logger.error("SSLException occurred while creating socket in LayerWMS: ", sslException);
+} catch (IOException ioException) {
+	logger.error("IOException occurred while creating socket in LayerWMS: ", ioException);
+} finally {
+	if(is != null) {
+		is.close()
+	}
+}
 %>

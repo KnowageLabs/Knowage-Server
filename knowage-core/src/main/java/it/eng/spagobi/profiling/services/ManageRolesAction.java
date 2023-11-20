@@ -155,7 +155,8 @@ public class ManageRolesAction extends AbstractSpagoBIAction {
 				// ArrayList<Role> roles =
 				// (ArrayList<Role>)roleDao.loadAllRoles();
 				logger.debug("Loaded roles list");
-				JSONArray rolesJSON = (JSONArray) SerializerFactory.getSerializer("application/json").serialize(roles, locale);
+				JSONArray rolesJSON = (JSONArray) SerializerFactory.getSerializer("application/json").serialize(roles,
+						locale);
 				JSONObject rolesResponseJSON = createJSONResponseRoles(rolesJSON, totalResNum);
 
 				writeBackToClient(new JSONSuccess(rolesResponseJSON));
@@ -225,7 +226,8 @@ public class ManageRolesAction extends AbstractSpagoBIAction {
 						String id = getAttributeAsString(ID);
 						if (id == null || id.equals("") || id.equals("0")) {
 							try {
-								AuditLogUtilities.updateAudit(getHttpRequest(), profile, "PROF_ROLES.ADD", logParam, "OK");
+								AuditLogUtilities.updateAudit(getHttpRequest(), profile, "PROF_ROLES.ADD", logParam,
+										"OK");
 							} catch (Exception e) {
 								// TODO Auto-generated catch block
 								e.printStackTrace();
@@ -236,18 +238,20 @@ public class ManageRolesAction extends AbstractSpagoBIAction {
 					}
 				} catch (EMFUserError e1) {
 					try {
-						AuditLogUtilities.updateAudit(getHttpRequest(), profile, "PROF_ROLES." + ((insertModality) ? "ADD" : "MODIFY"), logParam, "ERR");
+						AuditLogUtilities.updateAudit(getHttpRequest(), profile,
+								"PROF_ROLES." + ((insertModality) ? "ADD" : "MODIFY"), logParam, "ERR");
 					} catch (Exception e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
 					logger.error(e1.getMessage(), e1);
-					throw new SpagoBIServiceException(SERVICE_NAME, "Exception occurred while retrieving role by name", e1);
+					throw new SpagoBIServiceException(SERVICE_NAME, "Exception occurred while retrieving role by name",
+							e1);
 				}
 
 				List<Domain> domains = (List<Domain>) getSessionContainer().getAttribute("roleTypes");
 
-				HashMap<String, Integer> domainIds = new HashMap<String, Integer>();
+				HashMap<String, Integer> domainIds = new HashMap<>();
 				for (int i = 0; i < domains.size(); i++) {
 					domainIds.put(domains.get(i).getValueCd(), domains.get(i).getValueId());
 				}
@@ -255,7 +259,8 @@ public class ManageRolesAction extends AbstractSpagoBIAction {
 				Integer roleTypeID = domainIds.get(roleTypeCD);
 				if (roleTypeID == null) {
 					try {
-						AuditLogUtilities.updateAudit(getHttpRequest(), profile, "PROF_ROLES." + ((insertModality) ? "ADD" : "MODIFY"), logParam, "ERR");
+						AuditLogUtilities.updateAudit(getHttpRequest(), profile,
+								"PROF_ROLES." + ((insertModality) ? "ADD" : "MODIFY"), logParam, "ERR");
 					} catch (Exception e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
@@ -270,40 +275,40 @@ public class ManageRolesAction extends AbstractSpagoBIAction {
 				role.setName(name);
 				role.setRoleTypeCD(roleTypeCD);
 				role.setRoleTypeID(roleTypeID);
-				role.setIsAbleToBuildQbeQuery(buildQbeQuery);
-				role.setIsAbleToDoMassiveExport(doMassiveExport);
-				role.setIsAbleToSaveIntoPersonalFolder(saveIntoPersonalFolder);
-				role.setIsAbleToSaveMetadata(saveMetadata);
-				role.setIsAbleToSaveRememberMe(saveRememberMe);
-				role.setIsAbleToEditPythonScripts(editPythonScripts);
-				role.setIsAbleToCreateCustomChart(createCustomChart);
-				role.setIsAbleToSaveSubobjects(saveSubobjects);
-				role.setIsAbleToSeeMetadata(seeMetadata);
-				role.setIsAbleToSeeNotes(seeNotes);
-				role.setIsAbleToSeeSnapshots(seeSnapshots);
-				role.setIsAbleToRunSnapshots(runSnapshots);
-				role.setIsAbleToSeeSubobjects(seeSubobjects);
-				role.setIsAbleToSeeViewpoints(seeViewpoints);
-				role.setIsAbleToSendMail(sendMail);
-				role.setIsAbleToManageUsers(manageUsers);
-				role.setIsAbleToSeeDocumentBrowser(seeDocBrowser);
-				role.setIsAbleToSeeMyData(seeMyData);
-				role.setIsAbleToSeeMyWorkspace(seeMyWorkspace);
-				role.setIsAbleToSeeFavourites(seeFavourites);
-				role.setIsAbleToSeeSubscriptions(seeSubscriptions);
-				role.setIsAbleToSeeToDoList(seeToDoList);
-				role.setIsAbleToCreateDocuments(createDocument);
+				role.setAbleToBuildQbeQuery(buildQbeQuery);
+				role.setAbleToDoMassiveExport(doMassiveExport);
+				role.setAbleToSaveIntoPersonalFolder(saveIntoPersonalFolder);
+				role.setAbleToSaveMetadata(saveMetadata);
+				role.setAbleToSaveRememberMe(saveRememberMe);
+				role.setAbleToEditPythonScripts(editPythonScripts);
+				role.setAbleToCreateCustomChart(createCustomChart);
+				role.setAbleToSaveSubobjects(saveSubobjects);
+				role.setAbleToSeeMetadata(seeMetadata);
+				role.setAbleToSeeNotes(seeNotes);
+				role.setAbleToSeeSnapshots(seeSnapshots);
+				role.setAbleToRunSnapshots(runSnapshots);
+				role.setAbleToSeeSubobjects(seeSubobjects);
+				role.setAbleToSeeViewpoints(seeViewpoints);
+				role.setAbleToSendMail(sendMail);
+				role.setAbleToManageUsers(manageUsers);
+				role.setAbleToSeeDocumentBrowser(seeDocBrowser);
+				role.setAbleToSeeMyData(seeMyData);
+				role.setAbleToSeeMyWorkspace(seeMyWorkspace);
+				role.setAbleToSeeFavourites(seeFavourites);
+				role.setAbleToSeeSubscriptions(seeSubscriptions);
+				role.setAbleToSeeToDoList(seeToDoList);
+				role.setAbleToCreateDocuments(createDocument);
 				role.setAbleToEditAllKpiComm(kpiCommEditAll);
 				role.setAbleToEditMyKpiComm(kpiCommEditMy);
 				role.setAbleToDeleteKpiComm(kpiCommDelete);
-				role.setIsAbleToCreateSocialAnalysis(createAnalysisSocial);
-				role.setIsAbleToViewSocialAnalysis(viewAnalysisSocial);
-				role.setIsAbleToHierarchiesManagement(hierarchiesManagement);
-				role.setIsAbleToEnableDatasetPersistence(enableDatasetPersistence);
-				role.setIsAbleToEnableFederatedDataset(enableFederatedDataset);
-				role.setIsAbleToEnableRate(enableToRate);
-				role.setIsAbleToEnablePrint(enableToPrint);
-				role.setIsAbleToEnableCopyAndEmbed(enableToCopyAndEmbed);
+				role.setAbleToCreateSocialAnalysis(createAnalysisSocial);
+				role.setAbleToViewSocialAnalysis(viewAnalysisSocial);
+				role.setAbleToHierarchiesManagement(hierarchiesManagement);
+				role.setAbleToEnableDatasetPersistence(enableDatasetPersistence);
+				role.setAbleToEnableFederatedDataset(enableFederatedDataset);
+				role.setAbleToEnableRate(enableToRate);
+				role.setAbleToEnablePrint(enableToPrint);
+				role.setAbleToEnableCopyAndEmbed(enableToCopyAndEmbed);
 
 				role.setAbleToManageGlossaryBusiness(manageGlossaryBusiness);
 				role.setAbleToManageGlossaryTechnical(manageGlossaryTechnical);
@@ -319,9 +324,11 @@ public class ManageRolesAction extends AbstractSpagoBIAction {
 
 						// Erase existing Role - Business Model Categories
 						// Associations
-						List<RoleMetaModelCategory> RoleMetaModelCategories = roleDao.getMetaModelCategoriesForRole(Integer.valueOf(id));
+						List<RoleMetaModelCategory> RoleMetaModelCategories = roleDao
+								.getMetaModelCategoriesForRole(Integer.valueOf(id));
 						for (RoleMetaModelCategory roleMetaModelCategory : RoleMetaModelCategories) {
-							roleDao.removeRoleMetaModelCategory(roleMetaModelCategory.getRoleId(), roleMetaModelCategory.getCategoryId());
+							roleDao.removeRoleMetaModelCategory(roleMetaModelCategory.getRoleId(),
+									roleMetaModelCategory.getCategoryId());
 						}
 
 						// Add Role - Business Model Categories Associations
@@ -334,7 +341,8 @@ public class ManageRolesAction extends AbstractSpagoBIAction {
 						attributesResponseSuccessJSON.put("success", true);
 						attributesResponseSuccessJSON.put("responseText", "Operation succeded");
 						writeBackToClient(new JSONSuccess(attributesResponseSuccessJSON));
-						AuditLogUtilities.updateAudit(getHttpRequest(), profile, "PROF_ROLES." + ((insertModality) ? "ADD" : "MODIFY"), logParam, "OK");
+						AuditLogUtilities.updateAudit(getHttpRequest(), profile,
+								"PROF_ROLES." + ((insertModality) ? "ADD" : "MODIFY"), logParam, "OK");
 					} else {
 						Integer roleID = roleDao.insertRoleComplete(role);
 						// Add Role - Business Model Categories Associations
@@ -353,7 +361,8 @@ public class ManageRolesAction extends AbstractSpagoBIAction {
 
 				} catch (Throwable e) {
 					try {
-						AuditLogUtilities.updateAudit(getHttpRequest(), profile, "PROF_ROLES." + ((insertModality) ? "ADD" : "MODIFY"), logParam, "ERR");
+						AuditLogUtilities.updateAudit(getHttpRequest(), profile,
+								"PROF_ROLES." + ((insertModality) ? "ADD" : "MODIFY"), logParam, "ERR");
 					} catch (Exception e1) {
 						// TODO Auto-generated catch block
 						e1.printStackTrace();
@@ -364,7 +373,8 @@ public class ManageRolesAction extends AbstractSpagoBIAction {
 
 			} else {
 				try {
-					AuditLogUtilities.updateAudit(getHttpRequest(), profile, "PROF_ROLES." + ((insertModality) ? "ADD" : "MODIFY"), logParam, "KO");
+					AuditLogUtilities.updateAudit(getHttpRequest(), profile,
+							"PROF_ROLES." + ((insertModality) ? "ADD" : "MODIFY"), logParam, "KO");
 				} catch (Exception e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -382,7 +392,8 @@ public class ManageRolesAction extends AbstractSpagoBIAction {
 				// Remove Role - Business Model Categories Associations
 				List<RoleMetaModelCategory> RoleMetaModelCategories = roleDao.getMetaModelCategoriesForRole(id);
 				for (RoleMetaModelCategory roleMetaModelCategory : RoleMetaModelCategories) {
-					roleDao.removeRoleMetaModelCategory(roleMetaModelCategory.getRoleId(), roleMetaModelCategory.getCategoryId());
+					roleDao.removeRoleMetaModelCategory(roleMetaModelCategory.getRoleId(),
+							roleMetaModelCategory.getCategoryId());
 				}
 
 				roleDao.eraseRole(aRole);
@@ -444,7 +455,7 @@ public class ManageRolesAction extends AbstractSpagoBIAction {
 	private void getMetaModelCategories(IRoleDAO roleDao, Locale locale) {
 		// invoca DAO di Role e ritorna lista delle Categorie di BM associate
 
-		List<RoleMetaModelCategory> categories = new ArrayList<RoleMetaModelCategory>();
+		List<RoleMetaModelCategory> categories = new ArrayList<>();
 		try {
 			Integer roleId = getAttributeAsInteger(ID);
 			categories = roleDao.getMetaModelCategoriesForRole(roleId);
@@ -452,7 +463,8 @@ public class ManageRolesAction extends AbstractSpagoBIAction {
 
 			int totalResNum = categories.size();
 
-			JSONArray rolesJSON = (JSONArray) SerializerFactory.getSerializer("application/json").serialize(categories, locale);
+			JSONArray rolesJSON = (JSONArray) SerializerFactory.getSerializer("application/json").serialize(categories,
+					locale);
 
 			JSONObject rolesResponseJSON = createJSONResponse(rolesJSON, totalResNum, "Categories");
 			writeBackToClient(new JSONSuccess(rolesResponseJSON));
@@ -465,7 +477,7 @@ public class ManageRolesAction extends AbstractSpagoBIAction {
 	// Search for associated Business Model categories for the passed Role
 	private List<RoleMetaModelCategory> getMetaModelCategories(IRoleDAO roleDao, Role role) {
 
-		List<RoleMetaModelCategory> categories = new ArrayList<RoleMetaModelCategory>();
+		List<RoleMetaModelCategory> categories = new ArrayList<>();
 		try {
 			Integer roleId = role.getId();
 			categories = roleDao.getMetaModelCategoriesForRole(roleId);

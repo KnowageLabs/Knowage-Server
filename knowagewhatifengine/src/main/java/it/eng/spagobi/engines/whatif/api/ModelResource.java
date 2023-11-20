@@ -17,6 +17,7 @@
  */
 package it.eng.spagobi.engines.whatif.api;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -44,7 +45,6 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import org.apache.axis.utils.ByteArrayOutputStream;
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -222,15 +222,17 @@ public class ModelResource extends AbstractWhatIfEngineService {
 		IAllocationAlgorithm allocationAlgorithm;
 
 		try {
-			Map<String, Object> properties = new HashMap<String, Object>();
+			Map<String, Object> properties = new HashMap<>();
 			properties.put(DefaultWeightedAllocationAlgorithm.ENGINEINSTANCE_PROPERTY, ei);
 			allocationAlgorithm = AllocationAlgorithmFactory.getAllocationAlgorithm(algorithm, ei, properties);
 		} catch (SpagoBIEngineException e) {
 			LOGGER.error(e);
-			throw new SpagoBIEngineRestServiceRuntimeException("sbi.olap.writeback.algorithm.definition.error", getLocale(), e);
+			throw new SpagoBIEngineRestServiceRuntimeException("sbi.olap.writeback.algorithm.definition.error",
+					getLocale(), e);
 		}
 
-		CellTransformation transformation = new CellTransformation(value, cellWrapper.getValue(), cellWrapper, allocationAlgorithm);
+		CellTransformation transformation = new CellTransformation(value, cellWrapper.getValue(), cellWrapper,
+				allocationAlgorithm);
 		cellSetWrapper.applyTranformation(transformation);
 		String table = renderModel(model);
 
@@ -274,7 +276,8 @@ public class ModelResource extends AbstractWhatIfEngineService {
 		} catch (WhatIfPersistingTransformationException e) {
 			LOGGER.debug("Error persisting the modifications", e);
 			logErrorTransformations(e.getTransformations());
-			throw new SpagoBIEngineRestServiceRuntimeException(e.getLocalizationmessage(), modelWrapper.getLocale(), "Error persisting modifications", e);
+			throw new SpagoBIEngineRestServiceRuntimeException(e.getLocalizationmessage(), modelWrapper.getLocale(),
+					"Error persisting modifications", e);
 		} finally {
 			LOGGER.debug("Closing the connection used to persist the modifications");
 			try {
@@ -333,7 +336,8 @@ public class ModelResource extends AbstractWhatIfEngineService {
 			throw new SpagoBIEngineRestServiceRuntimeException(getLocale(), e1);
 		}
 
-		Monitor totalTime = MonitorFactory.start("WhatIfEngine/it.eng.spagobi.engines.whatif.api.ModelResource.increaseVersion.totalTime");
+		Monitor totalTime = MonitorFactory
+				.start("WhatIfEngine/it.eng.spagobi.engines.whatif.api.ModelResource.increaseVersion.totalTime");
 		if (name.equals(VERSION_FAKE_DESCR)) {
 			name = null;
 		}
@@ -434,7 +438,8 @@ public class ModelResource extends AbstractWhatIfEngineService {
 		byte[] outputByte = out.toByteArray();
 		String fileName = getExportFileName() + ".xls";
 
-		return Response.ok(outputByte, MediaType.APPLICATION_OCTET_STREAM).header("content-disposition", "attachment; filename = " + fileName).build();
+		return Response.ok(outputByte, MediaType.APPLICATION_OCTET_STREAM)
+				.header("content-disposition", "attachment; filename = " + fileName).build();
 	}
 
 	@GET
@@ -469,7 +474,8 @@ public class ModelResource extends AbstractWhatIfEngineService {
 		byte[] outputByte = out.toByteArray();
 		String fileName = getExportFileName() + ".pdf";
 
-		return Response.ok(outputByte, MediaType.APPLICATION_OCTET_STREAM).header("content-disposition", "attachment; filename = " + fileName).build();
+		return Response.ok(outputByte, MediaType.APPLICATION_OCTET_STREAM)
+				.header("content-disposition", "attachment; filename = " + fileName).build();
 	}
 
 	/**
@@ -496,9 +502,11 @@ public class ModelResource extends AbstractWhatIfEngineService {
 		byte[] outputByte = out.toByteArray();
 
 		Date d = new Date();
-		String fileName = EXPORT_FILE_NAME + "_" + d.getYear() + d.getMonth() + d.getDay() + d.getHours() + d.getMinutes() + ".txt";
+		String fileName = EXPORT_FILE_NAME + "_" + d.getYear() + d.getMonth() + d.getDay() + d.getHours()
+				+ d.getMinutes() + ".txt";
 
-		return Response.ok(outputByte, MediaType.APPLICATION_OCTET_STREAM).header("content-disposition", "attachment; filename = " + fileName).build();
+		return Response.ok(outputByte, MediaType.APPLICATION_OCTET_STREAM)
+				.header("content-disposition", "attachment; filename = " + fileName).build();
 	}
 
 	@GET
@@ -509,9 +517,11 @@ public class ModelResource extends AbstractWhatIfEngineService {
 		String EXCELL_TEMPLATE_FILE_NAME = "export_dataset_template.xlsm";
 		OutputStream out = null;
 		try {
-			URL resourceLocation = Thread.currentThread().getContextClassLoader().getResource(EXCELL_TEMPLATE_FILE_NAME);
+			URL resourceLocation = Thread.currentThread().getContextClassLoader()
+					.getResource(EXCELL_TEMPLATE_FILE_NAME);
 			LOGGER.debug("Resource is: " + resourceLocation);
-			Assert.assertNotNull(resourceLocation, "Could not find " + EXCELL_TEMPLATE_FILE_NAME + " in java resources");
+			Assert.assertNotNull(resourceLocation,
+					"Could not find " + EXCELL_TEMPLATE_FILE_NAME + " in java resources");
 			FileInputStream fileInputStream1 = new FileInputStream(new File(resourceLocation.toURI().getPath()));
 			FileInputStream fileInputStream2 = new FileInputStream(result);
 
@@ -525,7 +535,8 @@ public class ModelResource extends AbstractWhatIfEngineService {
 				SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd_hh:mm");
 				String ime = "OlapTableExport" + "_" + format.format(date);
 
-				getServletResponse().setHeader("Content-Disposition", "attachment" + "; filename=\"" + ime + ".xlsm" + "\";");
+				getServletResponse().setHeader("Content-Disposition",
+						"attachment" + "; filename=\"" + ime + ".xlsm" + "\";");
 				response.setContentType("application/vnd.ms-excel.sheet.macroEnabled.12");
 				out = getServletResponse().getOutputStream();
 				workbook.write(out);
@@ -560,7 +571,8 @@ public class ModelResource extends AbstractWhatIfEngineService {
 			AUDIT_LOGGER.info(info);
 		}
 		AUDIT_LOGGER.info("Pending transformations: ");
-		AUDIT_LOGGER.info(((SpagoBIPivotModel) getWhatIfEngineInstance().getPivotModel()).getPendingTransformations().toString());
+		AUDIT_LOGGER.info(
+				((SpagoBIPivotModel) getWhatIfEngineInstance().getPivotModel()).getPendingTransformations().toString());
 	}
 
 	public void logOperation(String info) {
@@ -633,9 +645,12 @@ public class ModelResource extends AbstractWhatIfEngineService {
 		while (it.hasNext()) {
 			Map.Entry pair = (Map.Entry) it.next();
 
-			if (pair.getKey().toString().equalsIgnoreCase("DOCUMENT_LABEL") || pair.getKey().toString().equalsIgnoreCase("SBI_ARTIFACT_ID")
-					|| pair.getKey().toString().equalsIgnoreCase("SBI_ARTIFACT_VERSION_ID") || pair.getKey().toString().equalsIgnoreCase("document")
-					|| pair.getKey().toString().equalsIgnoreCase("user_id") || pair.getKey().toString().equalsIgnoreCase("tenant")) {
+			if (pair.getKey().toString().equalsIgnoreCase("DOCUMENT_LABEL")
+					|| pair.getKey().toString().equalsIgnoreCase("SBI_ARTIFACT_ID")
+					|| pair.getKey().toString().equalsIgnoreCase("SBI_ARTIFACT_VERSION_ID")
+					|| pair.getKey().toString().equalsIgnoreCase("document")
+					|| pair.getKey().toString().equalsIgnoreCase("user_id")
+					|| pair.getKey().toString().equalsIgnoreCase("tenant")) {
 				++index;
 				if (index != 1) {
 					url += "&";
@@ -662,7 +677,8 @@ public class ModelResource extends AbstractWhatIfEngineService {
 		XSSFCell editCubeCell = editCube.createCell(0);
 
 		int keyIndex = 0;
-		Map<String, AllocationAlgorithmDefinition> allocationAlgorithms = AllocationAlgorithmSingleton.getInstance().getAllocationAlgorithms();
+		Map<String, AllocationAlgorithmDefinition> allocationAlgorithms = AllocationAlgorithmSingleton.getInstance()
+				.getAllocationAlgorithms();
 		Iterator ita = allocationAlgorithms.entrySet().iterator();
 		while (ita.hasNext()) {
 			Map.Entry pair = (Map.Entry) ita.next();
@@ -674,7 +690,8 @@ public class ModelResource extends AbstractWhatIfEngineService {
 			}
 			// ita.remove();
 		}
-		Map<String, AllocationAlgorithmDefinition> allocationAlgorithms2 = AllocationAlgorithmSingleton.getInstance().getAllocationAlgorithms();
+		Map<String, AllocationAlgorithmDefinition> allocationAlgorithms2 = AllocationAlgorithmSingleton.getInstance()
+				.getAllocationAlgorithms();
 
 		urlCell.setCellValue(url);
 		mdxCell.setCellValue(mdx);

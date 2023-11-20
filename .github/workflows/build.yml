@@ -1,0 +1,57 @@
+name: "Build"
+on:
+  push:
+  pull_request_target:
+    types:
+    - opened
+    - reopened
+    - synchronize
+    - ready_for_review
+    - review_requested
+# TODO : secrets are not accessible here
+#  pull_request_review:
+#    types:
+#    - submitted
+#    - edited
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+      with:
+        submodules: recursive
+
+    - name: Setup Java
+      uses: actions/setup-java@v3
+      with:
+        distribution: 'adopt'
+        java-version: '8'
+        cache: 'maven'
+
+    - name: Setup Node
+      uses: actions/setup-node@v3
+      with:
+        node-version: '16'
+        # cache: 'npm'
+
+    - name: Setting up 
+      uses: s4u/maven-settings-action@v2.8.0
+      with:
+        servers: |
+          [{
+            "id": "knowage-group",
+            "username": "${{ secrets.KNOWAGE_NEXUS_USERNAME }}",
+            "password": "${{ secrets.KNOWAGE_NEXUS_PASSWORD }}"
+          }]
+        mirrors: |
+          [{
+            "id": "knowage-group",
+            "name": "KNOWAGE Nexus",
+            "mirrorOf": "*",
+            "url": "${{ secrets.KNOWAGE_NEXUS_URL_KNOWAGE_GROUP }}"
+          }]
+
+    - name: Build
+      run: mvn compile -pl -:knowage-vue -q -f knowage-ce-parent/pom.xml

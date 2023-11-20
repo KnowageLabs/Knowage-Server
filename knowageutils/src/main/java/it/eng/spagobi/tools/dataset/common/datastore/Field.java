@@ -25,14 +25,12 @@ public class Field implements IField, Cloneable {
 	Object description = null;
 
 	public Field() {
-		super();
 	}
 
 	/**
 	 * @param value
 	 */
 	public Field(Object value) {
-		super();
 		this.value = value;
 	}
 
@@ -41,7 +39,6 @@ public class Field implements IField, Cloneable {
 	 * @param description
 	 */
 	public Field(Object value, Object description) {
-		super();
 		this.value = value;
 		this.description = description;
 	}
@@ -98,7 +95,7 @@ public class Field implements IField, Cloneable {
 	}
 
 	@Override
-	public Field clone() throws CloneNotSupportedException {
+	public final Field clone() throws CloneNotSupportedException {
 		return (Field) super.clone();
 	}
 

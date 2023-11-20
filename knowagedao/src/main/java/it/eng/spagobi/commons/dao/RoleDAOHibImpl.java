@@ -33,7 +33,6 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.criterion.Criterion;
-import org.hibernate.criterion.Expression;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Property;
 import org.hibernate.criterion.Restrictions;
@@ -108,17 +107,10 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 				tx.commit();
 			} catch (HibernateException he) {
 				logException(he);
-
-				if (tx != null)
-					tx.rollback();
-
+				rollbackIfActive(tx);
 				throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
-
 			} finally {
-				if (aSession != null) {
-					if (aSession.isOpen())
-						aSession.close();
-				}
+				closeSessionIfOpen(aSession);
 			}
 		}
 		m.stop();
@@ -139,17 +131,10 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 			tx.commit();
 		} catch (HibernateException he) {
 			logException(he);
-
-			if (tx != null)
-				tx.rollback();
-
+			rollbackIfActive(tx);
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
-
 		} finally {
-			if (aSession != null) {
-				if (aSession.isOpen())
-					aSession.close();
-			}
+			closeSessionIfOpen(aSession);
 		}
 		return toReturn;
 	}
@@ -183,24 +168,17 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 				tx.commit();
 			} catch (HibernateException he) {
 				logException(he);
-
-				if (tx != null)
-					tx.rollback();
-
+				rollbackIfActive(tx);
 				throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
-
 			} finally {
-				if (aSession != null) {
-					if (aSession.isOpen())
-						aSession.close();
-				}
+				closeSessionIfOpen(aSession);
 			}
 		}
 		return toReturn;
 	}
 
 	public SbiExtRoles loadByNameInSession(String roleName, Session aSession) {
-		Criterion aCriterion = Expression.eq("name", roleName);
+		Criterion aCriterion = Restrictions.eq("name", roleName);
 
 		Criteria aCriteria = aSession.createCriteria(SbiExtRoles.class);
 
@@ -240,17 +218,10 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 			}
 		} catch (HibernateException he) {
 			logException(he);
-
-			if (tx != null)
-				tx.rollback();
-
+			rollbackIfActive(tx);
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
-
 		} finally {
-			if (aSession != null) {
-				if (aSession.isOpen())
-					aSession.close();
-			}
+			closeSessionIfOpen(aSession);
 		}
 		return realResult;
 	}
@@ -263,7 +234,8 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 		try {
 			aSession = getSession();
 			tx = aSession.beginTransaction();
-			Criteria finder = aSession.createCriteria(SbiExtRoles.class).add(Restrictions.eq("commonInfo.organization", this.getTenant()));
+			Criteria finder = aSession.createCriteria(SbiExtRoles.class)
+					.add(Restrictions.eq("commonInfo.organization", this.getTenant()));
 			finder.addOrder(Order.asc("name"));
 			List hibList = finder.list();
 
@@ -278,17 +250,10 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 			}
 		} catch (HibernateException he) {
 			logException(he);
-
-			if (tx != null)
-				tx.rollback();
-
+			rollbackIfActive(tx);
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
-
 		} finally {
-			if (aSession != null) {
-				if (aSession.isOpen())
-					aSession.close();
-			}
+			closeSessionIfOpen(aSession);
 		}
 		return realResult;
 	}
@@ -298,7 +263,7 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 		List realResult = new ArrayList();
 		Session aSession = null;
 		Transaction tx = null;
-		List<SbiExtRoles> roles = new ArrayList<SbiExtRoles>();
+		List<SbiExtRoles> roles = new ArrayList<>();
 		try {
 			aSession = getSession();
 			tx = aSession.beginTransaction();
@@ -324,16 +289,10 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 
 		} catch (HibernateException he) {
 			logException(he);
-
-			if (tx != null)
-				tx.rollback();
-
+			rollbackIfActive(tx);
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		} finally {
-			if (aSession != null) {
-				if (aSession.isOpen())
-					aSession.close();
-			}
+			closeSessionIfOpen(aSession);
 		}
 
 	}
@@ -358,20 +317,12 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 			tx.commit();
 		} catch (HibernateException he) {
 			logException(he);
-
-			if (tx != null)
-				tx.rollback();
-
+			rollbackIfActive(tx);
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
-
 		} finally {
-			if (aSession != null) {
-				if (aSession.isOpen()) {
-					aSession.close();
-					LOGGER.debug("The [insertRole] occurs. Role cache will be cleaned.");
-					this.clearCache();
-				}
-			}
+			closeSessionIfOpen(aSession);
+			LOGGER.debug("The [insertRole] occurs. Role cache will be cleaned.");
+			this.clearCache();
 		}
 	}
 
@@ -453,26 +404,18 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 			tx.commit();
 		} catch (HibernateException he) {
 			logException(he);
-
-			if (tx != null)
-				tx.rollback();
-
+			rollbackIfActive(tx);
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
-
 		} finally {
-			if (aSession != null) {
-				if (aSession.isOpen()) {
-					aSession.close();
-					LOGGER.debug("The [eraseRole] occurs. Role cache will be cleaned.");
-					this.clearCache();
-				}
-			}
+			closeSessionIfOpen(aSession);
+			LOGGER.debug("The [eraseRole] occurs. Role cache will be cleaned.");
+			this.clearCache();
 		}
 	}
 
 	@Override
 	public void unsetOtherPublicRole(Session aSession) {
-		Criterion aCriterion = Expression.eq("isPublic", true);
+		Criterion aCriterion = Restrictions.eq("isPublic", true);
 		Criteria aCriteria = aSession.createCriteria(SbiExtRoles.class);
 		aCriteria.add(aCriterion);
 		SbiExtRoles hibRole = (SbiExtRoles) aCriteria.uniqueResult();
@@ -582,67 +525,62 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 			tx.commit();
 		} catch (HibernateException he) {
 			logException(he);
-
-			if (tx != null)
-				tx.rollback();
-
+			rollbackIfActive(tx);
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
-
 		} finally {
-			if (aSession != null) {
-				if (aSession.isOpen()) {
-					aSession.close();
-					LOGGER.debug("The [modifyRole] occurs. Role cache will be cleaned.");
-					this.clearCache();
-				}
-			}
+			closeSessionIfOpen(aSession);
+			LOGGER.debug("The [modifyRole] occurs. Role cache will be cleaned.");
+			this.clearCache();
 		}
 
 	}
 
 	private boolean isAbleTo(Role aRole, SbiAuthorizations authI) {
-		return (authI.getName().equals("SAVE_SUBOBJECTS") && aRole.isAbleToSaveSubobjects())
-				|| (authI.getName().equals("SEE_SUBOBJECTS") && aRole.isAbleToSeeSubobjects())
-				|| (authI.getName().equals("SEE_SNAPSHOTS") && aRole.isAbleToSeeSnapshots())
-				|| (authI.getName().equals("RUN_SNAPSHOTS") && aRole.isAbleToRunSnapshots())
-				|| (authI.getName().equals("SEE_VIEWPOINTS") && aRole.isAbleToSeeViewpoints())
-				|| (authI.getName().equals("SEE_NOTES") && aRole.isAbleToSeeNotes()) || (authI.getName().equals("SEE_METADATA") && aRole.isAbleToSeeMetadata())
-				|| (authI.getName().equals("SAVE_METADATA") && aRole.isAbleToSaveMetadata())
-				|| (authI.getName().equals("SEND_MAIL") && aRole.isAbleToSendMail())
-				|| (authI.getName().equals("SAVE_REMEMBER_ME") && aRole.isAbleToSaveRememberMe())
-				|| (authI.getName().equals("SAVE_INTO_FOLDER") && aRole.isAbleToSaveIntoPersonalFolder())
-				|| (authI.getName().equals("BUILD_QBE_QUERY") && aRole.isAbleToBuildQbeQuery())
-				|| (authI.getName().equals("DO_MASSIVE_EXPORT") && aRole.isAbleToDoMassiveExport())
-				|| (authI.getName().equals("MANAGE_USERS") && aRole.isAbleToManageUsers())
-				|| (authI.getName().equals("SEE_DOCUMENT_BROWSER") && aRole.isAbleToSeeDocumentBrowser())
-				|| (authI.getName().equals("SEE_FAVOURITES") && aRole.isAbleToSeeFavourites())
-				|| (authI.getName().equals("SEE_SUBSCRIPTIONS") && aRole.isAbleToSeeSubscriptions())
-				|| (authI.getName().equals("SEE_MY_DATA") && aRole.isAbleToSeeMyData())
-				|| (authI.getName().equals("SEE_MY_WORKSPACE") && aRole.isAbleToSeeMyWorkspace())
-				|| (authI.getName().equals("SEE_TODO_LIST") && aRole.isAbleToSeeToDoList())
-				|| (authI.getName().equals("KPI_COMMENT_EDIT_ALL") && aRole.isAbleToEditAllKpiComm())
-				|| (authI.getName().equals("KPI_COMMENT_EDIT_MY") && aRole.isAbleToEditMyKpiComm())
-				|| (authI.getName().equals("KPI_COMMENT_DELETE") && aRole.isAbleToDeleteKpiComm())
-				|| (authI.getName().equals("CREATE_DOCUMENTS") && aRole.isAbleToCreateDocuments())
-				|| (authI.getName().equals("CREATE_SOCIAL_ANALYSIS") && aRole.isAbleToCreateSocialAnalysis())
-				|| (authI.getName().equals("VIEW_SOCIAL_ANALYSIS") && aRole.isAbleToViewSocialAnalysis())
-				|| (authI.getName().equals("HIERARCHIES_MANAGEMENT") && aRole.isAbleToHierarchiesManagement())
-				|| (authI.getName().equals("ENABLE_DATASET_PERSISTENCE") && aRole.isAbleToEnableDatasetPersistence())
-				|| (authI.getName().equals("ENABLE_FEDERATED_DATASET") && aRole.isAbleToEnableFederatedDataset())
-				|| (authI.getName().equals("ENABLE_TO_RATE") && aRole.isAbleToEnableRate())
-				|| (authI.getName().equals("ENABLE_TO_PRINT") && aRole.isAbleToEnablePrint())
-				|| (authI.getName().equals("ENABLE_TO_COPY_AND_EMBED") && aRole.isAbleToEnableCopyAndEmbed())
-				|| (authI.getName().equals("MANAGE_GLOSSARY_BUSINESS") && aRole.isAbleToManageGlossaryBusiness())
-				|| (authI.getName().equals("MANAGE_GLOSSARY_TECHNICAL") && aRole.isAbleToManageGlossaryTechnical())
-				|| (authI.getName().equals("MANAGE_KPI_VALUE") && aRole.isAbleToManageKpiValue())
-				|| (authI.getName().equals("MANAGE_CALENDAR") && aRole.isAbleToManageCalendar())
-				|| (authI.getName().equals("FUNCTIONS_CATALOG_USAGE") && aRole.isAbleToUseFunctionsCatalog())
-				|| (authI.getName().equals("MANAGE_INTERNATIONALIZATION") && aRole.isAbleToManageInternationalization())
-				|| (authI.getName().equals("CREATE_SELF_SERVICE_COCKPIT") && aRole.isAbleToCreateSelfServiceCockpit())
-				|| (authI.getName().equals("CREATE_SELF_SERVICE_KPI") && aRole.isAbleToCreateSelfServiceKpi())
-				|| (authI.getName().equals("CREATE_SELF_SERVICE_GEOREPORT") && aRole.isAbleToCreateSelfServiceGeoreport())
-				|| (authI.getName().equals("EDIT_PYTHON_SCRIPTS") && aRole.isAbleToEditPythonScripts())
-				|| (authI.getName().equals("CREATE_CUSTOM_CHART") && aRole.isAbleToCreateCustomChart());
+		return (authI.getName().equals("SAVE_SUBOBJECTS") && aRole.getAbleToSaveSubobjects())
+				|| (authI.getName().equals("SEE_SUBOBJECTS") && aRole.getAbleToSeeSubobjects())
+				|| (authI.getName().equals("SEE_SNAPSHOTS") && aRole.getAbleToSeeSnapshots())
+				|| (authI.getName().equals("RUN_SNAPSHOTS") && aRole.getAbleToRunSnapshots())
+				|| (authI.getName().equals("SEE_VIEWPOINTS") && aRole.getAbleToSeeViewpoints())
+				|| (authI.getName().equals("SEE_NOTES") && aRole.getAbleToSeeNotes())
+				|| (authI.getName().equals("SEE_METADATA") && aRole.getAbleToSeeMetadata())
+				|| (authI.getName().equals("SAVE_METADATA") && aRole.getAbleToSaveMetadata())
+				|| (authI.getName().equals("SEND_MAIL") && aRole.getAbleToSendMail())
+				|| (authI.getName().equals("SAVE_REMEMBER_ME") && aRole.getAbleToSaveRememberMe())
+				|| (authI.getName().equals("SAVE_INTO_FOLDER") && aRole.getAbleToSaveIntoPersonalFolder())
+				|| (authI.getName().equals("BUILD_QBE_QUERY") && aRole.getAbleToBuildQbeQuery())
+				|| (authI.getName().equals("DO_MASSIVE_EXPORT") && aRole.getAbleToDoMassiveExport())
+				|| (authI.getName().equals("MANAGE_USERS") && aRole.getAbleToManageUsers())
+				|| (authI.getName().equals("SEE_DOCUMENT_BROWSER") && aRole.getAbleToSeeDocumentBrowser())
+				|| (authI.getName().equals("SEE_FAVOURITES") && aRole.getAbleToSeeFavourites())
+				|| (authI.getName().equals("SEE_SUBSCRIPTIONS") && aRole.getAbleToSeeSubscriptions())
+				|| (authI.getName().equals("SEE_MY_DATA") && aRole.getAbleToSeeMyData())
+				|| (authI.getName().equals("SEE_MY_WORKSPACE") && aRole.getAbleToSeeMyWorkspace())
+				|| (authI.getName().equals("SEE_TODO_LIST") && aRole.getAbleToSeeToDoList())
+				|| (authI.getName().equals("KPI_COMMENT_EDIT_ALL") && aRole.getAbleToEditAllKpiComm())
+				|| (authI.getName().equals("KPI_COMMENT_EDIT_MY") && aRole.getAbleToEditMyKpiComm())
+				|| (authI.getName().equals("KPI_COMMENT_DELETE") && aRole.getAbleToDeleteKpiComm())
+				|| (authI.getName().equals("CREATE_DOCUMENTS") && aRole.getAbleToCreateDocuments())
+				|| (authI.getName().equals("CREATE_SOCIAL_ANALYSIS") && aRole.getAbleToCreateSocialAnalysis())
+				|| (authI.getName().equals("VIEW_SOCIAL_ANALYSIS") && aRole.getAbleToViewSocialAnalysis())
+				|| (authI.getName().equals("HIERARCHIES_MANAGEMENT") && aRole.getAbleToHierarchiesManagement())
+				|| (authI.getName().equals("ENABLE_DATASET_PERSISTENCE") && aRole.getAbleToEnableDatasetPersistence())
+				|| (authI.getName().equals("ENABLE_FEDERATED_DATASET") && aRole.getAbleToEnableFederatedDataset())
+				|| (authI.getName().equals("ENABLE_TO_RATE") && aRole.getAbleToEnableRate())
+				|| (authI.getName().equals("ENABLE_TO_PRINT") && aRole.getAbleToEnablePrint())
+				|| (authI.getName().equals("ENABLE_TO_COPY_AND_EMBED") && aRole.getAbleToEnableCopyAndEmbed())
+				|| (authI.getName().equals("MANAGE_GLOSSARY_BUSINESS") && aRole.getAbleToManageGlossaryBusiness())
+				|| (authI.getName().equals("MANAGE_GLOSSARY_TECHNICAL") && aRole.getAbleToManageGlossaryTechnical())
+				|| (authI.getName().equals("MANAGE_KPI_VALUE") && aRole.getAbleToManageKpiValue())
+				|| (authI.getName().equals("MANAGE_CALENDAR") && aRole.getAbleToManageCalendar())
+				|| (authI.getName().equals("FUNCTIONS_CATALOG_USAGE") && aRole.getAbleToUseFunctionsCatalog())
+				|| (authI.getName().equals("MANAGE_INTERNATIONALIZATION")
+						&& aRole.getAbleToManageInternationalization())
+				|| (authI.getName().equals("CREATE_SELF_SERVICE_COCKPIT") && aRole.getAbleToCreateSelfServiceCockpit())
+				|| (authI.getName().equals("CREATE_SELF_SERVICE_KPI") && aRole.getAbleToCreateSelfServiceKpi())
+				|| (authI.getName().equals("CREATE_SELF_SERVICE_GEOREPORT")
+						&& aRole.getAbleToCreateSelfServiceGeoreport())
+				|| (authI.getName().equals("EDIT_PYTHON_SCRIPTS") && aRole.getAbleToEditPythonScripts())
+				|| (authI.getName().equals("CREATE_CUSTOM_CHART") && aRole.getAbleToCreateCustomChart());
 	}
 
 	/**
@@ -695,17 +633,10 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 			tx.commit();
 		} catch (HibernateException he) {
 			logException(he);
-
-			if (tx != null)
-				tx.rollback();
-
+			rollbackIfActive(tx);
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
-
 		} finally {
-			if (aSession != null) {
-				if (aSession.isOpen())
-					aSession.close();
-			}
+			closeSessionIfOpen(aSession);
 		}
 		return realResult;
 	}
@@ -742,7 +673,8 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 			 * " and s.id.sbiParuse.label != '" + sbiParuse.getLabel()+ "'";
 			 */
 
-			String hql = "from SbiParuseDet s " + " where s.id.sbiParuse.sbiParameters.parId = ? " + " and s.id.sbiParuse.label != ? ";
+			String hql = "from SbiParuseDet s " + " where s.id.sbiParuse.sbiParameters.parId = ? "
+					+ " and s.id.sbiParuse.label != ? ";
 
 			Query hqlQuery = aSession.createQuery(hql);
 			hqlQuery.setInteger(0, sbiParuse.getSbiParameters().getParId().intValue());
@@ -769,17 +701,10 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 			tx.commit();
 		} catch (HibernateException he) {
 			logException(he);
-
-			if (tx != null)
-				tx.rollback();
-
+			rollbackIfActive(tx);
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
-
 		} finally {
-			if (aSession != null) {
-				if (aSession.isOpen())
-					aSession.close();
-			}
+			closeSessionIfOpen(aSession);
 		}
 		return realResult;
 	}
@@ -824,82 +749,82 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 
 			String name = f.getName();
 			if (name.equals("EDIT_PYTHON_SCRIPTS")) {
-				role.setIsAbleToEditPythonScripts(true);
+				role.setAbleToEditPythonScripts(true);
 			}
 			if (name.equals("CREATE_CUSTOM_CHART")) {
-				role.setIsAbleToCreateCustomChart(true);
+				role.setAbleToCreateCustomChart(true);
 			}
 			if (name.equals("SAVE_SUBOBJECTS")) {
-				role.setIsAbleToSaveSubobjects(true);
+				role.setAbleToSaveSubobjects(true);
 			}
 			if (name.equals("SEE_SUBOBJECTS")) {
-				role.setIsAbleToSeeSubobjects(true);
+				role.setAbleToSeeSubobjects(true);
 			}
 			if (name.equals("SEE_VIEWPOINTS")) {
-				role.setIsAbleToSeeViewpoints(true);
+				role.setAbleToSeeViewpoints(true);
 			}
 			if (name.equals("SEE_SNAPSHOTS")) {
-				role.setIsAbleToSeeSnapshots(true);
+				role.setAbleToSeeSnapshots(true);
 			}
 			if (name.equals("RUN_SNAPSHOTS")) {
-				role.setIsAbleToRunSnapshots(true);
+				role.setAbleToRunSnapshots(true);
 			}
 			if (name.equals("SEE_NOTES")) {
-				role.setIsAbleToSeeNotes(true);
+				role.setAbleToSeeNotes(true);
 			}
 			if (name.equals("SEND_MAIL")) {
-				role.setIsAbleToSendMail(true);
+				role.setAbleToSendMail(true);
 			}
 			if (name.equals("SAVE_INTO_FOLDER")) {
-				role.setIsAbleToSaveIntoPersonalFolder(true);
+				role.setAbleToSaveIntoPersonalFolder(true);
 			}
 			if (name.equals("SAVE_REMEMBER_ME")) {
-				role.setIsAbleToSaveRememberMe(true);
+				role.setAbleToSaveRememberMe(true);
 			}
 			if (name.equals("SEE_METADATA")) {
-				role.setIsAbleToSeeMetadata(true);
+				role.setAbleToSeeMetadata(true);
 			}
 			if (name.equals("SAVE_METADATA")) {
-				role.setIsAbleToSaveMetadata(true);
+				role.setAbleToSaveMetadata(true);
 			}
 			if (name.equals("BUILD_QBE_QUERY")) {
-				role.setIsAbleToBuildQbeQuery(true);
+				role.setAbleToBuildQbeQuery(true);
 			}
 			if (name.equals("DO_MASSIVE_EXPORT")) {
-				role.setIsAbleToDoMassiveExport(true);
+				role.setAbleToDoMassiveExport(true);
 			}
 			if (name.equals("MANAGE_USERS")) {
-				role.setIsAbleToManageUsers(true);
+				role.setAbleToManageUsers(true);
 			}
 			if (name.equals("SEE_DOCUMENT_BROWSER")) {
-				role.setIsAbleToSeeDocumentBrowser(true);
+				role.setAbleToSeeDocumentBrowser(true);
 			}
 			if (name.equals("SEE_FAVOURITES")) {
-				role.setIsAbleToSeeFavourites(true);
+				role.setAbleToSeeFavourites(true);
 			}
 			if (name.equals("SEE_SUBSCRIPTIONS")) {
-				role.setIsAbleToSeeSubscriptions(true);
+				role.setAbleToSeeSubscriptions(true);
 			}
 			if (name.equals("SEE_MY_DATA")) {
-				role.setIsAbleToSeeMyData(true);
+				role.setAbleToSeeMyData(true);
 			}
 			if (name.equals("SEE_MY_WORKSPACE")) {
-				role.setIsAbleToSeeMyWorkspace(true);
+				role.setAbleToSeeMyWorkspace(true);
 			}
 			if (name.equals("SEE_TODO_LIST")) {
-				role.setIsAbleToSeeToDoList(true);
+				role.setAbleToSeeToDoList(true);
 			}
 			if (name.equals("CREATE_DOCUMENTS")) {
-				role.setIsAbleToCreateDocuments(true);
+				role.setAbleToCreateDocuments(true);
 			}
 			if (name.equals("CREATE_SOCIAL_ANALYSIS")) {
-				role.setIsAbleToCreateSocialAnalysis(true);
+				role.setAbleToCreateSocialAnalysis(true);
 			}
 			if (name.equals("VIEW_SOCIAL_ANALYSIS")) {
-				role.setIsAbleToViewSocialAnalysis(true);
+				role.setAbleToViewSocialAnalysis(true);
 			}
 			if (name.equals("HIERARCHIES_MANAGEMENT")) {
-				role.setIsAbleToHierarchiesManagement(true);
+				role.setAbleToHierarchiesManagement(true);
 			}
 			if (name.equals("KPI_COMMENT_EDIT_ALL")) {
 				role.setAbleToEditAllKpiComm(true);
@@ -911,19 +836,19 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 				role.setAbleToDeleteKpiComm(true);
 			}
 			if (name.equals("ENABLE_DATASET_PERSISTENCE")) {
-				role.setIsAbleToEnableDatasetPersistence(true);
+				role.setAbleToEnableDatasetPersistence(true);
 			}
 			if (name.equals("ENABLE_FEDERATED_DATASET")) {
-				role.setIsAbleToEnableFederatedDataset(true);
+				role.setAbleToEnableFederatedDataset(true);
 			}
 			if (name.equals("ENABLE_TO_RATE")) {
-				role.setIsAbleToEnableRate(true);
+				role.setAbleToEnableRate(true);
 			}
 			if (name.equals("ENABLE_TO_PRINT")) {
-				role.setIsAbleToEnablePrint(true);
+				role.setAbleToEnablePrint(true);
 			}
 			if (name.equals("ENABLE_TO_COPY_AND_EMBED")) {
-				role.setIsAbleToEnableCopyAndEmbed(true);
+				role.setAbleToEnableCopyAndEmbed(true);
 			}
 			if (name.equals("MANAGE_GLOSSARY_BUSINESS")) {
 				role.setAbleToManageGlossaryBusiness(true);
@@ -982,8 +907,9 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 			 * " and r.extRoleId = fr.id.role.extRoleId " +" and r.extRoleId = " + roleID;
 			 */
 
-			String hql = "select f from SbiFunctions f, SbiFuncRole fr, SbiExtRoles r " + " where f.functId = fr.id.function.functId "
-					+ " and r.extRoleId = fr.id.role.extRoleId " + " and r.extRoleId = ?";
+			String hql = "select f from SbiFunctions f, SbiFuncRole fr, SbiExtRoles r "
+					+ " where f.functId = fr.id.function.functId " + " and r.extRoleId = fr.id.role.extRoleId "
+					+ " and r.extRoleId = ?";
 
 			Query hqlQuery = aSession.createQuery(hql);
 			hqlQuery.setInteger(0, roleID.intValue());
@@ -991,14 +917,10 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 			tx.commit();
 		} catch (HibernateException he) {
 			logException(he);
-			if (tx != null)
-				tx.rollback();
+			rollbackIfActive(tx);
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		} finally {
-			if (aSession != null) {
-				if (aSession.isOpen())
-					aSession.close();
-			}
+			closeSessionIfOpen(aSession);
 		}
 		return functs;
 	}
@@ -1023,8 +945,9 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 			 * " and r.extRoleId = pud.id.sbiExtRoles.extRoleId " + " and r.extRoleId = " + roleID;
 			 */
 
-			String hql = "select pu from SbiParuseDet pud, SbiParuse pu, SbiExtRoles r " + " where pu.useId = pud.id.sbiParuse.useId "
-					+ " and r.extRoleId = pud.id.sbiExtRoles.extRoleId " + " and r.extRoleId = ?";
+			String hql = "select pu from SbiParuseDet pud, SbiParuse pu, SbiExtRoles r "
+					+ " where pu.useId = pud.id.sbiParuse.useId " + " and r.extRoleId = pud.id.sbiExtRoles.extRoleId "
+					+ " and r.extRoleId = ?";
 
 			Query hqlQuery = aSession.createQuery(hql);
 			hqlQuery.setInteger(0, roleID.intValue());
@@ -1032,14 +955,10 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 			tx.commit();
 		} catch (HibernateException he) {
 			logException(he);
-			if (tx != null)
-				tx.rollback();
+			rollbackIfActive(tx);
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		} finally {
-			if (aSession != null) {
-				if (aSession.isOpen())
-					aSession.close();
-			}
+			closeSessionIfOpen(aSession);
 		}
 		return uses;
 	}
@@ -1069,7 +988,7 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 			hibRole.setRoleType(roleType);
 
 			hibRole.setRoleTypeCode(role.getRoleTypeCD());
-			HashSet<SbiAuthorizationsRoles> functs = new HashSet<SbiAuthorizationsRoles>();
+			HashSet<SbiAuthorizationsRoles> functs = new HashSet<>();
 
 			updateSbiCommonInfo4Insert(hibRole);
 			roleId = (Integer) aSession.save(hibRole);
@@ -1122,20 +1041,12 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 
 		} catch (HibernateException he) {
 			logException(he);
-
-			if (tx != null)
-				tx.rollback();
-
+			rollbackIfActive(tx);
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
-
 		} finally {
-			if (aSession != null) {
-				if (aSession.isOpen()) {
-					aSession.close();
-					LOGGER.debug("OUT");
-					this.clearCache();
-				}
-			}
+			closeSessionIfOpen(aSession);
+			LOGGER.debug("OUT");
+			this.clearCache();
 		}
 		return roleId;
 	}
@@ -1158,16 +1069,11 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 
 		} catch (HibernateException he) {
 			LOGGER.error("Error while loading the list of SbiExtRoles", he);
-			if (tx != null)
-				tx.rollback();
+			rollbackIfActive(tx);
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 9104);
-
 		} finally {
-			if (aSession != null) {
-				if (aSession.isOpen())
-					aSession.close();
-				LOGGER.debug("OUT");
-			}
+			closeSessionIfOpen(aSession);
+			LOGGER.debug("OUT");
 		}
 		return resultNumber;
 	}
@@ -1216,16 +1122,11 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 
 		} catch (HibernateException he) {
 			LOGGER.error("Error while loading the list of SbiExtRoles", he);
-			if (tx != null)
-				tx.rollback();
+			rollbackIfActive(tx);
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 9104);
-
 		} finally {
-			if (aSession != null) {
-				if (aSession.isOpen())
-					aSession.close();
-				LOGGER.debug("OUT");
-			}
+			closeSessionIfOpen(aSession);
+			LOGGER.debug("OUT");
 		}
 		return toReturn;
 	}
@@ -1262,22 +1163,13 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 			tx.commit();
 		} catch (HibernateException he) {
 			logException(he);
-
-			if (tx != null)
-				tx.rollback();
-
+			rollbackIfActive(tx);
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
-
 		} finally {
-			if (aSession != null) {
-				if (aSession.isOpen()) {
-					aSession.close();
-					LOGGER.debug("The [insertRoleMetaModelCategory] occurs. Role cache will be cleaned.");
-					this.clearCache();
-				}
-				LOGGER.debug("OUT");
-
-			}
+			closeSessionIfOpen(aSession);
+			LOGGER.debug("The [insertRoleMetaModelCategory] occurs. Role cache will be cleaned.");
+			this.clearCache();
+			LOGGER.debug("OUT");
 		}
 
 	}
@@ -1306,7 +1198,8 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 					metaModelCategories.remove(category);
 					hibRole.setSbiMetaModelCategories(metaModelCategories);
 				} else {
-					LOGGER.debug("Category " + category.getName() + " is not associated to the role " + hibRole.getName());
+					LOGGER.debug(
+							"Category " + category.getName() + " is not associated to the role " + hibRole.getName());
 				}
 
 			}
@@ -1316,22 +1209,13 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 			tx.commit();
 		} catch (HibernateException he) {
 			logException(he);
-
-			if (tx != null)
-				tx.rollback();
-
+			rollbackIfActive(tx);
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
-
 		} finally {
-			if (aSession != null) {
-				if (aSession.isOpen()) {
-					aSession.close();
-					LOGGER.debug("The [removeRoleMetaModelCategory] occurs. Role cache will be cleaned.");
-					this.clearCache();
-				}
-				LOGGER.debug("OUT");
-
-			}
+			closeSessionIfOpen(aSession);
+			LOGGER.debug("The [removeRoleMetaModelCategory] occurs. Role cache will be cleaned.");
+			this.clearCache();
+			LOGGER.debug("OUT");
 		}
 	}
 
@@ -1344,7 +1228,7 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 	public List<RoleMetaModelCategory> getMetaModelCategoriesForRole(Integer roleId) throws EMFUserError {
 		Session aSession = null;
 		Transaction tx = null;
-		List<RoleMetaModelCategory> categories = new ArrayList<RoleMetaModelCategory>();
+		List<RoleMetaModelCategory> categories = new ArrayList<>();
 		try {
 			aSession = getSession();
 			tx = aSession.beginTransaction();
@@ -1364,17 +1248,10 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 			tx.commit();
 		} catch (HibernateException he) {
 			logException(he);
-
-			if (tx != null)
-				tx.rollback();
-
+			rollbackIfActive(tx);
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
-
 		} finally {
-			if (aSession != null) {
-				if (aSession.isOpen())
-					aSession.close();
-			}
+			closeSessionIfOpen(aSession);
 		}
 		return categories;
 	}
@@ -1388,7 +1265,7 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 	public List<RoleMetaModelCategory> getDataSetCategoriesForRole(String roleName) throws EMFUserError {
 		Session aSession = null;
 
-		List<RoleMetaModelCategory> categories = new ArrayList<RoleMetaModelCategory>();
+		List<RoleMetaModelCategory> categories = new ArrayList<>();
 		try {
 			aSession = getSession();
 			SbiExtRoles sbiExtRole = loadByNameInSession(roleName, aSession);
@@ -1412,10 +1289,7 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 
 		} finally {
-			if (aSession != null) {
-				if (aSession.isOpen())
-					aSession.close();
-			}
+			closeSessionIfOpen(aSession);
 		}
 		return categories;
 	}
@@ -1459,7 +1333,7 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 
 			Set<SbiDomains> dataSetCategories = hibRole.getSbiDataSetCategories();
 			if (dataSetCategories == null) {
-				dataSetCategories = new HashSet<SbiDomains>();
+				dataSetCategories = new HashSet<>();
 			}
 			dataSetCategories.add(category);
 			hibRole.setSbiDataSetCategories(dataSetCategories);
@@ -1474,22 +1348,13 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 			tx.commit();
 		} catch (HibernateException he) {
 			logException(he);
-
-			if (tx != null)
-				tx.rollback();
-
+			rollbackIfActive(tx);
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
-
 		} finally {
-			if (aSession != null) {
-				if (aSession.isOpen()) {
-					aSession.close();
-					LOGGER.debug("The [insertRoleDataSetCategory] occurs. Role cache will be cleaned.");
-					this.clearCache();
-				}
-				LOGGER.debug("OUT");
-
-			}
+			closeSessionIfOpen(aSession);
+			LOGGER.debug("The [insertRoleDataSetCategory] occurs. Role cache will be cleaned.");
+			this.clearCache();
+			LOGGER.debug("OUT");
 		}
 
 	}
@@ -1521,7 +1386,8 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 
 					hibRole.setSbiDataSetCategories(dataSetCategories);
 				} else {
-					LOGGER.debug("Category " + category.getValueNm() + " is not associated to the role " + hibRole.getName());
+					LOGGER.debug("Category " + category.getValueNm() + " is not associated to the role "
+							+ hibRole.getName());
 				}
 
 			}
@@ -1532,22 +1398,13 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 			tx.commit();
 		} catch (HibernateException he) {
 			logException(he);
-
-			if (tx != null)
-				tx.rollback();
-
+			rollbackIfActive(tx);
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
-
 		} finally {
-			if (aSession != null) {
-				if (aSession.isOpen()) {
-					aSession.close();
-					LOGGER.debug("The [removeRoleDataSetCategory] occurs. Role cache will be cleaned.");
-					this.clearCache();
-				}
-				LOGGER.debug("OUT");
-
-			}
+			closeSessionIfOpen(aSession);
+			LOGGER.debug("The [removeRoleDataSetCategory] occurs. Role cache will be cleaned.");
+			this.clearCache();
+			LOGGER.debug("OUT");
 		}
 	}
 
@@ -1574,14 +1431,10 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 			tx.commit();
 		} catch (HibernateException he) {
 			logException(he);
-			if (tx != null)
-				tx.rollback();
+			rollbackIfActive(tx);
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		} finally {
-			if (aSession != null) {
-				if (aSession.isOpen())
-					aSession.close();
-			}
+			closeSessionIfOpen(aSession);
 		}
 		LOGGER.debug("OUT");
 		return functs;
@@ -1594,7 +1447,8 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 	 * @throws EMFUserError the EMF user error
 	 */
 	@Override
-	public List<SbiAuthorizations> loadAllAuthorizationsByProductTypes(List<Integer> productTypesIds) throws EMFUserError {
+	public List<SbiAuthorizations> loadAllAuthorizationsByProductTypes(List<Integer> productTypesIds)
+			throws EMFUserError {
 		List functs = new ArrayList();
 		LOGGER.debug("IN");
 		Session aSession = null;
@@ -1611,14 +1465,10 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 			tx.commit();
 		} catch (HibernateException he) {
 			logException(he);
-			if (tx != null)
-				tx.rollback();
+			rollbackIfActive(tx);
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		} finally {
-			if (aSession != null) {
-				if (aSession.isOpen())
-					aSession.close();
-			}
+			closeSessionIfOpen(aSession);
 		}
 		LOGGER.debug("OUT");
 		return functs;
@@ -1648,14 +1498,10 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 			tx.commit();
 		} catch (HibernateException he) {
 			logException(he);
-			if (tx != null)
-				tx.rollback();
+			rollbackIfActive(tx);
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		} finally {
-			if (aSession != null) {
-				if (aSession.isOpen())
-					aSession.close();
-			}
+			closeSessionIfOpen(aSession);
 		}
 		LOGGER.debug("OUT");
 		return functs;
@@ -1677,8 +1523,9 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 		try {
 			aSession = getSession();
 			tx = aSession.beginTransaction();
-			String hql = "select f from SbiAuthorizations f, SbiAuthorizationsRoles fr, SbiExtRoles r " + " where f.id = fr.sbiAuthorizations.id"
-					+ " and r.extRoleId = fr.sbiExtRoles.extRoleId " + " and r.extRoleId = ?";
+			String hql = "select f from SbiAuthorizations f, SbiAuthorizationsRoles fr, SbiExtRoles r "
+					+ " where f.id = fr.sbiAuthorizations.id" + " and r.extRoleId = fr.sbiExtRoles.extRoleId "
+					+ " and r.extRoleId = ?";
 
 			Query hqlQuery = aSession.createQuery(hql);
 			hqlQuery.setInteger(0, roleID.intValue());
@@ -1686,15 +1533,10 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 			tx.commit();
 		} catch (HibernateException he) {
 			logException(he);
-			if (tx != null)
-				tx.rollback();
-
+			rollbackIfActive(tx);
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		} finally {
-			if (aSession != null) {
-				if (aSession.isOpen())
-					aSession.close();
-			}
+			closeSessionIfOpen(aSession);
 		}
 		LOGGER.debug("OUT");
 		return functs;
@@ -1710,14 +1552,15 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 	@Override
 	public List<SbiAuthorizationsRoles> LoadAuthorizationsRolesAssociatedToRole(Integer roleID) throws EMFUserError {
 		LOGGER.debug("IN");
-		List<SbiAuthorizationsRoles> functs = new ArrayList<SbiAuthorizationsRoles>();
+		List<SbiAuthorizationsRoles> functs = new ArrayList<>();
 		Session aSession = null;
 		Transaction tx = null;
 		try {
 			aSession = getSession();
 			tx = aSession.beginTransaction();
-			String hql = "select fr from SbiAuthorizations f, SbiAuthorizationsRoles fr, SbiExtRoles r " + " where f.id = fr.sbiAuthorizations.id"
-					+ " and r.extRoleId = fr.sbiExtRoles.extRoleId " + " and r.extRoleId = ?";
+			String hql = "select fr from SbiAuthorizations f, SbiAuthorizationsRoles fr, SbiExtRoles r "
+					+ " where f.id = fr.sbiAuthorizations.id" + " and r.extRoleId = fr.sbiExtRoles.extRoleId "
+					+ " and r.extRoleId = ?";
 
 			Query hqlQuery = aSession.createQuery(hql);
 			hqlQuery.setInteger(0, roleID.intValue());
@@ -1731,14 +1574,10 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 			tx.commit();
 		} catch (HibernateException he) {
 			logException(he);
-			if (tx != null)
-				tx.rollback();
+			rollbackIfActive(tx);
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		} finally {
-			if (aSession != null) {
-				if (aSession.isOpen())
-					aSession.close();
-			}
+			closeSessionIfOpen(aSession);
 		}
 		LOGGER.debug("OUT");
 		return functs;
@@ -1749,8 +1588,9 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 		LOGGER.debug("IN");
 
 		try {
-			String hql = "select fr from SbiAuthorizations f, SbiAuthorizationsRoles fr, SbiExtRoles r " + " where f.id = fr.sbiAuthorizations.id"
-					+ " and r.extRoleId = fr.sbiExtRoles.extRoleId " + " and r.extRoleId = ?";
+			String hql = "select fr from SbiAuthorizations f, SbiAuthorizationsRoles fr, SbiExtRoles r "
+					+ " where f.id = fr.sbiAuthorizations.id" + " and r.extRoleId = fr.sbiExtRoles.extRoleId "
+					+ " and r.extRoleId = ?";
 
 			Query hqlQuery = currSessionDB.createQuery(hql);
 			hqlQuery.setInteger(0, roleID.intValue());
@@ -1794,20 +1634,12 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 			tx.commit();
 		} catch (HibernateException he) {
 			logException(he);
-
-			if (tx != null)
-				tx.rollback();
-
+			rollbackIfActive(tx);
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
-
 		} finally {
-			if (aSession != null) {
-				if (aSession.isOpen()) {
-					aSession.close();
-					LOGGER.debug("The [eraseAuthorizationsRolesAssociatedToRole] occurs. Role cache will be cleaned.");
-					this.clearCache();
-				}
-			}
+			closeSessionIfOpen(aSession);
+			LOGGER.debug("The [eraseAuthorizationsRolesAssociatedToRole] occurs. Role cache will be cleaned.");
+			this.clearCache();
 		}
 
 		LOGGER.debug("OUT");
@@ -1825,7 +1657,7 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 	}
 
 	private Set<Integer> findProductTypesId(Session aSession, String tenant) {
-		Set<Integer> productTypesId = new HashSet<Integer>();
+		Set<Integer> productTypesId = new HashSet<>();
 
 		String hql = "from SbiOrganizationProductType opt where opt.commonInfo.organization=?";
 		Query query = aSession.createQuery(hql);
@@ -1865,7 +1697,8 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 					}
 				}
 			} catch (Throwable t) {
-				throw new SpagoBIRuntimeException("Error while getting a Role cache item with key " + key + " for tenant " + tenantId, t);
+				throw new SpagoBIRuntimeException(
+						"Error while getting a Role cache item with key " + key + " for tenant " + tenantId, t);
 			}
 		}
 		LOGGER.debug("OUT");
@@ -1898,17 +1731,10 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 			tx.commit();
 		} catch (HibernateException he) {
 			logException(he);
-
-			if (tx != null)
-				tx.rollback();
-
+			rollbackIfActive(tx);
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
-
 		} finally {
-			if (aSession != null) {
-				if (aSession.isOpen())
-					aSession.close();
-			}
+			closeSessionIfOpen(aSession);
 		}
 		return toReturn;
 	}
@@ -1930,7 +1756,8 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 				}
 				cacheManager.getCache(cacheName).put(new Element(key, role));
 			} catch (Throwable t) {
-				throw new SpagoBIRuntimeException("Error while putting Role cache item with key " + key + " for tenant " + tenantId, t);
+				throw new SpagoBIRuntimeException(
+						"Error while putting Role cache item with key " + key + " for tenant " + tenantId, t);
 			}
 		}
 		LOGGER.debug("OUT");
@@ -1952,7 +1779,8 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 				}
 				// else nothing to do, no cache manager exists
 			} catch (Throwable t) {
-				throw new SpagoBIRuntimeException("Error during Role cache full cleaning process for tenant " + tenantId, t);
+				throw new SpagoBIRuntimeException(
+						"Error during Role cache full cleaning process for tenant " + tenantId, t);
 			}
 		}
 	}

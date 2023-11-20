@@ -27,13 +27,11 @@ public class HtmlSanitizer {
 
 	private static final Pattern IMG_SRC_DATA = Pattern.compile("^data:image/.*$");
 
-	private PolicyFactory policy;
+	private final PolicyFactory policy;
 
-	private IWhiteList whiteList;
+	private final IWhiteList whiteList;
 
 	public HtmlSanitizer(IWhiteList whiteList) {
-		super();
-
 		Objects.requireNonNull(whiteList);
 
 		Map<String, Property> stylePropertiesInSVGMap = new HashMap<>();
@@ -47,8 +45,11 @@ public class HtmlSanitizer {
 		Property strokeLineJoinProperty = new Property(1, ImmutableSet.of("miter"), ImmutableMap.of());
 		Property strokeOpacityProperty = new Property(1, ImmutableSet.of(), ImmutableMap.of());
 		Property strokeWidthProperty = new Property(1, ImmutableSet.of("auto", "inherit"), ImmutableMap.of());
-		Property cursorProperty = new Property(8, ImmutableSet.of("pointer","default","move","not-allowed","grab","help","progress","grab"), ImmutableMap.of());
-		Property flexProperty = new Property(4, ImmutableSet.of("0","1","2","3","4","unset","inherit"), ImmutableMap.of());
+		Property cursorProperty = new Property(8,
+				ImmutableSet.of("pointer", "default", "move", "not-allowed", "grab", "help", "progress", "grab"),
+				ImmutableMap.of());
+		Property flexProperty = new Property(4, ImmutableSet.of("0", "1", "2", "3", "4", "unset", "inherit"),
+				ImmutableMap.of());
 
 		stylePropertiesInSVGMap.put("fill", allValsProperty);
 		stylePropertiesInSVGMap.put("fill-opacity", fillOpacityProperty);
@@ -92,11 +93,11 @@ public class HtmlSanitizer {
 				// Knowage
 				.allowAttributes("kn-cross", "kn-if", "kn-import", "kn-repeat", "kn-preview", "kn-selection-column", "kn-selection-value", "kn-message", "limit").globally()
 				// SVG
-				.allowElements("circle", "defs", "foreignobject", "g", "metadata", "path", "svg", "text", "tspan")
+				.allowElements("circle", "defs", "foreignobject", "g", "linearGradient", "metadata", "path", "stop", "svg", "text", "tspan")
 				.allowElements("dc:format", "dc:title", "dc:type")
 				.allowElements("cc:Work")
 				.allowElements("rdf:RDF")
-				.allowAttributes("aria-labelledby", "cx", "cy", "d", "fill", "id", "r", "role", "stroke", "stroke-dasharray", "stroke-dashoffset", "stroke-width", "transform", "viewBox", "version", "x", "y").globally()
+				.allowAttributes("aria-labelledby", "cx", "cy", "d", "fill", "gradientUnits", "id", "offset", "r", "role", "stop-color", "stroke", "stroke-dasharray", "stroke-dashoffset", "stroke-width", "transform", "viewBox", "version", "x", "x1", "x2", "y", "y1", "y2").globally()
 				.allowAttributes("rdf:about", "rdf:resource").globally()
 				.allowAttributes("sodipodi:docname").globally()
 				.allowAttributes("xml:space").globally()
@@ -213,7 +214,8 @@ public class HtmlSanitizer {
 
 		boolean ret = validValues.stream().anyMatch(url::startsWith);
 
-		LOGGER.debug("Checking if {} is in whitelist as external service giving the following {}: {} ", url, validValues, ret);
+		LOGGER.debug("Checking if {} is in whitelist as external service giving the following {}: {} ", url,
+				validValues, ret);
 
 		return ret;
 	}
@@ -223,7 +225,8 @@ public class HtmlSanitizer {
 
 		boolean ret = validValues.stream().anyMatch(url::startsWith);
 
-		LOGGER.debug("Checking if {} is in whitelist as relative path giving the following {}: {} ", url, validValues, ret);
+		LOGGER.debug("Checking if {} is in whitelist as relative path giving the following {}: {} ", url, validValues,
+				ret);
 
 		return ret;
 	}

@@ -236,7 +236,7 @@ public class RestUtilities {
 		return o;
 	}
 
-	public static enum HttpMethod {
+	public enum HttpMethod {
 		Get, Post, Put, Delete
 	}
 
@@ -304,13 +304,13 @@ public class RestUtilities {
 		HttpMethodBase method = getMethod(httpMethod, address);
 		if (requestHeaders != null) {
 			for (Entry<String, String> entry : requestHeaders.entrySet()) {
-				method.addRequestHeader(entry.getKey(), entry.getValue());
+				RestUtilities.addHeadersToRequest(entry, method);
 			}
 		}
 		if (queryParams != null && !queryParams.isEmpty()) {
 			// add uri query params to provided query params present in query
 			List<NameValuePair> addressPairs = getAddressPairs(address);
-			List<NameValuePair> totalPairs = new ArrayList<NameValuePair>(addressPairs);
+			List<NameValuePair> totalPairs = new ArrayList<>(addressPairs);
 			totalPairs.addAll(queryParams);
 			method.setQueryString(totalPairs.toArray(new NameValuePair[queryParams.size()]));
 		}
@@ -348,13 +348,13 @@ public class RestUtilities {
 		final HttpMethodBase method = getMethod(httpMethod, address);
 		if (requestHeaders != null) {
 			for (Entry<String, String> entry : requestHeaders.entrySet()) {
-				method.addRequestHeader(entry.getKey(), entry.getValue());
+				RestUtilities.addHeadersToRequest(entry, method);
 			}
 		}
 		if (queryParams != null) {
 			// add uri query params to provided query params present in query
 			List<NameValuePair> addressPairs = getAddressPairs(address);
-			List<NameValuePair> totalPairs = new ArrayList<NameValuePair>(addressPairs);
+			List<NameValuePair> totalPairs = new ArrayList<>(addressPairs);
 			totalPairs.addAll(queryParams);
 			method.setQueryString(totalPairs.toArray(new NameValuePair[queryParams.size()]));
 		}
@@ -454,7 +454,7 @@ public class RestUtilities {
 		try {
 			String query = URIUtil.getQuery(address);
 			List<NameValuePair> params = new ParameterParser().parse(query, '&');
-			List<NameValuePair> res = new ArrayList<NameValuePair>();
+			List<NameValuePair> res = new ArrayList<>();
 			for (NameValuePair nvp : params) {
 				res.add(new NameValuePair(URIUtil.decode(nvp.getName(), DEFAULT_CHARSET), URIUtil.decode(nvp.getValue(), DEFAULT_CHARSET)));
 			}
@@ -465,7 +465,7 @@ public class RestUtilities {
 	}
 
 	public static Map<String, String> getJSONHeaders() {
-		Map<String, String> res = new HashMap<String, String>(2);
+		Map<String, String> res = new HashMap<>(2);
 		res.put("Content-Type", "application/json");
 		res.put("Accept", "application/json");
 		return res;
@@ -493,4 +493,21 @@ public class RestUtilities {
 		return headers;
 	}
 
+	private static void addHeadersToRequest(Entry<String, String> entry, HttpMethodBase method) {
+		String headerValue = entry.getValue();
+		String headerKey = entry.getKey();
+		headerValue = RestUtilities.sanitizeValueFromRequestHeader(headerValue);
+		RestUtilities.checkIfValueFromRequestHeaderIsInWhitelistFromPropertiesFile(headerKey);
+		method.addRequestHeader(headerKey, headerValue);
+	}
+
+	private static String sanitizeValueFromRequestHeader(String value) {
+		return value.replace("\r", "").replace("%0d", "").replace("%0D", "").replace("\n", "").replace("%0a", "").replace("%0A", "");
+	}
+
+	private static void checkIfValueFromRequestHeaderIsInWhitelistFromPropertiesFile(String value) {
+		List<String> whitelist = HttpHeadersWhitelist.getInstance().getWhitelist();
+		if (!whitelist.contains(value))
+			throw new SpagoBIRuntimeException("Header value " + value + " is not in the list of allowed headers.");
+	}
 }

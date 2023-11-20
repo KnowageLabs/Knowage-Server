@@ -68,14 +68,10 @@ public class ObjTemplateDAOHibImpl extends AbstractHibernateDAO implements IObjT
 			tx.commit();
 		} catch (HibernateException he) {
 			logException(he);
-			if (tx != null)
-				tx.rollback();
+			rollbackIfActive(tx);
 			throw new EMFInternalError(EMFErrorSeverity.ERROR, "100");
 		} finally {
-			if (aSession != null) {
-				if (aSession.isOpen())
-					aSession.close();
-			}
+			closeSessionIfOpen(aSession);
 		}
 		return objTemp;
 	}
@@ -109,14 +105,10 @@ public class ObjTemplateDAOHibImpl extends AbstractHibernateDAO implements IObjT
 			tx.commit();
 		} catch (HibernateException he) {
 			logException(he);
-			if (tx != null)
-				tx.rollback();
+			rollbackIfActive(tx);
 			throw new EMFInternalError(EMFErrorSeverity.ERROR, "100");
 		} finally {
-			if (aSession != null) {
-				if (aSession.isOpen())
-					aSession.close();
-			}
+			closeSessionIfOpen(aSession);
 		}
 		return objTemp;
 	}
@@ -156,14 +148,10 @@ public class ObjTemplateDAOHibImpl extends AbstractHibernateDAO implements IObjT
 			tx.commit();
 		} catch (HibernateException he) {
 			logException(he);
-			if (tx != null)
-				tx.rollback();
+			rollbackIfActive(tx);
 			throw new EMFInternalError(EMFErrorSeverity.ERROR, "100");
 		} finally {
-			if (aSession != null) {
-				if (aSession.isOpen())
-					aSession.close();
-			}
+			closeSessionIfOpen(aSession);
 		}
 		return objTemp;
 	}
@@ -174,8 +162,8 @@ public class ObjTemplateDAOHibImpl extends AbstractHibernateDAO implements IObjT
 	 * @see it.eng.spagobi.analiticalmodel.document.dao.IObjTemplateDAO#getBIObjectTemplateList(java.lang.Integer)
 	 */
 	@Override
-	public List getBIObjectTemplateList(Integer biobjId) throws EMFInternalError {
-		List templates = new ArrayList();
+	public List<ObjTemplate> getBIObjectTemplateList(Integer biobjId) throws EMFInternalError {
+		List<ObjTemplate> templates = new ArrayList<>();
 		Session aSession = null;
 		Transaction tx = null;
 		try {
@@ -186,49 +174,21 @@ public class ObjTemplateDAOHibImpl extends AbstractHibernateDAO implements IObjT
 
 			Query query = aSession.createQuery(hql);
 			query.setInteger(0, biobjId.intValue());
-			List result = query.list();
-			Iterator it = result.iterator();
+			List<SbiObjTemplates> result = query.list();
+			Iterator<SbiObjTemplates> it = result.iterator();
 			while (it.hasNext()) {
-				templates.add(toObjTemplate((SbiObjTemplates) it.next()));
+				templates.add(toObjTemplate(it.next()));
 			}
 			tx.commit();
 		} catch (HibernateException he) {
 			logException(he);
-			if (tx != null)
-				tx.rollback();
+			rollbackIfActive(tx);
 			throw new EMFInternalError(EMFErrorSeverity.ERROR, "100");
 		} finally {
-			if (aSession != null) {
-				if (aSession.isOpen())
-					aSession.close();
-			}
+			closeSessionIfOpen(aSession);
 		}
 		return templates;
 	}
-
-	/*
-	 * @Override public List getBIObjectTemplateListByDocLabel(String biobjLabel) throws EMFInternalError { List templates = new ArrayList(); Session aSession =
-	 * null; Transaction tx = null; try { aSession = getSession(); tx = aSession.beginTransaction(); // String hql = //
-	 * "from SbiObjTemplates sot where sot.sbiObject.biobjId="+biobjId+" order by sot.prog desc"; String hql =
-	 * "from SbiObjTemplates sot where sot.sbiObject.label=? order by sot.prog desc";
-	 *
-	 * Query query = aSession.createQuery(hql); query.setString(0, biobjLabel); List result = query.list(); Iterator it = result.iterator(); while
-	 * (it.hasNext()) { templates.add(toObjTemplate((SbiObjTemplates) it.next())); } tx.commit(); } catch (HibernateException he) { logException(he); if (tx !=
-	 * null) tx.rollback(); throw new EMFInternalError(EMFErrorSeverity.ERROR, "100"); } finally { if (aSession != null) { if (aSession.isOpen())
-	 * aSession.close(); } } return templates; }
-	 */
-
-	/*
-	 * @Override public List getBIObjectTemplateListByDocLabel(String biobjLabel) throws EMFInternalError { List templates = new ArrayList(); Session aSession =
-	 * null; Transaction tx = null; try { aSession = getSession(); tx = aSession.beginTransaction(); // String hql = //
-	 * "from SbiObjTemplates sot where sot.sbiObject.biobjId="+biobjId+" order by sot.prog desc"; String hql =
-	 * "from SbiObjTemplates sot where sot.sbiObject.label=? order by sot.prog desc";
-	 *
-	 * Query query = aSession.createQuery(hql); query.setString(0, biobjLabel); List result = query.list(); Iterator it = result.iterator(); while
-	 * (it.hasNext()) { templates.add(toObjTemplate((SbiObjTemplates) it.next())); } tx.commit(); } catch (HibernateException he) { logException(he); if (tx !=
-	 * null) tx.rollback(); throw new EMFInternalError(EMFErrorSeverity.ERROR, "100"); } finally { if (aSession != null) { if (aSession.isOpen())
-	 * aSession.close(); } } return templates; }
-	 */
 
 	@SuppressWarnings("unchecked")
 	@Override
@@ -263,14 +223,10 @@ public class ObjTemplateDAOHibImpl extends AbstractHibernateDAO implements IObjT
 			tx.commit();
 		} catch (HibernateException he) {
 			logException(he);
-			if (tx != null)
-				tx.rollback();
+			rollbackIfActive(tx);
 			throw new EMFInternalError(EMFErrorSeverity.ERROR, "100");
 		} finally {
-			if (aSession != null) {
-				if (aSession.isOpen())
-					aSession.close();
-			}
+			closeSessionIfOpen(aSession);
 		}
 		return templates;
 	}
@@ -294,14 +250,10 @@ public class ObjTemplateDAOHibImpl extends AbstractHibernateDAO implements IObjT
 				tx.commit();
 			} catch (HibernateException | ParseException he) {
 				logException(he);
-				if (tx != null)
-					tx.rollback();
+				rollbackIfActive(tx);
 				throw new EMFInternalError(EMFErrorSeverity.ERROR, "100");
 			} finally {
-				if (aSession != null) {
-					if (aSession.isOpen())
-						aSession.close();
-				}
+				closeSessionIfOpen(aSession);
 			}
 		}
 	}
@@ -337,14 +289,10 @@ public class ObjTemplateDAOHibImpl extends AbstractHibernateDAO implements IObjT
 			tx.commit();
 		} catch (HibernateException he) {
 			logException(he);
-			if (tx != null)
-				tx.rollback();
+			rollbackIfActive(tx);
 			throw new EMFInternalError(EMFErrorSeverity.ERROR, "100");
 		} finally {
-			if (aSession != null) {
-				if (aSession.isOpen())
-					aSession.close();
-			}
+			closeSessionIfOpen(aSession);
 		}
 		return maxProg;
 	}
@@ -391,14 +339,10 @@ public class ObjTemplateDAOHibImpl extends AbstractHibernateDAO implements IObjT
 			tx.commit();
 		} catch (HibernateException he) {
 			logException(he);
-			if (tx != null)
-				tx.rollback();
+			rollbackIfActive(tx);
 			throw new EMFInternalError(EMFErrorSeverity.ERROR, "100");
 		} finally {
-			if (aSession != null) {
-				if (aSession.isOpen())
-					aSession.close();
-			}
+			closeSessionIfOpen(aSession);
 		}
 	}
 
@@ -416,7 +360,8 @@ public class ObjTemplateDAOHibImpl extends AbstractHibernateDAO implements IObjT
 			Query query = aSession.createQuery(hql);
 			query.setInteger(0, objTemplate.getBiobjId().intValue());
 			try {
-				logger.debug("Updates the current template of object " + objTemplate.getBiobjId() + " with active = false.");
+				logger.debug(
+						"Updates the current template of object " + objTemplate.getBiobjId() + " with active = false.");
 				query.executeUpdate();
 			} catch (Exception e) {
 				logger.error("Exception", e);
@@ -431,14 +376,11 @@ public class ObjTemplateDAOHibImpl extends AbstractHibernateDAO implements IObjT
 			tx.commit();
 		} catch (HibernateException he) {
 			logException(he);
-			if (tx != null)
-				tx.rollback();
-			throw new RuntimeException("Impossible to modify template [" + objTemplate.getName() + "] to document [" + objTemplate.getBiobjId() + "]", he);
+			rollbackIfActive(tx);
+			throw new RuntimeException("Impossible to modify template [" + objTemplate.getName() + "] to document ["
+					+ objTemplate.getBiobjId() + "]", he);
 		} finally {
-			if (aSession != null) {
-				if (aSession.isOpen())
-					aSession.close();
-			}
+			closeSessionIfOpen(aSession);
 			logger.debug("OUT");
 		}
 	}
@@ -464,7 +406,8 @@ public class ObjTemplateDAOHibImpl extends AbstractHibernateDAO implements IObjT
 			Query query = aSession.createQuery(hql);
 			query.setInteger(0, objTemplate.getBiobjId().intValue());
 			try {
-				logger.debug("Updates the current template of object " + objTemplate.getBiobjId() + " with active = false.");
+				logger.debug(
+						"Updates the current template of object " + objTemplate.getBiobjId() + " with active = false.");
 				query.executeUpdate();
 			} catch (Exception e) {
 				logger.error("Exception", e);
@@ -482,7 +425,8 @@ public class ObjTemplateDAOHibImpl extends AbstractHibernateDAO implements IObjT
 			while (it.hasNext()) {
 				maxProg = (Integer) it.next();
 			}
-			logger.debug("maxProg readed from SbiObjTemplates with biobjId " + objTemplate.getBiobjId() + " is : " + maxProg);
+			logger.debug("maxProg readed from SbiObjTemplates with biobjId " + objTemplate.getBiobjId() + " is : "
+					+ maxProg);
 			if (maxProg == null) {
 				nextProg = new Integer(1);
 			} else {
@@ -523,7 +467,8 @@ public class ObjTemplateDAOHibImpl extends AbstractHibernateDAO implements IObjT
 
 			if (biObject != null) {
 				String driverName = biObject.getEngine().getDriverName();
-				if (driverName != null && !"".equals(driverName) && !objTemplate.getName().startsWith("DossierTemplateWizard_")) {
+				if (driverName != null && !"".equals(driverName)
+						&& !objTemplate.getName().startsWith("DossierTemplateWizard_")) {
 
 					// save associations among dataset and documents
 					try {
@@ -532,7 +477,8 @@ public class ObjTemplateDAOHibImpl extends AbstractHibernateDAO implements IObjT
 						if (datasetsAssociated != null) {
 							for (Iterator iterator = datasetsAssociated.iterator(); iterator.hasNext();) {
 								String string = (String) iterator.next();
-								logger.debug("Dataset associated to biObject with label " + biObject.getLabel() + ": " + string);
+								logger.debug("Dataset associated to biObject with label " + biObject.getLabel() + ": "
+										+ string);
 							}
 
 							IBIObjDataSetDAO biObjDatasetDAO = DAOFactory.getBIObjDataSetDAO();
@@ -542,7 +488,8 @@ public class ObjTemplateDAOHibImpl extends AbstractHibernateDAO implements IObjT
 						}
 					} catch (Exception e) {
 						logger.error("Error while inserting dataset dependencies; check template format", e);
-						throw new RuntimeException("Impossible to add template [" + objTemplate.getName() + "] to document [" + objTemplate.getBiobjId()
+						throw new RuntimeException("Impossible to add template [" + objTemplate.getName()
+								+ "] to document [" + objTemplate.getBiobjId()
 								+ "]; error while recovering dataset associations; check template format.");
 					}
 
@@ -559,25 +506,24 @@ public class ObjTemplateDAOHibImpl extends AbstractHibernateDAO implements IObjT
 						}
 					} catch (Exception e) {
 						logger.error("Error while inserting function dependencies; check template format", e);
-						throw new RuntimeException("Impossible to add template [" + objTemplate.getName() + "] to document [" + objTemplate.getBiobjId()
+						throw new RuntimeException("Impossible to add template [" + objTemplate.getName()
+								+ "] to document [" + objTemplate.getBiobjId()
 								+ "]; error while recovering functions associations; check template format.");
 					}
 				}
 			} else {
-				logger.debug("dataset associations and function associations not inserted because object was not passed");
+				logger.debug(
+						"dataset associations and function associations not inserted because object was not passed");
 			}
 
 			tx.commit();
 		} catch (HibernateException he) {
 			logException(he);
-			if (tx != null)
-				tx.rollback();
-			throw new RuntimeException("Impossible to add template [" + objTemplate.getName() + "] to document [" + objTemplate.getBiobjId() + "]", he);
+			rollbackIfActive(tx);
+			throw new RuntimeException("Impossible to add template [" + objTemplate.getName() + "] to document ["
+					+ objTemplate.getBiobjId() + "]", he);
 		} finally {
-			if (aSession != null) {
-				if (aSession.isOpen())
-					aSession.close();
-			}
+			closeSessionIfOpen(aSession);
 			logger.debug("OUT");
 		}
 	}
@@ -604,7 +550,8 @@ public class ObjTemplateDAOHibImpl extends AbstractHibernateDAO implements IObjT
 				templates.add(toObjTemplate(it.next()));
 			}
 
-			String hqlUpdate = "update SbiObjTemplates sot set sot.active = true where sot.creationDate = :templateDate " + "  and sot.sbiObject.biobjId=?";
+			String hqlUpdate = "update SbiObjTemplates sot set sot.active = true where sot.creationDate = :templateDate "
+					+ "  and sot.sbiObject.biobjId=?";
 			query = aSession.createQuery(hqlUpdate);
 			query.setParameter("templateDate", templates.get(0).getCreationDate());
 			query.setInteger(0, biObjId);
@@ -612,14 +559,10 @@ public class ObjTemplateDAOHibImpl extends AbstractHibernateDAO implements IObjT
 			tx.commit();
 		} catch (HibernateException he) {
 			logException(he);
-			if (tx != null)
-				tx.rollback();
+			rollbackIfActive(tx);
 			throw new EMFInternalError(EMFErrorSeverity.ERROR, "100");
 		} finally {
-			if (aSession != null) {
-				if (aSession.isOpen())
-					aSession.close();
-			}
+			closeSessionIfOpen(aSession);
 		}
 
 	}

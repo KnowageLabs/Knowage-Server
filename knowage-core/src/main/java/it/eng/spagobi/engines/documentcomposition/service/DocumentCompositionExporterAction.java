@@ -20,6 +20,7 @@ package it.eng.spagobi.engines.documentcomposition.service;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.security.SecureRandom;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -50,7 +51,7 @@ public class DocumentCompositionExporterAction extends AbstractSpagoBIAction {
 
 	private static final Logger LOGGER = Logger.getLogger(DocumentCompositionExporterAction.class);
 
-	private final Random random = new Random();
+	private static final Random RANDOM = new SecureRandom();
 
 	@Override
 	public void doService() {
@@ -60,11 +61,12 @@ public class DocumentCompositionExporterAction extends AbstractSpagoBIAction {
 
 		this.freezeHttpResponse();
 
-		DocumentCompositionConfiguration docCompConf = (DocumentCompositionConfiguration) session.getAttribute("DOC_COMP_CONF");
+		DocumentCompositionConfiguration docCompConf = (DocumentCompositionConfiguration) session
+				.getAttribute("DOC_COMP_CONF");
 
 		// create the pdfFile
 		String dir = System.getProperty("java.io.tmpdir");
-		int randomInt = random.nextInt();
+		int randomInt = RANDOM.nextInt();
 		String path = dir + "/" + Integer.toString(randomInt) + ".pdf";
 
 		// File tmpFile=new File("path");
@@ -149,7 +151,8 @@ public class DocumentCompositionExporterAction extends AbstractSpagoBIAction {
 			// CALL EXPORTER
 			LOGGER.debug("call exporter");
 			DocumentCompositionExporter exporter = new DocumentCompositionExporter();
-			tmpFile = exporter.exportDocumentCompositionPDF(tmpFile, docCompConf, document, profile, currentConfigurationsMap, documents, defaultStyle);
+			tmpFile = exporter.exportDocumentCompositionPDF(tmpFile, docCompConf, document, profile,
+					currentConfigurationsMap, documents, defaultStyle);
 
 			if (tmpFile != null) {
 				String outputType = "PDF";

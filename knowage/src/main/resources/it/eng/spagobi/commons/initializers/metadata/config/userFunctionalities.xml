@@ -125,6 +125,7 @@
 	<USER_FUNCTIONALITY productType="KnowageSI" name="ThemeManagement" description="ThemeManagement"/>
 	<USER_FUNCTIONALITY productType="KnowageSI" name="QbeAdvancedSaving" description="QbeAdvancedSaving"/>	
 	<USER_FUNCTIONALITY productType="KnowageSI" name="CategoryManagement" description="CategoryManagement"/>
+	<USER_FUNCTIONALITY productType="KnowageSI" name="MondrianSchemaManagement" description="MondrianSchemaManagement"/>
 		
 	<!-- Authorizations for KnowageER -->
 	<USER_FUNCTIONALITY productType="KnowageER" name="ReadEnginesManagement" description="ReadEnginesManagement"/>

@@ -25,7 +25,8 @@ import it.eng.spagobi.services.common.SsoServiceInterface;
 
 public class Oauth2SsoService extends JWTSsoService {
 
-	public static String ACCESS_TOKEN = "access_token";
+	public static final String ACCESS_TOKEN = "access_token";
+	public static final String ID_TOKEN = "id_token";
 
 	@Override
 	public String readUserIdentifier(HttpServletRequest request) {

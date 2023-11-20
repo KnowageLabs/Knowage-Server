@@ -60,22 +60,16 @@ public class SbiDossierActivityDAOHibImpl extends AbstractHibernateDAO implement
 			LOGGER.debug("Dossier activity created correctly with id: " + id);
 
 		} catch (HibernateException he) {
-			if (tx != null)
-				tx.rollback();
+			rollbackIfActive(tx);
 			LOGGER.error("Exception creating a new dossier activity", he);
 			throw new SpagoBIRuntimeException("Exception creating a new dossier activity", he);
 		} catch (Exception e) {
-			if (tx != null)
-				tx.rollback();
+			rollbackIfActive(tx);
 			LOGGER.error("Exception creating a new dossier activity", e);
 			throw new SpagoBIRuntimeException("Exception creating a new dossier activity", e);
 
 		} finally {
-
-			if (aSession != null) {
-				if (aSession.isOpen())
-					aSession.close();
-			}
+			closeSessionIfOpen(aSession);
 		}
 
 		return id;
@@ -109,15 +103,12 @@ public class SbiDossierActivityDAOHibImpl extends AbstractHibernateDAO implement
 			LOGGER.debug("Dossier activity updated correctly. Id of activity: " + dossierActivity.getId());
 
 		} catch (HibernateException he) {
-			if (tx != null)
-				tx.rollback();
+			rollbackIfActive(tx);
 			LOGGER.error("Exception while updating a dossier activity with id: " + dossierActivity.getId(), he);
-			throw new SpagoBIRuntimeException("Exception while updating a dossier activity with id: " + dossierActivity.getId(), he);
+			throw new SpagoBIRuntimeException(
+					"Exception while updating a dossier activity with id: " + dossierActivity.getId(), he);
 		} finally {
-			if (aSession != null) {
-				if (aSession.isOpen())
-					aSession.close();
-			}
+			closeSessionIfOpen(aSession);
 		}
 		return id;
 	}
@@ -145,10 +136,7 @@ public class SbiDossierActivityDAOHibImpl extends AbstractHibernateDAO implement
 			LOGGER.error("Exception while laoding all dossier activities", he);
 			throw new SpagoBIRuntimeException("Exception while laoding all dossier activities", he);
 		} finally {
-			if (aSession != null) {
-				if (aSession.isOpen())
-					aSession.close();
-			}
+			closeSessionIfOpen(aSession);
 		}
 		return listOfDossierActivities;
 	}
@@ -177,11 +165,7 @@ public class SbiDossierActivityDAOHibImpl extends AbstractHibernateDAO implement
 			LOGGER.error("Exception while loading dossier activity with id: " + activityId, he);
 			throw new SpagoBIRuntimeException("Exception while loading dossier activity with id: " + activityId, he);
 		} finally {
-
-			if (aSession != null) {
-				if (aSession.isOpen())
-					aSession.close();
-			}
+			closeSessionIfOpen(aSession);
 		}
 		return da;
 	}
@@ -195,36 +179,35 @@ public class SbiDossierActivityDAOHibImpl extends AbstractHibernateDAO implement
 			aSession = getSession();
 			tx = aSession.beginTransaction();
 
-			SbiDossierActivity hibDossierActivity = (SbiDossierActivity) aSession.load(SbiDossierActivity.class, activityId);
+			SbiDossierActivity hibDossierActivity = (SbiDossierActivity) aSession.load(SbiDossierActivity.class,
+					activityId);
 			aSession.delete(hibDossierActivity);
 
 			tx.commit();
 		} catch (HibernateException he) {
-			if (tx != null)
-				tx.rollback();
+			rollbackIfActive(tx);
 			LOGGER.error("Exception creating a new dossier activity", he);
 			throw new SpagoBIRuntimeException("Exception creating a new dossier activity", he);
 		} finally {
+			closeSessionIfOpen(aSession);
 			LOGGER.debug("Dossier activity created correctly");
-			if (aSession != null) {
-				if (aSession.isOpen())
-					aSession.close();
-			}
 		}
 	}
 
 	public static DossierActivity toDossierActivity(SbiDossierActivity hibDossierActivity) {
 
 		DossierActivity da = new DossierActivity();
+		SbiProgressThread progress = hibDossierActivity.getProgress();
 
 		da.setId(hibDossierActivity.getId());
 		da.setActivity(hibDossierActivity.getActivity());
 		da.setDocumentId(hibDossierActivity.getDocumentId());
 		da.setParameters(hibDossierActivity.getParameters());
-		da.setProgressId(hibDossierActivity.getProgress().getProgressThreadId());
-		da.setPartial(hibDossierActivity.getProgress().getPartial());
-		da.setStatus(hibDossierActivity.getProgress().getStatus());
-		da.setTotal(hibDossierActivity.getProgress().getTotal());
+		da.setProgressId(progress.getProgressThreadId());
+		da.setPartial(progress.getPartial());
+		da.setStatus(progress.getStatus());
+		da.setTotal(progress.getTotal());
+		da.setExecutionRole(progress.getExecutionRole());
 
 		if (hibDossierActivity.getBinContent() != null) {
 			da.setPptExists(true);
@@ -264,7 +247,11 @@ public class SbiDossierActivityDAOHibImpl extends AbstractHibernateDAO implement
 		sda.setConfigContent(dossierActivity.getConfigContent());
 		UserProfile userProfile = (UserProfile) this.getUserProfile();
 		if (dossierActivity.getProgressId() != null) {
-			sda.setProgress(new SbiProgressThread(dossierActivity.getProgressId(), (String) userProfile.getUserId()));
+			SbiProgressThread progress = new SbiProgressThread();
+			progress.setProgressThreadId(dossierActivity.getProgressId());
+			progress.setUserId((String) userProfile.getUserId());
+			progress.setExecutionRole(dossierActivity.getExecutionRole());
+			sda.setProgress(progress);
 		}
 		// sda.setPpt(dossierActivity.getBinId());
 
@@ -293,13 +280,10 @@ public class SbiDossierActivityDAOHibImpl extends AbstractHibernateDAO implement
 			LOGGER.debug("Loaded activity with progressthreadId: " + progressthreadId);
 		} catch (HibernateException he) {
 			LOGGER.error("Exception while loading dossier activity with id: " + progressthreadId, he);
-			throw new SpagoBIRuntimeException("Exception while loading dossier activity with id: " + progressthreadId, he);
+			throw new SpagoBIRuntimeException("Exception while loading dossier activity with id: " + progressthreadId,
+					he);
 		} finally {
-
-			if (aSession != null) {
-				if (aSession.isOpen())
-					aSession.close();
-			}
+			closeSessionIfOpen(aSession);
 		}
 		return da;
 	}
@@ -323,15 +307,12 @@ public class SbiDossierActivityDAOHibImpl extends AbstractHibernateDAO implement
 			LOGGER.debug("Dossier activity updated correctly. Id of activity: " + dossierActivity.getId());
 
 		} catch (HibernateException he) {
-			if (tx != null)
-				tx.rollback();
+			rollbackIfActive(tx);
 			LOGGER.error("Exception while updating a dossier activity with id: " + dossierActivity.getId(), he);
-			throw new SpagoBIRuntimeException("Exception while updating a dossier activity with id: " + dossierActivity.getId(), he);
+			throw new SpagoBIRuntimeException(
+					"Exception while updating a dossier activity with id: " + dossierActivity.getId(), he);
 		} finally {
-			if (aSession != null) {
-				if (aSession.isOpen())
-					aSession.close();
-			}
+			closeSessionIfOpen(aSession);
 		}
 		return id;
 	}

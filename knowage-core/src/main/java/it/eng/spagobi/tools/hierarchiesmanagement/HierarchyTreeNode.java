@@ -23,6 +23,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Queue;
 import java.util.Stack;
 import java.util.Vector;
@@ -49,27 +50,28 @@ public class HierarchyTreeNode implements Iterable<HierarchyTreeNode> {
 
 	private final List<String> childrenKeys;
 
-	private HashMap attributes;
+	private Map attributes;
 
 	private static final List<HierarchyTreeNode> EMPTY_LIST = Collections.emptyList();
-	private static final Iterator<HierarchyTreeNode> EMPTY_ITERATOR = Collections.<HierarchyTreeNode>emptyList().iterator();
+	private static final Iterator<HierarchyTreeNode> EMPTY_ITERATOR = Collections.<HierarchyTreeNode>emptyList()
+			.iterator();
 
 	public HierarchyTreeNode(Object obj, String key) {
 		this.obj = obj;
 		this.key = key;
 		parent = null;
 		allowsChildren = true;
-		childrenKeys = new ArrayList<String>();
+		childrenKeys = new ArrayList<>();
 		attributes = new HashMap();
 	}
 
-	public HierarchyTreeNode(Object obj, String key, HashMap attributes) {
+	public HierarchyTreeNode(Object obj, String key, Map attributes) {
 		this.obj = obj;
 		this.key = key;
 		this.attributes = attributes;
 		parent = null;
 		allowsChildren = true;
-		childrenKeys = new ArrayList<String>();
+		childrenKeys = new ArrayList<>();
 	}
 
 	public void add(HierarchyTreeNode newChild, String key) {
@@ -80,7 +82,7 @@ public class HierarchyTreeNode implements Iterable<HierarchyTreeNode> {
 		}
 		newChild.setParent(this);
 		if (children == null) {
-			children = new LinkedList<HierarchyTreeNode>();
+			children = new LinkedList<>();
 		}
 		int childIndex = getChildCount();
 		children.add(childIndex, newChild);
@@ -105,8 +107,8 @@ public class HierarchyTreeNode implements Iterable<HierarchyTreeNode> {
 		child.setParent(null);
 	}
 
-	public void removeChildrenKey(String Key) {
-		this.childrenKeys.remove(Key);
+	public void removeChildrenKey(String key) {
+		this.childrenKeys.remove(key);
 	}
 
 	public HierarchyTreeNode getChild(int index) {
@@ -202,14 +204,14 @@ public class HierarchyTreeNode implements Iterable<HierarchyTreeNode> {
 	/**
 	 * @return the attributes
 	 */
-	public HashMap getAttributes() {
+	public Map getAttributes() {
 		return attributes;
 	}
 
 	/**
 	 * @param attributes the attributes to set
 	 */
-	public void setAttributes(HashMap attributes) {
+	public void setAttributes(Map attributes) {
 		this.attributes = attributes;
 	}
 
@@ -238,8 +240,8 @@ public class HierarchyTreeNode implements Iterable<HierarchyTreeNode> {
 	 *
 	 * @return the node
 	 */
-	public HierarchyTreeNode getHierarchyNode(String key, boolean theLast, Integer levelToCheck, HierarchyTreeNodeData data, IRecord record, IMetaData dsMeta,
-			String prefix) {
+	public HierarchyTreeNode getHierarchyNode(String key, boolean theLast, Integer levelToCheck,
+			HierarchyTreeNodeData data, IRecord record, IMetaData dsMeta, String prefix) {
 
 		/* As default, node toReturn is assigned to root. If toReturn will not be overridden, current node/leaf is attached to root. */
 		HierarchyTreeNode toReturn = this;
@@ -247,7 +249,9 @@ public class HierarchyTreeNode implements Iterable<HierarchyTreeNode> {
 		String recordCdLev = null;
 		if (levelToCheck > 0) {
 			/* Retrieving record CD LEV for record when node is not root */
-			recordCdLev = ((String) record.getFieldAt(dsMeta.getFieldIndex(prefix + HierarchyConstants.SUFFIX_CD_LEV + levelToCheck)).getValue()).trim();
+			recordCdLev = ((String) record
+					.getFieldAt(dsMeta.getFieldIndex(prefix + HierarchyConstants.SUFFIX_CD_LEV + levelToCheck))
+					.getValue()).trim();
 		}
 
 		Iterator<HierarchyTreeNode> treeIterator = this.iterator();
@@ -298,8 +302,8 @@ public class HierarchyTreeNode implements Iterable<HierarchyTreeNode> {
 	}
 
 	/**
-	 * Returns the index of the specified child in this node's child array. If the specified node is not a child of this node, returns <code>-1</code>. This
-	 * method performs a linear search and is O(n) where n is the number of children.
+	 * Returns the index of the specified child in this node's child array. If the specified node is not a child of this node, returns <code>-1</code>. This method
+	 * performs a linear search and is O(n) where n is the number of children.
 	 *
 	 */
 	public int indexOf(HierarchyTreeNode aChild) {
@@ -346,7 +350,7 @@ public class HierarchyTreeNode implements Iterable<HierarchyTreeNode> {
 	}
 
 	public List<HierarchyTreeNode> getPathToRoot() {
-		List<HierarchyTreeNode> elderList = new LinkedList<HierarchyTreeNode>();
+		List<HierarchyTreeNode> elderList = new LinkedList<>();
 		for (HierarchyTreeNode p = this; p != null; p = p.getParent()) {
 			elderList.add(p);
 		}
@@ -440,10 +444,9 @@ public class HierarchyTreeNode implements Iterable<HierarchyTreeNode> {
 		protected Queue<Iterator<HierarchyTreeNode>> queue;
 
 		public BreadthFirstIterator(HierarchyTreeNode rootNode) {
-			super();
-			Vector<HierarchyTreeNode> v = new Vector<HierarchyTreeNode>(1);
+			Vector<HierarchyTreeNode> v = new Vector<>(1);
 			v.addElement(rootNode); // PENDING: don't really need a vector
-			queue = new LinkedList<Iterator<HierarchyTreeNode>>();
+			queue = new LinkedList<>();
 			queue.offer(v.iterator());
 		}
 
@@ -479,11 +482,10 @@ public class HierarchyTreeNode implements Iterable<HierarchyTreeNode> {
 
 	private final class PreorderIterator implements Iterator<HierarchyTreeNode> {
 
-		private final Stack<Iterator<HierarchyTreeNode>> stack = new Stack<Iterator<HierarchyTreeNode>>();
+		private final Stack<Iterator<HierarchyTreeNode>> stack = new Stack<>();
 
 		PreorderIterator(HierarchyTreeNode rootNode) {
-			super();
-			List<HierarchyTreeNode> l = new Vector<HierarchyTreeNode>(1);
+			List<HierarchyTreeNode> l = new Vector<>(1);
 			l.add(rootNode); // PENDING: don't really need a vector
 			stack.push(l.iterator());
 		}

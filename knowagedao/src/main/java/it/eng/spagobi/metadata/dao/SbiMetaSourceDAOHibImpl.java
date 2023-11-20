@@ -17,14 +17,6 @@
  */
 package it.eng.spagobi.metadata.dao;
 
-import it.eng.spago.error.EMFErrorSeverity;
-import it.eng.spago.error.EMFUserError;
-import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
-import it.eng.spagobi.commons.dao.SpagoBIDAOException;
-import it.eng.spagobi.metadata.metadata.SbiMetaSource;
-import it.eng.spagobi.metadata.metadata.SbiMetaTable;
-import it.eng.spagobi.utilities.assertion.Assert;
-
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -38,10 +30,18 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.criterion.Criterion;
-import org.hibernate.criterion.Expression;
+import org.hibernate.criterion.Restrictions;
 
 import com.jamonapi.Monitor;
 import com.jamonapi.MonitorFactory;
+
+import it.eng.spago.error.EMFErrorSeverity;
+import it.eng.spago.error.EMFUserError;
+import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
+import it.eng.spagobi.commons.dao.SpagoBIDAOException;
+import it.eng.spagobi.metadata.metadata.SbiMetaSource;
+import it.eng.spagobi.metadata.metadata.SbiMetaTable;
+import it.eng.spagobi.utilities.assertion.Assert;
 
 /**
  * @author Antonella Giachino (antonella.giachino@eng.it)
@@ -54,13 +54,11 @@ public class SbiMetaSourceDAOHibImpl extends AbstractHibernateDAO implements ISb
 	/**
 	 * Load source by id.
 	 *
-	 * @param id
-	 *            the source is
+	 * @param id the source is
 	 *
 	 * @return the meta source
 	 *
-	 * @throws EMFUserError
-	 *             the EMF user error
+	 * @throws EMFUserError the EMF user error
 	 *
 	 * @see it.eng.spagobi.metadata.dao.ISbiMetaSourceDAOHibImpl#loadSourceByID(integer)
 	 */
@@ -89,26 +87,16 @@ public class SbiMetaSourceDAOHibImpl extends AbstractHibernateDAO implements ISb
 
 		} catch (ObjectNotFoundException he) {
 			logException(he);
-
-			if (tx != null)
-				tx.rollback();
-
+			rollbackIfActive(tx);
 			throw new SpagoBIDAOException("There is no sbiMetaSource with sourceId " + id);
 
 		} catch (HibernateException he) {
 			logException(he);
-
-			if (tx != null)
-				tx.rollback();
-
+			rollbackIfActive(tx);
 			throw new SpagoBIDAOException(he.getMessage());
 
 		} finally {
-			if (tmpSession != null) {
-				if (tmpSession.isOpen())
-					tmpSession.close();
-
-			}
+			closeSessionIfOpen(tmpSession);
 		}
 		logger.debug("OUT");
 		return toReturn;
@@ -117,13 +105,11 @@ public class SbiMetaSourceDAOHibImpl extends AbstractHibernateDAO implements ISb
 	/**
 	 * Load source by name.
 	 *
-	 * @param name
-	 *            the source name
+	 * @param name the source name
 	 *
 	 * @return the meta source
 	 *
-	 * @throws EMFUserError
-	 *             the EMF user error
+	 * @throws EMFUserError the EMF user error
 	 *
 	 * @see it.eng.spagobi.metadata.dao.ISbiMetaSourceDAOHibImpl#loadSourceByName(string)
 	 */
@@ -143,14 +129,10 @@ public class SbiMetaSourceDAOHibImpl extends AbstractHibernateDAO implements ISb
 
 		} catch (HibernateException he) {
 			logException(he);
-			if (tx != null)
-				tx.rollback();
+			rollbackIfActive(tx);
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		} finally {
-			if (tmpSession != null) {
-				if (tmpSession.isOpen())
-					tmpSession.close();
-			}
+			closeSessionIfOpen(tmpSession);
 		}
 
 		logger.debug("OUT");
@@ -166,7 +148,7 @@ public class SbiMetaSourceDAOHibImpl extends AbstractHibernateDAO implements ISb
 
 		try {
 
-			Criterion labelCriterrion = Expression.eq("name", name);
+			Criterion labelCriterrion = Restrictions.eq("name", name);
 			Criteria criteria = tmpSession.createCriteria(SbiMetaSource.class);
 			criteria.add(labelCriterrion);
 			toReturn = (SbiMetaSource) criteria.uniqueResult();
@@ -199,14 +181,10 @@ public class SbiMetaSourceDAOHibImpl extends AbstractHibernateDAO implements ISb
 
 		} catch (HibernateException he) {
 			logException(he);
-			if (tx != null)
-				tx.rollback();
+			rollbackIfActive(tx);
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		} finally {
-			if (tmpSession != null) {
-				if (tmpSession.isOpen())
-					tmpSession.close();
-			}
+			closeSessionIfOpen(tmpSession);
 		}
 
 		logger.debug("OUT");
@@ -218,8 +196,7 @@ public class SbiMetaSourceDAOHibImpl extends AbstractHibernateDAO implements ISb
 	 *
 	 * @return List of meta sources
 	 *
-	 * @throws EMFUserError
-	 *             the EMF user error
+	 * @throws EMFUserError the EMF user error
 	 *
 	 * @see it.eng.spagobi.metadata.dao.ISbiMetaSourceDAOHibImpl#loadAllSources()
 	 */
@@ -245,19 +222,11 @@ public class SbiMetaSourceDAOHibImpl extends AbstractHibernateDAO implements ISb
 			tx.commit();
 		} catch (HibernateException he) {
 			logException(he);
-
-			if (tx != null)
-				tx.rollback();
-
+			rollbackIfActive(tx);
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 
 		} finally {
-
-			if (tmpSession != null) {
-				if (tmpSession.isOpen())
-					tmpSession.close();
-			}
-
+			closeSessionIfOpen(tmpSession);
 		}
 		logger.debug("OUT");
 		return toReturn;
@@ -266,11 +235,9 @@ public class SbiMetaSourceDAOHibImpl extends AbstractHibernateDAO implements ISb
 	/**
 	 * Modify a metasource.
 	 *
-	 * @param aMetaSource
-	 *            the sbimetasource changed
+	 * @param aMetaSource the sbimetasource changed
 	 *
-	 * @throws EMFUserError
-	 *             the EMF user error
+	 * @throws EMFUserError the EMF user error
 	 *
 	 * @see it.eng.spagobi.metadata.dao.ISbiMetaSourceDAOHibImpl#modifySource(SbiMetaSource)
 	 */
@@ -300,17 +267,11 @@ public class SbiMetaSourceDAOHibImpl extends AbstractHibernateDAO implements ISb
 
 		} catch (HibernateException he) {
 			logException(he);
-
-			if (tx != null)
-				tx.rollback();
-
+			rollbackIfActive(tx);
 			throw new SpagoBIDAOException(he.getMessage());
 
 		} finally {
-			if (tmpSession != null) {
-				if (tmpSession.isOpen())
-					tmpSession.close();
-			}
+			closeSessionIfOpen(tmpSession);
 		}
 		logger.debug("OUT");
 	}
@@ -318,11 +279,9 @@ public class SbiMetaSourceDAOHibImpl extends AbstractHibernateDAO implements ISb
 	/**
 	 * Insert a metasource.
 	 *
-	 * @param aMetaSource
-	 *            the sbimetasource to insert
+	 * @param aMetaSource the sbimetasource to insert
 	 *
-	 * @throws EMFUserError
-	 *             the EMF user error
+	 * @throws EMFUserError the EMF user error
 	 *
 	 * @see it.eng.spagobi.metadata.dao.ISbiMetaSourceDAOHibImpl#insertSource(SbiMetaSource)
 	 */
@@ -342,20 +301,11 @@ public class SbiMetaSourceDAOHibImpl extends AbstractHibernateDAO implements ISb
 
 		} catch (HibernateException he) {
 			logException(he);
-
-			if (tx != null)
-				tx.rollback();
-
+			rollbackIfActive(tx);
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 
 		} finally {
-
-			if (tmpSession != null) {
-				if (tmpSession.isOpen())
-					tmpSession.close();
-
-			}
-
+			closeSessionIfOpen(tmpSession);
 		}
 		logger.debug("OUT");
 		return idToReturn;
@@ -364,11 +314,9 @@ public class SbiMetaSourceDAOHibImpl extends AbstractHibernateDAO implements ISb
 	/**
 	 * Delete a metasource.
 	 *
-	 * @param aMetaSource
-	 *            the sbimetasource to delete
+	 * @param aMetaSource the sbimetasource to delete
 	 *
-	 * @throws EMFUserError
-	 *             the EMF user error
+	 * @throws EMFUserError the EMF user error
 	 *
 	 * @see it.eng.spagobi.metadata.dao.ISbiMetaSourceDAOHibImpl#deleteSource(SbiMetaSource)
 	 */
@@ -382,26 +330,19 @@ public class SbiMetaSourceDAOHibImpl extends AbstractHibernateDAO implements ISb
 			tmpSession = getSession();
 			tx = tmpSession.beginTransaction();
 
-			SbiMetaSource hibMeta = (SbiMetaSource) tmpSession.load(SbiMetaSource.class, new Integer(aMetaSource.getSourceId()));
+			SbiMetaSource hibMeta = (SbiMetaSource) tmpSession.load(SbiMetaSource.class,
+					new Integer(aMetaSource.getSourceId()));
 
 			tmpSession.delete(hibMeta);
 
 			tx.commit();
 		} catch (HibernateException he) {
 			logException(he);
-
-			if (tx != null)
-				tx.rollback();
-
+			rollbackIfActive(tx);
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 
 		} finally {
-
-			if (tmpSession != null) {
-				if (tmpSession.isOpen())
-					tmpSession.close();
-			}
-
+			closeSessionIfOpen(tmpSession);
 		}
 		logger.debug("OUT");
 	}
@@ -411,7 +352,7 @@ public class SbiMetaSourceDAOHibImpl extends AbstractHibernateDAO implements ISb
 		Monitor monitorGeneral = MonitorFactory.start("metasource.dao.loadMetaTables.invoker.all");
 		LogMF.debug(logger, "IN: id = [{0}]", sourceId);
 
-		List<SbiMetaTable> toReturn = new ArrayList<SbiMetaTable>();
+		List<SbiMetaTable> toReturn = new ArrayList<>();
 		Session session = null;
 
 		try {
@@ -425,17 +366,18 @@ public class SbiMetaSourceDAOHibImpl extends AbstractHibernateDAO implements ISb
 			} catch (Throwable t) {
 				throw new SpagoBIDAOException("An error occured while creating the new transaction", t);
 			}
-			
+
 			toReturn = loadMetaTables(session, sourceId);
 
 		} catch (Throwable t) {
 			logException(t);
-			throw new SpagoBIDAOException("An unexpected error occured while loading meta tables of meta source with sourceId [" + sourceId + "]", t);
+			throw new SpagoBIDAOException(
+					"An unexpected error occured while loading meta tables of meta source with sourceId [" + sourceId
+							+ "]",
+					t);
 		} finally {
 			monitorGeneral.stop();
-			if (session != null && session.isOpen()) {
-				session.close();
-			}
+			closeSessionIfOpen(session);
 		}
 
 		LogMF.debug(logger, "OUT: returning [{0}]", toReturn);
@@ -447,7 +389,7 @@ public class SbiMetaSourceDAOHibImpl extends AbstractHibernateDAO implements ISb
 		Monitor monitorGeneral = MonitorFactory.start("metasource.dao.loadMetaTables.business.all");
 		LogMF.debug(logger, "IN: id = [{0}]", sourceId);
 
-		List<SbiMetaTable> toReturn = new ArrayList<SbiMetaTable>();
+		List<SbiMetaTable> toReturn = new ArrayList<>();
 		Session session = aSession;
 
 		try {
@@ -467,7 +409,10 @@ public class SbiMetaSourceDAOHibImpl extends AbstractHibernateDAO implements ISb
 		} catch (Throwable t) {
 			logException(t);
 
-			throw new SpagoBIDAOException("An unexpected error occured while loading meta tables of meta source with sourceId [" + sourceId + "]", t);
+			throw new SpagoBIDAOException(
+					"An unexpected error occured while loading meta tables of meta source with sourceId [" + sourceId
+							+ "]",
+					t);
 		} finally {
 			monitorGeneral.stop();
 			LogMF.debug(logger, "OUT: returning [{0}]", toReturn);

@@ -17,6 +17,7 @@
  */
 package it.eng.knowage.engine.cockpit;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -45,18 +46,21 @@ import it.eng.spagobi.utilities.json.JSONUtils;
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
  */
-public class CockpitEngineInstance extends AbstractEngineInstance {
-	// logger component
-	public static Logger logger = Logger.getLogger(CockpitEngineInstance.class);
+public class CockpitEngineInstance extends AbstractEngineInstance implements Serializable {
+	private static final long serialVersionUID = 373571150227072686L;
 
-	JSONObject template;
-	AssociationManager associationManager;
+	private static final Logger LOGGER = Logger.getLogger(CockpitEngineInstance.class);
+
+	private JSONObject template;
+	private AssociationManager associationManager;
 
 	// ENVIRONMENT VARIABLES
-	private final String[] lstEnvVariables = { "SBI_EXECUTION_ID", "SBI_COUNTRY", "SBI_LANGUAGE", "SBI_SPAGO_CONTROLLER", "SBI_EXECUTION_ROLE", COUNTRY,
-			LANGUAGE, "user_id", "DOCUMENT_ID", "DOCUMENT_LABEL", "DOCUMENT_NAME", "DOCUMENT_IS_PUBLIC", "DOCUMENT_COMMUNITIES", "DOCUMENT_DESCRIPTION",
-			"SPAGOBI_AUDIT_ID", "DOCUMENT_USER", "DOCUMENT_IS_VISIBLE", "DOCUMENT_AUTHOR", "DOCUMENT_FUNCTIONALITIES", "DOCUMENT_VERSION", "IS_FOR_EXPORT",
-			"COCKPIT_SELECTIONS", "EDIT_MODE", "IS_TECHNICAL_USER", "SBI_ENVIRONMENT", "documentMode", "timereloadurl", "DOCUMENT_OUTPUT_PARAMETERS" };
+	private final String[] lstEnvVariables = { "SBI_EXECUTION_ID", "SBI_COUNTRY", "SBI_LANGUAGE",
+			"SBI_SPAGO_CONTROLLER", "SBI_EXECUTION_ROLE", COUNTRY, LANGUAGE, "user_id", "DOCUMENT_ID", "DOCUMENT_LABEL",
+			"DOCUMENT_NAME", "DOCUMENT_IS_PUBLIC", "DOCUMENT_COMMUNITIES", "DOCUMENT_DESCRIPTION", "SPAGOBI_AUDIT_ID",
+			"DOCUMENT_USER", "DOCUMENT_IS_VISIBLE", "DOCUMENT_AUTHOR", "DOCUMENT_FUNCTIONALITIES", "DOCUMENT_VERSION",
+			"IS_FOR_EXPORT", "COCKPIT_SELECTIONS", "EDIT_MODE", "IS_TECHNICAL_USER", "SBI_ENVIRONMENT", "documentMode",
+			"timereloadurl", "DOCUMENT_OUTPUT_PARAMETERS" };
 
 	public CockpitEngineInstance(String template, Map env) {
 		super(env);
@@ -166,7 +170,7 @@ public class CockpitEngineInstance extends AbstractEngineInstance {
 	}
 
 	public Map<String, String> getOutputParameters() {
-		Map<String, String> outParslist = new HashMap<String, String>();
+		Map<String, String> outParslist = new HashMap<>();
 
 		try {
 			String jsonArrayPars = (String) this.getEnv().get(EngineConstants.DOCUMENT_OUTPUT_PARAMETERS);
@@ -183,19 +187,10 @@ public class CockpitEngineInstance extends AbstractEngineInstance {
 
 			}
 		} catch (Exception e) {
-			logger.error("Error in parsing output parameters ", e);
+			LOGGER.error("Error in parsing output parameters ", e);
 			throw new SpagoBIRuntimeException(e);
 		}
 
-		// String outPars = (String) this.getEnv().get(EngineConstants.DOCUMENT_OUTPUT_PARAMETERS);
-		// if (outPars != null && !outPars.equals("")) {
-		// StringTokenizer st = new StringTokenizer(outPars, ",", false);
-		// String parameterToken = null;
-		// while (st.hasMoreTokens()) {
-		// parameterToken = st.nextToken();
-		// outParslist.add(parameterToken);
-		// }
-		// }
 		return outParslist;
 	}
 
@@ -251,7 +246,7 @@ public class CockpitEngineInstance extends AbstractEngineInstance {
 			String parameterName = (String) it.next();
 			Object parameterValue = getEnv().get(parameterName);
 			// test necessary for don't pass complex objects like proxy,...
-			if (parameterValue != null && parameterValue.getClass().getName().equals("java.lang.String") && isAnalyticalDriver(parameterName)) {
+			if (parameterValue instanceof String && isAnalyticalDriver(parameterName)) {
 				toReturn.put(parameterName, parameterValue);
 			}
 		}
@@ -336,7 +331,7 @@ public class CockpitEngineInstance extends AbstractEngineInstance {
 
 	private static boolean isNumeric(String str) {
 		try {
-			int num = Integer.parseInt(str);
+			Integer.parseInt(str);
 		} catch (NumberFormatException nfe) {
 			return false;
 		}

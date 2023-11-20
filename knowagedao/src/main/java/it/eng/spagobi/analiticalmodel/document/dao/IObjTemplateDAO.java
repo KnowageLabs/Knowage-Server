@@ -41,7 +41,7 @@ public interface IObjTemplateDAO extends ISpagoBIDao {
 	 *
 	 * @throws EMFInternalError the EMF internal error
 	 */
-	public ObjTemplate getBIObjectActiveTemplate(Integer biobjId) throws EMFInternalError;
+	ObjTemplate getBIObjectActiveTemplate(Integer biobjId) throws EMFInternalError;
 
 	/**
 	 * Gets the bI object active template starting by document label
@@ -52,7 +52,7 @@ public interface IObjTemplateDAO extends ISpagoBIDao {
 	 *
 	 * @throws EMFInternalError the EMF internal error
 	 */
-	public ObjTemplate getBIObjectActiveTemplateByLabel(String label) throws EMFInternalError;
+	ObjTemplate getBIObjectActiveTemplateByLabel(String label) throws EMFInternalError;
 
 	/**
 	 * Gets the bI object template list.
@@ -63,18 +63,7 @@ public interface IObjTemplateDAO extends ISpagoBIDao {
 	 *
 	 * @throws EMFInternalError the EMF internal error
 	 */
-	public List getBIObjectTemplateList(Integer biobjId) throws EMFInternalError;
-
-	/**
-	 * Gets the bI object template list.
-	 *
-	 * @param biobjLabel the biobj label
-	 *
-	 * @return the bI object template list
-	 *
-	 * @throws EMFInternalError the EMF internal error
-	 */
-	// public List getBIObjectTemplateListByDocLabel(String biobjLabel) throws EMFInternalError;
+	List<ObjTemplate> getBIObjectTemplateList(Integer biobjId) throws EMFInternalError;
 
 	/**
 	 * Load bi object template.
@@ -85,7 +74,7 @@ public interface IObjTemplateDAO extends ISpagoBIDao {
 	 *
 	 * @throws EMFInternalError the EMF internal error
 	 */
-	public ObjTemplate loadBIObjectTemplate(Integer tempId) throws EMFInternalError;
+	ObjTemplate loadBIObjectTemplate(Integer tempId) throws EMFInternalError;
 
 	/**
 	 * Gets the next prog for template.
@@ -96,11 +85,11 @@ public interface IObjTemplateDAO extends ISpagoBIDao {
 	 *
 	 * @throws EMFInternalError the EMF internal error
 	 */
-	public List getAllTemplateWithoutActive(String data) throws EMFInternalError, ParseException;
+	List<ObjTemplate> getAllTemplateWithoutActive(String data) throws EMFInternalError, ParseException;
 
-	public void removeTemplates(JSONArray documents) throws EMFInternalError, JSONException;
+	void removeTemplates(JSONArray documents) throws EMFInternalError, JSONException;
 
-	public Integer getNextProgForTemplate(Integer biobjId) throws EMFInternalError;
+	Integer getNextProgForTemplate(Integer biobjId) throws EMFInternalError;
 
 	/**
 	 * Delete bi object template.
@@ -109,7 +98,7 @@ public interface IObjTemplateDAO extends ISpagoBIDao {
 	 *
 	 * @throws EMFInternalError the EMF internal error
 	 */
-	public void deleteBIObjectTemplate(Integer tempId) throws EMFInternalError;
+	void deleteBIObjectTemplate(Integer tempId) throws EMFInternalError;
 
 	/**
 	 * Setting active bi object template.
@@ -118,7 +107,7 @@ public interface IObjTemplateDAO extends ISpagoBIDao {
 	 *
 	 * @throws EMFInternalError the EMF internal error
 	 */
-	public void setTemplateActive(ObjTemplate objTemplate, BIObject biObject) throws EMFUserError, EMFInternalError;
+	void setTemplateActive(ObjTemplate objTemplate, BIObject biObject) throws EMFUserError, EMFInternalError;
 
 	/**
 	 * Insert a new bi object template.
@@ -127,7 +116,7 @@ public interface IObjTemplateDAO extends ISpagoBIDao {
 	 *
 	 * @throws EMFInternalError the EMF internal error
 	 */
-	public void insertBIObjectTemplate(ObjTemplate objTemplate, BIObject biObject);
+	void insertBIObjectTemplate(ObjTemplate objTemplate, BIObject biObject);
 
 	/**
 	 * Change activity of doc's template.
@@ -137,8 +126,8 @@ public interface IObjTemplateDAO extends ISpagoBIDao {
 	 *
 	 * @throws EMFInternalError the EMF internal error
 	 */
-	public void setPreviousTemplateActive(Integer biObjId, Integer tempId) throws EMFInternalError;
+	void setPreviousTemplateActive(Integer biObjId, Integer tempId) throws EMFInternalError;
 
-	public ObjTemplate toObjTemplate(SbiObjTemplates hibObjTemp);
+	ObjTemplate toObjTemplate(SbiObjTemplates hibObjTemp);
 
 }
