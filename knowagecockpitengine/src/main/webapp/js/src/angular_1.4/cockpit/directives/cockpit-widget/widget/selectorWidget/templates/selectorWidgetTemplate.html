@@ -1,85 +1,81 @@
 <div flex layout-align="center center" class="cockpitSelectorWidget">
-	<div ng-if="ngModel.settings.modalityValue=='singleValue' && showSelection && !isSelectedColumnTemporal()" layout="column" class="cSelWScroller">
-		<div ng-if="ngModel.settings.enableAll || !ngModel.settings.hideDisabled || !ngModel.activeValues" layout="column" ng-class="{'horizontal':ngModel.settings.modalityView=='horizontal','grid':ngModel.settings.modalityView=='grid' }" ng-click="selectElement($event)" >
-			<label class="kn-custom-radio-container" ng-class="{'white-space-normal':ngModel.settings.wrapText}" ng-repeat="record in datasetRecords.rows" ng-disabled="::isDisabled(record.column_1)" title="{{::record.column_1}}" ng-style="::gridWidth()">
-				<span>{{::record.column_1}}</span>
-			  <input type="radio" ng-checked="::isSelected(record.column_1)" ng-disabled="::isDisabled(record.column_1)" ng-value="::record.column_1">
-			  <span class="checkmark"></span>
-			</label>
-		</div>
-		<div ng-if="!ngModel.settings.enableAll && ngModel.settings.hideDisabled && ngModel.activeValues.length > 0" layout="column" ng-class="{'horizontal':ngModel.settings.modalityView=='horizontal','grid':ngModel.settings.modalityView=='grid' }" ng-click="selectElement($event)" >
-	    	<label class="kn-custom-radio-container" ng-class="{'white-space-normal':ngModel.settings.wrapText}" ng-repeat="record in ngModel.activeValues" title="{{record}}" ng-style="::gridWidth()">
-				<span>{{record}}</span>
-				<input type="radio" ng-checked="::isSelected(record)" ng-value="::record">
-				<span class="checkmark"></span>
-			</label>
-		</div>
-		
-	</div>
-	<!-- lov list multiple input -->
-	<div ng-if="ngModel.settings.modalityValue=='multiValue' && showSelection && !isSelectedColumnTemporal()" layout="column" class="cSelWScroller" >
-		<div ng-if="ngModel.settings.enableAll || !ngModel.settings.hideDisabled || !ngModel.activeValues" layout="column" ng-class="{'horizontal':ngModel.settings.modalityView=='horizontal','grid':ngModel.settings.modalityView=='grid' }" ng-click="selectElement($event,true)" >
-			<label class="kn-custom-checkbox-container" ng-class="{'white-space-normal':ngModel.settings.wrapText}" ng-repeat="record in datasetRecords.rows" ng-disabled="::isDisabled(record.column_1)" title="{{::record.column_1}}" ng-style="::gridWidth()">
-				<span>{{::record.column_1}}</span>
-				<input type="checkbox" ng-checked="::isSelected(record.column_1)" ng-disabled="::isDisabled(record.column_1)" ng-value="::record.column_1">
-				<span class="checkmark"></span>
-			</label>
-		</div>
-		<div ng-if="!ngModel.settings.enableAll && ngModel.settings.hideDisabled && ngModel.activeValues.length > 0" layout="column" ng-class="{'horizontal':ngModel.settings.modalityView=='horizontal','grid':ngModel.settings.modalityView=='grid' }" ng-click="selectElement($event,true)" >
-			<label class="kn-custom-checkbox-container" ng-class="{'white-space-normal':ngModel.settings.wrapText}" ng-repeat="record in ngModel.activeValues" ng-disabled="::isDisabled(record)" title="{{record}}" ng-style="::gridWidth()">
-				<span>{{::record}}</span>
-				<input type="checkbox" ng-checked="::isSelected(record)" ng-value="::record">
-				<span class="checkmark"></span>
-			</label>
-		</div>
+  <div ng-if="ngModel.settings.modalityValue=='singleValue' && showSelection && !isSelectedColumnTemporal()" layout="column" class="cSelWScroller">
+    <div ng-if="ngModel.settings.enableAll || !ngModel.settings.hideDisabled || !ngModel.activeValues" layout="column" ng-class="{'horizontal':ngModel.settings.modalityView=='horizontal','grid':ngModel.settings.modalityView=='grid' }" ng-click="selectElement($event)">
+      <label class="kn-custom-radio-container" ng-class="{'white-space-normal':ngModel.settings.wrapText}" ng-repeat="record in datasetRecords.rows" ng-disabled="::isDisabled(record.column_1)" title="{{::record.column_1}}" ng-style="::gridWidth()">
+        <span>{{::record.column_1}}</span>
+        <input type="radio" ng-checked="::isSelected(record.column_1)" ng-disabled="::isDisabled(record.column_1)" ng-value="::record.column_1" />
+        <span class="checkmark"></span>
+      </label>
+    </div>
+    <div ng-if="!ngModel.settings.enableAll && ngModel.settings.hideDisabled && ngModel.activeValues.length > 0" layout="column" ng-class="{'horizontal':ngModel.settings.modalityView=='horizontal','grid':ngModel.settings.modalityView=='grid' }" ng-click="selectElement($event)">
+      <label class="kn-custom-radio-container" ng-class="{'white-space-normal':ngModel.settings.wrapText}" ng-repeat="record in ngModel.activeValues" title="{{record}}" ng-style="::gridWidth()">
+        <span>{{record}}</span>
+        <input type="radio" ng-checked="::isSelected(record)" ng-value="::record" />
+        <span class="checkmark"></span>
+      </label>
+    </div>
+  </div>
+  <!-- lov list multiple input -->
+  <div ng-if="ngModel.settings.modalityValue=='multiValue' && showSelection && !isSelectedColumnTemporal()" layout="column" class="cSelWScroller">
+    <div ng-if="ngModel.settings.enableAll || !ngModel.settings.hideDisabled || !ngModel.activeValues" layout="column" ng-class="{'horizontal':ngModel.settings.modalityView=='horizontal','grid':ngModel.settings.modalityView=='grid' }" ng-click="selectElement($event,true)">
+      <label class="kn-custom-checkbox-container" ng-class="{'white-space-normal':ngModel.settings.wrapText}" ng-repeat="record in datasetRecords.rows" ng-disabled="::isDisabled(record.column_1)" title="{{::record.column_1}}" ng-style="::gridWidth()">
+        <span>{{::record.column_1}}</span>
+        <input type="checkbox" ng-checked="::isSelected(record.column_1)" ng-disabled="::isDisabled(record.column_1)" ng-value="::record.column_1" />
+        <span class="checkmark"></span>
+      </label>
+    </div>
+    <div ng-if="!ngModel.settings.enableAll && ngModel.settings.hideDisabled && ngModel.activeValues.length > 0" layout="column" ng-class="{'horizontal':ngModel.settings.modalityView=='horizontal','grid':ngModel.settings.modalityView=='grid' }" ng-click="selectElement($event,true)">
+      <label class="kn-custom-checkbox-container" ng-class="{'white-space-normal':ngModel.settings.wrapText}" ng-repeat="record in ngModel.activeValues" ng-disabled="::isDisabled(record)" title="{{record}}" ng-style="::gridWidth()">
+        <span>{{::record}}</span>
+        <input type="checkbox" ng-checked="::isSelected(record)" ng-value="::record" />
+        <span class="checkmark"></span>
+      </label>
+    </div>
+  </div>
 
-	</div>
-	
-	<!-- lov combobox single and multiple input -->
-	<div ng-if="(ngModel.settings.modalityValue=='dropdown' || ngModel.settings.modalityValue=='multiDropdown') && !isSelectedColumnTemporal()" layout="column" class="selectParameter cockpitSelectorWidgetCombobox" layout-padding layout-fill layout-align="center center">
-		<!-- single -->
-		<md-input-container class="md-block" ng-if="showSelection && ngModel.settings.modalityValue=='dropdown'" style="width:100%">
-			<div class="kn-select">
-				<span class="kn-select-arrow"></span>
-				<select ng-if="ngModel.settings.hideDisabled && (ngModel.activeValues.length > 0)" ng-model="selectedValues[0]" ng-change="toggleParameter(selectedValues[0])" ng-options="value for value in ngModel.activeValues" ng-style="::gridWidth()">
-					<option></option>
-				</select>
-				<select ng-if="ngModel.settings.hideDisabled && !ngModel.activeValues" ng-model="selectedValues[0]" ng-change="toggleParameter(selectedValues[0])" ng-options="value for value in datasetRecords.rows.map(mapToColumn)" ng-style="::gridWidth()">
-                	<option></option>
-                </select>
-				<select ng-if="!ngModel.settings.hideDisabled" ng-model="selectedValues[0]" ng-change="toggleParameter(selectedValues[0])" ng-options="value disable when isDisabled(value) for value in datasetRecords.rows.map(mapToColumn)" ng-style="::gridWidth()">
-                	<option></option>
-                </select>
-			</div>
-		</md-input-container>
-		
-		 <md-input-container class="md-block" ng-if="ngModel.settings.modalityValue=='multiDropdown' && showSelection" style="width:100%">
-              <div class="kn-select">
-              	<span class="kn-select-arrow"></span>
-                  <div ng-click="openSelectDialog($event)" style="height:32px;padding-right:24px;" class="truncated fakeDialog"><span ng-repeat="value in selectedValues">{{value}}<b ng-if="!$last">,</b></span></div>
-              </div>
-         </md-input-container>
-		
-		
-	</div>
-	
-	<!-- date pickers -->
-	<div ng-if="isSelectedColumnTemporal()" layout="column" class="cSelWScroller datePickers" ng-class="{'horizontal':ngModel.settings.modalityView=='horizontal','grid':ngModel.settings.modalityView=='grid'}" ng-cloak>
-		<div layout="row" layout-align="start center">
-			<md-input-container>
-				<label aria-label="Start Date" ng-if="ngModel.settings.modalityValue=='multiValue'">{{translate.load("sbi.cockpit.widgets.selector.startdate")}}</label>
-				<label aria-label="Date" ng-if="ngModel.settings.modalityValue!='multiValue'">{{translate.load("sbi.cockpit.widgets.selector.singledate")}}</label>
-				<md-datepicker  name="startDate" ng-change="selectDate()" ng-model="selectedDate.startDate" md-min-date="ngModel.settings.defaultStartDate" md-max-date="ngModel.settings.defaultEndDate" md-open-on-focus ng-style="::gridWidth()"></md-datepicker>
-			</md-input-container>
-		</div>
-		
-		<div layout="row" layout-align="start center" ng-show="ngModel.settings.modalityValue=='multiValue'">
-			<md-input-container>
-				<label aria-label="End Date">{{::translate.load("sbi.cockpit.widgets.selector.enddate")}}</label>
-				<md-datepicker  name="endDate"  ng-change="selectDate()" ng-model="selectedDate.endDate" md-min-date="startDate || ngModel.settings.defaultStartDate" md-max-date="ngModel.settings.defaultEndDate" md-open-on-focus ng-style="::gridWidth()"></md-datepicker>
-			</md-input-container>
-		</div>
-		
-	</div>
+  <!-- lov combobox single and multiple input -->
+  <div ng-if="(ngModel.settings.modalityValue=='dropdown' || ngModel.settings.modalityValue=='multiDropdown') && !isSelectedColumnTemporal()" layout="column" class="selectParameter cockpitSelectorWidgetCombobox" layout-padding layout-fill layout-align="center center">
+    <!-- single -->
+    <md-input-container class="md-block" ng-if="showSelection && ngModel.settings.modalityValue=='dropdown'" style="width: 100%">
+      <div class="kn-select" ng-style="::gridWidth()">
+        <span class="kn-select-arrow"></span>
+        <select ng-if="ngModel.settings.hideDisabled && (ngModel.activeValues.length > 0)" ng-model="selectedValues[0]" ng-change="toggleParameter(selectedValues[0])" ng-options="value for value in ngModel.activeValues">
+          <option></option>
+        </select>
+        <select ng-if="ngModel.settings.hideDisabled && !ngModel.activeValues" ng-model="selectedValues[0]" ng-change="toggleParameter(selectedValues[0])" ng-options="value for value in datasetRecords.rows.map(mapToColumn)">
+          <option></option>
+        </select>
+        <select ng-if="!ngModel.settings.hideDisabled" ng-model="selectedValues[0]" ng-change="toggleParameter(selectedValues[0])" ng-options="value disable when isDisabled(value) for value in datasetRecords.rows.map(mapToColumn)">
+          <option></option>
+        </select>
+      </div>
+    </md-input-container>
 
+    <md-input-container class="md-block" ng-if="ngModel.settings.modalityValue=='multiDropdown' && showSelection" style="width: 100%">
+      <div class="kn-select">
+        <span class="kn-select-arrow" ng-click="openSelectDialog($event)"></span>
+        <div ng-click="openSelectDialog($event)" style="height: 32px; padding-right: 24px" class="truncated fakeDialog">
+          <span ng-repeat="value in selectedValues">{{value}}<b ng-if="!$last">,</b></span>
+        </div>
+      </div>
+    </md-input-container>
+  </div>
+
+  <!-- date pickers -->
+  <div ng-if="isSelectedColumnTemporal()" layout="column" class="cSelWScroller datePickers" ng-class="{'horizontal':ngModel.settings.modalityView=='horizontal','grid':ngModel.settings.modalityView=='grid'}" ng-cloak>
+    <div layout="row" layout-align="start center">
+      <md-input-container>
+        <label aria-label="Start Date" ng-if="ngModel.settings.modalityValue=='multiValue'">{{translate.load("sbi.cockpit.widgets.selector.startdate")}}</label>
+        <label aria-label="Date" ng-if="ngModel.settings.modalityValue!='multiValue'">{{translate.load("sbi.cockpit.widgets.selector.singledate")}}</label>
+        <md-datepicker name="startDate" ng-change="selectDate()" ng-model="selectedDate.startDate" md-min-date="ngModel.settings.defaultStartDate" md-max-date="ngModel.settings.defaultEndDate" md-open-on-focus ng-style="::gridWidth()"></md-datepicker>
+      </md-input-container>
+    </div>
+
+    <div layout="row" layout-align="start center" ng-show="ngModel.settings.modalityValue=='multiValue'">
+      <md-input-container>
+        <label aria-label="End Date">{{::translate.load("sbi.cockpit.widgets.selector.enddate")}}</label>
+        <md-datepicker name="endDate" ng-change="selectDate()" ng-model="selectedDate.endDate" md-min-date="startDate || ngModel.settings.defaultStartDate" md-max-date="ngModel.settings.defaultEndDate" md-open-on-focus ng-style="::gridWidth()"></md-datepicker>
+      </md-input-container>
+    </div>
+  </div>
 </div>
