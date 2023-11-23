@@ -1,0 +1,33 @@
+<script>
+  var stat = "unchanged";
+  var mes = sessionStorage.getItem("client_id") + " " + sessionStorage.getItem("session_state");
+  var targetOrigin = sessionStorage.getItem("oidc_origin");
+  var opFrameId = "op";
+  var timerID;
+
+  function check_session() {
+    var win = window.parent.frames[opFrameId].contentWindow;
+    win.postMessage(mes, targetOrigin);
+  }
+
+  function setTimer() {
+    check_session();
+    timerID = setInterval(check_session, 2 * 1000);
+  }
+
+  window.addEventListener("message", receiveMessage, false);
+
+  function receiveMessage(e) {
+    if (e.origin !== targetOrigin) {
+      return;
+    }
+    stat = e.data;
+
+    if (stat === "changed") {
+      clearInterval(timerID);
+      window.parent.postMessage({ type: "logout" }, location.origin);
+    }
+  }
+
+  setTimer();
+</script>
