@@ -17,9 +17,6 @@
  */
 package it.eng.spagobi.security;
 
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.security.interfaces.RSAPublicKey;
 import java.util.Arrays;
 import java.util.Base64;
 import java.util.Calendar;
@@ -32,16 +29,10 @@ import java.util.stream.Collectors;
 import org.apache.log4j.LogMF;
 import org.apache.log4j.Logger;
 
-import com.auth0.jwk.Jwk;
-import com.auth0.jwk.JwkException;
-import com.auth0.jwk.JwkProvider;
-import com.auth0.jwk.JwkProviderBuilder;
 import com.auth0.jwt.JWT;
-import com.auth0.jwt.algorithms.Algorithm;
-import com.auth0.jwt.exceptions.JWTVerificationException;
+import com.auth0.jwt.exceptions.JWTDecodeException;
 import com.auth0.jwt.interfaces.Claim;
 import com.auth0.jwt.interfaces.DecodedJWT;
-import com.auth0.jwt.interfaces.Verification;
 import com.jayway.jsonpath.JsonPath;
 
 import it.eng.spago.error.EMFUserError;
@@ -76,28 +67,8 @@ public class OIDCFullIdTokenSecurityServiceSupplier implements ISecurityServiceS
 	private String externalJWTToken2InternalJWTToken(String jwtToken) {
 		try {
 			LogMF.debug(logger, "Input JWT token is [{0}]", jwtToken);
-			DecodedJWT decodedJWT = JWT.decode(jwtToken);
+			DecodedJWT decodedJWT = JWT.decode(jwtToken); // ID TOKEN IS TRUSTED: it was validated by OAuth2Filter
 			logger.debug("JWT token properly decoded");
-			// verify token
-			JwkProvider provider = new JwkProviderBuilder(new URL(OAuth2Config.getInstance().getJWKSUrl())).build();
-			Jwk jwk = provider.get(decodedJWT.getKeyId());
-			Algorithm algorithm = Algorithm.RSA256((RSAPublicKey) jwk.getPublicKey(), null);
-			Verification verifier = JWT.require(algorithm);
-			verifier.build().verify(jwtToken);
-			// check that issuer matches the configured one
-			if (!decodedJWT.getIssuer().equals(OAuth2Config.getInstance().getJwtTokenIssuer())) {
-				logger.error("JWT token issuer [" + decodedJWT.getIssuer() + "] does not match the configured one, that is ["
-						+ OAuth2Config.getInstance().getJwtTokenIssuer() + "]");
-				throw new SpagoBIRuntimeException("JWT token issuer does not match the configured one");
-			}
-			// check that aud matches client id
-			if (!decodedJWT.getAudience().get(0).equals(OAuth2Config.getInstance().getClientId())) {
-				logger.error("JWT token aud [" + decodedJWT.getAudience().get(0) + "] does not match the client id, that is ["
-						+ OAuth2Config.getInstance().getClientId() + "]");
-				throw new SpagoBIRuntimeException("JWT token aud does not match the client id");
-			}
-			logger.debug("JWT token verified.");
-
 			String userId = decodedJWT.getClaim(OAuth2Config.getInstance().getUserIdClaim()).asString();
 			LogMF.debug(logger, "User id is [{0}]", userId);
 			String userName = getUserName(decodedJWT);
@@ -116,7 +87,7 @@ public class OIDCFullIdTokenSecurityServiceSupplier implements ISecurityServiceS
 			LogMF.debug(logger, "Output JWT token is [{0}]", toReturn);
 
 			return toReturn;
-		} catch (JWTVerificationException | JwkException | MalformedURLException e) {
+		} catch (JWTDecodeException e) {
 			throw new SpagoBIRuntimeException("An error occured while parsing input JWT token", e);
 		}
 	}
