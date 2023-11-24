@@ -7,8 +7,6 @@
 <link rel="stylesheet" href="${pageContext.request.contextPath}/js/lib/openlayers/3.x.x/ol.css" type="text/css">
 <link rel="stylesheet" href="${pageContext.request.contextPath}/js/src/angular_1.x/geo/geoConfig/templates/geoCss.css" type="text/css">
 
-<script src="${pageContext.request.contextPath}/js/lib/chartjs/Chart.js"></script>
-
 <!--  <script type="text/javascript" src="https://www.google.com/jsapi"></script>
 <script>
    google.load('visualization', '1.0', {'packages':['corechart', 'bar']});
