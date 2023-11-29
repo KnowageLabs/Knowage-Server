@@ -17,6 +17,12 @@
  */
 package it.eng.spagobi.engines.whatif.api;
 
+import static java.time.temporal.ChronoField.DAY_OF_MONTH;
+import static java.time.temporal.ChronoField.HOUR_OF_DAY;
+import static java.time.temporal.ChronoField.MINUTE_OF_HOUR;
+import static java.time.temporal.ChronoField.MONTH_OF_YEAR;
+import static java.time.temporal.ChronoField.YEAR;
+
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -28,10 +34,12 @@ import java.net.URL;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeFormatterBuilder;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 
 import javax.servlet.ServletContext;
@@ -55,8 +63,6 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.olap4j.Cell;
-import org.olap4j.CellSet;
-import org.olap4j.CellSetAxis;
 import org.olap4j.OlapDataSource;
 import org.olap4j.OlapException;
 import org.pivot4j.PivotModel;
@@ -84,10 +90,10 @@ import it.eng.spagobi.engines.whatif.model.SpagoBIPivotModel;
 import it.eng.spagobi.engines.whatif.model.Util;
 import it.eng.spagobi.engines.whatif.model.transform.CellTransformation;
 import it.eng.spagobi.engines.whatif.model.transform.CellTransformationsStack;
+import it.eng.spagobi.engines.whatif.model.transform.algorithm.AbstractAllocationAlgorithm;
 import it.eng.spagobi.engines.whatif.model.transform.algorithm.AllocationAlgorithmDefinition;
 import it.eng.spagobi.engines.whatif.model.transform.algorithm.AllocationAlgorithmFactory;
 import it.eng.spagobi.engines.whatif.model.transform.algorithm.AllocationAlgorithmSingleton;
-import it.eng.spagobi.engines.whatif.model.transform.algorithm.DefaultWeightedAllocationAlgorithm;
 import it.eng.spagobi.engines.whatif.model.transform.algorithm.IAllocationAlgorithm;
 import it.eng.spagobi.engines.whatif.parser.Lexer;
 import it.eng.spagobi.engines.whatif.parser.parser;
@@ -105,16 +111,18 @@ import it.eng.spagobi.writeback4j.mondrian.CacheManager;
 
 @Path("/1.0/model")
 @ManageAuthorization
-
 public class ModelResource extends AbstractWhatIfEngineService {
 
-	private static final String VERSION_FAKE_DESCR = "sbiNoDescription";
-	private static final String TEMPLATE_MONDRIAN_SCHEMA = "mondranSchema";
-	private static final String EXPORT_FILE_NAME = "KnowageOlapExport";
+	private static final Logger LOGGER = Logger.getLogger(ModelResource.class);
+	private static final Logger AUDIT_LOGGER = Logger.getLogger("audit.stack");
 
-	public static final Logger LOGGER = Logger.getLogger(ModelResource.class);
-	public static final Logger AUDIT_LOGGER = Logger.getLogger("audit.stack");
-	public static final String EXPRESSION = "expression";
+	private static final String EXPRESSION = "expression";
+	private static final String VERSION_FAKE_DESCR = "sbiNoDescription";
+	private static final String EXPORT_FILE_NAME = "KnowageOlapExport";
+	private static final String EXCELL_TEMPLATE_FILE_NAME = "export_dataset_template.xlsm";
+	private static final DateTimeFormatter FILENAME_INSTANT_FORMATTER = new DateTimeFormatterBuilder()
+			.parseCaseInsensitive().appendValue(YEAR, 4).appendValue(MONTH_OF_YEAR, 2).appendValue(DAY_OF_MONTH, 2)
+			.appendValue(HOUR_OF_DAY, 2).appendValue(MINUTE_OF_HOUR, 2).toFormatter();
 
 	@Context
 	private HttpServletResponse response;
@@ -142,21 +150,13 @@ public class ModelResource extends AbstractWhatIfEngineService {
 	@POST
 	@Path("/")
 	@Produces("text/html; charset=UTF-8")
-
-	public String setMdx() throws OlapException {
+	public String setMdx() {
 		LOGGER.debug("IN");
 		String table = "";
 
 		WhatIfEngineInstance ei = getWhatIfEngineInstance();
 		SpagoBIPivotModel model = (SpagoBIPivotModel) ei.getPivotModel();
 
-		CellSet cellSet = model.getCellSet();
-
-		// Axes of the resulting query.
-		List<CellSetAxis> axes = cellSet.getAxes();
-
-		// The ROWS axis
-		CellSetAxis rowsOrColumns = axes.get(1);
 		String requestBody = "";
 
 		try {
@@ -223,7 +223,7 @@ public class ModelResource extends AbstractWhatIfEngineService {
 
 		try {
 			Map<String, Object> properties = new HashMap<>();
-			properties.put(DefaultWeightedAllocationAlgorithm.ENGINEINSTANCE_PROPERTY, ei);
+			properties.put(AbstractAllocationAlgorithm.ENGINEINSTANCE_PROPERTY, ei);
 			allocationAlgorithm = AllocationAlgorithmFactory.getAllocationAlgorithm(algorithm, ei, properties);
 		} catch (SpagoBIEngineException e) {
 			LOGGER.error(e);
@@ -501,9 +501,7 @@ public class ModelResource extends AbstractWhatIfEngineService {
 
 		byte[] outputByte = out.toByteArray();
 
-		Date d = new Date();
-		String fileName = EXPORT_FILE_NAME + "_" + d.getYear() + d.getMonth() + d.getDay() + d.getHours()
-				+ d.getMinutes() + ".txt";
+		String fileName = EXPORT_FILE_NAME + "_" + FILENAME_INSTANT_FORMATTER.format(Instant.now()) + ".txt";
 
 		return Response.ok(outputByte, MediaType.APPLICATION_OCTET_STREAM)
 				.header("content-disposition", "attachment; filename = " + fileName).build();
@@ -511,10 +509,9 @@ public class ModelResource extends AbstractWhatIfEngineService {
 
 	@GET
 	@Path("/exceledit")
-	public void excelFillExample(@Context ServletContext context) throws IOException, Exception {
+	public void excelFillExample(@Context ServletContext context) throws Exception {
 
 		File result = exportExcelForMerging();
-		String EXCELL_TEMPLATE_FILE_NAME = "export_dataset_template.xlsm";
 		OutputStream out = null;
 		try {
 			URL resourceLocation = Thread.currentThread().getContextClassLoader()
@@ -690,8 +687,6 @@ public class ModelResource extends AbstractWhatIfEngineService {
 			}
 			// ita.remove();
 		}
-		Map<String, AllocationAlgorithmDefinition> allocationAlgorithms2 = AllocationAlgorithmSingleton.getInstance()
-				.getAllocationAlgorithms();
 
 		urlCell.setCellValue(url);
 		mdxCell.setCellValue(mdx);

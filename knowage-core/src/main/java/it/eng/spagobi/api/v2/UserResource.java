@@ -77,13 +77,13 @@ public class UserResource extends AbstractSpagoBIResource {
 	private static final String CHARSET = "; charset=UTF-8";
 
 	@GET
-	@UserConstraint(functionalities = { CommunityFunctionalityConstants.PROFILE_MANAGEMENT, CommunityFunctionalityConstants.FINAL_USERS_MANAGEMENT })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.PROFILE_MANAGEMENT,
+			CommunityFunctionalityConstants.FINAL_USERS_MANAGEMENT })
 	@Path("/")
 	@Produces(MediaType.APPLICATION_JSON + CHARSET)
 	public Response getUserList(@QueryParam("dateFilter") String dateFilter) {
 		ISbiUserDAO usersDao = null;
 		List<UserBO> fullList = null;
-		List<SbiAttribute> attrList = null;
 		ISbiAttributeDAO objDao = null;
 		ArrayList<Integer> hiddenAttributesIds = new ArrayList<>();
 		ProfileAttributeResourceRoleProcessor roleFilter = new ProfileAttributeResourceRoleProcessor();
@@ -92,7 +92,6 @@ public class UserResource extends AbstractSpagoBIResource {
 			QueryFilters qp = new QueryFilters();
 			objDao = DAOFactory.getSbiAttributeDAO();
 			objDao.setUserProfile(getUserProfile());
-			attrList = objDao.loadSbiAttributes();
 			if (profile.isAbleToExecuteAction(CommunityFunctionalityConstants.PROFILE_MANAGEMENT)) {
 				// administrator: he can see every user
 			} else {
@@ -127,13 +126,13 @@ public class UserResource extends AbstractSpagoBIResource {
 	}
 
 	@GET
-	@UserConstraint(functionalities = { CommunityFunctionalityConstants.PROFILE_MANAGEMENT, CommunityFunctionalityConstants.FINAL_USERS_MANAGEMENT })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.PROFILE_MANAGEMENT,
+			CommunityFunctionalityConstants.FINAL_USERS_MANAGEMENT })
 	@Path("/{id}")
 	@Produces(MediaType.APPLICATION_JSON + CHARSET)
 	public Response getUserById(@PathParam("id") Integer id) {
 		ISbiUserDAO usersDao = null;
 		SbiUserDAOHibImpl hib = new SbiUserDAOHibImpl();
-		List<SbiAttribute> attrList = null;
 		ISbiAttributeDAO objDao = null;
 		ArrayList<Integer> hiddenAttributesIds = new ArrayList<>();
 		ProfileAttributeResourceRoleProcessor roleFilter = new ProfileAttributeResourceRoleProcessor();
@@ -148,7 +147,6 @@ public class UserResource extends AbstractSpagoBIResource {
 
 			objDao = DAOFactory.getSbiAttributeDAO();
 			objDao.setUserProfile(getUserProfile());
-			attrList = objDao.loadSbiAttributes();
 
 			if (!UserUtilities.isTechnicalUser(getUserProfile())) {
 				hiddenAttributesIds = roleFilter.getHiddenAttributesIds();
@@ -156,14 +154,16 @@ public class UserResource extends AbstractSpagoBIResource {
 			}
 			return Response.ok(user).build();
 		} catch (Exception e) {
-			LOGGER.error("User with selected id: " + id + " doesn't exists", e);
-			throw new SpagoBIRestServiceException("Item with selected id: " + id + " doesn't exists", buildLocaleFromSession(), e);
+			LOGGER.error("User with selected id: {} doesn't exists", id, e);
+			throw new SpagoBIRestServiceException("Item with selected id: " + id + " doesn't exists",
+					buildLocaleFromSession(), e);
 		}
 	}
 
 	@POST
 	@Path("/")
-	@UserConstraint(functionalities = { CommunityFunctionalityConstants.PROFILE_MANAGEMENT, CommunityFunctionalityConstants.FINAL_USERS_MANAGEMENT })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.PROFILE_MANAGEMENT,
+			CommunityFunctionalityConstants.FINAL_USERS_MANAGEMENT })
 	@Consumes(MediaType.APPLICATION_JSON)
 	public Response insertUser(@Valid UserBO requestDTO) {
 		ISbiUserDAO usersDao = null;
@@ -174,16 +174,13 @@ public class UserResource extends AbstractSpagoBIResource {
 			throw new SpagoBIServiceException("SPAGOBI_SERVICE", "public_ is a reserved prefix for user name", null);
 		}
 
-		try {
-			usersDao = DAOFactory.getSbiUserDAO();
-			usersDao.setUserProfile(getUserProfile());
-			SbiUser existingUser = usersDao.loadSbiUserByUserId(userId);
-			if (existingUser != null && userId.equals(existingUser.getUserId())) {
-				LOGGER.error("User already exists. User_ID is unique");
-				throw new SpagoBIRestServiceException("User with provided ID already exists.", buildLocaleFromSession(), new Throwable());
-			}
-		} catch (SpagoBIRestServiceException ex) {
-			throw ex;
+		usersDao = DAOFactory.getSbiUserDAO();
+		usersDao.setUserProfile(getUserProfile());
+		SbiUser existingUser = usersDao.loadSbiUserByUserId(userId);
+		if (existingUser != null && userId.equals(existingUser.getUserId())) {
+			LOGGER.error("User already exists. User_ID is unique");
+			throw new SpagoBIRestServiceException("User with provided ID already exists.", buildLocaleFromSession(),
+					new Throwable());
 		}
 
 		SbiUser sbiUser = new SbiUser();
@@ -193,7 +190,7 @@ public class UserResource extends AbstractSpagoBIResource {
 		sbiUser.setDefaultRoleId(requestDTO.getDefaultRoleId());
 
 		List<Integer> list = requestDTO.getSbiExtUserRoleses();
-		Set<SbiExtRoles> roles = new HashSet<SbiExtRoles>(0);
+		Set<SbiExtRoles> roles = new HashSet<>(0);
 		for (Integer id : list) {
 			SbiExtRoles role = new SbiExtRoles();
 			role.setExtRoleId(id);
@@ -202,7 +199,7 @@ public class UserResource extends AbstractSpagoBIResource {
 		sbiUser.setSbiExtUserRoleses(roles);
 
 		HashMap<Integer, HashMap<String, String>> map = requestDTO.getSbiUserAttributeses();
-		Set<SbiUserAttributes> attributes = new HashSet<SbiUserAttributes>(0);
+		Set<SbiUserAttributes> attributes = new HashSet<>(0);
 
 		for (Entry<Integer, HashMap<String, String>> entry : map.entrySet()) {
 			SbiUserAttributes attribute = new SbiUserAttributes();
@@ -221,7 +218,7 @@ public class UserResource extends AbstractSpagoBIResource {
 		String password = sbiUser.getPassword();
 		if (password != null && password.length() > 0) {
 			try {
-				sbiUser.setPassword(Password.encriptPassword(password));
+				sbiUser.setPassword(Password.hashPassword(password));
 			} catch (Exception e) {
 				LOGGER.error("Impossible to encrypt Password", e);
 				throw new SpagoBIServiceException("SPAGOBI_SERVICE", "Impossible to encrypt Password", e);
@@ -240,11 +237,12 @@ public class UserResource extends AbstractSpagoBIResource {
 
 	@PUT
 	@Path("/{id}")
-	@UserConstraint(functionalities = { CommunityFunctionalityConstants.PROFILE_MANAGEMENT, CommunityFunctionalityConstants.FINAL_USERS_MANAGEMENT })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.PROFILE_MANAGEMENT,
+			CommunityFunctionalityConstants.FINAL_USERS_MANAGEMENT })
 	@Consumes(MediaType.APPLICATION_JSON)
 	public Response updateUser(@PathParam("id") Integer id, @Valid UserBO requestDTO) {
 
-		SbiUser sbiUserOriginal = new SbiUser();
+		SbiUser sbiUserOriginal = null;
 		ISbiUserDAO usersDao = null;
 		ProfileAttributeResourceRoleProcessor roleFilter = new ProfileAttributeResourceRoleProcessor();
 
@@ -261,8 +259,6 @@ public class UserResource extends AbstractSpagoBIResource {
 		sbiUser.setPassword(requestDTO.getPassword());
 		sbiUser.setDefaultRoleId(requestDTO.getDefaultRoleId());
 		sbiUser.setFailedLoginAttempts(requestDTO.getFailedLoginAttempts());
-		// This reset the account lock enabled in case of too much failed login attempts
-//		sbiUser.setFailedLoginAttempts(0);
 
 		List<Integer> list = requestDTO.getSbiExtUserRoleses();
 		Set<SbiExtRoles> roles = new HashSet<>(0);
@@ -274,7 +270,7 @@ public class UserResource extends AbstractSpagoBIResource {
 		sbiUser.setSbiExtUserRoleses(roles);
 
 		HashMap<Integer, HashMap<String, String>> map = requestDTO.getSbiUserAttributeses();
-		Set<SbiUserAttributes> attributes = new HashSet<SbiUserAttributes>(0);
+		Set<SbiUserAttributes> attributes = new HashSet<>(0);
 		List<SbiAttribute> attrList = null;
 		ISbiAttributeDAO objDao = null;
 
@@ -305,7 +301,8 @@ public class UserResource extends AbstractSpagoBIResource {
 		// This method get hidden attributes from user and sets their value to last known in DB
 		// By this we are avoiding changing that value if user change some other attributes
 		try {
-			if (objDao.getUserProfile().getRoles().size() == 1 && objDao.getUserProfile().getRoles().toArray()[0].equals("user"))
+			if (objDao.getUserProfile().getRoles().size() == 1
+					&& objDao.getUserProfile().getRoles().toArray()[0].equals("user"))
 				roleFilter.setAttributeHiddenFromUser(sbiUserOriginal, attributes, attrList);
 		} catch (EMFInternalError e1) {
 			LOGGER.error(e1.getMessage(), e1);
@@ -316,7 +313,7 @@ public class UserResource extends AbstractSpagoBIResource {
 		String password = sbiUser.getPassword();
 		if (password != null && password.length() > 0) {
 			try {
-				sbiUser.setPassword(Password.encriptPassword(password));
+				sbiUser.setPassword(Password.hashPassword(password));
 			} catch (Exception e) {
 				LOGGER.error("Impossible to encrypt Password", e);
 				throw new SpagoBIServiceException("SPAGOBI_SERVICE", "Impossible to encrypt Password", e);
@@ -339,7 +336,8 @@ public class UserResource extends AbstractSpagoBIResource {
 
 	@DELETE
 	@Path("/{id}")
-	@UserConstraint(functionalities = { CommunityFunctionalityConstants.PROFILE_MANAGEMENT, CommunityFunctionalityConstants.FINAL_USERS_MANAGEMENT })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.PROFILE_MANAGEMENT,
+			CommunityFunctionalityConstants.FINAL_USERS_MANAGEMENT })
 	public Response deleteCheck(@PathParam("id") Integer id) {
 
 		ISbiUserDAO usersDao = null;
@@ -351,8 +349,9 @@ public class UserResource extends AbstractSpagoBIResource {
 			String encodedUser = URLEncoder.encode("" + id, UTF_8.name());
 			return Response.ok().entity(encodedUser).build();
 		} catch (Exception e) {
-			LOGGER.error("Error with deleting resource with id: " + id, e);
-			throw new SpagoBIRestServiceException("Error with deleting resource with id: " + id, buildLocaleFromSession(), e);
+			LOGGER.error("Error with deleting resource with id: {}", id, e);
+			throw new SpagoBIRestServiceException("Error with deleting resource with id: " + id,
+					buildLocaleFromSession(), e);
 		}
 	}
 

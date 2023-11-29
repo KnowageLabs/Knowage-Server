@@ -426,7 +426,7 @@ public class TenantsDAOHibImpl extends AbstractHibernateDAO implements ITenantsD
 			SbiUser tenantAdmin = new SbiUser();
 			tenantAdmin.setUserId(userId);
 			tenantAdmin.setFullName(aTenant.getName() + ADMIN_USER_NAME_SUFFIX);
-			String pwd = Password.encriptPassword(userId);
+			String pwd = Password.hashPassword(userId);
 			tenantAdmin.setPassword(pwd);
 			tenantAdmin.setIsSuperadmin(false);
 			tenantAdmin.getCommonInfo().setOrganization(aTenant.getName());

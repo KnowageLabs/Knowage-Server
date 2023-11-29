@@ -62,9 +62,8 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 public class InternalSecurityInitializer extends SpagoBIInitializer {
 
-	private static String INTERNAL_SECURITY_CONFIG_TAG_NAME = "INTERNAL_PROFILING_INITIALIZER";
-
-	private static Logger logger = Logger.getLogger(InternalSecurityInitializer.class);
+	private static final Logger LOGGER = Logger.getLogger(InternalSecurityInitializer.class);
+	private static final String INTERNAL_SECURITY_CONFIG_TAG_NAME = "INTERNAL_PROFILING_INITIALIZER";
 
 	public InternalSecurityInitializer() {
 		targetComponentName = "InternalSecurity";
@@ -73,13 +72,13 @@ public class InternalSecurityInitializer extends SpagoBIInitializer {
 	@Override
 	public void init(SourceBean config, Session hibernateSession) {
 
-		logger.debug("IN");
+		LOGGER.debug("IN");
 
 		try {
 			config = getConfiguration();
 
 			if (config == null) {
-				logger.error("Security initialization aborted because the input parameter [config] is null");
+				LOGGER.error("Security initialization aborted because the input parameter [config] is null");
 				return;
 			}
 
@@ -106,9 +105,11 @@ public class InternalSecurityInitializer extends SpagoBIInitializer {
 							SourceBean attribute = attributes.get(i);
 							String name = (String) attribute.getAttribute("name");
 							String value = (String) attribute.getAttribute("value");
-							logger.debug("Setting attribute [" + name + "] of user [" + userId + "] to value [" + value + "]");
+							LOGGER.debug("Setting attribute [" + name + "] of user [" + userId + "] to value [" + value
+									+ "]");
 							if (usersLookupMap.get(userId) == null) {
-								logger.debug("User [" + userId + "] was already stored in the database. The value of attribute [" + name
+								LOGGER.debug("User [" + userId
+										+ "] was already stored in the database. The value of attribute [" + name
 										+ "] will not be overwritten");
 								continue;
 							}
@@ -125,7 +126,8 @@ public class InternalSecurityInitializer extends SpagoBIInitializer {
 
 							userDAO.updateSbiUserAttributes(sbiUserAttr);
 
-							logger.debug("Attribute [" + name + "] of user [" + userId + "] succesfully set to value [" + value + "]");
+							LOGGER.debug("Attribute [" + name + "] of user [" + userId + "] succesfully set to value ["
+									+ value + "]");
 						}
 					}
 
@@ -134,9 +136,10 @@ public class InternalSecurityInitializer extends SpagoBIInitializer {
 						for (int i = 0; i < userroles.size(); i++) {
 							SourceBean role = userroles.get(i);
 							String name = (String) role.getAttribute("name");
-							logger.debug("Creating association beetween user [" + userId + "] and role [" + name + "]");
+							LOGGER.debug("Creating association beetween user [" + userId + "] and role [" + name + "]");
 							if (usersLookupMap.get(userId) == null) {
-								logger.debug("User [" + userId + "] was already stored in the database. The associatino with role [" + name
+								LOGGER.debug("User [" + userId
+										+ "] was already stored in the database. The associatino with role [" + name
 										+ "] will not be created");
 								continue;
 							}
@@ -150,21 +153,22 @@ public class InternalSecurityInitializer extends SpagoBIInitializer {
 							id.setExtRoleId(extRoleId);// role Id
 							id.setId(userIdInt);// user ID
 							sbiExtUserRole.getCommonInfo().setOrganization(organization);
-							;
+
 							sbiExtUserRole.setId(id);
 
 							userDAO.updateSbiUserRoles(sbiExtUserRole);
 
-							logger.debug("Association beetween user [" + userId + "] and role [" + name + "] succesfully created");
+							LOGGER.debug("Association beetween user [" + userId + "] and role [" + name
+									+ "] succesfully created");
 						}
 					}
 				}
 			}
 		} catch (Throwable t) {
-			logger.error("An unexpected error occurred during users' initialization", t);
+			LOGGER.error("An unexpected error occurred during users' initialization", t);
 			throw new SpagoBIRuntimeException("An unexpected error occurred during users' initialization", t);
 		}
-		logger.debug("OUT");
+		LOGGER.debug("OUT");
 	}
 
 	@Override
@@ -182,29 +186,30 @@ public class InternalSecurityInitializer extends SpagoBIInitializer {
 				return role.getId();
 			}
 		}
-		logger.warn("Role with name [" + name + "] and organization [" + organization + "] not found");
+		LOGGER.warn("Role with name [" + name + "] and organization [" + organization + "] not found");
 		return null;
 	}
 
 	private Integer findAttributeId(List<SbiAttribute> attributesList, String name, String organization) {
 		for (SbiAttribute attribute : attributesList) {
-			if (attribute.getAttributeName().equalsIgnoreCase(name) && attribute.getCommonInfo().getOrganization().equals(organization)) {
+			if (attribute.getAttributeName().equalsIgnoreCase(name)
+					&& attribute.getCommonInfo().getOrganization().equals(organization)) {
 				return attribute.getAttributeId();
 			}
 		}
-		logger.warn("Attribute with name [" + name + "] and organization [" + organization + "] not found");
+		LOGGER.warn("Attribute with name [" + name + "] and organization [" + organization + "] not found");
 		return null;
 	}
 
 	/**
 	 * @return The map of role ids (Integer) indexed by role name (String)
 	 */
-	public HashMap<String, Integer> initUsers(SourceBean config) {
+	public Map<String, Integer> initUsers(SourceBean config) {
 		HashMap<String, Integer> usersLookup;
 
-		logger.debug("IN");
+		LOGGER.debug("IN");
 
-		usersLookup = new HashMap<String, Integer>();
+		usersLookup = new HashMap<>();
 		try {
 			Assert.assertNotNull(config, "Input parameter [config] cannot be null");
 
@@ -220,7 +225,8 @@ public class InternalSecurityInitializer extends SpagoBIInitializer {
 				boolean insert = false;
 
 				if (usePublicUserConf == null
-						|| (usePublicUserConf.isActive() && usePublicUserConf.getValueCheck() != null && usePublicUserConf.getValueCheck().equals("true")))
+						|| (usePublicUserConf.isActive() && usePublicUserConf.getValueCheck() != null
+								&& usePublicUserConf.getValueCheck().equals("true")))
 					usePublicUser = true;
 
 				if (existingUser == null) {
@@ -228,18 +234,18 @@ public class InternalSecurityInitializer extends SpagoBIInitializer {
 					if (defaultUser.getUserId().equalsIgnoreCase(SpagoBIConstants.PUBLIC_USER_ID) && !usePublicUser)
 						insert = false;
 					if (insert) {
-						String userId = defaultUser.getUserId(); // save this because the dao during save set it to id
-						logger.debug("Storing user [" + defaultUser.getUserId() + "] into database ");
+						LOGGER.debug("Storing user [" + defaultUser.getUserId() + "] into database ");
 						Integer newId = userDAO.saveSbiUser(defaultUser);
 						usersLookup.put(defaultUser.getUserId(), newId);
-						logger.debug("User [" + defaultUser.getUserId() + "] sucesfully stored into database with id [" + newId + "]");
+						LOGGER.debug("User [" + defaultUser.getUserId() + "] sucesfully stored into database with id ["
+								+ newId + "]");
 					}
 				}
 			}
 		} catch (Throwable t) {
-			logger.error("An unexpected error occurred while initializieng default users", t);
+			LOGGER.error("An unexpected error occurred while initializieng default users", t);
 		} finally {
-			logger.debug("OUT");
+			LOGGER.debug("OUT");
 		}
 
 		return usersLookup;
@@ -248,15 +254,15 @@ public class InternalSecurityInitializer extends SpagoBIInitializer {
 	public List<SbiUser> readUsers(SourceBean config) {
 		List<SbiUser> defaultUsers;
 
-		logger.debug("IN");
+		LOGGER.debug("IN");
 
-		defaultUsers = new ArrayList<SbiUser>();
+		defaultUsers = new ArrayList<>();
 
 		try {
 			Assert.assertNotNull(config, "Input parameter [config] cannot be null");
 
 			List<SourceBean> defaultsUsersSB = config.getAttributeAsList("DEFAULT_USERS.USER");
-			logger.debug("Succesfully read from configuration [" + defaultsUsersSB.size() + "] defualt user(s)");
+			LOGGER.debug("Succesfully read from configuration [" + defaultsUsersSB.size() + "] defualt user(s)");
 
 			for (SourceBean defaultUserSB : defaultsUsersSB) {
 
@@ -268,10 +274,10 @@ public class InternalSecurityInitializer extends SpagoBIInitializer {
 				String password = (String) defaultUserSB.getAttribute("password");
 				if (password != null) {
 					try {
-						String pwd = Password.encriptPassword(password);
+						String pwd = Password.hashPassword(password);
 						defaultUser.setPassword(pwd);
 					} catch (Exception e) {
-						logger.error("Impossible to encript Password", e);
+						LOGGER.error("Impossible to encript Password", e);
 					}
 				}
 
@@ -296,13 +302,13 @@ public class InternalSecurityInitializer extends SpagoBIInitializer {
 
 				defaultUsers.add(defaultUser);
 
-				logger.debug("Succesfully parsed from configuration user [" + userId + ";" + fullName + "]");
+				LOGGER.debug("Succesfully parsed from configuration user [" + userId + ";" + fullName + "]");
 			}
 
 		} catch (Throwable t) {
-			logger.error("An unexpected error occurred while reading defualt users", t);
+			LOGGER.error("An unexpected error occurred while reading defualt users", t);
 		} finally {
-			logger.debug("OUT");
+			LOGGER.debug("OUT");
 		}
 
 		return defaultUsers;
@@ -316,9 +322,9 @@ public class InternalSecurityInitializer extends SpagoBIInitializer {
 		IRoleDAO roleDAO;
 		List<Role> defualtRoles;
 
-		logger.debug("IN");
+		LOGGER.debug("IN");
 
-		rolesList = new ArrayList<Role>();
+		rolesList = new ArrayList<>();
 		try {
 			Assert.assertNotNull(config, "Input parameter [config] cannot be null");
 
@@ -332,23 +338,26 @@ public class InternalSecurityInitializer extends SpagoBIInitializer {
 
 				Role existingRole = roleDAO.loadByName(defualtRole.getName());
 				if (existingRole == null) {
-					logger.debug("Storing role [" + defualtRole.getName() + "] for organization [" + defualtRole.getOrganization() + "] into database ");
+					LOGGER.debug("Storing role [" + defualtRole.getName() + "] for organization ["
+							+ defualtRole.getOrganization() + "] into database ");
 					roleDAO.insertRole(defualtRole);
 					existingRole = roleDAO.loadByName(defualtRole.getName());
-					logger.debug("Role [" + defualtRole.getName() + "] for organization [" + defualtRole.getOrganization()
-							+ "] succesfully stored into database with id [" + existingRole.getId() + "]");
+					LOGGER.debug(
+							"Role [" + defualtRole.getName() + "] for organization [" + defualtRole.getOrganization()
+									+ "] succesfully stored into database with id [" + existingRole.getId() + "]");
 				} else {
-					logger.debug("Role [" + defualtRole.getName() + "] for organization [" + defualtRole.getOrganization()
-							+ "] is alerdy stored into database with id [" + existingRole.getId() + "]");
+					LOGGER.debug(
+							"Role [" + defualtRole.getName() + "] for organization [" + defualtRole.getOrganization()
+									+ "] is alerdy stored into database with id [" + existingRole.getId() + "]");
 				}
 
 				rolesList.add(existingRole);
 			}
 
 		} catch (Throwable t) {
-			logger.error("An unexpected error occurred while initializieng default roles", t);
+			LOGGER.error("An unexpected error occurred while initializieng default roles", t);
 		} finally {
-			logger.debug("OUT");
+			LOGGER.debug("OUT");
 		}
 
 		return rolesList;
@@ -358,18 +367,18 @@ public class InternalSecurityInitializer extends SpagoBIInitializer {
 		List<Role> defaultRoles;
 		List<SourceBean> defaultRolesSB;
 
-		logger.debug("IN");
+		LOGGER.debug("IN");
 
-		defaultRoles = new ArrayList<Role>();
+		defaultRoles = new ArrayList<>();
 		try {
 			Assert.assertNotNull(config, "Input parameter [config] cannot be null");
 			defaultRolesSB = config.getAttributeAsList("DEFAULT_ROLES.ROLE");
 
-			logger.debug("Succesfully read from configuration [" + defaultRolesSB.size() + "] defualt role(s)");
+			LOGGER.debug("Succesfully read from configuration [" + defaultRolesSB.size() + "] defualt role(s)");
 
 			IDomainDAO domainDAO = DAOFactory.getDomainDAO();
 			List<Domain> domains = domainDAO.loadListDomainsByType("ROLE_TYPE");
-			HashMap<String, Integer> domainIds = new HashMap<String, Integer>();
+			HashMap<String, Integer> domainIds = new HashMap<>();
 			for (int i = 0; i < domains.size(); i++) {
 				domainIds.put(domains.get(i).getValueCd(), domains.get(i).getValueId());
 			}
@@ -399,12 +408,13 @@ public class InternalSecurityInitializer extends SpagoBIInitializer {
 
 				defaultRoles.add(sbiRole);
 
-				logger.debug("Succesfully parsed from configuration profile attribute [" + roleName + ";" + roleDescr + ";" + roleTypeCD + "]");
+				LOGGER.debug("Succesfully parsed from configuration profile attribute [" + roleName + ";" + roleDescr
+						+ ";" + roleTypeCD + "]");
 			}
 		} catch (Throwable t) {
-			logger.error("An unexpected error occurred while reading defualt profile attibutes", t);
+			LOGGER.error("An unexpected error occurred while reading defualt profile attibutes", t);
 		} finally {
-			logger.debug("OUT");
+			LOGGER.debug("OUT");
 		}
 
 		return defaultRoles;
@@ -418,9 +428,9 @@ public class InternalSecurityInitializer extends SpagoBIInitializer {
 		List<SbiAttribute> attributesList;
 		ISbiAttributeDAO profileAttributeDAO;
 
-		logger.debug("IN");
+		LOGGER.debug("IN");
 
-		attributesList = new ArrayList<SbiAttribute>();
+		attributesList = new ArrayList<>();
 		try {
 			Assert.assertNotNull(config, "Input parameter [config] cannot be null");
 
@@ -432,31 +442,34 @@ public class InternalSecurityInitializer extends SpagoBIInitializer {
 				profileAttributeDAO.setUserID("server_init");
 				profileAttributeDAO.setTenant(defaultProfileAttribute.getCommonInfo().getOrganization());
 
-				SbiAttribute existingAttribute = profileAttributeDAO.loadSbiAttributeByName(defaultProfileAttribute.getAttributeName());
+				SbiAttribute existingAttribute = profileAttributeDAO
+						.loadSbiAttributeByName(defaultProfileAttribute.getAttributeName());
 				if (existingAttribute == null) {
-					logger.debug("Storing attribute [" + defaultProfileAttribute.getAttributeName() + "] for organization ["
-							+ defaultProfileAttribute.getCommonInfo().getOrganization() + "] into database ");
+					LOGGER.debug(
+							"Storing attribute [" + defaultProfileAttribute.getAttributeName() + "] for organization ["
+									+ defaultProfileAttribute.getCommonInfo().getOrganization() + "] into database ");
 					try {
 						Integer id = profileAttributeDAO.saveSbiAttribute(defaultProfileAttribute);
 						defaultProfileAttribute.setAttributeId(id);
 						attributesList.add(defaultProfileAttribute);
-						logger.debug("Attribute [" + defaultProfileAttribute.getAttributeName() + "] for organization ["
-								+ defaultProfileAttribute.getCommonInfo().getOrganization() + "] succesfully stored into database with id equals to [" + id
-								+ "]");
+						LOGGER.debug("Attribute [" + defaultProfileAttribute.getAttributeName() + "] for organization ["
+								+ defaultProfileAttribute.getCommonInfo().getOrganization()
+								+ "] succesfully stored into database with id equals to [" + id + "]");
 					} catch (EMFUserError e) {
-						logger.error(e.getMessage(), e);
+						LOGGER.error(e.getMessage(), e);
 						throw new SpagoBIRuntimeException("Error while storing users' attribute", e);
 					}
 				} else {
 					attributesList.add(existingAttribute);
-					logger.debug("Attribute [" + existingAttribute.getAttributeName() + "] is already stored into the database with id equals to ["
+					LOGGER.debug("Attribute [" + existingAttribute.getAttributeName()
+							+ "] is already stored into the database with id equals to ["
 							+ existingAttribute.getAttributeId() + "]");
 				}
 			}
 		} catch (Throwable t) {
-			logger.error("An unexpected error occurred while initializing profile attibutes", t);
+			LOGGER.error("An unexpected error occurred while initializing profile attibutes", t);
 		} finally {
-			logger.debug("OUT");
+			LOGGER.debug("OUT");
 		}
 
 		return attributesList;
@@ -466,14 +479,15 @@ public class InternalSecurityInitializer extends SpagoBIInitializer {
 		List<SbiAttribute> defaultProfileAttributes;
 		List<SourceBean> defaultProfileAttributesSB;
 
-		logger.debug("IN");
+		LOGGER.debug("IN");
 
-		defaultProfileAttributes = new ArrayList<SbiAttribute>();
+		defaultProfileAttributes = new ArrayList<>();
 		try {
 			Assert.assertNotNull(config, "Input parameter [config] cannot be null");
 			defaultProfileAttributesSB = config.getAttributeAsList("DEFAULT_ATTRIBUTES.ATTRIBUTE");
 
-			logger.debug("Succesfully read from configuration [" + defaultProfileAttributesSB.size() + "] defualt profile attribute(s)");
+			LOGGER.debug("Succesfully read from configuration [" + defaultProfileAttributesSB.size()
+					+ "] defualt profile attribute(s)");
 
 			for (SourceBean defaultProfileAttributeSB : defaultProfileAttributesSB) {
 				SbiAttribute sbiAttribute = new SbiAttribute();
@@ -481,19 +495,21 @@ public class InternalSecurityInitializer extends SpagoBIInitializer {
 				String attributeDescription = (String) defaultProfileAttributeSB.getAttribute("description");
 				String organization = (String) defaultProfileAttributeSB.getAttribute("organization");
 				if (organization == null) {
-					throw new SpagoBIRuntimeException("Predefined attribute [" + attributeName + "] has no organization set.");
+					throw new SpagoBIRuntimeException(
+							"Predefined attribute [" + attributeName + "] has no organization set.");
 				}
 				sbiAttribute.setAttributeName(attributeName);
 				sbiAttribute.setDescription(attributeDescription);
 				sbiAttribute.getCommonInfo().setOrganization(organization);
 				defaultProfileAttributes.add(sbiAttribute);
 
-				logger.debug("Succesfully parsed from configuration profile attribute [" + attributeName + ";" + attributeDescription + "]");
+				LOGGER.debug("Succesfully parsed from configuration profile attribute [" + attributeName + ";"
+						+ attributeDescription + "]");
 			}
 		} catch (Throwable t) {
-			logger.error("An unexpected error occurred while reading defualt profile attibutes", t);
+			LOGGER.error("An unexpected error occurred while reading defualt profile attibutes", t);
 		} finally {
-			logger.debug("OUT");
+			LOGGER.debug("OUT");
 		}
 
 		return defaultProfileAttributes;
@@ -502,11 +518,12 @@ public class InternalSecurityInitializer extends SpagoBIInitializer {
 	public void initDefaultAuthorizations(SourceBean config) {
 		List<SourceBean> defaultAuthorizationsSB;
 		Session aSession = null;
-		logger.debug("IN");
+		LOGGER.debug("IN");
 		try {
 			Assert.assertNotNull(config, "Input parameter [config] cannot be null");
 			defaultAuthorizationsSB = config.getAttributeAsList("DEFAULT_AUTHORIZATIONS.AUTHORIZATION");
-			logger.debug("Succesfully read from configuration [" + defaultAuthorizationsSB.size() + "] defualt authorization(s)");
+			LOGGER.debug("Succesfully read from configuration [" + defaultAuthorizationsSB.size()
+					+ "] defualt authorization(s)");
 
 			List<SbiAuthorizations> authorizations = DAOFactory.getRoleDAO().loadAllAuthorizations();
 
@@ -516,9 +533,9 @@ public class InternalSecurityInitializer extends SpagoBIInitializer {
 				boolean isInConfigFile = false;
 				String nameInDB = auth.getName();
 				String productTypeInDB = auth.getProductType().getLabel();
-				Iterator it = defaultAuthorizationsSB.iterator();
+				Iterator<SourceBean> it = defaultAuthorizationsSB.iterator();
 				while (it.hasNext()) {
-					SourceBean authSB = (SourceBean) it.next();
+					SourceBean authSB = it.next();
 					String nameInFile = (String) authSB.getAttribute("authorizationName");
 					String productTypeInFile = (String) authSB.getAttribute("productType");
 					if (nameInFile.equals(nameInDB) && productTypeInFile.equals(productTypeInDB)) {
@@ -533,18 +550,18 @@ public class InternalSecurityInitializer extends SpagoBIInitializer {
 			}
 
 			// create a Set of names with AuthorizationName-ProductTypeLabel
-			Set<String> authorizationsFound = new HashSet<String>();
+			Set<String> authorizationsFound = new HashSet<>();
 			for (SbiAuthorizations authorization : authorizations) {
 				SbiProductType sbiProductType = authorization.getProductType();
 				authorizationsFound.add(authorization.getName() + "-" + sbiProductType.getLabel());
 			}
 
-			logger.debug("Initializer inserts default authorization");
+			LOGGER.debug("Initializer inserts default authorization");
 
 			Set<String> productTypes = loadProductTypes();
 			for (SourceBean defaultAuthSB : defaultAuthorizationsSB) {
 				String authName = (String) defaultAuthSB.getAttribute("authorizationName");
-				logger.debug("Insert " + authName);
+				LOGGER.debug("Insert " + authName);
 
 				/*
 				 * String organization = (String) defaultAuthSB.getAttribute("organization"); if (organization == null) { throw new
@@ -552,29 +569,33 @@ public class InternalSecurityInitializer extends SpagoBIInitializer {
 				 */
 				String productType = (String) defaultAuthSB.getAttribute("productType");
 				if (productType == null) {
-					throw new SpagoBIRuntimeException("Predefined authorization [" + authName + "] has no product type set.");
+					throw new SpagoBIRuntimeException(
+							"Predefined authorization [" + authName + "] has no product type set.");
 				}
 
 				if (productTypes.contains(productType)) {
 					if (!authorizationsFound.contains(authName + "-" + productType)) {
 						DAOFactory.getRoleDAO().insertAuthorization(authName, productType);
-						logger.debug("Succesfully inserted authorization [" + authName + "] for product Type [" + productType + "]");
+						LOGGER.debug("Succesfully inserted authorization [" + authName + "] for product Type ["
+								+ productType + "]");
 					} else {
-						logger.debug("Not inserted authorization [" + authName + "] for product Type [" + productType + "] because already present.");
+						LOGGER.debug("Not inserted authorization [" + authName + "] for product Type [" + productType
+								+ "] because already present.");
 
 					}
 				} else {
-					logger.debug("Not inserted authorization [" + authName + "]. Product Type [" + productType + "] is not registered.");
+					LOGGER.debug("Not inserted authorization [" + authName + "]. Product Type [" + productType
+							+ "] is not registered.");
 				}
 			}
 
 		} catch (Throwable t) {
-			logger.error("An unexpected error occurred while reading defualt profile attibutes", t);
+			LOGGER.error("An unexpected error occurred while reading defualt profile attibutes", t);
 		} finally {
 			if (aSession != null && aSession.isOpen()) {
 				aSession.close();
 			}
-			logger.debug("OUT");
+			LOGGER.debug("OUT");
 		}
 
 		return;
@@ -583,20 +604,23 @@ public class InternalSecurityInitializer extends SpagoBIInitializer {
 	public void initDefaultAuthorizationsRoles(SourceBean config) {
 		List<SourceBean> defaultAuthorizationsRolesSB;
 		Session aSession = null;
-		logger.debug("IN");
+		LOGGER.debug("IN");
 		try {
 			Assert.assertNotNull(config, "Input parameter [config] cannot be null");
-			defaultAuthorizationsRolesSB = config.getAttributeAsList("DEFAULT_AUTHORIZATIONS_ROLES.AUTHORIZATION_ROLES");
-			logger.debug("Succesfully read from configuration [" + defaultAuthorizationsRolesSB.size() + "] defualt authorization(s) roles");
+			defaultAuthorizationsRolesSB = config
+					.getAttributeAsList("DEFAULT_AUTHORIZATIONS_ROLES.AUTHORIZATION_ROLES");
+			LOGGER.debug("Succesfully read from configuration [" + defaultAuthorizationsRolesSB.size()
+					+ "] defualt authorization(s) roles");
 
 			List<SbiAuthorizations> authorizations = null;
 			List<SbiProductType> productTypes = null;
 
 			aSession = this.getSession();
 
-			Map<String, String> roleNames = new HashMap<String, String>();
+			Map<String, String> roleNames = new HashMap<>();
 			for (SourceBean defaultAuthorizationSB : defaultAuthorizationsRolesSB) {
-				roleNames.put((String) defaultAuthorizationSB.getAttribute("roleName"), (String) defaultAuthorizationSB.getAttribute("organization"));
+				roleNames.put((String) defaultAuthorizationSB.getAttribute("roleName"),
+						(String) defaultAuthorizationSB.getAttribute("organization"));
 			}
 
 			for (String roleName : roleNames.keySet()) {
@@ -608,13 +632,15 @@ public class InternalSecurityInitializer extends SpagoBIInitializer {
 				SbiCommonInfo sbiCommonInfo = new SbiCommonInfo();
 				sbiCommonInfo.setOrganization(organization);
 
-				SbiExtRoles role = (SbiExtRoles) aSession.createCriteria(SbiExtRoles.class).add(Restrictions.eq("name", roleName))
+				SbiExtRoles role = (SbiExtRoles) aSession.createCriteria(SbiExtRoles.class)
+						.add(Restrictions.eq("name", roleName))
 						.add(Restrictions.eq("commonInfo.organization", organization)).uniqueResult();
-				List<SbiAuthorizations> authorizationsAlreadyInserted = DAOFactory.getRoleDAO().LoadAuthorizationsAssociatedToRole(role.getExtRoleId());
+				List<SbiAuthorizations> authorizationsAlreadyInserted = DAOFactory.getRoleDAO()
+						.LoadAuthorizationsAssociatedToRole(role.getExtRoleId());
 
-				if (authorizationsAlreadyInserted.size() == 0) {
-					List listOfAuthToInsertForRole = config.getFilteredSourceBeanAttributeAsList("DEFAULT_AUTHORIZATIONS_ROLES.AUTHORIZATION_ROLES", "roleName",
-							roleName);
+				if (authorizationsAlreadyInserted.isEmpty()) {
+					List listOfAuthToInsertForRole = config.getFilteredSourceBeanAttributeAsList(
+							"DEFAULT_AUTHORIZATIONS_ROLES.AUTHORIZATION_ROLES", "roleName", roleName);
 
 					for (Object defaultAuthorization : listOfAuthToInsertForRole) {
 						SourceBean defaultAuthorizationSB = (SourceBean) defaultAuthorization;
@@ -628,12 +654,13 @@ public class InternalSecurityInitializer extends SpagoBIInitializer {
 							if (authorizations == null)
 								authorizations = DAOFactory.getRoleDAO().loadAllAuthorizations();
 
-							SbiAuthorizations sbiAuthorizations = getSbiAuthorizationToInsert(authorizations, authorizationName,
-									productType.getProductTypeId());
+							SbiAuthorizations sbiAuthorizations = getSbiAuthorizationToInsert(authorizations,
+									authorizationName, productType.getProductTypeId());
 
 							if (sbiAuthorizations != null) {
 								SbiAuthorizationsRoles sbiAuthorizationsRoles = new SbiAuthorizationsRoles();
-								sbiAuthorizationsRoles.setId(new SbiAuthorizationsRolesId(sbiAuthorizations.getId(), role.getExtRoleId()));
+								sbiAuthorizationsRoles.setId(
+										new SbiAuthorizationsRolesId(sbiAuthorizations.getId(), role.getExtRoleId()));
 								sbiAuthorizationsRoles.setSbiExtRoles(role);
 								sbiAuthorizationsRoles.setSbiAuthorizations(sbiAuthorizations);
 
@@ -646,17 +673,18 @@ public class InternalSecurityInitializer extends SpagoBIInitializer {
 				}
 			}
 		} catch (Throwable t) {
-			logger.error("An unexpected error occurred while reading defualt profile attibutes", t);
+			LOGGER.error("An unexpected error occurred while reading defualt profile attibutes", t);
 		} finally {
 			if (aSession != null && aSession.isOpen()) {
 				aSession.close();
 			}
-			logger.debug("OUT");
+			LOGGER.debug("OUT");
 		}
 
 	}
 
-	private SbiAuthorizations getSbiAuthorizationToInsert(List<SbiAuthorizations> l, String name, Integer productTypeId) {
+	private SbiAuthorizations getSbiAuthorizationToInsert(List<SbiAuthorizations> l, String name,
+			Integer productTypeId) {
 		SbiAuthorizations toReturn = null;
 
 		for (SbiAuthorizations object : l) {
@@ -672,16 +700,18 @@ public class InternalSecurityInitializer extends SpagoBIInitializer {
 	public void initExtRolesCategory(SourceBean config) {
 		List<SourceBean> extRolesCategoriesSB;
 		Session aSession = null;
-		logger.debug("IN");
+		LOGGER.debug("IN");
 		try {
 			Assert.assertNotNull(config, "Input parameter [config] cannot be null");
 			extRolesCategoriesSB = config.getAttributeAsList("EXT_ROLES_CATEGORIES.EXT_ROLES_CATEGORY");
-			logger.debug("Succesfully read from configuration [" + extRolesCategoriesSB.size() + "] defualt ext roles category(s) roles");
+			LOGGER.debug("Succesfully read from configuration [" + extRolesCategoriesSB.size()
+					+ "] defualt ext roles category(s) roles");
 			aSession = this.getSession();
 
-			Map<String, String> roleNames = new HashMap<String, String>();
+			Map<String, String> roleNames = new HashMap<>();
 			for (SourceBean defaultAuthorizationSB : extRolesCategoriesSB) {
-				roleNames.put((String) defaultAuthorizationSB.getAttribute("roleName"), (String) defaultAuthorizationSB.getAttribute("organization"));
+				roleNames.put((String) defaultAuthorizationSB.getAttribute("roleName"),
+						(String) defaultAuthorizationSB.getAttribute("organization"));
 			}
 
 			for (String roleName : roleNames.keySet()) {
@@ -689,10 +719,11 @@ public class InternalSecurityInitializer extends SpagoBIInitializer {
 				String organization = roleNames.get(roleName);
 				IRoleDAO roleDAO = DAOFactory.getRoleDAO();
 				roleDAO.setTenant(organization);
-				SbiExtRoles role = (SbiExtRoles) aSession.createCriteria(SbiExtRoles.class).add(Restrictions.eq("name", roleName))
+				SbiExtRoles role = (SbiExtRoles) aSession.createCriteria(SbiExtRoles.class)
+						.add(Restrictions.eq("name", roleName))
 						.add(Restrictions.eq("commonInfo.organization", organization)).uniqueResult();
 
-				if (DAOFactory.getRoleDAO().getMetaModelCategoriesForRole(role.getExtRoleId()).size() == 0) {
+				if (DAOFactory.getRoleDAO().getMetaModelCategoriesForRole(role.getExtRoleId()).isEmpty()) {
 					for (SourceBean extRolesCategorySB : extRolesCategoriesSB) {
 
 						SbiCategory category = (SbiCategory) aSession.createCriteria(SbiCategory.class)
@@ -705,12 +736,12 @@ public class InternalSecurityInitializer extends SpagoBIInitializer {
 
 			}
 		} catch (Throwable t) {
-			logger.error("An unexpected error occurred while reading defualt profile attibutes", t);
+			LOGGER.error("An unexpected error occurred while reading defualt profile attibutes", t);
 		} finally {
 			if (aSession != null && aSession.isOpen()) {
 				aSession.close();
 			}
-			logger.debug("OUT");
+			LOGGER.debug("OUT");
 		}
 
 	}
@@ -718,13 +749,13 @@ public class InternalSecurityInitializer extends SpagoBIInitializer {
 	private Set<String> loadProductTypes() {
 		List<SbiProductType> sbiProductTypes = DAOFactory.getProductTypeDAO().loadAllProductType();
 		if (sbiProductTypes != null && !sbiProductTypes.isEmpty()) {
-			Set<String> productTypes = new HashSet<String>(sbiProductTypes.size());
+			Set<String> productTypes = new HashSet<>(sbiProductTypes.size());
 			for (SbiProductType sbiProductType : sbiProductTypes) {
 				productTypes.add(sbiProductType.getLabel());
 			}
 			return productTypes;
 		} else {
-			return new HashSet<String>(0);
+			return new HashSet<>(0);
 		}
 	}
 }

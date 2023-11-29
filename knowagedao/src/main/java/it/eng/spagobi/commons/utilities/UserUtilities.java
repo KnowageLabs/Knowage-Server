@@ -91,11 +91,11 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 public class UserUtilities {
 
-	static Logger logger = Logger.getLogger(UserUtilities.class);
+	private static final Logger LOGGER = Logger.getLogger(UserUtilities.class);
 
 	public static String getSchema(String ente, RequestContainer aRequestContainer) {
 
-		logger.debug("Ente: " + ente);
+		LOGGER.debug("Ente: " + ente);
 		SessionContainer aSessionContainer = aRequestContainer.getSessionContainer();
 		SessionContainer permanentSession = aSessionContainer.getPermanentContainer();
 
@@ -105,24 +105,24 @@ public class UserUtilities {
 			try {
 				return (String) userProfile.getUserAttribute(ente);
 			} catch (EMFInternalError e) {
-				logger.error("User profile is NULL!!!!");
+				LOGGER.error("User profile is NULL!!!!");
 			}
 		} else {
-			logger.warn("User profile is NULL!!!!");
+			LOGGER.warn("User profile is NULL!!!!");
 		}
 		return null;
 	}
 
 	public static String getSchema(String ente, IEngUserProfile userProfile) {
-		logger.debug("Ente: " + ente);
+		LOGGER.debug("Ente: " + ente);
 		if (userProfile != null) {
 			try {
 				return (String) userProfile.getUserAttribute(ente);
 			} catch (EMFInternalError e) {
-				logger.error("User profile is NULL!!!!");
+				LOGGER.error("User profile is NULL!!!!");
 			}
 		} else {
-			logger.warn("User profile is NULL!!!!");
+			LOGGER.warn("User profile is NULL!!!!");
 		}
 		return null;
 	}
@@ -146,18 +146,17 @@ public class UserUtilities {
 			PortletRequest portletRequest = PortletUtilities.getPortletRequest();
 			Principal principal = portletRequest.getUserPrincipal();
 			userId = principal.getName();
-			logger.debug("got userId from Principal=" + userId);
+			LOGGER.debug("got userId from Principal=" + userId);
 
 			userProfile = UserUtilities.getUserProfile(userId);
 
-			logger.debug("User profile created. User id: " + (String) ((UserProfile) userProfile).getUserId());
-			logger.debug("Attributes name of the user profile: " + userProfile.getUserAttributeNames());
-			logger.debug("Functionalities of the user profile: " + userProfile.getFunctionalities());
-			logger.debug("Roles of the user profile: " + userProfile.getRoles());
+			LOGGER.debug("User profile created. User id: " + (String) ((UserProfile) userProfile).getUserId());
+			LOGGER.debug("Attributes name of the user profile: " + userProfile.getUserAttributeNames());
+			LOGGER.debug("Functionalities of the user profile: " + userProfile.getFunctionalities());
+			LOGGER.debug("Roles of the user profile: " + userProfile.getRoles());
 
 			permanentSession.setAttribute(IEngUserProfile.ENG_USER_PROFILE, userProfile);
 
-			// String username = (String) userProfile.getUserUniqueIdentifier();
 			String username = ((UserProfile) userProfile).getUserId().toString();
 			if (!UserUtilities.userFunctionalityRootExists(username)) {
 				UserUtilities.createUserFunctionalityRoot(userProfile);
@@ -169,13 +168,13 @@ public class UserUtilities {
 	}
 
 	public static IEngUserProfile getUserProfile(HttpServletRequest req) throws Exception {
-		logger.debug("IN");
+		LOGGER.debug("IN");
 		try {
 			SsoServiceInterface userProxy = SsoServiceFactory.createProxyService();
 			String userId = userProxy.readUserIdentifier(req);
 			return UserUtilities.getUserProfile(userId);
 		} finally {
-			logger.debug("OUT");
+			LOGGER.debug("OUT");
 		}
 	}
 
@@ -205,7 +204,7 @@ public class UserUtilities {
 
 		Monitor getUserProfileMonitor = MonitorFactory.start("KnowageDAO.UserUtilities.getUserProfile");
 
-		logger.debug("IN.userId=" + userId);
+		LOGGER.debug("IN.userId=" + userId);
 		CacheInterface cache = UserProfileCache.getCache();
 		// Search UserProfile in cache
 		if (cache.contains(userId)) {
@@ -220,13 +219,13 @@ public class UserUtilities {
 			try {
 				UserProfile profile;
 				if (UserProfile.isSchedulerUser(userId)) {
-					logger.debug("User [" + userId + "] has been recognized as a scheduler user.");
+					LOGGER.debug("User [" + userId + "] has been recognized as a scheduler user.");
 					profile = UserProfile.createSchedulerUserProfile(userId);
 				} else if (UserProfile.isDataPreparationUser(userId)) {
-					logger.debug("User [" + userId + "] has been recognized as a data preparation user.");
+					LOGGER.debug("User [" + userId + "] has been recognized as a data preparation user.");
 					profile = UserProfile.createDataPreparationUserProfile(userId);
 				} else if (PublicProfile.isPublicUser(userId)) {
-					logger.debug("User [" + userId + "] has been recognized as a public user.");
+					LOGGER.debug("User [" + userId + "] has been recognized as a public user.");
 					String decodedUserId = JWTSsoService.jwtToken2userId(userId);
 					SpagoBIUserProfile user = PublicProfile.createPublicUserProfile(decodedUserId);
 					profile = new UserProfile(user);
@@ -262,15 +261,15 @@ public class UserUtilities {
 					// put profile in cache
 					cache.put(userId, profile);
 				}
-				logger.debug("profile from get profile" + profile);
+				LOGGER.debug("profile from get profile" + profile);
 
 				return profile;
 
 			} catch (Exception e) {
-				logger.error("Exception while creating user profile", e);
+				LOGGER.error("Exception while creating user profile", e);
 				throw new SecurityException("Exception while creating user profile", e);
 			} finally {
-				logger.debug("OUT");
+				LOGGER.debug("OUT");
 				getUserProfileMonitor.stop();
 			}
 		}
@@ -340,14 +339,14 @@ public class UserUtilities {
 		String defaultRole = SingletonConfig.getInstance()
 				.getConfigValue(ConfigurationConstants.INTERNAL_SECURITY_USERS_DEFAULT_ROLE);
 		if (ArrayUtils.isEmpty(user.getRoles()) && StringUtils.isNotEmpty(defaultRole)) {
-			logger.debug("User profile object has no roles, setting the default one that is [" + defaultRole + "]");
+			LOGGER.debug("User profile object has no roles, setting the default one that is [" + defaultRole + "]");
 			user.setRoles(new String[] { defaultRole });
 		}
 	}
 
 	public static boolean isTechnicalUser(IEngUserProfile profile) {
 		Assert.assertNotNull(profile, "Object in input is null");
-		logger.debug("IN.user id = [" + ((UserProfile) profile).getUserId() + "]");
+		LOGGER.debug("IN.user id = [" + ((UserProfile) profile).getUserId() + "]");
 		try {
 			if (profile.isAbleToExecuteAction(CommunityFunctionalityConstants.DOCUMENT_MANAGEMENT_ADMIN) // for administrators
 					|| profile.isAbleToExecuteAction(CommunityFunctionalityConstants.DOCUMENT_MANAGEMENT_DEV) // for developers
@@ -364,7 +363,7 @@ public class UserUtilities {
 
 	public static boolean isTechDsManager(IEngUserProfile profile) {
 		Assert.assertNotNull(profile, "Object in input is null");
-		logger.debug("IN.user id = [" + ((UserProfile) profile).getUserId() + "]");
+		LOGGER.debug("IN.user id = [" + ((UserProfile) profile).getUserId() + "]");
 		try {
 			if (profile.isAbleToExecuteAction(CommunityFunctionalityConstants.DOCUMENT_MANAGEMENT_ADMIN) // for administrators
 					|| profile.isAbleToExecuteAction(CommunityFunctionalityConstants.DOCUMENT_MANAGEMENT_DEV)) { // for developers
@@ -379,7 +378,7 @@ public class UserUtilities {
 
 	public static boolean isAdministrator(IEngUserProfile profile) {
 		Assert.assertNotNull(profile, "Object in input is null");
-		logger.debug("IN.user id = [" + ((UserProfile) profile).getUserId() + "]");
+		LOGGER.debug("IN.user id = [" + ((UserProfile) profile).getUserId() + "]");
 		try {
 			if (profile.isAbleToExecuteAction(CommunityFunctionalityConstants.DOCUMENT_MANAGEMENT_ADMIN)) {
 				return true;
@@ -393,7 +392,7 @@ public class UserUtilities {
 
 	public static boolean hasDeveloperRole(IEngUserProfile profile) {
 		Assert.assertNotNull(profile, "Object in input is null");
-		logger.debug("IN.user id = [" + ((UserProfile) profile).getUserId() + "]");
+		LOGGER.debug("IN.user id = [" + ((UserProfile) profile).getUserId() + "]");
 		try {
 			IRoleDAO roleDAO = DAOFactory.getRoleDAO();
 			Collection<String> roles = ((UserProfile) profile).getRolesForUse();
@@ -413,7 +412,7 @@ public class UserUtilities {
 
 	public static boolean hasAdministratorRole(IEngUserProfile profile) {
 		Assert.assertNotNull(profile, "Object in input is null");
-		logger.debug("IN.user id = [" + ((UserProfile) profile).getUserId() + "]");
+		LOGGER.debug("IN.user id = [" + ((UserProfile) profile).getUserId() + "]");
 		try {
 			IRoleDAO roleDAO = DAOFactory.getRoleDAO();
 			Collection<String> roles = ((UserProfile) profile).getRolesForUse();
@@ -433,7 +432,7 @@ public class UserUtilities {
 
 	public static boolean hasUserRole(IEngUserProfile profile) {
 		Assert.assertNotNull(profile, "Object in input is null");
-		logger.debug("IN.user id = [" + ((UserProfile) profile).getUserId() + "]");
+		LOGGER.debug("IN.user id = [" + ((UserProfile) profile).getUserId() + "]");
 		try {
 			IRoleDAO roleDAO = DAOFactory.getRoleDAO();
 			Collection<String> roles = ((UserProfile) profile).getRolesForUse();
@@ -452,7 +451,7 @@ public class UserUtilities {
 
 	public static boolean isTester(IEngUserProfile profile) {
 		Assert.assertNotNull(profile, "Object in input is null");
-		logger.debug("IN.user id = [" + ((UserProfile) profile).getUserId() + "]");
+		LOGGER.debug("IN.user id = [" + ((UserProfile) profile).getUserId() + "]");
 		try {
 			if (profile.isAbleToExecuteAction(CommunityFunctionalityConstants.DOCUMENT_MANAGEMENT_TEST)) {
 				return true;
@@ -464,9 +463,9 @@ public class UserUtilities {
 		}
 	}
 
-	public static boolean haveRoleAndAuthorization(IEngUserProfile profile, String Role, String[] authorization) {
+	public static boolean haveRoleAndAuthorization(IEngUserProfile profile, String role, String[] authorization) {
 		Assert.assertNotNull(profile, "Object in input is null");
-		logger.debug("IN.user id = [" + ((UserProfile) profile).getUserId() + "]");
+		LOGGER.debug("IN.user id = [" + ((UserProfile) profile).getUserId() + "]");
 		ArrayList<String> auth = new ArrayList<>(Arrays.asList(authorization));
 		try {
 			if (((UserProfile) profile).getIsSuperadmin()) {
@@ -478,7 +477,7 @@ public class UserUtilities {
 				roleDAO.setTenant(((UserProfile) profile).getOrganization());
 
 				Role rol = roleDAO.loadByName(((ArrayList<?>) profile.getRoles()).get(i).toString());
-				if (Role == null || rol.getRoleTypeCD().compareTo(Role) == 0) {
+				if (role == null || rol.getRoleTypeCD().compareTo(role) == 0) {
 
 					// check for authorization
 					if (auth == null || auth.isEmpty()) {
@@ -518,11 +517,11 @@ public class UserUtilities {
 	public static boolean userFunctionalityRootExists(String username) throws Exception {
 		boolean exists = false;
 		try {
-			logger.debug("****  username checked: " + username);
+			LOGGER.debug("****  username checked: " + username);
 			ILowFunctionalityDAO functdao = DAOFactory.getLowFunctionalityDAO();
 			exists = functdao.checkUserRootExists(username);
 		} catch (Exception e) {
-			logger.error("Error while checking user functionality root existence", e);
+			LOGGER.error("Error while checking user functionality root existence", e);
 			throw new Exception("Unable to check user functionality existence", e);
 		}
 		return exists;
@@ -581,7 +580,7 @@ public class UserUtilities {
 		LowFunctionality personalFolder = loadUserFunctionalityRoot(userProfile, false);
 		if (personalFolder == null) {
 			String userId = (String) userProfile.getUserId();
-			logger.debug("Personal folder for user [" + userId + "] does not exist");
+			LOGGER.debug("Personal folder for user [" + userId + "] does not exist");
 			return false;
 		}
 		return personalFolder.getId().equals(folder.getId());
@@ -614,45 +613,42 @@ public class UserUtilities {
 	 * @throws Exception the exception
 	 */
 	public static void createUserFunctionalityRoot(IEngUserProfile userProfile) throws Exception {
-		logger.debug("IN");
+		LOGGER.debug("IN");
 		try {
 			String userId = (String) ((UserProfile) userProfile).getUserId();
-			logger.debug("userId: " + userId);
+			LOGGER.debug("userId: " + userId);
 			Collection roleStrs = ((UserProfile) userProfile).getRolesForUse();
 			Iterator roleIter = roleStrs.iterator();
 			List roles = new ArrayList();
-			logger.debug("Roles's number: " + roleStrs.size());
+			LOGGER.debug("Roles's number: " + roleStrs.size());
 			while (roleIter.hasNext()) {
 				String rolename = (String) roleIter.next();
-				logger.debug("Rolename: " + rolename);
+				LOGGER.debug("Rolename: " + rolename);
 				Role role = DAOFactory.getRoleDAO().loadByName(rolename);
 				if (role != null) {
 					roles.add(role);
-					logger.debug("Add Rolename ( " + rolename + ") ");
+					LOGGER.debug("Add Rolename ( " + rolename + ") ");
 				} else
-					logger.debug("Rolename ( " + rolename + ") doesn't exist in EXT_ROLES");
+					LOGGER.debug("Rolename ( " + rolename + ") doesn't exist in EXT_ROLES");
 			}
-			Role[] rolesArr = new Role[roles.size()];
-			rolesArr = (Role[]) roles.toArray(rolesArr);
 
 			UserFunctionality userFunct = new UserFunctionality();
 			userFunct.setCode("ufr_" + userId);
 			userFunct.setDescription("User Functionality Root");
 			userFunct.setName(userId);
 			userFunct.setPath("/" + userId);
-			// userFunct.setExecRoles(rolesArr);
 			ILowFunctionalityDAO functdao = DAOFactory.getLowFunctionalityDAO();
 			functdao.insertUserFunctionality(userFunct);
 		} catch (Exception e) {
-			logger.error("Error while creating user functionality root", e);
+			LOGGER.error("Error while creating user functionality root", e);
 			throw new Exception("Unable to create user functionality root", e);
 		} finally {
-			logger.debug("OUT");
+			LOGGER.debug("OUT");
 		}
 	}
 
 	public static String[] readFunctionality(SpagoBIUserProfile user) {
-		logger.debug("IN");
+		LOGGER.debug("IN");
 		List<String> functionalities = new ArrayList<>();
 		List<String> roleFunct = readFunctionalityByRole(user);
 		List<String> userFunct = readFunctionalityByUser(user);
@@ -661,7 +657,7 @@ public class UserUtilities {
 		functionalities.addAll(userFunct);
 		functionalities.addAll(licenseFunct);
 		String[] a = new String[] { "" };
-		logger.debug("OUT");
+		LOGGER.debug("OUT");
 		return functionalities.toArray(a);
 	}
 
@@ -688,14 +684,14 @@ public class UserUtilities {
 	}
 
 	public static List<String> readFunctionalityByRole(SpagoBIUserProfile user) {
-		logger.debug("IN");
+		LOGGER.debug("IN");
 		try {
 			String[] roles = user.getRoles();
 			String organization = user.getOrganization();
 			it.eng.spagobi.commons.dao.IUserFunctionalityDAO dao = DAOFactory.getUserFunctionalityDAO();
 			dao.setTenant(organization);
 			String[] functionalities = dao.readUserFunctionality(roles);
-			logger.debug("Functionalities retrieved: " + functionalities == null ? "" : functionalities.toString());
+			LOGGER.debug("Functionalities retrieved: " + functionalities == null ? "" : functionalities.toString());
 
 			List<String> roleFunctionalities = new ArrayList<>();
 			Role virtualRole = getVirtualRole(roles, organization);
@@ -854,16 +850,16 @@ public class UserUtilities {
 
 			return roleFunctionalities;
 		} catch (Exception e) {
-			logger.error("Exception", e);
+			LOGGER.error("Exception", e);
 			throw new RuntimeException("Error while loading functionalities", e);
 		} finally {
-			logger.debug("OUT");
+			LOGGER.debug("OUT");
 		}
 
 	}
 
 	public static List<String> readFunctionalityByLicense(SpagoBIUserProfile user) {
-		logger.debug("IN");
+		LOGGER.debug("IN");
 		List<String> licenseFunctionalities = new ArrayList<>();
 		try {
 			Class<?> licenseManager = Class.forName("it.eng.knowage.tools.servermanager.utils.LicenseManager");
@@ -874,11 +870,11 @@ public class UserUtilities {
 				licenseFunctionalities.addAll(functionalities);
 			}
 		} catch (Exception e) {
-			logger.debug("Server Manager not installed or not installer correctly.", e);
+			LOGGER.debug("Server Manager not installed or not installer correctly.", e);
 			licenseFunctionalities.addAll(freeFunctionalities());
-			logger.debug("Add following free functionalities: " + licenseFunctionalities, e);
+			LOGGER.debug("Add following free functionalities: " + licenseFunctionalities, e);
 		}
-		logger.debug("OUT");
+		LOGGER.debug("OUT");
 		return licenseFunctionalities;
 	}
 
@@ -895,210 +891,210 @@ public class UserUtilities {
 	}
 
 	public static String getUserId(HttpServletRequest req) {
-		logger.debug("IN");
+		LOGGER.debug("IN");
 		SsoServiceInterface userProxy = SsoServiceFactory.createProxyService();
 		String userId = userProxy.readUserIdentifier(req);
-		logger.debug("OUT,userId:" + userId);
+		LOGGER.debug("OUT,userId:" + userId);
 		return userId;
 	}
 
 	private static Role getVirtualRole(String[] roles, String organization) throws Exception {
-		logger.debug("IN");
+		LOGGER.debug("IN");
 		Role virtualRole = new Role("", "");
 
 		if (roles != null) {
 			for (int i = 0; i < roles.length; i++) {
 				String roleName = roles[i];
-				logger.debug("RoleName=" + roleName);
+				LOGGER.debug("RoleName=" + roleName);
 				IRoleDAO roleDAO = DAOFactory.getRoleDAO();
 				roleDAO.setTenant(organization);
 				Role anotherRole = roleDAO.loadByName(roleName);
 				if (anotherRole != null) {
 					if (anotherRole.getAbleToEditPythonScripts()) {
-						logger.debug("User has role " + roleName + " that is able to edit python scripts.");
+						LOGGER.debug("User has role " + roleName + " that is able to edit python scripts.");
 						virtualRole.setAbleToEditPythonScripts(true);
 					}
 					if (anotherRole.getAbleToCreateCustomChart()) {
-						logger.debug("User has role " + roleName + " that is able to create custom chart.");
+						LOGGER.debug("User has role " + roleName + " that is able to create custom chart.");
 						virtualRole.setAbleToCreateCustomChart(true);
 					}
 					if (anotherRole.getAbleToSaveSubobjects()) {
-						logger.debug("User has role " + roleName + " that is able to save subobjects.");
+						LOGGER.debug("User has role " + roleName + " that is able to save subobjects.");
 						virtualRole.setAbleToSaveSubobjects(true);
 					}
 					if (anotherRole.getAbleToSeeSubobjects()) {
-						logger.debug("User has role " + roleName + " that is able to see subobjects.");
+						LOGGER.debug("User has role " + roleName + " that is able to see subobjects.");
 						virtualRole.setAbleToSeeSubobjects(true);
 					}
 					if (anotherRole.getAbleToSeeViewpoints()) {
-						logger.debug("User has role " + roleName + " that is able to see viewpoints.");
+						LOGGER.debug("User has role " + roleName + " that is able to see viewpoints.");
 						virtualRole.setAbleToSeeViewpoints(true);
 					}
 					if (anotherRole.getAbleToSeeSnapshots()) {
-						logger.debug("User has role " + roleName + " that is able to see snapshots.");
+						LOGGER.debug("User has role " + roleName + " that is able to see snapshots.");
 						virtualRole.setAbleToSeeSnapshots(true);
 					}
 					if (anotherRole.getAbleToRunSnapshots()) {
-						logger.debug("User has role " + roleName + " that is able to run snapshots.");
+						LOGGER.debug("User has role " + roleName + " that is able to run snapshots.");
 						virtualRole.setAbleToRunSnapshots(true);
 					}
 					if (anotherRole.getAbleToSeeMetadata()) {
-						logger.debug("User has role " + roleName + " that is able to see metadata.");
+						LOGGER.debug("User has role " + roleName + " that is able to see metadata.");
 						virtualRole.setAbleToSeeMetadata(true);
 					}
 					if (anotherRole.getAbleToSaveMetadata()) {
-						logger.debug("User has role " + roleName + " that is able to save metadata.");
+						LOGGER.debug("User has role " + roleName + " that is able to save metadata.");
 						virtualRole.setAbleToSaveMetadata(true);
 					}
 					if (anotherRole.getAbleToSendMail()) {
-						logger.debug("User has role " + roleName + " that is able to send mail.");
+						LOGGER.debug("User has role " + roleName + " that is able to send mail.");
 						virtualRole.setAbleToSendMail(true);
 					}
 					if (anotherRole.getAbleToSeeNotes()) {
-						logger.debug("User has role " + roleName + " that is able to see notes.");
+						LOGGER.debug("User has role " + roleName + " that is able to see notes.");
 						virtualRole.setAbleToSeeNotes(true);
 					}
 					if (anotherRole.getAbleToSaveRememberMe()) {
-						logger.debug("User has role " + roleName + " that is able to save remember me.");
+						LOGGER.debug("User has role " + roleName + " that is able to save remember me.");
 						virtualRole.setAbleToSaveRememberMe(true);
 					}
 					if (anotherRole.getAbleToSaveIntoPersonalFolder()) {
-						logger.debug("User has role " + roleName + " that is able to save into personal folder.");
+						LOGGER.debug("User has role " + roleName + " that is able to save into personal folder.");
 						virtualRole.setAbleToSaveIntoPersonalFolder(true);
 					}
 					if (anotherRole.getAbleToBuildQbeQuery()) {
-						logger.debug("User has role " + roleName + " that is able to build QBE queries.");
+						LOGGER.debug("User has role " + roleName + " that is able to build QBE queries.");
 						virtualRole.setAbleToBuildQbeQuery(true);
 					}
 					if (anotherRole.getAbleToDoMassiveExport()) {
-						logger.debug("User has role " + roleName + " that is able to do massive export.");
+						LOGGER.debug("User has role " + roleName + " that is able to do massive export.");
 						virtualRole.setAbleToDoMassiveExport(true);
 					}
 					if (anotherRole.getAbleToManageUsers()) {
-						logger.debug("User has role " + roleName + " that is able to manage users.");
+						LOGGER.debug("User has role " + roleName + " that is able to manage users.");
 						virtualRole.setAbleToManageUsers(true);
 					}
 					if (anotherRole.getAbleToSeeDocumentBrowser()) {
-						logger.debug("User has role " + roleName + " that is able to see document browser.");
+						LOGGER.debug("User has role " + roleName + " that is able to see document browser.");
 						virtualRole.setAbleToSeeDocumentBrowser(true);
 					}
 					if (anotherRole.getAbleToSeeMyData()) {
-						logger.debug("User has role " + roleName + " that is able to see MyData.");
+						LOGGER.debug("User has role " + roleName + " that is able to see MyData.");
 						virtualRole.setAbleToSeeMyData(true);
 					}
 					if (anotherRole.getAbleToSeeMyWorkspace()) {
-						logger.debug("User has role " + roleName + " that is able to see MyWorkspace.");
+						LOGGER.debug("User has role " + roleName + " that is able to see MyWorkspace.");
 						virtualRole.setAbleToSeeMyWorkspace(true);
 					}
 					if (anotherRole.getAbleToSeeFavourites()) {
-						logger.debug("User has role " + roleName + " that is able to see Favourites.");
+						LOGGER.debug("User has role " + roleName + " that is able to see Favourites.");
 						virtualRole.setAbleToSeeFavourites(true);
 					}
 					if (anotherRole.getAbleToSeeSubscriptions()) {
-						logger.debug("User has role " + roleName + " that is able to see Subscriptions.");
+						LOGGER.debug("User has role " + roleName + " that is able to see Subscriptions.");
 						virtualRole.setAbleToSeeSubscriptions(true);
 					}
 					if (anotherRole.getAbleToSeeToDoList()) {
-						logger.debug("User has role " + roleName + " that is able to see To Do List.");
+						LOGGER.debug("User has role " + roleName + " that is able to see To Do List.");
 						virtualRole.setAbleToSeeToDoList(true);
 					}
 					if (anotherRole.getAbleToCreateDocuments()) {
-						logger.debug("User has role " + roleName + " that is able to create documents.");
+						LOGGER.debug("User has role " + roleName + " that is able to create documents.");
 						virtualRole.setAbleToCreateDocuments(true);
 					}
 					if (anotherRole.getAbleToEditAllKpiComm()) {
-						logger.debug("User has role " + roleName + " that is able to edit all kpi comments.");
+						LOGGER.debug("User has role " + roleName + " that is able to edit all kpi comments.");
 						virtualRole.setAbleToEditAllKpiComm(true);
 					}
 					if (anotherRole.getAbleToEditMyKpiComm()) {
-						logger.debug("User has role " + roleName + " that is able to edit owned kpi comments.");
+						LOGGER.debug("User has role " + roleName + " that is able to edit owned kpi comments.");
 						virtualRole.setAbleToEditMyKpiComm(true);
 					}
 					if (anotherRole.getAbleToEditAllKpiComm()) {
-						logger.debug("User has role " + roleName + " that is able to delete kpi comments.");
+						LOGGER.debug("User has role " + roleName + " that is able to delete kpi comments.");
 						virtualRole.setAbleToDeleteKpiComm(true);
 					}
 					if (anotherRole.getAbleToCreateSocialAnalysis()) {
-						logger.debug("User has role " + roleName + " that is able to create social analysis.");
+						LOGGER.debug("User has role " + roleName + " that is able to create social analysis.");
 						virtualRole.setAbleToCreateSocialAnalysis(true);
 					}
 					if (anotherRole.getAbleToViewSocialAnalysis()) {
-						logger.debug("User has role " + roleName + " that is able to view social analysis.");
+						LOGGER.debug("User has role " + roleName + " that is able to view social analysis.");
 						virtualRole.setAbleToViewSocialAnalysis(true);
 					}
 					if (anotherRole.getAbleToHierarchiesManagement()) {
-						logger.debug("User has role " + roleName + " that is able to manage hierarchies");
+						LOGGER.debug("User has role " + roleName + " that is able to manage hierarchies");
 						virtualRole.setAbleToHierarchiesManagement(true);
 					}
 					if (anotherRole.getAbleToEnableDatasetPersistence()) {
-						logger.debug("User has role " + roleName + " that is able to persist dataset.");
+						LOGGER.debug("User has role " + roleName + " that is able to persist dataset.");
 						virtualRole.setAbleToEnableDatasetPersistence(true);
 					}
 					if (anotherRole.getAbleToEnableFederatedDataset()) {
-						logger.debug("User has role " + roleName + " that is able to manage federated dataset.");
+						LOGGER.debug("User has role " + roleName + " that is able to manage federated dataset.");
 						virtualRole.setAbleToEnableFederatedDataset(true);
 					}
 					if (anotherRole.getAbleToEnableRate()) {
-						logger.debug("User has role " + roleName + " that is able to enable rating.");
+						LOGGER.debug("User has role " + roleName + " that is able to enable rating.");
 						virtualRole.setAbleToEnableRate(true);
 					}
 					if (anotherRole.getAbleToEnablePrint()) {
-						logger.debug("User has role " + roleName + " that is able to print documents.");
+						LOGGER.debug("User has role " + roleName + " that is able to print documents.");
 						virtualRole.setAbleToEnablePrint(true);
 					}
 					if (anotherRole.getAbleToEnableCopyAndEmbed()) {
-						logger.debug("User has role " + roleName + " that is able to copy or embed link.");
+						LOGGER.debug("User has role " + roleName + " that is able to copy or embed link.");
 						virtualRole.setAbleToEnableCopyAndEmbed(true);
 					}
 					if (anotherRole.getAbleToManageGlossaryBusiness()) {
-						logger.debug("User has role " + roleName + " that is able to manage glossary business.");
+						LOGGER.debug("User has role " + roleName + " that is able to manage glossary business.");
 						virtualRole.setAbleToManageGlossaryBusiness(true);
 					}
 					if (anotherRole.getAbleToManageGlossaryTechnical()) {
-						logger.debug("User has role " + roleName + " that is able to manage glossary technical.");
+						LOGGER.debug("User has role " + roleName + " that is able to manage glossary technical.");
 						virtualRole.setAbleToManageGlossaryTechnical(true);
 					}
 					if (anotherRole.getAbleToManageKpiValue()) {
-						logger.debug("User has role " + roleName + " that is able to manage kpi value.");
+						LOGGER.debug("User has role " + roleName + " that is able to manage kpi value.");
 						virtualRole.setAbleToManageKpiValue(true);
 					}
 					if (anotherRole.getAbleToManageCalendar()) {
-						logger.debug("User has role " + roleName + " that is able to manage Calendar.");
+						LOGGER.debug("User has role " + roleName + " that is able to manage Calendar.");
 						virtualRole.setAbleToManageCalendar(true);
 					}
 					if (anotherRole.getAbleToUseFunctionsCatalog()) {
-						logger.debug("User has role " + roleName + " that is able to use functions catalog.");
+						LOGGER.debug("User has role " + roleName + " that is able to use functions catalog.");
 						virtualRole.setAbleToUseFunctionsCatalog(true);
 					}
 					if (anotherRole.getAbleToManageInternationalization()) {
-						logger.debug("User has role " + roleName + " that is able to manage Internationalization.");
+						LOGGER.debug("User has role " + roleName + " that is able to manage Internationalization.");
 						virtualRole.setAbleToManageInternationalization(true);
 					}
 					if (anotherRole.getAbleToCreateSelfServiceCockpit()) {
-						logger.debug("User has role " + roleName + " that is able to create self service cockpit.");
+						LOGGER.debug("User has role " + roleName + " that is able to create self service cockpit.");
 						virtualRole.setAbleToCreateSelfServiceCockpit(true);
 					}
 					if (anotherRole.getAbleToCreateSelfServiceGeoreport()) {
-						logger.debug("User has role " + roleName
+						LOGGER.debug("User has role " + roleName
 								+ " that is able to create self service geographic report.");
 						virtualRole.setAbleToCreateSelfServiceGeoreport(true);
 					}
 					if (anotherRole.getAbleToCreateSelfServiceKpi()) {
-						logger.debug("User has role " + roleName + " that is able to create self service kpi.");
+						LOGGER.debug("User has role " + roleName + " that is able to create self service kpi.");
 						virtualRole.setAbleToCreateSelfServiceKpi(true);
 					}
 				}
 			}
 		}
-		logger.debug("OUT");
+		LOGGER.debug("OUT");
 		return virtualRole;
 	}
 
 	private static void checkTenant(SpagoBIUserProfile profile) {
 		if (profile.getOrganization() == null) {
-			logger.warn("User profile [" + profile.getUserId() + "] has no organization/tenant set!!!");
+			LOGGER.warn("User profile [" + profile.getUserId() + "] has no organization/tenant set!!!");
 			List<SbiTenant> tenants = DAOFactory.getTenantsDAO().loadAllTenants();
-			if (tenants == null || tenants.size() == 0) {
+			if (tenants == null || tenants.isEmpty()) {
 				throw new SpagoBIRuntimeException("No tenants found on database");
 			}
 			if (tenants.size() > 1) {
@@ -1106,7 +1102,7 @@ public class UserUtilities {
 						+ profile.getUserId() + "] to a single tenant!!!");
 			}
 			SbiTenant tenant = tenants.get(0);
-			logger.warn("Associating user profile [" + profile.getUserId() + "] to tenant [" + tenant.getName() + "]");
+			LOGGER.warn("Associating user profile [" + profile.getUserId() + "] to tenant [" + tenant.getName() + "]");
 			profile.setOrganization(tenant.getName());
 		}
 	}
@@ -1118,7 +1114,7 @@ public class UserUtilities {
 	 */
 
 	public static ISecurityServiceSupplier createISecurityServiceSupplier() {
-		logger.debug("IN");
+		LOGGER.debug("IN");
 
 		ISecurityServiceSupplier securityServiceSupplier = null;
 		String engUserProfileFactoryClass = null;
@@ -1140,12 +1136,11 @@ public class UserUtilities {
 				throw new DAORuntimeException(
 						"Impossible read from configuartion the property [SPAGOBI.SECURITY.USER-PROFILE-FACTORY-CLASS] that contains the name of the class used as securityServiceSupplier");
 			}
+		} catch (DAORuntimeException e) {
+			throw e;
 		} catch (Throwable t) {
-			if (t instanceof DAORuntimeException)
-				throw (DAORuntimeException) t;
-			else
-				throw new DAORuntimeException(
-						"Impossible to instatiate supplier class [" + engUserProfileFactoryClass + "]", t);
+			throw new DAORuntimeException(
+					"Impossible to instatiate supplier class [" + engUserProfileFactoryClass + "]", t);
 		}
 
 		return securityServiceSupplier;
@@ -1161,7 +1156,7 @@ public class UserUtilities {
 	public static SpagoBIUserProfile clone(SpagoBIUserProfile profile) {
 		// @formatter:off
 		SpagoBIUserProfile clone = new SpagoBIUserProfile(
-			profile.getAttributes() != null ? (HashMap) profile.getAttributes().clone() : null,
+			profile.getAttributes() != null ? new HashMap(profile.getAttributes()) : null,
 			profile.getFunctions() != null ? profile.getFunctions().clone() : null,
 			profile.getIsSuperadmin(),
 			profile.getOrganization(),
@@ -1191,7 +1186,7 @@ public class UserUtilities {
 				}
 			}
 		} catch (Throwable t) {
-			logger.error("Impossible to load engines from database ", t);
+			LOGGER.error("Impossible to load engines from database ", t);
 			throw new SpagoBIEngineRuntimeException("Impossible get engine availability");
 		}
 
@@ -1200,14 +1195,14 @@ public class UserUtilities {
 	}
 
 	public static List<String> getCurrentRoleNames(IEngUserProfile profile) throws EMFInternalError {
-		logger.debug("IN");
+		LOGGER.debug("IN");
 		List<String> roleNames = (List<String>) ((UserProfile) profile).getRolesForUse();
-		logger.debug("OUT");
+		LOGGER.debug("OUT");
 		return roleNames;
 	}
 
 	public static Set<Domain> getDataSetCategoriesByUser(IEngUserProfile profile) {
-		logger.debug("IN");
+		LOGGER.debug("IN");
 		IRoleDAO rolesDao = null;
 		Set<Domain> categories = new HashSet<>();
 		try {
@@ -1233,17 +1228,17 @@ public class UserUtilities {
 					}
 				}
 			}
-			logger.debug("OUT");
+			LOGGER.debug("OUT");
 			return categories;
 		} catch (Exception e) {
-			logger.error("Impossible to get role dataset categories for user [" + profile + "]", e);
+			LOGGER.error("Impossible to get role dataset categories for user [" + profile + "]", e);
 			throw new SpagoBIRuntimeException("Impossible to get role dataset categories for user [" + profile + "]",
 					e);
 		}
 	}
 
 	public static Set<Domain> getBusinessModelsCategoriesByUser(IEngUserProfile profile) {
-		logger.debug("IN");
+		LOGGER.debug("IN");
 		IRoleDAO rolesDao = null;
 		Set<Domain> toReturn = new HashSet<>();
 		try {
@@ -1253,7 +1248,6 @@ public class UserUtilities {
 			if (!roleNames.isEmpty()) {
 				rolesDao = DAOFactory.getRoleDAO();
 				rolesDao.setUserProfile(profile);
-				IDomainDAO domainDao = DAOFactory.getDomainDAO();
 				ICategoryDAO categoryDao = DAOFactory.getCategoryDAO();
 				List<Domain> allCategories = categoryDao.getCategoriesForBusinessModel().stream()
 						.map(Domain::fromCategory).collect(toList());
@@ -1270,10 +1264,10 @@ public class UserUtilities {
 					}
 				}
 			}
-			logger.debug("OUT");
+			LOGGER.debug("OUT");
 			return toReturn;
 		} catch (Exception e) {
-			logger.error("Impossible to get role dataset categories for user [" + profile + "]", e);
+			LOGGER.error("Impossible to get role dataset categories for user [" + profile + "]", e);
 			throw new SpagoBIRuntimeException("Impossible to get role dataset categories for user [" + profile + "]",
 					e);
 		}
@@ -1300,10 +1294,8 @@ public class UserUtilities {
 					preferences.setPreferences(ap.getPreferences());
 				}
 			} catch (EMFUserError e) {
-				logger.error("Impossible to get preferences for user [" + user + "]", e);
-				// e.printStackTrace();
+				LOGGER.error("Impossible to get preferences for user [" + user + "]", e);
 			}
-			// dao.setTenant(organization);
 		}
 
 		return preferences;
@@ -1312,7 +1304,7 @@ public class UserUtilities {
 
 	public static List<RoleMetaModelCategory> getUserCategories(IEngUserProfile profile) {
 		Assert.assertNotNull(profile, "Object in input is null");
-		logger.debug("IN.user id = [" + ((UserProfile) profile).getUserId() + "]");
+		LOGGER.debug("IN.user id = [" + ((UserProfile) profile).getUserId() + "]");
 		List<RoleMetaModelCategory> categories = new ArrayList<>();
 		try {
 			IRoleDAO roleDAO = DAOFactory.getRoleDAO();
@@ -1335,7 +1327,7 @@ public class UserUtilities {
 
 		ArrayList<Role> listRoles = new ArrayList<>();
 
-		logger.debug("IN.user id = [" + ((UserProfile) profile).getUserId() + "]");
+		LOGGER.debug("IN.user id = [" + ((UserProfile) profile).getUserId() + "]");
 		try {
 			IRoleDAO roleDAO = DAOFactory.getRoleDAO();
 			Collection<String> roles = ((UserProfile) profile).getRolesForUse();
@@ -1358,7 +1350,7 @@ public class UserUtilities {
 
 		ArrayList<String> listRoles = new ArrayList<>();
 
-		logger.debug("IN.user id = [" + ((UserProfile) profile).getUserId() + "]");
+		LOGGER.debug("IN.user id = [" + ((UserProfile) profile).getUserId() + "]");
 		try {
 			IRoleDAO roleDAO = DAOFactory.getRoleDAO();
 			Collection<String> roles = ((UserProfile) profile).getRolesForUse();
@@ -1374,6 +1366,9 @@ public class UserUtilities {
 			throw new SpagoBIRuntimeException("Error while getting user's information", e);
 		}
 		return listRoles;
+	}
+
+	private UserUtilities() {
 	}
 
 }

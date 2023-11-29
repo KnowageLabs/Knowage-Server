@@ -38,7 +38,7 @@ public enum PasswordEncrypterHolder {
 
 	PasswordEncrypter passwordEncrypter = null;
 
-	private PasswordEncrypterHolder(byte[] keyBytes) {
+	PasswordEncrypterHolder(byte[] keyBytes) {
 		passwordEncrypter = new PasswordEncrypter(keyBytes);
 	}
 
@@ -83,13 +83,14 @@ public enum PasswordEncrypterHolder {
 	}
 
 	private static byte[] getOldKeyBytes() {
-		byte[] keyBytes = { (byte) 0x06, (byte) 0xAB, (byte) 0x12, (byte) 0xE4, (byte) 0xE4, (byte) 0xE4, (byte) 0xE4, (byte) 0x12, (byte) 0x13, (byte) 0xE4,
-				(byte) 0x12, (byte) 0xCC, (byte) 0xEF, (byte) 0xE4, (byte) 0x06, (byte) 0x07, (byte) 0xE4, (byte) 0x07, (byte) 0x12, (byte) 0xCD, (byte) 0xE4,
-				(byte) 0x07, (byte) 0xFE, (byte) 0xFF, (byte) 0x07, (byte) 0xE4, (byte) 0x08 };
+		byte[] keyBytes = { (byte) 0x06, (byte) 0xAB, (byte) 0x12, (byte) 0xE4, (byte) 0xE4, (byte) 0xE4, (byte) 0xE4,
+				(byte) 0x12, (byte) 0x13, (byte) 0xE4, (byte) 0x12, (byte) 0xCC, (byte) 0xEF, (byte) 0xE4, (byte) 0x06,
+				(byte) 0x07, (byte) 0xE4, (byte) 0x07, (byte) 0x12, (byte) 0xCD, (byte) 0xE4, (byte) 0x07, (byte) 0xFE,
+				(byte) 0xFF, (byte) 0x07, (byte) 0xE4, (byte) 0x08 };
 		return keyBytes;
 	}
 
-	public String enCrypt(String value) {
-		return passwordEncrypter.enCrypt(value);
+	public String hash(String value) {
+		return passwordEncrypter.encrypt(value);
 	}
 }

@@ -17,6 +17,20 @@
  */
 package it.eng.spagobi.commons.services;
 
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
+
+import javax.servlet.ServletConfig;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.apache.log4j.Logger;
 
 import it.eng.spago.error.EMFErrorHandler;
 import it.eng.spago.error.EMFErrorSeverity;
@@ -32,30 +46,11 @@ import it.eng.spagobi.profiling.bean.SbiUser;
 import it.eng.spagobi.profiling.dao.ISbiUserDAO;
 import it.eng.spagobi.security.Password;
 
-import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Vector;
-
-import javax.servlet.ServletConfig;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import org.apache.log4j.Logger;
-
 /**
  * @author Antonella Giachino (antonella.giachino@eng.it)
- * @author Alessandro Pegoraro (alessandro.pegoraro@eng.it)
- * Process jasper report execution requests and returns bytes of the filled
- * reports
+ * @author Alessandro Pegoraro (alessandro.pegoraro@eng.it) Process jasper report execution requests and returns bytes of the filled reports
  */
 public class ChangePwdServlet extends HttpServlet {
-
 
 	/**
 	 * Logger component
@@ -76,6 +71,7 @@ public class ChangePwdServlet extends HttpServlet {
 	 * @param config the config
 	 * @throws ServletException the servlet exception
 	 */
+	@Override
 	public void init(ServletConfig config) throws ServletException {
 		super.init(config);
 		logger.debug("Initializing SpagoBI ChangePwd servlet...");
@@ -89,12 +85,13 @@ public class ChangePwdServlet extends HttpServlet {
 	 * @throws IOException      Signals that an I/O exception has occurred.
 	 * @throws ServletException the servlet exception
 	 */
+	@Override
 	public void service(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
 		logger.debug("IN");
 
 		EMFErrorHandler errorHandler = new EMFErrorHandler();
 
-		//getting values from request:
+		// getting values from request:
 		String message = request.getParameter(MESSAGE);
 		logger.debug("Message: " + message);
 
@@ -114,25 +111,25 @@ public class ChangePwdServlet extends HttpServlet {
 				return;
 			}
 
-			//gets the user bo from db
+			// gets the user bo from db
 			ISbiUserDAO userDao = DAOFactory.getSbiUserDAO();
 			SbiUser tmpUser = userDao.loadSbiUserByUserId(userId);
-			
+
 			if (message.trim().equalsIgnoreCase("CHANGE_PWD")) {
-				if (PasswordChecker.getInstance()
-						.isValid(tmpUser, oldPwd, newPwd, newPwd2)) {
-					//getting days number for calculate new expiration date
+				if (PasswordChecker.getInstance().isValid(tmpUser, oldPwd, newPwd, newPwd2)) {
+					// getting days number for calculate new expiration date
 					IConfigDAO configDao = DAOFactory.getSbiConfigDAO();
-					List lstConfigChecks = configDao.loadConfigParametersByProperties(SpagoBIConstants.CHANGEPWD_EXPIRED_TIME);
+					List<Config> lstConfigChecks = configDao
+							.loadConfigParametersByProperties(SpagoBIConstants.CHANGEPWD_EXPIRED_TIME);
 					Date beginDate = new Date();
-					if (lstConfigChecks.size() > 0) {
-						Config check = (Config) lstConfigChecks.get(0);
+					if (!lstConfigChecks.isEmpty()) {
+						Config check = lstConfigChecks.get(0);
 						if (check.isActive()) {
-							//define the new expired date							
+							// define the new expired date
 							SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT);
 							Calendar cal = Calendar.getInstance();
 							cal.set(beginDate.getYear() + 1900, beginDate.getMonth(), beginDate.getDate());
-							//adds n days (getted from db)
+							// adds n days (getted from db)
 							cal.add(Calendar.DATE, Integer.parseInt(check.getValueCheck()));
 							try {
 								Date endDate = StringUtilities.stringToDate(sdf.format(cal.getTime()), DATE_FORMAT);
@@ -141,15 +138,17 @@ public class ChangePwdServlet extends HttpServlet {
 								tmpUser.setDtPwdEnd(endDate);
 							} catch (Exception e) {
 								logger.error("The control pwd goes on error: " + e);
-								throw new EMFUserError(EMFErrorSeverity.ERROR, 14008, new Vector(), new HashMap());
+								throw new EMFUserError(EMFErrorSeverity.ERROR, 14008, Collections.emptyList(),
+										Collections.emptyMap());
 							}
 						}
 					}
-					tmpUser.setDtLastAccess(beginDate); //reset last access date
-					tmpUser.setPassword(Password.encriptPassword(newPwd));//SHA encrypt
-					tmpUser.setFlgPwdBlocked(false); //reset blocking flag
+					tmpUser.setDtLastAccess(beginDate); // reset last access date
+					tmpUser.setPassword(Password.hashPassword(newPwd));// SHA encrypt
+					tmpUser.setFlgPwdBlocked(false); // reset blocking flag
 					userDao.updateSbiUser(tmpUser, tmpUser.getId());
-					logger.debug("Updated properties for user with id " + tmpUser.getId() + " - DtLastAccess: " + tmpUser.getDtLastAccess().toString());
+					logger.debug("Updated properties for user with id " + tmpUser.getId() + " - DtLastAccess: "
+							+ tmpUser.getDtLastAccess().toString());
 				}
 			}
 		} catch (EMFUserError eex) {

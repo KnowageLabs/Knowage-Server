@@ -18,12 +18,15 @@
 
 package it.eng.spagobi.services.security.bo;
 
-public class SpagoBIUserProfile implements java.io.Serializable {
-	private java.util.HashMap attributes;
+import java.io.Serializable;
+import java.util.Map;
+
+public class SpagoBIUserProfile implements Serializable {
+	private Map attributes;
 
 	private String[] functions;
 
-	private java.lang.Boolean isSuperadmin;
+	private Boolean isSuperadmin;
 
 	private String organization;
 
@@ -38,8 +41,8 @@ public class SpagoBIUserProfile implements java.io.Serializable {
 	public SpagoBIUserProfile() {
 	}
 
-	public SpagoBIUserProfile(java.util.HashMap attributes, String[] functions, java.lang.Boolean isSuperadmin,
-			String organization, String[] roles, String uniqueIdentifier, String userId, String userName) {
+	public SpagoBIUserProfile(Map attributes, String[] functions, Boolean isSuperadmin, String organization,
+			String[] roles, String uniqueIdentifier, String userId, String userName) {
 		this.attributes = attributes;
 		this.functions = functions;
 		this.isSuperadmin = isSuperadmin;
@@ -55,7 +58,7 @@ public class SpagoBIUserProfile implements java.io.Serializable {
 	 *
 	 * @return attributes
 	 */
-	public java.util.HashMap getAttributes() {
+	public Map getAttributes() {
 		return attributes;
 	}
 
@@ -64,7 +67,7 @@ public class SpagoBIUserProfile implements java.io.Serializable {
 	 *
 	 * @param attributes
 	 */
-	public void setAttributes(java.util.HashMap attributes) {
+	public void setAttributes(Map attributes) {
 		this.attributes = attributes;
 	}
 

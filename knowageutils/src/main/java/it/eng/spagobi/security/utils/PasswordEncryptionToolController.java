@@ -3,8 +3,6 @@ package it.eng.spagobi.security.utils;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
 
 import it.eng.spagobi.security.PasswordEncrypter;
 
@@ -13,7 +11,7 @@ public class PasswordEncryptionToolController {
 	private String completeFilePathAndName = null;
 	private String plainTextPassword = null;
 
-	public String execute(String[] args) throws InvalidKeyException, NoSuchAlgorithmException, IOException {
+	public String execute(String[] args) {
 
 		completeFilePathAndName = args[0];
 		plainTextPassword = args[1];
@@ -42,7 +40,7 @@ public class PasswordEncryptionToolController {
 
 		PasswordEncrypter passwordEncrypter = new PasswordEncrypter(fileContent);
 
-		return "v2#SHA#" + passwordEncrypter.enCrypt(plainTextPassword);
+		return "v2#SHA#" + passwordEncrypter.encrypt(plainTextPassword);
 
 	}
 

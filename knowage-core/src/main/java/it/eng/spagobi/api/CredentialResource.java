@@ -182,7 +182,7 @@ public class CredentialResource {
 						}
 					}
 					tmpUser.setDtLastAccess(beginDate); // reset last access date
-					tmpUser.setPassword(Password.encriptPassword(newPassword));// SHA encrypt
+					tmpUser.setPassword(Password.hashPassword(newPassword));// SHA encrypt
 					tmpUser.setFlgPwdBlocked(false); // reset blocking flag
 					userDao.updateSbiUser(tmpUser, tmpUser.getId());
 					LOGGER.debug("Updated properties for user with id " + tmpUser.getId() + " - DtLastAccess: " + tmpUser.getDtLastAccess().toString());

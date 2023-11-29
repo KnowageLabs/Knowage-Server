@@ -30,8 +30,11 @@ import org.apache.log4j.Logger;
  */
 public class Password {
 
-	private static final String PREFIX_V2_SHA_PWD_ENCRIPTING = "v2#SHA#";
+	private static final Logger LOGGER = Logger.getLogger(Password.class);
+
+	public static final String PREFIX_V2_SHA_PWD_ENCRIPTING = "v2#SHA#";
 	public static final String PREFIX_SHA_PWD_ENCRIPTING = "#SHA#";
+
 	private String value = "";
 	private String encValue = "";
 
@@ -40,8 +43,6 @@ public class Password {
 
 	private int contaNum = 0;
 	private int contaNonAlfa = 0;
-
-	private static Logger logger = Logger.getLogger(Password.class);
 
 	public Password() {
 		value = "";
@@ -97,13 +98,13 @@ public class Password {
 	 * @throws InvalidKeyException
 	 * @throws IOException
 	 */
-	public String getEncValue(boolean before72) throws InvalidKeyException, NoSuchAlgorithmException, IOException {
+	public String getEncValue(boolean before72) {
 
 		if (encValue != null) {
 			if (before72) {
-				encValue = PREFIX_SHA_PWD_ENCRIPTING + PasswordEncrypterHolder.OLD_INSTANCE.enCrypt(value);
+				encValue = PREFIX_SHA_PWD_ENCRIPTING + PasswordEncrypterHolder.OLD_INSTANCE.hash(value);
 			} else {
-				encValue = PREFIX_V2_SHA_PWD_ENCRIPTING + PasswordEncrypterHolder.INSTANCE.enCrypt(value);
+				encValue = PREFIX_V2_SHA_PWD_ENCRIPTING + PasswordEncrypterHolder.INSTANCE.hash(value);
 			}
 		}
 		return encValue;
@@ -131,23 +132,15 @@ public class Password {
 	 * @return encrypted password
 	 * @throws Exception wrapping InvalidKeyException and NoSuchAlgorithmException
 	 */
-	public static String encriptPassword(String password, boolean before72) throws Exception {
+	public static String hashPassword(String password, boolean before72) {
 		if (password != null) {
 			Password hashPass = new Password(password);
-			try {
-				password = (hashPass.getEncValue(before72));
-			} catch (InvalidKeyException e) {
-				logger.error("not valid HASH", e);
-				throw new Exception("not valid HASH", e);
-			} catch (NoSuchAlgorithmException e) {
-				logger.error("Impossible to calcolate HASH", e);
-				throw new Exception("Impossible to calcolate HASH", e);
-			}
+			password = (hashPass.getEncValue(before72));
 		}
 		return password;
 	}
 
-	public static String encriptPassword(String password) throws Exception {
-		return encriptPassword(password, false);
+	public static String hashPassword(String password) {
+		return hashPassword(password, false);
 	}
 }
