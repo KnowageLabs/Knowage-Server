@@ -44,6 +44,8 @@ OAuth2Config oauth2Config = OAuth2Config.getInstance();
     
     window.sessionStorage.setItem("client_id", clientId);
     window.sessionStorage.setItem("oidc_origin", authorization_endpoint.origin);
+    window.sessionStorage.setItem("redirectUri", redirectUri);
+    window.sessionStorage.setItem("nonce", nonce);
 
     if (window.location.hash) {
         var args = new URLSearchParams(window.location.hash.substring(1));
