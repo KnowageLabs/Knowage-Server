@@ -41,11 +41,13 @@ OAuth2Config oauth2Config = OAuth2Config.getInstance();
     const redirectUri = '<%= StringEscapeUtils.escapeJavaScript(oauth2Config.getRedirectUrl()) %>';
     const nonce = '<%= StringEscapeUtils.escapeJavaScript((String) session.getAttribute(Oauth2SsoService.NONCE)) %>';
     const authorization_endpoint = new URL(authorizeEndpoint);
-    
-    window.sessionStorage.setItem("client_id", clientId);
-    window.sessionStorage.setItem("oidc_origin", authorization_endpoint.origin);
 
-    if (window.location.hash) {
+      window.sessionStorage.setItem("client_id", clientId);
+      window.sessionStorage.setItem("oidc_origin", authorization_endpoint.origin);
+      window.sessionStorage.setItem("redirectUri", redirectUri);
+      window.sessionStorage.setItem("nonce", nonce);
+
+      if (window.location.hash) {
         var args = new URLSearchParams(window.location.hash.substring(1));
         var id_token = args.get("id_token");
         var state = args.get("state");

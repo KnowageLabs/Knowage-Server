@@ -37,6 +37,7 @@ export default defineComponent({
       isMobileDevice: false,
       menuItemClickedTrigger: false,
       showMenu: false,
+      pollingInterval: null
     };
   },
 
@@ -105,7 +106,7 @@ export default defineComponent({
       });
     await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + "1.0/user-configs").then((response) => {
       store.commit("setConfigurations", response.data);
-      this.checkOidcSessionManagement(response.data);
+      this.checkOIDCSession(response.data);
     });
     if (this.isEnterprise) {
       if (Object.keys(this.defaultTheme.length === 0)) store.commit("setDefaultTheme", await this.themeHelper.getDefaultKnowageTheme());
@@ -129,25 +130,29 @@ export default defineComponent({
       this.isMobileDevice = true;
     }
   },
+  beforeUnmounted(){
+    clearInterval(this.pollingInterval)
+  },
 
   methods: {
     closeDialog() {
       this.$emit("update:visibility", false);
     },
-    checkOidcSessionManagement(configs) {
-      if (configs["oidc_check_session_iframe"]) {
-        window.addEventListener("message", async (event) => {
-          if (event.data.type === "logout") auth.logout();
-        });
-        const RPiframe = document.createElement("iframe");
-        RPiframe.style.display = "none";
-        RPiframe.src = `${process.env.VUE_APP_PUBLIC_PATH}oidc/sessionManagement.html`;
-        document.querySelector("body")?.append(RPiframe);
-
-        const OPiframe = document.createElement("iframe");
-        OPiframe.style.display = "none";
-        OPiframe.src = configs["oidc_check_session_iframe"];
-        document.querySelector("body")?.append(OPiframe);
+    checkOIDCSession(configs) {
+      if (configs["oidc.session.polling.url"]) {
+        this.pollingInterval = setInterval(()=>{
+          let url = configs["oidc.session.polling.url"]
+          const parametersRegex = /\${(nonce|client_id|redirect_uri|session_state)}/gm;
+          url = url.replace(parametersRegex,(match,parameter)=> encodeURIComponent(window.sessionStorage.getItem(parameter)))
+          await this.$http
+            .get(url)
+            .then((response)=>{
+              if(response.status === 302){
+                const headerLocation = new URL(response.headers.location)
+                if(headerLocation.searchParams.get("error")) auth.logout()
+              }
+            })
+        },configs["oidc.session.polling.interval"] || 15000)
       }
     },
     async onLoad() {
