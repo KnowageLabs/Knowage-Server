@@ -140,7 +140,7 @@ export default defineComponent({
     },
     checkOIDCSession(configs) {
       if (configs["oidc.session.polling.url"]) {
-        this.pollingInterval = setInterval(()=>{
+        this.pollingInterval = setInterval(async ()=>{
           let url = configs["oidc.session.polling.url"]
           const parametersRegex = /\${(nonce|client_id|redirect_uri|session_state)}/gm;
           url = url.replace(parametersRegex,(match,parameter)=> encodeURIComponent(window.sessionStorage.getItem(parameter)))
