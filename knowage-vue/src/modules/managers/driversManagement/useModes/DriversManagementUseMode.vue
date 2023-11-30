@@ -55,31 +55,31 @@
             },
             roles: {
                 type: Array,
-                requierd: true
+                required: true
             },
             constraints: {
                 type: Array,
-                requierd: true
+                required: true
             },
             selectionTypes: {
                 type: Array,
-                requierd: true
+                required: true
             },
             layers: {
                 type: Array,
-                requierd: true
+                required: true
             },
             lovs: {
                 type: Array,
-                requierd: true
+                required: true
             },
             isDate: {
                 type: Boolean,
-                requierd: true
+                required: true
             },
             showMapDriver: {
                 type: Boolean,
-                requierd: true
+                required: true
             }
         },
         data() {
