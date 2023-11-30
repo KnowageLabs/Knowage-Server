@@ -17,7 +17,6 @@
  */
 package it.eng.spagobi.tools.dataset.notifier.fiware;
 
-import java.math.BigInteger;
 import java.security.SecureRandom;
 import java.util.HashMap;
 import java.util.Map;
@@ -66,31 +65,11 @@ public class OAuth2Utils {
 		try {
 			SecureRandom prng = SecureRandom.getInstance("SHA1PRNG");
 			String randomNum = String.valueOf(prng.nextInt());
-			System.out.println("random num:" + randomNum);
 			nonce = DigestUtils.sha256Hex(randomNum);
 		} catch (Exception e) {
 			throw new SpagoBIRuntimeException("An error occured while creating nonce", e);
 		}
-
 		return nonce;
-	}
-
-	public static String createNonce2() {
-		String nonce = "";
-		try {
-			String random = new BigInteger(130, new SecureRandom()).toString(32);
-			System.out.println("random:" + random);
-			nonce = DigestUtils.sha256Hex(random);
-		} catch (Exception e) {
-			throw new SpagoBIRuntimeException("An error occured while creating nonce", e);
-		}
-
-		return nonce;
-	}
-
-	public static void main(String[] args) {
-		System.out.println(createNonce());
-		System.out.println(createNonce2());
 	}
 
 }
