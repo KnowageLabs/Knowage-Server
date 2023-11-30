@@ -7,10 +7,13 @@ axios.defaults.baseURL = process.env.VUE_APP_BASE_URL
 
 axios.interceptors.request.use(
     (config) => {
-        config.headers.common['Accept'] = 'application/json; charset=utf-8'
-        config.headers.common['Content-Type'] = 'application/json; charset=utf-8'
-        config.headers.common['Access-Control-Allow-Origin'] = '*'
-        if (localStorage.getItem('token')) config.headers.common[process.env.VUE_APP_DEFAULT_AUTH_HEADER] = 'Bearer ' + localStorage.getItem('token')
+        const restUrl = new URL(config.url)
+        if(restUrl.host === window.location.host){
+            config.headers.common['Accept'] = 'application/json; charset=utf-8'
+            config.headers.common['Content-Type'] = 'application/json; charset=utf-8'
+            config.headers.common['Access-Control-Allow-Origin'] = '*'
+            if (localStorage.getItem('token')) config.headers.common[process.env.VUE_APP_DEFAULT_AUTH_HEADER] = 'Bearer ' + localStorage.getItem('token')
+        }
         return config
     },
     (error) => {
