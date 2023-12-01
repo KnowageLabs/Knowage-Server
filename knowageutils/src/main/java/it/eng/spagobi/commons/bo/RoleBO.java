@@ -122,6 +122,11 @@ public class RoleBO implements Serializable {
 
 	private boolean ableToManageWidgetGallery;
 
+	private boolean isAbleToSeeHelpOnline;
+	private boolean isAbleToUseDataPreparation;
+	private boolean isAbleToUseDossier;
+	private boolean isAbleToUseDashboardThemeManagement;
+
 	private boolean defaultRole;
 
 	private List<RoleMetaModelCategory> roleMetaModelCategories;
@@ -130,7 +135,6 @@ public class RoleBO implements Serializable {
 	 * Class constructor.
 	 */
 	public RoleBO() {
-		super();
 
 	}
 
@@ -141,7 +145,6 @@ public class RoleBO implements Serializable {
 	 * @param description the description
 	 */
 	public RoleBO(String name, String description) {
-		super();
 		this.name = name;
 		this.description = description;
 	}
@@ -641,6 +644,38 @@ public class RoleBO implements Serializable {
 
 	public void setAbleToManageWidgetGallery(boolean ableToManageWidgetGallery) {
 		this.ableToManageWidgetGallery = ableToManageWidgetGallery;
+	}
+
+	public void setAbleToSeeHelpOnline(Boolean ableToSeeHelpOnline) {
+		this.isAbleToSeeHelpOnline = ableToSeeHelpOnline;
+	}
+
+	public Boolean isAbleToSeeHelpOnline() {
+		return isAbleToSeeHelpOnline;
+	}
+
+	public void setAbleToUseDataPreparation(Boolean ableToUseDataPreparation) {
+		this.isAbleToUseDataPreparation = ableToUseDataPreparation;
+	}
+
+	public Boolean isAbleToUseDataPreparation() {
+		return isAbleToUseDataPreparation;
+	}
+
+	public void setAbleToUseDossier(Boolean ableToUseDossier) {
+		this.isAbleToUseDossier = ableToUseDossier;
+	}
+
+	public Boolean isAbleToUseDossier() {
+		return isAbleToUseDossier;
+	}
+
+	public void setAbleToUseDashboardThemeManagement(Boolean ableToUseDashboardThemeManagement) {
+		this.isAbleToUseDashboardThemeManagement = ableToUseDashboardThemeManagement;
+	}
+
+	public Boolean isAbleToUseDashboardThemeManagement() {
+		return isAbleToUseDashboardThemeManagement;
 	}
 
 }

@@ -797,6 +797,7 @@ public class Role implements Serializable {
 	public void setAbleToSeeHelpOnline(Boolean ableToSeeHelpOnline) {
 		this.isAbleToSeeHelpOnline = ableToSeeHelpOnline;
 	}
+
 	public Boolean getAbleToSeeHelpOnline() {
 		return isAbleToSeeHelpOnline;
 	}
@@ -804,6 +805,7 @@ public class Role implements Serializable {
 	public void setAbleToUseDataPreparation(Boolean ableToUseDataPreparation) {
 		this.isAbleToUseDataPreparation = ableToUseDataPreparation;
 	}
+
 	public Boolean getAbleToUseDataPreparation() {
 		return isAbleToUseDataPreparation;
 	}
@@ -811,6 +813,7 @@ public class Role implements Serializable {
 	public void setAbleToUseDossier(Boolean ableToUseDossier) {
 		this.isAbleToUseDossier = ableToUseDossier;
 	}
+
 	public Boolean getAbleToUseDossier() {
 		return isAbleToUseDossier;
 	}
@@ -818,9 +821,9 @@ public class Role implements Serializable {
 	public void setAbleToUseDashboardThemeManagement(Boolean ableToUseDashboardThemeManagement) {
 		this.isAbleToUseDashboardThemeManagement = ableToUseDashboardThemeManagement;
 	}
+
 	public Boolean getAbleToUseDashboardThemeManagement() {
 		return isAbleToUseDashboardThemeManagement;
 	}
 
-	
 }
