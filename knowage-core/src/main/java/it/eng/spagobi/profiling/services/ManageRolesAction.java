@@ -112,6 +112,11 @@ public class ManageRolesAction extends AbstractSpagoBIAction {
 	private final String BM_CATEGORY_ID = "bmCategoryId";
 	private final String BM_CATEGORIES = "bmCategories";
 
+	private final String SEE_HELP_ONLINE = "seeHelpOnline";
+	private final String ENABLE_DATA_PREPARATION = "enableDataPreparation";
+	private final String ENABLE_DOSSIER = "enableDossier";
+	private final String ENABLE_DASHBOARD_THEME_MANAGEMENT = "enableDashboardThemeManagement";
+
 	public static String START = "start";
 	public static String LIMIT = "limit";
 	public static Integer START_DEFAULT = 0;
@@ -211,6 +216,13 @@ public class ManageRolesAction extends AbstractSpagoBIAction {
 			Boolean manageKpiValue = getAttributeAsBoolean(MANAGE_KPI_VALUE);
 			Boolean manageCalendar = getAttributeAsBoolean(MANAGE_CALENDAR);
 			Boolean functionsCatalogUsage = getAttributeAsBoolean(FUNCTIONS_CATALOG_USAGE);
+
+			Boolean seeHelpOnline = getAttributeAsBoolean(SEE_HELP_ONLINE);
+			Boolean enableDataPreparation = getAttributeAsBoolean(ENABLE_DATA_PREPARATION);
+			Boolean enableDossier = getAttributeAsBoolean(ENABLE_DOSSIER);
+			Boolean enableDashboardThemeManagement = getAttributeAsBoolean(ENABLE_DASHBOARD_THEME_MANAGEMENT);
+
+
 			List<String> bmCategoryIds = getAttributeAsList(BM_CATEGORIES);
 			if (bmCategoryIds.size() == 1) {
 				if (bmCategoryIds.get(0).equals("")) {
@@ -316,6 +328,12 @@ public class ManageRolesAction extends AbstractSpagoBIAction {
 				role.setAbleToManageKpiValue(manageKpiValue);
 				role.setAbleToManageCalendar(manageCalendar);
 				role.setAbleToUseFunctionsCatalog(functionsCatalogUsage);
+
+				role.setAbleToSeeHelpOnline(seeHelpOnline);
+				role.setAbleToUseDataPreparation(enableDataPreparation);
+				role.setAbleToUseDossier(enableDossier);
+				role.setAbleToUseDashboardThemeManagement(enableDashboardThemeManagement);
+
 				try {
 					String id = getAttributeAsString(ID);
 					if (id != null && !id.equals("") && !id.equals("0")) {

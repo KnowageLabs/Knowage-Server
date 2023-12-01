@@ -94,6 +94,11 @@ public class Role implements Serializable {
 	private boolean ableToCreateSelfServiceGeoreport;
 	private boolean ableToCreateSelfServiceKpi;
 
+	private boolean isAbleToSeeHelpOnline;
+	private boolean isAbleToUseDataPreparation;
+	private boolean isAbleToUseDossier;
+	private boolean isAbleToUseDashboardThemeManagement;
+
 	private boolean defaultRole;
 
 	private List<RoleMetaModelCategory> roleMetaModelCategories = new ArrayList<>();
@@ -788,4 +793,34 @@ public class Role implements Serializable {
 	public void setAbleToCreateSelfServiceKpi(boolean ableToCreateSelfServiceKpi) {
 		this.ableToCreateSelfServiceKpi = ableToCreateSelfServiceKpi;
 	}
+
+	public void setAbleToSeeHelpOnline(Boolean ableToSeeHelpOnline) {
+		this.isAbleToSeeHelpOnline = ableToSeeHelpOnline;
+	}
+	public Boolean getAbleToSeeHelpOnline() {
+		return isAbleToSeeHelpOnline;
+	}
+
+	public void setAbleToUseDataPreparation(Boolean ableToUseDataPreparation) {
+		this.isAbleToUseDataPreparation = ableToUseDataPreparation;
+	}
+	public Boolean getAbleToUseDataPreparation() {
+		return isAbleToUseDataPreparation;
+	}
+
+	public void setAbleToUseDossier(Boolean ableToUseDossier) {
+		this.isAbleToUseDossier = ableToUseDossier;
+	}
+	public Boolean getAbleToUseDossier() {
+		return isAbleToUseDossier;
+	}
+
+	public void setAbleToUseDashboardThemeManagement(Boolean ableToUseDashboardThemeManagement) {
+		this.isAbleToUseDashboardThemeManagement = ableToUseDashboardThemeManagement;
+	}
+	public Boolean getAbleToUseDashboardThemeManagement() {
+		return isAbleToUseDashboardThemeManagement;
+	}
+
+	
 }

@@ -580,7 +580,13 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 				|| (authI.getName().equals("CREATE_SELF_SERVICE_GEOREPORT")
 						&& aRole.getAbleToCreateSelfServiceGeoreport())
 				|| (authI.getName().equals("EDIT_PYTHON_SCRIPTS") && aRole.getAbleToEditPythonScripts())
-				|| (authI.getName().equals("CREATE_CUSTOM_CHART") && aRole.getAbleToCreateCustomChart());
+				|| (authI.getName().equals("CREATE_CUSTOM_CHART") && aRole.getAbleToCreateCustomChart())
+				|| (authI.getName().equals("SEE_HELP_ONLINE") && aRole.getAbleToSeeHelpOnline())
+				|| (authI.getName().equals("ENABLE_DATA_PREPARATION") && aRole.getAbleToUseDataPreparation())
+				|| (authI.getName().equals("ENABLE_DOSSIER") && aRole.getAbleToUseDossier())
+				|| (authI.getName().equals("ENABLE_DASHBOARD_THEME_MANAGEMENT") && aRole.getAbleToUseDashboardThemeManagement());
+
+				
 	}
 
 	/**
@@ -877,6 +883,19 @@ public class RoleDAOHibImpl extends AbstractHibernateDAO implements IRoleDAO {
 			if (name.equals("CREATE_SELF_SERVICE_KPI")) {
 				role.setAbleToCreateSelfServiceKpi(true);
 			}
+			if(name.equals("SEE_HELP_ONLINE")) {
+				role.setAbleToSeeHelpOnline(true);
+			}
+			if(name.equals("ENABLE_DATA_PREPARATION")){
+				role.setAbleToUseDataPreparation(true);
+			}
+			if(name.equals("ENABLE_DOSSIER")){
+				role.setAbleToUseDossier(true);
+			}
+			if(name.equals("ENABLE_DASHBOARD_THEME_MANAGEMENT")){
+				role.setAbleToUseDashboardThemeManagement(true);
+			}
+			
 
 		}
 
