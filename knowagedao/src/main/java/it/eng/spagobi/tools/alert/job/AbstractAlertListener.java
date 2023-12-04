@@ -15,7 +15,6 @@ import org.quartz.JobExecutionException;
 import org.quartz.SchedulerException;
 import org.quartz.impl.StdSchedulerFactory;
 
-import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.metadata.SbiCommonInfo;
 import it.eng.spagobi.commons.metadata.SbiHibernateModel;
@@ -48,7 +47,8 @@ public abstract class AbstractAlertListener extends AbstractSuspendableJob imple
 		try {
 			IAlertDAO alertDao = DAOFactory.getAlertDAO();
 			Alert alert = alertDao.loadAlert(Integer.valueOf(alertId));
-			eventBeforeTriggerAction = alert.getEventBeforeTriggerAction() != null ? alert.getEventBeforeTriggerAction() : 0;
+			eventBeforeTriggerAction = alert.getEventBeforeTriggerAction() != null ? alert.getEventBeforeTriggerAction()
+					: 0;
 			boolean singleExecution = alert.isSingleExecution();
 			if (!singleExecution || lookForNewExecutions(alert.getJsonOptions())) {
 				executeListener(alert.getJsonOptions());
@@ -64,7 +64,7 @@ public abstract class AbstractAlertListener extends AbstractSuspendableJob imple
 
 	protected abstract boolean lookForNewExecutions(String jsonParameters) throws AlertListenerException;
 
-	protected void writeAlertLog(String listenerParams, Integer actionId, String actionParams, String errorMsg) throws EMFUserError {
+	protected void writeAlertLog(String listenerParams, Integer actionId, String actionParams, String errorMsg) {
 		SbiAlertLog alertLog = new SbiAlertLog();
 		alertLog.setActionId(actionId);
 		alertLog.setActionParams(actionParams);
@@ -80,7 +80,7 @@ public abstract class AbstractAlertListener extends AbstractSuspendableJob imple
 		DAOFactory.getAlertDAO().insertAlertLog(alertLog);
 	}
 
-	private IAlertAction getActionInstance(Integer actionId) throws EMFUserError, AlertListenerException {
+	private IAlertAction getActionInstance(Integer actionId) throws AlertListenerException {
 		if (!cachedActionMap.containsKey(actionId)) {
 			AlertAction alertAction = DAOFactory.getAlertDAO().loadAction(actionId);
 			try {
@@ -94,12 +94,11 @@ public abstract class AbstractAlertListener extends AbstractSuspendableJob imple
 		return cachedActionMap.get(actionId);
 	}
 
-	protected void executeAction(Object listenerParamsObj, Integer actionId, Object actionParamsObj, Map<String, String> parameterMapFromListener)
-			throws EMFUserError, AlertListenerException {
-		String listenerParams = JsonConverter.objectToJson(listenerParamsObj, listenerParamsObj.getClass()).toString();
-		String actionParams = JsonConverter.objectToJson(actionParamsObj, actionParamsObj.getClass()).toString();
+	protected void executeAction(Object listenerParamsObj, Integer actionId, Object actionParamsObj,
+			Map<String, String> parameterMapFromListener) throws AlertListenerException {
+		String listenerParams = JsonConverter.objectToJson(listenerParamsObj, listenerParamsObj.getClass());
+		String actionParams = JsonConverter.objectToJson(actionParamsObj, actionParamsObj.getClass());
 		try {
-			// incrementActionTriggered(actionId);
 			IAlertAction action = getActionInstance(actionId);
 			action.executeAction(actionParams, parameterMapFromListener);
 			writeAlertLog(listenerParams, actionId, actionParams, null);
@@ -112,8 +111,8 @@ public abstract class AbstractAlertListener extends AbstractSuspendableJob imple
 	}
 
 	protected List<SbiHibernateModel> exportAction(Object listenerParamsObj, Integer actionId, Object actionParamsObj)
-			throws EMFUserError, AlertListenerException {
-		String actionParams = JsonConverter.objectToJson(actionParamsObj, actionParamsObj.getClass()).toString();
+			throws AlertListenerException {
+		String actionParams = JsonConverter.objectToJson(actionParamsObj, actionParamsObj.getClass());
 		IAlertAction action = getActionInstance(actionId);
 		return action.exportAction(actionParams);
 	}
@@ -137,35 +136,14 @@ public abstract class AbstractAlertListener extends AbstractSuspendableJob imple
 	}
 
 	protected void saveLastKey(Object key) throws AlertListenerException {
-		String _key = JsonConverter.objectToJson(key, key.getClass()).toString();
-		jobDataMap.put(LAST_KEY, _key);
+		String localKey = JsonConverter.objectToJson(key, key.getClass()).toString();
+		jobDataMap.put(LAST_KEY, localKey);
 		try {
 			StdSchedulerFactory.getDefaultScheduler().addJob(jobDetail, true);
 		} catch (SchedulerException e) {
 			throw new AlertListenerException("Error saving lastKey", e);
 		}
 	}
-
-	// protected long getActionTriggered(Integer actionId) {
-	// String key = ACTION_TRIGGERED + "_" + actionId;
-	// return jobDataMap.containsKey(key) ? Integer.valueOf(jobDataMap.getString(key)) : 0;
-	// }
-	//
-	// protected long getActionExecuted(Integer actionId) {
-	// String key = ACTION_EXECUTED + "_" + actionId;
-	// return jobDataMap.containsKey(key) ? Integer.valueOf(jobDataMap.getString(key)) : 0;
-	// }
-	//
-	// protected void incrementActionTriggered(Integer actionId) {
-	// long n = getActionTriggered(actionId) + 1;
-	// String key = ACTION_TRIGGERED + "_" + actionId;
-	// jobDataMap.put(key, "" + n);
-	// try {
-	// StdSchedulerFactory.getDefaultScheduler().addJob(jobDetail, true);
-	// } catch (SchedulerException e) {
-	// e.printStackTrace();
-	// }
-	// }
 
 	protected void incrementAlertTriggered() {
 		long n = getConsecutiveAlertsTriggered() + 1;
@@ -200,8 +178,7 @@ public abstract class AbstractAlertListener extends AbstractSuspendableJob imple
 	}
 
 	/**
-	 * @param eventBeforeTriggerAction
-	 *            the eventBeforeTriggerAction to set
+	 * @param eventBeforeTriggerAction the eventBeforeTriggerAction to set
 	 */
 	public void setEventBeforeTriggerAction(Integer eventBeforeTriggerAction) {
 		this.eventBeforeTriggerAction = eventBeforeTriggerAction;

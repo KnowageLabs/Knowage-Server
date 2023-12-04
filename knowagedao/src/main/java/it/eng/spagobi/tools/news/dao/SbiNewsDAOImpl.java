@@ -86,7 +86,8 @@ public class SbiNewsDAOImpl extends AbstractHibernateDAO implements ISbiNewsDAO 
 		while (iterator.hasNext()) {
 			SbiNews hibNews = iterator.next();
 			if (hibNews != null) {
-				BasicNews news = new BasicNews(hibNews.getId(), hibNews.getName(), hibNews.getDescription(), hibNews.getCategoryId());
+				BasicNews news = new BasicNews(hibNews.getId(), hibNews.getName(), hibNews.getDescription(),
+						hibNews.getCategoryId());
 				listOfNews.add(news);
 			}
 		}
@@ -171,7 +172,7 @@ public class SbiNewsDAOImpl extends AbstractHibernateDAO implements ISbiNewsDAO 
 		news.setExpirationDate(hibNews.getExpirationDate());
 
 		try {
-			Set listOfRoles = new HashSet();
+			Set<Role> listOfRoles = new HashSet<>();
 			Set<SbiExtRoles> setOfRoles = hibNews.getSbiNewsRoles();
 			Iterator<SbiExtRoles> iterator = setOfRoles.iterator();
 			while (iterator.hasNext()) {
@@ -260,8 +261,8 @@ public class SbiNewsDAOImpl extends AbstractHibernateDAO implements ISbiNewsDAO 
 			hibNews.setExpirationDate(aNews.getExpirationDate());
 			hibNews.setActive(aNews.getActive());
 			hibNews.setCategoryId(aNews.getType());
-			Set roles = aNews.getRoles();
-			Set extRoles = new HashSet<>();
+			Set<Role> roles = aNews.getRoles();
+			Set<SbiExtRoles> extRoles = new HashSet<>();
 			Iterator<Role> iterator = roles.iterator();
 
 			while (iterator.hasNext()) {
@@ -318,13 +319,14 @@ public class SbiNewsDAOImpl extends AbstractHibernateDAO implements ISbiNewsDAO 
 			String hql = " from SbiNews s where s.active=true and s.expirationDate >= current_date";
 			Query query = session.createQuery(hql);
 
-			List hibList = query.list();
-			Iterator iterator = hibList.iterator();
+			List<SbiNews> hibList = query.list();
+			Iterator<SbiNews> iterator = hibList.iterator();
 			while (iterator.hasNext()) {
-				SbiNews hibNews = (SbiNews) iterator.next();
+				SbiNews hibNews = iterator.next();
 				hibNews = getAvailableNews(hibNews, profile);
 				if (hibNews != null) {
-					BasicNews basicNews = new BasicNews(hibNews.getId(), hibNews.getName(), hibNews.getDescription(), hibNews.getCategoryId());
+					BasicNews basicNews = new BasicNews(hibNews.getId(), hibNews.getName(), hibNews.getDescription(),
+							hibNews.getCategoryId());
 					setOfNews.add(basicNews);
 				}
 			}
@@ -343,7 +345,7 @@ public class SbiNewsDAOImpl extends AbstractHibernateDAO implements ISbiNewsDAO 
 		}
 
 		logger.debug("OUT");
-		return new ArrayList<BasicNews>(setOfNews);
+		return new ArrayList<>(setOfNews);
 	}
 
 	public SbiNews getAvailableNews(SbiNews hibNews, IEngUserProfile profile) {

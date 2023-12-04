@@ -3,7 +3,6 @@ package it.eng.spagobi.tools.alert.dao;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -102,8 +101,8 @@ public class AlertDAOImpl extends AbstractHibernateDAO implements IAlertDAO {
 			parameters.put(IAlertListener.LISTENER_PARAMS, name);
 			parameters.put(IAlertListener.LISTENER_ID, "" + alert.getAlertListener().getId());
 			ISchedulerDAO schedulerDAO = DAOFactory.getSchedulerDAO();
-			schedulerDAO.createOrUpdateJobAndTrigger(name, Class.forName(alert.getAlertListener().getClassName()), ALERT_JOB_GROUP, ALERT_JOB_GROUP,
-					alert.getFrequency(), parameters);
+			schedulerDAO.createOrUpdateJobAndTrigger(name, Class.forName(alert.getAlertListener().getClassName()),
+					ALERT_JOB_GROUP, ALERT_JOB_GROUP, alert.getFrequency(), parameters);
 		} catch (ClassNotFoundException e) {
 			throw new SpagoBIDAOException(e);
 		}
@@ -130,8 +129,8 @@ public class AlertDAOImpl extends AbstractHibernateDAO implements IAlertDAO {
 			parameters.put(IAlertListener.LISTENER_PARAMS, name);
 			parameters.put(IAlertListener.LISTENER_ID, "" + alert.getAlertListener().getId());
 			ISchedulerDAO schedulerDAO = DAOFactory.getSchedulerDAO();
-			schedulerDAO.createOrUpdateJobAndTrigger(name, Class.forName(alert.getAlertListener().getClassName()), ALERT_JOB_GROUP, ALERT_JOB_GROUP,
-					alert.getFrequency(), parameters);
+			schedulerDAO.createOrUpdateJobAndTrigger(name, Class.forName(alert.getAlertListener().getClassName()),
+					ALERT_JOB_GROUP, ALERT_JOB_GROUP, alert.getFrequency(), parameters);
 		} catch (ClassNotFoundException e) {
 			throw new SpagoBIDAOException(e);
 		}
@@ -140,7 +139,8 @@ public class AlertDAOImpl extends AbstractHibernateDAO implements IAlertDAO {
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<Alert> listAlert() {
-		final List<String> suspendedTriggers = DAOFactory.getSchedulerDAO().listTriggerPausedByGroup(ALERT_JOB_GROUP, ALERT_JOB_GROUP);
+		final List<String> suspendedTriggers = DAOFactory.getSchedulerDAO().listTriggerPausedByGroup(ALERT_JOB_GROUP,
+				ALERT_JOB_GROUP);
 		return executeOnTransaction(new IExecuteOnTransaction<List<Alert>>() {
 			@Override
 			public List<Alert> execute(Session session) throws Exception {
@@ -154,7 +154,8 @@ public class AlertDAOImpl extends AbstractHibernateDAO implements IAlertDAO {
 						// trigger expired
 						alert.setJobStatus(JOB_STATUS.EXPIRED);
 					} else {
-						alert.setJobStatus(suspendedTriggers.contains("" + sbiAlert.getId()) ? JOB_STATUS.SUSPENDED : JOB_STATUS.ACTIVE);
+						alert.setJobStatus(suspendedTriggers.contains("" + sbiAlert.getId()) ? JOB_STATUS.SUSPENDED
+								: JOB_STATUS.ACTIVE);
 					}
 					ret.add(alert);
 				}
@@ -184,20 +185,27 @@ public class AlertDAOImpl extends AbstractHibernateDAO implements IAlertDAO {
 					alert.getFrequency().setCron(null);
 					alert.setJobStatus(JOB_STATUS.EXPIRED);
 				} else {
-					alert.setJobStatus(schedulerDao.isTriggerPaused(ALERT_JOB_GROUP, name, ALERT_JOB_GROUP, name) ? JOB_STATUS.SUSPENDED : JOB_STATUS.ACTIVE);
+					alert.setJobStatus(schedulerDao.isTriggerPaused(ALERT_JOB_GROUP, name, ALERT_JOB_GROUP, name)
+							? JOB_STATUS.SUSPENDED
+							: JOB_STATUS.ACTIVE);
 					Date startTime = tr.getStartTime();
-					Calendar dateStartFreq = GregorianCalendar.getInstance(); // creates a new calendar instance
+					Calendar dateStartFreq = Calendar.getInstance(); // creates a new calendar instance
 					dateStartFreq.setTime(startTime); // assigns calendar to given date
-					alert.getFrequency().setStartTime(dateStartFreq.get(Calendar.HOUR_OF_DAY) + ":" + dateStartFreq.get(Calendar.MINUTE));
+					alert.getFrequency().setStartTime(
+							dateStartFreq.get(Calendar.HOUR_OF_DAY) + ":" + dateStartFreq.get(Calendar.MINUTE));
 					alert.getFrequency().setStartDate(dateStartFreq.getTime().getTime());
 					if (tr.getEndTime() != null) {
 						Date endTime = tr.getEndTime();
-						Calendar dateEndFreq = GregorianCalendar.getInstance(); // creates a new calendar instance
+						Calendar dateEndFreq = Calendar.getInstance(); // creates a new calendar instance
 						dateEndFreq.setTime(endTime); // assigns calendar to given date
-						alert.getFrequency().setEndTime(dateEndFreq.get(Calendar.HOUR_OF_DAY) + ":" + dateEndFreq.get(Calendar.MINUTE));
+						alert.getFrequency().setEndTime(
+								dateEndFreq.get(Calendar.HOUR_OF_DAY) + ":" + dateEndFreq.get(Calendar.MINUTE));
 						alert.getFrequency().setEndDate(dateEndFreq.getTime().getTime());
 					}
-					alert.getFrequency().setCron(tr.getChronExpression() != null ? tr.getChronExpression().getExpression().replace("'", "\"") : null);
+					alert.getFrequency()
+							.setCron(tr.getChronExpression() != null
+									? tr.getChronExpression().getExpression().replace("'", "\"")
+									: null);
 				}
 			} catch (Throwable e) {
 				throw new SpagoBIDAOException(e);

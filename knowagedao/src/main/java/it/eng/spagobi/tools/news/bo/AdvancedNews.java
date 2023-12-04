@@ -20,6 +20,8 @@ import java.util.Set;
 
 import org.apache.log4j.Logger;
 
+import it.eng.spagobi.commons.bo.Role;
+
 public class AdvancedNews extends BasicNews {
 
 	/**
@@ -31,7 +33,7 @@ public class AdvancedNews extends BasicNews {
 	private Date expirationDate;
 	private String html;
 	private Boolean active;
-	private Set roles = null;
+	private Set<Role> roles = null;
 
 	public AdvancedNews() {
 
@@ -41,7 +43,7 @@ public class AdvancedNews extends BasicNews {
 		super(id);
 	}
 
-	public AdvancedNews(Date expirationDate, String html, Boolean active, Set roles) {
+	public AdvancedNews(Date expirationDate, String html, Boolean active, Set<Role> roles) {
 		this.expirationDate = expirationDate;
 		this.html = html;
 		this.active = active;
@@ -72,11 +74,11 @@ public class AdvancedNews extends BasicNews {
 		this.active = active;
 	}
 
-	public Set getRoles() {
+	public Set<Role> getRoles() {
 		return roles;
 	}
 
-	public void setRoles(Set roles) {
+	public void setRoles(Set<Role> roles) {
 		this.roles = roles;
 	}
 

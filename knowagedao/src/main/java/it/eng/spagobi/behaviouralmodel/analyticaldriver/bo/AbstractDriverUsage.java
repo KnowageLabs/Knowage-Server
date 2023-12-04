@@ -249,7 +249,7 @@ public class AbstractDriverUsage {
 		if (parameterValues == null || parameterValues.isEmpty()) {
 			return null;
 		}
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		Iterator it = parameterValues.iterator();
 		while (it.hasNext()) {
 			String aValue = (String) it.next();

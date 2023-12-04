@@ -34,8 +34,7 @@ public abstract class AbstactWidgetReader implements ICockpitWidget {
 	/**
 	 *
 	 */
-	public AbstactWidgetReader() {
-		super();
+	protected AbstactWidgetReader() {
 	}
 
 	@Override

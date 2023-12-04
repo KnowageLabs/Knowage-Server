@@ -26,7 +26,6 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.Logger;
 import org.jgrapht.graph.Pseudograph;
 
 import it.eng.spagobi.commons.bo.UserProfile;
@@ -54,8 +53,6 @@ import it.eng.spagobi.utilities.parameters.ParametersUtilities;
  */
 
 public abstract class AbstractAssociativityManager implements IAssociativityManager {
-
-	private static Logger logger = Logger.getLogger(AbstractAssociativityManager.class);
 
 	protected Map<String, Map<String, String>> datasetToAssociations;
 	protected Pseudograph<String, LabeledEdge<String>> graph;
@@ -248,7 +245,7 @@ public abstract class AbstractAssociativityManager implements IAssociativityMana
 									List<String> finalVals = new ArrayList<>();
 									for (int i = 0; i < valueArray.length; i++) {
 										String val = valueArray[i];
-										val = val.replaceAll("''", "\'");
+										val = val.replace("''", "\'");
 										finalVals.add(val);
 									}
 
