@@ -133,6 +133,7 @@ export default defineComponent({
             this.lazyParams = {}
         },
         getFormattedDate(date: any, column: any) {
+            if (!date) return null;
             const inputFormat = column.type === 'timestamp' ? 'DD/MM/YYYY HH:mm:ss.SSS' : 'DD/MM/YYYY'
             let format = undefined as string | undefined
             if (QBEDescriptor.admissibleDateFormats.includes(column.metawebDateFormat)) {

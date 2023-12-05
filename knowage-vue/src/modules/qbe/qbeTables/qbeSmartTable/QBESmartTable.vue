@@ -214,6 +214,7 @@ export default defineComponent({
             return configuration.currency + formattedNumber
         },
         getFormattedDate(date: any, output: any, input: any) {
+            if (!date) return null
             return formatDate(date, output, input)
         }
     }
