@@ -148,6 +148,14 @@ public class UserProfile implements IEngUserProfile {
 	private String organization = null;
 	private Boolean isSuperadmin = false;
 
+	// PM-int
+	private String userAgent;
+	private String sourceIpAddress;
+	private Boolean sourceSocketEnabled;
+	private String os;
+	private Long sessionStart;
+	private String sessionId;
+
 	@JsonIgnore
 	private SpagoBIUserProfile spagoBIUserProfile = null;
 
@@ -164,6 +172,12 @@ public class UserProfile implements IEngUserProfile {
 		this.organization = other.organization;
 		this.isSuperadmin = other.isSuperadmin;
 		this.spagoBIUserProfile = other.spagoBIUserProfile;
+		// PM-int
+		this.userAgent = other.userAgent;
+		this.sourceIpAddress = other.sourceIpAddress;
+		this.sourceSocketEnabled = other.sourceSocketEnabled;
+		this.os = other.os;
+		this.sessionStart = other.sessionStart;
 	}
 
 	/**
@@ -246,8 +260,8 @@ public class UserProfile implements IEngUserProfile {
 	}
 
 	/**
-	 * To be used by SpagoBI core ONLY. The user unique identifier in the output object is a JWT token expiring SCHEDULER_JWT_TOKEN_EXPIRE_HOURS hours containing a
-	 * claim SsoServiceInterface.USER_ID: the value of this claim matches this syntax: SCHEDULER_USER_ID_PREFIX + tenant name.
+	 * To be used by SpagoBI core ONLY. The user unique identifier in the output object is a JWT token expiring SCHEDULER_JWT_TOKEN_EXPIRE_HOURS hours
+	 * containing a claim SsoServiceInterface.USER_ID: the value of this claim matches this syntax: SCHEDULER_USER_ID_PREFIX + tenant name.
 	 *
 	 * @return the user profile for the scheduler
 	 */
@@ -425,8 +439,7 @@ public class UserProfile implements IEngUserProfile {
 				return true;
 			}
 
-			List<String> businessProcessNames = AuthorizationsBusinessMapper.getInstance()
-					.mapActionToBusinessProcess(actionName);
+			List<String> businessProcessNames = AuthorizationsBusinessMapper.getInstance().mapActionToBusinessProcess(actionName);
 			if (businessProcessNames != null) {
 				for (String businessProcess : businessProcessNames) {
 					if (functionalities.contains(businessProcess)) {
@@ -446,8 +459,7 @@ public class UserProfile implements IEngUserProfile {
 	 */
 	@Override
 	public boolean isAbleToExecuteModuleInPage(String pageName, String moduleName) throws EMFInternalError {
-		String functionality = AuthorizationsBusinessMapper.getInstance().mapPageModuleToBusinessProcess(pageName,
-				moduleName);
+		String functionality = AuthorizationsBusinessMapper.getInstance().mapPageModuleToBusinessProcess(pageName, moduleName);
 		if (functionality != null) {
 			return this.functionalities.contains(functionality);
 		} else
@@ -543,8 +555,7 @@ public class UserProfile implements IEngUserProfile {
 	public static UserProfile createSchedulerUserProfile(String userUniqueIdentifier) {
 		logger.debug("IN: userUniqueIdentifier = " + userUniqueIdentifier);
 		if (!isSchedulerUser(userUniqueIdentifier)) {
-			throw new SpagoBIRuntimeException(
-					"User unique identifier [" + userUniqueIdentifier + "] is not a scheduler user id");
+			throw new SpagoBIRuntimeException("User unique identifier [" + userUniqueIdentifier + "] is not a scheduler user id");
 		}
 		String userId = JWTSsoService.jwtToken2userId(userUniqueIdentifier);
 		logger.debug("IN: user id = " + userId);
@@ -555,14 +566,12 @@ public class UserProfile implements IEngUserProfile {
 		List<String> roles = new ArrayList<>();
 		HashMap attributes = new HashMap();
 
-		UserProfile toReturn = new UserProfile(userUniqueIdentifier, SCHEDULER_USER_NAME, SCHEDULER_USER_NAME,
-				organization);
+		UserProfile toReturn = new UserProfile(userUniqueIdentifier, SCHEDULER_USER_NAME, SCHEDULER_USER_NAME, organization);
 		toReturn.setRoles(roles);
 		toReturn.setAttributes(attributes);
 		toReturn.setFunctionalities(functionalities);
 
-		setSpagoBiUserProfileIntoUserProfile(toReturn, userUniqueIdentifier, userId, organization, roles,
-				functionalities);
+		setSpagoBiUserProfileIntoUserProfile(toReturn, userUniqueIdentifier, userId, organization, roles, functionalities);
 
 		logger.debug("OUT");
 		return toReturn;
@@ -571,8 +580,7 @@ public class UserProfile implements IEngUserProfile {
 	public static UserProfile createDataPreparationUserProfile(String userUniqueIdentifier) {
 		logger.debug("IN: userUniqueIdentifier = " + userUniqueIdentifier);
 		if (!isDataPreparationUser(userUniqueIdentifier)) {
-			throw new SpagoBIRuntimeException(
-					"User unique identifier [" + userUniqueIdentifier + "] is not a data preparation user id");
+			throw new SpagoBIRuntimeException("User unique identifier [" + userUniqueIdentifier + "] is not a data preparation user id");
 		}
 		String userId = JWTSsoService.jwtToken2userId(userUniqueIdentifier);
 		logger.debug("IN: user id = " + userId);
@@ -583,52 +591,44 @@ public class UserProfile implements IEngUserProfile {
 		List<String> roles = new ArrayList<>();
 		HashMap attributes = new HashMap();
 
-		UserProfile toReturn = new UserProfile(userUniqueIdentifier, DATA_PREP_USER_NAME, DATA_PREP_USER_NAME,
-				organization);
+		UserProfile toReturn = new UserProfile(userUniqueIdentifier, DATA_PREP_USER_NAME, DATA_PREP_USER_NAME, organization);
 		toReturn.setRoles(roles);
 		toReturn.setAttributes(attributes);
 		toReturn.setFunctionalities(functionalities);
 
-		setSpagoBiUserProfileIntoUserProfile(toReturn, userUniqueIdentifier, userId, organization, roles,
-				functionalities);
+		setSpagoBiUserProfileIntoUserProfile(toReturn, userUniqueIdentifier, userId, organization, roles, functionalities);
 
 		logger.debug("OUT");
 		return toReturn;
 	}
 
-	private static void setSpagoBiUserProfileIntoUserProfile(UserProfile userProfile, String userUniqueIdentifier,
-			String userId, String organization, List<String> roles, List<String> functionalities) {
+	private static void setSpagoBiUserProfileIntoUserProfile(UserProfile userProfile, String userUniqueIdentifier, String userId, String organization,
+			List<String> roles, List<String> functionalities) {
 
 		HashMap attributes = new HashMap();
 		String[] functionalitiesAsArray = functionalities.toArray(new String[0]);
 		String[] rolesAsArray = roles.toArray(new String[0]);
 		boolean isSuperadmin = false;
 
-		SpagoBIUserProfile spagoBiUserProfile = new SpagoBIUserProfile(attributes, functionalitiesAsArray, isSuperadmin,
-				organization, rolesAsArray, userUniqueIdentifier, userId, userId);
+		SpagoBIUserProfile spagoBiUserProfile = new SpagoBIUserProfile(attributes, functionalitiesAsArray, isSuperadmin, organization, rolesAsArray,
+				userUniqueIdentifier, userId, userId);
 
 		userProfile.setSpagoBIUserProfile(spagoBiUserProfile);
 	}
 
 	private static List<String> getSchedulerUserFunctionalities() {
-		String[] functionalities = { ALERT_MANAGEMENT, MANAGE_ANALYTICAL_WIDGET, ARTIFACT_CATALOGUE_MANAGEMENT,
-				MANAGE_CHART_WIDGET, CKAN_FUNCTIONALITY, CONTSTRAINT_MANAGEMENT, CONTSTRAINT_VIEW,
-				CREATE_CHART_FUNCTIONALITY, CREATE_COCKPIT_FUNCTIONALITY, CREATE_DATASETS_AS_FINAL_USER,
-				DATASET_MANAGEMENT, DATASOURCE_BIG_DATA, DATASOURCE_MANAGEMENT, DATASOURCE_READ,
-				DISTRIBUTIONLIST_MANAGEMENT, DISTRIBUTIONLIST_USER, DOCUMENT_ADMINISTRATION, DOCUMENT_MANAGEMENT_ADMIN,
-				DOCUMENT_DELETE_MANAGEMENT, DOCUMENT_DETAIL_MANAGEMENT, DOCUMENT_MANAGEMENT_DEV, DOCUMENT_MANAGEMENT,
-				DOCUMENT_METADATA_MANAGEMENT, DOCUMENT_MOVE_DOWN_STATE, DOCUMENT_MOVE_UP_STATE,
-				DOCUMENT_STATE_MANAGEMENT, DOCUMENT_MANAGEMENT_TEST, DOCUMENT_MANAGEMENT_USER, DOMAIN_WRITE,
-				EVENTS_MANAGEMENT, EXECUTE_CROSS_NAVIGATION, FEDERATION_DEFINITION, FUNCTIONALITIES_MANAGEMENT,
-				FUNCTIONS_CATALOG_MANAGEMENT, GEO_LAYERS_MANAGEMENT, GIS_WEB_DESIGNER, HOTLINK_MANAGEMENT,
-				IMAGES_MANAGEMENT, KPI_MANAGEMENT, KPI_SCHEDULATION, LOVS_MANAGEMENT, LOVS_VIEW,
-				MANAGE_CROSS_NAVIGATION, MAPCATALOGUE_MANAGEMENT, MENU_MANAGEMENT, META_MODEL_LIFECYCLE_MANAGEMENT,
-				META_MODELS_CATALOGUE_MANAGEMENT, MODIFY_REFRESH, MANAGE_MULTISHEET_COCKPIT,
-				NOTIFY_CONTEXT_BROKER_ACTION, PARAMETER_MANAGEMENT, PARAMETER_VIEW, PROFILE_ATTRIBUTES_MANAGEMENT,
-				PROFILE_MANAGEMENT, READ_ENGINES_MANAGEMENT, REGISTRY_DATA_ENTRY, SELF_SERVICE_DATASET_MANAGEMENT,
-				SELF_SERVICE_META_MODEL_MANAGEMENT, SHARED_DEVELOPMENT, MANAGE_STATIC_WIDGET,
-				SYNCRONIZE_ROLES_MANAGEMENT, USER_SAVE_DOCUMENT_FUNCTIONALITY, VIEW_MY_FOLDER_ADMIN,
-				WORKLIST_MANAGEMENT, WORKSPACE_MANAGEMENT, READ_ROLES };
+		String[] functionalities = { ALERT_MANAGEMENT, MANAGE_ANALYTICAL_WIDGET, ARTIFACT_CATALOGUE_MANAGEMENT, MANAGE_CHART_WIDGET, CKAN_FUNCTIONALITY,
+				CONTSTRAINT_MANAGEMENT, CONTSTRAINT_VIEW, CREATE_CHART_FUNCTIONALITY, CREATE_COCKPIT_FUNCTIONALITY, CREATE_DATASETS_AS_FINAL_USER,
+				DATASET_MANAGEMENT, DATASOURCE_BIG_DATA, DATASOURCE_MANAGEMENT, DATASOURCE_READ, DISTRIBUTIONLIST_MANAGEMENT, DISTRIBUTIONLIST_USER,
+				DOCUMENT_ADMINISTRATION, DOCUMENT_MANAGEMENT_ADMIN, DOCUMENT_DELETE_MANAGEMENT, DOCUMENT_DETAIL_MANAGEMENT, DOCUMENT_MANAGEMENT_DEV,
+				DOCUMENT_MANAGEMENT, DOCUMENT_METADATA_MANAGEMENT, DOCUMENT_MOVE_DOWN_STATE, DOCUMENT_MOVE_UP_STATE, DOCUMENT_STATE_MANAGEMENT,
+				DOCUMENT_MANAGEMENT_TEST, DOCUMENT_MANAGEMENT_USER, DOMAIN_WRITE, EVENTS_MANAGEMENT, EXECUTE_CROSS_NAVIGATION, FEDERATION_DEFINITION,
+				FUNCTIONALITIES_MANAGEMENT, FUNCTIONS_CATALOG_MANAGEMENT, GEO_LAYERS_MANAGEMENT, GIS_WEB_DESIGNER, HOTLINK_MANAGEMENT, IMAGES_MANAGEMENT,
+				KPI_MANAGEMENT, KPI_SCHEDULATION, LOVS_MANAGEMENT, LOVS_VIEW, MANAGE_CROSS_NAVIGATION, MAPCATALOGUE_MANAGEMENT, MENU_MANAGEMENT,
+				META_MODEL_LIFECYCLE_MANAGEMENT, META_MODELS_CATALOGUE_MANAGEMENT, MODIFY_REFRESH, MANAGE_MULTISHEET_COCKPIT, NOTIFY_CONTEXT_BROKER_ACTION,
+				PARAMETER_MANAGEMENT, PARAMETER_VIEW, PROFILE_ATTRIBUTES_MANAGEMENT, PROFILE_MANAGEMENT, READ_ENGINES_MANAGEMENT, REGISTRY_DATA_ENTRY,
+				SELF_SERVICE_DATASET_MANAGEMENT, SELF_SERVICE_META_MODEL_MANAGEMENT, SHARED_DEVELOPMENT, MANAGE_STATIC_WIDGET, SYNCRONIZE_ROLES_MANAGEMENT,
+				USER_SAVE_DOCUMENT_FUNCTIONALITY, VIEW_MY_FOLDER_ADMIN, WORKLIST_MANAGEMENT, WORKSPACE_MANAGEMENT, READ_ROLES };
 		return Arrays.asList(functionalities);
 	}
 
@@ -639,9 +639,56 @@ public class UserProfile implements IEngUserProfile {
 
 	@Override
 	public String toString() {
-		return "UserProfile [userUniqueIdentifier=" + userUniqueIdentifier + ", userId=" + userId + ", userName="
-				+ userName + ", userAttributes=" + userAttributes + ", roles=" + roles + ", organization="
-				+ organization + ", isSuperadmin=" + isSuperadmin + "]";
+		return "UserProfile [userUniqueIdentifier=" + userUniqueIdentifier + ", userId=" + userId + ", userName=" + userName + ", userAttributes="
+				+ userAttributes + ", roles=" + roles + ", organization=" + organization + ", isSuperadmin=" + isSuperadmin + "]";
+	}
+
+	public String getUserAgent() {
+		return userAgent;
+	}
+
+	public void setUserAgent(String userAgent) {
+		this.userAgent = userAgent;
+	}
+
+	public String getSourceIpAddress() {
+		return sourceIpAddress;
+	}
+
+	public void setSourceIpAddress(String sourceIpAddress) {
+		this.sourceIpAddress = sourceIpAddress;
+	}
+
+	public Boolean getSourceSocketEnabled() {
+		return sourceSocketEnabled;
+	}
+
+	public void setSourceSocketEnabled(Boolean sourceSocketEnabled) {
+		this.sourceSocketEnabled = sourceSocketEnabled;
+	}
+
+	public String getOs() {
+		return os;
+	}
+
+	public void setOs(String os) {
+		this.os = os;
+	}
+
+	public Long getSessionStart() {
+		return sessionStart;
+	}
+
+	public void setSessionStart(Long sessionStart) {
+		this.sessionStart = sessionStart;
+	}
+
+	public String getSessionId() {
+		return sessionId;
+	}
+
+	public void setSessionId(String sessionId) {
+		this.sessionId = sessionId;
 	}
 
 }

@@ -37,6 +37,8 @@ import javax.servlet.http.HttpSession;
 import org.apache.commons.httpclient.UsernamePasswordCredentials;
 import org.apache.log4j.Logger;
 
+import it.eng.knowage.privacymanager.LoginEventBuilder;
+import it.eng.knowage.privacymanager.PrivacyManagerClient;
 import it.eng.spago.base.Constants;
 import it.eng.spago.base.RequestContainer;
 import it.eng.spago.base.ResponseContainer;
@@ -109,6 +111,8 @@ public class ProfileFilter implements Filter {
 				IEngUserProfile profile = (IEngUserProfile) permanentSession.getAttribute(IEngUserProfile.ENG_USER_PROFILE);
 
 				UserProfile publicProfile = PublicProfile.evaluatePublicCase(httpRequest, session, permanentSession);
+				// PM-int
+				profile = enrichProfile(publicProfile, httpRequest, session);
 
 				if (publicProfile != null)
 					profile = publicProfile;
@@ -186,6 +190,12 @@ public class ProfileFilter implements Filter {
 					}
 
 				}
+				// PM-int todo chiamata al servizio JMS
+				LoginEventBuilder eventBuilder = new LoginEventBuilder();
+				UserProfile up = (UserProfile) profile;
+				eventBuilder.appendSession("knowage", up.getSourceIpAddress(), up.getSessionId(), up.getSessionStart(), up.getUserId().toString());
+				eventBuilder.appendUserAgent(up.getOs(), up.getSourceIpAddress(), up.getSourceSocketEnabled(), up.getUserAgent());
+				PrivacyManagerClient.getInstance().sendMessage(eventBuilder.getDTO());
 
 				chain.doFilter(request, response);
 			}
@@ -344,6 +354,72 @@ public class ProfileFilter implements Filter {
 			logger.debug("OUT");
 		}
 		return userId;
+	}
+
+	// PM-int
+	private UserProfile enrichProfile(UserProfile profile, ServletRequest req, HttpSession session) {
+		if (!(req instanceof HttpServletRequest))
+			return profile;
+
+		HttpServletRequest request = (HttpServletRequest) req;
+
+		String browserDetails = request.getHeader("User-Agent");
+		String userAgent = browserDetails;
+		String user = userAgent.toLowerCase();
+
+		String os = "";
+		String browser = "";
+
+		// =================OS=======================
+		if (userAgent.toLowerCase().indexOf("windows") >= 0) {
+			os = "Windows";
+		} else if (userAgent.toLowerCase().indexOf("mac") >= 0) {
+			os = "Mac";
+		} else if (userAgent.toLowerCase().indexOf("x11") >= 0) {
+			os = "Unix";
+		} else if (userAgent.toLowerCase().indexOf("android") >= 0) {
+			os = "Android";
+		} else if (userAgent.toLowerCase().indexOf("iphone") >= 0) {
+			os = "IPhone";
+		} else {
+			os = "UnKnown, More-Info: " + userAgent;
+		}
+		// ===============Browser===========================
+		if (user.contains("msie")) {
+			String substring = userAgent.substring(userAgent.indexOf("MSIE")).split(";")[0];
+			browser = substring.split(" ")[0].replace("MSIE", "IE") + "-" + substring.split(" ")[1];
+		} else if (user.contains("safari") && user.contains("version")) {
+			browser = (userAgent.substring(userAgent.indexOf("Safari")).split(" ")[0]).split("/")[0] + "-"
+					+ (userAgent.substring(userAgent.indexOf("Version")).split(" ")[0]).split("/")[1];
+		} else if (user.contains("opr") || user.contains("opera")) {
+			if (user.contains("opera"))
+				browser = (userAgent.substring(userAgent.indexOf("Opera")).split(" ")[0]).split("/")[0] + "-"
+						+ (userAgent.substring(userAgent.indexOf("Version")).split(" ")[0]).split("/")[1];
+			else if (user.contains("opr"))
+				browser = ((userAgent.substring(userAgent.indexOf("OPR")).split(" ")[0]).replace("/", "-")).replace("OPR", "Opera");
+		} else if (user.contains("chrome")) {
+			browser = (userAgent.substring(userAgent.indexOf("Chrome")).split(" ")[0]).replace("/", "-");
+		} else if ((user.indexOf("mozilla/7.0") > -1) || (user.indexOf("netscape6") != -1) || (user.indexOf("mozilla/4.7") != -1)
+				|| (user.indexOf("mozilla/4.78") != -1) || (user.indexOf("mozilla/4.08") != -1) || (user.indexOf("mozilla/3") != -1)) {
+			// browser=(userAgent.substring(userAgent.indexOf("MSIE")).split(" ")[0]).replace("/", "-");
+			browser = "Netscape-?";
+
+		} else if (user.contains("firefox")) {
+			browser = (userAgent.substring(userAgent.indexOf("Firefox")).split(" ")[0]).replace("/", "-");
+		} else if (user.contains("rv")) {
+			browser = "IE-" + user.substring(user.indexOf("rv") + 3, user.indexOf(")"));
+		} else {
+			browser = "UnKnown, More-Info: " + userAgent;
+		}
+
+		profile.setUserAgent(userAgent);
+		profile.setOs(os);
+		profile.setSessionStart(session.getCreationTime());
+		profile.setSourceIpAddress(request.getRemoteAddr());
+		profile.setSessionId(session.getId());
+		// todo
+		profile.setSourceSocketEnabled(false);
+		return profile;
 	}
 
 	public class SilentAuthenticationFailedException extends RuntimeException {
