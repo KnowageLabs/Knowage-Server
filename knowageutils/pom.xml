@@ -134,6 +134,7 @@
             <artifactId>activemq-all</artifactId>
             <version>5.15.0</version>
         </dependency>
+        
 		<dependency>
 			<groupId>org.apache.logging.log4j</groupId>
 			<artifactId>log4j-1.2-api</artifactId>
