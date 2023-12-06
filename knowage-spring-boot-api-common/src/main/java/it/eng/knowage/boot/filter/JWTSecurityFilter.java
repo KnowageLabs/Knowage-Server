@@ -61,7 +61,8 @@ public class JWTSecurityFilter implements Filter {
 	private Context ctx;
 
 	@Override
-	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
+	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
+			throws IOException, ServletException {
 		if (request instanceof HttpServletRequest) {
 			HttpServletRequest httpRequest = (HttpServletRequest) request;
 			HttpServletResponse httpResponse = (HttpServletResponse) response;
@@ -69,36 +70,37 @@ public class JWTSecurityFilter implements Filter {
 			String userToken = "";
 			String authorizationHeaderName = ConfigSingleton.getInstance().getAuthorizationHeaderName();
 
-			LOGGER.info("Looking for HTTP header with name " + authorizationHeaderName);
+			LOGGER.info("Looking for HTTP header with name {}", authorizationHeaderName);
 			userToken = httpRequest.getHeader(authorizationHeaderName);
 
 			// Fallback to a query parameter with the same name of the HTTP header
 			if (userToken == null) {
 				LOGGER.warn("Looking for user to token on query parameter");
-				LOGGER.info("Looking for query parameter with name " + authorizationHeaderName);
+				LOGGER.info("Looking for query parameter with name {}", authorizationHeaderName);
 				userToken = httpRequest.getParameter(authorizationHeaderName);
 			}
 
 			if (userToken == null) {
 				httpResponse.setStatus(401);
 			} else {
-				LOGGER.info("header: " + userToken);
+				LOGGER.info("Header value: {}", userToken);
 				String noBearerUserToken = userToken.replace("Bearer ", "");
 				String technicalToken = getTechnicalToken();
 				try {
-					SpagoBIUserProfile profile = securityServiceService.getUserProfile(technicalToken, noBearerUserToken);
+					SpagoBIUserProfile profile = securityServiceService.getUserProfile(technicalToken,
+							noBearerUserToken);
 
 					if (profile != null) {
 
-						businessRequestContext.setUsername(profile.getUserId());
-						businessRequestContext.setOrganization(profile.getOrganization());
-						businessRequestContext.setUserProfile(profile);
-						businessRequestContext.setUserToken(userToken);
+						setBusinessRequestContext(userToken, profile);
 
-						RequestContextHolder.currentRequestAttributes().setAttribute("userProfile", profile, RequestAttributes.SCOPE_REQUEST);
-						RequestContextHolder.currentRequestAttributes().setAttribute("userToken", userToken, RequestAttributes.SCOPE_REQUEST);
+						RequestContextHolder.currentRequestAttributes().setAttribute("userProfile", profile,
+								RequestAttributes.SCOPE_REQUEST);
+						RequestContextHolder.currentRequestAttributes().setAttribute("userToken", userToken,
+								RequestAttributes.SCOPE_REQUEST);
 
-						KnowageHttpServletRequestWrapper newRequest = new KnowageHttpServletRequestWrapper(httpRequest, profile);
+						KnowageHttpServletRequestWrapper newRequest = new KnowageHttpServletRequestWrapper(httpRequest,
+								profile);
 
 						chain.doFilter(newRequest, response);
 					} else {
@@ -110,12 +112,14 @@ public class JWTSecurityFilter implements Filter {
 					httpResponse.setStatus(500);
 				}
 			}
-		} else {
-			if (response instanceof HttpServletResponse) {
-				HttpServletResponse httpResponse = (HttpServletResponse) response;
-				httpResponse.setStatus(400);
-			}
 		}
+	}
+
+	private void setBusinessRequestContext(String userToken, SpagoBIUserProfile profile) {
+		businessRequestContext.setUsername(profile.getUserId());
+		businessRequestContext.setOrganization(profile.getOrganization());
+		businessRequestContext.setUserProfile(profile);
+		businessRequestContext.setUserToken(userToken);
 	}
 
 	private String getTechnicalToken() {
