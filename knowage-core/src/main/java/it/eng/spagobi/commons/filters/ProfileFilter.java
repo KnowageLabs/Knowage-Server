@@ -64,8 +64,8 @@ import it.eng.spagobi.tenant.Tenant;
 import it.eng.spagobi.tenant.TenantManager;
 import it.eng.spagobi.user.UserProfileManager;
 
-/**
- * @author Zerbetto (davide.zerbetto@eng.it)
+/*
+@author Zerbetto (davide.zerbetto@eng.it)
  *
  *         This filter tries to build the user profile object, using the user identifier
  */

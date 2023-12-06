@@ -5,13 +5,16 @@ import java.io.InputStreamReader;
 import java.util.HashMap;
 import java.util.Properties;
 
+import javax.jms.Connection;
 import javax.jms.JMSException;
 import javax.jms.MessageProducer;
+import javax.jms.ObjectMessage;
+import javax.jms.Queue;
+import javax.jms.Session;
 
 import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.message.ObjectMessage;
 
 import it.eng.knowage.pm.dto.PrivacyDTO;
 import it.eng.knowage.pm.dto.PrivacyEventType;
