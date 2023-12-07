@@ -68,6 +68,12 @@
 				
 				</md-content>
 			</div>
+
+      <div id="categories_check" ng-if="selectedConfigurationButton == translate.load('sbi.chartengine.designer.tab.configuration.categoriesCheck')">
+        <md-content flex layout="column">
+          <div ng-include src="templateUrls.categoriesCheckURL" layout-margin></div>
+        </md-content>
+      </div>
 			
 			<div id="legentitle" ng-if="selectedConfigurationButton == translate.load('sbi.chartengine.designer.tab.configuration.legendtitle')">
 				<md-content flex layout="column">

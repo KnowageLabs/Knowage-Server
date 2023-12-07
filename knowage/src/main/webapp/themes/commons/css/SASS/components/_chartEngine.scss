@@ -160,6 +160,10 @@
 	@include custom-background-image('../img/chart/configuration/configuration_no_data_message.png');
 }
 
+.categories_check_config{
+	@include custom-background-image('../img/chart/configuration/configuration_categories_check.png');
+}
+
 .legend_title_config{
 	@include custom-background-image('../img/chart/configuration/configuration_legend_title.png');
 }
