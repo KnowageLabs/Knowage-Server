@@ -151,6 +151,12 @@ export default defineComponent({
                 const headerLocation = new URL(response.headers.location)
                 if(headerLocation.searchParams.get("error")) auth.logout()
               }
+            }).
+            catch((error)=>{
+              if(error.response.request.responseURL){
+                const headerLocation = new URL(error.response.request.responseURL)
+                if(headerLocation.searchParams.get("error")) auth.logout()
+              }
             })
         },configs["oidc.session.polling.interval"] || 15000)
       }
