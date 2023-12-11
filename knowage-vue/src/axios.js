@@ -7,7 +7,13 @@ axios.defaults.baseURL = process.env.VUE_APP_BASE_URL
 
 axios.interceptors.request.use(
     (config) => {
-        const restUrl = new URL(config.url)
+        let restUrl;
+        try{
+            restUrl = new URL(config.url)
+        }catch{
+            restUrl = new URL(window.location.origin+config.url)
+        }
+        
         if(restUrl.host === window.location.host){
             config.headers.common['Accept'] = 'application/json; charset=utf-8'
             config.headers.common['Content-Type'] = 'application/json; charset=utf-8'
