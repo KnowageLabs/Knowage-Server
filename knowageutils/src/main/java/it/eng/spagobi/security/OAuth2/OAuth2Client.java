@@ -20,6 +20,7 @@ import org.apache.log4j.Logger;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import it.eng.spagobi.security.OAuth2.OAuth2Config.ClientAuthenticationMethod;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 public class OAuth2Client {
@@ -134,15 +135,24 @@ public class OAuth2Client {
 
 	// The generated PostMethod object is used to retrieve access token (OAuth2)
 	private PostMethod createPostMethodForAccessToken() {
-		String authorizationCredentials = config.getClientId() + ":" + config.getClientSecret();
-		String encoded = new String(Base64.getEncoder().encode(authorizationCredentials.getBytes()));
-		encoded = encoded.replaceAll("\n", "");
-		encoded = encoded.replaceAll("\r", "");
 
-		HttpClient httpClient = getHttpClient();
 		PostMethod httppost = new PostMethod(config.getAccessTokenUrl());
-		httppost.setRequestHeader("Authorization", "Basic " + encoded);
 		httppost.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+
+		ClientAuthenticationMethod clientAuthenticationMethod = config.getClientAuthenticationMethod();
+		switch (clientAuthenticationMethod) {
+		case CLIENT_SECRET_BASIC:
+			String authorizationCredentials = config.getClientId() + ":" + config.getClientSecret();
+			String encoded = new String(Base64.getEncoder().encode(authorizationCredentials.getBytes()));
+			encoded = encoded.replaceAll("\n", "");
+			encoded = encoded.replaceAll("\r", "");
+			httppost.setRequestHeader("Authorization", "Basic " + encoded);
+			break;
+		case CLIENT_SECRET_POST:
+			httppost.setParameter("client_id", config.getClientId());
+			httppost.setParameter("client_secret", config.getClientSecret());
+			break;
+		}
 
 		return httppost;
 	}
