@@ -325,14 +325,26 @@ public class StringUtilities {
 		return str == null;
 	}
 
+	/**
+	 * @deprecated Replace this with {@link org.apache.commons.lang3.StringUtils#isEmpty(CharSequence)}
+	 */
+	@Deprecated
 	public static boolean isEmpty(String str) {
 		return isNull(str) || "".equals(str.trim());
 	}
 
+	/**
+	 * @deprecated Replace this with {@link org.apache.commons.lang3.StringUtils#isNotEmpty(CharSequence)}
+	 */
+	@Deprecated
 	public static boolean isNotEmpty(String str) {
 		return !isEmpty(str);
 	}
 
+	/**
+	 * @deprecated Replace this with {@link org.apache.commons.lang3.StringUtils#isBlank(CharSequence)}
+	 */
+	@Deprecated
 	public static boolean containsOnlySpaces(String str) {
 		return !isNull(str) && isEmpty(str);
 	}
