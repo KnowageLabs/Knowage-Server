@@ -370,6 +370,7 @@ public class ProfileFilter implements Filter {
 		return userId;
 	}
 
+	// TODO PM Move to an external singleton
 	// PM-int
 	private UserProfile enrichProfile(UserProfile profile, ServletRequest req, HttpSession session) {
 		if (!(req instanceof HttpServletRequest))
