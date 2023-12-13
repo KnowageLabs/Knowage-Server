@@ -43,7 +43,6 @@ import it.eng.spagobi.behaviouralmodel.check.dao.ICheckDAO;
 import it.eng.spagobi.behaviouralmodel.lov.dao.IModalitiesValueDAO;
 import it.eng.spagobi.cache.dao.ICacheDAO;
 import it.eng.spagobi.commons.SingletonConfig;
-import it.eng.spagobi.commons.dao.es.EventToDatabaseEmittingCommand;
 import it.eng.spagobi.commons.dao.es.PMEventToDatabaseEmittingCommand;
 import it.eng.spagobi.community.dao.ISbiCommunityDAO;
 import it.eng.spagobi.dossier.dao.ISbiDossierActivityDAO;
@@ -265,7 +264,7 @@ public class DAOFactory {
 		IRoleDAO ret = (IRoleDAO) createDAOInstance("RoleDAO");
 
 		if (isAuthorizationEventsEmissionEnable()) {
-			EventToDatabaseEmittingCommand eventToDatabaseEmittingCommand = new EventToDatabaseEmittingCommand();
+			PMEventToDatabaseEmittingCommand eventToDatabaseEmittingCommand = new PMEventToDatabaseEmittingCommand();
 			ret.setEventEmittingCommand(eventToDatabaseEmittingCommand);
 		}
 

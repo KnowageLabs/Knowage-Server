@@ -1,8 +1,27 @@
+/*
+ * Knowage, Open Source Business Intelligence suite
+ * Copyright (C) 2023 Engineering Ingegneria Informatica S.p.A.
+ *
+ * Knowage is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Knowage is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 package it.eng.knowage.privacymanager;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.HashMap;
+import java.util.Arrays;
+import java.util.EnumMap;
+import java.util.Map;
 import java.util.Properties;
 
 import javax.jms.Connection;
@@ -21,12 +40,12 @@ import it.eng.knowage.pm.dto.PrivacyEventType;
 
 public class PrivacyManagerClient {
 
+	private static final Logger LOGGER = LogManager.getLogger(PrivacyManagerClient.class);
+
 	private static PrivacyManagerClient singleton = null;
 
-	private final HashMap<PrivacyEventType, Session> sessionMap = new HashMap<>();
-	private final HashMap<PrivacyEventType, Queue> queues = new HashMap<>();
-
-	private static final Logger LOGGER = LogManager.getLogger(PrivacyManagerClient.class);
+	private final Map<PrivacyEventType, Session> sessionMap = new EnumMap<>(PrivacyEventType.class);
+	private final Map<PrivacyEventType, Queue> queues = new EnumMap<>(PrivacyEventType.class);
 
 	private PrivacyManagerClient() {
 
@@ -44,12 +63,18 @@ public class PrivacyManagerClient {
 
 	private void initialize() {
 
-		InputStreamReader isr = new InputStreamReader(this.getClass().getClassLoader().getResourceAsStream("PrivacyManagerClient.properties"));
+		InputStreamReader isr = new InputStreamReader(
+				this.getClass().getClassLoader().getResourceAsStream("PrivacyManagerClient.properties"));
 		Properties prop = new Properties();
 		try {
 			prop.load(isr);
 			LOGGER.info("Initializing activeMQ connection...");
-			ActiveMQConnectionFactory connectionFactory = new ActiveMQConnectionFactory(prop.getProperty("activemq.host"));
+
+			String activeMqHost = prop.getProperty("activemq.host");
+
+			ActiveMQConnectionFactory connectionFactory = new ActiveMQConnectionFactory(activeMqHost);
+			connectionFactory.setTrustedPackages(Arrays.asList("it.eng.knowage"));
+
 			Connection connection = connectionFactory.createConnection();
 			for (PrivacyEventType eType : PrivacyEventType.values()) {
 				Session session = connection.createSession(true, Session.SESSION_TRANSACTED);
@@ -79,7 +104,7 @@ public class PrivacyManagerClient {
 			producer.send(msg);
 			session.commit();
 		} catch (JMSException e) {
-			LOGGER.error("Error while sending message [" + dto.getEventType() + "]", e);
+			LOGGER.error("Error while sending message [{}]", dto.getEventType(), e);
 		}
 
 	}
