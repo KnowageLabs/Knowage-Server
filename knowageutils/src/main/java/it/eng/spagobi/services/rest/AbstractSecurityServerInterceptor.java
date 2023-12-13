@@ -132,6 +132,8 @@ public abstract class AbstractSecurityServerInterceptor extends AbstractKnowageI
 						+ "] on class [" + resourceInfo.getResourceClass() + "]");
 			}
 
+			// TODO PM enrich user profile
+
 		} catch (SpagoBIRuntimeException e) {
 			throw e;
 		} catch (Exception e) {

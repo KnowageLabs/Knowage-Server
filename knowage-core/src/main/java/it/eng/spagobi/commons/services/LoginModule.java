@@ -189,8 +189,10 @@ public class LoginModule extends AbstractHttpModule {
 			}
 		}
 
-		String securityServiceSupplier = SingletonConfig.getInstance().getConfigValue("SPAGOBI.SECURITY.USER-PROFILE-FACTORY-CLASS.className");
-		boolean isInternalSecurity = securityServiceSupplier.equalsIgnoreCase(InternalSecurityServiceSupplierImpl.class.getName());
+		String securityServiceSupplier = SingletonConfig.getInstance()
+				.getConfigValue("SPAGOBI.SECURITY.USER-PROFILE-FACTORY-CLASS.className");
+		boolean isInternalSecurity = securityServiceSupplier
+				.equalsIgnoreCase(InternalSecurityServiceSupplierImpl.class.getName());
 		logger.debug("isInternalSecurity: " + isInternalSecurity);
 
 		ISecurityServiceSupplier supplier = SecurityServiceSupplierFactory.createISecurityServiceSupplier();
@@ -209,7 +211,7 @@ public class LoginModule extends AbstractHttpModule {
 					AuditLogUtilities.updateAudit(getHttpRequest(), profile, "SPAGOBI.Login", null, "KO");
 					monitor.stop(new SpagoBIRuntimeException("Incorrect credentials"));
 					return;
-				} else if (isInternalSecurity == true) {
+				} else if (isInternalSecurity) {
 					SbiUser user = DAOFactory.getSbiUserDAO().loadSbiUserByUserId(userId);
 					if (user.getFlgPwdBlocked() != null && user.getFlgPwdBlocked()) {
 						logger.error("userName/pwd uncorrect");
@@ -236,7 +238,8 @@ public class LoginModule extends AbstractHttpModule {
 
 				// Checks if the input role is valid for SpagoBI.
 				// Only if the configuration about this check returns true.
-				String strAdminPatter = SingletonConfig.getInstance().getConfigValue("SPAGOBI.SECURITY.ROLE-TYPE-PATTERNS.ADMIN-PATTERN");
+				String strAdminPatter = SingletonConfig.getInstance()
+						.getConfigValue("SPAGOBI.SECURITY.ROLE-TYPE-PATTERNS.ADMIN-PATTERN");
 				int sbiUserId = -1;
 				if (user != null)
 					sbiUserId = user.getId();
@@ -275,7 +278,7 @@ public class LoginModule extends AbstractHttpModule {
 							userDao.updateSbiUser(user, user.getId());
 						}
 					} catch (Exception e) {
-						logger.error("Error while update user's dtLastAccess: " + e);
+						logger.error("Non-fatal error while update user's dtLastAccess", e);
 					}
 				}
 			}
@@ -300,6 +303,8 @@ public class LoginModule extends AbstractHttpModule {
 
 			logger.debug("END - Getting user profile");
 
+			// TODO PM : login event
+
 			// checks if the input role is valid with SpagoBI's role list
 			boolean isRoleValid = true;
 			IConfigDAO configDao = DAOFactory.getSbiConfigDAO();
@@ -312,7 +317,9 @@ public class LoginModule extends AbstractHttpModule {
 					String roleToCheck = SingletonConfig.getInstance().getConfigValue("SPAGOBI.SECURITY.ROLE_LOGIN");
 					String valueRoleToCheck = "";
 					if (!("").equals(roleToCheck)) {
-						valueRoleToCheck = (request.getAttribute(roleToCheck) != null) ? (String) request.getAttribute(roleToCheck) : "";
+						valueRoleToCheck = (request.getAttribute(roleToCheck) != null)
+								? (String) request.getAttribute(roleToCheck)
+								: "";
 						if (!("").equals(valueRoleToCheck)) {
 							Collection lstRoles = profile.getRoles();
 							isRoleValid = false;
@@ -326,7 +333,8 @@ public class LoginModule extends AbstractHttpModule {
 								}
 							}
 						} else {
-							logger.debug("Role " + roleToCheck + " is not passed into the request. Check on the role is not applied. ");
+							logger.debug("Role " + roleToCheck
+									+ " is not passed into the request. Check on the role is not applied. ");
 						}
 					}
 					if (!isRoleValid) {
@@ -413,20 +421,24 @@ public class LoginModule extends AbstractHttpModule {
 			getHttpResponse().sendRedirect(KnowageSystemConfiguration.getKnowageVueContext());
 		} else {
 			URL url = new URL(getHttpRequest().getRequestURL().toString());
-			URL newUrl = new URL(url.getProtocol(), url.getHost(), 3000, KnowageSystemConfiguration.getKnowageVueContext());
+			URL newUrl = new URL(url.getProtocol(), url.getHost(), 3000,
+					KnowageSystemConfiguration.getKnowageVueContext());
 
 			getHttpResponse().sendRedirect(newUrl.toString());
 		}
 	}
 
-	private void checkIfIsBefore72AuthMethod(SourceBean response, MessageBuilder msgBuilder, Locale locale, SbiUser user) throws SourceBeanException {
+	private void checkIfIsBefore72AuthMethod(SourceBean response, MessageBuilder msgBuilder, Locale locale,
+			SbiUser user) throws SourceBeanException {
 		if (user.getPassword().startsWith(Password.PREFIX_SHA_PWD_ENCRIPTING)) {
 			logger.info("Old encrypting method. Change password required.");
-			response.setAttribute("old_enc_method_message", msgBuilder.getMessage("old_enc_method_message", "messages", locale));
+			response.setAttribute("old_enc_method_message",
+					msgBuilder.getMessage("old_enc_method_message", "messages", locale));
 		}
 	}
 
-	private void storeProfileInSession(UserProfile userProfile, SessionContainer permanentContainer, HttpSession httpSession) {
+	private void storeProfileInSession(UserProfile userProfile, SessionContainer permanentContainer,
+			HttpSession httpSession) {
 		logger.debug("IN");
 		permanentContainer.setAttribute(IEngUserProfile.ENG_USER_PROFILE, userProfile);
 		httpSession.setAttribute(IEngUserProfile.ENG_USER_PROFILE, userProfile);
@@ -445,13 +457,15 @@ public class LoginModule extends AbstractHttpModule {
 	private void manageLocale(SessionContainer permSess) {
 		// updates locale information on permanent container for Spago messages mechanism
 		// search firstly if a default language is set on configuraiton file, else take browser from spago
-		if (permSess.getAttribute(Constants.USER_LANGUAGE) == null || permSess.getAttribute(Constants.USER_COUNTRY) == null) {
+		if (permSess.getAttribute(Constants.USER_LANGUAGE) == null
+				|| permSess.getAttribute(Constants.USER_COUNTRY) == null) {
 			logger.debug("getting locale...");
 			Locale locale = GeneralUtilities.getStartingDefaultLocale();
 			if (locale == null) {
 				locale = MessageBuilder.getBrowserLocaleFromSpago();
 			} else {
-				logger.debug("Locale " + locale.getLanguage() + " - " + locale.getCountry() + " taken as default from configuraiton file");
+				logger.debug("Locale " + locale.getLanguage() + " - " + locale.getCountry()
+						+ " taken as default from configuraiton file");
 			}
 			if (locale != null) {
 				logger.debug("locale taken as default is " + locale.getLanguage() + " - " + locale.getCountry());
@@ -527,8 +541,8 @@ public class LoginModule extends AbstractHttpModule {
 
 		for (int i = 0; i < lstConfigChecks.size(); i++) {
 			Config check = (Config) lstConfigChecks.get(i);
-			if ((SpagoBIConstants.CHANGEPWD_CHANGE_FIRST).equals(check.getLabel()) && new Boolean(check.getValueCheck()) == true
-					&& user.getDtLastAccess() == null) {
+			if ((SpagoBIConstants.CHANGEPWD_CHANGE_FIRST).equals(check.getLabel())
+					&& new Boolean(check.getValueCheck()) == true && user.getDtLastAccess() == null) {
 				// if dtLastAccess isn't enhanced it represents the first login, so is necessary change the pwd
 				logger.info("The pwd needs to activate!");
 				toReturn = true;
@@ -548,7 +562,8 @@ public class LoginModule extends AbstractHttpModule {
 				if (user.getDtLastAccess() != null) {
 					SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT);
 					Calendar cal = Calendar.getInstance();
-					cal.set(user.getDtLastAccess().getYear() + 1900, user.getDtLastAccess().getMonth(), user.getDtLastAccess().getDate());
+					cal.set(user.getDtLastAccess().getYear() + 1900, user.getDtLastAccess().getMonth(),
+							user.getDtLastAccess().getDate());
 					cal.add(Calendar.MONTH, 6);
 					try {
 						tmpEndForUnused = StringUtilities.stringToDate(sdf.format(cal.getTime()), DATE_FORMAT);
@@ -582,7 +597,8 @@ public class LoginModule extends AbstractHttpModule {
 	}
 
 	public String getServiceHostUrl() {
-		String serviceURL = SpagoBIUtilities.readJndiResource(SingletonConfig.getInstance().getConfigValue("SPAGOBI.SPAGOBI_SERVICE_JNDI"));
+		String serviceURL = SpagoBIUtilities
+				.readJndiResource(SingletonConfig.getInstance().getConfigValue("SPAGOBI.SPAGOBI_SERVICE_JNDI"));
 		serviceURL = serviceURL.substring(0, serviceURL.lastIndexOf('/'));
 		return serviceURL;
 	}
