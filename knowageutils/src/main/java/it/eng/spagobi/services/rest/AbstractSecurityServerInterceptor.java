@@ -30,8 +30,11 @@ import javax.ws.rs.core.Response;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 
+import it.eng.knowage.privacymanager.LoginEventBuilder;
+import it.eng.knowage.privacymanager.PrivacyManagerClient;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.commons.bo.UserProfile;
+import it.eng.spagobi.commons.bo.UserProfileUtility;
 import it.eng.spagobi.services.common.SsoServiceFactory;
 import it.eng.spagobi.services.common.SsoServiceInterface;
 import it.eng.spagobi.services.exceptions.ExceptionUtilities;
@@ -71,8 +74,7 @@ public abstract class AbstractSecurityServerInterceptor extends AbstractKnowageI
 
 			Method method = resourceInfo.getResourceMethod();
 			LOGGER.info("Receiving request from: " + servletRequest.getRemoteAddr());
-			LOGGER.info("Attempt to invoke method [" + method.getName() + "] on class ["
-					+ resourceInfo.getResourceClass() + "]");
+			LOGGER.info("Attempt to invoke method [" + method.getName() + "] on class [" + resourceInfo.getResourceClass() + "]");
 
 			if (method.isAnnotationPresent(PublicService.class)) {
 				LOGGER.debug("Invoked service is public");
@@ -103,6 +105,13 @@ public abstract class AbstractSecurityServerInterceptor extends AbstractKnowageI
 			// Profile is not null
 			UserProfileManager.setProfile(profile);
 			manageTenant(profile);
+			// PM-int
+			profile = UserProfileUtility.enrichProfile(profile, servletRequest, servletRequest.getSession());
+			LoginEventBuilder eventBuilder = new LoginEventBuilder();
+			UserProfile up = profile;
+			eventBuilder.appendSession("knowage", up.getSourceIpAddress(), up.getSessionId(), up.getSessionStart(), up.getUserId().toString());
+			eventBuilder.appendUserAgent(up.getOs(), up.getSourceIpAddress(), up.getSourceSocketEnabled(), up.getUserAgent());
+			PrivacyManagerClient.getInstance().sendMessage(eventBuilder.getDTO());
 
 			// we put user profile in session only in case incoming request is NOT for a back-end service (because back-end services should be treated in a
 			// stateless fashion, otherwise number of HTTP sessions will increase with no control) and it is not already stored in session
@@ -119,17 +128,14 @@ public abstract class AbstractSecurityServerInterceptor extends AbstractKnowageI
 
 			if (!authorized) {
 				try {
-					requestContext.abortWith(Response.status(400)
-							.entity(ExceptionUtilities.serializeException("not-enabled-to-call-service", null))
-							.build());
+					requestContext.abortWith(Response.status(400).entity(ExceptionUtilities.serializeException("not-enabled-to-call-service", null)).build());
 				} catch (Exception e) {
-					throw new SpagoBIRuntimeException("Error checking if the user [" + profile.getUserName()
-							+ "] has the rights to invoke method [" + method.getName() + "] on class ["
-							+ resourceInfo.getResourceClass() + "]", e);
+					throw new SpagoBIRuntimeException("Error checking if the user [" + profile.getUserName() + "] has the rights to invoke method ["
+							+ method.getName() + "] on class [" + resourceInfo.getResourceClass() + "]", e);
 				}
 			} else {
-				LOGGER.debug("The user [" + profile.getUserName() + "] is enabled to invoke method [" + method.getName()
-						+ "] on class [" + resourceInfo.getResourceClass() + "]");
+				LOGGER.debug("The user [" + profile.getUserName() + "] is enabled to invoke method [" + method.getName() + "] on class ["
+						+ resourceInfo.getResourceClass() + "]");
 			}
 
 			// TODO PM enrich user profile
@@ -159,8 +165,7 @@ public abstract class AbstractSecurityServerInterceptor extends AbstractKnowageI
 	protected abstract void notAuthenticated(ContainerRequestContext requestContext);
 
 	@Override
-	public void filter(ContainerRequestContext requestContext, ContainerResponseContext responseContext)
-			throws IOException {
+	public void filter(ContainerRequestContext requestContext, ContainerResponseContext responseContext) throws IOException {
 		LOGGER.debug("IN");
 		UserProfileManager.unset();
 		LOGGER.debug("OUT");
@@ -203,8 +208,8 @@ public abstract class AbstractSecurityServerInterceptor extends AbstractKnowageI
 	protected abstract IEngUserProfile createProfile(String userId);
 
 	/**
-	 * Finds the user identifier from http request or from SSO system (by the http request in input). Use the SsoServiceInterface for read the userId in all cases,
-	 * if SSO is disabled use FakeSsoService. Check spagobi_sso.xml
+	 * Finds the user identifier from http request or from SSO system (by the http request in input). Use the SsoServiceInterface for read the userId in all
+	 * cases, if SSO is disabled use FakeSsoService. Check spagobi_sso.xml
 	 *
 	 * @param httpRequest The http request
 	 *

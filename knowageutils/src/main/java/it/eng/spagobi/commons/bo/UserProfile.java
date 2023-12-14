@@ -111,7 +111,7 @@ import it.eng.spagobi.tenant.TenantManager;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 /**
- * This class contain the information about the user
+ * This class contain the information about the user LoginFilter
  */
 public class UserProfile implements IEngUserProfile {
 

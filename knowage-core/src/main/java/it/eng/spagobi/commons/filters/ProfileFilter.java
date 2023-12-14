@@ -50,6 +50,7 @@ import it.eng.spago.security.DefaultCipher;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.commons.bo.SessionUserProfileBuilder;
 import it.eng.spagobi.commons.bo.UserProfile;
+import it.eng.spagobi.commons.bo.UserProfileUtility;
 import it.eng.spagobi.commons.services.LoginActionByToken;
 import it.eng.spagobi.commons.services.LoginActionWeb;
 import it.eng.spagobi.commons.services.LoginModule;
@@ -81,16 +82,14 @@ public class ProfileFilter implements Filter {
 	}
 
 	@Override
-	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
-			throws IOException, ServletException {
+	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
 		try {
 			if (request instanceof HttpServletRequest) {
 				HttpServletRequest httpRequest = (HttpServletRequest) request;
 				HttpServletResponse httpResponse = (HttpServletResponse) response;
 				HttpSession session = httpRequest.getSession();
 
-				RequestContainer requestContainer = (RequestContainer) session
-						.getAttribute(Constants.REQUEST_CONTAINER);
+				RequestContainer requestContainer = (RequestContainer) session.getAttribute(Constants.REQUEST_CONTAINER);
 				if (requestContainer == null) {
 					// RequestContainer does not exists yet (maybe it is the
 					// first call to Spago)
@@ -101,8 +100,7 @@ public class ProfileFilter implements Filter {
 					requestContainer.setSessionContainer(sessionContainer);
 					session.setAttribute(Constants.REQUEST_CONTAINER, requestContainer);
 				}
-				ResponseContainer responseContainer = (ResponseContainer) session
-						.getAttribute(Constants.RESPONSE_CONTAINER);
+				ResponseContainer responseContainer = (ResponseContainer) session.getAttribute(Constants.RESPONSE_CONTAINER);
 				if (responseContainer == null) {
 					responseContainer = new ResponseContainer();
 					SourceBean serviceResponse = new SourceBean(Constants.SERVICE_RESPONSE);
@@ -111,8 +109,7 @@ public class ProfileFilter implements Filter {
 				}
 				SessionContainer sessionContainer = requestContainer.getSessionContainer();
 				SessionContainer permanentSession = sessionContainer.getPermanentContainer();
-				IEngUserProfile profile = (IEngUserProfile) permanentSession
-						.getAttribute(IEngUserProfile.ENG_USER_PROFILE);
+				IEngUserProfile profile = (IEngUserProfile) permanentSession.getAttribute(IEngUserProfile.ENG_USER_PROFILE);
 
 				UserProfile publicProfile = PublicProfile.evaluatePublicCase(httpRequest, session, permanentSession);
 
@@ -131,8 +128,7 @@ public class ProfileFilter implements Filter {
 							userId = getUserIdInWebModeWithoutSSO(httpRequest);
 						} catch (Exception e) {
 							LOGGER.error("Error authenticating user", e);
-							httpRequest.getRequestDispatcher("/WEB-INF/jsp/commons/silentLoginFailed.jsp")
-									.forward(request, response);
+							httpRequest.getRequestDispatcher("/WEB-INF/jsp/commons/silentLoginFailed.jsp").forward(request, response);
 							return;
 						}
 					} else {
@@ -167,15 +163,15 @@ public class ProfileFilter implements Filter {
 					// and overwrites the existing
 					/*
 					 * if (!((UserProfile) profile).getUserUniqueIdentifier().toString ().equals(userId)) {LOGGER.debug(
-					 * "Different user profile found in session, creating a new one and replacing in session...." ); profile = GeneralUtilities.createNewUserProfile(userId);
-					 * permanentSession .setAttribute(IEngUserProfile.ENG_USER_PROFILE, profile); } else { LOGGER.debug("User profile object for user [" + userId +
-					 * "] already existing in session, ok"); }
+					 * "Different user profile found in session, creating a new one and replacing in session...." ); profile =
+					 * GeneralUtilities.createNewUserProfile(userId); permanentSession .setAttribute(IEngUserProfile.ENG_USER_PROFILE, profile); } else {
+					 * LOGGER.debug("User profile object for user [" + userId + "] already existing in session, ok"); }
 					 */
 				}
 
 				if (profile != null) {
 					// PM-int
-					profile = enrichProfile((UserProfile) profile, httpRequest, session);
+					profile = UserProfileUtility.enrichProfile((UserProfile) profile, httpRequest, session);
 
 					manageTenant(profile);
 					UserProfileManager.setProfile((UserProfile) profile);
@@ -183,10 +179,8 @@ public class ProfileFilter implements Filter {
 					// PM-int todo chiamata al servizio JMS
 					LoginEventBuilder eventBuilder = new LoginEventBuilder();
 					UserProfile up = (UserProfile) profile;
-					eventBuilder.appendSession("knowage", up.getSourceIpAddress(), up.getSessionId(),
-							up.getSessionStart(), up.getUserId().toString());
-					eventBuilder.appendUserAgent(up.getOs(), up.getSourceIpAddress(), up.getSourceSocketEnabled(),
-							up.getUserAgent());
+					eventBuilder.appendSession("knowage", up.getSourceIpAddress(), up.getSessionId(), up.getSessionStart(), up.getUserId().toString());
+					eventBuilder.appendUserAgent(up.getOs(), up.getSourceIpAddress(), up.getSourceSocketEnabled(), up.getUserAgent());
 					PrivacyManagerClient.getInstance().sendMessage(eventBuilder.getDTO());
 				} else {
 					// @formatter:off
@@ -198,8 +192,7 @@ public class ProfileFilter implements Filter {
 					{
 						String contextName = ChannelUtilities.getSpagoBIContextName(httpRequest);
 						String targetService = httpRequest.getRequestURI() + "?" + httpRequest.getQueryString();
-						String redirectURL = contextName
-								+ "/servlet/AdapterHTTP?PAGE=LoginPage&NEW_SESSION=TRUE&targetService="
+						String redirectURL = contextName + "/servlet/AdapterHTTP?PAGE=LoginPage&NEW_SESSION=TRUE&targetService="
 								+ URLEncoder.encode(targetService, UTF_8.name());
 						httpResponse.sendRedirect(redirectURL);
 						return;
@@ -222,8 +215,7 @@ public class ProfileFilter implements Filter {
 
 	private boolean requestIsForHomePage(HttpServletRequest request) {
 		// returns true in case request has PAGE=LoginPage parameter, false otherwise
-		return request.getParameter(Constants.PAGE) != null
-				&& request.getParameter(Constants.PAGE).equalsIgnoreCase(LoginModule.PAGE_NAME);
+		return request.getParameter(Constants.PAGE) != null && request.getParameter(Constants.PAGE).equalsIgnoreCase(LoginModule.PAGE_NAME);
 	}
 
 	private boolean requestIsForLoginByToken(HttpServletRequest request) {
@@ -234,8 +226,7 @@ public class ProfileFilter implements Filter {
 
 	private boolean requestIsForLoginByJavaScriptSDK(HttpServletRequest request) {
 		// returns true in case request has ACTION_NAME=LOGIN_ACTION_WEB parameter, false otherwise
-		return request.getParameter(Constants.ACTION_NAME) != null
-				&& request.getParameter(Constants.ACTION_NAME).equalsIgnoreCase(LoginActionWeb.SERVICE_NAME);
+		return request.getParameter(Constants.ACTION_NAME) != null && request.getParameter(Constants.ACTION_NAME).equalsIgnoreCase(LoginActionWeb.SERVICE_NAME);
 	}
 
 	private boolean requestIsForSessionExpired(HttpServletRequest request) {
@@ -243,8 +234,7 @@ public class ProfileFilter implements Filter {
 		return request.getRequestURI().contains(GeneralUtilities.getSessionExpiredURL());
 	}
 
-	private void storeProfileInSession(UserProfile userProfile, SessionContainer permanentContainer,
-			HttpSession httpSession) {
+	private void storeProfileInSession(UserProfile userProfile, SessionContainer permanentContainer, HttpSession httpSession) {
 		LOGGER.debug("IN");
 		permanentContainer.setAttribute(IEngUserProfile.ENG_USER_PROFILE, userProfile);
 		httpSession.setAttribute(IEngUserProfile.ENG_USER_PROFILE, userProfile);
@@ -284,8 +274,7 @@ public class ProfileFilter implements Filter {
 		LOGGER.debug("IN: userId = " + credentials.getUserName());
 		try {
 			ISecurityServiceSupplier supplier = SecurityServiceSupplierFactory.createISecurityServiceSupplier();
-			SpagoBIUserProfile profile = supplier.checkAuthentication(credentials.getUserName(),
-					credentials.getPassword());
+			SpagoBIUserProfile profile = supplier.checkAuthentication(credentials.getUserName(), credentials.getPassword());
 			if (profile == null) {
 				LOGGER.error("Authentication failed for user " + credentials.getUserName());
 				throw new SecurityException("Authentication failed");
@@ -303,12 +292,10 @@ public class ProfileFilter implements Filter {
 	private UsernamePasswordCredentials findUserCredentials(HttpServletRequest httpRequest) {
 		UsernamePasswordCredentials toReturn = null;
 		String userId = httpRequest.getParameter(SsoServiceInterface.USER_NAME_REQUEST_PARAMETER.toLowerCase());
-		LOGGER.debug("Request parameter " + SsoServiceInterface.USER_NAME_REQUEST_PARAMETER.toLowerCase() + " is ["
-				+ userId + "]");
+		LOGGER.debug("Request parameter " + SsoServiceInterface.USER_NAME_REQUEST_PARAMETER.toLowerCase() + " is [" + userId + "]");
 		if (userId == null) {
 			userId = httpRequest.getParameter(SsoServiceInterface.USER_NAME_REQUEST_PARAMETER.toUpperCase());
-			LOGGER.debug("Request parameter " + SsoServiceInterface.USER_NAME_REQUEST_PARAMETER.toUpperCase() + " is ["
-					+ userId + "]");
+			LOGGER.debug("Request parameter " + SsoServiceInterface.USER_NAME_REQUEST_PARAMETER.toUpperCase() + " is [" + userId + "]");
 		}
 		String password = httpRequest.getParameter(SsoServiceInterface.PASSWORD_REQUEST_PARAMETER.toLowerCase());
 		if (password == null) {
@@ -345,8 +332,8 @@ public class ProfileFilter implements Filter {
 	}
 
 	/**
-	 * Finds the user identifier from http request or from SSO system (by the http request in input). Use the SsoServiceInterface for read the userId in all cases,
-	 * if SSO is disabled use FakeSsoService. Check spagobi_sso.xml
+	 * Finds the user identifier from http request or from SSO system (by the http request in input). Use the SsoServiceInterface for read the userId in all
+	 * cases, if SSO is disabled use FakeSsoService. Check spagobi_sso.xml
 	 *
 	 * @param httpRequest The http request
 	 *
@@ -368,74 +355,6 @@ public class ProfileFilter implements Filter {
 			LOGGER.debug("OUT");
 		}
 		return userId;
-	}
-
-	// TODO PM Move to an external singleton
-	// PM-int
-	private UserProfile enrichProfile(UserProfile profile, ServletRequest req, HttpSession session) {
-		if (!(req instanceof HttpServletRequest))
-			return profile;
-
-		HttpServletRequest request = (HttpServletRequest) req;
-
-		String browserDetails = request.getHeader("User-Agent");
-		String userAgent = browserDetails;
-		String user = userAgent.toLowerCase();
-
-		String os = "";
-		String browser = "";
-
-		// =================OS=======================
-		if (userAgent.toLowerCase().indexOf("windows") >= 0) {
-			os = "Windows";
-		} else if (userAgent.toLowerCase().indexOf("mac") >= 0) {
-			os = "Mac";
-		} else if (userAgent.toLowerCase().indexOf("x11") >= 0) {
-			os = "Unix";
-		} else if (userAgent.toLowerCase().indexOf("android") >= 0) {
-			os = "Android";
-		} else if (userAgent.toLowerCase().indexOf("iphone") >= 0) {
-			os = "IPhone";
-		} else {
-			os = "UnKnown, More-Info: " + userAgent;
-		}
-		// ===============Browser===========================
-		if (user.contains("msie")) {
-			String substring = userAgent.substring(userAgent.indexOf("MSIE")).split(";")[0];
-			browser = substring.split(" ")[0].replace("MSIE", "IE") + "-" + substring.split(" ")[1];
-		} else if (user.contains("safari") && user.contains("version")) {
-			browser = (userAgent.substring(userAgent.indexOf("Safari")).split(" ")[0]).split("/")[0] + "-"
-					+ (userAgent.substring(userAgent.indexOf("Version")).split(" ")[0]).split("/")[1];
-		} else if (user.contains("opr") || user.contains("opera")) {
-			if (user.contains("opera"))
-				browser = (userAgent.substring(userAgent.indexOf("Opera")).split(" ")[0]).split("/")[0] + "-"
-						+ (userAgent.substring(userAgent.indexOf("Version")).split(" ")[0]).split("/")[1];
-			else if (user.contains("opr"))
-				browser = ((userAgent.substring(userAgent.indexOf("OPR")).split(" ")[0]).replace("/", "-"))
-						.replace("OPR", "Opera");
-		} else if (user.contains("chrome")) {
-			browser = (userAgent.substring(userAgent.indexOf("Chrome")).split(" ")[0]).replace("/", "-");
-		} else if ((user.indexOf("mozilla/7.0") > -1) || (user.indexOf("netscape6") != -1)
-				|| (user.indexOf("mozilla/4.7") != -1) || (user.indexOf("mozilla/4.78") != -1)
-				|| (user.indexOf("mozilla/4.08") != -1) || (user.indexOf("mozilla/3") != -1)) {
-			// browser=(userAgent.substring(userAgent.indexOf("MSIE")).split(" ")[0]).replace("/", "-");
-			browser = "Netscape-?";
-
-		} else if (user.contains("firefox")) {
-			browser = (userAgent.substring(userAgent.indexOf("Firefox")).split(" ")[0]).replace("/", "-");
-		} else if (user.contains("rv")) {
-			browser = "IE-" + user.substring(user.indexOf("rv") + 3, user.indexOf(")"));
-		} else {
-			browser = "UnKnown, More-Info: " + userAgent;
-		}
-
-		profile.setUserAgent(userAgent);
-		profile.setOs(os);
-		profile.setSessionStart(session.getCreationTime());
-		profile.setSourceIpAddress(request.getRemoteAddr());
-		profile.setSessionId(session.getId());
-		profile.setSourceSocketEnabled(false);
-		return profile;
 	}
 
 	public class SilentAuthenticationFailedException extends RuntimeException {
