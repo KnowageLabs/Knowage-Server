@@ -120,7 +120,7 @@ public class ExcelExporter extends AbstractFormatExporter {
 						"Cannot find export script at \"%s\": did you set the correct value for %s configuration?",
 						exportScriptFullPath, CONFIG_NAME_FOR_EXPORT_SCRIPT_PATH);
 				IllegalStateException ex = new IllegalStateException(msg);
-				logger.error(msg, ex);
+				LOGGER.error(msg, ex);
 				throw ex;
 			}
 
@@ -134,12 +134,12 @@ public class ExcelExporter extends AbstractFormatExporter {
 
 			LOGGER.info("Node complete command line: {}", processBuilder.command());
 
-			logger.info("Starting export script");
+			LOGGER.info("Starting export script");
 			Process exec = processBuilder.start();
 
 			logOutputToCoreLog(exec);
 
-			logger.info("Waiting...");
+			LOGGER.info("Waiting...");
 			exec.waitFor();
 			LOGGER.warn("Exit value: {}", exec.exitValue());
 
@@ -147,7 +147,7 @@ public class ExcelExporter extends AbstractFormatExporter {
 			Path outputFile = outputDir.resolve(documentLabel + ".xlsx");
 			return getByteArrayFromFile(outputFile, outputDir);
 		} catch (Exception e) {
-			logger.error("Error during scheduled export execution", e);
+			LOGGER.error("Error during scheduled export execution", e);
 			throw e;
 		}
 	}
@@ -165,7 +165,7 @@ public class ExcelExporter extends AbstractFormatExporter {
 			fis.close();
 			return bos.toByteArray();
 		} catch (Exception e) {
-			logger.error("Cannot serialize excel file", e);
+			LOGGER.error("Cannot serialize excel file", e);
 			throw new SpagoBIRuntimeException("Cannot serialize excel file", e);
 		} finally {
 			try {
@@ -173,7 +173,7 @@ public class ExcelExporter extends AbstractFormatExporter {
 					Files.delete(excelFile);
 				Files.delete(outputDir);
 			} catch (Exception e) {
-				logger.error("Cannot delete temp file", e);
+				LOGGER.error("Cannot delete temp file", e);
 			}
 		}
 	}
@@ -294,7 +294,7 @@ public class ExcelExporter extends AbstractFormatExporter {
 			}
 			return toReturn;
 		} catch (Exception e) {
-			logger.warn("Error while building crosstab options. Only raw data without formatting will be exported.", e);
+			LOGGER.warn("Error while building crosstab options. Only raw data without formatting will be exported.", e);
 			return new JSONObject();
 		}
 	}
@@ -319,7 +319,7 @@ public class ExcelExporter extends AbstractFormatExporter {
 			}
 			forceUniqueHeaders(cockpitSelections);
 		} catch (Exception e) {
-			logger.error("Cannot get cockpit selections", e);
+			LOGGER.error("Cannot get cockpit selections", e);
 			return new JSONObject();
 		}
 		return cockpitSelections;
@@ -453,7 +453,7 @@ public class ExcelExporter extends AbstractFormatExporter {
 			else
 				return true;
 		} catch (Exception e) {
-			logger.warn("Error while checking if layer is empty", e);
+			LOGGER.warn("Error while checking if layer is empty", e);
 			return false;
 		}
 	}
@@ -492,7 +492,7 @@ public class ExcelExporter extends AbstractFormatExporter {
 				}
 			}
 		} catch (Exception e) {
-			logger.error("Cannot get cockpit selections", e);
+			LOGGER.error("Cannot get cockpit selections", e);
 			return new JSONObject();
 		}
 		return cockpitSelections;
@@ -730,7 +730,7 @@ public class ExcelExporter extends AbstractFormatExporter {
 											mapParameters));
 								}
 							} catch (Exception e) {
-								logger.debug("Date will be exported as string due to error: ", e);
+								LOGGER.debug("Date will be exported as string due to error: ", e);
 								cell.setCellValue(s);
 							}
 							break;
@@ -744,7 +744,7 @@ public class ExcelExporter extends AbstractFormatExporter {
 											variablesMap, mapParameters));
 								}
 							} catch (Exception e) {
-								logger.debug("Timestamp will be exported as string due to error: ", e);
+								LOGGER.debug("Timestamp will be exported as string due to error: ", e);
 								cell.setCellValue(s);
 							}
 							break;
@@ -1038,9 +1038,9 @@ public class ExcelExporter extends AbstractFormatExporter {
 		InputStreamReader isr = new InputStreamReader(exec.getInputStream());
 		BufferedReader b = new BufferedReader(isr);
 		String line = null;
-		logger.warn("Process output");
+		LOGGER.warn("Process output");
 		while ((line = b.readLine()) != null) {
-			logger.warn(line);
+			LOGGER.warn(line);
 		}
 	}
 
