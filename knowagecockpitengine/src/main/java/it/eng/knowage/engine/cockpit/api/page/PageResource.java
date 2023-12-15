@@ -325,13 +325,12 @@ public class PageResource extends AbstractCockpitEngineResource {
 
 		request.setAttribute("template", getIOManager().getTemplateAsString());
 
-		String outputType = request.getParameter(OUTPUT_TYPE);
 		String userId = request.getParameter("user_id");
 		Map<String, String[]> parameterMap = request.getParameterMap();
 
 		String documentLabel = request.getParameter("DOCUMENT_LABEL");
 
-		ExcelExporter excelExporter = new ExcelExporter(outputType, userId, parameterMap, requestURL);
+		ExcelExporter excelExporter = new ExcelExporter(userId, parameterMap, requestURL);
 		String mimeType = excelExporter.getMimeType();
 		byte[] data = excelExporter.getBinaryData(documentLabel);
 

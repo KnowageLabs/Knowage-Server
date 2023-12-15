@@ -28,10 +28,12 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Objects;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.pdfbox.io.MemoryUsageSetting;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
@@ -56,7 +58,7 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 public class PdfExporter extends AbstractFormatExporter {
 
-	private static final Logger LOGGER = Logger.getLogger(PdfExporter.class);
+	private static final Logger LOGGER = LogManager.getLogger(PdfExporter.class);
 
 	private static final float POINTS_PER_INCH = 72;
 	private static final float POINTS_PER_MM = 1 / (10 * 2.54f) * POINTS_PER_INCH;
@@ -72,7 +74,8 @@ public class PdfExporter extends AbstractFormatExporter {
 	public byte[] getBinaryData(Integer documentId, String documentLabel, String templateString) throws JSONException {
 		if (templateString == null) {
 			ObjTemplate template = null;
-			String message = "Unable to get template for document with id [" + documentId + "] and label [" + documentLabel + "]";
+			String message = "Unable to get template for document with id [" + documentId + "] and label ["
+					+ documentLabel + "]";
 			try {
 				if (documentId != null && documentId.intValue() != 0)
 					template = DAOFactory.getObjTemplateDAO().getBIObjectActiveTemplate(documentId);
@@ -117,13 +120,12 @@ public class PdfExporter extends AbstractFormatExporter {
 			JSONObject dataStore = null;
 			int totalNumberOfRows = 0;
 			int offset = 0;
-			int fetchSize = Integer.parseInt(SingletonConfig.getInstance().getConfigValue("SPAGOBI.API.DATASET.MAX_ROWS_NUMBER"));
+			int fetchSize = Integer
+					.parseInt(SingletonConfig.getInstance().getConfigValue("SPAGOBI.API.DATASET.MAX_ROWS_NUMBER"));
 			BaseTable table = null;
 			JSONObject metadata = null;
 			JSONArray columns = null;
 			JSONArray rows = null;
-			JSONObject widgetData = null;
-			JSONObject widgetContent = null;
 			JSONArray columnsOrdered = null;
 			List<Integer> pdfHiddenColumns = null;
 			String[] columnDateFormats = null;
@@ -138,8 +140,8 @@ public class PdfExporter extends AbstractFormatExporter {
 					columns = metadata.getJSONArray("fields");
 					columns = filterDataStoreColumns(columns);
 
-					widgetData = dataStore.getJSONObject("widgetData");
-					widgetContent = widgetData.getJSONObject("content");
+					JSONObject widgetData = dataStore.getJSONObject("widgetData");
+					JSONObject widgetContent = widgetData.getJSONObject("content");
 
 					jsonArray = widgetContent.getJSONArray("columnSelectedOfDataset");
 					hiddenColumns = getHiddenColumnsList(jsonArray);
@@ -157,15 +159,16 @@ public class PdfExporter extends AbstractFormatExporter {
 
 					table = createBaseTable(document, page);
 
-					addHeaderToTable(table, style, widgetContent, columnsOrdered, pdfHiddenColumns);
+					addHeaderToTable(table, style, widgetData, widgetContent, columnsOrdered, pdfHiddenColumns);
 				}
 
 				rows = dataStore.getJSONArray("rows");
 
-				addDataToTable(table, settings, columnsOrdered, pdfHiddenColumns, columnDateFormats, columnStyles, rows);
+				addDataToTable(table, settings, columnsOrdered, pdfHiddenColumns, columnDateFormats, columnStyles,
+						rows);
 
 				offset += fetchSize;
-			} while(offset < totalNumberOfRows);
+			} while (offset < totalNumberOfRows);
 
 			table.draw();
 
@@ -174,7 +177,9 @@ public class PdfExporter extends AbstractFormatExporter {
 		}
 	}
 
-	private void addDataToTable(BaseTable table, JSONObject settings, JSONArray columnsOrdered, List<Integer> pdfHiddenColumns, String[] columnDateFormats, JSONObject[] columnStyles, JSONArray rows) throws JSONException {
+	private void addDataToTable(BaseTable table, JSONObject settings, JSONArray columnsOrdered,
+			List<Integer> pdfHiddenColumns, String[] columnDateFormats, JSONObject[] columnStyles, JSONArray rows)
+			throws JSONException {
 		// Check if summary row is enabled
 		boolean summaryRowEnabled = false;
 		String summaryRowLabel = null;
@@ -224,7 +229,7 @@ public class PdfExporter extends AbstractFormatExporter {
 								LOGGER.error("Cannot format value according to precision", e);
 							}
 						} else {
-							LOGGER.warn("Cannot format raw value {" + valueStr + "} with precision {" + precision + "}");
+							LOGGER.warn("Cannot format raw value {} with precision {}", valueStr, precision);
 						}
 					}
 					if (type.equalsIgnoreCase("date")) {
@@ -234,7 +239,8 @@ public class PdfExporter extends AbstractFormatExporter {
 							valueStr = outputDateFormat.format(date);
 						} catch (Exception e) {
 							// value stays as it is
-							LOGGER.warn("Cannot format date {" + valueStr + "} according to format {" + columnDateFormats[c] + "}", e);
+							LOGGER.warn("Cannot format date {} according to format {}", valueStr, columnDateFormats[c],
+									e);
 						}
 					}
 
@@ -245,16 +251,19 @@ public class PdfExporter extends AbstractFormatExporter {
 
 					valueStr = workaroundToRemoveCommonProblematicChars(valueStr);
 
-					Cell<PDPage> cell = row.createCell(columnPercentWidths[c], valueStr, HorizontalAlignment.get("center"), VerticalAlignment.get("top"));
+					Cell<PDPage> cell = row.createCell(columnPercentWidths[c], valueStr,
+							HorizontalAlignment.get("center"), VerticalAlignment.get("top"));
 					// first of all set alternate rows color
 					if (settings != null && settings.has("alternateRows")) {
 						JSONObject alternateRows = settings.getJSONObject("alternateRows");
 						if (alternateRows.optBoolean("enabled")) {
 							cell.setFont(PDType1Font.HELVETICA);
 							if (r % 2 == 0) {
-								cell.setFillColor(getColorFromString(alternateRows.optString("evenRowsColor"), Color.WHITE));
+								cell.setFillColor(
+										getColorFromString(alternateRows.optString("evenRowsColor"), Color.WHITE));
 							} else {
-								cell.setFillColor(getColorFromString(alternateRows.optString("oddRowsColor"), Color.WHITE));
+								cell.setFillColor(
+										getColorFromString(alternateRows.optString("oddRowsColor"), Color.WHITE));
 							}
 						}
 					}
@@ -270,7 +279,8 @@ public class PdfExporter extends AbstractFormatExporter {
 		}
 	}
 
-	private void addHeaderToTable(BaseTable table, JSONObject style, JSONObject widgetContent, JSONArray columnsOrdered, List<Integer> pdfHiddenColumns) throws JSONException {
+	private void addHeaderToTable(BaseTable table, JSONObject style, JSONObject widgetData, JSONObject widgetContent,
+			JSONArray columnsOrdered, List<Integer> pdfHiddenColumns) throws JSONException {
 		HashMap<String, String> arrayHeader = new HashMap<>();
 		for (int i = 0; i < widgetContent.getJSONArray("columnSelectedOfDataset").length(); i++) {
 			JSONObject column = widgetContent.getJSONArray("columnSelectedOfDataset").getJSONObject(i);
@@ -281,6 +291,24 @@ public class PdfExporter extends AbstractFormatExporter {
 				key = column.getString("name");
 			}
 			arrayHeader.put(key, column.getString("aliasToShow"));
+		}
+
+		JSONArray groupsFromWidgetContent = getGroupsFromWidgetContent(widgetData);
+		Map<String, String> groupsAndColumnsMap = getGroupAndColumnsMap(widgetContent, groupsFromWidgetContent);
+
+		if (!groupsAndColumnsMap.isEmpty()) {
+			Row<PDPage> groupHeaderRow = table.createRow(15f);
+			for (int i = 0; i < columnsOrdered.length(); i++) {
+				JSONObject column = columnsOrdered.getJSONObject(i);
+				String groupName = groupsAndColumnsMap.get(column.get("header"));
+				if (groupName != null) {
+					Cell<PDPage> cell = groupHeaderRow.createCell(columnPercentWidths[i], groupName,
+							HorizontalAlignment.get("center"), VerticalAlignment.get("top"));
+					styleHeaderCell(style, cell);
+				}
+
+			}
+			table.addHeaderRow(groupHeaderRow);
 		}
 
 		Row<PDPage> headerRow = table.createRow(15f);
@@ -296,22 +324,26 @@ public class PdfExporter extends AbstractFormatExporter {
 				columnName = arrayHeader.get(columnName);
 			}
 
-			Cell<PDPage> headerCell = headerRow.createCell(columnPercentWidths[i], columnName, HorizontalAlignment.get("center"),
-					VerticalAlignment.get("top"));
-			if (style != null && style.has("th") && style.getJSONObject("th").optBoolean("enabled")) {
-				JSONObject headerStyle = style.getJSONObject("th");
-				headerCell.setFont(PDType1Font.HELVETICA_BOLD);
-				if (headerStyle.has("font-size")) {
-					float size = getFontSizeFromString(headerStyle.getString("font-size"));
-					if (size != 0)
-						headerCell.setFontSize(size);
-				}
-				headerCell.setFillColor(getColorFromString(headerStyle.optString("background-color"), Color.WHITE));
-				headerCell.setTextColor(getColorFromString(headerStyle.optString("color"), Color.BLACK));
-			}
+			Cell<PDPage> cell = headerRow.createCell(columnPercentWidths[i], columnName,
+					HorizontalAlignment.get("center"), VerticalAlignment.get("top"));
+			styleHeaderCell(style, cell);
 		}
 
 		table.addHeaderRow(headerRow);
+	}
+
+	private void styleHeaderCell(JSONObject style, Cell<PDPage> headerCell) throws JSONException {
+		if (style != null && style.has("th") && style.getJSONObject("th").optBoolean("enabled")) {
+			JSONObject headerStyle = style.getJSONObject("th");
+			headerCell.setFont(PDType1Font.HELVETICA_BOLD);
+			if (headerStyle.has("font-size")) {
+				float size = getFontSizeFromString(headerStyle.getString("font-size"));
+				if (size != 0)
+					headerCell.setFontSize(size);
+			}
+			headerCell.setFillColor(getColorFromString(headerStyle.optString("background-color"), Color.WHITE));
+			headerCell.setTextColor(getColorFromString(headerStyle.optString("color"), Color.BLACK));
+		}
 	}
 
 	private String[] getColumnDateFormats(JSONArray columnsOrdered, JSONObject widgetContent) {
@@ -488,7 +520,7 @@ public class PdfExporter extends AbstractFormatExporter {
 			String sizeStr = fontSize.split("px")[0];
 			return Integer.parseInt(sizeStr);
 		} catch (Exception e) {
-			LOGGER.error("Cannot get size from string {" + fontSize + "}. Default size will be used.", e);
+			LOGGER.error("Cannot get size from string {}. Default size will be used.", fontSize, e);
 			return 0;
 		}
 	}
@@ -497,7 +529,8 @@ public class PdfExporter extends AbstractFormatExporter {
 		try {
 			return CSS_COLOR_PARSER.parse(rgbColor, defaultColor);
 		} catch (Exception e) {
-			LOGGER.error("Cannot create color from string {" + rgbColor + "}. Default color {" + defaultColor + "} will be used", e);
+			LOGGER.error("Cannot create color from string {}. Default color {} will be used", rgbColor, defaultColor,
+					e);
 			return defaultColor;
 		}
 	}
@@ -579,19 +612,17 @@ public class PdfExporter extends AbstractFormatExporter {
 	/**
 	 * Replace common problematic characters for Apache PDFBox, used by Boxable.
 	 *
-	 * The characters below aren't available in common font like Times New Roman, Helvetica, etc... So
-	 * we replace them with spaces.
+	 * The characters below aren't available in common font like Times New Roman, Helvetica, etc... So we replace them with spaces.
 	 *
 	 * @since Ticket#2023051987000018
 	 */
 	private String workaroundToRemoveCommonProblematicChars(String valueStr) {
-		valueStr = valueStr.replace('\u00A0',' ');
-		valueStr = valueStr.replace('\u2007',' ');
-		valueStr = valueStr.replace('\u202F',' ');
-		valueStr = valueStr.replace('\n',' ');
-		valueStr = valueStr.replace('\r',' ');
+		valueStr = valueStr.replace('\u00A0', ' ');
+		valueStr = valueStr.replace('\u2007', ' ');
+		valueStr = valueStr.replace('\u202F', ' ');
+		valueStr = valueStr.replace('\n', ' ');
+		valueStr = valueStr.replace('\r', ' ');
 		return valueStr;
 	}
 
 }
-
