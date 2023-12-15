@@ -37,7 +37,8 @@ import java.util.regex.Pattern;
 import javax.ws.rs.core.UriBuilder;
 
 import org.apache.commons.codec.binary.Base64;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CreationHelper;
 import org.apache.poi.ss.usermodel.Row;
@@ -70,7 +71,11 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 public class ExcelExporter extends AbstractFormatExporter {
 
-	static private Logger logger = Logger.getLogger(ExcelExporter.class);
+	private static final Logger LOGGER = LogManager.getLogger(ExcelExporter.class);
+	private static final String[] WIDGETS_TO_IGNORE = { "image", "text", "selector", "selection", "html" };
+	private static final String SCRIPT_NAME = "cockpit-export-xls.js";
+	private static final String CONFIG_NAME_FOR_EXPORT_SCRIPT_PATH = "internal.nodejs.chromium.export.path";
+	private static final int SHEET_NAME_MAX_LEN = 31;
 
 	public static final String UNIQUE_ALIAS_PLACEHOLDER = "_$_";
 
@@ -78,23 +83,17 @@ public class ExcelExporter extends AbstractFormatExporter {
 	private int uniqueId = 0;
 	private String requestURL = "";
 
-	private static final String[] WIDGETS_TO_IGNORE = { "image", "text", "selector", "selection", "html" };
-	private static final String SCRIPT_NAME = "cockpit-export-xls.js";
-	private static final String CONFIG_NAME_FOR_EXPORT_SCRIPT_PATH = "internal.nodejs.chromium.export.path";
-	private static final int SHEET_NAME_MAX_LEN = 31;
-
 	private static final String INT_CELL_DEFAULT_FORMAT = "0";
 	private static final String FLOAT_CELL_DEFAULT_FORMAT = "#,##0.00";
 
 	// used only for scheduled export
-	public ExcelExporter(String outputType, String userUniqueIdentifier, Map<String, String[]> parameterMap,
-			String requestURL) {
+	public ExcelExporter(String userUniqueIdentifier, Map<String, String[]> parameterMap, String requestURL) {
 		super(userUniqueIdentifier, new JSONObject());
 		this.isSingleWidgetExport = false;
 		this.requestURL = requestURL;
 	}
 
-	public ExcelExporter(String outputType, String userUniqueIdentifier, JSONObject body) {
+	public ExcelExporter(String userUniqueIdentifier, JSONObject body) {
 		super(userUniqueIdentifier, body);
 		this.isSingleWidgetExport = body.optBoolean("exportWidget");
 	}
@@ -133,7 +132,7 @@ public class ExcelExporter extends AbstractFormatExporter {
 
 			setWorkingDirectory(cockpitExportScriptPath, processBuilder);
 
-			logger.info("Node complete command line: " + processBuilder.command());
+			LOGGER.info("Node complete command line: {}", processBuilder.command());
 
 			logger.info("Starting export script");
 			Process exec = processBuilder.start();
@@ -142,7 +141,7 @@ public class ExcelExporter extends AbstractFormatExporter {
 
 			logger.info("Waiting...");
 			exec.waitFor();
-			logger.warn("Exit value: " + exec.exitValue());
+			LOGGER.warn("Exit value: {}", exec.exitValue());
 
 			// the script creates the resulting xls and saves it to outputFile
 			Path outputFile = outputDir.resolve(documentLabel + ".xlsx");
@@ -287,8 +286,9 @@ public class ExcelExporter extends AbstractFormatExporter {
 						options.put("jsonData", datastore.getJSONArray("rows"));
 						toReturn.put(String.valueOf(widgetId), options);
 					} catch (Exception e) {
-						logger.warn("Cannot build crosstab options for widget [" + widgetId
-								+ "]. Only raw data without formatting will be exported.", e);
+						LOGGER.warn(
+								"Cannot build crosstab options for widget {}. Only raw data without formatting will be exported.",
+								widgetId, e);
 					}
 				}
 			}
@@ -380,7 +380,7 @@ public class ExcelExporter extends AbstractFormatExporter {
 				exportedSheets += widgetExporter.export();
 
 			} catch (Exception e) {
-				logger.error("Error while exporting widget [" + widgetId + "]", e);
+				LOGGER.error("Error while exporting widget {}", widgetId, e);
 			}
 		}
 		Map<String, Map<String, Object>> selectionsMap = new HashMap<>();
@@ -503,7 +503,7 @@ public class ExcelExporter extends AbstractFormatExporter {
 		fillSheetWithData(dataStore, wb, newSheet, widgetName, 0, null);
 	}
 
-	public void fillSelectionsSheetWithData(Map<String, Map<String, Object>> selectionsMap, Workbook wb, Sheet sheet,
+	private void fillSelectionsSheetWithData(Map<String, Map<String, Object>> selectionsMap, Workbook wb, Sheet sheet,
 			String widgetName) {
 
 		Row newheader = sheet.createRow((short) 0);
@@ -537,7 +537,7 @@ public class ExcelExporter extends AbstractFormatExporter {
 
 	}
 
-	public String extractSelectionValues(String selectionValues) {
+	private String extractSelectionValues(String selectionValues) {
 		return selectionValues.replace("[\"(", "").replace(")\"]", "");
 	}
 
@@ -599,14 +599,6 @@ public class ExcelExporter extends AbstractFormatExporter {
 				}
 			}
 
-			// column.header matches with name or alias
-			// Fill Header
-			JSONArray groupsArray = new JSONArray();
-			if (widgetData.has("groups")) {
-				groupsArray = widgetData.getJSONArray("groups");
-			}
-
-			HashMap<String, String> mapGroupsAndColumns = new HashMap<>();
 			JSONArray columnsOrdered;
 			if (widgetData.getString("type").equalsIgnoreCase("table")
 					&& widgetContent.has("columnSelectedOfDataset")) {
@@ -616,24 +608,19 @@ public class ExcelExporter extends AbstractFormatExporter {
 				columnsOrdered = columns;
 			}
 
-			try {
-				if (widgetContent.get("columnSelectedOfDataset") instanceof JSONArray)
-					mapGroupsAndColumns = getMapFromGroupsArray(groupsArray,
-							widgetContent.getJSONArray("columnSelectedOfDataset"));
-			} catch (JSONException e) {
-				logger.error("Couldn't retrieve groups", e);
-			}
+			JSONArray groupsFromWidgetContent = getGroupsFromWidgetContent(widgetData);
+			Map<String, String> groupsAndColumnsMap = getGroupAndColumnsMap(widgetContent, groupsFromWidgetContent);
 
 			if (offset == 0) { // if pagination is active, headers must be created only once
 				Row header = null;
 				if (isSingleWidgetExport) { // export single widget
-					header = createHeaderColumnNames(sheet, mapGroupsAndColumns, columnsOrdered, 0);
+					header = createHeaderColumnNames(sheet, groupsAndColumnsMap, columnsOrdered, 0);
 				} else { // export whole cockpit
 					// First row is for Widget name in case exporting whole Cockpit document
 					Row firstRow = sheet.createRow((short) 0);
 					Cell firstCell = firstRow.createCell(0);
 					firstCell.setCellValue(widgetName);
-					header = createHeaderColumnNames(sheet, mapGroupsAndColumns, columnsOrdered, 1);
+					header = createHeaderColumnNames(sheet, groupsAndColumnsMap, columnsOrdered, 1);
 				}
 
 				for (int i = 0; i < columnsOrdered.length(); i++) {
@@ -683,7 +670,7 @@ public class ExcelExporter extends AbstractFormatExporter {
 			}
 			variablesMap = createMapVariables(variablesMap);
 			// FILL RECORDS
-			int isGroup = mapGroupsAndColumns.isEmpty() ? 0 : 1;
+			int isGroup = groupsAndColumnsMap.isEmpty() ? 0 : 1;
 			for (int r = 0; r < rows.length(); r++) {
 				JSONObject rowObject = rows.getJSONObject(r);
 				Row row;
@@ -971,7 +958,7 @@ public class ExcelExporter extends AbstractFormatExporter {
 		try {
 			return column.getString("type");
 		} catch (Exception e) {
-			logger.error("Error while retrieving column {" + colName + "} type. It will be treated as string.", e);
+			LOGGER.error("Error while retrieving column {} type. It will be treated as string.", colName, e);
 			return "string";
 		}
 	}
@@ -988,30 +975,15 @@ public class ExcelExporter extends AbstractFormatExporter {
 		return format;
 	}
 
-	/*
-	 * This method avoids cell style objects number to increase by rows number (see https://production.eng.it/jira/browse/KNOWAGE-6692 and
-	 * https://production.eng.it/jira/browse/KNOWAGE-6693)
-	 */
-//	@Override
-//	protected CellStyle getCellStyleByFormat(Workbook wb, CreationHelper helper, String format) {
-//		if (!format2CellStyle.containsKey(format)) {
-//			// if cell style does not exist
-//			CellStyle cellStyle = wb.createCellStyle();
-//			cellStyle.setDataFormat(helper.createDataFormat().getFormat(format));
-//			format2CellStyle.put(format, cellStyle);
-//		}
-//		return format2CellStyle.get(format);
-//	}
-
-	private Row createHeaderColumnNames(Sheet sheet, Map<String, String> mapGroupsAndColumns, JSONArray columnsOrdered,
+	private Row createHeaderColumnNames(Sheet sheet, Map<String, String> groupsAndColumnsMap, JSONArray columnsOrdered,
 			int startRowOffset) {
 		try {
 			Row header = null;
-			if (!mapGroupsAndColumns.isEmpty()) {
+			if (!groupsAndColumnsMap.isEmpty()) {
 				Row newheader = sheet.createRow((short) startRowOffset);
 				for (int i = 0; i < columnsOrdered.length(); i++) {
 					JSONObject column = columnsOrdered.getJSONObject(i);
-					String groupName = mapGroupsAndColumns.get(column.get("header"));
+					String groupName = groupsAndColumnsMap.get(column.get("header"));
 					if (groupName != null) {
 						Cell cell = newheader.createCell(i);
 						cell.setCellValue(groupName);
@@ -1047,7 +1019,7 @@ public class ExcelExporter extends AbstractFormatExporter {
 		}
 	}
 
-	public Sheet createUniqueSafeSheetForSelections(Workbook wb, String widgetName) {
+	private Sheet createUniqueSafeSheetForSelections(Workbook wb, String widgetName) {
 		Sheet sheet;
 		try {
 			sheet = wb.createSheet(widgetName);
@@ -1055,17 +1027,6 @@ public class ExcelExporter extends AbstractFormatExporter {
 		} catch (Exception e) {
 			throw new SpagoBIRuntimeException("Couldn't create sheet", e);
 		}
-	}
-
-	public static String[] toStringArray(JSONArray array) {
-		if (array == null)
-			return null;
-
-		String[] arr = new String[array.length()];
-		for (int i = 0; i < arr.length; i++) {
-			arr[i] = array.optString(i);
-		}
-		return arr;
 	}
 
 	private JSONObject getDatastore(String datasetLabel, Map<String, Object> map, String selections) {
