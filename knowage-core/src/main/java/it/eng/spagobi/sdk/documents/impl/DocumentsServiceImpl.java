@@ -98,8 +98,8 @@ import it.eng.spagobi.sdk.exceptions.MissingParameterValue;
 import it.eng.spagobi.sdk.exceptions.NonExecutableDocumentException;
 import it.eng.spagobi.sdk.exceptions.NotAllowedOperationException;
 import it.eng.spagobi.sdk.exceptions.SDKException;
-import it.eng.spagobi.sdk.utilities.SDKObjectsConverter;
 import it.eng.spagobi.sdk.utilities.KnowageSoapDataSource;
+import it.eng.spagobi.sdk.utilities.SDKObjectsConverter;
 import it.eng.spagobi.tools.catalogue.bo.Artifact;
 import it.eng.spagobi.tools.catalogue.bo.Content;
 import it.eng.spagobi.tools.catalogue.bo.MetaModel;
@@ -299,7 +299,7 @@ public class DocumentsServiceImpl extends AbstractSDKService implements Document
 	@Override
 	public SDKDocumentParameter[] getDocumentParameters(Integer documentId, String roleName)
 			throws NonExecutableDocumentException {
-		SDKDocumentParameter parameters[] = null;
+		SDKDocumentParameter[] parameters = null;
 		logger.debug("IN: documentId = [" + documentId + "]; roleName = [" + roleName + "]");
 
 		this.setTenant();
@@ -351,7 +351,7 @@ public class DocumentsServiceImpl extends AbstractSDKService implements Document
 
 	@Override
 	public SDKDocument[] getDocumentsAsList(String type, String state, String folderPath) {
-		SDKDocument documents[] = null;
+		SDKDocument[] documents = null;
 		logger.debug("IN");
 
 		this.setTenant();

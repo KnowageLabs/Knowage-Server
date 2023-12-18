@@ -151,12 +151,7 @@ public class MDXFormulaHandler {
 						return h.getUniqueName();
 
 					} else {
-						try {
-							h = CubeUtilities.getHierarchy(model.getCube(), selectedHierarchyName);
-						} catch (OlapException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						}
+						h = CubeUtilities.getHierarchy(model.getCube(), selectedHierarchyName);
 						return h.getUniqueName();
 					}
 				}

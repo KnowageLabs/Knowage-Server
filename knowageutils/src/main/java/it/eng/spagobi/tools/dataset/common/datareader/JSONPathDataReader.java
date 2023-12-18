@@ -158,7 +158,8 @@ public class JSONPathDataReader extends AbstractDataReader {
 
 	private boolean ngsiDefaultItems;
 
-	public JSONPathDataReader(String jsonPathItems, List<JSONPathAttribute> jsonPathAttributes, boolean useDirectlyAttributes, boolean ngsi) {
+	public JSONPathDataReader(String jsonPathItems, List<JSONPathAttribute> jsonPathAttributes,
+			boolean useDirectlyAttributes, boolean ngsi) {
 		this.jsonPathAttributes = jsonPathAttributes;
 		this.useDirectlyAttributes = useDirectlyAttributes;
 		this.ngsi = ngsi;
@@ -222,8 +223,8 @@ public class JSONPathDataReader extends AbstractDataReader {
 		}
 	}
 
-	protected void addData(String data, IDataStore dataStore, IMetaData dataStoreMeta, List<Object> parsedData, boolean skipPagination)
-			throws ParseException, JSONException {
+	protected void addData(String data, IDataStore dataStore, IMetaData dataStoreMeta, List<Object> parsedData,
+			boolean skipPagination) throws ParseException, JSONException {
 
 		boolean checkMaxResults = false;
 		if ((maxResults > 0)) {
@@ -273,7 +274,8 @@ public class JSONPathDataReader extends AbstractDataReader {
 					Class<?> type = fieldMeta.getType();
 					if (type == null) {
 						// dinamically defined, from json data path
-						String typeString = (String) getJSONPathValue(o, (String) fieldMeta.getProperty(JSON_PATH_TYPE_METADATA_PROPERTY));
+						String typeString = (String) getJSONPathValue(o,
+								(String) fieldMeta.getProperty(JSON_PATH_TYPE_METADATA_PROPERTY));
 						Assert.assertNotNull(typeString, "type of jsonpath type");
 						type = getType(typeString);
 						fieldMeta.setType(type);
@@ -316,7 +318,8 @@ public class JSONPathDataReader extends AbstractDataReader {
 	protected List<Object> getItems(String data) {
 		Object parsed = JsonPath.read(data, jsonPathItems);
 		if (parsed == null) {
-			throw new JSONPathDataReaderException(String.format("Items not found in %s with json path %s", data, jsonPathItems));
+			throw new JSONPathDataReaderException(
+					String.format("Items not found in %s with json path %s", data, jsonPathItems));
 		}
 
 		// can be an array or a single object
@@ -541,7 +544,8 @@ public class JSONPathDataReader extends AbstractDataReader {
 	}
 
 	private void updateAttributes(List<JSONPathAttribute> ngsiAttributes) {
-		Map<String, JSONPathAttribute> localByName = new HashMap<String, JSONPathDataReader.JSONPathAttribute>(jsonPathAttributes.size());
+		Map<String, JSONPathAttribute> localByName = new HashMap<>(
+				jsonPathAttributes.size());
 		for (JSONPathAttribute jpa : jsonPathAttributes) {
 			localByName.put(jpa.name, jpa);
 		}
@@ -560,7 +564,7 @@ public class JSONPathDataReader extends AbstractDataReader {
 	private List<JSONPathAttribute> getNGSIAttributes(List<Object> parsedData) {
 		Assert.assertTrue(ngsiDefaultItems, "must be ngsi default items");
 
-		List<JSONPathAttribute> res = new ArrayList<JSONPathAttribute>();
+		List<JSONPathAttribute> res = new ArrayList<>();
 		if (parsedData.isEmpty()) {
 			return res;
 		}
@@ -596,8 +600,7 @@ public class JSONPathDataReader extends AbstractDataReader {
 			return Short.valueOf(value);
 		} else if (fieldType.equals(Integer.class)) {
 			/*
-			 * In Solr, an integer value like the number "7" is returned as a value like "7.0": a good way to prevent problems in this case is to use the
-			 * following.
+			 * In Solr, an integer value like the number "7" is returned as a value like "7.0": a good way to prevent problems in this case is to use the following.
 			 */
 			return new BigDecimal(value).intValue();
 		} else if (fieldType.equals(BigInteger.class)) {
@@ -637,11 +640,12 @@ public class JSONPathDataReader extends AbstractDataReader {
 		boolean multiValue = fmd.isMultiValue();
 
 		if (multiValue) {
-			Object ret[] = null;
+			Object[] ret = null;
 
 			if (!(value instanceof net.minidev.json.JSONArray)) {
 				throw new IllegalStateException(
-						"Field " + name + " is multivalue but it's value is not a net.minidev.json.JSONArray: " + value + " of type " + value.getClass());
+						"Field " + name + " is multivalue but it's value is not a net.minidev.json.JSONArray: " + value
+								+ " of type " + value.getClass());
 			}
 
 			net.minidev.json.JSONArray arrayValue = (net.minidev.json.JSONArray) value;
@@ -719,8 +723,8 @@ public class JSONPathDataReader extends AbstractDataReader {
 
 	private static boolean isRealJsonPath(String jsonPath) {
 		// don't start with param substitution
-		return jsonPath.startsWith("$")
-				&& (!jsonPath.startsWith(StringUtilities.START_PARAMETER) && !jsonPath.startsWith(StringUtilities.START_USER_PROFILE_ATTRIBUTE));
+		return jsonPath.startsWith("$") && (!jsonPath.startsWith(StringUtilities.START_PARAMETER)
+				&& !jsonPath.startsWith(StringUtilities.START_USER_PROFILE_ATTRIBUTE));
 	}
 
 	private static Class<?> getType(String jsonPathType) {

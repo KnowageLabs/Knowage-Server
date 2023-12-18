@@ -30,6 +30,8 @@
 		<!-- <module name="SingleLineJavadoc"/> -->
 		<!-- <module name="StringLiteralEquality"/> -->
 
+		<module name="ArrayTypeStyle"/>
+
 	</module>
 
 </module>

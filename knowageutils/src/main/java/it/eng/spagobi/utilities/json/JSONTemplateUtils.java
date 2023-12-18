@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,16 +11,11 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package it.eng.spagobi.utilities.json;
-
-import it.eng.spago.base.SourceBean;
-import it.eng.spago.base.SourceBeanAttribute;
-import it.eng.spagobi.container.ObjectUtils;
-import it.eng.spagobi.utilities.messages.IEngineMessageBuilder;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -33,6 +28,11 @@ import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import it.eng.spago.base.SourceBean;
+import it.eng.spago.base.SourceBeanAttribute;
+import it.eng.spagobi.container.ObjectUtils;
+import it.eng.spagobi.utilities.messages.IEngineMessageBuilder;
 
 /**
  * @author Antonella Giachino (antonella.giachino@eng.it)
@@ -72,8 +72,7 @@ public class JSONTemplateUtils {
 	/**
 	 * Returns a JSONObject with the input configuration (xml format).
 	 *
-	 * @param getTemplate
-	 *            (). the template in xml language
+	 * @param getTemplate (). the template in xml language
 	 * @param
 	 *
 	 * @return JSONObject the same template in json format (because highcharts uses json format)
@@ -94,10 +93,13 @@ public class JSONTemplateUtils {
 
 			if (isHighChart()) {
 				// number of chart definition (for highchart lib)
-				setNumCharts((getTemplate().getAttribute(HIGH_NUMCHARTS) != null) ? Integer.valueOf((String) getTemplate().getAttribute(HIGH_NUMCHARTS)) : 1);
+				setNumCharts((getTemplate().getAttribute(HIGH_NUMCHARTS) != null)
+						? Integer.valueOf((String) getTemplate().getAttribute(HIGH_NUMCHARTS))
+						: 1);
 				// subtype for master/detail chart
-				setSubType((getTemplate().getAttribute(HIGH_CHART + "." + HIGH_SUBTYPE) != null) ? (String) getTemplate().getAttribute(
-						HIGH_CHART + "." + HIGH_SUBTYPE) : "");
+				setSubType((getTemplate().getAttribute(HIGH_CHART + "." + HIGH_SUBTYPE) != null)
+						? (String) getTemplate().getAttribute(HIGH_CHART + "." + HIGH_SUBTYPE)
+						: "");
 
 				getTemplate().delAttribute(WIDTH);
 				getTemplate().delAttribute(HEIGHT);
@@ -142,8 +144,7 @@ public class JSONTemplateUtils {
 	}
 
 	/**
-	 * @param template
-	 *            the template to set
+	 * @param template the template to set
 	 */
 	public void setTemplate(SourceBean template) {
 		this.template = template;
@@ -157,8 +158,7 @@ public class JSONTemplateUtils {
 	}
 
 	/**
-	 * @param divWidth
-	 *            the divWidth to set
+	 * @param divWidth the divWidth to set
 	 */
 	public void setDivWidth(String divWidth) {
 		this.divWidth = divWidth;
@@ -172,8 +172,7 @@ public class JSONTemplateUtils {
 	}
 
 	/**
-	 * @param divHeight
-	 *            the divHeight to set
+	 * @param divHeight the divHeight to set
 	 */
 	public void setDivHeight(String divHeight) {
 		this.divHeight = divHeight;
@@ -187,8 +186,7 @@ public class JSONTemplateUtils {
 	}
 
 	/**
-	 * @param theme
-	 *            the theme to set
+	 * @param theme the theme to set
 	 */
 	public void setTheme(String theme) {
 		this.theme = theme;
@@ -202,8 +200,7 @@ public class JSONTemplateUtils {
 	}
 
 	/**
-	 * @param numCharts
-	 *            the numCharts to set
+	 * @param numCharts the numCharts to set
 	 */
 	public void setNumCharts(Integer numCharts) {
 		this.numCharts = numCharts;
@@ -217,8 +214,7 @@ public class JSONTemplateUtils {
 	}
 
 	/**
-	 * @param subType
-	 *            the subType to set
+	 * @param subType the subType to set
 	 */
 	public void setSubType(String subType) {
 		this.subType = subType;
@@ -232,8 +228,7 @@ public class JSONTemplateUtils {
 	}
 
 	/**
-	 * @param firstBlock
-	 *            the firstBlock to set
+	 * @param firstBlock the firstBlock to set
 	 */
 	public void setFirstBlock(boolean firstBlock) {
 		this.firstBlock = firstBlock;
@@ -258,10 +253,8 @@ public class JSONTemplateUtils {
 	/**
 	 * Returns an OutputStreamWriter with the json template
 	 *
-	 * @param sbConfig
-	 *            the sourcebean with the xml configuration
-	 * @param ow
-	 *            the current OutputStreamWriter
+	 * @param sbConfig the sourcebean with the xml configuration
+	 * @param ow       the current OutputStreamWriter
 	 * @return
 	 */
 	private OutputStreamWriter getPropertiesDetail(Object sbConfig, OutputStreamWriter ow) {
@@ -326,7 +319,7 @@ public class JSONTemplateUtils {
 
 		try {
 			if (sb.getValue() instanceof SourceBean) {
-				// toReturn.write("      " + convertKeyString(sb.getKey())
+				// toReturn.write(" " + convertKeyString(sb.getKey())
 				// +": { \n");
 				SourceBean sbSubConfig = (SourceBean) sb.getValue();
 				List subAtts = sbSubConfig.getContainedAttributes();
@@ -362,7 +355,7 @@ public class JSONTemplateUtils {
 						}
 					}
 				}
-				// toReturn.write("       }\n");
+				// toReturn.write(" }\n");
 			} else {
 				// puts the simple value attribute
 				toReturn.write(String.valueOf(sb.getValue()));
@@ -423,10 +416,8 @@ public class JSONTemplateUtils {
 	/**
 	 * Returns an object (String or Integer) with the value of the property.
 	 *
-	 * @param key
-	 *            the attribute key
-	 * @param sbAttr
-	 *            the soureBeanAttribute to looking for the value of the key
+	 * @param key    the attribute key
+	 * @param sbAttr the soureBeanAttribute to looking for the value of the key
 	 * @return
 	 */
 	private Object getAttributeValue(String key, SourceBeanAttribute sbAttr) {
@@ -477,7 +468,7 @@ public class JSONTemplateUtils {
 	}
 
 	private String replaceParametersInValue(String valueString, boolean addFinalSpace) {
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		StringTokenizer st = new StringTokenizer(valueString);
 		while (st.hasMoreTokens()) {
 			String tok = st.nextToken();
@@ -516,7 +507,7 @@ public class JSONTemplateUtils {
 	}
 
 	private String replaceMessagesInValue(String valueString, boolean addFinalSpace) {
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		StringTokenizer st = new StringTokenizer(valueString);
 		while (st.hasMoreTokens()) {
 			String tok = st.nextToken();
@@ -558,9 +549,10 @@ public class JSONTemplateUtils {
 				if (((String) objPar.get("name")).equals(parName)) {
 					String val = ((String) objPar.get("value")).replaceAll("'", "");
 
-					String[] colors = valueString.substring(valueString.indexOf("(") + 1, valueString.length() - 1).split(",");
+					String[] colors = valueString.substring(valueString.indexOf("(") + 1, valueString.length() - 1)
+							.split(",");
 					for (int c = 0; c < colors.length; c++) {
-						String color[] = colors[c].split("=");
+						String[] color = colors[c].split("=");
 						if (color[0].equals(val)) {
 							return "'" + color[1] + "'";
 						}
@@ -580,7 +572,8 @@ public class JSONTemplateUtils {
 	 * @return
 	 * @throws IOException
 	 */
-	private OutputStreamWriter writeTagAttribute(SourceBeanAttribute sb, OutputStreamWriter toReturn, boolean isTag) throws IOException {
+	private OutputStreamWriter writeTagAttribute(SourceBeanAttribute sb, OutputStreamWriter toReturn, boolean isTag)
+			throws IOException {
 
 		Object subValue = getAttributeValue(sb.getKey(), sb);
 		if (subValue != null) {
@@ -606,8 +599,7 @@ public class JSONTemplateUtils {
 	/**
 	 * Splits the list of values and add ' around the single value. Necessary with Jackson library!
 	 *
-	 * @param string
-	 *            with the original list of values
+	 * @param string   with the original list of values
 	 * @param toReturn
 	 * @return
 	 * @throws IOException
@@ -631,7 +623,7 @@ public class JSONTemplateUtils {
 
 	private String convertKeyString(String xmlTag) {
 		String jsonKey = xmlTag.toLowerCase();
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		int count = 0;
 		for (String s : xmlTag.split("_")) {
 			if (count == 0) {
@@ -640,7 +632,7 @@ public class JSONTemplateUtils {
 				sb.append(Character.toUpperCase(s.charAt(0)));
 			}
 			if (s.length() > 1) {
-				sb.append(s.substring(1, s.length()).toLowerCase());
+				sb.append(s.substring(1).toLowerCase());
 			}
 			count++;
 		}

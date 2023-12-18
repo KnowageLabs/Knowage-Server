@@ -52,13 +52,7 @@ public class SlicerManager {
 	}
 
 	private Hierarchy getHierarchy(String hierarchyUniqueName) {
-		try {
-			return CubeUtilities.getHierarchy(model.getCube(), hierarchyUniqueName);
-		} catch (OlapException e) {
-			logger.debug("Error getting  hierarchy " + hierarchyUniqueName, e);
-			throw new SpagoBIEngineRuntimeException("Error getting  hierarchy " + hierarchyUniqueName, e);
-
-		}
+		return CubeUtilities.getHierarchy(model.getCube(), hierarchyUniqueName);
 	}
 
 	private Member getMember(Hierarchy hierarchy, String memberUniqueName) {
@@ -66,8 +60,12 @@ public class SlicerManager {
 
 			return CubeUtilities.getMember(hierarchy, memberUniqueName);
 		} catch (OlapException e) {
-			logger.debug("Error getting the member " + memberUniqueName + " from the hierarchy " + hierarchy.getUniqueName(), e);
-			throw new SpagoBIEngineRuntimeException("Error getting the member " + memberUniqueName + " from the hierarchy " + hierarchy.getUniqueName(), e);
+			logger.debug(
+					"Error getting the member " + memberUniqueName + " from the hierarchy " + hierarchy.getUniqueName(),
+					e);
+			throw new SpagoBIEngineRuntimeException(
+					"Error getting the member " + memberUniqueName + " from the hierarchy " + hierarchy.getUniqueName(),
+					e);
 		}
 	}
 

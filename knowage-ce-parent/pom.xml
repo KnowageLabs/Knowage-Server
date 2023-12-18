@@ -104,6 +104,7 @@
 		<checkstyle-maven-plugin.version>3.3.0</checkstyle-maven-plugin.version>
 
 		<checkstyle.config.location>../checkstyle/checkstyle.xml</checkstyle.config.location>
+		<checkstyle-suppressions.config.location>../checkstyle/checkstyle-suppressions.xml</checkstyle-suppressions.config.location>
 		<checkstyle.header.file>../LICENSE</checkstyle.header.file>
 		<mpir.skip>true</mpir.skip>
 
@@ -232,6 +233,8 @@
 						<id>validate</id>
 						<phase>validate</phase>
 						<configuration>
+							<configLocation>${checkstyle.config.location}</configLocation>
+							<suppressionsLocation>${checkstyle-suppressions.config.location}</suppressionsLocation>
 							<failsOnError>false</failsOnError>
 							<failOnViolation>true</failOnViolation>
 						</configuration>

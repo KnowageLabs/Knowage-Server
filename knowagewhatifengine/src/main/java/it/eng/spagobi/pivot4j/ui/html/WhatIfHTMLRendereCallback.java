@@ -65,7 +65,8 @@ public class WhatIfHTMLRendereCallback extends HtmlRenderCallback {
 	private Map<Integer, String> positionMeasureMap;
 	private boolean initialized = false;
 	private final Map<String, Object> properties;
-	private static final String PATH_TO_IMAGES = "../../../.." + KnowageSystemConfiguration.getKnowageContext() + "/themes/commons/img/olap/";
+	private static final String PATH_TO_IMAGES = "../../../.." + KnowageSystemConfiguration.getKnowageContext()
+			+ "/themes/commons/img/olap/";
 
 	public WhatIfHTMLRendereCallback(Writer writer) {
 		super(writer);
@@ -130,7 +131,7 @@ public class WhatIfHTMLRendereCallback extends HtmlRenderCallback {
 				ArrayList<String> fv = trimStyle(formatedValue);// formatedValue.split("=*\\s*\" | =*\\s*\'");
 
 				for (int i = 0; i < fv.size(); i++) {
-					String styles[] = fv.get(i).split("\\s*=\\s*");
+					String[] styles = fv.get(i).split("\\s*=\\s*");
 					if (styles.length == 2) {
 						cssw.writeStyle(styles[0], styles[1] + "!important");
 
@@ -237,7 +238,8 @@ public class WhatIfHTMLRendereCallback extends HtmlRenderCallback {
 						String uniqueName = context.getMember().getUniqueName();
 						String positionUniqueName = context.getPosition().getMembers().toString();
 						if (cmd != null) {
-							if ((cmd.equalsIgnoreCase("collapsePosition") || cmd.equalsIgnoreCase("drillUp") || cmd.equalsIgnoreCase("collapseMember"))
+							if ((cmd.equalsIgnoreCase("collapsePosition") || cmd.equalsIgnoreCase("drillUp")
+									|| cmd.equalsIgnoreCase("collapseMember"))
 									&& !drillMode.equals(DrillDownCommand.MODE_REPLACE)) {
 
 								Map<String, String> drillUpAttributes = new TreeMap<>();
@@ -249,8 +251,8 @@ public class WhatIfHTMLRendereCallback extends HtmlRenderCallback {
 								startElement("drillup", drillUpAttributes);
 								endElement("drillup");
 
-							} else if ((cmd.equalsIgnoreCase("expandPosition") || cmd.equalsIgnoreCase("drillDown") || cmd.equalsIgnoreCase("expandMember"))
-									&& commandParams.getMemberOrdinal() > -1) {
+							} else if ((cmd.equalsIgnoreCase("expandPosition") || cmd.equalsIgnoreCase("drillDown")
+									|| cmd.equalsIgnoreCase("expandMember")) && commandParams.getMemberOrdinal() > -1) {
 
 								Map<String, String> drillDownAttributes = new TreeMap<>();
 								drillDownAttributes.put("axis", String.valueOf(axis));
@@ -365,8 +367,8 @@ public class WhatIfHTMLRendereCallback extends HtmlRenderCallback {
 					if (d != 0) {
 						context.getMember();
 						attributes.put("src", PATH_TO_IMAGES + "arrow-up.png");
-						attributes.put("drillUp",
-								"(" + axis + " , " + pos + " , " + memb + ",'" + uniqueName + "','" + context.getHierarchy().getUniqueName() + "' )");
+						attributes.put("drillUp", "(" + axis + " , " + pos + " , " + memb + ",'" + uniqueName + "','"
+								+ context.getHierarchy().getUniqueName() + "' )");
 						startElement("img", attributes);
 						endElement("img");
 					}
@@ -381,7 +383,8 @@ public class WhatIfHTMLRendereCallback extends HtmlRenderCallback {
 				SpagoBIPivotModel sbiModel = (SpagoBIPivotModel) context.getModel();
 				SpagoBICrossNavigationConfig crossNavigation = sbiModel.getCrossNavigation();
 
-				if (crossNavigation != null && crossNavigation.isButtonClicked() && context.getCellType() == CellTypes.VALUE) {
+				if (crossNavigation != null && crossNavigation.isButtonClicked()
+						&& context.getCellType() == CellTypes.VALUE) {
 
 					int colId = context.getColumnIndex();
 					int rowId = context.getRowIndex();
@@ -439,7 +442,8 @@ public class WhatIfHTMLRendereCallback extends HtmlRenderCallback {
 
 	private boolean isPropertyCell(TableRenderContext context) {
 
-		if (showProperties && context.getLevel() != null && isEmptyNonPropertyCell(context) && context.getRenderer().getPropertyCollector() != null) {
+		if (showProperties && context.getLevel() != null && isEmptyNonPropertyCell(context)
+				&& context.getRenderer().getPropertyCollector() != null) {
 			List<Property> propertieds = context.getRenderer().getPropertyCollector().getProperties(context.getLevel());
 			return (propertieds != null && propertieds.size() > 0);
 		}
@@ -538,7 +542,8 @@ public class WhatIfHTMLRendereCallback extends HtmlRenderCallback {
 
 		if (context.getRenderer().getEnableSort()) {
 			if (context.getModel().isSorting(context.getPosition()) && context.getModel().getSortCriteria() != null) {
-				if (context.getModel().getSortCriteria().equals(SortCriteria.ASC) || context.getModel().getSortCriteria().equals(SortCriteria.BASC)
+				if (context.getModel().getSortCriteria().equals(SortCriteria.ASC)
+						|| context.getModel().getSortCriteria().equals(SortCriteria.BASC)
 						|| context.getModel().getSortCriteria().equals(SortCriteria.TOPCOUNT)) {
 					if (axisToSort == Axis.ROWS.axisOrdinal()) {
 						attributes.put("src", PATH_TO_IMAGES + "DESC-rows.png");
@@ -546,10 +551,12 @@ public class WhatIfHTMLRendereCallback extends HtmlRenderCallback {
 						attributes.put("src", PATH_TO_IMAGES + "DESC-columns.png");
 					}
 
-					attributes.put("sort", "(" + axisToSort + " , " + axis + " , '" + context.getPosition().getMembers().toString() + "' )");
+					attributes.put("sort", "(" + axisToSort + " , " + axis + " , '"
+							+ context.getPosition().getMembers().toString() + "' )");
 					startElement("img", attributes);
 					endElement("img");
-				} else if (context.getModel().getSortCriteria().equals(SortCriteria.DESC) || context.getModel().getSortCriteria().equals(SortCriteria.BDESC)
+				} else if (context.getModel().getSortCriteria().equals(SortCriteria.DESC)
+						|| context.getModel().getSortCriteria().equals(SortCriteria.BDESC)
 						|| context.getModel().getSortCriteria().equals(SortCriteria.BOTTOMCOUNT)) {
 
 					if (axisToSort == Axis.ROWS.axisOrdinal()) {
@@ -558,7 +565,8 @@ public class WhatIfHTMLRendereCallback extends HtmlRenderCallback {
 						attributes.put("src", PATH_TO_IMAGES + "ASC-columns.png");
 					}
 
-					attributes.put("sort", "(" + axisToSort + " , " + axis + " , '" + context.getPosition().getMembers().toString() + "' )");
+					attributes.put("sort", "(" + axisToSort + " , " + axis + " , '"
+							+ context.getPosition().getMembers().toString() + "' )");
 					startElement("img", attributes);
 					endElement("img");
 				}
@@ -570,7 +578,8 @@ public class WhatIfHTMLRendereCallback extends HtmlRenderCallback {
 					attributes.put("src", PATH_TO_IMAGES + "noSortColumns.png");
 				}
 
-				attributes.put("sort", "(" + axisToSort + " , " + axis + " , '" + context.getPosition().getMembers().toString() + "' )");
+				attributes.put("sort", "(" + axisToSort + " , " + axis + " , '"
+						+ context.getPosition().getMembers().toString() + "' )");
 
 				startElement("img", attributes);
 				endElement("img");
@@ -582,7 +591,7 @@ public class WhatIfHTMLRendereCallback extends HtmlRenderCallback {
 
 	public static ArrayList<String> trimStyle(String formatedValue) {
 		ArrayList<String> result = new ArrayList<>();
-		String results[] = formatedValue.split("\\s*\\|\\s*");
+		String[] results = formatedValue.split("\\s*\\|\\s*");
 
 		for (int i = 0; i < results.length; i++) {
 			if (!results[i].contains("format") && results[i].contains("=")) {
@@ -593,11 +602,11 @@ public class WhatIfHTMLRendereCallback extends HtmlRenderCallback {
 	}
 
 	private String formatValue(String label, Double value) {
-		String resArr[] = label.split("\\|");
+		String[] resArr = label.split("\\|");
 
 		for (int i = 0; i < resArr.length; i++) {
 			if (resArr[i].contains("format")) {
-				String result[] = resArr[i].split("\\s*=\\s*");
+				String[] result = resArr[i].split("\\s*=\\s*");
 				String pattern = result[1];
 				NumberFormat nf = NumberFormat.getNumberInstance(Locale.getDefault());
 				DecimalFormat df = (DecimalFormat) nf;

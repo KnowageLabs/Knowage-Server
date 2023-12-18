@@ -65,24 +65,26 @@ public class MessageBuilder implements IMessageBuilder, IEngineMessageBuilder {
 		logger.debug((new StringBuilder("IN-resourceName:")).append(resourceName).toString());
 		logger.debug((new StringBuilder("IN-locale:")).append(locale == null ? "null" : locale.toString()).toString());
 		if (!isValidLocale(locale)) {
-			logger.warn((new StringBuilder("Request locale ")).append(locale).append(" in input is not valid since it is null or not configured.").toString());
+			logger.warn((new StringBuilder("Request locale ")).append(locale)
+					.append(" in input is not valid since it is null or not configured.").toString());
 			locale = GeneralUtilities.getDefaultLocale();
 		}
 		String message = "";
 		try {
-			String resourceNameLoc = (new StringBuilder(String.valueOf(resourceName))).append("_").append(locale.getLanguage()).append("_")
-					.append(locale.getCountry()).toString();
+			String resourceNameLoc = (new StringBuilder(String.valueOf(resourceName))).append("_")
+					.append(locale.getLanguage()).append("_").append(locale.getCountry()).toString();
 			ClassLoader classLoad = getClass().getClassLoader();
 			java.io.InputStream resIs = classLoad.getResourceAsStream(resourceNameLoc);
 			if (resIs == null) {
 				logger.warn((new StringBuilder("Cannot find resource ")).append(resourceName).toString());
 				resIs = classLoad.getResourceAsStream(resourceName);
 			}
-			byte resBytes[] = GeneralUtilities.getByteArrayFromInputStream(resIs);
+			byte[] resBytes = GeneralUtilities.getByteArrayFromInputStream(resIs);
 			message = new String(resBytes);
 		} catch (Exception e) {
 			message = "";
-			logger.warn((new StringBuilder("Error while recovering text of the resource name ")).append(resourceName).toString(), e);
+			logger.warn((new StringBuilder("Error while recovering text of the resource name ")).append(resourceName)
+					.toString(), e);
 		}
 		logger.debug((new StringBuilder("OUT-message:")).append(message).toString());
 		return message;
@@ -97,7 +99,8 @@ public class MessageBuilder implements IMessageBuilder, IEngineMessageBuilder {
 	@Override
 	public String getMessage(String code, Locale locale) {
 		if (!isValidLocale(locale)) {
-			logger.warn((new StringBuilder("Request locale ")).append(locale).append(" in input is not valid since it is null or not configured.").toString());
+			logger.warn((new StringBuilder("Request locale ")).append(locale)
+					.append(" in input is not valid since it is null or not configured.").toString());
 			locale = GeneralUtilities.getDefaultLocale();
 		}
 		return getMessageInternal(code, null, locale);
@@ -112,7 +115,8 @@ public class MessageBuilder implements IMessageBuilder, IEngineMessageBuilder {
 	@Override
 	public String getMessage(String code, String bundle, Locale locale) {
 		if (!isValidLocale(locale)) {
-			logger.warn((new StringBuilder("Request locale ")).append(locale).append(" in input is not valid since it is null or not configured.").toString());
+			logger.warn((new StringBuilder("Request locale ")).append(locale)
+					.append(" in input is not valid since it is null or not configured.").toString());
 			locale = GeneralUtilities.getDefaultLocale();
 		}
 		return getMessageInternal(code, bundle, locale);
@@ -127,7 +131,8 @@ public class MessageBuilder implements IMessageBuilder, IEngineMessageBuilder {
 	@Override
 	public String getMessage(String code, HttpServletRequest request, Locale locale) {
 		if (!isValidLocale(locale)) {
-			logger.warn((new StringBuilder("Request locale ")).append(locale).append(" in input is not valid since it is null or not configured.").toString());
+			logger.warn((new StringBuilder("Request locale ")).append(locale)
+					.append(" in input is not valid since it is null or not configured.").toString());
 			locale = GeneralUtilities.getDefaultLocale();
 		}
 		return getMessageInternal(code, null, locale);
@@ -142,7 +147,8 @@ public class MessageBuilder implements IMessageBuilder, IEngineMessageBuilder {
 	@Override
 	public String getMessage(String code, String bundle, HttpServletRequest request, Locale locale) {
 		if (!isValidLocale(locale)) {
-			logger.warn((new StringBuilder("Request locale ")).append(locale).append(" in input is not valid since it is null or not configured.").toString());
+			logger.warn((new StringBuilder("Request locale ")).append(locale)
+					.append(" in input is not valid since it is null or not configured.").toString());
 			locale = GeneralUtilities.getDefaultLocale();
 		}
 		return getMessageInternal(code, bundle, locale);
@@ -263,12 +269,14 @@ public class MessageBuilder implements IMessageBuilder, IEngineMessageBuilder {
 			locale = PortletUtilities.getPortalLocale();
 		}
 		if (!isValidLocale(locale)) {
-			logger.warn((new StringBuilder("Request locale ")).append(locale).append(" not valid since it is not configured.").toString());
+			logger.warn((new StringBuilder("Request locale ")).append(locale)
+					.append(" not valid since it is not configured.").toString());
 			locale = GeneralUtilities.getDefaultLocale();
 			logger.debug((new StringBuilder("Using default locale ")).append(locale).append(".").toString());
 		} else if (StringUtilities.isEmpty(locale.getCountry())) {
 			logger.warn((new StringBuilder("Request locale ")).append(locale)
-					.append(" not contain the country value. The one specified in configuration will be used").toString());
+					.append(" not contain the country value. The one specified in configuration will be used")
+					.toString());
 //			SingletonConfig spagobiConfig = SingletonConfig.getInstance();
 //
 //			String country = GeneralUtilities.getCountry(locale.getLanguage());
@@ -364,7 +372,8 @@ public class MessageBuilder implements IMessageBuilder, IEngineMessageBuilder {
 					I18NMessagesDAO dao = DAOFactory.getI18NMessageDAO();
 					toreturn = dao.getI18NMessages(locale, code);
 				} catch (EMFUserError e) {
-					logger.error("error during internalization of " + code + " in table I18NMessages; original code will be kept", e);
+					logger.error("error during internalization of " + code
+							+ " in table I18NMessages; original code will be kept", e);
 				}
 			}
 		}

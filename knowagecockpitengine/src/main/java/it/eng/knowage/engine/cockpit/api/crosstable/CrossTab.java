@@ -125,29 +125,29 @@ public class CrossTab {
 	 * @deprecated Alias can be duplicated
 	 */
 	@Deprecated
-	private Map<String, String> dsColumnName2Alias = new HashMap<String, String>();
+	private final Map<String, String> dsColumnName2Alias = new HashMap<>();
 	/**
 	 * Relates something like "Field A" in the crosstab to "column_1" into datastore.
 	 *
 	 * @deprecated Alias can be duplicated
 	 */
 	@Deprecated
-	private Map<String, String> alias2DsColumnName = new HashMap<String, String>();
+	private final Map<String, String> alias2DsColumnName = new HashMap<>();
 	/**
 	 * Store the metadata related to the column name.
 	 */
-	private Map<String, JSONObject> dsColumnName2Metadata = new HashMap<String, JSONObject>();
+	private final Map<String, JSONObject> dsColumnName2Metadata = new HashMap<>();
 	/**
 	 * Store the metadata related to the column alias.
 	 */
-	private Map<String, JSONObject> alias2Metadata = new HashMap<String, JSONObject>();
+	private final Map<String, JSONObject> alias2Metadata = new HashMap<>();
 
 	private static final Placeholder NOT_AVAILABLE_PLACEHOLDER = new NotAvailablePlaceholder();
 
 	private List<Node> treeLeaves = null;
 
 	private String createJsonPathQueryFromNodes(Node currRow, Node currCol, MeasureInfo measure) {
-		Map<String, String> colsValues = new TreeMap<String, String>();
+		Map<String, String> colsValues = new TreeMap<>();
 		String measureColName = alias2DsColumnName.get(measure.name);
 
 		if (currRow.isMeasure()) {
@@ -254,15 +254,15 @@ public class CrossTab {
 
 	Placeholder[][] dataMatrix;
 	private JSONObject config;
-	private final List<MeasureInfo> measures = new ArrayList<CrossTab.MeasureInfo>();
-	private final List<MeasureInfo> measuresToShowOnTotalsOrSubTotals = new ArrayList<CrossTab.MeasureInfo>();
-	private final List<String> countMeasures = new ArrayList<String>();
+	private final List<MeasureInfo> measures = new ArrayList<>();
+	private final List<MeasureInfo> measuresToShowOnTotalsOrSubTotals = new ArrayList<>();
+	private final List<String> countMeasures = new ArrayList<>();
 	private CrosstabDefinition crosstabDefinition;
 	private List<String> rowHeadersTitles;
 	private List<String[]> rowsSum; // sum calculate for the rows (summ the row
-									// 1.. )
+									 // 1.. )
 	private List<String[]> columnsSum; // sum calculate for the rows (summ the
-										// row 1.. )
+										 // row 1.. )
 	private boolean measuresOnRow;
 	private boolean hideZeroRows;
 	private boolean fixedColumn;
@@ -283,24 +283,24 @@ public class CrossTab {
 	private List<String> columnCordinates;
 	private List<String> measuresCordinates;
 
-	private List<String> columnsSpecification = new ArrayList<String>();
-	private List<String> rowsSpecification = new ArrayList<String>();
+	private List<String> columnsSpecification = new ArrayList<>();
+	private List<String> rowsSpecification = new ArrayList<>();
 
-	private List<String> columnsHeaderList = new ArrayList<String>();
-	private List<String> rowsHeaderList = new ArrayList<String>();
-	private List<String> measuresHeaderList = new ArrayList<String>();
-	private List<String> columnsHeaderIdList = new ArrayList<String>();
-	private List<String> rowsHeaderIdList = new ArrayList<String>();
-	private List<String> measuresHeaderIdList = new ArrayList<String>();
+	private List<String> columnsHeaderList = new ArrayList<>();
+	private List<String> rowsHeaderList = new ArrayList<>();
+	private final List<String> measuresHeaderList = new ArrayList<>();
+	private List<String> columnsHeaderIdList = new ArrayList<>();
+	private List<String> rowsHeaderIdList = new ArrayList<>();
+	private final List<String> measuresHeaderIdList = new ArrayList<>();
 	/**
 	 * @deprecated This list has been overridden by {@link #dsAliasSortingReferenceBiMap} and {@link #dsColumnNameSortingReferenceBiMap}
 	 */
 	@Deprecated
-	private List<String> orderingHeaderList = new ArrayList<String>();
+	private final List<String> orderingHeaderList = new ArrayList<>();
 	/**
 	 * Contains mapping between current column NAME and external referenced column NAME for sorting
 	 */
-	private BidiMap dsColumnNameSortingReferenceBiMap = new DualHashBidiMap();
+	private final BidiMap dsColumnNameSortingReferenceBiMap = new DualHashBidiMap();
 
 	public enum CellType {
 		DATA("data"), CF("cf"), SUBTOTAL("partialsum"), TOTAL("totals");
@@ -309,7 +309,7 @@ public class CrossTab {
 			this.value = value;
 		}
 
-		private String value;
+		private final String value;
 
 		public String getValue() {
 			return this.value;
@@ -330,8 +330,9 @@ public class CrossTab {
 	 * @param fieldOptions       : fieldOptions
 	 * @param calculateFields    : array of JSONObjects the CF
 	 */
-	public CrossTab(IDataStore dataStore, CrosstabDefinition crosstabDefinition, JSONArray calculateFields, Map<Integer, NodeComparator> columnsSortKeysMap,
-			Map<Integer, NodeComparator> rowsSortKeysMap, Map<Integer, NodeComparator> measuresSortKeysMap, Integer myGlobalId) throws JSONException {
+	public CrossTab(IDataStore dataStore, CrosstabDefinition crosstabDefinition, JSONArray calculateFields,
+			Map<Integer, NodeComparator> columnsSortKeysMap, Map<Integer, NodeComparator> rowsSortKeysMap,
+			Map<Integer, NodeComparator> measuresSortKeysMap, Integer myGlobalId) throws JSONException {
 		this(dataStore, crosstabDefinition, columnsSortKeysMap, rowsSortKeysMap, measuresSortKeysMap);
 
 		init(crosstabDefinition, calculateFields, columnsSortKeysMap, rowsSortKeysMap, measuresSortKeysMap, myGlobalId);
@@ -345,16 +346,19 @@ public class CrossTab {
 	 * @param fieldOptions       : fieldOptions
 	 * @param calculateFields    : array of JSONObjects the CF
 	 */
-	public CrossTab(JSONArray datastore, JSONObject datastoreMetadata, CrosstabDefinition crosstabDefinition, JSONArray calculateFields,
-			Map<Integer, NodeComparator> columnsSortKeysMap, Map<Integer, NodeComparator> rowsSortKeysMap, Map<Integer, NodeComparator> measuresSortKeysMap,
+	public CrossTab(JSONArray datastore, JSONObject datastoreMetadata, CrosstabDefinition crosstabDefinition,
+			JSONArray calculateFields, Map<Integer, NodeComparator> columnsSortKeysMap,
+			Map<Integer, NodeComparator> rowsSortKeysMap, Map<Integer, NodeComparator> measuresSortKeysMap,
 			Integer myGlobalId) throws JSONException {
-		this(datastore, datastoreMetadata, crosstabDefinition, columnsSortKeysMap, rowsSortKeysMap, measuresSortKeysMap);
+		this(datastore, datastoreMetadata, crosstabDefinition, columnsSortKeysMap, rowsSortKeysMap,
+				measuresSortKeysMap);
 
 		init(crosstabDefinition, calculateFields, columnsSortKeysMap, rowsSortKeysMap, measuresSortKeysMap, myGlobalId);
 	}
 
-	private void init(CrosstabDefinition crosstabDefinition, JSONArray calculateFields, Map<Integer, NodeComparator> columnsSortKeysMap,
-			Map<Integer, NodeComparator> rowsSortKeysMap, Map<Integer, NodeComparator> measuresSortKeysMap, Integer myGlobalId) throws JSONException {
+	private void init(CrosstabDefinition crosstabDefinition, JSONArray calculateFields,
+			Map<Integer, NodeComparator> columnsSortKeysMap, Map<Integer, NodeComparator> rowsSortKeysMap,
+			Map<Integer, NodeComparator> measuresSortKeysMap, Integer myGlobalId) throws JSONException {
 
 		this.myGlobalId = myGlobalId;
 
@@ -366,7 +370,8 @@ public class CrossTab {
 
 				JSONObject cf = calculateFields.getJSONObject(i);
 				boolean horizontal = cf.getBoolean("horizontal");
-				calculateCF(cf.getString("operation"), horizontal, cf.getInt("level"), cf.getString("name"), CellType.CF);
+				calculateCF(cf.getString("operation"), horizontal, cf.getInt("level"), cf.getString("name"),
+						CellType.CF);
 			}
 		}
 
@@ -385,16 +390,16 @@ public class CrossTab {
 	 * @param crosstabDefinition : the definition of the crossTab
 	 */
 	public CrossTab(JSONArray dataStoredata, JSONObject datastoreMetadata, CrosstabDefinition crosstabDefinition,
-			Map<Integer, NodeComparator> columnsSortKeysMap, Map<Integer, NodeComparator> rowsSortKeysMap, Map<Integer, NodeComparator> measuresSortKeysMap)
-			throws JSONException {
+			Map<Integer, NodeComparator> columnsSortKeysMap, Map<Integer, NodeComparator> rowsSortKeysMap,
+			Map<Integer, NodeComparator> measuresSortKeysMap) throws JSONException {
 
 		JSONObject valueRecord;
 		this.config = crosstabDefinition.getConfig();
 		this.crosstabDefinition = crosstabDefinition;
 		int cellLimit = crosstabDefinition.getCellLimit();
 		boolean columnsOverflow = false; // true if the number of cell shown in
-											// the crosstab is less than the
-											// total number of cells
+										 // the crosstab is less than the
+										 // total number of cells
 		boolean measuresOnColumns = crosstabDefinition.isMeasuresOnColumns();
 		measuresOnRow = config.getString("measureson").equals("rows");
 		hideZeroRows = config.optBoolean("hideZeroRows");
@@ -411,21 +416,21 @@ public class CrossTab {
 		this.rowsSortKeysMap = rowsSortKeysMap;
 		this.measuresSortKeysMap = measuresSortKeysMap;
 
-		rowCordinates = new LinkedList<String>();
-		columnCordinates = new LinkedList<String>();
-		measuresCordinates = new LinkedList<String>();
+		rowCordinates = new LinkedList<>();
+		columnCordinates = new LinkedList<>();
+		measuresCordinates = new LinkedList<>();
 
-		List<String> data = new ArrayList<String>();
+		List<String> data = new ArrayList<>();
 
 		columnsRoot = new Node(Node.CROSSTAB_NODE_COLUMN_ROOT);
 		rowsRoot = new Node(Node.CROSSTAB_NODE_ROW_ROOT);
 
 		JSONArray dataStoreMetadataFields = datastoreMetadata.getJSONArray("fields");
 
-		List<String> columnsNameList = new ArrayList<String>();
-		List<String> rowsNameList = new ArrayList<String>();
-		List<String> measuresNameList = new ArrayList<String>();
-		List<String> orderingNameList = new ArrayList<String>(); // list with external sorting columns (just associated column)
+		List<String> columnsNameList = new ArrayList<>();
+		List<String> rowsNameList = new ArrayList<>();
+		List<String> measuresNameList = new ArrayList<>();
+		List<String> orderingNameList = new ArrayList<>(); // list with external sorting columns (just associated column)
 
 		for (int i = 0; i < crosstabDefinition.getMeasures().size(); i++) {
 			measuresHeaderList.add(crosstabDefinition.getMeasures().get(i).getAlias());
@@ -441,7 +446,8 @@ public class CrossTab {
 			if (column.getSortingId() != null && !column.getSortingId().equals("")) {
 				orderingHeaderList.add(column.getSortingId() + "|" + column.getAlias());
 				// dsAliasSortingReferenceBiMap.put(column.getSortingId(), column.getAlias());
-				dsColumnNameSortingReferenceBiMap.put(alias2DsColumnName.get(column.getSortingId()), alias2DsColumnName.get(column.getAlias()));
+				dsColumnNameSortingReferenceBiMap.put(alias2DsColumnName.get(column.getSortingId()),
+						alias2DsColumnName.get(column.getAlias()));
 			}
 		}
 
@@ -452,7 +458,8 @@ public class CrossTab {
 			if (row.getSortingId() != null && !row.getSortingId().equals("")) {
 				orderingHeaderList.add(row.getSortingId() + "|" + row.getAlias());
 				// dsAliasSortingReferenceBiMap.put(row.getSortingId(), row.getAlias());
-				dsColumnNameSortingReferenceBiMap.put(alias2DsColumnName.get(row.getSortingId()), alias2DsColumnName.get(row.getAlias()));
+				dsColumnNameSortingReferenceBiMap.put(alias2DsColumnName.get(row.getSortingId()),
+						alias2DsColumnName.get(row.getAlias()));
 			}
 		}
 
@@ -477,7 +484,7 @@ public class CrossTab {
 		}
 
 		// check association for external field sorting
-		if (orderingHeaderList != null && orderingHeaderList.size() > 0) {
+		if (orderingHeaderList != null && !orderingHeaderList.isEmpty()) {
 			String orderingHeadersNames = "";
 			for (int i = 0; i < orderingHeaderList.size(); i++) {
 				String orderingHeader = orderingHeaderList.get(i);
@@ -542,7 +549,7 @@ public class CrossTab {
 			}
 			columnsOverflow = columnsRoot.getLeafsNumber() < completeColumnsRoot.getLeafsNumber();
 		}
-		Map<String, Double> measureToOrderMap = new LinkedHashMap<String, Double>();
+		Map<String, Double> measureToOrderMap = new LinkedHashMap<>();
 
 		for (index = 0; index < dataStoredata.length(); index++) {
 			valueRecord = dataStoredata.getJSONObject(index);
@@ -550,8 +557,8 @@ public class CrossTab {
 			String rowPath;
 			String columnPath;
 			String enrichedColumnPath;
-			List<String> rowPathList = new ArrayList<String>();
-			List<String> colPathList = new ArrayList<String>();
+			List<String> rowPathList = new ArrayList<>();
+			List<String> colPathList = new ArrayList<>();
 
 			columnPath = "";
 			enrichedColumnPath = "";
@@ -565,7 +572,8 @@ public class CrossTab {
 				} else {
 					valueStr = value.toString();
 				}
-				enrichedColumnPath = enrichedColumnPath + PATH_SEPARATOR + dsColumnName2Alias.get(column) + PATH_SEPARATOR + valueStr;
+				enrichedColumnPath = enrichedColumnPath + PATH_SEPARATOR + dsColumnName2Alias.get(column)
+						+ PATH_SEPARATOR + valueStr;
 				columnPath = columnPath + PATH_SEPARATOR + valueStr;
 				colPathList.add(valueStr);
 			}
@@ -595,16 +603,19 @@ public class CrossTab {
 						Integer idx = getColumnIndex(measureLabel, measuresHeaderList);
 						if (idx >= 0) {
 							String colName = measuresNameList.get(i);
-							Double value = (valueRecord.get(colName).equals("")) ? 0 : Double.valueOf(String.valueOf(valueRecord.get(colName)));
+							Double value = (valueRecord.get(colName).equals("")) ? 0
+									: Double.valueOf(String.valueOf(valueRecord.get(colName)));
 							String[] columnPathArray = enrichedColumnPath.trim().split(PATH_SEPARATOR);
-							String[] entryParents = measuresSortKeysMap.get(entry.getKey()).getParentValue().split(PATH_SEPARATOR);
+							String[] entryParents = measuresSortKeysMap.get(entry.getKey()).getParentValue()
+									.split(PATH_SEPARATOR);
 							// add value to order only if parents are correct (useful for deep levels)
 							String valueLbl = rowPath + columnPath + PATH_SEPARATOR + colName;
 							/*
-							 * WARNING : in fact the following causes some sort of filtering when a record doesn't match the measure a user sorts for. The
-							 * else-branch adds a dummy value to records that don't match to let them appear on the crosstable.
+							 * WARNING : in fact the following causes some sort of filtering when a record doesn't match the measure a user sorts for. The else-branch adds a dummy value to
+							 * records that don't match to let them appear on the crosstable.
 							 */
-							if (columnPathArray != null && entryParents != null && Arrays.deepEquals(columnPathArray, entryParents)
+							if (columnPathArray != null && entryParents != null
+									&& Arrays.deepEquals(columnPathArray, entryParents)
 									&& colName.equalsIgnoreCase(alias2Metadata.get(measureLabel).optString("name"))) {
 								measureToOrderMap.put(valueLbl, value);
 							} else {
@@ -617,7 +628,8 @@ public class CrossTab {
 				String measure = measuresNameList.get(i);
 				columnCordinates.add(columnPath);
 				rowCordinates.add(rowPath);
-				measuresCordinates.add(rowPath + columnPath + PATH_SEPARATOR + getStringValue(valueRecord.get(measure)));
+				measuresCordinates
+						.add(rowPath + columnPath + PATH_SEPARATOR + getStringValue(valueRecord.get(measure)));
 				data.add("" + getStringValue(valueRecord.get(measure)));
 			}
 		}
@@ -627,7 +639,8 @@ public class CrossTab {
 			Node orderedColumnsRoot = new Node(Node.CROSSTAB_NODE_COLUMN_ROOT);
 			Node orderedRowsRoot = new Node(Node.CROSSTAB_NODE_ROW_ROOT);
 
-			Map<String, Double> orderedMeasures = sortMeasures(measuresSortKeysMap, measureToOrderMap, rowsCount, columnsCount, actualRows, actualColumns);
+			Map<String, Double> orderedMeasures = sortMeasures(measuresSortKeysMap, measureToOrderMap, rowsCount,
+					columnsCount, actualRows, actualColumns);
 			for (String key : orderedMeasures.keySet()) {
 
 				int nodePosition;
@@ -638,7 +651,8 @@ public class CrossTab {
 					for (int r = 0; r < rowsCount; r++) {
 						// Node constructor needs columnName, value, description
 						// we use rowsNameList to retrieve columnName and measureInfo to retrieve value and description
-						Node node = new Node(rowsNameList.get(r), measureInfo[r + 1].toString(), measureInfo[r + 1].toString());
+						Node node = new Node(rowsNameList.get(r), measureInfo[r + 1].toString(),
+								measureInfo[r + 1].toString());
 						nodePosition = nodeToCheck.getChildren().indexOf(node);
 						if (nodePosition < 0) {
 							nodeToCheck.addChild(node);
@@ -654,12 +668,12 @@ public class CrossTab {
 					orderedColumnsRoot.addChild(n);
 				}
 			}
-			if (orderedRowsRoot.getChildren().size() > 0)
+			if (!orderedRowsRoot.getChildren().isEmpty())
 				rowsRoot = orderedRowsRoot;
 			else
 				rowsRoot.orderedSubtree(rowsSortKeysMap);
 
-			if (orderedColumnsRoot.getChildren().size() > 0)
+			if (!orderedColumnsRoot.getChildren().isEmpty())
 				columnsRoot = orderedColumnsRoot;
 			else
 				columnsRoot.orderedSubtree(columnsSortKeysMap);
@@ -704,11 +718,11 @@ public class CrossTab {
 		 */
 		parsedValuesDataStore = JsonPath.parse(dataStoredata.toString());
 
-		dataMatrix = getDataMatrix(columnsSpecification, rowsSpecification, columnCordinates, rowCordinates, measuresCordinates, data, measuresOnColumns,
-				measuresCount, columnsRoot.getLeafsNumber());
+		dataMatrix = getDataMatrix(columnsSpecification, rowsSpecification, columnCordinates, rowCordinates,
+				measuresCordinates, data, measuresOnColumns, measuresCount, columnsRoot.getLeafsNumber());
 
-		celltypeOfColumns = new ArrayList<CrossTab.CellType>();
-		celltypeOfRows = new ArrayList<CrossTab.CellType>();
+		celltypeOfColumns = new ArrayList<>();
+		celltypeOfRows = new ArrayList<>();
 
 		for (int i = 0; i < dataMatrix.length; i++) {
 			celltypeOfRows.add(CellType.DATA);
@@ -745,8 +759,9 @@ public class CrossTab {
 	 * @param dataStore          : the source of the data
 	 * @param crosstabDefinition : the definition of the crossTab
 	 */
-	public CrossTab(IDataStore valuesDataStore, CrosstabDefinition crosstabDefinition, Map<Integer, NodeComparator> columnsSortKeysMap,
-			Map<Integer, NodeComparator> rowsSortKeysMap, Map<Integer, NodeComparator> measuresSortKeysMap) throws JSONException {
+	public CrossTab(IDataStore valuesDataStore, CrosstabDefinition crosstabDefinition,
+			Map<Integer, NodeComparator> columnsSortKeysMap, Map<Integer, NodeComparator> rowsSortKeysMap,
+			Map<Integer, NodeComparator> measuresSortKeysMap) throws JSONException {
 		IRecord valueRecord;
 		String rowPath;
 		String columnPath;
@@ -754,8 +769,8 @@ public class CrossTab {
 		this.crosstabDefinition = crosstabDefinition;
 		int cellLimit = crosstabDefinition.getCellLimit();
 		boolean columnsOverflow = false; // true if the number of cell shown in
-											// the crosstab is less than the
-											// total number of cells
+										 // the crosstab is less than the
+										 // total number of cells
 		boolean measuresOnColumns = crosstabDefinition.isMeasuresOnColumns();
 		measuresOnRow = config.getString("measureson").equals("rows");
 		int rowsCount = crosstabDefinition.getRows().size();
@@ -767,9 +782,9 @@ public class CrossTab {
 		this.rowsSortKeysMap = rowsSortKeysMap;
 		this.measuresSortKeysMap = measuresSortKeysMap;
 
-		rowCordinates = new LinkedList<String>();
-		columnCordinates = new LinkedList<String>();
-		List<String> data = new LinkedList<String>();
+		rowCordinates = new LinkedList<>();
+		columnCordinates = new LinkedList<>();
+		List<String> data = new LinkedList<>();
 
 		columnsRoot = new Node(Node.CROSSTAB_NODE_COLUMN_ROOT);
 		rowsRoot = new Node(Node.CROSSTAB_NODE_ROW_ROOT);
@@ -777,7 +792,8 @@ public class CrossTab {
 		int cellCount = 0;
 		int actualRows = 0;
 		int actualColumns = 0;
-		for (index = 0; index < valuesDataStore.getRecordsCount() && (cellLimit <= 0 || cellCount < cellLimit); index++) {
+		for (index = 0; index < valuesDataStore.getRecordsCount()
+				&& (cellLimit <= 0 || cellCount < cellLimit); index++) {
 			valueRecord = valuesDataStore.getRecordAt(index);
 
 			boolean columnInserted = addRecord(columnsRoot, valueRecord, 0, columnsCount);
@@ -880,11 +896,11 @@ public class CrossTab {
 		 */
 		parsedValuesDataStore = JsonPath.parse(valuesDataStore.toString());
 
-		dataMatrix = getDataMatrix(columnsSpecification, rowsSpecification, columnCordinates, rowCordinates, null, data, measuresOnColumns, measuresCount,
-				columnsRoot.getLeafsNumber());
+		dataMatrix = getDataMatrix(columnsSpecification, rowsSpecification, columnCordinates, rowCordinates, null, data,
+				measuresOnColumns, measuresCount, columnsRoot.getLeafsNumber());
 
-		celltypeOfColumns = new ArrayList<CrossTab.CellType>();
-		celltypeOfRows = new ArrayList<CrossTab.CellType>();
+		celltypeOfColumns = new ArrayList<>();
+		celltypeOfRows = new ArrayList<>();
 
 		for (int i = 0; i < dataMatrix.length; i++) {
 			celltypeOfRows.add(CellType.DATA);
@@ -924,7 +940,7 @@ public class CrossTab {
 			}
 			linesIndex++;
 			List<Node> children = node.getChildren();
-			List<Node> newchildren = new ArrayList<Node>();
+			List<Node> newchildren = new ArrayList<>();
 			newchildren.add(descriptionNode);
 			for (int i = 0; i < children.size(); i++) {
 				descriptionNode.addChild(node.getChildren().get(i));
@@ -984,16 +1000,17 @@ public class CrossTab {
 	 * @param measuresLength       : the number of the measures
 	 * @return the matrix that represent the data
 	 */
-	private Placeholder/* <?> */[][] getDataMatrix(List<String> columnsSpecification, List<String> rowsSpecification, List<String> columnCordinates,
-			List<String> rowCordinates, List<String> measuresCordinates, List<String> data, boolean measuresOnColumns, int measuresLength, int columnsN) {
+	private Placeholder/* <?> */[][] getDataMatrix(List<String> columnsSpecification, List<String> rowsSpecification,
+			List<String> columnCordinates, List<String> rowCordinates, List<String> measuresCordinates,
+			List<String> data, boolean measuresOnColumns, int measuresLength, int columnsN) {
 		Placeholder/* <?> */[][] dataMatrix;
 		int x, y;
 		int rowsN;
 
 		if (measuresOnColumns) {
-			rowsN = (rowsSpecification.size() > 0 ? rowsSpecification.size() : 1);
+			rowsN = (!rowsSpecification.isEmpty() ? rowsSpecification.size() : 1);
 		} else {
-			rowsN = (rowsSpecification.size() > 0 ? rowsSpecification.size() : 1) * measuresLength;
+			rowsN = (!rowsSpecification.isEmpty() ? rowsSpecification.size() : 1) * measuresLength;
 		}
 
 		dataMatrix = new Placeholder/* <?> */[rowsN][columnsN];
@@ -1011,22 +1028,22 @@ public class CrossTab {
 					String rowCoordinate = null;
 					String columnCoordinate = null;
 
-					if (rowsSpecification.size() > 0) {
+					if (!rowsSpecification.isEmpty()) {
 						rowCoordinate = rowCordinates.get(i + j);
 						x = rowsSpecification.indexOf(rowCoordinate);
 						if (x < 0) {
 							continue; // elements not found because crosstab is
-										// too big and it was truncated
+										 // too big and it was truncated
 						}
 					} else {
 						x = 0; // crosstab with no attributes on rows
 					}
-					if (columnsSpecification.size() > 0) {
+					if (!columnsSpecification.isEmpty()) {
 						columnCoordinate = columnCordinates.get(i + j);
 						y = columnsSpecification.indexOf(columnCoordinate);
 						if (y < 0) {
 							continue; // elements not found because crosstab is
-										// too big and it was truncated
+										 // too big and it was truncated
 						}
 					} else {
 						y = 0; // crosstab with no attributes on columns
@@ -1049,23 +1066,23 @@ public class CrossTab {
 					String rowCoordinate = null;
 					String columnCoordinate = null;
 
-					if (rowsSpecification.size() > 0) {
+					if (!rowsSpecification.isEmpty()) {
 						rowCoordinate = rowCordinates.get(i + j);
 						x = rowsSpecification.indexOf(rowCoordinate);
 						if (x < 0) {
 							continue; // elements not found because crosstab is
-										// too big and it was truncated
+										 // too big and it was truncated
 						}
 					} else {
 						x = 0; // crosstab with no attributes on rows
 					}
 
-					if (columnsSpecification.size() > 0) {
+					if (!columnsSpecification.isEmpty()) {
 						columnCoordinate = columnCordinates.get(i + j);
 						y = columnsSpecification.indexOf(columnCoordinate);
 						if (y < 0) {
 							continue; // elements not found because crosstab is
-										// too big and it was truncated
+										 // too big and it was truncated
 						}
 					} else {
 						y = 0; // crosstab with no attributes on columns
@@ -1108,15 +1125,16 @@ public class CrossTab {
 
 	/**
 	 * Add to the root (columnRoot or rowRoot) a path from the root to a leaf. A record contains both the columns definition and the rows definition: (it may be
-	 * something like that: C1 C2 C3 R1 R2 M1 M1, where Ci represent a column, Ri represent a row, Mi a measure). So for take a column path (C1 C2 C3), we need
-	 * need a start and end position in the record (in this case 0,3)
+	 * something like that: C1 C2 C3 R1 R2 M1 M1, where Ci represent a column, Ri represent a row, Mi a measure). So for take a column path (C1 C2 C3), we need need
+	 * a start and end position in the record (in this case 0,3)
 	 *
 	 * @param root          : the node in witch add the record
 	 * @param record
 	 * @param startPosition
 	 * @param endPosition
 	 */
-	private boolean addRecord(Node root, JSONObject datasetRecords, List<String> attributeFieldsName, List<String> orderingList) {
+	private boolean addRecord(Node root, JSONObject datasetRecords, List<String> attributeFieldsName,
+			List<String> orderingList) {
 		boolean toReturn = false;
 		Node nodeToCheck = root;
 
@@ -1160,8 +1178,8 @@ public class CrossTab {
 
 	/**
 	 * Add to the root (columnRoot or rowRoot) a path from the root to a leaf. A record contains both the columns definition and the rows definition: (it may be
-	 * something like that: C1 C2 C3 R1 R2 M1 M1, where Ci represent a column, Ri represent a row, Mi a measure). So for take a column path (C1 C2 C3), we need
-	 * need a start and end position in the record (in this case 0,3)
+	 * something like that: C1 C2 C3 R1 R2 M1 M1, where Ci represent a column, Ri represent a row, Mi a measure). So for take a column path (C1 C2 C3), we need need
+	 * a start and end position in the record (in this case 0,3)
 	 *
 	 * @param root          : the node in witch add the record
 	 * @param record
@@ -1174,7 +1192,7 @@ public class CrossTab {
 		Node node;
 		Node nodeToCheck = root;
 		int nodePosition;
-		List<IField> valueFields = new ArrayList<IField>();
+		List<IField> valueFields = new ArrayList<>();
 
 		valueFields = valueRecord.getFields();
 
@@ -1210,7 +1228,7 @@ public class CrossTab {
 	 * @return list with all the path from the node n to the leafs
 	 */
 	private List<String> getLeafsPathList(Node n) {
-		List<String> toReturn = new ArrayList<String>();
+		List<String> toReturn = new ArrayList<>();
 		for (int i = 0; i < n.getChildren().size(); i++) {
 			toReturn.addAll(visit(n.getChildren().get(i), PATH_SEPARATOR));
 		}
@@ -1218,7 +1236,7 @@ public class CrossTab {
 	}
 
 	private List<String> visit(Node n, String prefix) {
-		List<String> toReturn = new ArrayList<String>();
+		List<String> toReturn = new ArrayList<>();
 		String description = n.getDescription();
 		if (StringUtils.isEmpty(description)) {
 			description = "null";
@@ -1249,7 +1267,7 @@ public class CrossTab {
 	 * @param measures
 	 */
 	private void addMeasuresToTree(Node root, List<Measure> measures) {
-		List<Node> measuresNodes = new ArrayList<Node>();
+		List<Node> measuresNodes = new ArrayList<>();
 		for (Measure measure : measures) {
 			String alias = measure.getAlias();
 			String columnName = alias2DsColumnName.get(alias);
@@ -1261,7 +1279,7 @@ public class CrossTab {
 
 	// It's ok that the list of the measures is the same for every leaf
 	private void addMeasuresToLeafs(Node node, List<Node> measuresNodes) {
-		if (node.getChildren().size() == 0) {
+		if (node.getChildren().isEmpty()) {
 			for (int i = 0; i < measuresNodes.size(); i++) {
 				Node n = measuresNodes.get(i).clone();
 				node.addChild(n);
@@ -1304,12 +1322,12 @@ public class CrossTab {
 		}
 
 		String fieldName = measure.getAlias(); // the measure name is not the
-												// name (or alias) of the field
-												// coming with the datastore
-												// since it is something like
-												// SUM(col_0_0_) (see how
-												// crosstab datastore query is
-												// created)
+												 // name (or alias) of the field
+												 // coming with the datastore
+												 // since it is something like
+												 // SUM(col_0_0_) (see how
+												 // crosstab datastore query is
+												 // created)
 		String aggregationFunction = null;
 		if (measure.getAggregationFunction() != null) {
 			aggregationFunction = measure.getAggregationFunction().getName();
@@ -1320,25 +1338,32 @@ public class CrossTab {
 		if (Number.class.isAssignableFrom(clazz)) {
 
 			// BigInteger, Integer, Long, Short, Byte
-			if (Integer.class.isAssignableFrom(clazz) || BigInteger.class.isAssignableFrom(clazz) || Long.class.isAssignableFrom(clazz)
-					|| Short.class.isAssignableFrom(clazz) || Byte.class.isAssignableFrom(clazz)) {
-				return new MeasureInfo(fieldName, measure.getEntityId(), "int", null, aggregationFunction, excludeFromTotalAndSubtotal);
+			if (Integer.class.isAssignableFrom(clazz) || BigInteger.class.isAssignableFrom(clazz)
+					|| Long.class.isAssignableFrom(clazz) || Short.class.isAssignableFrom(clazz)
+					|| Byte.class.isAssignableFrom(clazz)) {
+				return new MeasureInfo(fieldName, measure.getEntityId(), "int", null, aggregationFunction,
+						excludeFromTotalAndSubtotal);
 			} else {
 				String decimalPrecision = (String) fieldMeta.getProperty(IFieldMetaData.DECIMALPRECISION);
 				if (decimalPrecision != null) {
-					return new MeasureInfo(fieldName, measure.getEntityId(), "float", "{" + IFieldMetaData.DECIMALPRECISION + ":" + decimalPrecision + "}",
-							aggregationFunction, excludeFromTotalAndSubtotal);
+					return new MeasureInfo(fieldName, measure.getEntityId(), "float",
+							"{" + IFieldMetaData.DECIMALPRECISION + ":" + decimalPrecision + "}", aggregationFunction,
+							excludeFromTotalAndSubtotal);
 				} else {
-					return new MeasureInfo(fieldName, measure.getEntityId(), "float", null, aggregationFunction, excludeFromTotalAndSubtotal);
+					return new MeasureInfo(fieldName, measure.getEntityId(), "float", null, aggregationFunction,
+							excludeFromTotalAndSubtotal);
 				}
 			}
 
 		} else if (Timestamp.class.isAssignableFrom(clazz)) {
-			return new MeasureInfo(fieldName, measure.getEntityId(), "timestamp", "d/m/Y H:i:s", aggregationFunction, excludeFromTotalAndSubtotal);
+			return new MeasureInfo(fieldName, measure.getEntityId(), "timestamp", "d/m/Y H:i:s", aggregationFunction,
+					excludeFromTotalAndSubtotal);
 		} else if (Date.class.isAssignableFrom(clazz)) {
-			return new MeasureInfo(fieldName, measure.getEntityId(), "date", "d/m/Y", aggregationFunction, excludeFromTotalAndSubtotal);
+			return new MeasureInfo(fieldName, measure.getEntityId(), "date", "d/m/Y", aggregationFunction,
+					excludeFromTotalAndSubtotal);
 		} else {
-			return new MeasureInfo(fieldName, measure.getEntityId(), "string", getFormat(measure), aggregationFunction, excludeFromTotalAndSubtotal);
+			return new MeasureInfo(fieldName, measure.getEntityId(), "string", getFormat(measure), aggregationFunction,
+					excludeFromTotalAndSubtotal);
 		}
 	}
 
@@ -1395,7 +1420,8 @@ public class CrossTab {
 		final String aggregationFunction;
 		final Boolean excludeFromTotalAndSubtotal;
 
-		public MeasureInfo(String name, String id, String type, String format, String aggregationFunction, Boolean excludeFromTotalAndSubtotal) {
+		public MeasureInfo(String name, String id, String type, String format, String aggregationFunction,
+				Boolean excludeFromTotalAndSubtotal) {
 			this.name = name;
 			this.type = type;
 			this.format = format;
@@ -1458,20 +1484,20 @@ public class CrossTab {
 	 */
 	private Node mergeNodes(List<Node> nodes, String NodeValue) {
 		Assert.assertNotNull(nodes, "We need at least a node to merge");
-		Assert.assertTrue(nodes.size() > 0, "We need at least a node to merge");
+		Assert.assertTrue(!nodes.isEmpty(), "We need at least a node to merge");
 		int index;
 		List<Node> commonChildNode;
 		Node newNode = new Node(NodeValue);
 		newNode.setCellType(CellType.CF);
-		List<Node> newchilds = new ArrayList<Node>();
-		if (nodes.size() > 0) {
+		List<Node> newchilds = new ArrayList<>();
+		if (!nodes.isEmpty()) {
 			// get the first node. If a child of the first node
 			// is not a child of the other nodes is not in common...
 			Node firstNode = nodes.get(0);
 			List<Node> firstNodeChilds = firstNode.getChildren();
-			if (firstNodeChilds != null && firstNodeChilds.size() > 0) {
+			if (firstNodeChilds != null && !firstNodeChilds.isEmpty()) {
 				for (int i = 0; i < firstNodeChilds.size(); i++) {
-					commonChildNode = new ArrayList<Node>();
+					commonChildNode = new ArrayList<>();
 					commonChildNode.add(firstNodeChilds.get(i));
 					// look for the child in all other nodes
 					for (int j = 1; j < nodes.size(); j++) {
@@ -1489,7 +1515,7 @@ public class CrossTab {
 				}
 			} else {
 				// we are the leafs.. so we want the id of the node
-				List<Integer> leafPositions = new ArrayList<Integer>();
+				List<Integer> leafPositions = new ArrayList<>();
 				for (int j = 0; j < nodes.size(); j++) {
 					leafPositions.add(nodes.get(j).getLeafPosition());
 				}
@@ -1525,14 +1551,15 @@ public class CrossTab {
 	 * @return
 	 */
 	private List<Node> cleanTreeAfterMergeRecorsive(Node node, int treeDepth, int level) {
-		List<Node> listOfNodesToRemove = new ArrayList<Node>();
-		if (node.getChildren().size() == 0) {
+		List<Node> listOfNodesToRemove = new ArrayList<>();
+		if (node.getChildren().isEmpty()) {
 			if (level < treeDepth - 1) {
 				listOfNodesToRemove.add(node);
 			}
 		} else {
 			for (int i = 0; i < node.getChildren().size(); i++) {
-				listOfNodesToRemove.addAll(cleanTreeAfterMergeRecorsive(node.getChildren().get(i), treeDepth, level + 1));
+				listOfNodesToRemove
+						.addAll(cleanTreeAfterMergeRecorsive(node.getChildren().get(i), treeDepth, level + 1));
 			}
 		}
 		return listOfNodesToRemove;
@@ -1584,7 +1611,8 @@ public class CrossTab {
 	 * @param cfName
 	 * @param celltype
 	 */
-	private void calculateCF(String operation, Node node, boolean horizontal, int level, String cfName, CellType celltype) {
+	private void calculateCF(String operation, Node node, boolean horizontal, int level, String cfName,
+			CellType celltype) {
 		Node rootNode;
 		if (horizontal) {
 			rootNode = columnsRoot;
@@ -1592,7 +1620,7 @@ public class CrossTab {
 			rootNode = rowsRoot;
 		}
 
-		List<Node> fathersOfTheNodesOfTheLevel = new ArrayList<Node>();
+		List<Node> fathersOfTheNodesOfTheLevel = new ArrayList<>();
 		fathersOfTheNodesOfTheLevel.add(node);
 
 		for (int i = 0; i < fathersOfTheNodesOfTheLevel.size(); i++) {
@@ -1610,8 +1638,9 @@ public class CrossTab {
 	 * @param cfName
 	 * @param celltype
 	 */
-	private void calculateCFSub(String operation, Node node, boolean horizontal, int level, String cfName, CellType celltype) {
-		List<String[]> calculatedFieldResult = new ArrayList<String[]>();
+	private void calculateCFSub(String operation, Node node, boolean horizontal, int level, String cfName,
+			CellType celltype) {
+		List<String[]> calculatedFieldResult = new ArrayList<>();
 		List<String> operationParsed;
 		List<String> operationExpsNames;
 		List<List<String>> parseOperationR = parseOperation(operation);
@@ -1623,7 +1652,7 @@ public class CrossTab {
 		Object[] expressionMap = buildExpressionMap(levelNodes, operationExpsNames);
 		Map<String, Integer> expressionToIndexMap = (Map<String, Integer>) expressionMap[1];
 		List<Node> nodeInvolvedInTheOperation = (List<Node>) expressionMap[0];
-		if (nodeInvolvedInTheOperation.size() > 0) {
+		if (!nodeInvolvedInTheOperation.isEmpty()) {
 
 			// add the header
 			int positionToAdd = node.getRightMostLeafPositionCF() + 1;
@@ -1633,11 +1662,13 @@ public class CrossTab {
 			List<Node> mergedNodeLeafs = mergedNode.getLeafs();
 			for (int i = 0; i < mergedNodeLeafs.size(); i++) {
 				List<Integer> leafPositions = mergedNodeLeafs.get(i).getLeafPositionsForCF();
-				List<String[]> arraysInvolvedInTheOperation = getArraysInvolvedInTheOperation(horizontal, operationExpsNames, expressionToIndexMap,
-						leafPositions);
+				List<String[]> arraysInvolvedInTheOperation = getArraysInvolvedInTheOperation(horizontal,
+						operationExpsNames, expressionToIndexMap, leafPositions);
 				calculatedFieldResult.add(executeOperationOnArrays(arraysInvolvedInTheOperation, operationParsed));
-				List<String[]> totalArraysInvolvedInTheOperation = getTotalArraysInvolvedInTheOperation(horizontal, leafPositions);
-				executeOperationOnTotalArraysAndUpdate(totalArraysInvolvedInTheOperation, operationParsed, horizontal, positionToAdd);
+				List<String[]> totalArraysInvolvedInTheOperation = getTotalArraysInvolvedInTheOperation(horizontal,
+						leafPositions);
+				executeOperationOnTotalArraysAndUpdate(totalArraysInvolvedInTheOperation, operationParsed, horizontal,
+						positionToAdd);
 			}
 
 			node.addChild(mergedNode);
@@ -1653,8 +1684,8 @@ public class CrossTab {
 	 */
 	private static List<List<String>> parseOperation(String operation) {
 		String freshOp = " " + operation;
-		List<String> operationParsed = new ArrayList<String>();
-		List<String> operationExpsNames = new ArrayList<String>();
+		List<String> operationParsed = new ArrayList<>();
+		List<String> operationExpsNames = new ArrayList<>();
 		int index = 0;
 		// parse the operation
 		while (freshOp.indexOf("field[") >= 0) {
@@ -1666,7 +1697,7 @@ public class CrossTab {
 			freshOp = freshOp.substring(index + 1);
 		}
 		operationParsed.add(freshOp);
-		List<List<String>> toReturn = new ArrayList<List<String>>();
+		List<List<String>> toReturn = new ArrayList<>();
 		toReturn.add(operationParsed);
 		toReturn.add(operationExpsNames);
 		return toReturn;
@@ -1681,8 +1712,8 @@ public class CrossTab {
 	 * @return
 	 */
 	private Object[] buildExpressionMap(List<Node> nodes, List<String> operationExpsNames) {
-		Map<String, Integer> expressionToIndexMap = new HashMap<String, Integer>();
-		List<Node> nodeInvolvedInTheOperation = new ArrayList<Node>();
+		Map<String, Integer> expressionToIndexMap = new HashMap<>();
+		List<Node> nodeInvolvedInTheOperation = new ArrayList<>();
 		int foundNode = 0;
 		for (Iterator<String> iterator = operationExpsNames.iterator(); iterator.hasNext();) {
 			String operationElement = iterator.next();
@@ -1712,9 +1743,9 @@ public class CrossTab {
 	 * @param indexInTheArray
 	 * @return
 	 */
-	private List<String[]> getArraysInvolvedInTheOperation(boolean horizontal, List<String> operationExpsNames, Map<String, Integer> expressionToIndexMap,
-			List<Integer> indexInTheArray) {
-		List<String[]> toReturn = new ArrayList<String[]>();
+	private List<String[]> getArraysInvolvedInTheOperation(boolean horizontal, List<String> operationExpsNames,
+			Map<String, Integer> expressionToIndexMap, List<Integer> indexInTheArray) {
+		List<String[]> toReturn = new ArrayList<>();
 		for (int y = 0; y < operationExpsNames.size(); y++) {
 			String alias = operationExpsNames.get(y);
 			int index = expressionToIndexMap.get(alias);
@@ -1728,7 +1759,7 @@ public class CrossTab {
 	}
 
 	private List<String[]> getTotalArraysInvolvedInTheOperation(boolean horizontal, List<Integer> indexInTheArray) {
-		List<String[]> toReturn = new ArrayList<String[]>();
+		List<String[]> toReturn = new ArrayList<>();
 
 		for (int y = 0; y < indexInTheArray.size(); y++) {
 			if (horizontal) {
@@ -1760,7 +1791,7 @@ public class CrossTab {
 		int datalength = data.get(0).length;
 		String[] operationResult = new String[datalength];
 		for (int i = 0; i < datalength; i++) {
-			operationElements = new ArrayList<String>();
+			operationElements = new ArrayList<>();
 			for (int j = 0; j < data.size(); j++) {
 				operationElements.add(data.get(j)[i]);
 			}
@@ -1769,7 +1800,8 @@ public class CrossTab {
 		return operationResult;
 	}
 
-	private void executeOperationOnTotalArraysAndUpdate(List<String[]> data, List<String> operation, boolean horizontal, int positionToAdd) {
+	private void executeOperationOnTotalArraysAndUpdate(List<String[]> data, List<String> operation, boolean horizontal,
+			int positionToAdd) {
 		String[] executeOperationOnArrays = executeOperationOnArrays(data, operation);
 		if (horizontal) {
 			for (int i = 0; i < executeOperationOnArrays.length; i++) {
@@ -1840,7 +1872,7 @@ public class CrossTab {
 	 *                      TODO
 	 */
 	private List<String[]> getTotalsOnRows(boolean measuresOnRow) {
-		List<String[]> result = new ArrayList<String[]>();
+		List<String[]> result = new ArrayList<>();
 		double[] st;
 		int measures = 1;
 		if (!measuresOnRow) {
@@ -1920,7 +1952,7 @@ public class CrossTab {
 	}
 
 	private double getCountDistinct(List<Double> values) {
-		Set<Double> distinctValues = new HashSet<Double>(values);
+		Set<Double> distinctValues = new HashSet<>(values);
 		return distinctValues.size();
 	}
 
@@ -1972,7 +2004,7 @@ public class CrossTab {
 	 *         TODO
 	 */
 	private List<String[]> getTotalsOnColumns(boolean measuresOnRow) {
-		List<String[]> result = new ArrayList<String[]>();
+		List<String[]> result = new ArrayList<>();
 		double[] st;
 //		int measures = 1; //default for measures on column : it sums 1 column at a time
 //		if (measuresOnRow) {
@@ -2172,7 +2204,7 @@ public class CrossTab {
 		double[] st = new double[measuresNumber];
 
 		String[] aggregationFunctions = new String[measuresNumber];
-		List<Integer> notDisplayedSuperTotal = new ArrayList<Integer>();
+		List<Integer> notDisplayedSuperTotal = new ArrayList<>();
 
 		for (int i = 0; i < measuresNumber; i++) {
 			MeasureInfo measureInfo = this.measuresToShowOnTotalsOrSubTotals.get(i);
@@ -2254,7 +2286,7 @@ public class CrossTab {
 		return node;
 	}
 
-	private void addTotals() throws JSONException {
+	private void addTotals() {
 		Boolean rowsTotals = config.optBoolean("calculatetotalsoncolumns");
 		Boolean columnsTotals = config.optBoolean("calculatetotalsonrows");
 
@@ -2309,7 +2341,8 @@ public class CrossTab {
 				} else {
 					int startPosition = 0;
 					for (int i = 0; i < columnsRoot.getChildren().size(); i++) {
-						startPosition = addSubtotalsToTheTreeNoMeasure(columnsRoot.getChildren().get(i), true, startPosition);
+						startPosition = addSubtotalsToTheTreeNoMeasure(columnsRoot.getChildren().get(i), true,
+								startPosition);
 					}
 				}
 			}
@@ -2321,7 +2354,8 @@ public class CrossTab {
 				} else {
 					int startPosition = 0;
 					for (int i = 0; i < rowsRoot.getChildren().size(); i++) {
-						startPosition = addSubtotalsToTheTreeNoMeasure(rowsRoot.getChildren().get(i), false, startPosition);
+						startPosition = addSubtotalsToTheTreeNoMeasure(rowsRoot.getChildren().get(i), false,
+								startPosition);
 					}
 				}
 			}
@@ -2334,7 +2368,8 @@ public class CrossTab {
 				} else {
 					int startPosition = 0;
 					for (int i = 0; i < rowsRoot.getChildren().size(); i++) {
-						startPosition = addSubtotalsToTheTreeNoMeasure(rowsRoot.getChildren().get(i), false, startPosition);
+						startPosition = addSubtotalsToTheTreeNoMeasure(rowsRoot.getChildren().get(i), false,
+								startPosition);
 					}
 				}
 			}
@@ -2345,7 +2380,8 @@ public class CrossTab {
 				} else {
 					int startPosition = 0;
 					for (int i = 0; i < columnsRoot.getChildren().size(); i++) {
-						startPosition = addSubtotalsToTheTreeNoMeasure(columnsRoot.getChildren().get(i), true, startPosition);
+						startPosition = addSubtotalsToTheTreeNoMeasure(columnsRoot.getChildren().get(i), true,
+								startPosition);
 					}
 				}
 			}
@@ -2358,7 +2394,7 @@ public class CrossTab {
 		int length = node.getLeafsNumber();
 		String[] total;
 		List<Node> children = node.getChildren();
-		if (children.size() > 0) {
+		if (!children.isEmpty()) {
 			int freshStartingPosition = startingPosition;
 
 			if (horizontal) {
@@ -2367,9 +2403,10 @@ public class CrossTab {
 				total = getTotalsOfRows(start, length);
 			}
 
-			List<String[]> linesums = new ArrayList<String[]>();
+			List<String[]> linesums = new ArrayList<>();
 			linesums.add(total);
-			addCrosstabDataLine(node, freshStartingPosition + node.getLeafsNumber(), linesums, horizontal, CellType.SUBTOTAL);
+			addCrosstabDataLine(node, freshStartingPosition + node.getLeafsNumber(), linesums, horizontal,
+					CellType.SUBTOTAL);
 
 			for (int i = 0; i < children.size(); i++) {
 				Node currChild = children.get(i);
@@ -2391,18 +2428,19 @@ public class CrossTab {
 		} else {
 			for (int i = 0; i < node.getChildren().size(); i++) {
 				addSubtotalsToTheTree(node.getChildren().get(i), horizontal, startingPosition);
-				startingPosition = addSubtotalsToTheNodeUpLevel(node.getChildren().get(i), horizontal, startingPosition);
+				startingPosition = addSubtotalsToTheNodeUpLevel(node.getChildren().get(i), horizontal,
+						startingPosition);
 			}
 		}
 	}
 
 	public int addSubtotalsToTheNodeUpLevel(Node node, boolean horizontal, int startingPosition) {
 		List<Node> children = node.getChildren();
-		List<List<Integer>> valuesTosum = new ArrayList<List<Integer>>();
-		List<String[]> linesums = new ArrayList<String[]>();
+		List<List<Integer>> valuesTosum = new ArrayList<>();
+		List<String[]> linesums = new ArrayList<>();
 
 		for (int y = 0; y < measures.size(); y++) {
-			valuesTosum.add(new ArrayList<Integer>());
+			valuesTosum.add(new ArrayList<>());
 		}
 
 		for (int i = 0; i < children.size(); i++) {
@@ -2428,17 +2466,18 @@ public class CrossTab {
 
 	public int addSubtotalsToTheNodeFirstLevel(Node node, boolean horizontal, int positionToAddNode) {
 		Node n = node;
-		List<String[]> linesums = new ArrayList<String[]>();
-		if (n.getChildren().size() > 0 && // has children
-				n.getChildren().get(0).getChildren().size() > 0 && // has
-																	// granchildren
-				n.getChildren().get(0).getChildren().get(0).getChildren().size() > 0) { // the
+		List<String[]> linesums = new ArrayList<>();
+		if (!n.getChildren().isEmpty() && // has children
+				!n.getChildren().get(0).getChildren().isEmpty() && // has
+																	 // granchildren
+				!n.getChildren().get(0).getChildren().get(0).getChildren().isEmpty()) { // the
 			// granchildren
 			// are
 			// not
 			// leaf
 			for (int i = 0; i < n.getChildren().size(); i++) {
-				positionToAddNode = addSubtotalsToTheNodeFirstLevel(n.getChildren().get(i), horizontal, positionToAddNode);
+				positionToAddNode = addSubtotalsToTheNodeFirstLevel(n.getChildren().get(i), horizontal,
+						positionToAddNode);
 			}
 		} else {
 			Node subtotalNode = buildSubtotalNode(1, true, horizontal);
@@ -2450,8 +2489,9 @@ public class CrossTab {
 					continue;
 				}
 
-				List<Integer> linesToSum = new ArrayList<Integer>();
-				if ((!measuresOnRow && crosstabDefinition.getColumns().size() == 0) || (measuresOnRow && crosstabDefinition.getRows().size() == 0)) {
+				List<Integer> linesToSum = new ArrayList<>();
+				if ((!measuresOnRow && crosstabDefinition.getColumns().isEmpty())
+						|| (measuresOnRow && crosstabDefinition.getRows().isEmpty())) {
 					// no columns required: just measures
 					linesToSum.add(positionToAddNode + y);
 				} else {
@@ -2461,7 +2501,8 @@ public class CrossTab {
 				}
 				linesums.add(getTotals(linesToSum, horizontal));
 			}
-			if ((!measuresOnRow && crosstabDefinition.getColumns().size() == 0) || (measuresOnRow && crosstabDefinition.getRows().size() == 0)) {
+			if ((!measuresOnRow && crosstabDefinition.getColumns().isEmpty())
+					|| (measuresOnRow && crosstabDefinition.getRows().isEmpty())) {
 				positionToAddNode = positionToAddNode + measuresCount;
 			} else {
 				positionToAddNode = positionToAddNode + measuresCount * n.getChildren().size();
@@ -2509,7 +2550,7 @@ public class CrossTab {
 	 * TODO
 	 */
 	private String[] getTotals(List<Integer> lines, boolean horizontal) {
-		double sum[];
+		double[] sum;
 		if (!horizontal) {
 			sum = new double[dataMatrix[0].length];
 //			for (int i = 0; i < dataMatrix[0].length; i++) {
@@ -2520,7 +2561,7 @@ public class CrossTab {
 //				}
 //			}
 //			for (int j = 1; j < lines.size(); j++) {
-//				for (int i = 0; i < dataMatrix[0].length; i++) {
+//				for (int i = 0; i < dataMatrix[0].length; i++) {c
 //					String value = dataMatrix[lines.get(j)][i];
 ////					if (!value.equals(DATA_MATRIX_NA) && (getCellType(lines.get(j), i).equals(CellType.DATA))) {
 //					if (!value.equals(DATA_MATRIX_NA) &&
@@ -2604,7 +2645,8 @@ public class CrossTab {
 	 * @param horizontal    true to insert columns/false to insert rows
 	 * @param type          the type of the data
 	 */
-	public void addCrosstabDataLine(Node currNode, int startposition, List<String[]> line, boolean horizontal, CellType type) {
+	public void addCrosstabDataLine(Node currNode, int startposition, List<String[]> line, boolean horizontal,
+			CellType type) {
 		if (horizontal) {
 			addCrosstabDataColumns(currNode, startposition, line, type);
 		} else {
@@ -2622,7 +2664,8 @@ public class CrossTab {
 	public void addCrosstabDataColumns(Node currNode, int startposition, List<String[]> colums, CellType type) {
 		Assert.assertNotNull(dataMatrix, "The data matrix must not be null");
 		Assert.assertTrue(startposition <= dataMatrix[0].length,
-				"The position you want to add the columns is bigger than the table size ts=" + dataMatrix[0].length + " position= " + startposition);
+				"The position you want to add the columns is bigger than the table size ts=" + dataMatrix[0].length
+						+ " position= " + startposition);
 
 		final List<MeasureInfo> measures = getMeasures();
 		final int measureSize = measures.size();
@@ -2649,7 +2692,8 @@ public class CrossTab {
 				Node currRow = this.rowsRoot.getLeafs().get(i);
 				Node currCol = currNode;
 				String path = createJsonPathQueryFromNodes(currRow, currCol, measureInfo);
-				newPlaceholder = new JsonPathAggregatorPlaceholder(this, measureInfo, getAggregatorDelegate(measureInfo), type, path);
+				newPlaceholder = new JsonPathAggregatorPlaceholder(this, measureInfo,
+						getAggregatorDelegate(measureInfo), type, path);
 
 				newData[i][startposition + x] = newPlaceholder;
 			}
@@ -2718,7 +2762,8 @@ public class CrossTab {
 	public void addCrosstabDataRow(Node currNode, int startposition, List<String[]> rows, CellType type) {
 		Assert.assertNotNull(dataMatrix, "The data matrix must not be null");
 		Assert.assertTrue(startposition <= dataMatrix.length,
-				"The position you want to add the rows is bigger than the table size ts=" + dataMatrix[0].length + " position= " + startposition);
+				"The position you want to add the rows is bigger than the table size ts=" + dataMatrix[0].length
+						+ " position= " + startposition);
 
 		final List<MeasureInfo> measures = getMeasures();
 		final int measureSize = measures.size();
@@ -2746,7 +2791,8 @@ public class CrossTab {
 				Node currRow = currNode;
 				Node currCol = this.columnsRoot.getLeafs().get(index);
 				String path = createJsonPathQueryFromNodes(currRow, currCol, measureInfo);
-				newPlaceholder = new JsonPathAggregatorPlaceholder(this, measureInfo, getAggregatorDelegate(measureInfo), type, path);
+				newPlaceholder = new JsonPathAggregatorPlaceholder(this, measureInfo,
+						getAggregatorDelegate(measureInfo), type, path);
 
 				newData[startposition + x][j] = newPlaceholder;
 			}
@@ -2945,7 +2991,7 @@ public class CrossTab {
 
 	public List<String> getRowHeadersTitles() {
 		if (rowHeadersTitles == null) {
-			rowHeadersTitles = new ArrayList<String>();
+			rowHeadersTitles = new ArrayList<>();
 			List<CrosstabDefinition.Row> rows = crosstabDefinition.getRows();
 			for (int i = 0; i < rows.size(); i++) {
 				rowHeadersTitles.add(rows.get(i).getAlias());
@@ -3034,13 +3080,13 @@ public class CrossTab {
 	}
 
 	/**
-	 * Returns the number of leaves of the current subtree: Takes the root node of the column tree, visits the first level in depth, and return the number of
-	 * leaves of this first level
+	 * Returns the number of leaves of the current subtree: Takes the root node of the column tree, visits the first level in depth, and return the number of leaves
+	 * of this first level
 	 *
 	 * @return the number of leaves
 	 */
 	private int getColumnSubtreeNumberOfLeaves(int colIdx) {
-		if (columnsHeaderList.size() == 0) {
+		if (columnsHeaderList.isEmpty()) {
 			// i don't have any columns defined
 			return measures.size();
 		}
@@ -3053,7 +3099,7 @@ public class CrossTab {
 	}
 
 	private void initTreeLeavesList() {
-		treeLeaves = new ArrayList<Node>();
+		treeLeaves = new ArrayList<>();
 		recursiveAddLeaves(columnsRoot);
 	}
 
@@ -3063,7 +3109,7 @@ public class CrossTab {
 
 		List<Node> children = n.getChildren();
 
-		if (children == null || children.size() == 0) {
+		if (children == null || children.isEmpty()) {
 			treeLeaves.add(n);
 			return;
 		}
@@ -3134,13 +3180,15 @@ public class CrossTab {
 	}
 
 	public String getHTMLCrossTab(Locale locale) {
-		CrossTabHTMLSerializer serializer = new CrossTabHTMLSerializer(locale, myGlobalId, columnsSortKeysMap, rowsSortKeysMap, measuresSortKeysMap, null);
+		CrossTabHTMLSerializer serializer = new CrossTabHTMLSerializer(locale, myGlobalId, columnsSortKeysMap,
+				rowsSortKeysMap, measuresSortKeysMap, null);
 		String html = serializer.serialize(this);
 		return html;
 	}
 
 	public String getHTMLCrossTab(Locale locale, JSONObject variables) {
-		CrossTabHTMLSerializer serializer = new CrossTabHTMLSerializer(locale, myGlobalId, columnsSortKeysMap, rowsSortKeysMap, measuresSortKeysMap, variables);
+		CrossTabHTMLSerializer serializer = new CrossTabHTMLSerializer(locale, myGlobalId, columnsSortKeysMap,
+				rowsSortKeysMap, measuresSortKeysMap, variables);
 		String html = serializer.serialize(this);
 		return html;
 	}
@@ -3149,10 +3197,10 @@ public class CrossTab {
 		return crosstabDefinition;
 	}
 
-	private Map<String, Double> sortMeasures(Map<Integer, NodeComparator> sortKeys, Map<String, Double> values, int rowsCount, int columnsCount, int totRows,
-			int totColumns) {
-		Map<String, Double> toReturn = new LinkedHashMap<String, Double>();
-		List<Double> valuesToOrder = new ArrayList<Double>();
+	private Map<String, Double> sortMeasures(Map<Integer, NodeComparator> sortKeys, Map<String, Double> values,
+			int rowsCount, int columnsCount, int totRows, int totColumns) {
+		Map<String, Double> toReturn = new LinkedHashMap<>();
+		List<Double> valuesToOrder = new ArrayList<>();
 
 		ValueComparator comparator = null;
 		if (sortKeys != null) {
@@ -3168,11 +3216,11 @@ public class CrossTab {
 
 		// sort measure on rows
 		for (int c = 0; c < values.size(); c++) {
-			List<Double> valuesForCategory = new ArrayList<Double>(values.values());
-			if (valuesForCategory.size() == 0) {
+			List<Double> valuesForCategory = new ArrayList<>(values.values());
+			if (valuesForCategory.isEmpty()) {
 				continue;
 			}
-			if (valuesForCategory.size() > 0 && comparator != null) {
+			if (!valuesForCategory.isEmpty() && comparator != null) {
 				Collections.sort(valuesForCategory, comparator);
 			} else {
 				Collections.sort(valuesForCategory);

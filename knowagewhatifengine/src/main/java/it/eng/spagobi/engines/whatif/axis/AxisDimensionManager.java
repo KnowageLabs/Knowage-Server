@@ -35,7 +35,6 @@ import org.pivot4j.util.MemberHierarchyCache;
 import org.pivot4j.util.MemberSelection;
 
 import it.eng.spagobi.engines.whatif.cube.CubeUtilities;
-import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
 
 public class AxisDimensionManager {
 
@@ -44,7 +43,6 @@ public class AxisDimensionManager {
 	private PivotModel model;
 
 	public AxisDimensionManager(PivotModel model) {
-		super();
 		this.model = model;
 	}
 
@@ -65,13 +63,8 @@ public class AxisDimensionManager {
 
 		List<Member> membersToMove = null;
 
-		try {
-			logger.debug("getting the hierarchy object from the cube");
-			hierarchy = CubeUtilities.getHierarchy(getModel().getCube(), hierarchyName);
-		} catch (OlapException e) {
-			logger.error("Error getting the hierrarchy " + hierarchyName + " from the cube ", e);
-			throw new SpagoBIEngineRuntimeException("Error addingthe hierrarchy " + hierarchyName + " in the axis " + toAxisPos, e);
-		}
+		logger.debug("getting the hierarchy object from the cube");
+		hierarchy = CubeUtilities.getHierarchy(getModel().getCube(), hierarchyName);
 
 		// if the old axis is -1 the source are the filters
 		if (fromAxisPos < 0) {
@@ -117,7 +110,7 @@ public class AxisDimensionManager {
 				// measures), and add the visible measures
 				try {
 					if (hierarchy.getDimension().getDimensionType().equals(Dimension.Type.MEASURE)) {
-						List<Member> membersToRemove = new ArrayList<Member>();
+						List<Member> membersToRemove = new ArrayList<>();
 						List<Member> rootMembers = pm.findVisibleMembers(hierarchy);
 						for (int i = 0; i < rootMembers.size(); i++) {
 							Member member = rootMembers.get(i);
@@ -160,13 +153,8 @@ public class AxisDimensionManager {
 		Hierarchy hierarchy = null;
 		PlaceHierarchiesOnAxes ph = getModel().getTransform(PlaceHierarchiesOnAxes.class);
 
-		try {
-			logger.debug("getting the hierarchy object from the cube");
-			hierarchy = CubeUtilities.getHierarchy(getModel().getCube(), hierarchyName);
-		} catch (OlapException e) {
-			logger.error("Error getting the hierrarchy " + hierarchyName + " from the cube ", e);
-			throw new SpagoBIEngineRuntimeException("Error adding the hierrarchy " + hierarchyName + " in the axis " + axisPos, e);
-		}
+		logger.debug("getting the hierarchy object from the cube");
+		hierarchy = CubeUtilities.getHierarchy(getModel().getCube(), hierarchyName);
 
 		logger.debug("Getting the hierarchies list from the axis");
 
@@ -184,8 +172,7 @@ public class AxisDimensionManager {
 	}
 
 	/**
-	 * Changes the visibility of the members of a hierarchy. It takes a hierarchy, removes all the members and shows only the ones passed in the body of the
-	 * request
+	 * Changes the visibility of the members of a hierarchy. It takes a hierarchy, removes all the members and shows only the ones passed in the body of the request
 	 *
 	 * @param hierarchy hierarchy to update
 	 * @param members   list of members to show
@@ -214,21 +201,18 @@ public class AxisDimensionManager {
 	 * @param hierarchyPosition      the position of the old hierarchy
 	 * @return the new hierarchy
 	 */
-	public Hierarchy updateHierarchyOnAxis(int axisPos, String newHierarchyUniqueName, String oldHierarchyUniqueName, int hierarchyPosition) {
+	public Hierarchy updateHierarchyOnAxis(int axisPos, String newHierarchyUniqueName, String oldHierarchyUniqueName,
+			int hierarchyPosition) {
 		logger.debug("IN");
-		logger.debug("Updating the hierarchy in a dimension.. The new hierarchy is " + newHierarchyUniqueName + " the old one is " + oldHierarchyUniqueName);
+		logger.debug("Updating the hierarchy in a dimension.. The new hierarchy is " + newHierarchyUniqueName
+				+ " the old one is " + oldHierarchyUniqueName);
 
 		Hierarchy hierarchy = null;
 		PlaceHierarchiesOnAxes ph = getModel().getTransform(PlaceHierarchiesOnAxes.class);
 		Axis ax = CubeUtilities.getAxis(axisPos);
 
-		try {
-			logger.debug("getting the hierarchy object from the cube");
-			hierarchy = CubeUtilities.getHierarchy(getModel().getCube(), oldHierarchyUniqueName);
-		} catch (OlapException e) {
-			logger.error("Error getting the hierrarchy " + oldHierarchyUniqueName + " from the cube ", e);
-			throw new SpagoBIEngineRuntimeException("Error getting hierrarchy " + oldHierarchyUniqueName + " from the axis " + axisPos, e);
-		}
+		logger.debug("getting the hierarchy object from the cube");
+		hierarchy = CubeUtilities.getHierarchy(getModel().getCube(), oldHierarchyUniqueName);
 
 		// removes the slicers
 		logger.debug("Cleaning slicers");
@@ -244,13 +228,8 @@ public class AxisDimensionManager {
 			ph.removeHierarchy(ax, hierarchy);
 			logger.debug("Hierarchy removed");
 
-			try {
-				logger.debug("getting the hierarchy object from the cube");
-				hierarchy = CubeUtilities.getHierarchy(getModel().getCube(), newHierarchyUniqueName);
-			} catch (OlapException e) {
-				logger.error("Error getting the hierrarchy " + newHierarchyUniqueName + " from the cube ", e);
-				throw new SpagoBIEngineRuntimeException("Error getting hierrarchy " + newHierarchyUniqueName + " from the axis " + axisPos, e);
-			}
+			logger.debug("getting the hierarchy object from the cube");
+			hierarchy = CubeUtilities.getHierarchy(getModel().getCube(), newHierarchyUniqueName);
 
 			logger.debug("Adding a new hierarchy " + newHierarchyUniqueName + " in the axis " + axisPos);
 			ph.addHierarchy(ax, hierarchy, false, hierarchyPosition);

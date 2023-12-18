@@ -49,7 +49,7 @@ import it.eng.spagobi.writeback4j.SbiAliases;
 public class CubeUtilities {
 
 	public static final String PATH_DELIM = "[";
-	public static transient Logger logger = Logger.getLogger(CubeUtilities.class);
+	private static final Logger LOGGER = Logger.getLogger(CubeUtilities.class);
 
 	/**
 	 * @param hierarchy
@@ -58,8 +58,9 @@ public class CubeUtilities {
 	 * @return
 	 * @throws OlapException
 	 */
-	public static List<Member> findMembersByName(Hierarchy hierarchy, String name, Boolean strict) throws OlapException {
-		List<Member> searchResultMembers = new ArrayList<Member>();
+	public static List<Member> findMembersByName(Hierarchy hierarchy, String name, Boolean strict)
+			throws OlapException {
+		List<Member> searchResultMembers = new ArrayList<>();
 		for (Level level : hierarchy.getLevels()) {// && j < nodeLimit
 
 			for (Member member : level.getMembers()) {
@@ -119,7 +120,7 @@ public class CubeUtilities {
 	 * @return true if the member is the root
 	 * @throws OlapException
 	 */
-	public static boolean isRoot(String memberUniqueName) throws OlapException {
+	public static boolean isRoot(String memberUniqueName) {
 		return memberUniqueName == null || memberUniqueName.substring(1).indexOf(PATH_DELIM) == -1;
 	}
 
@@ -128,7 +129,8 @@ public class CubeUtilities {
 			Member m = members.get(i);
 			if (m.getUniqueName().equals(memberUniqueName)) {
 				return m;
-			} else if (memberUniqueName.contains(m.getUniqueName()) && memberUniqueName.indexOf(m.getUniqueName()) == 0) {
+			} else if (memberUniqueName.contains(m.getUniqueName())
+					&& memberUniqueName.indexOf(m.getUniqueName()) == 0) {
 				return getMember((List<Member>) m.getChildMembers(), memberUniqueName);
 			}
 		}
@@ -148,18 +150,18 @@ public class CubeUtilities {
 	 * @throws OlapException
 	 */
 	public static Position getPosition(List<Position> positions, String positionUniqueName) {
-		logger.debug("IN");
+		LOGGER.debug("IN");
 		positionUniqueName = positionUniqueName.replace(" ", "");
 		for (int i = 0; i < positions.size(); i++) {
 			Position p = positions.get(i);
 			String member = p.getMembers().toString();
 			member = member.replace(" ", "");
 			if (member.equals(positionUniqueName)) {
-				logger.debug("OUT: fund a member " + member);
+				LOGGER.debug("OUT: fund a member " + member);
 				return p;
 			}
 		}
-		logger.debug("OUT: ");
+		LOGGER.debug("OUT: ");
 		return null;
 	}
 
@@ -171,7 +173,7 @@ public class CubeUtilities {
 	 * @return
 	 * @throws OlapException
 	 */
-	public static Hierarchy getHierarchy(Cube cube, String hierarchyUniqueName) throws OlapException {
+	public static Hierarchy getHierarchy(Cube cube, String hierarchyUniqueName) {
 		Hierarchy hierarchy = null;
 		NamedList<Hierarchy> hierarchies = cube.getHierarchies();
 		for (int i = 0; i < hierarchies.size(); i++) {
@@ -185,7 +187,7 @@ public class CubeUtilities {
 	}
 
 	public static List<Dimension> getDimensions(List<Hierarchy> hierarchies) {
-		List<Dimension> dimensions = new ArrayList<Dimension>();
+		List<Dimension> dimensions = new ArrayList<>();
 		if (hierarchies != null) {
 			for (int i = 0; i < hierarchies.size(); i++) {
 				Hierarchy aHierarchy = hierarchies.get(i);
@@ -228,24 +230,24 @@ public class CubeUtilities {
 			if (dimension.getUniqueName().equals(WhatIfConstants.VERSION_DIMENSION_UNIQUENAME)) {
 				versionDimension = dimension;
 			}
-			;
 		}
 		if (versionDimension == null) {
-			logger.error("Could not find version dimension");
+			LOGGER.error("Could not find version dimension");
 			throw new SpagoBIEngineRuntimeException("Could not find version dimension");
 		}
-		logger.debug("Found dimension " + versionDimension.getUniqueName());
+		LOGGER.debug("Found dimension " + versionDimension.getUniqueName());
 
 		// get Hierarchy Used by dimension version
 		NamedList<Hierarchy> hierarchies = versionDimension.getHierarchies();
 		Hierarchy hierarchy = null;
-		if (hierarchies == null || hierarchies.size() == 0) {
-			logger.error("Could not find hierarchies for version dimension");
+		if (hierarchies == null || hierarchies.isEmpty()) {
+			LOGGER.error("Could not find hierarchies for version dimension");
 			throw new SpagoBIEngineRuntimeException("Could not find hierarchies for version dimension");
 		} else if (hierarchies.size() == 1) {
 			hierarchy = hierarchies.get(0);
 		} else {
-			String hierarchyUsed = modelConfig.getDimensionHierarchyMap().get(WhatIfConstants.VERSION_DIMENSION_UNIQUENAME);
+			String hierarchyUsed = modelConfig.getDimensionHierarchyMap()
+					.get(WhatIfConstants.VERSION_DIMENSION_UNIQUENAME);
 			hierarchy = hierarchies.get(hierarchyUsed);
 		}
 		if (hierarchy == null) {
@@ -258,8 +260,9 @@ public class CubeUtilities {
 	/**
 	 * Calculate the members value based on the passed expression
 	 */
-	public static Double getMemberValue(LinkedList membersExpression, SpagoBICellWrapper cellWrapper, PivotModel pivotModel, OlapDataSource olapDataSource,
-			Map<String, String> dimensionHierarchyMap, SbiAliases aliases) {
+	public static Double getMemberValue(LinkedList membersExpression, SpagoBICellWrapper cellWrapper,
+			PivotModel pivotModel, OlapDataSource olapDataSource, Map<String, String> dimensionHierarchyMap,
+			SbiAliases aliases) {
 		Double toReturn = null;
 
 		// Members are the dimensional "coordinates" that identify the specific
@@ -283,8 +286,9 @@ public class CubeUtilities {
 			boolean memberFound = searchMember(cellMembers, memberExpressionParts, dimensionHierarchyMap, aliases);
 
 			if (!memberFound) {
-				logger.error("ERROR: Cannot calculate Value, Member not found: " + memberExpression);
-				throw new SpagoBIEngineRuntimeException("Cannot calculate Value, Member not found: " + memberExpression);
+				LOGGER.error("ERROR: Cannot calculate Value, Member not found: " + memberExpression);
+				throw new SpagoBIEngineRuntimeException(
+						"Cannot calculate Value, Member not found: " + memberExpression);
 			}
 
 		}
@@ -296,8 +300,9 @@ public class CubeUtilities {
 		if (pivotModel instanceof SpagoBIPivotModel) {
 			spagoBIPivotModel = (SpagoBIPivotModel) pivotModel;
 		} else {
-			logger.error("ERROR: Cannot calculate Member Value, PivotModel not of type SpagoBIPivotModel");
-			throw new SpagoBIEngineRuntimeException("Cannot calculate Member Value, PivotModel not of type SpagoBIPivotModel");
+			LOGGER.error("ERROR: Cannot calculate Member Value, PivotModel not of type SpagoBIPivotModel");
+			throw new SpagoBIEngineRuntimeException(
+					"Cannot calculate Member Value, PivotModel not of type SpagoBIPivotModel");
 		}
 		Object value = mdxQueryExecutor.getValueForTuple(cellMembers, cube, spagoBIPivotModel);
 		if (value instanceof Double) {
@@ -309,7 +314,8 @@ public class CubeUtilities {
 	/*
 	 * Search if the specified member(s) currently exists, retrieve the corresponding object(s) and insert it in the cellMembers array (with a substitution)
 	 */
-	private static boolean searchMember(Member[] cellMembers, String[] memberExpressionParts, Map<String, String> dimensionHierarchyMap, SbiAliases aliases) {
+	private static boolean searchMember(Member[] cellMembers, String[] memberExpressionParts,
+			Map<String, String> dimensionHierarchyMap, SbiAliases aliases) {
 		boolean memberFound = false;
 		String memberExpressionDimension = memberExpressionParts[0];
 		boolean hierarchySpecified = false;
@@ -361,7 +367,7 @@ public class CubeUtilities {
 			Member aMember = cellMembers[i];
 			String memberUniqueName = aMember.getUniqueName();
 
-			String uniqueNameParts[] = splitSquareBracketNames(memberUniqueName);
+			String[] uniqueNameParts = splitSquareBracketNames(memberUniqueName);
 			String dimensionName = uniqueNameParts[0];
 			// Search the member to modify first by dimensionName (first part of
 			// the uniqueName)
@@ -398,7 +404,7 @@ public class CubeUtilities {
 				// get Level of the interested member
 				Level levelOfMember = aMember.getLevel();
 				try {
-					List<Member> matchingLevelMembers = new ArrayList<Member>();
+					List<Member> matchingLevelMembers = new ArrayList<>();
 					List<Member> levelMembers = levelOfMember.getMembers();
 					for (Member levelMember : levelMembers) {
 						if (searchByUniqueName) {
@@ -436,20 +442,26 @@ public class CubeUtilities {
 							}
 						}
 						if (!memberFound) {
-							logger.error("ERROR: Cannot calculate Value, Member name not found: " + memberToSearchSimpleName);
-							throw new SpagoBIEngineRuntimeException("Cannot calculate Member Value, Member name is ambiguous: " + memberToSearchSimpleName);
+							LOGGER.error("ERROR: Cannot calculate Value, Member name not found: "
+									+ memberToSearchSimpleName);
+							throw new SpagoBIEngineRuntimeException(
+									"Cannot calculate Member Value, Member name is ambiguous: "
+											+ memberToSearchSimpleName);
 						}
 
 					} else {
 						// zero members found (wrong name)
 						memberFound = false;
-						logger.error("ERROR: Cannot calculate Value, Member name not found: " + memberToSearchSimpleName);
-						throw new SpagoBIEngineRuntimeException("Cannot calculate Member Value, Member name not found: " + memberToSearchSimpleName);
+						LOGGER.error(
+								"ERROR: Cannot calculate Value, Member name not found: " + memberToSearchSimpleName);
+						throw new SpagoBIEngineRuntimeException(
+								"Cannot calculate Member Value, Member name not found: " + memberToSearchSimpleName);
 
 					}
 
 				} catch (OlapException e) {
-					throw new SpagoBIEngineRuntimeException("Cannot calculate Member Value, OlapException: " + e.getMessage());
+					throw new SpagoBIEngineRuntimeException(
+							"Cannot calculate Member Value, OlapException: " + e.getMessage());
 				}
 				if (memberFound) {
 					break;
@@ -465,7 +477,7 @@ public class CubeUtilities {
 	 * uniqueNameParts: parts of the unique name of the current cell selected memberToSearchSimpleName: specified level part in the member expression, ex:
 	 * Drink.Dairy in the member name [Product].[Drink.Dairy]
 	 */
-	private static String generateUniqueName(String uniqueNameParts[], String memberToSearchSimpleName) {
+	private static String generateUniqueName(String[] uniqueNameParts, String memberToSearchSimpleName) {
 		String[] uniqueNamesPartsCopy = new String[uniqueNameParts.length];
 		System.arraycopy(uniqueNameParts, 0, uniqueNamesPartsCopy, 0, uniqueNameParts.length);
 		String[] memberParts = memberToSearchSimpleName.split("\\.");
@@ -483,7 +495,7 @@ public class CubeUtilities {
 	}
 
 	private static String[] splitSquareBracketNames(String memberExpression) {
-		ArrayList<String> memberExpressionParts = new ArrayList<String>();
+		ArrayList<String> memberExpressionParts = new ArrayList<>();
 
 		StringTokenizer st = new StringTokenizer(memberExpression, "[]", false);
 		while (st.hasMoreTokens()) {
@@ -500,7 +512,7 @@ public class CubeUtilities {
 	 * Transform a string separated with dot in a string with square brackets separated by dot Ex: Name.Level -> [Name].[Level]
 	 */
 	private static String formatNameWithSquareBracket(String name) {
-		ArrayList<String> nameParts = new ArrayList<String>();
+		ArrayList<String> nameParts = new ArrayList<>();
 
 		StringTokenizer st = new StringTokenizer(name, ".", true);
 		while (st.hasMoreTokens()) {
@@ -511,7 +523,7 @@ public class CubeUtilities {
 				nameParts.add(token);
 			}
 		}
-		StringBuffer formattedName = new StringBuffer();
+		StringBuilder formattedName = new StringBuilder();
 		for (String namePart : nameParts) {
 			formattedName.append(namePart);
 		}

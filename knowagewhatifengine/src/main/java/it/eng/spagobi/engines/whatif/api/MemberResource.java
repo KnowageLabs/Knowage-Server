@@ -77,12 +77,15 @@ public class MemberResource extends AbstractWhatIfEngineService {
 	@Path("/drilldown/{axis}/{position}/{member}")
 	@Produces("text/html; charset=UTF-8")
 
-	public String drillDown(@javax.ws.rs.core.Context HttpServletRequest req, @PathParam("axis") int axisPos, @PathParam("position") int positionPos,
-			@PathParam("member") int memberPos) throws JSONException, IOException {
+	public String drillDown(@javax.ws.rs.core.Context HttpServletRequest req, @PathParam("axis") int axisPos,
+			@PathParam("position") int positionPos, @PathParam("member") int memberPos)
+			throws JSONException, IOException {
 		Member m2 = null;
-		Monitor totalTime = MonitorFactory.start("WhatIfEngine/it.eng.spagobi.engines.whatif.api.MemberResource.serialize.drillDown.totalTime");
+		Monitor totalTime = MonitorFactory
+				.start("WhatIfEngine/it.eng.spagobi.engines.whatif.api.MemberResource.serialize.drillDown.totalTime");
 
-		Monitor readbodyTime = MonitorFactory.start("WhatIfEngine/it.eng.spagobi.engines.whatif.api.MemberResource.serialize.drillDown.readBody");
+		Monitor readbodyTime = MonitorFactory
+				.start("WhatIfEngine/it.eng.spagobi.engines.whatif.api.MemberResource.serialize.drillDown.readBody");
 		WhatIfEngineInstance ei = getWhatIfEngineInstance();
 		SpagoBIPivotModel model = (SpagoBIPivotModel) ei.getPivotModel();
 		ModelConfig modelConfig = getWhatIfEngineInstance().getModelConfig();
@@ -91,7 +94,8 @@ public class MemberResource extends AbstractWhatIfEngineService {
 		JSONObject jo = RestUtilities.readBodyAsJSONObject(req);
 		readbodyTime.stop();
 
-		Monitor getDrillInfoTime = MonitorFactory.start("WhatIfEngine/it.eng.spagobi.engines.whatif.api.MemberResource.serialize.drillDown.getdrillinfo");
+		Monitor getDrillInfoTime = MonitorFactory.start(
+				"WhatIfEngine/it.eng.spagobi.engines.whatif.api.MemberResource.serialize.drillDown.getdrillinfo");
 		// The ROWS axis
 		CellSetAxis rowsOrColumns = getAxis(axisPos, model);
 
@@ -115,7 +119,8 @@ public class MemberResource extends AbstractWhatIfEngineService {
 		String drillType = modelConfig.getDrillType();
 		getDrillInfoTime.stop();
 
-		Monitor doDrillTime = MonitorFactory.start("WhatIfEngine/it.eng.spagobi.engines.whatif.api.MemberResource.serialize.drillDown.dodrill");
+		Monitor doDrillTime = MonitorFactory
+				.start("WhatIfEngine/it.eng.spagobi.engines.whatif.api.MemberResource.serialize.drillDown.dodrill");
 		if (drillType == null || drillType.equals(DrillDownCommand.MODE_POSITION)) {
 			DrillExpandPosition transform = model.getTransform(DrillExpandPosition.class);
 			if (transform.canExpand(p, m2)) {
@@ -138,7 +143,8 @@ public class MemberResource extends AbstractWhatIfEngineService {
 		// modelConfig.setColumnCount(model.getCellSet().getAxes().get(Axis.COLUMNS.axisOrdinal()).getPositionCount());
 		doDrillTime.stop();
 
-		Monitor renderTime = MonitorFactory.start("WhatIfEngine/it.eng.spagobi.engines.whatif.api.MemberResource.serialize.drillDown.render");
+		Monitor renderTime = MonitorFactory
+				.start("WhatIfEngine/it.eng.spagobi.engines.whatif.api.MemberResource.serialize.drillDown.render");
 		String table = renderModel(model);
 		renderTime.stop();
 
@@ -199,15 +205,7 @@ public class MemberResource extends AbstractWhatIfEngineService {
 				throw new SpagoBIRestServiceException(getLocale(), e);
 			}
 		} else {
-			/*
-			 * p = positions.get(positionPos); m = p.getMembers(); m2 = m.get(memberPos);
-			 */
-			try {
-				hierarchy = CubeUtilities.getHierarchy(model.getCube(), positionUniqueName);
-			} catch (OlapException e) {
-				logger.error(e);
-				throw new SpagoBIRestServiceException(getLocale(), e);
-			}
+			hierarchy = CubeUtilities.getHierarchy(model.getCube(), positionUniqueName);
 		}
 
 		// hierarchy = m2.getHierarchy();
@@ -263,7 +261,8 @@ public class MemberResource extends AbstractWhatIfEngineService {
 			JSONArray filters = new JSONArray(filter);
 			for (int i = 0; i < filters.length(); i++) {
 				JSONObject jsonObj = filters.getJSONObject(i);
-				Hierarchy h = CubeUtilities.getHierarchy(model.getCube(), jsonObj.getString("selectedHierarchyUniqueName"));
+				Hierarchy h = CubeUtilities.getHierarchy(model.getCube(),
+						jsonObj.getString("selectedHierarchyUniqueName"));
 				axisHierarchies.add(h);
 			}
 
@@ -421,7 +420,7 @@ public class MemberResource extends AbstractWhatIfEngineService {
 		}
 		WhatIfEngineInstance ei = getWhatIfEngineInstance();
 		SpagoBIPivotModel model = (SpagoBIPivotModel) ei.getPivotModel();
-		List<MetadataElement> selection = new ArrayList<MetadataElement>();
+		List<MetadataElement> selection = new ArrayList<>();
 		CellSet cellSet = model.getCellSet();
 
 		try {
@@ -449,7 +448,8 @@ public class MemberResource extends AbstractWhatIfEngineService {
 			}
 
 		} catch (NullPointerException e) {
-			throw new SpagoBIRestServiceException("Selected member isnt associated with table column", buildLocaleFromSession(), e);
+			throw new SpagoBIRestServiceException("Selected member isnt associated with table column",
+					buildLocaleFromSession(), e);
 		} catch (Exception e) {
 			throw new SpagoBIRestServiceException("Mondrian error", buildLocaleFromSession(), e);
 		}

@@ -24,83 +24,52 @@ import java.util.Set;
 
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
- * 
+ *
  */
 public class JavaKeywordsUtils {
 	private static final char JAVA_RESERVEDWORD_PREFIX = '_';
 	private static final char[] PKG_SEPARATORS = { '.', ':' };
-	
-	 /**
-	  * List of java reserved words.  Must be kept sorted in ascending order.
-	  */
-	 private static final String JAVA_RESERVED_WORDS[] =
-	 {
-		 "abstract",   "assert",     "boolean",      "break",        "byte",
-	     "case",       "catch",      "char",         "class",        "const",
-	     "continue",   "default",    "do",           "double",       "else",
-	     "enum",       "extends",    "false",        "final",        "finally",
-	     "float",      "for",        "goto",         "if",           "implements",
-	     "import",     "instanceof", "int",          "interface",    "long",
-	     "native",     "new",        "null",         "package",      "private",
-	     "protected",  "public",     "return",       "short",        "static",
-	     "strictfp",   "super",      "switch",       "synchronized", "this",
-	     "throw",      "throws",     "transient",    "true",         "try",
-	     "void",       "volatile",   "while"
-	 };
 
+	/**
+	 * List of java reserved words. Must be kept sorted in ascending order.
+	 */
+	private static final String[] JAVA_RESERVED_WORDS = { "abstract", "assert", "boolean", "break", "byte", "case",
+			"catch", "char", "class", "const", "continue", "default", "do", "double", "else", "enum", "extends",
+			"false", "final", "finally", "float", "for", "goto", "if", "implements", "import", "instanceof", "int",
+			"interface", "long", "native", "new", "null", "package", "private", "protected", "public", "return",
+			"short", "static", "strictfp", "super", "switch", "synchronized", "this", "throw", "throws", "transient",
+			"true", "try", "void", "volatile", "while" };
 
-	 /**
-	  * List of java.lang classes (1.5 JDK).
-	  */
-	 private static final Set<String> JAVA_LANG_NAMES = new HashSet<String>(Arrays.asList(
-			 new String[]
-	         {
-				// Interfaces
-				"Appendable", "CharSequence", "Cloneable", "Comparable",
-	            "Iterable",   "Readable",     "Runnable",
+	/**
+	 * List of java.lang classes (1.5 JDK).
+	 */
+	private static final Set<String> JAVA_LANG_NAMES = new HashSet<>(Arrays.asList(
+			// Interfaces
+			"Appendable", "CharSequence", "Cloneable", "Comparable", "Iterable", "Readable", "Runnable", // Classes
+			"Boolean", "Byte", "Character", "Class", "ClassLoader", "Compiler", "Double", "Enum", "Float",
+			"InheritableThreadLocal", "Integer", "Long", "Math", "Number", "Object", "Package", "Process",
+			"ProcessBuilder", "Runtime", "RuntimePermission", "SecurityManager", "Short", "StackTraceElement",
+			"StrictMath", "String", "StringBuffer", "StringBuilder", "System", "Thread", "ThreadGroup", "ThreadLocal",
+			"Throwable", "Void", // Exceptions
+			"ArithmeticException", "ArrayIndexOutOfBoundsException", "ArrayStoreException", "ClassCastException",
+			"ClassNotFoundException", "CloneNotSupportedException", "EnumConstantNotPresentException", "Exception",
+			"IllegalAccessException", "IllegalArgumentException", "IllegalMonitorStateException",
+			"IllegalStateException", "IllegalThreadStateException", "IndexOutOfBoundsException",
+			"InstantiationException", "InterruptedException", "NegativeArraySizeException", "NoSuchFieldException",
+			"NoSuchMethodException", "NullPointerException", "NumberFormatException", "RuntimeException",
+			"SecurityException", "StringIndexOutOfBoundsException", "TypeNotPresentException",
+			"UnsupportedOperationException", // Errors
+			"AbstractMethodError", "AssertionError", "ClassCircularityError", "ClassFormatError", "Error",
+			"ExceptionInInitializerError", "IllegalAccessError", "IncompatibleClassChangeError", "InstantiationError",
+			"InternalError", "LinkageError", "NoClassDefFoundError", "NoSuchFieldError", "NoSuchMethodError",
+			"OutOfMemoryError", "StackOverflowError", "ThreadDeath", "UnknownError", "UnsatisfiedLinkError",
+			"UnsupportedClassVersionError", "VerifyError", "VirtualMachineError", // Annotation types
+			"Deprecated", "Override", "SuppressWarnings"));
 
-	            // Classes
-	            "Boolean",         "Byte",                   "Character",          "Class",
-	            "ClassLoader",     "Compiler",               "Double",             "Enum",
-	            "Float",           "InheritableThreadLocal", "Integer",            "Long",
-	            "Math",            "Number",                 "Object",             "Package",
-	            "Process",         "ProcessBuilder",         "Runtime",            "RuntimePermission",
-	            "SecurityManager", "Short",                  "StackTraceElement",  "StrictMath",
-	            "String",          "StringBuffer",           "StringBuilder",      "System",
-	            "Thread",          "ThreadGroup",            "ThreadLocal",        "Throwable",
-	            "Void",
-
-	            // Exceptions
-	            "ArithmeticException",             "ArrayIndexOutOfBoundsException", "ArrayStoreException",
-	            "ClassCastException",              "ClassNotFoundException",         "CloneNotSupportedException",
-	            "EnumConstantNotPresentException", "Exception",                      "IllegalAccessException",
-	            "IllegalArgumentException",        "IllegalMonitorStateException",   "IllegalStateException",
-	            "IllegalThreadStateException",     "IndexOutOfBoundsException",      "InstantiationException",
-	            "InterruptedException",            "NegativeArraySizeException",     "NoSuchFieldException",
-	            "NoSuchMethodException",           "NullPointerException",           "NumberFormatException",
-	            "RuntimeException",                "SecurityException",              "StringIndexOutOfBoundsException",
-	            "TypeNotPresentException",         "UnsupportedOperationException",
-
-	            // Errors
-	            "AbstractMethodError",  "AssertionError",               "ClassCircularityError",
-	            "ClassFormatError",     "Error",                        "ExceptionInInitializerError",
-	            "IllegalAccessError",   "IncompatibleClassChangeError", "InstantiationError",
-	            "InternalError",        "LinkageError",                 "NoClassDefFoundError",
-	            "NoSuchFieldError",     "NoSuchMethodError",            "OutOfMemoryError",
-	            "StackOverflowError",   "ThreadDeath",                  "UnknownError",
-	            "UnsatisfiedLinkError", "UnsupportedClassVersionError", "VerifyError",
-	            "VirtualMachineError",
-
-	            // Annotation types
-	            "Deprecated", "Override", "SuppressWarnings"
-	          }
-	));
-	 
 	/**
 	 * Is the value of checkString a java reserved word?
-	 * 
-	 * @param checkString
-	 *            String value to check.
+	 *
+	 * @param checkString String value to check.
 	 * @return true if checkString exactly matches a java reserved word
 	 */
 	public static boolean isJavaReservedWord(String checkString) {
@@ -108,11 +77,9 @@ public class JavaKeywordsUtils {
 	}
 
 	/**
-	 * Transform an invalid java identifier into a valid one. Any invalid
-	 * characters are replaced with '_'s.
-	 * 
-	 * @param id
-	 *            The invalid java identifier.
+	 * Transform an invalid java identifier into a valid one. Any invalid characters are replaced with '_'s.
+	 *
+	 * @param id The invalid java identifier.
 	 * @return The transformed java identifier.
 	 */
 	public static String transformInvalidJavaIdentifier(String id) {
@@ -147,9 +114,8 @@ public class JavaKeywordsUtils {
 
 	/**
 	 * Check the identifier to see if it is a valid Java identifier.
-	 * 
-	 * @param id
-	 *            The Java identifier to check.
+	 *
+	 * @param id The Java identifier to check.
 	 * @return true if identifier is valid.
 	 */
 	public static boolean isValidJavaIdentifier(String id) {
@@ -180,9 +146,8 @@ public class JavaKeywordsUtils {
 
 	/**
 	 * Convert a java package name to a file directory name.
-	 * 
-	 * @param packageName
-	 *            Package name to convert.
+	 *
+	 * @param packageName Package name to convert.
 	 * @return The converted package name, empty string if packageName was null.
 	 */
 	public static String packageNameToDirectoryName(String packageName) {
@@ -190,19 +155,17 @@ public class JavaKeywordsUtils {
 
 		if (packageName != null) {
 			for (char pkgSeparator : PKG_SEPARATORS) {
-				packageName = packageName.replace(pkgSeparator,
-						File.separatorChar);
+				packageName = packageName.replace(pkgSeparator, File.separatorChar);
 			}
 		}
 
 		dir = packageName;
 		return (dir == null) ? "" : dir + File.separatorChar;
 	}
-	
+
 	/**
-	 * Converts a name to a Java class name (<em>first letter
-	 * not capitalized</em>)
-	 * 
+	 * Converts a name to a Java class name (<em>first letter not capitalized</em>)
+	 *
 	 * @param name the name to convert
 	 * @return the generated java variable name
 	 */
@@ -210,14 +173,14 @@ public class JavaKeywordsUtils {
 		String className;
 		className = StringUtils.initUpper(name);
 		className = transformInvalidJavaIdentifier(className);
-		if(className.charAt(0) == JAVA_RESERVEDWORD_PREFIX) className = "Class" + className;
+		if (className.charAt(0) == JAVA_RESERVEDWORD_PREFIX)
+			className = "Class" + className;
 		return className;
 	}
-	
+
 	/**
-	 * Converts a name to a Java property name (<em>first letter
-	 * not capitalized</em>)
-	 * 
+	 * Converts a name to a Java property name (<em>first letter not capitalized</em>)
+	 *
 	 * @param name the name to convert
 	 * @return the generated java variable name
 	 */
@@ -225,5 +188,8 @@ public class JavaKeywordsUtils {
 		String propertyName;
 		propertyName = transformInvalidJavaIdentifier(name);
 		return propertyName;
+	}
+
+	private JavaKeywordsUtils() {
 	}
 }

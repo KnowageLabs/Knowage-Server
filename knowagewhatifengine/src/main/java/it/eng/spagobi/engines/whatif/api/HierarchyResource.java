@@ -110,7 +110,7 @@ public class HierarchyResource extends AbstractWhatIfEngineService {
 		PivotModel model = ei.getPivotModel();
 		SwapAxes transform = model.getTransform(SwapAxes.class);
 
-		List<Member> list = new ArrayList<Member>();
+		List<Member> list = new ArrayList<>();
 		List<Member> visibleMembers = null;
 		String memberDescription;
 
@@ -179,12 +179,13 @@ public class HierarchyResource extends AbstractWhatIfEngineService {
 			throw new SpagoBIEngineRuntimeException("Error getting the member tree " + node, e);
 		}
 
-		List<SbiMember> members = new ArrayList<SbiMember>();
+		List<SbiMember> members = new ArrayList<>();
 
 		// If the tree contains also versions we need to resolve the description
 		// of the version
-		List<SbiVersion> versions = new ArrayList<SbiVersion>();
-		boolean isVersionDimension = hierarchy.getDimension().getUniqueName().equals(WhatIfConstants.VERSION_DIMENSION_UNIQUENAME);
+		List<SbiVersion> versions = new ArrayList<>();
+		boolean isVersionDimension = hierarchy.getDimension().getUniqueName()
+				.equals(WhatIfConstants.VERSION_DIMENSION_UNIQUENAME);
 		if (isVersionDimension) {
 			try {
 				versions = getVersions();
@@ -232,16 +233,16 @@ public class HierarchyResource extends AbstractWhatIfEngineService {
 	@Path("/{hierarchy}/filtertree2/{axis}")
 	@Produces("text/html; charset=UTF-8")
 
-	public List<NodeFilter> getMemberValue2(@javax.ws.rs.core.Context HttpServletRequest req, @PathParam("hierarchy") String hierarchyUniqueName,
-			@PathParam("axis") int axis) {
+	public List<NodeFilter> getMemberValue2(@javax.ws.rs.core.Context HttpServletRequest req,
+			@PathParam("hierarchy") String hierarchyUniqueName, @PathParam("axis") int axis) {
 		Hierarchy hierarchy = null;
 
-		List<Member> list = new ArrayList<Member>();
+		List<Member> list = new ArrayList<>();
 
 		try {
 			hierarchy = CubeUtilities.getHierarchy(getPivotModel().getCube(), hierarchyUniqueName);
 
-			List<NodeFilter> nodes = new ArrayList<NodeFilter>();
+			List<NodeFilter> nodes = new ArrayList<>();
 			Level l = hierarchy.getLevels().get(0);
 
 			list = l.getMembers();
@@ -331,12 +332,7 @@ public class HierarchyResource extends AbstractWhatIfEngineService {
 		// if not a filter axis
 		if (axis >= 0) {
 			PlaceMembersOnAxes pm = model.getTransform(PlaceMembersOnAxes.class);
-			try {
-				visibleMembers = pm.findVisibleMembers(CubeUtilities.getHierarchy(model.getCube(), hier));
-			} catch (OlapException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+			visibleMembers = pm.findVisibleMembers(CubeUtilities.getHierarchy(model.getCube(), hier));
 		}
 
 		JSONArray ja = new JSONArray();
@@ -370,7 +366,8 @@ public class HierarchyResource extends AbstractWhatIfEngineService {
 
 			FilterTreeBuilder ftb = new FilterTreeBuilder();
 			List<Member> treeLeaves = CubeUtilities.findMembersByName(hierarchy, seachParameter.getName(), false);
-			List<Member> visibleMembers = getVisibleMembers(seachParameter.getAxis(), seachParameter.getHierarchyUniqueName());
+			List<Member> visibleMembers = getVisibleMembers(seachParameter.getAxis(),
+					seachParameter.getHierarchyUniqueName());
 			ftb.setHierarchy(getHierarchy(seachParameter.getHierarchyUniqueName()));
 			ftb.setTreeLeaves(treeLeaves);
 			ftb.setVisibleMembers(visibleMembers);
@@ -395,7 +392,7 @@ public class HierarchyResource extends AbstractWhatIfEngineService {
 
 	private List<SbiVersion> getVersions() {
 		Connection connection;
-		List<SbiVersion> versions = new ArrayList<SbiVersion>();
+		List<SbiVersion> versions = new ArrayList<>();
 		IDataSource dataSource = getWhatIfEngineInstance().getDataSource();
 		try {
 			logger.debug("Getting the connection to DB");

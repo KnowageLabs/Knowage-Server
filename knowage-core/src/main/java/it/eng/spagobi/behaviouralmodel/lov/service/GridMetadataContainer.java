@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,14 +11,12 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 package it.eng.spagobi.behaviouralmodel.lov.service;
-
-import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -34,6 +32,8 @@ import com.fasterxml.jackson.core.Version;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
+
 /**
  * @authors Alberto Ghedin (alberto.ghedin@eng.it)
  *
@@ -43,7 +43,7 @@ public class GridMetadataContainer {
 	private String totalProperty;
 	private List<Object> fields;
 	private List<Map<String, String>> values;
-	private Map<String, String> metaData;
+	private final Map<String, String> metaData;
 	private int results;
 
 	protected static Logger logger = Logger.getLogger(GridMetadataContainer.class);
@@ -51,9 +51,9 @@ public class GridMetadataContainer {
 	public GridMetadataContainer() {
 		rootPropery = "root";
 		totalProperty = "results";
-		values = new ArrayList<Map<String, String>>();
-		metaData = new HashMap<String, String>();
-		fields = new ArrayList<Object>();
+		values = new ArrayList<>();
+		metaData = new HashMap<>();
+		fields = new ArrayList<>();
 	}
 
 	public void setProperty(String propertyName, String propertyValue) {
@@ -137,9 +137,9 @@ public class GridMetadataContainer {
 	 * @return
 	 */
 	public static List<Object> buildHeaderMap(List<String> colNames) {
-		List<Object> toReturn = new ArrayList<Object>();
+		List<Object> toReturn = new ArrayList<>();
 		for (int i = 0; i < colNames.size(); i++) {
-			Map<String, String> headerMap = new HashMap<String, String>();
+			Map<String, String> headerMap = new HashMap<>();
 			headerMap.put("name", colNames.get(i));
 			headerMap.put("header", colNames.get(i));
 			toReturn.add(headerMap);
@@ -154,9 +154,9 @@ public class GridMetadataContainer {
 	 * @return
 	 */
 	public static List<Object> buildHeaderMapForGrid(List<String> colNames) {
-		List<Object> toReturn = new ArrayList<Object>();
+		List<Object> toReturn = new ArrayList<>();
 		for (int i = 0; i < colNames.size(); i++) {
-			Map<String, String> headerMap = new HashMap<String, String>();
+			Map<String, String> headerMap = new HashMap<>();
 			headerMap.put("header", colNames.get(i));
 			headerMap.put("name", colNames.get(i));
 			headerMap.put("dataIndex", colNames.get(i));
@@ -165,7 +165,7 @@ public class GridMetadataContainer {
 		return toReturn;
 	}
 
-	public static void main(String args[]) {
+	public static void main(String[] args) {
 		GridMetadataContainer gmc = new GridMetadataContainer();
 
 		gmc.setResults(2);
