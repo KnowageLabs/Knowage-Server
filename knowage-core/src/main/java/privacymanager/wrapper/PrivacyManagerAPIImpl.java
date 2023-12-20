@@ -78,11 +78,9 @@ class PrivacyManagerAPIImpl implements IPrivacyManagerAPI {
 
 		PMTokenDTO tokenDTO = new PMTokenDTO(pmUser, pmPwd, locale);
 
-		Response response = restClient.target(pmUrl + "/privacyintegrationdev/api/jwt/login")
-				.request()
+		Response response = restClient.target(pmUrl + "/api/jwt/login").request()
 				.header(HTTP_HEADER_NAME_X_CONSUMER_KEY, HTTP_HEADER_VALUE_X_CONSUMER_KEY)
-				.header(HttpHeaders.CONTENT_TYPE, "application/json")
-				.accept(MediaType.WILDCARD)
+				.header(HttpHeaders.CONTENT_TYPE, "application/json").accept(MediaType.WILDCARD)
 				.post(Entity.entity(tokenDTO, MediaType.APPLICATION_JSON));
 
 		LOGGER.info("Response status: {}", response.getStatus());
@@ -110,12 +108,10 @@ class PrivacyManagerAPIImpl implements IPrivacyManagerAPI {
 
 		PMkeyDTO pMkeyDTO = new PMkeyDTO(serviceProvider, 24);
 
-		Response response = restClient.target(pmUrl + "/privacyintegrationdev/api/integration/keymanagement/retrieve")
-				.request()
+		Response response = restClient.target(pmUrl + "/api/integration/keymanagement/retrieve").request()
 				.header(HTTP_HEADER_NAME_X_CONSUMER_KEY, HTTP_HEADER_VALUE_X_CONSUMER_KEY)
 				.header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
-				.header(HttpHeaders.CONTENT_TYPE, "application/json")
-				.accept(MediaType.WILDCARD)
+				.header(HttpHeaders.CONTENT_TYPE, "application/json").accept(MediaType.WILDCARD)
 				.post(Entity.entity(pMkeyDTO, MediaType.APPLICATION_JSON));
 
 		LOGGER.info("Response status: {}", response.getStatus());
@@ -128,7 +124,9 @@ class PrivacyManagerAPIImpl implements IPrivacyManagerAPI {
 
 		checkStatus(bodyAsMap);
 
-		String key = bodyAsMap.containsKey("opTargetObject") ? ((Map<String, Object>) bodyAsMap.get("opTargetObject")).get("keyValue").toString() : null;
+		String key = bodyAsMap.containsKey("opTargetObject")
+				? ((Map<String, Object>) bodyAsMap.get("opTargetObject")).get("keyValue").toString()
+				: null;
 
 		return key;
 
@@ -141,12 +139,10 @@ class PrivacyManagerAPIImpl implements IPrivacyManagerAPI {
 		// TODO : Really? Two times appDescription?
 		PMSaveDTO saveDTO = new PMSaveDTO(appDescription, appVendor, appUrl, appDescription);
 
-		Response response = restClient.target(pmUrl + "/privacyintegrationdev/api/integration/service/provider/save")
-				.request()
+		Response response = restClient.target(pmUrl + "/api/integration/service/provider/save").request()
 				.header(HTTP_HEADER_NAME_X_CONSUMER_KEY, HTTP_HEADER_VALUE_X_CONSUMER_KEY)
 				.header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
-				.header(HttpHeaders.CONTENT_TYPE, "application/json")
-				.accept(MediaType.WILDCARD)
+				.header(HttpHeaders.CONTENT_TYPE, "application/json").accept(MediaType.WILDCARD)
 				.post(Entity.entity(saveDTO, MediaType.APPLICATION_JSON));
 
 		LOGGER.info("Response postForEntity " + response.getStatus());
@@ -159,7 +155,9 @@ class PrivacyManagerAPIImpl implements IPrivacyManagerAPI {
 
 		checkStatus(bodyAsMap);
 
-		Map<String, Object> result = bodyAsMap.containsKey("opTargetObject") ? (Map<String, Object>) bodyAsMap.get("opTargetObject") : null;
+		Map<String, Object> result = bodyAsMap.containsKey("opTargetObject")
+				? (Map<String, Object>) bodyAsMap.get("opTargetObject")
+				: null;
 
 		// TODO
 		return result.toString();
@@ -167,8 +165,7 @@ class PrivacyManagerAPIImpl implements IPrivacyManagerAPI {
 
 	private void checkStatus(Map<String, Object> bodyAsMap) throws PrivacyManagerFailureException {
 
-		if (bodyAsMap == null
-				|| !bodyAsMap.containsKey("success")
+		if (bodyAsMap == null || !bodyAsMap.containsKey("success")
 				|| !Boolean.parseBoolean(bodyAsMap.get("success").toString())) {
 			throw new PrivacyManagerFailureException("TODO");
 		}
