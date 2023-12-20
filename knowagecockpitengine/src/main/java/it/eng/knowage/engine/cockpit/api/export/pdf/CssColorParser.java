@@ -53,7 +53,7 @@ public class CssColorParser {
 
 	private static final CssColorParser INSTANCE = new CssColorParser();
 
-	private static enum CssColorLiteral {
+	private enum CssColorLiteral {
 		ALICEBLUE(240, 248, 255),
 		ANTIQUEWHITE(250, 235, 215),
 		AQUA(0, 255, 255),
@@ -309,7 +309,7 @@ public class CssColorParser {
 			}
 
 		} catch (Exception e) {
-			LOGGER.error("Cannot create color from string {" + rgbColor + "}. Default color {" + defaultColor + "} will be used", e);
+			LOGGER.atError().withThrowable(e).log("Cannot create color from string {}. Default color {} will be used", rgbColor, defaultColor);
 		}
 
 		return ret;

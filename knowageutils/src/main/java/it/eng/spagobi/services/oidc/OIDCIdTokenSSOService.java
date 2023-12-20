@@ -33,7 +33,7 @@ public class OIDCIdTokenSSOService extends JWTSsoService {
 	@Override
 	public String readUserIdentifier(HttpServletRequest request) {
 		HttpSession session = request.getSession();
-		String idToken = (String) session.getAttribute(Oauth2SsoService.ID_TOKEN);
+		String idToken = (String) session.getAttribute(Oauth2SsoService.ID_TOKEN); // ID TOKEN IS TRUSTED: it was validated by OAuth2Filter
 		if (idToken == null) {
 			logger.debug("ID token not found.");
 			return super.readUserIdentifier(request);

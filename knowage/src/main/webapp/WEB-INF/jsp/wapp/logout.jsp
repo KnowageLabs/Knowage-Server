@@ -185,6 +185,7 @@ else if (active != null && active.equalsIgnoreCase("true")) {
 function redirect() {
 	var redirectUrl = "<%= redirectUrl %>";
 	redirectUrl = resolveDynamicParameters(redirectUrl);
+	window.sessionStorage.removeItem("id_token");
     window.location = redirectUrl;
 };
 

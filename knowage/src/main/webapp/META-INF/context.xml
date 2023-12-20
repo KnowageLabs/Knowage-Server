@@ -1,5 +1,5 @@
 <Context path="/knowage" reloadable="false">
-	<CookieProcessor sameSiteCookies="strict" />
+	<CookieProcessor sameSiteCookies="lax" />
 	
 	<!-- <Loader delegate="true"/> -->
 	<ResourceLink global="jdbc/foodmart" name="jdbc/foodmart" type="javax.sql.DataSource" />

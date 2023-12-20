@@ -8,7 +8,7 @@
             </Toolbar>
         </template>
 
-        <div v-html="sqlFormats.sqlFormatted"></div>
+        <div v-html="sqlFormats.sqlFormatted" class="sqlContent"></div>
 
         <template #footer>
             <Button class="kn-button kn-button--primary" @click="$emit('close')"> {{ $t('common.ok') }}</Button>
@@ -40,3 +40,9 @@ export default defineComponent({
     methods: {}
 })
 </script>
+
+<style lang="scss">
+.sqlContent {
+	max-width: 80vw;
+}
+</style>

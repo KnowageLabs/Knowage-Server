@@ -27,6 +27,7 @@ public class Oauth2SsoService extends JWTSsoService {
 
 	public static final String ACCESS_TOKEN = "access_token";
 	public static final String ID_TOKEN = "id_token";
+	public static final String NONCE = "nonce";
 
 	@Override
 	public String readUserIdentifier(HttpServletRequest request) {

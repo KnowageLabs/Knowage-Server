@@ -7,8 +7,10 @@ dataset-label='ngModel.content.datasetLabel'
 updateble='ngModel.updateble' 
 drillable='ngModel.drillable' 
 on-click-series='reloadWidgetsByChartEvent' 
-layout-column flex>
+layout-column flex ng-show="!hideChart">
+
 </chart-renderer>
+<div ng-if="hideChart" class="kn-warning">{{hideChart}}</div>
 <div ng-if="ngModel.content.chartTemplate.CHART.accessibility && ngModel.content.chartTemplate.CHART.accessibility.sonification" class="sonification-controls">
 	<button id="play" tabindex="1" aria-label="play" ng-click="playSonify()"><md-icon md-font-icon="fa fa-play" ></md-icon></button>
     <button id="pause" tabindex="2" aria-label="pause" ng-click="pauseSonify()"><md-icon md-font-icon="fa fa-pause" ></md-icon></button>

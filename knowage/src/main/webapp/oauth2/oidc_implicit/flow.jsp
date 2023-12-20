@@ -16,6 +16,7 @@ You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 --%>
 
+<%@page import="it.eng.spagobi.services.oauth2.Oauth2SsoService"%>
 <%@page import="it.eng.spagobi.security.OAuth2.OAuth2Client"%>
 <%@page import="it.eng.spagobi.security.OAuth2.OAuth2Config"%>
 <%@page import="org.apache.commons.lang.StringEscapeUtils"%>
@@ -28,85 +29,81 @@ OAuth2Config oauth2Config = OAuth2Config.getInstance();
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <meta charset="utf-8">
+    <meta charset="utf-8" />
     <title>OIDC implicit flow</title>
   </head>
   <body>
     <script>
+    
     const authorizeEndpoint = '<%= StringEscapeUtils.escapeJavaScript(oauth2Config.getAuthorizeUrl()) %>';
     const clientId = '<%= StringEscapeUtils.escapeJavaScript(oauth2Config.getClientId()) %>';
     const scope = '<%= StringEscapeUtils.escapeJavaScript(oauth2Config.getScopes()) %>';
     const redirectUri = '<%= StringEscapeUtils.escapeJavaScript(oauth2Config.getRedirectUrl()) %>';
+    const nonce = '<%= StringEscapeUtils.escapeJavaScript((String) session.getAttribute(Oauth2SsoService.NONCE)) %>';
+    const authorization_endpoint = new URL(authorizeEndpoint);
 
-        if (window.location.hash) {
-            var args = new URLSearchParams(window.location.hash.substring(1));
-            var id_token = args.get("id_token");
-            
-            if (id_token) {
-            	var state = args.get("state");
-            	if (window.sessionStorage.getItem("state") !== state){
-            	    throw Error("Probable session hijacking attack!");
-            	}
+      window.sessionStorage.setItem("client_id", clientId);
+      window.sessionStorage.setItem("oidc_origin", authorization_endpoint.origin);
+      window.sessionStorage.setItem("redirect_uri", redirectUri);
+      window.sessionStorage.setItem("nonce", nonce);
 
-        		// storing id_token for later usage (on logout)
-                window.sessionStorage.setItem("id_token", id_token);
-        		
-        		var lastRedirectUri = window.location.href.split('?')[0];
-            	var args = new URLSearchParams({
-            		PAGE : "LoginPage",
-            		NEW_SESSION : "TRUE",
-            		id_token: id_token
-                });
-                window.location = lastRedirectUri + "?" + args;
+      if (window.location.hash) {
+        var args = new URLSearchParams(window.location.hash.substring(1));
+        var id_token = args.get("id_token");
+        var state = args.get("state");
+        var session_state = args.get("session_state");
+        
+        if (id_token && state) {
+        	if (window.sessionStorage.getItem("state") !== state){
+        	    throw Error("Probable session hijacking attack!");
+        	}
 
-            } else {
-            	startOauth2Flow();
-            }
+    		// storing id_token for later usage (on logout)
+            window.sessionStorage.setItem("id_token", id_token);
+            window.sessionStorage.setItem("session_state", session_state);
+    		// we don't need state anymore
+            window.sessionStorage.removeItem("state");
+
+			var lastRedirectUri = window.location.href.split("?")[0];
+			var args = new URLSearchParams({
+	            PAGE: "LoginPage",
+	            NEW_SESSION: "TRUE",
+	            id_token: id_token
+			});
+			window.location = lastRedirectUri + "?" + args;
         } else {
-        	startOauth2Flow();
+          startOauth2Flow();
+        }
+      } else {
+        startOauth2Flow();
+      }
+
+     function startOauth2Flow() {
+     	var state = generateRandomString(64);
+     	
+     	window.sessionStorage.setItem("state", state);
+
+         var args = new URLSearchParams({
+             response_type: "code id_token",
+             client_id: clientId,
+             state: state,
+             nonce: nonce,
+             redirect_uri: redirectUri,
+             scope: scope
+         });
+         window.location = authorizeEndpoint + "?" + args;
+     }
+
+      function generateRandomString(length) {
+        var text = "";
+        var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+
+        for (var i = 0; i < length; i++) {
+          text += possible.charAt(Math.floor(Math.random() * possible.length));
         }
 
-        function startOauth2Flow() {
-        	var state = generateRandomString(64);
-        	var codeVerifier = generateRandomString(128);
-        	
-        	generateCodeChallenge(codeVerifier).then(function(codeChallenge) {
-            	window.sessionStorage.setItem("state", state);
-                window.sessionStorage.setItem("code_verifier", codeVerifier);
-
-	            var args = new URLSearchParams({
-	                response_type: "code id_token",
-	                client_id: clientId,
-	                state: state,
-	                nonce: state,
-	                code_challenge_method: "S256",
-                    code_challenge: codeChallenge,
-	                redirect_uri: redirectUri,
-	                scope: scope
-	            });
-	            window.location = authorizeEndpoint + "?" + args;
-        	});
-        }
-        
-        async function generateCodeChallenge(codeVerifier) {
-            var digest = await crypto.subtle.digest("SHA-256",
-                new TextEncoder().encode(codeVerifier));
-
-            return btoa(String.fromCharCode(...new Uint8Array(digest)))
-                .replace(/=/g, '').replace(/\+/g, '-').replace(/\//g, '_')
-        }
-
-        function generateRandomString(length) {
-            var text = "";
-            var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-
-            for (var i = 0; i < length; i++) {
-                text += possible.charAt(Math.floor(Math.random() * possible.length));
-            }
-
-            return text;
-        }
-        
+        return text;
+      }
     </script>
   </body>
 </html>

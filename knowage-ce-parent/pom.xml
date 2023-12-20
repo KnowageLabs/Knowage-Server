@@ -2,7 +2,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>it.eng.knowage</groupId>
 	<artifactId>knowage-ce-parent</artifactId>
-	<version>8.1.17-SNAPSHOT</version>
+	<version>8.1.19-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<name>knowage-ce-parent</name>
 
@@ -174,7 +174,22 @@
 				</plugin>
 			</plugins>
 		</pluginManagement>
-	</build>	
+		
+		<plugins>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-resources-plugin</artifactId>
+				<version>3.3.1</version>
+				<configuration>
+					<nonFilteredFileExtensions>
+						<nonFilteredFileExtension>xlsm</nonFilteredFileExtension>
+					</nonFilteredFileExtensions>
+				</configuration>
+			</plugin>
+
+		</plugins>
+	</build>
 
 	<profiles>
 		<profile>

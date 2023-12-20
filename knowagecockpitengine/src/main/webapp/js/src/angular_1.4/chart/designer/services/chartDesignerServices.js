@@ -160,7 +160,8 @@ angular.module('ChartDesignerService', ['chartRendererModule'])
 		var data = [
 			{name:sbiModule_translate.load("sbi.chartengine.designer.tab.configuration.generic"),value:"generic"},
             {name:sbiModule_translate.load("sbi.chartengine.designer.tab.configuration.titlesubtitle"),value:"title_and_subtitle"},
-            {name:sbiModule_translate.load("sbi.chartengine.designer.tab.configuration.nodata"),value:"no_data"}
+            {name:sbiModule_translate.load("sbi.chartengine.designer.tab.configuration.nodata"),value:"no_data"},
+			{name:sbiModule_translate.load("sbi.chartengine.designer.tab.configuration.categoriesCheck"),value:"categories_check"}
 		];
 
 		var legend = [
@@ -279,6 +280,7 @@ angular.module('ChartDesignerService', ['chartRendererModule'])
 				genericDetailsURL:	chartDesignerBasePath + '/directives/custom_directives/configuration-tab/generic_details.html',
 				titleSubtitleDetailsURL: chartDesignerBasePath + '/directives/custom_directives/configuration-tab/title_and_subtitle.html',
 				noDataDetailsURL: chartDesignerBasePath + '/directives/custom_directives/configuration-tab/nodata.html',
+				categoriesCheckURL: chartDesignerBasePath + '/directives/custom_directives/configuration-tab/categories_check.html',
 				legendTitleURL: chartDesignerBasePath + '/directives/custom_directives/configuration-tab/legend_title.html',
 				legendItemsURL: chartDesignerBasePath + '/directives/custom_directives/configuration-tab/legend_items.html',
 				colorPaletteURL: chartDesignerBasePath + '/directives/custom_directives/configuration-tab/color_palette.html',

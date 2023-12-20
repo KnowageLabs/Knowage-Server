@@ -961,7 +961,7 @@
 			var currLegend = externalLegend[layerName];
 			currLegend.classification.length=0;
 
-			for(var i=0; i < gradients.length; i++){
+			for(var i=0; i < Math.min(numberGradient, gradients.length); i++){
 				var  tmpGrad={};
 				tmpGrad.color = gradients[i].toRgbString();
 				tmpGrad.item = 0; //number of features in this range

@@ -942,7 +942,7 @@
         "dayNamesMin": ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"],
         "dayNamesShort": ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"],
         "firstDayOfWeek": 0,
-        "monthNames": ["Gennaio", "Febbraio", "Marzo", "Aprile", "Maggio", "Giugno", "Luglio", "Augosto", "Settembre", "Ottobre", "Novembre", "Dicembre"],
+        "monthNames": ["Gennaio", "Febbraio", "Marzo", "Aprile", "Maggio", "Giugno", "Luglio", "Agosto", "Settembre", "Ottobre", "Novembre", "Dicembre"],
         "monthNamesShort": ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
         "today": "Today",
         "weekHeader": "Wk"

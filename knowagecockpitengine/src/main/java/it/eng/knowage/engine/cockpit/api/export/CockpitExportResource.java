@@ -64,7 +64,7 @@ public class CockpitExportResource extends AbstractCockpitEngineResource {
 			body.put("template", template);
 			String outputType = body.getString(OUTPUT_TYPE);
 			String userId = body.getString(USER_ID);
-			ExcelExporter excelExporter = new ExcelExporter(outputType, userId, body);
+			ExcelExporter excelExporter = new ExcelExporter(userId, body);
 			String mimeType = excelExporter.getMimeType();
 			if (mimeType != null) {
 				Integer documentId = body.optInt(DOCUMENT_ID);
