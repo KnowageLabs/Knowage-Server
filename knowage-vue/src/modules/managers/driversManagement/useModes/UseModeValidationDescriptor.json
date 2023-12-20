@@ -46,14 +46,6 @@
                 ]
             },
             {
-                "fieldName": "selectedLayer",
-                "validators": [
-                    {
-                        "key": "required_for_map_in"
-                    }
-                ]
-            },
-            {
                 "fieldName": "defaultFormula",
                 "validators": [
                     {
