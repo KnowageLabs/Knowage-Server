@@ -181,15 +181,15 @@ export default defineComponent({
         },
         selectionTypes: {
             type: Array,
-            requierd: true
+            required: true
         },
         layers: {
             type: Array,
-            requierd: true
+            required: true
         },
         lovs: {
             type: Array,
-            requierd: true
+            required: true
         },
         isDate: {
             type: Boolean,
@@ -197,7 +197,7 @@ export default defineComponent({
         },
         showMapDriver: {
             type: Boolean,
-            requierd: true
+            required: true
         }
     },
     data() {
