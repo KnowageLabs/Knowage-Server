@@ -258,6 +258,12 @@
 			<version>${project.version}</version>
 			<scope>compile</scope>
 		</dependency>
+		
+		<dependency>
+			<groupId>it.eng.knowage</groupId>
+			<artifactId>knowage-pm-dto</artifactId>
+			<version>${project.version}</version>
+		</dependency>
 
 		<dependency>
 			<groupId>it.eng.knowage</groupId>

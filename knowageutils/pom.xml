@@ -125,6 +125,18 @@
 			<artifactId>commons-httpclient</artifactId> <version>3.0.1</version> </dependency> -->
 
 		<dependency>
+			<groupId>it.eng.knowage</groupId>
+			<artifactId>knowage-pm-dto</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.activemq</groupId>
+			<artifactId>activemq-client</artifactId>
+			<version>5.15.0</version>
+		</dependency>
+
+		<dependency>
 			<groupId>org.apache.logging.log4j</groupId>
 			<artifactId>log4j-1.2-api</artifactId>
 		</dependency>

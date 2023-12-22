@@ -29,7 +29,7 @@ import it.eng.spagobi.profiling.bean.SbiUserAttributes;
 import it.eng.spagobi.user.UserProfileManager;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
-public class EventToDatabaseEmittingCommand implements UserEventsEmettingCommand, RoleEventsEmittingCommand {
+public class EventToDatabaseEmittingCommand extends AbstractEventEmittingImpl {
 
 	private static final String DATA_KEY_PASSWORD_BLOCKED = "passwordBlocked";
 	private static final String DATA_KEY_FAILED_LOGIN_ATTEMPTS = "failedLoginAttempts";
@@ -41,38 +41,26 @@ public class EventToDatabaseEmittingCommand implements UserEventsEmettingCommand
 	@Override
 	public void emitUserAttributeDeleted(Session aSession, SbiUserAttributes attribute) {
 
-		JsonObject data = createCommonDataForEvent()
-				.add("id", attribute.getId().getId())
-				.add("attributeId", attribute.getSbiAttribute().getAttributeId())
-				.add("name", attribute.getSbiAttribute().getAttributeName())
-				.add("value", Optional.ofNullable(attribute.getAttributeValue()).orElse(""))
+		JsonObject data = createCommonDataForEvent().add("id", attribute.getId().getId()).add("attributeId", attribute.getSbiAttribute().getAttributeId())
+				.add("name", attribute.getSbiAttribute().getAttributeName()).add("value", Optional.ofNullable(attribute.getAttributeValue()).orElse(""))
 				.build();
 
-		SbiEs event = createUserEvent(attribute.getSbiUser())
-				.withEvent("UserAttributeDeleted")
-				.withData(data)
-				.build();
+		SbiEs event = createUserEvent(attribute.getSbiUser()).withEvent("UserAttributeDeleted").withData(data).build();
 
-			aSession.save(event);
+		aSession.save(event);
 
 	}
 
 	@Override
 	public void emitUserAttributeAdded(Session aSession, SbiUserAttributes attribute) {
 
-		JsonObject data = createCommonDataForEvent()
-				.add("id", attribute.getId().getId())
-				.add("attributeId", attribute.getId().getAttributeId())
-				.add("name", attribute.getSbiAttribute().getAttributeName())
-				.add("value", Optional.ofNullable(attribute.getAttributeValue()).orElse(""))
+		JsonObject data = createCommonDataForEvent().add("id", attribute.getId().getId()).add("attributeId", attribute.getId().getAttributeId())
+				.add("name", attribute.getSbiAttribute().getAttributeName()).add("value", Optional.ofNullable(attribute.getAttributeValue()).orElse(""))
 				.build();
 
-		SbiEs event = createUserEvent(attribute.getSbiUser())
-				.withEvent("UserAttributeAdded")
-				.withData(data)
-				.build();
+		SbiEs event = createUserEvent(attribute.getSbiUser()).withEvent("UserAttributeAdded").withData(data).build();
 
-			aSession.save(event);
+		aSession.save(event);
 
 	}
 
@@ -84,27 +72,15 @@ public class EventToDatabaseEmittingCommand implements UserEventsEmettingCommand
 		JsonArrayBuilder arrayBuilder = Json.createArrayBuilder();
 
 		sbiExtUserRoleses.stream()
-			.map(e -> Json.createObjectBuilder()
-					.add("extRoleId", e.getExtRoleId())
-					.add("code", e.getCode())
-					.add("name", e.getName())
-					.build())
-			.forEach(arrayBuilder::add);
+				.map(e -> Json.createObjectBuilder().add("extRoleId", e.getExtRoleId()).add("code", e.getCode()).add("name", e.getName()).build())
+				.forEach(arrayBuilder::add);
 
-		JsonObject data = createCommonDataForEvent()
-				.add("id", user.getId())
-				.add(DATA_KEY_USER_ID, user.getUserId())
-				.add(DATA_KEY_ROLES, arrayBuilder)
-				.add(DATA_KEY_PASSWORD, Optional.ofNullable(user.getPassword()).orElse(""))
-				.add(DATA_KEY_FAILED_LOGIN_ATTEMPTS, user.getFailedLoginAttempts())
+		JsonObject data = createCommonDataForEvent().add("id", user.getId()).add(DATA_KEY_USER_ID, user.getUserId()).add(DATA_KEY_ROLES, arrayBuilder)
+				.add(DATA_KEY_PASSWORD, Optional.ofNullable(user.getPassword()).orElse("")).add(DATA_KEY_FAILED_LOGIN_ATTEMPTS, user.getFailedLoginAttempts())
 				.add(DATA_KEY_PASSWORD_BLOCKED, Optional.ofNullable(user.getFlgPwdBlocked()).orElse(Boolean.FALSE))
-				.add(DATA_KEY_IS_SUPER_ADMIN, Optional.ofNullable(user.getIsSuperadmin()).orElse(Boolean.FALSE))
-				.build();
+				.add(DATA_KEY_IS_SUPER_ADMIN, Optional.ofNullable(user.getIsSuperadmin()).orElse(Boolean.FALSE)).build();
 
-		SbiEs event = createUserEvent(user)
-			.withEvent("UserDeleted")
-			.withData(data)
-			.build();
+		SbiEs event = createUserEvent(user).withEvent("UserDeleted").withData(data).build();
 
 		aSession.save(event);
 	}
@@ -117,27 +93,15 @@ public class EventToDatabaseEmittingCommand implements UserEventsEmettingCommand
 		JsonArrayBuilder arrayBuilder = Json.createArrayBuilder();
 
 		sbiExtUserRoleses.stream()
-			.map(e -> Json.createObjectBuilder()
-					.add("extRoleId", e.getExtRoleId())
-					.add("code", e.getCode())
-					.add("name", e.getName())
-					.build())
-			.forEach(arrayBuilder::add);
+				.map(e -> Json.createObjectBuilder().add("extRoleId", e.getExtRoleId()).add("code", e.getCode()).add("name", e.getName()).build())
+				.forEach(arrayBuilder::add);
 
-		JsonObject data = createCommonDataForEvent()
-				.add("id", user.getId())
-				.add(DATA_KEY_USER_ID, user.getUserId())
-				.add(DATA_KEY_ROLES, arrayBuilder)
-				.add(DATA_KEY_PASSWORD, Optional.ofNullable(user.getPassword()).orElse(""))
-				.add(DATA_KEY_FAILED_LOGIN_ATTEMPTS, user.getFailedLoginAttempts())
+		JsonObject data = createCommonDataForEvent().add("id", user.getId()).add(DATA_KEY_USER_ID, user.getUserId()).add(DATA_KEY_ROLES, arrayBuilder)
+				.add(DATA_KEY_PASSWORD, Optional.ofNullable(user.getPassword()).orElse("")).add(DATA_KEY_FAILED_LOGIN_ATTEMPTS, user.getFailedLoginAttempts())
 				.add(DATA_KEY_PASSWORD_BLOCKED, Optional.ofNullable(user.getFlgPwdBlocked()).orElse(Boolean.FALSE))
-				.add(DATA_KEY_IS_SUPER_ADMIN, Optional.ofNullable(user.getIsSuperadmin()).orElse(Boolean.FALSE))
-				.build();
+				.add(DATA_KEY_IS_SUPER_ADMIN, Optional.ofNullable(user.getIsSuperadmin()).orElse(Boolean.FALSE)).build();
 
-		SbiEs event = createUserEvent(user)
-			.withEvent("UserCreated")
-			.withData(data)
-			.build();
+		SbiEs event = createUserEvent(user).withEvent("UserCreated").withData(data).build();
 
 		aSession.save(event);
 	}
@@ -149,38 +113,28 @@ public class EventToDatabaseEmittingCommand implements UserEventsEmettingCommand
 
 		JsonArrayBuilder rolesArrayBuilder = Json.createArrayBuilder();
 
-		sbiExtUserRoleses.stream()
-			.map(e -> {
-				JsonObjectBuilder builder = Json.createObjectBuilder();
-				builder.add("extRoleId", e.getExtRoleId());
+		sbiExtUserRoleses.stream().map(e -> {
+			JsonObjectBuilder builder = Json.createObjectBuilder();
+			builder.add("extRoleId", e.getExtRoleId());
 
-				if (isNull(e.getCode())) {
-					builder.addNull("code");
-				} else {
-					builder.add("code", e.getCode());
-				}
-				builder.add("name", e.getName());
+			if (isNull(e.getCode())) {
+				builder.addNull("code");
+			} else {
+				builder.add("code", e.getCode());
+			}
+			builder.add("name", e.getName());
 
-				JsonObject built = builder.build();
+			JsonObject built = builder.build();
 
-				return built;
-			})
-			.forEach(rolesArrayBuilder::add);
+			return built;
+		}).forEach(rolesArrayBuilder::add);
 
-		JsonObject data = createCommonDataForEvent()
-				.add("id", user.getId())
-				.add(DATA_KEY_USER_ID, user.getUserId())
-				.add(DATA_KEY_ROLES, rolesArrayBuilder)
-				.add(DATA_KEY_PASSWORD, Optional.ofNullable(user.getPassword()).orElse(""))
-				.add(DATA_KEY_FAILED_LOGIN_ATTEMPTS, user.getFailedLoginAttempts())
+		JsonObject data = createCommonDataForEvent().add("id", user.getId()).add(DATA_KEY_USER_ID, user.getUserId()).add(DATA_KEY_ROLES, rolesArrayBuilder)
+				.add(DATA_KEY_PASSWORD, Optional.ofNullable(user.getPassword()).orElse("")).add(DATA_KEY_FAILED_LOGIN_ATTEMPTS, user.getFailedLoginAttempts())
 				.add(DATA_KEY_PASSWORD_BLOCKED, Optional.ofNullable(user.getFlgPwdBlocked()).orElse(Boolean.FALSE))
-				.add(DATA_KEY_IS_SUPER_ADMIN, Optional.ofNullable(user.getIsSuperadmin()).orElse(Boolean.FALSE))
-				.build();
+				.add(DATA_KEY_IS_SUPER_ADMIN, Optional.ofNullable(user.getIsSuperadmin()).orElse(Boolean.FALSE)).build();
 
-		SbiEs event = createUserEvent(user)
-			.withEvent("UserUpdated")
-			.withData(data)
-			.build();
+		SbiEs event = createUserEvent(user).withEvent("UserUpdated").withData(data).build();
 
 		aSession.save(event);
 	}
@@ -201,16 +155,10 @@ public class EventToDatabaseEmittingCommand implements UserEventsEmettingCommand
 			throw new SpagoBIRuntimeException("Cannot load ext role with id " + extRoleId);
 		}
 
-		JsonObject data = createCommonDataForEvent()
-				.add("extRoleId", extRoleId)
-				.add("code", Optional.ofNullable(extRole.getCode()).orElse(""))
-				.add("name", extRole.getName())
-				.build();
+		JsonObject data = createCommonDataForEvent().add("extRoleId", extRoleId).add("code", Optional.ofNullable(extRole.getCode()).orElse(""))
+				.add("name", extRole.getName()).build();
 
-		SbiEs event = createUserEvent(role.getSbiUser())
-			.withEvent("UserRoleUpdated")
-			.withData(data)
-			.build();
+		SbiEs event = createUserEvent(role.getSbiUser()).withEvent("UserRoleUpdated").withData(data).build();
 
 		aSession.save(event);
 	}
@@ -231,16 +179,10 @@ public class EventToDatabaseEmittingCommand implements UserEventsEmettingCommand
 			throw new SpagoBIRuntimeException("Cannot load ext role with id " + extRoleId);
 		}
 
-		JsonObject data = createCommonDataForEvent()
-				.add("extRoleId", extRoleId)
-				.add("code", Optional.ofNullable(extRole.getCode()).orElse(""))
-				.add("name", extRole.getName())
-				.build();
+		JsonObject data = createCommonDataForEvent().add("extRoleId", extRoleId).add("code", Optional.ofNullable(extRole.getCode()).orElse(""))
+				.add("name", extRole.getName()).build();
 
-		SbiEs event = createUserEvent(role.getSbiUser())
-			.withEvent("UserRoleDeleted")
-			.withData(data)
-			.build();
+		SbiEs event = createUserEvent(role.getSbiUser()).withEvent("UserRoleDeleted").withData(data).build();
 
 		aSession.save(event);
 	}
@@ -261,16 +203,10 @@ public class EventToDatabaseEmittingCommand implements UserEventsEmettingCommand
 			throw new SpagoBIRuntimeException("Cannot load ext role with id " + extRoleId);
 		}
 
-		JsonObject data = createCommonDataForEvent()
-				.add("extRoleId", extRoleId)
-				.add("code", Optional.ofNullable(extRole.getCode()).orElse(""))
-				.add("name", extRole.getName())
-				.build();
+		JsonObject data = createCommonDataForEvent().add("extRoleId", extRoleId).add("code", Optional.ofNullable(extRole.getCode()).orElse(""))
+				.add("name", extRole.getName()).build();
 
-		SbiEs event = createUserEvent(role.getSbiUser())
-			.withEvent("UserRoleAdded")
-			.withData(data)
-			.build();
+		SbiEs event = createUserEvent(role.getSbiUser()).withEvent("UserRoleAdded").withData(data).build();
 
 		aSession.save(event);
 	}
@@ -278,17 +214,11 @@ public class EventToDatabaseEmittingCommand implements UserEventsEmettingCommand
 	@Override
 	public void emitUserAttributeUpdated(Session aSession, SbiUserAttributes attribute) {
 
-		JsonObject data = createCommonDataForEvent()
-				.add("id", attribute.getId().getId())
-				.add("attributeId", attribute.getSbiAttribute().getAttributeId())
-				.add("name", attribute.getSbiAttribute().getAttributeName())
-				.add("value", Optional.ofNullable(attribute.getAttributeValue()).orElse(""))
+		JsonObject data = createCommonDataForEvent().add("id", attribute.getId().getId()).add("attributeId", attribute.getSbiAttribute().getAttributeId())
+				.add("name", attribute.getSbiAttribute().getAttributeName()).add("value", Optional.ofNullable(attribute.getAttributeValue()).orElse(""))
 				.build();
 
-		SbiEs event = createUserEvent(attribute.getSbiUser())
-				.withEvent("UserAttributeUpdated")
-				.withData(data)
-				.build();
+		SbiEs event = createUserEvent(attribute.getSbiUser()).withEvent("UserAttributeUpdated").withData(data).build();
 
 		aSession.save(event);
 
@@ -301,22 +231,12 @@ public class EventToDatabaseEmittingCommand implements UserEventsEmettingCommand
 		JsonArray datasetCategories = createDatasetCategoriesAsJsonArray(role);
 		JsonArray metaModelCategories = createMetaModelCategoriesAsJsonArray(role);
 
-		JsonObject data = createCommonDataForEvent()
-				.add("id", role.getExtRoleId())
-				.add("code", Optional.ofNullable(role.getCode()).orElse(""))
-				.add("name", role.getName())
-				.add("description", Optional.ofNullable(role.getDescr()).orElse(""))
-				.add("isPublic", role.getIsPublic())
-				.add("roleTypeCode", role.getRoleTypeCode())
-				.add("authorizations", authorizations)
-				.add("datasetCategories", datasetCategories)
-				.add("metaModelCategories", metaModelCategories)
-				.build();
+		JsonObject data = createCommonDataForEvent().add("id", role.getExtRoleId()).add("code", Optional.ofNullable(role.getCode()).orElse(""))
+				.add("name", role.getName()).add("description", Optional.ofNullable(role.getDescr()).orElse("")).add("isPublic", role.getIsPublic())
+				.add("roleTypeCode", role.getRoleTypeCode()).add("authorizations", authorizations).add("datasetCategories", datasetCategories)
+				.add("metaModelCategories", metaModelCategories).build();
 
-		SbiEs event = createRoleEvent(role)
-				.withEvent("RoleAdded")
-				.withData(data)
-				.build();
+		SbiEs event = createRoleEvent(role).withEvent("RoleAdded").withData(data).build();
 
 		aSession.save(event);
 
@@ -329,22 +249,12 @@ public class EventToDatabaseEmittingCommand implements UserEventsEmettingCommand
 		JsonArray datasetCategories = createDatasetCategoriesAsJsonArray(role);
 		JsonArray metaModelCategories = createMetaModelCategoriesAsJsonArray(role);
 
-		JsonObject data = createCommonDataForEvent()
-				.add("id", role.getExtRoleId())
-				.add("code", Optional.ofNullable(role.getCode()).orElse(""))
-				.add("name", role.getName())
-				.add("description", Optional.ofNullable(role.getDescr()).orElse(""))
-				.add("isPublic", Optional.ofNullable(role.getIsPublic()).orElse(false))
-				.add("roleTypeCode", role.getRoleTypeCode())
-				.add("authorizations", authorizations)
-				.add("datasetCategories", datasetCategories)
-				.add("metaModelCategories", metaModelCategories)
-				.build();
+		JsonObject data = createCommonDataForEvent().add("id", role.getExtRoleId()).add("code", Optional.ofNullable(role.getCode()).orElse(""))
+				.add("name", role.getName()).add("description", Optional.ofNullable(role.getDescr()).orElse(""))
+				.add("isPublic", Optional.ofNullable(role.getIsPublic()).orElse(false)).add("roleTypeCode", role.getRoleTypeCode())
+				.add("authorizations", authorizations).add("datasetCategories", datasetCategories).add("metaModelCategories", metaModelCategories).build();
 
-		SbiEs event = createRoleEvent(role)
-				.withEvent("RoleAdded")
-				.withData(data)
-				.build();
+		SbiEs event = createRoleEvent(role).withEvent("RoleAdded").withData(data).build();
 
 		aSession.save(event);
 
@@ -355,21 +265,15 @@ public class EventToDatabaseEmittingCommand implements UserEventsEmettingCommand
 
 		JsonArray datasetCategories = createDatasetCategoriesAsJsonArray(role);
 
-		JsonObjectBuilder builder = createCommonDataForEvent()
-				.add("id", role.getExtRoleId());
+		JsonObjectBuilder builder = createCommonDataForEvent().add("id", role.getExtRoleId());
 		if (role.getCode() == null) {
 			builder.addNull("code");
 		} else {
 			builder.add("code", role.getCode());
 		}
-		JsonObject data = builder.add("name", role.getName())
-				.add("datasetCategories", datasetCategories)
-				.build();
+		JsonObject data = builder.add("name", role.getName()).add("datasetCategories", datasetCategories).build();
 
-		SbiEs event = createRoleEvent(role)
-				.withEvent("DatasetCategoryRemoved")
-				.withData(data)
-				.build();
+		SbiEs event = createRoleEvent(role).withEvent("DatasetCategoryRemoved").withData(data).build();
 
 		aSession.save(event);
 
@@ -380,21 +284,15 @@ public class EventToDatabaseEmittingCommand implements UserEventsEmettingCommand
 
 		JsonArray datasetCategories = createDatasetCategoriesAsJsonArray(role);
 
-		JsonObjectBuilder builder = createCommonDataForEvent()
-				.add("id", role.getExtRoleId());
+		JsonObjectBuilder builder = createCommonDataForEvent().add("id", role.getExtRoleId());
 		if (role.getCode() == null) {
 			builder.addNull("code");
 		} else {
 			builder.add("code", role.getCode());
 		}
-		JsonObject data = builder.add("name", role.getName())
-				.add("datasetCategories", datasetCategories)
-				.build();
+		JsonObject data = builder.add("name", role.getName()).add("datasetCategories", datasetCategories).build();
 
-		SbiEs event = createRoleEvent(role)
-				.withEvent("DatasetCategoryAdded")
-				.withData(data)
-				.build();
+		SbiEs event = createRoleEvent(role).withEvent("DatasetCategoryAdded").withData(data).build();
 
 		aSession.save(event);
 
@@ -407,22 +305,12 @@ public class EventToDatabaseEmittingCommand implements UserEventsEmettingCommand
 		JsonArray datasetCategories = createDatasetCategoriesAsJsonArray(role);
 		JsonArray metaModelCategories = createMetaModelCategoriesAsJsonArray(role);
 
-		JsonObject data = createCommonDataForEvent()
-				.add("id", role.getExtRoleId())
-				.add("code", Optional.ofNullable(role.getCode()).orElse(""))
-				.add("name", role.getName())
-				.add("description", Optional.ofNullable(role.getDescr()).orElse(""))
-				.add("isPublic", role.getIsPublic())
-				.add("roleTypeCode", role.getRoleTypeCode())
-				.add("authorizations", authorizations)
-				.add("datasetCategories", datasetCategories)
-				.add("metaModelCategories", metaModelCategories)
-				.build();
+		JsonObject data = createCommonDataForEvent().add("id", role.getExtRoleId()).add("code", Optional.ofNullable(role.getCode()).orElse(""))
+				.add("name", role.getName()).add("description", Optional.ofNullable(role.getDescr()).orElse("")).add("isPublic", role.getIsPublic())
+				.add("roleTypeCode", role.getRoleTypeCode()).add("authorizations", authorizations).add("datasetCategories", datasetCategories)
+				.add("metaModelCategories", metaModelCategories).build();
 
-		SbiEs event = createRoleEvent(role)
-				.withEvent("RoleUpdated")
-				.withData(data)
-				.build();
+		SbiEs event = createRoleEvent(role).withEvent("RoleUpdated").withData(data).build();
 
 		aSession.save(event);
 
@@ -431,21 +319,15 @@ public class EventToDatabaseEmittingCommand implements UserEventsEmettingCommand
 	@Override
 	public void emitPublicFlagSetEvent(Session aSession, SbiExtRoles role) {
 
-		JsonObjectBuilder builder = createCommonDataForEvent()
-				.add("id", role.getExtRoleId());
+		JsonObjectBuilder builder = createCommonDataForEvent().add("id", role.getExtRoleId());
 		if (role.getCode() == null) {
 			builder.addNull("code");
 		} else {
 			builder.add("code", role.getCode());
 		}
-		JsonObject data = builder.add("name", role.getName())
-				.add("isPublic", role.getIsPublic())
-				.build();
+		JsonObject data = builder.add("name", role.getName()).add("isPublic", role.getIsPublic()).build();
 
-		SbiEs event = createRoleEvent(role)
-				.withEvent("PublicFlagSet")
-				.withData(data)
-				.build();
+		SbiEs event = createRoleEvent(role).withEvent("PublicFlagSet").withData(data).build();
 
 		aSession.save(event);
 
@@ -456,33 +338,26 @@ public class EventToDatabaseEmittingCommand implements UserEventsEmettingCommand
 	}
 
 	public SbiEs.Builder createUserEvent(int userId) {
-		return SbiEs.Builder.newBuilder()
-			.withType("User")
-			.withId(userId);
+		return SbiEs.Builder.newBuilder().withType("User").withId(userId);
 	}
 
 	public JsonArray createAuthorizationsAsJsonArray(SbiExtRoles role) {
 		JsonArrayBuilder authorizationsArrayBuilder = Json.createArrayBuilder();
 
-		((Set<SbiAuthorizationsRoles>) role.getSbiAuthorizationsRoleses())
-			.stream()
-			.map(e -> {
+		((Set<SbiAuthorizationsRoles>) role.getSbiAuthorizationsRoleses()).stream().map(e -> {
 
-				JsonObjectBuilder builder = Json.createObjectBuilder()
-						.add("authorizationId", e.getId().getAuthorizationId())
-						.add("roleId", e.getId().getRoleId());
+			JsonObjectBuilder builder = Json.createObjectBuilder().add("authorizationId", e.getId().getAuthorizationId()).add("roleId", e.getId().getRoleId());
 
-				if (isNull(e.getSbiAuthorizations())) {
-					builder.addNull("name");
-				} else {
-					builder.add("name", e.getSbiAuthorizations().getName());
-				}
+			if (isNull(e.getSbiAuthorizations())) {
+				builder.addNull("name");
+			} else {
+				builder.add("name", e.getSbiAuthorizations().getName());
+			}
 
-				JsonObject ret = builder.build();
+			JsonObject ret = builder.build();
 
-				return ret;
-			})
-			.forEach(authorizationsArrayBuilder::add);
+			return ret;
+		}).forEach(authorizationsArrayBuilder::add);
 
 		return authorizationsArrayBuilder.build();
 	}
@@ -491,10 +366,7 @@ public class EventToDatabaseEmittingCommand implements UserEventsEmettingCommand
 		JsonArrayBuilder authorizationsArrayBuilder = Json.createArrayBuilder();
 
 		if (!isNull(role.getSbiDataSetCategories())) {
-			((Set<SbiDomains>) role.getSbiDataSetCategories())
-				.stream()
-				.map(this::fromSbiDomainsToJsonObject)
-				.forEach(authorizationsArrayBuilder::add);
+			((Set<SbiDomains>) role.getSbiDataSetCategories()).stream().map(this::fromSbiDomainsToJsonObject).forEach(authorizationsArrayBuilder::add);
 		}
 
 		return authorizationsArrayBuilder.build();
@@ -504,10 +376,7 @@ public class EventToDatabaseEmittingCommand implements UserEventsEmettingCommand
 		JsonArrayBuilder authorizationsArrayBuilder = Json.createArrayBuilder();
 
 		if (!isNull(role.getSbiMetaModelCategories())) {
-			role.getSbiMetaModelCategories()
-				.stream()
-				.map(this::fromSbiCategoryToJsonObject)
-				.forEach(authorizationsArrayBuilder::add);
+			role.getSbiMetaModelCategories().stream().map(this::fromSbiCategoryToJsonObject).forEach(authorizationsArrayBuilder::add);
 		}
 
 		return authorizationsArrayBuilder.build();
@@ -518,45 +387,29 @@ public class EventToDatabaseEmittingCommand implements UserEventsEmettingCommand
 	}
 
 	public SbiEs.Builder createRoleEvent(int roleId) {
-		return SbiEs.Builder.newBuilder()
-			.withType("Role")
-			.withId(roleId);
+		return SbiEs.Builder.newBuilder().withType("Role").withId(roleId);
 	}
 
 	protected final JsonObjectBuilder createCommonDataForEvent() {
 
 		UserProfile userProfile = Optional.ofNullable(UserProfileManager.getProfile()).orElse(new UserProfile());
 
-		JsonObject userProfileAsJson = Json.createObjectBuilder()
-				.add("id", Optional.ofNullable(userProfile.getUserId()).orElse("").toString())
+		JsonObject userProfileAsJson = Json.createObjectBuilder().add("id", Optional.ofNullable(userProfile.getUserId()).orElse("").toString())
 				.add("username", Optional.ofNullable(userProfile.getUserName()).orElse("").toString())
-				.add("isSuperAdmin", Optional.ofNullable(userProfile.getIsSuperadmin()).orElse(Boolean.FALSE).toString())
-				.build();
+				.add("isSuperAdmin", Optional.ofNullable(userProfile.getIsSuperadmin()).orElse(Boolean.FALSE).toString()).build();
 
-		return Json.createObjectBuilder()
-			.add("userProfile", userProfileAsJson);
+		return Json.createObjectBuilder().add("userProfile", userProfileAsJson);
 	}
 
 	protected final JsonObject fromSbiDomainsToJsonObject(SbiDomains e) {
-		JsonObject ret = Json.createObjectBuilder()
-				.add("domainCd", e.getDomainCd())
-				.add("domainNm", e.getDomainNm())
-				.add("valueCd", e.getValueCd())
-				.add("valueDs", e.getValueDs())
-				.add("valueNm", e.getValueNm())
-				.add("valueId", e.getValueId())
-				.build();
+		JsonObject ret = Json.createObjectBuilder().add("domainCd", e.getDomainCd()).add("domainNm", e.getDomainNm()).add("valueCd", e.getValueCd())
+				.add("valueDs", e.getValueDs()).add("valueNm", e.getValueNm()).add("valueId", e.getValueId()).build();
 
 		return ret;
 	}
 
 	protected final JsonObject fromSbiCategoryToJsonObject(SbiCategory e) {
-		JsonObject ret = Json.createObjectBuilder()
-				.add("code", e.getCode())
-				.add("name", e.getName())
-				.add("type", e.getType())
-				.add("id", e.getId())
-				.build();
+		JsonObject ret = Json.createObjectBuilder().add("code", e.getCode()).add("name", e.getName()).add("type", e.getType()).add("id", e.getId()).build();
 
 		return ret;
 	}

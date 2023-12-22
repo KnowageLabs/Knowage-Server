@@ -151,6 +151,7 @@
 		<module>../knowage-vue</module>
 		<module>../knowage-spring-boot-api-common</module>
 		<module>../knowage-common</module>
+		<module>../knowage-pm-dto</module>
 	</modules>
 
 	<build>
