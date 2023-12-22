@@ -13,8 +13,8 @@
         breakpoint="960px"
         @rowSelect="onSelect"
         @rowUnselect="onSelect"
-        @rowSelectAll="onSelect"
-        @rowUnselectAll="onSelect"
+        @rowSelectAll="onSelectAll"
+        @rowUnselectAll="onSelectAll"
     >
         <template #empty>
             <div>
@@ -23,7 +23,7 @@
         </template>
         <Column :selectionMode="['CONTAINS', 'NOT CONTAINS', 'IN', 'NOT IN'].includes(filterOperator) ? 'multiple' : 'single'" :headerStyle="QBEFilterDialogDescriptor.selectionColumnHeaderStyle"></Column>
         <Column v-for="column in columns" :key="column.header" :field="column.dataIndex" :header="column.header" :sortable="true">
-            <template #filter="{filterModel}">
+            <template #filter="{ filterModel }">
                 <InputText v-model="filterModel.value" class="p-column-filter"></InputText>
             </template>
         </Column>
@@ -74,6 +74,10 @@ export default defineComponent({
                 this.selectedValues = []
                 this.loadedSelectedValues?.forEach((el: any) => this.selectedValues.push({ column_1: '' + el }))
             }
+        },
+        onSelectAll(event: any) {
+            this.selectedValues = event.data ?? []
+            this.onSelect()
         },
         onSelect() {
             let tempSelectedValues = [] as string[]

@@ -46,6 +46,7 @@ import LovsManagementProfileAttributesList from './LovsManagementProfileAttribut
 import LovsManagementTestDialog from './LovsManagementTestDialog/LovsManagementTestDialog.vue'
 import LovsManagementParamsDialog from './LovsManagementParamsDialog/LovsManagementParamsDialog.vue'
 import LovsManagementDataset from './LovsManagementDataset/LovsManagementDataset.vue'
+import { removeUnusedVisibleColumnsFromModel } from './LovsManagementTestDialog/LovsManagementTestDialogHelpers'
 
 export default defineComponent({
     name: 'lovs-management-wizard-card',
@@ -399,6 +400,7 @@ export default defineComponent({
             this.setFormatedVisibleValues()
         },
         setColumnValues() {
+            removeUnusedVisibleColumnsFromModel(this.treeListTypeModel)
             if (this.lov.id || this.treeListTypeModel.LOVTYPE !== 'simple') {
                 this.formatedVisibleValues = this.treeListTypeModel['VISIBLE-COLUMNS']?.length > 0 ? this.treeListTypeModel['VISIBLE-COLUMNS'].split(',') : []
                 this.formatedInvisibleValues = []
