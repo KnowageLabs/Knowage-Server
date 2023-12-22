@@ -30,6 +30,12 @@
 		
 		<dependency>
 			<groupId>it.eng.knowage</groupId>
+			<artifactId>knowage-pm-dto</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>it.eng.knowage</groupId>
 			<artifactId>knowage-utils</artifactId>
 			<version>${project.version}</version>
 			<type>test-jar</type>

@@ -24,6 +24,7 @@ import java.util.Map;
 import org.apache.log4j.Logger;
 
 import it.eng.knowage.encryption.DecryptionDataStoreTransformer;
+import it.eng.knowage.privacymanager.PrivacyManagerDataStoreTransformer;
 import it.eng.spagobi.services.dataset.bo.SpagoBiDataSet;
 import it.eng.spagobi.tenant.Tenant;
 import it.eng.spagobi.tenant.TenantManager;
@@ -55,13 +56,12 @@ public abstract class ConfigurableDataSet extends AbstractDataSet {
 	private static transient Logger logger = Logger.getLogger(ConfigurableDataSet.class);
 
 	public ConfigurableDataSet() {
-		super();
-		userProfileParameters = new HashMap<String, Object>();
+		userProfileParameters = new HashMap<>();
 	}
 
 	public ConfigurableDataSet(SpagoBiDataSet dataSetConfig) {
 		super(dataSetConfig);
-		userProfileParameters = new HashMap<String, Object>();
+		userProfileParameters = new HashMap<>();
 	}
 
 	/**
@@ -152,6 +152,7 @@ public abstract class ConfigurableDataSet extends AbstractDataSet {
 			dataStore = dataProxy.load(dataReader);
 
 			addDataStoreTransformer(new DecryptionDataStoreTransformer(this));
+			addDataStoreTransformer(new PrivacyManagerDataStoreTransformer(this));
 			addDataStoreTransformer(new DataStoreStatsTransformer());
 
 			if (hasDataStoreTransformers()) {
