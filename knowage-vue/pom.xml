@@ -177,6 +177,7 @@
 							<arguments>
 								<argument>install</argument>
 								<argument>--workspaces</argument>
+								<argument>--legacy-peer-deps</argument>
 							</arguments>
 						</configuration>
 					</execution>

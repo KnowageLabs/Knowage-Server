@@ -13,7 +13,7 @@ import it.eng.spagobi.profiling.bean.SbiUser;
 import it.eng.spagobi.profiling.bean.SbiUserAttributes;
 import it.eng.spagobi.user.UserProfileManager;
 
-public class PMEventToDatabaseEmittingCommand implements UserEventsEmettingCommand, RoleEventsEmittingCommand {
+public class PMEventToDatabaseEmittingCommand extends AbstractEventEmittingImpl {
 
 	private FullEventBuilder getBasicBuilder() {
 		FullEventBuilder eventBuilder = new FullEventBuilder(false);

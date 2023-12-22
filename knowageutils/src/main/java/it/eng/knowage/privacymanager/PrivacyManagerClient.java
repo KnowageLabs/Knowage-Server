@@ -17,12 +17,9 @@
  */
 package it.eng.knowage.privacymanager;
 
-import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.Arrays;
 import java.util.EnumMap;
 import java.util.Map;
-import java.util.Properties;
 
 import javax.jms.Connection;
 import javax.jms.JMSException;
@@ -63,11 +60,9 @@ public class PrivacyManagerClient {
 
 	private void initialize() {
 
-		InputStreamReader isr = new InputStreamReader(
-				this.getClass().getClassLoader().getResourceAsStream("PrivacyManagerClient.properties"));
-		Properties prop = new Properties();
+		PMConfiguration prop = PMConfiguration.getInstance();
 		try {
-			prop.load(isr);
+
 			LOGGER.info("Initializing activeMQ connection...");
 
 			String activeMqHost = prop.getProperty("activemq.host");
@@ -84,8 +79,6 @@ public class PrivacyManagerClient {
 			}
 			LOGGER.info("activeMQ connections initialized...");
 
-		} catch (IOException e) {
-			LOGGER.error("Error while loading properties from PrivacyManagerClient.properties", e);
 		} catch (JMSException e) {
 			LOGGER.error("Error while initializing activeMQ connection", e);
 		}

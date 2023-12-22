@@ -17,6 +17,10 @@
  */
 package it.eng.spagobi.commons.dao;
 
+import java.util.Optional;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.HibernateException;
 
 import it.eng.spago.error.EMFUserError;
@@ -43,7 +47,8 @@ import it.eng.spagobi.behaviouralmodel.check.dao.ICheckDAO;
 import it.eng.spagobi.behaviouralmodel.lov.dao.IModalitiesValueDAO;
 import it.eng.spagobi.cache.dao.ICacheDAO;
 import it.eng.spagobi.commons.SingletonConfig;
-import it.eng.spagobi.commons.dao.es.PMEventToDatabaseEmittingCommand;
+import it.eng.spagobi.commons.dao.es.AbstractEventEmittingImpl;
+import it.eng.spagobi.commons.dao.es.NoEventEmitting;
 import it.eng.spagobi.community.dao.ISbiCommunityDAO;
 import it.eng.spagobi.dossier.dao.ISbiDossierActivityDAO;
 import it.eng.spagobi.engines.config.dao.IEngineDAO;
@@ -117,6 +122,9 @@ import it.eng.spagobi.workspace.dao.IObjFuncOrganizerDAO;
 public class DAOFactory {
 
 	private static final String CONFIG_EMIT_AUTHORIZATION_EVENTS = "KNOWAGE.EMIT_AUTHORIZATION_EVENTS";
+	private static final String KNOWAGE_EMIT_AUTHORIZATION_EVENTS_IMPL = "kn.emit.authorization.event.impl";
+
+	private static final Logger LOGGER = LogManager.getLogger(DAOFactory.class);
 
 	private static String getDAOClass(String daoName) {
 		return DAOConfig.getMappings().get(daoName);
@@ -263,10 +271,7 @@ public class DAOFactory {
 	public static IRoleDAO getRoleDAO() {
 		IRoleDAO ret = (IRoleDAO) createDAOInstance("RoleDAO");
 
-		if (isAuthorizationEventsEmissionEnable()) {
-			PMEventToDatabaseEmittingCommand eventToDatabaseEmittingCommand = new PMEventToDatabaseEmittingCommand();
-			ret.setEventEmittingCommand(eventToDatabaseEmittingCommand);
-		}
+		setEventEmitter(ret);
 
 		return ret;
 	}
@@ -565,10 +570,7 @@ public class DAOFactory {
 	public static ISbiUserDAO getSbiUserDAO() {
 		ISbiUserDAO ret = (ISbiUserDAO) createDAOInstance("SbiUserDAO");
 
-		if (isAuthorizationEventsEmissionEnable()) {
-			PMEventToDatabaseEmittingCommand eventToDatabaseEmittingCommand = new PMEventToDatabaseEmittingCommand();
-			ret.setEventEmittingCommand(eventToDatabaseEmittingCommand);
-		}
+		setEventEmitter(ret);
 
 		return ret;
 	}
@@ -1017,6 +1019,32 @@ public class DAOFactory {
 		SingletonConfig config = SingletonConfig.getInstance();
 		String configValue = config.getConfigValue(CONFIG_EMIT_AUTHORIZATION_EVENTS);
 		return Boolean.parseBoolean(configValue);
+	}
+
+	private static AbstractEventEmittingImpl createAuthorizationEventsEmissionEnable() {
+		String configValue = Optional
+				.ofNullable(System.getProperty(KNOWAGE_EMIT_AUTHORIZATION_EVENTS_IMPL, System.getenv(KNOWAGE_EMIT_AUTHORIZATION_EVENTS_IMPL)))
+				.orElse(NoEventEmitting.class.getName());
+		AbstractEventEmittingImpl emitter = null;
+
+		try {
+			Class<AbstractEventEmittingImpl> clazz = (Class<AbstractEventEmittingImpl>) Class.forName(configValue);
+			emitter = clazz.newInstance();
+		} catch (ClassNotFoundException | InstantiationException | IllegalAccessException ex) {
+			LOGGER.error("Cannot initialize class {}", configValue, ex);
+		}
+		return emitter;
+	}
+
+	private static void setEventEmitter(EmittingEventDAO ret) {
+		AbstractEventEmittingImpl eventToDatabaseEmittingCommand = null;
+		if (isAuthorizationEventsEmissionEnable()) {
+			eventToDatabaseEmittingCommand = createAuthorizationEventsEmissionEnable();
+
+		} else {
+			eventToDatabaseEmittingCommand = new NoEventEmitting();
+		}
+		ret.setEventEmittingCommand(eventToDatabaseEmittingCommand);
 	}
 
 	private DAOFactory() {

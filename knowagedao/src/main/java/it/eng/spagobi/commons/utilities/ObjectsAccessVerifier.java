@@ -42,6 +42,7 @@ import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.constants.CommunityFunctionalityConstants;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.commons.dao.EmittingEventDAO;
 import it.eng.spagobi.commons.dao.IRoleDAO;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
@@ -821,7 +822,7 @@ public class ObjectsAccessVerifier {
 		boolean isPublic = false;
 		try {
 			ILowFunctionalityDAO foldersDAO = DAOFactory.getLowFunctionalityDAO();
-			IRoleDAO roleDAO = DAOFactory.getRoleDAO();
+			EmittingEventDAO roleDAO = DAOFactory.getRoleDAO();
 
 			List foldersId = obj.getFunctionalities();
 

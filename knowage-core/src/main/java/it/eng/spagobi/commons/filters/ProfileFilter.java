@@ -158,6 +158,18 @@ public class ProfileFilter implements Filter {
 						LOGGER.debug("User identifier not found.");
 					}
 
+					// PM-int
+					if (profile != null) {
+						UserProfile up = UserProfileUtility.enrichProfile((UserProfile) profile, httpRequest, session);
+
+						// PM-int todo chiamata al servizio JMS LoginEventBuilder eventBuilder = new LoginEventBuilder(); UserProfile up = (UserProfile)
+						// profile;
+						LoginEventBuilder eventBuilder = new LoginEventBuilder();
+						eventBuilder.appendSession("knowage", up.getSourceIpAddress(), up.getSessionId(), up.getSessionStart(), up.getUserId().toString());
+						eventBuilder.appendUserAgent(up.getOs(), up.getSourceIpAddress(), up.getSourceSocketEnabled(), up.getUserAgent());
+						PrivacyManagerClient.getInstance().sendMessage(eventBuilder.getDTO());
+					}
+
 				} else {
 					// in case the profile is different, creates a new one
 					// and overwrites the existing
@@ -170,18 +182,9 @@ public class ProfileFilter implements Filter {
 				}
 
 				if (profile != null) {
-					// PM-int
-					profile = UserProfileUtility.enrichProfile((UserProfile) profile, httpRequest, session);
-
 					manageTenant(profile);
 					UserProfileManager.setProfile((UserProfile) profile);
 
-					// PM-int todo chiamata al servizio JMS
-					LoginEventBuilder eventBuilder = new LoginEventBuilder();
-					UserProfile up = (UserProfile) profile;
-					eventBuilder.appendSession("knowage", up.getSourceIpAddress(), up.getSessionId(), up.getSessionStart(), up.getUserId().toString());
-					eventBuilder.appendUserAgent(up.getOs(), up.getSourceIpAddress(), up.getSourceSocketEnabled(), up.getUserAgent());
-					PrivacyManagerClient.getInstance().sendMessage(eventBuilder.getDTO());
 				} else {
 					// @formatter:off
 					if (!requestIsForHomePage(httpRequest) &&

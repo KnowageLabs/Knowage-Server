@@ -34,6 +34,7 @@ public class PrivacyManagerDataStoreTransformer extends AbstractDataStoreTransfo
 
 	private final List<IFieldMetaData> subjectField = new ArrayList<>();
 	private final Map<Integer, IFieldMetaData> subjectFieldByIndex = new LinkedHashMap<>();
+	private final Map<Integer, Integer> subjectFieldOrder = new LinkedHashMap<>();
 
 	public PrivacyManagerDataStoreTransformer(IDataSet dataSet) {
 		this.dataSet = dataSet;
@@ -47,7 +48,7 @@ public class PrivacyManagerDataStoreTransformer extends AbstractDataStoreTransfo
 	@Override
 	public void transformDataSetRecords(IDataStore dataStore) {
 		if (needPM) {
-			FullEventBuilder eventBuilder = new FullEventBuilder(true);
+			FullEventBuilder2 eventBuilder = new FullEventBuilder2(true);
 			UserProfile up = UserProfileManager.getProfile();
 
 			eventBuilder.appendSession("knowage", up.getSourceIpAddress(), up.getSessionId(), up.getSessionStart(), up.getUserId().toString());
@@ -59,16 +60,22 @@ public class PrivacyManagerDataStoreTransformer extends AbstractDataStoreTransfo
 			}
 
 			for (IRecord record : dataStore.getRecords()) {
+				String[] subjData = new String[4];
 				List<IField> fields = record.getFields();
 
 				for (int i = 0; i < fields.size(); i++) {
 					if (subjectFieldByIndex.containsKey(i)) {
 						IFieldMetaData fieldMetaData = subjectFieldByIndex.get(i);
-						// String fieldName = fieldMetaData.getName();
+						String fieldName = fieldMetaData.getName();
 						IField fieldAt = record.getFieldAt(i);
 						Object value = fieldAt.getValue();
-						// TODO in teoria campo unico da decidere con il FE
-						eventBuilder.appendSubject(value.toString());
+
+						String val = null;
+						if (value != null) {
+							val = value.toString();
+						}
+						subjData[subjectFieldOrder.get(i)] = val;
+						// eventBuilder.appendSubject(val);
 					}
 				}
 				for (int i = 0; i < fields.size(); i++) {
@@ -78,13 +85,16 @@ public class PrivacyManagerDataStoreTransformer extends AbstractDataStoreTransfo
 						IField fieldAt = record.getFieldAt(i);
 						Object value = fieldAt.getValue();
 						// TODO definizione del tipo dato
-						eventBuilder.appendData(fieldName, value.toString(), DataSetScope.OTHER);
+						String val = null;
+						if (value != null) {
+							val = value.toString();
+						}
+						eventBuilder.appendData(fieldName, val, DataSetScope.OTHER);
 					}
 				}
-			}
-			// l'ultimo record non e' ancora stato caricato sul dto
-			eventBuilder.forceLastSubject();
 
+				eventBuilder.appendSubject(subjData[0], subjData[1], subjData[2], subjData[3]);
+			}
 			PrivacyManagerClient.getInstance().sendMessage(eventBuilder.getDTO());
 		}
 	}
@@ -106,6 +116,23 @@ public class PrivacyManagerDataStoreTransformer extends AbstractDataStoreTransfo
 					IFieldMetaData value = e.getValue();
 					sensibleField.add(value);
 					sensibleFieldByIndex.put(key, value);
+					String decoded = EventBuilderUtils.decodeSubjectField(value.getName());
+					switch (decoded) {
+					case EventBuilderUtils.TAXCODE:
+						subjectFieldOrder.put(key, 0);
+						break;
+					case EventBuilderUtils.NAME:
+						subjectFieldOrder.put(key, 1);
+						break;
+					case EventBuilderUtils.LAST_NAME:
+						subjectFieldOrder.put(key, 2);
+						break;
+					case EventBuilderUtils.BIRTHDATE:
+						subjectFieldOrder.put(key, 3);
+						break;
+					default:
+						LOGGER.error("Cannot map subject field {}. Check PrivacyManagerClient.properties", value.getName());
+					}
 				});
 
 		dataStoreMetadata.getFieldsMeta().stream().collect(Collectors.toMap(e -> index.getAndIncrement(), e -> e)).entrySet().stream()

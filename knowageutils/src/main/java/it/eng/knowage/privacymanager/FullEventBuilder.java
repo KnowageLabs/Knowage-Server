@@ -56,8 +56,7 @@ public class FullEventBuilder extends LoginEventBuilder {
 		} else {
 			dto.setResponses(new ArrayList<>());
 		}
-		subject.append("000;").append(taxCode).append(";").append(name).append(";").append(lastName).append(";")
-				.append(birthDate).append("\n");
+		subject.append("000;").append(taxCode).append(";").append(name).append(";").append(lastName).append(";").append(birthDate).append("\n");
 	}
 
 	public void appendSubject(String fullSubject) {
