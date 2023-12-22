@@ -20,6 +20,7 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import { iLov } from '../../../LovsManagement'
+import { removeUnusedVisibleColumnsFromModel } from './LovsManagementTestDialogHelpers'
 import Dialog from 'primevue/dialog'
 import Dropdown from 'primevue/dropdown'
 import lovsManagementTestDialogDescriptor from './LovsManagementTestDialogDescriptor.json'
@@ -96,6 +97,7 @@ export default defineComponent({
         },
         loadTypeModel() {
             this.treeListTypeModel = deepcopy(this.testModel)
+            removeUnusedVisibleColumnsFromModel(this.treeListTypeModel)
         },
         loadModel() {
             this.model = deepcopy(this.testLovModel)
