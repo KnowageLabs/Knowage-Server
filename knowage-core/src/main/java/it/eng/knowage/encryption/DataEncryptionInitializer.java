@@ -42,6 +42,8 @@ import it.eng.spagobi.tools.scheduler.dao.ISchedulerDAO;
  */
 public class DataEncryptionInitializer implements InitializerIFace {
 
+	private static final String TENANT = "DEFAULT_TENANT";
+
 	private static final Logger LOGGER = LogManager.getLogger(DataEncryptionInitializer.class);
 
 	public static final String DEFAULT_JOB_GROUP = "Encryption";
@@ -75,7 +77,8 @@ public class DataEncryptionInitializer implements InitializerIFace {
 			String genAlgo = getValue(PROPERTY_GENERIC_ALGO);
 			String genPwd = getValue(PROPERTY_GENERIC_PWD);
 
-			LOGGER.warn("Reading encryption configuration: the system properties will take precedence over environment variables");
+			LOGGER.warn(
+					"Reading encryption configuration: the system properties will take precedence over environment variables");
 
 			if (ObjectUtils.anyNotNull(pmUrl, pmUser, pmPwd, pmApp, pmAlgo, genAlgo, genPwd)) {
 				LOGGER.warn("Found some encryption configuration");
@@ -84,11 +87,13 @@ public class DataEncryptionInitializer implements InitializerIFace {
 				EncryptionConfiguration cfg = null;
 
 				if (anyNull(pmUrl, pmUser, pmPwd, pmApp, pmAlgo)) {
-					LOGGER.error("Failing to read Privacy Manager configuration from both system properties and system environment: you must provide all the configuration values listed in the documentation.");
+					LOGGER.error(
+							"Failing to read Privacy Manager configuration from both system properties and system environment: you must provide all the configuration values listed in the documentation.");
 					LOGGER.error("Trying with a generic algorithm");
 
 					if (anyNull(genAlgo, genPwd)) {
-						LOGGER.error("Failing to read generic encryption algorithm configuration from both system properties and system environment: you must provide all the configuration values listed in the documentation.");
+						LOGGER.error(
+								"Failing to read generic encryption algorithm configuration from both system properties and system environment: you must provide all the configuration values listed in the documentation.");
 					} else {
 						cfg = configureGenericDecryption(genAlgo, genPwd, cfgKey);
 					}
@@ -97,8 +102,7 @@ public class DataEncryptionInitializer implements InitializerIFace {
 				}
 
 				if (cfg != null) {
-					EncryptionPreferencesRegistry.getInstance()
-						.addConfiguration(cfgKey, cfg);
+					EncryptionPreferencesRegistry.getInstance().addConfiguration(cfgKey, cfg);
 
 					if (PRIVACY_MANAGER.equals(cfg.getType())) {
 						scheduleJobToRetrieveThePassword(cfg);
@@ -122,34 +126,17 @@ public class DataEncryptionInitializer implements InitializerIFace {
 		ISchedulerDAO schedulerDAO = DAOFactory.getSchedulerDAO();
 
 		// The following job is cross tenant but we need to set this anyway
-		schedulerDAO.setTenant("DEFAULT_TENANT");
+		schedulerDAO.setTenant(TENANT);
 
-		Job jobDetail = schedulerDAO.loadJob(DEFAULT_JOB_GROUP, DEFAULT_JOB_NAME);
-		if (jobDetail == null) {
-			String pmUrl = cfg.getPmUrl();
-			String pmUser = cfg.getPmUser();
-			String pmApplication = cfg.getPmApplication();
-			String pmPwd = cfg.getPmPwd();
+		deleteJobForPrivacyManager(schedulerDAO);
+		Job jobDetail = createJobForPrivacyManager(schedulerDAO, cfg);
 
-			jobDetail = new Job();
-			jobDetail.setName(DEFAULT_JOB_NAME);
-			jobDetail.setGroupName(DEFAULT_JOB_GROUP);
-			jobDetail.setDescription(String.format(DEFAULT_JOB_DESC, pmUrl, pmUser, pmApplication));
-			jobDetail.setDurable(true);
-			jobDetail.setVolatile(false);
-			jobDetail.setRequestsRecovery(true);
-			jobDetail.setJobClass(GetPasswordFromPrivacyManagerJob.class);
-			jobDetail.addParameter(GetPasswordFromPrivacyManagerJob.PARAM_PM_URL, pmUrl);
-			jobDetail.addParameter(GetPasswordFromPrivacyManagerJob.PARAM_PM_USER, pmUser);
-			jobDetail.addParameter(GetPasswordFromPrivacyManagerJob.PARAM_PM_PWD, pmPwd);
-			jobDetail.addParameter(GetPasswordFromPrivacyManagerJob.PARAM_PM_APP, pmApplication);
+		deleteTriggerForPrivacyManager(schedulerDAO);
+		createTriggerForPrivacyManager(schedulerDAO, jobDetail);
+	}
 
-			schedulerDAO.insertJob(jobDetail);
-			LOGGER.debug("Added job with name " + DEFAULT_JOB_NAME + " in group " + DEFAULT_JOB_GROUP);
-		}
-
-		schedulerDAO.deleteTrigger(DEFAULT_TRIGGER_NAME, DEFAULT_TRIGGER_GROUP);
-
+	private void createTriggerForPrivacyManager(ISchedulerDAO schedulerDAO, Job jobDetail) {
+		LOGGER.debug("Adding trigger with name {} in group {}", DEFAULT_TRIGGER_NAME, DEFAULT_TRIGGER_GROUP);
 		Trigger simpleTrigger = new Trigger();
 		simpleTrigger.setName(DEFAULT_TRIGGER_NAME);
 		simpleTrigger.setGroupName(DEFAULT_TRIGGER_GROUP);
@@ -157,14 +144,52 @@ public class DataEncryptionInitializer implements InitializerIFace {
 		simpleTrigger.setRunImmediately(true);
 
 		schedulerDAO.insertTrigger(simpleTrigger);
-		LOGGER.debug("Added trigger with name " + DEFAULT_TRIGGER_NAME + " in group " + DEFAULT_TRIGGER_GROUP);
+		LOGGER.debug("Added trigger with name {} in group {}", DEFAULT_TRIGGER_NAME, DEFAULT_TRIGGER_GROUP);
+	}
+
+	private void deleteTriggerForPrivacyManager(ISchedulerDAO schedulerDAO) {
+		LOGGER.debug("Deleting trigger with name {} in group {}", DEFAULT_TRIGGER_NAME, DEFAULT_TRIGGER_GROUP);
+		schedulerDAO.deleteTrigger(DEFAULT_TRIGGER_NAME, DEFAULT_TRIGGER_GROUP);
+		LOGGER.debug("Deleted trigger with name {} in group {}", DEFAULT_TRIGGER_NAME, DEFAULT_TRIGGER_GROUP);
+	}
+
+	private void deleteJobForPrivacyManager(ISchedulerDAO schedulerDAO) {
+		LOGGER.debug("Deleting job with name {} in group {}", DEFAULT_JOB_NAME, DEFAULT_JOB_GROUP);
+		schedulerDAO.deleteJob(DEFAULT_JOB_NAME, DEFAULT_JOB_GROUP);
+		LOGGER.debug("Deleted job with name {} in group {}", DEFAULT_JOB_NAME, DEFAULT_JOB_GROUP);
+	}
+
+	private Job createJobForPrivacyManager(ISchedulerDAO schedulerDAO, EncryptionConfiguration cfg) {
+		LOGGER.debug("Adding job with name {} in group {}", DEFAULT_JOB_NAME, DEFAULT_JOB_GROUP);
+		Job jobDetail = null;
+
+		String pmUrl = cfg.getPmUrl();
+		String pmUser = cfg.getPmUser();
+		String pmApplication = cfg.getPmApplication();
+		String pmPwd = cfg.getPmPwd();
+
+		jobDetail = new Job();
+		jobDetail.setName(DEFAULT_JOB_NAME);
+		jobDetail.setGroupName(DEFAULT_JOB_GROUP);
+		jobDetail.setDescription(String.format(DEFAULT_JOB_DESC, pmUrl, pmUser, pmApplication));
+		jobDetail.setDurable(true);
+		jobDetail.setVolatile(false);
+		jobDetail.setRequestsRecovery(true);
+		jobDetail.setJobClass(GetPasswordFromPrivacyManagerJob.class);
+		jobDetail.addParameter(GetPasswordFromPrivacyManagerJob.PARAM_PM_URL, pmUrl);
+		jobDetail.addParameter(GetPasswordFromPrivacyManagerJob.PARAM_PM_USER, pmUser);
+		jobDetail.addParameter(GetPasswordFromPrivacyManagerJob.PARAM_PM_PWD, pmPwd);
+		jobDetail.addParameter(GetPasswordFromPrivacyManagerJob.PARAM_PM_APP, pmApplication);
+
+		schedulerDAO.insertJob(jobDetail);
+		LOGGER.debug("Created job with name {} in group {}", DEFAULT_JOB_NAME, DEFAULT_JOB_GROUP);
+		return jobDetail;
 	}
 
 	private String getValue(String key) {
 		String ret = null;
 
-		ret = Optional.ofNullable(getProperty(key))
-				.orElse(getenv(key));
+		ret = Optional.ofNullable(getProperty(key)).orElse(getenv(key));
 
 		return ret;
 	}
@@ -189,7 +214,8 @@ public class DataEncryptionInitializer implements InitializerIFace {
 		return cfg;
 	}
 
-	private EncryptionConfiguration configurePrivacyManager(String pmUrl, String pmUser, String pmPwd, String pmApp, String pmAlgo) {
+	private EncryptionConfiguration configurePrivacyManager(String pmUrl, String pmUser, String pmPwd, String pmApp,
+			String pmAlgo) {
 		EncryptionConfiguration cfg;
 		cfg = new EncryptionConfiguration(PRIVACY_MANAGER);
 
@@ -205,4 +231,3 @@ public class DataEncryptionInitializer implements InitializerIFace {
 	}
 
 }
-
