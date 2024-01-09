@@ -185,6 +185,7 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 			String likeSelections, int maxRowCount, String aggregations, String summaryRow, int offset, int fetchSize,
 			Boolean isNearRealtime, String options, Set<String> indexes, String widgetName) {
 		LOGGER.debug("IN");
+		DatasetManagementAPI datasetManagementAPI = getDatasetManagementAPI();
 		Monitor totalTiming = MonitorFactory.start("Knowage.AbstractDataSetResource.getDataStore");
 		try {
 			Monitor timing = MonitorFactory.start("Knowage.AbstractDataSetResource.getDataStore:validateParams");
@@ -286,20 +287,20 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 			}
 
 			Monitor timingMinMax = MonitorFactory.start("Knowage.AbstractDataSetResource.getDataStore:calculateMinMax");
-			filters = getDatasetManagementAPI().calculateMinMaxFilters(dataSet, isNearRealtime,
-					DataSetUtilities.getParametersMap(parameters), filters, likeFilters, indexes);
+			Map<String, String> parametersMap = DataSetUtilities.getParametersMap(parameters);
+			filters = datasetManagementAPI.calculateMinMaxFilters(dataSet, isNearRealtime, parametersMap, filters,
+					likeFilters, indexes);
 			timingMinMax.stop();
 
-			Filter where = getDatasetManagementAPI().getWhereFilter(filters, likeFilters);
+			Filter where = datasetManagementAPI.getWhereFilter(filters, likeFilters);
 
 			timing.stop();
 
 			List<List<AbstractSelectionField>> summaryRowArray = getSummaryRowArray(summaryRow, dataSet,
 					columnAliasToName);
 
-			IDataStore dataStore = getDatasetManagementAPI().getDataStore(dataSet, isNearRealtime,
-					DataSetUtilities.getParametersMap(parameters), projections, where, groups, sortings,
-					summaryRowArray, offset, fetchSize, maxRowCount, indexes);
+			IDataStore dataStore = datasetManagementAPI.getDataStore(dataSet, isNearRealtime, parametersMap,
+					projections, where, groups, sortings, summaryRowArray, offset, fetchSize, maxRowCount, indexes);
 
 			// if required apply function from catalog
 			String catalogFuncId = getCatalogFunctionUuid(projections);
@@ -1078,7 +1079,8 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 	public String getDataSet(String label) {
 		LOGGER.debug("IN");
 		try {
-			IDataSet dataSet = getDatasetManagementAPI().getDataSet(label);
+			DatasetManagementAPI datasetManagementAPI = getDatasetManagementAPI();
+			IDataSet dataSet = datasetManagementAPI.getDataSet(label);
 			return serializeDataSet(dataSet, null);
 		} catch (Throwable t) {
 			throw new SpagoBIServiceException(this.request.getPathInfo(),
@@ -1090,7 +1092,8 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 
 	protected Response deleteDataset(String label) {
 		IDataSetDAO datasetDao = DAOFactory.getDataSetDAO();
-		IDataSet dataset = getDatasetManagementAPI().getDataSet(label);
+		DatasetManagementAPI datasetManagementAPI = getDatasetManagementAPI();
+		IDataSet dataset = datasetManagementAPI.getDataSet(label);
 
 		try {
 			datasetDao.deleteDataSet(dataset.getId());
