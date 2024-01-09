@@ -378,6 +378,10 @@ public class RolesResource extends AbstractSpagoBIResource {
 		role.setAbleToEditAllKpiComm(bo.isAbleToEditAllKpiComm());
 		role.setAbleToEditMyKpiComm(bo.isAbleToEditMyKpiComm());
 		role.setAbleToDeleteKpiComm(bo.isAbleToDeleteKpiComm());
+		role.setAbleToSeeHelpOnline(bo.isAbleToSeeHelpOnline());
+		role.setAbleToUseDataPreparation(bo.isAbleToUseDataPreparation());
+		role.setAbleToUseDossier(bo.isAbleToUseDossier());
+		role.setAbleToUseDashboardThemeManagement(bo.isAbleToUseDashboardThemeManagement());
 
 		return role;
 	}
