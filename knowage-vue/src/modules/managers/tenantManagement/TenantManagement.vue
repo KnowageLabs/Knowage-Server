@@ -121,7 +121,7 @@ export default defineComponent({
             })
         },
         showForm(event: any) {
-            const path = event.value ? `/tenants-management/${event.value.MULTITENANT_ID}` : '/tenants-management/new-tenant'
+            const path = event.value ? `/tenants-management/${event.value.TENANT_ID}` : '/tenants-management/new-tenant'
             this.hintVisible = false
 
             if (!this.touched) {
