@@ -33,11 +33,12 @@ import javax.persistence.Persistence;
 
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.log4j.Logger;
-import org.jasypt.encryption.pbe.StandardPBEStringEncryptor;
+import org.jasypt.encryption.pbe.PBEStringEncryptor;
 import org.jasypt.hibernate3.encryptor.HibernatePBEEncryptorRegistry;
 import org.json.JSONObject;
 
 import it.eng.knowage.encryption.DataEncryptionCfgForExternalEngines;
+import it.eng.knowage.encryption.EncryptorFactory;
 import it.eng.qbe.datasource.AbstractDataSource;
 import it.eng.qbe.datasource.ConnectionDescriptor;
 import it.eng.qbe.datasource.IPersistenceManager;
@@ -86,7 +87,8 @@ public class JPADataSource extends AbstractDataSource implements IJpaDataSource 
 		if (configuration instanceof FileDataSourceConfiguration) {
 			this.configuration = configuration;
 		} else if (configuration instanceof CompositeDataSourceConfiguration) {
-			IDataSourceConfiguration subConf = ((CompositeDataSourceConfiguration) configuration).getSubConfigurations().get(0);
+			IDataSourceConfiguration subConf = ((CompositeDataSourceConfiguration) configuration).getSubConfigurations()
+					.get(0);
 			if (subConf instanceof FileDataSourceConfiguration) {
 				this.configuration = subConf;
 				this.configuration.loadDataSourceProperties().putAll(configuration.loadDataSourceProperties());
@@ -120,9 +122,7 @@ public class JPADataSource extends AbstractDataSource implements IJpaDataSource 
 			String modelName = configuration.getModelName();
 			String encryptorName = modelName + "_encryptor";
 
-			StandardPBEStringEncryptor encryptor = new StandardPBEStringEncryptor();
-			encryptor.setAlgorithm(algorithm);
-			encryptor.setPassword(password);
+			PBEStringEncryptor encryptor = EncryptorFactory.getInstance().create(algorithm, password);
 
 			HibernatePBEEncryptorRegistry registry = HibernatePBEEncryptorRegistry.getInstance();
 			registry.registerPBEStringEncryptor(encryptorName, encryptor);
@@ -195,7 +195,8 @@ public class JPADataSource extends AbstractDataSource implements IJpaDataSource 
 		IDataSource dataSource = (IDataSource) configuration.loadDataSourceProperties().get("datasource");
 		// FOR SPAGOBIMETA
 		if (dataSource == null) {
-			ConnectionDescriptor connectionDescriptor = (ConnectionDescriptor) configuration.loadDataSourceProperties().get("connection");
+			ConnectionDescriptor connectionDescriptor = (ConnectionDescriptor) configuration.loadDataSourceProperties()
+					.get("connection");
 			if (connectionDescriptor != null) {
 				dataSource = connectionDescriptor.getDataSource();
 			}
@@ -209,7 +210,6 @@ public class JPADataSource extends AbstractDataSource implements IJpaDataSource 
 		IModelStructureBuilder structureBuilder;
 		if (dataMartModelStructure == null) {
 
-
 			if (profile != null) {
 				JSONObject jsonObj = new CustomizedFunctionsReader().getJSONCustomFunctionsVariable(profile);
 				CustomFunctionsSingleton.getInstance().setCustomizedFunctionsJSON(jsonObj);
@@ -222,9 +222,10 @@ public class JPADataSource extends AbstractDataSource implements IJpaDataSource 
 			List<Filter> filtersOnProfileAttributes = getFiltersOnProfileAttributes();
 			Map<String, String> filtersConditionsOnProfileAttributes = getFiltersConditionsOnProfileAttribute();
 			if (!filtersOnProfileAttributes.isEmpty() || !fieldsFilteredByRole.isEmpty()) {
-				LOGGER.debug("One or more profile attributes filters were found therefore profile attributes model access modality will be activated.");
-				this.setDataMartModelAccessModality(new ProfileAttributesModelAccessModality(filtersOnProfileAttributes, fieldsFilteredByRole, profile,
-						filtersConditionsOnProfileAttributes));
+				LOGGER.debug(
+						"One or more profile attributes filters were found therefore profile attributes model access modality will be activated.");
+				this.setDataMartModelAccessModality(new ProfileAttributesModelAccessModality(filtersOnProfileAttributes,
+						fieldsFilteredByRole, profile, filtersConditionsOnProfileAttributes));
 			}
 		}
 		return dataMartModelStructure;
@@ -267,7 +268,8 @@ public class JPADataSource extends AbstractDataSource implements IJpaDataSource 
 				IModelField field = fieldsIt.next();
 				String attributeName = (String) field.getProperty("attribute");
 				if (attributeName != null && !attributeName.trim().equals("")) {
-					LOGGER.debug("Found profile attribute filter on field " + field.getUniqueName() + ": profile attribute is " + attributeName);
+					LOGGER.debug("Found profile attribute filter on field " + field.getUniqueName()
+							+ ": profile attribute is " + attributeName);
 					// Filter filter = new Filter(entity.getUniqueName(), "F{" +
 					// field.getName() + "} = {" + attributeName + "}");
 					List<String> values = new ArrayList<>();
@@ -308,8 +310,9 @@ public class JPADataSource extends AbstractDataSource implements IJpaDataSource 
 					String filtercondition = (String) field.getProperty("filtercondition");
 					if (filtercondition != null && !filtercondition.trim().equals("")) {
 						toReturn.put(field.getUniqueName(), filtercondition);
-						LOGGER.debug("Found profile attribute filter on field " + field.getUniqueName() + ": profile attribute is " + attributeName
-								+ " and is filter condition is " + filtercondition);
+						LOGGER.debug("Found profile attribute filter on field " + field.getUniqueName()
+								+ ": profile attribute is " + attributeName + " and is filter condition is "
+								+ filtercondition);
 					}
 				}
 			}
@@ -354,9 +357,9 @@ public class JPADataSource extends AbstractDataSource implements IJpaDataSource 
 
 		// to solve http://spagoworld.org/jira/browse/SPAGOBI-1934
 		// KNOWAGE-XXXX : Removed because the class was deleted at some point
-		/* TODO : Check if (dialect != null && dialect.contains("SQLServerDialect")) {
-			dialect = "org.hibernate.dialect.ExtendedSQLServerDialect";
-		} else */ if (dialect != null && dialect.contains("MySQL")) {
+		/*
+		 * TODO : Check if (dialect != null && dialect.contains("SQLServerDialect")) { dialect = "org.hibernate.dialect.ExtendedSQLServerDialect"; } else
+		 */ if (dialect != null && dialect.contains("MySQL")) {
 			dialect = "org.hibernate.dialect.ExtendedMySQLDialect";
 		} else if (dialect != null && dialect.contains("CustomOracleSpatialDialect")) {
 			dialect = "org.hibernatespatial.oracle.CustomOracleSpatialDialect";
