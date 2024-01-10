@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
@@ -27,13 +28,12 @@ public class DecryptionDataStoreTransformer extends AbstractDataStoreTransformer
 	private static final Logger LOGGER = LogManager.getLogger(DecryptionDataStoreTransformer.class);
 
 	private boolean needDecryption = false;
-	private List<IFieldMetaData> decryptableField = new ArrayList<>();
-	private Map<Integer, IFieldMetaData> decryptableFieldByIndex = new LinkedHashMap<>();
+	private final List<IFieldMetaData> decryptableField = new ArrayList<>();
+	private final Map<Integer, IFieldMetaData> decryptableFieldByIndex = new LinkedHashMap<>();
 	private StandardPBEStringEncryptor encryptor;
 	private final IDataSet dataSet;
 
 	public DecryptionDataStoreTransformer(IDataSet dataSet) {
-		super();
 		this.dataSet = dataSet;
 		try {
 			setUpDecryption();
@@ -44,15 +44,15 @@ public class DecryptionDataStoreTransformer extends AbstractDataStoreTransformer
 
 	@Override
 	public void transformDataSetRecords(IDataStore dataStore) {
-		for (IRecord record : dataStore.getRecords()) {
-			decryptIfNeeded(record);
+		for (IRecord currRecord : dataStore.getRecords()) {
+			decryptIfNeeded(currRecord);
 		}
 
 	}
 
 	@Override
 	public void transformDataSetMetaData(IDataStore dataStore) {
-
+		// Not needed
 	}
 
 	private void setUpDecryption() {
@@ -60,8 +60,8 @@ public class DecryptionDataStoreTransformer extends AbstractDataStoreTransformer
 
 		AtomicInteger index = new AtomicInteger();
 
-		dataStoreMetadata.getFieldsMeta().stream().collect(Collectors.toMap(e -> index.getAndIncrement(), e -> e)).entrySet().stream()
-				.filter(e -> e.getValue().isDecrypt()).forEach(e -> {
+		dataStoreMetadata.getFieldsMeta().stream().collect(Collectors.toMap(e -> index.getAndIncrement(), e -> e))
+				.entrySet().stream().filter(e -> e.getValue().isDecrypt()).forEach(e -> {
 					Integer key = e.getKey();
 					IFieldMetaData value = e.getValue();
 					decryptableField.add(value);
@@ -71,7 +71,8 @@ public class DecryptionDataStoreTransformer extends AbstractDataStoreTransformer
 		needDecryption = !decryptableField.isEmpty();
 
 		if (needDecryption) {
-			EncryptionConfiguration cfg = EncryptionPreferencesRegistry.getInstance().getConfiguration(EncryptionPreferencesRegistry.DEFAULT_CFG_KEY);
+			EncryptionConfiguration cfg = EncryptionPreferencesRegistry.getInstance()
+					.getConfiguration(EncryptionPreferencesRegistry.DEFAULT_CFG_KEY);
 
 			String algorithm = cfg.getAlgorithm();
 			String password = cfg.getEncryptionPwd();
@@ -83,30 +84,37 @@ public class DecryptionDataStoreTransformer extends AbstractDataStoreTransformer
 
 	}
 
-	private void decryptIfNeeded(IRecord record) {
+	private void decryptIfNeeded(IRecord currRecord) {
 		if (needDecryption) {
-			List<IField> fields = record.getFields();
+			List<IField> fields = currRecord.getFields();
 
 			for (int i = 0; i < fields.size(); i++) {
 				if (decryptableFieldByIndex.containsKey(i)) {
-					IFieldMetaData fieldMetaData = decryptableFieldByIndex.get(i);
-					String fieldName = fieldMetaData.getName();
-					String fieldAlias = fieldMetaData.getAlias();
-					IField fieldAt = record.getFieldAt(i);
-					Object value = fieldAt.getValue();
-					String newValue = null;
-
-					try {
-						newValue = encryptor.decrypt(value.toString());
-						fieldAt.setValue(newValue);
-					} catch (EncryptionOperationNotPossibleException e) {
-						LOGGER.warn("Ignoring field value {} from field {} (with \"{}\" alias): see following message", value, fieldName, fieldAlias);
-						LOGGER.warn("Cannot decrypt column: see the previous message", e);
-					} catch (EncryptionInitializationException e) {
-						LOGGER.error("Encryption initialization error: check decryption system properties", e);
-					}
+					decrypt(currRecord, i);
 				}
 			}
+		}
+	}
+
+	private void decrypt(IRecord currRecord, int i) {
+		IFieldMetaData fieldMetaData = decryptableFieldByIndex.get(i);
+		String fieldName = fieldMetaData.getName();
+		String fieldAlias = fieldMetaData.getAlias();
+		IField fieldAt = currRecord.getFieldAt(i);
+		Object value = fieldAt.getValue();
+		String newValue = null;
+
+		try {
+			if (Objects.nonNull(value)) {
+				newValue = encryptor.decrypt(value.toString());
+				fieldAt.setValue(newValue);
+			}
+		} catch (EncryptionOperationNotPossibleException e) {
+			LOGGER.warn("Ignoring field value {} from field {} (with \"{}\" alias): see following message",
+					value, fieldName, fieldAlias);
+			LOGGER.warn("Cannot decrypt column: see the previous message", e);
+		} catch (EncryptionInitializationException e) {
+			LOGGER.error("Encryption initialization error: check decryption system properties", e);
 		}
 	}
 
@@ -115,7 +123,7 @@ public class DecryptionDataStoreTransformer extends AbstractDataStoreTransformer
 	}
 
 	private Map<String, IFieldMetaData> mapFieldByColumnName(IMetaData metaData) {
-		return metaData.getFieldsMeta().stream().collect(Collectors.toMap(e -> mapFieldKey(e), e -> e));
+		return metaData.getFieldsMeta().stream().collect(Collectors.toMap(this::mapFieldKey, e -> e));
 	}
 
 	private IMetaData getMetaData() {
