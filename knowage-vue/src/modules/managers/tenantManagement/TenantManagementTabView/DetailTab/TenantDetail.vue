@@ -67,7 +67,6 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import { createValidations } from '@/helpers/commons/validationHelper'
-import Button from 'primevue/button'
 import Card from 'primevue/card'
 import useValidate from '@vuelidate/core'
 import tabViewDescriptor from '../TenantManagementTabViewDescriptor.json'
@@ -79,7 +78,6 @@ import { AxiosResponse } from 'axios'
 export default defineComponent({
     name: 'detail-tab',
     components: {
-        Button,
         Card,
         KnValidationMessages
     },
@@ -115,7 +113,7 @@ export default defineComponent({
         async selectedTenant() {
             this.v$.$reset()
             this.tenant = { ...this.selectedTenant } as iTenant
-            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `multitenant/image?TENANT=${this.tenant.MULTITENANT_NAME}`).then((response: AxiosResponse<any>) => {
+            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `multitenant/image?TENANT=${this.tenant.TENANT_NAME}`).then((response: AxiosResponse<any>) => {
                 this.tenant.TENANT_IMAGE = response.data
             })
         },
@@ -146,10 +144,10 @@ export default defineComponent({
                 },
                 false
             )
-            if (event.srcElement.files[0] && event.srcElement.files[0].size < import.meta.env.VITE_MAX_UPLOAD_IMAGE_SIZE) {
+            if (event.srcElement.files[0] && event.srcElement.files[0].size < process.env.VUE_APP_MAX_UPLOAD_IMAGE_SIZE) {
                 reader.readAsDataURL(event.srcElement.files[0])
                 this.v$.$touch()
-            } else this.store.setError({ title: this.$t('common.error.uploading'), msg: this.$t('common.error.exceededSize', { size: '(200KB)' }) })
+            } else this.$store.commit('setError', { title: this.$t('common.error.uploading'), msg: this.$t('common.error.exceededSize', { size: '(200KB)' }) })
         },
 
         uploadExtendedFile(event): void {

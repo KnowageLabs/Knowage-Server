@@ -2,7 +2,7 @@
     "validations": {
         "tenant": [
             {
-                "fieldName": "MULTITENANT_NAME",
+                "fieldName": "TENANT_NAME",
                 "validators": [
                     {
                         "key": "required"

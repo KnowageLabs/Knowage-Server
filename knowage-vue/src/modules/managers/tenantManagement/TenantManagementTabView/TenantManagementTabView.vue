@@ -133,13 +133,13 @@ export default defineComponent({
             this.listOfSelectedDataSources = null
             this.touched = false
 
-            await this.loadData(`/producttypes?TENANT=${this.tenant.MULTITENANT_NAME}`).then((response: AxiosResponse<any>) => {
+            await this.loadData(`/producttypes?TENANT=${this.tenant.TENANT_NAME}`).then((response: AxiosResponse<any>) => {
                 var productTypes = response.data.root
 
                 this.listOfSelectedProducts = []
                 this.copySelectedElement(productTypes, this.listOfSelectedProducts)
             })
-            await this.loadData(`/datasources?TENANT=${this.tenant.MULTITENANT_NAME}`).then((response: AxiosResponse<any>) => {
+            await this.loadData(`/datasources?TENANT=${this.tenant.TENANT_NAME}`).then((response: AxiosResponse<any>) => {
                 var dataSources = response.data.root
 
                 this.listOfSelectedDataSources = []
