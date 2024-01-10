@@ -10,7 +10,7 @@ import java.util.stream.Collectors;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.jasypt.encryption.pbe.StandardPBEStringEncryptor;
+import org.jasypt.encryption.pbe.PBEStringEncryptor;
 import org.jasypt.exceptions.EncryptionInitializationException;
 import org.jasypt.exceptions.EncryptionOperationNotPossibleException;
 
@@ -30,7 +30,7 @@ public class DecryptionDataStoreTransformer extends AbstractDataStoreTransformer
 	private boolean needDecryption = false;
 	private final List<IFieldMetaData> decryptableField = new ArrayList<>();
 	private final Map<Integer, IFieldMetaData> decryptableFieldByIndex = new LinkedHashMap<>();
-	private StandardPBEStringEncryptor encryptor;
+	private PBEStringEncryptor encryptor;
 	private final IDataSet dataSet;
 
 	public DecryptionDataStoreTransformer(IDataSet dataSet) {
@@ -74,12 +74,7 @@ public class DecryptionDataStoreTransformer extends AbstractDataStoreTransformer
 			EncryptionConfiguration cfg = EncryptionPreferencesRegistry.getInstance()
 					.getConfiguration(EncryptionPreferencesRegistry.DEFAULT_CFG_KEY);
 
-			String algorithm = cfg.getAlgorithm();
-			String password = cfg.getEncryptionPwd();
-
-			encryptor = new StandardPBEStringEncryptor();
-			encryptor.setAlgorithm(algorithm);
-			encryptor.setPassword(password);
+			encryptor = EncryptorFactory.getInstance().create(cfg);
 		}
 
 	}
@@ -110,8 +105,8 @@ public class DecryptionDataStoreTransformer extends AbstractDataStoreTransformer
 				fieldAt.setValue(newValue);
 			}
 		} catch (EncryptionOperationNotPossibleException e) {
-			LOGGER.warn("Ignoring field value {} from field {} (with \"{}\" alias): see following message",
-					value, fieldName, fieldAlias);
+			LOGGER.warn("Ignoring field value {} from field {} (with \"{}\" alias): see following message", value,
+					fieldName, fieldAlias);
 			LOGGER.warn("Cannot decrypt column: see the previous message", e);
 		} catch (EncryptionInitializationException e) {
 			LOGGER.error("Encryption initialization error: check decryption system properties", e);
@@ -120,10 +115,6 @@ public class DecryptionDataStoreTransformer extends AbstractDataStoreTransformer
 
 	private String mapFieldKey(IFieldMetaData field) {
 		return field.getName();
-	}
-
-	private Map<String, IFieldMetaData> mapFieldByColumnName(IMetaData metaData) {
-		return metaData.getFieldsMeta().stream().collect(Collectors.toMap(this::mapFieldKey, e -> e));
 	}
 
 	private IMetaData getMetaData() {
