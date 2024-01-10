@@ -102,6 +102,7 @@
 					document: sbiModule_cockpitDocument.docId,
 					widget: widget.id,
 					DOCUMENT_LABEL: sbiModule_cockpitDocument.docLabel,
+					DOCUMENT_NAME: sbiModule_cockpitDocument.docName,
 					SBI_COUNTRY: sbiModule_config.curr_country,
 					SBI_LANGUAGE: sbiModule_config.curr_language,
 					SBI_SCRIPT: sbiModule_config.curr_script,
