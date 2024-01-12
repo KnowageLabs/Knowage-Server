@@ -50,7 +50,6 @@ public class CatalogFunctionDataProxy extends AbstractDataProxy {
 	private final Map<String, String> requestHeaders;
 	private final HttpMethod method;
 	private IDataStore dataStore;
-	private static transient Logger logger = Logger.getLogger(CatalogFunctionDataProxy.class);
 
 	public CatalogFunctionDataProxy(String address, HttpMethod method, Map<String, String> requestHeaders,
 			JSONObject requestBody) {
