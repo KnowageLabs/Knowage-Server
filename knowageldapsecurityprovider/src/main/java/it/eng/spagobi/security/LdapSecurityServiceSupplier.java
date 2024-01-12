@@ -87,6 +87,8 @@ public class LdapSecurityServiceSupplier extends InternalSecurityServiceSupplier
 		try {
 			Properties properties = getConfig();
 			Boolean searchUserBefore = new Boolean(properties.getProperty(ldapPrefix + SEARCH_USER_BEFORE));
+			logger.debug("ldapPrefix + SEARCH_USER_BEFORE = [" + ldapPrefix + SEARCH_USER_BEFORE + "]");
+			logger.debug("searchUserBefore = [" + searchUserBefore + "]");
 			String distinguishName = searchUserBefore ? findUserDistinguishName(userId) : userId;
 			logger.debug("Binding with distinguishName [" + distinguishName + "] ...");
 			try {
@@ -95,6 +97,7 @@ public class LdapSecurityServiceSupplier extends InternalSecurityServiceSupplier
 				throw e;
 			}
 			logger.debug("Authentication successfull for user [" + userId + "].");
+			logger.debug("Authentication successfull for distinguishName [" + distinguishName + "].");
 			SpagoBIUserProfile toReturn = getUserProfile(userId);
 			logger.debug("Profile object created for user [" + userId + "].");
 			return toReturn;
@@ -183,8 +186,10 @@ public class LdapSecurityServiceSupplier extends InternalSecurityServiceSupplier
 	 */
 
 	protected InitialDirContext bindWithCredentials(String userId, String psw) throws LDAPAuthenticationFailed {
-
+        logger.debug("IN userId = [" + userId + "]");
 		Properties properties = getConfig();
+		 logger.debug("IN properties.getProperty(ldapPrefix + DN_PREFIX = [" + properties.getProperty(ldapPrefix + "DN_PREFIX" + "]");
+		 logger.debug("IN properties.getProperty(ldapPrefix + DN_POSTFIX = [" + properties.getProperty(ldapPrefix + "DN_POSTFIX" + "]");
 
 		Hashtable<String, Object> env = new Hashtable<String, Object>();
 		env.put(Context.INITIAL_CONTEXT_FACTORY, properties.getProperty(ldapPrefix + "INITIAL_CONTEXT_FACTORY"));
@@ -194,6 +199,7 @@ public class LdapSecurityServiceSupplier extends InternalSecurityServiceSupplier
 
 		String distinguishName = null;
 		if (!userId.startsWith(properties.getProperty(ldapPrefix + "DN_PREFIX")) && !userId.endsWith(properties.getProperty(ldapPrefix + "DN_POSTFIX"))) {
+			logger.debug("add Prefix and Postfix");
 			distinguishName = properties.getProperty(ldapPrefix + "DN_PREFIX") + userId + properties.getProperty(ldapPrefix + "DN_POSTFIX");
 		} else {
 			distinguishName = userId;
