@@ -22,7 +22,8 @@ import java.math.BigDecimal;
 import java.util.Map;
 
 import org.apache.commons.httpclient.HttpStatus;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -42,14 +43,16 @@ import it.eng.spagobi.utilities.rest.RestUtilities.Response;
 
 public class CatalogFunctionDataProxy extends AbstractDataProxy {
 
-	private JSONObject requestBody;
-	private String address;
+	private static final Logger LOGGER = LogManager.getLogger(CatalogFunctionDataProxy.class);
+
+	private final JSONObject requestBody;
+	private final String address;
 	private final Map<String, String> requestHeaders;
 	private final HttpMethod method;
 	private IDataStore dataStore;
-	private static transient Logger logger = Logger.getLogger(CatalogFunctionDataProxy.class);
 
-	public CatalogFunctionDataProxy(String address, HttpMethod method, Map<String, String> requestHeaders, JSONObject requestBody) {
+	public CatalogFunctionDataProxy(String address, HttpMethod method, Map<String, String> requestHeaders,
+			JSONObject requestBody) {
 		this.requestBody = requestBody;
 		this.address = address;
 		this.requestHeaders = requestHeaders;
@@ -64,9 +67,8 @@ public class CatalogFunctionDataProxy extends AbstractDataProxy {
 			// ONLY AT THIS POINT WE HAVE ACTUAL DATA, so we must put them in the request
 			putDataStoreInRequestBody();
 
-			Response response = RestUtilities.makeRequest(this.method, this.address, this.requestHeaders, this.requestBody.toString());
-			logger.info("CatalogFunctionDataProxy, this.method [" + this.method + "], this.address [" + this.address + "], this.requestHeaders ["
-					+ this.requestHeaders + "], this.requestBody.toString() [" + this.requestBody.toString() + "]");
+			Response response = RestUtilities.makeRequest(this.method, this.address, this.requestHeaders,
+					this.requestBody.toString());
 			String responseBody = response.getResponseBody();
 			if (response.getStatusCode() != HttpStatus.SC_OK) {
 				throw new CatalogFunctionException(responseBody);
@@ -86,32 +88,46 @@ public class CatalogFunctionDataProxy extends AbstractDataProxy {
 	private void putDataStoreInRequestBody() throws JSONException {
 		JSONObject data = new JSONObject();
 
+		LOGGER.debug("Datastore: {}", dataStore);
+
 		// put metadata
 		JSONArray metadataArray = new JSONArray();
 		for (int i = 0; i < dataStore.getMetaData().getFieldsMeta().size(); i++) {
 			IFieldMetaData meta = dataStore.getMetaData().getFieldsMeta().get(i);
 			JSONObject metaObj = new JSONObject();
+
+			LOGGER.debug("Adding field metadata: {}", meta);
+
 			metaObj.put("header", meta.getName());
 			metaObj.put("type", meta.getType());
 			metadataArray.put(metaObj);
 		}
+
+		LOGGER.debug("Metadata: {}", metadataArray);
+
 		data.put("metadata", metadataArray);
 
 		// put records
 		JSONArray recordsArray = new JSONArray();
 		for (int i = 0; i < dataStore.getRecords().size(); i++) {
-			IRecord record = dataStore.getRecords().get(i);
+			IRecord currRecord = dataStore.getRecords().get(i);
 			JSONArray fieldsArray = new JSONArray();
-			for (int j = 0; j < record.getFields().size(); j++) {
-				IField field = record.getFields().get(j);
-				Object value = field.getValue() instanceof BigDecimal ? ((BigDecimal) field.getValue()).doubleValue() : field.getValue();
+			for (int j = 0; j < currRecord.getFields().size(); j++) {
+				IField field = currRecord.getFields().get(j);
+				Object value = field.getValue() instanceof BigDecimal ? ((BigDecimal) field.getValue()).doubleValue()
+						: field.getValue();
 				fieldsArray.put(value);
 			}
 			recordsArray.put(fieldsArray);
 		}
+
+		LOGGER.debug("Records: {}", recordsArray);
+
 		data.put("records", recordsArray);
 
 		requestBody.put("datastore", data);
+
+		LOGGER.debug("Datastore: {}", data);
 	}
 
 	public IDataStore getDataStore() {

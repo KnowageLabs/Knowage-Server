@@ -44,6 +44,7 @@ import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
 import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.commons.dao.EmittingEventDAO;
 import it.eng.spagobi.commons.dao.IConfigDAO;
 import it.eng.spagobi.commons.dao.SpagoBIDAOException;
 import it.eng.spagobi.commons.dao.es.NoEventEmitting;
@@ -64,7 +65,7 @@ import it.eng.spagobi.profiling.dao.filters.FinalUsersFilter;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
-public class SbiUserDAOHibImpl extends AbstractHibernateDAO implements ISbiUserDAO {
+public class SbiUserDAOHibImpl extends AbstractHibernateDAO implements ISbiUserDAO, EmittingEventDAO<UserEventsEmettingCommand> {
 
 	private static final Logger LOGGER = Logger.getLogger(SbiUserDAOHibImpl.class);
 
@@ -913,8 +914,7 @@ public class SbiUserDAOHibImpl extends AbstractHibernateDAO implements ISbiUserD
 			Criteria criteria = aSession.createCriteria(SbiUser.class);
 
 			/*
-			 * Here we use ignoreCase() because some sort of problem with
-			 * collations coming from SpagoBI.
+			 * Here we use ignoreCase() because some sort of problem with collations coming from SpagoBI.
 			 *
 			 * See also other occurrences of this comment.
 			 *
@@ -1058,9 +1058,7 @@ public class SbiUserDAOHibImpl extends AbstractHibernateDAO implements ISbiUserD
 			disableTenantFilter(aSession);
 			tx = aSession.beginTransaction();
 
-			Number count = (Number) aSession.createCriteria(SbiUser.class)
-				.setProjection(Projections.rowCount())
-				.uniqueResult();
+			Number count = (Number) aSession.createCriteria(SbiUser.class).setProjection(Projections.rowCount()).uniqueResult();
 
 			return count.longValue() > 0;
 

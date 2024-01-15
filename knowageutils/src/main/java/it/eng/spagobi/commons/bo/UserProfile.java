@@ -111,7 +111,7 @@ import it.eng.spagobi.tenant.TenantManager;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 /**
- * This class contain the information about the user
+ * This class contain the information about the user LoginFilter
  */
 public class UserProfile implements IEngUserProfile {
 
@@ -148,6 +148,14 @@ public class UserProfile implements IEngUserProfile {
 	private String organization = null;
 	private Boolean isSuperadmin = false;
 
+	// PM-int
+	private String userAgent;
+	private String sourceIpAddress;
+	private Boolean sourceSocketEnabled;
+	private String os;
+	private Long sessionStart;
+	private String sessionId;
+
 	@JsonIgnore
 	private SpagoBIUserProfile spagoBIUserProfile = null;
 
@@ -165,6 +173,12 @@ public class UserProfile implements IEngUserProfile {
 		this.organization = other.organization;
 		this.isSuperadmin = other.isSuperadmin;
 		this.spagoBIUserProfile = other.spagoBIUserProfile;
+		// PM-int
+		this.userAgent = other.userAgent;
+		this.sourceIpAddress = other.sourceIpAddress;
+		this.sourceSocketEnabled = other.sourceSocketEnabled;
+		this.os = other.os;
+		this.sessionStart = other.sessionStart;
 	}
 
 	/**
@@ -548,15 +562,18 @@ public class UserProfile implements IEngUserProfile {
 		logger.debug("IN: user id = " + userId);
 		String organization = userId.substring(SCHEDULER_USER_ID_PREFIX.length());
 		logger.debug("Organization : " + organization);
+
+		List<String> functionalities = getSchedulerUserFunctionalities();
+		List<String> roles = new ArrayList<>();
+		HashMap attributes = new HashMap();
+
 		UserProfile toReturn = new UserProfile(userUniqueIdentifier, SCHEDULER_USER_NAME, SCHEDULER_USER_NAME, organization);
-		toReturn.setRoles(new ArrayList());
-		toReturn.setAttributes(new HashMap());
-		toReturn.setFunctionalities(getSchedulerUserFunctionalities());
-		String[] roles = null;
-		ArrayList<String[]> newList = new ArrayList<>(getSchedulerUserFunctionalities());
-		SpagoBIUserProfile spagoBiUserProfile = new SpagoBIUserProfile(new HashMap(), Arrays.stream(newList.toArray()).toArray(String[]::new),
-				new Boolean(false), organization, roles, userUniqueIdentifier, userId, userId);
-		toReturn.setSpagoBIUserProfile(spagoBiUserProfile);
+		toReturn.setRoles(roles);
+		toReturn.setAttributes(attributes);
+		toReturn.setFunctionalities(functionalities);
+
+		setSpagoBiUserProfileIntoUserProfile(toReturn, userUniqueIdentifier, userId, organization, roles, functionalities);
+
 		logger.debug("OUT");
 		return toReturn;
 	}
@@ -570,20 +587,37 @@ public class UserProfile implements IEngUserProfile {
 		logger.debug("IN: user id = " + userId);
 		String organization = userId.substring(DATA_PREP_USER_ID_PREFIX.length());
 		logger.debug("Organization : " + organization);
+
+		List<String> functionalities = getDataPreparationUserFunctionalities();
+		List<String> roles = new ArrayList<>();
+		HashMap attributes = new HashMap();
+
 		UserProfile toReturn = new UserProfile(userUniqueIdentifier, DATA_PREP_USER_NAME, DATA_PREP_USER_NAME, organization);
-		toReturn.setRoles(new ArrayList());
-		toReturn.setAttributes(new HashMap());
-		toReturn.setFunctionalities(getDataPreparationUserFunctionalities());
-		String[] roles = null;
-		ArrayList<String[]> newList = new ArrayList<>(getDataPreparationUserFunctionalities());
-		SpagoBIUserProfile spagoBiUserProfile = new SpagoBIUserProfile(new HashMap(), Arrays.stream(newList.toArray()).toArray(String[]::new),
-				new Boolean(false), organization, roles, userUniqueIdentifier, userId, userId);
-		toReturn.setSpagoBIUserProfile(spagoBiUserProfile);
+		toReturn.setRoles(roles);
+		toReturn.setAttributes(attributes);
+		toReturn.setFunctionalities(functionalities);
+
+		setSpagoBiUserProfileIntoUserProfile(toReturn, userUniqueIdentifier, userId, organization, roles, functionalities);
+
 		logger.debug("OUT");
 		return toReturn;
 	}
 
-	private static Collection getSchedulerUserFunctionalities() {
+	private static void setSpagoBiUserProfileIntoUserProfile(UserProfile userProfile, String userUniqueIdentifier, String userId, String organization,
+			List<String> roles, List<String> functionalities) {
+
+		HashMap attributes = new HashMap();
+		String[] functionalitiesAsArray = functionalities.toArray(new String[0]);
+		String[] rolesAsArray = roles.toArray(new String[0]);
+		boolean isSuperadmin = false;
+
+		SpagoBIUserProfile spagoBiUserProfile = new SpagoBIUserProfile(attributes, functionalitiesAsArray, isSuperadmin, organization, rolesAsArray,
+				userUniqueIdentifier, userId, userId);
+
+		userProfile.setSpagoBIUserProfile(spagoBiUserProfile);
+	}
+
+	private static List<String> getSchedulerUserFunctionalities() {
 		String[] functionalities = { ALERT_MANAGEMENT, MANAGE_ANALYTICAL_WIDGET, ARTIFACT_CATALOGUE_MANAGEMENT, MANAGE_CHART_WIDGET, CKAN_FUNCTIONALITY,
 				CONTSTRAINT_MANAGEMENT, CONTSTRAINT_VIEW, CREATE_CHART_FUNCTIONALITY, CREATE_COCKPIT_FUNCTIONALITY, CREATE_DATASETS_AS_FINAL_USER,
 				DATASET_MANAGEMENT, DATASOURCE_BIG_DATA, DATASOURCE_MANAGEMENT, DATASOURCE_READ, DISTRIBUTIONLIST_MANAGEMENT, DISTRIBUTIONLIST_USER,
@@ -599,7 +633,7 @@ public class UserProfile implements IEngUserProfile {
 		return Arrays.asList(functionalities);
 	}
 
-	private static Collection getDataPreparationUserFunctionalities() {
+	private static List<String> getDataPreparationUserFunctionalities() {
 		String[] functionalities = { DATA_PREPARATION };
 		return Arrays.asList(functionalities);
 	}
@@ -608,6 +642,54 @@ public class UserProfile implements IEngUserProfile {
 	public String toString() {
 		return "UserProfile [userUniqueIdentifier=" + userUniqueIdentifier + ", userId=" + userId + ", userName=" + userName + ", userAttributes="
 				+ userAttributes + ", roles=" + roles + ", organization=" + organization + ", isSuperadmin=" + isSuperadmin + "]";
+	}
+
+	public String getUserAgent() {
+		return userAgent;
+	}
+
+	public void setUserAgent(String userAgent) {
+		this.userAgent = userAgent;
+	}
+
+	public String getSourceIpAddress() {
+		return sourceIpAddress;
+	}
+
+	public void setSourceIpAddress(String sourceIpAddress) {
+		this.sourceIpAddress = sourceIpAddress;
+	}
+
+	public Boolean getSourceSocketEnabled() {
+		return sourceSocketEnabled;
+	}
+
+	public void setSourceSocketEnabled(Boolean sourceSocketEnabled) {
+		this.sourceSocketEnabled = sourceSocketEnabled;
+	}
+
+	public String getOs() {
+		return os;
+	}
+
+	public void setOs(String os) {
+		this.os = os;
+	}
+
+	public Long getSessionStart() {
+		return sessionStart;
+	}
+
+	public void setSessionStart(Long sessionStart) {
+		this.sessionStart = sessionStart;
+	}
+
+	public String getSessionId() {
+		return sessionId;
+	}
+
+	public void setSessionId(String sessionId) {
+		this.sessionId = sessionId;
 	}
 
 }
