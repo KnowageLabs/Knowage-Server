@@ -31,8 +31,9 @@ import javax.naming.directory.InitialDirContext;
 import javax.naming.directory.SearchControls;
 import javax.naming.directory.SearchResult;
 
-import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.profiling.bean.SbiUser;
@@ -48,11 +49,12 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
  * This class implement the authentication method on LDAP but the authorization method on Knowage Repository
  *
  */
-public class LdapSecurityServiceSupplier extends InternalSecurityServiceSupplierImpl implements ISecurityServiceSupplier {
+public class LdapSecurityServiceSupplier extends InternalSecurityServiceSupplierImpl
+		implements ISecurityServiceSupplier {
 
-	static private Logger logger = Logger.getLogger(LdapSecurityServiceSupplier.class);
-
-	static protected String LDAP_AUTHENTICATION_CONFIG = "ldap.config";
+	private static final Logger LOGGER = LogManager.getLogger(LdapSecurityServiceSupplier.class);
+	private static final String LDAP_AUTHENTICATION_CONFIG = "ldap.config";
+	private static final int USER_JWT_TOKEN_EXPIRE_HOURS = 10; // JWT token for regular users will expire in 10 HOURS
 
 	protected static final String SEARCH_USER_BEFORE_PSW = "SEARCH_USER_BEFORE_PSW";
 	protected static final String SEARCH_USER_BEFORE_USER = "SEARCH_USER_BEFORE_USER";
@@ -64,8 +66,6 @@ public class LdapSecurityServiceSupplier extends InternalSecurityServiceSupplier
 	protected static final String SECURITY_AUTHENTICATION = "SECURITY_AUTHENTICATION";
 	protected static final String DN_PREFIX = "DN_PREFIX";
 	protected static final String DN_POSTFIX = "DN_POSTFIX";
-
-	protected static int USER_JWT_TOKEN_EXPIRE_HOURS = 10; // JWT token for regular users will expire in 10 HOURS
 
 	protected String ldapPrefix = "";
 
@@ -82,34 +82,30 @@ public class LdapSecurityServiceSupplier extends InternalSecurityServiceSupplier
 
 	@Override
 	public SpagoBIUserProfile checkAuthentication(String userId, String psw) {
-		logger.debug("IN: userId = [" + userId + "]");
+		LOGGER.debug("IN: userId = [{}]", userId);
 		InitialDirContext ctx = null;
 		try {
 			Properties properties = getConfig();
 			Boolean searchUserBefore = new Boolean(properties.getProperty(ldapPrefix + SEARCH_USER_BEFORE));
-			logger.debug("ldapPrefix + SEARCH_USER_BEFORE = [" + ldapPrefix + SEARCH_USER_BEFORE + "]");
-			logger.debug("searchUserBefore = [" + searchUserBefore + "]");
-			String distinguishName = searchUserBefore ? findUserDistinguishName(userId) : userId;
-			logger.debug("Binding with distinguishName [" + distinguishName + "] ...");
-			try {
-				ctx = bindWithCredentials(distinguishName, psw);
-			} catch (LDAPAuthenticationFailed e) {
-				throw e;
-			}
-			logger.debug("Authentication successfull for user [" + userId + "].");
-			logger.debug("Authentication successfull for distinguishName [" + distinguishName + "].");
+			LOGGER.debug("ldapPrefix + SEARCH_USER_BEFORE = [{}{}]", ldapPrefix, SEARCH_USER_BEFORE);
+			LOGGER.debug("searchUserBefore = [{}]", searchUserBefore);
+			String distinguishName = Boolean.TRUE.equals(searchUserBefore) ? findUserDistinguishName(userId) : userId;
+			LOGGER.debug("Binding with distinguishName [{}] ...", distinguishName);
+			ctx = bindWithCredentials(distinguishName, psw);
+			LOGGER.debug("Authentication successfull for user [{}].", userId);
+			LOGGER.debug("Authentication successfull for distinguishName [{}].", distinguishName);
 			SpagoBIUserProfile toReturn = getUserProfile(userId);
-			logger.debug("Profile object created for user [" + userId + "].");
+			LOGGER.debug("Profile object created for user [{}].", userId);
 			return toReturn;
 		} catch (Exception e) {
-			logger.error("LDAP authentication failed for user [" + userId + "]", e);
+			LOGGER.error("LDAP authentication failed for user [{}]", userId, e);
 			return null;
 		} finally {
 			if (ctx != null) {
 				try {
 					ctx.close();
 				} catch (NamingException e) {
-					logger.error("An error occurred while closing context", e);
+					LOGGER.error("An error occurred while closing context", e);
 				}
 			}
 		}
@@ -118,10 +114,12 @@ public class LdapSecurityServiceSupplier extends InternalSecurityServiceSupplier
 	protected Properties getConfig() {
 		try {
 			String filename = System.getProperty(LDAP_AUTHENTICATION_CONFIG);
-			Assert.assertNotNull(filename,
-					"System property " + LDAP_AUTHENTICATION_CONFIG + " has not been configured. Please add it while starting your JVM.");
+			Assert.assertNotNull(filename, "System property " + LDAP_AUTHENTICATION_CONFIG
+					+ " has not been configured. Please add it while starting your JVM.");
 			Properties properties = new Properties();
-			properties.load(new FileInputStream(filename));
+			try (FileInputStream fis = new FileInputStream(filename)) {
+				properties.load(fis);
+			}
 			return properties;
 		} catch (Exception e) {
 			throw new SpagoBIRuntimeException("An error occurred while retrieving LDAP configuration", e);
@@ -186,25 +184,27 @@ public class LdapSecurityServiceSupplier extends InternalSecurityServiceSupplier
 	 */
 
 	protected InitialDirContext bindWithCredentials(String userId, String psw) throws LDAPAuthenticationFailed {
-        logger.debug("IN userId = [" + userId + "]");
+		LOGGER.debug("IN userId = [{}]", userId);
 		Properties properties = getConfig();
-		 logger.debug("IN properties.getProperty(ldapPrefix + DN_PREFIX = [" + properties.getProperty(ldapPrefix + "DN_PREFIX" + "]");
-		 logger.debug("IN properties.getProperty(ldapPrefix + DN_POSTFIX = [" + properties.getProperty(ldapPrefix + "DN_POSTFIX" + "]");
 
-		Hashtable<String, Object> env = new Hashtable<String, Object>();
-		env.put(Context.INITIAL_CONTEXT_FACTORY, properties.getProperty(ldapPrefix + "INITIAL_CONTEXT_FACTORY"));
-		env.put(Context.PROVIDER_URL, properties.getProperty(ldapPrefix + "PROVIDER_URL"));
+		String prefix = properties.getProperty(ldapPrefix + DN_PREFIX);
+		String postfix = properties.getProperty(ldapPrefix + DN_POSTFIX);
 
-		env.put(Context.SECURITY_AUTHENTICATION, properties.getProperty(ldapPrefix + "SECURITY_AUTHENTICATION"));
+		LOGGER.debug("IN properties.getProperty(ldapPrefix + DN_PREFIX = [{}]", prefix);
+		LOGGER.debug("IN properties.getProperty(ldapPrefix + DN_POSTFIX = [{}]", postfix);
 
-		String distinguishName = null;
-		if (!userId.startsWith(properties.getProperty(ldapPrefix + "DN_PREFIX")) && !userId.endsWith(properties.getProperty(ldapPrefix + "DN_POSTFIX"))) {
-			logger.debug("add Prefix and Postfix");
-			distinguishName = properties.getProperty(ldapPrefix + "DN_PREFIX") + userId + properties.getProperty(ldapPrefix + "DN_POSTFIX");
-		} else {
-			distinguishName = userId;
-		}
-		logger.debug("User distinguishName = [" + distinguishName + "]");
+		Hashtable<String, Object> env = new Hashtable<>();
+		env.put(Context.INITIAL_CONTEXT_FACTORY, properties.getProperty(ldapPrefix + INITIAL_CONTEXT_FACTORY));
+		env.put(Context.PROVIDER_URL, properties.getProperty(ldapPrefix + PROVIDER_URL));
+
+		env.put(Context.SECURITY_AUTHENTICATION, properties.getProperty(ldapPrefix + SECURITY_AUTHENTICATION));
+
+		String distinguishName = userId;
+
+		distinguishName = StringUtils.prependIfMissing(distinguishName, prefix);
+		distinguishName = StringUtils.appendIfMissing(distinguishName, postfix);
+
+		LOGGER.debug("User distinguishName = [{}]", distinguishName);
 		env.put(Context.SECURITY_PRINCIPAL, distinguishName);
 		env.put(Context.SECURITY_CREDENTIALS, psw);
 		env.put("javax.security.sasl.qop", "auth-conf");
@@ -223,11 +223,11 @@ public class LdapSecurityServiceSupplier extends InternalSecurityServiceSupplier
 
 		Properties properties = getConfig();
 
-		Hashtable<String, Object> env = new Hashtable<String, Object>();
-		env.put(Context.INITIAL_CONTEXT_FACTORY, properties.getProperty(ldapPrefix + "INITIAL_CONTEXT_FACTORY"));
-		env.put(Context.PROVIDER_URL, properties.getProperty(ldapPrefix + "PROVIDER_URL"));
+		Hashtable<String, Object> env = new Hashtable<>();
+		env.put(Context.INITIAL_CONTEXT_FACTORY, properties.getProperty(ldapPrefix + INITIAL_CONTEXT_FACTORY));
+		env.put(Context.PROVIDER_URL, properties.getProperty(ldapPrefix + PROVIDER_URL));
 
-		env.put(Context.SECURITY_AUTHENTICATION, properties.getProperty(ldapPrefix + "SECURITY_AUTHENTICATION"));
+		env.put(Context.SECURITY_AUTHENTICATION, properties.getProperty(ldapPrefix + SECURITY_AUTHENTICATION));
 		env.put("javax.security.sasl.qop", "auth-conf");
 		env.put("javax.security.sasl.strength", "high");
 
@@ -240,16 +240,17 @@ public class LdapSecurityServiceSupplier extends InternalSecurityServiceSupplier
 		return ctx;
 	}
 
-	protected String findUserDistinguishName(String userId) throws LDAPBindAsAnonymuousFailed, LDAPAuthenticationFailed {
+	protected String findUserDistinguishName(String userId)
+			throws LDAPBindAsAnonymuousFailed, LDAPAuthenticationFailed {
 
 		Properties properties = getConfig();
 
 		String toReturn = null;
 
-		String postfix = properties.getProperty(ldapPrefix + "DN_POSTFIX");
+		String postfix = properties.getProperty(ldapPrefix + DN_POSTFIX);
 		postfix = postfix.startsWith(",") ? postfix.substring(1) : postfix;
 
-		String usernameForLDAPAuthBefore = new String(properties.getProperty(ldapPrefix + SEARCH_USER_BEFORE_USER));
+		String usernameForLDAPAuthBefore = properties.getProperty(ldapPrefix + SEARCH_USER_BEFORE_USER);
 
 		boolean validUsername = usernameForLDAPAuthBefore != null && !usernameForLDAPAuthBefore.isEmpty();
 
@@ -257,7 +258,7 @@ public class LdapSecurityServiceSupplier extends InternalSecurityServiceSupplier
 		String password = null;
 		if (validUsername) {
 			password = properties.getProperty(ldapPrefix + SEARCH_USER_BEFORE_PSW);
-			logger.debug("Found credentials in properties file for authentication before looking for attribute.");
+			LOGGER.debug("Found credentials in properties file for authentication before looking for attribute.");
 		}
 
 		InitialDirContext ctx = null;
@@ -286,7 +287,8 @@ public class LdapSecurityServiceSupplier extends InternalSecurityServiceSupplier
 			// distinguish name
 			toReturn = ldapResult.getNameInNamespace();
 			if (answer.hasMore()) {
-				throw new SpagoBIRuntimeException("More than one user were found on LDAP using filter [" + filter + "]");
+				throw new SpagoBIRuntimeException(
+						"More than one user were found on LDAP using filter [" + filter + "]");
 			}
 		} catch (NamingException e) {
 			throw new SpagoBIRuntimeException("Error while finding user distinguish name for user [" + userId + "]", e);
@@ -295,7 +297,7 @@ public class LdapSecurityServiceSupplier extends InternalSecurityServiceSupplier
 				try {
 					ctx.close();
 				} catch (NamingException e) {
-					logger.error("An error occurred while closing context", e);
+					LOGGER.error("An error occurred while closing context", e);
 				}
 			}
 		}
