@@ -30,8 +30,7 @@ public abstract class FileIterator implements DataIterator {
 	protected final IMetaData metadata;
 	protected final FileInputStream inputStream;
 
-	public FileIterator(IMetaData metadata, Path filePath) throws IOException {
-		super();
+	protected FileIterator(IMetaData metadata, Path filePath) throws IOException {
 		this.metadata = metadata;
 		this.inputStream = new FileInputStream(filePath.toFile());
 	}

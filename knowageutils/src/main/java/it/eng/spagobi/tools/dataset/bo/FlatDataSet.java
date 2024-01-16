@@ -57,7 +57,6 @@ public class FlatDataSet extends ConfigurableDataSet {
 	private IMetaData metadata;
 
 	public FlatDataSet() {
-		super();
 	}
 
 	public FlatDataSet(SpagoBiDataSet dataSetConfig) {
@@ -161,13 +160,17 @@ public class FlatDataSet extends ConfigurableDataSet {
 	public DataIterator iterator() {
 		LOGGER.debug("IN");
 		try {
+			IMetaData metadata = getMetadata();
 			String query = "select * from " + this.getTableName();
-			Connection connection = dataSource.getConnection();
-			Statement stmt = connection.createStatement();
-			stmt.setFetchSize(5000);
-			ResultSet rs = stmt.executeQuery(query);
-			DataIterator iterator = new ResultSetIterator(connection, stmt, rs);
-			return iterator;
+			try (Connection connection = dataSource.getConnection(); Statement stmt = connection.createStatement()) {
+
+				connection.setAutoCommit(false); // PostgreSQL requires disabling auto-commit for setFetchSize to work
+				stmt.setFetchSize(5000);
+
+				try (ResultSet rs = stmt.executeQuery(query)) {
+					return new ResultSetIterator(rs, metadata);
+				}
+			}
 		} catch (Exception e) {
 			throw new SpagoBIRuntimeException(e);
 		} finally {

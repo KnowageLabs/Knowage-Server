@@ -35,6 +35,7 @@ import it.eng.spagobi.tools.dataset.common.datareader.AbstractDataReader;
 import it.eng.spagobi.tools.dataset.common.datareader.JDBCStandardDataReader;
 import it.eng.spagobi.tools.dataset.common.iterator.DataIterator;
 import it.eng.spagobi.tools.dataset.common.iterator.ResultSetIterator;
+import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
@@ -47,7 +48,6 @@ public class JDBCPostgreSQLDataSet extends JDBCDataSet {
 	 * Instantiates a new empty JDBC PostgreSQL data set.
 	 */
 	public JDBCPostgreSQLDataSet() {
-		super();
 		setDataProxy(new JDBCPostgreSQLDataProxy());
 		setDataReader(createDataReader());
 	}
@@ -65,6 +65,7 @@ public class JDBCPostgreSQLDataSet extends JDBCDataSet {
 	public DataIterator iterator() {
 		logger.debug("IN");
 		try {
+			IMetaData metadata = getMetadata();
 			QuerableBehaviour querableBehaviour = (QuerableBehaviour) getBehaviour(QuerableBehaviour.class.getName());
 			String statement = querableBehaviour.getStatement();
 			logger.debug("Obtained statement [" + statement + "]");
@@ -72,13 +73,17 @@ public class JDBCPostgreSQLDataSet extends JDBCDataSet {
 			JDBCDataProxy jdbcDataProxy = (JDBCDataProxy) dataProxy;
 			IDataSource dataSource = jdbcDataProxy.getDataSource();
 			Assert.assertNotNull(dataSource, "Invalid datasource");
-			Connection connection = dataSource.getConnection();
-			connection.setAutoCommit(false);
-			Statement stmt = connection.createStatement(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
-			stmt.setFetchSize(5000);
-			ResultSet rs = (ResultSet) dataProxy.getData(dataReader, stmt);
-			DataIterator iterator = new ResultSetIterator(connection, stmt, rs);
-			return iterator;
+			try (Connection connection = dataSource.getConnection();
+					Statement stmt = connection.createStatement(ResultSet.TYPE_FORWARD_ONLY,
+							ResultSet.CONCUR_READ_ONLY)) {
+
+				connection.setAutoCommit(false); // PostgreSQL requires disabling auto-commit for setFetchSize to work
+				stmt.setFetchSize(5000);
+
+				try (ResultSet rs = (ResultSet) dataProxy.getData(dataReader, stmt)) {
+					return new ResultSetIterator(rs, metadata);
+				}
+			}
 		} catch (ClassNotFoundException | SQLException | NamingException e) {
 			throw new SpagoBIRuntimeException(e);
 		} finally {
