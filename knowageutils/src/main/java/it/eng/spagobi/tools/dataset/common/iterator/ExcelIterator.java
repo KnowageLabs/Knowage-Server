@@ -25,7 +25,7 @@ import java.nio.file.Path;
 import java.sql.Timestamp;
 import java.util.Date;
 
-import org.apache.log4j.Logger;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.DataFormatter;
@@ -40,19 +40,19 @@ import it.eng.spagobi.tools.dataset.common.datastore.IField;
 import it.eng.spagobi.tools.dataset.common.datastore.IRecord;
 import it.eng.spagobi.tools.dataset.common.datastore.Record;
 import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 public class ExcelIterator extends FileIterator implements DataIterator {
 
-	private static transient Logger logger = Logger.getLogger(ExcelIterator.class);
-
-	private DataFormatter formatter = new DataFormatter();
+	private final DataFormatter formatter = new DataFormatter();
 	private int rowIndex;
 	private final int numberOfColumns;
 	private final int numberOfRows;
 	private final Sheet sheet;
 
 	public ExcelIterator(IMetaData metadata, Path filePath, String fileType, int sheetNumber, int initialRow)
-			throws IOException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+			throws IOException, InstantiationException, IllegalAccessException, IllegalArgumentException,
+			InvocationTargetException {
 		super(metadata, filePath);
 		ExcelDataReaderFactory excelFactory = new ExcelDataReaderFactory();
 		Workbook wb = excelFactory.getWorkookInstance(fileType, inputStream);
@@ -70,7 +70,7 @@ public class ExcelIterator extends FileIterator implements DataIterator {
 
 	@Override
 	public IRecord next() {
-		IRecord record = new Record();
+		IRecord currRecord = new Record();
 		Row row = sheet.getRow(rowIndex);
 		int lastColumn = numberOfColumns;
 		for (int c = 0; c < lastColumn; c++) {
@@ -79,13 +79,13 @@ public class ExcelIterator extends FileIterator implements DataIterator {
 			try {
 				valueField = parseCell(cell);
 			} catch (Throwable t) {
-				throw new RuntimeException("Impossible to parse cell [" + c + "]", t);
+				throw new SpagoBIRuntimeException("Impossible to parse cell [" + c + "]", t);
 			}
 			IField field = new Field(valueField);
-			record.appendField(field);
+			currRecord.appendField(field);
 		}
 		rowIndex++;
-		return record;
+		return currRecord;
 	}
 
 	private Object parseCell(Cell cell) {
@@ -103,8 +103,8 @@ public class ExcelIterator extends FileIterator implements DataIterator {
 		case NUMERIC:
 			if (DateUtil.isCellDateFormatted(cell)) {
 				/**
-				 * HSSFCell.getCellStyle().getDataFormatString() returns Cell date format (even if it is a Custom format), but it will be Excel's Date format
-				 * that is DIFFERENT from Java's
+				 * HSSFCell.getCellStyle().getDataFormatString() returns Cell date format (even if it is a Custom format), but it will be Excel's Date format that is DIFFERENT
+				 * from Java's
 				 */
 				// String formatString = cell.getCellStyle().getDataFormatString();
 				Date date = cell.getDateCellValue();
@@ -142,7 +142,7 @@ public class ExcelIterator extends FileIterator implements DataIterator {
 			break;
 
 		case STRING:
-			if (org.apache.commons.lang.StringUtils.isBlank(cell.getStringCellValue())) {
+			if (StringUtils.isBlank(cell.getStringCellValue())) {
 				valueField = "";
 			} else {
 				valueField = cell.getStringCellValue();
@@ -151,7 +151,6 @@ public class ExcelIterator extends FileIterator implements DataIterator {
 			break;
 
 		case BLANK:
-			valueField = null;
 			break;
 		default:
 		}
