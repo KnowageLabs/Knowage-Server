@@ -17,7 +17,6 @@
  */
 package it.eng.spagobi.api.v2.export;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.math.BigDecimal;
@@ -29,7 +28,6 @@ import java.util.Date;
 import org.apache.log4j.LogMF;
 import org.apache.log4j.Logger;
 import org.apache.poi.ss.SpreadsheetVersion;
-import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.ClientAnchor;
@@ -50,7 +48,6 @@ import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 
 import it.eng.knowage.commons.multitenant.OrganizationImageManager;
-import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
 import it.eng.spagobi.tenant.TenantManager;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.common.datastore.IRecord;
@@ -65,7 +62,7 @@ public class ExcelExportJob extends AbstractExportJob {
 	private static final Logger logger = Logger.getLogger(ExcelExportJob.class);
 
 	private static final String TIMESTAMP_FORMAT = "dd/MM/yyyy HH:mm:ss.SSS";
-	
+
 	private String documentName = "";
 
 	@Override
@@ -136,56 +133,56 @@ public class ExcelExportJob extends AbstractExportJob {
 				IMetaData dataSetMetadata = dataSet.getMetadata();
 
 				// CREATE BRANDED HEADER SHEET
-				String imageB64 = OrganizationImageManager.getOrganizationB64Image(TenantManager.getTenant().getName());
+				String imageB64 = OrganizationImageManager.getOrganizationB64ImageWide(TenantManager.getTenant().getName());
 				int startRow = 0;
-				float rowHeight = 35; // in points	
+				float rowHeight = 35; // in points
 				int rowspan = 2;
 				int startCol = 0;
 				int colWidth = 25;
 				int colspan = 2;
 				int namespan = 10;
 				int dataspan = 10;
-				
+
 				if (imageB64 != null) {
-					
-					for (int r = startRow; r < startRow+rowspan; r++) {
-						   sheet.createRow(r).setHeightInPoints(rowHeight);
-						   for (int c = startCol; c < startCol+colspan; c++) {
-							   sheet.getRow(r).createCell(c);
-							   sheet.setColumnWidth(c, colWidth * 256);
+
+					for (int r = startRow; r < startRow + rowspan; r++) {
+						sheet.createRow(r).setHeightInPoints(rowHeight);
+						for (int c = startCol; c < startCol + colspan; c++) {
+							sheet.getRow(r).createCell(c);
+							sheet.setColumnWidth(c, colWidth * 256);
 						}
 					}
-					
+
 					// set brandend header image
-					sheet.addMergedRegion(new CellRangeAddress(startRow, startRow+rowspan-1, startCol, startCol+colspan-1));
-					drawBrandendHeaderImage(sheet, imageB64, Workbook.PICTURE_TYPE_PNG, startCol, startRow, colspan, rowspan);							
-					
+					sheet.addMergedRegion(new CellRangeAddress(startRow, startRow + rowspan - 1, startCol, startCol + colspan - 1));
+					drawBrandendHeaderImage(sheet, imageB64, Workbook.PICTURE_TYPE_PNG, startCol, startRow, colspan, rowspan);
+
 					// set document name
-					sheet.getRow(startRow).createCell(startCol+colspan).setCellValue(documentName);
-					sheet.addMergedRegion(new CellRangeAddress(startRow, startRow, startCol+colspan, namespan));
+					sheet.getRow(startRow).createCell(startCol + colspan).setCellValue(documentName);
+					sheet.addMergedRegion(new CellRangeAddress(startRow, startRow, startCol + colspan, namespan));
 					// set cell style
 					CellStyle documentNameCellStyle = buildCellStyle(sheet, true, HorizontalAlignment.LEFT, VerticalAlignment.CENTER, (short) 16);
-					sheet.getRow(startRow).getCell(startCol+colspan).setCellStyle(documentNameCellStyle);
-					
-					// set date 
+					sheet.getRow(startRow).getCell(startCol + colspan).setCellStyle(documentNameCellStyle);
+
+					// set date
 					Date date = new Date();
-					sheet.getRow(startRow+1).createCell(startCol+colspan).setCellValue("Data di generazione: " + timeStampFormat.format(date));
-					sheet.addMergedRegion(new CellRangeAddress(startRow+1, startRow+1, startCol+colspan, dataspan));
+					sheet.getRow(startRow + 1).createCell(startCol + colspan).setCellValue("Data di generazione: " + timeStampFormat.format(date));
+					sheet.addMergedRegion(new CellRangeAddress(startRow + 1, startRow + 1, startCol + colspan, dataspan));
 					// set cell style
 					CellStyle headerDateCellStyle = buildCellStyle(sheet, false, HorizontalAlignment.LEFT, VerticalAlignment.CENTER, (short) 8);
-					sheet.getRow(startRow+1).getCell(startCol+colspan).setCellStyle(headerDateCellStyle);
+					sheet.getRow(startRow + 1).getCell(startCol + colspan).setCellStyle(headerDateCellStyle);
 				}
-				
-				int headerIndex = (imageB64 != null) ? (startRow+rowspan) : 0;
+
+				int headerIndex = (imageB64 != null) ? (startRow + rowspan) : 0;
 				Row widgetNameRow = sheet.createRow((short) headerIndex);
 				Cell widgetNameCell = widgetNameRow.createCell(0);
 				widgetNameCell.setCellValue(sheet.getSheetName());
 				// set cell style
 				CellStyle widgetNameStyle = buildCellStyle(sheet, true, HorizontalAlignment.LEFT, VerticalAlignment.CENTER, (short) 14);
 				widgetNameCell.setCellStyle(widgetNameStyle);
-				
+
 				Row header;
-				header = sheet.createRow((short) headerIndex+1); // first row
+				header = sheet.createRow((short) headerIndex + 1); // first row
 				if (dataSetMetadata != null && dataSetMetadata.getFieldCount() > 0) {
 					for (int i = 0; i <= dataSetMetadata.getFieldCount() - 1; i++) {
 						Cell cell = header.createCell(i);
@@ -196,14 +193,14 @@ public class ExcelExportJob extends AbstractExportJob {
 						cell.setCellStyle(headerCellStyle);
 					}
 				}
-				
+
 				// adjusts the column width to fit the contents
 				adjustColumnWidth(sheet);
 
 				// FILL CELL RECORD
 				try (DataIterator iterator = dataSet.iterator()) {
 
-					int i = headerIndex+1;
+					int i = headerIndex + 1;
 					final int recordLimit = SpreadsheetVersion.EXCEL2007.getLastRowIndex();
 					while (iterator.hasNext() && i < recordLimit) {
 
@@ -267,7 +264,7 @@ public class ExcelExportJob extends AbstractExportJob {
 						i++;
 					}
 				}
-				
+
 				// adjusts the column width to fit the contents
 				adjustColumnWidth(sheet);
 
@@ -303,13 +300,13 @@ public class ExcelExportJob extends AbstractExportJob {
 	protected String mime() {
 		return "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
 	}
-	
+
 	public CellStyle buildCellStyle(Sheet sheet, boolean bold, HorizontalAlignment alignment, VerticalAlignment verticalAlignment, short headerFontSizeShort) {
-		
+
 		// CELL
 		CellStyle cellStyle = sheet.getWorkbook().createCellStyle();
-		
-		// alignment 
+
+		// alignment
 		cellStyle.setAlignment(alignment);
 		cellStyle.setVerticalAlignment(verticalAlignment);
 
@@ -355,43 +352,42 @@ public class ExcelExportJob extends AbstractExportJob {
 //				: IndexedColors.valueOf(DEFAULT_HEADER_COLOR).getIndex();
 //		font.setColor(headerColorIndex);
 
-		// bold		
+		// bold
 		font.setBold(bold);
-		
+
 		cellStyle.setFont(font);
 		return cellStyle;
 	}
 
 	public void adjustColumnWidth(Sheet sheet) {
-		try {		    			
+		try {
 			boolean enabled = true;
 			((SXSSFSheet) sheet).trackAllColumnsForAutoSizing();
 			Row row = sheet.getRow(sheet.getLastRowNum());
-			if(row != null) {
+			if (row != null) {
 				for (int i = 0; i < row.getLastCellNum(); i++) {
 					sheet.autoSizeColumn(i);
-					if(enabled && (i == 0 || i == 1)) {
+					if (enabled && (i == 0 || i == 1)) {
 						// first or second column
 						int colWidth = 25;
 						if (sheet.getColumnWidthInPixels(i) < (colWidth * 256))
 							sheet.setColumnWidth(i, colWidth * 256);
 					}
-				}	
+				}
 			}
 		} catch (Exception e) {
 			// to do
 		}
 	}
-	
-	public void drawBrandendHeaderImage(Sheet sheet, String imageB64, int pictureType, int startCol, int startRow,
-			int colspan, int rowspan) {
+
+	public void drawBrandendHeaderImage(Sheet sheet, String imageB64, int pictureType, int startCol, int startRow, int colspan, int rowspan) {
 		try {
 			Workbook wb = sheet.getWorkbook();
-			
+
 			// load the picture
-		    String encodingPrefix = "base64,";
-		    int contentStartIndex = imageB64.indexOf(encodingPrefix) + encodingPrefix.length();
-		    byte[] bytes = org.apache.commons.codec.binary.Base64.decodeBase64(imageB64.substring(contentStartIndex));			
+			String encodingPrefix = "base64,";
+			int contentStartIndex = imageB64.indexOf(encodingPrefix) + encodingPrefix.length();
+			byte[] bytes = org.apache.commons.codec.binary.Base64.decodeBase64(imageB64.substring(contentStartIndex));
 			int pictureIdx = wb.addPicture(bytes, pictureType);
 
 			// create an anchor with upper left cell startCol/startRow
@@ -405,15 +401,15 @@ public class ExcelExportJob extends AbstractExportJob {
 
 			int pictWidthPx = pict.getImageDimension().width;
 			int pictHeightPx = pict.getImageDimension().height;
-			
+
 			// get the heights of all merged rows in px
-			float[] rowHeightsPx = new float[startRow+rowspan];
+			float[] rowHeightsPx = new float[startRow + rowspan];
 			float rowsHeightPx = 0f;
-			for (int r = startRow; r < startRow+rowspan; r++) {
+			for (int r = startRow; r < startRow + rowspan; r++) {
 				Row row = sheet.getRow(r);
 				float rowHeightPt = row.getHeightInPoints();
-				rowHeightsPx[r-startRow] = rowHeightPt * Units.PIXEL_DPI / Units.POINT_DPI;
-				rowsHeightPx += rowHeightsPx[r-startRow];
+				rowHeightsPx[r - startRow] = rowHeightPt * Units.PIXEL_DPI / Units.POINT_DPI;
+				rowsHeightPx += rowHeightsPx[r - startRow];
 			}
 
 			// get the widths of all merged cols in px
@@ -427,12 +423,12 @@ public class ExcelExportJob extends AbstractExportJob {
 			// calculate scale
 			float scale = 1;
 			if (pictHeightPx > rowsHeightPx) {
-				float tmpscale = rowsHeightPx / (float) pictHeightPx;
+				float tmpscale = rowsHeightPx / pictHeightPx;
 				if (tmpscale < scale)
 					scale = tmpscale;
 			}
 			if (pictWidthPx > colsWidthPx) {
-				float tmpscale = colsWidthPx / (float) pictWidthPx;
+				float tmpscale = colsWidthPx / pictWidthPx;
 				if (tmpscale < scale)
 					scale = tmpscale;
 			}
@@ -449,7 +445,7 @@ public class ExcelExportJob extends AbstractExportJob {
 				}
 				colsWidthPx += colWidthPx;
 			}
-			
+
 			// set the horizontal center position as Col1 plus Dx1 of anchor
 			if (col1 != null) {
 				anchor.setCol1(col1);
@@ -464,23 +460,23 @@ public class ExcelExportJob extends AbstractExportJob {
 				float rowHeightPx = rowHeightsPx[r];
 				if (rowsHeightPx + rowHeightPx > vertCenterPosPx) {
 					row1 = r + startRow;
-				    break;
+					break;
 				}
 				rowsHeightPx += rowHeightPx;
 			}
-			  
+
 			if (row1 != null) {
 				anchor.setRow1(row1);
-				anchor.setDy1(Math.round(vertCenterPosPx - rowsHeightPx) * Units.EMU_PER_PIXEL); //in unit EMU for XSSF
+				anchor.setDy1(Math.round(vertCenterPosPx - rowsHeightPx) * Units.EMU_PER_PIXEL); // in unit EMU for XSSF
 			}
-			 
-			anchor.setCol2(startCol+colspan);
+
+			anchor.setCol2(startCol + colspan);
 			anchor.setDx2(Math.round(colsWidthPx - Math.round(horCenterPosPx - colsWidthPx)) * Units.EMU_PER_PIXEL);
-			anchor.setRow2(startRow+rowspan);
+			anchor.setRow2(startRow + rowspan);
 			anchor.setDy2(Math.round(rowsHeightPx - Math.round(vertCenterPosPx - rowsHeightPx)) * Units.EMU_PER_PIXEL);
-			
+
 		} catch (Exception e) {
 			throw new SpagoBIRuntimeException("Cannot write data to Excel file", e);
 		}
-	}	
+	}
 }
