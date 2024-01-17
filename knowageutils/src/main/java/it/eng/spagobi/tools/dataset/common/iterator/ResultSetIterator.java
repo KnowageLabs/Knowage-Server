@@ -17,8 +17,10 @@
  */
 package it.eng.spagobi.tools.dataset.common.iterator;
 
+import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -26,10 +28,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
-
-import javax.sql.rowset.CachedRowSet;
-import javax.sql.rowset.RowSetFactory;
-import javax.sql.rowset.RowSetProvider;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -50,7 +48,9 @@ public class ResultSetIterator implements DataIterator {
 
 	private static final Logger LOGGER = LogManager.getLogger(ResultSetIterator.class);
 
-	private final CachedRowSet cache;
+	private final Connection conn;
+	private final Statement stmt;
+	private final ResultSet rs;
 	private final IMetaData metadata;
 	private final int columnCount;
 	private boolean needDecryption = false;
@@ -58,42 +58,67 @@ public class ResultSetIterator implements DataIterator {
 	private final Map<Integer, IFieldMetaData> decryptableFieldByIndex = new LinkedHashMap<>();
 	private PBEStringEncryptor encryptor;
 
-	public ResultSetIterator(ResultSet rs, IMetaData metadata) throws SQLException {
-		RowSetFactory rowSetFactory = RowSetProvider.newFactory();
-		cache = rowSetFactory.createCachedRowSet();
-		cache.populate(rs);
+	/**
+	 * IMPORTANT!!! An {@code Iterator} has methods {@code hasNext()} and {@code next()} while a {@code ResultSet} object has only {@code next()}, that behaves like
+	 * both {@code Iterator} {@code hasNext()} and {@code next()} at the same time, since it returns true if there are other elements while it is moving forward its
+	 * internal cursor. But {@code Iterator.hasNext()} is not supposed to move forward, therefore it cannot invoke {@code ResultSet.next()} method!!! In order to
+	 * harmonize those API, {@code ResultSetIterator} loads first record into {@code nextRow} variable during initialization (within the constructor) using the
+	 * {@code loadNextRow} method; when {@code Iterator.next()} method is invoked, we get values from {@code nextRow} variable and then we move forward with
+	 * {@code loadNextRow} method, overriding the values into {@code nextRow} variable or setting it to null in case there no more elements.
+	 * {@code Iterator.hasNext()} method simply checks that {@code nextRow} is not null.
+	 */
+	private Object[] nextRow;
+
+	public ResultSetIterator(Connection conn, Statement stmt, ResultSet rs, IMetaData metadata) throws SQLException {
+		this.conn = conn;
+		this.stmt = stmt;
+		this.rs = rs;
 		this.columnCount = rs.getMetaData().getColumnCount();
 		this.metadata = metadata;
 		setUpDecryption();
+		loadNextRow();
 	}
 
-	@Override
-	public boolean hasNext() {
-		try {
-			return cache.next();
-		} catch (SQLException e) {
-			return false;
+	private void loadNextRow() throws SQLException {
+		if (rs.next()) {
+			int columnsNumber = rs.getMetaData().getColumnCount();
+			Object[] row = new Object[columnsNumber];
+			for (int columnIndex = 1; columnIndex <= columnsNumber; columnIndex++) {
+				row[columnIndex - 1] = rs.getObject(columnIndex);
+			}
+			this.nextRow = row;
+		} else {
+			this.nextRow = null;
 		}
 	}
 
 	@Override
+	public boolean hasNext() {
+		return nextRow != null;
+	}
+
+	@Override
 	public IRecord next() {
-		IRecord currRecord = new Record();
-		for (int columnIndex = 1; columnIndex <= columnCount; columnIndex++) {
-			try {
-				Object columnValue;
-				columnValue = cache.getObject(columnIndex);
+		if (!hasNext()) {
+			throw new SpagoBIRuntimeException("ResultSet is empty or it was already scrolled completely");
+		}
+		int columnIndex = 0;
+		try {
+			IRecord currRecord = new Record();
+			for (columnIndex = 1; columnIndex <= columnCount; columnIndex++) {
+				Object columnValue = nextRow[columnIndex - 1];
 				IField field = new Field(columnValue);
 				if (columnValue != null) {
 					metadata.getFieldMeta(columnIndex - 1).setType(columnValue.getClass());
 				}
 				currRecord.appendField(field);
-			} catch (SQLException e) {
-				new SpagoBIRuntimeException("Error getting value at column " + columnIndex, e);
 			}
+			decryptIfNeeded(currRecord);
+			loadNextRow();
+			return currRecord;
+		} catch (SQLException e) {
+			throw new SpagoBIRuntimeException(e);
 		}
-		decryptIfNeeded(currRecord);
-		return currRecord;
 	}
 
 	@Override
@@ -105,8 +130,14 @@ public class ResultSetIterator implements DataIterator {
 	@Override
 	public void close() {
 		try {
-			if (cache != null) {
-				cache.close();
+			if (rs != null) {
+				rs.close();
+			}
+			if (stmt != null) {
+				stmt.close();
+			}
+			if (conn != null) {
+				conn.close();
 			}
 		} catch (SQLException e) {
 			throw new SpagoBIRuntimeException(e);
