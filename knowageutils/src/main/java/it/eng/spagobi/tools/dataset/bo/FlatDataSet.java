@@ -94,11 +94,6 @@ public class FlatDataSet extends ConfigurableDataSet {
 	}
 
 	@Override
-	public void setMetadata(IMetaData metadata) {
-		this.metadata = metadata;
-	}
-
-	@Override
 	public IMetaData getMetadata() {
 		IMetaData currMetadata = null;
 		try {
