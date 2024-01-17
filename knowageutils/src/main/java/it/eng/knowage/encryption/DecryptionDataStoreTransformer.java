@@ -71,10 +71,7 @@ public class DecryptionDataStoreTransformer extends AbstractDataStoreTransformer
 		needDecryption = !decryptableField.isEmpty();
 
 		if (needDecryption) {
-			EncryptionConfiguration cfg = EncryptionPreferencesRegistry.getInstance()
-					.getConfiguration(EncryptionPreferencesRegistry.DEFAULT_CFG_KEY);
-
-			encryptor = EncryptorFactory.getInstance().create(cfg);
+			encryptor = EncryptorFactory.getInstance().createDefault();
 		}
 
 	}

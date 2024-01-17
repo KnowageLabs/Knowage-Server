@@ -37,8 +37,6 @@ import org.jasypt.encryption.pbe.PBEStringEncryptor;
 import org.jasypt.exceptions.EncryptionInitializationException;
 import org.jasypt.exceptions.EncryptionOperationNotPossibleException;
 
-import it.eng.knowage.encryption.EncryptionConfiguration;
-import it.eng.knowage.encryption.EncryptionPreferencesRegistry;
 import it.eng.knowage.encryption.EncryptorFactory;
 import it.eng.spagobi.tools.dataset.common.datastore.Field;
 import it.eng.spagobi.tools.dataset.common.datastore.IField;
@@ -136,10 +134,7 @@ public class ResultSetIterator implements DataIterator {
 		needDecryption = !decryptableField.isEmpty();
 
 		if (needDecryption) {
-			EncryptionConfiguration cfg = EncryptionPreferencesRegistry.getInstance()
-					.getConfiguration(EncryptionPreferencesRegistry.DEFAULT_CFG_KEY);
-
-			encryptor = EncryptorFactory.getInstance().create(cfg);
+			encryptor = EncryptorFactory.getInstance().createDefault();
 		}
 
 	}
