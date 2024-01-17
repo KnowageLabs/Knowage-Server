@@ -269,7 +269,7 @@ public abstract class AbstractJDBCDataset extends ConfigurableDataSet {
 	public DataIterator iterator() {
 		LOGGER.debug("IN");
 		try {
-			IMetaData metadata = getMetadata();
+			IMetaData currMetadata = getMetadata();
 			QuerableBehaviour querableBehaviour = (QuerableBehaviour) getBehaviour(QuerableBehaviour.class.getName());
 			String statement = querableBehaviour.getStatement();
 			LOGGER.debug("Obtained statement [{}]", statement);
@@ -277,17 +277,15 @@ public abstract class AbstractJDBCDataset extends ConfigurableDataSet {
 			JDBCDataProxy jdbcDataProxy = (JDBCDataProxy) dataProxy;
 			IDataSource dataSource = jdbcDataProxy.getDataSource();
 			Assert.assertNotNull(dataSource, "Invalid datasource");
-			try (Connection connection = dataSource.getConnection();
-					Statement stmt = connection.createStatement(ResultSet.TYPE_FORWARD_ONLY,
-							ResultSet.CONCUR_READ_ONLY)) {
+			Connection connection = dataSource.getConnection();
+			Statement stmt = connection.createStatement(ResultSet.TYPE_FORWARD_ONLY,
+							ResultSet.CONCUR_READ_ONLY);
 
-				connection.setAutoCommit(false); // PostgreSQL requires disabling auto-commit for setFetchSize to work
-				stmt.setFetchSize(5000);
+			connection.setAutoCommit(false); // PostgreSQL requires disabling auto-commit for setFetchSize to work
+			stmt.setFetchSize(5000);
 
-				try (ResultSet rs = (ResultSet) dataProxy.getData(dataReader, stmt)) {
-					return new ResultSetIterator(rs, metadata);
-				}
-			}
+			ResultSet rs = (ResultSet) dataProxy.getData(dataReader, stmt);
+			return new ResultSetIterator(connection, stmt, rs, currMetadata);
 		} catch (ClassNotFoundException | SQLException | NamingException e) {
 			throw new SpagoBIRuntimeException(e);
 		} finally {
