@@ -42,8 +42,8 @@ import com.jamonapi.MonitorFactory;
 import it.eng.spagobi.api.common.AbstractDataSetResource;
 import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.commons.bo.UserProfile;
-import it.eng.spagobi.commons.constants.ConfigurationConstants;
 import it.eng.spagobi.commons.constants.CommunityFunctionalityConstants;
+import it.eng.spagobi.commons.constants.ConfigurationConstants;
 import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.services.rest.annotations.UserConstraint;
 import it.eng.spagobi.services.serialization.JsonConverter;
@@ -128,14 +128,16 @@ public class AssociativeSelectionsResource extends AbstractDataSetResource {
 
 			// parse selections
 			if (selectionsString == null || selectionsString.isEmpty()) {
-				throw new SpagoBIServiceParameterException(this.request.getPathInfo(), "Query parameter [selections] cannot be null or empty");
+				throw new SpagoBIServiceParameterException(this.request.getPathInfo(),
+						"Query parameter [selections] cannot be null or empty");
 			}
 
 			JSONObject selectionsObject = new JSONObject(selectionsString);
 
 			// parse association group
 			if (associationGroupString == null) {
-				throw new SpagoBIServiceParameterException(this.request.getPathInfo(), "Query parameter [associationGroup] cannot be null");
+				throw new SpagoBIServiceParameterException(this.request.getPathInfo(),
+						"Query parameter [associationGroup] cannot be null");
 			}
 
 			AssociationGroupJSONSerializer serializer = new AssociationGroupJSONSerializer();
@@ -196,15 +198,15 @@ public class AssociativeSelectionsResource extends AbstractDataSetResource {
 
 			AssociationAnalyzer analyzer = new AssociationAnalyzer(associationGroup.getAssociations());
 			analyzer.process();
-			Map<String, Map<String, String>> datasetToAssociationToColumnMap = analyzer.getDatasetToAssociationToColumnMap();
+			Map<String, Map<String, String>> datasetToAssociationToColumnMap = analyzer
+					.getDatasetToAssociationToColumnMap();
 			Pseudograph<String, LabeledEdge<String>> graph = analyzer.getGraph();
 
 			DataSetResource dataRes = new DataSetResource();
-			List<SimpleFilter> filtersList = new ArrayList<SimpleFilter>();
+			List<SimpleFilter> filtersList = new ArrayList<>();
 			IDataSet dataSetInFilter = null;
 			if (filtersString != null && !filtersString.isEmpty()) {
 				JSONArray jsonArray = new JSONArray(filtersString);
-				JSONArray firstFilterValues = null;
 				if (jsonArray instanceof JSONArray) {
 					for (int i = 0; i < jsonArray.length(); i++) { // looking for filter embedded in array
 						JSONObject filterJsonObject = jsonArray.optJSONObject(i);
@@ -221,10 +223,16 @@ public class AssociativeSelectionsResource extends AbstractDataSetResource {
 								}
 							}
 							dataSetInFilter = getDataSetDAO().loadDataSetByLabel(label);
-							filterJsonObject.optString("filterOperator");
-							firstFilterValues = filterJsonObject.getJSONArray("filterVals");
-							SimpleFilter firstSimpleFilter = dataRes.getFilter(filterJsonObject.optString("filterOperator"), firstFilterValues,
-									filterJsonObject.optString("colName"), dataSetInFilter, null);
+							IMetaData metadata = dataSetInFilter.getMetadata();
+
+							JSONArray firstFilterValues = filterJsonObject.getJSONArray("filterVals");
+							String filterOperator = filterJsonObject.optString("filterOperator");
+							String columns = filterJsonObject.optString("colName");
+
+							boolean needEncrypt = metadata.needEncryptionDecryption(columns);
+
+							SimpleFilter firstSimpleFilter = dataRes.getFilter(filterOperator, firstFilterValues,
+									columns, dataSetInFilter, null, needEncrypt);
 							filtersList.add(firstSimpleFilter);
 						}
 					}
@@ -238,7 +246,8 @@ public class AssociativeSelectionsResource extends AbstractDataSetResource {
 			Iterator<String> it = selectionsObject.keys();
 			while (it.hasNext()) {
 				String datasetDotColumn = it.next();
-				Assert.assertTrue(datasetDotColumn.indexOf(".") >= 0, "Data not compliant with format <DATASET_LABEL>.<COLUMN> [" + datasetDotColumn + "]");
+				Assert.assertTrue(datasetDotColumn.indexOf(".") >= 0,
+						"Data not compliant with format <DATASET_LABEL>.<COLUMN> [" + datasetDotColumn + "]");
 				String[] tmpDatasetAndColumn = datasetDotColumn.split("\\.");
 				Assert.assertTrue(tmpDatasetAndColumn.length == 2, "Impossible to get both dataset label and column");
 
@@ -248,7 +257,8 @@ public class AssociativeSelectionsResource extends AbstractDataSetResource {
 				Assert.assertNotNull(datasetLabel, "A dataset label in selections is null");
 				Assert.assertTrue(!datasetLabel.isEmpty(), "A dataset label in selections is empty");
 				Assert.assertNotNull(column, "A column for dataset [" + datasetLabel + "]  in selections is null");
-				Assert.assertTrue(!column.isEmpty(), "A column for dataset [" + datasetLabel + "] in selections is empty");
+				Assert.assertTrue(!column.isEmpty(),
+						"A column for dataset [" + datasetLabel + "] in selections is empty");
 
 				IDataSet dataSet = getDataSetDAO().loadDataSetByLabel(datasetLabel);
 
@@ -259,7 +269,8 @@ public class AssociativeSelectionsResource extends AbstractDataSetResource {
 				if (object instanceof JSONArray) {
 					JSONArray jsonArray = (JSONArray) object;
 					for (int i = 0; i < jsonArray.length(); i++) {
-						Object valueForQuery = DataSetUtilities.getValue(jsonArray.get(i).toString(), projection.getType());
+						Object valueForQuery = DataSetUtilities.getValue(jsonArray.get(i).toString(),
+								projection.getType());
 						valueObjects.add(valueForQuery);
 					}
 				} else {
@@ -270,11 +281,11 @@ public class AssociativeSelectionsResource extends AbstractDataSetResource {
 				selectionsFilters.add(new InFilter(projection, valueObjects));
 
 				if (!selectionsMap.containsKey(datasetLabel)) {
-					selectionsMap.put(datasetLabel, new HashMap<String, Set<Tuple>>());
+					selectionsMap.put(datasetLabel, new HashMap<>());
 				}
 				Map<String, Set<Tuple>> selection = selectionsMap.get(datasetLabel);
 				if (!selection.containsKey(column)) {
-					selection.put(column, new HashSet<Tuple>());
+					selection.put(column, new HashSet<>());
 				}
 				Set<Tuple> tupleSet = selection.get(column);
 				for (Object value : valueObjects) {
@@ -286,18 +297,21 @@ public class AssociativeSelectionsResource extends AbstractDataSetResource {
 
 			logger.debug("Selections list: " + selectionsFilters);
 
-			Map<String, String> datasetSelectionParameters = selectionsFilters.get(selectionsFilters.size() - 1).getDataset().getParamsMap();
+			Map<String, String> datasetSelectionParameters = selectionsFilters.get(selectionsFilters.size() - 1)
+					.getDataset().getParamsMap();
 
 			if (datasetSelectionParameters == null || datasetSelectionParameters.isEmpty()) {
 
-				datasetSelectionParameters = datasetParameters.get(selectionsFilters.get(selectionsFilters.size() - 1).getDataset().getLabel());
+				datasetSelectionParameters = datasetParameters
+						.get(selectionsFilters.get(selectionsFilters.size() - 1).getDataset().getLabel());
 			}
-			filtersList = this.calculateMinMaxFilters(selectionsFilters.get(selectionsFilters.size() - 1).getDataset(), true, datasetSelectionParameters,
-					filtersList, selectionsFilters, userprofile, associationGroup);
+			filtersList = this.calculateMinMaxFilters(selectionsFilters.get(selectionsFilters.size() - 1).getDataset(),
+					true, datasetSelectionParameters, filtersList, selectionsFilters, userprofile, associationGroup);
 
-			String strategy = SingletonConfig.getInstance().getConfigValue(ConfigurationConstants.SPAGOBI_DATASET_ASSOCIATIVE_LOGIC_STRATEGY);
-			Config config = AssociativeLogicUtils.buildConfig(strategy, graph, datasetToAssociationToColumnMap, selectionsFilters, filtersList,
-					nearRealtimeDatasets, datasetParameters, documents);
+			String strategy = SingletonConfig.getInstance()
+					.getConfigValue(ConfigurationConstants.SPAGOBI_DATASET_ASSOCIATIVE_LOGIC_STRATEGY);
+			Config config = AssociativeLogicUtils.buildConfig(strategy, graph, datasetToAssociationToColumnMap,
+					selectionsFilters, filtersList, nearRealtimeDatasets, datasetParameters, documents);
 
 			IAssociativityManager manager = AssociativeStrategyFactory.createStrategyInstance(config, getUserProfile());
 			manager.process();
@@ -306,7 +320,7 @@ public class AssociativeSelectionsResource extends AbstractDataSetResource {
 
 			for (String d : selectionsMap.keySet()) {
 				if (!selections.containsKey(d)) {
-					selections.put(d, new HashMap<String, Set<Tuple>>());
+					selections.put(d, new HashMap<>());
 				}
 				Map<String, Set<Tuple>> calcSelections = selections.get(d);
 				Map<String, Set<Tuple>> inputSelections = selectionsMap.get(d);
@@ -347,7 +361,8 @@ public class AssociativeSelectionsResource extends AbstractDataSetResource {
 							IFieldMetaData fieldMeta = metadata.getFieldMeta(i);
 							String alias = fieldMeta.getAlias();
 							if (fieldMeta.getName().equals(fieldName)) {
-								association.setDescription(association.getDescription().replace(dataSetLabel + "." + fieldName, dataSetLabel + "." + alias));
+								association.setDescription(association.getDescription()
+										.replace(dataSetLabel + "." + fieldName, dataSetLabel + "." + alias));
 								field.setFieldName(alias);
 								break;
 							}
@@ -359,8 +374,9 @@ public class AssociativeSelectionsResource extends AbstractDataSetResource {
 	}
 
 	// FIXME
-	public List<SimpleFilter> calculateMinMaxFilters(IDataSet dataSet, boolean isNearRealtime, Map<String, String> parametersValues, List<SimpleFilter> filters,
-			List<SimpleFilter> likeFilters, UserProfile userprofile, AssociationGroup associationGroup) throws JSONException {
+	public List<SimpleFilter> calculateMinMaxFilters(IDataSet dataSet, boolean isNearRealtime,
+			Map<String, String> parametersValues, List<SimpleFilter> filters, List<SimpleFilter> likeFilters,
+			UserProfile userprofile, AssociationGroup associationGroup) throws JSONException {
 		logger.debug("IN");
 		List<SimpleFilter> newFilters = new ArrayList<>(filters);
 		List<Integer> minMaxFilterIndexes = new ArrayList<>();
@@ -384,7 +400,8 @@ public class AssociativeSelectionsResource extends AbstractDataSetResource {
 						logger.debug("Max filter found at index [" + i + "]");
 						minMaxFilterIndexes.add(i);
 						String columnName = ((SingleProjectionSimpleFilter) filter).getProjection().getName();
-						Projection projection = new Projection(AggregationFunctions.MAX_FUNCTION, dataSet, columnName, columnName);
+						Projection projection = new Projection(AggregationFunctions.MAX_FUNCTION, dataSet, columnName,
+								columnName);
 						minMaxProjections.add(projection);
 					}
 				} else {
@@ -399,7 +416,8 @@ public class AssociativeSelectionsResource extends AbstractDataSetResource {
 			logger.debug("MIN/MAX filter found");
 			List<SimpleFilter> filtersToUse = setRightColumnsFromAssociations(associationGroup, dataSet, likeFilters);
 			Filter where = getWhereFilter(noMinMaxFilters, filtersToUse);
-			IDataStore dataStore = getSummaryRowDataStore(dataSet, isNearRealtime, parametersValues, minMaxProjections, where, -1, userprofile);
+			IDataStore dataStore = getSummaryRowDataStore(dataSet, isNearRealtime, parametersValues, minMaxProjections,
+					where, -1, userprofile);
 			if (dataStore == null) {
 				String errorMessage = "Error in getting min and max filters values";
 				logger.error(errorMessage);
@@ -416,14 +434,17 @@ public class AssociativeSelectionsResource extends AbstractDataSetResource {
 					logger.error(errorMessage);
 					throw new SpagoBIRuntimeException(errorMessage);
 				} else {
-					Projection projectionWithoutAggregation = new Projection(projection.getDataset(), projection.getName(), alias);
+					Projection projectionWithoutAggregation = new Projection(projection.getDataset(),
+							projection.getName(), alias);
 					if (values.isEmpty()) {
 						logger.warn(errorMessage + ", put NULL");
-						newFilters.set(index, new NullaryFilter(projectionWithoutAggregation, SimpleFilterOperator.IS_NULL));
+						newFilters.set(index,
+								new NullaryFilter(projectionWithoutAggregation, SimpleFilterOperator.IS_NULL));
 					} else {
 						Object value = values.get(0);
 						logger.debug("MIN/MAX value for field [" + alias + "] is equal to [" + value + "]");
-						newFilters.set(index, new UnaryFilter(projectionWithoutAggregation, SimpleFilterOperator.EQUALS_TO, value));
+						newFilters.set(index,
+								new UnaryFilter(projectionWithoutAggregation, SimpleFilterOperator.EQUALS_TO, value));
 					}
 				}
 			}
@@ -432,11 +453,13 @@ public class AssociativeSelectionsResource extends AbstractDataSetResource {
 		return newFilters;
 	}
 
-	private IDataStore getSummaryRowDataStore(IDataSet dataSet, boolean isNearRealtime, Map<String, String> parametersValues,
-			List<AbstractSelectionField> projections, Filter filter, int maxRowCount, UserProfile userprofile) throws JSONException {
+	private IDataStore getSummaryRowDataStore(IDataSet dataSet, boolean isNearRealtime,
+			Map<String, String> parametersValues, List<AbstractSelectionField> projections, Filter filter,
+			int maxRowCount, UserProfile userprofile) throws JSONException {
 		dataSet.setParametersMap(parametersValues);
 		dataSet.resolveParameters();
-		IDatasetEvaluationStrategy strategy = DatasetEvaluationStrategyFactory.get(dataSet.getEvaluationStrategy(isNearRealtime), dataSet, userprofile);
+		IDatasetEvaluationStrategy strategy = DatasetEvaluationStrategyFactory
+				.get(dataSet.getEvaluationStrategy(isNearRealtime), dataSet, userprofile);
 		return strategy.executeSummaryRowQuery(projections, filter, maxRowCount);
 	}
 
@@ -461,12 +484,13 @@ public class AssociativeSelectionsResource extends AbstractDataSetResource {
 	/*
 	 * Method used for guarantee that filters use the same column names of dataset fields (with associations it could change)
 	 */
-	public List<SimpleFilter> setRightColumnsFromAssociations(AssociationGroup associationGroup, IDataSet dataSet, List<SimpleFilter> filters) {
-		List<SimpleFilter> filtersToReturn = new ArrayList<SimpleFilter>();
+	public List<SimpleFilter> setRightColumnsFromAssociations(AssociationGroup associationGroup, IDataSet dataSet,
+			List<SimpleFilter> filters) {
+		List<SimpleFilter> filtersToReturn = new ArrayList<>();
 		if (filters.size() > 0) {
 			for (SimpleFilter simpleFilter : filters) {
 				InFilter filter = (InFilter) simpleFilter;
-				List<Projection> projectionsToAdd = new ArrayList<Projection>();
+				List<Projection> projectionsToAdd = new ArrayList<>();
 				for (Projection proj : filter.getProjections()) {
 					String nameToAdd = findRightNameFromAssociation(proj, associationGroup, dataSet);
 					if (nameToAdd != null && !nameToAdd.isEmpty()) {
@@ -485,7 +509,8 @@ public class AssociativeSelectionsResource extends AbstractDataSetResource {
 
 	}
 
-	public String findRightNameFromAssociation(Projection projection, AssociationGroup associationGroup, IDataSet newDataSet) {
+	public String findRightNameFromAssociation(Projection projection, AssociationGroup associationGroup,
+			IDataSet newDataSet) {
 		String newName = "";
 		IDataSet dataset = projection.getDataset();
 		for (Association association : associationGroup.getAssociations()) {

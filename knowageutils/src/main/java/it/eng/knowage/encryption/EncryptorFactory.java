@@ -37,6 +37,13 @@ public class EncryptorFactory {
 
 	}
 
+	public PBEStringEncryptor createDefault() {
+		EncryptionConfiguration cfg = EncryptionPreferencesRegistry.getInstance()
+				.getConfiguration(EncryptionPreferencesRegistry.DEFAULT_CFG_KEY);
+
+		return create(cfg);
+	}
+
 	public PBEStringEncryptor create(EncryptionConfiguration cfg) {
 		String algorithm = cfg.getAlgorithm();
 		String password = cfg.getEncryptionPwd();

@@ -20,6 +20,7 @@ package it.eng.spagobi.tools.dataset.common.metadata;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * @authors Angelo Bernabei (angelo.bernabei@eng.it) Andrea Gioia (andrea.gioia@eng.it) Davide Zerbetto (davide.zerbetto@eng.it)
@@ -103,5 +104,18 @@ public interface IMetaData {
 	void changeFieldAlias(int fieldIndex, String newAlias);
 
 	List<IFieldMetaData> getFieldsMeta();
+
+	default Optional<IFieldMetaData> findMetadataByColumnName(String columnName) {
+		return getFieldsMeta().stream().filter(e -> e.getName().equals(columnName)).findFirst();
+	}
+
+	default boolean needEncryptionDecryption(String column) {
+		boolean needEncrypt = false;
+		Optional<IFieldMetaData> colMetaData = findMetadataByColumnName(column);
+		if (colMetaData.isPresent()) {
+			needEncrypt = colMetaData.get().isDecrypt();
+		}
+		return needEncrypt;
+	}
 
 }
