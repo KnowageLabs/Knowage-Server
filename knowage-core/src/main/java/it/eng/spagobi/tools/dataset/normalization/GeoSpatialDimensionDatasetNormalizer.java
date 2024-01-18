@@ -115,8 +115,8 @@ public class GeoSpatialDimensionDatasetNormalizer implements IDatasetNormalizer 
 		// Get the first value of the datastore to validate
 		Iterator it = datastoreToValidate.iterator();
 		int columnIndex = datastoreToValidate.getMetaData().getFieldIndex(columnNameOnDataset);
-		IRecord record = (IRecord) it.next();
-		IField field = record.getFieldAt(columnIndex);
+		IRecord currRecord = (IRecord) it.next();
+		IField field = currRecord.getFieldAt(columnIndex);
 		fieldValue = field.getValue();
 
 		// then check if the value is ammissible for the Level members (default values used as identifiers values)

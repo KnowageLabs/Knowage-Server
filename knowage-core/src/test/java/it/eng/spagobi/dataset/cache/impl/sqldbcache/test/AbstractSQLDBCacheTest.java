@@ -447,11 +447,11 @@ public abstract class AbstractSQLDBCacheTest extends AbstractCacheTest {
 		fieldMetaData.setFieldType(FieldType.ATTRIBUTE);
 		metadata.addFiedMeta(fieldMetaData);
 		dataStore.setMetaData(metadata);
-		Record record = new Record();
+		Record newRecord = new Record();
 		Field field = new Field();
 		field.setValue("try");
-		record.appendField(field);
-		dataStore.appendRecord(record);
+		newRecord.appendField(field);
+		dataStore.appendRecord(newRecord);
 
 		// persist the datastore as a table on db
 		DatabaseDialect dialect = DatabaseDialect.get(dataSourceWriting.getHibDialectClass());

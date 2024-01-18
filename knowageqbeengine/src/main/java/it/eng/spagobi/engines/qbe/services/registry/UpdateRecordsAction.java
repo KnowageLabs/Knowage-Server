@@ -84,7 +84,7 @@ public class UpdateRecordsAction extends AbstractQbeEngineAction {
 					}
 				}
 
-				Map<String, Object> properties = new HashMap<String, Object>();
+				Map<String, Object> properties = new HashMap<>();
 				properties.put("keyField", keyColumn);
 				properties.put("ids", arrays);
 
@@ -102,7 +102,8 @@ public class UpdateRecordsAction extends AbstractQbeEngineAction {
 		} catch (Throwable t) {
 			errorHitsMonitor = MonitorFactory.start("QbeEngine.updateRecordsAction.errorHits");
 			errorHitsMonitor.stop();
-			throw SpagoBIEngineServiceExceptionHandler.getInstance().getWrappedException(getActionName(), getEngineInstance(), t);
+			throw SpagoBIEngineServiceExceptionHandler.getInstance().getWrappedException(getActionName(),
+					getEngineInstance(), t);
 		} finally {
 			if (totalTimeMonitor != null)
 				totalTimeMonitor.stop();
@@ -124,14 +125,14 @@ public class UpdateRecordsAction extends AbstractQbeEngineAction {
 		}
 
 		qbeEngineInstance = (QbeEngineInstance) getAttributeFromSession(RegistryEngineStartAction.ENGINE_INSTANCE);
-		Assert.assertNotNull(qbeEngineInstance,
-				"It's not possible to execute " + this.getActionName() + " service before having properly created an instance of EngineInstance class");
+		Assert.assertNotNull(qbeEngineInstance, "It's not possible to execute " + this.getActionName()
+				+ " service before having properly created an instance of EngineInstance class");
 
 		registryConf = qbeEngineInstance.getRegistryConfiguration();
-		Assert.assertNotNull(registryConf,
-				"It's not possible to execute " + this.getActionName() + " service before having properly created an instance of RegistryConfiguration class");
+		Assert.assertNotNull(registryConf, "It's not possible to execute " + this.getActionName()
+				+ " service before having properly created an instance of RegistryConfiguration class");
 
-		idsToReturn = new Vector<Integer>();
+		idsToReturn = new Vector<>();
 
 		for (int i = 0; i < modifiedRecords.length(); i++) {
 			JSONObject aRecord = modifiedRecords.getJSONObject(i);
@@ -155,13 +156,19 @@ public class UpdateRecordsAction extends AbstractQbeEngineAction {
 					autoLoadPK = true;
 				}
 
-				String tableForPkMax = registryConf.getConfiguration(RegistryConfiguration.Configuration.TABLE_FOR_PK_MAX);
-				String columnForPkMax = registryConf.getConfiguration(RegistryConfiguration.Configuration.COLUMN_FOR_PK_MAX);
+				String tableForPkMax = registryConf
+						.getConfiguration(RegistryConfiguration.Configuration.TABLE_FOR_PK_MAX);
+				String columnForPkMax = registryConf
+						.getConfiguration(RegistryConfiguration.Configuration.COLUMN_FOR_PK_MAX);
 
-				boolean enableAddRecords = registryConf.getConfiguration(RegistryConfiguration.Configuration.ENABLE_ADD_RECORDS) != null
-						&& registryConf.getConfiguration(RegistryConfiguration.Configuration.ENABLE_ADD_RECORDS).equalsIgnoreCase("true") ? true : false;
-				boolean enableButtons = registryConf.getConfiguration(RegistryConfiguration.Configuration.ENABLE_BUTTONs) != null
-						&& registryConf.getConfiguration(RegistryConfiguration.Configuration.ENABLE_BUTTONs).equalsIgnoreCase("true") ? true : false;
+				boolean enableAddRecords = registryConf
+						.getConfiguration(RegistryConfiguration.Configuration.ENABLE_ADD_RECORDS) != null
+						&& registryConf.getConfiguration(RegistryConfiguration.Configuration.ENABLE_ADD_RECORDS)
+								.equalsIgnoreCase("true") ? true : false;
+				boolean enableButtons = registryConf
+						.getConfiguration(RegistryConfiguration.Configuration.ENABLE_BUTTONs) != null
+						&& registryConf.getConfiguration(RegistryConfiguration.Configuration.ENABLE_BUTTONs)
+								.equalsIgnoreCase("true") ? true : false;
 
 				if (!enableAddRecords && !enableButtons) {
 					String message = "You are not allowed to execute operation adding new records";
@@ -173,7 +180,8 @@ public class UpdateRecordsAction extends AbstractQbeEngineAction {
 				if (columnForPkMax == null || columnForPkMax.trim().equals(""))
 					columnForPkMax = null;
 
-				Integer id = insertRecord(aRecord, qbeEngineInstance, registryConf, autoLoadPK, tableForPkMax, columnForPkMax);
+				Integer id = insertRecord(aRecord, qbeEngineInstance, registryConf, autoLoadPK, tableForPkMax,
+						columnForPkMax);
 				idsToReturn.add(id);
 			} else {
 				logger.debug("Update Row with id " + keyColumn + " = " + keyValueObject.toString());
@@ -186,53 +194,26 @@ public class UpdateRecordsAction extends AbstractQbeEngineAction {
 
 	}
 
-	/**
-	 * The Id column is the one not editable
-	 *
-	 * @param registryConfiguration
-	 * @return
-	 * @throws Exception
-	 */
-
-	// private String getFieldId(RegistryConfiguration registryConfiguration) throws Exception{
-	// logger.debug("IN");
-	// String toReturn = null;
-	// List<RegistryConfiguration.Column> columns = registryConfiguration.getColumns();
-	// for (Iterator iterator = columns.iterator(); iterator.hasNext() && toReturn == null;) {
-	// RegistryConfiguration.Column column = (RegistryConfiguration.Column) iterator.next();
-	// boolean editable = column.isEditable();
-	// if(!editable){
-	// toReturn = column.getField();
-	// }
-	// }
-	// logger.debug("ID field is "+toReturn);
-	//
-	// if(toReturn == null){
-	// logger.error("Cannot insert new record because no logical primary key could be found (field with editable = false)");
-	// throw new Exception("Cannot insert new record because no logical primary key could be found (field with editable = false)");
-	// }
-	//
-	// logger.debug("OUT");
-	// return toReturn;
-	// }
-
-	private void updateRecord(JSONObject aRecord, QbeEngineInstance qbeEngineInstance, RegistryConfiguration registryConf) {
+	private void updateRecord(JSONObject aRecord, QbeEngineInstance qbeEngineInstance,
+			RegistryConfiguration registryConf) {
 		logger.debug("IN");
 		IDataSource genericDatasource = qbeEngineInstance.getDataSource();
 		genericDatasource.getPersistenceManager().updateRecord(aRecord, registryConf);
 		logger.debug("OUT");
 	}
 
-	private Integer insertRecord(JSONObject aRecord, QbeEngineInstance qbeEngineInstance, RegistryConfiguration registryConf, boolean autoLoadPK,
-			String tableForPkMax, String columnForPkMax) {
+	private Integer insertRecord(JSONObject aRecord, QbeEngineInstance qbeEngineInstance,
+			RegistryConfiguration registryConf, boolean autoLoadPK, String tableForPkMax, String columnForPkMax) {
 		logger.debug("IN");
 		IDataSource genericDatasource = qbeEngineInstance.getDataSource();
-		Integer id = genericDatasource.getPersistenceManager().insertRecord(aRecord, registryConf, autoLoadPK, tableForPkMax, columnForPkMax);
+		Integer id = genericDatasource.getPersistenceManager().insertRecord(aRecord, registryConf, autoLoadPK,
+				tableForPkMax, columnForPkMax);
 		logger.debug("OUT");
 		return id;
 	}
 
-	private void addDefaultValuesRecord(JSONObject aRecord, QbeEngineInstance qbeEngineInstance, RegistryConfiguration registryConf) throws JSONException {
+	private void addDefaultValuesRecord(JSONObject aRecord, QbeEngineInstance qbeEngineInstance,
+			RegistryConfiguration registryConf) throws JSONException {
 		IDataSource genericDatasource = qbeEngineInstance.getDataSource();
 		genericDatasource.getPersistenceManager().addDefaultValueToRecord(aRecord, registryConf);
 	}

@@ -108,7 +108,7 @@ public abstract class AbstractQbeDataSet extends AbstractDataSet {
 			row = (Object[]) o;
 		}
 		LogMF.debug(logger, "Processing record {0}", Arrays.toString(row));
-		IRecord record = new Record();
+		IRecord newRecord = new Record();
 		for (int i = 0, j = 0; i < dataStoreMeta.getFieldCount(); i++) {
 			IFieldMetaData fieldMeta = dataStoreMeta.getFieldMeta(i);
 			Boolean calculated = (Boolean) fieldMeta.getProperty("calculated");
@@ -128,13 +128,13 @@ public abstract class AbstractQbeDataSet extends AbstractDataSet {
 						s.useDelimiter("\\A");
 
 						String clobAsString = s.hasNext() ? s.next() : "";
-						record.appendField(new Field(clobAsString));
+						newRecord.appendField(new Field(clobAsString));
 					}
 					if (row[j] != null)
 						fieldMeta.setType(row[j].getClass());
 				} else {
 
-					record.appendField(new Field(row[j]));
+					newRecord.appendField(new Field(row[j]));
 					if (row[j] != null)
 						fieldMeta.setType(row[j].getClass());
 				}
@@ -145,15 +145,15 @@ public abstract class AbstractQbeDataSet extends AbstractDataSet {
 					variable.reset();
 				}
 
-				record.appendField(new Field(variable.getValue()));
+				newRecord.appendField(new Field(variable.getValue()));
 				if (variable.getValue() != null)
 					fieldMeta.setType(variable.getValue().getClass());
 			}
 		}
-		return record;
+		return newRecord;
 	}
 
-	private void processCalculatedFields(IRecord record, IDataStore dataStore) {
+	private void processCalculatedFields(IRecord currRecord, IDataStore dataStore) {
 		IMetaData dataStoreMeta;
 		List calculatedFieldsMeta;
 
@@ -182,9 +182,9 @@ public abstract class AbstractQbeDataSet extends AbstractDataSet {
 			Map dmFields = new HashMap();
 			Object[] columns = new Object[dataStoreMeta.getFieldCount()];
 			for (int j = 0; j < dataStoreMeta.getFieldCount(); j++) {
-				qFields.put(dataStoreMeta.getFieldMeta(j).getAlias(), record.getFieldAt(j).getValue());
-				dmFields.put(dataStoreMeta.getFieldMeta(j).getProperty("uniqueName"), record.getFieldAt(j).getValue());
-				columns[j] = record.getFieldAt(j).getValue();
+				qFields.put(dataStoreMeta.getFieldMeta(j).getAlias(), currRecord.getFieldAt(j).getValue());
+				dmFields.put(dataStoreMeta.getFieldMeta(j).getProperty("uniqueName"), currRecord.getFieldAt(j).getValue());
+				columns[j] = currRecord.getFieldAt(j).getValue();
 			}
 
 			groovyBindings.put("qFields", qFields); // key = alias
@@ -210,7 +210,7 @@ public abstract class AbstractQbeDataSet extends AbstractDataSet {
 			logger.debug("Field [" + fieldMeta.getName() + "] is equals to [" + calculatedValue + "]");
 			variable.setValue(calculatedValue);
 
-			record.getFieldAt(dataStoreMeta.getFieldIndex(fieldMeta.getAlias())).setValue(variable.getValue());
+			currRecord.getFieldAt(dataStoreMeta.getFieldIndex(fieldMeta.getAlias())).setValue(variable.getValue());
 		}
 	}
 

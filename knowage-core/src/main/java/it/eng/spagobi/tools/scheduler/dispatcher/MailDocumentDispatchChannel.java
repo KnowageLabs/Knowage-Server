@@ -35,7 +35,6 @@ import javax.activation.DataHandler;
 import javax.activation.DataSource;
 import javax.mail.Message;
 import javax.mail.Multipart;
-import javax.mail.PasswordAuthentication;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMultipart;
@@ -123,15 +122,15 @@ public class MailDocumentDispatchChannel implements IDocumentDispatchChannel {
 			emailDispatchDataStore = dispatchContext.getEmailDispatchDataStore();
 			nameSuffix = dispatchContext.getNameSuffix();
 			descriptionSuffix = dispatchContext.getDescriptionSuffix();
-			containedFileName = dispatchContext.getContainedFileName() != null && !dispatchContext.getContainedFileName().equals("") ? dispatchContext
-					.getContainedFileName() : document.getName();
-			zipFileName = dispatchContext.getZipMailName() != null && !dispatchContext.getZipMailName().equals("") ? dispatchContext.getZipMailName()
+			containedFileName = dispatchContext.getContainedFileName() != null
+					&& !dispatchContext.getContainedFileName().equals("") ? dispatchContext.getContainedFileName()
+							: document.getName();
+			zipFileName = dispatchContext.getZipMailName() != null && !dispatchContext.getZipMailName().equals("")
+					? dispatchContext.getZipMailName()
 					: document.getName();
 			reportNameInSubject = dispatchContext.isReportNameInSubject();
 
-			SessionFacade facade = MailSessionBuilder.newInstance()
-				.usingSchedulerProfile()
-				.build();
+			SessionFacade facade = MailSessionBuilder.newInstance().usingSchedulerProfile().build();
 
 			String mailSubj = dispatchContext.getMailSubj();
 			mailSubj = StringUtilities.substituteParametersInString(mailSubj, parametersMap, null, false);
@@ -174,7 +173,8 @@ public class MailDocumentDispatchChannel implements IDocumentDispatchChannel {
 			}
 			// else
 			else {
-				sds = new SchedulerDataSource(executionOutput, contentType, containedFileName + nameSuffix + fileExtension);
+				sds = new SchedulerDataSource(executionOutput, contentType,
+						containedFileName + nameSuffix + fileExtension);
 				mbp2.setDataHandler(new DataHandler(sds));
 				mbp2.setFileName(sds.getName());
 			}
@@ -198,7 +198,8 @@ public class MailDocumentDispatchChannel implements IDocumentDispatchChannel {
 		return true;
 	}
 
-	private MimeBodyPart zipAttachment(byte[] attach, String containedFileName, String zipFileName, String nameSuffix, String fileExtension) {
+	private MimeBodyPart zipAttachment(byte[] attach, String containedFileName, String zipFileName, String nameSuffix,
+			String fileExtension) {
 		MimeBodyPart messageBodyPart = null;
 		try {
 
@@ -271,7 +272,8 @@ public class MailDocumentDispatchChannel implements IDocumentDispatchChannel {
 
 	}
 
-	public static boolean canDispatch(DispatchContext dispatchContext, BIObject document, IDataStore emailDispatchDataStore) {
+	public static boolean canDispatch(DispatchContext dispatchContext, BIObject document,
+			IDataStore emailDispatchDataStore) {
 		String[] recipients = findRecipients(dispatchContext, document, emailDispatchDataStore);
 		return (recipients != null && recipients.length > 0);
 	}
@@ -363,7 +365,8 @@ public class MailDocumentDispatchChannel implements IDocumentDispatchChannel {
 		return recipients;
 	}
 
-	private static List<String> findRecipientsFromDataSet(DispatchContext info, BIObject biobj, IDataStore dataStore) throws Exception {
+	private static List<String> findRecipientsFromDataSet(DispatchContext info, BIObject biobj, IDataStore dataStore)
+			throws Exception {
 		logger.debug("IN");
 		List<String> recipients = new ArrayList();
 		if (info.isUseDataSet()) {
@@ -388,24 +391,26 @@ public class MailDocumentDispatchChannel implements IDocumentDispatchChannel {
 				}
 			}
 			if (parameter == null) {
-				throw new Exception("The document parameter with label [" + dsParameterLabel + "] was not found. Cannot filter the dataset.");
+				throw new Exception("The document parameter with label [" + dsParameterLabel
+						+ "] was not found. Cannot filter the dataset.");
 			}
 
 			// considering the first value of the parameter
 			List values = parameter.getParameterValues();
 			if (values == null || values.isEmpty()) {
-				throw new Exception("The document parameter with label [" + dsParameterLabel + "] has no values. Cannot filter the dataset.");
+				throw new Exception("The document parameter with label [" + dsParameterLabel
+						+ "] has no values. Cannot filter the dataset.");
 			}
 
 			codeValue = (String) values.get(0);
 			logger.debug("Using value [" + codeValue + "] for dataset filtering...");
 
-			Iterator it = dataStore.iterator();
+			Iterator<IRecord> it = dataStore.iterator();
 			while (it.hasNext()) {
 				String recipient = null;
-				IRecord record = (IRecord) it.next();
+				IRecord currRecord = it.next();
 				// the parameter value is used to filter on the first dataset field
-				IField valueField = record.getFieldAt(0);
+				IField valueField = currRecord.getFieldAt(0);
 				Object valueObj = valueField.getValue();
 				String value = null;
 				if (valueObj != null)
@@ -413,7 +418,7 @@ public class MailDocumentDispatchChannel implements IDocumentDispatchChannel {
 				if (codeValue.equals(value)) {
 					logger.debug("Found value [" + codeValue + "] on the first field of a record of the dataset.");
 					// recipient address is on the second dataset field
-					IField recipientField = record.getFieldAt(1);
+					IField recipientField = currRecord.getFieldAt(1);
 					Object recipientFieldObj = recipientField.getValue();
 					if (recipientFieldObj != null) {
 						recipient = recipientFieldObj.toString();

@@ -81,13 +81,13 @@ public class FacetSolrDataReader extends SolrDataReader {
 
             for (int j = 0; j < parsedData.size(); j++) {
                 if (maxResults <= 0 || rowFetched < maxResults) {
-                    IRecord record = new Record(dataStore);
+                    IRecord currRecord = new Record(dataStore);
                     Map<Object, Object> aMap = (Map<Object, Object>) parsedData.get(j);
                     for (Object key : aMap.keySet()) {
                         Object value = aMap.get(key);
-                        record.appendField(new Field(value));
+                        currRecord.appendField(new Field(value));
                     }
-                    dataStore.appendRecord(record);
+                    dataStore.appendRecord(currRecord);
                     rowFetched++;
                 }
             }
@@ -95,13 +95,13 @@ public class FacetSolrDataReader extends SolrDataReader {
 
             for (int j = 0; j < parsedData.size(); j++) {
                 if (maxResults <= 0 || rowFetched < maxResults) {
-                    IRecord record = new Record(dataStore);
+                    IRecord currRecord = new Record(dataStore);
                     IField field = new Field(parsedData.get(j));
-                    record.appendField(field);
+                    currRecord.appendField(field);
 
                     field = new Field(parsedData.get(j + 1));
-                    record.appendField(field);
-                    dataStore.appendRecord(record);
+                    currRecord.appendField(field);
+                    dataStore.appendRecord(currRecord);
                     rowFetched++;
                 }
                 j = j + 1;

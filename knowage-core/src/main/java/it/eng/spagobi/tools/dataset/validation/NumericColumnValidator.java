@@ -60,8 +60,8 @@ public class NumericColumnValidator extends AbstractDatasetValidator {
 				int columnIndex = dataStore.getMetaData().getFieldIndex(columnName); 
 				int rowNumber = 0;
 				while( it.hasNext() ) {
-					IRecord record = (IRecord)it.next();
-		    		IField field = record.getFieldAt(columnIndex);
+					IRecord currRecord = (IRecord)it.next();
+		    		IField field = currRecord.getFieldAt(columnIndex);
 		    		Object fieldValue = field.getValue(); 
 		    		if(fieldValue != null)  {
 		    			if (!fieldValue.toString().isEmpty()){

@@ -96,30 +96,34 @@ public class HierarchyMasterService {
 			IDataSourceDAO dataSourceDAO = DAOFactory.getDataSourceDAO();
 			IDataSource dataSource = dataSourceDAO.loadDataSourceByLabel(dataSourceName);
 			if (dataSource == null) {
-				throw new SpagoBIServiceException("An unexpected error occured while retriving hierarchies names", "No datasource found for Hierarchies");
+				throw new SpagoBIServiceException("An unexpected error occured while retriving hierarchies names",
+						"No datasource found for Hierarchies");
 			}
 			// 3- execute query to get hierarchies names
 			String hierarchyNameColumn = AbstractJDBCDataset.encapsulateColumnName("HIER_NM", dataSource);
 			String typeColumn = AbstractJDBCDataset.encapsulateColumnName("HIER_TP", dataSource);
-			String hierarchyCodeColumn = AbstractJDBCDataset.encapsulateColumnName(HierarchyConstants.HIER_CD, dataSource);
-			String hierarchyDescriptionColumn = AbstractJDBCDataset.encapsulateColumnName(HierarchyConstants.HIER_DS, dataSource);
+			String hierarchyCodeColumn = AbstractJDBCDataset.encapsulateColumnName(HierarchyConstants.HIER_CD,
+					dataSource);
+			String hierarchyDescriptionColumn = AbstractJDBCDataset.encapsulateColumnName(HierarchyConstants.HIER_DS,
+					dataSource);
 			String bkpColumn = AbstractJDBCDataset.encapsulateColumnName(HierarchyConstants.BKP_COLUMN, dataSource);
 			String columns = hierarchyNameColumn + "," + typeColumn + "," + hierarchyDescriptionColumn + " ";
-			String queryText = "SELECT DISTINCT(" + hierarchyCodeColumn + ")," + columns + " FROM " + tableName + " WHERE " + typeColumn + "=\'MASTER\' AND ("
-					+ bkpColumn + "= 0 OR " + bkpColumn + " IS NULL) ORDER BY " + hierarchyCodeColumn;
+			String queryText = "SELECT DISTINCT(" + hierarchyCodeColumn + ")," + columns + " FROM " + tableName
+					+ " WHERE " + typeColumn + "=\'MASTER\' AND (" + bkpColumn + "= 0 OR " + bkpColumn
+					+ " IS NULL) ORDER BY " + hierarchyCodeColumn;
 			// IDataStore dataStore = dataSource.executeStatement("SELECT DISTINCT(" + hierarchyCodeColumn + ")," + columns + " FROM " + tableName + " WHERE "
 			// + typeColumn + "=\'MASTER\' AND (" + bkpColumn + "= 0 OR " + bkpColumn + " IS NULL) ORDER BY " + hierarchyCodeColumn, null, null);
 			IDataStore dataStore = dataSource.executeStatement(queryText, 0, 0);
 
-			for (Iterator iterator = dataStore.iterator(); iterator.hasNext();) {
-				IRecord record = (IRecord) iterator.next();
-				IField field = record.getFieldAt(0);
+			for (Iterator<IRecord> iterator = dataStore.iterator(); iterator.hasNext();) {
+				IRecord currRecord = iterator.next();
+				IField field = currRecord.getFieldAt(0);
 				String hierarchyCode = (String) field.getValue();
-				field = record.getFieldAt(1);
+				field = currRecord.getFieldAt(1);
 				String hierarchyName = (String) field.getValue();
-				field = record.getFieldAt(2);
+				field = currRecord.getFieldAt(2);
 				String hierarchyType = (String) field.getValue();
-				field = record.getFieldAt(3);
+				field = currRecord.getFieldAt(3);
 				String hierarchyDescription = (String) field.getValue();
 
 				JSONObject hierarchy = new JSONObject();
@@ -133,7 +137,8 @@ public class HierarchyMasterService {
 
 		} catch (Throwable t) {
 			logger.error("An unexpected error occured while retriving automatic hierarchies names");
-			throw new SpagoBIServiceException("An unexpected error occured while retriving automatic hierarchies names", t);
+			throw new SpagoBIServiceException("An unexpected error occured while retriving automatic hierarchies names",
+					t);
 		}
 		logger.debug("END");
 		return hierarchiesJSONArray.toString();
@@ -156,18 +161,23 @@ public class HierarchyMasterService {
 			String dimensionLabel = requestVal.getString("dimension");
 			String validityDate = (requestVal.isNull("validityDate")) ? null : requestVal.getString("validityDate");
 			String filterDate = (requestVal.isNull("filterDate")) ? null : requestVal.getString("filterDate");
-			String filterHierarchy = (requestVal.isNull("filterHierarchy")) ? null : requestVal.getString("filterHierarchy");
-			String filterHierType = (requestVal.isNull("filterHierType")) ? null : requestVal.getString("filterHierType");
-			String optionalFilters = (requestVal.isNull("optionalFilters")) ? null : requestVal.getString("optionalFilters");
+			String filterHierarchy = (requestVal.isNull("filterHierarchy")) ? null
+					: requestVal.getString("filterHierarchy");
+			String filterHierType = (requestVal.isNull("filterHierType")) ? null
+					: requestVal.getString("filterHierType");
+			String optionalFilters = (requestVal.isNull("optionalFilters")) ? null
+					: requestVal.getString("optionalFilters");
 
 			if (dimensionLabel == null) {
-				throw new SpagoBIServiceException("An unexpected error occured while creating hierarchy master", "wrong request parameters");
+				throw new SpagoBIServiceException("An unexpected error occured while creating hierarchy master",
+						"wrong request parameters");
 			}
 
 			IDataSource dataSource = HierarchyUtils.getDataSource(dimensionLabel);
 
 			if (dataSource == null) {
-				throw new SpagoBIServiceException("An unexpected error occured while retriving hierarchies names", "No datasource found for Hierarchies");
+				throw new SpagoBIServiceException("An unexpected error occured while retriving hierarchies names",
+						"No datasource found for Hierarchies");
 			}
 
 			Hierarchies hierarchies = HierarchiesSingleton.getInstance();
@@ -175,7 +185,8 @@ public class HierarchyMasterService {
 
 			HashMap hierConfig = hierarchies.getConfig(dimensionLabel);
 
-			boolean forceNameAsLevel = Boolean.parseBoolean((String) hierConfig.get(HierarchyConstants.FORCE_NAME_AS_LEVEL));
+			boolean forceNameAsLevel = Boolean
+					.parseBoolean((String) hierConfig.get(HierarchyConstants.FORCE_NAME_AS_LEVEL));
 
 			if (forceNameAsLevel) {
 				// WORKAROUND: if code and name of hierarchy are equals put a prefix to make them different!
@@ -218,22 +229,24 @@ public class HierarchyMasterService {
 				primaryKeyCount = HierarchyUtils.getCountId(primaryKey, hierTableName, dbConnection, dataSource);
 			}
 
-			List<Field> metadataFields = new ArrayList<Field>(dimension.getMetadataFields());
+			List<Field> metadataFields = new ArrayList<>(dimension.getMetadataFields());
 			Map<String, Integer> metatadaFieldsMap = HierarchyUtils.getMetadataFieldsMap(metadataFields);
 
-			List<Field> generalFields = new ArrayList<Field>(hierarchy.getMetadataGeneralFields());
-			List<Field> nodeFields = new ArrayList<Field>(hierarchy.getMetadataNodeFields());
+			List<Field> generalFields = new ArrayList<>(hierarchy.getMetadataGeneralFields());
+			List<Field> nodeFields = new ArrayList<>(hierarchy.getMetadataNodeFields());
 			boolean exludeHierLeaf = (filterHierarchy != null) ? true : false;
-			IDataStore dataStore = HierarchyUtils.getDimensionDataStore(dataSource, dimensionName, metadataFields, validityDate, optionalFilters, filterDate,
-					filterHierarchy, filterHierType, hierTableName, prefix, exludeHierLeaf);
+			IDataStore dataStore = HierarchyUtils.getDimensionDataStore(dataSource, dimensionName, metadataFields,
+					validityDate, optionalFilters, filterDate, filterHierarchy, filterHierType, hierTableName, prefix,
+					exludeHierLeaf);
 
-			Iterator iterator = dataStore.iterator();
+			Iterator<IRecord> iterator = dataStore.iterator();
 			while (iterator.hasNext()) {
 				// dataStore.
-				IRecord record = (IRecord) iterator.next();
+				IRecord currRecord = iterator.next();
 				primaryKeyCount++;
-				insertHierarchyMaster(dbConnection, dataSource, record, dataStore, hierTableName, generalFields, nodeFields, metatadaFieldsMap, requestVal,
-						prefix, dimensionName, validityDate, hierConfig, primaryKey, primaryKeyCount);
+				insertHierarchyMaster(dbConnection, dataSource, currRecord, dataStore, hierTableName, generalFields,
+						nodeFields, metatadaFieldsMap, requestVal, prefix, dimensionName, validityDate, hierConfig,
+						primaryKey, primaryKeyCount);
 			}
 
 			saveHierarchyMasterConfiguration(dbConnection, dataSource, requestVal);
@@ -273,21 +286,28 @@ public class HierarchyMasterService {
 			String validityTreeDate = requestVal.getString("validityTreeDate");
 			String validityDate = (requestVal.isNull("validityDate")) ? null : requestVal.getString("validityDate");
 			String filterDate = (requestVal.isNull("filterDate")) ? null : requestVal.getString("filterDate");
-			String filterHierarchy = (requestVal.isNull("filterHierarchy")) ? null : requestVal.getString("filterHierarchy");
-			String filterHierType = (requestVal.isNull("filterHierType")) ? null : requestVal.getString("filterHierType");
-			String optionalFilters = (requestVal.isNull("optionalFilters")) ? null : requestVal.getString("optionalFilters");
+			String filterHierarchy = (requestVal.isNull("filterHierarchy")) ? null
+					: requestVal.getString("filterHierarchy");
+			String filterHierType = (requestVal.isNull("filterHierType")) ? null
+					: requestVal.getString("filterHierType");
+			String optionalFilters = (requestVal.isNull("optionalFilters")) ? null
+					: requestVal.getString("optionalFilters");
 			String optionDate = (requestVal.isNull("optionDate")) ? null : requestVal.getString("optionDate");
-			String optionHierarchy = (requestVal.isNull("optionHierarchy")) ? null : requestVal.getString("optionHierarchy");
-			String optionHierType = (requestVal.isNull("optionHierType")) ? null : requestVal.getString("optionHierType");
+			String optionHierarchy = (requestVal.isNull("optionHierarchy")) ? null
+					: requestVal.getString("optionHierarchy");
+			String optionHierType = (requestVal.isNull("optionHierType")) ? null
+					: requestVal.getString("optionHierType");
 
 			if (dimensionLabel == null) {
-				throw new SpagoBIServiceException("An unexpected error occured while syncronize hierarchy master", "wrong request parameters");
+				throw new SpagoBIServiceException("An unexpected error occured while syncronize hierarchy master",
+						"wrong request parameters");
 			}
 
 			IDataSource dataSource = HierarchyUtils.getDataSource(dimensionLabel);
 
 			if (dataSource == null) {
-				throw new SpagoBIServiceException("An unexpected error occured while retriving hierarchies names", "No datasource found for Hierarchies");
+				throw new SpagoBIServiceException("An unexpected error occured while retriving hierarchies names",
+						"No datasource found for Hierarchies");
 			}
 
 			dbConnection = dataSource.getConnection();
@@ -299,7 +319,8 @@ public class HierarchyMasterService {
 			Assert.assertNotNull(dimension, "Impossible to find a valid dimension with label [" + dimensionLabel + "]");
 
 			Hierarchy hierarchy = hierarchies.getHierarchy(dimensionLabel);
-			Assert.assertNotNull(hierarchy, "Impossible to find a valid hierarchy for dimension [" + dimensionLabel + "]");
+			Assert.assertNotNull(hierarchy,
+					"Impossible to find a valid hierarchy for dimension [" + dimensionLabel + "]");
 
 			String dimensionName = dimension.getName();
 			String hierTableName = hierarchies.getHierarchyTableName(dimensionLabel);
@@ -313,17 +334,17 @@ public class HierarchyMasterService {
 			HashMap hierConfig = hierarchies.getConfig(dimensionLabel);
 			int numLevels = Integer.parseInt((String) hierConfig.get(HierarchyConstants.NUM_LEVELS));
 
-			List<Field> metadataFields = new ArrayList<Field>(dimension.getMetadataFields());
+			List<Field> metadataFields = new ArrayList<>(dimension.getMetadataFields());
 			Map<String, Integer> metatadaFieldsMap = HierarchyUtils.getMetadataFieldsMap(metadataFields);
 
-			List<Field> generalFields = new ArrayList<Field>(hierarchy.getMetadataGeneralFields());
-			List<Field> nodeFields = new ArrayList<Field>(hierarchy.getMetadataNodeFields());
+			List<Field> generalFields = new ArrayList<>(hierarchy.getMetadataGeneralFields());
+			List<Field> nodeFields = new ArrayList<>(hierarchy.getMetadataNodeFields());
 
 			List<String> orderFields = null;
 			for (int i = 0; i < nodeFields.size(); i++) {
 				Field f = nodeFields.get(i);
 				if (f.isOrderField()) {
-					orderFields = new LinkedList<String>();
+					orderFields = new LinkedList<>();
 					if (f.isSingleValue()) {
 						orderFields.add(f.getId());
 					} else {
@@ -350,16 +371,18 @@ public class HierarchyMasterService {
 				exludeHierLeaf = true;
 				hierNameForDim = optionHierarchy;
 			}
-			IDataStore dsNewDimensions = HierarchyUtils.getDimensionDataStore(dataSource, dimensionName, metadataFields, validityDate, optionalFilters,
-					validityTreeDate, hierNameForDim, filterHierType, hierTableName, prefix, exludeHierLeaf);
+			IDataStore dsNewDimensions = HierarchyUtils.getDimensionDataStore(dataSource, dimensionName, metadataFields,
+					validityDate, optionalFilters, validityTreeDate, hierNameForDim, filterHierType, hierTableName,
+					prefix, exludeHierLeaf);
 			logger.error("#Records from dimension: " + dsNewDimensions.getRecordsCount());
 
 			// 3 - Get the dimension leaves already present into the original Hierarchy
 			// IDataStore dsDimensionsFromHier = HierarchyUtils.getDimensionFromHierDataStore(dataSource, dimensionName, metadataFields, validityDate,
 			// optionalFilters, validityTreeDate, filterHierarchy, filterHierType, hierTableName, prefix, false);
 
-			IDataStore dsDimensionsFromHier = HierarchyUtils.getDimensionFromHierDataStore(dataSource, dimensionName, metadataFields, validityDate,
-					optionalFilters, null, filterHierarchy, filterHierType, hierTableName, prefix, false);
+			IDataStore dsDimensionsFromHier = HierarchyUtils.getDimensionFromHierDataStore(dataSource, dimensionName,
+					metadataFields, validityDate, optionalFilters, null, filterHierarchy, filterHierType, hierTableName,
+					prefix, false);
 			logger.error("#Records from hierarchy: " + dsDimensionsFromHier.getRecordsCount());
 
 			// 4 - Iterate on the dimensions' leaves used by the hierarchy datastore and check if the record is present into the dimension datastore:
@@ -376,8 +399,8 @@ public class HierarchyMasterService {
 			}
 			if (posID == -1) {
 				logger.error("Impossible synchronize the hierarchy.");
-				throw new SpagoBIServiceException("Error",
-						"Impossible synchronize the hierarchy. Column " + prefix + HierarchyConstants.DIM_FILTER_FIELD + " not found into the resultset. ");
+				throw new SpagoBIServiceException("Error", "Impossible synchronize the hierarchy. Column " + prefix
+						+ HierarchyConstants.DIM_FILTER_FIELD + " not found into the resultset. ");
 			}
 
 			Iterator iterFromHier = dsDimensionsFromHier.iterator();
@@ -405,15 +428,16 @@ public class HierarchyMasterService {
 			String backupHierName = HierarchyUtils.updateHierarchyForBackup(dataSource, dbConnection, paramsMap, true);
 
 			// 5 - insert the new hierarchy (merged)
-			Iterator iterFromDim = dsNewDimensions.iterator();
+			Iterator<IRecord> iterFromDim = dsNewDimensions.iterator();
 			int cont = 0;
 			while (iterFromDim.hasNext()) {
 				cont++;
 				// iterate on dimension records
-				IRecord record = (IRecord) iterFromDim.next();
+				IRecord currRecord = iterFromDim.next();
 				primaryKeyCount++;
-				insertHierarchyMaster(dbConnection, dataSource, record, dsNewDimensions, hierTableName, generalFields, nodeFields, metatadaFieldsMap,
-						requestVal, prefix, dimensionName, validityDate, hierConfig, primaryKey, primaryKeyCount);
+				insertHierarchyMaster(dbConnection, dataSource, currRecord, dsNewDimensions, hierTableName,
+						generalFields, nodeFields, metatadaFieldsMap, requestVal, prefix, dimensionName, validityDate,
+						hierConfig, primaryKey, primaryKeyCount);
 			}
 			logger.error("#Records inserted into master hierarchy: " + cont);
 
@@ -426,7 +450,7 @@ public class HierarchyMasterService {
 			dbConnection.commit();
 
 		} catch (Throwable t) {
-			if (dbConnection.getAutoCommit() == false && dbConnection != null && !dbConnection.isClosed()) {
+			if (!dbConnection.getAutoCommit() && dbConnection != null && !dbConnection.isClosed()) {
 				dbConnection.rollback();
 			}
 			logger.error("An unexpected error occured while retriving dimension data");
@@ -440,22 +464,25 @@ public class HierarchyMasterService {
 
 	}
 
-	public static void updateOrderField(IDataSource dataSource, Connection databaseConnection, HashMap paramsMap, List<String> listField) {
+	public static void updateOrderField(IDataSource dataSource, Connection databaseConnection, HashMap paramsMap,
+			List<String> listField) {
 		logger.debug("START");
 
 		String hierNameColumn = AbstractJDBCDataset.encapsulateColumnName(HierarchyConstants.HIER_NM, dataSource);
 		String beginDtColumn = AbstractJDBCDataset.encapsulateColumnName(HierarchyConstants.BEGIN_DT, dataSource);
 		String endDtColumn = AbstractJDBCDataset.encapsulateColumnName(HierarchyConstants.END_DT, dataSource);
 		String hierTypeColumn = AbstractJDBCDataset.encapsulateColumnName(HierarchyConstants.HIER_TP, dataSource);
-		String leafIdColumn = AbstractJDBCDataset.encapsulateColumnName(((String) paramsMap.get("prefix")) + "_" + HierarchyConstants.LEAF_ID, dataSource);
+		String leafIdColumn = AbstractJDBCDataset.encapsulateColumnName(
+				((String) paramsMap.get("prefix")) + "_" + HierarchyConstants.LEAF_ID, dataSource);
 
 		Date vDateConverted = Date.valueOf((String) paramsMap.get("validityDate"));
 
-		String srcTable = "(SELECT * FROM " + (String) paramsMap.get("hierarchyTable") + " WHERE " + hierNameColumn + "=?) SRC ";
+		String srcTable = "(SELECT * FROM " + (String) paramsMap.get("hierarchyTable") + " WHERE " + hierNameColumn
+				+ "=?) SRC ";
 
 		String updatePart = "UPDATE " + (String) paramsMap.get("hierarchyTable") + " DST, " + srcTable;
 
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 
 		for (int i = 0; i < listField.size(); i++) {
 			String sep = i == (listField.size() - 1) ? " " : ", ";
@@ -467,13 +494,15 @@ public class HierarchyMasterService {
 
 		String vDateWhereClause = " ? >= DST." + beginDtColumn + " AND ? <= DST." + endDtColumn;
 		String joinClause = " DST." + leafIdColumn + " = SRC." + leafIdColumn;
-		String wherePart = " WHERE DST." + hierNameColumn + "=? AND DST." + hierTypeColumn + "= ? AND " + vDateWhereClause + "AND " + joinClause;
+		String wherePart = " WHERE DST." + hierNameColumn + "=? AND DST." + hierTypeColumn + "= ? AND "
+				+ vDateWhereClause + "AND " + joinClause;
 
 		String updateQuery = updatePart + setPart + wherePart;
 
 		logger.debug("The update query is [" + updateQuery + "]");
 
-		try (Statement stmt = databaseConnection.createStatement(); PreparedStatement preparedStatement = databaseConnection.prepareStatement(updateQuery)) {
+		try (Statement stmt = databaseConnection.createStatement();
+				PreparedStatement preparedStatement = databaseConnection.prepareStatement(updateQuery)) {
 			preparedStatement.setString(1, (String) paramsMap.get("backupHierName"));
 			preparedStatement.setString(2, (String) paramsMap.get("hierTargetName"));
 			preparedStatement.setString(3, (String) paramsMap.get("hierTargetType"));
@@ -492,18 +521,22 @@ public class HierarchyMasterService {
 
 	}
 
-	public void saveHierarchyMasterConfiguration(Connection dbConnection, IDataSource dataSource, JSONObject requestVal) throws SQLException, JSONException {
+	public void saveHierarchyMasterConfiguration(Connection dbConnection, IDataSource dataSource, JSONObject requestVal)
+			throws SQLException, JSONException {
 
 		String hierCdColumn = AbstractJDBCDataset.encapsulateColumnName(HierarchyConstants.HIER_CD, dataSource);
 		String hierNmColumn = AbstractJDBCDataset.encapsulateColumnName(HierarchyConstants.HIER_NM, dataSource);
-		String confColumn = AbstractJDBCDataset.encapsulateColumnName(HierarchyConstants.HIER_MASTERS_CONFIG, dataSource);
-		String idColumn = AbstractJDBCDataset.encapsulateColumnName(HierarchyConstants.HIER_MASTERS_CONFIG_ID, dataSource);
-		int countId = HierarchyUtils.getCountId(HierarchyConstants.HIER_MASTERS_CONFIG_ID, HierarchyConstants.HIER_MASTERS_CONFIG_TABLE, dbConnection,
+		String confColumn = AbstractJDBCDataset.encapsulateColumnName(HierarchyConstants.HIER_MASTERS_CONFIG,
 				dataSource);
+		String idColumn = AbstractJDBCDataset.encapsulateColumnName(HierarchyConstants.HIER_MASTERS_CONFIG_ID,
+				dataSource);
+		int countId = HierarchyUtils.getCountId(HierarchyConstants.HIER_MASTERS_CONFIG_ID,
+				HierarchyConstants.HIER_MASTERS_CONFIG_TABLE, dbConnection, dataSource);
 
 		String insertClause = idColumn + "," + hierCdColumn + "," + hierNmColumn + "," + confColumn;
 
-		String saveConfQuery = "INSERT INTO " + HierarchyConstants.HIER_MASTERS_CONFIG_TABLE + " (" + insertClause + ") VALUES (?,?,?,?)";
+		String saveConfQuery = "INSERT INTO " + HierarchyConstants.HIER_MASTERS_CONFIG_TABLE + " (" + insertClause
+				+ ") VALUES (?,?,?,?)";
 
 		logger.debug("Insert query is [" + saveConfQuery + "]");
 
@@ -526,9 +559,10 @@ public class HierarchyMasterService {
 
 	}
 
-	private void insertHierarchyMaster(Connection dbConnection, IDataSource dataSource, IRecord record, IDataStore dataStore, String hTableName,
-			List<Field> generalFields, List<Field> nodeFields, Map<String, Integer> metatadaFieldsMap, JSONObject requestVal, String prefix,
-			String dimensionName, String validityDate, HashMap hierConfig, String primaryKey, int primaryKeyCount) {
+	private void insertHierarchyMaster(Connection dbConnection, IDataSource dataSource, IRecord recordToInsert,
+			IDataStore dataStore, String hTableName, List<Field> generalFields, List<Field> nodeFields,
+			Map<String, Integer> metatadaFieldsMap, JSONObject requestVal, String prefix, String dimensionName,
+			String validityDate, HashMap hierConfig, String primaryKey, int primaryKeyCount) {
 
 		logger.debug("START");
 
@@ -542,13 +576,13 @@ public class HierarchyMasterService {
 			String sep = ",";
 
 			// fieldsMap is necessary to keep track of the position for values we need to use later when replace the prep. stat.
-			Map<Integer, Object> fieldsMap = new HashMap<Integer, Object>();
+			Map<Integer, Object> fieldsMap = new HashMap<>();
 
 			// typeMap is necessary to keep track of the position for types we need to use later when replace the prep. stat.
-			Map<Integer, String> typeMap = new HashMap<Integer, String>();
+			Map<Integer, String> typeMap = new HashMap<>();
 
 			// levelsMap is necessary to keep track of values for levels
-			Map<Integer, Object[]> levelsMap = new HashMap<Integer, Object[]>();
+			Map<Integer, Object[]> levelsMap = new HashMap<>();
 
 			// this counter come across different logics to build the insert query and it's used to keep things sequential
 			// int index = 0;
@@ -573,21 +607,23 @@ public class HierarchyMasterService {
 			 * in this section we add columns and values related to hierarchy general fields specified in request JSON*
 			 **********************************************************************************************************/
 
-			manageGeneralFieldsSection(dataSource, generalFields, record, metatadaFieldsMap, fieldsMap, typeMap, requestVal, columnsClause, valuesClause, sep);
+			manageGeneralFieldsSection(dataSource, generalFields, recordToInsert, metatadaFieldsMap, fieldsMap, typeMap,
+					requestVal, columnsClause, valuesClause, sep);
 
 			/****************************************************************************************
 			 * in this section we add columns and values related to levels specified in request JSON*
 			 ****************************************************************************************/
 
-			manageLevelsSection(dataSource, nodeFields, record, metatadaFieldsMap, fieldsMap, levelsMap, requestVal, columnsClause, valuesClause, sep, prefix,
-					fillConfiguration, hierConfig);
+			manageLevelsSection(dataSource, nodeFields, recordToInsert, metatadaFieldsMap, fieldsMap, levelsMap, requestVal,
+					columnsClause, valuesClause, sep, prefix, fillConfiguration, hierConfig);
 
 			/***********************************************************************
 			 * in this section we add a recursive logic to calculate parents levels*
 			 ***********************************************************************/
 
-			manageRecursiveSection(dbConnection, dataSource, nodeFields, record, metatadaFieldsMap, fieldsMap, levelsMap, requestVal, columnsClause,
-					valuesClause, sep, prefix, dimensionName, validityDate, fillConfiguration, hierConfig);
+			manageRecursiveSection(dbConnection, dataSource, nodeFields, recordToInsert, metatadaFieldsMap, fieldsMap,
+					levelsMap, requestVal, columnsClause, valuesClause, sep, prefix, dimensionName, validityDate,
+					fillConfiguration, hierConfig);
 
 			checkMaxLevel(levelsMap, hierConfig);
 
@@ -595,7 +631,8 @@ public class HierarchyMasterService {
 			 * in this section we add columns and values related to the leaf code and name*
 			 ******************************************************************************/
 
-			manageLeafSection(dataSource, record, metatadaFieldsMap, fieldsMap, levelsMap, columnsClause, valuesClause, sep, prefix);
+			manageLeafSection(dataSource, recordToInsert, metatadaFieldsMap, fieldsMap, levelsMap, columnsClause, valuesClause,
+					sep, prefix);
 
 			/******************************************************************************
 			 * in this section we add columns and values related to the parent of the leaf*
@@ -607,7 +644,8 @@ public class HierarchyMasterService {
 			 * in this section we add column and value related to the leaf id that comes from id in dimension record*
 			 ********************************************************************************************************/
 
-			manageLeafIdSection(dataSource, metatadaFieldsMap, record, fieldsMap, columnsClause, valuesClause, sep, prefix);
+			manageLeafIdSection(dataSource, metatadaFieldsMap, recordToInsert, fieldsMap, columnsClause, valuesClause, sep,
+					prefix);
 
 			/************************************************************************
 			 * in this section we add column and value related to the hierarchy type*
@@ -625,7 +663,8 @@ public class HierarchyMasterService {
 			 * put together clauses in order to create the insert prepared statement and execute it*
 			 ***************************************************************************************/
 
-			StringBuffer insertQuery = new StringBuffer("INSERT INTO " + hTableName + columnsClause + " VALUES " + valuesClause);
+			StringBuffer insertQuery = new StringBuffer(
+					"INSERT INTO " + hTableName + columnsClause + " VALUES " + valuesClause);
 
 			logger.debug("The insert query is [" + insertQuery.toString() + "]");
 
@@ -649,7 +688,8 @@ public class HierarchyMasterService {
 			try {
 				insertPs.executeUpdate();
 			} catch (SQLException se) {
-				logger.error("Error while executing stmt: [" + insertQuery.toString() + "]\n with values: " + fieldsMap.values().toString());
+				logger.error("Error while executing stmt: [" + insertQuery.toString() + "]\n with values: "
+						+ fieldsMap.values().toString());
 				throw new SpagoBIServiceException("An unexpected error occured while inserting a new hierarchy", se);
 			} finally {
 				if (!insertPs.isClosed()) {
@@ -667,9 +707,10 @@ public class HierarchyMasterService {
 		logger.debug("END");
 	}
 
-	private void manageGeneralFieldsSection(IDataSource dataSource, List<Field> generalFields, IRecord record, Map<String, Integer> metatadaFieldsMap,
-			Map<Integer, Object> fieldsMap, Map<Integer, String> typesMap, JSONObject requestVal, StringBuffer columnsClause, StringBuffer valuesClause,
-			String sep) throws JSONException, ParseException {
+	private void manageGeneralFieldsSection(IDataSource dataSource, List<Field> generalFields, IRecord recordToManage,
+			Map<String, Integer> metatadaFieldsMap, Map<Integer, Object> fieldsMap, Map<Integer, String> typesMap,
+			JSONObject requestVal, StringBuffer columnsClause, StringBuffer valuesClause, String sep)
+			throws JSONException, ParseException {
 
 		int index = fieldsMap.size();
 
@@ -707,7 +748,7 @@ public class HierarchyMasterService {
 		if (!requestVal.isNull(HierarchyConstants.BEGIN_DT)) {
 			beginDtValue = requestVal.getString(HierarchyConstants.BEGIN_DT);
 		} else {
-			Date dt = (Date) record.getFieldAt(metatadaFieldsMap.get(HierarchyConstants.BEGIN_DT)).getValue();
+			Date dt = (Date) recordToManage.getFieldAt(metatadaFieldsMap.get(HierarchyConstants.BEGIN_DT)).getValue();
 			beginDtValue = dt.toString();
 		}
 		// updating sql clauses for columns and values
@@ -726,7 +767,7 @@ public class HierarchyMasterService {
 		if (!requestVal.isNull(HierarchyConstants.END_DT)) {
 			endDtValue = requestVal.getString(HierarchyConstants.END_DT);
 		} else {
-			Date dt = (Date) record.getFieldAt(metatadaFieldsMap.get(HierarchyConstants.END_DT)).getValue();
+			Date dt = (Date) recordToManage.getFieldAt(metatadaFieldsMap.get(HierarchyConstants.END_DT)).getValue();
 			endDtValue = dt.toString();
 		}
 
@@ -741,9 +782,10 @@ public class HierarchyMasterService {
 
 	}
 
-	private void manageLevelsSection(IDataSource dataSource, List<Field> nodeFields, IRecord record, Map<String, Integer> metatadaFieldsMap,
-			Map<Integer, Object> fieldsMap, Map<Integer, Object[]> levelsMap, JSONObject requestVal, StringBuffer columnsClause, StringBuffer valuesClause,
-			String sep, String prefix, FillConfiguration fillConfiguration, HashMap hierConfig) throws JSONException {
+	private void manageLevelsSection(IDataSource dataSource, List<Field> nodeFields, IRecord recordToManage,
+			Map<String, Integer> metatadaFieldsMap, Map<Integer, Object> fieldsMap, Map<Integer, Object[]> levelsMap,
+			JSONObject requestVal, StringBuffer columnsClause, StringBuffer valuesClause, String sep, String prefix,
+			FillConfiguration fillConfiguration, HashMap hierConfig) throws JSONException {
 
 		// retrieve levels from request json
 		if (requestVal.isNull("levels")) {
@@ -771,14 +813,17 @@ public class HierarchyMasterService {
 			// columns for code and name level
 			// String cdColumn = AbstractJDBCDataset.encapsulateColumnName(prefix + "_CD_LEV" + lvlIndex, dataSource);
 			// String nmColumn = AbstractJDBCDataset.encapsulateColumnName(prefix + "_NM_LEV" + lvlIndex, dataSource);
-			String cdColumn = AbstractJDBCDataset.encapsulateColumnName((String) hierConfig.get(HierarchyConstants.TREE_NODE_CD) + lvlIndex, dataSource);
-			String nmColumn = AbstractJDBCDataset.encapsulateColumnName((String) hierConfig.get(HierarchyConstants.TREE_NODE_NM) + lvlIndex, dataSource);
+			String cdColumn = AbstractJDBCDataset.encapsulateColumnName(
+					(String) hierConfig.get(HierarchyConstants.TREE_NODE_CD) + lvlIndex, dataSource);
+			String nmColumn = AbstractJDBCDataset.encapsulateColumnName(
+					(String) hierConfig.get(HierarchyConstants.TREE_NODE_NM) + lvlIndex, dataSource);
 
 			// retrieve values to look for in dimension columns
 			String cdLvl = lvl.getString("CD");
 			String nmLvl = lvl.getString("NM");
 
-			logger.debug("In the level [" + lvlIndex + "] user has specified the code [" + cdLvl + "] and the name [" + nmLvl + "]");
+			logger.debug("In the level [" + lvlIndex + "] user has specified the code [" + cdLvl + "] and the name ["
+					+ nmLvl + "]");
 
 			Object cdValue = null;
 			Object nmValue = null;
@@ -789,8 +834,8 @@ public class HierarchyMasterService {
 				nmValue = nmLvl;
 			} else {
 				// retrieve record fields looking at metafield position in the dimension
-				IField cdTmpField = record.getFieldAt(metatadaFieldsMap.get(cdLvl));
-				IField nmTmpField = record.getFieldAt(metatadaFieldsMap.get(nmLvl));
+				IField cdTmpField = recordToManage.getFieldAt(metatadaFieldsMap.get(cdLvl));
+				IField nmTmpField = recordToManage.getFieldAt(metatadaFieldsMap.get(nmLvl));
 
 				// Filling logic: if the user has enabled the filling option, null values in a level are replaced by values from the previous level
 
@@ -802,7 +847,8 @@ public class HierarchyMasterService {
 			}
 			concatNmValues += (nmValue == null) ? "" : nmValue;
 
-			logger.debug("For the level [" + lvlIndex + "] we are going to insert code [" + cdValue + "] and name [" + nmValue + "]");
+			logger.debug("For the level [" + lvlIndex + "] we are going to insert code [" + cdValue + "] and name ["
+					+ nmValue + "]");
 
 			// updating sql clauses for columns and values
 			columnsClause.append(cdColumn + "," + nmColumn + sep);
@@ -841,9 +887,10 @@ public class HierarchyMasterService {
 		}
 	}
 
-	private void manageRecursiveSection(Connection dbConnection, IDataSource dataSource, List<Field> nodeFields, IRecord record,
-			Map<String, Integer> metatadaFieldsMap, Map<Integer, Object> fieldsMap, Map<Integer, Object[]> levelsMap, JSONObject requestVal,
-			StringBuffer columnsClause, StringBuffer valuesClause, String sep, String prefix, String dimensionName, String validityDate,
+	private void manageRecursiveSection(Connection dbConnection, IDataSource dataSource, List<Field> nodeFields,
+			IRecord recordToManage, Map<String, Integer> metatadaFieldsMap, Map<Integer, Object> fieldsMap,
+			Map<Integer, Object[]> levelsMap, JSONObject requestVal, StringBuffer columnsClause,
+			StringBuffer valuesClause, String sep, String prefix, String dimensionName, String validityDate,
 			FillConfiguration fillConfiguration, HashMap hierConfig) throws JSONException, SQLException {
 
 		int index = fieldsMap.size();
@@ -851,7 +898,7 @@ public class HierarchyMasterService {
 
 		if (!requestVal.isNull("recursive")) {
 
-			LinkedList<Object> recursiveValuesList = new LinkedList<Object>();
+			LinkedList<Object> recursiveValuesList = new LinkedList<>();
 
 			// retrieve recursive object from request json
 			JSONObject recursive = requestVal.getJSONObject("recursive");
@@ -861,7 +908,8 @@ public class HierarchyMasterService {
 			String jsonRecursiveParentCd = recursive.getString(HierarchyConstants.JSON_CD_PARENT);
 			String jsonRecursiveParentNm = recursive.getString(HierarchyConstants.JSON_NM_PARENT);
 
-			logger.debug("Parent field selected are [" + jsonRecursiveParentCd + "] and [" + jsonRecursiveParentNm + "]");
+			logger.debug(
+					"Parent field selected are [" + jsonRecursiveParentCd + "] and [" + jsonRecursiveParentNm + "]");
 
 			// create columns for recursive fields selected in the json
 
@@ -872,8 +920,8 @@ public class HierarchyMasterService {
 
 			// get values from recursive selected fields
 
-			IField recursiveCdField = record.getFieldAt(metatadaFieldsMap.get(jsonRecursiveCd));
-			IField recursiveNmField = record.getFieldAt(metatadaFieldsMap.get(jsonRecursiveNm));
+			IField recursiveCdField = recordToManage.getFieldAt(metatadaFieldsMap.get(jsonRecursiveCd));
+			IField recursiveNmField = recordToManage.getFieldAt(metatadaFieldsMap.get(jsonRecursiveNm));
 
 			Object recursiveCdValue = recursiveCdField.getValue();
 			Object recursiveNmValue = recursiveNmField.getValue();
@@ -888,8 +936,8 @@ public class HierarchyMasterService {
 
 			// get values from parent fields
 
-			IField recursiveParentCdField = record.getFieldAt(metatadaFieldsMap.get(jsonRecursiveParentCd));
-			IField recursiveParentNmField = record.getFieldAt(metatadaFieldsMap.get(jsonRecursiveParentNm));
+			IField recursiveParentCdField = recordToManage.getFieldAt(metatadaFieldsMap.get(jsonRecursiveParentCd));
+			IField recursiveParentNmField = recordToManage.getFieldAt(metatadaFieldsMap.get(jsonRecursiveParentNm));
 
 			Object recursiveParentCdValue = recursiveParentCdField.getValue();
 			Object recursiveParentNmValue = recursiveParentNmField.getValue();
@@ -898,8 +946,9 @@ public class HierarchyMasterService {
 
 			if (recursiveParentCdValue != null) {
 
-				recursiveParentSelect(dbConnection, dataSource, recursiveValuesList, recursiveParentCdValue, recursiveParentNmValue, recursiveCdValue,
-						dimensionName, jsonRecursiveCd, jsonRecursiveNm, jsonRecursiveParentCd, jsonRecursiveParentNm, validityDate);
+				recursiveParentSelect(dbConnection, dataSource, recursiveValuesList, recursiveParentCdValue,
+						recursiveParentNmValue, recursiveCdValue, dimensionName, jsonRecursiveCd, jsonRecursiveNm,
+						jsonRecursiveParentCd, jsonRecursiveParentNm, validityDate);
 			}
 
 			int recursiveValuesSize = recursiveValuesList.size();
@@ -915,15 +964,18 @@ public class HierarchyMasterService {
 				// columns for code and name level
 				// String cdColumn = AbstractJDBCDataset.encapsulateColumnName(prefix + "_CD_LEV" + (lvlIndex), dataSource);
 				// String nmColumn = AbstractJDBCDataset.encapsulateColumnName(prefix + "_NM_LEV" + (lvlIndex), dataSource);
-				String cdColumn = AbstractJDBCDataset.encapsulateColumnName((String) hierConfig.get(HierarchyConstants.TREE_NODE_CD) + lvlIndex, dataSource);
-				String nmColumn = AbstractJDBCDataset.encapsulateColumnName((String) hierConfig.get(HierarchyConstants.TREE_NODE_NM) + lvlIndex, dataSource);
+				String cdColumn = AbstractJDBCDataset.encapsulateColumnName(
+						(String) hierConfig.get(HierarchyConstants.TREE_NODE_CD) + lvlIndex, dataSource);
+				String nmColumn = AbstractJDBCDataset.encapsulateColumnName(
+						(String) hierConfig.get(HierarchyConstants.TREE_NODE_NM) + lvlIndex, dataSource);
 
 				Object cdValue = ((recursiveValuesList.get(i)) != null) ? recursiveValuesList.get(i)
 						: fillConfiguration.fillHandler(levelsMap, HierarchyConstants.CD_VALUE_POSITION);
 				Object nmValue = ((recursiveValuesList.get(i + 1)) != null) ? recursiveValuesList.get(i + 1)
 						: fillConfiguration.fillHandler(levelsMap, HierarchyConstants.NM_VALUE_POSITION);
 
-				logger.debug("In the level [" + lvlIndex + "] user has specified the code [" + cdValue + "] and the name [" + nmValue + "]");
+				logger.debug("In the level [" + lvlIndex + "] user has specified the code [" + cdValue
+						+ "] and the name [" + nmValue + "]");
 				concatNmValues += (nmValue == null) ? "" : nmValue;
 
 				// updating sql clauses for columns and values
@@ -948,9 +1000,11 @@ public class HierarchyMasterService {
 					for (int n = 0; n < nodeFields.size(); n++) {
 						Field f = nodeFields.get(n);
 						if (f.isUniqueCode()) {
-							cdUniqueColumn = AbstractJDBCDataset.encapsulateColumnName(f.getId() + lvlIndex, dataSource);
+							cdUniqueColumn = AbstractJDBCDataset.encapsulateColumnName(f.getId() + lvlIndex,
+									dataSource);
 							// cdUniqueValue = (cdValue == null || cdValue.equals("")) ? null : Helper.sha256(String.valueOf(Math.random()) + concatNmValues);
-							cdUniqueValue = (cdValue == null || cdValue.equals("")) ? null : Helper.sha256(concatNmValues);
+							cdUniqueValue = (cdValue == null || cdValue.equals("")) ? null
+									: Helper.sha256(concatNmValues);
 							break;
 						}
 					}
@@ -966,8 +1020,9 @@ public class HierarchyMasterService {
 
 	}
 
-	private void manageLeafSection(IDataSource dataSource, IRecord record, Map<String, Integer> metatadaFieldsMap, Map<Integer, Object> fieldsMap,
-			Map<Integer, Object[]> levelsMap, StringBuffer columnsClause, StringBuffer valuesClause, String sep, String prefix) {
+	private void manageLeafSection(IDataSource dataSource, IRecord recordToManage, Map<String, Integer> metatadaFieldsMap,
+			Map<Integer, Object> fieldsMap, Map<Integer, Object[]> levelsMap, StringBuffer columnsClause,
+			StringBuffer valuesClause, String sep, String prefix) {
 
 		int index = fieldsMap.size();
 		int lvlIndex = levelsMap.size();
@@ -983,7 +1038,8 @@ public class HierarchyMasterService {
 			String cdLeafColumn = AbstractJDBCDataset.encapsulateColumnName(prefix + "_CD_LEAF", dataSource);
 			String nmLeafColumn = AbstractJDBCDataset.encapsulateColumnName(prefix + "_NM_LEAF", dataSource);
 
-			logger.debug("For the leaf we are going to insert code [" + cdLeafValue + "] and name [" + nmLeafValue + "]");
+			logger.debug(
+					"For the leaf we are going to insert code [" + cdLeafValue + "] and name [" + nmLeafValue + "]");
 
 			// updating sql clauses for columns and values
 			columnsClause.append(cdLeafColumn + sep + nmLeafColumn + sep);
@@ -997,8 +1053,8 @@ public class HierarchyMasterService {
 
 	}
 
-	private void manageParentLeafSection(IDataSource dataSource, Map<Integer, Object> fieldsMap, Map<Integer, Object[]> levelsMap, StringBuffer columnsClause,
-			StringBuffer valuesClause, String sep) {
+	private void manageParentLeafSection(IDataSource dataSource, Map<Integer, Object> fieldsMap,
+			Map<Integer, Object[]> levelsMap, StringBuffer columnsClause, StringBuffer valuesClause, String sep) {
 
 		int index = fieldsMap.size();
 		int lvlIndex = levelsMap.size();
@@ -1020,7 +1076,8 @@ public class HierarchyMasterService {
 				leafParentCdValue = lvlValues[HierarchyConstants.CD_VALUE_POSITION];
 				leafParentNmValue = lvlValues[HierarchyConstants.NM_VALUE_POSITION];
 
-				if (leafParentCdValue != null && leafParentNmValue != null && !leafParentCdValue.equals("") && !leafParentNmValue.equals("")) {
+				if (leafParentCdValue != null && leafParentNmValue != null && !leafParentCdValue.equals("")
+						&& !leafParentNmValue.equals("")) {
 
 					logger.debug("Found a valorized parent! Break the loop.");
 					break;
@@ -1030,7 +1087,8 @@ public class HierarchyMasterService {
 			String cdLeafParentColumn = AbstractJDBCDataset.encapsulateColumnName("LEAF_PARENT_CD", dataSource);
 			String nmLeafParentColumn = AbstractJDBCDataset.encapsulateColumnName("LEAF_PARENT_NM", dataSource);
 
-			logger.debug("We are going to use code [" + leafParentCdValue + "] and name [" + leafParentNmValue + "] for parent");
+			logger.debug("We are going to use code [" + leafParentCdValue + "] and name [" + leafParentNmValue
+					+ "] for parent");
 
 			// updating sql clauses for columns and values
 			columnsClause.append(cdLeafParentColumn + "," + nmLeafParentColumn + sep);
@@ -1044,13 +1102,14 @@ public class HierarchyMasterService {
 
 	}
 
-	private void manageLeafIdSection(IDataSource dataSource, Map<String, Integer> metatadaFieldsMap, IRecord record, Map<Integer, Object> fieldsMap,
-			StringBuffer columnsClause, StringBuffer valuesClause, String sep, String prefix) {
+	private void manageLeafIdSection(IDataSource dataSource, Map<String, Integer> metatadaFieldsMap, IRecord recordToManage,
+			Map<Integer, Object> fieldsMap, StringBuffer columnsClause, StringBuffer valuesClause, String sep,
+			String prefix) {
 
 		int index = fieldsMap.size();
 
 		String leafIdColumn = AbstractJDBCDataset.encapsulateColumnName(prefix + "_LEAF_ID", dataSource);
-		IField leafIdTmpField = record.getFieldAt(metatadaFieldsMap.get(prefix + "_ID"));
+		IField leafIdTmpField = recordToManage.getFieldAt(metatadaFieldsMap.get(prefix + "_ID"));
 
 		Object leafIdValue = leafIdTmpField.getValue();
 
@@ -1065,8 +1124,8 @@ public class HierarchyMasterService {
 
 	}
 
-	private void manageHierTypeSection(IDataSource dataSource, Map<Integer, Object> fieldsMap, StringBuffer columnsClause, StringBuffer valuesClause,
-			String sep) {
+	private void manageHierTypeSection(IDataSource dataSource, Map<Integer, Object> fieldsMap,
+			StringBuffer columnsClause, StringBuffer valuesClause, String sep) {
 		String hierTypeColumn = AbstractJDBCDataset.encapsulateColumnName(HierarchyConstants.HIER_TP, dataSource);
 
 		logger.debug("Hierarchy tipe is [" + HierarchyConstants.HIER_TP_MASTER + "]");
@@ -1082,8 +1141,8 @@ public class HierarchyMasterService {
 
 	}
 
-	private void manageMaxDepthSection(IDataSource dataSource, Map<Integer, Object> fieldsMap, Map<Integer, Object[]> levelsMap, StringBuffer columnsClause,
-			StringBuffer valuesClause) {
+	private void manageMaxDepthSection(IDataSource dataSource, Map<Integer, Object> fieldsMap,
+			Map<Integer, Object[]> levelsMap, StringBuffer columnsClause, StringBuffer valuesClause) {
 
 		int index = fieldsMap.size();
 		int lvlIndex = levelsMap.size();
@@ -1105,8 +1164,9 @@ public class HierarchyMasterService {
 	 *
 	 * @throws SQLException
 	 */
-	private void recursiveParentSelect(Connection dbConnection, IDataSource dataSource, LinkedList<Object> parentValuesList, Object parentCdValue,
-			Object parentNmValue, Object oldCdValue, String dimensionName, String jsonRecursiveCd, String jsonRecursiveNm, String jsonRecursiveParentCd,
+	private void recursiveParentSelect(Connection dbConnection, IDataSource dataSource,
+			LinkedList<Object> parentValuesList, Object parentCdValue, Object parentNmValue, Object oldCdValue,
+			String dimensionName, String jsonRecursiveCd, String jsonRecursiveNm, String jsonRecursiveParentCd,
 			String jsonRecursiveParentNm, String validityDate) throws SQLException {
 
 		logger.debug("START");
@@ -1127,10 +1187,11 @@ public class HierarchyMasterService {
 			String vDateConverted = HierarchyUtils.getConvertedDate(validityDate, dataSource);
 			vDateWhereClause = vDateConverted + ">= " + beginDtColumn + " AND " + vDateConverted + " <= " + endDtColumn;
 		}
-		String recursiveSelectClause = cdRecursiveColumn + "," + nmRecursiveColumn + "," + cdParentColumn + "," + nmParentColumn;
+		String recursiveSelectClause = cdRecursiveColumn + "," + nmRecursiveColumn + "," + cdParentColumn + ","
+				+ nmParentColumn;
 
-		String recurisveSelect = "SELECT " + recursiveSelectClause + " FROM " + dimensionName + " WHERE " + cdRecursiveColumn + " = ? AND " + nmRecursiveColumn
-				+ " = ? AND " + vDateWhereClause;
+		String recurisveSelect = "SELECT " + recursiveSelectClause + " FROM " + dimensionName + " WHERE "
+				+ cdRecursiveColumn + " = ? AND " + nmRecursiveColumn + " = ? AND " + vDateWhereClause;
 
 		logger.debug("Select query is [" + recurisveSelect + "]");
 
@@ -1138,7 +1199,8 @@ public class HierarchyMasterService {
 		ps.setObject(1, parentCdValue);
 		ps.setObject(2, parentNmValue);
 
-		logger.debug("PreparedStatment is using [" + parentCdValue + "] and [" + parentNmValue + "] with validity date [" + validityDate + "]");
+		logger.debug("PreparedStatment is using [" + parentCdValue + "] and [" + parentNmValue
+				+ "] with validity date [" + validityDate + "]");
 
 		ResultSet rs = ps.executeQuery();
 
@@ -1151,24 +1213,29 @@ public class HierarchyMasterService {
 			parentValuesList.addFirst(newRecursiveNmValue);
 			parentValuesList.addFirst(newRecursiveCdValue);
 
-			logger.debug("Result found! Creating a new recursive level with values [" + newRecursiveCdValue + "] and [" + newRecursiveNmValue + "]");
+			logger.debug("Result found! Creating a new recursive level with values [" + newRecursiveCdValue + "] and ["
+					+ newRecursiveNmValue + "]");
 
 			Object tmpParentCdValue = rs.getObject(jsonRecursiveParentCd);
 			Object tmpParentNmValue = rs.getObject(jsonRecursiveParentNm);
 
 			if (tmpParentCdValue != null) {
 
-				logger.debug("Check values validity. New value is [" + tmpParentCdValue + "] and old is [" + oldCdValue + "]");
+				logger.debug("Check values validity. New value is [" + tmpParentCdValue + "] and old is [" + oldCdValue
+						+ "]");
 
 				if (tmpParentCdValue.equals(oldCdValue)) {
 					logger.error("Impossible to create recursive levels. A cycle found during recursive selections");
-					throw new SQLException("Impossible to create recursive levels. A cycle found during recursive selections");
+					throw new SQLException(
+							"Impossible to create recursive levels. A cycle found during recursive selections");
 				}
 
-				logger.debug("Look for another parent with values [" + tmpParentCdValue + "] and [" + tmpParentNmValue + "]");
+				logger.debug("Look for another parent with values [" + tmpParentCdValue + "] and [" + tmpParentNmValue
+						+ "]");
 
-				recursiveParentSelect(dbConnection, dataSource, parentValuesList, tmpParentCdValue, tmpParentNmValue, newRecursiveCdValue, dimensionName,
-						jsonRecursiveCd, jsonRecursiveNm, jsonRecursiveParentCd, jsonRecursiveParentNm, validityDate);
+				recursiveParentSelect(dbConnection, dataSource, parentValuesList, tmpParentCdValue, tmpParentNmValue,
+						newRecursiveCdValue, dimensionName, jsonRecursiveCd, jsonRecursiveNm, jsonRecursiveParentCd,
+						jsonRecursiveParentNm, validityDate);
 			} else {
 				logger.debug("No parent found!");
 				logger.debug("END");
@@ -1186,7 +1253,8 @@ public class HierarchyMasterService {
 		int numLevels = Integer.parseInt((String) hierConfig.get(HierarchyConstants.NUM_LEVELS));
 
 		if (lvlIndex > numLevels) {
-			throw new SQLException("Creation failed. You have " + lvlIndex + " levels, but the maximum is " + numLevels + " levels");
+			throw new SQLException(
+					"Creation failed. You have " + lvlIndex + " levels, but the maximum is " + numLevels + " levels");
 		}
 	}
 
@@ -1196,13 +1264,16 @@ public class HierarchyMasterService {
 
 		String hierCdColumn = AbstractJDBCDataset.encapsulateColumnName(HierarchyConstants.HIER_CD, dataSource);
 		String hierNmColumn = AbstractJDBCDataset.encapsulateColumnName(HierarchyConstants.HIER_NM, dataSource);
-		String confColumn = AbstractJDBCDataset.encapsulateColumnName(HierarchyConstants.HIER_MASTERS_CONFIG, dataSource);
+		String confColumn = AbstractJDBCDataset.encapsulateColumnName(HierarchyConstants.HIER_MASTERS_CONFIG,
+				dataSource);
 
 		String selectClause = hierCdColumn + "," + hierNmColumn + "," + confColumn;
 
-		String selectQuery = "SELECT " + selectClause + " FROM " + HierarchyConstants.HIER_MASTERS_CONFIG_TABLE + " WHERE HIER_NM = ?  ORDER BY TIME_IN DESC ";
+		String selectQuery = "SELECT " + selectClause + " FROM " + HierarchyConstants.HIER_MASTERS_CONFIG_TABLE
+				+ " WHERE HIER_NM = ?  ORDER BY TIME_IN DESC ";
 
-		try (Statement stmt = dbConnection.createStatement(); PreparedStatement selectPs = dbConnection.prepareStatement(selectQuery)) {
+		try (Statement stmt = dbConnection.createStatement();
+				PreparedStatement selectPs = dbConnection.prepareStatement(selectQuery)) {
 
 			selectPs.setString(1, hierarchyName);
 

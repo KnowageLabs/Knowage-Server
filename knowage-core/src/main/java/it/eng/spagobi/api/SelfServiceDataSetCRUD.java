@@ -2026,8 +2026,8 @@ public class SelfServiceDataSetCRUD extends AbstractSpagoBIResource {
 		boolean foundLong = false;
 		boolean foundInteger = false;
 		for (int i = 0; i < Math.min(ROWS_LIMIT_GUESS_TYPE_HEURISTIC, dataStore.getRecordsCount()); i++) {
-			IRecord record = dataStore.getRecordAt(i);
-			IField field = record.getFieldAt(columnIndex);
+			IRecord currRecord = dataStore.getRecordAt(i);
+			IField field = currRecord.getFieldAt(columnIndex);
 			Object value = field.getValue();
 			if ((value == null) || (value.toString().isEmpty())) {
 				continue;
@@ -2067,8 +2067,8 @@ public class SelfServiceDataSetCRUD extends AbstractSpagoBIResource {
 	private boolean isADate(JSONObject jsonConf, IDataStore dataStore, int columnIndex) throws JSONException {
 		String dateFormat = jsonConf.get(DataSetConstants.FILE_DATE_FORMAT).toString();
 		for (int i = 0; i < Math.min(10, dataStore.getRecordsCount()); i++) {
-			IRecord record = dataStore.getRecordAt(i);
-			IField field = record.getFieldAt(columnIndex);
+			IRecord currRecord = dataStore.getRecordAt(i);
+			IField field = currRecord.getFieldAt(columnIndex);
 			Object value = field.getValue();
 			if (value instanceof Date) {
 				if (value instanceof Timestamp)
@@ -2098,8 +2098,8 @@ public class SelfServiceDataSetCRUD extends AbstractSpagoBIResource {
 	private boolean isATimestamp(JSONObject jsonConf, IDataStore dataStore, int columnIndex) throws JSONException {
 		String timestampFormat = jsonConf.get(DataSetConstants.FILE_TIMESTAMP_FORMAT).toString();
 		for (int i = 0; i < Math.min(10, dataStore.getRecordsCount()); i++) {
-			IRecord record = dataStore.getRecordAt(i);
-			IField field = record.getFieldAt(columnIndex);
+			IRecord currRecord = dataStore.getRecordAt(i);
+			IField field = currRecord.getFieldAt(columnIndex);
 			Object value = field.getValue();
 			if (value instanceof Timestamp) {
 				continue;

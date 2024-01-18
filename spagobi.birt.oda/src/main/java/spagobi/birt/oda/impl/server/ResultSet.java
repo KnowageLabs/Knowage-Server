@@ -144,9 +144,9 @@ public class ResultSet implements IResultSet
 	 */
 	public String getString( int index ) throws OdaException {
 		logger.debug("IN getString");
-		IRecord record = dataStore.getRecordAt(getRow());
+		IRecord currRecord = dataStore.getRecordAt(getRow());
 		
-		if(record == null){
+		if(currRecord == null){
 			logger.debug("ODA Exception Record null");
 			throw (OdaException) new OdaException("Impossible to read row [" + getRow() + "]. The resultset contains [" + dataStore.getRecordsCount() + "] rows");
 		}
@@ -158,7 +158,7 @@ public class ResultSet implements IResultSet
 		
 		String toReturn = null;
 		try {
-			IField field = record.getFieldAt(fieldIndex);
+			IField field = currRecord.getFieldAt(fieldIndex);
 			toReturn = "" + field.getValue();
 		} catch (IndexOutOfBoundsException e) {
 			logger.warn("Column index not found in the record",e);
@@ -181,9 +181,9 @@ public class ResultSet implements IResultSet
 	 */
 	public int getInt( int index ) throws OdaException {
 		logger.debug("IN getInt");
-		IRecord record = dataStore.getRecordAt(getRow());
+		IRecord currRecord = dataStore.getRecordAt(getRow());
 		
-		if(record == null){
+		if(currRecord == null){
 			throw (OdaException) new OdaException("Impossible to read row [" + getRow() + "]. The resultset contains [" + dataStore.getRecordsCount() + "] rows");
 		}
 
@@ -193,7 +193,7 @@ public class ResultSet implements IResultSet
 		IField field = null;
 		int value = 0;
 		try {
-			field = record.getFieldAt(fieldIndex);
+			field = currRecord.getFieldAt(fieldIndex);
 			
 			if(field == null){
 				throw (OdaException) new OdaException("Impossible to read column [" + (index-1) + "]. The resultset contains [" + dataStore.getMetaData().getFieldCount() + "] columns");

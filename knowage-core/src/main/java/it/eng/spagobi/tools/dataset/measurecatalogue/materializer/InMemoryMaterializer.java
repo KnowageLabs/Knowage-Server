@@ -619,7 +619,7 @@ public class InMemoryMaterializer implements IMaterializer {
 		public InMemoryAggregator() {
 		};
 
-		public void addRecord(IRecord record) {
+		public void addRecord(IRecord recordToAdd) {
 
 			// check if the record already exists
 			boolean recordFound = false;
@@ -628,22 +628,22 @@ public class InMemoryMaterializer implements IMaterializer {
 				for (int j = 0; j < records.get(i).getFields().size(); j++) {
 
 					if (j != measureColumnIndex && !// checks only dimensions
-					(records.get(i).getFieldAt(j).equals(record.getFieldAt(j)))) {// if a dimension is not equal
+					(records.get(i).getFieldAt(j).equals(recordToAdd.getFieldAt(j)))) {// if a dimension is not equal
 						recordFound = false;
 						break;
 					}
 				}
 				if (recordFound) {
 					List<Object> recordsMeasuresValue = recordsMeasuresValues.get(i);
-					recordsMeasuresValue.add(record.getFieldAt(measureColumnIndex).getValue());// record found
+					recordsMeasuresValue.add(recordToAdd.getFieldAt(measureColumnIndex).getValue());// record found
 					break;
 				}
 			}
 
 			if (!recordFound) {
-				records.add(record);
+				records.add(recordToAdd);
 				List<Object> recordsMeasuresValue = new ArrayList<Object>();
-				recordsMeasuresValue.add(record.getFieldAt(measureColumnIndex).getValue());
+				recordsMeasuresValue.add(recordToAdd.getFieldAt(measureColumnIndex).getValue());
 				recordsMeasuresValues.add(recordsMeasuresValue);
 			}
 		}

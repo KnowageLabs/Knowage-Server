@@ -238,7 +238,7 @@ class SolrFacetPivotEvaluationStrategy extends SolrEvaluationStrategy {
 
 	}
 
-	public String transformFormula(Record record, IMetaData metadata, String formula) {
+	public String transformFormula(Record currRecord, IMetaData metadata, String formula) {
 		formula = formula.replaceAll("\"", "");
 
 		for (int i = 0; i < metadata.getFieldCount(); i++) {
@@ -255,7 +255,7 @@ class SolrFacetPivotEvaluationStrategy extends SolrEvaluationStrategy {
 				Matcher m = r.matcher(formula);
 
 				while (m.find()) {
-					formula = formula.replace(m.group(), record.getFieldAt(i).getValue().toString());
+					formula = formula.replace(m.group(), currRecord.getFieldAt(i).getValue().toString());
 				}
 
 				pattern = "((?:AVG|MIN|MAX|SUM|COUNT_DISTINCT|COUNT|DISTINCT COUNT)\\()([a-zA-Z0-9\\-\\+\\/\\*\\_\\s\\$\\{\\}\\\"]*)(\\))";
@@ -263,7 +263,7 @@ class SolrFacetPivotEvaluationStrategy extends SolrEvaluationStrategy {
 				m = r.matcher(formula);
 
 				while (m.find()) {
-					formula = formula.replace(m.group(), record.getFieldAt(i).getValue().toString());
+					formula = formula.replace(m.group(), currRecord.getFieldAt(i).getValue().toString());
 				}
 
 			}
@@ -274,7 +274,7 @@ class SolrFacetPivotEvaluationStrategy extends SolrEvaluationStrategy {
 
 	}
 
-	public Map<String, Object> findBindings(Record record, IMetaData metadata, String formula) {
+	public Map<String, Object> findBindings(Record currRecord, IMetaData metadata, String formula) {
 
 		Map<String, Object> bindings = new HashMap<>();
 		bindings.put("parameters", new HashMap());
@@ -283,7 +283,7 @@ class SolrFacetPivotEvaluationStrategy extends SolrEvaluationStrategy {
 
 			if (formula.contains(metadata.getFieldName(i))) {
 
-				BigDecimal value = new BigDecimal(record.getFieldAt(i).getValue().toString());
+				BigDecimal value = new BigDecimal(currRecord.getFieldAt(i).getValue().toString());
 
 				bindings.put(metadata.getFieldName(i), value);
 

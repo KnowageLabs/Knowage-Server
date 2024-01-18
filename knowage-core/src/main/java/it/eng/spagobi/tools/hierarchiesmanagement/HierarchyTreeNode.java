@@ -241,7 +241,7 @@ public class HierarchyTreeNode implements Iterable<HierarchyTreeNode> {
 	 * @return the node
 	 */
 	public HierarchyTreeNode getHierarchyNode(String key, boolean theLast, Integer levelToCheck,
-			HierarchyTreeNodeData data, IRecord record, IMetaData dsMeta, String prefix) {
+			HierarchyTreeNodeData data, IRecord currRecord, IMetaData dsMeta, String prefix) {
 
 		/* As default, node toReturn is assigned to root. If toReturn will not be overridden, current node/leaf is attached to root. */
 		HierarchyTreeNode toReturn = this;
@@ -249,7 +249,7 @@ public class HierarchyTreeNode implements Iterable<HierarchyTreeNode> {
 		String recordCdLev = null;
 		if (levelToCheck > 0) {
 			/* Retrieving record CD LEV for record when node is not root */
-			recordCdLev = ((String) record
+			recordCdLev = ((String) currRecord
 					.getFieldAt(dsMeta.getFieldIndex(prefix + HierarchyConstants.SUFFIX_CD_LEV + levelToCheck))
 					.getValue()).trim();
 		}

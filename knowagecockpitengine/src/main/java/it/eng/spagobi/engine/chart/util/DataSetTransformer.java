@@ -280,10 +280,10 @@ public class DataSetTransformer {
 			/**
 			 * Take each record from the 'dataRows' parameter, i.e. each record from the dataset and put it inside the local (temporary) 'records' variable.
 			 */
-			Map<String, Object> record = (Map<String, Object>) dataRows.get(i);
+			Map<String, Object> currRecord = (Map<String, Object>) dataRows.get(i);
 
-			if (!allColumns.contains(record.get(rawColumnNameColumn))) {
-				allColumns.add((String) record.get(rawColumnNameColumn));
+			if (!allColumns.contains(currRecord.get(rawColumnNameColumn))) {
+				allColumns.add((String) currRecord.get(rawColumnNameColumn));
 			}
 
 		}
@@ -307,17 +307,17 @@ public class DataSetTransformer {
 			/**
 			 * Current record (row) from the map of maps of available data (primitive (not pivoted) dataset).
 			 */
-			Map<String, Object> record = (Map<String, Object>) dataRows.get(i);
+			Map<String, Object> currRecord = (Map<String, Object>) dataRows.get(i);
 
 			/**
 			 * Value (name) of the current record's row from the map of maps. Current row of the matrix.
 			 */
-			String currentRow = (String) record.get(rawColumnNameRow);
+			String currentRow = (String) currRecord.get(rawColumnNameRow);
 
 			/**
 			 * Value (name) of the current record's column from the map of maps. Current column of the matrix.
 			 */
-			String currentColumn = (String) record.get(rawColumnNameColumn);
+			String currentColumn = (String) currRecord.get(rawColumnNameColumn);
 
 			/**
 			 * Put a new map for the row that is not contained by the map of maps.
@@ -326,7 +326,7 @@ public class DataSetTransformer {
 
 				HashMap<String, Float> submapWithNewColumn = new HashMap<>();
 
-				if (record.get(columnsMapper.get(serie + "_" + aggregationType)).getClass().toString()
+				if (currRecord.get(columnsMapper.get(serie + "_" + aggregationType)).getClass().toString()
 						.equals("class java.lang.Integer")) {
 
 					/**
@@ -335,15 +335,15 @@ public class DataSetTransformer {
 					 *
 					 * NOTE: The same goes for other variables of the same name ('serieValueForXOfRowAndColumn') in the code afterwards.
 					 */
-					Integer serieValueForXOfRowAndColumn = (int) record
+					Integer serieValueForXOfRowAndColumn = (int) currRecord
 							.get(columnsMapper.get(serie + "_" + aggregationType));
 					submapWithNewColumn.put(currentColumn,
 							Float.parseFloat(Integer.toString(serieValueForXOfRowAndColumn)));
 
 				} else {
 
-					String serieValueForXOfRowAndColumn = (record.get(columnsMapper.get(serie + "_" + aggregationType)))
-							.toString();
+					String serieValueForXOfRowAndColumn = (currRecord
+							.get(columnsMapper.get(serie + "_" + aggregationType))).toString();
 					submapWithNewColumn.put(currentColumn, Float.parseFloat(serieValueForXOfRowAndColumn));
 				}
 
@@ -351,18 +351,18 @@ public class DataSetTransformer {
 
 			} else {
 
-				if (record.get(columnsMapper.get(serie + "_" + aggregationType)).getClass().toString()
+				if (currRecord.get(columnsMapper.get(serie + "_" + aggregationType)).getClass().toString()
 						.equals("class java.lang.Integer")) {
 
-					Integer serieValueForXOfRowAndColumn = (int) record
+					Integer serieValueForXOfRowAndColumn = (int) currRecord
 							.get(columnsMapper.get(serie + "_" + aggregationType));
 					availableDataMapOfMaps.get(currentRow).put(currentColumn,
 							Float.parseFloat(Integer.toString(serieValueForXOfRowAndColumn)));
 
 				} else {
 
-					String serieValueForXOfRowAndColumn = (record.get(columnsMapper.get(serie + "_" + aggregationType)))
-							.toString();
+					String serieValueForXOfRowAndColumn = (currRecord
+							.get(columnsMapper.get(serie + "_" + aggregationType))).toString();
 					availableDataMapOfMaps.get(currentRow).put(currentColumn,
 							Float.parseFloat(serieValueForXOfRowAndColumn));
 
@@ -529,17 +529,17 @@ public class DataSetTransformer {
 		 */
 		for (int i = 0; i < dataRows.size(); i++) {
 			Map<String, Object> row = (Map<String, Object>) dataRows.get(i);
-			HashMap<String, String> record = new HashMap<>();
+			HashMap<String, String> newRecord = new HashMap<>();
 
 			/* For every record take these columns */
 
 			for (int j = 0; j < listColumns.size(); j++) {
 				Object x = row.get(listColumns.get(j));
 
-				record.put(columns.get(j).toString(), x.toString());
-				record.put(serie.toString(), row.get(serieRawColumn).toString());
+				newRecord.put(columns.get(j).toString(), x.toString());
+				newRecord.put(serie.toString(), row.get(serieRawColumn).toString());
 
-				result.put(new Integer(i), record);
+				result.put(i, newRecord);
 			}
 		}
 
@@ -614,17 +614,17 @@ public class DataSetTransformer {
 
 		for (int i = 0; i < dataRows.size(); i++) {
 			Map<String, Object> row = (Map<String, Object>) dataRows.get(i);
-			HashMap<String, String> record = new HashMap<>();
+			HashMap<String, String> newRecord = new HashMap<>();
 
 			/* For every record take these columns */
 			for (int j = 0; j < listColumns.size(); j++) {
 				Object x = row.get(listColumns.get(j));
-				record.put(columns.get(j).toString(), x.toString());
+				newRecord.put(columns.get(j).toString(), x.toString());
 			}
 
-			record.put(serie.toString(), row.get(serieRawColumn).toString());
+			newRecord.put(serie.toString(), row.get(serieRawColumn).toString());
 
-			result.put(new Integer(i), record);
+			result.put(i, newRecord);
 		}
 
 		JSONObject res = createTreeMap(columns, serie, result);
@@ -1579,17 +1579,17 @@ public class DataSetTransformer {
 		if (dataRows != null) {
 			for (int i = 0; i < dataRows.size(); i++) {
 				Map<String, Object> row = (Map<String, Object>) dataRows.get(i);
-				HashMap<String, Object> record = new HashMap<>();
+				HashMap<String, Object> newRecord = new HashMap<>();
 
 				/* For every record take these columns */
 				for (String column : listColumns) {
 					Object x = row.get(column);
-					record.put(columns.get(columnsIndex.get(column)).toString(), x);
+					newRecord.put(columns.get(columnsIndex.get(column)).toString(), x);
 				}
 
-				record.put(serie.toString(), row.get(serieRawColumn));
+				newRecord.put(serie.toString(), row.get(serieRawColumn));
 
-				firstresult.put(new Integer(i), record);
+				firstresult.put(i, newRecord);
 			}
 		}
 		return firstresult;
