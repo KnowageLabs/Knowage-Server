@@ -15,7 +15,23 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+/*
+ * Knowage, Open Source Business Intelligence suite
+ * Copyright (C) 2024 Engineering Ingegneria Informatica S.p.A.
 
+ * Knowage is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+
+ * Knowage is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 package it.eng.spagobi.dossier.dao;
 
 import java.util.List;
@@ -25,18 +41,18 @@ import it.eng.spagobi.commons.dao.ISpagoBIDao;
 
 public interface ISbiDossierActivityDAO extends ISpagoBIDao {
 
-	public List<DossierActivity> loadAllActivities(Integer documentId);
+	List<DossierActivity> loadAllActivities(Integer documentId);
 
-	public DossierActivity loadActivity(Integer activityId);
+	DossierActivity loadActivity(Integer activityId);
 
-	public DossierActivity loadActivityByProgressThreadId(Integer progressthreadId);
+	DossierActivity loadActivityByProgressThreadId(Integer progressthreadId);
 
-	public Integer insertNewActivity(DossierActivity aLayer);
+	Integer insertNewActivity(DossierActivity aLayer);
 
-	public Integer updateActivity(DossierActivity dossierActivity, byte[] file, String type);
+	Integer updateActivity(DossierActivity dossierActivity, byte[] file, String type);
 
-	public Integer updateActivity(DossierActivity dossierActivity);
+	Integer updateActivity(DossierActivity dossierActivity);
 
-	public void deleteActivity(Integer activityId);
+	void deleteActivity(Integer activityId);
 
 }

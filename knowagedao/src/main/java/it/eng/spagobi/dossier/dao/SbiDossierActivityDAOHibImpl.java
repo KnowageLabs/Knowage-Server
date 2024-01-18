@@ -253,7 +253,6 @@ public class SbiDossierActivityDAOHibImpl extends AbstractHibernateDAO implement
 			progress.setExecutionRole(dossierActivity.getExecutionRole());
 			sda.setProgress(progress);
 		}
-		// sda.setPpt(dossierActivity.getBinId());
 
 		return sda;
 	}
