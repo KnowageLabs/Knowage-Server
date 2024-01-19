@@ -142,6 +142,8 @@ mvn test -DskipTests=false
 
 from ``knowage-ce-parent`` folder.
 
+This project is tested with Browserstack.
+
 ## License
 
 [AGPL](LICENSE) © 2021 Engineering Ingegneria Informatica S.p.A.
