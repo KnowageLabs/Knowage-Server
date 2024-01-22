@@ -20,6 +20,8 @@ package it.eng.spagobi.tools.dataset.common.metadata;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.commons.lang3.builder.ToStringBuilder;
+
 public class FieldMetadata implements IFieldMetaData, Cloneable {
 
 	private String name;
@@ -127,8 +129,7 @@ public class FieldMetadata implements IFieldMetaData, Cloneable {
 
 	@Override
 	public String toString() {
-		return "FieldMetadata [name=" + name + ", alias=" + alias + ", type=" + type + ", properties=" + properties + ", fieldType=" + fieldType
-				+ ", multivalue=" + multiValue + "]";
+		return ToStringBuilder.reflectionToString(this);
 	}
 
 	@Override
