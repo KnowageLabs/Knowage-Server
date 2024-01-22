@@ -266,8 +266,7 @@ export default defineComponent({
             }
 
             return parameterVisible
-        },
-        
+        }
     },
     async created() {
         window.addEventListener('message', this.iframeEventsListener)
