@@ -81,6 +81,7 @@ public class DecryptionDataStoreTransformer extends AbstractDataStoreTransformer
 			});
 		// @formatter:on
 
+		LOGGER.debug("Decryptable field map is {}", decryptableField);
 		needDecryption = !decryptableField.isEmpty();
 
 		LOGGER.debug("Need decryption? {}", needDecryption);
@@ -96,10 +97,13 @@ public class DecryptionDataStoreTransformer extends AbstractDataStoreTransformer
 
 	private void decryptIfNeeded(IRecord currRecord) {
 		if (needDecryption) {
+			LOGGER.debug("Decrypting record {}", currRecord);
 			List<IField> fields = currRecord.getFields();
 
 			for (int i = 0; i < fields.size(); i++) {
+				LOGGER.debug("Current field {}", i);
 				if (decryptableFieldByIndex.containsKey(i)) {
+					LOGGER.debug("Decrypting field {}: {}", i, decryptableFieldByIndex.get(i));
 					decrypt(currRecord, i);
 				}
 			}
@@ -118,6 +122,7 @@ public class DecryptionDataStoreTransformer extends AbstractDataStoreTransformer
 			if (Objects.nonNull(value)) {
 				newValue = encryptor.decrypt(value.toString());
 				fieldAt.setValue(newValue);
+				LOGGER.warn("Decrypt value {} to {}", value, newValue);
 			}
 		} catch (EncryptionOperationNotPossibleException e) {
 			LOGGER.warn("Ignoring field value {} from field {} (with \"{}\" alias): see following message", value,
