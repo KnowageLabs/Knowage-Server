@@ -25,7 +25,8 @@ import java.sql.Statement;
 
 import javax.naming.NamingException;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import it.eng.spagobi.services.dataset.bo.SpagoBiDataSet;
 import it.eng.spagobi.tools.dataset.common.behaviour.QuerableBehaviour;
@@ -35,19 +36,19 @@ import it.eng.spagobi.tools.dataset.common.datareader.AbstractDataReader;
 import it.eng.spagobi.tools.dataset.common.datareader.JDBCStandardDataReader;
 import it.eng.spagobi.tools.dataset.common.iterator.DataIterator;
 import it.eng.spagobi.tools.dataset.common.iterator.ResultSetIterator;
+import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 public class JDBCPostgreSQLDataSet extends JDBCDataSet {
 
-	private static transient Logger logger = Logger.getLogger(JDBCPostgreSQLDataSet.class);
+	private static final Logger LOGGER = LogManager.getLogger(JDBCPostgreSQLDataSet.class);
 
 	/**
 	 * Instantiates a new empty JDBC PostgreSQL data set.
 	 */
 	public JDBCPostgreSQLDataSet() {
-		super();
 		setDataProxy(new JDBCPostgreSQLDataProxy());
 		setDataReader(createDataReader());
 	}
@@ -63,26 +64,28 @@ public class JDBCPostgreSQLDataSet extends JDBCDataSet {
 
 	@Override
 	public DataIterator iterator() {
-		logger.debug("IN");
+		LOGGER.debug("IN");
 		try {
+			IMetaData currMetadata = getMetadata();
 			QuerableBehaviour querableBehaviour = (QuerableBehaviour) getBehaviour(QuerableBehaviour.class.getName());
 			String statement = querableBehaviour.getStatement();
-			logger.debug("Obtained statement [" + statement + "]");
+			LOGGER.debug("Obtained statement [{}]", statement);
 			dataProxy.setStatement(statement);
 			JDBCDataProxy jdbcDataProxy = (JDBCDataProxy) dataProxy;
 			IDataSource dataSource = jdbcDataProxy.getDataSource();
 			Assert.assertNotNull(dataSource, "Invalid datasource");
 			Connection connection = dataSource.getConnection();
-			connection.setAutoCommit(false);
 			Statement stmt = connection.createStatement(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
+
+			connection.setAutoCommit(false); // PostgreSQL requires disabling auto-commit for setFetchSize to work
 			stmt.setFetchSize(5000);
+
 			ResultSet rs = (ResultSet) dataProxy.getData(dataReader, stmt);
-			DataIterator iterator = new ResultSetIterator(connection, stmt, rs);
-			return iterator;
+			return new ResultSetIterator(connection, stmt, rs, currMetadata);
 		} catch (ClassNotFoundException | SQLException | NamingException e) {
 			throw new SpagoBIRuntimeException(e);
 		} finally {
-			logger.debug("OUT");
+			LOGGER.debug("OUT");
 		}
 	}
 

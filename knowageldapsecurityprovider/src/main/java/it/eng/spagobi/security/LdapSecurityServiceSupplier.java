@@ -54,7 +54,8 @@ public class LdapSecurityServiceSupplier extends InternalSecurityServiceSupplier
 
 	private static final Logger LOGGER = LogManager.getLogger(LdapSecurityServiceSupplier.class);
 	private static final String LDAP_AUTHENTICATION_CONFIG = "ldap.config";
-	private static final int USER_JWT_TOKEN_EXPIRE_HOURS = 10; // JWT token for regular users will expire in 10 HOURS
+
+	public static final int USER_JWT_TOKEN_EXPIRE_HOURS = 10; // JWT token for regular users will expire in 10 HOURS
 
 	protected static final String SEARCH_USER_BEFORE_PSW = "SEARCH_USER_BEFORE_PSW";
 	protected static final String SEARCH_USER_BEFORE_USER = "SEARCH_USER_BEFORE_USER";

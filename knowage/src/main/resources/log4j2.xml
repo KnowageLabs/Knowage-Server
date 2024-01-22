@@ -193,6 +193,15 @@
 		<logger name="it.eng.knowage.functionscatalog.utils.CatalogFunctionDataProxy" level="debug" additivity="false">
 			<AppenderRef ref="KNOWAGE_CORE" />
 		</logger>
+		<logger name="it.eng.knowage.encryption.DecryptionDataStoreTransformer" level="debug" additivity="false">
+			<AppenderRef ref="KNOWAGE_CORE" />
+		</logger>
+		<logger name="it.eng.knowage.encryption.DataEncryptionInitializer" level="debug" additivity="false">
+			<AppenderRef ref="KNOWAGE_CORE" />
+		</logger>
+		<logger name="privacymanager.wrapper.PrivacyManagerAPIImpl" level="debug" additivity="false">
+			<AppenderRef ref="KNOWAGE_CORE" />
+		</logger>
 		<Root level="error">
 			<AppenderRef ref="KNOWAGE_CORE" />
 		</Root>

@@ -54,10 +54,8 @@ public class FlatDataSet extends ConfigurableDataSet {
 
 	private String tableName = null;
 	private IDataSource dataSource = null;
-	private IMetaData metadata;
 
 	public FlatDataSet() {
-		super();
 	}
 
 	public FlatDataSet(SpagoBiDataSet dataSetConfig) {
@@ -96,21 +94,16 @@ public class FlatDataSet extends ConfigurableDataSet {
 	}
 
 	@Override
-	public void setMetadata(IMetaData metadata) {
-		this.metadata = metadata;
-	}
-
-	@Override
 	public IMetaData getMetadata() {
-		IMetaData metadata = null;
+		IMetaData currMetadata = null;
 		try {
 			DatasetMetadataParser dsp = new DatasetMetadataParser();
-			metadata = dsp.xmlToMetadata(getDsMetadata());
+			currMetadata = dsp.xmlToMetadata(getDsMetadata());
 		} catch (Exception e) {
 			logger.error("Error loading the metadata", e);
 			throw new SpagoBIEngineRuntimeException("Error loading the metadata", e);
 		}
-		return metadata;
+		return currMetadata;
 	}
 
 	@Override
@@ -166,13 +159,16 @@ public class FlatDataSet extends ConfigurableDataSet {
 	public DataIterator iterator() {
 		logger.debug("IN");
 		try {
+			IMetaData currMetadata = getMetadata();
 			String query = "select * from " + this.getTableName();
 			Connection connection = dataSource.getConnection();
 			Statement stmt = connection.createStatement();
+
+			connection.setAutoCommit(false); // PostgreSQL requires disabling auto-commit for setFetchSize to work
 			stmt.setFetchSize(5000);
+
 			ResultSet rs = stmt.executeQuery(query);
-			DataIterator iterator = new ResultSetIterator(connection, stmt, rs);
-			return iterator;
+			return new ResultSetIterator(connection, stmt, rs, currMetadata);
 		} catch (Exception e) {
 			throw new SpagoBIRuntimeException(e);
 		} finally {

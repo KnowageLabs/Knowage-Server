@@ -60,21 +60,36 @@ public class DecryptionDataStoreTransformer extends AbstractDataStoreTransformer
 
 		AtomicInteger index = new AtomicInteger();
 
-		dataStoreMetadata.getFieldsMeta().stream().collect(Collectors.toMap(e -> index.getAndIncrement(), e -> e))
-				.entrySet().stream().filter(e -> e.getValue().isDecrypt()).forEach(e -> {
-					Integer key = e.getKey();
-					IFieldMetaData value = e.getValue();
-					decryptableField.add(value);
-					decryptableFieldByIndex.put(key, value);
-				});
+		// @formatter:off
+		LOGGER.debug("Looking for fields which need decrypt...");
+		dataStoreMetadata.getFieldsMeta()
+			.stream()
+			.collect(Collectors.toMap(e -> index.getAndIncrement(), e -> e))
+			.entrySet()
+			.stream()
+			.peek(e -> {
+				LOGGER.debug("Current field: {}", e);
+			})
+			.filter(e -> e.getValue().isDecrypt())
+			.forEach(e -> {
+				Integer key = e.getKey();
+				IFieldMetaData value = e.getValue();
+				decryptableField.add(value);
+				decryptableFieldByIndex.put(key, value);
+
+				LOGGER.debug("Field to decrypt: {}", value);
+			});
+		// @formatter:on
 
 		needDecryption = !decryptableField.isEmpty();
 
+		LOGGER.debug("Need decryption? {}", needDecryption);
 		if (needDecryption) {
-			EncryptionConfiguration cfg = EncryptionPreferencesRegistry.getInstance()
-					.getConfiguration(EncryptionPreferencesRegistry.DEFAULT_CFG_KEY);
-
-			encryptor = EncryptorFactory.getInstance().create(cfg);
+			LOGGER.debug("Decryption needed. Instantiating the encryptor...");
+			encryptor = EncryptorFactory.getInstance().createDefault();
+			LOGGER.debug("Encryptor is {}", encryptor);
+		} else {
+			LOGGER.debug("Encryptor not needed");
 		}
 
 	}
