@@ -1,5 +1,10 @@
+html, body {
+    height: 100%;
+}
+
 #app {
     background-color: var(--kn-app-background-color);
+    height: 100%;
 }
 
 .kn-border-none {
