@@ -97,6 +97,7 @@ import it.eng.spagobi.tools.dataset.common.query.AggregationFunctions;
 import it.eng.spagobi.tools.dataset.common.query.IAggregationFunction;
 import it.eng.spagobi.tools.dataset.common.transformer.DataStoreStatsTransformer;
 import it.eng.spagobi.tools.dataset.common.transformer.IDataStoreTransformer;
+import it.eng.spagobi.tools.dataset.common.transformer.SyncMetaDataDataStoreTransformer;
 import it.eng.spagobi.tools.dataset.constants.DataSetConstants;
 import it.eng.spagobi.tools.dataset.dao.DataSetFactory;
 import it.eng.spagobi.tools.dataset.dao.IDataSetDAO;
@@ -311,7 +312,9 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 				functionTransformer.transform(dataStore);
 			}
 
-			IDataStoreTransformer transformer = new DecryptionDataStoreTransformer(dataSet);
+			IDataStoreTransformer transformer = new SyncMetaDataDataStoreTransformer(dataSet);
+			transformer.transform(dataStore);
+			transformer = new DecryptionDataStoreTransformer(dataStore);
 			transformer.transform(dataStore);
 			transformer = new DataStoreStatsTransformer();
 			transformer.transform(dataStore);

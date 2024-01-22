@@ -131,12 +131,11 @@ public abstract class AbstractDataSet implements IDataSet {
 
 	private Set tags;
 
-	protected List<IDataStoreTransformer> dataStoreTransformers = new ArrayList<>();
+	protected final List<IDataStoreTransformer> dataStoreTransformers = new ArrayList<>();
 
 	private static Logger logger = Logger.getLogger(AbstractDataSet.class);
 
 	public AbstractDataSet() {
-		super();
 		behaviours = new HashMap();
 		tags = new HashSet();
 	}
@@ -162,7 +161,6 @@ public abstract class AbstractDataSet implements IDataSet {
 	}
 
 	public AbstractDataSet(SpagoBiDataSet dataSet) {
-		super();
 		setId(dataSet.getDsId());
 		setName(dataSet.getName());
 		setLabel(dataSet.getLabel());
@@ -182,13 +180,15 @@ public abstract class AbstractDataSet implements IDataSet {
 		setPersistTableName(dataSet.getPersistTableName());
 		setScheduled(dataSet.isScheduled());
 		SpagoBiDataSource dsDataSourceForReading = dataSet.getDataSourceForReading();
-		setDataSourceForReading(dsDataSourceForReading != null ? DataSourceFactory.getDataSource(dsDataSourceForReading) : null);
+		setDataSourceForReading(
+				dsDataSourceForReading != null ? DataSourceFactory.getDataSource(dsDataSourceForReading) : null);
 		setScopeId(dataSet.getScopeId());
 		setScopeCd(dataSet.getScopeCd());
 		setOwner(dataSet.getOwner());
 
 		if (this.getPivotColumnName() != null && this.getPivotColumnValue() != null && this.getPivotRowName() != null) {
-			addDataStoreTransformer(new PivotDataSetTransformer(getPivotColumnName(), getPivotColumnValue(), getPivotRowName(), isNumRows()));
+			addDataStoreTransformer(new PivotDataSetTransformer(getPivotColumnName(), getPivotColumnValue(),
+					getPivotRowName(), isNumRows()));
 		}
 
 		behaviours = new HashMap();
@@ -296,7 +296,7 @@ public abstract class AbstractDataSet implements IDataSet {
 	}
 
 	public boolean hasMetadata() {
-		return (getDsMetadata() != null && getDsMetadata().trim().equals("") == false);
+		return (getDsMetadata() != null && !getDsMetadata().trim().equals(""));
 	}
 
 	@Override
@@ -366,7 +366,8 @@ public abstract class AbstractDataSet implements IDataSet {
 		List<JSONObject> parameters = getDataSetParameters();
 		if (parameters.size() > paramValues.size()) {
 			String parameterNotValorizedStr = getParametersNotValorized(parameters, paramValues);
-			throw new ParametersNotValorizedException("The following parameters have no value [" + parameterNotValorizedStr + "]");
+			throw new ParametersNotValorizedException(
+					"The following parameters have no value [" + parameterNotValorizedStr + "]");
 		}
 
 		if (paramValues.size() > 0) {
@@ -390,7 +391,7 @@ public abstract class AbstractDataSet implements IDataSet {
 		String paramValue = paramValues.get(paramName);
 		String[] values = null;
 		if (isMultiValue) {
-			List<String> list = new ArrayList<String>();
+			List<String> list = new ArrayList<>();
 			boolean paramValueConsumed = false;
 			try {
 				JSONArray jsonArray = new JSONArray(paramValue);
@@ -504,7 +505,9 @@ public abstract class AbstractDataSet implements IDataSet {
 					SourceBean sbRow = (SourceBean) iterator.next();
 					String namePar = sbRow.getAttribute(NAME) != null ? sbRow.getAttribute(NAME).toString() : null;
 					String typePar = sbRow.getAttribute(TYPE) != null ? sbRow.getAttribute(TYPE).toString() : null;
-					boolean multiValue = sbRow.getAttribute(MULTIVALUE) != null ? Boolean.valueOf(sbRow.getAttribute(MULTIVALUE).toString()) : false;
+					boolean multiValue = sbRow.getAttribute(MULTIVALUE) != null
+							? Boolean.valueOf(sbRow.getAttribute(MULTIVALUE).toString())
+							: false;
 
 					if (typePar != null && typePar.startsWith("class")) {
 						typePar = typePar.substring(6);
@@ -534,7 +537,8 @@ public abstract class AbstractDataSet implements IDataSet {
 		}
 	}
 
-	private static String getParametersNotValorized(List<JSONObject> parameters, Map<String, String> parametersValues) throws JSONException {
+	private static String getParametersNotValorized(List<JSONObject> parameters, Map<String, String> parametersValues)
+			throws JSONException {
 		String toReturn = "";
 
 		for (Iterator<JSONObject> iterator = parameters.iterator(); iterator.hasNext();) {
@@ -932,9 +936,9 @@ public abstract class AbstractDataSet implements IDataSet {
 
 	/**
 	 * Get the values for a certain dataset's field, considering a optional filter. In case the dataset is persisted or flat, the values are retrieved by the
-	 * persistence table. In case the dataset is neither persisted nor flat, it will look for a temporary table with the same signature using
-	 * TemporaryTableManager; in case there is no temporary table, the dataset will be persisted, therefore the datasource must be read and write or a
-	 * datasource for writing must be provided.
+	 * persistence table. In case the dataset is neither persisted nor flat, it will look for a temporary table with the same signature using TemporaryTableManager;
+	 * in case there is no temporary table, the dataset will be persisted, therefore the datasource must be read and write or a datasource for writing must be
+	 * provided.
 	 *
 	 * @param fieldName The dataset's field
 	 * @param start     The offset on results
@@ -951,13 +955,14 @@ public abstract class AbstractDataSet implements IDataSet {
 		}
 	}
 
-	protected IDataStore getDomainValuesFromPersistenceTable(String fieldName, Integer start, Integer limit, IDataStoreFilter filter) {
+	protected IDataStore getDomainValuesFromPersistenceTable(String fieldName, Integer start, Integer limit,
+			IDataStoreFilter filter) {
 		IDataStore toReturn = null;
 		try {
 			String tableName = this.getTableNameForReading();
 			IDataSource dataSource = this.getDataSourceForReading();
-			StringBuffer buffer = new StringBuffer(
-					"Select DISTINCT " + AbstractJDBCDataset.encapsulateColumnName(fieldName, dataSource) + " FROM " + tableName);
+			StringBuffer buffer = new StringBuffer("Select DISTINCT "
+					+ AbstractJDBCDataset.encapsulateColumnName(fieldName, dataSource) + " FROM " + tableName);
 			IDataSetTableDescriptor tableDescriptor = new DataSetTableDescriptor(this);
 			manageFilterOnDomainValues(buffer, fieldName, tableDescriptor, filter);
 			String sqlStatement = buffer.toString();
@@ -968,7 +973,8 @@ public abstract class AbstractDataSet implements IDataSet {
 		return toReturn;
 	}
 
-	protected IDataStore getDomainValuesFromTemporaryTable(String fieldName, Integer start, Integer limit, IDataStoreFilter filter) {
+	protected IDataStore getDomainValuesFromTemporaryTable(String fieldName, Integer start, Integer limit,
+			IDataStoreFilter filter) {
 
 		IDataStore toReturn = null;
 		try {
@@ -1001,8 +1007,8 @@ public abstract class AbstractDataSet implements IDataSet {
 			}
 			IDataSource dataSource = tableDescriptor.getDataSource();
 			String filterColumnName = tableDescriptor.getColumnName(fieldName);
-			StringBuffer buffer = new StringBuffer(
-					"Select DISTINCT " + AbstractJDBCDataset.encapsulateColumnName(filterColumnName, dataSource) + " FROM " + tableName);
+			StringBuffer buffer = new StringBuffer("Select DISTINCT "
+					+ AbstractJDBCDataset.encapsulateColumnName(filterColumnName, dataSource) + " FROM " + tableName);
 			manageFilterOnDomainValues(buffer, fieldName, tableDescriptor, filter);
 			String sqlStatement = buffer.toString();
 			toReturn = TemporaryTableManager.queryTemporaryTable(sqlStatement, dataSource, start, limit);
@@ -1014,7 +1020,8 @@ public abstract class AbstractDataSet implements IDataSet {
 		return toReturn;
 	}
 
-	protected void manageFilterOnDomainValues(StringBuffer buffer, String fieldName, IDataSetTableDescriptor tableDescriptor, IDataStoreFilter filter) {
+	protected void manageFilterOnDomainValues(StringBuffer buffer, String fieldName,
+			IDataSetTableDescriptor tableDescriptor, IDataStoreFilter filter) {
 		if (filter != null) {
 			String filterColumnName = tableDescriptor.getColumnName(fieldName);
 			if (filterColumnName == null) {
@@ -1023,8 +1030,10 @@ public abstract class AbstractDataSet implements IDataSet {
 			String columnName = tableDescriptor.getColumnName(fieldName);
 			Class clazz = tableDescriptor.getColumnType(fieldName);
 			String value = getFilterValue(filter.getValue(), clazz);
-			IConditionalOperator conditionalOperator = SQLStatementConditionalOperators.getOperator(filter.getOperator());
-			String temp = conditionalOperator.apply(AbstractJDBCDataset.encapsulateColumnName(columnName, tableDescriptor.getDataSource()),
+			IConditionalOperator conditionalOperator = SQLStatementConditionalOperators
+					.getOperator(filter.getOperator());
+			String temp = conditionalOperator.apply(
+					AbstractJDBCDataset.encapsulateColumnName(columnName, tableDescriptor.getDataSource()),
 					new String[] { value });
 			buffer.append(" WHERE " + temp);
 		}
@@ -1138,7 +1147,8 @@ public abstract class AbstractDataSet implements IDataSet {
 
 	@Override
 	public DataIterator iterator() {
-		throw new UnsupportedOperationException("This operation has to be overriden by subclasses in order to be used.");
+		throw new UnsupportedOperationException(
+				"This operation has to be overriden by subclasses in order to be used.");
 	}
 
 	@Override
@@ -1211,7 +1221,7 @@ public abstract class AbstractDataSet implements IDataSet {
 	}
 
 	@Override
-	public void removeDataStoreTransformers() {
+	public void clearDataStoreTransformers() {
 		dataStoreTransformers.clear();
 	}
 
