@@ -1,4 +1,3 @@
-import { getLocale } from '@/helpers/commons/localeHelper'
 import deepcopy from 'deepcopy'
 import moment from 'moment'
 
@@ -42,10 +41,13 @@ function checkIfMultivalueDriverContainsCrossNavigationValue(tempParam: any, cro
     return index !== -1
 }
 
-function getValidDate(value: string) {
-    let momentDate = moment(deepcopy(value)).locale(getLocale())
-    if (momentDate.isValid()) return momentDate.toDate()
-
+export function getValidDate(value: string) {
+    let momentDate = moment(deepcopy(value))
+    const validFormats = ['DD/MM/YYYY', 'DD/MM/YYYY HH:mm:ss.SSS']
+    for (let i = 0; i < validFormats.length; i++) {
+        momentDate = moment(deepcopy(value), validFormats[i])
+        if (momentDate.isValid()) return momentDate.toDate()
+    }
     return ''
 }
 

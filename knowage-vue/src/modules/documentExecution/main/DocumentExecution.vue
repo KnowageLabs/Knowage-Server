@@ -96,11 +96,11 @@ import TieredMenu from 'primevue/tieredmenu'
 import Registry from '../registry/Registry.vue'
 import Dossier from '../dossier/Dossier.vue'
 import Olap from '../olap/Olap.vue'
-import moment from 'moment'
 import DocumentExecutionSelectCrossNavigationDialog from './dialogs/documentExecutionSelectCrossNavigationDialog/DocumentExecutionSelectCrossNavigationDialog.vue'
 import DocumentExecutionCNContainerDialog from './dialogs/documentExecutionCNContainerDialog/DocumentExecutionCNContainerDialog.vue'
 import { getCorrectRolesForExecution } from '../../../helpers/commons/roleHelper'
 import { findCrossTargetByCrossName, loadNavigationParamsInitialValue } from './DocumentExecutionCrossNavigationHelper'
+import { getValidDate } from './DocumentExecutionCrossNavigationHelper'
 
 const crypto = require('crypto')
 const deepcopy = require('deepcopy')
@@ -266,8 +266,7 @@ export default defineComponent({
             }
 
             return parameterVisible
-        },
-        
+        }
     },
     async created() {
         window.addEventListener('message', this.iframeEventsListener)
@@ -706,7 +705,7 @@ export default defineComponent({
                     })
 
                     if (el.type === 'DATE' && !el.selectionType && el.valueSelection === 'man_in' && el.showOnPanel === 'true' && el.visible) {
-                        el.parameterValue[0].value = moment(el.parameterValue[0].description?.split('#')[0]).toDate() as any
+                        el.parameterValue[0].value = getValidDate('' + el.parameterValue[0].value)
                     }
                 }
                 if (el.data) {
