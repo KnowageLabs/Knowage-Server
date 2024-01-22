@@ -622,7 +622,7 @@ public class ExcelExporter extends AbstractFormatExporter {
 			HashMap<String, Object> variablesMap = new HashMap<>();
 			JSONObject widgetData = dataStore.getJSONObject("widgetData");
 			JSONObject widgetContent = widgetData.getJSONObject("content");
-			HashMap<String, String> arrayHeader = new HashMap<>();
+			HashMap<Integer, String> arrayHeader = new HashMap<>();
 			HashMap<String, String> chartAggregationsMap = new HashMap<>();
 			if (widgetData.getString("type").equalsIgnoreCase("table")) {
 				for (int i = 0; i < widgetContent.getJSONArray("columnSelectedOfDataset").length(); i++) {
@@ -633,7 +633,7 @@ public class ExcelExporter extends AbstractFormatExporter {
 					} else {
 						key = column.getString("name");
 					}
-					arrayHeader.put(key, column.getString("aliasToShow"));
+					arrayHeader.put(i, column.getString("aliasToShow"));
 				}
 			} else if (widgetData.getString("type").equalsIgnoreCase("chart")) {
 				for (int i = 0; i < widgetContent.getJSONArray("columnSelectedOfDataset").length(); i++) {
@@ -749,9 +749,10 @@ public class ExcelExporter extends AbstractFormatExporter {
 					JSONObject column = columnsOrdered.getJSONObject(i);
 					String columnName = column.getString("header");
 					String chartAggregation = null;
-					if (widgetData.getString("type").equalsIgnoreCase("table") || widgetData.getString("type").equalsIgnoreCase("discovery")) {
-						if (arrayHeader.get(columnName) != null) {
-							columnName = arrayHeader.get(columnName);
+					if (widgetData.getString("type").equalsIgnoreCase("table")
+							|| widgetData.getString("type").equalsIgnoreCase("discovery")) {
+						if (arrayHeader.get(i) != null) {
+							columnName = arrayHeader.get(i);
 						}
 					} else if (widgetData.getString("type").equalsIgnoreCase("chart")) {
 						chartAggregation = chartAggregationsMap.get(columnName);

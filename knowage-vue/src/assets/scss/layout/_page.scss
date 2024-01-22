@@ -7,7 +7,7 @@
             margin-left: 0;
         }
         .kn-page--full {
-            width: 100vw;
+            width: 100%;
         }
     }
 }
@@ -15,10 +15,10 @@
 .kn-page {
     display: flex;
     flex-direction: column;
-    height: 100vh;
+    height: 100%;
     &--full {
         @extend .kn-page;
-        width: calc(100vw - #{var(--kn-mainmenu-width)});
+        width: calc(100% - #{var(--kn-mainmenu-width)});
     }
     .kn-page-content {
         flex: 1;
