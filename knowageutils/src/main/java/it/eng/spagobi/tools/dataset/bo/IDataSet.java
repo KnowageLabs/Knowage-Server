@@ -133,9 +133,9 @@ public interface IDataSet extends Iterable<IRecord> {
 	// --------------------------------------------------------------------------------------------------
 
 	// profilation ...
-	public Map getUserProfileAttributes();
+	Map getUserProfileAttributes();
 
-	public void setUserProfileAttributes(Map<String, Object> attributes);
+	void setUserProfileAttributes(Map<String, Object> attributes);
 
 	// execution ...
 	// --------------------------------------------------------------------------------------------------
@@ -242,64 +242,64 @@ public interface IDataSet extends Iterable<IRecord> {
 	 * @param filter    The optional filter
 	 * @return The datastore containing the values for the dataset's field
 	 */
-	public IDataStore getDomainValues(String fieldName, Integer start, Integer limit, IDataStoreFilter filter);
+	IDataStore getDomainValues(String fieldName, Integer start, Integer limit, IDataStoreFilter filter);
 
-	public IDataStore decode(IDataStore datastore);
+	IDataStore decode(IDataStore datastore);
 
 	boolean isCalculateResultNumberOnLoadEnabled();
 
 	void setCalculateResultNumberOnLoad(boolean enabled);
 
-	public void setDataSource(IDataSource dataSource);
+	void setDataSource(IDataSource dataSource);
 
-	public IDataSource getDataSource();
+	IDataSource getDataSource();
 
-	public String getTableNameForReading();
+	String getTableNameForReading();
 
-	public IDataSource getDataSourceForReading();
+	IDataSource getDataSourceForReading();
 
-	public void setDataSourceForReading(IDataSource dataSource);
+	void setDataSourceForReading(IDataSource dataSource);
 
-	public String getOrganization();
+	String getOrganization();
 
-	public void setOrganization(String organization);
+	void setOrganization(String organization);
 
-	public IDataSource getDataSourceForWriting();
+	IDataSource getDataSourceForWriting();
 
-	public void setDataSourceForWriting(IDataSource dataSource);
+	void setDataSourceForWriting(IDataSource dataSource);
 
-	public FederationDefinition getDatasetFederation();
+	FederationDefinition getDatasetFederation();
 
-	public void setDatasetFederation(FederationDefinition datasetFederation);
+	void setDatasetFederation(FederationDefinition datasetFederation);
 
-	public String getStartDateField();
+	String getStartDateField();
 
-	public void setStartDateField(String startDateField);
+	void setStartDateField(String startDateField);
 
-	public String getEndDateField();
+	String getEndDateField();
 
-	public void setEndDateField(String endDateField);
+	void setEndDateField(String endDateField);
 
-	public String getSchedulingCronLine();
+	String getSchedulingCronLine();
 
-	public void setSchedulingCronLine(String schedulingCronLine);
+	void setSchedulingCronLine(String schedulingCronLine);
 
-	public Map<String, ?> getDefaultValues();
+	Map<String, ?> getDefaultValues();
 
 	@Override
-	public DataIterator iterator();
+	DataIterator iterator();
 
-	public boolean isIterable();
+	boolean isIterable();
 
-	public boolean isRealtime();
+	boolean isRealtime();
 
-	public boolean isCachingSupported();
+	boolean isCachingSupported();
 
-	public DatasetEvaluationStrategyType getEvaluationStrategy(boolean isNearRealtime);
+	DatasetEvaluationStrategyType getEvaluationStrategy(boolean isNearRealtime);
 
 	UserProfile getUserProfile();
 
-	public void setUserProfile(UserProfile profile);
+	void setUserProfile(UserProfile profile);
 
 	void resolveParameters();
 
@@ -307,12 +307,12 @@ public interface IDataSet extends Iterable<IRecord> {
 
 	Set getTags();
 
-	public void setTags(Set tags);
+	void setTags(Set tags);
 
 	// Data store transformer
 	boolean hasDataStoreTransformers();
 
-	void removeDataStoreTransformers();
+	void clearDataStoreTransformers();
 
 	List<IDataStoreTransformer> getDataStoreTransformers();
 

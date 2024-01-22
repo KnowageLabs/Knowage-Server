@@ -1,6 +1,5 @@
 package it.eng.knowage.encryption;
 
-import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -14,13 +13,11 @@ import org.jasypt.encryption.pbe.PBEStringEncryptor;
 import org.jasypt.exceptions.EncryptionInitializationException;
 import org.jasypt.exceptions.EncryptionOperationNotPossibleException;
 
-import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.dataset.common.datastore.IField;
 import it.eng.spagobi.tools.dataset.common.datastore.IRecord;
 import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
 import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
-import it.eng.spagobi.tools.dataset.common.metadata.MetaData;
 import it.eng.spagobi.tools.dataset.common.transformer.AbstractDataStoreTransformer;
 
 public class DecryptionDataStoreTransformer extends AbstractDataStoreTransformer {
@@ -28,13 +25,16 @@ public class DecryptionDataStoreTransformer extends AbstractDataStoreTransformer
 	private static final Logger LOGGER = LogManager.getLogger(DecryptionDataStoreTransformer.class);
 
 	private boolean needDecryption = false;
-	private final List<IFieldMetaData> decryptableField = new ArrayList<>();
 	private final Map<Integer, IFieldMetaData> decryptableFieldByIndex = new LinkedHashMap<>();
 	private PBEStringEncryptor encryptor;
-	private final IDataSet dataSet;
+	private final IMetaData dataStoreMetadata;
 
-	public DecryptionDataStoreTransformer(IDataSet dataSet) {
-		this.dataSet = dataSet;
+	public DecryptionDataStoreTransformer(IDataStore dataStore) {
+		this(dataStore.getMetaData());
+	}
+
+	public DecryptionDataStoreTransformer(IMetaData dataStoreMetadata) {
+		this.dataStoreMetadata = dataStoreMetadata;
 		try {
 			setUpDecryption();
 		} catch (Exception e) {
@@ -56,8 +56,6 @@ public class DecryptionDataStoreTransformer extends AbstractDataStoreTransformer
 	}
 
 	private void setUpDecryption() {
-		IMetaData dataStoreMetadata = getMetaData();
-
 		AtomicInteger index = new AtomicInteger();
 
 		// @formatter:off
@@ -74,15 +72,14 @@ public class DecryptionDataStoreTransformer extends AbstractDataStoreTransformer
 			.forEach(e -> {
 				Integer key = e.getKey();
 				IFieldMetaData value = e.getValue();
-				decryptableField.add(value);
 				decryptableFieldByIndex.put(key, value);
 
-				LOGGER.debug("Field to decrypt: {}", value);
+				LOGGER.debug("\tField to decrypt: {}", value);
 			});
 		// @formatter:on
 
-		LOGGER.debug("Decryptable field map is {}", decryptableField);
-		needDecryption = !decryptableField.isEmpty();
+		LOGGER.debug("Decryptable field map is {}", decryptableFieldByIndex);
+		needDecryption = !decryptableFieldByIndex.isEmpty();
 
 		LOGGER.debug("Need decryption? {}", needDecryption);
 		if (needDecryption) {
@@ -135,10 +132,6 @@ public class DecryptionDataStoreTransformer extends AbstractDataStoreTransformer
 
 	private String mapFieldKey(IFieldMetaData field) {
 		return field.getName();
-	}
-
-	private IMetaData getMetaData() {
-		return dataSet.getDsMetadata() != null ? dataSet.getMetadata() : new MetaData();
 	}
 
 }

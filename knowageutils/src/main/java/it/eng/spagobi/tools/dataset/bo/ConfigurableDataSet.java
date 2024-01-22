@@ -133,7 +133,8 @@ public abstract class ConfigurableDataSet extends AbstractDataSet {
 			}
 
 			if (hasBehaviour(QuerableBehaviour.class.getName())) {
-				QuerableBehaviour querableBehaviour = (QuerableBehaviour) getBehaviour(QuerableBehaviour.class.getName());
+				QuerableBehaviour querableBehaviour = (QuerableBehaviour) getBehaviour(
+						QuerableBehaviour.class.getName());
 				String stm = querableBehaviour.getStatement();
 				dataProxy.setStatement(stm);
 			}
@@ -151,7 +152,7 @@ public abstract class ConfigurableDataSet extends AbstractDataSet {
 
 			dataStore = dataProxy.load(dataReader);
 
-			addDataStoreTransformer(new DecryptionDataStoreTransformer(this));
+			addDataStoreTransformer(new DecryptionDataStoreTransformer(dataStore));
 			addDataStoreTransformer(new PrivacyManagerDataStoreTransformer(this));
 			addDataStoreTransformer(new DataStoreStatsTransformer());
 
@@ -267,12 +268,14 @@ public abstract class ConfigurableDataSet extends AbstractDataSet {
 
 	@Override
 	public void setDataSource(IDataSource dataSource) {
-		throw new UnreachableCodeException("setDataSource method not implemented in class " + this.getClass().getName() + "!!!!");
+		throw new UnreachableCodeException(
+				"setDataSource method not implemented in class " + this.getClass().getName() + "!!!!");
 	}
 
 	@Override
 	public IDataSource getDataSource() {
-		throw new UnreachableCodeException("getDataSource method not implemented in class " + this.getClass().getName() + "!!!!");
+		throw new UnreachableCodeException(
+				"getDataSource method not implemented in class " + this.getClass().getName() + "!!!!");
 	}
 
 }
