@@ -266,6 +266,9 @@ export default defineComponent({
             }
 
             return parameterVisible
+        },
+        isMobileDevice(){
+            return /Android|iPhone/i.test(navigator.userAgent)
         }
     },
     async created() {
@@ -826,7 +829,8 @@ export default defineComponent({
             postForm.action = process.env.VUE_APP_HOST_URL + postObject.url
             postForm.method = 'post'
             const iframeName = crossNavigationPopupMode ? 'documentFramePopup' : 'documentFrame'
-            postForm.target = tempIndex !== -1 ? iframeName + tempIndex : documentLabel
+            if(this.isMobileDevice && postObject.params.outputType?.toLowerCase() === 'pdf') postForm.target = "_blank"
+            else postForm.target = tempIndex !== -1 ? iframeName + tempIndex : documentLabel
             postForm.acceptCharset = 'UTF-8'
             document.body.appendChild(postForm)
 
