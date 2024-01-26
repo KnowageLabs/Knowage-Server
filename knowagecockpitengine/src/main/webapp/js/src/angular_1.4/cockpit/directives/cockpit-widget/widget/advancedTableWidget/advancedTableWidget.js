@@ -856,6 +856,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			    },
 				onColumnResized: columnResized,
 				rowHeight: 28,
+				rowBuffer: 60,
 				getRowStyle: function(params) {
 					if($scope.ngModel.settings.rowThresholds && $scope.ngModel.settings.rowThresholds.enabled){
 						if(rowThresholdComparer(mapRow(params.data))) return rowThresholdComparer(mapRow(params.data));
