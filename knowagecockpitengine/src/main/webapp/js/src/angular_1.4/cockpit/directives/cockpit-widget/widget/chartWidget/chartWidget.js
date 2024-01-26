@@ -196,7 +196,7 @@ function cockpitChartWidgetControllerFunction(
 				var tempData = JSON.parse(dataAndChartConf.jsonData);
 				var category = $scope.ngModel.content.columnSelectedOfDataset.filter((i)=>i.fieldType === "ATTRIBUTE")[0];
 				var field = tempData.metaData.fields.filter((i)=>i.header === category.alias)[0];
-				var stat = Object.values(tempData.stats).filter((i)=>i.name === field.name)[0];
+				var stat = tempData.stats[tempData.metaData.fields.map((i)=>i.name).indexOf(field?.name)];
 				if(stat && stat.cardinality < $scope.ngModel.content.chartTemplate.CHART.categoriesCheck.min){
 					$scope.hideChart = $scope.ngModel.content.chartTemplate.CHART.categoriesCheck.text;
 					return
