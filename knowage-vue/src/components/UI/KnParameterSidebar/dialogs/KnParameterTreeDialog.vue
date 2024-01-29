@@ -3,7 +3,7 @@
         <template #header>
             <Toolbar class="kn-toolbar kn-toolbar--primary p-p-0 p-m-0 p-col-12">
                 <template #start>
-                    {{ $t('common.parameter') + ': ' + parameter?.urlName }}
+                    {{ $t('common.parameter') + ': ' + parameter?.label }}
                 </template>
             </Toolbar>
         </template>
