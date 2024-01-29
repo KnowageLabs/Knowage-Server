@@ -15,6 +15,7 @@ GNU Affero General Public License for more details.
 You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 --%>
+<%@page import="org.apache.commons.lang.StringEscapeUtils"%>  
 <html>
 <head>
 <style type="text/css">
@@ -55,7 +56,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	<div class="kn-info flex-50" style="font-size:.8rem">
   
 <%String name=(String)request.getAttribute("msgOK");
-out.print(name);
+out.print(StringEscapeUtils.escapeHtml(name));
 request.removeAttribute("msgOK");	 %>
 
 	</div>

@@ -56,12 +56,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		 language="java" 
 		 contentType="text/html; charset=UTF-8"
     	 pageEncoding="UTF-8" %>
+<%@page import="org.apache.commons.lang.StringEscapeUtils"%>    	 
 
 <div style='width:100%;display:flex;justify-content:center;align-items:center'>
 	<div class="kn-infoerror flex-50" style="font-size:.8rem">
       
 <%String name=(String)request.getAttribute("msgKO");
-out.print(name);
+out.print(StringEscapeUtils.escapeHtml(name));
 request.removeAttribute("msgKO");
 %>
 	</div>
