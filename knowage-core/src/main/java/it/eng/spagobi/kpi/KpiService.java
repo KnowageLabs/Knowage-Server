@@ -1291,12 +1291,10 @@ public class KpiService {
 				parameterMap.put(placeholder.getName(), placeholder.getValue());
 			}
 			// Replacing parameters from "@name" to "$P{name}" notation as expected by IDataSet
-			Pattern regex = Pattern.compile("[$&+,:;=\\\\?@#|/<>.^*()%!-]");
+			
 			for (String paramName : parameterMap.keySet()) {
-				if (regex.matcher(paramName).find()) {
-					throw new IllegalArgumentException("paramName [" + paramName + " contains special characters");
-				}
-				query = query.replaceAll("\\@\\b" + paramName + "\\b", "\\$P{" + paramName + "}");
+				//query = query.replaceAll("\\@\\b" + Pattern.quote(paramName) + "\\b", "\\$P{" + Pattern.quote(paramName) + "}");
+				query = query.replaceAll("@" + Pattern.quote(paramName), "$P{" + paramName + "}");
 			}
 		}
 

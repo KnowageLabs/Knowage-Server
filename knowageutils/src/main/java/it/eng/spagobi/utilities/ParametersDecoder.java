@@ -43,6 +43,8 @@ public class ParametersDecoder {
 
 	public static final String DEFAULT_OPEN_BLOCK_MARKER = "{";
 	public static final String DEFAULT_CLOSE_BLOCK_MARKER = "}";
+	public static final String DEFAULT_SEPARATOR = ";";
+	
 
 	/////////////////////////////////////////////////////////////
 	// CONSTRUCTORS
@@ -52,21 +54,9 @@ public class ParametersDecoder {
 	 * Instantiates a new parameters decoder.
 	 */
 	public ParametersDecoder() {
-		this(DEFAULT_OPEN_BLOCK_MARKER, DEFAULT_CLOSE_BLOCK_MARKER);
 	}
 
-	/**
-	 * Instantiates a new parameters decoder.
-	 *
-	 * @param openBlockMarker  the open block marker
-	 * @param closeBlockMarker the close block marker
-	 */
-	public ParametersDecoder(String openBlockMarker, String closeBlockMarker) {
-		this.openBlockMarker = openBlockMarker;
-		this.closeBlockMarker = closeBlockMarker;
-		this.multiValueRegex = String.format("%s.%s.+%s.+%s", Pattern.quote(openBlockMarker), Pattern.quote(openBlockMarker), Pattern.quote(closeBlockMarker),
-				Pattern.quote(closeBlockMarker));
-	}
+
 
 	/////////////////////////////////////////////////////////////
 	// ACCESS METHODS
@@ -170,7 +160,7 @@ public class ParametersDecoder {
 			String separator = getSeparator(value);
 			String innerBlock = getInnerBlock(value);
 			String parameterType = getParameterType(value);
-			String[] chunks = innerBlock.split(separator);
+			String[] chunks = innerBlock.split(DEFAULT_SEPARATOR);
 			for (int i = 0; i < chunks.length; i++) {
 				String singleValue = chunks[i];
 				if (parameterType.equalsIgnoreCase("STRING")) {
@@ -215,7 +205,7 @@ public class ParametersDecoder {
 			values = new ArrayList();
 			String separator = getSeparator(value);
 			String innerBlock = getInnerBlock(value);
-			String[] chunks = innerBlock.split(separator);
+			String[] chunks = innerBlock.split(DEFAULT_SEPARATOR);
 			for (int i = 0; i < chunks.length; i++) {
 				String singleValue = chunks[i];
 				values.add(singleValue);
