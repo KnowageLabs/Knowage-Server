@@ -57,7 +57,11 @@ Sbi.sdk.namespace =  function() {
     for (i=0; i<a.length; ++i) {
         d=a[i].split(".");
         rt = d[0];
-        eval('if (typeof ' + rt + ' == "undefined"){' + rt + ' = {};} o = ' + rt + ';');
+        if(typeof d[0] == "undefined") {
+		rt = {};	 
+		}
+		o = rt;
+        
         for (j=1; j<d.length; ++j) {
             o[d[j]]=o[d[j]] || {};
             o=o[d[j]];

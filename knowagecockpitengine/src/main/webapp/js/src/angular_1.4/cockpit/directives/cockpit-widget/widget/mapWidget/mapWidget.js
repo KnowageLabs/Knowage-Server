@@ -358,7 +358,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 						var expression =  leftOperand + operator + rightOperand;
 
 						//if (filterValue.indexOf(columnValue)==-1){
-						if (eval(expression) == false){
+					    var evalFunc = Function("return " + expression)();		
+						if (evalFunc == false){
 							datastore.rows.splice(i,1);
 						}
 					}else if (filters[f].type == 'SPATIAL_ATTRIBUTE'){

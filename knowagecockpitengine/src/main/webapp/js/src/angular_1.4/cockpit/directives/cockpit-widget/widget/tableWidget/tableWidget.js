@@ -539,7 +539,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
 						//if (filterValue.indexOf(columnValue)==-1){
-						if (eval(expression) == false){
+						var evalFunc = Function("return " + expression)();	
+						if (evalFunc == false){
 							dataset.splice(d,1);
 						}
 					}else if (filters[f].type == 'SPATIAL_ATTRIBUTE'){

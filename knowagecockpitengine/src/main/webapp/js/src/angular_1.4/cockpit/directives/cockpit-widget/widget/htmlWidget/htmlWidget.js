@@ -293,7 +293,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			do {
 				if(!allElements[i].innerHTML) allElements[i].innerHTML = ' ';
 				if(allElements[i] && allElements[i].hasAttribute("kn-repeat")){
-					if(eval($scope.checkAttributePlaceholders(allElements[i].getAttribute('kn-repeat')))){
+					var evalFunc = Function("return " + $scope.checkAttributePlaceholders(allElements[i].getAttribute('kn-repeat')))();
+					if(evalFunc){
 						allElements[i].removeAttribute("kn-repeat");
 						var limit = allElements[i].hasAttribute("limit") && (allElements[i].hasAttribute("limit") <= $scope.htmlDataset.rows.length) ? allElements[i].getAttribute('limit') : $scope.htmlDataset.rows.length;
 						if(allElements[i].hasAttribute("limit") && allElements[i].getAttribute('limit') == -1) limit = $scope.htmlDataset.rows.length;
@@ -341,7 +342,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				    	condition = condition.replace($scope.calcRegex, $scope.calcReplacer);
 				    	condition = condition.replace($scope.variablesRegex, $scope.variablesReplacer);
 				    	condition = condition.replace($scope.i18nRegex, $scope.i18nReplacer);
-				    	if(eval(condition)){
+				    	var evalFunc = Function("return " + condition)();
+				    	if(evalFunc){
 				    		allElements[j].removeAttribute("kn-if");
 				    	}else{
 				    		allElements[j].parentNode.removeChild(allElements[j]);
@@ -425,7 +427,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		}
 
 		$scope.calcReplacer = function(match,p1,min,max,precision,format){
-			var result = eval(p1);
+			var evalFunc = Function("return " + p1)();
+			var result = evalFunc;
 			if(min && result < min) result = min;
 			if(max && result > max) result = max;
 			if(format) return precision ? $filter('number')(result, precision) : $filter('number')(result);
