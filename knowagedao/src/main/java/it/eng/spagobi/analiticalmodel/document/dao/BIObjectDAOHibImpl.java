@@ -2993,7 +2993,8 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 		SbiEngines sbiEngines = sbiObject.getSbiEngines();
 		if (sbiEngines != null && sbiEngines.getDriverNm() != null && !sbiEngines.getDriverNm().isEmpty()) {
 			try {
-				IEngineDriver driver = (IEngineDriver) Class.forName(sbiEngines.getDriverNm()).newInstance();
+				SpagoBiEngineDriver sbiDriver = SpagoBiEngineDriver.fromDriverName(sbiEngines.getDriverNm());
+				IEngineDriver driver = (IEngineDriver) Class.forName(sbiDriver.getDriverName()).newInstance();
 				List<DefaultOutputParameter> params = driver.getDefaultOutputParameters();
 				for (DefaultOutputParameter defaultOutputParameter : params) {
 					SbiOutputParameter outputParameter = new SbiOutputParameter();
@@ -3021,7 +3022,8 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 		List<SbiOutputParameter> ret = new ArrayList<>();
 		if (sbiObject.getSbiEngines() != null) {
 			try {
-				IEngineDriver driver = (IEngineDriver) Class.forName(sbiObject.getSbiEngines().getDriverNm())
+				SpagoBiEngineDriver sbiDriver = SpagoBiEngineDriver.fromDriverName(sbiObject.getSbiEngines().getDriverNm());
+				IEngineDriver driver = (IEngineDriver) Class.forName(sbiDriver.getDriverName())
 						.newInstance();
 				List<DefaultOutputParameter> params = driver.getSpecificOutputParameters(categories);
 				for (DefaultOutputParameter defaultOutputParameter : params) {
