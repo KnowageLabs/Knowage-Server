@@ -24,6 +24,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -47,8 +48,9 @@ public class QbeCSVExporter {
 	public void export(File outputFile, Connection connection, String sqlStatement) {
 		try {
 			FileWriter writer = new FileWriter(outputFile);
-			Statement stmt = connection.createStatement(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
-			ResultSet resultSet = stmt.executeQuery( sqlStatement );
+			//Statement stmt = connection.createStatement(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
+			PreparedStatement pstmt = connection.prepareStatement(sqlStatement, ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
+			ResultSet resultSet = pstmt.executeQuery(  );
 			int columnCount = resultSet.getMetaData().getColumnCount();
 			while (resultSet.next()) {
 				writeRecordInfoCsvFile(writer, resultSet, columnCount);

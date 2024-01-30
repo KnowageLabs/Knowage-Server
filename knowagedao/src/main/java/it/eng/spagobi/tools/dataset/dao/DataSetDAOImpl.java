@@ -2897,12 +2897,12 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 					// String uniqueName = metaBC.getName().toLowerCase();
 
 					// sets the new bcId
-					SbiMetaDsBcId metaDsBcId = new SbiMetaDsBcId();
-					metaDsBcId.setOrganization(ds.getId().getOrganization());
+					SbiMetaDsBcId metaDsBcId = new SbiMetaDsBcId(ds.getId().getDsId(), ds.getId().getVersionNum(),ds.getId().getOrganization(), metaBC.getBcId() );
+					/*metaDsBcId.setOrganization(ds.getId().getOrganization());
 					metaDsBcId.setVersionNum(ds.getId().getVersionNum());
 					metaDsBcId.setDsId(ds.getId().getDsId());
 					metaDsBcId.setBcId(metaBC.getBcId());
-
+                    */
 					// Loads old records to delete (previous version)
 					List<SbiMetaDsBc> lstDsBc = DAOFactory.getDsBcDAO().loadDsBcByKey(metaDsBcId);
 					for (SbiMetaDsBc el : lstDsBc) {

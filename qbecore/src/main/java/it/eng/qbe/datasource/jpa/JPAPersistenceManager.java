@@ -37,6 +37,9 @@ import java.util.stream.Collectors;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
 import javax.persistence.Query;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
 import javax.persistence.metamodel.Attribute;
 import javax.persistence.metamodel.Attribute.PersistentAttributeType;
 import javax.persistence.metamodel.EntityType;
@@ -130,12 +133,19 @@ public class JPAPersistenceManager implements IPersistenceManager {
 
 		logger.debug("SELECT max(p." + keyColumn + ") as c FROM " + targetEntity.getName() + " p");
 		// logger.debug("SELECT max(p."+keyColumn+") as c FROM "+targetEntity.getName()+" p");
-		Query maxQuery = entityManager.createQuery("SELECT max(p." + keyColumn + ") as c FROM " + targetEntity.getName() + " p");
+		CriteriaBuilder cb1 = entityManager.getCriteriaBuilder();
+		@SuppressWarnings("unchecked")
+		CriteriaQuery<Number> cq = cb1.createQuery(Number.class);
+		@SuppressWarnings("unchecked")
+		Root root = cq.from(targetEntity.getBindableJavaType());
+		Number num = (Number) cq.select(cb1.max(root.<Number>get(keyColumn)));
+		
+		//Query maxQuery = entityManager.createQuery("SELECT max(p." + keyColumn + ") as c FROM " + targetEntity.getName() + " p");
 
-		Object result = maxQuery.getSingleResult();
+		//Object result = maxQuery.getSingleResult();
 
-		if (result != null) {
-			toReturn = Integer.valueOf(result.toString());
+		if (num != null) {
+			toReturn = num.intValue();
 			toReturn++;
 		}
 
