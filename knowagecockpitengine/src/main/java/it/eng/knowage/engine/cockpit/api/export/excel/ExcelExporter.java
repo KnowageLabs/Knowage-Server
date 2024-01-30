@@ -30,6 +30,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -68,7 +69,10 @@ import it.eng.knowage.engine.cockpit.api.export.ExporterClient;
 import it.eng.knowage.engine.cockpit.api.export.excel.exporters.IWidgetExporter;
 import it.eng.knowage.engine.cockpit.api.export.excel.exporters.WidgetExporterFactory;
 import it.eng.spago.error.EMFAbstractError;
+import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 import it.eng.spagobi.analiticalmodel.document.bo.ObjTemplate;
+import it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO;
+import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
 import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.tenant.TenantManager;
@@ -96,7 +100,8 @@ public class ExcelExporter extends AbstractFormatExporter {
 
 	private static final String INT_CELL_DEFAULT_FORMAT = "0";
 	private static final String FLOAT_CELL_DEFAULT_FORMAT = "#,##0.00";
-
+	
+	private String imageB64 = "";
 	private String documentName = "";
 	private Map<String, Object> properties;
 
@@ -242,7 +247,7 @@ public class ExcelExporter extends AbstractFormatExporter {
 					fillSelectionsSheetWithData(selectionsMap, wb, selectionsSheet, "Selections");
 					exportedSheets++;
 				}
-				///
+				
 				Map<String, Map<String, Object>> driversMap = new HashMap<>();
 				try {
 					driversMap = createDriversMap();
@@ -267,7 +272,7 @@ public class ExcelExporter extends AbstractFormatExporter {
 				for (Sheet sheet : wb) {
 					if (sheet != null) {
 						// Adjusts the column width to fit the contents
-						adjustColumnWidth(sheet);
+						adjustColumnWidth(sheet, this.imageB64);
 					}
 				}
 			}
@@ -427,8 +432,7 @@ public class ExcelExporter extends AbstractFormatExporter {
 			fillSelectionsSheetWithData(selectionsMap, wb, selectionsSheet, "Selections");
 			exportedSheets++;
 		}
-
-		//
+		
 		Map<String, Map<String, Object>> driversMap = new HashMap<>();
 		try {
 			driversMap = createDriversMap();
@@ -549,17 +553,52 @@ public class ExcelExporter extends AbstractFormatExporter {
 		fillSheetWithData(dataStore, wb, newSheet, widgetName, 0, null);
 	}
 
-	private void fillSelectionsSheetWithData(Map<String, Map<String, Object>> selectionsMap, Workbook wb, Sheet sheet, String widgetName) {
+	private void fillSelectionsSheetWithData(Map<String, Map<String, Object>> selectionsMap, Workbook wb, Sheet sheet,
+			String widgetName) {
+		
+		// CREATE BRANDED HEADER SHEET
+		this.imageB64 = OrganizationImageManager.getOrganizationB64Image(TenantManager.getTenant().getName());
+		int startRow = 0;
+		float rowHeight = 35; // in points	
+		int rowspan = 2;
+		int startCol = 0;
+		int colWidth = 25;
+		int colspan = 2;
+		int namespan = 10;
+		int dataspan = 10;
 
-		Row newheader = sheet.createRow((short) 0);
+		Row newheader;
+		
+		int headerIndex = createBrandedHeaderSheet(
+				sheet, 
+				this.imageB64, 
+				startRow, 
+				rowHeight, 
+				rowspan, 
+				startCol,
+				colWidth,
+				colspan,
+				namespan,
+				dataspan,
+				this.documentName,
+				sheet.getSheetName());
+
+		newheader = sheet.createRow((short) headerIndex+1); // first row
+		
 		Cell cell = newheader.createCell(0);
 		cell.setCellValue("Dataset");
+		CellStyle headerCellStyle = buildCellStyle(sheet, true, HorizontalAlignment.LEFT, VerticalAlignment.CENTER, (short) 11);
+		cell.setCellStyle(headerCellStyle);
+		
 		Cell cell2 = newheader.createCell(1);
 		cell2.setCellValue("Field");
+		cell2.setCellStyle(headerCellStyle);
+		
 		Cell cell3 = newheader.createCell(2);
 		cell3.setCellValue("Values");
+		cell3.setCellStyle(headerCellStyle);
 
-		int j = 1;
+		int j = headerIndex + 2;
 		for (String key : selectionsMap.keySet()) {
 
 			for (String selectionskey : selectionsMap.get(key).keySet()) {
@@ -568,14 +607,12 @@ public class ExcelExporter extends AbstractFormatExporter {
 
 				Cell cellData0 = row.createCell(0);
 				cellData0.setCellValue(key);
-
+				
 				Cell cellData1 = row.createCell(1);
 				cellData1.setCellValue(selectionskey);
 
 				Cell cellData2 = row.createCell(2);
-
 				cellData2.setCellValue(extractSelectionValues("" + selectionsMap.get(key).get(selectionskey)));
-
 			}
 
 		}
@@ -584,29 +621,105 @@ public class ExcelExporter extends AbstractFormatExporter {
 
 	private void fillDriversSheetWithData(Map<String, Map<String, Object>> driversMap, Workbook wb, Sheet sheet, String widgetName) {
 
-		Row newheader = sheet.createRow((short) 0);
+		// CREATE BRANDED HEADER SHEET
+		this.imageB64 = OrganizationImageManager.getOrganizationB64Image(TenantManager.getTenant().getName());
+		int startRow = 0;
+		float rowHeight = 35; // in points	
+		int rowspan = 2;
+		int startCol = 0;
+		int colWidth = 25;
+		int colspan = 2;
+		int namespan = 10;
+		int dataspan = 10;
+
+		Row newheader;
+		
+		int headerIndex = createBrandedHeaderSheet(
+				sheet, 
+				this.imageB64, 
+				startRow, 
+				rowHeight, 
+				rowspan, 
+				startCol,
+				colWidth,
+				colspan,
+				namespan,
+				dataspan,
+				this.documentName,
+				sheet.getSheetName());
+
+		newheader = sheet.createRow((short) headerIndex+1);
+		
 		Cell cell = newheader.createCell(0);
 		cell.setCellValue("Filter");
+		CellStyle headerCellStyle = buildCellStyle(sheet, true, HorizontalAlignment.LEFT, VerticalAlignment.CENTER, (short) 11);
+		cell.setCellStyle(headerCellStyle);
+		
 		Cell cell2 = newheader.createCell(1);
 		cell2.setCellValue("Value");
+		cell2.setCellStyle(headerCellStyle);
 
-		int j = 1;
+		List<BIObject> allDocuments = getDocuments();
+		List<BIObjectParameter> drivers = getDriversByDocumentName(allDocuments, this.documentName);
+		
+		int j = headerIndex+2;
 		for (String key : driversMap.keySet()) {
 
 			Row row = sheet.createRow(j++);
 
 			Cell cellData0 = row.createCell(0);
-			cellData0.setCellValue(key);
-
-			Cell cellData1 = row.createCell(1);
-
-			if (driversMap.get(key).keySet().contains("description")) {
+			cellData0.setCellValue(getDriverLabelByParameterUrlName(drivers, key));
+			
+			Cell cellData1 = row.createCell(1);			
+			if(driversMap.get(key).keySet().contains("description")){
 				cellData1.setCellValue(extractSelectionValues("" + driversMap.get(key).get("description")));
 			} else {
 				cellData1.setCellValue(extractSelectionValues("" + driversMap.get(key).get("value")));
 			}
 		}
 
+	}
+	
+	private List<BIObject> getDocuments() {
+		IBIObjectDAO documentsDao = null;
+		List<BIObject> allDocuments = null;
+		try {
+			documentsDao = DAOFactory.getBIObjectDAO();
+			allDocuments = documentsDao.loadAllBIObjects();
+		} catch (Exception e) {
+			LOGGER.debug("Documents objects can not be provided", e);
+		}
+		return allDocuments;
+	}
+	
+	private List<BIObjectParameter> getDriversByDocumentName(List<BIObject> allDocuments, String documentName) {
+		List<BIObjectParameter> drivers = null;
+		try {
+			for (BIObject document : allDocuments) {
+				if (document.getName().equals(documentName)) {
+					drivers = document.getDrivers();
+					break;
+				}
+			}
+		} catch (Exception e) {
+			LOGGER.debug("Drivers objects can not be provided", e);
+		}
+		return drivers;
+	}
+	
+	private String getDriverLabelByParameterUrlName(List<BIObjectParameter> drivers, String parameterUrlName) {
+		String label = "";
+		try {
+			for (BIObjectParameter driver : drivers) {
+				if (driver.getParameterUrlName().equals(parameterUrlName)) {
+					label = driver.getLabel();
+					break;
+				}
+			}
+		} catch (Exception e) {
+			LOGGER.debug("Driver label can not be provided", e);
+		}
+		return label;
 	}
 
 	private String extractSelectionValues(String selectionValues) {
@@ -622,7 +735,7 @@ public class ExcelExporter extends AbstractFormatExporter {
 			HashMap<String, Object> variablesMap = new HashMap<>();
 			JSONObject widgetData = dataStore.getJSONObject("widgetData");
 			JSONObject widgetContent = widgetData.getJSONObject("content");
-			HashMap<Integer, String> arrayHeader = new HashMap<>();
+			HashMap<String, String> arrayHeader = new HashMap<>();
 			HashMap<String, String> chartAggregationsMap = new HashMap<>();
 			if (widgetData.getString("type").equalsIgnoreCase("table")) {
 				for (int i = 0; i < widgetContent.getJSONArray("columnSelectedOfDataset").length(); i++) {
@@ -633,7 +746,7 @@ public class ExcelExporter extends AbstractFormatExporter {
 					} else {
 						key = column.getString("name");
 					}
-					arrayHeader.put(i, column.getString("aliasToShow"));
+					arrayHeader.put(key, column.getString("aliasToShow"));
 				}
 			} else if (widgetData.getString("type").equalsIgnoreCase("chart")) {
 				for (int i = 0; i < widgetContent.getJSONArray("columnSelectedOfDataset").length(); i++) {
@@ -680,8 +793,8 @@ public class ExcelExporter extends AbstractFormatExporter {
 			JSONArray groupsFromWidgetContent = getGroupsFromWidgetContent(widgetData);
 			Map<String, String> groupsAndColumnsMap = getGroupAndColumnsMap(widgetContent, groupsFromWidgetContent);
 
-			// CREATE BRANDED HEADER SHEET
-			String imageB64 = OrganizationImageManager.getOrganizationB64ImageWide(TenantManager.getTenant().getName());
+			// CREATE BRANDED HEADER SHEET	
+			this.imageB64 = OrganizationImageManager.getOrganizationB64Image(TenantManager.getTenant().getName());
 			int startRow = 0;
 			float rowHeight = 35; // in points
 			int rowspan = 2;
@@ -690,41 +803,10 @@ public class ExcelExporter extends AbstractFormatExporter {
 			int colspan = 2;
 			int namespan = 10;
 			int dataspan = 10;
-
+			
 			if (offset == 0) { // if pagination is active, headers must be created only once
-				Row header = null;
-
-				if (imageB64 != null) {
-
-					for (int r = startRow; r < startRow + rowspan; r++) {
-						sheet.createRow(r).setHeightInPoints(rowHeight);
-						for (int c = startCol; c < startCol + colspan; c++) {
-							sheet.getRow(r).createCell(c);
-							sheet.setColumnWidth(c, colWidth * 256);
-						}
-					}
-
-					// set brandend header image
-					sheet.addMergedRegion(new CellRangeAddress(startRow, startRow + rowspan - 1, startCol, startCol + colspan - 1));
-					drawBrandendHeaderImage(sheet, imageB64, Workbook.PICTURE_TYPE_PNG, startCol, startRow, colspan, rowspan);
-
-					// set document name
-					sheet.getRow(startRow).createCell(startCol + colspan).setCellValue(documentName);
-					sheet.addMergedRegion(new CellRangeAddress(startRow, startRow, startCol + colspan, namespan));
-					// set cell style
-					CellStyle documentNameCellStyle = buildCellStyle(sheet, true, HorizontalAlignment.LEFT, VerticalAlignment.CENTER, (short) 16);
-					sheet.getRow(startRow).getCell(startCol + colspan).setCellStyle(documentNameCellStyle);
-
-					// set date
-					DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
-					Date date = new Date();
-					sheet.getRow(startRow + 1).createCell(startCol + colspan).setCellValue("Data di generazione: " + dateFormat.format(date));
-					sheet.addMergedRegion(new CellRangeAddress(startRow + 1, startRow + 1, startCol + colspan, dataspan));
-					// set cell style
-					CellStyle dateCellStyle = buildCellStyle(sheet, false, HorizontalAlignment.LEFT, VerticalAlignment.CENTER, (short) 8);
-					sheet.getRow(startRow + 1).getCell(startCol + colspan).setCellStyle(dateCellStyle);
-				}
-
+				Row header = null; 
+				
 //				ATTENTION: exporting single widget must not be different from exporting whole cockpit
 //				if (isSingleWidgetExport) { // export single widget
 //					header = createHeaderColumnNames(sheet, groupsAndColumnsMap, columnsOrdered, 0);
@@ -735,15 +817,22 @@ public class ExcelExporter extends AbstractFormatExporter {
 //					firstCell.setCellValue(widgetName);
 //					header = createHeaderColumnNames(sheet, groupsAndColumnsMap, columnsOrdered, 1);
 //				}
-
-				int headerIndex = (imageB64 != null) ? (startRow + rowspan) : 0;
-				Row widgetNameRow = sheet.createRow((short) headerIndex);
-				Cell widgetNameCell = widgetNameRow.createCell(0);
-				widgetNameCell.setCellValue(widgetName);
-				// set cell style
-				CellStyle widgetNameStyle = buildCellStyle(sheet, true, HorizontalAlignment.LEFT, VerticalAlignment.CENTER, (short) 14);
-				widgetNameCell.setCellStyle(widgetNameStyle);
-				header = createHeaderColumnNames(sheet, groupsAndColumnsMap, columnsOrdered, headerIndex + 1);
+				
+				int headerIndex = createBrandedHeaderSheet(
+						sheet, 
+						this.imageB64, 
+						startRow, 
+						rowHeight, 
+						rowspan, 
+						startCol,
+						colWidth,
+						colspan,
+						namespan,
+						dataspan,
+						this.documentName,
+						widgetName);
+								
+				header = createHeaderColumnNames(sheet, groupsAndColumnsMap, columnsOrdered, headerIndex+1);	
 
 				for (int i = 0; i < columnsOrdered.length(); i++) {
 					JSONObject column = columnsOrdered.getJSONObject(i);
@@ -751,9 +840,9 @@ public class ExcelExporter extends AbstractFormatExporter {
 					String chartAggregation = null;
 					if (widgetData.getString("type").equalsIgnoreCase("table")
 							|| widgetData.getString("type").equalsIgnoreCase("discovery")) {
-						if (arrayHeader.get(i) != null) {
-							columnName = arrayHeader.get(i);
-						}
+						if (arrayHeader.get(columnName) != null) {
+							columnName = arrayHeader.get(columnName);
+						}					
 					} else if (widgetData.getString("type").equalsIgnoreCase("chart")) {
 						chartAggregation = chartAggregationsMap.get(columnName);
 						if (chartAggregation != null) {
@@ -769,14 +858,13 @@ public class ExcelExporter extends AbstractFormatExporter {
 
 					Cell cell = header.createCell(i);
 					cell.setCellValue(columnName);
-
-					// set cell style
+					
 					CellStyle headerCellStyle = buildCellStyle(sheet, true, HorizontalAlignment.LEFT, VerticalAlignment.CENTER, (short) 11);
 					cell.setCellStyle(headerCellStyle);
 				}
 
 				// adjusts the column width to fit the contents
-				adjustColumnWidth(sheet);
+				adjustColumnWidth(sheet, this.imageB64);
 			}
 
 			// Cell styles for int and float
@@ -808,9 +896,9 @@ public class ExcelExporter extends AbstractFormatExporter {
 //					row = sheet.createRow((offset + r + isGroup) + 1); // starting from second row, because the 0th (first) is Header
 //				else
 //					row = sheet.createRow((offset + r + isGroup) + 2);
-
-				if (imageB64 != null)
-					row = sheet.createRow((offset + r + isGroup) + (startRow + rowspan) + 2); // starting by Header
+				
+				if(!this.imageB64.isEmpty())
+					row = sheet.createRow((offset + r + isGroup) + (startRow+rowspan) + 2); // starting by Header
 				else
 					row = sheet.createRow((offset + r + isGroup) + 2);
 
@@ -887,186 +975,7 @@ public class ExcelExporter extends AbstractFormatExporter {
 		} catch (Exception e) {
 			throw new SpagoBIRuntimeException("Cannot write data to Excel file", e);
 		}
-	}
-
-	public CellStyle buildCellStyle(Sheet sheet, boolean bold, HorizontalAlignment alignment, VerticalAlignment verticalAlignment, short headerFontSizeShort) {
-
-		// CELL
-		CellStyle cellStyle = sheet.getWorkbook().createCellStyle();
-
-		// alignment
-		cellStyle.setAlignment(alignment);
-		cellStyle.setVerticalAlignment(verticalAlignment);
-
-		// foreground color
-//		String headerBGColor = (String) this.getProperty(PROPERTY_HEADER_BACKGROUND_COLOR);
-//		short backgroundColorIndex = headerBGColor != null ? IndexedColors.valueOf(headerBGColor).getIndex()
-//				: IndexedColors.valueOf(DEFAULT_HEADER_BACKGROUND_COLOR).getIndex();
-//		cellStyle.setFillForegroundColor(backgroundColorIndex);
-
-		// pattern
-//		cellStyle.setFillPattern(fp);
-
-		// borders
-//		cellStyle.setBorderBottom(borderBottom);
-//		cellStyle.setBorderLeft(borderLeft);
-//		cellStyle.setBorderRight(borderRight);
-//		cellStyle.setBorderTop(borderTop);
-
-//		String bordeBorderColor = (String) this.getProperty(PROPERTY_HEADER_BORDER_COLOR);
-//		short borderColorIndex = bordeBorderColor != null ? IndexedColors.valueOf(bordeBorderColor).getIndex()
-//				: IndexedColors.valueOf(DEFAULT_HEADER_BORDER_COLOR).getIndex();
-//		cellStyle.setLeftBorderColor(borderColorIndex);
-//		cellStyle.setRightBorderColor(borderColorIndex);
-//		cellStyle.setBottomBorderColor(borderColorIndex);
-//		cellStyle.setTopBorderColor(borderColorIndex);
-
-		// FONT
-		Font font = sheet.getWorkbook().createFont();
-
-		// size
-//		Short headerFontSize = (Short) this.getProperty(PROPERTY_HEADER_FONT_SIZE);
-//		short headerFontSizeShort = headerFontSize != null ? headerFontSize.shortValue() : DEFAULT_HEADER_FONT_SIZE;
-		font.setFontHeightInPoints(headerFontSizeShort);
-
-		// name
-//		String fontName = (String) this.getProperty(PROPERTY_FONT_NAME);
-//		fontName = fontName != null ? fontName : DEFAULT_FONT_NAME;
-//		font.setFontName(fontName);
-
-		// color
-//		String headerColor = (String) this.getProperty(PROPERTY_HEADER_COLOR);
-//		short headerColorIndex = headerColor != null ? IndexedColors.valueOf(headerColor).getIndex()
-//				: IndexedColors.valueOf(DEFAULT_HEADER_COLOR).getIndex();
-//		font.setColor(headerColorIndex);
-
-		// bold
-		font.setBold(bold);
-
-		cellStyle.setFont(font);
-		return cellStyle;
-	}
-
-	public void adjustColumnWidth(Sheet sheet) {
-		try {
-			boolean enabled = true;
-			((SXSSFSheet) sheet).trackAllColumnsForAutoSizing();
-			Row row = sheet.getRow(sheet.getLastRowNum());
-			if (row != null) {
-				for (int i = 0; i < row.getLastCellNum(); i++) {
-					sheet.autoSizeColumn(i);
-					if (enabled && (i == 0 || i == 1)) {
-						// first or second column
-						int colWidth = 25;
-						if (sheet.getColumnWidthInPixels(i) < (colWidth * 256))
-							sheet.setColumnWidth(i, colWidth * 256);
-					}
-				}
-			}
-		} catch (Exception e) {
-			throw new SpagoBIRuntimeException("Cannot write data to Excel file", e);
-		}
-	}
-
-	public void drawBrandendHeaderImage(Sheet sheet, String imageB64, int pictureType, int startCol, int startRow, int colspan, int rowspan) {
-		try {
-			Workbook wb = sheet.getWorkbook();
-
-			// load the picture
-			String encodingPrefix = "base64,";
-			int contentStartIndex = imageB64.indexOf(encodingPrefix) + encodingPrefix.length();
-			byte[] bytes = org.apache.commons.codec.binary.Base64.decodeBase64(imageB64.substring(contentStartIndex));
-			int pictureIdx = wb.addPicture(bytes, pictureType);
-
-			// create an anchor with upper left cell startCol/startRow
-			CreationHelper helper = wb.getCreationHelper();
-			ClientAnchor anchor = helper.createClientAnchor();
-			anchor.setCol1(startCol);
-			anchor.setRow1(startRow);
-
-			Drawing drawing = sheet.createDrawingPatriarch();
-			Picture pict = drawing.createPicture(anchor, pictureIdx);
-
-			int pictWidthPx = pict.getImageDimension().width;
-			int pictHeightPx = pict.getImageDimension().height;
-
-			// get the heights of all merged rows in px
-			float[] rowHeightsPx = new float[startRow + rowspan];
-			float rowsHeightPx = 0f;
-			for (int r = startRow; r < startRow + rowspan; r++) {
-				Row row = sheet.getRow(r);
-				float rowHeightPt = row.getHeightInPoints();
-				rowHeightsPx[r - startRow] = rowHeightPt * Units.PIXEL_DPI / Units.POINT_DPI;
-				rowsHeightPx += rowHeightsPx[r - startRow];
-			}
-
-			// get the widths of all merged cols in px
-			float[] colWidthsPx = new float[startCol + colspan];
-			float colsWidthPx = 0f;
-			for (int c = startCol; c < startCol + colspan; c++) {
-				colWidthsPx[c - startCol] = sheet.getColumnWidthInPixels(c);
-				colsWidthPx += colWidthsPx[c - startCol];
-			}
-
-			// calculate scale
-			float scale = 1;
-			if (pictHeightPx > rowsHeightPx) {
-				float tmpscale = rowsHeightPx / pictHeightPx;
-				if (tmpscale < scale)
-					scale = tmpscale;
-			}
-			if (pictWidthPx > colsWidthPx) {
-				float tmpscale = colsWidthPx / pictWidthPx;
-				if (tmpscale < scale)
-					scale = tmpscale;
-			}
-
-			// calculate the horizontal center position
-			int horCenterPosPx = Math.round(colsWidthPx / 2f - pictWidthPx * scale / 2f);
-			Integer col1 = null;
-			colsWidthPx = 0f;
-			for (int c = 0; c < colWidthsPx.length; c++) {
-				float colWidthPx = colWidthsPx[c];
-				if (colsWidthPx + colWidthPx > horCenterPosPx) {
-					col1 = c + startCol;
-					break;
-				}
-				colsWidthPx += colWidthPx;
-			}
-
-			// set the horizontal center position as Col1 plus Dx1 of anchor
-			if (col1 != null) {
-				anchor.setCol1(col1);
-				anchor.setDx1(Math.round(horCenterPosPx - colsWidthPx) * Units.EMU_PER_PIXEL);
-			}
-
-			// calculate the vertical center position
-			int vertCenterPosPx = Math.round(rowsHeightPx / 2f - pictHeightPx * scale / 2f);
-			Integer row1 = null;
-			rowsHeightPx = 0f;
-			for (int r = 0; r < rowHeightsPx.length; r++) {
-				float rowHeightPx = rowHeightsPx[r];
-				if (rowsHeightPx + rowHeightPx > vertCenterPosPx) {
-					row1 = r + startRow;
-					break;
-				}
-				rowsHeightPx += rowHeightPx;
-			}
-
-			if (row1 != null) {
-				anchor.setRow1(row1);
-				anchor.setDy1(Math.round(vertCenterPosPx - rowsHeightPx) * Units.EMU_PER_PIXEL); // in unit EMU for XSSF
-			}
-
-			anchor.setCol2(startCol + colspan);
-			anchor.setDx2(Math.round(colsWidthPx - Math.round(horCenterPosPx - colsWidthPx)) * Units.EMU_PER_PIXEL);
-			anchor.setRow2(startRow + rowspan);
-			anchor.setDy2(Math.round(rowsHeightPx - Math.round(vertCenterPosPx - rowsHeightPx)) * Units.EMU_PER_PIXEL);
-
-		} catch (Exception e) {
-			throw new SpagoBIRuntimeException("Cannot write data to Excel file", e);
-		}
-	}
+	}	
 
 	private HashMap<String, Object> createMapVariables(HashMap<String, Object> variablesMap) throws JSONException {
 		if (body.has("COCKPIT_VARIABLES")) {
@@ -1162,9 +1071,105 @@ public class ExcelExporter extends AbstractFormatExporter {
 
 		return mapp;
 	}
+	
 
-	// create drivers map
+	
+	
+	private Map<String, Map<String, Object>> createSelectionsMap() throws JSONException {
+		Map<String, Map<String, Object>> selectionsMap = new HashMap<>();
+		if (body.has("COCKPIT_SELECTIONS") && body.get("COCKPIT_SELECTIONS") instanceof JSONArray) {
+			JSONArray cockpitSelections = body.getJSONArray("COCKPIT_SELECTIONS");
 
+			for (int i = 0; i < cockpitSelections.length(); i++) {
+				if (!(cockpitSelections.get(i) instanceof JSONArray)) {
+					JSONObject cockpitSelection = cockpitSelections.getJSONObject(i);
+
+					manageUserSelectionFromJSONObject(selectionsMap, cockpitSelection);
+				}
+			}
+		} else if (body.has("COCKPIT_SELECTIONS") && body.get("COCKPIT_SELECTIONS") instanceof JSONObject) {
+
+			JSONObject cockpitSelection = body.getJSONObject("COCKPIT_SELECTIONS");
+			manageUserSelectionFromJSONObject(selectionsMap, cockpitSelection);
+		}
+
+		return selectionsMap;
+	}
+	
+	private void manageUserSelectionFromJSONObject(Map<String, Map<String, Object>> selectionsMap,
+			JSONObject cockpitSelection) throws JSONException {
+		if (cockpitSelection.has("userSelections") && !((cockpitSelection.getJSONObject("userSelections")).length() == 0)) {
+			manageUserSelectionFromJSONObjectUsingKey(selectionsMap, cockpitSelection, "userSelections");
+		} else if (cockpitSelection.has("selections") && !((cockpitSelection.getJSONObject("selections")).length() == 0)) {
+			// TODO : Map widget seems to have a different syntax
+			manageUserSelectionFromJSONObjectUsingKey(selectionsMap, cockpitSelection, "selections");
+		}
+	}
+
+	private void manageUserSelectionFromJSONObjectUsingKey(Map<String, Map<String, Object>> selectionsMap,
+			JSONObject cockpitSelection, String key) throws JSONException {
+		JSONObject selections = cockpitSelection.getJSONObject(key);
+
+		Iterator<String> keys = selections.keys();
+
+		manageSingleUserSelection(selectionsMap, selections, keys);
+	}
+
+	private void manageSingleUserSelection(Map<String, Map<String, Object>> selectionsMap, JSONObject selections,
+			Iterator<String> keys) throws JSONException {
+		while (keys.hasNext()) {
+			String key = keys.next();
+			if (selections.get(key) instanceof JSONObject) {
+				manageSelection(selectionsMap, selections, key);
+			}
+		}
+	}
+
+	private void manageSelection(Map<String, Map<String, Object>> selectionsMap, JSONObject selections, String key)
+			throws JSONException {
+		JSONObject selection = (JSONObject) selections.get(key);
+		Iterator<String> selectionKeys = selection.keys();
+		HashMap<String, Object> selects = new HashMap<>();
+		while (selectionKeys.hasNext()) {
+			String selKey = selectionKeys.next();
+			Object select = selection.get(selKey);
+			if (!selKey.contains(",")) {
+				manageUserSelectionValue(selects, selKey, select);
+			}
+		}
+		if (!selects.isEmpty()) {
+			selectionsMap.put(key, selects);
+		}
+	}
+
+	private void manageUserSelectionValue(HashMap<String, Object> selects, String selKey, Object select)
+			throws JSONException {
+		if (select instanceof JSONObject) {
+			if (((JSONObject) select).has("filterOperator")) {
+				// Do nothing
+			}
+		} else {
+			if (select instanceof JSONArray) {
+				JSONArray selectArray = (JSONArray) select;
+				for (int j = 0; j < selectArray.length(); j++) {
+					Object selObj = selectArray.get(j);
+					if (selObj instanceof JSONObject) {
+						if (((JSONObject) selObj).has("filterOperator")) {
+							// Do nothing
+						} else {
+							selects.put(selKey, selObj);
+						}
+
+					} else {
+						selects.put(selKey, selObj);
+					}
+				}
+			} else {
+				selects.put(selKey, select);
+			}
+		}
+	}
+	
 	private Map<String, Map<String, Object>> createDriversMap() throws JSONException {
 		Map<String, Map<String, Object>> selectionsMap = new HashMap<>();
 		if (body.has("COCKPIT_SELECTIONS") && body.get("COCKPIT_SELECTIONS") instanceof JSONArray) {
@@ -1218,106 +1223,12 @@ public class ExcelExporter extends AbstractFormatExporter {
 		while (driverKeys.hasNext()) {
 			String selKey = driverKeys.next();
 			Object select = ((JSONObject) driver.get(0)).get(selKey);
-			if (!selKey.contains(",")) {
+			if (!selKey.contains(",") && !select.toString().isEmpty()) {
 				manageUserSelectionValue(selects, selKey, select);
 			}
 		}
 		if (!selects.isEmpty()) {
 			selectionsMap.put(key, selects);
-		}
-	}
-
-	// create selections map
-
-	private Map<String, Map<String, Object>> createSelectionsMap() throws JSONException {
-		Map<String, Map<String, Object>> selectionsMap = new HashMap<>();
-		if (body.has("COCKPIT_SELECTIONS") && body.get("COCKPIT_SELECTIONS") instanceof JSONArray) {
-			JSONArray cockpitSelections = body.getJSONArray("COCKPIT_SELECTIONS");
-
-			for (int i = 0; i < cockpitSelections.length(); i++) {
-				if (!(cockpitSelections.get(i) instanceof JSONArray)) {
-					JSONObject cockpitSelection = cockpitSelections.getJSONObject(i);
-
-					manageUserSelectionFromJSONObject(selectionsMap, cockpitSelection);
-				}
-			}
-		} else if (body.has("COCKPIT_SELECTIONS") && body.get("COCKPIT_SELECTIONS") instanceof JSONObject) {
-
-			JSONObject cockpitSelection = body.getJSONObject("COCKPIT_SELECTIONS");
-
-			manageUserSelectionFromJSONObject(selectionsMap, cockpitSelection);
-		}
-
-		return selectionsMap;
-	}
-
-	private void manageUserSelectionFromJSONObject(Map<String, Map<String, Object>> selectionsMap, JSONObject cockpitSelection) throws JSONException {
-		if (cockpitSelection.has("userSelections") && !((cockpitSelection.getJSONObject("userSelections")).length() == 0)) {
-			manageUserSelectionFromJSONObjectUsingKey(selectionsMap, cockpitSelection, "userSelections");
-		} else if (cockpitSelection.has("selections") && !((cockpitSelection.getJSONObject("selections")).length() == 0)) {
-			// TODO : Map widget seems to have a different syntax
-			manageUserSelectionFromJSONObjectUsingKey(selectionsMap, cockpitSelection, "selections");
-		}
-	}
-
-	private void manageUserSelectionFromJSONObjectUsingKey(Map<String, Map<String, Object>> selectionsMap, JSONObject cockpitSelection, String key)
-			throws JSONException {
-		JSONObject selections = cockpitSelection.getJSONObject(key);
-
-		Iterator<String> keys = selections.keys();
-
-		manageSingleUserSelection(selectionsMap, selections, keys);
-	}
-
-	private void manageSingleUserSelection(Map<String, Map<String, Object>> selectionsMap, JSONObject selections, Iterator<String> keys) throws JSONException {
-		while (keys.hasNext()) {
-			String key = keys.next();
-			if (selections.get(key) instanceof JSONObject) {
-				manageSelection(selectionsMap, selections, key);
-			}
-		}
-	}
-
-	private void manageSelection(Map<String, Map<String, Object>> selectionsMap, JSONObject selections, String key) throws JSONException {
-		JSONObject selection = (JSONObject) selections.get(key);
-		Iterator<String> selectionKeys = selection.keys();
-		HashMap<String, Object> selects = new HashMap<>();
-		while (selectionKeys.hasNext()) {
-			String selKey = selectionKeys.next();
-			Object select = selection.get(selKey);
-			if (!selKey.contains(",")) {
-				selects.put(selKey, select);
-			}
-		}
-		if (!selects.isEmpty()) {
-			selectionsMap.put(key, selects);
-		}
-	}
-
-	private void manageUserSelectionValue(HashMap<String, Object> selects, String selKey, Object select) throws JSONException {
-		if (select instanceof JSONObject) {
-			if (((JSONObject) select).has("filterOperator")) {
-				// Do nothing
-			}
-		} else {
-			if (select instanceof JSONArray) {
-				JSONArray selectArray = (JSONArray) select;
-				for (int j = 0; j < selectArray.length(); j++) {
-					Object selObj = selectArray.get(j);
-					if (selObj instanceof JSONObject) {
-						if (((JSONObject) selObj).has("filterOperator")) {
-							// Do nothing
-						} else {
-							selects.put(selKey, selObj);
-						}
-
-					} else {
-						selects.put(selKey, selObj);
-					}
-				}
-			} else {
-				selects.put(selKey, select);
-			}
 		}
 	}
 
