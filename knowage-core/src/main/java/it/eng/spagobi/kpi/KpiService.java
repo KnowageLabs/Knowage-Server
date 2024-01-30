@@ -32,6 +32,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.regex.Pattern;
 
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
@@ -1290,7 +1291,11 @@ public class KpiService {
 				parameterMap.put(placeholder.getName(), placeholder.getValue());
 			}
 			// Replacing parameters from "@name" to "$P{name}" notation as expected by IDataSet
+			Pattern regex = Pattern.compile("[$&+,:;=\\\\?@#|/<>.^*()%!-]");
 			for (String paramName : parameterMap.keySet()) {
+				if (regex.matcher(paramName).find()) {
+					throw new IllegalArgumentException("paramName [" + paramName + " contains special characters");
+				}
 				query = query.replaceAll("\\@\\b" + paramName + "\\b", "\\$P{" + paramName + "}");
 			}
 		}
