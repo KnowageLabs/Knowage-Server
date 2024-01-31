@@ -365,7 +365,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				templateUrl: $scope.getTemplateUrl('selectorWidgetMultiSelectDialogTemplate'),
 				parent: angular.element(document.body),
 				targetEvent: ev,
-				clickOutsideToClose:false,
+				clickOutsideToClose: true,
 				bindToController: true,
 				locals: {
 					itemsList:$scope.datasetRecords.rows,
