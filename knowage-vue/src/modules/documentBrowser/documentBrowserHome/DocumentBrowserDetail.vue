@@ -107,7 +107,7 @@ export default defineComponent({
     top: 0;
     right: 0;
     height: 100%;
-    max-width: 350px;
+    width: 350px;
 }
 
 .document-table-container {
