@@ -75,6 +75,7 @@ import it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
 import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.tenant.TenantManager;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
@@ -622,7 +623,7 @@ public class ExcelExporter extends AbstractFormatExporter {
 	private void fillDriversSheetWithData(Map<String, Map<String, Object>> driversMap, Workbook wb, Sheet sheet, String widgetName) {
 
 		// CREATE BRANDED HEADER SHEET
-		this.imageB64 = OrganizationImageManager.getOrganizationB64Image(TenantManager.getTenant().getName());
+		this.imageB64 = OrganizationImageManager.getOrganizationB64ImageWide(TenantManager.getTenant().getName());
 		int startRow = 0;
 		float rowHeight = 35; // in points	
 		int rowspan = 2;
@@ -794,7 +795,7 @@ public class ExcelExporter extends AbstractFormatExporter {
 			Map<String, String> groupsAndColumnsMap = getGroupAndColumnsMap(widgetContent, groupsFromWidgetContent);
 
 			// CREATE BRANDED HEADER SHEET	
-			this.imageB64 = OrganizationImageManager.getOrganizationB64Image(TenantManager.getTenant().getName());
+			this.imageB64 = OrganizationImageManager.getOrganizationB64ImageWide(TenantManager.getTenant().getName());
 			int startRow = 0;
 			float rowHeight = 35; // in points
 			int rowspan = 2;
@@ -897,7 +898,7 @@ public class ExcelExporter extends AbstractFormatExporter {
 //				else
 //					row = sheet.createRow((offset + r + isGroup) + 2);
 				
-				if(!this.imageB64.isEmpty())
+				if(StringUtilities.isNotEmpty(imageB64))
 					row = sheet.createRow((offset + r + isGroup) + (startRow+rowspan) + 2); // starting by Header
 				else
 					row = sheet.createRow((offset + r + isGroup) + 2);

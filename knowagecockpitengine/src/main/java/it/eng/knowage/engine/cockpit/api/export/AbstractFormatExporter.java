@@ -62,6 +62,7 @@ import it.eng.knowage.commons.multitenant.OrganizationImageManager;
 import it.eng.knowage.engine.cockpit.api.export.pdf.CssColorParser;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.i18n.dao.I18NMessagesDAO;
 import it.eng.spagobi.tenant.TenantManager;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
@@ -1447,7 +1448,7 @@ public abstract class AbstractFormatExporter {
 			if(row != null) {
 				for (int i = 0; i < row.getLastCellNum(); i++) {
 					sheet.autoSizeColumn(i);
-					if(!imageB64.isEmpty() && (i == 0 || i == 1)) {
+					if(StringUtilities.isNotEmpty(imageB64) && (i == 0 || i == 1)) {
 						// first or second column
 						int colWidth = 25;
 						if (sheet.getColumnWidthInPixels(i) < (colWidth * 256))
@@ -1462,8 +1463,8 @@ public abstract class AbstractFormatExporter {
 	
 	public int createBrandedHeaderSheet(Sheet sheet, String imageB64, 
 			int startRow, float rowHeight, int rowspan, int startCol, int colWidth, int colspan, int namespan, int dataspan, 
-			String documentName, String widgetName) {				
-		if (!imageB64.isEmpty()) {			
+			String documentName, String widgetName) {
+		if (StringUtilities.isNotEmpty(imageB64)) {			
 			for (int r = startRow; r < startRow+rowspan; r++) {
 				   sheet.createRow(r).setHeightInPoints(rowHeight);
 				   for (int c = startCol; c < startCol+colspan; c++) {
@@ -1493,7 +1494,7 @@ public abstract class AbstractFormatExporter {
 			sheet.getRow(startRow+1).getCell(startCol+colspan).setCellStyle(dateCellStyle);
 		}
 		
-		int headerIndex = (!imageB64.isEmpty()) ? (startRow+rowspan) : 0;
+		int headerIndex = (StringUtilities.isNotEmpty(imageB64)) ? (startRow+rowspan) : 0;
 		Row widgetNameRow = sheet.createRow((short) headerIndex);
 		Cell widgetNameCell = widgetNameRow.createCell(0);
 		widgetNameCell.setCellValue(widgetName);
