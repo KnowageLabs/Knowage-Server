@@ -557,7 +557,7 @@ public class ExcelExporter extends AbstractFormatExporter {
 			String widgetName) {
 		
 		// CREATE BRANDED HEADER SHEET
-		this.imageB64 = OrganizationImageManager.getOrganizationB64Image(TenantManager.getTenant().getName());
+		this.imageB64 = OrganizationImageManager.getOrganizationB64ImageWide(TenantManager.getTenant().getName());
 		int startRow = 0;
 		float rowHeight = 35; // in points	
 		int rowspan = 2;
