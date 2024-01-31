@@ -107,7 +107,6 @@ angular.module("cockpitModule").service("cockpitModule_widgetSelection",function
 				var obj = {};
 				obj["id"] = col.alias;
 				obj["alias"] = (ngModel.type == "table" ? col.aliasToShow : col.alias);
-				if(col.variables && col.variables.some((item)=>item.action === 'header')) obj["aliasVariableName"] = col.variables.filter((item)=>item.action === 'header')[0].variable;
 
 				if(col.boundFunction){
 					obj["catalogFunctionId"] = col.boundFunction.id;

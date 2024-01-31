@@ -314,7 +314,7 @@ function cockpitToolbarControllerFunction($scope,$timeout,$q,$location,windowCom
 		}
 				
 				
-				/*if (!angular.equals(cockpitModule_properties.VARIABLES,{})) {
+				if (!angular.equals(cockpitModule_properties.VARIABLES,{})) {
 					for (var k in widget.content.columnSelectedOfDataset) {
 						if(Array.isArray(widget.content.columnSelectedOfDataset[k].variables) && widget.content.columnSelectedOfDataset[k].variables.length >0) {
 							if (widget.type == "table" && widget.content.columnSelectedOfDataset[k].variables[0].action == 'header') {
@@ -327,7 +327,7 @@ function cockpitToolbarControllerFunction($scope,$timeout,$q,$location,windowCom
 
 						}
 					}
-				}*/
+				}
 
 				requestUrl.COCKPIT_SELECTIONS[i] = {};
 				if (widget.type == "map") {
