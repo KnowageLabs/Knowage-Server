@@ -736,19 +736,20 @@ public class ExcelExporter extends AbstractFormatExporter {
 			HashMap<String, Object> variablesMap = new HashMap<>();
 			JSONObject widgetData = dataStore.getJSONObject("widgetData");
 			JSONObject widgetContent = widgetData.getJSONObject("content");
-			HashMap<String, String> arrayHeader = new HashMap<>();
+			HashMap<Integer, String> arrayHeader = new HashMap<>();
 			HashMap<String, String> chartAggregationsMap = new HashMap<>();
 			if (widgetData.getString("type").equalsIgnoreCase("table")) {
 				for (int i = 0; i < widgetContent.getJSONArray("columnSelectedOfDataset").length(); i++) {
 					JSONObject column = widgetContent.getJSONArray("columnSelectedOfDataset").getJSONObject(i);
-					String key;
-					if (column.optBoolean("isCalculated") && !column.has("name")) {
-						key = column.getString("alias");
-					} else {
-						key = column.getString("name");
-					}
-					arrayHeader.put(key, column.getString("aliasToShow"));
-				}
+//					String key;
+//					if (column.optBoolean("isCalculated") && !column.has("name")) {
+//						key = column.getString("alias");
+//					} else {
+//						key = column.getString("name");
+//					}
+					// arrayHeader is used to rename excel header, especially when variables are setted up
+					arrayHeader.put(i, getTableColumnHeaderValue(column));
+				}					
 			} else if (widgetData.getString("type").equalsIgnoreCase("chart")) {
 				for (int i = 0; i < widgetContent.getJSONArray("columnSelectedOfDataset").length(); i++) {
 					JSONObject column = widgetContent.getJSONArray("columnSelectedOfDataset").getJSONObject(i);
