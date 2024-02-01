@@ -368,6 +368,8 @@
 		domainNm="Language tag code" valueDs="Turkish (TR)" />
 	<DOMAIN valueCd="zh-Hans-CN" valueNm="Chinese (CH)" domainCd="LANG"
 		domainNm="Language tag code" valueDs="Chinese (CH)" />
+	<DOMAIN valueCd="sk-SK" valueNm="Slovak" domainCd="LANG"
+		domainNm="Language tag code" valueDs="Slovak" />
 
 	<DOMAIN valueCd="fieldType" valueNm="fieldType" domainCd="DS_META_PROPERTY"
 		domainNm="Data Set Metadata Property" valueDs="Data Set Metadata Property" />
