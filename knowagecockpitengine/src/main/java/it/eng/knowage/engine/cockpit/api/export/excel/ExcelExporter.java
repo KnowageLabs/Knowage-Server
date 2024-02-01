@@ -39,6 +39,7 @@ import java.util.regex.Pattern;
 import javax.ws.rs.core.UriBuilder;
 
 import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.poi.ss.usermodel.Cell;
@@ -913,9 +914,9 @@ public class ExcelExporter extends AbstractFormatExporter {
 //					row = sheet.createRow((offset + r + isGroup) + 1); // starting from second row, because the 0th (first) is Header
 //				else
 //					row = sheet.createRow((offset + r + isGroup) + 2);
-				
-				if(!this.imageB64.isEmpty())
-					row = sheet.createRow((offset + r + isGroup) + (startRow+rowspan) + 2); // starting by Header
+
+				if (StringUtils.isNotEmpty(imageB64))
+					row = sheet.createRow((offset + r + isGroup) + (startRow + rowspan) + 2); // starting by Header
 				else
 					row = sheet.createRow((offset + r + isGroup) + 2);
 

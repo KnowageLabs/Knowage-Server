@@ -57,8 +57,8 @@ import org.apache.poi.xssf.usermodel.XSSFColor;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.apache.commons.lang3.StringUtils;
 
-import it.eng.knowage.commons.multitenant.OrganizationImageManager;
 import it.eng.knowage.engine.cockpit.api.export.pdf.CssColorParser;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
@@ -1447,7 +1447,7 @@ public abstract class AbstractFormatExporter {
 			if(row != null) {
 				for (int i = 0; i < row.getLastCellNum(); i++) {
 					sheet.autoSizeColumn(i);
-					if(!imageB64.isEmpty() && (i == 0 || i == 1)) {
+					if(StringUtils.isNotEmpty(imageB64) && (i == 0 || i == 1)) {
 						// first or second column
 						int colWidth = 25;
 						if (sheet.getColumnWidthInPixels(i) < (colWidth * 256))
@@ -1463,7 +1463,7 @@ public abstract class AbstractFormatExporter {
 	public int createBrandedHeaderSheet(Sheet sheet, String imageB64, 
 			int startRow, float rowHeight, int rowspan, int startCol, int colWidth, int colspan, int namespan, int dataspan, 
 			String documentName, String widgetName) {				
-		if (!imageB64.isEmpty()) {			
+		if (StringUtils.isNotEmpty(imageB64)) {			
 			for (int r = startRow; r < startRow+rowspan; r++) {
 				   sheet.createRow(r).setHeightInPoints(rowHeight);
 				   for (int c = startCol; c < startCol+colspan; c++) {
@@ -1493,7 +1493,7 @@ public abstract class AbstractFormatExporter {
 			sheet.getRow(startRow+1).getCell(startCol+colspan).setCellStyle(dateCellStyle);
 		}
 		
-		int headerIndex = (!imageB64.isEmpty()) ? (startRow+rowspan) : 0;
+		int headerIndex = (StringUtils.isNotEmpty(imageB64)) ? (startRow+rowspan) : 0;
 		Row widgetNameRow = sheet.createRow((short) headerIndex);
 		Cell widgetNameCell = widgetNameRow.createCell(0);
 		widgetNameCell.setCellValue(widgetName);

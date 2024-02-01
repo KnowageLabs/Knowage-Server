@@ -31,6 +31,7 @@ import java.util.Map.Entry;
 import java.util.UUID;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
@@ -355,7 +356,7 @@ abstract class AbstractExportJob implements Job {
 			if(row != null) {
 				for (int i = 0; i < row.getLastCellNum(); i++) {
 					sheet.autoSizeColumn(i);
-					if(!imageB64.isEmpty() && (i == 0 || i == 1)) {
+					if(StringUtils.isNotEmpty(imageB64) && (i == 0 || i == 1)) {
 						// first or second column
 						int colWidth = 25;
 						if (sheet.getColumnWidthInPixels(i) < (colWidth * 256))
@@ -371,7 +372,7 @@ abstract class AbstractExportJob implements Job {
 	public int createBrandedHeaderSheet(Sheet sheet, String imageB64, 
 			int startRow, float rowHeight, int rowspan, int startCol, int colWidth, int colspan, int namespan, int dataspan, 
 			String documentName, String widgetName) {				
-		if (!imageB64.isEmpty()) {			
+		if (StringUtils.isNotEmpty(imageB64)) {			
 			for (int r = startRow; r < startRow+rowspan; r++) {
 				   sheet.createRow(r).setHeightInPoints(rowHeight);
 				   for (int c = startCol; c < startCol+colspan; c++) {
@@ -401,7 +402,7 @@ abstract class AbstractExportJob implements Job {
 			sheet.getRow(startRow+1).getCell(startCol+colspan).setCellStyle(dateCellStyle);
 		}
 		
-		int headerIndex = (!imageB64.isEmpty()) ? (startRow+rowspan) : 0;
+		int headerIndex = (StringUtils.isNotEmpty(imageB64)) ? (startRow+rowspan) : 0;
 		Row widgetNameRow = sheet.createRow((short) headerIndex);
 		Cell widgetNameCell = widgetNameRow.createCell(0);
 		widgetNameCell.setCellValue(widgetName);
