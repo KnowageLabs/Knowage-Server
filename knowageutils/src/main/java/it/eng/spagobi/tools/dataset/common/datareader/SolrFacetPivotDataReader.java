@@ -45,8 +45,8 @@ public class SolrFacetPivotDataReader extends SolrDataReader {
 
 	private static Logger logger = Logger.getLogger(SolrFacetPivotDataReader.class);
 
-	private Map<String, String> nameToAliasMap;
-	private Map<String, Boolean> sortedCategories;
+	private final Map<String, String> nameToAliasMap;
+	private final Map<String, Boolean> sortedCategories;
 
 	public SolrFacetPivotDataReader(String jsonPathItems, List<JSONPathAttribute> jsonPathAttributes) {
 		super(jsonPathItems, jsonPathAttributes);
@@ -67,7 +67,8 @@ public class SolrFacetPivotDataReader extends SolrDataReader {
 	}
 
 	private void transformFacetPivotToDocs(JSONObject jsonObject) throws JSONException {
-		JSONObject facetContainer = new JSONObject(jsonObject.getJSONObject("responseHeader").getJSONObject("params").getString("json.facet"));
+		JSONObject facetContainer = new JSONObject(
+				jsonObject.getJSONObject("responseHeader").getJSONObject("params").getString("json.facet"));
 		while (isFacetContainer(facetContainer)) {
 			String rawCategoryAlias = getRawCategoryAlias(facetContainer);
 			String categoryAlias = getCategoryAlias(rawCategoryAlias);
@@ -179,7 +180,8 @@ public class SolrFacetPivotDataReader extends SolrDataReader {
 	}
 
 	private String getCategoryAlias(String rawCategoryAlias) {
-		Assert.assertTrue(isRawCategoryAlias(rawCategoryAlias), "[" + rawCategoryAlias + "] is not a raw category alias");
+		Assert.assertTrue(isRawCategoryAlias(rawCategoryAlias),
+				"[" + rawCategoryAlias + "] is not a raw category alias");
 		return rawCategoryAlias.substring(0, rawCategoryAlias.length() - FACET_PIVOT_CATEGORY_ALIAS_POSTFIX.length());
 	}
 
@@ -231,14 +233,16 @@ public class SolrFacetPivotDataReader extends SolrDataReader {
 		nameToAliasMap.clear();
 
 		try {
-			JSONObject facetContainer = new JSONObject(jsonObject.getJSONObject("responseHeader").getJSONObject("params").getString("json.facet"));
+			JSONObject facetContainer = new JSONObject(
+					jsonObject.getJSONObject("responseHeader").getJSONObject("params").getString("json.facet"));
 			while (isFacetContainer(facetContainer)) {
 				String rawCategoryAlias = getRawCategoryAlias(facetContainer);
 				String categoryAlias = getCategoryAlias(rawCategoryAlias);
 				JSONObject facet = facetContainer.getJSONObject(rawCategoryAlias);
 				String categoryName = facet.getString("field");
 				nameToAliasMap.put(categoryName, categoryAlias);
-				newJsonPathAttributes.add(new JSONPathAttribute(categoryAlias, "$." + categoryAlias, jsonPathAttributeNameToTypeMap.get(categoryName)));
+				newJsonPathAttributes.add(new JSONPathAttribute(categoryAlias, "$." + categoryAlias,
+						jsonPathAttributeNameToTypeMap.get(categoryName)));
 				facetContainer = facet.optJSONObject("facet");
 			}
 			if (facetContainer != null) {
@@ -259,12 +263,14 @@ public class SolrFacetPivotDataReader extends SolrDataReader {
 							if (definition.has("field")) {
 								measureName = definition.getString("field");
 							} else {
-								throw new SpagoBIRuntimeException("Unable to retrieve definition of measure with alias [" + measureAlias + "]");
+								throw new SpagoBIRuntimeException(
+										"Unable to retrieve definition of measure with alias [" + measureAlias + "]");
 							}
 						}
 
 						nameToAliasMap.put(measureName, measureAlias);
-						newJsonPathAttributes.add(new JSONPathAttribute(measureAlias, "$." + measureAlias, jsonPathAttributeNameToTypeMap.get(measureName)));
+						newJsonPathAttributes.add(new JSONPathAttribute(measureAlias, "$." + measureAlias,
+								jsonPathAttributeNameToTypeMap.get(measureName)));
 					}
 				}
 			}
@@ -296,7 +302,7 @@ public class SolrFacetPivotDataReader extends SolrDataReader {
 	}
 
 	@Override
-	protected Object getJSONPathValue(Object o, String jsonPathValue) throws JSONException {
+	protected Object getJSONPathValue(Object o, String jsonPathValue) {
 		// can be an array with a single value, a single object or also null (not found)
 		Object res = null;
 		try {
