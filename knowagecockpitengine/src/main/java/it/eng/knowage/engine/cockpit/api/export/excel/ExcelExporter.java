@@ -736,23 +736,25 @@ public class ExcelExporter extends AbstractFormatExporter {
 			HashMap<String, Object> variablesMap = new HashMap<>();
 			JSONObject widgetData = dataStore.getJSONObject("widgetData");
 			JSONObject widgetContent = widgetData.getJSONObject("content");
-			HashMap<Integer, String> arrayHeader = new HashMap<>();
+			JSONArray columnSelectedOfDataset = widgetContent.getJSONArray("columnSelectedOfDataset");
+//			HashMap<String, String> arrayHeader = new HashMap<>();
 			HashMap<String, String> chartAggregationsMap = new HashMap<>();
 			if (widgetData.getString("type").equalsIgnoreCase("table")) {
-				for (int i = 0; i < widgetContent.getJSONArray("columnSelectedOfDataset").length(); i++) {
-					JSONObject column = widgetContent.getJSONArray("columnSelectedOfDataset").getJSONObject(i);
+//				ATTENTION: renaming table columns names of the excel export has been placed at the end
+//				for (int i = 0; i < columnSelectedOfDataset.length(); i++) {
+//					JSONObject column = columnSelectedOfDataset.getJSONObject(i);
 //					String key;
 //					if (column.optBoolean("isCalculated") && !column.has("name")) {
 //						key = column.getString("alias");
 //					} else {
 //						key = column.getString("name");
 //					}
-					// arrayHeader is used to rename excel header, especially when variables are setted up
-					arrayHeader.put(i, getTableColumnHeaderValue(column));
-				}					
+//					// arrayHeader is used to rename table columns names of the excel export
+//					arrayHeader.put(key, column.getString("aliasToShow"));
+//				}					
 			} else if (widgetData.getString("type").equalsIgnoreCase("chart")) {
-				for (int i = 0; i < widgetContent.getJSONArray("columnSelectedOfDataset").length(); i++) {
-					JSONObject column = widgetContent.getJSONArray("columnSelectedOfDataset").getJSONObject(i);
+				for (int i = 0; i < columnSelectedOfDataset.length(); i++) {
+					JSONObject column = columnSelectedOfDataset.getJSONObject(i);
 					if (column.has("aggregationSelected") && column.has("alias")) {
 						String col = column.getString("alias");
 						String aggregation = column.getString("aggregationSelected");
@@ -786,8 +788,8 @@ public class ExcelExporter extends AbstractFormatExporter {
 
 			JSONArray columnsOrdered;
 			if (widgetData.getString("type").equalsIgnoreCase("table") && widgetContent.has("columnSelectedOfDataset")) {
-				hiddenColumns = getHiddenColumnsList(widgetContent.getJSONArray("columnSelectedOfDataset"));
-				columnsOrdered = getTableOrderedColumns(widgetContent.getJSONArray("columnSelectedOfDataset"), columns);
+				hiddenColumns = getHiddenColumnsList(columnSelectedOfDataset);
+				columnsOrdered = getTableOrderedColumns(columnSelectedOfDataset, columns);
 			} else {
 				columnsOrdered = columns;
 			}
@@ -842,9 +844,19 @@ public class ExcelExporter extends AbstractFormatExporter {
 					String chartAggregation = null;
 					if (widgetData.getString("type").equalsIgnoreCase("table")
 							|| widgetData.getString("type").equalsIgnoreCase("discovery")) {
-						if (arrayHeader.get(i) != null) {
-							columnName = arrayHeader.get(i);
-						}					
+						// renaming table columns names of the excel export
+
+//						if (arrayHeader.get(columnName) != null) {
+//							columnName = arrayHeader.get(columnName);
+//						}
+							
+						for (int j = 0; j < columnSelectedOfDataset.length(); j++) {
+							JSONObject columnSelected = columnSelectedOfDataset.getJSONObject(j);
+							if (columnName.equals(columnSelected.getString("aliasToShow"))) {
+								columnName = getTableColumnHeaderValue(columnSelected);
+								break;
+							}
+						}
 					} else if (widgetData.getString("type").equalsIgnoreCase("chart")) {
 						chartAggregation = chartAggregationsMap.get(columnName);
 						if (chartAggregation != null) {
