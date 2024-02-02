@@ -54,10 +54,10 @@ jobs:
           }]
 
     - name: Check POMs
-      run: mvn sortpom:verify -:knowage-vue -q -f knowage-ce-parent/pom.xml
+      run: mvn sortpom:verify -q -f knowage-ce-parent/pom.xml
 
     - name: Checkstyle
-      run: mvn checkstyle:check -:knowage-vue -q -f knowage-ce-parent/pom.xml
+      run: mvn checkstyle:check -q -f knowage-ce-parent/pom.xml
 
     - name: Build
       run: mvn compile -pl -:knowage-vue -q -f knowage-ce-parent/pom.xml
