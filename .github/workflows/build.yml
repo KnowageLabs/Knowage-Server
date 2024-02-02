@@ -30,7 +30,7 @@ jobs:
         # cache: 'npm'
 
     - name: Setting up 
-      uses: s4u/maven-settings-action@v2.8.0
+      uses: s4u/maven-settings-action@v3.0.0
       with:
         servers: |
           [{
@@ -50,7 +50,7 @@ jobs:
       run: mvn sortpom:verify -q -f knowage-ce-parent/pom.xml
 
     - name: Checkstyle
-      run: mvn checkstyle:check -q -f knowage-ce-parent/pom.xml
+      run: mvn checkstyle:check --debug -f knowage-ce-parent/pom.xml
 
     - name: Build
       run: mvn compile -pl -:knowage-vue -q -f knowage-ce-parent/pom.xml
