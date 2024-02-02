@@ -1,19 +1,11 @@
 name: "Build"
 on:
   push:
+    branches:
+      - 'main'
+      - 'master'
+      - 'knowage-server-*'
   pull_request:
-#  pull_request_target:
-#    types:
-#    - opened
-#    - reopened
-#    - synchronize
-#    - ready_for_review
-#    - review_requested
-# TODO : secrets are not accessible here
-#  pull_request_review:
-#    types:
-#    - submitted
-#    - edited
 
 jobs:
   build:
