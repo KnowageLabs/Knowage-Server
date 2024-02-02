@@ -30,7 +30,8 @@ import java.util.Map;
 
 import javax.naming.NamingException;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -66,33 +67,30 @@ import it.eng.spagobi.utilities.json.JSONUtils;
 
 public abstract class AbstractJDBCDataset extends ConfigurableDataSet {
 
-	public static String DS_TYPE = "SbiQueryDataSet";
+	private static final Logger LOGGER = LogManager.getLogger(AbstractJDBCDataset.class);
+	private static final String DS_TYPE = "SbiQueryDataSet";
 
 	protected SelectQuery selectQuery;
 
 	private static final String QUERY = "query";
 	private static final String QUERY_SCRIPT = "queryScript";
 	private static final String QUERY_SCRIPT_LANGUAGE = "queryScriptLanguage";
-	private static final String DATA_SOURCE = "dataSource";
-
-	private static transient Logger logger = Logger.getLogger(AbstractJDBCDataset.class);
 
 	/**
 	 * Instantiates a new empty JDBC data set.
 	 */
-	public AbstractJDBCDataset() {
-		super();
+	protected AbstractJDBCDataset() {
 		setDataProxy(new JDBCDataProxy());
 		setDataReader(new JDBCStandardDataReader());
 		addBehaviour(new QuerableBehaviour(this));
 	}
 
 	// cannibalization :D
-	public AbstractJDBCDataset(JDBCDataSet jdbcDataset) {
+	protected AbstractJDBCDataset(JDBCDataSet jdbcDataset) {
 		this(jdbcDataset.toSpagoBiDataSet());
 	}
 
-	public AbstractJDBCDataset(SpagoBiDataSet dataSetConfig) {
+	protected AbstractJDBCDataset(SpagoBiDataSet dataSetConfig) {
 		super(dataSetConfig);
 
 		setDataProxy(new JDBCDataProxy());
@@ -108,9 +106,11 @@ public abstract class AbstractJDBCDataset extends ConfigurableDataSet {
 			JSONObject jsonConf = ObjectUtils.toJSONObject(config);
 			setQuery((jsonConf.get(QUERY) != null) ? jsonConf.get(QUERY).toString() : "");
 			setQueryScript((jsonConf.get(QUERY_SCRIPT) != null) ? jsonConf.get(QUERY_SCRIPT).toString() : "");
-			setQueryScriptLanguage((jsonConf.get(QUERY_SCRIPT_LANGUAGE) != null) ? jsonConf.get(QUERY_SCRIPT_LANGUAGE).toString() : "");
+			setQueryScriptLanguage(
+					(jsonConf.get(QUERY_SCRIPT_LANGUAGE) != null) ? jsonConf.get(QUERY_SCRIPT_LANGUAGE).toString()
+							: "");
 		} catch (Exception e) {
-			logger.error("Error while defining dataset configuration. Error:", e);
+			LOGGER.error("Error while defining dataset configuration.", e);
 			throw new SpagoBIRuntimeException("Error while defining dataset configuration", e);
 		}
 
@@ -130,7 +130,7 @@ public abstract class AbstractJDBCDataset extends ConfigurableDataSet {
 			try {
 				schema = (String) userProfile.get(dataSource.getSchemaAttribute());
 				((JDBCDataProxy) dataProxy).setSchema(schema);
-				logger.debug("Set UP Schema=" + schema);
+				LOGGER.debug("Set UP Schema={}", schema);
 			} catch (Throwable t) {
 				throw new SpagoBIRuntimeException("An error occurred while reading schema name from user profile", t);
 			}
@@ -156,7 +156,7 @@ public abstract class AbstractJDBCDataset extends ConfigurableDataSet {
 			jsonConf.put(QUERY_SCRIPT_LANGUAGE, (getQueryScriptLanguage() == null) ? "" : getQueryScriptLanguage());
 			toReturn.setConfiguration(jsonConf.toString());
 		} catch (Exception e) {
-			logger.error("Error while defining dataset configuration. Error:", e);
+			LOGGER.error("Error while defining dataset configuration. Error:", e);
 			throw new SpagoBIRuntimeException("Error while defining dataset configuration. Error:", e);
 		}
 
@@ -174,9 +174,11 @@ public abstract class AbstractJDBCDataset extends ConfigurableDataSet {
 			dataProxy = getDataProxy();
 		}
 
-		if (!(dataProxy instanceof JDBCDataProxy) && !(dataProxy instanceof JDBCRedShiftDataProxy) && !(dataProxy instanceof JDBCBigQueryDataProxy)
-				&& !(dataProxy instanceof JDBCSynapseDataProxy) && !(dataProxy instanceof JDBCSpannerDataProxy)) {
-			throw new RuntimeException("DataProxy cannot be of type [" + dataProxy.getClass().getName() + "] in JDBCDataSet");
+		if (!(dataProxy instanceof JDBCDataProxy) && !(dataProxy instanceof JDBCRedShiftDataProxy)
+				&& !(dataProxy instanceof JDBCBigQueryDataProxy) && !(dataProxy instanceof JDBCSynapseDataProxy)
+				&& !(dataProxy instanceof JDBCSpannerDataProxy)) {
+			throw new RuntimeException(
+					"DataProxy cannot be of type [" + dataProxy.getClass().getName() + "] in JDBCDataSet");
 		}
 
 		return (JDBCDataProxy) dataProxy;
@@ -199,7 +201,7 @@ public abstract class AbstractJDBCDataset extends ConfigurableDataSet {
 			DatasetMetadataParser dsp = new DatasetMetadataParser();
 			metadata = dsp.xmlToMetadata(getDsMetadata());
 		} catch (Exception e) {
-			logger.error("Error loading the metadata", e);
+			LOGGER.error("Error loading the metadata", e);
 			throw new SpagoBIEngineRuntimeException("Error loading the metadata", e);
 		}
 		return metadata;
@@ -215,73 +217,79 @@ public abstract class AbstractJDBCDataset extends ConfigurableDataSet {
 	public IDataSetTableDescriptor persist(String tableName, IDataSource dataSource) {
 		IDataSource datasetDataSource = getDataSource();
 		if (datasetDataSource.getLabel().equals(dataSource.getLabel())) {
-			logger.debug("Specified datasource is the dataset's datasource; using CREATE TABLE AS SELECT tecnique");
+			LOGGER.debug("Specified datasource is the dataset's datasource; using CREATE TABLE AS SELECT tecnique");
 			try {
 				List<String> fields = this.getFieldsList();
 				return TemporaryTableManager.createTable(fields, (String) query, tableName, getDataSource());
 			} catch (Exception e) {
-				logger.error("Error peristing the temporary table", e);
+				LOGGER.error("Error peristing the temporary table", e);
 				throw new SpagoBIEngineRuntimeException("Error peristing the temporary table", e);
 			}
 		} else {
-			logger.debug("Specified datasource is NOT the dataset's datasource");
+			LOGGER.debug("Specified datasource is NOT the dataset's datasource");
 			return super.persist(tableName, dataSource);
 		}
 	}
 
 	public static String encapsulateColumnName(String columnName, IDataSource dataSource) {
-		logger.debug("IN");
+		LOGGER.debug("IN");
 		try {
 			String toReturn = columnName;
 			if (columnName != null) {
 				String aliasDelimiter = TemporaryTableManager.getAliasDelimiter(dataSource);
-				logger.debug("Alias delimiter is [" + aliasDelimiter + "]");
+				LOGGER.debug("Alias delimiter is [{}]", aliasDelimiter);
 				if (!columnName.startsWith(aliasDelimiter) || !columnName.endsWith(aliasDelimiter)) {
 					toReturn = aliasDelimiter + columnName + aliasDelimiter;
 				}
 			}
-			logger.debug("OUT: returning " + toReturn);
+			LOGGER.debug("OUT: returning {}", toReturn);
 			return toReturn;
 		} catch (DataBaseException e) {
 			throw new SpagoBIRuntimeException(e);
 		}
 	}
 
-	public static String substituteStandardWithDatasourceDelimiter(String columnName, IDataSource dataSource) throws DataBaseException {
-		logger.debug("IN");
+	public static String substituteStandardWithDatasourceDelimiter(String columnName, IDataSource dataSource)
+			throws DataBaseException {
+		LOGGER.debug("IN");
 		if (columnName != null) {
-			logger.debug("Column name is [" + columnName + "]");
-			columnName = columnName.replaceAll(AbstractDataBase.STANDARD_ALIAS_DELIMITER, TemporaryTableManager.getAliasDelimiter(dataSource));
-			logger.debug("Column name after replacement is [" + columnName + "]");
+			LOGGER.debug("Column name is [{}]", columnName);
+			columnName = columnName.replaceAll(AbstractDataBase.STANDARD_ALIAS_DELIMITER,
+					TemporaryTableManager.getAliasDelimiter(dataSource));
+			LOGGER.debug("Column name after replacement is [{}]", columnName);
 		} else {
-			throw new IllegalArgumentException("THe arguments columnName [" + columnName + "] and dataSource [" + dataSource + "] cannot be null");
+			throw new IllegalArgumentException(
+					"THe arguments columnName [" + columnName + "] and dataSource [" + dataSource + "] cannot be null");
 		}
-		logger.debug("OUT");
+		LOGGER.debug("OUT");
 		return columnName;
 	}
 
 	@Override
 	public DataIterator iterator() {
-		logger.debug("IN");
+		LOGGER.debug("IN");
 		try {
+			IMetaData currMetadata = getMetadata();
 			QuerableBehaviour querableBehaviour = (QuerableBehaviour) getBehaviour(QuerableBehaviour.class.getName());
 			String statement = querableBehaviour.getStatement();
-			logger.debug("Obtained statement [" + statement + "]");
+			LOGGER.debug("Obtained statement [{}]", statement);
 			dataProxy.setStatement(statement);
 			JDBCDataProxy jdbcDataProxy = (JDBCDataProxy) dataProxy;
 			IDataSource dataSource = jdbcDataProxy.getDataSource();
 			Assert.assertNotNull(dataSource, "Invalid datasource");
 			Connection connection = dataSource.getConnection();
-			Statement stmt = connection.createStatement(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
+			Statement stmt = connection.createStatement(ResultSet.TYPE_FORWARD_ONLY,
+							ResultSet.CONCUR_READ_ONLY);
+
 			connection.setAutoCommit(false); // PostgreSQL requires disabling auto-commit for setFetchSize to work
 			stmt.setFetchSize(5000);
+
 			ResultSet rs = (ResultSet) dataProxy.getData(dataReader, stmt);
-			DataIterator iterator = new ResultSetIterator(connection, stmt, rs);
-			return iterator;
+			return new ResultSetIterator(connection, stmt, rs, currMetadata);
 		} catch (ClassNotFoundException | SQLException | NamingException e) {
 			throw new SpagoBIRuntimeException(e);
 		} finally {
-			logger.debug("OUT");
+			LOGGER.debug("OUT");
 		}
 	}
 
@@ -308,7 +316,8 @@ public abstract class AbstractJDBCDataset extends ConfigurableDataSet {
 		List<JSONObject> parameters = getDataSetParameters();
 		if (parameters.size() > paramValues.size()) {
 			String parameterNotValorizedStr = getParametersNotValorized(parameters, paramValues);
-			throw new ParametersNotValorizedException("The following parameters have no value [" + parameterNotValorizedStr + "]");
+			throw new ParametersNotValorizedException(
+					"The following parameters have no value [" + parameterNotValorizedStr + "]");
 		}
 
 		if (paramValues.size() > 0) {
@@ -332,7 +341,7 @@ public abstract class AbstractJDBCDataset extends ConfigurableDataSet {
 		String paramValue = paramValues.get(paramName);
 		String[] values = null;
 		if (isMultiValue) {
-			List<String> list = new ArrayList<String>();
+			List<String> list = new ArrayList<>();
 			boolean paramValueConsumed = false;
 			try {
 				JSONArray jsonArray = new JSONArray(paramValue);
@@ -347,35 +356,27 @@ public abstract class AbstractJDBCDataset extends ConfigurableDataSet {
 				list.add(paramValue);
 			}
 			values = list.toArray(new String[0]);
-			if (values != null && values.length == 1 && !values[0].isEmpty()) {
-				String valuesString = values[0];
-//				if (valuesString.startsWith("'") && valuesString.endsWith("'")) {
-//					// patch for KNOWAGE-4600: An error occurs when propagating a driver value with commas through cross navigation.
-//					// Do nothing, keep values as it is
-//				} else {
-//					values = valuesString.split(",");
-//				}
-			}
 		} else {
 			values = Arrays.asList(paramValue).toArray(new String[0]);
 		}
 		return values;
 	}
 
-	private static String getParametersNotValorized(List<JSONObject> parameters, Map<String, String> parametersValues) throws JSONException {
-		String toReturn = "";
+	private static String getParametersNotValorized(List<JSONObject> parameters, Map<String, String> parametersValues)
+			throws JSONException {
+		StringBuilder toReturn = new StringBuilder("");
 
 		for (Iterator<JSONObject> iterator = parameters.iterator(); iterator.hasNext();) {
 			JSONObject parameter = iterator.next();
 			String parameterName = parameter.getString("namePar");
 			if (parametersValues.get(parameterName) == null) {
-				toReturn += parameterName;
+				toReturn.append(parameterName);
 				if (iterator.hasNext()) {
-					toReturn += ", ";
+					toReturn.append(", ");
 				}
 			}
 		}
-		return toReturn;
+		return toReturn.toString();
 	}
 
 	/**
@@ -411,30 +412,30 @@ public abstract class AbstractJDBCDataset extends ConfigurableDataSet {
 					if (value.contains("','")) {
 						value = value.substring(1, value.length() - 1);
 						String[] valuesArray = value.split("','");
-						String newValuesFromArray = "";
+						StringBuilder newValuesFromArray = new StringBuilder("");
 						for (int i = 0; i < valuesArray.length; i++) {
 							String temp = valuesArray[i];
 							if (!delim.isEmpty() && temp.startsWith(delim) && temp.endsWith(delim))
 								temp = temp.substring(1, temp.length() - 1);
-							temp = temp.replaceAll("'", "''");
+							temp = temp.replace("'", "''");
 							if (i == 0)
-								newValuesFromArray = (delim + temp + delim);
+								newValuesFromArray.append(delim + temp + delim);
 							else
-								newValuesFromArray = newValuesFromArray + "," + (delim + temp + delim);
+								newValuesFromArray.append(",").append(delim + temp + delim);
 
 						}
-						newValues.add(newValuesFromArray);
+						newValues.add(newValuesFromArray.toString());
 					} else {
 						if (isString) {
 							value = value.substring(1, value.length() - 1);
-							value = value.replaceAll("'", "''");
+							value = value.replace("'", "''");
 						}
 						newValues.add(delim + value + delim);
 					}
 				} else {
 					if (isString) {
 						// Duplicate single quote to transform it into an escaped SQL single quote
-						value = value.replaceAll("'", "''");
+						value = value.replace("'", "''");
 					}
 					newValues.add(delim + value + delim);
 				}

@@ -190,6 +190,18 @@
 		<logger name="it.eng.spagobi.commons.utilities.ObjectsAccessVerifier" level="warn" additivity="false">
 			<AppenderRef ref="KNOWAGE_CORE" />
 		</logger>
+		<logger name="it.eng.knowage.functionscatalog.utils.CatalogFunctionDataProxy" level="warn" additivity="false">
+			<AppenderRef ref="KNOWAGE_CORE" />
+		</logger>
+		<logger name="it.eng.knowage.encryption.DecryptionDataStoreTransformer" level="warn" additivity="false">
+			<AppenderRef ref="KNOWAGE_CORE" />
+		</logger>
+		<logger name="it.eng.knowage.encryption.DataEncryptionInitializer" level="warn" additivity="false">
+			<AppenderRef ref="KNOWAGE_CORE" />
+		</logger>
+		<logger name="privacymanager.wrapper.PrivacyManagerAPIImpl" level="warn" additivity="false">
+			<AppenderRef ref="KNOWAGE_CORE" />
+		</logger>
 		<Root level="error">
 			<AppenderRef ref="KNOWAGE_CORE" />
 		</Root>

@@ -1,19 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	
 	<modelVersion>4.0.0</modelVersion>
-
+	
 	<parent>
 		<groupId>it.eng.knowage</groupId>
 		<artifactId>knowage-ce-parent</artifactId>
-		<version>8.1.18</version>
+		<version>8.1.19</version>
 		<relativePath>../knowage-ce-parent/pom.xml</relativePath>
 	</parent>
-
+	
 	<artifactId>spagobi.birt.oda</artifactId>
 	<packaging>jar</packaging>
-
-
+	
 	<dependencies>
-
+		
 		<dependency>
 			<groupId>it.eng.knowage</groupId>
 			<artifactId>knowage-utils</artifactId>
@@ -21,8 +22,8 @@
 			<scope>compile</scope>
 			<exclusions>
 				<exclusion>
-					<groupId>org.cometd.java</groupId>
 					<artifactId>cometd-java-server</artifactId>
+					<groupId>org.cometd.java</groupId>
 				</exclusion>
 			</exclusions>
 		</dependency>
@@ -33,7 +34,7 @@
 			<version>4.4.2</version>
 			<scope>compile</scope>
 		</dependency>
-
+		
 		<!-- runtime dependency???
 		<dependency>
 			<groupId>it.eng.spago</groupId>
@@ -51,12 +52,12 @@
 		<dependency>
 			<groupId>javax.servlet</groupId>
 			<artifactId>javax.servlet-api</artifactId>
-			<version>3.1.0</version> <!-- WebLogic uses 3.1.0, Tomcat 7 uses 3.0 -->
+			<version>3.1.0</version>
 			<scope>provided</scope>
 		</dependency>
 		
 	</dependencies>
-
+	
 	<build>
 		<plugins>
 			<plugin>
@@ -70,6 +71,5 @@
 			</plugin>
 		</plugins>
 	</build>
-
-
+	
 </project>

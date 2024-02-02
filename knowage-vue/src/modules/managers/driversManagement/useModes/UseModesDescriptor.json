@@ -79,10 +79,6 @@
         {
             "name": "Manual Input",
             "valueSelection": "man_in"
-        },
-        {
-            "name": "Map Input",
-            "valueSelection": "map_in"
         }
     ]
 }

@@ -25,7 +25,17 @@
     <LovsManagementProfileAttributesList v-show="profileAttributesDialogVisible" :visible="profileAttributesDialogVisible" :profileAttributes="profileAttributes" @selected="setCodeInput($event)" @close="profileAttributesDialogVisible = false"></LovsManagementProfileAttributesList>
     <LovsManagementParamsDialog v-show="paramsDialogVisible" :visible="paramsDialogVisible" :dependenciesList="dependenciesList" :mode="paramsDialogMode" @preview="onPreview" @close="onParamsDialogClose" @test="onTest"></LovsManagementParamsDialog>
     <LovsManagementPreviewDialog v-show="previewDialogVisible" :visible="previewDialogVisible" :dataForPreview="dataForPreview" :pagination="pagination" @close="onPreviewClose" @pageChanged="previewLov($event, false, true)"></LovsManagementPreviewDialog>
-    <LovsManagementTestDialog v-if="testDialogVisible" :visible="testDialogVisible" :selectedLov="lov" :testModel="treeListTypeModel" :testLovModel="testLovModel" :testLovTreeModel="testLovTreeModel" @close="onTestDialogClose()" @save="onTestSave($event)"></LovsManagementTestDialog>
+    <LovsManagementTestDialog
+        v-if="testDialogVisible"
+        :visible="testDialogVisible"
+        :selectedLov="lov"
+        :testModel="treeListTypeModel"
+        :testLovModel="testLovModel"
+        :testLovTreeModel="testLovTreeModel"
+        :tableModelForTest="tableModelForTest"
+        @close="onTestDialogClose()"
+        @save="onTestSave($event)"
+    ></LovsManagementTestDialog>
 </template>
 
 <script lang="ts">
@@ -46,6 +56,7 @@ import LovsManagementProfileAttributesList from './LovsManagementProfileAttribut
 import LovsManagementTestDialog from './LovsManagementTestDialog/LovsManagementTestDialog.vue'
 import LovsManagementParamsDialog from './LovsManagementParamsDialog/LovsManagementParamsDialog.vue'
 import LovsManagementDataset from './LovsManagementDataset/LovsManagementDataset.vue'
+import { removeUnusedVisibleColumnsFromModel } from './LovsManagementTestDialog/LovsManagementTestDialogHelpers'
 
 export default defineComponent({
     name: 'lovs-management-wizard-card',
@@ -399,6 +410,7 @@ export default defineComponent({
             this.setFormatedVisibleValues()
         },
         setColumnValues() {
+            removeUnusedVisibleColumnsFromModel(this.treeListTypeModel, this.tableModelForTest)
             if (this.lov.id || this.treeListTypeModel.LOVTYPE !== 'simple') {
                 this.formatedVisibleValues = this.treeListTypeModel['VISIBLE-COLUMNS']?.length > 0 ? this.treeListTypeModel['VISIBLE-COLUMNS'].split(',') : []
                 this.formatedInvisibleValues = []

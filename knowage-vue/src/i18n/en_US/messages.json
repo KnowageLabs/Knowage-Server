@@ -2030,6 +2030,10 @@
                 "title": "Data Source"
             },
             "detail": {
+                "logo": "Tenant Logo",
+                "logoHint": "The company/product logo, visible on the menu bar. If not present the default Knowage \"K\" will be shown.",
+                "logoWide": "Tenant Logo Wide",
+                "logoWideHint": "This logo will be used within dashboards XLSX exports. If no image is provided it will not be visible in those instances. The images should be below 200KB and in jpg or png format.",
                 "theme": "Theme",
                 "title": "Detail"
             },

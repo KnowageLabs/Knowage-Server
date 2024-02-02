@@ -18,6 +18,8 @@
 package it.eng.spagobi.security.OAuth2;
 
 import java.io.IOException;
+import java.net.URL;
+import java.security.interfaces.RSAPublicKey;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -32,7 +34,18 @@ import javax.servlet.http.HttpSession;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import com.auth0.jwk.Jwk;
+import com.auth0.jwk.JwkProvider;
+import com.auth0.jwk.JwkProviderBuilder;
+import com.auth0.jwt.JWT;
+import com.auth0.jwt.algorithms.Algorithm;
+import com.auth0.jwt.interfaces.Claim;
+import com.auth0.jwt.interfaces.DecodedJWT;
+import com.auth0.jwt.interfaces.Verification;
+
 import it.eng.spagobi.services.oauth2.Oauth2SsoService;
+import it.eng.spagobi.tools.dataset.notifier.fiware.OAuth2Utils;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 /**
  * This filter forwards incoming requests into /oauth2/authorization_code/flow.jsp (where OAuth2 standard authorization code flow actually occurs), until
@@ -48,30 +61,31 @@ public class OAuth2Filter implements Filter {
 	private OAuth2FlowManager flowManager = new NoFlowManager();
 
 	private interface OAuth2FlowManager {
-		void manage(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
-				throws ServletException, IOException;
+		void manage(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws ServletException, IOException;
 	}
 
 	private static class ImplicitFlowManager implements OAuth2FlowManager {
 
 		@Override
-		public void manage(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
-				throws ServletException, IOException {
+		public void manage(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws ServletException, IOException {
 
 			LOGGER.debug("Managing OAuth2 in implicit way");
 
 			HttpSession session = request.getSession();
 			OAuth2Config config = OAuth2Config.getInstance();
-			String idToken = request.getParameter("id_token");
+			String idToken = request.getParameter(Oauth2SsoService.ID_TOKEN);
 
 			if (idToken != null) {
 				// request contains id token --> set it in session and continue with filters chain
 				LOGGER.debug("ID token found: [{}]", idToken);
+				validateIdToken(idToken, session);
+				LOGGER.debug("ID token validated successfully");
 				session.setAttribute(Oauth2SsoService.ID_TOKEN, idToken);
 				chain.doFilter(request, response);
 			} else {
 				if (session.isNew() || session.getAttribute(Oauth2SsoService.ID_TOKEN) == null) {
 					// OAuth2 flow must take place --> stop filters chain
+					manageNonce(session);
 					LOGGER.debug("ID token not found, starting OIDC flow...");
 					request.getRequestDispatcher(config.getFlowJSPPath()).forward(request, response);
 				} else {
@@ -81,13 +95,61 @@ public class OAuth2Filter implements Filter {
 			}
 		}
 
+		private void manageNonce(HttpSession session) {
+			Object nonceFromSession = session.getAttribute(Oauth2SsoService.NONCE);
+			// in case nonce is not defined, generate it and put it in session
+			if (nonceFromSession == null) {
+				String nonce = OAuth2Utils.createNonce();
+				LOGGER.debug("Nonce generated : [{}]", nonce);
+				session.setAttribute(Oauth2SsoService.NONCE, nonce);
+			}
+
+		}
+
+		private void validateIdToken(String idToken, HttpSession session) {
+			LOGGER.debug("Input JWT token is [{}]", idToken);
+			try {
+				DecodedJWT decodedJWT = JWT.decode(idToken);
+				LOGGER.debug("JWT token properly decoded");
+				// verify token
+				JwkProvider provider = new JwkProviderBuilder(new URL(OAuth2Config.getInstance().getJWKSUrl())).build();
+				Jwk jwk = provider.get(decodedJWT.getKeyId());
+				Algorithm algorithm = Algorithm.RSA256((RSAPublicKey) jwk.getPublicKey(), null);
+				Verification verifier = JWT.require(algorithm);
+				verifier.build().verify(idToken);
+				// check that issuer matches the configured one
+				if (!decodedJWT.getIssuer().equals(OAuth2Config.getInstance().getJwtTokenIssuer())) {
+					LOGGER.error("JWT token issuer [{}] does not match the configured one, that is [{}]", decodedJWT.getIssuer(),
+							OAuth2Config.getInstance().getJwtTokenIssuer());
+					throw new SpagoBIRuntimeException("JWT token issuer does not match the configured one");
+				}
+				// check that aud matches client id
+				if (!decodedJWT.getAudience().get(0).equals(OAuth2Config.getInstance().getClientId())) {
+					LOGGER.error("JWT token aud [{}] does not match the client id, that is [{}]", decodedJWT.getAudience().get(0),
+							OAuth2Config.getInstance().getClientId());
+					throw new SpagoBIRuntimeException("JWT token aud does not match the client id");
+				}
+				// check that nonce matches the generated one
+				String generatedNonce = (String) session.getAttribute(Oauth2SsoService.NONCE);
+				Claim nonceClaim = decodedJWT.getClaim(Oauth2SsoService.NONCE);
+				if (nonceClaim.isNull() || !nonceClaim.asString().equals(generatedNonce)) {
+					LOGGER.error("JWT token nonce [{}] does not match the generated nonce, that is [{}]", nonceClaim, generatedNonce);
+					throw new SpagoBIRuntimeException("JWT token nonce does not match the generated nonce");
+				}
+				LOGGER.debug("JWT token verified.");
+			} catch (Exception e) {
+				LOGGER.error("An error occurred while verifying ID TOKEN", e);
+				throw new SpagoBIRuntimeException("An error occurred while verifying ID TOKEN", e);
+			}
+
+		}
+
 	}
 
 	private static class ClassicFlowManager implements OAuth2FlowManager {
 
 		@Override
-		public void manage(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
-				throws ServletException, IOException {
+		public void manage(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws ServletException, IOException {
 
 			LOGGER.debug("Managing OAuth2 in a classic way");
 
@@ -117,8 +179,7 @@ public class OAuth2Filter implements Filter {
 	private static class NoFlowManager implements OAuth2FlowManager {
 
 		@Override
-		public void manage(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
-				throws ServletException, IOException {
+		public void manage(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws ServletException, IOException {
 
 			LOGGER.debug("No OAuth2 management");
 
@@ -151,8 +212,7 @@ public class OAuth2Filter implements Filter {
 	}
 
 	@Override
-	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
-			throws IOException, ServletException {
+	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
 
 		LOGGER.debug("Executing OAuth2 filter");
 

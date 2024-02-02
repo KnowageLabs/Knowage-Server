@@ -27,6 +27,7 @@ public class CockpitExportResource extends AbstractCockpitEngineResource {
 	private static final String USER_ID = "user_id";
 	private static final String DOCUMENT_ID = "document";
 	private static final String DOCUMENT_LABEL = "DOCUMENT_LABEL";
+	private static final String DOCUMENT_NAME = "DOCUMENT_NAME";
 
 	@GET
 	@Path("/excel")
@@ -64,14 +65,15 @@ public class CockpitExportResource extends AbstractCockpitEngineResource {
 			body.put("template", template);
 			String outputType = body.getString(OUTPUT_TYPE);
 			String userId = body.getString(USER_ID);
-			ExcelExporter excelExporter = new ExcelExporter(outputType, userId, body);
+			ExcelExporter excelExporter = new ExcelExporter(userId, body);
 			String mimeType = excelExporter.getMimeType();
 			if (mimeType != null) {
 				Integer documentId = body.optInt(DOCUMENT_ID);
 				String documentLabel = body.optString(DOCUMENT_LABEL);
+				String documentName = body.optString(DOCUMENT_NAME);
 				String options = body.optString("options");
 				byte[] data;
-				data = excelExporter.getBinaryData(documentId, documentLabel, template, options);
+				data = excelExporter.getBinaryData(documentId, documentLabel, documentName, template, options);
 
 				response.setContentType(MediaType.APPLICATION_OCTET_STREAM);
 				response.setHeader("Content-length", Integer.toString(data.length));

@@ -1,24 +1,26 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+	
 	<modelVersion>4.0.0</modelVersion>
+	
 	<parent>
 		<groupId>it.eng.knowage</groupId>
 		<artifactId>knowage-ce-parent</artifactId>
-		<version>8.1.18</version>
+		<version>8.1.19</version>
 		<relativePath>../knowage-ce-parent/pom.xml</relativePath>
 	</parent>
+	
 	<artifactId>knowage-common</artifactId>
 	<packaging>jar</packaging>
 	<name>knowage-common</name>
 	<description>Common classes for all KNOWAGE artifacts</description>
-
+	
 	<properties>
 		<java.version>1.8</java.version>
 	</properties>
-
+	
 	<dependencies>
-
+		
 		<dependency>
 			<groupId>org.apache.logging.log4j</groupId>
 			<artifactId>log4j-core</artifactId>
@@ -30,13 +32,14 @@
 			<version>2.1.1</version>
 			<scope>provided</scope>
 		</dependency>
-
+		
 		<dependency>
 			<groupId>javax.annotation</groupId>
 			<artifactId>javax.annotation-api</artifactId>
 			<version>1.3.2</version>
 			<scope>provided</scope>
 		</dependency>
-
+		
 	</dependencies>
+	
 </project>

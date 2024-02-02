@@ -1,14 +1,15 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	
 	<modelVersion>4.0.0</modelVersion>
-
+	
 	<parent>
 		<groupId>it.eng.knowage</groupId>
 		<artifactId>knowage-ce-parent</artifactId>
-		<version>8.1.18</version>
+		<version>8.1.19</version>
 		<relativePath>../knowage-ce-parent/pom.xml</relativePath>
 	</parent>
-
+	
 	<artifactId>knowage-core</artifactId>
 	<packaging>jar</packaging>
 	
@@ -20,12 +21,18 @@
 			<version>${project.version}</version>
 			<scope>compile</scope>
 		</dependency>
-
+		
 		<dependency>
 			<groupId>it.eng.knowage</groupId>
 			<artifactId>knowage-utils</artifactId>
 			<version>${project.version}</version>
 			<scope>compile</scope>
+		</dependency>
+		
+		<dependency>
+			<groupId>it.eng.knowage</groupId>
+			<artifactId>knowage-pm-dto</artifactId>
+			<version>${project.version}</version>
 		</dependency>
 		
 		<dependency>
@@ -36,17 +43,16 @@
 			<scope>test</scope>
 			<exclusions>
 				<exclusion>
-					<groupId>org.apache.poi</groupId>
 					<artifactId>poi</artifactId>
+					<groupId>org.apache.poi</groupId>
 				</exclusion>
 				<exclusion>
-					<groupId>org.apache.poi</groupId>
 					<artifactId>poi-ooxml</artifactId>
+					<groupId>org.apache.poi</groupId>
 				</exclusion>
 			</exclusions>
 		</dependency>
-
-
+		
 		<dependency>
 			<groupId>it.eng.knowage</groupId>
 			<artifactId>knowage-dao</artifactId>
@@ -89,8 +95,8 @@
 			<scope>compile</scope>
 			<exclusions>
 				<exclusion>
-					<groupId>javax.ws.rs</groupId>
 					<artifactId>jsr311-api</artifactId>
+					<groupId>javax.ws.rs</groupId>
 				</exclusion>
 			</exclusions>
 		</dependency>
@@ -105,15 +111,15 @@
 		<dependency>
 			<groupId>org.apache.poi</groupId>
 			<artifactId>poi</artifactId>
-			<scope>compile</scope>
 			<version>${apache.poi}</version>
+			<scope>compile</scope>
 		</dependency>
 		
 		<dependency>
 			<groupId>org.apache.poi</groupId>
 			<artifactId>poi-ooxml</artifactId>
-			<scope>compile</scope>
 			<version>${apache.poi}</version>
+			<scope>compile</scope>
 		</dependency>
 		
 		<dependency>
@@ -131,20 +137,19 @@
 			<scope>compile</scope>
 			<exclusions>
 				<exclusion>
-					<groupId>ch.qos.logback</groupId>
 					<artifactId>logback-classic</artifactId>
+					<groupId>ch.qos.logback</groupId>
 				</exclusion>
 				<exclusion>
-					<groupId>com.fasterxml.jackson.core</groupId>
 					<artifactId>jackson-annotations</artifactId>
+					<groupId>com.fasterxml.jackson.core</groupId>
 				</exclusion>
 				<exclusion>
-					<groupId>com.fasterxml.jackson.core</groupId>
 					<artifactId>jackson-core</artifactId>
+					<groupId>com.fasterxml.jackson.core</groupId>
 				</exclusion>
 			</exclusions>
 		</dependency>
-		
 		
 		<dependency>
 			<groupId>org.apache.xmlgraphics</groupId>
@@ -153,8 +158,8 @@
 			<scope>compile</scope>
 			<exclusions>
 				<exclusion>
-					<groupId>org.python</groupId>
 					<artifactId>jython</artifactId>
+					<groupId>org.python</groupId>
 				</exclusion>
 			</exclusions>
 		</dependency>
@@ -165,7 +170,7 @@
 			<version>1.1</version>
 			<scope>compile</scope>
 		</dependency>
-
+		
 		<dependency>
 			<groupId>com.github.jsqlparser</groupId>
 			<artifactId>jsqlparser</artifactId>
@@ -183,7 +188,7 @@
 		<dependency>
 			<groupId>javax.servlet</groupId>
 			<artifactId>javax.servlet-api</artifactId>
-			<version>3.1.0</version> <!-- WebLogic uses 3.1.0, Tomcat 7 uses 3.0 -->
+			<version>3.1.0</version>
 			<scope>provided</scope>
 		</dependency>
 		
@@ -193,14 +198,14 @@
 			<version>2.3.1</version>
 			<scope>provided</scope>
 		</dependency>
-
+		
 		<dependency>
 			<groupId>net.trajano.caliper</groupId>
 			<artifactId>caliper</artifactId>
 			<version>1.2.1</version>
 			<scope>test</scope>
 		</dependency>
-
+		
 		<dependency>
 			<groupId>org.jmockit</groupId>
 			<artifactId>jmockit</artifactId>
@@ -222,38 +227,38 @@
 			<version>5.1.33</version>
 			<scope>test</scope>
 		</dependency>
-
+		
 		<dependency>
 			<groupId>org.hsqldb</groupId>
 			<artifactId>hsqldb</artifactId>
 			<version>1.8.0.10</version>
 			<scope>test</scope>
 		</dependency>
-
+		
 		<dependency>
 			<groupId>org.jboss.resteasy</groupId>
 			<artifactId>resteasy-html</artifactId>
 			<version>${resteasy.version}</version>
 		</dependency>
-
+		
 		<dependency>
 			<groupId>org.apache.livy</groupId>
 			<artifactId>livy-client-http</artifactId>
 			<version>0.7.1-incubating</version>
 		</dependency>
-
+		
 		<dependency>
 			<groupId>org.apache.avro</groupId>
 			<artifactId>avro</artifactId>
 			<version>1.8.2</version>
 		</dependency>
-
+		
 		<dependency>
 			<groupId>org.jboss.resteasy</groupId>
 			<artifactId>resteasy-jackson2-provider</artifactId>
 			<version>3.6.2.Final</version>
 		</dependency>
-
+		
 	</dependencies>
 	
 </project>

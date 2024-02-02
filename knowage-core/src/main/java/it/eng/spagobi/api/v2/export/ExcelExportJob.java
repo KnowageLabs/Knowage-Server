@@ -28,22 +28,32 @@ import java.util.Date;
 import org.apache.log4j.LogMF;
 import org.apache.log4j.Logger;
 import org.apache.poi.ss.SpreadsheetVersion;
-import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.ClientAnchor;
 import org.apache.poi.ss.usermodel.CreationHelper;
+import org.apache.poi.ss.usermodel.Drawing;
+import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.HorizontalAlignment;
+import org.apache.poi.ss.usermodel.Picture;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.VerticalAlignment;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.util.CellRangeAddress;
+import org.apache.poi.util.Units;
+import org.apache.poi.xssf.streaming.SXSSFSheet;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 
+import it.eng.knowage.commons.multitenant.OrganizationImageManager;
+import it.eng.spagobi.tenant.TenantManager;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.common.datastore.IRecord;
 import it.eng.spagobi.tools.dataset.common.iterator.DataIterator;
 import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 public class ExcelExportJob extends AbstractExportJob {
 
@@ -52,6 +62,9 @@ public class ExcelExportJob extends AbstractExportJob {
 	private static final Logger logger = Logger.getLogger(ExcelExportJob.class);
 
 	private static final String TIMESTAMP_FORMAT = "dd/MM/yyyy HH:mm:ss.SSS";
+	
+	private String imageB64 = "";
+	private String documentName = "";
 
 	@Override
 	protected void export(JobExecutionContext context) throws JobExecutionException {
@@ -73,68 +86,99 @@ public class ExcelExportJob extends AbstractExportJob {
 
 				// STYLE CELL
 				CellStyle borderStyleHeader = wb.createCellStyle();
-				borderStyleHeader.setBorderBottom(BorderStyle.THIN);
-				borderStyleHeader.setBorderLeft(BorderStyle.THIN);
-				borderStyleHeader.setBorderRight(BorderStyle.THIN);
-				borderStyleHeader.setBorderTop(BorderStyle.THIN);
+//				borderStyleHeader.setBorderBottom(BorderStyle.THIN);
+//				borderStyleHeader.setBorderLeft(BorderStyle.THIN);
+//				borderStyleHeader.setBorderRight(BorderStyle.THIN);
+//				borderStyleHeader.setBorderTop(BorderStyle.THIN);
 				borderStyleHeader.setAlignment(HorizontalAlignment.CENTER);
 
 				CellStyle borderStyleRow = wb.createCellStyle();
-				borderStyleRow.setBorderBottom(BorderStyle.THIN);
-				borderStyleRow.setBorderLeft(BorderStyle.THIN);
-				borderStyleRow.setBorderRight(BorderStyle.THIN);
-				borderStyleRow.setBorderTop(BorderStyle.THIN);
+//				borderStyleRow.setBorderBottom(BorderStyle.THIN);
+//				borderStyleRow.setBorderLeft(BorderStyle.THIN);
+//				borderStyleRow.setBorderRight(BorderStyle.THIN);
+//				borderStyleRow.setBorderTop(BorderStyle.THIN);
 				borderStyleRow.setAlignment(HorizontalAlignment.RIGHT);
 
 				CellStyle tsCellStyle = wb.createCellStyle();
 				tsCellStyle.setDataFormat(createHelper.createDataFormat().getFormat(TIMESTAMP_FORMAT));
-				tsCellStyle.setBorderBottom(BorderStyle.THIN);
-				tsCellStyle.setBorderLeft(BorderStyle.THIN);
-				tsCellStyle.setBorderRight(BorderStyle.THIN);
-				tsCellStyle.setBorderTop(BorderStyle.THIN);
+//				tsCellStyle.setBorderBottom(BorderStyle.THIN);
+//				tsCellStyle.setBorderLeft(BorderStyle.THIN);
+//				tsCellStyle.setBorderRight(BorderStyle.THIN);
+//				tsCellStyle.setBorderTop(BorderStyle.THIN);
 				tsCellStyle.setAlignment(HorizontalAlignment.RIGHT);
 
 				CellStyle dateCellStyle = wb.createCellStyle();
 				dateCellStyle.setDataFormat(createHelper.createDataFormat().getFormat(DATE_FORMAT));
-				dateCellStyle.setBorderBottom(BorderStyle.THIN);
-				dateCellStyle.setBorderLeft(BorderStyle.THIN);
-				dateCellStyle.setBorderRight(BorderStyle.THIN);
-				dateCellStyle.setBorderTop(BorderStyle.THIN);
+//				dateCellStyle.setBorderBottom(BorderStyle.THIN);
+//				dateCellStyle.setBorderLeft(BorderStyle.THIN);
+//				dateCellStyle.setBorderRight(BorderStyle.THIN);
+//				dateCellStyle.setBorderTop(BorderStyle.THIN);
 				dateCellStyle.setAlignment(HorizontalAlignment.RIGHT);
 
 				CellStyle intCellStyle = wb.createCellStyle();
 				intCellStyle.setDataFormat(createHelper.createDataFormat().getFormat("0"));
-				intCellStyle.setBorderBottom(BorderStyle.THIN);
-				intCellStyle.setBorderLeft(BorderStyle.THIN);
-				intCellStyle.setBorderRight(BorderStyle.THIN);
-				intCellStyle.setBorderTop(BorderStyle.THIN);
+//				intCellStyle.setBorderBottom(BorderStyle.THIN);
+//				intCellStyle.setBorderLeft(BorderStyle.THIN);
+//				intCellStyle.setBorderRight(BorderStyle.THIN);
+//				intCellStyle.setBorderTop(BorderStyle.THIN);
 				intCellStyle.setAlignment(HorizontalAlignment.RIGHT);
 
 				CellStyle decimalCellStyle = wb.createCellStyle();
 				decimalCellStyle.setDataFormat(createHelper.createDataFormat().getFormat("#,##0.00"));
-				decimalCellStyle.setBorderBottom(BorderStyle.THIN);
-				decimalCellStyle.setBorderLeft(BorderStyle.THIN);
-				decimalCellStyle.setBorderRight(BorderStyle.THIN);
-				decimalCellStyle.setBorderTop(BorderStyle.THIN);
+//				decimalCellStyle.setBorderBottom(BorderStyle.THIN);
+//				decimalCellStyle.setBorderLeft(BorderStyle.THIN);
+//				decimalCellStyle.setBorderRight(BorderStyle.THIN);
+//				decimalCellStyle.setBorderTop(BorderStyle.THIN);
 				decimalCellStyle.setAlignment(HorizontalAlignment.RIGHT);
 
 				IMetaData dataSetMetadata = dataSet.getMetadata();
 
-				// CREATE HEADER SHEET
+				// CREATE BRANDED HEADER SHEET
+				this.imageB64 = OrganizationImageManager.getOrganizationB64ImageWide(TenantManager.getTenant().getName());
+				int startRow = 0;
+				float rowHeight = 35; // in points
+				int rowspan = 2;
+				int startCol = 0;
+				int colWidth = 25;
+				int colspan = 2;
+				int namespan = 10;
+				int dataspan = 10;
+					
 				Row header;
-				header = sheet.createRow((short) 0); // first row
+				
+				int headerIndex = createBrandedHeaderSheet(
+						sheet, 
+						this.imageB64, 
+						startRow, 
+						rowHeight, 
+						rowspan, 
+						startCol,
+						colWidth,
+						colspan,
+						namespan,
+						dataspan,
+						this.documentName,
+						sheet.getSheetName());
+				
+				header = sheet.createRow((short) headerIndex+1); // first row
 				if (dataSetMetadata != null && dataSetMetadata.getFieldCount() > 0) {
 					for (int i = 0; i <= dataSetMetadata.getFieldCount() - 1; i++) {
 						Cell cell = header.createCell(i);
 						cell.setCellValue(dataSetMetadata.getFieldAlias(i));
 						cell.setCellStyle(borderStyleHeader);
+						// set cell style
+						CellStyle headerCellStyle = buildCellStyle(sheet, true, HorizontalAlignment.LEFT, VerticalAlignment.CENTER, (short) 11);
+						cell.setCellStyle(headerCellStyle);
 					}
 				}
+
+				// adjusts the column width to fit the contents
+				adjustColumnWidth(sheet, this.imageB64);
 
 				// FILL CELL RECORD
 				try (DataIterator iterator = dataSet.iterator()) {
 
-					int i = 0;
+					int i = headerIndex + 1;
 					final int recordLimit = SpreadsheetVersion.EXCEL2007.getLastRowIndex();
 					while (iterator.hasNext() && i < recordLimit) {
 
@@ -199,6 +243,9 @@ public class ExcelExportJob extends AbstractExportJob {
 					}
 				}
 
+				// adjusts the column width to fit the contents
+				adjustColumnWidth(sheet, this.imageB64);
+
 				wb.write(exportFileOS);
 				exportFileOS.flush();
 				exportFileOS.close();
@@ -230,6 +277,5 @@ public class ExcelExportJob extends AbstractExportJob {
 	@Override
 	protected String mime() {
 		return "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
-	}
-
+	}	
 }

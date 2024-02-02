@@ -1,70 +1,18 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	
 	<modelVersion>4.0.0</modelVersion>
-
+	
 	<parent>
 		<groupId>it.eng.knowage</groupId>
 		<artifactId>knowage-ce-parent</artifactId>
-		<version>8.1.18</version>
+		<version>8.1.19</version>
 		<relativePath>../knowage-ce-parent/pom.xml</relativePath>
 	</parent>
-
+	
 	<artifactId>knowagemeta</artifactId>
 	<packaging>war</packaging>
-	
-	<profiles>
-		<profile>
-			<id>development</id>
-            <activation>
-                <!-- this profile is active by default -->
-                <activeByDefault>true</activeByDefault>
-            </activation>
-            <properties>
-	       		<application.environment>development</application.environment>
-      		</properties>
-      		<build>
-			    <plugins>
-			        <plugin>
-			        	<groupId>org.apache.maven.plugins</groupId>
-			            <artifactId>maven-war-plugin</artifactId>
-			            <configuration>
-			                <attachClasses>true</attachClasses>
-			                <classesClassifier>classes</classesClassifier>
-			            </configuration>
-			        </plugin>
-			    </plugins>
-			</build>
-		</profile>
-		
-		<profile>
-			<id>production</id>
-			<properties>
-	       		<application.environment>production</application.environment>
-	       		<disable.console.logging>*/console.log = function() {}; console.warn = function() {}; console.debug = function() {}; console.info = function() {};  /*</disable.console.logging>
-	        </properties>
-			<build>
-			    <plugins>
-			        <plugin>
-			        	<groupId>org.apache.maven.plugins</groupId>
-			            <artifactId>maven-war-plugin</artifactId>
-			            <configuration>
-			                <attachClasses>true</attachClasses>
-			                <classesClassifier>classes</classesClassifier>
-			                <webResources>
-								<resource>
-									<directory>src/main/webapp</directory>
-									<filtering>true</filtering>
-									<includes>
-										<include>**/angularImport.jsp</include>
-									</includes>										
-								</resource>					      
-					      </webResources>
-			            </configuration>
-			        </plugin>
-			    </plugins>
-			</build>
-		</profile>
-	</profiles>
+	<name>knowagemeta</name>
 	
 	<dependencies>
 		
@@ -75,8 +23,8 @@
 			<scope>compile</scope>
 			<exclusions>
 				<exclusion>
-					<groupId>org.cometd.java</groupId>
 					<artifactId>cometd-java-server</artifactId>
+					<groupId>org.cometd.java</groupId>
 				</exclusion>
 			</exclusions>
 		</dependency>
@@ -136,44 +84,43 @@
 			<scope>compile</scope>
 			<exclusions>
 				<exclusion>
-					<groupId>com.fasterxml.jackson.core</groupId>
 					<artifactId>jackson-databind</artifactId>
+					<groupId>com.fasterxml.jackson.core</groupId>
 				</exclusion>
 				<exclusion>
-					<groupId>com.fasterxml.jackson.core</groupId>
 					<artifactId>jackson-core</artifactId>
+					<groupId>com.fasterxml.jackson.core</groupId>
 				</exclusion>
 			</exclusions>
 		</dependency>
-
+		
 		<dependency>
 			<groupId>javax.servlet</groupId>
 			<artifactId>javax.servlet-api</artifactId>
-			<version>3.1.0</version> <!-- WebLogic uses 3.1.0, Tomcat 7 uses 3.0 -->
+			<version>3.1.0</version>
 			<scope>provided</scope>
 		</dependency>
-
+		
 		<dependency>
 			<groupId>org.eclipse.jdt.core.compiler</groupId>
 			<artifactId>ecj</artifactId>
 			<version>3.7</version>
 			<scope>compile</scope>
 		</dependency>
-
+		
 		<dependency>
 			<groupId>org.eclipse.persistence</groupId>
 			<artifactId>javax.persistence</artifactId>
 			<version>2.0.5</version>
 			<scope>runtime</scope>
 		</dependency>
-
+		
 		<dependency>
 			<groupId>com.vividsolutions</groupId>
 			<artifactId>jts</artifactId>
 			<version>1.13</version>
 		</dependency>
-
-
+		
 		<dependency>
 			<groupId>org.jasypt</groupId>
 			<artifactId>jasypt</artifactId>
@@ -182,14 +129,67 @@
 			<groupId>org.jasypt</groupId>
 			<artifactId>jasypt-hibernate3</artifactId>
 		</dependency>
-
+		
 		<!-- Provides support for Graylog in log4j2 -->
 		<dependency>
 			<groupId>biz.paluch.logging</groupId>
 			<artifactId>logstash-gelf</artifactId>
 		</dependency>
-
+		
 	</dependencies>
-
-	<name>knowagemeta</name>
+	
+	<profiles>
+		<profile>
+			<id>development</id>
+			<activation>
+				<!-- this profile is active by default -->
+				<activeByDefault>true</activeByDefault>
+			</activation>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-war-plugin</artifactId>
+						<configuration>
+							<attachClasses>true</attachClasses>
+							<classesClassifier>classes</classesClassifier>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+			<properties>
+				<application.environment>development</application.environment>
+			</properties>
+		</profile>
+		
+		<profile>
+			<id>production</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-war-plugin</artifactId>
+						<configuration>
+							<attachClasses>true</attachClasses>
+							<classesClassifier>classes</classesClassifier>
+							<webResources>
+								<resource>
+									<directory>src/main/webapp</directory>
+									<filtering>true</filtering>
+									<includes>
+										<include>**/angularImport.jsp</include>
+									</includes>
+								</resource>
+							</webResources>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+			<properties>
+				<application.environment>production</application.environment>
+				<disable.console.logging>*/console.log = function() {}; console.warn = function() {}; console.debug = function() {}; console.info = function() {};  /*</disable.console.logging>
+			</properties>
+		</profile>
+	</profiles>
+	
 </project>

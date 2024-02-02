@@ -57,7 +57,6 @@ public class PreparedDataSet extends ConfigurableDataSet {
 	private IMetaData metadata;
 
 	public PreparedDataSet() {
-		super();
 	}
 
 	public PreparedDataSet(SpagoBiDataSet dataSetConfig) {
@@ -139,13 +138,16 @@ public class PreparedDataSet extends ConfigurableDataSet {
 	public DataIterator iterator() {
 		LOGGER.debug("IN");
 		try {
+			IMetaData currMetadata = getMetadata();
 			String query = "select * from " + this.getTableName();
 			Connection connection = dataSource.getConnection();
 			Statement stmt = connection.createStatement();
+
+			connection.setAutoCommit(false); // PostgreSQL requires disabling auto-commit for setFetchSize to work
 			stmt.setFetchSize(5000);
+
 			ResultSet rs = stmt.executeQuery(query);
-			DataIterator iterator = new ResultSetIterator(connection, stmt, rs);
-			return iterator;
+			return new ResultSetIterator(connection, stmt, rs, currMetadata);
 		} catch (Exception e) {
 			throw new SpagoBIRuntimeException(e);
 		} finally {

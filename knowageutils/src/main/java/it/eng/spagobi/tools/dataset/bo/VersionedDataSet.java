@@ -753,8 +753,8 @@ public class VersionedDataSet implements IDataSet {
 	}
 
 	@Override
-	public void removeDataStoreTransformers() {
-		wrappedDataset.removeDataStoreTransformers();
+	public void clearDataStoreTransformers() {
+		wrappedDataset.clearDataStoreTransformers();
 	}
 
 	@Override

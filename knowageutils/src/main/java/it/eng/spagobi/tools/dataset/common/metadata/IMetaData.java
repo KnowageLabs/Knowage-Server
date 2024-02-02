@@ -20,13 +20,14 @@ package it.eng.spagobi.tools.dataset.common.metadata;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * @authors Angelo Bernabei (angelo.bernabei@eng.it) Andrea Gioia (andrea.gioia@eng.it) Davide Zerbetto (davide.zerbetto@eng.it)
  */
 public interface IMetaData {
 
-	public static final String RESULT_NUMBER_PROPERTY = "resultNumber";
+	String RESULT_NUMBER_PROPERTY = "resultNumber";
 
 	/**
 	 * @return Returns the index of identifier field if any. -1 otherwise.
@@ -43,14 +44,13 @@ public interface IMetaData {
 	/**
 	 * Get the designated field's index.
 	 *
-	 * @param columnIndex
-	 *            the first column is 0, the second is 1, ...
+	 * @param columnIndex the first column is 0, the second is 1, ...
 	 *
 	 * @return column index
 	 *
-	 * @deprecated use getFieldIndex(IFieldMetaData fieldMeta) instead. This method is ambiguous because field name is not unique among fields contained in a
-	 *             result set. The same field can be used more then one time in the select statement of the same query. This is a problem when different
-	 *             aggregation functions are applied on the different occurrences of the same fields (see SPAGOBI-757)
+	 * @deprecated use getFieldIndex(IFieldMetaData fieldMeta) instead. This method is ambiguous because field name is not unique among fields contained in a result
+	 *             set. The same field can be used more then one time in the select statement of the same query. This is a problem when different aggregation
+	 *             functions are applied on the different occurrences of the same fields (see SPAGOBI-757)
 	 */
 	@Deprecated
 	int getFieldIndex(String fieldName);
@@ -62,8 +62,7 @@ public interface IMetaData {
 	/**
 	 * Get the designated column's name.
 	 *
-	 * @param columnIndex
-	 *            the first column is 0, the second is 1, ...
+	 * @param columnIndex the first column is 0, the second is 1, ...
 	 *
 	 * @return column name
 	 */
@@ -72,8 +71,7 @@ public interface IMetaData {
 	/**
 	 * Get the designated column's alias.
 	 *
-	 * @param columnIndex
-	 *            the first column is 0, the second is 1, ...
+	 * @param columnIndex the first column is 0, the second is 1, ...
 	 *
 	 * @return column alias, if alias is null return the name
 	 */
@@ -106,5 +104,18 @@ public interface IMetaData {
 	void changeFieldAlias(int fieldIndex, String newAlias);
 
 	List<IFieldMetaData> getFieldsMeta();
+
+	default Optional<IFieldMetaData> findMetadataByColumnName(String columnName) {
+		return getFieldsMeta().stream().filter(e -> e.getName().equals(columnName)).findFirst();
+	}
+
+	default boolean needEncryptionDecryption(String column) {
+		boolean needEncrypt = false;
+		Optional<IFieldMetaData> colMetaData = findMetadataByColumnName(column);
+		if (colMetaData.isPresent()) {
+			needEncrypt = colMetaData.get().isDecrypt();
+		}
+		return needEncrypt;
+	}
 
 }

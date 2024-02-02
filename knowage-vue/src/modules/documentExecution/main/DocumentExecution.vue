@@ -96,11 +96,11 @@ import TieredMenu from 'primevue/tieredmenu'
 import Registry from '../registry/Registry.vue'
 import Dossier from '../dossier/Dossier.vue'
 import Olap from '../olap/Olap.vue'
-import moment from 'moment'
 import DocumentExecutionSelectCrossNavigationDialog from './dialogs/documentExecutionSelectCrossNavigationDialog/DocumentExecutionSelectCrossNavigationDialog.vue'
 import DocumentExecutionCNContainerDialog from './dialogs/documentExecutionCNContainerDialog/DocumentExecutionCNContainerDialog.vue'
 import { getCorrectRolesForExecution } from '../../../helpers/commons/roleHelper'
 import { findCrossTargetByCrossName, loadNavigationParamsInitialValue } from './DocumentExecutionCrossNavigationHelper'
+import { getValidDate } from './DocumentExecutionCrossNavigationHelper'
 
 const crypto = require('crypto')
 const deepcopy = require('deepcopy')
@@ -267,7 +267,9 @@ export default defineComponent({
 
             return parameterVisible
         },
-        
+        isAndroidDevice(){
+            return /Android/i.test(navigator.userAgent)
+        }
     },
     async created() {
         window.addEventListener('message', this.iframeEventsListener)
@@ -706,7 +708,7 @@ export default defineComponent({
                     })
 
                     if (el.type === 'DATE' && !el.selectionType && el.valueSelection === 'man_in' && el.showOnPanel === 'true' && el.visible) {
-                        el.parameterValue[0].value = moment(el.parameterValue[0].description?.split('#')[0]).toDate() as any
+                        el.parameterValue[0].value = getValidDate('' + el.parameterValue[0].value)
                     }
                 }
                 if (el.data) {
@@ -827,7 +829,8 @@ export default defineComponent({
             postForm.action = process.env.VUE_APP_HOST_URL + postObject.url
             postForm.method = 'post'
             const iframeName = crossNavigationPopupMode ? 'documentFramePopup' : 'documentFrame'
-            postForm.target = tempIndex !== -1 ? iframeName + tempIndex : documentLabel
+            if(this.isAndroidDevice && postObject.params.outputType?.toLowerCase() === 'pdf') postForm.target = "_blank"
+            else postForm.target = tempIndex !== -1 ? iframeName + tempIndex : documentLabel
             postForm.acceptCharset = 'UTF-8'
             document.body.appendChild(postForm)
 

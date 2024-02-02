@@ -28,11 +28,12 @@ import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.tools.dataset.common.datareader.IDataReader;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
+import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 public class JDBCPostgreSQLDataProxy extends JDBCDataProxy {
 
-	private static transient Logger logger = Logger.getLogger(JDBCPostgreSQLDataProxy.class);
+	private static Logger logger = Logger.getLogger(JDBCPostgreSQLDataProxy.class);
 
 	private String statement;
 
@@ -149,15 +150,11 @@ public class JDBCPostgreSQLDataProxy extends JDBCDataProxy {
 
 			if (resultNumber > -1) { // it means that resultNumber was successfully calculated by this data proxy
 				int limitedResultNumber = getMaxResults() > 0 && resultNumber > getMaxResults() ? getMaxResults() : resultNumber;
-				dataStore.getMetaData().setProperty("resultNumber", new Integer(limitedResultNumber));
+				dataStore.getMetaData().setProperty("resultNumber", limitedResultNumber);
 			}
 
 		} finally {
-			try {
-				releaseResources(connection, stmt, resultSet);
-			} catch (Exception t) {
-				throw new SpagoBIRuntimeException("Impossible to release allocated resources properly", t);
-			}
+			releaseResources(connection, stmt, resultSet);
 		}
 
 		return dataStore;
@@ -179,8 +176,8 @@ public class JDBCPostgreSQLDataProxy extends JDBCDataProxy {
 			rs = stmt.executeQuery(sqlQuery);
 			rs.next();
 			resultNumber = rs.getInt(1);
-		} catch (Throwable t) {
-			throw new SpagoBIRuntimeException("An error occurred while creating connection steatment", t);
+		} catch (Exception e) {
+			throw new SpagoBIRuntimeException("An error occurred while getting result number", e);
 		} finally {
 			releaseResources(null, stmt, rs);
 		}
@@ -220,27 +217,19 @@ public class JDBCPostgreSQLDataProxy extends JDBCDataProxy {
 
 	private String getFinalStatement() {
 
-		if (fetchSize == -1) {
-			if (!this.statement.isEmpty()) {
-				this.statement = removeLastSemicolon(this.statement);
-				return this.statement;
-			}
-		}
+		Assert.assertNotBlank(this.statement, "Statement cannot be empty!!");
+
+		this.statement = removeLastSemicolon(this.statement);
 
 		StringBuilder newStatement = new StringBuilder();
-		if (!this.statement.isEmpty()) {
-			this.statement = removeLastSemicolon(this.statement);
+		newStatement.append(this.statement);
 
-			newStatement.append("SELECT * FROM (").append(this.statement).append(") t");
+		if (offset > 0) {
+			newStatement.append(" OFFSET " + offset);
+		}
 
-			if (offset > 0) {
-				newStatement.append(" OFFSET " + offset);
-			}
-
-			if (fetchSize > 0) {
-				newStatement.append(" FETCH NEXT " + fetchSize + " ROWS ONLY");
-			}
-
+		if (fetchSize > 0) {
+			newStatement.append(" FETCH NEXT " + fetchSize + " ROWS ONLY");
 		}
 
 		return newStatement.toString();

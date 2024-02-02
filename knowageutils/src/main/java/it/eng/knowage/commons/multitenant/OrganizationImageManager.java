@@ -31,6 +31,7 @@ import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
 public abstract class OrganizationImageManager {
 	static private Logger logger = Logger.getLogger(OrganizationImageManager.class);
 	static private final String ORGANIZATION_IMAGE_FILE_NAME = "organization_image.base64";
+	static private final String ORGANIZATION_IMAGE_WIDE_FILE_NAME = "organization_image_wide.base64";
 
 	public static final String getOrganizationB64Image(String organization) {
 		String organizationImagePath = SpagoBIUtilities.getRootResourcePath() + File.separatorChar + organization + File.separatorChar
@@ -53,6 +54,30 @@ public abstract class OrganizationImageManager {
 			Files.write(Paths.get(organizationImagePath), imgB64.getBytes());
 		} catch (Exception e) {
 			logger.error("Cannot save organization image", e);
+		}
+	}
+
+	public static final String getOrganizationB64ImageWide(String organization) {
+		String organizationImagePath = SpagoBIUtilities.getRootResourcePath() + File.separatorChar + organization + File.separatorChar
+				+ ORGANIZATION_IMAGE_WIDE_FILE_NAME;
+		if (new File(organizationImagePath).isFile()) {
+			try (FileInputStream inputStream = new FileInputStream(organizationImagePath)) {
+				String imgB64 = IOUtils.toString(inputStream);
+				return imgB64;
+			} catch (Exception e) {
+				logger.error("Cannot load organization image wide", e);
+			}
+		}
+		return null;
+	}
+
+	public static final void setOrganizationB64ImageWide(String organization, String imgB64) {
+		String organizationImagePath = SpagoBIUtilities.getRootResourcePath() + File.separatorChar + organization + File.separatorChar
+				+ ORGANIZATION_IMAGE_WIDE_FILE_NAME;
+		try {
+			Files.write(Paths.get(organizationImagePath), imgB64.getBytes());
+		} catch (Exception e) {
+			logger.error("Cannot save organization image wide", e);
 		}
 	}
 }

@@ -465,7 +465,7 @@ public class DataStoreListenerOperatorTest extends TestCase {
 		}
 
 		@Override
-		public void removeDataStoreTransformers() {
+		public void clearDataStoreTransformers() {
 
 		}
 

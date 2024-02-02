@@ -95,33 +95,6 @@
                             <KnValidationMessages class="p-mt-1" :vComp="v$.mode.selectionType" :additionalTranslateParams="{ fieldName: $t('managers.driversManagement.useModes.modality') }" :specificTranslateKeys="{ required_type_for_lov: 'common.validation.required' }"></KnValidationMessages>
                         </div>
                     </div>
-                    <div class="p-col-9 p-sm-12 p-md-8 p-fluid p-formgrid p-grid" v-show="mode.valueSelection === 'map_in'">
-                        <div class="p-field p-col-6 p-sm-12 p-md-6">
-                            <span class="p-float-label">
-                                <Dropdown
-                                    id="type"
-                                    class="kn-material-input"
-                                    v-model="v$.mode.selectedLayer.$model"
-                                    :options="layers"
-                                    optionLabel="name"
-                                    optionValue="name"
-                                    :class="{
-                                        'p-invalid': v$.mode.selectedLayer.$invalid && v$.mode.selectedLayer.$dirty
-                                    }"
-                                    @blur="v$.mode.selectedLayer.$touch()"
-                                    @change="modeChanged"
-                                />
-                                <label for="type" class="kn-material-input-label"> {{ $t('managers.driversManagement.useModes.layer') }} * </label>
-                            </span>
-                            <KnValidationMessages class="p-mt-1" :vComp="v$.mode.selectedLayer" :additionalTranslateParams="{ fieldName: $t('managers.driversManagement.useModes.layer') }" :specificTranslateKeys="{ required_for_map_in: 'common.validation.required' }"></KnValidationMessages>
-                        </div>
-                        <div class="p-field p-col-6 p-sm-12 p-md-6">
-                            <span class="p-float-label">
-                                <InputText id="prop" class="kn-material-input" type="text" v-model="mode.selectedLayerProp" />
-                                <label for="prop" class="kn-material-input-label">{{ $t('managers.driversManagement.useModes.layerProp') }} </label>
-                            </span>
-                        </div>
-                    </div>
                 </div>
                 <div class="p-col-12 p-d-flex p-flex-wrap">
                     <div class="p-field p-col-4 p-sm-12 p-md-4">
@@ -208,15 +181,15 @@ export default defineComponent({
         },
         selectionTypes: {
             type: Array,
-            requierd: true
+            required: true
         },
         layers: {
             type: Array,
-            requierd: true
+            required: true
         },
         lovs: {
             type: Array,
-            requierd: true
+            required: true
         },
         isDate: {
             type: Boolean,
@@ -224,7 +197,7 @@ export default defineComponent({
         },
         showMapDriver: {
             type: Boolean,
-            requierd: true
+            required: true
         }
     },
     data() {
@@ -249,9 +222,6 @@ export default defineComponent({
             required_lovId_for_lov: () => {
                 return this.mode.valueSelection != 'lov' || this.mode.typeLov.name != null
             },
-            required_for_map_in: () => {
-                return this.mode.valueSelection != 'map_in' || (this.mode.selectedLayer != '' && this.mode.selectedLayer != null)
-            },
             required_for_pick_up: () => {
                 return this.selectedDefault != 'pickUp' || (this.mode.defaultFormula != '' && this.mode.defaultFormula != null)
             },
@@ -269,15 +239,9 @@ export default defineComponent({
     },
     computed: {
         defaults(): any {
-            if (this.mode.valueSelection === 'map_in') {
-                return this.useModeDescriptor.defaultValues.filter((type) => type.label != 'pickUp')
-            }
             return this.useModeDescriptor.defaultValues
         },
         availableTypes(): any {
-            if (!this.showMapDriver) {
-                return this.useModeDescriptor.types.filter((type) => type.valueSelection != 'map_in')
-            }
             return this.useModeDescriptor.types
         }
     },
@@ -353,12 +317,6 @@ export default defineComponent({
                     this.mode.selectionType = null
                     this.mode.selectedLayer = null
                     this.mode.selectedLayerProp = null
-                    break
-                case 'map_in':
-                    this.mode.idLov = null
-                    this.mode.typeLov = { name: null }
-                    this.mode.selectionType = null
-                    this.mode.manualInput = 0
                     break
             }
             this.modeChanged()

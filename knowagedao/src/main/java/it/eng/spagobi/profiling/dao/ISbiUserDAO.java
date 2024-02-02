@@ -20,6 +20,7 @@ package it.eng.spagobi.profiling.dao;
 import java.util.ArrayList;
 import java.util.List;
 
+import it.eng.spagobi.commons.dao.EmittingEventDAO;
 import it.eng.spagobi.commons.dao.ISpagoBIDao;
 import it.eng.spagobi.commons.dao.es.UserEventsEmettingCommand;
 import it.eng.spagobi.commons.metadata.SbiExtRoles;
@@ -33,11 +34,10 @@ import it.eng.spagobi.profiling.bo.UserBO;
 /**
  * DAO for SBI_USER table and related ones.
  *
- * WARNING : All the implementation must consider the difference between queries
- * and commands because all the commands executed must be tracked for GDPR.
+ * WARNING : All the implementation must consider the difference between queries and commands because all the commands executed must be tracked for GDPR.
  *
  */
-public interface ISbiUserDAO extends ISpagoBIDao {
+public interface ISbiUserDAO extends ISpagoBIDao, EmittingEventDAO<UserEventsEmettingCommand> {
 
 	// Query
 	SbiUser loadSbiUserByUserId(String userId);
@@ -85,9 +85,5 @@ public interface ISbiUserDAO extends ISpagoBIDao {
 	void incrementFailedLoginAttempts(String userId);
 
 	void resetFailedLoginAttempts(String userId);
-
-	// Utils
-
-	void setEventEmittingCommand(UserEventsEmettingCommand command);
 
 }

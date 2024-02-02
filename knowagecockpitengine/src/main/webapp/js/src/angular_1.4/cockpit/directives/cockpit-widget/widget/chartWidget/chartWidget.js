@@ -192,6 +192,17 @@ function cockpitChartWidgetControllerFunction(
 	$scope.refresh=function(element,width,height,data,nature, undefined, changedChartType,dataAndChartConf){
 		if(dataAndChartConf && dataAndChartConf.chartConf) $scope.tempChartConf = dataAndChartConf.chartConf;
 		if ($scope.ngModel.dataset){
+			if($scope.ngModel.content.chartTemplate.CHART.categoriesCheck && $scope.ngModel.content.chartTemplate.CHART.categoriesCheck.min){
+				var tempData = JSON.parse(dataAndChartConf.jsonData);
+				var category = $scope.ngModel.content.columnSelectedOfDataset.filter((i)=>i.fieldType === "ATTRIBUTE")[0];
+				var field = tempData.metaData.fields.filter((i)=>i.header === category.alias)[0];
+				var stat = tempData.stats[tempData.metaData.fields.map((i)=>i.name).indexOf(field?.name)];
+				if(stat && stat.cardinality < $scope.ngModel.content.chartTemplate.CHART.categoriesCheck.min){
+					$scope.hideChart = $scope.ngModel.content.chartTemplate.CHART.categoriesCheck.text;
+					return
+				}
+			}
+			$scope.hideChart = false
 			var dataset = cockpitModule_datasetServices.getDatasetById($scope.ngModel.dataset.dsId);
 			var aggregations = cockpitModule_widgetSelection.getAggregation($scope.ngModel,dataset);
 			$scope.ngModel.dataset.label = $scope.ngModel.dataset.dsLabel;

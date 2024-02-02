@@ -1,11 +1,192 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	
 	<modelVersion>4.0.0</modelVersion>
+	
 	<groupId>it.eng.knowage</groupId>
 	<artifactId>knowage-ce-parent</artifactId>
-	<version>8.1.18</version>
+	<version>8.1.19</version>
 	<packaging>pom</packaging>
 	<name>knowage-ce-parent</name>
-
+	
+	<modules>
+		<module>../jdbccore</module>
+		<module>../knowageutilsjson</module>
+		<module>../knowageutils</module>
+		<module>../qbecore</module>
+		<module>../spagobi-cwm</module>
+		<module>../spagobi-commons-core</module>
+		<module>../spagobi-metamodel-core</module>
+		<module>../spagobi-metamodel-utils</module>
+		<module>../knowagedao</module>
+		<module>../knowage-core</module>
+		<module>../knowageoauth2securityprovider</module>
+		<module>../knowageldapsecurityprovider</module>
+		<module>../knowagegooglesecurityprovider</module>
+		<module>../knowageazuresecurityprovider</module>
+		<module>../knowage</module>
+		<module>../knowagecockpitengine</module>
+		<module>../knowagekpiengine</module>
+		<module>../knowagesdk</module>
+		
+		<module>../knowagecommonjengine</module>
+		<module>../knowagegeoreportengine</module>
+		<module>../knowagemeta</module>
+		<module>../knowageqbeengine</module>
+		<module>../knowagesvgviewerengine</module>
+		<module>../knowagetalendengine</module>
+		<module>../knowagewhatifengine</module>
+		<module>../knowagejasperreportengine</module>
+		<module>../spagobi.birt.oda</module>
+		<module>../knowagebirtreportengine</module>
+		<module>../knowagedatabasescripts</module>
+		<module>../knowage-api</module>
+		<module>../knowage-vue</module>
+		<module>../knowage-spring-boot-api-common</module>
+		<module>../knowage-common</module>
+		<module>../knowage-pm-dto</module>
+	</modules>
+	
+	<properties>
+		<apache.poi>4.1.2</apache.poi>
+		<commons-lang3.version>3.12.0</commons-lang3.version>
+		<commons-text.version>1.10.0</commons-text.version>
+		<jasypt.version>1.9.3</jasypt.version>
+		
+		<!-- Minimized version: ixed because in jspf are not dynamic as in pom -->
+		<js.version>${project.version}</js.version>
+		<junit4.version>4.13.2</junit4.version>
+		<log4j.version>2.17.1</log4j.version>
+		<logstash-gelf.version>1.15.0</logstash-gelf.version>
+		<m2e.jaxrs.activation>false</m2e.jaxrs.activation>
+		
+		<!-- For eclipse plugin -->
+		<m2e.jpa.activation>false</m2e.jpa.activation>
+		<m2e.jsf.activation>false</m2e.jsf.activation>
+		<maven.compiler.source>1.8</maven.compiler.source>
+		<maven.compiler.target>1.8</maven.compiler.target>
+		<ojdbc.version>12.2.0.1</ojdbc.version>
+		<owasp-java-html-sanitizer.version>20220608.1</owasp-java-html-sanitizer.version>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<quartz.version>2.3.2</quartz.version>
+		<resteasy.version>3.6.2.Final</resteasy.version>
+		
+		<!-- if you want run tests overwrite this property with: mvn test -DskipTests=false -->
+		<skipTests>true</skipTests>
+		
+		<spring.boot>2.5.12</spring.boot>
+	</properties>
+	
+	<dependencyManagement>
+		
+		<dependencies>
+			
+			<!-- CometD -->
+			<!-- 
+				Next version is:
+					org.cometd.java:cometd-java-server-common:x.x.x
+			 -->
+			<dependency>
+				<groupId>org.cometd.java</groupId>
+				<artifactId>cometd-java-server</artifactId>
+				<version>4.0.9</version>
+			</dependency>
+			
+			<!-- Replace Axis 1.4 -->
+			<dependency>
+				<groupId>com.sun.xml.ws</groupId>
+				<artifactId>jaxws-rt</artifactId>
+				<version>2.3.6</version>
+			</dependency>
+			
+			<dependency>
+				<groupId>org.quartz-scheduler</groupId>
+				<artifactId>quartz</artifactId>
+				<version>${quartz.version}</version>
+			</dependency>
+			
+			<dependency>
+				<groupId>org.apache.logging.log4j</groupId>
+				<artifactId>log4j-1.2-api</artifactId>
+				<version>${log4j.version}</version>
+			</dependency>
+			
+			<dependency>
+				<groupId>org.apache.logging.log4j</groupId>
+				<artifactId>log4j-core</artifactId>
+				<version>${log4j.version}</version>
+			</dependency>
+			
+			<dependency>
+				<groupId>org.apache.logging.log4j</groupId>
+				<artifactId>log4j-api</artifactId>
+				<version>${log4j.version}</version>
+			</dependency>
+			
+			<dependency>
+				<groupId>org.apache.logging.log4j</groupId>
+				<artifactId>log4j-web</artifactId>
+				<version>${log4j.version}</version>
+			</dependency>
+			
+			<dependency>
+				<groupId>org.apache.logging.log4j</groupId>
+				<artifactId>log4j-jcl</artifactId>
+				<version>${log4j.version}</version>
+			</dependency>
+			
+			<dependency>
+				<groupId>biz.paluch.logging</groupId>
+				<artifactId>logstash-gelf</artifactId>
+				<version>${logstash-gelf.version}</version>
+			</dependency>
+			
+			<dependency>
+				<groupId>com.oracle.database.jdbc</groupId>
+				<artifactId>ojdbc8</artifactId>
+				<version>${ojdbc.version}</version>
+			</dependency>
+			
+			<dependency>
+				<groupId>com.googlecode.owasp-java-html-sanitizer</groupId>
+				<artifactId>owasp-java-html-sanitizer</artifactId>
+				<version>${owasp-java-html-sanitizer.version}</version>
+			</dependency>
+			
+			<dependency>
+				<groupId>org.apache.commons</groupId>
+				<artifactId>commons-lang3</artifactId>
+				<version>${commons-lang3.version}</version>
+			</dependency>
+			
+			<dependency>
+				<groupId>org.apache.commons</groupId>
+				<artifactId>commons-text</artifactId>
+				<version>${commons-text.version}</version>
+			</dependency>
+			
+			<dependency>
+				<groupId>org.jasypt</groupId>
+				<artifactId>jasypt</artifactId>
+				<version>${jasypt.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.jasypt</groupId>
+				<artifactId>jasypt-hibernate3</artifactId>
+				<version>${jasypt.version}</version>
+			</dependency>
+			
+			<dependency>
+				<groupId>junit</groupId>
+				<artifactId>junit</artifactId>
+				<version>${junit4.version}</version>
+				<scope>test</scope>
+			</dependency>
+			
+		</dependencies>
+		
+	</dependencyManagement>
+	
 	<repositories>
 		<!-- We use SpagoBI repo on GitHub because we cannot find HBql library somewhere else -->
 		<repository>
@@ -24,13 +205,13 @@
 			<url>https://www.license4j.com/maven/</url>
 			<layout>default</layout>
 		</repository>
-
+		
 		<!-- We use osgeo.org because it contains geotools 2.7.5, needed by knowage DAO; this library is not available on Maven Central -->
 		<repository>
 			<id>osgeo.org</id>
 			<url>https://repo.osgeo.org/repository/release/</url>
 		</repository>
-			<!-- We use Maven Geo-Solutions for hibernate-spatial-1.1.1.jar, needed by Qbe core; this library is not available on Maven Central -->
+		<!-- We use Maven Geo-Solutions for hibernate-spatial-1.1.1.jar, needed by Qbe core; this library is not available on Maven Central -->
 		<repository>
 			<id>geo-solutions</id>
 			<url>https://maven.geo-solutions.it/</url>
@@ -62,77 +243,8 @@
 			<url>http://repo.bidlink.cn/nexus/content/repositories/</url>
 		</repository>
 		
-		
 	</repositories>
-  
-	<properties>
-		<maven.compiler.source>1.8</maven.compiler.source>
-		<maven.compiler.target>1.8</maven.compiler.target>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		
-		<!-- if you want run tests overwrite this property with: mvn test -DskipTests=false -->
-		<skipTests>true</skipTests>
-
-		<!-- For eclipse plugin -->
-		<m2e.jpa.activation>false</m2e.jpa.activation>
-		<m2e.jsf.activation>false</m2e.jsf.activation>
-		<m2e.jaxrs.activation>false</m2e.jaxrs.activation>
-
-		<!-- Minimized version: ixed because in jspf are not dynamic as in pom -->
-		<js.version>${project.version}</js.version>
-
-		<spring.boot>2.5.12</spring.boot>
-		<apache.poi>4.1.2</apache.poi>
-		<resteasy.version>3.6.2.Final</resteasy.version>
-		<quartz.version>2.3.2</quartz.version>
-		<logstash-gelf.version>1.15.0</logstash-gelf.version>
-		<log4j.version>2.17.1</log4j.version>
-		<ojdbc.version>12.2.0.1</ojdbc.version>
-		<owasp-java-html-sanitizer.version>20220608.1</owasp-java-html-sanitizer.version>
-		<commons-lang3.version>3.12.0</commons-lang3.version>
-		<jasypt.version>1.9.3</jasypt.version>
-		<commons-text.version>1.10.0</commons-text.version>
-		<junit4.version>4.13.2</junit4.version>
-	</properties>
-
-	<modules>
-		<module>../jdbccore</module>
-		<module>../knowageutilsjson</module>
-		<module>../knowageutils</module>
-		<module>../qbecore</module>
-		<module>../spagobi-cwm</module>
-		<module>../spagobi-commons-core</module>
-		<module>../spagobi-metamodel-core</module>
-		<module>../spagobi-metamodel-utils</module>
-		<module>../knowagedao</module>
-		<module>../knowage-core</module>
-		<module>../knowageoauth2securityprovider</module>
-		<module>../knowageldapsecurityprovider</module>
-		<module>../knowagegooglesecurityprovider</module>
-		<module>../knowageazuresecurityprovider</module>
-		<module>../knowage</module>
-		<module>../knowagecockpitengine</module>
-		<module>../knowagekpiengine</module>
-		<module>../knowagesdk</module>
-		
-		<module>../knowagecommonjengine</module>
-		<module>../knowagegeoreportengine</module>
-		<module>../knowagemeta</module>
-		<module>../knowageqbeengine</module>
-		<module>../knowagesvgviewerengine</module>
-		<module>../knowagetalendenginclientapi</module>
-		<module>../knowagetalendengine</module>
-		<module>../knowagewhatifengine</module>
-		<module>../knowagejasperreportengine</module>
-		<module>../spagobi.birt.oda</module>
-		<module>../knowagebirtreportengine</module>
-		<module>../knowagedatabasescripts</module>
-		<module>../knowage-api</module>
-		<module>../knowage-vue</module>
-		<module>../knowage-spring-boot-api-common</module>
-		<module>../knowage-common</module>
-	</modules>
-
+	
 	<build>
 		<pluginManagement>
 			<plugins>
@@ -140,9 +252,9 @@
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-jar-plugin</artifactId>
 					<version>2.6</version>
-
+					
 					<configuration>
-
+						
 						<archive>
 							<manifest>
 								<addDefaultImplementationEntries>true</addDefaultImplementationEntries>
@@ -157,13 +269,13 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-war-plugin</artifactId>
- 					<version>3.3.1</version>
-
+					<version>3.3.1</version>
+					
 					<configuration>
 						<warName>${project.name}</warName>
 					</configuration>
 				</plugin>
-
+				
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-surefire-plugin</artifactId>
@@ -174,23 +286,55 @@
 				</plugin>
 			</plugins>
 		</pluginManagement>
-	</build>	
-
+		
+		<plugins>
+			
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-resources-plugin</artifactId>
+				<version>3.3.1</version>
+				<configuration>
+					<nonFilteredFileExtensions>
+						<nonFilteredFileExtension>xlsm</nonFilteredFileExtension>
+					</nonFilteredFileExtensions>
+				</configuration>
+			</plugin>
+			
+			<plugin>
+				<groupId>com.github.ekryd.sortpom</groupId>
+				<artifactId>sortpom-maven-plugin</artifactId>
+				<version>2.15.0</version>
+				<executions>
+					<execution>
+						<phase>compile</phase>
+						<goals>
+							<goal>sort</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<createBackupFile>false</createBackupFile>
+					<keepBlankLines>true</keepBlankLines>
+					<indentBlankLines>true</indentBlankLines>
+					<nrOfIndentSpace>-1</nrOfIndentSpace>
+					<sortProperties>true</sortProperties>
+				</configuration>
+			</plugin>
+			
+		</plugins>
+	</build>
+	
 	<profiles>
 		<profile>
 			<id>cas-enabled</id>
-			<properties>
-				<enable.cas.start>&lt;!--</enable.cas.start>
-				<enable.cas.end>--&gt;</enable.cas.end>
-			</properties>
-
+			
 			<build>
 				<plugins>
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-war-plugin</artifactId>
 						<version>2.6</version>
-
+						
 						<configuration>
 							<webResources>
 								<resource>
@@ -205,6 +349,10 @@
 					</plugin>
 				</plugins>
 			</build>
+			<properties>
+				<enable.cas.end>--&gt;</enable.cas.end>
+				<enable.cas.start>&lt;!--</enable.cas.start>
+			</properties>
 		</profile>
 		
 		<profile>
@@ -212,14 +360,45 @@
 			<activation>
 				<activeByDefault>true</activeByDefault>
 			</activation>
+			
+			<build>
+				<resources>
+					<resource>
+						<filtering>true</filtering>
+						<directory>src/main/resources</directory>
+						<includes>
+							<include>**/*.*</include>
+						</includes>
+						<excludes>
+							<exclude>**/*.pdf</exclude>
+							<exclude>**/*.zip</exclude>
+							<exclude>**/*.xlsm</exclude>
+						</excludes>
+					</resource>
+					<resource>
+						<filtering>false</filtering>
+						<directory>src/main/resources</directory>
+						<includes>
+							<include>**/*.pdf</include>
+							<include>**/*.zip</include>
+							<include>**/*.xlsm</include>
+						</includes>
+					</resource>
+				</resources>
+			</build>
 			<properties>
 				<hibernate.dialect>org.hibernate.dialect.MySQLDialect</hibernate.dialect>
 				<quartz.job.store.driver.delegate.class>org.quartz.impl.jdbcjobstore.StdJDBCDelegate</quartz.job.store.driver.delegate.class>
 			</properties>
-
+		</profile>
+		
+		<profile>
+			<id>oracle10</id>
+			
 			<build>
 				<resources>
 					<resource>
+						<filtering>true</filtering>
 						<directory>src/main/resources</directory>
 						<includes>
 							<include>**/*.*</include>
@@ -229,31 +408,31 @@
 							<exclude>**/*.zip</exclude>
 							<exclude>**/*.xlsm</exclude>
 						</excludes>
-						<filtering>true</filtering>
 					</resource>
 					<resource>
+						<filtering>false</filtering>
 						<directory>src/main/resources</directory>
 						<includes>
 							<include>**/*.pdf</include>
 							<include>**/*.zip</include>
 							<include>**/*.xlsm</include>
 						</includes>
-						<filtering>false</filtering>
 					</resource>
 				</resources>
 			</build>
-		</profile>
-
-		<profile>
-			<id>oracle10</id>
 			<properties>
 				<hibernate.dialect>org.hibernate.dialect.Oracle10gDialect</hibernate.dialect>
 				<quartz.job.store.driver.delegate.class>org.quartz.impl.jdbcjobstore.oracle.OracleDelegate</quartz.job.store.driver.delegate.class>
 			</properties>
-
+		</profile>
+		
+		<profile>
+			<id>postgres</id>
+			
 			<build>
 				<resources>
 					<resource>
+						<filtering>true</filtering>
 						<directory>src/main/resources</directory>
 						<includes>
 							<include>**/*.*</include>
@@ -263,31 +442,31 @@
 							<exclude>**/*.zip</exclude>
 							<exclude>**/*.xlsm</exclude>
 						</excludes>
-						<filtering>true</filtering>
 					</resource>
 					<resource>
+						<filtering>false</filtering>
 						<directory>src/main/resources</directory>
 						<includes>
 							<include>**/*.pdf</include>
 							<include>**/*.zip</include>
 							<include>**/*.xlsm</include>
 						</includes>
-						<filtering>false</filtering>
 					</resource>
 				</resources>
 			</build>
-		</profile>
-
-		<profile>
-			<id>postgres</id>
 			<properties>
 				<hibernate.dialect>org.hibernate.dialect.PostgreSQLDialect</hibernate.dialect>
 				<quartz.job.store.driver.delegate.class>org.quartz.impl.jdbcjobstore.PostgreSQLDelegate</quartz.job.store.driver.delegate.class>
 			</properties>
-
+		</profile>
+		
+		<profile>
+			<id>mssql</id>
+			
 			<build>
 				<resources>
 					<resource>
+						<filtering>true</filtering>
 						<directory>src/main/resources</directory>
 						<includes>
 							<include>**/*.*</include>
@@ -297,168 +476,24 @@
 							<exclude>**/*.zip</exclude>
 							<exclude>**/*.xlsm</exclude>
 						</excludes>
-						<filtering>true</filtering>
 					</resource>
 					<resource>
+						<filtering>false</filtering>
 						<directory>src/main/resources</directory>
 						<includes>
 							<include>**/*.pdf</include>
 							<include>**/*.zip</include>
 							<include>**/*.xlsm</include>
 						</includes>
-						<filtering>false</filtering>
 					</resource>
 				</resources>
 			</build>
-		</profile>
-		
-			<profile>
-			<id>mssql</id>
 			<properties>
 				<hibernate.dialect>org.hibernate.dialect.SQLServerDialect</hibernate.dialect>
 				<quartz.job.store.driver.delegate.class>org.quartz.impl.jdbcjobstore.MSSQLDelegate</quartz.job.store.driver.delegate.class>
 			</properties>
-
-			<build>
-				<resources>
-					<resource>
-						<directory>src/main/resources</directory>
-						<includes>
-							<include>**/*.*</include>
-						</includes>
-						<excludes>
-							<exclude>**/*.pdf</exclude>
-							<exclude>**/*.zip</exclude>
-							<exclude>**/*.xlsm</exclude>
-						</excludes>
-						<filtering>true</filtering>
-					</resource>
-					<resource>
-						<directory>src/main/resources</directory>
-						<includes>
-							<include>**/*.pdf</include>
-							<include>**/*.zip</include>
-							<include>**/*.xlsm</include>
-						</includes>
-						<filtering>false</filtering>
-					</resource>
-				</resources>
-			</build>
 		</profile>
 		
 	</profiles>
-
-	<dependencyManagement>
-
-		<dependencies>
-
-			<!-- CometD -->
-			<!-- 
-				Next version is:
-					org.cometd.java:cometd-java-server-common:x.x.x
-			 -->
-			<dependency>
-				<groupId>org.cometd.java</groupId>
-				<artifactId>cometd-java-server</artifactId>
-				<version>4.0.9</version>
-			</dependency>
-			
-			<!-- Replace Axis 1.4 -->
-			<dependency>
-				<groupId>com.sun.xml.ws</groupId>
-				<artifactId>jaxws-rt</artifactId>
-				<version>2.3.6</version>
-			</dependency>
-
-			<dependency>
-				<groupId>org.quartz-scheduler</groupId>
-				<artifactId>quartz</artifactId>
-				<version>${quartz.version}</version>
-			</dependency>
-
-			<dependency>
-				<groupId>org.apache.logging.log4j</groupId>
-				<artifactId>log4j-1.2-api</artifactId>
-				<version>${log4j.version}</version>
-			</dependency>
-
-			<dependency>
-				<groupId>org.apache.logging.log4j</groupId>
-				<artifactId>log4j-core</artifactId>
-				<version>${log4j.version}</version>
-			</dependency>
-
-			<dependency>
-				<groupId>org.apache.logging.log4j</groupId>
-				<artifactId>log4j-api</artifactId>
-				<version>${log4j.version}</version>
-			</dependency>
-
-			<dependency>
-				<groupId>org.apache.logging.log4j</groupId>
-				<artifactId>log4j-web</artifactId>
-				<version>${log4j.version}</version>
-			</dependency>
-
-			<dependency>
-				<groupId>org.apache.logging.log4j</groupId>
-				<artifactId>log4j-jcl</artifactId>
-				<version>${log4j.version}</version>
-			</dependency>
-
-			<dependency>
-				<groupId>biz.paluch.logging</groupId>
-				<artifactId>logstash-gelf</artifactId>
-				<version>${logstash-gelf.version}</version>
-			</dependency>
-			
-			<dependency>
-				<groupId>com.oracle.database.jdbc</groupId>
-				<artifactId>ojdbc8</artifactId>
-				<version>${ojdbc.version}</version>
-			</dependency>
-			
-			<dependency>
-				<groupId>com.googlecode.owasp-java-html-sanitizer</groupId>
-				<artifactId>owasp-java-html-sanitizer</artifactId>
-				<version>${owasp-java-html-sanitizer.version}</version>
-			</dependency>
-			
-			<dependency>
-				<groupId>org.apache.commons</groupId>
-				<artifactId>commons-lang3</artifactId>
-				<version>${commons-lang3.version}</version>
-			</dependency>
-
-			<dependency>
-				<groupId>org.apache.commons</groupId>
-				<artifactId>commons-text</artifactId>
-				<version>${commons-text.version}</version>
-			</dependency>
-
-			<dependency>
-				<groupId>org.jasypt</groupId>
-				<artifactId>
-					jasypt</artifactId>
-				<version>${jasypt.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>
-					org.jasypt</groupId>
-				<artifactId>jasypt-hibernate3</artifactId>
-				<version>
-					${jasypt.version}</version>
-			</dependency>
-			
-			<dependency>
-				<groupId>junit</groupId>
-				<artifactId>junit</artifactId>
-				<version>${junit4.version}</version>
-				<scope>test</scope>
-			</dependency>
-
-		</dependencies>
-
-	</dependencyManagement>
 	
 </project>
