@@ -318,6 +318,8 @@
 					<indentBlankLines>true</indentBlankLines>
 					<nrOfIndentSpace>-1</nrOfIndentSpace>
 					<sortProperties>true</sortProperties>
+					<verifyFail>Stop</verifyFail>
+					<verifyFailOn>Strict</verifyFailOn>
 				</configuration>
 			</plugin>
 			
