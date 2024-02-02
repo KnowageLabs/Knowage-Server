@@ -1,121 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	
 	<modelVersion>4.0.0</modelVersion>
+	
 	<groupId>it.eng.knowage</groupId>
 	<artifactId>knowage-ce-parent</artifactId>
 	<version>8.2.0-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<name>knowage-ce-parent</name>
-
-	<repositories>
-		<!-- We use SpagoBI repo on GitHub because we cannot find HBql library somewhere else -->
-		<repository>
-			<id>spagobi-releases</id>
-			<url>https://github.com/SpagoBILabs/SpagoBI/raw/mvn-repo/releases</url>
-		</repository>
-		<!-- We use www.license4j.com/maven because license4j is not available on Maven Central, it is available by its own repo -->
-		<repository>
-			<releases>
-				<enabled>true</enabled>
-				<updatePolicy>always</updatePolicy>
-				<checksumPolicy>fail</checksumPolicy>
-			</releases>
-			<id>license4j-runtime-library</id>
-			<name>License4J Runtime Library Maven Repository</name>
-			<url>https://www.license4j.com/maven/</url>
-			<layout>default</layout>
-		</repository>
-
-		<!-- We use osgeo.org because it contains geotools 2.7.5, needed by knowage DAO; this library is not available on Maven Central -->
-		<repository>
-			<id>osgeo.org</id>
-			<url>https://repo.osgeo.org/repository/release/</url>
-		</repository>
-			<!-- We use Maven Geo-Solutions for hibernate-spatial-1.1.1.jar, needed by Qbe core; this library is not available on Maven Central -->
-		<repository>
-			<id>geo-solutions</id>
-			<url>https://maven.geo-solutions.it/</url>
-		</repository>
-		<!-- We use Enonic Repository because it contains simplecaptcha 1.2.1 library, needed by knowage CE core; this library is not available on Maven Central -->
-		<repository>
-			<id>enonic</id>
-			<url>https://repo.enonic.com/public/</url>
-		</repository>
-		<!-- We use Pentaho repository for mondrian, needed by knowagewhatifengine CE -->
-		<repository>
-			<id>pentaho</id>
-			<url>https://repo.orl.eng.hitachivantara.com/artifactory/pnt-mvn/</url>
-		</repository>
-
-		<!-- To get JasperReports dependencies such as jasperreports-functions in version 6.1.0 (only more recent version are available from Maven Central) -->
-		<repository>
-			<id>jasperreports</id>
-			<url>https://jaspersoft.jfrog.io/artifactory/jr-ce-releases/</url>
-		</repository>
-
-		<!-- Required to get dependencies of JasperReports (it self download from Maven Central) such as specific itext version (2.1.7.js2, only 2.1.7 available on Maven Central) -->
-		<repository>
-			<id>jasperreports-thrid-party</id>
-			<url>https://jaspersoft.jfrog.io/artifactory/third-party-ce-artifacts/</url>
-		</repository>
-
-		<!-- We use xss-html-filter repository for xss-html-filter, needed by knowage CE; this library is not available on Maven Central -->
-		<repository>
-			<id>xss-html-filter releases</id>
-			<url>https://xss-html-filter.sf.net/releases/</url>
-		</repository>
-
-		<!-- We use OW2 third party repository for com.jamon:fdsapi, needed by knowage CE; this library is not available on Maven Central -->
-		<repository>
-			<id>ow2-third-party</id>
-			<url>https://repository.ow2.org/nexus/content/repositories/3rd-party/</url>
-		</repository>
-
-	</repositories>
-
-	<properties>
-		<maven.compiler.source>1.8</maven.compiler.source>
-		<maven.compiler.target>1.8</maven.compiler.target>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-
-		<!-- if you want run tests overwrite this property with: mvn test -DskipTests=false -->
-		<skipTests>true</skipTests>
-
-		<!-- For eclipse plugin -->
-		<m2e.jpa.activation>false</m2e.jpa.activation>
-		<m2e.jsf.activation>false</m2e.jsf.activation>
-		<m2e.jaxrs.activation>false</m2e.jaxrs.activation>
-
-		<!-- Minimized version: ixed because in jspf are not dynamic as in pom -->
-		<js.version>${project.version}</js.version>
-
-		<spring.boot>2.5.12</spring.boot>
-		<apache.poi>4.1.2</apache.poi>
-		<resteasy.version>3.6.2.Final</resteasy.version>
-		<quartz.version>2.3.2</quartz.version>
-		<logstash-gelf.version>1.15.0</logstash-gelf.version>
-		<log4j.version>2.17.1</log4j.version>
-		<ojdbc.version>12.2.0.1</ojdbc.version>
-		<owasp-java-html-sanitizer.version>20220608.1</owasp-java-html-sanitizer.version>
-		<commons-lang3.version>3.12.0</commons-lang3.version>
-		<jasypt.version>1.9.3</jasypt.version>
-		<commons-text.version>1.10.0</commons-text.version>
-		<junit4.version>4.13.2</junit4.version>
-		<hsqldb.version>1.8.0.10</hsqldb.version>
-		<checkstyle-maven-plugin.version>3.3.0</checkstyle-maven-plugin.version>
-
-		<checkstyle.config.location>../checkstyle/checkstyle.xml</checkstyle.config.location>
-		<checkstyle-suppressions.config.location>../checkstyle/checkstyle-suppressions.xml</checkstyle-suppressions.config.location>
-		<checkstyle.header.file>../LICENSE</checkstyle.header.file>
-		<mpir.skip>true</mpir.skip>
-
-		<!--
-			Exlude some types from Sonar analisys for now.
-
-			In the future they can be included too.
-		 -->
-		<sonar.exclusions>**/*.css, **/*.js, **/*.ts, **/*.xml, **/dist/**/*, **/node_modules/**/*</sonar.exclusions>
-	</properties>
-
+	
 	<modules>
 		<module>../jdbccore</module>
 		<module>../knowageutilsjson</module>
@@ -135,7 +28,6 @@
 		<module>../knowagecockpitengine</module>
 		<module>../knowagekpiengine</module>
 		<module>../knowagesdk</module>
-
 		<module>../knowagecommonjengine</module>
 		<module>../knowagegeoreportengine</module>
 		<module>../knowagemeta</module>
@@ -153,7 +45,213 @@
 		<module>../knowage-common</module>
 		<module>../knowage-pm-dto</module>
 	</modules>
+	
+	<distributionManagement>
+		<site>
+			<id>${project.artifactId}-site</id>
+			<url>file:///C:/KNOWAGE/tmp/project-site/${project.artifactId}</url>
+		</site>
+	</distributionManagement>
+	
+	<properties>
+		<apache.poi>4.1.2</apache.poi>
+		<checkstyle-maven-plugin.version>3.3.0</checkstyle-maven-plugin.version>
+		<checkstyle-suppressions.config.location>../checkstyle/checkstyle-suppressions.xml</checkstyle-suppressions.config.location>
+		<checkstyle.config.location>../checkstyle/checkstyle.xml</checkstyle.config.location>
+		<checkstyle.header.file>../LICENSE</checkstyle.header.file>
+		<commons-lang3.version>3.12.0</commons-lang3.version>
+		<commons-text.version>1.10.0</commons-text.version>
+		<hsqldb.version>1.8.0.10</hsqldb.version>
+		<jasypt.version>1.9.3</jasypt.version>
+		<!-- Minimized version: ixed because in jspf are not dynamic as in pom -->
+		<js.version>${project.version}</js.version>
+		<junit4.version>4.13.2</junit4.version>
+		<log4j.version>2.17.1</log4j.version>
+		<logstash-gelf.version>1.15.0</logstash-gelf.version>
+		<m2e.jaxrs.activation>false</m2e.jaxrs.activation>
+		<!-- For eclipse plugin -->
+		<m2e.jpa.activation>false</m2e.jpa.activation>
+		<m2e.jsf.activation>false</m2e.jsf.activation>
+		<maven.compiler.source>1.8</maven.compiler.source>
+		<maven.compiler.target>1.8</maven.compiler.target>
+		<mpir.skip>true</mpir.skip>
+		<ojdbc.version>12.2.0.1</ojdbc.version>
+		<owasp-java-html-sanitizer.version>20220608.1</owasp-java-html-sanitizer.version>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<quartz.version>2.3.2</quartz.version>
+		<resteasy.version>3.6.2.Final</resteasy.version>
+		<!-- if you want run tests overwrite this property with: mvn test -DskipTests=false -->
+		<skipTests>true</skipTests>
+		<!--
+			Exlude some types from Sonar analisys for now.
 
+			In the future they can be included too.
+		 -->
+		<sonar.exclusions>**/*.css, **/*.js, **/*.ts, **/*.xml, **/dist/**/*, **/node_modules/**/*</sonar.exclusions>
+		<spring.boot>2.5.12</spring.boot>
+	</properties>
+	
+	<dependencyManagement>
+		<dependencies>
+			<!-- CometD -->
+			<!-- 
+				Next version is:
+					org.cometd.java:cometd-java-server-common:x.x.x
+			 -->
+			<dependency>
+				<groupId>org.cometd.java</groupId>
+				<artifactId>cometd-java-server</artifactId>
+				<version>4.0.9</version>
+			</dependency>
+			<dependency>
+				<groupId>com.sun.xml.ws</groupId>
+				<artifactId>jaxws-rt</artifactId>
+				<version>2.3.6</version>
+			</dependency>
+			<dependency>
+				<groupId>org.quartz-scheduler</groupId>
+				<artifactId>quartz</artifactId>
+				<version>${quartz.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.logging.log4j</groupId>
+				<artifactId>log4j-1.2-api</artifactId>
+				<version>${log4j.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.logging.log4j</groupId>
+				<artifactId>log4j-core</artifactId>
+				<version>${log4j.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.logging.log4j</groupId>
+				<artifactId>log4j-api</artifactId>
+				<version>${log4j.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.logging.log4j</groupId>
+				<artifactId>log4j-web</artifactId>
+				<version>${log4j.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.logging.log4j</groupId>
+				<artifactId>log4j-jcl</artifactId>
+				<version>${log4j.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.logging.log4j</groupId>
+				<artifactId>log4j-iostreams</artifactId>
+				<version>${log4j.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>biz.paluch.logging</groupId>
+				<artifactId>logstash-gelf</artifactId>
+				<version>${logstash-gelf.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.oracle.database.jdbc</groupId>
+				<artifactId>ojdbc8</artifactId>
+				<version>${ojdbc.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.googlecode.owasp-java-html-sanitizer</groupId>
+				<artifactId>owasp-java-html-sanitizer</artifactId>
+				<version>${owasp-java-html-sanitizer.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.commons</groupId>
+				<artifactId>commons-lang3</artifactId>
+				<version>${commons-lang3.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.commons</groupId>
+				<artifactId>commons-text</artifactId>
+				<version>${commons-text.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.jasypt</groupId>
+				<artifactId>jasypt</artifactId>
+				<version>${jasypt.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.jasypt</groupId>
+				<artifactId>jasypt-hibernate3</artifactId>
+				<version>${jasypt.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>junit</groupId>
+				<artifactId>junit</artifactId>
+				<version>${junit4.version}</version>
+				<scope>test</scope>
+			</dependency>
+			<dependency>
+				<groupId>org.hsqldb</groupId>
+				<artifactId>hsqldb</artifactId>
+				<version>${hsqldb.version}</version>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
+	
+	<repositories>
+		<!-- We use SpagoBI repo on GitHub because we cannot find HBql library somewhere else -->
+		<repository>
+			<id>spagobi-releases</id>
+			<url>https://github.com/SpagoBILabs/SpagoBI/raw/mvn-repo/releases</url>
+		</repository>
+		<!-- We use www.license4j.com/maven because license4j is not available on Maven Central, it is available by its own repo -->
+		<repository>
+			<releases>
+				<enabled>true</enabled>
+				<updatePolicy>always</updatePolicy>
+				<checksumPolicy>fail</checksumPolicy>
+			</releases>
+			<id>license4j-runtime-library</id>
+			<name>License4J Runtime Library Maven Repository</name>
+			<url>https://www.license4j.com/maven/</url>
+			<layout>default</layout>
+		</repository>
+		<!-- We use osgeo.org because it contains geotools 2.7.5, needed by knowage DAO; this library is not available on Maven Central -->
+		<repository>
+			<id>osgeo.org</id>
+			<url>https://repo.osgeo.org/repository/release/</url>
+		</repository>
+		<!-- We use Maven Geo-Solutions for hibernate-spatial-1.1.1.jar, needed by Qbe core; this library is not available on Maven Central -->
+		<repository>
+			<id>geo-solutions</id>
+			<url>https://maven.geo-solutions.it/</url>
+		</repository>
+		<!-- We use Enonic Repository because it contains simplecaptcha 1.2.1 library, needed by knowage CE core; this library is not available on Maven Central -->
+		<repository>
+			<id>enonic</id>
+			<url>https://repo.enonic.com/public/</url>
+		</repository>
+		<!-- We use Pentaho repository for mondrian, needed by knowagewhatifengine CE -->
+		<repository>
+			<id>pentaho</id>
+			<url>https://repo.orl.eng.hitachivantara.com/artifactory/pnt-mvn/</url>
+		</repository>
+		<!-- To get JasperReports dependencies such as jasperreports-functions in version 6.1.0 (only more recent version are available from Maven Central) -->
+		<repository>
+			<id>jasperreports</id>
+			<url>https://jaspersoft.jfrog.io/artifactory/jr-ce-releases/</url>
+		</repository>
+		<!-- Required to get dependencies of JasperReports (it self download from Maven Central) such as specific itext version (2.1.7.js2, only 2.1.7 available on Maven Central) -->
+		<repository>
+			<id>jasperreports-thrid-party</id>
+			<url>https://jaspersoft.jfrog.io/artifactory/third-party-ce-artifacts/</url>
+		</repository>
+		<!-- We use xss-html-filter repository for xss-html-filter, needed by knowage CE; this library is not available on Maven Central -->
+		<repository>
+			<id>xss-html-filter releases</id>
+			<url>https://xss-html-filter.sf.net/releases/</url>
+		</repository>
+		<!-- We use OW2 third party repository for com.jamon:fdsapi, needed by knowage CE; this library is not available on Maven Central -->
+		<repository>
+			<id>ow2-third-party</id>
+			<url>https://repository.ow2.org/nexus/content/repositories/3rd-party/</url>
+		</repository>
+	</repositories>
+	
 	<build>
 		<pluginManagement>
 			<plugins>
@@ -161,9 +259,7 @@
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-jar-plugin</artifactId>
 					<version>2.6</version>
-
 					<configuration>
-
 						<archive>
 							<manifest>
 								<addDefaultImplementationEntries>true</addDefaultImplementationEntries>
@@ -174,17 +270,11 @@
 						</archive>
 					</configuration>
 				</plugin>
-
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-war-plugin</artifactId>
- 					<version>3.3.1</version>
-
-					<configuration>
-						<warName>${project.name}</warName>
-					</configuration>
+					<version>3.3.1</version>
 				</plugin>
-
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-surefire-plugin</artifactId>
@@ -193,13 +283,11 @@
 						<skipTests>${skipTests}</skipTests>
 					</configuration>
 				</plugin>
-
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-site-plugin</artifactId>
 					<version>3.7.1</version>
 				</plugin>
-
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-enforcer-plugin</artifactId>
@@ -220,11 +308,30 @@
 						</execution>
 					</executions>
 				</plugin>
+				<plugin>
+					<groupId>com.github.ekryd.sortpom</groupId>
+					<artifactId>sortpom-maven-plugin</artifactId>
+					<version>2.15.0</version>
+					<executions>
+						<execution>
+							<phase>compile</phase>
+							<goals>
+								<goal>sort</goal>
+							</goals>
+						</execution>
+					</executions>
+					<configuration>
+						<createBackupFile>false</createBackupFile>
+						<keepBlankLines>true</keepBlankLines>
+						<indentBlankLines>true</indentBlankLines>
+						<nrOfIndentSpace>-1</nrOfIndentSpace>
+						<sortProperties>true</sortProperties>
+					</configuration>
+				</plugin>
 			</plugins>
 		</pluginManagement>
 		
 		<plugins>
-
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-checkstyle-plugin</artifactId>
@@ -233,19 +340,18 @@
 					<execution>
 						<id>validate</id>
 						<phase>validate</phase>
+						<goals>
+							<goal>check</goal>
+						</goals>
 						<configuration>
 							<configLocation>${checkstyle.config.location}</configLocation>
 							<suppressionsLocation>${checkstyle-suppressions.config.location}</suppressionsLocation>
 							<failsOnError>false</failsOnError>
 							<failOnViolation>true</failOnViolation>
 						</configuration>
-						<goals>
-							<goal>check</goal>
-						</goals>
 					</execution>
 				</executions>
 			</plugin>
-
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-resources-plugin</artifactId>
@@ -256,25 +362,77 @@
 					</nonFilteredFileExtensions>
 				</configuration>
 			</plugin>
-
 		</plugins>
-	</build>	
-
+	</build>
+	
+	<reporting>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-project-info-reports-plugin</artifactId>
+				<version>3.4.2</version>
+				<reportSets>
+					<reportSet>
+						<id>main</id>
+						<reports>
+							<report>index</report>
+						</reports>
+					</reportSet>
+				</reportSets>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-checkstyle-plugin</artifactId>
+				<version>${checkstyle-maven-plugin.version}</version>
+				<reportSets>
+					<reportSet>
+						<id>checkstyle</id>
+						<reports>
+							<report>checkstyle</report>
+						</reports>
+					</reportSet>
+				</reportSets>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-checkstyle-plugin</artifactId>
+				<version>${checkstyle-maven-plugin.version}</version>
+				<reportSets>
+					<reportSet>
+						<id>checkstyle-aggregate</id>
+						<reports>
+							<report>checkstyle-aggregate</report>
+						</reports>
+						<inherited>false</inherited>
+					</reportSet>
+				</reportSets>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jxr-plugin</artifactId>
+				<version>2.3</version>
+				<reportSets>
+					<reportSet>
+						<id>aggregate</id>
+						<reports>
+							<report>aggregate</report>
+						</reports>
+						<inherited>false</inherited>
+					</reportSet>
+				</reportSets>
+			</plugin>
+		</plugins>
+	</reporting>
+	
 	<profiles>
 		<profile>
 			<id>cas-enabled</id>
-			<properties>
-				<enable.cas.start>&lt;!--</enable.cas.start>
-				<enable.cas.end>--&gt;</enable.cas.end>
-			</properties>
-
 			<build>
 				<plugins>
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-war-plugin</artifactId>
 						<version>2.6</version>
-
 						<configuration>
 							<webResources>
 								<resource>
@@ -289,21 +447,52 @@
 					</plugin>
 				</plugins>
 			</build>
+			<properties>
+				<enable.cas.end>--&gt;</enable.cas.end>
+				<enable.cas.start>&lt;!--</enable.cas.start>
+			</properties>
 		</profile>
-
 		<profile>
 			<id>mysql</id>
 			<activation>
 				<activeByDefault>true</activeByDefault>
 			</activation>
+			<build>
+				<resources>
+					<resource>
+						<filtering>true</filtering>
+						<directory>src/main/resources</directory>
+						<includes>
+							<include>**/*.*</include>
+						</includes>
+						<excludes>
+							<exclude>**/*.pdf</exclude>
+							<exclude>**/*.zip</exclude>
+							<exclude>**/*.xlsm</exclude>
+						</excludes>
+					</resource>
+					<resource>
+						<filtering>false</filtering>
+						<directory>src/main/resources</directory>
+						<includes>
+							<include>**/*.pdf</include>
+							<include>**/*.zip</include>
+							<include>**/*.xlsm</include>
+						</includes>
+					</resource>
+				</resources>
+			</build>
 			<properties>
 				<hibernate.dialect>org.hibernate.dialect.MySQLDialect</hibernate.dialect>
 				<quartz.job.store.driver.delegate.class>org.quartz.impl.jdbcjobstore.StdJDBCDelegate</quartz.job.store.driver.delegate.class>
 			</properties>
-
+		</profile>
+		<profile>
+			<id>oracle10</id>
 			<build>
 				<resources>
 					<resource>
+						<filtering>true</filtering>
 						<directory>src/main/resources</directory>
 						<includes>
 							<include>**/*.*</include>
@@ -313,31 +502,29 @@
 							<exclude>**/*.zip</exclude>
 							<exclude>**/*.xlsm</exclude>
 						</excludes>
-						<filtering>true</filtering>
 					</resource>
 					<resource>
+						<filtering>false</filtering>
 						<directory>src/main/resources</directory>
 						<includes>
 							<include>**/*.pdf</include>
 							<include>**/*.zip</include>
 							<include>**/*.xlsm</include>
 						</includes>
-						<filtering>false</filtering>
 					</resource>
 				</resources>
 			</build>
-		</profile>
-
-		<profile>
-			<id>oracle10</id>
 			<properties>
 				<hibernate.dialect>org.hibernate.dialect.Oracle10gDialect</hibernate.dialect>
 				<quartz.job.store.driver.delegate.class>org.quartz.impl.jdbcjobstore.oracle.OracleDelegate</quartz.job.store.driver.delegate.class>
 			</properties>
-
+		</profile>
+		<profile>
+			<id>postgres</id>
 			<build>
 				<resources>
 					<resource>
+						<filtering>true</filtering>
 						<directory>src/main/resources</directory>
 						<includes>
 							<include>**/*.*</include>
@@ -347,31 +534,29 @@
 							<exclude>**/*.zip</exclude>
 							<exclude>**/*.xlsm</exclude>
 						</excludes>
-						<filtering>true</filtering>
 					</resource>
 					<resource>
+						<filtering>false</filtering>
 						<directory>src/main/resources</directory>
 						<includes>
 							<include>**/*.pdf</include>
 							<include>**/*.zip</include>
 							<include>**/*.xlsm</include>
 						</includes>
-						<filtering>false</filtering>
 					</resource>
 				</resources>
 			</build>
-		</profile>
-
-		<profile>
-			<id>postgres</id>
 			<properties>
 				<hibernate.dialect>org.hibernate.dialect.PostgreSQLDialect</hibernate.dialect>
 				<quartz.job.store.driver.delegate.class>org.quartz.impl.jdbcjobstore.PostgreSQLDelegate</quartz.job.store.driver.delegate.class>
 			</properties>
-
+		</profile>
+		<profile>
+			<id>mssql</id>
 			<build>
 				<resources>
 					<resource>
+						<filtering>true</filtering>
 						<directory>src/main/resources</directory>
 						<includes>
 							<include>**/*.*</include>
@@ -381,250 +566,23 @@
 							<exclude>**/*.zip</exclude>
 							<exclude>**/*.xlsm</exclude>
 						</excludes>
-						<filtering>true</filtering>
 					</resource>
 					<resource>
+						<filtering>false</filtering>
 						<directory>src/main/resources</directory>
 						<includes>
 							<include>**/*.pdf</include>
 							<include>**/*.zip</include>
 							<include>**/*.xlsm</include>
 						</includes>
-						<filtering>false</filtering>
 					</resource>
 				</resources>
 			</build>
-		</profile>
-
-			<profile>
-			<id>mssql</id>
 			<properties>
 				<hibernate.dialect>org.hibernate.dialect.SQLServerDialect</hibernate.dialect>
 				<quartz.job.store.driver.delegate.class>org.quartz.impl.jdbcjobstore.MSSQLDelegate</quartz.job.store.driver.delegate.class>
 			</properties>
-
-			<build>
-				<resources>
-					<resource>
-						<directory>src/main/resources</directory>
-						<includes>
-							<include>**/*.*</include>
-						</includes>
-						<excludes>
-							<exclude>**/*.pdf</exclude>
-							<exclude>**/*.zip</exclude>
-							<exclude>**/*.xlsm</exclude>
-						</excludes>
-						<filtering>true</filtering>
-					</resource>
-					<resource>
-						<directory>src/main/resources</directory>
-						<includes>
-							<include>**/*.pdf</include>
-							<include>**/*.zip</include>
-							<include>**/*.xlsm</include>
-						</includes>
-						<filtering>false</filtering>
-					</resource>
-				</resources>
-			</build>
 		</profile>
-
 	</profiles>
-
-	<dependencyManagement>
-
-		<dependencies>
-
-			<!-- CometD -->
-			<!-- 
-				Next version is:
-					org.cometd.java:cometd-java-server-common:x.x.x
-			 -->
-			<dependency>
-				<groupId>org.cometd.java</groupId>
-				<artifactId>cometd-java-server</artifactId>
-				<version>4.0.9</version>
-			</dependency>
-
-			<dependency>
-				<groupId>com.sun.xml.ws</groupId>
-				<artifactId>jaxws-rt</artifactId>
-				<version>2.3.6</version>
-			</dependency>
-
-			<dependency>
-				<groupId>org.quartz-scheduler</groupId>
-				<artifactId>quartz</artifactId>
-				<version>${quartz.version}</version>
-			</dependency>
-
-			<dependency>
-				<groupId>org.apache.logging.log4j</groupId>
-				<artifactId>log4j-1.2-api</artifactId>
-				<version>${log4j.version}</version>
-			</dependency>
-
-			<dependency>
-				<groupId>org.apache.logging.log4j</groupId>
-				<artifactId>log4j-core</artifactId>
-				<version>${log4j.version}</version>
-			</dependency>
-
-			<dependency>
-				<groupId>org.apache.logging.log4j</groupId>
-				<artifactId>log4j-api</artifactId>
-				<version>${log4j.version}</version>
-			</dependency>
-
-			<dependency>
-				<groupId>org.apache.logging.log4j</groupId>
-				<artifactId>log4j-web</artifactId>
-				<version>${log4j.version}</version>
-			</dependency>
-
-			<dependency>
-				<groupId>org.apache.logging.log4j</groupId>
-				<artifactId>log4j-jcl</artifactId>
-				<version>${log4j.version}</version>
-			</dependency>
-
-			<dependency>
-				<groupId>org.apache.logging.log4j</groupId>
-				<artifactId>log4j-iostreams</artifactId>
-				<version>${log4j.version}</version>
-			</dependency>
-
-			<dependency>
-				<groupId>biz.paluch.logging</groupId>
-				<artifactId>logstash-gelf</artifactId>
-				<version>${logstash-gelf.version}</version>
-			</dependency>
-
-			<dependency>
-				<groupId>com.oracle.database.jdbc</groupId>
-				<artifactId>ojdbc8</artifactId>
-				<version>${ojdbc.version}</version>
-			</dependency>
-
-			<dependency>
-				<groupId>com.googlecode.owasp-java-html-sanitizer</groupId>
-				<artifactId>owasp-java-html-sanitizer</artifactId>
-				<version>${owasp-java-html-sanitizer.version}</version>
-			</dependency>
-
-			<dependency>
-				<groupId>org.apache.commons</groupId>
-				<artifactId>commons-lang3</artifactId>
-				<version>${commons-lang3.version}</version>
-			</dependency>
-
-			<dependency>
-				<groupId>org.apache.commons</groupId>
-				<artifactId>commons-text</artifactId>
-				<version>${commons-text.version}</version>
-			</dependency>
-
-			<dependency>
-				<groupId>org.jasypt</groupId>
-				<artifactId>
-					jasypt</artifactId>
-				<version>${jasypt.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>
-					org.jasypt</groupId>
-				<artifactId>jasypt-hibernate3</artifactId>
-				<version>
-					${jasypt.version}</version>
-			</dependency>
-
-			<dependency>
-				<groupId>junit</groupId>
-				<artifactId>junit</artifactId>
-				<version>${junit4.version}</version>
-				<scope>test</scope>
-			</dependency>
-
-			<dependency>
-				<groupId>org.hsqldb</groupId>
-				<artifactId>hsqldb</artifactId>
-				<version>${hsqldb.version}</version>
-			</dependency>
-
-		</dependencies>
-
-	</dependencyManagement>
-
-	<reporting>
-		<plugins>
-
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-project-info-reports-plugin</artifactId>
-				<version>3.4.2</version>
-				<reportSets>
-					<reportSet>
-						<id>main</id>
-						<reports>
-							<report>index</report>
-						</reports>
-					</reportSet>
-				</reportSets>
-			</plugin>
-
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-checkstyle-plugin</artifactId>
-				<version>${checkstyle-maven-plugin.version}</version>
-				<reportSets>
-					<reportSet>
-						<id>checkstyle</id>
-						<reports>
-							<report>checkstyle</report>
-						</reports>
-					</reportSet>
-				</reportSets>
-			</plugin>
-
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-checkstyle-plugin</artifactId>
-				<version>${checkstyle-maven-plugin.version}</version>
-				<reportSets>
-					<reportSet>
-						<id>checkstyle-aggregate</id>
-						<inherited>false</inherited>
-						<reports>
-							<report>checkstyle-aggregate</report>
-						</reports>
-					</reportSet>
-				</reportSets>
-			</plugin>
-
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-jxr-plugin</artifactId>
-				<version>2.3</version>
-				<reportSets>
-					<reportSet>
-						<id>aggregate</id>
-						<inherited>false</inherited>
-						<reports>
-							<report>aggregate</report>
-						</reports>
-					</reportSet>
-				</reportSets>
-			</plugin>
-
-		</plugins>
-	</reporting>
-
-	<distributionManagement>
-		<site>
-			<id>${project.artifactId}-site</id>
-			<url>file:///C:/KNOWAGE/tmp/project-site/${project.artifactId}</url>
-		</site>
-	</distributionManagement>
-
+	
 </project>
