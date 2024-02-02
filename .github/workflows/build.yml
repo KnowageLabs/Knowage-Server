@@ -1,7 +1,8 @@
 name: "Build"
 on:
   push:
-  pull_request_target:
+  pull_request:
+#  pull_request_target:
 #    types:
 #    - opened
 #    - reopened
