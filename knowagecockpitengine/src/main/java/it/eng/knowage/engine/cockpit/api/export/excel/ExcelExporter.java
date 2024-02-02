@@ -842,8 +842,8 @@ public class ExcelExporter extends AbstractFormatExporter {
 					String chartAggregation = null;
 					if (widgetData.getString("type").equalsIgnoreCase("table")
 							|| widgetData.getString("type").equalsIgnoreCase("discovery")) {
-						if (arrayHeader.get(columnName) != null) {
-							columnName = arrayHeader.get(columnName);
+						if (arrayHeader.get(i) != null) {
+							columnName = arrayHeader.get(i);
 						}					
 					} else if (widgetData.getString("type").equalsIgnoreCase("chart")) {
 						chartAggregation = chartAggregationsMap.get(columnName);
