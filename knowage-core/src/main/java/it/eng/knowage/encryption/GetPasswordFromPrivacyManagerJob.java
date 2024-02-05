@@ -60,7 +60,7 @@ public class GetPasswordFromPrivacyManagerJob implements Job {
 
 			cfg.setEncryptionPwd(key);
 
-			DataEncryptionCfgForExternalEngines decfee = DataEncryptionCfgForExternalEngines.getInstance();
+			DataEncryptionGlobalCfg decfee = DataEncryptionGlobalCfg.getInstance();
 			decfee.setKeyTemplateForAlgorithm(cfgKey, cfg.getAlgorithm());
 			decfee.setKeyTemplateForPassword(cfgKey, key);
 

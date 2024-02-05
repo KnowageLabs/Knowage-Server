@@ -17,17 +17,17 @@
  */
 package it.eng.knowage.encryption;
 
-public class DataEncryptionCfgForExternalEngines {
+public class DataEncryptionGlobalCfg {
 
 	private static final String KEY_TEMPLATE_FOR_ALGORITHM = "engine.encryption.%s.algorithm";
 	private static final String KEY_TEMPLATE_FOR_PASSWORD = "engine.encryption.%s.password";
-	private static final DataEncryptionCfgForExternalEngines INSTANCE = new DataEncryptionCfgForExternalEngines();
+	private static final DataEncryptionGlobalCfg INSTANCE = new DataEncryptionGlobalCfg();
 
-	public static DataEncryptionCfgForExternalEngines getInstance() {
+	public static DataEncryptionGlobalCfg getInstance() {
 		return INSTANCE;
 	}
 
-	private DataEncryptionCfgForExternalEngines() {
+	private DataEncryptionGlobalCfg() {
 		super();
 	}
 
