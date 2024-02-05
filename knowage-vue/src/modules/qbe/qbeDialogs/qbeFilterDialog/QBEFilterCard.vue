@@ -178,6 +178,14 @@ export default defineComponent({
     methods: {
         loadFilter() {
             this.filter = this.propFilter as iFilter
+
+            let isEncrypted = false;
+            if (this.field.attributes) {
+                isEncrypted = this.field.attributes.decrypt;
+            } else {
+                isEncrypted = this.field.decrypt;
+            }
+
             if (this.subqueries?.length > 0) {
                 this.targetValues.push({
                     label: this.$t('qbe.filters.targets.subquery'),
@@ -187,7 +195,12 @@ export default defineComponent({
 
             this.formatFilter()
 
-            this.filterOperatorOptions = this.QBEFilterDialogDescriptor.operatorValues
+            if (isEncrypted) {
+                this.filterOperatorOptions = this.QBEFilterDialogDescriptor.operatorValues.filter((operator) => operator.allowedWithDecrypt);
+            } else {
+                this.filterOperatorOptions = this.QBEFilterDialogDescriptor.operatorValues;
+            }
+
             const tempEntity = this.getEntity() as any
             if (tempEntity?.iconCls === 'geographic_dimension') {
                 this.filterOperatorOptions = this.filterOperatorOptions.concat(this.QBEFilterDialogDescriptor.spatialOperatorValues)

@@ -10,75 +10,93 @@
     "operatorValues": [
         {
             "label": "qbe.filters.operators.equalsTo",
-            "value": "EQUALS TO"
+            "value": "EQUALS TO",
+            "allowedWithDecrypt": true
         },
         {
             "label": "qbe.filters.operators.notEqualsTo",
-            "value": "NOT EQUALS TO"
+            "value": "NOT EQUALS TO",
+            "allowedWithDecrypt": true
         },
         {
             "label": "qbe.filters.operators.greaterThan",
-            "value": "GREATER THAN"
+            "value": "GREATER THAN",
+            "allowedWithDecrypt": false
         },
         {
             "label": "qbe.filters.operators.equalsOrGreaterThan",
-            "value": "EQUALS OR GREATER THAN"
+            "value": "EQUALS OR GREATER THAN",
+            "allowedWithDecrypt": false
         },
         {
             "label": "qbe.filters.operators.lessThan",
-            "value": "LESS THAN"
+            "value": "LESS THAN",
+            "allowedWithDecrypt": false
         },
         {
             "label": "qbe.filters.operators.equalsOrLessThan",
-            "value": "EQUALS OR LESS THAN"
+            "value": "EQUALS OR LESS THAN",
+            "allowedWithDecrypt": false
         },
         {
             "label": "qbe.filters.operators.startsWith",
-            "value": "STARTS WITH"
+            "value": "STARTS WITH",
+            "allowedWithDecrypt": false
         },
         {
             "label": "qbe.filters.operators.notStartsWith",
-            "value": "NOT STARTS WITH"
+            "value": "NOT STARTS WITH",
+            "allowedWithDecrypt": false
         },
         {
             "label": "qbe.filters.operators.endsWith",
-            "value": "ENDS WITH"
+            "value": "ENDS WITH",
+            "allowedWithDecrypt": false
         },
         {
             "label": "qbe.filters.operators.notEndsWith",
-            "value": "NOT ENDS WITH"
+            "value": "NOT ENDS WITH",
+            "allowedWithDecrypt": false
         },
         {
             "label": "qbe.filters.operators.contains",
-            "value": "CONTAINS"
+            "value": "CONTAINS",
+            "allowedWithDecrypt": false
         },
         {
             "label": "qbe.filters.operators.notContains",
-            "value": "NOT CONTAINS"
+            "value": "NOT CONTAINS",
+            "allowedWithDecrypt": false
         },
         {
             "label": "qbe.filters.operators.between",
-            "value": "BETWEEN"
+            "value": "BETWEEN",
+            "allowedWithDecrypt": false
         },
         {
             "label": "qbe.filters.operators.notBetween",
-            "value": "NOT BETWEEN"
+            "value": "NOT BETWEEN",
+            "allowedWithDecrypt": false
         },
         {
             "label": "qbe.filters.operators.in",
-            "value": "IN"
+            "value": "IN",
+            "allowedWithDecrypt": true
         },
         {
             "label": "qbe.filters.operators.notIn",
-            "value": "NOT IN"
+            "value": "NOT IN",
+            "allowedWithDecrypt": true
         },
         {
             "label": "qbe.filters.operators.isNull",
-            "value": "IS NULL"
+            "value": "IS NULL",
+            "allowedWithDecrypt": false
         },
         {
             "label": "qbe.filters.operators.notNull",
-            "value": "NOT NULL"
+            "value": "NOT NULL",
+            "allowedWithDecrypt": false
         }
     ],
     "selectionColumnHeaderStyle": {
