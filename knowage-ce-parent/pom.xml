@@ -57,7 +57,7 @@
 		<js.version>${project.version}</js.version>
 		<junit4.version>4.13.2</junit4.version>
 		<log4j.version>2.17.1</log4j.version>
-		<logstash-gelf.version>1.15.0</logstash-gelf.version>
+		<logstash-gelf.version>1.15.1</logstash-gelf.version>
 		<m2e.jaxrs.activation>false</m2e.jaxrs.activation>
 		
 		<!-- For eclipse plugin -->
