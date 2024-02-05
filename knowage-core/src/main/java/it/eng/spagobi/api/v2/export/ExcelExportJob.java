@@ -82,7 +82,7 @@ public class ExcelExportJob extends AbstractExportJob {
 
 			// create WB
 			try (Workbook wb = new SXSSFWorkbook()) {
-				Sheet sheet = wb.createSheet("dataset");
+				Sheet sheet = wb.createSheet(dataSet.getLabel());
 				CreationHelper createHelper = wb.getCreationHelper();
 
 				// STYLE CELL
