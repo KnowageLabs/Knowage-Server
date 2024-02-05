@@ -6,6 +6,7 @@ on:
       - 'master'
       - 'knowage-server-*'
   pull_request:
+  pull_request_target:
 
 jobs:
   build:
