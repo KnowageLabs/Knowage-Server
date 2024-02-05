@@ -119,7 +119,8 @@ public abstract class AbstractFormatExporter {
 						JSONObject column = aggr.getJSONObject(ii);
 
 						if (column.has("group") && column.getString("group").equals(id)) {
-							String nameToInsert = getTableColumnHeaderValue(column);
+//							String nameToInsert = getTableColumnHeaderValue(column);
+							String nameToInsert = column.getString("aliasToShow");
 							returnMap.put(nameToInsert, groupName);
 						}
 
@@ -248,11 +249,11 @@ public abstract class AbstractFormatExporter {
 
 				JSONObject columnNew = columnsNew.getJSONObject(i);
 
-				String newHeader = getTableColumnHeaderValue(columnNew);
+//				String newHeader = getTableColumnHeaderValue(columnNew);
 
 				for (int j = 0; j < columnsOld.length(); j++) {
 					JSONObject columnOld = columnsOld.getJSONObject(j);
-					if (columnOld.getString("header").equals(newHeader)) {
+					if (columnOld.getString("header").equals(columnNew.getString("aliasToShow"))) {
 
 						if (columnNew.has("ranges")) {
 							JSONArray ranges = columnNew.getJSONArray("ranges");
@@ -398,7 +399,8 @@ public abstract class AbstractFormatExporter {
 				for (int j = 0; j < columns.length(); j++) {
 					JSONObject col = columns.getJSONObject(j);
 					if (col.has("aliasToShow")
-							&& orderedCol.getString("header").equals(getTableColumnHeaderValue(col))) {
+//							&& orderedCol.getString("header").equals(getTableColumnHeaderValue(col))) {
+							&& orderedCol.getString("header").equals(col.getString("aliasToShow"))) {
 						if (col.has("style")) {
 							toReturn[i] = col.getJSONObject("style");
 						}
