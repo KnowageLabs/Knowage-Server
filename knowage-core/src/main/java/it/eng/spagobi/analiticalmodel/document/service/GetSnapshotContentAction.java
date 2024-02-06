@@ -54,8 +54,10 @@ import it.eng.spagobi.tools.scheduler.utils.SchedulerUtilities;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 public class GetSnapshotContentAction extends AbstractHttpAction {
+
 	public static int SUCCESS = 200;
-	static Logger logger = Logger.getLogger(GetSnapshotContentAction.class);
+
+	private static final Logger LOGGER = Logger.getLogger(GetSnapshotContentAction.class);
 
 	/*
 	 * (non-Javadoc)
@@ -64,7 +66,7 @@ public class GetSnapshotContentAction extends AbstractHttpAction {
 	 */
 	@Override
 	public void service(SourceBean request, SourceBean response) throws Exception {
-		logger.debug("IN");
+		LOGGER.debug("IN");
 		freezeHttpResponse();
 		HttpServletResponse httpResp = getHttpResponse();
 		Map<String, Object> contentMap;
@@ -72,11 +74,12 @@ public class GetSnapshotContentAction extends AbstractHttpAction {
 		String schedulationName = (String) request.getAttribute("schedulationName");
 		if (schedulationName != null) {
 			boolean collate = false;
-			List<Snapshot> snaps = DAOFactory.getSnapshotDAO().getLastSnapshotsBySchedulation(schedulationName, collate);
+			List<Snapshot> snaps = DAOFactory.getSnapshotDAO().getLastSnapshotsBySchedulation(schedulationName,
+					collate);
 			contentMap = mergeListSnap(snaps);
 		} else {
 			List<String> objectIdStr = request.getAttributeAsList("mergeitems");
-			if (objectIdStr == null || objectIdStr.size() == 0) {
+			if (objectIdStr == null || objectIdStr.isEmpty()) {
 				contentMap = getSnapshotForOneDocument(request);
 			} else {
 				contentMap = merge(objectIdStr);
@@ -96,8 +99,8 @@ public class GetSnapshotContentAction extends AbstractHttpAction {
 			exportType = ".pdf";
 		}
 
-		logger.debug("Type of export" + exportType);
-		logger.debug("Content-Disposition " + "filename=\"export" + exportType + "\";");
+		LOGGER.debug("Type of export" + exportType);
+		LOGGER.debug("Content-Disposition " + "filename=\"export" + exportType + "\";");
 		httpResp.setHeader("Content-Disposition", "filename=\"export" + exportType + "\";");
 		httpResp.setContentType(contentType);
 		httpResp.setContentLength(content.length);
@@ -105,7 +108,7 @@ public class GetSnapshotContentAction extends AbstractHttpAction {
 		httpResp.setStatus(SUCCESS);
 
 		httpResp.getOutputStream().flush();
-		logger.debug("OUT");
+		LOGGER.debug("OUT");
 	}
 
 	public Map<String, Object> getSnapshotForOneDocument(SourceBean request) throws Exception {
@@ -114,17 +117,17 @@ public class GetSnapshotContentAction extends AbstractHttpAction {
 		Integer objectId = new Integer(objectIdStr);
 		String idSnapStr = (String) request.getAttribute(SpagoBIConstants.SNAPSHOT_ID);
 		Integer idSnap = new Integer(idSnapStr);
-		logger.debug("Required snapshot with id = " + idSnap + " of document with id = " + objectId);
-		IEngUserProfile profile = (IEngUserProfile) this.getRequestContainer().getSessionContainer().getPermanentContainer()
-				.getAttribute(IEngUserProfile.ENG_USER_PROFILE);
+		LOGGER.debug("Required snapshot with id = " + idSnap + " of document with id = " + objectId);
+		IEngUserProfile profile = (IEngUserProfile) this.getRequestContainer().getSessionContainer()
+				.getPermanentContainer().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
 		BIObject obj = DAOFactory.getBIObjectDAO().loadBIObjectById(objectId);
 		// check if the user is able to see the document
 		// TODO check if the user is able to execute the document (even if it does no make sense to be able to see the document but not to execute it...)
 		byte[] content = null;
 		String contentType = "text/html";
 		if (ObjectsAccessVerifier.canSee(obj, profile)) {
-			logger.debug("Current user [" + ((UserProfile) profile).getUserId().toString() + "] can see snapshot with id = " + idSnap
-					+ " of document with id = " + objectId);
+			LOGGER.debug("Current user [" + ((UserProfile) profile).getUserId().toString()
+					+ "] can see snapshot with id = " + idSnap + " of document with id = " + objectId);
 			ISnapshotDAO snapdao = DAOFactory.getSnapshotDAO();
 			Snapshot snap = snapdao.loadSnapshot(idSnap);
 			content = snap.getContent();
@@ -132,22 +135,21 @@ public class GetSnapshotContentAction extends AbstractHttpAction {
 				contentType = snap.getContentType();
 			}
 		} else {
-			logger.error("Current user [" + ((UserProfile) profile).getUserId().toString() + "] CANNOT see snapshot with id = " + idSnap
-					+ " of document with id = " + objectId);
-			// content = "You cannot see required snapshot.".getBytes();
+			LOGGER.error("Current user [" + ((UserProfile) profile).getUserId().toString()
+					+ "] CANNOT see snapshot with id = " + idSnap + " of document with id = " + objectId);
 			content = "You cannot see required snapshot.".getBytes(UTF_8);
 		}
 
-		Map<String, Object> toReturn = new HashMap<String, Object>();
+		Map<String, Object> toReturn = new HashMap<>();
 		toReturn.put("content", content);
 		toReturn.put("contentType", contentType);
 		return toReturn;
 	}
 
 	public Map<String, Object> merge(List<String> snapshotIds) {
-		logger.debug("IN");
+		LOGGER.debug("IN");
 		ISnapshotDAO snapDao = null;
-		List<Snapshot> snapList = new ArrayList<Snapshot>();
+		List<Snapshot> snapList = new ArrayList<>();
 		try {
 			// load the snapshots
 			snapDao = DAOFactory.getSnapshotDAO();
@@ -158,27 +160,26 @@ public class GetSnapshotContentAction extends AbstractHttpAction {
 			}
 			return mergeListSnap(snapList);
 		} catch (Exception e) {
-			logger.error(" Error while crating input stream for the content of a snapshot", e);
+			LOGGER.error(" Error while crating input stream for the content of a snapshot", e);
 			throw new SpagoBIRuntimeException(" Error while crating input stream for the content of a snapshot", e);
 		}
 	}
 
 	private Map<String, Object> mergeListSnap(List<Snapshot> snapList) {
-		logger.debug("IN");
+		LOGGER.debug("IN");
 
 		try {
 
 			ISnapshotDAO snapDao = DAOFactory.getSnapshotDAO();
 			String jobName = snapDao.loadSnapshotSchedulation(snapList.get(0).getId());
 			PDFMergerUtility mergePdf = new PDFMergerUtility();
-			List<Snapshot> sortedSnapList = new ArrayList<Snapshot>();
+			List<Snapshot> sortedSnapList = new ArrayList<>();
 
 			// sort snapshot of documents respecting the order of document in the schedulation
 			ISchedulerServiceSupplier schedulerService = SchedulerServiceSupplierFactory.getSupplier();
 			String jobDetail = schedulerService.getJobDefinition(jobName, JobManagementModule.JOB_GROUP);
 			SourceBean jobDetailSB = SchedulerUtilities.getSBFromWebServiceResponse(jobDetail);
 			JobInfo jobInfo = SchedulerUtilities.getJobInfoFromJobSourceBean(jobDetailSB);
-			// List<Integer> sortedDocList = jobInfo.getDocumentIds();
 
 			if (!jobInfo.isJobCollateSnapshots()) {
 				int min = -1;
@@ -207,7 +208,6 @@ public class GetSnapshotContentAction extends AbstractHttpAction {
 			} else {
 				sortedSnapList = snapList;
 			}
-			// JSONArray snapshotIds = RestUtilities.readBodyAsJSONArray(req);
 			for (int i = 0; i < sortedSnapList.size(); i++) {
 				Snapshot snap = sortedSnapList.get(i);
 				InputStream is = new ByteArrayInputStream(snap.getContent());
@@ -215,24 +215,23 @@ public class GetSnapshotContentAction extends AbstractHttpAction {
 			}
 			// download merged file
 			ByteArrayOutputStream pdfDownload = new ByteArrayOutputStream();
-			// mergePdf.setDestinationFileName(SpagoBIUtilities.getResourcePath()+"/"+"Merge.pdf");
 			mergePdf.setDestinationStream(pdfDownload);
 			mergePdf.mergeDocuments(null);
 
-			Map<String, Object> toReturn = new HashMap<String, Object>();
+			Map<String, Object> toReturn = new HashMap<>();
 			toReturn.put("content", pdfDownload.toByteArray());
 			toReturn.put("contentType", "application/pdf");
 
 			return toReturn;
 
 		} catch (EMFUserError e) {
-			logger.error("Error with getting snapshpots", e);
+			LOGGER.error("Error with getting snapshpots", e);
 			throw new SpagoBIRuntimeException("Error with getting snapshpots", e);
 		} catch (IOException e) {
-			logger.error("I/O Error with getting snapshpot ids from request", e);
+			LOGGER.error("I/O Error with getting snapshpot ids from request", e);
 			throw new SpagoBIRuntimeException("I/O Error with getting snapshpot ids from request", e);
 		} catch (EMFInternalError e) {
-			logger.error(" Error while crating input stream for the content of a snapshot", e);
+			LOGGER.error(" Error while crating input stream for the content of a snapshot", e);
 			throw new SpagoBIRuntimeException(" Error while crating input stream for the content of a snapshot", e);
 		}
 	}

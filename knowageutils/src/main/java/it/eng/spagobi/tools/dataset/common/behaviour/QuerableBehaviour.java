@@ -25,6 +25,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 
 import it.eng.spago.base.SourceBeanException;
@@ -67,7 +68,8 @@ public class QuerableBehaviour extends AbstractDataSetBehaviour {
 		logger.debug("IN");
 		try {
 			Assert.assertNotNull(getTargetDataSet(), "Target dataset of a QuerableBehaviour cannot be null");
-			logger.debug("Querable dataset [" + getTargetDataSet().getName() + "] is of type [" + getTargetDataSet().getClass().getName() + "]");
+			logger.debug("Querable dataset [" + getTargetDataSet().getName() + "] is of type ["
+					+ getTargetDataSet().getClass().getName() + "]");
 			statement = getBaseStatement();
 			logger.debug("Base dataset statement is equal to [" + statement + "]");
 			Assert.assertNotNull(statement, "Querable dataset statment cannot be null");
@@ -102,14 +104,15 @@ public class QuerableBehaviour extends AbstractDataSetBehaviour {
 			statement = ((ScriptDataSet) getTargetDataSet()).getScript();
 		} else if (getTargetDataSet() instanceof ConfigurableDataSet) {
 			ConfigurableDataSet jdbcDataSet = (ConfigurableDataSet) getTargetDataSet();
-			if (StringUtilities.isNotEmpty(jdbcDataSet.getQueryScript())) {
+			if (StringUtils.isNotEmpty(jdbcDataSet.getQueryScript())) {
 				statement = (String) jdbcDataSet.getQuery();
 				statement = applyScript(statement, jdbcDataSet.getQueryScript(), jdbcDataSet.getQueryScriptLanguage());
 			} else {
 				statement = (String) jdbcDataSet.getQuery();
 			}
 		} else {
-			logger.error("Type [" + getTargetDataSet().getClass().getName() + "] of the dataset [" + getTargetDataSet().getName() + "] is not managed! \n"
+			logger.error("Type [" + getTargetDataSet().getClass().getName() + "] of the dataset ["
+					+ getTargetDataSet().getName() + "] is not managed! \n"
 					+ "Is impossible to define the dataset's statemant! ");
 			Assert.assertNotNull(statement, "Querable dataset statment cannot be null");
 		}
@@ -119,7 +122,7 @@ public class QuerableBehaviour extends AbstractDataSetBehaviour {
 	private String applyScript(String statement, String script, String language) {
 		List<Object> imports = null;
 		if ("groovy".equals(language)) {
-			imports = new ArrayList<Object>();
+			imports = new ArrayList<>();
 			URL url = Thread.currentThread().getContextClassLoader().getResource("predefinedGroovyScript.groovy");
 			File scriptFile;
 			try {
@@ -135,7 +138,7 @@ public class QuerableBehaviour extends AbstractDataSetBehaviour {
 			}
 
 		} else if ("ECMAScript".equals(language)) {
-			imports = new ArrayList<Object>();
+			imports = new ArrayList<>();
 			URL url = Thread.currentThread().getContextClassLoader().getResource("predefinedJavascriptScript.js");
 			File scriptFile;
 			try {
@@ -153,7 +156,7 @@ public class QuerableBehaviour extends AbstractDataSetBehaviour {
 			logger.debug("There is no predefined script file to import for scripting language [" + language + "]");
 		}
 
-		Map<String, Object> bindings = new HashMap<String, Object>();
+		Map<String, Object> bindings = new HashMap<>();
 		bindings.put("attributes", getTargetDataSet().getUserProfileAttributes());
 		bindings.put("parameters", getTargetDataSet().getParamsMap());
 		bindings.put("query", statement);
@@ -173,10 +176,12 @@ public class QuerableBehaviour extends AbstractDataSetBehaviour {
 			try {
 				newStatement = substituteProfileAttributes(newStatement, userProfileAttributes);
 			} catch (Throwable e) {
-				throw new ProfileAttributeDsException("An error occurred while excuting query [" + newStatement + "]", e);
+				throw new ProfileAttributeDsException("An error occurred while excuting query [" + newStatement + "]",
+						e);
 			}
-		} else if (targetDataSet instanceof JDBCDataSet || targetDataSet instanceof JDBCHiveDataSet || targetDataSet instanceof JDBCOrientDbDataSet
-				|| targetDataSet instanceof JDBCPostgreSQLDataSet || targetDataSet instanceof JDBCVerticaDataSet || targetDataSet instanceof MongoDataSet) {
+		} else if (targetDataSet instanceof JDBCDataSet || targetDataSet instanceof JDBCHiveDataSet
+				|| targetDataSet instanceof JDBCOrientDbDataSet || targetDataSet instanceof JDBCPostgreSQLDataSet
+				|| targetDataSet instanceof JDBCVerticaDataSet || targetDataSet instanceof MongoDataSet) {
 			try {
 				newStatement = StringUtilities.substituteParametersInString(newStatement, userProfileAttributes);
 			} catch (Exception e) {
@@ -189,7 +194,8 @@ public class QuerableBehaviour extends AbstractDataSetBehaviour {
 						atts += ", ";
 					}
 				}
-				throw new ProfileAttributeDsException("The following profile attributes have no value[" + atts + "]", e);
+				throw new ProfileAttributeDsException("The following profile attributes have no value[" + atts + "]",
+						e);
 
 			}
 		}
@@ -239,7 +245,8 @@ public class QuerableBehaviour extends AbstractDataSetBehaviour {
 
 			try {
 				Map parTypeMap = getParTypeMap(getTargetDataSet());
-				newStatement = StringUtilities.substituteDatasetParametersInString(newStatement, getTargetDataSet().getParamsMap(), parTypeMap, false);
+				newStatement = StringUtilities.substituteDatasetParametersInString(newStatement,
+						getTargetDataSet().getParamsMap(), parTypeMap, false);
 			} catch (Throwable e) {
 				throw new SpagoBIRuntimeException("An error occurred while settin up parameters", e);
 			}
@@ -303,7 +310,7 @@ public class QuerableBehaviour extends AbstractDataSetBehaviour {
 
 			logger.debug("Dataset parameters string is equals to [" + parametersXML + "]");
 
-			if (!StringUtilities.isEmpty(parametersXML)) {
+			if (!StringUtils.isEmpty(parametersXML)) {
 				parameters = DataSetParametersList.fromXML(parametersXML).getItems();
 				logger.debug("Dataset have  [" + parameters.size() + "] parameters");
 

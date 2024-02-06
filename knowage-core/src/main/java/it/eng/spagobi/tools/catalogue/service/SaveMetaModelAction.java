@@ -17,13 +17,23 @@
  */
 package it.eng.spagobi.tools.catalogue.service;
 
+import java.io.IOException;
+import java.util.Date;
+import java.util.HashMap;
+
+import org.apache.commons.fileupload.FileItem;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.log4j.LogMF;
+import org.apache.log4j.Logger;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.services.AbstractSpagoBIAction;
 import it.eng.spagobi.commons.utilities.AuditLogUtilities;
 import it.eng.spagobi.commons.utilities.GeneralUtilities;
 import it.eng.spagobi.commons.utilities.SpagoBIServiceExceptionHandler;
-import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.tools.catalogue.bo.Content;
 import it.eng.spagobi.tools.catalogue.bo.MetaModel;
 import it.eng.spagobi.tools.catalogue.dao.IMetaModelsDAO;
@@ -31,16 +41,6 @@ import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 import it.eng.spagobi.utilities.service.IServiceResponse;
 import it.eng.spagobi.utilities.service.JSONResponse;
-
-import java.io.IOException;
-import java.util.Date;
-import java.util.HashMap;
-
-import org.apache.commons.fileupload.FileItem;
-import org.apache.log4j.LogMF;
-import org.apache.log4j.Logger;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 public class SaveMetaModelAction extends AbstractSpagoBIAction {
 
@@ -109,7 +109,8 @@ public class SaveMetaModelAction extends AbstractSpagoBIAction {
 			} catch (SpagoBIServiceException e) {
 				throw e;
 			} catch (Throwable t) {
-				AuditLogUtilities.updateAudit(getHttpRequest(), this.getUserProfile(), logOperation, logParameters, "KO");
+				AuditLogUtilities.updateAudit(getHttpRequest(), this.getUserProfile(), logOperation, logParameters,
+						"KO");
 				throw new SpagoBIServiceException(this.getActionName(), "Error while saving meta model", t);
 			}
 
@@ -120,11 +121,13 @@ public class SaveMetaModelAction extends AbstractSpagoBIAction {
 				result.put("id", model.getId());
 				replayToClient(result.toString(), null);
 			} catch (Exception e) {
-				throw new SpagoBIServiceException(SERVICE_NAME, "Impossible to write back the response to the client", e);
+				throw new SpagoBIServiceException(SERVICE_NAME, "Impossible to write back the response to the client",
+						e);
 			}
 
 		} catch (Throwable t) {
-			SpagoBIServiceException e = SpagoBIServiceExceptionHandler.getInstance().getWrappedException(SERVICE_NAME, t);
+			SpagoBIServiceException e = SpagoBIServiceExceptionHandler.getInstance().getWrappedException(SERVICE_NAME,
+					t);
 			replayToClient(null, e);
 		} finally {
 			logger.debug("OUT");
@@ -189,7 +192,8 @@ public class SaveMetaModelAction extends AbstractSpagoBIAction {
 			// check if the uploaded file exceeds the maximum dimension
 			int maxSize = GeneralUtilities.getTemplateMaxSize();
 			if (uploaded.getSize() > maxSize) {
-				throw new SpagoBIEngineServiceException(getActionName(), "The uploaded file exceeds the maximum size, that is " + maxSize);
+				throw new SpagoBIEngineServiceException(getActionName(),
+						"The uploaded file exceeds the maximum size, that is " + maxSize);
 			}
 		} finally {
 			logger.debug("OUT");
@@ -207,7 +211,7 @@ public class SaveMetaModelAction extends AbstractSpagoBIAction {
 		String category = getAttributeAsString(CATEGORY);
 		String dataSourceLabel = getAttributeAsString(DATA_SOURCE_LABEL);
 		Integer categoryValue = null;
-		if (StringUtilities.isNotEmpty(category)) {
+		if (StringUtils.isNotEmpty(category)) {
 			categoryValue = getAttributeAsInteger(CATEGORY);
 		}
 		MetaModel model = new MetaModel();

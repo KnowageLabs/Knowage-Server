@@ -38,7 +38,6 @@ import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.utilities.GeneralUtilities;
 import it.eng.spagobi.commons.utilities.PortletUtilities;
-import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.i18n.dao.I18NMessagesDAO;
 import it.eng.spagobi.utilities.messages.IEngineMessageBuilder;
 
@@ -273,7 +272,7 @@ public class MessageBuilder implements IMessageBuilder, IEngineMessageBuilder {
 					.append(" not valid since it is not configured.").toString());
 			locale = GeneralUtilities.getDefaultLocale();
 			logger.debug((new StringBuilder("Using default locale ")).append(locale).append(".").toString());
-		} else if (StringUtilities.isEmpty(locale.getCountry())) {
+		} else if (StringUtils.isEmpty(locale.getCountry())) {
 			logger.warn((new StringBuilder("Request locale ")).append(locale)
 					.append(" not contain the country value. The one specified in configuration will be used")
 					.toString());
@@ -299,7 +298,7 @@ public class MessageBuilder implements IMessageBuilder, IEngineMessageBuilder {
 			language = locale.getLanguage();
 			country = locale.getCountry();
 
-			if (StringUtilities.isEmpty(locale.getCountry())) {
+			if (StringUtils.isEmpty(locale.getCountry())) {
 				return true;
 			} else if (locale.getCountry().equalsIgnoreCase(country)) {
 				String script = GeneralUtilities.getScript(language);

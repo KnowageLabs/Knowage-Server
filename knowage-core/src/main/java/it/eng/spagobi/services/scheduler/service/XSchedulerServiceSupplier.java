@@ -20,6 +20,7 @@ package it.eng.spagobi.services.scheduler.service;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -33,7 +34,6 @@ import it.eng.spagobi.commons.deserializer.TriggerXMLDeserializer;
 import it.eng.spagobi.commons.serializer.JobXMLSerializer;
 import it.eng.spagobi.commons.serializer.SerializerFactory;
 import it.eng.spagobi.commons.serializer.XMLSerializer;
-import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.tools.scheduler.bo.Job;
 import it.eng.spagobi.tools.scheduler.bo.Trigger;
 import it.eng.spagobi.tools.scheduler.dao.ISchedulerDAO;
@@ -84,8 +84,8 @@ public class XSchedulerServiceSupplier implements ISchedulerServiceSupplier {
 
 		xml = null;
 		try {
-			Assert.assertTrue(StringUtilities.isNotEmpty(jobName), "Input parameter [jobName] cannot be empty");
-			Assert.assertTrue(StringUtilities.isNotEmpty(jobGroup), "Input parameter [jobGroup] cannot be empty");
+			Assert.assertTrue(StringUtils.isNotEmpty(jobName), "Input parameter [jobName] cannot be empty");
+			Assert.assertTrue(StringUtils.isNotEmpty(jobGroup), "Input parameter [jobGroup] cannot be empty");
 
 			Job aJob = schedulerDAO.loadJob(jobGroup, jobName);
 			if (aJob == null) {
@@ -111,7 +111,7 @@ public class XSchedulerServiceSupplier implements ISchedulerServiceSupplier {
 
 			List<Trigger> triggers = schedulerDAO.loadTriggers(jobGroupName, jobName);
 			// filter out trigger whose property runImmediately is equal to true
-			List<Trigger> triggersToSerialize = new ArrayList<Trigger>();
+			List<Trigger> triggersToSerialize = new ArrayList<>();
 			for (Trigger trigger : triggers) {
 				// if(trigger.getName().startsWith("schedule_uuid_") == false) {
 				if (!trigger.isRunImmediately()) {
@@ -139,12 +139,14 @@ public class XSchedulerServiceSupplier implements ISchedulerServiceSupplier {
 
 		xml = null;
 		try {
-			Assert.assertTrue(StringUtilities.isNotEmpty(triggerName), "Input parameter [triggerName] cannot be empty");
-			Assert.assertTrue(StringUtilities.isNotEmpty(triggerGroupName), "Input parameter [triggerGroupName] cannot be empty");
+			Assert.assertTrue(StringUtils.isNotEmpty(triggerName), "Input parameter [triggerName] cannot be empty");
+			Assert.assertTrue(StringUtils.isNotEmpty(triggerGroupName),
+					"Input parameter [triggerGroupName] cannot be empty");
 
 			Trigger trigger = schedulerDAO.loadTrigger(triggerGroupName, triggerName);
 			if (trigger == null) {
-				throw new SpagoBIRuntimeException("Trigger with name [" + triggerName + "] not found in group [" + triggerGroupName + "]");
+				throw new SpagoBIRuntimeException(
+						"Trigger with name [" + triggerName + "] not found in group [" + triggerGroupName + "]");
 			}
 			LOGGER.debug("Trigger [" + triggerName + "] succesfully loaded from group [" + triggerGroupName + "]");
 
@@ -158,8 +160,8 @@ public class XSchedulerServiceSupplier implements ISchedulerServiceSupplier {
 		} catch (SpagoBIRuntimeException t) {
 			throw t;
 		} catch (Throwable t) {
-			throw new SpagoBIRuntimeException("An unexpected error occured while loading trigger [" + triggerName + "] from group [" + triggerGroupName + "]",
-					t);
+			throw new SpagoBIRuntimeException("An unexpected error occured while loading trigger [" + triggerName
+					+ "] from group [" + triggerGroupName + "]", t);
 		} finally {
 			LOGGER.debug("OUT");
 		}
@@ -272,8 +274,8 @@ public class XSchedulerServiceSupplier implements ISchedulerServiceSupplier {
 
 		buffer = new StringBuilder();
 		try {
-			Assert.assertTrue(StringUtilities.isNotEmpty(jobName), "Input parameter [jobName] cannot be empty");
-			Assert.assertTrue(StringUtilities.isNotEmpty(jobGroupName), "Input parameter [jobGroupName] cannot be empty");
+			Assert.assertTrue(StringUtils.isNotEmpty(jobName), "Input parameter [jobName] cannot be empty");
+			Assert.assertTrue(StringUtils.isNotEmpty(jobGroupName), "Input parameter [jobGroupName] cannot be empty");
 
 			if (schedulerDAO.jobExists(jobGroupName, jobName)) {
 				buffer.append("<JOB_EXISTANCE exists=\"false\" />");
@@ -281,7 +283,8 @@ public class XSchedulerServiceSupplier implements ISchedulerServiceSupplier {
 				buffer.append("<JOB_EXISTANCE exists=\"true\" />");
 			}
 		} catch (Throwable t) {
-			throw new SpagoBIRuntimeException("An unexpected error occured while checking for existence of job [" + jobName + "]", t);
+			throw new SpagoBIRuntimeException(
+					"An unexpected error occured while checking for existence of job [" + jobName + "]", t);
 		} finally {
 			LOGGER.debug("OUT");
 		}

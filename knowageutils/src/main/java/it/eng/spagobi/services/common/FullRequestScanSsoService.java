@@ -24,10 +24,10 @@ import java.util.stream.Stream;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.LogMF;
 import org.apache.log4j.Logger;
 
-import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
@@ -77,9 +77,11 @@ public class FullRequestScanSsoService extends JWTSsoService {
 				return Optional.ofNullable(userId);
 			};
 
-			Stream<OptionalFunction> stream = Stream.of(getUserIdFromHeader, getUserIdFromAttribute, getUserIdFromRemoteUser);
+			Stream<OptionalFunction> stream = Stream.of(getUserIdFromHeader, getUserIdFromAttribute,
+					getUserIdFromRemoteUser);
 
-			Optional<String> userIdOpt = stream.flatMap(opt -> opt.getUserId().map(Stream::of).orElseGet(Stream::empty)).findFirst();
+			Optional<String> userIdOpt = stream.flatMap(opt -> opt.getUserId().map(Stream::of).orElseGet(Stream::empty))
+					.findFirst();
 
 			if (userIdOpt.isPresent()) {
 				String userId = userIdOpt.get();
@@ -107,8 +109,9 @@ public class FullRequestScanSsoService extends JWTSsoService {
 	private String getHeaderName() {
 		String toReturn = System.getProperty(USER_IDENTIFIER_PARAMETER_NAME_SYSTEM_PROPERTY);
 		LogMF.debug(logger, "Request header name found from system properties: [{0}]", toReturn);
-		if (StringUtilities.isEmpty(toReturn)) {
-			LogMF.debug(logger, "System property [{0}] was not found or it was empty. Using default request header name [{1}] ...",
+		if (StringUtils.isEmpty(toReturn)) {
+			LogMF.debug(logger,
+					"System property [{0}] was not found or it was empty. Using default request header name [{1}] ...",
 					USER_IDENTIFIER_PARAMETER_NAME_SYSTEM_PROPERTY, USER_IDENTIFIER_DEFAULT_REQUEST_HEADER_NAME);
 			toReturn = USER_IDENTIFIER_DEFAULT_REQUEST_HEADER_NAME;
 		}

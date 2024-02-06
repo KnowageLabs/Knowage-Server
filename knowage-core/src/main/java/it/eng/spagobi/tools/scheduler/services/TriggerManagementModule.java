@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 
 import it.eng.spago.base.RequestContainer;
@@ -44,7 +45,6 @@ import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.utilities.AuditLogUtilities;
-import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.services.scheduler.service.ISchedulerServiceSupplier;
 import it.eng.spagobi.services.scheduler.service.SchedulerServiceSupplierFactory;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
@@ -140,7 +140,8 @@ public class TriggerManagementModule extends AbstractHttpModule {
 				String outcome = (String) schedModRespSB.getAttribute("outcome");
 				if (outcome.equalsIgnoreCase("fault")) {
 					try {
-						AuditLogUtilities.updateAudit(getHttpRequest(), currProfile, "SCHED_TRIGGER.RUN", logParam, "KO");
+						AuditLogUtilities.updateAudit(getHttpRequest(), currProfile, "SCHED_TRIGGER.RUN", logParam,
+								"KO");
 					} catch (Exception e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
@@ -869,10 +870,10 @@ public class TriggerManagementModule extends AbstractHttpModule {
 
 		if (dispatchContext.isFileSystemDispatchChannelEnabled()) {
 			saveOptString += "saveasfile=true%26";
-			if (StringUtilities.isNotEmpty(dispatchContext.getDestinationFolder())) {
+			if (StringUtils.isNotEmpty(dispatchContext.getDestinationFolder())) {
 				saveOptString += "destinationfolder=" + dispatchContext.getDestinationFolder() + "%26";
 			}
-			if (StringUtilities.isNotEmpty(dispatchContext.getDestinationFolder())) {
+			if (StringUtils.isNotEmpty(dispatchContext.getDestinationFolder())) {
 				saveOptString += "destinationfolder=" + dispatchContext.getDestinationFolder() + "%26";
 			}
 			if (dispatchContext.isDestinationFolderRelativeToResourceFolder()) {

@@ -60,7 +60,7 @@ import it.eng.spagobi.commons.utilities.UserUtilities;
 
 public class ExecuteAndSendAction extends AbstractHttpAction {
 
-	private static transient Logger logger = Logger.getLogger(ExecuteAndSendAction.class);
+	private static final Logger LOGGER = Logger.getLogger(ExecuteAndSendAction.class);
 
 	/*
 	 * (non-Javadoc)
@@ -69,7 +69,7 @@ public class ExecuteAndSendAction extends AbstractHttpAction {
 	 */
 	@Override
 	public void service(SourceBean request, SourceBean responseSb) throws Exception {
-		logger.debug("IN");
+		LOGGER.debug("IN");
 
 		freezeHttpResponse();
 		HttpServletResponse response = getHttpResponse();
@@ -105,37 +105,37 @@ public class ExecuteAndSendAction extends AbstractHttpAction {
 				Object par = it.next();
 				SourceBeanAttribute p = (SourceBeanAttribute) par;
 				String parName = p.getKey();
-				logger.debug("got parName=" + parName);
+				LOGGER.debug("got parName=" + parName);
 				if (parName.equals("objlabel")) {
 					objLabel = (String) request.getAttribute("objlabel");
-					logger.debug("got objLabel from Request=" + objLabel);
+					LOGGER.debug("got objLabel from Request=" + objLabel);
 				} else if (parName.equals("objid")) {
 					objid = (String) request.getAttribute("objid");
-					logger.debug("got objid from Request=" + objid);
+					LOGGER.debug("got objid from Request=" + objid);
 				} else if (parName.equals("to")) {
 					to = (String) request.getAttribute("to");
-					logger.debug("got to from Request=" + to);
+					LOGGER.debug("got to from Request=" + to);
 				} else if (parName.equals("cc")) {
 					cc = (String) request.getAttribute("cc");
-					logger.debug("got cc from Request=" + cc);
+					LOGGER.debug("got cc from Request=" + cc);
 				} else if (parName.equals("object")) {
 					object = (String) request.getAttribute("object");
-					logger.debug("got object from Request=" + object);
+					LOGGER.debug("got object from Request=" + object);
 				} else if (parName.equals("message")) {
 					message = (String) request.getAttribute("message");
-					logger.debug("got message from Request=" + message);
+					LOGGER.debug("got message from Request=" + message);
 				} else if (parName.equals("userid")) {
 					userId = (String) request.getAttribute("userid");
-					logger.info("got userId from Request=" + userId);
+					LOGGER.info("got userId from Request=" + userId);
 				} else if (parName.equals("login")) {
 					login = (String) request.getAttribute("login");
-					logger.info("got user from Request" + login);
+					LOGGER.info("got user from Request" + login);
 				} else if (parName.equals("pwd")) {
 					pass = (String) request.getAttribute("pwd");
-					logger.info("got pwd from Request");
+					LOGGER.info("got pwd from Request");
 				} else if (parName.equals("replyto")) {
 					from = (String) request.getAttribute("replyto");
-					logger.info("got email to reply to, from Request" + from);
+					LOGGER.info("got email to reply to, from Request" + from);
 				} else if (parName.equals("NEW_SESSION")) {
 					continue;
 				} else {
@@ -146,7 +146,7 @@ public class ExecuteAndSendAction extends AbstractHttpAction {
 
 			if (to.equals("")) {
 				retCode = TONOTFOUND;
-				logger.error("To Address not found");
+				LOGGER.error("To Address not found");
 				throw new Exception("To Address not found");
 			}
 
@@ -195,9 +195,7 @@ public class ExecuteAndSendAction extends AbstractHttpAction {
 			// } end if (execCtrl.directExecution()) {
 			// SEND MAIL
 
-			SessionFacade facade = MailSessionBuilder.newInstance()
-				.usingUserProfile()
-				.build();
+			SessionFacade facade = MailSessionBuilder.newInstance().usingUserProfile().build();
 
 			// create a message
 			Message msg = facade.createNewMimeMessage();
@@ -212,8 +210,8 @@ public class ExecuteAndSendAction extends AbstractHttpAction {
 				recipients = cc.split(",");
 				InternetAddress[] addressCC = new InternetAddress[recipients.length];
 				for (int i = 0; i < recipients.length; i++) {
-					String cc_add = recipients[i];
-					if ((cc_add != null) && !cc_add.trim().equals("")) {
+					String ccAdd = recipients[i];
+					if ((ccAdd != null) && !ccAdd.trim().equals("")) {
 						addressCC[i] = new InternetAddress(recipients[i]);
 					}
 				}
@@ -228,7 +226,8 @@ public class ExecuteAndSendAction extends AbstractHttpAction {
 			// create the second message part
 			MimeBodyPart mbp2 = new MimeBodyPart();
 			// attach the file to the message
-			SchedulerDataSource sds = new SchedulerDataSource(documentBytes, returnedContentType, "result" + fileextension);
+			SchedulerDataSource sds = new SchedulerDataSource(documentBytes, returnedContentType,
+					"result" + fileextension);
 			mbp2.setDataHandler(new DataHandler(sds));
 			mbp2.setFileName(sds.getName());
 			// create the Multipart and add its parts to it
@@ -243,12 +242,12 @@ public class ExecuteAndSendAction extends AbstractHttpAction {
 				facade.sendMessage(msg);
 				retCode = OK;
 			} else {
-				logger.error("Error while executing and sending object " + errorHandler.getStackTrace());
+				LOGGER.error("Error while executing and sending object " + errorHandler.getStackTrace());
 				retCode = ERROR;
 			}
 
 		} catch (Exception e) {
-			logger.error("Error while executing and sending object ", e);
+			LOGGER.error("Error while executing and sending object ", e);
 			if (retCode.equals("")) {
 				retCode = ERROR;
 			}
@@ -257,10 +256,10 @@ public class ExecuteAndSendAction extends AbstractHttpAction {
 				response.getOutputStream().write(retCode.getBytes());
 				response.getOutputStream().flush();
 			} catch (Exception ex) {
-				logger.error("Error while sending response to client", ex);
+				LOGGER.error("Error while sending response to client", ex);
 			}
 		}
-		logger.debug("OUT");
+		LOGGER.debug("OUT");
 	}
 
 	private class SchedulerDataSource implements DataSource {
@@ -301,39 +300,39 @@ public class ExecuteAndSendAction extends AbstractHttpAction {
 	/**
 	 * Add the description to the BIObjectparameters
 	 *
-	 * @param BIObjectParameters
+	 * @param biObjectParameters
 	 * @param attributes
 	 */
-	public void setParametersDescription(List<BIObjectParameter> BIObjectParameters, List<SourceBeanAttribute> attributes) {
-		Map<String, String> parameterNameDescriptionMap = new HashMap<String, String>();
+	public void setParametersDescription(List<BIObjectParameter> biObjectParameters,
+			List<SourceBeanAttribute> attributes) {
+		Map<String, String> parameterNameDescriptionMap = new HashMap<>();
 		// we create a map: parameter name, parameter description
 		for (int i = 0; i < attributes.size(); i++) {
 			SourceBeanAttribute sba = attributes.get(i);
 			// the name of parameter in the request with the description is parametername+ field_visible_description
 			int descriptionPosition = sba.getKey().indexOf("field_visible_description");
 			if (descriptionPosition > 0) {
-				parameterNameDescriptionMap.put(sba.getKey().substring(0, descriptionPosition - 1), (String) sba.getValue());
+				parameterNameDescriptionMap.put(sba.getKey().substring(0, descriptionPosition - 1),
+						(String) sba.getValue());
 			}
 		}
-		for (int i = 0; i < BIObjectParameters.size(); i++) {
-			String bobjName = BIObjectParameters.get(i).getParameterUrlName();
+		for (int i = 0; i < biObjectParameters.size(); i++) {
+			String bobjName = biObjectParameters.get(i).getParameterUrlName();
 			String value = parameterNameDescriptionMap.get(bobjName);
 			if (value != null) {
-				BIObjectParameters.get(i).setParameterValuesDescription(parseDescriptionString(value));
+				biObjectParameters.get(i).setParameterValuesDescription(parseDescriptionString(value));
 			}
 		}
 	}
 
 	/**
-	 * Parse a string with the description of the parameter and return a list with description.. This transformation is necessary because the multivalues
-	 * parameters
+	 * Parse a string with the description of the parameter and return a list with description.. This transformation is necessary because the multivalues parameters
 	 *
-	 * @param s
-	 *            the string with the description
+	 * @param s the string with the description
 	 * @return the list of descriptions
 	 */
 	public List<String> parseDescriptionString(String s) {
-		List<String> descriptions = new ArrayList<String>();
+		List<String> descriptions = new ArrayList<>();
 		StringTokenizer stk = new StringTokenizer(s, ";");
 		while (stk.hasMoreTokens()) {
 			descriptions.add(stk.nextToken());

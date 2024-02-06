@@ -22,6 +22,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -29,7 +30,6 @@ import org.hibernate.Session;
 import it.eng.spago.base.SourceBean;
 import it.eng.spagobi.commons.metadata.SbiConfig;
 import it.eng.spagobi.commons.metadata.SbiDomains;
-import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 /**
@@ -57,13 +57,15 @@ public class ConfigurationsInitializer extends SpagoBIInitializer {
 			if (configurationParameters == null || configurationParameters.isEmpty()) {
 				return;
 			}
-			logger.debug("Configuration file contains the definition of [" + configurationParameters.size() + "] configuration parameter(s)");
+			logger.debug("Configuration file contains the definition of [" + configurationParameters.size()
+					+ "] configuration parameter(s)");
 
 			existingParametersMap = getConfParametersFromDatabase(hibernateSession);
 			if (existingParametersMap == null || existingParametersMap.keySet().size() == 0) {
 				logger.debug("Database does not contain configuration parameters");
 			} else {
-				logger.debug("Database contains [" + existingParametersMap.keySet().size() + "] configuration parameter(s)");
+				logger.debug(
+						"Database contains [" + existingParametersMap.keySet().size() + "] configuration parameter(s)");
 			}
 
 			for (SbiConfig configurationParameter : configurationParameters) {
@@ -71,7 +73,8 @@ public class ConfigurationsInitializer extends SpagoBIInitializer {
 					logger.debug("Parameter [" + configurationParameter.getLabel() + "] already present in database");
 				} else {
 					hibernateSession.save(configurationParameter);
-					logger.debug("Parameter [" + configurationParameter.getLabel() + "] succesfully saved into database");
+					logger.debug(
+							"Parameter [" + configurationParameter.getLabel() + "] succesfully saved into database");
 				}
 			}
 
@@ -92,12 +95,14 @@ public class ConfigurationsInitializer extends SpagoBIInitializer {
 			String hql = "from SbiConfig";
 			Query hqlQuery = hibernateSession.createQuery(hql);
 			List<SbiConfig> configurationParametersFromDatabase = hqlQuery.list();
-			existingParametersMap = new HashMap<String, SbiConfig>();
+			existingParametersMap = new HashMap<>();
 			for (SbiConfig configurationParameterFromDatabase : configurationParametersFromDatabase) {
-				existingParametersMap.put(configurationParameterFromDatabase.getLabel(), configurationParameterFromDatabase);
+				existingParametersMap.put(configurationParameterFromDatabase.getLabel(),
+						configurationParameterFromDatabase);
 			}
 		} catch (Throwable t) {
-			throw new SpagoBIRuntimeException("An unexpected error occured while loading configuration parameters from database", t);
+			throw new SpagoBIRuntimeException(
+					"An unexpected error occured while loading configuration parameters from database", t);
 		} finally {
 			logger.debug("OUT");
 		}
@@ -110,7 +115,7 @@ public class ConfigurationsInitializer extends SpagoBIInitializer {
 
 		logger.debug("IN");
 
-		configurations = new ArrayList<SbiConfig>();
+		configurations = new ArrayList<>();
 		try {
 			SourceBean configSB = getConfiguration();
 			if (configSB == null) {
@@ -128,7 +133,7 @@ public class ConfigurationsInitializer extends SpagoBIInitializer {
 				SbiDomains hibDomain = null;
 
 				String valueTypeCd = (String) aConfigSB.getAttribute("valueType");
-				if (StringUtilities.isNotEmpty(valueTypeCd)) {
+				if (StringUtils.isNotEmpty(valueTypeCd)) {
 					hibDomain = findDomain(hibernateSession, valueTypeCd, "PAR_TYPE");
 					if (hibDomain == null) {
 						logger.error("Could not find domain for configuration parameter");
@@ -157,7 +162,8 @@ public class ConfigurationsInitializer extends SpagoBIInitializer {
 				configurations.add(configuration);
 			}
 		} catch (Throwable t) {
-			throw new SpagoBIRuntimeException("Ab unexpected error occured while reading configuration parameters from file", t);
+			throw new SpagoBIRuntimeException(
+					"Ab unexpected error occured while reading configuration parameters from file", t);
 		} finally {
 			logger.debug("OUT");
 		}

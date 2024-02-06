@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Vector;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 
 import it.eng.spago.base.SourceBeanException;
@@ -112,7 +113,7 @@ public class ParametersResolver {
 
 			// if a parameter has value '' put null!
 			Map parameterValues = targetDataSet.getParamsMap();
-			Vector<String> parsToChange = new Vector<String>();
+			Vector<String> parsToChange = new Vector<>();
 
 			for (Iterator iterator = parameterValues.keySet().iterator(); iterator.hasNext();) {
 				String parName = (String) iterator.next();
@@ -130,7 +131,8 @@ public class ParametersResolver {
 
 			try {
 				Map parTypeMap = getParTypeMap(targetDataSet);
-				newStatement = StringUtilities.substituteDatasetParametersInString(newStatement, targetDataSet.getParamsMap(), parTypeMap, false);
+				newStatement = StringUtilities.substituteDatasetParametersInString(newStatement,
+						targetDataSet.getParamsMap(), parTypeMap, false);
 			} catch (Exception e) {
 				throw new SpagoBIRuntimeException("An error occurred while settin up parameters", e);
 			}
@@ -240,7 +242,7 @@ public class ParametersResolver {
 
 			logger.debug("Dataset parameters string is equals to [" + parametersXML + "]");
 
-			if (!StringUtilities.isEmpty(parametersXML)) {
+			if (!StringUtils.isEmpty(parametersXML)) {
 				parameters = DataSetParametersList.fromXML(parametersXML).getItems();
 				logger.debug("Dataset have  [" + parameters.size() + "] parameters");
 

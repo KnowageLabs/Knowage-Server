@@ -17,10 +17,10 @@
  */
 package it.eng.spagobi.engines.whatif.template.initializer.impl;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 
 import it.eng.spago.base.SourceBean;
-import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.engines.whatif.template.WhatIfTemplate;
 import it.eng.spagobi.engines.whatif.template.initializer.AbstractInitializer;
 import it.eng.spagobi.tools.datasource.bo.DataSourceFactory;
@@ -56,7 +56,7 @@ public class StandAloneInitializerImpl extends AbstractInitializer {
 			ds.setLabel(STAD_ALONE_DS_LABEL);
 			SourceBean connectionProperties = (SourceBean) standAloneSB.getAttribute(TAG_CONNECTION);
 			String jndiName = getBeanValue(TAG_JNDI_NAME, connectionProperties);
-			if (StringUtilities.isNotEmpty(jndiName)) {
+			if (StringUtils.isNotEmpty(jndiName)) {
 				ds.setJndi(getBeanValue(TAG_JNDI_NAME, connectionProperties));
 			} else {
 				ds.setPwd(getBeanValue(TAG_PWD, connectionProperties));

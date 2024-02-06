@@ -51,7 +51,7 @@ public class ProjectionConverter extends CommonJSON implements IConverter<List<A
 	 */
 	@Override
 	public List<AbstractSelectionField> convert(JSONObject aggregations) {
-		Map<String, String> columnAliasToName = new HashMap<String, String>();
+		Map<String, String> columnAliasToName = new HashMap<>();
 
 		try {
 
@@ -64,24 +64,24 @@ public class ProjectionConverter extends CommonJSON implements IConverter<List<A
 		return null;
 	}
 
-	protected List<AbstractSelectionField> getProjections(IDataSet dataSet, JSONArray categories, JSONArray measures, Map<String, String> columnAliasToName)
-			throws JSONException {
+	protected List<AbstractSelectionField> getProjections(IDataSet dataSet, JSONArray categories, JSONArray measures,
+			Map<String, String> columnAliasToName) throws JSONException {
 		ArrayList<AbstractSelectionField> projections = new ArrayList<>(categories.length() + measures.length());
 		addProjections(dataSet, categories, columnAliasToName, projections);
 		addProjections(dataSet, measures, columnAliasToName, projections);
 		return projections;
 	}
 
-	private void addProjections(IDataSet dataSet, JSONArray categories, Map<String, String> columnAliasToName, ArrayList<AbstractSelectionField> projections)
-			throws JSONException {
+	private void addProjections(IDataSet dataSet, JSONArray categories, Map<String, String> columnAliasToName,
+			ArrayList<AbstractSelectionField> projections) throws JSONException {
 		for (int i = 0; i < categories.length(); i++) {
 			JSONObject category = categories.getJSONObject(i);
 			addProjection(dataSet, projections, category, columnAliasToName);
 		}
 	}
 
-	private void addProjection(IDataSet dataSet, ArrayList<AbstractSelectionField> projections, JSONObject catOrMeasure, Map<String, String> columnAliasToName)
-			throws JSONException {
+	private void addProjection(IDataSet dataSet, ArrayList<AbstractSelectionField> projections, JSONObject catOrMeasure,
+			Map<String, String> columnAliasToName) throws JSONException {
 
 		String functionObj = catOrMeasure.optString("funct");
 		// check if it is an array

@@ -24,9 +24,9 @@ import javax.servlet.http.HttpSession;
 import javax.xml.namespace.QName;
 import javax.xml.ws.Service;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 
-import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.services.metamodel.MetamodelService;
 import it.eng.spagobi.services.security.exceptions.SecurityException;
 import it.eng.spagobi.utilities.assertion.Assert;
@@ -41,17 +41,16 @@ public final class MetamodelServiceProxy extends AbstractServiceProxy {
 
 	private static final String SERVICE_NAME = "Metamodel Service";
 
-	private static final QName SERVICE_QNAME = new QName("http://metamodel.services.spagobi.eng.it/", "MetamodelService");
+	private static final QName SERVICE_QNAME = new QName("http://metamodel.services.spagobi.eng.it/",
+			"MetamodelService");
 
 	private static Logger logger = Logger.getLogger(MetamodelServiceProxy.class);
 
 	/**
 	 * use this i engine context only.
 	 *
-	 * @param user
-	 *            user ID
-	 * @param session
-	 *            http session
+	 * @param user    user ID
+	 * @param session http session
 	 */
 	public MetamodelServiceProxy(String user, HttpSession session) {
 		super(user, session);
@@ -61,12 +60,12 @@ public final class MetamodelServiceProxy extends AbstractServiceProxy {
 			logger.error("HttpSession IS NULL....");
 	}
 
-	public MetamodelServiceProxy(String user, String secureAttributes, String serviceUrlStr, String spagoBiServerURL, String token) {
+	public MetamodelServiceProxy(String user, String secureAttributes, String serviceUrlStr, String spagoBiServerURL,
+			String token) {
 		super(user, secureAttributes, serviceUrlStr, spagoBiServerURL, token);
 	}
 
 	private MetamodelServiceProxy() {
-		super();
 	}
 
 	private MetamodelService lookUp() throws SecurityException {
@@ -103,11 +102,14 @@ public final class MetamodelServiceProxy extends AbstractServiceProxy {
 
 		serviceResponse = null;
 		try {
-			Assert.assertTrue(StringUtilities.isNotEmpty(metamodelName),
-					"Input parameter [name] cannot be null when invoking method [getMetamodelContentByName] of service [" + SERVICE_NAME + "]");
+			Assert.assertTrue(StringUtils.isNotEmpty(metamodelName),
+					"Input parameter [name] cannot be null when invoking method [getMetamodelContentByName] of service ["
+							+ SERVICE_NAME + "]");
 			serviceResponse = lookUp().getMetamodelContentByName(readTicket(), userId, metamodelName);
 		} catch (Throwable se) {
-			throw new SpagoBIRuntimeException("An unexpected error occerd while invoking method [getMetamodelContentByName] of service [" + SERVICE_NAME + "]",
+			throw new SpagoBIRuntimeException(
+					"An unexpected error occerd while invoking method [getMetamodelContentByName] of service ["
+							+ SERVICE_NAME + "]",
 					se);
 		} finally {
 			logger.debug("OUT");
@@ -130,11 +132,14 @@ public final class MetamodelServiceProxy extends AbstractServiceProxy {
 
 		serviceResponse = -1;
 		try {
-			Assert.assertTrue(StringUtilities.isNotEmpty(metamodelName),
-					"Input parameter [name] cannot be null when invoking method [getMetamodelContentByName] of service [" + SERVICE_NAME + "]");
+			Assert.assertTrue(StringUtils.isNotEmpty(metamodelName),
+					"Input parameter [name] cannot be null when invoking method [getMetamodelContentByName] of service ["
+							+ SERVICE_NAME + "]");
 			serviceResponse = lookUp().getMetamodelContentLastModified(readTicket(), userId, metamodelName);
 		} catch (Throwable se) {
-			throw new SpagoBIRuntimeException("An unexpected error occerd while invoking method [getMetamodelContentByName] of service [" + SERVICE_NAME + "]",
+			throw new SpagoBIRuntimeException(
+					"An unexpected error occerd while invoking method [getMetamodelContentByName] of service ["
+							+ SERVICE_NAME + "]",
 					se);
 		} finally {
 			logger.debug("OUT");

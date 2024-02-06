@@ -3,6 +3,7 @@ package it.eng.spagobi.commons.services;
 import java.io.IOException;
 import java.util.Locale;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.json.JSONObject;
 
@@ -18,7 +19,6 @@ import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.utilities.AuditLogUtilities;
 import it.eng.spagobi.commons.utilities.SpagoBIServiceExceptionHandler;
-import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.commons.utilities.UserUtilities;
 import it.eng.spagobi.commons.utilities.messages.MessageBuilder;
 import it.eng.spagobi.services.security.bo.SpagoBIUserProfile;
@@ -131,7 +131,8 @@ public class LoginActionByToken extends AbstractBaseHttpAction {
 			// in case user has a default role, we get his default user profile object
 			profile = SessionUserProfileBuilder.getDefaultUserProfile((UserProfile) profile);
 			// put user profile into session
-			storeProfileInSession((UserProfile) profile, getSessionContainer().getPermanentContainer(), getHttpRequest().getSession());
+			storeProfileInSession((UserProfile) profile, getSessionContainer().getPermanentContainer(),
+					getHttpRequest().getSession());
 
 			// Propagate THEME if present
 			if (theme != null && theme.length() > 0) {
@@ -139,15 +140,17 @@ public class LoginActionByToken extends AbstractBaseHttpAction {
 			}
 
 			// Propagate BACK URL if present
-			if (!StringUtilities.isEmpty(backUrl)) {
+			if (!StringUtils.isEmpty(backUrl)) {
 				getHttpSession().setAttribute(SpagoBIConstants.BACK_URL, backUrl);
 			}
 
 			// Propagate locale
 			Locale locale = MessageBuilder.getBrowserLocaleFromSpago();
-			logger.debug("User [" + userId + "] loacale has been set to [" + locale.getLanguage() + "/" + locale.getCountry() + "]");
+			logger.debug("User [" + userId + "] loacale has been set to [" + locale.getLanguage() + "/"
+					+ locale.getCountry() + "]");
 			if (locale != null) {
-				getSessionContainer().getPermanentContainer().setAttribute(Constants.USER_LANGUAGE, locale.getLanguage());
+				getSessionContainer().getPermanentContainer().setAttribute(Constants.USER_LANGUAGE,
+						locale.getLanguage());
 				getSessionContainer().getPermanentContainer().setAttribute(Constants.USER_COUNTRY, locale.getCountry());
 			}
 

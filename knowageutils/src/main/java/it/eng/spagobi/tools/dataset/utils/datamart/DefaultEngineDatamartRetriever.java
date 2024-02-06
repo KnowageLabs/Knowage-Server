@@ -27,10 +27,10 @@ import java.util.zip.ZipFile;
 
 import javax.activation.DataHandler;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 
 import it.eng.knowage.commons.security.PathTraversalChecker;
-import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.services.common.EnginConf;
 import it.eng.spagobi.services.proxy.MetamodelServiceProxy;
 import it.eng.spagobi.utilities.assertion.Assert;
@@ -85,7 +85,7 @@ public class DefaultEngineDatamartRetriever implements IQbeDataSetDatamartRetrie
 		LOGGER.debug("IN");
 
 		try {
-			Assert.assertTrue(StringUtilities.isNotEmpty(metamodelName), "Input parameter [metamodelName] cannot be null");
+			Assert.assertTrue(StringUtils.isNotEmpty(metamodelName), "Input parameter [metamodelName] cannot be null");
 			LOGGER.debug("Load metamodel jar file for model [" + metamodelName + "]");
 
 			File directory = getDataMartDir();
@@ -94,7 +94,8 @@ public class DefaultEngineDatamartRetriever implements IQbeDataSetDatamartRetrie
 			metamodelJarFile = new File(targetMetamodelFolder, "datamart.jar");
 
 			if (metamodelJarFile.exists()) {
-				LOGGER.debug("jar file for metamodel [" + metamodelName + "] has been already loaded in folder [" + targetMetamodelFolder + "]");
+				LOGGER.debug("jar file for metamodel [" + metamodelName + "] has been already loaded in folder ["
+						+ targetMetamodelFolder + "]");
 				long localVersionLastModified = metamodelJarFile.lastModified();
 				long remoteVersionLastModified = this.metamodelProxy.getMetamodelContentLastModified(metamodelName);
 				if (localVersionLastModified < remoteVersionLastModified) {
@@ -105,11 +106,13 @@ public class DefaultEngineDatamartRetriever implements IQbeDataSetDatamartRetrie
 				downloadJarFile(metamodelName, targetMetamodelFolder);
 			}
 
-			Assert.assertTrue(metamodelJarFile.exists(), "After load opertion file [" + metamodelJarFile + "] must exist");
+			Assert.assertTrue(metamodelJarFile.exists(),
+					"After load opertion file [" + metamodelJarFile + "] must exist");
 		} catch (SpagoBIEngineRuntimeException t) {
 			throw t;
 		} catch (Exception t) {
-			throw new SpagoBIEngineRuntimeException("An unexpected error occured while loading metamodel's jar file", t);
+			throw new SpagoBIEngineRuntimeException("An unexpected error occured while loading metamodel's jar file",
+					t);
 		}
 
 		return metamodelJarFile;
@@ -127,15 +130,20 @@ public class DefaultEngineDatamartRetriever implements IQbeDataSetDatamartRetrie
 			LOGGER.debug("Loading jar file for metamodel [" + metamodelName + "] from SpagoBI server...");
 			handler = this.metamodelProxy.getMetamodelContentByName(metamodelName);
 			if (handler == null)
-				throw new SpagoBIEngineRuntimeException("Model " + metamodelName + " was defined but not generated, please contact the system administrator");
-			LOGGER.debug("jar file for metamodel [" + metamodelName + "] has been loaded succesfully from SpagoBI server");
+				throw new SpagoBIEngineRuntimeException("Model " + metamodelName
+						+ " was defined but not generated, please contact the system administrator");
+			LOGGER.debug(
+					"jar file for metamodel [" + metamodelName + "] has been loaded succesfully from SpagoBI server");
 		} catch (Exception t) {
-			throw new SpagoBIEngineRuntimeException("Impossible to load jar file of metamodel [" + metamodelName + "] from SpagoBiServer", t);
+			throw new SpagoBIEngineRuntimeException(
+					"Impossible to load jar file of metamodel [" + metamodelName + "] from SpagoBiServer", t);
 		}
 
-		LOGGER.debug("Copying jar file of metamodel [" + metamodelName + "] locally into folder [" + destinationFolder + "] ...");
+		LOGGER.debug("Copying jar file of metamodel [" + metamodelName + "] locally into folder [" + destinationFolder
+				+ "] ...");
 		storeJarFile(handler, destinationFolder);
-		LOGGER.debug("jar file of metamodel [" + metamodelName + "] succesfully copied locally into folder [" + destinationFolder + "] ...");
+		LOGGER.debug("jar file of metamodel [" + metamodelName + "] succesfully copied locally into folder ["
+				+ destinationFolder + "] ...");
 	}
 
 	/**
@@ -159,7 +167,8 @@ public class DefaultEngineDatamartRetriever implements IQbeDataSetDatamartRetrie
 		if (!destinationFolder.exists())
 			destinationFolder.mkdirs();
 
-		try (FileOutputStream fos = new FileOutputStream(metamodelJarFile); InputStream is = dataHandler.getInputStream()) {
+		try (FileOutputStream fos = new FileOutputStream(metamodelJarFile);
+				InputStream is = dataHandler.getInputStream()) {
 			int c = 0;
 			byte[] b = new byte[1024];
 			while ((c = is.read(b)) != -1) {
@@ -170,7 +179,8 @@ public class DefaultEngineDatamartRetriever implements IQbeDataSetDatamartRetrie
 			}
 			fos.flush();
 		} catch (Exception t) {
-			throw new SpagoBIEngineRuntimeException("An unexpected error occured while saving localy metamodel's jar file", t);
+			throw new SpagoBIEngineRuntimeException(
+					"An unexpected error occured while saving localy metamodel's jar file", t);
 		}
 	}
 

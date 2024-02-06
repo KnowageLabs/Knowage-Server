@@ -42,7 +42,6 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 
-import org.apache.log4j.Logger;
 import org.jboss.resteasy.plugins.providers.multipart.InputPart;
 import org.jboss.resteasy.plugins.providers.multipart.MultipartFormDataInput;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -68,8 +67,6 @@ import it.eng.spagobi.services.security.SpagoBIUserProfile;
 @Component
 @Validated
 public class FilesResource {
-
-	private static final Logger LOGGER = Logger.getLogger(FilesResource.class);
 
 	@Autowired
 	@Lazy
@@ -112,10 +109,11 @@ public class FilesResource {
 	public Response downloadFiles(@Valid DownloadFilesDTO dto) throws KnowageBusinessException {
 		SpagoBIUserProfile profile = businessContext.getUserProfile();
 		java.nio.file.Path zipFile = null;
-		List<String> listOfPaths = new ArrayList<String>();
+		List<String> listOfPaths = new ArrayList<>();
 		String folderPath = resourceManagerAPIservice.getFolderByKey(dto.getKey(), profile);
 		for (String name : dto.getSelectedFilesNames()) {
-			PathTraversalChecker.preventPathTraversalAttack(Paths.get(folderPath).resolve(name), Paths.get(folderPath), profile);
+			PathTraversalChecker.preventPathTraversalAttack(Paths.get(folderPath).resolve(name), Paths.get(folderPath),
+					profile);
 			listOfPaths.add(Paths.get(folderPath).resolve(name).toString());
 		}
 		try {
@@ -125,16 +123,16 @@ public class FilesResource {
 				MimetypesFileTypeMap fileTypeMap = new MimetypesFileTypeMap();
 				String mimeType = fileTypeMap.getContentType(f.getName());
 				return Response.ok(path.toFile()).header("Content-length", "" + Files.size(path))
-						.header("Content-Disposition", String.format("attachment; filename=\"%s\"", path.getFileName())).header("Content-type", mimeType)
-						.build();
+						.header("Content-Disposition", String.format("attachment; filename=\"%s\"", path.getFileName()))
+						.header("Content-type", mimeType).build();
 
 			} else {
 				zipFile = resourceManagerAPIservice.getDownloadFilePath(listOfPaths, profile, true);
 				if (FilesValidator.validateStringFilenameUsingContains(zipFile.getFileName().toString())) {
 					String filename = zipFile.getFileName() + ".zip";
 					return Response.ok(zipFile.toFile()).header("Content-length", "" + Files.size(zipFile))
-							.header("Content-Disposition", String.format("attachment; filename=\"%s\"", filename)).header("Content-Type", "application/zip")
-							.build();
+							.header("Content-Disposition", String.format("attachment; filename=\"%s\"", filename))
+							.header("Content-Type", "application/zip").build();
 				} else {
 					throw new KnowageRuntimeException("Invalid file name");
 				}
@@ -178,8 +176,8 @@ public class FilesResource {
 			MediaType mediaType = inputPart.getMediaType();
 
 			MultivaluedMap<String, String> multivaluedMap = inputPart.getHeaders();
-			String FILENAME_REGEX = "(form-data; name=\\\"file\\\"; filename=\\\")([\\w,\\s\\-_\\(\\).]+)(\\\")";
-			Pattern p = Pattern.compile(FILENAME_REGEX);
+			String filenameRegex = "(form-data; name=\\\"file\\\"; filename=\\\")([\\w,\\s\\-_\\(\\).]+)(\\\")";
+			Pattern p = Pattern.compile(filenameRegex);
 			Matcher m = p.matcher(multivaluedMap.get("Content-Disposition").get(0));
 			String fileName = null;
 			if (m.matches() && m.groupCount() > 1) {
@@ -188,7 +186,8 @@ public class FilesResource {
 
 			if (FilesValidator.validateStringFilenameUsingContains(fileName)) {
 
-				String path = Paths.get(resourceManagerAPIservice.getFolderByKey(key, profile)).resolve(fileName).toString();
+				String path = Paths.get(resourceManagerAPIservice.getFolderByKey(key, profile)).resolve(fileName)
+						.toString();
 
 				if (!Arrays.asList("application/x-zip-compressed", "application/zip").contains(mediaType.toString())) {
 					try (InputStream is = inputPart.getBody(InputStream.class, null)) {
@@ -247,7 +246,8 @@ public class FilesResource {
 	@Path("/metadata")
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
-	public MetadataDTO saveMetadata(MetadataDTO fileDTO, @QueryParam("key") String key) throws KnowageBusinessException {
+	public MetadataDTO saveMetadata(MetadataDTO fileDTO, @QueryParam("key") String key)
+			throws KnowageBusinessException {
 		SpagoBIUserProfile profile = businessContext.getUserProfile();
 		MetadataDTO file = null;
 		try {

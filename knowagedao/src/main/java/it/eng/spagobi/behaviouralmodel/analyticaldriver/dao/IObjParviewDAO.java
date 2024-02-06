@@ -35,8 +35,8 @@ import it.eng.spagobi.commons.dao.ISpagoBIDao;
 public interface IObjParviewDAO extends ISpagoBIDao {
 
 	/**
-	 * Loads the list of ObjParview associated to the input <code>objParId</code> and <code>paruseId</code>. All these information, achived by a query to the
-	 * DB, are stored into a List of <code>ObjParview</code> object, which is returned.
+	 * Loads the list of ObjParview associated to the input <code>objParId</code> and <code>paruseId</code>. All these information, achived by a query to the DB,
+	 * are stored into a List of <code>ObjParview</code> object, which is returned.
 	 *
 	 * @param objParId  The id for the BI object parameter to load
 	 * @param parvireId The parameterUse-id for the Parameter to load
@@ -45,7 +45,7 @@ public interface IObjParviewDAO extends ISpagoBIDao {
 	 *
 	 * @throws EMFUserError If an Exception occurred
 	 */
-	public List loadObjParview(Integer objParId, Integer parviewId) throws EMFUserError;
+	List<ObjParview> loadObjParview(Integer objParId, Integer parviewId) throws EMFUserError;
 
 	/**
 	 * Implements the query to modify a ObjParview. All information needed is stored into the input <code>ObjParview</code> object.
@@ -54,7 +54,7 @@ public interface IObjParviewDAO extends ISpagoBIDao {
 	 *
 	 * @throws EMFUserError If an Exception occurred
 	 */
-	public void modifyObjParview(ObjParview aObjParview) throws HibernateException;
+	void modifyObjParview(ObjParview aObjParview) throws HibernateException;
 
 	/**
 	 * Implements the query to insert a ObjParview. All information needed is stored into the input <code>ObjParview</code> object.
@@ -64,7 +64,7 @@ public interface IObjParviewDAO extends ISpagoBIDao {
 	 *
 	 * @throws EMFUserError If an Exception occurred
 	 */
-	public Integer insertObjParview(ObjParview aObjParview) throws HibernateException;
+	Integer insertObjParview(ObjParview aObjParview) throws HibernateException;
 
 	/**
 	 * Implements the query to erase a ObjParview. All information needed is stored into the input <code>ObjParview</code> object.
@@ -73,7 +73,7 @@ public interface IObjParviewDAO extends ISpagoBIDao {
 	 *
 	 * @throws EMFUserError If an Exception occurred
 	 */
-	public void eraseObjParview(ObjParview aObjParview) throws HibernateException;
+	void eraseObjParview(ObjParview aObjParview) throws HibernateException;
 
 	/**
 	 * Implements the query to erase a ObjParview preserving the session. All information needed is stored into the input <code>ObjParview</code> object.
@@ -83,18 +83,18 @@ public interface IObjParviewDAO extends ISpagoBIDao {
 	 * @throws EMFUserError
 	 */
 
-	public void eraseObjParview(ObjParview aObjParview, Session aSession);
+	void eraseObjParview(ObjParview aObjParview, Session aSession);
 
 	/**
-	 * Implements the query to erase a ObjParview preserving the session. All information needed is stored into the input <code>ObjParview</code> object. If
-	 * does not exist don'd do anything
+	 * Implements the query to erase a ObjParview preserving the session. All information needed is stored into the input <code>ObjParview</code> object. If does
+	 * not exist don'd do anything
 	 *
 	 * @param aObjParview
 	 * @param aSession
 	 * @throws EMFUserError
 	 */
 
-	public void eraseObjParviewIfExists(ObjParview aObjParview, Session aSession) throws HibernateException;
+	void eraseObjParviewIfExists(ObjParview aObjParview, Session aSession) throws HibernateException;
 
 	/**
 	 * Returns the list of all ObjParview objects associated to a <code>BIObjectParameter</code>, known its <code>objParId</code>.
@@ -105,7 +105,7 @@ public interface IObjParviewDAO extends ISpagoBIDao {
 	 *
 	 * @throws EMFUserError If any exception occurred
 	 */
-	public List loadObjParviews(Integer objParId) throws HibernateException;
+	List<ObjParview> loadObjParviews(Integer objParId) throws HibernateException;
 
 	/**
 	 * Returns the list of labels of BIObjectParameter objects that have a correlation relationship with the BIObjectParameter at input, given its id.
@@ -116,18 +116,7 @@ public interface IObjParviewDAO extends ISpagoBIDao {
 	 *
 	 * @throws EMFUserError the EMF user error
 	 */
-	public List getDependencies(Integer objParFatherId) throws EMFUserError;
-
-	/**
-	 * Returns the labels list of the documents containing dependencies for the parameter view identified by the id at input.
-	 *
-	 * @param viewId The Integer representing the view id
-	 *
-	 * @return The list of BIObject objects labels
-	 *
-	 * @throws EMFUserError the EMF user error
-	 */
-	public List getDocumentLabelsListWithAssociatedDependencies(Integer viewId) throws EMFUserError;
+	List<String> getDependencies(Integer objParFatherId) throws EMFUserError;
 
 	/**
 	 * Returns the list of dependencies (ObjParview objects list) for the Parameterview object identified by the id passes at input.
@@ -138,7 +127,7 @@ public interface IObjParviewDAO extends ISpagoBIDao {
 	 *
 	 * @throws EMFUserError the EMF user error
 	 */
-	public List getAllDependenciesForParameterview(Integer viewId) throws EMFUserError;
+	List<ObjParview> getAllDependenciesForParameterview(Integer viewId) throws EMFUserError;
 
 	/**
 	 * Returns the list of all ObjParview objects associated to a <code>BIObjectParameter</code> by a father relationship, known its <code>objParId</code>.
@@ -149,5 +138,5 @@ public interface IObjParviewDAO extends ISpagoBIDao {
 	 *
 	 * @throws EMFUserError If any exception occurred
 	 */
-	public List loadObjParviewsFather(Integer objParId) throws HibernateException;
+	List<ObjParview> loadObjParviewsFather(Integer objParId) throws HibernateException;
 }

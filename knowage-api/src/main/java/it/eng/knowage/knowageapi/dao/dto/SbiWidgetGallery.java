@@ -31,7 +31,6 @@ import javax.persistence.Lob;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.PrimaryKeyJoinColumn;
-import javax.persistence.PrimaryKeyJoinColumns;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.Type;
@@ -46,9 +45,6 @@ import org.hibernate.annotations.Type;
 public class SbiWidgetGallery implements Serializable {
 	private static final long serialVersionUID = 1L;
 
-//	@Id
-//	private String uuid;
-
 	private String author;
 
 	private String description;
@@ -57,7 +53,6 @@ public class SbiWidgetGallery implements Serializable {
 
 	private String label;
 
-//	private String organization;
 	@EmbeddedId
 	private SbiWidgetGalleryId id;
 
@@ -108,9 +103,9 @@ public class SbiWidgetGallery implements Serializable {
 
 	// bi-directional many-to-one association to SbiWidgetGalleryTag
 	@OneToMany(mappedBy = "sbiWidgetGallery", targetEntity = SbiWidgetGalleryTag.class, orphanRemoval = true, fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-	@PrimaryKeyJoinColumns({ @PrimaryKeyJoinColumn(name = "UUID", referencedColumnName = "WIDGET_ID"),
-			@PrimaryKeyJoinColumn(name = "ORGANIZATION", referencedColumnName = "ORGANIZATION") })
-	private final List<SbiWidgetGalleryTag> sbiWidgetGalleryTags = new ArrayList<SbiWidgetGalleryTag>();
+	@PrimaryKeyJoinColumn(name = "UUID", referencedColumnName = "WIDGET_ID")
+	@PrimaryKeyJoinColumn(name = "ORGANIZATION", referencedColumnName = "ORGANIZATION")
+	private final List<SbiWidgetGalleryTag> sbiWidgetGalleryTags = new ArrayList<>();
 
 	public SbiWidgetGallery() {
 		id = new SbiWidgetGalleryId();

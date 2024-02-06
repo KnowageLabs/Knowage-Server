@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.sql.Timestamp;
 import java.util.Iterator;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -35,7 +36,6 @@ import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.serializer.SerializationException;
 import it.eng.spagobi.commons.serializer.SerializerFactory;
 import it.eng.spagobi.commons.services.AbstractSpagoBIAction;
-import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 import it.eng.spagobi.utilities.service.JSONSuccess;
@@ -87,9 +87,10 @@ public class SaveViewpointAction extends AbstractSpagoBIAction {
 			logger.debug("Parameter [" + SCOPE + "] is equals to [" + viewpointScope + "]");
 			logger.debug("Parameter [" + viewpointScope + "] is equals to [" + viewpointJSON + "]");
 
-			Assert.assertTrue(!StringUtilities.isEmpty(viewpointScope), "Viewpoint's name cannot be null or empty");
-			Assert.assertNotNull(!StringUtilities.isEmpty(viewpointDescription), "Viewpoint's description cannot be null or empty");
-			Assert.assertNotNull(!StringUtilities.isEmpty(viewpointScope), "Viewpoint's scope cannot be null or empty");
+			Assert.assertTrue(!StringUtils.isEmpty(viewpointScope), "Viewpoint's name cannot be null or empty");
+			Assert.assertNotNull(!StringUtils.isEmpty(viewpointDescription),
+					"Viewpoint's description cannot be null or empty");
+			Assert.assertNotNull(!StringUtils.isEmpty(viewpointScope), "Viewpoint's scope cannot be null or empty");
 			Assert.assertNotNull(viewpointJSON, "Viewpoint's content cannot be null");
 
 			executionInstance = getContext().getExecutionInstance(ExecutionInstance.class.getName());
@@ -115,13 +116,16 @@ public class SaveViewpointAction extends AbstractSpagoBIAction {
 				try {
 					parameterValue = viewpointJSON.getString(parameterName);
 				} catch (JSONException e) {
-					logger.error("Impossible read value for the parameter [" + parameterName + "] into viewpoint's content", e);
-					throw new SpagoBIServiceException(SERVICE_NAME, "Impossible read value for the parameter [" + parameterName + "] into viewpoint's content",
+					logger.error(
+							"Impossible read value for the parameter [" + parameterName + "] into viewpoint's content",
+							e);
+					throw new SpagoBIServiceException(SERVICE_NAME,
+							"Impossible read value for the parameter [" + parameterName + "] into viewpoint's content",
 							e);
 				}
 
 				// defines the string of parameters to save into db
-				if (!StringUtilities.isEmpty(parameterValue)) {
+				if (!StringUtils.isEmpty(parameterValue)) {
 					viewpointString += parameterName + "%3D" + parameterValue + "%26";
 				}
 			}
@@ -136,11 +140,13 @@ public class SaveViewpointAction extends AbstractSpagoBIAction {
 				viewpointDAO = DAOFactory.getViewpointDAO();
 				viewpoint = viewpointDAO.loadViewpointByNameAndBIObjectId(viewpointName, biobjectId);
 				if (viewpoint != null)
-					throw new SpagoBIServiceException(SERVICE_NAME, "A viewpoint with the name [" + viewpointName + "] alredy exist");
+					throw new SpagoBIServiceException(SERVICE_NAME,
+							"A viewpoint with the name [" + viewpointName + "] alredy exist");
 				// Assert.assertTrue(viewpoint == null, "A viewpoint with the name [" + viewpointName + "] alredy exist");
 			} catch (EMFUserError e) {
 				logger.error("Impossible to check if a viewpoint with name [" + viewpointName + "] already exists", e);
-				throw new SpagoBIServiceException(SERVICE_NAME, "Impossible to check if a viewpoint with name [" + viewpointName + "] already exists", e);
+				throw new SpagoBIServiceException(SERVICE_NAME,
+						"Impossible to check if a viewpoint with name [" + viewpointName + "] already exists", e);
 			}
 
 			try {
@@ -161,14 +167,17 @@ public class SaveViewpointAction extends AbstractSpagoBIAction {
 
 			} catch (EMFUserError e) {
 				logger.error("Impossible to save viewpoint [" + viewpointName + "]", e);
-				throw new SpagoBIServiceException(SERVICE_NAME, "Impossible to check if a viewpoint with name [" + viewpointName + "] already exists", e);
+				throw new SpagoBIServiceException(SERVICE_NAME,
+						"Impossible to check if a viewpoint with name [" + viewpointName + "] already exists", e);
 			}
 
 			try {
-				JSONObject results = (JSONObject) SerializerFactory.getSerializer("application/json").serialize(viewpoint, null);
+				JSONObject results = (JSONObject) SerializerFactory.getSerializer("application/json")
+						.serialize(viewpoint, null);
 				writeBackToClient(new JSONSuccess(results));
 			} catch (IOException e) {
-				throw new SpagoBIServiceException(SERVICE_NAME, "Impossible to write back the responce to the client", e);
+				throw new SpagoBIServiceException(SERVICE_NAME, "Impossible to write back the responce to the client",
+						e);
 			} catch (SerializationException e) {
 				throw new SpagoBIServiceException(SERVICE_NAME, "Cannot serialize objects", e);
 			}

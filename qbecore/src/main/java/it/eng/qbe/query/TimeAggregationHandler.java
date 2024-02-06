@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -32,7 +33,6 @@ import it.eng.qbe.statement.AbstractQbeDataSet;
 import it.eng.qbe.statement.IStatement;
 import it.eng.qbe.statement.QbeDatasetFactory;
 import it.eng.qbe.utility.TemporalRecord;
-import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.dataset.common.datastore.IRecord;
 import it.eng.spagobi.tools.dataset.common.datastore.Record;
@@ -44,7 +44,7 @@ public class TimeAggregationHandler {
 
 	private static final Logger logger = Logger.getLogger(TimeAggregationHandler.class);
 
-	private IDataSource ds;
+	private final IDataSource ds;
 
 	public TimeAggregationHandler(IDataSource ds) {
 		this.ds = ds;
@@ -58,7 +58,8 @@ public class TimeAggregationHandler {
 		IModelEntity timeDimension = getTimeDimension(ds);
 
 		if (temporalDimension != null) {
-			HierarchicalDimensionField hierarchicalDimensionByEntity = temporalDimension.getHierarchicalDimensionByEntity(temporalDimension.getType());
+			HierarchicalDimensionField hierarchicalDimensionByEntity = temporalDimension
+					.getHierarchicalDimensionByEntity(temporalDimension.getType());
 			if (hierarchicalDimensionByEntity == null) {
 				logger.error("Temporal dimension hierarchy is [null]");
 				throw new SpagoBIRuntimeException("Temporal dimension hierarchy is [null]");
@@ -112,9 +113,10 @@ public class TimeAggregationHandler {
 							Operand left = new Operand(
 									new String[] { temporalDimension.getType() + ":" + temporalDimensionId },
 									temporalDimension.getName() + ":" + temporalDimensionId, "Field Content",
-									new String[] {""}, new String[] {""}, "");
+									new String[] { "" }, new String[] { "" }, "");
 							Operand maxRight = new Operand(new String[] { currentPeriod.getId().toString() },
-									currentPeriod.getId().toString(), "Static Content", new String[] {""}, new String[] {""}, "");
+									currentPeriod.getId().toString(), "Static Content", new String[] { "" },
+									new String[] { "" }, "");
 
 							String maxFilterId = "TimeFilterMax" + timeFilterIndex;
 							WhereField maxWhereField = new WhereField(maxFilterId, maxFilterId, false, left,
@@ -125,7 +127,8 @@ public class TimeAggregationHandler {
 							int oldestPeriodIndex = currentPeriodIndex - offset > 0 ? currentPeriodIndex - offset : 0;
 							TemporalRecord oldestPeriod = allPeriodsStartingDate.get(oldestPeriodIndex);
 							Operand minRight = new Operand(new String[] { oldestPeriod.getId().toString() },
-									oldestPeriod.getId().toString(), "Static Content", new String[] {""}, new String[] {""}, "");
+									oldestPeriod.getId().toString(), "Static Content", new String[] { "" },
+									new String[] { "" }, "");
 
 							String minFilterId = "TimeFilterMax" + timeFilterIndex;
 							WhereField minWhereField = new WhereField(minFilterId, minFilterId, false, left,
@@ -181,7 +184,7 @@ public class TimeAggregationHandler {
 						String timeLevel = whereField.getLeftOperand().description;
 						timeLevelColumn = defaultHierarchy.getLevelByType(timeLevel);
 
-						//String timeDimensionId = "ID";
+						// String timeDimensionId = "ID";
 						String timeDimensionId = getHourId(timeDimension);
 						TemporalRecord currentTime = getCurrentTime(timeDimension, timeDimensionId, timeLevelColumn,
 								null, defaultHierarchy.getAncestors(timeLevelColumn));
@@ -200,9 +203,11 @@ public class TimeAggregationHandler {
 									(Integer) currentTime.getId());
 							whereFieldsIndexesToRemove.add(whereFieldIndex);
 							Operand left = new Operand(new String[] { timeDimension.getType() + ":" + timeDimensionId },
-									timeDimension.getName() + ":" + timeDimensionId, "Field Content", new String[] {""}, new String[] {""}, "");
+									timeDimension.getName() + ":" + timeDimensionId, "Field Content",
+									new String[] { "" }, new String[] { "" }, "");
 							Operand maxRight = new Operand(new String[] { currentTime.getId().toString() },
-									currentTime.getId().toString(), "Static Content", new String[] {""}, new String[] {""}, "");
+									currentTime.getId().toString(), "Static Content", new String[] { "" },
+									new String[] { "" }, "");
 
 							String maxFilterId = "TimeFilterMax" + timeFilterIndex;
 							WhereField maxWhereField = new WhereField(maxFilterId, maxFilterId, false, left,
@@ -213,7 +218,8 @@ public class TimeAggregationHandler {
 							int oldestPeriodIndex = currentPeriodIndex - offset > 0 ? currentPeriodIndex - offset : 0;
 							TemporalRecord oldestPeriod = allPeriodsStartingDate.get(oldestPeriodIndex);
 							Operand minRight = new Operand(new String[] { oldestPeriod.getId().toString() },
-									oldestPeriod.getId().toString(), "Static Content", new String[] {""}, new String[] {""}, "");
+									oldestPeriod.getId().toString(), "Static Content", new String[] { "" },
+									new String[] { "" }, "");
 
 							String minFilterId = "TimeFilterMax" + timeFilterIndex;
 							WhereField minWhereField = new WhereField(minFilterId, minFilterId, false, left,
@@ -269,7 +275,7 @@ public class TimeAggregationHandler {
 			// retrieving time_id
 			String temporalDimensionId = getTemporalId(temporalDimension);
 
-			// adding  time_id to query
+			// adding time_id to query
 			addTimeIdToQuery(query, temporalDimension, temporalDimensionId);
 
 			// relative year
@@ -306,7 +312,8 @@ public class TimeAggregationHandler {
 					hierarchyFullColumnMap, hierarchyColumnMap, relativeYear);
 
 			// retrieving all temporal fields used in query
-			Set<String> temporalFieldTypesInSelect = getTemporalFieldsInSelect(query.getSelectFields(false), hierarchyFullColumnMap);
+			Set<String> temporalFieldTypesInSelect = getTemporalFieldsInSelect(query.getSelectFields(false),
+					hierarchyFullColumnMap);
 
 			// defining wich fields will be calculated after query execution
 			Map<String, Map<String, String>> inlineFilteredSelectFields = updateInlineFilteredSelectFieldsAliases(
@@ -339,10 +346,11 @@ public class TimeAggregationHandler {
 			query.setCurrentPeriodValuyesByType(currentPeriodValuyesByType);
 
 			// relativeYear will be added later on where clause only if needed
-			removeRelativeYearFromWhereFields(whereFields, yearsInWhere, hierarchyFullColumnMap.get("YEAR"), relativeYear);
+			removeRelativeYearFromWhereFields(whereFields, yearsInWhere, hierarchyFullColumnMap.get("YEAR"),
+					relativeYear);
 
 			// when period to date will result in a single record, temporal where clauses are used to calculate the relative period, not for filtering
-			if(containsPeriodToDate(selectFields) && !isMultiLineResult(selectFields, hierarchyFullColumnMap)) {
+			if (containsPeriodToDate(selectFields) && !isMultiLineResult(selectFields, hierarchyFullColumnMap)) {
 				removeCurrentPeriodFromWhereFields(whereFields, hierarchyFullColumnMap);
 			}
 
@@ -357,12 +365,13 @@ public class TimeAggregationHandler {
 		List<WhereField> whereFieldsToBeRemoved = new ArrayList<>();
 
 		for (String levelType : hierarchyFullColumnMap.keySet()) {
-			if(!"YEAR".equals(levelType)) {
+			if (!"YEAR".equals(levelType)) {
 				String levelColumn = hierarchyFullColumnMap.get(levelType);
 
 				for (WhereField wField : whereFields) {
 					if (wField.getLeftOperand().values != null && wField.getLeftOperand().values.length > 0
-							&& levelColumn.equals(wField.getLeftOperand().values[0]) && ("EQUALS TO".equals(wField.getOperator()) || ("IN".equals(wField.getOperator())))
+							&& levelColumn.equals(wField.getLeftOperand().values[0])
+							&& ("EQUALS TO".equals(wField.getOperator()) || ("IN".equals(wField.getOperator())))
 							&& wField.getRightOperand().values != null && wField.getRightOperand().values.length > 0) {
 
 						whereFieldsToBeRemoved.add(wField);
@@ -378,10 +387,12 @@ public class TimeAggregationHandler {
 		return !whereFieldsToBeRemoved.isEmpty();
 	}
 
-	private void removeRelativeYearFromWhereFields(List<WhereField> whereFields, Set<String> yearsInWhere, String yearColumn, String relativeYear) {
+	private void removeRelativeYearFromWhereFields(List<WhereField> whereFields, Set<String> yearsInWhere,
+			String yearColumn, String relativeYear) {
 		for (WhereField wField : whereFields) {
 			if (wField.getLeftOperand().values != null && wField.getLeftOperand().values.length > 0
-					&& yearColumn.equals(wField.getLeftOperand().values[0]) && ("EQUALS TO".equals(wField.getOperator()) || ("IN".equals(wField.getOperator())))
+					&& yearColumn.equals(wField.getLeftOperand().values[0])
+					&& ("EQUALS TO".equals(wField.getOperator()) || ("IN".equals(wField.getOperator())))
 					&& wField.getRightOperand().values != null && wField.getRightOperand().values.length > 0
 					&& relativeYear.equals(wField.getRightOperand().values[0] + "")) {
 
@@ -397,12 +408,12 @@ public class TimeAggregationHandler {
 
 		List<IModelField> fields = temporalDimension.getAllFields();
 		for (IModelField f : fields) {
-			if("temporal_id".equals(f.getProperty("type"))){
-			//if (f.getName().equalsIgnoreCase("time_id")) {
+			if ("temporal_id".equals(f.getProperty("type"))) {
+				// if (f.getName().equalsIgnoreCase("time_id")) {
 				return f.getName();
 			}
 		}
-		logger.error("Impossible to find temporal_id on Temporal Dimension" );
+		logger.error("Impossible to find temporal_id on Temporal Dimension");
 		throw new SpagoBIRuntimeException("Impossible to find time_id on Temporal Dimension");
 	}
 
@@ -410,12 +421,12 @@ public class TimeAggregationHandler {
 
 		List<IModelField> fields = temporalDimension.getAllFields();
 		for (IModelField f : fields) {
-			if("the_date".equals(f.getProperty("type"))){
-			//if (f.getName().equalsIgnoreCase("the_date") || f.getName().equalsIgnoreCase("time_date")) {
+			if ("the_date".equals(f.getProperty("type"))) {
+				// if (f.getName().equalsIgnoreCase("the_date") || f.getName().equalsIgnoreCase("time_date")) {
 				return f.getName();
 			}
 		}
-		logger.error("Impossible to find a date field on Temporal Dimension" );
+		logger.error("Impossible to find a date field on Temporal Dimension");
 		throw new SpagoBIRuntimeException("Impossible to find a date field on Temporal Dimension");
 	}
 
@@ -423,11 +434,11 @@ public class TimeAggregationHandler {
 
 		List<IModelField> fields = timeDimension.getAllFields();
 		for (IModelField f : fields) {
-			if("hour_id".equals(f.getProperty("type"))){
+			if ("hour_id".equals(f.getProperty("type"))) {
 				return f.getName();
 			}
 		}
-		logger.error("Impossible to find hour_id on Temporal Dimension" );
+		logger.error("Impossible to find hour_id on Temporal Dimension");
 		throw new SpagoBIRuntimeException("Impossible to find hour_id on Temporal Dimension");
 	}
 
@@ -436,7 +447,7 @@ public class TimeAggregationHandler {
 			Set<String> yearsInWhere, LinkedList<String> allYearsOnDWHString, int relativeYearIndex,
 			Map<String, List<String>> distinctPeriods, Map<String, String> currentPeriodValuyesByType) {
 
-		if(!existsNotInlineTemporlFilteredColumn(selectFields)) {
+		if (!existsNotInlineTemporlFilteredColumn(selectFields)) {
 
 			Set<String> yearsToBeAddedToWhereClause = extractYearsToBeAddedToWhereClause(selectFields, relativeYear,
 					yearsInWhere, allYearsOnDWHString, relativeYearIndex, hierarchyFullColumnMap, distinctPeriods,
@@ -447,16 +458,17 @@ public class TimeAggregationHandler {
 					for (WhereField wField : whereFields) {
 						if (wField.getLeftOperand().values != null && wField.getLeftOperand().values.length > 0
 								&& hierarchyFullColumnMap.get("YEAR").equals(wField.getLeftOperand().values[0])
-								&& ("EQUALS TO".equals(wField.getOperator()) || ("IN".equals(wField.getOperator()))) &&  wField.getRightOperand().values != null
-								&&  wField.getRightOperand().values.length > 0) {
+								&& ("EQUALS TO".equals(wField.getOperator()) || ("IN".equals(wField.getOperator())))
+								&& wField.getRightOperand().values != null
+								&& wField.getRightOperand().values.length > 0) {
 
-							for (String value :  wField.getRightOperand().values) {
+							for (String value : wField.getRightOperand().values) {
 								yearsToBeAddedToWhereClause.add(value);
 							}
 
 							Operand right = new Operand(
 									yearsToBeAddedToWhereClause.toArray(new String[yearsToBeAddedToWhereClause.size()]),
-									"YEAR", "Static Content", new String[] {""}, new String[] {""}, "");
+									"YEAR", "Static Content", new String[] { "" }, new String[] { "" }, "");
 
 							wField.setRightOperand(right);
 							wField.setOperator("IN");
@@ -466,13 +478,14 @@ public class TimeAggregationHandler {
 					}
 				}
 
-				if(!yersAdded) {
+				if (!yersAdded) {
 					Operand left = new Operand(new String[] { hierarchyFullColumnMap.get("YEAR") },
-							hierarchyFullColumnMap.get("YEAR"), "Field Content", new String[] {""}, new String[] {""}, "");
+							hierarchyFullColumnMap.get("YEAR"), "Field Content", new String[] { "" },
+							new String[] { "" }, "");
 
 					Operand right = new Operand(
 							yearsToBeAddedToWhereClause.toArray(new String[yearsToBeAddedToWhereClause.size()]), "YEAR",
-							"Static Content", new String[] {""}, new String[] {""}, "");
+							"Static Content", new String[] { "" }, new String[] { "" }, "");
 					query.addWhereField("ParallelYear", "ParallelYear", false, left, "IN", right, "AND");
 				}
 
@@ -487,9 +500,8 @@ public class TimeAggregationHandler {
 				SimpleSelectField ssField = (SimpleSelectField) sfield;
 				String temporalOperand = ssField.getTemporalOperand();
 
-				if(StringUtilities.isEmpty(temporalOperand) &&
-						ssField.getFunction() != null && !"NONE".equals(ssField.getFunction().getName()) &&
-						!ssField.isGroupByField()) {
+				if (StringUtils.isEmpty(temporalOperand) && ssField.getFunction() != null
+						&& !"NONE".equals(ssField.getFunction().getName()) && !ssField.isGroupByField()) {
 					return true;
 				}
 			}
@@ -539,39 +551,40 @@ public class TimeAggregationHandler {
 			if (sfield.isSimpleField()) {
 				SimpleSelectField ssField = (SimpleSelectField) sfield;
 				String temporalOperand = ssField.getTemporalOperand();
-				int temporalOperandParameter = -1*Integer.parseInt(ssField.getTemporalOperandParameter() != null ? ssField.getTemporalOperandParameter() : "0");
+				int temporalOperandParameter = -1 * Integer.parseInt(
+						ssField.getTemporalOperandParameter() != null ? ssField.getTemporalOperandParameter() : "0");
 				if (temporalOperand != null) {
 					switch (temporalOperand) {
 
 					case TEMPORAL_OPERAND_YTD:
-						hasPeriodToDate=true;
+						hasPeriodToDate = true;
 						break;
 					case TEMPORAL_OPERAND_QTD:
-						hasPeriodToDate=true;
+						hasPeriodToDate = true;
 					case TEMPORAL_OPERAND_LAST_QUARTER:
-						int[] opRangeQuarter = {0,0};
-						if(lastOperatorRanges.containsKey("QUARTER")) {
+						int[] opRangeQuarter = { 0, 0 };
+						if (lastOperatorRanges.containsKey("QUARTER")) {
 							opRangeQuarter = lastOperatorRanges.get("QUARTER");
 						}
-						if(temporalOperandParameter <= 0 && temporalOperandParameter < opRangeQuarter[0]) {
+						if (temporalOperandParameter <= 0 && temporalOperandParameter < opRangeQuarter[0]) {
 							opRangeQuarter[0] = temporalOperandParameter;
 						}
-						if(temporalOperandParameter >= 0 && temporalOperandParameter > opRangeQuarter[1]) {
+						if (temporalOperandParameter >= 0 && temporalOperandParameter > opRangeQuarter[1]) {
 							opRangeQuarter[1] = temporalOperandParameter;
 						}
 						lastOperatorRanges.put("QUARTER", opRangeQuarter);
 						break;
 					case TEMPORAL_OPERAND_MTD:
-						hasPeriodToDate=true;
+						hasPeriodToDate = true;
 					case TEMPORAL_OPERAND_LAST_MONTH:
-						int[] opRangeMonth = {0,0};
-						if(lastOperatorRanges.containsKey("MONTH")) {
+						int[] opRangeMonth = { 0, 0 };
+						if (lastOperatorRanges.containsKey("MONTH")) {
 							opRangeMonth = lastOperatorRanges.get("MONTH");
 						}
-						if(temporalOperandParameter <= 0 && temporalOperandParameter < opRangeMonth[0]) {
+						if (temporalOperandParameter <= 0 && temporalOperandParameter < opRangeMonth[0]) {
 							opRangeMonth[0] = temporalOperandParameter;
 						}
-						if(temporalOperandParameter >= 0 && temporalOperandParameter > opRangeMonth[1]) {
+						if (temporalOperandParameter >= 0 && temporalOperandParameter > opRangeMonth[1]) {
 							opRangeMonth[1] = temporalOperandParameter;
 						}
 						lastOperatorRanges.put("MONTH", opRangeMonth);
@@ -598,8 +611,9 @@ public class TimeAggregationHandler {
 							String currentPeriodValue = "K_UNDEFINED";
 							if ((currentPeriod != null)) {
 								currentPeriodValue = currentPeriod.getPeriod() + "";
-							}else {
-								logger.error("There is NO value on current period... set period on filter or extends temporal dimension data");
+							} else {
+								logger.error(
+										"There is NO value on current period... set period on filter or extends temporal dimension data");
 							}
 							currentPeriodValuesByType.put(levelColumn, currentPeriodValue);
 
@@ -630,28 +644,32 @@ public class TimeAggregationHandler {
 		temporalFieldTypesInSelectOrWhere.addAll(temporalFieldTypesInWhere);
 
 		for (String levelType : inlineFilterFieldTypes) {
-			if (!temporalFieldTypesInSelectOrWhere.contains(levelType) ) {
+			if (!temporalFieldTypesInSelectOrWhere.contains(levelType)) {
 				String levelColumn = hierarchyFullColumnMap.get(levelType);
-				Operand left = new Operand(new String[] { levelColumn }, levelColumn, "Field Content", new String[] {""}, new String[] {""}, "");
+				Operand left = new Operand(new String[] { levelColumn }, levelColumn, "Field Content",
+						new String[] { "" }, new String[] { "" }, "");
 
 				TemporalRecord currentPeriod = getCurrentPeriod(temporalDimension, temporalDimensionId,
 						hierarchyColumnMap.get(levelType), new Date());
 				String currentPeriodValue = "K_UNDEFINED";
 				if ((currentPeriod != null)) {
 					currentPeriodValue = currentPeriod.getPeriod() + "";
-				}else {
-					logger.error("There is NO value on current period... set period on filter or extends temporal dimension data");
+				} else {
+					logger.error(
+							"There is NO value on current period... set period on filter or extends temporal dimension data");
 				}
 
-				String[] currentPeriodValues = new String[] {  currentPeriodValue };
+				String[] currentPeriodValues = new String[] { currentPeriodValue };
 
 				int[] opRange = lastOperatorRanges.get(levelType);
-				if(opRange != null) {
+				if (opRange != null) {
 
-					LinkedList<LinkedHashMap<String,String>> allMonthOrQuarterPeriods = new LinkedList<>();
-					LinkedList<TemporalRecord> allPeriodsInDwh = loadAllPeriodsStartingDate(temporalDimension, temporalDimensionId, hierarchyColumnMap.get(levelType));
-					LinkedList<TemporalRecord> allYearsOnDWH = loadAllPeriodsStartingDate(temporalDimension, temporalDimensionId, hierarchyColumnMap.get("YEAR"));
-					for (TemporalRecord  yearRecord : allYearsOnDWH) {
+					LinkedList<LinkedHashMap<String, String>> allMonthOrQuarterPeriods = new LinkedList<>();
+					LinkedList<TemporalRecord> allPeriodsInDwh = loadAllPeriodsStartingDate(temporalDimension,
+							temporalDimensionId, hierarchyColumnMap.get(levelType));
+					LinkedList<TemporalRecord> allYearsOnDWH = loadAllPeriodsStartingDate(temporalDimension,
+							temporalDimensionId, hierarchyColumnMap.get("YEAR"));
+					for (TemporalRecord yearRecord : allYearsOnDWH) {
 						for (TemporalRecord monthOrQuarterRecord : allPeriodsInDwh) {
 							LinkedHashMap<String, String> currRecord = new LinkedHashMap<>();
 							currRecord.put("YEAR", yearRecord.getPeriod().toString());
@@ -665,7 +683,6 @@ public class TimeAggregationHandler {
 
 					int currentPeriodIndex = allMonthOrQuarterPeriods.indexOf(currentRecord);
 
-
 					int start = currentPeriodIndex + opRange[0];
 					if (start < 0)
 						start = 0;
@@ -674,10 +691,11 @@ public class TimeAggregationHandler {
 					int end = currentPeriodIndex + opRange[1];
 					if (end < 0)
 						end = 0;
-					if (end > allMonthOrQuarterPeriods.size()-1)end =  allMonthOrQuarterPeriods.size()-1;
+					if (end > allMonthOrQuarterPeriods.size() - 1)
+						end = allMonthOrQuarterPeriods.size() - 1;
 
 					Set<String> currentPeriodValuesSet = new LinkedHashSet<>();
-					for (int i = start; i <= end ; i++ ) {
+					for (int i = start; i <= end; i++) {
 						currentPeriodValuesSet.add(allMonthOrQuarterPeriods.get(i).get(levelType));
 					}
 
@@ -685,13 +703,14 @@ public class TimeAggregationHandler {
 				}
 
 				// Period to date aggregates only with 'daily granularity'
-				 if(levelType.equals("YEAR") || !hasPeriodToDate) {
+				if (levelType.equals("YEAR") || !hasPeriodToDate) {
 
-					Operand right = new Operand(currentPeriodValues, levelType, "Static Content", new String[] {""}, new String[] {""}, "");
+					Operand right = new Operand(currentPeriodValues, levelType, "Static Content", new String[] { "" },
+							new String[] { "" }, "");
 					query.addWhereField("current_" + levelType, "current_" + levelType, false, left, "IN", right,
 							"AND");
 					query.updateWhereClauseStructure();
-				 }
+				}
 
 				currentPeriodValuesByType.put(levelColumn, currentPeriodValue);
 			}
@@ -761,7 +780,7 @@ public class TimeAggregationHandler {
 
 				if (ssField.getFunction() == null && "MEASURE".equals(ssField.getNature())
 						&& ssField.getTemporalOperand() != null && ssField.getTemporalOperand().length() > 0) {
-					 logger.debug("SET SUM as aggregation functon");
+					logger.debug("SET SUM as aggregation functon");
 					ssField.setFunction(AggregationFunctions.get(AggregationFunctions.SUM));
 				}
 
@@ -948,7 +967,8 @@ public class TimeAggregationHandler {
 		return yearsToBeAddedToWhereClause;
 	}
 
-	private Set<String> extractInlineFilterFieldTypes(List<ISelectField> selectFields, Map<String, String> hierarchyFullColumnMap) {
+	private Set<String> extractInlineFilterFieldTypes(List<ISelectField> selectFields,
+			Map<String, String> hierarchyFullColumnMap) {
 
 		boolean multipleLineResult = isMultiLineResult(selectFields, hierarchyFullColumnMap);
 
@@ -958,9 +978,9 @@ public class TimeAggregationHandler {
 	private boolean isMultiLineResult(List<ISelectField> selectFields, Map<String, String> hierarchyFullColumnMap) {
 		boolean multipleLineResult = false;
 		for (ISelectField sfield : selectFields) {
-			if(sfield instanceof SimpleSelectField) {
-				String sfieldUniqueName = ((SimpleSelectField)sfield).getUniqueName();
-				if(hierarchyFullColumnMap.values().contains(sfieldUniqueName)) {
+			if (sfield instanceof SimpleSelectField) {
+				String sfieldUniqueName = ((SimpleSelectField) sfield).getUniqueName();
+				if (hierarchyFullColumnMap.values().contains(sfieldUniqueName)) {
 					multipleLineResult = true;
 					break;
 				}
@@ -985,7 +1005,7 @@ public class TimeAggregationHandler {
 
 					// YEAR
 					case TEMPORAL_OPERAND_YTD:
-						if(singleLineResult) {
+						if (singleLineResult) {
 							inlineFilterFieldTypes.add("MONTH");
 							inlineFilterFieldTypes.add("DAY");
 						}
@@ -996,7 +1016,7 @@ public class TimeAggregationHandler {
 
 					// QUARTER
 					case TEMPORAL_OPERAND_QTD:
-						if(singleLineResult) {
+						if (singleLineResult) {
 							inlineFilterFieldTypes.add("MONTH");
 							inlineFilterFieldTypes.add("DAY");
 						}
@@ -1006,7 +1026,7 @@ public class TimeAggregationHandler {
 
 					// MONTH
 					case TEMPORAL_OPERAND_MTD:
-						if(singleLineResult) {
+						if (singleLineResult) {
 							inlineFilterFieldTypes.add("DAY");
 						}
 					case TEMPORAL_OPERAND_LAST_MONTH:
@@ -1015,7 +1035,7 @@ public class TimeAggregationHandler {
 
 					// WEEK
 					case TEMPORAL_OPERAND_WTD:
-						if(singleLineResult) {
+						if (singleLineResult) {
 							inlineFilterFieldTypes.add("DAY");
 						}
 					case TEMPORAL_OPERAND_LAST_WEEK:
@@ -1125,9 +1145,11 @@ public class TimeAggregationHandler {
 			String temporalDimensionDateField = getDateField(temporalDimension);
 
 			Operand left = new Operand(new String[] { temporalDimension.getType() + ":" + temporalDimensionDateField },
-					temporalDimension.getName() + ":" + temporalDimensionDateField, "Field Content", new String[] {""}, new String[] {""}, "");
+					temporalDimension.getName() + ":" + temporalDimensionDateField, "Field Content",
+					new String[] { "" }, new String[] { "" }, "");
 			Operand right = new Operand(new String[] { new SimpleDateFormat("dd/MM/yyyy").format(actualTime) },
-					new SimpleDateFormat("dd/MM/yyyy").format(actualTime), "Static Content", new String[] {""}, new String[] {""}, "");
+					new SimpleDateFormat("dd/MM/yyyy").format(actualTime), "Static Content", new String[] { "" },
+					new String[] { "" }, "");
 			currentPeriodQuery.addWhereField("Filter1", "Filter1", false, left, "EQUALS TO", right, "AND");
 			ExpressionNode newFilterNode = new ExpressionNode("NODE_CONST", "$F{" + "Filter1" + "}");
 			currentPeriodQuery.setWhereClauseStructure(newFilterNode);
@@ -1167,13 +1189,15 @@ public class TimeAggregationHandler {
 					true, true, false, null, null);
 		}
 
-		//String timeDimensionIdField = "ID";
+		// String timeDimensionIdField = "ID";
 		String timeDimensionIdField = getHourId(timeDimension);
 		Operand left = new Operand(new String[] { timeDimension.getType() + ":" + timeDimensionIdField },
-				timeDimension.getName() + ":" + timeDimensionIdField, "Field Content", new String[] {""}, new String[] {""}, "");
+				timeDimension.getName() + ":" + timeDimensionIdField, "Field Content", new String[] { "" },
+				new String[] { "" }, "");
 
 		Operand right = new Operand(new String[] { new SimpleDateFormat("HHmm").format(actualTime) },
-				new SimpleDateFormat("HHmm").format(actualTime), "Static Content", new String[] {""}, new String[] {""}, "");
+				new SimpleDateFormat("HHmm").format(actualTime), "Static Content", new String[] { "" },
+				new String[] { "" }, "");
 
 		currentTimeQuery.addWhereField("Filter1", "Filter1", false, left, "EQUALS TO", right, "AND");
 		ExpressionNode newFilterNode = new ExpressionNode("NODE_CONST", "$F{" + "Filter1" + "}");
@@ -1245,7 +1269,7 @@ public class TimeAggregationHandler {
 	private IDataStore executeDatamartQuery(Query myquery) {
 
 		IStatement statement = ds.createStatement(myquery);
-		AbstractQbeDataSet qbeDataSet = (AbstractQbeDataSet)QbeDatasetFactory.createDataSet(statement);
+		AbstractQbeDataSet qbeDataSet = (AbstractQbeDataSet) QbeDatasetFactory.createDataSet(statement);
 
 		String queryString = qbeDataSet.getStatement().getQueryString();
 		logger.debug("QUERY STRING: " + queryString);
@@ -1275,11 +1299,11 @@ public class TimeAggregationHandler {
 		sysoDatastore(fullDatastore);
 
 		Map<String, Map<String, String>> inlineFilteredSelectFields = query.getInlineFilteredSelectFields();
-		if(inlineFilteredSelectFields != null && inlineFilteredSelectFields.size() > 0) {
+		if (inlineFilteredSelectFields != null && inlineFilteredSelectFields.size() > 0) {
 
 			/*
 			 * DATA FOR AGGREGATION
-			 * */
+			 */
 			Set<String> aliasesToBeRemovedAfterExecution = query.getAliasesToBeRemovedAfterExecution();
 			Map<String, String> hierarchyFullColumnMap = query.getHierarchyFullColumnMap();
 			LinkedList<String> allYearsOnDWH = query.getAllYearsOnDWH();
@@ -1290,19 +1314,20 @@ public class TimeAggregationHandler {
 			// riorganizzo i periodi per type
 			Map<String, List<String>> distinctPeriodsByType = new LinkedHashMap<>();
 			for (String type : hierarchyFullColumnMap.keySet()) {
-				distinctPeriodsByType.put(type, distinctPeriods.get( hierarchyFullColumnMap.get(type)));
+				distinctPeriodsByType.put(type, distinctPeriods.get(hierarchyFullColumnMap.get(type)));
 			}
 
 			/*
 			 * END DATA FOR AGGREGATION
-			 * */
+			 */
 
 			// elimino le groupby aggiuntive per ottenere tutte le righe della query finale
 			List<ISelectField> selectFields = query.getSelectFields(false);
 			for (ISelectField sfield : selectFields) {
 				if (sfield.isSimpleField()) {
 					SimpleSelectField ssField = (SimpleSelectField) sfield;
-					if(aliasesToBeRemovedAfterExecution != null && aliasesToBeRemovedAfterExecution.contains(ssField.getUniqueName())) {
+					if (aliasesToBeRemovedAfterExecution != null
+							&& aliasesToBeRemovedAfterExecution.contains(ssField.getUniqueName())) {
 						ssField.setGroupByField(false);
 						ssField.setFunction(AggregationFunctions.COUNT_FUNCTION);
 					}
@@ -1311,7 +1336,6 @@ public class TimeAggregationHandler {
 
 			// eseguo la query per avere il numero di righe finale
 			IDataStore finalDatastore = executeDatamartQuery(query);
-
 
 			logger.debug("finalDatastore: ");
 			sysoDatastore(finalDatastore);
@@ -1324,39 +1348,38 @@ public class TimeAggregationHandler {
 				Map<String, String> rowPeriodValuesByType = new HashMap<>();
 				for (int fieldIndex = 0; fieldIndex < finalDatastore.getMetaData().getFieldCount(); fieldIndex++) {
 					String fieldName = finalDatastore.getMetaData().getFieldName(fieldIndex);
-					if(fieldName != null && temporalFieldTypesInQuery.contains(fieldName)){
+					if (fieldName != null && temporalFieldTypesInQuery.contains(fieldName)) {
 						rowPeriodValuesByType.put(fieldName, finalRecord.getFieldAt(fieldIndex).getValue().toString());
 					}
 				}
-
 
 				// recupero l'identificativo della riga, rappresentato
 				// come coppie alias/valore
 				Map<String, String> currentRecordId = getRecordAggregatedId(finalRecord, finalDatastore, query);
 
-				Map<String, String> periodSetToCurrent = setCurrentIfNotPresent(query, hierarchyFullColumnMap, distinctPeriodsByType, currentRecordId);
+				Map<String, String> periodSetToCurrent = setCurrentIfNotPresent(query, hierarchyFullColumnMap,
+						distinctPeriodsByType, currentRecordId);
 
 				// Creo una mappa per tipo in cui tutti gli elementi sono numerati es i mesi da 0 a 11, i quarter da 0 a 3...
 				Map<String, Integer> rowPeriodsNumbered = new HashMap<>();
 				for (String type : rowPeriodValuesByType.keySet()) {
 					String currentPeriodValue = rowPeriodValuesByType.get(type);
 
-					if(periodSetToCurrent.get(type) != null) {
+					if (periodSetToCurrent.get(type) != null) {
 						currentPeriodValue = periodSetToCurrent.get(type);
 					}
 
 					List<String> distinctPeriodsForThisType = distinctPeriods.get(type);
 					int currentValueIndexForThisType = -1;
-					for(int i = 0; distinctPeriodsForThisType != null && i< distinctPeriodsForThisType.size(); i++) {
+					for (int i = 0; distinctPeriodsForThisType != null && i < distinctPeriodsForThisType.size(); i++) {
 						String period = distinctPeriodsForThisType.get(i);
-						if(period.equals(currentPeriodValue)) {
+						if (period.equals(currentPeriodValue)) {
 							currentValueIndexForThisType = i;
 							break;
 						}
 					}
 					rowPeriodsNumbered.put(type, currentValueIndexForThisType);
 				}
-
 
 				String rowLog = "| ";
 
@@ -1369,7 +1392,7 @@ public class TimeAggregationHandler {
 
 					String fieldAlias = finalDatastore.getMetaData().getFieldAlias(fieldIndex);
 					// se la colonna è da calcolare...
-					if(fieldAlias != null && inlineFilteredSelectFields.containsKey(fieldAlias)){
+					if (fieldAlias != null && inlineFilteredSelectFields.containsKey(fieldAlias)) {
 
 						Map<String, String> inlineParameters = inlineFilteredSelectFields.get(fieldAlias);
 						String temporalOperand = inlineParameters.get("temporalOperand");
@@ -1381,24 +1404,22 @@ public class TimeAggregationHandler {
 						switch (temporalOperand) {
 
 						// PERIOD_TO_DATE
-						// per i PERIOD_TO_DATE devo recuperare l'id temporale della riga  da cui partire,
+						// per i PERIOD_TO_DATE devo recuperare l'id temporale della riga da cui partire,
 						// quella a cui fermarmi corrisponde con la riga corrente traslata nel periodo di riferimento
 						// YTD_1 per la riga corrispondente a Giugno 2016 visualizzer� il dato aggregato da inizio 2015 a tutto Giugno 2015
-						case TEMPORAL_OPERAND_YTD:
-						{
+						case TEMPORAL_OPERAND_YTD: {
 							// PORTO AL PRIMO RECORD DEL ANNO
 							for (String fieldType : temporalFieldTypesInQuery) {
-								if(!hierarchyFullColumnMap.get("YEAR").equals(fieldType)) {
+								if (!hierarchyFullColumnMap.get("YEAR").equals(fieldType)) {
 									firstRecordId.put(fieldType, distinctPeriods.get(fieldType).get(0));
 								}
 							}
 							int parallelYearIndex = relativeYearIndex - temporalOperandParameter;
-							if(parallelYearIndex >= 0 && allYearsOnDWH.size() > parallelYearIndex -1 ) {
-								String parallelYear =  allYearsOnDWH.get(parallelYearIndex);
+							if (parallelYearIndex >= 0 && allYearsOnDWH.size() > parallelYearIndex - 1) {
+								String parallelYear = allYearsOnDWH.get(parallelYearIndex);
 								firstRecordId.put(hierarchyFullColumnMap.get("YEAR"), parallelYear);
 								lastRecordId.put(hierarchyFullColumnMap.get("YEAR"), parallelYear);
-							}
-							else {
+							} else {
 								firstRecordId.put(hierarchyFullColumnMap.get("YEAR"), null);
 								lastRecordId.put(hierarchyFullColumnMap.get("YEAR"), null);
 							}
@@ -1432,12 +1453,11 @@ public class TimeAggregationHandler {
 							if (periodType == null) {
 								periodType = "WEEK";
 								lastPeriod = true;
-							}
-						{
+							} {
 							// PORTO AL PRIMO RECORD DEL PERIODO (nell'anno)
 							for (String fieldType : temporalFieldTypesInQuery) {
-								if(!hierarchyFullColumnMap.get("YEAR").equals(fieldType) &&
-								   !hierarchyFullColumnMap.get(periodType).equals(fieldType)) {
+								if (!hierarchyFullColumnMap.get("YEAR").equals(fieldType)
+										&& !hierarchyFullColumnMap.get(periodType).equals(fieldType)) {
 									firstRecordId.put(fieldType, distinctPeriods.get(fieldType).get(0));
 								}
 							}
@@ -1446,15 +1466,9 @@ public class TimeAggregationHandler {
 							rowPeriodNumber = rowPeriodNumber > 0 ? rowPeriodNumber : 0;
 							Integer otherPeriodNumber = rowPeriodNumber - temporalOperandParameter;
 
-
 							/*
-							if(otherPeriodNumber < rowPeriodNumber) {
-								otherPeriodNumber = otherPeriodNumber + 1;
-							}
-							else {
-								otherPeriodNumber = otherPeriodNumber - 1;
-							}
-							*/
+							 * if(otherPeriodNumber < rowPeriodNumber) { otherPeriodNumber = otherPeriodNumber + 1; } else { otherPeriodNumber = otherPeriodNumber - 1; }
+							 */
 
 							List<String> periods = distinctPeriodsByType.get(periodType);
 							int periodsCount = periods.size();
@@ -1471,64 +1485,62 @@ public class TimeAggregationHandler {
 							}
 
 							int yearOtherIndex = relativeYearIndex + yearOffset;
-							if(yearOtherIndex < 0) {
+							if (yearOtherIndex < 0) {
 								yearOtherIndex = 0;
 							}
-							if(yearOtherIndex >= allYearsOnDWH.size()) {
-								yearOtherIndex = allYearsOnDWH.size() -1;
-								periodOtherIndex = periods.size() -1;
+							if (yearOtherIndex >= allYearsOnDWH.size()) {
+								yearOtherIndex = allYearsOnDWH.size() - 1;
+								periodOtherIndex = periods.size() - 1;
 							}
 							// L'ANNO LO DEVO METTERE SOLO SE PRESENTE TRA I CAMPI DELLA SELECT ???
 							firstRecordId.put(hierarchyFullColumnMap.get("YEAR"), allYearsOnDWH.get(yearOtherIndex));
 							firstRecordId.put(hierarchyFullColumnMap.get(periodType), periods.get(periodOtherIndex));
 
-							if(lastPeriod) {
+							if (lastPeriod) {
 								// se operatore last, aggrego fino al periodo della riga corrente
-								lastRecordId.put(hierarchyFullColumnMap.get(periodType), rowPeriodValuesByType.get(hierarchyFullColumnMap.get(periodType)));
-								lastRecordId.put(hierarchyFullColumnMap.get("YEAR"), allYearsOnDWH.get(relativeYearIndex));
-							}
-							else {
+								lastRecordId.put(hierarchyFullColumnMap.get(periodType),
+										rowPeriodValuesByType.get(hierarchyFullColumnMap.get(periodType)));
+								lastRecordId.put(hierarchyFullColumnMap.get("YEAR"),
+										allYearsOnDWH.get(relativeYearIndex));
+							} else {
 								// se operatore period to date, aggrego fino allo stesso 'tempo' nel periodo di riferimento
-								lastRecordId.put(hierarchyFullColumnMap.get(periodType), rowPeriodValuesByType.get(hierarchyFullColumnMap.get(periodType)));
-								lastRecordId.put(hierarchyFullColumnMap.get("YEAR"), allYearsOnDWH.get(relativeYearIndex));
+								lastRecordId.put(hierarchyFullColumnMap.get(periodType),
+										rowPeriodValuesByType.get(hierarchyFullColumnMap.get(periodType)));
+								lastRecordId.put(hierarchyFullColumnMap.get("YEAR"),
+										allYearsOnDWH.get(relativeYearIndex));
 							}
 							break;
 						}
-
 
 						// LAST_PERIOD
 						// per i LAST_PERIOD devo recuperare l'id temporale della riga da cui partire,
 						// quella a cui fermarmi corrisponde con la riga corrente
 						// LM_3 per la riga Giugno 2016 visualizzer� il dato aggregato da Aprile a Giugno 2015
 						// LM_4 per la riga Gennaio 2016 visualizzer� il dato aggregato da Ottobre 2015 a Gennaio 2016
-						case TEMPORAL_OPERAND_LAST_YEAR:
-						{
+						case TEMPORAL_OPERAND_LAST_YEAR: {
 							// setta gennaio/Q1/W1
 							for (String fieldType : temporalFieldTypesInQuery) {
-								if(!hierarchyFullColumnMap.get("YEAR").equals(fieldType)) {
+								if (!hierarchyFullColumnMap.get("YEAR").equals(fieldType)) {
 									firstRecordId.put(fieldType, distinctPeriods.get(fieldType).get(0));
 								}
 							}
 
 							int parallelYearIndex = relativeYearIndex - temporalOperandParameter;
-							if(parallelYearIndex >= 0 && allYearsOnDWH.size() > parallelYearIndex ) {
-								String parallelYear =  allYearsOnDWH.get(parallelYearIndex);
+							if (parallelYearIndex >= 0 && allYearsOnDWH.size() > parallelYearIndex) {
+								String parallelYear = allYearsOnDWH.get(parallelYearIndex);
 								firstRecordId.put(hierarchyFullColumnMap.get("YEAR"), parallelYear);
-							}
-							else if(parallelYearIndex < 0) {
+							} else if (parallelYearIndex < 0) {
 								firstRecordId.put(hierarchyFullColumnMap.get("YEAR"), allYearsOnDWH.getFirst());
-							}
-							else {
+							} else {
 								firstRecordId.put(hierarchyFullColumnMap.get("YEAR"), allYearsOnDWH.getLast());
 							}
 
-							if(relativeYearIndex >= 0 && allYearsOnDWH.size() > relativeYearIndex ) {
-								lastRecordId.put(hierarchyFullColumnMap.get("YEAR"), allYearsOnDWH.get(relativeYearIndex));
-							}
-							else if(relativeYearIndex < 0) {
+							if (relativeYearIndex >= 0 && allYearsOnDWH.size() > relativeYearIndex) {
+								lastRecordId.put(hierarchyFullColumnMap.get("YEAR"),
+										allYearsOnDWH.get(relativeYearIndex));
+							} else if (relativeYearIndex < 0) {
 								firstRecordId.put(hierarchyFullColumnMap.get("YEAR"), allYearsOnDWH.getFirst());
-							}
-							else {
+							} else {
 								firstRecordId.put(hierarchyFullColumnMap.get("YEAR"), allYearsOnDWH.getLast());
 							}
 
@@ -1536,15 +1548,14 @@ public class TimeAggregationHandler {
 						}
 
 						// PARALLEL_PERIOD
-						case TEMPORAL_OPERAND_PARALLEL_YEAR:
-						{
+						case TEMPORAL_OPERAND_PARALLEL_YEAR: {
 							// i parallel years si calcolano sempre in funzione di quello che trovo nella where
 
 							String year = null;
 
 							int parallelYearIndex = relativeYearIndex - temporalOperandParameter;
-							if(parallelYearIndex >= 0 && allYearsOnDWH.size() > parallelYearIndex ) {
-								year =  allYearsOnDWH.get(parallelYearIndex);
+							if (parallelYearIndex >= 0 && allYearsOnDWH.size() > parallelYearIndex) {
+								year = allYearsOnDWH.get(parallelYearIndex);
 							}
 							firstRecordId.put(hierarchyFullColumnMap.get("YEAR"), year);
 							lastRecordId.put(hierarchyFullColumnMap.get("YEAR"), year);
@@ -1554,24 +1565,25 @@ public class TimeAggregationHandler {
 							break;
 						}
 
-
 						setCurrentIfNotPresent(query, hierarchyFullColumnMap, distinctPeriodsByType, firstRecordId);
 						setCurrentIfNotPresent(query, hierarchyFullColumnMap, distinctPeriodsByType, lastRecordId);
 
-						int firstRecordIndex = calculateRecordIndex(hierarchyFullColumnMap, distinctPeriodsByType, firstRecordId);
-						int lastRecordIndex = calculateRecordIndex(hierarchyFullColumnMap, distinctPeriodsByType, lastRecordId);
+						int firstRecordIndex = calculateRecordIndex(hierarchyFullColumnMap, distinctPeriodsByType,
+								firstRecordId);
+						int lastRecordIndex = calculateRecordIndex(hierarchyFullColumnMap, distinctPeriodsByType,
+								lastRecordId);
 
 						boolean swapped = false;
-						if(firstRecordIndex > lastRecordIndex) {
+						if (firstRecordIndex > lastRecordIndex) {
 							int swap = lastRecordIndex;
 							lastRecordIndex = firstRecordIndex;
 							firstRecordIndex = swap;
 						}
-						logger.debug( fieldAlias +" FIRST: "+firstRecordIndex + " -> LAST: " + lastRecordIndex + (swapped?" (Reading the future: swapped first and last!)":""));
-
+						logger.debug(fieldAlias + " FIRST: " + firstRecordIndex + " -> LAST: " + lastRecordIndex
+								+ (swapped ? " (Reading the future: swapped first and last!)" : ""));
 
 						/** A QUESTO PUNTO AGGREGO E CALCOLO IL VALORE */
-						if(firstRecordId.get(hierarchyFullColumnMap.get("YEAR")) != null) {
+						if (firstRecordId.get(hierarchyFullColumnMap.get("YEAR")) != null) {
 							double finalValue = 0D;
 							boolean aValueFound = false;
 							/** INQUESTO CICLO DEVO UTILIZZARE I CAMPI FIRST E LAST */
@@ -1580,27 +1592,26 @@ public class TimeAggregationHandler {
 								Record currRecord = (Record) fullIterator.next();
 								Map<String, String> recordId = getRecordFullId(currRecord, finalDatastore, query);
 
-								int recordIndex = calculateRecordIndex(hierarchyFullColumnMap, distinctPeriodsByType, recordId);
+								int recordIndex = calculateRecordIndex(hierarchyFullColumnMap, distinctPeriodsByType,
+										recordId);
 
-
-								if(firstRecordIndex <= recordIndex && recordIndex <= lastRecordIndex) {
+								if (firstRecordIndex <= recordIndex && recordIndex <= lastRecordIndex) {
 									logger.debug("recordIndex: " + recordIndex);
 									aValueFound = true;
-									finalValue += Double.parseDouble(currRecord.getFieldAt(fieldIndex).getValue().toString());
+									finalValue += Double
+											.parseDouble(currRecord.getFieldAt(fieldIndex).getValue().toString());
 									finalRecord.getFieldAt(fieldIndex).setValue(finalValue);
 								}
 							}
-							if(!aValueFound) {
+							if (!aValueFound) {
 								finalRecord.getFieldAt(fieldIndex).setValue(0D);
 							}
-						}
-						else {
+						} else {
 							finalRecord.getFieldAt(fieldIndex).setValue(0D);
 						}
 
 						rowLog += " | " + firstRecordId + " >>> " + lastRecordId;
-					}
-					else {
+					} else {
 						rowLog += " | NON AGGREGATO ";
 					}
 				}
@@ -1611,30 +1622,28 @@ public class TimeAggregationHandler {
 
 			return finalDatastore;
 
-		}
-		else {
+		} else {
 			return fullDatastore;
 		}
 
-
 	}
 
-
-
-	private Map<String,String> setCurrentIfNotPresent(Query query, Map<String, String> hierarchyFullColumnMap,
+	private Map<String, String> setCurrentIfNotPresent(Query query, Map<String, String> hierarchyFullColumnMap,
 			Map<String, List<String>> distinctPeriodsByType, Map<String, String> currentRecordId) {
-		Map<String,String> periodSetToCurrent = new HashMap<>();
+		Map<String, String> periodSetToCurrent = new HashMap<>();
 		Set<String> periodElements = distinctPeriodsByType.keySet();
 		for (String period : periodElements) {
 			List<String> periods = distinctPeriodsByType.get(period);
-			if(periods != null){
+			if (periods != null) {
 				String periodUniqueIdentifier = hierarchyFullColumnMap.get(period);
 				String currentRecordPeriod = currentRecordId.get(periodUniqueIdentifier);
-				if(currentRecordPeriod != null) {
+				if (currentRecordPeriod != null) {
 					int periodIndex = periods.indexOf(currentRecordPeriod);
-					if(periodIndex < 0) {
-						currentRecordId.put(periodUniqueIdentifier, query.getCurrentPeriodValuyesByType().get(periodUniqueIdentifier));
-						periodSetToCurrent.put(periodUniqueIdentifier, query.getCurrentPeriodValuyesByType().get(periodUniqueIdentifier));
+					if (periodIndex < 0) {
+						currentRecordId.put(periodUniqueIdentifier,
+								query.getCurrentPeriodValuyesByType().get(periodUniqueIdentifier));
+						periodSetToCurrent.put(periodUniqueIdentifier,
+								query.getCurrentPeriodValuyesByType().get(periodUniqueIdentifier));
 					}
 				}
 			}
@@ -1642,30 +1651,26 @@ public class TimeAggregationHandler {
 		return periodSetToCurrent;
 	}
 
-
-
 	private int calculateRecordIndex(Map<String, String> hierarchyFullColumnMap,
 			Map<String, List<String>> distinctPeriodsByType, Map<String, String> recordId)
-					throws NumberFormatException {
+			throws NumberFormatException {
 		String recordCode = "";
 		Set<String> periodElements = distinctPeriodsByType.keySet();
 		for (String period : periodElements) {
 			List<String> periods = distinctPeriodsByType.get(period);
-			if(periods != null){
+			if (periods != null) {
 				int periodIndex = periods.indexOf(recordId.get(hierarchyFullColumnMap.get(period)));
-				recordCode += new DecimalFormat("000").format(periodIndex+1);
+				recordCode += new DecimalFormat("000").format(periodIndex + 1);
 			}
 		}
 		int recordIndex = Integer.parseInt(recordCode.indexOf('-') < 0 ? recordCode : "0");
 		return recordIndex;
 	}
 
-
-
 	private void sysoDatastore(IDataStore ds) throws RuntimeException {
 		try {
-		JSONDataWriter dataSetWriter = new JSONDataWriter();
-		JSONObject dataSetJSON = (JSONObject) dataSetWriter.write(ds);
+			JSONDataWriter dataSetWriter = new JSONDataWriter();
+			JSONObject dataSetJSON = (JSONObject) dataSetWriter.write(ds);
 			logger.debug(dataSetJSON.getJSONArray("rows").toString());
 		} catch (JSONException e) {
 			e.printStackTrace();
@@ -1682,20 +1687,21 @@ public class TimeAggregationHandler {
 		return getRecordId(finalRecord, finalDatastore, query, idAliases);
 	}
 
-	private Map<String, String> getRecordId(Record finalRecord, IDataStore finalDatastore, Query query, Set<String> idAliases) {
+	private Map<String, String> getRecordId(Record finalRecord, IDataStore finalDatastore, Query query,
+			Set<String> idAliases) {
 		Map<String, String> recordId = new LinkedHashMap<>();
 		for (int fieldIndex = 0; fieldIndex < finalDatastore.getMetaData().getFieldCount(); fieldIndex++) {
 			String fieldName = finalDatastore.getMetaData().getFieldName(fieldIndex);
-			if(fieldName != null && idAliases.contains(fieldName)){
-				recordId.put(fieldName, (finalRecord.getFieldAt(fieldIndex).getValue() != null ? finalRecord.getFieldAt(fieldIndex).getValue().toString(): "") );
+			if (fieldName != null && idAliases.contains(fieldName)) {
+				recordId.put(fieldName,
+						(finalRecord.getFieldAt(fieldIndex).getValue() != null
+								? finalRecord.getFieldAt(fieldIndex).getValue().toString()
+								: ""));
 			}
 		}
 		return recordId;
 	}
 
 	/* END FROM EXECUTE QUERY ACTION */
-
-
-
 
 }

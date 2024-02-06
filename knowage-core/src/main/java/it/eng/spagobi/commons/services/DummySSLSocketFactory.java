@@ -32,10 +32,10 @@ import javax.net.ssl.SSLSocketFactory;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.TrustManagerFactory;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 
 import it.eng.spagobi.commons.SingletonConfig;
-import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.security.utils.EncryptionPBEWithMD5AndDESManager;
 
 /**
@@ -64,10 +64,11 @@ public class DummySSLSocketFactory extends SSLSocketFactory {
 
 			// Custom Trusted Store Certificate Options
 			String trustedStorePath = SingletonConfig.getInstance().getConfigValue("MAIL.PROFILES.trustedStore.file");
-			String trustedStorePassword = SingletonConfig.getInstance().getConfigValue("MAIL.PROFILES.trustedStore.password");
+			String trustedStorePassword = SingletonConfig.getInstance()
+					.getConfigValue("MAIL.PROFILES.trustedStore.password");
 
-			if ((!StringUtilities.isEmpty(trustedStorePath))) {
-				if (StringUtilities.isEmpty(trustedStorePassword)) {
+			if ((!StringUtils.isEmpty(trustedStorePath))) {
+				if (StringUtils.isEmpty(trustedStorePassword)) {
 					trustedStorePassword = null;
 					logger.debug("No Trusted Store Password Definied");
 				} else {
@@ -92,8 +93,8 @@ public class DummySSLSocketFactory extends SSLSocketFactory {
 			String keyStorePassword = SingletonConfig.getInstance().getConfigValue("MAIL.PROFILES.keyStore.password");
 
 			// Eventuale configurazione dinamica del keystore SOLO in mutua autenticazione:
-			if ((!StringUtilities.isEmpty(keyStorePath))) {
-				if (StringUtilities.isEmpty(keyStorePassword)) {
+			if ((!StringUtils.isEmpty(keyStorePath))) {
+				if (StringUtils.isEmpty(keyStorePassword)) {
 					trustedStorePassword = null;
 					logger.debug("No Key Store Password Definied");
 				} else {

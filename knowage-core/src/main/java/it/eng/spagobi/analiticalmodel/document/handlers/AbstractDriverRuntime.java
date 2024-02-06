@@ -78,7 +78,7 @@ public abstract class AbstractDriverRuntime<T extends AbstractDriver> {
 	Parameter analyticalDriver;
 	ParameterUse analyticalDriverExecModality;
 	List<? extends AbstractParuse> dataDependencies;
-	List<AbstractParview> visualDependencies;
+	List<? extends AbstractParview> visualDependencies;
 	List lovDependencies;
 
 	// attribute used by the serializer

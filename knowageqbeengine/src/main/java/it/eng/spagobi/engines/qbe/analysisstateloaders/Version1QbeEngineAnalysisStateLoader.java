@@ -17,32 +17,31 @@
  */
 package it.eng.spagobi.engines.qbe.analysisstateloaders;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
 
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
  */
-public class Version1QbeEngineAnalysisStateLoader extends AbstractQbeEngineAnalysisStateLoader{
+public class Version1QbeEngineAnalysisStateLoader extends AbstractQbeEngineAnalysisStateLoader {
 
 	/** Logger component. */
 	private static final Logger LOGGER = Logger.getLogger(Version1QbeEngineAnalysisStateLoader.class);
 
 	public static final String FROM_VERSION = "1";
-    public static final String TO_VERSION = "2";
+	public static final String TO_VERSION = "2";
 
-    public Version1QbeEngineAnalysisStateLoader() {
-    	super();
-    }
+	public Version1QbeEngineAnalysisStateLoader() {
+	}
 
-    public Version1QbeEngineAnalysisStateLoader(IQbeEngineAnalysisStateLoader loader) {
-    	super(loader);
-    }
+	public Version1QbeEngineAnalysisStateLoader(IQbeEngineAnalysisStateLoader loader) {
+		super(loader);
+	}
 
 	@Override
 	public JSONObject convert(JSONObject data) {
@@ -50,32 +49,33 @@ public class Version1QbeEngineAnalysisStateLoader extends AbstractQbeEngineAnaly
 		JSONObject catalogueJSON;
 		JSONArray queriesJSON;
 
-		LOGGER.debug( "IN" );
+		LOGGER.debug("IN");
 		try {
 			Assert.assertNotNull(data, "Data to convert cannot be null");
 
-			LOGGER.debug( "Converting from encoding version [" + FROM_VERSION + "] to encoding version [" + TO_VERSION + "] ..." );
-			LOGGER.debug( "Data to convert [" + data.toString() + "]");
+			LOGGER.debug("Converting from encoding version [" + FROM_VERSION + "] to encoding version [" + TO_VERSION
+					+ "] ...");
+			LOGGER.debug("Data to convert [" + data.toString() + "]");
 
 			catalogueJSON = data.getJSONObject("catalogue");
 			// fix query encoding ...
 			queriesJSON = catalogueJSON.getJSONArray("queries");
-			LOGGER.debug( "In the stored catalogue there are  [" + queriesJSON.length() + "] to convert");
-			for(int i = 0; i < queriesJSON.length(); i++) {
+			LOGGER.debug("In the stored catalogue there are  [" + queriesJSON.length() + "] to convert");
+			for (int i = 0; i < queriesJSON.length(); i++) {
 				convertQuery(queriesJSON.getJSONObject(i));
 			}
 
 			resultJSON = new JSONObject();
 			resultJSON.put("catalogue", catalogueJSON);
 
-			LOGGER.debug( "Converted data [" + resultJSON.toString() + "]");
-			LOGGER.debug( "Conversion from encoding version [" + FROM_VERSION + "] to encoding version [" + TO_VERSION + "] terminated succesfully" );
-		}catch(Throwable t) {
+			LOGGER.debug("Converted data [" + resultJSON.toString() + "]");
+			LOGGER.debug("Conversion from encoding version [" + FROM_VERSION + "] to encoding version [" + TO_VERSION
+					+ "] terminated succesfully");
+		} catch (Throwable t) {
 			throw new SpagoBIEngineRuntimeException("Impossible to load from rowData [" + data + "]", t);
 		} finally {
-			LOGGER.debug( "OUT" );
+			LOGGER.debug("OUT");
 		}
-
 
 		return resultJSON;
 	}
@@ -95,14 +95,14 @@ public class Version1QbeEngineAnalysisStateLoader extends AbstractQbeEngineAnaly
 		try {
 			Assert.assertNotNull(queryJSON, "Query to be converted cannot be null");
 			queryId = queryJSON.getString("id");
-			LOGGER.debug( "Converting query [" + queryId + "] ...");
-			LOGGER.debug( "Query content to be converted [" + queryJSON.toString() + "]");
+			LOGGER.debug("Converting query [" + queryId + "] ...");
+			LOGGER.debug("Query content to be converted [" + queryJSON.toString() + "]");
 
 			// convert fields
-			fieldsJSON = queryJSON.getJSONArray( "fields" );
-			LOGGER.debug( "Query [" + queryId + "] have [" + fieldsJSON.length() + "] fields to convert");
-			for(int j = 0; j < fieldsJSON.length(); j++) {
-				LOGGER.debug( "Converting field [" + (j+1) + "] ...");
+			fieldsJSON = queryJSON.getJSONArray("fields");
+			LOGGER.debug("Query [" + queryId + "] have [" + fieldsJSON.length() + "] fields to convert");
+			for (int j = 0; j < fieldsJSON.length(); j++) {
+				LOGGER.debug("Converting field [" + (j + 1) + "] ...");
 				fieldJSON = fieldsJSON.getJSONObject(j);
 				fieldUniqueName = fieldJSON.getString("id");
 				fieldUniqueName = convertFieldUniqueName(fieldUniqueName);
@@ -110,23 +110,23 @@ public class Version1QbeEngineAnalysisStateLoader extends AbstractQbeEngineAnaly
 			}
 
 			// convert filters
-			filtersJSON = queryJSON.getJSONArray( "filters" );
-			LOGGER.debug( "Query [" + queryId + "] have [" + filtersJSON.length() + "] filters to convert");
-			for(int j = 0; j < filtersJSON.length(); j++) {
-				LOGGER.debug( "Converting filter [" + (j+1) + "] ...");
+			filtersJSON = queryJSON.getJSONArray("filters");
+			LOGGER.debug("Query [" + queryId + "] have [" + filtersJSON.length() + "] filters to convert");
+			for (int j = 0; j < filtersJSON.length(); j++) {
+				LOGGER.debug("Converting filter [" + (j + 1) + "] ...");
 				filterJSON = filtersJSON.getJSONObject(j);
 				fieldUniqueName = filterJSON.getString("id");
 				fieldUniqueName = convertFieldUniqueName(fieldUniqueName);
 				filterJSON.put("id", fieldUniqueName);
 
 				operandType = filterJSON.getString("otype");
-				if(operandType.equals("Field Conten")) {
-					LOGGER.debug( "Converting filter [" + (j+1) + "] operand ...");
+				if (operandType.equals("Field Conten")) {
+					LOGGER.debug("Converting filter [" + (j + 1) + "] operand ...");
 					fieldUniqueName = filterJSON.getString("operand");
 					fieldUniqueName = convertFieldUniqueName(fieldUniqueName);
 					filterJSON.put("operand", fieldUniqueName);
 				} else if (operandType.equals("Parent Field Content")) {
-					LOGGER.debug( "Converting filter [" + (j+1) + "] operand ...");
+					LOGGER.debug("Converting filter [" + (j + 1) + "] operand ...");
 					fieldUniqueName = filterJSON.getString("operand");
 					String[] chunks = fieldUniqueName.split(" ");
 					fieldUniqueName = chunks[1];
@@ -137,18 +137,18 @@ public class Version1QbeEngineAnalysisStateLoader extends AbstractQbeEngineAnaly
 			}
 
 			// convert subqueries
-			subqueriesJSON = queryJSON.getJSONArray( "subqueries" );
-			LOGGER.debug( "Query [" + queryId + "] have [" + subqueriesJSON.length() + "] subqueries to convert");
-			for(int j = 0; j < subqueriesJSON.length(); j++) {
-				LOGGER.debug( "Converting subquery [" + (j+1)+ "] of query [" + queryId + "] ...");
-				convertQuery( subqueriesJSON.getJSONObject(j) );
+			subqueriesJSON = queryJSON.getJSONArray("subqueries");
+			LOGGER.debug("Query [" + queryId + "] have [" + subqueriesJSON.length() + "] subqueries to convert");
+			for (int j = 0; j < subqueriesJSON.length(); j++) {
+				LOGGER.debug("Converting subquery [" + (j + 1) + "] of query [" + queryId + "] ...");
+				convertQuery(subqueriesJSON.getJSONObject(j));
 			}
 
-			LOGGER.debug( "Query [" + queryId + "] converted succesfully");
-		}catch(Throwable t) {
+			LOGGER.debug("Query [" + queryId + "] converted succesfully");
+		} catch (Throwable t) {
 			throw new SpagoBIEngineRuntimeException("Impossible convert query [" + queryId + "]", t);
 		} finally {
-			LOGGER.debug( "OUT" );
+			LOGGER.debug("OUT");
 		}
 	}
 
@@ -156,26 +156,24 @@ public class Version1QbeEngineAnalysisStateLoader extends AbstractQbeEngineAnaly
 		String result;
 		String[] chunks;
 
-		LOGGER.debug( "Field unique name to convert [" + fieldUniqueName + "]" );
+		LOGGER.debug("Field unique name to convert [" + fieldUniqueName + "]");
 
 		chunks = fieldUniqueName.split(":");
 
 		result = "";
-		for(int i = chunks.length-1; i > 0 ; i--) {
-			if(!StringUtilities.isEmpty(chunks[i])) {
+		for (int i = chunks.length - 1; i > 0; i--) {
+			if (!StringUtils.isEmpty(chunks[i])) {
 				/*
-				if(chunks[i].indexOf("(") > 0 ) {
-					chunks[i] = chunks[i].substring(0, chunks[i].indexOf("("));
-				}
-				*/
+				 * if(chunks[i].indexOf("(") > 0 ) { chunks[i] = chunks[i].substring(0, chunks[i].indexOf("(")); }
+				 */
 				chunks[i] = chunks[i].substring(0, 1).toLowerCase() + chunks[i].substring(1);
 			}
-			result = StringUtilities.isEmpty(result)? chunks[i]: chunks[i] + ":" + result;
+			result = StringUtils.isEmpty(result) ? chunks[i] : chunks[i] + ":" + result;
 		}
 
 		result = chunks[0] + ":" + result;
 
-		LOGGER.debug( "Converted field unique name [" + result + "]" );
+		LOGGER.debug("Converted field unique name [" + result + "]");
 
 		return result;
 	}

@@ -31,6 +31,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -58,7 +59,6 @@ import it.eng.spagobi.commons.bo.Role;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
-import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.commons.utilities.UserUtilities;
 import it.eng.spagobi.engines.config.bo.Engine;
 import it.eng.spagobi.engines.config.dao.IEngineDAO;
@@ -73,8 +73,8 @@ import it.eng.spagobi.utilities.filters.XSSUtils;
 @Path("/2.0/saveDocument")
 @ManageAuthorization
 public class SaveDocumentResource extends AbstractSpagoBIResource {
-	// logger component
-	private static Logger logger = Logger.getLogger(SaveDocumentResource.class);
+	// LOGGER component
+	private static final Logger LOGGER = Logger.getLogger(SaveDocumentResource.class);
 	// type of service
 	private static final String DOC_SAVE = "DOC_SAVE";
 	private static final String DOC_UPDATE = "DOC_UPDATE";
@@ -86,8 +86,8 @@ public class SaveDocumentResource extends AbstractSpagoBIResource {
 	@Path("/")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response saveDocument(@Valid SaveDocumentDTO saveDocumentDTO) {
-		logger.debug("IN");
-		logger.debug("saveDocumentDTO: " + saveDocumentDTO);
+		LOGGER.debug("IN");
+		LOGGER.debug("saveDocumentDTO: " + saveDocumentDTO);
 
 		JSError error = new JSError();
 		Integer id = null;
@@ -99,20 +99,21 @@ public class SaveDocumentResource extends AbstractSpagoBIResource {
 
 			} else {
 				String action = saveDocumentDTO.getAction();
-				logger.debug("Action type is equal to [" + action + "]");
+				LOGGER.debug("Action type is equal to [" + action + "]");
 				if (DOC_SAVE.equalsIgnoreCase(action)) {
-					logger.debug("Sanitize XSS");
+					LOGGER.debug("Sanitize XSS");
 					checkAndSanitizeXSS(saveDocumentDTO);
-					logger.debug("Do insert document");
+					LOGGER.debug("Do insert document");
 					id = doInsertDocument(saveDocumentDTO, error);
 				} else if (DOC_UPDATE.equalsIgnoreCase(action)) {
-					logger.error("DOC_UPDATE action is no more supported");
-					throw new SpagoBIServiceException(saveDocumentDTO.getPathInfo(), "sbi.document.unsupported.udpateaction");
+					LOGGER.error("DOC_UPDATE action is no more supported");
+					throw new SpagoBIServiceException(saveDocumentDTO.getPathInfo(),
+							"sbi.document.unsupported.udpateaction");
 				} else if (MODIFY_COCKPIT.equalsIgnoreCase(action) || MODIFY_KPI.equalsIgnoreCase(action)) {
 
-					logger.debug("Sanitize XSS");
+					LOGGER.debug("Sanitize XSS");
 					checkAndSanitizeXSS(saveDocumentDTO);
-					logger.debug("Do modify document");
+					LOGGER.debug("Do modify document");
 					id = doModifyDocument(saveDocumentDTO, action, error);
 				} else {
 					throw new SpagoBIServiceException(saveDocumentDTO.getPathInfo(), "sbi.document.unsupported.action");
@@ -129,7 +130,7 @@ public class SaveDocumentResource extends AbstractSpagoBIResource {
 		} catch (Exception e) {
 			throw new SpagoBIServiceException(saveDocumentDTO.getPathInfo(), "sbi.document.saveError", e);
 		} finally {
-			logger.debug("OUT");
+			LOGGER.debug("OUT");
 		}
 	}
 
@@ -179,17 +180,17 @@ public class SaveDocumentResource extends AbstractSpagoBIResource {
 				}
 				// TODO Change when new template is completed
 			} catch (Exception e) {
-				logger.info("New template version", e);
+				LOGGER.info("New template version", e);
 			}
 		}
 	}
 
 	private Integer updateDocument(DocumentDTO doc) {
 
-		logger.debug("IN");
+		LOGGER.debug("IN");
 		Integer docId = doc.getId();
-		Assert.assertNotNull(StringUtilities.isNotEmpty(doc.getName()), "Document's name cannot be null or empty");
-		Assert.assertNotNull(StringUtilities.isNotEmpty(doc.getLabel()), "Document's label cannot be null or empty");
+		Assert.assertNotNull(StringUtils.isNotEmpty(doc.getName()), "Document's name cannot be null or empty");
+		Assert.assertNotNull(StringUtils.isNotEmpty(doc.getLabel()), "Document's label cannot be null or empty");
 
 		try {
 
@@ -209,32 +210,35 @@ public class SaveDocumentResource extends AbstractSpagoBIResource {
 			throw new SpagoBIServiceException("sbi.document.updateError", e);
 
 		} finally {
-			logger.debug("OUT");
+			LOGGER.debug("OUT");
 		}
 
 		return docId;
 
 	}
 
-	private Integer doInsertDocument(SaveDocumentDTO saveDocumentDTO, JSError error) throws JSONException, EMFUserError {
-		logger.debug("IN");
+	private Integer doInsertDocument(SaveDocumentDTO saveDocumentDTO, JSError error)
+			throws JSONException, EMFUserError {
+		LOGGER.debug("IN");
 		DocumentDTO documentDTO = saveDocumentDTO.getDocumentDTO();
-		Assert.assertNotNull(StringUtilities.isNotEmpty(documentDTO.getName()), "Document's name cannot be null or empty");
-		Assert.assertNotNull(StringUtilities.isNotEmpty(documentDTO.getLabel()), "Document's label cannot be null or empty");
-		Assert.assertNotNull(StringUtilities.isNotEmpty(documentDTO.getType()), "Document's type cannot be null or empty");
+		Assert.assertNotNull(StringUtils.isNotEmpty(documentDTO.getName()), "Document's name cannot be null or empty");
+		Assert.assertNotNull(StringUtils.isNotEmpty(documentDTO.getLabel()),
+				"Document's label cannot be null or empty");
+		Assert.assertNotNull(StringUtils.isNotEmpty(documentDTO.getType()), "Document's type cannot be null or empty");
 		Integer id = null;
 		AnalyticalModelDocumentManagementAPI documentManagementAPI = null;
 		try {
 			documentManagementAPI = new AnalyticalModelDocumentManagementAPI(getUserProfile());
 			if (documentManagementAPI.getDocument(documentDTO.getLabel()) != null) {
-				logger.error("sbi.document.labelAlreadyExistent");
+				LOGGER.error("sbi.document.labelAlreadyExistent");
 				error.addErrorKey("sbi.document.labelAlreadyExistent");
 			} else {
 				String type = documentDTO.getType();
-				logger.debug("type: " + type);
+				LOGGER.debug("type: " + type);
 				if (SpagoBIConstants.MAP_TYPE_CODE.equalsIgnoreCase(type)) {
 					id = insertGeoreportDocument(saveDocumentDTO, documentManagementAPI);
-				} else if (SpagoBIConstants.DOCUMENT_COMPOSITE_TYPE.equalsIgnoreCase(type) || SpagoBIConstants.DASHBOARD_TYPE.equalsIgnoreCase(type)) {
+				} else if (SpagoBIConstants.DOCUMENT_COMPOSITE_TYPE.equalsIgnoreCase(type)
+						|| SpagoBIConstants.DASHBOARD_TYPE.equalsIgnoreCase(type)) {
 					id = insertCockpitDocument(saveDocumentDTO, documentManagementAPI, getUserProfile());
 				} else if (SpagoBIConstants.DOSSIER_TYPE.equalsIgnoreCase(type)) {
 					id = insertDossierDocument(saveDocumentDTO, documentManagementAPI);
@@ -245,15 +249,16 @@ public class SaveDocumentResource extends AbstractSpagoBIResource {
 				}
 			}
 		} catch (Throwable t) {
-			logger.error("Error inserting document", t);
-			logger.debug("Document was: " + String.valueOf(saveDocumentDTO));
+			LOGGER.error("Error inserting document", t);
+			LOGGER.debug("Document was: " + String.valueOf(saveDocumentDTO));
 			error.addErrorKey("sbi.document.saveError");
 		}
-		logger.debug("OUT");
+		LOGGER.debug("OUT");
 		return id;
 	}
 
-	private Integer doModifyDocument(SaveDocumentDTO request, String action, JSError error) throws EMFUserError, JSONException {
+	private Integer doModifyDocument(SaveDocumentDTO request, String action, JSError error)
+			throws EMFUserError, JSONException {
 		DocumentDTO documentDTO = request.getDocumentDTO();
 		CustomDataDTO customDataDTO = request.getCustomDataDTO();
 
@@ -264,32 +269,34 @@ public class SaveDocumentResource extends AbstractSpagoBIResource {
 		String documentLabel = documentDTO.getLabel();
 		BIObject document = biObjectDao.loadBIObjectByLabel(documentLabel);
 
-		List<Integer> filteredFolders = new ArrayList<Integer>();
-		if (request.getFolders() == null || request.getFolders().size() == 0) {
+		List<Integer> filteredFolders = new ArrayList<>();
+		if (request.getFolders() == null || request.getFolders().isEmpty()) {
 
 			// if no folders are specified in request keep previous ones if present, else put on user home
-			logger.debug("no folders specified in request, search for previous ones.");
+			LOGGER.debug("no folders specified in request, search for previous ones.");
 			ILowFunctionalityDAO functionalitiesDAO = DAOFactory.getLowFunctionalityDAO();
 			IEngUserProfile profile = getUserProfile();
 			// add personal folder for default
 
 			List<Integer> functionalities = document.getFunctionalities();
-			if (functionalities != null && functionalities.size() > 0) {
-				logger.debug("Document was already present in " + functionalities.size() + " folders, keep those ones");
+			if (functionalities != null && !functionalities.isEmpty()) {
+				LOGGER.debug("Document was already present in " + functionalities.size() + " folders, keep those ones");
 				LowFunctionality lowFunc = null;
 				for (int i = 0; i < functionalities.size(); i++) {
-					Integer id = functionalities.get(i);
 					lowFunc = functionalitiesDAO.loadLowFunctionalityByID(functionalities.get(i), false);
 					filteredFolders.add(lowFunc.getId());
 				}
 			} else {
-				logger.debug("as default case put document in user home folder");
+				LOGGER.debug("as default case put document in user home folder");
 				LowFunctionality userFunc = null;
 				try {
-					userFunc = functionalitiesDAO.loadLowFunctionalityByPath("/" + ((UserProfile) profile).getUserId(), false);
+					userFunc = functionalitiesDAO.loadLowFunctionalityByPath("/" + ((UserProfile) profile).getUserId(),
+							false);
 				} catch (Exception e) {
-					logger.error("Error on insertion of the document.. Impossible to get the id of the personal folder ", e);
-					throw new SpagoBIRuntimeException("Error on insertion of the document.. Impossible to get the id of the personal folder ", e);
+					LOGGER.error(
+							"Error on insertion of the document.. Impossible to get the id of the personal folder ", e);
+					throw new SpagoBIRuntimeException(
+							"Error on insertion of the document.. Impossible to get the id of the personal folder ", e);
 				}
 				filteredFolders.add(userFunc.getId());
 			}
@@ -301,12 +308,13 @@ public class SaveDocumentResource extends AbstractSpagoBIResource {
 		// update document informations
 		document = syncronizeDocument(document, filteredFolders, request.getDocumentDTO());
 
-		String tempalteName = (MODIFY_GEOREPORT.equalsIgnoreCase(action)) ? "template.georeport" : "template.sbicockpit";
+		String tempalteName = (MODIFY_GEOREPORT.equalsIgnoreCase(action)) ? "template.georeport"
+				: "template.sbicockpit";
 		String templateContent = customDataDTO.getTemplateContentAsString();
 
 		if (MODIFY_KPI.equalsIgnoreCase(action)) {
 			tempalteName = "template.xml";
-			Map<String, Object> json = new HashMap<String, Object>();
+			Map<String, Object> json = new HashMap<>();
 			json.put("templateContent", templateContent);
 			customDataDTO.setTemplateContent(json);
 		}
@@ -317,14 +325,14 @@ public class SaveDocumentResource extends AbstractSpagoBIResource {
 			documentManagementAPI.saveDocument(document, template);
 			return document.getId();
 		} catch (Throwable t) {
-			logger.error("Error updating document", t);
-			logger.debug("Document was: " + String.valueOf(request));
+			LOGGER.error("Error updating document", t);
+			LOGGER.debug("Document was: " + String.valueOf(request));
 			error.addErrorKey("sbi.document.saveError");
 		}
 		return null;
 	}
 
-	private BIObject syncronizeDocument(BIObject obj, List<Integer> folders, DocumentDTO documentDTO) throws JSONException {
+	private BIObject syncronizeDocument(BIObject obj, List<Integer> folders, DocumentDTO documentDTO) {
 		BIObject toReturn = obj;
 		String name = documentDTO.getName();
 		String description = documentDTO.getDescription();
@@ -341,11 +349,11 @@ public class SaveDocumentResource extends AbstractSpagoBIResource {
 		return toReturn;
 	}
 
-	private Integer insertGeoreportDocument(SaveDocumentDTO saveDocumentDTO, AnalyticalModelDocumentManagementAPI documentManagementAPI)
-			throws JSONException, EMFUserError {
+	private Integer insertGeoreportDocument(SaveDocumentDTO saveDocumentDTO,
+			AnalyticalModelDocumentManagementAPI documentManagementAPI) throws JSONException, EMFUserError {
 		String sourceModelName = getAttributeAsString("model_name");
 		DocumentDTO documentDTO = saveDocumentDTO.getDocumentDTO();
-		List<Integer> filteredFolders = new ArrayList<Integer>();
+		List<Integer> filteredFolders = new ArrayList<>();
 		filteredFolders = getFilteredFoldersList(saveDocumentDTO, filteredFolders);
 		CustomDataDTO customDataDTO = saveDocumentDTO.getCustomDataDTO();
 
@@ -355,24 +363,26 @@ public class SaveDocumentResource extends AbstractSpagoBIResource {
 
 		if (saveDocumentDTO.getSourceDatasetDTO() != null) {
 			SourceDatasetDTO sourceDatasetDTO = saveDocumentDTO.getSourceDatasetDTO();
-			id = insertGeoReportDocumentCreatedOnDataset(sourceDatasetDTO, documentDTO, customDataDTO, filteredFolders, documentManagementAPI);
+			id = insertGeoReportDocumentCreatedOnDataset(sourceDatasetDTO, documentDTO, customDataDTO, filteredFolders,
+					documentManagementAPI);
 		} else if (sourceModelName != null) {
 			throw new SpagoBIRuntimeException("Impossible to create geo document defined on a metamodel");
 		} else {
-			id = insertGeoReportDocumentCreatedOnDataset(null, documentDTO, customDataDTO, filteredFolders, documentManagementAPI);
+			id = insertGeoReportDocumentCreatedOnDataset(null, documentDTO, customDataDTO, filteredFolders,
+					documentManagementAPI);
 			// throw new SpagoBIServiceException(SERVICE_NAME,
 			// "Impossible to create geo document because both sourceModel and sourceDataset are null");
 		}
 		return id;
 	}
 
-	private Integer insertKPIDocument(SaveDocumentDTO saveDocumentDTO, AnalyticalModelDocumentManagementAPI documentManagementAPI)
-			throws JSONException, EMFUserError {
+	private Integer insertKPIDocument(SaveDocumentDTO saveDocumentDTO,
+			AnalyticalModelDocumentManagementAPI documentManagementAPI) throws JSONException, EMFUserError {
 		DocumentDTO documentDTO = saveDocumentDTO.getDocumentDTO();
-		List<Integer> filteredFolders = new ArrayList<Integer>();
+		List<Integer> filteredFolders = new ArrayList<>();
 		filteredFolders = getFilteredFoldersList(saveDocumentDTO, filteredFolders);
 		CustomDataDTO customDataDTO = saveDocumentDTO.getCustomDataDTO();
-		Map<String, Object> json = new HashMap<String, Object>();
+		Map<String, Object> json = new HashMap<>();
 		String templateContent = customDataDTO.getTemplateContentAsString();
 		json.put("templateContent", templateContent);
 
@@ -387,13 +397,13 @@ public class SaveDocumentResource extends AbstractSpagoBIResource {
 		return document.getId();
 	}
 
-	private Integer insertDossierDocument(SaveDocumentDTO saveDocumentDTO, AnalyticalModelDocumentManagementAPI documentManagementAPI)
-			throws JSONException, EMFUserError {
+	private Integer insertDossierDocument(SaveDocumentDTO saveDocumentDTO,
+			AnalyticalModelDocumentManagementAPI documentManagementAPI) throws JSONException, EMFUserError {
 		DocumentDTO documentDTO = saveDocumentDTO.getDocumentDTO();
-		List<Integer> filteredFolders = new ArrayList<Integer>();
+		List<Integer> filteredFolders = new ArrayList<>();
 		filteredFolders = getFilteredFoldersList(saveDocumentDTO, filteredFolders);
 		CustomDataDTO customDataDTO = saveDocumentDTO.getCustomDataDTO();
-		Map<String, Object> json = new HashMap<String, Object>();
+		Map<String, Object> json = new HashMap<>();
 		String templateContent = customDataDTO.getTemplateContentAsString();
 		json.put("templateContent", templateContent);
 
@@ -408,16 +418,19 @@ public class SaveDocumentResource extends AbstractSpagoBIResource {
 		return document.getId();
 	}
 
-	private List<Integer> getFilteredFoldersList(SaveDocumentDTO request, List<Integer> filteredFolders) throws JSONException {
-		if (request.getFolders() == null || request.getFolders().size() == 0) {
+	private List<Integer> getFilteredFoldersList(SaveDocumentDTO request, List<Integer> filteredFolders)
+			throws JSONException {
+		if (request.getFolders() == null || request.getFolders().isEmpty()) {
 			IEngUserProfile profile = getUserProfile();
 			// add personal folder for default
 			LowFunctionality userFunc = null;
 			try {
 				userFunc = UserUtilities.loadUserFunctionalityRoot((UserProfile) profile, true);
 			} catch (Exception e) {
-				logger.error("Error on insertion of the document.. Impossible to get the id of the personal folder ", e);
-				throw new SpagoBIRuntimeException("Error on insertion of the document.. Impossible to get the id of the personal folder ", e);
+				LOGGER.error("Error on insertion of the document.. Impossible to get the id of the personal folder ",
+						e);
+				throw new SpagoBIRuntimeException(
+						"Error on insertion of the document.. Impossible to get the id of the personal folder ", e);
 			}
 			filteredFolders.add(userFunc.getId());
 		} else {
@@ -426,28 +439,31 @@ public class SaveDocumentResource extends AbstractSpagoBIResource {
 		return filteredFolders;
 	}
 
-	private Integer insertCockpitDocument(SaveDocumentDTO saveDocumentDTO, AnalyticalModelDocumentManagementAPI documentManagementAPI, UserProfile profile)
+	private Integer insertCockpitDocument(SaveDocumentDTO saveDocumentDTO,
+			AnalyticalModelDocumentManagementAPI documentManagementAPI, UserProfile profile)
 			throws EMFUserError, JSONException {
-		logger.debug("IN");
-		List<Integer> filteredFolders = new ArrayList<Integer>();
+		LOGGER.debug("IN");
+		List<Integer> filteredFolders = new ArrayList<>();
 		filteredFolders = getFilteredFoldersList(saveDocumentDTO, filteredFolders);
 		CustomDataDTO customData = saveDocumentDTO.getCustomDataDTO();
 		Assert.assertNotNull(customData, "Custom data object cannot be null");
 
-		BIObject document = createBaseDocument(saveDocumentDTO.getDocumentDTO(), filteredFolders, documentManagementAPI, profile);
+		BIObject document = createBaseDocument(saveDocumentDTO.getDocumentDTO(), filteredFolders, documentManagementAPI,
+				profile);
 		ObjTemplate template = buildDocumentTemplate("template.sbicockpit", customData, null);
-		logger.debug("Template created");
-		logger.debug(template);
+		LOGGER.debug("Template created");
+		LOGGER.debug(template);
 
 		documentManagementAPI.saveDocument(document, template);
-		logger.debug("OUT");
+		LOGGER.debug("OUT");
 		return document.getId();
 	}
 
-	private Integer insertGeoReportDocumentCreatedOnDataset(SourceDatasetDTO sourceDataset, DocumentDTO documentDTO, CustomDataDTO customData,
-			List<Integer> folders, AnalyticalModelDocumentManagementAPI documentManagementAPI) throws EMFUserError, JSONException {
+	private Integer insertGeoReportDocumentCreatedOnDataset(SourceDatasetDTO sourceDataset, DocumentDTO documentDTO,
+			CustomDataDTO customData, List<Integer> folders, AnalyticalModelDocumentManagementAPI documentManagementAPI)
+			throws EMFUserError, JSONException {
 
-		logger.debug("IN");
+		LOGGER.debug("IN");
 
 		String sourceDatasetLabel = null;
 		BIObject document = createBaseDocument(documentDTO, folders, documentManagementAPI, null);
@@ -456,7 +472,8 @@ public class SaveDocumentResource extends AbstractSpagoBIResource {
 		IDataSet ISourceDataset = null;
 		if (sourceDataset != null) {
 			sourceDatasetLabel = sourceDataset.getLabel();
-			Assert.assertNotNull(StringUtilities.isNotEmpty(sourceDatasetLabel), "Source dataset's label cannot be null or empty");
+			Assert.assertNotNull(StringUtils.isNotEmpty(sourceDatasetLabel),
+					"Source dataset's label cannot be null or empty");
 
 			try {
 				ISourceDataset = DAOFactory.getDataSetDAO().loadDataSetByLabel(sourceDatasetLabel);
@@ -475,15 +492,15 @@ public class SaveDocumentResource extends AbstractSpagoBIResource {
 		}
 
 		List<MetadataDTO> metadata = documentDTO.getMetadataDTOs();
-		if (metadata != null && metadata.size() > 0) {
+		if (metadata != null && !metadata.isEmpty()) {
 			documentManagementAPI.saveDocumentMetadataProperties(document, null, metadata);
 		}
 		return document.getId();
 	}
 
 	// TODO consolidate the following 2 methods
-	private BIObject createBaseDocument(DocumentDTO documentDTO, List<Integer> folders, AnalyticalModelDocumentManagementAPI documentManagementAPI,
-			UserProfile profile) throws JSONException, EMFUserError {
+	private BIObject createBaseDocument(DocumentDTO documentDTO, List<Integer> folders,
+			AnalyticalModelDocumentManagementAPI documentManagementAPI, UserProfile profile) throws EMFUserError {
 		BIObject sourceDocument = null;
 		String visibility = "true"; // default value
 		String previewFile = "";
@@ -498,13 +515,14 @@ public class SaveDocumentResource extends AbstractSpagoBIResource {
 			// default
 			// value
 		}
-		return createBaseDocument(documentDTO.getLabel(), documentDTO.getName(), documentDTO.getDescription(), visibility, previewFile, documentDTO.getType(),
-				documentDTO.getEngineId(), folders, profile);
+		return createBaseDocument(documentDTO.getLabel(), documentDTO.getName(), documentDTO.getDescription(),
+				visibility, previewFile, documentDTO.getType(), documentDTO.getEngineId(), folders, profile);
 
 	}
 
-	private BIObject createBaseDocument(String label, String name, String description, String visibility, String previewFile, String type, String engineId,
-			List<Integer> folders, UserProfile profile) throws EMFUserError, JSONException {
+	private BIObject createBaseDocument(String label, String name, String description, String visibility,
+			String previewFile, String type, String engineId, List<Integer> folders, UserProfile profile)
+			throws EMFUserError {
 
 		BIObject document = new BIObject();
 
@@ -515,7 +533,8 @@ public class SaveDocumentResource extends AbstractSpagoBIResource {
 			document.setPreviewFile(previewFile.replace("\"", ""));
 		}
 
-		if (SpagoBIConstants.DOCUMENT_COMPOSITE_TYPE.equalsIgnoreCase(type) || SpagoBIConstants.DASHBOARD_TYPE.equalsIgnoreCase(type)) {
+		if (SpagoBIConstants.DOCUMENT_COMPOSITE_TYPE.equalsIgnoreCase(type)
+				|| SpagoBIConstants.DASHBOARD_TYPE.equalsIgnoreCase(type)) {
 			// gets correct type of the engine for DOCUMENT_COMPOSITION (it's
 			// cockpit and it uses the EXTERNAL engine)
 			Engine engine = null;
@@ -523,7 +542,8 @@ public class SaveDocumentResource extends AbstractSpagoBIResource {
 
 			List<Engine> engines = DAOFactory.getEngineDAO().loadAllEnginesForBIObjectTypeAndTenant(type);
 			if (engines != null && !engines.isEmpty()) {
-				if (SpagoBIConstants.DOCUMENT_COMPOSITE_TYPE.equalsIgnoreCase(type) || SpagoBIConstants.DASHBOARD_TYPE.equalsIgnoreCase(type)) {
+				if (SpagoBIConstants.DOCUMENT_COMPOSITE_TYPE.equalsIgnoreCase(type)
+						|| SpagoBIConstants.DASHBOARD_TYPE.equalsIgnoreCase(type)) {
 					for (Engine e : engines) {
 						try {
 							engineType = DAOFactory.getDomainDAO().loadDomainById(e.getEngineTypeId());
@@ -567,7 +587,7 @@ public class SaveDocumentResource extends AbstractSpagoBIResource {
 		document.setBiObjectTypeID(biObjectTypeID);
 		document.setBiObjectTypeCode(objType.getValueCd());
 
-		if (StringUtilities.isNotEmpty(engineId)) {
+		if (StringUtils.isNotEmpty(engineId)) {
 			engine = DAOFactory.getEngineDAO().loadEngineByID(new Integer(engineId));
 			if (engine == null) {
 				return new JSError().addError("Impossible to load engine with id equals to[" + engineId + "]");
@@ -611,7 +631,8 @@ public class SaveDocumentResource extends AbstractSpagoBIResource {
 
 	private BIObject setDocumentState(BIObject document) throws EMFUserError {
 
-		Domain objState = DAOFactory.getDomainDAO().loadDomainByCodeAndValue(SpagoBIConstants.DOC_STATE, SpagoBIConstants.DOC_STATE_REL);
+		Domain objState = DAOFactory.getDomainDAO().loadDomainByCodeAndValue(SpagoBIConstants.DOC_STATE,
+				SpagoBIConstants.DOC_STATE_REL);
 		Integer stateID = objState.getValueId();
 		document.setStateID(stateID);
 		document.setStateCode(objState.getValueCd());
@@ -629,9 +650,11 @@ public class SaveDocumentResource extends AbstractSpagoBIResource {
 		}
 		Domain objState = null;
 		if (isOnlyDevRole) {
-			objState = DAOFactory.getDomainDAO().loadDomainByCodeAndValue(SpagoBIConstants.DOC_STATE, SpagoBIConstants.DOC_STATE_DEV);
+			objState = DAOFactory.getDomainDAO().loadDomainByCodeAndValue(SpagoBIConstants.DOC_STATE,
+					SpagoBIConstants.DOC_STATE_DEV);
 		} else
-			objState = DAOFactory.getDomainDAO().loadDomainByCodeAndValue(SpagoBIConstants.DOC_STATE, SpagoBIConstants.DOC_STATE_REL);
+			objState = DAOFactory.getDomainDAO().loadDomainByCodeAndValue(SpagoBIConstants.DOC_STATE,
+					SpagoBIConstants.DOC_STATE_REL);
 		Integer stateID = objState.getValueId();
 		document.setStateID(stateID);
 		document.setStateCode(objState.getValueCd());
@@ -651,11 +674,11 @@ public class SaveDocumentResource extends AbstractSpagoBIResource {
 		return onlyDev;
 	}
 
-	private BIObject setFolders(BIObject document, List<Integer> functsList) throws JSONException {
+	private BIObject setFolders(BIObject document, List<Integer> functsList) {
 
 		List<Integer> folders;
 
-		folders = new ArrayList<Integer>();
+		folders = new ArrayList<>();
 
 		for (Integer id : functsList) {
 			if (id.intValue() == -1) {
@@ -680,17 +703,19 @@ public class SaveDocumentResource extends AbstractSpagoBIResource {
 		return document;
 	}
 
-	private ObjTemplate buildDocumentTemplate(String templateName, CustomDataDTO customDataDTO, BIObject sourceDocument) throws JSONException {
+	private ObjTemplate buildDocumentTemplate(String templateName, CustomDataDTO customDataDTO, BIObject sourceDocument)
+			throws JSONException {
 		String templateContent = customDataDTO.getTemplateContentAsString();
-		logger.debug("templateContent: " + templateContent);
+		LOGGER.debug("templateContent: " + templateContent);
 
 		String modelName = customDataDTO.getModelName();
-		logger.debug("modelName: " + modelName);
+		LOGGER.debug("modelName: " + modelName);
 
 		return buildDocumentTemplate(templateName, templateContent, sourceDocument, modelName);
 	}
 
-	private ObjTemplate buildDocumentTemplate(String templateName, String templateContent, BIObject sourceDocument, String modelName) {
+	private ObjTemplate buildDocumentTemplate(String templateName, String templateContent, BIObject sourceDocument,
+			String modelName) {
 
 		ObjTemplate template = null;
 
@@ -699,7 +724,7 @@ public class SaveDocumentResource extends AbstractSpagoBIResource {
 		UserProfile userProfile = this.getUserProfile();
 		String templateAuthor = userProfile.getUserId().toString();
 
-		if (StringUtilities.isNotEmpty(templateContent)) {
+		if (StringUtils.isNotEmpty(templateContent)) {
 			template = documentTemplateBuilder.buildDocumentTemplate(templateName, templateAuthor, templateContent);
 		} else {
 			throw new SpagoBIServiceException("buildDocumentTemplate", "sbi.document.saveError");
@@ -708,127 +733,21 @@ public class SaveDocumentResource extends AbstractSpagoBIResource {
 		return template;
 	}
 
-	// ==============================================================
-	// TODO refactor the following code...
-	// ==============================================================
+	private List<Integer> filterFolders(List<FolderDTO> folders) {
+		List<Integer> toReturn = new ArrayList<>();
 
-	// protected byte[] getTemplateContent() throws Exception {
-	// logger.debug("OUT");
-	// String wkDefinition = getAttributeAsString(OBJECT_WK_DEFINITION);
-	// String query = getAttributeAsString(OBJECT_QUERY);
-	// JSONObject smartFilterValues = getAttributeAsJSONObject(FORMVALUES);
-	// String smartFilterValuesString = null;
-	// if (smartFilterValues != null) {
-	// smartFilterValuesString = smartFilterValues.toString();
-	// }
-	// logger.debug("Base query definition : " + query);
-	// logger.debug("Smart filter values : " + smartFilterValues);
-	// ExecutionInstance executionInstance = getContext().getExecutionInstance(ExecutionInstance.class.getName());
-	// BIObject biobj = executionInstance.getBIObject();
-	// ObjTemplate qbETemplate = biobj.getActiveTemplate();
-	// String templCont = new String(qbETemplate.getContent());
-	// logger.debug("OUT");
-	// return content;
-	// }
-	//
-	// protected ObjTemplate createNewTemplate(byte[] content) {
-	// logger.debug("IN");
-	// ObjTemplate objTemp = new ObjTemplate();
-	// objTemp.setContent(content);
-	// UserProfile userProfile = (UserProfile) this.getUserProfile();
-	// objTemp.setCreationUser(userProfile.getUserId().toString());
-	// objTemp.setDimension(Long.toString(content.length / 1000) + " KByte");
-	// logger.debug("OUT");
-	// return objTemp;
-	// }
-
-//	OLD METHOD TO DELETE ALBNALE
-//	private JSONArray filterFolders(JSONArray foldersJSON) throws JSONException {
-//		JSONArray toReturn = new JSONArray();
-//
-//		Set<Integer> folderIds = new HashSet<Integer>();
-//		for (int i = 0; i < foldersJSON.length(); i++) {
-//			int id = foldersJSON.getInt(i);
-//			Integer folderId = new Integer(id);
-//			if (!folderIds.contains(folderId)) {
-//				toReturn.put(id);
-//				folderIds.add(new Integer(folderId));
-//			} else {
-//				logger.debug("Folder filtered out because duplicate: [" + id + "]");
-//			}
-//		}
-//
-//		return toReturn;
-//	}
-
-	private List<Integer> filterFolders(List<FolderDTO> folders) throws JSONException {
-		List<Integer> toReturn = new ArrayList<Integer>();
-
-		Set<Integer> folderIds = new HashSet<Integer>();
+		Set<Integer> folderIds = new HashSet<>();
 		for (FolderDTO folderDTO : folders) {
 			Integer id = Integer.valueOf(folderDTO.getId());
 			if (!folderIds.contains(id)) {
 				toReturn.add(id);
 				folderIds.add(id);
 			} else {
-				logger.debug("Folder filtered out because duplicate: [" + id + "]");
+				LOGGER.debug("Folder filtered out because duplicate: [" + id + "]");
 			}
 		}
 
 		return toReturn;
 	}
-
-//	private static void insertCockpitRelationsWithDataset(String template, BIObject obj) throws JSONException, EMFUserError {
-//
-//		// 0. Get the engine. Only engines with 1:N relation with datasets are managed.
-//		// 09.05.2016 : for the moment only the cockpit engine is multidatasets.
-//		Engine engineObj = obj.getEngine();
-//		if (!engineObj.getLabel().toLowerCase().contains("cockpit")) {
-//			logger.debug("The engine [" + engineObj.getLabel() + "] cannot use multiple datasets.");
-//			return;
-//		}
-//		String driverName = engineObj.getDriverName();
-//		if (driverName != null && !"".equals(driverName)) {
-//			try {
-//				IEngineDriver driver = (IEngineDriver) Class.forName(driverName).newInstance();
-//				ArrayList<String> datasetsAssociated = driver.getDatasetAssociated(template.getBytes());
-//				if (datasetsAssociated != null) {
-//					HashMap<Integer, Boolean> lstDsInsertedForObj = new HashMap<Integer, Boolean>();
-//					for (Iterator<String> iterator = datasetsAssociated.iterator(); iterator.hasNext();) {
-//						String dsLabel = iterator.next();
-//						logger.debug("Insert relation for dataset with id [" + dsLabel + "]");
-//						VersionedDataSet ds = ((VersionedDataSet) DAOFactory.getDataSetDAO().loadDataSetByLabel(dsLabel));
-//						// insert only relations with new ds
-//						if (lstDsInsertedForObj.get(ds.getId()) != null) {
-//							continue;
-//						}
-//
-//						String dsOrganization = ds.getOrganization();
-//						logger.debug("Dataset organization used for insert relation is: " + dsOrganization);
-//						Integer dsVersion = ds.getVersionNum();
-//						logger.debug("Dataset version used for insert relation is: " + dsVersion);
-//
-//						// creating relation object
-//						SbiMetaObjDs relObjDs = new SbiMetaObjDs();
-//						SbiMetaObjDsId relObjDsId = new SbiMetaObjDsId();
-//						relObjDsId.setDsId(ds.getId());
-//						relObjDsId.setOrganization(dsOrganization);
-//						relObjDsId.setVersionNum(dsVersion);
-//						relObjDsId.setObjId(obj.getId());
-//						relObjDs.setId(relObjDsId);
-//
-//						DAOFactory.getSbiObjDsDAO().insertObjDs(relObjDs);
-//						lstDsInsertedForObj.put(ds.getId(), true);
-//					}
-//				}
-//			} catch (Exception e) {
-//				e.printStackTrace();
-//				throw new SpagoBIRuntimeException("Driver not found: " + driverName, e);
-//			}
-//
-//		} else {
-//			logger.debug("The document doesn't use any dataset! ");
-//		}
-//	}
 
 }

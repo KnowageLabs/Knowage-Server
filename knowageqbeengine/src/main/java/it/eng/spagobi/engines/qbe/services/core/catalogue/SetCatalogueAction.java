@@ -73,7 +73,6 @@ import it.eng.qbe.statement.graph.serializer.ModelObjectInternationalizedSeriali
 import it.eng.qbe.statement.graph.serializer.RelationJSONSerializer;
 import it.eng.spago.base.SourceBean;
 import it.eng.spagobi.commons.bo.UserProfile;
-import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.engines.qbe.QbeEngineConfig;
 import it.eng.spagobi.engines.qbe.services.core.AbstractQbeEngineAction;
 import it.eng.spagobi.utilities.StringUtils;
@@ -132,8 +131,8 @@ public class SetCatalogueAction extends AbstractQbeEngineAction {
 		String roleSelectionFromTheSavedQuery = null;
 		boolean isDierctlyExecutable = false;
 		QueryGraph queryGraph = null; // the query graph (the graph that
-										// involves all the entities of the
-										// query)
+										 // involves all the entities of the
+										 // query)
 		String ambiguousWarinig = null;
 		boolean forceReturnGraph = false;
 
@@ -211,15 +210,16 @@ public class SetCatalogueAction extends AbstractQbeEngineAction {
 				new TimeAggregationHandler(getDataSource()).handleTimeFilters(query);
 			}
 
-			Query filteredQuery = accessModality.getFilteredStatement(query, this.getDataSource(), userProfile.getUserAttributes());
+			Query filteredQuery = accessModality.getFilteredStatement(query, this.getDataSource(),
+					userProfile.getUserAttributes());
 
 			// loading the ambiguous fields
-			Set<ModelFieldPaths> ambiguousFields = new HashSet<ModelFieldPaths>();
+			Set<ModelFieldPaths> ambiguousFields = new HashSet<>();
 			Map<IModelField, Set<IQueryField>> modelFieldsMap = filteredQuery.getQueryFields(getDataSource());
 			Set<IModelField> modelFields = modelFieldsMap.keySet();
 			Set<IModelEntity> modelEntities = Query.getQueryEntities(modelFields);
 
-			Map<String, Object> pathFiltersMap = new HashMap<String, Object>();
+			Map<String, Object> pathFiltersMap = new HashMap<>();
 			pathFiltersMap.put(CubeFilter.PROPERTY_MODEL_STRUCTURE, getDataSource().getModelStructure());
 			pathFiltersMap.put(CubeFilter.PROPERTY_ENTITIES, modelEntities);
 
@@ -236,7 +236,8 @@ public class SetCatalogueAction extends AbstractQbeEngineAction {
 					// false).getRootEntitiesGraph();
 					ambiguousFields = getAmbiguousFields(filteredQuery, modelEntities, modelFieldsMap);
 					// filter paths
-					GraphManager.filterPaths(ambiguousFields, pathFiltersMap, (QbeEngineConfig.getInstance().getPathsFiltersImpl()));
+					GraphManager.filterPaths(ambiguousFields, pathFiltersMap,
+							(QbeEngineConfig.getInstance().getPathsFiltersImpl()));
 
 					boolean removeSubPaths = QbeEngineConfig.getInstance().isRemoveSubpaths();
 					if (removeSubPaths) {
@@ -244,8 +245,8 @@ public class SetCatalogueAction extends AbstractQbeEngineAction {
 						GraphUtilities.cleanSubPaths(ambiguousFields, orderDirection);
 					}
 
-					GraphManager.getDefaultCoverGraphInstance(QbeEngineConfig.getInstance().getDefaultCoverImpl()).applyDefault(ambiguousFields, queryGraph,
-							modelEntities);
+					GraphManager.getDefaultCoverGraphInstance(QbeEngineConfig.getInstance().getDefaultCoverImpl())
+							.applyDefault(ambiguousFields, queryGraph, modelEntities);
 					isDierctlyExecutable = GraphManager.isDirectlyExecutable(modelEntities, queryGraph);
 				} else {
 					// no ambigous fields found
@@ -254,17 +255,20 @@ public class SetCatalogueAction extends AbstractQbeEngineAction {
 			} else {// saved query
 				ambiguousFields = getAmbiguousFields(filteredQuery, modelEntities, modelFieldsMap);
 				// filter paths
-				GraphManager.filterPaths(ambiguousFields, pathFiltersMap, (QbeEngineConfig.getInstance().getPathsFiltersImpl()));
+				GraphManager.filterPaths(ambiguousFields, pathFiltersMap,
+						(QbeEngineConfig.getInstance().getPathsFiltersImpl()));
 				applySavedGraphPaths(oldQueryGraph, ambiguousFields);
 				queryGraph = oldQueryGraph;
 			}
 
 			if (queryGraph != null) {
-				boolean valid = GraphManager.getGraphValidatorInstance(QbeEngineConfig.getInstance().getGraphValidatorImpl()).isValid(queryGraph,
-						modelEntities);
+				boolean valid = GraphManager
+						.getGraphValidatorInstance(QbeEngineConfig.getInstance().getGraphValidatorImpl())
+						.isValid(queryGraph, modelEntities);
 				logger.debug("QueryGraph valid = " + valid);
 				if (!valid) {
-					throw new SpagoBIEngineServiceException(getActionName(), "error.mesage.description.relationship.not.enough");
+					throw new SpagoBIEngineServiceException(getActionName(),
+							"error.mesage.description.relationship.not.enough");
 				}
 			}
 
@@ -277,7 +281,8 @@ public class SetCatalogueAction extends AbstractQbeEngineAction {
 			@SuppressWarnings("deprecation")
 			SimpleModule simpleModule = new SimpleModule("SimpleModule", new Version(1, 0, 0, null));
 			simpleModule.addSerializer(Relationship.class, new RelationJSONSerializer(getDataSource(), getLocale()));
-			simpleModule.addSerializer(ModelObjectI18n.class, new ModelObjectInternationalizedSerializer(getDataSource(), getLocale()));
+			simpleModule.addSerializer(ModelObjectI18n.class,
+					new ModelObjectInternationalizedSerializer(getDataSource(), getLocale()));
 			mapper.registerModule(simpleModule);
 
 			String serialized = this.getAttributeAsString(AMBIGUOUS_FIELDS_PATHS);
@@ -333,7 +338,8 @@ public class SetCatalogueAction extends AbstractQbeEngineAction {
 		} catch (Throwable t) {
 			errorHitsMonitor = MonitorFactory.start("QbeEngine.errorHits");
 			errorHitsMonitor.stop();
-			throw SpagoBIEngineServiceExceptionHandler.getInstance().getWrappedException(getActionName(), getEngineInstance(), t);
+			throw SpagoBIEngineServiceExceptionHandler.getInstance().getWrappedException(getActionName(),
+					getEngineInstance(), t);
 		} finally {
 			if (totalTimeMonitor != null)
 				totalTimeMonitor.stop();
@@ -380,13 +386,16 @@ public class SetCatalogueAction extends AbstractQbeEngineAction {
 				// calculate the default cover graph
 				logger.debug("Calculating the default graph");
 				IModelStructure modelStructure = getDataSource().getModelStructure();
-				RootEntitiesGraph rootEntitiesGraph = modelStructure.getRootEntitiesGraph(getDataSource().getConfiguration().getModelName(), false);
+				RootEntitiesGraph rootEntitiesGraph = modelStructure
+						.getRootEntitiesGraph(getDataSource().getConfiguration().getModelName(), false);
 				Graph<IModelEntity, Relationship> graph = rootEntitiesGraph.getRootEntitiesGraph();
 				logger.debug("UndirectedGraph retrieved");
 
 				Set<IModelEntity> entities = query.getQueryEntities(getDataSource());
 				if (entities.size() > 0) {
-					queryGraph = GraphManager.getDefaultCoverGraphInstance(QbeEngineConfig.getInstance().getDefaultCoverImpl()).getCoverGraph(graph, entities);
+					queryGraph = GraphManager
+							.getDefaultCoverGraphInstance(QbeEngineConfig.getInstance().getDefaultCoverImpl())
+							.getCoverGraph(graph, entities);
 				}
 			} else {
 				query.setQueryGraph(queryGraph);
@@ -408,14 +417,16 @@ public class SetCatalogueAction extends AbstractQbeEngineAction {
 
 		PathInspector pi = new PathInspector(queryGraph, queryGraph.vertexSet());
 		Map<IModelEntity, Set<GraphPath<IModelEntity, Relationship>>> paths = pi.getAllEntitiesPathsMap();
-		(GraphManager.getDefaultCoverGraphInstance(QbeEngineConfig.getInstance().getDefaultCoverImpl())).applyDefault(paths, ambiguousFields);
+		(GraphManager.getDefaultCoverGraphInstance(QbeEngineConfig.getInstance().getDefaultCoverImpl()))
+				.applyDefault(paths, ambiguousFields);
 
 	}
 
 	public void applySelectedRoles(String serializedRoles, Set<IModelEntity> modelEntities, Query query) {
 		cleanFieldsRolesMapInEntity(query);
 		try {
-			if (serializedRoles != null && !serializedRoles.trim().equals("{}") && !serializedRoles.trim().equals("[]") && !serializedRoles.trim().equals("")) {
+			if (serializedRoles != null && !serializedRoles.trim().equals("{}") && !serializedRoles.trim().equals("[]")
+					&& !serializedRoles.trim().equals("")) {
 				query.initFieldsRolesMapInEntity(getDataSource());
 			}
 
@@ -425,7 +436,8 @@ public class SetCatalogueAction extends AbstractQbeEngineAction {
 		}
 	}
 
-	public Set<ModelFieldPaths> getAmbiguousFields(Query query, Set<IModelEntity> modelEntities, Map<IModelField, Set<IQueryField>> modelFieldsMap) {
+	public Set<ModelFieldPaths> getAmbiguousFields(Query query, Set<IModelEntity> modelEntities,
+			Map<IModelField, Set<IQueryField>> modelFieldsMap) {
 		logger.debug("IN");
 
 		try {
@@ -435,13 +447,15 @@ public class SetCatalogueAction extends AbstractQbeEngineAction {
 			Set<IModelField> modelFields = modelFieldsMap.keySet();
 
 			Assert.assertNotNull(modelFields, "No field specified in teh query");
-			Set<ModelFieldPaths> ambiguousModelField = new HashSet<ModelFieldPaths>();
+			Set<ModelFieldPaths> ambiguousModelField = new HashSet<>();
 			if (modelFields != null) {
 
-				Graph<IModelEntity, Relationship> graph = getDataSource().getModelStructure().getRootEntitiesGraph(modelName, false).getRootEntitiesGraph();
+				Graph<IModelEntity, Relationship> graph = getDataSource().getModelStructure()
+						.getRootEntitiesGraph(modelName, false).getRootEntitiesGraph();
 
 				PathInspector pathInspector = new PathInspector(graph, modelEntities);
-				Map<IModelEntity, Set<GraphPath<IModelEntity, Relationship>>> ambiguousMap = pathInspector.getAmbiguousEntitiesAllPathsMap();
+				Map<IModelEntity, Set<GraphPath<IModelEntity, Relationship>>> ambiguousMap = pathInspector
+						.getAmbiguousEntitiesAllPathsMap();
 
 				Iterator<IModelField> modelFieldsIter = modelFields.iterator();
 
@@ -454,7 +468,8 @@ public class SetCatalogueAction extends AbstractQbeEngineAction {
 						if (queryFields != null) {
 							Iterator<IQueryField> queryFieldsIter = queryFields.iterator();
 							while (queryFieldsIter.hasNext()) {
-								ambiguousModelField.add(new ModelFieldPaths(queryFieldsIter.next(), iModelField, paths));
+								ambiguousModelField
+										.add(new ModelFieldPaths(queryFieldsIter.next(), iModelField, paths));
 							}
 						}
 					}
@@ -471,10 +486,11 @@ public class SetCatalogueAction extends AbstractQbeEngineAction {
 	}
 
 	private QueryGraph getQueryGraphFromRequest(Query query, Set<IModelEntity> modelEntities) {
-		List<Relationship> toReturn = new ArrayList<Relationship>();
+		List<Relationship> toReturn = new ArrayList<>();
 		IModelStructure modelStructure = getDataSource().getModelStructure();
 		logger.debug("IModelStructure retrieved");
-		RootEntitiesGraph rootEntitiesGraph = modelStructure.getRootEntitiesGraph(getDataSource().getConfiguration().getModelName(), false);
+		RootEntitiesGraph rootEntitiesGraph = modelStructure
+				.getRootEntitiesGraph(getDataSource().getConfiguration().getModelName(), false);
 		logger.debug("RootEntitiesGraph retrieved");
 
 		Set<Relationship> relationships = rootEntitiesGraph.getRelationships();
@@ -483,11 +499,12 @@ public class SetCatalogueAction extends AbstractQbeEngineAction {
 		LogMF.debug(logger, AMBIGUOUS_FIELDS_PATHS + "is {0}", serialized);
 
 		List<ModelFieldPaths> list = null;
-		if (StringUtilities.isNotEmpty(serialized)) {
+		if (org.apache.commons.lang3.StringUtils.isNotEmpty(serialized)) {
 			try {
 				list = deserializeList(serialized, relationships, modelStructure, query);
 			} catch (FieldNotAttendInTheQuery e1) {
-				logger.debug("The query has been updated and in the previous ambiguos paths selection there is some field don't exist in teh query");
+				logger.debug(
+						"The query has been updated and in the previous ambiguos paths selection there is some field don't exist in teh query");
 				return null;
 			} catch (SerializationException e) {
 				throw new SpagoBIEngineRuntimeException("Error while deserializing list of relationships", e);
@@ -559,7 +576,7 @@ public class SetCatalogueAction extends AbstractQbeEngineAction {
 	private Query getCurrentQuery() {
 		String queryId = this.getAttributeAsString(CURRENT_QUERY_ID);
 		Query query = null;
-		if (StringUtilities.isNotEmpty(queryId)) {
+		if (org.apache.commons.lang3.StringUtils.isNotEmpty(queryId)) {
 			query = this.getEngineInstance().getQueryCatalogue().getQuery(queryId);
 		}
 		return query;
@@ -567,15 +584,17 @@ public class SetCatalogueAction extends AbstractQbeEngineAction {
 
 	private Query deserializeQuery(JSONObject queryJSON) throws SerializationException, JSONException {
 		// queryJSON.put("expression", queryJSON.get("filterExpression"));
-		return SerializerFactory.getDeserializer("application/json").deserializeQuery(queryJSON.toString(), getEngineInstance().getDataSource());
+		return SerializerFactory.getDeserializer("application/json").deserializeQuery(queryJSON.toString(),
+				getEngineInstance().getDataSource());
 	}
 
-	public static List<ModelFieldPaths> deserializeList(String serialized, Collection<Relationship> relationShips, IModelStructure modelStructure, Query query)
-			throws SerializationException {
+	public static List<ModelFieldPaths> deserializeList(String serialized, Collection<Relationship> relationShips,
+			IModelStructure modelStructure, Query query) throws SerializationException {
 		ObjectMapper mapper = new ObjectMapper();
 		@SuppressWarnings("deprecation")
 		SimpleModule simpleModule = new SimpleModule("SimpleModule", new Version(1, 0, 0, null));
-		simpleModule.addDeserializer(ModelFieldPaths.class, new ModelFieldPathsJSONDeserializer(relationShips, modelStructure, query));
+		simpleModule.addDeserializer(ModelFieldPaths.class,
+				new ModelFieldPathsJSONDeserializer(relationShips, modelStructure, query));
 		mapper.registerModule(simpleModule);
 		TypeReference<List<ModelFieldPaths>> type = new TypeReference<List<ModelFieldPaths>>() {
 		};
@@ -593,7 +612,8 @@ public class SetCatalogueAction extends AbstractQbeEngineAction {
 	public String getValueBounded(String operandValueToBound, String operandType) {
 
 		String boundedValue = operandValueToBound;
-		if (operandType.equalsIgnoreCase("STRING") || operandType.equalsIgnoreCase("CHARACTER") || operandType.equalsIgnoreCase("java.lang.String")
+		if (operandType.equalsIgnoreCase("STRING") || operandType.equalsIgnoreCase("CHARACTER")
+				|| operandType.equalsIgnoreCase("java.lang.String")
 				|| operandType.equalsIgnoreCase("java.lang.Character")) {
 
 			// if the value is already surrounded by quotes, does not neither
@@ -604,7 +624,8 @@ public class SetCatalogueAction extends AbstractQbeEngineAction {
 				operandValueToBound = StringUtils.escapeQuotes(operandValueToBound);
 				return StringUtils.bound(operandValueToBound, "'");
 			}
-		} else if (operandType.equalsIgnoreCase("DATE") || operandType.equalsIgnoreCase("java.sql.date") || operandType.equalsIgnoreCase("java.util.date")) {
+		} else if (operandType.equalsIgnoreCase("DATE") || operandType.equalsIgnoreCase("java.sql.date")
+				|| operandType.equalsIgnoreCase("java.util.date")) {
 			boundedValue = parseDate(operandValueToBound);
 		} else if (operandType.equalsIgnoreCase("TIMESTAMP") || operandType.equalsIgnoreCase("java.sql.TIMESTAMP")) {
 			boundedValue = parseTimestamp(operandValueToBound);
@@ -624,8 +645,8 @@ public class SetCatalogueAction extends AbstractQbeEngineAction {
 
 		String toReturn = date;
 
-		it.eng.spagobi.tools.datasource.bo.IDataSource connection = (it.eng.spagobi.tools.datasource.bo.IDataSource) this.getEngineInstance().getDataSource()
-				.getConfiguration().loadDataSourceProperties().get("datasource");
+		it.eng.spagobi.tools.datasource.bo.IDataSource connection = (it.eng.spagobi.tools.datasource.bo.IDataSource) this
+				.getEngineInstance().getDataSource().getConfiguration().loadDataSourceProperties().get("datasource");
 
 		String dialect = connection.getHibDialectClass();
 
@@ -682,9 +703,8 @@ public class SetCatalogueAction extends AbstractQbeEngineAction {
 				}
 			} else if (dialect.equalsIgnoreCase(QuerySerializationConstants.DIALECT_TERADATA)) {
 				/*
-				 * Unfortunately we cannot use neither CAST(" + dateStr + " AS DATE FORMAT 'dd/mm/yyyy') nor CAST((" + dateStr + " (Date,Format 'dd/mm/yyyy'))
-				 * As Date) because Hibernate does not recognize (and validate) those SQL functions. Therefore we must use a predefined date format
-				 * (yyyy-MM-dd).
+				 * Unfortunately we cannot use neither CAST(" + dateStr + " AS DATE FORMAT 'dd/mm/yyyy') nor CAST((" + dateStr + " (Date,Format 'dd/mm/yyyy')) As Date) because
+				 * Hibernate does not recognize (and validate) those SQL functions. Therefore we must use a predefined date format (yyyy-MM-dd).
 				 */
 				try {
 					DateFormat dateFormat;
@@ -719,8 +739,8 @@ public class SetCatalogueAction extends AbstractQbeEngineAction {
 
 		String toReturn = date;
 
-		it.eng.spagobi.tools.datasource.bo.IDataSource connection = (it.eng.spagobi.tools.datasource.bo.IDataSource) this.getEngineInstance().getDataSource()
-				.getConfiguration().loadDataSourceProperties().get("datasource");
+		it.eng.spagobi.tools.datasource.bo.IDataSource connection = (it.eng.spagobi.tools.datasource.bo.IDataSource) this
+				.getEngineInstance().getDataSource().getConfiguration().loadDataSourceProperties().get("datasource");
 
 		String dialect = connection.getHibDialectClass();
 
@@ -777,9 +797,8 @@ public class SetCatalogueAction extends AbstractQbeEngineAction {
 				}
 			} else if (dialect.equalsIgnoreCase(QuerySerializationConstants.DIALECT_TERADATA)) {
 				/*
-				 * Unfortunately we cannot use neither CAST(" + dateStr + " AS DATE FORMAT 'dd/mm/yyyy') nor CAST((" + dateStr + " (Date,Format 'dd/mm/yyyy'))
-				 * As Date) because Hibernate does not recognize (and validate) those SQL functions. Therefore we must use a predefined date format
-				 * (yyyy-MM-dd).
+				 * Unfortunately we cannot use neither CAST(" + dateStr + " AS DATE FORMAT 'dd/mm/yyyy') nor CAST((" + dateStr + " (Date,Format 'dd/mm/yyyy')) As Date) because
+				 * Hibernate does not recognize (and validate) those SQL functions. Therefore we must use a predefined date format (yyyy-MM-dd).
 				 */
 				try {
 					DateFormat dateFormat;

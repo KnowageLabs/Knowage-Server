@@ -31,6 +31,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormatter;
@@ -50,7 +51,6 @@ import it.eng.spagobi.analiticalmodel.functionalitytree.bo.LowFunctionality;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.dao.DAOFactory;
-import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.commons.utilities.UserUtilities;
 import it.eng.spagobi.services.scheduler.service.ISchedulerServiceSupplier;
 import it.eng.spagobi.services.scheduler.service.SchedulerServiceSupplierFactory;
@@ -168,7 +168,8 @@ public class SchedulerUtilitiesV2 {
 
 		JobTrigger jobTrigger = new JobTrigger();
 		ISchedulerServiceSupplier schedulerService = SchedulerServiceSupplierFactory.getSupplier();
-		String jobDetail = schedulerService.getJobDefinition((String) jsonObject.opt(JobTrigger.JOB_NAME), (String) jsonObject.opt(JobTrigger.JOB_GROUP));
+		String jobDetail = schedulerService.getJobDefinition((String) jsonObject.opt(JobTrigger.JOB_NAME),
+				(String) jsonObject.opt(JobTrigger.JOB_GROUP));
 		SourceBean jobDetailSB = SchedulerUtilities.getSBFromWebServiceResponse(jobDetail);
 		if (jobDetailSB == null) {
 			throw new Exception("Cannot recover job " + (String) jsonObject.opt(JobTrigger.JOB_NAME));
@@ -288,7 +289,7 @@ public class SchedulerUtilitiesV2 {
 
 		for (String uniqueDispatchContextName : uniqueDispatchContextNames) {
 			DispatchContext dispatchContext = saveOptions.get(uniqueDispatchContextName);
-			StringBuffer message = new StringBuffer();
+			StringBuilder message = new StringBuilder();
 
 			JSONObject obj = new JSONObject();
 			obj.put("labelId", uniqueDispatchContextName);
@@ -313,7 +314,8 @@ public class SchedulerUtilitiesV2 {
 		return j;
 	}
 
-	public static StringBuffer getSchedulingMessage(JobTrigger trigg, boolean runImmediately, IEngUserProfile profile) throws EMFUserError, JSONException {
+	public static StringBuffer getSchedulingMessage(JobTrigger trigg, boolean runImmediately, IEngUserProfile profile)
+			throws EMFUserError, JSONException {
 		StringBuffer message = new StringBuffer();
 		JobInfo jobInfo = trigg.getJobInfo();
 
@@ -374,8 +376,8 @@ public class SchedulerUtilitiesV2 {
 
 	// Serialization of JobTrigger save
 	// parameter----------------------------------------------------------------------------------------------------------------------------------------------------------------
-	public static void serializeSaveParameterOptions(StringBuffer message, JobTrigger trigg, boolean runImmediately, IEngUserProfile profile)
-			throws EMFUserError {
+	public static void serializeSaveParameterOptions(StringBuffer message, JobTrigger trigg, boolean runImmediately,
+			IEngUserProfile profile) throws EMFUserError {
 
 		message.append("   <PARAMETERS>");
 
@@ -392,9 +394,11 @@ public class SchedulerUtilitiesV2 {
 			saveOptString += serializeSaveAsJavaClassOptions(dispatchContext);
 			saveOptString += serializeSaveAsDocumentOptions(dispatchContext);
 			saveOptString += serializeSaveAsMailOptions(dispatchContext);
-			saveOptString += serializeSaveAsDistributionListOptions(dispatchContext, uniqueDispatchContextName, trigg, runImmediately, profile);
+			saveOptString += serializeSaveAsDistributionListOptions(dispatchContext, uniqueDispatchContextName, trigg,
+					runImmediately, profile);
 
-			message.append("   	   <PARAMETER name=\"biobject_id_" + uniqueDispatchContextName + "\" value=\"" + saveOptString + "\" />");
+			message.append("   	   <PARAMETER name=\"biobject_id_" + uniqueDispatchContextName + "\" value=\""
+					+ saveOptString + "\" />");
 		}
 
 		message.append("   </PARAMETERS>");
@@ -408,10 +412,12 @@ public class SchedulerUtilitiesV2 {
 			if ((dispatchContext.getSnapshotName() != null) && !dispatchContext.getSnapshotName().trim().equals("")) {
 				saveOptString += "snapshotname=" + dispatchContext.getSnapshotName() + "%26";
 			}
-			if ((dispatchContext.getSnapshotDescription() != null) && !dispatchContext.getSnapshotDescription().trim().equals("")) {
+			if ((dispatchContext.getSnapshotDescription() != null)
+					&& !dispatchContext.getSnapshotDescription().trim().equals("")) {
 				saveOptString += "snapshotdescription=" + dispatchContext.getSnapshotDescription() + "%26";
 			}
-			if ((dispatchContext.getSnapshotHistoryLength() != null) && !dispatchContext.getSnapshotHistoryLength().trim().equals("")) {
+			if ((dispatchContext.getSnapshotHistoryLength() != null)
+					&& !dispatchContext.getSnapshotHistoryLength().trim().equals("")) {
 				saveOptString += "snapshothistorylength=" + dispatchContext.getSnapshotHistoryLength() + "%26";
 			}
 		}
@@ -437,10 +443,10 @@ public class SchedulerUtilitiesV2 {
 
 		if (dispatchContext.isFileSystemDispatchChannelEnabled()) {
 			saveOptString += "saveasfile=true%26";
-			if (StringUtilities.isNotEmpty(dispatchContext.getDestinationFolder())) {
+			if (StringUtils.isNotEmpty(dispatchContext.getDestinationFolder())) {
 				saveOptString += "destinationfolder=" + dispatchContext.getDestinationFolder() + "%26";
 			}
-			if (StringUtilities.isNotEmpty(dispatchContext.getDestinationFolder())) {
+			if (StringUtils.isNotEmpty(dispatchContext.getDestinationFolder())) {
 				saveOptString += "destinationfolder=" + dispatchContext.getDestinationFolder() + "%26";
 			}
 			if (dispatchContext.isDestinationFolderRelativeToResourceFolder()) {
@@ -478,23 +484,29 @@ public class SchedulerUtilitiesV2 {
 			if ((dispatchContext.getDocumentName() != null) && !dispatchContext.getDocumentName().trim().equals("")) {
 				saveOptString += "documentname=" + dispatchContext.getDocumentName() + "%26";
 			}
-			if ((dispatchContext.getDocumentDescription() != null) && !dispatchContext.getDocumentDescription().trim().equals("")) {
+			if ((dispatchContext.getDocumentDescription() != null)
+					&& !dispatchContext.getDocumentDescription().trim().equals("")) {
 				saveOptString += "documentdescription=" + dispatchContext.getDocumentDescription() + "%26";
 			}
-			if (dispatchContext.isUseFixedFolder() && dispatchContext.getFoldersTo() != null && !dispatchContext.getFoldersTo().trim().equals("")) {
+			if (dispatchContext.isUseFixedFolder() && dispatchContext.getFoldersTo() != null
+					&& !dispatchContext.getFoldersTo().trim().equals("")) {
 				saveOptString += "foldersTo=" + dispatchContext.getFoldersTo() + "%26";
 			}
 			if (dispatchContext.isUseFolderDataSet() && dispatchContext.getDataSetFolderLabel() != null
 					&& !dispatchContext.getDataSetFolderLabel().trim().equals("")) {
 				saveOptString += "datasetFolderLabel=" + dispatchContext.getDataSetFolderLabel() + "%26";
-				if (dispatchContext.getDataSetFolderParameterLabel() != null && !dispatchContext.getDataSetFolderParameterLabel().trim().equals("")) {
-					saveOptString += "datasetFolderParameterLabel=" + dispatchContext.getDataSetFolderParameterLabel() + "%26";
+				if (dispatchContext.getDataSetFolderParameterLabel() != null
+						&& !dispatchContext.getDataSetFolderParameterLabel().trim().equals("")) {
+					saveOptString += "datasetFolderParameterLabel=" + dispatchContext.getDataSetFolderParameterLabel()
+							+ "%26";
 				}
 			}
-			if ((dispatchContext.getDocumentHistoryLength() != null) && !dispatchContext.getDocumentHistoryLength().trim().equals("")) {
+			if ((dispatchContext.getDocumentHistoryLength() != null)
+					&& !dispatchContext.getDocumentHistoryLength().trim().equals("")) {
 				saveOptString += "documenthistorylength=" + dispatchContext.getDocumentHistoryLength() + "%26";
 			}
-			if ((dispatchContext.getFunctionalityIds() != null) && !dispatchContext.getFunctionalityIds().trim().equals("")) {
+			if ((dispatchContext.getFunctionalityIds() != null)
+					&& !dispatchContext.getFunctionalityIds().trim().equals("")) {
 				saveOptString += "functionalityids=" + dispatchContext.getFunctionalityIds() + "%26";
 			}
 		}
@@ -507,16 +519,20 @@ public class SchedulerUtilitiesV2 {
 
 		if (dispatchContext.isMailDispatchChannelEnabled()) {
 			saveOptString += "sendmail=true%26";
-			if (dispatchContext.isUseFixedRecipients() && dispatchContext.getMailTos() != null && !dispatchContext.getMailTos().trim().equals("")) {
+			if (dispatchContext.isUseFixedRecipients() && dispatchContext.getMailTos() != null
+					&& !dispatchContext.getMailTos().trim().equals("")) {
 				saveOptString += "mailtos=" + dispatchContext.getMailTos() + "%26";
 			}
-			if (dispatchContext.isUseDataSet() && dispatchContext.getDataSetLabel() != null && !dispatchContext.getDataSetLabel().trim().equals("")) {
+			if (dispatchContext.isUseDataSet() && dispatchContext.getDataSetLabel() != null
+					&& !dispatchContext.getDataSetLabel().trim().equals("")) {
 				saveOptString += "datasetLabel=" + dispatchContext.getDataSetLabel() + "%26";
-				if (dispatchContext.getDataSetParameterLabel() != null && !dispatchContext.getDataSetParameterLabel().trim().equals("")) {
+				if (dispatchContext.getDataSetParameterLabel() != null
+						&& !dispatchContext.getDataSetParameterLabel().trim().equals("")) {
 					saveOptString += "datasetParameterLabel=" + dispatchContext.getDataSetParameterLabel() + "%26";
 				}
 			}
-			if (dispatchContext.isUseExpression() && dispatchContext.getExpression() != null && !dispatchContext.getExpression().trim().equals("")) {
+			if (dispatchContext.isUseExpression() && dispatchContext.getExpression() != null
+					&& !dispatchContext.getExpression().trim().equals("")) {
 				saveOptString += "expression=" + dispatchContext.getExpression() + "%26";
 			}
 			if ((dispatchContext.getMailSubj() != null) && !dispatchContext.getMailSubj().trim().equals("")) {
@@ -550,8 +566,9 @@ public class SchedulerUtilitiesV2 {
 		return saveOptString;
 	}
 
-	private static String serializeSaveAsDistributionListOptions(DispatchContext dispatchContext, String uniqueDispatchContextName, JobTrigger triggerInfo,
-			boolean runImmediately, IEngUserProfile profile) throws EMFUserError {
+	private static String serializeSaveAsDistributionListOptions(DispatchContext dispatchContext,
+			String uniqueDispatchContextName, JobTrigger triggerInfo, boolean runImmediately, IEngUserProfile profile)
+			throws EMFUserError {
 		String saveOptString = "";
 
 		JobInfo jobInfo = triggerInfo.getJobInfo();
@@ -622,7 +639,8 @@ public class SchedulerUtilitiesV2 {
 						if (queryString.length() > 0) {
 							queryString = queryString.substring(0, queryString.length() - 3);
 						}
-						params += "<PARAMETER name=\"" + biobj.getLabel() + "__" + index + "\" value=\"" + queryString + "\" />";
+						params += "<PARAMETER name=\"" + biobj.getLabel() + "__" + index + "\" value=\"" + queryString
+								+ "\" />";
 					} else {
 						continue;
 					}
@@ -673,8 +691,9 @@ public class SchedulerUtilitiesV2 {
 
 	// Creation of JobTrigger save
 	// paramater----------------------------------------------------------------------------------------------------------------------------------------------------------------
-	public static Map<String, DispatchContext> getSaveOptionsFromRequest(JSONArray docum, JSONArray jerr) throws EMFUserError, JSONException {
-		Map<String, DispatchContext> saveOptions = new HashMap<String, DispatchContext>();
+	public static Map<String, DispatchContext> getSaveOptionsFromRequest(JSONArray docum, JSONArray jerr)
+			throws EMFUserError, JSONException {
+		Map<String, DispatchContext> saveOptions = new HashMap<>();
 		for (int i = 0; i < docum.length(); i++) {
 			DispatchContext dispatchContext = new DispatchContext();
 			getSaveAsSnapshotOptions(docum.getJSONObject(i), dispatchContext, jerr);
@@ -688,7 +707,8 @@ public class SchedulerUtilitiesV2 {
 		return saveOptions;
 	}
 
-	private static void getSaveAsSnapshotOptions(JSONObject request, DispatchContext dispatchContext, JSONArray jerr) throws JSONException {
+	private static void getSaveAsSnapshotOptions(JSONObject request, DispatchContext dispatchContext, JSONArray jerr)
+			throws JSONException {
 		Boolean saveassnap = request.optBoolean("saveassnapshot");
 		if (saveassnap) {
 			dispatchContext.setSnapshootDispatchChannelEnabled(true);
@@ -707,7 +727,8 @@ public class SchedulerUtilitiesV2 {
 		}
 	}
 
-	private static void getSaveAsFileOptions(JSONObject request, DispatchContext dispatchContext, JSONArray jerr) throws JSONException {
+	private static void getSaveAsFileOptions(JSONObject request, DispatchContext dispatchContext, JSONArray jerr)
+			throws JSONException {
 		Boolean saveasfile = request.optBoolean("saveasfile");
 		if (saveasfile) {
 			dispatchContext.setFileSystemDisptachChannelEnabled(true);
@@ -733,7 +754,8 @@ public class SchedulerUtilitiesV2 {
 		}
 	}
 
-	private static void getSaveAsJavaClassOptions(JSONObject request, DispatchContext dispatchContext, JSONArray jerr) throws JSONException {
+	private static void getSaveAsJavaClassOptions(JSONObject request, DispatchContext dispatchContext, JSONArray jerr)
+			throws JSONException {
 		Boolean sendToJavaClass = request.optBoolean("sendtojavaclass");
 		if (sendToJavaClass) {
 			dispatchContext.setJavaClassDispatchChannelEnabled(true);
@@ -743,19 +765,22 @@ public class SchedulerUtilitiesV2 {
 				tryClass = (JavaClassDestination) Class.forName(javaClassPath).newInstance();
 			} catch (ClassCastException e) {
 				// logger.error("Error in istantiating class");
-				EMFValidationError emfError = new EMFValidationError(EMFErrorSeverity.ERROR, "sendtojavaclass", "12200");
+				EMFValidationError emfError = new EMFValidationError(EMFErrorSeverity.ERROR, "sendtojavaclass",
+						"12200");
 				jerr.put("Java class not valid");
 
 			} catch (Exception e) {
 				// logger.error("Error in istantiating class");
-				EMFValidationError emfError = new EMFValidationError(EMFErrorSeverity.ERROR, "sendtojavaclass", "12100");
+				EMFValidationError emfError = new EMFValidationError(EMFErrorSeverity.ERROR, "sendtojavaclass",
+						"12100");
 				jerr.put("Error in setting java class ");
 			}
 			dispatchContext.setJavaClassPath(javaClassPath);
 		}
 	}
 
-	private static void getSaveAsDocumentOptions(JSONObject request, DispatchContext dispatchContext, JSONArray jerr) throws JSONException {
+	private static void getSaveAsDocumentOptions(JSONObject request, DispatchContext dispatchContext, JSONArray jerr)
+			throws JSONException {
 		Boolean saveasdoc = request.optBoolean("saveasdocument");
 		if (saveasdoc) {
 			dispatchContext.setFunctionalityTreeDispatchChannelEnabled(true);
@@ -806,7 +831,8 @@ public class SchedulerUtilitiesV2 {
 		}
 	}
 
-	private static void getSaveAsMailOptions(JSONObject request, DispatchContext dispatchContext, JSONArray jerr) throws EMFUserError, JSONException {
+	private static void getSaveAsMailOptions(JSONObject request, DispatchContext dispatchContext, JSONArray jerr)
+			throws EMFUserError, JSONException {
 		Boolean sendmail = request.optBoolean("sendmail");
 		if (sendmail) {
 			dispatchContext.setMailDispatchChannelEnabled(true);
@@ -896,8 +922,8 @@ public class SchedulerUtilitiesV2 {
 		}
 	}
 
-	private static void getSaveAsDistributionListOptions(JSONObject request, DispatchContext dispatchContext, JSONArray jerr)
-			throws EMFUserError, JSONException {
+	private static void getSaveAsDistributionListOptions(JSONObject request, DispatchContext dispatchContext,
+			JSONArray jerr) throws EMFUserError, JSONException {
 		Boolean sendtodl = request.optBoolean("saveasdl");
 		if (sendtodl) {
 			dispatchContext.setDistributionListDispatchChannelEnabled(true);
@@ -924,7 +950,8 @@ public class SchedulerUtilitiesV2 {
 	// Load of JobTrigger
 	// ----------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-	public static JobTrigger getJobTriggerInfo(String jobName, String jobGroupName, String triggerName, String triggerGroup) {
+	public static JobTrigger getJobTriggerInfo(String jobName, String jobGroupName, String triggerName,
+			String triggerGroup) {
 		try {
 			ISchedulerServiceSupplier schedulerService = SchedulerServiceSupplierFactory.getSupplier();
 			String respStr_gt = schedulerService.getJobSchedulationDefinition(triggerName, triggerGroup);
@@ -938,7 +965,8 @@ public class SchedulerUtilitiesV2 {
 					// TriggerInfo tInfo = SchedulerUtilities.getTriggerInfoFromTriggerSourceBean(triggerDetailSB, jobDetailSB);
 					// return tInfo;
 				} else {
-					throw new Exception("Detail not recovered for job " + jobName + "associated to trigger " + triggerName);
+					throw new Exception(
+							"Detail not recovered for job " + jobName + "associated to trigger " + triggerName);
 				}
 			} else {
 				throw new Exception("Detail not recovered for trigger " + triggerName);
@@ -987,14 +1015,14 @@ public class SchedulerUtilitiesV2 {
 		JobInfo jobInfo = SchedulerUtilities.getJobInfoFromJobSourceBean(jobInfoSB);
 		triggerInfo.setJobInfo(jobInfo);
 
-		Map<String, DispatchContext> saveOptions = new HashMap<String, DispatchContext>();
+		Map<String, DispatchContext> saveOptions = new HashMap<>();
 		List<Integer> biobjIds = jobInfo.getDocumentIds();
 		int index = 0;
 		for (Integer biobjId : biobjIds) {
 			index++;
 			DispatchContext dispatchContext = new DispatchContext();
-			SourceBean dispatchContextSB = (SourceBean) triggerInfoSB.getFilteredSourceBeanAttribute("JOB_PARAMETERS.JOB_PARAMETER", "name",
-					"biobject_id_" + biobjId.toString() + "__" + index);
+			SourceBean dispatchContextSB = (SourceBean) triggerInfoSB.getFilteredSourceBeanAttribute(
+					"JOB_PARAMETERS.JOB_PARAMETER", "name", "biobject_id_" + biobjId.toString() + "__" + index);
 			if (dispatchContextSB != null) {
 				String encodedDispatchContext = (String) dispatchContextSB.getAttribute("value");
 				dispatchContext = SchedulerUtilities.decodeDispatchContext(encodedDispatchContext);
@@ -1069,22 +1097,26 @@ public class SchedulerUtilitiesV2 {
 		return saveOptionsJSONArray;
 	}
 
-	private static void SaveAsSnapshotOptionsToJson(DispatchContext dispatchContext, JSONObject jo) throws JSONException {
+	private static void SaveAsSnapshotOptionsToJson(DispatchContext dispatchContext, JSONObject jo)
+			throws JSONException {
 		if (dispatchContext.isSnapshootDispatchChannelEnabled()) {
 			jo.put("saveassnapshot", true);
 			if ((dispatchContext.getSnapshotName() != null) && !dispatchContext.getSnapshotName().trim().equals("")) {
 				jo.put("snapshotname", dispatchContext.getSnapshotName());
 			}
-			if ((dispatchContext.getSnapshotDescription() != null) && !dispatchContext.getSnapshotDescription().trim().equals("")) {
+			if ((dispatchContext.getSnapshotDescription() != null)
+					&& !dispatchContext.getSnapshotDescription().trim().equals("")) {
 				jo.put("snapshotdescription", dispatchContext.getSnapshotDescription());
 			}
-			if ((dispatchContext.getSnapshotHistoryLength() != null) && !dispatchContext.getSnapshotHistoryLength().trim().equals("")) {
+			if ((dispatchContext.getSnapshotHistoryLength() != null)
+					&& !dispatchContext.getSnapshotHistoryLength().trim().equals("")) {
 				jo.put("snapshothistorylength", dispatchContext.getSnapshotHistoryLength());
 			}
 		}
 	}
 
-	private static void SaveAsJavaClassOptionsToJson(DispatchContext dispatchContext, JSONObject jo) throws JSONException {
+	private static void SaveAsJavaClassOptionsToJson(DispatchContext dispatchContext, JSONObject jo)
+			throws JSONException {
 		if (dispatchContext.isJavaClassDispatchChannelEnabled()) {
 			jo.put("sendtojavaclass", true);
 			if ((dispatchContext.getJavaClassPath() != null) && !dispatchContext.getJavaClassPath().trim().equals("")) {
@@ -1096,10 +1128,10 @@ public class SchedulerUtilitiesV2 {
 	private static void SaveAsFileOptionsToJson(DispatchContext dispatchContext, JSONObject jo) throws JSONException {
 		if (dispatchContext.isFileSystemDispatchChannelEnabled()) {
 			jo.put("saveasfile", true);
-			if (StringUtilities.isNotEmpty(dispatchContext.getDestinationFolder())) {
+			if (StringUtils.isNotEmpty(dispatchContext.getDestinationFolder())) {
 				jo.put("destinationfolder", dispatchContext.getDestinationFolder());
 			}
-			if (StringUtilities.isNotEmpty(dispatchContext.getDestinationFolder())) {
+			if (StringUtils.isNotEmpty(dispatchContext.getDestinationFolder())) {
 				jo.put("destinationfolder", dispatchContext.getDestinationFolder());
 			}
 			jo.put("isrelativetoresourcefolder", dispatchContext.isDestinationFolderRelativeToResourceFolder());
@@ -1119,27 +1151,32 @@ public class SchedulerUtilitiesV2 {
 
 	}
 
-	private static void SaveAsDocumentOptionsToJson(DispatchContext dispatchContext, JSONObject jo) throws JSONException {
+	private static void SaveAsDocumentOptionsToJson(DispatchContext dispatchContext, JSONObject jo)
+			throws JSONException {
 		if (dispatchContext.isFunctionalityTreeDispatchChannelEnabled()) {
 			jo.put("saveasdocument", true);
 			if ((dispatchContext.getDocumentName() != null) && !dispatchContext.getDocumentName().trim().equals("")) {
 				jo.put("documentname", dispatchContext.getDocumentName());
 			}
-			if ((dispatchContext.getDocumentDescription() != null) && !dispatchContext.getDocumentDescription().trim().equals("")) {
+			if ((dispatchContext.getDocumentDescription() != null)
+					&& !dispatchContext.getDocumentDescription().trim().equals("")) {
 				jo.put("documentdescription", dispatchContext.getDocumentDescription());
 			}
-			if (dispatchContext.isUseFixedFolder() && dispatchContext.getFoldersTo() != null && !dispatchContext.getFoldersTo().trim().equals("")) {
+			if (dispatchContext.isUseFixedFolder() && dispatchContext.getFoldersTo() != null
+					&& !dispatchContext.getFoldersTo().trim().equals("")) {
 				jo.put("foldersTo", dispatchContext.getFoldersTo());
 			}
 			if (dispatchContext.isUseFolderDataSet() && dispatchContext.getDataSetFolderLabel() != null
 					&& !dispatchContext.getDataSetFolderLabel().trim().equals("")) {
 				jo.put("useFolderDataset", true);
 				jo.put("datasetFolderLabel", dispatchContext.getDataSetFolderLabel());
-				if (dispatchContext.getDataSetFolderParameterLabel() != null && !dispatchContext.getDataSetFolderParameterLabel().trim().equals("")) {
+				if (dispatchContext.getDataSetFolderParameterLabel() != null
+						&& !dispatchContext.getDataSetFolderParameterLabel().trim().equals("")) {
 					jo.put("datasetFolderParameter", dispatchContext.getDataSetFolderParameterLabel());
 				}
 			}
-			if ((dispatchContext.getDocumentHistoryLength() != null) && !dispatchContext.getDocumentHistoryLength().trim().equals("")) {
+			if ((dispatchContext.getDocumentHistoryLength() != null)
+					&& !dispatchContext.getDocumentHistoryLength().trim().equals("")) {
 				jo.put("documenthistorylength", dispatchContext.getDocumentHistoryLength());
 			}
 
@@ -1147,7 +1184,8 @@ public class SchedulerUtilitiesV2 {
 				jo.put("useFixedFolder", true);
 			}
 
-			if ((dispatchContext.getFunctionalityIds() != null) && !dispatchContext.getFunctionalityIds().trim().equals("")) {
+			if ((dispatchContext.getFunctionalityIds() != null)
+					&& !dispatchContext.getFunctionalityIds().trim().equals("")) {
 				JSONArray ja = new JSONArray();
 				String[] st = dispatchContext.getFunctionalityIds().split(",");
 				for (String s : st) {
@@ -1163,18 +1201,22 @@ public class SchedulerUtilitiesV2 {
 	private static void SaveAsMailOptionsToJson(DispatchContext dispatchContext, JSONObject jo) throws JSONException {
 		if (dispatchContext.isMailDispatchChannelEnabled()) {
 			jo.put("sendmail", true);
-			if (dispatchContext.isUseFixedRecipients() && dispatchContext.getMailTos() != null && !dispatchContext.getMailTos().trim().equals("")) {
+			if (dispatchContext.isUseFixedRecipients() && dispatchContext.getMailTos() != null
+					&& !dispatchContext.getMailTos().trim().equals("")) {
 				jo.put("useFixedRecipients", true);
 				jo.put("mailtos", dispatchContext.getMailTos());
 			}
-			if (dispatchContext.isUseDataSet() && dispatchContext.getDataSetLabel() != null && !dispatchContext.getDataSetLabel().trim().equals("")) {
+			if (dispatchContext.isUseDataSet() && dispatchContext.getDataSetLabel() != null
+					&& !dispatchContext.getDataSetLabel().trim().equals("")) {
 				jo.put("useDataset", true);
 				jo.put("datasetLabel", dispatchContext.getDataSetLabel());
-				if (dispatchContext.getDataSetParameterLabel() != null && !dispatchContext.getDataSetParameterLabel().trim().equals("")) {
+				if (dispatchContext.getDataSetParameterLabel() != null
+						&& !dispatchContext.getDataSetParameterLabel().trim().equals("")) {
 					jo.put("datasetParameter", dispatchContext.getDataSetParameterLabel());
 				}
 			}
-			if (dispatchContext.isUseExpression() && dispatchContext.getExpression() != null && !dispatchContext.getExpression().trim().equals("")) {
+			if (dispatchContext.isUseExpression() && dispatchContext.getExpression() != null
+					&& !dispatchContext.getExpression().trim().equals("")) {
 				jo.put("useExpression", true);
 				jo.put("expression", dispatchContext.getExpression());
 			}
@@ -1208,7 +1250,8 @@ public class SchedulerUtilitiesV2 {
 
 	}
 
-	private static void SaveAsDistributionListOptionsToJson(DispatchContext dispatchContext, JSONObject jo) throws JSONException {
+	private static void SaveAsDistributionListOptionsToJson(DispatchContext dispatchContext, JSONObject jo)
+			throws JSONException {
 
 		if (dispatchContext.isDistributionListDispatchChannelEnabled()) {
 			jo.put("saveasdl", true);
@@ -1271,7 +1314,7 @@ public class SchedulerUtilitiesV2 {
 			}
 		}
 		return false;
-	};
+	}
 
 	public static JSONObject lowFuncToJson(LowFunctionality lf) throws JSONException {
 		JSONObject tmp = new JSONObject();

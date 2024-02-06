@@ -57,6 +57,7 @@ import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.httpclient.methods.PutMethod;
 import org.apache.commons.httpclient.util.ParameterParser;
 import org.apache.commons.httpclient.util.URIUtil;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.http.util.Asserts;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
@@ -65,7 +66,6 @@ import org.json.JSONObject;
 
 import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
-import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.security.hmacfilter.HMACFilterAuthenticationProvider;
 import it.eng.spagobi.security.hmacfilter.HMACSecurityException;
 import it.eng.spagobi.utilities.assertion.Assert;
@@ -90,7 +90,7 @@ public class RestUtilities {
 		timeout = HTTP_TIMEOUT_DEFAULT_VALUE;
 
 		String timeoutProp = System.getProperty(HTTP_TIMEOUT_PROPERTY);
-		if (StringUtilities.isNotEmpty(timeoutProp)) {
+		if (StringUtils.isNotEmpty(timeoutProp)) {
 			try {
 				logger.debug("HTTP timeout found with value [" + timeoutProp + "].");
 				int timeoutValue = Integer.parseInt(timeoutProp);
@@ -104,7 +104,8 @@ public class RestUtilities {
 		String timeoutStr = SingletonConfig.getInstance().getConfigValue("SPAGOBI.DATASET.REST.TIMEOUT");
 		if (timeoutStr != null) {
 			timeout = Integer.valueOf(timeoutStr);
-			logger.debug("The SPAGOBI.DATASET.REST.TIMEOUT configuration overwrire the timeout with the value  " + timeout);
+			logger.debug(
+					"The SPAGOBI.DATASET.REST.TIMEOUT configuration overwrire the timeout with the value  " + timeout);
 		}
 
 	}
@@ -283,19 +284,21 @@ public class RestUtilities {
 
 	}
 
-	public static Response makeRequest(HttpMethod httpMethod, String address, Map<String, String> requestHeaders, String requestBody)
-			throws HttpException, IOException, HMACSecurityException {
+	public static Response makeRequest(HttpMethod httpMethod, String address, Map<String, String> requestHeaders,
+			String requestBody) throws HttpException, IOException, HMACSecurityException {
 		return makeRequest(httpMethod, address, requestHeaders, requestBody, null);
 	}
 
-	public static Response makeRequest(HttpMethod httpMethod, String address, Map<String, String> requestHeaders, String requestBody,
-			List<NameValuePair> queryParams) throws HttpException, IOException, HMACSecurityException {
+	public static Response makeRequest(HttpMethod httpMethod, String address, Map<String, String> requestHeaders,
+			String requestBody, List<NameValuePair> queryParams)
+			throws HttpException, IOException, HMACSecurityException {
 		return makeRequest(httpMethod, address, requestHeaders, requestBody, queryParams, false);
 	}
 
 	@SuppressWarnings("deprecation")
-	public static Response makeRequest(HttpMethod httpMethod, String address, Map<String, String> requestHeaders, String requestBody,
-			List<NameValuePair> queryParams, boolean authenticate) throws HttpException, IOException, HMACSecurityException {
+	public static Response makeRequest(HttpMethod httpMethod, String address, Map<String, String> requestHeaders,
+			String requestBody, List<NameValuePair> queryParams, boolean authenticate)
+			throws HttpException, IOException, HMACSecurityException {
 		logger.debug("httpMethod = " + httpMethod);
 		logger.debug("address = " + address);
 		logger.debug("requestHeaders = " + requestHeaders);
@@ -343,8 +346,9 @@ public class RestUtilities {
 	}
 
 	@SuppressWarnings("deprecation")
-	public static InputStream makeRequestGetStream(HttpMethod httpMethod, String address, Map<String, String> requestHeaders, String requestBody,
-			List<NameValuePair> queryParams, boolean authenticate) throws HttpException, IOException, HMACSecurityException {
+	public static InputStream makeRequestGetStream(HttpMethod httpMethod, String address,
+			Map<String, String> requestHeaders, String requestBody, List<NameValuePair> queryParams,
+			boolean authenticate) throws HttpException, IOException, HMACSecurityException {
 		final HttpMethodBase method = getMethod(httpMethod, address);
 		if (requestHeaders != null) {
 			for (Entry<String, String> entry : requestHeaders.entrySet()) {
@@ -456,7 +460,8 @@ public class RestUtilities {
 			List<NameValuePair> params = new ParameterParser().parse(query, '&');
 			List<NameValuePair> res = new ArrayList<>();
 			for (NameValuePair nvp : params) {
-				res.add(new NameValuePair(URIUtil.decode(nvp.getName(), DEFAULT_CHARSET), URIUtil.decode(nvp.getValue(), DEFAULT_CHARSET)));
+				res.add(new NameValuePair(URIUtil.decode(nvp.getName(), DEFAULT_CHARSET),
+						URIUtil.decode(nvp.getValue(), DEFAULT_CHARSET)));
 			}
 			return res;
 		} catch (URIException e) {
@@ -502,7 +507,8 @@ public class RestUtilities {
 	}
 
 	private static String sanitizeValueFromRequestHeader(String value) {
-		return value.replace("\r", "").replace("%0d", "").replace("%0D", "").replace("\n", "").replace("%0a", "").replace("%0A", "");
+		return value.replace("\r", "").replace("%0d", "").replace("%0D", "").replace("\n", "").replace("%0a", "")
+				.replace("%0A", "");
 	}
 
 	private static void checkIfValueFromRequestHeaderIsInWhitelistFromPropertiesFile(String value) {

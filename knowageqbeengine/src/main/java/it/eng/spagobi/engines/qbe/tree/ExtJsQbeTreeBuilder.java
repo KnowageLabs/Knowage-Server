@@ -27,6 +27,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 
+import org.apache.commons.lang3.StringUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -49,7 +50,6 @@ import it.eng.qbe.serializer.SerializationManager;
 import it.eng.qbe.statement.graph.bean.Relationship;
 import it.eng.spago.configuration.ConfigSingleton;
 import it.eng.spagobi.commons.bo.UserProfile;
-import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.engines.qbe.serializer.json.QbeSerializationConstants;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
@@ -81,8 +81,7 @@ public class ExtJsQbeTreeBuilder {
 	/**
 	 * Instantiates a new ext js qbe tree builder.
 	 *
-	 * @param qbeTreeFilter
-	 *            the qbe tree filter
+	 * @param qbeTreeFilter the qbe tree filter
 	 */
 	public ExtJsQbeTreeBuilder(QbeTreeFilter qbeTreeFilter) {
 		setQbeTreeFilter(qbeTreeFilter);
@@ -104,7 +103,7 @@ public class ExtJsQbeTreeBuilder {
 		if (label == null) {
 			label = entity.getPropertyAsString("label");
 		}
-		return StringUtilities.isEmpty(label) ? entity.getName() : label;
+		return StringUtils.isEmpty(label) ? entity.getName() : label;
 	}
 
 	private String getEntityTooltip(IModelEntity entity) {
@@ -115,14 +114,14 @@ public class ExtJsQbeTreeBuilder {
 	private String getFieldLabel(IModelField field) {
 		String label;
 		label = getDatamartLabels().getProperty(field, "label");
-		if (StringUtilities.isEmpty(label)) {
+		if (StringUtils.isEmpty(label)) {
 			IModelEntity parentEntity = field.getParent();
 			// IModelEntity parentEntity = field.getLogicalParent();
 			IModelEntity rootEntity = field.getStructure().getRootEntity(parentEntity);
 			IModelField rootField = rootEntity.getFieldByName(field.getName());
 			label = getDatamartLabels().getProperty(rootField, "label");
 		}
-		return StringUtilities.isEmpty(label) ? field.getName() : label;
+		return StringUtils.isEmpty(label) ? field.getName() : label;
 	}
 
 	private String getFieldTooltip(IModelField field) {
@@ -135,8 +134,7 @@ public class ExtJsQbeTreeBuilder {
 	/**
 	 * Builds the qbe tree.
 	 *
-	 * @param datamartName
-	 *            the datamart name
+	 * @param datamartName the datamart name
 	 *
 	 * @return the jSON array
 	 */
@@ -158,14 +156,12 @@ public class ExtJsQbeTreeBuilder {
 	/**
 	 * Adds the entity nodes.
 	 *
-	 * @param nodes
-	 *            the nodes
-	 * @param datamartName
-	 *            the datamart name
+	 * @param nodes        the nodes
+	 * @param datamartName the datamart name
 	 */
 	public void addEntityNodes(JSONArray nodes, String datamartName, UserProfile userProfile) {
-		FilteredModelStructure filteredModelStructure = new FilteredModelStructure((dataSource).getModelStructure(userProfile), getDataSource(),
-				getQbeTreeFilter());
+		FilteredModelStructure filteredModelStructure = new FilteredModelStructure(
+				(dataSource).getModelStructure(userProfile), getDataSource(), getQbeTreeFilter());
 		List<IModelEntity> entities = filteredModelStructure.getRootEntities(datamartName);
 
 		Iterator<IModelEntity> it = entities.iterator();
@@ -178,12 +174,9 @@ public class ExtJsQbeTreeBuilder {
 	/**
 	 * Adds the entity node.
 	 *
-	 * @param nodes
-	 *            the nodes
-	 * @param entity
-	 *            the entity
-	 * @param recursionLevel
-	 *            the recursion level
+	 * @param nodes          the nodes
+	 * @param entity         the entity
+	 * @param recursionLevel the recursion level
 	 */
 	public void addEntityNode(JSONArray nodes, IModelEntity entity, int recursionLevel) {
 
@@ -193,12 +186,9 @@ public class ExtJsQbeTreeBuilder {
 	/**
 	 * Adds the entity root node.
 	 *
-	 * @param nodes
-	 *            the nodes
-	 * @param entity
-	 *            the entity
-	 * @param recursionLevel
-	 *            the recursion level
+	 * @param nodes          the nodes
+	 * @param entity         the entity
+	 * @param recursionLevel the recursion level
 	 */
 	public void addEntityRootNode(JSONArray nodes, IModelEntity entity, int recursionLevel) {
 
@@ -231,17 +221,17 @@ public class ExtJsQbeTreeBuilder {
 			nodeAttributes.put("type", NODE_TYPE_ENTITY);
 			nodeAttributes.put("londDescription", londDescription);
 			nodeAttributes.put("linkedToWords", new Boolean(linkedToWords)); // TO-DO
-																				// check
-																				// if
-																				// isabletoGlossary
-																				// and
-																				// if
-																				// this
-																				// nod
-																				// have
-																				// a
-																				// word
-																				// associated
+																			 // check
+																			 // if
+																			 // isabletoGlossary
+																			 // and
+																			 // if
+																			 // this
+																			 // nod
+																			 // have
+																			 // a
+																			 // word
+																			 // associated
 			entityNode.put("attributes", nodeAttributes);
 			entityNode.put("children", childrenNodes);
 			entityNode.put("relation", relationNodes);
@@ -256,10 +246,8 @@ public class ExtJsQbeTreeBuilder {
 	/**
 	 * Gets the field nodes.
 	 *
-	 * @param entity
-	 *            the entity
-	 * @param recursionLevel
-	 *            the recursion level
+	 * @param entity         the entity
+	 * @param recursionLevel the recursion level
 	 *
 	 * @return the field nodes
 	 */
@@ -339,7 +327,8 @@ public class ExtJsQbeTreeBuilder {
 				// if the source entity refer to another entity more than one
 				// time, we print the relation name in the label of the relation
 				// field
-				boolean needRelationInLabel = (entity.getStructure().getDirectConnections(entity, relationship.getTargetEntity())).size() > 1;
+				boolean needRelationInLabel = (entity.getStructure().getDirectConnections(entity,
+						relationship.getTargetEntity())).size() > 1;
 				JSONObject jsObject = getRelationFieldNode(relationship, entity, needRelationInLabel);
 				if (jsObject != null) {
 					relation.put(jsObject);
@@ -353,10 +342,8 @@ public class ExtJsQbeTreeBuilder {
 	/**
 	 * Gets the field node.
 	 *
-	 * @param parentEntity
-	 *            the parent entity
-	 * @param field
-	 *            the field
+	 * @param parentEntity the parent entity
+	 * @param field        the field
 	 *
 	 * @return the field node
 	 */
@@ -503,7 +490,8 @@ public class ExtJsQbeTreeBuilder {
 				defaultSlot.put(QbeSerializationConstants.SLOT_NAME, field.getDefaultSlotValue());
 				JSONArray valuesets = new JSONArray();
 				JSONObject valueset = new JSONObject();
-				valueset.put(QbeSerializationConstants.SLOT_VALUESET_TYPE, QbeSerializationConstants.SLOT_VALUESET_TYPE_DEFAULT);
+				valueset.put(QbeSerializationConstants.SLOT_VALUESET_TYPE,
+						QbeSerializationConstants.SLOT_VALUESET_TYPE_DEFAULT);
 				valueset.put(QbeSerializationConstants.SLOT_VALUESET_VALUES, "");
 				valuesets.put(valueset);
 				defaultSlot.put(QbeSerializationConstants.SLOT_VALUESET, valuesets);
@@ -530,7 +518,8 @@ public class ExtJsQbeTreeBuilder {
 		return fieldNode;
 	}
 
-	public JSONObject getRelationFieldNode(Relationship relation, IModelEntity parentEntity, boolean needRelationInLabel) {
+	public JSONObject getRelationFieldNode(Relationship relation, IModelEntity parentEntity,
+			boolean needRelationInLabel) {
 		String iconCls = "relation";
 		String sourceText = relation.getSourceFieldsString();
 		String targetText = relation.getTargetFieldsString();
@@ -547,10 +536,13 @@ public class ExtJsQbeTreeBuilder {
 			relationEntityString = relationEntityString + "(" + relationName + ")";
 		}
 
-		String relationTooltip = (EngineMessageBundle.getMessage("sbi.qbe.tree.relation.name", this.getLocale())) + ": " + relationName + "<br>"
-				+ (EngineMessageBundle.getMessage("sbi.qbe.tree.source.fields", this.getLocale())) + ": [" + sourceText + "]<br>"
-				+ (EngineMessageBundle.getMessage("sbi.qbe.tree.target.entity", this.getLocale())) + ": " + targetEntityLabel + "<br>"
-				+ (EngineMessageBundle.getMessage("sbi.qbe.tree.target.fields", this.getLocale())) + ": " + targetText + "<br>";
+		String relationTooltip = (EngineMessageBundle.getMessage("sbi.qbe.tree.relation.name", this.getLocale())) + ": "
+				+ relationName + "<br>"
+				+ (EngineMessageBundle.getMessage("sbi.qbe.tree.source.fields", this.getLocale())) + ": [" + sourceText
+				+ "]<br>" + (EngineMessageBundle.getMessage("sbi.qbe.tree.target.entity", this.getLocale())) + ": "
+				+ targetEntityLabel + "<br>"
+				+ (EngineMessageBundle.getMessage("sbi.qbe.tree.target.fields", this.getLocale())) + ": " + targetText
+				+ "<br>";
 
 		JSONObject fieldNode = new JSONObject();
 		try {
@@ -585,14 +577,10 @@ public class ExtJsQbeTreeBuilder {
 	/**
 	 * Add Calculate Fields on the entity Control recursion level because calculate field are applied only at entity level not in dimension level.
 	 *
-	 * @param tree
-	 *            the tree
-	 * @param parentEntityNodeId
-	 *            the parent entity node id
-	 * @param nodeCounter
-	 *            the node counter
-	 * @param entity
-	 *            the entity
+	 * @param tree               the tree
+	 * @param parentEntityNodeId the parent entity node id
+	 * @param nodeCounter        the node counter
+	 * @param entity             the entity
 	 *
 	 * @return the int
 	 */
@@ -603,8 +591,8 @@ public class ExtJsQbeTreeBuilder {
 		 *
 		 * CalculatedField calculatedField = null; String fieldAction = null;
 		 *
-		 * Iterator manualCalculatedFieldsIterator = manualCalcultatedFieldForEntity.iterator(); while (manualCalculatedFieldsIterator.hasNext()){
-		 * calculatedField = (CalculatedField)manualCalculatedFieldsIterator.next();
+		 * Iterator manualCalculatedFieldsIterator = manualCalcultatedFieldForEntity.iterator(); while (manualCalculatedFieldsIterator.hasNext()){ calculatedField =
+		 * (CalculatedField)manualCalculatedFieldsIterator.next();
 		 *
 		 *
 		 *
@@ -612,11 +600,10 @@ public class ExtJsQbeTreeBuilder {
 		 * calculatedField.setFldCompleteNameInQuery(calculatedField.getId()); }
 		 *
 		 *
-		 * fieldAction = getUrlGenerator().getActionUrlForCalculateField(calculatedField.getId (), entity.getName(),
-		 * calculatedField.getFldCompleteNameInQuery());
+		 * fieldAction = getUrlGenerator().getActionUrlForCalculateField(calculatedField.getId (), entity.getName(), calculatedField.getFldCompleteNameInQuery());
 		 *
-		 * nodeCounter++; tree.addNode("" + nodeCounter, "" + parentEntityNodeId, calculatedField.getFldLabel(), fieldAction, calculatedField.getFldLabel(),
-		 * "_self", getUrlGenerator().getResourceUrl("../img/cfield.gif"), getUrlGenerator().getResourceUrl("../img/cfield.gif"), "", "", "", "", ""); }
+		 * nodeCounter++; tree.addNode("" + nodeCounter, "" + parentEntityNodeId, calculatedField.getFldLabel(), fieldAction, calculatedField.getFldLabel(), "_self",
+		 * getUrlGenerator().getResourceUrl("../img/cfield.gif"), getUrlGenerator().getResourceUrl("../img/cfield.gif"), "", "", "", "", ""); }
 		 *
 		 * return nodeCounter;
 		 */
@@ -626,12 +613,9 @@ public class ExtJsQbeTreeBuilder {
 	/**
 	 * Gets the sub entities nodes.
 	 *
-	 * @param entity
-	 *            the entity
-	 * @param nodes
-	 *            the nodes
-	 * @param recursionLevel
-	 *            the recursion level
+	 * @param entity         the entity
+	 * @param nodes          the nodes
+	 * @param recursionLevel the recursion level
 	 *
 	 * @return the sub entities nodes
 	 */
@@ -664,8 +648,7 @@ public class ExtJsQbeTreeBuilder {
 	/**
 	 * Sets the datamart model.
 	 *
-	 * @param dataSource
-	 *            the new datamart model
+	 * @param dataSource the new datamart model
 	 */
 	protected void setDatamartModel(IDataSource dataSource) {
 		this.dataSource = dataSource;
@@ -683,8 +666,7 @@ public class ExtJsQbeTreeBuilder {
 	/**
 	 * Sets the qbe tree filter.
 	 *
-	 * @param qbeTreeFilter
-	 *            the new qbe tree filter
+	 * @param qbeTreeFilter the new qbe tree filter
 	 */
 	private void setQbeTreeFilter(QbeTreeFilter qbeTreeFilter) {
 		this.qbeTreeFilter = qbeTreeFilter;

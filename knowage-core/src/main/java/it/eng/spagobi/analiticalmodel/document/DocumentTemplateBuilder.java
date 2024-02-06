@@ -17,10 +17,10 @@
  */
 package it.eng.spagobi.analiticalmodel.document;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 
 import it.eng.spagobi.analiticalmodel.document.bo.ObjTemplate;
-import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
@@ -43,7 +43,8 @@ public class DocumentTemplateBuilder {
 		ObjTemplate template = new ObjTemplate();
 
 		try {
-			Assert.assertTrue(StringUtilities.isNotEmpty(templateName), "Input parameter [templateName] cannot be null or empty");
+			Assert.assertTrue(StringUtils.isNotEmpty(templateName),
+					"Input parameter [templateName] cannot be null or empty");
 			Assert.assertNotNull(templateName, "Input parameter [templateContent] cannot be null");
 
 			template.setName(templateName);

@@ -84,7 +84,6 @@ import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.utilities.GeneralUtilities;
 import it.eng.spagobi.commons.utilities.ObjectsAccessVerifier;
 import it.eng.spagobi.commons.utilities.ParameterValuesDecoder;
-import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.commons.validation.SpagoBIValidationImpl;
 import it.eng.spagobi.engines.config.bo.Engine;
 import it.eng.spagobi.engines.drivers.IEngineDriver;
@@ -913,7 +912,7 @@ public class ExecutionInstance implements Serializable {
 			return;
 		}
 		String value = values.get(0);
-		if (StringUtilities.isEmpty(value)) {
+		if (StringUtils.isEmpty(value)) {
 			// no values to be validated
 			return;
 		}

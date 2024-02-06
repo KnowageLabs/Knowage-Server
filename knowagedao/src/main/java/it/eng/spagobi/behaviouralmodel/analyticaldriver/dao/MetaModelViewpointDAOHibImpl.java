@@ -196,12 +196,12 @@ public class MetaModelViewpointDAOHibImpl extends AbstractHibernateDAO implement
 	}
 
 	@Override
-	public List loadAccessibleViewpointsByMetaModelId(Integer metaModelId, IEngUserProfile userProfile)
+	public List<Viewpoint> loadAccessibleViewpointsByMetaModelId(Integer metaModelId, IEngUserProfile userProfile)
 			throws EMFUserError {
 		Session aSession = null;
 		Transaction tx = null;
 
-		List realResult = new ArrayList();
+		List<Viewpoint> realResult = new ArrayList<>();
 		try {
 			aSession = getSession();
 			tx = aSession.beginTransaction();
@@ -216,13 +216,13 @@ public class MetaModelViewpointDAOHibImpl extends AbstractHibernateDAO implement
 			hqlQuery.setInteger(0, metaModelId.intValue());
 			hqlQuery.setString(1, (String) ((UserProfile) userProfile).getUserId());
 
-			List hibList = hqlQuery.list();
+			List<SbiMetaModelViewpoints> hibList = hqlQuery.list();
 
 			tx.commit();
 
-			Iterator it = hibList.iterator();
+			Iterator<SbiMetaModelViewpoints> it = hibList.iterator();
 			while (it.hasNext()) {
-				realResult.add(toMetaModelViewpoint((SbiMetaModelViewpoints) it.next()));
+				realResult.add(toMetaModelViewpoint(it.next()));
 			}
 		} catch (HibernateException he) {
 			logException(he);

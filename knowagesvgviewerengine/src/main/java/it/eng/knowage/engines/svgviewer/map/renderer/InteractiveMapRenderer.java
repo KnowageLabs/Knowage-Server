@@ -36,6 +36,7 @@ import java.util.Map;
 
 import javax.xml.transform.TransformerException;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -63,7 +64,6 @@ import it.eng.knowage.engines.svgviewer.map.utils.SVGMapSaver;
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.configuration.ConfigSingleton;
 import it.eng.spagobi.commons.dao.DAOFactory;
-import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.dataset.common.datastore.IField;
 import it.eng.spagobi.tools.dataset.common.datastore.IRecord;
@@ -81,7 +81,6 @@ public class InteractiveMapRenderer extends AbstractMapRenderer {
 	public static transient Logger logger = Logger.getLogger(InteractiveMapRenderer.class);
 
 	public InteractiveMapRenderer() {
-		super();
 	}
 
 	@Override
@@ -92,12 +91,14 @@ public class InteractiveMapRenderer extends AbstractMapRenderer {
 	}
 
 	@Override
-	public File renderMap(IMapProvider mapProvider, IDataMartProvider datamartProvider) throws SvgViewerEngineException {
+	public File renderMap(IMapProvider mapProvider, IDataMartProvider datamartProvider)
+			throws SvgViewerEngineException {
 		return renderMap(mapProvider, datamartProvider, SvgViewerEngineConstants.DSVG);
 	}
 
 	@Override
-	public File renderMap(IMapProvider mapProvider, IDataMartProvider datamartProvider, String outputFormat) throws SvgViewerEngineRuntimeException {
+	public File renderMap(IMapProvider mapProvider, IDataMartProvider datamartProvider, String outputFormat)
+			throws SvgViewerEngineRuntimeException {
 
 		Monitor totalTimeMonitor = null;
 		Monitor totalTimePerFormatMonitor = null;
@@ -105,7 +106,8 @@ public class InteractiveMapRenderer extends AbstractMapRenderer {
 		try {
 
 			totalTimeMonitor = MonitorFactory.start("GeoEngine.drawMapAction.renderMap.totalTime");
-			totalTimePerFormatMonitor = MonitorFactory.start("GeoEngine.drawMapAction.renderMap." + outputFormat + ".totalTime");
+			totalTimePerFormatMonitor = MonitorFactory
+					.start("GeoEngine.drawMapAction.renderMap." + outputFormat + ".totalTime");
 
 			if (outputFormat.equalsIgnoreCase(SvgViewerEngineConstants.SVG)) {
 				return renderSVGMap(mapProvider, datamartProvider);
@@ -137,7 +139,8 @@ public class InteractiveMapRenderer extends AbstractMapRenderer {
 	 *
 	 * @throws SvgViewerEngineException the geo engine exception
 	 */
-	private File renderDSVGMap(IMapProvider mapProvider, IDataMartProvider datamartProvider, boolean includeScript) throws SvgViewerEngineRuntimeException {
+	private File renderDSVGMap(IMapProvider mapProvider, IDataMartProvider datamartProvider, boolean includeScript)
+			throws SvgViewerEngineRuntimeException {
 
 		SVGDocument targetMap;
 		SVGDocument masterMap = null;
@@ -191,7 +194,8 @@ public class InteractiveMapRenderer extends AbstractMapRenderer {
 		// merge and decorate map
 		try {
 
-			mergeAndDecorateMapTotalTimeMonitor = MonitorFactory.start("GeoEngine.drawMapAction.renderMap.mergeAndDecorateMap");
+			mergeAndDecorateMapTotalTimeMonitor = MonitorFactory
+					.start("GeoEngine.drawMapAction.renderMap.mergeAndDecorateMap");
 
 			decorateMap(targetMap, masterMap, datamartProvider, dataMart, mapProvider);
 
@@ -214,15 +218,18 @@ public class InteractiveMapRenderer extends AbstractMapRenderer {
 					measures = getMeasuresConfigurationScript(dataMart);
 					String selectedMeasureName = getSelectedMeasureName();
 					logger.debug("Selected measure [" + selectedMeasureName + "]");
-					Assert.assertTrue(selectedMeasureName != null, "default_kpi attribute cannot be null. Please add it to MEASURES tag in your template file");
+					Assert.assertTrue(selectedMeasureName != null,
+							"default_kpi attribute cannot be null. Please add it to MEASURES tag in your template file");
 
 					int selectedMeasureIndexIndex = -1;
 					for (int i = 0; i < measures.length(); i++) {
 						JSONObject measure = (JSONObject) measures.get(i);
-						logger.debug("Comparing selected measure [" + selectedMeasureName + "] with measure [" + (String) measure.get("name") + "]");
+						logger.debug("Comparing selected measure [" + selectedMeasureName + "] with measure ["
+								+ (String) measure.get("name") + "]");
 						String nm = (String) measure.get("name");
 						if (selectedMeasureName.equalsIgnoreCase(nm)) {
-							logger.debug("Selected measure [" + selectedMeasureName + "] is equal to measure [" + (String) measure.get("name") + "]");
+							logger.debug("Selected measure [" + selectedMeasureName + "] is equal to measure ["
+									+ (String) measure.get("name") + "]");
 							selectedMeasureIndexIndex = i;
 							break;
 						}
@@ -357,7 +364,8 @@ public class InteractiveMapRenderer extends AbstractMapRenderer {
 	 *
 	 * @throws SvgViewerEngineException the geo engine exception
 	 */
-	private File renderSVGMap(IMapProvider mapProvider, IDataMartProvider datamartProvider) throws SvgViewerEngineRuntimeException {
+	private File renderSVGMap(IMapProvider mapProvider, IDataMartProvider datamartProvider)
+			throws SvgViewerEngineRuntimeException {
 		SVGDocument targetMap;
 		SVGDocument masterMap;
 
@@ -424,7 +432,8 @@ public class InteractiveMapRenderer extends AbstractMapRenderer {
 	 * @param targetMap the target map
 	 * @param datamart  the datamart
 	 */
-	private void decorateMap(SVGDocument targetMap, SVGDocument masterMap, IDataMartProvider datamartProvider, DataMart dataMart, IMapProvider mapProvider) {
+	private void decorateMap(SVGDocument targetMap, SVGDocument masterMap, IDataMartProvider datamartProvider,
+			DataMart dataMart, IMapProvider mapProvider) {
 
 		IDataStore dataStore;
 		IMetaData dataStoreMeta;
@@ -450,15 +459,18 @@ public class InteractiveMapRenderer extends AbstractMapRenderer {
 				// Element targetLayer = targetMap.getElementById(dataMart.getTargetFeatureName());
 				Element targetLayer = targetMap.getElementById(dataMart.getTargetFeatureName().get(l));
 				if (targetLayer == null) {
-					logger.error("Layer [" + dataMart.getTargetFeatureName() + "] doesn't exist for Hierarchy [" + datamartProvider.getSelectedHierarchyName()
-							+ "], MemberName [" + datamartProvider.getSelectedMemberName() + "] and Level [" + datamartProvider.getSelectedLevel()
-							+ "]. Please, check the template.");
+					logger.error("Layer [" + dataMart.getTargetFeatureName() + "] doesn't exist for Hierarchy ["
+							+ datamartProvider.getSelectedHierarchyName() + "], MemberName ["
+							+ datamartProvider.getSelectedMemberName() + "] and Level ["
+							+ datamartProvider.getSelectedLevel() + "]. Please, check the template.");
 					String description = "Layer [" + dataMart.getTargetFeatureName() + "] doesn't exist for Hierarchy ["
-							+ datamartProvider.getSelectedHierarchyName() + "], MemberName [" + datamartProvider.getSelectedMemberName() + "] and Level ["
+							+ datamartProvider.getSelectedHierarchyName() + "], MemberName ["
+							+ datamartProvider.getSelectedMemberName() + "] and Level ["
 							+ datamartProvider.getSelectedLevel() + "]. Please, check the template.";
 					SvgViewerEngineRuntimeException svgException;
-					svgException = new SvgViewerEngineRuntimeException("Layer [" + dataMart.getTargetFeatureName() + "] doesn't exist for Hierarchy ["
-							+ datamartProvider.getSelectedHierarchyName() + "], MemberName [" + datamartProvider.getSelectedMemberName() + "] and Level ["
+					svgException = new SvgViewerEngineRuntimeException("Layer [" + dataMart.getTargetFeatureName()
+							+ "] doesn't exist for Hierarchy [" + datamartProvider.getSelectedHierarchyName()
+							+ "], MemberName [" + datamartProvider.getSelectedMemberName() + "] and Level ["
 							+ datamartProvider.getSelectedLevel() + "]. Please, check the template.");
 					svgException.setDescription(description);
 					throw svgException;
@@ -513,34 +525,43 @@ public class InteractiveMapRenderer extends AbstractMapRenderer {
 						// check the dynamic cross type definition (throught the dataset)
 						if (listCrossType.size() > 0) {
 							IFieldMetaData fieldMetaCrossable = (IFieldMetaData) listCrossType.get(0);
-							IField fieldCrossable = record.getFieldAt(dataStoreMeta.getFieldIndex(fieldMetaCrossable.getName()));
+							IField fieldCrossable = record
+									.getFieldAt(dataStoreMeta.getFieldIndex(fieldMetaCrossable.getName()));
 							String fieldCrossableValue = (String) fieldCrossable.getValue();
 							if (fieldCrossableValue != null) {
-								useCrossNav = (((String) fieldCrossable.getValue()).equalsIgnoreCase("cross")) ? true : false;
+								useCrossNav = (((String) fieldCrossable.getValue()).equalsIgnoreCase("cross")) ? true
+										: false;
 							} else {
 								disabledLink = true;
-								logger.debug("[crosstype] property for the element is null. The link will be disabled.");
+								logger.debug(
+										"[crosstype] property for the element is null. The link will be disabled.");
 							}
 						}
-						if (listCrossType.size() == 0 && datamartProvider.getHierarchyMember(datamartProvider.getSelectedMemberName()).getEnableCross()) {
+						if (listCrossType.size() == 0 && datamartProvider
+								.getHierarchyMember(datamartProvider.getSelectedMemberName()).getEnableCross()) {
 							useCrossNav = true;
 						}
 						if (!disabledLink && useCrossNav) {
-							logger.debug("Required cross navigation for member [" + datamartProvider.getSelectedHierarchyName() + "]. "
+							logger.debug("Required cross navigation for member ["
+									+ datamartProvider.getSelectedHierarchyName() + "]. "
 									+ " Checking presence of cross navigation definition...");
-							boolean isCrossable = DAOFactory.getCrossNavigationDAO().documentIsCrossable((String) this.getEnv().get("DOCUMENT_LABEL"));
+							boolean isCrossable = DAOFactory.getCrossNavigationDAO()
+									.documentIsCrossable((String) this.getEnv().get("DOCUMENT_LABEL"));
 							if (isCrossable) {
-								JSONArray crossData = addCrossData(listID, record, dataStoreMeta, datamartProvider, mapProvider);
+								JSONArray crossData = addCrossData(listID, record, dataStoreMeta, datamartProvider,
+										mapProvider);
 								if (crossData != null)
 									mapElements.put("crossData", crossData);
 								mapElements.put("link_cross", defaultUrl);
 							} else {
-								logger.debug("... The cross navigation for the document isn't present." + " Please, check its definition through the GUI.");
+								logger.debug("... The cross navigation for the document isn't present."
+										+ " Please, check its definition through the GUI.");
 							}
 						}
 
 						// 3. add DRILL links ONLY if it isn't the last level
-						int intSelectedLevel = (datamartProvider.getSelectedLevel() == null) ? 1 : Integer.parseInt(datamartProvider.getSelectedLevel());
+						int intSelectedLevel = (datamartProvider.getSelectedLevel() == null) ? 1
+								: Integer.parseInt(datamartProvider.getSelectedLevel());
 						int totalLevels = datamartProvider.getHierarchyMembersNames().size();
 						if (!disabledLink && !useCrossNav && (intSelectedLevel < totalLevels)) {
 							String drillIdValue = addLinkDrillId(listDrillNav, record, dataStoreMeta);
@@ -568,7 +589,8 @@ public class InteractiveMapRenderer extends AbstractMapRenderer {
 						linkType = "drill";
 					}
 
-					String linkUrl = (linkType != null && linkType.equals("cross")) ? (String) tmpMap.get("link_cross") : (String) tmpMap.get("link_drill");
+					String linkUrl = (linkType != null && linkType.equals("cross")) ? (String) tmpMap.get("link_cross")
+							: (String) tmpMap.get("link_drill");
 					if (linkUrl != null) {
 						String drillId = null;
 						if (tmpMap.get("drill_id") != null) {
@@ -577,7 +599,8 @@ public class InteractiveMapRenderer extends AbstractMapRenderer {
 
 						if (linkType.equals("cross")) {
 							JSONArray jsonValue = (JSONArray) tmpMap.get("crossData");
-							JSONArray jsonCross = datamartProvider.getHierarchyMember(datamartProvider.getSelectedMemberName()).getLabelsCross();
+							JSONArray jsonCross = datamartProvider
+									.getHierarchyMember(datamartProvider.getSelectedMemberName()).getLabelsCross();
 							addHRefLinksCross(targetMap, featureElement, jsonValue, jsonCross, datamartProvider);
 						} else {
 							addHRefLinksDrill(targetMap, featureElement, elementId, drillId, linkUrl);
@@ -632,7 +655,8 @@ public class InteractiveMapRenderer extends AbstractMapRenderer {
 					// 6. manage visibility
 					if (geoIdMetaData != null && visibilityIdMetaData != null) {
 						IField geoIdField = aRecord.getFieldAt(dataStoreMeta.getFieldIndex(geoIdMetaData.getName()));
-						IField visibilityIdField = aRecord.getFieldAt(dataStoreMeta.getFieldIndex(visibilityIdMetaData.getName()));
+						IField visibilityIdField = aRecord
+								.getFieldAt(dataStoreMeta.getFieldIndex(visibilityIdMetaData.getName()));
 
 						if (geoIdField != null && visibilityIdField != null) {
 							showElements(masterMap, geoIdField, visibilityIdField);
@@ -683,7 +707,8 @@ public class InteractiveMapRenderer extends AbstractMapRenderer {
 
 		// int selectedKpiIndex = dataStoreMeta.getFieldIndex( getSelectedMeasureName() );
 		String selectedKpiName = getSelectedMeasureName(); // kpiNames[selectedKpiIndex];
-		Assert.assertTrue(selectedKpiName != null, "default_kpi attribute cannot be null. Please add it to MEASURES tag in your template file");
+		Assert.assertTrue(selectedKpiName != null,
+				"default_kpi attribute cannot be null. Please add it to MEASURES tag in your template file");
 		Measure measure = getMeasure(selectedKpiName);
 		Number lb_value = null;
 		Number ub_value = null;
@@ -703,13 +728,15 @@ public class InteractiveMapRenderer extends AbstractMapRenderer {
 		// Set orderedKpiValuesSet = datamart.getOrderedKpiValuesSet( selectedKpiName );
 		kpi_ordered_values = (Number[]) orderedKpiValuesSet.toArray(new Number[0]);
 
-		if (measure.getTresholdLb() == null || measure.getTresholdLb().trim().equalsIgnoreCase("") || measure.getTresholdLb().equalsIgnoreCase("none")) {
+		if (measure.getTresholdLb() == null || measure.getTresholdLb().trim().equalsIgnoreCase("")
+				|| measure.getTresholdLb().equalsIgnoreCase("none")) {
 			lb_value = null;
 		} else {
 			lb_value = Double.parseDouble(measure.getTresholdLb());
 		}
 
-		if (measure.getTresholdUb() == null || measure.getTresholdUb().trim().equalsIgnoreCase("") || measure.getTresholdUb().equalsIgnoreCase("none")) {
+		if (measure.getTresholdUb() == null || measure.getTresholdUb().trim().equalsIgnoreCase("")
+				|| measure.getTresholdUb().equalsIgnoreCase("none")) {
 			ub_value = null;
 		} else {
 			ub_value = Double.parseDouble(measure.getTresholdUb());
@@ -761,7 +788,8 @@ public class InteractiveMapRenderer extends AbstractMapRenderer {
 				start_index = 0;
 			} else {
 				for (int j = 0; j < kpi_ordered_values.length; j++) {
-					if (kpi_ordered_values[j].doubleValue() >= lb_value.doubleValue() && kpi_ordered_values[j].doubleValue() <= ub_value.doubleValue()) {
+					if (kpi_ordered_values[j].doubleValue() >= lb_value.doubleValue()
+							&& kpi_ordered_values[j].doubleValue() <= ub_value.doubleValue()) {
 						start_index = (start_index == -1 ? j : start_index);
 						diff_value_num++;
 					}
@@ -824,7 +852,8 @@ public class InteractiveMapRenderer extends AbstractMapRenderer {
 
 		if (measure.getColurCalculatorType().equalsIgnoreCase("static")) {
 			col_kpi_array = getColoursArray(selectedKpiName);
-		} else if (measure.getColurCalculatorType().equalsIgnoreCase("gradient") || measure.getColurCalculatorType().equalsIgnoreCase("grad")) {
+		} else if (measure.getColurCalculatorType().equalsIgnoreCase("gradient")
+				|| measure.getColurCalculatorType().equalsIgnoreCase("grad")) {
 			col_kpi_array = getGradientColourRange(colorRangeCalculationGradParams, num_group);
 		} else {
 			col_kpi_array = getGradientColourRange(colorRangeCalculationGradParams, num_group);
@@ -877,8 +906,9 @@ public class InteractiveMapRenderer extends AbstractMapRenderer {
 				}
 
 				if (targetColor != null) {
-					if (child.getNodeName().equals("path") || child.getNodeName().equals("polygon") || child.getNodeName().equals("ellipse")
-							|| child.getNodeName().equals("circle") || child.getNodeName().equals("rect")) {
+					if (child.getNodeName().equals("path") || child.getNodeName().equals("polygon")
+							|| child.getNodeName().equals("ellipse") || child.getNodeName().equals("circle")
+							|| child.getNodeName().equals("rect")) {
 
 						child.setAttribute("fill", targetColor);
 					} else if (child.getNodeName().equals("line") || child.getNodeName().equals("polyline")) {
@@ -928,11 +958,13 @@ public class InteractiveMapRenderer extends AbstractMapRenderer {
 
 					Measure kpi = getMeasure(fieldName);
 					String kpiValue = "" + field.getValue();
-					labelGroup.setAttribute("transform", "translate(" + centroide.getAttribute("cx") + "," + centroide.getAttribute("cy") + ") scale(40)");
+					labelGroup.setAttribute("transform", "translate(" + centroide.getAttribute("cx") + ","
+							+ centroide.getAttribute("cy") + ") scale(40)");
 					labelGroup.setAttribute("display", "inherit");
 					// get correct anchor from the centroide throught property inkscape:label; for default uses 'middle'
 					String anchor = "middle";
-					if (centroide.getAttribute("inkscape:label").equals("start") || centroide.getAttribute("inkscape:label").equals("middle")
+					if (centroide.getAttribute("inkscape:label").equals("start")
+							|| centroide.getAttribute("inkscape:label").equals("middle")
 							|| centroide.getAttribute("inkscape:label").equals("end")) {
 						anchor = centroide.getAttribute("inkscape:label");
 					}
@@ -1133,7 +1165,8 @@ public class InteractiveMapRenderer extends AbstractMapRenderer {
 			String rA = Integer.toHexString(new_rA);
 			String gA = Integer.toHexString(new_gA);
 			String bA = Integer.toHexString(new_bA);
-			shade = "#" + (rA.length() == 1 ? "0" : "") + rA + (gA.length() == 1 ? "0" : "") + gA + (bA.length() == 1 ? "0" : "") + bA;
+			shade = "#" + (rA.length() == 1 ? "0" : "") + rA + (gA.length() == 1 ? "0" : "") + gA
+					+ (bA.length() == 1 ? "0" : "") + bA;
 			colorRangeArray[i] = shade;
 		}
 		List colorRangeList = Arrays.asList(colorRangeArray);
@@ -1152,9 +1185,11 @@ public class InteractiveMapRenderer extends AbstractMapRenderer {
 	 * @param aRecord    the record with values
 	 * @param labelField the label field
 	 */
-	private void addLabels(SVGDocument masterMap, Element centroide, Element labelGroup, IRecord aRecord, IField labelField) {
+	private void addLabels(SVGDocument masterMap, Element centroide, Element labelGroup, IRecord aRecord,
+			IField labelField) {
 		logger.debug("IN");
-		labelGroup.setAttribute("transform", "translate(" + centroide.getAttribute("cx") + "," + centroide.getAttribute("cy") + ") scale(1)");
+		labelGroup.setAttribute("transform",
+				"translate(" + centroide.getAttribute("cx") + "," + centroide.getAttribute("cy") + ") scale(1)");
 		labelGroup.setAttribute("display", "inherit");
 
 		Element label = masterMap.createElement("text");
@@ -1172,7 +1207,8 @@ public class InteractiveMapRenderer extends AbstractMapRenderer {
 		// 3. if it isn't found force 'middle' as default
 		String anchor = "middle";
 		String anchorProperty = centroide.getAttribute("text-anchor");
-		if (anchorProperty != null && anchorProperty.equals("start") || anchorProperty.equals("middle") || anchorProperty.equals("end")) {
+		if (anchorProperty != null && anchorProperty.equals("start") || anchorProperty.equals("middle")
+				|| anchorProperty.equals("end")) {
 			anchor = anchorProperty;
 		} else {
 			String styleProperty = centroide.getAttribute("style");
@@ -1182,7 +1218,8 @@ public class InteractiveMapRenderer extends AbstractMapRenderer {
 				anchorProperty = styleProperty.substring(anchorPropertyPosStart + 12, anchorPropertyPosEnd);
 				anchor = anchorProperty;
 				// clean the style from the anchor information
-				styleProperty = styleProperty.replace(styleProperty.substring(anchorPropertyPosStart, anchorPropertyPosEnd + 1), "");
+				styleProperty = styleProperty
+						.replace(styleProperty.substring(anchorPropertyPosStart, anchorPropertyPosEnd + 1), "");
 				centroide.setAttribute("style", styleProperty);
 			}
 		}
@@ -1326,8 +1363,8 @@ public class InteractiveMapRenderer extends AbstractMapRenderer {
 	 * @param child     the child element
 	 * @param record    the record with data
 	 */
-	private JSONArray addCrossData(List listCrossNav, IRecord record, IMetaData dataStoreMeta, IDataMartProvider datamartProvider, IMapProvider mapProvider)
-			throws Exception {
+	private JSONArray addCrossData(List listCrossNav, IRecord record, IMetaData dataStoreMeta,
+			IDataMartProvider datamartProvider, IMapProvider mapProvider) throws Exception {
 		logger.debug("IN");
 		JSONArray toReturn = new JSONArray();
 		logger.debug("... The cross navigation is founded. Define the link url...");
@@ -1435,8 +1472,8 @@ public class InteractiveMapRenderer extends AbstractMapRenderer {
 	 * @param linkType       the link type ('cross' or 'drill')
 	 *
 	 */
-	private void addHRefLinksCross(SVGDocument targetMap, Element featureElement, JSONArray JSONValues, JSONArray JSONCross,
-			IDataMartProvider datamatProvider) {
+	private void addHRefLinksCross(SVGDocument targetMap, Element featureElement, JSONArray JSONValues,
+			JSONArray JSONCross, IDataMartProvider datamatProvider) {
 		logger.debug("IN");
 		Element linkCrossElement = targetMap.createElement("a");
 		linkCrossElement.setAttribute("xlink:href", "javascript:void(0)");
@@ -1449,12 +1486,14 @@ public class InteractiveMapRenderer extends AbstractMapRenderer {
 			featureElement.setAttribute("style", "cursor:pointer");
 		}
 
-		featureElement.setAttribute("onclick", "javascript:clickedElementCrossNavigation('" + JSONValues.toString() + "', '" + JSONCross.toString() + "')");
+		featureElement.setAttribute("onclick", "javascript:clickedElementCrossNavigation('" + JSONValues.toString()
+				+ "', '" + JSONCross.toString() + "')");
 
 		logger.debug("OUT");
 	}
 
-	private void addHRefLinksDrill(SVGDocument targetMap, Element featureElement, String elementId, String drillId, String linkUrl) {
+	private void addHRefLinksDrill(SVGDocument targetMap, Element featureElement, String elementId, String drillId,
+			String linkUrl) {
 		logger.debug("IN");
 		Element linkCrossElement = targetMap.createElement("a");
 		linkCrossElement.setAttribute("xlink:href", linkUrl);
@@ -1486,10 +1525,12 @@ public class InteractiveMapRenderer extends AbstractMapRenderer {
 
 		if (drillId == null) {
 			// featureElement.setAttribute("onclick", "javascript:clickedElement('" + documentId + "','" + elementId + "')");
-			featureElement.setAttribute("onclick", "javascript:clickedElement('" + strEnv + "','" + documentId + "','" + elementId + "')");
+			featureElement.setAttribute("onclick",
+					"javascript:clickedElement('" + strEnv + "','" + documentId + "','" + elementId + "')");
 		} else {
 			// featureElement.setAttribute("onclick", "javascript:clickedElement('" + documentId + "','" + elementId + "','" + drillId + "')");
-			featureElement.setAttribute("onclick", "javascript:clickedElement('" + strEnv + "','" + documentId + "','" + elementId + "','" + drillId + "')");
+			featureElement.setAttribute("onclick", "javascript:clickedElement('" + strEnv + "','" + documentId + "','"
+					+ elementId + "','" + drillId + "')");
 		}
 
 		logger.debug("OUT");
@@ -1509,7 +1550,8 @@ public class InteractiveMapRenderer extends AbstractMapRenderer {
 		if (tooltip == null) {
 			featureElement.setAttribute("onmouseover", "javascript:showTooltipElement('" + elementId + "')");
 		} else {
-			featureElement.setAttribute("onmouseover", "javascript:showTooltipElement('" + elementId + "','" + tooltip + "')");
+			featureElement.setAttribute("onmouseover",
+					"javascript:showTooltipElement('" + elementId + "','" + tooltip + "')");
 		}
 		featureElement.setAttribute("onmousemove", "javascript:getMousePosition()");
 		featureElement.setAttribute("onmouseout", "javascript:hideTooltipElement()");
@@ -1590,7 +1632,8 @@ public class InteractiveMapRenderer extends AbstractMapRenderer {
 	 */
 	private void includeScript(StringBuffer buffer, String scriptName) {
 		try {
-			URL scriptUrl = new URL((String) getEnv().get(SvgViewerEngineConstants.ENV_ABSOLUTE_CONTEXT_URL) + "/js/lib/svg-widgets/" + scriptName);
+			URL scriptUrl = new URL((String) getEnv().get(SvgViewerEngineConstants.ENV_ABSOLUTE_CONTEXT_URL)
+					+ "/js/lib/svg-widgets/" + scriptName);
 			// URL scriptUrl = new URL("http://localhost:8080/SpagoBIGeoEngine" + "/js/lib/svg-widgets/" + scriptName);
 
 			BufferedReader reader = new BufferedReader(new InputStreamReader(scriptUrl.openStream()));
@@ -1610,7 +1653,8 @@ public class InteractiveMapRenderer extends AbstractMapRenderer {
 	private void importScipt(SVGDocument map, String scriptName) {
 		Element script = map.createElement("script");
 		script.setAttribute("type", "text/ecmascript");
-		script.setAttribute("xlink:href", (String) getEnv().get(SvgViewerEngineConstants.ENV_CONTEXT_URL) + "/js/lib/svg-widgets/" + scriptName);
+		script.setAttribute("xlink:href",
+				(String) getEnv().get(SvgViewerEngineConstants.ENV_CONTEXT_URL) + "/js/lib/svg-widgets/" + scriptName);
 		Element importsBlock = map.getElementById("imported_scripts");
 		importsBlock.appendChild(script);
 		Node lf = map.createTextNode("\n");
@@ -1635,20 +1679,23 @@ public class InteractiveMapRenderer extends AbstractMapRenderer {
 			try {
 				viewBox = targetMap.getRootElement().getAttribute("viewBox");
 			} catch (Throwable t) {
-				MapRenderingException e = new MapRenderingException("Impossible to read attribute [viewBox] from target map's root node");
+				MapRenderingException e = new MapRenderingException(
+						"Impossible to read attribute [viewBox] from target map's root node");
 				e.addHint("add to the svg map root tag the attribute [viewbox] with the following value: ]"
 						+ "0 0 W D] (where W and H are respectively your map width and height)");
 				throw e;
 			}
-			if (StringUtilities.isEmpty(viewBox)) {
-				MapRenderingException e = new MapRenderingException("Impossible to read attribute [viewBox] from target map's root node");
+			if (StringUtils.isEmpty(viewBox)) {
+				MapRenderingException e = new MapRenderingException(
+						"Impossible to read attribute [viewBox] from target map's root node");
 				e.addHint("add to the svg map root tag the attribute [viewbox] with the following value: ["
 						+ "0 0 W D] (where W and H are respectively your map width and height)");
 				throw e;
 			}
 			logger.debug("Target map vieBox is equal to [" + viewBox + "]");
 			chunks = viewBox.trim().split(" ");
-			Assert.assertTrue(chunks.length == 4, "Attribute [viewBox] of  target ma is malformed: expected format is [x y width height]");
+			Assert.assertTrue(chunks.length == 4,
+					"Attribute [viewBox] of  target ma is malformed: expected format is [x y width height]");
 
 			width = Double.parseDouble(chunks[2]);
 			heigth = Double.parseDouble(chunks[3]);
@@ -1660,7 +1707,8 @@ public class InteractiveMapRenderer extends AbstractMapRenderer {
 		} catch (Throwable t) {
 			if (t instanceof SvgViewerEngineException)
 				throw (SvgViewerEngineRuntimeException) t;
-			throw new SvgViewerEngineRuntimeException("An unpredicted error occurred while setting up main map viewbox attribute");
+			throw new SvgViewerEngineRuntimeException(
+					"An unpredicted error occurred while setting up main map viewbox attribute");
 		} finally {
 			logger.debug("OUT");
 		}
@@ -1720,8 +1768,10 @@ public class InteractiveMapRenderer extends AbstractMapRenderer {
 			JSONObject measure = new JSONObject();
 			Measure localMeasure = getMeasure(measureNames[i]);
 			if (localMeasure == null) {
-				logger.error("Configuration for kpi [" + measureNames[i] + "] doesn't found. Please, check the template!");
-				throw new SvgViewerEngineRuntimeException("Configuration for kpi [" + measureNames[i] + "] doesn't found. Please, check the template!");
+				logger.error(
+						"Configuration for kpi [" + measureNames[i] + "] doesn't found. Please, check the template!");
+				throw new SvgViewerEngineRuntimeException(
+						"Configuration for kpi [" + measureNames[i] + "] doesn't found. Please, check the template!");
 			}
 			measure.put("name", measureNames[i]);
 			measure.put("description", localMeasure.getDescription());
@@ -1736,14 +1786,16 @@ public class InteractiveMapRenderer extends AbstractMapRenderer {
 			}
 			measure.put("ordered_values", orderedValues);
 
-			if (getMeasure(measureNames[i]).getTresholdLb() == null || getMeasure(measureNames[i]).getTresholdLb().trim().equalsIgnoreCase("")
+			if (getMeasure(measureNames[i]).getTresholdLb() == null
+					|| getMeasure(measureNames[i]).getTresholdLb().trim().equalsIgnoreCase("")
 					|| getMeasure(measureNames[i]).getTresholdLb().equalsIgnoreCase("none")) {
 				measure.put("lower_bound", "none");
 			} else {
 				measure.put("lower_bound", getMeasure(measureNames[i]).getTresholdLb());
 			}
 
-			if (getMeasure(measureNames[i]).getTresholdUb() == null || getMeasure(measureNames[i]).getTresholdUb().trim().equalsIgnoreCase("")
+			if (getMeasure(measureNames[i]).getTresholdUb() == null
+					|| getMeasure(measureNames[i]).getTresholdUb().trim().equalsIgnoreCase("")
 					|| getMeasure(measureNames[i]).getTresholdUb().equalsIgnoreCase("none")) {
 				measure.put("upper_bound", "none");
 			} else {
@@ -1778,7 +1830,8 @@ public class InteractiveMapRenderer extends AbstractMapRenderer {
 					thresholdCalculatorParams.put("descriptions", descriptions);
 				}
 			} else {
-				String value = getMeasure(measureNames[i]).getTresholdCalculatorParameters().getProperty("GROUPS_NUMBER");
+				String value = getMeasure(measureNames[i]).getTresholdCalculatorParameters()
+						.getProperty("GROUPS_NUMBER");
 				thresholdCalculatorParams.put("num_group", Integer.parseInt(value));
 			}
 
@@ -1838,7 +1891,8 @@ public class InteractiveMapRenderer extends AbstractMapRenderer {
 
 		layerNames = getLayerNames();
 		for (int i = 0; i < layerNames.length; i++) {
-			if (doc.getElementById(layerNames[i]) != null || layerNames[i].equalsIgnoreCase("grafici") || layerNames[i].equalsIgnoreCase("valori")) {
+			if (doc.getElementById(layerNames[i]) != null || layerNames[i].equalsIgnoreCase("grafici")
+					|| layerNames[i].equalsIgnoreCase("valori")) {
 				JSONObject layer = new JSONObject();
 				layer.put("name", layerNames[i]);
 				if (layerNames[i].equalsIgnoreCase("grafici")) {

@@ -20,6 +20,7 @@ package it.eng.qbe.query.serializer.json;
 import java.util.Iterator;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -37,7 +38,6 @@ import it.eng.qbe.query.serializer.IQueryDeserializer;
 import it.eng.qbe.serializer.SerializationException;
 import it.eng.qbe.statement.graph.GraphUtilities;
 import it.eng.qbe.statement.graph.bean.QueryGraph;
-import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.tools.dataset.common.query.AggregationFunctions;
 import it.eng.spagobi.tools.dataset.common.query.IAggregationFunction;
 import it.eng.spagobi.utilities.assertion.Assert;
@@ -79,7 +79,8 @@ public class QueryJSONDeserializer implements IQueryDeserializer {
 				queryJSON = (JSONObject) o;
 			} else {
 				Assert.assertUnreachable(
-						"Object to be deserialized must be of type string or of type JSONObject, not of type [" + o.getClass().getName() + "]");
+						"Object to be deserialized must be of type string or of type JSONObject, not of type ["
+								+ o.getClass().getName() + "]");
 			}
 
 			query = new Query();
@@ -90,7 +91,8 @@ public class QueryJSONDeserializer implements IQueryDeserializer {
 				query.setDescription(queryJSON.optString(QuerySerializationConstants.DESCRIPTION));
 				query.setDistinctClauseEnabled(queryJSON.optBoolean(QuerySerializationConstants.DISTINCT));
 				query.setRelationsRoles(queryJSON.optString(QuerySerializationConstants.RELATIONS_ROLES));
-				QueryGraph graph = GraphUtilities.deserializeGraph((JSONArray) queryJSON.opt("graph"), query, dataSource);
+				QueryGraph graph = GraphUtilities.deserializeGraph((JSONArray) queryJSON.opt("graph"), query,
+						dataSource);
 				query.setQueryGraph(graph);
 
 				// TODO: move this in AnalysisStateLoader class
@@ -116,7 +118,8 @@ public class QueryJSONDeserializer implements IQueryDeserializer {
 				}
 
 			} catch (JSONException e) {
-				throw new SerializationException("An error occurred while deserializing query: " + queryJSON.toString(), e);
+				throw new SerializationException("An error occurred while deserializing query: " + queryJSON.toString(),
+						e);
 			}
 
 			deserializeFields(fieldsJSON, dataSource, query);
@@ -128,8 +131,8 @@ public class QueryJSONDeserializer implements IQueryDeserializer {
 				try {
 					subquery = deserializeQuery(subqueriesJSON.get(i), dataSource);
 				} catch (JSONException e) {
-					throw new SerializationException("An error occurred while deserializing subquery number [" + (i + 1) + "]: " + subqueriesJSON.toString(),
-							e);
+					throw new SerializationException("An error occurred while deserializing subquery number [" + (i + 1)
+							+ "]: " + subqueriesJSON.toString(), e);
 				}
 
 				query.addSubquery(subquery);
@@ -141,7 +144,8 @@ public class QueryJSONDeserializer implements IQueryDeserializer {
 		return query;
 	}
 
-	private void deserializeFields(JSONArray fieldsJSON, IDataSource dataSource, Query query) throws SerializationException {
+	private void deserializeFields(JSONArray fieldsJSON, IDataSource dataSource, Query query)
+			throws SerializationException {
 		JSONObject fieldJSON;
 		IModelField field;
 		String alias;
@@ -190,8 +194,9 @@ public class QueryJSONDeserializer implements IQueryDeserializer {
 					}
 
 					temporalOperand = fieldJSON.optString(QuerySerializationConstants.TEMPORAL_OPERAND);
-					temporalOperandParameter = fieldJSON.optString(QuerySerializationConstants.TEMPORAL_OPERAND_PARAMETER);
-					if (StringUtilities.isEmpty(temporalOperandParameter)) {
+					temporalOperandParameter = fieldJSON
+							.optString(QuerySerializationConstants.TEMPORAL_OPERAND_PARAMETER);
+					if (StringUtils.isEmpty(temporalOperandParameter)) {
 						temporalOperandParameter = "0";
 					}
 
@@ -201,11 +206,11 @@ public class QueryJSONDeserializer implements IQueryDeserializer {
 						Assert.assertNotNull(fieldUniqueName, "Field name cannot be null");
 
 						field = dataSource.getModelStructure().getField(fieldUniqueName);
-						Assert.assertNotNull(field,
-								String.format("Impossible to retrieve a field named %s from datamart-structure. Please check select clause: %s",
-										fieldUniqueName, fieldsJSON.toString()));
+						Assert.assertNotNull(field, String.format(
+								"Impossible to retrieve a field named %s from datamart-structure. Please check select clause: %s",
+								fieldUniqueName, fieldsJSON.toString()));
 
-						if (StringUtilities.isEmpty(alias))
+						if (StringUtils.isEmpty(alias))
 							alias = "Column_" + (i + 1);
 
 						group = fieldJSON.optString(QuerySerializationConstants.FIELD_GROUP);
@@ -223,9 +228,9 @@ public class QueryJSONDeserializer implements IQueryDeserializer {
 							funct = AggregationFunctions.NONE;
 						}
 
-						// if (StringUtilities.isEmpty(temporalOperand)) {
-						query.addSelectField(field.getUniqueName(), funct, alias, included, visible, group.equalsIgnoreCase("true"), order, pattern,
-								temporalOperand, temporalOperandParameter, field.getJavaClass() != null ? field.getJavaClass() : null);
+						query.addSelectField(field.getUniqueName(), funct, alias, included, visible,
+								group.equalsIgnoreCase("true"), order, pattern, temporalOperand,
+								temporalOperandParameter, field.getJavaClass() != null ? field.getJavaClass() : null);
 						// }
 						// Handle temporal operands
 						// else {
@@ -234,16 +239,14 @@ public class QueryJSONDeserializer implements IQueryDeserializer {
 						 * temporalDimension.getHierarchicalDimensionByEntity(temporalDimension.getType()); Hierarchy defaultHierarchy =
 						 * hierarchicalDimensionByEntity.getDefaultHierarchy();
 						 *
-						 * String entity = temporalDimension.getType(); String temporalCondition = " 1 = 1 "; String year = entity + ":" +
-						 * defaultHierarchy.getLevelByType("YEAR"); String month = entity + ":" + defaultHierarchy.getLevelByType("MONTH"); String
-						 * temporalDimensionDateField = "the_date";
+						 * String entity = temporalDimension.getType(); String temporalCondition = " 1 = 1 "; String year = entity + ":" + defaultHierarchy.getLevelByType("YEAR");
+						 * String month = entity + ":" + defaultHierarchy.getLevelByType("MONTH"); String temporalDimensionDateField = "the_date";
 						 *
 						 *
-						 * if (temporalOperand.equals("YTD")) { Calendar startDate = new GregorianCalendar(); startDate.set(startDate.get(Calendar.YEAR), 0, 1,
-						 * 0, 0); Date today = new Date();
+						 * if (temporalOperand.equals("YTD")) { Calendar startDate = new GregorianCalendar(); startDate.set(startDate.get(Calendar.YEAR), 0, 1, 0, 0); Date today = new
+						 * Date();
 						 *
-						 * temporalCondition = year + " = (select "+year+" from "+entity+" where "+temporalDimensionDateField+
-						 * " between :startDate and :endDate ) ";
+						 * temporalCondition = year + " = (select "+year+" from "+entity+" where "+temporalDimensionDateField+ " between :startDate and :endDate ) ";
 						 *
 						 * } else if (temporalOperand.equals("MTD")) {
 						 *
@@ -255,8 +258,7 @@ public class QueryJSONDeserializer implements IQueryDeserializer {
 						 *
 						 * expression = "CASE WHEN " + temporalCondition + "THEN " + field.getUniqueName() + " ELSE NULL END"; slots = "";
 						 *
-						 * query.addInLineCalculatedFiled(alias, expression, slots, type, nature, included, visible, group.equalsIgnoreCase("true"), order,
-						 * funct);
+						 * query.addInLineCalculatedFiled(alias, expression, slots, type, nature, included, visible, group.equalsIgnoreCase("true"), order, funct);
 						 */
 
 						// }
@@ -286,25 +288,27 @@ public class QueryJSONDeserializer implements IQueryDeserializer {
 						Object editableO = fieldJSON.opt(QuerySerializationConstants.FIELD_EDITABLE);
 						editable = editableO != null && editableO.toString().equalsIgnoreCase("false") ? false : true;
 
-						query.addInLineCalculatedFiled(alias, expression, slots, type, nature, included, visible, group.equalsIgnoreCase("true"), order, funct,
-								entity, editable);
+						query.addInLineCalculatedFiled(alias, expression, slots, type, nature, included, visible,
+								group.equalsIgnoreCase("true"), order, funct, entity, editable);
 					} else {
 						Assert.assertUnreachable("Type [" + fieldType + "] of field [" + alias + "] is not valid");
 					}
 
 					logger.debug("Field [" + alias + "] succefully deserialized");
 				} catch (Throwable t) {
-					throw new SerializationException(
-							"An error occurred while deserializing field [" + fieldsJSON.toString() + "] of query [" + query.getId() + "]", t);
+					throw new SerializationException("An error occurred while deserializing field ["
+							+ fieldsJSON.toString() + "] of query [" + query.getId() + "]", t);
 				}
 			}
 		} catch (Throwable t) {
-			throw new SerializationException("An error occurred while deserializing select clause: " + fieldsJSON.toString(), t);
+			throw new SerializationException(
+					"An error occurred while deserializing select clause: " + fieldsJSON.toString(), t);
 		}
 
 	}
 
-	private void deserializeFilters(JSONArray filtersJOSN, IDataSource dataSource, Query query) throws SerializationException {
+	private void deserializeFilters(JSONArray filtersJOSN, IDataSource dataSource, Query query)
+			throws SerializationException {
 
 		JSONObject filterJSON;
 
@@ -342,11 +346,13 @@ public class QueryJSONDeserializer implements IQueryDeserializer {
 					operandValues = new String[] { filterJSON.getString(QuerySerializationConstants.FILTER_LO_VALUE) };
 					operandDescription = filterJSON.getString(QuerySerializationConstants.FILTER_LO_DESCRIPTION);
 					operandType = filterJSON.getString(QuerySerializationConstants.FILTER_LO_TYPE);
-					operandLasDefaulttValues = new String[] { filterJSON.getString(QuerySerializationConstants.FILTER_LO_DEFAULT_VALUE) };
-					operandLastValues = new String[] { filterJSON.getString(QuerySerializationConstants.FILTER_LO_LAST_VALUE) };
+					operandLasDefaulttValues = new String[] {
+							filterJSON.getString(QuerySerializationConstants.FILTER_LO_DEFAULT_VALUE) };
+					operandLastValues = new String[] {
+							filterJSON.getString(QuerySerializationConstants.FILTER_LO_LAST_VALUE) };
 					operandAlias = filterJSON.getString(QuerySerializationConstants.FILTER_LO_ALIAS);
-					leftOperand = new WhereField.Operand(operandValues, operandDescription, operandType, operandLasDefaulttValues, operandLastValues,
-							operandAlias);
+					leftOperand = new WhereField.Operand(operandValues, operandDescription, operandType,
+							operandLasDefaulttValues, operandLastValues, operandAlias);
 
 					operator = filterJSON.getString(QuerySerializationConstants.FILTER_OPERATOR);
 					operatorParameter = filterJSON.optString(QuerySerializationConstants.FILTER_OPERATOR_PARAMETER);
@@ -355,38 +361,45 @@ public class QueryJSONDeserializer implements IQueryDeserializer {
 					operandValues = JSONUtils.asStringArray(operandValuesJSONArray);
 					operandDescription = filterJSON.getString(QuerySerializationConstants.FILTER_RO_DESCRIPTION);
 					operandType = filterJSON.getString(QuerySerializationConstants.FILTER_RO_TYPE);
-					operandDefaultValuesJSONArray = filterJSON.optJSONArray(QuerySerializationConstants.FILTER_RO_DEFAULT_VALUE);
+					operandDefaultValuesJSONArray = filterJSON
+							.optJSONArray(QuerySerializationConstants.FILTER_RO_DEFAULT_VALUE);
 					operandLasDefaulttValues = JSONUtils.asStringArray(operandDefaultValuesJSONArray);
-					operandLastValuesJSONArray = filterJSON.optJSONArray(QuerySerializationConstants.FILTER_RO_LAST_VALUE);
+					operandLastValuesJSONArray = filterJSON
+							.optJSONArray(QuerySerializationConstants.FILTER_RO_LAST_VALUE);
 					operandLastValues = JSONUtils.asStringArray(operandLastValuesJSONArray);
 					operandAlias = filterJSON.getString(QuerySerializationConstants.FILTER_RO_ALIAS);
 
 					JSONObject temporalOperand = filterJSON.optJSONObject("temporalOperand");
 
-					rightOperand = new WhereField.Operand(operandValues, operandDescription, operandType, operandLasDefaulttValues, operandLastValues,
-							operandAlias);
+					rightOperand = new WhereField.Operand(operandValues, operandDescription, operandType,
+							operandLasDefaulttValues, operandLastValues, operandAlias);
 
 					booleanConnector = filterJSON.getString(QuerySerializationConstants.FILTER_BOOLEAN_CONNETOR);
 
-					Assert.assertTrue(!StringUtilities.isEmpty(operator), "Undefined operator for filter: " + filterJSON.toString());
-					Assert.assertTrue(!"NONE".equalsIgnoreCase(operator), "Undefined operator NONE for filter: " + filterJSON.toString());
+					Assert.assertTrue(!StringUtils.isEmpty(operator),
+							"Undefined operator for filter: " + filterJSON.toString());
+					Assert.assertTrue(!"NONE".equalsIgnoreCase(operator),
+							"Undefined operator NONE for filter: " + filterJSON.toString());
 
-					query.addWhereField(filterId, filterDescription, promptable, leftOperand, operator, operatorParameter, rightOperand, booleanConnector,
-							temporalOperand);
+					query.addWhereField(filterId, filterDescription, promptable, leftOperand, operator,
+							operatorParameter, rightOperand, booleanConnector, temporalOperand);
 
 				} catch (JSONException e) {
-					throw new SerializationException("An error occurred while filter [" + filtersJOSN.toString() + "] of query [" + query.getId() + "]", e);
+					throw new SerializationException("An error occurred while filter [" + filtersJOSN.toString()
+							+ "] of query [" + query.getId() + "]", e);
 				}
 			}
 		} catch (Throwable t) {
-			throw new SerializationException("An error occurred while deserializing field of query [" + query.getId() + "]", t);
+			throw new SerializationException(
+					"An error occurred while deserializing field of query [" + query.getId() + "]", t);
 		} finally {
 			logger.debug("OUT");
 		}
 
 	}
 
-	private void deserializeHavings(JSONArray havingsJOSN, IDataSource dataSource, Query query) throws SerializationException {
+	private void deserializeHavings(JSONArray havingsJOSN, IDataSource dataSource, Query query)
+			throws SerializationException {
 
 		JSONObject havingJSON;
 		IModelField field;
@@ -426,12 +439,14 @@ public class QueryJSONDeserializer implements IQueryDeserializer {
 					operandValues = new String[] { havingJSON.getString(QuerySerializationConstants.FILTER_LO_VALUE) };
 					operandDescription = havingJSON.getString(QuerySerializationConstants.FILTER_LO_DESCRIPTION);
 					operandType = havingJSON.getString(QuerySerializationConstants.FILTER_LO_TYPE);
-					operandLasDefaulttValues = new String[] { havingJSON.getString(QuerySerializationConstants.FILTER_LO_DEFAULT_VALUE) };
-					operandLastValues = new String[] { havingJSON.getString(QuerySerializationConstants.FILTER_LO_LAST_VALUE) };
+					operandLasDefaulttValues = new String[] {
+							havingJSON.getString(QuerySerializationConstants.FILTER_LO_DEFAULT_VALUE) };
+					operandLastValues = new String[] {
+							havingJSON.getString(QuerySerializationConstants.FILTER_LO_LAST_VALUE) };
 					operandFunction = havingJSON.getString(QuerySerializationConstants.FILTER_LO_FUNCTION);
 					function = AggregationFunctions.get(operandFunction);
-					leftOperand = new HavingField.Operand(operandValues, operandDescription, operandType, operandLasDefaulttValues, operandLastValues,
-							function);
+					leftOperand = new HavingField.Operand(operandValues, operandDescription, operandType,
+							operandLasDefaulttValues, operandLastValues, function);
 
 					operator = havingJSON.getString(QuerySerializationConstants.FILTER_OPERATOR);
 
@@ -439,75 +454,44 @@ public class QueryJSONDeserializer implements IQueryDeserializer {
 					operandValues = JSONUtils.asStringArray(operandValuesJSONArray);
 					operandDescription = havingJSON.getString(QuerySerializationConstants.FILTER_RO_DESCRIPTION);
 					operandType = havingJSON.getString(QuerySerializationConstants.FILTER_RO_TYPE);
-					operandDefaultValuesJSONArray = havingJSON.optJSONArray(QuerySerializationConstants.FILTER_RO_DEFAULT_VALUE);
+					operandDefaultValuesJSONArray = havingJSON
+							.optJSONArray(QuerySerializationConstants.FILTER_RO_DEFAULT_VALUE);
 					operandLasDefaulttValues = JSONUtils.asStringArray(operandDefaultValuesJSONArray);
-					operandLastValuesJSONArray = havingJSON.optJSONArray(QuerySerializationConstants.FILTER_RO_LAST_VALUE);
+					operandLastValuesJSONArray = havingJSON
+							.optJSONArray(QuerySerializationConstants.FILTER_RO_LAST_VALUE);
 					operandLastValues = JSONUtils.asStringArray(operandLastValuesJSONArray);
 					operandFunction = havingJSON.getString(QuerySerializationConstants.FILTER_RO_FUNCTION);
 					function = AggregationFunctions.get(operandFunction);
-					rightOperand = new HavingField.Operand(operandValues, operandDescription, operandType, operandLasDefaulttValues, operandLastValues,
-							function);
+					rightOperand = new HavingField.Operand(operandValues, operandDescription, operandType,
+							operandLasDefaulttValues, operandLastValues, function);
 
 					booleanConnector = havingJSON.getString(QuerySerializationConstants.FILTER_BOOLEAN_CONNETOR);
 
-					Assert.assertTrue(!StringUtilities.isEmpty(operator), "Undefined operator for filter: " + havingJSON.toString());
-					Assert.assertTrue(!"NONE".equalsIgnoreCase(operator), "Undefined operator NONE for filter: " + havingJSON.toString());
+					Assert.assertTrue(!StringUtils.isEmpty(operator),
+							"Undefined operator for filter: " + havingJSON.toString());
+					Assert.assertTrue(!"NONE".equalsIgnoreCase(operator),
+							"Undefined operator NONE for filter: " + havingJSON.toString());
 
-					query.addHavingField(filterId, filterDescription, promptable, leftOperand, operator, rightOperand, booleanConnector);
+					query.addHavingField(filterId, filterDescription, promptable, leftOperand, operator, rightOperand,
+							booleanConnector);
 
 				} catch (JSONException e) {
-					throw new SerializationException(
-							"An error occurred while deserializing filter [" + havingsJOSN.toString() + "] of query [" + query.getId() + "]", e);
+					throw new SerializationException("An error occurred while deserializing filter ["
+							+ havingsJOSN.toString() + "] of query [" + query.getId() + "]", e);
 				}
 
 			}
 		} catch (Throwable t) {
-			throw new SerializationException("An error occurred while deserializing filters of query [" + query.getId() + "]", t);
+			throw new SerializationException(
+					"An error occurred while deserializing filters of query [" + query.getId() + "]", t);
 		} finally {
 			logger.debug("OUT");
 		}
 
 	}
 
-	/*
-	 * private void deserializeFilters(JSONArray filtersJOSN, DataMartModel datamartModel, Query query) throws SerializationException {
-	 *
-	 * JSONObject filterJSON; DataMartField field; String fname; String fdesc; String fieldUniqueName; String operator; String operand; boolean isFree; String
-	 * operandDesc; String operandType; String boperator; String defaultValue; String lastValue;
-	 *
-	 * logger.debug("IN");
-	 *
-	 * try {
-	 *
-	 * logger.debug("Query [" + query.getId() + "] have [" + filtersJOSN.length() + "] to deserialize"); for(int i = 0; i < filtersJOSN.length(); i++) {
-	 *
-	 * try { filterJSON = filtersJOSN.getJSONObject(i); fieldUniqueName = filterJSON.getString(SerializationConstants.FILTER_ID); field =
-	 * datamartModel.getDataMartModelStructure().getField(fieldUniqueName); Assert.assertNotNull(field, "Impossible to load a field named [" + fieldUniqueName +
-	 * "] from datamart"); } catch (JSONException e) { throw new SerializationException("An error occurred while filter [" + filtersJOSN.toString() +
-	 * "] of query [" + query.getId() + "]", e); }
-	 *
-	 * try { fname = filterJSON.getString(SerializationConstants.FILTER_NAME); fdesc = filterJSON.getString( SerializationConstants.FILTER_NAME);
-	 *
-	 * operator = filterJSON.getString(SerializationConstants.FILTER_OPEARTOR); operand = filterJSON.getString(SerializationConstants.FILTER_OPEARND); isFree =
-	 * filterJSON.getBoolean(SerializationConstants.FILTER_IS_FREE); operandDesc = filterJSON.getString(SerializationConstants.FILTER_OPEARND_DESCRIPTION);
-	 * operandType = filterJSON.getString(SerializationConstants.FILTER_OPEARND_TYPE); boperator =
-	 * filterJSON.getString(SerializationConstants.FILTER_BOOLEAN_CONNETOR); defaultValue = filterJSON.getString(SerializationConstants.FILTER_DEFAULT_VALUE);
-	 * lastValue = filterJSON.getString(SerializationConstants.FILTER_LAST_VALUE); } catch (JSONException e) { throw new SerializationException(
-	 * "An error occurred while filter [" + filtersJOSN.toString() + "] of query [" + query.getId() + "]", e); }
-	 *
-	 *
-	 * Assert.assertTrue(!StringUtilities.isEmpty(operator), "Undefined operator for filter: " + filterJSON.toString());
-	 * Assert.assertTrue(!"NONE".equalsIgnoreCase(operator), "Undefined operator NONE for filter: " + filterJSON.toString());
-	 *
-	 *
-	 * query.addWhereFiled(fname, fdesc,field.getUniqueName(), operator, operand, operandType, operandDesc, boperator, isFree, defaultValue, lastValue); } }
-	 * catch(Throwable t) { throw new SerializationException("An error occurred while deserializing filters of query [" + query.getId() +"]", t); } finally {
-	 * logger.debug("OUT"); }
-	 *
-	 * }
-	 */
-
-	private void deserializeExpression(JSONObject expressionJOSN, IDataSource dataSource, Query query) throws SerializationException {
+	private void deserializeExpression(JSONObject expressionJOSN, IDataSource dataSource, Query query)
+			throws SerializationException {
 		ExpressionNode filterExp;
 
 		// start recursion
@@ -534,7 +518,8 @@ public class QueryJSONDeserializer implements IQueryDeserializer {
 					node.addChild(getFilterExpTree(childNodeJSON));
 				}
 			} catch (JSONException e) {
-				throw new SerializationException("An error occurred while deserializing where clause structure: " + nodeJSON.toString(), e);
+				throw new SerializationException(
+						"An error occurred while deserializing where clause structure: " + nodeJSON.toString(), e);
 			}
 		}
 		return node;

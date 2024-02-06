@@ -25,6 +25,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 
 import it.eng.spago.base.Constants;
@@ -40,7 +41,6 @@ import it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IParameterDAO;
 import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
-import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.utilities.DateRangeUtils;
 import it.eng.spagobi.utilities.assertion.Assert;
 
@@ -66,7 +66,8 @@ public abstract class DependenciesPostProcessingLov extends AbstractLOV {
 	 * @param dependencies            The dependencies' configuration
 	 * @return the list filtered considering the dependencies
 	 */
-	public List processDependencies(List rows, Map selectedParameterValues, List<? extends AbstractParuse> dependencies) {
+	public List processDependencies(List rows, Map selectedParameterValues,
+			List<? extends AbstractParuse> dependencies) {
 		if (selectedParameterValues != null && dependencies != null && !dependencies.isEmpty()) {
 			if (dependencies.size() == 1) {
 				AbstractParuse biParameterExecDependency = dependencies.get(0);
@@ -74,7 +75,8 @@ public abstract class DependenciesPostProcessingLov extends AbstractLOV {
 			} else if (dependencies.size() == 2) {
 				AbstractParuse biParameterExecDependency1 = dependencies.get(0);
 				AbstractParuse biParameterExecDependency2 = dependencies.get(1);
-				rows = evaluateSingleLogicOperation(rows, biParameterExecDependency1, biParameterExecDependency2, selectedParameterValues);
+				rows = evaluateSingleLogicOperation(rows, biParameterExecDependency1, biParameterExecDependency2,
+						selectedParameterValues);
 			} else {
 				// build the expression
 				int posinlist = 0;
@@ -98,7 +100,8 @@ public abstract class DependenciesPostProcessingLov extends AbstractLOV {
 		try {
 
 			Integer objParFatherId = objParuse.getParFatherId();
-			BIObjectParameter objParFather = DAOFactory.getBIObjectParameterDAO().loadForDetailByObjParId(objParFatherId);
+			BIObjectParameter objParFather = DAOFactory.getBIObjectParameterDAO()
+					.loadForDetailByObjParId(objParFatherId);
 			// get the general parameter associated to the bi parameter father
 			IParameterDAO parameterDAO = DAOFactory.getParameterDAO();
 			Parameter parameter = parameterDAO.loadForDetailByParameterID(objParFather.getParID());
@@ -119,8 +122,8 @@ public abstract class DependenciesPostProcessingLov extends AbstractLOV {
 			} else if (values instanceof String[]) {
 				filterValues = (String[]) values;
 			} else {
-				Assert.assertUnreachable(
-						"values associated to parameter [" + objParFather.getParameterUrlName() + "] are naither an instance of JSONObject nor of JSONArray");
+				Assert.assertUnreachable("values associated to parameter [" + objParFather.getParameterUrlName()
+						+ "] are naither an instance of JSONObject nor of JSONArray");
 			}
 
 			// based on the values number do different filter operations
@@ -130,11 +133,13 @@ public abstract class DependenciesPostProcessingLov extends AbstractLOV {
 			case 1:
 				valueFilter = filterValues[0];
 				if (valueFilter != null && !valueFilter.equals(""))
-					return filterList(list, valueFilter, valueTypeFilter, objParuse.getFilterColumn(), objParuse.getFilterOperation());
+					return filterList(list, valueFilter, valueTypeFilter, objParuse.getFilterColumn(),
+							objParuse.getFilterOperation());
 				else
 					return list;
 			default:
-				return filterList(list, filterValues, valueTypeFilter, objParuse.getFilterColumn(), objParuse.getFilterOperation());
+				return filterList(list, filterValues, valueTypeFilter, objParuse.getFilterColumn(),
+						objParuse.getFilterOperation());
 			}
 		} catch (Exception e) {
 			LOGGER.error("Error while doing filter for corelation ", e);
@@ -142,7 +147,8 @@ public abstract class DependenciesPostProcessingLov extends AbstractLOV {
 		}
 	}
 
-	private List evaluateSingleLogicOperation(List list, AbstractParuse obpuLeft, AbstractParuse obpuRight, Map selectedParameterValues) {
+	private List evaluateSingleLogicOperation(List list, AbstractParuse obpuLeft, AbstractParuse obpuRight,
+			Map selectedParameterValues) {
 		List listToReturn = list;
 		List listLeft = filterForCorrelation(list, obpuLeft, selectedParameterValues);
 		String lo = obpuLeft.getLogicOperator();
@@ -200,7 +206,8 @@ public abstract class DependenciesPostProcessingLov extends AbstractLOV {
 				tmpExpr = tmpExpr.substring(indRR + 1);
 			}
 			if (numberOfLeftRound != numberOfRightRound) {
-				LOGGER.warn("Expression is wrong: number of left breaks is different from right breaks. Returning list without evaluating expression");
+				LOGGER.warn(
+						"Expression is wrong: number of left breaks is different from right breaks. Returning list without evaluating expression");
 				return list;
 			}
 
@@ -234,7 +241,8 @@ public abstract class DependenciesPostProcessingLov extends AbstractLOV {
 				if (exprPart.indexOf("AND") != -1) {
 					int indexOper = exprPart.indexOf("AND");
 					String firstListName = (exprPart.substring(1, indexOper)).replace("null", " ");
-					String secondListName = (exprPart.substring(indexOper + 3, exprPart.length() - 1)).replace("null", " ");
+					String secondListName = (exprPart.substring(indexOper + 3, exprPart.length() - 1)).replace("null",
+							" ");
 					List firstList = null;
 					if (!firstListName.trim().equals("previousList")) {
 						firstList = (List) calculatedLists.get(firstListName.trim());
@@ -251,7 +259,8 @@ public abstract class DependenciesPostProcessingLov extends AbstractLOV {
 				} else if (exprPart.indexOf("OR") != -1) {
 					int indexOper = exprPart.indexOf("OR");
 					String firstListName = (exprPart.substring(1, indexOper)).replace("null", " ");
-					String secondListName = (exprPart.substring(indexOper + 2, exprPart.length() - 1)).replace("null", " ");
+					String secondListName = (exprPart.substring(indexOper + 2, exprPart.length() - 1)).replace("null",
+							" ");
 					List firstList = null;
 					if (!firstListName.trim().equals("previousList")) {
 						firstList = (List) calculatedLists.get(firstListName.trim());
@@ -267,7 +276,8 @@ public abstract class DependenciesPostProcessingLov extends AbstractLOV {
 					previusCalculated = mergeLists(firstList, secondList);
 				} else {
 					// previousList remains the same as before
-					LOGGER.warn("A part of the Expression is wrong: inside a left break and right break there's no condition AND or OR");
+					LOGGER.warn(
+							"A part of the Expression is wrong: inside a left break and right break there's no condition AND or OR");
 				}
 				expr = expr.substring(0, indLR) + "previousList" + expr.substring(indRR + 1);
 			}
@@ -308,20 +318,21 @@ public abstract class DependenciesPostProcessingLov extends AbstractLOV {
 	// -------------------------------------------------------------------------
 	// Methods copied from DelegatedBasicListService after DAO refactoring
 	// -------------------------------------------------------------------------
-	public static List filterList(List list, String valuefilter, String valuetypefilter, String columnfilter, String typeFilter) {
+	public static List filterList(List list, String valuefilter, String valuetypefilter, String columnfilter,
+			String typeFilter) {
 
 		List newList = new ArrayList();
 
-		Assert.assertTrue(!StringUtilities.isEmpty(valuefilter), "the value filter is not set");
+		Assert.assertTrue(!StringUtils.isEmpty(valuefilter), "the value filter is not set");
 
-		if (StringUtilities.isEmpty(columnfilter)) {
+		if (StringUtils.isEmpty(columnfilter)) {
 			return list;
 		}
-		if (StringUtilities.isEmpty(typeFilter)) {
+		if (StringUtils.isEmpty(typeFilter)) {
 			return list;
 		}
 
-		if (StringUtilities.isEmpty(valuetypefilter)) {
+		if (StringUtils.isEmpty(valuetypefilter)) {
 			return list;
 		}
 
@@ -335,7 +346,8 @@ public abstract class DependenciesPostProcessingLov extends AbstractLOV {
 			SourceBean row = (SourceBean) iterRow.next();
 			boolean doesRowSatisfyCondition = false;
 			try {
-				doesRowSatisfyCondition = doesRowSatisfyCondition(row, valuefilter, valuetypefilter, columnfilter, typeFilter);
+				doesRowSatisfyCondition = doesRowSatisfyCondition(row, valuefilter, valuetypefilter, columnfilter,
+						typeFilter);
 			} catch (EMFValidationError error) {
 				error.printStackTrace();
 				return list;
@@ -347,8 +359,8 @@ public abstract class DependenciesPostProcessingLov extends AbstractLOV {
 		return newList;
 	}
 
-	private static boolean doesRowSatisfyCondition(SourceBean row, String valuefilter, String valuetypefilter, String columnfilter, String typeFilter)
-			throws EMFValidationError {
+	private static boolean doesRowSatisfyCondition(SourceBean row, String valuefilter, String valuetypefilter,
+			String columnfilter, String typeFilter) throws EMFValidationError {
 		Object attribute = row.getAttribute(columnfilter);
 		if (attribute == null)
 			return false;
@@ -379,10 +391,13 @@ public abstract class DependenciesPostProcessingLov extends AbstractLOV {
 				return value.trim().compareToIgnoreCase(valuefilter) >= 0;
 			} else {
 				TracerSingleton.log(Constants.NOME_MODULO, TracerSingleton.WARNING,
-						"DelegatedBasicListService::filterList: the filter type '" + typeFilter + "' is not a valid filter type");
+						"DelegatedBasicListService::filterList: the filter type '" + typeFilter
+								+ "' is not a valid filter type");
 				HashMap params = new HashMap();
-				params.put(Constants.NOME_MODULO, "DelegatedBasicListService::filterList: the filter type '" + typeFilter + "' is not a valid filter type");
-				EMFValidationError error = new EMFValidationError(EMFErrorSeverity.ERROR, SpagoBIConstants.TYPE_FILTER, "100", null, params);
+				params.put(Constants.NOME_MODULO, "DelegatedBasicListService::filterList: the filter type '"
+						+ typeFilter + "' is not a valid filter type");
+				EMFValidationError error = new EMFValidationError(EMFErrorSeverity.ERROR, SpagoBIConstants.TYPE_FILTER,
+						"100", null, params);
 				throw error;
 			}
 		}
@@ -394,26 +409,30 @@ public abstract class DependenciesPostProcessingLov extends AbstractLOV {
 				valueDouble = new Double(value);
 			} catch (Exception e) {
 				TracerSingleton.log(Constants.NOME_MODULO, TracerSingleton.WARNING,
-						"DelegatedBasicListService::filterList: the string value is not a recognizable number representations: value to be filtered = " + value,
+						"DelegatedBasicListService::filterList: the string value is not a recognizable number representations: value to be filtered = "
+								+ value,
 						e);
 				HashMap params = new HashMap();
 				params.put(Constants.NOME_MODULO, "DelegatedBasicListService::filterList");
 				List<Object> v = new ArrayList<>();
 				v.add(value);
-				EMFValidationError error = new EMFValidationError(EMFErrorSeverity.WARNING, SpagoBIConstants.TYPE_VALUE_FILTER, "1051", v, params);
+				EMFValidationError error = new EMFValidationError(EMFErrorSeverity.WARNING,
+						SpagoBIConstants.TYPE_VALUE_FILTER, "1051", v, params);
 				throw error;
 			}
 			try {
 				valueFilterDouble = new Double(valuefilter);
 			} catch (Exception e) {
 				TracerSingleton.log(Constants.NOME_MODULO, TracerSingleton.WARNING,
-						"DelegatedBasicListService::filterList: input string value is not a recognizable number representations: filter value = " + valuefilter,
+						"DelegatedBasicListService::filterList: input string value is not a recognizable number representations: filter value = "
+								+ valuefilter,
 						e);
 				HashMap params = new HashMap();
 				params.put(Constants.NOME_MODULO, "DelegatedBasicListService::filterList");
 				List<Object> v = new ArrayList<>();
 				v.add(valuefilter);
-				EMFValidationError error = new EMFValidationError(EMFErrorSeverity.WARNING, SpagoBIConstants.VALUE_FILTER, "1052", v, params);
+				EMFValidationError error = new EMFValidationError(EMFErrorSeverity.WARNING,
+						SpagoBIConstants.VALUE_FILTER, "1052", v, params);
 				throw error;
 			}
 
@@ -431,10 +450,13 @@ public abstract class DependenciesPostProcessingLov extends AbstractLOV {
 				return valueDouble.doubleValue() >= valueFilterDouble.doubleValue();
 			} else {
 				TracerSingleton.log(Constants.NOME_MODULO, TracerSingleton.WARNING,
-						"DelegatedBasicListService::filterList: the filter type '" + typeFilter + "' is not a valid filter type");
+						"DelegatedBasicListService::filterList: the filter type '" + typeFilter
+								+ "' is not a valid filter type");
 				HashMap params = new HashMap();
-				params.put(Constants.NOME_MODULO, "DelegatedBasicListService::filterList: the filter type '" + typeFilter + "' is not a valid filter type");
-				EMFValidationError error = new EMFValidationError(EMFErrorSeverity.ERROR, SpagoBIConstants.TYPE_FILTER, "100", null, params);
+				params.put(Constants.NOME_MODULO, "DelegatedBasicListService::filterList: the filter type '"
+						+ typeFilter + "' is not a valid filter type");
+				EMFValidationError error = new EMFValidationError(EMFErrorSeverity.ERROR, SpagoBIConstants.TYPE_FILTER,
+						"100", null, params);
 				throw error;
 			}
 		}
@@ -453,30 +475,32 @@ public abstract class DependenciesPostProcessingLov extends AbstractLOV {
 				valueDate = DateRangeUtils.toDate(value, format);
 			} catch (Exception e) {
 				TracerSingleton.log(Constants.NOME_MODULO, TracerSingleton.WARNING,
-						"DelegatedBasicListService::filterList: the string value is not a valid date representation according to the format " + format
-								+ ": value to be filtered = " + value,
+						"DelegatedBasicListService::filterList: the string value is not a valid date representation according to the format "
+								+ format + ": value to be filtered = " + value,
 						e);
 				HashMap params = new HashMap();
 				params.put(Constants.NOME_MODULO, "DelegatedBasicListService::filterList");
 				List<Object> v = new ArrayList<>();
 				v.add(value);
 				v.add(format);
-				EMFValidationError error = new EMFValidationError(EMFErrorSeverity.WARNING, SpagoBIConstants.TYPE_VALUE_FILTER, "1054", v, params);
+				EMFValidationError error = new EMFValidationError(EMFErrorSeverity.WARNING,
+						SpagoBIConstants.TYPE_VALUE_FILTER, "1054", v, params);
 				throw error;
 			}
 			try {
 				valueFilterDate = DateRangeUtils.toDate(valuefilter, format);
 			} catch (Exception e) {
 				TracerSingleton.log(Constants.NOME_MODULO, TracerSingleton.WARNING,
-						"DelegatedBasicListService::filterList: input string is not a valid date representation according to the format " + format
-								+ ": filter value = " + valuefilter,
+						"DelegatedBasicListService::filterList: input string is not a valid date representation according to the format "
+								+ format + ": filter value = " + valuefilter,
 						e);
 				HashMap params = new HashMap();
 				params.put(Constants.NOME_MODULO, "DelegatedBasicListService::filterList");
 				List<Object> v = new ArrayList<>();
 				v.add(valuefilter);
 				v.add(format);
-				EMFValidationError error = new EMFValidationError(EMFErrorSeverity.WARNING, SpagoBIConstants.VALUE_FILTER, "1055", v, params);
+				EMFValidationError error = new EMFValidationError(EMFErrorSeverity.WARNING,
+						SpagoBIConstants.VALUE_FILTER, "1055", v, params);
 				throw error;
 			}
 
@@ -494,21 +518,26 @@ public abstract class DependenciesPostProcessingLov extends AbstractLOV {
 				return valueDate.compareTo(valueFilterDate) >= 0;
 			} else {
 				TracerSingleton.log(Constants.NOME_MODULO, TracerSingleton.WARNING,
-						"DelegatedBasicListService::filterList: the filter type '" + typeFilter + "' is not a valid filter type");
+						"DelegatedBasicListService::filterList: the filter type '" + typeFilter
+								+ "' is not a valid filter type");
 				HashMap params = new HashMap();
-				params.put(Constants.NOME_MODULO, "DelegatedBasicListService::filterList: the filter type '" + typeFilter + "' is not a valid filter type");
-				EMFValidationError error = new EMFValidationError(EMFErrorSeverity.ERROR, SpagoBIConstants.TYPE_FILTER, "100", null, params);
+				params.put(Constants.NOME_MODULO, "DelegatedBasicListService::filterList: the filter type '"
+						+ typeFilter + "' is not a valid filter type");
+				EMFValidationError error = new EMFValidationError(EMFErrorSeverity.ERROR, SpagoBIConstants.TYPE_FILTER,
+						"100", null, params);
 				throw error;
 			}
 		} else if (valuetypefilter.equalsIgnoreCase(SpagoBIConstants.DATE_RANGE_TYPE)) {
 			return DateRangeUtils.isInDateRangeFilter(valuefilter, typeFilter, value);
 		} else {
 			TracerSingleton.log(Constants.NOME_MODULO, TracerSingleton.WARNING,
-					"DelegatedBasicListService::filterList: the filter value type '" + valuetypefilter + "' is not a valid filter value type");
+					"DelegatedBasicListService::filterList: the filter value type '" + valuetypefilter
+							+ "' is not a valid filter value type");
 			HashMap params = new HashMap();
-			params.put(Constants.NOME_MODULO,
-					"DelegatedBasicListService::filterList: the filter value type '" + valuetypefilter + "' is not a valid filter value type");
-			EMFValidationError error = new EMFValidationError(EMFErrorSeverity.ERROR, SpagoBIConstants.TYPE_FILTER, "100", null, params);
+			params.put(Constants.NOME_MODULO, "DelegatedBasicListService::filterList: the filter value type '"
+					+ valuetypefilter + "' is not a valid filter value type");
+			EMFValidationError error = new EMFValidationError(EMFErrorSeverity.ERROR, SpagoBIConstants.TYPE_FILTER,
+					"100", null, params);
 			throw error;
 		}
 	}
@@ -525,7 +554,8 @@ public abstract class DependenciesPostProcessingLov extends AbstractLOV {
 	 *
 	 * @return the filtered list
 	 */
-	public static List filterList(List list, String[] valuesfilter, String valuetypefilter, String columnfilter, String typeFilter) {
+	public static List filterList(List list, String[] valuesfilter, String valuetypefilter, String columnfilter,
+			String typeFilter) {
 
 		List newList = new ArrayList();
 
@@ -533,22 +563,24 @@ public abstract class DependenciesPostProcessingLov extends AbstractLOV {
 			return list;
 		}
 
-		if (StringUtilities.isEmpty(columnfilter)) {
+		if (StringUtils.isEmpty(columnfilter)) {
 			return list;
 		}
-		if (StringUtilities.isEmpty(typeFilter)) {
-			return list;
-		}
-
-		if (StringUtilities.isEmpty(valuetypefilter)) {
+		if (StringUtils.isEmpty(typeFilter)) {
 			return list;
 		}
 
-		if (typeFilter.equalsIgnoreCase(SpagoBIConstants.LESS_FILTER) || typeFilter.equalsIgnoreCase(SpagoBIConstants.LESS_OR_EQUAL_FILTER)
-				|| typeFilter.equalsIgnoreCase(SpagoBIConstants.GREATER_FILTER) || typeFilter.equalsIgnoreCase(SpagoBIConstants.GREATER_OR_EQUAL_FILTER)) {
+		if (StringUtils.isEmpty(valuetypefilter)) {
+			return list;
+		}
 
-			Assert.assertUnreachable(
-					"filterList with a list of filtering values: the filter type " + typeFilter + " is not applicable for multi-values filtering.");
+		if (typeFilter.equalsIgnoreCase(SpagoBIConstants.LESS_FILTER)
+				|| typeFilter.equalsIgnoreCase(SpagoBIConstants.LESS_OR_EQUAL_FILTER)
+				|| typeFilter.equalsIgnoreCase(SpagoBIConstants.GREATER_FILTER)
+				|| typeFilter.equalsIgnoreCase(SpagoBIConstants.GREATER_OR_EQUAL_FILTER)) {
+
+			Assert.assertUnreachable("filterList with a list of filtering values: the filter type " + typeFilter
+					+ " is not applicable for multi-values filtering.");
 		}
 
 		// controls the correctness of the filtering conditions
@@ -563,7 +595,8 @@ public abstract class DependenciesPostProcessingLov extends AbstractLOV {
 				String valuefilter = valuesfilter[i];
 				try {
 					if (valuefilter != null && !valuefilter.equals(""))
-						doesRowSatisfyCondition = doesRowSatisfyCondition(row, valuefilter, valuetypefilter, columnfilter, typeFilter);
+						doesRowSatisfyCondition = doesRowSatisfyCondition(row, valuefilter, valuetypefilter,
+								columnfilter, typeFilter);
 					else
 						doesRowSatisfyCondition = true;
 				} catch (EMFValidationError error) {

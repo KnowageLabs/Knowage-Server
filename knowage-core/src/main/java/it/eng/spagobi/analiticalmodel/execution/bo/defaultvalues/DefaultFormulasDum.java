@@ -22,15 +22,15 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 public class DefaultFormulasDum {
 
-	private static Logger logger = Logger.getLogger(DefaultFormulas.class);
+	private static Logger logger = Logger.getLogger(DefaultFormulasDum.class);
 
 	private static Map<String, IDefaultFormulaDum> formulas;
 
-	public static String NONE = "NONE";
-	public static String FIRST = "FIRST";
-	public static String LAST = "LAST";
+	public static final String NONE = "NONE";
+	public static final String FIRST = "FIRST";
+	public static final String LAST = "LAST";
 
-	public static IDefaultFormulaDum NONE_FUNCTION = new IDefaultFormulaDum() {
+	public static final IDefaultFormulaDum NONE_FUNCTION = new IDefaultFormulaDum() {
 
 		@Override
 		public String getName() {
@@ -38,15 +38,16 @@ public class DefaultFormulasDum {
 		}
 
 		@Override
-		public DefaultValuesList getDefaultValues(AbstractDriver analyticalDocumentParameter, AbstractBIResourceRuntime dum, IEngUserProfile profile,
-				IDrivableBIResource object, Locale locale, String role) {
+		public DefaultValuesList getDefaultValues(AbstractDriver analyticalDocumentParameter,
+				AbstractBIResourceRuntime dum, IEngUserProfile profile, IDrivableBIResource object, Locale locale,
+				String role) {
 			// TODO Auto-generated method stub
 			return null;
 		}
 
 	};
 
-	public static IDefaultFormulaDum FIRST_FUNCTION = new IDefaultFormulaDum() {
+	public static final IDefaultFormulaDum FIRST_FUNCTION = new IDefaultFormulaDum() {
 
 		@Override
 		public String getName() {
@@ -54,8 +55,9 @@ public class DefaultFormulasDum {
 		}
 
 		@Override
-		public DefaultValuesList getDefaultValues(AbstractDriver analyticalDocumentParameter, AbstractBIResourceRuntime dum, IEngUserProfile profile,
-				IDrivableBIResource object, Locale locale, String role) {
+		public DefaultValuesList getDefaultValues(AbstractDriver analyticalDocumentParameter,
+				AbstractBIResourceRuntime dum, IEngUserProfile profile, IDrivableBIResource object, Locale locale,
+				String role) {
 			logger.debug("Formula " + this.getName() + ": IN");
 			LovValue defaultValue = null;
 			try {
@@ -63,8 +65,8 @@ public class DefaultFormulasDum {
 				logger.debug("LOV info retrieved");
 				// get from cache, if available
 				LovResultCacheManager executionCacheManager = new LovResultCacheManager();
-				String lovResultStr = executionCacheManager.getLovResultDum(profile, lovDetails, dum.getDependencies(analyticalDocumentParameter, role), object,
-						true, locale);
+				String lovResultStr = executionCacheManager.getLovResultDum(profile, lovDetails,
+						dum.getDependencies(analyticalDocumentParameter, role), object, true, locale);
 				logger.debug("LOV executed");
 				// get all the rows of the result
 				LovResultHandler lovResultHandler = new LovResultHandler(lovResultStr);
@@ -73,8 +75,8 @@ public class DefaultFormulasDum {
 				if (lovResult == null || lovResult.isEmpty()) {
 					Parameter par = analyticalDocumentParameter.getParameter();
 					ModalitiesValue lov = par.getModalityValue();
-					String message = "LOV result is empty for driver with label [" + analyticalDocumentParameter.getLabel() + "] and lov with label ["
-							+ lov.getLabel() + "]";
+					String message = "LOV result is empty for driver with label ["
+							+ analyticalDocumentParameter.getLabel() + "] and lov with label [" + lov.getLabel() + "]";
 					logger.error(message);
 					throw new SpagoBIRuntimeException(message);
 				}
@@ -94,7 +96,7 @@ public class DefaultFormulasDum {
 		}
 	};
 
-	public static IDefaultFormulaDum LAST_FUNCTION = new IDefaultFormulaDum() {
+	public static final IDefaultFormulaDum LAST_FUNCTION = new IDefaultFormulaDum() {
 
 		@Override
 		public String getName() {
@@ -102,8 +104,9 @@ public class DefaultFormulasDum {
 		}
 
 		@Override
-		public DefaultValuesList getDefaultValues(AbstractDriver analyticalDocumentParameter, AbstractBIResourceRuntime dum, IEngUserProfile profile,
-				IDrivableBIResource object, Locale locale, String role) {
+		public DefaultValuesList getDefaultValues(AbstractDriver analyticalDocumentParameter,
+				AbstractBIResourceRuntime dum, IEngUserProfile profile, IDrivableBIResource object, Locale locale,
+				String role) {
 			logger.debug("Formula " + this.getName() + ": IN");
 			LovValue defaultValue = null;
 			try {
@@ -111,8 +114,8 @@ public class DefaultFormulasDum {
 				logger.debug("LOV info retrieved");
 				// get from cache, if available
 				LovResultCacheManager executionCacheManager = new LovResultCacheManager();
-				String lovResultStr = executionCacheManager.getLovResultDum(profile, lovDetails, dum.getDependencies(analyticalDocumentParameter, role), object,
-						true, locale);
+				String lovResultStr = executionCacheManager.getLovResultDum(profile, lovDetails,
+						dum.getDependencies(analyticalDocumentParameter, role), object, true, locale);
 				logger.debug("LOV executed");
 				// get all the rows of the result
 				LovResultHandler lovResultHandler = new LovResultHandler(lovResultStr);
@@ -121,8 +124,8 @@ public class DefaultFormulasDum {
 				if (lovResult == null || lovResult.isEmpty()) {
 					Parameter par = analyticalDocumentParameter.getParameter();
 					ModalitiesValue lov = par.getModalityValue();
-					String message = "LOV result is empty for driver with label [" + analyticalDocumentParameter.getLabel() + "] and lov with label ["
-							+ lov.getLabel() + "]";
+					String message = "LOV result is empty for driver with label ["
+							+ analyticalDocumentParameter.getLabel() + "] and lov with label [" + lov.getLabel() + "]";
 					logger.error(message);
 					throw new SpagoBIRuntimeException(message);
 				}
@@ -143,7 +146,7 @@ public class DefaultFormulasDum {
 	};
 
 	static {
-		formulas = new HashMap<String, IDefaultFormulaDum>();
+		formulas = new HashMap<>();
 		formulas.put(NONE, NONE_FUNCTION);
 		formulas.put(FIRST, FIRST_FUNCTION);
 		formulas.put(LAST, LAST_FUNCTION);
@@ -161,4 +164,7 @@ public class DefaultFormulasDum {
 		return toReturn;
 	}
 
+	private DefaultFormulasDum() {
+
+	}
 }

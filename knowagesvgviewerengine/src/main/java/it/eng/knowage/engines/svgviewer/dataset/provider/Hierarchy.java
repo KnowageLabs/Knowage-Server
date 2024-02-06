@@ -17,14 +17,13 @@
  */
 package it.eng.knowage.engines.svgviewer.dataset.provider;
 
-import it.eng.spagobi.commons.utilities.StringUtilities;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 
 /**
@@ -43,10 +42,10 @@ public class Hierarchy {
 	private String table;
 
 	/** The level list. */
-	private List levelList;
+	private final List levelList;
 
 	/** The level map. */
-	private Map levelMap;
+	private final Map levelMap;
 
 	private static final String ALL_MEASURE_KEY = "__ALL_MEASURE_KEY__";
 
@@ -55,8 +54,7 @@ public class Hierarchy {
 	/**
 	 * Instantiates a new hierarchy.
 	 *
-	 * @param name
-	 *            the name
+	 * @param name the name
 	 */
 	public Hierarchy(String name) {
 		this.name = name;
@@ -69,10 +67,8 @@ public class Hierarchy {
 	/**
 	 * Instantiates a new hierarchy.
 	 *
-	 * @param name
-	 *            the name
-	 * @param table
-	 *            the table
+	 * @param name  the name
+	 * @param table the table
 	 */
 	public Hierarchy(String name, String table) {
 		this.name = name;
@@ -94,8 +90,7 @@ public class Hierarchy {
 	/**
 	 * Sets the name.
 	 *
-	 * @param name
-	 *            the new name
+	 * @param name the new name
 	 */
 	public void setName(String name) {
 		this.name = name;
@@ -113,8 +108,7 @@ public class Hierarchy {
 	/**
 	 * Sets the table.
 	 *
-	 * @param table
-	 *            the new table
+	 * @param table the new table
 	 */
 	public void setTable(String table) {
 		this.table = table;
@@ -132,8 +126,7 @@ public class Hierarchy {
 	/**
 	 * Sets the type.
 	 *
-	 * @param type
-	 *            the new type
+	 * @param type the new type
 	 */
 	public void setType(String type) {
 		this.type = type;
@@ -142,8 +135,7 @@ public class Hierarchy {
 	/**
 	 * Adds the level.
 	 *
-	 * @param level
-	 *            the level
+	 * @param level the level
 	 */
 	public void addLevel(Level level) {
 		levelList.add(level);
@@ -153,8 +145,7 @@ public class Hierarchy {
 	/**
 	 * Gets the level.
 	 *
-	 * @param levelName
-	 *            the level name
+	 * @param levelName the level name
 	 *
 	 * @return the level
 	 */
@@ -174,8 +165,7 @@ public class Hierarchy {
 	/**
 	 * Gets the sublevels.
 	 *
-	 * @param levelName
-	 *            the level name
+	 * @param levelName the level name
 	 *
 	 * @return the sublevels
 	 */
@@ -213,7 +203,7 @@ public class Hierarchy {
 		private String featureName;
 
 		/** The link. */
-		private Map links;
+		private final Map links;
 
 		/**
 		 * Instantiates a new level.
@@ -234,8 +224,7 @@ public class Hierarchy {
 		/**
 		 * Sets the column desc.
 		 *
-		 * @param columnDesc
-		 *            the new column desc
+		 * @param columnDesc the new column desc
 		 */
 		public void setColumnDesc(String columnDesc) {
 			this.columnDesc = columnDesc;
@@ -253,8 +242,7 @@ public class Hierarchy {
 		/**
 		 * Sets the column id.
 		 *
-		 * @param columnId
-		 *            the new column id
+		 * @param columnId the new column id
 		 */
 		public void setColumnId(String columnId) {
 			this.columnId = columnId;
@@ -272,8 +260,7 @@ public class Hierarchy {
 		/**
 		 * Sets the feature name.
 		 *
-		 * @param featureName
-		 *            the new feature name
+		 * @param featureName the new feature name
 		 */
 		public void setFeatureName(String featureName) {
 			this.featureName = featureName;
@@ -291,8 +278,7 @@ public class Hierarchy {
 		/**
 		 * Sets the name.
 		 *
-		 * @param name
-		 *            the new name
+		 * @param name the new name
 		 */
 		public void setName(String name) {
 			this.name = name;
@@ -317,11 +303,10 @@ public class Hierarchy {
 		/**
 		 * Sets the link.
 		 *
-		 * @param link
-		 *            the new link
+		 * @param link the new link
 		 */
 		public void setLink(String key, Link link) {
-			if (StringUtilities.isEmpty(key)) {
+			if (StringUtils.isEmpty(key)) {
 				this.links.put(ALL_MEASURE_KEY, link);
 				logger.debug("impossible to add link on " + key);
 			} else {

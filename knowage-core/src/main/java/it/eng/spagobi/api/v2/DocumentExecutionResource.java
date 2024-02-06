@@ -64,6 +64,7 @@ import javax.ws.rs.core.Response.ResponseBuilder;
 
 import org.apache.clerezza.jaxrs.utils.form.FormFile;
 import org.apache.clerezza.jaxrs.utils.form.MultiPartBody;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -110,7 +111,6 @@ import it.eng.spagobi.commons.utilities.DateRangeDAOUtilities;
 import it.eng.spagobi.commons.utilities.GeneralUtilities;
 import it.eng.spagobi.commons.utilities.ObjectsAccessVerifier;
 import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
-import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.commons.utilities.messages.IMessageBuilder;
 import it.eng.spagobi.commons.utilities.messages.MessageBuilderFactory;
 import it.eng.spagobi.profiling.PublicProfile;
@@ -270,7 +270,7 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 			url += engineParam;
 
 			String editMode = requestVal.optString("EDIT_MODE");
-			if (!StringUtilities.isEmpty(editMode)) {
+			if (!StringUtils.isEmpty(editMode)) {
 				url += "&EDIT_MODE=" + editMode;
 			}
 
@@ -311,7 +311,7 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 			subObjectId = parameters.optString("subobj_id");
 		}
 		String documentTypeCode = obj.getBiObjectTypeCode();
-		return documentTypeCode.equals(SpagoBIConstants.OLAP_TYPE_CODE) && !StringUtilities.isEmpty(subObjectId);
+		return documentTypeCode.equals(SpagoBIConstants.OLAP_TYPE_CODE) && !StringUtils.isEmpty(subObjectId);
 	}
 
 	private String buildEngineUrlString(JSONObject reqVal, BIObject obj, HttpServletRequest req, String isForExport,
@@ -330,16 +330,16 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 				String subViewObjectDescription = parameters.optString("subobj_description");
 				String subViewObjectVisibility = parameters.optString("subobj_visibility");
 
-				if (!StringUtilities.isEmpty(subViewObjectID)) {
+				if (!StringUtils.isEmpty(subViewObjectID)) {
 					ret += "&" + AbstractEngineStartAction.SUBOBJ_ID + "=" + subViewObjectID;
 				}
-				if (!StringUtilities.isEmpty(subViewObjectName)) {
+				if (!StringUtils.isEmpty(subViewObjectName)) {
 					ret += "&" + AbstractEngineStartAction.SUBOBJ_NAME + "=" + subViewObjectName;
 				}
-				if (!StringUtilities.isEmpty(subViewObjectDescription)) {
+				if (!StringUtils.isEmpty(subViewObjectDescription)) {
 					ret += "&" + AbstractEngineStartAction.SUBOBJ_DESCRIPTION + "=" + subViewObjectDescription;
 				}
-				if (!StringUtilities.isEmpty(subViewObjectVisibility)) {
+				if (!StringUtils.isEmpty(subViewObjectVisibility)) {
 					ret += "&" + AbstractEngineStartAction.SUBOBJ_VISIBILITY + "=" + subViewObjectVisibility;
 				}
 			}

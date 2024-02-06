@@ -76,27 +76,9 @@ import it.eng.spagobi.utilities.rest.RestUtilities;
 @Path("/1.0/documents")
 @ManageAuthorization
 public class DocumentResource extends AbstractDocumentResource {
-	protected static Logger logger = Logger.getLogger(DocumentResource.class);
 
-	/*
-	 * @GET
-	 *
-	 * @Path("/")
-	 *
-	 * @Produces(MediaType.APPLICATION_JSON ) public Response getDocuments(@QueryParam("inputType") String inputType) { logger.debug("IN"); IBIObjectDAO
-	 * documentsDao = null; List<BIObject> allObjects = null; List<BIObject> objects = null;
-	 *
-	 * try { documentsDao = DAOFactory.getBIObjectDAO(); allObjects = documentsDao.loadAllBIObjects();
-	 *
-	 * UserProfile profile = getUserProfile(); objects = new ArrayList<BIObject>();
-	 *
-	 * if (inputType != null && !inputType.isEmpty()) { for (BIObject obj : allObjects) { if (obj.getBiObjectTypeCode().equals(inputType) &&
-	 * ObjectsAccessVerifier.canSee(obj, profile)) objects.add(obj); } } else { for (BIObject obj : allObjects) { if (ObjectsAccessVerifier.canSee(obj,
-	 * profile)) objects.add(obj); } } String toBeReturned = JsonConverter.objectToJson(objects, objects.getClass());
-	 *
-	 * return Response.ok(toBeReturned).build(); } catch (Exception e) { logger.error("Error while getting the list of documents", e); throw new
-	 * SpagoBIRuntimeException("Error while getting the list of documents", e); } finally { logger.debug("OUT"); } }
-	 */
+	private static final Logger LOGGER = Logger.getLogger(DocumentResource.class);
+
 	@Override
 	@POST
 	@Path("/")
@@ -138,7 +120,8 @@ public class DocumentResource extends AbstractDocumentResource {
 	@GET
 	@Path("/{label}/usertemplate")
 	public Response getDocumentTemplateCheckUser(@PathParam("label") String label) {
-		AnalyticalModelDocumentManagementAPI documentManager = new AnalyticalModelDocumentManagementAPI(getUserProfile());
+		AnalyticalModelDocumentManagementAPI documentManager = new AnalyticalModelDocumentManagementAPI(
+				getUserProfile());
 		BIObject document = documentManager.getDocument(label);
 		if (document == null)
 			throw new SpagoBIRuntimeException("Document with label [" + label + "] doesn't exist");
@@ -146,9 +129,10 @@ public class DocumentResource extends AbstractDocumentResource {
 		// check if owner of document or administrator
 
 		if (!document.getTenant().equals(getUserProfile().getOrganization())
-				|| (!UserUtilities.isAdministrator(getUserProfile()) && !document.getCreationUser().equals(getUserProfile().getUserId()))) {
-			throw new SpagoBIRuntimeException(
-					"User [" + getUserProfile().getUserName() + "] has no rights to see template of document with label [" + label + "]");
+				|| (!UserUtilities.isAdministrator(getUserProfile())
+						&& !document.getCreationUser().equals(getUserProfile().getUserId()))) {
+			throw new SpagoBIRuntimeException("User [" + getUserProfile().getUserName()
+					+ "] has no rights to see template of document with label [" + label + "]");
 		}
 
 		ResponseBuilder rb;
@@ -160,7 +144,7 @@ public class DocumentResource extends AbstractDocumentResource {
 		try {
 			rb = Response.ok(template.getContent());
 		} catch (Exception e) {
-			logger.error("Error while getting document template", e);
+			LOGGER.error("Error while getting document template", e);
 			throw new SpagoBIRuntimeException("Error while getting document template", e);
 		}
 
@@ -179,7 +163,6 @@ public class DocumentResource extends AbstractDocumentResource {
 	@Path("/{label}/meta")
 	@Produces(MediaType.APPLICATION_JSON)
 	public String getDocumentMeta(@PathParam("label") String label) {
-		// TODO
 		return null;
 	}
 
@@ -187,8 +170,9 @@ public class DocumentResource extends AbstractDocumentResource {
 	@Path("/{label}/parameters")
 	@Produces(MediaType.APPLICATION_JSON)
 	public String getDocumentParameters(@PathParam("label") String label) {
-		logger.debug("IN");
-		AnalyticalModelDocumentManagementAPI documentManager = new AnalyticalModelDocumentManagementAPI(getUserProfile());
+		LOGGER.debug("IN");
+		AnalyticalModelDocumentManagementAPI documentManager = new AnalyticalModelDocumentManagementAPI(
+				getUserProfile());
 		try {
 			List<JSONObject> parameters = documentManager.getDocumentParameters(label);
 			JSONArray paramsJSON = writeParameters(parameters);
@@ -196,9 +180,10 @@ public class DocumentResource extends AbstractDocumentResource {
 			resultsJSON.put("results", paramsJSON);
 			return resultsJSON.toString();
 		} catch (Throwable t) {
-			throw new SpagoBIServiceException(this.request.getPathInfo(), "An unexpected error occured while executing service", t);
+			throw new SpagoBIServiceException(this.request.getPathInfo(),
+					"An unexpected error occured while executing service", t);
 		} finally {
-			logger.debug("OUT");
+			LOGGER.debug("OUT");
 		}
 	}
 
@@ -206,7 +191,7 @@ public class DocumentResource extends AbstractDocumentResource {
 	@Path("/{label}/analyticalDrivers")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getDocumentAD(@PathParam("label") String label) {
-		logger.debug("IN");
+		LOGGER.debug("IN");
 
 		IParameterDAO driversDao = null;
 		List<Parameter> fullList = null;
@@ -218,9 +203,10 @@ public class DocumentResource extends AbstractDocumentResource {
 			fullList = driversDao.loadParametersByBIObjectLabel(label);
 			return Response.ok(fullList).build();
 		} catch (Throwable t) {
-			throw new SpagoBIServiceException(this.request.getPathInfo(), "An unexpected error occured while executing service", t);
+			throw new SpagoBIServiceException(this.request.getPathInfo(),
+					"An unexpected error occured while executing service", t);
 		} finally {
-			logger.debug("OUT");
+			LOGGER.debug("OUT");
 		}
 	}
 
@@ -228,7 +214,7 @@ public class DocumentResource extends AbstractDocumentResource {
 	@Path("/{label}/lovs")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getDocumentLovs(@PathParam("label") String label) {
-		logger.debug("IN");
+		LOGGER.debug("IN");
 
 		List<ModalitiesValue> modalitiesValues = null;
 		IModalitiesValueDAO modalitiesValueDAO = null;
@@ -241,9 +227,10 @@ public class DocumentResource extends AbstractDocumentResource {
 
 			return Response.ok(modalitiesValues).build();
 		} catch (Throwable t) {
-			throw new SpagoBIServiceException(this.request.getPathInfo(), "An unexpected error occured while executing service", t);
+			throw new SpagoBIServiceException(this.request.getPathInfo(),
+					"An unexpected error occured while executing service", t);
 		} finally {
-			logger.debug("OUT");
+			LOGGER.debug("OUT");
 		}
 	}
 
@@ -283,7 +270,8 @@ public class DocumentResource extends AbstractDocumentResource {
 		JSONObject geoTemplate = jsonData.getJSONObject("TEMPLATE");
 		String layerLabel = jsonData.getString("DOCUMENT_LABEL");
 
-		AnalyticalModelDocumentManagementAPI documentManager = new AnalyticalModelDocumentManagementAPI(getUserProfile());
+		AnalyticalModelDocumentManagementAPI documentManager = new AnalyticalModelDocumentManagementAPI(
+				getUserProfile());
 
 		ObjTemplate template = new ObjTemplate();
 		template.setName(layerLabel + "_Template.json");
@@ -303,8 +291,9 @@ public class DocumentResource extends AbstractDocumentResource {
 			}
 			documentManager.saveDocument(document, template);
 		} catch (EMFUserError e) {
-			logger.error("Error saving JSON Template ...", e);
-			throw new SpagoBIServiceException(this.request.getPathInfo(), "An unexpected error occured while executing service", e);
+			LOGGER.error("Error saving JSON Template ...", e);
+			throw new SpagoBIServiceException(this.request.getPathInfo(),
+					"An unexpected error occured while executing service", e);
 		}
 		return Response.ok().build();
 	}
@@ -324,8 +313,9 @@ public class DocumentResource extends AbstractDocumentResource {
 			xml = json.toString();
 
 		} catch (Exception e) {
-			logger.error("Error converting JSON Template to XML...", e);
-			throw new SpagoBIServiceException(this.request.getPathInfo(), "An unexpected error occured while executing service", e);
+			LOGGER.error("Error converting JSON Template to XML...", e);
+			throw new SpagoBIServiceException(this.request.getPathInfo(),
+					"An unexpected error occured while executing service", e);
 
 		}
 
@@ -338,8 +328,8 @@ public class DocumentResource extends AbstractDocumentResource {
 	@Path("/saveKpiTemplate")
 	@Produces(MediaType.APPLICATION_XML)
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
-	public String saveKpiTemplate(@FormParam("jsonTemplate") String jsonTemplate, @FormParam("docLabel") String docLabel,
-			@Context HttpServletResponse servletResponse) {
+	public String saveKpiTemplate(@FormParam("jsonTemplate") String jsonTemplate,
+			@FormParam("docLabel") String docLabel, @Context HttpServletResponse servletResponse) {
 		String xml = null;
 		try {
 			JSONObject json = new JSONObject(jsonTemplate);
@@ -347,8 +337,9 @@ public class DocumentResource extends AbstractDocumentResource {
 			xml = JSONTemplateUtilities.convertJsonToXML(json);
 
 		} catch (Exception e) {
-			logger.error("Error converting JSON Template to XML...", e);
-			throw new SpagoBIServiceException(this.request.getPathInfo(), "An unexpected error occured while executing service", e);
+			LOGGER.error("Error converting JSON Template to XML...", e);
+			throw new SpagoBIServiceException(this.request.getPathInfo(),
+					"An unexpected error occured while executing service", e);
 
 		}
 
@@ -357,11 +348,11 @@ public class DocumentResource extends AbstractDocumentResource {
 		return xml;
 	}
 
-	public JSONArray writeParameters(List<JSONObject> params) throws Exception {
+	public JSONArray writeParameters(List<JSONObject> params) {
 		JSONArray paramsJSON = new JSONArray();
 
-		for (Iterator iterator = params.iterator(); iterator.hasNext();) {
-			JSONObject jsonObject = (JSONObject) iterator.next();
+		for (Iterator<JSONObject> iterator = params.iterator(); iterator.hasNext();) {
+			JSONObject jsonObject = iterator.next();
 			paramsJSON.put(jsonObject);
 		}
 
@@ -374,14 +365,15 @@ public class DocumentResource extends AbstractDocumentResource {
 
 	private void saveOlapTemplate(String docLabel, String xml, JSONObject json) {
 
-		AnalyticalModelDocumentManagementAPI documentManager = new AnalyticalModelDocumentManagementAPI(getUserProfile());
+		AnalyticalModelDocumentManagementAPI documentManager = new AnalyticalModelDocumentManagementAPI(
+				getUserProfile());
 
 		ObjTemplate template = new ObjTemplate();
 		template.setName("Template.xml");
 		template.setContent(xml.getBytes());
 		template.setDimension(Long.toString(xml.getBytes().length / 1000) + " KByte");
 
-		ArrayList<String> categoriesNames = new ArrayList<String>();
+		ArrayList<String> categoriesNames = new ArrayList<>();
 
 		/**
 		 * Handles OLAP template cross-navigation parameters.
@@ -401,8 +393,10 @@ public class DocumentResource extends AbstractDocumentResource {
 
 			if (olapJSONObject.optJSONObject("CROSS_NAVIGATION") != null) {
 
-				crossNavFromCellSingle = olapJSONObject.optJSONObject("CROSS_NAVIGATION").optJSONObject("PARAMETERS").optJSONObject("PARAMETER");
-				crossNavFromCellMulti = olapJSONObject.optJSONObject("CROSS_NAVIGATION").optJSONObject("PARAMETERS").optJSONArray("PARAMETER");
+				crossNavFromCellSingle = olapJSONObject.optJSONObject("CROSS_NAVIGATION").optJSONObject("PARAMETERS")
+						.optJSONObject("PARAMETER");
+				crossNavFromCellMulti = olapJSONObject.optJSONObject("CROSS_NAVIGATION").optJSONObject("PARAMETERS")
+						.optJSONArray("PARAMETER");
 
 				if (crossNavFromCellMulti == null) {
 					if (crossNavFromCellSingle != null) {
@@ -437,9 +431,9 @@ public class DocumentResource extends AbstractDocumentResource {
 				JSONObject joT = (JSONObject) jaCategories.get(i);
 				categoriesNames.add((String) joT.opt("name"));
 			}
-			logger.info("Category names for the OLAP document are: " + categoriesNames);
+			LOGGER.info("Category names for the OLAP document are: " + categoriesNames);
 		} catch (JSONException e) {
-			logger.error("Cannot get OLAP values from JSON object", e);
+			LOGGER.error("Cannot get OLAP values from JSON object", e);
 			throw new SpagoBIServiceException("Cannot get OLAP values from JSON object", e);
 		}
 
@@ -456,29 +450,31 @@ public class DocumentResource extends AbstractDocumentResource {
 			documentManager.saveDocument(document, template);
 
 		} catch (EMFUserError e) {
-			logger.error("Error saving JSON Template to XML...", e);
-			throw new SpagoBIServiceException(this.request.getPathInfo(), "An unexpected error occured while executing service", e);
+			LOGGER.error("Error saving JSON Template to XML...", e);
+			throw new SpagoBIServiceException(this.request.getPathInfo(),
+					"An unexpected error occured while executing service", e);
 		}
 	}
 
 	private void saveTemplate(String docLabel, String xml) {
-		AnalyticalModelDocumentManagementAPI documentManager = new AnalyticalModelDocumentManagementAPI(getUserProfile());
+		AnalyticalModelDocumentManagementAPI documentManager = new AnalyticalModelDocumentManagementAPI(
+				getUserProfile());
 
 		ObjTemplate template = new ObjTemplate();
 		template.setName("Template.json");
 		template.setContent(xml.getBytes());
 		template.setDimension(Long.toString(xml.getBytes().length / 1000) + " KByte");
 
-		ArrayList<String> categoriesNames = new ArrayList<String>();
+		ArrayList<String> categoriesNames = new ArrayList<>();
 
 		/**
-		 * 'allSpecificChartTypes': Array of all chart types that need some default (generic) output parameters to be removed from the list of final output
-		 * parameters for the document of that chart type. For example, the WORDCLOUD chart type does not need a GROUPING_NAME and GROUPING_VALUE output
-		 * parameters, so these two will be removed from the predefined (standard) list of output parameters (it will have only SERIE_NAME, SERIE_VALUE,
-		 * CATEGORY_NAME, CATEGORY_VALUE parameters).
+		 * 'allSpecificChartTypes': Array of all chart types that need some default (generic) output parameters to be removed from the list of final output parameters
+		 * for the document of that chart type. For example, the WORDCLOUD chart type does not need a GROUPING_NAME and GROUPING_VALUE output parameters, so these two
+		 * will be removed from the predefined (standard) list of output parameters (it will have only SERIE_NAME, SERIE_VALUE, CATEGORY_NAME, CATEGORY_VALUE
+		 * parameters).
 		 *
-		 * 'specificChartType': If the type of the chart document that is saved is one of those in the following list, we will record it and manage further
-		 * functions accordingly.
+		 * 'specificChartType': If the type of the chart document that is saved is one of those in the following list, we will record it and manage further functions
+		 * accordingly.
 		 *
 		 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 		 */
@@ -524,7 +520,8 @@ public class DocumentResource extends AbstractDocumentResource {
 						if (specificChartTypes.indexOf(obj.opt("type").toString()) >= 0) {
 							// Get that specific type of the chart document that
 							// is in process of saving. (danristo)
-							specificChartType = (String) specificChartTypes.get(specificChartTypes.indexOf(obj.opt("type").toString()));
+							specificChartType = (String) specificChartTypes
+									.get(specificChartTypes.indexOf(obj.opt("type").toString()));
 							break;
 						} else if (!obj.opt("type").toString().equals("SUNBURST")) {
 							break;
@@ -543,20 +540,13 @@ public class DocumentResource extends AbstractDocumentResource {
 						categoriesNames.add((String) joT.opt("column"));
 					}
 
-					logger.info("Category names for the SUNBURST document are: " + categoriesNames);
+					LOGGER.info("Category names for the SUNBURST document are: " + categoriesNames);
 
 				}
 			}
 
-		} catch (JSONException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		} catch (TransformerFactoryConfigurationError e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		} catch (TransformerException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
+		} catch (JSONException | TransformerFactoryConfigurationError | TransformerException e1) {
+			LOGGER.warn("Non-fatal error", e1);
 		}
 
 		try {
@@ -568,11 +558,12 @@ public class DocumentResource extends AbstractDocumentResource {
 				document = biObjectDao.loadBIObjectById(docId);
 				if (document == null) {
 					// This is wrong. We should use only one type of identifier!!!
-					logger.debug("The document identifier is an Integer, but no document is found with such identifier. Trying with with it as a String.");
+					LOGGER.debug(
+							"The document identifier is an Integer, but no document is found with such identifier. Trying with with it as a String.");
 					document = biObjectDao.loadBIObjectByLabel(docLabel);
 				}
 			} catch (NumberFormatException e) {
-				logger.debug("The document identifier is not an Integer.");
+				LOGGER.debug("The document identifier is not an Integer.");
 				document = biObjectDao.loadBIObjectByLabel(docLabel);
 			}
 
@@ -592,8 +583,9 @@ public class DocumentResource extends AbstractDocumentResource {
 			}
 
 		} catch (EMFUserError e) {
-			logger.error("Error saving JSON Template to XML...", e);
-			throw new SpagoBIServiceException(this.request.getPathInfo(), "An unexpected error occured while executing service", e);
+			LOGGER.error("Error saving JSON Template to XML...", e);
+			throw new SpagoBIServiceException(this.request.getPathInfo(),
+					"An unexpected error occured while executing service", e);
 		}
 	}
 

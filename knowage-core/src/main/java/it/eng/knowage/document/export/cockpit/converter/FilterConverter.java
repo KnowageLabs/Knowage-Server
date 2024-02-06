@@ -31,7 +31,6 @@ import org.json.JSONObject;
 
 import it.eng.knowage.document.export.cockpit.IConverter;
 import it.eng.qbe.dataset.QbeDataSet;
-import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.tools.dataset.DatasetManagementAPI;
@@ -78,7 +77,7 @@ public class FilterConverter extends CommonJSON implements IConverter<Filter, JS
 
 		List<Filter> filters = new ArrayList<>(0);
 		try {
-			Map<String, String> columnAliasToName = new HashMap<String, String>();
+			Map<String, String> columnAliasToName = new HashMap<>();
 			loadColumnAliasToName(getCategories(aggregations), columnAliasToName);
 			loadColumnAliasToName(getMeasures(aggregations), columnAliasToName);
 
@@ -87,26 +86,18 @@ public class FilterConverter extends CommonJSON implements IConverter<Filter, JS
 
 		}
 
-		return getDatasetManagementAPI().getWhereFilter(filters, new ArrayList<SimpleFilter>());
+		return getDatasetManagementAPI().getWhereFilter(filters, new ArrayList<>());
 	}
 
 	/**
 	 * @return
 	 */
 	protected DatasetManagementAPI getDatasetManagementAPI() {
-		DatasetManagementAPI managementAPI = new DatasetManagementAPI(UserProfileManager.getProfile());
-		return managementAPI;
+		return new DatasetManagementAPI(UserProfileManager.getProfile());
 	}
 
-	/**
-	 * @return
-	 */
-	private UserProfile getUserProfile() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	protected List<Filter> getFilters(String datasetLabel, JSONObject selectionsObject, Map<String, String> columnAliasToColumnName) throws JSONException {
+	protected List<Filter> getFilters(String datasetLabel, JSONObject selectionsObject,
+			Map<String, String> columnAliasToColumnName) throws JSONException {
 		List<Filter> filters = new ArrayList<>(0);
 
 		if (selectionsObject.has(datasetLabel)) {
@@ -150,9 +141,11 @@ public class FilterConverter extends CommonJSON implements IConverter<Filter, JS
 					throw new SpagoBIRuntimeException("Not recognised filter object " + filtersObject);
 				}
 
-				SimpleFilter firstSimpleFilter = getFilter(firstFilterOperator, firstFilterValues, columns, dataSet, columnAliasToColumnName);
+				SimpleFilter firstSimpleFilter = getFilter(firstFilterOperator, firstFilterValues, columns, dataSet,
+						columnAliasToColumnName);
 				if (firstSimpleFilter != null) {
-					SimpleFilter secondSimpleFilter = getFilter(secondFilterOperator, secondFilterValues, columns, dataSet, columnAliasToColumnName);
+					SimpleFilter secondSimpleFilter = getFilter(secondFilterOperator, secondFilterValues, columns,
+							dataSet, columnAliasToColumnName);
 					if (secondSimpleFilter != null) {
 						Filter compoundFilter = getComplexFilter((InFilter) firstSimpleFilter, secondSimpleFilter);
 						filters.add(compoundFilter);
@@ -175,11 +168,13 @@ public class FilterConverter extends CommonJSON implements IConverter<Filter, JS
 
 	public Filter getComplexFilter(InFilter inFilter, SimpleFilter anotherFilter) {
 		SimpleFilterOperator operator = anotherFilter.getOperator();
-		if (SimpleFilterOperator.EQUALS_TO_MIN.equals(operator) || SimpleFilterOperator.EQUALS_TO_MAX.equals(operator)) {
+		if (SimpleFilterOperator.EQUALS_TO_MIN.equals(operator)
+				|| SimpleFilterOperator.EQUALS_TO_MAX.equals(operator)) {
 			List<Object> operands = inFilter.getOperands();
 			Object result = operands.get(0);
-			if (result instanceof Comparable == false) {
-				throw new SpagoBIRuntimeException("Unable to compare operands of type [" + result.getClass().getName() + "]");
+			if (!(result instanceof Comparable)) {
+				throw new SpagoBIRuntimeException(
+						"Unable to compare operands of type [" + result.getClass().getName() + "]");
 			}
 			Comparable comparableResult = (Comparable) result;
 			for (int i = 1; i < operands.size(); i++) {
@@ -221,7 +216,8 @@ public class FilterConverter extends CommonJSON implements IConverter<Filter, JS
 				List<Object> valueObjects = new ArrayList<>(0);
 				if (!operator.isNullary() && !operator.isPlaceholder()) {
 					for (int i = 0; i < valuesJsonArray.length(); i++) {
-						String[] valuesArray = StringUtilities.splitBetween(valuesJsonArray.getString(i), "'", "','", "'");
+						String[] valuesArray = StringUtilities.splitBetween(valuesJsonArray.getString(i), "'", "','",
+								"'");
 						for (int j = 0; j < valuesArray.length; j++) {
 							Projection projection = projections.get(j % projections.size());
 							valueObjects.add(DataSetUtilities.getValue(valuesArray[j], projection.getType()));
@@ -239,7 +235,8 @@ public class FilterConverter extends CommonJSON implements IConverter<Filter, JS
 							filter = new InFilter(projections, valueObjects);
 						}
 					} else if (SimpleFilterOperator.LIKE.equals(operator)) {
-						filter = new LikeFilter(projections.get(0), valueObjects.get(0).toString(), LikeFilter.TYPE.PATTERN);
+						filter = new LikeFilter(projections.get(0), valueObjects.get(0).toString(),
+								LikeFilter.TYPE.PATTERN);
 					} else if (SimpleFilterOperator.BETWEEN.equals(operator)) {
 						filter = new BetweenFilter(projections.get(0), valueObjects.get(0), valueObjects.get(1));
 					} else if (operator.isNullary()) {
@@ -253,7 +250,8 @@ public class FilterConverter extends CommonJSON implements IConverter<Filter, JS
 		return filter;
 	}
 
-	protected List<String> getColumnList(String columns, IDataSet dataSet, Map<String, String> columnAliasToColumnName) {
+	protected List<String> getColumnList(String columns, IDataSet dataSet,
+			Map<String, String> columnAliasToColumnName) {
 		List<String> columnList = new ArrayList<>(Arrays.asList(columns.trim().split("\\s*,\\s*"))); // trim spaces while splitting
 
 		// transform QBE columns
@@ -268,7 +266,7 @@ public class FilterConverter extends CommonJSON implements IConverter<Filter, JS
 		// transform aliases
 		if (columnAliasToColumnName != null) {
 			Set<String> aliases = columnAliasToColumnName.keySet();
-			if (aliases.size() > 0) {
+			if (!aliases.isEmpty()) {
 				for (int i = 0; i < columnList.size(); i++) {
 					String column = columnList.get(i);
 					if (aliases.contains(column)) {

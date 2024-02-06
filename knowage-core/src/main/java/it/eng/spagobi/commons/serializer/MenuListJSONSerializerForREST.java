@@ -23,6 +23,7 @@ import java.util.Locale;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -37,7 +38,6 @@ import it.eng.spagobi.commons.constants.CommunityFunctionalityConstants;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.utilities.GeneralUtilities;
-import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.commons.utilities.UserUtilities;
 import it.eng.spagobi.commons.utilities.messages.MessageBuilder;
 import it.eng.spagobi.profiling.PublicProfile;
@@ -101,7 +101,8 @@ public class MenuListJSONSerializerForREST implements Serializer {
 	private static final String HREF_MYDATA_ADMIN = "/servlet/AdapterHTTP?ACTION_NAME=SELF_SERVICE_DATASET_START_ACTION&LIGHT_NAVIGATOR_RESET_INSERT=TRUE&MYDATA=false";
 	private static final String HREF_LOGIN = "/servlet/AdapterHTTP?ACTION_NAME=LOGOUT_ACTION&LIGHT_NAVIGATOR_DISABLED=TRUE";
 	private static final String HREF_LOGOUT = "/servlet/AdapterHTTP?ACTION_NAME=LOGOUT_ACTION&LIGHT_NAVIGATOR_DISABLED=TRUE&NEW_SESSION=TRUE";
-	private static final String HREF_SOCIAL_ANALYSIS = SingletonConfig.getInstance().getConfigValue("SPAGOBI.SOCIAL_ANALYSIS_URL");
+	private static final String HREF_SOCIAL_ANALYSIS = SingletonConfig.getInstance()
+			.getConfigValue("SPAGOBI.SOCIAL_ANALYSIS_URL");
 	private static final String HREF_HIERARCHIES_MANAGEMENT = "/restful-services/publish?PUBLISHER=hierarchiesEditor";
 	private static final String HREF_MANAGE_GLOSSARY_TECHNICAL = "/restful-services/publish?PUBLISHER=glossaryTechnical";
 	private static final String HREF_MANAGE_GLOSSARY_BUSINESS = "/restful-services/publish?PUBLISHER=glossaryBusiness";
@@ -149,7 +150,8 @@ public class MenuListJSONSerializerForREST implements Serializer {
 
 		contextName = KnowageSystemConfiguration.getKnowageContext();
 		if (!(o instanceof List)) {
-			throw new SerializationException("MenuListJSONSerializer is unable to serialize object of type: " + o.getClass().getName());
+			throw new SerializationException(
+					"MenuListJSONSerializer is unable to serialize object of type: " + o.getClass().getName());
 		}
 
 		try {
@@ -192,7 +194,8 @@ public class MenuListJSONSerializerForREST implements Serializer {
 							if (menuElem.getHasChildren()) {
 
 								List lstChildrenLev2 = menuElem.getLstChildren();
-								JSONArray tempMenuList2 = (JSONArray) getChildren(filteredMenuList, lstChildrenLev2, 1, locale);
+								JSONArray tempMenuList2 = (JSONArray) getChildren(filteredMenuList, lstChildrenLev2, 1,
+										locale);
 								temp.put(MENU, tempMenuList2);
 							}
 						} else {
@@ -221,9 +224,10 @@ public class MenuListJSONSerializerForREST implements Serializer {
 							temp.put(TARGET, "_self");
 
 							// if (menuElem.getCode() != null && menuElem.getCode().equals("doc_admin_angular")) {
-							if (menuElem.getCode() != null
-									&& (menuElem.getCode().equals("doc_admin_angular") || menuElem.getCode().equals("doc_test_angular"))) {
-								temp.put(HREF, "javascript:javascript:execDirectUrl('" + contextName + HREF_DOC_BROWSER_ANGULAR + "', '" + text + "')");
+							if (menuElem.getCode() != null && (menuElem.getCode().equals("doc_admin_angular")
+									|| menuElem.getCode().equals("doc_test_angular"))) {
+								temp.put(HREF, "javascript:javascript:execDirectUrl('" + contextName
+										+ HREF_DOC_BROWSER_ANGULAR + "', '" + text + "')");
 								temp.put(FIRST_URL, contextName + HREF_DOC_BROWSER_ANGULAR);
 								temp.put(LINK_TYPE, "execDirectUrl");
 							}
@@ -235,7 +239,8 @@ public class MenuListJSONSerializerForREST implements Serializer {
 							 */
 							if (menuElem.getCode() != null && menuElem.getCode().equals("workspace")) {
 
-								temp.put(HREF, "javascript:javascript:execDirectUrl('" + contextName + HREF_DOC_BROWSER_WORKSPACE + "', '" + text + "')");
+								temp.put(HREF, "javascript:javascript:execDirectUrl('" + contextName
+										+ HREF_DOC_BROWSER_WORKSPACE + "', '" + text + "')");
 								temp.put(FIRST_URL, contextName + HREF_DOC_BROWSER_WORKSPACE);
 								temp.put(LINK_TYPE, "execDirectUrl");
 
@@ -243,10 +248,12 @@ public class MenuListJSONSerializerForREST implements Serializer {
 
 							if (menuElem.getHasChildren()) {
 								List lstChildrenLev2 = menuElem.getLstChildren();
-								JSONArray tempMenuList = (JSONArray) getChildren(filteredMenuList, lstChildrenLev2, 1, locale);
+								JSONArray tempMenuList = (JSONArray) getChildren(filteredMenuList, lstChildrenLev2, 1,
+										locale);
 								temp.put(MENU, tempMenuList);
 							}
-							if (menuElem.getCode().equals("doc_test_angular") && UserUtilities.isAdministrator(this.getUserProfile())) {
+							if (menuElem.getCode().equals("doc_test_angular")
+									&& UserUtilities.isAdministrator(this.getUserProfile())) {
 								continue;
 							}
 
@@ -276,21 +283,26 @@ public class MenuListJSONSerializerForREST implements Serializer {
 		return result;
 	}
 
-	private JSONArray createEndUserMenu(Locale locale, int level, JSONArray tempMenuList) throws JSONException, EMFUserError, EMFInternalError {
+	private JSONArray createEndUserMenu(Locale locale, int level, JSONArray tempMenuList)
+			throws JSONException, EMFUserError, EMFInternalError {
 
 		MessageBuilder messageBuilder = new MessageBuilder();
 
 		List funcs = (List) userProfile.getFunctionalities();
 
-		String strActiveSignup = SingletonConfig.getInstance().getConfigValue("SPAGOBI.SECURITY.ACTIVE_SIGNUP_FUNCTIONALITY");
+		String strActiveSignup = SingletonConfig.getInstance()
+				.getConfigValue("SPAGOBI.SECURITY.ACTIVE_SIGNUP_FUNCTIONALITY");
 		boolean activeSignup = strActiveSignup.equalsIgnoreCase("true");
 
 		String strMyAccountMenu = SingletonConfig.getInstance().getConfigValue("SPAGOBI.SECURITY.MY_ACCOUNT_MENU");
 		boolean myAccountMenu = !"false".equalsIgnoreCase(strMyAccountMenu); // default value is true, for backward compatibility
 
-		String securityServiceSupplier = SingletonConfig.getInstance().getConfigValue("SPAGOBI.SECURITY.USER-PROFILE-FACTORY-CLASS.className");
-		boolean isInternalSecurityServiceSupplier = securityServiceSupplier.equalsIgnoreCase("it.eng.spagobi.security.InternalSecurityServiceSupplierImpl");
-		boolean isPublicUser = userProfile.getUserUniqueIdentifier().toString().equalsIgnoreCase(SpagoBIConstants.PUBLIC_USER_ID);
+		String securityServiceSupplier = SingletonConfig.getInstance()
+				.getConfigValue("SPAGOBI.SECURITY.USER-PROFILE-FACTORY-CLASS.className");
+		boolean isInternalSecurityServiceSupplier = securityServiceSupplier
+				.equalsIgnoreCase("it.eng.spagobi.security.InternalSecurityServiceSupplierImpl");
+		boolean isPublicUser = userProfile.getUserUniqueIdentifier().toString()
+				.equalsIgnoreCase(SpagoBIConstants.PUBLIC_USER_ID);
 		if (isInternalSecurityServiceSupplier && !isPublicUser && myAccountMenu) {
 			// build myAccount
 			JSONObject myAccount = new JSONObject();
@@ -300,28 +312,31 @@ public class MenuListJSONSerializerForREST implements Serializer {
 			myAccount.put(ICON_ALIGN, "top");
 			myAccount.put(SCALE, "large");
 			myAccount.put(TARGET, "_self");
-			myAccount.put(HREF, "javascript:javascript:execDirectUrl('" + contextName + "/restful-services/signup/prepareUpdate', \'Modify user\')");
+			myAccount.put(HREF, "javascript:javascript:execDirectUrl('" + contextName
+					+ "/restful-services/signup/prepareUpdate', \'Modify user\')");
 			myAccount.put(FIRST_URL, contextName + "/restful-services/signup/prepareUpdate");
 			myAccount.put(LINK_TYPE, "execDirectUrl");
 
 			tempMenuList.put(myAccount);
 		}
 		if (isAbleTo(CommunityFunctionalityConstants.SEE_DOCUMENT_BROWSER, funcs)) {
-			JSONObject browserAngular = createMenuItem("fa fa-2x fa-folder-o", HREF_DOC_BROWSER_ANGULAR, messageBuilder.getMessage("menu.Browser", locale),
-					true, null);
+			JSONObject browserAngular = createMenuItem("fa fa-2x fa-folder-o", HREF_DOC_BROWSER_ANGULAR,
+					messageBuilder.getMessage("menu.Browser", locale), true, null);
 			tempMenuList.put(browserAngular);
 		}
 		if (isAbleTo(CommunityFunctionalityConstants.SEE_FAVOURITES, funcs)) {
-			JSONObject favourites = createMenuItem("fa fa-2x fa-bookmark", HREF_BOOKMARK, messageBuilder.getMessage("menu.MyFavorites", locale), true, null);
+			JSONObject favourites = createMenuItem("fa fa-2x fa-bookmark", HREF_BOOKMARK,
+					messageBuilder.getMessage("menu.MyFavorites", locale), true, null);
 			tempMenuList.put(favourites);
 		}
 		if (isAbleTo(CommunityFunctionalityConstants.SEE_SUBSCRIPTIONS, funcs)) {
-			JSONObject subscriptions = createMenuItem("fa fa-2x fa-envelope", HREF_SUBSCRIPTIONS, messageBuilder.getMessage("menu.Subscriptions", locale), true,
-					null);
+			JSONObject subscriptions = createMenuItem("fa fa-2x fa-envelope", HREF_SUBSCRIPTIONS,
+					messageBuilder.getMessage("menu.Subscriptions", locale), true, null);
 			tempMenuList.put(subscriptions);
 		}
 		if (isAbleTo(CommunityFunctionalityConstants.FINAL_USERS_MANAGEMENT, funcs)) {
-			JSONObject createDoc = createMenuItem("fa fa-2x fa-users", HREF_USERS, messageBuilder.getMessage("menu.Users", locale), true, null);
+			JSONObject createDoc = createMenuItem("fa fa-2x fa-users", HREF_USERS,
+					messageBuilder.getMessage("menu.Users", locale), true, null);
 			tempMenuList.put(createDoc);
 		}
 
@@ -339,9 +354,11 @@ public class MenuListJSONSerializerForREST implements Serializer {
 			tempMenuList.put(workspace);
 		}
 
-		String strSbiSocialAnalysisStatus = SingletonConfig.getInstance().getConfigValue("SPAGOBI.SOCIAL_ANALYSIS_IS_ACTIVE");
+		String strSbiSocialAnalysisStatus = SingletonConfig.getInstance()
+				.getConfigValue("SPAGOBI.SOCIAL_ANALYSIS_IS_ACTIVE");
 		boolean sbiSocialAnalysisStatus = "TRUE".equalsIgnoreCase(strSbiSocialAnalysisStatus);
-		if (sbiSocialAnalysisStatus && (isAbleTo(CommunityFunctionalityConstants.CREATE_SOCIAL_ANALYSIS, funcs) || isAbleTo(CommunityFunctionalityConstants.VIEW_SOCIAL_ANALYSIS, funcs))) {
+		if (sbiSocialAnalysisStatus && (isAbleTo(CommunityFunctionalityConstants.CREATE_SOCIAL_ANALYSIS, funcs)
+				|| isAbleTo(CommunityFunctionalityConstants.VIEW_SOCIAL_ANALYSIS, funcs))) {
 			JSONObject socialAnalysis = new JSONObject();
 			socialAnalysis.put(ICON_CLS, "public");
 			socialAnalysis.put(TOOLTIP, messageBuilder.getMessage("menu.SocialAnalysis", locale));
@@ -351,10 +368,12 @@ public class MenuListJSONSerializerForREST implements Serializer {
 			// if (!GeneralUtilities.isSSOEnabled()) {
 			socialAnalysis.put(HREF,
 					"javascript:execDirectUrl('" + HREF_SOCIAL_ANALYSIS + "?" + SsoServiceInterface.USER_ID + "="
-							+ userProfile.getUserUniqueIdentifier().toString() + "&" + SpagoBIConstants.SBI_LANGUAGE + "=" + locale.getLanguage() + "&"
-							+ SpagoBIConstants.SBI_COUNTRY + "=" + locale.getCountry() + "');");
-			socialAnalysis.put(FIRST_URL, HREF_SOCIAL_ANALYSIS + "?" + SsoServiceInterface.USER_ID + "=" + userProfile.getUserUniqueIdentifier().toString()
-					+ "&" + SpagoBIConstants.SBI_LANGUAGE + "=" + locale.getLanguage() + "&" + SpagoBIConstants.SBI_COUNTRY + "=" + locale.getCountry());
+							+ userProfile.getUserUniqueIdentifier().toString() + "&" + SpagoBIConstants.SBI_LANGUAGE
+							+ "=" + locale.getLanguage() + "&" + SpagoBIConstants.SBI_COUNTRY + "="
+							+ locale.getCountry() + "');");
+			socialAnalysis.put(FIRST_URL, HREF_SOCIAL_ANALYSIS + "?" + SsoServiceInterface.USER_ID + "="
+					+ userProfile.getUserUniqueIdentifier().toString() + "&" + SpagoBIConstants.SBI_LANGUAGE + "="
+					+ locale.getLanguage() + "&" + SpagoBIConstants.SBI_COUNTRY + "=" + locale.getCountry());
 			socialAnalysis.put(LINK_TYPE, "execDirectUrl");
 
 			tempMenuList.put(socialAnalysis);
@@ -367,7 +386,8 @@ public class MenuListJSONSerializerForREST implements Serializer {
 			hierarchiesManagement.put(ICON_ALIGN, "top");
 			hierarchiesManagement.put(SCALE, "large");
 			hierarchiesManagement.put(TARGET, "_self");
-			hierarchiesManagement.put(HREF, "javascript:execDirectUrl('" + contextName + HREF_HIERARCHIES_MANAGEMENT + "');");
+			hierarchiesManagement.put(HREF,
+					"javascript:execDirectUrl('" + contextName + HREF_HIERARCHIES_MANAGEMENT + "');");
 			hierarchiesManagement.put(LINK_TYPE, "execDirectUrl");
 			hierarchiesManagement.put(FIRST_URL, contextName + HREF_HIERARCHIES_MANAGEMENT);
 			tempMenuList.put(hierarchiesManagement);
@@ -393,7 +413,8 @@ public class MenuListJSONSerializerForREST implements Serializer {
 			glossaryManagementTechnical.put(ICON_ALIGN, "top");
 			glossaryManagementTechnical.put(SCALE, "large");
 			glossaryManagementTechnical.put(TARGET, "_self");
-			glossaryManagementTechnical.put(HREF, "javascript:execDirectUrl('" + contextName + HREF_MANAGE_GLOSSARY_TECHNICAL + "');");
+			glossaryManagementTechnical.put(HREF,
+					"javascript:execDirectUrl('" + contextName + HREF_MANAGE_GLOSSARY_TECHNICAL + "');");
 			glossaryManagementTechnical.put(FIRST_URL, contextName + HREF_MANAGE_GLOSSARY_TECHNICAL);
 			glossaryManagementTechnical.put(LINK_TYPE, "execDirectUrl");
 			tempMenuList.put(glossaryManagementTechnical);
@@ -406,7 +427,8 @@ public class MenuListJSONSerializerForREST implements Serializer {
 			glossaryManagementTechnical.put(ICON_ALIGN, "top");
 			glossaryManagementTechnical.put(SCALE, "large");
 			glossaryManagementTechnical.put(TARGET, "_self");
-			glossaryManagementTechnical.put(HREF, "javascript:execDirectUrl('" + contextName + HREF_MANAGE_GLOSSARY_BUSINESS + "');");
+			glossaryManagementTechnical.put(HREF,
+					"javascript:execDirectUrl('" + contextName + HREF_MANAGE_GLOSSARY_BUSINESS + "');");
 			glossaryManagementTechnical.put(FIRST_URL, contextName + HREF_MANAGE_GLOSSARY_BUSINESS);
 			glossaryManagementTechnical.put(LINK_TYPE, "execDirectUrl");
 			tempMenuList.put(glossaryManagementTechnical);
@@ -459,7 +481,8 @@ public class MenuListJSONSerializerForREST implements Serializer {
 			tenantManagementTechnical.put(ICON_ALIGN, "top");
 			tenantManagementTechnical.put(SCALE, "large");
 			tenantManagementTechnical.put(TARGET, "_self");
-			tenantManagementTechnical.put(HREF, "javascript:execDirectUrl('" + contextName + HREF_TEMPLATE_MANAGEMENT + "');");
+			tenantManagementTechnical.put(HREF,
+					"javascript:execDirectUrl('" + contextName + HREF_TEMPLATE_MANAGEMENT + "');");
 			tenantManagementTechnical.put(FIRST_URL, contextName + HREF_TEMPLATE_MANAGEMENT);
 			tenantManagementTechnical.put(LINK_TYPE, "execDirectUrl");
 			tempMenuList.put(tenantManagementTechnical);
@@ -471,7 +494,8 @@ public class MenuListJSONSerializerForREST implements Serializer {
 			tenantManagementTechnical.put(ICON_ALIGN, "top");
 			tenantManagementTechnical.put(SCALE, "large");
 			tenantManagementTechnical.put(TARGET, "_self");
-			tenantManagementTechnical.put(HREF, "javascript:execDirectUrl('" + contextName + HREF_IMPEXP_DOCUMENT + "');");
+			tenantManagementTechnical.put(HREF,
+					"javascript:execDirectUrl('" + contextName + HREF_IMPEXP_DOCUMENT + "');");
 			tenantManagementTechnical.put(FIRST_URL, contextName + HREF_IMPEXP_DOCUMENT);
 			tenantManagementTechnical.put(LINK_TYPE, "execDirectUrl");
 			tempMenuList.put(tenantManagementTechnical);
@@ -483,7 +507,8 @@ public class MenuListJSONSerializerForREST implements Serializer {
 			tenantManagementTechnical.put(ICON_ALIGN, "top");
 			tenantManagementTechnical.put(SCALE, "large");
 			tenantManagementTechnical.put(TARGET, "_self");
-			tenantManagementTechnical.put(HREF, "javascript:execDirectUrl('" + contextName + HREF_IMPEXP_RESOURCE + "');");
+			tenantManagementTechnical.put(HREF,
+					"javascript:execDirectUrl('" + contextName + HREF_IMPEXP_RESOURCE + "');");
 			tenantManagementTechnical.put(FIRST_URL, contextName + HREF_IMPEXP_RESOURCE);
 			tenantManagementTechnical.put(LINK_TYPE, "execDirectUrl");
 			tempMenuList.put(tenantManagementTechnical);
@@ -515,12 +540,13 @@ public class MenuListJSONSerializerForREST implements Serializer {
 		if (isAbleTo(CommunityFunctionalityConstants.IMP_EXP_CATALOG, funcs)) {
 			JSONObject tenantManagementTechnical = new JSONObject();
 			tenantManagementTechnical.put(ICON_CLS, "style"); // TODO: change
-																// icon
+																 // icon
 			tenantManagementTechnical.put(TOOLTIP, messageBuilder.getMessage("menu.importexport.catalog", locale)); // TODO
 			tenantManagementTechnical.put(ICON_ALIGN, "top");
 			tenantManagementTechnical.put(SCALE, "large");
 			tenantManagementTechnical.put(TARGET, "_self");
-			tenantManagementTechnical.put(HREF, "javascript:execDirectUrl('" + contextName + HREF_IMPEXP_CATALOG + "');");
+			tenantManagementTechnical.put(HREF,
+					"javascript:execDirectUrl('" + contextName + HREF_IMPEXP_CATALOG + "');");
 			tenantManagementTechnical.put(FIRST_URL, contextName + HREF_IMPEXP_CATALOG);
 			tenantManagementTechnical.put(LINK_TYPE, "execDirectUrl");
 			tempMenuList.put(tenantManagementTechnical);
@@ -564,11 +590,13 @@ public class MenuListJSONSerializerForREST implements Serializer {
 		tempMenuList.put(download);
 
 		// end
-		LowFunctionality personalFolder = DAOFactory.getLowFunctionalityDAO().loadLowFunctionalityByCode("USER_FUNCT", false);
+		LowFunctionality personalFolder = DAOFactory.getLowFunctionalityDAO().loadLowFunctionalityByCode("USER_FUNCT",
+				false);
 		JSONObject myFolder = new JSONObject();
 		if (personalFolder != null) {
 			Integer persFoldId = personalFolder.getId();
-			myFolder = createMenuItem("folder_special", "/servlet/AdapterHTTP?ACTION_NAME=DOCUMENT_USER_BROWSER_START_ACTION&node=" + persFoldId,
+			myFolder = createMenuItem("folder_special",
+					"/servlet/AdapterHTTP?ACTION_NAME=DOCUMENT_USER_BROWSER_START_ACTION&node=" + persFoldId,
 					messageBuilder.getMessage("menu.MyFolder", locale), true, null);
 			tempMenuList.put(myFolder);
 		}
@@ -576,7 +604,8 @@ public class MenuListJSONSerializerForREST implements Serializer {
 		return tempMenuList;
 	}
 
-	private JSONObject createMenuItem(String icon, String href, String tooltip, boolean idDirectLink, String label) throws JSONException {
+	private JSONObject createMenuItem(String icon, String href, String tooltip, boolean idDirectLink, String label)
+			throws JSONException {
 		JSONObject menuItem = new JSONObject();
 		menuItem.put(ICON_ALIGN, "top"); // TODO: check if used
 		menuItem.put(SCALE, "large"); // TODO: check if used
@@ -625,11 +654,14 @@ public class MenuListJSONSerializerForREST implements Serializer {
 
 		MessageBuilder messageBuilder = new MessageBuilder();
 
-		JSONObject lang = createMenuItem("flag", "", messageBuilder.getMessage("menu.Languages", locale), false, "LANG");
+		JSONObject lang = createMenuItem("flag", "", messageBuilder.getMessage("menu.Languages", locale), false,
+				"LANG");
 
-		JSONObject accessibility = createMenuItem("accessibility", "", messageBuilder.getMessage("menu.Accessibility", locale), false, "ACCESS");
+		JSONObject accessibility = createMenuItem("accessibility", "",
+				messageBuilder.getMessage("menu.Accessibility", locale), false, "ACCESS");
 
-		JSONObject roles = createMenuItem("assignment_ind", "", messageBuilder.getMessage("menu.RoleSelection", locale), false, "ROLE");
+		JSONObject roles = createMenuItem("assignment_ind", "", messageBuilder.getMessage("menu.RoleSelection", locale),
+				false, "ROLE");
 
 		JSONObject info = createMenuItem("info", "", messageBuilder.getMessage("menu.info", locale), false, "INFO");
 
@@ -648,18 +680,21 @@ public class MenuListJSONSerializerForREST implements Serializer {
 
 		if (PublicProfile.isPublicUser(userProfile.getUserUniqueIdentifier().toString())
 				|| userProfile.getUserUniqueIdentifier().toString().equalsIgnoreCase(SpagoBIConstants.PUBLIC_USER_ID)) {
-			JSONObject login = createMenuItem("input", HREF_LOGIN, messageBuilder.getMessage("menu.login", locale), false, null);
+			JSONObject login = createMenuItem("input", HREF_LOGIN, messageBuilder.getMessage("menu.login", locale),
+					false, null);
 			tempMenuList.put(login);
 		} else {
 
 			HttpSession session = this.getHttpSession();
 
-			boolean showLogoutOnSilentLogin = Boolean.valueOf(SingletonConfig.getInstance().getConfigValue("SPAGOBI.HOME.SHOW_LOGOUT_ON_SILENT_LOGIN"));
+			boolean showLogoutOnSilentLogin = Boolean
+					.valueOf(SingletonConfig.getInstance().getConfigValue("SPAGOBI.HOME.SHOW_LOGOUT_ON_SILENT_LOGIN"));
 			boolean silentLogin = Boolean.TRUE.equals(session.getAttribute(SsoServiceInterface.SILENT_LOGIN));
 			// we show/don't show the logout button in case of a silent login,
 			// according to configuration
 			if (!silentLogin || showLogoutOnSilentLogin) {
-				JSONObject power = createMenuItem("power_settings_new", HREF_LOGOUT, messageBuilder.getMessage("menu.logout", locale), false, null);
+				JSONObject power = createMenuItem("power_settings_new", HREF_LOGOUT,
+						messageBuilder.getMessage("menu.logout", locale), false, null);
 				tempMenuList.put(power);
 			}
 		}
@@ -676,7 +711,8 @@ public class MenuListJSONSerializerForREST implements Serializer {
 		return tempMenuList;
 	}
 
-	private JSONArray createUserMenuElement(List filteredMenuList, Menu childElem, Locale locale, int level, JSONArray tempMenuList) throws JSONException {
+	private JSONArray createUserMenuElement(List filteredMenuList, Menu childElem, Locale locale, int level,
+			JSONArray tempMenuList) throws JSONException {
 		JSONObject temp2 = new JSONObject();
 
 		String path = MenuUtilities.getMenuPath(filteredMenuList, childElem, locale);
@@ -694,7 +730,8 @@ public class MenuListJSONSerializerForREST implements Serializer {
 					switch (titleCode) {
 					case "menu.ServerManager":
 					case "menu.CacheManagement":
-						Class.forName("it.eng.knowage.tools.servermanager.importexport.ExporterMetadata", false, this.getClass().getClassLoader());
+						Class.forName("it.eng.knowage.tools.servermanager.importexport.ExporterMetadata", false,
+								this.getClass().getClassLoader());
 						break;
 					}
 				} catch (ClassNotFoundException e) {
@@ -736,7 +773,8 @@ public class MenuListJSONSerializerForREST implements Serializer {
 						switch (titleCode) {
 						case "menu.ServerManager":
 						case "menu.CacheManagement":
-							Class.forName("it.eng.knowage.tools.servermanager.importexport.ExporterMetadata", false, this.getClass().getClassLoader());
+							Class.forName("it.eng.knowage.tools.servermanager.importexport.ExporterMetadata", false,
+									this.getClass().getClassLoader());
 							break;
 						}
 					} catch (ClassNotFoundException e) {
@@ -756,27 +794,37 @@ public class MenuListJSONSerializerForREST implements Serializer {
 			String src = childElem.getUrl();
 
 			if (childElem.getObjId() != null) {
-				if (childElem.isClickable() == true) {
-					temp2.put(HREF, "javascript:execDirectUrl('" + contextName + "/servlet/AdapterHTTP?ACTION_NAME=MENU_BEFORE_EXEC&MENU_ID="
-							+ childElem.getMenuId() + "', '" + path + "' )");
+				if (childElem.isClickable()) {
+					temp2.put(HREF,
+							"javascript:execDirectUrl('" + contextName
+									+ "/servlet/AdapterHTTP?ACTION_NAME=MENU_BEFORE_EXEC&MENU_ID="
+									+ childElem.getMenuId() + "', '" + path + "' )");
 					temp2.put(LINK_TYPE, "execDirectUrl");
-					temp2.put(SRC, contextName + "/servlet/AdapterHTTP?ACTION_NAME=MENU_BEFORE_EXEC&MENU_ID=" + childElem.getMenuId());
+					temp2.put(SRC, contextName + "/servlet/AdapterHTTP?ACTION_NAME=MENU_BEFORE_EXEC&MENU_ID="
+							+ childElem.getMenuId());
 				} else {
 					temp2.put("isClickable", "false");
 				}
 			} else if (childElem.getStaticPage() != null && !childElem.getStaticPage().equals("")) {
-				temp2.put(HREF, "javascript:execDirectUrl('" + contextName + "/servlet/AdapterHTTP?ACTION_NAME=READ_HTML_FILE&MENU_ID=" + childElem.getMenuId()
-						+ "', '" + path + "' )");
+				temp2.put(HREF,
+						"javascript:execDirectUrl('" + contextName
+								+ "/servlet/AdapterHTTP?ACTION_NAME=READ_HTML_FILE&MENU_ID=" + childElem.getMenuId()
+								+ "', '" + path + "' )");
 				temp2.put(LINK_TYPE, "execDirectUrl");
-				temp2.put(SRC, contextName + "/servlet/AdapterHTTP?ACTION_NAME=READ_HTML_FILE&MENU_ID=" + childElem.getMenuId());
-			} else if (StringUtilities.isNotEmpty(childElem.getFunctionality())) {
-				String finalUrl = "javascript:execDirectUrl('" + DetailMenuModule.findFunctionalityUrl(childElem, contextName) + "', '" + path + "')";
+				temp2.put(SRC, contextName + "/servlet/AdapterHTTP?ACTION_NAME=READ_HTML_FILE&MENU_ID="
+						+ childElem.getMenuId());
+			} else if (StringUtils.isNotEmpty(childElem.getFunctionality())) {
+				String finalUrl = "javascript:execDirectUrl('"
+						+ DetailMenuModule.findFunctionalityUrl(childElem, contextName) + "', '" + path + "')";
 				temp2.put(HREF, finalUrl);
 				temp2.put(LINK_TYPE, "execDirectUrl");
 				temp2.put(SRC, DetailMenuModule.findFunctionalityUrl(childElem, contextName));
-			} else if (childElem.getExternalApplicationUrl() != null && !childElem.getExternalApplicationUrl().isEmpty()) {
+			} else if (childElem.getExternalApplicationUrl() != null
+					&& !childElem.getExternalApplicationUrl().isEmpty()) {
 				temp2.put(HREF,
-						"javascript:callExternalApp('" + StringEscapeUtils.escapeJavaScript(childElem.getExternalApplicationUrl()) + "', '" + path + "')");
+						"javascript:callExternalApp('"
+								+ StringEscapeUtils.escapeJavaScript(childElem.getExternalApplicationUrl()) + "', '"
+								+ path + "')");
 				temp2.put(LINK_TYPE, "callExternalApp");
 				temp2.put(SRC, childElem.getExternalApplicationUrl());
 			} else if (childElem.isAdminsMenu() && childElem.getUrl() != null) {
@@ -790,11 +838,15 @@ public class MenuListJSONSerializerForREST implements Serializer {
 				// code to manage SpagoBISocialAnalysis link in admin menu
 				if (url.contains("${SPAGOBI_SOCIAL_ANALYSIS_URL}")) {
 					url = url.substring(0, url.length() - 1);
-					url = url.replace("${SPAGOBI_SOCIAL_ANALYSIS_URL}", SingletonConfig.getInstance().getConfigValue("SPAGOBI.SOCIAL_ANALYSIS_URL"));
-					src = src.replace("${SPAGOBI_SOCIAL_ANALYSIS_URL}", SingletonConfig.getInstance().getConfigValue("SPAGOBI.SOCIAL_ANALYSIS_URL"));
+					url = url.replace("${SPAGOBI_SOCIAL_ANALYSIS_URL}",
+							SingletonConfig.getInstance().getConfigValue("SPAGOBI.SOCIAL_ANALYSIS_URL"));
+					src = src.replace("${SPAGOBI_SOCIAL_ANALYSIS_URL}",
+							SingletonConfig.getInstance().getConfigValue("SPAGOBI.SOCIAL_ANALYSIS_URL"));
 					// if (!GeneralUtilities.isSSOEnabled()) {
-					url = url + "?" + SsoServiceInterface.USER_ID + "=" + userProfile.getUserUniqueIdentifier().toString() + "&" + SpagoBIConstants.SBI_LANGUAGE
-							+ "=" + locale.getLanguage() + "&" + SpagoBIConstants.SBI_COUNTRY + "=" + locale.getCountry();
+					url = url + "?" + SsoServiceInterface.USER_ID + "="
+							+ userProfile.getUserUniqueIdentifier().toString() + "&" + SpagoBIConstants.SBI_LANGUAGE
+							+ "=" + locale.getLanguage() + "&" + SpagoBIConstants.SBI_COUNTRY + "="
+							+ locale.getCountry();
 					url += "&" + SpagoBIConstants.SBI_SCRIPT + "=" + locale.getScript() + "'";
 				}
 				temp2.put(SRC, src);

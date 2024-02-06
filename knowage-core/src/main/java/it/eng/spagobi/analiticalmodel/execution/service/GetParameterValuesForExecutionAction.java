@@ -20,6 +20,21 @@ package it.eng.spagobi.analiticalmodel.execution.service;
 import static it.eng.spagobi.commons.constants.SpagoBIConstants.DATE_RANGE_OPTIONS_KEY;
 import static it.eng.spagobi.commons.constants.SpagoBIConstants.DATE_RANGE_QUANTITY_JSON;
 import static it.eng.spagobi.commons.constants.SpagoBIConstants.DATE_RANGE_TYPE_JSON;
+
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import org.apache.log4j.Logger;
+import org.hibernate.HibernateException;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.base.SourceBeanAttribute;
 import it.eng.spago.error.EMFUserError;
@@ -43,23 +58,8 @@ import it.eng.spagobi.commons.services.DelegatedBasicListService;
 import it.eng.spagobi.commons.utilities.DateRangeDAOUtilities;
 import it.eng.spagobi.commons.utilities.messages.MessageBuilderFactory;
 import it.eng.spagobi.utilities.assertion.Assert;
-import it.eng.spagobi.utilities.cache.CacheInterface;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 import it.eng.spagobi.utilities.service.JSONSuccess;
-
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import org.apache.log4j.Logger;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.hibernate.HibernateException;
 
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
@@ -75,23 +75,23 @@ public class GetParameterValuesForExecutionAction extends AbstractSpagoBIAction 
 	private static final String LABEL_FIELD = "label";
 
 	// request parameters
-	public static String PARAMETER_ID = "PARAMETER_ID";
-	public static String SELECTED_PARAMETER_VALUES = "PARAMETERS";
-	public static String FILTERS = "FILTERS";
-	public static String NODE_ID_SEPARATOR = "___SEPA__";
+	public static final String PARAMETER_ID = "PARAMETER_ID";
+	public static final String SELECTED_PARAMETER_VALUES = "PARAMETERS";
+	public static final String FILTERS = "FILTERS";
+	public static final String NODE_ID_SEPARATOR = "___SEPA__";
 
-	public static String MODE = "MODE";
-	public static String NODE = "node";
-	public static String MODE_SIMPLE = "simple";
-	public static String MODE_COMPLETE = "complete";
-	public static String START = "start";
-	public static String LIMIT = "limit";
+	public static final String MODE = "MODE";
+	public static final String NODE = "node";
+	public static final String MODE_SIMPLE = "simple";
+	public static final String MODE_COMPLETE = "complete";
+	public static final String START = "start";
+	public static final String LIMIT = "limit";
 	// in massive export case
-	public static String OBJ_PARAMETER_IDS = "OBJ_PARAMETER_IDS";
-	public static String CONTEST = "CONTEST"; // used to check if mssive export
-												// case; cannot use MODALITY
-												// because already in use
-	public static String MASSIVE_EXPORT = "massiveExport";
+	public static final String OBJ_PARAMETER_IDS = "OBJ_PARAMETER_IDS";
+	public static final String CONTEST = "CONTEST"; // used to check if mssive export
+	// case; cannot use MODALITY
+	// because already in use
+	public static final String MASSIVE_EXPORT = "massiveExport";
 
 	private static final String[] VISIBLE_COLUMNS = new String[] { VALUE_FIELD, LABEL_FIELD, DESCRIPTION_FIELD };
 
@@ -110,12 +110,9 @@ public class GetParameterValuesForExecutionAction extends AbstractSpagoBIAction 
 		String contest;
 		BIObjectParameter biObjectParameter;
 		ExecutionInstance executionInstance;
-		String valueColumn;
-		String descriptionColumn;
 		List rows;
 		List<ObjParuse> biParameterExecDependencies;
 		ILovDetail lovProvDet;
-		CacheInterface cache;
 		List objParameterIds;
 		int treeLovNodeLevel = 0;
 		String treeLovNodeValue = null;
@@ -161,21 +158,23 @@ public class GetParameterValuesForExecutionAction extends AbstractSpagoBIAction 
 
 			Assert.assertNotNull(getContext(), "Parameter [" + PARAMETER_ID + "] cannot be null");
 			Assert.assertNotNull(getContext(), "Execution context cannot be null");
-			Assert.assertNotNull(getContext().isExecutionInstanceAMap(ExecutionInstance.class.getName()), "Execution instance cannot be null");
+			Assert.assertNotNull(getContext().isExecutionInstanceAMap(ExecutionInstance.class.getName()),
+					"Execution instance cannot be null");
 
 			boolean isAMap = getContext().isExecutionInstanceAMap(ExecutionInstance.class.getName());
 			executionInstance = null;
 			if (!isAMap) {
 				executionInstance = getContext().getExecutionInstance(ExecutionInstance.class.getName());
 			} else {
-				Map<Integer, ExecutionInstance> instances = getContext().getExecutionInstancesAsMap(ExecutionInstance.class.getName());
+				Map<Integer, ExecutionInstance> instances = getContext()
+						.getExecutionInstancesAsMap(ExecutionInstance.class.getName());
 				// I want to get (at least one) of the document the parameter is
 				// referring to,
 				// I can reach it via the ObjectParameter passed from
 				// ParametersPanel
 				Integer biObjectId = null;
 				Assert.assertNotNull(objParameterIds, "In map case objParameterids list cannot be null");
-				if (objParameterIds.size() == 0) {
+				if (objParameterIds.isEmpty()) {
 					throw new SpagoBIServiceException("In map case objParameterids list cannot be empty", SERVICE_NAME);
 
 				}
@@ -223,7 +222,8 @@ public class GetParameterValuesForExecutionAction extends AbstractSpagoBIAction 
 							selectedParameterValues.put(key, v);
 						} else {
 							Assert.assertUnreachable("Attribute [" + key + "] value [" + v
-									+ "] of PARAMETERS is not of type JSONArray nor String. It is of type [" + v.getClass().getName() + "]");
+									+ "] of PARAMETERS is not of type JSONArray nor String. It is of type ["
+									+ v.getClass().getName() + "]");
 						}
 					}
 				} catch (JSONException e) {
@@ -267,8 +267,8 @@ public class GetParameterValuesForExecutionAction extends AbstractSpagoBIAction 
 
 				// get from cache, if available
 				LovResultCacheManager executionCacheManager = new LovResultCacheManager();
-				lovResult = executionCacheManager.getLovResult(profile, lovProvDet, executionInstance.getDependencies(biObjectParameter), executionInstance,
-						true);
+				lovResult = executionCacheManager.getLovResult(profile, lovProvDet,
+						executionInstance.getDependencies(biObjectParameter), executionInstance, true);
 
 				// get all the rows of the result
 				LovResultHandler lovResultHandler = new LovResultHandler(lovResult);
@@ -288,7 +288,8 @@ public class GetParameterValuesForExecutionAction extends AbstractSpagoBIAction 
 					String columnfilter = (String) filtersJSON.get(SpagoBIConstants.COLUMN_FILTER);
 					String typeFilter = (String) filtersJSON.get(SpagoBIConstants.TYPE_FILTER);
 					String typeValueFilter = (String) filtersJSON.get(SpagoBIConstants.TYPE_VALUE_FILTER);
-					rows = DelegatedBasicListService.filterList(rows, valuefilter, typeValueFilter, columnfilter, typeFilter);
+					rows = DelegatedBasicListService.filterList(rows, valuefilter, typeValueFilter, columnfilter,
+							typeFilter);
 				}
 			} catch (JSONException e) {
 				throw new SpagoBIServiceException(SERVICE_NAME, "Impossible to read filter's configuration", e);
@@ -299,14 +300,17 @@ public class GetParameterValuesForExecutionAction extends AbstractSpagoBIAction 
 			// DependenciesPostProcessingLov, i.e. scripts, java classes and
 			// fixed lists)
 			biParameterExecDependencies = executionInstance.getDependencies(biObjectParameter);
-			if (lovProvDet instanceof DependenciesPostProcessingLov && selectedParameterValues != null && biParameterExecDependencies != null
-					&& biParameterExecDependencies.size() > 0 && !contest.equals(MASSIVE_EXPORT)) {
-				rows = ((DependenciesPostProcessingLov) lovProvDet).processDependencies(rows, selectedParameterValues, biParameterExecDependencies);
+			if (lovProvDet instanceof DependenciesPostProcessingLov && selectedParameterValues != null
+					&& biParameterExecDependencies != null && !biParameterExecDependencies.isEmpty()
+					&& !contest.equals(MASSIVE_EXPORT)) {
+				rows = ((DependenciesPostProcessingLov) lovProvDet).processDependencies(rows, selectedParameterValues,
+						biParameterExecDependencies);
 			}
 			// END filtering for correlation
 
 			if (lovProvDet.getLovType() != null && lovProvDet.getLovType().contains("tree")) {
-				JSONArray valuesJSONArray = getChildrenForTreeLov(lovProvDet, rows, mode, treeLovNodeLevel, treeLovNodeValue);
+				JSONArray valuesJSONArray = getChildrenForTreeLov(lovProvDet, rows, mode, treeLovNodeLevel,
+						treeLovNodeValue);
 				try {
 					writeBackToClient(new JSONSuccess(valuesJSONArray));
 				} catch (IOException e) {
@@ -328,8 +332,8 @@ public class GetParameterValuesForExecutionAction extends AbstractSpagoBIAction 
 
 	}
 
-	private void manageDataRange(BIObjectParameter biObjectParameter, ExecutionInstance executionInstance) throws EMFUserError, SerializationException,
-			JSONException, IOException {
+	private void manageDataRange(BIObjectParameter biObjectParameter, ExecutionInstance executionInstance)
+			throws EMFUserError, SerializationException, JSONException, IOException {
 		Integer parID = biObjectParameter.getParID();
 		Assert.assertNotNull(parID, "parID");
 		String executionRole = executionInstance.getExecutionRole();
@@ -339,8 +343,9 @@ public class GetParameterValuesForExecutionAction extends AbstractSpagoBIAction 
 
 		JSONArray dateRangeValuesDataJSON = getDateRangeValuesDataJSON(options);
 		int dataRangeOptionsSize = getDataRangeOptionsSize(options);
-		JSONObject valuesJSON = (JSONObject) JSONStoreFeedTransformer.getInstance().transform(dateRangeValuesDataJSON, VALUE_FIELD.toUpperCase(),
-				LABEL_FIELD.toUpperCase(), DESCRIPTION_FIELD.toUpperCase(), VISIBLE_COLUMNS, dataRangeOptionsSize);
+		JSONObject valuesJSON = (JSONObject) JSONStoreFeedTransformer.getInstance().transform(dateRangeValuesDataJSON,
+				VALUE_FIELD.toUpperCase(), LABEL_FIELD.toUpperCase(), DESCRIPTION_FIELD.toUpperCase(), VISIBLE_COLUMNS,
+				dataRangeOptionsSize);
 		writeBackToClient(new JSONSuccess(valuesJSON));
 	}
 
@@ -374,7 +379,8 @@ public class GetParameterValuesForExecutionAction extends AbstractSpagoBIAction 
 		return MessageBuilderFactory.getMessageBuilder().getMessage(code, getHttpRequest());
 	}
 
-	private JSONArray getChildrenForTreeLov(ILovDetail lovProvDet, List rows, String mode, int treeLovNodeLevel, String treeLovNodeValue) {
+	private JSONArray getChildrenForTreeLov(ILovDetail lovProvDet, List rows, String mode, int treeLovNodeLevel,
+			String treeLovNodeValue) {
 		String valueColumn;
 		String descriptionColumn;
 		boolean addNode;
@@ -393,7 +399,7 @@ public class GetParameterValuesForExecutionAction extends AbstractSpagoBIAction 
 				treeLovParentNodeName = lovProvDet.getTreeLevelsColumns().get(treeLovNodeLevel).getFirst();
 			}
 
-			Set<JSONObject> valuesDataJSON = new LinkedHashSet<JSONObject>();
+			Set<JSONObject> valuesDataJSON = new LinkedHashSet<>();
 
 			valueColumn = lovProvDet.getValueColumnName();
 			descriptionColumn = lovProvDet.getDescriptionColumnName();
@@ -405,13 +411,13 @@ public class GetParameterValuesForExecutionAction extends AbstractSpagoBIAction 
 				List columns = row.getContainedAttributes();
 				valueJSON = new JSONObject();
 				boolean notNullNode = false; // if the row does not contain the
-												// value atribute we don't add
-												// the node
+											 // value atribute we don't add
+											 // the node
 				for (int i = 0; i < columns.size(); i++) {
 					SourceBeanAttribute attribute = (SourceBeanAttribute) columns.get(i);
 					if ((treeLovParentNodeName == "lovroot")
-							|| (attribute.getKey().equalsIgnoreCase(treeLovParentNodeName) && (attribute.getValue().toString())
-									.equalsIgnoreCase(treeLovNodeValue))) {
+							|| (attribute.getKey().equalsIgnoreCase(treeLovParentNodeName)
+									&& (attribute.getValue().toString()).equalsIgnoreCase(treeLovNodeValue))) {
 						addNode = true;
 					}
 
@@ -532,8 +538,9 @@ public class GetParameterValuesForExecutionAction extends AbstractSpagoBIAction 
 				visiblecolumns = new String[] { "value", "label", "description" };
 			}
 
-			valuesJSON = (JSONObject) JSONStoreFeedTransformer.getInstance().transform(valuesDataJSON, valueColumn.toUpperCase(), displayColumn.toUpperCase(),
-					descriptionColumn.toUpperCase(), visiblecolumns, new Integer(rows.size()));
+			valuesJSON = (JSONObject) JSONStoreFeedTransformer.getInstance().transform(valuesDataJSON,
+					valueColumn.toUpperCase(), displayColumn.toUpperCase(), descriptionColumn.toUpperCase(),
+					visiblecolumns, rows.size());
 			return valuesJSON;
 		} catch (Exception e) {
 			throw new SpagoBIServiceException("Impossible to serialize response", e);

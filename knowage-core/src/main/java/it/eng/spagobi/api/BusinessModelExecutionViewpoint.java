@@ -62,7 +62,7 @@ public class BusinessModelExecutionViewpoint extends AbstractSpagoBIResource {
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
 	public Response addViewoint(@Valid AddViewpointRequestDTO request) {
 		LOGGER.debug("IN");
-		HashMap<String, Object> resultAsMap = new HashMap<String, Object>();
+		HashMap<String, Object> resultAsMap = new HashMap<>();
 		String viewpointOwner;
 		IMetaModelViewpointDAO metaModelViewpointDAO;
 		Viewpoint viewpoint = null;
@@ -85,9 +85,7 @@ public class BusinessModelExecutionViewpoint extends AbstractSpagoBIResource {
 			LOGGER.debug("Document Id: [{}]", metaModel.getId());
 			viewpointOwner = (String) userProfile.getUserId();
 
-			viewpointString = viewpointReq.entrySet()
-					.stream()
-					.map(e -> e.getKey() + "%3D" + e.getValue())
+			viewpointString = viewpointReq.entrySet().stream().map(e -> e.getKey() + "%3D" + e.getValue())
 					.collect(joining("%26"));
 
 			LOGGER.debug("Viewpoint's content will be saved on database as: [{}]", viewpointString);
@@ -118,9 +116,10 @@ public class BusinessModelExecutionViewpoint extends AbstractSpagoBIResource {
 	@GET
 	@Path("/getViewpoints")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
-	public Response getViewpoints(@Valid @ExtendedAlphanumeric @QueryParam("label") String name, @Valid @ExtendedAlphanumeric @QueryParam("role") String role) {
-		HashMap<String, Object> resultAsMap = new HashMap<String, Object>();
-		List viewpoints;
+	public Response getViewpoints(@Valid @ExtendedAlphanumeric @QueryParam("label") String name,
+			@Valid @ExtendedAlphanumeric @QueryParam("role") String role) {
+		HashMap<String, Object> resultAsMap = new HashMap<>();
+		List<Viewpoint> viewpoints;
 		IEngUserProfile userProfile;
 		Integer metaModelId;
 		IMetaModelViewpointDAO metaModelViewpointDAO;
@@ -136,9 +135,11 @@ public class BusinessModelExecutionViewpoint extends AbstractSpagoBIResource {
 			viewpoints = metaModelViewpointDAO.loadAccessibleViewpointsByMetaModelId(metaModelId, getUserProfile());
 		} catch (EMFUserError e) {
 			LOGGER.error("Cannot load viewpoints for document [{}]", metaModelId, e);
-			throw new SpagoBIServiceException(SERVICE_NAME, "Cannot load viewpoints for document [" + metaModelId + "]", e);
+			throw new SpagoBIServiceException(SERVICE_NAME, "Cannot load viewpoints for document [" + metaModelId + "]",
+					e);
 		}
-		LOGGER.debug("Document [{}] have {} valid viewpoints for user [{}]", metaModelId, (viewpoints == null ? "0" : "" + viewpoints.size()), ((UserProfile) userProfile).getUserId());
+		LOGGER.debug("Document [{}] have {} valid viewpoints for user [{}]", metaModelId,
+				(viewpoints == null ? "0" : "" + viewpoints.size()), ((UserProfile) userProfile).getUserId());
 		resultAsMap.put("viewpoints", viewpoints);
 		return Response.ok(resultAsMap).build();
 	}
@@ -157,7 +158,8 @@ public class BusinessModelExecutionViewpoint extends AbstractSpagoBIResource {
 			metaModelViewpointDAO.eraseViewpoint(viewpoint.getVpId());
 		} catch (EMFUserError e) {
 			LOGGER.error("Impossible to delete viewpoint with name [{}] already exists", id, e);
-			throw new SpagoBIServiceException(SERVICE_NAME, "Impossible to delete viewpoint with name [" + id + "] already exists", e);
+			throw new SpagoBIServiceException(SERVICE_NAME,
+					"Impossible to delete viewpoint with name [" + id + "] already exists", e);
 		}
 
 		return Response.ok().build();
