@@ -571,7 +571,7 @@ public class ExcelExporter extends AbstractFormatExporter {
 			String widgetName) {
 		
 		// CREATE BRANDED HEADER SHEET
-		this.imageB64 = OrganizationImageManager.getOrganizationB64Image(TenantManager.getTenant().getName());
+		this.imageB64 = OrganizationImageManager.getOrganizationB64ImageWide(TenantManager.getTenant().getName());
 		int startRow = 0;
 		float rowHeight = 35; // in points	
 		int rowspan = 2;
@@ -637,7 +637,7 @@ public class ExcelExporter extends AbstractFormatExporter {
 			String widgetName) {
 
 		// CREATE BRANDED HEADER SHEET
-		this.imageB64 = OrganizationImageManager.getOrganizationB64Image(TenantManager.getTenant().getName());
+		this.imageB64 = OrganizationImageManager.getOrganizationB64ImageWide(TenantManager.getTenant().getName());
 		int startRow = 0;
 		float rowHeight = 35; // in points	
 		int rowspan = 2;
@@ -814,7 +814,7 @@ public class ExcelExporter extends AbstractFormatExporter {
 			Map<String, String> groupsAndColumnsMap = getGroupAndColumnsMap(widgetContent, groupsFromWidgetContent);
 
 			// CREATE BRANDED HEADER SHEET	
-			this.imageB64 = OrganizationImageManager.getOrganizationB64Image(TenantManager.getTenant().getName());
+			this.imageB64 = OrganizationImageManager.getOrganizationB64ImageWide(TenantManager.getTenant().getName());
 			int startRow = 0;
 			float rowHeight = 35; // in points	
 			int rowspan = 2;

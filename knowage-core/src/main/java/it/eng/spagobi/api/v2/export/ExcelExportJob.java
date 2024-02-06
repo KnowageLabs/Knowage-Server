@@ -135,7 +135,7 @@ public class ExcelExportJob extends AbstractExportJob {
 				IMetaData dataSetMetadata = dataSet.getMetadata();
 
 				// CREATE BRANDED HEADER SHEET
-				this.imageB64 = OrganizationImageManager.getOrganizationB64Image(TenantManager.getTenant().getName());
+				this.imageB64 = OrganizationImageManager.getOrganizationB64ImageWide(TenantManager.getTenant().getName());
 				int startRow = 0;
 				float rowHeight = 35; // in points	
 				int rowspan = 2;
