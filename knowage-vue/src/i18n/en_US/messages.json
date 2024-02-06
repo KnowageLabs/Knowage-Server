@@ -466,6 +466,8 @@
             "crossNavigationNoTargetError": "No cross navigation targets available",
             "currentRank": "Curent Rank is...",
             "customMetadata": "Custom Metadata",
+            "deleteSavedParameter":"Delete saved parameter",
+            "deleteSavedParameterConfirm":"Are you sure to delete the saved parameter?",
             "destinationSelectionTitle": "Selection of the destination document",
             "editCockpit": "Edit cockpit document",
             "editModeConfirm": "You are leaving edit mode. Continue?",
@@ -721,7 +723,7 @@
     },
     "infoDialog": {
         "aboutKnowage": "About Knowage",
-        "copyright": "Â© {year} Engineering Ingegneria Informatica S.p.A.",
+        "copyright": "© {year} Engineering Ingegneria Informatica S.p.A.",
         "sourceCode": "Source code available on "
     },
     "knScheduler": {
@@ -935,16 +937,35 @@
         }
     },
     "language": {
+        "bg_BG":"Bulgarian",
         "de_DE": "German",
-        "en_GB": "english (GB)",
-        "en_US": "english (US)",
-        "es_ES": "espanol",
-        "fr_FR": "french",
-        "it_IT": "italian",
+        "en_GB": "English (GB)",
+        "en_US": "English (US)",
+        "es_ES": "Espanol",
+        "fr_FR": "French",
+        "it_IT": "Italian",
+        "ja_JP":"Japanese",
+        "ko_KR":"Korean",
         "languageSelection": "Language Selection",
-        "pt_BR": "portuguese",
+        "pt_BR": "Portuguese",
+        "ru_RU":"Russian",
+        "tr_TR":"Turkish",
         "zh_CN_#Hans": "Chinese (simplified)"
     },
+
+    "bg_BG":"Bulgaria",
+    "de_DE": "Tedesco",
+    "en_GB": "Inglese (GB)",
+    "en_US": "Inglese (US)",
+    "es_ES": "Spagnolo",
+    "fr_FR": "Francese",
+    "it_IT": "italiano",
+    "ja_JP":"Giapponese",
+    "ko_KR":"Coreano",
+    "ru_RU":"Russo",
+    "tr_TR":"Turco",
+
+
     "licenseDialog": {
         "changeLicense": "Change License",
         "dataRequired": "This data is required to generate/update licenses",

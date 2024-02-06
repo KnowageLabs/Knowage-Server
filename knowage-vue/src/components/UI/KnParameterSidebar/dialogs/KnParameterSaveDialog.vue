@@ -59,7 +59,7 @@
             </div>
 
             <div class="p-field p-col-12">
-                <label for="scope" class="kn-material-input-label">{{ $t('common.scope') }} * </label>
+                <label for="scope" class="kn-material-input-label">{{ $t('common.visibility') }} * </label>
                 <Dropdown
                     id="scope"
                     class="kn-material-input"

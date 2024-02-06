@@ -442,6 +442,8 @@
             "currentRank": "la classificazione attuale è...",
             "customMetadata": "Metadati personalizzati",
             "destinationSelectionTitle": "Selezione del documento di destinazione",
+            "deleteSavedParameter":"Cancella parametro salvato",
+            "deleteSavedParameterConfirm":"Sei sicuro di voler cancellare il parametro selezionato?",
             "editCockpit": "Modifica la dashboard",
             "editModeConfirm": "Stai abbandomando la modalità edit. continua ?",
             "embedInHtml": "incorporare in HTML",
@@ -693,7 +695,7 @@
     },
     "infoDialog": {
         "aboutKnowage": "about Knowage",
-        "copyright": "Â© {year} Engineering Ingegneria Informatica S.p.A.",
+        "copyright": "© {year} Engineering Ingegneria Informatica S.p.A.",
         "sourceCode": "codice sorgente disponibile "
     },
     "knScheduler": {
@@ -906,12 +908,17 @@
         }
     },
     "language": {
+        "bg_BG": "Bulgaria",
         "de_DE": "Tedesco",
         "en_GB": "Inglese (GB)",
         "en_US": "Inglese (US)",
         "es_ES": "Spagnolo",
         "fr_FR": "Francese",
-        "it_IT": "italiano",
+        "it_IT": "Italiano",
+        "ja_JP":"Giapponese",
+        "ko_KR":"Coreano",
+        "ru_RU":"Russo",
+        "tr_TR":"Turco",
         "languageSelection": "Selezione della lingua",
         "pt_BR": "Portoghese",
         "zh_CN_#Hans": "Cinese (semplificato)"
