@@ -952,20 +952,6 @@
         "tr_TR":"Turkish",
         "zh_CN_#Hans": "Chinese (simplified)"
     },
-
-    "bg_BG":"Bulgaria",
-    "de_DE": "Tedesco",
-    "en_GB": "Inglese (GB)",
-    "en_US": "Inglese (US)",
-    "es_ES": "Spagnolo",
-    "fr_FR": "Francese",
-    "it_IT": "italiano",
-    "ja_JP":"Giapponese",
-    "ko_KR":"Coreano",
-    "ru_RU":"Russo",
-    "tr_TR":"Turco",
-
-
     "licenseDialog": {
         "changeLicense": "Change License",
         "dataRequired": "This data is required to generate/update licenses",
