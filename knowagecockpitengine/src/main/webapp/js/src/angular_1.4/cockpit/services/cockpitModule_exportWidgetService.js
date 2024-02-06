@@ -206,7 +206,7 @@
 					options : options
 			}
 
-			if (!angular.equals(cockpitModule_properties.VARIABLES,{})) {
+			/*if (!angular.equals(cockpitModule_properties.VARIABLES,{})) {
 				for (var k in widget.content.columnSelectedOfDataset) {
 					if(Array.isArray(widget.content.columnSelectedOfDataset[k].variables) && widget.content.columnSelectedOfDataset[k].variables.length) {
 						if (widget.type == "table" && widget.content.columnSelectedOfDataset[k].variables[0].action == 'header') {
@@ -219,7 +219,7 @@
 
 					}
 				}
-			}
+			}*/
 
 			var drivers = formatDrivers(cockpitModule_analyticalDrivers);
 

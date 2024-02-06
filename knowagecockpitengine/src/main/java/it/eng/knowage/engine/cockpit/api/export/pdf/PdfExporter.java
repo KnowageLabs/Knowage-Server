@@ -281,17 +281,17 @@ public class PdfExporter extends AbstractFormatExporter {
 
 	private void addHeaderToTable(BaseTable table, JSONObject style, JSONObject widgetData, JSONObject widgetContent,
 			JSONArray columnsOrdered, List<Integer> pdfHiddenColumns) throws JSONException {
-		HashMap<String, String> arrayHeader = new HashMap<>();
-		for (int i = 0; i < widgetContent.getJSONArray("columnSelectedOfDataset").length(); i++) {
-			JSONObject column = widgetContent.getJSONArray("columnSelectedOfDataset").getJSONObject(i);
-			String key;
-			if (column.optBoolean("isCalculated") && !column.has("name")) {
-				key = column.getString("alias");
-			} else {
-				key = column.getString("name");
-			}
-			arrayHeader.put(key, column.getString("aliasToShow"));
-		}
+//		HashMap<String, String> arrayHeader = new HashMap<String, String>();
+//		for (int i = 0; i < widgetContent.getJSONArray("columnSelectedOfDataset").length(); i++) {
+//			JSONObject column = widgetContent.getJSONArray("columnSelectedOfDataset").getJSONObject(i);
+//			String key;
+//			if (column.optBoolean("isCalculated") && !column.has("name")) {
+//				key = column.getString("alias");
+//			} else {
+//				key = column.getString("name");
+//			}
+//			arrayHeader.put(key, column.getString("aliasToShow"));
+//		}
 
 		JSONArray groupsFromWidgetContent = getGroupsFromWidgetContent(widgetData);
 		Map<String, String> groupsAndColumnsMap = getGroupAndColumnsMap(widgetContent, groupsFromWidgetContent);
@@ -303,6 +303,10 @@ public class PdfExporter extends AbstractFormatExporter {
 				String groupName = groupsAndColumnsMap.get(column.get("header"));
 				if (groupName != null) {
 					Cell<PDPage> cell = groupHeaderRow.createCell(columnPercentWidths[i], groupName,
+							HorizontalAlignment.get("center"), VerticalAlignment.get("top"));
+					styleHeaderCell(style, cell);
+				} else {
+					Cell<PDPage> cell = groupHeaderRow.createCell(columnPercentWidths[i], "",
 							HorizontalAlignment.get("center"), VerticalAlignment.get("top"));
 					styleHeaderCell(style, cell);
 				}
@@ -320,8 +324,17 @@ public class PdfExporter extends AbstractFormatExporter {
 
 			JSONObject column = columnsOrdered.getJSONObject(i);
 			String columnName = column.getString("header");
-			if (arrayHeader.get(columnName) != null) {
-				columnName = arrayHeader.get(columnName);
+//			if (arrayHeader.get(columnName) != null) {
+//				columnName = arrayHeader.get(columnName);
+//			}
+			
+			JSONArray columnSelectedOfDataset = widgetContent.getJSONArray("columnSelectedOfDataset");
+			for (int j = 0; j < columnSelectedOfDataset.length(); j++) {
+				JSONObject columnSelected = columnSelectedOfDataset.getJSONObject(j);
+				if (columnName.equals(columnSelected.getString("aliasToShow"))) {
+					columnName = getTableColumnHeaderValue(columnSelected);
+					break;
+				}
 			}
 
 			Cell<PDPage> cell = headerRow.createCell(columnPercentWidths[i], columnName,
