@@ -52,7 +52,6 @@ import it.eng.spagobi.commons.services.LoginModule;
 import it.eng.spagobi.commons.utilities.ChannelUtilities;
 import it.eng.spagobi.commons.utilities.GeneralUtilities;
 import it.eng.spagobi.commons.utilities.StringUtilities;
-import it.eng.spagobi.profiling.PublicProfile;
 import it.eng.spagobi.services.common.SsoServiceFactory;
 import it.eng.spagobi.services.common.SsoServiceInterface;
 import it.eng.spagobi.services.security.bo.SpagoBIUserProfile;
@@ -107,11 +106,6 @@ public class ProfileFilter implements Filter {
 				SessionContainer sessionContainer = requestContainer.getSessionContainer();
 				SessionContainer permanentSession = sessionContainer.getPermanentContainer();
 				IEngUserProfile profile = (IEngUserProfile) permanentSession.getAttribute(IEngUserProfile.ENG_USER_PROFILE);
-
-				UserProfile publicProfile = PublicProfile.evaluatePublicCase(httpRequest, session, permanentSession);
-
-				if (publicProfile != null)
-					profile = publicProfile;
 
 				if (profile == null) {
 					// in case the profile does not exist, creates a new one

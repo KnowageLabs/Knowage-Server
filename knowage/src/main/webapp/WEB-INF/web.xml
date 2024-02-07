@@ -40,7 +40,6 @@
 	<filter-mapping>
 		<filter-name>EncodingFilter</filter-name>
 		<url-pattern>/servlet/AdapterHTTP</url-pattern>
-		<url-pattern>/public/servlet/AdapterHTTP</url-pattern>
 		<url-pattern>/WEB-INF/jsp/*</url-pattern>
 		<dispatcher>REQUEST</dispatcher>
 		<dispatcher>FORWARD</dispatcher>
@@ -127,7 +126,6 @@
 	<filter-mapping>
 		<filter-name>SpagoBICoreCheckSessionFilter</filter-name>
 		<url-pattern>/servlet/AdapterHTTP</url-pattern>
-		<url-pattern>/public/servlet/AdapterHTTP</url-pattern>
 		<url-pattern>/restful-services/publish</url-pattern>
 		<dispatcher>REQUEST</dispatcher>
 	</filter-mapping>
@@ -178,7 +176,6 @@
 		<filter-name>ProfileFilter</filter-name>
 		<url-pattern>/servlet/AdapterHTTP</url-pattern>
 		<url-pattern>/restful-services/publish</url-pattern>
-		<url-pattern>/public/servlet/AdapterHTTP</url-pattern>
 		<dispatcher>REQUEST</dispatcher>
 		<dispatcher>FORWARD</dispatcher>
 	</filter-mapping>
@@ -418,7 +415,6 @@
 	<servlet-mapping>
 		<servlet-name>AdapterHTTP</servlet-name>
 		<url-pattern>/servlet/AdapterHTTP</url-pattern>
-		<url-pattern>/public/servlet/AdapterHTTP</url-pattern>
 	</servlet-mapping>
 
 	<!-- END SERVLET MAPPINGS -->
