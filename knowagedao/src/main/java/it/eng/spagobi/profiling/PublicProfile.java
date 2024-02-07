@@ -21,60 +21,21 @@ package it.eng.spagobi.profiling;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.servlet.ServletRequest;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-
 import org.apache.log4j.Logger;
 
-import it.eng.spago.base.SessionContainer;
 import it.eng.spago.error.EMFUserError;
-import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.commons.bo.Role;
-import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.dao.IRoleDAO;
 import it.eng.spagobi.commons.utilities.UserUtilities;
 import it.eng.spagobi.services.common.JWTSsoService;
 import it.eng.spagobi.services.security.bo.SpagoBIUserProfile;
-import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 public class PublicProfile {
 
 	static Logger logger = Logger.getLogger(PublicProfile.class);
 
 	public static final String PUBLIC_USER_PREFIX = "public-";
-	public static final String PUBLIC_USER_NAME = "sbi.execution.publicProfileName";
-	static final String PUBLIC_PATTERN_MATCH = "public/servlet";
-
-	public static UserProfile evaluatePublicCase(ServletRequest request, HttpSession session, SessionContainer permanentSession) {
-
-		UserProfile toReturn = null;
-
-		if (((HttpServletRequest) request).getServletPath().contains(PUBLIC_PATTERN_MATCH)) {
-
-			String organization = null;
-			if (request.getParameter("ORGANIZATION") != null) {
-				organization = request.getParameter("ORGANIZATION").toString();
-			}
-			if (organization == null) {
-				throw new SpagoBIRuntimeException("Public request must specify ORGANIZATION");
-			}
-
-			String userId = createPublicUserId(organization);
-			logger.debug("Public User Id is " + userId);
-
-			SpagoBIUserProfile spagoBIProfile = createPublicUserProfile(userId);
-
-			toReturn = new UserProfile(spagoBIProfile);
-
-			if (permanentSession != null)
-				permanentSession.setAttribute(IEngUserProfile.ENG_USER_PROFILE, toReturn);
-			if (session != null)
-				session.setAttribute(IEngUserProfile.ENG_USER_PROFILE, toReturn);
-		}
-		return toReturn;
-	}
 
 	public static String createPublicUserId(String organization) {
 		return PUBLIC_USER_PREFIX + organization;
