@@ -19,9 +19,6 @@
   <ACTION name="START_ACTION" class="it.eng.spago.dispatching.action.util.PublishAction" scope="REQUEST">
  	<CONFIG/>
  </ACTION>
- <ACTION name="START_ACTION_PUBLIC_USER" class="it.eng.spagobi.wapp.services.PublicUserStartAction" scope="REQUEST">
- 	<CONFIG/>
- </ACTION>
   <ACTION name="LOGIN_ACTION_SBI_SETTINGS" class="it.eng.spagobi.commons.services.PortletLoginAction" scope="REQUEST">
  	<CONFIG/>
  </ACTION>
