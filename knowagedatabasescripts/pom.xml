@@ -18,7 +18,6 @@
 		<plugins>
 			<plugin>
 				<artifactId>maven-assembly-plugin</artifactId>
-				<version>3.1.1</version>
 				<executions>
 					<execution>
 						<id>mysql-zip</id>
@@ -29,7 +28,7 @@
 						<configuration>
 							<finalName>${project.artifactId}</finalName>
 							<descriptors>
-								<descriptor>assembly-mysql.xml</descriptor>
+								<descriptor>src/assembly/descriptors/assembly-mysql.xml</descriptor>
 							</descriptors>
 						</configuration>
 					</execution>
@@ -42,7 +41,7 @@
 						<configuration>
 							<finalName>${project.artifactId}</finalName>
 							<descriptors>
-								<descriptor>assembly-oracle.xml</descriptor>
+								<descriptor>src/assembly/descriptors/assembly-oracle.xml</descriptor>
 							</descriptors>
 						</configuration>
 					</execution>
@@ -55,7 +54,7 @@
 						<configuration>
 							<finalName>${project.artifactId}</finalName>
 							<descriptors>
-								<descriptor>assembly-postgres.xml</descriptor>
+								<descriptor>src/assembly/descriptors/assembly-postgres.xml</descriptor>
 							</descriptors>
 						</configuration>
 					</execution>
