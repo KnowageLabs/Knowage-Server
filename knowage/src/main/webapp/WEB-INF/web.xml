@@ -129,7 +129,6 @@
 		<url-pattern>/servlet/AdapterHTTP</url-pattern>
 		<url-pattern>/public/servlet/AdapterHTTP</url-pattern>
 		<url-pattern>/restful-services/publish</url-pattern>
-		<url-pattern>/public/restful-services/publish</url-pattern>
 		<dispatcher>REQUEST</dispatcher>
 	</filter-mapping>
 
@@ -179,7 +178,6 @@
 		<filter-name>ProfileFilter</filter-name>
 		<url-pattern>/servlet/AdapterHTTP</url-pattern>
 		<url-pattern>/restful-services/publish</url-pattern>
-		<url-pattern>/public/restful-services/publish</url-pattern>
 		<url-pattern>/public/servlet/AdapterHTTP</url-pattern>
 		<dispatcher>REQUEST</dispatcher>
 		<dispatcher>FORWARD</dispatcher>

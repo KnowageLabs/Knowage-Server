@@ -30,14 +30,6 @@ import it.eng.spagobi.api.AbstractSpagoBIResource;
 import it.eng.spagobi.commons.ResourcePublisherMapping;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 
-/**
- * PublisherService Rest service can be used to display a jsp. It can be called passing the request parameter "PUBLISHER" containing the uri to the requested
- * resource. i.e. PUBLISHER=PUBLISHER=/WEB-INF/jsp/community/XXX.jsp
- *
- * @author franceschini
- *
- */
-
 @Path("/publish")
 public class PublisherService extends AbstractSpagoBIResource {
 
