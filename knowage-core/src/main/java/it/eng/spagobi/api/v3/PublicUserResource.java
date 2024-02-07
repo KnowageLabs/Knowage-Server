@@ -113,15 +113,17 @@ public class PublicUserResource {
 			HttpSession session = httpRequest.getSession(false);
 			if (session != null) {
 				UserProfile existingUserProfile = (UserProfile) session.getAttribute(IEngUserProfile.ENG_USER_PROFILE);
-				if (existingUserProfile.getUserId().equals(publicUserId)) {
-					// if public user profile object already exists, return it
-					return Response.ok(new UserInformationDTO(existingUserProfile)).build();
-				} else {
-					// if a different user profile object already exists, return BAD_REQUEST (400)
-					LOGGER.error(
-							"Cannot create public user [{}]: an user profile object already exists in session with user id = [{}] beloning to tenant [{}].",
-							publicUserId, existingUserProfile.getUserId(), existingUserProfile.getOrganization());
-					return Response.status(Response.Status.BAD_REQUEST).build();
+				if (existingUserProfile != null) {
+					if (existingUserProfile.getUserId().equals(publicUserId)) {
+						// if public user profile object already exists, return it
+						return Response.ok(new UserInformationDTO(existingUserProfile)).build();
+					} else {
+						// if a different user profile object already exists, return BAD_REQUEST (400)
+						LOGGER.error(
+								"Cannot create public user [{}]: an user profile object already exists in session with user id = [{}] beloning to tenant [{}].",
+								publicUserId, existingUserProfile.getUserId(), existingUserProfile.getOrganization());
+						return Response.status(Response.Status.BAD_REQUEST).build();
+					}
 				}
 			}
 
