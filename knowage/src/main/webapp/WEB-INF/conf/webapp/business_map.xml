@@ -7,7 +7,6 @@
 		<MAP_ACTION actionName="GET_PUBLIC_SUBOBJECTS_INFO" businessProcess="MenuManagement" />
 		<MAP_ACTION actionName="GET_SNAPSHOTS_INFO" businessProcess="MenuManagement" />
 		<MAP_ACTION actionName="GET_SUBOBJECT_INFO" businessProcess="MenuManagement" />
-		<!-- <MAP_ACTION actionName="START_ACTION_PUBLIC_USER" businessProcess="MenuManagement" />  -->
 	</MAP_ACTIONS>
 	<MAP_PAGE_MODULES>
 		<MAP_PAGE_MODULE pageName="LoginPage" moduleName="LoginModule" businessProcess="MenuManagement" />	
