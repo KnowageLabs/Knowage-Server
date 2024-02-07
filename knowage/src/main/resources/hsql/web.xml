@@ -508,17 +508,6 @@
 		<url-pattern>/services/SbiDocumentService</url-pattern>
 	</servlet-mapping>
 
-	<!-- START TOMCAT RES -->
-	<resource-ref id="knowageds_core">
-		<description>
-		</description>
-		<res-ref-name>knowageds</res-ref-name>
-		<res-type>javax.sql.DataSource</res-type>
-		<res-auth>Container</res-auth>
-		<res-sharing-scope>Shareable</res-sharing-scope>
-	</resource-ref>
-	<!-- END TOMCAT RES -->
-
 	<!-- 
 		This servlet comes from resteasy-jaxrs and is enabled by default mapped to "" URL. The empty string has
 		greater priority than "/": that is a big problem for us because our WARs have mixed resources, REST
