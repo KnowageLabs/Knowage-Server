@@ -61,7 +61,7 @@ public class PublicProfile {
 				throw new SpagoBIRuntimeException("Public request must specify ORGANIZATION");
 			}
 
-			String userId = PUBLIC_USER_PREFIX + organization;
+			String userId = createPublicUserId(organization);
 			logger.debug("Public User Id is " + userId);
 
 			SpagoBIUserProfile spagoBIProfile = createPublicUserProfile(userId);
@@ -74,6 +74,10 @@ public class PublicProfile {
 				session.setAttribute(IEngUserProfile.ENG_USER_PROFILE, toReturn);
 		}
 		return toReturn;
+	}
+
+	public static String createPublicUserId(String organization) {
+		return PUBLIC_USER_PREFIX + organization;
 	}
 
 	/**
