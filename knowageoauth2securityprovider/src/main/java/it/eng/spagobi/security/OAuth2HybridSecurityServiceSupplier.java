@@ -25,6 +25,7 @@ import com.auth0.jwt.interfaces.Claim;
 
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.profiling.bean.SbiUser;
+import it.eng.spagobi.security.OAuth2.OAuth2Config;
 import it.eng.spagobi.services.common.JWTSsoService;
 import it.eng.spagobi.services.security.bo.SpagoBIUserProfile;
 import it.eng.spagobi.utilities.assertion.UnreachableCodeException;
@@ -54,8 +55,14 @@ public class OAuth2HybridSecurityServiceSupplier extends InternalSecurityService
 			logger.debug("Clear text userId: " + userId);
 			SbiUser user = DAOFactory.getSbiUserDAO().loadSbiUserByUserId(userId);
 			if (user == null) {
-				logger.debug("User [" + userId + "] was not found into internal metadata, returning a minimal profile object...");
-				return createMinimumUserProfile(jwtToken, userId);
+				if (OAuth2Config.getInstance().isNonProfiledUserAllowed()) {
+					logger.info("User [" + userId
+							+ "] was not found into internal metadata; non profiled users are allowed to enter. Returning a minimal profile object...");
+					return createMinimumUserProfile(jwtToken, userId);
+				} else {
+					logger.info("User [" + userId + "] was not found into internal metadata; non profiled users are not allowed to enter. Returning null.");
+					return null;
+				}
 			} else {
 				return super.createUserProfile(jwtToken);
 			}
