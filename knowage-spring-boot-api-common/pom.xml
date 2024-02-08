@@ -59,7 +59,15 @@
 					<artifactId>logback-classic</artifactId>
 					<groupId>ch.qos.logback</groupId>
 				</exclusion>
+				<exclusion>
+					<groupId>org.springframework.boot</groupId>
+					<artifactId>spring-boot-starter-logging</artifactId>
+				</exclusion>
 			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-log4j2</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -97,10 +105,6 @@
 			<artifactId>json</artifactId>
 			<version>20210307</version>
 		</dependency>
-		<!-- 		<dependency> -->
-		<!-- 			<groupId>org.slf4j</groupId> -->
-		<!-- 			<artifactId>slf4j-log4j12</artifactId> -->
-		<!-- 		</dependency> -->
 		<dependency>
 			<groupId>com.fasterxml.jackson.datatype</groupId>
 			<artifactId>jackson-datatype-jsr310</artifactId>
