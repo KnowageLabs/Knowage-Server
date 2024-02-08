@@ -178,7 +178,7 @@
 		<logger name="org.jbpm" level="error">
 			<AppenderRef ref="KNOWAGE_CORE" />
 		</logger>
-		<logger name="org.quartz" additivity="false" level="error">
+		<logger name="org.quartz" additivity="false" level="trace">
 			<AppenderRef ref="KNOWAGE_QUARTZ" />
 		</logger>
 		<logger name="it.eng.spagobi.tools.scheduler.init.QuartzInitializer" additivity="false" level="warn">
