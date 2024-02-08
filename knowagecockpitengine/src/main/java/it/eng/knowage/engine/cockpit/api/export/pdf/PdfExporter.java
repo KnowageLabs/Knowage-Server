@@ -304,11 +304,26 @@ public class PdfExporter extends AbstractFormatExporter {
 				if (groupName != null) {
 					Cell<PDPage> cell = groupHeaderRow.createCell(columnPercentWidths[i], groupName,
 							HorizontalAlignment.get("center"), VerticalAlignment.get("top"));
-					styleHeaderCell(style, cell);
+					styleHeaderCell(style, cell);			
+					// check if adjacent header cells have same group names in order to add merged region
+					int adjacents = getAdjacentEqualNamesAmount(groupsAndColumnsMap, columnsOrdered, i, groupName);
+					if (adjacents > 1) {
+						cell.setRightBorderStyle(null);
+						for (int j = 1; j < adjacents; j++) {							
+							cell = groupHeaderRow.createCell(columnPercentWidths[i+j], "",
+								HorizontalAlignment.get("center"), VerticalAlignment.get("top"));
+							styleHeaderCell(style, cell);			
+							cell.setLeftBorderStyle(null);
+							if (j + 1 < adjacents) {								
+								cell.setRightBorderStyle(null);
+							}
+						}
+					}						
+					i += adjacents - 1;
 				} else {
-					Cell<PDPage> cell = groupHeaderRow.createCell(columnPercentWidths[i], "",
+					Cell<PDPage> blankCell = groupHeaderRow.createCell(columnPercentWidths[i], "",
 							HorizontalAlignment.get("center"), VerticalAlignment.get("top"));
-					styleHeaderCell(style, cell);
+					styleHeaderCell(style, blankCell);
 				}
 
 			}
@@ -343,6 +358,24 @@ public class PdfExporter extends AbstractFormatExporter {
 		}
 
 		table.addHeaderRow(headerRow);
+	}
+	
+	private int getAdjacentEqualNamesAmount(Map<String, String> groupsAndColumnsMap, JSONArray columnsOrdered, int matchStartIndex, String groupNameToMatch) {
+		try {
+			int adjacents = 0;
+			for (int i = matchStartIndex; i < columnsOrdered.length(); i++) {
+				JSONObject column = columnsOrdered.getJSONObject(i);
+				String groupName = groupsAndColumnsMap.get(column.get("header"));
+				if(groupName.equals(groupNameToMatch)) {
+					adjacents++;
+				} else {
+					return adjacents;
+				}
+			}		
+			return adjacents;
+		} catch (Exception e) {
+			throw new SpagoBIRuntimeException("Couldn't compute adjacent equal names amount", e);
+		}
 	}
 
 	private void styleHeaderCell(JSONObject style, Cell<PDPage> headerCell) throws JSONException {
