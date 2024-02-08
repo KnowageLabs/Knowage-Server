@@ -59,8 +59,17 @@
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-json</artifactId>
+			<exclusions>
+				<exclusion>
+					<groupId>org.springframework.boot</groupId>
+					<artifactId>spring-boot-starter-logging</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
-		
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-log4j2</artifactId>
+		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-tomcat</artifactId>
@@ -87,14 +96,6 @@
 			<artifactId>javax.ws.rs-api</artifactId>
 			<version>2.1.1</version>
 		</dependency>
-		
-		<!--
-		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>slf4j-log4j12</artifactId>
-		</dependency>
-		-->
-		
 		<dependency>
 			<groupId>org.apache.logging.log4j</groupId>
 			<artifactId>log4j-1.2-api</artifactId>
@@ -154,18 +155,6 @@
 			<artifactId>resteasy-multipart-provider</artifactId>
 			<version>4.6.0.Final</version>
 		</dependency>
-		
-		<!--
-			Fixes:
-				SLF4J: Failed to load class "org.slf4j.impl.StaticLoggerBinder".
-				SLF4J: Defaulting to no-operation (NOP) logger implementation
-				SLF4J: See http://www.slf4j.org/codes.html#StaticLoggerBinder for further details.
-		 -->
-		<!-- 		<dependency> -->
-		<!-- 			<groupId>org.slf4j</groupId> -->
-		<!-- 			<artifactId>slf4j-log4j12</artifactId> -->
-		<!-- 		</dependency> -->
-		
 		<!-- 
 			   ____        _          __             _            _       
 			  / __ \      | |        / _|           | |          | |      
