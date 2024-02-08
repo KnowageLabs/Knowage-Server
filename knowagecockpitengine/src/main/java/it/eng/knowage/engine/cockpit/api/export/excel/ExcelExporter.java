@@ -1276,10 +1276,19 @@ public class ExcelExporter extends AbstractFormatExporter {
 					JSONObject column = columnsOrdered.getJSONObject(i);
 					String groupName = groupsAndColumnsMap.get(column.get("header"));
 					if (groupName != null) {
+						// check if adjacent header cells have same group names in order to add merged region 
+						int adjacents = getAdjacentEqualNamesAmount(groupsAndColumnsMap, columnsOrdered, i, groupName);
+						if (adjacents > 1) {
+							sheet.addMergedRegion(new CellRangeAddress(newheader.getRowNum(), // first row (0-based)
+									newheader.getRowNum(), // last row (0-based)
+									i, // first column (0-based)
+									i + adjacents - 1 // last column (0-based)
+							));
+						}						
 						Cell cell = newheader.createCell(i);
 						cell.setCellValue(groupName);
+						i += adjacents - 1;
 					}
-
 				}
 				header = sheet.createRow((short) (startRowOffset + 1));
 			} else
@@ -1287,6 +1296,24 @@ public class ExcelExporter extends AbstractFormatExporter {
 			return header;
 		} catch (Exception e) {
 			throw new SpagoBIRuntimeException("Couldn't create header column names", e);
+		}
+	}
+	
+	private int getAdjacentEqualNamesAmount(Map<String, String> groupsAndColumnsMap, JSONArray columnsOrdered, int matchStartIndex, String groupNameToMatch) {
+		try {
+			int adjacents = 0;
+			for (int i = matchStartIndex; i < columnsOrdered.length(); i++) {
+				JSONObject column = columnsOrdered.getJSONObject(i);
+				String groupName = groupsAndColumnsMap.get(column.get("header"));
+				if(groupName.equals(groupNameToMatch)) {
+					adjacents++;
+				} else {
+					return adjacents;
+				}
+			}		
+			return adjacents;
+		} catch (Exception e) {
+			throw new SpagoBIRuntimeException("Couldn't compute adjacent equal names amount", e);
 		}
 	}
 
