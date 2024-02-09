@@ -14,21 +14,18 @@
 	<packaging>jar</packaging>
 	
 	<dependencies>
-		
 		<dependency>
 			<groupId>it.eng.knowage</groupId>
 			<artifactId>spagobi-metamodel-core</artifactId>
 			<version>${project.version}</version>
 			<scope>compile</scope>
 		</dependency>
-		
 		<dependency>
 			<groupId>it.eng.knowage</groupId>
 			<artifactId>spagobi-cwm</artifactId>
 			<version>${project.version}</version>
 			<scope>compile</scope>
 		</dependency>
-		
 	</dependencies>
 	
 </project>

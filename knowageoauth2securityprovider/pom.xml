@@ -14,14 +14,12 @@
 	<packaging>jar</packaging>
 	
 	<dependencies>
-		
 		<dependency>
 			<groupId>it.eng.knowage</groupId>
 			<artifactId>knowage-core</artifactId>
 			<version>${project.version}</version>
 			<scope>compile</scope>
 		</dependency>
-		
 	</dependencies>
 	
 </project>

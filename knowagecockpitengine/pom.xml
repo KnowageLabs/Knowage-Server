@@ -15,14 +15,12 @@
 	<name>knowagecockpitengine</name>
 	
 	<dependencies>
-		
 		<dependency>
 			<groupId>it.eng.knowage</groupId>
 			<artifactId>knowage-dao</artifactId>
 			<version>${project.version}</version>
 			<scope>compile</scope>
 		</dependency>
-		
 		<dependency>
 			<groupId>it.eng.knowage</groupId>
 			<artifactId>knowage-utils</artifactId>
@@ -43,92 +41,78 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
-		
 		<dependency>
 			<groupId>it.eng.knowage</groupId>
 			<artifactId>qbe-core</artifactId>
 			<version>${project.version}</version>
 			<scope>compile</scope>
 		</dependency>
-		
 		<dependency>
 			<groupId>org.apache.velocity</groupId>
 			<artifactId>velocity</artifactId>
 			<version>1.7</version>
 			<scope>compile</scope>
 		</dependency>
-		
 		<!-- https://mvnrepository.com/artifact/velocity-tools/velocity-tools -->
 		<dependency>
 			<groupId>velocity-tools</groupId>
 			<artifactId>velocity-tools</artifactId>
 			<version>1.4</version>
 		</dependency>
-		
 		<dependency>
 			<groupId>backport-util-concurrent</groupId>
 			<artifactId>backport-util-concurrent</artifactId>
 			<version>3.1</version>
 			<scope>compile</scope>
 		</dependency>
-		
 		<dependency>
 			<groupId>org.jboss.resteasy</groupId>
 			<artifactId>resteasy-servlet-initializer</artifactId>
 			<version>${resteasy.version}</version>
 			<scope>runtime</scope>
 		</dependency>
-		
 		<dependency>
 			<groupId>org.jboss.resteasy</groupId>
 			<artifactId>resteasy-html</artifactId>
 			<version>${resteasy.version}</version>
 		</dependency>
-		
 		<dependency>
 			<groupId>wsdl4j</groupId>
 			<artifactId>wsdl4j</artifactId>
 			<version>1.5.1</version>
 			<scope>runtime</scope>
 		</dependency>
-		
 		<dependency>
 			<groupId>javax.servlet</groupId>
 			<artifactId>javax.servlet-api</artifactId>
 			<version>3.1.0</version>
 			<scope>provided</scope>
 		</dependency>
-		
 		<dependency>
 			<groupId>com.fdsapi</groupId>
 			<artifactId>fdsapi</artifactId>
 			<version>1.2</version>
 		</dependency>
-		
 		<dependency>
 			<groupId>net.sf.xss-html-filter</groupId>
 			<artifactId>xss-html-filter</artifactId>
 			<version>1.5</version>
 		</dependency>
-		
 		<dependency>
 			<groupId>xalan</groupId>
 			<artifactId>xalan</artifactId>
 			<version>2.7.2</version>
 		</dependency>
-		
 		<dependency>
 			<groupId>com.github.dhorions</groupId>
 			<artifactId>boxable</artifactId>
 			<version>1.7.0</version>
 		</dependency>
-		
 		<!-- Provides support for Graylog in log4j2 -->
 		<dependency>
 			<groupId>biz.paluch.logging</groupId>
 			<artifactId>logstash-gelf</artifactId>
 		</dependency>
-		
 	</dependencies>
 	
 	<build>
@@ -140,6 +124,30 @@
 					<attachClasses>true</attachClasses>
 					<classesClassifier>classes</classesClassifier>
 				</configuration>
+			</plugin>
+			<plugin>
+				<artifactId>maven-clean-plugin</artifactId>
+				<version>3.2.0</version>
+				<executions>
+					<execution>
+						<id>clean-node_modules-and-dist</id>
+						<phase>clean</phase>
+						<goals>
+							<goal>clean</goal>
+						</goals>
+						<configuration>
+							<filesets>
+								<fileset>
+									<directory>${basedir}/src/main/webapp</directory>
+									<includes>
+										<include>dist/</include>
+										<include>node_modules/</include>
+									</includes>
+								</fileset>
+							</filesets>
+						</configuration>
+					</execution>
+				</executions>
 			</plugin>
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
@@ -226,7 +234,6 @@
 				<application.environment>development</application.environment>
 			</properties>
 		</profile>
-		
 		<profile>
 			<id>production</id>
 			<build>

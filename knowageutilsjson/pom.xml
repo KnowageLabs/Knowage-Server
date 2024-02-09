@@ -14,7 +14,6 @@
 	<packaging>jar</packaging>
 	
 	<dependencies>
-		
 		<!-- is it a runtime dependency??
 		<dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>
@@ -22,7 +21,6 @@
 			<version>2.0.2</version>
 		</dependency>
 		-->
-		
 		<dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>
 			<artifactId>jackson-databind</artifactId>
@@ -34,12 +32,9 @@
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
 		</dependency>
-		
 		<dependency>
 			<groupId>org.apache.logging.log4j</groupId>
 			<artifactId>log4j-1.2-api</artifactId>
-			<version>2.17.1</version>
-			<scope>compile</scope>
 		</dependency>
 	</dependencies>
 	
