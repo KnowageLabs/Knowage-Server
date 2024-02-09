@@ -355,7 +355,7 @@ public class UserProfile implements IEngUserProfile {
 	/*
 	 * All roles are returned
 	 */
-	public Collection<String> getRolesForUse() {
+	public Collection<String> getRolesForUse() throws EMFInternalError{
 		LOGGER.debug("Getting roles for use");
 		Collection<String> toReturn = this.roles;
 		LOGGER.debug("End getting roles for user: {}", toReturn);
