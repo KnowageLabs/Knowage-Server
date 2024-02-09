@@ -15,9 +15,7 @@
 	<name>knowage-vue</name>
 	
 	<dependencyManagement>
-		
 		<dependencies>
-			
 			<!-- 
 				Duplicated in:
 				  - knowage-api
@@ -32,20 +30,17 @@
 				<type>pom</type>
 				<scope>import</scope>
 			</dependency>
-			
 		</dependencies>
-		
 	</dependencyManagement>
 	
 	<dependencies>
-		
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
 			<exclusions>
 				<exclusion>
-					<groupId>org.springframework.boot</groupId>
 					<artifactId>spring-boot-starter-logging</artifactId>
+					<groupId>org.springframework.boot</groupId>
 				</exclusion>
 			</exclusions>
 		</dependency>
@@ -53,33 +48,27 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-log4j2</artifactId>
 		</dependency>
-		
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-tomcat</artifactId>
 		</dependency>
-		
 		<dependency>
 			<groupId>org.apache.logging.log4j</groupId>
 			<artifactId>log4j-core</artifactId>
 		</dependency>
-		
 		<dependency>
 			<groupId>org.apache.logging.log4j</groupId>
 			<artifactId>log4j-api</artifactId>
 		</dependency>
-		
 		<dependency>
 			<groupId>org.apache.logging.log4j</groupId>
 			<artifactId>log4j-web</artifactId>
 		</dependency>
-		
 		<!-- Provides support for Graylog in log4j2 -->
 		<dependency>
 			<groupId>biz.paluch.logging</groupId>
 			<artifactId>logstash-gelf</artifactId>
 		</dependency>
-		
 	</dependencies>
 	
 	<build>
@@ -99,13 +88,11 @@
 		
 		<finalName>knowage-vue</finalName>
 		<plugins>
-			
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
 				<version>${spring.boot}</version>
 			</plugin>
-			
 			<plugin>
 				<artifactId>maven-war-plugin</artifactId>
 				<configuration>
