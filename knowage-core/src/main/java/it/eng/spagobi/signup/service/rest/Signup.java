@@ -106,7 +106,7 @@ public class Signup {
 			UserProfile profile = (UserProfile) req.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
 			ISbiUserDAO userDao = DAOFactory.getSbiUserDAO();
 			SbiUser user = userDao.loadSbiUserByUserId((String) profile.getUserId());
-			Map<String, String> data = profile.getUserAttributes();
+			Map<String, Object> data = profile.getUserAttributes();
 			if (user.getFullName() != null) {
 				int i = user.getFullName().indexOf(" ");
 				if (i >= 0) {
