@@ -71,7 +71,7 @@ public class StartNewExecutionProcess extends AbstractSpagoBIAction {
 
 		BIObject obj;
 		IEngUserProfile profile;
-		List roles;
+		List<String> roles;
 
 		logger.debug("IN");
 

@@ -63,8 +63,8 @@ public class GetRolesForExecutionAction extends AbstractSpagoBIAction {
 		String documentLabel;
 		BIObject obj;
 		IEngUserProfile profile;
-		List roleNames;
-		List roles;
+		List<String> roleNames;
+		List<Role> roles;
 
 		logger.debug("IN");
 
@@ -114,14 +114,14 @@ public class GetRolesForExecutionAction extends AbstractSpagoBIAction {
 				throw new SpagoBIServiceException(SERVICE_NAME, t);
 			}
 
-			if (roleNames == null || roleNames.size() == 0) {
+			if (roleNames == null || roleNames.isEmpty()) {
 				logger.warn("Object cannot be executed by any role of the user");
 				throw new SpagoBIServiceException(SERVICE_NAME, "Object cannot be executed by any role of the user");
 			} else {
-				roles = new ArrayList();
-				Iterator it = roleNames.iterator();
+				roles = new ArrayList<>();
+				Iterator<String> it = roleNames.iterator();
 				while (it.hasNext()) {
-					String roleName = (String) it.next();
+					String roleName = it.next();
 					try {
 						Role role = DAOFactory.getRoleDAO().loadByName(roleName);
 						roles.add(role);

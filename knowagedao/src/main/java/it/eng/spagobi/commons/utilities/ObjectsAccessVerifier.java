@@ -110,15 +110,15 @@ public class ObjectsAccessVerifier {
 	 * @param profile
 	 * @return
 	 */
-	public static boolean canExec(String state, List folders, IEngUserProfile profile) {
+	public static boolean canExec(String state, List<LowFunctionality> folders, IEngUserProfile profile) {
 
 		logger.debug("IN.state=" + state);
 		boolean canExec = false;
 		if (isAbleToExec(state, profile)) {
 
-			Iterator folderIt = folders.iterator();
+			Iterator<LowFunctionality> folderIt = folders.iterator();
 			while (folderIt.hasNext()) {
-				LowFunctionality folder = (LowFunctionality) folderIt.next();
+				LowFunctionality folder = folderIt.next();
 				canExec = canExecInternal(folder, profile);
 				if (canExec) {
 					logger.debug("OUT.return true");
@@ -141,15 +141,15 @@ public class ObjectsAccessVerifier {
 	 * @param profile
 	 * @return
 	 */
-	public static boolean canDev(String state, List folders, IEngUserProfile profile) {
+	public static boolean canDev(String state, List<LowFunctionality> folders, IEngUserProfile profile) {
 		Monitor monitor = MonitorFactory.start("spagobi.core.ObjectAccessVerifier.canDev");
 		logger.debug("IN.state=" + state);
 		boolean canDev = false;
 		if (isAbleToExec(state, profile)) {
 
-			Iterator folderIt = folders.iterator();
+			Iterator<LowFunctionality> folderIt = folders.iterator();
 			while (folderIt.hasNext()) {
-				LowFunctionality folder = (LowFunctionality) folderIt.next();
+				LowFunctionality folder = folderIt.next();
 				canDev = canDevInternal(folder, profile);
 				if (canDev) {
 					logger.debug("OUT.return true");
@@ -175,15 +175,15 @@ public class ObjectsAccessVerifier {
 	 * @param profile
 	 * @return
 	 */
-	public static boolean canTest(String state, List folders, IEngUserProfile profile) {
+	public static boolean canTest(String state, List<LowFunctionality> folders, IEngUserProfile profile) {
 		Monitor monitor = MonitorFactory.start("spagobi.core.ObjectAccessVerifier.canTest");
 		logger.debug("IN.state=" + state);
 		boolean canTest = false;
 		if (isAbleToExec(state, profile)) {
 
-			Iterator folderIt = folders.iterator();
+			Iterator<LowFunctionality> folderIt = folders.iterator();
 			while (folderIt.hasNext()) {
-				LowFunctionality folder = (LowFunctionality) folderIt.next();
+				LowFunctionality folder = folderIt.next();
 				canTest = canTestInternal(folder, profile);
 				if (canTest) {
 					logger.debug("OUT.return true");
@@ -217,15 +217,15 @@ public class ObjectsAccessVerifier {
 	 * @param userProfile
 	 * @return
 	 */
-	public static int getVisibleInstances(String initialPath, List folders) {
+	public static int getVisibleInstances(String initialPath, List<LowFunctionality> folders) {
 
 		logger.debug("IN");
 
 		int visibleInstances = 0;
 		if (initialPath != null && !initialPath.trim().equals("")) {
-			Iterator folderIt = folders.iterator();
+			Iterator<LowFunctionality> folderIt = folders.iterator();
 			while (folderIt.hasNext()) {
-				LowFunctionality folder = (LowFunctionality) folderIt.next();
+				LowFunctionality folder = folderIt.next();
 				String folderPath = folder.getPath();
 				if (folderPath.equalsIgnoreCase(initialPath) || folderPath.startsWith(initialPath + "/")) {
 					visibleInstances++;
@@ -280,7 +280,7 @@ public class ObjectsAccessVerifier {
 		return false;
 	}
 
-	public static boolean isAbleToSave(JSONArray documentfolders, IEngUserProfile profile) throws EMFInternalError, JSONException {
+	public static boolean isAbleToSave(JSONArray documentfolders, IEngUserProfile profile) throws JSONException {
 		if (documentfolders != null) {
 			for (int it = 0; it < documentfolders.length(); it++) {
 				if (canCreateInternal(documentfolders.getInt(it), profile)) {
@@ -317,13 +317,15 @@ public class ObjectsAccessVerifier {
 	 * @return A boolean control value
 	 */
 	public static boolean canDevBIObject(Integer biObjectID, IEngUserProfile profile) {
-		Monitor monitor = MonitorFactory.start("spagobi.core.ObjectAccessVerifier.canDevBIObject(Integer biObjectID, IEngUserProfile profile)");
+		Monitor monitor = MonitorFactory
+				.start("spagobi.core.ObjectAccessVerifier.canDevBIObject(Integer biObjectID, IEngUserProfile profile)");
 		boolean toReturn = false;
 		try {
 			logger.debug("IN: obj id = [" + biObjectID + "]; user id = [" + ((UserProfile) profile).getUserId() + "]");
 			// if user is administrator, he can develop, no need to make any query to database
 			if (profile.isAbleToExecuteAction(CommunityFunctionalityConstants.DOCUMENT_MANAGEMENT_ADMIN)) {
-				logger.debug("User [" + ((UserProfile) profile).getUserId() + "] is administrator. He can develop every document");
+				logger.debug("User [" + ((UserProfile) profile).getUserId()
+						+ "] is administrator. He can develop every document");
 				monitor.stop();
 				return true;
 			}
@@ -347,13 +349,16 @@ public class ObjectsAccessVerifier {
 	 * @return A boolean control value
 	 */
 	public static boolean canDevBIObject(BIObject obj, IEngUserProfile profile) {
-		Monitor monitor = MonitorFactory.start("spagobi.core.ObjectAccessVerifier.canDevBIObject(BIObject obj, IEngUserProfile profile)");
+		Monitor monitor = MonitorFactory
+				.start("spagobi.core.ObjectAccessVerifier.canDevBIObject(BIObject obj, IEngUserProfile profile)");
 		boolean toReturn = false;
 		try {
-			logger.debug("IN: obj label = [" + obj.getLabel() + "]; user id = [" + ((UserProfile) profile).getUserId() + "]");
+			logger.debug("IN: obj label = [" + obj.getLabel() + "]; user id = [" + ((UserProfile) profile).getUserId()
+					+ "]");
 			// if user is administrator, he can develop, no need to make any query to database
 			if (profile.isAbleToExecuteAction(CommunityFunctionalityConstants.DOCUMENT_MANAGEMENT_ADMIN)) {
-				logger.debug("User [" + ((UserProfile) profile).getUserId() + "] is administrator. He can develop every document");
+				logger.debug("User [" + ((UserProfile) profile).getUserId()
+						+ "] is administrator. He can develop every document");
 				monitor.stop();
 				return true;
 			}
@@ -365,10 +370,10 @@ public class ObjectsAccessVerifier {
 				return false;
 			}
 			// if user is not an administrator and document is in DEV state, we must see if he has development permission
-			List folders = obj.getFunctionalities();
-			Iterator it = folders.iterator();
+			List<Integer> folders = obj.getFunctionalities();
+			Iterator<Integer> it = folders.iterator();
 			while (it.hasNext()) {
-				Integer folderId = (Integer) it.next();
+				Integer folderId = it.next();
 				boolean canDevInFolder = canDev(folderId, profile);
 				if (canDevInFolder) {
 					logger.debug("User can develop in functionality with id = " + folderId);
@@ -501,7 +506,7 @@ public class ObjectsAccessVerifier {
 		logger.debug("IN");
 		Monitor monitor = MonitorFactory.start("spagobi.core.ObjectAccessVerifier.canExecInternal");
 
-		Collection roles = null;
+		Collection<String> roles = null;
 
 		try {
 			roles = ((UserProfile) profile).getRolesForUse();
@@ -518,16 +523,16 @@ public class ObjectsAccessVerifier {
 		}
 
 		Role[] execRoles = folder.getExecRoles();
-		List execRoleNames = new ArrayList();
+		List<String> execRoleNames = new ArrayList<>();
 		for (int i = 0; i < execRoles.length; i++) {
 			Role role = execRoles[i];
 			execRoleNames.add(role.getName());
 		}
 
-		Iterator iterRoles = roles.iterator();
+		Iterator<String> iterRoles = roles.iterator();
 		String roleName = "";
 		while (iterRoles.hasNext()) {
-			roleName = (String) iterRoles.next();
+			roleName = iterRoles.next();
 			if (execRoleNames.contains(roleName)) {
 				logger.debug("OUT.return true");
 				monitor.stop();
@@ -550,7 +555,7 @@ public class ObjectsAccessVerifier {
 	private static boolean canTestInternal(LowFunctionality folder, IEngUserProfile profile) {
 		Monitor monitor = MonitorFactory.start("spagobi.core.ObjectAccessVerifier.canTestInternal");
 		logger.debug("IN");
-		Collection roles = null;
+		Collection<String> roles = null;
 
 		try {
 			roles = ((UserProfile) profile).getRolesForUse();
@@ -561,16 +566,16 @@ public class ObjectsAccessVerifier {
 		}
 
 		Role[] testRoles = folder.getTestRoles();
-		List testRoleNames = new ArrayList();
+		List<String> testRoleNames = new ArrayList<>();
 		for (int i = 0; i < testRoles.length; i++) {
 			Role role = testRoles[i];
 			testRoleNames.add(role.getName());
 		}
 
-		Iterator iterRoles = roles.iterator();
+		Iterator<String> iterRoles = roles.iterator();
 		String roleName = "";
 		while (iterRoles.hasNext()) {
-			roleName = (String) iterRoles.next();
+			roleName = iterRoles.next();
 			if (testRoleNames.contains(roleName)) {
 				logger.debug("OUT. return true");
 				monitor.stop();
@@ -592,7 +597,7 @@ public class ObjectsAccessVerifier {
 	 */
 	private static boolean canDevInternal(LowFunctionality folder, IEngUserProfile profile) {
 		logger.debug("IN");
-		Collection roles = null;
+		Collection<String> roles = null;
 		try {
 			roles = ((UserProfile) profile).getRolesForUse();
 
@@ -603,16 +608,16 @@ public class ObjectsAccessVerifier {
 		}
 
 		Role[] devRoles = folder.getDevRoles();
-		List devRoleNames = new ArrayList();
+		List<String> devRoleNames = new ArrayList<>();
 		for (int i = 0; i < devRoles.length; i++) {
 			Role role = devRoles[i];
 			devRoleNames.add(role.getName());
 		}
 
-		Iterator iterRoles = roles.iterator();
+		Iterator<String> iterRoles = roles.iterator();
 		String roleName = "";
 		while (iterRoles.hasNext()) {
-			roleName = (String) iterRoles.next();
+			roleName = iterRoles.next();
 			if (devRoleNames.contains(roleName)) {
 
 				logger.debug("OUT. return true");
@@ -633,7 +638,7 @@ public class ObjectsAccessVerifier {
 	 */
 	private static boolean canTestInternal(Integer folderId, IEngUserProfile profile) {
 		logger.debug("IN");
-		Collection roles = null;
+		Collection<String> roles = null;
 
 		try {
 			roles = ((UserProfile) profile).getRolesForUse();
@@ -652,16 +657,16 @@ public class ObjectsAccessVerifier {
 			return false;
 		}
 		Role[] testRoles = funct.getTestRoles();
-		List testRoleNames = new ArrayList();
+		List<String> testRoleNames = new ArrayList<>();
 		for (int i = 0; i < testRoles.length; i++) {
 			Role role = testRoles[i];
 			testRoleNames.add(role.getName());
 		}
 
-		Iterator iterRoles = roles.iterator();
+		Iterator<String> iterRoles = roles.iterator();
 		String roleName = "";
 		while (iterRoles.hasNext()) {
-			roleName = (String) iterRoles.next();
+			roleName = iterRoles.next();
 			if (testRoleNames.contains(roleName)) {
 				logger.debug("OUT. return true");
 				return true;
@@ -681,7 +686,7 @@ public class ObjectsAccessVerifier {
 	private static boolean canCreateInternal(Integer folderId, IEngUserProfile profile) {
 		logger.debug("IN");
 		Monitor monitor = MonitorFactory.start("spagobi.core.ObjectAccessVerifier.canSaveInternal");
-		Collection roles = null;
+		Collection<String> roles = null;
 		try {
 			roles = ((UserProfile) profile).getRolesForUse();
 
@@ -702,16 +707,16 @@ public class ObjectsAccessVerifier {
 			return false;
 		}
 		Role[] createRoles = funct.getCreateRoles();
-		List createRoleNames = new ArrayList();
+		List<String> createRoleNames = new ArrayList<>();
 		for (int i = 0; i < createRoles.length; i++) {
 			Role role = createRoles[i];
 			createRoleNames.add(role.getName());
 		}
 
-		Iterator iterRoles = roles.iterator();
+		Iterator<String> iterRoles = roles.iterator();
 		String roleName = "";
 		while (iterRoles.hasNext()) {
-			roleName = (String) iterRoles.next();
+			roleName = iterRoles.next();
 			if (createRoleNames.contains(roleName)) {
 
 				logger.debug("OUT. return true");
@@ -722,7 +727,6 @@ public class ObjectsAccessVerifier {
 
 		if (profile != null) {
 			LowFunctionality personalFolder = UserUtilities.loadUserFunctionalityRoot((UserProfile) profile, false);
-			// if (personalFolder != null && personalFolder.getId() == folderId) {
 			if (personalFolder == null) {
 				try {
 					UserUtilities.createUserFunctionalityRoot(profile);
@@ -751,7 +755,7 @@ public class ObjectsAccessVerifier {
 	private static boolean canDevInternal(Integer folderId, IEngUserProfile profile) {
 		logger.debug("IN");
 		Monitor monitor = MonitorFactory.start("spagobi.core.ObjectAccessVerifier.canDevInternal");
-		;
+
 		boolean toReturn = false;
 		try {
 
@@ -765,21 +769,21 @@ public class ObjectsAccessVerifier {
 			roleDAO.setUserProfile(profile);
 
 			// getting roles with DEV permission on folder
-			Collection roles = ((UserProfile) profile).getRolesForUse();
+			Collection<String> roles = ((UserProfile) profile).getRolesForUse();
 			LowFunctionality funct = foldersDAO.loadLowFunctionalityByID(folderId, false);
 			Assert.assertNotNull(funct, "Folder with id [" + folderId + "] not found");
 			Role[] devRoles = funct.getDevRoles();
-			List devRoleNames = new ArrayList();
+			List<String> devRoleNames = new ArrayList<>();
 			for (int i = 0; i < devRoles.length; i++) {
 				Role role = devRoles[i];
 				devRoleNames.add(role.getName());
 			}
 
 			// iterating on user's roles
-			Iterator iterRoles = roles.iterator();
+			Iterator<String> iterRoles = roles.iterator();
 			String roleName = "";
 			while (iterRoles.hasNext()) {
-				roleName = (String) iterRoles.next();
+				roleName = iterRoles.next();
 				Role role = roleDAO.loadByName(roleName);
 				// if the role is DEV_ROLE role type and has development permission on folder, the user is able to develop in folder
 				if ((role.getRoleTypeCD().equals("DEV_ROLE") || role.getRoleTypeCD().equals("ADMIN"))
@@ -794,9 +798,10 @@ public class ObjectsAccessVerifier {
 			logger.debug("Returning " + toReturn);
 			return toReturn;
 		} catch (Exception e) {
-			logger.error("Error while evaluating development permission on folder with id [" + folderId + "] for user [" + profile + "]", e);
-			throw new SpagoBIRuntimeException("Error while evaluating development permission on folder with id [" + folderId + "] for user [" + profile + "]",
-					e);
+			logger.error("Error while evaluating development permission on folder with id [" + folderId + "] for user ["
+					+ profile + "]", e);
+			throw new SpagoBIRuntimeException("Error while evaluating development permission on folder with id ["
+					+ folderId + "] for user [" + profile + "]", e);
 		} finally {
 			logger.debug("OUT");
 			monitor.stop();
@@ -809,7 +814,7 @@ public class ObjectsAccessVerifier {
 		Role[] execRoles = funct.getExecRoles();
 		for (int i = 0; i < execRoles.length && !isPublic; i++) {
 			Role role = execRoles[i];
-			if (role.getIsPublic() != null && role.getIsPublic() == true) {
+			if (role.getIsPublic() != null && role.getIsPublic()) {
 				isPublic = true;
 			}
 		}
@@ -821,16 +826,15 @@ public class ObjectsAccessVerifier {
 		boolean isPublic = false;
 		try {
 			ILowFunctionalityDAO foldersDAO = DAOFactory.getLowFunctionalityDAO();
-			IRoleDAO roleDAO = DAOFactory.getRoleDAO();
 
-			List foldersId = obj.getFunctionalities();
+			List<Integer> foldersId = obj.getFunctionalities();
 
-			if (foldersId == null || foldersId.size() == 0) {
+			if (foldersId == null || foldersId.isEmpty()) {
 				logger.error("BIObject does not belong to any functionality!!" + "[" + obj.getLabel() + "]");
 				return false;
 			}
-			for (Iterator iterator = foldersId.iterator(); iterator.hasNext() && !isPublic;) {
-				Integer folderId = (Integer) iterator.next();
+			for (Iterator<Integer> iterator = foldersId.iterator(); iterator.hasNext() && !isPublic;) {
+				Integer folderId = iterator.next();
 				LowFunctionality funct = foldersDAO.loadLowFunctionalityByID(folderId, false);
 				Assert.assertNotNull(funct, "Folder with id [" + folderId + "] not found");
 				isPublic = isFunctionalityPublic(funct);
@@ -842,9 +846,9 @@ public class ObjectsAccessVerifier {
 	}
 
 	/**
-	 * Controls if the current user can see the document: - if the document is in DEV state the user must have the development permission in a folder containing
-	 * it; - if the document is in TEST state the user must have the test permission in a folder containing it; - if the document is in REL state the user must
-	 * have the execution permission in a folder containing it.
+	 * Controls if the current user can see the document: - if the document is in DEV state the user must have the development permission in a folder containing it;
+	 * - if the document is in TEST state the user must have the test permission in a folder containing it; - if the document is in REL state the user must have the
+	 * execution permission in a folder containing it.
 	 *
 	 * @param obj     The BIObject
 	 * @param profile user profile
@@ -853,7 +857,8 @@ public class ObjectsAccessVerifier {
 	 */
 	public static boolean canSee(BIObject obj, IEngUserProfile profile) throws EMFInternalError {
 		logger.debug("IN");
-		Monitor monitor = MonitorFactory.start("spagobi.core.ObjectAccessVerifier.canSee(BIObject obj, IEngUserProfile profile)");
+		Monitor monitor = MonitorFactory
+				.start("spagobi.core.ObjectAccessVerifier.canSee(BIObject obj, IEngUserProfile profile)");
 		boolean canSee = false;
 		if (obj == null) {
 			logger.warn("BIObject in input is null!!");
@@ -890,15 +895,15 @@ public class ObjectsAccessVerifier {
 			}
 		}
 
-		List foldersId = obj.getFunctionalities();
-		if (foldersId == null || foldersId.size() == 0) {
+		List<Integer> foldersId = obj.getFunctionalities();
+		if (foldersId == null || foldersId.isEmpty()) {
 			monitor.stop();
 			logger.error("BIObject does not belong to any functionality!!" + "[" + obj.getLabel() + "]");
 			return false;
 		}
-		Iterator foldersIdIt = foldersId.iterator();
+		Iterator<Integer> foldersIdIt = foldersId.iterator();
 		while (foldersIdIt.hasNext()) {
-			Integer folderId = (Integer) foldersIdIt.next();
+			Integer folderId = foldersIdIt.next();
 			boolean canDev = canDev(state, folderId, profile);
 			if (canDev) {
 				canSee = true;
@@ -918,8 +923,9 @@ public class ObjectsAccessVerifier {
 						|| profile.isAbleToExecuteAction(CommunityFunctionalityConstants.PARAMETER_MANAGEMENT)) { // for behavioral model administrators
 					canSee = true;
 				} else {
-					if (obj.isPublicDoc() || (!obj.isPublicDoc() && ((UserProfile) profile).getUserId().equals(obj.getCreationUser())
-							|| isUserPersonalFolder(folderId, profile))) {
+					if (obj.isPublicDoc()
+							|| (!obj.isPublicDoc() && ((UserProfile) profile).getUserId().equals(obj.getCreationUser())
+									|| isUserPersonalFolder(folderId, profile))) {
 						canSee = checkProfileVisibility(obj, profile);
 					}
 				}
@@ -932,9 +938,9 @@ public class ObjectsAccessVerifier {
 	}
 
 	/**
-	 * Controls if the user can see the LowFunctionality. The root LowFunctionality is visible by everybody. The administrator can see all LowFunctionalities.
-	 * Other users can see the LowFunctionality only if they have at least one of the following permission: - they can develop on that folder; - they can test
-	 * on that folder; - they can execute on that folder.
+	 * Controls if the user can see the LowFunctionality. The root LowFunctionality is visible by everybody. The administrator can see all LowFunctionalities. Other
+	 * users can see the LowFunctionality only if they have at least one of the following permission: - they can develop on that folder; - they can test on that
+	 * folder; - they can execute on that folder.
 	 *
 	 * @param lowFunctionality The LowFunctionality
 	 * @param profile          user profile
@@ -943,8 +949,10 @@ public class ObjectsAccessVerifier {
 	 */
 	public static boolean canSee(LowFunctionality lowFunctionality, IEngUserProfile profile) throws EMFInternalError {
 		boolean canSee = false;
-		Monitor monitor = MonitorFactory.start("spagobi.core.ObjectAccessVerifier.canSee(LowFunctionality lowFunctionality, IEngUserProfile profile)");
-		logger.debug("IN: lowFunctionality path = [" + lowFunctionality.getPath() + "]; userId = [" + ((UserProfile) profile).getUserId() + "]");
+		Monitor monitor = MonitorFactory.start(
+				"spagobi.core.ObjectAccessVerifier.canSee(LowFunctionality lowFunctionality, IEngUserProfile profile)");
+		logger.debug("IN: lowFunctionality path = [" + lowFunctionality.getPath() + "]; userId = ["
+				+ ((UserProfile) profile).getUserId() + "]");
 		// if it is root folder, anybody can see it
 		if (lowFunctionality.getParentId() == null) {
 			canSee = true;
@@ -954,7 +962,8 @@ public class ObjectsAccessVerifier {
 				canSee = true;
 			} else {
 				// if user can exec or dev or test on functionality, he can see it, otherwise he cannot see it
-				if (ObjectsAccessVerifier.canExec(lowFunctionality, profile) || ObjectsAccessVerifier.canTest(lowFunctionality, profile)
+				if (ObjectsAccessVerifier.canExec(lowFunctionality, profile)
+						|| ObjectsAccessVerifier.canTest(lowFunctionality, profile)
 						|| ObjectsAccessVerifier.canDev(lowFunctionality, profile)) {
 					canSee = true;
 				} else {
@@ -978,7 +987,8 @@ public class ObjectsAccessVerifier {
 	public static boolean checkProfileVisibility(BIObject obj, IEngUserProfile profile) throws EMFInternalError {
 		Monitor monitor = MonitorFactory.start("spagobi.core.ObjectAccessVerifier.checkProfileVisibility");
 
-		logger.debug("IN: obj label is [" + obj.getLabel() + "]; user is [" + ((UserProfile) profile).getUserId().toString() + "]");
+		logger.debug("IN: obj label is [" + obj.getLabel() + "]; user is ["
+				+ ((UserProfile) profile).getUserId().toString() + "]");
 		boolean toReturn = true;
 		String profVisibility = obj.getProfiledVisibility();
 		if (profVisibility == null || profVisibility.trim().equals("")) {
@@ -986,26 +996,30 @@ public class ObjectsAccessVerifier {
 			monitor.stop();
 			return true;
 		}
-		logger.debug("Biobject with label [" + obj.getLabel() + "] has profile visibility contraints = [" + profVisibility + "]");
+		logger.debug("Biobject with label [" + obj.getLabel() + "] has profile visibility contraints = ["
+				+ profVisibility + "]");
 		String[] constraints = profVisibility.split(" AND ");
 		for (int i = 0; i < constraints.length; i++) {
 			String constraint = constraints[i];
 			logger.debug("Examining constraint [" + constraint + "] ...");
 			int index = constraint.indexOf("=");
 			if (index == -1) {
-				logger.error("Constraint [" + constraint + "] is not correct!! It should have the syntax PROFILE_ATTRIBUTE_NAME=VALUE. It will be ignored.");
+				logger.error("Constraint [" + constraint
+						+ "] is not correct!! It should have the syntax PROFILE_ATTRIBUTE_NAME=VALUE. It will be ignored.");
 				continue;
 			}
 			String profileAttrName = constraint.substring(0, index).trim();
 			String value = constraint.substring(index + 1).trim();
 			if (!profile.getUserAttributeNames().contains(profileAttrName)) {
-				logger.debug("User profile hasn't the required profile attribute [" + profileAttrName + "], it does not satisfy constraint");
+				logger.debug("User profile hasn't the required profile attribute [" + profileAttrName
+						+ "], it does not satisfy constraint");
 				toReturn = false;
 				break;
 			}
 			Object profileAttr = profile.getUserAttribute(profileAttrName);
 			if (profileAttr == null) {
-				logger.debug("User profile attribute [" + profileAttrName + "] is null, it does not satisfy constraint");
+				logger.debug(
+						"User profile attribute [" + profileAttrName + "] is null, it does not satisfy constraint");
 				toReturn = false;
 				break;
 			}
@@ -1014,7 +1028,7 @@ public class ObjectsAccessVerifier {
 				// the profile attribute is multi-value
 				String[] values = null;
 				try {
-					values = GeneralUtilities.findAttributeValues(profileAttrStr);
+					values = SpagoBIUtilities.findAttributeValues(profileAttrStr);
 				} catch (Exception e) {
 					logger.error("Error while reading profile attribute", e);
 					logger.debug("User profile attribute [" + profileAttrName + "] does not satisfy constraint");
@@ -1022,14 +1036,16 @@ public class ObjectsAccessVerifier {
 					break;
 				}
 				if (!Arrays.asList(values).contains(value)) {
-					logger.debug("User profile attribute [" + profileAttrName + "] does not contain [" + value + "] value, it does not satisfy constraint");
+					logger.debug("User profile attribute [" + profileAttrName + "] does not contain [" + value
+							+ "] value, it does not satisfy constraint");
 					toReturn = false;
 					break;
 				}
 			} else {
 				// the profile attribute is single-value
 				if (!profileAttrStr.equals(value)) {
-					logger.debug("User profile attribute [" + profileAttrName + "] is not equal to [" + value + "], it does not satisfy constraint");
+					logger.debug("User profile attribute [" + profileAttrName + "] is not equal to [" + value
+							+ "], it does not satisfy constraint");
 					toReturn = false;
 					break;
 				}
@@ -1049,11 +1065,13 @@ public class ObjectsAccessVerifier {
 	 * @throws EMFUserError
 	 * @throws EMFInternalError
 	 */
-	public static List getCorrectRolesForExecution(Integer objectId, IEngUserProfile profile) throws EMFInternalError, EMFUserError {
+	public static List<String> getCorrectRolesForExecution(Integer objectId, IEngUserProfile profile)
+			throws EMFInternalError, EMFUserError {
 		Monitor monitor = MonitorFactory.start("spagobi.core.ObjectAccessVerifier.getCorrectRolesForExecution");
 		logger.debug("IN");
-		List correctRoles = null;
-		if (profile.isAbleToExecuteAction(CommunityFunctionalityConstants.DOCUMENT_MANAGEMENT_DEV) || profile.isAbleToExecuteAction(CommunityFunctionalityConstants.DOCUMENT_MANAGEMENT_USER)
+		List<String> correctRoles = null;
+		if (profile.isAbleToExecuteAction(CommunityFunctionalityConstants.DOCUMENT_MANAGEMENT_DEV)
+				|| profile.isAbleToExecuteAction(CommunityFunctionalityConstants.DOCUMENT_MANAGEMENT_USER)
 				|| profile.isAbleToExecuteAction(CommunityFunctionalityConstants.DOCUMENT_MANAGEMENT_ADMIN)) {
 			logger.debug("User is able to execute action");
 			correctRoles = DAOFactory.getBIObjectDAO().getCorrectRolesForExecution(objectId, profile);
@@ -1066,7 +1084,8 @@ public class ObjectsAccessVerifier {
 		return correctRoles;
 	}
 
-	public static List getCorrectRolesForExecution(String objectLabel, IEngUserProfile profile) throws EMFInternalError, EMFUserError {
+	public static List<String> getCorrectRolesForExecution(String objectLabel, IEngUserProfile profile)
+			throws EMFInternalError, EMFUserError {
 		BIObject biObj = DAOFactory.getBIObjectDAO().loadBIObjectByLabel(objectLabel);
 
 		return getCorrectRolesForExecution(biObj.getId(), profile);
@@ -1103,14 +1122,15 @@ public class ObjectsAccessVerifier {
 	 * @param lowFunctionality The folder
 	 * @return true if the user in input is able to delete the input object in the specified position (folder)
 	 */
-	public static boolean canDeleteBIObject(int biobjectId, IEngUserProfile profile, LowFunctionality lowFunctionality) {
+	public static boolean canDeleteBIObject(int biobjectId, IEngUserProfile profile,
+			LowFunctionality lowFunctionality) {
 		logger.debug("IN");
 		boolean canDelete = false;
 		try {
 			Assert.assertNotNull(profile, "User profile object in input is null");
 			Assert.assertNotNull(lowFunctionality, "LowFunctionality object in input is null");
-			logger.debug("Evaulating deletion permission for user [" + ((UserProfile) profile).getUserId() + "] on folder [" + lowFunctionality.getPath()
-					+ "] for document with id [" + biobjectId + "] ...");
+			logger.debug("Evaulating deletion permission for user [" + ((UserProfile) profile).getUserId()
+					+ "] on folder [" + lowFunctionality.getPath() + "] for document with id [" + biobjectId + "] ...");
 			if (profile.isAbleToExecuteAction(CommunityFunctionalityConstants.DOCUMENT_MANAGEMENT_ADMIN)) {
 				logger.debug("User is administrator, therefore he can delete it");
 				canDelete = true;
@@ -1127,7 +1147,8 @@ public class ObjectsAccessVerifier {
 						logger.debug("User is the creator of the document, therefore he can delete it");
 						canDelete = true;
 					} else {
-						boolean isInPersonalFolder = UserUtilities.isPersonalFolder(lowFunctionality, (UserProfile) profile);
+						boolean isInPersonalFolder = UserUtilities.isPersonalFolder(lowFunctionality,
+								(UserProfile) profile);
 						if (isInPersonalFolder) {
 							logger.debug("Folder is personal folder, therefore user can delete it");
 							canDelete = true;
@@ -1154,7 +1175,8 @@ public class ObjectsAccessVerifier {
 		boolean canDelete = false;
 		try {
 			Assert.assertNotNull(profile, "User profile object in input is null");
-			logger.debug("Evaulating deletion permission for user [" + ((UserProfile) profile).getUserId() + "] for document with id [" + biobjectId + "] ...");
+			logger.debug("Evaulating deletion permission for user [" + ((UserProfile) profile).getUserId()
+					+ "] for document with id [" + biobjectId + "] ...");
 			if (profile.isAbleToExecuteAction(CommunityFunctionalityConstants.DOCUMENT_MANAGEMENT_ADMIN)) {
 				logger.debug("User is administrator, therefore he can delete it");
 				canDelete = true;
@@ -1172,11 +1194,13 @@ public class ObjectsAccessVerifier {
 						canDelete = true;
 					} else {
 						// if the document is ONLY inside the personal folder, the user can delete it
-						List folders = obj.getFunctionalities();
+						List<Integer> folders = obj.getFunctionalities();
 						if (folders.size() == 1) {
-							Integer folderId = (Integer) folders.get(0);
-							LowFunctionality lowFunctionality = DAOFactory.getLowFunctionalityDAO().loadLowFunctionalityByID(folderId, false);
-							boolean isInPersonalFolder = UserUtilities.isPersonalFolder(lowFunctionality, (UserProfile) profile);
+							Integer folderId = folders.get(0);
+							LowFunctionality lowFunctionality = DAOFactory.getLowFunctionalityDAO()
+									.loadLowFunctionalityByID(folderId, false);
+							boolean isInPersonalFolder = UserUtilities.isPersonalFolder(lowFunctionality,
+									(UserProfile) profile);
 							if (isInPersonalFolder) {
 								logger.debug("Folder is personal folder, therefore user can delete it");
 								canDelete = true;
@@ -1219,8 +1243,8 @@ public class ObjectsAccessVerifier {
 	}
 
 	/**
-	 * Check if the user can execute the required document. It checks the state of the document and its position on folders, and look for user permissions. It
-	 * also checks if behavioural model is set properly (i.e. the user has valid roles for execution).
+	 * Check if the user can execute the required document. It checks the state of the document and its position on folders, and look for user permissions. It also
+	 * checks if behavioural model is set properly (i.e. the user has valid roles for execution).
 	 *
 	 * @param obj     The document to be executed
 	 * @param profile The user profile object
@@ -1230,12 +1254,13 @@ public class ObjectsAccessVerifier {
 	 */
 	public static boolean canExec(BIObject obj, IEngUserProfile profile) throws EMFInternalError, EMFUserError {
 		logger.debug("IN");
-		Monitor monitor = MonitorFactory.start("spagobi.core.ObjectAccessVerifier.canExec(BIObject obj, IEngUserProfile profile)");
+		Monitor monitor = MonitorFactory
+				.start("spagobi.core.ObjectAccessVerifier.canExec(BIObject obj, IEngUserProfile profile)");
 		boolean canExec = false;
 		String state = obj.getStateCode();
 
-		List foldersId = obj.getFunctionalities();
-		if (foldersId == null || foldersId.size() == 0) {
+		List<Integer> foldersId = obj.getFunctionalities();
+		if (foldersId == null || foldersId.isEmpty()) {
 			logger.warn("BIObject does not belong to any functionality!!");
 			monitor.stop();
 			throw new EMFInternalError(EMFErrorSeverity.ERROR, "BIObject does not belong to any functionality!!");
@@ -1246,12 +1271,13 @@ public class ObjectsAccessVerifier {
 		boolean canExecByStateAndFolders = false;
 		if ("SUSP".equalsIgnoreCase(state)) {
 			// only admin can exec suspended document
-			canExecByStateAndFolders = profile.isAbleToExecuteAction(CommunityFunctionalityConstants.DOCUMENT_MANAGEMENT_ADMIN);
+			canExecByStateAndFolders = profile
+					.isAbleToExecuteAction(CommunityFunctionalityConstants.DOCUMENT_MANAGEMENT_ADMIN);
 		}
 
-		Iterator foldersIdIt = foldersId.iterator();
+		Iterator<Integer> foldersIdIt = foldersId.iterator();
 		while (foldersIdIt.hasNext()) {
-			Integer folderId = (Integer) foldersIdIt.next();
+			Integer folderId = foldersIdIt.next();
 			boolean canDev = canDev(state, folderId, profile);
 
 			logger.debug("canDev value: " + canDev);
@@ -1292,7 +1318,7 @@ public class ObjectsAccessVerifier {
 		if (canExecByStateAndFolders) {
 			Integer id = obj.getId();
 			// get the correct roles for execution
-			List correctRoles = null;
+			List<String> correctRoles = null;
 			if (profile.isAbleToExecuteAction(CommunityFunctionalityConstants.DOCUMENT_MANAGEMENT_DEV)
 					|| profile.isAbleToExecuteAction(CommunityFunctionalityConstants.DOCUMENT_MANAGEMENT_USER)
 					|| profile.isAbleToExecuteAction(CommunityFunctionalityConstants.DOCUMENT_MANAGEMENT_ADMIN)) {
@@ -1303,19 +1329,21 @@ public class ObjectsAccessVerifier {
 
 			logger.debug("correct roles for execution retrived " + correctRoles);
 
-			if (correctRoles == null || correctRoles.size() == 0) {
-				logger.error("Document [" + obj.getLabel() + "] cannot be executed by no role of the user [" + ((UserProfile) profile).getUserId() + "]");
+			if (correctRoles == null || correctRoles.isEmpty()) {
+				logger.error("Document [" + obj.getLabel() + "] cannot be executed by no role of the user ["
+						+ ((UserProfile) profile).getUserId() + "]");
 				canExec = false;
 			} else {
-				logger.debug("Document [" + obj.getLabel() + "] can be executed by the user [" + ((UserProfile) profile).getUserId() + "]");
+				logger.debug("Document [" + obj.getLabel() + "] can be executed by the user ["
+						+ ((UserProfile) profile).getUserId() + "]");
 				canExec = true;
 			}
 
 			logger.debug("canExec value: " + canExec);
 
 		} else {
-			logger.error("User [" + ((UserProfile) profile).getUserId() + "] cannot execute the document [" + obj.getLabel()
-					+ "] according to document's state and his permission on folders");
+			logger.error("User [" + ((UserProfile) profile).getUserId() + "] cannot execute the document ["
+					+ obj.getLabel() + "] according to document's state and his permission on folders");
 			canExec = false;
 		}
 
@@ -1332,7 +1360,8 @@ public class ObjectsAccessVerifier {
 		try {
 			LowFunctionality folder = null;
 			folder = DAOFactory.getLowFunctionalityDAO().loadLowFunctionalityByID(folderId, false);
-			if (folder.getCodType().equalsIgnoreCase("USER_FUNCT") && folder.getName().equalsIgnoreCase(((UserProfile) profile).getUserId().toString())) {
+			if (folder.getCodType().equalsIgnoreCase("USER_FUNCT")
+					&& folder.getName().equalsIgnoreCase(((UserProfile) profile).getUserId().toString())) {
 				toReturn = true;
 				logger.debug("User " + ((UserProfile) profile).getUserId() + " is in its personal folder");
 			}

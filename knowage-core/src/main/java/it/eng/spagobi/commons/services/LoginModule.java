@@ -44,6 +44,8 @@ import it.eng.knowage.commons.security.KnowageSystemConfiguration;
 import it.eng.knowage.commons.utilities.KnLanguageCookie;
 import it.eng.knowage.monitor.IKnowageMonitor;
 import it.eng.knowage.monitor.KnowageMonitorFactory;
+import it.eng.knowage.privacymanager.LoginEventBuilder;
+import it.eng.knowage.privacymanager.PrivacyManagerClient;
 import it.eng.spago.base.Constants;
 import it.eng.spago.base.RequestContainer;
 import it.eng.spago.base.SessionContainer;
@@ -59,6 +61,7 @@ import it.eng.spagobi.commons.bo.Config;
 import it.eng.spagobi.commons.bo.Role;
 import it.eng.spagobi.commons.bo.SessionUserProfileBuilder;
 import it.eng.spagobi.commons.bo.UserProfile;
+import it.eng.spagobi.commons.bo.UserProfileUtility;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.dao.IConfigDAO;
@@ -209,7 +212,7 @@ public class LoginModule extends AbstractHttpModule {
 					AuditLogUtilities.updateAudit(getHttpRequest(), profile, "SPAGOBI.Login", null, "KO");
 					monitor.stop(new SpagoBIRuntimeException("Incorrect credentials"));
 					return;
-				} else if (isInternalSecurity == true) {
+				} else if (isInternalSecurity) {
 					SbiUser user = DAOFactory.getSbiUserDAO().loadSbiUserByUserId(userId);
 					if (user.getFlgPwdBlocked() != null && user.getFlgPwdBlocked()) {
 						logger.error("userName/pwd uncorrect");
@@ -275,7 +278,7 @@ public class LoginModule extends AbstractHttpModule {
 							userDao.updateSbiUser(user, user.getId());
 						}
 					} catch (Exception e) {
-						logger.error("Error while update user's dtLastAccess: " + e);
+						logger.error("Non-fatal error while update user's dtLastAccess", e);
 					}
 				}
 			}
@@ -299,6 +302,14 @@ public class LoginModule extends AbstractHttpModule {
 			}
 
 			logger.debug("END - Getting user profile");
+
+			// PM-int
+			profile = UserProfileUtility.enrichProfile((UserProfile) profile, servletRequest, httpSession);
+			LoginEventBuilder eventBuilder = new LoginEventBuilder();
+			UserProfile up = (UserProfile) profile;
+			eventBuilder.appendSession("knowage", up.getSourceIpAddress(), up.getSessionId(), up.getSessionStart(), up.getUserId().toString());
+			eventBuilder.appendUserAgent(up.getOs(), up.getSourceIpAddress(), up.getSourceSocketEnabled(), up.getUserAgent());
+			PrivacyManagerClient.getInstance().sendMessage(eventBuilder.getDTO());
 
 			// checks if the input role is valid with SpagoBI's role list
 			boolean isRoleValid = true;
