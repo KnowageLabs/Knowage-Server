@@ -282,9 +282,9 @@ public class ExecutionInstance implements Serializable {
 		logger.debug("OUT");
 	}
 
-	private List loadCorrectRolesForExecution() throws EMFInternalError, EMFUserError {
+	private List<String> loadCorrectRolesForExecution() throws EMFInternalError, EMFUserError {
 		logger.debug("IN");
-		List correctRoles = ObjectsAccessVerifier.getCorrectRolesForExecution(object.getId(), userProfile);
+		List<String> correctRoles = ObjectsAccessVerifier.getCorrectRolesForExecution(object.getId(), userProfile);
 		logger.debug("OUT");
 		return correctRoles;
 	}
