@@ -18,6 +18,7 @@
 package it.eng.knowage.pm.dto;
 
 import java.io.Serializable;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -37,7 +38,7 @@ public class PrivacyDTO implements Serializable {
 
 	private String request;
 
-	private Map<String, String> requestMetadatas;
+	private final Map<String, String> requestMetadatas = new LinkedHashMap<>();
 
 	private List<String> responses;
 
@@ -87,10 +88,6 @@ public class PrivacyDTO implements Serializable {
 
 	public Map<String, String> getRequestMetadatas() {
 		return requestMetadatas;
-	}
-
-	public void setRequestMetadatas(Map<String, String> requestMetadatas) {
-		this.requestMetadatas = requestMetadatas;
 	}
 
 	public List<String> getResponses() {

@@ -17,6 +17,8 @@
  */
 package it.eng.spagobi.commons.bo;
 
+import java.util.Objects;
+
 import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -50,10 +52,14 @@ public class UserProfileUtility {
 		}
 		profile.setUserAgent(userAgent);
 		profile.setOs(os);
-		profile.setSessionStart(session.getCreationTime());
 		profile.setSourceIpAddress(request.getRemoteAddr());
-		profile.setSessionId(session.getId());
 		profile.setSourceSocketEnabled(false);
+
+		if (Objects.nonNull(session)) {
+			profile.setSessionStart(session.getCreationTime());
+			profile.setSessionId(session.getId());
+		}
+
 		return profile;
 	}
 
