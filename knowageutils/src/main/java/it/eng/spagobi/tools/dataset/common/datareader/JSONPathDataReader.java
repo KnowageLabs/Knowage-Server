@@ -24,6 +24,9 @@ import java.sql.Time;
 import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.TemporalAccessor;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -161,8 +164,7 @@ public class JSONPathDataReader extends AbstractDataReader {
 
 	private boolean ngsiDefaultItems;
 
-	public JSONPathDataReader(String jsonPathItems, List<JSONPathAttribute> jsonPathAttributes,
-			boolean useDirectlyAttributes, boolean ngsi) {
+	public JSONPathDataReader(String jsonPathItems, List<JSONPathAttribute> jsonPathAttributes, boolean useDirectlyAttributes, boolean ngsi) {
 		this.jsonPathAttributes = jsonPathAttributes;
 		this.useDirectlyAttributes = useDirectlyAttributes;
 		this.ngsi = ngsi;
@@ -225,8 +227,7 @@ public class JSONPathDataReader extends AbstractDataReader {
 		}
 	}
 
-	protected void addData(String data, IDataStore dataStore, IMetaData dataStoreMeta, List<Object> parsedData,
-			boolean skipPagination) throws ParseException {
+	protected void addData(String data, IDataStore dataStore, IMetaData dataStoreMeta, List<Object> parsedData, boolean skipPagination) throws ParseException {
 
 		boolean checkMaxResults = false;
 		if ((maxResults > 0)) {
@@ -275,8 +276,7 @@ public class JSONPathDataReader extends AbstractDataReader {
 					Class<?> type = fieldMeta.getType();
 					if (type == null) {
 						// dinamically defined, from json data path
-						String typeString = (String) getJSONPathValue(o,
-								(String) fieldMeta.getProperty(JSON_PATH_TYPE_METADATA_PROPERTY));
+						String typeString = (String) getJSONPathValue(o, (String) fieldMeta.getProperty(JSON_PATH_TYPE_METADATA_PROPERTY));
 						Assert.assertNotNull(typeString, "type of jsonpath type");
 						type = getType(typeString);
 						fieldMeta.setType(type);
@@ -319,8 +319,7 @@ public class JSONPathDataReader extends AbstractDataReader {
 	protected List<Object> getItems(String data) {
 		Object parsed = JsonPath.read(data, jsonPathItems);
 		if (parsed == null) {
-			throw new JSONPathDataReaderException(
-					String.format("Items not found in %s with json path %s", data, jsonPathItems));
+			throw new JSONPathDataReaderException(String.format("Items not found in %s with json path %s", data, jsonPathItems));
 		}
 
 		// can be an array or a single object
@@ -405,15 +404,36 @@ public class JSONPathDataReader extends AbstractDataReader {
 		return value;
 	}
 
-	private static Object normalizeTimestamp(Object value) {
+	public static Object normalizeTimestamp(Object value) {
 		if (value == null) {
 			return value;
 		}
+		Optional<Timestamp> timestampOpt = tryNormalizeTimestamp(value);
+		if (timestampOpt.isPresent()) {
+			return timestampOpt.get();
+		}
+		timestampOpt = tryNormalizeISO(value);
+		if (timestampOpt.isPresent()) {
+			return timestampOpt.get();
+		}
+		return value;
+	}
+
+	protected static Optional<Timestamp> tryNormalizeTimestamp(Object value) {
 		try {
-			Timestamp ts = Timestamp.valueOf(value.toString());
-			return ts;
+			return Optional.of(Timestamp.valueOf(value.toString()));
 		} catch (Exception e) {
-			return value;
+			return Optional.empty();
+		}
+	}
+
+	protected static Optional<Timestamp> tryNormalizeISO(Object value) {
+		try {
+			TemporalAccessor t = DateTimeFormatter.ISO_LOCAL_DATE_TIME.withZone(ZoneId.systemDefault()).parse(value.toString());
+			java.time.Instant instant = java.time.Instant.from(t);
+			return Optional.of(new Timestamp(instant.toEpochMilli()));
+		} catch (Exception e) {
+			return Optional.empty();
 		}
 	}
 
@@ -569,8 +589,7 @@ public class JSONPathDataReader extends AbstractDataReader {
 
 	private static Object getSingleValue(String value, IFieldMetaData fmd) throws ParseException {
 		Class<?> fieldType = fmd.getType();
-		String jsonPathType = Optional.ofNullable(fmd.getProperty(JSON_PATH_TYPE_METADATA_PROPERTY))
-				.map(Object::toString).orElse("");
+		String jsonPathType = Optional.ofNullable(fmd.getProperty(JSON_PATH_TYPE_METADATA_PROPERTY)).map(Object::toString).orElse("");
 
 		if (fieldType.equals(String.class)) {
 			return value;
@@ -580,7 +599,8 @@ public class JSONPathDataReader extends AbstractDataReader {
 			return Short.valueOf(value);
 		} else if (fieldType.equals(Integer.class)) {
 			/*
-			 * In Solr, an integer value like the number "7" is returned as a value like "7.0": a good way to prevent problems in this case is to use the following.
+			 * In Solr, an integer value like the number "7" is returned as a value like "7.0": a good way to prevent problems in this case is to use the
+			 * following.
 			 */
 			return new BigDecimal(value).intValue();
 		} else if (fieldType.equals(BigInteger.class)) {
@@ -629,8 +649,7 @@ public class JSONPathDataReader extends AbstractDataReader {
 
 			if (!(value instanceof net.minidev.json.JSONArray)) {
 				throw new IllegalStateException(
-						"Field " + name + " is multivalue but it's value is not a net.minidev.json.JSONArray: " + value
-								+ " of type " + value.getClass());
+						"Field " + name + " is multivalue but it's value is not a net.minidev.json.JSONArray: " + value + " of type " + value.getClass());
 			}
 
 			net.minidev.json.JSONArray arrayValue = (net.minidev.json.JSONArray) value;
@@ -713,8 +732,8 @@ public class JSONPathDataReader extends AbstractDataReader {
 
 	private static boolean isRealJsonPath(String jsonPath) {
 		// don't start with param substitution
-		return jsonPath.startsWith("$") && (!jsonPath.startsWith(StringUtilities.START_PARAMETER)
-				&& !jsonPath.startsWith(StringUtilities.START_USER_PROFILE_ATTRIBUTE));
+		return jsonPath.startsWith("$")
+				&& (!jsonPath.startsWith(StringUtilities.START_PARAMETER) && !jsonPath.startsWith(StringUtilities.START_USER_PROFILE_ATTRIBUTE));
 	}
 
 	private static Class<?> getType(String jsonPathType) {
