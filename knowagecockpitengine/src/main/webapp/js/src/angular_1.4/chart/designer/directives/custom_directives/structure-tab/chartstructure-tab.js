@@ -57,7 +57,12 @@ function structureTabControllerFunction($scope,sbiModule_translate,sbiModule_res
 	$scope.$watch('chartTemplate.dateTime',function(newValue,oldValue){
 		if($scope.chartTemplate && newValue!=oldValue){
 			if(newValue==false) $scope.chartTemplate.CHART ? $scope.chartTemplate.CHART.categoryDate = "" : $scope.chartTemplate.categoryDate = "" ;
-			else $scope.chartTemplate.CHART ? $scope.chartTemplate.CHART.categoryDate = $scope.categories[0].column : $scope.chartTemplate.categoryDate = $scope.categories[0].column;;
+			else {
+				if($scope.chartTemplate.CHART){
+					$scope.chartTemplate.CHART.categoryDate = $scope.categories[0] ? $scope.categories[0].column : undefined;
+				}else{
+					$scope.chartTemplate.categoryDate = $scope.categories[0] ? $scope.categories[0].column : undefined;
+				}
 		}
 
 	},true)
@@ -136,12 +141,12 @@ function structureTabControllerFunction($scope,sbiModule_translate,sbiModule_res
 	}
 
 	$scope.checkAxis = function() {
-		if($scope.chartTemplate.AXES_LIST.AXIS.constructor === Object){
+		if($scope.chartTemplate && $scope.chartTemplate.AXES_LIST.AXIS.constructor === Object){
 			var temp = $scope.chartTemplate.AXES_LIST.AXIS;
 			$scope.chartTemplate.AXES_LIST.AXIS = [];
 			$scope.chartTemplate.AXES_LIST.AXIS.push(temp);
 		}
-		$scope.allAxis = $scope.chartTemplate.AXES_LIST.AXIS;
+		$scope.allAxis = $scope.chartTemplate ? $scope.chartTemplate.AXES_LIST.AXIS : [];
 		for (var i = 0; i < $scope.allAxis.length; i++) {
 			if($scope.allAxis[i].type == 'Category'){
 			    $scope.categoriesAxis = $scope.allAxis[i];
