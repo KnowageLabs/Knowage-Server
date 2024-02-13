@@ -24,6 +24,9 @@ import java.sql.Time;
 import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.TemporalAccessor;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -224,8 +227,7 @@ public class JSONPathDataReader extends AbstractDataReader {
 		}
 	}
 
-	protected void addData(String data, IDataStore dataStore, IMetaData dataStoreMeta, List<Object> parsedData,
-			boolean skipPagination) throws ParseException {
+	protected void addData(String data, IDataStore dataStore, IMetaData dataStoreMeta, List<Object> parsedData, boolean skipPagination) throws ParseException {
 
 		boolean checkMaxResults = false;
 		if ((maxResults > 0)) {
@@ -402,15 +404,36 @@ public class JSONPathDataReader extends AbstractDataReader {
 		return value;
 	}
 
-	private static Object normalizeTimestamp(Object value) {
+	public static Object normalizeTimestamp(Object value) {
 		if (value == null) {
 			return value;
 		}
+		Optional<Timestamp> timestampOpt = tryNormalizeTimestamp(value);
+		if (timestampOpt.isPresent()) {
+			return timestampOpt.get();
+		}
+		timestampOpt = tryNormalizeISO(value);
+		if (timestampOpt.isPresent()) {
+			return timestampOpt.get();
+		}
+		return value;
+	}
+
+	protected static Optional<Timestamp> tryNormalizeTimestamp(Object value) {
 		try {
-			Timestamp ts = Timestamp.valueOf(value.toString());
-			return ts;
+			return Optional.of(Timestamp.valueOf(value.toString()));
 		} catch (Exception e) {
-			return value;
+			return Optional.empty();
+		}
+	}
+
+	protected static Optional<Timestamp> tryNormalizeISO(Object value) {
+		try {
+			TemporalAccessor t = DateTimeFormatter.ISO_LOCAL_DATE_TIME.withZone(ZoneId.systemDefault()).parse(value.toString());
+			java.time.Instant instant = java.time.Instant.from(t);
+			return Optional.of(new Timestamp(instant.toEpochMilli()));
+		} catch (Exception e) {
+			return Optional.empty();
 		}
 	}
 
@@ -566,8 +589,7 @@ public class JSONPathDataReader extends AbstractDataReader {
 
 	private static Object getSingleValue(String value, IFieldMetaData fmd) throws ParseException {
 		Class<?> fieldType = fmd.getType();
-		String jsonPathType = Optional.ofNullable(fmd.getProperty(JSON_PATH_TYPE_METADATA_PROPERTY))
-				.map(Object::toString).orElse("");
+		String jsonPathType = Optional.ofNullable(fmd.getProperty(JSON_PATH_TYPE_METADATA_PROPERTY)).map(Object::toString).orElse("");
 
 		if (fieldType.equals(String.class)) {
 			return value;
