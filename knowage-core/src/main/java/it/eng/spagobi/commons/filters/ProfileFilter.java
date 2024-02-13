@@ -152,7 +152,7 @@ public class ProfileFilter implements Filter {
 						}
 
 						// put user profile into session
-						storeProfileInSession((UserProfile) profile, permanentSession, session);
+						storeProfileInSession((UserProfile) profile, permanentSession, session, httpRequest);
 					} else {
 						LOGGER.debug("User identifier not found.");
 					}
@@ -242,8 +242,12 @@ public class ProfileFilter implements Filter {
 	}
 
 	private void storeProfileInSession(UserProfile userProfile, SessionContainer permanentContainer,
-			HttpSession httpSession) {
+			HttpSession httpSession, HttpServletRequest httpRequest) {
 		LOGGER.debug("IN");
+
+		// PM-int
+		UserProfileUtility.enrichProfile(userProfile, httpRequest, httpSession);
+
 		permanentContainer.setAttribute(IEngUserProfile.ENG_USER_PROFILE, userProfile);
 		httpSession.setAttribute(IEngUserProfile.ENG_USER_PROFILE, userProfile);
 		LOGGER.debug("OUT");
