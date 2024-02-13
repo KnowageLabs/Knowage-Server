@@ -1563,7 +1563,10 @@
 							datetype:"$datetype",
 							#if($isDateTime==true)
 							#if($datetype=="string")
-							x: Date.parse("$serieCategoryName"),
+							x: (function() {
+								var str = "$serieCategoryName";
+								return moment(str, "DD/MM/YYYY hh:mm:ss.SSS").valueOf();
+							})(),
 							#end
 							#end
            					#foreach($customColor in $customColors)
