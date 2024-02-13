@@ -32,7 +32,6 @@ import org.apache.log4j.Logger;
 
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.commons.bo.UserProfile;
-import it.eng.spagobi.commons.bo.UserProfileUtility;
 import it.eng.spagobi.commons.utilities.GeneralUtilities;
 import it.eng.spagobi.commons.utilities.UserUtilities;
 import it.eng.spagobi.services.rest.AbstractSecurityServerInterceptor;
@@ -138,8 +137,6 @@ public class SecurityServerInterceptor extends AbstractSecurityServerInterceptor
 					profile = (UserProfile) UserUtilities.getUserProfile(spagoBIUserProfile.getUniqueIdentifier());
 				}
 			}
-
-			UserProfileUtility.enrichProfile(profile, servletRequest, session);
 		} catch (Throwable t) {
 			LOGGER.error("Problem during authentication, returning null", t);
 		} finally {
