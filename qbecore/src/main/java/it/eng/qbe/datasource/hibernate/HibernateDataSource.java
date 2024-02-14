@@ -33,15 +33,12 @@ import it.eng.qbe.datasource.IPersistenceManager;
 import it.eng.qbe.datasource.configuration.CompositeDataSourceConfiguration;
 import it.eng.qbe.datasource.configuration.FileDataSourceConfiguration;
 import it.eng.qbe.datasource.configuration.IDataSourceConfiguration;
-import it.eng.qbe.datasource.transaction.ITransaction;
-import it.eng.qbe.datasource.transaction.hibernate.HibernateTransaction;
 import it.eng.qbe.model.accessmodality.AbstractModelAccessModality;
 import it.eng.qbe.model.structure.IModelStructure;
 import it.eng.qbe.model.structure.builder.IModelStructureBuilder;
 import it.eng.qbe.model.structure.builder.hibernate.HibernateModelStructureBuilder;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
-
 
 public class HibernateDataSource extends AbstractDataSource implements IHibernateDataSource {
 
@@ -56,49 +53,48 @@ public class HibernateDataSource extends AbstractDataSource implements IHibernat
 	protected Map<String, SessionFactory> sessionFactoryMap = new HashMap<>();
 
 	protected HibernateDataSource(String dataSourceName, IDataSourceConfiguration configuration) {
-		setName( dataSourceName );
+		setName(dataSourceName);
 		dataMartModelAccessModality = new AbstractModelAccessModality();
 
 		// validate & set configuration
-		if(configuration instanceof FileDataSourceConfiguration) {
-			FileDataSourceConfiguration subConf = (FileDataSourceConfiguration)configuration;
+		if (configuration instanceof FileDataSourceConfiguration) {
+			FileDataSourceConfiguration subConf = (FileDataSourceConfiguration) configuration;
 			CompositeDataSourceConfiguration c = new CompositeDataSourceConfiguration(subConf.getModelName());
 			c.addSubConfiguration(subConf);
 			Iterator<String> it = subConf.loadDataSourceProperties().keySet().iterator();
-			while(it.hasNext()) {
+			while (it.hasNext()) {
 				String propertyName = it.next();
 				c.loadDataSourceProperties().put(propertyName, subConf.loadDataSourceProperties().get(propertyName));
 			}
 			this.configuration = c;
-		} else if(configuration instanceof CompositeDataSourceConfiguration) {
-			CompositeDataSourceConfiguration c = (CompositeDataSourceConfiguration)configuration;
+		} else if (configuration instanceof CompositeDataSourceConfiguration) {
+			CompositeDataSourceConfiguration c = (CompositeDataSourceConfiguration) configuration;
 			if (c.getSubConfigurations() == null || c.getSubConfigurations().isEmpty()) {
 				throw new SpagoBIRuntimeException("Impossible to create HibernateDataSource. Datasource sub-configurations not defined");
 			}
-			for(int i = 0; i < c.getSubConfigurations().size(); i++) {
-				if( !(c.getSubConfigurations().get(i) instanceof FileDataSourceConfiguration) ) {
-					throw new SpagoBIRuntimeException("Impossible to create HibernateDataSource. Unable to manage sub-configuration of type [" + c.getSubConfigurations().get(i).getClass().getName() + "]");
+			for (int i = 0; i < c.getSubConfigurations().size(); i++) {
+				if (!(c.getSubConfigurations().get(i) instanceof FileDataSourceConfiguration)) {
+					throw new SpagoBIRuntimeException("Impossible to create HibernateDataSource. Unable to manage sub-configuration of type ["
+							+ c.getSubConfigurations().get(i).getClass().getName() + "]");
 				}
 			}
 			this.configuration = configuration;
 		} else {
-			throw new SpagoBIRuntimeException("Impossible to create HibernateDataSource. Unable to manage configuration of type [" + configuration.getClass().getName() + "]");
+			throw new SpagoBIRuntimeException(
+					"Impossible to create HibernateDataSource. Unable to manage configuration of type [" + configuration.getClass().getName() + "]");
 		}
-
-
-
 
 	}
 
 	@Override
 	public List<IDataSourceConfiguration> getSubConfigurations() {
-		return ((CompositeDataSourceConfiguration)configuration).getSubConfigurations();
+		return ((CompositeDataSourceConfiguration) configuration).getSubConfigurations();
 	}
 
 	public boolean isCompositeDataSource() {
 		boolean isComposite = false;
-		if(configuration instanceof CompositeDataSourceConfiguration) {
-			isComposite = (((CompositeDataSourceConfiguration)configuration).getSubConfigurations().size() > 1 );
+		if (configuration instanceof CompositeDataSourceConfiguration) {
+			isComposite = (((CompositeDataSourceConfiguration) configuration).getSubConfigurations().size() > 1);
 		}
 
 		return isComposite;
@@ -109,12 +105,12 @@ public class HibernateDataSource extends AbstractDataSource implements IHibernat
 		LOGGER.debug("IN");
 
 		try {
-			if(!isOpen()) {
+			if (!isOpen()) {
 				compositeHibernateConfiguration = buildEmptyConfiguration();
 
 				addDatamarts();
 
-				if(isCompositeDataSource()) {
+				if (isCompositeDataSource()) {
 					addDbLinks();
 					compositeHibernateSessionFactory = compositeHibernateConfiguration.buildSessionFactory();
 				} else {
@@ -123,7 +119,7 @@ public class HibernateDataSource extends AbstractDataSource implements IHibernat
 
 				classLoaderExtended = true;
 			}
-		} catch (Throwable t){
+		} catch (Throwable t) {
 			throw new SpagoBIRuntimeException("Impossible to open connection", t);
 		} finally {
 			LOGGER.debug("OUT");
@@ -141,14 +137,13 @@ public class HibernateDataSource extends AbstractDataSource implements IHibernat
 		compositeHibernateConfiguration = null;
 		configurationMap = new HashMap<>();
 		sessionFactoryMap = new HashMap<>();
-		//classLoaderExtended = false;
+		// classLoaderExtended = false;
 	}
-
 
 	protected void addDatamarts() {
 
-		for(int i = 0; i < getSubConfigurations().size(); i++) {
-			addDatamart((FileDataSourceConfiguration)getSubConfigurations().get(i), !classLoaderExtended);
+		for (int i = 0; i < getSubConfigurations().size(); i++) {
+			addDatamart((FileDataSourceConfiguration) getSubConfigurations().get(i), !classLoaderExtended);
 		}
 		classLoaderExtended = true;
 	}
@@ -157,12 +152,13 @@ public class HibernateDataSource extends AbstractDataSource implements IHibernat
 		Configuration cfg = null;
 		SessionFactory sf = null;
 
-		if(configuration.getFile() == null) return;
+		if (configuration.getFile() == null)
+			return;
 
 		cfg = buildEmptyConfiguration();
 		configurationMap.put(configuration.getModelName(), cfg);
 
-		if (extendClassLoader){
+		if (extendClassLoader) {
 			updateCurrentClassLoader(configuration.getFile());
 		}
 
@@ -180,12 +176,12 @@ public class HibernateDataSource extends AbstractDataSource implements IHibernat
 
 	@Override
 	public IDataSource getToolsDataSource() {
-		IDataSource connection = (IDataSource)configuration.loadDataSourceProperties().get("datasource");
+		IDataSource connection = (IDataSource) configuration.loadDataSourceProperties().get("datasource");
 		return connection;
 	}
 
 	private Map getDbLinkMap() {
-		Map dbLinkMap = (Map)configuration.loadDataSourceProperties().get("dblinkMap");
+		Map dbLinkMap = (Map) configuration.loadDataSourceProperties().get("dblinkMap");
 		return dbLinkMap;
 	}
 
@@ -196,7 +192,7 @@ public class HibernateDataSource extends AbstractDataSource implements IHibernat
 
 		IDataSource connection = getToolsDataSource();
 
-		if(connection.checkIsJndi()) {
+		if (connection.checkIsJndi()) {
 			cfg.setProperty("hibernate.connection.datasource", connection.getJndi());
 			cfg.setProperty("hibernate.validator.apply_to_ddl", "false");
 			cfg.setProperty("hibernate.validator.autoregister_listeners", "false");
@@ -222,8 +218,9 @@ public class HibernateDataSource extends AbstractDataSource implements IHibernat
 		return cfg;
 	}
 
-
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 *
 	 * @see it.eng.qbe.datasource.IHibernateDataSource#getConfiguration()
 	 */
 	@Override
@@ -234,7 +231,9 @@ public class HibernateDataSource extends AbstractDataSource implements IHibernat
 		return compositeHibernateConfiguration;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 *
 	 * @see it.eng.qbe.datasource.IHibernateDataSource#getSessionFactory()
 	 */
 	@Override
@@ -245,21 +244,23 @@ public class HibernateDataSource extends AbstractDataSource implements IHibernat
 		return compositeHibernateSessionFactory;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 *
 	 * @see it.eng.qbe.datasource.IHibernateDataSource#getSessionFactory(java.lang.String)
 	 */
 	@Override
 	public SessionFactory getHibernateSessionFactory(String dmName) {
-		if(compositeHibernateSessionFactory == null) open();
+		if (compositeHibernateSessionFactory == null)
+			open();
 		return sessionFactoryMap.get(dmName);
 	}
 
-
 	public Configuration getConfiguration(String dmName) {
-		if(compositeHibernateConfiguration == null) open();
+		if (compositeHibernateConfiguration == null)
+			open();
 		return configurationMap.get(dmName);
 	}
-
 
 	protected void addDbLink(String modelName, Configuration srcCfg, Configuration dstCfg) {
 
@@ -269,11 +270,11 @@ public class HibernateDataSource extends AbstractDataSource implements IHibernat
 		String targetEntityName = null;
 		Table targetTable = null;
 
-		dbLink = (String)getDbLinkMap().get(modelName);
+		dbLink = (String) getDbLinkMap().get(modelName);
 		if (dbLink != null) {
 			Iterator it = srcCfg.getClassMappings();
-			while(it.hasNext()) {
-				srcPersistentClass = (PersistentClass)it.next();
+			while (it.hasNext()) {
+				srcPersistentClass = (PersistentClass) it.next();
 				targetEntityName = srcPersistentClass.getEntityName();
 				dstPersistentClass = dstCfg.getClassMapping(targetEntityName);
 				targetTable = dstPersistentClass.getTable();
@@ -286,7 +287,7 @@ public class HibernateDataSource extends AbstractDataSource implements IHibernat
 	protected void addDbLinks() {
 		Configuration cfg = null;
 
-		for(int i = 0; i < getSubConfigurations().size(); i++) {
+		for (int i = 0; i < getSubConfigurations().size(); i++) {
 			String modelName = getSubConfigurations().get(i).getModelName();
 			cfg = configurationMap.get(modelName);
 			addDbLink(modelName, cfg, compositeHibernateConfiguration);
@@ -296,7 +297,7 @@ public class HibernateDataSource extends AbstractDataSource implements IHibernat
 	@Override
 	public IModelStructure getModelStructure() {
 		IModelStructureBuilder structureBuilder;
-		if(dataMartModelStructure == null) {
+		if (dataMartModelStructure == null) {
 			structureBuilder = new HibernateModelStructureBuilder(this);
 			dataMartModelStructure = structureBuilder.build();
 		}
@@ -305,15 +306,9 @@ public class HibernateDataSource extends AbstractDataSource implements IHibernat
 	}
 
 	@Override
-	public ITransaction getTransaction(){
-		return new HibernateTransaction(this);
-	}
-
-	@Override
 	public IPersistenceManager getPersistenceManager() {
 		// TODO Auto-generated method stub
 		return new HibernatePersistenceManager(this);
 	}
-
 
 }

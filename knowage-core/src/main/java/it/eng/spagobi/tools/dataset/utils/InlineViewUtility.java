@@ -81,7 +81,7 @@ public class InlineViewUtility {
 				tableName = sqlQuery;
 			} else {
 				QbeDataSet qbeDataSet = (QbeDataSet) dataSet;
-				tableName = qbeDataSet.getStatement().getSqlQueryString();
+				tableName = qbeDataSet.unwrap().getSQLQuery();
 			}
 			tableName = "(\n" + tableName + "\n) " + subQueryAlias;
 		}

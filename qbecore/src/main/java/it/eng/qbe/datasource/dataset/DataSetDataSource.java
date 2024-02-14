@@ -29,8 +29,6 @@ import it.eng.qbe.datasource.configuration.CompositeDataSourceConfiguration;
 import it.eng.qbe.datasource.configuration.DataSetDataSourceConfiguration;
 import it.eng.qbe.datasource.configuration.IDataSourceConfiguration;
 import it.eng.qbe.datasource.sql.ISQLDataSource;
-import it.eng.qbe.datasource.transaction.ITransaction;
-import it.eng.qbe.datasource.transaction.dataset.DataSetTransaction;
 import it.eng.qbe.model.accessmodality.AbstractModelAccessModality;
 import it.eng.qbe.model.structure.IModelStructure;
 import it.eng.qbe.model.structure.builder.IModelStructureBuilder;
@@ -120,11 +118,6 @@ public class DataSetDataSource extends AbstractDataSource implements ISQLDataSou
 		}
 
 		return dataMartModelStructure;
-	}
-
-	@Override
-	public ITransaction getTransaction() {
-		return new DataSetTransaction(this);
 	}
 
 	// TO-DO

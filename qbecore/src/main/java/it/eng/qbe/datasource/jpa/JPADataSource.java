@@ -27,7 +27,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 
@@ -45,9 +44,6 @@ import it.eng.qbe.datasource.IPersistenceManager;
 import it.eng.qbe.datasource.configuration.CompositeDataSourceConfiguration;
 import it.eng.qbe.datasource.configuration.FileDataSourceConfiguration;
 import it.eng.qbe.datasource.configuration.IDataSourceConfiguration;
-import it.eng.qbe.datasource.transaction.ITransaction;
-import it.eng.qbe.datasource.transaction.jpa.JPAEclipseLinkTransaction;
-import it.eng.qbe.datasource.transaction.jpa.JPAHibernateTransaction;
 import it.eng.qbe.model.accessmodality.AbstractModelAccessModality;
 import it.eng.qbe.model.structure.IModelEntity;
 import it.eng.qbe.model.structure.IModelField;
@@ -74,7 +70,6 @@ public class JPADataSource extends AbstractDataSource implements IJpaDataSource 
 	private static final boolean CLASS_LOADER_EXTENDED = false;
 
 	private EntityManagerFactory factory;
-	private EntityManager entityManager;
 
 	private UserProfile userProfile = null;
 
@@ -148,11 +143,11 @@ public class JPADataSource extends AbstractDataSource implements IJpaDataSource 
 	 * @see it.eng.qbe.datasource.jpa.IJPAataSource#getEntityManager()
 	 */
 	@Override
-	public EntityManager getEntityManager() {
+	public JPAEntityManager getEntityManager() {
 		if (factory == null) {
 			open();
 		}
-		return entityManager;
+		return new JPAEntityManager(factory.createEntityManager());
 	}
 
 	@Override
@@ -171,13 +166,8 @@ public class JPADataSource extends AbstractDataSource implements IJpaDataSource 
 		}
 
 		initEntityManagerFactory(getConfiguration().getModelName());
-		initEntityManager();
 		initJasypt();
 
-	}
-
-	private void initEntityManager() {
-		entityManager = factory.createEntityManager();
 	}
 
 	@Override
@@ -394,17 +384,7 @@ public class JPADataSource extends AbstractDataSource implements IJpaDataSource 
 	}
 
 	@Override
-	public ITransaction getTransaction() {
-		if (getEntityManager() instanceof org.eclipse.persistence.jpa.JpaEntityManager) {
-			return new JPAEclipseLinkTransaction(this);
-		} else {
-			return new JPAHibernateTransaction(this);
-		}
-	}
-
-	@Override
 	public IPersistenceManager getPersistenceManager() {
-		// TODO Auto-generated method stub
 		return new JPAPersistenceManager(this);
 	}
 

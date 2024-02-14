@@ -993,12 +993,12 @@ public class LoadRegistryAction extends ExecuteQueryAction {
 
 		if (dataset instanceof JPQLDataSet) {
 			auditlogger.info("[" + userProfile.getUserId() + "]:: JPQL: " + dataset.getStatement().getQueryString());
-			auditlogger.info("[" + userProfile.getUserId() + "]:: SQL: " + ((JPQLDataSet) dataset).getSQLQuery(true));
+			auditlogger.info("[" + userProfile.getUserId() + "]:: SQL: " + ((JPQLDataSet) dataset).getSQLQuery());
 		} else if (dataset instanceof HQLDataSet) {
 			auditlogger.info("[" + userProfile.getUserId() + "]:: HQL: " + dataset.getStatement().getQueryString());
-			auditlogger.info("[" + userProfile.getUserId() + "]:: SQL: " + ((HQLDataSet) dataset).getSQLQuery(true));
+			auditlogger.info("[" + userProfile.getUserId() + "]:: SQL: " + ((HQLDataSet) dataset).getSQLQuery());
 		} else {
-			auditlogger.info("[" + userProfile.getUserId() + "]:: SQL: " + dataset.getStatement().getSqlQueryString());
+			auditlogger.info("[" + userProfile.getUserId() + "]:: SQL: " + dataset.getSQLQuery());
 		}
 	}
 

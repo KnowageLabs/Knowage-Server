@@ -31,10 +31,8 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
-import org.hibernate.Session;
 
 import it.eng.qbe.datasource.IDataSource;
-import it.eng.qbe.datasource.hibernate.IHibernateDataSource;
 import it.eng.qbe.model.structure.IModelEntity;
 import it.eng.qbe.model.structure.IModelField;
 import it.eng.qbe.query.AbstractSelectField;
@@ -1371,23 +1369,6 @@ public class HQLStatement extends AbstractStatement {
 		}
 
 		return super.getQueryString();
-	}
-
-	@Override
-	public String getSqlQueryString() {
-		String sqlQuery = null;
-		Session session = null;
-		HQL2SQLStatementRewriter queryRewriter;
-		try {
-			session = ((IHibernateDataSource) getDataSource()).getHibernateSessionFactory().openSession();
-			queryRewriter = new HQL2SQLStatementRewriter(session);
-			sqlQuery = queryRewriter.rewrite(getQueryString());
-		} finally {
-			if (session != null && session.isOpen())
-				session.close();
-		}
-
-		return sqlQuery;
 	}
 
 	@Override

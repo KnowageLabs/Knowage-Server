@@ -208,4 +208,9 @@ public class SQLDataSet extends AbstractQbeDataSet {
 		}
 	}
 
+	@Override
+	public String getSQLQuery() {
+		return statement.getQueryString();
+	}
+
 }

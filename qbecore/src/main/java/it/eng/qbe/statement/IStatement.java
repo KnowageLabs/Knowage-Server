@@ -64,8 +64,6 @@ public interface IStatement {
 
 	public String getQueryString();
 
-	public String getSqlQueryString();
-
 	public int getOffset();
 
 	public void setOffset(int offset);

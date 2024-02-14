@@ -34,7 +34,6 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
 
-import it.eng.qbe.datasource.transaction.hibernate.HibernateTransaction;
 import it.eng.spagobi.commons.dao.DAOConfig;
 
 public class HibernateSessionManager {
@@ -208,7 +207,7 @@ public class HibernateSessionManager {
 	}
 
 	public static Connection getConnection(Session session) {
-		return HibernateTransaction.getConnection(session);
+		return session.connection();
 	}
 
 	private HibernateSessionManager() {

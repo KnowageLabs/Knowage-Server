@@ -26,7 +26,6 @@ import org.hibernate.ScrollableResults;
 import org.hibernate.Session;
 
 import it.eng.qbe.datasource.hibernate.IHibernateDataSource;
-import it.eng.qbe.datasource.transaction.hibernate.HibernateTransaction;
 import it.eng.qbe.query.Query;
 import it.eng.qbe.statement.AbstractQbeDataSet;
 import it.eng.qbe.statement.AbstractStatement;
@@ -121,10 +120,10 @@ public class HQLDataSet extends AbstractQbeDataSet {
 	private int getResultNumberUsingInlineView(org.hibernate.Query hibernateQuery, Session session) throws Exception {
 		int resultNumber = 0;
 		logger.debug("IN");
-		String sqlQuery = "SELECT COUNT(*) FROM (" + statement.getSqlQueryString() + ") temptable";
+		String sqlQuery = "SELECT COUNT(*) FROM (" + this.getSQLQuery() + ") temptable";
 		logger.debug("Executing query " + sqlQuery + " ...");
 		JDBCDataSet dataSet = new JDBCDataSet();
-		JDBCSharedConnectionDataProxy proxy = new JDBCSharedConnectionDataProxy(HibernateTransaction.getConnection(session));
+		JDBCSharedConnectionDataProxy proxy = new JDBCSharedConnectionDataProxy(session.connection());
 		dataSet.setDataProxy(proxy);
 		dataSet.setQuery(sqlQuery);
 		dataSet.loadData(0, 1, -1);
@@ -213,6 +212,23 @@ public class HQLDataSet extends AbstractQbeDataSet {
 	public void setDataSource(IDataSource dataSource) {
 		// TODO Auto-generated method stub
 
+	}
+
+	@Override
+	public String getSQLQuery() {
+		String sqlQuery = null;
+		Session session = null;
+		HQL2SQLStatementRewriter queryRewriter;
+		try {
+			session = ((IHibernateDataSource) getDataSource()).getHibernateSessionFactory().openSession();
+			queryRewriter = new HQL2SQLStatementRewriter(session);
+			sqlQuery = queryRewriter.rewrite(this.getStatement().getQueryString());
+		} finally {
+			if (session != null && session.isOpen())
+				session.close();
+		}
+
+		return sqlQuery;
 	}
 
 }

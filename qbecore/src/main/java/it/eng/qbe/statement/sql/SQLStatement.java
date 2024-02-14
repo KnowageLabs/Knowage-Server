@@ -180,18 +180,6 @@ public class SQLStatement extends AbstractStatement {
 	}
 
 	@Override
-	public String getSqlQueryString() {
-
-		// ISQLDataSource ds = ((ISQLDataSource)getDataSource());
-		return getQueryString();
-		// EntityManager em = ds.getEntityManager();
-		//
-		// JPQL2SQLStatementRewriter translator = new JPQL2SQLStatementRewriter(em);
-		// return translator.rewrite( getQueryString());
-
-	}
-
-	@Override
 	public String getValueBounded(String operandValueToBound, String operandType) {
 		// JPQLStatementWhereClause clause = new JPQLStatementWhereClause(this);
 		// return clause.getValueBounded(operandValueToBound, operandType);

@@ -99,13 +99,12 @@ public class JPAPersistenceManager implements IPersistenceManager {
 		String toReturn = null;
 
 		logger.debug("IN");
-		EntityManager entityManager = null;
-		try {
+		try (JPAEntityManager jpaEntityManager = dataSource.getEntityManager()) {
 			Assert.assertNotNull(registryConf, "Input parameter [registryConf] cannot be null");
 
 			logger.debug("Target entity: " + registryConf.getEntity());
 
-			entityManager = dataSource.getEntityManager();
+			EntityManager entityManager = jpaEntityManager.unwrap();
 			Assert.assertNotNull(entityManager, "entityManager cannot be null");
 
 			EntityType targetEntity = getTargetEntity(registryConf, entityManager);
@@ -114,9 +113,9 @@ public class JPAPersistenceManager implements IPersistenceManager {
 
 			toReturn = keyAttributeName;
 
-		} catch (Throwable t) {
-			logger.error(t);
-			throw new SpagoBIRuntimeException("Error searching for key column", t);
+		} catch (Exception e) {
+			logger.error("Error searching for key column", e);
+			throw new SpagoBIRuntimeException("Error searching for key column", e);
 		}
 
 		logger.debug("OUT");
@@ -169,15 +168,14 @@ public class JPAPersistenceManager implements IPersistenceManager {
 		Integer toReturn = null;
 
 		logger.debug("IN");
-		EntityManager entityManager = null;
-		try {
+		try (JPAEntityManager jpaEntityManager = dataSource.getEntityManager()) {
 			Assert.assertNotNull(aRecord, "Input parameter [record] cannot be null");
 			Assert.assertNotNull(aRecord, "Input parameter [registryConf] cannot be null");
 
 			logger.debug("New record: " + aRecord.toString(3));
 			logger.debug("Target entity: " + registryConf.getEntity());
 
-			entityManager = dataSource.getEntityManager();
+			EntityManager entityManager = jpaEntityManager.unwrap();
 			Assert.assertNotNull(entityManager, "entityManager cannot be null");
 
 			entityTransaction = entityManager.getTransaction();
@@ -289,15 +287,14 @@ public class JPAPersistenceManager implements IPersistenceManager {
 		EntityTransaction entityTransaction = null;
 
 		logger.debug("IN");
-		EntityManager entityManager = null;
-		try {
+		try (JPAEntityManager jpaEntityManager = dataSource.getEntityManager()) {
 			Assert.assertNotNull(aRecord, "Input parameter [record] cannot be null");
 			Assert.assertNotNull(aRecord, "Input parameter [registryConf] cannot be null");
 
 			logger.debug("New record: " + aRecord.toString(3));
 			logger.debug("Target entity: " + registryConf.getEntity());
 
-			entityManager = dataSource.getEntityManager();
+			EntityManager entityManager = jpaEntityManager.unwrap();
 			Assert.assertNotNull(entityManager, "entityManager cannot be null");
 
 			entityTransaction = entityManager.getTransaction();
@@ -386,12 +383,12 @@ public class JPAPersistenceManager implements IPersistenceManager {
 			JPAPersistenceManagerAuditLogger.log(Operation.UPDATE, this.getDataSource().getConfiguration().getModelName(), registryConf.getEntity(), oldRecord,
 					aRecord, changesCounter);
 
-		} catch (Throwable t) {
+		} catch (Exception e) {
 			if (entityTransaction != null && entityTransaction.isActive()) {
 				entityTransaction.rollback();
 			}
-			logger.error(t);
-			throw new SpagoBIRuntimeException("Error saving entity", t);
+			logger.error("Error while updating record", e);
+			throw new SpagoBIRuntimeException("Error while updating record", e);
 		} finally {
 			logger.debug("OUT");
 		}
@@ -499,15 +496,14 @@ public class JPAPersistenceManager implements IPersistenceManager {
 		EntityTransaction entityTransaction = null;
 
 		logger.debug("IN");
-		EntityManager entityManager = null;
-		try {
+		try (JPAEntityManager jpaEntityManager = dataSource.getEntityManager()) {
 			Assert.assertNotNull(aRecord, "Input parameter [record] cannot be null");
 			Assert.assertNotNull(aRecord, "Input parameter [registryConf] cannot be null");
 
 			logger.debug("Record: " + aRecord.toString(3));
 			logger.debug("Target entity: " + registryConf.getEntity());
 
-			entityManager = dataSource.getEntityManager();
+			EntityManager entityManager = jpaEntityManager.unwrap();
 			Assert.assertNotNull(entityManager, "entityManager cannot be null");
 
 			entityTransaction = entityManager.getTransaction();
@@ -544,12 +540,12 @@ public class JPAPersistenceManager implements IPersistenceManager {
 			JPAPersistenceManagerAuditLogger.log(Operation.DELETION, this.getDataSource().getConfiguration().getModelName(), registryConf.getEntity(), aRecord,
 					null, null);
 
-		} catch (Throwable t) {
+		} catch (Exception e) {
 			if (entityTransaction != null && entityTransaction.isActive()) {
 				entityTransaction.rollback();
 			}
-			logger.error(t);
-			throw new SpagoBIRuntimeException("Error deleting entity", t);
+			logger.error("Error deleting record", e);
+			throw new SpagoBIRuntimeException("Error deleting record", e);
 		} finally {
 			logger.debug("OUT");
 		}

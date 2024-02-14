@@ -397,10 +397,9 @@ public class QbeQueryResource extends AbstractQbeEngineResource {
 		dataSet.setDrivers(drivers);
 
 		Assert.assertTrue(dataSet.isIterable(), "Impossible to export a non-iterable data set");
-		DataIterator iterator = null;
-		try {
+
+		try (DataIterator iterator = dataSet.iterator()) {
 			LOGGER.debug("Starting iteration to transfer data");
-			iterator = dataSet.iterator();
 
 			StreamingOutput stream = null;
 			MediaType mediaType = null;
@@ -422,9 +421,6 @@ public class QbeQueryResource extends AbstractQbeEngineResource {
 			return Response.ok(stream, mediaType).cacheControl(CacheControl.valueOf("no-cache"))
 					.header("Content-Disposition", "attachment;filename=" + "report" + "." + outputType + "\";").build();
 		} catch (Exception e) {
-			if (iterator != null) {
-				iterator.close();
-			}
 			LOGGER.debug("Query results cannot be exported");
 			throw new SpagoBIRestServiceException("Query results cannot be exported", buildLocaleFromSession(), e);
 		}
@@ -1220,12 +1216,12 @@ public class QbeQueryResource extends AbstractQbeEngineResource {
 
 		if (dataset instanceof JPQLDataSet) {
 			AUDIT_LOGGER.info("[" + userProfile.getUserId() + "]:: JPQL: " + dataset.getStatement().getQueryString());
-			AUDIT_LOGGER.info("[" + userProfile.getUserId() + "]:: SQL: " + ((JPQLDataSet) dataset).getSQLQuery(false));
+			AUDIT_LOGGER.info("[" + userProfile.getUserId() + "]:: SQL: " + ((JPQLDataSet) dataset).getSQLQuery());
 		} else if (dataset instanceof HQLDataSet) {
 			AUDIT_LOGGER.info("[" + userProfile.getUserId() + "]:: HQL: " + dataset.getStatement().getQueryString());
-			AUDIT_LOGGER.info("[" + userProfile.getUserId() + "]:: SQL: " + ((HQLDataSet) dataset).getSQLQuery(false));
+			AUDIT_LOGGER.info("[" + userProfile.getUserId() + "]:: SQL: " + ((HQLDataSet) dataset).getSQLQuery());
 		} else {
-			AUDIT_LOGGER.info("[" + userProfile.getUserId() + "]:: SQL: " + dataset.getStatement().getSqlQueryString());
+			AUDIT_LOGGER.info("[" + userProfile.getUserId() + "]:: SQL: " + dataset.getSQLQuery());
 		}
 
 	}

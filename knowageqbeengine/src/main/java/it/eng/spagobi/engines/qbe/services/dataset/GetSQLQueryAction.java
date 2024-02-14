@@ -18,7 +18,9 @@
 package it.eng.spagobi.engines.qbe.services.dataset;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -30,14 +32,21 @@ import it.eng.qbe.datasource.IDataSource;
 import it.eng.qbe.datasource.dataset.DataSetDataSource;
 import it.eng.qbe.query.ISelectField;
 import it.eng.qbe.query.Query;
+import it.eng.qbe.statement.AbstractQbeDataSet;
 import it.eng.qbe.statement.IStatement;
+import it.eng.qbe.statement.QbeDatasetFactory;
 import it.eng.spago.base.SourceBean;
+import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.utilities.StringUtilities;
+import it.eng.spagobi.engines.qbe.QbeEngineConfig;
 import it.eng.spagobi.engines.qbe.services.core.AbstractQbeEngineAction;
 import it.eng.spagobi.engines.qbe.services.core.ExecuteQueryAction;
-import it.eng.spagobi.utilities.assertion.Assert;
+import it.eng.spagobi.services.common.SsoServiceInterface;
+import it.eng.spagobi.tools.dataset.bo.IDataSet;
+import it.eng.spagobi.utilities.engines.EngineConstants;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceException;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceExceptionHandler;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.service.JSONSuccess;
 
 /**
@@ -82,15 +91,12 @@ public class GetSQLQueryAction extends AbstractQbeEngineAction {
 			}
 
 			getEngineInstance().setActiveQuery(query);
-			Assert.assertNotNull(query, "Query not found!!");
 
 			if (replaceParametersWithQuestion) {
-				// promptable filters values may come with request (read-only
-				// user modality)
+				// promptable filters values may come with request (read-only user modality)
 				ExecuteQueryAction.updatePromptableFiltersValue(query, this, true);
 			} else {
-				// promptable filters values may come with request (read-only
-				// user modality)
+				// promptable filters values may come with request (read-only user modality)
 				ExecuteQueryAction.updatePromptableFiltersValue(query, this);
 			}
 
@@ -99,9 +105,11 @@ public class GetSQLQueryAction extends AbstractQbeEngineAction {
 
 			JSONObject toReturn = new JSONObject();
 
+			AbstractQbeDataSet qbeDataSet = (AbstractQbeDataSet) getActiveQueryAsDataSet(query);
+
 			IDataSource dataSource = statement.getDataSource();
 			if (dataSource instanceof DataSetDataSource) {
-				String sqlQuery = statement.getSqlQueryString();
+				String sqlQuery = qbeDataSet.getSQLQuery();
 				String sqlQueryFormatted = formatQueryString(sqlQuery);
 
 				LOGGER.debug("Executable query (SQL): [" + sqlQuery + "]");
@@ -110,7 +118,7 @@ public class GetSQLQueryAction extends AbstractQbeEngineAction {
 				toReturn.put("sqlFormatted", sqlQueryFormatted);
 			} else {
 				String jpaQueryStr = statement.getQueryString();
-				String sqlQuery = statement.getSqlQueryString();
+				String sqlQuery = qbeDataSet.getSQLQuery();
 				String jpaQueryStrFormatted = formatQueryString(addAliasInJqpl(query, jpaQueryStr));
 				String sqlQueryFormatted = formatQueryString(addAliasInSql(query, sqlQuery));
 
@@ -210,4 +218,32 @@ public class GetSQLQueryAction extends AbstractQbeEngineAction {
 		return queryString;
 	}
 
+	private IDataSet getActiveQueryAsDataSet(Query q) {
+		IStatement statement = getEngineInstance().getDataSource().createStatement(q);
+		IDataSet dataSet;
+		try {
+
+			dataSet = QbeDatasetFactory.createDataSet(statement);
+			boolean isMaxResultsLimitBlocking = QbeEngineConfig.getInstance().isMaxResultLimitBlocking();
+			dataSet.setAbortOnOverflow(isMaxResultsLimitBlocking);
+
+			Map userAttributes = new HashMap();
+			UserProfile userProfile = (UserProfile) this.getEnv().get(EngineConstants.ENV_USER_PROFILE);
+			userAttributes.putAll(userProfile.getUserAttributes());
+			userAttributes.put(SsoServiceInterface.USER_ID, userProfile.getUserId().toString());
+
+			dataSet.addBinding("attributes", userAttributes);
+			dataSet.addBinding("parameters", this.getEnv());
+			dataSet.setUserProfileAttributes(userAttributes);
+
+			dataSet.setParamsMap(this.getEnv());
+
+		} catch (Exception e) {
+			LOGGER.debug("Error getting the data set from the query");
+			throw new SpagoBIRuntimeException("Error getting the data set from the query", e);
+		}
+		LOGGER.debug("Dataset correctly taken from the query ");
+		return dataSet;
+
+	}
 }

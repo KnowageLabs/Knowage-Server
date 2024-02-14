@@ -36,6 +36,7 @@ import javax.persistence.metamodel.SingularAttribute;
 import org.apache.log4j.Logger;
 
 import it.eng.qbe.datasource.jpa.JPADataSource;
+import it.eng.qbe.datasource.jpa.JPAEntityManager;
 import it.eng.qbe.model.properties.initializer.IModelStructurePropertiesInitializer;
 import it.eng.qbe.model.properties.initializer.ModelStructurePropertiesInitializerFactory;
 import it.eng.qbe.model.structure.HierarchicalDimensionField;
@@ -52,6 +53,7 @@ import it.eng.qbe.model.structure.ModelViewEntity.Join;
 import it.eng.qbe.model.structure.ModelViewEntity.ViewRelationship;
 import it.eng.qbe.model.structure.builder.AbstractModelStructureBuilder;
 import it.eng.spagobi.utilities.assertion.Assert;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
@@ -100,13 +102,13 @@ public class JPAModelStructureBuilder extends AbstractModelStructureBuilder {
 
 		LOGGER.debug("IN");
 
-		try {
+		try (JPAEntityManager jpaEntityManager = getDataSource().getEntityManager()) {
 			modelStructure = new ModelStructure();
 			modelStructure.setMaxRecursionLevel(this.maxRecursionLevel);
 
 			modelName = getDataSource().getConfiguration().getModelName();
 			Assert.assertNotNull(getDataSource(), "datasource cannot be null");
-			setEntityManager(getDataSource().getEntityManager());
+			setEntityManager(jpaEntityManager.unwrap());
 			Assert.assertNotNull(getEntityManager(), "Impossible to find the jar file associated to datamart named: [" + modelName + "]");
 
 			propertiesInitializer.addProperties(modelStructure);
@@ -125,8 +127,8 @@ public class JPAModelStructureBuilder extends AbstractModelStructureBuilder {
 
 			return modelStructure;
 
-		} catch (Throwable t) {
-			throw new RuntimeException("Impossible to build model structure", t);
+		} catch (Exception e) {
+			throw new SpagoBIRuntimeException("Impossible to build model structure", e);
 		} finally {
 			LOGGER.debug("OUT");
 		}

@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,11 +11,16 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package it.eng.qbe.datasource.jpa.query;
+
+import java.io.File;
+import java.util.List;
+
+import javax.persistence.EntityManager;
 
 import it.eng.qbe.datasource.AbstractDataSourceTestCase;
 import it.eng.qbe.datasource.DriverManager;
@@ -23,11 +28,7 @@ import it.eng.qbe.datasource.configuration.FileDataSourceConfiguration;
 import it.eng.qbe.datasource.configuration.IDataSourceConfiguration;
 import it.eng.qbe.datasource.jpa.IJpaDataSource;
 import it.eng.qbe.datasource.jpa.JPADriver;
-
-import java.io.File;
-import java.util.List;
-
-import javax.persistence.EntityManager;
+import it.eng.qbe.datasource.jpa.JPAEntityManager;
 
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
@@ -61,26 +62,28 @@ public class QueryDataSourceTestCase extends AbstractDataSourceTestCase {
 
 	private void doTestCustomQuery() {
 
-		javax.persistence.Query jpqlQuery;
-		String statementStr = "SELECT t_0.storeId.storeCountry FROM  SalesFact1998 t_0 WHERE  t_0.timeId=t_0.timeId ";
-		EntityManager entityManager = ((IJpaDataSource) dataSource).getEntityManager();
+		try (JPAEntityManager jpaEntityManager = ((IJpaDataSource) dataSource).getEntityManager()) {
+			javax.persistence.Query jpqlQuery;
+			String statementStr = "SELECT t_0.storeId.storeCountry FROM  SalesFact1998 t_0 WHERE  t_0.timeId=t_0.timeId ";
+			EntityManager entityManager = jpaEntityManager.unwrap();
 
-		try {
-			jpqlQuery = entityManager.createQuery(statementStr);
-		} catch (Throwable t) {
-			logger.error("statementStr: " + statementStr);
-			logger.error(t.getMessage());
-			throw new RuntimeException("Impossible to compile query statement [" + statementStr + "]", t);
-		}
+			try {
+				jpqlQuery = entityManager.createQuery(statementStr);
+			} catch (Throwable t) {
+				logger.error("statementStr: " + statementStr);
+				logger.error(t.getMessage());
+				throw new RuntimeException("Impossible to compile query statement [" + statementStr + "]", t);
+			}
 
-		List result = null;
+			List result = null;
 
-		try {
-			result = jpqlQuery.getResultList();
-		} catch (Throwable t) {
-			logger.error("statementStr: " + statementStr);
-			logger.error("statementStr: " + t.getMessage());
-			throw new RuntimeException("Impossible to execute statement [" + statementStr + "]", t);
+			try {
+				result = jpqlQuery.getResultList();
+			} catch (Throwable t) {
+				logger.error("statementStr: " + statementStr);
+				logger.error("statementStr: " + t.getMessage());
+				throw new RuntimeException("Impossible to execute statement [" + statementStr + "]", t);
+			}
 		}
 
 	}

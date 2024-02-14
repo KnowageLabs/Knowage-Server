@@ -17,8 +17,6 @@
  */
 package it.eng.qbe.statement.jpa;
 
-import static java.util.Objects.nonNull;
-
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.text.ParseException;
@@ -41,6 +39,7 @@ import org.hibernate.type.Type;
 
 import it.eng.qbe.datasource.jpa.IJpaDataSource;
 import it.eng.qbe.datasource.jpa.JPADataSource;
+import it.eng.qbe.datasource.jpa.JPAEntityManager;
 import it.eng.qbe.model.accessmodality.IModelAccessModality;
 import it.eng.qbe.query.serializer.json.QuerySerializationConstants;
 import it.eng.qbe.statement.AbstractQbeDataSet;
@@ -50,10 +49,12 @@ import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.tools.dataset.bo.JDBCDataSet;
 import it.eng.spagobi.tools.dataset.bo.JDBCDatasetFactory;
 import it.eng.spagobi.tools.dataset.common.iterator.DataIterator;
+import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
 import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
 import it.eng.spagobi.tools.dataset.utils.DatasetMetadataParser;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
-import it.eng.spagobi.utilities.assertion.Assert;
+import it.eng.spagobi.utilities.database.DataBaseException;
+import it.eng.spagobi.utilities.database.DataBaseFactory;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 /**
@@ -77,11 +78,6 @@ public class JPQLDataSet extends AbstractQbeDataSet {
 		}
 	}
 
-	private EntityManager getEntityMananger() {
-		Assert.assertNotNull(statement, "Statement cannot be null");
-		return ((IJpaDataSource) statement.getDataSource()).getEntityManager();
-	}
-
 	private IStatement getLoadingStatement(EntityManager entityManager) {
 		LOGGER.debug("Getting filtered statement...");
 		IStatement filteredStatement = getFilteredStatement();
@@ -96,60 +92,66 @@ public class JPQLDataSet extends AbstractQbeDataSet {
 	}
 
 	private void loadDataPersistenceProvider(int offset, int fetchSize, int maxResults) {
+
 		boolean overflow = false;
 		int resultNumber = -1;
 
-		enableFilters();
-
 		IStatement filteredStatement = this.getStatement();
 		String statementStr = filteredStatement.getQueryString();
-		LOGGER.debug("Compiling query statement [" + statementStr + "]");
-		javax.persistence.Query jpqlQuery = getEntityMananger().createQuery(statementStr);
 
 		if (this.isCalculateResultNumberOnLoadEnabled()) {
-			resultNumber = getResultNumber(filteredStatement);
-			LOGGER.info("Number of fetched records: " + resultNumber + " for query " + filteredStatement.getQueryString());
+			resultNumber = getResultNumber();
+			LOGGER.info("Number of fetched records: " + resultNumber + " for JQPL query " + statementStr);
 			overflow = (maxResults > 0) && (resultNumber >= maxResults);
 		}
 
-		List result = null;
+		try (JPAEntityManager jpaEntityManager = ((IJpaDataSource) statement.getDataSource()).getEntityManager()) {
 
-		if (overflow && abortOnOverflow) {
-			// does not execute query
-			result = new ArrayList();
-		} else {
-			offset = offset < 0 ? 0 : offset;
-			if (maxResults > 0) {
-				fetchSize = (fetchSize > 0) ? Math.min(fetchSize, maxResults) : maxResults;
+			EntityManager entityManager = jpaEntityManager.unwrap();
+
+			enableFilters(entityManager);
+
+			LOGGER.debug("Compiling query statement [" + statementStr + "]");
+			javax.persistence.Query jpqlQuery = entityManager.createQuery(statementStr);
+
+			List result = null;
+
+			if (overflow && abortOnOverflow) {
+				// does not execute query
+				result = new ArrayList();
+			} else {
+				offset = offset < 0 ? 0 : offset;
+				if (maxResults > 0) {
+					fetchSize = (fetchSize > 0) ? Math.min(fetchSize, maxResults) : maxResults;
+				}
+				LOGGER.debug("Executing query " + filteredStatement.getQueryString() + " with offset = " + offset + " and fetch size = " + fetchSize);
+				jpqlQuery.setFirstResult(offset);
+				if (fetchSize > 0) {
+					jpqlQuery.setMaxResults(fetchSize);
+				}
+
+				try {
+					result = jpqlQuery.getResultList();
+				} catch (Throwable t) {
+					throw new RuntimeException("Impossible to execute statement [" + statementStr + "]", t);
+				}
+
+				LOGGER.debug("Query " + filteredStatement.getQueryString() + " with offset = " + offset + " and fetch size = " + fetchSize + " executed");
 			}
-			LOGGER.debug("Executing query " + filteredStatement.getQueryString() + " with offset = " + offset + " and fetch size = " + fetchSize);
-			jpqlQuery.setFirstResult(offset);
-			if (fetchSize > 0) {
-				jpqlQuery.setMaxResults(fetchSize);
+
+			dataStore = toDataStore(result, ((AbstractStatement) statement).getDataStoreMeta());
+
+			if (this.isCalculateResultNumberOnLoadEnabled()) {
+				dataStore.getMetaData().setProperty("resultNumber", resultNumber);
 			}
 
-			try {
-				result = jpqlQuery.getResultList();
-			} catch (Throwable t) {
-				throw new RuntimeException("Impossible to execute statement [" + statementStr + "]", t);
+			if (hasDataStoreTransformers()) {
+				executeDataStoreTransformers(dataStore);
 			}
-
-			LOGGER.debug("Query " + filteredStatement.getQueryString() + " with offset = " + offset + " and fetch size = " + fetchSize + " executed");
-		}
-
-		dataStore = toDataStore(result, ((AbstractStatement) statement).getDataStoreMeta());
-
-		if (this.isCalculateResultNumberOnLoadEnabled()) {
-			dataStore.getMetaData().setProperty("resultNumber", resultNumber);
-		}
-
-		if (hasDataStoreTransformers()) {
-			executeDataStoreTransformers(dataStore);
 		}
 	}
 
-	protected void enableFilters() {
-		EntityManager entityManager = getEntityMananger();
+	protected void enableFilters(EntityManager entityManager) {
 		Session session = entityManager.unwrap(Session.class);
 		enableFilters(session);
 	}
@@ -269,21 +271,12 @@ public class JPQLDataSet extends AbstractQbeDataSet {
 		return ret;
 	}
 
-	private int getResultNumber(IStatement filteredStatement) {
+	private int getResultNumber() {
+		String sqlQueryString = this.getSQLQuery();
 		int resultNumber = 0;
-		EntityManager em = null;
-		try {
-			String sqlQueryString = filteredStatement.getSqlQueryString();
-			em = getEntityMananger();
-
-			/*
-			 * Workaround for KNOWAGE-6753.
-			 *
-			 * We had some concurrency problem here: I've fixed extracting a new connection to the database.
-			 */
-			em = em.getEntityManagerFactory().createEntityManager();
-
-			JPADataSource ds = ((JPADataSource) filteredStatement.getDataSource());
+		try (JPAEntityManager jpaEntityManager = ((IJpaDataSource) statement.getDataSource()).getEntityManager()) {
+			EntityManager em = jpaEntityManager.unwrap();
+			JPADataSource ds = ((JPADataSource) this.getStatement().getDataSource());
 			String dialect = ds.getToolsDataSource().getHibDialectClass();
 			int orderByIndexOf = sqlQueryString.toLowerCase().indexOf("order by");
 			if (dialect.equals(QuerySerializationConstants.DIALECT_SQLSERVER) && orderByIndexOf != -1) {
@@ -293,11 +286,7 @@ public class JPQLDataSet extends AbstractQbeDataSet {
 			Number singleResult = (Number) em.createNativeQuery("SELECT COUNT(*) FROM (" + sqlQueryString + ") COUNT_INLINE_VIEW").getSingleResult();
 			resultNumber = singleResult.intValue();
 		} catch (Exception e) {
-			throw new RuntimeException("Impossible to get result number", e);
-		} finally {
-			if (nonNull(em)) {
-				em.close();
-			}
+			throw new SpagoBIRuntimeException("Impossible to get result number", e);
 		}
 		return resultNumber;
 	}
@@ -323,35 +312,55 @@ public class JPQLDataSet extends AbstractQbeDataSet {
 	}
 
 	@Override
-	public String getSQLQuery(boolean includeInjectedFilters) {
-		LOGGER.debug("IN: includeInjectedFilters = " + includeInjectedFilters);
-		String toReturn = null;
-		if (includeInjectedFilters) {
-			IStatement filteredStatement = this.getFilteredStatement();
-			toReturn = filteredStatement.getSqlQueryString();
-		} else {
-			toReturn = statement.getSqlQueryString();
-		}
-		LOGGER.debug("OUT: returning [" + toReturn + "]");
-		return toReturn;
-	}
-
-	@Override
 	public DataIterator iterator() {
-
-		enableFilters();
 
 		IMetaData metadata = this.getMetadata();
 
 		DatasetMetadataParser dsp = new DatasetMetadataParser();
 		String metadataXMLString = dsp.metadataToXML(metadata);
 
-		String sqlQueryString = this.getSQLQuery(true);
+		String sqlQueryString = this.getSQLQuery();
 		LOGGER.debug("Executing query: " + sqlQueryString);
 		JDBCDataSet jdbcDataset = (JDBCDataSet) JDBCDatasetFactory.getJDBCDataSet(this.getDataSource());
 		jdbcDataset.setDsMetadata(metadataXMLString);
 		jdbcDataset.setQuery(sqlQueryString);
 		return jdbcDataset.iterator();
+	}
+
+	@Override
+	public String getSQLQuery() {
+		try (JPAEntityManager jpaEntityManager = ((JPADataSource) this.getStatement().getDataSource()).getEntityManager()) {
+			EntityManager em = jpaEntityManager.unwrap();
+			enableFilters(em);
+			JPQL2SQLStatementRewriter translator = new JPQL2SQLStatementRewriter(em);
+			String translatedQuery = translator.rewrite(this.getFilteredStatement().getQueryString());
+			return adjustActualAliases(translatedQuery);
+		}
+	}
+
+	private String adjustActualAliases(String sqlQueryString) {
+		logger.debug("IN: input query is " + sqlQueryString);
+		it.eng.spagobi.tools.datasource.bo.IDataSource dataSource = ((JPADataSource) this.getStatement().getDataSource()).getToolsDataSource();
+
+		String aliasDelimiter;
+		try {
+			aliasDelimiter = DataBaseFactory.getDataBase(dataSource).getAliasDelimiter();
+		} catch (DataBaseException e) {
+			throw new SpagoBIRuntimeException("An error occurred while getting datasource alias delimiter", e);
+		}
+
+		IMetaData metadata = ((AbstractStatement) this.getStatement()).getDataStoreMeta();
+
+		for (int i = 0; i < metadata.getFieldCount(); i++) {
+			IFieldMetaData fieldMeta = metadata.getFieldMeta(i);
+			String alias = fieldMeta.getAlias();
+			int col = sqlQueryString.indexOf(" as col_");
+			int com = sqlQueryString.indexOf("_,") > -1 ? sqlQueryString.indexOf("_,") : sqlQueryString.indexOf("_ ");
+			sqlQueryString = sqlQueryString.replace(sqlQueryString.substring(col, com + 1), " as " + aliasDelimiter + alias + aliasDelimiter);
+		}
+
+		logger.debug("OUT: output query is " + sqlQueryString);
+		return sqlQueryString;
 	}
 
 	@Override
@@ -377,8 +386,6 @@ public class JPQLDataSet extends AbstractQbeDataSet {
 	@Override
 	public void setDrivers(Map<String, Object> drivers) {
 		super.setDrivers(drivers);
-
-		enableFilters();
 	}
 
 }

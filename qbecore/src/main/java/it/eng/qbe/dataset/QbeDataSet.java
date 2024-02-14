@@ -539,4 +539,10 @@ public class QbeDataSet extends ConfigurableDataSet {
 	public void setDataSourceForReading(IDataSource datasourceForReading) {
 		this.datasourceForReading = datasourceForReading;
 	}
+
+	public AbstractQbeDataSet unwrap() {
+		init();
+		return (AbstractQbeDataSet) ds;
+	}
+
 }

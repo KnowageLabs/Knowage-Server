@@ -99,4 +99,9 @@ public class HiveQLDataSet extends AbstractQbeDataSet {
 		return td;
 	}
 
+	@Override
+	public String getSQLQuery() {
+		return statement.getQueryString();
+	}
+
 }

@@ -247,9 +247,7 @@ public abstract class AbstractQbeDataSet extends AbstractDataSet {
 
 	}
 
-	public String getSQLQuery(boolean includeInjectedFilters) {
-		return statement.getSqlQueryString();
-	}
+	public abstract String getSQLQuery();
 
 	@Override
 	public IDataSetTableDescriptor persist(String tableName, IDataSource dataSource) {
@@ -263,7 +261,7 @@ public abstract class AbstractQbeDataSet extends AbstractDataSet {
 			// TT table with CREATE AS SELECT
 			logger.debug("Datasource for reading is the same for writing --> use TT table with CREATE AS SELECT");
 			try {
-				String sql = getSQLQuery(true);
+				String sql = getSQLQuery();
 				List<String> fields = getDataSetSelectedFields(statement.getQuery());
 				return TemporaryTableManager.createTable(fields, sql, tableName, dataSource);
 			} catch (Exception e) {
@@ -332,7 +330,7 @@ public abstract class AbstractQbeDataSet extends AbstractDataSet {
 		UserProfile profile = getUserProfile();
 		LogMF.debug(logger, "User profile is {0}", profile);
 		String datasourceSignature = this.getDataSource().getSignature(profile);
-		String querySignature = getSQLQuery(true);
+		String querySignature = getSQLQuery();
 		String toReturn = datasourceSignature + "_" + querySignature;
 		LogMF.debug(logger, "Dataset signature is {0}", toReturn);
 		return toReturn;
