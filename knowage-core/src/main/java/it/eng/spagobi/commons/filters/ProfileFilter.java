@@ -24,8 +24,6 @@ import static org.apache.commons.lang3.StringUtils.isEmpty;
 import java.io.IOException;
 import java.net.URLEncoder;
 
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
@@ -37,7 +35,8 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.httpclient.UsernamePasswordCredentials;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import it.eng.knowage.privacymanager.LoginEventBuilder;
 import it.eng.knowage.privacymanager.PrivacyManagerClient;
@@ -65,15 +64,15 @@ import it.eng.spagobi.tenant.Tenant;
 import it.eng.spagobi.tenant.TenantManager;
 import it.eng.spagobi.user.UserProfileManager;
 
-/*
-@author Zerbetto (davide.zerbetto@eng.it)
+/**
+ * @author Zerbetto (davide.zerbetto@eng.it)
  *
  *         This filter tries to build the user profile object, using the user identifier
  */
 
 public class ProfileFilter implements Filter {
 
-	private static final Logger LOGGER = Logger.getLogger(ProfileFilter.class);
+	private static final Logger LOGGER = LogManager.getLogger(ProfileFilter.class);
 
 	@Override
 	public void destroy() {
@@ -135,12 +134,12 @@ public class ProfileFilter implements Filter {
 						userId = getUserIdWithSSO(httpRequest);
 					}
 
-					LOGGER.debug("User id = " + userId);
+					LOGGER.debug("User id = {}", userId);
 					if (userId != null && !userId.trim().equals("")) {
 						profile = GeneralUtilities.createNewUserProfile(userId);
 
 						if (profile == null) {
-							LOGGER.error("User [" + userId + "] has no profile defined.");
+							LOGGER.error("User [{}] has no profile defined.", userId);
 							httpRequest.getRequestDispatcher("/unprofiledUser.jsp").forward(request, response);
 							return;
 						}
@@ -253,10 +252,6 @@ public class ProfileFilter implements Filter {
 		LOGGER.debug("OUT");
 	}
 
-	private static String getSessionFileName() throws NamingException {
-		return (String) (new InitialContext().lookup("java:comp/env/fileSessionTest"));
-	}
-
 	private String getUserIdInWebModeWithoutSSO(HttpServletRequest httpRequest) {
 		SpagoBIUserProfile profile = null;
 		UsernamePasswordCredentials credentials = this.findUserCredentials(httpRequest);
@@ -283,18 +278,18 @@ public class ProfileFilter implements Filter {
 	}
 
 	private SpagoBIUserProfile authenticate(UsernamePasswordCredentials credentials) throws Throwable {
-		LOGGER.debug("IN: userId = " + credentials.getUserName());
+		LOGGER.debug("IN: userId = {}", credentials.getUserName());
 		try {
 			ISecurityServiceSupplier supplier = SecurityServiceSupplierFactory.createISecurityServiceSupplier();
 			SpagoBIUserProfile profile = supplier.checkAuthentication(credentials.getUserName(),
 					credentials.getPassword());
 			if (profile == null) {
-				LOGGER.error("Authentication failed for user " + credentials.getUserName());
+				LOGGER.error("Authentication failed for user {}", credentials.getUserName());
 				throw new SecurityException("Authentication failed");
 			}
 			return profile;
 		} catch (Throwable t) {
-			LOGGER.error("Error while authenticating userId = " + credentials.getUserName(), t);
+			LOGGER.error("Error while authenticating userId = {}", credentials.getUserName(), t);
 			throw t;
 		} finally {
 			LOGGER.debug("OUT");
@@ -305,19 +300,19 @@ public class ProfileFilter implements Filter {
 	private UsernamePasswordCredentials findUserCredentials(HttpServletRequest httpRequest) {
 		UsernamePasswordCredentials toReturn = null;
 		String userId = httpRequest.getParameter(SsoServiceInterface.USER_NAME_REQUEST_PARAMETER.toLowerCase());
-		LOGGER.debug("Request parameter " + SsoServiceInterface.USER_NAME_REQUEST_PARAMETER.toLowerCase() + " is ["
-				+ userId + "]");
+		LOGGER.debug("Request parameter {} is [{}]", SsoServiceInterface.USER_NAME_REQUEST_PARAMETER.toLowerCase(),
+				userId);
 		if (userId == null) {
 			userId = httpRequest.getParameter(SsoServiceInterface.USER_NAME_REQUEST_PARAMETER.toUpperCase());
-			LOGGER.debug("Request parameter " + SsoServiceInterface.USER_NAME_REQUEST_PARAMETER.toUpperCase() + " is ["
-					+ userId + "]");
+			LOGGER.debug("Request parameter {} is [{}]", SsoServiceInterface.USER_NAME_REQUEST_PARAMETER.toUpperCase(),
+					userId);
 		}
 		String password = httpRequest.getParameter(SsoServiceInterface.PASSWORD_REQUEST_PARAMETER.toLowerCase());
 		if (password == null) {
 			password = httpRequest.getParameter(SsoServiceInterface.PASSWORD_REQUEST_PARAMETER.toUpperCase());
 		}
 		if (!isEmpty(userId) && !isNull(password)) {
-			LOGGER.debug("Read credentials from request: user id is [" + userId + "]");
+			LOGGER.debug("Read credentials from request: user id is [{}]", userId);
 			String passwordMode = httpRequest.getParameter(SsoServiceInterface.PASSWORD_MODE_REQUEST_PARAMETER);
 			if (!isEmpty(passwordMode) && passwordMode.equalsIgnoreCase(SsoServiceInterface.PASSWORD_MODE_ENCRYPTED)) {
 				LOGGER.debug("Password mode is encrypted. Decripting password...");
@@ -334,11 +329,11 @@ public class ProfileFilter implements Filter {
 		UserProfile userProfile = (UserProfile) profile;
 		// retrieving tenant id
 		String tenantId = userProfile.getOrganization();
-		LOGGER.debug("Retrieved tenantId from user profile object : [" + tenantId + "]");
+		LOGGER.debug("Retrieved tenantId from user profile object : [{}]", tenantId);
 		// putting tenant id on thread local
 		Tenant tenant = new Tenant(tenantId);
 		TenantManager.setTenant(tenant);
-		LOGGER.debug("Tenant [" + tenantId + "] set into TenantManager");
+		LOGGER.debug("Tenant [{}] set into TenantManager", tenantId);
 	}
 
 	@Override
