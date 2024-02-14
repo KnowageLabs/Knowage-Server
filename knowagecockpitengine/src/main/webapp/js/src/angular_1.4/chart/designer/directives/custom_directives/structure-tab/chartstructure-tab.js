@@ -63,6 +63,7 @@ function structureTabControllerFunction($scope,sbiModule_translate,sbiModule_res
 				}else{
 					$scope.chartTemplate.categoryDate = $scope.categories[0] ? $scope.categories[0].column : undefined;
 				}
+			}
 		}
 
 	},true)
