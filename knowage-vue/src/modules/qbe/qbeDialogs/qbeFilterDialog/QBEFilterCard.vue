@@ -263,7 +263,6 @@ export default defineComponent({
                 case 'valueOfField':
                     this.filter.rightOperandType = 'Static Content'
                     this.selectedValues = this.filter.rightOperandValue.filter((el: any) => el !== '')
-                    await this.loadFilterValues()
 
                     this.filter.hasParam = false
                     this.filter.paramName = ''
