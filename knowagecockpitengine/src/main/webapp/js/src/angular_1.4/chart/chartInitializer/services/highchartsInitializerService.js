@@ -875,7 +875,9 @@ angular.module('chartInitializer')
 					}
 					else{
 						pointOptions = [];
-						pointOptions.push(Date.parse(data[j][column]));
+						var format = widgetData.jsonData.metaData.fields.filter((i)=>i.name === column)[0].dateFormatJava.replaceAll('y','Y').replaceAll('d','D');
+						pointOptions.push(moment(data[j][column], format).valueOf());
+
 
 						if(widgetData.chartTemplate.CHART.VALUES.SERIE[i].type == "arearangelow"){
 
