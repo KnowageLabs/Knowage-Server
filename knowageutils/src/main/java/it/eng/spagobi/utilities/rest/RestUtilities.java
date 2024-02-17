@@ -301,6 +301,7 @@ public class RestUtilities {
 		logger.debug("requestHeaders = " + requestHeaders);
 		logger.debug("requestBody = " + requestBody);
 
+		checkIfAddressIsInWhitelist(address);
 		HttpMethodBase method = getMethod(httpMethod, address);
 		if (requestHeaders != null) {
 			for (Entry<String, String> entry : requestHeaders.entrySet()) {
@@ -345,6 +346,8 @@ public class RestUtilities {
 	@SuppressWarnings("deprecation")
 	public static InputStream makeRequestGetStream(HttpMethod httpMethod, String address, Map<String, String> requestHeaders, String requestBody,
 			List<NameValuePair> queryParams, boolean authenticate) throws HttpException, IOException, HMACSecurityException {
+		
+		checkIfAddressIsInWhitelist(address);
 		final HttpMethodBase method = getMethod(httpMethod, address);
 		if (requestHeaders != null) {
 			for (Entry<String, String> entry : requestHeaders.entrySet()) {
@@ -394,7 +397,7 @@ public class RestUtilities {
 		};
 	}
 
-	protected static HttpClient getHttpClient(String address) {
+	private static HttpClient getHttpClient(String address) {
 		HttpClient client = new HttpClient();
 		loadHttpTimeout();
 		client.setTimeout(timeout);
@@ -509,5 +512,16 @@ public class RestUtilities {
 		List<String> whitelist = HttpHeadersWhitelist.getInstance().getWhitelist();
 		if (!whitelist.contains(value))
 			throw new SpagoBIRuntimeException("Header value " + value + " is not in the list of allowed headers.");
+	}
+	
+	public static void checkIfAddressIsInWhitelist(String address) {
+		List<String> whitelist = BEServicesWhiteList.getInstance().getWhitelist();
+		
+		for(String baseUrl : whitelist) {
+			if(address.startsWith(baseUrl)) {
+				return;
+			}
+		}
+		throw new SpagoBIRuntimeException("Address value " + address + " is not in the whitelist of allowed external services.");
 	}
 }
