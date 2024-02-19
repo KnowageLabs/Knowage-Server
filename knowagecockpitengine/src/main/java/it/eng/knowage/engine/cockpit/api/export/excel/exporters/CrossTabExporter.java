@@ -722,7 +722,7 @@ public class CrossTabExporter extends GenericWidgetExporter implements IWidgetEx
 				// crosstab fits in memory
 				String cockpitSheetName = getCockpitSheetName(template, widgetId);
 				Sheet sheet = excelExporter.createUniqueSafeSheet(wb, widgetName, cockpitSheetName);
-				((SXSSFSheet) sheet).setRandomAccessWindowSize(totalRowsNumber);
+				((SXSSFSheet) sheet).setRandomAccessWindowSize(-1);
 				fillExcelSheetWithData(sheet, cs, wb.getCreationHelper(), 0, excelExporter.getLocale());
 				return 1;
 			} else {
