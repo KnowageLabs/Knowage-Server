@@ -31,104 +31,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <%@page import="it.eng.spago.base.SessionContainer"%>
 <%@page import="it.eng.spago.base.RequestContainer"%>
 
-<iframe id='invalidSessionJasper'
-                 name='invalidSessionJasper'
-                 src='<%=KnowageSystemConfiguration.getKnowageContext()%>jasperreportengine/invalidateSession.jsp'
-                 height='0'
-                 width='0'
-                 frameborder='0' >
-</iframe>  
-
-</iframe>  
-
-<iframe id='invalidSessionQbe'
-                 name='invalidSessionQbe'
-                 src='<%=KnowageSystemConfiguration.getKnowageContext()%>qbeengine/invalidateSession.jsp'
-                 height='0'
-                 width='0'
-                 frameborder='0' >
-</iframe>  
-
-<iframe id='invalidSessionBirt'
-                 name='invalidSessionBirt'
-                 src='<%=KnowageSystemConfiguration.getKnowageContext()%>birtreportengine/invalidateSession.jsp'
-                 height='0'
-                 width='0'
-                 frameborder='0' >
-</iframe>  
-
-<iframe id='invalidSessionTalend'
-                 name='invalidSessionTalend'
-                 src='<%=KnowageSystemConfiguration.getKnowageContext()%>talendengine/invalidateSession.jsp'
-                 height='0'
-                 width='0'
-                 frameborder='0' >
-</iframe> 
-
-<iframe id='invalidSessionWhatIf'
-                 name='invalidSessionChart'
-                 src='<%=KnowageSystemConfiguration.getKnowageContext()%>whatifengine/invalidateSession.jsp'
-                 height='0'
-                 width='0'
-                 frameborder='0' >
-</iframe>
-
-<iframe id='invalidSessionCockpit'
-                 name='invalidSessionCockpit'
-                 src='<%=KnowageSystemConfiguration.getKnowageContext()%>cockpitengine/invalidateSession.jsp'
-                 height='0'
-                 width='0'
-                 frameborder='0' >
-</iframe> 
-
-<iframe id='invalidSessionGis'
-                 name='invalidSessionGis'
-                 src='<%=KnowageSystemConfiguration.getKnowageContext()%>georeportengine/invalidateSession.jsp'
-                 height='0'
-                 width='0'
-                 frameborder='0' >
-</iframe> 
-
-<iframe id='invalidSessionKpi'
-                 name='invalidSessionKpi'
-                 src='<%=KnowageSystemConfiguration.getKnowageContext()%>kpiengine/invalidateSession.jsp'
-                 height='0'
-                 width='0'
-                 frameborder='0' >
-</iframe> 
-
-<iframe id='invalidSessionMeta'
-                 name='invalidSessionMeta'
-                 src='<%=KnowageSystemConfiguration.getKnowageContext()%>meta/invalidateSession.jsp'
-                 height='0'
-                 width='0'
-                 frameborder='0' >
-</iframe> 
-
-<iframe id='invalidSessionSvg'
-                 name='invalidSessionSvg'
-                 src='<%=KnowageSystemConfiguration.getKnowageContext()%>svgviewerengine/invalidateSession.jsp'
-                 height='0'
-                 width='0'
-                 frameborder='0' >
-</iframe> 
-
-<iframe id='invalidSessionCommonj'
-                 name='invalidSessionCommonj'
-                 src='<%=KnowageSystemConfiguration.getKnowageContext()%>commonjengine/invalidateSession.jsp'
-                 height='0'
-                 width='0'
-                 frameborder='0' >
-</iframe>
-
-<iframe id='invalidSessionDossier'
-                 name='invalidSessionDossier'
-                 src='<%=KnowageSystemConfiguration.getKnowageContext()%>dossierengine/invalidateSession.jsp'
-                 height='0'
-                 width='0'
-                 frameborder='0' >
-</iframe>
-
 <%
 
 boolean backUrlB=false;
@@ -181,12 +83,25 @@ else if (active != null && active.equalsIgnoreCase("true")) {
 } %>
 
 <script>
+function invalidateNoError(url) {
+	return new Promise(function(resolve, reject) {
+		var xhr = new XMLHttpRequest();
+		xhr.open("GET", url, false);
+		xhr.onload = function() {
+			resolve(true);
+		};
+		xhr.onerror = function() {
+			resolve(true);
+		};
+		xhr.send();
+	});
+}
 
 function redirect() {
 	var redirectUrl = "<%= redirectUrl %>";
 	redirectUrl = resolveDynamicParameters(redirectUrl);
 	window.sessionStorage.removeItem("id_token");
-    window.location = redirectUrl;
+	window.location = redirectUrl;
 };
 
 function resolveDynamicParameters(url) {
@@ -199,15 +114,31 @@ function setTimeoutToRedirect() {
 	}, 1000);
 };
 
+function invalidateAll() {
+	Promise.all([
+		invalidateNoError("<%=KnowageSystemConfiguration.getKnowageContext()%>cockpitengine/invalidateSession.jsp"),
+		invalidateNoError("<%=KnowageSystemConfiguration.getKnowageContext()%>jasperreportengine/invalidateSession.jsp"),
+		invalidateNoError("<%=KnowageSystemConfiguration.getKnowageContext()%>qbeengine/invalidateSession.jsp"),
+		invalidateNoError("<%=KnowageSystemConfiguration.getKnowageContext()%>birtreportengine/invalidateSession.jsp"),
+		invalidateNoError("<%=KnowageSystemConfiguration.getKnowageContext()%>talendengine/invalidateSession.jsp"),
+		invalidateNoError("<%=KnowageSystemConfiguration.getKnowageContext()%>whatifengine/invalidateSession.jsp"),
+		invalidateNoError("<%=KnowageSystemConfiguration.getKnowageContext()%>georeportengine/invalidateSession.jsp"),
+		invalidateNoError("<%=KnowageSystemConfiguration.getKnowageContext()%>kpiengine/invalidateSession.jsp"),
+		invalidateNoError("<%=KnowageSystemConfiguration.getKnowageContext()%>meta/invalidateSession.jsp"),
+		invalidateNoError("<%=KnowageSystemConfiguration.getKnowageContext()%>svgviewerengine/invalidateSession.jsp"),
+		invalidateNoError("<%=KnowageSystemConfiguration.getKnowageContext()%>commonjengine/invalidateSession.jsp"),
+		invalidateNoError("<%=KnowageSystemConfiguration.getKnowageContext()%>dossierengine/invalidateSession.jsp"),
+	]).then(() => { redirect(); })
+}
 </script>
 
 
 <% if (GoogleSignInConfig.isEnabled()) { %>
 
-	<%-- Resources for Google Sign-In authentication --%>
-	<script src="https://apis.google.com/js/platform.js?onload=onLoad" async defer></script>
-	<meta name="google-signin-client_id" content="<%= GoogleSignInConfig.getClientId() %>">
-	<script>
+<%-- Resources for Google Sign-In authentication --%>
+<script src="https://apis.google.com/js/platform.js?onload=onLoad" async defer></script>
+<meta name="google-signin-client_id" content="<%= GoogleSignInConfig.getClientId() %>">
+<script>
 	function googleSignOut(callback, fail) {
 		var auth2 = gapi.auth2.getAuthInstance();
 		auth2.signOut().then(function() {
@@ -230,13 +161,13 @@ function setTimeoutToRedirect() {
 		});
 	};
 
-	</script>
+</script>
 	
-<% }  else { %>
+<% } else { %>
 
-	<script>
-	setTimeoutToRedirect();
-	</script>
+<script>
+	invalidateAll();
+</script>
 	
 <% } %>
 
