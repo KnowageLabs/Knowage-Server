@@ -718,18 +718,18 @@ public class CrossTabExporter extends GenericWidgetExporter implements IWidgetEx
 
 			int totalRowsNumber = cs.getTotalNumberOfRows();
 			int windowSize = Integer.parseInt(SingletonConfig.getInstance().getConfigValue("KNOWAGE.DASHBOARD.EXPORT.EXCEL.STREAMING_WINDOW_SIZE"));
-			if (totalRowsNumber <= windowSize) {
+//			if (totalRowsNumber <= windowSize) {
 				// crosstab fits in memory
 				String cockpitSheetName = getCockpitSheetName(template, widgetId);
 				Sheet sheet = excelExporter.createUniqueSafeSheet(wb, widgetName, cockpitSheetName);
 				((SXSSFSheet) sheet).setRandomAccessWindowSize(-1);
 				fillExcelSheetWithData(sheet, cs, wb.getCreationHelper(), 0, excelExporter.getLocale());
 				return 1;
-			} else {
-				// export crosstab as generic widget
-				logger.warn("Crosstab [" + widgetId + "] has more rows than streaming windows size. It will be exported as a generic widget.");
-				return super.export();
-			}
+//			} else {
+//				// export crosstab as generic widget
+//				logger.warn("Crosstab [" + widgetId + "] has more rows than streaming windows size. It will be exported as a generic widget.");
+//				return super.export();
+//			}
 
 		} catch (Exception e) {
 			throw new SpagoBIRuntimeException("Unable to export crosstab widget: " + widgetId, e);
