@@ -45,6 +45,7 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.VerticalAlignment;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.CellRangeAddress;
+import org.apache.poi.xssf.streaming.SXSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFColor;
 import org.json.JSONArray;
@@ -721,6 +722,7 @@ public class CrossTabExporter extends GenericWidgetExporter implements IWidgetEx
 				// crosstab fits in memory
 				String cockpitSheetName = getCockpitSheetName(template, widgetId);
 				Sheet sheet = excelExporter.createUniqueSafeSheet(wb, widgetName, cockpitSheetName);
+				((SXSSFSheet) sheet).setRandomAccessWindowSize(totalRowsNumber);
 				fillExcelSheetWithData(sheet, cs, wb.getCreationHelper(), 0, excelExporter.getLocale());
 				return 1;
 			} else {
