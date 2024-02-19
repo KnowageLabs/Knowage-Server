@@ -86,7 +86,7 @@ else if (active != null && active.equalsIgnoreCase("true")) {
 function invalidateNoError(url) {
 	return new Promise(function(resolve, reject) {
 		var xhr = new XMLHttpRequest();
-		xhr.open("GET", url, false);
+		xhr.open("GET", url, true);
 		xhr.onload = function() {
 			resolve(true);
 		};
