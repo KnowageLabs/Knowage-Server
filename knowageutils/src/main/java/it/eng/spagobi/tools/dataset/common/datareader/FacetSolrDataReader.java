@@ -19,6 +19,7 @@
 package it.eng.spagobi.tools.dataset.common.datareader;
 
 import it.eng.spagobi.tools.dataset.common.datastore.*;
+import it.eng.spagobi.tools.dataset.common.datastore.Record;
 import it.eng.spagobi.tools.dataset.common.metadata.FieldMetadata;
 import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
 import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
