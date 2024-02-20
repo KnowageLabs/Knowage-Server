@@ -17,6 +17,7 @@
  */
 package it.eng.spagobi.utilities.engines.rest;
 
+import static it.eng.spagobi.commons.constants.ConfigurationConstants.SPAGOBI_SPAGOBI_SERVICE_JNDI;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
 import java.nio.charset.StandardCharsets;
@@ -94,7 +95,7 @@ public class SimpleRestClient {
 		String ret = EnginConf.getInstance().getSpagoBiServerUrl();
 		if (StringUtils.isEmpty(ret)) {
 			ret = SpagoBIUtilities
-					.readJndiResource(SingletonConfig.getInstance().getConfigValue("SPAGOBI.SPAGOBI_SERVICE_JNDI"));
+					.readJndiResource(SingletonConfig.getInstance().getConfigValue(SPAGOBI_SPAGOBI_SERVICE_JNDI));
 		}
 		return ret;
 	}

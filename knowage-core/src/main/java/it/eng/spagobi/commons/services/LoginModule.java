@@ -17,6 +17,8 @@
  */
 package it.eng.spagobi.commons.services;
 
+import static it.eng.spagobi.commons.constants.ConfigurationConstants.SPAGOBI_SPAGOBI_SERVICE_JNDI;
+
 import java.io.IOException;
 import java.net.URI;
 import java.net.URL;
@@ -614,7 +616,7 @@ public class LoginModule extends AbstractHttpModule {
 
 	public String getServiceHostUrl() {
 		String serviceURL = SpagoBIUtilities
-				.readJndiResource(SingletonConfig.getInstance().getConfigValue("SPAGOBI.SPAGOBI_SERVICE_JNDI"));
+				.readJndiResource(SingletonConfig.getInstance().getConfigValue(SPAGOBI_SPAGOBI_SERVICE_JNDI));
 		serviceURL = serviceURL.substring(0, serviceURL.lastIndexOf('/'));
 		return serviceURL;
 	}
