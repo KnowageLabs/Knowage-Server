@@ -17,6 +17,7 @@
  */
 package it.eng.knowage.engine.cockpit.api.page;
 
+import static it.eng.spagobi.commons.constants.ConfigurationConstants.SPAGOBI_SPAGOBI_SERVICE_JNDI;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -449,7 +450,8 @@ public class PageResource extends AbstractCockpitEngineResource {
 	}
 
 	public String getServiceHostUrl() {
-		String serviceURL = SpagoBIUtilities.readJndiResource(SingletonConfig.getInstance().getConfigValue("SPAGOBI.SPAGOBI_SERVICE_JNDI"));
+		String serviceURL = SpagoBIUtilities
+				.readJndiResource(SingletonConfig.getInstance().getConfigValue(SPAGOBI_SPAGOBI_SERVICE_JNDI));
 		serviceURL = serviceURL.substring(0, serviceURL.lastIndexOf('/'));
 		return serviceURL;
 	}

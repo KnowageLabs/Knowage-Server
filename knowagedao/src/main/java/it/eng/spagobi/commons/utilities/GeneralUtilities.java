@@ -17,6 +17,7 @@
  */
 package it.eng.spagobi.commons.utilities;
 
+import static it.eng.spagobi.commons.constants.ConfigurationConstants.SPAGOBI_SPAGOBI_SERVICE_JNDI;
 import java.io.File;
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
@@ -907,7 +908,8 @@ public class GeneralUtilities extends SpagoBIUtilities {
 	}
 
 	public static String getServiceHostUrl() {
-		String serviceURL = SpagoBIUtilities.readJndiResource(SingletonConfig.getInstance().getConfigValue("SPAGOBI.SPAGOBI_SERVICE_JNDI"));
+		String serviceURL = SpagoBIUtilities
+				.readJndiResource(SingletonConfig.getInstance().getConfigValue(SPAGOBI_SPAGOBI_SERVICE_JNDI));
 		serviceURL = serviceURL.substring(0, serviceURL.lastIndexOf('/'));
 		return serviceURL;
 	}

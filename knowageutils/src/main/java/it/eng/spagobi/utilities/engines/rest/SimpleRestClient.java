@@ -17,6 +17,7 @@
  */
 package it.eng.spagobi.utilities.engines.rest;
 
+import static it.eng.spagobi.commons.constants.ConfigurationConstants.SPAGOBI_SPAGOBI_SERVICE_JNDI;
 import java.util.Base64;
 import java.util.Iterator;
 import java.util.Map;
@@ -89,12 +90,12 @@ public class SimpleRestClient {
 	}
 
 	private String loadServerUrl() {
-		String serverUrl = EnginConf.getInstance().getSpagoBiServerUrl();
-		if (StringUtilities.isEmpty(serverUrl)) {
-			serverUrl = SpagoBIUtilities
-					.readJndiResource(SingletonConfig.getInstance().getConfigValue("SPAGOBI.SPAGOBI_SERVICE_JNDI"));
+		String ret = EnginConf.getInstance().getSpagoBiServerUrl();
+		if (StringUtilities.isEmpty(ret)) {
+			ret = SpagoBIUtilities
+					.readJndiResource(SingletonConfig.getInstance().getConfigValue(SPAGOBI_SPAGOBI_SERVICE_JNDI));
 		}
-		return serverUrl;
+		return ret;
 	}
 
 	/**

@@ -17,6 +17,7 @@
  */
 package it.eng.spagobi.commons.utilities;
 
+import static it.eng.spagobi.commons.constants.ConfigurationConstants.SPAGOBI_SPAGOBI_SERVICE_JNDI;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
@@ -385,7 +386,8 @@ public class ExecutionProxy {
 	}
 
 	public String getServiceHostUrl() {
-		String serviceURL = SpagoBIUtilities.readJndiResource(SingletonConfig.getInstance().getConfigValue("SPAGOBI.SPAGOBI_SERVICE_JNDI"));
+		String serviceURL = SpagoBIUtilities
+				.readJndiResource(SingletonConfig.getInstance().getConfigValue(SPAGOBI_SPAGOBI_SERVICE_JNDI));
 		serviceURL = serviceURL.substring(0, serviceURL.lastIndexOf('/'));
 		return serviceURL;
 	}
