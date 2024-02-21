@@ -15,7 +15,8 @@
             }
         ],
         "defaultSortField": "jobName",
-        "filterFields": ["jobName"],
+        "filterFields": ["jobName", "jobParameters.mailtos", "jobDescription", "documents"],
+        "fullTextSearch": true,
         "interaction": {
             "parameterLabel": "jobName",
             "parameterValue": "jobName",
