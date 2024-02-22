@@ -93,7 +93,7 @@ public class HtmlSanitizer {
 				// Knowage
 				.allowAttributes("kn-cross", "kn-if", "kn-import", "kn-repeat", "kn-preview", "kn-selection-column", "kn-selection-value", "kn-message", "limit").globally()
 				// SVG
-				.allowElements("circle", "defs", "foreignobject", "g", "linearGradient", "metadata", "path", "stop", "svg", "text", "tspan")
+				.allowElements("circle", "defs", "foreignobject", "g", "linearGradient", "metadata", "path","rect", "stop", "svg", "text", "tspan")
 				.allowElements("dc:format", "dc:title", "dc:type")
 				.allowElements("cc:Work")
 				.allowElements("rdf:RDF")
