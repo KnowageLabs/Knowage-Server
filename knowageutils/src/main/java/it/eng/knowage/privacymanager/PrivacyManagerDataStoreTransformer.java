@@ -82,9 +82,12 @@ public class PrivacyManagerDataStoreTransformer extends AbstractDataStoreTransfo
 			eventBuilder.appendUserAgent(os, sourceIpAddress, sourceSocketEnabled, userAgent);
 			// metadata --> from dataset (map)
 			Map paramsMap = Optional.ofNullable(dataSet.getParamsMap()).orElse(Collections.emptyMap());
+			LOGGER.debug("Parameters map", paramsMap);
 			Set<String> keys = paramsMap.keySet();
 			for (String key : keys) {
+				LOGGER.debug("Key: {}", key);
 				String paramValue = paramsMap.getOrDefault(key, "").toString();
+				LOGGER.debug("Value: {}", paramValue);
 				eventBuilder.appendMetaData(key, paramValue);
 			}
 
