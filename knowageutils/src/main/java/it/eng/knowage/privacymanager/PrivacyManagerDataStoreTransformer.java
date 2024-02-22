@@ -84,7 +84,8 @@ public class PrivacyManagerDataStoreTransformer extends AbstractDataStoreTransfo
 			Map paramsMap = Optional.ofNullable(dataSet.getParamsMap()).orElse(Collections.emptyMap());
 			Set<String> keys = paramsMap.keySet();
 			for (String key : keys) {
-				eventBuilder.appendMetaData(key, paramsMap.get(key).toString());
+				String paramValue = paramsMap.getOrDefault(key, "").toString();
+				eventBuilder.appendMetaData(key, paramValue);
 			}
 
 			for (IRecord currRecord : dataStore.getRecords()) {
