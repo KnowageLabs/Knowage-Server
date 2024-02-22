@@ -36,7 +36,7 @@ import it.eng.spagobi.commons.utilities.urls.UrlBuilderFactory;
 import it.eng.spagobi.tools.dataset.constants.DataSetConstants;
 import it.eng.spagobi.utilities.scripting.ScriptUtilities;
 import it.eng.spagobi.utilities.themes.ThemesManager;
-
+import org.apache.log4j.Logger;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -59,7 +59,7 @@ public class ScriptWizardTag extends CommonWizardLovTag {
 	private String script;
 	private String languageScript;
 	protected String currTheme="";
-
+	private static Logger logger = Logger.getLogger(ScriptWizardTag.class);
 	String readonly = "readonly" ;
 	boolean isreadonly = true ;
 	String disabled = "disabled" ;
@@ -158,7 +158,7 @@ public class ScriptWizardTag extends CommonWizardLovTag {
 				}
 			}	
 		} catch (Throwable e) {
-			e.printStackTrace();
+			logger.error("loadListDomainsByType",e);
 		}
 		
 		/*

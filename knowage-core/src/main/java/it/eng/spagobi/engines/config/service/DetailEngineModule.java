@@ -23,7 +23,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
-
+import org.apache.log4j.Logger;
 import it.eng.spago.base.RequestContainer;
 import it.eng.spago.base.SessionContainer;
 import it.eng.spago.base.SourceBean;
@@ -56,7 +56,7 @@ public class DetailEngineModule extends AbstractHttpModule {
 	private String modalita = "";
 	private IEngUserProfile profile;
 	private SessionContainer session = null;
-
+	private static Logger logger = Logger.getLogger(DetailEngineModule.class);
 	/*
 	 * (non-Javadoc)
 	 *
@@ -136,8 +136,8 @@ public class DetailEngineModule extends AbstractHttpModule {
 			try {
 				AuditLogUtilities.updateAudit(getHttpRequest(), profile, "ENGINE.MODIFY", logParam, "KO");
 			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				//e.printStackTrace();
+				logger.error("AuditLogUtilities.updateAudit",e);
 			}
 			SpagoBITracer.major(AdmintoolsConstants.NAME_MODULE, "DettaglioEngineModule", "getDettaglioEngine", "Cannot fill response container", ex);
 			HashMap params = new HashMap();
@@ -205,15 +205,15 @@ public class DetailEngineModule extends AbstractHttpModule {
 				try {
 					AuditLogUtilities.updateAudit(getHttpRequest(), profile, "ENGINE.ADD", logParam, "ERR");
 				} catch (Exception e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
+					//e1.printStackTrace();
+					logger.error("AuditLogUtilities.updateAudit",e1);
 				}
 			} else {
 				try {
 					AuditLogUtilities.updateAudit(getHttpRequest(), profile, "ENGINE.MODIFY", logParam, "ERR");
 				} catch (Exception e1) {
-					// TODO Auto-generated catch block
 					e1.printStackTrace();
+					logger.error("AuditLogUtilities.updateAudit",e1);
 				}
 			}
 
@@ -228,15 +228,15 @@ public class DetailEngineModule extends AbstractHttpModule {
 				try {
 					AuditLogUtilities.updateAudit(getHttpRequest(), profile, "ENGINE.ADD", logParam, "KO");
 				} catch (Exception e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
+					//e1.printStackTrace();
+					logger.error("AuditLogUtilities.updateAudit",e1);
 				}
 			} else {
 				try {
 					AuditLogUtilities.updateAudit(getHttpRequest(), profile, "ENGINE.MODIFY", logParam, "KO");
 				} catch (Exception e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
+					//e1.printStackTrace();
+					logger.error("AuditLogUtilities.updateAudit",e1);
 				}
 			}
 			SpagoBITracer.major(AdmintoolsConstants.NAME_MODULE, "DetailEngineModule", "modDetailEngine", "Cannot fill response container", ex);
@@ -246,15 +246,15 @@ public class DetailEngineModule extends AbstractHttpModule {
 			try {
 				AuditLogUtilities.updateAudit(getHttpRequest(), profile, "ENGINE.ADD", logParam, "OK");
 			} catch (Exception e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
+				//e1.printStackTrace();
+				logger.error("AuditLogUtilities.updateAudit",e1);
 			}
 		} else {
 			try {
 				AuditLogUtilities.updateAudit(getHttpRequest(), profile, "ENGINE.MODIFY", logParam, "OK");
 			} catch (Exception e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
+				//e1.printStackTrace();
+				logger.error("AuditLogUtilities.updateAudit",e1);
 			}
 		}
 		response.setAttribute("loopback", "true");
@@ -294,8 +294,8 @@ public class DetailEngineModule extends AbstractHttpModule {
 			try {
 				AuditLogUtilities.updateAudit(getHttpRequest(), profile, "ENGINE-DELETE", logParam, "KO");
 			} catch (Exception e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
+				//e1.printStackTrace();
+				logger.error("AuditLogUtilities.updateAudit",e1);
 			}
 			HashMap params = new HashMap();
 			params.put(AdmintoolsConstants.PAGE, ListEnginesModule.MODULE_PAGE);
@@ -306,8 +306,8 @@ public class DetailEngineModule extends AbstractHttpModule {
 			try {
 				AuditLogUtilities.updateAudit(getHttpRequest(), profile, "ENGINE-DELETE", logParam, "ERR");
 			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				//e.printStackTrace();
+				logger.error("AuditLogUtilities.updateAudit",e);
 			}
 			SpagoBITracer.major(AdmintoolsConstants.NAME_MODULE, "DetailEngineModule", "delDetailRuolo", "Cannot fill response container", ex);
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
@@ -315,8 +315,8 @@ public class DetailEngineModule extends AbstractHttpModule {
 		try {
 			AuditLogUtilities.updateAudit(getHttpRequest(), profile, "ENGINE-DELETE", logParam, "OK");
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			//e.printStackTrace();
+			logger.error("AuditLogUtilities.updateAudit",e);
 		}
 		response.setAttribute("loopback", "true");
 	}
@@ -352,8 +352,8 @@ public class DetailEngineModule extends AbstractHttpModule {
 			try {
 				AuditLogUtilities.updateAudit(getHttpRequest(), profile, "ENGINE-ADD", null, "KO");
 			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				//e.printStackTrace();
+				logger.error("AuditLogUtilities.updateAudit",e);
 			}
 			SpagoBITracer.major(AdmintoolsConstants.NAME_MODULE, "DetailEngineModule", "newDetailEngine", "Cannot prepare page for the insertion", ex);
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
@@ -435,8 +435,8 @@ public class DetailEngineModule extends AbstractHttpModule {
 				try {
 					AuditLogUtilities.updateAudit(getHttpRequest(), profile, "ENGINE-MODIFY", logParam, "OK");
 				} catch (Exception e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					//e.printStackTrace();
+					logger.error("AuditLogUtilities.updateAudit",e);
 				}
 			}
 		}

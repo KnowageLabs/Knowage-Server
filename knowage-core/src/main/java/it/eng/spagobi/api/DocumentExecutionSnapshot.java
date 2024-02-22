@@ -142,14 +142,11 @@ public class DocumentExecutionSnapshot extends AbstractSpagoBIResource {
 		try {
 			object.put("snapshot", snap.getContent());
 		} catch (EMFUserError e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			LOGGER.error(e);
 		} catch (EMFInternalError e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			LOGGER.error(e);
 		} catch (JSONException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			LOGGER.error(e);
 		}
 
 		return object.toString();

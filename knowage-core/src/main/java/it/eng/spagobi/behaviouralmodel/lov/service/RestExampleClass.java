@@ -62,8 +62,7 @@ public class RestExampleClass {
 			modalitiesValuesJSON = serializeModalitiesValues(modalitiesValues);
 			// logger.debug("5:" + modalitiesValuesJSON);
 		} catch (Throwable t) {
-			// TODO Auto-generated catch block
-			t.printStackTrace();
+			logger.error("get",t);
 		}
 
 		return modalitiesValuesJSON.toString();
@@ -84,8 +83,7 @@ public class RestExampleClass {
 			DAOFactory.getModalitiesValueDAO().eraseModalitiesValue(mod);
 
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error("delete",e);
 		}
 
 		return "obrisano";
@@ -117,7 +115,7 @@ public class RestExampleClass {
 			}
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error("save",e);
 		}
 
 		return "saved";

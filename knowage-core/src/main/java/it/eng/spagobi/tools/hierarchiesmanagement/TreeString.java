@@ -25,6 +25,8 @@ package it.eng.spagobi.tools.hierarchiesmanagement;
 import java.io.UnsupportedEncodingException;
 import java.util.Iterator;
 
+import org.apache.log4j.Logger;
+
 /**
  * Given a <code>HierarchyTreeNode</code> structure, <code>TreeString</code> will print a string like
  *
@@ -39,7 +41,7 @@ import java.util.Iterator;
  *
  */
 public class TreeString {
-
+	private static Logger logger = Logger.getLogger(TreeString.class);
 	public static String toString(HierarchyTreeNode tree) {
 		StringBuffer sb = new StringBuffer();
 
@@ -94,7 +96,7 @@ public class TreeString {
 				return new String(new byte[] { -30, -108, -100 }, "utf8");
 			}
 		} catch (UnsupportedEncodingException e) {
-			e.printStackTrace();
+			logger.error("UnsupportedEncodingException",e);
 		}
 		return null;
 	}

@@ -173,7 +173,7 @@ public class ManageEnginesAction extends AbstractSpagoBIAction {
 
 		} catch (ClassNotFoundException e) {
 			message = "Class Name Error";
-			e.printStackTrace();
+			logger.error("testEngine",e);
 		} catch (Throwable t) {
 			throw new SpagoBIServiceException(SERVICE_NAME, "Impossible to save or modify engine", t);
 		}

@@ -59,8 +59,7 @@ public class ExecuteDocumentAction extends AbstractSpagoBIAction {
 			try {
 				AuditLogUtilities.updateAudit(getHttpRequest(), profile, "DOCUMENT.EXECUTION", null, "ERR");
 			} catch (Exception e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
+				logger.error("AuditLogUtilities.updateAudit",e);
 			}
 			logger.error("Service internal error", e);
 		}
@@ -107,8 +106,7 @@ public class ExecuteDocumentAction extends AbstractSpagoBIAction {
 							try {
 								AuditLogUtilities.updateAudit(getHttpRequest(), profile, "DOCUMENT.EXECUTION", logParam, "ERR");
 							} catch (Exception e) {
-								// TODO Auto-generated catch block
-								e.printStackTrace();
+								logger.error("AuditLogUtilities.updateAudit",e);
 							}
 							logger.warn("User cannot see subobject [" + subObject.getName() + "] of document with label [" + obj.getLabel() + "].");
 						}

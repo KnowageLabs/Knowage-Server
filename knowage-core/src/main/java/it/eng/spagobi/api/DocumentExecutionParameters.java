@@ -547,7 +547,7 @@ public class DocumentExecutionParameters extends AbstractSpagoBIResource {
 							}
 						} catch (UnsupportedEncodingException e) {
 							// TODO Auto-generated catch block
-							// e.printStackTrace();
+							
 							logger.debug("An error occured while decoding parameter with value[" + itemVal + "]" + e);
 						}
 					}

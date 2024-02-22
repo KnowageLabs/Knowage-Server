@@ -154,9 +154,8 @@ public class TenantsInitializer extends SpagoBIInitializer {
 
 						association.setCommonInfo(commonInfo);
 
-						SbiOrganizationProductTypeId id = new SbiOrganizationProductTypeId();
-						id.setProductTypeId(aProductType.getProductTypeId());
-						id.setOrganizationId(aTenant.getId());
+						SbiOrganizationProductTypeId id = new SbiOrganizationProductTypeId(aProductType.getProductTypeId(),aTenant.getId());
+
 						association.setId(id);
 
 						hibernateSession.save(association);
@@ -199,9 +198,7 @@ public class TenantsInitializer extends SpagoBIInitializer {
 
 							association.setCommonInfo(commonInfo);
 
-							SbiOrganizationProductTypeId id = new SbiOrganizationProductTypeId();
-							id.setProductTypeId(aProductType.getProductTypeId());
-							id.setOrganizationId(aTenant.getId());
+							SbiOrganizationProductTypeId id = new SbiOrganizationProductTypeId(aProductType.getProductTypeId(),aTenant.getId());
 							association.setId(id);
 
 							hibernateSession.save(association);

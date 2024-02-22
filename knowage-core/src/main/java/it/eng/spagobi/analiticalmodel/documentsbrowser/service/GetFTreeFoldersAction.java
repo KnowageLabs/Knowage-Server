@@ -183,8 +183,7 @@ public class GetFTreeFoldersAction extends AbstractBaseHttpAction {
 				node.put("leaf", true);
 			}
 		} catch (JSONException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error("createNode",e);
 		}
 		
 		return node;		

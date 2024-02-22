@@ -134,7 +134,7 @@ public class WorkflowResource extends AbstractSpagoBIResource {
                     if (id > -1) // -1 if user is not in database but inserted
                         // after this update isNew = false in this
                         // case
-                        sbiwf.setId(id);
+                        sbiwf.changeId(id);
                 }
             } catch (JSONException e) {
                 logger.error(e);

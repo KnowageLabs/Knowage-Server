@@ -168,7 +168,7 @@ public class InsertNotesAction extends AbstractHttpAction {
 					try {
 						correctRoles = DAOFactory.getBIObjectDAO().getCorrectRolesForExecution(new Integer(objId), profile2);
 					} catch (NumberFormatException e2) {
-						e2.printStackTrace();
+						logger.error("getCorrectRolesForExecution",e2);
 					}
 					if (correctRoles == null || correctRoles.size() == 0) {
 						logger.warn("Object cannot be executed by no role of the user");

@@ -241,8 +241,8 @@ public class ManageRolesAction extends AbstractSpagoBIAction {
 								AuditLogUtilities.updateAudit(getHttpRequest(), profile, "PROF_ROLES.ADD", logParam,
 										"OK");
 							} catch (Exception e) {
-								// TODO Auto-generated catch block
-								e.printStackTrace();
+								//e.printStackTrace();
+								logger.error("AuditLogUtilities.updateAudit",e);
 							}
 							throw new SpagoBIServiceException(SERVICE_NAME, "Role Name already present.");
 						} else
@@ -253,8 +253,8 @@ public class ManageRolesAction extends AbstractSpagoBIAction {
 						AuditLogUtilities.updateAudit(getHttpRequest(), profile,
 								"PROF_ROLES." + ((insertModality) ? "ADD" : "MODIFY"), logParam, "ERR");
 					} catch (Exception e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
+						//e.printStackTrace();
+						logger.error("AuditLogUtilities.updateAudit",e);
 					}
 					logger.error(e1.getMessage(), e1);
 					throw new SpagoBIServiceException(SERVICE_NAME, "Exception occurred while retrieving role by name",
@@ -274,8 +274,8 @@ public class ManageRolesAction extends AbstractSpagoBIAction {
 						AuditLogUtilities.updateAudit(getHttpRequest(), profile,
 								"PROF_ROLES." + ((insertModality) ? "ADD" : "MODIFY"), logParam, "ERR");
 					} catch (Exception e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
+						//e.printStackTrace();
+						logger.error("AuditLogUtilities.updateAudit",e);
 					}
 					logger.error("Role type CD not existing");
 					throw new SpagoBIServiceException(SERVICE_NAME, "Role Type ID is undefined");
@@ -382,8 +382,8 @@ public class ManageRolesAction extends AbstractSpagoBIAction {
 						AuditLogUtilities.updateAudit(getHttpRequest(), profile,
 								"PROF_ROLES." + ((insertModality) ? "ADD" : "MODIFY"), logParam, "ERR");
 					} catch (Exception e1) {
-						// TODO Auto-generated catch block
-						e1.printStackTrace();
+						//e1.printStackTrace();
+						logger.error("AuditLogUtilities.updateAudit",e1);
 					}
 					logger.error(e.getMessage(), e);
 					throw new SpagoBIServiceException(SERVICE_NAME, "Exception occurred while saving new role", e);
@@ -394,8 +394,8 @@ public class ManageRolesAction extends AbstractSpagoBIAction {
 					AuditLogUtilities.updateAudit(getHttpRequest(), profile,
 							"PROF_ROLES." + ((insertModality) ? "ADD" : "MODIFY"), logParam, "KO");
 				} catch (Exception e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					//e.printStackTrace();
+					logger.error("AuditLogUtilities.updateAudit",e);
 				}
 				logger.error("Missing role name");
 				throw new SpagoBIServiceException(SERVICE_NAME, "Please enter role name");
@@ -422,8 +422,8 @@ public class ManageRolesAction extends AbstractSpagoBIAction {
 				try {
 					AuditLogUtilities.updateAudit(getHttpRequest(), profile, "PROF_ROLES.DELETE", logParam, "KO");
 				} catch (Exception e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
+					//e1.printStackTrace();
+					logger.error("AuditLogUtilities.updateAudit",e1);
 				}
 				logger.error("Exception occurred while deleting role", e);
 				throw new SpagoBIServiceException(SERVICE_NAME, "Exception occurred while deleting role", e);
@@ -442,8 +442,8 @@ public class ManageRolesAction extends AbstractSpagoBIAction {
 				try {
 					AuditLogUtilities.updateAudit(getHttpRequest(), profile, "PROF_ROLES.SYNCHRONIZATION", null, "KO");
 				} catch (Exception e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
+					//e1.printStackTrace();
+					logger.error("AuditLogUtilities.updateAudit",e1);
 				}
 				logger.error("Exception occurred while syncronize roles", e);
 				throw new SpagoBIServiceException(SERVICE_NAME, "Exception occurred while syncronize role", e);

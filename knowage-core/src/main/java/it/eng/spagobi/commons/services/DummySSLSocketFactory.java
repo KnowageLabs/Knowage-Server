@@ -116,7 +116,7 @@ public class DummySSLSocketFactory extends SSLSocketFactory {
 			factory = mySSLContext.getSocketFactory();
 		} catch (Exception ex) {
 			logger.debug("Error in DummySSLSocketFactory: " + ex);
-			ex.printStackTrace();
+			
 		}
 
 	}

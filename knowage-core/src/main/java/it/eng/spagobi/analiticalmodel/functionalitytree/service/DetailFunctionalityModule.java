@@ -33,6 +33,7 @@ import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 import it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO;
 import it.eng.spagobi.analiticalmodel.document.service.BIObjectsModule;
 import it.eng.spagobi.analiticalmodel.document.utils.DetBIObjModHelper;
+import it.eng.spagobi.analiticalmodel.execution.service.GetUrlForExecutionAction;
 import it.eng.spagobi.analiticalmodel.functionalitytree.bo.LowFunctionality;
 import it.eng.spagobi.analiticalmodel.functionalitytree.dao.ILowFunctionalityDAO;
 import it.eng.spagobi.commons.bo.Role;
@@ -41,7 +42,7 @@ import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.utilities.AuditLogUtilities;
 import it.eng.spagobi.commons.utilities.SpagoBITracer;
-
+import org.apache.log4j.Logger;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -69,6 +70,7 @@ public class DetailFunctionalityModule extends AbstractHttpModule{
 	private String typeFunct = null;
 	private IEngUserProfile profile;
 	SessionContainer session = null;
+	private static Logger logger = Logger.getLogger(DetailFunctionalityModule.class);
 
 	/*
 	 * (non-Javadoc)
@@ -269,8 +271,8 @@ public class DetailFunctionalityModule extends AbstractHttpModule{
 				try {
 					AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "FUNCTIONALITY.ADD",logParam , "OK");
 				} catch (Exception e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					//e.printStackTrace();
+					logger.error("AuditLogUtilities.updateAudit ",e);
 				}				
 			} else if (mod.equalsIgnoreCase(AdmintoolsConstants.DETAIL_MOD)) {
 				DAOFactory.getLowFunctionalityDAO().modifyLowFunctionality(
@@ -279,8 +281,8 @@ public class DetailFunctionalityModule extends AbstractHttpModule{
 				try {
 					AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "FUNCTIONALITY.MODIFY",logParam , "OK");
 				} catch (Exception e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					//e.printStackTrace();
+					logger.error("AuditLogUtilities.updateAudit ",e);
 				}
 				
 				// at this point erase inconsistent child roles that have been
@@ -298,8 +300,8 @@ public class DetailFunctionalityModule extends AbstractHttpModule{
 			try {
 				AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "FUNCTIONALITY.ADD/MODIFY",logParam , "ERR");
 			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				//e.printStackTrace();
+				logger.error("AuditLogUtilities.updateAudit ",e);
 			}	
 			EMFErrorHandler errorHandler = getErrorHandler();
 			errorHandler.addError(eex);
@@ -308,8 +310,8 @@ public class DetailFunctionalityModule extends AbstractHttpModule{
 			try {
 				AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "FUNCTIONALITY.ADD/MODIFY",logParam , "ERR");
 			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				//e.printStackTrace();
+				logger.error("AuditLogUtilities.updateAudit ",e);
 			}	
 			SpagoBITracer.major(AdmintoolsConstants.NAME_MODULE,
 					"DetailFunctionalityModule", "modDettaglioFunctionality",
@@ -357,8 +359,8 @@ public class DetailFunctionalityModule extends AbstractHttpModule{
 			try {
 				AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "FUNCTIONALITY.DELETE",logParam , "KO");
 			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				//e.printStackTrace();
+				logger.error("AuditLogUtilities.updateAudit ",e);
 			}
 			EMFErrorHandler errorHandler = getErrorHandler();
 			errorHandler.addError(eex);
@@ -367,8 +369,8 @@ public class DetailFunctionalityModule extends AbstractHttpModule{
 				try {
 					AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "FUNCTIONALITY.DELETE",logParam , "KO");
 				} catch (Exception e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					//e.printStackTrace();
+					logger.error("AuditLogUtilities.updateAudit ",e);
 				}
 			SpagoBITracer.major(AdmintoolsConstants.NAME_MODULE,
 					"DetailFunctionalityModule", "delFunctionality",
@@ -379,8 +381,8 @@ public class DetailFunctionalityModule extends AbstractHttpModule{
 		try {
 			AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "FUNCTIONALITY.DELETE",logParam , "OK");
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			//e.printStackTrace();
+			logger.error("AuditLogUtilities.updateAudit ",e);
 		}		 
 	}
 
@@ -500,8 +502,8 @@ public class DetailFunctionalityModule extends AbstractHttpModule{
 				try {
 					AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "parentFunct",logParam , "OK");
 				} catch (Exception e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					//e.printStackTrace();
+					logger.error("AuditLogUtilities.updateAudit ",e);
 				}
 				EMFValidationError error = new EMFValidationError(
 						EMFErrorSeverity.ERROR,
@@ -527,8 +529,8 @@ public class DetailFunctionalityModule extends AbstractHttpModule{
 				try {
 					AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "FUNCTIONALITY.ADD",null , "ERR");
 				} catch (Exception e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					//e.printStackTrace();
+					logger.error("AuditLogUtilities.updateAudit ",e);
 				}
 			}
 			if (DAOFactory.getLowFunctionalityDAO().existByCode(code) != null) {
@@ -538,8 +540,8 @@ public class DetailFunctionalityModule extends AbstractHttpModule{
 				try {
 					AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "FUNCTIONALITY.ADD",null , "ERR");
 				} catch (Exception e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					//e.printStackTrace();
+					logger.error("AuditLogUtilities.updateAudit ",e);
 				}
 			}
 			lowFunct = new LowFunctionality();
@@ -564,8 +566,8 @@ public class DetailFunctionalityModule extends AbstractHttpModule{
 				try {
 					AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "FUNCTIONALITY.MODIFY",null , "ERR");
 				} catch (Exception e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					//e.printStackTrace();
+					logger.error("AuditLogUtilities.updateAudit ",e);
 				}
 				EMFValidationError error = new EMFValidationError(
 						EMFErrorSeverity.ERROR, 1027);

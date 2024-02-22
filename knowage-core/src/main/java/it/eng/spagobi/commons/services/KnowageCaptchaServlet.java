@@ -10,6 +10,11 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+//import com.esotericsoftware.minlog.Log.Logger;
+import org.apache.log4j.Logger;
+
+import it.eng.spagobi.analiticalmodel.documentsbrowser.service.GetFTreeFoldersAction;
+import it.eng.spagobi.api.common.MetaUtils;
 import net.logicsquad.nanocaptcha.image.ImageCaptcha;
 import net.logicsquad.nanocaptcha.image.filter.FishEyeImageFilter;
 
@@ -19,7 +24,7 @@ public class KnowageCaptchaServlet extends HttpServlet {
 	 *
 	 */
 	private static final long serialVersionUID = -1268155968745374787L;
-
+	private static final Logger LOGGER = Logger.getLogger(KnowageCaptchaServlet.class);
 	@Override
 	public void doGet(HttpServletRequest httpservletrequest, HttpServletResponse httpservletresponse) throws ServletException, IOException {
 		int width = 200;
@@ -42,7 +47,7 @@ public class KnowageCaptchaServlet extends HttpServlet {
 		try {
 			writeImage(((httpservletresponse.getOutputStream())), bufferedimage);
 		} catch (IOException ioexception) {
-			ioexception.printStackTrace();
+			LOGGER.error("writeImage",ioexception);
 		}
 	}
 
@@ -51,7 +56,7 @@ public class KnowageCaptchaServlet extends HttpServlet {
 			ImageIO.write(bufferedimage, "png", outputstream);
 			outputstream.close();
 		} catch (IOException ioexception) {
-			ioexception.printStackTrace();
+			LOGGER.error("writeImage",ioexception);
 		}
 	}
 

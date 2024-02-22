@@ -119,9 +119,8 @@ public class InternalSecurityInitializer extends SpagoBIInitializer {
 
 							Integer attrID = findAttributeId(attributesList, name, organization);
 
-							SbiUserAttributesId sbiUserAttrID = new SbiUserAttributesId();
-							sbiUserAttrID.setId(usersLookupMap.get(userId));// user ID
-							sbiUserAttrID.setAttributeId(attrID.intValue());
+							SbiUserAttributesId sbiUserAttrID = new SbiUserAttributesId(usersLookupMap.get(userId),attrID.intValue());
+
 							sbiUserAttr.setId(sbiUserAttrID);
 
 							userDAO.updateSbiUserAttributes(sbiUserAttr);
@@ -145,13 +144,13 @@ public class InternalSecurityInitializer extends SpagoBIInitializer {
 							}
 
 							SbiExtUserRoles sbiExtUserRole = new SbiExtUserRoles();
-							SbiExtUserRolesId id = new SbiExtUserRolesId();
+							
 
 							Integer extRoleId = findRoleId(rolesList, name, organization);
 
 							int userIdInt = usersLookupMap.get(userId).intValue();
-							id.setExtRoleId(extRoleId);// role Id
-							id.setId(userIdInt);// user ID
+							SbiExtUserRolesId id = new SbiExtUserRolesId(userIdInt,extRoleId);
+							
 							sbiExtUserRole.getCommonInfo().setOrganization(organization);
 
 							sbiExtUserRole.setId(id);
@@ -450,7 +449,7 @@ public class InternalSecurityInitializer extends SpagoBIInitializer {
 									+ defaultProfileAttribute.getCommonInfo().getOrganization() + "] into database ");
 					try {
 						Integer id = profileAttributeDAO.saveSbiAttribute(defaultProfileAttribute);
-						defaultProfileAttribute.setAttributeId(id);
+						defaultProfileAttribute.changeAttributeId(id);
 						attributesList.add(defaultProfileAttribute);
 						LOGGER.debug("Attribute [" + defaultProfileAttribute.getAttributeName() + "] for organization ["
 								+ defaultProfileAttribute.getCommonInfo().getOrganization()

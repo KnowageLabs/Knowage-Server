@@ -238,14 +238,16 @@ public class DetailMenuModule extends AbstractHttpModule {
 			try {
 				AuditLogUtilities.updateAudit(getHttpRequest(), profile, "MENU.ADD", logParam, "OK");
 			} catch (Exception e) {
-				e.printStackTrace();
+				//e.printStackTrace();
+				logger.error("AuditLogUtilities.updateAudit",e);
 			}
 		} else if (mod.equalsIgnoreCase(AdmintoolsConstants.DETAIL_MOD)) {
 			menuDao.modifyMenu(menu);
 			try {
 				AuditLogUtilities.updateAudit(getHttpRequest(), profile, "MENU.MODIFY", logParam, "OK");
 			} catch (Exception e) {
-				e.printStackTrace();
+				//e.printStackTrace();
+				logger.error("AuditLogUtilities.updateAudit",e);
 			}
 		}
 
@@ -278,14 +280,16 @@ public class DetailMenuModule extends AbstractHttpModule {
 			try {
 				AuditLogUtilities.updateAudit(getHttpRequest(), profile, "MENU.DELETE", logParam, "ERR");
 			} catch (Exception e) {
-				e.printStackTrace();
+				//e.printStackTrace();
+				logger.error("AuditLogUtilities.updateAudit",e);
 			}
 			throw new EMFUserError(EMFErrorSeverity.ERROR, "10002", messageBundle);
 		} catch (Exception ex) {
 			try {
 				AuditLogUtilities.updateAudit(getHttpRequest(), profile, "MENU.DELETE", logParam, "ERR");
 			} catch (Exception e) {
-				e.printStackTrace();
+				//e.printStackTrace();
+				logger.error("AuditLogUtilities.updateAudit",e);
 			}
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		}
@@ -338,7 +342,8 @@ public class DetailMenuModule extends AbstractHttpModule {
 			try {
 				AuditLogUtilities.updateAudit(getHttpRequest(), profile, "MENU.ADD", null, "KO");
 			} catch (Exception e) {
-				e.printStackTrace();
+				//e.printStackTrace();
+				logger.error("AuditLogUtilities.updateAudit",e);
 			}
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		}
@@ -386,7 +391,8 @@ public class DetailMenuModule extends AbstractHttpModule {
 			try {
 				AuditLogUtilities.updateAudit(getHttpRequest(), profile, "MENU.ADD/MODIFY", logParam, "OK");
 			} catch (Exception e) {
-				e.printStackTrace();
+				//e.printStackTrace();
+				logger.error("AuditLogUtilities.updateAudit",e);
 			}
 			throw new EMFUserError(EMFErrorSeverity.ERROR, "10003", messageBundle);
 		}

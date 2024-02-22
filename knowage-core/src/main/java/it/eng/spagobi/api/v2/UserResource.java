@@ -192,8 +192,8 @@ public class UserResource extends AbstractSpagoBIResource {
 		List<Integer> list = requestDTO.getSbiExtUserRoleses();
 		Set<SbiExtRoles> roles = new HashSet<>(0);
 		for (Integer id : list) {
-			SbiExtRoles role = new SbiExtRoles();
-			role.setExtRoleId(id);
+			SbiExtRoles role = new SbiExtRoles(id);
+			
 			roles.add(role);
 		}
 		sbiUser.setSbiExtUserRoleses(roles);
@@ -203,8 +203,7 @@ public class UserResource extends AbstractSpagoBIResource {
 
 		for (Entry<Integer, HashMap<String, String>> entry : map.entrySet()) {
 			SbiUserAttributes attribute = new SbiUserAttributes();
-			SbiUserAttributesId attid = new SbiUserAttributesId();
-			attid.setAttributeId(entry.getKey());
+			SbiUserAttributesId attid = new SbiUserAttributesId(entry.getKey());
 			attribute.setId(attid);
 			for (Entry<String, String> value : entry.getValue().entrySet()) {
 
@@ -253,7 +252,7 @@ public class UserResource extends AbstractSpagoBIResource {
 		}
 
 		SbiUser sbiUser = new SbiUser();
-		sbiUser.setId(id);
+		sbiUser.changeId(id);
 		sbiUser.setUserId(requestDTO.getUserId());
 		sbiUser.setFullName(requestDTO.getFullName());
 		sbiUser.setPassword(requestDTO.getPassword());
@@ -263,8 +262,8 @@ public class UserResource extends AbstractSpagoBIResource {
 		List<Integer> list = requestDTO.getSbiExtUserRoleses();
 		Set<SbiExtRoles> roles = new HashSet<>(0);
 		for (Integer i : list) {
-			SbiExtRoles role = new SbiExtRoles();
-			role.setExtRoleId(i);
+			SbiExtRoles role = new SbiExtRoles(i);
+			
 			roles.add(role);
 		}
 		sbiUser.setSbiExtUserRoleses(roles);
@@ -287,8 +286,7 @@ public class UserResource extends AbstractSpagoBIResource {
 
 		for (Entry<Integer, HashMap<String, String>> entry : map.entrySet()) {
 			SbiUserAttributes attribute = new SbiUserAttributes();
-			SbiUserAttributesId attid = new SbiUserAttributesId();
-			attid.setAttributeId(entry.getKey());
+			SbiUserAttributesId attid = new SbiUserAttributesId(entry.getKey());
 			attribute.setId(attid);
 			for (Entry<String, String> value : entry.getValue().entrySet()) {
 

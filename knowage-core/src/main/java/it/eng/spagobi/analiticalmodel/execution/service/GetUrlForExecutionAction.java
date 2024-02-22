@@ -126,8 +126,8 @@ public class GetUrlForExecutionAction extends AbstractSpagoBIAction {
 				logParam.put("SNAPSHOT ID", snapshotId.toString());				
 				AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "DOCUMENT.GET_URL_FOR_SNAPSHOT",logParam , "KO");
 			} catch (Exception e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
+				//e1.printStackTrace();
+				logger.error("Snapshot with id = " + snapshotId,e1);
 			}		 
 			logger.error("Snapshot with id = " + snapshotId + " not found", e);
 			throw new SpagoBIServiceException(SERVICE_NAME, "Scheduled execution not found", e);
@@ -155,8 +155,8 @@ public class GetUrlForExecutionAction extends AbstractSpagoBIAction {
 					try {
 						AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "DOCUMENT.GET_URL_FOR_SNAPSHOT",logParam , "KO");
 					} catch (Exception e1) {
-						// TODO Auto-generated catch block
-						e1.printStackTrace();
+						//e1.printStackTrace();
+						logger.error("AuditLogUtilities.updateAudit",e1);
 					}
 					throw new SpagoBIServiceException("Cannot serialize the url [" + url + "] to the client", e);
 				}
@@ -164,8 +164,8 @@ public class GetUrlForExecutionAction extends AbstractSpagoBIAction {
 				try {
 					AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "DOCUMENT.GET_URL_FOR_SNAPSHOT",logParam , "KO");
 				} catch (Exception e1) {
-					// TODO Auto-generated catch block
 					e1.printStackTrace();
+					logger.error("AuditLogUtilities.updateAudit",e1);
 				}
 				throw new SpagoBIServiceException(SERVICE_NAME, "Required scheduled execution is not relevant to current document");
 			}
@@ -175,8 +175,8 @@ public class GetUrlForExecutionAction extends AbstractSpagoBIAction {
 		try {
 			AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "DOCUMENT.GET_URL_FOR_SNAPSHOT",logParam , "OK");
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			//e.printStackTrace();
+			logger.error("AuditLogUtilities.updateAudit",e);
 		}
 		return response;
 	}
@@ -203,8 +203,8 @@ public class GetUrlForExecutionAction extends AbstractSpagoBIAction {
 				logParam.put("SUBOBJECT ID", subObjectId.toString());				
 				AuditLogUtilities.updateAudit(getHttpRequest(),  userProfile, "DOCUMENT.GET_URL_FOR_SUBOBJ", logParam, "ERR");
 			} catch (Exception e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
+				//e1.printStackTrace();
+				logger.error("SUBOBJECT ID = " + subObjectId,e1);
 			}		 
 			logger.error("SubObject with id = " + subObjectId + " not found", e);
 			throw new SpagoBIServiceException(SERVICE_NAME, "Customized view not found", e);
@@ -265,8 +265,8 @@ public class GetUrlForExecutionAction extends AbstractSpagoBIAction {
 							try {
 								AuditLogUtilities.updateAudit(getHttpRequest(),  userProfile, "DOCUMENT.GET_URL_FOR_SUBOBJ",logParam , "ERR");
 							} catch (Exception e1) {
-								// TODO Auto-generated catch block
-								e1.printStackTrace();
+								//e1.printStackTrace();
+								logger.error("AuditLogUtilities.updateAudit",e1);
 							}	
 							throw new SpagoBIServiceException("Cannot serialize the url [" + url + "] to the client", e);
 						}
@@ -274,8 +274,8 @@ public class GetUrlForExecutionAction extends AbstractSpagoBIAction {
 						try {
 							AuditLogUtilities.updateAudit(getHttpRequest(),  userProfile, "DOCUMENT.GET_URL_FOR_SUBOBJ",logParam , "KO");
 						} catch (Exception e1) {
-							// TODO Auto-generated catch block
-							e1.printStackTrace();
+							//e1.printStackTrace();
+							logger.error("AuditLogUtilities.updateAudit",e1);
 						}	
 						throw new SpagoBIServiceException(SERVICE_NAME, "User cannot execute required customized view");
 					}
@@ -283,8 +283,8 @@ public class GetUrlForExecutionAction extends AbstractSpagoBIAction {
 					try {
 						AuditLogUtilities.updateAudit(getHttpRequest(),  userProfile, "DOCUMENT.GET_URL_FOR_SUBOBJ",logParam , "KO");
 					} catch (Exception e1) {
-						// TODO Auto-generated catch block
-						e1.printStackTrace();
+						//e1.printStackTrace();
+						logger.error("AuditLogUtilities.updateAudit",e1);
 					}	
 					throw new SpagoBIServiceException(SERVICE_NAME, "Required subobject is not relevant to current document");
 				}
@@ -293,8 +293,8 @@ public class GetUrlForExecutionAction extends AbstractSpagoBIAction {
 			try {
 				AuditLogUtilities.updateAudit(getHttpRequest(),  userProfile, "DOCUMENT.GET_URL_FOR_SUBOBJ",logParam , "ERR");
 			} catch (Exception e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
+				//e1.printStackTrace();
+				logger.error("AuditLogUtilities.updateAudit",e1);
 			}	
 			throw new SpagoBIServiceException(SERVICE_NAME, "An internal error has occured", e);
 		} finally {
@@ -303,8 +303,8 @@ public class GetUrlForExecutionAction extends AbstractSpagoBIAction {
 		try {
 			AuditLogUtilities.updateAudit(getHttpRequest(),  userProfile, "DOCUMENT.GET_URL_FOR_SUBOBJ",logParam , "OK");
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			//e.printStackTrace();
+			logger.error("AuditLogUtilities.updateAudit",e);
 		}
 		return response;
 	}
@@ -350,8 +350,8 @@ public class GetUrlForExecutionAction extends AbstractSpagoBIAction {
 					try {
 						AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "DOCUMENT.GET_URL",logParam , "ERR");
 					} catch (Exception e1) {
-						// TODO Auto-generated catch block
-						e1.printStackTrace();
+						//e1.printStackTrace();
+						logger.error("AuditLogUtilities.updateAudit",e1);
 					}
 					throw new SpagoBIServiceException(SERVICE_NAME, "Cannot serialize errors to the client", e);
 				}
@@ -372,14 +372,14 @@ public class GetUrlForExecutionAction extends AbstractSpagoBIAction {
 					try {
 						AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "DOCUMENT.GET_URL",logParam , "KO");
 					} catch (Exception e1) {
-						// TODO Auto-generated catch block
-						e1.printStackTrace();
+						//e1.printStackTrace();
+						logger.error("AuditLogUtilities.updateAudit",e1);
 					}
 					try {
 						AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "DOCUMENT.GET_URL",logParam , "ERR");
 					} catch (Exception e1) {
-						// TODO Auto-generated catch block
-						e1.printStackTrace();
+						//e1.printStackTrace();
+						logger.error("AuditLogUtilities.updateAudit",e1);
 					}
 					throw new SpagoBIServiceException(SERVICE_NAME, "Cannot serialize the url [" + url + "] to the client", e);
 				}
@@ -390,8 +390,8 @@ public class GetUrlForExecutionAction extends AbstractSpagoBIAction {
 		try {
 			AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "DOCUMENT.GET_URL",logParam , "OK");
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			//e.printStackTrace();
+			logger.error("AuditLogUtilities.updateAudit",e);
 		}
 		return response;
 	}

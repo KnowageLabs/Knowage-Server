@@ -156,14 +156,14 @@ public class ManageAttributesAction extends AbstractSpagoBIAction {
                             boolean isNewAttrForRes = true;
                             if (idStr != null && !idStr.equals("")) {
                                 Integer attributeId = new Integer(idStr);
-                                attribute.setAttributeId(attributeId.intValue());
+                                attribute.changeAttributeId(attributeId.intValue());
                                 isNewAttrForRes = false;
                             }
                             Integer attrID = attrDao.saveOrUpdateSbiAttribute(attribute);
                             logger.debug("Attribute updated");
 
                             ArrayList<SbiAttribute> attributes = new ArrayList<SbiAttribute>();
-                            attribute.setAttributeId(attrID);
+                            attribute.changeAttributeId(attrID);
                             attributes.add(attribute);
 
                             getAttributesListAdded(locale, attributes, isNewAttrForRes, attrID);
@@ -184,8 +184,8 @@ public class ManageAttributesAction extends AbstractSpagoBIAction {
                 try {
                     AuditLogUtilities.updateAudit(getHttpRequest(), profile, "PROF_ATTRIBUTES.ADD", null, "OK");
                 } catch (Exception e3) {
-                    // TODO Auto-generated catch block
-                    e3.printStackTrace();
+                	//e.printStackTrace();
+        			logger.error("AuditLogUtilities.updateAudit",e);
                 }
                 logger.error(e.getMessage(), e);
                 getHttpResponse().setStatus(404);
@@ -218,13 +218,13 @@ public class ManageAttributesAction extends AbstractSpagoBIAction {
 
             } catch (IOException e1) {
                 logger.error("IO Exception", e1);
-                e1.printStackTrace();
+                //e1.printStackTrace();
             } catch (SerializationException e) {
                 logger.error("Deserialization Exception", e);
-                e.printStackTrace();
+                //e.printStackTrace();
             } catch (JSONException e) {
                 logger.error("JSONException", e);
-                e.printStackTrace();
+                //e.printStackTrace();
             }
             if (idStr != null && !idStr.equals("")) {
                 HashMap<String, String> logParam = new HashMap();
@@ -251,8 +251,8 @@ public class ManageAttributesAction extends AbstractSpagoBIAction {
                         try {
                             AuditLogUtilities.updateAudit(getHttpRequest(), profile, "PROF_ATTRIBUTES.DELETE", logParam, "KO");
                         } catch (Exception e1) {
-                            // TODO Auto-generated catch block
-                            e1.printStackTrace();
+                        	//e.printStackTrace();
+                			logger.error("AuditLogUtilities.updateAudit",e);
                         }
                     } catch (IOException e1) {
                         logger.error(e1.getMessage(), e1);

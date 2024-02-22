@@ -152,15 +152,15 @@ public class DetailDataSourceModule extends AbstractHttpModule {
 				try {
 					AuditLogUtilities.updateAudit(getHttpRequest(), profile, "DATA_SOURCE.ADD", logParam, "KO");
 				} catch (Exception e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					//e.printStackTrace();
+					logger.error("AuditLogUtilities.updateAudit ",e);
 				}
 			} else {
 				try {
 					AuditLogUtilities.updateAudit(getHttpRequest(), profile, "DATA_SOURCE.MODIFY", logParam, "KO");
 				} catch (Exception e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					//e.printStackTrace();
+					logger.error("AuditLogUtilities.updateAudit ",e);
 				}
 			}
 
@@ -213,15 +213,15 @@ public class DetailDataSourceModule extends AbstractHttpModule {
 							try {
 								AuditLogUtilities.updateAudit(getHttpRequest(), profile, "DATA_SOURCE.ADD", logParam, "KO");
 							} catch (Exception e) {
-								// TODO Auto-generated catch block
-								e.printStackTrace();
+								//e.printStackTrace();
+								logger.error("AuditLogUtilities.updateAudit ",e);
 							}
 						} else {
 							try {
 								AuditLogUtilities.updateAudit(getHttpRequest(), profile, "DATA_SOURCE.MODIFY", logParam, "KO");
 							} catch (Exception e) {
-								// TODO Auto-generated catch block
-								e.printStackTrace();
+								//e.printStackTrace();
+								logger.error("AuditLogUtilities.updateAudit ",e);
 							}
 						}
 						return;
@@ -272,8 +272,8 @@ public class DetailDataSourceModule extends AbstractHttpModule {
 			try {
 				AuditLogUtilities.updateAudit(getHttpRequest(), profile, "DATA_SOURCE.MODIFY", null, "ERR");
 			} catch (Exception e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
+				//e1.printStackTrace();
+				logger.error("AuditLogUtilities.updateAudit ",e1);
 			}
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 8005, new Vector(), params);
 
@@ -284,8 +284,8 @@ public class DetailDataSourceModule extends AbstractHttpModule {
 			try {
 				AuditLogUtilities.updateAudit(getHttpRequest(), profile, "DATA_SOURCE.MODIFY", null, "KO");
 			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				//e.printStackTrace();
+				logger.error("AuditLogUtilities.updateAudit ",e);
 			}
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		}
@@ -332,8 +332,8 @@ public class DetailDataSourceModule extends AbstractHttpModule {
 			try {
 				AuditLogUtilities.updateAudit(getHttpRequest(), profile, "DATA_SOURCE.DELETE", null, "ERR");
 			} catch (Exception e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
+				//e1.printStackTrace();
+				logger.error("AuditLogUtilities.updateAudit ",e1);
 			}
 			logger.error("Cannot fill response container" + e.getLocalizedMessage());
 			HashMap params = new HashMap();
@@ -341,21 +341,21 @@ public class DetailDataSourceModule extends AbstractHttpModule {
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 8006, new Vector(), params);
 
 		} catch (Exception ex) {
-			ex.printStackTrace();
+			//ex.printStackTrace();
 			logger.error("Cannot fill response container", ex);
 			try {
 				AuditLogUtilities.updateAudit(getHttpRequest(), profile, "DATA_SOURCE.DELETE", null, "ERR");
 			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				//e.printStackTrace();
+				logger.error("AuditLogUtilities.updateAudit ",e);
 			}
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		}
 		try {
 			AuditLogUtilities.updateAudit(getHttpRequest(), profile, "DATA_SOURCE.DELETE", logParam, "OK");
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			//e.printStackTrace();
+			logger.error("AuditLogUtilities.updateAudit ",e);
 		}
 		response.setAttribute("loopback", "true");
 	}

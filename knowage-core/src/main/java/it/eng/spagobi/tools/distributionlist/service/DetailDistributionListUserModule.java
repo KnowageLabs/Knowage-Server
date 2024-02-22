@@ -167,7 +167,6 @@ public class DetailDistributionListUserModule extends AbstractHttpModule {
 				
 		}
 	    catch (Exception ex) {		
-		    ex.printStackTrace();
 			logger.error("Cannot fill response container" ,ex);
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 	    }
@@ -209,7 +208,6 @@ public class DetailDistributionListUserModule extends AbstractHttpModule {
 				
 		}
 	    catch (Exception ex) {		
-		    ex.printStackTrace();
 			logger.error("Cannot fill response container" ,ex);
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 	    }

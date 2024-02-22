@@ -471,7 +471,7 @@ public class ChartImpl implements IChart {
 			
 		}
 		catch (Exception e) {
-			logger.error(e.getCause()+" "+e.getStackTrace());
+			logger.error(e.getCause()+" "+e);
 			logger.error("many error in reading data source parameters",e);
 		}
 

@@ -172,8 +172,7 @@ public class MeasureCatalogueCRUD {
 			metaData.put("geoIdHierarchyLevel", geoRefFieldMeta.get(0).getProperty("hierarchy_level"));
 			// TODO bisogna strippare la label del datset dal prefisso dell'header di colonna
 		} catch (JSONException t) {
-			// TODO Auto-generated catch block
-			t.printStackTrace();
+			logger.error("JSONException",t);
 		}
 
 		logger.debug("Joined dataset succesfully serialized");

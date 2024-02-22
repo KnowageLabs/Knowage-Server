@@ -263,7 +263,6 @@ public class DetailDistributionListModule extends AbstractModule {
 				
 		}
 	    catch (Exception ex) {		
-		    ex.printStackTrace();
 			logger.error("Cannot fill response container" ,ex);
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 	    }

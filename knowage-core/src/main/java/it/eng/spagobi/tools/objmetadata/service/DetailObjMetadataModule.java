@@ -254,7 +254,6 @@ public class DetailObjMetadataModule extends AbstractModule {
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 13006, new Vector(), params);
 
 		} catch (Exception ex) {
-			ex.printStackTrace();
 			logger.error("Cannot fill response container", ex);
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		}

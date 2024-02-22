@@ -241,8 +241,8 @@ public class JobManagementModule extends AbstractHttpModule {
 					try {
 						AuditLogUtilities.updateAudit(getHttpRequest(), profile, "SCHEDULER.DELETE", logParam, "KO");
 					} catch (Exception e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
+						//e.printStackTrace();
+						logger.error("AuditLogUtilities.updateAudit ",e);
 					}
 					throw new Exception("Imcomplete response returned by the Web service " + "during schedule " + triggerName + " deletion");
 				}
@@ -250,8 +250,8 @@ public class JobManagementModule extends AbstractHttpModule {
 					try {
 						AuditLogUtilities.updateAudit(getHttpRequest(), profile, "SCHEDULER.DELETE", logParam, "KO");
 					} catch (Exception e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
+						//e.printStackTrace();
+						logger.error("AuditLogUtilities.updateAudit ",e);
 					}
 					throw new Exception("Schedule " + triggerName + " not deleted by the Web Service");
 				}
@@ -263,8 +263,8 @@ public class JobManagementModule extends AbstractHttpModule {
 				try {
 					AuditLogUtilities.updateAudit(getHttpRequest(), profile, "SCHEDULER.DELETE", logParam, "KO");
 				} catch (Exception e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					//e.printStackTrace();
+					logger.error("AuditLogUtilities.updateAudit ",e);
 				}
 				throw new Exception("Imcomplete response returned by the Web service " + "during job " + jobName + " deletion");
 			}
@@ -272,8 +272,8 @@ public class JobManagementModule extends AbstractHttpModule {
 				try {
 					AuditLogUtilities.updateAudit(getHttpRequest(), profile, "SCHEDULER.DELETE", logParam, "KO");
 				} catch (Exception e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					//e.printStackTrace();
+					logger.error("AuditLogUtilities.updateAudit ",e);
 				}
 				throw new Exception("JOb " + jobName + " not deleted by the Web Service");
 			}
@@ -283,8 +283,8 @@ public class JobManagementModule extends AbstractHttpModule {
 			try {
 				AuditLogUtilities.updateAudit(getHttpRequest(), profile, "SCHEDULER.DELETE", logParam, "KO");
 			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				//e.printStackTrace();
+				logger.error("AuditLogUtilities.updateAudit ",e);
 			}
 			logger.error("Error while deleting job", ex);
 			throw new EMFUserError(EMFErrorSeverity.ERROR, "errors.1002", "component_scheduler_messages");
@@ -292,8 +292,8 @@ public class JobManagementModule extends AbstractHttpModule {
 		try {
 			AuditLogUtilities.updateAudit(getHttpRequest(), profile, "SCHEDULER.DELETE", logParam, "OK");
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			//e.printStackTrace();
+			logger.error("AuditLogUtilities.updateAudit ",e);
 		}
 	}
 
@@ -525,8 +525,8 @@ public class JobManagementModule extends AbstractHttpModule {
 				try {
 					AuditLogUtilities.updateAudit(getHttpRequest(), profile, "SCHEDULER.SAVE", logParam, "KO");
 				} catch (Exception e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					//e.printStackTrace();
+					logger.error("AuditLogUtilities.updateAudit ",e);
 				}
 				throw new Exception("Imcomplete response returned by the Web service " + "during job " + jobInfo.getJobName() + " creation");
 			}
@@ -536,16 +536,16 @@ public class JobManagementModule extends AbstractHttpModule {
 			try {
 				AuditLogUtilities.updateAudit(getHttpRequest(), profile, "SCHEDULER.SAVE", logParam, "OK");
 			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				//e.printStackTrace();
+				logger.error("AuditLogUtilities.updateAudit ",e);
 			}
 
 		} catch (Exception ex) {
 			try {
 				AuditLogUtilities.updateAudit(getHttpRequest(), profile, "SCHEDULER.SAVE", logParam, "KO");
 			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				//e.printStackTrace();
+				logger.error("AuditLogUtilities.updateAudit ",e);
 			}
 			logger.error("Error while saving job", ex);
 			throw new EMFUserError(EMFErrorSeverity.ERROR, "errors.1004", "component_scheduler_messages");

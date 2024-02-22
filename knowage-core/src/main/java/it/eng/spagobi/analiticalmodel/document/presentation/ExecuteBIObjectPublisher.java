@@ -104,7 +104,7 @@ public class ExecuteBIObjectPublisher implements PublisherDispatcherIFace {
 				try {
 					executeModuleResponse.delAttribute("isLoop");
 				} catch (Exception e) {
-					e.printStackTrace();
+					logger.error("delAttribute",e);
 				}
 				isLoop = true;
 			}

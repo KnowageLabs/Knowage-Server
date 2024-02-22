@@ -321,8 +321,8 @@ public class DetailMapModule extends AbstractHttpModule {
 			try {
 				AuditLogUtilities.updateAudit(getHttpRequest(), profile, "MAP_CATALOG.ADD/MODIFY", null, "ERR");
 			} catch (Exception e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
+				//e1.printStackTrace();
+				logger.error("AuditLogUtilities.updateAudit",e1);
 			}
 			logger.error("Error while saving catalogue map: " + e.getMessage());
 			HashMap params = new HashMap();
@@ -335,8 +335,8 @@ public class DetailMapModule extends AbstractHttpModule {
 			try {
 				AuditLogUtilities.updateAudit(getHttpRequest(), profile, "MAP_CATALOG.MODIFY", null, "KO");
 			} catch (Exception e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
+				//e1.printStackTrace();
+				logger.error("AuditLogUtilities.updateAudit",e1);
 			}
 			TracerSingleton.log(SpagoBIConstants.NAME_MODULE, TracerSingleton.MAJOR, "Cannot fill response container" + ex.getLocalizedMessage());
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
@@ -384,8 +384,8 @@ public class DetailMapModule extends AbstractHttpModule {
 			try {
 				AuditLogUtilities.updateAudit(getHttpRequest(), profile, "MAP_CATALOG.DELETE", logParam, "ERR");
 			} catch (Exception e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
+				//e1.printStackTrace();
+				logger.error("AuditLogUtilities.updateAudit",e1);
 			}
 			HashMap params = new HashMap();
 			params.put(AdmintoolsConstants.PAGE, ListMapsModule.MODULE_PAGE);
@@ -395,10 +395,10 @@ public class DetailMapModule extends AbstractHttpModule {
 			try {
 				AuditLogUtilities.updateAudit(getHttpRequest(), profile, "MAP_CATALOG.DELETE", logParam, "ERR");
 			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			ex.printStackTrace();
+				//e.printStackTrace();
+				logger.error("AuditLogUtilities.updateAudit",e);
+			}//ex.printStackTrace();
+			logger.error("AuditLogUtilities.updateAudit",ex);
 			TracerSingleton.log(SpagoBIConstants.NAME_MODULE, TracerSingleton.MAJOR, "Cannot fill response container" + ex.getLocalizedMessage());
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		}
@@ -406,8 +406,8 @@ public class DetailMapModule extends AbstractHttpModule {
 		try {
 			AuditLogUtilities.updateAudit(getHttpRequest(), profile, "MAP_CATALOG.DELETE", logParam, "OK");
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			//e.printStackTrace();
+			logger.error("AuditLogUtilities.updateAudit",e);
 		}
 	}
 
@@ -489,8 +489,8 @@ public class DetailMapModule extends AbstractHttpModule {
 			try {
 				AuditLogUtilities.updateAudit(getHttpRequest(), profile, "MAP_CATALOG.MODIFY", logParam, "ERR");
 			} catch (Exception e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
+				//e1.printStackTrace();
+				logger.error("AuditLogUtilities.updateAudit ",e1);
 			}
 			HashMap params = new HashMap();
 			params.put(AdmintoolsConstants.PAGE, ListMapsModule.MODULE_PAGE);
@@ -500,10 +500,10 @@ public class DetailMapModule extends AbstractHttpModule {
 			try {
 				AuditLogUtilities.updateAudit(getHttpRequest(), profile, "MAP_CATALOG.MODIFY", null, "KO");
 			} catch (Exception e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			}
-			ex.printStackTrace();
+				//e1.printStackTrace();
+				logger.error("AuditLogUtilities.updateAudit ",e1);
+			}//ex.printStackTrace();
+			logger.error("AuditLogUtilities.updateAudit ",ex);
 			TracerSingleton.log(SpagoBIConstants.NAME_MODULE, TracerSingleton.MAJOR, "Cannot fill response container" + ex.getLocalizedMessage());
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		}
@@ -586,8 +586,8 @@ public class DetailMapModule extends AbstractHttpModule {
 			if (uploaded.getSize() > 0) {
 				try {
 					content = uploaded.get();
-				} catch (Exception e) {
-					e.printStackTrace();
+				} catch (Exception e) {//e.printStackTrace();
+					logger.error("uploaded.get ",e);
 				}
 			}
 		}
@@ -646,8 +646,8 @@ public class DetailMapModule extends AbstractHttpModule {
 			return lstFeatures;
 		} catch (EMFUserError eu) {
 			throw new EMFUserError(eu);
-		} catch (Exception e) {
-			e.printStackTrace();
+		} catch (Exception e) {//e.printStackTrace();
+			logger.error("EMFUserError ",e);
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 5009);
 		}
 	}
@@ -691,8 +691,8 @@ public class DetailMapModule extends AbstractHttpModule {
 			try {
 				AuditLogUtilities.updateAudit(getHttpRequest(), profile, "MAP_CATALOG.ADD", null, "ERR");
 			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				//e.printStackTrace();
+				logger.error("AuditLogUtilities.updateAudit",e);
 			}
 			TracerSingleton.log(SpagoBIConstants.NAME_MODULE, TracerSingleton.MAJOR, "Cannot fill response container" + ex.getLocalizedMessage());
 			HashMap params = new HashMap();

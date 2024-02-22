@@ -31,6 +31,7 @@ import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spago.tracing.TracerSingleton;
 import it.eng.spago.validation.EMFValidationError;
+import it.eng.spagobi.analiticalmodel.execution.service.GetUrlForExecutionAction;
 import it.eng.spagobi.commons.constants.AdmintoolsConstants;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
@@ -39,7 +40,7 @@ import it.eng.spagobi.mapcatalogue.bo.GeoFeature;
 import it.eng.spagobi.mapcatalogue.bo.GeoMap;
 import it.eng.spagobi.mapcatalogue.bo.GeoMapFeature;
 import it.eng.spagobi.mapcatalogue.dao.ISbiGeoFeaturesDAO;
-
+import org.apache.log4j.Logger;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -55,7 +56,7 @@ import javax.servlet.ServletOutputStream;
 public class DetailFeatureModule extends AbstractHttpModule {
 	
 	private String modalita = "";
-	
+	private static Logger logger = Logger.getLogger(DetailFeatureModule.class);
 	
 	/**
 	 * Method called automatically by Spago framework when the action is invoked.
@@ -222,15 +223,15 @@ private void modDetailFeature(SourceBean request, String mod, SourceBean respons
 			try {
 				AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "MAP_CATALOG_FEATURE.ADD", logParam, "ERR");
 			} catch (Exception e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
+				//e1.printStackTrace();
+				logger.error("AuditLogUtilities.updateAudit ",e1);
 			}
 		} else {
 			try {
 				AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "MAP_CATALOG_FEATURE.MODIFY", logParam, "ERR");
 			} catch (Exception e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
+				//e1.printStackTrace();
+				logger.error("AuditLogUtilities.updateAudit ",e1);
 			}
 		}
 		HashMap params = new HashMap();
@@ -244,15 +245,15 @@ private void modDetailFeature(SourceBean request, String mod, SourceBean respons
 			try {
 				AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "MAP_CATALOG_FEATURE.ADD", logParam, "KO");
 			} catch (Exception e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
+				//e1.printStackTrace();
+				logger.error("AuditLogUtilities.updateAudit ",e1);
 			}
 		} else {
 			try {
 				AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "MAP_CATALOG_FEATURE.MODIFY", logParam, "KO");
 			} catch (Exception e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
+				//e1.printStackTrace();
+				logger.error("AuditLogUtilities.updateAudit ",e1);
 			}
 		}
 		TracerSingleton.log(SpagoBIConstants.NAME_MODULE, TracerSingleton.MAJOR, "Cannot fill response container" + ex.getLocalizedMessage());		
@@ -263,15 +264,15 @@ private void modDetailFeature(SourceBean request, String mod, SourceBean respons
 		try {
 			AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "MAP_CATALOG_FEATURE.ADD", logParam, "OK");
 		} catch (Exception e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
+			//e1.printStackTrace();
+			logger.error("AuditLogUtilities.updateAudit ",e1);
 		}
 	} else {
 		try {
 			AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "MAP_CATALOG_FEATURE.MODIFY", logParam, "OK");
 		} catch (Exception e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
+			//e1.printStackTrace();
+			logger.error("AuditLogUtilities.updateAudit ",e1);
 		}
 	}
 	
@@ -308,8 +309,8 @@ private void delDetailFeature(SourceBean request, String mod, SourceBean respons
 		try {
 			AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "MAP_CATALOG_FEATURE.DELETE", null, "ERR");
 		} catch (Exception e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
+			//e1.printStackTrace();
+			logger.error("AuditLogUtilities.updateAudit ",e1);
 		}
 		  HashMap params = new HashMap();
 		  params.put(AdmintoolsConstants.PAGE, ListFeaturesModule.MODULE_PAGE);
@@ -320,8 +321,8 @@ private void delDetailFeature(SourceBean request, String mod, SourceBean respons
 	    	try {
 				AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "MAP_CATALOG_FEATURE.DELETE", null, "KO");
 			} catch (Exception e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
+				//e1.printStackTrace();
+				logger.error("AuditLogUtilities.updateAudit ",e1);
 			}
 		TracerSingleton.log(SpagoBIConstants.NAME_MODULE, TracerSingleton.MAJOR, "Cannot fill response container" + ex.getLocalizedMessage());
 		throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
@@ -330,8 +331,8 @@ private void delDetailFeature(SourceBean request, String mod, SourceBean respons
 	try {
 		AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "MAP_CATALOG_FEATURE.DELETE", null, "OK");
 	} catch (Exception e1) {
-		// TODO Auto-generated catch block
-		e1.printStackTrace();
+		//e1.printStackTrace();
+		logger.error("AuditLogUtilities.updateAudit ",e1);
 	}
 	
 }

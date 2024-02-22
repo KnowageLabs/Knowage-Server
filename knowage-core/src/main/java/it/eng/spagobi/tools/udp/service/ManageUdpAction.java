@@ -144,7 +144,7 @@ public class ManageUdpAction extends AbstractSpagoBIAction {
                 udp.setIsMultivalue(isMultivalue);
 
                 if (id != null && !id.equals("") && !id.equals("0")) {
-                    udp.setUdpId(Integer.valueOf(id));
+                    udp.changeUdpId(Integer.valueOf(id));
                     udpDao.update(udp);
                     logger.debug("User attribute " + id + " updated");
                     JSONObject attributesResponseSuccessJSON = new JSONObject();

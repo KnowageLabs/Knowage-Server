@@ -222,13 +222,11 @@ public class PrintNotesAction extends AbstractSpagoBIAction {
 						}
 					} catch (IOException e) {
 						LOGGER.error("error in appending lines to the buffer",e);
-						e.printStackTrace();
 					}
 				}
 			}
 		} catch (Exception e) {
 			LOGGER.error("error in retrieving the template",e);
-			e.printStackTrace();
 			return null;
 		}
 		LOGGER.debug("OUT");

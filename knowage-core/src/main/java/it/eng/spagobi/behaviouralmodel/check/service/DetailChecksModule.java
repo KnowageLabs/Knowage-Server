@@ -32,6 +32,7 @@ import it.eng.spago.security.IEngUserProfile;
 import it.eng.spago.validation.EMFValidationError;
 import it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO;
 import it.eng.spagobi.analiticalmodel.document.utils.DetBIObjModHelper;
+import it.eng.spagobi.analiticalmodel.execution.service.GetUrlForExecutionAction;
 import it.eng.spagobi.behaviouralmodel.check.bo.Check;
 import it.eng.spagobi.behaviouralmodel.check.dao.ICheckDAO;
 import it.eng.spagobi.commons.bo.Domain;
@@ -40,7 +41,7 @@ import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.utilities.AuditLogUtilities;
 import it.eng.spagobi.commons.utilities.SpagoBITracer;
 import it.eng.spagobi.commons.utilities.UserUtilities;
-
+import org.apache.log4j.Logger;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -63,7 +64,7 @@ public class DetailChecksModule extends AbstractHttpModule {
 	private Boolean back = new Boolean(false);
 	private IEngUserProfile profile;
 	SessionContainer session = null;
-
+	private static Logger logger = Logger.getLogger(DetailChecksModule.class);
 	/* (non-Javadoc)
 	 * @see it.eng.spago.dispatching.module.AbstractModule#init(it.eng.spago.base.SourceBean)
 	 */
@@ -143,8 +144,8 @@ public class DetailChecksModule extends AbstractHttpModule {
 			try {
 				AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "CHECK.ADD/MODIFY", null, "KO");
 			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				//e.printStackTrace();
+				logger.error("AuditLogUtilities.updateAudit",e);
 			}
 			SpagoBITracer.major(AdmintoolsConstants.NAME_MODULE, "DettaglioEngineModule","getDettaglioEngine","Cannot fill response container", ex  );
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
@@ -178,8 +179,8 @@ public class DetailChecksModule extends AbstractHttpModule {
 				try {
 					AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "CHECK.ADD/MODIFY", null, "ERR");
 				} catch (Exception e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					//e.printStackTrace();
+					logger.error("AuditLogUtilities.updateAudit",e);
 				}
 				return;
 			}
@@ -197,8 +198,8 @@ public class DetailChecksModule extends AbstractHttpModule {
 			try {
 				AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "CHECK.ADD/MODIFY", null, "KO");
 			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				//e.printStackTrace();
+				logger.error("AuditLogUtilities.updateAudit",e);
 			}
 			SpagoBITracer.major(AdmintoolsConstants.NAME_MODULE, "DetailEngineModule","modDetailEngine","Cannot fill response container", ex  );
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
@@ -210,8 +211,8 @@ public class DetailChecksModule extends AbstractHttpModule {
 		try {
 			AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "CHECK.ADD/MODIFY", logParam, "OK");
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			//e.printStackTrace();
+			logger.error("AuditLogUtilities.updateAudit",e);
 		}
 	
 	}
@@ -286,8 +287,8 @@ public class DetailChecksModule extends AbstractHttpModule {
 			try {
 				AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "CHECK.DELETE", null, "ERR");
 			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				//e.printStackTrace();
+				logger.error("AuditLogUtilities.updateAudit",e);
 			}
 			SpagoBITracer.major(AdmintoolsConstants.NAME_MODULE, "DetailEngineModule","delDetailRuolo","Cannot fill response container", ex  );
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
@@ -299,8 +300,8 @@ public class DetailChecksModule extends AbstractHttpModule {
 		try {
 			AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "CHECK.DELETE", logParam, "OK");
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			//e.printStackTrace();
+			logger.error("AuditLogUtilities.updateAudit",e);
 		}
 	}
 	
@@ -337,8 +338,8 @@ public class DetailChecksModule extends AbstractHttpModule {
 			try {
 				AuditLogUtilities.updateAudit(getHttpRequest(),  profile, "CHECK.DELETE", null, "ERR");
 			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				//e.printStackTrace();
+				logger.error("AuditLogUtilities.updateAudit",e);
 			}
 			SpagoBITracer.major(AdmintoolsConstants.NAME_MODULE, "DetailEngineModule","newDetailEngine","Cannot prepare page for the insertion", ex  );
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);

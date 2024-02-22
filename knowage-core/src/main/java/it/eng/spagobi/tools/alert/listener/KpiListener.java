@@ -38,16 +38,13 @@ public class KpiListener extends AbstractAlertListener {
         InputParameter par = (InputParameter) JsonConverter.jsonToObject(jsonParameters, InputParameter.class);
 
         SbiKpiKpi sbiKpiKpi = new SbiKpiKpi();
-        SbiKpiKpiId sbiKpiKpiId = new SbiKpiKpiId();
-        sbiKpiKpiId.setId(par.getKpiId());
-        sbiKpiKpiId.setVersion(par.getKpiVersion());
+        SbiKpiKpiId sbiKpiKpiId = new SbiKpiKpiId(par.getKpiId(),par.getKpiVersion());
         sbiKpiKpi.setSbiKpiKpiId(sbiKpiKpiId);
         ret.add(sbiKpiKpi);
         if (par.getActions() != null) {
             for (Action action : par.getActions()) {
                 if (action.getIdAction() != null) {
-                    SbiAlertAction alertAction = new SbiAlertAction();
-                    alertAction.setId(action.getIdAction());
+                    SbiAlertAction alertAction = new SbiAlertAction(action.getIdAction());
                     ret.add(alertAction);
                 }
             }

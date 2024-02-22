@@ -130,9 +130,7 @@ public class DataSourceInitializer extends SpagoBIInitializer {
 			SbiOrganizationDatasource sbiOrganizationDatasource = new SbiOrganizationDatasource();
 			sbiOrganizationDatasource.setSbiDataSource(aDataSource);
 			sbiOrganizationDatasource.setSbiOrganizations(tenant);
-			SbiOrganizationDatasourceId idRel = new SbiOrganizationDatasourceId();
-			idRel.setDatasourceId(newId);
-			idRel.setOrganizationId(tenant.getId());
+			SbiOrganizationDatasourceId idRel = new SbiOrganizationDatasourceId(newId,tenant.getId());
 			sbiOrganizationDatasource.setCommonInfo(sbiCommonInfo);
 			sbiOrganizationDatasource.setId(idRel);
 

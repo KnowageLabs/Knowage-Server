@@ -256,8 +256,7 @@ public class SaveLovAction extends AbstractSpagoBIAction {
 			try {
 				AuditLogUtilities.updateAudit(getHttpRequest(), profile, "LOV.ADD/MODIFY", logParam, "ERR");
 			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				logger.error("AuditLogUtilities.updateAudit",e);
 			}
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 1018, new Vector(), params);
 		}

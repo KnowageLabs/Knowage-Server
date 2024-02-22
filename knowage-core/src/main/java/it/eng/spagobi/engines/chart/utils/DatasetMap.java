@@ -112,7 +112,7 @@ public class DatasetMap {
 			copyDataset = (DefaultCategoryDataset)dataset.clone();
 		} catch (CloneNotSupportedException e) {
 			logger.error("error copying dataset");
-			e.printStackTrace();
+			//e.printStackTrace();
 		}
 		try{
 			series=new TreeSet(((DefaultCategoryDataset)dataset).getRowKeys());
@@ -340,8 +340,8 @@ public class DatasetMap {
 			try {
 				copyDataset = (DefaultCategoryDataset)dataset.clone();	// clone dataset
 			} catch (CloneNotSupportedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				//e.printStackTrace();
+				logger.error("dataset.clone",e);
 			}
 
 			// all series present in the dataset
@@ -514,8 +514,8 @@ public class DatasetMap {
 		try {
 			copyDataset = (DefaultXYZDataset)dataset.clone();
 		} catch (CloneNotSupportedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			//e.printStackTrace();
+			logger.error("dataset.clone",e);
 		}
 
 
@@ -598,8 +598,8 @@ public class DatasetMap {
 		try {
 			copyDataset = (DefaultCategoryDataset)dataset.clone();
 		} catch (CloneNotSupportedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			//e.printStackTrace();
+			logger.error("dataset.clone",e);
 		}
 
 		series=new TreeSet();

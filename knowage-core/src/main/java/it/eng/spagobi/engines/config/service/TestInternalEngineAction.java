@@ -52,7 +52,7 @@ public class TestInternalEngineAction extends AbstractHttpAction{
 			
 		} catch (ClassNotFoundException e) {
 			 message = "ClassNameError";
-			e.printStackTrace();
+			logger.error("service",e);
 		}
 		finally {
 			httResponse.getOutputStream().write(message.getBytes());

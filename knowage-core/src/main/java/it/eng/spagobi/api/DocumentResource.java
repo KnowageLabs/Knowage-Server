@@ -549,14 +549,11 @@ public class DocumentResource extends AbstractDocumentResource {
 			}
 
 		} catch (JSONException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
+			logger.error("JSONException",e1);
 		} catch (TransformerFactoryConfigurationError e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
+			logger.error("TransformerFactoryConfigurationError",e1);
 		} catch (TransformerException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
+			logger.error("TransformerException",e1);
 		}
 
 		try {

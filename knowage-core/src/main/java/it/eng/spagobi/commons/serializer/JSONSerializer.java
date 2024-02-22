@@ -23,6 +23,7 @@ import java.util.Iterator;
 import java.util.Locale;
 import java.util.Map;
 
+import org.apache.log4j.Logger;
 import org.json.JSONArray;
 
 import it.eng.qbe.dataset.FederatedDataSet;
@@ -79,7 +80,7 @@ import it.eng.spagobi.tools.udp.metadata.SbiUdpValue;
 public class JSONSerializer implements Serializer {
 
 	Map<Class, Serializer> mappings;
-
+	private static Logger logger = Logger.getLogger(JSONSerializer.class);
 	public JSONSerializer() {
 		mappings = new HashMap();
 
@@ -168,7 +169,7 @@ public class JSONSerializer implements Serializer {
 			}
 
 		} catch (Throwable t) {
-			t.printStackTrace();
+			logger.error("serialize",t);
 			throw new SerializationException("An error occurred while serializing object: " + o, t);
 		} finally {
 

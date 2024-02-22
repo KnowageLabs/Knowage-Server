@@ -651,8 +651,8 @@ public class DetailBIObjectModule extends AbstractHttpModule {
 			try {
 				AuditLogUtilities.updateAudit(getHttpRequest(), profile, "DOCUMENT.DELETE", logParam, "ERR");
 			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				//e.printStackTrace();
+				logger.error("AuditLogUtilities.updateAudit",e);
 			}
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		}
@@ -661,8 +661,8 @@ public class DetailBIObjectModule extends AbstractHttpModule {
 		try {
 			AuditLogUtilities.updateAudit(getHttpRequest(), profile, "DOCUMENT.DELETE", logParam, "OK");
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			//e.printStackTrace();
+			logger.error("AuditLogUtilities.updateAudit",e);
 		}
 	}
 
@@ -1014,8 +1014,8 @@ public class DetailBIObjectModule extends AbstractHttpModule {
 			try {
 				AuditLogUtilities.updateAudit(getHttpRequest(), profile, "DOCUMENT.ADD/MODIFY", logParam, "ERR");
 			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				//e.printStackTrace();
+				logger.error("AuditLogUtilities.updateAudit",e);
 			}
 			throw error;
 		} catch (Exception ex) {
@@ -1023,8 +1023,8 @@ public class DetailBIObjectModule extends AbstractHttpModule {
 			try {
 				AuditLogUtilities.updateAudit(getHttpRequest(), profile, "DOCUMENT.ADD/MODIFY", logParam, "ERR");
 			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				//e.printStackTrace();
+				logger.error("AuditLogUtilities.updateAudit",e);
 			}
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
 		}

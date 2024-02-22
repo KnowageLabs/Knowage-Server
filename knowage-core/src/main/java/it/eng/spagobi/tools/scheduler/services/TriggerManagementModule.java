@@ -142,8 +142,8 @@ public class TriggerManagementModule extends AbstractHttpModule {
 					try {
 						AuditLogUtilities.updateAudit(getHttpRequest(), currProfile, "SCHED_TRIGGER.RUN", logParam, "KO");
 					} catch (Exception e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
+						//e.printStackTrace();
+						logger.error("AuditLogUtilities.updateAudit ",e);
 					}
 					throw new Exception("Immediate Trigger not created by the web service");
 				}
@@ -158,18 +158,18 @@ public class TriggerManagementModule extends AbstractHttpModule {
 				try {
 					AuditLogUtilities.updateAudit(getHttpRequest(), currProfile, "SCHED_TRIGGER.RUN", logParam, "KO");
 				} catch (Exception ex) {
-					// TODO Auto-generated catch block
-					ex.printStackTrace();
+					//ex.printStackTrace();
+					logger.error("AuditLogUtilities.updateAudit ",ex);
 				}
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				//e.printStackTrace();
+				logger.error("AuditLogUtilities.updateAudit ",e);
 			}
 		} catch (Exception e) {
 			try {
 				AuditLogUtilities.updateAudit(getHttpRequest(), profile, "SCHED_TRIGGER.RUN", logParam, "KO");
 			} catch (Exception ex) {
-				// TODO Auto-generated catch block
-				ex.printStackTrace();
+				//ex.printStackTrace();
+				logger.error("AuditLogUtilities.updateAudit ",ex);
 			}
 			logger.error("Error while create immediate trigger ", e);
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
@@ -198,8 +198,8 @@ public class TriggerManagementModule extends AbstractHttpModule {
 						AuditLogUtilities.updateAudit(getHttpRequest(), profile, "SCHED_TRIGGER.DELETE", logParam,
 								"KO");
 					} catch (Exception e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
+						//e.printStackTrace();
+						logger.error("AuditLogUtilities.updateAudit ",e);
 					}
 					throw new Exception("Trigger not deleted by the service");
 				}
@@ -211,15 +211,15 @@ public class TriggerManagementModule extends AbstractHttpModule {
 			try {
 				AuditLogUtilities.updateAudit(getHttpRequest(), profile, "SCHED_TRIGGER.DELETE", logParam, "OK");
 			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				//e.printStackTrace();
+				logger.error("AuditLogUtilities.updateAudit ",e);
 			}
 		} catch (Exception e) {
 			try {
 				AuditLogUtilities.updateAudit(getHttpRequest(), profile, "SCHED_TRIGGER.DELETE", logParam, "KO");
 			} catch (Exception ex) {
-				// TODO Auto-generated catch block
-				ex.printStackTrace();
+				//ex.printStackTrace();
+				logger.error("AuditLogUtilities.updateAudit ",ex);
 			}
 			logger.error("Error while deleting schedule (trigger) ", e);
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);
@@ -284,8 +284,8 @@ public class TriggerManagementModule extends AbstractHttpModule {
 				try {
 					AuditLogUtilities.updateAudit(getHttpRequest(), profile, "SCHED_TRIGGER.SAVE", logParam, "OK");
 				} catch (Exception e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					//e.printStackTrace();
+					logger.error("AuditLogUtilities.updateAudit ",e);
 				}
 				return;
 			}
@@ -304,8 +304,8 @@ public class TriggerManagementModule extends AbstractHttpModule {
 					try {
 						AuditLogUtilities.updateAudit(getHttpRequest(), profile, "SCHED_TRIGGER.SAVE", logParam, "KO");
 					} catch (Exception e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
+						//e.printStackTrace();
+						logger.error("AuditLogUtilities.updateAudit ",e);
 					}
 					throw new Exception("Trigger " + triggerInfo.getTriggerName() + " not created by the web service");
 				}
@@ -316,15 +316,15 @@ public class TriggerManagementModule extends AbstractHttpModule {
 			try {
 				AuditLogUtilities.updateAudit(getHttpRequest(), profile, "SCHED_TRIGGER.SAVE", logParam, "OK");
 			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				//e.printStackTrace();
+				logger.error("AuditLogUtilities.updateAudit ",e);
 			}
 		} catch (Exception ex) {
 			try {
 				AuditLogUtilities.updateAudit(getHttpRequest(), profile, "SCHED_TRIGGER.SAVE", logParam, "KO");
 			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				//e.printStackTrace();
+				logger.error("AuditLogUtilities.updateAudit ",e);
 			}
 			logger.error("Error while saving schedule for job", ex);
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 100);

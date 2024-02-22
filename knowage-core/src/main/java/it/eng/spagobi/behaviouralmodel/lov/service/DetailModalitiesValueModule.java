@@ -550,8 +550,8 @@ public class DetailModalitiesValueModule extends AbstractHttpModule {
 				try {
 					AuditLogUtilities.updateAudit(getHttpRequest(), profile, "LOV.MODIFY", logParam, "OK");
 				} catch (Exception e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					//e.printStackTrace();
+					logger.error("AuditLogUtilities.updateAudit",e);
 				}
 			}
 
@@ -562,8 +562,8 @@ public class DetailModalitiesValueModule extends AbstractHttpModule {
 			try {
 				AuditLogUtilities.updateAudit(getHttpRequest(), profile, "LOV.ADD/MODIFY", logParam, "ERR");
 			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				//e.printStackTrace();
+				logger.error("AuditLogUtilities.updateAudit",e);
 			}
 			throw new EMFUserError(EMFErrorSeverity.ERROR, 1018, new Vector(), params);
 		}
@@ -742,8 +742,8 @@ public class DetailModalitiesValueModule extends AbstractHttpModule {
 			try {
 				AuditLogUtilities.updateAudit(getHttpRequest(), profile, "LOV.DELETE", logParam, "ERR");
 			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				//e.printStackTrace();
+				logger.error("AuditLogUtilities.updateAudit",e);
 			}
 			logger.error("Cannot fill response container", ex);
 			HashMap params = new HashMap();
@@ -758,8 +758,8 @@ public class DetailModalitiesValueModule extends AbstractHttpModule {
 		try {
 			AuditLogUtilities.updateAudit(getHttpRequest(), profile, "LOV.DELETE", logParam, "OK");
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			//e.printStackTrace();
+			logger.error("AuditLogUtilities.updateAudit",e);
 		}
 
 	}

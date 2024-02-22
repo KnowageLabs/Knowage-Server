@@ -111,7 +111,7 @@ public class DefaultValuesRetriever {
 
 			columnName = lovProvDet.getValueColumnName();
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error("getLovResult",e);
 		}
 
 		// get all the rows of the result

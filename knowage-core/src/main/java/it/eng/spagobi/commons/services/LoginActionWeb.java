@@ -193,7 +193,7 @@ public class LoginActionWeb extends AbstractBaseHttpAction {
 			try {
 				AuditLogUtilities.updateAudit(getHttpRequest(), profile, "LOGIN", null, "KO");
 			} catch (Exception e) {
-				e.printStackTrace();
+				logger.error("AuditLogUtilities.updateAudit",e);
 			}
 			throw SpagoBIServiceExceptionHandler.getInstance().getWrappedException(SERVICE_NAME, t);
 		} finally {
