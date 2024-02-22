@@ -49,7 +49,7 @@ public class JsonConverter {
 		ObjectMapper mapper = new ObjectMapper();
 
 		try {
-			return mapper.writerWithType(t).writeValueAsString(obj);
+			return mapper.writerFor(t).writeValueAsString(obj);
 		} catch (Exception e) {
 			throw new SpagoBIRuntimeException("Error while writing the JSON string", e);
 		}

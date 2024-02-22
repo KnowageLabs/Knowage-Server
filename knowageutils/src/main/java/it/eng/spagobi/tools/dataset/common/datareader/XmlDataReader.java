@@ -59,8 +59,7 @@ public class XmlDataReader extends AbstractDataReader {
 	private static transient Logger logger = Logger.getLogger(XmlDataReader.class);
 
 	public XmlDataReader() {
-		domFactory = DocumentBuilderFactory.newInstance();
-
+          domFactory = getFactory();
 	}
 
 	@Override

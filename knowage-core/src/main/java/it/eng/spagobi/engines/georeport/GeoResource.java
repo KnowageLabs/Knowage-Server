@@ -37,6 +37,7 @@ import javax.ws.rs.core.Response;
 import org.apache.log4j.Logger;
 
 import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
+import it.eng.spagobi.utilities.rest.RestUtilities;
 
 /**
  * @authors Giovanni Luca Ulivo (GiovanniLuca.Ulivo@eng.it)
@@ -57,7 +58,9 @@ public class GeoResource {
 			String reqString = req.getQueryString();
 
 			String finalWMSUrl = layerUrl + "?" + reqString.replaceAll("layerURL[^&]*&", "");
-
+            
+			RestUtilities.checkIfAddressIsInWhitelist(finalWMSUrl);
+            
 			URL url = new URL(finalWMSUrl);
 			if (req.getParameter("REQUEST").equals("GetFeatureInfo")) {
 				URLConnection conn = url.openConnection();
