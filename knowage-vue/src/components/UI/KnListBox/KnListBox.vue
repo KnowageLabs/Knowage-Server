@@ -1,188 +1,170 @@
 <template>
-    <Listbox
-        class="kn-list knListBox"
-        :options="sortedOptions"
-        :class="{ noSorting: !settings.sortFields }"
-        listStyle="max-height:calc(100% - 66px)"
-        :filter="!settings.fullTextSearch"
-        :filterPlaceholder="$t('common.search')"
-        filterMatchMode="contains"
-        :filterFields="settings.filterFields"
-        :emptyFilterMessage="$t('common.info.noDataFound')"
-        data-test="list"
-    >
-        <template #header v-if="settings.sortFields">
-            <div v-if="settings.fullTextSearch" ref="filter" class="p-listbox-header">
-                <div class="p-listbox-filter-container">
-                    <input type="text" class="p-listbox-filter p-inputtext p-component" placeholder="search" role="searchbox" :value="filterValue" @keyup="searchFilter($event)" />
-                    <span class="p-listbox-filter-icon pi pi-search"></span>
-                </div>
-            </div>
-            <Button icon="fas fa-sort-amount-down-alt" class="p-button-text p-button-rounded p-button-plain headerButton" @click="toggleSort" v-tooltip.bottom="$t('common.sort')" />
-            <Menu id="sortMenu" ref="sortMenu" :model="settings.sortFields" :popup="true">
-                <template #item="{item}">
-                    <a class="p-menuitem-link" role="menuitem" tabindex="0" @click="sort($event, item.name || item)">
-                        <span v-if="selectedDirection === 'asc'" class="p-menuitem-icon fas" :class="{ 'fa-sort-amount-up-alt': selectedSort === (item.name || item) }"></span>
-                        <span v-else class="p-menuitem-icon fas" :class="{ 'fa-sort-amount-down-alt': selectedSort === (item.name || item) }"></span>
-                        <span class="p-menuitem-text">{{ $t(item.label || item) }}</span>
-                    </a>
-                </template>
-            </Menu>
+  <Listbox class="kn-list knListBox" :options="sortedOptions" :class="{ noSorting: !settings.sortFields }" listStyle="max-height:calc(100% - 66px)" :filter="!settings.fullTextSearch" :filterPlaceholder="$t('common.search')" filterMatchMode="contains" :filterFields="settings.filterFields" :emptyFilterMessage="$t('common.info.noDataFound')" data-test="list">
+    <template #header v-if="settings.sortFields">
+      <div v-if="settings.fullTextSearch" ref="filter" class="p-listbox-header">
+        <div class="p-listbox-filter-container">
+          <input type="text" class="p-listbox-filter p-inputtext p-component" placeholder="search" role="searchbox" :value="filterValue" @keyup="searchFilter($event)" />
+          <span class="p-listbox-filter-icon pi pi-search"></span>
+        </div>
+      </div>
+      <Button icon="fas fa-sort-amount-down-alt" class="p-button-text p-button-rounded p-button-plain headerButton" @click="toggleSort" v-tooltip.bottom="$t('common.sort')" />
+      <Menu id="sortMenu" ref="sortMenu" :model="settings.sortFields" :popup="true">
+        <template #item="{item}">
+          <a class="p-menuitem-link" role="menuitem" tabindex="0" @click="sort($event, item.name || item)">
+            <span v-if="selectedDirection === 'asc'" class="p-menuitem-icon fas" :class="{ 'fa-sort-amount-up-alt': selectedSort === (item.name || item) }"></span>
+            <span v-else class="p-menuitem-icon fas" :class="{ 'fa-sort-amount-down-alt': selectedSort === (item.name || item) }"></span>
+            <span class="p-menuitem-text">{{ $t(item.label || item) }}</span>
+          </a>
         </template>
-        <template #option="slotProps">
-            <router-link class="kn-decoration-none" :to="{ name: settings.interaction.path, params: { id: slotProps.option.id } }" exact v-if="settings.interaction.type === 'router'">
-                <div class="kn-list-item" v-tooltip="slotProps.option[settings.tooltipField || 'description']" :class="getBorderClass(slotProps.option)" data-test="list-item">
-                    <Avatar v-if="settings.avatar && settings.avatar.values[slotProps.option[settings.avatar.property]]" :icon="settings.avatar.values[slotProps.option[settings.avatar.property]].icon" shape="circle" :style="settings.avatar.values[slotProps.option[settings.avatar.property]].style" />
-                    <div class="kn-list-item-text">
-                        <span v-if="settings.titleField !== false">{{ slotProps.option[settings.titleField || 'label'] }}</span>
-                        <span class="kn-list-item-text-secondary kn-truncated" v-if="settings.textField !== false">{{ slotProps.option[settings.textField || 'name'] }}</span>
-                    </div>
-                    <Badge v-if="settings.badgeField" :value="slotProps.option[settings.badgeField]" :severity="settings.badgeSeverity || 'info'"></Badge>
-                    <Badge v-if="settings.badgeIcon && slotProps.option[settings.badgeIcon] === true" :severity="settings.badgeSeverity || 'info'">
-                        <i class="fas fa-check"></i>
-                    </Badge>
-                    <KnListButtonRenderer :buttons="settings.buttons" @click="clickedButton($event, slotProps.option)" />
-                </div>
-            </router-link>
-            <div
-                class="kn-list-item"
-                v-tooltip="slotProps.option[settings.tooltipField || 'description']"
-                v-if="!settings.interaction || settings.interaction.type === 'event'"
-                @click="clickedButton($event, slotProps.option)"
-                :class="[{ 'router-link-active': isItemSelected(slotProps.option) }, getBorderClass(slotProps.option)]"
-                data-test="list-item"
-            >
-                <Avatar v-if="settings.avatar && settings.avatar.values[slotProps.option[settings.avatar.property]]" :icon="settings.avatar.values[slotProps.option[settings.avatar.property]].icon" shape="circle" :style="settings.avatar.values[slotProps.option[settings.avatar.property]].style" />
-                <div class="kn-list-item-text">
-                    <span v-if="settings.titleField !== false">{{ slotProps.option[settings.titleField || 'label'] }}</span>
-                    <span v-if="settings.textField !== false && !settings.textFieldType" class="kn-list-item-text-secondary kn-truncated">{{ slotProps.option[settings.textField || 'name'] }}</span>
-                    <span v-if="settings.textField !== false && settings.textFieldType && settings.textFieldType === 'date'" class="kn-list-item-text-secondary kn-truncated">{{ getTime(slotProps.option[settings.textField || 'name']) }}</span>
-                </div>
-                <Badge v-if="settings.badgeField && slotProps.option[settings.badgeField]" :value="slotProps.option[settings.badgeField]" :severity="settings.badgeSeverity || 'info'"></Badge>
-                <Badge v-if="settings.badgeIcon && slotProps.option[settings.badgeIcon] === true" :severity="settings.badgeSeverity || 'info'">
-                    <i class="fas fa-check"></i>
-                </Badge>
-                <KnListButtonRenderer :buttons="settings.buttons" :selectedItem="slotProps.option" @click="clickedButton($event, slotProps.option)" />
-            </div>
-        </template>
-    </Listbox>
+      </Menu>
+    </template>
+    <template #option="slotProps">
+      <router-link class="kn-decoration-none" :to="{ name: settings.interaction.path, params: { id: slotProps.option.id } }" exact v-if="settings.interaction.type === 'router'">
+        <div class="kn-list-item" v-tooltip="slotProps.option[settings.tooltipField || 'description']" :class="getBorderClass(slotProps.option)" data-test="list-item">
+          <Avatar v-if="settings.avatar && settings.avatar.values[slotProps.option[settings.avatar.property]]" :icon="settings.avatar.values[slotProps.option[settings.avatar.property]].icon" shape="circle" :style="settings.avatar.values[slotProps.option[settings.avatar.property]].style" />
+          <div class="kn-list-item-text">
+            <span v-if="settings.titleField !== false">{{ slotProps.option[settings.titleField || "label"] }}</span>
+            <span class="kn-list-item-text-secondary kn-truncated" v-if="settings.textField !== false">{{ slotProps.option[settings.textField || "name"] }}</span>
+          </div>
+          <Badge v-if="settings.badgeField" :value="slotProps.option[settings.badgeField]" :severity="settings.badgeSeverity || 'info'"></Badge>
+          <Badge v-if="settings.badgeIcon && slotProps.option[settings.badgeIcon] === true" :severity="settings.badgeSeverity || 'info'">
+            <i class="fas fa-check"></i>
+          </Badge>
+          <KnListButtonRenderer :buttons="settings.buttons" @click="clickedButton($event, slotProps.option)" />
+        </div>
+      </router-link>
+      <div class="kn-list-item" v-tooltip="slotProps.option[settings.tooltipField || 'description']" v-if="!settings.interaction || settings.interaction.type === 'event'" @click="clickedButton($event, slotProps.option)" :class="[{ 'router-link-active': isItemSelected(slotProps.option) }, getBorderClass(slotProps.option)]" data-test="list-item">
+        <Avatar v-if="settings.avatar && settings.avatar.values[slotProps.option[settings.avatar.property]]" :icon="settings.avatar.values[slotProps.option[settings.avatar.property]].icon" shape="circle" :style="settings.avatar.values[slotProps.option[settings.avatar.property]].style" />
+        <div class="kn-list-item-text">
+          <span v-if="settings.titleField !== false">{{ slotProps.option[settings.titleField || "label"] }}</span>
+          <span v-if="settings.textField !== false && !settings.textFieldType" class="kn-list-item-text-secondary kn-truncated">{{ slotProps.option[settings.textField || "name"] }}</span>
+          <span v-if="settings.textField !== false && settings.textFieldType && settings.textFieldType === 'date'" class="kn-list-item-text-secondary kn-truncated">{{ getTime(slotProps.option[settings.textField || "name"]) }}</span>
+        </div>
+        <Badge v-if="settings.badgeField && slotProps.option[settings.badgeField]" :value="slotProps.option[settings.badgeField]" :severity="settings.badgeSeverity || 'info'"></Badge>
+        <Badge v-if="settings.badgeIcon && slotProps.option[settings.badgeIcon] === true" :severity="settings.badgeSeverity || 'info'">
+          <i class="fas fa-check"></i>
+        </Badge>
+        <KnListButtonRenderer :buttons="settings.buttons" :selectedItem="slotProps.option" @click="clickedButton($event, slotProps.option)" />
+      </div>
+    </template>
+  </Listbox>
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue'
-import Avatar from 'primevue/avatar'
-import Badge from 'primevue/badge'
-import Listbox from 'primevue/listbox'
-import KnListButtonRenderer from './KnListButtonRenderer.vue'
-import Menu from 'primevue/menu'
-import { formatDateWithLocale } from '@/helpers/commons/localeHelper'
+import { defineComponent } from "vue";
+import Avatar from "primevue/avatar";
+import Badge from "primevue/badge";
+import Listbox from "primevue/listbox";
+import KnListButtonRenderer from "./KnListButtonRenderer.vue";
+import Menu from "primevue/menu";
+import { formatDateWithLocale } from "@/helpers/commons/localeHelper";
 
 export default defineComponent({
-    name: 'kn-list-box',
-    components: {
-        Avatar,
-        Badge,
-        KnListButtonRenderer,
-        Listbox,
-        Menu
+  name: "kn-list-box",
+  components: {
+    Avatar,
+    Badge,
+    KnListButtonRenderer,
+    Listbox,
+    Menu,
+  },
+  props: {
+    settings: {
+      type: Object,
+      required: true,
     },
-    props: {
-        settings: {
-            type: Object,
-            required: true
-        },
-        options: Array,
-        selected: Object
+    options: Array,
+    selected: Object,
+  },
+  data() {
+    return {
+      filterValue: "",
+      selectedSort: "label",
+      selectedDirection: "",
+      sortedOptions: [] as Array<any>,
+    };
+  },
+  emits: ["click"],
+  created() {
+    this.selectedSort = this.settings.defaultSortField || "label";
+    this.sort(null, this.selectedSort, true);
+  },
+  updated() {
+    this.sort(null, this.selectedSort, true);
+  },
+  computed: {},
+  methods: {
+    searchFilter(e) {
+      this.filterValue = e.target.value;
+      this.sortedOptions = this.options ? this.options.filter((i) => JSON.stringify(i).indexOf(this.filterValue) > -1) : [];
     },
-    data() {
-        return {
-            filterValue: '',
-            selectedSort: 'label',
-            selectedDirection: '',
-            sortedOptions: [] as Array<any>
+    clickedButton(e, item) {
+      const emits = e.item && e.item.emits;
+      e.item = item;
+      this.$emit(emits || "click", e);
+    },
+    getBorderClass(item): string {
+      if (this.settings.statusBorder) {
+        return "kn-list-item-" + this.settings.statusBorder.values[item[this.settings.statusBorder.property]];
+      } else return "";
+    },
+    isItemSelected(option) {
+      if (this.selected) {
+        if (this.settings.selectProperty && this.selected[this.settings.selectProperty]) {
+          return this.selected[this.settings.selectProperty] == option[this.settings.selectProperty];
+        } else {
+          return this.selected == option;
         }
+      } else return false;
     },
-    emits: ['click'],
-    created() {
-        this.selectedSort = this.settings.defaultSortField || 'label'
-        this.sort(null, this.selectedSort, true)
+    toggleSort(e) {
+      // eslint-disable-next-line
+      // @ts-ignore
+      this.$refs.sortMenu.toggle(e);
     },
-    updated() {
-        this.sort(null, this.selectedSort, true)
-    },
-    computed: {},
-    methods: {
-        searchFilter(e) {
-            this.filterValue = e.target.value
-            this.sortedOptions = this.options.filter((i) => JSON.stringify(i).indexOf(this.filterValue) > -1)
-        },
-        clickedButton(e, item) {
-            const emits = e.item && e.item.emits
-            e.item = item
-            this.$emit(emits || 'click', e)
-        },
-        getBorderClass(item): string {
-            if (this.settings.statusBorder) {
-                return 'kn-list-item-' + this.settings.statusBorder.values[item[this.settings.statusBorder.property]]
-            } else return ''
-        },
-        isItemSelected(option) {
-            if (this.selected) {
-                if (this.settings.selectProperty && this.selected[this.settings.selectProperty]) {
-                    return this.selected[this.settings.selectProperty] == option[this.settings.selectProperty]
-                } else {
-                    return this.selected == option
-                }
-            } else return false
-        },
-        toggleSort(e) {
-            // eslint-disable-next-line
-            // @ts-ignore
-            this.$refs.sortMenu.toggle(e)
-        },
-        sort(e, item, desc?) {
-            if (this.settings.fullTextSearch) this.sortedOptions = this.filterValue ? this.sortedOptions : this.options
-            else this.sortedOptions = this.options ? this.options : []
-            if (this.selectedSort === item) this.selectedDirection = this.selectedDirection === 'desc' ? 'asc' : 'desc'
-            else {
-                this.selectedSort = item
-                this.selectedDirection = 'desc'
-            }
+    sort(e, item, desc?) {
+      if (this.settings.fullTextSearch) this.sortedOptions = this.filterValue ? this.sortedOptions : this.options ? this.options : [];
+      else this.sortedOptions = this.options ? this.options : [];
+      if (this.selectedSort === item) this.selectedDirection = this.selectedDirection === "desc" ? "asc" : "desc";
+      else {
+        this.selectedSort = item;
+        this.selectedDirection = "desc";
+      }
 
-            if (e || (!e && this.selectedDirection === '')) {
-                if (this.selectedDirection === '') this.selectedDirection = 'desc'
-                if (desc || this.selectedDirection === 'desc') this.sortedOptions.sort((a: any, b: any) => (a[this.selectedSort] > b[this.selectedSort] ? 1 : -1))
-                else this.sortedOptions.sort((a: any, b: any) => (a[this.selectedSort] > b[this.selectedSort] ? -1 : 1))
-            }
-        },
-        getTime(ms) {
-            return formatDateWithLocale(ms)
-        }
-    }
-})
+      if (e || (!e && this.selectedDirection === "")) {
+        if (this.selectedDirection === "") this.selectedDirection = "desc";
+        if (desc || this.selectedDirection === "desc") this.sortedOptions.sort((a: any, b: any) => (a[this.selectedSort] > b[this.selectedSort] ? 1 : -1));
+        else this.sortedOptions.sort((a: any, b: any) => (a[this.selectedSort] > b[this.selectedSort] ? -1 : 1));
+      }
+    },
+    getTime(ms) {
+      return formatDateWithLocale(ms);
+    },
+  },
+});
 </script>
 <style lang="scss">
 .knListBox {
-    position: relative;
-    flex: 1;
-    overflow-y: auto;
+  position: relative;
+  flex: 1;
+  overflow-y: auto;
 
-    .headerButton {
-        position: absolute;
-        right: 8px;
-        top: 16px;
-    }
-    &.noSorting {
-        .p-listbox-header {
-            .p-listbox-filter-container {
-                width: 100%;
-            }
-        }
-    }
+  .headerButton {
+    position: absolute;
+    right: 8px;
+    top: 16px;
+  }
+  &.noSorting {
     .p-listbox-header {
-        .p-listbox-filter-container {
-            width: calc(100% - 36px);
-        }
+      .p-listbox-filter-container {
+        width: 100%;
+      }
     }
+  }
+  .p-listbox-header {
+    .p-listbox-filter-container {
+      width: calc(100% - 36px);
+    }
+  }
 }
 </style>
