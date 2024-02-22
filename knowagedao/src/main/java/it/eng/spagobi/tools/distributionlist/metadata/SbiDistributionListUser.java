@@ -77,7 +77,7 @@ public class SbiDistributionListUser  extends SbiHibernateModel {
       * 
       * @param dluId the new dlu id
       */
-     public void setDluId(Integer dluId) {
+     private void setDluId(Integer dluId) {
          this.dluId = dluId;
      }
 

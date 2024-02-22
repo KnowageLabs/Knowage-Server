@@ -43,7 +43,7 @@ public class SbiUserFunctionality  extends SbiHibernateModel {
      * 
      * @param id the new id
      */
-    public void setId(int id) {
+    private void setId(int id) {
         this.id = id;
     }
     

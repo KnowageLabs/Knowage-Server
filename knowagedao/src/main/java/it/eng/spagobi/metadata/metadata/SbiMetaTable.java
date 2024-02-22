@@ -59,7 +59,7 @@ public class SbiMetaTable extends SbiHibernateModel {
 		return this.tableId;
 	}
 
-	public void setTableId(Integer tableId) {
+	private void setTableId(Integer tableId) {
 		this.tableId = tableId;
 	}
 
@@ -109,6 +109,11 @@ public class SbiMetaTable extends SbiHibernateModel {
 
 	public void setSbiMetaTableBcs(Set sbiMetaTableBcs) {
 		this.sbiMetaTableBcs = sbiMetaTableBcs;
+	}
+
+	public void changeTableId(Integer tableId) {
+		this.setTableId(tableId);
+		
 	}
 
 }

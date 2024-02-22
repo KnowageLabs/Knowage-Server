@@ -1550,7 +1550,8 @@ public class MetaService extends AbstractSpagoBIResource {
 				value = null;
 			context.createPathAndSetValue(path, value);
 		} catch (Throwable t) {
-			t.printStackTrace();
+			//t.printStackTrace();
+			logger.error("Error in replace",t);
 			throw new SpagoBIException("Error in replace", t);
 		}
 	}

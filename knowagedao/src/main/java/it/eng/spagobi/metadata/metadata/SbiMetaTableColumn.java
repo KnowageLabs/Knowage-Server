@@ -42,7 +42,7 @@ public class SbiMetaTableColumn extends SbiHibernateModel {
 		return this.columnId;
 	}
 
-	public void setColumnId(Integer columnId) {
+	private void setColumnId(Integer columnId) {
 		this.columnId = columnId;
 	}
 
@@ -84,6 +84,11 @@ public class SbiMetaTableColumn extends SbiHibernateModel {
 
 	public void setSbiMetaBcAttributes(Set sbiMetaBcAttributes) {
 		this.sbiMetaBcAttributes = sbiMetaBcAttributes;
+	}
+
+	public void changeColumnId(Integer idTbCol) {
+		this.setColumnId(idTbCol);
+		
 	}
 
 }

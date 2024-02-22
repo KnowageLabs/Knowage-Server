@@ -25,6 +25,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -48,7 +49,7 @@ public class CompositeDataSourceConfiguration implements IDataSourceConfiguratio
 
 	String modelName;
 	Map<String, Object> dataSourceProperties;
-
+	private static Logger logger = Logger.getLogger(CompositeDataSourceConfiguration.class);
 	List<IDataSourceConfiguration> subConfigurations;
 
 	public CompositeDataSourceConfiguration(String modelName, Map<String, Object> dataSourceProperties) {
@@ -267,7 +268,7 @@ public class CompositeDataSourceConfiguration implements IDataSourceConfiguratio
 			}
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error("loadMyRelationships",e);
 		}
 
 		return relationship;

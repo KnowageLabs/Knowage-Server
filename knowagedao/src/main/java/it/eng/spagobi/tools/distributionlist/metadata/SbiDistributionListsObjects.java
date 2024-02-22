@@ -79,7 +79,7 @@ public class SbiDistributionListsObjects  extends SbiHibernateModel {
      * 
      * @param relId the new rel id
      */
-    public void setRelId(Integer relId) {
+    private void setRelId(Integer relId) {
         this.relId = relId;
     }
 

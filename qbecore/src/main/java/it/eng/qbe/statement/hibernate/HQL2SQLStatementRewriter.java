@@ -86,7 +86,7 @@ public class HQL2SQLStatementRewriter {
 						, sessionFactoryImplementor
 				});
 			}catch (Throwable e) {
-				e.printStackTrace();
+				logger.error("createQueryTranslatorMethod",e);
 			}
 		} catch (NoSuchMethodException e) {
 			
@@ -112,11 +112,11 @@ public class HQL2SQLStatementRewriter {
 								}
 						);
 					}catch (Throwable t) {
-						t.printStackTrace();
+						logger.error("createQueryTranslatorMethod",e);
 					}
 				}
 			} catch (NoSuchMethodException ex) {
-				e.printStackTrace();
+				logger.error("astQueryTranslatorFactory",e);
 			}
 		}
 		

@@ -45,7 +45,7 @@ public class SbiKpiValue extends SbiHibernateModel implements java.io.Serializab
 		return id;
 	}
 
-	public void setId(int id) {
+	private void setId(int id) {
 		this.id = id;
 	}
 

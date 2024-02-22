@@ -176,7 +176,7 @@ public class TalendWork implements Work {
 				try {
 					input.close();
 				} catch (IOException e) {
-					e.printStackTrace();
+					logger.error("input",e);
 				}
 			}
 		}
@@ -245,7 +245,7 @@ public class TalendWork implements Work {
 				}
 
 			} catch (IOException ioe) {
-				ioe.printStackTrace();
+				logger.error("InputStreamReader",ioe);
 			}
 		}
 	}

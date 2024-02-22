@@ -28,7 +28,7 @@ public class SbiKpiTargetValueId implements Serializable {
 	 * @param kpiVersion
 	 *            the kpiVersion to set
 	 */
-	public void setKpiVersion(Integer kpiVersion) {
+	private void setKpiVersion(Integer kpiVersion) {
 		this.kpiVersion = kpiVersion;
 	}
 
@@ -43,7 +43,7 @@ public class SbiKpiTargetValueId implements Serializable {
 	 * @param kpiId
 	 *            the kpiId to set
 	 */
-	public void setKpiId(Integer kpiId) {
+	private void setKpiId(Integer kpiId) {
 		this.kpiId = kpiId;
 	}
 
@@ -58,7 +58,7 @@ public class SbiKpiTargetValueId implements Serializable {
 	 * @param targetId
 	 *            the targetId to set
 	 */
-	public void setTargetId(Integer targetId) {
+	private void setTargetId(Integer targetId) {
 		this.targetId = targetId;
 	}
 

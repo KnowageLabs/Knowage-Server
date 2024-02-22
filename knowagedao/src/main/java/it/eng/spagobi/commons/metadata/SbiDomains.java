@@ -64,7 +64,7 @@ public class SbiDomains extends SbiHibernateModel {
 	 *
 	 * @param valueId the new value id
 	 */
-	public void setValueId(Integer valueId) {
+	private void setValueId(Integer valueId) {
 		this.valueId = valueId;
 	}
 
@@ -191,6 +191,11 @@ public class SbiDomains extends SbiHibernateModel {
 		} else if (!valueId.equals(other.valueId))
 			return false;
 		return true;
+	}
+
+	public void changeValueId(Integer valueId) {
+		this.setValueId(valueId);
+		
 	}
 
 }

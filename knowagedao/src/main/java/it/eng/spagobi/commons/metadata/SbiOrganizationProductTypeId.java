@@ -35,7 +35,7 @@ public class SbiOrganizationProductTypeId implements java.io.Serializable {
 		return productTypeId;
 	}
 
-	public void setProductTypeId(int productTypeId) {
+	private void setProductTypeId(int productTypeId) {
 		this.productTypeId = productTypeId;
 	}
 
@@ -43,7 +43,7 @@ public class SbiOrganizationProductTypeId implements java.io.Serializable {
 		return this.organizationId;
 	}
 
-	public void setOrganizationId(int organizationId) {
+	private void setOrganizationId(int organizationId) {
 		this.organizationId = organizationId;
 	}
 

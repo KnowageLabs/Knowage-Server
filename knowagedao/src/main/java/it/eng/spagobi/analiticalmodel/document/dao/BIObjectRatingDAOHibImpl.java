@@ -139,9 +139,8 @@ public class BIObjectRatingDAOHibImpl extends AbstractHibernateDAO implements IB
 
 			} else {
 				SbiObjectsRating hibBIObjectsRating1 = new SbiObjectsRating();
-				SbiObjectsRatingId hibBIObjectsRatingId1 = new SbiObjectsRatingId();
-				hibBIObjectsRatingId1.setObjId(obj.getId());
-				hibBIObjectsRatingId1.setUserId(userid);
+				SbiObjectsRatingId hibBIObjectsRatingId1 = new SbiObjectsRatingId(obj.getId(),userid);
+				
 				hibBIObjectsRating1.setId(hibBIObjectsRatingId1);
 				hibBIObjectsRating1.setRating(newRating);
 				hibBIObjectsRating1.setSbiObjects(hibBIObject);
@@ -199,9 +198,7 @@ public class BIObjectRatingDAOHibImpl extends AbstractHibernateDAO implements IB
 
 			} else {
 				SbiObjectsRating hibBIObjectsRating1 = new SbiObjectsRating();
-				SbiObjectsRatingId hibBIObjectsRatingId1 = new SbiObjectsRatingId();
-				hibBIObjectsRatingId1.setObjId(obj.getId());
-				hibBIObjectsRatingId1.setUserId(userid);
+				SbiObjectsRatingId hibBIObjectsRatingId1 = new SbiObjectsRatingId(obj.getId(),userid);
 				hibBIObjectsRating1.setId(hibBIObjectsRatingId1);
 				hibBIObjectsRating1.setRating(newRating);
 				hibBIObjectsRating1.setSbiObjects(hibBIObject);

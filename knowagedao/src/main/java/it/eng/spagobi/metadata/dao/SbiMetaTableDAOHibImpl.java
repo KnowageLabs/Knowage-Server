@@ -75,7 +75,7 @@ public class SbiMetaTableDAOHibImpl extends AbstractHibernateDAO implements ISbi
 			toReturn = loadTableByID(tmpSession, id);
 			SbiMetaTable hibTable = (SbiMetaTable) tmpSession.load(SbiMetaTable.class, id);
 			toReturn = new SbiMetaTable();
-			toReturn.setTableId(hibTable.getTableId());
+			toReturn.changeTableId(hibTable.getTableId());
 			toReturn.setName(hibTable.getName());
 			toReturn.setDeleted(hibTable.isDeleted());
 			tx.commit();
@@ -115,12 +115,12 @@ public class SbiMetaTableDAOHibImpl extends AbstractHibernateDAO implements ISbi
 			tmpSession = getSession();
 			tx = tmpSession.beginTransaction();
 			SbiMetaTable smt = loadTableByID(tmpSession, id);
-			toReturn.setTableId(smt.getTableId());
+			toReturn.changeTableId(smt.getTableId());
 			toReturn.setName(smt.getName());
 
 			SbiMetaSource sms = new SbiMetaSource();
 			sms.setName(smt.getSbiMetaSource().getName());
-			sms.setSourceId(smt.getSbiMetaSource().getSourceId());
+			sms.changeSourceId(smt.getSbiMetaSource().getSourceId());
 			sms.setType(smt.getSbiMetaSource().getType());
 			sms.setUrl(smt.getSbiMetaSource().getUrl());
 			toReturn.setSbiMetaSource(sms);
@@ -129,7 +129,7 @@ public class SbiMetaTableDAOHibImpl extends AbstractHibernateDAO implements ISbi
 			for (Iterator<SbiMetaTableColumn> iterator = smt.getSbiMetaTableColumns().iterator(); iterator.hasNext();) {
 				SbiMetaTableColumn smc = iterator.next();
 				SbiMetaTableColumn tmp = new SbiMetaTableColumn();
-				tmp.setColumnId(smc.getColumnId());
+				tmp.changeColumnId(smc.getColumnId());
 				tmp.setName(smc.getName());
 				tmp.setType(smc.getType());
 				smtc.add(tmp);

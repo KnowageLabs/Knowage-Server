@@ -727,7 +727,7 @@ public class PersistedTableManager implements IPersistedManager {
 				createIndexes(dataset, datasource, tablename, columns);
 				result = true;
 			} catch (Exception e) {
-				LOGGER.error(e.getStackTrace(), e);
+				LOGGER.error("createIndexesOnTable", e);
 			}
 		}
 

@@ -451,7 +451,8 @@ public class PhysicalModelInitializer {
 					column.setDefaultValue(rs.getString("COLUMN_DEF"));
 				} catch (Throwable t) {
 					log("Impossible to set Default column value");
-					t.printStackTrace();
+					//t.printStackTrace();
+					logger.error("Impossible to set Default column value",t);
 					column.setDefaultValue(null);
 				}
 				column.setName(rs.getString("COLUMN_NAME"));

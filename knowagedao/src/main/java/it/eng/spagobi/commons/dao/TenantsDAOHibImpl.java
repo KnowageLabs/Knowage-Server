@@ -284,7 +284,7 @@ public class TenantsDAOHibImpl extends AbstractHibernateDAO implements ITenantsD
 			Integer idTenant = (Integer) aSession.save(aTenant);
 			aSession.flush();
 
-			aTenant.setId(idTenant);
+			aTenant.changeId(idTenant);
 
 			SbiCommonInfo sbiCommoInfo = new SbiCommonInfo();
 			sbiCommoInfo.setOrganization(aTenant.getName());
@@ -530,12 +530,11 @@ public class TenantsDAOHibImpl extends AbstractHibernateDAO implements ITenantsD
 	private void setRole(Role role, SbiUser tenantAdmin) {
 		logger.debug("IN");
 		SbiExtUserRoles sbiExtUserRole = new SbiExtUserRoles();
-		SbiExtUserRolesId id = new SbiExtUserRolesId();
+		
 		try {
 			ISbiUserDAO userDAO = DAOFactory.getSbiUserDAO();
 			Integer extRoleId = role.getId();
-			id.setExtRoleId(extRoleId); // role Id
-			id.setId(tenantAdmin.getId()); // user Id
+			SbiExtUserRolesId id = new SbiExtUserRolesId(tenantAdmin.getId(),extRoleId);
 			sbiExtUserRole.setSbiUser(tenantAdmin);
 			sbiExtUserRole.setId(id);
 			sbiExtUserRole.getCommonInfo().setOrganization(role.getOrganization());
@@ -779,7 +778,8 @@ public class TenantsDAOHibImpl extends AbstractHibernateDAO implements ITenantsD
 			aTenant.getSbiOrganizationThemes().stream().filter(y -> y.getId().getUuid() == null).forEach(x -> {
 
 				SbiOrganizationTheme newSbiOrganizationTheme = x;
-				newSbiOrganizationTheme.getId().setUuid(uuidForLambda);
+				SbiOrganizationThemeId sbiOrganizationThemeId = new SbiOrganizationThemeId(uuidForLambda); 
+				newSbiOrganizationTheme.setId(sbiOrganizationThemeId);
 				newSbiOrganizationTheme.setCommonInfo(sbiCommoInfo);
 				updateSbiCommonInfo4Insert(newSbiOrganizationTheme);
 
@@ -1014,7 +1014,7 @@ public class TenantsDAOHibImpl extends AbstractHibernateDAO implements ITenantsD
 					+ ((aTenant == null) ? "" : String.valueOf(aTenant.getId())), e);
 
 			// Added
-			e.printStackTrace();
+			//e.printStackTrace();
 
 			if (jdbcConnection != null) {
 				try {
@@ -1100,8 +1100,8 @@ public class TenantsDAOHibImpl extends AbstractHibernateDAO implements ITenantsD
 				tenant.getSbiOrganizationThemes().stream().forEach(x -> x.setActive(false));
 			}
 
-			SbiOrganizationThemeId id = new SbiOrganizationThemeId();
-			id.setOrganizationId(tenant.getId());
+			SbiOrganizationThemeId id = new SbiOrganizationThemeId(tenant.getId());
+			
 
 			SbiOrganizationTheme newTheme = new SbiOrganizationTheme(themeName, newThemeConfigStr, isActive);
 			newTheme.setId(id);

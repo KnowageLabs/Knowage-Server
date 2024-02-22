@@ -63,7 +63,7 @@ public class SbiGlBnessClsWlistId implements Serializable {
 	 * @param wordId
 	 *            the wordId to set
 	 */
-	public void setWordId(int wordId) {
+	private void setWordId(int wordId) {
 		this.wordId = wordId;
 	}
 
@@ -78,7 +78,7 @@ public class SbiGlBnessClsWlistId implements Serializable {
 	 * @param bcId
 	 *            the bcId to set
 	 */
-	public void setBcId(int bcId) {
+	private void setBcId(int bcId) {
 		this.bcId = bcId;
 	}
 
@@ -93,7 +93,7 @@ public class SbiGlBnessClsWlistId implements Serializable {
 	 * @param column_name
 	 *            the column_name to set
 	 */
-	public void setColumn_name(String column_name) {
+	private void setColumn_name(String column_name) {
 		this.column_name = column_name;
 	}
 

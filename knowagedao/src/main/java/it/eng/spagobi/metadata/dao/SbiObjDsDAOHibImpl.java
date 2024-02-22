@@ -160,9 +160,9 @@ public class SbiObjDsDAOHibImpl extends AbstractHibernateDAO implements ISbiObjD
 		try {
 			aSession = getSession();
 			tx = aSession.beginTransaction();
-			SbiMetaObjDsId hibId = new SbiMetaObjDsId();
-			hibId.setObjId(aMetaObjDs.getId().getObjId());
-			hibId.setDsId(aMetaObjDs.getId().getDsId());
+			SbiMetaObjDsId hibId = new SbiMetaObjDsId(aMetaObjDs.getId().getDsId(),
+					aMetaObjDs.getId().getObjId());
+			
 
 			updateSbiCommonInfo4Update(hibId);
 			tx.commit();
@@ -235,11 +235,12 @@ public class SbiObjDsDAOHibImpl extends AbstractHibernateDAO implements ISbiObjD
 					List<SbiMetaObjDs> lstRels = DAOFactory.getSbiObjDsDAO().loadDsByObjId(objId);
 					for (SbiMetaObjDs r : lstRels) {
 						SbiMetaObjDs delObjDs = new SbiMetaObjDs();
-						SbiMetaObjDsId delObjDsId = new SbiMetaObjDsId();
-						delObjDsId.setDsId(r.getId().getDsId());
-						delObjDsId.setOrganization(r.getId().getOrganization());
-						delObjDsId.setVersionNum(r.getId().getVersionNum());
-						delObjDsId.setObjId(objId);
+						SbiMetaObjDsId delObjDsId = new SbiMetaObjDsId(r.getId().getDsId(),
+								r.getId().getVersionNum(),r.getId().getOrganization(),objId);
+						//delObjDsId.setDsId(r.getId().getDsId());
+						//delObjDsId.setOrganization(r.getId().getOrganization());
+						//delObjDsId.setVersionNum(r.getId().getVersionNum());
+						//delObjDsId.setObjId(objId);
 						delObjDs.setId(delObjDsId);
 						DAOFactory.getSbiObjDsDAO().deleteObjDs(delObjDs);
 					}
@@ -255,11 +256,8 @@ public class SbiObjDsDAOHibImpl extends AbstractHibernateDAO implements ISbiObjD
 
 				// creating relation object
 				SbiMetaObjDs relObjDs = new SbiMetaObjDs();
-				SbiMetaObjDsId relObjDsId = new SbiMetaObjDsId();
-				relObjDsId.setDsId(dsId);
-				relObjDsId.setOrganization(dsOrganization);
-				relObjDsId.setVersionNum(dsVersion);
-				relObjDsId.setObjId(objId);
+				SbiMetaObjDsId relObjDsId = new SbiMetaObjDsId(dsId,dsVersion,dsOrganization,objId);
+				
 				relObjDs.setId(relObjDsId);
 
 				// check if the relation already exists (in this context will be only ONE relation)
@@ -315,11 +313,7 @@ public class SbiObjDsDAOHibImpl extends AbstractHibernateDAO implements ISbiObjD
 
 						// creating relation object
 						SbiMetaObjDs relObjDs = new SbiMetaObjDs();
-						SbiMetaObjDsId relObjDsId = new SbiMetaObjDsId();
-						relObjDsId.setDsId(ds.getId());
-						relObjDsId.setOrganization(dsOrganization);
-						relObjDsId.setVersionNum(dsVersion);
-						relObjDsId.setObjId(obj.getId());
+						SbiMetaObjDsId relObjDsId = new SbiMetaObjDsId(ds.getId(),dsVersion,dsOrganization,obj.getId());
 						relObjDs.setId(relObjDsId);
 
 						DAOFactory.getSbiObjDsDAO().insertObjDs(relObjDs);
@@ -396,11 +390,7 @@ public class SbiObjDsDAOHibImpl extends AbstractHibernateDAO implements ISbiObjD
 
 					// creating meta relation object
 					SbiMetaObjDs relMetaObjDs = new SbiMetaObjDs();
-					SbiMetaObjDsId relMetaObjDsId = new SbiMetaObjDsId();
-					relMetaObjDsId.setDsId(ds.getId());
-					relMetaObjDsId.setOrganization(dsOrganization);
-					relMetaObjDsId.setVersionNum(dsVersion);
-					relMetaObjDsId.setObjId(obj.getId());
+					SbiMetaObjDsId relMetaObjDsId = new SbiMetaObjDsId(ds.getId(),dsVersion,dsOrganization,obj.getId());
 					relMetaObjDs.setId(relMetaObjDsId);
 					DAOFactory.getSbiObjDsDAO().insertObjDs(relMetaObjDs);
 
@@ -477,11 +467,13 @@ public class SbiObjDsDAOHibImpl extends AbstractHibernateDAO implements ISbiObjD
 			aSession = getSession();
 			tx = aSession.beginTransaction();
 
-			SbiMetaObjDsId hibId = new SbiMetaObjDsId();
-			hibId.setObjId(aMetaObjDs.getId().getObjId());
-			hibId.setDsId(aMetaObjDs.getId().getDsId());
-			hibId.setOrganization(aMetaObjDs.getId().getOrganization());
-			hibId.setVersionNum(aMetaObjDs.getId().getVersionNum());
+			SbiMetaObjDsId hibId = new SbiMetaObjDsId(aMetaObjDs.getId().getDsId(),
+					aMetaObjDs.getId().getVersionNum(),aMetaObjDs.getId().getOrganization(),
+					aMetaObjDs.getId().getObjId());
+			//hibId.setObjId(aMetaObjDs.getId().getObjId());
+			//hibId.setDsId(aMetaObjDs.getId().getDsId());
+			//hibId.setOrganization(aMetaObjDs.getId().getOrganization());
+			//hibId.setVersionNum(aMetaObjDs.getId().getVersionNum());
 
 			SbiMetaObjDs hib = (SbiMetaObjDs) aSession.load(SbiMetaObjDs.class, hibId);
 
@@ -516,11 +508,9 @@ public class SbiObjDsDAOHibImpl extends AbstractHibernateDAO implements ISbiObjD
 			tx = aSession.beginTransaction();
 
 			for (SbiMetaObjDs r : lstRel) {
-				SbiMetaObjDsId hibId = new SbiMetaObjDsId();
-				hibId.setObjId(r.getId().getObjId());
-				hibId.setDsId(r.getId().getDsId());
-				hibId.setOrganization(r.getId().getOrganization());
-				hibId.setVersionNum(r.getId().getVersionNum());
+				SbiMetaObjDsId hibId = new SbiMetaObjDsId(r.getId().getDsId(),r.getId().getVersionNum(),
+						r.getId().getOrganization(),r.getId().getObjId());
+				
 
 				SbiMetaObjDs hib = (SbiMetaObjDs) aSession.load(SbiMetaObjDs.class, hibId);
 

@@ -32,11 +32,21 @@ public class SbiProgressThread implements java.io.Serializable {
 	private String type;
 	private String executionRole;
 
+	
+	public SbiProgressThread(int progressThreadId) {
+		super();
+		this.progressThreadId = progressThreadId;
+	}
+
+	public SbiProgressThread() {
+		super();
+	}
+
 	public int getProgressThreadId() {
 		return this.progressThreadId;
 	}
 
-	public void setProgressThreadId(int progressThreadId) {
+	private void setProgressThreadId(int progressThreadId) {
 		this.progressThreadId = progressThreadId;
 	}
 

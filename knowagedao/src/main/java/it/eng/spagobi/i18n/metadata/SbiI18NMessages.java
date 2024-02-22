@@ -38,11 +38,15 @@ public class SbiI18NMessages extends SbiHibernateModel implements java.io.Serial
 		this.message = message;
 	}
 
+	public SbiI18NMessages(Integer id) {
+		this.id=id;
+	}
+
 	public Integer getId() {
 		return id;
 	}
 
-	public void setId(Integer id) {
+	private void setId(Integer id) {
 		this.id = id;
 	}
 

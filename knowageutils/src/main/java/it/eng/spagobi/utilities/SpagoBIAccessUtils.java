@@ -182,7 +182,6 @@ public class SpagoBIAccessUtils {
 			return ret;
 		} catch (IOException ioe) {
 			LOGGER.error("Exception: " + ioe);
-			ioe.printStackTrace();
 			return null;
 		}
 
@@ -208,7 +207,6 @@ public class SpagoBIAccessUtils {
 			os.flush();
 		} catch (IOException ioe) {
 			LOGGER.error("Exception: " + ioe);
-			ioe.printStackTrace();
 		} finally {
 			if (closeStreams) {
 				try {
@@ -218,7 +216,6 @@ public class SpagoBIAccessUtils {
 						is.close();
 				} catch (IOException e) {
 					LOGGER.error("Error closing streams: " + e);
-					e.printStackTrace();
 				}
 
 			}

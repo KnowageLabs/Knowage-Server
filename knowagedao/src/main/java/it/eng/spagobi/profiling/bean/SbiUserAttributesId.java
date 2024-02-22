@@ -35,19 +35,27 @@ public class SbiUserAttributesId implements java.io.Serializable {
 		this.attributeId = attributeId;
 	}
 
+	public SbiUserAttributesId(int attributeId) {
+		this.attributeId = attributeId;
+	}
+	
 	public int getId() {
 		return this.id;
 	}
 
-	public void setId(int id) {
+	private void setId(int id) {
 		this.id = id;
+	}
+	
+	public void changeId(int id) {
+		this.setId(id);
 	}
 
 	public int getAttributeId() {
 		return this.attributeId;
 	}
 
-	public void setAttributeId(int attributeId) {
+	private void setAttributeId(int attributeId) {
 		this.attributeId = attributeId;
 	}
 

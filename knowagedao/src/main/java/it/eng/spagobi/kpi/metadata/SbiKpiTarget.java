@@ -26,7 +26,7 @@ public class SbiKpiTarget extends SbiHibernateModel {
 	/**
 	 * @param targetId the targetId to set
 	 */
-	public void setTargetId(Integer targetId) {
+	private void setTargetId(Integer targetId) {
 		this.targetId = targetId;
 	}
 

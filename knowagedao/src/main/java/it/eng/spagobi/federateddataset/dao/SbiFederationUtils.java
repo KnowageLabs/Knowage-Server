@@ -96,7 +96,7 @@ public class SbiFederationUtils {
 		Assert.assertNotNull(sbiFederationDefinition, "The federation is null");
 		Assert.assertNotNull(federationDefinition, "The federation is null");
 
-		sbiFederationDefinition.setFederation_id(federationDefinition.getFederation_id());
+		sbiFederationDefinition.changeFederation_id(federationDefinition.getFederation_id());
 		sbiFederationDefinition.setLabel(federationDefinition.getLabel());
 		sbiFederationDefinition.setName(federationDefinition.getName());
 		sbiFederationDefinition.setDescription(federationDefinition.getDescription());

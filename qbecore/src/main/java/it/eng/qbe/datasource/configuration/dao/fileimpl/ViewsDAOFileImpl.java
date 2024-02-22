@@ -78,7 +78,7 @@ public class ViewsDAOFileImpl implements IViewsDAO {
 			}
 			jarFile.close();
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error("loadModelViews",e);
 		}				
 		
 		return views;	
@@ -98,7 +98,7 @@ public class ViewsDAOFileImpl implements IViewsDAO {
 				viewsJSON = new JSONObject();
 			}
 		} catch(Exception ioe){
-			ioe.printStackTrace();
+			logger.error("loadViewsFormJarFile",ioe);
 			viewsJSON = new JSONObject();
 		}finally{
 			try {

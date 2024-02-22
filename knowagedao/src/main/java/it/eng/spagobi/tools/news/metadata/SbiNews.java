@@ -65,7 +65,7 @@ public class SbiNews extends SbiHibernateModel {
 		return id;
 	}
 
-	public void setId(Integer id) {
+	private void setId(Integer id) {
 		this.id = id;
 	}
 
@@ -147,6 +147,11 @@ public class SbiNews extends SbiHibernateModel {
 
 	public void setRead(Set<SbiNewsRead> read) {
 		this.read = read;
+	}
+
+	public void changeId(Integer id) {
+		this.setId(id);
+		
 	}
 
 }

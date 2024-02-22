@@ -30,7 +30,7 @@ public class SbiKpiExecutionFilterId implements Serializable {
 	 * @param placeholderId
 	 *            the placeholderId to set
 	 */
-	public void setPlaceholderId(Integer placeholderId) {
+	private void setPlaceholderId(Integer placeholderId) {
 		this.placeholderId = placeholderId;
 	}
 
@@ -45,7 +45,7 @@ public class SbiKpiExecutionFilterId implements Serializable {
 	 * @param executionId
 	 *            the executionId to set
 	 */
-	public void setExecutionId(Integer executionId) {
+	private void setExecutionId(Integer executionId) {
 		this.executionId = executionId;
 	}
 
@@ -60,7 +60,7 @@ public class SbiKpiExecutionFilterId implements Serializable {
 	 * @param kpiId
 	 *            the kpiId to set
 	 */
-	public void setKpiId(Integer kpiId) {
+	private void setKpiId(Integer kpiId) {
 		this.kpiId = kpiId;
 	}
 
@@ -75,7 +75,7 @@ public class SbiKpiExecutionFilterId implements Serializable {
 	 * @param kpiVersion
 	 *            the kpiVersion to set
 	 */
-	public void setKpiVersion(Integer kpiVersion) {
+	private void setKpiVersion(Integer kpiVersion) {
 		this.kpiVersion = kpiVersion;
 	}
 

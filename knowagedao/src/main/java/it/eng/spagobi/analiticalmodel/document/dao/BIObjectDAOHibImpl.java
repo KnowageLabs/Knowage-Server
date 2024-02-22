@@ -2112,14 +2112,14 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 						.loadBIObjectParametersById(biObject.getId());
 				for (int i = 0; i < lstDocParameters.size(); i++) {
 					BIObjectParameter docParam = lstDocParameters.get(i);
-					SbiObjects aSbiObject = new SbiObjects();
-					aSbiObject.setBiobjId(biObject.getId());
+					SbiObjects aSbiObject = new SbiObjects(biObject.getId());
+					
 
-					SbiParameters aSbiParameter = new SbiParameters();
-					aSbiParameter.setParId(docParam.getParameter().getId());
+					SbiParameters aSbiParameter = new SbiParameters(docParam.getParameter().getId());
+					
 
-					SbiObjPar hibObjPar = new SbiObjPar();
-					hibObjPar.setObjParId(docParam.getId());
+					SbiObjPar hibObjPar = new SbiObjPar(docParam.getId());
+					
 					hibObjPar.setLabel(docParam.getLabel());
 
 					hibObjPar.setSbiObject(aSbiObject);
@@ -2151,14 +2151,15 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 							Integer objId = biObject.getId();
 							if (objId == null || objId.compareTo(new Integer("0")) == 0)
 								objId = biObject.getId();
-							aSbiObject.setBiobjId(objId);
+							aSbiObject = new SbiObjects(objId);
+							
 
-							SbiParameters aSbiParameter = new SbiParameters();
-							aSbiParameter.setParId(objPar.getParID());
-							SbiObjPar sbiObjPar = new SbiObjPar();
+							SbiParameters aSbiParameter = new SbiParameters(objPar.getParID());
+							
+							SbiObjPar sbiObjPar = new SbiObjPar(new Integer("-1"));
 							sbiObjPar.setSbiObject(aSbiObject);
 							sbiObjPar.setSbiParameter(aSbiParameter);
-							sbiObjPar.setObjParId(new Integer("-1"));
+							
 							sbiObjPar.setLabel(objPar.getLabel());
 							sbiObjPar.setParurlNm(objPar.getParameterUrlName());
 							sbiObjPar.setReqFl(objPar.getRequired().shortValue());
@@ -2240,14 +2241,15 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 							Integer objId = biobjectId;
 							if (objId == null || objId.compareTo(new Integer("0")) == 0)
 								objId = biobjectId;
-							aSbiObject.setBiobjId(objId);
+							aSbiObject = new SbiObjects(objId);
+							
 
-							SbiParameters aSbiParameter = new SbiParameters();
-							aSbiParameter.setParId(objPar.getParID());
-							SbiObjPar sbiObjPar = new SbiObjPar();
+							SbiParameters aSbiParameter = new SbiParameters(objPar.getParID());
+							
+							SbiObjPar sbiObjPar = new SbiObjPar(new Integer("-1"));
 							sbiObjPar.setSbiObject(aSbiObject);
 							sbiObjPar.setSbiParameter(aSbiParameter);
-							sbiObjPar.setObjParId(new Integer("-1"));
+							
 							sbiObjPar.setLabel(objPar.getLabel());
 							sbiObjPar.setParurlNm(objPar.getParameterUrlName());
 							sbiObjPar.setReqFl(objPar.getRequired().shortValue());

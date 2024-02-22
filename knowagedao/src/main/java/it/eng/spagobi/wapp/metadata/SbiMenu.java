@@ -112,7 +112,7 @@ public class SbiMenu extends SbiHibernateModel implements Comparable<SbiMenu> {
 	 *
 	 * @param menuId the new menu id
 	 */
-	public void setMenuId(Integer menuId) {
+	private void setMenuId(Integer menuId) {
 		this.menuId = menuId;
 	}
 

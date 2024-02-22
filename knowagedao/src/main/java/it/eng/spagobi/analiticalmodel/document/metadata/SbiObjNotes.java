@@ -36,6 +36,13 @@ public class SbiObjNotes  extends SbiHibernateModel {
      private Date creationDate;
      private Date lastChangeDate;
      
+     public SbiObjNotes() {
+         
+     }
+     
+     public SbiObjNotes(Integer id) {
+         this.objNoteId = id;
+     }
 	/**
 	 * Gets the obj note id.
 	 * 

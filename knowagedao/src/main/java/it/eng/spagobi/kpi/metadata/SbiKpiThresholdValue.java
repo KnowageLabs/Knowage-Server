@@ -52,7 +52,7 @@ public class SbiKpiThresholdValue extends SbiHibernateModel implements java.io.S
 	 * @param id
 	 *            the id to set
 	 */
-	public void setId(Integer id) {
+	private void setId(Integer id) {
 		this.id = id;
 	}
 

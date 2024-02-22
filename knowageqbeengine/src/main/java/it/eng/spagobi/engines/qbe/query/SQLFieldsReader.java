@@ -24,7 +24,7 @@ import java.sql.ResultSetMetaData;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
-
+import org.apache.log4j.Logger;
 // TODO: Auto-generated Javadoc
 /**
  * Class that can get fields (i.e name and type) from a sql query string
@@ -38,7 +38,7 @@ public class SQLFieldsReader {
 	
 	/** The connection. */
 	private Connection connection;
-
+	private static Logger logger = Logger.getLogger(SQLFieldsReader.class);
 	/**
 	 * Instantiates a new sQL fields reader.
 	 * 
@@ -116,7 +116,7 @@ public class SQLFieldsReader {
              }
          }
          catch(Exception e) {
-        	 e.printStackTrace();
+        	 logger.error("readFields",e);
          }
 		
 		
@@ -179,7 +179,7 @@ public class SQLFieldsReader {
                                  break;
                  }
              } catch (Exception ex2){
-                 ex2.printStackTrace();
+                 logger.error("getJdbcTypeClass",ex2);
              }
          }
          return cls;

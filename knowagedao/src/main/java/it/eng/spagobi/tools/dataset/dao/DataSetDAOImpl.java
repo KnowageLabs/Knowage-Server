@@ -876,7 +876,7 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 			String sbiVersionIn = hibDataSet.getCommonInfo().getSbiVersionIn();
 			hibDataSet.setUserIn(userIn);
 			hibDataSet.setSbiVersionIn(sbiVersionIn);
-			hibDataSet.getId().setVersionNum(1);
+			hibDataSet.getId().changeVersionNum(1);
 			hibDataSet.getId().setOrganization(hibDataSet.getCommonInfo().getOrganization());
 			hibDataSet.setTimeIn(currentTStamp);
 			// hibDataSet.setOrganization(hibDataSet.getCommonInfo().getOrganization());
@@ -2095,7 +2095,8 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 			if (transaction != null && transaction.isActive()) {
 				transaction.rollback();
 			}
-			t.printStackTrace();
+			//t.printStackTrace();
+			logger.error("An unexpected error occured while loading datasets",t);
 			throw new SpagoBIDAOException("An unexpected error occured while loading datasets", t);
 		} finally {
 			if (session != null && session.isOpen()) {
@@ -2749,13 +2750,13 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 		Query query = null;
 		if (isInsert) {
 			hql = " select max(sb.id.dsId) as maxId from SbiDataSet sb ";
-			toReturn.setVersionNum(new Integer("1"));
+			toReturn.changeVersionNum(new Integer("1"));
 			query = aSession.createQuery(hql);
 		} else {
 			hql = " select max(sb.id.versionNum) as maxId, sb.id.organization as organization from SbiDataSet sb where sb.id.dsId = ? group by organization";
 			query = aSession.createQuery(hql);
 			query.setInteger(0, dataSet.getId());
-			toReturn.setDsId(dataSet.getId());
+			toReturn.changeDsId(dataSet.getId());
 		}
 
 		List result = query.list();
@@ -2783,13 +2784,13 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 
 		if (isInsert) {
 			logger.debug("Nextid: " + nextId);
-			toReturn.setDsId(nextId);
+			toReturn.changeDsId(nextId);
 		} else {
 			logger.debug("NextVersion: " + nextId);
 			if (organization != null) {
 				toReturn.setOrganization(organization);
 			}
-			toReturn.setVersionNum(nextId);
+			toReturn.changeVersionNum(nextId);
 		}
 
 		return toReturn;

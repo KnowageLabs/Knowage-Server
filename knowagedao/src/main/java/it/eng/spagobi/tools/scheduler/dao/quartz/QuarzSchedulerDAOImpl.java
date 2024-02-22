@@ -773,8 +773,7 @@ public class QuarzSchedulerDAOImpl extends AbstractHibernateDAO implements ISche
 	}
 
 	public SbiTriggerPaused fromTriggerPaused(TriggerPaused triggerPaused) {
-		SbiTriggerPaused hibTriggerPaused = new SbiTriggerPaused();
-		hibTriggerPaused.setId(triggerPaused.getId());
+		SbiTriggerPaused hibTriggerPaused = new SbiTriggerPaused(triggerPaused.getId());
 		hibTriggerPaused.setJobGroup(triggerPaused.getJobGroup());
 		hibTriggerPaused.setJobName(triggerPaused.getJobName());
 		hibTriggerPaused.setTriggerGroup(triggerPaused.getTriggerGroup());

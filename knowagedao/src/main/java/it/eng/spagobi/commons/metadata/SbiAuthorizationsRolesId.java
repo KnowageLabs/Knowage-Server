@@ -39,7 +39,7 @@ public class SbiAuthorizationsRolesId implements java.io.Serializable {
 		return this.authorizationId;
 	}
 
-	public void setAuthorizationId(int authorizationId) {
+	private void setAuthorizationId(int authorizationId) {
 		this.authorizationId = authorizationId;
 	}
 
@@ -47,7 +47,7 @@ public class SbiAuthorizationsRolesId implements java.io.Serializable {
 		return this.roleId;
 	}
 
-	public void setRoleId(int roleId) {
+	private void setRoleId(int roleId) {
 		this.roleId = roleId;
 	}
 

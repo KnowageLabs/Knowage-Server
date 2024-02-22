@@ -133,7 +133,7 @@ public class SbiObjPar  extends SbiHibernateModel {
 	 *
 	 * @param objParId the new obj par id
 	 */
-	public void setObjParId(Integer objParId) {
+	private void setObjParId(Integer objParId) {
 		this.objParId = objParId;
 	}
 

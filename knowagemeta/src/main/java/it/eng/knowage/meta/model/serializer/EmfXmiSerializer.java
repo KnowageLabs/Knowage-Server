@@ -27,7 +27,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Collections;
-
+import org.apache.log4j.Logger;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
@@ -46,7 +46,7 @@ public class EmfXmiSerializer implements IModelSerializer {
 	public static final String SPAGOBI_MODEL_URI_SLASH = "it/eng/spagobi";
 	public static final String KNOWAGE_MODEL_INITALIZER = "value=\"StandardKnowageBusinessModelInitializer\"";
 	public static final String SPAGOBI_MODEL_INITALIZER = "value=\"StandardSpagobiBusinessModelInitializer\"";
-
+	private static Logger logger = Logger.getLogger(EmfXmiSerializer.class);
 	@Override
 	public void serialize(Model model, File file) {
 		FileOutputStream outputStream;
@@ -132,7 +132,7 @@ public class EmfXmiSerializer implements IModelSerializer {
 
 			// resource.save(System.out, Collections.EMPTY_MAP);
 		} catch (Throwable e) {
-			e.printStackTrace();
+			logger.error("load",e);
 			throw new RuntimeException("Impossible to deserialize model [" + (model != null ? model.getName() : "null") + "]", e);
 		}
 

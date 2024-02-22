@@ -76,7 +76,7 @@ public class RelationshipsDAOFileImpl implements IRelationshipsDAO{
 			}
 			jarFile.close();
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error("loadRelationshipFromJarFile",e);
 		}				
 		
 		return relationship;	
@@ -96,7 +96,7 @@ public class RelationshipsDAOFileImpl implements IRelationshipsDAO{
 				relationshipsJSON = new JSONObject();
 			}
 		} catch(Exception ioe){
-			ioe.printStackTrace();
+			logger.error("loadRelationshipFromJarFile",ioe);
 			relationshipsJSON = new JSONObject();
 		}finally{
 			try {

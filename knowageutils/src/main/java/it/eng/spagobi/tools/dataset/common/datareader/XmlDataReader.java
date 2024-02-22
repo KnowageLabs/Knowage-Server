@@ -162,7 +162,7 @@ public class XmlDataReader extends AbstractDataReader {
 				try {
 					dataStream.close();
 				} catch (IOException e) {
-					e.printStackTrace();
+					
 					logger.error("IOException during File Closure");
 				}
 		}

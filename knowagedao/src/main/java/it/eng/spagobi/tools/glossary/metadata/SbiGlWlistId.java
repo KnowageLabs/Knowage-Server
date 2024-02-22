@@ -50,7 +50,7 @@ public class SbiGlWlistId implements Serializable {
 	 * @param wordId
 	 *            the wordId to set
 	 */
-	public void setWordId(int wordId) {
+	private void setWordId(int wordId) {
 		this.wordId = wordId;
 	}
 
@@ -65,7 +65,7 @@ public class SbiGlWlistId implements Serializable {
 	 * @param contentId
 	 *            the contentId to set
 	 */
-	public void setContentId(int contentId) {
+	private void setContentId(int contentId) {
 		this.contentId = contentId;
 	}
 

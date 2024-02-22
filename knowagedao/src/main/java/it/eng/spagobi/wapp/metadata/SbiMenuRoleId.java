@@ -71,7 +71,7 @@ public class SbiMenuRoleId  implements java.io.Serializable {
      * 
      * @param menuId the new menu id
      */
-    public void setMenuId(Integer menuId) {
+    private void setMenuId(Integer menuId) {
         this.menuId = menuId;
     }
 
@@ -89,7 +89,7 @@ public class SbiMenuRoleId  implements java.io.Serializable {
      * 
      * @param extRoleId the new ext role id
      */
-    public void setExtRoleId(Integer extRoleId) {
+    private void setExtRoleId(Integer extRoleId) {
         this.extRoleId = extRoleId;
     }
    

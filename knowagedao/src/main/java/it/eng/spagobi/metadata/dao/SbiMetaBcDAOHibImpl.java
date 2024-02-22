@@ -731,12 +731,12 @@ public class SbiMetaBcDAOHibImpl extends AbstractHibernateDAO implements ISbiMet
 			tmpSession = getSession();
 			tx = tmpSession.beginTransaction();
 			tmpBC = (SbiMetaBc) tmpSession.load(SbiMetaBc.class, id);
-			smbc.setBcId(tmpBC.getBcId());
+			smbc.changeBcId(tmpBC.getBcId());
 			smbc.setName(tmpBC.getName());
 
-			SbiMetaModel smm = new SbiMetaModel();
+			SbiMetaModel smm = new SbiMetaModel(tmpBC.getSbiMetaModel().getId());
 			smm.setCategory(tmpBC.getSbiMetaModel().getCategory());
-			smm.setId(tmpBC.getSbiMetaModel().getId());
+			
 			smm.setName(tmpBC.getSbiMetaModel().getName());
 			smm.setDescription(tmpBC.getSbiMetaModel().getDescription());
 
@@ -746,7 +746,7 @@ public class SbiMetaBcDAOHibImpl extends AbstractHibernateDAO implements ISbiMet
 					.hasNext();) {
 				SbiMetaBcAttribute smc = iterator.next();
 				SbiMetaBcAttribute tmp = new SbiMetaBcAttribute();
-				tmp.setAttributeId(smc.getAttributeId());
+				tmp.changeAttributeId(smc.getAttributeId());
 				tmp.setName(smc.getName());
 				tmp.setType(smc.getType());
 				smtc.add(tmp);

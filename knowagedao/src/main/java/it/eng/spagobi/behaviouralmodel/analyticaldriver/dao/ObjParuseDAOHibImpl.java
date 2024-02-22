@@ -140,7 +140,7 @@ public class ObjParuseDAOHibImpl extends AbstractHibernateDAO implements IObjPar
 			correlation.setPostCondition(aObjParuse.getPostCondition());
 			correlation.setLogicOperator(aObjParuse.getLogicOperator());
 			updateSbiCommonInfo4Insert(correlation);
-			correlation.setId((Integer) aSession.save(correlation));
+			correlation.changeId((Integer) aSession.save(correlation));
 			tx.commit();
 		} catch (HibernateException he) {
 			logException(he);

@@ -48,7 +48,7 @@ public class SbiTenant extends SbiHibernateModel {
 		return id;
 	}
 
-	public void setId(Integer id) {
+	private void setId(Integer id) {
 		this.id = id;
 	}
 
@@ -90,5 +90,10 @@ public class SbiTenant extends SbiHibernateModel {
 
 	public void setSbiOrganizationThemes(Set<SbiOrganizationTheme> sbiOrganizationThemes) {
 		this.sbiOrganizationThemes = sbiOrganizationThemes;
+	}
+
+	public void changeId(Integer idTenant) {
+		this.setId(idTenant);
+		
 	}
 }

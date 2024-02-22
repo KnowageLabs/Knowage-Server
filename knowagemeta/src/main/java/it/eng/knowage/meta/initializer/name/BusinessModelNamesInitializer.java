@@ -89,7 +89,8 @@ public class BusinessModelNamesInitializer {
 		try {
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			//e.printStackTrace();
+			logger.error("",e);		
 		}
 
 	}
@@ -99,7 +100,8 @@ public class BusinessModelNamesInitializer {
 		try {
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			//e.printStackTrace();
+			logger.error("",e);
 		}
 
 	}
@@ -175,7 +177,8 @@ public class BusinessModelNamesInitializer {
 		try {
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			//e.printStackTrace();
+			logger.error("",e);
 		}
 	}
 
@@ -202,7 +205,8 @@ public class BusinessModelNamesInitializer {
 			}
 			businessColumn.setUniqueName(uniqueName);
 		} catch (Exception e) {
-			e.printStackTrace();
+			//e.printStackTrace();
+			logger.error("set",e);
 		}
 
 	}
@@ -220,7 +224,8 @@ public class BusinessModelNamesInitializer {
 		try {
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			//e.printStackTrace();
+			logger.error("",e);
 		}
 
 	}
@@ -241,7 +246,8 @@ public class BusinessModelNamesInitializer {
 		try {
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			//e.printStackTrace();
+			logger.error("",e);
 		}
 	}
 }

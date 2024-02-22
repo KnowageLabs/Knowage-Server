@@ -74,7 +74,7 @@ public class SbiObjMetadata  extends SbiHibernateModel {
         return this.objMetaId;
     }
     
-    public void setObjMetaId(Integer objMetaId) {
+    private void setObjMetaId(Integer objMetaId) {
         this.objMetaId = objMetaId;
     }
 

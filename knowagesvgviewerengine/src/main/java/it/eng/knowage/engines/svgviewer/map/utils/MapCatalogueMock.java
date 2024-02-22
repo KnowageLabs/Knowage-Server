@@ -22,6 +22,8 @@ import it.eng.spago.configuration.ConfigSingleton;
 import java.io.File;
 import java.net.MalformedURLException;
 
+import org.apache.log4j.Logger;
+
 // TODO: Auto-generated Javadoc
 /**
  * The Class MapCatalogueMock.
@@ -30,6 +32,7 @@ import java.net.MalformedURLException;
  */
 public class MapCatalogueMock {
 
+	private static Logger logger = Logger.getLogger(MapCatalogueMock.class);
 	/**
 	 * Gets the standard hierarchy.
 	 *
@@ -58,7 +61,7 @@ public class MapCatalogueMock {
 		try {
 			return file.toURI().toURL().toString();
 		} catch (MalformedURLException e) {
-			e.printStackTrace();
+			logger.error("getMapUrl",e);
 			return null;
 		}
 	}

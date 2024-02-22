@@ -69,7 +69,8 @@ public class OlapModelInitializer {
 			}
 			getPropertiesInitializer().addProperties(olapModel);
 		} catch (Throwable t) {
-			t.printStackTrace();
+			//t.printStackTrace();
+			logger.error("Impossible to initialize olap model",t);
 			throw new RuntimeException("Impossible to initialize olap model", t);
 		}
 

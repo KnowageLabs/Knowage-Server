@@ -109,7 +109,7 @@ public class JasperReportEngineInstance extends AbstractEngineInstance {
 	public static final String JS_DIR = "JS_dir";
 	public static final String JS_EXT_ZIP = ".zip";
 
-	private static transient Logger logger = Logger.getLogger(JasperReportEngineInstance.class);
+	private static transient com.sun.org.slf4j.internal.Logger logger = Logger.getLogger(JasperReportEngineInstance.class);
 
 	public JasperReportEngineInstance(JasperReportEngineTemplate template, Map env, DataSetServiceProxy dsProxy) {
 		super(env);
@@ -432,8 +432,8 @@ public class JasperReportEngineInstance extends AbstractEngineInstance {
 				try {
 					Files.copy(source.toPath(), target.toPath(), REPLACE_EXISTING);
 				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					//e.printStackTrace();
+					logger.error("Files.copy",e);
 				}
 			}
 			logger.debug("Properties are copied to [" + pathMasterID + "]");

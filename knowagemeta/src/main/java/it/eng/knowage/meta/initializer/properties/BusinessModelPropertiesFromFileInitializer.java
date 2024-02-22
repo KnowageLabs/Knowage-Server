@@ -136,7 +136,8 @@ public class BusinessModelPropertiesFromFileInitializer implements IPropertiesIn
 			initModelAdmissibleValues(nodes, o.getParentModel());
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			//e.printStackTrace();
+			logger.error("initModelProperties",e);
 		}
 
 	}
@@ -155,7 +156,8 @@ public class BusinessModelPropertiesFromFileInitializer implements IPropertiesIn
 			nodes = readXMLNodes(document, "/properties/table/typesValues/admissibleValuesOf");
 			initModelAdmissibleValues(nodes, o.getModel().getParentModel());
 		} catch (Exception e) {
-			e.printStackTrace();
+			//e.printStackTrace();
+			logger.error("initTableProperties",e);
 		}
 	}
 
@@ -173,7 +175,8 @@ public class BusinessModelPropertiesFromFileInitializer implements IPropertiesIn
 			nodes = readXMLNodes(document, "/properties/table/typesValues/admissibleValuesOf");
 			initModelAdmissibleValues(nodes, o.getModel().getParentModel());
 		} catch (Exception e) {
-			e.printStackTrace();
+			//e.printStackTrace();
+			logger.error("initViewProperties",e);
 		}
 	}
 
@@ -236,7 +239,8 @@ public class BusinessModelPropertiesFromFileInitializer implements IPropertiesIn
 			// **************************************************************************
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			//e.printStackTrace();
+			logger.error("initColumnProperties",e);
 		}
 
 	}
@@ -264,7 +268,8 @@ public class BusinessModelPropertiesFromFileInitializer implements IPropertiesIn
 			initModelAdmissibleValues(nodes, rootModel);
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			//e.printStackTrace();
+			logger.error("initCalculatedColumnProperties",e);
 		}
 
 	}
@@ -287,7 +292,8 @@ public class BusinessModelPropertiesFromFileInitializer implements IPropertiesIn
 			nodes = readXMLNodes(document, "/properties/relationship/typesValues/admissibleValuesOf");
 			initModelAdmissibleValues(nodes, o.getModel().getParentModel());
 		} catch (Exception e) {
-			e.printStackTrace();
+			//e.printStackTrace();
+			logger.error("initRelationshipProperties",e);
 		}
 	}
 

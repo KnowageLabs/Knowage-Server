@@ -47,7 +47,7 @@ public class SbiMetaBc extends SbiHibernateModel {
 		return this.bcId;
 	}
 
-	public void setBcId(Integer bcId) {
+	private void setBcId(Integer bcId) {
 		this.bcId = bcId;
 	}
 
@@ -105,6 +105,11 @@ public class SbiMetaBc extends SbiHibernateModel {
 
 	public void setSbiMetaBcAttributes(Set sbiMetaBcAttributes) {
 		this.sbiMetaBcAttributes = sbiMetaBcAttributes;
+	}
+
+	public void changeBcId(Integer bcId) {
+		this.setBcId(bcId);
+		
 	}
 
 }

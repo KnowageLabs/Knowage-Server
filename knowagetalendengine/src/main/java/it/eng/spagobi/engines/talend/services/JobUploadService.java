@@ -142,10 +142,10 @@ public class JobUploadService extends AbstractEngineStartServlet {
 		    		try {
 		    			jobDeploymentDescriptor.load(item.getInputStream());
 					} catch (DocumentException e) {
-						e.printStackTrace();
+						logger.error("jobDeploymentDescriptor.load DE",e);
 						return null;
 					} catch (IOException e) {
-						e.printStackTrace();
+						logger.error("jobDeploymentDescriptor.load IO",e);
 						return null;
 					}
 		    	}
@@ -179,7 +179,7 @@ public class JobUploadService extends AbstractEngineStartServlet {
 	    try {
 			item.write(uploadedFile);
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error("item.write",e);
 		}
 
 		String[] dirNames = ZipUtils.getDirectoryNameByLevel(new ZipFile(uploadedFile), 2);
@@ -298,7 +298,7 @@ public class JobUploadService extends AbstractEngineStartServlet {
 
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error("ContentServiceProxy",e);
 		}
 	}
 
@@ -350,8 +350,7 @@ public class JobUploadService extends AbstractEngineStartServlet {
 
 	    	//PublishAccessUtils.publish(spagobiurl, user, password, label, name, description, encrypt, visible, type, state, functionalitiyCode, templateBase64Coded);
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error(e);
 		}
 
 	}

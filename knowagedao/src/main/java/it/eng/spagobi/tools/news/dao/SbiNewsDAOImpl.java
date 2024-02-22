@@ -281,7 +281,7 @@ public class SbiNewsDAOImpl extends AbstractHibernateDAO implements ISbiNewsDAO 
 			hibNews.setSbiNewsRoles(extRoles);
 
 			if (aNews.getId() != null) {
-				hibNews.setId(aNews.getId());
+				hibNews.changeId(aNews.getId());
 			}
 
 			updateSbiCommonInfo4Insert(hibNews);

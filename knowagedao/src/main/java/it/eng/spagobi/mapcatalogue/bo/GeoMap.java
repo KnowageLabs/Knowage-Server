@@ -210,8 +210,7 @@ public class GeoMap implements Serializable {
 
 	public SbiGeoMaps toSpagoBiGeoMaps() throws EMFUserError, EMFInternalError {
 		logger.info("IN");
-		SbiGeoMaps sbm = new SbiGeoMaps();
-		sbm.setMapId(getMapId());
+		SbiGeoMaps sbm = new SbiGeoMaps(getMapId());
 		sbm.setName(getName());
 		sbm.setDescr(getDescr());
 		sbm.setFormat(getFormat());
@@ -225,8 +224,8 @@ public class GeoMap implements Serializable {
 			byte[] binContentsContent = binContentDAO.getBinContent(getBinId());
 			if (binContentsContent != null) {
 				Integer contentId = getBinId();
-				SbiBinContents sbiBinContents = new SbiBinContents();
-				sbiBinContents.setId(contentId);
+				SbiBinContents sbiBinContents = new SbiBinContents(contentId);
+				
 				sbiBinContents.setContent(binContentsContent);
 				sbm.setBinContents(sbiBinContents);
 			}

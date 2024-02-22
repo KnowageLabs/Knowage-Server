@@ -24,7 +24,7 @@ import java.sql.Statement;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
-
+import org.apache.log4j.Logger;
 import it.eng.knowage.engines.svgviewer.SvgViewerEngineConstants;
 import it.eng.spago.base.SourceBean;
 import it.eng.spagobi.tools.datasource.bo.DataSourceFactory;
@@ -47,7 +47,7 @@ public class QueryLabelProducer extends AbstractLabelProducer {
 
 	/** The param names. */
 	private Set paramNames;
-
+	private static Logger logger = Logger.getLogger(QueryLabelProducer.class);
 	/*
 	 * (non-Javadoc)
 	 *
@@ -110,13 +110,13 @@ public class QueryLabelProducer extends AbstractLabelProducer {
 				}
 			}
 		} catch (Exception ex) {
-			ex.printStackTrace();
+			logger.error("getLabel",ex);
 		} finally {
 			if (connection != null) {
 				try {
 					connection.close();
 				} catch (SQLException e) {
-					e.printStackTrace();
+					logger.error("connection",e);
 				}
 			}
 		}

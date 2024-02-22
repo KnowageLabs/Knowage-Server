@@ -249,12 +249,12 @@ public class I18NMessagesDAOHibImpl extends AbstractHibernateDAO implements I18N
 		logger.debug("IN");
 		Session session = null;
 		Transaction tx = null;
-		SbiI18NMessages toModify = new SbiI18NMessages();
+		
 		try {
 			session = getSession();
 			tx = session.beginTransaction();
-
-			toModify.setId(message.getId());
+			SbiI18NMessages toModify = new SbiI18NMessages(message.getId());
+			
 			toModify.setLanguageCd(message.getLanguageCd());
 			toModify.setLabel(message.getLabel());
 			toModify.setMessage(message.getMessage());

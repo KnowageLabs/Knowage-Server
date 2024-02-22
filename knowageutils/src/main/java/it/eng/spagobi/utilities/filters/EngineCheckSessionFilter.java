@@ -103,7 +103,7 @@ public class EngineCheckSessionFilter implements Filter {
 				logger.error(" msg: ["+ z.getMessage() + "]"); 
 				logger.error(" stacktrace:");
 			}
-			t.printStackTrace(); 
+			logger.error("doFilter",t); 
 	    	throw new ServletException(t);
 		} finally {
 			logger.debug("OUT");

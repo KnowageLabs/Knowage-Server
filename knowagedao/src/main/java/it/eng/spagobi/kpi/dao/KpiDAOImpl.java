@@ -273,7 +273,7 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 				if (newVersion) {
 					SbiKpiRule oldRule = (SbiKpiRule) session.load(SbiKpiRule.class,
 							new SbiKpiRuleId(rule.getId(), rule.getVersion()));
-					sbiRule.getSbiKpiRuleId().setId(rule.getId());
+					sbiRule.getSbiKpiRuleId().changeRuleId(rule.getId());
 					if (oldRule.getActive() == 'T') {
 						oldRule.setActive(null);
 					}
@@ -607,7 +607,8 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 					for (SbiKpiTargetValue sbiKpiTargetValue : oldKpi.getSbiKpiTargetValues()) {
 						sbiKpiTargetIds.add(sbiKpiTargetValue.getSbiKpiTarget().getTargetId());
 					}
-					sbiKpiKpi.getSbiKpiKpiId().setId(kpi.getId());
+					//sbiKpiKpi.getSbiKpiKpiId().setId(kpi.getId());
+					sbiKpiKpi.getSbiKpiKpiId().changeKpiId(kpi.getId());
 				}
 				try {
 					SbiKpiKpi sbiKpi = from(session, sbiKpiKpi, kpi);
@@ -848,7 +849,7 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 					cat.setValueDs(domain.getValueDescription());
 					updateSbiCommonInfo4Insert(cat);
 					Integer id = (Integer) session.save(cat);
-					cat.setValueId(id);
+					cat.changeValueId(id);
 				}
 			}
 		}
@@ -1769,10 +1770,8 @@ public class KpiDAOImpl extends AbstractHibernateDAO implements IKpiDAO {
 		if (sbiValue == null) {
 			sbiValue = new SbiKpiTargetValue();
 			SbiKpiTargetValueId sbiKpiTargetValueId = sbiValue.getSbiKpiTargetValueId();
-			sbiKpiTargetValueId.setKpiId(kpiId);
-			sbiKpiTargetValueId.setKpiVersion(kpiVersion);
-			sbiKpiTargetValueId.setTargetId(targetId);
-		}
+			sbiKpiTargetValueId = new SbiKpiTargetValueId(targetId,kpiId,kpiVersion);
+					}
 		updateSbiCommonInfo4Insert(sbiValue);
 		sbiValue.setValue(targetValue.getValue());
 		return sbiValue;

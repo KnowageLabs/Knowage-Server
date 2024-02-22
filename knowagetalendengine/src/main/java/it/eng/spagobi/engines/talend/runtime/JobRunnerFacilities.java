@@ -153,7 +153,6 @@ public class JobRunnerFacilities {
 				try {
 					input.close();
 				} catch (IOException e) {
-					e.printStackTrace();
 					logger.error("IO error");
 				}
 			}

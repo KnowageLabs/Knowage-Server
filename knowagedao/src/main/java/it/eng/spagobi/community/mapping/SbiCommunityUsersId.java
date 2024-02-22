@@ -41,7 +41,7 @@ public class SbiCommunityUsersId extends SbiHibernateModel{
 		return this.communityId;
 	}
 
-	public void setCommunityId(int communityId) {
+	private void setCommunityId(int communityId) {
 		this.communityId = communityId;
 	}
 
@@ -49,7 +49,7 @@ public class SbiCommunityUsersId extends SbiHibernateModel{
 		return this.userId;
 	}
 
-	public void setUserId(String userId) {
+	private void setUserId(String userId) {
 		this.userId = userId;
 	}
 

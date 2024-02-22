@@ -31,6 +31,13 @@ public class SbiCategory extends SbiHibernateModel {
 
 	private String type;
 
+	public SbiCategory(Integer id) {
+		this.id=id;
+	}
+
+	public SbiCategory() {
+	}
+
 	/**
 	 * @return the id
 	 */
@@ -41,7 +48,7 @@ public class SbiCategory extends SbiHibernateModel {
 	/**
 	 * @param id the id to set
 	 */
-	public void setId(Integer id) {
+	private void setId(Integer id) {
 		this.id = id;
 	}
 

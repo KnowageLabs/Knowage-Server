@@ -111,7 +111,7 @@ public class SbiGeoMaps extends SbiHibernateModel {
 	 * @param mapId
 	 *            the new map id
 	 */
-	public void setMapId(int mapId) {
+	private void setMapId(int mapId) {
 		this.mapId = mapId;
 	}
 

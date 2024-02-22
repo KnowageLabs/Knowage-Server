@@ -12,6 +12,10 @@ public class SbiAlert extends SbiHibernateModel {
 	private Integer listenerId;
 	private String listenerOptions;
 
+	public SbiAlert(Integer id) {
+		this.id=id;
+	}
+
 	/**
 	 * @return the singleExecution
 	 */
@@ -68,7 +72,7 @@ public class SbiAlert extends SbiHibernateModel {
 	 * @param id
 	 *            the id to set
 	 */
-	public void setId(Integer id) {
+	private void setId(Integer id) {
 		this.id = id;
 	}
 

@@ -186,8 +186,12 @@ public class SbiObjParuse extends SbiHibernateModel {
 	 *
 	 * @param objparuseId the new id
 	 */
-	public void setId(Integer objparuseId) {
+	private void setId(Integer objparuseId) {
 		this.id = objparuseId;
+	}
+	
+	public void changeId(Integer id) {
+		this.setId(id);
 	}
 
 }

@@ -44,7 +44,7 @@ public class SbiGeoLayersRolesId implements java.io.Serializable {
 		return layer;
 	}
 
-	public void setLayer(int layer) {
+	private void setLayer(int layer) {
 		this.layer = layer;
 	}
 
@@ -52,7 +52,7 @@ public class SbiGeoLayersRolesId implements java.io.Serializable {
 		return role;
 	}
 
-	public void setRole(int role) {
+	private void setRole(int role) {
 		this.role = role;
 	}
 

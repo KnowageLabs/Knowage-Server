@@ -42,8 +42,8 @@ public class TestJPA {
 			return emf;
 
 		} catch (RuntimeException e) {
-
-			e.printStackTrace();
+			//e.printStackTrace();
+			logger.error("createEntityManagerFactory",e);
 			return null;
 		}
 	}

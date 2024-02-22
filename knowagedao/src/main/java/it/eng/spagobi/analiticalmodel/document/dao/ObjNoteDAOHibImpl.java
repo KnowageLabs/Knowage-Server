@@ -254,7 +254,16 @@ public class ObjNoteDAOHibImpl extends AbstractHibernateDAO implements IObjNoteD
 			hibObjNote.setLastChangeDate(now);
 			updateSbiCommonInfo4Insert(hibObjNote);
 			if (flag) {
-				hibObjNote.setObjNoteId(objNote.getId());
+				//hibObjNote.setObjNoteId(objNote.getId());
+				hibObjNote = new SbiObjNotes(objNote.getId());
+				hibObjNote.setExecReq(execReq);
+				hibObjNote.setSbiBinContents(hibBinContent);
+				hibObjNote.setSbiObject(hibBIObject);
+				hibObjNote.setOwner(objNote.getOwner());
+				hibObjNote.setIsPublic(objNote.getIsPublic());
+				hibObjNote.setCreationDate(now);
+				hibObjNote.setLastChangeDate(now);
+				updateSbiCommonInfo4Insert(hibObjNote);
 				aSession.update(hibObjNote);
 			} else {
 				aSession.save(hibObjNote);

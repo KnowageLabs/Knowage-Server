@@ -17,11 +17,15 @@ public class SbiMetaDsTabRel extends SbiHibernateModel {
 
 	}
 
+	public SbiMetaDsTabRel(Integer relationId) {
+		this.relationId=relationId;
+	}
+
 	public Integer getRelationId() {
 		return relationId;
 	}
 
-	public void setRelationId(Integer relationId) {
+	private void setRelationId(Integer relationId) {
 		this.relationId = relationId;
 	}
 

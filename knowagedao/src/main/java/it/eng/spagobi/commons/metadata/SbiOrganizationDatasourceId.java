@@ -35,11 +35,13 @@ public class SbiOrganizationDatasourceId implements java.io.Serializable {
 		this.organizationId = organizationId;
 	}
 
+	
+	
 	public int getDatasourceId() {
 		return this.datasourceId;
 	}
 
-	public void setDatasourceId(int datasourceId) {
+	private void setDatasourceId(int datasourceId) {
 		this.datasourceId = datasourceId;
 	}
 
@@ -47,7 +49,7 @@ public class SbiOrganizationDatasourceId implements java.io.Serializable {
 		return this.organizationId;
 	}
 
-	public void setOrganizationId(int organizationId) {
+	private void setOrganizationId(int organizationId) {
 		this.organizationId = organizationId;
 	}
 

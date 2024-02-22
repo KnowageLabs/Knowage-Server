@@ -40,7 +40,7 @@ public class SbiCockpitWidget extends SbiHibernateModel {
 		return sbiCockpitWidgetId;
 	}
 
-	public void setSbiCockpitWidgetId(Integer sbiCockpitWidgetId) {
+	private void setSbiCockpitWidgetId(Integer sbiCockpitWidgetId) {
 		this.sbiCockpitWidgetId = sbiCockpitWidgetId;
 	}
 

@@ -1102,9 +1102,7 @@ public class MenuDAOImpl extends AbstractHibernateDAO implements IMenuDAO {
 			criteria.add(domainCdCriterrion);
 			SbiExtRoles hibRole = (SbiExtRoles) criteria.uniqueResult();
 
-			SbiMenuRoleId sbiMenuRoleId = new SbiMenuRoleId();
-			sbiMenuRoleId.setMenuId(hibMenu.getMenuId());
-			sbiMenuRoleId.setExtRoleId(role.getId());
+			SbiMenuRoleId sbiMenuRoleId = new SbiMenuRoleId(hibMenu.getMenuId(),role.getId());
 
 			SbiMenuRole sbiMenuRole = new SbiMenuRole();
 			sbiMenuRole.setId(sbiMenuRoleId);

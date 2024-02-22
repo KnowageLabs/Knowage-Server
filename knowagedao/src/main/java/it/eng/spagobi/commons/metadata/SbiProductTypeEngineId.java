@@ -39,7 +39,7 @@ public class SbiProductTypeEngineId implements java.io.Serializable {
 		return this.engineId;
 	}
 
-	public void setEngineId(int engineId) {
+	private void setEngineId(int engineId) {
 		this.engineId = engineId;
 	}
 
@@ -47,7 +47,7 @@ public class SbiProductTypeEngineId implements java.io.Serializable {
 		return this.productTypeId;
 	}
 
-	public void setProductTypeId(int productTypeId) {
+	private void setProductTypeId(int productTypeId) {
 		this.productTypeId = productTypeId;
 	}
 

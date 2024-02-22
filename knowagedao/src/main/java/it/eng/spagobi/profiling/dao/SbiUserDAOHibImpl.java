@@ -414,7 +414,7 @@ public class SbiUserDAOHibImpl extends AbstractHibernateDAO implements ISbiUserD
 				}
 				userToUpdate.setFullName(user.getFullName());
 				userToUpdate.setUserId(user.getUserId());
-				userToUpdate.setId(id);
+				userToUpdate.changeId(id);
 				userToUpdate.setFailedLoginAttempts(user.getFailedLoginAttempts());
 				userToUpdate.setDefaultRoleId(user.getDefaultRoleId());
 				updateSbiCommonInfo4Update(userToUpdate);
@@ -495,16 +495,13 @@ public class SbiUserDAOHibImpl extends AbstractHibernateDAO implements ISbiUserD
 				}
 
 				SbiExtUserRoles sbiExtUserRole = new SbiExtUserRoles();
-				SbiExtUserRolesId extUserRoleId = new SbiExtUserRolesId();
-
-				extUserRoleId.setExtRoleId(aRole.getExtRoleId());// role Id
-				extUserRoleId.setId(currentSessionUser.getId());// user ID
+				SbiExtUserRolesId extUserRoleId = new SbiExtUserRolesId(currentSessionUser.getId(),aRole.getExtRoleId());
 
 				sbiExtUserRole.setId(extUserRoleId);
 				sbiExtUserRole.setSbiUser(currentSessionUser);
 
 				sbiExtUserRole.setSbiUser(currentSessionUser);
-				sbiExtUserRole.getId().setId(currentSessionUser.getId());
+				//sbiExtUserRole.getId().setId(currentSessionUser.getId());
 				sbiExtUserRole.getCommonInfo().setOrganization(aRole.getCommonInfo().getOrganization());
 				updateSbiCommonInfo4Insert(sbiExtUserRole);
 				aSession.saveOrUpdate(sbiExtUserRole);
@@ -601,7 +598,7 @@ public class SbiUserDAOHibImpl extends AbstractHibernateDAO implements ISbiUserD
 					int attributeId = attribute.getId().getAttributeId();
 
 					if (addedAttrs.contains(attributeId)) {
-						attribute.getId().setId(id);
+						attribute.getId().changeId(id);
 						updateSbiCommonInfo4Insert(attribute);
 						aSession.saveOrUpdate(attribute);
 

@@ -121,11 +121,9 @@ public class SpagoBITalendEngineClient {
 	      }      
 
 	    } catch (HttpException e) {
-	      System.err.println("Fatal protocol violation: " + e.getMessage());
-	      e.printStackTrace();
+	      logger.error("Fatal protocol violation: " + e.getMessage());
 	    } catch (IOException e) {
-	      System.err.println("Fatal transport error: " + e.getMessage());
-	      e.printStackTrace();
+	      logger.error("Fatal transport error: " + e.getMessage());
 	    } finally {
 	      // Release the connection.
 	      method.releaseConnection();
@@ -181,8 +179,7 @@ public class SpagoBITalendEngineClient {
                 );
             }
         } catch (Exception ex) {
-        	System.err.println("ERROR: " + ex.getClass().getName() + " "+ ex.getMessage());
-            ex.printStackTrace();
+        	logger.error("ERROR: " + ex.getClass().getName() + " "+ ex.getMessage());
             return false;
         } finally {
             method.releaseConnection();

@@ -44,7 +44,7 @@ public class SbiDatasetTagId implements Serializable {
 		return dsId;
 	}
 
-	public void setDsId(Integer dsId) {
+	private void setDsId(Integer dsId) {
 		this.dsId = dsId;
 	}
 
@@ -52,7 +52,7 @@ public class SbiDatasetTagId implements Serializable {
 		return versionNum;
 	}
 
-	public void setVersionNum(Integer versionNum) {
+	private void setVersionNum(Integer versionNum) {
 		this.versionNum = versionNum;
 	}
 
@@ -60,7 +60,7 @@ public class SbiDatasetTagId implements Serializable {
 		return organization;
 	}
 
-	public void setOrganization(String organization) {
+	private void setOrganization(String organization) {
 		this.organization = organization;
 	}
 
@@ -68,7 +68,7 @@ public class SbiDatasetTagId implements Serializable {
 		return tagId;
 	}
 
-	public void setTagId(Integer tagId) {
+	private void setTagId(Integer tagId) {
 		this.tagId = tagId;
 	}
 

@@ -49,7 +49,7 @@ public class SbiSubObjects  extends SbiHibernateModel {
 	 * 
 	 * @param subObjId the new sub obj id
 	 */
-	public void setSubObjId(Integer subObjId) {
+	private void setSubObjId(Integer subObjId) {
 		this.subObjId = subObjId;
 	}
 	

@@ -241,10 +241,10 @@ public class JavaJobRunner implements IJobRunner {
 					out.flush();
 					out.close();
 				} catch (FileNotFoundException e) {
-					e.printStackTrace();
+					logger.error("FileNotFoundException",e);
 					return false;
 				} catch (IOException e) {
-					e.printStackTrace();
+					logger.error("IOException",e);
 					return false;
 				}
 			}

@@ -122,7 +122,8 @@ public class OlapModelPropertiesFromFileInitializer implements IPropertiesInitia
 			initModelAdmissibleValues(nodes, o.getParentModel());
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			//e.printStackTrace();
+			logger.error("initModelProperties",e);
 		}
 
 	}
@@ -141,7 +142,8 @@ public class OlapModelPropertiesFromFileInitializer implements IPropertiesInitia
 			nodes = readXMLNodes(document, "/properties/cube/typesValues/admissibleValuesOf");
 			initModelAdmissibleValues(nodes, o.getModel().getParentModel());
 		} catch (Exception e) {
-			e.printStackTrace();
+			//e.printStackTrace();
+			logger.error("initCubeProperties",e);
 		}
 	}
 
@@ -159,7 +161,8 @@ public class OlapModelPropertiesFromFileInitializer implements IPropertiesInitia
 			nodes = readXMLNodes(document, "/properties/dimension/typesValues/admissibleValuesOf");
 			initModelAdmissibleValues(nodes, o.getModel().getParentModel());
 		} catch (Exception e) {
-			e.printStackTrace();
+			//e.printStackTrace();
+			logger.error("initDimensionProperties",e);
 		}
 	}
 
@@ -177,7 +180,8 @@ public class OlapModelPropertiesFromFileInitializer implements IPropertiesInitia
 			nodes = readXMLNodes(document, "/properties/hierarchy/typesValues/admissibleValuesOf");
 			initModelAdmissibleValues(nodes, o.getDimension().getModel().getParentModel());
 		} catch (Exception e) {
-			e.printStackTrace();
+			//e.printStackTrace();
+			logger.error("initHierarchyProperties",e);
 		}
 	}
 
@@ -195,7 +199,8 @@ public class OlapModelPropertiesFromFileInitializer implements IPropertiesInitia
 			nodes = readXMLNodes(document, "/properties/level/typesValues/admissibleValuesOf");
 			initModelAdmissibleValues(nodes, o.getHierarchy().getDimension().getModel().getParentModel());
 		} catch (Exception e) {
-			e.printStackTrace();
+			//e.printStackTrace();
+			logger.error("initLevelProperties",e);
 		}
 	}
 
@@ -213,7 +218,8 @@ public class OlapModelPropertiesFromFileInitializer implements IPropertiesInitia
 			nodes = readXMLNodes(document, "/properties/measure/typesValues/admissibleValuesOf");
 			initModelAdmissibleValues(nodes, o.getCube().getModel().getParentModel());
 		} catch (Exception e) {
-			e.printStackTrace();
+			//e.printStackTrace();
+			logger.error("initMeasureProperties",e);
 		}
 	}
 

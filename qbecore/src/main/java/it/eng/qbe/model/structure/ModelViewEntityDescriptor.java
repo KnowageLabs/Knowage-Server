@@ -290,7 +290,6 @@ public class ModelViewEntityDescriptor implements IModelViewEntityDescriptor {
 			}
 			catch(Throwable t) {
 				logger.debug("Impossible to initialize ModelViewRelationshipDescriptor from conf object: "+ relationshipJSON,t);
-				t.printStackTrace();
 				throw new RuntimeException("Impossible to initialize ModelViewRelationshipDescriptor from conf object: " + relationshipJSON, t);
 			}
 		}

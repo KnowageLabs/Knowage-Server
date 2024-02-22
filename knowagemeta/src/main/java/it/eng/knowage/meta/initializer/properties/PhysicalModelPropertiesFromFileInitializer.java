@@ -117,7 +117,7 @@ public class PhysicalModelPropertiesFromFileInitializer implements IPropertiesIn
 			initModelAdmissibleValues(nodes, o.getParentModel());
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error("initModelProperties",e);
 		}
 
 	}
@@ -136,7 +136,7 @@ public class PhysicalModelPropertiesFromFileInitializer implements IPropertiesIn
 			nodes = readXMLNodes(document, "/properties/table/typesValues/admissibleValuesOf");
 			initModelAdmissibleValues(nodes, o.getModel().getParentModel());
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error("initTableProperties",e);
 		}
 	}
 
@@ -163,7 +163,7 @@ public class PhysicalModelPropertiesFromFileInitializer implements IPropertiesIn
 			initModelAdmissibleValues(nodes, rootModel);
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error("initColumnProperties",e);
 		}
 
 	}

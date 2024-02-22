@@ -100,7 +100,7 @@ public class SbiObjStateId  implements java.io.Serializable {
      * 
      * @param startDt the new start dt
      */
-    public void setStartDt(Date startDt) {
+    private void setStartDt(Date startDt) {
         this.startDt = startDt;
     }
 

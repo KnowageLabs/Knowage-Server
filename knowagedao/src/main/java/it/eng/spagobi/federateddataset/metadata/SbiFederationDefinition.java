@@ -77,7 +77,7 @@ public class SbiFederationDefinition extends SbiHibernateModel {
 		return federation_id;
 	}
 
-	public void setFederation_id(int federation_id) {
+	private void setFederation_id(int federation_id) {
 		this.federation_id = federation_id;
 	}
 
@@ -131,6 +131,11 @@ public class SbiFederationDefinition extends SbiHibernateModel {
 
 	public void setOwner(String owner) {
 		this.owner = owner;
+	}
+
+	public void changeFederation_id(int federation_id) {
+		this.setFederation_id(federation_id);
+		
 	}
 
 }

@@ -43,7 +43,7 @@ public class SbiKpiThreshold extends SbiHibernateModel implements java.io.Serial
 		return this.id;
 	}
 
-	public void setId(Integer id) {
+	private void setId(Integer id) {
 		this.id = id;
 	}
 

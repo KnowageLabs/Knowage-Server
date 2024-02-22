@@ -128,7 +128,7 @@ public class SbiParuse extends SbiHibernateModel {
 	 *
 	 * @param useId the new use id
 	 */
-	public void setUseId(Integer useId) {
+	private void setUseId(Integer useId) {
 		this.useId = useId;
 	}
 

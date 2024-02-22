@@ -76,7 +76,7 @@ public class SbiUser extends SbiHibernateModel {
 		return this.id;
 	}
 
-	public void setId(int id) {
+	private void setId(int id) {
 		this.id = id;
 	}
 
@@ -272,6 +272,11 @@ public class SbiUser extends SbiHibernateModel {
 		} else if (!defaultRoleId.equals(other.defaultRoleId))
 			return false;
 		return true;
+	}
+
+	public void changeId(Integer id) {
+		this.setId(id);
+		
 	}
 
 }

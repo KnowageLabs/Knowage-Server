@@ -599,8 +599,7 @@ public class SbiGeoLayersDAOHibImpl extends AbstractHibernateDAO implements ISbi
 			tx = tmpSession.beginTransaction();
 
 			GeoLayer aLayer = loadLayerByID(layerId);
-			SbiGeoLayers hibLayer = new SbiGeoLayers();
-			hibLayer.setLayerId(aLayer.getLayerId());
+			SbiGeoLayers hibLayer = new SbiGeoLayers(aLayer.getLayerId());
 			hibLayer.setLabel(aLayer.getLabel());
 			hibLayer.setName(aLayer.getName());
 			hibLayer.setDescr(aLayer.getDescr());

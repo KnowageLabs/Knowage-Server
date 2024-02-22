@@ -76,7 +76,7 @@ public class SbiGlDataSetWlistId implements Serializable {
 	/**
 	 * @param wordId the wordId to set
 	 */
-	public void setWordId(int wordId) {
+	private void setWordId(int wordId) {
 		this.wordId = wordId;
 	}
 
@@ -93,7 +93,7 @@ public class SbiGlDataSetWlistId implements Serializable {
 	/**
 	 * @param datasetId the datasetId to set
 	 */
-	public void setDatasetId(int datasetId) {
+	private void setDatasetId(int datasetId) {
 		this.datasetId = datasetId;
 	}
 
@@ -111,7 +111,7 @@ public class SbiGlDataSetWlistId implements Serializable {
 	/**
 	 * @param organization the organization to set
 	 */
-	public void setOrganization(String organization) {
+	private void setOrganization(String organization) {
 		this.organization = organization;
 	}
 
@@ -129,7 +129,7 @@ public class SbiGlDataSetWlistId implements Serializable {
 	/**
 	 * @param column_name the column_name to set
 	 */
-	public void setColumn_name(String column_name) {
+	private void setColumn_name(String column_name) {
 		this.column_name = column_name;
 	}
 

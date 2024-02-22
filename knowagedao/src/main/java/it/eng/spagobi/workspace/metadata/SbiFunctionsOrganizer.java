@@ -54,7 +54,7 @@ public class SbiFunctionsOrganizer extends SbiHibernateModel {
 		return functId;
 	}
 
-	public void setFunctId(Integer functId) {
+	private void setFunctId(Integer functId) {
 		this.functId = functId;
 	}
 

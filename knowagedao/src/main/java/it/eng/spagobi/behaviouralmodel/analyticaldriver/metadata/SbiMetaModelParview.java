@@ -23,7 +23,7 @@ public class SbiMetaModelParview extends SbiHibernateModel {
 		return parviewId;
 	}
 
-	public void setParviewId(Integer parviewId) {
+	private void setParviewId(Integer parviewId) {
 		this.parviewId = parviewId;
 	}
 

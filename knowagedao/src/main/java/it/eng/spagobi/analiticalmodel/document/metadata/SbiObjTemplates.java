@@ -87,7 +87,7 @@ public class SbiObjTemplates extends SbiHibernateModel {
 	 * @param objTempId
 	 *            the new obj temp id
 	 */
-	public void setObjTempId(Integer objTempId) {
+	private void setObjTempId(Integer objTempId) {
 		this.objTempId = objTempId;
 	}
 

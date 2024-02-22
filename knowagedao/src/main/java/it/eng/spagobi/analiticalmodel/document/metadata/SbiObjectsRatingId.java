@@ -71,7 +71,7 @@ public class SbiObjectsRatingId  implements java.io.Serializable {
      * 
      * @param objId the new obj id
      */
-    public void setObjId(Integer objId) {
+    private void setObjId(Integer objId) {
         this.objId = objId;
     }
 
@@ -89,7 +89,7 @@ public class SbiObjectsRatingId  implements java.io.Serializable {
      * 
      * @param userId the new user id
      */
-    public void setUserId(String userId) {
+    private void setUserId(String userId) {
         this.userId = userId;
     }
    

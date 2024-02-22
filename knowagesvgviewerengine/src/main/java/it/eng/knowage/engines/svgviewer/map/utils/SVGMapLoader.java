@@ -125,7 +125,13 @@ public class SVGMapLoader {
 	 *             the XML stream exception
 	 */
 	public static XMLStreamReader getMapAsStream(File file) throws FileNotFoundException, XMLStreamException {
-		return xmlInputFactory.createXMLStreamReader(new FileInputStream(file));
+		XMLStreamReader xMLStreamReader = null;
+		try {
+			xMLStreamReader = xmlInputFactory.createXMLStreamReader(new FileInputStream(file));
+		}catch (Exception e) {
+			logger.error("getMapAsStream",e);
+		}
+		return xMLStreamReader;
 	}
 
 	/**
@@ -142,7 +148,13 @@ public class SVGMapLoader {
 	 *             the XML stream exception
 	 */
 	public static XMLStreamReader getMapAsStream(String url) throws FileNotFoundException, XMLStreamException {
-		return xmlInputFactory.createXMLStreamReader(new FileInputStream(url));
+		XMLStreamReader xMLStreamReader = null;
+		try {
+			xMLStreamReader = xmlInputFactory.createXMLStreamReader(new FileInputStream(url));
+		}catch (Exception e) {
+			logger.error("getMapAsStream",e);
+		}
+		return xMLStreamReader;
 	}
 
 	public static String getDefaultMemberName(List confSBList) {

@@ -28,6 +28,7 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
+import org.apache.log4j.Logger;
 import org.w3c.dom.svg.SVGDocument;
 
 // TODO: Auto-generated Javadoc
@@ -40,7 +41,7 @@ public class SVGMapSaver {
 
 	/** The transformer factory. */
 	private static TransformerFactory transformerFactory;
-
+	private static Logger logger = Logger.getLogger(SVGMapSaver.class);
 	static {
 		transformerFactory = TransformerFactory.newInstance();
 	}
@@ -59,7 +60,11 @@ public class SVGMapSaver {
 	 *             the transformer exception
 	 */
 	public static void saveMap(SVGDocument doc, File ouputFile) throws FileNotFoundException, TransformerException {
-		saveMap(doc, new FileOutputStream(ouputFile));
+		try {
+			saveMap(doc, new FileOutputStream(ouputFile));
+		}catch (Exception e) {
+			logger.error("FileOutputStream",e);
+		}
 	}
 
 	/**

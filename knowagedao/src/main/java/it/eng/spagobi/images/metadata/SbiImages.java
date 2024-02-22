@@ -38,7 +38,7 @@ public class SbiImages extends SbiHibernateModel {
 	 * @param imageId
 	 *            the imageId to set
 	 */
-	public void setImageId(Integer imageId) {
+	private void setImageId(Integer imageId) {
 		this.imageId = imageId;
 	}
 

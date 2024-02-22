@@ -77,8 +77,8 @@ public class MetaModelParviewDAOHibImpl extends AbstractHibernateDAO implements 
 						"the BIMetaModelParameter with " + " does not exist.");
 
 			}
-			SbiMetaModelParview view = new SbiMetaModelParview();
-			view.setParviewId(metaModelParview.getId());
+			SbiMetaModelParview view = new SbiMetaModelParview(metaModelParview.getId());
+			
 			view.setSbiMetaModelPar(sbiMetaModelPar);
 			view.setSbiMetaModelFather(sbiMetaModelParFather);
 			view.setOperation(metaModelParview.getOperation());

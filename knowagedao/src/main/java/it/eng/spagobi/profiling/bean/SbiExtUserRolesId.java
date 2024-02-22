@@ -39,7 +39,7 @@ public class SbiExtUserRolesId implements java.io.Serializable {
 		return this.id;
 	}
 
-	public void setId(int id) {
+	private void setId(int id) {
 		this.id = id;
 	}
 
@@ -47,7 +47,7 @@ public class SbiExtUserRolesId implements java.io.Serializable {
 		return this.extRoleId;
 	}
 
-	public void setExtRoleId(Integer extRoleId) {
+	private void setExtRoleId(Integer extRoleId) {
 		this.extRoleId = extRoleId;
 	}
 

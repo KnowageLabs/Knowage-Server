@@ -196,14 +196,11 @@ public class AbstractMapRendererConfigurator {
 			try {
 				labelProducer = (ILabelProducer) Class.forName(clazz).newInstance();
 			} catch (InstantiationException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				logger.error("InstantiationException",e);
 			} catch (IllegalAccessException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				logger.error("IllegalAccessException",e);
 			} catch (ClassNotFoundException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				logger.error("ClassNotFoundException",e);
 			}
 			if (labelProducer != null) {
 				labelProducer.init(label);

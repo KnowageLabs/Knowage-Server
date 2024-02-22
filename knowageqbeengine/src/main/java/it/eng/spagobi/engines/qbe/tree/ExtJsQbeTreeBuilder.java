@@ -27,6 +27,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 
+import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -77,7 +78,7 @@ public class ExtJsQbeTreeBuilder {
 	public static final String NODE_TYPE_HIERARCHY_LEVEL_FIELD = "hierarchyLevelField";
 	public static final String NODE_TYPE_INLINE_CALCULATED_FIELD = "inLineCalculatedField";
 	public static final String NODE_TYPE_RELATION_FIELD = "relation";
-
+	private static Logger logger = Logger.getLogger(ExtJsQbeTreeBuilder.class);
 	/**
 	 * Instantiates a new ext js qbe tree builder.
 	 *
@@ -146,7 +147,7 @@ public class ExtJsQbeTreeBuilder {
 		try {
 			writer = new PrintWriter(new FileWriter(file));
 		} catch (IOException e) {
-			e.printStackTrace();
+			logger.error("PrintWriter",e);
 			writer = new PrintWriter(new CharArrayWriter());
 		}
 		addEntityNodes(nodes, datamartName, userProfile);

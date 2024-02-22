@@ -59,7 +59,7 @@ public class SbiSnapshots  extends SbiHibernateModel {
 	 *
 	 * @param snapId the new snap id
 	 */
-	public void setSnapId(Integer snapId) {
+	private void setSnapId(Integer snapId) {
 		this.snapId = snapId;
 	}
 

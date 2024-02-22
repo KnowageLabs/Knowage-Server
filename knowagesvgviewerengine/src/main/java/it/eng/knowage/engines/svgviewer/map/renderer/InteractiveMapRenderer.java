@@ -1599,11 +1599,11 @@ public class InteractiveMapRenderer extends AbstractMapRenderer {
 				buffer.append(line + "\n");
 			}
 		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			//e.printStackTrace();
+			logger.error("FileNotFoundEx",e);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			//e.printStackTrace();
+			logger.error("IOEx",e);
 		}
 	}
 

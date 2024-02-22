@@ -131,7 +131,7 @@ public class PerlJobRunner implements IJobRunner {
     			EventServiceProxy)parameters.get(EngineConstants.ENV_EVENT_SERVICE_PROXY));
 	    wm.run(jrt, listener);
 	} catch (Exception e) {
-	    e.printStackTrace();
+	    logger.error("TalendWorkListener",e);
 	}
 		
     }
@@ -181,10 +181,17 @@ public class PerlJobRunner implements IJobRunner {
 	    String tempFileName = uuidGenerator.generateTimeBasedUUID().toString();
 	    TalendEngineConfig config = TalendEngineConfig.getInstance();
 	    File contextScriptTempFile = new File(tempDirPath + File.separatorChar + tempFileName + config.getPerlExt());
-		FileOutputStream fos = new FileOutputStream(contextScriptTempFile);
-		fos.write(filebuff.toString().getBytes());
-		fos.flush();
-		fos.close();
+	    FileOutputStream fos = null;
+	    try {
+	    	fos = new FileOutputStream(contextScriptTempFile);
+	    	fos.write(filebuff.toString().getBytes());
+			fos.flush();
+			fos.close();
+	    }catch (Exception e) {
+			logger.error("FileOutputStream",e);
+		}
+		
+		
 		return contextScriptTempFile;
 	}
 	    

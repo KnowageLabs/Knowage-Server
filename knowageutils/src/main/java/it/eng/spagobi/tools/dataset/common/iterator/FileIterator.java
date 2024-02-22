@@ -21,7 +21,7 @@ package it.eng.spagobi.tools.dataset.common.iterator;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.file.Path;
-
+import org.apache.log4j.Logger;
 import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
@@ -29,10 +29,17 @@ public abstract class FileIterator implements DataIterator {
 
 	protected final IMetaData metadata;
 	protected final FileInputStream inputStream;
-
+	private static Logger logger = Logger.getLogger(FileIterator.class);
 	protected FileIterator(IMetaData metadata, Path filePath) throws IOException {
 		this.metadata = metadata;
-		this.inputStream = new FileInputStream(filePath.toFile());
+		FileInputStream tmpinputStream = null;
+		
+		try {
+			tmpinputStream = new FileInputStream(filePath.toFile());
+		}catch (Exception e) {
+			logger.error("FileInputStream",e);
+		}
+		this.inputStream = tmpinputStream;	
 	}
 
 	@Override

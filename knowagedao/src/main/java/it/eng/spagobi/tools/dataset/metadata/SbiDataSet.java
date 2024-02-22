@@ -620,8 +620,8 @@ public class SbiDataSet extends SbiHibernateModel {
 	private SbiDomains getDomain(Integer id) {
 		if (id != null) {
 			try {
-				SbiDomains sbiDomain = new SbiDomains();
-				sbiDomain.setValueId(id);
+				SbiDomains sbiDomain = new SbiDomains(id);
+				
 
 				return sbiDomain;
 			} catch (Exception e) {
@@ -633,8 +633,7 @@ public class SbiDataSet extends SbiHibernateModel {
 
 	private SbiCategory getCategory(Integer id) {
 		if (id != null) {
-			SbiCategory sbiDomain = new SbiCategory();
-			sbiDomain.setId(id);
+			SbiCategory sbiDomain = new SbiCategory(id);
 
 			return sbiDomain;
 		} else {

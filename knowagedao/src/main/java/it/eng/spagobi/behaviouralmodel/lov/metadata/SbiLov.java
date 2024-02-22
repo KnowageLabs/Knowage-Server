@@ -74,7 +74,7 @@ public class SbiLov extends SbiHibernateModel {
 	 * @param lovId
 	 *            the new lov id
 	 */
-	public void setLovId(Integer lovId) {
+	private void setLovId(Integer lovId) {
 		this.lovId = lovId;
 	}
 

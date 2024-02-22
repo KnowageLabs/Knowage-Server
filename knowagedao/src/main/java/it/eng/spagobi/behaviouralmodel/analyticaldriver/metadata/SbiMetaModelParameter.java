@@ -242,7 +242,7 @@ public class SbiMetaModelParameter extends SbiHibernateModel {
 		return metaModelParId;
 	}
 
-	public void setMetaModelParId(Integer metaModelParId) {
+	private void setMetaModelParId(Integer metaModelParId) {
 		this.metaModelParId = metaModelParId;
 	}
 

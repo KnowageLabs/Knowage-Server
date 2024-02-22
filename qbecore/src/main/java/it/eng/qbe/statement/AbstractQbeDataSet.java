@@ -204,7 +204,7 @@ public abstract class AbstractQbeDataSet extends AbstractDataSet {
 
 			} catch (Exception ex) {
 				calculatedValue = "NA";
-				ex.printStackTrace();
+				logger.error("GroovySandbox",ex);
 			}
 
 			logger.debug("Field [" + fieldMeta.getName() + "] is equals to [" + calculatedValue + "]");
