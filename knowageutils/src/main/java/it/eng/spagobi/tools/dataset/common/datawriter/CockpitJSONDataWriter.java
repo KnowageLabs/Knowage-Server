@@ -43,7 +43,7 @@ public class CockpitJSONDataWriter extends JSONDataWriter {
 			if (multiValue) {
 				result = value;
 			} else if (Timestamp.class.isAssignableFrom(type)) {
-				result = TIMESTAMP_FORMATTER.format(value);
+				result = TIMESTAMP_FORMATTER_V2.format((TemporalAccessor) value);
 			} else if ("oracle.sql.TIMESTAMP".equals(typeName)) {
 				String s = value.toString();
 				int year = Integer.parseInt(s.substring(0, 4)) - 1900;
@@ -64,9 +64,9 @@ public class CockpitJSONDataWriter extends JSONDataWriter {
 				Timestamp timestamp = new Timestamp(year, month, date, 0, 0, 0, 0);
 				result = TIMESTAMP_FORMATTER.format(timestamp);
 			} else if (Time.class.isAssignableFrom(type)) {
-				result = CACHE_TIMEONLY_FORMATTER.format(value);
+				result = CACHE_TIMEONLY_FORMATTER_V2.format((TemporalAccessor) value);
 			} else if (Date.class.isAssignableFrom(type)) {
-				result = DATE_FORMATTER.format(value);
+				result = DATE_FORMATTER_V2.format((TemporalAccessor) value);
 			} else if (Boolean.class.isAssignableFrom(type)) {
 				result = Boolean.valueOf(value.toString());
 			} else if (Byte.class.isAssignableFrom(type)) {

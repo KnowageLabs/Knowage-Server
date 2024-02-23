@@ -21,6 +21,8 @@ package it.eng.knowage.engine.cockpit.api.crosstable;
 import java.math.BigInteger;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.TemporalAccessor;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -111,9 +113,15 @@ public class CrossTab {
 	 */
 	@Deprecated
 	private static final String DATA_MATRIX_NA = "";
+	@Deprecated
 	private static final SimpleDateFormat DATE_FORMATTER = new SimpleDateFormat("dd/MM/yyyy");
+	@Deprecated
 	private static final SimpleDateFormat TIMESTAMP_FORMATTER = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
 
+	private static final DateTimeFormatter DATE_FORMATTER_V2 = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+	private static final DateTimeFormatter TIMESTAMP_FORMATTER_V2 = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
+
+	
 	private static Logger logger = Logger.getLogger(CrossTab.class);
 
 	private Node columnsRoot;
@@ -1304,9 +1312,9 @@ public class CrossTab {
 			clazz = String.class;
 		}
 		if (Timestamp.class.isAssignableFrom(clazz)) {
-			fieldValue = TIMESTAMP_FORMATTER.format(obj);
+			fieldValue = TIMESTAMP_FORMATTER_V2.format((TemporalAccessor) obj);
 		} else if (Date.class.isAssignableFrom(clazz)) {
-			fieldValue = DATE_FORMATTER.format(obj);
+			fieldValue = DATE_FORMATTER_V2.format((TemporalAccessor) obj);
 		} else {
 			fieldValue = obj.toString();
 		}

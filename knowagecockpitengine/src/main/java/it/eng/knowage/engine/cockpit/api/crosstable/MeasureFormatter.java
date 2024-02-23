@@ -40,15 +40,19 @@ public class MeasureFormatter {
 	List<MeasureInfo> measuresInfo;
 	// String[][] measureMetadata;
 	boolean measureOnRow;
-	DecimalFormat numberFormat;
-	String pattern;
+	private DecimalFormat numberFormat;
+	private String pattern;
 
 	public MeasureFormatter(JSONObject crosstabDefinitionJSON, DecimalFormat numberFormat, String pattern) throws SerializationException, JSONException {
 
 		JSONArray measuresJSON = crosstabDefinitionJSON.optJSONArray(CrosstabSerializationConstants.MEASURES);
 		JSONObject config = crosstabDefinitionJSON.optJSONObject(CrosstabSerializationConstants.CONFIG);
 		this.pattern = pattern;
-		this.numberFormat = numberFormat;
+		if(numberFormat == null) {
+			this.numberFormat = new DecimalFormat(pattern);	
+		}else {
+			this.numberFormat = numberFormat;	
+		}
 		if (measuresJSON != null) {
 			measuresInfo = new ArrayList<MeasureInfo>();
 			for (int i = 0; i < measuresJSON.length(); i++) {
@@ -80,10 +84,10 @@ public class MeasureFormatter {
 		try {
 			String decimalPrecision = (new JSONObject(measuresInfo.get(pos).getFormat())).optString(IFieldMetaData.DECIMALPRECISION);
 			if (decimalPrecision != null) {
-				DecimalFormat numberFormat = new DecimalFormat(pattern);
-				numberFormat.setMinimumFractionDigits(new Integer(decimalPrecision));
-				numberFormat.setMaximumFractionDigits(new Integer(decimalPrecision));
-				formatted = numberFormat.format(f);
+				DecimalFormat lnumberFormat = new DecimalFormat(pattern);
+				lnumberFormat.setMinimumFractionDigits(new Integer(decimalPrecision));
+				lnumberFormat.setMaximumFractionDigits(new Integer(decimalPrecision));
+				formatted = lnumberFormat.format(f);
 			}
 		} catch (Exception e) {
 			formatted = numberFormat.format(f);
