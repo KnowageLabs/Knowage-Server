@@ -20,12 +20,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 From https://github.com/curityio/pkce-javascript-example
 --%>
 
-<%@page import="it.eng.spagobi.security.OAuth2.OAuth2Config"%>
-
-<%
-OAuth2Config oauth2Config = OAuth2Config.getInstance();
-%>
-
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -34,10 +28,29 @@ OAuth2Config oauth2Config = OAuth2Config.getInstance();
   </head>
   <body>
     <script>
-    const authorizeEndpoint = "<%= oauth2Config.getAuthorizeUrl() %>";
-    const tokenEndpoint = "<%= oauth2Config.getAccessTokenUrl() %>";
-    const clientId = "<%= oauth2Config.getClientId() %>";
-    const redirectUri = "<%= oauth2Config.getRedirectUrl() %>";
+    
+    var oauth2Config = null;
+	
+    var xhrOAuth2C = new XMLHttpRequest();
+
+    xhrOAuth2C.onload = function() {
+        var response = xhrOAuth2C.response;
+
+        if (xhrOAuth2C.status == 200) {
+        	oauthConfig = response;
+        } else {
+            alert("Error: " + response.error_description + " (" + response.error + ")");
+        }
+    };
+    xhrOAuth2C.responseType = 'json';
+    xhrOAuth2C.open("GET", '/oauth2configservice', true);
+    xhrOAuth2C.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+    xhrOAuth2C.send();
+
+    const authorizeEndpoint = oauth2Config.authorizeUrl;
+    const tokenEndpoint = oauth2Config.accessTokenUrl;
+    const clientId = oauth2Config.clientId;
+    const redirectUri = oauth2Config.redirectUrl;
 
         if (window.location.search) {
             var args = new URLSearchParams(window.location.search);
