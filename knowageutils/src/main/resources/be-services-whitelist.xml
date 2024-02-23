@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!-- for every service to add in whitelist, add a new backendservice element
-     with the specific baseUrl, so every address starting with that baseUrl will be
-     copnsidered trusted -->
-<be-services-whitelist>
-<!-- For testing purpose to consider trusted every http or https call -->
-   <backendservice baseUrl="http" />
-</be-services-whitelist>
