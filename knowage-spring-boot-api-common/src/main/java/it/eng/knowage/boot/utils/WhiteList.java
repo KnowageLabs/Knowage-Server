@@ -28,7 +28,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import javax.naming.Context;
+import javax.naming.NamingException;
+
 import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import com.thoughtworks.xstream.XStream;
 
@@ -41,6 +45,9 @@ public class WhiteList implements IWhiteList {
 
 	private static final WhiteList INSTANCE = new WhiteList();
 
+	@Autowired
+	private Context context;
+	
 	public static WhiteList getInstance() {
 		return INSTANCE;
 	}
@@ -120,7 +127,16 @@ public class WhiteList implements IWhiteList {
 
 	@Override
 	public List<String> getExternalServices() {
-		return getProperties().stream().filter(e -> e.baseurl != null).map(e -> e.baseurl).collect(Collectors.toList());
+		List<String> extServiceList = getProperties().stream().filter(e -> e.baseurl != null).map(e -> e.baseurl).collect(Collectors.toList());
+		// baseURL dei servizi knowage
+		String serviceUrl ="/";
+		try {
+			serviceUrl = (String) context.lookup("java:comp/env/service_url");
+		} catch (NamingException e1) {
+			LOGGER.error("Cannot read service_url from jndiContext", e1);
+		}
+		extServiceList.add(serviceUrl);
+		return extServiceList;
 	}
 
 }

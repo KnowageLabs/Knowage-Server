@@ -160,10 +160,12 @@
 		<servlet-class>it.eng.spagobi.engines.jasperreport.services.JRImageServlet</servlet-class>
 	</servlet>
 
+	<!--  TO REMOVE  
 	<servlet>
 		<servlet-name>SpagoBIDrillServlet</servlet-name>
 		<servlet-class>it.eng.spagobi.utilities.callbacks.drill.SpagoBIDrillServlet</servlet-class>
 	</servlet>
+	-->
 
 	<servlet>
 		<servlet-name>EngineTestServlet</servlet-name>
@@ -189,11 +191,12 @@
 		<url-pattern>/JRImageServlet</url-pattern>
 	</servlet-mapping>
 
+	<!-- 
 	<servlet-mapping>
 		<servlet-name>SpagoBIDrillServlet</servlet-name>
 		<url-pattern>/SpagoBIDrillServlet</url-pattern>
 	</servlet-mapping>
-
+     -->
 	<servlet-mapping>
 		<servlet-name>EngineTestServlet</servlet-name>
 		<url-pattern>/JasperReportServletTest</url-pattern>

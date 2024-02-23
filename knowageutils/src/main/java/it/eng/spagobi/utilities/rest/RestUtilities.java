@@ -72,6 +72,7 @@ import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.filters.XSSRequestWrapper;
 import it.eng.spagobi.utilities.json.JSONUtils;
+import it.eng.spagobi.utilities.whitelist.WhiteList;
 
 public class RestUtilities {
 
@@ -515,7 +516,9 @@ public class RestUtilities {
 	}
 	
 	public static void checkIfAddressIsInWhitelist(String address) {
-		List<String> whitelist = BEServicesWhiteList.getInstance().getWhitelist();
+		// TODO check the baseUrl in which knowage is deployed
+		
+		List<String> whitelist = WhiteList.getInstance().getExternalServices();
 		
 		for(String baseUrl : whitelist) {
 			if(address.startsWith(baseUrl)) {
