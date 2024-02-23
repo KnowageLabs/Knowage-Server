@@ -20,6 +20,10 @@ package it.eng.spagobi.tools.dataset.common.datareader;
 import java.math.BigInteger;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 
 import org.apache.log4j.Logger;
@@ -41,8 +45,13 @@ import it.eng.spagobi.tools.dataset.common.metadata.MetaData;
  */
 public class JSONDataReader extends AbstractDataReader {
 
+	@Deprecated
 	private static final SimpleDateFormat DATE_FORMATTER = new SimpleDateFormat("dd/MM/yyyy");
+	@Deprecated
 	private static final SimpleDateFormat TIMESTAMP_FORMATTER = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+
+	private static final DateTimeFormatter DATE_FORMATTER_V2 = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+	private static final DateTimeFormatter TIMESTAMP_FORMATTER_V2 = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
 
 	private static transient Logger logger = Logger.getLogger(JSONDataReader.class);
 
@@ -144,9 +153,9 @@ public class JSONDataReader extends AbstractDataReader {
 					} else if (fieldType == Double.class) {
 						value = new Double(columnValue);
 					} else if (fieldType == Timestamp.class) {
-						value = TIMESTAMP_FORMATTER.parse(columnValue);
+						value = new Timestamp(Instant.from(TIMESTAMP_FORMATTER_V2.parse(columnValue)).toEpochMilli());
 					} else if (fieldType == Date.class) {
-						value = DATE_FORMATTER.parse(columnValue);
+						value = Date.from((LocalDate.parse(columnValue, DATE_FORMATTER_V2)).atStartOfDay(ZoneId.systemDefault()).toInstant());
 					} else if (fieldType == Boolean.class) {
 						value = new Boolean(columnValue);
 					} else {

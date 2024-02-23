@@ -22,6 +22,11 @@ import java.math.BigInteger;
 import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.ParseException;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.TemporalAccessor;
 import java.util.Date;
 
 
@@ -33,8 +38,13 @@ public class ObjectComparator {
 	
 	
 	public static final int DESCENDING = 1;
+	@Deprecated
 	private DateFormat dateFormatter;
+	@Deprecated
 	private DateFormat timestampFormatter;
+	
+	private DateTimeFormatter dateFormatter_v2;
+	private DateTimeFormatter timestampFormatter_v2;
 	
 	/**
 	 * Build the comparator object
@@ -108,12 +118,12 @@ public class ObjectComparator {
 			return rc* d1.compareTo(d2);
 		} 
 		if(type.isAssignableFrom(Date.class)){
-			Date d1 = dateFormatter.parse(obj1);
-			Date d2 = dateFormatter.parse(obj2);
+			Date d1 = Date.from((LocalDate.parse(obj1, dateFormatter_v2)).atStartOfDay(ZoneId.systemDefault()).toInstant());
+			Date d2 = Date.from((LocalDate.parse(obj2, dateFormatter_v2)).atStartOfDay(ZoneId.systemDefault()).toInstant());			
 			return rc* d1.compareTo(d2);
 		} else if(type.isAssignableFrom(Timestamp.class)){
-			Date d1 = timestampFormatter.parse(obj1);
-			Date d2 = timestampFormatter.parse(obj2);
+			Date d1 = new Date(Instant.from(timestampFormatter_v2.parse(obj1)).toEpochMilli());
+			Date d2 = new Date(Instant.from(timestampFormatter_v2.parse(obj2)).toEpochMilli());		
 			return rc* d1.compareTo(d2);
 		}
 		return rc*obj1.compareTo(obj2);

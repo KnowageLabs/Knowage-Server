@@ -28,6 +28,11 @@ import java.nio.file.Paths;
 import java.sql.Date;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.TemporalAccessor;
 
 import org.apache.avro.Conversions;
 import org.apache.avro.LogicalTypes;
@@ -72,8 +77,11 @@ public class AvroExportJob extends AbstractExportJob {
 
 	private IDataSet dataSet;
 	private IMetaData dsMeta;
+	@Deprecated
 	private SimpleDateFormat dateFormatter = new SimpleDateFormat(DATE_FORMAT);
-
+	private DateTimeFormatter dateFormatter_v2 = DateTimeFormatter.ofPattern(DATE_FORMAT);
+	 
+	
 	private Path avroExportFolder;
 
 	@Override
@@ -134,7 +142,8 @@ public class AvroExportJob extends AbstractExportJob {
 		try {
 			Class<?> type = dsMeta.getFieldType(i);
 			if (isDate(type)) {
-				value = dateFormatter.parse(value.toString()).getTime();
+				//value = dateFormatter.parse(value.toString()).getTime();
+				value = Date.from((LocalDate.parse(value.toString(), dateFormatter_v2)).atStartOfDay(ZoneId.systemDefault()).toInstant());
 			} else if (isTimestamp(type)) {
 				value = DatabaseUtils.timestampFormatter(value);
 			} else if (BigDecimal.class.isAssignableFrom(type)) {
@@ -152,7 +161,7 @@ public class AvroExportJob extends AbstractExportJob {
 				value = String.valueOf(value);
 			} else {
 				if (value instanceof java.util.Date) {
-					value = dateFormatter.format(value);
+					value = dateFormatter_v2.format((TemporalAccessor)value);
 				}
 				value = value.toString();
 			}

@@ -108,10 +108,10 @@ public class JSONDataWriter implements IDataWriter {
 
 	protected final DateTimeFormatter DATE_FORMATTER_V2 = DateTimeFormatter.ofPattern(DATE_FORMAT);
 	protected final DateTimeFormatter TIMESTAMP_FORMATTER_V2 = DateTimeFormatter.ofPattern(TIMESTAMP_FORMAT);
-
+	protected final DateTimeFormatter CACHE_TIMESTAMP_FORMATTER_V2 = DateTimeFormatter.ofPattern(CACHE_TIMESTAMP_FORMAT);
+	protected final DateTimeFormatter CACHE_TIMEONLY_FORMATTER_V2 = DateTimeFormatter.ofPattern(TIME_FORMAT);
 	// public static final String WORKSHEETS_ADDITIONAL_DATA_FIELDS_OPTIONS_OPTIONS = "options";
 	// public static final String WORKSHEETS_ADDITIONAL_DATA_FIELDS_OPTIONS_SCALE_FACTOR = "measureScaleFactor";
-
 	public static final String METADATA = "metaData";
 	public static final String PROPERTY_FIELD_OPTION = "PROPERTY_FIELD_OPTION";
 	public static final String PROPERTY_ADJUST = "PROPERTY_ADJUST";
@@ -347,11 +347,11 @@ public class JSONDataWriter implements IDataWriter {
 					}
 					result = _result;
 				} else if (Timestamp.class.isAssignableFrom(fieldMetaData.getType())) {
-					result = TIMESTAMP_FORMATTER.format(field.getValue());
+					result = TIMESTAMP_FORMATTER_V2.format((TemporalAccessor) field.getValue());
 				} else if (Time.class.isAssignableFrom(fieldMetaData.getType())) {
-					result = CACHE_TIMEONLY_FORMATTER.format(field.getValue());
+					result = CACHE_TIMEONLY_FORMATTER_V2.format((TemporalAccessor) field.getValue());
 				} else if (Date.class.isAssignableFrom(fieldMetaData.getType())) {
-					result = DATE_FORMATTER.format(field.getValue());
+					result = DATE_FORMATTER_V2.format((TemporalAccessor) field.getValue());
 				} else if (Boolean.class.isAssignableFrom(fieldMetaData.getType())) {
 					result = Boolean.valueOf(field.getValue().toString());
 				} else if (Byte.class.isAssignableFrom(fieldMetaData.getType())) {
@@ -411,7 +411,7 @@ public class JSONDataWriter implements IDataWriter {
 
 			Date cacheDate = dataStore.getCacheDate();
 			if (cacheDate != null) {
-				String date = CACHE_TIMESTAMP_FORMATTER.format(cacheDate);
+				String date = CACHE_TIMESTAMP_FORMATTER_V2.format((TemporalAccessor) cacheDate);
 				metadata.put("cacheDate", date);
 			}
 

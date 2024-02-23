@@ -21,6 +21,8 @@ import it.eng.spagobi.analiticalmodel.document.bo.Snapshot;
 import it.eng.spagobi.commons.utilities.GeneralUtilities;
 
 import java.text.SimpleDateFormat;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.TemporalAccessor;
 import java.util.Locale;
 
 import org.json.JSONObject;
@@ -38,8 +40,11 @@ public class SnapshotJSONSerializer implements Serializer {
 	public static final String CREATION_DATE = "creationDate";
 	
 	// dates are sent to the client using a fixed format, the one returned by GeneralUtilities.getServerDateFormat()
+	@Deprecated
 	private static final SimpleDateFormat DATE_FORMATTER = new SimpleDateFormat( GeneralUtilities.getServerTimeStampFormat() );
+	private static final DateTimeFormatter DATE_FORMATTER_V2 = DateTimeFormatter.ofPattern(GeneralUtilities.getServerTimeStampFormat());
 
+	
 	public Object serialize(Object o, Locale locale) throws SerializationException {
 		JSONObject  result = null;
 		
@@ -53,7 +58,7 @@ public class SnapshotJSONSerializer implements Serializer {
 			result.put(ID, snapshot.getId() );
 			result.put(NAME, snapshot.getName() );
 			result.put(DESCRIPTION, snapshot.getDescription() );			
-			result.put(CREATION_DATE, DATE_FORMATTER.format(  snapshot.getDateCreation() ) );
+			result.put(CREATION_DATE, DATE_FORMATTER_V2.format( (TemporalAccessor) snapshot.getDateCreation() ) );
 		} catch (Throwable t) {
 			throw new SerializationException("An error occurred while serializing object: " + o, t);
 		} finally {
