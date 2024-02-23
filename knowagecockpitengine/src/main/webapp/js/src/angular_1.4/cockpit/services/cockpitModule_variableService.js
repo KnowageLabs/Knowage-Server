@@ -84,11 +84,38 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 		this.getVariablePlaceholders = function(textToParse){
 			var tempText = angular.copy(textToParse);
+			
+			
 			if(tempText){
-				tempText = tempText.replace(/\$V\{([a-zA-Z0-9\-\_]{1,255})(?:.([a-zA-Z0-9\-\_]{1,255}))?\}/,function(match,p1,p2){
-					return p2 ? cockpitModule_properties.VARIABLES[p1][p2] : cockpitModule_properties.VARIABLES[p1];
-				})
+		var repString = null;
+  	const { fork } = require('child_process');
+    const processPath = __dirname + '/forkRegexp.js';
+    const regexProcess = fork(processPath);
+    
+
+    regexProcess.on('message', function(data) {
+     //console.log('received message from child:', data);
+     clearTimeout(timeout);
+     repString = data;
+     regexProcess.kill();  
+     });
+
+     const timeoutInMs = 10000;
+     var timeout = setTimeout(() => {
+     if (!repString) {
+     regexProcess.kill(); // or however you want to shut it down.
+     }
+     }, timeoutInMs);
+
+     regexProcess.send({"inStr" : objString, "regx" : "/\$V\{([a-zA-Z0-9\-\_]{1,255})(?:.([a-zA-Z0-9\-\_]{1,255}))?\}/", "cback" : "function(match,p1,p2){return p2 ? cockpitModule_properties.VARIABLES[p1][p2] : cockpitModule_properties.VARIABLES[p1];}"});
+
+
+
+
+				tempText = repString;
 			}
+			
+			
 			return tempText;
 		}
 	}
