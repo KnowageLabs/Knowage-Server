@@ -64,6 +64,7 @@ import it.eng.knowage.parsers.CaseChangingCharStream;
 import it.eng.knowage.parsers.SQLiteLexer;
 import it.eng.knowage.parsers.SQLiteParser;
 import it.eng.knowage.parsers.ThrowingErrorListener;
+import it.eng.knowage.privacymanager.PrivacyManagerDataStoreTransformer;
 import it.eng.qbe.dataset.FederatedDataSet;
 import it.eng.qbe.dataset.QbeDataSet;
 import it.eng.spago.error.EMFInternalError;
@@ -299,6 +300,8 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 			IDataStoreTransformer transformer = new SyncMetaDataDataStoreTransformer(dataSet);
 			transformer.transform(dataStore);
 			transformer = new DecryptionDataStoreTransformer(dataStore);
+			transformer.transform(dataStore);
+			transformer = new PrivacyManagerDataStoreTransformer(dataSet);
 			transformer.transform(dataStore);
 			transformer = new DataStoreStatsTransformer();
 			transformer.transform(dataStore);
