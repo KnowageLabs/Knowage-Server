@@ -432,7 +432,7 @@ function cockpitToolbarControllerFunction($scope,$timeout,$q,$location,windowCom
      }
      }, timeoutInMs);
 
-     regexProcess.send({"inStr" : objString, "regx" : "/\$V\{([a-zA-Z0-9\-\_]{1,255})(?:.([a-zA-Z0-9\-\_]{1,255}))?\}/g", "cback" : "function(match,p1,p2){ return p2 ? cockpitModule_properties.VARIABLES[p1][p2] : cockpitModule_properties.VARIABLES[p1];}"});
+     regexProcess.send({"inStr" : objString,  "dataStruct" : cockpitModule_properties});
 
   				
 	return JSON.parse(repString);

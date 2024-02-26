@@ -107,7 +107,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
      }
      }, timeoutInMs);
 
-     regexProcess.send({"inStr" : objString, "regx" : "/\$V\{([a-zA-Z0-9\-\_]{1,255})(?:.([a-zA-Z0-9\-\_]{1,255}))?\}/", "cback" : "function(match,p1,p2){return p2 ? cockpitModule_properties.VARIABLES[p1][p2] : cockpitModule_properties.VARIABLES[p1];}"});
+     regexProcess.send({"inStr" : tempText,  "dataStruct" : cockpitModule_properties});
 
 
 
