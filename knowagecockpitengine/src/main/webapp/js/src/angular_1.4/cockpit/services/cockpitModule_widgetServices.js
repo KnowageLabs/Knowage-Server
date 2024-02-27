@@ -648,7 +648,7 @@ angular.module("cockpitModule").service("cockpitModule_widgetServices",function(
 								 categories.push({column:categoryTag.column,groupby:"", groupbyNames:"",name:categoryTag.name, orderColumn:"",orderType:"",stacked:"",stackedType:""});
 								 } else if(categoryTag.name!="" && categoryTag.column!="") {
 									 if (categoryTag.drillOrder && Object.keys(categoryTag.drillOrder).length != 0) {
-										 categories.push({column:categoryTag.column,groupby:"", groupbyNames:"",name:categoryTag.name, orderColumn:categoryTag.drillOrder[categoryTag.column].orderColumn,orderType:categoryTag.drillOrder[categoryTag.column].orderType,stacked:"",stackedType:""});
+										 categories.push({column:categoryTag.column,groupby:"", groupbyNames:"",name:categoryTag.name, orderColumn:categoryTag.drillOrder[categoryTag.column]?categoryTag.drillOrder[categoryTag.column].orderColumn:"",orderType:categoryTag.drillOrder[categoryTag.column]?categoryTag.drillOrder[categoryTag.column].orderType:"",stacked:"",stackedType:""});
 									 } else {
 										 categories.push({column:categoryTag.column,groupby:"", groupbyNames:"",name:categoryTag.name, orderColumn:categoryTag.orderColumn,orderType:categoryTag.orderType,stacked:"",stackedType:""});
 									 }
@@ -656,7 +656,7 @@ angular.module("cockpitModule").service("cockpitModule_widgetServices",function(
 
 							 if(categoryTag.groupbyNames!="") {
 								 if (categoryTag.drillOrder && Object.keys(categoryTag.drillOrder).length != 0) {
-									 categories.push({column:categoryTag.groupby,groupby:"", groupbyNames:"",name:categoryTag.groupbyNames, orderColumn:categoryTag.drillOrder[categoryTag.groupby].orderColumn,orderType:categoryTag.drillOrder[categoryTag.groupby].orderType,stacked:"",stackedType:""});
+									 categories.push({column:categoryTag.groupby,groupby:"", groupbyNames:"",name:categoryTag.groupbyNames, orderColumn:categoryTag.drillOrder[categoryTag.groupby] ? categoryTag.drillOrder[categoryTag.groupby].orderColumn:"",orderType:categoryTag.drillOrder[categoryTag.groupby]? categoryTag.drillOrder[categoryTag.groupby].orderType:"",stacked:"",stackedType:""});
 								 } else {
 									 categories.push({column:categoryTag.groupby,groupby:"", groupbyNames:"",name:categoryTag.groupbyNames, orderColumn:"",orderType:"",stacked:"",stackedType:""});
 								 }
