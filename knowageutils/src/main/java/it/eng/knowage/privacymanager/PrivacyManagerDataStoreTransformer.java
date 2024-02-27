@@ -141,12 +141,13 @@ public class PrivacyManagerDataStoreTransformer extends AbstractDataStoreTransfo
 
 		AtomicInteger index = new AtomicInteger();
 
-		dataStoreMetadata.getFieldsMeta().stream().collect(Collectors.toMap(e -> index.getAndIncrement(), e -> e))
-				.entrySet().stream().filter(e -> e.getValue().isPersonal()).forEach(e -> {
+		dataStoreMetadata.getFieldsMeta().stream().collect(Collectors.toMap(e -> index.getAndIncrement(), e -> e)).entrySet().stream()
+				.filter(e -> e.getValue().isSubjectId()).forEach(e -> {
 					Integer key = e.getKey();
 					IFieldMetaData value = e.getValue();
-					sensibleField.add(value);
-					sensibleFieldByIndex.put(key, value);
+					subjectField.add(value);
+					subjectFieldByIndex.put(key, value);
+
 					String decoded = EventBuilderUtils.decodeSubjectField(value.getName());
 					switch (decoded) {
 					case EventBuilderUtils.TAXCODE:
@@ -162,17 +163,16 @@ public class PrivacyManagerDataStoreTransformer extends AbstractDataStoreTransfo
 						subjectFieldOrder.put(key, 3);
 						break;
 					default:
-						LOGGER.error("Cannot map subject field {}. Check PrivacyManagerClient.properties",
-								value.getName());
+						LOGGER.error("Cannot map subject field {}. Check PrivacyManagerClient.properties", value.getName());
 					}
 				});
 
-		dataStoreMetadata.getFieldsMeta().stream().collect(Collectors.toMap(e -> index.getAndIncrement(), e -> e))
-				.entrySet().stream().filter(e -> e.getValue().isSubjectId()).forEach(e -> {
+		dataStoreMetadata.getFieldsMeta().stream().collect(Collectors.toMap(e -> index.getAndIncrement(), e -> e)).entrySet().stream()
+				.filter(e -> e.getValue().isPersonal()).forEach(e -> {
 					Integer key = e.getKey();
 					IFieldMetaData value = e.getValue();
-					subjectField.add(value);
-					subjectFieldByIndex.put(key, value);
+					sensibleField.add(value);
+					sensibleFieldByIndex.put(key, value);
 				});
 
 		needPM = !sensibleField.isEmpty();
