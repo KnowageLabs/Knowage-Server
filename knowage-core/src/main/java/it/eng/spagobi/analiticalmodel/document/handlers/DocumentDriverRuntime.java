@@ -66,7 +66,7 @@ public class DocumentDriverRuntime extends AbstractDriverRuntime<BIObjectParamet
 			throw new SpagoBIServiceException(
 					"An error occurred while loading parameter visual dependecies for parameter [" + id + "]", e);
 		}
-		Iterator<AbstractParview> it = visualDependencies.iterator();
+		Iterator<? extends AbstractParview> it = visualDependencies.iterator();
 		while (it.hasNext()) {
 			AbstractParview dependency = it.next();
 			Integer objParFatherId = dependency.getParFatherId();

@@ -21,8 +21,8 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
-import org.json.JSONObject;
 
 import it.eng.qbe.datasource.IDataSource;
 import it.eng.qbe.model.accessmodality.AbstractModelAccessModality;
@@ -32,7 +32,6 @@ import it.eng.qbe.statement.AbstractQbeDataSet;
 import it.eng.qbe.statement.IStatement;
 import it.eng.qbe.statement.QbeDatasetFactory;
 import it.eng.spagobi.commons.bo.UserProfile;
-import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.engines.qbe.datasource.QbeDataSourceManager;
 import it.eng.spagobi.engines.qbe.registry.bo.RegistryConfiguration;
 import it.eng.spagobi.engines.qbe.template.QbeTemplate;
@@ -84,10 +83,11 @@ public class QbeEngineInstance extends AbstractEngineInstance {
 		queryCatalogue = new QueryCatalogue();
 		queryCatalogue.addQuery(new Query());
 
-		it.eng.spagobi.tools.datasource.bo.IDataSource dataSrc = (it.eng.spagobi.tools.datasource.bo.IDataSource) env.get(EngineConstants.ENV_DATASOURCE);
+		it.eng.spagobi.tools.datasource.bo.IDataSource dataSrc = (it.eng.spagobi.tools.datasource.bo.IDataSource) env
+				.get(EngineConstants.ENV_DATASOURCE);
 		logger.debug("Datasource is " + dataSrc);
 
-		Map<String, Object> dataSourceProperties = new HashMap<String, Object>();
+		Map<String, Object> dataSourceProperties = new HashMap<>();
 
 		if (template != null) {
 			dataSourceProperties.put("dblinkMap", template.getDbLinkMap());
@@ -106,7 +106,8 @@ public class QbeEngineInstance extends AbstractEngineInstance {
 			dataSourceProperties.put(EngineConstants.MODEL_NAME, env.get("DATAMART_NAME"));
 		}
 
-		dataSource = QbeDataSourceManager.getInstance().getDataSource(template != null ? template.getDatamartNames() : null, dataSourceProperties,
+		dataSource = QbeDataSourceManager.getInstance().getDataSource(
+				template != null ? template.getDatamartNames() : null, dataSourceProperties,
 				QbeEngineConfig.getInstance().isDataSourceCacheEnabled());
 
 		if (template != null) {
@@ -118,8 +119,9 @@ public class QbeEngineInstance extends AbstractEngineInstance {
 			if (template.getDatamartModelAccessModality() != null) {
 
 				if (template.getDatamartModelAccessModality().getRecursiveFiltering() == null) {
-					String recursiveFilteringAttr = dataSource.getModelStructure().getPropertyAsString(AbstractModelAccessModality.ATTR_RECURSIVE_FILTERING);
-					if (!StringUtilities.isEmpty(recursiveFilteringAttr)) {
+					String recursiveFilteringAttr = dataSource.getModelStructure()
+							.getPropertyAsString(AbstractModelAccessModality.ATTR_RECURSIVE_FILTERING);
+					if (!StringUtils.isEmpty(recursiveFilteringAttr)) {
 						if ("disabled".equalsIgnoreCase(recursiveFilteringAttr)) {
 							template.getDatamartModelAccessModality().setRecursiveFiltering(Boolean.FALSE);
 						} else {
@@ -286,8 +288,8 @@ public class QbeEngineInstance extends AbstractEngineInstance {
 	}
 
 	public it.eng.spagobi.tools.datasource.bo.IDataSource getDataSourceForWriting() {
-		it.eng.spagobi.tools.datasource.bo.IDataSource datasource = (it.eng.spagobi.tools.datasource.bo.IDataSource) this.getEnv()
-				.get(EngineConstants.DATASOURCE_FOR_WRITING);
+		it.eng.spagobi.tools.datasource.bo.IDataSource datasource = (it.eng.spagobi.tools.datasource.bo.IDataSource) this
+				.getEnv().get(EngineConstants.DATASOURCE_FOR_WRITING);
 		if (datasource == null) {
 			throw new SpagoBIEngineRuntimeException("Datasource for writing not defined!");
 		}

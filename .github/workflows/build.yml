@@ -1,18 +1,12 @@
 name: "Build"
 on:
   push:
+    branches:
+      - 'main'
+      - 'master'
+      - 'knowage-server-*'
+  pull_request:
   pull_request_target:
-    types:
-    - opened
-    - reopened
-    - synchronize
-    - ready_for_review
-    - review_requested
-# TODO : secrets are not accessible here
-#  pull_request_review:
-#    types:
-#    - submitted
-#    - edited
 
 jobs:
   build:
@@ -52,6 +46,12 @@ jobs:
             "mirrorOf": "*",
             "url": "${{ secrets.KNOWAGE_NEXUS_URL_KNOWAGE_GROUP }}"
           }]
+
+    - name: Check POMs
+      run: mvn sortpom:verify -q -f knowage-ce-parent/pom.xml
+
+    - name: Checkstyle
+      run: mvn checkstyle:check -q -f knowage-ce-parent/pom.xml
 
     - name: Build
       run: mvn compile -pl -:knowage-vue -q -f knowage-ce-parent/pom.xml

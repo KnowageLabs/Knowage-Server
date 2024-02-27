@@ -19,11 +19,11 @@ package it.eng.spagobi.engines.qbe.services.formbuilder;
 
 import java.io.IOException;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.json.JSONObject;
 
 import it.eng.spago.base.SourceBean;
-import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.engines.qbe.QbeEngineInstance;
 import it.eng.spagobi.engines.qbe.services.core.AbstractQbeEngineAction;
 import it.eng.spagobi.services.proxy.ContentServiceProxy;
@@ -42,12 +42,11 @@ public class SaveFormAction extends AbstractQbeEngineAction {
 	public static final String FORM_STATE = "FORM_STATE";
 	public static final String TEMPLATE_NAME = "TEMPLATE_NAME";
 
-
 	/** Logger component. */
 	private static final Logger LOGGER = Logger.getLogger(SaveFormAction.class);
 
 	@Override
-	public void service(SourceBean request, SourceBean response)  {
+	public void service(SourceBean request, SourceBean response) {
 
 		JSONObject formState;
 		String templateName;
@@ -64,8 +63,8 @@ public class SaveFormAction extends AbstractQbeEngineAction {
 			super.service(request, response);
 
 			qbeEngineInstance = getEngineInstance();
-			Assert.assertNotNull(qbeEngineInstance, "It's not possible to execute " + this.getActionName() + " service before having properly created an instance of EngineInstance class");
-
+			Assert.assertNotNull(qbeEngineInstance, "It's not possible to execute " + this.getActionName()
+					+ " service before having properly created an instance of EngineInstance class");
 
 			formState = this.getAttributeAsJSONObject(FORM_STATE);
 			LOGGER.debug("Parameter [" + FORM_STATE + "] is equals to [" + formState + "]");
@@ -75,12 +74,12 @@ public class SaveFormAction extends AbstractQbeEngineAction {
 
 			templateName = this.getAttributeAsString(TEMPLATE_NAME);
 			LOGGER.debug("Parameter [" + TEMPLATE_NAME + "] is equals to [" + templateName + "]");
-			if(StringUtilities.isEmpty(templateName)) {
+			if (StringUtils.isEmpty(templateName)) {
 				templateName = "template.sbiform";
 				LOGGER.debug("The default template name [" + templateName + "] will be used");
 			}
 
-			template = (SourceBean)qbeEngineInstance.getEnv().get("TEMPLATE");
+			template = (SourceBean) qbeEngineInstance.getEnv().get("TEMPLATE");
 
 			StringBuilder dataDefinition = new StringBuilder();
 			String formStateString = new String(getEngineInstance().getFormState().store());
@@ -100,36 +99,36 @@ public class SaveFormAction extends AbstractQbeEngineAction {
 			queryBlock = SourceBean.fromXMLString(dataDefinition.toString());
 			template.updAttribute(queryBlock);
 
-			String datsetLabel = (String) qbeEngineInstance.getEnv().get(
-					EngineConstants.ENV_DATASET_LABEL);
+			String datsetLabel = (String) qbeEngineInstance.getEnv().get(EngineConstants.ENV_DATASET_LABEL);
 			if (datsetLabel != null) {
 				SourceBean dsLbl = new SourceBean("DATASET");
 				dsLbl.setAttribute("label", datsetLabel);
 				template.updAttribute(dsLbl);
 			}
 
-
 			LOGGER.debug(template.toString());
 
-			contentServiceProxy = (ContentServiceProxy)qbeEngineInstance.getEnv().get(EngineConstants.ENV_CONTENT_SERVICE_PROXY);
+			contentServiceProxy = (ContentServiceProxy) qbeEngineInstance.getEnv()
+					.get(EngineConstants.ENV_CONTENT_SERVICE_PROXY);
 			Assert.assertNotNull(formState, "Parameter [" + FORM_STATE + "] cannot be null");
 
-			String docId = (String)qbeEngineInstance.getEnv().get("DOCUMENT");
+			String docId = (String) qbeEngineInstance.getEnv().get("DOCUMENT");
 			String result = contentServiceProxy.saveObjectTemplate(docId, templateName, template.toString());
-
 
 			if (result == null || !result.trim().equals("OK")) {
 				throw new Exception("Error while saving document's template");
 			}
 
 			try {
-				writeBackToClient( new JSONAcknowledge() );
+				writeBackToClient(new JSONAcknowledge());
 			} catch (IOException e) {
-				throw new SpagoBIEngineServiceException(getActionName(), "Impossible to write back the responce to the client", e);
+				throw new SpagoBIEngineServiceException(getActionName(),
+						"Impossible to write back the responce to the client", e);
 			}
 
-		} catch(Throwable t) {
-			throw SpagoBIEngineServiceExceptionHandler.getInstance().getWrappedException(getActionName(), getEngineInstance(), t);
+		} catch (Throwable t) {
+			throw SpagoBIEngineServiceExceptionHandler.getInstance().getWrappedException(getActionName(),
+					getEngineInstance(), t);
 		} finally {
 			LOGGER.debug("OUT");
 		}

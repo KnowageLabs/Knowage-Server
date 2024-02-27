@@ -47,6 +47,7 @@ import javax.ws.rs.core.Response.ResponseBuilder;
 import javax.ws.rs.core.Response.Status;
 
 import org.apache.clerezza.jaxrs.utils.form.MultiPartBody;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.hibernate.HibernateException;
 import org.json.JSONArray;
@@ -87,7 +88,6 @@ import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.utilities.GeneralUtilities;
 import it.eng.spagobi.commons.utilities.ObjectsAccessVerifier;
-import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.commons.utilities.UserUtilities;
 import it.eng.spagobi.sdk.documents.bo.SDKDocument;
 import it.eng.spagobi.sdk.documents.bo.SDKDocumentParameter;
@@ -113,7 +113,8 @@ public class DocumentResource extends AbstractDocumentResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	public String getDocumentParameters(@PathParam("label") String label) {
 
-		AnalyticalModelDocumentManagementAPI documentManager = new AnalyticalModelDocumentManagementAPI(getUserProfile());
+		AnalyticalModelDocumentManagementAPI documentManager = new AnalyticalModelDocumentManagementAPI(
+				getUserProfile());
 		BIObject document = documentManager.getDocument(label);
 		if (document == null)
 			throw new SpagoBIRuntimeException("Document with label [" + label + "] doesn't exist");
@@ -181,7 +182,7 @@ public class DocumentResource extends AbstractDocumentResource {
 			UserProfile userProfile = getUserProfile();
 			List<String> roles = DAOFactory.getBIObjectDAO().getCorrectRolesForExecution(id, userProfile);
 			String userName = (String) userProfile.getUserId();
-			List<String> userRoles = new ArrayList<String>();
+			List<String> userRoles = new ArrayList<>();
 			for (String role : roles) {
 				userRoles.add(userName + "|" + role);
 			}
@@ -218,7 +219,8 @@ public class DocumentResource extends AbstractDocumentResource {
 			logger.error("Error while try to retrieve the specified parameter", e);
 			throw new SpagoBIRuntimeException("Error while try to retrieve the specified parameter", e);
 		}
-		AnalyticalModelDocumentManagementAPI documentManager = new AnalyticalModelDocumentManagementAPI(getUserProfile());
+		AnalyticalModelDocumentManagementAPI documentManager = new AnalyticalModelDocumentManagementAPI(
+				getUserProfile());
 		BIObject document = documentManager.getDocument(label);
 		if (document == null) {
 			logger.error("Document with label [" + label + "] doesn't exist");
@@ -226,7 +228,8 @@ public class DocumentResource extends AbstractDocumentResource {
 		}
 
 		if (!parameter.getBiObjectID().equals(document.getId())) {
-			logger.error("Parameter with id [" + id + "] is parameter of [" + parameter.getBiObjectID() + "], not [" + label + "]");
+			logger.error("Parameter with id [" + id + "] is parameter of [" + parameter.getBiObjectID() + "], not ["
+					+ label + "]");
 			throw new SpagoBIRuntimeException("Parameter with id [" + id + "] is not a parameter of [" + label + "]");
 		}
 
@@ -240,7 +243,8 @@ public class DocumentResource extends AbstractDocumentResource {
 			return parameterDAO.loadForDetailByParameterID(biPar.getParameter().getId());
 		} catch (EMFUserError e) {
 			logger.error("Error while retrieving analytical driver associated with the parameter", e);
-			throw new SpagoBIRuntimeException("Error while retrieving analytical driver associated with the parameter", e);
+			throw new SpagoBIRuntimeException("Error while retrieving analytical driver associated with the parameter",
+					e);
 		}
 	}
 
@@ -248,7 +252,8 @@ public class DocumentResource extends AbstractDocumentResource {
 	@Path("/{label}/parameters")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
 	public Response addParameter(@PathParam("label") String label, String body) {
-		BIObjectParameter parameter = (BIObjectParameter) JsonConverter.jsonToValidObject(body, BIObjectParameter.class);
+		BIObjectParameter parameter = (BIObjectParameter) JsonConverter.jsonToValidObject(body,
+				BIObjectParameter.class);
 
 		IBIObjectParameterDAO parameterDAO = null;
 		try {
@@ -257,16 +262,18 @@ public class DocumentResource extends AbstractDocumentResource {
 			logger.error("Error while retrieving parameters", e);
 			throw new SpagoBIRuntimeException("Error while retrieving parameters", e);
 		}
-		AnalyticalModelDocumentManagementAPI documentManager = new AnalyticalModelDocumentManagementAPI(getUserProfile());
+		AnalyticalModelDocumentManagementAPI documentManager = new AnalyticalModelDocumentManagementAPI(
+				getUserProfile());
 		BIObject document = documentManager.getDocument(label);
 		if (document == null)
 			throw new SpagoBIRuntimeException("Document with label [" + label + "] doesn't exist");
 
 		if (!parameter.getBiObjectID().equals(document.getId())) {
-			logger.error(
-					"[" + parameter.getBiObjectID() + "] is not the id of document with label [" + label + "]. The correct id is [" + document.getId() + "]");
+			logger.error("[" + parameter.getBiObjectID() + "] is not the id of document with label [" + label
+					+ "]. The correct id is [" + document.getId() + "]");
 			throw new SpagoBIRuntimeException(
-					"[" + parameter.getBiObjectID() + "] is not the id of document with label [" + label + "]. The correct id is [" + document.getId() + "]");
+					"[" + parameter.getBiObjectID() + "] is not the id of document with label [" + label
+							+ "]. The correct id is [" + document.getId() + "]");
 		}
 
 		try {
@@ -283,7 +290,8 @@ public class DocumentResource extends AbstractDocumentResource {
 	@Path("/{label}/parameters/{id}")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
 	public Response modifyParameter(@PathParam("label") String label, @PathParam("id") Integer id, String body) {
-		BIObjectParameter parameter = (BIObjectParameter) JsonConverter.jsonToValidObject(body, BIObjectParameter.class);
+		BIObjectParameter parameter = (BIObjectParameter) JsonConverter.jsonToValidObject(body,
+				BIObjectParameter.class);
 
 		IBIObjectParameterDAO parameterDAO = null;
 		try {
@@ -292,16 +300,18 @@ public class DocumentResource extends AbstractDocumentResource {
 			logger.error("Error while retrieving parameters", e);
 			throw new SpagoBIRuntimeException("Error while retrieving parameters", e);
 		}
-		AnalyticalModelDocumentManagementAPI documentManager = new AnalyticalModelDocumentManagementAPI(getUserProfile());
+		AnalyticalModelDocumentManagementAPI documentManager = new AnalyticalModelDocumentManagementAPI(
+				getUserProfile());
 		BIObject document = documentManager.getDocument(label);
 		if (document == null)
 			throw new SpagoBIRuntimeException("Document with label [" + label + "] doesn't exist");
 
 		if (!parameter.getBiObjectID().equals(document.getId())) {
-			logger.error(
-					"[" + parameter.getBiObjectID() + "] is not the id of document with label [" + label + "]. The correct id is [" + document.getId() + "]");
+			logger.error("[" + parameter.getBiObjectID() + "] is not the id of document with label [" + label
+					+ "]. The correct id is [" + document.getId() + "]");
 			throw new SpagoBIRuntimeException(
-					"[" + parameter.getBiObjectID() + "] is not the id of document with label [" + label + "]. The correct id is [" + document.getId() + "]");
+					"[" + parameter.getBiObjectID() + "] is not the id of document with label [" + label
+							+ "]. The correct id is [" + document.getId() + "]");
 		}
 
 		parameter.setId(id);
@@ -330,7 +340,8 @@ public class DocumentResource extends AbstractDocumentResource {
 			logger.error("Error while try to retrieve the specified parameter", e);
 			throw new SpagoBIRuntimeException("Error while try to retrieve the specified parameter", e);
 		}
-		AnalyticalModelDocumentManagementAPI documentManager = new AnalyticalModelDocumentManagementAPI(getUserProfile());
+		AnalyticalModelDocumentManagementAPI documentManager = new AnalyticalModelDocumentManagementAPI(
+				getUserProfile());
 		BIObject document = documentManager.getDocument(label);
 		if (document == null) {
 			logger.error("Document with label [" + label + "] doesn't exist");
@@ -338,7 +349,8 @@ public class DocumentResource extends AbstractDocumentResource {
 		}
 
 		if (!parameter.getBiObjectID().equals(document.getId())) {
-			logger.error("Parameter with id [" + id + "] is parameter of [" + parameter.getBiObjectID() + "], not [" + label + "]");
+			logger.error("Parameter with id [" + id + "] is parameter of [" + parameter.getBiObjectID() + "], not ["
+					+ label + "]");
 			throw new SpagoBIRuntimeException("Parameter with id [" + id + "] is not a parameter of [" + label + "]");
 		}
 
@@ -356,11 +368,13 @@ public class DocumentResource extends AbstractDocumentResource {
 	@POST
 	@Path("{label}/content")
 	@Produces("application/pdf")
-	public Response execute(@PathParam("label") String label, @QueryParam("outputType") String outputType, String body) {
+	public Response execute(@PathParam("label") String label, @QueryParam("outputType") String outputType,
+			String body) {
 		SDKDocumentParameter[] parameters = null;
 		if (!body.isEmpty())
 			parameters = (SDKDocumentParameter[]) JsonConverter.jsonToValidObject(body, SDKDocumentParameter[].class);
-		AnalyticalModelDocumentManagementAPI documentManager = new AnalyticalModelDocumentManagementAPI(getUserProfile());
+		AnalyticalModelDocumentManagementAPI documentManager = new AnalyticalModelDocumentManagementAPI(
+				getUserProfile());
 		BIObject document = documentManager.getDocument(label);
 		if (document == null)
 			throw new SpagoBIRuntimeException("Document with label [" + label + "] doesn't exist");
@@ -397,10 +411,11 @@ public class DocumentResource extends AbstractDocumentResource {
 					rb.header("Content-Disposition", "attachment; filename=" + content.getFileName());
 					return rb.build();
 				} else
-					throw new SpagoBIRuntimeException(
-							"User [" + getUserProfile().getUserName() + "] has no rights to execute document with label [" + label + "]");
+					throw new SpagoBIRuntimeException("User [" + getUserProfile().getUserName()
+							+ "] has no rights to execute document with label [" + label + "]");
 			} else
-				throw new SpagoBIRuntimeException("User [" + getUserProfile().getUserName() + "] has no rights to execute document with label [" + label + "]");
+				throw new SpagoBIRuntimeException("User [" + getUserProfile().getUserName()
+						+ "] has no rights to execute document with label [" + label + "]");
 
 		} catch (SpagoBIRuntimeException e) {
 			throw e;
@@ -423,10 +438,12 @@ public class DocumentResource extends AbstractDocumentResource {
 	@GET
 	@Path("/listDocument")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
-	public String getDocumentSearchAndPaginate(@QueryParam("Page") String pageStr, @QueryParam("ItemPerPage") String itemPerPageStr,
-			@QueryParam("label") String label, @QueryParam("name") String name, @QueryParam("descr") String descr,
-			@QueryParam("excludeType") String excludeType, @QueryParam("includeType") String includeType, @QueryParam("scope") String scope,
-			@QueryParam("loadObjPar") Boolean loadObjPar, @QueryParam("objLabelIn") String objLabelIn, @QueryParam("objLabelNotIn") String objLabelNotIn,
+	public String getDocumentSearchAndPaginate(@QueryParam("Page") String pageStr,
+			@QueryParam("ItemPerPage") String itemPerPageStr, @QueryParam("label") String label,
+			@QueryParam("name") String name, @QueryParam("descr") String descr,
+			@QueryParam("excludeType") String excludeType, @QueryParam("includeType") String includeType,
+			@QueryParam("scope") String scope, @QueryParam("loadObjPar") Boolean loadObjPar,
+			@QueryParam("objLabelIn") String objLabelIn, @QueryParam("objLabelNotIn") String objLabelNotIn,
 			@QueryParam("forceVis") @DefaultValue("false") Boolean forceVisibility) throws EMFInternalError {
 		logger.debug("IN");
 		UserProfile profile = getUserProfile();
@@ -434,7 +451,7 @@ public class DocumentResource extends AbstractDocumentResource {
 		List<BIObject> filterObj = null;
 		Integer page = getNumberOrNull(pageStr);
 		Integer item_per_page = getNumberOrNull(itemPerPageStr);
-		List<CriteriaParameter> disjunctions = new ArrayList<CriteriaParameter>();
+		List<CriteriaParameter> disjunctions = new ArrayList<>();
 		if (label != null && !label.isEmpty()) {
 			disjunctions.add(new CriteriaParameter("label", label, Match.ILIKE));
 		}
@@ -456,7 +473,7 @@ public class DocumentResource extends AbstractDocumentResource {
 			}
 		}
 
-		List<CriteriaParameter> restritions = new ArrayList<CriteriaParameter>();
+		List<CriteriaParameter> restritions = new ArrayList<>();
 
 		// filter document if is USER profile
 		// Commented out: this kind of logic has to be handled by the
@@ -480,7 +497,8 @@ public class DocumentResource extends AbstractDocumentResource {
 		}
 
 		// hide if user is not admin or devel and visible is false
-		if (!forceVisibility && !profile.isAbleToExecuteAction(CommunityFunctionalityConstants.DOCUMENT_MANAGEMENT_ADMIN)
+		if (!forceVisibility
+				&& !profile.isAbleToExecuteAction(CommunityFunctionalityConstants.DOCUMENT_MANAGEMENT_ADMIN)
 				&& !profile.isAbleToExecuteAction(CommunityFunctionalityConstants.DOCUMENT_MANAGEMENT_DEV)) {
 			restritions.add(new CriteriaParameter("visible", Short.valueOf("1"), Match.EQ));
 		}
@@ -517,8 +535,9 @@ public class DocumentResource extends AbstractDocumentResource {
 	@GET
 	@Path("/")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
-	public Response getDocumentsV2(@QueryParam("type") String type, @QueryParam("folderId") String folderIdStr, @QueryParam("date") String date,
-			@QueryParam("searchKey") String searchKey, @QueryParam("searchAttributes") String attributes, @QueryParam("searchSimilar") Boolean similar) {
+	public Response getDocumentsV2(@QueryParam("type") String type, @QueryParam("folderId") String folderIdStr,
+			@QueryParam("date") String date, @QueryParam("searchKey") String searchKey,
+			@QueryParam("searchAttributes") String attributes, @QueryParam("searchSimilar") Boolean similar) {
 		logger.debug("IN");
 		IBIObjectDAO documentsDao = null;
 		List<BIObject> allObjects = null;
@@ -528,10 +547,10 @@ public class DocumentResource extends AbstractDocumentResource {
 
 		Integer functionalityId = getNumberOrNull(folderIdStr);
 
-		boolean isTypeFilterValid = !StringUtilities.isEmpty(type);
+		boolean isTypeFilterValid = !StringUtils.isEmpty(type);
 		boolean isFolderFilterValid = functionalityId != null;
-		boolean isDateFilterValid = !StringUtilities.isEmpty(date);
-		boolean isSearchFilterValid = !StringUtilities.isEmpty(searchKey);
+		boolean isDateFilterValid = !StringUtils.isEmpty(date);
+		boolean isSearchFilterValid = !StringUtils.isEmpty(searchKey);
 
 		try {
 			documentsDao = DAOFactory.getBIObjectDAO();
@@ -541,27 +560,32 @@ public class DocumentResource extends AbstractDocumentResource {
 				logger.debug("Date input parameter found: [" + date + "]. Loading documents before that date...");
 				allObjects = documentsDao.loadDocumentsBeforeDate(date);
 			} else if (isFolderFilterValid) {
-				logger.debug("Folder id parameter found: [" + functionalityId + "]. Loading documents belonging to that folder...");
+				logger.debug("Folder id parameter found: [" + functionalityId
+						+ "]. Loading documents belonging to that folder...");
 				allObjects = documentsDao.loadAllBIObjectsByFolderId(functionalityId);
 			} else if (isSearchFilterValid) {
 				logger.debug("Search key found: [" + searchKey + "]. Loading documents that match search key...");
 				allObjects = documentsDao.loadAllBIObjectsBySearchKey(searchKey, attributes);
 			} else {
-				logger.debug("Neither filter on date nor on folder nor a search key was found, loading all documents...");
+				logger.debug(
+						"Neither filter on date nor on folder nor a search key was found, loading all documents...");
 				allObjects = documentsDao.loadAllBIObjects();
 			}
 
 			UserProfile profile = getUserProfile();
-			objects = new ArrayList<BIObject>();
+			objects = new ArrayList<>();
 
 			for (BIObject obj : allObjects) {
 				try {
 					// hide if user is not admin or devel and visible is false
-					if (!obj.isVisible() && !profile.isAbleToExecuteAction(CommunityFunctionalityConstants.DOCUMENT_MANAGEMENT_ADMIN)
-							&& !profile.isAbleToExecuteAction(CommunityFunctionalityConstants.DOCUMENT_MANAGEMENT_DEV) || isDeprecated(obj)) {
+					if (!obj.isVisible()
+							&& !profile.isAbleToExecuteAction(CommunityFunctionalityConstants.DOCUMENT_MANAGEMENT_ADMIN)
+							&& !profile.isAbleToExecuteAction(CommunityFunctionalityConstants.DOCUMENT_MANAGEMENT_DEV)
+							|| isDeprecated(obj)) {
 						continue;
 					}
-					if (ObjectsAccessVerifier.canSee(obj, profile) && (!isTypeFilterValid || obj.getBiObjectTypeCode().equals(type))) {
+					if (ObjectsAccessVerifier.canSee(obj, profile)
+							&& (!isTypeFilterValid || obj.getBiObjectTypeCode().equals(type))) {
 						objects.add(obj);
 					}
 				} catch (EMFInternalError e) {
@@ -617,7 +641,8 @@ public class DocumentResource extends AbstractDocumentResource {
 
 		IOutputParameterDAO parameterDAO = DAOFactory.getOutputParameterDAO();
 		parameterDAO.setUserProfile(getUserProfile());
-		AnalyticalModelDocumentManagementAPI documentManager = new AnalyticalModelDocumentManagementAPI(getUserProfile());
+		AnalyticalModelDocumentManagementAPI documentManager = new AnalyticalModelDocumentManagementAPI(
+				getUserProfile());
 		BIObject document = documentManager.getDocument(op.getBiObjectId());
 		if (document == null) {
 			throw new SpagoBIRuntimeException("Document with id [" + op.getBiObjectId() + "] doesn't exist");
@@ -646,10 +671,11 @@ public class DocumentResource extends AbstractDocumentResource {
 	@GET
 	@Path("/{label}/parameters/{id}/values")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
-	public String getDocumentParameterValues(@PathParam("label") String label, @PathParam("id") Integer id, @QueryParam("role") String role) {
+	public String getDocumentParameterValues(@PathParam("label") String label, @PathParam("id") Integer id,
+			@QueryParam("role") String role) {
 		logger.debug("IN");
 
-		List<String> values = new ArrayList<String>();
+		List<String> values = new ArrayList<>();
 		String columnName = null;
 		boolean manualInput = false;
 
@@ -657,7 +683,7 @@ public class DocumentResource extends AbstractDocumentResource {
 			IParameterUseDAO parameterUseDAO = DAOFactory.getParameterUseDAO();
 			ParameterUse parameterUse = parameterUseDAO.loadByParameterIdandRole(id, role);
 
-			values = new ArrayList<String>();
+			values = new ArrayList<>();
 			columnName = null;
 
 			Integer manualInputInteger = parameterUse.getManualInput();
@@ -703,7 +729,8 @@ public class DocumentResource extends AbstractDocumentResource {
 			jo.put("columnName", columnName);
 			return jo.toString();
 		} catch (Exception e) {
-			String error = "Error while getting the list of parameter values by document [" + label + "], parameter [" + id + "] and role [" + role + "]";
+			String error = "Error while getting the list of parameter values by document [" + label + "], parameter ["
+					+ id + "] and role [" + role + "]";
 			logger.error(error, e);
 			throw new SpagoBIRuntimeException(error, e);
 		} finally {
@@ -715,7 +742,8 @@ public class DocumentResource extends AbstractDocumentResource {
 	@Path("/{label}/preview")
 	public Response getPreviewFile(@PathParam("label") String label) {
 		logger.debug("IN");
-		AnalyticalModelDocumentManagementAPI documentManager = new AnalyticalModelDocumentManagementAPI(getUserProfile());
+		AnalyticalModelDocumentManagementAPI documentManager = new AnalyticalModelDocumentManagementAPI(
+				getUserProfile());
 		BIObject document = documentManager.getDocument(label);
 
 		ResponseBuilder rb;
@@ -761,8 +789,8 @@ public class DocumentResource extends AbstractDocumentResource {
 				String parentPath = previewFile.getParentFile().getAbsolutePath();
 				String directoryPath = previewDirectory.getAbsolutePath();
 				if (!parentPath.equals(directoryPath)) {
-					logger.error("Path Traversal Attack security check failed: file parent path: " + parentPath + " is different" + " from directory path: "
-							+ directoryPath);
+					logger.error("Path Traversal Attack security check failed: file parent path: " + parentPath
+							+ " is different" + " from directory path: " + directoryPath);
 					throw new SpagoBIRuntimeException("Path Traversal Attack security check failed");
 				}
 
@@ -779,7 +807,8 @@ public class DocumentResource extends AbstractDocumentResource {
 				return rb.build();
 
 			} else {
-				logger.error("User [" + getUserProfile().getUserName() + "] has no rights to see document with label [" + label + "]");
+				logger.error("User [" + getUserProfile().getUserName() + "] has no rights to see document with label ["
+						+ label + "]");
 				// throw new SpagoBIRuntimeException("User [" +
 				// getUserProfile().getUserName() +
 				// "] has no rights to see document with label [" + label +

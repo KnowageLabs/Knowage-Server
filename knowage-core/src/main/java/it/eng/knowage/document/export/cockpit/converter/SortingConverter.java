@@ -53,7 +53,7 @@ public class SortingConverter extends CommonJSON implements IConverter<List<Sort
 	 */
 	@Override
 	public List<Sorting> convert(JSONObject aggregations) {
-		Map<String, String> columnAliasToName = new HashMap<String, String>();
+		Map<String, String> columnAliasToName = new HashMap<>();
 
 		try {
 			loadColumnAliasToName(getCategories(aggregations), columnAliasToName);
@@ -65,9 +65,9 @@ public class SortingConverter extends CommonJSON implements IConverter<List<Sort
 		return null;
 	}
 
-	protected List<Sorting> getSortings(IDataSet dataSet, JSONArray categories, JSONArray measures, Map<String, String> columnAliasToName)
-			throws JSONException {
-		ArrayList<Sorting> sortings = new ArrayList<Sorting>(0);
+	protected List<Sorting> getSortings(IDataSet dataSet, JSONArray categories, JSONArray measures,
+			Map<String, String> columnAliasToName) throws JSONException {
+		ArrayList<Sorting> sortings = new ArrayList<>(0);
 
 		for (int i = 0; i < categories.length(); i++) {
 			JSONObject categoryObject = categories.getJSONObject(i);
@@ -88,11 +88,13 @@ public class SortingConverter extends CommonJSON implements IConverter<List<Sort
 		return sortings;
 	}
 
-	private Sorting getSorting(IDataSet dataSet, JSONObject jsonObject, Map<String, String> columnAliasToName) throws JSONException {
+	private Sorting getSorting(IDataSet dataSet, JSONObject jsonObject, Map<String, String> columnAliasToName)
+			throws JSONException {
 		Sorting sorting = null;
 
 		String orderType = (String) jsonObject.opt("orderType");
-		if (orderType != null && !orderType.isEmpty() && ("ASC".equalsIgnoreCase(orderType) || "DESC".equalsIgnoreCase(orderType))) {
+		if (orderType != null && !orderType.isEmpty()
+				&& ("ASC".equalsIgnoreCase(orderType) || "DESC".equalsIgnoreCase(orderType))) {
 			IAggregationFunction function = AggregationFunctions.get(jsonObject.optString("funct"));
 			String orderColumn = (String) jsonObject.opt("orderColumn");
 

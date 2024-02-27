@@ -102,8 +102,8 @@ public class GetCertificatedDatasets {
 			String ckanFilter = request.getParameter("ckanFilter");
 			String ckanOffset = request.getParameter("ckanOffset");
 			String ckanRepository = request.getParameter("ckanRepository");
-			String typeDocWizard = (request.getParameter("typeDoc") != null && !"null".equals(request.getParameter("typeDoc")))
-					? request.getParameter("typeDoc") : null;
+			String typeDocWizard = (request.getParameter("typeDoc") != null
+					&& !"null".equals(request.getParameter("typeDoc"))) ? request.getParameter("typeDoc") : null;
 
 			if (isTech != null && isTech.equals("true")) {
 				// if is technical dataset == ENTERPRISE --> get all ADMIN/DEV public datasets
@@ -124,7 +124,8 @@ public class GetCertificatedDatasets {
 			dataSets = getFilteredDatasets(unfilteredDataSets, categories);
 			logger.debug("Creating JSON...");
 			long start = System.currentTimeMillis();
-			datasetsJSONArray = (JSONArray) SerializerFactory.getSerializer("application/json").serialize(dataSets, null);
+			datasetsJSONArray = (JSONArray) SerializerFactory.getSerializer("application/json").serialize(dataSets,
+					null);
 			if (ckanDS != null && ckanDS.equals("true")) {
 				if (ckanFilter.equals("NOFILTER") && ckanOffset.equals("0")) {
 					for (int i = 0; i < ckanJSONArray.length(); i++) {
@@ -146,7 +147,8 @@ public class GetCertificatedDatasets {
 		return JSONReturn.toString();
 	}
 
-	private JSONArray putActions(IEngUserProfile profile, JSONArray datasetsJSONArray, String typeDocWizard) throws JSONException, EMFInternalError {
+	private JSONArray putActions(IEngUserProfile profile, JSONArray datasetsJSONArray, String typeDocWizard)
+			throws JSONException, EMFInternalError {
 
 		Engine qbeEngine = null;
 		try {
@@ -223,7 +225,8 @@ public class GetCertificatedDatasets {
 			String dsType = datasetJSON.optString(DataSetConstants.DS_TYPE_CD);
 			if (dsType == null || !dsType.equals(DataSetFactory.FEDERATED_DS_TYPE)) {
 				if (qbeEngine != null && (typeDocWizard == null || typeDocWizard.equalsIgnoreCase("REPORT"))) {
-					if (profile.getFunctionalities().contains(CommunityFunctionalityConstants.BUILD_QBE_QUERIES_FUNCTIONALITY)) {
+					if (profile.getFunctionalities()
+							.contains(CommunityFunctionalityConstants.BUILD_QBE_QUERIES_FUNCTIONALITY)) {
 						actions.put(qbeAction);
 					}
 				}
@@ -256,7 +259,8 @@ public class GetCertificatedDatasets {
 			dataSets = dataSetDao.loadFlatDatasets();
 			// dataSets = dataSetDao.loadFlatDatasets(profile.getUserUniqueIdentifier().toString());
 
-			datasetsJSONArray = (JSONArray) SerializerFactory.getSerializer("application/json").serialize(dataSets, null);
+			datasetsJSONArray = (JSONArray) SerializerFactory.getSerializer("application/json").serialize(dataSets,
+					null);
 
 			JSONArray datasetsJSONReturn = putActions(profile, datasetsJSONArray, null);
 
@@ -268,7 +272,7 @@ public class GetCertificatedDatasets {
 		return JSONReturn.toString();
 	}
 
-	private JSONArray getOnlineCkanDatasets(IEngUserProfile profile, String url, String filter, String offset) throws JSONException {
+	private JSONArray getOnlineCkanDatasets(IEngUserProfile profile, String url, String filter, String offset) {
 
 		JSONArray datasetsJsonArray = new JSONArray();
 
@@ -288,7 +292,8 @@ public class GetCertificatedDatasets {
 			}
 			logger.debug("Resources translated in " + (System.currentTimeMillis() - start) + "ms.");
 		} catch (CKANException e) {
-			throw new SpagoBIServiceException("REST service /certificateddatasets", "Error while getting CKAN resources: " + e);
+			throw new SpagoBIServiceException("REST service /certificateddatasets",
+					"Error while getting CKAN resources: " + e);
 		}
 		return datasetsJsonArray;
 	}
@@ -302,7 +307,8 @@ public class GetCertificatedDatasets {
 			String config = JSONUtils.escapeJsonString(ds.getConfiguration());
 			JSONObject jsonConf = ObjectUtils.toJSONObject(config);
 			for (int i = 0; i < ckanDs.length(); i++) {
-				if (jsonConf.getString("ckanId").equals(ckanDs.getJSONObject(i).getJSONObject("configuration").getString("ckanId"))) {
+				if (jsonConf.getString("ckanId")
+						.equals(ckanDs.getJSONObject(i).getJSONObject("configuration").getString("ckanId"))) {
 					ckanDs.remove(i);
 					break;
 				}
@@ -313,19 +319,17 @@ public class GetCertificatedDatasets {
 
 	protected List<Integer> getCategories(IEngUserProfile profile) {
 
-		List<Integer> categories = new ArrayList<Integer>();
+		List<Integer> categories = new ArrayList<>();
 		try {
 			// NO CATEGORY IN THE DOMAINS
 			IDomainDAO domainDao = DAOFactory.getDomainDAO();
 			ICategoryDAO categoryDao = DAOFactory.getCategoryDAO();
 
 			// TODO : Makes sense?
-			List<Domain> dialects = categoryDao.getCategoriesForDataset()
-				.stream()
-				.map(Domain::fromCategory)
-				.collect(toList());
+			List<Domain> dialects = categoryDao.getCategoriesForDataset().stream().map(Domain::fromCategory)
+					.collect(toList());
 
-			if (dialects == null || dialects.size() == 0) {
+			if (dialects == null || dialects.isEmpty()) {
 				return null;
 			}
 
@@ -338,9 +342,7 @@ public class GetCertificatedDatasets {
 
 				List<RoleMetaModelCategory> aRoleCategories = roledao.getMetaModelCategoriesForRole(role.getId());
 				List<RoleMetaModelCategory> resp = new ArrayList<>();
-				List<Domain> array = categoryDao.getCategoriesForDataset()
-						.stream()
-						.map(Domain::fromCategory)
+				List<Domain> array = categoryDao.getCategoriesForDataset().stream().map(Domain::fromCategory)
 						.collect(toList());
 				for (RoleMetaModelCategory r : aRoleCategories) {
 					for (Domain dom : array) {
@@ -360,14 +362,15 @@ public class GetCertificatedDatasets {
 			}
 		} catch (Exception e) {
 			logger.error("Error loading the data set categories visible from the roles of the user");
-			throw new SpagoBIRuntimeException("Error loading the data set categories visible from the roles of the user");
+			throw new SpagoBIRuntimeException(
+					"Error loading the data set categories visible from the roles of the user");
 		}
 		return categories;
 	}
 
 	private List<IDataSet> getFilteredDatasets(List<IDataSet> unfilteredDataSets, List<Integer> categories) {
-		List<IDataSet> dataSets = new ArrayList<IDataSet>();
-		if (categories != null && categories.size() != 0) {
+		List<IDataSet> dataSets = new ArrayList<>();
+		if (categories != null && !categories.isEmpty()) {
 			for (IDataSet ds : unfilteredDataSets) {
 				if (ds.getCategoryId() != null || categories.contains(ds.getCategoryId())) {
 					dataSets.add(ds);

@@ -103,7 +103,8 @@
 			}
 
 			if (isChoropleth) {
-				var extColor = mts.getColorFromClassification(externalLegend, value, parentLayer);
+				// Fixed like this in KNOWAGE-8380 but... TODO because the color is determined too many times
+				var extColor = mts.getColorByThresholds(value, props) || mts.getColorFromClassification(externalLegend, value, parentLayer);
 				var configMarker = config.markerConf || {};
 				if (coordType == "string") {
 					style = mts.getMarkerStyles(externalLegend, value, parentLayer, props, configMarker, extColor);

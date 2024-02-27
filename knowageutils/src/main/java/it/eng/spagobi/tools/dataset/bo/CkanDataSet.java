@@ -17,14 +17,10 @@
  */
 package it.eng.spagobi.tools.dataset.bo;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.json.JSONObject;
 
-/*
- * @author Alessandro Portosa (alessandro.portosa@eng.it)
- */
-
-import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.container.ObjectUtils;
 import it.eng.spagobi.services.dataset.bo.SpagoBiDataSet;
 import it.eng.spagobi.tools.dataset.common.dataproxy.CkanDataProxy;
@@ -58,7 +54,6 @@ public class CkanDataSet extends ConfigurableDataSet {
 	 * Instantiates a new empty file data set.
 	 */
 	public CkanDataSet() {
-		super();
 	}
 
 	public CkanDataSet(SpagoBiDataSet dataSetConfig) {
@@ -72,13 +67,15 @@ public class CkanDataSet extends ConfigurableDataSet {
 			JSONObject jsonConf = ObjectUtils.toJSONObject(config);
 			String fileName = (jsonConf.get(FILE_NAME) != null) ? jsonConf.get(FILE_NAME).toString() : "";
 			if (fileName == null || fileName.length() == 0) {
-				throw new IllegalArgumentException("fileName member of SpagoBiDataSet object parameter cannot be null or empty"
-						+ "while creating a FileDataSet. If you whant to create an empty FileDataSet use the proper constructor.");
+				throw new IllegalArgumentException(
+						"fileName member of SpagoBiDataSet object parameter cannot be null or empty"
+								+ "while creating a FileDataSet. If you whant to create an empty FileDataSet use the proper constructor.");
 			}
 			this.setFileName((jsonConf.get(FILE_NAME) != null) ? jsonConf.get(FILE_NAME).toString() : "");
 			logger.info("File name: " + fileName);
 
-			this.setResourcePath(StringUtilities.isNotEmpty(jsonConf.optString(CKAN_URL)) ? jsonConf.optString(CKAN_URL) : "");
+			this.setResourcePath(
+					StringUtils.isNotEmpty(jsonConf.optString(CKAN_URL)) ? jsonConf.optString(CKAN_URL) : "");
 			logger.info("Resource path: " + this.getResourcePath());
 			if (this.dataProxy != null)
 				dataProxy.setResPath(this.getResourcePath());
@@ -148,7 +145,8 @@ public class CkanDataSet extends ConfigurableDataSet {
 		}
 
 		if (!(dataProxy instanceof CkanDataProxy))
-			throw new RuntimeException("DataProxy cannot be of type [" + dataProxy.getClass().getName() + "] in CKANDataSet");
+			throw new RuntimeException(
+					"DataProxy cannot be of type [" + dataProxy.getClass().getName() + "] in CKANDataSet");
 
 		return (CkanDataProxy) dataProxy;
 	}

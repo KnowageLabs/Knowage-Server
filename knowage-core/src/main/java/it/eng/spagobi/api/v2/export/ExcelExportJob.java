@@ -64,6 +64,7 @@ public class ExcelExportJob extends AbstractExportJob {
 	private static final String DATE_FORMAT = "dd/MM/yyyy";
 	private static final String TIMESTAMP_FORMAT = "dd/MM/yyyy HH:mm:ss.SSS";
 	
+	private String imageB64 = "";
 	private String documentName = "";
 
 	@Override
@@ -81,7 +82,7 @@ public class ExcelExportJob extends AbstractExportJob {
 
 			// create WB
 			try (Workbook wb = new SXSSFWorkbook()) {
-				Sheet sheet = wb.createSheet("dataset");
+				Sheet sheet = wb.createSheet(dataSet.getLabel());
 				CreationHelper createHelper = wb.getCreationHelper();
 
 				// STYLE CELL
@@ -134,7 +135,7 @@ public class ExcelExportJob extends AbstractExportJob {
 				IMetaData dataSetMetadata = dataSet.getMetadata();
 
 				// CREATE BRANDED HEADER SHEET
-				String imageB64 = OrganizationImageManager.getOrganizationB64Image(TenantManager.getTenant().getName());
+				this.imageB64 = OrganizationImageManager.getOrganizationB64ImageWide(TenantManager.getTenant().getName());
 				int startRow = 0;
 				float rowHeight = 35; // in points	
 				int rowspan = 2;
@@ -143,46 +144,23 @@ public class ExcelExportJob extends AbstractExportJob {
 				int colspan = 2;
 				int namespan = 10;
 				int dataspan = 10;
-				
-				if (imageB64 != null) {
 					
-					for (int r = startRow; r < startRow+rowspan; r++) {
-						   sheet.createRow(r).setHeightInPoints(rowHeight);
-						   for (int c = startCol; c < startCol+colspan; c++) {
-							   sheet.getRow(r).createCell(c);
-							   sheet.setColumnWidth(c, colWidth * 256);
-						}
-					}
-					
-					// set brandend header image
-					sheet.addMergedRegion(new CellRangeAddress(startRow, startRow+rowspan-1, startCol, startCol+colspan-1));
-					drawBrandendHeaderImage(sheet, imageB64, Workbook.PICTURE_TYPE_PNG, startCol, startRow, colspan, rowspan);							
-					
-					// set document name
-					sheet.getRow(startRow).createCell(startCol+colspan).setCellValue(documentName);
-					sheet.addMergedRegion(new CellRangeAddress(startRow, startRow, startCol+colspan, namespan));
-					// set cell style
-					CellStyle documentNameCellStyle = buildCellStyle(sheet, true, HorizontalAlignment.LEFT, VerticalAlignment.CENTER, (short) 16);
-					sheet.getRow(startRow).getCell(startCol+colspan).setCellStyle(documentNameCellStyle);
-					
-					// set date 
-					Date date = new Date();
-					sheet.getRow(startRow+1).createCell(startCol+colspan).setCellValue("Data di generazione: " + timeStampFormat.format(date));
-					sheet.addMergedRegion(new CellRangeAddress(startRow+1, startRow+1, startCol+colspan, dataspan));
-					// set cell style
-					CellStyle headerDateCellStyle = buildCellStyle(sheet, false, HorizontalAlignment.LEFT, VerticalAlignment.CENTER, (short) 8);
-					sheet.getRow(startRow+1).getCell(startCol+colspan).setCellStyle(headerDateCellStyle);
-				}
-				
-				int headerIndex = (imageB64 != null) ? (startRow+rowspan) : 0;
-				Row widgetNameRow = sheet.createRow((short) headerIndex);
-				Cell widgetNameCell = widgetNameRow.createCell(0);
-				widgetNameCell.setCellValue(sheet.getSheetName());
-				// set cell style
-				CellStyle widgetNameStyle = buildCellStyle(sheet, true, HorizontalAlignment.LEFT, VerticalAlignment.CENTER, (short) 14);
-				widgetNameCell.setCellStyle(widgetNameStyle);
-				
 				Row header;
+				
+				int headerIndex = createBrandedHeaderSheet(
+						sheet, 
+						this.imageB64, 
+						startRow, 
+						rowHeight, 
+						rowspan, 
+						startCol,
+						colWidth,
+						colspan,
+						namespan,
+						dataspan,
+						this.documentName,
+						sheet.getSheetName());
+				
 				header = sheet.createRow((short) headerIndex+1); // first row
 				if (dataSetMetadata != null && dataSetMetadata.getFieldCount() > 0) {
 					for (int i = 0; i <= dataSetMetadata.getFieldCount() - 1; i++) {
@@ -196,7 +174,7 @@ public class ExcelExportJob extends AbstractExportJob {
 				}
 				
 				// adjusts the column width to fit the contents
-				adjustColumnWidth(sheet);
+				adjustColumnWidth(sheet, this.imageB64);
 
 				// FILL CELL RECORD
 				try (DataIterator iterator = dataSet.iterator()) {
@@ -267,7 +245,7 @@ public class ExcelExportJob extends AbstractExportJob {
 				}
 				
 				// adjusts the column width to fit the contents
-				adjustColumnWidth(sheet);
+				adjustColumnWidth(sheet, this.imageB64);
 
 				wb.write(exportFileOS);
 				exportFileOS.flush();
@@ -300,185 +278,5 @@ public class ExcelExportJob extends AbstractExportJob {
 	@Override
 	protected String mime() {
 		return "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
-	}
-	
-	public CellStyle buildCellStyle(Sheet sheet, boolean bold, HorizontalAlignment alignment, VerticalAlignment verticalAlignment, short headerFontSizeShort) {
-		
-		// CELL
-		CellStyle cellStyle = sheet.getWorkbook().createCellStyle();
-		
-		// alignment 
-		cellStyle.setAlignment(alignment);
-		cellStyle.setVerticalAlignment(verticalAlignment);
-
-		// foreground color
-//		String headerBGColor = (String) this.getProperty(PROPERTY_HEADER_BACKGROUND_COLOR);
-//		short backgroundColorIndex = headerBGColor != null ? IndexedColors.valueOf(headerBGColor).getIndex()
-//				: IndexedColors.valueOf(DEFAULT_HEADER_BACKGROUND_COLOR).getIndex();
-//		cellStyle.setFillForegroundColor(backgroundColorIndex);
-
-		// pattern
-//		cellStyle.setFillPattern(fp);
-
-		// borders
-//		cellStyle.setBorderBottom(borderBottom);
-//		cellStyle.setBorderLeft(borderLeft);
-//		cellStyle.setBorderRight(borderRight);
-//		cellStyle.setBorderTop(borderTop);
-
-//		String bordeBorderColor = (String) this.getProperty(PROPERTY_HEADER_BORDER_COLOR);
-//		short borderColorIndex = bordeBorderColor != null ? IndexedColors.valueOf(bordeBorderColor).getIndex()
-//				: IndexedColors.valueOf(DEFAULT_HEADER_BORDER_COLOR).getIndex();
-//		cellStyle.setLeftBorderColor(borderColorIndex);
-//		cellStyle.setRightBorderColor(borderColorIndex);
-//		cellStyle.setBottomBorderColor(borderColorIndex);
-//		cellStyle.setTopBorderColor(borderColorIndex);
-
-		// FONT
-		Font font = sheet.getWorkbook().createFont();
-
-		// size
-//		Short headerFontSize = (Short) this.getProperty(PROPERTY_HEADER_FONT_SIZE);
-//		short headerFontSizeShort = headerFontSize != null ? headerFontSize.shortValue() : DEFAULT_HEADER_FONT_SIZE;
-		font.setFontHeightInPoints(headerFontSizeShort);
-
-		// name
-//		String fontName = (String) this.getProperty(PROPERTY_FONT_NAME);
-//		fontName = fontName != null ? fontName : DEFAULT_FONT_NAME;
-//		font.setFontName(fontName);
-
-		// color
-//		String headerColor = (String) this.getProperty(PROPERTY_HEADER_COLOR);
-//		short headerColorIndex = headerColor != null ? IndexedColors.valueOf(headerColor).getIndex()
-//				: IndexedColors.valueOf(DEFAULT_HEADER_COLOR).getIndex();
-//		font.setColor(headerColorIndex);
-
-		// bold		
-		font.setBold(bold);
-		
-		cellStyle.setFont(font);
-		return cellStyle;
-	}
-
-	public void adjustColumnWidth(Sheet sheet) {
-		try {		    			
-			boolean enabled = true;
-			((SXSSFSheet) sheet).trackAllColumnsForAutoSizing();
-			Row row = sheet.getRow(sheet.getLastRowNum());
-			if(row != null) {
-				for (int i = 0; i < row.getLastCellNum(); i++) {
-					sheet.autoSizeColumn(i);
-					if(enabled && (i == 0 || i == 1)) {
-						// first or second column
-						int colWidth = 25;
-						if (sheet.getColumnWidthInPixels(i) < (colWidth * 256))
-							sheet.setColumnWidth(i, colWidth * 256);
-					}
-				}	
-			}
-		} catch (Exception e) {
-			// to do
-		}
-	}
-	
-	public void drawBrandendHeaderImage(Sheet sheet, String imageB64, int pictureType, int startCol, int startRow,
-			int colspan, int rowspan) {
-		try {
-			Workbook wb = sheet.getWorkbook();
-			
-			// load the picture
-		    String encodingPrefix = "base64,";
-		    int contentStartIndex = imageB64.indexOf(encodingPrefix) + encodingPrefix.length();
-		    byte[] bytes = org.apache.commons.codec.binary.Base64.decodeBase64(imageB64.substring(contentStartIndex));			
-			int pictureIdx = wb.addPicture(bytes, pictureType);
-
-			// create an anchor with upper left cell startCol/startRow
-			CreationHelper helper = wb.getCreationHelper();
-			ClientAnchor anchor = helper.createClientAnchor();
-			anchor.setCol1(startCol);
-			anchor.setRow1(startRow);
-
-			Drawing drawing = sheet.createDrawingPatriarch();
-			Picture pict = drawing.createPicture(anchor, pictureIdx);
-
-			int pictWidthPx = pict.getImageDimension().width;
-			int pictHeightPx = pict.getImageDimension().height;
-			
-			// get the heights of all merged rows in px
-			float[] rowHeightsPx = new float[startRow+rowspan];
-			float rowsHeightPx = 0f;
-			for (int r = startRow; r < startRow+rowspan; r++) {
-				Row row = sheet.getRow(r);
-				float rowHeightPt = row.getHeightInPoints();
-				rowHeightsPx[r-startRow] = rowHeightPt * Units.PIXEL_DPI / Units.POINT_DPI;
-				rowsHeightPx += rowHeightsPx[r-startRow];
-			}
-
-			// get the widths of all merged cols in px
-			float[] colWidthsPx = new float[startCol + colspan];
-			float colsWidthPx = 0f;
-			for (int c = startCol; c < startCol + colspan; c++) {
-				colWidthsPx[c - startCol] = sheet.getColumnWidthInPixels(c);
-				colsWidthPx += colWidthsPx[c - startCol];
-			}
-
-			// calculate scale
-			float scale = 1;
-			if (pictHeightPx > rowsHeightPx) {
-				float tmpscale = rowsHeightPx / (float) pictHeightPx;
-				if (tmpscale < scale)
-					scale = tmpscale;
-			}
-			if (pictWidthPx > colsWidthPx) {
-				float tmpscale = colsWidthPx / (float) pictWidthPx;
-				if (tmpscale < scale)
-					scale = tmpscale;
-			}
-
-			// calculate the horizontal center position
-			int horCenterPosPx = Math.round(colsWidthPx / 2f - pictWidthPx * scale / 2f);
-			Integer col1 = null;
-			colsWidthPx = 0f;
-			for (int c = 0; c < colWidthsPx.length; c++) {
-				float colWidthPx = colWidthsPx[c];
-				if (colsWidthPx + colWidthPx > horCenterPosPx) {
-					col1 = c + startCol;
-					break;
-				}
-				colsWidthPx += colWidthPx;
-			}
-			
-			// set the horizontal center position as Col1 plus Dx1 of anchor
-			if (col1 != null) {
-				anchor.setCol1(col1);
-				anchor.setDx1(Math.round(horCenterPosPx - colsWidthPx) * Units.EMU_PER_PIXEL);
-			}
-
-			// calculate the vertical center position
-			int vertCenterPosPx = Math.round(rowsHeightPx / 2f - pictHeightPx * scale / 2f);
-			Integer row1 = null;
-			rowsHeightPx = 0f;
-			for (int r = 0; r < rowHeightsPx.length; r++) {
-				float rowHeightPx = rowHeightsPx[r];
-				if (rowsHeightPx + rowHeightPx > vertCenterPosPx) {
-					row1 = r + startRow;
-				    break;
-				}
-				rowsHeightPx += rowHeightPx;
-			}
-			  
-			if (row1 != null) {
-				anchor.setRow1(row1);
-				anchor.setDy1(Math.round(vertCenterPosPx - rowsHeightPx) * Units.EMU_PER_PIXEL); //in unit EMU for XSSF
-			}
-			 
-			anchor.setCol2(startCol+colspan);
-			anchor.setDx2(Math.round(colsWidthPx - Math.round(horCenterPosPx - colsWidthPx)) * Units.EMU_PER_PIXEL);
-			anchor.setRow2(startRow+rowspan);
-			anchor.setDy2(Math.round(rowsHeightPx - Math.round(vertCenterPosPx - rowsHeightPx)) * Units.EMU_PER_PIXEL);
-			
-		} catch (Exception e) {
-			throw new SpagoBIRuntimeException("Cannot write data to Excel file", e);
-		}
 	}	
 }

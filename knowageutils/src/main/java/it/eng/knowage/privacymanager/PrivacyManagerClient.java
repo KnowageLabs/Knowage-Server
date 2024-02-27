@@ -39,8 +39,17 @@ public class PrivacyManagerClient {
 
 	private static final Logger LOGGER = LogManager.getLogger(PrivacyManagerClient.class);
 
-	private static PrivacyManagerClient singleton = null;
+	private static final PrivacyManagerClient INSTANCE = new PrivacyManagerClient();
 
+	static {
+		INSTANCE.initialize();
+	}
+
+	public static final PrivacyManagerClient getInstance() {
+		return INSTANCE;
+	}
+
+	private boolean isConfigured = false;
 	private final Map<PrivacyEventType, Session> sessionMap = new EnumMap<>(PrivacyEventType.class);
 	private final Map<PrivacyEventType, Queue> queues = new EnumMap<>(PrivacyEventType.class);
 
@@ -48,56 +57,54 @@ public class PrivacyManagerClient {
 
 	}
 
-	public static synchronized PrivacyManagerClient getInstance() {
-		if (singleton == null) {
-			singleton = new PrivacyManagerClient();
-			singleton.initialize();
-
-		}
-
-		return singleton;
-	}
-
 	private void initialize() {
 
 		PMConfiguration prop = PMConfiguration.getInstance();
-		try {
+		if (prop.isConfigured()) {
+			try {
 
-			LOGGER.info("Initializing activeMQ connection...");
+				LOGGER.info("Initializing ActiveMQ connection...");
 
-			String activeMqHost = prop.getProperty("activemq.host");
+				String activeMqHost = prop.getProperty("activemq.host");
 
-			ActiveMQConnectionFactory connectionFactory = new ActiveMQConnectionFactory(activeMqHost);
-			connectionFactory.setTrustedPackages(Arrays.asList("it.eng.knowage"));
+				ActiveMQConnectionFactory connectionFactory = new ActiveMQConnectionFactory(activeMqHost);
+				connectionFactory.setTrustedPackages(Arrays.asList("it.eng.knowage"));
 
-			Connection connection = connectionFactory.createConnection();
-			for (PrivacyEventType eType : PrivacyEventType.values()) {
-				Session session = connection.createSession(true, Session.SESSION_TRANSACTED);
-				sessionMap.put(eType, session);
-				Queue q = session.createQueue(prop.getProperty(eType.toString()));
-				queues.put(eType, q);
+				Connection connection = connectionFactory.createConnection();
+				for (PrivacyEventType eType : PrivacyEventType.values()) {
+					Session session = connection.createSession(true, Session.SESSION_TRANSACTED);
+					sessionMap.put(eType, session);
+					Queue q = session.createQueue(prop.getProperty(eType.toString()));
+					queues.put(eType, q);
+				}
+				LOGGER.info("ActiveMQ connections initialized...");
+
+				isConfigured = true;
+
+			} catch (JMSException e) {
+				LOGGER.error("Error while initializing ActiveMQ connection", e);
 			}
-			LOGGER.info("activeMQ connections initialized...");
-
-		} catch (JMSException e) {
-			LOGGER.error("Error while initializing activeMQ connection", e);
+		} else {
+			LOGGER.error("PM client is not configured");
 		}
 
 	}
 
 	public void sendMessage(PrivacyDTO dto) {
 
-		Session session = sessionMap.get(dto.getEventType());
-		Queue queue = queues.get(dto.getEventType());
+		if (isConfigured) {
+			Session session = sessionMap.get(dto.getEventType());
+			Queue queue = queues.get(dto.getEventType());
 
-		try {
-			MessageProducer producer = session.createProducer(queue);
-			ObjectMessage msg = session.createObjectMessage();
-			msg.setObject(dto);
-			producer.send(msg);
-			session.commit();
-		} catch (JMSException e) {
-			LOGGER.error("Error while sending message [{}]", dto.getEventType(), e);
+			try {
+				MessageProducer producer = session.createProducer(queue);
+				ObjectMessage msg = session.createObjectMessage();
+				msg.setObject(dto);
+				producer.send(msg);
+				session.commit();
+			} catch (JMSException e) {
+				LOGGER.error("Error while sending message [{}]", dto.getEventType(), e);
+			}
 		}
 
 	}

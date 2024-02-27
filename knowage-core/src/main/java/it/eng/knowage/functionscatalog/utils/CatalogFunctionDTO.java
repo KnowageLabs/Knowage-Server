@@ -43,10 +43,10 @@ public class CatalogFunctionDTO {
 	private String offlineScriptTrainModel;
 	private String offlineScriptUseModel;
 	private String type;
-	private List<InputVariableDTO> inputVariables = new ArrayList<InputVariableDTO>();
-	private List<InputColumnDTO> inputColumns = new ArrayList<InputColumnDTO>();
-	private List<OutputColumnDTO> outputColumns = new ArrayList<OutputColumnDTO>();
-	private List<String> keywords = new ArrayList<String>();
+	private List<InputVariableDTO> inputVariables = new ArrayList<>();
+	private List<InputColumnDTO> inputColumns = new ArrayList<>();
+	private List<OutputColumnDTO> outputColumns = new ArrayList<>();
+	private List<String> keywords = new ArrayList<>();
 
 	public UUID getId() {
 		return id;

@@ -71,20 +71,19 @@ public class DocumentExecutionSendMail extends AbstractSpagoBIResource {
 		String object = requestVal.optString("OBJECT");
 		JSONObject jsonParameters = requestVal.optJSONObject("parameters");
 
-		HashMap<String, Object> resultAsMap = new HashMap<String, Object>();
+		HashMap<String, Object> resultAsMap = new HashMap<>();
 
 		LOGGER.debug("IN");
 
-		final String OK = "10";
-		String ERROR = "Error. Mail not sent";
-		final String TONOTFOUND = "90";
+		String error = "Error. Mail not sent";
+
 		// String retCode = "";
 
 		try {
 
 			if (to.equals("")) {
 				// retCode = TONOTFOUND;
-				ERROR = "To Address not found";
+				error = "To Address not found";
 				LOGGER.error("To Address not found");
 				throw new Exception("To Address not found");
 			}
@@ -104,7 +103,7 @@ public class DocumentExecutionSendMail extends AbstractSpagoBIResource {
 			ExecutionController execCtrl = new ExecutionController();
 			execCtrl.setBiObject(biobj);
 
-			List<BIObjectParameter> listBioParams = new ArrayList<BIObjectParameter>();
+			List<BIObjectParameter> listBioParams = new ArrayList<>();
 			// fill parameters
 			String queryStr = "user_id=" + userId + "&ACTION_NAME=SEND_TO_ACTION&SBI_ENVIRONMENT=DOCBROWSER";
 			for (BIObjectParameter biParam : biobj.getDrivers()) {
@@ -148,12 +147,8 @@ public class DocumentExecutionSendMail extends AbstractSpagoBIResource {
 			// } end if (execCtrl.directExecution()) {
 			// SEND MAIL
 
-			SessionFacade facade = MailSessionBuilder.newInstance()
-				.usingUserProfile()
-				.setFromAddress(from)
-				.setUser(login)
-				.setPassword(pass)
-				.build();
+			SessionFacade facade = MailSessionBuilder.newInstance().usingUserProfile().setFromAddress(from)
+					.setUser(login).setPassword(pass).build();
 
 			// create a message
 			Message msg = facade.createNewMimeMessage();
@@ -167,8 +162,8 @@ public class DocumentExecutionSendMail extends AbstractSpagoBIResource {
 				recipients = cc.split(",");
 				InternetAddress[] addressCC = new InternetAddress[recipients.length];
 				for (int i = 0; i < recipients.length; i++) {
-					String cc_add = recipients[i];
-					if ((cc_add != null) && !cc_add.trim().equals("")) {
+					String ccAdd = recipients[i];
+					if ((ccAdd != null) && !ccAdd.trim().equals("")) {
 						addressCC[i] = new InternetAddress(recipients[i]);
 					}
 				}
@@ -183,7 +178,8 @@ public class DocumentExecutionSendMail extends AbstractSpagoBIResource {
 			// create the second message part
 			MimeBodyPart mbp2 = new MimeBodyPart();
 			// attach the file to the message
-			SchedulerDataSource sds = new SchedulerDataSource(documentBytes, returnedContentType, "result" + fileextension);
+			SchedulerDataSource sds = new SchedulerDataSource(documentBytes, returnedContentType,
+					"result" + fileextension);
 			mbp2.setDataHandler(new DataHandler(sds));
 			mbp2.setFileName(sds.getName());
 			// create the Multipart and add its parts to it
@@ -201,7 +197,7 @@ public class DocumentExecutionSendMail extends AbstractSpagoBIResource {
 
 		} catch (Exception e) {
 			LOGGER.error("Error while executing and sending object ", e);
-			resultAsMap.put("errors", ERROR);
+			resultAsMap.put("errors", error);
 		} finally {
 			// try {
 			// response.getOutputStream().write(retCode.getBytes());
@@ -228,8 +224,7 @@ public class DocumentExecutionSendMail extends AbstractSpagoBIResource {
 
 		@Override
 		public InputStream getInputStream() throws IOException {
-			ByteArrayInputStream bais = new ByteArrayInputStream(content);
-			return bais;
+			return new ByteArrayInputStream(content);
 		}
 
 		@Override
@@ -253,39 +248,39 @@ public class DocumentExecutionSendMail extends AbstractSpagoBIResource {
 	/**
 	 * Add the description to the BIObjectparameters
 	 *
-	 * @param BIObjectParameters
+	 * @param biObjectParameters
 	 * @param attributes
 	 */
-	public void setParametersDescription(List<BIObjectParameter> BIObjectParameters, List<SourceBeanAttribute> attributes) {
-		Map<String, String> parameterNameDescriptionMap = new HashMap<String, String>();
+	public void setParametersDescription(List<BIObjectParameter> biObjectParameters,
+			List<SourceBeanAttribute> attributes) {
+		Map<String, String> parameterNameDescriptionMap = new HashMap<>();
 		// we create a map: parameter name, parameter description
 		for (int i = 0; i < attributes.size(); i++) {
 			SourceBeanAttribute sba = attributes.get(i);
 			// the name of parameter in the request with the description is parametername+ field_visible_description
 			int descriptionPosition = sba.getKey().indexOf("field_visible_description");
 			if (descriptionPosition > 0) {
-				parameterNameDescriptionMap.put(sba.getKey().substring(0, descriptionPosition - 1), (String) sba.getValue());
+				parameterNameDescriptionMap.put(sba.getKey().substring(0, descriptionPosition - 1),
+						(String) sba.getValue());
 			}
 		}
-		for (int i = 0; i < BIObjectParameters.size(); i++) {
-			String bobjName = BIObjectParameters.get(i).getParameterUrlName();
+		for (int i = 0; i < biObjectParameters.size(); i++) {
+			String bobjName = biObjectParameters.get(i).getParameterUrlName();
 			String value = parameterNameDescriptionMap.get(bobjName);
 			if (value != null) {
-				BIObjectParameters.get(i).setParameterValuesDescription(parseDescriptionString(value));
+				biObjectParameters.get(i).setParameterValuesDescription(parseDescriptionString(value));
 			}
 		}
 	}
 
 	/**
-	 * Parse a string with the description of the parameter and return a list with description.. This transformation is necessary because the multivalues
-	 * parameters
+	 * Parse a string with the description of the parameter and return a list with description.. This transformation is necessary because the multivalues parameters
 	 *
-	 * @param s
-	 *            the string with the description
+	 * @param s the string with the description
 	 * @return the list of descriptions
 	 */
 	public List<String> parseDescriptionString(String s) {
-		List<String> descriptions = new ArrayList<String>();
+		List<String> descriptions = new ArrayList<>();
 		StringTokenizer stk = new StringTokenizer(s, ";");
 		while (stk.hasMoreTokens()) {
 			descriptions.add(stk.nextToken());

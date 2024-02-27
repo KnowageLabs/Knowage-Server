@@ -27,7 +27,7 @@ import org.json.JSONObject;
 
 public class CatalogFunctionRuntimeConfigDTO {
 
-	private static transient Logger logger = Logger.getLogger(CatalogFunctionRuntimeConfigDTO.class);
+	private static final Logger LOGGER = Logger.getLogger(CatalogFunctionRuntimeConfigDTO.class);
 
 	private Map<String, InputVariable> inputVariables;
 	private Map<String, OutputColumnRuntime> outputColumns;
@@ -38,9 +38,8 @@ public class CatalogFunctionRuntimeConfigDTO {
 
 	}
 
-	public CatalogFunctionRuntimeConfigDTO(Map<String, InputVariable> inputVariables, Map<String, OutputColumnRuntime> outputColumns,
-			Map<String, String> inputColumns) {
-		super();
+	public CatalogFunctionRuntimeConfigDTO(Map<String, InputVariable> inputVariables,
+			Map<String, OutputColumnRuntime> outputColumns, Map<String, String> inputColumns) {
 		this.inputVariables = inputVariables;
 		this.outputColumns = outputColumns;
 		this.inputColumns = inputColumns;
@@ -88,7 +87,7 @@ public class CatalogFunctionRuntimeConfigDTO {
 	}
 
 	private void setInputColumns(JSONObject jsonConfig) {
-		inputColumns = new HashMap<String, String>();
+		inputColumns = new HashMap<>();
 		JSONArray inCols = jsonConfig.optJSONArray("inputColumns");
 		for (int i = 0; i < inCols.length(); i++) {
 			try {
@@ -96,14 +95,14 @@ public class CatalogFunctionRuntimeConfigDTO {
 				String dsColumn = inCols.getJSONObject(i).getString("dsColumn");
 				inputColumns.put(columnName, dsColumn);
 			} catch (Exception e) {
-				logger.error("Error initializing input columns", e);
-				inputColumns = new HashMap<String, String>();
+				LOGGER.error("Error initializing input columns", e);
+				inputColumns = new HashMap<>();
 			}
 		}
 	}
 
 	private void setOutputColumns(JSONObject jsonConfig) {
-		outputColumns = new HashMap<String, OutputColumnRuntime>();
+		outputColumns = new HashMap<>();
 		JSONArray outCols = jsonConfig.optJSONArray("outputColumns");
 		for (int i = 0; i < outCols.length(); i++) {
 			try {
@@ -114,14 +113,14 @@ public class CatalogFunctionRuntimeConfigDTO {
 				OutputColumnRuntime outputColumn = new OutputColumnRuntime(columnName, fieldType, type, alias);
 				outputColumns.put(columnName, outputColumn);
 			} catch (Exception e) {
-				logger.error("Error initializing output columns", e);
-				outputColumns = new HashMap<String, OutputColumnRuntime>();
+				LOGGER.error("Error initializing output columns", e);
+				outputColumns = new HashMap<>();
 			}
 		}
 	}
 
 	private void setInputVariables(JSONObject jsonConfig) {
-		inputVariables = new HashMap<String, InputVariable>();
+		inputVariables = new HashMap<>();
 		JSONArray inVars = jsonConfig.optJSONArray("inputVariables");
 		for (int i = 0; i < inVars.length(); i++) {
 			try {
@@ -131,8 +130,8 @@ public class CatalogFunctionRuntimeConfigDTO {
 				InputVariable inputVariable = new InputVariable(varName, type, value);
 				inputVariables.put(varName, inputVariable);
 			} catch (Exception e) {
-				logger.error("Error initializing input variables", e);
-				inputVariables = new HashMap<String, InputVariable>();
+				LOGGER.error("Error initializing input variables", e);
+				inputVariables = new HashMap<>();
 			}
 		}
 	}

@@ -25,6 +25,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
 
+import org.apache.commons.lang3.StringUtils;
+
 import it.eng.spago.base.Constants;
 import it.eng.spago.base.RequestContainer;
 import it.eng.spago.base.ResponseContainer;
@@ -55,7 +57,6 @@ import it.eng.spago.validation.EMFValidationError;
 import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.utilities.PortletUtilities;
-import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.utilities.assertion.Assert;
 
 /**
@@ -77,7 +78,6 @@ public class DelegatedBasicListService {
 	 * Instantiates a new delegated basic list service.
 	 */
 	public DelegatedBasicListService() {
-		super();
 	} // private KFDelegatedBasicListService()
 
 	/**
@@ -91,11 +91,13 @@ public class DelegatedBasicListService {
 	 */
 	public static void service(ServiceIFace service, SourceBean request, SourceBean response) throws Exception {
 		if ((service == null) || (request == null) || (response == null)) {
-			TracerSingleton.log(Constants.NOME_MODULO, TracerSingleton.WARNING, "KFDelegatedBasicListService::service: parametri non validi");
+			TracerSingleton.log(Constants.NOME_MODULO, TracerSingleton.WARNING,
+					"KFDelegatedBasicListService::service: parametri non validi");
 			return;
 		}
 
-		TracerSingleton.log(Constants.NOME_MODULO, TracerSingleton.DEBUG, "KFDelegatedBasicListService::service: request", request);
+		TracerSingleton.log(Constants.NOME_MODULO, TracerSingleton.DEBUG,
+				"KFDelegatedBasicListService::service: request", request);
 
 		String message = getMessage(request);
 		if ((message == null) || message.equalsIgnoreCase("BEGIN"))
@@ -112,7 +114,8 @@ public class DelegatedBasicListService {
 		if ((listService.getList() == null) || list_nocache.equalsIgnoreCase("TRUE"))
 			listService.setList(listService.getList(request, response));
 		if (listService.getList() == null) {
-			TracerSingleton.log(Constants.NOME_MODULO, TracerSingleton.WARNING, "KFDelegatedBasicListService::service: _list nullo");
+			TracerSingleton.log(Constants.NOME_MODULO, TracerSingleton.WARNING,
+					"KFDelegatedBasicListService::service: _list nullo");
 			return;
 		} // if (listService.getList() == null)
 		int pagedListNumber = 1;
@@ -124,7 +127,8 @@ public class DelegatedBasicListService {
 				pagedListNumber = Integer.parseInt(list_page);
 			} // try
 			catch (Exception ex) {
-				TracerSingleton.log(Constants.NOME_MODULO, TracerSingleton.CRITICAL, "KFDelegatedBasicListService::service: Integer.parseInt(list_page)", ex);
+				TracerSingleton.log(Constants.NOME_MODULO, TracerSingleton.CRITICAL,
+						"KFDelegatedBasicListService::service: Integer.parseInt(list_page)", ex);
 			} // catch (Exception ex) try
 		} // if (message.equalsIgnoreCase(LIST_PAGE))
 		else if (message.equalsIgnoreCase(LIST_FIRST))
@@ -137,21 +141,25 @@ public class DelegatedBasicListService {
 			pagedListNumber = listService.getList().pages();
 		else if (message.equalsIgnoreCase(LIST_CURRENT))
 			pagedListNumber = listService.getList().getCurrentPage();
-		TracerSingleton.log(Constants.NOME_MODULO, TracerSingleton.DEBUG, "KFDelegatedBasicListService::service: pagedListNumber [" + pagedListNumber + "]");
+		TracerSingleton.log(Constants.NOME_MODULO, TracerSingleton.DEBUG,
+				"KFDelegatedBasicListService::service: pagedListNumber [" + pagedListNumber + "]");
 		listService.getList().clearDynamicData();
 		listService.callback(request, response, listService.getList(), pagedListNumber);
 		SourceBean pagedList = listService.getList().getPagedList(pagedListNumber);
 		if (pagedList == null) {
-			TracerSingleton.log(Constants.NOME_MODULO, TracerSingleton.WARNING, "KFDelegatedBasicListService::service: pagedList nullo");
+			TracerSingleton.log(Constants.NOME_MODULO, TracerSingleton.WARNING,
+					"KFDelegatedBasicListService::service: pagedList nullo");
 			return;
 		} // if (pagedList == null)
 		try {
 			response.setAttribute(pagedList);
 		} // try
 		catch (SourceBeanException ex) {
-			TracerSingleton.log(Constants.NOME_MODULO, TracerSingleton.CRITICAL, "KFDelegatedBasicListService::service: response.setAttribute(pagedList)", ex);
+			TracerSingleton.log(Constants.NOME_MODULO, TracerSingleton.CRITICAL,
+					"KFDelegatedBasicListService::service: response.setAttribute(pagedList)", ex);
 		} // catch (SourceBeanException ex) try
-		TracerSingleton.log(Constants.NOME_MODULO, TracerSingleton.DEBUG, "KFDelegatedBasicListService::service: response", response);
+		TracerSingleton.log(Constants.NOME_MODULO, TracerSingleton.DEBUG,
+				"KFDelegatedBasicListService::service: response", response);
 	} // public static void service(ServiceIFace service, SourceBean request,
 
 	// SourceBean response) throws Exception
@@ -178,17 +186,18 @@ public class DelegatedBasicListService {
 			paginator.setPageSize(pagedRows);
 			String pool = (String) serviceInitializer.getConfig().getAttribute("POOL");
 			SourceBean statement = (SourceBean) serviceInitializer.getConfig().getAttribute("QUERIES.SELECT_QUERY");
-			rowsSourceBean = (SourceBean) QueryExecutor.executeQuery(serviceRequestContext.getRequestContainer(), serviceRequestContext.getResponseContainer(),
-					pool, statement, "SELECT");
+			rowsSourceBean = (SourceBean) QueryExecutor.executeQuery(serviceRequestContext.getRequestContainer(),
+					serviceRequestContext.getResponseContainer(), pool, statement, "SELECT");
 		} else {
 			// in case the query is dinamically created, the config SourceBean is in response
 			config = (SourceBean) response.getAttribute("CONFIG");
 			pagedRows = Integer.parseInt((String) config.getAttribute("ROWS"));
 			paginator.setPageSize(pagedRows);
 			String pool = (String) config.getAttribute("POOL");
-			String statement = (String) ((SourceBean) config.getAttribute("QUERIES.SELECT_QUERY")).getAttribute("statement");
-			rowsSourceBean = (SourceBean) executeSelect(serviceRequestContext.getRequestContainer(), serviceRequestContext.getResponseContainer(), pool,
-					statement);
+			String statement = (String) ((SourceBean) config.getAttribute("QUERIES.SELECT_QUERY"))
+					.getAttribute("statement");
+			rowsSourceBean = (SourceBean) executeSelect(serviceRequestContext.getRequestContainer(),
+					serviceRequestContext.getResponseContainer(), pool, statement);
 		}
 
 		List rowsVector = null;
@@ -219,7 +228,8 @@ public class DelegatedBasicListService {
 			String columnfilter = (String) request.getAttribute(SpagoBIConstants.COLUMN_FILTER);
 			String typeFilter = (String) request.getAttribute(SpagoBIConstants.TYPE_FILTER);
 			String typeValueFilter = (String) request.getAttribute(SpagoBIConstants.TYPE_VALUE_FILTER);
-			list = filterList(list, valuefilter, typeValueFilter, columnfilter, typeFilter, serviceRequestContext.getErrorHandler());
+			list = filterList(list, valuefilter, typeValueFilter, columnfilter, typeFilter,
+					serviceRequestContext.getErrorHandler());
 		}
 
 		return list;
@@ -237,8 +247,8 @@ public class DelegatedBasicListService {
 	 *
 	 * @return the filtered list
 	 */
-	public static ListIFace filterList(ListIFace list, List valuesfilter, String valuetypefilter, String columnfilter, String typeFilter,
-			EMFErrorHandler errorHandler) {
+	public static ListIFace filterList(ListIFace list, List valuesfilter, String valuetypefilter, String columnfilter,
+			String typeFilter, EMFErrorHandler errorHandler) {
 		if ((valuesfilter == null) || (valuesfilter.size() == 0)) {
 			return list;
 		}
@@ -251,11 +261,13 @@ public class DelegatedBasicListService {
 		if ((valuetypefilter == null) || (valuetypefilter.trim().equals(""))) {
 			return list;
 		}
-		if (typeFilter.equalsIgnoreCase(SpagoBIConstants.LESS_FILTER) || typeFilter.equalsIgnoreCase(SpagoBIConstants.LESS_OR_EQUAL_FILTER)
-				|| typeFilter.equalsIgnoreCase(SpagoBIConstants.GREATER_FILTER) || typeFilter.equalsIgnoreCase(SpagoBIConstants.GREATER_OR_EQUAL_FILTER)) {
+		if (typeFilter.equalsIgnoreCase(SpagoBIConstants.LESS_FILTER)
+				|| typeFilter.equalsIgnoreCase(SpagoBIConstants.LESS_OR_EQUAL_FILTER)
+				|| typeFilter.equalsIgnoreCase(SpagoBIConstants.GREATER_FILTER)
+				|| typeFilter.equalsIgnoreCase(SpagoBIConstants.GREATER_OR_EQUAL_FILTER)) {
 			TracerSingleton.log(Constants.NOME_MODULO, TracerSingleton.WARNING,
-					"DelegatedBasicListService::filterList with a list of filtering values: the filter type " + typeFilter
-							+ " is not applicable for multi-values filtering.");
+					"DelegatedBasicListService::filterList with a list of filtering values: the filter type "
+							+ typeFilter + " is not applicable for multi-values filtering.");
 			String labelTypeFilter = "";
 			if (typeFilter.equalsIgnoreCase(SpagoBIConstants.LESS_FILTER))
 				labelTypeFilter = PortletUtilities.getMessage("SBIListLookPage.isLessThan", "messages");
@@ -269,7 +281,8 @@ public class DelegatedBasicListService {
 			params.put(Constants.NOME_MODULO, "DelegatedBasicListService::filterList with a list of filtering values");
 			Vector v = new Vector();
 			v.add(labelTypeFilter);
-			EMFValidationError error = new EMFValidationError(EMFErrorSeverity.WARNING, SpagoBIConstants.TYPE_FILTER, "1069", v, params);
+			EMFValidationError error = new EMFValidationError(EMFErrorSeverity.WARNING, SpagoBIConstants.TYPE_FILTER,
+					"1069", v, params);
 			errorHandler.addError(error);
 			return list;
 		}
@@ -292,7 +305,8 @@ public class DelegatedBasicListService {
 				String valuefilter = (String) valuesfilterIt.next();
 				try {
 					if (valuefilter != null && !valuefilter.equals(""))
-						doesRowSatisfyCondition = doesRowSatisfyCondition(row, valuefilter, valuetypefilter, columnfilter, typeFilter);
+						doesRowSatisfyCondition = doesRowSatisfyCondition(row, valuefilter, valuetypefilter,
+								columnfilter, typeFilter);
 					else
 						doesRowSatisfyCondition = true;
 				} catch (EMFValidationError error) {
@@ -322,13 +336,15 @@ public class DelegatedBasicListService {
 	 *
 	 * @return the filtered list
 	 */
-	public static SourceBean filterList(SourceBean allrowsSB, String valuefilter, String valuetypefilter, String columnfilter, String typeFilter,
-			EMFErrorHandler errorHandler) {
+	public static SourceBean filterList(SourceBean allrowsSB, String valuefilter, String valuetypefilter,
+			String columnfilter, String typeFilter, EMFErrorHandler errorHandler) {
 		if ((valuefilter == null) || (valuefilter.equals(""))) {
-			TracerSingleton.log(Constants.NOME_MODULO, TracerSingleton.WARNING, "DelegatedBasicListService::filterList: the value filter is not set.");
+			TracerSingleton.log(Constants.NOME_MODULO, TracerSingleton.WARNING,
+					"DelegatedBasicListService::filterList: the value filter is not set.");
 			HashMap params = new HashMap();
 			params.put(Constants.NOME_MODULO, "DelegatedBasicListService::filterList");
-			EMFValidationError error = new EMFValidationError(EMFErrorSeverity.WARNING, SpagoBIConstants.VALUE_FILTER, "1070", null, params);
+			EMFValidationError error = new EMFValidationError(EMFErrorSeverity.WARNING, SpagoBIConstants.VALUE_FILTER,
+					"1070", null, params);
 			if (errorHandler != null) {
 				errorHandler.addError(error);
 			}
@@ -356,7 +372,8 @@ public class DelegatedBasicListService {
 			SourceBean row = (SourceBean) iterRow.next();
 			boolean doesRowSatisfyCondition = false;
 			try {
-				doesRowSatisfyCondition = doesRowSatisfyCondition(row, valuefilter, valuetypefilter, columnfilter, typeFilter);
+				doesRowSatisfyCondition = doesRowSatisfyCondition(row, valuefilter, valuetypefilter, columnfilter,
+						typeFilter);
 			} catch (EMFValidationError error) {
 				if (errorHandler != null) {
 					errorHandler.addError(error);
@@ -383,13 +400,15 @@ public class DelegatedBasicListService {
 	 *
 	 * @return the filtered list
 	 */
-	public static ListIFace filterList(ListIFace list, String valuefilter, String valuetypefilter, String columnfilter, String typeFilter,
-			EMFErrorHandler errorHandler) {
+	public static ListIFace filterList(ListIFace list, String valuefilter, String valuetypefilter, String columnfilter,
+			String typeFilter, EMFErrorHandler errorHandler) {
 		if ((valuefilter == null) || (valuefilter.equals(""))) {
-			TracerSingleton.log(Constants.NOME_MODULO, TracerSingleton.WARNING, "DelegatedBasicListService::filterList: the value filter is not set.");
+			TracerSingleton.log(Constants.NOME_MODULO, TracerSingleton.WARNING,
+					"DelegatedBasicListService::filterList: the value filter is not set.");
 			HashMap params = new HashMap();
 			params.put(Constants.NOME_MODULO, "DelegatedBasicListService::filterList");
-			EMFValidationError error = new EMFValidationError(EMFErrorSeverity.WARNING, SpagoBIConstants.VALUE_FILTER, "1070", null, params);
+			EMFValidationError error = new EMFValidationError(EMFErrorSeverity.WARNING, SpagoBIConstants.VALUE_FILTER,
+					"1070", null, params);
 			if (errorHandler != null) {
 				errorHandler.addError(error);
 			}
@@ -418,7 +437,8 @@ public class DelegatedBasicListService {
 			SourceBean row = (SourceBean) iterRow.next();
 			boolean doesRowSatisfyCondition = false;
 			try {
-				doesRowSatisfyCondition = doesRowSatisfyCondition(row, valuefilter, valuetypefilter, columnfilter, typeFilter);
+				doesRowSatisfyCondition = doesRowSatisfyCondition(row, valuefilter, valuetypefilter, columnfilter,
+						typeFilter);
 			} catch (EMFValidationError error) {
 				if (errorHandler != null) {
 					errorHandler.addError(error);
@@ -433,13 +453,16 @@ public class DelegatedBasicListService {
 		return newList;
 	}
 
-	private static boolean verifyFilterConditions(String valuetypefilter, String typeFilter, EMFErrorHandler errorHandler) {
+	private static boolean verifyFilterConditions(String valuetypefilter, String typeFilter,
+			EMFErrorHandler errorHandler) {
 		// case of number filtering
 		if (valuetypefilter.equalsIgnoreCase(SpagoBIConstants.NUMBER_TYPE_FILTER)) {
-			if (typeFilter.equalsIgnoreCase(SpagoBIConstants.START_FILTER) || typeFilter.equalsIgnoreCase(SpagoBIConstants.END_FILTER)
+			if (typeFilter.equalsIgnoreCase(SpagoBIConstants.START_FILTER)
+					|| typeFilter.equalsIgnoreCase(SpagoBIConstants.END_FILTER)
 					|| typeFilter.equalsIgnoreCase(SpagoBIConstants.CONTAIN_FILTER)) {
 				TracerSingleton.log(Constants.NOME_MODULO, TracerSingleton.WARNING,
-						"DelegatedBasicListService::filterList: the filter type " + typeFilter + " is not applicable to numbers.");
+						"DelegatedBasicListService::filterList: the filter type " + typeFilter
+								+ " is not applicable to numbers.");
 				String labelTypeFilter = "";
 				if (typeFilter.equalsIgnoreCase(SpagoBIConstants.START_FILTER))
 					labelTypeFilter = PortletUtilities.getMessage("SBIListLookPage.startWith", "messages");
@@ -451,7 +474,8 @@ public class DelegatedBasicListService {
 				params.put(Constants.NOME_MODULO, "DelegatedBasicListService::filterList");
 				Vector v = new Vector();
 				v.add(labelTypeFilter);
-				EMFValidationError error = new EMFValidationError(EMFErrorSeverity.WARNING, SpagoBIConstants.TYPE_FILTER, "1050", v, params);
+				EMFValidationError error = new EMFValidationError(EMFErrorSeverity.WARNING,
+						SpagoBIConstants.TYPE_FILTER, "1050", v, params);
 				errorHandler.addError(error);
 				return false;
 			} else
@@ -459,10 +483,12 @@ public class DelegatedBasicListService {
 		}
 		// case of date filtering
 		if (valuetypefilter.equalsIgnoreCase(SpagoBIConstants.DATE_TYPE_FILTER)) {
-			if (typeFilter.equalsIgnoreCase(SpagoBIConstants.START_FILTER) || typeFilter.equalsIgnoreCase(SpagoBIConstants.END_FILTER)
+			if (typeFilter.equalsIgnoreCase(SpagoBIConstants.START_FILTER)
+					|| typeFilter.equalsIgnoreCase(SpagoBIConstants.END_FILTER)
 					|| typeFilter.equalsIgnoreCase(SpagoBIConstants.CONTAIN_FILTER)) {
 				TracerSingleton.log(Constants.NOME_MODULO, TracerSingleton.WARNING,
-						"DelegatedBasicListService::filterList: the filter type " + typeFilter + " is not applicable to date.");
+						"DelegatedBasicListService::filterList: the filter type " + typeFilter
+								+ " is not applicable to date.");
 				String labelTypeFilter = "";
 				if (typeFilter.equalsIgnoreCase(SpagoBIConstants.START_FILTER))
 					labelTypeFilter = PortletUtilities.getMessage("SBIListLookPage.startWith", "messages");
@@ -474,7 +500,8 @@ public class DelegatedBasicListService {
 				params.put(Constants.NOME_MODULO, "DelegatedBasicListService::filterList");
 				Vector v = new Vector();
 				v.add(labelTypeFilter);
-				EMFValidationError error = new EMFValidationError(EMFErrorSeverity.WARNING, SpagoBIConstants.TYPE_FILTER, "1053", v, params);
+				EMFValidationError error = new EMFValidationError(EMFErrorSeverity.WARNING,
+						SpagoBIConstants.TYPE_FILTER, "1053", v, params);
 				errorHandler.addError(error);
 				return false;
 			} else
@@ -495,7 +522,8 @@ public class DelegatedBasicListService {
 	 *
 	 * @return the filtered list
 	 */
-	public static List filterList(List list, String[] valuesfilter, String valuetypefilter, String columnfilter, String typeFilter) {
+	public static List filterList(List list, String[] valuesfilter, String valuetypefilter, String columnfilter,
+			String typeFilter) {
 
 		List newList = new ArrayList();
 
@@ -503,22 +531,24 @@ public class DelegatedBasicListService {
 			return list;
 		}
 
-		if (StringUtilities.isEmpty(columnfilter)) {
+		if (StringUtils.isEmpty(columnfilter)) {
 			return list;
 		}
-		if (StringUtilities.isEmpty(typeFilter)) {
-			return list;
-		}
-
-		if (StringUtilities.isEmpty(valuetypefilter)) {
+		if (StringUtils.isEmpty(typeFilter)) {
 			return list;
 		}
 
-		if (typeFilter.equalsIgnoreCase(SpagoBIConstants.LESS_FILTER) || typeFilter.equalsIgnoreCase(SpagoBIConstants.LESS_OR_EQUAL_FILTER)
-				|| typeFilter.equalsIgnoreCase(SpagoBIConstants.GREATER_FILTER) || typeFilter.equalsIgnoreCase(SpagoBIConstants.GREATER_OR_EQUAL_FILTER)) {
+		if (StringUtils.isEmpty(valuetypefilter)) {
+			return list;
+		}
 
-			Assert.assertUnreachable(
-					"filterList with a list of filtering values: the filter type " + typeFilter + " is not applicable for multi-values filtering.");
+		if (typeFilter.equalsIgnoreCase(SpagoBIConstants.LESS_FILTER)
+				|| typeFilter.equalsIgnoreCase(SpagoBIConstants.LESS_OR_EQUAL_FILTER)
+				|| typeFilter.equalsIgnoreCase(SpagoBIConstants.GREATER_FILTER)
+				|| typeFilter.equalsIgnoreCase(SpagoBIConstants.GREATER_OR_EQUAL_FILTER)) {
+
+			Assert.assertUnreachable("filterList with a list of filtering values: the filter type " + typeFilter
+					+ " is not applicable for multi-values filtering.");
 		}
 
 		// controls the correctness of the filtering conditions
@@ -533,7 +563,8 @@ public class DelegatedBasicListService {
 				String valuefilter = valuesfilter[i];
 				try {
 					if (valuefilter != null && !valuefilter.equals(""))
-						doesRowSatisfyCondition = doesRowSatisfyCondition(row, valuefilter, valuetypefilter, columnfilter, typeFilter);
+						doesRowSatisfyCondition = doesRowSatisfyCondition(row, valuefilter, valuetypefilter,
+								columnfilter, typeFilter);
 					else
 						doesRowSatisfyCondition = true;
 				} catch (EMFValidationError error) {
@@ -550,20 +581,21 @@ public class DelegatedBasicListService {
 		return newList;
 	}
 
-	public static List filterList(List list, String valuefilter, String valuetypefilter, String columnfilter, String typeFilter) {
+	public static List filterList(List list, String valuefilter, String valuetypefilter, String columnfilter,
+			String typeFilter) {
 
 		List newList = new ArrayList();
 
-		Assert.assertTrue(!StringUtilities.isEmpty(valuefilter), "the value filter is not set");
+		Assert.assertTrue(!StringUtils.isEmpty(valuefilter), "the value filter is not set");
 
-		if (StringUtilities.isEmpty(columnfilter)) {
+		if (StringUtils.isEmpty(columnfilter)) {
 			return list;
 		}
-		if (StringUtilities.isEmpty(typeFilter)) {
+		if (StringUtils.isEmpty(typeFilter)) {
 			return list;
 		}
 
-		if (StringUtilities.isEmpty(valuetypefilter)) {
+		if (StringUtils.isEmpty(valuetypefilter)) {
 			return list;
 		}
 
@@ -577,7 +609,8 @@ public class DelegatedBasicListService {
 			SourceBean row = (SourceBean) iterRow.next();
 			boolean doesRowSatisfyCondition = false;
 			try {
-				doesRowSatisfyCondition = doesRowSatisfyCondition(row, valuefilter, valuetypefilter, columnfilter, typeFilter);
+				doesRowSatisfyCondition = doesRowSatisfyCondition(row, valuefilter, valuetypefilter, columnfilter,
+						typeFilter);
 			} catch (EMFValidationError error) {
 				error.printStackTrace();
 				return list;
@@ -589,8 +622,8 @@ public class DelegatedBasicListService {
 		return newList;
 	}
 
-	private static boolean doesRowSatisfyCondition(SourceBean row, String valuefilter, String valuetypefilter, String columnfilter, String typeFilter)
-			throws EMFValidationError {
+	private static boolean doesRowSatisfyCondition(SourceBean row, String valuefilter, String valuetypefilter,
+			String columnfilter, String typeFilter) throws EMFValidationError {
 		Object attribute = row.getAttribute(columnfilter);
 		if (attribute == null)
 			return false;
@@ -621,10 +654,13 @@ public class DelegatedBasicListService {
 				return value.trim().compareToIgnoreCase(valuefilter) >= 0;
 			} else {
 				TracerSingleton.log(Constants.NOME_MODULO, TracerSingleton.WARNING,
-						"DelegatedBasicListService::filterList: the filter type '" + typeFilter + "' is not a valid filter type");
+						"DelegatedBasicListService::filterList: the filter type '" + typeFilter
+								+ "' is not a valid filter type");
 				HashMap params = new HashMap();
-				params.put(Constants.NOME_MODULO, "DelegatedBasicListService::filterList: the filter type '" + typeFilter + "' is not a valid filter type");
-				EMFValidationError error = new EMFValidationError(EMFErrorSeverity.ERROR, SpagoBIConstants.TYPE_FILTER, "100", null, params);
+				params.put(Constants.NOME_MODULO, "DelegatedBasicListService::filterList: the filter type '"
+						+ typeFilter + "' is not a valid filter type");
+				EMFValidationError error = new EMFValidationError(EMFErrorSeverity.ERROR, SpagoBIConstants.TYPE_FILTER,
+						"100", null, params);
 				throw error;
 			}
 		}
@@ -636,26 +672,30 @@ public class DelegatedBasicListService {
 				valueDouble = new Double(value);
 			} catch (Exception e) {
 				TracerSingleton.log(Constants.NOME_MODULO, TracerSingleton.WARNING,
-						"DelegatedBasicListService::filterList: the string value is not a recognizable number representations: value to be filtered = " + value,
+						"DelegatedBasicListService::filterList: the string value is not a recognizable number representations: value to be filtered = "
+								+ value,
 						e);
 				HashMap params = new HashMap();
 				params.put(Constants.NOME_MODULO, "DelegatedBasicListService::filterList");
 				Vector v = new Vector();
 				v.add(value);
-				EMFValidationError error = new EMFValidationError(EMFErrorSeverity.WARNING, SpagoBIConstants.TYPE_VALUE_FILTER, "1051", v, params);
+				EMFValidationError error = new EMFValidationError(EMFErrorSeverity.WARNING,
+						SpagoBIConstants.TYPE_VALUE_FILTER, "1051", v, params);
 				throw error;
 			}
 			try {
 				valueFilterDouble = new Double(valuefilter);
 			} catch (Exception e) {
 				TracerSingleton.log(Constants.NOME_MODULO, TracerSingleton.WARNING,
-						"DelegatedBasicListService::filterList: input string value is not a recognizable number representations: filter value = " + valuefilter,
+						"DelegatedBasicListService::filterList: input string value is not a recognizable number representations: filter value = "
+								+ valuefilter,
 						e);
 				HashMap params = new HashMap();
 				params.put(Constants.NOME_MODULO, "DelegatedBasicListService::filterList");
 				Vector v = new Vector();
 				v.add(valuefilter);
-				EMFValidationError error = new EMFValidationError(EMFErrorSeverity.WARNING, SpagoBIConstants.VALUE_FILTER, "1052", v, params);
+				EMFValidationError error = new EMFValidationError(EMFErrorSeverity.WARNING,
+						SpagoBIConstants.VALUE_FILTER, "1052", v, params);
 				throw error;
 			}
 
@@ -673,10 +713,13 @@ public class DelegatedBasicListService {
 				return valueDouble.doubleValue() >= valueFilterDouble.doubleValue();
 			} else {
 				TracerSingleton.log(Constants.NOME_MODULO, TracerSingleton.WARNING,
-						"DelegatedBasicListService::filterList: the filter type '" + typeFilter + "' is not a valid filter type");
+						"DelegatedBasicListService::filterList: the filter type '" + typeFilter
+								+ "' is not a valid filter type");
 				HashMap params = new HashMap();
-				params.put(Constants.NOME_MODULO, "DelegatedBasicListService::filterList: the filter type '" + typeFilter + "' is not a valid filter type");
-				EMFValidationError error = new EMFValidationError(EMFErrorSeverity.ERROR, SpagoBIConstants.TYPE_FILTER, "100", null, params);
+				params.put(Constants.NOME_MODULO, "DelegatedBasicListService::filterList: the filter type '"
+						+ typeFilter + "' is not a valid filter type");
+				EMFValidationError error = new EMFValidationError(EMFErrorSeverity.ERROR, SpagoBIConstants.TYPE_FILTER,
+						"100", null, params);
 				throw error;
 			}
 		}
@@ -695,30 +738,32 @@ public class DelegatedBasicListService {
 				valueDate = toDate(value, format);
 			} catch (Exception e) {
 				TracerSingleton.log(Constants.NOME_MODULO, TracerSingleton.WARNING,
-						"DelegatedBasicListService::filterList: the string value is not a valid date representation according to the format " + format
-								+ ": value to be filtered = " + value,
+						"DelegatedBasicListService::filterList: the string value is not a valid date representation according to the format "
+								+ format + ": value to be filtered = " + value,
 						e);
 				HashMap params = new HashMap();
 				params.put(Constants.NOME_MODULO, "DelegatedBasicListService::filterList");
 				Vector v = new Vector();
 				v.add(value);
 				v.add(format);
-				EMFValidationError error = new EMFValidationError(EMFErrorSeverity.WARNING, SpagoBIConstants.TYPE_VALUE_FILTER, "1054", v, params);
+				EMFValidationError error = new EMFValidationError(EMFErrorSeverity.WARNING,
+						SpagoBIConstants.TYPE_VALUE_FILTER, "1054", v, params);
 				throw error;
 			}
 			try {
 				valueFilterDate = toDate(valuefilter, format);
 			} catch (Exception e) {
 				TracerSingleton.log(Constants.NOME_MODULO, TracerSingleton.WARNING,
-						"DelegatedBasicListService::filterList: input string is not a valid date representation according to the format " + format
-								+ ": filter value = " + valuefilter,
+						"DelegatedBasicListService::filterList: input string is not a valid date representation according to the format "
+								+ format + ": filter value = " + valuefilter,
 						e);
 				HashMap params = new HashMap();
 				params.put(Constants.NOME_MODULO, "DelegatedBasicListService::filterList");
 				Vector v = new Vector();
 				v.add(valuefilter);
 				v.add(format);
-				EMFValidationError error = new EMFValidationError(EMFErrorSeverity.WARNING, SpagoBIConstants.VALUE_FILTER, "1055", v, params);
+				EMFValidationError error = new EMFValidationError(EMFErrorSeverity.WARNING,
+						SpagoBIConstants.VALUE_FILTER, "1055", v, params);
 				throw error;
 			}
 
@@ -736,19 +781,24 @@ public class DelegatedBasicListService {
 				return valueDate.compareTo(valueFilterDate) >= 0;
 			} else {
 				TracerSingleton.log(Constants.NOME_MODULO, TracerSingleton.WARNING,
-						"DelegatedBasicListService::filterList: the filter type '" + typeFilter + "' is not a valid filter type");
+						"DelegatedBasicListService::filterList: the filter type '" + typeFilter
+								+ "' is not a valid filter type");
 				HashMap params = new HashMap();
-				params.put(Constants.NOME_MODULO, "DelegatedBasicListService::filterList: the filter type '" + typeFilter + "' is not a valid filter type");
-				EMFValidationError error = new EMFValidationError(EMFErrorSeverity.ERROR, SpagoBIConstants.TYPE_FILTER, "100", null, params);
+				params.put(Constants.NOME_MODULO, "DelegatedBasicListService::filterList: the filter type '"
+						+ typeFilter + "' is not a valid filter type");
+				EMFValidationError error = new EMFValidationError(EMFErrorSeverity.ERROR, SpagoBIConstants.TYPE_FILTER,
+						"100", null, params);
 				throw error;
 			}
 		} else {
 			TracerSingleton.log(Constants.NOME_MODULO, TracerSingleton.WARNING,
-					"DelegatedBasicListService::filterList: the filter value type '" + valuetypefilter + "' is not a valid filter value type");
+					"DelegatedBasicListService::filterList: the filter value type '" + valuetypefilter
+							+ "' is not a valid filter value type");
 			HashMap params = new HashMap();
-			params.put(Constants.NOME_MODULO,
-					"DelegatedBasicListService::filterList: the filter value type '" + valuetypefilter + "' is not a valid filter value type");
-			EMFValidationError error = new EMFValidationError(EMFErrorSeverity.ERROR, SpagoBIConstants.TYPE_FILTER, "100", null, params);
+			params.put(Constants.NOME_MODULO, "DelegatedBasicListService::filterList: the filter value type '"
+					+ valuetypefilter + "' is not a valid filter value type");
+			EMFValidationError error = new EMFValidationError(EMFErrorSeverity.ERROR, SpagoBIConstants.TYPE_FILTER,
+					"100", null, params);
 			throw error;
 		}
 	}
@@ -788,8 +838,8 @@ public class DelegatedBasicListService {
 	 *
 	 * @throws EMFInternalError the EMF internal error
 	 */
-	public static Object executeSelect(RequestContainer requestContainer, ResponseContainer responseContainer, String pool, String statement)
-			throws EMFInternalError {
+	public static Object executeSelect(RequestContainer requestContainer, ResponseContainer responseContainer,
+			String pool, String statement) throws EMFInternalError {
 		Object result = null;
 		DataConnectionManager dataConnectionManager = null;
 		DataConnection dataConnection = null;
@@ -824,14 +874,15 @@ public class DelegatedBasicListService {
 		String pool = (String) serviceInitializer.getConfig().getAttribute("POOL");
 		SourceBean statement = (SourceBean) serviceInitializer.getConfig().getAttribute("QUERIES.DELETE_QUERY");
 		RequestContextIFace serviceRequestContext = (RequestContextIFace) service;
-		Boolean isOK = (Boolean) QueryExecutor.executeQuery(serviceRequestContext.getRequestContainer(), serviceRequestContext.getResponseContainer(), pool,
-				statement, "DELETE");
+		Boolean isOK = (Boolean) QueryExecutor.executeQuery(serviceRequestContext.getRequestContainer(),
+				serviceRequestContext.getResponseContainer(), pool, statement, "DELETE");
 		EMFErrorHandler engErrorHandler = serviceRequestContext.getErrorHandler();
 		if ((isOK != null) && isOK.booleanValue()) {
 			engErrorHandler.addError(new EMFUserError(EMFErrorSeverity.INFORMATION, 10002));
 			return true;
 		} // if ((isOK != null) && isOK.booleanValue())
-		TracerSingleton.log(Constants.NOME_MODULO, TracerSingleton.MAJOR, "KFDelegatedBasicListService::delete: errore cancellazione riga");
+		TracerSingleton.log(Constants.NOME_MODULO, TracerSingleton.MAJOR,
+				"KFDelegatedBasicListService::delete: errore cancellazione riga");
 		engErrorHandler.addError(new EMFUserError(EMFErrorSeverity.WARNING, 10003));
 		return false;
 	} // public static boolean delete( ServiceIFace service, SourceBean request,

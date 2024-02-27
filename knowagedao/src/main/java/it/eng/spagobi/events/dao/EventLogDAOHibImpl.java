@@ -25,6 +25,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
@@ -40,7 +41,6 @@ import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
 import it.eng.spagobi.commons.metadata.SbiExtRoles;
-import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.dao.PagedList;
 import it.eng.spagobi.events.bo.EventLog;
 import it.eng.spagobi.events.bo.EventType;
@@ -143,10 +143,10 @@ public class EventLogDAOHibImpl extends AbstractHibernateDAO implements IEventLo
 		if (endDate != null) {
 			criteria.add(Restrictions.le("date", endDate));
 		}
-		if (!StringUtilities.isEmpty(creationUser)) {
+		if (!StringUtils.isEmpty(creationUser)) {
 			criteria.add(Restrictions.eq("user", creationUser));
 		}
-		if (!StringUtilities.isEmpty(type)) {
+		if (!StringUtils.isEmpty(type)) {
 			EventType eventType = EventType.valueOf(type);
 			criteria.add(Restrictions.eq("eventType", eventType));
 		}
@@ -154,7 +154,7 @@ public class EventLogDAOHibImpl extends AbstractHibernateDAO implements IEventLo
 	}
 
 	private void addOrderingCriteria(Criteria criteria, String sortingColumn, boolean sortingAscending) {
-		if (!StringUtilities.isEmpty(sortingColumn)) {
+		if (!StringUtils.isEmpty(sortingColumn)) {
 			if (sortingAscending) {
 				criteria.addOrder(Order.asc(sortingColumn));
 			} else {

@@ -19,6 +19,7 @@ package it.eng.spagobi.analiticalmodel.execution.service;
 
 import java.io.IOException;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.json.JSONObject;
 
@@ -30,7 +31,6 @@ import it.eng.spagobi.analiticalmodel.document.handlers.ExecutionInstance;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.services.AbstractSpagoBIAction;
-import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 import it.eng.spagobi.utilities.service.JSONAcknowledge;
@@ -68,7 +68,7 @@ public class DeleteViewpointsAction extends AbstractSpagoBIAction {
 			viewpointIds = this.getAttributeAsString(VIEWPOINT_IDS);
 
 			logger.debug("Parameter [" + VIEWPOINT_IDS + "] is equals to [" + viewpointIds + "]");
-			Assert.assertTrue(!StringUtilities.isEmpty(viewpointIds), "Viewpoint's ids cannot be null or empty");
+			Assert.assertTrue(!StringUtils.isEmpty(viewpointIds), "Viewpoint's ids cannot be null or empty");
 
 			ids = viewpointIds.split(",");
 
@@ -85,8 +85,8 @@ public class DeleteViewpointsAction extends AbstractSpagoBIAction {
 			logger.debug("Document Id:  [" + biobjectId + "]");
 
 			/*
-			 * Assert.assertTrue(userProfile.isAbleToExecuteAction(SpagoBIConstants.DOCUMENT_MANAGEMENT_ADMIN), "User [" +
-			 * userProfile.getUserUniqueIdentifier()+ "] have not the rights to delete viewpoints");
+			 * Assert.assertTrue(userProfile.isAbleToExecuteAction(SpagoBIConstants.DOCUMENT_MANAGEMENT_ADMIN), "User [" + userProfile.getUserUniqueIdentifier()+
+			 * "] have not the rights to delete viewpoints");
 			 */
 			for (int i = 0; i < ids.length; i++) {
 				try {
@@ -99,7 +99,8 @@ public class DeleteViewpointsAction extends AbstractSpagoBIAction {
 
 				} catch (EMFUserError e) {
 					logger.error("Impossible to delete viewpoint with name [" + ids[i] + "] already exists", e);
-					throw new SpagoBIServiceException(SERVICE_NAME, "Impossible to delete viewpoint with name [" + ids[i] + "] already exists", e);
+					throw new SpagoBIServiceException(SERVICE_NAME,
+							"Impossible to delete viewpoint with name [" + ids[i] + "] already exists", e);
 				}
 			}
 
@@ -107,7 +108,8 @@ public class DeleteViewpointsAction extends AbstractSpagoBIAction {
 				JSONObject results = new JSONObject();
 				writeBackToClient(new JSONAcknowledge());
 			} catch (IOException e) {
-				throw new SpagoBIServiceException(SERVICE_NAME, "Impossible to write back the responce to the client", e);
+				throw new SpagoBIServiceException(SERVICE_NAME, "Impossible to write back the responce to the client",
+						e);
 			}
 
 		} finally {

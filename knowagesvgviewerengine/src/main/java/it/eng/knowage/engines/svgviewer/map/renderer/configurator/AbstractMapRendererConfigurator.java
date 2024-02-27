@@ -17,19 +17,19 @@
  */
 package it.eng.knowage.engines.svgviewer.map.renderer.configurator;
 
-import it.eng.knowage.engines.svgviewer.map.renderer.ILabelProducer;
-import it.eng.knowage.engines.svgviewer.map.renderer.Layer;
-import it.eng.knowage.engines.svgviewer.map.renderer.Measure;
-import it.eng.spago.base.SourceBean;
-import it.eng.spagobi.commons.utilities.StringUtilities;
-
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
+
+import it.eng.knowage.engines.svgviewer.map.renderer.ILabelProducer;
+import it.eng.knowage.engines.svgviewer.map.renderer.Layer;
+import it.eng.knowage.engines.svgviewer.map.renderer.Measure;
+import it.eng.spago.base.SourceBean;
 
 /**
  * The Class AbstractMapRendererConfigurator.
@@ -43,8 +43,7 @@ public class AbstractMapRendererConfigurator {
 	/**
 	 * Gets the measures.
 	 *
-	 * @param measuresConfigurationSB
-	 *            the measures configuration sb
+	 * @param measuresConfigurationSB the measures configuration sb
 	 *
 	 * @return the measures
 	 */
@@ -121,7 +120,7 @@ public class AbstractMapRendererConfigurator {
 			measure.setColurCalculatorParameters(colurCalculatorParameters);
 
 			// set default kpi
-			if (!StringUtilities.isEmpty(defaultMeasureName) && defaultMeasureName.equals(measure.getColumnId())) {
+			if (!StringUtils.isEmpty(defaultMeasureName) && defaultMeasureName.equals(measure.getColumnId())) {
 				measure.setSelected(true);
 			}
 
@@ -134,8 +133,7 @@ public class AbstractMapRendererConfigurator {
 	/**
 	 * Gets the layers.
 	 *
-	 * @param layersConfigurationSB
-	 *            the layers configuration sb
+	 * @param layersConfigurationSB the layers configuration sb
 	 *
 	 * @return the layers
 	 */
@@ -178,8 +176,7 @@ public class AbstractMapRendererConfigurator {
 	/**
 	 * Gets the label producers.
 	 *
-	 * @param labelsConfigurationSB
-	 *            the labels configuration sb
+	 * @param labelsConfigurationSB the labels configuration sb
 	 *
 	 * @return the label producers
 	 */
@@ -218,7 +215,7 @@ public class AbstractMapRendererConfigurator {
 			SourceBean param = (SourceBean) it.next();
 			String paramName = (String) param.getAttribute("name");
 			String paramValue = param.getCharacters().trim();
-			if (!StringUtilities.isEmpty(paramName) && !StringUtilities.isEmpty(paramValue)) {
+			if (!StringUtils.isEmpty(paramName) && !StringUtils.isEmpty(paramValue)) {
 				settingsMap.put(paramName, downCastValue(paramValue));
 			}
 		}
@@ -239,11 +236,10 @@ public class AbstractMapRendererConfigurator {
 		}
 
 		/*
-		 * if(paramValue.startsWith("'") && paramValue.endsWith("'")) { value = paramValue; } else if(paramValue.startsWith("\"") && paramValue.endsWith("\""))
-		 * { value = paramValue; } else if(paramValue.startsWith("{") && paramValue.endsWith("}")) { value = paramValue; } else if(paramValue.startsWith("[") &&
-		 * paramValue.endsWith("]")) { value = paramValue; } else if(paramValue.startsWith("function") && paramValue.endsWith("}")) { value = paramValue; } else
-		 * {
-		 * 
+		 * if(paramValue.startsWith("'") && paramValue.endsWith("'")) { value = paramValue; } else if(paramValue.startsWith("\"") && paramValue.endsWith("\"")) { value
+		 * = paramValue; } else if(paramValue.startsWith("{") && paramValue.endsWith("}")) { value = paramValue; } else if(paramValue.startsWith("[") &&
+		 * paramValue.endsWith("]")) { value = paramValue; } else if(paramValue.startsWith("function") && paramValue.endsWith("}")) { value = paramValue; } else {
+		 *
 		 * }
 		 */
 

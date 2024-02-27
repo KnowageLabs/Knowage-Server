@@ -71,7 +71,6 @@ import it.eng.spagobi.commons.serializer.DataSetMetadataJSONSerializer;
 import it.eng.spagobi.commons.utilities.AuditLogUtilities;
 import it.eng.spagobi.commons.utilities.GeneralUtilities;
 import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
-import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.commons.utilities.UserUtilities;
 import it.eng.spagobi.tools.dataset.DatasetManagementAPI;
 import it.eng.spagobi.tools.dataset.bo.AbstractJDBCDataset;
@@ -2020,7 +2019,7 @@ public class ManageDataSetsForREST {
 			throw new SpagoBIRuntimeException("Impossible to retrieve dataset from request");
 		}
 
-		if (StringUtilities.isNotEmpty(transformerTypeCode)) {
+		if (StringUtils.isNotEmpty(transformerTypeCode)) {
 			dataSet = setTransformer(dataSet, transformerTypeCode, json);
 		}
 		Map<String, String> parametersMap = new HashMap<>();

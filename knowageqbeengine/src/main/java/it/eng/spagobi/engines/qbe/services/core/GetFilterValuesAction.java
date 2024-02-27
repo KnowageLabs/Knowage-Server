@@ -23,6 +23,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -45,7 +46,6 @@ import it.eng.qbe.statement.IStatement;
 import it.eng.qbe.statement.QbeDatasetFactory;
 import it.eng.spago.base.SourceBean;
 import it.eng.spagobi.commons.bo.UserProfile;
-import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.engines.qbe.QbeEngineInstance;
 import it.eng.spagobi.engines.qbe.registry.bo.RegistryConfiguration;
 import it.eng.spagobi.engines.qbe.registry.bo.RegistryConfiguration.Filter;
@@ -116,7 +116,7 @@ public class GetFilterValuesAction extends AbstractQbeEngineAction {
 
 			queryType = getAttributeAsString(QUERY_TYPE);
 			logger.debug("Parameter [" + QUERY_TYPE + "] is equals to [" + queryType + "]");
-			if (StringUtilities.isEmpty(queryType)) {
+			if (StringUtils.isEmpty(queryType)) {
 				queryType = "standard";
 				logger.debug("Parameter [" + QUERY_TYPE + "] set up to default value [" + queryType + "]");
 			}
@@ -141,7 +141,9 @@ public class GetFilterValuesAction extends AbstractQbeEngineAction {
 
 			// if order entity is different select entity cannot apply distinct
 			// filter
-			boolean setDistinctClause = StringUtilities.isEmpty(orderEntity) || orderEntity.equalsIgnoreCase(entityId) ? true : false;
+			boolean setDistinctClause = StringUtils.isEmpty(orderEntity) || orderEntity.equalsIgnoreCase(entityId)
+					? true
+					: false;
 
 			if (queryType.equalsIgnoreCase("standard")) {
 				query = buildQuery(entityId, orderEntity, orderType, queryRootEntity, setDistinctClause, dependences);
@@ -150,7 +152,8 @@ public class GetFilterValuesAction extends AbstractQbeEngineAction {
 				QueryCatalogue queryCatalogue = engineInstance.getQueryCatalogue();
 				query = queryCatalogue.getQuery(lookupQuery);
 				if (query == null) {
-					throw new SpagoBIEngineServiceException(getActionName(), "Impossible to retrive custom query [" + lookupQuery + "] from catalogue");
+					throw new SpagoBIEngineServiceException(getActionName(),
+							"Impossible to retrive custom query [" + lookupQuery + "] from catalogue");
 				}
 
 			}
@@ -182,13 +185,15 @@ public class GetFilterValuesAction extends AbstractQbeEngineAction {
 				dataSet.loadData();
 				dataStore = dataSet.getDataStore();
 
-				Assert.assertNotNull(dataStore, "The dataStore returned by loadData method of the class [" + dataSet.getClass().getName() + "] cannot be null");
+				Assert.assertNotNull(dataStore, "The dataStore returned by loadData method of the class ["
+						+ dataSet.getClass().getName() + "] cannot be null");
 			} catch (Exception e) {
 				logger.debug("Query execution aborted because of an internal exceptian");
 				SpagoBIEngineServiceException exception;
 				String message;
 
-				message = "An error occurred in " + getActionName() + " service while executing query: [" + statement.getQueryString() + "]";
+				message = "An error occurred in " + getActionName() + " service while executing query: ["
+						+ statement.getQueryString() + "]";
 				exception = new SpagoBIEngineServiceException(getActionName(), message, e);
 				exception.addHint("Check if the query is properly formed: [" + statement.getQueryString() + "]");
 				exception.addHint("Check connection configuration");
@@ -200,7 +205,8 @@ public class GetFilterValuesAction extends AbstractQbeEngineAction {
 
 			resultNumber = (Integer) dataStore.getMetaData().getProperty("resultNumber");
 			Assert.assertNotNull(resultNumber,
-					"property [resultNumber] of the dataStore returned by loadData method of the class [" + dataSet.getClass().getName() + "] cannot be null");
+					"property [resultNumber] of the dataStore returned by loadData method of the class ["
+							+ dataSet.getClass().getName() + "] cannot be null");
 			logger.debug("Total records: " + resultNumber);
 
 			dataSetWriter = new JSONDataWriter();
@@ -216,7 +222,8 @@ public class GetFilterValuesAction extends AbstractQbeEngineAction {
 		} catch (Throwable t) {
 			errorHitsMonitor = MonitorFactory.start("QbeEngine.errorHits");
 			errorHitsMonitor.stop();
-			throw SpagoBIEngineServiceExceptionHandler.getInstance().getWrappedException(getActionName(), getEngineInstance(), t);
+			throw SpagoBIEngineServiceExceptionHandler.getInstance().getWrappedException(getActionName(),
+					getEngineInstance(), t);
 		} finally {
 			if (totalTimeMonitor != null)
 				totalTimeMonitor.stop();
@@ -225,8 +232,8 @@ public class GetFilterValuesAction extends AbstractQbeEngineAction {
 
 	}
 
-	private Query buildQuery(String entityId, String orderEntity, String orderType, boolean queryRootEntity, boolean setDistinctClause, String dependences)
-			throws JSONException {
+	private Query buildQuery(String entityId, String orderEntity, String orderType, boolean queryRootEntity,
+			boolean setDistinctClause, String dependences) throws JSONException {
 
 		String entityPattern = null;
 		String orderEntityPattern = null;
@@ -237,7 +244,7 @@ public class GetFilterValuesAction extends AbstractQbeEngineAction {
 		Assert.assertNotNull(entityId, "Parameter [" + ENTITY_ID + "] cannot be null");
 
 		// default values for request parameters
-		if (StringUtilities.isEmpty(orderType)) {
+		if (StringUtils.isEmpty(orderType)) {
 			orderType = "NONE";
 		}
 
@@ -281,11 +288,12 @@ public class GetFilterValuesAction extends AbstractQbeEngineAction {
 		Query query = new Query();
 		// id is mandatory
 		query.setId("q1000");
-		query.addSelectFiled(entityId, "NONE", "Valori", true, true, false, (orderEntity != null && !orderEntity.trim().equals("")) ? null : orderType,
-				entityPattern);
+		query.addSelectFiled(entityId, "NONE", "Valori", true, true, false,
+				(orderEntity != null && !orderEntity.trim().equals("")) ? null : orderType, entityPattern);
 		query.setDistinctClauseEnabled(setDistinctClause);
 		if (orderEntity != null && !orderEntity.equals("")) {
-			query.addSelectFiled(orderEntity, "NONE", "Ordinamento", false, false, false, orderType, orderEntityPattern);
+			query.addSelectFiled(orderEntity, "NONE", "Ordinamento", false, false, false, orderType,
+					orderEntityPattern);
 		}
 
 		if (null != dependences && !"".equals(dependences)) {
@@ -316,16 +324,19 @@ public class GetFilterValuesAction extends AbstractQbeEngineAction {
 				}
 				String[] fields = new String[] { nameFiledWhere };
 				String[] values = new String[] { valueFieldWhere };
-				WhereField.Operand left = new WhereField.Operand(fields, "name", AbstractStatement.OPERAND_TYPE_SIMPLE_FIELD, null, null);
-				WhereField.Operand right = new WhereField.Operand(values, "value", AbstractStatement.OPERAND_TYPE_STATIC, null, null);
-				query.addWhereField(nameFiledWhere, valueFieldWhere, false, left, CriteriaConstants.EQUALS_TO, right, "AND");
+				WhereField.Operand left = new WhereField.Operand(fields, "name",
+						AbstractStatement.OPERAND_TYPE_SIMPLE_FIELD, null, null);
+				WhereField.Operand right = new WhereField.Operand(values, "value",
+						AbstractStatement.OPERAND_TYPE_STATIC, null, null);
+				query.addWhereField(nameFiledWhere, valueFieldWhere, false, left, CriteriaConstants.EQUALS_TO, right,
+						"AND");
 				ExpressionNode newFilterNode = new ExpressionNode("NODE_CONST", "$F{" + nameFiledWhere + "}");
 				query.setWhereClauseStructure(newFilterNode);
 				// query.addSelectFiled(nameFiledWhere, "NONE", "dependes" + i,
 				// true, true, false, null, null);
 			}
 		}
-		
+
 		QbeEngineInstance qbeEngineInstance = getEngineInstance();
 		QbeTemplate template = qbeEngineInstance.getTemplate();
 		RegistryConfiguration registryConfig = (RegistryConfiguration) template.getProperty("registryConfiguration");
@@ -339,9 +350,12 @@ public class GetFilterValuesAction extends AbstractQbeEngineAction {
 
 				String[] fieldss = new String[] { nameFieldWhere };
 				String[] values = new String[] { valueFieldWhere };
-				WhereField.Operand left = new WhereField.Operand(fieldss, "name", AbstractStatement.OPERAND_TYPE_SIMPLE_FIELD, null, null);
-				WhereField.Operand right = new WhereField.Operand(values, "value", AbstractStatement.OPERAND_TYPE_STATIC, null, null);
-				query.addWhereField(nameFieldWhere, valueFieldWhere, false, left, CriteriaConstants.EQUALS_TO, right, "AND");
+				WhereField.Operand left = new WhereField.Operand(fieldss, "name",
+						AbstractStatement.OPERAND_TYPE_SIMPLE_FIELD, null, null);
+				WhereField.Operand right = new WhereField.Operand(values, "value",
+						AbstractStatement.OPERAND_TYPE_STATIC, null, null);
+				query.addWhereField(nameFieldWhere, valueFieldWhere, false, left, CriteriaConstants.EQUALS_TO, right,
+						"AND");
 				ExpressionNode newFilterNode = new ExpressionNode("NODE_CONST", "$F{" + nameFieldWhere + "}");
 				query.setWhereClauseStructure(newFilterNode);
 			}
@@ -350,7 +364,8 @@ public class GetFilterValuesAction extends AbstractQbeEngineAction {
 		/* Profile attributes handling */
 		UserProfile userProfile = (UserProfile) getEnv().get(EngineConstants.ENV_USER_PROFILE);
 		IModelAccessModality accessModality = getDataSource().getModelAccessModality();
-		Query filteredQuery = accessModality.getFilteredStatement(query, getDataSource(), userProfile.getUserAttributes());
+		Query filteredQuery = accessModality.getFilteredStatement(query, getDataSource(),
+				userProfile.getUserAttributes());
 
 		query = filteredQuery;
 		logger.debug("OUT");

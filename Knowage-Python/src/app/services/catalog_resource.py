@@ -75,14 +75,12 @@ def python_function_execute():
         logging.exception("Error during script execution")
         return str(e), 500
 
-    # convert dataframe to knowage json format
-    try:
-        knowage_json = utils.dataframe_to_datastore(namespace["outdf_"])
-    except Exception as e:
-        logging.exception("Error converting dataframe to knowage format")
-        return str(e), 500
+    response_df = namespace["outdf_"]
 
-    return str(knowage_json).replace('\'', "\""), 200
+    # convert dataframe to json format
+    response_json = response_df.to_json(orient="records", date_format="iso")
+
+    return response_json, 200
 
 def build_runtime_variables(input_variables):
     runtime_vars = {}

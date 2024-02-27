@@ -30,6 +30,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.jgrapht.graph.Pseudograph;
 import org.json.JSONArray;
@@ -44,7 +45,6 @@ import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.constants.CommunityFunctionalityConstants;
 import it.eng.spagobi.commons.constants.ConfigurationConstants;
-import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.services.rest.annotations.UserConstraint;
 import it.eng.spagobi.services.serialization.JsonConverter;
 import it.eng.spagobi.tools.dataset.associativity.IAssociativityManager;
@@ -104,7 +104,7 @@ public class AssociativeSelectionsResource extends AbstractDataSetResource {
 		String nearRealtimeDatasetsString = null;
 		String filtersString = null;
 		try {
-			if (StringUtilities.isNotEmpty(body)) {
+			if (StringUtils.isNotEmpty(body)) {
 				JSONObject jsonBody = new JSONObject(body);
 
 				JSONObject jsonAssociationGroup = jsonBody.optJSONObject("associationGroup");

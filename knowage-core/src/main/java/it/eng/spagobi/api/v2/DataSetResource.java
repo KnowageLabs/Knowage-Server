@@ -52,6 +52,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
 import javax.ws.rs.core.Response.Status;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.LogMF;
 import org.apache.log4j.Logger;
 import org.geotools.data.DataSourceException;
@@ -725,7 +726,7 @@ public class DataSetResource extends AbstractDataSetResource {
 			String options = null;
 			JSONArray jsonIndexes = null;
 
-			if (StringUtilities.isNotEmpty(body)) {
+			if (StringUtils.isNotEmpty(body)) {
 				JSONObject jsonBody = new JSONObject(body);
 
 				JSONObject jsonParameters = jsonBody.optJSONObject("parameters");
@@ -799,7 +800,7 @@ public class DataSetResource extends AbstractDataSetResource {
 			int start = -1;
 			int limit = -1;
 			Set<String> columns = null;
-			if (StringUtilities.isNotEmpty(body)) {
+			if (StringUtils.isNotEmpty(body)) {
 				JSONObject jsonBody = new JSONObject(body);
 
 				if (jsonBody.has("start")) {
@@ -990,7 +991,7 @@ public class DataSetResource extends AbstractDataSetResource {
 			Monitor timing = MonitorFactory.start("Knowage.DataSetResource.getDataStorePostWithJsonInBody:parseInputs");
 
 			String formulaString = "";
-			if (StringUtilities.isNotEmpty(body)) {
+			if (StringUtils.isNotEmpty(body)) {
 				JSONObject jsonBody = new JSONObject(body);
 
 				formulaString = jsonBody.getString("formula");

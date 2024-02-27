@@ -17,11 +17,23 @@
  */
 package it.eng.knowage.knowagevue;
 
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.filter.CommonsRequestLoggingFilter;
 
 @Configuration
 @ComponentScan("it.eng.knowage.knowagevue.controller")
 public class KnowageVueConfiguration {
+
+	@Bean
+	public CommonsRequestLoggingFilter requestLoggingFilter() {
+		CommonsRequestLoggingFilter loggingFilter = new CommonsRequestLoggingFilter();
+		loggingFilter.setIncludeClientInfo(true);
+		loggingFilter.setIncludeQueryString(true);
+		loggingFilter.setIncludePayload(false);
+		loggingFilter.setMaxPayloadLength(64000);
+		return loggingFilter;
+	}
 
 }

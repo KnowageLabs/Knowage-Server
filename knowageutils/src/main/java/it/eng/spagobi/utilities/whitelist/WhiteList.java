@@ -29,6 +29,8 @@ import org.xml.sax.InputSource;
 
 import it.eng.knowage.commons.security.KnowageSystemConfiguration;
 import it.eng.spago.base.SourceBean;
+import it.eng.spagobi.commons.SingletonConfig;
+import it.eng.spagobi.commons.constants.ConfigurationConstants;
 import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
 
 public class WhiteList implements IWhiteList {
@@ -114,7 +116,8 @@ public class WhiteList implements IWhiteList {
 
 	@Override
 	public List<String> getExternalServices() {
-		return getProperties("baseurl");
+		List<String>  lStr = getProperties("baseurl");
+		return lStr;
 	}
 
 }

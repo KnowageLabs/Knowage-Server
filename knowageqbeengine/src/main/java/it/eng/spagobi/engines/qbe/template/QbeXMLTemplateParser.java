@@ -22,11 +22,11 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.UUID;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.json.JSONObject;
 
 import it.eng.spago.base.SourceBean;
-import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.engines.qbe.externalservices.ExternalServiceConfiguration;
 import it.eng.spagobi.engines.qbe.registry.bo.RegistryConfiguration;
 import it.eng.spagobi.engines.qbe.registry.parser.RegistryConfigurationXMLParser;
@@ -66,7 +66,8 @@ public class QbeXMLTemplateParser implements IQbeTemplateParser {
 	@Override
 	public QbeTemplate parse(Object template) {
 		Assert.assertNotNull(template, "Input parameter [template] cannot be null");
-		Assert.assertTrue(template instanceof SourceBean, "Input parameter [template] cannot be of type [" + template.getClass().getName() + "]");
+		Assert.assertTrue(template instanceof SourceBean,
+				"Input parameter [template] cannot be of type [" + template.getClass().getName() + "]");
 		return parse((SourceBean) template);
 	}
 
@@ -95,8 +96,8 @@ public class QbeXMLTemplateParser implements IQbeTemplateParser {
 					&& !TAG_ROOT_SMART_FILTER.equalsIgnoreCase(templateName)) {
 
 				QbeTemplateParseException e = new QbeTemplateParseException("Malformed template structure");
-				e.setDescription("template root tag cannot be equals to [" + templateName + "]. " + "It must be equal to [" + TAG_ROOT_NORMAL + "] or ["
-						+ TAG_ROOT_COMPOSITE + "]");
+				e.setDescription("template root tag cannot be equals to [" + templateName + "]. "
+						+ "It must be equal to [" + TAG_ROOT_NORMAL + "] or [" + TAG_ROOT_COMPOSITE + "]");
 				e.addHint("Check document template in document details page");
 				throw e;
 			}
@@ -124,8 +125,8 @@ public class QbeXMLTemplateParser implements IQbeTemplateParser {
 					if (qbeSB.containsAttribute(TAG_DATAMART)) {
 						datamartSB = (SourceBean) qbeSB.getAttribute(TAG_DATAMART);
 						dmName = (String) datamartSB.getAttribute(PROP_DATAMART_NAME);
-						Assert.assertTrue(!StringUtilities.isEmpty(dmName),
-								"Attribute [" + PROP_DATAMART_NAME + "] in tag [" + TAG_DATAMART + "] must be properly defined");
+						Assert.assertTrue(!StringUtils.isEmpty(dmName), "Attribute [" + PROP_DATAMART_NAME
+								+ "] in tag [" + TAG_DATAMART + "] must be properly defined");
 
 						qbeTemplate.addDatamartName(dmName);
 
@@ -148,8 +149,8 @@ public class QbeXMLTemplateParser implements IQbeTemplateParser {
 						modalitySB = (SourceBean) qbeSB.getAttribute(TAG_MODALITY);
 						modalities.add(modalitySB);
 					} else {
-						logger.debug(
-								"Qbe template associated to datamart [" + dmName + "] does not contain tag [" + TAG_MODALITY + "] so it will be not profiled");
+						logger.debug("Qbe template associated to datamart [" + dmName + "] does not contain tag ["
+								+ TAG_MODALITY + "] so it will be not profiled");
 					}
 				}
 
@@ -169,8 +170,8 @@ public class QbeXMLTemplateParser implements IQbeTemplateParser {
 				if (template.containsAttribute(TAG_DATAMART)) {
 					datamartSB = (SourceBean) template.getAttribute(TAG_DATAMART);
 					dmName = (String) datamartSB.getAttribute(PROP_DATAMART_NAME);
-					Assert.assertTrue(!StringUtilities.isEmpty(dmName),
-							"Attribute [" + PROP_DATAMART_NAME + "] in tag [" + TAG_DATAMART + "] must be properly defined");
+					Assert.assertTrue(!StringUtils.isEmpty(dmName), "Attribute [" + PROP_DATAMART_NAME + "] in tag ["
+							+ TAG_DATAMART + "] must be properly defined");
 					qbeTemplate.addDatamartName(dmName);
 
 					String maxRecursionLevel = (String) datamartSB.getAttribute(PROP_DATAMART_MAXRECURSIONLEVEL);
@@ -178,8 +179,8 @@ public class QbeXMLTemplateParser implements IQbeTemplateParser {
 						qbeTemplate.setProperty("maxRecursionLevel", maxRecursionLevel);
 					}
 				} // else {
-					// Assert.assertUnreachable("Missing compolsury tag [" + TAG_DATAMART + "]");
-					// }
+					 // Assert.assertUnreachable("Missing compolsury tag [" + TAG_DATAMART + "]");
+					 // }
 
 				// MODALITY block
 				if (template.containsAttribute(TAG_MODALITY)) {
@@ -221,9 +222,11 @@ public class QbeXMLTemplateParser implements IQbeTemplateParser {
 
 			for (int i = 0; i < modalities.size(); i++) {
 				modalitySB = (SourceBean) modalities.get(i);
-				String recursiveFilteringAttr = (String) modalitySB.getAttribute(QbeXMLModelAccessModality.ATTR_RECURSIVE_FILTERING);
-				if (!StringUtilities.isEmpty(recursiveFilteringAttr)) {
-					compositeModalitySB.setAttribute(QbeXMLModelAccessModality.ATTR_RECURSIVE_FILTERING, recursiveFilteringAttr);
+				String recursiveFilteringAttr = (String) modalitySB
+						.getAttribute(QbeXMLModelAccessModality.ATTR_RECURSIVE_FILTERING);
+				if (!StringUtils.isEmpty(recursiveFilteringAttr)) {
+					compositeModalitySB.setAttribute(QbeXMLModelAccessModality.ATTR_RECURSIVE_FILTERING,
+							recursiveFilteringAttr);
 				}
 				List tables = modalitySB.getAttributeAsList(TAG_MODALITY_TABLE);
 				for (int j = 0; j < tables.size(); j++) {
@@ -233,7 +236,8 @@ public class QbeXMLTemplateParser implements IQbeTemplateParser {
 			}
 
 			if (compositeModalitySB != null && compositeModalitySB.getAttribute(TAG_MODALITY_TABLE) != null) {
-				QbeXMLModelAccessModality datamartModelAccessModality = new QbeXMLModelAccessModality(compositeModalitySB);
+				QbeXMLModelAccessModality datamartModelAccessModality = new QbeXMLModelAccessModality(
+						compositeModalitySB);
 				qbeTemplate.setDatamartModelAccessModality(datamartModelAccessModality);
 			}
 
@@ -253,16 +257,22 @@ public class QbeXMLTemplateParser implements IQbeTemplateParser {
 					String requiredColumns = (String) aServiceConfig.getAttribute(PROP_SERVICE_REQUIREDCOLUMNS);
 					logger.debug("Required columns = [" + requiredColumns + "]");
 					if (description == null || description.trim().equals("")) {
-						logger.error("External service configuration is not valid: " + PROP_SERVICE_DESCRIPTION + " attribute is mandatory.");
-						QbeTemplateParseException e = new QbeTemplateParseException("Wrong external service configuration");
-						e.setDescription("External service configuration is not valid: " + PROP_SERVICE_DESCRIPTION + " attribute is mandatory.");
+						logger.error("External service configuration is not valid: " + PROP_SERVICE_DESCRIPTION
+								+ " attribute is mandatory.");
+						QbeTemplateParseException e = new QbeTemplateParseException(
+								"Wrong external service configuration");
+						e.setDescription("External service configuration is not valid: " + PROP_SERVICE_DESCRIPTION
+								+ " attribute is mandatory.");
 						e.addHint("Check document template in external service details section");
 						throw e;
 					}
 					if (endpoint == null || endpoint.trim().equals("")) {
-						logger.error("External service configuration is not valid:  " + PROP_SERVICE_ENDPOINT + " attribute is mandatory.");
-						QbeTemplateParseException e = new QbeTemplateParseException("Wrong external service configuration");
-						e.setDescription("External service configuration is not valid:  " + PROP_SERVICE_ENDPOINT + " attribute is mandatory.");
+						logger.error("External service configuration is not valid:  " + PROP_SERVICE_ENDPOINT
+								+ " attribute is mandatory.");
+						QbeTemplateParseException e = new QbeTemplateParseException(
+								"Wrong external service configuration");
+						e.setDescription("External service configuration is not valid:  " + PROP_SERVICE_ENDPOINT
+								+ " attribute is mandatory.");
 						e.addHint("Check document template in external service details section");
 						throw e;
 					}

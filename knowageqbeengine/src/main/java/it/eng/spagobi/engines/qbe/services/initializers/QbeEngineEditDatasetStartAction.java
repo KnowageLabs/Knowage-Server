@@ -17,13 +17,13 @@
  */
 package it.eng.spagobi.engines.qbe.services.initializers;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.LogMF;
 import org.apache.log4j.Logger;
 
 import it.eng.qbe.dataset.QbeDataSet;
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.base.SourceBeanException;
-import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.engines.qbe.template.QbeXMLTemplateParser;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
@@ -77,24 +77,22 @@ public class QbeEngineEditDatasetStartAction extends QbeEngineStartAction {
 
 	@Override
 	public IDataSource getDataSource() {
-		 IDataSet toEdit = this.getDataSetToEdit();
-		 IDataSource dataSource = toEdit.getDataSource();
-		 Assert.assertNotNull(dataSource, "Datasource is missing");
-		 LOGGER.debug("Datasource's label is [" + dataSource.getLabel() + "]");
-		 return dataSource;
-	 }
-
+		IDataSet toEdit = this.getDataSetToEdit();
+		IDataSource dataSource = toEdit.getDataSource();
+		Assert.assertNotNull(dataSource, "Datasource is missing");
+		LOGGER.debug("Datasource's label is [" + dataSource.getLabel() + "]");
+		return dataSource;
+	}
 
 	private IDataSet getDataSetToEdit() {
 		if (datasetToEdit == null) {
 			String dataSetLabel = this.getAttributeAsString(INPUT_DATA_SET_LABEL);
 			LOGGER.debug("Input parameter " + INPUT_DATA_SET_LABEL + " is [" + dataSetLabel + "]");
-			Assert.assertTrue(StringUtilities.isNotEmpty(dataSetLabel), "Dataset to edit not specified");
+			Assert.assertTrue(StringUtils.isNotEmpty(dataSetLabel), "Dataset to edit not specified");
 			datasetToEdit = this.getDataSetServiceProxy().getDataSetByLabel(dataSetLabel);
 		}
 		return datasetToEdit;
 	}
-
 
 	@Override
 	public byte[] getAnalysisStateRowData() {

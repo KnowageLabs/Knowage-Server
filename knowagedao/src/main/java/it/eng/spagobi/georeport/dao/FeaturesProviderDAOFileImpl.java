@@ -25,6 +25,7 @@ import java.io.StringReader;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.geotools.feature.FeatureCollection;
 import org.geotools.feature.FeatureIterator;
@@ -33,7 +34,6 @@ import org.opengis.feature.Feature;
 import org.opengis.feature.simple.SimpleFeature;
 
 import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
-import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
@@ -84,7 +84,8 @@ public class FeaturesProviderDAOFileImpl extends AbstractHibernateDAO implements
 			LOGGER.debug("Parameter [" + GEOID_PVALUE + "] is equal to [" + geoIdPValue + "]");
 			Assert.assertNotNull(geoIdPName, "Parameter [" + GEOID_PNAME + "] cannot be null");
 
-			if (!((String) featureProviderEndPoint).equalsIgnoreCase(indexOnFile) || !geoIdPName.equalsIgnoreCase(indexOnAttribute)) {
+			if (!((String) featureProviderEndPoint).equalsIgnoreCase(indexOnFile)
+					|| !geoIdPName.equalsIgnoreCase(indexOnAttribute)) {
 				createIndex((String) featureProviderEndPoint, geoIdPName);
 			}
 
@@ -94,8 +95,8 @@ public class FeaturesProviderDAOFileImpl extends AbstractHibernateDAO implements
 		} catch (FeaturesProviderRuntimeException t) {
 			throw t;
 		} catch (Throwable t) {
-			throw new FeaturesProviderRuntimeException("An error occured while retrieving feature with id [" + geoIdPValue + "] from endpoint ["
-					+ featureProviderEndPoint + "]", t);
+			throw new FeaturesProviderRuntimeException("An error occured while retrieving feature with id ["
+					+ geoIdPValue + "] from endpoint [" + featureProviderEndPoint + "]", t);
 		} finally {
 			LOGGER.debug("OUT");
 		}
@@ -123,7 +124,8 @@ public class FeaturesProviderDAOFileImpl extends AbstractHibernateDAO implements
 		} catch (FeaturesProviderRuntimeException t) {
 			throw t;
 		} catch (Throwable t) {
-			throw new SpagoBIRuntimeException("An unexpected error occured while retrieving features from src file [" + srcFile + "]", t);
+			throw new SpagoBIRuntimeException(
+					"An unexpected error occured while retrieving features from src file [" + srcFile + "]", t);
 		} finally {
 			LOGGER.debug("OUT");
 		}
@@ -146,7 +148,8 @@ public class FeaturesProviderDAOFileImpl extends AbstractHibernateDAO implements
 		} catch (FeaturesProviderRuntimeException t) {
 			throw t;
 		} catch (Throwable t) {
-			throw new SpagoBIRuntimeException("An unexpected error occured while retrieving features from endpoint [" + featureProviderEndPoint + "]", t);
+			throw new SpagoBIRuntimeException("An unexpected error occured while retrieving features from endpoint ["
+					+ featureProviderEndPoint + "]", t);
 		} finally {
 			LOGGER.debug("OUT");
 		}
@@ -165,8 +168,8 @@ public class FeaturesProviderDAOFileImpl extends AbstractHibernateDAO implements
 		LOGGER.debug("IN");
 
 		try {
-			Assert.assertTrue(!StringUtilities.isEmpty(filename), "Input parameter [filename] cannot be null or empty");
-			Assert.assertTrue(!StringUtilities.isEmpty(geoIdPName), "Input parameter [filename] cannot be null or empty");
+			Assert.assertTrue(!StringUtils.isEmpty(filename), "Input parameter [filename] cannot be null or empty");
+			Assert.assertTrue(!StringUtils.isEmpty(geoIdPName), "Input parameter [filename] cannot be null or empty");
 
 			LOGGER.debug("Indexing file [" + filename + "] on attribute [" + geoIdPName + "] ...");
 
@@ -188,8 +191,9 @@ public class FeaturesProviderDAOFileImpl extends AbstractHibernateDAO implements
 			FeatureIterator iterator = featureCollection.features();
 			while (iterator.hasNext()) {
 				Feature feature = iterator.next();
-				if ((feature instanceof SimpleFeature) == false) {
-					throw new FeaturesProviderRuntimeException("Feature [" + feature.getIdentifier() + "] is not a simple feature");
+				if (!(feature instanceof SimpleFeature)) {
+					throw new FeaturesProviderRuntimeException(
+							"Feature [" + feature.getIdentifier() + "] is not a simple feature");
 				}
 
 				SimpleFeature simpleFeature = (SimpleFeature) feature;
@@ -207,7 +211,8 @@ public class FeaturesProviderDAOFileImpl extends AbstractHibernateDAO implements
 		} catch (Throwable t) {
 			indexOnAttribute = null;
 			lookupTable = null;
-			throw new SpagoBIRuntimeException("An unexpected error occured while creating index on file [" + filename + "]", t);
+			throw new SpagoBIRuntimeException(
+					"An unexpected error occured while creating index on file [" + filename + "]", t);
 		} finally {
 			LOGGER.debug("OUT");
 		}
@@ -221,8 +226,9 @@ public class FeaturesProviderDAOFileImpl extends AbstractHibernateDAO implements
 		try {
 			Assert.assertNotNull(targetFile, "Input parameter [targetFile] cannot be null");
 
-			if (targetFile.exists() == false && targetFile.canRead() == false) {
-				throw new FeaturesProviderRuntimeException("Impossible to load features. File [" + targetFile + "] cannot be read");
+			if (!targetFile.exists() && !targetFile.canRead()) {
+				throw new FeaturesProviderRuntimeException(
+						"Impossible to load features. File [" + targetFile + "] cannot be read");
 			}
 			String featureStr = null;
 			try (BufferedReader reader = new BufferedReader(new FileReader(targetFile))) {

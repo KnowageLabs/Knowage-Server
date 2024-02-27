@@ -56,13 +56,14 @@ public class GroupConverter extends CommonJSON implements IConverter<List<Abstra
 	 */
 	@Override
 	public List<AbstractSelectionField> convert(JSONObject aggregations) {
-		Map<String, String> columnAliasToName = new HashMap<String, String>();
+		Map<String, String> columnAliasToName = new HashMap<>();
 
 		try {
 			Map<String, Object> optionMap = new HashMap<>();
 			loadColumnAliasToName(getCategories(aggregations), columnAliasToName);
 			loadColumnAliasToName(getMeasures(aggregations), columnAliasToName);
-			return getGroups(dataset, getCategories(aggregations), getMeasures(aggregations), columnAliasToName, hasSolrFacetPivotOption(dataset, optionMap));
+			return getGroups(dataset, getCategories(aggregations), getMeasures(aggregations), columnAliasToName,
+					hasSolrFacetPivotOption(dataset, optionMap));
 		} catch (JSONException e) {
 
 		}
@@ -80,8 +81,8 @@ public class GroupConverter extends CommonJSON implements IConverter<List<Abstra
 		return dataSet instanceof SolrDataSet;
 	}
 
-	private List<AbstractSelectionField> getGroups(IDataSet dataSet, JSONArray categories, JSONArray measures, Map<String, String> columnAliasToName,
-			boolean forceGroups) throws JSONException {
+	private List<AbstractSelectionField> getGroups(IDataSet dataSet, JSONArray categories, JSONArray measures,
+			Map<String, String> columnAliasToName, boolean forceGroups) throws JSONException {
 		ArrayList<AbstractSelectionField> groups = new ArrayList<>(0);
 
 		// hasAggregationInCategory se categoria di aggregazione del for ha una funzione di aggregazione
@@ -91,7 +92,8 @@ public class GroupConverter extends CommonJSON implements IConverter<List<Abstra
 		for (int i = 0; i < categories.length(); i++) {
 			JSONObject category = categories.getJSONObject(i);
 			String functionName = category.optString("funct");
-			if (forceGroups || hasAggregatedMeasures || hasAggregationInCategory(category) || hasCountAggregation(functionName)) {
+			if (forceGroups || hasAggregatedMeasures || hasAggregationInCategory(category)
+					|| hasCountAggregation(functionName)) {
 				Projection projection = getProjection(dataSet, category, columnAliasToName);
 				groups.add(projection);
 			}
@@ -122,7 +124,7 @@ public class GroupConverter extends CommonJSON implements IConverter<List<Abstra
 		return false;
 	}
 
-	private boolean hasAggregationInCategory(JSONObject field) throws JSONException {
+	private boolean hasAggregationInCategory(JSONObject field) {
 		String functionName = field.optString("funct");
 		if (!AggregationFunctions.get(functionName).getName().equals(AggregationFunctions.NONE)) {
 			return true;

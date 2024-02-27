@@ -27,65 +27,56 @@ import it.eng.spagobi.commons.dao.ISpagoBIDao;
 
 public interface IMetaModelViewpointDAO extends ISpagoBIDao {
 	/**
-	 * Loads all detail information for a viewpoint identified by its <code>name</code> and relevant meta model identifier. All these information are stored
-	 * into a <code>Viewpoint</code> object, which is returned.
+	 * Loads all detail information for a viewpoint identified by its <code>name</code> and relevant meta model identifier. All these information are stored into a
+	 * <code>Viewpoint</code> object, which is returned.
 	 *
-	 * @param name
-	 *            The name for the viewpoint to load
-	 * @param name
-	 *            The id of the meta model
+	 * @param name The name for the viewpoint to load
+	 * @param name The id of the meta model
 	 *
 	 * @return A <code>Viewpoint</code> object containing all loaded information
 	 *
-	 * @throws EMFUserError
-	 *             If an Exception occurred
+	 * @throws EMFUserError If an Exception occurred
 	 */
-	public Viewpoint loadViewpointByNameAndMetaModelId(String name, Integer metaModelId) throws EMFUserError;
+	Viewpoint loadViewpointByNameAndMetaModelId(String name, Integer metaModelId) throws EMFUserError;
 
 	/**
 	 * Implements the query to insert a viewpoint. All information needed is stored into the input <code>Viewpoint</code> object.
 	 *
-	 * @param viewpoint
-	 *            the viewpoint
+	 * @param viewpoint the viewpoint
 	 *
-	 * @throws EMFUserError
-	 *             If an Exception occurred
+	 * @throws EMFUserError If an Exception occurred
 	 */
-	public void insertMetaModelViewpoint(Viewpoint viewpoint) throws EMFUserError;
+	void insertMetaModelViewpoint(Viewpoint viewpoint) throws EMFUserError;
 
 	/**
 	 * Loads all detail information for all viewpoints of a object specified accessibile to the user profile at input. For each of them, detail information is
 	 * stored into a <code>ViewPoint</code> object. After that, all value constraints are stored into a <code>List</code>, which is returned.
 	 *
 	 * @return A list containing all viewpoints objects
-	 * @throws EMFUserError
-	 *             If an Exception occurred
+	 * @throws EMFUserError If an Exception occurred
 	 */
-	public List loadAccessibleViewpointsByMetaModelId(Integer metaModelId, IEngUserProfile userProfile) throws EMFUserError;
+	List<Viewpoint> loadAccessibleViewpointsByMetaModelId(Integer metaModelId, IEngUserProfile userProfile)
+			throws EMFUserError;
 
 	/**
-	 * Loads all detail information for a viewpoint identified by its <code>id</code>. All these information are stored into a <code>Viewpoint</code> object,
-	 * which is returned.
+	 * Loads all detail information for a viewpoint identified by its <code>id</code>. All these information are stored into a <code>Viewpoint</code> object, which
+	 * is returned.
 	 *
-	 * @param id
-	 *            The id for the viewpoint to load
+	 * @param id The id for the viewpoint to load
 	 *
 	 * @return A <code>Viewpoint</code> object containing all loaded information
 	 *
-	 * @throws EMFUserError
-	 *             If an Exception occurred
+	 * @throws EMFUserError If an Exception occurred
 	 */
-	public Viewpoint loadViewpointByID(Integer id) throws EMFUserError;
+	Viewpoint loadViewpointByID(Integer id) throws EMFUserError;
 
 	/**
 	 * Implements the query to erase a viewpoint. All information needed is stored into the input <code>Viewpoint</code> object.
 	 *
-	 * @param ID
-	 *            The identifier of viewpoint
+	 * @param ID The identifier of viewpoint
 	 *
-	 * @throws EMFUserError
-	 *             If an Exception occurred
+	 * @throws EMFUserError If an Exception occurred
 	 */
-	public void eraseViewpoint(Integer id) throws EMFUserError;
+	void eraseViewpoint(Integer id) throws EMFUserError;
 
 }

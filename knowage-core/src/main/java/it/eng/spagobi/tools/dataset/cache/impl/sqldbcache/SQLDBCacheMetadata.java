@@ -28,6 +28,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 
 import com.hazelcast.core.IMap;
@@ -36,7 +37,6 @@ import it.eng.spagobi.cache.dao.ICacheDAO;
 import it.eng.spagobi.cache.metadata.SbiCacheItem;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
-import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.tools.dataset.cache.CacheException;
 import it.eng.spagobi.tools.dataset.cache.ICacheMetadata;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
@@ -61,25 +61,26 @@ public class SQLDBCacheMetadata implements ICacheMetadata {
 
 	SQLDBCacheConfiguration cacheConfiguration;
 
-	private BigDecimal totalMemory;
+	private final BigDecimal totalMemory;
 
 	private boolean isActiveCleanAction = false;
-	private Integer cachePercentageToClean;
-	private Integer cacheDsLastAccessTtl;
-	private Integer cachePercentageToStore;
+	private final Integer cachePercentageToClean;
+	private final Integer cacheDsLastAccessTtl;
+	private final Integer cachePercentageToStore;
 
 	private static Logger logger = Logger.getLogger(SQLDBCacheMetadata.class);
 
 	public SQLDBCacheMetadata(SQLDBCacheConfiguration cacheConfiguration) {
 		this.cacheConfiguration = cacheConfiguration;
-			totalMemory = this.cacheConfiguration.getCacheSpaceAvailable();
-			cachePercentageToClean = this.cacheConfiguration.getCachePercentageToClean();
-			cacheDsLastAccessTtl = this.cacheConfiguration.getCacheDsLastAccessTtl();
-			cachePercentageToStore = this.cacheConfiguration.getCachePercentageToStore();
+		totalMemory = this.cacheConfiguration.getCacheSpaceAvailable();
+		cachePercentageToClean = this.cacheConfiguration.getCachePercentageToClean();
+		cacheDsLastAccessTtl = this.cacheConfiguration.getCacheDsLastAccessTtl();
+		cachePercentageToStore = this.cacheConfiguration.getCachePercentageToStore();
 
 		String tableNamePrefix = this.cacheConfiguration.getTableNamePrefix();
-		if (StringUtilities.isEmpty(tableNamePrefix)) {
-			throw new CacheException("An unexpected error occured while initializing cache metadata: SPAGOBI.CACHE.NAMEPREFIX cannot be empty");
+		if (StringUtils.isEmpty(tableNamePrefix)) {
+			throw new CacheException(
+					"An unexpected error occured while initializing cache metadata: SPAGOBI.CACHE.NAMEPREFIX cannot be empty");
 		}
 
 		// Cleaning behavior now is driven by totalMemory value
@@ -110,7 +111,8 @@ public class SQLDBCacheMetadata implements ICacheMetadata {
 	@Override
 	public BigDecimal getUsedMemory() throws DataBaseException {
 		CacheDataBase dataBase = DataBaseFactory.getCacheDataBase(cacheConfiguration.getCacheDataSource());
-		BigDecimal usedMemory = DatabaseUtilities.getUsedMemorySize(dataBase, cacheConfiguration.getSchema(), cacheConfiguration.getTableNamePrefix());
+		BigDecimal usedMemory = DatabaseUtilities.getUsedMemorySize(dataBase, cacheConfiguration.getSchema(),
+				cacheConfiguration.getTableNamePrefix());
 		logger.debug("Used memory is equal to [" + usedMemory + "]");
 		return usedMemory;
 	}
@@ -144,7 +146,9 @@ public class SQLDBCacheMetadata implements ICacheMetadata {
 	public Integer getAvailableMemoryAsPercentage() throws DataBaseException {
 		Integer toReturn = 0;
 		BigDecimal spaceAvailable = getAvailableMemory();
-		toReturn = Integer.valueOf(((spaceAvailable.multiply(new BigDecimal(100)).divide(getTotalMemory(), RoundingMode.HALF_UP)).intValue()));
+		toReturn = Integer
+				.valueOf(((spaceAvailable.multiply(new BigDecimal(100)).divide(getTotalMemory(), RoundingMode.HALF_UP))
+						.intValue()));
 		return toReturn;
 	}
 
@@ -197,27 +201,29 @@ public class SQLDBCacheMetadata implements ICacheMetadata {
 	}
 
 	@Override
-	public void addCacheItem(String dataSetName, String resultsetSignature, Map<String, Object> properties, String tableName, IDataStore resultset) {
+	public void addCacheItem(String dataSetName, String resultsetSignature, Map<String, Object> properties,
+			String tableName, IDataStore resultset) {
 		addCacheItem(dataSetName, resultsetSignature, properties, tableName, getRequiredMemory(resultset));
 	}
 
 	@Override
 	public void addCacheItem(String dataSetName, String resultsetSignature, String tableName, BigDecimal dimension) {
-		addCacheItem(dataSetName, resultsetSignature, new HashMap<String, Object>(0), tableName, dimension);
+		addCacheItem(dataSetName, resultsetSignature, new HashMap<>(0), tableName, dimension);
 	}
 
 	/**
 	 * Add cache item.
 	 *
-	 * TODO : a call to {@link #removeCacheItem(String)} or {@link #removeCacheItem(String, boolean)} before this method
-	 * is actually a requirement.
+	 * TODO : a call to {@link #removeCacheItem(String)} or {@link #removeCacheItem(String, boolean)} before this method is actually a requirement.
 	 */
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
-	public void addCacheItem(String dataSetName, String resultsetSignature, Map<String, Object> properties, String tableName, BigDecimal dimension) {
+	public void addCacheItem(String dataSetName, String resultsetSignature, Map<String, Object> properties,
+			String tableName, BigDecimal dimension) {
 		String hashedSignature = Helper.sha256(resultsetSignature);
 
-		IMap mapLocks = DistributedLockFactory.getDistributedMap(SpagoBIConstants.DISTRIBUTED_MAP_INSTANCE_NAME, SpagoBIConstants.DISTRIBUTED_MAP_FOR_CACHE);
+		IMap mapLocks = DistributedLockFactory.getDistributedMap(SpagoBIConstants.DISTRIBUTED_MAP_INSTANCE_NAME,
+				SpagoBIConstants.DISTRIBUTED_MAP_FOR_CACHE);
 		mapLocks.lock(hashedSignature); // it is possible to use also the method tryLock(...) with timeout parameter
 		try {
 			CacheItem item = new CacheItem();
@@ -231,8 +237,8 @@ public class SQLDBCacheMetadata implements ICacheMetadata {
 			item.setProperties(properties);
 			cacheDao.insertCacheItem(item);
 
-			logger.debug("Added cacheItem : [ Name: " + item.getName() + " \n Signature: " + item.getSignature() + " \n Dimension: " + item.getDimension()
-					+ " bytes (approximately)  ]");
+			logger.debug("Added cacheItem : [ Name: " + item.getName() + " \n Signature: " + item.getSignature()
+					+ " \n Dimension: " + item.getDimension() + " bytes (approximately)  ]");
 		} finally {
 			mapLocks.unlock(hashedSignature);
 		}
@@ -242,7 +248,8 @@ public class SQLDBCacheMetadata implements ICacheMetadata {
 	public void updateCacheItem(CacheItem cacheItem) {
 		String hashedSignature = cacheItem.getSignature();
 
-		IMap mapLocks = DistributedLockFactory.getDistributedMap(SpagoBIConstants.DISTRIBUTED_MAP_INSTANCE_NAME, SpagoBIConstants.DISTRIBUTED_MAP_FOR_CACHE);
+		IMap mapLocks = DistributedLockFactory.getDistributedMap(SpagoBIConstants.DISTRIBUTED_MAP_INSTANCE_NAME,
+				SpagoBIConstants.DISTRIBUTED_MAP_FOR_CACHE);
 		mapLocks.lock(hashedSignature); // it is possible to use also the method tryLock(...) with timeout parameter
 		try {
 			if (containsCacheItem(hashedSignature, true)) {
@@ -257,8 +264,7 @@ public class SQLDBCacheMetadata implements ICacheMetadata {
 	}
 
 	/**
-	 * Updates all items in sbi_cache_item setting the correct dimension calculated
-	 * on the effective DB space occupation.
+	 * Updates all items in sbi_cache_item setting the correct dimension calculated on the effective DB space occupation.
 	 *
 	 */
 	@Override
@@ -266,8 +272,8 @@ public class SQLDBCacheMetadata implements ICacheMetadata {
 		List<CacheItem> cacheItems = getAllCacheItems();
 		for (CacheItem cacheItem : cacheItems) {
 			try {
-				cacheItem.setDimension(DatabaseUtilities.getUsedMemorySize(
-				            				DataBaseFactory.getCacheDataBase(dataSource), "cache", cacheItem.getTable()));
+				cacheItem.setDimension(DatabaseUtilities.getUsedMemorySize(DataBaseFactory.getCacheDataBase(dataSource),
+						"cache", cacheItem.getTable()));
 			} catch (DataBaseException e) {
 				logger.error("Error updating cacheitem [" + cacheItem.getTable() + "]", e);
 				throw new SpagoBIRuntimeException("Error updating cacheitem [" + cacheItem.getTable() + "]", e);
@@ -285,14 +291,17 @@ public class SQLDBCacheMetadata implements ICacheMetadata {
 		Set<String> ret = Collections.emptySet();
 		String hashedSignature = Helper.sha256(signature);
 
-		IMap mapLocks = DistributedLockFactory.getDistributedMap(SpagoBIConstants.DISTRIBUTED_MAP_INSTANCE_NAME, SpagoBIConstants.DISTRIBUTED_MAP_FOR_CACHE);
+		IMap mapLocks = DistributedLockFactory.getDistributedMap(SpagoBIConstants.DISTRIBUTED_MAP_INSTANCE_NAME,
+				SpagoBIConstants.DISTRIBUTED_MAP_FOR_CACHE);
 		mapLocks.lock(hashedSignature); // it is possible to use also the method tryLock(...) with timeout parameter
 		try {
 			if (containsCacheItem(signature)) {
 				ret = getTableNameSet(cacheDao.deleteCacheItemBySignature(hashedSignature));
-				logger.debug("The dataset with signature[" + signature + "] and hash [" + hashedSignature + "] has been updated");
+				logger.debug("The dataset with signature[" + signature + "] and hash [" + hashedSignature
+						+ "] has been updated");
 			} else {
-				logger.debug("The dataset with signature[" + signature + "] and hash [" + hashedSignature + "] does not exist in cache");
+				logger.debug("The dataset with signature[" + signature + "] and hash [" + hashedSignature
+						+ "] does not exist in cache");
 			}
 		} finally {
 			mapLocks.unlock(hashedSignature);
@@ -342,14 +351,17 @@ public class SQLDBCacheMetadata implements ICacheMetadata {
 
 		String hashedSignature = Helper.sha256(resultSetSignature);
 
-		IMap mapLocks = DistributedLockFactory.getDistributedMap(SpagoBIConstants.DISTRIBUTED_MAP_INSTANCE_NAME, SpagoBIConstants.DISTRIBUTED_MAP_FOR_CACHE);
+		IMap mapLocks = DistributedLockFactory.getDistributedMap(SpagoBIConstants.DISTRIBUTED_MAP_INSTANCE_NAME,
+				SpagoBIConstants.DISTRIBUTED_MAP_FOR_CACHE);
 		mapLocks.lock(hashedSignature); // it is possible to use also the method tryLock(...) with timeout parameter
 		try {
 			cacheItem = cacheDao.loadCacheItemBySignature(hashedSignature);
 			if (cacheItem != null) {
-				logger.debug("The dataset with signature[" + resultSetSignature + "] and hash [" + hashedSignature + "] has been found in cache");
+				logger.debug("The dataset with signature[" + resultSetSignature + "] and hash [" + hashedSignature
+						+ "] has been found in cache");
 			} else {
-				logger.debug("The dataset with signature[" + resultSetSignature + "] and hash [" + hashedSignature + "] does not exist in cache");
+				logger.debug("The dataset with signature[" + resultSetSignature + "] and hash [" + hashedSignature
+						+ "] does not exist in cache");
 			}
 		} finally {
 			mapLocks.unlock(hashedSignature);
@@ -404,7 +416,7 @@ public class SQLDBCacheMetadata implements ICacheMetadata {
 
 	@Override
 	public List<String> getSignatures() {
-		List<String> signatures = new ArrayList<String>();
+		List<String> signatures = new ArrayList<>();
 		List<CacheItem> cacheItems = cacheDao.loadAllCacheItems();
 		for (CacheItem item : cacheItems) {
 			signatures.add(item.getSignature());
@@ -422,9 +434,7 @@ public class SQLDBCacheMetadata implements ICacheMetadata {
 	}
 
 	private Set<String> getTableNameSet(List<SbiCacheItem> cacheItems) {
-		return cacheItems.stream()
-				.map(SbiCacheItem::getTableName)
-				.collect(Collectors.toSet());
+		return cacheItems.stream().map(SbiCacheItem::getTableName).collect(Collectors.toSet());
 	}
 
 }

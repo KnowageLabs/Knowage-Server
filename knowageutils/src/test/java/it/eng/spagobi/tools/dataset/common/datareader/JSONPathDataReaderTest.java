@@ -28,6 +28,7 @@ import static java.util.Calendar.SECOND;
 import static java.util.Calendar.YEAR;
 
 import java.io.IOException;
+import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -345,4 +346,59 @@ public class JSONPathDataReaderTest extends TestCase {
 		return HelperForTest.readFile("dataReader-test.json", JSONPathDataReaderTest.class);
 	}
 
+	public void testNormalizeTimestamp() {
+		Timestamp t = new Timestamp(System.currentTimeMillis());
+		Object normalizedTimestamp = JSONPathDataReader.normalizeTimestamp(t);
+		assertEquals(t, normalizedTimestamp);
+	}
+
+	/**
+	 * Test normalize method with a string such as "2024-02-13 15:45:53"
+	 */
+	public void testNormalizeTimestampISO1() {
+		Object object = JSONPathDataReader.normalizeTimestamp("2024-02-13 15:45:53");
+		assertTrue(object instanceof Timestamp);
+		Timestamp normalizedTimestamp = (Timestamp) object;
+		assertEquals(2024, normalizedTimestamp.getYear() + 1900);
+		assertEquals(2, normalizedTimestamp.getMonth() + 1);
+		assertEquals(13, normalizedTimestamp.getDate());
+		assertEquals(15, normalizedTimestamp.getHours());
+		assertEquals(45, normalizedTimestamp.getMinutes());
+		assertEquals(53, normalizedTimestamp.getSeconds());
+
+		object = JSONPathDataReader.normalizeTimestamp("2024-11-06 09:05:11");
+		assertTrue(object instanceof Timestamp);
+		normalizedTimestamp = (Timestamp) object;
+		assertEquals(2024, normalizedTimestamp.getYear() + 1900);
+		assertEquals(11, normalizedTimestamp.getMonth() + 1);
+		assertEquals(6, normalizedTimestamp.getDate());
+		assertEquals(9, normalizedTimestamp.getHours());
+		assertEquals(5, normalizedTimestamp.getMinutes());
+		assertEquals(11, normalizedTimestamp.getSeconds());
+	}
+
+	/**
+	 * Test normalize method with a string such as "2024-02-13T15:45:53" (ISO 8601)
+	 */
+	public void testNormalizeTimestampISO2() {
+		Object object = JSONPathDataReader.normalizeTimestamp("2024-02-13T15:45:53");
+		assertTrue(object instanceof Timestamp);
+		Timestamp normalizedTimestamp = (Timestamp) object;
+		assertEquals(2024, normalizedTimestamp.getYear() + 1900);
+		assertEquals(2, normalizedTimestamp.getMonth() + 1);
+		assertEquals(13, normalizedTimestamp.getDate());
+		assertEquals(15, normalizedTimestamp.getHours());
+		assertEquals(45, normalizedTimestamp.getMinutes());
+		assertEquals(53, normalizedTimestamp.getSeconds());
+
+		object = JSONPathDataReader.normalizeTimestamp("2024-11-06T09:05:11");
+		assertTrue(object instanceof Timestamp);
+		normalizedTimestamp = (Timestamp) object;
+		assertEquals(2024, normalizedTimestamp.getYear() + 1900);
+		assertEquals(11, normalizedTimestamp.getMonth() + 1);
+		assertEquals(6, normalizedTimestamp.getDate());
+		assertEquals(9, normalizedTimestamp.getHours());
+		assertEquals(5, normalizedTimestamp.getMinutes());
+		assertEquals(11, normalizedTimestamp.getSeconds());
+	}
 }

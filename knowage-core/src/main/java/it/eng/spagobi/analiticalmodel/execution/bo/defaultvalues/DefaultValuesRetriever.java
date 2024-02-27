@@ -37,7 +37,6 @@ import it.eng.spagobi.analiticalmodel.document.handlers.LovResultCacheManager;
 import it.eng.spagobi.analiticalmodel.execution.bo.LovValue;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.AbstractDriver;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
-import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.ObjParuse;
 import it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail;
 import it.eng.spagobi.behaviouralmodel.lov.bo.LovResultHandler;
 import it.eng.spagobi.tools.catalogue.bo.MetaModel;
@@ -46,22 +45,24 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 public class DefaultValuesRetriever {
 
-	private static Logger logger = Logger.getLogger(DefaultValuesRetriever.class);
+	private static final Logger LOGGER = Logger.getLogger(DefaultValuesRetriever.class);
 
-	public DefaultValuesList getDefaultValues(BIObjectParameter analyticalDocumentParameter, ExecutionInstance executionInstance, IEngUserProfile profile) {
-		logger.debug("IN");
+	public DefaultValuesList getDefaultValues(BIObjectParameter analyticalDocumentParameter,
+			ExecutionInstance executionInstance, IEngUserProfile profile) {
+		LOGGER.debug("IN");
 		DefaultValuesList defaultValues = null;
 		try {
 			ILovDetail lovForDefault = executionInstance.getLovDetailForDefault(analyticalDocumentParameter);
 			if (lovForDefault != null) {
-				logger.debug("A LOV for default values is defined : " + lovForDefault);
+				LOGGER.debug("A LOV for default values is defined : " + lovForDefault);
 				defaultValues = getDefaultValuesFromDefaultLov(executionInstance, profile, lovForDefault);
 			} else {
-				logger.debug("No LOV for default values defined");
+				LOGGER.debug("No LOV for default values defined");
 				String formulaForDefault = analyticalDocumentParameter.getParameter().getDefaultFormula();
 				if (formulaForDefault != null) {
 					IDefaultFormula defaultFormula = DefaultFormulas.get(formulaForDefault);
-					defaultValues = defaultFormula.getDefaultValues(analyticalDocumentParameter, executionInstance, profile);
+					defaultValues = defaultFormula.getDefaultValues(analyticalDocumentParameter, executionInstance,
+							profile);
 				}
 			}
 		} catch (Exception e) {
@@ -70,22 +71,23 @@ public class DefaultValuesRetriever {
 		if (defaultValues == null) {
 			defaultValues = new DefaultValuesList();
 		}
-		logger.debug("OUT");
+		LOGGER.debug("OUT");
 		return defaultValues;
 	}
 
-	protected DefaultValuesList getDefaultValuesFromDefaultLov(ExecutionInstance executionInstance, IEngUserProfile profile, ILovDetail lovForDefault)
-			throws Exception, SourceBeanException {
-		logger.debug("IN");
+	protected DefaultValuesList getDefaultValuesFromDefaultLov(ExecutionInstance executionInstance,
+			IEngUserProfile profile, ILovDetail lovForDefault) throws Exception {
+		LOGGER.debug("IN");
 		DefaultValuesList defaultValues = new DefaultValuesList();
 
 		// get from cache, if available
 		LovResultCacheManager executionCacheManager = new LovResultCacheManager();
-		String lovResult = executionCacheManager.getLovResult(profile, lovForDefault, new ArrayList<ObjParuse>(), executionInstance, true);
+		String lovResult = executionCacheManager.getLovResult(profile, lovForDefault, new ArrayList<>(),
+				executionInstance, true);
 		LovResultHandler lovResultHandler = new LovResultHandler(lovResult);
 		List rows = lovResultHandler.getRows();
-		logger.debug("LOV result retrieved without errors");
-		logger.debug("LOV contains " + rows.size() + " values");
+		LOGGER.debug("LOV result retrieved without errors");
+		LOGGER.debug("LOV contains " + rows.size() + " values");
 		Iterator it = rows.iterator();
 		String valueColumn = lovForDefault.getValueColumnName();
 		String descriptionColumn = lovForDefault.getDescriptionColumnName();
@@ -96,18 +98,20 @@ public class DefaultValuesRetriever {
 			defaultValue.setDescription(row.getAttribute(descriptionColumn));
 			defaultValues.add(defaultValue);
 		}
-		logger.debug("OUT");
+		LOGGER.debug("OUT");
 		return defaultValues;
 	}
 
-	public DefaultValuesList getDefaultQueryValues(BIObjectParameter biparam, ExecutionInstance executionInstance, IEngUserProfile userProfile) {
+	public DefaultValuesList getDefaultQueryValues(BIObjectParameter biparam, ExecutionInstance executionInstance,
+			IEngUserProfile userProfile) {
 
 		LovResultCacheManager executionCacheManager = new LovResultCacheManager();
 		ILovDetail lovProvDet = executionInstance.getLovDetail(biparam);
 		String columnName = null;
 		String lovResult = null;
 		try {
-			lovResult = executionCacheManager.getLovResult(userProfile, lovProvDet, executionInstance.getDependencies(biparam), executionInstance, true);
+			lovResult = executionCacheManager.getLovResult(userProfile, lovProvDet,
+					executionInstance.getDependencies(biparam), executionInstance, true);
 
 			columnName = lovProvDet.getValueColumnName();
 		} catch (Exception e) {
@@ -141,8 +145,9 @@ public class DefaultValuesRetriever {
 	 * GET DEFAULT VALUE FROM DOCUMENT_URL_MANAGER
 	 */
 
-	public DefaultValuesList getDefaultValuesDum(AbstractDriver driver, IDrivableBIResource object, IEngUserProfile profile, Locale locale, String role) {
-		logger.debug("IN");
+	public DefaultValuesList getDefaultValuesDum(AbstractDriver driver, IDrivableBIResource object,
+			IEngUserProfile profile, Locale locale, String role) {
+		LOGGER.debug("IN");
 		AbstractBIResourceRuntime dum = null;
 		if (object instanceof BIObject) {
 			dum = new DocumentRuntime(profile, locale);
@@ -153,10 +158,10 @@ public class DefaultValuesRetriever {
 		try {
 			ILovDetail lovForDefault = dum.getLovDetailForDefault(driver);
 			if (lovForDefault != null) {
-				logger.debug("A LOV for default values is defined : " + lovForDefault);
+				LOGGER.debug("A LOV for default values is defined : " + lovForDefault);
 				defaultValues = getDefaultValuesFromDefaultLovDum(object, profile, lovForDefault, locale);
 			} else {
-				logger.debug("No LOV for default values defined");
+				LOGGER.debug("No LOV for default values defined");
 				String formulaForDefault = driver.getParameter().getDefaultFormula();
 				if (formulaForDefault != null) {
 					IDefaultFormulaDum defaultFormulaDum = DefaultFormulasDum.get(formulaForDefault);
@@ -169,22 +174,23 @@ public class DefaultValuesRetriever {
 		if (defaultValues == null) {
 			defaultValues = new DefaultValuesList();
 		}
-		logger.debug("OUT");
+		LOGGER.debug("OUT");
 		return defaultValues;
 	}
 
-	protected DefaultValuesList getDefaultValuesFromDefaultLovDum(IDrivableBIResource object, IEngUserProfile profile, ILovDetail lovForDefault, Locale locale)
-			throws Exception, SourceBeanException {
-		logger.debug("IN");
+	protected DefaultValuesList getDefaultValuesFromDefaultLovDum(IDrivableBIResource object, IEngUserProfile profile,
+			ILovDetail lovForDefault, Locale locale) throws Exception {
+		LOGGER.debug("IN");
 		DefaultValuesList defaultValues = new DefaultValuesList();
 
 		// get from cache, if available
 		LovResultCacheManager executionCacheManager = new LovResultCacheManager();
-		String lovResult = executionCacheManager.getLovResultDum(profile, lovForDefault, new ArrayList<ObjParuse>(), object, true, locale);
+		String lovResult = executionCacheManager.getLovResultDum(profile, lovForDefault, new ArrayList<>(), object,
+				true, locale);
 		LovResultHandler lovResultHandler = new LovResultHandler(lovResult);
 		List rows = lovResultHandler.getRows();
-		logger.debug("LOV result retrieved without errors");
-		logger.debug("LOV contains " + rows.size() + " values");
+		LOGGER.debug("LOV result retrieved without errors");
+		LOGGER.debug("LOV contains " + rows.size() + " values");
 		Iterator it = rows.iterator();
 		String valueColumn = lovForDefault.getValueColumnName();
 		String descriptionColumn = lovForDefault.getDescriptionColumnName();
@@ -195,23 +201,24 @@ public class DefaultValuesRetriever {
 			defaultValue.setDescription(row.getAttribute(descriptionColumn));
 			defaultValues.add(defaultValue);
 		}
-		logger.debug("OUT");
+		LOGGER.debug("OUT");
 		return defaultValues;
 	}
 
-	public DefaultValuesList getDefaultQueryValuesDum(AbstractDriver biparam, AbstractBIResourceRuntime dum, IEngUserProfile userProfile,
-			IDrivableBIResource object, Locale locale, String role) {
+	public DefaultValuesList getDefaultQueryValuesDum(AbstractDriver biparam, AbstractBIResourceRuntime dum,
+			IEngUserProfile userProfile, IDrivableBIResource object, Locale locale, String role) {
 
 		LovResultCacheManager executionCacheManager = new LovResultCacheManager();
 		ILovDetail lovProvDet = dum.getLovDetail(biparam);
 		String columnName = null;
 		String lovResult = null;
 		try {
-			lovResult = executionCacheManager.getLovResultDum(userProfile, lovProvDet, dum.getDependencies(biparam, role), object, true, locale);
+			lovResult = executionCacheManager.getLovResultDum(userProfile, lovProvDet,
+					dum.getDependencies(biparam, role), object, true, locale);
 
 			columnName = lovProvDet.getValueColumnName();
 		} catch (Exception e) {
-			logger.error(e.getMessage());
+			LOGGER.error(e.getMessage());
 		}
 
 		// get all the rows of the result
@@ -219,7 +226,7 @@ public class DefaultValuesRetriever {
 		try {
 			lovResultHandler = new LovResultHandler(lovResult);
 		} catch (SourceBeanException e) {
-			logger.error(e.getMessage());
+			LOGGER.error(e.getMessage());
 		}
 
 		DefaultValuesList defaultValuesList = new DefaultValuesList();

@@ -51,7 +51,7 @@ public class DocumentExecutionSnapshot extends AbstractSpagoBIResource {
 	@Path("/getSnapshots")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
 	public Response getSnapshots(@QueryParam("id") Integer biobjectId, @Context HttpServletRequest req) {
-		HashMap<String, Object> resultAsMap = new HashMap<String, Object>();
+		HashMap<String, Object> resultAsMap = new HashMap<>();
 		List<SnapshotMainInfo> snapshotsList = null;
 		try {
 			snapshotsList = DAOFactory.getSnapshotDAO().getSnapshotMainInfos(biobjectId);
@@ -59,7 +59,8 @@ public class DocumentExecutionSnapshot extends AbstractSpagoBIResource {
 			throw new SpagoBIServiceException("Cannot load scheduled executions", e);
 		}
 		resultAsMap.put("schedulers", snapshotsList);
-		resultAsMap.put("urlPath", GeneralUtilities.getSpagoBIProfileBaseUrl(this.getUserProfile().getUserUniqueIdentifier().toString()));
+		resultAsMap.put("urlPath",
+				GeneralUtilities.getSpagoBIProfileBaseUrl(this.getUserProfile().getUserUniqueIdentifier().toString()));
 		return Response.ok(resultAsMap).build();
 	}
 
@@ -78,22 +79,24 @@ public class DocumentExecutionSnapshot extends AbstractSpagoBIResource {
 	@GET
 	@Path("/getSnapshotsForSchedulationAndDocument")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
-	public Response getSnapshotsForSchedulationAndDocument(@QueryParam("id") Integer biobjectId, @QueryParam("scheduler") String scheduler,
-			@Context HttpServletRequest req) {
-		HashMap<String, Object> resultAsMap = new HashMap<String, Object>();
+	public Response getSnapshotsForSchedulationAndDocument(@QueryParam("id") Integer biobjectId,
+			@QueryParam("scheduler") String scheduler, @Context HttpServletRequest req) {
+		HashMap<String, Object> resultAsMap = new HashMap<>();
 
 		// workaround , should pass an Id or a label cause name cannot contain spaces otherwise
 		scheduler = scheduler.replaceAll("%2520", " ");
 
 		List<Snapshot> snapshotsList = null;
 		try {
-			snapshotsList = DAOFactory.getSnapshotDAO().getSnapshotsForSchedulationAndDocument(biobjectId, scheduler, false);
+			snapshotsList = DAOFactory.getSnapshotDAO().getSnapshotsForSchedulationAndDocument(biobjectId, scheduler,
+					false);
 		} catch (EMFUserError e) {
 			throw new SpagoBIServiceException("Cannot load scheduled executions", e);
 		}
 
 		resultAsMap.put("schedulers", snapshotsList);
-		resultAsMap.put("urlPath", GeneralUtilities.getSpagoBIProfileBaseUrl(this.getUserProfile().getUserUniqueIdentifier().toString()));
+		resultAsMap.put("urlPath",
+				GeneralUtilities.getSpagoBIProfileBaseUrl(this.getUserProfile().getUserUniqueIdentifier().toString()));
 
 		return Response.ok(resultAsMap).build();
 	}
@@ -101,9 +104,10 @@ public class DocumentExecutionSnapshot extends AbstractSpagoBIResource {
 	@GET
 	@Path("/getSnapshotContent")
 	@Produces("application/octet-stream")
-	public String getSnapshotContent(@QueryParam("biobjectId") Integer objectId, @QueryParam("idSnap") Integer idSnap, @Context HttpServletRequest req) {
+	public String getSnapshotContent(@QueryParam("biobjectId") Integer objectId, @QueryParam("idSnap") Integer idSnap,
+			@Context HttpServletRequest req) {
 
-		HashMap<String, Object> resultAsMap = new HashMap<String, Object>();
+		HashMap<String, Object> resultAsMap = new HashMap<>();
 
 		IEngUserProfile profile = this.getUserProfile();
 		Snapshot snap = null;
@@ -114,7 +118,8 @@ public class DocumentExecutionSnapshot extends AbstractSpagoBIResource {
 			String contentType = "text/html";
 			try {
 				if (ObjectsAccessVerifier.canSee(obj, profile)) {
-					LOGGER.debug("Current user [{}] can see snapshot with id = {} of document with id = {}", ((UserProfile) profile).getUserId().toString(), idSnap, objectId);
+					LOGGER.debug("Current user [{}] can see snapshot with id = {} of document with id = {}",
+							((UserProfile) profile).getUserId().toString(), idSnap, objectId);
 					ISnapshotDAO snapdao = DAOFactory.getSnapshotDAO();
 					snap = snapdao.loadSnapshot(idSnap);
 					content = snap.getContent();
@@ -122,18 +127,17 @@ public class DocumentExecutionSnapshot extends AbstractSpagoBIResource {
 						contentType = snap.getContentType();
 					}
 				} else {
-					LOGGER.error("Current user [{}] CANNOT see snapshot with id = {} of document with id = {}", ((UserProfile) profile).getUserId().toString(), idSnap, objectId);
+					LOGGER.error("Current user [{}] CANNOT see snapshot with id = {} of document with id = {}",
+							((UserProfile) profile).getUserId().toString(), idSnap, objectId);
 					// content = "You cannot see required snapshot.".getBytes();
 					content = "You cannot see required snapshot.".getBytes(UTF_8);
 				}
 			} catch (EMFInternalError e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				LOGGER.warn("Non-fatal error", e);
 			}
 
 		} catch (EMFUserError e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			LOGGER.warn("Non-fatal error", e);
 		}
 
 		resultAsMap.put("snapshot", snap);
@@ -141,23 +145,24 @@ public class DocumentExecutionSnapshot extends AbstractSpagoBIResource {
 
 		try {
 			object.put("snapshot", snap.getContent());
+
 		} catch (EMFUserError e) {
 			LOGGER.error(e);
 		} catch (EMFInternalError e) {
 			LOGGER.error(e);
 		} catch (JSONException e) {
 			LOGGER.error(e);
-		}
+
+		} 
 
 		return object.toString();
-		// return Response.ok(resultAsMap).build();
 	}
 
 	@POST
 	@Path("/deleteSnapshot")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
 	public Response deleteSnapshot(@Context HttpServletRequest req) {
-		HashMap<String, Object> resultAsMap = new HashMap<String, Object>();
+		HashMap<String, Object> resultAsMap = new HashMap<>();
 		IEngUserProfile userProfile;
 		ISnapshotDAO snapdao;
 		Snapshot snapshot;
@@ -181,7 +186,8 @@ public class DocumentExecutionSnapshot extends AbstractSpagoBIResource {
 					snapdao.deleteSnapshot(snapshot.getId());
 				} catch (EMFUserError e) {
 					LOGGER.error("Impossible to delete snapshot with name [{}] already exists", ids[i], e);
-					throw new SpagoBIServiceException("Impossible to delete snapshot with name [" + ids[i] + "] already exists", e);
+					throw new SpagoBIServiceException(
+							"Impossible to delete snapshot with name [" + ids[i] + "] already exists", e);
 				}
 			}
 
@@ -190,7 +196,7 @@ public class DocumentExecutionSnapshot extends AbstractSpagoBIResource {
 		} catch (JSONException e1) {
 			throw new SpagoBIServiceException(SERVICE_NAME, e1.getMessage());
 		}
-
+ 
 		return Response.ok(resultAsMap).build();
 	}
 

@@ -58,7 +58,7 @@ public class WidgetGalleryDTO {
 	private String type;
 
 	@ListStringConstraint(message = "One or more tag is not valid")
-	private List<String> tags = new ArrayList<String>();
+	private List<String> tags = new ArrayList<>();
 
 	private String image = null;
 
@@ -136,9 +136,8 @@ public class WidgetGalleryDTO {
 		this.description = description;
 	}
 
-	public WidgetGalleryDTO(String id, String author, String name, String type, List<String> tags, String html, String javaScript, String python, String css,
-			byte[] image) {
-		super();
+	public WidgetGalleryDTO(String id, String author, String name, String type, List<String> tags, String html,
+			String javaScript, String python, String css, byte[] image) {
 		this.id = id;
 		this.author = author;
 		this.name = name;
@@ -153,7 +152,6 @@ public class WidgetGalleryDTO {
 	}
 
 	public WidgetGalleryDTO() {
-		super();
 	}
 
 	public String getImage() {

@@ -48,7 +48,6 @@ import it.eng.spago.base.SourceBeanException;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.constants.CommunityFunctionalityConstants;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
-import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.engines.qbe.QbeEngine;
 import it.eng.spagobi.engines.qbe.QbeEngineInstance;
 import it.eng.spagobi.engines.qbe.api.AbstractQbeEngineResource;
@@ -99,8 +98,8 @@ public class QbeEngineStartResource extends AbstractQbeEngineResource {
 	@GET
 	@Path("/")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response startQbe(@QueryParam("datamart") String datamart, @QueryParam("drivers") String drivers, @QueryParam("registryId") String registryId,
-			@QueryParam("sourceDatasetLabel") String sourceDatasetLabel) {
+	public Response startQbe(@QueryParam("datamart") String datamart, @QueryParam("drivers") String drivers,
+			@QueryParam("registryId") String registryId, @QueryParam("sourceDatasetLabel") String sourceDatasetLabel) {
 
 		logger.debug("IN");
 
@@ -162,11 +161,12 @@ public class QbeEngineStartResource extends AbstractQbeEngineResource {
 				templateBean = getTemplateAsSourceBean(datamart);
 				logger.debug("Starting qbe from datamart [" + datamart + "]");
 				env.put("DRIVERS", decodeParameterValue(drivers));
-			} else if (StringUtilities.isNotEmpty(sourceDatasetLabel)) {
+			} else if (StringUtils.isNotEmpty(sourceDatasetLabel)) {
 				logger.debug("Starting qbe from dataset [" + sourceDatasetLabel + "]");
 				addDatasetToEnvEngine(sourceDatasetLabel, env);
 			} else {
-				throw new SpagoBIEngineStartupException(ENGINE_NAME, "Cannot start QbE: neither datamart nor dataset are specified");
+				throw new SpagoBIEngineStartupException(ENGINE_NAME,
+						"Cannot start QbE: neither datamart nor dataset are specified");
 			}
 
 			qbeEngineInstance = QbeEngine.createInstance(templateBean, env);
@@ -181,8 +181,10 @@ public class QbeEngineStartResource extends AbstractQbeEngineResource {
 				while (rootException.getCause() != null) {
 					rootException = rootException.getCause();
 				}
-				String str = rootException.getMessage() != null ? rootException.getMessage() : rootException.getClass().getName();
-				String message = "An unpredicted error occurred while executing " + ENGINE_NAME + " service." + "\nThe root cause of the error is: " + str;
+				String str = rootException.getMessage() != null ? rootException.getMessage()
+						: rootException.getClass().getName();
+				String message = "An unpredicted error occurred while executing " + ENGINE_NAME + " service."
+						+ "\nThe root cause of the error is: " + str;
 
 				serviceException = new SpagoBIEngineStartupException(ENGINE_NAME, message, e);
 			}
@@ -199,29 +201,33 @@ public class QbeEngineStartResource extends AbstractQbeEngineResource {
 	protected void addDatasetToEnvEngine(String sourceDatasetLabel, Map env) {
 
 		IDataSet dataset = this.getDataSetServiceProxy().getDataSetByLabelAndUserCategories(sourceDatasetLabel);
-		dataset.setDataSourceForReading(dataset.getDataSource() != null ? dataset.getDataSource() : dataset.getDataSourceForReading());
+		dataset.setDataSourceForReading(
+				dataset.getDataSource() != null ? dataset.getDataSource() : dataset.getDataSourceForReading());
 
-		if (!dataset.isPersisted() && !dataset.isFlatDataset() && !dataset.toSpagoBiDataSet().getType().equals("SbiFileDataSet") && dataset.getDsType() != null
+		if (!dataset.isPersisted() && !dataset.isFlatDataset()
+				&& !dataset.toSpagoBiDataSet().getType().equals("SbiFileDataSet") && dataset.getDsType() != null
 				&& !dataset.getDsType().equals("SbiQueryDataSet")) {
 			logger.error("Dataset [" + sourceDatasetLabel + "] is not persisted. Cannot start qbe.");
 			throw new SpagoBIEngineStartupException(ENGINE_NAME, "Cannot start QbE from a non-persisted dataset");
 		}
 
-		if (dataset.toSpagoBiDataSet().getType().equals("SbiFileDataSet") && StringUtils.isEmpty(dataset.getPersistTableName())) {
+		if (dataset.toSpagoBiDataSet().getType().equals("SbiFileDataSet")
+				&& StringUtils.isEmpty(dataset.getPersistTableName())) {
 			JSONObject datasetPersistedLabels = null;
 			try {
 
-				datasetPersistedLabels = FederationUtils.createDatasetsOnCache(this.getDataSetRelationKeysMap(dataset), getUserIdentifier());
+				datasetPersistedLabels = FederationUtils.createDatasetsOnCache(this.getDataSetRelationKeysMap(dataset),
+						getUserIdentifier());
 				if (datasetPersistedLabels != null) {
 					IDataSource cachedDataSource = getCacheDataSource();
 					// update profile attributes into dataset
-					Map<String, Object> userAttributes = new HashMap<String, Object>();
-					Map<String, String> mapNameTable = new HashMap<String, String>();
+					Map<String, Object> userAttributes = new HashMap<>();
+					Map<String, String> mapNameTable = new HashMap<>();
 					UserProfile profile = (UserProfile) this.getEnv().get(EngineConstants.ENV_USER_PROFILE);
 					userAttributes.putAll(profile.getUserAttributes());
 					userAttributes.put(SsoServiceInterface.USER_ID, profile.getUserId().toString());
-					IDataSet cachedDataSet = FederationUtils.createDatasetOnCache(datasetPersistedLabels.getString(dataset.getLabel()), dataset,
-							cachedDataSource);
+					IDataSet cachedDataSet = FederationUtils.createDatasetOnCache(
+							datasetPersistedLabels.getString(dataset.getLabel()), dataset, cachedDataSource);
 					// label has been reset to the source label because
 					cachedDataSet.setLabel(dataset.getLabel());
 					cachedDataSet.setUserProfileAttributes(userAttributes);
@@ -233,9 +239,12 @@ public class QbeEngineStartResource extends AbstractQbeEngineResource {
 
 				}
 			} catch (JSONException e1) {
-				logger.error("Error loading the dataset. Please check that all the dataset linked to this federation are still working", e1);
+				logger.error(
+						"Error loading the dataset. Please check that all the dataset linked to this federation are still working",
+						e1);
 				throw new SpagoBIEngineRuntimeException(
-						"Error loading the dataset. Please check that all the dataset linked to this federation are still working", e1);
+						"Error loading the dataset. Please check that all the dataset linked to this federation are still working",
+						e1);
 			}
 		} else {
 			env.put(EngineConstants.ENV_DATASETS, Collections.singletonList(dataset));
@@ -251,7 +260,7 @@ public class QbeEngineStartResource extends AbstractQbeEngineResource {
 	 */
 	@JsonIgnore
 	public JSONObject getDataSetRelationKeysMap(IDataSet dataset) throws JSONException {
-		Map<String, Set<String>> datasetKeyColumnMap = new HashMap<String, Set<String>>();
+		Map<String, Set<String>> datasetKeyColumnMap = new HashMap<>();
 
 		datasetKeyColumnMap.put(dataset.getLabel(), null); // TODO: add all dataset columns to indexes?
 
@@ -355,13 +364,17 @@ public class QbeEngineStartResource extends AbstractQbeEngineResource {
 					logger.debug("Retriving target schema for datasource [" + dataSource.getLabel() + "]");
 					String attrname = dataSource.getSchemaAttribute();
 					logger.debug("Datasource's schema attribute name is equals to [" + attrname + "]");
-					Assert.assertNotNull(attrname, "Datasource's schema attribute name cannot be null in order to retrive the target schema");
+					Assert.assertNotNull(attrname,
+							"Datasource's schema attribute name cannot be null in order to retrive the target schema");
 					String schema = (String) getUserProfile().getUserAttribute(attrname);
-					Assert.assertNotNull(schema, "Impossible to retrive the value of attribute [" + attrname + "] form user profile");
+					Assert.assertNotNull(schema,
+							"Impossible to retrive the value of attribute [" + attrname + "] form user profile");
 					dataSource.setJndi(dataSource.getJndi() + schema);
-					logger.debug("Target schema for datasource  [" + dataSource.getLabel() + "] is [" + dataSource.getJndi() + "]");
+					logger.debug("Target schema for datasource  [" + dataSource.getLabel() + "] is ["
+							+ dataSource.getJndi() + "]");
 				} catch (Throwable t) {
-					throw new SpagoBIEngineRuntimeException("Impossible to retrive target schema for datasource [" + dataSource.getLabel() + "]", t);
+					throw new SpagoBIEngineRuntimeException(
+							"Impossible to retrive target schema for datasource [" + dataSource.getLabel() + "]", t);
 				}
 				logger.debug("Target schema for datasource  [" + dataSource.getLabel() + "] retrieved succesfully");
 			}
@@ -375,7 +388,8 @@ public class QbeEngineStartResource extends AbstractQbeEngineResource {
 
 	public DataSourceServiceProxy getDataSourceServiceProxy() {
 		if (datasourceProxy == null) {
-			datasourceProxy = new DataSourceServiceProxy((String) getUserProfile().getUserUniqueIdentifier(), getHttpSession());
+			datasourceProxy = new DataSourceServiceProxy((String) getUserProfile().getUserUniqueIdentifier(),
+					getHttpSession());
 		}
 
 		return datasourceProxy;
@@ -383,7 +397,8 @@ public class QbeEngineStartResource extends AbstractQbeEngineResource {
 
 	protected ContentServiceProxy getContentServiceProxy() {
 		if (contentProxy == null) {
-			contentProxy = new ContentServiceProxy((String) getUserProfile().getUserUniqueIdentifier(), getHttpSession());
+			contentProxy = new ContentServiceProxy((String) getUserProfile().getUserUniqueIdentifier(),
+					getHttpSession());
 		}
 
 		return contentProxy;
@@ -391,7 +406,8 @@ public class QbeEngineStartResource extends AbstractQbeEngineResource {
 
 	public DataSetServiceProxy getDataSetServiceProxy() {
 		if (datasetProxy == null) {
-			datasetProxy = new DataSetServiceProxy((String) getUserProfile().getUserUniqueIdentifier(), getHttpSession());
+			datasetProxy = new DataSetServiceProxy((String) getUserProfile().getUserUniqueIdentifier(),
+					getHttpSession());
 		}
 
 		return datasetProxy;
@@ -399,7 +415,8 @@ public class QbeEngineStartResource extends AbstractQbeEngineResource {
 
 	public MetamodelServiceProxy getMetamodelServiceProxy() {
 		if (metamodelProxy == null) {
-			metamodelProxy = new MetamodelServiceProxy((String) getUserProfile().getUserUniqueIdentifier(), getHttpSession());
+			metamodelProxy = new MetamodelServiceProxy((String) getUserProfile().getUserUniqueIdentifier(),
+					getHttpSession());
 		}
 
 		return metamodelProxy;
@@ -419,13 +436,17 @@ public class QbeEngineStartResource extends AbstractQbeEngineResource {
 					logger.debug("Retriving target schema for datasource [" + dataSource.getLabel() + "]");
 					attrname = dataSource.getSchemaAttribute();
 					logger.debug("Datasource's schema attribute name is equals to [" + attrname + "]");
-					Assert.assertNotNull(attrname, "Datasource's schema attribute name cannot be null in order to retrive the target schema");
+					Assert.assertNotNull(attrname,
+							"Datasource's schema attribute name cannot be null in order to retrive the target schema");
 					schema = (String) getUserProfile().getUserAttribute(attrname);
-					Assert.assertNotNull(schema, "Impossible to retrive the value of attribute [" + attrname + "] form user profile");
+					Assert.assertNotNull(schema,
+							"Impossible to retrive the value of attribute [" + attrname + "] form user profile");
 					dataSource.setJndi(dataSource.getJndi() + schema);
-					logger.debug("Target schema for datasource  [" + dataSource.getLabel() + "] is [" + dataSource.getJndi() + "]");
+					logger.debug("Target schema for datasource  [" + dataSource.getLabel() + "] is ["
+							+ dataSource.getJndi() + "]");
 				} catch (Throwable t) {
-					throw new SpagoBIEngineRuntimeException("Impossible to retrive target schema for datasource [" + dataSource.getLabel() + "]", t);
+					throw new SpagoBIEngineRuntimeException(
+							"Impossible to retrive target schema for datasource [" + dataSource.getLabel() + "]", t);
 				}
 				logger.debug("Target schema for datasource  [" + dataSource.getLabel() + "] retrieved succesfully");
 			}
@@ -450,7 +471,8 @@ public class QbeEngineStartResource extends AbstractQbeEngineResource {
 		try {
 			templateSB = SourceBean.fromXMLString(getTemplateAsString(registryId));
 		} catch (SourceBeanException e) {
-			SpagoBIEngineStartupException engineException = new SpagoBIEngineStartupException(getEngineName(), "Impossible to parse template's content", e);
+			SpagoBIEngineStartupException engineException = new SpagoBIEngineStartupException(getEngineName(),
+					"Impossible to parse template's content", e);
 			engineException.setDescription("Impossible to parse template's content:  " + e.getMessage());
 			engineException.addHint("Check if the document's template is a well formed xml file");
 			throw engineException;
@@ -475,8 +497,9 @@ public class QbeEngineStartResource extends AbstractQbeEngineResource {
 		if (template == null) {
 			contentProxy = getContentServiceProxy();
 			if (contentProxy == null) {
-				throw new SpagoBIEngineStartupException("SpagoBIQbeEngine", "Impossible to instatiate proxy class [" + ContentServiceProxy.class.getName()
-						+ "] " + "in order to retrive the template of document [" + registryId + "]");
+				throw new SpagoBIEngineStartupException("SpagoBIQbeEngine",
+						"Impossible to instatiate proxy class [" + ContentServiceProxy.class.getName() + "] "
+								+ "in order to retrive the template of document [" + registryId + "]");
 			}
 
 			requestParameters = ParametersDecoder.getDecodedRequestParameters(request);
@@ -485,10 +508,12 @@ public class QbeEngineStartResource extends AbstractQbeEngineResource {
 
 		try {
 			if (template == null)
-				throw new SpagoBIEngineRuntimeException("There are no template associated to document [" + registryId + "]");
+				throw new SpagoBIEngineRuntimeException(
+						"There are no template associated to document [" + registryId + "]");
 			templateContent = DECODER.decode(template.getContent());
 		} catch (Throwable e) {
-			SpagoBIEngineStartupException engineException = new SpagoBIEngineStartupException(getEngineName(), "Impossible to get template's content", e);
+			SpagoBIEngineStartupException engineException = new SpagoBIEngineStartupException(getEngineName(),
+					"Impossible to get template's content", e);
 			engineException.setDescription("Impossible to get template's content:  " + e.getMessage());
 			engineException.addHint("Check the document's template");
 			throw engineException;

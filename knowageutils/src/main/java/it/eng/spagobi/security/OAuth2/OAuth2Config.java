@@ -67,6 +67,7 @@ public class OAuth2Config {
 	private final String tokenBody;
 	private final String jwtTokenIssuer;
 	private final String idTokenJsonRolesPath;
+	private final boolean nonProfiledUserAllowed;
 
 	public OAuth2Config() {
 
@@ -143,6 +144,9 @@ public class OAuth2Config {
 
 			idTokenJsonRolesPath = System.getProperty("oauth2_id_token_roles_json_path", System.getenv("OAUTH2_ID_TOKEN_ROLES_JSON_PATH"));
 
+			nonProfiledUserAllowed = Boolean.parseBoolean(
+					Optional.ofNullable(System.getProperty("allow_non_profiled_users", System.getenv("ALLOW_NON_PROFILED_USERS"))).orElse("true"));
+
 		} else {
 			type = FlowType.NONE;
 			authorizeUrl = null;
@@ -167,6 +171,7 @@ public class OAuth2Config {
 			tokenBody = null;
 			jwtTokenIssuer = null;
 			idTokenJsonRolesPath = null;
+			nonProfiledUserAllowed = true;
 		}
 
 		LOGGER.debug("Constructed OAuth2Config: {}", this);
@@ -276,15 +281,19 @@ public class OAuth2Config {
 		return idTokenJsonRolesPath;
 	}
 
+	public boolean isNonProfiledUserAllowed() {
+		return nonProfiledUserAllowed;
+	}
+
 	@Override
 	public String toString() {
 		return "OAuth2Config [type=" + type + ", authorizeUrl=" + authorizeUrl + ", redirectUrl=" + redirectUrl + ", clientId=" + clientId + ", clientSecret="
-				+ clientSecret + ", accessTokenUrl=" + accessTokenUrl + ", jwksUrl=" + jwksUrl + ", userInfoUrl=" + userInfoUrl + ", adminId=" + adminId
-				+ ", adminEmail=" + adminEmail + ", adminPassword=" + adminPassword + ", scopes=" + scopes + ", userIdClaim=" + userIdClaim + ", userNameClaim="
-				+ userNameClaim + ", profileAttributes=" + profileAttributes + ", restApiBaseUrl=" + restApiBaseUrl + ", organizationInfoPath="
-				+ organizationInfoPath + ", rolesPath=" + rolesPath + ", applicationId=" + applicationId + ", tokenPath=" + tokenPath
-				+ ", clientAuthenticationMethod=" + clientAuthenticationMethod + ", tokenBody=" + tokenBody + ", jwtTokenIssuer=" + jwtTokenIssuer
-				+ ", idTokenJsonRolesPath=" + idTokenJsonRolesPath + "]";
+				+ clientSecret + ", accessTokenUrl=" + accessTokenUrl + ", clientAuthenticationMethod=" + clientAuthenticationMethod + ", jwksUrl=" + jwksUrl
+				+ ", userInfoUrl=" + userInfoUrl + ", adminId=" + adminId + ", adminEmail=" + adminEmail + ", adminPassword=" + adminPassword + ", scopes="
+				+ scopes + ", userIdClaim=" + userIdClaim + ", userNameClaim=" + userNameClaim + ", profileAttributes=" + profileAttributes
+				+ ", restApiBaseUrl=" + restApiBaseUrl + ", organizationInfoPath=" + organizationInfoPath + ", rolesPath=" + rolesPath + ", applicationId="
+				+ applicationId + ", tokenPath=" + tokenPath + ", tokenBody=" + tokenBody + ", jwtTokenIssuer=" + jwtTokenIssuer + ", idTokenJsonRolesPath="
+				+ idTokenJsonRolesPath + ", nonProfiledUserAllowed=" + nonProfiledUserAllowed + "]";
 	}
 
 	public String getFlowJSPPath() {

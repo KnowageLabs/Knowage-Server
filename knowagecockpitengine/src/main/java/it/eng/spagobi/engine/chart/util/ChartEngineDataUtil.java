@@ -28,6 +28,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
@@ -41,7 +42,6 @@ import com.jamonapi.MonitorFactory;
 import it.eng.knowage.engine.cockpit.api.CockpitExecutionClient;
 import it.eng.qbe.query.Query;
 import it.eng.spago.security.IEngUserProfile;
-import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.dataset.common.datawriter.JSONDataWriter;
@@ -57,14 +57,15 @@ public class ChartEngineDataUtil {
 	public static transient Logger logger = Logger.getLogger(ChartEngineDataUtil.class);
 
 	@SuppressWarnings({ "rawtypes" })
-	public static String loadJsonData(String jsonTemplate, IDataSet dataSet, Map analyticalDrivers, Map userProfile, Locale locale) throws Throwable {
+	public static String loadJsonData(String jsonTemplate, IDataSet dataSet, Map analyticalDrivers, Map userProfile,
+			Locale locale) throws Throwable {
 		IQuery query = extractAggregatedQueryFromTemplate(jsonTemplate);
 		return loadJsonData(query, dataSet, analyticalDrivers, userProfile, locale, null);
 	}
 
 	@SuppressWarnings({ "rawtypes" })
-	private static String loadJsonData(IQuery query, IDataSet dataSet, Map analyticalDrivers, Map userProfile, Locale locale, String dateFormatJava)
-			throws Throwable {
+	private static String loadJsonData(IQuery query, IDataSet dataSet, Map analyticalDrivers, Map userProfile,
+			Locale locale, String dateFormatJava) throws Throwable {
 		IDataStore dataStore = loadDatastore(query, dataSet, analyticalDrivers, userProfile, locale, dateFormatJava);
 
 		JSONObject dataSetJSON = new JSONObject();
@@ -83,8 +84,8 @@ public class ChartEngineDataUtil {
 	}
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	private static IDataStore loadDatastore(IQuery query, IDataSet dataSet, Map analyticalDrivers, Map userProfile, Locale locale, String dateFormatJava)
-			throws JSONException {
+	private static IDataStore loadDatastore(IQuery query, IDataSet dataSet, Map analyticalDrivers, Map userProfile,
+			Locale locale, String dateFormatJava) throws JSONException {
 
 		analyticalDrivers.put("LOCALE", locale);
 		dataSet.setParamsMap(analyticalDrivers);
@@ -102,9 +103,9 @@ public class ChartEngineDataUtil {
 	}
 
 	@SuppressWarnings("rawtypes")
-	public static String drilldown(String jsonTemplate, String breadcrumb, IDataSet dataSet, Map analyticalDrivers, Map userProfile, Locale locale,
-			String documentLabel, IEngUserProfile profile, String selections, String aggregations, String parameters, Map<String, Object> queryParams)
-			throws Throwable {
+	public static String drilldown(String jsonTemplate, String breadcrumb, IDataSet dataSet, Map analyticalDrivers,
+			Map userProfile, Locale locale, String documentLabel, IEngUserProfile profile, String selections,
+			String aggregations, String parameters, Map<String, Object> queryParams) throws Throwable {
 
 		JSONObject parametersJson = null;
 		JSONObject aggregationsJson = null;
@@ -189,31 +190,35 @@ public class ChartEngineDataUtil {
 					dataset.put(key, aggArray);
 				}
 
-				String aggregationsToSend = "{aggregations:" + aggregationsJson.toString() + ",parameters:" + parametersJson.toString() + ",selections:"
-						+ selectionsJson.toString() + "}";
+				String aggregationsToSend = "{aggregations:" + aggregationsJson.toString() + ",parameters:"
+						+ parametersJson.toString() + ",selections:" + selectionsJson.toString() + "}";
 				CockpitExecutionClient cockpitExecutionClient;
 				cockpitExecutionClient = new CockpitExecutionClient();
 				String userId = (String) profile.getUserUniqueIdentifier();
-				jsonData = cockpitExecutionClient.getDataFromDataset(aggregationsToSend, aggregationsJson.getString("dataset"), userId, queryParams);
+				jsonData = cockpitExecutionClient.getDataFromDataset(aggregationsToSend,
+						aggregationsJson.getString("dataset"), userId, queryParams);
 
 			} else {
-				IQuery q = extractAggregatedQueryFromTemplate(jsonTemplate, true, drilldownSerie, drilldownCategory, drilldownParams);
+				IQuery q = extractAggregatedQueryFromTemplate(jsonTemplate, true, drilldownSerie, drilldownCategory,
+						drilldownParams);
 				jsonData = loadJsonData(q, dataSet, analyticalDrivers, userProfile, locale, dateFormatJava);
 			}
 
 			boolean enableNextDrilldown = i < gbys.length;
 
 			/**
-			 * We are sending additional information about the web application from which we call the VM. This boolean will tell us if we are coming from the
-			 * Highcharts Export web application. The value of "exportWebApp" input parameter contains this boolean. This information is useful when we have
-			 * drilldown, i.e. more than one category for the Highcharts chart (BAR, LINE).
+			 * We are sending additional information about the web application from which we call the VM. This boolean will tell us if we are coming from the Highcharts
+			 * Export web application. The value of "exportWebApp" input parameter contains this boolean. This information is useful when we have drilldown, i.e. more than
+			 * one category for the Highcharts chart (BAR, LINE).
 			 *
 			 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 			 */
-			VelocityContext velocityContext = ChartEngineUtil.loadVelocityContext(null, jsonData, false, documentLabel, profile);
+			VelocityContext velocityContext = ChartEngineUtil.loadVelocityContext(null, jsonData, false, documentLabel,
+					profile);
 			if (jsonTemplate != null) {
 				mapTemplate = ChartEngineUtil.convertJsonToMap(jsonTemplate, true);
-				velocityContext.put("chart", mapTemplate.get("chart") != null ? mapTemplate.get("chart") : mapTemplate.get("CHART"));
+				velocityContext.put("chart",
+						mapTemplate.get("chart") != null ? mapTemplate.get("chart") : mapTemplate.get("CHART"));
 			}
 			velocityContext.put("selectedCategory", selectedCategory);
 			velocityContext.put("chart", mapTemplate);
@@ -233,8 +238,8 @@ public class ChartEngineDataUtil {
 		return extractAggregatedQueryFromTemplate(jsonTemplate, false, null, null, null);
 	}
 
-	private static IQuery extractAggregatedQueryFromTemplate(String jsonTemplate, boolean isDrilldown, String drilldownSerie, String drilldownCategory,
-			Map<String, Object> drilldownParams) throws JSONException {
+	private static IQuery extractAggregatedQueryFromTemplate(String jsonTemplate, boolean isDrilldown,
+			String drilldownSerie, String drilldownCategory, Map<String, Object> drilldownParams) throws JSONException {
 
 		IQuery q = new Query();
 
@@ -269,21 +274,26 @@ public class ChartEngineDataUtil {
 
 			String serieColumn = serie.getString("column");
 			String serieName = serie.getString("name");
-			String serieFunction = StringUtilities.isNotEmpty(serie.optString("groupingFunction")) ? serie.optString("groupingFunction") : "SUM";
+			String serieFunction = StringUtils.isNotEmpty(serie.optString("groupingFunction"))
+					? serie.optString("groupingFunction")
+					: "SUM";
 			if (serieFunction.equals("NONE")) {
 				none = true;
 			}
 			/**
 			 * parallel chart needs possibility to work without aggregation function
 			 */
-			if (chartType.equals("PARALLEL") && jo.getJSONObject("CHART").getJSONObject("LIMIT").getString("groupByCategory").equals("false")) {
+			if (chartType.equals("PARALLEL")
+					&& jo.getJSONObject("CHART").getJSONObject("LIMIT").getString("groupByCategory").equals("false")) {
 				serieFunction = "NONE";
 			}
 
 			if (!isDrilldown || serieName.equalsIgnoreCase(drilldownSerie)) {
 				String fieldAlias = serieColumn + (!isDrilldown ? "_" + serieFunction : "");
 
-				String orderTypeFinal = (serie.opt("orderType") != null) ? orderTypeFinal = serie.opt("orderType").toString().toUpperCase() : null;
+				String orderTypeFinal = (serie.opt("orderType") != null)
+						? orderTypeFinal = serie.opt("orderType").toString().toUpperCase()
+						: null;
 
 				q.addSelectFiled(serieColumn, serieFunction, fieldAlias, true, true, false, orderTypeFinal, null, null);
 			}
@@ -309,15 +319,17 @@ public class ChartEngineDataUtil {
 			for (int i = 0; i < categories.length(); i++) {
 				JSONObject cat = (JSONObject) categories.get(i);
 
-				if (chartType.equals("PARALLEL") && jo.getJSONObject("CHART").getJSONObject("LIMIT").getString("groupByCategory").equals("false")) {
+				if (chartType.equals("PARALLEL") && jo.getJSONObject("CHART").getJSONObject("LIMIT")
+						.getString("groupByCategory").equals("false")) {
 
 					/**
-					 * The PARALLEL chart does not handle the feature of ordering the chart X-axis by the specific column (attribute), hence we do not take
-					 * 'orderType' and 'orderColumn' properties into count.
+					 * The PARALLEL chart does not handle the feature of ordering the chart X-axis by the specific column (attribute), hence we do not take 'orderType' and
+					 * 'orderColumn' properties into count.
 					 *
 					 * @commentBy Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 					 */
-					q.addSelectFiled(cat.getString("column"), null, cat.getString("column"), true, true, false, "ASC", null, null);
+					q.addSelectFiled(cat.getString("column"), null, cat.getString("column"), true, true, false, "ASC",
+							null, null);
 
 				} else {
 
@@ -335,11 +347,11 @@ public class ChartEngineDataUtil {
 					 *              checking if chart type is scatter: if it is, there will not have "group by" in the query
 					 */
 					if (chartType.equals("SCATTER") && none) {
-						q.addSelectFiled(cat.getString("column"), null, cat.getString("column"), true, true, false, cat.getString("orderType"), null,
-								cat.getString("orderColumn"));
+						q.addSelectFiled(cat.getString("column"), null, cat.getString("column"), true, true, false,
+								cat.getString("orderType"), null, cat.getString("orderColumn"));
 					} else {
-						q.addSelectFiled(cat.getString("column"), null, cat.getString("column"), true, true, true, cat.getString("orderType"), null,
-								cat.getString("orderColumn"));
+						q.addSelectFiled(cat.getString("column"), null, cat.getString("column"), true, true, true,
+								cat.getString("orderType"), null, cat.getString("orderColumn"));
 					}
 
 				}
@@ -347,8 +359,8 @@ public class ChartEngineDataUtil {
 		} else {
 
 			/**
-			 * The ordering type of the subsequent category (all those that follow the first category) will be fixed to ascending (ASC), since the current
-			 * implementation does not cover ordering column and ordering type also for categories other than the first one.
+			 * The ordering type of the subsequent category (all those that follow the first category) will be fixed to ascending (ASC), since the current implementation
+			 * does not cover ordering column and ordering type also for categories other than the first one.
 			 *
 			 * NOTE: This possibility of setting the ordering column should be enabled and provided for all layers, not just on the first one.
 			 *
@@ -377,7 +389,7 @@ public class ChartEngineDataUtil {
 		JSONObject metadataJSON = new JSONObject();
 		try {
 			IMetaData metadata = dataSet.getMetadata();
-			List<IFieldMetaData> fieldsMetaData = new ArrayList<IFieldMetaData>();
+			List<IFieldMetaData> fieldsMetaData = new ArrayList<>();
 			int fieldCount = metadata.getFieldCount();
 			for (int i = 0; i < fieldCount; i++) {
 				IFieldMetaData fieldMetaData = metadata.getFieldMeta(i);
@@ -407,9 +419,9 @@ public class ChartEngineDataUtil {
 		// field's meta
 		JSONArray fieldsMetaDataJSON = new JSONArray();
 
-		List<JSONObject> spatialAttributesList = new ArrayList<JSONObject>();
-		List<JSONObject> attributesList = new ArrayList<JSONObject>();
-		List<JSONObject> measuresList = new ArrayList<JSONObject>();
+		List<JSONObject> spatialAttributesList = new ArrayList<>();
+		List<JSONObject> attributesList = new ArrayList<>();
+		List<JSONObject> measuresList = new ArrayList<>();
 
 		int fieldCount = fieldsMetaData.size();
 		logger.debug("Number of fields = " + fieldCount);
@@ -417,7 +429,8 @@ public class ChartEngineDataUtil {
 
 		for (IFieldMetaData fieldMetaData : fieldsMetaData) {
 
-			logger.debug("Evaluating field with name [" + fieldMetaData.getName() + "], alias [" + fieldMetaData.getAlias() + "] ...");
+			logger.debug("Evaluating field with name [" + fieldMetaData.getName() + "], alias ["
+					+ fieldMetaData.getAlias() + "] ...");
 
 			Boolean isCalculatedExpert = (Boolean) fieldMetaData.getProperty(PROPERTY_CALCULATED_EXPERT);
 
@@ -429,7 +442,8 @@ public class ChartEngineDataUtil {
 			Object propertyRawValue = fieldMetaData.getProperty(PROPERTY_VISIBLE);
 			logger.debug("Read property " + PROPERTY_VISIBLE + ": its value is [" + propertyRawValue + "]");
 
-			if (propertyRawValue != null && !propertyRawValue.toString().equals("") && (Boolean.parseBoolean(propertyRawValue.toString()) == false)) {
+			if (propertyRawValue != null && !propertyRawValue.toString().equals("")
+					&& !Boolean.parseBoolean(propertyRawValue.toString())) {
 				logger.debug("The field is not visible");
 				continue;
 			} else {
@@ -447,10 +461,11 @@ public class ChartEngineDataUtil {
 			switch (type) {
 			case ATTRIBUTE:
 				Object isSegmentAttributeObj = fieldMetaData.getProperty(PROPERTY_IS_SEGMENT_ATTRIBUTE);
-				logger.debug("Read property " + PROPERTY_IS_SEGMENT_ATTRIBUTE + ": its value is [" + propertyRawValue + "]");
-				String attributeNature = (isSegmentAttributeObj != null && (Boolean.parseBoolean(isSegmentAttributeObj.toString()) == true))
-						? "segment_attribute"
-						: "attribute";
+				logger.debug(
+						"Read property " + PROPERTY_IS_SEGMENT_ATTRIBUTE + ": its value is [" + propertyRawValue + "]");
+				String attributeNature = (isSegmentAttributeObj != null
+						&& Boolean.parseBoolean(isSegmentAttributeObj.toString())) ? "segment_attribute"
+								: "attribute";
 
 				logger.debug("The nature of the attribute is recognized as " + attributeNature);
 				fieldMetaDataJSON.put("nature", attributeNature);
@@ -461,13 +476,16 @@ public class ChartEngineDataUtil {
 				break;
 			case MEASURE:
 				Object isMandatoryMeasureObj = fieldMetaData.getProperty(PROPERTY_IS_MANDATORY_MEASURE);
-				logger.debug("Read property " + PROPERTY_IS_MANDATORY_MEASURE + ": its value is [" + isMandatoryMeasureObj + "]");
-				String measureNature = (isMandatoryMeasureObj != null && (Boolean.parseBoolean(isMandatoryMeasureObj.toString()) == true)) ? "mandatory_measure"
-						: "measure";
+				logger.debug("Read property " + PROPERTY_IS_MANDATORY_MEASURE + ": its value is ["
+						+ isMandatoryMeasureObj + "]");
+				String measureNature = (isMandatoryMeasureObj != null
+						&& Boolean.parseBoolean(isMandatoryMeasureObj.toString())) ? "mandatory_measure"
+								: "measure";
 				logger.debug("The nature of the measure is recognized as " + measureNature);
 				fieldMetaDataJSON.put("nature", measureNature);
 				String aggregationFunction = (String) fieldMetaData.getProperty(PROPERTY_AGGREGATION_FUNCTION);
-				logger.debug("Read property " + PROPERTY_AGGREGATION_FUNCTION + ": its value is [" + aggregationFunction + "]");
+				logger.debug("Read property " + PROPERTY_AGGREGATION_FUNCTION + ": its value is [" + aggregationFunction
+						+ "]");
 				fieldMetaDataJSON.put("funct", AggregationFunctions.get(aggregationFunction).getName());
 				fieldMetaDataJSON.put("iconCls", measureNature);
 				String decimalPrecision = (String) fieldMetaData.getProperty(IFieldMetaData.DECIMALPRECISION);
@@ -481,9 +499,12 @@ public class ChartEngineDataUtil {
 				break;
 			case SPATIAL_ATTRIBUTE:
 				Object isSegmentSpatialAttributeObj = fieldMetaData.getProperty(PROPERTY_IS_SEGMENT_ATTRIBUTE);
-				logger.debug("Read property " + PROPERTY_IS_SEGMENT_ATTRIBUTE + ": its value is [" + propertyRawValue + "]");
+				logger.debug(
+						"Read property " + PROPERTY_IS_SEGMENT_ATTRIBUTE + ": its value is [" + propertyRawValue + "]");
 				String spatialAttributeNature = (isSegmentSpatialAttributeObj != null
-						&& (Boolean.parseBoolean(isSegmentSpatialAttributeObj.toString()) == true)) ? "segment_attribute" : "attribute";
+						&& Boolean.parseBoolean(isSegmentSpatialAttributeObj.toString()))
+								? "segment_attribute"
+								: "attribute";
 
 				logger.debug("The nature of the attribute is recognized as " + spatialAttributeNature);
 				fieldMetaDataJSON.put("nature", spatialAttributeNature);
@@ -530,10 +551,10 @@ public class ChartEngineDataUtil {
 	protected static String getFieldColumnType(IFieldMetaData fieldMetaData) {
 		String fieldColumnType = fieldMetaData.getType().toString();
 		fieldColumnType = fieldColumnType.substring(fieldColumnType.lastIndexOf(".") + 1); // clean
-																							// the
-																							// class
-																							// type
-																							// name
+																							 // the
+																							 // class
+																							 // type
+																							 // name
 		return fieldColumnType;
 	}
 }

@@ -17,7 +17,11 @@
  */
 package it.eng.spagobi.engines.jasperreport.services;
 
-import it.eng.spagobi.commons.utilities.StringUtilities;
+import java.io.File;
+
+import org.apache.commons.lang3.StringUtils;
+import org.apache.log4j.Logger;
+
 import it.eng.spagobi.engines.jasperreport.JasperReportEngine;
 import it.eng.spagobi.engines.jasperreport.JasperReportEngineInstance;
 import it.eng.spagobi.engines.jasperreport.JasperReportEngineTemplate;
@@ -28,10 +32,6 @@ import it.eng.spagobi.utilities.engines.AbstractEngineStartServlet;
 import it.eng.spagobi.utilities.engines.EngineConstants;
 import it.eng.spagobi.utilities.engines.EngineStartServletIOManager;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineException;
-
-import java.io.File;
-
-import org.apache.log4j.Logger;
 
 /**
  * @authors Andrea Gioia (andrea.gioia@eng.it) Davide Zerbetto (davide.zerbetto@eng.it)
@@ -77,18 +77,21 @@ public class JasperReportEngineStartAction extends AbstractEngineStartServlet {
 
 			outputType = servletIOManager.getParameterAsString(OUTPUT_TYPE);
 			logger.debug("Parameter [" + OUTPUT_TYPE + "] is equal to [" + outputType + "]");
-			if (StringUtilities.isEmpty(outputType)) {
+			if (StringUtils.isEmpty(outputType)) {
 				outputType = JasperReportEngine.getConfig().getDefaultOutputType();
 				servletIOManager.getEnv().put(OUTPUT_TYPE, outputType);
-				logger.debug("Parameter [" + OUTPUT_TYPE + "] has been set to the default value [" + servletIOManager.getEnv().get(OUTPUT_TYPE) + "]");
+				logger.debug("Parameter [" + OUTPUT_TYPE + "] has been set to the default value ["
+						+ servletIOManager.getEnv().get(OUTPUT_TYPE) + "]");
 			}
 
 			// this proxy is used by ScriptletChart to execute and embed external chart into report
-			servletIOManager.getEnv().put(EngineConstants.ENV_DOCUMENT_EXECUTE_SERVICE_PROXY, servletIOManager.getDocumentExecuteServiceProxy());
+			servletIOManager.getEnv().put(EngineConstants.ENV_DOCUMENT_EXECUTE_SERVICE_PROXY,
+					servletIOManager.getDocumentExecuteServiceProxy());
 
 			servletIOManager.auditServiceStartEvent();
 
-			template = new JasperReportEngineTemplate(servletIOManager.getTemplateName(), servletIOManager.getTemplate(false));
+			template = new JasperReportEngineTemplate(servletIOManager.getTemplateName(),
+					servletIOManager.getTemplate(false));
 
 			File reportOutputDir = JasperReportEngine.getConfig().getReportOutputDir();
 			File reportFile = File.createTempFile("report", "." + outputType, reportOutputDir);
@@ -101,14 +104,16 @@ public class JasperReportEngineStartAction extends AbstractEngineStartServlet {
 
 			engineInstance.runReport(reportFile, servletIOManager.getRequest());
 
-			servletIOManager.writeBackToClient(200, reportFile, true, "report." + outputType, JasperReportEngine.getConfig().getMIMEType(outputType));
+			servletIOManager.writeBackToClient(200, reportFile, true, "report." + outputType,
+					JasperReportEngine.getConfig().getMIMEType(outputType));
 
 			// instant cleaning
 			reportFile.delete();
 
 			servletIOManager.auditServiceEndEvent();
 		} catch (Throwable t) {
-			throw new SpagoBIEngineException("An error occurred while executing report. Check log file for more information", t);
+			throw new SpagoBIEngineException(
+					"An error occurred while executing report. Check log file for more information", t);
 		} finally {
 			logger.debug("OUT");
 		}

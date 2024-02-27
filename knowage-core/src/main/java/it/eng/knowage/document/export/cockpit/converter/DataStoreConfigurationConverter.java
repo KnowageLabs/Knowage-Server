@@ -40,7 +40,8 @@ import it.eng.spagobi.tools.dataset.metasql.query.item.Sorting;
  * @author Dragan Pirkovic
  *
  */
-public class DataStoreConfigurationConverter implements IDataStoreConfiguration, IConverter<IDataStoreConfiguration, ICockpitWidget> {
+public class DataStoreConfigurationConverter
+		implements IDataStoreConfiguration, IConverter<IDataStoreConfiguration, ICockpitWidget> {
 
 	IConverter<IJsonConfiguration, ICockpitWidget> converter;
 	IJsonConfiguration jsonConfiguration;
@@ -71,8 +72,9 @@ public class DataStoreConfigurationConverter implements IDataStoreConfiguration,
 	@Override
 	public IDataStoreConfiguration convert(ICockpitWidget widget) throws IConverterException {
 		this.jsonConfiguration = converter.convert(widget);
-		return new DatastoreConfigurationBuilder().setDataSet(getDataset()).setParameters(getParameters()).setProjections(getProjections())
-				.setFilter(getFilter()).setGroups(getGroups()).setSortings(getSortings()).setSummaryRow(getSummaryRowProjections()).build();
+		return new DatastoreConfigurationBuilder().setDataSet(getDataset()).setParameters(getParameters())
+				.setProjections(getProjections()).setFilter(getFilter()).setGroups(getGroups())
+				.setSortings(getSortings()).setSummaryRow(getSummaryRowProjections()).build();
 
 	}
 
@@ -109,7 +111,8 @@ public class DataStoreConfigurationConverter implements IDataStoreConfiguration,
 	public Filter getFilter() {
 		if (jsonConfiguration != null) {
 			try {
-				return ConverterFactory.getFilterConverter(getDataset(), jsonConfiguration.getAggregations()).convert(jsonConfiguration.getSelections());
+				return ConverterFactory.getFilterConverter(getDataset(), jsonConfiguration.getAggregations())
+						.convert(jsonConfiguration.getSelections());
 			} catch (IConverterException e) {
 
 			}
@@ -166,8 +169,9 @@ public class DataStoreConfigurationConverter implements IDataStoreConfiguration,
 	@Override
 	public Map<String, String> getParameters() {
 		try {
-			return new ObjectMapper().readValue(jsonConfiguration.getParameters().toString(), new TypeReference<Map<String, String>>() {
-			});
+			return new ObjectMapper().readValue(jsonConfiguration.getParameters().toString(),
+					new TypeReference<Map<String, String>>() {
+					});
 		} catch (IOException e1) {
 
 		}
@@ -184,7 +188,8 @@ public class DataStoreConfigurationConverter implements IDataStoreConfiguration,
 	public List<AbstractSelectionField> getProjections() {
 		if (jsonConfiguration != null) {
 			try {
-				return ConverterFactory.getProjectionConverter(getDataset()).convert(jsonConfiguration.getAggregations());
+				return ConverterFactory.getProjectionConverter(getDataset())
+						.convert(jsonConfiguration.getAggregations());
 			} catch (IConverterException e) {
 
 			}
@@ -217,9 +222,7 @@ public class DataStoreConfigurationConverter implements IDataStoreConfiguration,
 	 */
 	@Override
 	public List<List<AbstractSelectionField>> getSummaryRowProjections() {
-		// TODO Auto-generated method stub
-		List<List<AbstractSelectionField>> newL = new ArrayList<List<AbstractSelectionField>>();
-		return newL;
+		return new ArrayList<>();
 
 	}
 
@@ -230,7 +233,6 @@ public class DataStoreConfigurationConverter implements IDataStoreConfiguration,
 	 */
 	@Override
 	public boolean isRealtime() {
-		// TODO Auto-generated method stub
 		return false;
 	}
 

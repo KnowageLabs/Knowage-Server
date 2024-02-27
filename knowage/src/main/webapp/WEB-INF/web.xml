@@ -40,7 +40,6 @@
 	<filter-mapping>
 		<filter-name>EncodingFilter</filter-name>
 		<url-pattern>/servlet/AdapterHTTP</url-pattern>
-		<url-pattern>/public/servlet/AdapterHTTP</url-pattern>
 		<url-pattern>/WEB-INF/jsp/*</url-pattern>
 		<dispatcher>REQUEST</dispatcher>
 		<dispatcher>FORWARD</dispatcher>
@@ -127,9 +126,7 @@
 	<filter-mapping>
 		<filter-name>SpagoBICoreCheckSessionFilter</filter-name>
 		<url-pattern>/servlet/AdapterHTTP</url-pattern>
-		<url-pattern>/public/servlet/AdapterHTTP</url-pattern>
 		<url-pattern>/restful-services/publish</url-pattern>
-		<url-pattern>/public/restful-services/publish</url-pattern>
 		<dispatcher>REQUEST</dispatcher>
 	</filter-mapping>
 
@@ -179,8 +176,6 @@
 		<filter-name>ProfileFilter</filter-name>
 		<url-pattern>/servlet/AdapterHTTP</url-pattern>
 		<url-pattern>/restful-services/publish</url-pattern>
-		<url-pattern>/public/restful-services/publish</url-pattern>
-		<url-pattern>/public/servlet/AdapterHTTP</url-pattern>
 		<dispatcher>REQUEST</dispatcher>
 		<dispatcher>FORWARD</dispatcher>
 	</filter-mapping>
@@ -420,7 +415,6 @@
 	<servlet-mapping>
 		<servlet-name>AdapterHTTP</servlet-name>
 		<url-pattern>/servlet/AdapterHTTP</url-pattern>
-		<url-pattern>/public/servlet/AdapterHTTP</url-pattern>
 	</servlet-mapping>
 
 	<!-- END SERVLET MAPPINGS -->
@@ -526,17 +520,6 @@
 		<servlet-name>SoapServlet</servlet-name>
 		<url-pattern>/services/SbiDocumentService</url-pattern>
 	</servlet-mapping>
-
-	<!-- START TOMCAT RES -->
-	<resource-ref id="knowageds_core">
-		<description>
-		</description>
-		<res-ref-name>knowageds</res-ref-name>
-		<res-type>javax.sql.DataSource</res-type>
-		<res-auth>Container</res-auth>
-		<res-sharing-scope>Shareable</res-sharing-scope>
-	</resource-ref>
-	<!-- END TOMCAT RES -->
 
 	<!-- 
 		This servlet comes from resteasy-jaxrs and is enabled by default mapped to "" URL. The empty string has

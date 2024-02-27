@@ -21,6 +21,7 @@ import java.io.IOException;
 
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -29,7 +30,6 @@ import commonj.work.WorkEvent;
 import de.myfoo.commonj.work.FooRemoteWorkItem;
 import it.eng.spago.base.SourceBean;
 import it.eng.spagobi.commons.bo.UserProfile;
-import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.engines.commonj.runtime.CommonjWorkContainer;
 import it.eng.spagobi.engines.commonj.utils.GeneralUtils;
 import it.eng.spagobi.engines.commonj.utils.ProcessesStatusContainer;
@@ -72,7 +72,7 @@ public class StopWorkAction extends AbstractEngineAction {
 
 			pid = getAttributeAsString(PID);
 			LOGGER.debug("Parameter [" + PID + "] is equals to [" + pid + "]");
-			Assert.assertTrue(!StringUtilities.isEmpty(pid), "Parameter [" + PID + "] cannot be null or empty");
+			Assert.assertTrue(!StringUtils.isEmpty(pid), "Parameter [" + PID + "] cannot be null or empty");
 
 			ProcessesStatusContainer processesStatusContainer = ProcessesStatusContainer.getInstance();
 			Object o = processesStatusContainer.getPidContainerMap().get(pid);
@@ -106,7 +106,8 @@ public class StopWorkAction extends AbstractEngineAction {
 				writeBackToClient(new JSONFailure(e));
 			} catch (IOException | JSONException e1) {
 				LOGGER.error("Error in stopping the work and in writing back to client", e);
-				throw new SpagoBIEngineServiceException(getActionName(), "Error in stopping the work and in writing back to client", e1);
+				throw new SpagoBIEngineServiceException(getActionName(),
+						"Error in stopping the work and in writing back to client", e1);
 			}
 
 		} finally {

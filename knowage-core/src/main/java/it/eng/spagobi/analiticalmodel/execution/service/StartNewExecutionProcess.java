@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Locale;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -37,7 +38,6 @@ import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.services.AbstractSpagoBIAction;
 import it.eng.spagobi.commons.utilities.ObjectsAccessVerifier;
-import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.container.CoreContextManager;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
@@ -71,7 +71,7 @@ public class StartNewExecutionProcess extends AbstractSpagoBIAction {
 
 		BIObject obj;
 		IEngUserProfile profile;
-		List roles;
+		List<String> roles;
 
 		logger.debug("IN");
 
@@ -79,7 +79,8 @@ public class StartNewExecutionProcess extends AbstractSpagoBIAction {
 
 			profile = getUserProfile();
 			documentId = requestContainsAttribute(DOCUMENT_ID) ? getAttributeAsInteger(DOCUMENT_ID) : null;
-			documentVersion = requestContainsAttribute(DOCUMENT_VERSION) ? getAttributeAsInteger(DOCUMENT_VERSION) : null;
+			documentVersion = requestContainsAttribute(DOCUMENT_VERSION) ? getAttributeAsInteger(DOCUMENT_VERSION)
+					: null;
 			documentLabel = getAttributeAsString(DOCUMENT_LABEL);
 			executionRole = getAttributeAsString(EXECUTION_ROLE);
 			userProvidedParametersStr = getAttributeAsString(ObjectsTreeConstants.PARAMETERS);
@@ -89,20 +90,21 @@ public class StartNewExecutionProcess extends AbstractSpagoBIAction {
 			logger.debug("Parameter [" + DOCUMENT_VERSION + "] is equals to [" + documentVersion + "]");
 			logger.debug("Parameter [" + EXECUTION_ROLE + "] is equals to [" + executionRole + "]");
 
-			Assert.assertTrue(!StringUtilities.isEmpty(documentLabel) || documentId != null,
-					"At least one between [" + DOCUMENT_ID + "] and [" + DOCUMENT_LABEL + "] parameter must be specified on request");
+			Assert.assertTrue(!StringUtils.isEmpty(documentLabel) || documentId != null, "At least one between ["
+					+ DOCUMENT_ID + "] and [" + DOCUMENT_LABEL + "] parameter must be specified on request");
 
-			Assert.assertTrue(!StringUtilities.isEmpty(executionRole), "Parameter [" + EXECUTION_ROLE + "] cannot be null");
+			Assert.assertTrue(!StringUtils.isEmpty(executionRole), "Parameter [" + EXECUTION_ROLE + "] cannot be null");
 
 			// load object to chek if it exists
 			obj = null;
-			if (!StringUtilities.isEmpty(documentLabel)) {
+			if (!StringUtils.isEmpty(documentLabel)) {
 				logger.debug("Loading document with label = [" + documentLabel + "] ...");
 				try {
 					obj = DAOFactory.getBIObjectDAO().loadBIObjectByLabel(documentLabel);
 				} catch (EMFUserError error) {
 					logger.error("Object with label equals to [" + documentLabel + "] not found");
-					throw new SpagoBIServiceException(SERVICE_NAME, "Object with label equals to [" + documentId + "] not found", error);
+					throw new SpagoBIServiceException(SERVICE_NAME,
+							"Object with label equals to [" + documentId + "] not found", error);
 				}
 			} else if (documentId != null) {
 				logger.info("Loading biobject with id = [" + documentId + "] ...");
@@ -110,10 +112,12 @@ public class StartNewExecutionProcess extends AbstractSpagoBIAction {
 					obj = DAOFactory.getBIObjectDAO().loadBIObjectById(documentId);
 				} catch (EMFUserError error) {
 					logger.error("Object with id equals to [" + documentId + "] not found");
-					throw new SpagoBIServiceException(SERVICE_NAME, "Object with id equals to [" + documentId + "] not found", error);
+					throw new SpagoBIServiceException(SERVICE_NAME,
+							"Object with id equals to [" + documentId + "] not found", error);
 				}
 			} else {
-				Assert.assertUnreachable("At least one between [" + DOCUMENT_ID + "] and [" + DOCUMENT_LABEL + "] parameter must be specified on request");
+				Assert.assertUnreachable("At least one between [" + DOCUMENT_ID + "] and [" + DOCUMENT_LABEL
+						+ "] parameter must be specified on request");
 			}
 			Assert.assertNotNull(obj, "Impossible to load document");
 			logger.debug("... docuemnt loaded succesfully");
@@ -129,10 +133,13 @@ public class StartNewExecutionProcess extends AbstractSpagoBIAction {
 			}
 
 			if (roles != null && !roles.contains(executionRole)) {
-				logger.error("Document [id: " + obj.getId() + "; label: " + obj.getLabel() + " ] cannot be executed by any role of the user ["
-						+ ((UserProfile) profile).getUserId() + "]");
-				throw new SpagoBIServiceException(SERVICE_NAME, "Document [id: " + obj.getId() + "; label: " + obj.getLabel()
-						+ " ] cannot be executed by any role of the user [" + ((UserProfile) profile).getUserId() + "]");
+				logger.error("Document [id: " + obj.getId() + "; label: " + obj.getLabel()
+						+ " ] cannot be executed by any role of the user [" + ((UserProfile) profile).getUserId()
+						+ "]");
+				throw new SpagoBIServiceException(SERVICE_NAME,
+						"Document [id: " + obj.getId() + "; label: " + obj.getLabel()
+								+ " ] cannot be executed by any role of the user ["
+								+ ((UserProfile) profile).getUserId() + "]");
 			}
 
 			// so far so good: everything has been validated successfully. Let's create a new ExecutionInstance.
@@ -145,7 +152,8 @@ public class StartNewExecutionProcess extends AbstractSpagoBIAction {
 
 			CoreContextManager ccm = createContext(executionContextId);
 			// so far so good: everything has been validated successfully. Let's create a new ExecutionInstance.
-			instance = createExecutionInstance(obj.getId(), obj.getDocVersion(), executionRole, executionContextId, getLocale());
+			instance = createExecutionInstance(obj.getId(), obj.getDocVersion(), executionRole, executionContextId,
+					getLocale());
 
 			createContext(executionContextId).set(ExecutionInstance.class.getName(), instance);
 
@@ -175,11 +183,13 @@ public class StartNewExecutionProcess extends AbstractSpagoBIAction {
 		}
 	}
 
-	private ExecutionInstance createExecutionInstance(Integer biobjectId, Integer biobjectVersion, String aRoleName, String execId, Locale locale) {
+	private ExecutionInstance createExecutionInstance(Integer biobjectId, Integer biobjectVersion, String aRoleName,
+			String execId, Locale locale) {
 		String executionFlowId = getAttributeAsString("EXECUTION_FLOW_ID");
 		Boolean displayToolbar = getAttributeAsBoolean(SpagoBIConstants.TOOLBAR_VISIBLE, true);
 		Boolean displaySlider = getAttributeAsBoolean(SpagoBIConstants.SLIDERS_VISIBLE, true);
-		String modality = requestContainsAttribute(ObjectsTreeConstants.MODALITY) ? getAttributeAsString(ObjectsTreeConstants.MODALITY)
+		String modality = requestContainsAttribute(ObjectsTreeConstants.MODALITY)
+				? getAttributeAsString(ObjectsTreeConstants.MODALITY)
 				: SpagoBIConstants.NORMAL_EXECUTION_MODALITY;
 
 		// create execution id
@@ -194,8 +204,8 @@ public class StartNewExecutionProcess extends AbstractSpagoBIAction {
 		// create new execution instance
 		ExecutionInstance instance = null;
 		try {
-			instance = new ExecutionInstance(getUserProfile(), executionFlowId, execId, biobjectId, biobjectVersion, aRoleName, modality,
-					displayToolbar.booleanValue(), displaySlider.booleanValue(), locale);
+			instance = new ExecutionInstance(getUserProfile(), executionFlowId, execId, biobjectId, biobjectVersion,
+					aRoleName, modality, displayToolbar.booleanValue(), displaySlider.booleanValue(), locale);
 		} catch (Exception e) {
 			logger.error(e);
 		}

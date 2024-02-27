@@ -25,7 +25,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import it.eng.spagobi.commons.utilities.StringUtilities;
+import org.apache.commons.lang3.StringUtils;
+
 import it.eng.spagobi.tools.dataset.common.datawriter.CockpitJSONDataWriter;
 import it.eng.spagobi.tools.dataset.common.query.AggregationFunctions;
 import it.eng.spagobi.tools.dataset.common.query.IAggregationFunction;
@@ -53,8 +54,9 @@ public abstract class AbstractSelectQueryVisitor extends AbstractFilterVisitor i
 
 	protected static final String ALIAS_PREFIX = "AS";
 
-	protected static final String DATE_TIME_FORMAT_SQL_STANDARD = CockpitJSONDataWriter.CACHE_DATE_TIME_FORMAT.replace("yyyy", "YYYY").replace("MM", "MM")
-			.replace("dd", "DD").replace("HH", "HH24").replace("mm", "MI").replace("ss", "SS");
+	protected static final String DATE_TIME_FORMAT_SQL_STANDARD = CockpitJSONDataWriter.CACHE_DATE_TIME_FORMAT
+			.replace("yyyy", "YYYY").replace("MM", "MM").replace("dd", "DD").replace("HH", "HH24").replace("mm", "MI")
+			.replace("ss", "SS");
 
 	protected boolean buildPreparedStatement;
 	protected boolean useNameAsAlias;
@@ -164,7 +166,8 @@ public abstract class AbstractSelectQueryVisitor extends AbstractFilterVisitor i
 			visit(new UnsatisfiedFilter());
 		} else {
 			if (hasNullOperand(item) || !database.getDatabaseDialect().isSingleColumnInOperatorSupported()
-					|| (item.getProjections().size() > 1 && !database.getDatabaseDialect().isMultiColumnInOperatorSupported())) {
+					|| (item.getProjections().size() > 1
+							&& !database.getDatabaseDialect().isMultiColumnInOperatorSupported())) {
 				queryBuilder.append("(");
 				visit(transformToAndOrFilters(item));
 				queryBuilder.append(")");
@@ -232,7 +235,8 @@ public abstract class AbstractSelectQueryVisitor extends AbstractFilterVisitor i
 			visit(new UnsatisfiedFilter());
 		} else {
 			if (hasNullOperand(item) || !database.getDatabaseDialect().isSingleColumnInOperatorSupported()
-					|| (item.getProjections().size() > 1 && !database.getDatabaseDialect().isMultiColumnInOperatorSupported())) {
+					|| (item.getProjections().size() > 1
+							&& !database.getDatabaseDialect().isMultiColumnInOperatorSupported())) {
 				queryBuilder.append("(");
 				visit(transformToAndOrFilters(item));
 				queryBuilder.append(")");
@@ -322,10 +326,12 @@ public abstract class AbstractSelectQueryVisitor extends AbstractFilterVisitor i
 		/*
 		 * TODO: Remove isCalculatedColumn or change logic
 		 */
-		String columnName = isCalculatedColumn(name) ? name.replace(AbstractDataBase.STANDARD_ALIAS_DELIMITER, aliasDelimiter)
+		String columnName = isCalculatedColumn(name)
+				? name.replace(AbstractDataBase.STANDARD_ALIAS_DELIMITER, aliasDelimiter)
 				: aliasDelimiter + name + aliasDelimiter;
 
-		boolean isValidAggregationFunction = aggregationFunction != null && !aggregationFunction.getName().equals(AggregationFunctions.NONE);
+		boolean isValidAggregationFunction = aggregationFunction != null
+				&& !aggregationFunction.getName().equals(AggregationFunctions.NONE);
 		if (!isValidAggregationFunction) {
 			queryBuilder.append(columnName);
 		} else {
@@ -334,7 +340,7 @@ public abstract class AbstractSelectQueryVisitor extends AbstractFilterVisitor i
 
 		String alias = projection.getAlias();
 		if (useAlias) {
-			if (StringUtilities.isNotEmpty(alias) && !alias.equals(name)) {
+			if (StringUtils.isNotEmpty(alias) && !alias.equals(name)) {
 				queryBuilder.append(" ");
 				queryBuilder.append(aliasPrefix);
 				queryBuilder.append(" ");
@@ -364,7 +370,8 @@ public abstract class AbstractSelectQueryVisitor extends AbstractFilterVisitor i
 		String name = projection.getFormula();
 		String columnName = name.replace(AbstractDataBase.STANDARD_ALIAS_DELIMITER, aliasDelimiter);
 
-		boolean isValidAggregationFunction = aggregationFunction != null && !aggregationFunction.getName().equals(AggregationFunctions.NONE);
+		boolean isValidAggregationFunction = aggregationFunction != null
+				&& !aggregationFunction.getName().equals(AggregationFunctions.NONE);
 		if (!isValidAggregationFunction) {
 			queryBuilder.append(columnName);
 		} else {
@@ -373,7 +380,7 @@ public abstract class AbstractSelectQueryVisitor extends AbstractFilterVisitor i
 
 		String alias = projection.getAlias();
 		if (useAlias) {
-			if (StringUtilities.isNotEmpty(alias) && !alias.equals(name)) {
+			if (StringUtils.isNotEmpty(alias) && !alias.equals(name)) {
 				queryBuilder.append(" ");
 				queryBuilder.append(aliasPrefix);
 				queryBuilder.append(" ");
@@ -404,7 +411,8 @@ public abstract class AbstractSelectQueryVisitor extends AbstractFilterVisitor i
 			IAggregationFunction aggregationFunction = projection.getAggregationFunction();
 
 			String name = projection.getName();
-			String columnName = isCalculatedColumn(name) ? name.replace(AbstractDataBase.STANDARD_ALIAS_DELIMITER, aliasDelimiter)
+			String columnName = isCalculatedColumn(name)
+					? name.replace(AbstractDataBase.STANDARD_ALIAS_DELIMITER, aliasDelimiter)
 					: aliasDelimiter + name + aliasDelimiter;
 
 			if (aggregationFunction == null || AggregationFunctions.NONE_FUNCTION.equals(aggregationFunction)) {
@@ -419,7 +427,8 @@ public abstract class AbstractSelectQueryVisitor extends AbstractFilterVisitor i
 			IAggregationFunction aggregationFunction = projection.getAggregationFunction();
 
 			String name = projection.getAlias();
-			String columnName = isCalculatedColumn(name) ? name.replace(AbstractDataBase.STANDARD_ALIAS_DELIMITER, aliasDelimiter)
+			String columnName = isCalculatedColumn(name)
+					? name.replace(AbstractDataBase.STANDARD_ALIAS_DELIMITER, aliasDelimiter)
 					: aliasDelimiter + name + aliasDelimiter;
 
 			if (aggregationFunction == null || AggregationFunctions.NONE_FUNCTION.equals(aggregationFunction)) {
@@ -456,7 +465,7 @@ public abstract class AbstractSelectQueryVisitor extends AbstractFilterVisitor i
 		Assert.assertTrue(!(selectAll && selectCount), "Invalid projections definition");
 
 		String tableName = query.getTableName();
-		Assert.assertTrue(StringUtilities.isNotEmpty(tableName), "Missing table definition");
+		Assert.assertTrue(StringUtils.isNotEmpty(tableName), "Missing table definition");
 
 		Assert.assertTrue(query.hasLimit() || !query.hasOffset(), "Invalid offset definition (missing limit)");
 	}
@@ -472,8 +481,8 @@ public abstract class AbstractSelectQueryVisitor extends AbstractFilterVisitor i
 			queryBuilder.append("COUNT(*) ");
 		} else {
 			List<AbstractSelectionField> projectionsAbs = query.getProjections();
-			List<Projection> projections = new ArrayList<Projection>();
-			List<DataStoreCalculatedField> projectionsCalcFields = new ArrayList<DataStoreCalculatedField>();
+			List<Projection> projections = new ArrayList<>();
+			List<DataStoreCalculatedField> projectionsCalcFields = new ArrayList<>();
 			int appendedProjectionsCounter = 0;
 			for (AbstractSelectionField abstractSelectionField : projectionsAbs) {
 				if (abstractSelectionField.getClass().equals(DataStoreCatalogFunctionField.class)) {
@@ -505,14 +514,16 @@ public abstract class AbstractSelectQueryVisitor extends AbstractFilterVisitor i
 						Projection projection = (Projection) projs;
 
 						for (Projection p : projections) {
-							if (p.getDataset().equals(projection.getDataset()) && p.getName().equals(projection.getName())) {
+							if (p.getDataset().equals(projection.getDataset())
+									&& p.getName().equals(projection.getName())) {
 								projectionAlreadyDefined = true;
 								break;
 							}
 						}
 						if (!projectionAlreadyDefined) {
 							IAggregationFunction aggregationFunction = projection.getAggregationFunction();
-							if (aggregationFunction == null || AggregationFunctions.NONE_FUNCTION.equals(aggregationFunction)) {
+							if (aggregationFunction == null
+									|| AggregationFunctions.NONE_FUNCTION.equals(aggregationFunction)) {
 								queryBuilder.append(",");
 								append(projection, false);
 							}
@@ -521,14 +532,16 @@ public abstract class AbstractSelectQueryVisitor extends AbstractFilterVisitor i
 					} else {
 						DataStoreCalculatedField projection = (DataStoreCalculatedField) projs;
 						for (DataStoreCalculatedField p : projectionsCalcFields) {
-							if (p.getDataset().equals(projection.getDataset()) && p.getName().equals(projection.getName())) {
+							if (p.getDataset().equals(projection.getDataset())
+									&& p.getName().equals(projection.getName())) {
 								projectionAlreadyDefined = true;
 								break;
 							}
 						}
 						if (!projectionAlreadyDefined) {
 							IAggregationFunction aggregationFunction = projection.getAggregationFunction();
-							if (aggregationFunction == null || AggregationFunctions.NONE_FUNCTION.equals(aggregationFunction)) {
+							if (aggregationFunction == null
+									|| AggregationFunctions.NONE_FUNCTION.equals(aggregationFunction)) {
 								queryBuilder.append(",");
 								append(projection, false);
 							}
@@ -549,7 +562,8 @@ public abstract class AbstractSelectQueryVisitor extends AbstractFilterVisitor i
 		if (query.getDataSet().getDsMetadata() != null && query.getDataSet().getDsMetadata().contains("CLOB"))
 			containsCLOB = true;
 
-		if (query.isSelectDistinct() && query.getGroups().isEmpty() && !query.hasAggregationFunction() && !containsCLOB) {
+		if (query.isSelectDistinct() && query.getGroups().isEmpty() && !query.hasAggregationFunction()
+				&& !containsCLOB) {
 			queryBuilder.append("DISTINCT ");
 		}
 	}
@@ -558,7 +572,7 @@ public abstract class AbstractSelectQueryVisitor extends AbstractFilterVisitor i
 		queryBuilder.append(" FROM ");
 
 		String schema = query.getSchema();
-		if (StringUtilities.isNotEmpty(schema)) {
+		if (StringUtils.isNotEmpty(schema)) {
 			queryBuilder.append(schema);
 			queryBuilder.append(".");
 		}
@@ -577,8 +591,8 @@ public abstract class AbstractSelectQueryVisitor extends AbstractFilterVisitor i
 	}
 
 	protected void buildGroupBy(SelectQuery query) {
-		List<AbstractSelectionField> groups = query.getGroups().stream().filter(g -> (g instanceof DataStoreCatalogFunctionField) == false)
-				.collect(Collectors.toList());
+		List<AbstractSelectionField> groups = query.getGroups().stream()
+				.filter(g -> !(g instanceof DataStoreCatalogFunctionField)).collect(Collectors.toList());
 		if (groups == null || groups.isEmpty()) {
 			return;
 		}
@@ -612,13 +626,15 @@ public abstract class AbstractSelectQueryVisitor extends AbstractFilterVisitor i
 					for (AbstractSelectionField g : groups) {
 						if (g instanceof Projection) {
 							Projection proj = (Projection) g;
-							if (proj.getDataset().equals(projection.getDataset()) && proj.getName().equals(projection.getName())) {
+							if (proj.getDataset().equals(projection.getDataset())
+									&& proj.getName().equals(projection.getName())) {
 								projectionAlreadyDefined = true;
 								break;
 							}
 						} else {
 							DataStoreCalculatedField calc = (DataStoreCalculatedField) g;
-							if (calc.getDataset().equals(projection.getDataset()) && calc.getName().equals(projection.getName())) {
+							if (calc.getDataset().equals(projection.getDataset())
+									&& calc.getName().equals(projection.getName())) {
 								projectionAlreadyDefined = true;
 								break;
 							}
@@ -626,7 +642,8 @@ public abstract class AbstractSelectQueryVisitor extends AbstractFilterVisitor i
 					}
 					if (!projectionAlreadyDefined) {
 						IAggregationFunction aggregationFunction = projection.getAggregationFunction();
-						if (aggregationFunction == null || AggregationFunctions.NONE_FUNCTION.equals(aggregationFunction)) {
+						if (aggregationFunction == null
+								|| AggregationFunctions.NONE_FUNCTION.equals(aggregationFunction)) {
 							queryBuilder.append(",");
 							append(projection, false);
 						}
@@ -639,13 +656,15 @@ public abstract class AbstractSelectQueryVisitor extends AbstractFilterVisitor i
 					for (AbstractSelectionField g : groups) {
 						if (g instanceof Projection) {
 							Projection proj = (Projection) g;
-							if (proj.getDataset().equals(projection.getDataset()) && proj.getName().equals(projection.getName())) {
+							if (proj.getDataset().equals(projection.getDataset())
+									&& proj.getName().equals(projection.getName())) {
 								projectionAlreadyDefined = true;
 								break;
 							}
 						} else {
 							DataStoreCalculatedField calc = (DataStoreCalculatedField) g;
-							if (calc.getDataset().equals(projection.getDataset()) && calc.getName().equals(projection.getName())) {
+							if (calc.getDataset().equals(projection.getDataset())
+									&& calc.getName().equals(projection.getName())) {
 								projectionAlreadyDefined = true;
 								break;
 							}
@@ -653,7 +672,8 @@ public abstract class AbstractSelectQueryVisitor extends AbstractFilterVisitor i
 					}
 					if (!projectionAlreadyDefined) {
 						IAggregationFunction aggregationFunction = projection.getAggregationFunction();
-						if (aggregationFunction == null || AggregationFunctions.NONE_FUNCTION.equals(aggregationFunction)) {
+						if (aggregationFunction == null
+								|| AggregationFunctions.NONE_FUNCTION.equals(aggregationFunction)) {
 							// queryBuilder.append(",");
 							// append(projection, false);
 						}

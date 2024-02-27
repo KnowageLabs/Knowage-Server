@@ -33,6 +33,7 @@ import java.util.Map;
 import javax.naming.NamingException;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.LogMF;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
@@ -66,7 +67,6 @@ import it.eng.spagobi.commons.services.AbstractSpagoBIAction;
 import it.eng.spagobi.commons.utilities.AuditLogUtilities;
 import it.eng.spagobi.commons.utilities.GeneralUtilities;
 import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
-import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.commons.utilities.UserUtilities;
 import it.eng.spagobi.commons.utilities.messages.MessageBuilder;
 import it.eng.spagobi.container.ObjectUtils;
@@ -1074,7 +1074,7 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 			throw new SpagoBIRuntimeException("Impossible to retrieve dataset from request");
 		}
 
-		if (StringUtilities.isNotEmpty(transformerTypeCode)) {
+		if (StringUtils.isNotEmpty(transformerTypeCode)) {
 			dataSet = setTransformer(dataSet, transformerTypeCode);
 		}
 		HashMap<String, String> parametersMap = new HashMap<>();

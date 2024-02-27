@@ -33,6 +33,7 @@ import javax.servlet.http.HttpSession;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.httpclient.methods.GetMethod;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.LogMF;
 import org.apache.log4j.Logger;
 import org.json.JSONException;
@@ -49,7 +50,6 @@ import com.auth0.jwt.interfaces.Claim;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.auth0.jwt.interfaces.Verification;
 
-import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.security.OAuth2.OAuth2Client;
 import it.eng.spagobi.security.OAuth2.OAuth2Config;
 import it.eng.spagobi.services.common.JWTSsoService;
@@ -82,7 +82,8 @@ public class Oauth2HybridSsoService extends JWTSsoService {
 		}
 		LogMF.debug(logger, "Access token found: [{0}]", accessToken);
 		if (OAuth2Config.getInstance().hasUserInfoUrl()) {
-			logger.debug("User info URL found from config [" + OAuth2Config.getInstance().getUserInfoUrl() + "]; getting user id from it ...");
+			logger.debug("User info URL found from config [" + OAuth2Config.getInstance().getUserInfoUrl()
+					+ "]; getting user id from it ...");
 			jwtToken = getJWTTokenFromProfileInfoURL(accessToken, OAuth2Config.getInstance().getUserInfoUrl());
 		} else {
 			logger.debug("User info URL not found from config; getting user id from access token as JWT token ....");
@@ -112,9 +113,12 @@ public class Oauth2HybridSsoService extends JWTSsoService {
 			int statusCode = httpClient.executeMethod(httpget);
 			byte[] response = httpget.getResponseBody();
 			if (statusCode != HttpStatus.SC_OK) {
-				logger.error("Error while getting user information from OAuth2 provider: server returned statusCode = " + statusCode);
+				logger.error("Error while getting user information from OAuth2 provider: server returned statusCode = "
+						+ statusCode);
 				LogMF.error(logger, "Server response is:\n{0}", new Object[] { new String(response) });
-				throw new SpagoBIRuntimeException("Error while getting user information from OAuth2 provider: server returned statusCode = " + statusCode);
+				throw new SpagoBIRuntimeException(
+						"Error while getting user information from OAuth2 provider: server returned statusCode = "
+								+ statusCode);
 			}
 
 			String responseStr = new String(response);
@@ -129,7 +133,7 @@ public class Oauth2HybridSsoService extends JWTSsoService {
 			claims.put(SsoServiceInterface.USER_ID, userId);
 
 			String userName = getUserName(jsonObject);
-			if (StringUtilities.isNotEmpty(userName)) {
+			if (StringUtils.isNotEmpty(userName)) {
 				logger.debug("User name is [" + userName + "]");
 				claims.put(JWTSsoService.USERNAME_CLAIM, userName);
 			} else {
@@ -140,7 +144,8 @@ public class Oauth2HybridSsoService extends JWTSsoService {
 			LogMF.debug(logger, "JWT token created:\n{0}", jwtToken);
 			return jwtToken;
 		} catch (Exception e) {
-			throw new SpagoBIRuntimeException("Cannot get user id from access token [" + accessToken + "] by user profile info URL [" + userInfoUrl + "]", e);
+			throw new SpagoBIRuntimeException("Cannot get user id from access token [" + accessToken
+					+ "] by user profile info URL [" + userInfoUrl + "]", e);
 		}
 	}
 
@@ -167,7 +172,7 @@ public class Oauth2HybridSsoService extends JWTSsoService {
 			claims.put(SsoServiceInterface.USER_ID, userId);
 
 			String userName = getUserName(decodedJWT);
-			if (StringUtilities.isNotEmpty(userName)) {
+			if (StringUtils.isNotEmpty(userName)) {
 				logger.debug("User name is [" + userName + "]");
 				claims.put(JWTSsoService.USERNAME_CLAIM, userName);
 			} else {

@@ -17,19 +17,19 @@
  */
 package it.eng.spagobi.commons.deserializer;
 
-import it.eng.spago.base.SourceBean;
-import it.eng.spago.base.SourceBeanAttribute;
-import it.eng.spagobi.commons.utilities.StringUtilities;
-import it.eng.spagobi.tools.scheduler.bo.Job;
-import it.eng.spagobi.utilities.assertion.Assert;
-import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
-
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
+
+import it.eng.spago.base.SourceBean;
+import it.eng.spago.base.SourceBeanAttribute;
+import it.eng.spagobi.tools.scheduler.bo.Job;
+import it.eng.spagobi.utilities.assertion.Assert;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
@@ -75,7 +75,8 @@ public class JobXMLDeserializer implements Deserializer {
 			} else if (o instanceof String) {
 				xml = SourceBean.fromXMLString((String) o);
 			} else {
-				throw new DeserializationException("Impossible to deserialize from an object of type [" + o.getClass().getName() + "]");
+				throw new DeserializationException(
+						"Impossible to deserialize from an object of type [" + o.getClass().getName() + "]");
 			}
 
 			jobName = (String) xml.getAttribute(JOB_NAME);
@@ -120,7 +121,7 @@ public class JobXMLDeserializer implements Deserializer {
 
 		String jobClassName = (String) xml.getAttribute(JOB_CLASS);
 
-		if (StringUtilities.isEmpty(jobClassName)) {
+		if (StringUtils.isEmpty(jobClassName)) {
 			return null;
 		}
 
@@ -135,7 +136,7 @@ public class JobXMLDeserializer implements Deserializer {
 	}
 
 	private Map<String, String> deserializeParametersAttribute(SourceBean xml) {
-		Map<String, String> parameters = new HashMap<String, String>();
+		Map<String, String> parameters = new HashMap<>();
 
 		SourceBean jobParameters = (SourceBean) xml.getAttribute(JOB_PARAMETERS);
 

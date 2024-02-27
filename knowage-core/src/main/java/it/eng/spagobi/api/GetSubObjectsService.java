@@ -37,8 +37,8 @@ public class GetSubObjectsService extends AbstractSpagoBIResource {
 	@Path("/getSubObjects")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
 	public Response getSubObjects(@QueryParam("idObj") Integer biobjectId) {
-		HashMap<String, Object> resultAsMap = new HashMap<String, Object>();
-		List subObjectsList = null;
+		HashMap<String, Object> resultAsMap = new HashMap<>();
+		List<SubObject> subObjectsList = null;
 		IEngUserProfile userProfile = this.getUserProfile();
 		try {
 			if (userProfile.isAbleToExecuteAction(CommunityFunctionalityConstants.DOCUMENT_MANAGEMENT_ADMIN)) {
@@ -47,7 +47,7 @@ public class GetSubObjectsService extends AbstractSpagoBIResource {
 				subObjectsList = DAOFactory.getSubObjectDAO().getAccessibleSubObjects(biobjectId, userProfile);
 			}
 		} catch (EMFUserError e) {
-			LOGGER.error("Error while recovering subobjects list for document with id = " + biobjectId, e);
+			LOGGER.error("Error while recovering subobjects list for document with id = {}", biobjectId, e);
 			throw new SpagoBIServiceException(SERVICE_NAME, "Cannot load customized views", e);
 		} catch (EMFInternalError e) {
 			LOGGER.error("Error while recovering information about user", e);
@@ -83,17 +83,18 @@ public class GetSubObjectsService extends AbstractSpagoBIResource {
 			e1.printStackTrace();
 		}
 		if (canDeleteSubObject) {
-			LOGGER.info("User [id: " + userProfile.getUserUniqueIdentifier() + ", userId: " + userProfile.getUserId() + ", name: " + userProfile.getUserName()
-					+ "] " + "is deleting customized view [id: " + subObject.getId() + ", name: " + subObject.getName() + "] ...");
+			LOGGER.info("User [id: {}, userId: {}, name: {}] is deleting customized view [id: {}, name: {}] ...",
+					userProfile.getUserUniqueIdentifier(), userProfile.getUserId(), userProfile.getUserName(),
+					subObject.getId(), subObject.getName());
 			try {
 				dao.deleteSubObject(biobjectId);
 			} catch (EMFUserError e) {
 				throw new SpagoBIServiceException(SERVICE_NAME, "Error while deleting customized view", e);
 			}
-			LOGGER.debug("Customized view [id: " + subObject.getId() + ", name: " + subObject.getName() + "] deleted.");
+			LOGGER.debug("Customized view [id: {}, name: {}] deleted.", subObject.getId(), subObject.getName());
 		} else {
-			LOGGER.error("User [id: " + userProfile.getUserUniqueIdentifier() + ", userId: " + userProfile.getUserId() + ", name: " + userProfile.getUserName()
-					+ "] cannot delete customized view");
+			LOGGER.error("User [id: {}, userId: {}, name: {}] cannot delete customized view",
+					userProfile.getUserUniqueIdentifier(), userProfile.getUserId(), userProfile.getUserName());
 			throw new SpagoBIServiceException(SERVICE_NAME, "User cannot delete customized view");
 		}
 

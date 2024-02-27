@@ -44,18 +44,18 @@ import it.eng.spagobi.tools.catalogue.bo.MetaModel;
 import it.eng.spagobi.tools.catalogue.metadata.IDrivableBIResource;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
-
 public class MinMaxValuesRetriever {
 
-	private static Logger logger = Logger.getLogger(MinMaxValuesRetriever.class);
+	private static final Logger LOGGER = Logger.getLogger(MinMaxValuesRetriever.class);
 
-	public LovValue getMaxValue(BIObjectParameter analyticalDocumentParameter, ExecutionInstance executionInstance, IEngUserProfile profile) {
-		logger.debug("IN");
+	public LovValue getMaxValue(BIObjectParameter analyticalDocumentParameter, ExecutionInstance executionInstance,
+			IEngUserProfile profile) {
+		LOGGER.debug("IN");
 		LovValue retValue = null;
 		try {
 			ILovDetail lov = executionInstance.getLovDetailForMax(analyticalDocumentParameter);
 			if (lov != null) {
-				logger.debug("A LOV for max values is defined : " + lov);
+				LOGGER.debug("A LOV for max values is defined : " + lov);
 				retValue = getMaxValueFromMaxLov(executionInstance, profile, lov);
 			}
 		} catch (Exception e) {
@@ -64,22 +64,23 @@ public class MinMaxValuesRetriever {
 		if (retValue == null) {
 			retValue = new LovValue();
 		}
-		logger.debug("OUT");
+		LOGGER.debug("OUT");
 		return retValue;
 	}
 
-	protected LovValue getMaxValueFromMaxLov(ExecutionInstance executionInstance, IEngUserProfile profile, ILovDetail lov) throws Exception, SourceBeanException {
-		logger.debug("IN");
+	protected LovValue getMaxValueFromMaxLov(ExecutionInstance executionInstance, IEngUserProfile profile,
+			ILovDetail lov) throws Exception {
+		LOGGER.debug("IN");
 		LovValue retValue = new LovValue();
 
 		// get from cache, if available
 		LovResultCacheManager executionCacheManager = new LovResultCacheManager();
-		String lovResult = executionCacheManager.getLovResult(profile, lov, new ArrayList<ObjParuse>(), executionInstance, true);
+		String lovResult = executionCacheManager.getLovResult(profile, lov, new ArrayList<>(), executionInstance, true);
 		LovResultHandler lovResultHandler = new LovResultHandler(lovResult);
 		List rows = lovResultHandler.getRows();
 		int size = rows.size();
-		logger.debug("LOV result retrieved without errors");
-		logger.debug("LOV contains " + size + " values");
+		LOGGER.debug("LOV result retrieved without errors");
+		LOGGER.debug("LOV contains " + size + " values");
 		if (size != 1) {
 			String msg = String.format("LOV for min and max value must provide exactly 1 value, %d founded", size);
 			throw new SpagoBIRuntimeException(msg);
@@ -92,22 +93,24 @@ public class MinMaxValuesRetriever {
 			retValue.setValue(row.getAttribute(valueColumn));
 			retValue.setDescription(row.getAttribute(descriptionColumn));
 		}
-		logger.debug("OUT");
+		LOGGER.debug("OUT");
 		return retValue;
 	}
 
-	public LovValue getMaxQueryValues(BIObjectParameter biparam, ExecutionInstance executionInstance, IEngUserProfile userProfile) {
+	public LovValue getMaxQueryValues(BIObjectParameter biparam, ExecutionInstance executionInstance,
+			IEngUserProfile userProfile) {
 
 		LovResultCacheManager executionCacheManager = new LovResultCacheManager();
 		ILovDetail lovProvDet = executionInstance.getLovDetail(biparam);
 		String columnName = null;
 		String lovResult = null;
 		try {
-			lovResult = executionCacheManager.getLovResult(userProfile, lovProvDet, executionInstance.getDependencies(biparam), executionInstance, true);
+			lovResult = executionCacheManager.getLovResult(userProfile, lovProvDet,
+					executionInstance.getDependencies(biparam), executionInstance, true);
 
 			columnName = lovProvDet.getValueColumnName();
 		} catch (Exception e) {
-			logger.error("Error retriving min/max value", e);
+			LOGGER.error("Error retriving min/max value", e);
 		}
 
 		// get all the rows of the result
@@ -115,7 +118,7 @@ public class MinMaxValuesRetriever {
 		try {
 			lovResultHandler = new LovResultHandler(lovResult);
 		} catch (SourceBeanException e) {
-			logger.error("Error retriving min/max value", e);
+			LOGGER.error("Error retriving min/max value", e);
 		}
 
 		LovValue ret = new LovValue();
@@ -130,8 +133,9 @@ public class MinMaxValuesRetriever {
 		return ret;
 	}
 
-	public LovValue getMaxValueDum(AbstractDriver driver, IDrivableBIResource object, IEngUserProfile profile, Locale locale, String role) {
-		logger.debug("IN");
+	public LovValue getMaxValueDum(AbstractDriver driver, IDrivableBIResource object, IEngUserProfile profile,
+			Locale locale, String role) {
+		LOGGER.debug("IN");
 		AbstractBIResourceRuntime dum = null;
 		if (object instanceof BIObject) {
 			dum = new DocumentRuntime(profile, locale);
@@ -142,7 +146,7 @@ public class MinMaxValuesRetriever {
 		try {
 			ILovDetail lov = dum.getLovDetailForMax(driver);
 			if (lov != null) {
-				logger.debug("A LOV for max values is defined : " + lov);
+				LOGGER.debug("A LOV for max values is defined : " + lov);
 				retValue = getMaxValueFromMaxLovDum(object, profile, lov, locale);
 			}
 		} catch (Exception e) {
@@ -151,23 +155,24 @@ public class MinMaxValuesRetriever {
 		if (retValue == null) {
 			retValue = new LovValue();
 		}
-		logger.debug("OUT");
+		LOGGER.debug("OUT");
 		return retValue;
 	}
 
-	protected LovValue getMaxValueFromMaxLovDum(IDrivableBIResource object, IEngUserProfile profile, ILovDetail lov, Locale locale)
-			throws Exception, SourceBeanException {
-		logger.debug("IN");
+	protected LovValue getMaxValueFromMaxLovDum(IDrivableBIResource object, IEngUserProfile profile, ILovDetail lov,
+			Locale locale) throws Exception {
+		LOGGER.debug("IN");
 		LovValue retValue = new LovValue();
 
 		// get from cache, if available
 		LovResultCacheManager executionCacheManager = new LovResultCacheManager();
-		String lovResult = executionCacheManager.getLovResultDum(profile, lov, new ArrayList<ObjParuse>(), object, true, locale);
+		String lovResult = executionCacheManager.getLovResultDum(profile, lov, new ArrayList<>(), object, true,
+				locale);
 		LovResultHandler lovResultHandler = new LovResultHandler(lovResult);
 		List rows = lovResultHandler.getRows();
 		int size = rows.size();
-		logger.debug("LOV result retrieved without errors");
-		logger.debug("LOV contains " + size + " values");
+		LOGGER.debug("LOV result retrieved without errors");
+		LOGGER.debug("LOV contains " + size + " values");
 		if (size != 1) {
 			String msg = String.format("LOV for min and max value must provide exactly 1 value, %d founded", size);
 			throw new SpagoBIRuntimeException(msg);
@@ -180,23 +185,24 @@ public class MinMaxValuesRetriever {
 			retValue.setValue(row.getAttribute(valueColumn));
 			retValue.setDescription(row.getAttribute(descriptionColumn));
 		}
-		logger.debug("OUT");
+		LOGGER.debug("OUT");
 		return retValue;
 	}
 
-	public LovValue getMaxQueryValuesDum(AbstractDriver biparam, AbstractBIResourceRuntime dum, IEngUserProfile userProfile,
-			IDrivableBIResource object, Locale locale, String role) {
+	public LovValue getMaxQueryValuesDum(AbstractDriver biparam, AbstractBIResourceRuntime dum,
+			IEngUserProfile userProfile, IDrivableBIResource object, Locale locale, String role) {
 
 		LovResultCacheManager executionCacheManager = new LovResultCacheManager();
 		ILovDetail lovProvDet = dum.getLovDetail(biparam);
 		String columnName = null;
 		String lovResult = null;
 		try {
-			lovResult = executionCacheManager.getLovResultDum(userProfile, lovProvDet, dum.getDependencies(biparam, role), object, true, locale);
+			lovResult = executionCacheManager.getLovResultDum(userProfile, lovProvDet,
+					dum.getDependencies(biparam, role), object, true, locale);
 
 			columnName = lovProvDet.getValueColumnName();
 		} catch (Exception e) {
-			logger.error(e.getMessage());
+			LOGGER.error(e.getMessage());
 		}
 
 		// get all the rows of the result
@@ -204,7 +210,7 @@ public class MinMaxValuesRetriever {
 		try {
 			lovResultHandler = new LovResultHandler(lovResult);
 		} catch (SourceBeanException e) {
-			logger.error(e.getMessage());
+			LOGGER.error(e.getMessage());
 		}
 
 		LovValue retValue = new LovValue();
@@ -212,7 +218,7 @@ public class MinMaxValuesRetriever {
 			List<SourceBean> rows = lovResultHandler.getRows();
 			for (SourceBean row : rows) {
 				String rowValue = (String) row.getAttribute(columnName);
-				
+
 				retValue.setValue(rowValue);
 			}
 		}

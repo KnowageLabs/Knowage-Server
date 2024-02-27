@@ -28,11 +28,10 @@ import javax.ws.rs.core.MediaType;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import it.eng.spago.error.EMFInternalError;
 import it.eng.spagobi.api.AbstractSpagoBIResource;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.profiling.bo.UserInformationDTO;
-import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 @Path("2.0/currentuser")
 
@@ -45,14 +44,14 @@ public class CurrentUserResource extends AbstractSpagoBIResource {
 	@GET
 	@Path("/")
 	@Produces(MediaType.APPLICATION_JSON + charset)
-	public UserInformationDTO getCurrentUserInformation(@Context HttpServletRequest httpRequest) throws EMFInternalError {
+	public UserInformationDTO getCurrentUserInformation(@Context HttpServletRequest httpRequest) {
 
 		UserProfile userProfile = getUserProfile();
 
 		if (userProfile == null) {
 			String message = "UserProfile is null";
 			LOGGER.error(message);
-			throw new SpagoBIEngineRuntimeException(message);
+			throw new SpagoBIRuntimeException(message);
 		}
 
 		return new UserInformationDTO(userProfile);

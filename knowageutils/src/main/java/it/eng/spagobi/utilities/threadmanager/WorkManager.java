@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,33 +11,28 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package it.eng.spagobi.utilities.threadmanager;
 
-
-import it.eng.spago.base.SourceBean;
-import it.eng.spagobi.commons.utilities.StringUtilities;
-import it.eng.spagobi.services.common.EnginConf;
-import it.eng.spagobi.utilities.assertion.Assert;
-
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 
 import commonj.work.Work;
 import commonj.work.WorkItem;
 import commonj.work.WorkListener;
-
 import de.myfoo.commonj.util.ThreadPool;
 import de.myfoo.commonj.work.FooRemoteWorkItem;
 import de.myfoo.commonj.work.FooWorkManager;
-
-
+import it.eng.spago.base.SourceBean;
+import it.eng.spagobi.services.common.EnginConf;
+import it.eng.spagobi.utilities.assertion.Assert;
 
 /**
  * @authors Angelo Bernabei angelo.bernabei@eng.it, Andrea Gioia andrea.gioia@eng.it
@@ -45,33 +40,28 @@ import de.myfoo.commonj.work.FooWorkManager;
 public class WorkManager {
 
 	private FooWorkManager workManagerInstance;
-	
-	
+
 	private static transient Logger logger = Logger.getLogger(WorkManager.class);
 
 	/**
 	 * Instantiates a new work manager.
-	 * 
+	 *
 	 * @throws NamingException the naming exception
 	 */
 	public WorkManager() throws NamingException {
 		init();
 	}
-	
-	
+
 	public WorkManager(String jndiServerManager) throws NamingException {
 		init(jndiServerManager);
 	}
 
-	
-	
-	
 	/**
 	 * Run.
-	 * 
-	 * @param job the job
+	 *
+	 * @param job      the job
 	 * @param listener the listener
-	 * 
+	 *
 	 * @throws Exception the exception
 	 */
 	public void run(Work job, WorkListener listener) throws Exception {
@@ -90,17 +80,17 @@ public class WorkManager {
 
 	/**
 	 * Run.
-	 * 
-	 * @param job the job
+	 *
+	 * @param job      the job
 	 * @param listener the listener
-	 * 
+	 *
 	 * @throws Exception the exception
 	 */
 	public FooRemoteWorkItem runWithReturn(Work job, WorkListener listener) throws Exception {
 		logger.debug("IN");
-		FooRemoteWorkItem fooRemoteWorkItem=null;
+		FooRemoteWorkItem fooRemoteWorkItem = null;
 		try {
-			fooRemoteWorkItem=new FooRemoteWorkItem(job, listener, workManagerInstance);
+			fooRemoteWorkItem = new FooRemoteWorkItem(job, listener, workManagerInstance);
 			WorkItem wi = workManagerInstance.schedule(job, listener);
 
 		} catch (Exception e) {
@@ -112,19 +102,17 @@ public class WorkManager {
 		return fooRemoteWorkItem;
 	}
 
-
-	public FooRemoteWorkItem buildFooRemoteWorkItem(Work job, WorkListener listener) throws Exception{
-		FooRemoteWorkItem fooRemoteWorkItem=null;
-		fooRemoteWorkItem=new FooRemoteWorkItem(job, listener, workManagerInstance);
+	public FooRemoteWorkItem buildFooRemoteWorkItem(Work job, WorkListener listener) throws Exception {
+		FooRemoteWorkItem fooRemoteWorkItem = null;
+		fooRemoteWorkItem = new FooRemoteWorkItem(job, listener, workManagerInstance);
 		return fooRemoteWorkItem;
 	}
 
-	
 	public WorkItem runWithReturnWI(Work job, WorkListener listener) throws Exception {
 		logger.debug("IN");
-		WorkItem workItem=null;
+		WorkItem workItem = null;
 		try {
-			workItem  = workManagerInstance.schedule(job, listener);
+			workItem = workManagerInstance.schedule(job, listener);
 
 		} catch (Exception e) {
 			logger.error("Exception", e);
@@ -135,22 +123,24 @@ public class WorkManager {
 		return workItem;
 	}
 
-
 	/**
 	 * Initialize the inner work manager instances.
-	 * 
+	 *
 	 * @throws NamingException the naming exception
 	 */
 	public void init() throws NamingException {
 		init(null);
 	}
+
 	public void init(String workManagerResourceName) throws NamingException {
-		
+
 		logger.debug("IN");
 
 		try {
-			workManagerInstance = (workManagerResourceName!=null)? getSharedWorkManagerResource(workManagerResourceName): getSharedWorkManagerResource();
-			if(workManagerInstance == null) {
+			workManagerInstance = (workManagerResourceName != null)
+					? getSharedWorkManagerResource(workManagerResourceName)
+					: getSharedWorkManagerResource();
+			if (workManagerInstance == null) {
 				logger.warn("Impossible to get shared work manager a private one to this webapp will be created");
 				workManagerInstance = getPrivateWorkManagerResource();
 			}
@@ -160,7 +150,6 @@ public class WorkManager {
 			logger.debug("OUT");
 		}
 	}
-	
 
 	public FooWorkManager getPrivateWorkManagerResource() {
 		logger.debug("IN");
@@ -175,18 +164,19 @@ public class WorkManager {
 			logger.debug("OUT");
 		}
 	}
+
 	public FooWorkManager getSharedWorkManagerResource() throws NamingException {
-		
+
 		logger.debug("IN");
 
 		try {
 			FooWorkManager workManagerResource = null;
 			String taskManagerResourceName = getWorkManagerResourceNameFromConfiguration();
-			if(taskManagerResourceName != null) {
+			if (taskManagerResourceName != null) {
 				logger.debug("WorkManager jndi name is equal to[" + taskManagerResourceName + "]");
 				workManagerResource = getSharedWorkManagerResource(taskManagerResourceName);
-			} 
-			
+			}
+
 			return workManagerResource;
 		} catch (Throwable t) {
 			throw new RuntimeException("An unexpected error occured while getting shared work manager resource", t);
@@ -194,51 +184,55 @@ public class WorkManager {
 			logger.debug("OUT");
 		}
 	}
-	
+
 	public FooWorkManager getSharedWorkManagerResource(String workManagerResourceName) {
 
-		
 		logger.debug("IN");
 
 		try {
-			
+
 			FooWorkManager workManagerResource = null;
-			
-			Assert.assertTrue(StringUtilities.isNotEmpty(workManagerResourceName), "Work Manager resource name cannot be empty");
+
+			Assert.assertTrue(StringUtils.isNotEmpty(workManagerResourceName),
+					"Work Manager resource name cannot be empty");
 			logger.debug("Work Manager resource name is equal to [" + workManagerResourceName + "]");
-			
+
 			logger.debug("Loading from JNDI context the work manager resource [" + workManagerResourceName + "] ...");
-			
+
 			Context context = null;
 			try {
 				context = new InitialContext();
-			} catch(Throwable t) {
+			} catch (Throwable t) {
 				throw new RuntimeException("An unexpected error occured while initializing JNDI context", t);
 			}
 
 			Object jndiResource = null;
 			try {
 				jndiResource = context.lookup(workManagerResourceName);
-			} catch(NamingException ne) {
+			} catch (NamingException ne) {
 				logger.warn("Resource [" + workManagerResourceName + "] is not bound in this context");
-			} catch(Throwable t) {
-				throw new RuntimeException("An unexpected error occured while loading JNDI resource [" + workManagerResourceName + "]", t);
+			} catch (Throwable t) {
+				throw new RuntimeException(
+						"An unexpected error occured while loading JNDI resource [" + workManagerResourceName + "]", t);
 			}
-			
-			if(jndiResource != null) {
-				if(jndiResource instanceof FooWorkManager) {
+
+			if (jndiResource != null) {
+				if (jndiResource instanceof FooWorkManager) {
 					workManagerResource = (FooWorkManager) jndiResource;
 				} else {
-					logger.warn("The resource [" + workManagerResourceName + "] is an instance of [" + jndiResource.getClass().getName()+ "] " +
-							"and not an instance of [" + FooWorkManager.class.getName()+ "] as expected");
+					logger.warn("The resource [" + workManagerResourceName + "] is an instance of ["
+							+ jndiResource.getClass().getName() + "] " + "and not an instance of ["
+							+ FooWorkManager.class.getName() + "] as expected");
 				}
-				
+
 			}
-			
-			if(workManagerResource != null) {
-				logger.debug("The work manager resource [" + workManagerResourceName + "] has been loaded succesfully from JNDI context");
+
+			if (workManagerResource != null) {
+				logger.debug("The work manager resource [" + workManagerResourceName
+						+ "] has been loaded succesfully from JNDI context");
 			} else {
-				logger.warn("Impossible to find work manager resource [" + workManagerResourceName + "] in JNDI context");
+				logger.warn(
+						"Impossible to find work manager resource [" + workManagerResourceName + "] in JNDI context");
 			}
 
 			return workManagerResource;
@@ -248,32 +242,32 @@ public class WorkManager {
 			logger.debug("OUT");
 		}
 	}
-	
+
 	private String getWorkManagerResourceNameFromConfiguration() {
-		
+
 		logger.debug("IN");
 
 		try {
 			String workManagerResourceName = null;
-			SourceBean jndiSB = (SourceBean)EnginConf.getInstance().getConfig().getAttribute("JNDI_THREAD_MANAGER");
+			SourceBean jndiSB = (SourceBean) EnginConf.getInstance().getConfig().getAttribute("JNDI_THREAD_MANAGER");
 			logger.debug("Impossible to find block [<JNDI_THREAD_MANAGER>] into configuration");
-			if(jndiSB != null) {
-				workManagerResourceName = (String) jndiSB.getCharacters();
+			if (jndiSB != null) {
+				workManagerResourceName = jndiSB.getCharacters();
 			}
 			return workManagerResourceName;
 		} catch (Throwable t) {
-			throw new RuntimeException("An unespected error occured while getting work manager resource name from configurations", t);
+			throw new RuntimeException(
+					"An unespected error occured while getting work manager resource name from configurations", t);
 		} finally {
 			logger.debug("OUT");
 		}
 	}
 
-
 	public commonj.work.WorkManager getInnerInstance() {
 		return workManagerInstance;
 	}
-	
-	public void shutdown(){
+
+	public void shutdown() {
 		workManagerInstance.shutdown();
 	}
 

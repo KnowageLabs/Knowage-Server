@@ -61,7 +61,6 @@ import it.eng.spagobi.commons.dao.ICategoryDAO;
 import it.eng.spagobi.commons.dao.IRoleDAO;
 import it.eng.spagobi.commons.utilities.GeneralUtilities;
 import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
-import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.commons.utilities.UserUtilities;
 import it.eng.spagobi.tools.dataset.actions.DatasetActionsCheckerFactory;
 import it.eng.spagobi.tools.dataset.association.DistinctValuesCalculateWork;
@@ -197,7 +196,7 @@ public class DatasetManagementAPI {
 		logger.debug("IN");
 
 		try {
-			if (StringUtilities.isEmpty(label)) {
+			if (org.apache.commons.lang3.StringUtils.isEmpty(label)) {
 				throw new RuntimeException("Invalid value [" + label + "] for input parameter [label]");
 			}
 
@@ -214,9 +213,10 @@ public class DatasetManagementAPI {
 
 			UserProfile currUserProfile = getUserProfile();
 
-			if (UserUtilities.hasAdministratorRole(currUserProfile) || UserUtilities.hasDeveloperRole(currUserProfile)) {
+			if (UserUtilities.hasAdministratorRole(currUserProfile)
+					|| UserUtilities.hasDeveloperRole(currUserProfile)) {
 				return dataSet;
-			} else if (DataSetUtilities.isExecutableByUser(dataSet, currUserProfile) == false) {
+			} else if (!DataSetUtilities.isExecutableByUser(dataSet, currUserProfile)) {
 				Integer dsCategoryId = dataSet.getCategoryId();
 				if (dsCategoryId == null) {
 					throw new RuntimeException("Dataset " + label + " doesn't have category set.");
@@ -234,11 +234,13 @@ public class DatasetManagementAPI {
 					}
 				}
 				// just if dataset hasn't a category available for the user gives an error
-				throw new RuntimeException("User [" + currUserProfile.getUserId() + "] cannot access to dataset [" + label + "]");
+				throw new RuntimeException(
+						"User [" + currUserProfile.getUserId() + "] cannot access to dataset [" + label + "]");
 			}
 			return dataSet;
 		} catch (Throwable t) {
-			throw new RuntimeException("An unexpected error occured while executing method [getDataSet]. " + t.getMessage(), t);
+			throw new RuntimeException(
+					"An unexpected error occured while executing method [getDataSet]. " + t.getMessage(), t);
 		} finally {
 			logger.debug("OUT");
 		}
@@ -283,17 +285,20 @@ public class DatasetManagementAPI {
 		return tableName;
 	}
 
-	public IDataStore getDataStore(IDataSet dataSet, boolean isNearRealtime, Map<String, String> parametersValues, List<AbstractSelectionField> projections,
-			Filter filter, List<AbstractSelectionField> list, List<Sorting> sortings, List<List<AbstractSelectionField>> summaryRowProjections, int offset,
-			int fetchSize, int maxRowCount, Set<String> indexes) throws JSONException {
+	public IDataStore getDataStore(IDataSet dataSet, boolean isNearRealtime, Map<String, String> parametersValues,
+			List<AbstractSelectionField> projections, Filter filter, List<AbstractSelectionField> list,
+			List<Sorting> sortings, List<List<AbstractSelectionField>> summaryRowProjections, int offset, int fetchSize,
+			int maxRowCount, Set<String> indexes) throws JSONException {
 
 		Monitor totalTiming = MonitorFactory.start("Knowage.DatasetManagementAPI.getDataStore");
 		try {
 			dataSet.setParametersMap(parametersValues);
 			dataSet.resolveParameters();
 
-			IDatasetEvaluationStrategy strategy = DatasetEvaluationStrategyFactory.get(dataSet.getEvaluationStrategy(isNearRealtime), dataSet, userProfile);
-			return strategy.executeQuery(projections, filter, list, sortings, summaryRowProjections, offset, fetchSize, maxRowCount, indexes);
+			IDatasetEvaluationStrategy strategy = DatasetEvaluationStrategyFactory
+					.get(dataSet.getEvaluationStrategy(isNearRealtime), dataSet, userProfile);
+			return strategy.executeQuery(projections, filter, list, sortings, summaryRowProjections, offset, fetchSize,
+					maxRowCount, indexes);
 
 		} finally {
 			totalTiming.stop();
@@ -305,8 +310,8 @@ public class DatasetManagementAPI {
 		putDataSetInCache(dataSet, cache, DatasetEvaluationStrategyType.CACHED, columns);
 	}
 
-	public void putDataSetInCache(IDataSet dataSet, ICache cache, DatasetEvaluationStrategyType evaluationStrategy, Set<String> columns)
-			throws DataBaseException {
+	public void putDataSetInCache(IDataSet dataSet, ICache cache, DatasetEvaluationStrategyType evaluationStrategy,
+			Set<String> columns) throws DataBaseException {
 		if (dataSet.isCachingSupported()) {
 			if (dataSet instanceof VersionedDataSet) {
 				dataSet = ((VersionedDataSet) dataSet).getWrappedDataset();
@@ -447,10 +452,12 @@ public class DatasetManagementAPI {
 					stmt = conn.createStatement();
 					stmt.executeUpdate(query);
 				} else {
-					logger.debug("Impossible to build the index statement and thus creating the index. Tablename and/or column are null or empty.");
+					logger.debug(
+							"Impossible to build the index statement and thus creating the index. Tablename and/or column are null or empty.");
 				}
 			} catch (ClassNotFoundException | NamingException | SQLException e) {
-				logger.debug("Impossible to build index for table [" + tableName + "] and columns [" + columns + "]", e);
+				logger.debug("Impossible to build index for table [" + tableName + "] and columns [" + columns + "]",
+						e);
 			} finally {
 				if (stmt != null) {
 					try {
@@ -470,7 +477,8 @@ public class DatasetManagementAPI {
 
 		} else {
 			if (signature != null && !signature.isEmpty()) {
-				logger.error("Table name could not be found for signature [" + signature + "] and hash [" + Helper.sha256(signature) + "]");
+				logger.error("Table name could not be found for signature [" + signature + "] and hash ["
+						+ Helper.sha256(signature) + "]");
 			} else {
 				logger.error("Table name could not be found for signature [" + signature + "]");
 
@@ -520,7 +528,8 @@ public class DatasetManagementAPI {
 			ICategoryDAO categoryDao = DAOFactory.getCategoryDAO();
 
 			// TODO : Makes sense?
-			List<Domain> dialects = categoryDao.getCategoriesForDataset().stream().map(Domain::fromCategory).collect(toList());
+			List<Domain> dialects = categoryDao.getCategoriesForDataset().stream().map(Domain::fromCategory)
+					.collect(toList());
 			if (dialects == null || dialects.size() == 0) {
 				return null;
 			}
@@ -535,7 +544,8 @@ public class DatasetManagementAPI {
 				List<RoleMetaModelCategory> aRoleCategories = roledao.getMetaModelCategoriesForRole(role.getId());
 				List<RoleMetaModelCategory> resp = new ArrayList<>();
 
-				List<Domain> array = categoryDao.getCategoriesForDataset().stream().map(Domain::fromCategory).collect(toList());
+				List<Domain> array = categoryDao.getCategoriesForDataset().stream().map(Domain::fromCategory)
+						.collect(toList());
 
 				for (RoleMetaModelCategory r : aRoleCategories) {
 					for (Domain dom : array) {
@@ -553,7 +563,8 @@ public class DatasetManagementAPI {
 			}
 		} catch (Exception e) {
 			logger.error("Error loading the data set categories visible from the roles of the user");
-			throw new SpagoBIRuntimeException("Error loading the data set categories visible from the roles of the user");
+			throw new SpagoBIRuntimeException(
+					"Error loading the data set categories visible from the roles of the user");
 		}
 		return categories;
 	}
@@ -601,7 +612,9 @@ public class DatasetManagementAPI {
 					SourceBean sbRow = (SourceBean) iterator.next();
 					String namePar = sbRow.getAttribute(NAME) != null ? sbRow.getAttribute(NAME).toString() : null;
 					String typePar = sbRow.getAttribute(TYPE) != null ? sbRow.getAttribute(TYPE).toString() : null;
-					boolean multiValue = sbRow.getAttribute(MULTIVALUE) != null ? Boolean.valueOf(sbRow.getAttribute(MULTIVALUE).toString()) : false;
+					boolean multiValue = sbRow.getAttribute(MULTIVALUE) != null
+							? Boolean.valueOf(sbRow.getAttribute(MULTIVALUE).toString())
+							: false;
 
 					if (typePar != null && typePar.startsWith("class")) {
 						typePar = typePar.substring(6);
@@ -636,7 +649,8 @@ public class DatasetManagementAPI {
 			List<JSONObject> parameters = getDataSetParameters(dataSet.getLabel());
 			if (parameters.size() > paramValues.size()) {
 				String parameterNotValorizedStr = getParametersNotValorized(parameters, paramValues);
-				throw new ParametersNotValorizedException("The following parameters have no value [" + parameterNotValorizedStr + "]");
+				throw new ParametersNotValorizedException(
+						"The following parameters have no value [" + parameterNotValorizedStr + "]");
 			}
 
 			if (paramValues.size() > 0) {
@@ -650,7 +664,8 @@ public class DatasetManagementAPI {
 							if (paramValue == null) {
 								values = new String[0];
 							} else {
-								values = isMultiValue ? paramValue.split(",") : Arrays.asList(paramValue).toArray(new String[0]);
+								values = isMultiValue ? paramValue.split(",")
+										: Arrays.asList(paramValue).toArray(new String[0]);
 							}
 
 							String typePar = parameter.optString("typePar");
@@ -698,21 +713,24 @@ public class DatasetManagementAPI {
 			List<JSONObject> parameters = getDataSetParameters(dataSet.getLabel());
 			if (parameters.size() > paramValues.size()) {
 				String parameterNotValorizedStr = getParametersNotValorized(parameters, paramValues);
-				throw new ParametersNotValorizedException("The following parameters have no value [" + parameterNotValorizedStr + "]");
+				throw new ParametersNotValorizedException(
+						"The following parameters have no value [" + parameterNotValorizedStr + "]");
 			}
 
 			if (paramValues.size() > 0) {
 				for (String paramName : paramValues.keySet()) {
 					for (int i = 0; i < parameters.size(); i++) {
 						JSONObject parameter = parameters.get(i);
-						if (paramName.equals(parameter.optString("namePar")) && paramName.equals(currentParameterName)) {
+						if (paramName.equals(parameter.optString("namePar"))
+								&& paramName.equals(currentParameterName)) {
 							boolean isMultiValue = parameter.optBoolean("multiValuePar");
 							String paramValue = paramValues.get(paramName);
 							String[] values = null;
 							if (paramValue == null) {
 								values = new String[0];
 							} else {
-								values = isMultiValue ? paramValue.split(",") : Arrays.asList(paramValue).toArray(new String[0]);
+								values = isMultiValue ? paramValue.split(",")
+										: Arrays.asList(paramValue).toArray(new String[0]);
 							}
 
 							String typePar = parameter.optString("typePar");
@@ -756,8 +774,8 @@ public class DatasetManagementAPI {
 		}
 	}
 
-	public Map<String, TLongHashSet> readDomainValues(IDataSet dataSet, Map<String, String> parametersValues, boolean wait)
-			throws NamingException, InterruptedException, JSONException {
+	public Map<String, TLongHashSet> readDomainValues(IDataSet dataSet, Map<String, String> parametersValues,
+			boolean wait) throws NamingException, InterruptedException, JSONException {
 		logger.debug("IN");
 		Map<String, TLongHashSet> toReturn = new HashMap<>(0);
 		dataSet.setParametersMap(parametersValues);
@@ -765,7 +783,8 @@ public class DatasetManagementAPI {
 		logger.debug("Looking for domain values for dataSet with signature [" + signature + "]...");
 		String hashSignature = Helper.sha256(signature);
 		logger.debug("Corresponding signature hash value is [" + hashSignature + "]");
-		String path = SpagoBIUtilities.getDatasetResourcePath() + File.separatorChar + DataSetConstants.DOMAIN_VALUES_FOLDER;
+		String path = SpagoBIUtilities.getDatasetResourcePath() + File.separatorChar
+				+ DataSetConstants.DOMAIN_VALUES_FOLDER;
 		logger.debug("Reading domain values from binary file located at [" + path + "]");
 		UnsafeInput input = null;
 		try {
@@ -774,8 +793,8 @@ public class DatasetManagementAPI {
 			String filepath = path + File.separatorChar + hashSignature + DataSetConstants.DOMAIN_VALUES_EXTENSION;
 			File file = new File(filepath);
 			if (!file.exists()) {
-				logger.debug(
-						"Impossible to find a binary file named [" + hashSignature + DataSetConstants.DOMAIN_VALUES_EXTENSION + "] located at [" + path + "]");
+				logger.debug("Impossible to find a binary file named [" + hashSignature
+						+ DataSetConstants.DOMAIN_VALUES_EXTENSION + "] located at [" + path + "]");
 
 				calculateDomainValues(dataSet, wait);
 			}
@@ -785,7 +804,9 @@ public class DatasetManagementAPI {
 				logger.debug("Reading domain values: DONE");
 			}
 		} catch (FileNotFoundException e) {
-			throw new SpagoBIRuntimeException("It is likely that no domain values have been calculated for dataSet [" + dataSet.getLabel() + "]", e);
+			throw new SpagoBIRuntimeException(
+					"It is likely that no domain values have been calculated for dataSet [" + dataSet.getLabel() + "]",
+					e);
 		} finally {
 			if (input != null) {
 				input.close();
@@ -801,16 +822,18 @@ public class DatasetManagementAPI {
 	public void calculateDomainValues(IDataSet dataSet, boolean wait) throws NamingException, InterruptedException {
 		logger.debug("IN");
 		logger.debug("Getting the JNDI Work Manager");
-		WorkManager spagoBIWorkManager = new WorkManager(GeneralUtilities.getSpagoBIConfigurationProperty("JNDI_THREAD_MANAGER"));
+		WorkManager spagoBIWorkManager = new WorkManager(
+				GeneralUtilities.getSpagoBIConfigurationProperty("JNDI_THREAD_MANAGER"));
 		commonj.work.WorkManager workManager = spagoBIWorkManager.getInnerInstance();
 		Work domainValuesWork = new DistinctValuesCalculateWork(dataSet, userProfile);
-		logger.debug("Scheduling calculating work for dataSet with label [" + dataSet.getLabel() + "] and signature [" + dataSet.getSignature() + "] by user ["
-				+ userProfile.getUserId() + "].");
+		logger.debug("Scheduling calculating work for dataSet with label [" + dataSet.getLabel() + "] and signature ["
+				+ dataSet.getSignature() + "] by user [" + userProfile.getUserId() + "].");
 		WorkItem workItem = workManager.schedule(domainValuesWork);
 		if (wait) {
 			List<WorkItem> workItems = new ArrayList<>(1);
 			workItems.add(workItem);
-			long workTimeout = Long.parseLong(SingletonConfig.getInstance().getConfigValue("SPAGOBI.WORKMANAGER.SQLDBCACHE.TIMEOUT"));
+			long workTimeout = Long
+					.parseLong(SingletonConfig.getInstance().getConfigValue("SPAGOBI.WORKMANAGER.SQLDBCACHE.TIMEOUT"));
 			workManager.waitForAll(workItems, workTimeout);
 			logger.debug("Synchronous work has finished");
 		} else {
@@ -822,11 +845,12 @@ public class DatasetManagementAPI {
 	public void clearDomainValues(IDataSet dataSet) throws NamingException {
 		logger.debug("IN");
 		logger.debug("Getting the JNDI Work Manager");
-		WorkManager spagoBIWorkManager = new WorkManager(GeneralUtilities.getSpagoBIConfigurationProperty("JNDI_THREAD_MANAGER"));
+		WorkManager spagoBIWorkManager = new WorkManager(
+				GeneralUtilities.getSpagoBIConfigurationProperty("JNDI_THREAD_MANAGER"));
 		commonj.work.WorkManager workManager = spagoBIWorkManager.getInnerInstance();
 		Work domainValuesWork = new DistinctValuesClearWork(dataSet, userProfile);
-		logger.debug("Scheduling asynchronous deleting work for dataSet with label [" + dataSet.getLabel() + "] and signature [" + dataSet.getSignature()
-				+ "] by user [" + userProfile.getUserId() + "].");
+		logger.debug("Scheduling asynchronous deleting work for dataSet with label [" + dataSet.getLabel()
+				+ "] and signature [" + dataSet.getSignature() + "] by user [" + userProfile.getUserId() + "].");
 		workManager.schedule(domainValuesWork);
 		logger.debug("Asynchronous work has been scheduled");
 		logger.debug("OUT");
@@ -837,8 +861,9 @@ public class DatasetManagementAPI {
 	 */
 
 	// FIXME
-	public List<Filter> calculateMinMaxFilters(IDataSet dataSet, boolean isNearRealtime, Map<String, String> parametersValues, List<Filter> filters,
-			List<SimpleFilter> likeFilters, Set<String> indexes) throws JSONException {
+	public List<Filter> calculateMinMaxFilters(IDataSet dataSet, boolean isNearRealtime,
+			Map<String, String> parametersValues, List<Filter> filters, List<SimpleFilter> likeFilters,
+			Set<String> indexes) throws JSONException {
 
 		logger.debug("IN");
 
@@ -867,7 +892,8 @@ public class DatasetManagementAPI {
 					minMaxFilterIndexes.add(i);
 
 					String columnName = ((SingleProjectionSimpleFilter) filter).getProjection().getName();
-					Projection projection = new Projection(AggregationFunctions.MAX_FUNCTION, dataSet, columnName, columnName);
+					Projection projection = new Projection(AggregationFunctions.MAX_FUNCTION, dataSet, columnName,
+							columnName);
 					minMaxProjections.add(projection);
 				} else {
 					noMinMaxFilters.add(filter);
@@ -883,11 +909,13 @@ public class DatasetManagementAPI {
 			Filter where = getWhereFilter(noMinMaxFilters, likeFilters);
 			IDataStore dataStore = null;
 			if (dataSet.getEvaluationStrategy(isNearRealtime).equals(DatasetEvaluationStrategyType.CACHED)) {
-				dataStore = getDataStore(dataSet, isNearRealtime, parametersValues, minMaxProjections, where, null, null, null, -1, -1, -1, indexes);
+				dataStore = getDataStore(dataSet, isNearRealtime, parametersValues, minMaxProjections, where, null,
+						null, null, -1, -1, -1, indexes);
 			} else {
 				// List<List<Projection>> listToPrj = new ArrayList<List<Projection>>();
 				// listToPrj.add(minMaxProjections);
-				dataStore = getSummaryRowDataStore(dataSet, isNearRealtime, parametersValues, minMaxProjections, where, -1);
+				dataStore = getSummaryRowDataStore(dataSet, isNearRealtime, parametersValues, minMaxProjections, where,
+						-1);
 			}
 			if (dataStore == null) {
 				String errorMessage = "Error in getting min and max filters values";
@@ -909,14 +937,17 @@ public class DatasetManagementAPI {
 					logger.error(errorMessage);
 					throw new SpagoBIRuntimeException(errorMessage);
 				} else {
-					Projection projectionWithoutAggregation = new Projection(projection.getDataset(), projection.getName(), alias);
+					Projection projectionWithoutAggregation = new Projection(projection.getDataset(),
+							projection.getName(), alias);
 					if (values.isEmpty()) {
 						logger.warn(errorMessage + ", put NULL");
-						newFilters.set(index, new NullaryFilter(projectionWithoutAggregation, SimpleFilterOperator.IS_NULL));
+						newFilters.set(index,
+								new NullaryFilter(projectionWithoutAggregation, SimpleFilterOperator.IS_NULL));
 					} else {
 						Object value = values.get(0);
 						logger.debug("MIN/MAX value for field [" + alias + "] is equal to [" + value + "]");
-						newFilters.set(index, new UnaryFilter(projectionWithoutAggregation, SimpleFilterOperator.EQUALS_TO, value));
+						newFilters.set(index,
+								new UnaryFilter(projectionWithoutAggregation, SimpleFilterOperator.EQUALS_TO, value));
 					}
 				}
 			}
@@ -926,12 +957,14 @@ public class DatasetManagementAPI {
 		return newFilters;
 	}
 
-	private IDataStore getSummaryRowDataStore(IDataSet dataSet, boolean isNearRealtime, Map<String, String> parametersValues,
-			List<AbstractSelectionField> minMaxProjections, Filter filter, int maxRowCount) throws JSONException {
+	private IDataStore getSummaryRowDataStore(IDataSet dataSet, boolean isNearRealtime,
+			Map<String, String> parametersValues, List<AbstractSelectionField> minMaxProjections, Filter filter,
+			int maxRowCount) throws JSONException {
 		dataSet.setParametersMap(parametersValues);
 		dataSet.resolveParameters();
 
-		IDatasetEvaluationStrategy strategy = DatasetEvaluationStrategyFactory.get(dataSet.getEvaluationStrategy(isNearRealtime), dataSet, userProfile);
+		IDatasetEvaluationStrategy strategy = DatasetEvaluationStrategyFactory
+				.get(dataSet.getEvaluationStrategy(isNearRealtime), dataSet, userProfile);
 		return strategy.executeSummaryRowQuery(minMaxProjections, filter, maxRowCount);
 	}
 

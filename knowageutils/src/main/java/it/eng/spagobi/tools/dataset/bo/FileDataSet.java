@@ -22,11 +22,11 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.json.JSONObject;
 
 import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
-import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.container.ObjectUtils;
 import it.eng.spagobi.services.dataset.bo.SpagoBiDataSet;
 import it.eng.spagobi.tools.dataset.common.dataproxy.FileDataProxy;
@@ -82,14 +82,16 @@ public class FileDataSet extends ConfigurableDataSet {
 			JSONObject jsonConf = ObjectUtils.toJSONObject(config);
 			String fileName = (jsonConf.get(FILE_NAME) != null) ? jsonConf.get(FILE_NAME).toString() : "";
 			if (fileName == null || fileName.length() == 0) {
-				throw new IllegalArgumentException("fileName member of SpagoBiDataSet object parameter cannot be null or empty"
-						+ "while creating a FileDataSet. If you whant to create an empty FileDataSet use the proper constructor.");
+				throw new IllegalArgumentException(
+						"fileName member of SpagoBiDataSet object parameter cannot be null or empty"
+								+ "while creating a FileDataSet. If you whant to create an empty FileDataSet use the proper constructor.");
 			}
 			this.setFileName((jsonConf.get(FILE_NAME) != null) ? jsonConf.get(FILE_NAME).toString() : "");
 			logger.info("File name: " + fileName);
 
-			this.setResourcePath(StringUtilities.isNotEmpty(jsonConf.optString(RESOURCE_PATH)) ? jsonConf.optString(RESOURCE_PATH)
-					: (SpagoBIUtilities.getResourcePath() == null ? "" : SpagoBIUtilities.getResourcePath()));
+			this.setResourcePath(
+					StringUtils.isNotEmpty(jsonConf.optString(RESOURCE_PATH)) ? jsonConf.optString(RESOURCE_PATH)
+							: (SpagoBIUtilities.getResourcePath() == null ? "" : SpagoBIUtilities.getResourcePath()));
 			logger.info("Resource path: " + this.getResourcePath());
 			if (this.dataProxy != null)
 				dataProxy.setResPath(this.getResourcePath());
@@ -154,7 +156,8 @@ public class FileDataSet extends ConfigurableDataSet {
 		}
 
 		if (!(dataProxy instanceof FileDataProxy))
-			throw new RuntimeException("DataProxy cannot be of type [" + dataProxy.getClass().getName() + "] in FileDataSet");
+			throw new RuntimeException(
+					"DataProxy cannot be of type [" + dataProxy.getClass().getName() + "] in FileDataSet");
 
 		return (FileDataProxy) dataProxy;
 	}
@@ -253,15 +256,17 @@ public class FileDataSet extends ConfigurableDataSet {
 	@Override
 	public DataIterator iterator() {
 		if ("CSV".equalsIgnoreCase(fileType)) {
-			DataIterator iterator = CsvIteratorBuilder.newBuilder().filePath(getFilePath()).quote(this.getCsvQuote()).encoding(getCsvEncoding())
-					.delimiter(this.getCsvDelimiter()).metadata(this.getMetadata()).build();
+			DataIterator iterator = CsvIteratorBuilder.newBuilder().filePath(getFilePath()).quote(this.getCsvQuote())
+					.encoding(getCsvEncoding()).delimiter(this.getCsvDelimiter()).metadata(this.getMetadata()).build();
 			return iterator;
 		} else if ("XLSX".equalsIgnoreCase(fileType) || "XLS".equalsIgnoreCase(fileType)) {
-			DataIterator iterator = ExcelIteratorBuilder.newBuilder().filePath(getFilePath()).fileType(fileType).initialRow(getExcelInitialRow())
-					.sheetNumber(getExcelSheetNumber()).metadata(this.getMetadata()).build();
+			DataIterator iterator = ExcelIteratorBuilder.newBuilder().filePath(getFilePath()).fileType(fileType)
+					.initialRow(getExcelInitialRow()).sheetNumber(getExcelSheetNumber()).metadata(this.getMetadata())
+					.build();
 			return iterator;
 		} else {
-			throw new UnsupportedOperationException("File DataSet iterator has not been implemented for file type " + fileType);
+			throw new UnsupportedOperationException(
+					"File DataSet iterator has not been implemented for file type " + fileType);
 		}
 	}
 
@@ -270,7 +275,8 @@ public class FileDataSet extends ConfigurableDataSet {
 			JSONObject cfg = new JSONObject(this.getConfiguration());
 			return cfg.optInt(EXCEL_FILE_SKIP_ROWS);
 		} catch (Exception e) {
-			logger.error("Cannot retrieve excel file initial row number from dataset config, will start from first row", e);
+			logger.error("Cannot retrieve excel file initial row number from dataset config, will start from first row",
+					e);
 			return 0;
 		}
 	}
@@ -280,7 +286,8 @@ public class FileDataSet extends ConfigurableDataSet {
 			JSONObject cfg = new JSONObject(this.getConfiguration());
 			return cfg.optInt(EXCEL_FILE_SHEET_NUMBER);
 		} catch (Exception e) {
-			logger.error("Cannot retrieve excel file sheet number from dataset config, using first sheet as default", e);
+			logger.error("Cannot retrieve excel file sheet number from dataset config, using first sheet as default",
+					e);
 			return 0;
 		}
 	}

@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,18 +11,26 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package it.eng.spagobi.sdk.services;
+
+import java.io.IOException;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+
+import org.apache.commons.lang3.StringUtils;
+import org.apache.log4j.Logger;
+import org.json.JSONObject;
 
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.serializer.SerializationException;
 import it.eng.spagobi.commons.serializer.SerializerFactory;
 import it.eng.spagobi.commons.services.AbstractSpagoBIAction;
 import it.eng.spagobi.commons.utilities.SpagoBIServiceExceptionHandler;
-import it.eng.spagobi.commons.utilities.StringUtilities;
 import it.eng.spagobi.services.dataset.bo.SpagoBiDataSet;
 import it.eng.spagobi.services.dataset.service.DataSetSupplier;
 import it.eng.spagobi.tools.dataset.bo.DataSetFactory;
@@ -31,14 +39,6 @@ import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 import it.eng.spagobi.utilities.service.JSONSuccess;
-
-import java.io.IOException;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-
-import org.apache.log4j.Logger;
-import org.json.JSONObject;
 
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
@@ -71,7 +71,8 @@ public class ExecuteDataSetAction extends AbstractSpagoBIAction {
 
 			dataSetLabel = getAttributeAsString(DATASET_LABEL);
 			logger.debug("Parameter [" + DATASET_LABEL + "] is equals to [" + dataSetLabel + "]");
-			Assert.assertTrue(!StringUtilities.isEmpty(dataSetLabel), "Parameter [" + DATASET_LABEL + "] cannot be null or empty");
+			Assert.assertTrue(!StringUtils.isEmpty(dataSetLabel),
+					"Parameter [" + DATASET_LABEL + "] cannot be null or empty");
 
 			callback = getAttributeAsString(CALLBACK);
 			logger.debug("Parameter [" + CALLBACK + "] is equals to [" + callback + "]");
@@ -81,7 +82,8 @@ public class ExecuteDataSetAction extends AbstractSpagoBIAction {
 				dataSetSupplier = new DataSetSupplier();
 				dataSetConfig = dataSetSupplier.getDataSetByLabel(dataSetLabel, getUserProfile());
 			} catch (Throwable t) {
-				throw new SpagoBIServiceException("Impossible to find a dataset whose label is [" + dataSetLabel + "]", t);
+				throw new SpagoBIServiceException("Impossible to find a dataset whose label is [" + dataSetLabel + "]",
+						t);
 			}
 			Assert.assertNotNull(dataSetConfig, "Impossible to find a dataset whose label is [" + dataSetLabel + "]");
 
@@ -108,11 +110,13 @@ public class ExecuteDataSetAction extends AbstractSpagoBIAction {
 			// checkQbeDataset(dataSet);
 			dataSet.loadData();
 			dataStore = dataSet.getDataStore();
-			Assert.assertNotNull(dataStore, "The dataStore returned by loadData method of the class [" + dataSet.getClass().getName() + "] cannot be null");
+			Assert.assertNotNull(dataStore, "The dataStore returned by loadData method of the class ["
+					+ dataSet.getClass().getName() + "] cannot be null");
 
 			dataSetJSON = null;
 			try {
-				dataSetJSON = (JSONObject) SerializerFactory.getSerializer("application/json").serialize(dataStore, null);
+				dataSetJSON = (JSONObject) SerializerFactory.getSerializer("application/json").serialize(dataStore,
+						null);
 			} catch (SerializationException e) {
 				throw new SpagoBIServiceException("Impossible to serialize datastore", e);
 			}

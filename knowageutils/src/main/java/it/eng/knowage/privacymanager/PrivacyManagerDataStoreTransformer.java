@@ -1,9 +1,13 @@
 package it.eng.knowage.privacymanager;
 
+import static java.util.Objects.nonNull;
+
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
@@ -48,26 +52,54 @@ public class PrivacyManagerDataStoreTransformer extends AbstractDataStoreTransfo
 	@Override
 	public void transformDataSetRecords(IDataStore dataStore) {
 		if (needPM) {
+			LOGGER.debug("Transforming data store {}", dataStore);
+
 			FullEventBuilder2 eventBuilder = new FullEventBuilder2(true);
 			UserProfile up = UserProfileManager.getProfile();
 
-			eventBuilder.appendSession("knowage", up.getSourceIpAddress(), up.getSessionId(), up.getSessionStart(), up.getUserId().toString());
-			eventBuilder.appendUserAgent(up.getOs(), up.getSourceIpAddress(), up.getSourceSocketEnabled(), up.getUserAgent());
-			// metadata --> from dataset (map)
-			Set<String> keys = this.dataSet.getParamsMap().keySet();
-			for (String key : keys) {
-				eventBuilder.appendMetaData(key, this.dataSet.getParamsMap().get(key).toString());
+			String sourceIpAddress = "";
+			String sessionId = "";
+			Long sessionStart = 0L;
+			String string = "";
+			String os = "";
+			Boolean sourceSocketEnabled = false;
+			String userAgent = "";
+
+			if (nonNull(up)) {
+				sourceIpAddress = up.getSourceIpAddress();
+				sessionId = up.getSessionId();
+				sessionStart = up.getSessionStart();
+				string = nonNull(up.getUserId()) ? up.getUserId().toString() : "";
+				os = up.getOs();
+				sourceSocketEnabled = up.getSourceSocketEnabled();
+				userAgent = up.getUserAgent();
 			}
 
-			for (IRecord record : dataStore.getRecords()) {
+			LOGGER.debug("Session: {}, {}, {}, {}", sourceIpAddress, sessionId, sessionStart, string);
+			LOGGER.debug("User agent: {}, {}, {}, {}", os, sourceIpAddress, sourceSocketEnabled, userAgent);
+
+			eventBuilder.appendSession("knowage", sourceIpAddress, sessionId, sessionStart, string);
+			eventBuilder.appendUserAgent(os, sourceIpAddress, sourceSocketEnabled, userAgent);
+			// metadata --> from dataset (map)
+			Map paramsMap = Optional.ofNullable(dataSet.getParamsMap()).orElse(Collections.emptyMap());
+			LOGGER.debug("Parameters map is {}", paramsMap);
+			Set<String> keys = paramsMap.keySet();
+			for (String key : keys) {
+				LOGGER.debug("Key is {}", key);
+				String paramValue = Optional.ofNullable(paramsMap.get(key)).map(Object::toString).orElse("");
+				LOGGER.debug("Value is {}", paramValue);
+				eventBuilder.appendMetaData(key, paramValue);
+			}
+
+			for (IRecord currRecord : dataStore.getRecords()) {
 				String[] subjData = new String[4];
-				List<IField> fields = record.getFields();
+				List<IField> fields = currRecord.getFields();
 
 				for (int i = 0; i < fields.size(); i++) {
 					if (subjectFieldByIndex.containsKey(i)) {
 						IFieldMetaData fieldMetaData = subjectFieldByIndex.get(i);
 						String fieldName = fieldMetaData.getName();
-						IField fieldAt = record.getFieldAt(i);
+						IField fieldAt = currRecord.getFieldAt(i);
 						Object value = fieldAt.getValue();
 
 						String val = null;
@@ -82,7 +114,7 @@ public class PrivacyManagerDataStoreTransformer extends AbstractDataStoreTransfo
 					if (sensibleFieldByIndex.containsKey(i)) {
 						IFieldMetaData fieldMetaData = sensibleFieldByIndex.get(i);
 						String fieldName = fieldMetaData.getName();
-						IField fieldAt = record.getFieldAt(i);
+						IField fieldAt = currRecord.getFieldAt(i);
 						Object value = fieldAt.getValue();
 						// TODO definizione del tipo dato
 						String val = null;
@@ -101,8 +133,7 @@ public class PrivacyManagerDataStoreTransformer extends AbstractDataStoreTransfo
 
 	@Override
 	public void transformDataSetMetaData(IDataStore dataStore) {
-		// TODO Auto-generated method stub DAOFactory
-
+		// Not needed
 	}
 
 	private void setUpPrivacy() {
@@ -110,8 +141,8 @@ public class PrivacyManagerDataStoreTransformer extends AbstractDataStoreTransfo
 
 		AtomicInteger index = new AtomicInteger();
 
-		dataStoreMetadata.getFieldsMeta().stream().collect(Collectors.toMap(e -> index.getAndIncrement(), e -> e)).entrySet().stream()
-				.filter(e -> e.getValue().isPersonal()).forEach(e -> {
+		dataStoreMetadata.getFieldsMeta().stream().collect(Collectors.toMap(e -> index.getAndIncrement(), e -> e))
+				.entrySet().stream().filter(e -> e.getValue().isPersonal()).forEach(e -> {
 					Integer key = e.getKey();
 					IFieldMetaData value = e.getValue();
 					sensibleField.add(value);
@@ -131,12 +162,13 @@ public class PrivacyManagerDataStoreTransformer extends AbstractDataStoreTransfo
 						subjectFieldOrder.put(key, 3);
 						break;
 					default:
-						LOGGER.error("Cannot map subject field {}. Check PrivacyManagerClient.properties", value.getName());
+						LOGGER.error("Cannot map subject field {}. Check PrivacyManagerClient.properties",
+								value.getName());
 					}
 				});
 
-		dataStoreMetadata.getFieldsMeta().stream().collect(Collectors.toMap(e -> index.getAndIncrement(), e -> e)).entrySet().stream()
-				.filter(e -> e.getValue().isSubjectId()).forEach(e -> {
+		dataStoreMetadata.getFieldsMeta().stream().collect(Collectors.toMap(e -> index.getAndIncrement(), e -> e))
+				.entrySet().stream().filter(e -> e.getValue().isSubjectId()).forEach(e -> {
 					Integer key = e.getKey();
 					IFieldMetaData value = e.getValue();
 					subjectField.add(value);
@@ -152,7 +184,7 @@ public class PrivacyManagerDataStoreTransformer extends AbstractDataStoreTransfo
 	}
 
 	private Map<String, IFieldMetaData> mapFieldByColumnName(IMetaData metaData) {
-		return metaData.getFieldsMeta().stream().collect(Collectors.toMap(e -> mapFieldKey(e), e -> e));
+		return metaData.getFieldsMeta().stream().collect(Collectors.toMap(this::mapFieldKey, e -> e));
 	}
 
 	private IMetaData getMetaData() {

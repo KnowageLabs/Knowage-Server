@@ -33,6 +33,7 @@ import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.user.UserProfileManager;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
+
 public class ParameterForExecution {
 	private static Logger logger = Logger.getLogger(ParameterForExecution.class);
 
@@ -46,8 +47,8 @@ public class ParameterForExecution {
 	BIObjectParameter analyticalDocumentParameter;
 	Parameter analyticalDriver;
 	ParameterUse analyticalDriverExecModality;
-	List dataDependencies;
-	List visualDependencies;
+	List<ObjParuse> dataDependencies;
+	List<ObjParview> visualDependencies;
 
 	// attribute used by the serializer
 	String id;
@@ -83,7 +84,7 @@ public class ParameterForExecution {
 
 	public abstract class ParameterDependency {
 		public String urlName;
-	};
+	}
 
 	public class DataDependency extends ParameterDependency {
 	}
@@ -102,11 +103,11 @@ public class ParameterForExecution {
 		loadValues();
 		loadDefaultValues();
 
-		objParameterIds = new ArrayList<Integer>();
+		objParameterIds = new ArrayList<>();
 	}
 
 	private void initDAO() {
-			ANALYTICAL_DRIVER_USE_MODALITY_DAO = DAOFactory.getParameterUseDAO();
+		ANALYTICAL_DRIVER_USE_MODALITY_DAO = DAOFactory.getParameterUseDAO();
 
 		DATA_DEPENDENCIES_DAO = DAOFactory.getObjParuseDAO();
 
@@ -114,7 +115,8 @@ public class ParameterForExecution {
 		try {
 			ANALYTICAL_DOCUMENT_PARAMETER_DAO = DAOFactory.getBIObjectParameterDAO();
 		} catch (HibernateException e) {
-			throw new SpagoBIServiceException("An error occurred while retrieving DAO [" + ANALYTICAL_DOCUMENT_PARAMETER_DAO.getClass().getName() + "]", e);
+			throw new SpagoBIServiceException("An error occurred while retrieving DAO ["
+					+ ANALYTICAL_DOCUMENT_PARAMETER_DAO.getClass().getName() + "]", e);
 		}
 	}
 
@@ -125,13 +127,13 @@ public class ParameterForExecution {
 	void initAttributes() {
 		ExecutionInstance executionInstance = this.getExecutionInstance();
 		if (executionInstance == null) {
-			throw new SpagoBIServiceException(it.eng.spagobi.analiticalmodel.execution.service.GetParametersForExecutionAction.SERVICE_NAME,
-					"Impossible to find in context execution instance for execution of document with id " + " [" + analyticalDocumentParameter.getBiObjectID()
-							+ "]");
+			throw new SpagoBIServiceException(
+					it.eng.spagobi.analiticalmodel.execution.service.GetParametersForExecutionAction.SERVICE_NAME,
+					"Impossible to find in context execution instance for execution of document with id " + " ["
+							+ analyticalDocumentParameter.getBiObjectID() + "]");
 		}
 
 		id = analyticalDocumentParameter.getParameterUrlName();
-		// label = localize( analyticalDocumentParameter.getLabel() );
 		label = analyticalDocumentParameter.getLabel();
 
 		Integer parameterId = analyticalDocumentParameter.getParameter().getId();
@@ -160,15 +162,18 @@ public class ParameterForExecution {
 		thickPerc = analyticalDocumentParameter.getThickPerc() != null ? analyticalDocumentParameter.getThickPerc() : 0;
 
 		try {
-			analyticalDriverExecModality = ANALYTICAL_DRIVER_USE_MODALITY_DAO.loadByParameterIdandRole(analyticalDocumentParameter.getParID(),
-					executionInstance.getExecutionRole());
+			analyticalDriverExecModality = ANALYTICAL_DRIVER_USE_MODALITY_DAO.loadByParameterIdandRole(
+					analyticalDocumentParameter.getParID(), executionInstance.getExecutionRole());
 		} catch (Exception e) {
-			throw new SpagoBIServiceException(GetParametersForExecutionAction.SERVICE_NAME, "Impossible to find any valid execution modality for parameter ["
-					+ id + "] and role [" + executionInstance.getExecutionRole() + "]", e);
+			throw new SpagoBIServiceException(GetParametersForExecutionAction.SERVICE_NAME,
+					"Impossible to find any valid execution modality for parameter [" + id + "] and role ["
+							+ executionInstance.getExecutionRole() + "]",
+					e);
 		}
 
-		Assert.assertNotNull(analyticalDriverExecModality, "Impossible to find any valid execution modality for parameter [" + id + "] and role ["
-				+ executionInstance.getExecutionRole() + "]");
+		Assert.assertNotNull(analyticalDriverExecModality,
+				"Impossible to find any valid execution modality for parameter [" + id + "] and role ["
+						+ executionInstance.getExecutionRole() + "]");
 
 		parameterUseId = analyticalDriverExecModality.getUseID();
 
@@ -182,31 +187,34 @@ public class ParameterForExecution {
 
 	private void initVisualDependencies() {
 		if (dependencies == null) {
-			dependencies = new HashMap<String, List<ParameterDependency>>();
+			dependencies = new HashMap<>();
 		}
 
 		try {
 			visualDependencies = VISUAL_DEPENDENCIES_DAO.loadObjParviews(analyticalDocumentParameter.getId());
 		} catch (HibernateException e) {
-			throw new SpagoBIServiceException("An error occurred while loading parameter visual dependecies for parameter [" + id + "]", e);
+			throw new SpagoBIServiceException(
+					"An error occurred while loading parameter visual dependecies for parameter [" + id + "]", e);
 		}
 
-		Iterator it = visualDependencies.iterator();
+		Iterator<ObjParview> it = visualDependencies.iterator();
 		while (it.hasNext()) {
-			ObjParview dependency = (ObjParview) it.next();
+			ObjParview dependency = it.next();
 			Integer objParFatherId = dependency.getParFatherId();
 			try {
-				BIObjectParameter objParFather = ANALYTICAL_DOCUMENT_PARAMETER_DAO.loadForDetailByObjParId(objParFatherId);
+				BIObjectParameter objParFather = ANALYTICAL_DOCUMENT_PARAMETER_DAO
+						.loadForDetailByObjParId(objParFatherId);
 				VisualDependency visualDependency = new VisualDependency();
 				visualDependency.urlName = objParFather.getParameterUrlName();
 				visualDependency.condition = dependency;
 				if (!dependencies.containsKey(visualDependency.urlName)) {
-					dependencies.put(visualDependency.urlName, new ArrayList<ParameterDependency>());
+					dependencies.put(visualDependency.urlName, new ArrayList<>());
 				}
 				List<ParameterDependency> depList = dependencies.get(visualDependency.urlName);
 				depList.add(visualDependency);
 			} catch (EMFUserError e) {
-				throw new SpagoBIServiceException("An error occurred while loading parameter [" + objParFatherId + "]", e);
+				throw new SpagoBIServiceException("An error occurred while loading parameter [" + objParFatherId + "]",
+						e);
 			}
 		}
 	}
@@ -214,37 +222,41 @@ public class ParameterForExecution {
 	private void initDataDependencies() {
 
 		if (dependencies == null) {
-			dependencies = new HashMap<String, List<ParameterDependency>>();
+			dependencies = new HashMap<>();
 		}
 
 		try {
-			dataDependencies = DATA_DEPENDENCIES_DAO.loadObjParuse(analyticalDocumentParameter.getId(), analyticalDriverExecModality.getUseID());
+			dataDependencies = DATA_DEPENDENCIES_DAO.loadObjParuse(analyticalDocumentParameter.getId(),
+					analyticalDriverExecModality.getUseID());
 		} catch (EMFUserError e) {
-			throw new SpagoBIServiceException("An error occurred while loading parameter data dependecies for parameter [" + id + "]", e);
+			throw new SpagoBIServiceException(
+					"An error occurred while loading parameter data dependecies for parameter [" + id + "]", e);
 		}
 
-		Iterator it = dataDependencies.iterator();
+		Iterator<ObjParuse> it = dataDependencies.iterator();
 		while (it.hasNext()) {
-			ObjParuse dependency = (ObjParuse) it.next();
+			ObjParuse dependency = it.next();
 			Integer objParFatherId = dependency.getParFatherId();
 			try {
-				BIObjectParameter objParFather = ANALYTICAL_DOCUMENT_PARAMETER_DAO.loadForDetailByObjParId(objParFatherId);
+				BIObjectParameter objParFather = ANALYTICAL_DOCUMENT_PARAMETER_DAO
+						.loadForDetailByObjParId(objParFatherId);
 				DataDependency dataDependency = new DataDependency();
 				dataDependency.urlName = objParFather.getParameterUrlName();
 				if (!dependencies.containsKey(dataDependency.urlName)) {
-					dependencies.put(dataDependency.urlName, new ArrayList<ParameterDependency>());
+					dependencies.put(dataDependency.urlName, new ArrayList<>());
 				}
 				List<ParameterDependency> depList = dependencies.get(dataDependency.urlName);
 				depList.add(dataDependency);
 			} catch (EMFUserError e) {
-				throw new SpagoBIServiceException("An error occurred while loading parameter [" + objParFatherId + "]", e);
+				throw new SpagoBIServiceException("An error occurred while loading parameter [" + objParFatherId + "]",
+						e);
 			}
 		}
 	}
 
 	public void loadValues() {
-		if ("COMBOBOX".equalsIgnoreCase(selectionType) || "LIST".equalsIgnoreCase(selectionType) || "SLIDER".equalsIgnoreCase(selectionType)
-				|| "TREE".equalsIgnoreCase(selectionType)) { // load values only if it is not a lookup
+		if ("COMBOBOX".equalsIgnoreCase(selectionType) || "LIST".equalsIgnoreCase(selectionType)
+				|| "SLIDER".equalsIgnoreCase(selectionType) || "TREE".equalsIgnoreCase(selectionType)) { // load values only if it is not a lookup
 			List lovs = getLOV();
 			setValuesCount(lovs == null ? 0 : lovs.size());
 			if (getValuesCount() == 1) {
@@ -265,47 +277,32 @@ public class ParameterForExecution {
 			IEngUserProfile profile = UserProfileManager.getProfile();
 			defaultValues = retriever.getDefaultValues(analyticalDocumentParameter, executionInstance, profile);
 		} catch (Exception e) {
-			throw new SpagoBIServiceException(GetParametersForExecutionAction.SERVICE_NAME, "Impossible to get parameter's default values", e);
+			throw new SpagoBIServiceException(GetParametersForExecutionAction.SERVICE_NAME,
+					"Impossible to get parameter's default values", e);
 		}
 		logger.debug("OUT");
 	}
 
 	private List getLOV() {
-		// ExecutionInstance executionInstance = getContext().getExecutionInstance( ExecutionInstance.class.getName() );
 		logger.debug("IN");
 		// the execution instance could be a map if in massive export case
-
-		// ExecutionInstance executionInstance = null;
-		// Assert.assertNotNull(getContext().isExecutionInstanceAMap(ExecutionInstance.class.getName()), "Execution instance cannot be null");
-		// boolean isAMap = getContext().isExecutionInstanceAMap(ExecutionInstance.class.getName());
-		// if (!isAMap) {
-		// executionInstance = getContext().getExecutionInstance(ExecutionInstance.class.getName());
-		// } else {
-		// Map<Integer, ExecutionInstance> instances = getContext().getExecutionInstancesAsMap(ExecutionInstance.class.getName());
-		// Integer objId = analyticalDocumentParameter.getBiObjectID();
-		// executionInstance = instances.get(objId);
-		// }
-		// if (executionInstance == null) {
-		// throw new SpagoBIServiceException(GetParametersForExecutionAction.SERVICE_NAME,
-		// "Impossible to find in context execution instance for execution of document with id " + " [" + analyticalDocumentParameter.getBiObjectID()
-		// + "]: was it searched as a map? " + isAMap);
-		// }
 
 		List rows = null;
 		String lovResult = null;
 		try {
 			// get the result of the lov
-			// IEngUserProfile profile = getUserProfile();
 			IEngUserProfile profile = UserProfileManager.getProfile();
 			LovResultCacheManager executionCacheManager = new LovResultCacheManager();
-			lovResult = executionCacheManager.getLovResult(profile, executionInstance.getLovDetail(analyticalDocumentParameter),
+			lovResult = executionCacheManager.getLovResult(profile,
+					executionInstance.getLovDetail(analyticalDocumentParameter),
 					executionInstance.getDependencies(analyticalDocumentParameter), executionInstance, true);
 
 			// get all the rows of the result
 			LovResultHandler lovResultHandler = new LovResultHandler(lovResult);
 			rows = lovResultHandler.getRows();
 		} catch (Exception e) {
-			throw new SpagoBIServiceException(GetParametersForExecutionAction.SERVICE_NAME, "Impossible to get parameter's values", e);
+			throw new SpagoBIServiceException(GetParametersForExecutionAction.SERVICE_NAME,
+					"Impossible to get parameter's values", e);
 		}
 		logger.debug("OUT");
 		return rows;
@@ -323,7 +320,8 @@ public class ParameterForExecution {
 
 			value = (String) lovSB.getAttribute(lovProvDet.getValueColumnName());
 		} catch (Exception e) {
-			throw new SpagoBIServiceException(GetParametersForExecutionAction.SERVICE_NAME, "Impossible to get parameter's value", e);
+			throw new SpagoBIServiceException(GetParametersForExecutionAction.SERVICE_NAME,
+					"Impossible to get parameter's value", e);
 		}
 
 		return value;
@@ -476,19 +474,19 @@ public class ParameterForExecution {
 		this.objParameterIds = objParameterIds;
 	}
 
-	public List getVisualDependencies() {
+	public List<ObjParview> getVisualDependencies() {
 		return visualDependencies;
 	}
 
-	public void setVisualDependencies(List visualDependencies) {
+	public void setVisualDependencies(List<ObjParview> visualDependencies) {
 		this.visualDependencies = visualDependencies;
 	}
 
-	public List getDataDependencies() {
+	public List<ObjParuse> getDataDependencies() {
 		return dataDependencies;
 	}
 
-	public void setDataDependencies(List dataDependencies) {
+	public void setDataDependencies(List<ObjParuse> dataDependencies) {
 		this.dataDependencies = dataDependencies;
 	}
 

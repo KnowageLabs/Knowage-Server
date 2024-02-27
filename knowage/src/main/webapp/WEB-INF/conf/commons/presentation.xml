@@ -3,7 +3,6 @@
 	
 	<MAPPING business_type="ACTION" business_name="SERVICE_EXCEPTION_ACTION" publisher_name="SERVICE_ERROR_PUBLISHER"/>
 	<MAPPING business_type="ACTION" business_name="START_ACTION" publisher_name="DYN_FORWARD_PUBLISHER"/>
-	<!-- <MAPPING business_type="ACTION" business_name="START_ACTION_PUBLIC_USER" publisher_name="PublicUserPublisher"/> -->
 	<MAPPING business_name="SaveConfigurationPage" business_type="PAGE" publisher_name="SaveConfigurationPubJ"/>
     <MAPPING business_name="SERVICE_CALLER_PAGE" business_type="PAGE" publisher_name="ServiceCallerPublisher"/>
 	

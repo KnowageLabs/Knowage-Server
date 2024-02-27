@@ -23,7 +23,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import it.eng.spagobi.commons.utilities.StringUtilities;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * @author Andrea Gioia
@@ -55,10 +55,10 @@ public class ModelEntity extends AbstractModelNode implements IModelEntity {
 		setType(type);
 
 		setParent(null);
-		this.fields = new HashMap<String, IModelField>();
-		this.calculatedFields = new HashMap<String, ModelCalculatedField>();
-		this.hierarchicalDimensionFields = new HashMap<String, HierarchicalDimensionField>();
-		this.subEntities = new HashMap<String, IModelEntity>();
+		this.fields = new HashMap<>();
+		this.calculatedFields = new HashMap<>();
+		this.hierarchicalDimensionFields = new HashMap<>();
+		this.subEntities = new HashMap<>();
 
 		initProperties();
 	}
@@ -81,10 +81,10 @@ public class ModelEntity extends AbstractModelNode implements IModelEntity {
 		}
 		this.path = thisPath;
 		this.parent = parent;
-		this.fields = new HashMap<String, IModelField>();
-		this.calculatedFields = new HashMap<String, ModelCalculatedField>();
-		this.hierarchicalDimensionFields = new HashMap<String, HierarchicalDimensionField>();
-		this.subEntities = new HashMap<String, IModelEntity>();
+		this.fields = new HashMap<>();
+		this.calculatedFields = new HashMap<>();
+		this.hierarchicalDimensionFields = new HashMap<>();
+		this.subEntities = new HashMap<>();
 
 		initProperties();
 	}
@@ -130,7 +130,7 @@ public class ModelEntity extends AbstractModelNode implements IModelEntity {
 	@Override
 	public String getUniqueType() {
 		String entityType = getType();
-		if (!StringUtilities.isEmpty(getRole())) {
+		if (!StringUtils.isEmpty(getRole())) {
 			entityType += "(" + getRole() + ")";
 		}
 		return entityType;
@@ -219,7 +219,7 @@ public class ModelEntity extends AbstractModelNode implements IModelEntity {
 	public List<ModelCalculatedField> getCalculatedFields() {
 		List<ModelCalculatedField> list;
 
-		list = new ArrayList<ModelCalculatedField>();
+		list = new ArrayList<>();
 		String key = null;
 		for (Iterator<String> it = calculatedFields.keySet().iterator(); it.hasNext();) {
 			key = it.next();
@@ -238,7 +238,7 @@ public class ModelEntity extends AbstractModelNode implements IModelEntity {
 	public List<IModelField> getAllFields() {
 		List<IModelField> list;
 
-		list = new ArrayList<IModelField>();
+		list = new ArrayList<>();
 		String key = null;
 		for (Iterator<String> it = fields.keySet().iterator(); it.hasNext();) {
 			key = it.next();
@@ -250,7 +250,7 @@ public class ModelEntity extends AbstractModelNode implements IModelEntity {
 
 	@Override
 	public List<IModelField> getFieldsByType(boolean isKey) {
-		List<IModelField> list = new ArrayList<IModelField>();
+		List<IModelField> list = new ArrayList<>();
 		String key = null;
 		for (Iterator<String> it = fields.keySet().iterator(); it.hasNext();) {
 			key = it.next();
@@ -293,7 +293,8 @@ public class ModelEntity extends AbstractModelNode implements IModelEntity {
 			}
 		}
 
-		IModelEntity subEntity = new ModelEntity(subEntityName, subEntityPath, subEntityRole, subEntityType, getStructure());
+		IModelEntity subEntity = new ModelEntity(subEntityName, subEntityPath, subEntityRole, subEntityType,
+				getStructure());
 		subEntity.setParent(this);
 
 		addSubEntity(subEntity);
@@ -313,7 +314,7 @@ public class ModelEntity extends AbstractModelNode implements IModelEntity {
 
 	@Override
 	public List<IModelEntity> getSubEntities() {
-		List<IModelEntity> list = new ArrayList<IModelEntity>();
+		List<IModelEntity> list = new ArrayList<>();
 		String key = null;
 		for (Iterator<String> it = subEntities.keySet().iterator(); it.hasNext();) {
 			key = it.next();
@@ -324,7 +325,7 @@ public class ModelEntity extends AbstractModelNode implements IModelEntity {
 
 	@Override
 	public List<IModelEntity> getAllSubEntities() {
-		List<IModelEntity> list = new ArrayList<IModelEntity>();
+		List<IModelEntity> list = new ArrayList<>();
 		String key = null;
 		for (Iterator<String> it = subEntities.keySet().iterator(); it.hasNext();) {
 			key = it.next();
@@ -337,7 +338,7 @@ public class ModelEntity extends AbstractModelNode implements IModelEntity {
 
 	@Override
 	public List<IModelEntity> getAllSubEntities(String entityName) {
-		List<IModelEntity> list = new ArrayList<IModelEntity>();
+		List<IModelEntity> list = new ArrayList<>();
 		String key = null;
 		for (Iterator<String> it = subEntities.keySet().iterator(); it.hasNext();) {
 			key = it.next();
@@ -353,7 +354,7 @@ public class ModelEntity extends AbstractModelNode implements IModelEntity {
 
 	@Override
 	public List<IModelField> getAllFieldOccurencesOnSubEntity(String entityName, String fieldName) {
-		List<IModelField> list = new ArrayList<IModelField>();
+		List<IModelField> list = new ArrayList<>();
 		List<IModelEntity> entities = getAllSubEntities(entityName);
 		for (int i = 0; i < entities.size(); i++) {
 			IModelEntity entity = entities.get(i);
@@ -371,10 +372,10 @@ public class ModelEntity extends AbstractModelNode implements IModelEntity {
 
 	@Override
 	public String toString() {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 
-		String line = getName().toUpperCase() + "(id=" + getId() + ";path=" + path + ";parent:" + (getParent() == null ? "NULL" : getParent().getName())
-				+ ";role=" + role;
+		String line = getName().toUpperCase() + "(id=" + getId() + ";path=" + path + ";parent:"
+				+ (getParent() == null ? "NULL" : getParent().getName()) + ";role=" + role;
 
 		buffer.append(line + "\n");
 		String key = null;
@@ -451,7 +452,7 @@ public class ModelEntity extends AbstractModelNode implements IModelEntity {
 
 		// newModelEntity.setProperties(properties);
 
-		Map<String, Object> properties2 = new HashMap<String, Object>();
+		Map<String, Object> properties2 = new HashMap<>();
 		for (Iterator iterator = properties.keySet().iterator(); iterator.hasNext();) {
 			String key = (String) iterator.next();
 			String o = (String) properties.get(key);

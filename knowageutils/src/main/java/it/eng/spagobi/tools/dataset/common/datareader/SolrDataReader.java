@@ -17,20 +17,22 @@
  */
 package it.eng.spagobi.tools.dataset.common.datareader;
 
-import com.jayway.jsonpath.JsonPath;
-import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
-import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
-import it.eng.spagobi.utilities.assertion.Assert;
-import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
+import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
+import com.jayway.jsonpath.JsonPath;
+
+import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
+import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
+import it.eng.spagobi.utilities.assertion.Assert;
+import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 public class SolrDataReader extends JSONPathDataReader {
 
@@ -47,14 +49,14 @@ public class SolrDataReader extends JSONPathDataReader {
 
 	@Override
 	protected void addFieldMetadata(IMetaData dataStoreMeta, List<Object> parsedData) {
-			super.addFieldMetadata(dataStoreMeta, parsedData);
+		super.addFieldMetadata(dataStoreMeta, parsedData);
 	}
 
 	@Override
-	protected void addData(String data, IDataStore dataStore, IMetaData dataStoreMeta, List<Object> parsedData, boolean skipPagination)
-			throws ParseException, JSONException {
-			super.addData(data, dataStore, dataStoreMeta, parsedData, true);
-			logger.debug("Insert [" + dataStore.getRecordsCount() + "] records");
+	protected void addData(String data, IDataStore dataStore, IMetaData dataStoreMeta, List<Object> parsedData,
+			boolean skipPagination) throws ParseException {
+		super.addData(data, dataStore, dataStoreMeta, parsedData, true);
+		logger.debug("Insert [" + dataStore.getRecordsCount() + "] records");
 	}
 
 	@Override
@@ -67,22 +69,22 @@ public class SolrDataReader extends JSONPathDataReader {
 
 	protected JSONObject getHighlightedData(String responseBody) {
 		JSONObject jsonObject = null;
-		try{
+		try {
 			jsonObject = new JSONObject(responseBody);
-			if(jsonObject.has("highlighting")){
+			if (jsonObject.has("highlighting")) {
 				JSONObject highlighting = jsonObject.getJSONObject("highlighting");
 				JSONObject jsonResponse = jsonObject.getJSONObject("response");
 				JSONArray jsonDocs = jsonResponse.getJSONArray("docs");
-				if(jsonDocs.length()>0){
+				if (jsonDocs.length() > 0) {
 					for (int i = 0; i < jsonDocs.length(); i++) {
 						JSONObject jsonDoc = jsonDocs.getJSONObject(i);
 						String id = jsonDoc.getString("id");
 						JSONObject highlightingDetail = highlighting.getJSONObject(id);
 						Iterator<String> keys = highlightingDetail.keys();
-						while(keys.hasNext()){
+						while (keys.hasNext()) {
 							String field = keys.next();
 							JSONArray jsonReplacement = highlightingDetail.getJSONArray(field);
-							if(jsonReplacement.length()>0){
+							if (jsonReplacement.length() > 0) {
 								String text = jsonReplacement.getString(0);
 								jsonDoc.put(field, text);
 							}
@@ -91,7 +93,7 @@ public class SolrDataReader extends JSONPathDataReader {
 				}
 				jsonObject.remove("highlighting");
 			}
-		}catch (JSONException e){
+		} catch (JSONException e) {
 			throw new SpagoBIRuntimeException("Unable to manage highlighting", e);
 		}
 		return jsonObject;
@@ -105,12 +107,12 @@ public class SolrDataReader extends JSONPathDataReader {
 		this.resultNumber = resultNumber;
 	}
 
-	public List<JSONPathAttribute> getJsonPathAttributes(String type){
+	public List<JSONPathAttribute> getJsonPathAttributes(String type) {
 		Assert.assertNotEmpty(type, "Type can't be empty");
 		List<JSONPathAttribute> attributes = new ArrayList<>();
 		List<JSONPathDataReader.JSONPathAttribute> jsonPathAttributes = getJsonPathAttributes();
-		for(JSONPathDataReader.JSONPathAttribute attribute : jsonPathAttributes){
-			if(type.equals(attribute.getJsonPathType())){
+		for (JSONPathDataReader.JSONPathAttribute attribute : jsonPathAttributes) {
+			if (type.equals(attribute.getJsonPathType())) {
 				attributes.add(attribute);
 			}
 		}
