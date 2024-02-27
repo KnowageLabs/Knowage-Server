@@ -506,18 +506,18 @@ public class SbiDataSetDAOImpl extends AbstractHibernateDAO implements ISbiDataS
 			Set<Domain> categoryList = null;
 			List<Integer> categoryIds = null;
 
-			statement.append("from SbiDataSet ds where ds.active = :active and (ds.owner = :owner or (");
+			statement.append("from SbiDataSet ds where ds.active = :active and (ds.owner = :owner and ");
 			session = getSession();
 			categoryList = UserUtilities.getDataSetCategoriesByUser(userProfile);
 			if (categoryList.isEmpty()) {
-				statement.append("ds.category.id is null");
+				statement.append("ds.category.id is null)");
 			} else {
 				categoryIds = extractCategoryIds(categoryList);
-				statement.append("(ds.category.id is null or ds.category.id in (:categories))");
+				statement.append("ds.category.id is null or ds.category.id in (:categories))");
 			}
 
 			statement.append(
-					" and ds.scope.valueId in (select dom.valueId from SbiDomains dom where dom.valueCd in ('USER', 'ENTERPRISE') and dom.domainCd = 'DS_SCOPE')))");
+					" and ds.scope.valueId in (select dom.valueId from SbiDomains dom where dom.valueCd in ('USER', 'ENTERPRISE') and dom.domainCd = 'DS_SCOPE')");
 
 			Query query = session.createQuery(statement.toString());
 			query.setBoolean("active", true);
