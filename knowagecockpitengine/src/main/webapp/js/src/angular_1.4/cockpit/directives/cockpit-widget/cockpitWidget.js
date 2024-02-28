@@ -1797,6 +1797,25 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                                 scope.ngModel.content.chartTemplate.CHART = angular.copy(scope.ngModel.content.chartTemplateOriginal.CHART)
                             } else {
                                 var isOriginal = false
+                                if(tempOriginalChartType.toLowerCase() === 'pie' && type.toLowerCase() !== 'pie'){
+                                    if(escope.ngModel.content.chartTemplate.CHART.AXES_LIST.AXIS.filter((i)=>i.id === 'X').length === 0){
+                                        scope.ngModel.content.chartTemplate.CHART.AXES_LIST.AXIS.push({
+                                            "alias": "X",
+                                            "id": "X",
+                                            "TITLE": {
+                                                "style": {
+                                                    "align": "",
+                                                    "color": "",
+                                                    "fontFamily": "",
+                                                    "fontSize": "",
+                                                    "fontWeight": ""
+                                                },
+                                                "text": ""
+                                            },
+                                            "type": "Category"
+                                        })
+                                    }
+                                } 
                                 var categories = cockpitModule_widgetServices.checkCategories(scope.ngModel.content.chartTemplate)
                                 delete scope.ngModel.content.chartTemplate.CHART.VALUES.CATEGORY
                                 scope.ngModel.content.chartTemplate.CHART.VALUES.CATEGORY = cockpitModule_widgetServices.compatibleCategories(type, categories)
