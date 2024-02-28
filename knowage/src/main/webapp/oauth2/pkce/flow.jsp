@@ -44,7 +44,7 @@ From https://github.com/curityio/pkce-javascript-example
     };
     xhrOAuth2C.responseType = 'json';
     xhrOAuth2C.open("GET", '/oauth2configservice', true);
-    xhrOAuth2C.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+    //xhrOAuth2C.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
     xhrOAuth2C.send();
 
     const authorizeEndpoint = oauth2Config.authorizeUrl;

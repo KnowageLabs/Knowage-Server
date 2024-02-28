@@ -16,11 +16,6 @@ You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 --%>
 
-<%@page import="it.eng.spagobi.security.OAuth2.OAuth2Client"%>
-<%@page import="it.eng.spagobi.security.OAuth2.OAuth2Config"%>
-<%@page import="org.apache.commons.lang.StringEscapeUtils"%>
-<%@page import="org.json.JSONObject"%>
-
 <%
 String code = request.getParameter("code");
 %>
@@ -74,7 +69,7 @@ String code = request.getParameter("code");
         };
         xhrO2AT.responseType = 'json';
         xhrO2AT.open("GET", '/oauth2clientservice', true);
-        xhrO2AT.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+        //xhrO2AT.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
         xhrO2AT.send(new URLSearchParams({code: code});   	
     }
 
