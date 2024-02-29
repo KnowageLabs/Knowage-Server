@@ -37,6 +37,7 @@ import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.commons.constants.CommunityFunctionalityConstants;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.commons.serializer.v3.MenuHelper;
 import it.eng.spagobi.commons.utilities.GeneralUtilities;
 import it.eng.spagobi.commons.utilities.UserUtilities;
 import it.eng.spagobi.commons.utilities.messages.MessageBuilder;
@@ -44,7 +45,6 @@ import it.eng.spagobi.profiling.PublicProfile;
 import it.eng.spagobi.services.common.SsoServiceInterface;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.wapp.bo.Menu;
-import it.eng.spagobi.wapp.services.DetailMenuModule;
 import it.eng.spagobi.wapp.util.MenuUtilities;
 
 /**
@@ -815,10 +815,10 @@ public class MenuListJSONSerializerForREST implements Serializer {
 						+ childElem.getMenuId());
 			} else if (StringUtils.isNotEmpty(childElem.getFunctionality())) {
 				String finalUrl = "javascript:execDirectUrl('"
-						+ DetailMenuModule.findFunctionalityUrl(childElem, contextName) + "', '" + path + "')";
+						+ MenuHelper.findFunctionalityUrl(childElem, contextName) + "', '" + path + "')";
 				temp2.put(HREF, finalUrl);
 				temp2.put(LINK_TYPE, "execDirectUrl");
-				temp2.put(SRC, DetailMenuModule.findFunctionalityUrl(childElem, contextName));
+				temp2.put(SRC, MenuHelper.findFunctionalityUrl(childElem, contextName));
 			} else if (childElem.getExternalApplicationUrl() != null
 					&& !childElem.getExternalApplicationUrl().isEmpty()) {
 				temp2.put(HREF,

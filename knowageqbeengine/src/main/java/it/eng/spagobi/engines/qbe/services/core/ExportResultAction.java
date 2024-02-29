@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,7 +11,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -46,10 +46,7 @@ import it.eng.spagobi.engines.qbe.exporter.QbeCSVExporter;
 import it.eng.spagobi.engines.qbe.exporter.QbeXLSExporter;
 import it.eng.spagobi.engines.qbe.exporter.QbeXLSXExporter;
 import it.eng.spagobi.engines.qbe.query.Field;
-import it.eng.spagobi.engines.qbe.query.ReportRunner;
 import it.eng.spagobi.engines.qbe.query.SQLFieldsReader;
-import it.eng.spagobi.engines.qbe.query.TemplateBuilder;
-import it.eng.spagobi.engines.qbe.services.formviewer.ExecuteDetailQueryAction;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.bo.JDBCDataSet;
 import it.eng.spagobi.tools.dataset.common.behaviour.UserProfileUtils;
@@ -93,11 +90,7 @@ public class ExportResultAction extends AbstractQbeEngineAction {
 		SQLFieldsReader fieldsReader = null;
 		Vector extractedFields = null;
 		Map params = null;
-		TemplateBuilder templateBuilder = null;
-		String templateContent = null;
 		File reportFile = null;
-		ReportRunner runner = null;
-		boolean isFormEngineInstance = false;
 
 		logger.debug("IN");
 
@@ -118,39 +111,28 @@ public class ExportResultAction extends AbstractQbeEngineAction {
 			fileExtension = MimeUtils.getFileExtension(mimeType);
 			writeBackResponseInline = RESPONSE_TYPE_INLINE.equalsIgnoreCase(responseType);
 
-			isFormEngineInstance = getEngineInstance().getTemplate().getProperty("formJSONTemplate") != null;
-			if (!isFormEngineInstance) {
-				// case of standard QBE
+			Assert.assertNotNull(getEngineInstance().getActiveQuery(), "Query object cannot be null in oder to execute " + this.getActionName() + " service");
+			Assert.assertTrue(getEngineInstance().getActiveQuery().isEmpty() == false,
+					"Query object cannot be empty in oder to execute " + this.getActionName() + " service");
 
-				Assert.assertNotNull(getEngineInstance().getActiveQuery(),
-						"Query object cannot be null in oder to execute " + this.getActionName() + " service");
-				Assert.assertTrue(getEngineInstance().getActiveQuery().isEmpty() == false,
-						"Query object cannot be empty in oder to execute " + this.getActionName() + " service");
+			Assert.assertNotNull(mimeType, "Input parameter [" + MIME_TYPE + "] cannot be null in oder to execute " + this.getActionName() + " service");
+			Assert.assertTrue(MimeUtils.isValidMimeType(mimeType) == true, "[" + mimeType + "] is not a valid value for " + MIME_TYPE + " parameter");
 
-				Assert.assertNotNull(mimeType, "Input parameter [" + MIME_TYPE + "] cannot be null in oder to execute " + this.getActionName() + " service");
-				Assert.assertTrue(MimeUtils.isValidMimeType(mimeType) == true, "[" + mimeType + "] is not a valid value for " + MIME_TYPE + " parameter");
+			Assert.assertNotNull(responseType,
+					"Input parameter [" + RESPONSE_TYPE + "] cannot be null in oder to execute " + this.getActionName() + " service");
+			Assert.assertTrue(RESPONSE_TYPE_INLINE.equalsIgnoreCase(responseType) || RESPONSE_TYPE_ATTACHMENT.equalsIgnoreCase(responseType),
+					"[" + responseType + "] is not a valid value for " + RESPONSE_TYPE + " parameter");
 
-				Assert.assertNotNull(responseType,
-						"Input parameter [" + RESPONSE_TYPE + "] cannot be null in oder to execute " + this.getActionName() + " service");
-				Assert.assertTrue(RESPONSE_TYPE_INLINE.equalsIgnoreCase(responseType) || RESPONSE_TYPE_ATTACHMENT.equalsIgnoreCase(responseType),
-						"[" + responseType + "] is not a valid value for " + RESPONSE_TYPE + " parameter");
+			statement = getEngineInstance().getDataSource().createStatement(getEngineInstance().getActiveQuery());
+			// logger.debug("Parametric query: [" + statement.getQueryString() + "]");
 
-				statement = getEngineInstance().getDataSource().createStatement(getEngineInstance().getActiveQuery());
-				// logger.debug("Parametric query: [" + statement.getQueryString() + "]");
+			statement.setParameters(getEnv());
+			jpaQueryStr = statement.getQueryString();
+			logger.debug("Executable HQL/JPQL query: [" + jpaQueryStr + "]");
 
-				statement.setParameters(getEnv());
-				jpaQueryStr = statement.getQueryString();
-				logger.debug("Executable HQL/JPQL query: [" + jpaQueryStr + "]");
+			sqlQuery = statement.getSqlQueryString();
+			Assert.assertNotNull(sqlQuery, "The SQL query is needed while exporting results.");
 
-				sqlQuery = statement.getSqlQueryString();
-				Assert.assertNotNull(sqlQuery, "The SQL query is needed while exporting results.");
-
-			} else {
-				// case of FormEngine
-
-				sqlQuery = this.getAttributeFromSessionAsString(ExecuteDetailQueryAction.LAST_DETAIL_QUERY);
-				Assert.assertNotNull(sqlQuery, "The detail query was not found, maybe you have not execute the detail query yet.");
-			}
 			logger.debug("Executable SQL query: [" + sqlQuery + "]");
 
 			logger.debug("Exctracting fields ...");

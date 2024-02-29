@@ -48,7 +48,7 @@ import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.utilities.ObjectsAccessVerifier;
 import it.eng.spagobi.services.scheduler.service.ISchedulerServiceSupplier;
 import it.eng.spagobi.services.scheduler.service.SchedulerServiceSupplierFactory;
-import it.eng.spagobi.tools.scheduler.services.JobManagementModule;
+import it.eng.spagobi.tools.scheduler.SchedulerConstants;
 import it.eng.spagobi.tools.scheduler.to.JobInfo;
 import it.eng.spagobi.tools.scheduler.utils.SchedulerUtilities;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
@@ -74,8 +74,7 @@ public class GetSnapshotContentAction extends AbstractHttpAction {
 		String schedulationName = (String) request.getAttribute("schedulationName");
 		if (schedulationName != null) {
 			boolean collate = false;
-			List<Snapshot> snaps = DAOFactory.getSnapshotDAO().getLastSnapshotsBySchedulation(schedulationName,
-					collate);
+			List<Snapshot> snaps = DAOFactory.getSnapshotDAO().getLastSnapshotsBySchedulation(schedulationName, collate);
 			contentMap = mergeListSnap(snaps);
 		} else {
 			List<String> objectIdStr = request.getAttributeAsList("mergeitems");
@@ -118,16 +117,16 @@ public class GetSnapshotContentAction extends AbstractHttpAction {
 		String idSnapStr = (String) request.getAttribute(SpagoBIConstants.SNAPSHOT_ID);
 		Integer idSnap = new Integer(idSnapStr);
 		LOGGER.debug("Required snapshot with id = " + idSnap + " of document with id = " + objectId);
-		IEngUserProfile profile = (IEngUserProfile) this.getRequestContainer().getSessionContainer()
-				.getPermanentContainer().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
+		IEngUserProfile profile = (IEngUserProfile) this.getRequestContainer().getSessionContainer().getPermanentContainer()
+				.getAttribute(IEngUserProfile.ENG_USER_PROFILE);
 		BIObject obj = DAOFactory.getBIObjectDAO().loadBIObjectById(objectId);
 		// check if the user is able to see the document
 		// TODO check if the user is able to execute the document (even if it does no make sense to be able to see the document but not to execute it...)
 		byte[] content = null;
 		String contentType = "text/html";
 		if (ObjectsAccessVerifier.canSee(obj, profile)) {
-			LOGGER.debug("Current user [" + ((UserProfile) profile).getUserId().toString()
-					+ "] can see snapshot with id = " + idSnap + " of document with id = " + objectId);
+			LOGGER.debug("Current user [" + ((UserProfile) profile).getUserId().toString() + "] can see snapshot with id = " + idSnap
+					+ " of document with id = " + objectId);
 			ISnapshotDAO snapdao = DAOFactory.getSnapshotDAO();
 			Snapshot snap = snapdao.loadSnapshot(idSnap);
 			content = snap.getContent();
@@ -135,8 +134,8 @@ public class GetSnapshotContentAction extends AbstractHttpAction {
 				contentType = snap.getContentType();
 			}
 		} else {
-			LOGGER.error("Current user [" + ((UserProfile) profile).getUserId().toString()
-					+ "] CANNOT see snapshot with id = " + idSnap + " of document with id = " + objectId);
+			LOGGER.error("Current user [" + ((UserProfile) profile).getUserId().toString() + "] CANNOT see snapshot with id = " + idSnap
+					+ " of document with id = " + objectId);
 			content = "You cannot see required snapshot.".getBytes(UTF_8);
 		}
 
@@ -177,7 +176,7 @@ public class GetSnapshotContentAction extends AbstractHttpAction {
 
 			// sort snapshot of documents respecting the order of document in the schedulation
 			ISchedulerServiceSupplier schedulerService = SchedulerServiceSupplierFactory.getSupplier();
-			String jobDetail = schedulerService.getJobDefinition(jobName, JobManagementModule.JOB_GROUP);
+			String jobDetail = schedulerService.getJobDefinition(jobName, SchedulerConstants.JOB_GROUP);
 			SourceBean jobDetailSB = SchedulerUtilities.getSBFromWebServiceResponse(jobDetail);
 			JobInfo jobInfo = SchedulerUtilities.getJobInfoFromJobSourceBean(jobDetailSB);
 

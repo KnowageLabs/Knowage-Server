@@ -30,9 +30,9 @@ import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 
 import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.tools.scheduler.SchedulerConstants;
 import it.eng.spagobi.tools.scheduler.bo.Trigger;
 import it.eng.spagobi.tools.scheduler.dao.ISchedulerDAO;
-import it.eng.spagobi.tools.scheduler.services.JobManagementModule;
 import it.eng.spagobi.tools.scheduler.wsEvents.SbiWsEvent;
 import it.eng.spagobi.tools.scheduler.wsEvents.dao.SbiWsEventsDao;
 
@@ -89,7 +89,7 @@ public class RestEventJob extends AbstractSpagoBIJob implements Job {
 			schedulerDAO = DAOFactory.getSchedulerDAO();
 			schedulerDAO.setTenant(getTenant().getName());
 
-			String jobGroup = JobManagementModule.JOB_GROUP;
+			String jobGroup = SchedulerConstants.JOB_GROUP;
 			// it.eng.spagobi.tools.scheduler.bo.Job jobDetail = schedulerDAO.loadJob(jobGroup, jobName);
 
 			List<Trigger> triggers = schedulerDAO.loadTriggers(jobGroup, jobName);

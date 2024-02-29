@@ -1,3 +1,20 @@
+/*
+ * Knowage, Open Source Business Intelligence suite
+ * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
+ *
+ * Knowage is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Knowage is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 package it.eng.spagobi.commons.services;
 
 import java.io.IOException;
@@ -28,7 +45,6 @@ import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 import it.eng.spagobi.utilities.service.AbstractBaseHttpAction;
 import it.eng.spagobi.utilities.service.JSONSuccess;
-import it.eng.spagobi.wapp.services.ChangeTheme;
 
 public class LoginActionByToken extends AbstractBaseHttpAction {
 
@@ -41,7 +57,6 @@ public class LoginActionByToken extends AbstractBaseHttpAction {
 	public static String CALLBACK = "callback";
 	public static String TOKEN = "token";
 
-	public static String THEME = ChangeTheme.THEME_NAME;
 	public static String BACK_URL = SpagoBIConstants.BACK_URL;
 
 	// logger component
@@ -52,7 +67,6 @@ public class LoginActionByToken extends AbstractBaseHttpAction {
 	@Override
 	public void service(SourceBean request, SourceBean response) throws SpagoBIServiceException {
 		String callback = null;
-		String theme;
 		String backUrl;
 		String token;
 		boolean isSSOActive = false;
@@ -72,9 +86,6 @@ public class LoginActionByToken extends AbstractBaseHttpAction {
 
 			callback = getAttributeAsString(CALLBACK);
 			logger.debug("Parameter [" + CALLBACK + "] is equals to [" + callback + "]");
-
-			theme = getAttributeAsString(THEME);
-			logger.debug("Parameter [" + THEME + "] is equals to [" + theme + "]");
 
 			backUrl = getAttributeAsString(BACK_URL);
 			logger.debug("Parameter [" + BACK_URL + "] is equals to [" + backUrl + "]");
@@ -131,13 +142,7 @@ public class LoginActionByToken extends AbstractBaseHttpAction {
 			// in case user has a default role, we get his default user profile object
 			profile = SessionUserProfileBuilder.getDefaultUserProfile((UserProfile) profile);
 			// put user profile into session
-			storeProfileInSession((UserProfile) profile, getSessionContainer().getPermanentContainer(),
-					getHttpRequest().getSession());
-
-			// Propagate THEME if present
-			if (theme != null && theme.length() > 0) {
-				getSessionContainer().getPermanentContainer().setAttribute(SpagoBIConstants.THEME, theme);
-			}
+			storeProfileInSession((UserProfile) profile, getSessionContainer().getPermanentContainer(), getHttpRequest().getSession());
 
 			// Propagate BACK URL if present
 			if (!StringUtils.isEmpty(backUrl)) {
@@ -146,11 +151,9 @@ public class LoginActionByToken extends AbstractBaseHttpAction {
 
 			// Propagate locale
 			Locale locale = MessageBuilder.getBrowserLocaleFromSpago();
-			logger.debug("User [" + userId + "] loacale has been set to [" + locale.getLanguage() + "/"
-					+ locale.getCountry() + "]");
+			logger.debug("User [" + userId + "] loacale has been set to [" + locale.getLanguage() + "/" + locale.getCountry() + "]");
 			if (locale != null) {
-				getSessionContainer().getPermanentContainer().setAttribute(Constants.USER_LANGUAGE,
-						locale.getLanguage());
+				getSessionContainer().getPermanentContainer().setAttribute(Constants.USER_LANGUAGE, locale.getLanguage());
 				getSessionContainer().getPermanentContainer().setAttribute(Constants.USER_COUNTRY, locale.getCountry());
 			}
 

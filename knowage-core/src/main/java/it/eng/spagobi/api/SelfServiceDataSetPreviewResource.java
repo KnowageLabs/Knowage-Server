@@ -61,7 +61,6 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRestServiceException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 import it.eng.spagobi.utilities.themes.ThemesManager;
-import it.eng.spagobi.wapp.services.ChangeTheme;
 
 @Path("/selfservicedatasetpreview")
 public class SelfServiceDataSetPreviewResource extends AbstractSpagoBIResource {
@@ -275,6 +274,7 @@ public class SelfServiceDataSetPreviewResource extends AbstractSpagoBIResource {
 
 	/**
 	 * Forward the request to the jsp
+	 *
 	 * @return
 	 */
 	@GET
@@ -287,11 +287,7 @@ public class SelfServiceDataSetPreviewResource extends AbstractSpagoBIResource {
 			/* FORWARD THE REQUEST */
 			logger.debug("Forwarding the request");
 
-			String theme_name = (String) request.getAttribute(ChangeTheme.THEME_NAME);
-			if (theme_name == null)
-				theme_name = ThemesManager.getDefaultTheme();
-
-			String url = "/themes/" + theme_name + "/jsp/";
+			String url = "/themes/" + ThemesManager.getDefaultTheme() + "/jsp/";
 			url = url + DATASET_VALUE_SUCCESS_REQUEST_DISPATCHER_URL;
 
 			return new View(url);

@@ -45,7 +45,6 @@ import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 import it.eng.spagobi.utilities.service.AbstractBaseHttpAction;
 import it.eng.spagobi.utilities.service.JSONSuccess;
-import it.eng.spagobi.wapp.services.ChangeTheme;
 
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it) This action is used by SpagoBISDK module.
@@ -63,7 +62,6 @@ public class LoginActionWeb extends AbstractBaseHttpAction {
 	public static String USER_ID = "user";
 	public static String PASSWORD = "password";
 
-	public static String THEME = ChangeTheme.THEME_NAME;
 	public static String BACK_URL = SpagoBIConstants.BACK_URL;
 
 	// logger component
@@ -74,7 +72,6 @@ public class LoginActionWeb extends AbstractBaseHttpAction {
 	@Override
 	public void service(SourceBean request, SourceBean response) throws SpagoBIServiceException {
 		String callback = null;
-		String theme;
 		String backUrl;
 		boolean isSSOActive = false;
 		String usr = null;
@@ -100,11 +97,7 @@ public class LoginActionWeb extends AbstractBaseHttpAction {
 			logger.debug("Parameter [" + USER_ID + "] is equals to [" + usr + "]");
 
 			pwd = getAttributeAsString(PASSWORD);
-			logger.debug("Parameter [" + PASSWORD + "] is equals to [" + (StringUtils.isEmpty(pwd) ? "null" : "*******")
-					+ "]"); // do not log pwd !
-
-			theme = getAttributeAsString(THEME);
-			logger.debug("Parameter [" + THEME + "] is equals to [" + theme + "]");
+			logger.debug("Parameter [" + PASSWORD + "] is equals to [" + (StringUtils.isEmpty(pwd) ? "null" : "*******") + "]"); // do not log pwd !
 
 			backUrl = getAttributeAsString(BACK_URL);
 			logger.debug("Parameter [" + BACK_URL + "] is equals to [" + backUrl + "]");
@@ -133,8 +126,7 @@ public class LoginActionWeb extends AbstractBaseHttpAction {
 				if (userProfile == null) {
 					logger.warn("An attempt to authenticate with wrong credential has made [" + usr + "/" + pwd + "]");
 					AuditLogUtilities.updateAudit(getHttpRequest(), profile, "LOGIN", null, "KO");
-					throw new SpagoBIServiceException(SERVICE_NAME,
-							"An attempt to authenticate with wrong credential has made [" + usr + "/" + pwd + "]");
+					throw new SpagoBIServiceException(SERVICE_NAME, "An attempt to authenticate with wrong credential has made [" + usr + "/" + pwd + "]");
 				}
 
 				// authentication was successful, we get the user unique identifier
@@ -160,13 +152,7 @@ public class LoginActionWeb extends AbstractBaseHttpAction {
 			// in case user has a default role, we get his default user profile object
 			profile = SessionUserProfileBuilder.getDefaultUserProfile((UserProfile) profile);
 			// put user profile into session
-			storeProfileInSession((UserProfile) profile, getSessionContainer().getPermanentContainer(),
-					getHttpRequest().getSession());
-
-			// Propagate THEME if present
-			if (theme != null && theme.length() > 0) {
-				getSessionContainer().getPermanentContainer().setAttribute(SpagoBIConstants.THEME, theme);
-			}
+			storeProfileInSession((UserProfile) profile, getSessionContainer().getPermanentContainer(), getHttpRequest().getSession());
 
 			// Propagate BACK URL if present
 			if (!StringUtils.isEmpty(backUrl)) {
@@ -175,11 +161,9 @@ public class LoginActionWeb extends AbstractBaseHttpAction {
 
 			// Propagate locale
 			Locale locale = MessageBuilder.getBrowserLocaleFromSpago();
-			logger.debug("User [" + usr + "] loacale has been set to [" + locale.getLanguage() + "/"
-					+ locale.getCountry() + "]");
+			logger.debug("User [" + usr + "] loacale has been set to [" + locale.getLanguage() + "/" + locale.getCountry() + "]");
 			if (locale != null) {
-				getSessionContainer().getPermanentContainer().setAttribute(Constants.USER_LANGUAGE,
-						locale.getLanguage());
+				getSessionContainer().getPermanentContainer().setAttribute(Constants.USER_LANGUAGE, locale.getLanguage());
 				getSessionContainer().getPermanentContainer().setAttribute(Constants.USER_COUNTRY, locale.getCountry());
 			}
 
