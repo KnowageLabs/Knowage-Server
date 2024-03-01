@@ -1,125 +1,67 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	
 	<modelVersion>4.0.0</modelVersion>
-
+	
 	<parent>
 		<groupId>it.eng.knowage</groupId>
 		<artifactId>knowage-ce-parent</artifactId>
 		<version>8.0.23-SNAPSHOT</version>
 		<relativePath>../knowage-ce-parent/pom.xml</relativePath>
 	</parent>
-
+	
 	<artifactId>knowagewhatifengine</artifactId>
 	<packaging>war</packaging>
-
-	<profiles>
-		<profile>
-			<id>development</id>
-            <activation>
-                <!-- this profile is active by default -->
-                <activeByDefault>true</activeByDefault>
-            </activation>
-            <properties>
-	       		<application.environment>development</application.environment>
-      		</properties>
-      		<build>
-			    <plugins>
-			        <plugin>
-			        	<groupId>org.apache.maven.plugins</groupId>
-			            <artifactId>maven-war-plugin</artifactId>
-			            <configuration>
-			                <attachClasses>true</attachClasses>
-			                <classesClassifier>classes</classesClassifier>
-			            </configuration>
-			        </plugin>
-			    </plugins>
-			</build>
-		</profile>
-		
-		<profile>
-			<id>production</id>
-			<properties>
-	       		<application.environment>production</application.environment>
-	       		<disable.console.logging>*/console.log = function() {}; console.warn = function() {}; console.debug = function() {}; console.info = function() {};  /*</disable.console.logging>
-	        </properties>
-			<build>
-			    <plugins>
-			        <plugin>
-			        	<groupId>org.apache.maven.plugins</groupId>
-			            <artifactId>maven-war-plugin</artifactId>
-			            <configuration>
-			                <attachClasses>true</attachClasses>
-			                <classesClassifier>classes</classesClassifier>
-			                <webResources>
-								<resource>
-									<directory>src/main/webapp</directory>
-									<filtering>true</filtering>
-									<includes>
-										<include>**/angularImport.jsp</include>
-									</includes>										
-								</resource>					      
-					      </webResources>
-			            </configuration>
-			        </plugin>
-			    </plugins>
-			</build>
-		</profile>
-	</profiles>
-
+	<name>knowagewhatifengine</name>
+	
 	<dependencies>
-		
 		<dependency>
 			<groupId>it.eng.knowage</groupId>
 			<artifactId>knowage-utils</artifactId>
-			<version>8.0.23-SNAPSHOT</version>
+			<version>${project.version}</version>
 			<scope>compile</scope>
 			<exclusions>
 				<exclusion>
-					<groupId>org.cometd.java</groupId>
 					<artifactId>cometd-java-server</artifactId>
+					<groupId>org.cometd.java</groupId>
 				</exclusion>
 				<exclusion>
-					<groupId>javax.servlet.jsp</groupId>
 					<artifactId>jsp-api</artifactId>
+					<groupId>javax.servlet.jsp</groupId>
 				</exclusion>
 				<exclusion>
-					<groupId>org.apache.hadoop</groupId>
 					<artifactId>hadoop-hdfs</artifactId>
+					<groupId>org.apache.hadoop</groupId>
 				</exclusion>
 				<exclusion>
-					<groupId>org.apache.hadoop</groupId>
 					<artifactId>hadoop-common</artifactId>
+					<groupId>org.apache.hadoop</groupId>
 				</exclusion>
 			</exclusions>
 		</dependency>
-		
 		<dependency>
 			<groupId>org.jboss.resteasy</groupId>
 			<artifactId>resteasy-servlet-initializer</artifactId>
 			<version>${resteasy.version}</version>
 			<scope>runtime</scope>
 		</dependency>
-		
 		<dependency>
 			<groupId>org.jboss.resteasy</groupId>
 			<artifactId>resteasy-html</artifactId>
 			<version>${resteasy.version}</version>
 		</dependency>
-		
 		<dependency>
 			<groupId>com.fasterxml.jackson.jaxrs</groupId>
 			<artifactId>jackson-jaxrs-json-provider</artifactId>
 			<version>2.9.2</version>
 			<scope>runtime</scope>
 		</dependency>
-
 		<dependency>
 			<groupId>org.olap4j</groupId>
 			<artifactId>olap4j</artifactId>
 			<version>1.1.0</version>
 			<scope>compile</scope>
 		</dependency>
-
 		<dependency>
 			<groupId>org.pivot4j</groupId>
 			<artifactId>pivot4j-core</artifactId>
@@ -127,39 +69,35 @@
 			<scope>compile</scope>
 			<exclusions>
 				<exclusion>
-					<groupId>de.jflex</groupId>
 					<artifactId>jflex</artifactId>
+					<groupId>de.jflex</groupId>
 				</exclusion>
 			</exclusions>
 		</dependency>
-
-		<!-- pivot4j-0.9 is not compatible with managed poi (from knowage-ce-parent/pom.xml), therefore we override dependency towards poi-3.10-beta2 -->
+		<!-- pivot4j-0.9 is not compatible with managed poi (from knowage-ce-parent/pom.xml), 
+			therefore we override dependency towards poi-3.10-beta2 -->
 		<dependency>
 			<groupId>org.apache.poi</groupId>
 			<artifactId>poi</artifactId>
 			<version>3.10-beta2</version>
 		</dependency>
-
 		<dependency>
 			<groupId>org.apache.poi</groupId>
 			<artifactId>poi-ooxml</artifactId>
 			<version>3.10-beta2</version>
 		</dependency>
-
 		<dependency>
 			<groupId>de.jflex</groupId>
 			<artifactId>jflex</artifactId>
 			<version>1.5.0</version>
 			<scope>compile</scope>
 		</dependency>
-
 		<dependency>
 			<groupId>javax.servlet</groupId>
 			<artifactId>javax.servlet-api</artifactId>
 			<version>3.1.0</version>
 			<scope>provided</scope>
 		</dependency>
-		
 		<dependency>
 			<groupId>pentaho</groupId>
 			<artifactId>mondrian</artifactId>
@@ -167,35 +105,88 @@
 			<scope>compile</scope>
 			<exclusions>
 				<exclusion>
-					<groupId>javax.servlet</groupId>
 					<artifactId>jsp-api</artifactId>
+					<groupId>javax.servlet</groupId>
 				</exclusion>
 				<exclusion>
-					<groupId>javacup</groupId>
 					<artifactId>javacup</artifactId>
+					<groupId>javacup</groupId>
 				</exclusion>
 				<exclusion>
-					<groupId>xalan</groupId>
 					<artifactId>xalan</artifactId>
+					<groupId>xalan</groupId>
 				</exclusion>
 			</exclusions>
 		</dependency>
-		
 		<dependency>
 			<groupId>org.hibernate</groupId>
 			<artifactId>hibernate-core</artifactId>
 			<version>3.6.2.Final</version>
 			<scope>compile</scope>
 		</dependency>
-		
 		<dependency>
 			<groupId>org.hsqldb</groupId>
 			<artifactId>hsqldb</artifactId>
 			<version>1.8.0.10</version>
 			<scope>test</scope>
 		</dependency>
-
 	</dependencies>
 	
-	<name>knowagewhatifengine</name>
+	<build>
+		<finalName>knowagewhatifengine</finalName>
+	</build>
+	
+	<profiles>
+		<profile>
+			<id>development</id>
+			<activation>
+				<!-- this profile is active by default -->
+				<activeByDefault>true</activeByDefault>
+			</activation>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-war-plugin</artifactId>
+						<configuration>
+							<attachClasses>true</attachClasses>
+							<classesClassifier>classes</classesClassifier>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+			<properties>
+				<application.environment>development</application.environment>
+			</properties>
+		</profile>
+		<profile>
+			<id>production</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-war-plugin</artifactId>
+						<configuration>
+							<attachClasses>true</attachClasses>
+							<classesClassifier>classes</classesClassifier>
+							<webResources>
+								<resource>
+									<directory>src/main/webapp</directory>
+									<filtering>true</filtering>
+									<includes>
+										<include>**/angularImport.jsp</include>
+									</includes>
+								</resource>
+							</webResources>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+			<properties>
+				<application.environment>production</application.environment>
+				<disable.console.logging>*/console.log = function() {}; console.warn = function() {}; console.debug = function() {}; console.info = function() {};  /*</disable.console.logging>
+			</properties>
+		</profile>
+	</profiles>
+	
 </project>
