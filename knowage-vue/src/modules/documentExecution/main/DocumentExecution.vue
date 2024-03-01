@@ -383,7 +383,7 @@ export default defineComponent({
                 })
             }
 
-            if (this.user.functionalities.includes("EnableToRate") || this.user.functionalities.includes("seeHelpOnline")) {
+            if (this.user.functionalities.includes("EnableToRate") || this.user.functionalities.includes("HelpOnLine")) {
               let tempObj = {
                 label: this.$t("common.info.info"),
                 items: [] as any,
@@ -395,7 +395,7 @@ export default defineComponent({
                   command: () => this.openRank(),
                 });
               }
-              if (this.user.functionalities.includes("seeHelpOnline")) {
+              if (this.user.functionalities.includes("HelpOnLine")) {
                 tempObj.items.push({
                   icon: "pi pi-book",
                   label: this.$t("common.onlineHelp"),
