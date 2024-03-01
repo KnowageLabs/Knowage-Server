@@ -383,22 +383,26 @@ export default defineComponent({
                 })
             }
 
-            if (this.user.functionalities.includes('EnableToRate') && this.user.functionalities.includes('Collaboration')) {
-                this.toolbarMenuItems.push({
-                    label: this.$t('common.info.info'),
-                    items: [
-                        {
-                            icon: 'pi pi-star',
-                            label: this.$t('common.rank'),
-                            command: () => this.openRank()
-                        },
-                        {
-                            icon: 'pi pi-book',
-                            label: this.$t('common.onlineHelp'),
-                            command: () => this.openHelp()
-                        }
-                    ]
-                })
+            if (this.user.functionalities.includes("EnableToRate") || this.user.functionalities.includes("seeHelpOnline")) {
+              let tempObj = {
+                label: this.$t("common.info.info"),
+                items: [] as any,
+              };
+              if (this.user.functionalities.includes("EnableToRate")) {
+                tempObj.items.push({
+                  icon: "pi pi-star",
+                  label: this.$t("common.rank"),
+                  command: () => this.openRank(),
+                });
+              }
+              if (this.user.functionalities.includes("seeHelpOnline")) {
+                tempObj.items.push({
+                  icon: "pi pi-book",
+                  label: this.$t("common.onlineHelp"),
+                  command: () => this.openHelp(),
+                });
+              }
+              this.toolbarMenuItems.push(tempObj);
             }
 
             this.toolbarMenuItems.push({

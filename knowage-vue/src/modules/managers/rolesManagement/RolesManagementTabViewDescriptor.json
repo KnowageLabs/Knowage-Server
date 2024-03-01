@@ -143,6 +143,13 @@
             "visible": false
         },
         {
+            "category": "documentExecutionMenu",
+            "dbname": "SEE_HELP_ONLINE",
+            "fieldName": "ableToSeeHelpOnline",
+            "label": "managers.rolesManagement.authorizations.seeHelpOnline",
+            "visible": false
+        },
+        {
             "category": "menuConfiguration",
             "dbname": "SEE_DOCUMENT_BROWSER",
             "fieldName": "ableToSeeDocumentBrowser",
@@ -259,6 +266,13 @@
             "dbname": "ENABLE_FEDERATED_DATASET",
             "fieldName": "ableToEnableFederatedDataset",
             "label": "managers.rolesManagement.authorizations.federatedDataset",
+            "visible": false
+        },
+        {
+            "category": "myWorskpace",
+            "dbname": "ENABLE_DATA_PREPARATION",
+            "fieldName": "ableToUseDataPreparation",
+            "label": "managers.rolesManagement.authorizations.enableDataPreparation",
             "visible": false
         },
         {
