@@ -29,7 +29,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <%@page import="it.eng.spagobi.commons.services.LoginModule"%>
 <%@page import="it.eng.spagobi.wapp.util.MenuUtilities"%>
 <%@page import="it.eng.spagobi.commons.serializer.MenuThemesListJSONSerializer"%>
-<%@page import="it.eng.spagobi.wapp.services.DetailMenuModule"%>
+<%@page import="it.eng.spagobi.commons.serializer.v3.MenuHelper"%>
 <%@page import="it.eng.spagobi.wapp.bo.Menu"%>
 <%@page import="org.json.JSONArray"%>
 <%@page import="it.eng.spagobi.commons.constants.ObjectsTreeConstants"%>
@@ -44,30 +44,34 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     
 
 <%
-	String contextName = ChannelUtilities.getSpagoBIContextName(request);
-	SourceBean moduleResponse = (SourceBean)aServiceResponse.getAttribute("LoginModule"); 
-	boolean isTechnicalUser = UserUtilities.isTechnicalUser(userProfile);
-	
-	String isDirectExec = (String) aServiceRequest.getAttribute("DIRECT_EXEC");
-	if (isDirectExec==null) isDirectExec = "FALSE";
-	if(moduleResponse==null) moduleResponse=aServiceResponse;
-	
-	List lstMenu = new ArrayList();
-	if (session.getAttribute(MenuUtilities.LIST_MENU) != null){
-		lstMenu = (List)session.getAttribute(MenuUtilities.LIST_MENU);
-	}
-	//if (moduleResponse.getAttribute(MenuUtilities.LIST_MENU) != null){
-	//	lstMenu = (List)moduleResponse.getAttribute(MenuUtilities.LIST_MENU);
-	//}
-	
-	List filteredMenuList = MenuUtilities.filterListForUser(lstMenu, userProfile);
-	MenuListJSONSerializer serializer = new MenuListJSONSerializer(userProfile, session);
-	JSONArray jsonMenuList = (JSONArray) serializer.serialize(filteredMenuList,locale);
-	//System.out.println(jsonMenuList);
-%>
+    String contextName = ChannelUtilities.getSpagoBIContextName(request);
+    	SourceBean moduleResponse = (SourceBean)aServiceResponse.getAttribute("LoginModule"); 
+    	boolean isTechnicalUser = UserUtilities.isTechnicalUser(userProfile);
+    	
+    	String isDirectExec = (String) aServiceRequest.getAttribute("DIRECT_EXEC");
+    	if (isDirectExec==null) isDirectExec = "FALSE";
+    	if(moduleResponse==null) moduleResponse=aServiceResponse;
+    	
+    	List lstMenu = new ArrayList();
+    	if (session.getAttribute(MenuUtilities.LIST_MENU) != null){
+    		lstMenu = (List)session.getAttribute(MenuUtilities.LIST_MENU);
+    	}
+    	//if (moduleResponse.getAttribute(MenuUtilities.LIST_MENU) != null){
+    	//	lstMenu = (List)moduleResponse.getAttribute(MenuUtilities.LIST_MENU);
+    	//}
+    	
+    	List filteredMenuList = MenuUtilities.filterListForUser(lstMenu, userProfile);
+    	MenuListJSONSerializer serializer = new MenuListJSONSerializer(userProfile, session);
+    	JSONArray jsonMenuList = (JSONArray) serializer.serialize(filteredMenuList,locale);
+    	//System.out.println(jsonMenuList);
+    %>
 
-<% Boolean enableGlossary=userProfile.isAbleToExecuteAction(CommunityFunctionalityConstants.GLOSSARY) ;%>
-<%if(enableGlossary){ %>
+<%
+Boolean enableGlossary=userProfile.isAbleToExecuteAction(CommunityFunctionalityConstants.GLOSSARY) ;
+%>
+<%
+if(enableGlossary){
+%>
 <style>
 /* apply this style for the helps online link if the glossary is enabled */
 .glossHelpOnline{
@@ -76,7 +80,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 }
 </style>
 
-<%} %>
+<%
+}
+%>
 
 <script>
    	function execCrossNavigation(frameid, doclabel, params, subobjid, title, target) {
@@ -107,14 +113,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     	
    	function execShowHelpOnLine(getItem){
   		
-<%  if(enableGlossary){ %>
+<%if(enableGlossary){%>
     			
 		console.log("execShowHelpOnLine");
 		if (getItem == undefined || getItem == null) {
 			return;
 		}
 
-<% } %>
+<%}%>
 	    	  
    	}
    	
@@ -123,7 +129,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
    	*/
 	function execShowExportExcel(id){  		
    		console.log('execShowExportExcel id ' + id);
-   		window.location.href = '<%=contextName %>/servlet/AdapterHTTP?ACTION_NAME=EXPORT_EXCEL_DATASET_ACTION&SBI_EXECUTION_ID=-1&LIGHT_NAVIGATOR_DISABLED=TRUE&id='+id;
+   		window.location.href = '<%=contextName%>/servlet/AdapterHTTP?ACTION_NAME=EXPORT_EXCEL_DATASET_ACTION&SBI_EXECUTION_ID=-1&LIGHT_NAVIGATOR_DISABLED=TRUE&id='+id;
 			    	  
 	}
    	
@@ -185,60 +191,60 @@ sessionExpiredSpagoBIJS = 'sessionExpiredSpagoBIJS';
 	} else {
 	
 		if (filteredMenuList.size() > 0) {
-			//DAO method returns menu ordered by parentId, but null values are higher or lower on different database:
-			//PostgreSQL - Nulls are considered HIGHER than non-nulls.
-			//DB2 - Higher
-			//MSSQL - Lower
-			//MySQL - Lower
-			//Oracle - Higher
-			//Ingres - Higher
-			// so we must look for the first menu item with null parentId
-			Menu firtsItem = null;
-			Iterator it = filteredMenuList.iterator();
-			while (it.hasNext()) {
-				Menu aMenuElement = (Menu) it.next();
-				if (aMenuElement.getParentId() == null) {
-					firtsItem = aMenuElement;
-					break;
-				}
-			}
-			String pathInit=MenuUtilities.getMenuPath(filteredMenuList,firtsItem, locale);
-			Integer objId=firtsItem.getObjId();
-			
-			if(objId!=null){
-				firstUrlToCall = contextName+"/servlet/AdapterHTTP?ACTION_NAME=MENU_BEFORE_EXEC&MENU_ID="+firtsItem.getMenuId();
-			}else if(firtsItem.getStaticPage()!=null && !firtsItem.getStaticPage().equals("")){
-				firstUrlToCall = contextName+"/servlet/AdapterHTTP?ACTION_NAME=READ_HTML_FILE&MENU_ID="+firtsItem.getMenuId();
-			}else if(firtsItem.getFunctionality()!=null&&!firtsItem.getFunctionality().equals("")){
-				firstUrlToCall = DetailMenuModule.findFunctionalityUrl(firtsItem, contextName);
-			}else if(firtsItem.getExternalApplicationUrl()!=null && !firtsItem.getExternalApplicationUrl().equals("")){
-				firstUrlToCall = firtsItem.getExternalApplicationUrl();
-				if (!GeneralUtilities.isSSOEnabled()) {
-					if (firstUrlToCall.indexOf("?") == -1) {
-						firstUrlToCall += "?" + SsoServiceInterface.USER_ID + "=" + userUniqueIdentifier;
-					} else {
-						firstUrlToCall += "&" + SsoServiceInterface.USER_ID + "=" + userUniqueIdentifier;
-					}
-				}
+	//DAO method returns menu ordered by parentId, but null values are higher or lower on different database:
+	//PostgreSQL - Nulls are considered HIGHER than non-nulls.
+	//DB2 - Higher
+	//MSSQL - Lower
+	//MySQL - Lower
+	//Oracle - Higher
+	//Ingres - Higher
+	// so we must look for the first menu item with null parentId
+	Menu firtsItem = null;
+	Iterator it = filteredMenuList.iterator();
+	while (it.hasNext()) {
+		Menu aMenuElement = (Menu) it.next();
+		if (aMenuElement.getParentId() == null) {
+			firtsItem = aMenuElement;
+			break;
+		}
+	}
+	String pathInit=MenuUtilities.getMenuPath(filteredMenuList,firtsItem, locale);
+	Integer objId=firtsItem.getObjId();
+	
+	if(objId!=null){
+		firstUrlToCall = contextName+"/servlet/AdapterHTTP?ACTION_NAME=MENU_BEFORE_EXEC&MENU_ID="+firtsItem.getMenuId();
+	}else if(firtsItem.getStaticPage()!=null && !firtsItem.getStaticPage().equals("")){
+		firstUrlToCall = contextName+"/servlet/AdapterHTTP?ACTION_NAME=READ_HTML_FILE&MENU_ID="+firtsItem.getMenuId();
+	}else if(firtsItem.getFunctionality()!=null&&!firtsItem.getFunctionality().equals("")){
+		firstUrlToCall = MenuHelper.findFunctionalityUrl(firtsItem, contextName);
+	}else if(firtsItem.getExternalApplicationUrl()!=null && !firtsItem.getExternalApplicationUrl().equals("")){
+		firstUrlToCall = firtsItem.getExternalApplicationUrl();
+		if (!GeneralUtilities.isSSOEnabled()) {
+			if (firstUrlToCall.indexOf("?") == -1) {
+				firstUrlToCall += "?" + SsoServiceInterface.USER_ID + "=" + userUniqueIdentifier;
 			} else {
-				if(isTechnicalUser){
-					firstUrlToCall = contextName+"/themes/" + currTheme + "/html/technicalUserIntro.jsp";	
-				}else{
-					firstUrlToCall = contextName+"/themes/" + currTheme + "/html/finalUserIntro.jsp";
-				}
-				isFirstUrlToCallEqualsToDefaultPage = true;	
+				firstUrlToCall += "&" + SsoServiceInterface.USER_ID + "=" + userUniqueIdentifier;
 			}
+		}
+	} else {
+		if(isTechnicalUser){
+			firstUrlToCall = contextName+"/themes/" + currTheme + "/html/technicalUserIntro.jsp";	
+		}else{
+			firstUrlToCall = contextName+"/themes/" + currTheme + "/html/finalUserIntro.jsp";
+		}
+		isFirstUrlToCallEqualsToDefaultPage = true;	
+	}
 		} else{
-			if(isTechnicalUser){
-				firstUrlToCall = contextName+"/themes/" + currTheme + "/html/technicalUserIntro.jsp";	
-			}else{
-				firstUrlToCall = contextName+"/themes/" + currTheme + "/html/finalUserIntro.jsp";
-			}
-			isFirstUrlToCallEqualsToDefaultPage = true;
+	if(isTechnicalUser){
+		firstUrlToCall = contextName+"/themes/" + currTheme + "/html/technicalUserIntro.jsp";	
+	}else{
+		firstUrlToCall = contextName+"/themes/" + currTheme + "/html/finalUserIntro.jsp";
+	}
+	isFirstUrlToCallEqualsToDefaultPage = true;
 		}
 		
 	}
- %>
+%>
 
 
 

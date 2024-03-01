@@ -82,7 +82,6 @@ import it.eng.spagobi.tenant.TenantManager;
 import it.eng.spagobi.user.UserProfileManager;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 import it.eng.spagobi.utilities.themes.ThemesManager;
-import it.eng.spagobi.wapp.services.ChangeTheme;
 import net.logicsquad.nanocaptcha.image.ImageCaptcha;
 
 @Path("/signup")
@@ -126,12 +125,7 @@ public class Signup {
 			throw new SpagoBIServiceException("An unexpected error occurred while executing the subscribe action", t);
 		}
 		try {
-			String themeName = (String) req.getAttribute(ChangeTheme.THEME_NAME);
-			LOGGER.debug("theme selected: " + themeName);
-
-			String currTheme = (String) req.getAttribute("currTheme");
-			if (currTheme == null)
-				currTheme = ThemesManager.getDefaultTheme();
+			String currTheme = ThemesManager.getDefaultTheme();
 			LOGGER.debug("currTheme: " + currTheme);
 
 			String url = "/themes/" + currTheme + "/jsp/signup/modify.jsp";
@@ -140,8 +134,7 @@ public class Signup {
 			List<SbiCommunity> communities = DAOFactory.getCommunityDAO().loadAllSbiCommunities();
 			req.setAttribute("communities", communities);
 
-			String strActiveSignup = SingletonConfig.getInstance()
-					.getConfigValue("SPAGOBI.SECURITY.ACTIVE_SIGNUP_FUNCTIONALITY");
+			String strActiveSignup = SingletonConfig.getInstance().getConfigValue("SPAGOBI.SECURITY.ACTIVE_SIGNUP_FUNCTIONALITY");
 			boolean activeSignup = strActiveSignup.equalsIgnoreCase("true");
 			req.setAttribute("activeSignup", activeSignup);
 
@@ -173,8 +166,8 @@ public class Signup {
 
 	}
 
-	private void updAttribute(ISbiUserDAO userDao, ISbiAttributeDAO dao, String attributeValue, String userId, int id,
-			SbiAttribute attribute) throws EMFUserError {
+	private void updAttribute(ISbiUserDAO userDao, ISbiAttributeDAO dao, String attributeValue, String userId, int id, SbiAttribute attribute)
+			throws EMFUserError {
 		LOGGER.debug("IN");
 		try {
 			Integer attributeId = null;
@@ -294,12 +287,7 @@ public class Signup {
 	@Path("/prepareActive")
 	@PublicService
 	public View prepareActive(@Context HttpServletRequest req) {
-		String themeName = (String) req.getAttribute(ChangeTheme.THEME_NAME);
-		LOGGER.debug("theme selected: " + themeName);
-
-		String currTheme = (String) req.getAttribute("currTheme");
-		if (currTheme == null)
-			currTheme = ThemesManager.getDefaultTheme();
+		String currTheme = ThemesManager.getDefaultTheme();
 		LOGGER.debug("currTheme: " + currTheme);
 
 		String url = "/themes/" + currTheme + "/jsp/signup/active.jsp";
@@ -317,8 +305,7 @@ public class Signup {
 		String token = request.getParameter("token");
 		IMessageBuilder msgBuilder = MessageBuilderFactory.getMessageBuilder();
 		String strLocale = GeneralUtilities.trim(request.getParameter("locale"));
-		Locale locale = new Locale(strLocale.substring(0, strLocale.indexOf("_")),
-				strLocale.substring(strLocale.indexOf("_") + 1));
+		Locale locale = new Locale(strLocale.substring(0, strLocale.indexOf("_")), strLocale.substring(strLocale.indexOf("_") + 1));
 
 		try {
 			String userId = SignupJWTTokenManager.verifyJWTToken(token);
@@ -327,9 +314,7 @@ public class Signup {
 			SbiUser user = userDao.loadSbiUserByUserId(userId);
 
 			if (user == null) {
-				return new JSONObject(
-						"{message: '" + msgBuilder.getMessage("signup.msg.unknownUser", "messages", locale) + "'}")
-								.toString();
+				return new JSONObject("{message: '" + msgBuilder.getMessage("signup.msg.unknownUser", "messages", locale) + "'}").toString();
 			}
 
 			if (!user.getFlgPwdBlocked()) {
@@ -341,18 +326,13 @@ public class Signup {
 			userDao.updateSbiUser(user, null);
 
 			LOGGER.debug("OUT");
-			return new JSONObject(
-					"{message: '" + msgBuilder.getMessage("signup.msg.userActivationOK", "messages", locale) + "'}")
-							.toString();
+			return new JSONObject("{message: '" + msgBuilder.getMessage("signup.msg.userActivationOK", "messages", locale) + "'}").toString();
 		} catch (TokenExpiredException te) {
 			LOGGER.error("Expired Token [" + token + "]", te);
-			return new JSONObject("{errors: '" + msgBuilder.getMessage("signup.msg.userActiveKO", "messages", locale)
-					+ "',expired:true}").toString();
+			return new JSONObject("{errors: '" + msgBuilder.getMessage("signup.msg.userActiveKO", "messages", locale) + "',expired:true}").toString();
 		} catch (Exception e) {
 			LOGGER.error("Generic token validation error [" + token + "]", e);
-			return new JSONObject(
-					"{errors: '" + msgBuilder.getMessage("signup.msg.userActiveKO", "messages", locale) + "'}")
-							.toString();
+			return new JSONObject("{errors: '" + msgBuilder.getMessage("signup.msg.userActiveKO", "messages", locale) + "'}").toString();
 		}
 	}
 
@@ -383,13 +363,11 @@ public class Signup {
 
 		String name = signupDTO.getName();
 
-		String strActiveSignup = SingletonConfig.getInstance()
-				.getConfigValue("SPAGOBI.SECURITY.ACTIVE_SIGNUP_FUNCTIONALITY");
+		String strActiveSignup = SingletonConfig.getInstance().getConfigValue("SPAGOBI.SECURITY.ACTIVE_SIGNUP_FUNCTIONALITY");
 		boolean activeSignup = "true".equalsIgnoreCase(strActiveSignup);
 		if (!activeSignup) {
 			LOGGER.error(String.format("Attempt to register with signup not active for the user [%s]", name));
-			throw new SpagoBIServiceException(this.request.getPathInfo(),
-					msgBuilder.getMessage("signup.check.error", "messages", locale));
+			throw new SpagoBIServiceException(this.request.getPathInfo(), msgBuilder.getMessage("signup.check.error", "messages", locale));
 		}
 
 		String surname = signupDTO.getSurname();
@@ -435,8 +413,7 @@ public class Signup {
 		String language = signupDTO.getLanguage();
 		String captcha = signupDTO.getCaptcha();
 
-		String strUseCaptcha = (signupDTO.getUseCaptcha() == null || signupDTO.getUseCaptcha().equals("")) ? "true"
-				: signupDTO.getUseCaptcha();
+		String strUseCaptcha = (signupDTO.getUseCaptcha() == null || signupDTO.getUseCaptcha().equals("")) ? "true" : signupDTO.getUseCaptcha();
 		boolean useCaptcha = Boolean.parseBoolean(strUseCaptcha);
 
 		try {
@@ -464,8 +441,7 @@ public class Signup {
 				if (sbiUser != null) {
 					Set<SbiUserAttributes> userAttributes = sbiUser.getSbiUserAttributeses();
 					for (SbiUserAttributes sbiUserAttributes : userAttributes) {
-						if (sbiUserAttributes.getSbiAttribute().getAttributeName().equals("email")
-								&& sbiUserAttributes.getAttributeValue().equals(email)) {
+						if (sbiUserAttributes.getSbiAttribute().getAttributeName().equals("email") && sbiUserAttributes.getAttributeValue().equals(email)) {
 							matchingEmailAddress = true;
 							break;
 						}
@@ -490,8 +466,7 @@ public class Signup {
 			user.getCommonInfo().setUserIn(username);
 			user.setFlgPwdBlocked(true);
 
-			String defaultTenant = SingletonConfig.getInstance()
-					.getConfigValue("SPAGOBI.SECURITY.DEFAULT_TENANT_ON_SIGNUP");
+			String defaultTenant = SingletonConfig.getInstance().getConfigValue("SPAGOBI.SECURITY.DEFAULT_TENANT_ON_SIGNUP");
 			// if config is not defined, because it is a new configuration do not throw error and put a default value
 			if (defaultTenant == null) {
 				defaultTenant = "DEFAULT_TENANT";
@@ -499,8 +474,7 @@ public class Signup {
 
 			Set<SbiExtRoles> roles = new HashSet<>();
 			SbiExtRoles r = new SbiExtRoles();
-			String defaultRole = SingletonConfig.getInstance()
-					.getConfigValue("SPAGOBI.SECURITY.DEFAULT_ROLE_ON_SIGNUP");
+			String defaultRole = SingletonConfig.getInstance().getConfigValue("SPAGOBI.SECURITY.DEFAULT_ROLE_ON_SIGNUP");
 
 			IRoleDAO roleDAO = DAOFactory.getRoleDAO();
 			roleDAO.setTenant(defaultTenant);
@@ -557,8 +531,7 @@ public class Signup {
 			LOGGER.debug("Activation url port is equal to [" + port + "]");
 
 			// Get confirmation mail template
-			String mailText = Resources.toString(getClass().getResource("/templates/confirmationMailTemplate.html"),
-					StandardCharsets.UTF_8);
+			String mailText = Resources.toString(getClass().getResource("/templates/confirmationMailTemplate.html"), StandardCharsets.UTF_8);
 
 			LOGGER.debug("Preparing activation mail for user [" + username + "]");
 			String subject = msgBuilder.getMessage("signup.active.subject", "messages", locale);
@@ -567,28 +540,20 @@ public class Signup {
 			String token = SignupJWTTokenManager.createJWTToken(user.getUserId());
 			String version = SbiCommonInfo.getVersion().substring(0, SbiCommonInfo.getVersion().lastIndexOf("."));
 
-			String urlString = request.getContextPath() + "/restful-services/signup/prepareActive?token=" + token
-					+ "&locale=" + locale + "&version=" + version;
+			String urlString = request.getContextPath() + "/restful-services/signup/prepareActive?token=" + token + "&locale=" + locale + "&version=" + version;
 			URL url = new URL(request.getScheme(), host, port, urlString);
 
 			// Replacing all placeholder occurencies in template with dynamic user values
-			mailText = mailText.replace("%%WELCOME%%",
-					msgBuilder.getMessage("signup.active.welcome", "messages", locale));
+			mailText = mailText.replace("%%WELCOME%%", msgBuilder.getMessage("signup.active.welcome", "messages", locale));
 			mailText = mailText.replace("%%USERNAME%%", username);
-			mailText = mailText.replace("%%THANKS_MESSAGE%%",
-					msgBuilder.getMessage("signup.active.thanks", "messages", locale));
-			mailText = mailText.replace("%%WELCOME_MESSAGE%%",
-					msgBuilder.getMessage("signup.active.message", "messages", locale));
+			mailText = mailText.replace("%%THANKS_MESSAGE%%", msgBuilder.getMessage("signup.active.thanks", "messages", locale));
+			mailText = mailText.replace("%%WELCOME_MESSAGE%%", msgBuilder.getMessage("signup.active.message", "messages", locale));
 			mailText = mailText.replace("%%URL%%", url.toString());
-			mailText = mailText.replace("%%URL_LABEL%%",
-					msgBuilder.getMessage("signup.active.labelUrl", "messages", locale));
-			mailText = mailText.replace("%%BOOKMARK%%",
-					msgBuilder.getMessage("signup.active.bookmark", "messages", locale));
+			mailText = mailText.replace("%%URL_LABEL%%", msgBuilder.getMessage("signup.active.labelUrl", "messages", locale));
+			mailText = mailText.replace("%%BOOKMARK%%", msgBuilder.getMessage("signup.active.bookmark", "messages", locale));
 			mailText = mailText.replace("%%QA%%", msgBuilder.getMessage("signup.active.qa", "messages", locale));
-			mailText = mailText.replace("%%GITHUB%%",
-					msgBuilder.getMessage("signup.active.github", "messages", locale));
-			mailText = mailText.replace("%%DOCUMENTATION%%",
-					msgBuilder.getMessage("signup.active.documentation", "messages", locale));
+			mailText = mailText.replace("%%GITHUB%%", msgBuilder.getMessage("signup.active.github", "messages", locale));
+			mailText = mailText.replace("%%DOCUMENTATION%%", msgBuilder.getMessage("signup.active.documentation", "messages", locale));
 
 			LOGGER.debug("Activation url is equal to [" + url.toExternalForm() + "]");
 			LOGGER.debug("Activation mail for user [" + username + "] succesfully prepared");
@@ -632,12 +597,7 @@ public class Signup {
 	@Path("/prepare")
 	@PublicService
 	public View prepare(@Context HttpServletRequest req) {
-		String themeName = (String) req.getAttribute(ChangeTheme.THEME_NAME);
-		LOGGER.debug("theme selected: " + themeName);
-
-		String currTheme = (String) req.getAttribute("currTheme");
-		if (currTheme == null)
-			currTheme = ThemesManager.getDefaultTheme();
+		String currTheme = ThemesManager.getDefaultTheme();
 		LOGGER.debug("currTheme: " + currTheme);
 
 		String url = "/themes/" + currTheme + "/jsp/signup/signup.jsp";
@@ -659,8 +619,7 @@ public class Signup {
 
 	private void sendMail(String emailAddress, String subject, String emailContent) throws Exception {
 
-		SessionFacade facade = MailSessionBuilder.newInstance().usingUserProfile().withTimeout(5000)
-				.withConnectionTimeout(5000).build();
+		SessionFacade facade = MailSessionBuilder.newInstance().usingUserProfile().withTimeout(5000).withConnectionTimeout(5000).build();
 
 		// create a message
 		Message msg = facade.createNewMimeMessage();

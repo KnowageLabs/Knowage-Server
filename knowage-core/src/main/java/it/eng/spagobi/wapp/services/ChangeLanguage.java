@@ -34,29 +34,6 @@ import org.apache.log4j.Logger;
 
 import it.eng.knowage.commons.utilities.KnLanguageCookie;
 import it.eng.knowage.commons.utilities.LocalePropertiesUtilities;
-
-/**
-
-SpagoBI - The Business Intelligence Free Platform
-
-Copyright (C) 2004 - 2011 Engineering Ingegneria Informatica S.p.A.
-
-This library is free software; you can redistribute it and/or
-modify it under the terms of the GNU Lesser General Public
-License as published by the Free Software Foundation; either
-version 2.1 of the License, or (at your option) any later version.
-
-This library is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-Lesser General Public License for more details.
-
-You should have received a copy of the GNU Lesser General Public
-License along with this library; if not, write to the Free Software
-Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
-
- **/
-
 import it.eng.spago.base.RequestContainer;
 import it.eng.spago.base.SessionContainer;
 import it.eng.spago.base.SourceBean;
@@ -66,26 +43,8 @@ import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.utilities.GeneralUtilities;
 import it.eng.spagobi.commons.utilities.UserUtilities;
-import it.eng.spagobi.commons.utilities.messages.MessageBuilder;
 import it.eng.spagobi.utilities.themes.ThemesManager;
 import it.eng.spagobi.wapp.util.MenuUtilities;
-
-/**
- *
- * SpagoBI - The Business Intelligence Free Platform
- *
- * Copyright (C) 2004 - 2011 Engineering Ingegneria Informatica S.p.A.
- *
- * This library is free software; you can redistribute it and/or modify it under the terms of the GNU Lesser General Public License as published by the Free
- * Software Foundation; either version 2.1 of the License, or (at your option) any later version.
- *
- * This library is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
- * A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public License along with this library; if not, write to the Free Software Foundation, Inc., 51
- * Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
- *
- **/
 
 public class ChangeLanguage extends AbstractHttpAction {
 
@@ -104,16 +63,12 @@ public class ChangeLanguage extends AbstractHttpAction {
 
 		HttpServletRequest servletRequest = getHttpRequest();
 
-		Locale locale = MessageBuilder.getBrowserLocaleFromSpago();
-
 		String srLanguage = (String) serviceRequest.getAttribute("language_id");
 		String srCountry = (String) serviceRequest.getAttribute("country_id");
 		String srScript = (String) serviceRequest.getAttribute("script_id");
 		String isPublicUser = (String) serviceRequest.getAttribute("IS_PUBLIC_USER");
 		logger.debug("language selected: " + srLanguage);
-		String currTheme = (String) serviceRequest.getAttribute(ChangeTheme.THEME_NAME);
-		if (currTheme == null)
-			ThemesManager.getDefaultTheme();
+		String currTheme = ThemesManager.getDefaultTheme();
 		logger.debug("theme used: " + currTheme);
 
 		IEngUserProfile profile = (IEngUserProfile) permSess.getAttribute(IEngUserProfile.ENG_USER_PROFILE);

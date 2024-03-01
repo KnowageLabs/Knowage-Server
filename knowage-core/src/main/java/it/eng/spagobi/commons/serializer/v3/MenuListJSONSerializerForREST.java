@@ -65,7 +65,6 @@ import it.eng.spagobi.services.common.SsoServiceInterface;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.wapp.bo.Menu;
-import it.eng.spagobi.wapp.services.DetailMenuModule;
 import it.eng.spagobi.wapp.util.MenuUtilities;
 
 /**
@@ -917,7 +916,7 @@ public class MenuListJSONSerializerForREST implements Serializer {
 
 	private void setPropertiesForFunctionalityMenu(Menu childElem, JSONObject temp2, String path) throws JSONException {
 		temp2.put(TO,
-				StringEscapeUtils.escapeJavaScript(DetailMenuModule.findFunctionalityUrl(childElem, contextName)));
+				StringEscapeUtils.escapeJavaScript(MenuHelper.findFunctionalityUrl(childElem, contextName)));
 	}
 
 	private void setPropertiesForStaticMenu(Menu childElem, JSONObject temp2, String path) throws JSONException {
