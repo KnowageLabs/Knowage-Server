@@ -148,7 +148,6 @@
 			<version>1.2.4</version>
 			<scope>compile</scope>
 		</dependency>
-		
 		<!-- TODO : Deprecated! Replace it with Metro after the code is refactored -->
 		<dependency>
 			<groupId>org.apache.axis</groupId>
@@ -156,7 +155,6 @@
 			<version>1.4</version>
 			<scope>compile</scope>
 		</dependency>
-		
 		<!-- TODO : Deprecated! Replace it with Metro after the code is refactored -->
 		<dependency>
 			<groupId>axis</groupId>
@@ -164,7 +162,6 @@
 			<version>1.5.1</version>
 			<scope>runtime</scope>
 		</dependency>
-		
 		<!-- Replace Axis 1.4 -->
 		<dependency>
 			<groupId>com.sun.xml.ws</groupId>

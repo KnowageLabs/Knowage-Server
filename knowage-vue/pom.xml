@@ -106,7 +106,6 @@
 					<warSourceDirectory>${project.basedir}/src-mvn/main/webapp</warSourceDirectory>
 				</configuration>
 			</plugin>
-			
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>exec-maven-plugin</artifactId>
@@ -157,7 +156,6 @@
 					</execution>
 				</executions>
 			</plugin>
-			
 		</plugins>
 	</build>
 	

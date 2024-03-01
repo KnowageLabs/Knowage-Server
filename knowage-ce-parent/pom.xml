@@ -68,10 +68,8 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<quartz.version>2.3.2</quartz.version>
 		<resteasy.version>3.6.2.Final</resteasy.version>
-		
 		<!-- if you want run tests overwrite this property with: mvn test -DskipTests=false -->
 		<skipTests>true</skipTests>
-		
 		<spring.boot>2.5.12</spring.boot>
 	</properties>
 	
@@ -276,6 +274,26 @@
 					<configuration>
 						<skipTests>${skipTests}</skipTests>
 					</configuration>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-enforcer-plugin</artifactId>
+					<version>3.2.1</version>
+					<executions>
+						<execution>
+							<id>enforce-versions</id>
+							<goals>
+								<goal>enforce</goal>
+							</goals>
+							<configuration>
+								<rules>
+									<requireJavaVersion>
+										<version>1.5</version>
+									</requireJavaVersion>
+								</rules>
+							</configuration>
+						</execution>
+					</executions>
 				</plugin>
 				<plugin>
 					<groupId>com.github.ekryd.sortpom</groupId>
