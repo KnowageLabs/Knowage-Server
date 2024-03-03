@@ -97,8 +97,6 @@ public class PrivacyManagerDataStoreTransformer extends AbstractDataStoreTransfo
 
 				for (int i = 0; i < fields.size(); i++) {
 					if (subjectFieldByIndex.containsKey(i)) {
-						IFieldMetaData fieldMetaData = subjectFieldByIndex.get(i);
-						String fieldName = fieldMetaData.getName();
 						IField fieldAt = currRecord.getFieldAt(i);
 						Object value = fieldAt.getValue();
 
@@ -107,7 +105,6 @@ public class PrivacyManagerDataStoreTransformer extends AbstractDataStoreTransfo
 							val = value.toString();
 						}
 						subjData[subjectFieldOrder.get(i)] = val;
-						// eventBuilder.appendSubject(val);
 					}
 				}
 				for (int i = 0; i < fields.size(); i++) {
@@ -142,11 +139,12 @@ public class PrivacyManagerDataStoreTransformer extends AbstractDataStoreTransfo
 		AtomicInteger index = new AtomicInteger();
 
 		dataStoreMetadata.getFieldsMeta().stream().collect(Collectors.toMap(e -> index.getAndIncrement(), e -> e))
-				.entrySet().stream().filter(e -> e.getValue().isPersonal()).forEach(e -> {
+				.entrySet().stream().filter(e -> e.getValue().isSubjectId()).forEach(e -> {
 					Integer key = e.getKey();
 					IFieldMetaData value = e.getValue();
-					sensibleField.add(value);
-					sensibleFieldByIndex.put(key, value);
+					subjectField.add(value);
+					subjectFieldByIndex.put(key, value);
+
 					String decoded = EventBuilderUtils.decodeSubjectField(value.getName());
 					switch (decoded) {
 					case EventBuilderUtils.TAXCODE:
@@ -168,23 +166,15 @@ public class PrivacyManagerDataStoreTransformer extends AbstractDataStoreTransfo
 				});
 
 		dataStoreMetadata.getFieldsMeta().stream().collect(Collectors.toMap(e -> index.getAndIncrement(), e -> e))
-				.entrySet().stream().filter(e -> e.getValue().isSubjectId()).forEach(e -> {
+				.entrySet().stream().filter(e -> e.getValue().isPersonal()).forEach(e -> {
 					Integer key = e.getKey();
 					IFieldMetaData value = e.getValue();
-					subjectField.add(value);
-					subjectFieldByIndex.put(key, value);
+					sensibleField.add(value);
+					sensibleFieldByIndex.put(key, value);
 				});
 
 		needPM = !sensibleField.isEmpty();
 
-	}
-
-	private String mapFieldKey(IFieldMetaData field) {
-		return field.getName();
-	}
-
-	private Map<String, IFieldMetaData> mapFieldByColumnName(IMetaData metaData) {
-		return metaData.getFieldsMeta().stream().collect(Collectors.toMap(this::mapFieldKey, e -> e));
 	}
 
 	private IMetaData getMetaData() {
