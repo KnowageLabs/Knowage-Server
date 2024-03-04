@@ -97,6 +97,7 @@ public class PrivacyManagerDataStoreTransformer extends AbstractDataStoreTransfo
 
 				for (int i = 0; i < fields.size(); i++) {
 					if (subjectFieldByIndex.containsKey(i)) {
+						IFieldMetaData fieldMetaData = subjectFieldByIndex.get(i);
 						IField fieldAt = currRecord.getFieldAt(i);
 						Object value = fieldAt.getValue();
 
