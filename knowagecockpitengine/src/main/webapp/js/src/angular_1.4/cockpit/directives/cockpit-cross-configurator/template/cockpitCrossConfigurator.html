@@ -203,6 +203,14 @@
             <md-checkbox ng-model="ngModel.preview.background" ng-disabled="!ngModel.preview.enable">
                Direct download
             </md-checkbox>
+            <md-input-container ng-if="ngModel.preview.background" class="md-block" flex="20">
+               <label>{{translate.load("sbi.cockpit.style.format")}}</label>
+               <md-select ng-model="ngModel.preview.backgroundFormat">
+                  <md-option value="csv">CSV</md-option>
+                  <md-option value="xls">XLS</md-option>
+               </md-select>
+               <div class="hint" ng-if="ngModel.preview.previewType != 'singleColumn'">{{::translate.load('kn.crossconfigurator.hint.column')}}</div>
+            </md-input-container>
          </md-card-content>
          <md-subheader ng-if="ngModel.preview.enable && ngModel.preview.parameters.length > 0">{{::translate.load('kn.crossconfigurator.datasetparameters')}}</md-subheader>
          <md-card-content ng-if="ngModel.preview.enable && ngModel.preview.parameters.length > 0">

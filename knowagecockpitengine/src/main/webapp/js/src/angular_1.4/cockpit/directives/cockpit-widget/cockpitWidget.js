@@ -972,7 +972,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
                                 data.parameters = config.parameters
                             }
 
-                            $http.post(sbiModule_config.externalBasePath + PREVIEWBACKGROUND + id.dsId + '/csv', data).then(
+                            var backgroundFormat = previewSettings.backgroundFormat || 'csv'
+
+                            $http.post(sbiModule_config.externalBasePath + PREVIEWBACKGROUND + id.dsId + '/' + backgroundFormat, data).then(
                                 function (response) {
                                     popupMessage(response)
                                 },
