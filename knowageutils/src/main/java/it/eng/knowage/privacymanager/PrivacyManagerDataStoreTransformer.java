@@ -97,6 +97,7 @@ public class PrivacyManagerDataStoreTransformer extends AbstractDataStoreTransfo
 				List<IField> fields = currRecord.getFields();
 
 				for (int i = 0; i < fields.size(); i++) {
+					LOGGER.debug("Checking subject field {} - fieldFound {}", i, subjectFieldByIndex.containsKey(i));
 					if (subjectFieldByIndex.containsKey(i)) {
 						IField fieldAt = currRecord.getFieldAt(i);
 						Object value = fieldAt.getValue();
@@ -109,6 +110,7 @@ public class PrivacyManagerDataStoreTransformer extends AbstractDataStoreTransfo
 					}
 				}
 				for (int i = 0; i < fields.size(); i++) {
+					LOGGER.debug("Checking sensiblefield {} - fieldFound {}", i, sensibleFieldByIndex.containsKey(i));
 					if (sensibleFieldByIndex.containsKey(i)) {
 						IFieldMetaData fieldMetaData = sensibleFieldByIndex.get(i);
 						String fieldName = fieldMetaData.getName();
@@ -178,6 +180,9 @@ public class PrivacyManagerDataStoreTransformer extends AbstractDataStoreTransfo
 				});
 
 		needPM = !sensibleField.isEmpty();
+		LOGGER.debug("subjectFiledByIndex {}", subjectFieldByIndex.toString());
+		LOGGER.debug("subjectFieldOrder {}", subjectFieldOrder.toString());
+		LOGGER.debug("sensibleFiledByIndex {}", sensibleFieldByIndex.toString());
 
 	}
 
