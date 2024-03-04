@@ -16,6 +16,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import it.eng.knowage.pm.dto.DataSetScope;
+import it.eng.knowage.pm.dto.PrivacyDTO;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
@@ -96,6 +97,7 @@ public class PrivacyManagerDataStoreTransformer extends AbstractDataStoreTransfo
 				List<IField> fields = currRecord.getFields();
 
 				for (int i = 0; i < fields.size(); i++) {
+					LOGGER.debug("Checking subject field {} - fieldFound {}", i, subjectFieldByIndex.containsKey(i));
 					if (subjectFieldByIndex.containsKey(i)) {
 						IFieldMetaData fieldMetaData = subjectFieldByIndex.get(i);
 						IField fieldAt = currRecord.getFieldAt(i);
@@ -109,23 +111,27 @@ public class PrivacyManagerDataStoreTransformer extends AbstractDataStoreTransfo
 					}
 				}
 				for (int i = 0; i < fields.size(); i++) {
+					LOGGER.debug("Checking sensiblefield {} - fieldFound {}", i, sensibleFieldByIndex.containsKey(i));
 					if (sensibleFieldByIndex.containsKey(i)) {
 						IFieldMetaData fieldMetaData = sensibleFieldByIndex.get(i);
 						String fieldName = fieldMetaData.getName();
 						IField fieldAt = currRecord.getFieldAt(i);
 						Object value = fieldAt.getValue();
-						// TODO definizione del tipo dato
+
 						String val = null;
 						if (value != null) {
 							val = value.toString();
 						}
+						LOGGER.debug("appending fieldName{}, value{}", fieldName, val);
 						eventBuilder.appendData(fieldName, val, DataSetScope.OTHER);
 					}
 				}
-
+				LOGGER.debug("appending subject {}, {}, {}, {}", subjData[0], subjData[1], subjData[2], subjData[3]);
 				eventBuilder.appendSubject(subjData[0], subjData[1], subjData[2], subjData[3]);
 			}
-			PrivacyManagerClient.getInstance().sendMessage(eventBuilder.getDTO());
+			PrivacyDTO dto = eventBuilder.getDTO();
+			LOGGER.debug("Calculated DTO : " + dto.toString());
+			PrivacyManagerClient.getInstance().sendMessage(dto);
 		}
 	}
 
@@ -139,13 +145,13 @@ public class PrivacyManagerDataStoreTransformer extends AbstractDataStoreTransfo
 
 		AtomicInteger index = new AtomicInteger();
 
-		dataStoreMetadata.getFieldsMeta().stream().collect(Collectors.toMap(e -> index.getAndIncrement(), e -> e))
-				.entrySet().stream().filter(e -> e.getValue().isSubjectId()).forEach(e -> {
+		dataStoreMetadata.getFieldsMeta().stream().collect(Collectors.toMap(e -> index.getAndIncrement(), e -> e)).entrySet().stream()
+				.filter(e -> e.getValue().isSubjectId()).forEach(e -> {
 					Integer key = e.getKey();
 					IFieldMetaData value = e.getValue();
 					subjectField.add(value);
 					subjectFieldByIndex.put(key, value);
-
+					LOGGER.debug("Scanned subject field {}, {}", key, value.getName());
 					String decoded = EventBuilderUtils.decodeSubjectField(value.getName());
 					switch (decoded) {
 					case EventBuilderUtils.TAXCODE:
@@ -161,20 +167,23 @@ public class PrivacyManagerDataStoreTransformer extends AbstractDataStoreTransfo
 						subjectFieldOrder.put(key, 3);
 						break;
 					default:
-						LOGGER.error("Cannot map subject field {}. Check PrivacyManagerClient.properties",
-								value.getName());
+						LOGGER.error("Cannot map subject field {}. Check PrivacyManagerClient.properties", value.getName());
 					}
 				});
 
-		dataStoreMetadata.getFieldsMeta().stream().collect(Collectors.toMap(e -> index.getAndIncrement(), e -> e))
-				.entrySet().stream().filter(e -> e.getValue().isPersonal()).forEach(e -> {
+		dataStoreMetadata.getFieldsMeta().stream().collect(Collectors.toMap(e -> index.getAndIncrement(), e -> e)).entrySet().stream()
+				.filter(e -> e.getValue().isPersonal()).forEach(e -> {
 					Integer key = e.getKey();
 					IFieldMetaData value = e.getValue();
+					LOGGER.debug("Scanned sensible ect field {}, {}", key, value.getName());
 					sensibleField.add(value);
 					sensibleFieldByIndex.put(key, value);
 				});
 
 		needPM = !sensibleField.isEmpty();
+		LOGGER.debug("subjectFiledByIndex {}", subjectFieldByIndex.toString());
+		LOGGER.debug("subjectFieldOrder {}", subjectFieldOrder.toString());
+		LOGGER.debug("sensibleFiledByIndex {}", sensibleFieldByIndex.toString());
 
 	}
 
