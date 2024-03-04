@@ -20,8 +20,13 @@ package it.eng.spagobi.commons.services;
 
 import org.apache.log4j.Logger;
 
+import it.eng.knowage.pm.dto.PrivacyDTO;
+import it.eng.knowage.privacymanager.LoginEventBuilder;
+import it.eng.knowage.privacymanager.PrivacyManagerClient;
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.dispatching.action.AbstractHttpAction;
+import it.eng.spagobi.commons.bo.UserProfile;
+import it.eng.spagobi.user.UserProfileManager;
 
 public class LogoutAction extends AbstractHttpAction {
 
@@ -38,6 +43,15 @@ public class LogoutAction extends AbstractHttpAction {
 		// nothing to do here, all logic is in logout.jsp
 		logger.debug("IN");
 		logger.debug("OUT");
+		// PM-int
+		UserProfile up = UserProfileManager.getProfile();
+		LoginEventBuilder eventBuilder = new LoginEventBuilder();
+
+		eventBuilder.appendSession("knowage", up.getSourceIpAddress(), up.getSessionId(), up.getSessionStart(), up.getUserId().toString());
+		eventBuilder.appendUserAgent(up.getOs(), up.getSourceIpAddress(), up.getSourceSocketEnabled(), up.getUserAgent());
+		PrivacyDTO dto = eventBuilder.getDTO();
+		dto.setDescription("Logout");
+		PrivacyManagerClient.getInstance().sendMessage(dto);
 
 	}
 
