@@ -30,12 +30,3 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	String redirectURL = contextName + "/servlet/AdapterHTTP?PAGE=LoginPage&NEW_SESSION=TRUE" + (queryString != null ? "&" + queryString : "");
     response.sendRedirect(redirectURL);
 %>
-
-<HTML>
-<HEAD>
-<TITLE>Redirect...</TITLE> 
-
-</HEAD>
-<BODY>
-Redirect in corso... 
-</BODY>

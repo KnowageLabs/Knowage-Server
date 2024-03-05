@@ -24,6 +24,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
          session="true" 
 %>
 <%@page import="it.eng.spagobi.commons.utilities.ChannelUtilities"%>
+<%@page import="it.eng.spagobi.commons.constants.SpagoBIConstants"%>
+<%@page import="it.eng.spagobi.commons.constants.CommunityFunctionalityConstants"%>
 <% String contextName = ChannelUtilities.getSpagoBIContextName(request);
     String redirectURL = contextName+"/servlet/AdapterHTTP?PAGE=LoginPage&NEW_SESSION=TRUE&MESSAGE=START_LOGIN";
 	if(request.getAttribute(SpagoBIConstants.BACK_URL)!=null){
@@ -35,14 +37,3 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     
     response.sendRedirect(redirectURL);
 %>
-<%@page import="it.eng.spagobi.commons.constants.SpagoBIConstants"%>
-<%@page import="it.eng.spagobi.commons.constants.CommunityFunctionalityConstants"%>
-<HTML>
-<HEAD>
-<TITLE>Redirect...</TITLE> 
-
-</HEAD>
-<BODY>
-Redirect in corso...
-</BODY>
-</HTML>
