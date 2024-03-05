@@ -35,6 +35,7 @@ export default defineComponent({
     emits: ['click'],
     mounted() {
         this.filteredButtons = this.buttons!.filter((x) => {
+            if(x.condition && x.condition.charAt(0) === "!") return !this.selectedItem?.[x.condition.substring(1,x.condition.length)]
             return !x.condition || this.selectedItem?.[x.condition]
         })
     },
