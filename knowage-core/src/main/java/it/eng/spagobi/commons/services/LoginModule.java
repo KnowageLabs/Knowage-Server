@@ -43,7 +43,7 @@ import org.hibernate.HibernateException;
 import org.hibernate.Session;
 
 import it.eng.knowage.commons.security.KnowageSystemConfiguration;
-import it.eng.knowage.commons.utilities.KnLanguageCookie;
+
 import it.eng.knowage.monitor.IKnowageMonitor;
 import it.eng.knowage.monitor.KnowageMonitorFactory;
 import it.eng.knowage.privacymanager.LoginEventBuilder;
@@ -152,8 +152,7 @@ public class LoginModule extends AbstractHttpModule {
 
 		String localeCookie = browserLocale.toLanguageTag();
 		HttpServletResponse resp = getHttpResponse();
-		KnLanguageCookie.setCookie(resp, localeCookie);
-
+		
 		MessageBuilder msgBuilder = new MessageBuilder();
 		Locale locale = msgBuilder.getLocale(servletRequest);
 

@@ -32,7 +32,6 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
-import it.eng.knowage.commons.utilities.KnLanguageCookie;
 import it.eng.knowage.commons.utilities.LocalePropertiesUtilities;
 import it.eng.spago.base.RequestContainer;
 import it.eng.spago.base.SessionContainer;
@@ -121,8 +120,7 @@ public class ChangeLanguage extends AbstractHttpAction {
 				}
 
 				String knLanguage = LocalePropertiesUtilities.getAngularPropertiesFileName(currLocale, "-");
-				KnLanguageCookie.setCookie(resp, knLanguage);
-
+				
 			}
 
 //			boolean found = false;
