@@ -128,7 +128,7 @@ angular.module("cockpitModule").service("cockpitModule_generalServices",function
 						cockpitModule_properties.DOCUMENT_ID=response.data.id;
 						window.parent.postMessage(cockpitModule_properties);
 						if(window.parent.document.getElementById('_KNOWAGE_VUE')){
-							window.parent.postMessage({"type":"saveCockpit","model":cockpitModule_properties}, '*');
+							window.parent.postMessage({"type":"saveCockpit","model":cockpitModule_properties}, location.origin);
 						}
 					},
 					function(response){
