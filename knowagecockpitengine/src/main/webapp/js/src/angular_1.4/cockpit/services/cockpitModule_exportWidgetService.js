@@ -274,17 +274,20 @@
 			toReturn.dataset = aggregation.dataset;
 			toReturn.measures = [];
 			toReturn.categories = [];
-			var toFilter = spatialAttributesToFilter[aggregation.dataset];
-			for (var i=0; i<aggregation.categories.length; i++) {
-				var col = aggregation.categories[i];
-				if (!toFilter.includes(col.columnName)) {
-					toReturn.categories.push(col);
+			var toFilter = spatialAttributesToFilter[aggregation.dataset] ?? [];
+			
+			if(toFilter){
+				for (var i=0; i<aggregation.categories.length; i++) {
+					var col = aggregation.categories[i];
+					if (!toFilter.includes(col.columnName)) {
+						toReturn.categories.push(col);
+					}
 				}
-			}
-			for (var i=0; i<aggregation.measures.length; i++) {
-				var col = aggregation.measures[i];
-				if (!toFilter.includes(col.columnName)) {
-					toReturn.measures.push(col);
+				for (var i=0; i<aggregation.measures.length; i++) {
+					var col = aggregation.measures[i];
+					if (!toFilter.includes(col.columnName)) {
+						toReturn.measures.push(col);
+					}
 				}
 			}
 			return toReturn;
