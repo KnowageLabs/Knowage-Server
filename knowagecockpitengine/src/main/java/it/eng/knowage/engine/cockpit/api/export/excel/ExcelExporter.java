@@ -777,6 +777,22 @@ public class ExcelExporter extends AbstractFormatExporter {
 	private String extractSelectionValues(String selectionValues) {
 		return selectionValues.replace("[\"(", "").replace(")\"]", "");
 	}
+	
+	private JSONArray getChildFromWidgetContent(JSONObject widgetContent, String childName) {
+		JSONArray ret = new JSONArray();
+		if(widgetContent.has(childName)) {
+			JSONArray childArray = widgetContent.optJSONArray(childName);
+			if(childArray != null) {
+				ret = childArray;				
+			} else {
+				JSONObject childObject = widgetContent.optJSONObject(childName);
+				if(childObject != null) {						
+					ret.put(childObject);
+				}
+			}
+		}
+		return ret;
+	}
 
 	public void fillSheetWithData(JSONObject dataStore, Workbook wb, Sheet sheet, String widgetName, int offset,
 			JSONObject settings) {
@@ -788,7 +804,7 @@ public class ExcelExporter extends AbstractFormatExporter {
 			HashMap<String, Object> variablesMap = new HashMap<>();
 			JSONObject widgetData = dataStore.getJSONObject("widgetData");
 			JSONObject widgetContent = widgetData.getJSONObject("content");
-			JSONArray columnSelectedOfDataset = widgetContent.getJSONArray("columnSelectedOfDataset");
+			JSONArray columnSelectedOfDataset = getChildFromWidgetContent(widgetContent, "columnSelectedOfDataset");
 //			HashMap<String, String> arrayHeader = new HashMap<>();
 			HashMap<String, String> chartAggregationsMap = new HashMap<>();
 			if (widgetData.getString("type").equalsIgnoreCase("table")) {
