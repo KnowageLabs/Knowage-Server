@@ -99,7 +99,6 @@ public class PrivacyManagerDataStoreTransformer extends AbstractDataStoreTransfo
 				for (int i = 0; i < fields.size(); i++) {
 					LOGGER.debug("Checking subject field {} - fieldFound {}", i, subjectFieldByIndex.containsKey(i));
 					if (subjectFieldByIndex.containsKey(i)) {
-						IFieldMetaData fieldMetaData = subjectFieldByIndex.get(i);
 						IField fieldAt = currRecord.getFieldAt(i);
 						Object value = fieldAt.getValue();
 
@@ -130,7 +129,7 @@ public class PrivacyManagerDataStoreTransformer extends AbstractDataStoreTransfo
 				eventBuilder.appendSubject(subjData[0], subjData[1], subjData[2], subjData[3]);
 			}
 			PrivacyDTO dto = eventBuilder.getDTO();
-			LOGGER.debug("Calculated DTO : " + dto.toString());
+			LOGGER.debug("Calculated DTO: {}", dto);
 			PrivacyManagerClient.getInstance().sendMessage(dto);
 		}
 	}
@@ -145,8 +144,8 @@ public class PrivacyManagerDataStoreTransformer extends AbstractDataStoreTransfo
 
 		AtomicInteger index = new AtomicInteger();
 
-		dataStoreMetadata.getFieldsMeta().stream().collect(Collectors.toMap(e -> index.getAndIncrement(), e -> e)).entrySet().stream()
-				.filter(e -> e.getValue().isSubjectId()).forEach(e -> {
+		dataStoreMetadata.getFieldsMeta().stream().collect(Collectors.toMap(e -> index.getAndIncrement(), e -> e))
+				.entrySet().stream().filter(e -> e.getValue().isSubjectId()).forEach(e -> {
 					Integer key = e.getKey();
 					IFieldMetaData value = e.getValue();
 					subjectField.add(value);
@@ -167,12 +166,13 @@ public class PrivacyManagerDataStoreTransformer extends AbstractDataStoreTransfo
 						subjectFieldOrder.put(key, 3);
 						break;
 					default:
-						LOGGER.error("Cannot map subject field {}. Check PrivacyManagerClient.properties", value.getName());
+						LOGGER.error("Cannot map subject field {}. Check PrivacyManagerClient.properties",
+								value.getName());
 					}
 				});
 
-		dataStoreMetadata.getFieldsMeta().stream().collect(Collectors.toMap(e -> index.getAndIncrement(), e -> e)).entrySet().stream()
-				.filter(e -> e.getValue().isPersonal()).forEach(e -> {
+		dataStoreMetadata.getFieldsMeta().stream().collect(Collectors.toMap(e -> index.getAndIncrement(), e -> e))
+				.entrySet().stream().filter(e -> e.getValue().isPersonal()).forEach(e -> {
 					Integer key = e.getKey();
 					IFieldMetaData value = e.getValue();
 					LOGGER.debug("Scanned sensible ect field {}, {}", key, value.getName());

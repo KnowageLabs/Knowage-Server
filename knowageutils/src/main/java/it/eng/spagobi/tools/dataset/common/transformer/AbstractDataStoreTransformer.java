@@ -36,8 +36,10 @@ public abstract class AbstractDataStoreTransformer implements IDataStoreTransfor
 		}
 	}
 
+	// TODO : change to protected
 	public abstract void transformDataSetRecords(IDataStore dataStore);
 
+	// TODO : change to protected
 	public abstract void transformDataSetMetaData(IDataStore dataStore);
 
 	public AbstractDataStoreTransformer getNextTransformer() {

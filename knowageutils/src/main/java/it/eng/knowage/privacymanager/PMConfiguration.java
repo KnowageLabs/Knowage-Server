@@ -15,7 +15,7 @@ public class PMConfiguration {
 	private static final Logger LOGGER = LogManager.getLogger(PMConfiguration.class);
 	private static final String KNOWAGE_PM_CONF_PATH = "kn.privacy.manager.configuration.path";
 
-	private static PMConfiguration INSTANCE = new PMConfiguration();
+	private static final PMConfiguration INSTANCE = new PMConfiguration();
 
 	public static synchronized PMConfiguration getInstance() {
 		if (!INSTANCE.isConfigured) {
@@ -38,10 +38,15 @@ public class PMConfiguration {
 
 		this.prop = new Properties();
 
+		LOGGER.debug("Reading system property {}", KNOWAGE_PM_CONF_PATH);
 		String filePath = System.getProperty(KNOWAGE_PM_CONF_PATH);
 		if (filePath == null) {
+			LOGGER.debug("System property {} not found: reading environment varibale {}", KNOWAGE_PM_CONF_PATH,
+					KNOWAGE_PM_CONF_PATH);
 			filePath = System.getenv(KNOWAGE_PM_CONF_PATH);
 		}
+
+		LOGGER.debug("Configuration file path is {}", filePath);
 
 		if (StringUtils.isNotEmpty(filePath) && Files.exists(Paths.get(filePath))) {
 			try (FileReader reader = new FileReader(filePath)) {
