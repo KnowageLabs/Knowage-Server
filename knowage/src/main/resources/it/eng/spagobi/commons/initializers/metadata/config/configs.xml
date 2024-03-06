@@ -670,6 +670,10 @@
 	<CONFIG label="internal.security.users.defaultRole" name="Default users role"
 		description="Default role to be assigned to the users when they have no roles" isActive="true"
 		valueCheck="default_role" valueType="STRING" category="SECURITY" />
+		
+	<CONFIG label="KNOWAGE.MANDATORY-ROLE" name="Mandatory session role"
+		description="If true, when users with more than one role logon, they must choose a session role before continuing" isActive="true"
+		valueCheck="false" valueType="STRING" category="SECURITY" />
 
 </CONFIGS>
 
