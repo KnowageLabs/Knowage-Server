@@ -181,9 +181,9 @@ public class PrivacyManagerDataStoreTransformer extends AbstractDataStoreTransfo
 				});
 
 		needPM = !sensibleField.isEmpty();
-		LOGGER.debug("subjectFiledByIndex {}", subjectFieldByIndex.toString());
-		LOGGER.debug("subjectFieldOrder {}", subjectFieldOrder.toString());
-		LOGGER.debug("sensibleFiledByIndex {}", sensibleFieldByIndex.toString());
+		LOGGER.debug("subjectFiledByIndex {}", subjectFieldByIndex);
+		LOGGER.debug("subjectFieldOrder {}", subjectFieldOrder);
+		LOGGER.debug("sensibleFiledByIndex {}", sensibleFieldByIndex);
 
 	}
 

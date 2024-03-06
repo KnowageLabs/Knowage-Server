@@ -31,18 +31,22 @@ public class EventBuilderUtils {
 	}
 
 	public static String decodeSubjectField(String fieldName) {
+		LOGGER.debug("Decoding {} for subject field", fieldName);
+
+		String ret = "n.d.";
 
 		if (LAST_NAME_PATTERN.matcher(fieldName).find()) {
-			return LAST_NAME;
+			ret = LAST_NAME;
 		} else if (NAME_PATTERN.matcher(fieldName).find()) {
-			return NAME;
+			ret = NAME;
 		} else if (BIRTHDATE_PATTERN.matcher(fieldName).find()) {
-			return BIRTHDATE;
+			ret = BIRTHDATE;
 		} else if (TAXCODE_PATTERN.matcher(fieldName).find()) {
-			return TAXCODE;
+			ret = TAXCODE;
 		}
 
-		return "n.d.";
+		LOGGER.debug("Decoded {} as subject field {}", fieldName, ret);
+		return ret;
 	}
 
 }

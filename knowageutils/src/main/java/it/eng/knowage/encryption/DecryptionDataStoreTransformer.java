@@ -125,7 +125,7 @@ public class DecryptionDataStoreTransformer extends AbstractDataStoreTransformer
 			if (Objects.nonNull(value)) {
 				newValue = encryptor.decrypt(value.toString());
 				fieldAt.setValue(newValue);
-				LOGGER.warn("Decrypt value {} to {}", value, newValue);
+				LOGGER.debug("Decrypt value {} to {}", value, newValue);
 			}
 		} catch (EncryptionOperationNotPossibleException e) {
 			LOGGER.warn("Ignoring field value {} from field {} (with \"{}\" alias): see following message", value,
