@@ -3,7 +3,6 @@ package it.eng.knowage.privacymanager;
 import static java.util.Objects.nonNull;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -41,7 +40,7 @@ public class PrivacyManagerDataStoreTransformer extends AbstractDataStoreTransfo
 	private final Map<Integer, IFieldMetaData> subjectFieldByIndex = new LinkedHashMap<>();
 	private final Map<Integer, Integer> subjectFieldOrder = new LinkedHashMap<>();
 
-	private final Map paramsMap = Collections.emptyMap();
+	private final Map paramsMap = new LinkedHashMap<>();
 
 	public PrivacyManagerDataStoreTransformer(IDataSet dataSet) {
 		this(dataSet.getDsMetadata() != null ? dataSet.getMetadata() : new MetaData(), dataSet.getParamsMap());
