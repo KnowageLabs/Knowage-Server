@@ -59,7 +59,7 @@ public class PrivacyManagerDataStoreTransformer extends AbstractDataStoreTransfo
 
 	public PrivacyManagerDataStoreTransformer(IMetaData dataStoreMetadata, Map paramsMap) {
 		this.dataStoreMetadata = dataStoreMetadata;
-		this.paramsMap.putAll(paramsMap);
+		this.paramsMap.putAll(Optional.ofNullable(paramsMap).orElse(Collections.emptyMap()));
 		try {
 			setUpPrivacy();
 		} catch (Exception e) {
