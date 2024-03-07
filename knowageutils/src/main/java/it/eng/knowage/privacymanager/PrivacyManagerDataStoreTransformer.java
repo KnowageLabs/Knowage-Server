@@ -167,6 +167,8 @@ public class PrivacyManagerDataStoreTransformer extends AbstractDataStoreTransfo
 	private void setUpPrivacy() {
 		AtomicInteger index = new AtomicInteger();
 
+		LOGGER.debug("Metadata is {}", dataStoreMetadata);
+
 		dataStoreMetadata.getFieldsMeta().stream().collect(Collectors.toMap(e -> index.getAndIncrement(), e -> e))
 				.entrySet().stream().filter(e -> e.getValue().isSubjectId()).forEach(e -> {
 					Integer key = e.getKey();
