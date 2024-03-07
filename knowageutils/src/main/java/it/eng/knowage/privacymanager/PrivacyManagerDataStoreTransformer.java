@@ -41,7 +41,7 @@ public class PrivacyManagerDataStoreTransformer extends AbstractDataStoreTransfo
 	private final Map<Integer, IFieldMetaData> subjectFieldByIndex = new LinkedHashMap<>();
 	private final Map<Integer, Integer> subjectFieldOrder = new LinkedHashMap<>();
 
-	private Map paramsMap = Collections.emptyMap();
+	private final Map paramsMap = Collections.emptyMap();
 
 	public PrivacyManagerDataStoreTransformer(IDataSet dataSet) {
 		this(dataSet.getDsMetadata() != null ? dataSet.getMetadata() : new MetaData(), dataSet.getParamsMap());
@@ -49,7 +49,7 @@ public class PrivacyManagerDataStoreTransformer extends AbstractDataStoreTransfo
 
 	public PrivacyManagerDataStoreTransformer(IDataStore dataStore, Map paramsMap) {
 		this.dataStoreMetadata = dataStore.getMetaData();
-		this.paramsMap = paramsMap;
+		this.paramsMap.putAll(paramsMap);
 		try {
 			setUpPrivacy();
 		} catch (Exception e) {
@@ -59,7 +59,7 @@ public class PrivacyManagerDataStoreTransformer extends AbstractDataStoreTransfo
 
 	public PrivacyManagerDataStoreTransformer(IMetaData dataStoreMetadata, Map paramsMap) {
 		this.dataStoreMetadata = dataStoreMetadata;
-		this.paramsMap = paramsMap;
+		this.paramsMap.putAll(paramsMap);
 		try {
 			setUpPrivacy();
 		} catch (Exception e) {
@@ -214,10 +214,6 @@ public class PrivacyManagerDataStoreTransformer extends AbstractDataStoreTransfo
 
 	public Map getParamsMap() {
 		return paramsMap;
-	}
-
-	public void setParamsMap(Map paramsMap) {
-		this.paramsMap = paramsMap;
 	}
 
 }
