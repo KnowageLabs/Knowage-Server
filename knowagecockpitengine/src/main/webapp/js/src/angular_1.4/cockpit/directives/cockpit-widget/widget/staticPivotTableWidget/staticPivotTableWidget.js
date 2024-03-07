@@ -1629,11 +1629,16 @@ function cockpitStaticPivotTableWidgetControllerFunction(
 				sbiModule_messaging.showErrorMessage(sbiModule_translate.load('sbi.chartengine.structure.serieStyleConfig.dataLabels.format.emptyText'), sbiModule_translate.load('sbi.generic.error'));
 				return;
 			}
+			if($scope.selectedColumn.ranges.length > 0){
+				if($scope.selectedColumn.ranges.some((i)=>!i.operator || !i.value).length > 0) {
+					sbiModule_messaging.showErrorMessage(sbiModule_translate.load('sbi.chartengine.structure.serieStyleConfig.error.badThresholdsSettings')'le soglie impostate non sono corrette', sbiModule_translate.load('sbi.generic.error'));
+					return;
+				}
+			}
 			$scope.checkPrecision();
 			$scope.selectedColumn = $scope.cleanObjectConfiguration($scope.selectedColumn, 'style', false);
 			$scope.selectedColumn = $scope.cleanObjectConfigurationForSaving($scope.selectedColumn);
 			angular.copy($scope.selectedColumn,selectedColumn);
-//			angular.copy($scope.localModel,model);
 
 			$mdDialog.cancel();
 		}
