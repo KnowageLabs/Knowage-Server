@@ -1091,7 +1091,7 @@ public class CrossTabHTMLSerializer {
 
 		for (int c = 0; c < colorThrJ.length(); c++) {
 			JSONObject thrCond = (JSONObject) colorThrJ.get(c);
-			if (!thrCond.has("value")) {
+			if (!thrCond.has("operator") || !thrCond.has("value")) {
 				continue;
 			}
 			String condition = thrCond.getString("operator");
