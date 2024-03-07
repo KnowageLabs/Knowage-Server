@@ -144,7 +144,7 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 	}
 
 	protected Map<String, Object> getDataSetWriterProperties() throws JSONException {
-		Map<String, Object> properties = new HashMap<String, Object>();
+		Map<String, Object> properties = new HashMap<>();
 		JSONArray fieldOptions = new JSONArray("[{id: 1, options: {measureScaleFactor: 0.5}}]");
 		properties.put(JSONDataWriter.PROPERTY_FIELD_OPTION, fieldOptions);
 		return properties;
@@ -168,30 +168,35 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 	 * @deprecated
 	 */
 	@Deprecated
-	public String getDataStore(String label, String parameters, Map<String, Object> drivers, String selections, String likeSelections, int maxRowCount,
-			String aggregations, String summaryRow, int offset, int fetchSize, Boolean isNearRealtime, Set<String> indexes, String widgetName) {
-		return getDataStore(label, parameters, drivers, selections, likeSelections, maxRowCount, aggregations, summaryRow, offset, fetchSize, isNearRealtime,
-				null, indexes, widgetName);
+	public String getDataStore(String label, String parameters, Map<String, Object> drivers, String selections,
+			String likeSelections, int maxRowCount, String aggregations, String summaryRow, int offset, int fetchSize,
+			Boolean isNearRealtime, Set<String> indexes, String widgetName) {
+		return getDataStore(label, parameters, drivers, selections, likeSelections, maxRowCount, aggregations,
+				summaryRow, offset, fetchSize, isNearRealtime, null, indexes, widgetName);
 	}
 
-	public String getDataStore(String label, String parameters, Map<String, Object> drivers, String selections, String likeSelections, int maxRowCount,
-			String aggregations, String summaryRow, int offset, int fetchSize, Set<String> indexes, String widgetName) {
-		return getDataStore(label, parameters, drivers, selections, likeSelections, maxRowCount, aggregations, summaryRow, offset, fetchSize, null, null,
-				indexes, widgetName);
+	public String getDataStore(String label, String parameters, Map<String, Object> drivers, String selections,
+			String likeSelections, int maxRowCount, String aggregations, String summaryRow, int offset, int fetchSize,
+			Set<String> indexes, String widgetName) {
+		return getDataStore(label, parameters, drivers, selections, likeSelections, maxRowCount, aggregations,
+				summaryRow, offset, fetchSize, null, null, indexes, widgetName);
 	}
 
-	public String getDataStore(String label, String parameters, Map<String, Object> drivers, String selections, String likeSelections, int maxRowCount,
-			String aggregations, String summaryRow, int offset, int fetchSize, Boolean isNearRealtime, String options, Set<String> indexes, String widgetName) {
+	public String getDataStore(String label, String parameters, Map<String, Object> drivers, String selections,
+			String likeSelections, int maxRowCount, String aggregations, String summaryRow, int offset, int fetchSize,
+			Boolean isNearRealtime, String options, Set<String> indexes, String widgetName) {
 		logger.debug("IN");
 		Monitor totalTiming = MonitorFactory.start("Knowage.AbstractDataSetResource.getDataStore");
 		try {
 			Monitor timing = MonitorFactory.start("Knowage.AbstractDataSetResource.getDataStore:validateParams");
 
-			int maxResults = Integer.parseInt(SingletonConfig.getInstance().getConfigValue("SPAGOBI.API.DATASET.MAX_ROWS_NUMBER"));
+			int maxResults = Integer
+					.parseInt(SingletonConfig.getInstance().getConfigValue("SPAGOBI.API.DATASET.MAX_ROWS_NUMBER"));
 			logger.debug("Offset [" + offset + "], fetch size [" + fetchSize + "], max results[" + maxResults + "]");
 
 			if (maxResults <= 0) {
-				throw new SpagoBIRuntimeException("SPAGOBI.API.DATASET.MAX_ROWS_NUMBER value cannot be a non-positive integer");
+				throw new SpagoBIRuntimeException(
+						"SPAGOBI.API.DATASET.MAX_ROWS_NUMBER value cannot be a non-positive integer");
 			}
 			if (offset < 0) {
 				logger.debug("Offset size is not valid. Setting it to [0] by default.");
@@ -202,10 +207,12 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 				fetchSize = -1;
 			}
 			if (fetchSize > maxResults) {
-				throw new IllegalArgumentException("The page requested is too big. Max page size is equals to [" + maxResults + "]");
+				throw new IllegalArgumentException(
+						"The page requested is too big. Max page size is equals to [" + maxResults + "]");
 			}
 			if (maxRowCount > maxResults) {
-				throw new IllegalArgumentException("The dataset requested is too big. Max row count is equals to [" + maxResults + "]");
+				throw new IllegalArgumentException(
+						"The dataset requested is too big. Max row count is equals to [" + maxResults + "]");
 			}
 
 			IDataSetDAO dataSetDao = DAOFactory.getDataSetDAO();
@@ -221,10 +228,10 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 			timing.stop();
 			timing = MonitorFactory.start("Knowage.AbstractDataSetResource.getDataStore:getQueryDetails");
 
-			List<AbstractSelectionField> projections = new ArrayList<AbstractSelectionField>(0);
-			List<AbstractSelectionField> groups = new ArrayList<AbstractSelectionField>(0);
-			List<Sorting> sortings = new ArrayList<Sorting>(0);
-			Map<String, String> columnAliasToName = new HashMap<String, String>();
+			List<AbstractSelectionField> projections = new ArrayList<>(0);
+			List<AbstractSelectionField> groups = new ArrayList<>(0);
+			List<Sorting> sortings = new ArrayList<>(0);
+			Map<String, String> columnAliasToName = new HashMap<>();
 			if (aggregations != null && !aggregations.isEmpty()) {
 				JSONObject aggregationsObject = new JSONObject(aggregations);
 				JSONArray categoriesObject = aggregationsObject.getJSONArray("categories");
@@ -236,15 +243,17 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 				Map<String, Object> optionMap;
 				if (options != null && !options.isEmpty()) {
 					ObjectMapper objectMapper = new ObjectMapper();
-					optionMap = new HashMap<>((Map<? extends String, ?>) objectMapper.readValue(options, new TypeReference<Map<String, Object>>() {
-					}));
+					optionMap = new HashMap<>((Map<? extends String, ?>) objectMapper.readValue(options,
+							new TypeReference<Map<String, Object>>() {
+							}));
 				} else {
 					optionMap = new HashMap<>();
 				}
 				applyOptions(dataSet, optionMap);
 
 				projections.addAll(getProjections(dataSet, categoriesObject, measuresObject, columnAliasToName));
-				groups.addAll(getGroups(dataSet, categoriesObject, measuresObject, columnAliasToName, hasSolrFacetPivotOption(dataSet, optionMap)));
+				groups.addAll(getGroups(dataSet, categoriesObject, measuresObject, columnAliasToName,
+						hasSolrFacetPivotOption(dataSet, optionMap)));
 				sortings.addAll(getSortings(dataSet, categoriesObject, measuresObject, columnAliasToName));
 
 				if (isSolrDataset(dataSet)) {
@@ -276,24 +285,27 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 			}
 
 			Monitor timingMinMax = MonitorFactory.start("Knowage.AbstractDataSetResource.getDataStore:calculateMinMax");
-			filters = getDatasetManagementAPI().calculateMinMaxFilters(dataSet, isNearRealtime, DataSetUtilities.getParametersMap(parameters), filters,
-					likeFilters, indexes);
+			filters = getDatasetManagementAPI().calculateMinMaxFilters(dataSet, isNearRealtime,
+					DataSetUtilities.getParametersMap(parameters), filters, likeFilters, indexes);
 			timingMinMax.stop();
 
 			Filter where = getDatasetManagementAPI().getWhereFilter(filters, likeFilters);
 
 			timing.stop();
 
-			List<List<AbstractSelectionField>> summaryRowArray = getSummaryRowArray(summaryRow, dataSet, columnAliasToName);
+			List<List<AbstractSelectionField>> summaryRowArray = getSummaryRowArray(summaryRow, dataSet,
+					columnAliasToName);
 
-			IDataStore dataStore = getDatasetManagementAPI().getDataStore(dataSet, isNearRealtime, DataSetUtilities.getParametersMap(parameters), projections,
-					where, groups, sortings, summaryRowArray, offset, fetchSize, maxRowCount, indexes);
+			IDataStore dataStore = getDatasetManagementAPI().getDataStore(dataSet, isNearRealtime,
+					DataSetUtilities.getParametersMap(parameters), projections, where, groups, sortings,
+					summaryRowArray, offset, fetchSize, maxRowCount, indexes);
 
 			// if required apply function from catalog
 			String catalogFuncId = getCatalogFunctionUuid(projections);
 			if (catalogFuncId != null) {
 				CatalogFunctionRuntimeConfigDTO catalogFunctionConfig = getCatalogFunctionConfiguration(projections);
-				IDataStoreTransformer functionTransformer = new CatalogFunctionTransformer(getUserProfile(), catalogFuncId, catalogFunctionConfig);
+				IDataStoreTransformer functionTransformer = new CatalogFunctionTransformer(getUserProfile(),
+						catalogFuncId, catalogFunctionConfig);
 				functionTransformer.transform(dataStore);
 			}
 
@@ -301,7 +313,7 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 			transformer.transform(dataStore);
 			transformer = new DecryptionDataStoreTransformer(dataStore);
 			transformer.transform(dataStore);
-			transformer = new PrivacyManagerDataStoreTransformer(dataSet);
+			transformer = new PrivacyManagerDataStoreTransformer(dataStore, dataSet.getParamsMap());
 			transformer.transform(dataStore);
 			transformer = new DataStoreStatsTransformer();
 			transformer.transform(dataStore);
@@ -321,7 +333,8 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 		} catch (CatalogFunctionException c) {
 			throw c;
 		} catch (Throwable t) {
-			throw new SpagoBIServiceException(this.request.getPathInfo(), "An unexpected error occured while executing service", t);
+			throw new SpagoBIServiceException(this.request.getPathInfo(),
+					"An unexpected error occured while executing service", t);
 		} finally {
 			totalTiming.stop();
 			logger.debug("OUT");
@@ -345,18 +358,19 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 		for (AbstractSelectionField p : projections) {
 			if (p instanceof DataStoreCatalogFunctionField) {
 				// we can take the first configuration since all the other ones will be identical
-				return CatalogFunctionRuntimeConfigDTO.fromJSON(((DataStoreCatalogFunctionField) p).getCatalogFunctionConfig());
+				return CatalogFunctionRuntimeConfigDTO
+						.fromJSON(((DataStoreCatalogFunctionField) p).getCatalogFunctionConfig());
 			}
 		}
 		throw new SpagoBIRuntimeException("Couldn't retrieve function configuration");
 	}
 
 	@SuppressWarnings("unused")
-	private List<List<AbstractSelectionField>> getSummaryRowArray(String summaryJson, IDataSet dataSet, Map<String, String> columnAliasToName)
-			throws JSONException {
+	private List<List<AbstractSelectionField>> getSummaryRowArray(String summaryJson, IDataSet dataSet,
+			Map<String, String> columnAliasToName) throws JSONException {
 		if (summaryJson != null && !summaryJson.isEmpty()) {
 
-			List<List<AbstractSelectionField>> returnList = new ArrayList<List<AbstractSelectionField>>();
+			List<List<AbstractSelectionField>> returnList = new ArrayList<>();
 			JSONArray summaryRowObject = new JSONArray(summaryJson);
 
 			if (summaryRowObject != null && summaryRowObject.length() == 1) {
@@ -366,9 +380,10 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 				JSONObject summaryRowObjectArray = summaryRowObject.getJSONObject(0);
 				JSONArray summaryRowMeasuresObject = summaryRowObjectArray.getJSONArray("measures");
 
-				List<AbstractSelectionField> summaryRowProjections = new ArrayList<AbstractSelectionField>(0);
+				List<AbstractSelectionField> summaryRowProjections = new ArrayList<>(0);
 
-				summaryRowProjections.addAll(getProjections(dataSet, new JSONArray(), summaryRowMeasuresObject, columnAliasToName));
+				summaryRowProjections
+						.addAll(getProjections(dataSet, new JSONArray(), summaryRowMeasuresObject, columnAliasToName));
 
 				returnList.add(summaryRowProjections);
 
@@ -382,9 +397,10 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 
 					JSONArray summaryRowMeasuresObject = jsonObj.getJSONArray("measures");
 
-					List<AbstractSelectionField> summaryRowProjections = new ArrayList<AbstractSelectionField>(0);
+					List<AbstractSelectionField> summaryRowProjections = new ArrayList<>(0);
 
-					summaryRowProjections.addAll(getProjections(dataSet, new JSONArray(), summaryRowMeasuresObject, columnAliasToName));
+					summaryRowProjections.addAll(
+							getProjections(dataSet, new JSONArray(), summaryRowMeasuresObject, columnAliasToName));
 
 					returnList.add(summaryRowProjections);
 
@@ -444,9 +460,9 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 		return dataSet instanceof SolrDataSet;
 	}
 
-	protected List<AbstractSelectionField> getProjectionsSummary(IDataSet dataSet, JSONArray categories, JSONArray measures,
-			Map<String, String> columnAliasToName) throws JSONException {
-		ArrayList<AbstractSelectionField> projections = new ArrayList<AbstractSelectionField>(categories.length() + measures.length());
+	protected List<AbstractSelectionField> getProjectionsSummary(IDataSet dataSet, JSONArray categories,
+			JSONArray measures, Map<String, String> columnAliasToName) throws JSONException {
+		ArrayList<AbstractSelectionField> projections = new ArrayList<>(categories.length() + measures.length());
 
 		for (int i = 0; i < categories.length(); i++) {
 			JSONObject category = categories.getJSONObject(i);
@@ -463,24 +479,24 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 		return projections;
 	}
 
-	protected List<AbstractSelectionField> getProjections(IDataSet dataSet, JSONArray categories, JSONArray measures, Map<String, String> columnAliasToName)
-			throws JSONException, ValidationException {
+	protected List<AbstractSelectionField> getProjections(IDataSet dataSet, JSONArray categories, JSONArray measures,
+			Map<String, String> columnAliasToName) throws JSONException, ValidationException {
 		ArrayList<AbstractSelectionField> projections = new ArrayList<>(categories.length() + measures.length());
 		addProjections(dataSet, categories, columnAliasToName, projections);
 		addProjections(dataSet, measures, columnAliasToName, projections);
 		return projections;
 	}
 
-	private void addProjections(IDataSet dataSet, JSONArray categories, Map<String, String> columnAliasToName, ArrayList<AbstractSelectionField> projections)
-			throws JSONException, ValidationException {
+	private void addProjections(IDataSet dataSet, JSONArray categories, Map<String, String> columnAliasToName,
+			ArrayList<AbstractSelectionField> projections) throws JSONException, ValidationException {
 		for (int i = 0; i < categories.length(); i++) {
 			JSONObject category = categories.getJSONObject(i);
 			addProjection(dataSet, projections, category, columnAliasToName);
 		}
 	}
 
-	private void addProjection(IDataSet dataSet, ArrayList<AbstractSelectionField> projections, JSONObject catOrMeasure, Map<String, String> columnAliasToName)
-			throws JSONException, ValidationException {
+	private void addProjection(IDataSet dataSet, ArrayList<AbstractSelectionField> projections, JSONObject catOrMeasure,
+			Map<String, String> columnAliasToName) throws JSONException, ValidationException {
 
 		String functionObj = catOrMeasure.optString("funct");
 		if (functionObj.startsWith("[")) { // check if it is an array
@@ -488,7 +504,8 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 			JSONArray functs = new JSONArray(functionObj);
 			for (int j = 0; j < functs.length(); j++) {
 				String functName = functs.getString(j);
-				AbstractSelectionField projection = getProjectionWithFunct(dataSet, catOrMeasure, columnAliasToName, functName);
+				AbstractSelectionField projection = getProjectionWithFunct(dataSet, catOrMeasure, columnAliasToName,
+						functName);
 				projections.add(projection);
 			}
 		} else {
@@ -499,8 +516,8 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 
 	}
 
-	private AbstractSelectionField getProjectionWithFunct(IDataSet dataSet, JSONObject jsonObject, Map<String, String> columnAliasToName, String functName)
-			throws JSONException, ValidationException {
+	private AbstractSelectionField getProjectionWithFunct(IDataSet dataSet, JSONObject jsonObject,
+			Map<String, String> columnAliasToName, String functName) throws JSONException, ValidationException {
 		String columnName = getColumnName(jsonObject, columnAliasToName);
 		String columnAlias = getColumnAlias(jsonObject, columnAliasToName);
 		IAggregationFunction function = AggregationFunctions.get(functName);
@@ -512,12 +529,16 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 		if (jsonObject.has("catalogFunctionId")) { // check if the column is coming from catalog function
 			String catalogFuncUuid = jsonObject.getString("catalogFunctionId");
 			JSONObject catalogFuncConf = jsonObject.getJSONObject("catalogFunctionConfig");
-			projection = new DataStoreCatalogFunctionField(function, columnAlias, columnAlias, catalogFuncUuid, catalogFuncConf);
-		} else if (!function.equals(AggregationFunctions.COUNT_FUNCTION) && functionColumnName != null && !functionColumnName.isEmpty()) {
+			projection = new DataStoreCatalogFunctionField(function, columnAlias, columnAlias, catalogFuncUuid,
+					catalogFuncConf);
+		} else if (!function.equals(AggregationFunctions.COUNT_FUNCTION) && functionColumnName != null
+				&& !functionColumnName.isEmpty()) {
 			if (jsonObject.has("formula")) {
 				String formula = jsonObject.optString("formula");
-				DataStoreCalculatedField aggregatedProjection = new DataStoreCalculatedField(dataSet, functionColumnName, formula);
-				projection = new CoupledCalculatedFieldProjection(function, aggregatedProjection, dataSet, columnName, columnAlias);
+				DataStoreCalculatedField aggregatedProjection = new DataStoreCalculatedField(dataSet,
+						functionColumnName, formula);
+				projection = new CoupledCalculatedFieldProjection(function, aggregatedProjection, dataSet, columnName,
+						columnAlias);
 			} else {
 				Projection aggregatedProjection = new Projection(dataSet, functionColumnName);
 				projection = new CoupledProjection(function, aggregatedProjection, dataSet, columnName, columnAlias);
@@ -533,7 +554,8 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 		return projection;
 	}
 
-	public String validateFormula(String formula, List<SimpleSelectionField> columns) throws ValidationException, JSONException {
+	public String validateFormula(String formula, List<SimpleSelectionField> columns)
+			throws ValidationException, JSONException {
 
 		validateBrackets(formula);
 		validateFields(formula, columns);
@@ -616,7 +638,8 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 
 	}
 
-	private AbstractSelectionField getProjection(IDataSet dataSet, JSONObject jsonObject, Map<String, String> columnAliasToName) throws JSONException {
+	private AbstractSelectionField getProjection(IDataSet dataSet, JSONObject jsonObject,
+			Map<String, String> columnAliasToName) throws JSONException {
 		return getProjectionWithFunct(dataSet, jsonObject, columnAliasToName, jsonObject.optString("funct")); // caso in cui ci siano facets complesse (coupled
 		// proj)
 	}
@@ -635,9 +658,11 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 			boolean isIdMatching = columnAliasToName.containsKey(id) || columnAliasToName.containsValue(id);
 
 			String columnName = jsonObject.getString("columnName");
-			boolean isColumnNameMatching = columnAliasToName.containsKey(columnName) || columnAliasToName.containsValue(columnName);
+			boolean isColumnNameMatching = columnAliasToName.containsKey(columnName)
+					|| columnAliasToName.containsValue(columnName);
 
-			Assert.assertTrue(isIdMatching || isColumnNameMatching, "Column name [" + columnName + "] not found in dataset metadata");
+			Assert.assertTrue(isIdMatching || isColumnNameMatching,
+					"Column name [" + columnName + "] not found in dataset metadata");
 			return isColumnNameMatching ? columnName : id;
 		}
 	}
@@ -649,8 +674,8 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 		return columnAlias;
 	}
 
-	protected List<AbstractSelectionField> getGroups(IDataSet dataSet, JSONArray categories, JSONArray measures, Map<String, String> columnAliasToName,
-			boolean forceGroups) throws JSONException {
+	protected List<AbstractSelectionField> getGroups(IDataSet dataSet, JSONArray categories, JSONArray measures,
+			Map<String, String> columnAliasToName, boolean forceGroups) throws JSONException {
 		ArrayList<AbstractSelectionField> groups = new ArrayList<>(0);
 
 		// hasAggregationInCategory se categoria di aggregazione del for ha una funzione di aggregazione
@@ -660,7 +685,8 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 		for (int i = 0; i < categories.length(); i++) {
 			JSONObject category = categories.getJSONObject(i);
 			String functionName = category.optString("funct");
-			if (forceGroups || hasAggregatedMeasures || hasAggregationInCategory(category) || hasCountAggregation(functionName)) {
+			if (forceGroups || hasAggregatedMeasures || hasAggregationInCategory(category)
+					|| hasCountAggregation(functionName)) {
 				AbstractSelectionField projection = getProjection(dataSet, category, columnAliasToName);
 				groups.add(projection);
 			}
@@ -699,7 +725,8 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 		for (int i = 0; i < fields.length(); i++) {
 			JSONObject field = fields.getJSONObject(i);
 			String functionName = field.optString("funct");
-			if (!AggregationFunctions.get(functionName).getName().equals(AggregationFunctions.NONE) && !field.has("formula")) {
+			if (!AggregationFunctions.get(functionName).getName().equals(AggregationFunctions.NONE)
+					&& !field.has("formula")) {
 				return true;
 			}
 			if (field.has("formula")) {
@@ -723,9 +750,9 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 		return false;
 	}
 
-	protected List<Sorting> getSortings(IDataSet dataSet, JSONArray categories, JSONArray measures, Map<String, String> columnAliasToName)
-			throws JSONException {
-		ArrayList<Sorting> sortings = new ArrayList<Sorting>(0);
+	protected List<Sorting> getSortings(IDataSet dataSet, JSONArray categories, JSONArray measures,
+			Map<String, String> columnAliasToName) throws JSONException {
+		ArrayList<Sorting> sortings = new ArrayList<>(0);
 
 		for (int i = 0; i < categories.length(); i++) {
 			JSONObject categoryObject = categories.getJSONObject(i);
@@ -746,11 +773,13 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 		return sortings;
 	}
 
-	private Sorting getSorting(IDataSet dataSet, JSONObject jsonObject, Map<String, String> columnAliasToName) throws JSONException {
+	private Sorting getSorting(IDataSet dataSet, JSONObject jsonObject, Map<String, String> columnAliasToName)
+			throws JSONException {
 		Sorting sorting = null;
 
 		String orderType = (String) jsonObject.opt("orderType");
-		if (orderType != null && !orderType.isEmpty() && ("ASC".equalsIgnoreCase(orderType) || "DESC".equalsIgnoreCase(orderType))) {
+		if (orderType != null && !orderType.isEmpty()
+				&& ("ASC".equalsIgnoreCase(orderType) || "DESC".equalsIgnoreCase(orderType))) {
 			IAggregationFunction function = AggregationFunctions.get(jsonObject.optString("funct"));
 			String orderColumn = (String) jsonObject.opt("orderColumn");
 
@@ -758,7 +787,8 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 				DataStoreCalculatedField projection;
 				if (orderColumn != null && !orderColumn.isEmpty() && !orderType.isEmpty()) {
 					String alias = jsonObject.optString("alias");
-					projection = new DataStoreCalculatedField(function, dataSet, orderColumn, alias, jsonObject.getString("formula"));
+					projection = new DataStoreCalculatedField(function, dataSet, orderColumn, alias,
+							jsonObject.getString("formula"));
 				} else {
 					String columnName = getColumnName(jsonObject, columnAliasToName);
 					projection = new DataStoreCalculatedField(function, dataSet, columnName, orderColumn);
@@ -786,7 +816,8 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 		return sorting;
 	}
 
-	protected List<Filter> getFilters(String datasetLabel, JSONObject selectionsObject, Map<String, String> columnAliasToColumnName) throws JSONException {
+	protected List<Filter> getFilters(String datasetLabel, JSONObject selectionsObject,
+			Map<String, String> columnAliasToColumnName) throws JSONException {
 		List<Filter> filters = new ArrayList<>(0);
 
 		if (selectionsObject.has(datasetLabel)) {
@@ -834,8 +865,8 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 		return filters;
 	}
 
-	protected List<SimpleFilter> getLikeFilters(String datasetLabel, JSONObject likeSelectionsObject, Map<String, String> columnAliasToColumnName)
-			throws JSONException {
+	protected List<SimpleFilter> getLikeFilters(String datasetLabel, JSONObject likeSelectionsObject,
+			Map<String, String> columnAliasToColumnName) throws JSONException {
 		List<SimpleFilter> likeFilters = new ArrayList<>(0);
 
 		if (likeSelectionsObject.has(datasetLabel)) {
@@ -873,7 +904,8 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 		return likeFilters;
 	}
 
-	protected List<String> getColumnList(String columns, IDataSet dataSet, Map<String, String> columnAliasToColumnName) {
+	protected List<String> getColumnList(String columns, IDataSet dataSet,
+			Map<String, String> columnAliasToColumnName) {
 		List<String> columnList = new ArrayList<>(Arrays.asList(columns.trim().split("\\s*,\\s*"))); // trim spaces while splitting
 
 		// transform QBE columns
@@ -907,7 +939,8 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 		return dataWriter;
 	}
 
-	protected void loadColumnAliasToName(JSONArray jsonArray, Map<String, String> columnAliasToName) throws JSONException {
+	protected void loadColumnAliasToName(JSONArray jsonArray, Map<String, String> columnAliasToName)
+			throws JSONException {
 		for (int i = 0; i < jsonArray.length(); i++) {
 			JSONObject category = jsonArray.getJSONObject(i);
 			String alias = category.optString("alias");
@@ -927,7 +960,8 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 
 	protected String serializeDataSet(IDataSet dataSet, String typeDocWizard) throws JSONException {
 		try {
-			JSONObject datasetsJSONObject = (JSONObject) SerializerFactory.getSerializer("application/json").serialize(dataSet, null);
+			JSONObject datasetsJSONObject = (JSONObject) SerializerFactory.getSerializer("application/json")
+					.serialize(dataSet, null);
 			JSONArray datasetsJSONArray = new JSONArray();
 			datasetsJSONArray.put(datasetsJSONObject);
 			JSONArray datasetsJSONReturn = putActions(getUserProfile(), datasetsJSONArray, typeDocWizard);
@@ -941,14 +975,15 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 	 * @param profile
 	 * @param datasetsJSONArray
 	 * @param typeDocWizard     Usato dalla my analysis per visualizzare solo i dataset su cui è possi bile costruire un certo tipo di analisi selfservice. Al
-	 *                          momento filtra la lista dei dataset solo nel caso del GEO in cui vengono eliminati tutti i dataset che non contengono un
-	 *                          riferimento alla dimensione spaziale. Ovviamente il fatto che un metodo che si chiama putActions filtri in modo silente la lista
-	 *                          dei dataset è una follia che andrebbe rifattorizzata al più presto.
+	 *                          momento filtra la lista dei dataset solo nel caso del GEO in cui vengono eliminati tutti i dataset che non contengono un riferimento
+	 *                          alla dimensione spaziale. Ovviamente il fatto che un metodo che si chiama putActions filtri in modo silente la lista dei dataset è
+	 *                          una follia che andrebbe rifattorizzata al più presto.
 	 * @return
 	 * @throws JSONException
 	 * @throws EMFInternalError
 	 */
-	protected JSONArray putActions(IEngUserProfile profile, JSONArray datasetsJSONArray, String typeDocWizard) throws JSONException, EMFInternalError {
+	protected JSONArray putActions(IEngUserProfile profile, JSONArray datasetsJSONArray, String typeDocWizard)
+			throws JSONException, EMFInternalError {
 
 		Engine qbeEngine = null;
 		try {
@@ -1018,7 +1053,8 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 			String dsType = datasetJSON.optString(DataSetConstants.DS_TYPE_CD);
 			if (dsType == null || !dsType.equals(DataSetFactory.FEDERATED_DS_TYPE)) {
 				if (qbeEngine != null && (typeDocWizard == null || typeDocWizard.equalsIgnoreCase("REPORT"))) {
-					if (profile.getFunctionalities() != null && profile.getFunctionalities().contains(CommunityFunctionalityConstants.BUILD_QBE_QUERIES_FUNCTIONALITY)) {
+					if (profile.getFunctionalities() != null && profile.getFunctionalities()
+							.contains(CommunityFunctionalityConstants.BUILD_QBE_QUERIES_FUNCTIONALITY)) {
 						actions.put(qbeAction);
 					}
 				}
@@ -1046,7 +1082,8 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 			IDataSet dataSet = getDatasetManagementAPI().getDataSet(label);
 			return serializeDataSet(dataSet, null);
 		} catch (Throwable t) {
-			throw new SpagoBIServiceException(this.request.getPathInfo(), "An unexpected error occured while executing service", t);
+			throw new SpagoBIServiceException(this.request.getPathInfo(),
+					"An unexpected error occured while executing service", t);
 		} finally {
 			logger.debug("OUT");
 		}
@@ -1062,7 +1099,8 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 			String message = null;
 			if (e instanceof DatasetInUseException) {
 				DatasetInUseException dui = (DatasetInUseException) e;
-				message = dui.getMessage() + "Used by: objects" + dui.getObjectsLabel() + " federations: " + dui.getFederationsLabel();
+				message = dui.getMessage() + "Used by: objects" + dui.getObjectsLabel() + " federations: "
+						+ dui.getFederationsLabel();
 			} else {
 				message = "Error while deleting the specified dataset";
 			}
@@ -1080,20 +1118,23 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 				InitialContext context = new InitialContext();
 				String serviceUrl = (String) context.lookup("java:comp/env/service_url");
 				URL serviceUrlAsURL = new URL(serviceUrl);
-				serviceUrlAsURL = new URL(serviceUrlAsURL.getProtocol(), serviceUrlAsURL.getHost(), serviceUrlAsURL.getPort(), "", null);
+				serviceUrlAsURL = new URL(serviceUrlAsURL.getProtocol(), serviceUrlAsURL.getHost(),
+						serviceUrlAsURL.getPort(), "", null);
 				String token = getUserProfile().getUserUniqueIdentifier().toString();
 				// delete Avro resources
-				Response response = restClient.target(serviceUrlAsURL + "/knowage-data-preparation/api/1.0/instance/" + instanceId).request()
+				Response response = restClient
+						.target(serviceUrlAsURL + "/knowage-data-preparation/api/1.0/instance/" + instanceId).request()
 						.header("X-Kn-Authorization", token).get();
 				JSONObject instance = new JSONObject(response.readEntity(String.class));
 				int sourceDsId = instance.getInt("dataSetId");
 				deleteAvroFolder(sourceDsId);
 				// delete data preparation process instance
-				restClient.target(serviceUrlAsURL + "/knowage-data-preparation/api/1.0/instance/" + instanceId).request().header("X-Kn-Authorization", token)
-						.delete();
+				restClient.target(serviceUrlAsURL + "/knowage-data-preparation/api/1.0/instance/" + instanceId)
+						.request().header("X-Kn-Authorization", token).delete();
 			}
 		} catch (Exception e) {
-			logger.error("Cannot delete PreparedDataSet related resources (process instance, avro file) for dataset " + label, e);
+			logger.error("Cannot delete PreparedDataSet related resources (process instance, avro file) for dataset "
+					+ label, e);
 		}
 
 		return Response.ok().build();
@@ -1101,8 +1142,8 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 
 	private void deleteAvroFolder(int dsId) {
 		try {
-			Path avroExportFolder = Paths.get(SpagoBIUtilities.getResourcePath(), "dataPreparation", (String) getUserProfile().getUserId(),
-					Integer.toString(dsId));
+			Path avroExportFolder = Paths.get(SpagoBIUtilities.getResourcePath(), "dataPreparation",
+					(String) getUserProfile().getUserId(), Integer.toString(dsId));
 			Files.walkFileTree(avroExportFolder, new SimpleFileVisitor<Path>() {
 
 				// delete directories or folders
@@ -1169,8 +1210,8 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 			}
 
 			// add the jar retriver in case of a Qbe DataSet
-			if (dataSet instanceof QbeDataSet
-					|| (dataSet instanceof VersionedDataSet && ((VersionedDataSet) dataSet).getWrappedDataset() instanceof QbeDataSet)) {
+			if (dataSet instanceof QbeDataSet || (dataSet instanceof VersionedDataSet
+					&& ((VersionedDataSet) dataSet).getWrappedDataset() instanceof QbeDataSet)) {
 				SpagoBICoreDatamartRetriever retriever = new SpagoBICoreDatamartRetriever();
 				Map parameters = dataSet.getParamsMap();
 				if (parameters == null) {
@@ -1205,12 +1246,14 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 		dataSet = dataSet instanceof VersionedDataSet ? ((VersionedDataSet) dataSet).getWrappedDataset() : dataSet;
 		if (dataSet instanceof AbstractJDBCDataset) {
 			IDataBase database = DataBaseFactory.getDataBase(dataSet.getDataSource());
-			isNearRealtimeSupported = database.getDatabaseDialect().isInLineViewSupported() && !dataSet.hasDataStoreTransformers();
+			isNearRealtimeSupported = database.getDatabaseDialect().isInLineViewSupported()
+					&& !dataSet.hasDataStoreTransformers();
 		} else if (dataSet instanceof FederatedDataSet) {
 			isNearRealtimeSupported = false;
 		} else if (dataSet instanceof QbeDataSet) {
 			IDataBase database = DataBaseFactory.getDataBase(dataSet.getDataSource());
-			isNearRealtimeSupported = database.getDatabaseDialect().isInLineViewSupported() && !dataSet.hasDataStoreTransformers();
+			isNearRealtimeSupported = database.getDatabaseDialect().isInLineViewSupported()
+					&& !dataSet.hasDataStoreTransformers();
 		} else if (dataSet instanceof FlatDataSet || dataSet.isPersisted() || dataSet instanceof PreparedDataSet
 				|| dataSet.getClass().equals(SolrDataSet.class)) {
 			isNearRealtimeSupported = true;

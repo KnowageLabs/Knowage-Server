@@ -32,7 +32,7 @@ public class PrivacyManagerDataStoreTransformer extends AbstractDataStoreTransfo
 
 	private static final Logger LOGGER = LogManager.getLogger(PrivacyManagerDataStoreTransformer.class);
 
-	private final IDataSet dataSet;
+	private final IMetaData dataStoreMetadata;
 	private boolean needPM = false;
 	private final List<IFieldMetaData> sensibleField = new ArrayList<>();
 	private final Map<Integer, IFieldMetaData> sensibleFieldByIndex = new LinkedHashMap<>();
@@ -41,8 +41,34 @@ public class PrivacyManagerDataStoreTransformer extends AbstractDataStoreTransfo
 	private final Map<Integer, IFieldMetaData> subjectFieldByIndex = new LinkedHashMap<>();
 	private final Map<Integer, Integer> subjectFieldOrder = new LinkedHashMap<>();
 
+	private Map paramsMap = Collections.emptyMap();
+
 	public PrivacyManagerDataStoreTransformer(IDataSet dataSet) {
-		this.dataSet = dataSet;
+		this(dataSet.getDsMetadata() != null ? dataSet.getMetadata() : new MetaData(), dataSet.getParamsMap());
+	}
+
+	public PrivacyManagerDataStoreTransformer(IDataStore dataStore, Map paramsMap) {
+		this.dataStoreMetadata = dataStore.getMetaData();
+		this.paramsMap = paramsMap;
+		try {
+			setUpPrivacy();
+		} catch (Exception e) {
+			LOGGER.error("Privacy initialization error: check setUpPrivacy method", e);
+		}
+	}
+
+	public PrivacyManagerDataStoreTransformer(IMetaData dataStoreMetadata, Map paramsMap) {
+		this.dataStoreMetadata = dataStoreMetadata;
+		this.paramsMap = paramsMap;
+		try {
+			setUpPrivacy();
+		} catch (Exception e) {
+			LOGGER.error("Privacy initialization error: check setUpPrivacy method", e);
+		}
+	}
+
+	public PrivacyManagerDataStoreTransformer(IMetaData dataStoreMetadata) {
+		this.dataStoreMetadata = dataStoreMetadata;
 		try {
 			setUpPrivacy();
 		} catch (Exception e) {
@@ -82,7 +108,6 @@ public class PrivacyManagerDataStoreTransformer extends AbstractDataStoreTransfo
 			eventBuilder.appendSession("knowage", sourceIpAddress, sessionId, sessionStart, string);
 			eventBuilder.appendUserAgent(os, sourceIpAddress, sourceSocketEnabled, userAgent);
 			// metadata --> from dataset (map)
-			Map paramsMap = Optional.ofNullable(dataSet.getParamsMap()).orElse(Collections.emptyMap());
 			LOGGER.debug("Parameters map is {}", paramsMap);
 			Set<String> keys = paramsMap.keySet();
 			for (String key : keys) {
@@ -140,8 +165,6 @@ public class PrivacyManagerDataStoreTransformer extends AbstractDataStoreTransfo
 	}
 
 	private void setUpPrivacy() {
-		IMetaData dataStoreMetadata = getMetaData();
-
 		AtomicInteger index = new AtomicInteger();
 
 		dataStoreMetadata.getFieldsMeta().stream().collect(Collectors.toMap(e -> index.getAndIncrement(), e -> e))
@@ -181,14 +204,20 @@ public class PrivacyManagerDataStoreTransformer extends AbstractDataStoreTransfo
 				});
 
 		needPM = !sensibleField.isEmpty();
+
+		LOGGER.debug("Need PM {}", needPM);
 		LOGGER.debug("subjectFiledByIndex {}", subjectFieldByIndex);
 		LOGGER.debug("subjectFieldOrder {}", subjectFieldOrder);
 		LOGGER.debug("sensibleFiledByIndex {}", sensibleFieldByIndex);
 
 	}
 
-	private IMetaData getMetaData() {
-		return dataSet.getDsMetadata() != null ? dataSet.getMetadata() : new MetaData();
+	public Map getParamsMap() {
+		return paramsMap;
+	}
+
+	public void setParamsMap(Map paramsMap) {
+		this.paramsMap = paramsMap;
 	}
 
 }
