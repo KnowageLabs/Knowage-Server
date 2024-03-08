@@ -165,11 +165,16 @@ public class PrivacyManagerDataStoreTransformer extends AbstractDataStoreTransfo
 	}
 
 	private void setUpPrivacy() {
-		AtomicInteger index = new AtomicInteger();
+
+		needPM = false;
+		subjectFieldByIndex.clear();
+		subjectFieldOrder.clear();
+		sensibleFieldByIndex.clear();
 
 		LOGGER.debug("Metadata is {}", dataStoreMetadata);
 
-		dataStoreMetadata.getFieldsMeta().stream().collect(Collectors.toMap(e -> index.getAndIncrement(), e -> e))
+		AtomicInteger index1 = new AtomicInteger();
+		dataStoreMetadata.getFieldsMeta().stream().collect(Collectors.toMap(e -> index1.getAndIncrement(), e -> e))
 				.entrySet().stream().filter(e -> e.getValue().isSubjectId()).forEach(e -> {
 					Integer key = e.getKey();
 					IFieldMetaData value = e.getValue();
@@ -196,7 +201,8 @@ public class PrivacyManagerDataStoreTransformer extends AbstractDataStoreTransfo
 					}
 				});
 
-		dataStoreMetadata.getFieldsMeta().stream().collect(Collectors.toMap(e -> index.getAndIncrement(), e -> e))
+		AtomicInteger index2 = new AtomicInteger();
+		dataStoreMetadata.getFieldsMeta().stream().collect(Collectors.toMap(e -> index2.getAndIncrement(), e -> e))
 				.entrySet().stream().filter(e -> e.getValue().isPersonal()).forEach(e -> {
 					Integer key = e.getKey();
 					IFieldMetaData value = e.getValue();
