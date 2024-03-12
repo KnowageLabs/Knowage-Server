@@ -13,7 +13,7 @@
         <template #footer>
             <div class="p-d-flex p-flex-row p-jc-end">
                 <Button class="kn-button kn-button--primary" @click="closeDialog"> {{ $t('common.cancel') }}</Button>
-                <Button class="kn-button kn-button--primary" @click="shareDocument">{{ $t('common.share') }}</Button>
+                <Button class="kn-button kn-button--primary" :disabled="buttonDisabled" @click="shareDocument">{{ $t('common.share') }}</Button>
             </div>
         </template>
     </Dialog>
@@ -38,6 +38,11 @@
                 selectedFoldersKeys: {} as any
             }
         },
+        computed: {
+            buttonDisabled(): boolean {
+                return (!this.selectedFoldersKeys || !this.selectedFoldersKeys.length || this.selectedFoldersKeys.length < 0)
+            }
+        },
         watch: {
             propFolders() {
                 this.loadFolders()
@@ -52,10 +57,12 @@
             },
             closeDialog() {
                 this.folders = []
+                this.selectedFoldersKeys = {}   
                 this.$emit('close')
             },
             shareDocument() {
                 this.$emit('share', this.selectedFoldersKeys)
+                this.selectedFoldersKeys = {}
             },
             setSelectedFolders(folders: INode[]) {
                 this.selectedFoldersKeys = folders
