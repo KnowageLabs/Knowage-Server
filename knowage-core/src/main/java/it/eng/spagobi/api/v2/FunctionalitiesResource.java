@@ -244,7 +244,6 @@ public class FunctionalitiesResource extends AbstractSpagoBIResource {
 	@Produces(MediaType.APPLICATION_JSON + charset)
 	public Response getFunctionalitiesForSharing(@PathParam("objectId") Integer objectId) {
 		logger.debug("IN");
-		String permission = SpagoBIConstants.PERMISSION_ON_FOLDER_TO_CREATE;
 		List<LowFunctionality> folders = new ArrayList<>();
 		try {
 			UserProfile profile = getUserProfile();
@@ -252,9 +251,8 @@ public class FunctionalitiesResource extends AbstractSpagoBIResource {
 			dao.setUserProfile(profile);
 			List<LowFunctionality> foldersForSharing = dao.loadFunctionalitiesForSharing(objectId);
 			for (LowFunctionality folder : foldersForSharing) {
-				if (folder.getParentId() == null || checkPermissionOnFolder(permission, folder, profile)) {
+				if (ObjectsAccessVerifier.canSee(folder, profile))
 					folders.add(folder);
-				}
 			}
 			return Response.ok(folders).build();
 		} catch (Exception e) {
