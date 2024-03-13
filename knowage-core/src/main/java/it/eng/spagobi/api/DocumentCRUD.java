@@ -320,49 +320,60 @@ public class DocumentCRUD extends AbstractSpagoBIResource {
 	public String shareDocument(@Context HttpServletRequest req, @QueryParam("functs") List<Integer> functs) {
 
 		logger.debug("IN");
-		String ids = req.getParameter(OBJECT_ID);
-		String isShare = req.getParameter(IS_SHARE);
-		Integer id = -1;
 		try {
-			id = new Integer(ids);
-		} catch (Exception e) {
-			logger.error("Error sharing the document.. Impossible to parse the id of the document " + ids, e);
-			throw new SpagoBIRuntimeException("Error sharing the document.. Impossible to parse the id of the document " + ids, e);
-		}
-		IEngUserProfile profile = this.getUserProfile();
-
-		AnalyticalModelDocumentManagementAPI documentManagementAPI = new AnalyticalModelDocumentManagementAPI(profile);
-		String oper = ("true".equalsIgnoreCase(isShare)) ? "Sharing" : "Unsharing";
-		logger.debug("Execute " + oper);
-		if (id != null) {
-			BIObject document = documentManagementAPI.getDocument(id);
-			List lstFuncts = new ArrayList();
-
-			if ("true".equalsIgnoreCase(isShare)) {
-
-				JSONArray mJSONArray = new JSONArray(functs);
-				lstFuncts = JSONUtils.asList(mJSONArray);
-			}
-			// add personal folder for default
-			LowFunctionality userFunc = null;
+			String ids = req.getParameter(OBJECT_ID);
+			String isShare = req.getParameter(IS_SHARE);
+			Integer id = -1;
 			try {
-				ILowFunctionalityDAO functionalitiesDAO = DAOFactory.getLowFunctionalityDAO();
-				// userFunc = functionalitiesDAO.loadLowFunctionalityByPath("/" + profile.getUserUniqueIdentifier(), false);
-				userFunc = functionalitiesDAO.loadLowFunctionalityByPath("/" + ((UserProfile) profile).getUserId().toString(), false);
+				id = new Integer(ids);
 			} catch (Exception e) {
-				logger.error("Error " + oper + "  the document.. Impossible to get the id of the personal folder for document " + ids, e);
-				throw new SpagoBIRuntimeException("Error " + oper + "  the document.. Impossible to get the id of the personal folder for document " + ids, e);
+				logger.error("Error sharing the document.. Impossible to parse the id of the document " + ids, e);
+				throw new SpagoBIRuntimeException("Error sharing the document.. Impossible to parse the id of the document " + ids, e);
 			}
-			if (userFunc != null)
-				lstFuncts.add(userFunc.getId());
-			else
-				logger.error("Error " + oper + " the document.. Impossible to get the id of the personal folder for document " + ids);
-
-			document.setFunctionalities(lstFuncts);
-
-			// save
-			documentManagementAPI.saveDocument(document, null);
+			IEngUserProfile profile = this.getUserProfile();
+	
+			AnalyticalModelDocumentManagementAPI documentManagementAPI = new AnalyticalModelDocumentManagementAPI(profile);
+			String oper = ("true".equalsIgnoreCase(isShare)) ? "Sharing" : "Unsharing";
+			logger.debug("Execute " + oper);
+			if (id != null) {
+				BIObject document = documentManagementAPI.getDocument(id);
+				
+				List lstFuncts = new ArrayList();
+				if ("true".equalsIgnoreCase(isShare)) {
+					if(functs != null && !functs.isEmpty()) {
+						JSONArray mJSONArray = new JSONArray(functs);
+						lstFuncts = JSONUtils.asList(mJSONArray);
+					} else {
+						logger.error("Error " + oper + " the document.. Impossible to get the functs list " + functs);
+						throw new SpagoBIRuntimeException("Error " + oper + " the document.. Impossible to get the functs list " + functs);
+					}
+				}
+				
+				// add personal folder for default
+				LowFunctionality userFunc = null;
+				try {
+					ILowFunctionalityDAO functionalitiesDAO = DAOFactory.getLowFunctionalityDAO();
+					// userFunc = functionalitiesDAO.loadLowFunctionalityByPath("/" + profile.getUserUniqueIdentifier(), false);
+					userFunc = functionalitiesDAO.loadLowFunctionalityByPath("/" + ((UserProfile) profile).getUserId().toString(), false);
+				} catch (Exception e) {
+					logger.error("Error " + oper + "  the document.. Impossible to get the id of the personal folder for document " + ids, e);
+					throw new SpagoBIRuntimeException("Error " + oper + "  the document.. Impossible to get the id of the personal folder for document " + ids, e);
+				}
+				if (userFunc != null)
+					lstFuncts.add(userFunc.getId());
+				else
+					logger.error("Error " + oper + " the document.. Impossible to get the id of the personal folder for document " + ids);
+	
+				document.setFunctionalities(lstFuncts);
+	
+				// save
+				documentManagementAPI.saveDocument(document, null);
+			}
+		} catch (Exception e) {
+			logger.error("Error in shareDocument Service: " + e);
+			throw new SpagoBIRuntimeException("Error in shareDocument Service: " + e);
 		}
+		
 		logger.debug("OUT");
 		return "{}";
 	}
