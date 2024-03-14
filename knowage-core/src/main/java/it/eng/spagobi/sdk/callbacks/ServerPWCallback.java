@@ -53,13 +53,6 @@ public class ServerPWCallback implements CallbackHandler {
 				if (pc.getUsage() == WSPasswordCallback.DECRYPT) {
 					logger.debug("WSPasswordCallback.DECRYPT=" + WSPasswordCallback.DECRYPT);
 					pc.setPassword("security");
-					// } else if (pc.getUsage() == WSPasswordCallback.USERNAME_TOKEN) {
-					// logger.debug("WSPasswordCallback.USERNAME_TOKEN = " + pc.getUsage() + " callback usage");
-					// // for passwords sent in digest mode we need to provide the password,
-					// // because the original one can't be un-digested from the message
-					// String password = getPassword(userId);
-					// // this will throw an exception if the passwords don't match
-					// pc.setPassword(password);
 				} else if (pc.getUsage() == WSPasswordCallback.USERNAME_TOKEN_UNKNOWN) {
 					logger.debug("WSPasswordCallback.USERNAME_TOKEN_UNKNOWN = " + pc.getUsage() + " callback usage");
 					// for passwords sent in clear-text mode we can compare passwords directly

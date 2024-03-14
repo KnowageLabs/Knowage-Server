@@ -128,7 +128,6 @@ public class SignupFieldsValidator implements IFieldsValidator {
 
 			if (modify == null) {
 				if (password == null)
-					// validationErrors.put( new JSONObject("{message: 'Field Password mandatory'}") );
 					validationErrors.put(new JSONObject("{message: \"" + msgBuilder.getMessage("signup.check.pwdMandatory", locale) + "\"}"));
 				else {
 					if (!validatePassword(password, username)) {
@@ -143,23 +142,18 @@ public class SignupFieldsValidator implements IFieldsValidator {
 				}
 
 				if (username == null)
-					// validationErrors.put( new JSONObject("{message: 'Field Username mandatory'}") );
 					validationErrors.put(new JSONObject("{message: \"" + msgBuilder.getMessage("signup.check.usernameMandatory", locale) + "\"}"));
 
 				if (confirmPassword == null)
-					// validationErrors.put( new JSONObject("{message: 'Field Confirm Password mandatory'}") );
 					validationErrors.put(new JSONObject("{message: \"" + msgBuilder.getMessage("signup.check.confirmPwdMandatory", locale) + "\"}"));
 
 				if (useCaptcha && !Boolean.valueOf(terms))
-					// validationErrors.put( new JSONObject("{message: 'Agree with the terms of service mandatory'}") );
 					validationErrors.put(new JSONObject("{message: \"" + msgBuilder.getMessage("signup.check.agreeMandatory", locale) + "\"}"));
 
 				if (password != null && !password.equals(defaultPassword) && confirmPassword != null && !confirmPassword.equals(defaultPasswordConfirm))
 					if (!password.equals(confirmPassword))
-						// validationErrors.put( new JSONObject("{message: 'Field Password and Confirm Password not equal'}") );
 						validationErrors.put(new JSONObject("{message: \"" + msgBuilder.getMessage("signup.check.pwdNotEqual", locale) + "\"}"));
 				if (useCaptcha && captcha == null)
-					// validationErrors.put( new JSONObject("{message: 'Field Captcha mandatory'}") );
 					validationErrors.put(new JSONObject("{message: \"" + msgBuilder.getMessage("signup.check.captchaMandatory", locale) + "\"}"));
 			}
 		} catch (JSONException e1) {
