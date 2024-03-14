@@ -593,7 +593,7 @@ public class ExecutionInstance implements Serializable {
 
 					int numOfValues = jsonArray.length();
 					LOGGER.debug("Found {} values", numOfValues);
-					for (int j = 0; i < numOfValues; j++) {
+					for (int j = 0; j < numOfValues; j++) {
 						JSONObject currValue = (JSONObject) jsonArray.get(j);
 						LOGGER.debug("The current value is {}", currValue);
 						Object currValueValue = currValue.get("value");

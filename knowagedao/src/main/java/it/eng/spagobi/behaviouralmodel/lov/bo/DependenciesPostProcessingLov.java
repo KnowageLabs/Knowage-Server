@@ -190,22 +190,20 @@ public abstract class DependenciesPostProcessingLov extends AbstractLOV {
 	private List evaluateExpression(List list, String expr, List ops, Map selectedParameterValues) {
 		List previusCalculated = list;
 		try {
+			
 			// check number of left and right break, if numbers are different the expression is wrong
-			int numberOfLeftRound = 0;
-			String tmpExpr = expr;
-			while (tmpExpr.indexOf("(") != -1) {
-				numberOfLeftRound++;
-				int indLR = tmpExpr.indexOf("(");
-				tmpExpr = tmpExpr.substring(indLR + 1);
+			char[] toCheck = expr.toCharArray();
+			int lP = 0; int rP = 0;
+			
+			for(int i = 0; i < toCheck.length; i++) {
+				if(toCheck[i] == '(') {
+					lP++;
+				} else if(toCheck[i] == ')') {
+					rP++;
+				} 
 			}
-			int numberOfRightRound = 0;
-			tmpExpr = expr;
-			while (tmpExpr.indexOf(")") != -1) {
-				numberOfRightRound++;
-				int indRR = tmpExpr.indexOf(")");
-				tmpExpr = tmpExpr.substring(indRR + 1);
-			}
-			if (numberOfLeftRound != numberOfRightRound) {
+			
+			if(rP != lP) {
 				LOGGER.warn(
 						"Expression is wrong: number of left breaks is different from right breaks. Returning list without evaluating expression");
 				return list;

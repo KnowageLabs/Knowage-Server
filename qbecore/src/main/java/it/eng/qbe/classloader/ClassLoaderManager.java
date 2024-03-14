@@ -97,7 +97,7 @@ public class ClassLoaderManager {
 				if (!previousCL.equals(genericClassLoader)) {
 					currentClassLoaders.add(aDynClassLoader);
 				}
-				genericClassLoader = start.getParent();
+				genericClassLoader = genericClassLoader.getParent();
 			}
 			root = genericClassLoader;
 
