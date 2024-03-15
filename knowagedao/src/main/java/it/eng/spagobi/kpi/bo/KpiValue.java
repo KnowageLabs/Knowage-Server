@@ -132,5 +132,18 @@ public final class KpiValue implements Cloneable {
 	public void setManualNote(String manualNote) {
 		this.manualNote = manualNote;
 	}
-
+	
+	@Override
+    public final Object clone()  {
+	  KpiValue ben = null;
+	  try {
+		ben = (KpiValue) super.clone();
+		if(timeRun != null) {
+			ben.timeRun = (Date)timeRun.clone();
+			// the other fields are primitives or immutable objects
+		}
+	  } catch (CloneNotSupportedException e) {} // won't happen KpiValue implements Cloneable
+	  return ben;
+	}
+	
 }
