@@ -120,7 +120,4 @@ public class ImagesDAOImpl extends AbstractHibernateDAO implements IImagesDAO {
 		}).longValue();
 	}
 
-	public static void main(String[] args) {
-		logger.debug(OrderBy.valueOf("CommonInfo").valueOf("timeIn"));
-	}
 }

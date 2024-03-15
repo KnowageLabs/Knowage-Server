@@ -540,13 +540,4 @@ public class ChartDriver extends GenericDriver {
 
 	}
 
-	public static void main(String[] args) {
-		ChartDriver driver = new ChartDriver();
-		// String str = "xxx $R{pippo}tail head$R{pippo}tail $R{pippo} xxx";
-		String str = "dnsadn dknwk ldwnd lkwndxlkw xnwlknd";
-		logger.debug(str);
-		String newStr = driver.replaceMessagesInString(str);
-		logger.debug(newStr);
-	}
-
 }

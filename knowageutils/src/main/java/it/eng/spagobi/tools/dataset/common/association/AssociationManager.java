@@ -146,17 +146,5 @@ public class AssociationManager implements Serializable {
 		return g;
 	}
 
-	public static void main(String[] args) {
-		UndirectedGraph<String, DefaultEdge> g = createStringGraph();
-		ConnectivityInspector ci = new ConnectivityInspector(g);
-		List connectedSet = ci.connectedSets();
-		for (Object o : connectedSet) {
-			Set vertexes = (Set) o;
-			for (Object vertex : vertexes) {
-				LOGGER.debug(vertex.toString());
-			}
-			LOGGER.debug("-----------------------------");
-		}
-		LOGGER.debug(connectedSet.size());
-	}
+
 }

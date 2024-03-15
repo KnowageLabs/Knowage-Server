@@ -164,8 +164,4 @@ public class AuthorizationsBusinessMapper {
 		return businessProcessName;
 	}
 
-	public static void main(String[] args) {
-		logger.debug(Pattern.matches("SERVICE\\[/DATASETS.*\\]", "SERVICE[/DATASETS]"));
-
-	}
 }

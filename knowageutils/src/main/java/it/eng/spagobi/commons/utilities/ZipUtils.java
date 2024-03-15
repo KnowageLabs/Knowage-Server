@@ -309,10 +309,5 @@ public class ZipUtils {
 		}
 	}
 
-	public static void main(String[] args) throws IOException {
-		String zipname = "c:\\test.zip";
-		zip(new File(zipname), "C:\\ENEL\\TEST\\src\\Test.java",
-				"c:\\excel\\3039_3035303332363330393633_454e4750473034_32372f30342f323031322031393a31333a3032.xls");
-	}
 
 }

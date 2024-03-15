@@ -320,18 +320,6 @@ public class ParametersDecoder {
 		return requestParameters;
 	}
 
-	/////////////////////////////////////////////////////////////
-	// MAIN METHOD
-	/////////////////////////////////////////////////////////////
 
-	/**
-	 * Just for test purpose ;-).
-	 *
-	 * @param args the args
-	 */
-	public static void main(String[] args) {
-		// TODO Auto-generated method stub
-
-	}
 
 }

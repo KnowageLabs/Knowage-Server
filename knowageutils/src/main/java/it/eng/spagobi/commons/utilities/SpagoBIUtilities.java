@@ -67,27 +67,6 @@ public class SpagoBIUtilities {
 	public static final String MULTI_VALUE_PROFILE_ATTRIBUTE_REGEXP = "^{.+{.*}}$";
 
 	/**
-	 * The Main method.
-	 *
-	 * @param args String for command line arguments
-	 */
-	public static void main(String[] args) {
-
-		String[] okvalues = new String[] { "{;{a;b;c}}", "{;{abc}}", "{;{ab;c}}", "{ {a b c}}", "{,{a,b,c}}", "{;g{a;b;c}}", "{a;{a;b;c}}" };
-
-		String[] kovalues = new String[] { "a{;{a;b;c}}", "{;{a;b;c}}a", "Davide", " f s ", "{{a;b;c}}" };
-
-		for (int i = 0; i < okvalues.length; i++) {
-			logger.debug(okvalues[i] + " : " + isMultivalueProfileAttribute(okvalues[i]));
-		}
-		logger.debug("***************************");
-		for (int i = 0; i < kovalues.length; i++) {
-			logger.debug(kovalues[i] + " : " + isMultivalueProfileAttribute(kovalues[i]));
-		}
-
-	}
-
-	/**
 	 * Cleans a string from spaces and tabulation characters.
 	 *
 	 * @param original The input string
