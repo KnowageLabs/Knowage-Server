@@ -33,6 +33,9 @@
             <label class="kn-material-input-label">{{ $t('managers.lovsManagement.queryDefinition') }}</label>
             <VCodeMirror ref="codeMirror" class="p-mt-2" v-model:value="code" :autoHeight="true" :options="options" @keyup="onKeyUp" />
         </div>
+        <div v-if="query.datasource" class="p-mt-2">
+           <small>{{ $t('managers.lovsManagement.queryColumnsNameNotAllowed') }}</small>
+        </div>
     </div>
 </template>
 

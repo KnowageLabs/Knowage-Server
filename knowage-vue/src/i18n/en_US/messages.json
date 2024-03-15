@@ -1634,6 +1634,7 @@
             "profileAttributes": "Profile Attributes",
             "profileDependencyText": "The lov needs some profile attributes.Your personal profile doesn't contain all the necessary attributes.To proceed with the test assign a value to the missing profile attributes.",
             "queryDefinition": "Query definition",
+            "queryColumnsNameNotAllowed": "Column names including null, ' ' , '/' and '.'  are not allowed. Use aliases.",
             "queryWizard": "WIZARD QUERY",
             "sameLabelError": "LOV with same label already exists",
             "script": "Script",
