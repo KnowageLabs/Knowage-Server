@@ -22,7 +22,9 @@ import org.apache.log4j.Logger;
 import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.profiling.PublicProfile;
 import it.eng.spagobi.profiling.dao.ISbiUserDAO;
+import it.eng.spagobi.services.common.JWTSsoService;
 import it.eng.spagobi.services.security.bo.SpagoBIUserProfile;
 
 /**
@@ -159,6 +161,9 @@ public class SecurityServiceSupplierFactory {
 				ret = UserProfile.createSchedulerUserProfile(token).getSpagoBIUserProfile();
 			} else if (UserProfile.isDataPreparationUser(token)) {
 				ret = UserProfile.createDataPreparationUserProfile(token).getSpagoBIUserProfile();
+			} else if (PublicProfile.isPublicUser(token)) {
+				String decodedUserId = JWTSsoService.jwtToken2userId(token);
+				ret = PublicProfile.createPublicUserProfile(decodedUserId);
 			} else {
 				ret = super.checkAuthenticationToken(token);
 			}
