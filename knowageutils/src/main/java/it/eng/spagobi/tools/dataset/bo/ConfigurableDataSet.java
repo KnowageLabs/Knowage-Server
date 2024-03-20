@@ -152,7 +152,7 @@ public abstract class ConfigurableDataSet extends AbstractDataSet {
 
 			dataStore = dataProxy.load(dataReader);
 
-			addDataStoreTransformer(new DecryptionDataStoreTransformer(dataStore));
+			addDataStoreTransformer(new DecryptionDataStoreTransformer(this));
 			addDataStoreTransformer(new PrivacyManagerDataStoreTransformer(this));
 			addDataStoreTransformer(new DataStoreStatsTransformer());
 

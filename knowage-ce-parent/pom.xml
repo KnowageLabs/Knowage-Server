@@ -5,7 +5,7 @@
 	
 	<groupId>it.eng.knowage</groupId>
 	<artifactId>knowage-ce-parent</artifactId>
-	<version>8.1.19</version>
+	<version>8.1.20</version>
 	<packaging>pom</packaging>
 	<name>knowage-ce-parent</name>
 	
@@ -28,7 +28,6 @@
 		<module>../knowagecockpitengine</module>
 		<module>../knowagekpiengine</module>
 		<module>../knowagesdk</module>
-		
 		<module>../knowagecommonjengine</module>
 		<module>../knowagegeoreportengine</module>
 		<module>../knowagemeta</module>
@@ -51,15 +50,14 @@
 		<apache.poi>4.1.2</apache.poi>
 		<commons-lang3.version>3.12.0</commons-lang3.version>
 		<commons-text.version>1.10.0</commons-text.version>
+		<hsqldb.version>1.8.0.10</hsqldb.version>
 		<jasypt.version>1.9.3</jasypt.version>
-		
 		<!-- Minimized version: ixed because in jspf are not dynamic as in pom -->
 		<js.version>${project.version}</js.version>
 		<junit4.version>4.13.2</junit4.version>
 		<log4j.version>2.17.1</log4j.version>
-		<logstash-gelf.version>1.15.0</logstash-gelf.version>
+		<logstash-gelf.version>1.15.1</logstash-gelf.version>
 		<m2e.jaxrs.activation>false</m2e.jaxrs.activation>
-		
 		<!-- For eclipse plugin -->
 		<m2e.jpa.activation>false</m2e.jpa.activation>
 		<m2e.jsf.activation>false</m2e.jsf.activation>
@@ -70,15 +68,12 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<quartz.version>2.3.2</quartz.version>
 		<resteasy.version>3.6.2.Final</resteasy.version>
-		
 		<!-- if you want run tests overwrite this property with: mvn test -DskipTests=false -->
 		<skipTests>true</skipTests>
-		
 		<spring.boot>2.5.12</spring.boot>
 	</properties>
 	
 	<dependencyManagement>
-		
 		<dependencies>
 			
 			<!-- CometD -->
@@ -92,7 +87,6 @@
 				<version>4.0.9</version>
 			</dependency>
 			
-			<!-- Replace Axis 1.4 -->
 			<dependency>
 				<groupId>com.sun.xml.ws</groupId>
 				<artifactId>jaxws-rt</artifactId>
@@ -136,6 +130,24 @@
 			</dependency>
 			
 			<dependency>
+				<groupId>org.apache.logging.log4j</groupId>
+				<artifactId>log4j-iostreams</artifactId>
+				<version>${log4j.version}</version>
+			</dependency>
+			
+			<dependency>
+				<groupId>org.apache.logging.log4j</groupId>
+				<artifactId>log4j-slf4j-impl</artifactId>
+				<version>${log4j.version}</version>
+			</dependency>
+			
+			<dependency>
+				<groupId>org.apache.logging.log4j</groupId>
+				<artifactId>log4j-jul</artifactId>
+				<version>${log4j.version}</version>
+			</dependency>
+			
+			<dependency>
 				<groupId>biz.paluch.logging</groupId>
 				<artifactId>logstash-gelf</artifactId>
 				<version>${logstash-gelf.version}</version>
@@ -170,6 +182,7 @@
 				<artifactId>jasypt</artifactId>
 				<version>${jasypt.version}</version>
 			</dependency>
+			
 			<dependency>
 				<groupId>org.jasypt</groupId>
 				<artifactId>jasypt-hibernate3</artifactId>
@@ -183,8 +196,13 @@
 				<scope>test</scope>
 			</dependency>
 			
+			<dependency>
+				<groupId>org.hsqldb</groupId>
+				<artifactId>hsqldb</artifactId>
+				<version>${hsqldb.version}</version>
+			</dependency>
+			
 		</dependencies>
-		
 	</dependencyManagement>
 	
 	<repositories>
@@ -205,7 +223,6 @@
 			<url>https://www.license4j.com/maven/</url>
 			<layout>default</layout>
 		</repository>
-		
 		<!-- We use osgeo.org because it contains geotools 2.7.5, needed by knowage DAO; this library is not available on Maven Central -->
 		<repository>
 			<id>osgeo.org</id>
@@ -221,28 +238,31 @@
 			<id>enonic</id>
 			<url>https://repo.enonic.com/public/</url>
 		</repository>
-		<!-- We use jaspersoft Repository because it contains jasperreports library, needed by knowagejasperreportengine CE; this library is not available on Maven Central -->
-		<repository>
-			<id>jaspersoft</id>
-			<url>http://jaspersoft.artifactoryonline.com/jaspersoft/jr-ce-releases</url>
-		</repository>
 		<!-- We use Pentaho repository for mondrian, needed by knowagewhatifengine CE -->
 		<repository>
 			<id>pentaho</id>
-			<url>http://nexus.pentaho.org/content/groups/omni</url>
+			<url>https://repo.orl.eng.hitachivantara.com/artifactory/pnt-mvn/</url>
 		</repository>
-		
+		<!-- To get JasperReports dependencies such as jasperreports-functions in version 6.1.0 (only more recent version are available from Maven Central) -->
+		<repository>
+			<id>jasperreports</id>
+			<url>https://jaspersoft.jfrog.io/artifactory/jr-ce-releases/</url>
+		</repository>
+		<!-- Required to get dependencies of JasperReports (it self download from Maven Central) such as specific itext version (2.1.7.js2, only 2.1.7 available on Maven Central) -->
+		<repository>
+			<id>jasperreports-thrid-party</id>
+			<url>https://jaspersoft.jfrog.io/artifactory/third-party-ce-artifacts/</url>
+		</repository>
 		<!-- We use xss-html-filter repository for xss-html-filter, needed by knowage CE; this library is not available on Maven Central -->
 		<repository>
 			<id>xss-html-filter releases</id>
 			<url>https://xss-html-filter.sf.net/releases/</url>
 		</repository>
-		<!-- We use bidlink Repository for com.jamon:fdsapi, needed by knowage CE; this library is not available on Maven Central -->
+		<!-- We use OW2 third party repository for com.jamon:fdsapi, needed by knowage CE; this library is not available on Maven Central -->
 		<repository>
-			<id>bidlink</id>
-			<url>http://repo.bidlink.cn/nexus/content/repositories/</url>
+			<id>ow2-third-party</id>
+			<url>https://repository.ow2.org/nexus/content/repositories/3rd-party/</url>
 		</repository>
-		
 	</repositories>
 	
 	<build>
@@ -250,11 +270,14 @@
 			<plugins>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-assembly-plugin</artifactId>
+					<version>3.6.0</version>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-jar-plugin</artifactId>
 					<version>2.6</version>
-					
 					<configuration>
-						
 						<archive>
 							<manifest>
 								<addDefaultImplementationEntries>true</addDefaultImplementationEntries>
@@ -265,17 +288,11 @@
 						</archive>
 					</configuration>
 				</plugin>
-				
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-war-plugin</artifactId>
 					<version>3.3.1</version>
-					
-					<configuration>
-						<warName>${project.name}</warName>
-					</configuration>
 				</plugin>
-				
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-surefire-plugin</artifactId>
@@ -284,57 +301,78 @@
 						<skipTests>${skipTests}</skipTests>
 					</configuration>
 				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-enforcer-plugin</artifactId>
+					<version>3.2.1</version>
+					<executions>
+						<execution>
+							<id>enforce-versions</id>
+							<goals>
+								<goal>enforce</goal>
+							</goals>
+							<configuration>
+								<rules>
+									<requireJavaVersion>
+										<version>1.5</version>
+									</requireJavaVersion>
+								</rules>
+							</configuration>
+						</execution>
+					</executions>
+				</plugin>
+				<plugin>
+					<groupId>com.github.ekryd.sortpom</groupId>
+					<artifactId>sortpom-maven-plugin</artifactId>
+					<version>2.15.0</version>
+					<executions>
+						<execution>
+							<phase>compile</phase>
+							<goals>
+								<goal>sort</goal>
+							</goals>
+						</execution>
+					</executions>
+					<configuration>
+						<createBackupFile>false</createBackupFile>
+						<keepBlankLines>true</keepBlankLines>
+						<indentBlankLines>true</indentBlankLines>
+						<nrOfIndentSpace>-1</nrOfIndentSpace>
+						<sortProperties>true</sortProperties>
+						<verifyFail>Stop</verifyFail>
+						<verifyFailOn>Strict</verifyFailOn>
+					</configuration>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-resources-plugin</artifactId>
+					<version>3.3.1</version>
+				</plugin>
 			</plugins>
 		</pluginManagement>
 		
 		<plugins>
-			
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-resources-plugin</artifactId>
-				<version>3.3.1</version>
 				<configuration>
 					<nonFilteredFileExtensions>
 						<nonFilteredFileExtension>xlsm</nonFilteredFileExtension>
 					</nonFilteredFileExtensions>
 				</configuration>
 			</plugin>
-			
-			<plugin>
-				<groupId>com.github.ekryd.sortpom</groupId>
-				<artifactId>sortpom-maven-plugin</artifactId>
-				<version>2.15.0</version>
-				<executions>
-					<execution>
-						<phase>compile</phase>
-						<goals>
-							<goal>sort</goal>
-						</goals>
-					</execution>
-				</executions>
-				<configuration>
-					<createBackupFile>false</createBackupFile>
-					<keepBlankLines>true</keepBlankLines>
-					<indentBlankLines>true</indentBlankLines>
-					<nrOfIndentSpace>-1</nrOfIndentSpace>
-					<sortProperties>true</sortProperties>
-				</configuration>
-			</plugin>
-			
 		</plugins>
 	</build>
 	
 	<profiles>
 		<profile>
 			<id>cas-enabled</id>
-			
 			<build>
 				<plugins>
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-war-plugin</artifactId>
 						<version>2.6</version>
-						
 						<configuration>
 							<webResources>
 								<resource>
@@ -354,13 +392,11 @@
 				<enable.cas.start>&lt;!--</enable.cas.start>
 			</properties>
 		</profile>
-		
 		<profile>
 			<id>mysql</id>
 			<activation>
 				<activeByDefault>true</activeByDefault>
 			</activation>
-			
 			<build>
 				<resources>
 					<resource>
@@ -391,10 +427,8 @@
 				<quartz.job.store.driver.delegate.class>org.quartz.impl.jdbcjobstore.StdJDBCDelegate</quartz.job.store.driver.delegate.class>
 			</properties>
 		</profile>
-		
 		<profile>
 			<id>oracle10</id>
-			
 			<build>
 				<resources>
 					<resource>
@@ -425,10 +459,8 @@
 				<quartz.job.store.driver.delegate.class>org.quartz.impl.jdbcjobstore.oracle.OracleDelegate</quartz.job.store.driver.delegate.class>
 			</properties>
 		</profile>
-		
 		<profile>
 			<id>postgres</id>
-			
 			<build>
 				<resources>
 					<resource>
@@ -459,10 +491,8 @@
 				<quartz.job.store.driver.delegate.class>org.quartz.impl.jdbcjobstore.PostgreSQLDelegate</quartz.job.store.driver.delegate.class>
 			</properties>
 		</profile>
-		
 		<profile>
 			<id>mssql</id>
-			
 			<build>
 				<resources>
 					<resource>
@@ -493,7 +523,6 @@
 				<quartz.job.store.driver.delegate.class>org.quartz.impl.jdbcjobstore.MSSQLDelegate</quartz.job.store.driver.delegate.class>
 			</properties>
 		</profile>
-		
 	</profiles>
 	
 </project>

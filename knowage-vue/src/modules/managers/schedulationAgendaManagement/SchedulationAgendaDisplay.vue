@@ -38,7 +38,7 @@
                                     <Column field="date" :style="schedulationAgendaDescriptor.table.dateColumn.style">
                                         <template #body="slotProps">
                                             <div v-if="displayMode == 'time'" class="p-pl-1 color-left-border" :style="{ borderLeftColor: getRandomColor(slotProps.data.jobName) }">
-                                                {{ new Date(slotProps.data.date).getHours() + ':' + new Date(slotProps.data.date).getMinutes() }}
+                                                {{ new Date(slotProps.data.date).toLocaleString(getLocale(true), { hour: '2-digit', minute: '2-digit' }) }}
                                             </div>
                                             <div v-if="displayMode == 'package' || displayMode == 'document'" class="p-pl-1 color-left-border" :style="{ borderLeftColor: getRandomColor(slotProps.data.jobName) }">
                                                 {{ slotProps.data.date }}
@@ -96,7 +96,7 @@ import Badge from 'primevue/badge'
 import Column from 'primevue/column'
 import SelectButton from 'primevue/selectbutton'
 import schedulationAgendaDescriptor from './SchedulationAgendaDescriptor.json'
-import { formatDate, formatDateWithLocale } from '@/helpers/commons/localeHelper'
+import { formatDate, getLocale, formatDateWithLocale } from '@/helpers/commons/localeHelper'
 import Card from 'primevue/card'
 import moment from 'moment'
 
@@ -144,6 +144,9 @@ export default defineComponent({
         }
     },
     methods: {
+        getLocale(js) {
+            getLocale(js)
+        },
         updateDisplayData(displayType: string) {
             this.runDisplay(displayType)
         },

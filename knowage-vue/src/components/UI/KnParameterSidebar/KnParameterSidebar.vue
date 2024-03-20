@@ -128,7 +128,7 @@
                         >
                         <i class="fa fa-eraser parameter-clear-icon kn-cursor-pointer" v-tooltip.left="$t('documentExecution.main.parameterClearTooltip')" @click="resetParameterValue(parameter)"></i>
                     </div>
-                    <Dropdown v-if="!parameter.multivalue && parameter.parameterValue" class="kn-material-input" v-model="parameter.parameterValue[0].value" :options="parameter.data" optionValue="value" optionLabel="description" @change="onDropdownChange(parameter)" />
+                    <Dropdown v-if="!parameter.multivalue && parameter.parameterValue[0]" class="kn-material-input" v-model="parameter.parameterValue[0].value" :options="parameter.data" optionValue="value" optionLabel="description" @change="onDropdownChange(parameter)" />
 
                     <MultiSelect v-else v-model="parameter.parameterValue" :options="parameter.data" optionLabel="description" @change="updateDependency(parameter)" />
                 </div>
@@ -525,7 +525,7 @@ export default defineComponent({
 
             let url = '2.0/documentExeParameters/admissibleValues'
             if (this.mode !== 'execution' && this.document) {
-                url = this.document.type === 'businessModel' ? `1.0/businessmodel/${this.document.name}/admissibleValues` : `/3.0/datasets/${this.document.label}/admissibleValues`
+                url = this.document.type === 'businessModel' ? `1.0/businessmodel/${this.document.name}/admissibleValues` : `3.0/datasets/${this.document.label}/admissibleValues`
             }
 
             await this.$http

@@ -21,6 +21,7 @@ import java.util.Optional;
 import java.util.StringTokenizer;
 
 import javax.annotation.Priority;
+import javax.servlet.http.HttpSession;
 import javax.ws.rs.Priorities;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.core.Response;
@@ -72,6 +73,7 @@ public class SecurityServerInterceptor extends AbstractSecurityServerInterceptor
 	@Override
 	protected UserProfile authenticateUser() {
 		UserProfile profile = null;
+		HttpSession session = servletRequest.getSession(false);
 
 		LOGGER.trace("IN");
 

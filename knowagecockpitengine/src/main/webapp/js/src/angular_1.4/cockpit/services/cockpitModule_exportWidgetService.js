@@ -119,7 +119,7 @@
 				widget.content.columnSelectedOfDataset[k].aliasToShow = widget.content.columnSelectedOfDataset[k].name + widget.content.columnSelectedOfDataset[k].aliasToShow;
 			}
 		}
-			if (!angular.equals(cockpitModule_properties.VARIABLES,{})) {
+			/*if (!angular.equals(cockpitModule_properties.VARIABLES,{})) {
 				for (var k in widget.content.columnSelectedOfDataset) {
 					if(Array.isArray(widget.content.columnSelectedOfDataset[k].variables) && widget.content.columnSelectedOfDataset[k].variables.length) {
 						if (widget.type == "table" && widget.content.columnSelectedOfDataset[k].variables[0].action == 'header') {
@@ -132,7 +132,7 @@
 
 					}
 				}
-			}
+			}*/
 
 			var drivers = formatDrivers(cockpitModule_analyticalDrivers);
 			if (widget.type == "map") {
@@ -206,7 +206,7 @@
 					options : options
 			}
 
-			if (!angular.equals(cockpitModule_properties.VARIABLES,{})) {
+			/*if (!angular.equals(cockpitModule_properties.VARIABLES,{})) {
 				for (var k in widget.content.columnSelectedOfDataset) {
 					if(Array.isArray(widget.content.columnSelectedOfDataset[k].variables) && widget.content.columnSelectedOfDataset[k].variables.length) {
 						if (widget.type == "table" && widget.content.columnSelectedOfDataset[k].variables[0].action == 'header') {
@@ -219,7 +219,7 @@
 
 					}
 				}
-			}
+			}*/
 
 			var drivers = formatDrivers(cockpitModule_analyticalDrivers);
 
@@ -274,17 +274,20 @@
 			toReturn.dataset = aggregation.dataset;
 			toReturn.measures = [];
 			toReturn.categories = [];
-			var toFilter = spatialAttributesToFilter[aggregation.dataset];
-			for (var i=0; i<aggregation.categories.length; i++) {
-				var col = aggregation.categories[i];
-				if (!toFilter.includes(col.columnName)) {
-					toReturn.categories.push(col);
+			var toFilter = spatialAttributesToFilter[aggregation.dataset] ?? [];
+			
+			if(toFilter){
+				for (var i=0; i<aggregation.categories.length; i++) {
+					var col = aggregation.categories[i];
+					if (!toFilter.includes(col.columnName)) {
+						toReturn.categories.push(col);
+					}
 				}
-			}
-			for (var i=0; i<aggregation.measures.length; i++) {
-				var col = aggregation.measures[i];
-				if (!toFilter.includes(col.columnName)) {
-					toReturn.measures.push(col);
+				for (var i=0; i<aggregation.measures.length; i++) {
+					var col = aggregation.measures[i];
+					if (!toFilter.includes(col.columnName)) {
+						toReturn.measures.push(col);
+					}
 				}
 			}
 			return toReturn;

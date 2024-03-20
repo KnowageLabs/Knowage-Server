@@ -28,6 +28,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Properties;
 
 import org.apache.log4j.Logger;
@@ -45,6 +46,8 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.VerticalAlignment;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.CellRangeAddress;
+import org.apache.poi.xssf.streaming.SXSSFSheet;
+import org.apache.poi.xssf.usermodel.DefaultIndexedColorMap;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFColor;
 import org.json.JSONArray;
@@ -111,9 +114,13 @@ public class CrossTabExporter extends GenericWidgetExporter implements IWidgetEx
 	public static final String DEFAULT_FONT_NAME = "Verdana";
 	public static final int DEFAULT_CALCULATED_FIELD_DECIMALS = 2;
 
+	private static final String STRING_CELL_DEFAULT_FORMAT = "#,##0.00";
+
 	private Properties properties;
 	private Map<String, List<Threshold>> thresholdColorsMap;
 	private JSONObject variables = new JSONObject();
+
+	protected Map<Integer, XSSFCellStyle> formatHash2CellStyle = new HashMap<>();
 
 	public CrossTabExporter(Properties properties, JSONObject variables) {
 		super();
@@ -151,6 +158,51 @@ public class CrossTabExporter extends GenericWidgetExporter implements IWidgetEx
 	public Object getProperty(String propertyName) {
 		return this.properties.get(propertyName);
 	}
+	
+	/*
+	 * This method avoids cell style objects number to increase by rows number (see https://production.eng.it/jira/browse/KNOWAGE-6692 and
+	 * https://production.eng.it/jira/browse/KNOWAGE-6693)
+	 */
+	protected final XSSFCellStyle getCellStyleByFormat(Workbook wb, CreationHelper helper, String format,
+			Optional<FillPatternType> fillPatternTypeOpt, Optional<Color> colorOpt) {
+		Integer styleKey = getStyleKey(format, fillPatternTypeOpt, colorOpt);
+		formatHash2CellStyle.computeIfAbsent(styleKey,
+				key -> doCreateCellStyle(wb, helper, format, fillPatternTypeOpt, colorOpt));
+		return formatHash2CellStyle.get(styleKey);
+	}
+	
+	private final XSSFCellStyle doCreateCellStyle(Workbook wb, CreationHelper helper, String format,
+			Optional<FillPatternType> fillPatternTypeOpt, Optional<Color> colorOpt) {
+
+		logger.debug("New style created for format " + format + ", fill pattern" + fillPatternTypeOpt + " and color" +  colorOpt);
+
+		XSSFCellStyle cellStyle = (XSSFCellStyle) wb.createCellStyle();
+		cellStyle.setDataFormat(helper.createDataFormat().getFormat(format));
+		fillPatternTypeOpt.ifPresent(cellStyle::setFillPattern);
+		colorOpt.ifPresent(
+				color -> cellStyle.setFillForegroundColor(new XSSFColor(color, new DefaultIndexedColorMap())));
+
+		logger.debug("New style is " + cellStyle);
+
+		return cellStyle;
+	}
+	
+	private final Integer getStyleKey(String format, Optional<FillPatternType> fillPatternTypeOpt,
+			Optional<Color> colorOpt) {
+		Integer hashcode = format.hashCode();
+		if (fillPatternTypeOpt.isPresent()) {
+			FillPatternType fillPatternType = fillPatternTypeOpt.get();
+			hashcode += fillPatternType.hashCode();
+		}
+		if (colorOpt.isPresent()) {
+			Color color = colorOpt.get();
+			hashcode += color.hashCode();
+		}
+
+		logger.debug("Getting style for " + format + ", " + fillPatternTypeOpt +" and " +  colorOpt + " return " + hashcode);
+
+		return hashcode;
+	}
 
 	private int fillExcelSheetWithData(Sheet sheet, CrossTab cs, CreationHelper createHelper, int startRow, Locale locale)
 			throws SerializationException, JSONException {
@@ -166,6 +218,7 @@ public class CrossTabExporter extends GenericWidgetExporter implements IWidgetEx
 
 		CellStyle memberCellStyle = this.buildHeaderCellStyle(sheet);
 		CellStyle dimensionCellStyle = this.buildDimensionCellStyle(sheet);
+		CellStyle dataCellStyle = this.buildDataCellStyle(sheet);
 
 		// build headers for column first ...
 		Monitor buildColumnsHeaderMonitor = MonitorFactory.start("CockpitEngine.export.excel.CrossTabExporter.buildColumnsHeaderMonitor");
@@ -179,7 +232,7 @@ public class CrossTabExporter extends GenericWidgetExporter implements IWidgetEx
 
 		// then put the matrix data
 		Monitor buildDataMatrixMonitor = MonitorFactory.start("CockpitEngine.export.excel.CrossTabExporter.buildDataMatrixMonitor");
-		buildDataMatrix(sheet, cs, columnsDepth + startRow - 1, rowsDepth - 1, createHelper);
+		buildDataMatrix(sheet, cs, columnsDepth + startRow - 1, rowsDepth - 1, createHelper, dataCellStyle);
 		buildDataMatrixMonitor.stop();
 
 		// finally add row titles
@@ -209,10 +262,11 @@ public class CrossTabExporter extends GenericWidgetExporter implements IWidgetEx
 		return totalRowsNumber + 4;
 	}
 
-	protected int buildDataMatrix(Sheet sheet, CrossTab cs, int rowOffset, int columnOffset, CreationHelper createHelper) throws JSONException {
+	protected int buildDataMatrix(Sheet sheet, CrossTab cs, int rowOffset, int columnOffset, CreationHelper createHelper,
+			CellStyle dataCellStyle) throws JSONException {
 		MeasureFormatter measureFormatter = new MeasureFormatter(cs);
 		String[][] dataMatrix = cs.getDataMatrix();
-		CellStyle cellStyleForNA = buildNACellStyle(sheet);
+		CellStyle cellStyleForNA = buildNACellStyle(sheet, dataCellStyle);
 		int rowNum = 0;
 		int numOfMeasures = cs.getMeasures().size();
 		List<Measure> allMeasures = cs.getCrosstabDefinition().getMeasures();
@@ -257,7 +311,7 @@ public class CrossTabExporter extends GenericWidgetExporter implements IWidgetEx
 					String measureId = getMeasureId(cs, measureIdx);
 					int decimals = measureFormatter.getFormatXLS(i, j);
 					CellType cellType = cs.getCellType(i, j);
-					CellStyle style = getStyle(decimals, sheet, createHelper, cellType, measureId, value);
+					CellStyle style = getStyle(decimals, sheet, createHelper, cellType, measureId, value, dataCellStyle);
 					cellStyleMonitor.stop();
 					Monitor buildCellMonitor = MonitorFactory.start("CockpitEngine.export.excel.CrossTabExporter.buildDataMatrix.buildCellMonitor");
 					String cellTypeValue = cellType.getValue();
@@ -309,8 +363,8 @@ public class CrossTabExporter extends GenericWidgetExporter implements IWidgetEx
 		return org.apache.poi.ss.usermodel.CellType.STRING;
 	}
 
-	public CellStyle buildNACellStyle(Sheet sheet) {
-		CellStyle cellStyleForNA = this.buildDataCellStyle(sheet);
+	public CellStyle buildNACellStyle(Sheet sheet, CellStyle dataCellStyle) {
+		CellStyle cellStyleForNA = dataCellStyle;
 		cellStyleForNA.setAlignment(HorizontalAlignment.CENTER);
 		return cellStyleForNA;
 	}
@@ -327,7 +381,7 @@ public class CrossTabExporter extends GenericWidgetExporter implements IWidgetEx
 	 * @throws JSONException
 	 */
 	protected void buildRowsHeaders(Sheet sheet, CrossTab cs, List<Node> siblings, int rowNum, int columnNum, CreationHelper createHelper, Locale locale,
-			CellStyle cellStyle) throws JSONException {
+			CellStyle memberCellStyle) throws JSONException {
 		int rowsCounter = rowNum;
 
 		for (int i = 0; i < siblings.size(); i++) {
@@ -344,7 +398,7 @@ public class CrossTabExporter extends GenericWidgetExporter implements IWidgetEx
 			cell.setCellValue(createHelper.createRichTextString(text));
 			cell.setCellType(this.getCellTypeString());
 
-			cell.setCellStyle(cellStyle);
+			cell.setCellStyle(memberCellStyle);
 
 			int descendants = aNode.getLeafsNumber();
 			if (descendants > 1) {
@@ -356,7 +410,7 @@ public class CrossTabExporter extends GenericWidgetExporter implements IWidgetEx
 			}
 
 			if (childs != null && childs.size() > 0) {
-				buildRowsHeaders(sheet, cs, childs, rowsCounter, columnNum + 1, createHelper, locale, cellStyle);
+				buildRowsHeaders(sheet, cs, childs, rowsCounter, columnNum + 1, createHelper, locale, memberCellStyle);
 			}
 			int increment = descendants > 1 ? descendants : 1;
 			rowsCounter = rowsCounter + increment;
@@ -375,7 +429,7 @@ public class CrossTabExporter extends GenericWidgetExporter implements IWidgetEx
 	 * @throws JSONException
 	 */
 	protected void buildRowHeaderTitle(Sheet sheet, CrossTab cs, int columnHeadersNumber, int startColumn, int startRow, CreationHelper createHelper,
-			Locale locale, CellStyle cellStyle) throws JSONException {
+			Locale locale, CellStyle dimensionCellStyle) throws JSONException {
 		List<String> titles = cs.getRowHeadersTitles();
 
 		if (titles != null) {
@@ -394,7 +448,7 @@ public class CrossTabExporter extends GenericWidgetExporter implements IWidgetEx
 
 				cell.setCellValue(createHelper.createRichTextString(text));
 				cell.setCellType(this.getCellTypeString());
-				cell.setCellStyle(cellStyle);
+				cell.setCellStyle(dimensionCellStyle);
 			}
 			if (cs.isMeasureOnRow()) {
 				Cell cell = row.createCell(startColumn + titles.size());
@@ -404,7 +458,7 @@ public class CrossTabExporter extends GenericWidgetExporter implements IWidgetEx
 				}
 				cell.setCellValue(createHelper.createRichTextString(text));
 				cell.setCellType(this.getCellTypeString());
-				cell.setCellStyle(cellStyle);
+				cell.setCellStyle(dimensionCellStyle);
 			}
 		}
 	}
@@ -513,6 +567,8 @@ public class CrossTabExporter extends GenericWidgetExporter implements IWidgetEx
 
 	public CellStyle buildDataCellStyle(Sheet sheet) {
 		CellStyle cellStyle = sheet.getWorkbook().createCellStyle();
+//		CreationHelper helper = wb.getCreationHelper();
+//		XSSFCellStyle cellStyle = getCellStyleByFormat(wb, helper, STRING_CELL_DEFAULT_FORMAT, Optional.empty(), Optional.empty());
 		cellStyle.setAlignment(HorizontalAlignment.RIGHT);
 		cellStyle.setVerticalAlignment(VerticalAlignment.CENTER);
 
@@ -646,7 +702,8 @@ public class CrossTabExporter extends GenericWidgetExporter implements IWidgetEx
 		return false;
 	}
 
-	public CellStyle getStyle(int j, Sheet sheet, CreationHelper createHelper, CellType celltype, String measureId, Double value) {
+	public CellStyle getStyle(int j, Sheet sheet, CreationHelper createHelper, CellType celltype, String measureId, Double value,
+			CellStyle dataCellStyle) {
 
 		if (celltype.equals(CellType.CF)) {
 			j = this.getCalculatedFieldDecimals();
@@ -658,12 +715,12 @@ public class CrossTabExporter extends GenericWidgetExporter implements IWidgetEx
 			decimals += "0";
 		}
 
-		XSSFCellStyle cellStyle = (XSSFCellStyle) this.buildDataCellStyle(sheet);
 		DataFormat df = createHelper.createDataFormat();
 		String format = "#,##0";
 		if (decimals.length() > 0) {
 			format += "." + decimals;
 		}
+		CellStyle cellStyle = dataCellStyle;
 		cellStyle.setDataFormat(df.getFormat(format));
 
 		if (celltype.equals(CellType.TOTAL)) {
@@ -676,7 +733,7 @@ public class CrossTabExporter extends GenericWidgetExporter implements IWidgetEx
 			cellStyle.setFillForegroundColor(IndexedColors.GREY_25_PERCENT.getIndex());
 		}
 		if (celltype.equals(CellType.DATA)) {
-			cellStyle.setFillForegroundColor(getThresholdColor(measureId, value));
+			((XSSFCellStyle) cellStyle).setFillForegroundColor(getThresholdColor(measureId, value));
 		}
 
 		return cellStyle;
@@ -717,10 +774,11 @@ public class CrossTabExporter extends GenericWidgetExporter implements IWidgetEx
 
 			int totalRowsNumber = cs.getTotalNumberOfRows();
 			int windowSize = Integer.parseInt(SingletonConfig.getInstance().getConfigValue("KNOWAGE.DASHBOARD.EXPORT.EXCEL.STREAMING_WINDOW_SIZE"));
-			if (totalRowsNumber <= windowSize) {
+			if (totalRowsNumber <= windowSize || windowSize == -1) {
 				// crosstab fits in memory
 				String cockpitSheetName = getCockpitSheetName(template, widgetId);
 				Sheet sheet = excelExporter.createUniqueSafeSheet(wb, widgetName, cockpitSheetName);
+				((SXSSFSheet) sheet).setRandomAccessWindowSize(windowSize);
 				fillExcelSheetWithData(sheet, cs, wb.getCreationHelper(), 0, excelExporter.getLocale());
 				return 1;
 			} else {

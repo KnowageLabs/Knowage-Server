@@ -16,10 +16,14 @@
         @extend .kn-toolbar;
         background-color: var(--kn-toolbar-primary-background-color) !important;
         color: var(--kn-toolbar-primary-color);
-        .p-button.p-button-text.p-button-plain {
-            color: var(--kn-toolbar-primary-icon-color);
-            &:enabled:hover {
-                color: var(--kn-toolbar-primary-icon-hover-color);
+        .p-button.p-button-plain {
+            color: var(--kn-toolbar-primary-color);
+            .p-button-icon {
+                color: var(--kn-toolbar-primary-color);
+            }
+            &:not(disabled):hover {
+                color: var(--kn-toolbar-primary-color);
+                opacity: 0.8;
             }
         }
     }
@@ -28,16 +32,44 @@
         @extend .kn-toolbar;
         background-color: var(--kn-toolbar-secondary-background-color) !important;
         color: var(--kn-toolbar-secondary-color);
+        .p-button.p-button-plain {
+            color: var(--kn-toolbar-secondary-color);
+            .p-button-icon {
+                color: var(--kn-toolbar-secondary-color);
+            }
+            &:not(disabled):hover {
+                color: var(--kn-toolbar-secondary-color);
+                opacity: 0.8;
+            }
+        }
     }
 
     &--default {
         @extend .kn-toolbar;
         background-color: var(--kn-toolbar-default-background-color) !important;
         color: var(--kn-toolbar-default-color);
+        .p-button.p-button-plain {
+            color: var(--kn-toolbar-default-color);
+            .p-button-icon {
+                color: var(--kn-toolbar-default-color);
+            }
+            &:not(disabled):hover {
+                color: var(--kn-toolbar-default-color);
+                opacity: 0.8;
+            }
+        }
     }
 
     &--transparent {
         @extend .kn-toolbar;
         background-color: transparent !important;
+    }
+}
+
+.p-card {
+    .kn-toolbar {
+        .kn-button {
+            padding: 1rem 2rem;
+        }
     }
 }

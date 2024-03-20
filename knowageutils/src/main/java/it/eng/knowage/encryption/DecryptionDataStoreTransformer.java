@@ -13,11 +13,13 @@ import org.jasypt.encryption.pbe.PBEStringEncryptor;
 import org.jasypt.exceptions.EncryptionInitializationException;
 import org.jasypt.exceptions.EncryptionOperationNotPossibleException;
 
+import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.tools.dataset.common.datastore.IField;
 import it.eng.spagobi.tools.dataset.common.datastore.IRecord;
 import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
 import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
+import it.eng.spagobi.tools.dataset.common.metadata.MetaData;
 import it.eng.spagobi.tools.dataset.common.transformer.AbstractDataStoreTransformer;
 
 public class DecryptionDataStoreTransformer extends AbstractDataStoreTransformer {
@@ -28,6 +30,10 @@ public class DecryptionDataStoreTransformer extends AbstractDataStoreTransformer
 	private final Map<Integer, IFieldMetaData> decryptableFieldByIndex = new LinkedHashMap<>();
 	private PBEStringEncryptor encryptor;
 	private final IMetaData dataStoreMetadata;
+
+	public DecryptionDataStoreTransformer(IDataSet dataSet) {
+		this(dataSet.getDsMetadata() != null ? dataSet.getMetadata() : new MetaData());
+	}
 
 	public DecryptionDataStoreTransformer(IDataStore dataStore) {
 		this(dataStore.getMetaData());
@@ -119,7 +125,7 @@ public class DecryptionDataStoreTransformer extends AbstractDataStoreTransformer
 			if (Objects.nonNull(value)) {
 				newValue = encryptor.decrypt(value.toString());
 				fieldAt.setValue(newValue);
-				LOGGER.warn("Decrypt value {} to {}", value, newValue);
+				LOGGER.debug("Decrypt value {} to {}", value, newValue);
 			}
 		} catch (EncryptionOperationNotPossibleException e) {
 			LOGGER.warn("Ignoring field value {} from field {} (with \"{}\" alias): see following message", value,

@@ -102,13 +102,14 @@ public class XlsxStreamingOutput implements StreamingOutput {
 
 		List<IFieldMetaData> fieldsMetadata = this.metaData.getFieldsMeta();
 
-		this.visibleFields = fieldsMetadata.stream()
-			.filter(e -> (Boolean) e.getProperties().getOrDefault("visible", true))
-			.collect(toList());
-		this.indexesOfVisibleFields = IntStream.range(0, fieldsMetadata.size())
-			.filter(e -> (Boolean) fieldsMetadata.get(e).getProperties().getOrDefault("visible", true))
-			.boxed()
-			.collect(toList());
+		this.visibleFields = fieldsMetadata.stream().filter(e -> {
+			Object o = e.getProperties().get("visible");
+			return o == null || Boolean.valueOf(o.toString());
+		}).collect(toList());
+		this.indexesOfVisibleFields = IntStream.range(0, fieldsMetadata.size()).filter(e -> {
+			Object o = fieldsMetadata.get(e).getProperties().get("visible");
+			return o == null || Boolean.valueOf(o.toString());
+		}).boxed().collect(toList());
 		this.visibleFieldCount = visibleFields.size();
 		this.properties = new HashMap<>();
 		this.locale = locale;
@@ -159,16 +160,11 @@ public class XlsxStreamingOutput implements StreamingOutput {
 
 	/**
 	 *
-	 * @param sheet
-	 *            ...
-	 * @param workbook
-	 *            ...
-	 * @param createHelper
-	 *            ...
-	 * @param beginRowHeaderData
-	 *            header's vertical offset. Expressed in number of rows
-	 * @param beginColumnHeaderData
-	 *            header's horizontal offset. Expressed in number of columns
+	 * @param sheet                 ...
+	 * @param workbook              ...
+	 * @param createHelper          ...
+	 * @param beginRowHeaderData    header's vertical offset. Expressed in number of rows
+	 * @param beginColumnHeaderData header's horizontal offset. Expressed in number of columns
 	 *
 	 * @return ...
 	 */

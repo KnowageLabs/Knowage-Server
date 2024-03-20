@@ -119,7 +119,8 @@ public abstract class AbstractFormatExporter {
 						JSONObject column = aggr.getJSONObject(ii);
 
 						if (column.has("group") && column.getString("group").equals(id)) {
-							String nameToInsert = getTableColumnHeaderValue(column);
+//							String nameToInsert = getTableColumnHeaderValue(column);
+							String nameToInsert = column.getString("aliasToShow");
 							returnMap.put(nameToInsert, groupName);
 						}
 
@@ -248,11 +249,11 @@ public abstract class AbstractFormatExporter {
 
 				JSONObject columnNew = columnsNew.getJSONObject(i);
 
-				String newHeader = getTableColumnHeaderValue(columnNew);
+//				String newHeader = getTableColumnHeaderValue(columnNew);
 
 				for (int j = 0; j < columnsOld.length(); j++) {
 					JSONObject columnOld = columnsOld.getJSONObject(j);
-					if (columnOld.getString("header").equals(newHeader)) {
+					if (columnOld.getString("header").equals(columnNew.getString("aliasToShow"))) {
 
 						if (columnNew.has("ranges")) {
 							JSONArray ranges = columnNew.getJSONArray("ranges");
@@ -398,7 +399,8 @@ public abstract class AbstractFormatExporter {
 				for (int j = 0; j < columns.length(); j++) {
 					JSONObject col = columns.getJSONObject(j);
 					if (col.has("aliasToShow")
-							&& orderedCol.getString("header").equals(getTableColumnHeaderValue(col))) {
+//							&& orderedCol.getString("header").equals(getTableColumnHeaderValue(col))) {
+							&& orderedCol.getString("header").equals(col.getString("aliasToShow"))) {
 						if (col.has("style")) {
 							toReturn[i] = col.getJSONObject("style");
 						}
@@ -1417,6 +1419,28 @@ public abstract class AbstractFormatExporter {
 			}
 		}
 		return format.toString();
+	}
+	
+	protected final JSONObject getWidgetContentFromBody(JSONObject widget) {
+		JSONObject curWidget = new JSONObject();
+		
+		if (body == null || body.length() == 0)
+			return curWidget;
+		
+		try {
+			JSONArray allWidgets = body.getJSONArray("widget");
+			int i;
+			for (i = 0; i < allWidgets.length(); i++) {
+				curWidget = allWidgets.getJSONObject(i);
+				if (curWidget.getLong("id") == widget.getLong("id")) {
+					return curWidget.optJSONObject("content");
+				}
+			}
+		} catch (Exception e) {
+		LOGGER.error("Cannot get widget content field", e);
+			return new JSONObject();
+		}
+		return curWidget;
 	}
 
 	protected final Map<String, String> getGroupAndColumnsMap(JSONObject widgetContent, JSONArray groupsArray) {

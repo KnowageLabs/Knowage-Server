@@ -32,6 +32,7 @@ import org.apache.log4j.Logger;
 
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.commons.bo.UserProfile;
+import it.eng.spagobi.commons.bo.UserProfileUtility;
 import it.eng.spagobi.services.common.SsoServiceFactory;
 import it.eng.spagobi.services.common.SsoServiceInterface;
 import it.eng.spagobi.services.exceptions.ExceptionUtilities;
@@ -104,6 +105,9 @@ public abstract class AbstractSecurityServerInterceptor extends AbstractKnowageI
 			UserProfileManager.setProfile(profile);
 			manageTenant(profile);
 
+			// PM-int
+			UserProfileUtility.enrichProfile(profile, servletRequest, servletRequest.getSession());
+
 			// we put user profile in session only in case incoming request is NOT for a back-end service (because back-end services should be treated in a
 			// stateless fashion, otherwise number of HTTP sessions will increase with no control) and it is not already stored in session
 			if (!isBackEndService() && getUserProfileFromSession() == null) {
@@ -131,6 +135,8 @@ public abstract class AbstractSecurityServerInterceptor extends AbstractKnowageI
 				LOGGER.debug("The user [" + profile.getUserName() + "] is enabled to invoke method [" + method.getName()
 						+ "] on class [" + resourceInfo.getResourceClass() + "]");
 			}
+
+			// TODO PM enrich user profile
 
 		} catch (SpagoBIRuntimeException e) {
 			throw e;

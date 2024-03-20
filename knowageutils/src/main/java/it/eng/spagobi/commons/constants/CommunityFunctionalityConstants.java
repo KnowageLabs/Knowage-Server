@@ -45,6 +45,9 @@ public class CommunityFunctionalityConstants {
 	public static final String CREATE_SELF_SERVICE_KPI = "CreateSelfSelviceKpi";
 	public static final String CREATE_SOCIAL_ANALYSIS = "CreateSocialAnalysis";
 	public static final String DATA_PREPARATION = "DataPreparation";
+	public static final String HELP_ON_LINE = "HelpOnLine";
+	public static final String DOSSIER_CREATION = "DossierCreation";
+	public static final String DASHBOARD_THEMES_MANAGEMENT = "DashboardThemesManagement";
 	public static final String DATASET_MANAGEMENT = "DatasetManagement";
 	public static final String DATASOURCE_BIG_DATA = "DataSourceBigData";
 	public static final String DATASOURCE_MANAGEMENT = "DataSourceManagement";

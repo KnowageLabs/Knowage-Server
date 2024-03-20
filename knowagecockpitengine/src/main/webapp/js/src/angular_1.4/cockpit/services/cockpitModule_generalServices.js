@@ -136,7 +136,7 @@ angular.module("cockpitModule").service("cockpitModule_generalServices",function
                         }
 
                         if (hasVueParent) {
-							hasVueParent.postMessage({"type":"saveCockpit","model":cockpitModule_properties}, '*');
+							hasVueParent.postMessage({"type":"saveCockpit","model":cockpitModule_properties}, location.origin);
 						}else {
 							window.parent.postMessage(cockpitModule_properties);
 						}

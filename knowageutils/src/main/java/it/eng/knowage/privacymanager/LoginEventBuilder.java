@@ -47,7 +47,7 @@ public class LoginEventBuilder {
 		dto.setSession(session);
 	}
 
-	public void appendUserAgent(String os, String sourceIp, boolean sourceSocketEnabled, String userAgent) {
+	public void appendUserAgent(String os, String sourceIp, Boolean sourceSocketEnabled, String userAgent) {
 		UserAgentDTO usrAg = new UserAgentDTO();
 		usrAg.setOs(os);
 		usrAg.setSourceIpAddress(sourceIp);

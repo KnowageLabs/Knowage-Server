@@ -5,7 +5,7 @@ angular.module("cockpitModule").service("cockpitModule_nearRealtimeServices",fun
 		var dsList=tmpList==undefined? cockpitModule_template.configuration.datasets:tmpList;
 		for(var i=0;i<dsList.length;i++){
 			if(angular.equals(dsList[i].dsLabel,dsLabel) || angular.equals(dsList[i].label,dsLabel)){
-				return !dsList[i].useCache
+				return true
 			}
 		}
 	}

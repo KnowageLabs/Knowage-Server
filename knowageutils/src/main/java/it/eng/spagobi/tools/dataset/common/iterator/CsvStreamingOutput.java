@@ -41,13 +41,14 @@ public class CsvStreamingOutput implements StreamingOutput {
 
 		List<IFieldMetaData> fieldsMetadata = this.metaData.getFieldsMeta();
 
-		this.visibleFields = fieldsMetadata.stream()
-			.filter(e -> (Boolean) e.getProperties().getOrDefault("visible", true))
-			.collect(toList());
-		this.indexesOfVisibleFields = IntStream.range(0, fieldsMetadata.size())
-			.filter(e -> (Boolean) fieldsMetadata.get(e).getProperties().getOrDefault("visible", true))
-			.boxed()
-			.collect(toList());
+		this.visibleFields = fieldsMetadata.stream().filter(e -> {
+			Object o = e.getProperties().get("visible");
+			return o == null || Boolean.valueOf(o.toString());
+		}).collect(toList());
+		this.indexesOfVisibleFields = IntStream.range(0, fieldsMetadata.size()).filter(e -> {
+			Object o = fieldsMetadata.get(e).getProperties().get("visible");
+			return o == null || Boolean.valueOf(o.toString());
+		}).boxed().collect(toList());
 		this.visibleFieldCount = visibleFields.size();
 	}
 

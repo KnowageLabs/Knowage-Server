@@ -1206,7 +1206,10 @@ public class LowFunctionalityDAOHibImpl extends AbstractHibernateDAO implements 
 			boolean isFinalUser = false;
 
 			if (profile != null && profile.isAbleToExecuteAction(VIEW_MY_FOLDER_ADMIN)) {
-				statement.append("where (f.functTypeCd = 'LOW_FUNCT' or f.functTypeCd = 'USER_FUNCT')");
+//				statement.append("where (f.functTypeCd = 'LOW_FUNCT' or f.functTypeCd = 'USER_FUNCT')");
+				
+//				no personal folder should be present
+				statement.append("where (f.functTypeCd = 'LOW_FUNCT')");
 			} else if (username == null) {
 				statement.append("where f.functTypeCd = 'LOW_FUNCT'");
 			} else {

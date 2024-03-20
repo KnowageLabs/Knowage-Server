@@ -41,7 +41,7 @@
                 ]
             },
             {
-                "fieldName": "scopeCd",
+                "fieldName": "scopeId",
                 "validators": [
                     {
                         "key": "required"
@@ -49,13 +49,10 @@
                 ]
             },
             {
-                "fieldName": "catTypeVn",
+                "fieldName": "catTypeId",
                 "validators": [
                     {
-                        "key": "required",
-                        "validator": {
-                            "type": "cat-type-required"
-                        }
+                        "key": "required"
                     }
                 ]
             }

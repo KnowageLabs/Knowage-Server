@@ -30,6 +30,7 @@
             selectionMode="single"
             class="p-datatable-sm kn-table"
             dataKey="id"
+            :resizableColumns="true"
             :responsiveLayout="documentBrowserTableDescriptor.responsiveLayout"
             :breakpoint="documentBrowserTableDescriptor.breakpoint"
             @rowClick="$emit('selected', $event.data)"

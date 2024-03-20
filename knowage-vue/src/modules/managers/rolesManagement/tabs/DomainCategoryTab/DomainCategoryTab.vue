@@ -10,7 +10,7 @@
         <template #content>
             <DataTable
                 :value="categoryList"
-                v-model:selection="selectedCategories"
+                v-model:selection.sync="selectedCategories"
                 class="p-datatable-sm kn-table"
                 dataKey="categoryId"
                 :paginator="true"
@@ -19,10 +19,6 @@
                 breakpoint="960px"
                 :scrollable="true"
                 scrollHeight="flex"
-                @rowSelect="setDirty"
-                @rowUnselect="setDirty"
-                @rowSelectAll="setDirty"
-                @rowUnselectAll="setDirty"
                 data-test="data-table"
             >
                 <template #empty>
@@ -65,6 +61,11 @@ export default defineComponent({
     watch: {
         selected() {
             this.selectedCategories = this.selected as iCategory[]
+        },
+        selectedCategories(newCategories: iCategory[]): void {
+            if (newCategories === this.selectedCategories) {
+                this.setDirty()
+            }
         }
     },
     created() {

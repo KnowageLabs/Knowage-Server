@@ -6,7 +6,7 @@
 	<parent>
 		<groupId>it.eng.knowage</groupId>
 		<artifactId>knowage-ce-parent</artifactId>
-		<version>8.1.19</version>
+		<version>8.1.20</version>
 		<relativePath>../knowage-ce-parent/pom.xml</relativePath>
 	</parent>
 	
@@ -15,7 +15,6 @@
 	<name>knowagesdk</name>
 	
 	<dependencies>
-		
 		<dependency>
 			<groupId>it.eng.knowage</groupId>
 			<artifactId>knowage-utils</artifactId>
@@ -116,8 +115,11 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
-		
 	</dependencies>
+	
+	<build>
+		<finalName>knowagesdk</finalName>
+	</build>
 	
 	<profiles>
 		<profile>

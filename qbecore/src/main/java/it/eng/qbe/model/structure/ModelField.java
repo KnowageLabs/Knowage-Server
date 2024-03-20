@@ -193,4 +193,10 @@ public class ModelField extends AbstractModelNode implements IModelField {
 
 	}
 
+	@Override
+	public boolean isEncrypted() {
+		String decryptValue = getPropertyAsString("decrypt");
+		return new Boolean(decryptValue);
+	}
+
 }

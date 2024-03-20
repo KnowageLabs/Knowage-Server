@@ -37,7 +37,7 @@ import org.jasypt.encryption.pbe.PBEStringEncryptor;
 import org.jasypt.hibernate3.encryptor.HibernatePBEEncryptorRegistry;
 import org.json.JSONObject;
 
-import it.eng.knowage.encryption.DataEncryptionCfgForExternalEngines;
+import it.eng.knowage.encryption.DataEncryptionGlobalCfg;
 import it.eng.knowage.encryption.EncryptorFactory;
 import it.eng.qbe.datasource.AbstractDataSource;
 import it.eng.qbe.datasource.ConnectionDescriptor;
@@ -113,7 +113,7 @@ public class JPADataSource extends AbstractDataSource implements IJpaDataSource 
 
 		String cfgKey = DEFAULT_CFG_KEY;
 
-		DataEncryptionCfgForExternalEngines decfee = DataEncryptionCfgForExternalEngines.getInstance();
+		DataEncryptionGlobalCfg decfee = DataEncryptionGlobalCfg.getInstance();
 		String algorithm = decfee.getKeyTemplateForAlgorithm(cfgKey);
 		String password = decfee.getKeyTemplateForPassword(cfgKey);
 

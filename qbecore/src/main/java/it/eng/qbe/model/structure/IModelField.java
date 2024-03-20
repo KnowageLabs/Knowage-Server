@@ -22,6 +22,7 @@ import it.eng.spagobi.utilities.objects.Couple;
 
 public interface IModelField extends IModelNode {
 
+	@Override
 	public String getUniqueName();
 
 	public Couple getQueryName();
@@ -47,4 +48,6 @@ public interface IModelField extends IModelNode {
 	public Class getJavaClass();
 
 	public void setJavaClass(Class javaClass);
+
+	public boolean isEncrypted();
 }

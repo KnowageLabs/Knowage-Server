@@ -422,7 +422,7 @@ public class JPAModelStructureBuilder extends AbstractModelStructureBuilder {
 		} else {
 			modelField = dataMartEntity.addNormalField(keyPrefix + attr.getName());
 		}
-
+		modelField.setModelName(dataMartEntity.getModelName());
 		modelField.setType(type);
 		modelField.setPrecision(precision);
 		modelField.setLength(scale);

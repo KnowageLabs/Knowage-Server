@@ -20,7 +20,6 @@ package it.eng.spagobi.security.init;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -85,12 +84,13 @@ public class InternalSecurityInitializer extends SpagoBIInitializer {
 
 			ISbiUserDAO userDAO = DAOFactory.getSbiUserDAO();
 
+			initDefaultAuthorizations(config);
+
 			if (!userDAO.thereIsAnyUsers()) {
 				List<SbiAttribute> attributesList = initProfileAttributes(config);
 				List<Role> rolesList = initRoles(config);
 				initExtRolesCategory(config);
 				Map<String, Integer> usersLookupMap = initUsers(config);
-				initDefaultAuthorizations(config);
 				initDefaultAuthorizationsRoles(config);
 
 				// finally default users associations
@@ -511,26 +511,26 @@ public class InternalSecurityInitializer extends SpagoBIInitializer {
 			List<SbiAuthorizations> authorizations = DAOFactory.getRoleDAO().loadAllAuthorizations();
 
 			aSession = this.getSession();
-			// remove from DB the SbiAuthorizations deleted in configuration file
-			for (SbiAuthorizations auth : authorizations) {
-				boolean isInConfigFile = false;
-				String nameInDB = auth.getName();
-				String productTypeInDB = auth.getProductType().getLabel();
-				Iterator it = defaultAuthorizationsSB.iterator();
-				while (it.hasNext()) {
-					SourceBean authSB = (SourceBean) it.next();
-					String nameInFile = (String) authSB.getAttribute("authorizationName");
-					String productTypeInFile = (String) authSB.getAttribute("productType");
-					if (nameInFile.equals(nameInDB) && productTypeInFile.equals(productTypeInDB)) {
-						isInConfigFile = true;
-						break;
-					}
-				}
-				if (!isInConfigFile) {
-					deleteAuthorization(aSession, auth);
-				}
-
-			}
+//			// remove from DB the SbiAuthorizations deleted in configuration file
+//			for (SbiAuthorizations auth : authorizations) {
+//				boolean isInConfigFile = false;
+//				String nameInDB = auth.getName();
+//				String productTypeInDB = auth.getProductType().getLabel();
+//				Iterator it = defaultAuthorizationsSB.iterator();
+//				while (it.hasNext()) {
+//					SourceBean authSB = (SourceBean) it.next();
+//					String nameInFile = (String) authSB.getAttribute("authorizationName");
+//					String productTypeInFile = (String) authSB.getAttribute("productType");
+//					if (nameInFile.equals(nameInDB) && productTypeInFile.equals(productTypeInDB)) {
+//						isInConfigFile = true;
+//						break;
+//					}
+//				}
+//				if (!isInConfigFile) {
+//					deleteAuthorization(aSession, auth);
+//				}
+//
+//			}
 
 			// create a Set of names with AuthorizationName-ProductTypeLabel
 			Set<String> authorizationsFound = new HashSet<String>();
@@ -568,8 +568,8 @@ public class InternalSecurityInitializer extends SpagoBIInitializer {
 				}
 			}
 
-		} catch (Throwable t) {
-			logger.error("An unexpected error occurred while reading defualt profile attibutes", t);
+		} catch (Exception e) {
+			logger.error("An unexpected error occurred while reading defualt profile attibutes", e);
 		} finally {
 			if (aSession != null && aSession.isOpen()) {
 				aSession.close();

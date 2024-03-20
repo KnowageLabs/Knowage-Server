@@ -17,7 +17,44 @@
             "value": "Generic"
         }
     ],
-    "jsonPathTypes": ["string", "int", "double", "date yyy-MM-dd", "timestamp yyyy-MM-dd HH:mm:ss", "ISO8601 yyyy-MM-ddTHH:mm:ss.SSSZ", "time HH:mm:ss", "boolean"],
+    "jsonPathTypes": [
+        {
+            "label": "string",
+            "type": "string"
+        },
+        {
+            "label": "int",
+            "type": "int"
+        },
+        {
+            "label": "double",
+            "type": "double"
+        },
+        {
+            "label": "date yyy-MM-dd",
+            "type": "date yyy-MM-dd"
+        },
+        {
+            "label": "timestamp yyyy-MM-dd HH:mm:ss",
+            "type": "timestamp yyyy-MM-dd HH:mm:ss"
+        },
+        {
+            "label": "ISO8601 yyyy-MM-ddTHH:mm:ss.SSSZ",
+            "type": "ISO8601 yyyy-MM-ddTHH:mm:ss.SSSZ"
+        },
+        {
+            "label": "time HH:mm:ss",
+            "type": "time HH:mm:ss"
+        },
+        {
+            "label": "boolean",
+            "type": "boolean"
+        },
+        {
+            "label": "timestamp epoch",
+            "type": "EPOCH"
+        }
+    ],
     "newJsonPathAttr": {
         "jsonPathValue": "",
         "name": "",

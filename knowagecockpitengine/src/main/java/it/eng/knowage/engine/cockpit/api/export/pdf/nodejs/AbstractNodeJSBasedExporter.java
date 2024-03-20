@@ -1,4 +1,23 @@
+/*
+ * Knowage, Open Source Business Intelligence suite
+ * Copyright (C) 2024 Engineering Ingegneria Informatica S.p.A.
+
+ * Knowage is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+
+ * Knowage is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 package it.eng.knowage.engine.cockpit.api.export.pdf.nodejs;
+
+import static java.nio.charset.StandardCharsets.UTF_8;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -45,7 +64,7 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
  */
 public abstract class AbstractNodeJSBasedExporter {
 
-	private static final Logger logger = Logger.getLogger(AbstractNodeJSBasedExporter.class);
+	private static final Logger LOGGER = Logger.getLogger(AbstractNodeJSBasedExporter.class);
 
 	static class SheetImageFileVisitor extends SimpleFileVisitor<Path> {
 
@@ -62,7 +81,6 @@ public abstract class AbstractNodeJSBasedExporter {
 		private final List<InputStream> imagesInputStreams;
 
 		public SheetImageFileVisitor(List<InputStream> imagesInputStreams) {
-			super();
 			this.imagesInputStreams = imagesInputStreams;
 		}
 
@@ -73,11 +91,12 @@ public abstract class AbstractNodeJSBasedExporter {
 
 		@Override
 		public FileVisitResult visitFile(Path filePath, BasicFileAttributes attributes) {
-			logger.debug("Visit file " + filePath);
+			LOGGER.debug("Visit file " + filePath);
 			if (imagePathMatcher.matches(filePath)) {
-				logger.debug("File " + filePath + " matches the filter!");
+				LOGGER.debug("File " + filePath + " matches the filter!");
 				try {
-					InputStream currImageInputStream = Files.newInputStream(filePath, StandardOpenOption.DELETE_ON_CLOSE);
+					InputStream currImageInputStream = Files.newInputStream(filePath,
+							StandardOpenOption.DELETE_ON_CLOSE);
 					imagesInputStreams.add(currImageInputStream);
 				} catch (IOException e) {
 					throw new IllegalStateException("Cannot open input stream on file " + filePath, e);
@@ -86,13 +105,14 @@ public abstract class AbstractNodeJSBasedExporter {
 
 			return FileVisitResult.CONTINUE;
 		}
-	};
+	}
 
 	protected static final String SCRIPT_NAME = "cockpit-export.js";
 
 	protected static final String CONFIG_NAME_FOR_EXPORT_SCRIPT_PATH = "internal.nodejs.chromium.export.path";
 
-	protected abstract byte[] handleFile(final Path outputDir, BIObject document, final List<InputStream> imagesInputStreams) throws IOException;
+	protected abstract byte[] handleFile(final Path outputDir, BIObject document,
+			final List<InputStream> imagesInputStreams) throws IOException;
 
 	protected final int documentId;
 
@@ -102,10 +122,12 @@ public abstract class AbstractNodeJSBasedExporter {
 	protected final boolean pdfFrontPage;
 	protected final boolean pdfBackPage;
 	protected final RenderOptions renderOptions;
+	private final BIObject document;
+	private final String engineLabel;
+	private final JSONObject template;
 
-	public AbstractNodeJSBasedExporter(int documentId, String userId, String requestUrl, RenderOptions renderOptions, String pdfPageOrientation,
-			boolean pdfFrontPage, boolean pdfBackPage) {
-		super();
+	protected AbstractNodeJSBasedExporter(int documentId, String userId, String requestUrl, RenderOptions renderOptions,
+			String pdfPageOrientation, boolean pdfFrontPage, boolean pdfBackPage) throws EMFUserError, JSONException {
 		this.documentId = documentId;
 		this.userId = userId;
 		this.requestUrl = requestUrl;
@@ -113,22 +135,25 @@ public abstract class AbstractNodeJSBasedExporter {
 		this.pageOrientation = pdfPageOrientation;
 		this.pdfFrontPage = pdfFrontPage;
 		this.pdfBackPage = pdfBackPage;
+
+		document = DAOFactory.getBIObjectDAO().loadBIObjectById(documentId);
+		engineLabel = document.getEngineLabel();
+		ObjTemplate objTemplate = document.getActiveTemplate();
+		if (objTemplate == null) {
+			throw new SpagoBIRuntimeException("Unable to get template for document with id [" + documentId + "]");
+		}
+		String templateString = new String(objTemplate.getContent());
+		template = new JSONObject(templateString);
 	}
 
-	protected int getSheetCount(BIObject document) {
+	protected int getSheetCount() {
 		try {
 			int numOfPages = 0;
-			switch (document.getEngineLabel()) {
+			switch (engineLabel) {
 			case "knowagechartengine":
 				numOfPages = 1;
 				return numOfPages;
 			case "knowagecockpitengine":
-				ObjTemplate objTemplate = document.getActiveTemplate();
-				if (objTemplate == null) {
-					throw new SpagoBIRuntimeException("Unable to get template for document with id [" + documentId + "]");
-				}
-				String templateString = new String(objTemplate.getContent());
-				JSONObject template = new JSONObject(templateString);
 				JSONArray sheets = template.getJSONArray("sheets");
 				numOfPages = sheets.length();
 				return numOfPages;
@@ -142,19 +167,13 @@ public abstract class AbstractNodeJSBasedExporter {
 		}
 	}
 
-	protected int getSheetHeight(BIObject document) {
+	protected int getSheetHeight() {
 		try {
-			int sheetHeight = Integer.valueOf(renderOptions.getDimensions().getHeight());
-			switch (document.getEngineLabel()) {
+			int sheetHeight = Integer.parseInt(renderOptions.getDimensions().getHeight());
+			switch (engineLabel) {
 			case "knowagechartengine":
 				break;
 			case "knowagecockpitengine":
-				ObjTemplate objTemplate = document.getActiveTemplate();
-				if (objTemplate == null) {
-					throw new SpagoBIRuntimeException("Unable to get template for document with id [" + documentId + "]");
-				}
-				String templateString = new String(objTemplate.getContent());
-				JSONObject template = new JSONObject(templateString);
 				JSONArray sheets = template.getJSONArray("sheets");
 				int sheetLabelHeigth = (sheets.length() > 0) ? 48 : 0;
 				for (int sheetIndex = 0; sheetIndex < sheets.length(); sheetIndex++) {
@@ -178,19 +197,13 @@ public abstract class AbstractNodeJSBasedExporter {
 		}
 	}
 
-	protected int getSheetWidth(BIObject document) {
+	protected int getSheetWidth() {
 		try {
-			int sheetWidth = Integer.valueOf(renderOptions.getDimensions().getWidth());
-			switch (document.getEngineLabel()) {
+			int sheetWidth = Integer.parseInt(renderOptions.getDimensions().getWidth());
+			switch (engineLabel) {
 			case "knowagechartengine":
 				break;
 			case "knowagecockpitengine":
-				ObjTemplate objTemplate = document.getActiveTemplate();
-				if (objTemplate == null) {
-					throw new SpagoBIRuntimeException("Unable to get template for document with id [" + documentId + "]");
-				}
-				String templateString = new String(objTemplate.getContent());
-				JSONObject template = new JSONObject(templateString);
 				JSONArray sheets = template.getJSONArray("sheets");
 				int sheetLabelHeigth = (sheets.length() > 0) ? 48 : 0;
 				for (int sheetIndex = 0; sheetIndex < sheets.length(); sheetIndex++) {
@@ -200,8 +213,8 @@ public abstract class AbstractNodeJSBasedExporter {
 						for (int widgetIndex = 0; widgetIndex < widgets.length(); widgetIndex++) {
 							JSONObject widget = (JSONObject) widgets.get(widgetIndex);
 							int row = widget.getInt("row");
-							int sizeY = widget.getInt("sizeY");
-							int widgetWidth = (row + sizeY) * 30 + sheetLabelHeigth; // scaling by cockpitModule_gridsterOptions.rowWidth
+							int sizeX = widget.getInt("sizeX");
+							int widgetWidth = (row + sizeX) * 30 + sheetLabelHeigth; // scaling by cockpitModule_gridsterOptions.rowWidth
 							sheetWidth = Math.max(sheetWidth, widgetWidth);
 						}
 					}
@@ -230,7 +243,7 @@ public abstract class AbstractNodeJSBasedExporter {
 			String description = document.getDescription();
 			if (name == null || description == null) {
 				throw new SpagoBIRuntimeException(
-						"Unable to get name [" + name + "] or description [" + description + "] for document with id [" + documentId + "]");
+					"Unable to get name [" + name + "] or description [" + description + "] for document with id [" + documentId + "]");
 			}
 			toReturn = new FrontpageDetails(name, description, new Date());
 		}
@@ -242,50 +255,57 @@ public abstract class AbstractNodeJSBasedExporter {
 		final Path outputDir = Files.createTempDirectory("knowage-exporter-2");
 
 		Files.createDirectories(outputDir);
-		logger.info("Files will be placed in: " + outputDir);
+		LOGGER.info("Files will be placed in: " + outputDir);
 
-		BIObject document = DAOFactory.getBIObjectDAO().loadBIObjectById(documentId);
-		int sheetCount = getSheetCount(document);
-		int sheetWidth = getSheetWidth(document);
-		int sheetHeight = getSheetHeight(document);
+		int sheetCount = getSheetCount();
+		int sheetWidth = getSheetWidth();
+		int sheetHeight = getSheetHeight();
 		double deviceScaleFactor = getDeviceScaleFactor(document);
 		boolean isMultiSheet = getIsMultiSheet(document);
-		String encodedUserId = Base64.encodeBase64String(userId.getBytes("UTF-8"));
-		logger.debug("Encoded User Id: " + encodedUserId);
+		String encodedUserId = Base64.encodeBase64String(userId.getBytes(UTF_8));
+		LOGGER.debug("Encoded User Id: " + encodedUserId);
 
-		URI url = UriBuilder.fromUri(requestUrl).replaceQueryParam("outputType_description", "HTML").replaceQueryParam("outputType", "HTML")
-				.replaceQueryParam("export", null).build();
-		logger.debug("URL: " + url);
+		// @formatter:off
+		URI url = UriBuilder.fromUri(requestUrl)
+				.replaceQueryParam("outputType_description", "HTML")
+				.replaceQueryParam("outputType", "HTML")
+				// Strange way to delete a query param but that's it
+				.replaceQueryParam("export")
+				.build();
+		// @formatter:on
+		LOGGER.debug("URL: " + url);
 
 		// Script
-		String cockpitExportScriptPath = SingletonConfig.getInstance().getConfigValue(CONFIG_NAME_FOR_EXPORT_SCRIPT_PATH);
+		String cockpitExportScriptPath = SingletonConfig.getInstance()
+				.getConfigValue(CONFIG_NAME_FOR_EXPORT_SCRIPT_PATH);
 		Path exportScriptFullPath = Paths.get(cockpitExportScriptPath, SCRIPT_NAME);
-		logger.info("Script Path: " + cockpitExportScriptPath);
+		LOGGER.info("Script Path: " + cockpitExportScriptPath);
 
 		if (!Files.isRegularFile(exportScriptFullPath)) {
-			String msg = String.format("Cannot find export script at \"%s\": did you set the correct value for %s configuration?", exportScriptFullPath,
-					CONFIG_NAME_FOR_EXPORT_SCRIPT_PATH);
+			String msg = String.format(
+					"Cannot find export script at \"%s\": did you set the correct value for %s configuration?",
+					exportScriptFullPath, CONFIG_NAME_FOR_EXPORT_SCRIPT_PATH);
 			IllegalStateException ex = new IllegalStateException(msg);
-			logger.error(msg, ex);
+			LOGGER.error(msg, ex);
 			throw ex;
 		}
 
-		ProcessBuilder processBuilder = new ProcessBuilder("node", exportScriptFullPath.toString(), url.toString(), encodedUserId, outputDir.toString(),
-				Integer.toString(sheetCount), Integer.toString(sheetWidth), Integer.toString(sheetHeight), Double.toString(deviceScaleFactor),
-				Boolean.toString(isMultiSheet));
+		ProcessBuilder processBuilder = new ProcessBuilder("node", exportScriptFullPath.toString(), url.toString(),
+				encodedUserId, outputDir.toString(), Integer.toString(sheetCount), Integer.toString(sheetWidth),
+				Integer.toString(sheetHeight), Double.toString(deviceScaleFactor), Boolean.toString(isMultiSheet));
 
 		setWorkingDirectory(cockpitExportScriptPath, processBuilder);
 
-		logger.info("Node complete command line: " + processBuilder.command());
+		LOGGER.info("Node complete command line: " + processBuilder.command());
 
-		logger.info("Starting export script");
+		LOGGER.info("Starting export script");
 		Process exec = processBuilder.start();
 
 		logOutputToCoreLog(exec);
 
-		logger.info("Waiting...");
+		LOGGER.info("Waiting...");
 		exec.waitFor();
-		logger.warn("Exit value: " + exec.exitValue());
+		LOGGER.warn("Exit value: " + exec.exitValue());
 
 		final List<InputStream> imagesInputStreams = new ArrayList<>();
 
@@ -315,9 +335,9 @@ public abstract class AbstractNodeJSBasedExporter {
 		InputStreamReader isr = new InputStreamReader(exec.getInputStream());
 		BufferedReader b = new BufferedReader(isr);
 		String line = null;
-		logger.warn("Process output");
-		while((line = b.readLine()) != null) {
-			logger.warn(line);
+		LOGGER.warn("Process output");
+		while ((line = b.readLine()) != null) {
+			LOGGER.warn(line);
 		}
 	}
 
