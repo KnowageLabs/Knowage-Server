@@ -1262,8 +1262,9 @@ public class SourceBean extends AbstractXMLObject implements CloneableObject, Se
 	public Element toElement(Document document, XMLSerializer serializer) {
 		if (_upperCase)
 			_sourceBeanName = _sourceBeanName.toUpperCase();
-//		Element element = document.createElement(_sourceBeanName);
-
+		
+		// XML-DOM api does not preserve the order of the lovs columns.
+		// Recursively copy to elements that support sorted attributeMap prevent us from losing columns sorting.
 		Element element = new ElementImpl((CoreDocumentImpl) document, _sourceBeanName) {
 			@Override
 			public NamedNodeMap getAttributes() {
@@ -1351,8 +1352,6 @@ public class SourceBean extends AbstractXMLObject implements CloneableObject, Se
 				Integer pos2 = IntStream.range(0, _attributes.size())
 						.filter(i -> ((SourceBeanAttribute) _attributes.get(i)).getKey().equals(att2.getNodeName())).findFirst().orElse(-1);
 
-//				Integer pos1 = _attributes.indexOf(att1.getNodeName());
-//				Integer pos2 = _attributes.indexOf(att2.getNodeName());
 				if (pos1 > -1 && pos2 > -1) {
 					return pos1.compareTo(pos2);
 				} else if (pos1 > -1 || pos2 > -1) {
