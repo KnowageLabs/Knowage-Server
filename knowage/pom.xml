@@ -1,164 +1,19 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-	
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	
+
 	<parent>
 		<groupId>it.eng.knowage</groupId>
 		<artifactId>knowage-ce-parent</artifactId>
 		<version>8.0.23-SNAPSHOT</version>
 		<relativePath>../knowage-ce-parent/pom.xml</relativePath>
 	</parent>
-	
+
 	<artifactId>knowage</artifactId>
 	<packaging>war</packaging>
 	<name>knowage</name>
-	
-	<dependencies>
-		<dependency>
-			<groupId>it.eng.knowage</groupId>
-			<artifactId>knowage-core</artifactId>
-			<version>${project.version}</version>
-			<scope>compile</scope>
-			<exclusions>
-				<exclusion>
-					<artifactId>bcmail-jdk14</artifactId>
-					<groupId>bouncycastle</groupId>
-				</exclusion>
-				<exclusion>
-					<artifactId>bctsp-jdk14</artifactId>
-					<groupId>org.bouncycastle</groupId>
-				</exclusion>
-				<exclusion>
-					<artifactId>bcprov-jdk14</artifactId>
-					<groupId>bouncycastle</groupId>
-				</exclusion>
-				<exclusion>
-					<artifactId>xalan</artifactId>
-					<groupId>xalan</groupId>
-				</exclusion>
-				<exclusion>
-					<artifactId>guava</artifactId>
-					<groupId>com.google.guava</groupId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-		<dependency>
-			<groupId>it.eng.knowage</groupId>
-			<artifactId>knowage-utils</artifactId>
-			<version>${project.version}</version>
-			<scope>compile</scope>
-			<exclusions>
-				<exclusion>
-					<artifactId>hadoop-hdfs</artifactId>
-					<groupId>org.apache.hadoop</groupId>
-				</exclusion>
-				<exclusion>
-					<artifactId>hadoop-common</artifactId>
-					<groupId>org.apache.hadoop</groupId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-		<dependency>
-			<groupId>xalan</groupId>
-			<artifactId>xalan</artifactId>
-			<version>2.7.2</version>
-			<scope>runtime</scope>
-		</dependency>
-		<dependency>
-			<groupId>xalan</groupId>
-			<artifactId>serializer</artifactId>
-			<version>2.7.2</version>
-			<scope>runtime</scope>
-		</dependency>
-		<dependency>
-			<groupId>it.eng.knowage</groupId>
-			<artifactId>knowageoauth2securityprovider</artifactId>
-			<version>${project.version}</version>
-			<scope>runtime</scope>
-		</dependency>
-		<dependency>
-			<groupId>it.eng.knowage</groupId>
-			<artifactId>knowageldapsecurityprovider</artifactId>
-			<version>${project.version}</version>
-			<scope>runtime</scope>
-		</dependency>
-		<dependency>
-			<groupId>it.eng.knowage</groupId>
-			<artifactId>knowagegooglesecurityprovider</artifactId>
-			<version>${project.version}</version>
-			<scope>runtime</scope>
-		</dependency>
-		<dependency>
-			<groupId>it.eng.knowage</groupId>
-			<artifactId>knowageazuresecurityprovider</artifactId>
-			<version>${project.version}</version>
-			<scope>runtime</scope>
-		</dependency>
-		<dependency>
-			<groupId>javax.portlet</groupId>
-			<artifactId>portlet-api</artifactId>
-			<version>2.0</version>
-			<scope>compile</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.jboss.resteasy</groupId>
-			<artifactId>resteasy-validator-provider-11</artifactId>
-			<version>${resteasy.version}</version>
-			<scope>runtime</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.jboss.resteasy</groupId>
-			<artifactId>resteasy-servlet-initializer</artifactId>
-			<version>${resteasy.version}</version>
-			<scope>runtime</scope>
-		</dependency>
-		<dependency>
-			<groupId>com.fasterxml.jackson.jaxrs</groupId>
-			<artifactId>jackson-jaxrs-json-provider</artifactId>
-			<version>2.9.2</version>
-			<scope>runtime</scope>
-		</dependency>
-		<dependency>
-			<groupId>javax.servlet</groupId>
-			<artifactId>javax.servlet-api</artifactId>
-			<version>3.1.0</version>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>com.fdsapi</groupId>
-			<artifactId>fdsapi</artifactId>
-			<version>1.2</version>
-		</dependency>
-		<dependency>
-			<groupId>oro</groupId>
-			<artifactId>oro</artifactId>
-			<version>2.0.8</version>
-		</dependency>
-		<dependency>
-			<groupId>net.sf.xss-html-filter</groupId>
-			<artifactId>xss-html-filter</artifactId>
-			<version>1.5</version>
-		</dependency>
-		<dependency>
-			<groupId>commons-lang</groupId>
-			<artifactId>commons-lang</artifactId>
-			<version>2.5</version>
-			<scope>compile</scope>
-		</dependency>
-		<dependency>
-			<groupId>javax.websocket</groupId>
-			<artifactId>javax.websocket-api</artifactId>
-			<version>1.1</version>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>commons-modeler</groupId>
-			<artifactId>commons-modeler</artifactId>
-			<version>2.0.1</version>
-		</dependency>
-	</dependencies>
-	
+
 	<build>
 		<finalName>knowage</finalName>
 		<pluginManagement>
@@ -170,6 +25,7 @@
 						<classesClassifier>classes</classesClassifier>
 					</configuration>
 				</plugin>
+
 				<plugin>
 					<groupId>org.codehaus.cargo</groupId>
 					<artifactId>cargo-maven2-plugin</artifactId>
@@ -240,17 +96,9 @@
 					</execution>
 				</executions>
 			</plugin>
-			<plugin>
-				<artifactId>maven-resources-plugin</artifactId>
-				<configuration>
-					<nonFilteredFileExtensions>
-						<nonFilteredFileExtension>xlsm</nonFilteredFileExtension>
-					</nonFilteredFileExtensions>
-				</configuration>
-			</plugin>
 		</plugins>
 	</build>
-	
+
 	<profiles>
 		<profile>
 			<id>development</id>
@@ -258,27 +106,33 @@
 				<!-- this profile is active by default -->
 				<activeByDefault>true</activeByDefault>
 			</activation>
-			<build>
-				<resources>
-					<resource>
-						<filtering>true</filtering>
-						<directory>src/main/resources</directory>
-					</resource>
-				</resources>
-			</build>
 			<properties>
 				<application.environment>development</application.environment>
 			</properties>
-		</profile>
-		<profile>
-			<id>production</id>
 			<build>
+				<pluginManagement>
+					<plugins>
+
+					</plugins>
+				</pluginManagement>
 				<resources>
 					<resource>
-						<filtering>true</filtering>
 						<directory>src/main/resources</directory>
+						<filtering>true</filtering>
 					</resource>
 				</resources>
+			</build>
+		</profile>
+
+		<profile>
+			<id>production</id>
+			<properties>
+				<application.environment>production</application.environment>
+				<disable.console.logging>*/console.log = function() {}; console.warn
+					= function() {}; console.debug = function() {}; console.info =
+					function() {}; /*</disable.console.logging>
+			</properties>
+			<build>
 				<pluginManagement>
 					<plugins>
 						<plugin>
@@ -305,6 +159,7 @@
 								</webResources>
 							</configuration>
 						</plugin>
+
 						<plugin>
 							<groupId>org.codehaus.cargo</groupId>
 							<artifactId>cargo-maven2-plugin</artifactId>
@@ -321,6 +176,7 @@
 								</configuration>
 							</configuration>
 						</plugin>
+
 						<plugin>
 							<groupId>org.codehaus.mojo</groupId>
 							<artifactId>exec-maven-plugin</artifactId>
@@ -344,20 +200,25 @@
 						</plugin>
 					</plugins>
 				</pluginManagement>
+				<resources>
+					<resource>
+						<directory>src/main/resources</directory>
+						<filtering>true</filtering>
+					</resource>
+				</resources>
 			</build>
-			<properties>
-				<application.environment>production</application.environment>
-				<disable.console.logging>*/console.log = function() {}; console.warn
-					= function() {}; console.debug = function() {}; console.info =
-					function() {}; /*</disable.console.logging>
-			</properties>
 		</profile>
+
 		<profile>
 			<id>hsql</id>
 			<build>
 				<plugins>
 					<plugin>
 						<artifactId>maven-resources-plugin</artifactId>
+						<version>2.7</version>
+						<configuration>
+							<encoding>UTF-8</encoding>
+						</configuration>
 						<executions>
 							<execution>
 								<id>copy-hibernate</id>
@@ -381,14 +242,175 @@
 								</configuration>
 							</execution>
 						</executions>
-						<version>2.7</version>
-						<configuration>
-							<encoding>UTF-8</encoding>
-						</configuration>
 					</plugin>
 				</plugins>
 			</build>
 		</profile>
 	</profiles>
-	
+
+	<dependencies>
+
+		<dependency>
+			<groupId>it.eng.knowage</groupId>
+			<artifactId>knowage-core</artifactId>
+			<version>8.0.23-SNAPSHOT</version>
+			<scope>compile</scope>
+			<exclusions>
+				<exclusion>
+					<groupId>bouncycastle</groupId>
+					<artifactId>bcmail-jdk14</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.bouncycastle</groupId>
+					<artifactId>bctsp-jdk14</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>bouncycastle</groupId>
+					<artifactId>bcprov-jdk14</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>xalan</groupId>
+					<artifactId>xalan</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>com.google.guava</groupId>
+					<artifactId>guava</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+
+		<dependency>
+			<groupId>it.eng.knowage</groupId>
+			<artifactId>knowage-utils</artifactId>
+			<version>8.0.23-SNAPSHOT</version>
+			<scope>compile</scope>
+			<exclusions>
+				<exclusion>
+					<groupId>org.apache.hadoop</groupId>
+					<artifactId>hadoop-hdfs</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.apache.hadoop</groupId>
+					<artifactId>hadoop-common</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+
+		<dependency>
+			<groupId>xalan</groupId>
+			<artifactId>xalan</artifactId>
+			<version>2.7.2</version>
+			<scope>runtime</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>xalan</groupId>
+			<artifactId>serializer</artifactId>
+			<version>2.7.2</version>
+			<scope>runtime</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>it.eng.knowage</groupId>
+			<artifactId>knowageoauth2securityprovider</artifactId>
+			<version>8.0.23-SNAPSHOT</version>
+			<scope>runtime</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>it.eng.knowage</groupId>
+			<artifactId>knowageldapsecurityprovider</artifactId>
+			<version>8.0.23-SNAPSHOT</version>
+			<scope>runtime</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>it.eng.knowage</groupId>
+			<artifactId>knowagegooglesecurityprovider</artifactId>
+			<version>8.0.23-SNAPSHOT</version>
+			<scope>runtime</scope>
+		</dependency>
+		
+		<dependency>
+			<groupId>it.eng.knowage</groupId>
+			<artifactId>knowageazuresecurityprovider</artifactId>
+			<version>8.0.23-SNAPSHOT</version>
+			<scope>runtime</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>javax.portlet</groupId>
+			<artifactId>portlet-api</artifactId>
+			<version>2.0</version>
+			<scope>compile</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.jboss.resteasy</groupId>
+			<artifactId>resteasy-validator-provider-11</artifactId>
+			<version>${resteasy.version}</version>
+			<scope>runtime</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.jboss.resteasy</groupId>
+			<artifactId>resteasy-servlet-initializer</artifactId>
+			<version>${resteasy.version}</version>
+			<scope>runtime</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>com.fasterxml.jackson.jaxrs</groupId>
+			<artifactId>jackson-jaxrs-json-provider</artifactId>
+			<version>2.9.2</version>
+			<scope>runtime</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>javax.servlet-api</artifactId>
+			<version>3.1.0</version> <!-- WebLogic uses 3.1.0, Tomcat 7 uses 3.0 -->
+			<scope>provided</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>com.fdsapi</groupId>
+			<artifactId>fdsapi</artifactId>
+			<version>1.2</version>
+		</dependency>
+
+		<dependency>
+			<groupId>oro</groupId>
+			<artifactId>oro</artifactId>
+			<version>2.0.8</version>
+		</dependency>
+
+		<dependency>
+			<groupId>net.sf.xss-html-filter</groupId>
+			<artifactId>xss-html-filter</artifactId>
+			<version>1.5</version>
+		</dependency>
+
+		<dependency>
+			<groupId>commons-lang</groupId>
+			<artifactId>commons-lang</artifactId>
+			<version>2.5</version>
+			<scope>compile</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>javax.websocket</groupId>
+			<artifactId>javax.websocket-api</artifactId>
+			<version>1.1</version>
+			<scope>provided</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>commons-modeler</groupId>
+			<artifactId>commons-modeler</artifactId>
+			<version>2.0.1</version>
+		</dependency>
+
+	</dependencies>
+
 </project>

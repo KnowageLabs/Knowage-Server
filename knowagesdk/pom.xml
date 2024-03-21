@@ -1,126 +1,122 @@
-<?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-	
 	<modelVersion>4.0.0</modelVersion>
-	
+
 	<parent>
 		<groupId>it.eng.knowage</groupId>
 		<artifactId>knowage-ce-parent</artifactId>
 		<version>8.0.23-SNAPSHOT</version>
 		<relativePath>../knowage-ce-parent/pom.xml</relativePath>
 	</parent>
-	
+
 	<artifactId>knowagesdk</artifactId>
 	<packaging>war</packaging>
 	<name>knowagesdk</name>
-	
+
 	<dependencies>
+	
 		<dependency>
 			<groupId>it.eng.knowage</groupId>
 			<artifactId>knowage-utils</artifactId>
-			<version>${project.version}</version>
+			<version>8.0.23-SNAPSHOT</version>
 			<scope>compile</scope>
-			<exclusions>
+			<exclusions>				
 				<exclusion>
-					<artifactId>jgrapht-core</artifactId>
 					<groupId>org.jgrapht</groupId>
+					<artifactId>jgrapht-core</artifactId>
 				</exclusion>
 				<exclusion>
-					<artifactId>mongo-java-driver</artifactId>
 					<groupId>org.mongodb</groupId>
+					<artifactId>mongo-java-driver</artifactId>
 				</exclusion>
 				<exclusion>
-					<artifactId>super-csv</artifactId>
 					<groupId>net.sf.supercsv</groupId>
+					<artifactId>super-csv</artifactId>
 				</exclusion>
 				<exclusion>
-					<artifactId>MetaModel-pojo</artifactId>
 					<groupId>org.apache.metamodel</groupId>
+					<artifactId>MetaModel-pojo</artifactId>
 				</exclusion>
 				<exclusion>
-					<artifactId>cometd-java-server</artifactId>
 					<groupId>org.cometd.java</groupId>
+					<artifactId>cometd-java-server</artifactId>
 				</exclusion>
 				<exclusion>
+					<groupId>org.apache.hadoop</groupId>
 					<artifactId>hadoop-hdfs</artifactId>
-					<groupId>org.apache.hadoop</groupId>
 				</exclusion>
 				<exclusion>
+					<groupId>org.apache.hadoop</groupId>
 					<artifactId>hadoop-common</artifactId>
-					<groupId>org.apache.hadoop</groupId>
 				</exclusion>
 				<exclusion>
-					<artifactId>geronimo-commonj_1.1_spec</artifactId>
 					<groupId>org.apache.geronimo.specs</groupId>
+					<artifactId>geronimo-commonj_1.1_spec</artifactId>
 				</exclusion>
 				<exclusion>
-					<artifactId>commons-discovery</artifactId>
 					<groupId>commons-discovery</groupId>
+					<artifactId>commons-discovery</artifactId>
 				</exclusion>
 				<exclusion>
-					<artifactId>groovy-all</artifactId>
 					<groupId>org.codehaus.groovy</groupId>
+					<artifactId>groovy-all</artifactId>
 				</exclusion>
 				<exclusion>
+					<groupId>org.andromda.thirdparty.netbeans.mdr</groupId>
 					<artifactId>mdrapi</artifactId>
-					<groupId>org.andromda.thirdparty.netbeans.mdr</groupId>
 				</exclusion>
 				<exclusion>
+					<groupId>org.andromda.thirdparty.netbeans.mdr</groupId>
 					<artifactId>nbmdr</artifactId>
-					<groupId>org.andromda.thirdparty.netbeans.mdr</groupId>
 				</exclusion>
 				<exclusion>
-					<artifactId>mof</artifactId>
 					<groupId>org.andromda.thirdparty.jmi</groupId>
+					<artifactId>mof</artifactId>
 				</exclusion>
 				<exclusion>
+					<groupId>org.eclipse.emf</groupId>
 					<artifactId>org.eclipse.emf.common</artifactId>
-					<groupId>org.eclipse.emf</groupId>
 				</exclusion>
 				<exclusion>
+					<groupId>org.eclipse.emf</groupId>
 					<artifactId>org.eclipse.emf.ecore.xmi</artifactId>
-					<groupId>org.eclipse.emf</groupId>
 				</exclusion>
 				<exclusion>
-					<artifactId>pdfbox</artifactId>
 					<groupId>org.apache.pdfbox</groupId>
+					<artifactId>pdfbox</artifactId>
 				</exclusion>
 				<exclusion>
-					<artifactId>kryo</artifactId>
 					<groupId>com.esotericsoftware</groupId>
+					<artifactId>kryo</artifactId>
 				</exclusion>
 				<exclusion>
-					<artifactId>trove4j</artifactId>
 					<groupId>net.sf.trove4j</groupId>
+					<artifactId>trove4j</artifactId>
 				</exclusion>
 				<exclusion>
-					<artifactId>license4j-runtime-library</artifactId>
 					<groupId>com.license4j</groupId>
+					<artifactId>license4j-runtime-library</artifactId>
 				</exclusion>
 				<exclusion>
-					<artifactId>commons-codec</artifactId>
 					<groupId>commons-codec</groupId>
+					<artifactId>commons-codec</artifactId>
 				</exclusion>
 				<exclusion>
-					<artifactId>commons-lang3</artifactId>
 					<groupId>org.apache.commons</groupId>
+					<artifactId>commons-lang3</artifactId>
 				</exclusion>
 				<exclusion>
-					<artifactId>zero-allocation-hashing</artifactId>
 					<groupId>net.openhft</groupId>
+					<artifactId>zero-allocation-hashing</artifactId>
 				</exclusion>
 				<exclusion>
-					<artifactId>joda-time</artifactId>
 					<groupId>joda-time</groupId>
+					<artifactId>joda-time</artifactId>
 				</exclusion>
 			</exclusions>
 		</dependency>
+
 	</dependencies>
-	
-	<build>
-		<finalName>knowagesdk</finalName>
-	</build>
-	
+
 	<profiles>
 		<profile>
 			<id>production</id>
@@ -158,5 +154,4 @@
 			</build>
 		</profile>
 	</profiles>
-	
 </project>

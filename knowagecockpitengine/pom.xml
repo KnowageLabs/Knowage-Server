@@ -1,115 +1,19 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-	
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	
+
 	<parent>
 		<groupId>it.eng.knowage</groupId>
 		<artifactId>knowage-ce-parent</artifactId>
 		<version>8.0.23-SNAPSHOT</version>
 		<relativePath>../knowage-ce-parent/pom.xml</relativePath>
 	</parent>
-	
+
 	<artifactId>knowagecockpitengine</artifactId>
 	<packaging>war</packaging>
 	<name>knowagecockpitengine</name>
-	
-	<dependencies>
-		<dependency>
-			<groupId>it.eng.knowage</groupId>
-			<artifactId>knowage-dao</artifactId>
-			<version>${project.version}</version>
-			<scope>compile</scope>
-		</dependency>
-		<dependency>
-			<groupId>it.eng.knowage</groupId>
-			<artifactId>knowage-utils</artifactId>
-			<version>${project.version}</version>
-			<scope>compile</scope>
-			<exclusions>
-				<exclusion>
-					<artifactId>hadoop-hdfs</artifactId>
-					<groupId>org.apache.hadoop</groupId>
-				</exclusion>
-				<exclusion>
-					<artifactId>hadoop-common</artifactId>
-					<groupId>org.apache.hadoop</groupId>
-				</exclusion>
-				<exclusion>
-					<artifactId>xalan</artifactId>
-					<groupId>xalan</groupId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-		<dependency>
-			<groupId>it.eng.knowage</groupId>
-			<artifactId>qbe-core</artifactId>
-			<version>${project.version}</version>
-			<scope>compile</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.velocity</groupId>
-			<artifactId>velocity</artifactId>
-			<version>1.7</version>
-			<scope>compile</scope>
-		</dependency>
-		<!-- https://mvnrepository.com/artifact/velocity-tools/velocity-tools -->
-		<dependency>
-			<groupId>velocity-tools</groupId>
-			<artifactId>velocity-tools</artifactId>
-			<version>1.4</version>
-		</dependency>
-		<dependency>
-			<groupId>backport-util-concurrent</groupId>
-			<artifactId>backport-util-concurrent</artifactId>
-			<version>3.1</version>
-			<scope>compile</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.jboss.resteasy</groupId>
-			<artifactId>resteasy-servlet-initializer</artifactId>
-			<version>${resteasy.version}</version>
-			<scope>runtime</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.jboss.resteasy</groupId>
-			<artifactId>resteasy-html</artifactId>
-			<version>${resteasy.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>wsdl4j</groupId>
-			<artifactId>wsdl4j</artifactId>
-			<version>1.5.1</version>
-			<scope>runtime</scope>
-		</dependency>
-		<dependency>
-			<groupId>javax.servlet</groupId>
-			<artifactId>javax.servlet-api</artifactId>
-			<version>3.1.0</version>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>com.fdsapi</groupId>
-			<artifactId>fdsapi</artifactId>
-			<version>1.2</version>
-		</dependency>
-		<dependency>
-			<groupId>net.sf.xss-html-filter</groupId>
-			<artifactId>xss-html-filter</artifactId>
-			<version>1.5</version>
-		</dependency>
-		<dependency>
-			<groupId>xalan</groupId>
-			<artifactId>xalan</artifactId>
-			<version>2.7.2</version>
-		</dependency>
-		<dependency>
-			<groupId>com.github.dhorions</groupId>
-			<artifactId>boxable</artifactId>
-			<version>1.6</version>
-		</dependency>
-	</dependencies>
-	
+
 	<build>
 		<finalName>knowagecockpitengine</finalName>
 		<plugins>
@@ -173,7 +77,7 @@
 			</plugin>
 		</plugins>
 	</build>
-	
+
 	<profiles>
 		<profile>
 			<id>development</id>
@@ -181,6 +85,9 @@
 				<!-- this profile is active by default -->
 				<activeByDefault>true</activeByDefault>
 			</activation>
+			<properties>
+				<application.environment>development</application.environment>
+			</properties>
 			<build>
 				<plugins>
 					<plugin>
@@ -201,12 +108,16 @@
 					</plugin>
 				</plugins>
 			</build>
-			<properties>
-				<application.environment>development</application.environment>
-			</properties>
 		</profile>
+
 		<profile>
 			<id>production</id>
+			<properties>
+				<application.environment>production</application.environment>
+				<disable.console.logging>*/console.log = function() {}; console.warn
+					= function() {}; console.debug = function() {}; console.info =
+					function() {}; /*</disable.console.logging>
+			</properties>
 			<build>
 				<plugins>
 					<plugin>
@@ -247,13 +158,117 @@
 					</plugin>
 				</plugins>
 			</build>
-			<properties>
-				<application.environment>production</application.environment>
-				<disable.console.logging>*/console.log = function() {}; console.warn
-					= function() {}; console.debug = function() {}; console.info =
-					function() {}; /*</disable.console.logging>
-			</properties>
 		</profile>
 	</profiles>
-	
+
+	<dependencies>
+
+		<dependency>
+			<groupId>it.eng.knowage</groupId>
+			<artifactId>knowage-dao</artifactId>
+			<version>8.0.23-SNAPSHOT</version>
+			<scope>compile</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>it.eng.knowage</groupId>
+			<artifactId>knowage-utils</artifactId>
+			<version>8.0.23-SNAPSHOT</version>
+			<scope>compile</scope>
+			<exclusions>
+				<exclusion>
+					<groupId>org.apache.hadoop</groupId>
+					<artifactId>hadoop-hdfs</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.apache.hadoop</groupId>
+					<artifactId>hadoop-common</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>xalan</groupId>
+					<artifactId>xalan</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+
+		<dependency>
+			<groupId>it.eng.knowage</groupId>
+			<artifactId>qbe-core</artifactId>
+			<version>8.0.23-SNAPSHOT</version>
+			<scope>compile</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.velocity</groupId>
+			<artifactId>velocity</artifactId>
+			<version>1.7</version>
+			<scope>compile</scope>
+		</dependency>
+
+		<!-- https://mvnrepository.com/artifact/velocity-tools/velocity-tools -->
+		<dependency>
+			<groupId>velocity-tools</groupId>
+			<artifactId>velocity-tools</artifactId>
+			<version>1.4</version>
+		</dependency>
+
+		<dependency>
+			<groupId>backport-util-concurrent</groupId>
+			<artifactId>backport-util-concurrent</artifactId>
+			<version>3.1</version>
+			<scope>compile</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.jboss.resteasy</groupId>
+			<artifactId>resteasy-servlet-initializer</artifactId>
+			<version>${resteasy.version}</version>
+			<scope>runtime</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.jboss.resteasy</groupId>
+			<artifactId>resteasy-html</artifactId>
+			<version>${resteasy.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>wsdl4j</groupId>
+			<artifactId>wsdl4j</artifactId>
+			<version>1.5.1</version>
+			<scope>runtime</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>javax.servlet-api</artifactId>
+			<version>3.1.0</version> <!-- WebLogic uses 3.1.0, Tomcat 7 uses 3.0 -->
+			<scope>provided</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>com.fdsapi</groupId>
+			<artifactId>fdsapi</artifactId>
+			<version>1.2</version>
+		</dependency>
+
+		<dependency>
+			<groupId>net.sf.xss-html-filter</groupId>
+			<artifactId>xss-html-filter</artifactId>
+			<version>1.5</version>
+		</dependency>
+
+		<dependency>
+			<groupId>xalan</groupId>
+			<artifactId>xalan</artifactId>
+			<version>2.7.2</version>
+		</dependency>
+
+		<dependency>
+			<groupId>com.github.dhorions</groupId>
+			<artifactId>boxable</artifactId>
+			<version>1.6</version>
+		</dependency>
+
+	</dependencies>
 </project>

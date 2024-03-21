@@ -1,73 +1,80 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-	
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	
+
 	<parent>
 		<groupId>it.eng.knowage</groupId>
 		<artifactId>knowage-ce-parent</artifactId>
 		<version>8.0.23-SNAPSHOT</version>
 		<relativePath>../knowage-ce-parent/pom.xml</relativePath>
 	</parent>
-	
+
 	<artifactId>knowage-core</artifactId>
 	<packaging>jar</packaging>
 	
 	<dependencies>
+		
 		<dependency>
 			<groupId>it.eng.knowage</groupId>
 			<artifactId>knowage-utils</artifactId>
-			<version>${project.version}</version>
+			<version>8.0.23-SNAPSHOT</version>
 			<scope>compile</scope>
 		</dependency>
 
 		<dependency>
 			<groupId>it.eng.knowage</groupId>
 			<artifactId>knowage-utils</artifactId>
-			<version>${project.version}</version>
+			<version>8.0.23-SNAPSHOT</version>
 			<type>test-jar</type>
 			<scope>test</scope>
 			<exclusions>
 				<exclusion>
-					<artifactId>poi</artifactId>
 					<groupId>org.apache.poi</groupId>
+					<artifactId>poi</artifactId>
 				</exclusion>
 				<exclusion>
-					<artifactId>poi-ooxml</artifactId>
 					<groupId>org.apache.poi</groupId>
+					<artifactId>poi-ooxml</artifactId>
 				</exclusion>
 			</exclusions>
 		</dependency>
+
+
 		<dependency>
 			<groupId>it.eng.knowage</groupId>
 			<artifactId>knowage-dao</artifactId>
-			<version>${project.version}</version>
+			<version>8.0.23-SNAPSHOT</version>
 			<scope>compile</scope>
 		</dependency>
+		
 		<dependency>
 			<groupId>it.eng.knowage</groupId>
 			<artifactId>spagobi-metamodel-utils</artifactId>
-			<version>${project.version}</version>
+			<version>8.0.23-SNAPSHOT</version>
 			<scope>compile</scope>
 		</dependency>
+		
 		<dependency>
 			<groupId>jfree</groupId>
 			<artifactId>jfreechart</artifactId>
 			<version>1.0.9</version>
 			<scope>compile</scope>
 		</dependency>
+		
 		<dependency>
 			<groupId>net.sf.jasperreports</groupId>
 			<artifactId>jasperreports</artifactId>
 			<version>4.0.0</version>
 			<scope>compile</scope>
 		</dependency>
+		
 		<dependency>
 			<groupId>backport-util-concurrent</groupId>
 			<artifactId>backport-util-concurrent</artifactId>
 			<version>3.1</version>
 			<scope>compile</scope>
 		</dependency>
+		
 		<dependency>
 			<groupId>org.apache.clerezza</groupId>
 			<artifactId>jaxrs.utils</artifactId>
@@ -75,35 +82,40 @@
 			<scope>compile</scope>
 			<exclusions>
 				<exclusion>
-					<artifactId>jsr311-api</artifactId>
 					<groupId>javax.ws.rs</groupId>
+					<artifactId>jsr311-api</artifactId>
 				</exclusion>
 			</exclusions>
 		</dependency>
+		
 		<dependency>
 			<groupId>commons-collections</groupId>
 			<artifactId>commons-collections</artifactId>
 			<version>3.1</version>
 			<scope>compile</scope>
 		</dependency>
+		
 		<dependency>
 			<groupId>org.apache.poi</groupId>
 			<artifactId>poi</artifactId>
-			<version>${apache.poi}</version>
 			<scope>compile</scope>
+			<version>${apache.poi}</version>
 		</dependency>
+		
 		<dependency>
 			<groupId>org.apache.poi</groupId>
 			<artifactId>poi-ooxml</artifactId>
-			<version>${apache.poi}</version>
 			<scope>compile</scope>
+			<version>${apache.poi}</version>
 		</dependency>
+		
 		<dependency>
 			<groupId>com.google.code.maven-play-plugin.net.sf.jtidy</groupId>
 			<artifactId>jtidy</artifactId>
 			<version>r938</version>
 			<scope>compile</scope>
 		</dependency>
+		
 		<!-- -->
 		<dependency>
 			<groupId>com.wealdtech.hawk</groupId>
@@ -112,19 +124,21 @@
 			<scope>compile</scope>
 			<exclusions>
 				<exclusion>
-					<artifactId>logback-classic</artifactId>
 					<groupId>ch.qos.logback</groupId>
+					<artifactId>logback-classic</artifactId>
 				</exclusion>
 				<exclusion>
+					<groupId>com.fasterxml.jackson.core</groupId>
 					<artifactId>jackson-annotations</artifactId>
-					<groupId>com.fasterxml.jackson.core</groupId>
 				</exclusion>
 				<exclusion>
-					<artifactId>jackson-core</artifactId>
 					<groupId>com.fasterxml.jackson.core</groupId>
+					<artifactId>jackson-core</artifactId>
 				</exclusion>
 			</exclusions>
 		</dependency>
+		
+		
 		<dependency>
 			<groupId>org.apache.xmlgraphics</groupId>
 			<artifactId>batik-transcoder</artifactId>
@@ -132,72 +146,83 @@
 			<scope>compile</scope>
 			<exclusions>
 				<exclusion>
-					<artifactId>jython</artifactId>
 					<groupId>org.python</groupId>
+					<artifactId>jython</artifactId>
 				</exclusion>
 			</exclusions>
 		</dependency>
+		
 		<dependency>
 			<groupId>net.logicsquad</groupId>
 			<artifactId>nanocaptcha</artifactId>
 			<version>1.1</version>
 			<scope>compile</scope>
 		</dependency>
+
 		<dependency>
 			<groupId>com.github.jsqlparser</groupId>
 			<artifactId>jsqlparser</artifactId>
 			<version>1.0</version>
 			<scope>compile</scope>
 		</dependency>
+		
 		<dependency>
 			<groupId>javax.portlet</groupId>
 			<artifactId>portlet-api</artifactId>
 			<version>2.0</version>
 			<scope>provided</scope>
 		</dependency>
+		
 		<dependency>
 			<groupId>javax.servlet</groupId>
 			<artifactId>javax.servlet-api</artifactId>
-			<version>3.1.0</version>
+			<version>3.1.0</version> <!-- WebLogic uses 3.1.0, Tomcat 7 uses 3.0 -->
 			<scope>provided</scope>
 		</dependency>
+		
 		<dependency>
 			<groupId>javax.servlet.jsp</groupId>
 			<artifactId>javax.servlet.jsp-api</artifactId>
 			<version>2.3.1</version>
 			<scope>provided</scope>
 		</dependency>
+
 		<dependency>
 			<groupId>net.trajano.caliper</groupId>
 			<artifactId>caliper</artifactId>
 			<version>1.2.1</version>
 			<scope>test</scope>
 		</dependency>
+
 		<dependency>
 			<groupId>org.jmockit</groupId>
 			<artifactId>jmockit</artifactId>
 			<version>1.40</version>
 			<scope>test</scope>
 		</dependency>
+		
 		<dependency>
 			<groupId>it.eng.knowage</groupId>
 			<artifactId>knowage-dao</artifactId>
-			<version>${project.version}</version>
+			<version>8.0.23-SNAPSHOT</version>
 			<type>test-jar</type>
 			<scope>test</scope>
 		</dependency>
+		
 		<dependency>
 			<groupId>mysql</groupId>
 			<artifactId>mysql-connector-java</artifactId>
 			<version>5.1.33</version>
 			<scope>test</scope>
 		</dependency>
+
 		<dependency>
 			<groupId>org.hsqldb</groupId>
 			<artifactId>hsqldb</artifactId>
 			<version>1.8.0.10</version>
 			<scope>test</scope>
 		</dependency>
+
 		<dependency>
 			<groupId>org.jboss.resteasy</groupId>
 			<artifactId>resteasy-html</artifactId>

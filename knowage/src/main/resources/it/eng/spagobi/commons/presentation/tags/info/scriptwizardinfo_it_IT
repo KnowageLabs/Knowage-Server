@@ -1,6 +1,6 @@
 <div style='width:600px;font-size:10px;font-family:verdana;' >
 <br/>
-Lo script puÃ² essere scritto utilizzando i linguaggi Groovy o JavaScript.
+Lo script può essere scritto utilizzando i linguaggi Groovy o JavaScript.
 <br/><br/>
 Lo script deve restituire una stringa XML contenente la lista di valori con la sintassi sotto riportata. 
 Qualora lo script torni un valore singolo questo viene automaticamente inserito nella stringa XML, altrimenti
@@ -15,13 +15,13 @@ la stringa restituita deve avere la seguente sintassi:
 GLi script possono essere parametrizzati con gli attributi di profilo, richiamati con la sintassi <b>${nome_attributo}</b>; questi possono avere un valore singolo oppure essere multi-valore:
 <br/>
 <br/>
-Un attributo di profilo multi-valore Ã¨ registrato nel file authorizations.xml; il suo valore Ã¨ indicato con la sintassi: 
+Un attributo di profilo multi-valore è registrato nel file authorizations.xml; il suo valore è indicato con la sintassi: 
  <i> {splitter {valore_1 splitter valore_2 splitter ... valore_n}}</i>;
  
 <br/>
 <br/>
 
-Per gli script in linguaggio groovy e javascript sono a disposizione alcune funzioni che permettono di includere un valore nella stringa XML richiesta e di gestire gli attributi multi-valore:
+Per gli script in linguaggio groovy e javascript sono¨a disposizione alcune funzioni che permettono di includere un valore nella stringa XML richiesta e di gestire gli attributi multi-valore:
 <ul>
 <br/>
 <br/>
