@@ -6,21 +6,32 @@
     import authHelper from '@/helpers/commons/authHelper'
     export default {
         name: 'IframeRenderer',
+        emits: ['click'],
         props: {
             url: String,
             externalLink: Boolean
         },
         data() {
             return {
-                completeUrl: ''
+                completeUrl: '',
+                clickMonitor: null
             }
         },
         created() {
             window.addEventListener('message', this.receiveMessage)
             this.createBaseUrl()
+            this.clickMonitor = setInterval(() => {
+            const elem = document.activeElement
+            if (elem && elem.tagName == 'IFRAME') {
+                this.$emit('click')
+            }
+        }, 200)
         },
         updated() {
             this.createBaseUrl()
+        },
+        unmounted() {
+            clearInterval(this.clickMonitor)
         },
         methods: {
             createBaseUrl() {

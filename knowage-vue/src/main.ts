@@ -1,75 +1,78 @@
-import { createApp } from 'vue'
-import App from './App.vue'
-import PrimeVue from 'primevue/config'
-import router from './App.routes.js'
-import store from './App.store.js'
+import { createApp } from "vue";
+import App from "./App.vue";
+import PrimeVue from "primevue/config";
+import router from "./App.routes.js";
+import store from "./App.store.js";
 
-import VueAxios from 'vue-axios'
-import interceptor from './axios.js'
+import VueAxios from "vue-axios";
+import interceptor from "./axios.js";
 
-import './registerServiceWorker'
+import "./registerServiceWorker";
 
-import 'codemirror/lib/codemirror.css'
-import 'codemirror/theme/monokai.css'
-import 'codemirror/theme/eclipse.css'
-import 'codemirror/addon/hint/show-hint.css'
-import 'codemirror/addon/hint/show-hint.js'
-import 'codemirror/addon/hint/sql-hint.js'
-import 'codemirror/addon/lint/lint.js'
-import 'codemirror/addon/selection/mark-selection.js'
-import 'codemirror/mode/htmlmixed/htmlmixed.js'
-import 'codemirror/mode/javascript/javascript.js'
-import 'codemirror/mode/python/python.js'
-import 'codemirror/mode/xml/xml.js'
-import 'codemirror/mode/sql/sql.js'
-import 'codemirror/mode/groovy/groovy.js'
-import 'codemirror/mode/clike/clike.js'
-import 'codemirror/mode/mathematica/mathematica.js'
+import "codemirror/lib/codemirror.css";
+import "codemirror/theme/monokai.css";
+import "codemirror/theme/eclipse.css";
+import "codemirror/addon/hint/show-hint.css";
+import "codemirror/addon/hint/show-hint.js";
+import "codemirror/addon/hint/sql-hint.js";
+import "codemirror/addon/lint/lint.js";
+import "codemirror/addon/selection/mark-selection.js";
+import "codemirror/mode/htmlmixed/htmlmixed.js";
+import "codemirror/mode/javascript/javascript.js";
+import "codemirror/mode/python/python.js";
+import "codemirror/mode/xml/xml.js";
+import "codemirror/mode/sql/sql.js";
+import "codemirror/mode/groovy/groovy.js";
+import "codemirror/mode/clike/clike.js";
+import "codemirror/mode/mathematica/mathematica.js";
 
-import 'primevue/resources/themes/mdc-light-indigo/theme.css'
-import 'primevue/resources/primevue.min.css'
-import 'primeicons/primeicons.css'
-import '@fortawesome/fontawesome-free/css/all.css'
-import 'primeflex/primeflex.css'
-import '@/assets/css/dialects-icons.css'
-import 'material-icons/iconfont/material-icons.css'
+import "primevue/resources/themes/mdc-light-indigo/theme.css";
+import "primevue/resources/primevue.min.css";
+import "primeicons/primeicons.css";
+import "@fortawesome/fontawesome-free/css/all.css";
+import "primeflex/primeflex.css";
+import "@/assets/css/dialects-icons.css";
+import "material-icons/iconfont/material-icons.css";
 
-import ToastService from 'primevue/toastservice'
-import Button from 'primevue/button'
-import Card from 'primevue/card'
-import InputText from 'primevue/inputtext'
-import ProgressBar from 'primevue/progressbar'
-import Toolbar from 'primevue/toolbar'
-import Tooltip from 'primevue/tooltip'
-import BadgeDirective from 'primevue/badgedirective'
+import ToastService from "primevue/toastservice";
+import Button from "primevue/button";
+import Card from "primevue/card";
+import InputText from "primevue/inputtext";
+import ProgressBar from "primevue/progressbar";
+import Toolbar from "primevue/toolbar";
+import Tooltip from "primevue/tooltip";
+import BadgeDirective from "primevue/badgedirective";
 
-import ConfirmationService from 'primevue/confirmationservice'
-import internationalizationPlugin from './plugins/internationalization.js'
+import ConfirmationService from "primevue/confirmationservice";
+import internationalizationPlugin from "./plugins/internationalization.js";
 
-import i18n from '@/App.i18n'
+import i18n from "@/App.i18n";
 
-import QBEOperator from './modules/qbe/qbeDialogs/qbeAdvancedFilterDialog/QBEOperator.vue'
+import QBEOperator from "./modules/qbe/qbeDialogs/qbeAdvancedFilterDialog/QBEOperator.vue";
+import { Quasar } from "quasar";
+import quasarUserOptions from "./quasar-user-options";
 
-if (process.env.NODE_ENV === 'development') document.domain = 'localhost'
+if (process.env.NODE_ENV === "development") document.domain = "localhost";
 
 createApp(App)
-    .use(VueAxios, interceptor)
-    .use(store)
-    .use(i18n)
-    .use(router)
-    .use(PrimeVue)
-    .use(ToastService)
-    .use(ConfirmationService)
-    .use(internationalizationPlugin, store.state.internationalization)
+  .use(Quasar, quasarUserOptions)
+  .use(VueAxios, interceptor)
+  .use(store)
+  .use(i18n)
+  .use(router)
+  .use(PrimeVue)
+  .use(ToastService)
+  .use(ConfirmationService)
+  .use(internationalizationPlugin, store.state.internationalization)
 
-    .directive('badge', BadgeDirective)
-    .directive('tooltip', Tooltip)
+  .directive("badge", BadgeDirective)
+  .directive("tooltip", Tooltip)
 
-    .component('Button', Button)
-    .component('Card', Card)
-    .component('InputText', InputText)
-    .component('ProgressBar', ProgressBar)
-    .component('Toolbar', Toolbar)
-    .component('QBEOperator', QBEOperator)
+  .component("Button", Button)
+  .component("Card", Card)
+  .component("InputText", InputText)
+  .component("ProgressBar", ProgressBar)
+  .component("Toolbar", Toolbar)
+  .component("QBEOperator", QBEOperator)
 
-    .mount('#app')
+  .mount("#app");
