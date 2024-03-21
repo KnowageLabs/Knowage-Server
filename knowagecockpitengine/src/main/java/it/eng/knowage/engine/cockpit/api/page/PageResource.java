@@ -77,8 +77,10 @@ import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.utilities.GeneralUtilities;
 import it.eng.spagobi.commons.utilities.ObjectsAccessVerifier;
 import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
+import it.eng.spagobi.container.IContainer;
 import it.eng.spagobi.engines.config.bo.Engine;
 import it.eng.spagobi.utilities.engines.EngineConstants;
+import it.eng.spagobi.utilities.engines.EngineStartServletIOManager;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceExceptionHandler;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
@@ -223,6 +225,7 @@ public class PageResource extends AbstractCockpitEngineResource {
 			response.setContentType(MediaType.TEXT_HTML);
 			response.setCharacterEncoding(UTF_8.name());
 
+			EngineStartServletIOManager ioManager = getIOManager();
 			if ("execute".equals(pageName)) {
 				String outputType = request.getParameter(OUTPUT_TYPE);
 				if ("xls".equalsIgnoreCase(outputType) || "xlsx".equalsIgnoreCase(outputType)) {
@@ -234,9 +237,19 @@ public class PageResource extends AbstractCockpitEngineResource {
 				} else if ("PNG".equalsIgnoreCase(outputType)) {
 					return createRedirect("/png");
 				} else {
-					engineInstance = CockpitEngine.createInstance(getIOManager().getTemplateAsString(),
-							getIOManager().getEnv());
-					getIOManager().getHttpSession().setAttribute(EngineConstants.ENGINE_INSTANCE, engineInstance);
+					IContainer requestContainer = ioManager.getRequestContainer();
+					Map env = ioManager.getEnv();
+					List<String> keys = requestContainer.getKeys();
+
+					LOGGER.warn("Request container contains:");
+					keys.forEach((key) -> LOGGER.warn("{} - {}", key, requestContainer.getString(key)));
+
+					LOGGER.warn("Environment vars are:");
+					env.forEach((key, value) -> LOGGER.warn("{} - {}", key, value));
+
+					String templateAsString = ioManager.getTemplateAsString();
+					engineInstance = CockpitEngine.createInstance(templateAsString, env);
+					ioManager.getHttpSession().setAttribute(EngineConstants.ENGINE_INSTANCE, engineInstance);
 
 					String editMode = request.getParameter("documentMode");
 					if (editMode != null) {
@@ -262,8 +275,8 @@ public class PageResource extends AbstractCockpitEngineResource {
 				template = buildBaseTemplate();
 				// create a new engine instance
 				engineInstance = CockpitEngine.createInstance(template.toString(), // servletIOManager.getTemplateAsString(),
-						getIOManager().getEnvForWidget());
-				getIOManager().getHttpSession().setAttribute(EngineConstants.ENGINE_INSTANCE, engineInstance);
+						ioManager.getEnvForWidget());
+				ioManager.getHttpSession().setAttribute(EngineConstants.ENGINE_INSTANCE, engineInstance);
 				dispatchUrl = "/WEB-INF/jsp/ngCockpit.jsp";
 			} else {
 				// error
