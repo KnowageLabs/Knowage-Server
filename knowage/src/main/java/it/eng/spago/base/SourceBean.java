@@ -17,10 +17,6 @@
  */
 package it.eng.spago.base;
 
-import it.eng.spago.configuration.ConfigSingleton;
-import it.eng.spago.tracing.TracerSingleton;
-import it.eng.spago.util.XMLUtil;
-
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.Serializable;
@@ -29,12 +25,22 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
+import java.util.stream.IntStream;
 
+import org.apache.xerces.dom.AttrImpl;
+import org.apache.xerces.dom.AttributeMap;
+import org.apache.xerces.dom.CoreDocumentImpl;
+import org.apache.xerces.dom.ElementImpl;
 import org.apache.xerces.parsers.SAXParser;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.NamedNodeMap;
 import org.xml.sax.InputSource;
 import org.xml.sax.XMLReader;
+
+import it.eng.spago.configuration.ConfigSingleton;
+import it.eng.spago.tracing.TracerSingleton;
+import it.eng.spago.util.XMLUtil;
 
 /**
  * DATE            CONTRIBUTOR/DEVELOPER    NOTE
@@ -136,12 +142,9 @@ public class SourceBean extends AbstractXMLObject implements CloneableObject, Se
 	 * Costruisce un <code>SourceBean</code> vuoto con nome <em>name</em>.
 	 * <p>
 	 *
-	 * @param name
-	 *            nome del <code>SourceBean</code>
-	 * @param trim
-	 *            Indica se le sezioni di testo devono essere trimmate
-	 * @exception SourceBeanException
-	 *                viene lanciata se il parametro di input <em>name</em> non &egrave; una nome valido
+	 * @param name nome del <code>SourceBean</code>
+	 * @param trim Indica se le sezioni di testo devono essere trimmate
+	 * @exception SourceBeanException viene lanciata se il parametro di input <em>name</em> non &egrave; una nome valido
 	 * @see SourceBean#SourceBean(SourceBean)
 	 */
 	public SourceBean(String name, boolean trim) throws SourceBeanException {
@@ -158,10 +161,8 @@ public class SourceBean extends AbstractXMLObject implements CloneableObject, Se
 	 * Costruisce un <code>SourceBean</code> vuoto con nome <em>name</em>.
 	 * <p>
 	 *
-	 * @param name
-	 *            nome del <code>SourceBean</code>
-	 * @exception SourceBeanException
-	 *                viene lanciata se il parametro di input <em>name</em> non &egrave; una nome valido
+	 * @param name nome del <code>SourceBean</code>
+	 * @exception SourceBeanException viene lanciata se il parametro di input <em>name</em> non &egrave; una nome valido
 	 * @see SourceBean#SourceBean(SourceBean)
 	 */
 	public SourceBean(String name) throws SourceBeanException {
@@ -179,10 +180,8 @@ public class SourceBean extends AbstractXMLObject implements CloneableObject, Se
 	 * Costruisce un <code>SourceBean</code> copia di <em>sourceBean</em>.
 	 * <p>
 	 *
-	 * @param sourceBean
-	 *            <code>SourceBean</code> da copiare
-	 * @exception SourceBeanException
-	 *                viene lanciata se il parametro di input <em>sourceBean</em> &egrave; nullo
+	 * @param sourceBean <code>SourceBean</code> da copiare
+	 * @exception SourceBeanException viene lanciata se il parametro di input <em>sourceBean</em> &egrave; nullo
 	 * @see SourceBean#SourceBean(String)
 	 */
 	public SourceBean(SourceBean sourceBean) throws SourceBeanException {
@@ -236,8 +235,7 @@ public class SourceBean extends AbstractXMLObject implements CloneableObject, Se
 	 * Elimina tutto il contenuto del <code>SourceBean</code> corrispondente all'attributo di chiave <em>key</em>.
 	 * <p>
 	 *
-	 * @param key
-	 *            chiave dell'attributo in dot-notation
+	 * @param key chiave dell'attributo in dot-notation
 	 * @see SourceBean#clearBean()
 	 */
 	public void clearBean(String key) {
@@ -249,8 +247,7 @@ public class SourceBean extends AbstractXMLObject implements CloneableObject, Se
 	 * Copia tutto il contenuto del parametro <code>SourceBean</code> nel proprio stato.
 	 * <p>
 	 *
-	 * @param sourceBean
-	 *            <code>SourceBean</code> di riferimento.
+	 * @param sourceBean <code>SourceBean</code> di riferimento.
 	 */
 	public void setBean(SourceBean sourceBean) {
 		clearBean();
@@ -264,12 +261,9 @@ public class SourceBean extends AbstractXMLObject implements CloneableObject, Se
 	 * Copia il contenuto del parametro <code>SourceBean</code> nel proprio stato a partire dall'attributo con chiave <em>key</em>.
 	 * <p>
 	 *
-	 * @param key
-	 *            <code>String</code> key che identifica un elemento del sourceBean.
-	 * @param sourceBean
-	 *            <code>SourceBean</code> di riferimento.
-	 * @exception SourceBeanException
-	 *                viene lanciata se la chiave non fa riferimento a nessun elemento.
+	 * @param key        <code>String</code> key che identifica un elemento del sourceBean.
+	 * @param sourceBean <code>SourceBean</code> di riferimento.
+	 * @exception SourceBeanException viene lanciata se la chiave non fa riferimento a nessun elemento.
 	 */
 	public void setBean(String key, SourceBean sourceBean) throws SourceBeanException {
 		Object attribute = getAttribute(key);
@@ -302,11 +296,12 @@ public class SourceBean extends AbstractXMLObject implements CloneableObject, Se
 	 * Ritorna tutti gli oggetti di tipo <code>SourceBeanAttribute</code> il cui campo chiave vale <em>key</em>.
 	 * <p>
 	 *
-	 * @param key
-	 *            chiave dell'attributo in dot-notation
-	 * @return <ul>
-	 *         <li> <em>null</em> se l'attributo non esiste <li> il <code>SourceBeanAttribute</code> corrispondente alla chiave se l'attributo &egrave;
-	 *         single-value <li> <em>List</em> arraylist di <code>SourceBeanAttribute</code> corrispondenti alla chiave se l'attributo &egrave; multi-value
+	 * @param key chiave dell'attributo in dot-notation
+	 * @return
+	 *         <ul>
+	 *         <li><em>null</em> se l'attributo non esiste
+	 *         <li>il <code>SourceBeanAttribute</code> corrispondente alla chiave se l'attributo &egrave; single-value
+	 *         <li><em>List</em> arraylist di <code>SourceBeanAttribute</code> corrispondenti alla chiave se l'attributo &egrave; multi-value
 	 *         </ul>
 	 * @see SourceBean#getAttribute(String)
 	 */
@@ -339,8 +334,8 @@ public class SourceBean extends AbstractXMLObject implements CloneableObject, Se
 		if (values.size() == 1) {
 			if (deepSearch) {
 				if (!((((SourceBeanAttribute) (values.get(0))).getValue()) instanceof SourceBean)) {
-					TracerSingleton.log(Constants.NOME_MODULO, TracerSingleton.WARNING, "SourceBean::getAttributeItem: attributo [" + searchKey
-							+ "] non 衵n SourceBean");
+					TracerSingleton.log(Constants.NOME_MODULO, TracerSingleton.WARNING,
+							"SourceBean::getAttributeItem: attributo [" + searchKey + "] non 衵n SourceBean");
 					return null;
 				} // if (!(value instanceof SourceBean))
 				String childKey = key.substring(key.indexOf('.') + 1, key.length());
@@ -349,8 +344,8 @@ public class SourceBean extends AbstractXMLObject implements CloneableObject, Se
 			return values.get(0);
 		} // if (values.size() == 1)
 		if (deepSearch) {
-			TracerSingleton.log(Constants.NOME_MODULO, TracerSingleton.WARNING, "SourceBean::getAttributeItem: attributo [" + searchKey
-					+ "] multivalore, impossibile eseguire una ricerca nidificata");
+			TracerSingleton.log(Constants.NOME_MODULO, TracerSingleton.WARNING,
+					"SourceBean::getAttributeItem: attributo [" + searchKey + "] multivalore, impossibile eseguire una ricerca nidificata");
 			return null;
 		} // if (deepSearch)
 		return values;
@@ -360,8 +355,7 @@ public class SourceBean extends AbstractXMLObject implements CloneableObject, Se
 	 * Ritorna true se l'oggetto sourceBean contiene almento un elemento con chiave <em>key</em>.
 	 * <p>
 	 *
-	 * @param key
-	 *            chiave dell'attributo in dot-notation
+	 * @param key chiave dell'attributo in dot-notation
 	 * @return esito della ricerca dell'elemento.
 	 */
 	public boolean containsAttribute(String key) {
@@ -373,11 +367,12 @@ public class SourceBean extends AbstractXMLObject implements CloneableObject, Se
 	 * Ritorna tutti i valori dell'attributo con chiave <em>key</em>.
 	 * <p>
 	 *
-	 * @param key
-	 *            chiave dell'attributo in dot-notation
-	 * @return <ul>
-	 *         <li> <em>null</em> se l'attributo non esiste <li> l'oggetto corrispondente alla chiave se l'attributo &egrave; single-value <li> <em>List</em>
-	 *         arraylist degli oggetti corrispondenti alla chiave se l'attributo &egrave; multi-value
+	 * @param key chiave dell'attributo in dot-notation
+	 * @return
+	 *         <ul>
+	 *         <li><em>null</em> se l'attributo non esiste
+	 *         <li>l'oggetto corrispondente alla chiave se l'attributo &egrave; single-value
+	 *         <li><em>List</em> arraylist degli oggetti corrispondenti alla chiave se l'attributo &egrave; multi-value
 	 *         </ul>
 	 * @see SourceBean#setAttribute(String, Object)
 	 * @see SourceBean#setAttribute(SourceBean)
@@ -414,8 +409,7 @@ public class SourceBean extends AbstractXMLObject implements CloneableObject, Se
 	 * Ritorna tutti i valori dell'attributo con chiave <em>key</em>.
 	 * <p>
 	 *
-	 * @param key
-	 *            chiave dell'attributo in dot-notation
+	 * @param key chiave dell'attributo in dot-notation
 	 * @return <em>List</em> arraylist degli oggetti corrispondenti alla chiave, di dimensione nulla se nessun attributo viene trovato
 	 * @see SourceBean#setAttribute(String, Object)
 	 * @see SourceBean#setAttribute(SourceBean)
@@ -445,12 +439,9 @@ public class SourceBean extends AbstractXMLObject implements CloneableObject, Se
 	 *
 	 * </blockquote>
 	 *
-	 * @param key
-	 *            chiave dell'attributo in dot-notation
-	 * @param value
-	 *            valore dell'attributo
-	 * @exception SourceBeanException
-	 *                viene lanciata in tutti i casi in cui la chiave espressa in dot-notation non sia corretta
+	 * @param key   chiave dell'attributo in dot-notation
+	 * @param value valore dell'attributo
+	 * @exception SourceBeanException viene lanciata in tutti i casi in cui la chiave espressa in dot-notation non sia corretta
 	 * @see SourceBean#getAttribute(String)
 	 * @see SourceBean#setAttribute(SourceBean)
 	 * @see SourceBean#updAttribute(String, Object)
@@ -494,8 +485,8 @@ public class SourceBean extends AbstractXMLObject implements CloneableObject, Se
 				sourceBean.setAttribute(childKey, value);
 				return;
 			} // if (attribute instanceof SourceBean)
-			TracerSingleton.log(Constants.NOME_MODULO, TracerSingleton.WARNING, "SourceBean::setAttribute: attributo [" + searchKey
-					+ "] multivalore, impossibile eseguire una ricerca nidificata");
+			TracerSingleton.log(Constants.NOME_MODULO, TracerSingleton.WARNING,
+					"SourceBean::setAttribute: attributo [" + searchKey + "] multivalore, impossibile eseguire una ricerca nidificata");
 			throw new SourceBeanException("Attributo [" + searchKey + "] multivalore, impossibile eseguire una ricerca nidificata");
 		} // if (key.indexOf('.') != -1)
 		if (value instanceof SourceBean) {
@@ -512,10 +503,8 @@ public class SourceBean extends AbstractXMLObject implements CloneableObject, Se
 	 * <code>SourceBean</code> viene aggiunto &egrave; pari al nome del contenitore stesso.
 	 * <p>
 	 *
-	 * @param value
-	 *            <code>SourceBean</code> da aggiungere
-	 * @exception SourceBeanException
-	 *                viene lanciata se <em>value</em> &egrave; <em>null</em>
+	 * @param value <code>SourceBean</code> da aggiungere
+	 * @exception SourceBeanException viene lanciata se <em>value</em> &egrave; <em>null</em>
 	 * @see SourceBean#getAttribute(String)
 	 * @see SourceBean#setAttribute(String, Object)
 	 * @see SourceBean#updAttribute(String, Object)
@@ -537,12 +526,9 @@ public class SourceBean extends AbstractXMLObject implements CloneableObject, Se
 	 * cui alla chiave corrisponda un attributo multi-value viene lanciata l'eccezione <code>SourceBeanException</code>.
 	 * <p>
 	 *
-	 * @param key
-	 *            chiave dell'attributo in dot-notation
-	 * @param value
-	 *            valore dell'attributo
-	 * @exception SourceBeanException
-	 *                viene lanciata in tutti i casi in cui la chiave espressa in dot-notation non sia corretta
+	 * @param key   chiave dell'attributo in dot-notation
+	 * @param value valore dell'attributo
+	 * @exception SourceBeanException viene lanciata in tutti i casi in cui la chiave espressa in dot-notation non sia corretta
 	 * @see SourceBean#getAttribute(String)
 	 * @see SourceBean#setAttribute(String, Object)
 	 * @see SourceBean#setAttribute(SourceBean)
@@ -571,8 +557,8 @@ public class SourceBean extends AbstractXMLObject implements CloneableObject, Se
 				return;
 			} // if (attribute instanceof SourceBean)
 			if (attribute instanceof List) {
-				TracerSingleton.log(Constants.NOME_MODULO, TracerSingleton.WARNING, "SourceBean::updAttribute: attributo [" + searchKey
-						+ "] multivalore, impossibile eseguire una ricerca nidificata");
+				TracerSingleton.log(Constants.NOME_MODULO, TracerSingleton.WARNING,
+						"SourceBean::updAttribute: attributo [" + searchKey + "] multivalore, impossibile eseguire una ricerca nidificata");
 				throw new SourceBeanException("Attributo [" + searchKey + "] multivalore, impossibile eseguire una ricerca nidificata");
 			} // if (attribute instanceof List)
 			TracerSingleton.log(Constants.NOME_MODULO, TracerSingleton.WARNING, "SourceBean::updAttribute: attributo [" + searchKey + "] non 衵n SourceBean");
@@ -584,8 +570,8 @@ public class SourceBean extends AbstractXMLObject implements CloneableObject, Se
 			return;
 		} // if (attributeItem == null)
 		if (attributeItem instanceof List) {
-			TracerSingleton.log(Constants.NOME_MODULO, TracerSingleton.WARNING, "SourceBean::updAttribute: attributo [" + key
-					+ "] multivalore, impossibile eseguire aggiornamento");
+			TracerSingleton.log(Constants.NOME_MODULO, TracerSingleton.WARNING,
+					"SourceBean::updAttribute: attributo [" + key + "] multivalore, impossibile eseguire aggiornamento");
 			throw new SourceBeanException("Attributo [" + key + "] multivalore, impossibile eseguire aggiornamento");
 		} // if (attributeItem instanceof List)
 		SourceBeanAttribute sourceBeanAttribute = (SourceBeanAttribute) attributeItem;
@@ -605,8 +591,8 @@ public class SourceBean extends AbstractXMLObject implements CloneableObject, Se
 			return;
 		} // if (attributeItem == null)
 		if (attributeItem instanceof List) {
-			TracerSingleton.log(Constants.NOME_MODULO, TracerSingleton.WARNING, "SourceBean::updAttribute: attributo [" + value.getName()
-					+ "] multivalore, impossibile eseguire aggiornamento");
+			TracerSingleton.log(Constants.NOME_MODULO, TracerSingleton.WARNING,
+					"SourceBean::updAttribute: attributo [" + value.getName() + "] multivalore, impossibile eseguire aggiornamento");
 			throw new SourceBeanException("Attributo [" + value.getName() + "] multivalore, impossibile eseguire aggiornamento");
 		} // if (attributeItem instanceof List)
 		SourceBeanAttribute sourceBeanAttribute = (SourceBeanAttribute) attributeItem;
@@ -618,10 +604,8 @@ public class SourceBean extends AbstractXMLObject implements CloneableObject, Se
 	 * Elimina tutti i valori dell'attributo con chiave <em>key</em>.
 	 * <p>
 	 *
-	 * @param key
-	 *            chiave dell'attributo in dot-notation
-	 * @exception SourceBeanException
-	 *                viene lanciata in tutti i casi in cui la chiave espressa in dot-notation non sia corretta
+	 * @param key chiave dell'attributo in dot-notation
+	 * @exception SourceBeanException viene lanciata in tutti i casi in cui la chiave espressa in dot-notation non sia corretta
 	 * @see SourceBean#getAttribute(String)
 	 * @see SourceBean#setAttribute(String, Object)
 	 * @see SourceBean#setAttribute(SourceBean)
@@ -651,15 +635,15 @@ public class SourceBean extends AbstractXMLObject implements CloneableObject, Se
 			} // if (values.size() == 0)
 			if (values.size() == 1) {
 				if (!((values.get(0)) instanceof SourceBean)) {
-					TracerSingleton.log(Constants.NOME_MODULO, TracerSingleton.WARNING, "SourceBean::delAttribute: attributo [" + searchKey
-							+ "] non 衵n SourceBean");
+					TracerSingleton.log(Constants.NOME_MODULO, TracerSingleton.WARNING,
+							"SourceBean::delAttribute: attributo [" + searchKey + "] non 衵n SourceBean");
 					throw new SourceBeanException("Attributo [" + searchKey + "] non 衵n SourceBean");
 				} // if (!(value instanceof SourceBean))
 				((SourceBean) (values.get(0))).delAttribute(key.substring(key.indexOf('.') + 1, key.length()));
 				return;
 			} // if (values.size() == 1)
-			TracerSingleton.log(Constants.NOME_MODULO, TracerSingleton.WARNING, "SourceBean::delAttribute: attributo [" + searchKey
-					+ "] multivalore, impossibile eseguire una ricerca nidificata");
+			TracerSingleton.log(Constants.NOME_MODULO, TracerSingleton.WARNING,
+					"SourceBean::delAttribute: attributo [" + searchKey + "] multivalore, impossibile eseguire una ricerca nidificata");
 			throw new SourceBeanException("Attributo [" + searchKey + "] multivalore, impossibile eseguire una ricerca nidificata");
 		} // if (key.indexOf('.') != -1)
 
@@ -690,8 +674,7 @@ public class SourceBean extends AbstractXMLObject implements CloneableObject, Se
 	 * Ritorna il testo contenuto nel <code>SourceBean</code> corrispondente all'attributo di chiave <em>key</em>.
 	 * <p>
 	 *
-	 * @param key
-	 *            chiave dell'attributo in dot-notation
+	 * @param key chiave dell'attributo in dot-notation
 	 * @return il testo contenuto
 	 * @see SourceBean#getCharacters()
 	 * @see SourceBean#setCharacters(String)
@@ -712,8 +695,7 @@ public class SourceBean extends AbstractXMLObject implements CloneableObject, Se
 	 * Sostituisce il testo contenuto con quello del parametro <em>characters</em>.
 	 * <p>
 	 *
-	 * @param characters
-	 *            il nuovo testo
+	 * @param characters il nuovo testo
 	 * @see SourceBean#getCharacters(String)
 	 * @see SourceBean#getCharacters(String, String)
 	 * @see SourceBean#setCharacters(String, String)
@@ -729,10 +711,8 @@ public class SourceBean extends AbstractXMLObject implements CloneableObject, Se
 	 * Sostituisce il testo contenuto con quello del parametro <em>characters</em>.
 	 * <p>
 	 *
-	 * @param characters
-	 *            il nuovo testo
-	 * @param trim
-	 *            true se il testo deve essere trimmato
+	 * @param characters il nuovo testo
+	 * @param trim       true se il testo deve essere trimmato
 	 * @see SourceBean#getCharacters(String)
 	 * @see SourceBean#getCharacters(String, String)
 	 * @see SourceBean#setCharacters(String, String)
@@ -751,10 +731,8 @@ public class SourceBean extends AbstractXMLObject implements CloneableObject, Se
 	 * <em>characters</em>.
 	 * <p>
 	 *
-	 * @param key
-	 *            chiave dell'attributo in dot-notation
-	 * @param characters
-	 *            il nuovo testo
+	 * @param key        chiave dell'attributo in dot-notation
+	 * @param characters il nuovo testo
 	 * @see SourceBean#getCharacters(String)
 	 * @see SourceBean#getCharacters(String, String)
 	 * @see SourceBean#setCharacters(String)
@@ -788,8 +766,7 @@ public class SourceBean extends AbstractXMLObject implements CloneableObject, Se
 	 * Elimina il testo contenuto nel <code>SourceBean</code> corrispondente all'attributo di chiave <em>key</em>.
 	 * <p>
 	 *
-	 * @param key
-	 *            chiave dell'attributo in dot-notation
+	 * @param key chiave dell'attributo in dot-notation
 	 * @see SourceBean#getCharacters()
 	 * @see SourceBean#getCharacters(String)
 	 * @see SourceBean#setCharacters(String)
@@ -810,13 +787,11 @@ public class SourceBean extends AbstractXMLObject implements CloneableObject, Se
 	 * single-value con chiave <em>paramName</em> e valore <em>paramValue</em>.
 	 * <p>
 	 *
-	 * @param key
-	 *            chiave dell'attributo in dot-notation
-	 * @param paramName
-	 *            nome del parametro di filtro
-	 * @param paramValue
-	 *            valore del parametro di filtro
-	 * @return <em>List</em> arraylist di <code>SourceBean</code> se pi&ugrave; valori vengono trovati </ul>
+	 * @param key        chiave dell'attributo in dot-notation
+	 * @param paramName  nome del parametro di filtro
+	 * @param paramValue valore del parametro di filtro
+	 * @return <em>List</em> arraylist di <code>SourceBean</code> se pi&ugrave; valori vengono trovati
+	 *         </ul>
 	 * @see SourceBean#getAttribute(String)
 	 */
 	public List getFilteredSourceBeanAttributeAsList(String key, String paramName, String paramValue) {
@@ -864,15 +839,14 @@ public class SourceBean extends AbstractXMLObject implements CloneableObject, Se
 	 * <em>paramName</em> e valore <em>paramValue</em>.
 	 * <p>
 	 *
-	 * @param key
-	 *            chiave dell'attributo in dot-notation
-	 * @param paramName
-	 *            nome del parametro di filtro
-	 * @param paramValue
-	 *            valore del parametro di filtro
-	 * @return <ul>
-	 *         <li> <em>null</em> se nessun valore viene trovato <li> <code>SourceBean</code> se un solo valore viene trovato <li> <em>List</em> arraylist di
-	 *         <code>SourceBean</code> se pi&ugrave; valori vengono trovati
+	 * @param key        chiave dell'attributo in dot-notation
+	 * @param paramName  nome del parametro di filtro
+	 * @param paramValue valore del parametro di filtro
+	 * @return
+	 *         <ul>
+	 *         <li><em>null</em> se nessun valore viene trovato
+	 *         <li><code>SourceBean</code> se un solo valore viene trovato
+	 *         <li><em>List</em> arraylist di <code>SourceBean</code> se pi&ugrave; valori vengono trovati
 	 *         </ul>
 	 * @see SourceBean#getAttribute(String)
 	 */
@@ -906,8 +880,7 @@ public class SourceBean extends AbstractXMLObject implements CloneableObject, Se
 	 * <em>key</em>.
 	 * <p>
 	 *
-	 * @param key
-	 *            chiave dell'attributo in dot-notation
+	 * @param key chiave dell'attributo in dot-notation
 	 * @return <code>List</code> list di <code>SourceBeanAttribute</code> contenuti
 	 * @see SourceBean#getContainedAttributes()
 	 * @see SourceBean#setContainedAttributes(List)
@@ -928,8 +901,7 @@ public class SourceBean extends AbstractXMLObject implements CloneableObject, Se
 	 * Sostituisce tutti gli oggetti di tipo <code>SourceBeanAttribute</code> contenuti con quelli del vettore <em>attributes</em>.
 	 * <p>
 	 *
-	 * @param attributes
-	 *            <code>List</code> list <code>SourceBeanAttribute</code> dei nuovi attributi
+	 * @param attributes <code>List</code> list <code>SourceBeanAttribute</code> dei nuovi attributi
 	 * @see SourceBean#getContainedAttributes()
 	 * @see SourceBean#getContainedAttributes(String)
 	 * @see SourceBean#setContainedAttributes(String, List)
@@ -946,8 +918,7 @@ public class SourceBean extends AbstractXMLObject implements CloneableObject, Se
 	 * <em>key</em> con quelli del vettore <em>attributes</em>.
 	 * <p>
 	 *
-	 * @param attributes
-	 *            <code>List</code> list di <code>SourceBeanAttribute</code> dei nuovi attributi
+	 * @param attributes <code>List</code> list di <code>SourceBeanAttribute</code> dei nuovi attributi
 	 * @see SourceBean#getContainedAttributes()
 	 * @see SourceBean#getContainedAttributes(String)
 	 * @see SourceBean#setContainedAttributes(List)
@@ -1004,8 +975,7 @@ public class SourceBean extends AbstractXMLObject implements CloneableObject, Se
 	 * Elimina tutti gli attributi contenuti nel <code>SourceBean</code> corrispondente all'attributo di chiave <em>key</em>.
 	 * <p>
 	 *
-	 * @param key
-	 *            chiave dell'attributo in dot-notation
+	 * @param key chiave dell'attributo in dot-notation
 	 * @see SourceBean#getContainedAttributes()
 	 * @see SourceBean#getContainedAttributes(String)
 	 * @see SourceBean#setContainedAttributes(List)
@@ -1045,8 +1015,7 @@ public class SourceBean extends AbstractXMLObject implements CloneableObject, Se
 	 * il cui valore associato &egrave; di tipo <code>SourceBean</code>.
 	 * <p>
 	 *
-	 * @param key
-	 *            chiave dell'attributo in dot-notation
+	 * @param key chiave dell'attributo in dot-notation
 	 * @return <code>List</code> il vettore di <code>SourceBeanAttribute</code>
 	 * @see SourceBean#getContainedSourceBeanAttributes()
 	 * @see SourceBean#getContainedAttributes()
@@ -1101,8 +1070,7 @@ public class SourceBean extends AbstractXMLObject implements CloneableObject, Se
 	 * Ritorna il vettore di chiavi in dot-notation degli attributi a cui &egrave; associata la chiave <em>key</em>.
 	 * <p>
 	 *
-	 * @param key
-	 *            chiave dell'attributo <em>non</em> in dot-notation
+	 * @param key chiave dell'attributo <em>non</em> in dot-notation
 	 * @return <code>List</code> il vettore di chiavi in dot-notation
 	 */
 	public Vector getFullKeyPaths(String key) {
@@ -1162,8 +1130,7 @@ public class SourceBean extends AbstractXMLObject implements CloneableObject, Se
 	 * Ritorna il <code>SourceBean</code> ottenuto dal parsing dell'<code>InputSource</code> <em>stream</em>.
 	 * <p>
 	 *
-	 * @param stream
-	 *            rappresentazione XML del <code>SourceBean</code>
+	 * @param stream rappresentazione XML del <code>SourceBean</code>
 	 * @return il <code>SourceBean</code> corrispondente allo stream XML
 	 * @see SourceBean#fromXMLString(String)
 	 * @see SourceBean#fromXMLFile(String)
@@ -1176,8 +1143,7 @@ public class SourceBean extends AbstractXMLObject implements CloneableObject, Se
 	 * Ritorna il <code>SourceBean</code> ottenuto dal parsing della stringa <em>xmlSourceBean</em>.
 	 * <p>
 	 *
-	 * @param xmlSourceBean
-	 *            rappresentazione XML del <code>SourceBean</code>
+	 * @param xmlSourceBean rappresentazione XML del <code>SourceBean</code>
 	 * @return il <code>SourceBean</code> corrispondente allo stream XML
 	 * @see SourceBean#fromXMLStream(InputSource)
 	 * @see SourceBean#fromXMLFile(String)
@@ -1229,8 +1195,7 @@ public class SourceBean extends AbstractXMLObject implements CloneableObject, Se
 	 * Ritorna il <code>SourceBean</code> ottenuto dal parsing della stringa <em>xmlSourceBean</em>.
 	 * <p>
 	 *
-	 * @param xmlSourceBean
-	 *            rappresentazione XML del <code>SourceBean</code>
+	 * @param xmlSourceBean rappresentazione XML del <code>SourceBean</code>
 	 * @return il <code>SourceBean</code> corrispondente allo stream XML
 	 * @see SourceBean#fromXMLStream(InputSource)
 	 * @see SourceBean#fromXMLFile(String)
@@ -1243,8 +1208,7 @@ public class SourceBean extends AbstractXMLObject implements CloneableObject, Se
 	 * Ritorna il <code>SourceBean</code> ottenuto dal parsing del file <em>xmlSourceBean</em>.
 	 * <p>
 	 *
-	 * @param xmlSourceBean
-	 *            nome del file che contiene la rappresentazione XML del <code>SourceBean</code>
+	 * @param xmlSourceBean nome del file che contiene la rappresentazione XML del <code>SourceBean</code>
 	 * @return il <code>SourceBean</code> corrispondente allo stream XML
 	 * @see SourceBean#fromXMLStream(InputSource)
 	 * @see SourceBean#fromXMLString(String)
@@ -1280,8 +1244,7 @@ public class SourceBean extends AbstractXMLObject implements CloneableObject, Se
 	 * Ritorna il <code>SourceBean</code> ottenuto dal parsing del file <em>xmlSourceBean</em>.
 	 * <p>
 	 *
-	 * @param xmlSourceBean
-	 *            nome del file che contiene la rappresentazione XML del <code>SourceBean</code>
+	 * @param xmlSourceBean nome del file che contiene la rappresentazione XML del <code>SourceBean</code>
 	 * @return il <code>SourceBean</code> corrispondente allo stream XML
 	 * @see SourceBean#fromXMLStream(InputSource)
 	 * @see SourceBean#fromXMLString(String)
@@ -1299,7 +1262,15 @@ public class SourceBean extends AbstractXMLObject implements CloneableObject, Se
 	public Element toElement(Document document, XMLSerializer serializer) {
 		if (_upperCase)
 			_sourceBeanName = _sourceBeanName.toUpperCase();
-		Element element = document.createElement(_sourceBeanName);
+		
+		// XML-DOM api does not preserve the order of the lovs columns.
+		// Recursively copy to elements that support sorted attributeMap prevent us from losing columns sorting.
+		Element element = new ElementImpl((CoreDocumentImpl) document, _sourceBeanName) {
+			@Override
+			public NamedNodeMap getAttributes() {
+				return new AttributeSortedMap(this, (AttributeMap) super.getAttributes());
+			}
+		};
 
 		for (Iterator it = _namespaceMappings.iterator(); it.hasNext();) {
 			NamespaceMapping mapping = (NamespaceMapping) it.next();
@@ -1353,20 +1324,42 @@ public class SourceBean extends AbstractXMLObject implements CloneableObject, Se
 		} // for (int i = 0; i < notXMLObjectAttributes.size(); i++)
 	}
 
-	private void XMLObjectAttributesToElement(Document document, Element element) {
+	private void XMLObjectAttributesToElement(Document document, Element parent) {
 		List xmlObjectAttributes = getContainedXMLObjectAttributes();
 		for (int i = 0; i < xmlObjectAttributes.size(); i++) {
 			SourceBeanAttribute sourceBeanAttribute = (SourceBeanAttribute) (xmlObjectAttributes.get(i));
 			XMLObject xmlObject = (XMLObject) (sourceBeanAttribute.getValue());
 			if (xmlObject instanceof SourceBean)
-				element.appendChild(xmlObject.toElement(document));
+				parent.appendChild(xmlObject.toElement(document));
 			else {
 				String key = (_upperCase) ? sourceBeanAttribute.getKey().toUpperCase() : sourceBeanAttribute.getKey();
 				Element keyElement = document.createElement(key);
 				keyElement.appendChild(xmlObject.toElement(document));
-				element.appendChild(keyElement);
+				parent.appendChild(keyElement);
 			} // if (xmlObject instanceof SourceBean)
 		} // for (int i = 0; i < xmlObjectAttributes.size(); i++)
+	}
+
+	public class AttributeSortedMap extends AttributeMap {
+		AttributeSortedMap(ElementImpl element, AttributeMap attributes) {
+			super(element, attributes);
+			nodes.sort((o1, o2) -> {
+				AttrImpl att1 = (AttrImpl) o1;
+				AttrImpl att2 = (AttrImpl) o2;
+
+				Integer pos1 = IntStream.range(0, _attributes.size())
+						.filter(i -> ((SourceBeanAttribute) _attributes.get(i)).getKey().equals(att1.getNodeName())).findFirst().orElse(-1);
+				Integer pos2 = IntStream.range(0, _attributes.size())
+						.filter(i -> ((SourceBeanAttribute) _attributes.get(i)).getKey().equals(att2.getNodeName())).findFirst().orElse(-1);
+
+				if (pos1 > -1 && pos2 > -1) {
+					return pos1.compareTo(pos2);
+				} else if (pos1 > -1 || pos2 > -1) {
+					return pos1 == -1 ? 1 : -1;
+				}
+				return att1.getNodeName().compareTo(att2.getNodeName());
+			});
+		}
 	}
 
 	/*
@@ -1399,8 +1392,7 @@ public class SourceBean extends AbstractXMLObject implements CloneableObject, Se
 	/**
 	 * Allow to set the list of the mappings alias<->namespace uri contained in this element.
 	 *
-	 * @param mappings
-	 *            List of NamespaceMapping objects
+	 * @param mappings List of NamespaceMapping objects
 	 */
 	public void setNamespaceMappings(List mappings) {
 		_namespaceMappings = mappings;
@@ -1416,8 +1408,7 @@ public class SourceBean extends AbstractXMLObject implements CloneableObject, Se
 	/**
 	 * Allow to set the alias name of the root element.
 	 *
-	 * @param prefix
-	 *            The alias name of this element's namespace.
+	 * @param prefix The alias name of this element's namespace.
 	 */
 	public void setPrefix(String prefix) {
 		this._prefix = prefix;
