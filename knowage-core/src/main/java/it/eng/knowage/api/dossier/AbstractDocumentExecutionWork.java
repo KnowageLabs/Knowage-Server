@@ -666,7 +666,7 @@ public class AbstractDocumentExecutionWork extends DossierExecutionClient implem
 							// filled by fillParametersValues in DossierExecutionResource
 							outParamValue = currParamValue;
 
-							List<?> currParamValueDecoded = decoder.decode(outParamValue);
+							List<String> currParamValueDecoded = decoder.decode(outParamValue);
 
 							if (biObjectParameter.getParameterUrlName().equals(templateParameter.getUrlName())) {
 								outParamName = templateParameter.getUrlName();
@@ -703,7 +703,7 @@ public class AbstractDocumentExecutionWork extends DossierExecutionClient implem
 									String urlName = biObjectParameter.getParameterUrlName();
 									boolean multivalue = biObjectParameter.isMultivalue();
 									String type = biObjectParameter.getParameter().getType();
-									List<String> values = biObjectParameter.getParameterValues();
+									List<String> values = currParamValueDecoded;
 									List<String> descriptions = biObjectParameter.getParameterValuesDescription();
 
 									String encodedValues = parametersEncoder.encodeValuesFromListOfStrings(multivalue,
