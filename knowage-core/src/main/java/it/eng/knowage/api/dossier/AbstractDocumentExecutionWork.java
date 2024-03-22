@@ -58,6 +58,7 @@ import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
 import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.commons.utilities.BaseParametersEncoder;
 import it.eng.spagobi.commons.utilities.GeneralUtilities;
 import it.eng.spagobi.commons.utilities.ObjectsAccessVerifier;
 import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
@@ -400,11 +401,11 @@ public class AbstractDocumentExecutionWork extends DossierExecutionClient implem
 	public void release() {
 	}
 
-	public List getBiObjects() {
+	public List<BIObjectPlaceholdersPair> getBiObjects() {
 		return documents;
 	}
 
-	public void setBiObjects(List biObjects) {
+	public void setBiObjects(List<BIObjectPlaceholdersPair> biObjects) {
 		this.documents = biObjects;
 	}
 
@@ -640,6 +641,7 @@ public class AbstractDocumentExecutionWork extends DossierExecutionClient implem
 
 		// This control doesn't make sense for parameters which use a view
 		if (StringUtils.isEmpty(viewId) && drivers != null) {
+			BaseParametersEncoder parametersEncoder = new BaseParametersEncoder();
 			List<Parameter> parameter = reportToUse.getParameters();
 			if (drivers.size() != parameter.size()) {
 				throw new SpagoBIRuntimeException(
@@ -697,10 +699,23 @@ public class AbstractDocumentExecutionWork extends DossierExecutionClient implem
 
 									jsonParams.put(param);
 								} else {
-									serviceUrlBuilder.setParameter(biObjectParameter.getParameterUrlName(),
-											outParamValue);
-									serviceUrlBuilder.setParameter(biObjectParameter.getParameterUrlName(),
-											templateParameter.getUrlNameDescription());
+
+									String urlName = biObjectParameter.getParameterUrlName();
+									boolean multivalue = biObjectParameter.isMultivalue();
+									String type = biObjectParameter.getParameter().getType();
+									List<String> values = biObjectParameter.getParameterValues();
+									List<String> descriptions = biObjectParameter.getParameterValuesDescription();
+
+									String encodedValues = parametersEncoder.encodeValuesFromListOfStrings(multivalue,
+											values, type);
+									String encodedDescriptions = parametersEncoder
+											.encodeDescriptionFromListOfStrings(descriptions);
+
+									String valueParamName = urlName;
+									String descParamName = urlName + "_description";
+
+									serviceUrlBuilder.setParameter(valueParamName, encodedValues);
+									serviceUrlBuilder.setParameter(descParamName, encodedDescriptions);
 								}
 								found = true;
 
