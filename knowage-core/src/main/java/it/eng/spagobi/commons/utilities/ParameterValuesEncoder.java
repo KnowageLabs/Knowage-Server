@@ -19,7 +19,8 @@ package it.eng.spagobi.commons.utilities;
 
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
@@ -30,129 +31,32 @@ import it.eng.spagobi.commons.dao.DAOFactory;
 
 /**
  * @author Gioia
- *
+ * @deprecated Too much coupling: this class should be used by all the WARs which need it but it's not movable outside knowage-core because of the coupling with
+ *             {@link DAOFactory}, {@link BIObjectParameter} and {@link Parameter}; we need to reduce the coupling because the code to encode multivalue
+ *             parameters is currently copy-pasted in many places. Where possible use {@link BaseParametersEncoder}.
  */
-public class ParameterValuesEncoder {
+@Deprecated
+public class ParameterValuesEncoder extends BaseParametersEncoder {
 
-	static private Logger logger = Logger.getLogger(ParameterValuesEncoder.class);
-	private String separator;
-	private String openBlockMarker;
-	private String closeBlockMarker;
-
-	public static final String DEFAULT_SEPARATOR = ";";
-	public static final String DEFAULT_OPEN_BLOCK_MARKER = "{";
-	public static final String DEFAULT_CLOSE_BLOCK_MARKER = "}";
-
-	// ///////////////////////////////////////////////////////////
-	// CONSTRUCTORS
-	// ///////////////////////////////////////////////////////////
-
-	/**
-	 * Instantiates a new parameter values encoder.
-	 */
-	public ParameterValuesEncoder() {
-		this(DEFAULT_SEPARATOR, DEFAULT_OPEN_BLOCK_MARKER, DEFAULT_CLOSE_BLOCK_MARKER);
-	}
-
-	/**
-	 * Instantiates a new parameter values encoder.
-	 *
-	 * @param separator
-	 *            the separator
-	 * @param openBlockMarker
-	 *            the open block marker
-	 * @param closeBlockMarker
-	 *            the close block marker
-	 */
-	public ParameterValuesEncoder(String separator, String openBlockMarker, String closeBlockMarker) {
-		this.separator = separator;
-		this.openBlockMarker = openBlockMarker;
-		this.closeBlockMarker = closeBlockMarker;
-	}
-
-	// ///////////////////////////////////////////////////////////
-	// ACCESS METHODS
-	// ///////////////////////////////////////////////////////////
-
-	/**
-	 * Gets the close block marker.
-	 *
-	 * @return the close block marker
-	 */
-	public String getCloseBlockMarker() {
-		return closeBlockMarker;
-	}
-
-	/**
-	 * Sets the close block marker.
-	 *
-	 * @param closeBlockMarker
-	 *            the new close block marker
-	 */
-	public void setCloseBlockMarker(String closeBlockMarker) {
-		this.closeBlockMarker = closeBlockMarker;
-	}
-
-	/**
-	 * Gets the open block marker.
-	 *
-	 * @return the open block marker
-	 */
-	public String getOpenBlockMarker() {
-		return openBlockMarker;
-	}
-
-	/**
-	 * Sets the open block marker.
-	 *
-	 * @param openBlockMarker
-	 *            the new open block marker
-	 */
-	public void setOpenBlockMarker(String openBlockMarker) {
-		this.openBlockMarker = openBlockMarker;
-	}
-
-	/**
-	 * Gets the separator.
-	 *
-	 * @return the separator
-	 */
-	public String getSeparator() {
-		return separator;
-	}
-
-	/**
-	 * Sets the separator.
-	 *
-	 * @param separator
-	 *            the new separator
-	 */
-	public void setSeparator(String separator) {
-		this.separator = separator;
-	}
-
-	// ///////////////////////////////////////////////////////////
-	// PUBLIC METHODS
-	// ///////////////////////////////////////////////////////////
+	private static final Logger LOGGER = LogManager.getLogger(ParameterValuesEncoder.class);
 
 	/**
 	 * Encode.
 	 *
-	 * @param biobjPar
-	 *            the biobj par
+	 * @param biobjPar the biobj par
 	 *
 	 * @return the string
 	 */
 	public String encode(BIObjectParameter biobjPar) {
-		logger.debug("IN");
+		LOGGER.debug("IN");
 
-		List parameterValues = biobjPar.getParameterValues();
+		List<String> parameterValues = biobjPar.getParameterValues();
 		if (parameterValues == null) {
-			logger.debug("biobjPar.getParameterValues() == null");
+			LOGGER.debug("biobjPar.getParameterValues() == null");
 			return null;
 		}
 
-		if (parameterValues.size() == 0) {
+		if (parameterValues.isEmpty()) {
 			return "";
 		}
 
@@ -160,20 +64,21 @@ public class ParameterValuesEncoder {
 		if (parameter == null) {
 			Integer parId = biobjPar.getParID();
 			if (parId == null) {
-				logger.warn("Parameter object nor parameter id are set into BIObjectParameter with label = " + biobjPar.getLabel() + " of document with id = "
-						+ biobjPar.getBiObjectID());
+				LOGGER.warn(
+						"Parameter object nor parameter id are set into BIObjectParameter with label = {} of document with id = {}",
+						biobjPar.getLabel(), biobjPar.getBiObjectID());
 			} else {
 				try {
 					parameter = DAOFactory.getParameterDAO().loadForDetailByParameterID(parId);
 				} catch (EMFUserError e) {
-					logger.warn("Error loading parameter with id = " + parId);
+					LOGGER.warn("Error loading parameter with id = {}", parId);
 				}
 			}
 		}
 
 		if (parameter == null) {
-			logger.error("Unable to load parameter from BIObjectParameter with label = " + biobjPar.getLabel() + " of document with id = "
-					+ +biobjPar.getBiObjectID());
+			LOGGER.error("Unable to load parameter from BIObjectParameter with label = {} of document with id = {}",
+					biobjPar.getLabel(), biobjPar.getBiObjectID());
 			return null;
 		}
 
@@ -183,39 +88,35 @@ public class ParameterValuesEncoder {
 		ModalitiesValue modValue = parameter.getModalityValue();
 		if (modValue != null) {
 			String typeCode = modValue.getITypeCd();
-			logger.debug("typeCode=" + typeCode);
+			LOGGER.debug("typeCode={}", typeCode);
 
 			if (SpagoBIConstants.INPUT_TYPE_MAN_IN_CODE.equalsIgnoreCase(typeCode)) {
 				multivalue = false;
 			}
 		}
 
-		if (!multivalue) {
-			return (String) parameterValues.get(0);
-		} else {
-			return encodeMultivaluesParam(parameterValues, type);
-		}
+		return encodeValuesFromListOfStrings(multivalue, parameterValues, type);
 	}
 
 	/**
-	 * Get the description of a BIObjectParameter and encode it's description.. In this way we create a new parameter with the description of the parameter to
-	 * pass at the engine
+	 * Get the description of a BIObjectParameter and encode it's description.. In this way we create a new parameter with the description of the parameter to pass
+	 * at the engine
 	 *
-	 * @param biobjPar
-	 *            the parameter
+	 * @param biobjPar the parameter
 	 * @return a string with the encoded description
 	 */
 	public String encodeDescription(BIObjectParameter biobjPar) {
-		logger.debug("IN");
+		LOGGER.debug("IN");
 		if (biobjPar.getParameterValues() == null) {
-			logger.debug("biobjPar.getParameterValues() == null");
+			LOGGER.debug("biobjPar.getParameterValues() == null");
 			return null;
 		}
 
 		Parameter parameter = biobjPar.getParameter();
 		if (parameter != null) {
 
-			if (biobjPar.getParameterValuesDescription() == null) {
+			List<String> parameterValuesDescription = biobjPar.getParameterValuesDescription();
+			if (parameterValuesDescription == null) {
 				return "";
 			}
 
@@ -224,98 +125,42 @@ public class ParameterValuesEncoder {
 				boolean mult = biobjPar.isMultivalue();
 
 				String typeCode = biobjPar.getParameter().getModalityValue().getITypeCd();
-				logger.debug("typeCode=" + typeCode);
+				LOGGER.debug("typeCode={}", typeCode);
 				if (typeCode.equalsIgnoreCase(SpagoBIConstants.INPUT_TYPE_MAN_IN_CODE)) {
 					mult = false;
 				}
 
 				if (!mult) {
-					return (String) biobjPar.getParameterValuesDescription().get(0);
+					return parameterValuesDescription.get(0);
 				} else {
-					return encodeMultivalueParamsDesciption(biobjPar.getParameterValuesDescription());
+					return encodeMultivalueParamsDesciption(parameterValuesDescription);
 				}
 			} else {
-				List values = biobjPar.getParameterValuesDescription();
-				if (values != null && values.size() > 0) {
-					if (values.size() == 1)
-						return (String) biobjPar.getParameterValuesDescription().get(0);
-					else
-						return encodeMultivalueParamsDesciption(biobjPar.getParameterValuesDescription());
-				} else
-					return "";
+				return encodeDescriptionFromBIObjectParameter(biobjPar);
 			}
 		} else {
 			Integer parId = biobjPar.getParID();
 			String type = null;
 			if (parId == null) {
-				logger.warn("Parameter object nor parameter id are set into BiObjectPrameter with label = " + biobjPar.getLabel() + " of document with id = "
-						+ biobjPar.getBiObjectID());
+				LOGGER.warn(
+						"Parameter object nor parameter id are set into BiObjectPrameter with label = {} of document with id = {}",
+						biobjPar.getLabel(), biobjPar.getBiObjectID());
 			} else {
 				try {
 					Parameter aParameter = DAOFactory.getParameterDAO().loadForDetailByParameterID(parId);
 					type = aParameter.getType();
 				} catch (EMFUserError e) {
-					logger.warn("Error loading parameter with id = " + biobjPar.getParID());
+					LOGGER.warn("Error loading parameter with id = {}", biobjPar.getParID());
 				}
 			}
-			List values = biobjPar.getParameterValuesDescription();
-			if (values != null && values.size() > 0) {
-				if (values.size() == 1)
-					return (String) biobjPar.getParameterValuesDescription().get(0);
-				else
-					return encodeMultivalueParamsDesciption(biobjPar.getParameterValuesDescription());
-			} else
-				return "";
+			return encodeDescriptionFromBIObjectParameter(biobjPar);
 		}
 
 	}
 
-	// ///////////////////////////////////////////////////////////
-	// UTILITY METHODS
-	// ///////////////////////////////////////////////////////////
-
-	/**
-	 * Multi values parameters are encoded in the following way: openBlockMarker + separator + openBlockMarker + [values separated by the separator] +
-	 * closeBlockMarker + parameterType + closeBlockMarker Examples: {,{string1,string2,string3}STRING} {,{number1,number1,number1}NUM}
-	 *
-	 * parameterType: the type of the parameter (NUM/STRING/DATE)
-	 */
-	private String encodeMultivaluesParam(List values, String parameterType) {
-		logger.debug("IN");
-		String value = "";
-
-		if (values == null || values.size() == 0)
-			return value;
-
-		value += openBlockMarker;
-		value += separator;
-		value += openBlockMarker;
-		for (int i = 0; i < values.size(); i++) {
-			String valueToBeAppended = (values.get(i) == null) ? "" : (String) values.get(i);
-			value += (i > 0) ? separator : "";
-			value += valueToBeAppended;
-		}
-		value += closeBlockMarker;
-		value += parameterType;
-		value += closeBlockMarker;
-		logger.debug("IN.value=" + value);
-		return value;
+	private String encodeDescriptionFromBIObjectParameter(BIObjectParameter biobjPar) {
+		List<String> values = biobjPar.getParameterValuesDescription();
+		return encodeDescriptionFromListOfStrings(values);
 	}
 
-	private String encodeMultivalueParamsDesciption(List values) {
-		logger.debug("IN");
-		String value = "";
-
-		if (values == null || values.size() == 0)
-			return value;
-
-		for (int i = 0; i < values.size(); i++) {
-			String valueToBeAppended = (values.get(i) == null) ? "" : (String) values.get(i);
-			value += (i > 0) ? separator : "";
-			value += valueToBeAppended;
-		}
-
-		logger.debug("IN.value=" + value);
-		return value;
-	}
 }
