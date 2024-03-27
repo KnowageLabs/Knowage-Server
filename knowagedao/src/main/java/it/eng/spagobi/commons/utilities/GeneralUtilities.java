@@ -348,7 +348,7 @@ public class GeneralUtilities extends SpagoBIUtilities {
 	}
 
 	public static String getScript(String language) {
-		LOGGER.trace("Getting script for language: {}" + language);
+		LOGGER.trace("Getting script for language: {}", language);
 		String script = null;
 		List<Locale> locales = GeneralUtilities.getSupportedLocales();
 		Iterator<Locale> iter = locales.iterator();

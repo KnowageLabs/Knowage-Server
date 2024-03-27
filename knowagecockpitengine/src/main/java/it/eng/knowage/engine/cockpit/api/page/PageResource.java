@@ -365,9 +365,9 @@ public class PageResource extends AbstractCockpitEngineResource {
 		String userId = request.getParameter("user_id");
 		String pdfPageOrientation = request.getParameter(PDF_PAGE_ORIENTATION);
 		boolean pdfFrontPage = request.getParameter(PDF_FRONT_PAGE) != null
-				&& Boolean.valueOf(request.getParameter(PDF_FRONT_PAGE));
+				&& Boolean.parseBoolean(request.getParameter(PDF_FRONT_PAGE));
 		boolean pdfBackPage = request.getParameter(PDF_BACK_PAGE) != null
-				&& Boolean.valueOf(request.getParameter(PDF_BACK_PAGE));
+				&& Boolean.parseBoolean(request.getParameter(PDF_BACK_PAGE));
 
 		PngExporter pngExporter = new PngExporter(documentId, userId, requestURL, renderOptions, pdfPageOrientation,
 				pdfFrontPage, pdfBackPage);
@@ -451,17 +451,17 @@ public class PageResource extends AbstractCockpitEngineResource {
 		Boolean isMultiSheet = Boolean.parseBoolean(request.getParameter(IS_MULTI_SHEET));
 
 		if (widthParameterVal != null) {
-			pdfWidth = Integer.valueOf(widthParameterVal);
+			pdfWidth = Integer.parseInt(widthParameterVal);
 		}
 		if (heightParameterVal != null) {
-			pdfHeight = Integer.valueOf(heightParameterVal);
+			pdfHeight = Integer.parseInt(heightParameterVal);
 		}
 		if (jsRenderingWaitParameterVal != null) {
-			pdfRenderingWaitTime = 1000 * Long.valueOf(jsRenderingWaitParameterVal);
+			pdfRenderingWaitTime = 1000 * Long.parseLong(jsRenderingWaitParameterVal);
 		}
 
 		if (deviceScaleFactorVal != null) {
-			pdfDeviceScaleFactor = Double.valueOf(deviceScaleFactorVal);
+			pdfDeviceScaleFactor = Double.parseDouble(deviceScaleFactorVal);
 		}
 
 		ViewportDimensions dimensions = ViewportDimensions.builder().withWidth(pdfWidth).withHeight(pdfHeight)
