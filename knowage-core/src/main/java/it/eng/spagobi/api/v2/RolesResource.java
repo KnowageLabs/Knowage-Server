@@ -61,6 +61,8 @@ import it.eng.spagobi.commons.utilities.UserUtilities;
 import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
 import it.eng.spagobi.services.rest.annotations.UserConstraint;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRestServiceException;
+import org.owasp.esapi.reference.DefaultEncoder;
+import org.owasp.esapi.errors.EncodingException; 
 
 @Path("/2.0/roles")
 @ManageAuthorization
@@ -68,7 +70,7 @@ public class RolesResource extends AbstractSpagoBIResource {
 
 	private static final Logger LOGGER = LogManager.getLogger(RolesResource.class);
 	private static final String CHARSET = "; charset=UTF-8";
-
+	private static org.owasp.esapi.Encoder esapiEncoder = DefaultEncoder.getInstance();
 	@GET
 	@UserConstraint(functionalities = { CommunityFunctionalityConstants.PROFILE_MANAGEMENT,
 			CommunityFunctionalityConstants.FINAL_USERS_MANAGEMENT, CommunityFunctionalityConstants.READ_ROLES })
@@ -240,7 +242,7 @@ public class RolesResource extends AbstractSpagoBIResource {
 				}
 			}
 
-			String encodedRole = URLEncoder.encode("" + role.getId(), UTF_8.name());
+			String encodedRole = esapiEncoder.encodeForURL("" + role.getId());
 			return Response.created(new URI("2.0/roles/" + encodedRole)).entity(encodedRole).build();
 		} catch (Exception e) {
 			LOGGER.error("Error while inserting resource", e);
@@ -289,7 +291,7 @@ public class RolesResource extends AbstractSpagoBIResource {
 				rolesDao.removeRoleDataSetCategory(role.getId(), domain.getValueId());
 			}
 
-			String encodedRole = URLEncoder.encode("" + role.getId(), UTF_8.name());
+			String encodedRole = esapiEncoder.encodeForURL("" + role.getId());
 			return Response.created(new URI("2.0/roles/" + encodedRole)).entity(encodedRole).build();
 		} catch (Exception e) {
 			LOGGER.error("Error while modifying resource with id: " + id, e);
@@ -318,7 +320,7 @@ public class RolesResource extends AbstractSpagoBIResource {
 			}
 
 			rolesDao.eraseRole(role);
-			String encodedRole = URLEncoder.encode("" + id, UTF_8.name());
+			String encodedRole = esapiEncoder.encodeForURL("" + id);
 			return Response.ok().entity(encodedRole).build();
 		} catch (Exception e) {
 			LOGGER.error("Error with deleting resource with id: " + id, e);

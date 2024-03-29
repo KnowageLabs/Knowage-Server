@@ -45,6 +45,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.owasp.esapi.errors.EncodingException;
+import org.owasp.esapi.reference.DefaultEncoder;
 
 import it.eng.knowage.commons.security.KnowageSystemConfiguration;
 import it.eng.spago.base.RequestContainer;
@@ -83,6 +85,7 @@ public class GeneralUtilities extends SpagoBIUtilities {
 	private static final String VUE_ENVIRONMENT = "vue.environment";
 	private static final int MAX_DEFAULT_FILE_5M_SIZE = 5242880;
 	private static final int MAX_DEFAULT_FILE_10M_SIZE = 10485760; // 10 mega byte
+	private static org.owasp.esapi.Encoder esapiEncoder = DefaultEncoder.getInstance();
 
 	private static boolean isProduction = true;
 
@@ -620,13 +623,14 @@ public class GeneralUtilities extends SpagoBIUtilities {
 
 	/**
 	 * Returns an url starting with the given base url and adding parameters retrieved by the input parameters map. Each parameter value is encoded using
-	 * URLEncoder.encode(value, StandardCharsets.UTF_8);
+	 * esapiEncoder.encodeForURL(value, StandardCharsets.UTF_8);
 	 *
 	 * @param baseUrl The base url
 	 * @param mapPars The parameters map; those parameters will be added to the base url (values will be encoded using UTF-8 encoding)
 	 * @return an url starting with the given base url and adding parameters retrieved by the input parameters map
+	 * @throws EncodingException 
 	 */
-	public static String getUrl(String baseUrl, Map mapPars) {
+	public static String getUrl(String baseUrl, Map mapPars) throws EncodingException {
 		LOGGER.debug("Getting URL (???) from {} base URL and parameters {}", baseUrl, mapPars);
 		Assert.assertNotNull(baseUrl, "Base url in input is null");
 		StringBuilder sb = new StringBuilder();
@@ -642,7 +646,7 @@ public class GeneralUtilities extends SpagoBIUtilities {
 					String value = valueObj.toString();
 					// encoding value
 					try {
-						value = URLEncoder.encode(value, UTF_8.name());
+						value = esapiEncoder.encodeForURL(value);
 
 						// put all + to space! that is because
 						// otherwise %2B (encoding of plus) and + (substitution of white space in an url)
@@ -650,10 +654,10 @@ public class GeneralUtilities extends SpagoBIUtilities {
 						// and when using exporter I would no more be able to distinguish + from ' '
 						// value = value.replaceAll(Pattern.quote("+") , " ");
 
-					} catch (UnsupportedEncodingException e) {
+					} catch (EncodingException e) {
 						LOGGER.warn("UTF-8 encoding is not supported!!!", e);
 						LOGGER.warn("Using system encoding...");
-						value = URLEncoder.encode(value);
+						value = esapiEncoder.encodeForURL(value);
 					}
 
 					sb.append(key + "=" + value);
@@ -698,8 +702,8 @@ public class GeneralUtilities extends SpagoBIUtilities {
 
 			// do the decode
 			try {
-				parameterValue = URLDecoder.decode(parameterValueEncoded, UTF_8.name());
-			} catch (UnsupportedEncodingException e) {
+				parameterValue = esapiEncoder.decodeFromURL(parameterValueEncoded);
+			} catch (EncodingException e) {
 				LOGGER.error("Error in decoding parameter: UTF 8 not supported {}; use previous value {}",
 						parameterName, parameterValueEncoded, e);
 				parameterValue = parameterValueEncoded;

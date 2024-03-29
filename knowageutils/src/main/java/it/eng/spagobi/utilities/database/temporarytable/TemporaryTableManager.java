@@ -19,6 +19,7 @@ package it.eng.spagobi.utilities.database.temporarytable;
 
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -460,7 +461,7 @@ public class TemporaryTableManager {
 			if (!dialect.contains("VoltDB")) {
 				connection.setAutoCommit(false);
 			}
-			Statement stmt = connection.createStatement();
+			PreparedStatement stmt = connection.prepareStatement(sql);
 			if (queryTimeout > 0) {
 				stmt.setQueryTimeout(queryTimeout);
 			}

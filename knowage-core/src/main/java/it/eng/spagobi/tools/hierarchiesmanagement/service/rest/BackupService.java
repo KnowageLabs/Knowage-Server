@@ -116,7 +116,6 @@ public class BackupService {
 			String hierNameColumn = AbstractJDBCDataset.encapsulateColumnName(HierarchyConstants.HIER_NM, dataSource);
 
 			databaseConnection = dataSource.getConnection();
-			Statement stmt = databaseConnection.createStatement();
 			boolean doUpdateRelationsMT = false;
 
 			if (!hierarchyNameNew.equalsIgnoreCase(hierarchyNameOrig)) {

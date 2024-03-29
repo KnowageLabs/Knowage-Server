@@ -23,6 +23,8 @@ import java.util.Locale;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.owasp.esapi.Randomizer;
+import org.owasp.esapi.reference.DefaultRandomizer;
 
 import it.eng.knowage.commons.security.KnowageSystemConfiguration;
 import it.eng.spagobi.commons.SingletonConfig;
@@ -70,7 +72,8 @@ public class MenuThemesListJSONSerializer implements Serializer {
 						viewName = name;
 					}
 					JSONObject temp = new JSONObject();
-					temp.put(ID, new Double(Math.random()).toString());
+					Randomizer rand = DefaultRandomizer.getInstance();
+					temp.put(ID, new Double(rand.getRandomInteger(Integer.MIN_VALUE,Integer.MAX_VALUE)).toString());
 					temp.put(TEXT, viewName);
 					temp.put(HREF, "javascript:execUrl('" + contextName + "/servlet/AdapterHTTP?ACTION_NAME=CHANGE_THEME&THEME_NAME=" + name + "')");
 					tempFirstLevelMenuList.put(temp);

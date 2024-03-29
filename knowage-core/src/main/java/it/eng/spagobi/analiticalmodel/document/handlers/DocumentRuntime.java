@@ -12,6 +12,8 @@ import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.owasp.esapi.errors.EncodingException;
+import org.owasp.esapi.reference.DefaultEncoder;
 import org.safehaus.uuid.UUID;
 import org.safehaus.uuid.UUIDGenerator;
 
@@ -47,7 +49,7 @@ public class DocumentRuntime extends AbstractBIResourceRuntime<BIObjectParameter
 	private static Logger logger = Logger.getLogger(DocumentRuntime.class);
 
 	private final List<DocumentDriverRuntime> drivers = null;
-
+	private static org.owasp.esapi.Encoder esapiEncoder = DefaultEncoder.getInstance();
 	public DocumentRuntime(IEngUserProfile userProfile, Locale locale) {
 		super(userProfile, locale);
 	}
@@ -88,7 +90,7 @@ public class DocumentRuntime extends AbstractBIResourceRuntime<BIObjectParameter
 		}
 	}
 
-	public String getExecutionUrl(BIObject obj, String executionModality, String role) {
+	public String getExecutionUrl(BIObject obj, String executionModality, String role) throws EncodingException {
 		logger.debug("IN");
 		Monitor getExecutionUrlMonitor = MonitorFactory.start("Knowage.DocumentRuntime.getExecutionUrl");
 
@@ -156,11 +158,11 @@ public class DocumentRuntime extends AbstractBIResourceRuntime<BIObjectParameter
 							if (value != null && !value.equals("")) {
 								// encoding value
 								try {
-									value = URLEncoder.encode(value, UTF_8.name());
-								} catch (UnsupportedEncodingException e) {
+									value = esapiEncoder.encodeForURL(value);
+								} catch (EncodingException e) {
 									logger.warn("UTF-8 encoding is not supported!!!", e);
 									logger.warn("Using system encoding...");
-									value = URLEncoder.encode(value);
+									value = esapiEncoder.encodeForURL(value);
 								}
 								buffer.append("&" + aParameter.getParameterUrlName() + "=" + value);
 							}

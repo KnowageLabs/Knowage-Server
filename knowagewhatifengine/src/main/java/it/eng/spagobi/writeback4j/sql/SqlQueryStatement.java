@@ -20,6 +20,7 @@ package it.eng.spagobi.writeback4j.sql;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineException;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
 
@@ -53,8 +54,8 @@ public class SqlQueryStatement {
 
 		try {
 			logger.debug("Executing query " + sqlStatement);
-			Statement statement = connection.createStatement();
-			rs = statement.executeQuery(sqlStatement);
+			PreparedStatement statement = connection.prepareStatement(sqlStatement);
+			rs = statement.executeQuery();
 			logger.debug("Query executed & getting the first value");
 
 			if (rs.next()) {
@@ -74,8 +75,8 @@ public class SqlQueryStatement {
 
 		try {
 			logger.debug("Executing query " + sqlStatement);
-			Statement statement = connection.createStatement();
-			rs = statement.executeQuery(sqlStatement);
+			PreparedStatement statement = connection.prepareStatement(sqlStatement);
+			rs = statement.executeQuery();
 			logger.debug("Query executed");
 
 		} catch (Exception e) {

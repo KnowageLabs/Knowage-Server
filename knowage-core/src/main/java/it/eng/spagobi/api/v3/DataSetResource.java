@@ -43,6 +43,9 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.owasp.esapi.reference.DefaultEncoder;
+import org.owasp.esapi.errors.EncodingException;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
@@ -149,6 +152,8 @@ public class DataSetResource {
 	public static String SELECTED_PARAMETER_VALUES = "parameters";
 	public static String FILTERS = "FILTERS";
 	public static String NODE = "node";
+	
+	private static org.owasp.esapi.Encoder esapiEncoder = DefaultEncoder.getInstance();
 
 	/**
 	 * @deprecated Replaced by {@link MetaUtils#NODE_ID_SEPARATOR}
@@ -1008,10 +1013,10 @@ public class DataSetResource {
 						try {
 							// % character breaks decode method
 							if (!itemVal.contains("%")) {
-								itemVal = URLDecoder.decode(itemVal, UTF_8.name());
+								itemVal = esapiEncoder.decodeFromURL(itemVal);
 							}
 							if (!itemDescr.contains("%")) {
-								itemDescr = URLDecoder.decode(itemDescr, UTF_8.name());
+								itemDescr = esapiEncoder.decodeFromURL(itemDescr);
 							}
 
 							// check input value and convert if it's an old multivalue syntax({;{xxx;yyy}STRING}) to list of values :["A-OMP", "A-PO", "CL"]
@@ -1031,7 +1036,7 @@ public class DataSetResource {
 								paramDescrLst.add(itemDescr);
 
 							}
-						} catch (UnsupportedEncodingException e) {
+						} catch (EncodingException e) {
 							logger.debug("An error occured while decoding parameter with value[" + itemVal + "]" + e);
 						}
 					}
@@ -1039,8 +1044,8 @@ public class DataSetResource {
 					// % character breaks decode method
 					if (!((String) paramValues).contains("%")) {
 						try {
-							paramValues = URLDecoder.decode((String) paramValues, UTF_8.name());
-						} catch (UnsupportedEncodingException e) {
+							paramValues = esapiEncoder.decodeFromURL((String) paramValues);
+						} catch (EncodingException e) {
 							logger.debug(e.getCause(), e);
 							throw new SpagoBIRuntimeException(e.getMessage(), e);
 						}
@@ -1051,8 +1056,8 @@ public class DataSetResource {
 							: paramValues.toString();
 					if (!parDescrVal.contains("%")) {
 						try {
-							parDescrVal = URLDecoder.decode(parDescrVal, UTF_8.name());
-						} catch (UnsupportedEncodingException e) {
+							parDescrVal = esapiEncoder.decodeFromURL(parDescrVal);
+						} catch (EncodingException e) {
 							logger.debug(e.getCause(), e);
 							throw new SpagoBIRuntimeException(e.getMessage(), e);
 						}

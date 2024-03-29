@@ -27,6 +27,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.core.Response;
 
 import org.apache.log4j.Logger;
+import org.owasp.esapi.reference.DefaultEncoder;
 
 import it.eng.spagobi.commons.constants.CommunityFunctionalityConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
@@ -49,7 +50,7 @@ import it.eng.spagobi.utilities.threadmanager.WorkManager;
 public class HDFSResource extends AbstractSpagoBIResource {
 
 	protected static Logger logger = Logger.getLogger(HDFSResource.class);
-
+	private static org.owasp.esapi.Encoder esapiEncoder = DefaultEncoder.getInstance();
 	@POST
 	@Path("/{id}")
 	@UserConstraint(functionalities = { CommunityFunctionalityConstants.DATASOURCE_BIG_DATA })
@@ -78,7 +79,7 @@ public class HDFSResource extends AbstractSpagoBIResource {
 			commonj.work.WorkManager workManager = knowageWorkManager.getInnerInstance();
 			workManager.schedule(hdfsWriteWork);
 
-			return Response.ok(URLEncoder.encode(requestUUID, UTF_8.name())).build();
+			return Response.ok(esapiEncoder.encodeForURL(requestUUID)).build();
 
 		} catch (Exception e) {
 			throw new SpagoBIRuntimeException("Error while init dataset writing on HDFS: " + e.getMessage(), e);

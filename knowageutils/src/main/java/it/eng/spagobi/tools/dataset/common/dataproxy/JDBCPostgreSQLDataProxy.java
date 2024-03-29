@@ -18,6 +18,7 @@
 package it.eng.spagobi.tools.dataset.common.dataproxy;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -85,7 +86,7 @@ public class JDBCPostgreSQLDataProxy extends JDBCDataProxy {
 
 		IDataStore dataStore;
 		Connection connection;
-		Statement stmt;
+		PreparedStatement stmt;
 		ResultSet resultSet;
 
 		logger.debug("IN");
@@ -101,20 +102,20 @@ public class JDBCPostgreSQLDataProxy extends JDBCDataProxy {
 			} catch (Exception t) {
 				throw new SpagoBIRuntimeException("An error occurred while creating connection", t);
 			}
-			try {
-				stmt = connection.createStatement();
-			} catch (Exception t) {
-				throw new SpagoBIRuntimeException("An error occurred while creating connection steatment", t);
-			}
+			
+				
+			
 			String sqlQuery = "";
 			try {
+				sqlQuery = getFinalStatement();
+				stmt = connection.prepareStatement(sqlQuery);
 				// get max size
 				if (getMaxResults() > 0) {
 					stmt.setMaxRows(getMaxResults());
 				}
-				sqlQuery = getFinalStatement();
+				
 				logger.info("Executing query " + sqlQuery + " ...");
-				resultSet = stmt.executeQuery(sqlQuery);
+				resultSet = stmt.executeQuery();
 			} catch (Exception t) {
 				throw new SpagoBIRuntimeException("An error occurred while executing statement: " + sqlQuery, t);
 			}
@@ -167,7 +168,7 @@ public class JDBCPostgreSQLDataProxy extends JDBCDataProxy {
 	protected int getResultNumber(Connection connection) {
 		logger.debug("IN");
 		int resultNumber = 0;
-		Statement stmt = null;
+		PreparedStatement stmt = null;
 
 		ResultSet rs = null;
 
@@ -175,8 +176,8 @@ public class JDBCPostgreSQLDataProxy extends JDBCDataProxy {
 			String tableAlias = "temptable";
 			String sqlQuery = "SELECT COUNT(*) FROM (" + getStatement() + ") " + tableAlias;
 			logger.info("Executing query " + sqlQuery + " ...");
-			stmt = connection.createStatement(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
-			rs = stmt.executeQuery(sqlQuery);
+			stmt = connection.prepareStatement(sqlQuery,ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
+			rs = stmt.executeQuery();
 			rs.next();
 			resultNumber = rs.getInt(1);
 		} catch (Throwable t) {

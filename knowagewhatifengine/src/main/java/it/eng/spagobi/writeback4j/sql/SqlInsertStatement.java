@@ -20,6 +20,7 @@ package it.eng.spagobi.writeback4j.sql;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineException;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.Statement;
 
 import org.apache.log4j.Logger;
@@ -38,8 +39,8 @@ public class SqlInsertStatement {
 	public void executeStatement(Connection connection) throws SpagoBIEngineException {
 		try {
 
-			Statement statement = connection.createStatement();
-			statement.executeUpdate(sqlStatement);
+			PreparedStatement statement = connection.prepareStatement(sqlStatement);
+			statement.executeUpdate();
 
 		} catch (Exception e) {
 			logger.error("Error executing the query " + sqlStatement, e);

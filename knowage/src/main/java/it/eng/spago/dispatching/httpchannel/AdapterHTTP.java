@@ -34,6 +34,8 @@ import org.apache.commons.fileupload.FileItemFactory;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.commons.fileupload.servlet.ServletRequestContext;
+import org.owasp.esapi.HTTPUtilities;
+import org.owasp.esapi.reference.DefaultHTTPUtilities;
 
 import com.jamonapi.Monitor;
 import com.jamonapi.MonitorFactory;
@@ -142,6 +144,8 @@ public class AdapterHTTP extends HttpServlet {
 	public static final String XMLHTTPREQUEST = "XMLHttpRequest";
 
 	private static final String SERIALIZE_SESSION_ATTRIBUTE = "COMMON.SERIALIZE_SESSION";
+	
+	private static HTTPUtilities httpUtils = new DefaultHTTPUtilities();
 
 	private void handleQueryStringField(HttpServletRequest request, SourceBean serviceReq, String queryStringFieldName) throws SourceBeanException {
 

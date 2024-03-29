@@ -41,6 +41,7 @@ import javax.ws.rs.core.Response.Status;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.owasp.esapi.reference.DefaultEncoder;
 
 import it.eng.spagobi.api.AbstractSpagoBIResource;
 import it.eng.spagobi.commons.constants.CommunityFunctionalityConstants;
@@ -59,7 +60,7 @@ public class UdpResource extends AbstractSpagoBIResource {
 
 	// logger component-
 	private static Logger logger = Logger.getLogger(UdpResource.class);
-
+	private static org.owasp.esapi.Encoder esapiEncoder = DefaultEncoder.getInstance();
 	@GET
 	@Path("/")
 	@UserConstraint(functionalities = { CommunityFunctionalityConstants.USER_DATA_PROPERTIES_MANAGEMENT })
@@ -159,7 +160,7 @@ public class UdpResource extends AbstractSpagoBIResource {
 			sbiUdpsDao = DAOFactory.getUdpDAO();
 			sbiUdpsDao.setUserProfile(getUserProfile());
 			sbiUdpsDao.insert(sbiUdp);
-			String encodedSbiUdp = URLEncoder.encode("" + sbiUdp.getUdpId(), UTF_8.name());
+			String encodedSbiUdp = esapiEncoder.encodeForURL("" + sbiUdp.getUdpId());
 			return Response.created(new URI("1.0/userdataproperties/" + encodedSbiUdp)).entity(encodedSbiUdp).build();
 		} catch (Exception e) {
 			Response.notModified().build();
@@ -199,7 +200,7 @@ public class UdpResource extends AbstractSpagoBIResource {
 			sbiUdpsDao = DAOFactory.getUdpDAO();
 			sbiUdpsDao.setUserProfile(getUserProfile());
 			sbiUdpsDao.update(sbiUdp);
-			String encodedSbiUdp = URLEncoder.encode("" + sbiUdp.getUdpId(), UTF_8.name());
+			String encodedSbiUdp = esapiEncoder.encodeForURL("" + sbiUdp.getUdpId());
 			return Response.created(new URI("1.0/userdataproperties/" + encodedSbiUdp)).entity(encodedSbiUdp).build();
 		} catch (Exception e) {
 			logger.error("Error while updating url of the new resource", e);

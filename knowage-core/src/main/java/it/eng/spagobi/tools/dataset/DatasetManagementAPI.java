@@ -23,6 +23,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
@@ -443,14 +444,14 @@ public class DatasetManagementAPI {
 		if (cacheItem != null) {
 			String tableName = cacheItem.getTable();
 			Connection conn = null;
-			Statement stmt = null;
+			PreparedStatement stmt = null;
 
 			try {
 				String query = buildIndexStatement(tableName, columns);
 				if (query != null) {
 					conn = cache.getDataSource().getConnection();
-					stmt = conn.createStatement();
-					stmt.executeUpdate(query);
+					stmt = conn.prepareStatement(query);
+					stmt.executeUpdate();
 				} else {
 					logger.debug(
 							"Impossible to build the index statement and thus creating the index. Tablename and/or column are null or empty.");

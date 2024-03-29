@@ -28,6 +28,8 @@ import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.owasp.esapi.errors.EncodingException;
+import org.owasp.esapi.reference.DefaultEncoder;
 
 import it.eng.spagobi.commons.utilities.GeneralUtilities;
 import it.eng.spagobi.commons.utilities.messages.IMessageBuilder;
@@ -43,7 +45,8 @@ public class SignupFieldsValidator implements IFieldsValidator {
 	private static final String regex_date = "(0[1-9]|[12][0-9]|3[01])/(0[1-9]|1[012])/(19|20)\\d\\d";
 	private static final String defaultPassword = "Password";
 	private static final String defaultPasswordConfirm = "Confirm Password";
-
+	private static org.owasp.esapi.Encoder esapiEncoder = DefaultEncoder.getInstance();
+	
 	private boolean validatePassword(String password, String username) {
 
 		if (username != null && password.indexOf(username) != -1)
@@ -62,7 +65,7 @@ public class SignupFieldsValidator implements IFieldsValidator {
 	}
 
 	@Override
-	public JSONArray validateFields(MultivaluedMap<String, String> parameters) {
+	public JSONArray validateFields(MultivaluedMap<String, String> parameters) throws EncodingException{
 		IMessageBuilder msgBuilder = MessageBuilderFactory.getMessageBuilder();
 
 		JSONArray validationErrors = new JSONArray();
@@ -85,19 +88,19 @@ public class SignupFieldsValidator implements IFieldsValidator {
 
 		try {
 			if (name != null)
-				name = URLDecoder.decode(name, UTF_8.name());
+				name = esapiEncoder.decodeFromURL(name);
 			if (surname != null)
-				surname = URLDecoder.decode(surname, UTF_8.name());
+				surname = esapiEncoder.decodeFromURL(surname);
 			if (username != null)
-				username = URLDecoder.decode(username, UTF_8.name());
+				username = esapiEncoder.decodeFromURL(username);
 			if (password != null)
-				password = URLDecoder.decode(password, UTF_8.name());
+				password = esapiEncoder.decodeFromURL(password);
 			if (confirmPassword != null)
-				confirmPassword = URLDecoder.decode(confirmPassword, UTF_8.name());
+				confirmPassword = esapiEncoder.decodeFromURL(confirmPassword);
 			if (email != null)
-				email = URLDecoder.decode(email, UTF_8.name());
+				email = esapiEncoder.decodeFromURL(email);
 			if (birthDate != null)
-				birthDate = URLDecoder.decode(birthDate, UTF_8.name());
+				birthDate = esapiEncoder.decodeFromURL(birthDate);
 
 		} catch (Exception ex) {
 			logger.error(ex.getMessage());

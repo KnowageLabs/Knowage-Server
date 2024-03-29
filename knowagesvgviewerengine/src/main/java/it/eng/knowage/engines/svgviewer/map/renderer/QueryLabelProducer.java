@@ -18,6 +18,7 @@
 package it.eng.knowage.engines.svgviewer.map.renderer;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -95,8 +96,8 @@ public class QueryLabelProducer extends AbstractLabelProducer {
 		Connection connection = null;
 		try {
 			connection = dataSource.getConnection();
-			Statement statement = connection.createStatement();
-			statement.execute(query);
+			PreparedStatement statement = connection.prepareStatement(query);
+			statement.execute();
 			ResultSet resultSet = statement.getResultSet();
 			if (resultSet.next()) {
 				Iterator it = paramNames.iterator();

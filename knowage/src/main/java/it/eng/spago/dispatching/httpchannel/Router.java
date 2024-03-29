@@ -27,12 +27,19 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.owasp.esapi.HTTPUtilities;
+import org.owasp.esapi.errors.AccessControlException;
+import org.owasp.esapi.reference.DefaultEncoder;
+import org.owasp.esapi.reference.DefaultHTTPUtilities;
+
 import it.eng.spago.base.Constants;
 import it.eng.spago.configuration.ConfigSingleton;
 import it.eng.spago.tracing.TracerSingleton;
 import it.eng.spago.util.JavaScript;
 
 public class Router {
+	
+	private static HTTPUtilities httpUtils = new DefaultHTTPUtilities();
     public Router(String publisher) {
         this(publisher, true);
     } // public Router(String publisher)
@@ -72,7 +79,7 @@ public class Router {
         ServletContext servletContext,
         HttpServletRequest request,
         HttpServletResponse response)
-        throws ServletException, IOException {
+        throws ServletException, IOException, AccessControlException {
         TracerSingleton.log(
             Constants.NOME_MODULO,
             TracerSingleton.DEBUG,
@@ -144,7 +151,8 @@ public class Router {
             requestDispatcher.forward(request, response);
         } // if (_isForward)
         else {
-            response.sendRedirect(response.encodeRedirectURL(publishingURL));
+        	httpUtils.sendRedirect(response, publishingURL);
+            //response.sendRedirect(response.encodeRedirectURL(publishingURL));
         } // if (_isForward) else
     } // public void route(ServletContext servletContext, HttpServletRequest request,
 

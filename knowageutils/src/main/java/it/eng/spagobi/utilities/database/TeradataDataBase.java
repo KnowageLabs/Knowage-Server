@@ -19,6 +19,7 @@
 package it.eng.spagobi.utilities.database;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -34,9 +35,9 @@ public class TeradataDataBase extends AbstractDataBase implements MetaDataBase {
 	// https://community.teradata.com/t5/Blog/How-to-determine-or-switch-the-current-database-using-the/ba-p/66995
 	@Override
 	public String getSchema(Connection conn) throws SQLException {
-		Statement stmt = conn.createStatement();
+		PreparedStatement stmt = conn.prepareStatement("help session");
 		try {
-			ResultSet rs = stmt.executeQuery("help session");
+			ResultSet rs = stmt.executeQuery();
 			try {
 				rs.next();
 				return rs.getString(5);

@@ -39,6 +39,8 @@ import org.apache.logging.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.owasp.esapi.errors.EncodingException;
+import org.owasp.esapi.reference.DefaultEncoder;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -87,7 +89,8 @@ public class AbstractDocumentExecutionWork extends DossierExecutionClient implem
 	IProgressThreadDAO progressThreadDAO;
 	protected AbstractDossierTemplate dossierTemplate = null;
 	protected JSONObject jsonObjectTemplate = new JSONObject();
-
+	private static org.owasp.esapi.Encoder esapiEncoder = DefaultEncoder.getInstance();
+	
 	@Override
 	public void run() {
 		// TODO Auto-generated method stub
@@ -261,10 +264,11 @@ public class AbstractDocumentExecutionWork extends DossierExecutionClient implem
 	 * @throws UnsupportedEncodingException
 	 * @throws JSONException
 	 * @throws URISyntaxException
+	 * @throws EncodingException 
 	 */
 	private String getDashboardServiceUrl(BIObject biObject, String userUniqueIdentifier, JSONArray jsonArray,
 			Map<String, String> paramMap, Report reportToUse, Integer docId, String role)
-			throws UnsupportedEncodingException, JSONException, URISyntaxException {
+			throws UnsupportedEncodingException, JSONException, URISyntaxException, EncodingException {
 		String docLabel = biObject.getLabel();
 		String hostUrl = getServiceHostUrl();
 
@@ -285,7 +289,7 @@ public class AbstractDocumentExecutionWork extends DossierExecutionClient implem
 	}
 
 	private void addParametersToServiceUrl(BIObject biObject, JSONArray jsonArray, Map<String, String> paramMap,
-			Report reportToUse, URIBuilder serviceUrlBuilder) throws UnsupportedEncodingException, JSONException {
+			Report reportToUse, URIBuilder serviceUrlBuilder) throws UnsupportedEncodingException, JSONException, EncodingException {
 		if (reportToUse.getViewId() != null && StringUtils.isNotBlank(reportToUse.getViewId())) {
 			addViewParametersToServiceUrl(reportToUse, serviceUrlBuilder);
 		} else {
@@ -353,10 +357,11 @@ public class AbstractDocumentExecutionWork extends DossierExecutionClient implem
 	 * @throws UnsupportedEncodingException
 	 * @throws JSONException
 	 * @throws URISyntaxException
+	 * @throws EncodingException 
 	 */
 	private String getCockpitServiceUrl(BIObject biObject, String userUniqueIdentifier, JSONArray jsonArray,
 			Map<String, String> paramMap, Report reportToUse, String cockpitDocument, Integer docId, String role)
-			throws UnsupportedEncodingException, JSONException, URISyntaxException {
+			throws UnsupportedEncodingException, JSONException, URISyntaxException, EncodingException {
 		String docName = biObject.getName();
 		String hostUrl = getServiceHostUrl();
 		Locale locale = GeneralUtilities.getDefaultLocale();
@@ -411,7 +416,7 @@ public class AbstractDocumentExecutionWork extends DossierExecutionClient implem
 
 	public void addClassicParametersToServiceUrl(Integer progressthreadId, BIObject biObject, Report reportToUse,
 			URIBuilder serviceUrlBuilder, JSONArray jsonArray, Map<String, String> paramMap, boolean dashboard)
-			throws UnsupportedEncodingException, JSONException {
+			throws UnsupportedEncodingException, JSONException, EncodingException {
 		JSONArray jsonParams = new JSONArray();
 
 		List<BIObjectParameter> drivers = biObject.getDrivers();
@@ -464,11 +469,11 @@ public class AbstractDocumentExecutionWork extends DossierExecutionClient implem
 													currValue2AsString.length() - 1);
 										}
 
-										paramValue.put("value", URLEncoder.encode(currValue2AsString,
-												StandardCharsets.UTF_8.toString()));
+										paramValue.put("value", esapiEncoder.encodeForURL(currValue2AsString
+												));
 										paramValue.put("description",
-												URLEncoder.encode(templateParameter.getUrlNameDescription(),
-														StandardCharsets.UTF_8.toString()));
+												esapiEncoder.encodeForURL(templateParameter.getUrlNameDescription()
+														));
 
 										paramValueArray.put(paramValue);
 									}

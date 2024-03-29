@@ -39,6 +39,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
 import org.apache.log4j.Logger;
+import org.owasp.esapi.reference.DefaultEncoder;
 
 import it.eng.spagobi.api.AbstractSpagoBIResource;
 import it.eng.spagobi.commons.bo.Domain;
@@ -57,6 +58,7 @@ public class DomainResource extends AbstractSpagoBIResource {
 
 	// logger component-
 	private static Logger logger = Logger.getLogger(DomainResource.class);
+	private static org.owasp.esapi.Encoder esapiEncoder = DefaultEncoder.getInstance();
 
 	@GET
 	@Path("/")
@@ -127,7 +129,7 @@ public class DomainResource extends AbstractSpagoBIResource {
 			domainsDao.setUserProfile(getUserProfile());
 			List<Domain> domainsList = domainsDao.loadListDomains();
 			domainsDao.saveDomain(domain);
-			String encodedDomain = URLEncoder.encode("" + domain.getValueId(), UTF_8.name());
+			String encodedDomain = esapiEncoder.encodeForURL("" + domain.getValueId());
 			return Response.created(new URI("1.0/domains/" + encodedDomain)).entity(encodedDomain).build();
 		} catch (Exception e) {
 			Response.notModified().build();
@@ -158,7 +160,7 @@ public class DomainResource extends AbstractSpagoBIResource {
 			domainsDao.setUserProfile(getUserProfile());
 			List<Domain> domainsList = domainsDao.loadListDomains();
 			domainsDao.saveDomain(domain);
-			String encodedDomain = URLEncoder.encode("" + domain.getValueId(), UTF_8.name());
+			String encodedDomain = esapiEncoder.encodeForURL("" + domain.getValueId());
 			return Response.created(new URI("1.0/domains/" + encodedDomain)).entity(encodedDomain).build();
 		} catch (Exception e) {
 			logger.error("Error while updating url of the new resource", e);

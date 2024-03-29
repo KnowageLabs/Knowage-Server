@@ -232,16 +232,7 @@ public class parser extends java_cup.runtime.lr_parser {
 		this.engineInstance = engineInstance;
 	}
 
-	/*
-	 * Generate a random Double. Just for test.
-	 */
-	public Double generateDouble() {
-		// CHECKSTYLE:OFF
-		Random random = new Random();
-		// CHECKSTYLE:ON
-		double rand = (double) random.nextInt(101 - 1) + 1;
-		return rand;
-	}
+
 
 	/*
 	 * Calculate the Member Value from the cube passing a list of dimensional coordinates

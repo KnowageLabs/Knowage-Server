@@ -23,6 +23,7 @@ import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -79,7 +80,7 @@ public class JDBCSharedConnectionDataProxy extends AbstractDataProxy {
 	public IDataStore load(IDataReader dataReader) {
 		
 		IDataStore dataStore;
-		Statement stmt;
+		PreparedStatement stmt;
 		ResultSet resultSet;
 		
 		logger.debug("IN");
@@ -89,19 +90,16 @@ public class JDBCSharedConnectionDataProxy extends AbstractDataProxy {
 		
 		try {			
 			
-			try {
-				stmt = connection.createStatement(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
-			} catch (Throwable t) {
-				throw new SpagoBIRuntimeException("An error occurred while creating connection steatment", t);
-			}
 			
 			
 	        try {
+	        	
+	        	stmt = connection.prepareStatement(getStatement(),ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
 	        	//get max size 
 	        	if(getMaxResults() > 0){
 	        		stmt.setMaxRows(getMaxResults());
 	        	}
-				resultSet = stmt.executeQuery( getStatement() );
+	        	resultSet = stmt.executeQuery(  );
 				
 			} catch (Throwable t) {
 				logger.error("Trovata!:",t);

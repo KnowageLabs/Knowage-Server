@@ -20,9 +20,7 @@ package it.eng.spagobi.analiticalmodel.document.handlers;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
 import java.io.Serializable;
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
-import java.net.URLEncoder;
+
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
@@ -41,6 +39,7 @@ import org.apache.logging.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.owasp.esapi.reference.DefaultEncoder;
 import org.safehaus.uuid.UUID;
 import org.safehaus.uuid.UUIDGenerator;
 
@@ -94,6 +93,7 @@ import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 import it.eng.spagobi.utilities.objects.Couple;
+import org.owasp.esapi.errors.EncodingException; 
 
 /**
  * This class represents a document execution instance. This contains the following attributes: 1. execution flow id: it is the id of an execution flow
@@ -120,7 +120,7 @@ public class ExecutionInstance implements Serializable {
 	private boolean displaySliders = true;
 	private Calendar calendar = null;
 	private Locale locale = null;
-
+	private static org.owasp.esapi.Encoder esapiEncoder = DefaultEncoder.getInstance();
 	/**
 	 * Instantiates a new execution instance.
 	 *
@@ -1089,7 +1089,7 @@ public class ExecutionInstance implements Serializable {
 				if (val.equalsIgnoreCase("%")) {
 					value = "%";
 				} else {
-					value = URLDecoder.decode(val, UTF_8.name());
+					value = esapiEncoder.decodeFromURL(val);
 				}
 				String description = null;
 				if (value.equals("")) {
@@ -1186,7 +1186,7 @@ public class ExecutionInstance implements Serializable {
 		return url;
 	}
 
-	public String getSubObjectUrl(Locale locale) {
+	public String getSubObjectUrl(Locale locale) throws EncodingException {
 		LOGGER.debug("Getting sub object URL for locale {}", locale);
 		if (this.subObject == null) {
 			throw new SpagoBIServiceException("", "no subobject set");
@@ -1352,7 +1352,7 @@ public class ExecutionInstance implements Serializable {
 		return biParameterExecDependencies;
 	}
 
-	public String getExecutionUrl(Locale locale) {
+	public String getExecutionUrl(Locale locale) throws EncodingException {
 		LOGGER.debug("Getting execution URL for locale {}", locale);
 		String url = null;
 		Engine engine = this.getBIObject().getEngine();
@@ -1422,11 +1422,11 @@ public class ExecutionInstance implements Serializable {
 							if (value != null && !value.equals("")) {
 								// encoding value
 								try {
-									value = URLEncoder.encode(value, UTF_8.name());
-								} catch (UnsupportedEncodingException e) {
+									value = esapiEncoder.encodeForURL(value);
+								} catch (EncodingException e) {
 									LOGGER.warn("UTF-8 encoding is not supported!!!", e);
 									LOGGER.warn("Using system encoding...");
-									value = URLEncoder.encode(value);
+									value = esapiEncoder.encodeForURL(value);
 								}
 								buffer.append("&" + aParameter.getParameterUrlName() + "=" + value);
 							}

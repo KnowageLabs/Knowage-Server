@@ -41,6 +41,7 @@ import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.owasp.esapi.reference.DefaultEncoder;
 
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.api.AbstractSpagoBIResource;
@@ -64,7 +65,7 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 public class ConfigResource extends AbstractSpagoBIResource {
 
 	private static Logger logger = Logger.getLogger(ConfigResource.class);
-
+	private static org.owasp.esapi.Encoder esapiEncoder = DefaultEncoder.getInstance();
 	@GET
 	@Path("/")
 	@UserConstraint(functionalities = { CommunityFunctionalityConstants.CONFIG_MANAGEMENT })
@@ -256,7 +257,7 @@ public class ConfigResource extends AbstractSpagoBIResource {
 			configsDao = DAOFactory.getSbiConfigDAO();
 			configsDao.setUserProfile(getUserProfile());
 			configsDao.saveConfig(config);
-			String encodedConfig = URLEncoder.encode("" + config.getId(), UTF_8.name());
+			String encodedConfig = esapiEncoder.encodeForURL("" + config.getId());
 			return Response.created(new URI("1.0/configs/" + encodedConfig)).entity(encodedConfig).build();
 		} catch (Exception e) {
 			Response.notModified().build();
@@ -286,7 +287,7 @@ public class ConfigResource extends AbstractSpagoBIResource {
 			configsDao = DAOFactory.getSbiConfigDAO();
 			configsDao.setUserProfile(getUserProfile());
 			configsDao.saveConfig(config);
-			String encodedConfig = URLEncoder.encode("" + config.getId(), UTF_8.name());
+			String encodedConfig = esapiEncoder.encodeForURL("" + config.getId());
 			return Response.created(new URI("1.0/configs/" + encodedConfig)).entity(encodedConfig).build();
 		} catch (Exception e) {
 			logger.error("Error while updating url of the new resource", e);

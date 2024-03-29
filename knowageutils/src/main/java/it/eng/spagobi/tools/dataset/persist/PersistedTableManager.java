@@ -1051,9 +1051,9 @@ public class PersistedTableManager implements IPersistedManager {
 			if (!dialect.contains("VoltDB")) {
 				connection.setAutoCommit(false);
 			}
-			Statement stmt = connection.createStatement();
+			PreparedStatement stmt = connection.prepareStatement(sql);
 			LOGGER.debug("Executing sql " + sql);
-			stmt.execute(sql);
+			stmt.execute();
 			if (!dialect.contains("VoltDB")) {
 				connection.commit();
 			}
