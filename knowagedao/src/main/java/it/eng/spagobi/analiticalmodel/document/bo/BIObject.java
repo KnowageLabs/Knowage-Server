@@ -17,6 +17,7 @@
  */
 package it.eng.spagobi.analiticalmodel.document.bo;
 
+import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -910,4 +911,9 @@ public class BIObject implements Serializable, Cloneable, IDrivableBIResource<BI
 	public void setMetamodelDrivers(List<BIMetaModelParameter> drivers) {
 		this.biBIMetaModelParameter = drivers;
 	}
+	
+	public void writeObject(ObjectOutputStream aOutputStream) {
+		  throw new UnsupportedOperationException("Security violation : cannot serialize object to a stream");
+	}
+
 }

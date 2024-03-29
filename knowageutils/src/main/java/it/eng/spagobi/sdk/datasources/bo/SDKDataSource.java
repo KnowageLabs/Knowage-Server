@@ -18,6 +18,8 @@
 
 package it.eng.spagobi.sdk.datasources.bo;
 
+import java.io.ObjectOutputStream;
+
 public class SDKDataSource implements java.io.Serializable {
 	private String attrSchema;
 
@@ -343,6 +345,9 @@ public class SDKDataSource implements java.io.Serializable {
 		}
 		__hashCodeCalc = false;
 		return _hashCode;
+	}
+	public void writeObject(ObjectOutputStream aOutputStream) {
+		  throw new UnsupportedOperationException("Security violation : cannot serialize object to a stream");
 	}
 
 }

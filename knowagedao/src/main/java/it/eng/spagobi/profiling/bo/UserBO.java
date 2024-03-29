@@ -17,6 +17,7 @@
  */
 package it.eng.spagobi.profiling.bo;
 
+import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
@@ -178,5 +179,10 @@ public class UserBO implements Serializable {
 	public void setBlockedByFailedLoginAttempts(boolean blockedByFailedLoginAttempts) {
 		this.blockedByFailedLoginAttempts = blockedByFailedLoginAttempts;
 	}
+
+	public void writeObject(ObjectOutputStream aOutputStream) {
+		  throw new UnsupportedOperationException("Security violation : cannot serialize object to a stream");
+	}
+
 
 }

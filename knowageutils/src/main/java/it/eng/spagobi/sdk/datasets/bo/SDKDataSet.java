@@ -18,6 +18,8 @@
 
 package it.eng.spagobi.sdk.datasets.bo;
 
+import java.io.ObjectOutputStream;
+
 public class SDKDataSet implements java.io.Serializable {
 	private String description;
 
@@ -710,6 +712,10 @@ public class SDKDataSet implements java.io.Serializable {
 
 	public void setOrganization(String organization) {
 		this.organization = organization;
+	}
+	
+	public void writeObject(ObjectOutputStream aOutputStream) {
+		  throw new UnsupportedOperationException("Security violation : cannot serialize object to a stream");
 	}
 
 }

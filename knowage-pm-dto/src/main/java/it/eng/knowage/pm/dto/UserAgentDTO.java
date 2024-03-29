@@ -1,5 +1,6 @@
 package it.eng.knowage.pm.dto;
 
+import java.io.ObjectOutputStream;
 import java.io.Serializable;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;

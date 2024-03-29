@@ -17,6 +17,7 @@
  */
 package it.eng.spagobi.kpi.metadata;
 
+import java.io.ObjectOutputStream;
 import java.util.Date;
 
 import it.eng.spagobi.commons.metadata.SbiHibernateModel;
@@ -151,6 +152,10 @@ public class SbiKpiValue extends SbiHibernateModel implements java.io.Serializab
 
 	public void setManualNote(String manualNote) {
 		this.manualNote = manualNote;
+	}
+
+	public void writeObject(ObjectOutputStream aOutputStream) {
+		  throw new UnsupportedOperationException("Security violation : cannot serialize object to a stream");
 	}
 
 }

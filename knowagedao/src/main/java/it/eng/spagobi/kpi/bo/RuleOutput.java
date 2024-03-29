@@ -19,6 +19,7 @@ package it.eng.spagobi.kpi.bo;
 
 import it.eng.spagobi.commons.bo.Domain;
 
+import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.Date;
 
@@ -316,4 +317,9 @@ public class RuleOutput implements Serializable, Comparable<RuleOutput> {
 	public int compareTo(RuleOutput rule) {
 		return alias.compareToIgnoreCase(rule.alias);
 	}
+	
+	public void writeObject(ObjectOutputStream aOutputStream) {
+		  throw new UnsupportedOperationException("Security violation : cannot serialize object to a stream");
+	}
+
 }

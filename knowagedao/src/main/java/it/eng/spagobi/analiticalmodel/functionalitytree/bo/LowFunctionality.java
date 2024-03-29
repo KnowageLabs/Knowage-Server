@@ -17,6 +17,7 @@
  */
 package it.eng.spagobi.analiticalmodel.functionalitytree.bo;
 
+import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.List;
 
@@ -288,5 +289,5 @@ public class LowFunctionality implements Serializable {
 	public void setProg(Integer prog) {
 		this.prog = prog;
 	}
-
+	
 }

@@ -17,6 +17,7 @@
  */
 package it.eng.spagobi.tools.distributionlist.bo;
 
+import java.io.ObjectOutputStream;
 import java.io.Serializable;
 
 /**
@@ -62,6 +63,10 @@ public class Email implements Serializable{
 	 */
 	public void setEmail(String email) {
 		this.email = email;
+	}
+
+	public void writeObject(ObjectOutputStream aOutputStream) {
+		  throw new UnsupportedOperationException("Security violation : cannot serialize object to a stream");
 	}
 
 }

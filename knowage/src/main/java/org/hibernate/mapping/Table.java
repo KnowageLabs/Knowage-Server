@@ -23,6 +23,7 @@
  */
 package org.hibernate.mapping;
 
+import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -801,5 +802,9 @@ public class Table implements RelationalModel, Serializable {
 		}
 		return comments.iterator();
 	}
+
+	public void writeObject(ObjectOutputStream aOutputStream) {
+		  throw new UnsupportedOperationException("Security violation : cannot serialize object to a stream");
+    }
 
 }

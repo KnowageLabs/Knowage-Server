@@ -19,6 +19,7 @@ package it.eng.spagobi.analiticalmodel.document.bo;
 
 import it.eng.spagobi.commons.bo.Domain;
 
+import java.io.ObjectOutputStream;
 import java.io.Serializable;
 
 public class OutputParameter implements Serializable {
@@ -134,6 +135,10 @@ public class OutputParameter implements Serializable {
 
 	public void setIsUserDefined(Boolean isUserDefined) {
 		this.isUserDefined = isUserDefined;
+	}
+
+	public void writeObject(ObjectOutputStream aOutputStream) {
+		  throw new UnsupportedOperationException("Security violation : cannot serialize object to a stream");
 	}
 
 }

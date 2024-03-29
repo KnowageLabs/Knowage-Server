@@ -1,5 +1,6 @@
 package it.eng.knowage.pm.dto;
 
+import java.io.ObjectOutputStream;
 import java.io.Serializable;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -58,5 +59,9 @@ public class SessionDTO implements Serializable {
 	public String toString() {
 		return ToStringBuilder.reflectionToString(this);
 	}
+	
+	public void writeObject(ObjectOutputStream aOutputStream) {
+		  throw new UnsupportedOperationException("Security violation : cannot serialize object to a stream");
+}
 
 }

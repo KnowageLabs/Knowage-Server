@@ -19,6 +19,7 @@ package it.eng.spagobi.kpi.bo;
 
 import it.eng.spagobi.commons.bo.Domain;
 
+import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.Date;
 
@@ -294,5 +295,10 @@ public class Kpi implements Serializable {
 			return false;
 		return true;
 	}
+	
+	public void writeObject(ObjectOutputStream aOutputStream) {
+		  throw new UnsupportedOperationException("Security violation : cannot serialize object to a stream");
+	}
+
 
 }

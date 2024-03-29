@@ -17,6 +17,7 @@
  */
 package it.eng.spagobi.whatif.bo;
 
+import java.io.ObjectOutputStream;
 import java.io.Serializable;
 
 public class WhatifWorkflow implements Serializable {
@@ -99,6 +100,9 @@ public class WhatifWorkflow implements Serializable {
 
 	public void setInfo(String info) {
 		this.info = info;
+	}
+	public void writeObject(ObjectOutputStream aOutputStream) {
+		  throw new UnsupportedOperationException("Security violation : cannot serialize object to a stream");
 	}
 
 }

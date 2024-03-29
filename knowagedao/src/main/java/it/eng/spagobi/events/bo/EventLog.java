@@ -17,6 +17,7 @@
  */
 package it.eng.spagobi.events.bo;
 
+import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
@@ -274,6 +275,10 @@ public class EventLog implements Serializable {
 		}
 		return map;
 
+	}
+
+	public void writeObject(ObjectOutputStream aOutputStream) {
+		  throw new UnsupportedOperationException("Security violation : cannot serialize object to a stream");
 	}
 
 }
