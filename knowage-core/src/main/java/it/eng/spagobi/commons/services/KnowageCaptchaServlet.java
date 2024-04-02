@@ -13,8 +13,8 @@ import javax.servlet.http.HttpServletResponse;
 //import com.esotericsoftware.minlog.Log.Logger;
 import org.apache.log4j.Logger;
 
-import it.eng.spagobi.analiticalmodel.documentsbrowser.service.GetFTreeFoldersAction;
-import it.eng.spagobi.api.common.MetaUtils;
+
+
 import net.logicsquad.nanocaptcha.image.ImageCaptcha;
 import net.logicsquad.nanocaptcha.image.filter.FishEyeImageFilter;
 
