@@ -98,7 +98,7 @@ public class RepositoryResource extends AbstractSpagoBIResource {
 
 		m.put(null, root);
 
-		while(!l.isEmpty()) {
+		while (!l.isEmpty()) {
 			Iterator<SbiViewHierarchy> it = l.iterator();
 
 			while (it.hasNext()) {
@@ -132,13 +132,9 @@ public class RepositoryResource extends AbstractSpagoBIResource {
 		Set<SbiView> v1 = getViewsInFolder(vh);
 		Set<SbiViewForDoc> v2 = getImportedDocsInFolder(vh);
 
-		v1.stream()
-			.map(this::toViewOverDocument)
-			.forEach(addToRet);
+		v1.stream().map(this::toViewOverDocument).forEach(addToRet);
 
-		v2.stream()
-			.map(this::toViewOfImportedDoc)
-			.forEach(addToRet);
+		v2.stream().map(this::toViewOfImportedDoc).forEach(addToRet);
 
 		return ret;
 	}
@@ -296,10 +292,7 @@ public class RepositoryResource extends AbstractSpagoBIResource {
 
 		Set<SbiView> ownedAndPublicViewsOverDoc = dao.getOwnedAndPublicViewsOverDoc(document);
 
-		return ownedAndPublicViewsOverDoc
-				.stream()
-				.map(this::toViewOverDocument)
-				.collect(toSet());
+		return ownedAndPublicViewsOverDoc.stream().map(this::toViewOverDocument).collect(toSet());
 	}
 
 	@GET
@@ -377,6 +370,7 @@ public class RepositoryResource extends AbstractSpagoBIResource {
 
 			ret.setBiObjectId(object.getId());
 			ret.setBiObjectTypeCode(object.getBiObjectTypeCode());
+			ret.setDocumentLabel(object.getLabel());
 			ret.setDescription(e.getDescr());
 			ret.setDrivers(e.getDrivers());
 			ret.setId(e.getId());
@@ -570,9 +564,8 @@ public class RepositoryResource extends AbstractSpagoBIResource {
 /**
  * This is a workaround to a problem between JAX-RS and lists.
  *
- * The method {@link RepositoryResource#getFolderContents(String)} returned a <code>List<AbstractViewFolderItem></code> but someone
- * between Resteasy or Jackson didn't use to apply the correct serialization to every object in the list. Using a wrapper like this
- * seems to solve the problem.
+ * The method {@link RepositoryResource#getFolderContents(String)} returned a <code>List<AbstractViewFolderItem></code> but someone between Resteasy or Jackson
+ * didn't use to apply the correct serialization to every object in the list. Using a wrapper like this seems to solve the problem.
  *
  * I was not able to find a solution or documentation about this behavior.
  */

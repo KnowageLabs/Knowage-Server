@@ -27,9 +27,11 @@ import java.util.zip.ZipOutputStream;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
+import org.json.JSONException;
 
 import it.eng.knowage.engine.cockpit.api.export.pdf.nodejs.AbstractNodeJSBasedExporter;
 import it.eng.knowage.export.wrapper.beans.RenderOptions;
+import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 
 public class PngExporter extends AbstractNodeJSBasedExporter {
@@ -37,7 +39,7 @@ public class PngExporter extends AbstractNodeJSBasedExporter {
 	private static final Logger LOGGER = Logger.getLogger(PngExporter.class);
 
 	public PngExporter(int documentId, String userId, String requestUrl, RenderOptions renderOptions,
-			String pdfPageOrientation, boolean pdfFrontPage, boolean pdfBackPage) {
+			String pdfPageOrientation, boolean pdfFrontPage, boolean pdfBackPage) throws EMFUserError, JSONException {
 		super(documentId, userId, requestUrl, renderOptions, pdfPageOrientation, pdfFrontPage, pdfBackPage);
 	}
 

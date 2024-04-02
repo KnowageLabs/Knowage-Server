@@ -958,7 +958,9 @@ cockpitModule_templateServices.getDatasetUsetByWidgetWithParams();
 							data.parameters = config.parameters;
 						};
 
-						$http.post(sbiModule_config.externalBasePath + PREVIEWBACKGROUND + id.dsId + '/csv', data)
+						var backgroundFormat = previewSettings.backgroundFormat || 'csv'
+
+                        $http.post(sbiModule_config.externalBasePath + PREVIEWBACKGROUND + id.dsId + '/' + backgroundFormat, data)
 						.then(
 							function(response){
 								popupMessage(response)

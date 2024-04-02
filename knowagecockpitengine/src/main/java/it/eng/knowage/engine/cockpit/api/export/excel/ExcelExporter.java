@@ -40,6 +40,7 @@ import javax.ws.rs.core.UriBuilder;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.ObjectUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.poi.ss.usermodel.Cell;
@@ -315,15 +316,51 @@ public class ExcelExporter extends AbstractFormatExporter {
 						continue;
 					long widgetId = widget.getLong("id");
 					JSONObject options = new JSONObject();
+					JSONObject widgetContentFromTemplate = widget.optJSONObject("content");
+					JSONObject widgetContentFromBody = getWidgetContentFromBody(widget);
 					try {
+						// config retrieved from static object
 						options.put("config", new JSONObject().put("type", "pivot"));
-						options.put("sortOptions", widget.getJSONObject("content").getJSONObject("sortOptions"));
-						options.put("name", widget.getJSONObject("content").getString("name"));
-						options.put("crosstabDefinition",
-								widget.getJSONObject("content").getJSONObject("crosstabDefinition"));
-						options.put("style", widget.getJSONObject("content").getJSONObject("style"));
+
+						// sortOptions retrieved from template otherwise from request body
+						if(!ObjectUtils.isEmpty(widgetContentFromTemplate) && !widgetContentFromTemplate.isNull("sortOptions")) {			
+							options.put("sortOptions", widgetContentFromTemplate.getJSONObject("sortOptions"));
+						} else if(!ObjectUtils.isEmpty(widgetContentFromBody) && !widgetContentFromBody.isNull("sortOptions")) {
+								options.put("sortOptions", widgetContentFromBody.getJSONObject("sortOptions"));
+						} else {
+							options.put("sortOptions", new JSONObject());
+						}
+						
+						// name retrieved from template otherwise from request body
+						if(!ObjectUtils.isEmpty(widgetContentFromTemplate) && !widgetContentFromTemplate.isNull("name")) {			
+							options.put("name", widgetContentFromTemplate.getString("name"));
+						} else if(!ObjectUtils.isEmpty(widgetContentFromBody) && !widgetContentFromBody.isNull("name")) {
+								options.put("name", widgetContentFromBody.getString("name"));
+						} else {
+							options.put("name", new JSONObject());
+						}
+						
+						// crosstabDefinition retrieved from template otherwise from request body
+						if(!ObjectUtils.isEmpty(widgetContentFromTemplate) && !widgetContentFromTemplate.isNull("crosstabDefinition")) {			
+							options.put("crosstabDefinition", widgetContentFromTemplate.getJSONObject("crosstabDefinition"));
+						} else if(!ObjectUtils.isEmpty(widgetContentFromBody) && !widgetContentFromBody.isNull("crosstabDefinition")) {
+								options.put("crosstabDefinition", widgetContentFromBody.getJSONObject("crosstabDefinition"));
+						} else {
+							options.put("crosstabDefinition", new JSONObject());
+						}
+						
+						// style retrieved from template otherwise from request body
+						if(!ObjectUtils.isEmpty(widgetContentFromTemplate) && !widgetContentFromTemplate.isNull("style")) {			
+							options.put("style", widgetContentFromTemplate.getJSONObject("style"));
+						} else if(!ObjectUtils.isEmpty(widgetContentFromBody) && !widgetContentFromBody.isNull("style")) {
+								options.put("style", widgetContentFromBody.getJSONObject("style"));
+						} else {
+							options.put("style", new JSONObject());
+						}
+						
 						// variables cannot be retrieved from template so we must recover them from request body
 						options.put("variables", getCockpitVariables());
+						
 						ExporterClient client = new ExporterClient();
 						int datasetId = widget.getJSONObject("dataset").getInt("dsId");
 						String dsLabel = getDatasetLabel(template, datasetId);
@@ -740,6 +777,22 @@ public class ExcelExporter extends AbstractFormatExporter {
 	private String extractSelectionValues(String selectionValues) {
 		return selectionValues.replace("[\"(", "").replace(")\"]", "");
 	}
+	
+	private JSONArray getChildFromWidgetContent(JSONObject widgetContent, String childName) {
+		JSONArray ret = new JSONArray();
+		if(widgetContent.has(childName)) {
+			JSONArray childArray = widgetContent.optJSONArray(childName);
+			if(childArray != null) {
+				ret = childArray;				
+			} else {
+				JSONObject childObject = widgetContent.optJSONObject(childName);
+				if(childObject != null) {						
+					ret.put(childObject);
+				}
+			}
+		}
+		return ret;
+	}
 
 	public void fillSheetWithData(JSONObject dataStore, Workbook wb, Sheet sheet, String widgetName, int offset,
 			JSONObject settings) {
@@ -751,7 +804,7 @@ public class ExcelExporter extends AbstractFormatExporter {
 			HashMap<String, Object> variablesMap = new HashMap<>();
 			JSONObject widgetData = dataStore.getJSONObject("widgetData");
 			JSONObject widgetContent = widgetData.getJSONObject("content");
-			JSONArray columnSelectedOfDataset = widgetContent.getJSONArray("columnSelectedOfDataset");
+			JSONArray columnSelectedOfDataset = getChildFromWidgetContent(widgetContent, "columnSelectedOfDataset");
 //			HashMap<String, String> arrayHeader = new HashMap<>();
 			HashMap<String, String> chartAggregationsMap = new HashMap<>();
 			if (widgetData.getString("type").equalsIgnoreCase("table")) {

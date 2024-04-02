@@ -16,6 +16,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import it.eng.knowage.pm.dto.DataSetScope;
+import it.eng.knowage.pm.dto.PrivacyDTO;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
@@ -31,7 +32,7 @@ public class PrivacyManagerDataStoreTransformer extends AbstractDataStoreTransfo
 
 	private static final Logger LOGGER = LogManager.getLogger(PrivacyManagerDataStoreTransformer.class);
 
-	private final IDataSet dataSet;
+	private final IMetaData dataStoreMetadata;
 	private boolean needPM = false;
 	private final List<IFieldMetaData> sensibleField = new ArrayList<>();
 	private final Map<Integer, IFieldMetaData> sensibleFieldByIndex = new LinkedHashMap<>();
@@ -40,8 +41,34 @@ public class PrivacyManagerDataStoreTransformer extends AbstractDataStoreTransfo
 	private final Map<Integer, IFieldMetaData> subjectFieldByIndex = new LinkedHashMap<>();
 	private final Map<Integer, Integer> subjectFieldOrder = new LinkedHashMap<>();
 
+	private final Map paramsMap = new LinkedHashMap<>();
+
 	public PrivacyManagerDataStoreTransformer(IDataSet dataSet) {
-		this.dataSet = dataSet;
+		this(dataSet.getDsMetadata() != null ? dataSet.getMetadata() : new MetaData(), dataSet.getParamsMap());
+	}
+
+	public PrivacyManagerDataStoreTransformer(IDataStore dataStore, Map paramsMap) {
+		this.dataStoreMetadata = dataStore.getMetaData();
+		this.paramsMap.putAll(Optional.ofNullable(paramsMap).orElse(Collections.emptyMap()));
+		try {
+			setUpPrivacy();
+		} catch (Exception e) {
+			LOGGER.error("Privacy initialization error: check setUpPrivacy method", e);
+		}
+	}
+
+	public PrivacyManagerDataStoreTransformer(IMetaData dataStoreMetadata, Map paramsMap) {
+		this.dataStoreMetadata = dataStoreMetadata;
+		this.paramsMap.putAll(Optional.ofNullable(paramsMap).orElse(Collections.emptyMap()));
+		try {
+			setUpPrivacy();
+		} catch (Exception e) {
+			LOGGER.error("Privacy initialization error: check setUpPrivacy method", e);
+		}
+	}
+
+	public PrivacyManagerDataStoreTransformer(IMetaData dataStoreMetadata) {
+		this.dataStoreMetadata = dataStoreMetadata;
 		try {
 			setUpPrivacy();
 		} catch (Exception e) {
@@ -81,7 +108,6 @@ public class PrivacyManagerDataStoreTransformer extends AbstractDataStoreTransfo
 			eventBuilder.appendSession("knowage", sourceIpAddress, sessionId, sessionStart, string);
 			eventBuilder.appendUserAgent(os, sourceIpAddress, sourceSocketEnabled, userAgent);
 			// metadata --> from dataset (map)
-			Map paramsMap = Optional.ofNullable(dataSet.getParamsMap()).orElse(Collections.emptyMap());
 			LOGGER.debug("Parameters map is {}", paramsMap);
 			Set<String> keys = paramsMap.keySet();
 			for (String key : keys) {
@@ -96,9 +122,8 @@ public class PrivacyManagerDataStoreTransformer extends AbstractDataStoreTransfo
 				List<IField> fields = currRecord.getFields();
 
 				for (int i = 0; i < fields.size(); i++) {
+					LOGGER.debug("Checking subject field {} - fieldFound {}", i, subjectFieldByIndex.containsKey(i));
 					if (subjectFieldByIndex.containsKey(i)) {
-						IFieldMetaData fieldMetaData = subjectFieldByIndex.get(i);
-						String fieldName = fieldMetaData.getName();
 						IField fieldAt = currRecord.getFieldAt(i);
 						Object value = fieldAt.getValue();
 
@@ -107,27 +132,30 @@ public class PrivacyManagerDataStoreTransformer extends AbstractDataStoreTransfo
 							val = value.toString();
 						}
 						subjData[subjectFieldOrder.get(i)] = val;
-						// eventBuilder.appendSubject(val);
 					}
 				}
 				for (int i = 0; i < fields.size(); i++) {
+					LOGGER.debug("Checking sensiblefield {} - fieldFound {}", i, sensibleFieldByIndex.containsKey(i));
 					if (sensibleFieldByIndex.containsKey(i)) {
 						IFieldMetaData fieldMetaData = sensibleFieldByIndex.get(i);
 						String fieldName = fieldMetaData.getName();
 						IField fieldAt = currRecord.getFieldAt(i);
 						Object value = fieldAt.getValue();
-						// TODO definizione del tipo dato
+
 						String val = null;
 						if (value != null) {
 							val = value.toString();
 						}
+						LOGGER.debug("appending fieldName{}, value{}", fieldName, val);
 						eventBuilder.appendData(fieldName, val, DataSetScope.OTHER);
 					}
 				}
-
+				LOGGER.debug("appending subject {}, {}, {}, {}", subjData[0], subjData[1], subjData[2], subjData[3]);
 				eventBuilder.appendSubject(subjData[0], subjData[1], subjData[2], subjData[3]);
 			}
-			PrivacyManagerClient.getInstance().sendMessage(eventBuilder.getDTO());
+			PrivacyDTO dto = eventBuilder.getDTO();
+			LOGGER.debug("Calculated DTO: {}", dto);
+			PrivacyManagerClient.getInstance().sendMessage(dto);
 		}
 	}
 
@@ -137,16 +165,22 @@ public class PrivacyManagerDataStoreTransformer extends AbstractDataStoreTransfo
 	}
 
 	private void setUpPrivacy() {
-		IMetaData dataStoreMetadata = getMetaData();
 
-		AtomicInteger index = new AtomicInteger();
+		needPM = false;
+		subjectFieldByIndex.clear();
+		subjectFieldOrder.clear();
+		sensibleFieldByIndex.clear();
 
-		dataStoreMetadata.getFieldsMeta().stream().collect(Collectors.toMap(e -> index.getAndIncrement(), e -> e))
-				.entrySet().stream().filter(e -> e.getValue().isPersonal()).forEach(e -> {
+		LOGGER.debug("Metadata is {}", dataStoreMetadata);
+
+		AtomicInteger index1 = new AtomicInteger();
+		dataStoreMetadata.getFieldsMeta().stream().collect(Collectors.toMap(e -> index1.getAndIncrement(), e -> e))
+				.entrySet().stream().filter(e -> e.getValue().isSubjectId()).forEach(e -> {
 					Integer key = e.getKey();
 					IFieldMetaData value = e.getValue();
-					sensibleField.add(value);
-					sensibleFieldByIndex.put(key, value);
+					subjectField.add(value);
+					subjectFieldByIndex.put(key, value);
+					LOGGER.debug("Scanned subject field {}, {}", key, value.getName());
 					String decoded = EventBuilderUtils.decodeSubjectField(value.getName());
 					switch (decoded) {
 					case EventBuilderUtils.TAXCODE:
@@ -167,28 +201,27 @@ public class PrivacyManagerDataStoreTransformer extends AbstractDataStoreTransfo
 					}
 				});
 
-		dataStoreMetadata.getFieldsMeta().stream().collect(Collectors.toMap(e -> index.getAndIncrement(), e -> e))
-				.entrySet().stream().filter(e -> e.getValue().isSubjectId()).forEach(e -> {
+		AtomicInteger index2 = new AtomicInteger();
+		dataStoreMetadata.getFieldsMeta().stream().collect(Collectors.toMap(e -> index2.getAndIncrement(), e -> e))
+				.entrySet().stream().filter(e -> e.getValue().isPersonal()).forEach(e -> {
 					Integer key = e.getKey();
 					IFieldMetaData value = e.getValue();
-					subjectField.add(value);
-					subjectFieldByIndex.put(key, value);
+					LOGGER.debug("Scanned sensible ect field {}, {}", key, value.getName());
+					sensibleField.add(value);
+					sensibleFieldByIndex.put(key, value);
 				});
 
 		needPM = !sensibleField.isEmpty();
 
+		LOGGER.debug("Need PM {}", needPM);
+		LOGGER.debug("subjectFiledByIndex {}", subjectFieldByIndex);
+		LOGGER.debug("subjectFieldOrder {}", subjectFieldOrder);
+		LOGGER.debug("sensibleFiledByIndex {}", sensibleFieldByIndex);
+
 	}
 
-	private String mapFieldKey(IFieldMetaData field) {
-		return field.getName();
-	}
-
-	private Map<String, IFieldMetaData> mapFieldByColumnName(IMetaData metaData) {
-		return metaData.getFieldsMeta().stream().collect(Collectors.toMap(this::mapFieldKey, e -> e));
-	}
-
-	private IMetaData getMetaData() {
-		return dataSet.getDsMetadata() != null ? dataSet.getMetadata() : new MetaData();
+	public Map getParamsMap() {
+		return paramsMap;
 	}
 
 }

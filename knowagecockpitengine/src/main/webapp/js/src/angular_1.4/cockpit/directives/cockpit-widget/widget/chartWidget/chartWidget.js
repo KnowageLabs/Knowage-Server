@@ -259,7 +259,7 @@ function cockpitChartWidgetControllerFunction(
 					$scope.$broadcast(nature,data, false, changedChartType,dataAndChartConf,objForDrill, saving );
 					cockpitModule_generalServices.savingDataConfiguration(false)
 					cockpitModule_generalServices.setNearRealTime(false)
-				},400)
+				},nature === 'fullExpand' ? 1000 : 400)
 
 			}
 			if(nature == 'init'){

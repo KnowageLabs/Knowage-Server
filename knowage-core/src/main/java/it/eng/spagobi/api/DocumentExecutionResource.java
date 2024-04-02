@@ -126,7 +126,7 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 import it.eng.spagobi.utilities.rest.RestUtilities;
 
 import org.owasp.esapi.reference.DefaultEncoder;
-import org.owasp.esapi.errors.EncodingException;
+import org.owasp.esapi.errors.EncodingException; 
 /**
  * @deprecated Replaced by {@link it.eng.spagobi.api.v2.DocumentExecutionResource}
  */

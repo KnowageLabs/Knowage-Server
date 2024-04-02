@@ -22,7 +22,9 @@ import java.io.PrintStream;
 import java.security.NoSuchAlgorithmException;
 import java.security.Provider;
 import java.security.Security;
+import java.util.Map;
 import java.util.Properties;
+import java.util.stream.Collectors;
 
 import javax.mail.Address;
 import javax.mail.Authenticator;
@@ -53,8 +55,6 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
  * @author Marco Libanori
  */
 public class MailSessionBuilder {
-
-	private static final Logger LOGGER = LogManager.getLogger(MailSessionBuilder.class);
 
 	/**
 	 * Define the supported security modes.
@@ -160,6 +160,21 @@ public class MailSessionBuilder {
 		}
 	}
 
+	private static final Logger LOGGER = LogManager.getLogger(MailSessionBuilder.class);
+
+	private static final String PROP_SUFFIX_STARTTLS_ENABLE = ".starttls.enable";
+	private static final String PROP_SUFFIX_HOST = ".host";
+	private static final String PROP_SUFFIX_CONNECTIONTIMEOUT = ".connectiontimeout";
+	private static final String PROP_SUFFIX_TIMEOUT = ".timeout";
+	private static final String PROP_SUFFIX_FROM = ".from";
+	private static final String PROP_SUFFIX_PORT = ".port";
+	private static final String PROP_SUFFIX_SOCKET_FACTORY_FALLBACK = ".socketFactory.fallback";
+	private static final String PROP_SUFFIX_SOCKET_FACTORY_CLASS = ".socketFactory.class";
+	private static final String PROP_SUFFIX_SOCKET_FACTORY_PORT = ".socketFactory.port";
+	private static final String PROP_SUFFIX_AUTH = ".auth";
+	private static final String PROP_SUFFIX_PASSWORD = ".password";
+	private static final String PROP_SUFFIX_USER = ".user";
+
 	private static final String DEFAULT_SSL_FACTORY = "javax.net.ssl.SSLSocketFactory";
 	private static final String CUSTOM_SSL_FACTORY = "it.eng.spagobi.commons.services.DummySSLSocketFactory";
 
@@ -258,7 +273,7 @@ public class MailSessionBuilder {
 		LOGGER.debug("\tsmtpPortValue = {}", smtpPortValue);
 		LOGGER.debug("\tfromValue     = {}", fromValue);
 		LOGGER.debug("\tuserValue     = {}", userValue);
-		LOGGER.debug("\tpasswordValue = {}", passwordValue);
+		LOGGER.debug("\tpasswordValue = omitted");
 		LOGGER.debug("\tsecurityValue = {}", securityValue);
 
 		trustedStoreFileValue = config.getConfigValue(TRUSTED_STORE_FILE_KEY);
@@ -286,14 +301,14 @@ public class MailSessionBuilder {
 		}
 
 		if (securityValueEnum == SecurityMode.NONE) {
-			props.put(prefix + ".starttls.enable", "false");
+			props.put(prefix + PROP_SUFFIX_STARTTLS_ENABLE, "false");
 		} else if (securityValueEnum == SecurityMode.SSL) {
-			props.put(prefix + ".starttls.enable", "false");
+			props.put(prefix + PROP_SUFFIX_STARTTLS_ENABLE, "false");
 		} else if (securityValueEnum == SecurityMode.STARTTLS) {
-			props.put(prefix + ".starttls.enable", "true");
+			props.put(prefix + PROP_SUFFIX_STARTTLS_ENABLE, "true");
 		}
 
-		props.put(prefix + ".host", smtpHostValue);
+		props.put(prefix + PROP_SUFFIX_HOST, smtpHostValue);
 
 		if (StringUtils.isEmpty(smtpPortValue)) {
 			int defaultPort = securityValueEnum.getDefaultPort();
@@ -301,49 +316,49 @@ public class MailSessionBuilder {
 			LOGGER.warn("SMTP port is empty: using the default port {}", defaultPort);
 			smtpPortValue = Integer.toString(defaultPort);
 		}
-		props.put(prefix + ".port", smtpPortValue);
+		props.put(prefix + PROP_SUFFIX_PORT, smtpPortValue);
 
 		Authenticator auth = null;
 		if (StringUtils.isNotEmpty(userValue)) {
-			props.put(prefix + ".user", userValue);
-			props.put(prefix + ".password", passwordValue);
+			props.put(prefix + PROP_SUFFIX_USER, userValue);
+			props.put(prefix + PROP_SUFFIX_PASSWORD, passwordValue);
 		}
 
 		if (StringUtils.isEmpty(fromValue)) {
 			fromValue = "spagobi.scheduler@eng.it";
 		}
 		InternetAddress fromValueInternetAddress = new InternetAddress(fromValue);
-		props.put(prefix + ".from", fromValue);
+		props.put(prefix + PROP_SUFFIX_FROM, fromValue);
 
 		if (timeout != null) {
-			props.put(prefix + ".timeout", timeout.toString());
+			props.put(prefix + PROP_SUFFIX_TIMEOUT, timeout.toString());
 		}
 
 		if (connectionTimeout != null) {
-			props.put(prefix + ".connectiontimeout", connectionTimeout.toString());
+			props.put(prefix + PROP_SUFFIX_CONNECTIONTIMEOUT, connectionTimeout.toString());
 		}
 
 		// create autheticator object
 		if (StringUtils.isNotEmpty(userValue)) {
 			auth = new SMTPAuthenticator(userValue, passwordValue);
-			props.put(prefix + ".auth", "true");
+			props.put(prefix + PROP_SUFFIX_AUTH, "true");
 			// SSL Connection
 			if (securityValueEnum == SecurityMode.SSL) {
 				try {
 					SSLContext sslContext = SSLContext.getInstance("TLS", "SunJSSE");
 					Provider sslProvider = sslContext.getProvider();
 					Security.addProvider(sslProvider);
-					props.put(prefix + ".auth", "true");
-					props.put(prefix + ".socketFactory.port", smtpPortValue);
+					props.put(prefix + PROP_SUFFIX_AUTH, "true");
+					props.put(prefix + PROP_SUFFIX_SOCKET_FACTORY_PORT, smtpPortValue);
 					if ((!StringUtils.isEmpty(trustedStoreFileValue))) {
-						props.put(prefix + ".socketFactory.class", CUSTOM_SSL_FACTORY);
+						props.put(prefix + PROP_SUFFIX_SOCKET_FACTORY_CLASS, CUSTOM_SSL_FACTORY);
 
 					} else {
-						props.put(prefix + ".socketFactory.class", DEFAULT_SSL_FACTORY);
+						props.put(prefix + PROP_SUFFIX_SOCKET_FACTORY_CLASS, DEFAULT_SSL_FACTORY);
 					}
-					props.put(prefix + ".socketFactory.fallback", "false");
+					props.put(prefix + PROP_SUFFIX_SOCKET_FACTORY_FALLBACK, "false");
 				} catch (NoSuchAlgorithmException | java.security.NoSuchProviderException e) {
-					// TODO: handle exception
+					LOGGER.warn("SSL configuration problem. Connection will fail!", e);
 				}
 			}
 			session = Session.getInstance(props, auth);
@@ -357,7 +372,11 @@ public class MailSessionBuilder {
 			session.setDebugOut(ps);
 		}
 
-		LOGGER.debug("Session created using properties {}", props);
+		Map<Object, Object> propsForLog = props.entrySet().stream()
+				.filter(e -> !e.getKey().toString().endsWith(PROP_SUFFIX_PASSWORD))
+				.collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+
+		LOGGER.debug("Session created using properties {}", propsForLog);
 		LOGGER.info("End creating a new SessionFacade for profile name {}", profileName);
 
 		return new SessionFacade(session, fromValueInternetAddress, securityValueEnum, smtpHostValue,
@@ -399,7 +418,7 @@ public class MailSessionBuilder {
 	public MailSessionBuilder setPassword(String passwordValue) {
 		if (StringUtils.isNotEmpty(passwordValue)) {
 			LOGGER.warn("Overwriting the password...");
-			LOGGER.debug("... with {} replacing {}", passwordValue, this.passwordValue);
+			LOGGER.debug("Values are omitted for security reason!");
 			this.passwordValue = passwordValue;
 		}
 

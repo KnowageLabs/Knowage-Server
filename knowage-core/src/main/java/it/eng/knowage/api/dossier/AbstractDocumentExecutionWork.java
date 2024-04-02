@@ -60,6 +60,7 @@ import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
 import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.commons.utilities.BaseParametersEncoder;
 import it.eng.spagobi.commons.utilities.GeneralUtilities;
 import it.eng.spagobi.commons.utilities.ObjectsAccessVerifier;
 import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
@@ -89,8 +90,7 @@ public class AbstractDocumentExecutionWork extends DossierExecutionClient implem
 	IProgressThreadDAO progressThreadDAO;
 	protected AbstractDossierTemplate dossierTemplate = null;
 	protected JSONObject jsonObjectTemplate = new JSONObject();
-	private static org.owasp.esapi.Encoder esapiEncoder = DefaultEncoder.getInstance();
-	
+
 	@Override
 	public void run() {
 		// TODO Auto-generated method stub
@@ -175,7 +175,13 @@ public class AbstractDocumentExecutionWork extends DossierExecutionClient implem
 					}
 
 					String serviceUrl = null;
-					switch (biObject.getEngineLabel()) {
+					String engineLabel = biObject.getEngineLabel();
+
+					LOGGER.debug("Generating URL for document {}", docId);
+					LOGGER.debug("Engine label is {}", engineLabel);
+					LOGGER.debug("Parameters are {}", paramMap);
+
+					switch (engineLabel) {
 					case "knowagecockpitengine":
 						serviceUrl = getCockpitServiceUrl(biObject, userUniqueIdentifier, jsonArray, paramMap,
 								reportToUse, cockpitDocument, docId, role);
@@ -187,6 +193,8 @@ public class AbstractDocumentExecutionWork extends DossierExecutionClient implem
 					default:
 						break;
 					}
+
+					LOGGER.debug("URL is {}", serviceUrl);
 
 					// Images creation
 					Response images = executePostService(null, serviceUrl, userUniqueIdentifier, MediaType.TEXT_HTML,
@@ -254,69 +262,6 @@ public class AbstractDocumentExecutionWork extends DossierExecutionClient implem
 
 	/**
 	 * @param biObject
-	 * @param userUniqueIdentifier
-	 * @param jsonArray
-	 * @param paramMap
-	 * @param reportToUse
-	 * @param docId
-	 * @param role
-	 * @return
-	 * @throws UnsupportedEncodingException
-	 * @throws JSONException
-	 * @throws URISyntaxException
-	 * @throws EncodingException 
-	 */
-	private String getDashboardServiceUrl(BIObject biObject, String userUniqueIdentifier, JSONArray jsonArray,
-			Map<String, String> paramMap, Report reportToUse, Integer docId, String role)
-			throws UnsupportedEncodingException, JSONException, URISyntaxException, EncodingException {
-		String docLabel = biObject.getLabel();
-		String hostUrl = getServiceHostUrl();
-
-		URIBuilder serviceUrlBuilder = new URIBuilder(hostUrl);
-		serviceUrlBuilder
-				.setPath(KnowageSystemConfiguration.getKnowageCockpitEngineContext() + "/api/1.0/pages/execute/png");
-		serviceUrlBuilder.setParameter("user_id", userUniqueIdentifier);
-		serviceUrlBuilder.setParameter("document", Integer.toString(docId));
-		serviceUrlBuilder.setParameter("DOCUMENT_LABEL", docLabel);
-		serviceUrlBuilder.setParameter("toolbar", "false");
-		serviceUrlBuilder.setParameter("role", role);
-		serviceUrlBuilder.setParameter("menu", "false");
-
-		addParametersToServiceUrl(biObject, jsonArray, paramMap, reportToUse, serviceUrlBuilder);
-		addRenderOptionsToServiceUrl(biObject, reportToUse, serviceUrlBuilder);
-
-		return serviceUrlBuilder.toString();
-	}
-
-	private void addParametersToServiceUrl(BIObject biObject, JSONArray jsonArray, Map<String, String> paramMap,
-			Report reportToUse, URIBuilder serviceUrlBuilder) throws UnsupportedEncodingException, JSONException, EncodingException {
-		if (reportToUse.getViewId() != null && StringUtils.isNotBlank(reportToUse.getViewId())) {
-			addViewParametersToServiceUrl(reportToUse, serviceUrlBuilder);
-		} else {
-			addClassicParametersToServiceUrl(progressThreadId, biObject, reportToUse, serviceUrlBuilder, jsonArray,
-					paramMap, true);
-		}
-	}
-
-	private void addViewParametersToServiceUrl(Report reportToUse, URIBuilder serviceUrlBuilder) {
-		/*
-		 * /workspace/dashboard-view/SIL_01_DASHBOARD?viewName=SIL_01_VIEW_01&viewId=aab67015-af09-444e-8293-5815a51c50c3
-		 */
-		String viewId = reportToUse.getViewId();
-		ISbiViewDAO dao = DAOFactory.getSbiViewDAO();
-		dao.setUserProfile(userProfile);
-
-		try {
-			SbiView view = dao.read(viewId);
-			serviceUrlBuilder.setParameter("viewName", view.getName());
-			serviceUrlBuilder.setParameter("viewId", viewId);
-		} catch (Exception e) {
-			throw new SpagoBIRuntimeException("View with following id doesn't exist: " + viewId, e);
-		}
-	}
-
-	/**
-	 * @param biObject
 	 * @param reportToUse
 	 * @param serviceUrlBuilder
 	 * @throws JSONException
@@ -344,58 +289,6 @@ public class AbstractDocumentExecutionWork extends DossierExecutionClient implem
 		serviceUrlBuilder.setParameter("isMultiSheet", Boolean.toString(isMultiSheet));
 	}
 
-	/**
-	 * @param biObject
-	 * @param userUniqueIdentifier
-	 * @param jsonArray
-	 * @param paramMap
-	 * @param reportToUse
-	 * @param cockpitDocument
-	 * @param docId
-	 * @param role
-	 * @return
-	 * @throws UnsupportedEncodingException
-	 * @throws JSONException
-	 * @throws URISyntaxException
-	 * @throws EncodingException 
-	 */
-	private String getCockpitServiceUrl(BIObject biObject, String userUniqueIdentifier, JSONArray jsonArray,
-			Map<String, String> paramMap, Report reportToUse, String cockpitDocument, Integer docId, String role)
-			throws UnsupportedEncodingException, JSONException, URISyntaxException, EncodingException {
-		String docName = biObject.getName();
-		String hostUrl = getServiceHostUrl();
-		Locale locale = GeneralUtilities.getDefaultLocale();
-
-		URIBuilder serviceUrlBuilder = new URIBuilder(hostUrl);
-		serviceUrlBuilder
-				.setPath(KnowageSystemConfiguration.getKnowageCockpitEngineContext() + "/api/1.0/pages/execute/png");
-		serviceUrlBuilder.setParameter("user_id", userUniqueIdentifier);
-		serviceUrlBuilder.setParameter("DOCUMENT_LABEL", cockpitDocument);
-		serviceUrlBuilder.setParameter("DOCUMENT_OUTPUT_PARAMETERS", "[]");
-		serviceUrlBuilder.setParameter("DOCUMENT_IS_VISIBLE", "true");
-		serviceUrlBuilder.setParameter("SBI_EXECUTION_ROLE", role);
-		serviceUrlBuilder.setParameter("DOCUMENT_DESCRIPTION", "");
-		serviceUrlBuilder.setParameter("document", Integer.toString(docId));
-		serviceUrlBuilder.setParameter("IS_TECHNICAL_USER", "true");
-		serviceUrlBuilder.setParameter("DOCUMENT_NAME", docName);
-		serviceUrlBuilder.setParameter("NEW_SESSION", "TRUE");
-		serviceUrlBuilder.setParameter("SBI_ENVIRONMENT", "DOCBROWSER");
-		serviceUrlBuilder.setParameter("IS_FOR_EXPORT", "true");
-		serviceUrlBuilder.setParameter("documentMode", "VIEW");
-		serviceUrlBuilder.setParameter("export", "true");
-		serviceUrlBuilder.setParameter("outputType", "PNG");
-		serviceUrlBuilder.setParameter("knowage_sys_country", locale.getCountry());
-		serviceUrlBuilder.setParameter("knowage_sys_language", locale.getLanguage());
-		serviceUrlBuilder.setParameter("SBI_LANGUAGE", locale.getLanguage());
-		serviceUrlBuilder.setParameter("SBI_COUNTRY", locale.getCountry());
-		serviceUrlBuilder.setParameter("SBI_SCRIPT", locale.getScript());
-
-		addParametersToServiceUrl(biObject, jsonArray, paramMap, reportToUse, serviceUrlBuilder);
-		addRenderOptionsToServiceUrl(biObject, reportToUse, serviceUrlBuilder);
-
-		return serviceUrlBuilder.toString();
-	}
-
 	protected void setTenant() {
 		UserProfile profile = (UserProfile) this.getProfile();
 		String tenant = profile.getOrganization();
@@ -412,118 +305,6 @@ public class AbstractDocumentExecutionWork extends DossierExecutionClient implem
 				throw new SpagoBIRuntimeException("Image names must be different inside template");
 			}
 		}
-	}
-
-	public void addClassicParametersToServiceUrl(Integer progressthreadId, BIObject biObject, Report reportToUse,
-			URIBuilder serviceUrlBuilder, JSONArray jsonArray, Map<String, String> paramMap, boolean dashboard)
-			throws UnsupportedEncodingException, JSONException, EncodingException {
-		JSONArray jsonParams = new JSONArray();
-
-		List<BIObjectParameter> drivers = biObject.getDrivers();
-		String viewId = reportToUse.getViewId();
-
-		// This control doesn't make sense for parameters which use a view
-		if (StringUtils.isEmpty(viewId) && drivers != null) {
-			List<Parameter> parameter = reportToUse.getParameters();
-			if (drivers.size() != parameter.size()) {
-				throw new SpagoBIRuntimeException(
-						"There are a different number of parameters/drivers between document and template");
-			}
-			Collections.sort(drivers);
-			ParametersDecoder decoder = new ParametersDecoder();
-
-			for (BIObjectParameter biObjectParameter : drivers) {
-				boolean found = false;
-				String outParamValue = "";
-				String outParamName = "";
-				for (Parameter templateParameter : parameter) {
-
-					String currParamType = templateParameter.getType();
-					String currParamValue = templateParameter.getValue();
-
-					if (currParamType.equals("dynamic")) {
-
-						if (currParamValue != null && !currParamValue.isEmpty()) {
-
-							// filled by fillParametersValues in DossierExecutionResource
-							outParamValue = currParamValue;
-
-							List<?> currParamValueDecoded = decoder.decode(outParamValue);
-
-							if (biObjectParameter.getParameterUrlName().equals(templateParameter.getUrlName())) {
-								outParamName = templateParameter.getUrlName();
-								if (dashboard) {
-
-									JSONObject param = new JSONObject();
-									param.put("multivalue", decoder.isMultiValues(outParamValue));
-									param.put("urlName", biObjectParameter.getParameterUrlName());
-
-									JSONArray paramValueArray = new JSONArray();
-									for (Object currValue2 : currParamValueDecoded) {
-										JSONObject paramValue = new JSONObject();
-
-										String currValue2AsString = currValue2.toString();
-
-										if (currValue2AsString.startsWith("'") && currValue2AsString.endsWith("'")) {
-											currValue2AsString = currValue2AsString.substring(1,
-													currValue2AsString.length() - 1);
-										}
-
-										paramValue.put("value", esapiEncoder.encodeForURL(currValue2AsString
-												));
-										paramValue.put("description",
-												esapiEncoder.encodeForURL(templateParameter.getUrlNameDescription()
-														));
-
-										paramValueArray.put(paramValue);
-									}
-									param.put("value", paramValueArray);
-
-									jsonParams.put(param);
-								} else {
-									serviceUrlBuilder.setParameter(biObjectParameter.getParameterUrlName(),
-											outParamValue);
-									serviceUrlBuilder.setParameter(biObjectParameter.getParameterUrlName(),
-											templateParameter.getUrlNameDescription());
-								}
-								found = true;
-
-								break;
-							}
-						}
-					} else {
-						if (biObjectParameter.getParameterUrlName().equals(templateParameter.getUrlName())) {
-							serviceUrlBuilder.setParameter(biObjectParameter.getParameterUrlName(), currParamValue);
-							outParamValue = currParamValue;
-							outParamName = templateParameter.getUrlName();
-							// We need a description for static parameter, we force the value if it's missing
-							if (isEmpty(templateParameter.getUrlNameDescription())) {
-								templateParameter.setUrlNameDescription(currParamValue);
-							}
-							// description
-							serviceUrlBuilder.setParameter(biObjectParameter.getParameterUrlName(),
-									templateParameter.getUrlNameDescription());
-
-							found = true;
-							break;
-
-						}
-					}
-				}
-				paramMap.put(outParamName, outParamValue);
-				if (!found && biObjectParameter.isRequired()) {
-					throw new SpagoBIRuntimeException(
-							"There is no match between document parameters and template parameters.");
-				}
-
-			}
-		}
-		if (dashboard) {
-			byte[] jsonParamsByteArray = jsonParams.toString().getBytes();
-			String encodedJsonParams = new String(Base64.getEncoder().withoutPadding().encode(jsonParamsByteArray));
-			serviceUrlBuilder.setParameter("params", encodedJsonParams);
-		}
-
 	}
 
 	public String getServiceHostUrl() {
@@ -622,11 +403,11 @@ public class AbstractDocumentExecutionWork extends DossierExecutionClient implem
 	public void release() {
 	}
 
-	public List getBiObjects() {
+	public List<BIObjectPlaceholdersPair> getBiObjects() {
 		return documents;
 	}
 
-	public void setBiObjects(List biObjects) {
+	public void setBiObjects(List<BIObjectPlaceholdersPair> biObjects) {
 		this.documents = biObjects;
 	}
 
@@ -705,5 +486,276 @@ public class AbstractDocumentExecutionWork extends DossierExecutionClient implem
 
 	public void setJsonObjectTemplate(JSONObject jsonObjectTemplate) {
 		this.jsonObjectTemplate = jsonObjectTemplate;
+	}
+
+	/**
+	 * @param biObject
+	 * @param userUniqueIdentifier
+	 * @param jsonArray
+	 * @param paramMap
+	 * @param reportToUse
+	 * @param cockpitDocument
+	 * @param docId
+	 * @param role
+	 * @return
+	 * @throws UnsupportedEncodingException
+	 * @throws JSONException
+	 * @throws URISyntaxException
+	 */
+	private String getCockpitServiceUrl(BIObject biObject, String userUniqueIdentifier, JSONArray jsonArray,
+			Map<String, String> paramMap, Report reportToUse, String cockpitDocument, Integer docId, String role)
+			throws UnsupportedEncodingException, JSONException, URISyntaxException {
+		String docName = biObject.getName();
+		String hostUrl = getServiceHostUrl();
+		Locale locale = GeneralUtilities.getDefaultLocale();
+
+		URIBuilder serviceUrlBuilder = new URIBuilder(hostUrl);
+		serviceUrlBuilder
+				.setPath(KnowageSystemConfiguration.getKnowageCockpitEngineContext() + "/api/1.0/pages/execute/png");
+		serviceUrlBuilder.setParameter("user_id", userUniqueIdentifier);
+		serviceUrlBuilder.setParameter("DOCUMENT_LABEL", cockpitDocument);
+		serviceUrlBuilder.setParameter("DOCUMENT_OUTPUT_PARAMETERS", "[]");
+		serviceUrlBuilder.setParameter("DOCUMENT_IS_VISIBLE", "true");
+		serviceUrlBuilder.setParameter("SBI_EXECUTION_ROLE", role);
+		serviceUrlBuilder.setParameter("DOCUMENT_DESCRIPTION", "");
+		serviceUrlBuilder.setParameter("document", Integer.toString(docId));
+		serviceUrlBuilder.setParameter("IS_TECHNICAL_USER", "true");
+		serviceUrlBuilder.setParameter("DOCUMENT_NAME", docName);
+		serviceUrlBuilder.setParameter("NEW_SESSION", "TRUE");
+		serviceUrlBuilder.setParameter("SBI_ENVIRONMENT", "DOCBROWSER");
+		serviceUrlBuilder.setParameter("IS_FOR_EXPORT", "true");
+		serviceUrlBuilder.setParameter("documentMode", "VIEW");
+		serviceUrlBuilder.setParameter("export", "true");
+		serviceUrlBuilder.setParameter("outputType", "PNG");
+		serviceUrlBuilder.setParameter("knowage_sys_country", locale.getCountry());
+		serviceUrlBuilder.setParameter("knowage_sys_language", locale.getLanguage());
+		serviceUrlBuilder.setParameter("SBI_LANGUAGE", locale.getLanguage());
+		serviceUrlBuilder.setParameter("SBI_COUNTRY", locale.getCountry());
+		serviceUrlBuilder.setParameter("SBI_SCRIPT", locale.getScript());
+
+		addParametersToServiceUrlForCockpit(biObject, jsonArray, paramMap, reportToUse, serviceUrlBuilder);
+		addRenderOptionsToServiceUrl(biObject, reportToUse, serviceUrlBuilder);
+
+		return serviceUrlBuilder.toString();
+	}
+
+	/**
+	 * @param biObject
+	 * @param userUniqueIdentifier
+	 * @param jsonArray
+	 * @param paramMap
+	 * @param reportToUse
+	 * @param docId
+	 * @param role
+	 * @return
+	 * @throws UnsupportedEncodingException
+	 * @throws JSONException
+	 * @throws URISyntaxException
+	 */
+	private String getDashboardServiceUrl(BIObject biObject, String userUniqueIdentifier, JSONArray jsonArray,
+			Map<String, String> paramMap, Report reportToUse, Integer docId, String role)
+			throws UnsupportedEncodingException, JSONException, URISyntaxException {
+		String docLabel = biObject.getLabel();
+		String hostUrl = getServiceHostUrl();
+
+		URIBuilder serviceUrlBuilder = new URIBuilder(hostUrl);
+		serviceUrlBuilder
+				.setPath(KnowageSystemConfiguration.getKnowageCockpitEngineContext() + "/api/1.0/pages/execute/png");
+		serviceUrlBuilder.setParameter("user_id", userUniqueIdentifier);
+		serviceUrlBuilder.setParameter("document", Integer.toString(docId));
+		serviceUrlBuilder.setParameter("DOCUMENT_LABEL", docLabel);
+		serviceUrlBuilder.setParameter("toolbar", "false");
+		serviceUrlBuilder.setParameter("role", role);
+		serviceUrlBuilder.setParameter("menu", "false");
+
+		addParametersToServiceUrlForDashboard(biObject, jsonArray, paramMap, reportToUse, serviceUrlBuilder);
+		addRenderOptionsToServiceUrl(biObject, reportToUse, serviceUrlBuilder);
+
+		return serviceUrlBuilder.toString();
+	}
+
+	private void addParametersToServiceUrlForCockpit(BIObject biObject, JSONArray jsonArray,
+			Map<String, String> paramMap, Report reportToUse, URIBuilder serviceUrlBuilder)
+			throws UnsupportedEncodingException, JSONException {
+
+		String viewId = reportToUse.getViewId();
+
+		LOGGER.debug("View id is {}", viewId);
+
+		if (viewId != null && StringUtils.isNotBlank(viewId)) {
+			LOGGER.debug("Adding parameter for views...");
+			addViewParametersToServiceUrl(reportToUse, serviceUrlBuilder);
+		} else {
+			LOGGER.debug("Adding classic parameter...");
+			addClassicParametersToServiceUrl(progressThreadId, biObject, reportToUse, serviceUrlBuilder, jsonArray,
+					paramMap, false);
+		}
+	}
+
+	private void addParametersToServiceUrlForDashboard(BIObject biObject, JSONArray jsonArray,
+			Map<String, String> paramMap, Report reportToUse, URIBuilder serviceUrlBuilder)
+			throws UnsupportedEncodingException, JSONException {
+
+		String viewId = reportToUse.getViewId();
+
+		LOGGER.debug("View id is {}", viewId);
+
+		if (viewId != null && StringUtils.isNotBlank(viewId)) {
+			LOGGER.debug("Adding parameter for views...");
+			addViewParametersToServiceUrl(reportToUse, serviceUrlBuilder);
+		} else {
+			LOGGER.debug("Adding classic parameter...");
+			addClassicParametersToServiceUrl(progressThreadId, biObject, reportToUse, serviceUrlBuilder, jsonArray,
+					paramMap, true);
+		}
+	}
+
+	private void addViewParametersToServiceUrl(Report reportToUse, URIBuilder serviceUrlBuilder) {
+		/*
+		 * /workspace/dashboard-view/SIL_01_DASHBOARD?viewName=SIL_01_VIEW_01&viewId=aab67015-af09-444e-8293-5815a51c50c3
+		 */
+		String viewId = reportToUse.getViewId();
+		ISbiViewDAO dao = DAOFactory.getSbiViewDAO();
+		dao.setUserProfile(userProfile);
+
+		try {
+			SbiView view = dao.read(viewId);
+			String viewName = view.getName();
+
+			LOGGER.debug("Adding viewId {} and viewName {} to URL", viewId, viewName);
+
+			serviceUrlBuilder.setParameter("viewName", viewName);
+			serviceUrlBuilder.setParameter("viewId", viewId);
+		} catch (Exception e) {
+			throw new SpagoBIRuntimeException("View with following id doesn't exist: " + viewId, e);
+		}
+	}
+
+	private void addClassicParametersToServiceUrl(Integer progressthreadId, BIObject biObject, Report reportToUse,
+			URIBuilder serviceUrlBuilder, JSONArray jsonArray, Map<String, String> paramMap, boolean dashboard)
+			throws UnsupportedEncodingException, JSONException {
+		JSONArray jsonParams = new JSONArray();
+
+		List<BIObjectParameter> drivers = biObject.getDrivers();
+		String viewId = reportToUse.getViewId();
+
+		LOGGER.debug("Adding parameters {} to URL", paramMap);
+
+		// This control doesn't make sense for parameters which use a view
+		if (StringUtils.isEmpty(viewId) && drivers != null) {
+			BaseParametersEncoder parametersEncoder = new BaseParametersEncoder();
+			List<Parameter> parameter = reportToUse.getParameters();
+			if (drivers.size() != parameter.size()) {
+				throw new SpagoBIRuntimeException(
+						"There are a different number of parameters/drivers between document and template");
+			}
+			Collections.sort(drivers);
+			ParametersDecoder decoder = new ParametersDecoder();
+
+			for (BIObjectParameter biObjectParameter : drivers) {
+				boolean found = false;
+				String outParamValue = "";
+				String outParamName = "";
+				for (Parameter templateParameter : parameter) {
+
+					String currParamType = templateParameter.getType();
+					String currParamValue = templateParameter.getValue();
+
+					if (currParamType.equals("dynamic")) {
+
+						if (currParamValue != null && !currParamValue.isEmpty()) {
+
+							// filled by fillParametersValues in DossierExecutionResource
+							outParamValue = currParamValue;
+
+							List<String> currParamValueDecoded = decoder.decode(outParamValue);
+
+							if (biObjectParameter.getParameterUrlName().equals(templateParameter.getUrlName())) {
+								outParamName = templateParameter.getUrlName();
+								if (dashboard) {
+
+									JSONObject param = new JSONObject();
+									param.put("multivalue", decoder.isMultiValues(outParamValue));
+									param.put("urlName", biObjectParameter.getParameterUrlName());
+
+									JSONArray paramValueArray = new JSONArray();
+									for (Object currValue2 : currParamValueDecoded) {
+										JSONObject paramValue = new JSONObject();
+
+										String currValue2AsString = currValue2.toString();
+
+										if (currValue2AsString.startsWith("'") && currValue2AsString.endsWith("'")) {
+											currValue2AsString = currValue2AsString.substring(1,
+													currValue2AsString.length() - 1);
+										}
+
+										paramValue.put("value", URLEncoder.encode(currValue2AsString,
+												StandardCharsets.UTF_8.toString()));
+										paramValue.put("description",
+												URLEncoder.encode(templateParameter.getUrlNameDescription(),
+														StandardCharsets.UTF_8.toString()));
+
+										paramValueArray.put(paramValue);
+									}
+									param.put("value", paramValueArray);
+
+									jsonParams.put(param);
+								} else {
+
+									String urlName = biObjectParameter.getParameterUrlName();
+									boolean multivalue = biObjectParameter.isMultivalue();
+									String type = biObjectParameter.getParameter().getType();
+									List<String> values = currParamValueDecoded;
+									List<String> descriptions = biObjectParameter.getParameterValuesDescription();
+
+									String encodedValues = parametersEncoder.encodeValuesFromListOfStrings(multivalue,
+											values, type);
+									String encodedDescriptions = parametersEncoder
+											.encodeDescriptionFromListOfStrings(descriptions);
+
+									String valueParamName = urlName;
+									String descParamName = urlName + "_description";
+
+									serviceUrlBuilder.setParameter(valueParamName, encodedValues);
+									serviceUrlBuilder.setParameter(descParamName, encodedDescriptions);
+								}
+								found = true;
+
+								break;
+							}
+						}
+					} else {
+						if (biObjectParameter.getParameterUrlName().equals(templateParameter.getUrlName())) {
+							serviceUrlBuilder.setParameter(biObjectParameter.getParameterUrlName(), currParamValue);
+							outParamValue = currParamValue;
+							outParamName = templateParameter.getUrlName();
+							// We need a description for static parameter, we force the value if it's missing
+							if (isEmpty(templateParameter.getUrlNameDescription())) {
+								templateParameter.setUrlNameDescription(currParamValue);
+							}
+							// description
+							serviceUrlBuilder.setParameter(biObjectParameter.getParameterUrlName(),
+									templateParameter.getUrlNameDescription());
+
+							found = true;
+							break;
+
+						}
+					}
+				}
+				paramMap.put(outParamName, outParamValue);
+				if (!found && biObjectParameter.isRequired()) {
+					throw new SpagoBIRuntimeException(
+							"There is no match between document parameters and template parameters.");
+				}
+
+			}
+		}
+		if (dashboard) {
+			byte[] jsonParamsByteArray = jsonParams.toString().getBytes();
+			String encodedJsonParams = new String(Base64.getEncoder().withoutPadding().encode(jsonParamsByteArray));
+			serviceUrlBuilder.setParameter("params", encodedJsonParams);
+		}
+
 	}
 }

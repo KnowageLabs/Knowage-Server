@@ -25,8 +25,10 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Base64;
 import java.util.Base64.Encoder;
+import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -59,8 +61,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import edu.emory.mathcs.backport.java.util.Arrays;
-import edu.emory.mathcs.backport.java.util.Collections;
 import it.eng.knowage.engine.cockpit.CockpitEngine;
 import it.eng.knowage.engine.cockpit.CockpitEngineInstance;
 import it.eng.knowage.engine.cockpit.api.AbstractCockpitEngineResource;
@@ -79,6 +79,7 @@ import it.eng.spagobi.commons.utilities.ObjectsAccessVerifier;
 import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
 import it.eng.spagobi.engines.config.bo.Engine;
 import it.eng.spagobi.utilities.engines.EngineConstants;
+import it.eng.spagobi.utilities.engines.EngineStartServletIOManager;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceExceptionHandler;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
@@ -200,15 +201,23 @@ public class PageResource extends AbstractCockpitEngineResource {
 	private Object openPageInternal(String pageName) {
 		CockpitEngineInstance engineInstance;
 		String dispatchUrl = null;
+		EngineStartServletIOManager ioManager = getIOManager();
+		Map env = ioManager.getEnv();
 
 		if (LOGGER.isDebugEnabled()) {
-			LOGGER.debug("Opening page with following parameters: ");
+			LOGGER.debug("Opening page {}", pageName);
 			Enumeration<String> parameterNames = request.getParameterNames();
-			while (parameterNames.hasMoreElements()) {
-				String name = parameterNames.nextElement();
+			List<String> parameterNamesAsList = Collections.list(parameterNames);
+			Collections.sort(parameterNamesAsList);
+
+			LOGGER.debug("Parameters are: ");
+			parameterNamesAsList.forEach(name -> {
 				String[] parameterValues = request.getParameterValues(name);
 				LOGGER.debug("{} = {}", name, Arrays.asList(parameterValues));
-			}
+			});
+
+			LOGGER.warn("Environment vars are:");
+			env.forEach((key, value) -> LOGGER.warn("{} - {}", key, value));
 		}
 
 		try {
@@ -234,9 +243,9 @@ public class PageResource extends AbstractCockpitEngineResource {
 				} else if ("PNG".equalsIgnoreCase(outputType)) {
 					return createRedirect("/png");
 				} else {
-					engineInstance = CockpitEngine.createInstance(getIOManager().getTemplateAsString(),
-							getIOManager().getEnv());
-					getIOManager().getHttpSession().setAttribute(EngineConstants.ENGINE_INSTANCE, engineInstance);
+					String templateAsString = ioManager.getTemplateAsString();
+					engineInstance = CockpitEngine.createInstance(templateAsString, env);
+					ioManager.getHttpSession().setAttribute(EngineConstants.ENGINE_INSTANCE, engineInstance);
 
 					String editMode = request.getParameter("documentMode");
 					if (editMode != null) {
@@ -262,8 +271,8 @@ public class PageResource extends AbstractCockpitEngineResource {
 				template = buildBaseTemplate();
 				// create a new engine instance
 				engineInstance = CockpitEngine.createInstance(template.toString(), // servletIOManager.getTemplateAsString(),
-						getIOManager().getEnvForWidget());
-				getIOManager().getHttpSession().setAttribute(EngineConstants.ENGINE_INSTANCE, engineInstance);
+						ioManager.getEnvForWidget());
+				ioManager.getHttpSession().setAttribute(EngineConstants.ENGINE_INSTANCE, engineInstance);
 				dispatchUrl = "/WEB-INF/jsp/ngCockpit.jsp";
 			} else {
 				// error
@@ -356,9 +365,9 @@ public class PageResource extends AbstractCockpitEngineResource {
 		String userId = request.getParameter("user_id");
 		String pdfPageOrientation = request.getParameter(PDF_PAGE_ORIENTATION);
 		boolean pdfFrontPage = request.getParameter(PDF_FRONT_PAGE) != null
-				&& Boolean.valueOf(request.getParameter(PDF_FRONT_PAGE));
+				&& Boolean.parseBoolean(request.getParameter(PDF_FRONT_PAGE));
 		boolean pdfBackPage = request.getParameter(PDF_BACK_PAGE) != null
-				&& Boolean.valueOf(request.getParameter(PDF_BACK_PAGE));
+				&& Boolean.parseBoolean(request.getParameter(PDF_BACK_PAGE));
 
 		PngExporter pngExporter = new PngExporter(documentId, userId, requestURL, renderOptions, pdfPageOrientation,
 				pdfFrontPage, pdfBackPage);
@@ -442,17 +451,17 @@ public class PageResource extends AbstractCockpitEngineResource {
 		Boolean isMultiSheet = Boolean.parseBoolean(request.getParameter(IS_MULTI_SHEET));
 
 		if (widthParameterVal != null) {
-			pdfWidth = Integer.valueOf(widthParameterVal);
+			pdfWidth = Integer.parseInt(widthParameterVal);
 		}
 		if (heightParameterVal != null) {
-			pdfHeight = Integer.valueOf(heightParameterVal);
+			pdfHeight = Integer.parseInt(heightParameterVal);
 		}
 		if (jsRenderingWaitParameterVal != null) {
-			pdfRenderingWaitTime = 1000 * Long.valueOf(jsRenderingWaitParameterVal);
+			pdfRenderingWaitTime = 1000 * Long.parseLong(jsRenderingWaitParameterVal);
 		}
 
 		if (deviceScaleFactorVal != null) {
-			pdfDeviceScaleFactor = Double.valueOf(deviceScaleFactorVal);
+			pdfDeviceScaleFactor = Double.parseDouble(deviceScaleFactorVal);
 		}
 
 		ViewportDimensions dimensions = ViewportDimensions.builder().withWidth(pdfWidth).withHeight(pdfHeight)
@@ -583,15 +592,15 @@ public class PageResource extends AbstractCockpitEngineResource {
 
 			boolean isMultivalue = driver.isMultivalue();
 
-			List<Object> values = Optional.ofNullable(parameterMap.get(urlName)).map(Arrays::asList)
+			List<String> values = Optional.ofNullable(parameterMap.get(urlName)).map(Arrays::asList)
 					.orElse(Collections.emptyList());
-			List<Object> descriptions = Optional.ofNullable(parameterMap.get(urlName + "_description"))
+			List<String> descriptions = Optional.ofNullable(parameterMap.get(urlName + "_description"))
 					.map(Arrays::asList).orElse(Collections.emptyList());
 
 			if (OUTPUT_TYPE.equals(urlName)) {
 				LOGGER.debug("Forcing outputType to HTML");
-				values = Arrays.asList(new String[] { "HTML" });
-				descriptions = Arrays.asList(new String[] { "HTML" });
+				values = Arrays.asList("HTML");
+				descriptions = Arrays.asList("HTML");
 			}
 
 			JSONObject currentDriverJson = new JSONObject();

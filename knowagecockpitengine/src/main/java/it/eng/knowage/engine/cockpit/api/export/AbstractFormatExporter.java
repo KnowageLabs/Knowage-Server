@@ -1419,6 +1419,28 @@ public abstract class AbstractFormatExporter {
 		}
 		return format.toString();
 	}
+	
+	protected final JSONObject getWidgetContentFromBody(JSONObject widget) {
+		JSONObject curWidget = new JSONObject();
+		
+		if (body == null || body.length() == 0)
+			return curWidget;
+		
+		try {
+			JSONArray allWidgets = body.getJSONArray("widget");
+			int i;
+			for (i = 0; i < allWidgets.length(); i++) {
+				curWidget = allWidgets.getJSONObject(i);
+				if (curWidget.getLong("id") == widget.getLong("id")) {
+					return curWidget.optJSONObject("content");
+				}
+			}
+		} catch (Exception e) {
+		LOGGER.error("Cannot get widget content field", e);
+			return new JSONObject();
+		}
+		return curWidget;
+	}
 
 	protected final Map<String, String> getGroupAndColumnsMap(JSONObject widgetContent, JSONArray groupsArray) {
 		Map<String, String> mapGroupsAndColumns = new HashMap<>();

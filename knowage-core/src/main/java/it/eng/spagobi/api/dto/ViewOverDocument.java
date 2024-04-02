@@ -41,12 +41,18 @@ public class ViewOverDocument extends AbstractViewFolderItem {
 
 	private JSONObject settings;
 
+	private String documentLabel;
+
 	/**
 	 * @return the description
 	 */
 	@Override
 	public String getDescription() {
 		return description;
+	}
+
+	public String getDocumentLabel() {
+		return documentLabel;
 	}
 
 	/**
@@ -92,6 +98,10 @@ public class ViewOverDocument extends AbstractViewFolderItem {
 	 */
 	public void setDescription(String description) {
 		this.description = description;
+	}
+
+	public void setDocumentLabel(String documentLabel) {
+		this.documentLabel = documentLabel;
 	}
 
 	/**

@@ -1063,7 +1063,7 @@ public class BirtReportServlet extends HttpServlet {
 		extractionOptions.setOutputStream(responseOut);
 
 		// Set the HTTP response
-		response.setContentType("text/csv");
+		response.setContentType("text/csv"); 
 		httpUtils.setHeader(response, "Content-disposition", "inline; filename=reportcsv.csv");
 		dataExtractionTask.selectResultSet(resultSet.getResultSetName());
 		dataExtractionTask.extract(extractionOptions);
