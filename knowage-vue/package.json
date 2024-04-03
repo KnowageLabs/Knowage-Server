@@ -4,7 +4,7 @@
   "description": "Knowage is the professional open source suite for modern business analytics over traditional sources and big data systems.",
   "author": "knowage labs <knowage@eng.it>",
   "scripts": {
-    "serve": "set NODE_OPTIONS=--openssl-legacy-provider && vue-cli-service serve --port 3000",
+    "serve": "vue-cli-service serve --port 3000",
     "build": "vue-cli-service build --mode production --no-clean",
     "test:unit": "vue-cli-service test:unit --watch",
     "lint": "vue-cli-service lint",
