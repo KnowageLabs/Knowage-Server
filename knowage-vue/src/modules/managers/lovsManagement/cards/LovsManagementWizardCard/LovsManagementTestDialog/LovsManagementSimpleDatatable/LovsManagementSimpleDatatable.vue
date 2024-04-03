@@ -106,6 +106,15 @@ export default defineComponent({
             this.$emit('modelChanged', this.model)
         },
         setSelectedVisible() {
+            // sorting columns based on the order of user input
+            let tmpVisibleOptions: string[] = []
+
+            this.visibleOptions?.forEach((el: string) => { 
+                if (this.selectedVisible.includes(el)) {
+                    tmpVisibleOptions.push(el)
+                }
+            })
+            this.selectedVisible = tmpVisibleOptions
             this.model['VISIBLE-COLUMNS'] = this.selectedVisible.toString()
             this.$emit('modelChanged', this.model)
         }
