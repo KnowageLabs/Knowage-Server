@@ -1459,6 +1459,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             if ($scope.extendedStyle.borders != undefined) {
                 if ($scope.extendedStyle.borders) {
                     angular.merge($scope.borderShadowStyle, $scope.extendedStyle.border)
+                    $scope.borderShadowStyle['background-color'] = 'unset'
                 } else {
                     delete $scope.borderShadowStyle['border-color']
                     delete $scope.borderShadowStyle['border-width']
@@ -1511,7 +1512,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
             // update widgets background color
 
             var tempBackGround = { 'background-color': $scope.extendedStyle.backgroundColor || '' }
-            angular.merge($scope.borderShadowStyle, tempBackGround)
             angular.merge($scope.paddingStyle, tempBackGround)
 
             // update sheets background color
