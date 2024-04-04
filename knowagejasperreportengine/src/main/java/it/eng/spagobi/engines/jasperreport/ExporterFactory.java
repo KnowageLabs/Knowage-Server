@@ -21,7 +21,6 @@ import net.sf.jasperreports.engine.JRExporter;
 
 import it.eng.spago.base.SourceBean;
 import it.eng.spagobi.services.common.EnginConf;
-import it.eng.spagobi.tools.dataset.dao.DataSetDAOImpl;
 
 import org.apache.log4j.Logger;
 /**
@@ -37,7 +36,7 @@ public class ExporterFactory {
 	 * 
 	 * @return the exporter
 	 */
-	private static com.sun.org.slf4j.internal.Logger logger = Logger.getLogger(ExporterFactory.class);
+	private static Logger logger = Logger.getLogger(ExporterFactory.class);
 
 	public static JRExporter getExporter(String format) {
 		JRExporter exporter = null;
