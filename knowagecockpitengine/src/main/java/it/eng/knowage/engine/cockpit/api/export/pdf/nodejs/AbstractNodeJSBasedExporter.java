@@ -185,7 +185,7 @@ public abstract class AbstractNodeJSBasedExporter {
 							int row = widget.getInt("row");
 							int sizeY = widget.getInt("sizeY");
 							int widgetHeight = (row + sizeY) * 30 + sheetLabelHeigth; // scaling by cockpitModule_gridsterOptions.rowHeight
-							sheetHeight = Math.min(sheetHeight, widgetHeight);
+							sheetHeight = Math.max(sheetHeight, widgetHeight);
 						}
 					}
 				}
@@ -215,7 +215,7 @@ public abstract class AbstractNodeJSBasedExporter {
 							int row = widget.getInt("row");
 							int sizeX = widget.getInt("sizeX");
 							int widgetWidth = (row + sizeX) * 30 + sheetLabelHeigth; // scaling by cockpitModule_gridsterOptions.rowWidth
-							sheetWidth = Math.min(sheetWidth, widgetWidth);
+							sheetWidth = Math.max(sheetWidth, widgetWidth);
 						}
 					}
 				}
@@ -242,8 +242,8 @@ public abstract class AbstractNodeJSBasedExporter {
 			String name = document.getName();
 			String description = document.getDescription();
 			if (name == null || description == null) {
-				throw new SpagoBIRuntimeException("Unable to get name [" + name + "] or description [" + description
-						+ "] for document with id [" + documentId + "]");
+				throw new SpagoBIRuntimeException(
+					"Unable to get name [" + name + "] or description [" + description + "] for document with id [" + documentId + "]");
 			}
 			toReturn = new FrontpageDetails(name, description, new Date());
 		}
