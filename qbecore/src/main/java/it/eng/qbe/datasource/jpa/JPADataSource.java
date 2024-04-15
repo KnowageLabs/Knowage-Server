@@ -240,7 +240,6 @@ public class JPADataSource extends AbstractDataSource implements IJpaDataSource 
 	public IModelStructure getModelStructure(boolean getFullModel) {
 		if (getFullModel && this.userProfile == null) {
 			this.userProfile = new UserProfile("", "");
-			this.userProfile.setAttributes(new HashMap<>());
 			this.userProfile.setAttributeValue(ALL_FIELDS_ACCESSIBLE, "true");
 		}
 		return getModelStructure();

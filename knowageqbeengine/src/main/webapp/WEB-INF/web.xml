@@ -11,6 +11,7 @@
 
 	<display-name>knowageqbeengine</display-name>
 	<description>Knowage QBE Engine</description>
+	<distributable/>
 
 	<!-- 
 		Logger Setup Filter.

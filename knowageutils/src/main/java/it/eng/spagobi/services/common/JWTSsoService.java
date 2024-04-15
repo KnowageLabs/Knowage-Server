@@ -62,8 +62,8 @@ public class JWTSsoService implements SsoServiceInterface {
 	public static final String ROLES_CLAIM = "kn_roles";
 	public static final String IS_SUPER_ADMIN_CLAIM = "kn_is_super_admin";
 
-	protected static final List<String> PREDEFINED_CLAIMS_LIST = Arrays.asList(SsoServiceInterface.USER_ID, USERNAME_CLAIM, ROLES_CLAIM, IS_SUPER_ADMIN_CLAIM,
-			PublicClaims.ISSUER, PublicClaims.EXPIRES_AT);
+	protected static final List<String> PREDEFINED_CLAIMS_LIST = Arrays.asList(SsoServiceInterface.USER_ID,
+			USERNAME_CLAIM, ROLES_CLAIM, IS_SUPER_ADMIN_CLAIM, PublicClaims.ISSUER, PublicClaims.EXPIRES_AT);
 
 	@Override
 	public String readUserIdentifier(HttpServletRequest request) {
@@ -151,9 +151,9 @@ public class JWTSsoService implements SsoServiceInterface {
 	}
 
 	/**
-	 * Creates a JWT token with the input user id as {@link SsoServiceInterface#USER_ID} claim; the token DOES NOT EXPIRE!!! Use this method carefully. This
-	 * method was designed for the public user, in that case the JWT token is not intended to expire. Use this method carefully: in case you need a JWT token
-	 * with an expiration date, use the method {@link #userId2jwtToken(String userId, Date expiresAt)}
+	 * Creates a JWT token with the input user id as {@link SsoServiceInterface#USER_ID} claim; the token DOES NOT EXPIRE!!! Use this method carefully. This method
+	 * was designed for the public user, in that case the JWT token is not intended to expire. Use this method carefully: in case you need a JWT token with an
+	 * expiration date, use the method {@link #userId2jwtToken(String userId, Date expiresAt)}
 	 *
 	 * @param userId the user id
 	 * @return The JWT token with the input user id: this token will last forever.
@@ -265,14 +265,15 @@ public class JWTSsoService implements SsoServiceInterface {
 		Claim pswClaim = decodedJWT.getClaim(SsoServiceInterface.PASSWORD);
 		assertNotEmpty(pswClaim, "Password information is missing!!!");
 		String psw = pswClaim.asString();
-		Map<String, String> toReturn = new HashMap<String, String>();
+		Map<String, String> toReturn = new HashMap<>();
 		toReturn.put("userId", userId);
 		toReturn.put("dn", dn);
 		toReturn.put("psw", psw);
 		return toReturn;
 	}
 
-	public static String getFullJWTToken(String userId, String userName, String[] roles, Map<String, String> attributes, boolean isSuperAdmin, Date expiresAt) {
+	public static String getFullJWTToken(String userId, String userName, String[] roles, Map<String, String> attributes,
+			boolean isSuperAdmin, Date expiresAt) {
 		Algorithm algorithm = ALGORITHM_FACTORY.getAlgorithm();
 		// @formatter:off
 		Builder builder = JWT.create()
@@ -326,7 +327,7 @@ public class JWTSsoService implements SsoServiceInterface {
 				.collect(Collectors.toMap(Entry::getKey, e -> e.getValue().asString(), (prev, next) -> next, HashMap::new));
 		// @formatter:on
 		LogMF.debug(logger, "Attributs detected are [{0}]", attributes);
-		profile.setAttributes(attributes);
+		profile.getAttributes().putAll(attributes);
 
 		return profile;
 	}

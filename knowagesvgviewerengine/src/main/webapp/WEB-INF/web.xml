@@ -12,6 +12,7 @@
 
 	<display-name>knowagesvgviewerengine</display-name>
 	<description>Knowage SVG Viewer Engine</description>
+	<distributable/>
 
 	<!-- 
 		Logger Setup Filter.

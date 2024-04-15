@@ -12,6 +12,7 @@
 
 	<display-name>knowagejasperreportengine</display-name>
 	<description>Knowage Jasperreport Engine</description>
+	<distributable/>
 
 	<!-- 
 		Logger Setup Filter.

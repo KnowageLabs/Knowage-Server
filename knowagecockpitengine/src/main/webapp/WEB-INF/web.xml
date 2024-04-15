@@ -12,6 +12,7 @@
 
 	<display-name>knowagecockpitengine</display-name>
 	<description>Knowage Cockpit Engine</description>
+	<distributable/>
 
 	<!-- 
 		Logger Setup Filter.

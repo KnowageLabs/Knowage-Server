@@ -12,6 +12,7 @@
 
 	<display-name>knowagecommonjengine</display-name>
 	<description>Knowage CommonJ Engine</description>
+	<distributable/>
 
 	<!-- 
 		Logger Setup Filter.

@@ -12,6 +12,7 @@
 
 	<display-name>knowagebirtreportengine</display-name>
 	<description>Knowage BIRT Report Engine</description>
+	<distributable/>
 
 	<!-- 
 		Logger Setup Filter.

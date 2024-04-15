@@ -12,6 +12,7 @@
 
 	<display-name>knowagekpiengine</display-name>
 	<description>Knowage Kpi Engine</description>
+	<distributable/>
 	
 	<!-- 
 		Logger Setup Filter.

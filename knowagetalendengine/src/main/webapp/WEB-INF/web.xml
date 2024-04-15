@@ -11,6 +11,7 @@
 
 	<display-name>knowagetalendengine</display-name>
 	<description>Knowage Talend Engine</description>
+	<distributable/>
 
 	<!-- 
 		Logger Setup Filter.

@@ -92,6 +92,7 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -115,6 +116,8 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
  * This class contain the information about the user LoginFilter
  */
 public class UserProfile implements IEngUserProfile {
+
+	private static final long serialVersionUID = 2386185835796586418L;
 
 	private enum PREDEFINED_PROFILE_ATTRIBUTES {
 		USER_ID("user_id"), USER_ROLES("user_roles"), TENANT_ID("TENANT_ID");
@@ -151,12 +154,10 @@ public class UserProfile implements IEngUserProfile {
 
 		List<String> functionalities = getDataPreparationUserFunctionalities();
 		List<String> roles = new ArrayList<>();
-		HashMap<String, Object> attributes = new HashMap<>();
 
 		UserProfile toReturn = new UserProfile(userUniqueIdentifier, DATA_PREP_USER_NAME, DATA_PREP_USER_NAME,
 				organization);
 		toReturn.setRoles(roles);
-		toReturn.setAttributes(attributes);
 		toReturn.setFunctionalities(functionalities);
 
 		setSpagoBiUserProfileIntoUserProfile(toReturn, userUniqueIdentifier, userId, organization, roles,
@@ -186,7 +187,6 @@ public class UserProfile implements IEngUserProfile {
 		String jwtToken = JWTSsoService.userId2jwtToken(SCHEDULER_USER_ID_PREFIX + organization, expiresAt);
 		UserProfile profile = new UserProfile(jwtToken, SCHEDULER_USER_NAME, SCHEDULER_USER_NAME, organization);
 		profile.roles = new ArrayList<>();
-		profile.userAttributes = new HashMap<>();
 		return profile;
 	}
 
@@ -210,12 +210,10 @@ public class UserProfile implements IEngUserProfile {
 
 		List<String> functionalities = getSchedulerUserFunctionalities();
 		List<String> roles = new ArrayList<>();
-		HashMap<String, Object> attributes = new HashMap<>();
 
 		UserProfile toReturn = new UserProfile(userUniqueIdentifier, SCHEDULER_USER_NAME, SCHEDULER_USER_NAME,
 				organization);
 		toReturn.setRoles(roles);
-		toReturn.setAttributes(attributes);
 		toReturn.setFunctionalities(functionalities);
 
 		setSpagoBiUserProfileIntoUserProfile(toReturn, userUniqueIdentifier, userId, organization, roles,
@@ -307,7 +305,7 @@ public class UserProfile implements IEngUserProfile {
 	private String userUniqueIdentifier = null;
 	private String userId = null;
 	private String userName = null;
-	private Map<String, Object> userAttributes = null;
+	private final Map<String, Object> userAttributes = new LinkedHashMap<>();
 	private Collection<String> roles = null;
 	private Collection<String> functionalities = null;
 
@@ -365,7 +363,7 @@ public class UserProfile implements IEngUserProfile {
 			}
 		}
 
-		userAttributes = profile.getAttributes();
+		userAttributes.putAll(profile.getAttributes());
 		if (userAttributes != null) {
 			LOGGER.debug("USER ATTRIBUTES----");
 			Set<String> keis = userAttributes.keySet();
@@ -376,7 +374,6 @@ public class UserProfile implements IEngUserProfile {
 			}
 			LOGGER.debug("USER ATTRIBUTES----");
 		} else {
-			userAttributes = new HashMap<>();
 			LOGGER.debug("NO USER ATTRIBUTES");
 		}
 
@@ -396,7 +393,6 @@ public class UserProfile implements IEngUserProfile {
 		this.organization = organization;
 		this.roles = new ArrayList<>();
 		this.functionalities = new ArrayList<>();
-		this.userAttributes = new HashMap<>();
 		setPredefinedProfileAttributes();
 	}
 
@@ -404,7 +400,7 @@ public class UserProfile implements IEngUserProfile {
 		this.userUniqueIdentifier = other.userUniqueIdentifier;
 		this.userId = other.userId;
 		this.userName = other.userName;
-		this.userAttributes = other.userAttributes;
+		this.userAttributes.putAll(other.userAttributes);
 		this.roles = other.roles;
 		this.functionalities = other.functionalities;
 		this.organization = other.organization;
@@ -468,7 +464,7 @@ public class UserProfile implements IEngUserProfile {
 	 * @see it.eng.spago.security.IEngUserProfile#getRoles()
 	 */
 	@Override
-	public Collection getRoles() throws EMFInternalError {
+	public Collection<String> getRoles() throws EMFInternalError {
 		return this.roles;
 	}
 
@@ -624,15 +620,6 @@ public class UserProfile implements IEngUserProfile {
 	@Override
 	public void setApplication(String arg0) throws EMFInternalError {
 		// Not needed
-	}
-
-	/**
-	 * Sets the attributes.
-	 *
-	 * @param attrs the new attributes
-	 */
-	public void setAttributes(Map<String, Object> attrs) {
-		this.userAttributes = attrs;
 	}
 
 	/**

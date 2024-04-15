@@ -12,6 +12,7 @@
 
 	<display-name>knowagegeoreportengine</display-name>
 	<description>Knowage Geo Report Engine</description>
+	<distributable/>
 
 	<!-- 
 		Logger Setup Filter.

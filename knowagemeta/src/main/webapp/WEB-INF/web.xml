@@ -12,6 +12,7 @@
 
 	<display-name>knowagemeta</display-name>
 	<description>Knowage Meta</description>
+	<distributable/>
 
 	<!-- 
 		Logger Setup Filter.

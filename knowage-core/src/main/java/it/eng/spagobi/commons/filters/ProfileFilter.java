@@ -41,10 +41,6 @@ import org.apache.logging.log4j.Logger;
 import it.eng.knowage.privacymanager.LoginEventBuilder;
 import it.eng.knowage.privacymanager.PrivacyManagerClient;
 import it.eng.spago.base.Constants;
-import it.eng.spago.base.RequestContainer;
-import it.eng.spago.base.ResponseContainer;
-import it.eng.spago.base.SessionContainer;
-import it.eng.spago.base.SourceBean;
 import it.eng.spago.security.DefaultCipher;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.commons.bo.SessionUserProfileBuilder;
@@ -88,29 +84,33 @@ public class ProfileFilter implements Filter {
 				HttpServletResponse httpResponse = (HttpServletResponse) response;
 				HttpSession session = httpRequest.getSession();
 
-				RequestContainer requestContainer = (RequestContainer) session
-						.getAttribute(Constants.REQUEST_CONTAINER);
-				if (requestContainer == null) {
-					// RequestContainer does not exists yet (maybe it is the
-					// first call to Spago)
-					// initializing Spago objects (user profile object must
-					// be put into PermanentContainer)
-					requestContainer = new RequestContainer();
-					SessionContainer sessionContainer = new SessionContainer(true);
-					requestContainer.setSessionContainer(sessionContainer);
-					session.setAttribute(Constants.REQUEST_CONTAINER, requestContainer);
-				}
-				ResponseContainer responseContainer = (ResponseContainer) session
-						.getAttribute(Constants.RESPONSE_CONTAINER);
-				if (responseContainer == null) {
-					responseContainer = new ResponseContainer();
-					SourceBean serviceResponse = new SourceBean(Constants.SERVICE_RESPONSE);
-					responseContainer.setServiceResponse(serviceResponse);
-					session.setAttribute(Constants.RESPONSE_CONTAINER, responseContainer);
-				}
-				SessionContainer sessionContainer = requestContainer.getSessionContainer();
-				SessionContainer permanentSession = sessionContainer.getPermanentContainer();
-				IEngUserProfile profile = (IEngUserProfile) permanentSession
+				// @formatter:off
+				// TODO ML				RequestContainer requestContainer = (RequestContainer) session
+				// TODO ML						.getAttribute(Constants.REQUEST_CONTAINER);
+				// TODO ML				if (requestContainer == null) {
+				// TODO ML					// RequestContainer does not exists yet (maybe it is the
+				// TODO ML					// first call to Spago)
+				// TODO ML					// initializing Spago objects (user profile object must
+				// TODO ML					// be put into PermanentContainer)
+				// TODO ML					requestContainer = new RequestContainer();
+				// TODO ML					SessionContainer sessionContainer = new SessionContainer(true);
+				// TODO ML					requestContainer.setSessionContainer(sessionContainer);
+				// TODO ML					session.setAttribute(Constants.REQUEST_CONTAINER, requestContainer);
+				// TODO ML				}
+				// TODO ML				ResponseContainer responseContainer = (ResponseContainer) session
+				// TODO ML						.getAttribute(Constants.RESPONSE_CONTAINER);
+				// TODO ML				if (responseContainer == null) {
+				// TODO ML					responseContainer = new ResponseContainer();
+				// TODO ML					SourceBean serviceResponse = new SourceBean(Constants.SERVICE_RESPONSE);
+				// TODO ML					responseContainer.setServiceResponse(serviceResponse);
+				// TODO ML					session.setAttribute(Constants.RESPONSE_CONTAINER, responseContainer);
+				// TODO ML				}
+				// TODO ML				SessionContainer sessionContainer = requestContainer.getSessionContainer();
+				// TODO ML				SessionContainer permanentSession = sessionContainer.getPermanentContainer();
+				// TODO ML				IEngUserProfile profile = (IEngUserProfile) permanentSession
+				// TODO ML						.getAttribute(IEngUserProfile.ENG_USER_PROFILE);
+				// @formatter:off
+				IEngUserProfile profile = (IEngUserProfile) session
 						.getAttribute(IEngUserProfile.ENG_USER_PROFILE);
 
 				if (profile == null) {
@@ -151,7 +151,7 @@ public class ProfileFilter implements Filter {
 						}
 
 						// put user profile into session
-						storeProfileInSession((UserProfile) profile, permanentSession, session, httpRequest);
+						storeProfileInSession((UserProfile) profile, /* TODO ML: permanentSession, */ session, httpRequest);
 					} else {
 						LOGGER.debug("User identifier not found.");
 					}
@@ -240,14 +240,16 @@ public class ProfileFilter implements Filter {
 		return request.getRequestURI().contains(GeneralUtilities.getSessionExpiredURL());
 	}
 
-	private void storeProfileInSession(UserProfile userProfile, SessionContainer permanentContainer,
+	private void storeProfileInSession(UserProfile userProfile, /* TODO ML: SessionContainer permanentContainer, */
 			HttpSession httpSession, HttpServletRequest httpRequest) {
 		LOGGER.debug("IN");
 
 		// PM-int
 		UserProfileUtility.enrichProfile(userProfile, httpRequest, httpSession);
 
-		permanentContainer.setAttribute(IEngUserProfile.ENG_USER_PROFILE, userProfile);
+		// @formatter:off
+		// TODO ML: permanentContainer.setAttribute(IEngUserProfile.ENG_USER_PROFILE, userProfile);
+		// @formatter:on
 		httpSession.setAttribute(IEngUserProfile.ENG_USER_PROFILE, userProfile);
 		LOGGER.debug("OUT");
 	}

@@ -17,17 +17,6 @@
  */
 package it.eng.spagobi.commons.filters;
 
-import it.eng.spago.base.Constants;
-import it.eng.spago.base.RequestContainer;
-import it.eng.spago.base.ResponseContainer;
-import it.eng.spago.base.SessionContainer;
-import it.eng.spago.base.SourceBean;
-import it.eng.spago.security.IEngUserProfile;
-import it.eng.spagobi.commons.utilities.GeneralUtilities;
-import it.eng.spagobi.security.hmacfilter.HMACTokenValidator;
-import it.eng.spagobi.security.hmacfilter.HMACUtils;
-import it.eng.spagobi.security.hmacfilter.SystemTimeHMACTokenValidator;
-
 import java.io.IOException;
 
 import javax.servlet.Filter;
@@ -41,9 +30,20 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.log4j.Logger;
 
+import it.eng.spago.base.Constants;
+import it.eng.spago.base.RequestContainer;
+import it.eng.spago.base.ResponseContainer;
+import it.eng.spago.base.SessionContainer;
+import it.eng.spago.base.SourceBean;
+import it.eng.spago.security.IEngUserProfile;
+import it.eng.spagobi.commons.utilities.GeneralUtilities;
+import it.eng.spagobi.security.hmacfilter.HMACTokenValidator;
+import it.eng.spagobi.security.hmacfilter.HMACUtils;
+import it.eng.spagobi.security.hmacfilter.SystemTimeHMACTokenValidator;
+
 /**
  * @author Salvo Lupo
- * 
+ *
  */
 public class HmacLoginFilter implements Filter {
 
@@ -64,7 +64,8 @@ public class HmacLoginFilter implements Filter {
 	private String usernameField;
 
 	@Override
-	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
+	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
+			throws IOException, ServletException {
 		logger.debug("AfterHMAC Filter");
 		HttpServletRequest httpRequest = (HttpServletRequest) request;
 		HttpSession session = httpRequest.getSession();
@@ -74,7 +75,8 @@ public class HmacLoginFilter implements Filter {
 		if (username != null && !username.trim().equals("")) {
 			HMACUtils.checkHMAC(httpRequest, tokenValidator, key);
 			try {
-				RequestContainer requestContainer = (RequestContainer) session.getAttribute(Constants.REQUEST_CONTAINER);
+				RequestContainer requestContainer = (RequestContainer) session
+						.getAttribute(Constants.REQUEST_CONTAINER);
 				if (requestContainer == null) {
 					// RequestContainer does not exists yet (maybe it is the
 					// first call to Spago)
@@ -83,14 +85,15 @@ public class HmacLoginFilter implements Filter {
 					requestContainer = new RequestContainer();
 					SessionContainer sessionContainer = new SessionContainer(true);
 					requestContainer.setSessionContainer(sessionContainer);
-					session.setAttribute(Constants.REQUEST_CONTAINER, requestContainer);
+					// TODO ML: session.setAttribute(Constants.REQUEST_CONTAINER, requestContainer);
 				}
-				ResponseContainer responseContainer = (ResponseContainer) session.getAttribute(Constants.RESPONSE_CONTAINER);
+				ResponseContainer responseContainer = (ResponseContainer) session
+						.getAttribute(Constants.RESPONSE_CONTAINER);
 				if (responseContainer == null) {
 					responseContainer = new ResponseContainer();
 					SourceBean serviceResponse = new SourceBean(Constants.SERVICE_RESPONSE);
 					responseContainer.setServiceResponse(serviceResponse);
-					session.setAttribute(Constants.RESPONSE_CONTAINER, responseContainer);
+					// TODO ML: session.setAttribute(Constants.RESPONSE_CONTAINER, responseContainer);
 				}
 				SessionContainer sessionContainer = requestContainer.getSessionContainer();
 				SessionContainer permanentSession = sessionContainer.getPermanentContainer();
@@ -128,7 +131,7 @@ public class HmacLoginFilter implements Filter {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see javax.servlet.Filter#destroy()
 	 */
 	@Override

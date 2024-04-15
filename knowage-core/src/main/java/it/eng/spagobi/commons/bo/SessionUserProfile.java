@@ -37,7 +37,7 @@ public class SessionUserProfile extends UserProfile {
 
 	private static final long serialVersionUID = -8365797383215928448L;
 
-	private static transient Logger logger = Logger.getLogger(UserProfile.class);
+	private static final Logger LOGGER = Logger.getLogger(SessionUserProfile.class);
 
 	// defaultRole is the default role as it is set on metadata database
 	private String defaultRole = null;
@@ -45,6 +45,9 @@ public class SessionUserProfile extends UserProfile {
 	// sessionRole is the session role, set by the user using the web GUI change role functionality: when the user profile is created from scratch, the
 	// defaultRole is set as sessionRole as well, but the user can change it, therefore defaultRole and sessionRole will differ
 	private String sessionRole = null;
+
+	public SessionUserProfile() {
+	}
 
 	public SessionUserProfile(SpagoBIUserProfile spagoBIUserProfile) {
 		super(spagoBIUserProfile);
@@ -54,20 +57,20 @@ public class SessionUserProfile extends UserProfile {
 	 * if a session role is set, it is returned, otherwise all roles are returned
 	 */
 	@Override
-	public Collection getRolesForUse() throws EMFInternalError {
-		logger.debug("IN");
-		Collection toReturn = null;
-		logger.debug("Looking if session role is selected");
+	public Collection<String> getRolesForUse() throws EMFInternalError {
+		LOGGER.debug("IN");
+		Collection<String> toReturn = null;
+		LOGGER.debug("Looking if session role is selected");
 		String sessionRole = this.getSessionRole();
 		if (sessionRole != null) {
-			logger.debug("Session role selected is " + sessionRole);
-			toReturn = new ArrayList<String>();
+			LOGGER.debug("Session role selected is " + sessionRole);
+			toReturn = new ArrayList<>();
 			toReturn.add(sessionRole);
 		} else {
-			logger.debug("Session role not selected");
+			LOGGER.debug("Session role not selected");
 			toReturn = this.getRoles();
 		}
-		logger.debug("OUT");
+		LOGGER.debug("OUT");
 		return toReturn;
 	}
 
@@ -76,9 +79,9 @@ public class SessionUserProfile extends UserProfile {
 	}
 
 	public void setDefaultRole(String defaultRole) {
-		logger.debug("IN " + defaultRole);
+		LOGGER.debug("IN " + defaultRole);
 		this.defaultRole = defaultRole;
-		logger.debug("OUT");
+		LOGGER.debug("OUT");
 	}
 
 	public String getSessionRole() {
@@ -86,14 +89,15 @@ public class SessionUserProfile extends UserProfile {
 	}
 
 	public void setSessionRole(String sessionRole) {
-		logger.debug("IN " + sessionRole);
+		LOGGER.debug("IN " + sessionRole);
 		this.sessionRole = sessionRole;
-		logger.debug("OUT");
+		LOGGER.debug("OUT");
 	}
 
 	@Override
 	public String toString() {
-		return super.toString() + "; SessionUserProfile [defaultRole=" + defaultRole + ", sessionRole=" + sessionRole + "]";
+		return super.toString() + "; SessionUserProfile [defaultRole=" + defaultRole + ", sessionRole=" + sessionRole
+				+ "]";
 	}
 
 }

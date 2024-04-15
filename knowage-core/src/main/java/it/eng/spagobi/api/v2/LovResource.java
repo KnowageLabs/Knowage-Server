@@ -382,7 +382,8 @@ public class LovResource extends AbstractSpagoBIResource {
 			} else if (typeLov != null && typeLov.equalsIgnoreCase("DATASET")) {
 				DatasetDetail datasetClassDetail = DatasetDetail.fromXML(lovProvider);
 				try {
-					result = datasetClassDetail.getLovResult(profile, null, toMockedBIObjectParameters(paramFilled), null);
+					result = datasetClassDetail.getLovResult(profile, null, toMockedBIObjectParameters(paramFilled),
+							null);
 					rowsSourceBean = SourceBean.fromXMLString(result);
 					colNames = findFirstRowAttributes(rowsSourceBean);
 				} catch (Exception e) {
@@ -572,7 +573,8 @@ public class LovResource extends AbstractSpagoBIResource {
 
 	}
 
-	private ModalitiesValue toModality(JSONObject requestBodyJSON) throws EMFUserError, SerializationException, SourceBeanException {
+	private ModalitiesValue toModality(JSONObject requestBodyJSON)
+			throws EMFUserError, SerializationException, SourceBeanException {
 
 		logger.debug("IN");
 
@@ -643,7 +645,8 @@ public class LovResource extends AbstractSpagoBIResource {
 			modalitiesValueDAO = DAOFactory.getModalitiesValueDAO();
 			modalitiesValues = modalitiesValueDAO.loadAllModalitiesValue();
 			for (ModalitiesValue lov : modalitiesValues) {
-				if ((lovId == null || (lovId != null && !lovId.equals(lov.getId()))) && lov.getLabel().equalsIgnoreCase(newLabel)) {
+				if ((lovId == null || (lovId != null && !lovId.equals(lov.getId())))
+						&& lov.getLabel().equalsIgnoreCase(newLabel)) {
 					return true;
 				}
 			}
@@ -654,7 +657,8 @@ public class LovResource extends AbstractSpagoBIResource {
 		return false;
 	}
 
-	private ModalitiesValue recoverModalitiesValueDetails(JSONObject requestBodyJSON) throws EMFUserError, SerializationException, SourceBeanException {
+	private ModalitiesValue recoverModalitiesValueDetails(JSONObject requestBodyJSON)
+			throws EMFUserError, SerializationException, SourceBeanException {
 
 		logger.debug("IN");
 
@@ -739,7 +743,8 @@ public class LovResource extends AbstractSpagoBIResource {
 
 		// create a fake user profile
 		UserProfile currentUserProfile = getUserProfile();
-		UserProfile userProfile = new UserProfile((String) currentUserProfile.getUserId(), currentUserProfile.getOrganization());
+		UserProfile userProfile = new UserProfile((String) currentUserProfile.getUserId(),
+				currentUserProfile.getOrganization());
 		// copy all the roles, functionalities of the original profile
 		userProfile.setFunctionalities(getUserProfile().getFunctionalities());
 		userProfile.setRoles(getUserProfile().getRolesForUse());
@@ -760,7 +765,7 @@ public class LovResource extends AbstractSpagoBIResource {
 
 		}
 
-		userProfile.setAttributes(attributes);
+		userProfile.getUserAttributes().putAll(attributes);
 		return userProfile;
 
 	}
@@ -775,7 +780,8 @@ public class LovResource extends AbstractSpagoBIResource {
 				String parameterValue = parameters.get(parameterName);
 				if (parameterValue == null) {
 					logger.error("There is no name-value mapping for parameter [" + parameterName + "].");
-					throw new SpagoBIRuntimeException("Error while retrieving the value for parameter [" + parameterName + "].");
+					throw new SpagoBIRuntimeException(
+							"Error while retrieving the value for parameter [" + parameterName + "].");
 				} else {
 					BIObjectParameter objParam = new BIObjectParameter();
 					Parameter parameterDefinition = new Parameter();
@@ -810,7 +816,8 @@ public class LovResource extends AbstractSpagoBIResource {
 		return columnsNames;
 	}
 
-	private List<Map<String, String>> filterNulls(SourceBean rowsSourceBean, int numCols, Integer start, Integer limit) throws JSONException {
+	private List<Map<String, String>> filterNulls(SourceBean rowsSourceBean, int numCols, Integer start, Integer limit)
+			throws JSONException {
 		Map<String, String> map;
 		List<Map<String, String>> list = new ArrayList<>();
 		int startIter = 0;
@@ -864,8 +871,8 @@ public class LovResource extends AbstractSpagoBIResource {
 		 *
 		 * if (!script.isEmpty()) { converted = script; } else { converted = query; }
 		 *
-		 * if (converted.contains("'")) { converted = converted.replaceAll("'", "&#x27;"); } if (converted.contains("<")) { converted =
-		 * converted.replaceAll("<", "&lt;"); } if (converted.contains(">")) { converted = converted.replaceAll(">", "&gt;"); }
+		 * if (converted.contains("'")) { converted = converted.replaceAll("'", "&#x27;"); } if (converted.contains("<")) { converted = converted.replaceAll("<",
+		 * "&lt;"); } if (converted.contains(">")) { converted = converted.replaceAll(">", "&gt;"); }
 		 *
 		 * if (converted.contains("&")) { converted = converted.replaceAll("&", "&amp;"); }
 		 *

@@ -12,6 +12,7 @@
 
 	<display-name>knowage</display-name>
 	<description>Main app of the Knowage Suite</description>
+	<distributable/>
 
 	<!-- 
 		Logger Setup Filter.

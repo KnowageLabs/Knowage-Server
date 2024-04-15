@@ -12,6 +12,7 @@
 
 	<display-name>knowagewhatifengine</display-name>
 	<description>Knowage What-If engine</description>
+	<distributable/>
 
 	<!-- 
 		Logger Setup Filter.
