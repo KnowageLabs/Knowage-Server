@@ -62,6 +62,9 @@ const store = createStore({
             state.configurations = configs
         },
         setUser(state, user) {
+            localStorage.setItem('organization', user.organization)
+            if (user.userId === `public-${user.organization}`) localStorage.setItem('public', true)
+            else localStorage.removeItem('public')
             state.user = user
         },
         setError(state, error) {
