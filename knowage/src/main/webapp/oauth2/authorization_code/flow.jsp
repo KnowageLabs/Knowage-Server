@@ -109,16 +109,16 @@ String code = request.getParameter("code");
                 args.delete('LIGHT_NAVIGATOR_DISABLED');
         	}
         	if (args.size > 0) {
-        		// storing extra-query-parameters (comined with previous ones) for later usage (when user is redirected into knowage)
+        		// storing extra-query-parameters (combined with previous ones) for later usage (when user is redirected into knowage)
         		var previousExtraParameters = getSavedExtraQueryParameters();
         		if (!previousExtraParameters) {
-        			window.sessionStorage.setItem("extra-query-parameters", args);
+        			window.sessionStorage.setItem("extra-query-parameters", JSON.stringify(args));
         		} else {
             		let combined = new URLSearchParams({
-              		  ...Object.fromEntries(previousExtraParameters),
+              		  ...Object.fromEntries(new URLSearchParams(previousExtraParameters)),
               		  ...Object.fromEntries(args)
               		});
-              		window.sessionStorage.setItem("extra-query-parameters", combined);
+              		window.sessionStorage.setItem("extra-query-parameters", JSON.stringify(combined));
         		}
         	}
         }
