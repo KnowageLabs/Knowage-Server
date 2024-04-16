@@ -112,7 +112,7 @@ export default defineComponent({
       return false;
     },
     logout() {
-      auth.logout(localStorage.getItem("public"));
+      auth.logout(localStorage.getItem("public")?true:undefined);
     },
     roleSelection() {
       this.roleDisplay = !this.roleDisplay;

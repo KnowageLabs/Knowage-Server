@@ -1,7 +1,7 @@
 import store from '@/App.store'
 
 export default {
-    logout(isPublicUser?:string):void {
+    logout(isPublicUser?:boolean):void {
         localStorage.clear()
         store.commit('setUser', {})
         let url = window.location.origin
