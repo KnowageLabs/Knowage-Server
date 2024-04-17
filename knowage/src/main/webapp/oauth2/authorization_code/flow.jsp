@@ -64,7 +64,13 @@ String code = request.getParameter("code");
             		NEW_SESSION : "TRUE",
                     access_token: access_token
                 });
-                window.location = lastRedirectUri + "?" + args + "&" + extraParameters;
+            	
+            	var newRedirectUri = lastRedirectUri + "?" + args;
+            	if (extraParameters) {
+            		newRedirectUri += "&" + extraParameters;
+            	}
+            	
+                window.location = newRedirectUri;
 
             } else {
             	saveExtraQueryParameters();
@@ -112,13 +118,13 @@ String code = request.getParameter("code");
         		// storing extra-query-parameters (combined with previous ones) for later usage (when user is redirected into knowage)
         		var previousExtraParameters = getSavedExtraQueryParameters();
         		if (!previousExtraParameters) {
-        			window.sessionStorage.setItem("extra-query-parameters", JSON.stringify(args));
+        			window.sessionStorage.setItem("extra-query-parameters", args);
         		} else {
             		let combined = new URLSearchParams({
               		  ...Object.fromEntries(new URLSearchParams(previousExtraParameters)),
               		  ...Object.fromEntries(args)
               		});
-              		window.sessionStorage.setItem("extra-query-parameters", JSON.stringify(combined));
+              		window.sessionStorage.setItem("extra-query-parameters", combined);
         		}
         	}
         }
