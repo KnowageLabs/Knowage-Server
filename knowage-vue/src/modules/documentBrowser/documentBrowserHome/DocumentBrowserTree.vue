@@ -228,8 +228,8 @@ export default defineComponent({
         &:deep(.p-tree-wrapper) {
             max-height: 100% !important;
         }
-        &:deep(.p-treenode:last-child .p-treenode-children) {
-            padding-bottom: 70px;
+        &:deep(.p-tree-container) {
+            padding-bottom: 30px;
         }
     }
 }

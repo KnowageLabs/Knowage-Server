@@ -52,6 +52,8 @@ Temporary Items
 .project
 .eclipse
 .metadata
+.checkstyle
+bin/
 
 Servers
 

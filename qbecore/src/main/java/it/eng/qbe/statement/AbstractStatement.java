@@ -523,6 +523,8 @@ public abstract class AbstractStatement implements IStatement {
 					dataStoreFieldMeta.setFieldType(FieldType.ATTRIBUTE);
 				}
 
+				dataStoreFieldMeta.setDecrypt(datamartField.isEncrypted());
+
 			} else if (queryField.isCalculatedField()) {
 				CalculatedSelectField calculatedQueryField = (CalculatedSelectField) queryField;
 				dataStoreFieldMeta.setName(calculatedQueryField.getAlias());

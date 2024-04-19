@@ -18,8 +18,11 @@
 package it.eng.knowage.pm.dto;
 
 import java.io.Serializable;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+
+import org.apache.commons.lang3.builder.ToStringBuilder;
 
 public class PrivacyDTO implements Serializable {
 
@@ -37,7 +40,7 @@ public class PrivacyDTO implements Serializable {
 
 	private String request;
 
-	private Map<String, String> requestMetadatas;
+	private final Map<String, String> requestMetadatas = new LinkedHashMap<>();
 
 	private List<String> responses;
 
@@ -45,84 +48,85 @@ public class PrivacyDTO implements Serializable {
 
 	private SessionDTO session;
 
+	public String getDescription() {
+		return description;
+	}
+
 	public PrivacyEventType getEventType() {
 		return eventType;
-	}
-
-	public void setEventType(PrivacyEventType eventType) {
-		this.eventType = eventType;
-	}
-
-	public UserAgentDTO getUserAgent() {
-		return userAgent;
-	}
-
-	public void setUserAgent(UserAgentDTO userAgent) {
-		this.userAgent = userAgent;
-	}
-
-	public Long getTimestamp() {
-		return timestamp;
-	}
-
-	public void setTimestamp(Long timestamp) {
-		this.timestamp = timestamp;
 	}
 
 	public String getModule() {
 		return module;
 	}
 
-	public void setModule(String module) {
-		this.module = module;
+	public Outcome getOutcome() {
+		return outcome;
 	}
 
 	public String getRequest() {
 		return request;
 	}
 
-	public void setRequest(String request) {
-		this.request = request;
-	}
-
 	public Map<String, String> getRequestMetadatas() {
 		return requestMetadatas;
-	}
-
-	public void setRequestMetadatas(Map<String, String> requestMetadatas) {
-		this.requestMetadatas = requestMetadatas;
 	}
 
 	public List<String> getResponses() {
 		return responses;
 	}
 
-	public void setResponses(List<String> responses) {
-		this.responses = responses;
+	public SessionDTO getSession() {
+		return session;
 	}
 
-	public Outcome getOutcome() {
-		return outcome;
+	public Long getTimestamp() {
+		return timestamp;
 	}
 
-	public void setOutcome(Outcome outcome) {
-		this.outcome = outcome;
-	}
-
-	public String getDescription() {
-		return description;
+	public UserAgentDTO getUserAgent() {
+		return userAgent;
 	}
 
 	public void setDescription(String description) {
 		this.description = description;
 	}
 
-	public SessionDTO getSession() {
-		return session;
+	public void setEventType(PrivacyEventType eventType) {
+		this.eventType = eventType;
+	}
+
+	public void setModule(String module) {
+		this.module = module;
+	}
+
+	public void setOutcome(Outcome outcome) {
+		this.outcome = outcome;
+	}
+
+	public void setRequest(String request) {
+		this.request = request;
+	}
+
+	public void setResponses(List<String> responses) {
+		this.responses = responses;
+	}
+
+	@Override
+	public String toString() {
+		return ToStringBuilder.reflectionToString(this);
 	}
 
 	public void setSession(SessionDTO session) {
 		this.session = session;
+	}
+
+	public void setTimestamp(Long timestamp) {
+		this.timestamp = timestamp;
+	}
+
+	public void setUserAgent(UserAgentDTO userAgent) {
+		this.userAgent = userAgent;
 	}
 
 }

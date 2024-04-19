@@ -1,33 +1,20 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	
 	<modelVersion>4.0.0</modelVersion>
-
+	
 	<parent>
 		<groupId>it.eng.knowage</groupId>
 		<artifactId>knowage-ce-parent</artifactId>
-		<version>8.1.19-SNAPSHOT</version>
+		<version>8.1.21-SNAPSHOT</version>
 		<relativePath>../knowage-ce-parent/pom.xml</relativePath>
 	</parent>
-
+	
 	<artifactId>knowagejasperreportengine</artifactId>
 	<packaging>war</packaging>
 	<name>knowagejasperreportengine</name>
 	
-	<build>
-	    <plugins>
-	        <plugin>
-	            <artifactId>maven-war-plugin</artifactId>
-	            <configuration>
-	                <attachClasses>true</attachClasses>
-	                <classesClassifier>classes</classesClassifier>
-	            </configuration>
-	        </plugin>
-	    </plugins>
-	</build>
-	
-	
 	<dependencies>
-		
 		<dependency>
 			<groupId>it.eng.knowage</groupId>
 			<artifactId>knowage-utils</artifactId>
@@ -35,19 +22,17 @@
 			<scope>compile</scope>
 			<exclusions>
 				<exclusion>
-					<groupId>org.cometd.java</groupId>
 					<artifactId>cometd-java-server</artifactId>
+					<groupId>org.cometd.java</groupId>
 				</exclusion>
 			</exclusions>
 		</dependency>
-		
 		<dependency>
 			<groupId>it.eng.knowage</groupId>
 			<artifactId>qbe-core</artifactId>
 			<version>${project.version}</version>
 			<scope>runtime</scope>
 		</dependency>
-		
 		<dependency>
 			<groupId>net.sf.jasperreports</groupId>
 			<artifactId>jasperreports</artifactId>
@@ -55,41 +40,37 @@
 			<scope>compile</scope>
 			<exclusions>
 				<exclusion>
-					<groupId>com.fasterxml.jackson.core</groupId>
 					<artifactId>jackson-core</artifactId>
+					<groupId>com.fasterxml.jackson.core</groupId>
 				</exclusion>
 				<exclusion>
-					<groupId>com.fasterxml.jackson.core</groupId>
 					<artifactId>jackson-databind</artifactId>
+					<groupId>com.fasterxml.jackson.core</groupId>
 				</exclusion>
 				<exclusion>
-					<groupId>com.fasterxml.jackson.core</groupId>
 					<artifactId>jackson-annotations</artifactId>
+					<groupId>com.fasterxml.jackson.core</groupId>
 				</exclusion>
 			</exclusions>
 		</dependency>
-		
 		<dependency>
 			<groupId>net.sf.jasperreports</groupId>
 			<artifactId>jasperreports-fonts</artifactId>
 			<version>6.0.0</version>
 			<scope>runtime</scope>
 		</dependency>
-		
 		<dependency>
 			<groupId>net.sf.jasperreports</groupId>
 			<artifactId>jasperreports-functions</artifactId>
 			<version>6.1.0</version>
 			<scope>runtime</scope>
 		</dependency>
-
 		<dependency>
 			<groupId>net.sf.jasperreports</groupId>
 			<artifactId>jasperreports-chart-themes</artifactId>
 			<version>6.1.0</version>
 			<scope>runtime</scope>
 		</dependency>
-		
 		<dependency>
 			<groupId>net.sourceforge.jexcelapi</groupId>
 			<artifactId>jxl</artifactId>
@@ -97,44 +78,51 @@
 			<scope>runtime</scope>
 			<exclusions>
 				<exclusion>
-					<groupId>log4j</groupId>
 					<artifactId>log4j</artifactId>
+					<groupId>log4j</groupId>
 				</exclusion>
 			</exclusions>
 		</dependency>
-
 		<dependency>
 			<groupId>javax.servlet</groupId>
 			<artifactId>javax.servlet-api</artifactId>
 			<version>3.0.1</version>
 			<scope>provided</scope>
 		</dependency>
-
 		<dependency>
 			<groupId>wsdl4j</groupId>
 			<artifactId>wsdl4j</artifactId>
 			<version>1.5.1</version>
 			<scope>runtime</scope>
 		</dependency>
-
 		<dependency>
 			<groupId>xml-apis</groupId>
 			<artifactId>xml-apis</artifactId>
 			<version>1.4.01</version>
 			<scope>runtime</scope>
 		</dependency>
-
-
 		<!-- Provides support for Graylog in log4j2 -->
 		<dependency>
 			<groupId>biz.paluch.logging</groupId>
 			<artifactId>logstash-gelf</artifactId>
 		</dependency>
-
 		<!-- maybe they are runtime dependencies??? <dependency> <groupId>com.fdsapi</groupId> 
 			<artifactId>fdsapi</artifactId> <version>1.2</version> </dependency> <dependency> 
 			<groupId>xerces</groupId> <artifactId>xercesImpl</artifactId> <version>2.10.0</version> 
 			</dependency> -->
-
 	</dependencies>
+	
+	<build>
+		<finalName>knowagejasperreportengine</finalName>
+		<plugins>
+			<plugin>
+				<artifactId>maven-war-plugin</artifactId>
+				<configuration>
+					<attachClasses>true</attachClasses>
+					<classesClassifier>classes</classesClassifier>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+	
 </project>

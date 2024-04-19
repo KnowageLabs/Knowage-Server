@@ -49,6 +49,8 @@ import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.tools.dataset.bo.JDBCDataSet;
 import it.eng.spagobi.tools.dataset.bo.JDBCDatasetFactory;
 import it.eng.spagobi.tools.dataset.common.iterator.DataIterator;
+import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
+import it.eng.spagobi.tools.dataset.utils.DatasetMetadataParser;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
@@ -331,9 +333,15 @@ public class JPQLDataSet extends AbstractQbeDataSet {
 
 		enableFilters();
 
+		IMetaData metadata = this.getMetadata();
+
+		DatasetMetadataParser dsp = new DatasetMetadataParser();
+		String metadataXMLString = dsp.metadataToXML(metadata);
+
 		String sqlQueryString = this.getSQLQuery(true);
 		logger.debug("Executing query: " + sqlQueryString);
 		JDBCDataSet jdbcDataset = (JDBCDataSet) JDBCDatasetFactory.getJDBCDataSet(this.getDataSource());
+		jdbcDataset.setDsMetadata(metadataXMLString);
 		jdbcDataset.setQuery(sqlQueryString);
 		return jdbcDataset.iterator();
 	}

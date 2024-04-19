@@ -1,7 +1,6 @@
 package it.eng.knowage.privacymanager;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Map;
 
 import it.eng.knowage.pm.dto.DataSetScope;
@@ -23,14 +22,8 @@ public class FullEventBuilder2 extends LoginEventBuilder {
 	}
 
 	public void appendMetaData(String paramName, String paramValue) {
-
 		Map<String, String> rm = dto.getRequestMetadatas();
-		if (rm == null) {
-			rm = new HashMap<>();
-		}
 		rm.put(paramName, paramValue);
-
-		dto.setRequestMetadatas(rm);
 	}
 
 	public void appendSubject(String taxCode, String name, String lastName, String birthDate) {
@@ -38,7 +31,8 @@ public class FullEventBuilder2 extends LoginEventBuilder {
 			dto.setResponses(new ArrayList<>());
 		}
 
-		subject.append("000;").append(taxCode).append(";").append(name).append(";").append(lastName).append(";").append(birthDate).append("\n");
+		subject.append("000;").append(taxCode).append(";").append(name).append(";").append(lastName).append(";")
+				.append(birthDate).append("\n");
 		subject.append(sData);
 		dto.getResponses().add(subject.toString());
 		subject = new StringBuilder();

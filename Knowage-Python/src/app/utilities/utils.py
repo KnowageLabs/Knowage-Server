@@ -64,20 +64,6 @@ def datastore_to_dataframe(metadata, rows):
         df = df.astype(column_types)
     return df
 
-def dataframe_to_datastore(df):
-    knowage_json = []
-    n_rows, n_cols = df.shape
-    for i in range(0, n_rows):
-        element = {}
-        for j in range(0, n_cols):
-            key = df.columns[j]
-            value = df.loc[i][df.columns[j]]
-            if type(value) is pd.Timestamp:
-                value = value.strftime(configs.TIMESTAMP_FORMAT)
-            element.update({key: value})
-        knowage_json.append(element)
-    return knowage_json
-
 def get_environment_libraries():
     to_return = []
     for d in pkg_resources.working_set:

@@ -29,7 +29,7 @@
                 </Column>
                 <Column field="typeOrJsonPathValue" :header="$t('managers.datasetManagement.typeOrJsonPathValue')" :sortable="true">
                     <template #body="{ data }">
-                        <Dropdown id="scope" class="kn-material-input" :style="tableDescriptor.style.columnStyle" :options="jsonPathTypes" v-model="data.jsonPathType" />
+                        <Dropdown id="scope" v-model="data.jsonPathType" class="kn-material-input kn-small-input" :style="tableDescriptor.style.columnStyle" :options="jsonPathTypes" option-label="label" option-value="type" />
                     </template>
                 </Column>
                 <Column @rowClick="false">
@@ -114,3 +114,11 @@ export default defineComponent({
     }
 })
 </script>
+<style lang="scss">
+.kn-small-input {
+    min-width: 200px;
+    span {
+        padding: 0;
+    }
+}
+</style>

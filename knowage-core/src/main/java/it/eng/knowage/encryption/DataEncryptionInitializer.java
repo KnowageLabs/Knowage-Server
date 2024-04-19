@@ -77,8 +77,7 @@ public class DataEncryptionInitializer implements InitializerIFace {
 			String genAlgo = getValue(PROPERTY_GENERIC_ALGO);
 			String genPwd = getValue(PROPERTY_GENERIC_PWD);
 
-			LOGGER.warn(
-					"Reading encryption configuration: the system properties will take precedence over environment variables");
+			LOGGER.warn("Reading encryption configuration: the system properties will take precedence over environment variables");
 
 			if (ObjectUtils.anyNotNull(pmUrl, pmUser, pmPwd, pmApp, pmAlgo, genAlgo, genPwd)) {
 				LOGGER.warn("Found some encryption configuration");
@@ -203,7 +202,7 @@ public class DataEncryptionInitializer implements InitializerIFace {
 		cfg.setAlgorithm(genAlgo);
 
 		try {
-			DataEncryptionCfgForExternalEngines decfee = DataEncryptionCfgForExternalEngines.getInstance();
+			DataEncryptionGlobalCfg decfee = DataEncryptionGlobalCfg.getInstance();
 			decfee.setKeyTemplateForAlgorithm(cfgKey, genAlgo);
 			decfee.setKeyTemplateForPassword(cfgKey, genPwd);
 		} catch (Exception e) {
@@ -214,8 +213,7 @@ public class DataEncryptionInitializer implements InitializerIFace {
 		return cfg;
 	}
 
-	private EncryptionConfiguration configurePrivacyManager(String pmUrl, String pmUser, String pmPwd, String pmApp,
-			String pmAlgo) {
+	private EncryptionConfiguration configurePrivacyManager(String pmUrl, String pmUser, String pmPwd, String pmApp, String pmAlgo) {
 		EncryptionConfiguration cfg;
 		cfg = new EncryptionConfiguration(PRIVACY_MANAGER);
 

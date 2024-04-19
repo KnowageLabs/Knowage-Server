@@ -22,7 +22,9 @@ import org.apache.log4j.Logger;
 import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.profiling.PublicProfile;
 import it.eng.spagobi.profiling.dao.ISbiUserDAO;
+import it.eng.spagobi.services.common.JWTSsoService;
 import it.eng.spagobi.services.security.bo.SpagoBIUserProfile;
 
 /**
@@ -86,8 +88,7 @@ public class SecurityServiceSupplierFactory {
 		}
 
 		private boolean isLoginAttemtpsCounterBelowLimit(String userId) {
-			String configValue =
-					SingletonConfig.getInstance().getConfigValue("internal.security.login.maxFailedLoginAttempts");
+			String configValue = SingletonConfig.getInstance().getConfigValue("internal.security.login.maxFailedLoginAttempts");
 			final int maxFailedLogin = Integer.parseInt(configValue);
 			ISbiUserDAO userDao = DAOFactory.getSbiUserDAO();
 			int failedLoginAttempts = userDao.getFailedLoginAttempts(userId);
@@ -161,6 +162,9 @@ public class SecurityServiceSupplierFactory {
 				ret = UserProfile.createSchedulerUserProfile(token).getSpagoBIUserProfile();
 			} else if (UserProfile.isDataPreparationUser(token)) {
 				ret = UserProfile.createDataPreparationUserProfile(token).getSpagoBIUserProfile();
+			} else if (PublicProfile.isPublicUser(token)) {
+				String decodedUserId = JWTSsoService.jwtToken2userId(token);
+				ret = PublicProfile.createPublicUserProfile(decodedUserId);
 			} else {
 				ret = super.checkAuthenticationToken(token);
 			}
@@ -187,8 +191,7 @@ public class SecurityServiceSupplierFactory {
 		String engUserProfileFactoryClass = engUserProfileFactorySB;
 		engUserProfileFactoryClass = engUserProfileFactoryClass.trim();
 		try {
-			String configValue =
-					SingletonConfig.getInstance().getConfigValue("internal.security.login.checkForMaxFailedLoginAttempts");
+			String configValue = SingletonConfig.getInstance().getConfigValue("internal.security.login.checkForMaxFailedLoginAttempts");
 			Boolean enableFailedLoginAttemptsFilter = Boolean.parseBoolean(configValue);
 
 			Class<?> clazz = Class.forName(engUserProfileFactoryClass);

@@ -1,5 +1,8 @@
 package it.eng.knowage.api.dossier;
 
+import static it.eng.spagobi.commons.constants.ConfigurationConstants.SPAGOBI_SPAGOBI_SERVICE_JNDI;
+import static org.apache.commons.lang3.StringUtils.isEmpty;
+
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -7,6 +10,7 @@ import java.io.FileWriter;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.net.URISyntaxException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -27,6 +31,8 @@ import javax.ws.rs.core.Response;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.http.client.utils.URIBuilder;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.json.JSONArray;
@@ -37,6 +43,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import commonj.work.Work;
 import it.eng.knowage.api.dossier.utils.FileUtilities;
+import it.eng.knowage.commons.security.KnowageSystemConfiguration;
 import it.eng.knowage.engine.dossier.activity.bo.DossierActivity;
 import it.eng.knowage.engines.dossier.template.AbstractDossierTemplate;
 import it.eng.knowage.engines.dossier.template.parameter.Parameter;
@@ -46,11 +53,11 @@ import it.eng.knowage.export.wrapper.beans.RenderOptions;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
-import it.eng.spagobi.analiticalmodel.document.bo.DocumentMetadataProperty;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.BIObjectParameter;
 import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.commons.utilities.BaseParametersEncoder;
 import it.eng.spagobi.commons.utilities.GeneralUtilities;
 import it.eng.spagobi.commons.utilities.ObjectsAccessVerifier;
 import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
@@ -58,10 +65,6 @@ import it.eng.spagobi.dossier.dao.ISbiDossierActivityDAO;
 import it.eng.spagobi.tenant.Tenant;
 import it.eng.spagobi.tenant.TenantManager;
 import it.eng.spagobi.tools.massiveExport.dao.IProgressThreadDAO;
-import it.eng.spagobi.tools.objmetadata.bo.ObjMetacontent;
-import it.eng.spagobi.tools.objmetadata.bo.ObjMetadata;
-import it.eng.spagobi.tools.objmetadata.dao.IObjMetacontentDAO;
-import it.eng.spagobi.tools.objmetadata.dao.IObjMetadataDAO;
 import it.eng.spagobi.utilities.ParametersDecoder;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
@@ -86,15 +89,10 @@ public class AbstractDocumentExecutionWork extends DossierExecutionClient implem
 	@Override
 	public void run() {
 		// TODO Auto-generated method stub
-
 	}
 
 	protected void runInternal(JSONObject jsonObjectTemplate) {
-		LOGGER.debug("IN");
-
 		ProgressThreadManager progressThreadManager = null;
-		IObjMetadataDAO metaDAO = null;
-		IObjMetacontentDAO contentDAO = null;
 
 		Thread thread = Thread.currentThread();
 		Long threadId = thread.getId();
@@ -106,16 +104,6 @@ public class AbstractDocumentExecutionWork extends DossierExecutionClient implem
 
 		progressThreadManager = new ProgressThreadManager();
 		progressThreadManager.setStatusStarted(progressThreadId);
-		try {
-
-			metaDAO = DAOFactory.getObjMetadataDAO();
-			contentDAO = DAOFactory.getObjMetacontentDAO();
-
-		} catch (Exception e) {
-			LOGGER.error("Error setting DAO");
-			progressThreadManager.deleteThread(progressThreadId);
-			throw new SpagoBIServiceException("Error setting DAO", e);
-		}
 
 		BIObject biObject = null;
 		try {
@@ -141,7 +129,7 @@ public class AbstractDocumentExecutionWork extends DossierExecutionClient implem
 			String dbArray = activity.getConfigContent();
 			JSONArray jsonArray = null;
 
-			HashMap<String, String> paramMap = new HashMap<>();
+			Map<String, String> paramMap = new HashMap<>();
 
 			if (dbArray != null && !dbArray.isEmpty()) {
 				jsonArray = new org.json.JSONArray(dbArray);
@@ -174,63 +162,23 @@ public class AbstractDocumentExecutionWork extends DossierExecutionClient implem
 						throw new SpagoBIRuntimeException(message);
 					}
 
-					String docName = biObject.getName();
+					String serviceUrl = null;
+					String engineLabel = biObject.getEngineLabel();
 
-					String hostUrl = getServiceHostUrl();
+					LOGGER.debug("Generating URL for document {}", docId);
+					LOGGER.debug("Engine label is {}", engineLabel);
+					LOGGER.debug("Parameters are {}", paramMap);
 
-					StringBuilder serviceUrlBuilder = new StringBuilder();
-					serviceUrlBuilder.append(hostUrl);
-					serviceUrlBuilder.append("/knowagecockpitengine/api/1.0/pages/execute/png?");
-					serviceUrlBuilder.append("user_id=");
-					serviceUrlBuilder.append(userUniqueIdentifier);
-					serviceUrlBuilder.append("&DOCUMENT_LABEL=");
-					serviceUrlBuilder.append(cockpitDocument);
-					serviceUrlBuilder
-							.append("&DOCUMENT_OUTPUT_PARAMETERS=%5B%5D&DOCUMENT_IS_VISIBLE=true&SBI_EXECUTION_ROLE=");
-					serviceUrlBuilder.append(URLEncoder.encode(role, StandardCharsets.UTF_8.toString()));
-					serviceUrlBuilder.append("&DOCUMENT_DESCRIPTION=&document=");
-					serviceUrlBuilder.append(docId);
-					serviceUrlBuilder.append("&IS_TECHNICAL_USER=true&DOCUMENT_NAME=");
-					serviceUrlBuilder.append(docName);
-					serviceUrlBuilder.append(
-							"&NEW_SESSION=TRUE&SBI_ENVIRONMENT=DOCBROWSER&IS_FOR_EXPORT=true&documentMode=VIEW&export=true&outputType=PNG");
-
-					Locale locale = GeneralUtilities.getDefaultLocale();
-
-					serviceUrlBuilder.append("&knowage_sys_country=" + locale.getCountry());
-					serviceUrlBuilder.append("&knowage_sys_language=" + locale.getLanguage());
-
-					serviceUrlBuilder.append("&SBI_LANGUAGE=" + locale.getLanguage());
-					serviceUrlBuilder.append("&SBI_COUNTRY=" + locale.getCountry());
-					serviceUrlBuilder.append("&SBI_SCRIPT=" + locale.getScript());
-
-					RenderOptions renderOptions = RenderOptions.defaultOptions();
-					if (reportToUse.getSheetHeight() != null && !reportToUse.getSheetHeight().isEmpty()
-							&& reportToUse.getSheetWidth() != null && !reportToUse.getSheetWidth().isEmpty()) {
-						serviceUrlBuilder.append("&pdfWidth=" + Integer.valueOf(reportToUse.getSheetWidth()));
-						serviceUrlBuilder.append("&pdfHeight=" + Integer.valueOf(reportToUse.getSheetHeight()));
-					}
-
-					if (reportToUse.getDeviceScaleFactor() != null && !reportToUse.getDeviceScaleFactor().isEmpty()) {
-						serviceUrlBuilder
-								.append("&pdfDeviceScaleFactor=" + Double.valueOf(reportToUse.getDeviceScaleFactor()));
-					} else {
-						serviceUrlBuilder.append("&pdfDeviceScaleFactor="
-								+ Double.valueOf(renderOptions.getDimensions().getDeviceScaleFactor()));
-					}
-					JSONObject templateJSON = new JSONObject(new String(biObject.getActiveTemplate().getContent()));
-					boolean isMultiSheet = false;
-					if (templateJSON.has("sheets") && templateJSON.getJSONArray("sheets").length() > 1) {
-						isMultiSheet = true;
-					}
-					serviceUrlBuilder.append("&isMultiSheet=" + isMultiSheet);
-					String serviceUrl = addParametersToServiceUrl(progressThreadId, biObject, reportToUse,
-							serviceUrlBuilder, jsonArray, paramMap);
-
-					if (executedDocuments.contains(serviceUrl)) {
-						progressThreadManager.incrementPartial(progressThreadId);
+					switch (engineLabel) {
+					case "knowagecockpitengine":
+						serviceUrl = getCockpitServiceUrl(biObject, userUniqueIdentifier, jsonArray, paramMap,
+								reportToUse, cockpitDocument, docId, role);
+						break;
+					default:
 						break;
 					}
+
+					LOGGER.debug("URL is {}", serviceUrl);
 
 					// Images creation
 					Response images = executePostService(null, serviceUrl, userUniqueIdentifier, MediaType.TEXT_HTML,
@@ -287,27 +235,49 @@ public class AbstractDocumentExecutionWork extends DossierExecutionClient implem
 			progressThreadManager.setStatusDownload(progressThreadId);
 			LOGGER.debug("Thread row in database set as download state");
 
-			LOGGER.debug("OUT");
-
-			/**/
 		} catch (Exception e) {
 			progressThreadManager.setStatusError(progressThreadId);
 			createErrorFile(biObject, e);
 			LOGGER.error("Error while creating dossier activity", e);
 			throw new SpagoBIRuntimeException(e.getMessage(), e);
-		} finally {
-			LOGGER.debug("OUT");
 		}
 
 	}
 
+	/**
+	 * @param biObject
+	 * @param reportToUse
+	 * @param serviceUrlBuilder
+	 * @throws JSONException
+	 */
+	private void addRenderOptionsToServiceUrl(BIObject biObject, Report reportToUse, URIBuilder serviceUrlBuilder)
+			throws JSONException {
+		RenderOptions renderOptions = RenderOptions.defaultOptions();
+		if (reportToUse.getSheetHeight() != null && !reportToUse.getSheetHeight().isEmpty()
+				&& reportToUse.getSheetWidth() != null && !reportToUse.getSheetWidth().isEmpty()) {
+			serviceUrlBuilder.setParameter("pdfWidth", reportToUse.getSheetWidth());
+			serviceUrlBuilder.setParameter("pdfHeight", reportToUse.getSheetHeight());
+		}
+
+		if (reportToUse.getDeviceScaleFactor() != null && !reportToUse.getDeviceScaleFactor().isEmpty()) {
+			serviceUrlBuilder.setParameter("pdfDeviceScaleFactor", reportToUse.getDeviceScaleFactor());
+		} else {
+			serviceUrlBuilder.setParameter("pdfDeviceScaleFactor",
+					renderOptions.getDimensions().getDeviceScaleFactor());
+		}
+		JSONObject templateJSON = new JSONObject(new String(biObject.getActiveTemplate().getContent()));
+		boolean isMultiSheet = false;
+		if (templateJSON.has("sheets") && templateJSON.getJSONArray("sheets").length() > 1) {
+			isMultiSheet = true;
+		}
+		serviceUrlBuilder.setParameter("isMultiSheet", Boolean.toString(isMultiSheet));
+	}
+
 	protected void setTenant() {
-		LOGGER.debug("IN");
 		UserProfile profile = (UserProfile) this.getProfile();
 		String tenant = profile.getOrganization();
-		LOGGER.debug("Tenant : [{}]", tenant);
+		LOGGER.debug("Tenant : {}", tenant);
 		TenantManager.setTenant(new Tenant(tenant));
-		LOGGER.debug("OUT");
 	}
 
 	public void validImage(List<Report> reports) {
@@ -400,7 +370,7 @@ public class AbstractDocumentExecutionWork extends DossierExecutionClient implem
 
 	public String getServiceHostUrl() {
 		String serviceURL = SpagoBIUtilities
-				.readJndiResource(SingletonConfig.getInstance().getConfigValue("SPAGOBI.SPAGOBI_SERVICE_JNDI"));
+				.readJndiResource(SingletonConfig.getInstance().getConfigValue(SPAGOBI_SPAGOBI_SERVICE_JNDI));
 		serviceURL = serviceURL.substring(0, serviceURL.lastIndexOf('/'));
 		return serviceURL;
 	}
@@ -417,43 +387,39 @@ public class AbstractDocumentExecutionWork extends DossierExecutionClient implem
 		File outFolder = new File(outFolderPath);
 
 		byte[] buffer = new byte[1024];
-		ZipInputStream zis = new ZipInputStream(new ByteArrayInputStream(responseAsByteArray));
-		ZipEntry zipEntry = zis.getNextEntry();
-		while (zipEntry != null) {
-			File newFile = FileUtilities.createFile(FilenameUtils.removeExtension(zipEntry.getName()), ".png",
-					randomKey, new ArrayList<>());
-			FileOutputStream fos = new FileOutputStream(newFile);
-			int len;
-			while ((len = zis.read(buffer)) > 0) {
-				fos.write(buffer, 0, len);
-			}
-			fos.close();
-			zipEntry = zis.getNextEntry();
-		}
-		zis.closeEntry();
-		zis.close();
-
-		// array of supported extensions (use a List if you prefer)
-		String[] EXTENSIONS = new String[] { "gif", "png", "bmp" // and other formats you need
-		};
-		// filter to identify images based on their extensions
-		FilenameFilter IMAGE_FILTER = new FilenameFilter() {
-
-			@Override
-			public boolean accept(final File dir, final String name) {
-				for (final String ext : EXTENSIONS) {
-					if (name.endsWith("." + ext) && name.startsWith("sheet")) {
-						return (true);
+		try (ZipInputStream zis = new ZipInputStream(new ByteArrayInputStream(responseAsByteArray))) {
+			ZipEntry zipEntry = zis.getNextEntry();
+			while (zipEntry != null) {
+				File newFile = FileUtilities.createFile(FilenameUtils.removeExtension(zipEntry.getName()), ".png",
+						randomKey, new ArrayList<>());
+				try (FileOutputStream fos = new FileOutputStream(newFile)) {
+					int len;
+					while ((len = zis.read(buffer)) > 0) {
+						fos.write(buffer, 0, len);
 					}
 				}
-				return (false);
+				zipEntry = zis.getNextEntry();
 			}
+			zis.closeEntry();
+		}
+
+		// array of supported extensions (use a List if you prefer)
+		String[] extensions = new String[] { "gif", "png", "bmp" // and other formats you need
+		};
+		// filter to identify images based on their extensions
+		FilenameFilter imageFilter = (dir, name) -> {
+			for (final String ext : extensions) {
+				if (name.endsWith("." + ext) && name.startsWith("sheet")) {
+					return (true);
+				}
+			}
+			return (false);
 		};
 
 		String documentLabel = reportToUse.getLabel();
 
 		if (outFolder.isDirectory()) {
-			for (final File f : outFolder.listFiles(IMAGE_FILTER)) {
+			for (final File f : outFolder.listFiles(imageFilter)) {
 
 				try {
 
@@ -489,41 +455,6 @@ public class AbstractDocumentExecutionWork extends DossierExecutionClient implem
 		return destFile;
 	}
 
-	private List<DocumentMetadataProperty> getMetaDataAndContent(IObjMetadataDAO metaDao,
-			IObjMetacontentDAO metaContentDAO, BIObject obj) throws Exception {
-		LOGGER.debug("IN");
-		List toReturn = null;
-
-		try {
-			DocumentMetadataProperty objMetaDataAndContent = null;
-			List<ObjMetadata> allMetas = metaDao.loadAllObjMetadata();
-			Map<Integer, ObjMetacontent> values = new HashMap<>();
-
-			List list = metaContentDAO.loadObjOrSubObjMetacontents(obj.getId(), null);
-			for (Iterator iterator = list.iterator(); iterator.hasNext();) {
-				ObjMetacontent content = (ObjMetacontent) iterator.next();
-				Integer metaid = content.getObjmetaId();
-				values.put(metaid, content);
-			}
-
-			for (Iterator iterator = allMetas.iterator(); iterator.hasNext();) {
-				ObjMetadata meta = (ObjMetadata) iterator.next();
-				objMetaDataAndContent = new DocumentMetadataProperty();
-				objMetaDataAndContent.setMetadataPropertyDefinition(meta);
-				objMetaDataAndContent.setMetadataPropertyValue(values.get(meta.getObjMetaId()));
-				if (toReturn == null)
-					toReturn = new ArrayList<DocumentMetadataProperty>();
-				toReturn.add(objMetaDataAndContent);
-			}
-
-		} catch (Exception e) {
-			LOGGER.error("error in retrieving metadata and metacontent for biobj id {}", obj.getId(), e);
-			throw e;
-		}
-		LOGGER.debug("OUT");
-		return toReturn;
-	}
-
 	@Override
 	public boolean isDaemon() {
 		return false;
@@ -533,11 +464,11 @@ public class AbstractDocumentExecutionWork extends DossierExecutionClient implem
 	public void release() {
 	}
 
-	public List getBiObjects() {
+	public List<BIObjectPlaceholdersPair> getBiObjects() {
 		return documents;
 	}
 
-	public void setBiObjects(List biObjects) {
+	public void setBiObjects(List<BIObjectPlaceholdersPair> biObjects) {
 		this.documents = biObjects;
 	}
 
@@ -559,21 +490,15 @@ public class AbstractDocumentExecutionWork extends DossierExecutionClient implem
 	}
 
 	public void deleteDBRowInCaseOfError(IProgressThreadDAO threadDAO, Integer progressThreadId) {
-		LOGGER.debug("IN");
 		try {
 			threadDAO.deleteProgressThread(progressThreadId);
 		} catch (EMFUserError e1) {
 			LOGGER.error("Error in deleting the row with the progress id {}", progressThreadId);
 		}
-		LOGGER.debug("OUT");
-
 	}
 
 	public File createErrorFile(BIObject biObj, Throwable error) {
-//		public File createErrorFile(BIObject biObj, Throwable error, Map randomNamesToName) {
-		LOGGER.debug("IN");
 		File toReturn = null;
-		FileWriter fw = null;
 		ArrayList<PlaceHolder> list = new ArrayList<>();
 		PlaceHolder p = new PlaceHolder();
 		p.setValue("ERROR");
@@ -581,46 +506,38 @@ public class AbstractDocumentExecutionWork extends DossierExecutionClient implem
 		try {
 			if (biObj == null) {
 				toReturn = FileUtilities.createFile("errorLog", ".txt", randomKey, list);
-				fw = new FileWriter(toReturn);
-				fw.write(error + "\n");
-				if (error != null) {
-					StackTraceElement[] errs = error.getStackTrace();
-					for (int i = 0; i < errs.length; i++) {
-						String err = errs[i].toString();
-						fw.write(err + "\n");
+				try (FileWriter fw = new FileWriter(toReturn)) {
+					fw.write(error + "\n");
+					if (error != null) {
+						StackTraceElement[] errs = error.getStackTrace();
+						for (int i = 0; i < errs.length; i++) {
+							String err = errs[i].toString();
+							fw.write(err + "\n");
+						}
 					}
+					fw.flush();
 				}
-				fw.flush();
 			} else {
 				String fileName = "Error " + biObj.getLabel() + "-" + biObj.getName();
 				toReturn = FileUtilities.createFile(fileName, ".txt", randomKey, list);
-//			randomNamesToName.put(toReturn.getName(), fileName + ".txt");
-				fw = new FileWriter(toReturn);
-				fw.write("Error while executing biObject " + biObj.getLabel() + " - " + biObj.getName() + "\n");
-				fw.write(error + "\n");
-				if (error != null) {
-					StackTraceElement[] errs = error.getStackTrace();
-					for (int i = 0; i < errs.length; i++) {
-						String err = errs[i].toString();
-						fw.write(err + "\n");
+				try (FileWriter fw = new FileWriter(toReturn)) {
+					fw.write("Error while executing biObject " + biObj.getLabel() + " - " + biObj.getName() + "\n");
+					fw.write(error + "\n");
+					if (error != null) {
+						StackTraceElement[] errs = error.getStackTrace();
+						for (int i = 0; i < errs.length; i++) {
+							String err = errs[i].toString();
+							fw.write(err + "\n");
+						}
 					}
+					fw.flush();
 				}
-				fw.flush();
 			}
 		} catch (Exception e) {
-			LOGGER.error("Error in wirting error file for biObj {}", biObj.getLabel());
+			LOGGER.error("Error in writing error file for biObj {}", biObj);
 			deleteDBRowInCaseOfError(progressThreadDAO, progressThreadId);
-			throw new SpagoBIServiceException("Error in wirting error file for biObj " + biObj.getLabel(), e);
-		} finally {
-			if (fw != null) {
-				try {
-					fw.flush();
-					fw.close();
-				} catch (IOException e) {
-				}
-			}
+			throw new SpagoBIServiceException("Error in wirting error file for biObj " + biObj, e);
 		}
-		LOGGER.debug("OUT");
 		return toReturn;
 	}
 
@@ -631,4 +548,157 @@ public class AbstractDocumentExecutionWork extends DossierExecutionClient implem
 	public void setJsonObjectTemplate(JSONObject jsonObjectTemplate) {
 		this.jsonObjectTemplate = jsonObjectTemplate;
 	}
+
+	/**
+	 * @param biObject
+	 * @param userUniqueIdentifier
+	 * @param jsonArray
+	 * @param paramMap
+	 * @param reportToUse
+	 * @param cockpitDocument
+	 * @param docId
+	 * @param role
+	 * @return
+	 * @throws UnsupportedEncodingException
+	 * @throws JSONException
+	 * @throws URISyntaxException
+	 */
+	private String getCockpitServiceUrl(BIObject biObject, String userUniqueIdentifier, JSONArray jsonArray,
+			Map<String, String> paramMap, Report reportToUse, String cockpitDocument, Integer docId, String role)
+			throws UnsupportedEncodingException, JSONException, URISyntaxException {
+		String docName = biObject.getName();
+		String hostUrl = getServiceHostUrl();
+		Locale locale = GeneralUtilities.getDefaultLocale();
+
+		URIBuilder serviceUrlBuilder = new URIBuilder(hostUrl);
+		serviceUrlBuilder
+				.setPath(KnowageSystemConfiguration.getKnowageCockpitEngineContext() + "/api/1.0/pages/execute/png");
+		serviceUrlBuilder.setParameter("user_id", userUniqueIdentifier);
+		serviceUrlBuilder.setParameter("DOCUMENT_LABEL", cockpitDocument);
+		serviceUrlBuilder.setParameter("DOCUMENT_OUTPUT_PARAMETERS", "[]");
+		serviceUrlBuilder.setParameter("DOCUMENT_IS_VISIBLE", "true");
+		serviceUrlBuilder.setParameter("SBI_EXECUTION_ROLE", role);
+		serviceUrlBuilder.setParameter("DOCUMENT_DESCRIPTION", "");
+		serviceUrlBuilder.setParameter("document", Integer.toString(docId));
+		serviceUrlBuilder.setParameter("IS_TECHNICAL_USER", "true");
+		serviceUrlBuilder.setParameter("DOCUMENT_NAME", docName);
+		serviceUrlBuilder.setParameter("NEW_SESSION", "TRUE");
+		serviceUrlBuilder.setParameter("SBI_ENVIRONMENT", "DOCBROWSER");
+		serviceUrlBuilder.setParameter("IS_FOR_EXPORT", "true");
+		serviceUrlBuilder.setParameter("documentMode", "VIEW");
+		serviceUrlBuilder.setParameter("export", "true");
+		serviceUrlBuilder.setParameter("outputType", "PNG");
+		serviceUrlBuilder.setParameter("knowage_sys_country", locale.getCountry());
+		serviceUrlBuilder.setParameter("knowage_sys_language", locale.getLanguage());
+		serviceUrlBuilder.setParameter("SBI_LANGUAGE", locale.getLanguage());
+		serviceUrlBuilder.setParameter("SBI_COUNTRY", locale.getCountry());
+		serviceUrlBuilder.setParameter("SBI_SCRIPT", locale.getScript());
+
+		addParametersToServiceUrlForCockpit(biObject, jsonArray, paramMap, reportToUse, serviceUrlBuilder);
+		addRenderOptionsToServiceUrl(biObject, reportToUse, serviceUrlBuilder);
+
+		return serviceUrlBuilder.toString();
+	}
+
+	private void addParametersToServiceUrlForCockpit(BIObject biObject, JSONArray jsonArray,
+			Map<String, String> paramMap, Report reportToUse, URIBuilder serviceUrlBuilder)
+			throws UnsupportedEncodingException, JSONException {
+
+		LOGGER.debug("Adding classic parameter...");
+		addClassicParametersToServiceUrl(progressThreadId, biObject, reportToUse, serviceUrlBuilder, jsonArray,
+				paramMap);
+	}
+
+	private void addClassicParametersToServiceUrl(Integer progressthreadId, BIObject biObject, Report reportToUse,
+			URIBuilder serviceUrlBuilder, JSONArray jsonArray, Map<String, String> paramMap)
+			throws UnsupportedEncodingException, JSONException {
+
+		List<BIObjectParameter> drivers = biObject.getDrivers();
+
+		LOGGER.debug("Adding parameters {} to URL", paramMap);
+
+		// This control doesn't make sense for parameters which use a view
+		if (drivers != null) {
+			BaseParametersEncoder parametersEncoder = new BaseParametersEncoder();
+			List<Parameter> parameter = reportToUse.getParameters();
+			if (drivers.size() != parameter.size()) {
+				throw new SpagoBIRuntimeException(
+						"There are a different number of parameters/drivers between document and template");
+			}
+			Collections.sort(drivers);
+			ParametersDecoder decoder = new ParametersDecoder();
+
+			for (BIObjectParameter biObjectParameter : drivers) {
+				boolean found = false;
+				String outParamValue = "";
+				String outParamName = "";
+				for (Parameter templateParameter : parameter) {
+
+					String currParamType = templateParameter.getType();
+					String currParamValue = templateParameter.getValue();
+
+					if (currParamType.equals("dynamic")) {
+
+						if (currParamValue != null && !currParamValue.isEmpty()) {
+
+							// filled by fillParametersValues in DossierExecutionResource
+							outParamValue = currParamValue;
+
+							List<String> currParamValueDecoded = decoder.decode(outParamValue);
+
+							if (biObjectParameter.getParameterUrlName().equals(templateParameter.getUrlName())) {
+								outParamName = templateParameter.getUrlName();
+
+								String urlName = biObjectParameter.getParameterUrlName();
+								boolean multivalue = biObjectParameter.isMultivalue();
+								String type = biObjectParameter.getParameter().getType();
+								List<String> values = currParamValueDecoded;
+								List<String> descriptions = biObjectParameter.getParameterValuesDescription();
+
+								String encodedValues = parametersEncoder.encodeValuesFromListOfStrings(multivalue,
+										values, type);
+								String encodedDescriptions = parametersEncoder
+										.encodeDescriptionFromListOfStrings(descriptions);
+
+								String valueParamName = urlName;
+								String descParamName = urlName + "_description";
+
+								serviceUrlBuilder.setParameter(valueParamName, encodedValues);
+								serviceUrlBuilder.setParameter(descParamName, encodedDescriptions);
+
+								found = true;
+
+								break;
+							}
+						}
+					} else {
+						if (biObjectParameter.getParameterUrlName().equals(templateParameter.getUrlName())) {
+							serviceUrlBuilder.setParameter(biObjectParameter.getParameterUrlName(), currParamValue);
+							outParamValue = currParamValue;
+							outParamName = templateParameter.getUrlName();
+							// We need a description for static parameter, we force the value if it's missing
+							if (isEmpty(templateParameter.getUrlNameDescription())) {
+								templateParameter.setUrlNameDescription(currParamValue);
+							}
+							// description
+							serviceUrlBuilder.setParameter(biObjectParameter.getParameterUrlName(),
+									templateParameter.getUrlNameDescription());
+
+							found = true;
+							break;
+
+						}
+					}
+				}
+				paramMap.put(outParamName, outParamValue);
+				if (!found && biObjectParameter.isRequired()) {
+					throw new SpagoBIRuntimeException(
+							"There is no match between document parameters and template parameters.");
+				}
+
+			}
+		}
+
+	}
+
 }

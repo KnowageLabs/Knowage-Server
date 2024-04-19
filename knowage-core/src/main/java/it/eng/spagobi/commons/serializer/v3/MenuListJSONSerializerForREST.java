@@ -636,12 +636,14 @@ public class MenuListJSONSerializerForREST implements Serializer {
 				}
 				break;
 
-			case "silent_login":
-				boolean showLogoutOnSilentLogin = Boolean.valueOf(SingletonConfig.getInstance().getConfigValue("SPAGOBI.HOME.SHOW_LOGOUT_ON_SILENT_LOGIN"));
+			case "logout_enabled":
+				boolean showLogoutOnSilentLogin = Boolean
+						.parseBoolean(SingletonConfig.getInstance().getConfigValue("SPAGOBI.HOME.SHOW_LOGOUT_ON_SILENT_LOGIN"));
 				boolean silentLogin = Boolean.TRUE.equals(this.getHttpSession().getAttribute(SsoServiceInterface.SILENT_LOGIN));
+				boolean isPublicUser = PublicProfile.isPublicUser(userProfile.getUserUniqueIdentifier().toString());
 				// we show/don't show the logout button in case of a silent login,
 				// according to configuration
-				if (!silentLogin || showLogoutOnSilentLogin) {
+				if (!isPublicUser && (!silentLogin || showLogoutOnSilentLogin)) {
 					isSatisfied = true;
 				}
 				break;

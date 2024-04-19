@@ -21,7 +21,7 @@
         width: calc(100% - #{var(--kn-mainmenu-width)});
     }
     .kn-page-content {
-        flex: 1;
+        flex: 1 0 0;
         overflow-y: auto;
     }
 }

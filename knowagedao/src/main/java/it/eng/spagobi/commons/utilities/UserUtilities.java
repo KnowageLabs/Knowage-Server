@@ -828,6 +828,23 @@ public class UserUtilities {
 			if (virtualRole.isAbleToCreateCustomChart()) {
 				roleFunctionalities.add(CommunityFunctionalityConstants.CREATE_CUSTOM_CHART);
 			}
+
+			if (virtualRole.getAbleToUseDataPreparation()) {
+				roleFunctionalities.add(CommunityFunctionalityConstants.DATA_PREPARATION);
+			}
+
+			if (virtualRole.getAbleToSeeHelpOnline()) {
+				roleFunctionalities.add(CommunityFunctionalityConstants.HELP_ON_LINE);
+			}
+
+			if (virtualRole.getAbleToUseDossier()) {
+				roleFunctionalities.add(CommunityFunctionalityConstants.DOSSIER_CREATION);
+			}
+
+			if (virtualRole.getAbleToUseDashboardThemeManagement()) {
+				roleFunctionalities.add(CommunityFunctionalityConstants.DASHBOARD_THEMES_MANAGEMENT);
+			}
+
 			if (!roleFunctionalities.isEmpty()) {
 				List<String> roleTypeFunctionalities = Arrays.asList(functionalities);
 				roleFunctionalities.addAll(roleTypeFunctionalities);
@@ -1079,6 +1096,22 @@ public class UserUtilities {
 					if (anotherRole.isAbleToCreateSelfServiceKpi()) {
 						logger.debug("User has role " + roleName + " that is able to create self service kpi.");
 						virtualRole.setAbleToCreateSelfServiceKpi(true);
+					}
+					if (anotherRole.getAbleToUseDataPreparation()) {
+						logger.debug("User has role " + roleName + " that is able to use data preparation.");
+						virtualRole.setAbleToUseDataPreparation(true);
+					}
+					if (anotherRole.getAbleToUseDossier()) {
+						logger.debug("User has role " + roleName + " that is able to create dossier.");
+						virtualRole.setAbleToUseDossier(true);
+					}
+					if (anotherRole.getAbleToSeeHelpOnline()) {
+						logger.debug("User has role " + roleName + " that is able to see help online.");
+						virtualRole.setAbleToSeeHelpOnline(true);
+					}
+					if (anotherRole.getAbleToUseDashboardThemeManagement()) {
+						logger.debug("User has role " + roleName + " that is able to manage dashboard themes.");
+						virtualRole.setAbleToUseDashboardThemeManagement(true);
 					}
 				}
 			}

@@ -78,10 +78,12 @@ export default defineComponent({
         },
         deleteViewpointConfirm(viewpoint: any) {
             this.$confirm.require({
-                message: this.$t('documentExecution.dossier.deleteConfirm'),
-                header: this.$t('documentExecution.dossier.deleteTitle'),
+                message: this.$t('documentExecution.main.deleteSavedParameter.confirm'),
+                header: this.$t('documentExecution.main.deleteSavedParameter'),
                 icon: 'pi pi-exclamation-triangle',
-                accept: () => this.$emit('deleteViewpoint', viewpoint)
+                accept: () => this.$emit('deleteViewpoint', viewpoint),
+                acceptLabel: this.$t('common.yes'),
+                rejectLabel: this.$t('common.no')
             })
         }
     }

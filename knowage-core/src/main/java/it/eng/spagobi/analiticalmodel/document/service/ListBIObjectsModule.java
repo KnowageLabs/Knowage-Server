@@ -39,6 +39,7 @@ import it.eng.spago.paginator.basic.impl.GenericPaginator;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 import it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO;
+import it.eng.spagobi.analiticalmodel.functionalitytree.bo.LowFunctionality;
 import it.eng.spagobi.analiticalmodel.functionalitytree.service.TreeObjectsModule;
 import it.eng.spagobi.commons.SingletonConfig;
 import it.eng.spagobi.commons.constants.CommunityFunctionalityConstants;
@@ -86,8 +87,9 @@ public class ListBIObjectsModule extends AbstractBasicListModule {
 		} else
 			locale = GeneralUtilities.getDefaultLocale();
 
-		String currentFieldOrder = (request.getAttribute("FIELD_ORDER") == null || ((String) request.getAttribute("FIELD_ORDER")).equals("")) ? ""
-				: (String) request.getAttribute("FIELD_ORDER");
+		String currentFieldOrder = (request.getAttribute("FIELD_ORDER") == null
+				|| ((String) request.getAttribute("FIELD_ORDER")).equals("")) ? ""
+						: (String) request.getAttribute("FIELD_ORDER");
 		if (currentFieldOrder.equals("")) {
 			currentFieldOrder = "DESCR";
 			response.delAttribute("FIELD_ORDER");
@@ -96,8 +98,9 @@ public class ListBIObjectsModule extends AbstractBasicListModule {
 		response.delAttribute("PREC_FIELD_ORDER");
 		response.setAttribute("PREC_FIELD_ORDER", currentFieldOrder);
 
-		String currentTypOrder = (request.getAttribute("TYPE_ORDER") == null || ((String) request.getAttribute("TYPE_ORDER")).equals("")) ? ""
-				: (String) request.getAttribute("TYPE_ORDER");
+		String currentTypOrder = (request.getAttribute("TYPE_ORDER") == null
+				|| ((String) request.getAttribute("TYPE_ORDER")).equals("")) ? ""
+						: (String) request.getAttribute("TYPE_ORDER");
 		if (currentTypOrder.equals("")) {
 			currentTypOrder = " ASC";
 			response.delAttribute("TYPE_ORDER");
@@ -153,7 +156,8 @@ public class ListBIObjectsModule extends AbstractBasicListModule {
 			String columnfilter = (String) request.getAttribute(SpagoBIConstants.COLUMN_FILTER);
 			String typeFilter = (String) request.getAttribute(SpagoBIConstants.TYPE_FILTER);
 			String typeValueFilter = (String) request.getAttribute(SpagoBIConstants.TYPE_VALUE_FILTER);
-			list = DelegatedBasicListService.filterList(list, valuefilter, typeValueFilter, columnfilter, typeFilter, getResponseContainer().getErrorHandler());
+			list = DelegatedBasicListService.filterList(list, valuefilter, typeValueFilter, columnfilter, typeFilter,
+					getResponseContainer().getErrorHandler());
 		}
 
 		HashMap parametersMap = new HashMap();
@@ -185,7 +189,7 @@ public class ListBIObjectsModule extends AbstractBasicListModule {
 		String objectStateCD = obj.getStateCode();
 		logger.debug("Object State = " + objectStateCD);
 		int visibleInstances = 0;
-		List lowFunct = new ArrayList();
+		List<LowFunctionality> lowFunct = new ArrayList<>();
 		if (!functionalities.isEmpty()) {
 			lowFunct = DAOFactory.getLowFunctionalityDAO().loadLowFunctionalityList(functionalities);
 
@@ -284,9 +288,11 @@ public class ListBIObjectsModule extends AbstractBasicListModule {
 					logger.debug("Profile has the execution permission for the document [" + obj.getLabel() + "].");
 					canExec = ObjectsAccessVerifier.checkProfileVisibility(obj, profile);
 					if (canExec) {
-						logger.debug("Profile satisfies profiled visiblity constraints for the document [" + obj.getLabel() + "].");
+						logger.debug("Profile satisfies profiled visiblity constraints for the document ["
+								+ obj.getLabel() + "].");
 					} else {
-						logger.debug("Profile DOES NOT satisfy profiled visiblity constraints for the document [" + obj.getLabel() + "].");
+						logger.debug("Profile DOES NOT satisfy profiled visiblity constraints for the document ["
+								+ obj.getLabel() + "].");
 					}
 				}
 
@@ -306,7 +312,7 @@ public class ListBIObjectsModule extends AbstractBasicListModule {
 				}
 			}
 
-			if (canExec == false && canDev == false && canTest == false) {
+			if (!canExec && !canDev && !canTest) {
 				logger.debug("Document never Executable for this user");
 				return null;
 			}
@@ -367,79 +373,98 @@ public class ListBIObjectsModule extends AbstractBasicListModule {
 				// + "\"/> "
 				// call new Action
 				+ "		<PARAMETER name=\"" + ObjectsTreeConstants.ACTION + "\" scope=\"\" type=\"ABSOLUTE\" value=\""
-				+ SpagoBIConstants.EXECUTE_DOCUMENT_ACTION + "\"/> " + "		<PARAMETER name=\"" + ObjectsTreeConstants.BIOBJECT_TREE_LIST
-				+ "\" scope=\"\" type=\"ABSOLUTE\" value=\"" + ObjectsTreeConstants.BIOBJECT_TREE_LIST + "\"/> " + "		<PARAMETER name=\""
-				+ SpagoBIConstants.MESSAGEDET + "\" scope=\"\" type=\"ABSOLUTE\" value=\"" + ObjectsTreeConstants.EXEC_PHASE_CREATE_PAGE + "\"/> "
-				+ "		<PARAMETER name=\"" + ObjectsTreeConstants.OBJECT_ID + "\" scope=\"LOCAL\" type=\"RELATIVE\" value=\"OBJECT_ID\"/> "
+				+ SpagoBIConstants.EXECUTE_DOCUMENT_ACTION + "\"/> " + "		<PARAMETER name=\""
+				+ ObjectsTreeConstants.BIOBJECT_TREE_LIST + "\" scope=\"\" type=\"ABSOLUTE\" value=\""
+				+ ObjectsTreeConstants.BIOBJECT_TREE_LIST + "\"/> " + "		<PARAMETER name=\""
+				+ SpagoBIConstants.MESSAGEDET + "\" scope=\"\" type=\"ABSOLUTE\" value=\""
+				+ ObjectsTreeConstants.EXEC_PHASE_CREATE_PAGE + "\"/> " + "		<PARAMETER name=\""
+				+ ObjectsTreeConstants.OBJECT_ID + "\" scope=\"LOCAL\" type=\"RELATIVE\" value=\"OBJECT_ID\"/> "
 				+ "	</EXEC_CAPTION>";
 		/*
 		 * if (profile.isAbleToExecuteAction(SpagoBIConstants.DOCUMENT_METADATA_MANAGEMENT)) { moduleConfigStr +=
 		 * "	<METADATA_CAPTION popup=\"TRUE\" popupH=\"350\" popupW=\"800\" confirm=\"FALSE\" image=\"/img/editTemplate.jpg\" label=\"SBISet.objects.captionMetadata\">"
-		 * + "		<PARAMETER name=\"" + ObjectsTreeConstants.PAGE + "\" scope=\"\" type=\"ABSOLUTE\" value=\"" + MetadataBIObjectModule.MODULE_PAGE + "\"/> "
-		 * + "		<PARAMETER name=\"" + ObjectsTreeConstants.MESSAGE_DETAIL + "\" scope=\"\" type=\"ABSOLUTE\" value=\"" +
-		 * ObjectsTreeConstants.METADATA_SELECT + "\"/> " + "		<PARAMETER name=\"" + ObjectsTreeConstants.OBJECT_ID +
-		 * "\" scope=\"LOCAL\" type=\"RELATIVE\" value=\"OBJECT_ID\"/> " + "		<PARAMETER name=\"" + LightNavigationManager.LIGHT_NAVIGATOR_DISABLED +
-		 * "\" scope=\"\" type=\"ABSOLUTE\" value=\"TRUE\"/> " + "	</METADATA_CAPTION>"; }
+		 * + "		<PARAMETER name=\"" + ObjectsTreeConstants.PAGE + "\" scope=\"\" type=\"ABSOLUTE\" value=\"" + MetadataBIObjectModule.MODULE_PAGE + "\"/> " +
+		 * "		<PARAMETER name=\"" + ObjectsTreeConstants.MESSAGE_DETAIL + "\" scope=\"\" type=\"ABSOLUTE\" value=\"" + ObjectsTreeConstants.METADATA_SELECT +
+		 * "\"/> " + "		<PARAMETER name=\"" + ObjectsTreeConstants.OBJECT_ID + "\" scope=\"LOCAL\" type=\"RELATIVE\" value=\"OBJECT_ID\"/> " +
+		 * "		<PARAMETER name=\"" + LightNavigationManager.LIGHT_NAVIGATOR_DISABLED + "\" scope=\"\" type=\"ABSOLUTE\" value=\"TRUE\"/> " +
+		 * "	</METADATA_CAPTION>"; }
 		 */
 		if (profile.isAbleToExecuteAction(CommunityFunctionalityConstants.DOCUMENT_DETAIL_MANAGEMENT)) {
 			moduleConfigStr += "	<DETAIL_CAPTION  confirm=\"FALSE\" image=\"/img/detail.gif\" label=\"SBISet.objects.captionDetail\">"
-					+ "		<PARAMETER name=\"" + ObjectsTreeConstants.PAGE + "\" scope=\"\" type=\"ABSOLUTE\" value=\"" + DetailBIObjectModule.MODULE_PAGE
-					+ "\"/> " + "		<PARAMETER name=\"" + ObjectsTreeConstants.MESSAGE_DETAIL + "\" scope=\"\" type=\"ABSOLUTE\" value=\""
-					+ ObjectsTreeConstants.DETAIL_SELECT + "\"/> " + "		<PARAMETER name=\"" + ObjectsTreeConstants.OBJECT_ID
-					+ "\" scope=\"LOCAL\" type=\"RELATIVE\" value=\"OBJECT_ID\"/> " + "		<CONDITIONS>"
-					+ "			<PARAMETER name=\"canDev\" scope='LOCAL' value='true' operator='EQUAL_TO' />" + "		</CONDITIONS>" + "	</DETAIL_CAPTION>";
+					+ "		<PARAMETER name=\"" + ObjectsTreeConstants.PAGE + "\" scope=\"\" type=\"ABSOLUTE\" value=\""
+					+ DetailBIObjectModule.MODULE_PAGE + "\"/> " + "		<PARAMETER name=\""
+					+ ObjectsTreeConstants.MESSAGE_DETAIL + "\" scope=\"\" type=\"ABSOLUTE\" value=\""
+					+ ObjectsTreeConstants.DETAIL_SELECT + "\"/> " + "		<PARAMETER name=\""
+					+ ObjectsTreeConstants.OBJECT_ID + "\" scope=\"LOCAL\" type=\"RELATIVE\" value=\"OBJECT_ID\"/> "
+					+ "		<CONDITIONS>"
+					+ "			<PARAMETER name=\"canDev\" scope='LOCAL' value='true' operator='EQUAL_TO' />"
+					+ "		</CONDITIONS>" + "	</DETAIL_CAPTION>";
 		}
 		if (profile.isAbleToExecuteAction(CommunityFunctionalityConstants.DOCUMENT_DELETE_MANAGEMENT)) {
 			moduleConfigStr += "	<DELETE_CAPTION  confirm=\"TRUE\" image=\"/img/erase.gif\" label=\"SBISet.objects.captionErase\">"
-					+ "		<PARAMETER name=\"" + ObjectsTreeConstants.PAGE + "\" scope=\"\" type=\"ABSOLUTE\" value=\"" + DetailBIObjectModule.MODULE_PAGE
-					+ "\"/> " + "		<PARAMETER name=\"" + ObjectsTreeConstants.MESSAGE_DETAIL + "\" scope=\"\" type=\"ABSOLUTE\" value=\""
-					+ ObjectsTreeConstants.DETAIL_DEL + "\"/> " + "		<PARAMETER name=\"" + ObjectsTreeConstants.OBJECT_ID
-					+ "\" scope=\"LOCAL\" type=\"RELATIVE\" value=\"OBJECT_ID\"/> " + "		<CONDITIONS>"
-					+ "			<PARAMETER name=\"canDev\" scope='LOCAL' value='true' operator='EQUAL_TO' />" + "		</CONDITIONS>" + "	</DELETE_CAPTION>";
+					+ "		<PARAMETER name=\"" + ObjectsTreeConstants.PAGE + "\" scope=\"\" type=\"ABSOLUTE\" value=\""
+					+ DetailBIObjectModule.MODULE_PAGE + "\"/> " + "		<PARAMETER name=\""
+					+ ObjectsTreeConstants.MESSAGE_DETAIL + "\" scope=\"\" type=\"ABSOLUTE\" value=\""
+					+ ObjectsTreeConstants.DETAIL_DEL + "\"/> " + "		<PARAMETER name=\""
+					+ ObjectsTreeConstants.OBJECT_ID + "\" scope=\"LOCAL\" type=\"RELATIVE\" value=\"OBJECT_ID\"/> "
+					+ "		<CONDITIONS>"
+					+ "			<PARAMETER name=\"canDev\" scope='LOCAL' value='true' operator='EQUAL_TO' />"
+					+ "		</CONDITIONS>" + "	</DELETE_CAPTION>";
 		}
 		if (profile.isAbleToExecuteAction(CommunityFunctionalityConstants.DOCUMENT_MOVE_DOWN_STATE)) {
 			// if
 			// (profile.isAbleToExecuteAction(SpagoBIConstants.DOCUMENT_MANAGEMENT_ADMIN)){
 			moduleConfigStr += "	<MOVEDOWN_CAPTION  confirm=\"TRUE\" image=\"/img/ArrowDown1.gif\" label='SBISet.objects.captionMoveDown'>"
-					+ "		<PARAMETER name=\"" + ObjectsTreeConstants.PAGE + "\" scope=\"\" type=\"ABSOLUTE\" value=\"UpdateBIObjectStatePage\"/> "
-					+ "		<PARAMETER name=\"" + ObjectsTreeConstants.MESSAGE_DETAIL + "\" scope=\"\" type=\"ABSOLUTE\" value=\""
-					+ ObjectsTreeConstants.MOVE_STATE_DOWN + "\"/> " + "		<PARAMETER name=\"" + ObjectsTreeConstants.OBJECT_ID
+					+ "		<PARAMETER name=\"" + ObjectsTreeConstants.PAGE
+					+ "\" scope=\"\" type=\"ABSOLUTE\" value=\"UpdateBIObjectStatePage\"/> "
+					+ "		<PARAMETER name=\"" + ObjectsTreeConstants.MESSAGE_DETAIL
+					+ "\" scope=\"\" type=\"ABSOLUTE\" value=\"" + ObjectsTreeConstants.MOVE_STATE_DOWN + "\"/> "
+					+ "		<PARAMETER name=\"" + ObjectsTreeConstants.OBJECT_ID
 					+ "\" scope=\"LOCAL\" type=\"RELATIVE\" value=\"OBJECT_ID\"/> "
-					+ "		<PARAMETER name=\"LIGHT_NAVIGATOR_DISABLED\" scope=\"\" type=\"ABSOLUTE\" value=\"true\"/> " + "		<CONDITIONS>"
-					+ "			<PARAMETER name=\"stateDown\" scope='LOCAL' value='true' operator='EQUAL_TO' />" + "		</CONDITIONS>"
-					+ "	</MOVEDOWN_CAPTION>";
+					+ "		<PARAMETER name=\"LIGHT_NAVIGATOR_DISABLED\" scope=\"\" type=\"ABSOLUTE\" value=\"true\"/> "
+					+ "		<CONDITIONS>"
+					+ "			<PARAMETER name=\"stateDown\" scope='LOCAL' value='true' operator='EQUAL_TO' />"
+					+ "		</CONDITIONS>" + "	</MOVEDOWN_CAPTION>";
 
 		}
 		if (profile.isAbleToExecuteAction(CommunityFunctionalityConstants.DOCUMENT_MOVE_UP_STATE)) {
 
 			moduleConfigStr += "	<MOVEUP_CAPTION  confirm=\"TRUE\" image=\"/img/ArrowUp1.gif\" label='SBISet.objects.captionMoveUp'>"
-					+ "		<PARAMETER name=\"" + ObjectsTreeConstants.PAGE + "\" scope=\"\" type=\"ABSOLUTE\" value=\"UpdateBIObjectStatePage\"/> "
-					+ "		<PARAMETER name=\"" + ObjectsTreeConstants.MESSAGE_DETAIL + "\" scope=\"\" type=\"ABSOLUTE\" value=\""
-					+ ObjectsTreeConstants.MOVE_STATE_UP + "\"/> " + "		<PARAMETER name=\"" + ObjectsTreeConstants.OBJECT_ID
+					+ "		<PARAMETER name=\"" + ObjectsTreeConstants.PAGE
+					+ "\" scope=\"\" type=\"ABSOLUTE\" value=\"UpdateBIObjectStatePage\"/> "
+					+ "		<PARAMETER name=\"" + ObjectsTreeConstants.MESSAGE_DETAIL
+					+ "\" scope=\"\" type=\"ABSOLUTE\" value=\"" + ObjectsTreeConstants.MOVE_STATE_UP + "\"/> "
+					+ "		<PARAMETER name=\"" + ObjectsTreeConstants.OBJECT_ID
 					+ "\" scope=\"LOCAL\" type=\"RELATIVE\" value=\"OBJECT_ID\"/> "
-					+ "		<PARAMETER name=\"LIGHT_NAVIGATOR_DISABLED\" scope=\"\" type=\"ABSOLUTE\" value=\"true\"/> " + "		<CONDITIONS>"
-					+ "			<PARAMETER name=\"stateUp\" scope='LOCAL' value='true' operator='EQUAL_TO' />" + "		</CONDITIONS>" + "	</MOVEUP_CAPTION>";
+					+ "		<PARAMETER name=\"LIGHT_NAVIGATOR_DISABLED\" scope=\"\" type=\"ABSOLUTE\" value=\"true\"/> "
+					+ "		<CONDITIONS>"
+					+ "			<PARAMETER name=\"stateUp\" scope='LOCAL' value='true' operator='EQUAL_TO' />"
+					+ "		</CONDITIONS>" + "	</MOVEUP_CAPTION>";
 
 		}
 		moduleConfigStr += "	</CAPTIONS>";
 		moduleConfigStr += "	<BUTTONS>";
 
-		if ((profile.isAbleToExecuteAction(CommunityFunctionalityConstants.DOCUMENT_MANAGEMENT_ADMIN) && ChannelUtilities.isWebRunning())
+		if ((profile.isAbleToExecuteAction(CommunityFunctionalityConstants.DOCUMENT_MANAGEMENT_ADMIN)
+				&& ChannelUtilities.isWebRunning())
 				|| profile.isAbleToExecuteAction(CommunityFunctionalityConstants.DOCUMENT_MANAGEMENT_DEV)) {
 			moduleConfigStr += "		<INSERT_BUTTON confirm=\"FALSE\" image=\"/img/new.png\" label=\"SBISet.devObjects.newObjButt\"> "
-					+ "			<PARAMETER name=\"" + ObjectsTreeConstants.PAGE + "\" scope=\"\" type=\"ABSOLUTE\" value=\"" + DetailBIObjectModule.MODULE_PAGE
-					+ "\"/> " + "			<PARAMETER name=\"" + ObjectsTreeConstants.MESSAGE_DETAIL + "\" scope=\"\" type=\"ABSOLUTE\" value=\""
-					+ ObjectsTreeConstants.DETAIL_NEW + "\"/> " + "		</INSERT_BUTTON>";
+					+ "			<PARAMETER name=\"" + ObjectsTreeConstants.PAGE
+					+ "\" scope=\"\" type=\"ABSOLUTE\" value=\"" + DetailBIObjectModule.MODULE_PAGE + "\"/> "
+					+ "			<PARAMETER name=\"" + ObjectsTreeConstants.MESSAGE_DETAIL
+					+ "\" scope=\"\" type=\"ABSOLUTE\" value=\"" + ObjectsTreeConstants.DETAIL_NEW + "\"/> "
+					+ "		</INSERT_BUTTON>";
 		}
 		moduleConfigStr += "		<CHANGE_VIEW_BUTTON confirm=\"FALSE\" image=\"/img/treeView.png\" label=\"SBISet.objects.treeViewButt\"> "
-				+ "			<PARAMETER name=\"PAGE\" scope=\"\" type=\"ABSOLUTE\" value=\"BIObjectsPage\"/> " + "			<PARAMETER name=\""
-				+ SpagoBIConstants.OBJECTS_VIEW + "\" scope=\"\" type=\"ABSOLUTE\" value=\"" + SpagoBIConstants.VIEW_OBJECTS_AS_TREE + "\"/> "
+				+ "			<PARAMETER name=\"PAGE\" scope=\"\" type=\"ABSOLUTE\" value=\"BIObjectsPage\"/> "
+				+ "			<PARAMETER name=\"" + SpagoBIConstants.OBJECTS_VIEW
+				+ "\" scope=\"\" type=\"ABSOLUTE\" value=\"" + SpagoBIConstants.VIEW_OBJECTS_AS_TREE + "\"/> "
 				+ "		</CHANGE_VIEW_BUTTON>";
 		moduleConfigStr += "		<BACK_BUTTON confirm=\"FALSE\" image=\"/img/back.png\" label=\"SBISet.objects.backButt\"  onlyPortletRunning=\"true\"> "
 				+ "			<PARAMETER name=\"ACTION_NAME\" scope=\"\" type=\"ABSOLUTE\" value=\"START_ACTION\"/> "
 				+ "			<PARAMETER name=\"PUBLISHER_NAME\" scope=\"\" type=\"ABSOLUTE\" value=\"LoginSBIAnaliticalModelPublisher\"/> "
-				+ "			<PARAMETER name=\"" + LightNavigationManager.LIGHT_NAVIGATOR_RESET + "\" scope=\"\" type=\"ABSOLUTE\" value=\"true\"/> "
-				+ "		</BACK_BUTTON>";
+				+ "			<PARAMETER name=\"" + LightNavigationManager.LIGHT_NAVIGATOR_RESET
+				+ "\" scope=\"\" type=\"ABSOLUTE\" value=\"true\"/> " + "		</BACK_BUTTON>";
 		moduleConfigStr += "	</BUTTONS>";
 		moduleConfigStr += "</CONFIG>";
 		SourceBean moduleConfig = SourceBean.fromXMLString(moduleConfigStr);

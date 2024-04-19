@@ -35,6 +35,8 @@ import org.jasypt.encryption.pbe.PBEStringEncryptor;
 import org.jasypt.exceptions.EncryptionInitializationException;
 import org.jasypt.exceptions.EncryptionOperationNotPossibleException;
 
+import it.eng.knowage.encryption.DataEncryptionGlobalCfg;
+import it.eng.knowage.encryption.EncryptionPreferencesRegistry;
 import it.eng.knowage.encryption.EncryptorFactory;
 import it.eng.spagobi.tools.dataset.common.datastore.Field;
 import it.eng.spagobi.tools.dataset.common.datastore.IField;
@@ -59,13 +61,13 @@ public class ResultSetIterator implements DataIterator {
 	private PBEStringEncryptor encryptor;
 
 	/**
-	 * IMPORTANT!!! An {@code Iterator} has methods {@code hasNext()} and {@code next()} while a {@code ResultSet} object has only {@code next()}, that behaves like
-	 * both {@code Iterator} {@code hasNext()} and {@code next()} at the same time, since it returns true if there are other elements while it is moving forward its
-	 * internal cursor. But {@code Iterator.hasNext()} is not supposed to move forward, therefore it cannot invoke {@code ResultSet.next()} method!!! In order to
-	 * harmonize those API, {@code ResultSetIterator} loads first record into {@code nextRow} variable during initialization (within the constructor) using the
-	 * {@code loadNextRow} method; when {@code Iterator.next()} method is invoked, we get values from {@code nextRow} variable and then we move forward with
-	 * {@code loadNextRow} method, overriding the values into {@code nextRow} variable or setting it to null in case there no more elements.
-	 * {@code Iterator.hasNext()} method simply checks that {@code nextRow} is not null.
+	 * IMPORTANT!!! An {@code Iterator} has methods {@code hasNext()} and {@code next()} while a {@code ResultSet} object has only {@code next()}, that behaves
+	 * like both {@code Iterator} {@code hasNext()} and {@code next()} at the same time, since it returns true if there are other elements while it is moving
+	 * forward its internal cursor. But {@code Iterator.hasNext()} is not supposed to move forward, therefore it cannot invoke {@code ResultSet.next()}
+	 * method!!! In order to harmonize those API, {@code ResultSetIterator} loads first record into {@code nextRow} variable during initialization (within the
+	 * constructor) using the {@code loadNextRow} method; when {@code Iterator.next()} method is invoked, we get values from {@code nextRow} variable and then
+	 * we move forward with {@code loadNextRow} method, overriding the values into {@code nextRow} variable or setting it to null in case there no more
+	 * elements. {@code Iterator.hasNext()} method simply checks that {@code nextRow} is not null.
 	 */
 	private Object[] nextRow;
 
@@ -123,8 +125,7 @@ public class ResultSetIterator implements DataIterator {
 
 	@Override
 	public void remove() {
-		throw new UnsupportedOperationException(
-				"This operation has to be overriden by subclasses in order to be used.");
+		throw new UnsupportedOperationException("This operation has to be overriden by subclasses in order to be used.");
 	}
 
 	@Override
@@ -154,8 +155,8 @@ public class ResultSetIterator implements DataIterator {
 
 		AtomicInteger index = new AtomicInteger();
 
-		dataStoreMetadata.getFieldsMeta().stream().collect(Collectors.toMap(e -> index.getAndIncrement(), e -> e))
-				.entrySet().stream().filter(e -> e.getValue().isDecrypt()).forEach(e -> {
+		dataStoreMetadata.getFieldsMeta().stream().collect(Collectors.toMap(e -> index.getAndIncrement(), e -> e)).entrySet().stream()
+				.filter(e -> e.getValue().isDecrypt()).forEach(e -> {
 					Integer key = e.getKey();
 					IFieldMetaData value = e.getValue();
 					decryptableField.add(value);
@@ -165,7 +166,10 @@ public class ResultSetIterator implements DataIterator {
 		needDecryption = !decryptableField.isEmpty();
 
 		if (needDecryption) {
-			encryptor = EncryptorFactory.getInstance().createDefault();
+			DataEncryptionGlobalCfg decfee = DataEncryptionGlobalCfg.getInstance();
+			String algorithm = decfee.getKeyTemplateForAlgorithm(EncryptionPreferencesRegistry.DEFAULT_CFG_KEY);
+			String password = decfee.getKeyTemplateForPassword(EncryptionPreferencesRegistry.DEFAULT_CFG_KEY);
+			encryptor = EncryptorFactory.getInstance().create(algorithm, password);
 		}
 
 	}
@@ -196,8 +200,7 @@ public class ResultSetIterator implements DataIterator {
 				fieldAt.setValue(newValue);
 			}
 		} catch (EncryptionOperationNotPossibleException e) {
-			LOGGER.warn("Ignoring field value {} from field {} (with \"{}\" alias): see following message", value,
-					fieldName, fieldAlias);
+			LOGGER.warn("Ignoring field value {} from field {} (with \"{}\" alias): see following message", value, fieldName, fieldAlias);
 			LOGGER.warn("Cannot decrypt column: see the previous message", e);
 		} catch (EncryptionInitializationException e) {
 			LOGGER.error("Encryption initialization error: check decryption system properties", e);

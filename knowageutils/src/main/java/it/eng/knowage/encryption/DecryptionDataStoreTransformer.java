@@ -1,6 +1,5 @@
 package it.eng.knowage.encryption;
 
-import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -28,13 +27,20 @@ public class DecryptionDataStoreTransformer extends AbstractDataStoreTransformer
 	private static final Logger LOGGER = LogManager.getLogger(DecryptionDataStoreTransformer.class);
 
 	private boolean needDecryption = false;
-	private final List<IFieldMetaData> decryptableField = new ArrayList<>();
 	private final Map<Integer, IFieldMetaData> decryptableFieldByIndex = new LinkedHashMap<>();
 	private PBEStringEncryptor encryptor;
-	private final IDataSet dataSet;
+	private final IMetaData dataStoreMetadata;
 
 	public DecryptionDataStoreTransformer(IDataSet dataSet) {
-		this.dataSet = dataSet;
+		this(dataSet.getDsMetadata() != null ? dataSet.getMetadata() : new MetaData());
+	}
+
+	public DecryptionDataStoreTransformer(IDataStore dataStore) {
+		this(dataStore.getMetaData());
+	}
+
+	public DecryptionDataStoreTransformer(IMetaData dataStoreMetadata) {
+		this.dataStoreMetadata = dataStoreMetadata;
 		try {
 			setUpDecryption();
 		} catch (Exception e) {
@@ -56,8 +62,6 @@ public class DecryptionDataStoreTransformer extends AbstractDataStoreTransformer
 	}
 
 	private void setUpDecryption() {
-		IMetaData dataStoreMetadata = getMetaData();
-
 		AtomicInteger index = new AtomicInteger();
 
 		// @formatter:off
@@ -74,14 +78,14 @@ public class DecryptionDataStoreTransformer extends AbstractDataStoreTransformer
 			.forEach(e -> {
 				Integer key = e.getKey();
 				IFieldMetaData value = e.getValue();
-				decryptableField.add(value);
 				decryptableFieldByIndex.put(key, value);
 
-				LOGGER.debug("Field to decrypt: {}", value);
+				LOGGER.debug("\tField to decrypt: {}", value);
 			});
 		// @formatter:on
 
-		needDecryption = !decryptableField.isEmpty();
+		LOGGER.debug("Decryptable field map is {}", decryptableFieldByIndex);
+		needDecryption = !decryptableFieldByIndex.isEmpty();
 
 		LOGGER.debug("Need decryption? {}", needDecryption);
 		if (needDecryption) {
@@ -96,10 +100,13 @@ public class DecryptionDataStoreTransformer extends AbstractDataStoreTransformer
 
 	private void decryptIfNeeded(IRecord currRecord) {
 		if (needDecryption) {
+			LOGGER.debug("Decrypting record {}", currRecord);
 			List<IField> fields = currRecord.getFields();
 
 			for (int i = 0; i < fields.size(); i++) {
+				LOGGER.debug("Current field {}", i);
 				if (decryptableFieldByIndex.containsKey(i)) {
+					LOGGER.debug("Decrypting field {}: {}", i, decryptableFieldByIndex.get(i));
 					decrypt(currRecord, i);
 				}
 			}
@@ -118,6 +125,7 @@ public class DecryptionDataStoreTransformer extends AbstractDataStoreTransformer
 			if (Objects.nonNull(value)) {
 				newValue = encryptor.decrypt(value.toString());
 				fieldAt.setValue(newValue);
+				LOGGER.debug("Decrypt value {} to {}", value, newValue);
 			}
 		} catch (EncryptionOperationNotPossibleException e) {
 			LOGGER.warn("Ignoring field value {} from field {} (with \"{}\" alias): see following message", value,
@@ -130,10 +138,6 @@ public class DecryptionDataStoreTransformer extends AbstractDataStoreTransformer
 
 	private String mapFieldKey(IFieldMetaData field) {
 		return field.getName();
-	}
-
-	private IMetaData getMetaData() {
-		return dataSet.getDsMetadata() != null ? dataSet.getMetadata() : new MetaData();
 	}
 
 }

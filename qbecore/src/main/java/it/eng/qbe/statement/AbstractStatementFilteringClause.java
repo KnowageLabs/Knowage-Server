@@ -21,6 +21,8 @@ package it.eng.qbe.statement;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
+import org.jasypt.encryption.pbe.PBEStringEncryptor;
+import org.jasypt.hibernate3.encryptor.HibernatePBEEncryptorRegistry;
 import org.json.JSONObject;
 
 import it.eng.qbe.model.structure.IModelEntity;
@@ -40,7 +42,7 @@ import it.eng.spagobi.utilities.objects.Couple;
  */
 public abstract class AbstractStatementFilteringClause extends AbstractStatementClause {
 
-	public static transient Logger logger = Logger.getLogger(AbstractStatementFilteringClause.class);
+	public static Logger logger = Logger.getLogger(AbstractStatementFilteringClause.class);
 
 	protected String buildInLineCalculatedFieldClause(String operator, Operand leftOperand, boolean isPromptable, Operand rightOperand, Query query,
 			Map entityAliasesMaps, IConditionalOperator conditionalOperator) {
@@ -306,6 +308,17 @@ public abstract class AbstractStatementFilteringClause extends AbstractStatement
 					|| parentStatement.OPERAND_TYPE_PARENT_FIELD.equalsIgnoreCase(leadOperand.type)) {
 
 				IModelField datamartField = parentStatement.getDataSource().getModelStructure().getField(leadOperand.values[0]);
+
+				if (datamartField.isEncrypted()) {
+
+					HibernatePBEEncryptorRegistry registry = HibernatePBEEncryptorRegistry.getInstance();
+					String modelName = datamartField.getModelName();
+					String encryptorName = modelName + "_encryptor";
+
+					PBEStringEncryptor encryptor = registry.getPBEStringEncryptor(encryptorName);
+					operandValueToBound = encryptor.encrypt(operandValueToBound);
+				}
+
 				boundedValue = getValueBounded(operandValueToBound, datamartField.getType());
 			}
 

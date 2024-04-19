@@ -1,47 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+	
 	<modelVersion>4.0.0</modelVersion>
+	
 	<parent>
 		<groupId>it.eng.knowage</groupId>
 		<artifactId>knowage-ce-parent</artifactId>
-		<version>8.1.19-SNAPSHOT</version>
+		<version>8.1.21-SNAPSHOT</version>
 		<relativePath>../knowage-ce-parent/pom.xml</relativePath>
 	</parent>
+	
 	<artifactId>knowage-api</artifactId>
 	<packaging>war</packaging>
 	<name>knowage-api</name>
 	<description>API knowage microservice project</description>
+	
 	<properties>
 		<java.version>1.8</java.version>
-		<timestamp>${maven.build.timestamp}</timestamp>
 		<maven.build.timestamp.format>yyyy/MM/dd</maven.build.timestamp.format>
+		<timestamp>${maven.build.timestamp}</timestamp>
 	</properties>
-
-	<profiles>
-		<profile>
-			<id>development</id>
-			<activation>
-				<activeByDefault>true</activeByDefault>
-			</activation>
-			<properties>
-				<application.environment>development</application.environment>
-			</properties>
-		</profile>
-
-		<profile>
-			<id>production</id>
-			<properties>
-				<application.environment>production</application.environment>
-			</properties>
-		</profile>
-	</profiles>
-
+	
 	<dependencyManagement>
-
 		<dependencies>
-
 			<!-- 
 				Duplicated in:
 					- knowage-api
@@ -55,134 +36,104 @@
 				<type>pom</type>
 				<scope>import</scope>
 			</dependency>
-
 		</dependencies>
-
 	</dependencyManagement>
-
+	
 	<dependencies>
-
 		<dependency>
 			<groupId>it.eng.knowage</groupId>
 			<artifactId>knowage-spring-boot-api-common</artifactId>
 			<version>${project.version}</version>
 		</dependency>
-
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web-services</artifactId>
 		</dependency>
-
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-json</artifactId>
+			<exclusions>
+				<exclusion>
+					<artifactId>spring-boot-starter-logging</artifactId>
+					<groupId>org.springframework.boot</groupId>
+				</exclusion>
+			</exclusions>
 		</dependency>
-
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-log4j2</artifactId>
+		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-tomcat</artifactId>
 		</dependency>
-
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-validation</artifactId>
 		</dependency>
-
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-data-jpa</artifactId>
 		</dependency>
-
 		<dependency>
 			<groupId>org.jboss.resteasy</groupId>
 			<artifactId>resteasy-spring-boot-starter</artifactId>
 			<version>4.7.0.Final</version>
 		</dependency>
-
 		<dependency>
 			<groupId>javax.ws.rs</groupId>
 			<artifactId>javax.ws.rs-api</artifactId>
 			<version>2.1.1</version>
 		</dependency>
-
-		<!--
-		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>slf4j-log4j12</artifactId>
-		</dependency>
-		-->
-		
 		<dependency>
 			<groupId>org.apache.logging.log4j</groupId>
 			<artifactId>log4j-1.2-api</artifactId>
 		</dependency>
-
 		<dependency>
 			<groupId>org.apache.logging.log4j</groupId>
 			<artifactId>log4j-core</artifactId>
 		</dependency>
-
 		<dependency>
 			<groupId>org.apache.logging.log4j</groupId>
 			<artifactId>log4j-api</artifactId>
 		</dependency>
-
 		<dependency>
 			<groupId>org.apache.logging.log4j</groupId>
 			<artifactId>log4j-web</artifactId>
 		</dependency>
-
 		<!-- Provides support for Graylog in log4j2 -->
 		<dependency>
 			<groupId>biz.paluch.logging</groupId>
 			<artifactId>logstash-gelf</artifactId>
 		</dependency>
-
 		<dependency>
 			<groupId>javax</groupId>
 			<artifactId>javaee-api</artifactId>
 			<version>8.0</version>
 		</dependency>
-
 		<dependency>
 			<groupId>org.hibernate</groupId>
 			<artifactId>hibernate-entitymanager</artifactId>
 		</dependency>
-
 		<dependency>
 			<groupId>com.sun.xml.ws</groupId>
 			<artifactId>jaxws-rt</artifactId>
 		</dependency>
-
 		<dependency>
 			<groupId>commons-fileupload</groupId>
 			<artifactId>commons-fileupload</artifactId>
 			<version>1.4</version>
 		</dependency>
-		
 		<dependency>
 			<groupId>org.json</groupId>
 			<artifactId>json</artifactId>
 			<version>20210307</version>
 		</dependency>
-
 		<dependency>
 			<groupId>org.jboss.resteasy</groupId>
 			<artifactId>resteasy-multipart-provider</artifactId>
 			<version>4.6.0.Final</version>
 		</dependency>
-		
-		<!--
-			Fixes:
-				SLF4J: Failed to load class "org.slf4j.impl.StaticLoggerBinder".
-				SLF4J: Defaulting to no-operation (NOP) logger implementation
-				SLF4J: See http://www.slf4j.org/codes.html#StaticLoggerBinder for further details.
-		 -->
-<!-- 		<dependency> -->
-<!-- 			<groupId>org.slf4j</groupId> -->
-<!-- 			<artifactId>slf4j-log4j12</artifactId> -->
-<!-- 		</dependency> -->
-
 		<!-- 
 			   ____        _          __             _            _       
 			  / __ \      | |        / _|           | |          | |      
@@ -193,7 +144,6 @@
 			                  __/ |                                       
 			                 |___/                                        
 		 -->
-
 		<dependency>
 			<groupId>it.eng.knowage</groupId>
 			<artifactId>knowage-spring-boot-api-common</artifactId>
@@ -201,67 +151,58 @@
 			<type>test-jar</type>
 			<scope>test</scope>
 		</dependency>
-
 		<dependency>
 			<groupId>org.junit.jupiter</groupId>
 			<artifactId>junit-jupiter</artifactId>
 		</dependency>
-
 		<dependency>
 			<groupId>com.h2database</groupId>
 			<artifactId>h2</artifactId>
 			<scope>test</scope>
 		</dependency>
-
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
 			<exclusions>
 				<exclusion>
-					<groupId>com.vaadin.external.google</groupId>
 					<artifactId>android-json</artifactId>
+					<groupId>com.vaadin.external.google</groupId>
 				</exclusion>
 			</exclusions>
 		</dependency>
-
 		<dependency>
 			<groupId>org.mariadb.jdbc</groupId>
 			<artifactId>mariadb-java-client</artifactId>
 			<scope>test</scope>
 		</dependency>
-		
 		<dependency>
 			<groupId>org.postgresql</groupId>
 			<artifactId>postgresql</artifactId>
 			<scope>test</scope>
 		</dependency>
-
 		<dependency>
 			<groupId>com.github.h-thurow</groupId>
 			<artifactId>simple-jndi</artifactId>
 			<version>0.23.0</version>
 			<scope>test</scope>
 		</dependency>
-
 		<dependency>
 			<groupId>com.oracle.database.jdbc</groupId>
 			<artifactId>ojdbc8</artifactId>
 			<version>18.3.0.0</version>
 			<scope>test</scope>
 		</dependency>
-
 	</dependencies>
-
+	
 	<build>
-		<finalName>knowage-api</finalName>
 		<resources>
 			<resource>
-				<directory>src/main/resources</directory>
 				<filtering>true</filtering>
+				<directory>src/main/resources</directory>
 			</resource>
 		</resources>
-		
+		<finalName>knowage-api</finalName>
 		<plugins>
 			<plugin>
 				<artifactId>maven-war-plugin</artifactId>
@@ -271,13 +212,11 @@
 					<failOnMissingWebXml>false</failOnMissingWebXml>
 				</configuration>
 			</plugin>
-
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
 				<version>${spring.boot}</version>
 			</plugin>
-
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-jar-plugin</artifactId>
@@ -289,8 +228,25 @@
 					</execution>
 				</executions>
 			</plugin>
-
 		</plugins>
 	</build>
-
+	
+	<profiles>
+		<profile>
+			<id>development</id>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+			</activation>
+			<properties>
+				<application.environment>development</application.environment>
+			</properties>
+		</profile>
+		<profile>
+			<id>production</id>
+			<properties>
+				<application.environment>production</application.environment>
+			</properties>
+		</profile>
+	</profiles>
+	
 </project>

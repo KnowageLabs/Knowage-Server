@@ -54,10 +54,10 @@ def python_dataset_execute():
     # collect script result
     df = namespace[df_name]
 
-    # convert dataframe to knowage json format
-    knowage_json = utils.dataframe_to_datastore(df)
+    # convert dataframe to json format
+    response_json = df.to_json(orient="records", date_format="iso")
 
-    return str(knowage_json).replace('\'', "\""), 200
+    return response_json, 200
 
 def buildParameters(knowage_parameters):
     parameters = {}

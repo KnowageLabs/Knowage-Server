@@ -1,22 +1,21 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	
 	<modelVersion>4.0.0</modelVersion>
+	
 	<parent>
 		<groupId>it.eng.knowage</groupId>
 		<artifactId>knowage-ce-parent</artifactId>
-		<version>8.1.19-SNAPSHOT</version>
+		<version>8.1.21-SNAPSHOT</version>
 		<relativePath>../knowage-ce-parent/pom.xml</relativePath>
 	</parent>
-
+	
+	<artifactId>knowage-vue</artifactId>
 	<packaging>war</packaging>
 	<name>knowage-vue</name>
-	<artifactId>knowage-vue</artifactId>
-
+	
 	<dependencyManagement>
-
 		<dependencies>
-
 			<!-- 
 				Duplicated in:
 				  - knowage-api
@@ -31,48 +30,53 @@
 				<type>pom</type>
 				<scope>import</scope>
 			</dependency>
-
 		</dependencies>
-
 	</dependencyManagement>
 	
 	<dependencies>
-
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
+			<exclusions>
+				<exclusion>
+					<artifactId>spring-boot-starter-logging</artifactId>
+					<groupId>org.springframework.boot</groupId>
+				</exclusion>
+			</exclusions>
 		</dependency>
-
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-log4j2</artifactId>
+		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-tomcat</artifactId>
 		</dependency>
-
 		<dependency>
 			<groupId>org.apache.logging.log4j</groupId>
 			<artifactId>log4j-core</artifactId>
 		</dependency>
-
 		<dependency>
 			<groupId>org.apache.logging.log4j</groupId>
 			<artifactId>log4j-api</artifactId>
 		</dependency>
-
 		<dependency>
 			<groupId>org.apache.logging.log4j</groupId>
 			<artifactId>log4j-web</artifactId>
 		</dependency>
-
+		<dependency>
+			<groupId>org.apache.logging.log4j</groupId>
+			<artifactId>log4j-slf4j-impl</artifactId>
+		</dependency>
 		<!-- Provides support for Graylog in log4j2 -->
 		<dependency>
 			<groupId>biz.paluch.logging</groupId>
 			<artifactId>logstash-gelf</artifactId>
 		</dependency>
-
 	</dependencies>
-
+	
 	<build>
-
+		
 		<sourceDirectory>${project.basedir}/src-mvn/main/java</sourceDirectory>
 		<testSourceDirectory>${project.basedir}/src-mvn/test/java</testSourceDirectory>
 		<resources>
@@ -85,16 +89,14 @@
 				<directory>${project.basedir}/src-mvn/test/resources</directory>
 			</testResource>
 		</testResources>
-
+		
 		<finalName>knowage-vue</finalName>
 		<plugins>
-
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
 				<version>${spring.boot}</version>
 			</plugin>
-
 			<plugin>
 				<artifactId>maven-war-plugin</artifactId>
 				<configuration>
@@ -104,7 +106,6 @@
 					<warSourceDirectory>${project.basedir}/src-mvn/main/webapp</warSourceDirectory>
 				</configuration>
 			</plugin>
-
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>exec-maven-plugin</artifactId>
@@ -112,10 +113,10 @@
 				<executions>
 					<execution>
 						<id>npm-set-version</id>
+						<phase>process-resources</phase>
 						<goals>
 							<goal>exec</goal>
 						</goals>
-						<phase>process-resources</phase>
 						<configuration>
 							<executable>npm</executable>
 							<arguments>
@@ -127,10 +128,10 @@
 					</execution>
 					<execution>
 						<id>npm-install</id>
+						<phase>compile</phase>
 						<goals>
 							<goal>exec</goal>
 						</goals>
-						<phase>compile</phase>
 						<configuration>
 							<executable>npm</executable>
 							<arguments>
@@ -141,10 +142,10 @@
 					</execution>
 					<execution>
 						<id>npm-build</id>
+						<phase>compile</phase>
 						<goals>
 							<goal>exec</goal>
 						</goals>
-						<phase>compile</phase>
 						<configuration>
 							<executable>npm</executable>
 							<arguments>
@@ -155,7 +156,7 @@
 					</execution>
 				</executions>
 			</plugin>
-
 		</plugins>
 	</build>
+	
 </project>

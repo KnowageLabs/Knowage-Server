@@ -113,8 +113,11 @@ export default defineComponent({
         async selectedTenant() {
             this.v$.$reset()
             this.tenant = { ...this.selectedTenant } as iTenant
-            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `multitenant/image?TENANT=${this.tenant.TENANT_NAME}`).then((response: AxiosResponse<any>) => {
+            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `multitenant/${this.tenant.TENANT_NAME}/logo`).then((response: AxiosResponse<any>) => {
                 this.tenant.TENANT_IMAGE = response.data
+            })
+            await this.$http.get(process.env.VUE_APP_RESTFUL_SERVICES_PATH + `multitenant/${this.tenant.TENANT_NAME}/logo-wide`).then((response: AxiosResponse<any>) => {
+                this.tenant.TENANT_IMAGE_WIDE = response.data
             })
         },
         listOfThemes() {

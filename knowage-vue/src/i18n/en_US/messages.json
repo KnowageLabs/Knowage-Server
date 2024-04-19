@@ -466,6 +466,8 @@
             "crossNavigationNoTargetError": "No cross navigation targets available",
             "currentRank": "Curent Rank is...",
             "customMetadata": "Custom Metadata",
+            "deleteSavedParameter":"Delete saved parameter",
+            "deleteSavedParameterConfirm":"Are you sure to delete the saved parameter?",
             "destinationSelectionTitle": "Selection of the destination document",
             "editCockpit": "Edit cockpit document",
             "editModeConfirm": "You are leaving edit mode. Continue?",
@@ -721,7 +723,7 @@
     },
     "infoDialog": {
         "aboutKnowage": "About Knowage",
-        "copyright": "Â© {year} Engineering Ingegneria Informatica S.p.A.",
+        "copyright": "© {year} Engineering Ingegneria Informatica S.p.A.",
         "sourceCode": "Source code available on "
     },
     "knScheduler": {
@@ -935,14 +937,19 @@
         }
     },
     "language": {
+        "bg_BG":"Bulgarian",
         "de_DE": "German",
-        "en_GB": "english (GB)",
-        "en_US": "english (US)",
-        "es_ES": "espanol",
-        "fr_FR": "french",
-        "it_IT": "italian",
+        "en_GB": "English (GB)",
+        "en_US": "English (US)",
+        "es_ES": "Espanol",
+        "fr_FR": "French",
+        "it_IT": "Italian",
+        "ja_JP":"Japanese",
+        "ko_KR":"Korean",
         "languageSelection": "Language Selection",
-        "pt_BR": "portuguese",
+        "pt_BR": "Portuguese",
+        "ru_RU":"Russian",
+        "tr_TR":"Turkish",
         "zh_CN_#Hans": "Chinese (simplified)"
     },
     "licenseDialog": {
@@ -1627,6 +1634,7 @@
             "profileAttributes": "Profile Attributes",
             "profileDependencyText": "The lov needs some profile attributes.Your personal profile doesn't contain all the necessary attributes.To proceed with the test assign a value to the missing profile attributes.",
             "queryDefinition": "Query definition",
+            "queryColumnsNameNotAllowed": "Column names including null, ' ' , '/' and '.'  are not allowed. Use aliases.",
             "queryWizard": "WIZARD QUERY",
             "sameLabelError": "LOV with same label already exists",
             "script": "Script",
@@ -1825,6 +1833,7 @@
                 "datasetPersistence": "Dataset Persistence",
                 "doMassiveExport": "Do massive export",
                 "editPythonScripts": "Edit Python/R Scripts",
+                "enableDataPreparation": "Enable Data Preparation",
                 "federatedDataset": "Federated Dataset",
                 "functionsCatalogUsage": "Functions Catalog Usage",
                 "hierarchiesManagement": "Manage Hierarchies",
@@ -1845,6 +1854,7 @@
                 "saveOlapView": "Save OLAP View",
                 "saveRemember": "Save to remember",
                 "seeFavourites": "See favourites",
+                "seeHelpOnline": "See Help Online",
                 "seeSubobj": "See subobject",
                 "seeSubscriptions": "See subscriptions",
                 "seeToDoList": "See ToDo list",

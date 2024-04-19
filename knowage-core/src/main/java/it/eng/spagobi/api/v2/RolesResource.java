@@ -66,7 +66,8 @@ public class RolesResource extends AbstractSpagoBIResource {
 	private final String charset = "; charset=UTF-8";
 
 	@GET
-	@UserConstraint(functionalities = { CommunityFunctionalityConstants.PROFILE_MANAGEMENT, CommunityFunctionalityConstants.FINAL_USERS_MANAGEMENT, CommunityFunctionalityConstants.READ_ROLES })
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.PROFILE_MANAGEMENT, CommunityFunctionalityConstants.FINAL_USERS_MANAGEMENT,
+			CommunityFunctionalityConstants.READ_ROLES })
 	@Path("/")
 	@Produces(MediaType.APPLICATION_JSON + charset)
 	public Response getRoles() {
@@ -81,7 +82,8 @@ public class RolesResource extends AbstractSpagoBIResource {
 			fullList = rolesDao.loadAllRoles();
 
 			IEngUserProfile profile = this.getUserProfile();
-			if (profile.isAbleToExecuteAction(CommunityFunctionalityConstants.PROFILE_MANAGEMENT) || profile.isAbleToExecuteAction(CommunityFunctionalityConstants.READ_ROLES)) {
+			if (profile.isAbleToExecuteAction(CommunityFunctionalityConstants.PROFILE_MANAGEMENT)
+					|| profile.isAbleToExecuteAction(CommunityFunctionalityConstants.READ_ROLES)) {
 				filteredList = fullList;
 			} else {
 				// user with FINAL_USERS_MANAGEMENT (users with neither
@@ -183,10 +185,7 @@ public class RolesResource extends AbstractSpagoBIResource {
 			Collection<String> roles = up.getRoles();
 
 			ICategoryDAO categoryDao = DAOFactory.getCategoryDAO();
-			List<Domain> array = categoryDao.getCategoriesForDataset()
-				.stream()
-				.map(Domain::fromCategory)
-				.collect(toList());
+			List<Domain> array = categoryDao.getCategoriesForDataset().stream().map(Domain::fromCategory).collect(toList());
 
 			if (UserUtilities.isAdministrator(up)) {
 				resp = array;
@@ -259,24 +258,15 @@ public class RolesResource extends AbstractSpagoBIResource {
 			rolesDao.modifyRole(role);
 
 			// update Business Model categories
-			listAll = categoryDao.getCategoriesForBusinessModel()
-				.stream()
-				.map(Domain::fromCategory)
-				.collect(toList());
+			listAll = categoryDao.getCategoriesForBusinessModel().stream().map(Domain::fromCategory).collect(toList());
 			for (Domain domain : listAll) {
 				rolesDao.removeRoleMetaModelCategory(role.getId(), domain.getValueId());
 			}
-			listAll = categoryDao.getCategoriesForKpi()
-				.stream()
-				.map(Domain::fromCategory)
-				.collect(toList());
+			listAll = categoryDao.getCategoriesForKpi().stream().map(Domain::fromCategory).collect(toList());
 			for (Domain domain : listAll) {
 				rolesDao.removeRoleMetaModelCategory(role.getId(), domain.getValueId());
 			}
-			listAll = categoryDao.getCategoriesForDataset()
-				.stream()
-				.map(Domain::fromCategory)
-				.collect(toList());
+			listAll = categoryDao.getCategoriesForDataset().stream().map(Domain::fromCategory).collect(toList());
 			for (Domain domain : listAll) {
 				rolesDao.removeRoleMetaModelCategory(role.getId(), domain.getValueId());
 			}
@@ -286,10 +276,7 @@ public class RolesResource extends AbstractSpagoBIResource {
 				}
 			}
 			// update Data Set categories
-			listAll = categoryDao.getCategoriesForDataset()
-					.stream()
-					.map(Domain::fromCategory)
-					.collect(toList());
+			listAll = categoryDao.getCategoriesForDataset().stream().map(Domain::fromCategory).collect(toList());
 			for (Domain domain : listAll) {
 				rolesDao.removeRoleDataSetCategory(role.getId(), domain.getValueId());
 			}
@@ -380,6 +367,10 @@ public class RolesResource extends AbstractSpagoBIResource {
 		role.setAbleToEditAllKpiComm(bo.isAbleToEditAllKpiComm());
 		role.setAbleToEditMyKpiComm(bo.isAbleToEditMyKpiComm());
 		role.setAbleToDeleteKpiComm(bo.isAbleToDeleteKpiComm());
+		role.setAbleToSeeHelpOnline(bo.isAbleToSeeHelpOnline());
+		role.setAbleToUseDataPreparation(bo.isAbleToUseDataPreparation());
+		role.setAbleToUseDossier(bo.isAbleToUseDossier());
+		role.setAbleToUseDashboardThemeManagement(bo.isAbleToUseDashboardThemeManagement());
 
 		return role;
 	}

@@ -239,11 +239,10 @@
 			command="roleSelection" conditionedView="roleSelection"/>
 		<ITEM label="menu.info" iconCls="fas fa-info-circle"
 			command="info" />
-		<ITEM label="menu.login"
-			to="${SPAGOBI_CONTEXT}/servlet/AdapterHTTP?ACTION_NAME=LOGOUT_ACTION&amp;LIGHT_NAVIGATOR_DISABLED=TRUE"
+		<ITEM label="menu.login" command="logout"
 			iconCls="fas fa-sign-in-alt" condition="public_user" />
 		<ITEM label="menu.logout" command="logout"
-			condition="silent_login" iconCls="fas fa-sign-out-alt" />
+			condition="logout_enabled" iconCls="fas fa-sign-out-alt" />
 	</COMMON_USER_FUNCTIONALITIES>
 
 

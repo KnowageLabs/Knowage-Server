@@ -117,6 +117,10 @@
 		<AUTHORIZATION productType="KnowageSI" authorizationName="SEE_NEWS" organization="DEFAULT_TENANT" />
 		<AUTHORIZATION productType="KnowageSI" authorizationName="EDIT_PYTHON_SCRIPTS" organization="DEFAULT_TENANT" />
 		<AUTHORIZATION productType="KnowageSI" authorizationName="CREATE_CUSTOM_CHART" organization="DEFAULT_TENANT" />
+		<AUTHORIZATION productType="KnowageSI" authorizationName="SEE_HELP_ONLINE" organization="DEFAULT_TENANT" />
+		<AUTHORIZATION productType="KnowageSI" authorizationName="ENABLE_DOSSIER" organization="DEFAULT_TENANT" />
+		<AUTHORIZATION productType="KnowageSI" authorizationName="ENABLE_DATA_PREPARATION" organization="DEFAULT_TENANT" />
+		<AUTHORIZATION productType="KnowageSI" authorizationName="ENABLE_DASHBOARD_THEME_MANAGEMENT" organization="DEFAULT_TENANT" />
 
 		
 		<!-- Authorizations for KnowageER -->

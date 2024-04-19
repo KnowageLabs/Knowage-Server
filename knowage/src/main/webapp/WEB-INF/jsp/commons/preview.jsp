@@ -65,6 +65,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     	<script src="<%= KnowageSystemConfiguration.getKnowageContext() %>/polyfills/url-polyfill/url-polyfill.min.js"></script>
     	<style>
     		html, body {height: 100%;}
+			.ag-center-cols-viewport{
+				overflow-x: auto !important;
+			}
     	</style>
     </head>
     
@@ -126,6 +129,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		  	//Defining ag-grid options
 		  	var gridOptions = {
 			    enableSorting: true,
+				alwaysShowHorizontalScroll:true,
 			    enableFilter: false,
 			    pagination: options && typeof options.pagination != 'undefined' ? options.pagination : true,
 			    suppressDragLeaveHidesColumns : true,
@@ -135,6 +139,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	            onSortChanged: changeSorting,
 	            noRowsOverlayComponent: CustomErrorOverlay,
 	            defaultColDef: {
+					suppressMovable: true,
+					width: 150,
 	                filter: customFilter
 	            },
 	        };

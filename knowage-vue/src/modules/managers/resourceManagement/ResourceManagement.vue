@@ -279,6 +279,10 @@
 </script>
 
 <style lang="scss">
+    #folders-tree{
+        flex: 1 0 0;
+        overflow: auto;
+    }
     .knTreeLabel {
         border: none;
     }
