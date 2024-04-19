@@ -266,6 +266,9 @@ export default defineComponent({
             }
 
             return parameterVisible
+        },
+        isAndroidDevice() {
+            return /Android/i.test(navigator.userAgent)
         }
     },
     async created() {
@@ -709,7 +712,7 @@ export default defineComponent({
                     })
 
                     if (el.type === 'DATE' && !el.selectionType && el.valueSelection === 'man_in' && el.showOnPanel === 'true' && el.visible) {
-                        el.parameterValue[0].value = getValidDate('' + el.parameterValue[0].value)
+                        el.parameterValue[0].value = getValidDate('' + el.parameterValue[0].value, this.dateFormat)
                     }
                 }
                 if (el.data) {
