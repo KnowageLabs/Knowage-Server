@@ -267,7 +267,7 @@ export default defineComponent({
 
             return parameterVisible
         },
-        isAndroidDevice(){
+        isAndroidDevice() {
             return /Android/i.test(navigator.userAgent)
         }
     },
@@ -383,26 +383,26 @@ export default defineComponent({
                 })
             }
 
-            if (this.user.functionalities.includes("EnableToRate") || this.user.functionalities.includes("HelpOnLine")) {
-              let tempObj = {
-                label: this.$t("common.info.info"),
-                items: [] as any,
-              };
-              if (this.user.functionalities.includes("EnableToRate")) {
-                tempObj.items.push({
-                  icon: "pi pi-star",
-                  label: this.$t("common.rank"),
-                  command: () => this.openRank(),
-                });
-              }
-              if (this.user.functionalities.includes("HelpOnLine")) {
-                tempObj.items.push({
-                  icon: "pi pi-book",
-                  label: this.$t("common.onlineHelp"),
-                  command: () => this.openHelp(),
-                });
-              }
-              this.toolbarMenuItems.push(tempObj);
+            if (this.user.functionalities.includes('EnableToRate') || this.user.functionalities.includes('HelpOnLine')) {
+                let tempObj = {
+                    label: this.$t('common.info.info'),
+                    items: [] as any
+                }
+                if (this.user.functionalities.includes('EnableToRate')) {
+                    tempObj.items.push({
+                        icon: 'pi pi-star',
+                        label: this.$t('common.rank'),
+                        command: () => this.openRank()
+                    })
+                }
+                if (this.user.functionalities.includes('HelpOnLine')) {
+                    tempObj.items.push({
+                        icon: 'pi pi-book',
+                        label: this.$t('common.onlineHelp'),
+                        command: () => this.openHelp()
+                    })
+                }
+                this.toolbarMenuItems.push(tempObj)
             }
 
             this.toolbarMenuItems.push({
@@ -712,7 +712,7 @@ export default defineComponent({
                     })
 
                     if (el.type === 'DATE' && !el.selectionType && el.valueSelection === 'man_in' && el.showOnPanel === 'true' && el.visible) {
-                        el.parameterValue[0].value = getValidDate('' + el.parameterValue[0].value)
+                        el.parameterValue[0].value = getValidDate('' + el.parameterValue[0].value, this.dateFormat)
                     }
                 }
                 if (el.data) {
@@ -833,7 +833,7 @@ export default defineComponent({
             postForm.action = process.env.VUE_APP_HOST_URL + postObject.url
             postForm.method = 'post'
             const iframeName = crossNavigationPopupMode ? 'documentFramePopup' : 'documentFrame'
-            if(this.isAndroidDevice && postObject.params.outputType?.toLowerCase() === 'pdf') postForm.target = "_blank"
+            if (this.isAndroidDevice && postObject.params.outputType?.toLowerCase() === 'pdf') postForm.target = '_blank'
             else postForm.target = tempIndex !== -1 ? iframeName + tempIndex : documentLabel
             postForm.acceptCharset = 'UTF-8'
             document.body.appendChild(postForm)
