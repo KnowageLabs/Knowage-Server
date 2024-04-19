@@ -66,7 +66,7 @@
          </md-card-content>
          <md-subheader ng-if="ngModel.cross.enable && outputParametersList.length > 0">{{::translate.load("sbi.cockpit.cross.outputParameters")}}</md-subheader>
          <md-card-content ng-if="ngModel.cross.enable && outputParametersList.length > 0">
-            <div layout="row" class="filterRow" ng-show="ngModel.cross.outputParameter != outputParameter.name" ng-repeat="outputParameter in outputParametersList">
+            <div layout="row" class="filterRow" ng-show="ngModel.cross.outputParameter != outputParameter.name" ng-repeat="outputParameter in outputParametersList" style="align-items: center;">
                <!-- enable -->
                <md-input-container class="md-block" flex=20>
                   <md-checkbox ng-model="ngModel.cross.outputParametersList[outputParameter.name].enabled">
@@ -88,11 +88,12 @@
                <md-input-container class="md-block" flex=25 ng-if="ngModel.cross.outputParametersList[outputParameter.name].type == 'static' && ngModel.cross.outputParametersList[outputParameter.name].enabled==true
                   && (outputParameter.dataType == 'number' || outputParameter.dataType == 'text' || outputParameter.dataType == 'date')">
                   <label>{{::translate.load("sbi.cockpit.cross.outputParameter.value")}}</label>
-                  <md-chips class="dense" ng-model="ngModel.cross.outputParametersList[outputParameter.name].value" ng-init="ngModel.cross.outputParametersList[outputParameter.name].value = ngModel.cross.outputParametersList[outputParameter.name].value!='' ? [ngModel.cross.outputParametersList[outputParameter.name].value] : []">
+                  <md-chips class="dense" ng-model="ngModel.cross.outputParametersList[outputParameter.name].value">
                      <md-chip-template>
                          {{$chip}}
                      </md-chip-template>
                   </md-chips> 
+                  <div class="hint">Press Enter to add a value</div>
 
                </md-input-container>
                <input ng-model="ngModel.cross.outputParametersList[outputParameter.name].dateValue" type="hidden">
