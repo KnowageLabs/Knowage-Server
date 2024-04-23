@@ -3,6 +3,7 @@ process.env.VUE_APP_VERSION = process.env.npm_package_version
 module.exports = {
     publicPath: process.env.VUE_APP_PUBLIC_PATH,
     outputDir: './target/knowage-vue',
+
     devServer: {
         https: process.env.VUE_APP_HOST_HTTPS === 'true',
         proxy: {
@@ -61,18 +62,21 @@ module.exports = {
             }
         }
     },
+
     configureWebpack: {
         devtool: 'source-map',
         devServer: {
             headers: { 'Access-Control-Allow-Origin': '*' }
         }
     },
+
     chainWebpack: (config) => {
         config.plugin('html').tap((args) => {
             args[0].title = 'Knowage'
             return args
         })
     },
+
     css: {
         loaderOptions: {
             scss: {
@@ -80,6 +84,7 @@ module.exports = {
             }
         }
     },
+
     pwa: {
         manifestOptions: {
             id: '/knowage-vue/',
@@ -101,5 +106,16 @@ module.exports = {
             swSrc: 'src/knowage-sw.js'
         },
         manifestCrossorigin: 'use-credentials'
-    }
+    },
+
+    pluginOptions: {
+      quasar: {
+        importStrategy: 'kebab',
+        rtlSupport: false
+      }
+    },
+
+    transpileDependencies: [
+      'quasar'
+    ]
 }

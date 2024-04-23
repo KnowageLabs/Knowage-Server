@@ -161,8 +161,16 @@ export default defineComponent({
 })
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 #documents-found-hint {
     flex: 0.5;
+}
+
+#documents-datatable {
+    :deep(.p-datatable-wrapper) {
+        flex: 1 0 0;
+        height: unset;
+        overflow: auto;
+    }
 }
 </style>

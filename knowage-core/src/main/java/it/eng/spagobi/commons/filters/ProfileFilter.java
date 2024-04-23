@@ -81,16 +81,14 @@ public class ProfileFilter implements Filter {
 	}
 
 	@Override
-	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
-			throws IOException, ServletException {
+	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
 		try {
 			if (request instanceof HttpServletRequest) {
 				HttpServletRequest httpRequest = (HttpServletRequest) request;
 				HttpServletResponse httpResponse = (HttpServletResponse) response;
 				HttpSession session = httpRequest.getSession();
 
-				RequestContainer requestContainer = (RequestContainer) session
-						.getAttribute(Constants.REQUEST_CONTAINER);
+				RequestContainer requestContainer = (RequestContainer) session.getAttribute(Constants.REQUEST_CONTAINER);
 				if (requestContainer == null) {
 					// RequestContainer does not exists yet (maybe it is the
 					// first call to Spago)
@@ -101,8 +99,7 @@ public class ProfileFilter implements Filter {
 					requestContainer.setSessionContainer(sessionContainer);
 					session.setAttribute(Constants.REQUEST_CONTAINER, requestContainer);
 				}
-				ResponseContainer responseContainer = (ResponseContainer) session
-						.getAttribute(Constants.RESPONSE_CONTAINER);
+				ResponseContainer responseContainer = (ResponseContainer) session.getAttribute(Constants.RESPONSE_CONTAINER);
 				if (responseContainer == null) {
 					responseContainer = new ResponseContainer();
 					SourceBean serviceResponse = new SourceBean(Constants.SERVICE_RESPONSE);
@@ -111,13 +108,15 @@ public class ProfileFilter implements Filter {
 				}
 				SessionContainer sessionContainer = requestContainer.getSessionContainer();
 				SessionContainer permanentSession = sessionContainer.getPermanentContainer();
-				IEngUserProfile profile = (IEngUserProfile) permanentSession
-						.getAttribute(IEngUserProfile.ENG_USER_PROFILE);
+				IEngUserProfile profile = (IEngUserProfile) session.getAttribute(IEngUserProfile.ENG_USER_PROFILE);
 
-				UserProfile publicProfile = PublicProfile.evaluatePublicCase(httpRequest, session, permanentSession);
+				if (profile == null) {
+					// only in case current session has no profile object, evaluate public user scenario
+					UserProfile publicProfile = PublicProfile.evaluatePublicCase(httpRequest, session, permanentSession);
 
-				if (publicProfile != null)
-					profile = publicProfile;
+					if (publicProfile != null)
+						profile = publicProfile;
+				}
 
 				if (profile == null) {
 					// in case the profile does not exist, creates a new one
@@ -131,8 +130,7 @@ public class ProfileFilter implements Filter {
 							userId = getUserIdInWebModeWithoutSSO(httpRequest);
 						} catch (Exception e) {
 							LOGGER.error("Error authenticating user", e);
-							httpRequest.getRequestDispatcher("/WEB-INF/jsp/commons/silentLoginFailed.jsp")
-									.forward(request, response);
+							httpRequest.getRequestDispatcher("/WEB-INF/jsp/commons/silentLoginFailed.jsp").forward(request, response);
 							return;
 						}
 					} else {
@@ -169,10 +167,8 @@ public class ProfileFilter implements Filter {
 						// PM-int todo chiamata al servizio JMS LoginEventBuilder eventBuilder = new LoginEventBuilder(); UserProfile up = (UserProfile)
 						// profile;
 						LoginEventBuilder eventBuilder = new LoginEventBuilder();
-						eventBuilder.appendSession("knowage", up.getSourceIpAddress(), up.getSessionId(),
-								up.getSessionStart(), up.getUserId().toString());
-						eventBuilder.appendUserAgent(up.getOs(), up.getSourceIpAddress(), up.getSourceSocketEnabled(),
-								up.getUserAgent());
+						eventBuilder.appendSession("knowage", up.getSourceIpAddress(), up.getSessionId(), up.getSessionStart(), up.getUserId().toString());
+						eventBuilder.appendUserAgent(up.getOs(), up.getSourceIpAddress(), up.getSourceSocketEnabled(), up.getUserAgent());
 						PrivacyManagerClient.getInstance().sendMessage(eventBuilder.getDTO());
 					}
 
@@ -181,9 +177,9 @@ public class ProfileFilter implements Filter {
 					// and overwrites the existing
 					/*
 					 * if (!((UserProfile) profile).getUserUniqueIdentifier().toString ().equals(userId)) {LOGGER.debug(
-					 * "Different user profile found in session, creating a new one and replacing in session...." ); profile = GeneralUtilities.createNewUserProfile(userId);
-					 * permanentSession .setAttribute(IEngUserProfile.ENG_USER_PROFILE, profile); } else { LOGGER.debug("User profile object for user [" + userId +
-					 * "] already existing in session, ok"); }
+					 * "Different user profile found in session, creating a new one and replacing in session...." ); profile =
+					 * GeneralUtilities.createNewUserProfile(userId); permanentSession .setAttribute(IEngUserProfile.ENG_USER_PROFILE, profile); } else {
+					 * LOGGER.debug("User profile object for user [" + userId + "] already existing in session, ok"); }
 					 */
 				}
 
@@ -201,8 +197,7 @@ public class ProfileFilter implements Filter {
 					{
 						String contextName = ChannelUtilities.getSpagoBIContextName(httpRequest);
 						String targetService = httpRequest.getRequestURI() + "?" + httpRequest.getQueryString();
-						String redirectURL = contextName
-								+ "/servlet/AdapterHTTP?PAGE=LoginPage&NEW_SESSION=TRUE&targetService="
+						String redirectURL = contextName + "/servlet/AdapterHTTP?PAGE=LoginPage&NEW_SESSION=TRUE&targetService="
 								+ URLEncoder.encode(targetService, "UTF-8");
 						httpResponse.sendRedirect(redirectURL);
 						return;
@@ -225,8 +220,7 @@ public class ProfileFilter implements Filter {
 
 	private boolean requestIsForHomePage(HttpServletRequest request) {
 		// returns true in case request has PAGE=LoginPage parameter, false otherwise
-		return request.getParameter(Constants.PAGE) != null
-				&& request.getParameter(Constants.PAGE).equalsIgnoreCase(LoginModule.PAGE_NAME);
+		return request.getParameter(Constants.PAGE) != null && request.getParameter(Constants.PAGE).equalsIgnoreCase(LoginModule.PAGE_NAME);
 	}
 
 	private boolean requestIsForLoginByToken(HttpServletRequest request) {
@@ -237,8 +231,7 @@ public class ProfileFilter implements Filter {
 
 	private boolean requestIsForLoginByJavaScriptSDK(HttpServletRequest request) {
 		// returns true in case request has ACTION_NAME=LOGIN_ACTION_WEB parameter, false otherwise
-		return request.getParameter(Constants.ACTION_NAME) != null
-				&& request.getParameter(Constants.ACTION_NAME).equalsIgnoreCase(LoginActionWeb.SERVICE_NAME);
+		return request.getParameter(Constants.ACTION_NAME) != null && request.getParameter(Constants.ACTION_NAME).equalsIgnoreCase(LoginActionWeb.SERVICE_NAME);
 	}
 
 	private boolean requestIsForSessionExpired(HttpServletRequest request) {
@@ -246,8 +239,7 @@ public class ProfileFilter implements Filter {
 		return request.getRequestURI().contains(GeneralUtilities.getSessionExpiredURL());
 	}
 
-	private void storeProfileInSession(UserProfile userProfile, SessionContainer permanentContainer,
-			HttpSession httpSession, HttpServletRequest httpRequest) {
+	private void storeProfileInSession(UserProfile userProfile, SessionContainer permanentContainer, HttpSession httpSession, HttpServletRequest httpRequest) {
 		LOGGER.debug("IN");
 
 		// PM-int
@@ -291,8 +283,7 @@ public class ProfileFilter implements Filter {
 		LOGGER.debug("IN: userId = " + credentials.getUserName());
 		try {
 			ISecurityServiceSupplier supplier = SecurityServiceSupplierFactory.createISecurityServiceSupplier();
-			SpagoBIUserProfile profile = supplier.checkAuthentication(credentials.getUserName(),
-					credentials.getPassword());
+			SpagoBIUserProfile profile = supplier.checkAuthentication(credentials.getUserName(), credentials.getPassword());
 			if (profile == null) {
 				LOGGER.error("Authentication failed for user " + credentials.getUserName());
 				throw new SecurityException("Authentication failed");
@@ -310,12 +301,10 @@ public class ProfileFilter implements Filter {
 	private UsernamePasswordCredentials findUserCredentials(HttpServletRequest httpRequest) {
 		UsernamePasswordCredentials toReturn = null;
 		String userId = httpRequest.getParameter(SsoServiceInterface.USER_NAME_REQUEST_PARAMETER.toLowerCase());
-		LOGGER.debug("Request parameter " + SsoServiceInterface.USER_NAME_REQUEST_PARAMETER.toLowerCase() + " is ["
-				+ userId + "]");
+		LOGGER.debug("Request parameter " + SsoServiceInterface.USER_NAME_REQUEST_PARAMETER.toLowerCase() + " is [" + userId + "]");
 		if (userId == null) {
 			userId = httpRequest.getParameter(SsoServiceInterface.USER_NAME_REQUEST_PARAMETER.toUpperCase());
-			LOGGER.debug("Request parameter " + SsoServiceInterface.USER_NAME_REQUEST_PARAMETER.toUpperCase() + " is ["
-					+ userId + "]");
+			LOGGER.debug("Request parameter " + SsoServiceInterface.USER_NAME_REQUEST_PARAMETER.toUpperCase() + " is [" + userId + "]");
 		}
 		String password = httpRequest.getParameter(SsoServiceInterface.PASSWORD_REQUEST_PARAMETER.toLowerCase());
 		if (password == null) {
@@ -352,8 +341,8 @@ public class ProfileFilter implements Filter {
 	}
 
 	/**
-	 * Finds the user identifier from http request or from SSO system (by the http request in input). Use the SsoServiceInterface for read the userId in all cases,
-	 * if SSO is disabled use FakeSsoService. Check spagobi_sso.xml
+	 * Finds the user identifier from http request or from SSO system (by the http request in input). Use the SsoServiceInterface for read the userId in all
+	 * cases, if SSO is disabled use FakeSsoService. Check spagobi_sso.xml
 	 *
 	 * @param httpRequest The http request
 	 *

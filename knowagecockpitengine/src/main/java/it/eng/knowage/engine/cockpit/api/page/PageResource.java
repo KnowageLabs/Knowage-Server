@@ -18,6 +18,7 @@
 package it.eng.knowage.engine.cockpit.api.page;
 
 import static it.eng.spagobi.commons.constants.ConfigurationConstants.SPAGOBI_SPAGOBI_SERVICE_JNDI;
+import static java.nio.charset.StandardCharsets.UTF_8;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -25,11 +26,16 @@ import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URLEncoder;
+import java.util.Arrays;
+import java.util.Base64;
+import java.util.Base64.Encoder;
+import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.zip.ZipInputStream;
 
@@ -44,14 +50,12 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import org.apache.axis.encoding.Base64;
 import org.apache.log4j.Logger;
 import org.jboss.resteasy.plugins.providers.html.View;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import edu.emory.mathcs.backport.java.util.Arrays;
 import it.eng.knowage.engine.cockpit.CockpitEngine;
 import it.eng.knowage.engine.cockpit.CockpitEngineInstance;
 import it.eng.knowage.engine.cockpit.api.AbstractCockpitEngineResource;
@@ -69,6 +73,7 @@ import it.eng.spagobi.commons.utilities.ObjectsAccessVerifier;
 import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
 import it.eng.spagobi.engines.config.bo.Engine;
 import it.eng.spagobi.utilities.engines.EngineConstants;
+import it.eng.spagobi.utilities.engines.EngineStartServletIOManager;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineServiceExceptionHandler;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
@@ -80,39 +85,36 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 @Path("/1.0/pages")
 public class PageResource extends AbstractCockpitEngineResource {
 
+	private static final Logger LOGGER = Logger.getLogger(PageResource.class);
 	private static final String OUTPUT_TYPE = "outputType";
+	private static final String PDF_FRONT_PAGE = "pdfFrontPage";
 	private static final String PDF_PAGE_ORIENTATION = "pdfPageOrientation";
+	private static final String PDF_BACK_PAGE = "pdfBackPage";
 	private static final String PDF_ZOOM = "pdfZoom";
 	private static final String PDF_WIDTH = "pdfWidth";
 	private static final String PDF_HEIGHT = "pdfHeight";
 	private static final String PDF_DEVICE_SCALE_FACTOR = "pdfDeviceScaleFactor";
 	private static final String PDF_WAIT_TIME = "pdfWaitTime";
 	private static final String IS_MULTI_SHEET = "isMultiSheet";
-	static private final List<String> PDF_PARAMETERS = Arrays
-			.asList(new String[] { OUTPUT_TYPE, PDF_WIDTH, PDF_HEIGHT, PDF_WAIT_TIME, PDF_ZOOM, PDF_PAGE_ORIENTATION });
-	static private final List<String> JPG_PARAMETERS = Arrays.asList(new String[] { OUTPUT_TYPE });
+	private static final List<String> PDF_PARAMETERS = Arrays.asList(OUTPUT_TYPE, PDF_WIDTH, PDF_HEIGHT, PDF_WAIT_TIME,
+			PDF_ZOOM, PDF_PAGE_ORIENTATION);
 
-	static private Map<String, JSONObject> pages;
-	static private Map<String, String> urls;
+	private static Map<String, JSONObject> pages;
 
-	static private Logger logger = Logger.getLogger(PageResource.class);
+	private final Encoder base64Encoder = Base64.getEncoder().withoutPadding();
 
 	static {
 		pages = new HashMap<>();
-		urls = new HashMap<>();
 
 		try {
 			pages.put("edit",
 					new JSONObject("{name: 'execute', description: 'the cockpit edit page', parameters: []}"));
-			urls.put("edit", "/WEB-INF/jsp/ngCockpit.jsp");
 			pages.put("execute", new JSONObject(
 					"{name: 'execute', description: 'the cockpit execution page', parameters: ['template']}"));
-			urls.put("execute", "/WEB-INF/jsp/ngCockpit.jsp");
 			pages.put("test",
 					new JSONObject("{name: 'test', description: 'the cockpit test page', parameters: ['template']}"));
-			urls.put("execute", "/WEB-INF/jsp/test4.jsp");
 		} catch (JSONException t) {
-			logger.error(t);
+			LOGGER.error(t);
 		}
 	}
 
@@ -132,7 +134,7 @@ public class PageResource extends AbstractCockpitEngineResource {
 		} catch (Exception e) {
 			throw SpagoBIEngineServiceExceptionHandler.getInstance().getWrappedException("", getEngineInstance(), e);
 		} finally {
-			logger.debug("OUT");
+			LOGGER.debug("OUT");
 		}
 	}
 
@@ -165,14 +167,14 @@ public class PageResource extends AbstractCockpitEngineResource {
 	@GET
 	@Path("/{pagename}/spreadsheet")
 	public Response openPageGetSpreadsheet(@PathParam("pagename") String pageName)
-			throws EMFUserError, IOException, InterruptedException {
+			throws IOException, InterruptedException {
 		return openPageSpreadsheetInternal(pageName);
 	}
 
 	@POST
 	@Path("/{pagename}/spreadsheet")
 	public Response openPagePostSpreadsheet(@PathParam("pagename") String pageName)
-			throws EMFUserError, IOException, InterruptedException {
+			throws IOException, InterruptedException {
 		return openPageSpreadsheetInternal(pageName);
 	}
 
@@ -196,14 +198,23 @@ public class PageResource extends AbstractCockpitEngineResource {
 	private Object openPageInternal(String pageName) {
 		CockpitEngineInstance engineInstance;
 		String dispatchUrl = null;
+		EngineStartServletIOManager ioManager = getIOManager();
+		Map env = ioManager.getEnv();
 
-		if (logger.isDebugEnabled()) {
+		if (LOGGER.isDebugEnabled()) {
+			LOGGER.debug("Opening page " + pageName);
 			Enumeration<String> parameterNames = request.getParameterNames();
-			while (parameterNames.hasMoreElements()) {
-				String name = parameterNames.nextElement();
+			List<String> parameterNamesAsList = Collections.list(parameterNames);
+			Collections.sort(parameterNamesAsList);
+
+			LOGGER.debug("Parameters are: ");
+			parameterNamesAsList.forEach(name -> {
 				String[] parameterValues = request.getParameterValues(name);
-				logger.debug(name + " = " + Arrays.asList(parameterValues));
-			}
+				LOGGER.debug(name + " = " + Arrays.asList(parameterValues));
+			});
+
+			LOGGER.warn("Environment vars are:");
+			env.forEach((key, value) -> LOGGER.warn(key + " - " + value));
 		}
 
 		try {
@@ -216,7 +227,7 @@ public class PageResource extends AbstractCockpitEngineResource {
 			 * @author Danilo Ristovski (danristo, danilo.ristovski@mht.net)
 			 */
 			response.setContentType(MediaType.TEXT_HTML);
-			response.setCharacterEncoding("UTF-8");
+			response.setCharacterEncoding(UTF_8.name());
 
 			if ("execute".equals(pageName)) {
 				String outputType = request.getParameter(OUTPUT_TYPE);
@@ -229,9 +240,9 @@ public class PageResource extends AbstractCockpitEngineResource {
 				} else if ("PNG".equalsIgnoreCase(outputType)) {
 					return createRedirect("/png");
 				} else {
-					engineInstance = CockpitEngine.createInstance(getIOManager().getTemplateAsString(),
-							getIOManager().getEnv());
-					getIOManager().getHttpSession().setAttribute(EngineConstants.ENGINE_INSTANCE, engineInstance);
+					String templateAsString = ioManager.getTemplateAsString();
+					engineInstance = CockpitEngine.createInstance(templateAsString, env);
+					ioManager.getHttpSession().setAttribute(EngineConstants.ENGINE_INSTANCE, engineInstance);
 
 					String editMode = request.getParameter("documentMode");
 					if (editMode != null) {
@@ -244,7 +255,7 @@ public class PageResource extends AbstractCockpitEngineResource {
 						if (!ObjectsAccessVerifier.canEdit(obj, getUserProfile())) {
 							String message = String.format("User [%s] cannot edit this document",
 									(String) getUserProfile().getUserId());
-							logger.error(message);
+							LOGGER.error(message);
 							throw new Exception(message);
 
 						}
@@ -257,9 +268,8 @@ public class PageResource extends AbstractCockpitEngineResource {
 				template = buildBaseTemplate();
 				// create a new engine instance
 				engineInstance = CockpitEngine.createInstance(template.toString(), // servletIOManager.getTemplateAsString(),
-						getIOManager().getEnvForWidget());
-				getIOManager().getHttpSession().setAttribute(EngineConstants.ENGINE_INSTANCE, engineInstance);
-				// getExecutionSession().setAttributeInSession(EngineConstants.ENGINE_INSTANCE, engineInstance);
+						ioManager.getEnvForWidget());
+				ioManager.getHttpSession().setAttribute(EngineConstants.ENGINE_INSTANCE, engineInstance);
 				dispatchUrl = "/WEB-INF/jsp/ngCockpit.jsp";
 			} else {
 				// error
@@ -268,9 +278,10 @@ public class PageResource extends AbstractCockpitEngineResource {
 
 			return new View(dispatchUrl);
 		} catch (Exception e) {
+			LOGGER.error("Error opening page", e);
 			throw SpagoBIEngineServiceExceptionHandler.getInstance().getWrappedException("", getEngineInstance(), e);
 		} finally {
-			logger.debug("OUT");
+			LOGGER.debug("OUT");
 		}
 	}
 
@@ -284,16 +295,14 @@ public class PageResource extends AbstractCockpitEngineResource {
 		String requestURL = request.getRequestURI();
 		String queryString = request.getQueryString();
 
-		StringBuilder sb = new StringBuilder(requestURL.toString());
+		StringBuilder sb = new StringBuilder(requestURL);
 		sb.append(suffix);
 		if (Objects.nonNull(queryString)) {
 			sb.append("?");
 			sb.append(queryString);
 		}
 
-		URI newLocation = new URI(sb.toString());
-
-		return newLocation;
+		return new URI(sb.toString());
 	}
 
 	private Response openPagePdfInternal(String pageName)
@@ -301,11 +310,11 @@ public class PageResource extends AbstractCockpitEngineResource {
 		String requestURL = getRequestUrlForPdfExport(request);
 		RenderOptions renderOptions = getRenderOptionsForPdfExporter(request);
 
-		int documentId = Integer.valueOf(request.getParameter("document"));
+		int documentId = Integer.parseInt(request.getParameter("document"));
 		String userId = request.getParameter("user_id");
-		String pdfPageOrientation = request.getParameter("pdfPageOrientation");
-		boolean pdfFrontPage = Boolean.valueOf(request.getParameter("pdfFrontPage"));
-		boolean pdfBackPage = Boolean.valueOf(request.getParameter("pdfBackPage"));
+		String pdfPageOrientation = request.getParameter(PDF_PAGE_ORIENTATION);
+		boolean pdfFrontPage = Boolean.parseBoolean(request.getParameter(PDF_FRONT_PAGE));
+		boolean pdfBackPage = Boolean.parseBoolean(request.getParameter(PDF_BACK_PAGE));
 
 		PdfExporterV2 pdfExporter = new PdfExporterV2(documentId, userId, requestURL, renderOptions, pdfPageOrientation,
 				pdfFrontPage, pdfBackPage);
@@ -317,8 +326,7 @@ public class PageResource extends AbstractCockpitEngineResource {
 				.build();
 	}
 
-	private Response openPageSpreadsheetInternal(String pageName)
-			throws EMFUserError, IOException, InterruptedException {
+	private Response openPageSpreadsheetInternal(String pageName) throws IOException, InterruptedException {
 		String requestURL = getRequestUrlForExcelExport(request);
 
 		request.setAttribute("template", getIOManager().getTemplateAsString());
@@ -338,18 +346,18 @@ public class PageResource extends AbstractCockpitEngineResource {
 
 	private Response openPagePngInternal(String pageName)
 			throws EMFUserError, IOException, InterruptedException, JSONException {
-		String requestURL = getRequestUrlForPdfExport(request);
+		String requestURL = null;
+		String documentLabel = request.getParameter("DOCUMENT_LABEL");
+		requestURL = getRequestUrlForPdfExport(request);
 		RenderOptions renderOptions = getRenderOptionsForPdfExporter(request);
 
-		int documentId = Integer.valueOf(request.getParameter("document"));
+		int documentId = Integer.parseInt(request.getParameter("document"));
 		String userId = request.getParameter("user_id");
-		String pdfPageOrientation = request.getParameter("pdfPageOrientation");
-		boolean pdfFrontPage = request.getParameter("pdfFrontPage") != null
-				? Boolean.valueOf(request.getParameter("pdfFrontPage"))
-				: false;
-		boolean pdfBackPage = request.getParameter("pdfBackPage") != null
-				? Boolean.valueOf(request.getParameter("pdfBackPage"))
-				: false;
+		String pdfPageOrientation = request.getParameter(PDF_PAGE_ORIENTATION);
+		boolean pdfFrontPage = request.getParameter(PDF_FRONT_PAGE) != null
+				&& Boolean.parseBoolean(request.getParameter(PDF_FRONT_PAGE));
+		boolean pdfBackPage = request.getParameter(PDF_BACK_PAGE) != null
+				&& Boolean.parseBoolean(request.getParameter(PDF_BACK_PAGE));
 
 		PngExporter pngExporter = new PngExporter(documentId, userId, requestURL, renderOptions, pdfPageOrientation,
 				pdfFrontPage, pdfBackPage);
@@ -362,29 +370,28 @@ public class PageResource extends AbstractCockpitEngineResource {
 
 		if (!isZipped) {
 			mimeType = "image/png";
-			contentDisposition = "attachment; fileName=" + request.getParameter("DOCUMENT_LABEL") + ".png";
+			contentDisposition = "attachment; fileName=" + documentLabel + ".png";
 		} else {
 			mimeType = "application/zip";
-			contentDisposition = "attachment; fileName=" + request.getParameter("DOCUMENT_LABEL") + ".zip";
+			contentDisposition = "attachment; fileName=" + documentLabel + ".zip";
 		}
 
 		return Response.ok(data, mimeType).header("Content-length", Integer.toString(data.length))
 				.header("Content-Disposition", contentDisposition).build();
 	}
 
-	private RenderOptions getRenderOptionsForPdfExporter(HttpServletRequest request)
-			throws UnsupportedEncodingException {
+	private RenderOptions getRenderOptionsForPdfExporter(HttpServletRequest request) {
 		String userId = (String) getUserProfile().getUserUniqueIdentifier();
-		String encodedUserId = Base64.encode(userId.getBytes("UTF-8"));
+		String encodedUserId = new String(base64Encoder.encode(userId.getBytes(UTF_8)));
 		Map<String, String> headers = new HashMap<>(1);
 		headers.put("Authorization", "Direct " + encodedUserId);
 
 		RenderOptions defaultRenderOptions = RenderOptions.defaultOptions();
 		ViewportDimensions defaultDimensions = defaultRenderOptions.getDimensions();
 		long defaultJsRenderingWait = defaultRenderOptions.getJsRenderingWait();
-		int pdfWidth = Integer.valueOf(defaultDimensions.getWidth());
-		int pdfHeight = Integer.valueOf(defaultDimensions.getHeight());
-		double pdfDeviceScaleFactor = Double.valueOf(defaultDimensions.getDeviceScaleFactor());
+		int pdfWidth = Integer.parseInt(defaultDimensions.getWidth());
+		int pdfHeight = Integer.parseInt(defaultDimensions.getHeight());
+		double pdfDeviceScaleFactor = Double.parseDouble(defaultDimensions.getDeviceScaleFactor());
 		long pdfRenderingWaitTime = defaultJsRenderingWait;
 
 		String widthParameterVal = request.getParameter(PDF_WIDTH);
@@ -395,24 +402,23 @@ public class PageResource extends AbstractCockpitEngineResource {
 		Boolean isMultiSheet = Boolean.parseBoolean(request.getParameter(IS_MULTI_SHEET));
 
 		if (widthParameterVal != null) {
-			pdfWidth = Integer.valueOf(widthParameterVal);
+			pdfWidth = Integer.parseInt(widthParameterVal);
 		}
 		if (heightParameterVal != null) {
-			pdfHeight = Integer.valueOf(heightParameterVal);
+			pdfHeight = Integer.parseInt(heightParameterVal);
 		}
 		if (jsRenderingWaitParameterVal != null) {
-			pdfRenderingWaitTime = 1000 * Long.valueOf(jsRenderingWaitParameterVal);
+			pdfRenderingWaitTime = 1000 * Long.parseLong(jsRenderingWaitParameterVal);
 		}
 
 		if (deviceScaleFactorVal != null) {
-			pdfDeviceScaleFactor = Double.valueOf(deviceScaleFactorVal);
+			pdfDeviceScaleFactor = Double.parseDouble(deviceScaleFactorVal);
 		}
 
 		ViewportDimensions dimensions = ViewportDimensions.builder().withWidth(pdfWidth).withHeight(pdfHeight)
 				.withDeviceScaleFactor(pdfDeviceScaleFactor).withIsMultiSheet(isMultiSheet).build();
-		RenderOptions renderOptions = defaultRenderOptions.withDimensions(dimensions)
-				.withJavaScriptExecutionDetails(pdfRenderingWaitTime, 5000L);
-		return renderOptions;
+		return defaultRenderOptions.withDimensions(dimensions).withJavaScriptExecutionDetails(pdfRenderingWaitTime,
+				5000L);
 	}
 
 	private String getRequestUrlForPdfExport(HttpServletRequest request) throws UnsupportedEncodingException {
@@ -430,14 +436,15 @@ public class PageResource extends AbstractCockpitEngineResource {
 		StringBuilder sb = new StringBuilder(externalUrl);
 		String sep = "?";
 		Map<String, String[]> parameterMap = request.getParameterMap();
-		for (String parameter : parameterMap.keySet()) {
-			if (!PDF_PARAMETERS.contains(parameter)) {
-				String[] values = parameterMap.get(parameter);
+		for (Entry<String, String[]> parameter : parameterMap.entrySet()) {
+			String key = parameter.getKey();
+			String[] values = parameter.getValue();
+			if (!PDF_PARAMETERS.contains(key)) {
 				if (values != null && values.length > 0) {
 					sb.append(sep);
-					sb.append(URLEncoder.encode(parameter, "UTF-8"));
+					sb.append(URLEncoder.encode(key, UTF_8.name()));
 					sb.append("=");
-					sb.append(URLEncoder.encode(values[0], "UTF-8"));
+					sb.append(URLEncoder.encode(values[0], UTF_8.name()));
 					sep = "&";
 				}
 			}
@@ -461,11 +468,12 @@ public class PageResource extends AbstractCockpitEngineResource {
 		StringBuilder sb = new StringBuilder(externalUrl);
 		String sep = "?";
 		Map<String, String[]> parameterMap = request.getParameterMap();
-		for (String parameter : parameterMap.keySet()) {
-			String[] values = parameterMap.get(parameter);
+		for (Entry<String, String[]> parameter : parameterMap.entrySet()) {
+			String key = parameter.getKey();
+			String[] values = parameter.getValue();
 			if (values != null && values.length > 0) {
 				sb.append(sep);
-				sb.append(URLEncoder.encode(parameter, "UTF-8"));
+				sb.append(URLEncoder.encode(key, "UTF-8"));
 				sb.append("=");
 				sb.append(URLEncoder.encode(values[0], "UTF-8"));
 				sep = "&";
@@ -487,29 +495,28 @@ public class PageResource extends AbstractCockpitEngineResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	public String testAction(@Context HttpServletResponse response) {
 
-		logger.debug("IN");
+		LOGGER.debug("IN");
 
 		try {
 			JSONObject obj = new JSONObject();
 			try {
 				obj.put("result", "ok");
 			} catch (JSONException e) {
-				logger.error("Error building the success string");
+				LOGGER.error("Error building the success string");
 				throw new SpagoBIRuntimeException("Error building the success string");
 			}
-			String successString = obj.toString();
-			return successString;
+			return obj.toString();
 		} finally {
-			logger.debug("OUT");
+			LOGGER.debug("OUT");
 		}
 	}
 
 	private JSONObject buildBaseTemplate() {
 		JSONObject template;
 
-		logger.debug("IN");
+		LOGGER.debug("IN");
 		template = new JSONObject();
-		logger.debug("OUT");
+		LOGGER.debug("OUT");
 
 		return template;
 	}

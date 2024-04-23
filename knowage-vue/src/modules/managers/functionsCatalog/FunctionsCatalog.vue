@@ -158,4 +158,12 @@ export default defineComponent({
 .functions-main-content {
     height: 90vh;
 }
+
+#functions-datatable {
+    :deep(.p-datatable-wrapper) {
+        flex: 1 0 0;
+        height: unset;
+        overflow: auto;
+    }
+}
 </style>

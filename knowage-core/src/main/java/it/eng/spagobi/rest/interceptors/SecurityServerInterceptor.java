@@ -17,11 +17,11 @@
  */
 package it.eng.spagobi.rest.interceptors;
 
+import java.nio.charset.StandardCharsets;
 import java.util.Optional;
 import java.util.StringTokenizer;
 
 import javax.annotation.Priority;
-import javax.servlet.http.HttpSession;
 import javax.ws.rs.Priorities;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.core.Response;
@@ -56,9 +56,6 @@ public class SecurityServerInterceptor extends AbstractSecurityServerInterceptor
 
 	private static final Logger LOGGER = Logger.getLogger(SecurityServerInterceptor.class);
 
-	/**
-	 * TODO : Move from here into a generic configuration class
-	 */
 	private String authorizationHeaderName;
 
 	@Override
@@ -73,7 +70,6 @@ public class SecurityServerInterceptor extends AbstractSecurityServerInterceptor
 	@Override
 	protected UserProfile authenticateUser() {
 		UserProfile profile = null;
-		HttpSession session = servletRequest.getSession(false);
 
 		LOGGER.trace("IN");
 
@@ -83,7 +79,7 @@ public class SecurityServerInterceptor extends AbstractSecurityServerInterceptor
 			if (servletRequest.getHeader(authorizationHeaderName) != null) {
 				String token = servletRequest.getHeader(authorizationHeaderName);
 
-				LOGGER.trace("Token is: " + token);
+				LOGGER.trace("Token in header [" + authorizationHeaderName + "] is [" + token + "]");
 
 				token = token.replaceFirst("Bearer ", "");
 				ISecurityServiceSupplier supplier = SecurityServiceSupplierFactory.createISecurityServiceSupplier();
@@ -98,19 +94,19 @@ public class SecurityServerInterceptor extends AbstractSecurityServerInterceptor
 				 */
 				String auto = servletRequest.getHeader("Authorization");
 
-				LOGGER.trace("Token is: " + auto);
+				LOGGER.trace("Authorization header is: " + auto);
 
 				int position = auto.indexOf("Direct");
 				if (position > -1 && position < 5) {// Direct stay at the beginning of the header
 					String encodedUser = auto.replaceFirst("Direct ", "");
 					byte[] decodedBytes = Base64.decode(encodedUser);
-					String user = new String(decodedBytes, "UTF-8");
+					String user = new String(decodedBytes, StandardCharsets.UTF_8);
 					profile = (UserProfile) UserUtilities.getUserProfile(user);
 				} else {
 					String encodedUserPassword = auto.replaceFirst("Basic ", "");
 					String credentials = null;
 					byte[] decodedBytes = Base64.decode(encodedUserPassword);
-					credentials = new String(decodedBytes, "UTF-8");
+					credentials = new String(decodedBytes, StandardCharsets.UTF_8);
 
 					StringTokenizer tokenizer = new StringTokenizer(credentials, ":");
 					String user = tokenizer.nextToken();
@@ -128,7 +124,7 @@ public class SecurityServerInterceptor extends AbstractSecurityServerInterceptor
 				// "X-Auth-Token chencking authorization will be by access token"
 				String token = servletRequest.getHeader("X-Auth-Token");
 
-				LOGGER.trace("Token is: " + token);
+				LOGGER.trace("X-Auth-Token header is: " + token);
 
 				ISecurityServiceSupplier supplier = SecurityServiceSupplierFactory.createISecurityServiceSupplier();
 
@@ -137,8 +133,8 @@ public class SecurityServerInterceptor extends AbstractSecurityServerInterceptor
 					profile = (UserProfile) UserUtilities.getUserProfile(spagoBIUserProfile.getUniqueIdentifier());
 				}
 			}
-		} catch (Throwable t) {
-			LOGGER.error("Problem during authentication, returning null", t);
+		} catch (Exception e) {
+			LOGGER.error("Problem during authentication, returning null", e);
 		} finally {
 			LOGGER.trace("OUT");
 		}
@@ -151,22 +147,7 @@ public class SecurityServerInterceptor extends AbstractSecurityServerInterceptor
 		boolean authenticated = true;
 		IEngUserProfile engProfile = getUserProfileFromSession();
 
-		if (engProfile != null) {
-			// verify if the profile stored in session is still valid
-			// String userId = null;
-			// try {
-			// userId = getUserIdentifier();
-			// } catch (Exception e) {
-			// logger.debug("User identifier not found");
-			// }
-			// if (userId != null && userId.equals(engProfile.getUserUniqueIdentifier().toString()) == false) {
-			// logger.debug("User is authenticated but the profile store in session need to be updated");
-			// engProfile = this.getUserProfileFromUserId();
-			// } else {
-			// logger.debug("User is authenticated and his profile is already stored in session");
-			// }
-
-		} else {
+		if (engProfile == null) {
 			engProfile = this.getUserProfileFromUserId();
 
 			if (engProfile != null) {

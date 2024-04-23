@@ -111,16 +111,19 @@ public class SpagoBIScriptManager {
 
 			final String _script = script;
 
-			AccessController.doPrivileged(new PrivilegedExceptionAction<Object>() {
+			results = AccessController.doPrivileged(new PrivilegedExceptionAction<Object>() {
 
 				@Override
 				public Object run() throws ScriptException {
 					return scriptEngine.eval(_script);
 				}
 			}, accessControlContext);
-
-			results = scriptEngine.get("query");
-
+			
+			// the keyword "query" is used because it is useful in datasets when changing the query entered 
+			// this is a commonly used variable name.
+			if(scriptEngine.get("query") != null) {			
+				results = scriptEngine.get("query");
+			}
 		} catch (Throwable t) {
 			logger.error("Error while executing Javascript:\n" + script, t);
 			throw new SpagoBIRuntimeException("An unexpected error occured while executing script", t);

@@ -1512,7 +1512,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
             var tempBackGround = { 'background-color': $scope.extendedStyle.backgroundColor || '' }
             angular.merge($scope.borderShadowStyle, tempBackGround)
-            angular.merge($scope.paddingStyle, tempBackGround)
 
             // update sheets background color
             if ($scope.extendedStyle.sheetsBackgroundColor != undefined && $scope.cockpitModule_template.style) {

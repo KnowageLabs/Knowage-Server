@@ -1,0 +1,26 @@
+md-chips.dense {
+  md-chips-wrap {
+    padding: 0;
+  }
+  md-chip {
+    height: 24px;
+    line-height: 24px;
+    ._md-chip-content {
+      height: 24px;
+      line-height: 24px;
+    }
+    ._md-chip-remove {
+      height: 24px;
+    }
+    md-chip-template {
+      font-size: 0.7rem;
+    }
+  }
+  ._md-chip-input-container {
+    margin: 0 8px 0 0;
+    input {
+      height: 28px;
+      line-height: 28px;
+    }
+  }
+}
