@@ -47,8 +47,8 @@ import it.eng.spagobi.utilities.json.JSONUtils;
  * @author Andrea Gioia (andrea.gioia@eng.it)
  */
 public class CockpitEngineInstance extends AbstractEngineInstance implements Serializable {
-	private static final long serialVersionUID = 373571150227072686L;
 
+	private static final long serialVersionUID = 373571150227072686L;
 	private static final Logger LOGGER = Logger.getLogger(CockpitEngineInstance.class);
 
 	private JSONObject template;
