@@ -1250,7 +1250,13 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 			Query query = session.createQuery(statement.toString());
 
 			for (Map.Entry<String, Object> entry : parameters.entrySet()) {
-				query.setParameter(entry.getKey(), entry.getValue());
+				String key = entry.getKey();
+				Object value = entry.getValue();
+				if (value instanceof Collection) {
+					query.setParameterList(key, (Collection) value);
+				} else {
+					query.setParameter(key, value);
+				}
 			}
 
 			results = executeQuery(query, session);
