@@ -39,6 +39,7 @@ export interface iQBE {
     userIn: string
     versNum: number
     sourceDatasetLabel: string | null
+    federation_id: string | null
 }
 
 export interface iQuery {

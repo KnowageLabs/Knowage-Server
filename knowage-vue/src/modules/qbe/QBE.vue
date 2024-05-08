@@ -1120,7 +1120,7 @@ export default defineComponent({
                     this.qbe.dsTypeCd = this.DERIVED_CONST
                     this.qbe.qbeDataSource = this.sourceDataset?.dataSource
                 }
-                if (this.dataset?.type === 'federatedDataset') {
+                if (this.dataset?.type === 'federatedDataset' && this.qbe) {
                     this.qbe.federation_id = this.dataset.federation_id
                 }
                 this.savingDialogVisible = true
