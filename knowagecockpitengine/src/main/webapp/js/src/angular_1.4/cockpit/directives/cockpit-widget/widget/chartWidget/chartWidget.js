@@ -197,7 +197,7 @@ function cockpitChartWidgetControllerFunction(
 				var category = $scope.ngModel.content.columnSelectedOfDataset.filter((i)=>i.fieldType === "ATTRIBUTE")[0];
 				var field = tempData.metaData.fields.filter((i)=>i.header === category.alias)[0];
 				var stat = tempData.stats[tempData.metaData.fields.map((i)=>i.name).indexOf(field?.name)];
-				if(stat && stat.cardinality < $scope.ngModel.content.chartTemplate.CHART.categoriesCheck.min){
+				if(dataAndChartConf && stat && stat.cardinality < $scope.ngModel.content.chartTemplate.CHART.categoriesCheck.min){
 					$scope.hideChart = $scope.ngModel.content.chartTemplate.CHART.categoriesCheck.text;
 					return
 				}
@@ -259,7 +259,7 @@ function cockpitChartWidgetControllerFunction(
 					$scope.$broadcast(nature,data, false, changedChartType,dataAndChartConf,objForDrill, saving );
 					cockpitModule_generalServices.savingDataConfiguration(false)
 					cockpitModule_generalServices.setNearRealTime(false)
-				},nature === 'fullExpand' ? 1000 : 400)
+				}, 400)
 
 			}
 			if(nature == 'init'){

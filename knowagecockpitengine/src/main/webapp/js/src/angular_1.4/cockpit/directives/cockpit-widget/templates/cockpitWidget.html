@@ -92,7 +92,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         <md-button
           class="md-fab md-raised md-mini"
           aria-label="expand button"
-          ng-if="cockpitModule_properties.EDIT_MODE && checkType(ngModel.type, ['table','chart','static-pivot-table', 'document'])"
+          ng-if="hideChart && cockpitModule_properties.EDIT_MODE && checkType(ngModel.type, ['table','chart','static-pivot-table', 'document'])"
           ng-click="expandWidget();$event.stopPropagation();"
         >
           <md-tooltip md-direction="top" md-delay="1000"
@@ -323,7 +323,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         <md-button
           class="md-fab md-raised md-mini"
           ng-click="expandWidget();$event.stopPropagation();"
-          ng-if="checkType(ngModel.type, ['table','chart','static-pivot-table', 'map', 'customchart'])"
+          ng-if="hideChart && checkType(ngModel.type, ['table','chart','static-pivot-table', 'map', 'customchart'])"
         >
           <md-tooltip md-direction="bottom" ng-if="!widExp" md-delay="1000"
             >{{::translate.load("sbi.cockpit.editor.widget.widgeteditorgenericconfpanel.expandall")}}</md-tooltip
