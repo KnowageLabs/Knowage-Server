@@ -124,7 +124,7 @@ public class QbeDataSet extends ConfigurableDataSet {
 		this.ds = ds;
 	}
 
-	private void init() {
+	protected void init() {
 		if (ds == null) {
 			UserProfile profile = getUserProfile();
 			if (profile != null) {
@@ -135,6 +135,7 @@ public class QbeDataSet extends ConfigurableDataSet {
 			it.eng.qbe.datasource.IDataSource qbeDataSource = getQbeDataSource();
 			QueryCatalogue catalogue = getCatalogue(jsonQuery, qbeDataSource);
 			Query query = catalogue.getFirstQuery();
+			new TimeAggregationHandler(qbeDataSource).handleTimeFilters(query);
 			setQuery(query);
 			Query filteredQuery = filterQueryWithProfileAttributes(qbeDataSource, query);
 			initDs(qbeDataSource, filteredQuery);
@@ -170,10 +171,10 @@ public class QbeDataSet extends ConfigurableDataSet {
 	public void loadData(int offset, int fetchSize, int maxResults) {
 		init();
 		Query qbeQuery = (Query) query;
-		new TimeAggregationHandler(getQbeDataSource()).handleTimeFilters(qbeQuery);
 		Map<String, Map<String, String>> inlineFilteredSelectFields = qbeQuery.getInlineFilteredSelectFields();
-		initDs(getQbeDataSource(), qbeQuery);
 		if (inlineFilteredSelectFields != null && inlineFilteredSelectFields.size() > 0) {
+			// TODO : For federated dataset the call getQbeDataSource() will be a problem, see KNOWAGE-8470
+			initDs(getQbeDataSource(), qbeQuery);
 			ds.loadData(0, 0, -1);
 		} else {
 			ds.loadData(offset, fetchSize, maxResults);
