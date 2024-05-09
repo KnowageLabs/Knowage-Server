@@ -24,11 +24,11 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import org.apache.log4j.Logger;
 import org.joda.time.format.DateTimeFormatter;
 import org.joda.time.format.ISODateTimeFormat;
-import org.safehaus.uuid.UUIDGenerator;
 
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.base.SourceBeanAttribute;
@@ -116,12 +116,13 @@ public class TriggerXMLDeserializer implements Deserializer {
 			} else if (o instanceof String) {
 				xml = SourceBean.fromXMLString((String) o);
 			} else {
-				throw new DeserializationException("Impossible to deserialize from an object of type [" + o.getClass().getName() + "]");
+				throw new DeserializationException(
+						"Impossible to deserialize from an object of type [" + o.getClass().getName() + "]");
 			}
 
 			boolean runImmediately = deserializeRunImmediatelyAttribute(xml);
 			if (runImmediately) {
-				triggerName = "schedule_uuid_" + UUIDGenerator.getInstance().generateTimeBasedUUID().toString();
+				triggerName = "schedule_uuid_" + UUID.randomUUID().toString();
 				triggerGroupName = null;
 				triggerDescription = null;
 				startTime = null;
@@ -215,7 +216,8 @@ public class TriggerXMLDeserializer implements Deserializer {
 			String startDay;
 			String startMonth;
 			String startYear;
-			if (DateUtils.isValidFormat(startDateStr, "dd/MM/yyyy") || DateUtils.isValidFormat(startDateStr, "dd/MM/yy")) {
+			if (DateUtils.isValidFormat(startDateStr, "dd/MM/yyyy")
+					|| DateUtils.isValidFormat(startDateStr, "dd/MM/yy")) {
 				splitterDate = startDateStr.split("/");
 				startDay = splitterDate[0];
 				startMonth = splitterDate[1];
@@ -229,7 +231,8 @@ public class TriggerXMLDeserializer implements Deserializer {
 				return null;
 			}
 
-			calendar = new GregorianCalendar(new Integer(startYear).intValue(), new Integer(startMonth).intValue() - 1, new Integer(startDay).intValue());
+			calendar = new GregorianCalendar(new Integer(startYear).intValue(), new Integer(startMonth).intValue() - 1,
+					new Integer(startDay).intValue());
 			String startTimeStr = (String) xml.getAttribute(TRIGGER_START_TIME);
 			if (startTimeStr != null) {
 				String startHour = startTimeStr.substring(0, 2);
@@ -271,7 +274,8 @@ public class TriggerXMLDeserializer implements Deserializer {
 				return null;
 			}
 
-			calendar = new GregorianCalendar(new Integer(endYear).intValue(), new Integer(endMonth).intValue() - 1, new Integer(endDay).intValue());
+			calendar = new GregorianCalendar(new Integer(endYear).intValue(), new Integer(endMonth).intValue() - 1,
+					new Integer(endDay).intValue());
 
 			String endTimeStr = (String) xml.getAttribute(TRIGGER_END_TIME);
 			if (endTimeStr != null) {
@@ -304,7 +308,7 @@ public class TriggerXMLDeserializer implements Deserializer {
 	}
 
 	private Map<String, String> deserializeParametersAttribute(SourceBean xml) {
-		Map<String, String> parameters = new HashMap<String, String>();
+		Map<String, String> parameters = new HashMap<>();
 
 		SourceBean jobParameters = (SourceBean) xml.getAttribute(JOB_PARAMETERS);
 

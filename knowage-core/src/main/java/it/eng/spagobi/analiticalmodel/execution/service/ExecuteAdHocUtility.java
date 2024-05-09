@@ -19,14 +19,13 @@ package it.eng.spagobi.analiticalmodel.execution.service;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.UUID;
 
 import org.apache.log4j.LogMF;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.safehaus.uuid.UUID;
-import org.safehaus.uuid.UUIDGenerator;
 
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.engines.config.bo.Engine;
@@ -68,10 +67,12 @@ public class ExecuteAdHocUtility {
 			Assert.assertNotNull(DAOFactory.getEngineDAO(), "EngineDao cannot be null");
 			engine = DAOFactory.getEngineDAO().loadEngineByDriver(driver);
 			if (engine == null) {
-				throw new SpagoBIRuntimeException("There are no engines with driver equal to [" + driver + "] available");
+				throw new SpagoBIRuntimeException(
+						"There are no engines with driver equal to [" + driver + "] available");
 			}
 		} catch (Exception t) {
-			throw new SpagoBIRuntimeException("Impossible to load a valid engine whose drover is equal to [" + driver + "]", t);
+			throw new SpagoBIRuntimeException(
+					"Impossible to load a valid engine whose drover is equal to [" + driver + "]", t);
 		} finally {
 			logger.debug("OUT");
 		}
@@ -85,14 +86,16 @@ public class ExecuteAdHocUtility {
 			Assert.assertNotNull(DAOFactory.getEngineDAO(), "EngineDao cannot be null");
 			List<Engine> engines = DAOFactory.getEngineDAO().loadAllEnginesForBIObjectType(type);
 			if (engines == null || engines.isEmpty()) {
-				throw new SpagoBIRuntimeException("There are no engines for documents of type [" + type + "] available");
+				throw new SpagoBIRuntimeException(
+						"There are no engines for documents of type [" + type + "] available");
 			} else {
 				engine = engines.get(0);
-				LogMF.warn(logger, "There are more than one engine for document of type [" + type + "]. We will use the one whose label is equal to [{0}]",
-						engine.getLabel());
+				LogMF.warn(logger, "There are more than one engine for document of type [" + type
+						+ "]. We will use the one whose label is equal to [{0}]", engine.getLabel());
 			}
 		} catch (Exception t) {
-			throw new SpagoBIRuntimeException("Impossible to load a valid engine for document of type [" + type + "]", t);
+			throw new SpagoBIRuntimeException("Impossible to load a valid engine for document of type [" + type + "]",
+					t);
 		} finally {
 			logger.debug("OUT");
 		}
@@ -105,8 +108,7 @@ public class ExecuteAdHocUtility {
 
 		logger.debug("IN");
 
-		UUIDGenerator uuidGen = UUIDGenerator.getInstance();
-		UUID uuidObj = uuidGen.generateTimeBasedUUID();
+		UUID uuidObj = UUID.randomUUID();
 		executionId = uuidObj.toString();
 		executionId = executionId.replace("-", "");
 

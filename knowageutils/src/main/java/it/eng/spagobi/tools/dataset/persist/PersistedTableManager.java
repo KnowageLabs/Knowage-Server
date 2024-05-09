@@ -35,10 +35,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
+import java.util.UUID;
 
 import org.apache.log4j.Logger;
-import org.safehaus.uuid.UUID;
-import org.safehaus.uuid.UUIDGenerator;
 
 import com.jamonapi.Monitor;
 import com.jamonapi.MonitorFactory;
@@ -1142,8 +1141,7 @@ public class PersistedTableManager implements IPersistedManager {
 	 * @param prefix an optional prefix to use for the generated table name
 	 */
 	public static String generateRandomTableName(String prefix) {
-		UUIDGenerator uuidGen = UUIDGenerator.getInstance();
-		UUID uuidObj = uuidGen.generateTimeBasedUUID();
+		UUID uuidObj = UUID.randomUUID();
 		String generatedId = uuidObj.toString();
 		generatedId = generatedId.replaceAll("-", "");
 		generatedId = StringUtils.convertNonAscii(generatedId);

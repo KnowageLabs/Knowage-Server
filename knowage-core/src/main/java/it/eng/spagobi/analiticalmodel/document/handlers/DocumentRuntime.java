@@ -9,11 +9,10 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.UUID;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-import org.safehaus.uuid.UUID;
-import org.safehaus.uuid.UUIDGenerator;
 
 import com.jamonapi.Monitor;
 import com.jamonapi.MonitorFactory;
@@ -57,7 +56,8 @@ public class DocumentRuntime extends AbstractBIResourceRuntime<BIObjectParameter
 		return drivers;
 	}
 
-	private void addSystemParametersForExternalEngines(Map mapPars, Locale locale, BIObject obj, String executionModality, String role) {
+	private void addSystemParametersForExternalEngines(Map mapPars, Locale locale, BIObject obj,
+			String executionModality, String role) {
 		// mapPars.put("SBI_EXECUTION_ID", this.executionId);
 		mapPars.put(SpagoBIConstants.EXECUTION_ROLE, role);
 		Integer auditId = createAuditId(obj, executionModality, role);
@@ -81,7 +81,8 @@ public class DocumentRuntime extends AbstractBIResourceRuntime<BIObjectParameter
 		logger.debug("IN");
 		try {
 			AuditManager auditManager = AuditManager.getInstance();
-			Integer executionAuditId = auditManager.insertAudit(obj, null, this.getUserProfile(), role, executionModality);
+			Integer executionAuditId = auditManager.insertAudit(obj, null, this.getUserProfile(), role,
+					executionModality);
 			return executionAuditId;
 		} finally {
 			logger.debug("OUT");
@@ -120,7 +121,8 @@ public class DocumentRuntime extends AbstractBIResourceRuntime<BIObjectParameter
 		// IF THE ENGINE IS INTERNAL
 		else {
 			StringBuilder buffer = new StringBuilder();
-			buffer.append(GeneralUtilities.getSpagoBIProfileBaseUrl(((UserProfile) this.getUserProfile()).getUserId().toString()));
+			buffer.append(GeneralUtilities
+					.getSpagoBIProfileBaseUrl(((UserProfile) this.getUserProfile()).getUserId().toString()));
 			buffer.append("&PAGE=ExecuteBIObjectPage");
 			buffer.append("&" + SpagoBIConstants.TITLE_VISIBLE + "=FALSE");
 			buffer.append("&" + SpagoBIConstants.TOOLBAR_VISIBLE + "=FALSE");
@@ -139,8 +141,7 @@ public class DocumentRuntime extends AbstractBIResourceRuntime<BIObjectParameter
 			}
 
 			// identity string for context
-			UUIDGenerator uuidGen = UUIDGenerator.getInstance();
-			UUID uuid = uuidGen.generateRandomBasedUUID();
+			UUID uuid = UUID.randomUUID();
 			buffer.append("&" + LightNavigationConstants.LIGHT_NAVIGATOR_ID + "=" + uuid.toString());
 			List parameters = obj.getDrivers();
 			if (parameters != null && parameters.size() > 0) {
@@ -191,7 +192,8 @@ public class DocumentRuntime extends AbstractBIResourceRuntime<BIObjectParameter
 			IParameterUseDAO parusedao = DAOFactory.getParameterUseDAO();
 			ParameterUse biParameterExecModality = parusedao.loadByParameterIdandRole(driver.getParID(), role);
 			IObjParuseDAO objParuseDAO = DAOFactory.getObjParuseDAO();
-			biParameterExecDependencies.addAll(objParuseDAO.loadObjParuse(driver.getId(), biParameterExecModality.getUseID()));
+			biParameterExecDependencies
+					.addAll(objParuseDAO.loadObjParuse(driver.getId(), biParameterExecModality.getUseID()));
 		} catch (Exception e) {
 			throw new SpagoBIRuntimeException("Impossible to get dependencies", e);
 		}

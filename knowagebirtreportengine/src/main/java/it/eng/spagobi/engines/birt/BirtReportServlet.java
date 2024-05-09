@@ -35,6 +35,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.UUID;
 import java.util.jar.JarFile;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
@@ -75,8 +76,6 @@ import org.eclipse.birt.report.engine.dataextraction.CSVDataExtractionOption;
 import org.eclipse.birt.report.engine.dataextraction.ICSVDataExtractionOption;
 import org.eclipse.birt.report.utility.BirtUtility;
 import org.eclipse.birt.report.utility.DataExtractionParameterUtil;
-import org.safehaus.uuid.UUID;
-import org.safehaus.uuid.UUIDGenerator;
 
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.error.EMFInternalError;
@@ -118,9 +117,10 @@ public class BirtReportServlet extends HttpServlet {
 
 	private static final String FLAGGED_CSV_EXPORT_RESULT_SET_NAME = "exportdata";
 
-	public static final String OUTPUT_FOLDER = System.getProperty("java.io.tmpdir") != null && System.getProperty("java.io.tmpdir").endsWith(File.separator)
-			? System.getProperty("java.io.tmpdir") + "birt" + File.separator
-			: System.getProperty("java.io.tmpdir") + File.separator + "birt" + File.separator;
+	public static final String OUTPUT_FOLDER = System.getProperty("java.io.tmpdir") != null
+			&& System.getProperty("java.io.tmpdir").endsWith(File.separator)
+					? System.getProperty("java.io.tmpdir") + "birt" + File.separator
+					: System.getProperty("java.io.tmpdir") + File.separator + "birt" + File.separator;
 
 	public static final String PAGE_FILE_NAME = "page";
 	public static final String REPORT_EXECUTION_ID = "REPORT_EXECUTION_ID";
@@ -175,14 +175,16 @@ public class BirtReportServlet extends HttpServlet {
 		AuditAccessUtils auditAccessUtils = (AuditAccessUtils) request.getSession().getAttribute("SPAGOBI_AUDIT_UTILS");
 		if (auditId != null) {
 			if (auditAccessUtils != null)
-				auditAccessUtils.updateAudit(session, userId, auditId, new Long(System.currentTimeMillis()), null, "EXECUTION_STARTED", null, null);
+				auditAccessUtils.updateAudit(session, userId, auditId, new Long(System.currentTimeMillis()), null,
+						"EXECUTION_STARTED", null, null);
 		}
 		try {
 			runReport(request, response);
 			// AUDIT UPDATE
 			if (auditId != null) {
 				if (auditAccessUtils != null)
-					auditAccessUtils.updateAudit(session, userId, auditId, null, new Long(System.currentTimeMillis()), "EXECUTION_PERFORMED", null, null);
+					auditAccessUtils.updateAudit(session, userId, auditId, null, new Long(System.currentTimeMillis()),
+							"EXECUTION_PERFORMED", null, null);
 			}
 		} catch (ConnectionDefinitionException e) {
 			logger.error("Error during report production \n\n " + e);
@@ -194,16 +196,16 @@ public class BirtReportServlet extends HttpServlet {
 			// AUDIT UPDATE
 			if (auditId != null) {
 				if (auditAccessUtils != null)
-					auditAccessUtils.updateAudit(session, userId, auditId, null, new Long(System.currentTimeMillis()), "EXECUTION_FAILED", e.getDescription(),
-							null);
+					auditAccessUtils.updateAudit(session, userId, auditId, null, new Long(System.currentTimeMillis()),
+							"EXECUTION_FAILED", e.getDescription(), null);
 			}
 		} catch (Exception e) {
 			logger.error("Error during report production \n\n ", e);
 			// AUDIT UPDATE
 			if (auditId != null) {
 				if (auditAccessUtils != null)
-					auditAccessUtils.updateAudit(session, userId, auditId, null, new Long(System.currentTimeMillis()), "EXECUTION_FAILED", e.getMessage(),
-							null);
+					auditAccessUtils.updateAudit(session, userId, auditId, null, new Long(System.currentTimeMillis()),
+							"EXECUTION_FAILED", e.getMessage(), null);
 			}
 		}
 
@@ -287,7 +289,8 @@ public class BirtReportServlet extends HttpServlet {
 		return renderOption;
 	}
 
-	private InputStream getTemplateContent(HttpServletRequest servletRequest, IReportEngine birtReportEngine) throws IOException {
+	private InputStream getTemplateContent(HttpServletRequest servletRequest, IReportEngine birtReportEngine)
+			throws IOException {
 		logger.debug("IN");
 		HttpSession session = servletRequest.getSession();
 		IEngUserProfile profile = (IEngUserProfile) session.getAttribute(IEngUserProfile.ENG_USER_PROFILE);
@@ -321,8 +324,7 @@ public class BirtReportServlet extends HttpServlet {
 		}
 
 		SpagoBIAccessUtils util = new SpagoBIAccessUtils();
-		UUIDGenerator uuidGen = UUIDGenerator.getInstance();
-		UUID uuid_local = uuidGen.generateTimeBasedUUID();
+		UUID uuid_local = UUID.randomUUID();
 		String executionId = uuid_local.toString();
 		executionId = executionId.replaceAll("-", "");
 		boolean propertiesLoaded = false;
@@ -376,7 +378,8 @@ public class BirtReportServlet extends HttpServlet {
 		return is;
 	}
 
-	protected Map findReportParams(HttpServletRequest request, IReportRunnable design, IReportEngine birtReportEngine) throws ConnectionDefinitionException {
+	protected Map findReportParams(HttpServletRequest request, IReportRunnable design, IReportEngine birtReportEngine)
+			throws ConnectionDefinitionException {
 		logger.debug("IN");
 		String dateformat = request.getParameter("dateformat");
 		if (dateformat != null) {
@@ -396,7 +399,8 @@ public class BirtReportServlet extends HttpServlet {
 			paramValueString = decodeParameter(paramValueString);
 
 			if (paramValueString == null || paramValueString.trim().equals("")) {
-				logger.debug(this.getClass().getName() + "findReportParams() The report parameter " + paramName + " has no values set.");
+				logger.debug(this.getClass().getName() + "findReportParams() The report parameter " + paramName
+						+ " has no values set.");
 				continue;
 				// logger.debug(this.getClass().getName() +
 				// "findReportParams() The report parameter " + paramName
@@ -406,8 +410,8 @@ public class BirtReportServlet extends HttpServlet {
 
 			int paramType = param.getDataType();
 			/*
-			 * The ParameterConverter converts a single value. Multi-value parameters are assumed to contains values that are String type. If they are not
-			 * Strings (list of dates, list of numbers, ...) the converter will not work.
+			 * The ParameterConverter converts a single value. Multi-value parameters are assumed to contains values that are String type. If they are not Strings (list of
+			 * dates, list of numbers, ...) the converter will not work.
 			 */
 			Object paramValue = ParameterConverter.convertParameter(paramType, paramValueString, dateformat);
 			if (paramValue == null)
@@ -470,12 +474,13 @@ public class BirtReportServlet extends HttpServlet {
 	 * @return jndi connection
 	 * @throws ConnectionDefinitionException
 	 */
-	private IDataSource findDataSource(HttpSession session, String userId, String documentId, String requestConnectionName)
-			throws ConnectionDefinitionException {
+	private IDataSource findDataSource(HttpSession session, String userId, String documentId,
+			String requestConnectionName) throws ConnectionDefinitionException {
 		logger.debug("IN");
 		if (documentId == null) {
 			logger.error("Document identifier NOT found. Returning null.");
-			throw new ConnectionParameterNotValidException("No default connection defined in " + "engine-config.xml file.");
+			throw new ConnectionParameterNotValidException(
+					"No default connection defined in " + "engine-config.xml file.");
 		}
 		DataSourceServiceProxy proxyDS = new DataSourceServiceProxy(userId, session);
 		IDataSource ds = null;
@@ -536,7 +541,8 @@ public class BirtReportServlet extends HttpServlet {
 		SsoServiceInterface proxyService = SsoServiceFactory.createProxyService();
 		String token = proxyService.readTicket(session);
 
-		String kpiUrl = EnginConf.getInstance().getSpagoBiServerUrl() + "/publicjsp/kpiValueXml.jsp?SECURITY_TOKEN=" + token + "&USERID=" + userId;
+		String kpiUrl = EnginConf.getInstance().getSpagoBiServerUrl() + "/publicjsp/kpiValueXml.jsp?SECURITY_TOKEN="
+				+ token + "&USERID=" + userId;
 		// String kpiUrl =
 		// EnginConf.getInstance().getSpagoBiServerUrl()+"/testXml.jsp?"+"USERID="+userId;
 
@@ -709,9 +715,11 @@ public class BirtReportServlet extends HttpServlet {
 			renderOption.setOutputFormat(IBirtConstants.POSTSCRIPT_RENDER_FORMAT);
 			// renderOption.setOutputFileName(templateFileName + ".ps");
 			response.setHeader("Content-disposition", "inline; filename=" + templateFileName + ".ps");
-		} else if (outputFormat != null && outputFormat.equalsIgnoreCase(DataExtractionParameterUtil.EXTRACTION_FORMAT_CSV)) {
+		} else if (outputFormat != null
+				&& outputFormat.equalsIgnoreCase(DataExtractionParameterUtil.EXTRACTION_FORMAT_CSV)) {
 			logger.debug(" Output format parameter is CSV. Create document obj .");
-			prepareCSVRender(reportParams, request, design, userId, documentId, profile, kpiUrl, response, context, birtReportEngine);
+			prepareCSVRender(reportParams, request, design, userId, documentId, profile, kpiUrl, response, context,
+					birtReportEngine);
 			return;
 
 		} else {
@@ -737,7 +745,8 @@ public class BirtReportServlet extends HttpServlet {
 			runAndRenderTask.setRenderOption(renderOption);
 			logger.debug("runReport(): RunAndRenderTask created successfully.");
 		} else { // progressive run
-			ProgressiveCustomPageHandler myPageHandler = new ProgressiveCustomPageHandler((String) context.get(REPORT_EXECUTION_ID), birtReportEngine);
+			ProgressiveCustomPageHandler myPageHandler = new ProgressiveCustomPageHandler(
+					(String) context.get(REPORT_EXECUTION_ID), birtReportEngine);
 			runTask = birtReportEngine.createRunTask(design);
 			runTask.setLocale(locale);
 			runTask.setPageHandler(myPageHandler);
@@ -750,7 +759,8 @@ public class BirtReportServlet extends HttpServlet {
 		String reportExecutionId = (String) context.get(REPORT_EXECUTION_ID);
 		String pattern = "^[a-zA-Z0-9]*$";
 		if (!reportExecutionId.matches(pattern)) {
-			throw new RuntimeException("Security Exception: Report Executio Id [" + reportExecutionId + "] is not alfanumeric.");
+			throw new RuntimeException(
+					"Security Exception: Report Executio Id [" + reportExecutionId + "] is not alfanumeric.");
 		}
 
 		logger.debug("Execution id is : " + reportExecutionId);
@@ -793,8 +803,7 @@ public class BirtReportServlet extends HttpServlet {
 		// commented by Davide Zerbetto on 12/10/2009: there are problems with
 		// MIF (Ext ManagedIFrame library) library
 		/*
-		 * if (outputFormat.equalsIgnoreCase(IBirtConstants.HTML_RENDER_FORMAT)) { ((HTMLRenderOption) renderOption).setEmbeddable(true);
-		 * injectHTMLHeader(response); }
+		 * if (outputFormat.equalsIgnoreCase(IBirtConstants.HTML_RENDER_FORMAT)) { ((HTMLRenderOption) renderOption).setEmbeddable(true); injectHTMLHeader(response); }
 		 */
 		// try {
 		// task.run();
@@ -815,8 +824,7 @@ public class BirtReportServlet extends HttpServlet {
 
 	public static String createNewExecutionId() {
 		String executionId = null;
-		UUIDGenerator uuidGen = UUIDGenerator.getInstance();
-		UUID uuidObj = uuidGen.generateTimeBasedUUID();
+		UUID uuidObj = UUID.randomUUID();
 		executionId = uuidObj.toString();
 		executionId = executionId.replaceAll("-", "");
 		return executionId;
@@ -846,7 +854,8 @@ public class BirtReportServlet extends HttpServlet {
 		renderOption.setOutputFormat(outputFormat);
 	}
 
-	private Map getTaskContext(String userId, Map reportParams, HttpServletRequest request, String resourcePath, Map userProfileAttrs) throws IOException {
+	private Map getTaskContext(String userId, Map reportParams, HttpServletRequest request, String resourcePath,
+			Map userProfileAttrs) throws IOException {
 		Map context = BirtUtility.getAppContext(request);
 
 		String spagoBiServerURL = EnginConf.getInstance().getSpagoBiServerUrl();
@@ -906,12 +915,12 @@ public class BirtReportServlet extends HttpServlet {
 	 * EnginConf.getInstance().getConfig(); SourceBean htmlHeaderSb = (SourceBean) config.getAttribute("HTML_FOOTER"); footer = htmlHeaderSb.getCharacters(); if
 	 * (footer == null || footer.trim().equals("")) { throw new Exception("HTML_FOOTER not configured"); } } catch (Exception e) { logger.
 	 * error("Error while retrieving HTML_FOOTER from engine configuration.", e); logger.info("Using default HTML footer", e); StringBuffer buffer = new
-	 * StringBuffer(); buffer.append("</body></html>"); footer = buffer.toString(); } response.getOutputStream().write(footer.getBytes()); logger.debug("OUT");
-	 * }
+	 * StringBuffer(); buffer.append("</body></html>"); footer = buffer.toString(); } response.getOutputStream().write(footer.getBytes()); logger.debug("OUT"); }
 	 */
 
-	private void prepareCSVRender(Map reportParams, HttpServletRequest request, IReportRunnable design, String userId, String documentId,
-			IEngUserProfile profile, String kpiUrl, HttpServletResponse response, Map context, IReportEngine birtReportEngine) throws Exception {
+	private void prepareCSVRender(Map reportParams, HttpServletRequest request, IReportRunnable design, String userId,
+			String documentId, IEngUserProfile profile, String kpiUrl, HttpServletResponse response, Map context,
+			IReportEngine birtReportEngine) throws Exception {
 
 		logger.debug("IN");
 
@@ -921,7 +930,8 @@ public class BirtReportServlet extends HttpServlet {
 
 			reportDocument = getReportDocument(design, reportParams, context, birtReportEngine);
 
-			logger.debug("Report document obtained for report " + design.getReportName() + "; pages count = " + reportDocument.getPageCount());
+			logger.debug("Report document obtained for report " + design.getReportName() + "; pages count = "
+					+ reportDocument.getPageCount());
 
 			IDataExtractionTask dataExtractionTask = null;
 
@@ -953,7 +963,8 @@ public class BirtReportServlet extends HttpServlet {
 
 				if (flaggedExportResultSet != null) {
 					logger.debug("Found ExportData Element in report; extracting it...");
-					extractSingleResultSet(response, dataExtractionTask, extractionOptions, responseOut, flaggedExportResultSet);
+					extractSingleResultSet(response, dataExtractionTask, extractionOptions, responseOut,
+							flaggedExportResultSet);
 					logger.debug("Result set " + flaggedExportResultSet.getResultSetName() + " extracted succesfully");
 				} else {
 					// ExtractData element not found, search all element to export
@@ -966,12 +977,14 @@ public class BirtReportServlet extends HttpServlet {
 					} else {
 						// with more resultSets generate a zip file containing more CSV files
 						logger.debug("Found more than one result sets; extracting all of them...");
-						extractAllResultSets(response, dataExtractionTask, resultSetList, extractionOptions, responseOut);
+						extractAllResultSets(response, dataExtractionTask, resultSetList, extractionOptions,
+								responseOut);
 						logger.debug("All result sets extracted succesfully");
 					}
 				}
 			} catch (Exception e) {
-				throw new SpagoBIRuntimeException("Error while extracting data from report " + design.getReportName(), e);
+				throw new SpagoBIRuntimeException("Error while extracting data from report " + design.getReportName(),
+						e);
 			} finally {
 				if (dataExtractionTask != null) {
 					// close the extraction task
@@ -980,7 +993,8 @@ public class BirtReportServlet extends HttpServlet {
 			}
 
 		} catch (Exception e) {
-			throw new SpagoBIRuntimeException("Error while getting report document for report " + design.getReportName(), e);
+			throw new SpagoBIRuntimeException(
+					"Error while getting report document for report " + design.getReportName(), e);
 		} finally {
 			if (reportDocument != null) {
 				// close the report document
@@ -991,8 +1005,9 @@ public class BirtReportServlet extends HttpServlet {
 		logger.debug("OUT");
 	}
 
-	protected void extractAllResultSets(HttpServletResponse response, IDataExtractionTask dataExtractionTask, List resultSetList,
-			ICSVDataExtractionOption extractionOptions, OutputStream responseOut) throws BirtException {
+	protected void extractAllResultSets(HttpServletResponse response, IDataExtractionTask dataExtractionTask,
+			List resultSetList, ICSVDataExtractionOption extractionOptions, OutputStream responseOut)
+			throws BirtException {
 		try {
 			// Set the HTTP response
 			response.setContentType("application/zip");
@@ -1054,8 +1069,9 @@ public class BirtReportServlet extends HttpServlet {
 		}
 	}
 
-	protected void extractSingleResultSet(HttpServletResponse response, IDataExtractionTask dataExtractionTask, ICSVDataExtractionOption extractionOptions,
-			OutputStream responseOut, IResultSetItem resultSet) throws BirtException {
+	protected void extractSingleResultSet(HttpServletResponse response, IDataExtractionTask dataExtractionTask,
+			ICSVDataExtractionOption extractionOptions, OutputStream responseOut, IResultSetItem resultSet)
+			throws BirtException {
 		// output directly on the response OutputStream
 		extractionOptions.setOutputStream(responseOut);
 
@@ -1086,7 +1102,8 @@ public class BirtReportServlet extends HttpServlet {
 		return encoding;
 	}
 
-	protected IReportDocument getReportDocument(IReportRunnable design, Map reportParams, Map context, IReportEngine birtReportEngine) throws EngineException {
+	protected IReportDocument getReportDocument(IReportRunnable design, Map reportParams, Map context,
+			IReportEngine birtReportEngine) throws EngineException {
 		logger.debug("IN");
 		IReportDocument toReturn = null;
 		IRunTask runTask = null;
@@ -1115,7 +1132,8 @@ public class BirtReportServlet extends HttpServlet {
 			logger.debug("Report document successfully retrieved for report " + design.getReportName());
 
 		} catch (Exception e) {
-			throw new SpagoBIRuntimeException("Error while getting report document for report " + design.getReportName(), e);
+			throw new SpagoBIRuntimeException(
+					"Error while getting report document for report " + design.getReportName(), e);
 		} finally {
 			if (runTask != null) {
 				// close the task
@@ -1127,8 +1145,7 @@ public class BirtReportServlet extends HttpServlet {
 	}
 
 	protected String generateExecutionId() {
-		UUIDGenerator uuidGen = UUIDGenerator.getInstance();
-		UUID uuid_local = uuidGen.generateTimeBasedUUID();
+		UUID uuid_local = UUID.randomUUID();
 		String executionId = uuid_local.toString();
 		executionId = executionId.replaceAll("-", "");
 		return executionId;
@@ -1152,7 +1169,8 @@ public class BirtReportServlet extends HttpServlet {
 			toReturn = "application/vnd.ms-powerpoint";
 		} else if (outputFormat != null && outputFormat.equalsIgnoreCase(IBirtConstants.POSTSCRIPT_RENDER_FORMAT)) {
 			toReturn = "IBirtConstants.POSTSCRIPT_RENDER_FORMAT";
-		} else if (outputFormat != null && outputFormat.equalsIgnoreCase(DataExtractionParameterUtil.EXTRACTION_FORMAT_CSV)) {
+		} else if (outputFormat != null
+				&& outputFormat.equalsIgnoreCase(DataExtractionParameterUtil.EXTRACTION_FORMAT_CSV)) {
 			toReturn = "CSV";
 		} else {
 			toReturn = "text/html";
@@ -1208,8 +1226,8 @@ public class BirtReportServlet extends HttpServlet {
 					renderOption.setOutputFormat(IBirtConstants.HTML_RENDER_FORMAT);
 
 					for (int i = pageStart; i <= pageEnd; i++) {
-						renderOption.setOutputFileName(
-								BirtReportServlet.OUTPUT_FOLDER + reportExecutionId + File.separator + BirtReportServlet.PAGE_FILE_NAME + i + ".html");
+						renderOption.setOutputFileName(BirtReportServlet.OUTPUT_FOLDER + reportExecutionId
+								+ File.separator + BirtReportServlet.PAGE_FILE_NAME + i + ".html");
 
 						task.setRenderOption(renderOption);
 						logger.debug("Page number " + i + " is ready for viewing");

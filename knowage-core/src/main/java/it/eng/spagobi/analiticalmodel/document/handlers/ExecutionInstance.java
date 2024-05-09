@@ -33,6 +33,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.UUID;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.validator.GenericValidator;
@@ -41,8 +42,6 @@ import org.apache.logging.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.safehaus.uuid.UUID;
-import org.safehaus.uuid.UUIDGenerator;
 
 import com.jamonapi.Monitor;
 import com.jamonapi.MonitorFactory;
@@ -229,8 +228,7 @@ public class ExecutionInstance implements Serializable {
 		// reload the biobject
 		this.object = DAOFactory.getBIObjectDAO().loadBIObjectForExecutionByIdAndRole(object.getId(), newRole);
 		// generates a new execution id
-		UUIDGenerator uuidGen = UUIDGenerator.getInstance();
-		UUID uuidObj = uuidGen.generateTimeBasedUUID();
+		UUID uuidObj = UUID.randomUUID();
 		String currExecutionId = uuidObj.toString();
 		this.executionId = currExecutionId.replace("-", "");
 		this.calendar = new GregorianCalendar();
@@ -1404,8 +1402,7 @@ public class ExecutionInstance implements Serializable {
 			}
 
 			// identity string for context
-			UUIDGenerator uuidGen = UUIDGenerator.getInstance();
-			UUID uuid = uuidGen.generateRandomBasedUUID();
+			UUID uuid = UUID.randomUUID();
 			buffer.append("&" + LightNavigationConstants.LIGHT_NAVIGATOR_ID + "=" + uuid.toString());
 
 			List<BIObjectParameter> parameters = object.getDrivers();

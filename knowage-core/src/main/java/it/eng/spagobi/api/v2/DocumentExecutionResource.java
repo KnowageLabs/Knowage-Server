@@ -44,6 +44,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.StringTokenizer;
+import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
@@ -69,8 +70,6 @@ import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.safehaus.uuid.UUID;
-import org.safehaus.uuid.UUIDGenerator;
 
 import com.google.common.collect.BiMap;
 import com.jamonapi.Monitor;
@@ -224,8 +223,7 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 		JSONArray arrerr = new JSONArray();
 		if (sbiExecutionId == null || sbiExecutionId.isEmpty()) {
 			// CREATE EXECUTION ID
-			UUIDGenerator uuidGen = UUIDGenerator.getInstance();
-			UUID uuidObj = uuidGen.generateTimeBasedUUID();
+			UUID uuidObj = UUID.randomUUID();
 			sbiExecutionId = uuidObj.toString();
 			sbiExecutionId = sbiExecutionId.replaceAll("-", "");
 		}

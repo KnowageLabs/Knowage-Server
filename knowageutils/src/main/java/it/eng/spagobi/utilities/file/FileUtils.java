@@ -21,12 +21,11 @@ import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
 import java.util.List;
+import java.util.UUID;
 
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
-import org.safehaus.uuid.UUID;
-import org.safehaus.uuid.UUIDGenerator;
 
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.engines.SpagoBIEngineRuntimeException;
@@ -229,8 +228,7 @@ public class FileUtils {
 
 	public static String createNewExecutionId() {
 		String executionId = null;
-		UUIDGenerator uuidGen = UUIDGenerator.getInstance();
-		UUID uuidObj = uuidGen.generateTimeBasedUUID();
+		UUID uuidObj = UUID.randomUUID();
 		executionId = uuidObj.toString();
 		executionId = executionId.replaceAll("-", "");
 		return executionId;
