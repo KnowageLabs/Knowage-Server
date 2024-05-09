@@ -172,8 +172,8 @@ public class QbeDataSet extends ConfigurableDataSet {
 		Query qbeQuery = (Query) query;
 		new TimeAggregationHandler(getQbeDataSource()).handleTimeFilters(qbeQuery);
 		Map<String, Map<String, String>> inlineFilteredSelectFields = qbeQuery.getInlineFilteredSelectFields();
+		initDs(getQbeDataSource(), qbeQuery);
 		if (inlineFilteredSelectFields != null && inlineFilteredSelectFields.size() > 0) {
-			initDs(getQbeDataSource(), qbeQuery);
 			ds.loadData(0, 0, -1);
 		} else {
 			ds.loadData(offset, fetchSize, maxResults);
@@ -205,8 +205,10 @@ public class QbeDataSet extends ConfigurableDataSet {
 		}
 
 		// keeping previous datamart retriever, if input map doesn't contain any
-		IQbeDataSetDatamartRetriever previousRetriever = (IQbeDataSetDatamartRetriever) this.params.get(SpagoBIConstants.DATAMART_RETRIEVER);
-		IQbeDataSetDatamartRetriever newRetriever = params == null ? null : (IQbeDataSetDatamartRetriever) params.get(SpagoBIConstants.DATAMART_RETRIEVER);
+		IQbeDataSetDatamartRetriever previousRetriever = (IQbeDataSetDatamartRetriever) this.params
+				.get(SpagoBIConstants.DATAMART_RETRIEVER);
+		IQbeDataSetDatamartRetriever newRetriever = params == null ? null
+				: (IQbeDataSetDatamartRetriever) params.get(SpagoBIConstants.DATAMART_RETRIEVER);
 
 		this.params = params;
 		if (this.params == null) {
@@ -289,16 +291,16 @@ public class QbeDataSet extends ConfigurableDataSet {
 
 	public it.eng.qbe.datasource.IDataSource getQbeDataSource() {
 
-		Map<String, Object> dataSourceProperties = new HashMap<String, Object>();
+		Map<String, Object> dataSourceProperties = new HashMap<>();
 
 		String modelName = getDatamarts();
-		List<String> modelNames = new ArrayList<String>();
+		List<String> modelNames = new ArrayList<>();
 		modelNames.add(modelName);
 		dataSourceProperties.put("datasource", dataSource);
 		dataSourceProperties.put("dblinkMap", new HashMap());
 
 		if (this.getSourceDataset() != null) {
-			List<IDataSet> dataSets = new ArrayList<IDataSet>();
+			List<IDataSet> dataSets = new ArrayList<>();
 			dataSets.add(this.getSourceDataset());
 			dataSourceProperties.put(EngineConstants.ENV_DATASETS, dataSets);
 		}
@@ -311,13 +313,15 @@ public class QbeDataSet extends ConfigurableDataSet {
 
 	}
 
-	public it.eng.qbe.datasource.IDataSource getDataSourceFromDataSet(Map<String, Object> dataSourceProperties, boolean useCache) {
+	public it.eng.qbe.datasource.IDataSource getDataSourceFromDataSet(Map<String, Object> dataSourceProperties,
+			boolean useCache) {
 
 		it.eng.qbe.datasource.IDataSource dataSource;
 		List<IDataSet> dataSets = (List<IDataSet>) dataSourceProperties.get(EngineConstants.ENV_DATASETS);
 		dataSourceProperties.remove(EngineConstants.ENV_DATASETS);
 
-		CompositeDataSourceConfiguration compositeConfiguration = new CompositeDataSourceConfiguration(DataSetDataSource.EMPTY_MODEL_NAME);
+		CompositeDataSourceConfiguration compositeConfiguration = new CompositeDataSourceConfiguration(
+				DataSetDataSource.EMPTY_MODEL_NAME);
 		Iterator<String> it = dataSourceProperties.keySet().iterator();
 		while (it.hasNext()) {
 			String propertyName = it.next();
@@ -325,7 +329,8 @@ public class QbeDataSet extends ConfigurableDataSet {
 		}
 
 		for (int i = 0; i < dataSets.size(); i++) {
-			DataSetDataSourceConfiguration c = new DataSetDataSourceConfiguration((dataSets.get(i)).getLabel(), dataSets.get(i));
+			DataSetDataSourceConfiguration c = new DataSetDataSourceConfiguration((dataSets.get(i)).getLabel(),
+					dataSets.get(i));
 			compositeConfiguration.addSubConfiguration(c);
 		}
 
@@ -334,10 +339,11 @@ public class QbeDataSet extends ConfigurableDataSet {
 		return dataSource;
 	}
 
-	private it.eng.qbe.datasource.IDataSource getORMDataSource(List<String> dataMartNames, Map<String, Object> dataSourceProperties, boolean useCache) {
+	private it.eng.qbe.datasource.IDataSource getORMDataSource(List<String> dataMartNames,
+			Map<String, Object> dataSourceProperties, boolean useCache) {
 
 		File modelJarFile = null;
-		List<File> modelJarFiles = new ArrayList<File>();
+		List<File> modelJarFiles = new ArrayList<>();
 		CompositeDataSourceConfiguration compositeConfiguration = new CompositeDataSourceConfiguration();
 		compositeConfiguration.loadDataSourceProperties().putAll(dataSourceProperties);
 
@@ -357,7 +363,8 @@ public class QbeDataSet extends ConfigurableDataSet {
 		if (this.params == null || this.params.isEmpty()) {
 			return null;
 		}
-		IQbeDataSetDatamartRetriever retriever = (IQbeDataSetDatamartRetriever) this.params.get(SpagoBIConstants.DATAMART_RETRIEVER);
+		IQbeDataSetDatamartRetriever retriever = (IQbeDataSetDatamartRetriever) this.params
+				.get(SpagoBIConstants.DATAMART_RETRIEVER);
 		return retriever;
 	}
 
@@ -414,7 +421,8 @@ public class QbeDataSet extends ConfigurableDataSet {
 
 			for (int i = 0; i < queriesJSON.length(); i++) {
 				queryJSON = queriesJSON.getJSONObject(i);
-				query = it.eng.qbe.query.serializer.SerializerFactory.getDeserializer("application/json").deserializeQuery(queryJSON, dataSource);
+				query = it.eng.qbe.query.serializer.SerializerFactory.getDeserializer("application/json")
+						.deserializeQuery(queryJSON, dataSource);
 				catalogue.addQuery(query);
 			}
 		} catch (Throwable e) {
