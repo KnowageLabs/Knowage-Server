@@ -27,7 +27,6 @@ import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.ObjParuse;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.bo.ParameterUse;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IObjParuseDAO;
 import it.eng.spagobi.behaviouralmodel.analyticaldriver.dao.IParameterUseDAO;
-import it.eng.spagobi.behaviouralmodel.lov.bo.ILovDetail;
 import it.eng.spagobi.commons.bo.Domain;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.constants.ObjectsTreeConstants;
@@ -43,7 +42,7 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 
 public class DocumentRuntime extends AbstractBIResourceRuntime<BIObjectParameter> {
 
-	private static Logger logger = Logger.getLogger(DocumentRuntime.class);
+	private static final Logger LOGGER = Logger.getLogger(DocumentRuntime.class);
 
 	private final List<DocumentDriverRuntime> drivers = null;
 
@@ -58,7 +57,6 @@ public class DocumentRuntime extends AbstractBIResourceRuntime<BIObjectParameter
 
 	private void addSystemParametersForExternalEngines(Map mapPars, Locale locale, BIObject obj,
 			String executionModality, String role) {
-		// mapPars.put("SBI_EXECUTION_ID", this.executionId);
 		mapPars.put(SpagoBIConstants.EXECUTION_ROLE, role);
 		Integer auditId = createAuditId(obj, executionModality, role);
 		if (auditId != null) {
@@ -78,19 +76,19 @@ public class DocumentRuntime extends AbstractBIResourceRuntime<BIObjectParameter
 	}
 
 	private Integer createAuditId(BIObject obj, String executionModality, String role) {
-		logger.debug("IN");
+		LOGGER.debug("IN");
 		try {
 			AuditManager auditManager = AuditManager.getInstance();
 			Integer executionAuditId = auditManager.insertAudit(obj, null, this.getUserProfile(), role,
 					executionModality);
 			return executionAuditId;
 		} finally {
-			logger.debug("OUT");
+			LOGGER.debug("OUT");
 		}
 	}
 
 	public String getExecutionUrl(BIObject obj, String executionModality, String role) {
-		logger.debug("IN");
+		LOGGER.debug("IN");
 		Monitor getExecutionUrlMonitor = MonitorFactory.start("Knowage.DocumentRuntime.getExecutionUrl");
 
 		String url = null;
@@ -144,44 +142,36 @@ public class DocumentRuntime extends AbstractBIResourceRuntime<BIObjectParameter
 			UUID uuid = UUID.randomUUID();
 			buffer.append("&" + LightNavigationConstants.LIGHT_NAVIGATOR_ID + "=" + uuid.toString());
 			List parameters = obj.getDrivers();
-			if (parameters != null && parameters.size() > 0) {
+			if (parameters != null && !parameters.isEmpty()) {
 				Iterator it = parameters.iterator();
 				while (it.hasNext()) {
 					BIObjectParameter aParameter = (BIObjectParameter) it.next();
 
-					List list = aParameter.getParameterValues();
+					List<String> list = aParameter.getParameterValues();
 					if (list != null && !list.isEmpty()) {
-						Iterator r = list.iterator();
+						Iterator<String> r = list.iterator();
 						while (r.hasNext()) {
-							String value = (String) r.next();
+							String value = r.next();
 							if (value != null && !value.equals("")) {
 								// encoding value
 								try {
 									value = URLEncoder.encode(value, UTF_8.name());
 								} catch (UnsupportedEncodingException e) {
-									logger.warn("UTF-8 encoding is not supported!!!", e);
-									logger.warn("Using system encoding...");
+									LOGGER.warn("UTF-8 encoding is not supported!!!", e);
+									LOGGER.warn("Using system encoding...");
 									value = URLEncoder.encode(value);
 								}
 								buffer.append("&" + aParameter.getParameterUrlName() + "=" + value);
 							}
 						}
 					}
-					/*
-					 * ParameterValuesEncoder encoder = new ParameterValuesEncoder(); String encodedValue = encoder.encode(aParameter); if(encodedValue!=null &&
-					 * !encodedValue.equals("")){ buffer.append("&" + aParameter.getParameterUrlName() + "=" + encodedValue); }
-					 */
 				}
 			}
 			url = buffer.toString();
 		}
-		logger.debug("OUT: returning url = [" + url + "]");
+		LOGGER.debug("OUT: returning url = [" + url + "]");
 		getExecutionUrlMonitor.stop();
 		return url;
-	}
-
-	public ILovDetail getLovDetail(BIObjectParameter driver) {
-		return super.getLovDetail(driver);
 	}
 
 	@Override
@@ -199,14 +189,5 @@ public class DocumentRuntime extends AbstractBIResourceRuntime<BIObjectParameter
 		}
 		return biParameterExecDependencies;
 	}
-
-	public ILovDetail getLovDetailForDefault(BIObjectParameter driver) {
-		return super.getLovDetailForDefault(driver);
-	}
-
-//	validateInputs
-//	getDefaultValues
-//	getAdmissibleValues
-//	setValues
 
 }

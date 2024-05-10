@@ -73,9 +73,9 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
  */
 public class QbeDataSet extends ConfigurableDataSet {
 
-	public static String DS_TYPE = "SbiQbeDataSet";
+	public static final String DS_TYPE = "SbiQbeDataSet";
 
-	private static Logger logger = Logger.getLogger(QbeDataSet.class);
+	private static final Logger LOGGER = Logger.getLogger(QbeDataSet.class);
 
 	public static final String QBE_DATA_SOURCE = "qbeDataSource";
 
@@ -108,7 +108,7 @@ public class QbeDataSet extends ConfigurableDataSet {
 			this.setJsonQuery((jsonConf.opt(QBE_JSON_QUERY) != null) ? jsonConf.get(QBE_JSON_QUERY).toString() : "");
 
 		} catch (Exception e) {
-			logger.error("Error while defining dataset configuration.  Error: " + e.getMessage());
+			LOGGER.error("Error while defining dataset configuration.  Error: " + e.getMessage());
 		}
 
 		setDatasourceInternal(dataSetConfig);
@@ -356,7 +356,7 @@ public class QbeDataSet extends ConfigurableDataSet {
 		modelJarFiles.add(modelJarFile);
 		compositeConfiguration.addSubConfiguration(new FileDataSourceConfiguration(dataMartNames.get(0), modelJarFile));
 
-		logger.debug("OUT: Finish to load the data source for the model names " + dataMartNames + "..");
+		LOGGER.debug("OUT: Finish to load the data source for the model names " + dataMartNames + "..");
 		return DriverManager.getDataSource(getDriverName(modelJarFile), compositeConfiguration, this.useCache);
 	}
 
@@ -376,7 +376,7 @@ public class QbeDataSet extends ConfigurableDataSet {
 	 * @return jpa if the persistence provder is JPA o hibernate otherwise
 	 */
 	private static String getDriverName(File jarFile) {
-		logger.debug("IN: Check the driver name. Looking if " + jarFile + " is a jpa jar file..");
+		LOGGER.debug("IN: Check the driver name. Looking if " + jarFile + " is a jpa jar file..");
 		JarInputStream zis;
 		JarEntry zipEntry;
 		String dialectName = null;
@@ -386,7 +386,7 @@ public class QbeDataSet extends ConfigurableDataSet {
 			FileInputStream fis = new FileInputStream(jarFile);
 			zis = new JarInputStream(fis);
 			while ((zipEntry = zis.getNextJarEntry()) != null) {
-				logger.debug("Zip Entry is [" + zipEntry.getName() + "]");
+				LOGGER.debug("Zip Entry is [" + zipEntry.getName() + "]");
 				if (zipEntry.getName().equals("META-INF/persistence.xml")) {
 					isJpa = true;
 					break;
@@ -400,11 +400,11 @@ public class QbeDataSet extends ConfigurableDataSet {
 				dialectName = "hibernate";
 			}
 		} catch (Throwable t) {
-			logger.error("Impossible to read jar file [" + jarFile + "]", t);
+			LOGGER.error("Impossible to read jar file [" + jarFile + "]", t);
 			throw new SpagoBIRuntimeException("Impossible to read jar file [" + jarFile + "]", t);
 		}
 
-		logger.debug("OUT: " + jarFile + " has the dialect: " + dialectName);
+		LOGGER.debug("OUT: " + jarFile + " has the dialect: " + dialectName);
 		return dialectName;
 	}
 
@@ -466,7 +466,7 @@ public class QbeDataSet extends ConfigurableDataSet {
 			DatasetMetadataParser dsp = new DatasetMetadataParser();
 			metadata = dsp.xmlToMetadata(getDsMetadata());
 		} catch (Exception e) {
-			logger.error("Error loading the metadata", e);
+			LOGGER.error("Error loading the metadata", e);
 			throw new SpagoBIEngineRuntimeException("Error loading the metadata", e);
 		}
 		return metadata;

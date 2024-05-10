@@ -345,7 +345,7 @@ public class CrosstabResource extends AbstractCockpitEngineResource {
 		while (it.hasNext()) {
 			String aFilterName = it.next();
 			List<String> values = filters.get(aFilterName);
-			if (values != null && values.size() > 0) {
+			if (values != null && !values.isEmpty()) {
 				String operator = values.size() > 1 ? CriteriaConstants.IN : CriteriaConstants.EQUALS_TO;
 				Operand leftOperand = new Operand(new String[] { aFilterName }, null,
 						AbstractStatement.OPERAND_TYPE_SIMPLE_FIELD, null, null);
@@ -728,8 +728,7 @@ public class CrosstabResource extends AbstractCockpitEngineResource {
 	}
 
 	public List<String> getAllFields() {
-		List<String> toReturn = new ArrayList<>();
-		return toReturn;
+		return new ArrayList<>();
 	}
 
 	private void recordTemporaryTable(String tableName, IDataSource dataSource) {

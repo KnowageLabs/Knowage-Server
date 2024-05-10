@@ -31,7 +31,7 @@ import it.eng.spagobi.commons.utilities.ExecutionProxy;
 
 public class ReportExporter {
 
-	private static transient Logger logger = Logger.getLogger(ReportExporter.class);
+	private static final Logger LOGGER = Logger.getLogger(ReportExporter.class);
 
 	/**
 	 * return a PDF file containg the result of the jasper report execution
@@ -42,10 +42,10 @@ public class ReportExporter {
 	 */
 
 	public File getReport(BIObject obj, IEngUserProfile profile, String output) {
-		logger.debug("IN");
+		LOGGER.debug("IN");
 		File toReturn = null;
 		if (obj == null) {
-			logger.error("object is null");
+			LOGGER.error("object is null");
 			return null;
 		}
 
@@ -57,45 +57,36 @@ public class ReportExporter {
 		String fileExtension = proxy.getFileExtensionFromContType(proxy.getReturnedContentType());
 
 		if (returnByteArray == null || returnByteArray.length == 0) {
-			logger.error("error during execution; null result from execution Proxy");
+			LOGGER.error("error during execution; null result from execution Proxy");
 			return null;
 		}
 
 		// identity string for object execution
-		UUID uuid_local = UUID.randomUUID();
-		String executionId = uuid_local.toString();
-		executionId = executionId.replaceAll("-", "");
+		UUID uuid = UUID.randomUUID();
+		String executionId = uuid.toString();
+		executionId = executionId.replace("-", "");
 
-		FileOutputStream fos = null;
+		// file creation
+		// Create temp file
+		String dirS = System.getProperty("java.io.tmpdir");
+		String dirSS = dirS + "/reportExport";
+		File dir = new File(dirSS);
+		dir.mkdirs();
+
+		LOGGER.debug("Create Temp File");
 
 		try {
-			// file creation
-			// Create temp file
-			String dirS = System.getProperty("java.io.tmpdir");
-			String dirSS = dirS + "/reportExport";
-			File dir = new File(dirSS);
-			dir.mkdirs();
-
-			logger.debug("Create Temp File");
-
 			toReturn = File.createTempFile(obj.getLabel() + executionId, fileExtension, dir);
-			fos = new FileOutputStream(toReturn);
-			fos.write(returnByteArray);
+			try (FileOutputStream fos = new FileOutputStream(toReturn)) {
+				fos.write(returnByteArray);
+			}
 
 		} catch (IOException e) {
-			logger.error("error in writing the file", e);
+			LOGGER.error("error in writing the file", e);
 			return null;
-		} finally {
-			try {
-				fos.flush();
-				fos.close();
-			} catch (IOException e) {
-				logger.error("IO Exception: could not close the output stream", e);
-			}
-			// tmpFile.delete();
 		}
 
-		logger.debug("OUT");
+		LOGGER.debug("OUT");
 		return toReturn;
 
 	}

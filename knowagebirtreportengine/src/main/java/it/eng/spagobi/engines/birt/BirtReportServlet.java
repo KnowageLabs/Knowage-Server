@@ -58,6 +58,7 @@ import org.eclipse.birt.report.engine.api.HTMLRenderOption;
 import org.eclipse.birt.report.engine.api.HTMLServerImageHandler;
 import org.eclipse.birt.report.engine.api.IDataExtractionTask;
 import org.eclipse.birt.report.engine.api.IGetParameterDefinitionTask;
+import org.eclipse.birt.report.engine.api.IHTMLRenderOption;
 import org.eclipse.birt.report.engine.api.IImage;
 import org.eclipse.birt.report.engine.api.IPageHandler;
 import org.eclipse.birt.report.engine.api.IRenderOption;
@@ -106,14 +107,13 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
  **/
 public class BirtReportServlet extends HttpServlet {
 
-	// private IReportEngine birtReportEngine = null;
 	protected static Logger logger = Logger.getLogger(BirtReportServlet.class);
 	private static final String CONNECTION_NAME = "connectionName";
 	public static final String JS_EXT_ZIP = ".zip";
 	public static final String JS_FILE_ZIP = "JS_File";
 	public static final String RTF_FORMAT = "RTF";
-	public static final String predefinedGroovyScriptFileName = "predefinedGroovyScript.groovy";
-	public static final String predefinedJsScriptFileName = "predefinedJavascriptScript.js";
+	public static final String PREDEFINED_SCRIPT_GROOVY_FILE_NAME = "predefinedGroovyScript.groovy";
+	public static final String PREDEFINED_SCRIPT_JS_FILE_NAME = "predefinedJavascriptScript.js";
 
 	private static final String FLAGGED_CSV_EXPORT_RESULT_SET_NAME = "exportdata";
 
@@ -175,7 +175,7 @@ public class BirtReportServlet extends HttpServlet {
 		AuditAccessUtils auditAccessUtils = (AuditAccessUtils) request.getSession().getAttribute("SPAGOBI_AUDIT_UTILS");
 		if (auditId != null) {
 			if (auditAccessUtils != null)
-				auditAccessUtils.updateAudit(session, userId, auditId, new Long(System.currentTimeMillis()), null,
+				auditAccessUtils.updateAudit(session, userId, auditId, System.currentTimeMillis(), null,
 						"EXECUTION_STARTED", null, null);
 		}
 		try {
@@ -183,7 +183,7 @@ public class BirtReportServlet extends HttpServlet {
 			// AUDIT UPDATE
 			if (auditId != null) {
 				if (auditAccessUtils != null)
-					auditAccessUtils.updateAudit(session, userId, auditId, null, new Long(System.currentTimeMillis()),
+					auditAccessUtils.updateAudit(session, userId, auditId, null, System.currentTimeMillis(),
 							"EXECUTION_PERFORMED", null, null);
 			}
 		} catch (ConnectionDefinitionException e) {
@@ -196,7 +196,7 @@ public class BirtReportServlet extends HttpServlet {
 			// AUDIT UPDATE
 			if (auditId != null) {
 				if (auditAccessUtils != null)
-					auditAccessUtils.updateAudit(session, userId, auditId, null, new Long(System.currentTimeMillis()),
+					auditAccessUtils.updateAudit(session, userId, auditId, null, System.currentTimeMillis(),
 							"EXECUTION_FAILED", e.getDescription(), null);
 			}
 		} catch (Exception e) {
@@ -204,7 +204,7 @@ public class BirtReportServlet extends HttpServlet {
 			// AUDIT UPDATE
 			if (auditId != null) {
 				if (auditAccessUtils != null)
-					auditAccessUtils.updateAudit(session, userId, auditId, null, new Long(System.currentTimeMillis()),
+					auditAccessUtils.updateAudit(session, userId, auditId, null, System.currentTimeMillis(),
 							"EXECUTION_FAILED", e.getMessage(), null);
 			}
 		}
@@ -218,19 +218,18 @@ public class BirtReportServlet extends HttpServlet {
 			return null;
 		else {
 			String paramaterValueStr = paramaterValue.toString();
-			String toReturn = "";
+			StringBuilder toReturn = new StringBuilder();
 			ParametersDecoder decoder = new ParametersDecoder();
 			if (decoder.isMultiValues(paramaterValueStr)) {
 				List values = decoder.decode(paramaterValueStr);
-				// toReturn = (String) values.get(0);
 				for (int i = 0; i < values.size(); i++) {
-					toReturn += (i > 0 ? "," : "");
-					toReturn += values.get(i);
+					toReturn.append(i > 0 ? "," : "");
+					toReturn.append(values.get(i));
 				}
 			} else {
-				toReturn = paramaterValueStr;
+				toReturn.append(paramaterValueStr);
 			}
-			return toReturn;
+			return toReturn.toString();
 		}
 	}
 
@@ -273,7 +272,7 @@ public class BirtReportServlet extends HttpServlet {
 	private HTMLRenderOption prerareBackEndHtmlRenderOption() {
 		logger.debug("IN");
 		HTMLRenderOption renderOption = new HTMLRenderOption();
-		renderOption.setOutputFormat(HTMLRenderOption.HTML);
+		renderOption.setOutputFormat(IHTMLRenderOption.HTML);
 		renderOption.setSupportedImageFormats("PNG;GIF;JPG;BMP");
 		renderOption.setEmbeddable(false);
 		renderOption.setImageHandler(new HTMLServerImageHandler() {
@@ -324,38 +323,35 @@ public class BirtReportServlet extends HttpServlet {
 		}
 
 		SpagoBIAccessUtils util = new SpagoBIAccessUtils();
-		UUID uuid_local = UUID.randomUUID();
-		String executionId = uuid_local.toString();
-		executionId = executionId.replaceAll("-", "");
-		boolean propertiesLoaded = false;
+		UUID uuid = UUID.randomUUID();
+		String executionId = uuid.toString();
+		executionId = executionId.replace("-", "");
 		if (flgTemplateStandard.equalsIgnoreCase("false")) {
 			logger.debug("The template is a .ZIP file");
 			File fileZip = new File(getBirtExecutionTempDir(executionId), JS_FILE_ZIP + JS_EXT_ZIP);
-			FileOutputStream foZip = new FileOutputStream(fileZip);
-			foZip.write(templateContent);
-			foZip.close();
+			try (FileOutputStream foZip = new FileOutputStream(fileZip)) {
+				foZip.write(templateContent);
+			}
 			util.unzip(fileZip, getBirtExecutionTempDir(executionId));
-			JarFile zipFile = new JarFile(fileZip);
-			Enumeration totalZipEntries = zipFile.entries();
-			File jarFile = null;
-			while (totalZipEntries.hasMoreElements()) {
-				ZipEntry entry = (ZipEntry) totalZipEntries.nextElement();
-				if (entry.getName().endsWith(".jar")) {
-					jarFile = new File(getBirtExecutionTempDirName(executionId) + entry.getName());
-					// set classloader with jar
-					ClassLoader previous = Thread.currentThread().getContextClassLoader();
-					DynamicClassLoader dcl = new DynamicClassLoader(jarFile, previous);
-					Thread.currentThread().setContextClassLoader(dcl);
-				} else if (entry.getName().endsWith(".rptdesign")) {
-					// set InputStream with report
-					File birtFile = new File(getBirtExecutionTempDirName(executionId) + entry.getName());
-					InputStream isBirt = new FileInputStream(birtFile);
-					byte[] templateRptDesign = new byte[0];
-					templateRptDesign = util.getByteArrayFromInputStream(isBirt);
-					is = new java.io.ByteArrayInputStream(templateRptDesign);
-				}
-				if (entry.getName().endsWith(".properties")) {
-					propertiesLoaded = true;
+			try (JarFile zipFile = new JarFile(fileZip)) {
+				Enumeration totalZipEntries = zipFile.entries();
+				File jarFile = null;
+				while (totalZipEntries.hasMoreElements()) {
+					ZipEntry entry = (ZipEntry) totalZipEntries.nextElement();
+					if (entry.getName().endsWith(".jar")) {
+						jarFile = new File(getBirtExecutionTempDirName(executionId) + entry.getName());
+						// set classloader with jar
+						ClassLoader previous = Thread.currentThread().getContextClassLoader();
+						DynamicClassLoader dcl = new DynamicClassLoader(jarFile, previous);
+						Thread.currentThread().setContextClassLoader(dcl);
+					} else if (entry.getName().endsWith(".rptdesign")) {
+						// set InputStream with report
+						File birtFile = new File(getBirtExecutionTempDirName(executionId) + entry.getName());
+						InputStream isBirt = new FileInputStream(birtFile);
+						byte[] templateRptDesign = new byte[0];
+						templateRptDesign = util.getByteArrayFromInputStream(isBirt);
+						is = new java.io.ByteArrayInputStream(templateRptDesign);
+					}
 				}
 			}
 			String resourcePath = getBirtExecutionTempDirName(executionId);
@@ -383,9 +379,9 @@ public class BirtReportServlet extends HttpServlet {
 		logger.debug("IN");
 		String dateformat = request.getParameter("dateformat");
 		if (dateformat != null) {
-			dateformat = dateformat.replaceAll("D", "d");
-			dateformat = dateformat.replaceAll("m", "M");
-			dateformat = dateformat.replaceAll("Y", "y");
+			dateformat = dateformat.replace("D", "d");
+			dateformat = dateformat.replace("m", "M");
+			dateformat = dateformat.replace("Y", "y");
 		}
 
 		HashMap toReturn = new HashMap();
@@ -449,22 +445,21 @@ public class BirtReportServlet extends HttpServlet {
 	 */
 	private void addParToParMap(Map params, String parName, String parValue) {
 		logger.debug("IN.parName:" + parName + " /parValue:" + parValue);
-		String newParValue;
+		StringBuilder newParValue = new StringBuilder();
 
 		ParametersDecoder decoder = new ParametersDecoder();
 		if (decoder.isMultiValues(parValue)) {
 			List values = decoder.decode(parValue);
-			newParValue = "";
 			for (int i = 0; i < values.size(); i++) {
-				newParValue += (i > 0 ? "," : "");
-				newParValue += values.get(i);
+				newParValue.append((i > 0 ? "," : ""));
+				newParValue.append(values.get(i));
 			}
 
 		} else {
-			newParValue = parValue;
+			newParValue.append(parValue);
 		}
 
-		params.put(parName, newParValue);
+		params.put(parName, newParValue.toString());
 		logger.debug("OUT");
 	}
 
@@ -574,7 +569,7 @@ public class BirtReportServlet extends HttpServlet {
 		String outputType = getOutputType(outputFormat);
 
 		boolean progressiveViewing = false;
-		boolean isHTML = outputType.equalsIgnoreCase("text/html") ? true : false;
+		boolean isHTML = outputType.equalsIgnoreCase("text/html");
 		boolean containsJQuery = false;
 
 		// check if there is script for progressive pagination inside the report
@@ -788,36 +783,6 @@ public class BirtReportServlet extends HttpServlet {
 				is.close();
 		}
 
-		// NO PATCH
-		// task.setParameterValues(reportParams); NO PATCH
-		// task.validateParameters();
-		// task.setAppContext(context); NO PATCH
-		// renderOption.setOutputStream(response.getOutputStream());
-		// task.setRenderOption(renderOption);
-		// Create task to run and render the report,
-		// IRunAndRenderTask task = birtReportEngine.createRunAndRenderTask(design); // NO PATCH
-		// task.setLocale(locale);
-
-		// setting HTML header if output format is HTML: this is necessary in
-		// order to inject the document.domain directive
-		// commented by Davide Zerbetto on 12/10/2009: there are problems with
-		// MIF (Ext ManagedIFrame library) library
-		/*
-		 * if (outputFormat.equalsIgnoreCase(IBirtConstants.HTML_RENDER_FORMAT)) { ((HTMLRenderOption) renderOption).setEmbeddable(true); injectHTMLHeader(response); }
-		 */
-		// try {
-		// task.run();
-		// } catch (Exception e) {
-		// logger.error("Error while running the report: " + e);
-		// e.printStackTrace();
-		// }
-		// task.close();
-		// commented by Davide Zerbetto on 12/10/2009: there are problems with
-		// MIF (Ext ManagedIFrame library) library
-		/*
-		 * if (outputFormat.equalsIgnoreCase(IBirtConstants.HTML_RENDER_FORMAT)) { injectHTMLFooter(response); }
-		 */
-
 		logger.debug("OUT");
 
 	}
@@ -826,7 +791,7 @@ public class BirtReportServlet extends HttpServlet {
 		String executionId = null;
 		UUID uuidObj = UUID.randomUUID();
 		executionId = uuidObj.toString();
-		executionId = executionId.replaceAll("-", "");
+		executionId = executionId.replace("-", "");
 		return executionId;
 	}
 
@@ -838,7 +803,6 @@ public class BirtReportServlet extends HttpServlet {
 			logger.warn("Could not find engine config file");
 			return;
 		}
-		// Assert.assertNotNull(engineConfig, "Could not find engine configuration file");
 		String attributeName = output.toUpperCase() + "_EMITTER";
 		SourceBean emitterConf = (SourceBean) engineConfig.getAttribute(attributeName);
 		if (emitterConf == null) {
@@ -846,7 +810,6 @@ public class BirtReportServlet extends HttpServlet {
 			logger.debug("Could not find emitter configuration for output = [" + output + "]. Using default emitter.");
 			return;
 		}
-		// Assert.assertNotNull(emitterConf, "Could not find Excel emitter configuration");
 		String emitterId = (String) emitterConf.getAttribute("id");
 		String outputFormat = (String) emitterConf.getAttribute("output_format");
 		logger.debug("Using emitter [" + emitterId + "] with output format [" + outputFormat + "] ...");
@@ -881,42 +844,12 @@ public class BirtReportServlet extends HttpServlet {
 		context.put("SBI_BIRT_RUNTIME_TOKEN", token);
 		context.put("SBI_BIRT_RUNTIME_PARS_MAP", reportParams);
 		context.put("SBI_BIRT_RUNTIME_PROFILE_USER_ATTRS", userProfileAttrs);
-		context.put("SBI_BIRT_RUNTIME_GROOVY_SCRIPT_FILE_NAME", predefinedGroovyScriptFileName);
-		context.put("SBI_BIRT_RUNTIME_JS_SCRIPT_FILE_NAME", predefinedJsScriptFileName);
+		context.put("SBI_BIRT_RUNTIME_GROOVY_SCRIPT_FILE_NAME", PREDEFINED_SCRIPT_GROOVY_FILE_NAME);
+		context.put("SBI_BIRT_RUNTIME_JS_SCRIPT_FILE_NAME", PREDEFINED_SCRIPT_JS_FILE_NAME);
 		context.put("SESSION", session);
 
 		return context;
 	}
-
-	/**
-	 * This method injects the HTML header into the report HTML output. This is necessary in order to inject the document.domain javascript directive
-	 */
-	/*
-	 * commented by Davide Zerbetto on 12/10/2009: there are problems with MIF (Ext ManagedIFrame library) library protected void
-	 * injectHTMLHeader(HttpServletResponse response) throws IOException { logger.debug("IN"); String header = null; try { SourceBean config =
-	 * EnginConf.getInstance().getConfig(); SourceBean htmlHeaderSb = (SourceBean) config.getAttribute("HTML_HEADER"); header = htmlHeaderSb.getCharacters(); if
-	 * (header == null || header.trim().equals("")) { throw new Exception("HTML_HEADER not configured"); } header = header.replaceAll("\\$\\{SBI_DOMAIN\\}",
-	 * EnginConf.getInstance().getSpagoBiDomain()); } catch (Exception e) { logger .error("Error while retrieving HTML_HEADER from engine configuration.", e);
-	 * logger.info("Using default HTML header", e); StringBuffer buffer = new StringBuffer(); buffer.append(
-	 * "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01//EN\" \"http://www.w3.org/TR/html4/loose.dtd\">" ); buffer.append(
-	 * "<html><head><meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\"></meta>" ); buffer.append("  <script type=\"text/javascript\">");
-	 * buffer.append("    document.domain='" + EnginConf.getInstance().getSpagoBiDomain() + "';"); buffer.append("  </script>"); buffer.append("</head><body>");
-	 * header = buffer.toString(); } response.getOutputStream().write(header.getBytes()); logger.debug("OUT"); }
-	 */
-
-	/**
-	 * This method injects the HTML footer into the report HTML output. See injectHTMLHeader method
-	 *
-	 * @param context
-	 */
-	/*
-	 * commented by Davide Zerbetto on 12/10/2009: there are problems with MIF (Ext ManagedIFrame library) library protected void
-	 * injectHTMLFooter(HttpServletResponse response) throws IOException { logger.debug("IN"); String footer = null; try { SourceBean config =
-	 * EnginConf.getInstance().getConfig(); SourceBean htmlHeaderSb = (SourceBean) config.getAttribute("HTML_FOOTER"); footer = htmlHeaderSb.getCharacters(); if
-	 * (footer == null || footer.trim().equals("")) { throw new Exception("HTML_FOOTER not configured"); } } catch (Exception e) { logger.
-	 * error("Error while retrieving HTML_FOOTER from engine configuration.", e); logger.info("Using default HTML footer", e); StringBuffer buffer = new
-	 * StringBuffer(); buffer.append("</body></html>"); footer = buffer.toString(); } response.getOutputStream().write(footer.getBytes()); logger.debug("OUT"); }
-	 */
 
 	private void prepareCSVRender(Map reportParams, HttpServletRequest request, IReportRunnable design, String userId,
 			String documentId, IEngUserProfile profile, String kpiUrl, HttpServletResponse response, Map context,
@@ -939,7 +872,7 @@ public class BirtReportServlet extends HttpServlet {
 				// *** Create the data extraction task ****
 				dataExtractionTask = birtReportEngine.createDataExtractionTask(reportDocument);
 				List resultSetList = dataExtractionTask.getResultSetList();
-				if (resultSetList.size() == 0) {
+				if (resultSetList.isEmpty()) {
 					throw new SpagoBIRuntimeException("No result sets found!!");
 				}
 
@@ -1145,9 +1078,9 @@ public class BirtReportServlet extends HttpServlet {
 	}
 
 	protected String generateExecutionId() {
-		UUID uuid_local = UUID.randomUUID();
-		String executionId = uuid_local.toString();
-		executionId = executionId.replaceAll("-", "");
+		UUID uuid = UUID.randomUUID();
+		String executionId = uuid.toString();
+		executionId = executionId.replace("-", "");
 		return executionId;
 	}
 
@@ -1203,11 +1136,9 @@ public class BirtReportServlet extends HttpServlet {
 				int pageEnd;
 
 				if (lastCheckpoint == 0) {
-					// pageRange = 1 + "-" + pageNumber;
 					pageStart = 1;
 					pageEnd = pageNumber;
 				} else {
-					// pageRange = (lastCheckpoint + 1) + "-" + pageNumber;
 					pageStart = lastCheckpoint + 1;
 					pageEnd = pageNumber;
 

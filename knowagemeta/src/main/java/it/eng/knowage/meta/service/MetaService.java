@@ -26,7 +26,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
 import java.nio.file.Files;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Enumeration;
@@ -41,7 +40,6 @@ import java.util.jar.JarFile;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.naming.NamingException;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -64,7 +62,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.NullNode;
@@ -1035,8 +1032,7 @@ public class MetaService extends AbstractSpagoBIResource {
 
 	@GET
 	@Path("/updatePhysicalModel")
-	public Response updatePhysicalModel(@Context HttpServletRequest req)
-			throws ClassNotFoundException, NamingException, SQLException, JSONException, EMFUserError {
+	public Response updatePhysicalModel(@Context HttpServletRequest req) throws JSONException, EMFUserError {
 		PhysicalModelInitializer physicalModelInitializer = new PhysicalModelInitializer();
 		Model model = (Model) req.getSession().getAttribute(EMF_MODEL);
 		setProfileDialectThreadLocal(model);
@@ -1079,7 +1075,7 @@ public class MetaService extends AbstractSpagoBIResource {
 	@Path("/updatePhysicalModel")
 	@SuppressWarnings("unchecked")
 	public Response applyUpdatePhysicalModel(@Context HttpServletRequest req)
-			throws ClassNotFoundException, NamingException, SQLException, JSONException, IOException, EMFUserError {
+			throws JSONException, IOException, EMFUserError {
 		Model model = (Model) req.getSession().getAttribute(EMF_MODEL);
 		setProfileDialectThreadLocal(model);
 		JSONObject oldJsonModel = createJson(model);
@@ -1127,7 +1123,7 @@ public class MetaService extends AbstractSpagoBIResource {
 	@POST
 	@Path("/createBusinessColumn")
 	public Response createBusinessColumn(@Context HttpServletRequest req)
-			throws JsonProcessingException, SpagoBIException, IOException, JSONException {
+			throws SpagoBIException, IOException, JSONException {
 		JSONObject jsonRoot = RestUtilities.readBodyAsJSONObject(req);
 		Model model = (Model) req.getSession().getAttribute(EMF_MODEL);
 		setProfileDialectThreadLocal(model);
@@ -1178,7 +1174,7 @@ public class MetaService extends AbstractSpagoBIResource {
 	@POST
 	@Path("/moveBusinessColumn")
 	public String moveBusinessColumn(@Context HttpServletRequest req)
-			throws JsonProcessingException, SpagoBIException, IOException, JSONException {
+			throws SpagoBIException, IOException, JSONException {
 		JSONObject jsonRoot = RestUtilities.readBodyAsJSONObject(req);
 		Model model = (Model) req.getSession().getAttribute(EMF_MODEL);
 		setProfileDialectThreadLocal(model);
@@ -1214,7 +1210,7 @@ public class MetaService extends AbstractSpagoBIResource {
 	@POST
 	@Path("/deleteBusinessColumn")
 	public Response deleteBusinessColumn(@Context HttpServletRequest req)
-			throws JsonProcessingException, SpagoBIException, IOException, JSONException {
+			throws SpagoBIException, IOException, JSONException {
 		JSONObject jsonRoot = RestUtilities.readBodyAsJSONObject(req);
 		Model model = (Model) req.getSession().getAttribute(EMF_MODEL);
 		setProfileDialectThreadLocal(model);
@@ -1281,7 +1277,7 @@ public class MetaService extends AbstractSpagoBIResource {
 	@POST
 	@Path("/alterTemporalHierarchy")
 	public Response alterTemporalHierarchy(@Context HttpServletRequest req)
-			throws JsonProcessingException, SpagoBIException, IOException, JSONException {
+			throws SpagoBIException, IOException, JSONException {
 		JSONObject jsonRoot = RestUtilities.readBodyAsJSONObject(req);
 		Model model = (Model) req.getSession().getAttribute(EMF_MODEL);
 		JSONObject oldJsonModel = createJson(model);
@@ -1292,7 +1288,7 @@ public class MetaService extends AbstractSpagoBIResource {
 		JSONArray hierarchy = json.getJSONArray("hierarchy");
 
 		OlapModelInitializer omInit = new OlapModelInitializer();
-		if (model.getOlapModels().size() == 0) {
+		if (model.getOlapModels().isEmpty()) {
 			omInit.setRootModel(model);
 			omInit.initialize(model.getName());
 		}
@@ -1407,7 +1403,7 @@ public class MetaService extends AbstractSpagoBIResource {
 		bt.setModel(bm);
 		bm.getBusinessTables().add(bt);
 		bt.setName(name);
-		bt.setUniqueName(name.toLowerCase().replaceAll(" ", "_"));
+		bt.setUniqueName(name.toLowerCase().replace(" ", "_"));
 		bt.setDescription(description);
 		bt.setPhysicalTable(pt);
 		bt.setDescription(description);
@@ -1522,8 +1518,7 @@ public class MetaService extends AbstractSpagoBIResource {
 		// br.setPhysicalForeignKey(null);
 	}
 
-	private void applyDiff(JSONObject jsonRoot, Model model)
-			throws SpagoBIException, JsonProcessingException, IOException, JSONException {
+	private void applyDiff(JSONObject jsonRoot, Model model) throws SpagoBIException, IOException, JSONException {
 		if (jsonRoot.has("diff")) {
 			ObjectMapper mapper = new ObjectMapper();
 
@@ -1700,7 +1695,7 @@ public class MetaService extends AbstractSpagoBIResource {
 		Matcher m = p.matcher(path);
 		StringBuffer s = new StringBuffer();
 		while (m.find()) {
-			m.appendReplacement(s, "[" + String.valueOf(1 + Integer.parseInt(m.group(2))) + "]");
+			m.appendReplacement(s, "[" + (1 + Integer.parseInt(m.group(2))) + "]");
 		}
 		m.appendTail(s);
 		return s.toString();

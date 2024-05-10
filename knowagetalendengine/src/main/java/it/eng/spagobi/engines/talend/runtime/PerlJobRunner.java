@@ -29,7 +29,7 @@ import it.eng.spagobi.utilities.threadmanager.WorkManager;
 
 public class PerlJobRunner implements IJobRunner {
 
-	private static final Logger logger = Logger.getLogger(PerlJobRunner.class);
+	private static final Logger LOGGER = Logger.getLogger(PerlJobRunner.class);
 
 	private final RuntimeRepository runtimeRepository;
 
@@ -51,12 +51,12 @@ public class PerlJobRunner implements IJobRunner {
 
 		File contextTempScriptFile = null;
 
-		logger.debug("Starting run method with parameters: " + "project = [" + job.getProject() + "] ; "
+		LOGGER.debug("Starting run method with parameters: " + "project = [" + job.getProject() + "] ; "
 				+ "job name = [" + job.getName() + "] ; " + "context = [" + job.getContext() + "] ; " + "base dir = ["
 				+ runtimeRepository.getRootDir() + "].");
 
 		File executableJobDir = runtimeRepository.getExecutableJobDir(job);
-		logger.debug("Job base folder: " + executableJobDir);
+		LOGGER.debug("Job base folder: " + executableJobDir);
 
 		if (!runtimeRepository.containsJob(job)) {
 			throw new JobNotFoundException(
@@ -74,12 +74,12 @@ public class PerlJobRunner implements IJobRunner {
 		File contextFile = null;
 
 		if (job.getContext() == null || job.getContext().trim().equals("")) {
-			logger.debug("Context not specified.");
+			LOGGER.debug("Context not specified.");
 			job.setContext(DEFAULT_CONTEXT);
 			String contextFileName = TalendScriptAccessUtils.getContextFileName(job);
 			File defaultContextFile = new File(executableJobDir, contextFileName);
 			if (defaultContextFile.exists()) {
-				logger.debug("Found default script context file.");
+				LOGGER.debug("Found default script context file.");
 				contextFile = defaultContextFile;
 			}
 		} else {
@@ -99,21 +99,19 @@ public class PerlJobRunner implements IJobRunner {
 				}
 				cmd = cmd + " --context=" + contextFileName;
 			} else {
-				// String newContextScriptFileName = contextScriptFile.getName();
 				try {
 					contextTempScriptFile = createTempContextScriptFile(contextFile, parameters);
-					// newContextScriptFileName = contextTempScriptFile.getName();
 				} catch (Exception e) {
-					logger.error("Error while creating temp context file", e);
-					logger.error("Document parameter cannot be considered.");
+					LOGGER.error("Error while creating temp context file", e);
+					LOGGER.error("Document parameter cannot be considered.");
 				}
 				cmd = cmd + " --context=\"" + contextTempScriptFile.getAbsolutePath() + "\"";
 			}
 		}
 
-		logger.debug("Perl execution command: " + cmd);
+		LOGGER.debug("Perl execution command: " + cmd);
 
-		List filesToBeDeleted = new ArrayList();
+		List<File> filesToBeDeleted = new ArrayList<>();
 		filesToBeDeleted.add(contextTempScriptFile);
 
 		try {
@@ -130,56 +128,57 @@ public class PerlJobRunner implements IJobRunner {
 	}
 
 	private File createTempContextScriptFile(File contextScriptFile, Map parameters) throws Exception {
-		FileReader reader = new FileReader(contextScriptFile);
-		StringBuilder filebuff = new StringBuilder();
-		char[] buffer = new char[1024];
-		int len;
-		while ((len = reader.read(buffer)) >= 0) {
-			filebuff.append(buffer, 0, len);
-		}
-		reader.close();
-		Set entries = parameters.entrySet();
-		Iterator it = entries.iterator();
-		while (it.hasNext()) {
-			Map.Entry entry = (Map.Entry) it.next();
-			String parameterName = entry.getKey().toString();
-			Object parameterValueObj = entry.getValue();
-			logger.debug("Found parameter '" + parameterName + "' with value '" + parameterValueObj + "'.");
-			if (parameterValueObj == null || parameterValueObj.toString().trim().equals("")) {
-				logger.debug("Parameter '" + parameterName + "' has no value.");
-				continue;
+		try (FileReader reader = new FileReader(contextScriptFile)) {
+			StringBuilder filebuff = new StringBuilder();
+			char[] buffer = new char[1024];
+			int len;
+			while ((len = reader.read(buffer)) >= 0) {
+				filebuff.append(buffer, 0, len);
 			}
-			String parameterValue = parameterValueObj.toString();
-			int index = filebuff.indexOf("$_context{" + parameterName + "}");
-			if (index < 0) {
-				logger.error("Parameter '" + parameterName + "' not found in context script file.");
-				continue;
-			} else {
-				int startIndex = filebuff.indexOf("=", index) + 1;
-				int endIndex = filebuff.indexOf(";", startIndex);
-				filebuff.replace(startIndex, endIndex, parameterValue);
+			Set entries = parameters.entrySet();
+			Iterator it = entries.iterator();
+			while (it.hasNext()) {
+				Map.Entry entry = (Map.Entry) it.next();
+				String parameterName = entry.getKey().toString();
+				Object parameterValueObj = entry.getValue();
+				LOGGER.debug("Found parameter '" + parameterName + "' with value '" + parameterValueObj + "'.");
+				if (parameterValueObj == null || parameterValueObj.toString().trim().equals("")) {
+					LOGGER.debug("Parameter '" + parameterName + "' has no value.");
+					continue;
+				}
+				String parameterValue = parameterValueObj.toString();
+				int index = filebuff.indexOf("$_context{" + parameterName + "}");
+				if (index < 0) {
+					LOGGER.error("Parameter '" + parameterName + "' not found in context script file.");
+					continue;
+				} else {
+					int startIndex = filebuff.indexOf("=", index) + 1;
+					int endIndex = filebuff.indexOf(";", startIndex);
+					filebuff.replace(startIndex, endIndex, parameterValue);
+				}
 			}
+			String contextScriptFilePath = contextScriptFile.getAbsolutePath();
+			String contextScriptDirPath = contextScriptFilePath.substring(0,
+					contextScriptFilePath.lastIndexOf(File.separatorChar));
+			String tempDirPath = contextScriptDirPath + File.separatorChar + ".." + File.separatorChar + ".."
+					+ File.separatorChar + "temp";
+			File tempDir = new File(tempDirPath);
+			if (!tempDir.exists())
+				tempDir.mkdir();
+			else {
+				if (!tempDir.isDirectory())
+					tempDir.delete();
+			}
+			String tempFileName = UUID.randomUUID().toString();
+			TalendEngineConfig config = TalendEngineConfig.getInstance();
+			File contextScriptTempFile = new File(
+					tempDirPath + File.separatorChar + tempFileName + config.getPerlExt());
+			try (FileOutputStream fos = new FileOutputStream(contextScriptTempFile)) {
+				fos.write(filebuff.toString().getBytes());
+				fos.flush();
+			}
+			return contextScriptTempFile;
 		}
-		String contextScriptFilePath = contextScriptFile.getAbsolutePath();
-		String contextScriptDirPath = contextScriptFilePath.substring(0,
-				contextScriptFilePath.lastIndexOf(File.separatorChar));
-		String tempDirPath = contextScriptDirPath + File.separatorChar + ".." + File.separatorChar + ".."
-				+ File.separatorChar + "temp";
-		File tempDir = new File(tempDirPath);
-		if (!tempDir.exists())
-			tempDir.mkdir();
-		else {
-			if (!tempDir.isDirectory())
-				tempDir.delete();
-		}
-		String tempFileName = UUID.randomUUID().toString();
-		TalendEngineConfig config = TalendEngineConfig.getInstance();
-		File contextScriptTempFile = new File(tempDirPath + File.separatorChar + tempFileName + config.getPerlExt());
-		FileOutputStream fos = new FileOutputStream(contextScriptTempFile);
-		fos.write(filebuff.toString().getBytes());
-		fos.flush();
-		fos.close();
-		return contextScriptTempFile;
 	}
 
 }
