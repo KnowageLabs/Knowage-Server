@@ -1091,6 +1091,24 @@
 			 	#end
 				
 				#end
+
+			#set($enableValues = $chart.VALUES.SERIE.get(0).showValue)
+			#end
+
+			#if($chart.VALUES.SERIE.get(0))
+			#set($relatedSerie = $chart.VALUES.SERIE.get(0))
+				#if($chart.type.toUpperCase() == 'LINE' && $chart.groupSeriesCateg && $chart.groupSeriesCateg =='true')
+		 
+				#if($chart.VALUES.SERIE.get(0).serieTypeRadar && $chart.VALUES.SERIE.get(0).serieTypeRadar!="")
+				#set($relatedSerieTypes = $chart.VALUES.SERIE.get(0).serieTypeRadar.split(", "))
+				#set($count = $chart.VALUES.SERIE.get(0).serieTypeRadar.length() - $chart.VALUES.SERIE.get(0).serieTypeRadar.replace(",", "").length())
+			 	#else
+			 	#set($relatedSerieTypes = $chart.VALUES.SERIE.get(0).type.split(", "))
+			 	#set($count = $chart.VALUES.SERIE.get(0).type.length() - $chart.VALUES.SERIE.get(0).type.replace(",", "").length())
+			 	#end
+				
+				#end
+
 			#set($enableValues = $chart.VALUES.SERIE.get(0).showValue)
 			#end
 
@@ -1775,9 +1793,6 @@
 		
 		
 
-    	
-    	
-    	
 		{	
 			 label: {
 			      enabled: false
@@ -1806,9 +1821,12 @@
     			#end
 			#end
 			
+
 			#if($relatedSerieTypes && $count!=$counter && $relatedSerieTypes[$counter])
-		    	type: '$relatedSerieTypes[$counter]',
+		    	type: "$relatedSerieTypes[$counter]",
 		    	 #set ($counter = $counter+1)
+		    #elseif($chartType == 'line')
+		    	type: "$relatedSerieTypes[0]",
 		    #end
 				 #* #set ($counter = $counter+1) *#
 				#foreach($customColor in $customColors)
