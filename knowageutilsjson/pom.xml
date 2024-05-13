@@ -14,18 +14,22 @@
 	<packaging>jar</packaging>
 	
 	<dependencies>
-		<!-- is it a runtime dependency??
+		<!-- is it a runtime dependency?? -->
 		<dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>
 			<artifactId>jackson-core</artifactId>
-			<version>2.0.2</version>
+			<version>2.17.1</version>
 		</dependency>
-		-->
 		<dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>
 			<artifactId>jackson-databind</artifactId>
-			<version>2.9.2</version>
+			<version>2.17.1</version>
 			<scope>compile</scope>
+		</dependency>
+		<dependency>
+		    <groupId>com.fasterxml.jackson.core</groupId>
+		    <artifactId>jackson-annotations</artifactId>
+		    <version>2.17.1</version>
 		</dependency>
 		<dependency>
 			<groupId>com.fasterxml.jackson.datatype</groupId>
