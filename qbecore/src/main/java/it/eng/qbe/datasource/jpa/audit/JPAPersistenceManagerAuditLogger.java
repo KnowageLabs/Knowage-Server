@@ -17,13 +17,13 @@
 */
 package it.eng.qbe.datasource.jpa.audit;
 
-import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.log4j.Logger;
 import org.apache.log4j.MDC;
 import org.json.JSONObject;
 
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.user.UserProfileManager;
+import it.eng.spagobi.utilities.KnowageStringUtils;
 
 public class JPAPersistenceManagerAuditLogger {
 
@@ -40,13 +40,13 @@ public class JPAPersistenceManagerAuditLogger {
 	private static void logInternal(String userId, Operation operation, String modelName, String entityName, String oldRecordAsString, String newRecordAsString,
 			Integer changesNumber) {
 		try {
-			MDC.put("userId", StringEscapeUtils.escapeSql(userId));
-			MDC.put("operation", StringEscapeUtils.escapeSql(operation.name()));
+			MDC.put("userId", KnowageStringUtils.escapeSql(userId));
+			MDC.put("operation", KnowageStringUtils.escapeSql(operation.name()));
 			MDC.put("variations", changesNumber != null && changesNumber > 0 ? changesNumber : "NULL");
-			MDC.put("modelName", StringEscapeUtils.escapeSql(modelName));
-			MDC.put("entityName", StringEscapeUtils.escapeSql(entityName));
-			MDC.put("oldRecord", StringEscapeUtils.escapeSql(oldRecordAsString));
-			MDC.put("newRecord", StringEscapeUtils.escapeSql(newRecordAsString));
+			MDC.put("modelName", KnowageStringUtils.escapeSql(modelName));
+			MDC.put("entityName", KnowageStringUtils.escapeSql(entityName));
+			MDC.put("oldRecord", KnowageStringUtils.escapeSql(oldRecordAsString));
+			MDC.put("newRecord", KnowageStringUtils.escapeSql(newRecordAsString));
 			auditLogger.info("User [" + userId + "] is performing operation [" + operation.name() + "] on entity [" + entityName + "] from model [" + modelName
 					+ "] for record: old one is [" + oldRecordAsString + "], new one is [" + newRecordAsString + "], number of changes is " + changesNumber);
 		} finally {

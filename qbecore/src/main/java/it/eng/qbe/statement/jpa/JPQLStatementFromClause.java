@@ -35,7 +35,7 @@ import it.eng.qbe.query.Query;
 import it.eng.qbe.statement.graph.bean.QueryGraph;
 import it.eng.qbe.statement.graph.bean.Relationship;
 import it.eng.qbe.statement.sql.AbstractStatementFromClause;
-import it.eng.spagobi.utilities.StringUtils;
+import it.eng.spagobi.utilities.KnowageStringUtils;
 
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
@@ -89,7 +89,7 @@ public class JPQLStatementFromClause extends AbstractStatementFromClause {
 		joinStatments.addAll(recursionEntryPoint(queryGraph, vertexList, queryEntityAliases, entityAliasesMaps));
 		fromClauseElements.addAll(joinStatments);
 
-		return StringUtils.join(fromClauseElements, " ");
+		return KnowageStringUtils.join(fromClauseElements, " ");
 
 	}
 

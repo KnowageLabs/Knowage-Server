@@ -25,7 +25,7 @@ import java.util.Locale;
 import java.util.Locale.Builder;
 import java.util.ResourceBundle;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import it.eng.spago.base.Constants;
 import it.eng.spago.base.RequestContainer;

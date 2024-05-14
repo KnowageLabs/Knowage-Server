@@ -44,7 +44,7 @@ import it.eng.qbe.query.serializer.json.QuerySerializationConstants;
 import it.eng.qbe.serializer.SerializationManager;
 import it.eng.qbe.statement.hive.HiveQLStatement;
 import it.eng.spagobi.tools.dataset.common.query.CustomFunction;
-import it.eng.spagobi.utilities.StringUtils;
+import it.eng.spagobi.utilities.KnowageStringUtils;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.sql.SqlUtils;
@@ -376,7 +376,7 @@ public abstract class AbstractStatementClause implements IStatementClause {
 			} else if (dialect.equalsIgnoreCase(QuerySerializationConstants.DIALECT_HSQL)) {
 				try {
 					DateFormat daf;
-					if (StringUtils.isBounded(toReturn, "'")) {
+					if (KnowageStringUtils.isBounded(toReturn, "'")) {
 						daf = new SimpleDateFormat("'dd/MM/yyyy HH:mm:SS'");
 					} else {
 						daf = new SimpleDateFormat("dd/MM/yyyy HH:mm:SS");
@@ -419,7 +419,7 @@ public abstract class AbstractStatementClause implements IStatementClause {
 				 */
 				try {
 					DateFormat dateFormat;
-					if (StringUtils.isBounded(toReturn, "'")) {
+					if (KnowageStringUtils.isBounded(toReturn, "'")) {
 						dateFormat = new SimpleDateFormat("'dd/MM/yyyy'");
 					} else {
 						dateFormat = new SimpleDateFormat("dd/MM/yyyy");
@@ -471,7 +471,7 @@ public abstract class AbstractStatementClause implements IStatementClause {
 			} else if (dialect.equalsIgnoreCase(QuerySerializationConstants.DIALECT_HSQL)) {
 				try {
 					DateFormat daf;
-					if (StringUtils.isBounded(toReturn, "'")) {
+					if (KnowageStringUtils.isBounded(toReturn, "'")) {
 						daf = new SimpleDateFormat("'dd/MM/yyyy '");
 					} else {
 						daf = new SimpleDateFormat("dd/MM/yyyy ");
@@ -514,7 +514,7 @@ public abstract class AbstractStatementClause implements IStatementClause {
 				 */
 				try {
 					DateFormat dateFormat;
-					if (StringUtils.isBounded(toReturn, "'")) {
+					if (KnowageStringUtils.isBounded(toReturn, "'")) {
 						dateFormat = new SimpleDateFormat("'dd/MM/yyyy'");
 					} else {
 						dateFormat = new SimpleDateFormat("dd/MM/yyyy");

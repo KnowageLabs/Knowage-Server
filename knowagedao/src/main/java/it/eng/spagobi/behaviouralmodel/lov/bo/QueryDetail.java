@@ -37,7 +37,7 @@ import java.util.stream.Collectors;
 
 import javax.naming.NamingException;
 
-import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.commons.text.StringEscapeUtils;
 import org.apache.commons.validator.GenericValidator;
 import org.apache.log4j.Logger;
 
@@ -71,6 +71,7 @@ import it.eng.spagobi.services.datasource.bo.SpagoBiDataSource;
 import it.eng.spagobi.tools.dataset.metasql.query.DatabaseDialect;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.utilities.DateRangeUtils;
+import it.eng.spagobi.utilities.KnowageStringUtils;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.database.DataBaseException;
 import it.eng.spagobi.utilities.database.DataBaseFactory;
@@ -682,7 +683,7 @@ public class QueryDetail extends AbstractLOV implements ILovDetail {
 		if (value == null) {
 			return null;
 		}
-		return StringEscapeUtils.escapeSql(value);
+		return KnowageStringUtils.escapeSql(value);
 	}
 
 	private String composeStringToDt(DatabaseDialect dialect, String date) {

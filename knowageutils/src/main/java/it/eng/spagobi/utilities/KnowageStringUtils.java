@@ -37,9 +37,9 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
  *
  * @author Andrea Gioia
  */
-public class StringUtils {
+public class KnowageStringUtils {
 
-	protected static Logger logger = Logger.getLogger(StringUtils.class);
+	protected static Logger logger = Logger.getLogger(KnowageStringUtils.class);
 
 	private static final String PLAIN_ASCII = "AaEeIiOoUu" // grave
 			+ "AaEeIiOoUuYy" // acute
@@ -364,4 +364,14 @@ public class StringUtils {
 
 		return result;
 	}
+	
+	/**
+     * Imported from apache.commons
+     */
+    public static String escapeSql(String str) {
+        if (str == null) {
+            return null;
+        }
+        return str.replace("'", "''");
+    }
 }

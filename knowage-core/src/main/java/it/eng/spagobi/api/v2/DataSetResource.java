@@ -130,7 +130,6 @@ import it.eng.spagobi.tools.dataset.metasql.query.item.SimpleSelectionField;
 import it.eng.spagobi.tools.dataset.metasql.query.item.UnaryFilter;
 import it.eng.spagobi.tools.dataset.metasql.query.item.UnsatisfiedFilter;
 import it.eng.spagobi.tools.dataset.persist.IPersistedManager;
-import it.eng.spagobi.tools.dataset.persist.PersistedHDFSManager;
 import it.eng.spagobi.tools.dataset.persist.PersistedTableManager;
 import it.eng.spagobi.tools.dataset.utils.DataSetUtilities;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
@@ -312,11 +311,6 @@ public class DataSetResource extends AbstractDataSetResource {
 
 		try {
 			DAOFactory.getDataSetDAO().insertDataSet(dataset);
-
-			if (dataset.isPersistedHDFS()) {
-				IPersistedManager ptm = new PersistedHDFSManager(getUserProfile());
-				ptm.persistDataSet(dataset);
-			}
 
 			if (dataset.isPersisted()) {
 				IPersistedManager ptm = new PersistedTableManager(getUserProfile());

@@ -30,7 +30,7 @@ import org.apache.log4j.Logger;
 import org.json.JSONException;
 
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
-import it.eng.spagobi.utilities.StringUtils;
+import it.eng.spagobi.utilities.KnowageStringUtils;
 
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
@@ -125,7 +125,7 @@ public class OracleDataBase extends AbstractDataBase implements CacheDataBase, M
 					String columnName = rs.getString(2);
 					String columnType = rs.getString(3);
 
-					if (StringUtils.matchesLikeNotLikeCriteria(tableName, tableNamePatternLike, tableNamePatternNotLike)) {
+					if (KnowageStringUtils.matchesLikeNotLikeCriteria(tableName, tableNamePatternLike, tableNamePatternNotLike)) {
 
 						tableContent.putIfAbsent(tableName, new LinkedHashMap<>());
 						tableContent.get(tableName).put(columnName, columnType);

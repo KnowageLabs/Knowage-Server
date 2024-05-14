@@ -23,8 +23,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.text.StringEscapeUtils;
 import org.apache.log4j.LogMF;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
@@ -190,7 +190,7 @@ public class CrossTabHTMLSerializer {
 			return null;
 		}
 
-		return StringEscapeUtils.escapeHtml(text).replaceAll("'", "&apos;").replaceAll("\\\\", "&#92;").replaceAll("/", "&#47;");
+		return StringEscapeUtils.escapeHtml4(text).replaceAll("'", "&apos;").replaceAll("\\\\", "&#92;").replaceAll("/", "&#47;");
 	}
 
 	private String getTextAndLevel(Node node, String text) {
@@ -307,7 +307,7 @@ public class CrossTabHTMLSerializer {
 
 				if (!aNode.isTotal() && !aNode.isSubTotal() && crossTab.getCrosstabDefinition().getRows().size() > 0)
 					aColumn.setAttribute(NG_CLICK_ATTRIBUTE, "selectRow('" + crossTab.getCrosstabDefinition().getRows().get(i).getEntityId() + "','"
-							+ StringEscapeUtils.escapeJavaScript(text) + "')");
+							+ StringEscapeUtils.escapeEcmaScript(text) + "')");
 				aColumn.setCharacters(text);
 
 				int rowSpan = aNode.getLeafsNumber();
@@ -349,7 +349,7 @@ public class CrossTabHTMLSerializer {
 					subtotalHiddenColumn.setAttribute(ID_ATTRIBUTE, escapeAll(hiddenIdLabel));
 					String parentEntityId = crossTab.getColumnAliasFromName(aNode.getParentNode().getColumnName());
 					subtotalHiddenColumn.setAttribute(NG_CLICK_ATTRIBUTE,
-							"selectRow('" + parentEntityId + "','" + StringEscapeUtils.escapeJavaScript(text) + "')");
+							"selectRow('" + parentEntityId + "','" + StringEscapeUtils.escapeEcmaScript(text) + "')");
 					subtotalHiddenColumn.setCharacters(text);
 					// attach expand button
 					SourceBean aButton = new SourceBean(ICON_TAG);
@@ -533,7 +533,7 @@ public class CrossTabHTMLSerializer {
 						if (!text.equalsIgnoreCase(labelTotal) && !text.equalsIgnoreCase(labelSubTotal)) {
 							Column columnObj = ((Column) getCategoryConfByLabel(crossTab, crossTab.getColumnsRoot().getLevel(i).get(0).getValue(), "columns"));
 							String columnName = (columnObj != null) ? columnObj.getEntityId() : "";
-							aColumn.setAttribute(NG_CLICK_ATTRIBUTE, "selectRow('" + columnName + "','" + StringEscapeUtils.escapeJavaScript(text) + "')");
+							aColumn.setAttribute(NG_CLICK_ATTRIBUTE, "selectRow('" + columnName + "','" + StringEscapeUtils.escapeEcmaScript(text) + "')");
 						}
 						if (crossTab.getCrosstabDefinition().isMeasuresOnColumns() && i + 2 == levels) {
 							String completeText = CrossTab.PATH_SEPARATOR;
@@ -1013,9 +1013,9 @@ public class CrossTabHTMLSerializer {
 						measureRef = CrossTab.PATH_SEPARATOR + measuresInfo.get(pos).getId() + CrossTab.PATH_SEPARATOR + measuresInfo.get(pos).getName();
 
 						aColumn.setAttribute(NG_CLICK_ATTRIBUTE,
-								"selectMeasure('" + StringEscapeUtils.escapeJavaScript(rowHeaders) + "','" + StringEscapeUtils.escapeJavaScript(rowCord) + "','"
-										+ StringEscapeUtils.escapeJavaScript(columnsHeaders) + "','" + StringEscapeUtils.escapeJavaScript(columnCord) + "','"
-										+ StringEscapeUtils.escapeJavaScript(measureRef) + "')");
+								"selectMeasure('" + StringEscapeUtils.escapeEcmaScript(rowHeaders) + "','" + StringEscapeUtils.escapeEcmaScript(rowCord) + "','"
+										+ StringEscapeUtils.escapeEcmaScript(columnsHeaders) + "','" + StringEscapeUtils.escapeEcmaScript(columnCord) + "','"
+										+ StringEscapeUtils.escapeEcmaScript(measureRef) + "')");
 						internalserializeData5.stop();
 					}
 				} catch (NumberFormatException e) {

@@ -25,7 +25,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import it.eng.spago.base.SourceBean;
-import it.eng.spagobi.utilities.StringUtils;
+import it.eng.spagobi.utilities.KnowageStringUtils;
 
 /**
  * @author Dragan Pirkovic
@@ -84,7 +84,7 @@ public class Formula {
 		for (Argument argument : arguments) {
 			list.add(argument.getDefaultValue());
 		}
-		return StringUtils.join(list, ",");
+		return KnowageStringUtils.join(list, ",");
 	}
 
 	public String getExpression() {

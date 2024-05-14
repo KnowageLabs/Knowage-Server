@@ -20,7 +20,7 @@ import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.commons.lang.exception.ExceptionUtils;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.log4j.Logger;
 import org.hibernate.Session;
 import org.json.JSONArray;
@@ -399,7 +399,7 @@ public class ProcessKpiJob extends AbstractSuspendableJob {
 				throw e;
 			} catch (Exception e) {
 				// Convert the stacktrace to string (including nested exceptions)
-				error = ExceptionUtils.getFullStackTrace(e);
+				error = ExceptionUtils.getStackTrace(e);
 				throw e;
 			} finally {
 				// Log the results
