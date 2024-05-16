@@ -238,6 +238,7 @@ export default defineComponent({
 
 <style lang="scss">
 .kn-theme-management {
+    height: 100%;
     .p-fieldset-content {
         padding: 0;
     }
