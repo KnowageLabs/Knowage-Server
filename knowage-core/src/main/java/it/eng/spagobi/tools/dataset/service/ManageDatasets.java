@@ -1184,7 +1184,7 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 			dataSet = new FileDataSet();
 			((FileDataSet) dataSet).setResourcePath(DAOConfig.getResourcePath());
 
-			String fileName = getAttributeAsString(DataSetConstants.FILE_NAME);
+			String fileName = getAttributeAsString(DataSetConstants.FILE_NAME); 
 			File pathFile = new File(fileName);
 			fileName = pathFile.getName();
 			if (savingDataset) {
@@ -1226,11 +1226,16 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 				String realName = configuration.getString("fileName");
 				if (dsLabel != null && !realName.equals(dsLabel)) {
 
-					File dest = new File(SpagoBIUtilities.getResourcePath() + File.separatorChar + "dataset"
+					File dest = PathTraversalChecker.get(SpagoBIUtilities.getResourcePath(), SpagoBIUtilities.getResourcePath() + File.separatorChar + "dataset"
 							+ File.separatorChar + "files" + File.separatorChar + dsLabel + "."
 							+ configuration.getString("fileType").toLowerCase());
-					File source = new File(SpagoBIUtilities.getResourcePath() + File.separatorChar + "dataset"
+					// File dest = new File(SpagoBIUtilities.getResourcePath() + File.separatorChar + "dataset"
+					//		+ File.separatorChar + "files" + File.separatorChar + dsLabel + "."
+					//		+ configuration.getString("fileType").toLowerCase());
+					File source = PathTraversalChecker.get(SpagoBIUtilities.getResourcePath(), SpagoBIUtilities.getResourcePath() + File.separatorChar + "dataset"
 							+ File.separatorChar + "files" + File.separatorChar + realName);
+					// File source = new File(SpagoBIUtilities.getResourcePath() + File.separatorChar + "dataset"
+					//		+ File.separatorChar + "files" + File.separatorChar + realName);
 
 					if (!source.getCanonicalPath().equals(dest.getCanonicalPath())) {
 						LOGGER.debug("Source and destination are not the same. Copying from source to dest");
@@ -1603,10 +1608,12 @@ public class ManageDatasets extends AbstractSpagoBIAction {
 	}
 
 	private void deleteDatasetFile(String fileName, String resourcePath, String fileType) {
-		String filePath = resourcePath + File.separatorChar + "dataset" + File.separatorChar + "files"
-				+ File.separatorChar + "temp" + File.separatorChar;
+		//String filePath = resourcePath + File.separatorChar + "dataset" + File.separatorChar + "files"
+		//		+ File.separatorChar + "temp" + File.separatorChar;
 
-		File datasetFile = new File(filePath + fileName);
+		File datasetFile = PathTraversalChecker.get(resourcePath, resourcePath + File.separatorChar + "dataset" + File.separatorChar + "files"
+				+ File.separatorChar + "temp" + File.separatorChar + fileName);
+		//File datasetFile = new File(filePath + fileName);
 		if (datasetFile.exists()) {
 			datasetFile.delete();
 		}
