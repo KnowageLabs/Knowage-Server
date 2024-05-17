@@ -90,7 +90,7 @@ public class MeasureFormatter {
 				formatted = lnumberFormat.format(f);
 			}
 		} catch (Exception e) {
-			formatted = numberFormat.format(f);
+			formatted = numberFormat.format(f); // TODO KHORNE
 		}
 		return formatted;
 	}

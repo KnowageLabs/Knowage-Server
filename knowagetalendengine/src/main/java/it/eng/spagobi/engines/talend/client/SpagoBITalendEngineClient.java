@@ -29,7 +29,7 @@ import org.apache.log4j.Logger;
  * @author Andrea Gioia
  *
  */
-public class SpagoBITalendEngineClient {
+public class SpagoBITalendEngineClient { // TODO CANCELLARE
 	String host;
 	String port;
 	String appContext;

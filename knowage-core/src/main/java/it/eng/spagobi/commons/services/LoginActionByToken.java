@@ -87,7 +87,7 @@ public class LoginActionByToken extends AbstractBaseHttpAction {
 			callback = getAttributeAsString(CALLBACK);
 			logger.debug("Parameter [" + CALLBACK + "] is equals to [" + callback + "]");
 
-			backUrl = getAttributeAsString(BACK_URL);
+			backUrl = getAttributeAsString(BACK_URL); // TODO KHORNE se in whitelist ok, sennò cancella + log error
 			logger.debug("Parameter [" + BACK_URL + "] is equals to [" + backUrl + "]");
 
 			token = getAttributeAsString(TOKEN);

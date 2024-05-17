@@ -27,7 +27,7 @@ import javax.crypto.spec.SecretKeySpec;
 
 public class PasswordEncrypter {
 	private Mac mac = null;
-	private static final String PROVIDER = "HmacSHA1";
+	private static final String PROVIDER = "HmacSHA256";  // max supported by JDK 8
 
 	public PasswordEncrypter(byte[] keyBytes) {
 		SecretKey key = new SecretKeySpec(keyBytes, PROVIDER);
