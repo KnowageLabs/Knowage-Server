@@ -57,7 +57,7 @@ public class SbiObjNotes  extends SbiHibernateModel {
 	 * 
 	 * @param objNoteId the new obj note id
 	 */
-	public void setObjNoteId(Integer objNoteId) {
+	private void setObjNoteId(Integer objNoteId) {
 		this.objNoteId = objNoteId;
 	}
 	
