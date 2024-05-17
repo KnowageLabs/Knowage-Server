@@ -450,7 +450,7 @@ public class PersistedTableManager implements IPersistedManager {
 							columnSize.remove(fieldMetaName);
 							columnSize.put(fieldMetaName, newColumnSize);
 							try (Statement stmt = connection.createStatement()) {
-								String query = "ALTER TABLE " + tableName + " MODIFY COLUMN " + fieldMetaName + " "
+								String query = "ALTER TABLE " + tableName + " MODIFY COLUMN " + AbstractJDBCDataset.encapsulateColumnName(fieldMetaName, datasource) + " "
 										+ getDBFieldTypeFromAlias(datasource, fieldMeta);
 								stmt.executeUpdate(query);
 							}
