@@ -165,6 +165,20 @@
 	<welcome-file-list>
 		<welcome-file>/html/index.jsp</welcome-file>
 	</welcome-file-list>
+	<error-page>
+		<exception-type>java.lang.Throwable</exception-type>
+		<location>/html/error.html</location>
+	</error-page>
+
+	<error-page>
+		<error-code>404</error-code>
+		<location>/html/error.html</location>
+	</error-page>
+
+	<error-page>
+		<error-code>500</error-code>
+		<location>/html/error.html</location>
+	</error-page>
 
 	<!-- 
 		This servlet comes from resteasy-jaxrs and is enabled by default mapped to "" URL. The empty string has

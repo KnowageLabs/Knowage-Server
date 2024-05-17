@@ -183,5 +183,20 @@
 		<servlet-name>org.jboss.resteasy.plugins.server.servlet.HttpServlet30Dispatcher</servlet-name>
 		<url-pattern>/restful-services-default</url-pattern>
 	</servlet-mapping>
+	
+	<error-page>
+		<exception-type>java.lang.Throwable</exception-type>
+		<location>/html/error.html</location>
+	</error-page>
+
+	<error-page>
+		<error-code>404</error-code>
+		<location>/html/error.html</location>
+	</error-page>
+
+	<error-page>
+		<error-code>500</error-code>
+		<location>/html/error.html</location>
+	</error-page>
 
 </web-app>
