@@ -43,16 +43,12 @@ public class MeasureFormatter {
 	private DecimalFormat numberFormat;
 	private String pattern;
 
-	public MeasureFormatter(JSONObject crosstabDefinitionJSON, DecimalFormat numberFormat, String pattern) throws SerializationException, JSONException {
-
+	//public MeasureFormatter(JSONObject crosstabDefinitionJSON, DecimalFormat numberFormat, String pattern) throws SerializationException, JSONException {
+	public MeasureFormatter(JSONObject crosstabDefinitionJSON, String pattern) throws SerializationException, JSONException {
 		JSONArray measuresJSON = crosstabDefinitionJSON.optJSONArray(CrosstabSerializationConstants.MEASURES);
 		JSONObject config = crosstabDefinitionJSON.optJSONObject(CrosstabSerializationConstants.CONFIG);
 		this.pattern = pattern;
-		if(numberFormat == null) {
-			this.numberFormat = new DecimalFormat(pattern);	
-		}else {
-			this.numberFormat = numberFormat;	
-		}
+		this.numberFormat = new DecimalFormat(pattern);	
 		if (measuresJSON != null) {
 			measuresInfo = new ArrayList<MeasureInfo>();
 			for (int i = 0; i < measuresJSON.length(); i++) {
@@ -90,7 +86,7 @@ public class MeasureFormatter {
 				formatted = lnumberFormat.format(f);
 			}
 		} catch (Exception e) {
-			formatted = numberFormat.format(f); // TODO KHORNE
+			formatted = numberFormat.format(f); 
 		}
 		return formatted;
 	}
