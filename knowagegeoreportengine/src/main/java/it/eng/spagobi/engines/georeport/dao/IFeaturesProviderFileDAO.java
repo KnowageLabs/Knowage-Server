@@ -15,20 +15,24 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package it.eng.spagobi.engines.georeport.utils;
+package it.eng.spagobi.engines.georeport.dao;
 
-import java.util.HashMap;
+import it.eng.spagobi.commons.dao.ISpagoBIDao;
+
 import java.util.Map;
 
 import org.geotools.feature.FeatureCollection;
+import org.opengis.feature.simple.SimpleFeature;
 
 /**
- * @author Andrea Gioia (andrea.gioia@eng.it)
- *
+ * @authors Andrea Gioia (andrea.gioia@eng.it), Fabio D'Ovidio (f.dovidio@inovaos.it)
  */
-public class LayerCache {
-	public static Map<String, FeatureCollection> cache;
-	static {
-		cache = new HashMap<String, FeatureCollection>();
-	}
+public interface IFeaturesProviderFileDAO extends ISpagoBIDao {
+
+	SimpleFeature getFeatureById(Object fetureProviderEndPoint, String layerName, Map parameters);
+
+	FeatureCollection getAllFeatures(String srcFile);
+
+	FeatureCollection getAllFeaturesOLD(Object fetureProviderEndPoint, String layerName);
+
 }

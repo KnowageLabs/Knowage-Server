@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package it.eng.spagobi.georeport.dao;
+package it.eng.spagobi.engines.georeport.dao;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
