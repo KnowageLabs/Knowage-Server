@@ -36,6 +36,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.ext.Provider;
 
+import it.eng.knowage.features.Feature;
 import it.eng.knowage.rest.annotation.FeatureFlag;
 
 /**
@@ -61,21 +62,20 @@ public class FeatureFlagProvider implements ContainerRequestFilter {
 
 			response.put("errors", messages);
 
-			requestContext.abortWith(
-					Response.status(Status.FORBIDDEN).type(MediaType.APPLICATION_JSON).entity(response).build());
+			requestContext.abortWith(Response.status(Status.FORBIDDEN).type(MediaType.APPLICATION_JSON).entity(response).build());
 		}
 
 	}
 
 	private boolean isFeatureEnabled(FeatureFlag annotation) {
 
-		String name = annotation.value();
+		Feature feature = annotation.value();
+		String name = feature.getFullName();
 
 		String fromProperty = System.getProperty(name);
 		String fromEnv = System.getenv(name);
 
-		return Optional.ofNullable(fromProperty).map(Boolean::parseBoolean)
-				.orElse(Optional.ofNullable(fromEnv).map(Boolean::parseBoolean).orElse(true));
+		return Optional.ofNullable(fromProperty).map(Boolean::parseBoolean).orElse(Optional.ofNullable(fromEnv).map(Boolean::parseBoolean).orElse(true));
 
 	}
 }
