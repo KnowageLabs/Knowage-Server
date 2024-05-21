@@ -99,6 +99,7 @@ public class FunctionCatalogResource {
 	@Path("/")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
+	@FeatureFlag(Feature.EDIT_FUNCTIONS_CATALOG)
 	public Response create(FunctionCompleteDTO function) {
 		try {
 			FunctionCompleteDTO create = api.create(function);
@@ -145,6 +146,7 @@ public class FunctionCatalogResource {
 	@Path("/")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
+	@FeatureFlag(Feature.EDIT_FUNCTIONS_CATALOG)
 	public Response update(FunctionCompleteDTO function) {
 		try {
 			FunctionCompleteDTO ret = api.update(function);
