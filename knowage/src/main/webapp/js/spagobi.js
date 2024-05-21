@@ -50,14 +50,6 @@ function isIE7() {
 }
 
 
-function FCKeditor_OnComplete( editorInstance ) {
-        completeName = editorInstance.Name;
-        instanceName = completeName.substring(13, completeName.length);
-        var functocall = 'initializeNotes' + instanceName +'()';
-        eval(functocall);
-}
-
-
 function findPos(obj) {
        curleft = curtop = 0;
 	   if (obj.offsetParent) {
@@ -122,7 +114,7 @@ function delCookie (NameOfCookie) {
 //
 // window.onload = SbiJsInitializer.initialize;
 
- 
+/* 
 function SbiJsInitializerClass() {
 
   this.initialize = Initialize;
@@ -143,7 +135,7 @@ function SbiJsInitializerClass() {
  } catch (err) {
  	 var SbiJsInitializer = new SbiJsInitializerClass();
  }
-
+*/
 
 // END PORLTET JAVASCRIPT INTIIALIZER
 
