@@ -15,20 +15,21 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+package it.eng.knowage.features;
 
-package it.eng.knowage.rest.annotation;
+public enum Feature {
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+	// knowage.feature.editFunctionsCatalog represents the feature that allows users to insert or modify Python/R functions from their catalog
+	EDIT_FUNCTIONS_CATALOG("knowage.feature.editFunctionsCatalog");
 
-import it.eng.knowage.features.Feature;
+	private Feature(String fullName) {
+		this.fullName = fullName;
+	}
 
-@Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.METHOD)
-public @interface FeatureFlag {
+	private String fullName;
 
-	Feature value();
+	public String getFullName() {
+		return fullName;
+	}
 
 }

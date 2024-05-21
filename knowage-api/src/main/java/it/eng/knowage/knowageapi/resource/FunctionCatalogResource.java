@@ -40,6 +40,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.validation.annotation.Validated;
 
 import it.eng.knowage.boot.error.KnowageRuntimeException;
+import it.eng.knowage.features.Feature;
 import it.eng.knowage.knowageapi.resource.dto.FunctionCompleteDTO;
 import it.eng.knowage.knowageapi.resource.dto.FunctionDTO;
 import it.eng.knowage.knowageapi.service.FunctionCatalogAPI;
@@ -103,8 +104,7 @@ public class FunctionCatalogResource {
 			FunctionCompleteDTO create = api.create(function);
 			return Response.ok(create).build();
 		} catch (Exception e) {
-			LOGGER.error("Error getting function with id "
-					+ Optional.ofNullable(function).map(FunctionCompleteDTO::getName).orElse("null"), e);
+			LOGGER.error("Error getting function with id " + Optional.ofNullable(function).map(FunctionCompleteDTO::getName).orElse("null"), e);
 			return Response.serverError().build();
 		}
 	}
@@ -113,7 +113,7 @@ public class FunctionCatalogResource {
 	@Path("/new")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
-	@FeatureFlag("knowage.feature.newFunctionInCatalog")
+	@FeatureFlag(Feature.EDIT_FUNCTIONS_CATALOG)
 	public Response createWithNewUuid(FunctionCompleteDTO function) {
 		try {
 			function.setId(UUID.randomUUID());
@@ -123,8 +123,7 @@ public class FunctionCatalogResource {
 			// TODO : I did this because catching Exception is not right
 			throw e;
 		} catch (Exception e) {
-			LOGGER.error("Error getting function with id "
-					+ Optional.ofNullable(function).map(FunctionCompleteDTO::getName).orElse("null"), e);
+			LOGGER.error("Error getting function with id " + Optional.ofNullable(function).map(FunctionCompleteDTO::getName).orElse("null"), e);
 			return Response.serverError().build();
 		}
 	}
@@ -151,8 +150,7 @@ public class FunctionCatalogResource {
 			FunctionCompleteDTO ret = api.update(function);
 			return Response.ok(ret).build();
 		} catch (Exception e) {
-			LOGGER.error("Error updating function with id "
-					+ Optional.ofNullable(function).map(FunctionCompleteDTO::getName).orElse("null"), e);
+			LOGGER.error("Error updating function with id " + Optional.ofNullable(function).map(FunctionCompleteDTO::getName).orElse("null"), e);
 			throw e;
 		}
 	}
