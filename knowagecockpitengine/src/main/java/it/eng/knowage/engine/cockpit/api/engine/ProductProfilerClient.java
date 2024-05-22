@@ -27,16 +27,16 @@ import org.apache.log4j.Logger;
 import it.eng.spagobi.utilities.engines.rest.SimpleRestClient;
 
 public class ProductProfilerClient extends SimpleRestClient {
-	private final String serviceUrl = "/restful-services/2.0/backendservices/productprofiler/cockpit/widget";
 
-	protected static Logger logger = Logger.getLogger(ProductProfilerClient.class);
+	private static final Logger LOGGER = Logger.getLogger(ProductProfilerClient.class);
+	private static final String SERVICE_URL = "/restful-services/2.0/backendservices/productprofiler/cockpit/widget";
 
 	public boolean isAllowedToCreateWidget(String userId, String type) throws Exception {
 		boolean toReturn = false;
-		logger.debug("IN");
-		Map<String, Object> params = new HashMap<String, Object>();
+		LOGGER.debug("IN");
+		Map<String, Object> params = new HashMap<>();
 		params.put("type", type);
-		Response resp = executeGetService(params, String.format(serviceUrl), userId);
+		Response resp = executeGetService(params, String.format(SERVICE_URL), userId);
 		toReturn = new Boolean(resp.readEntity(String.class));
 		return toReturn;
 	}
