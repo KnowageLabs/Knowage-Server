@@ -425,11 +425,17 @@
 			<groupId>com.jamonapi</groupId>
 			<artifactId>jamon</artifactId>
 			<version>2.81</version>
+			<exclusions>
+				<exclusion>
+					<groupId>com.hazelcast</groupId>
+					<artifactId>hazelcast-all</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>com.hazelcast</groupId>
-			<artifactId>hazelcast-all</artifactId>
-			<version>3.6.1</version>
+			<artifactId>hazelcast</artifactId>
+			<version>5.3.6</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>

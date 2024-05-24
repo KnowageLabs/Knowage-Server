@@ -17,7 +17,8 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.log4j.Logger;
 
-import com.hazelcast.core.IMap;
+import com.hazelcast.map.IMap;
+
 import commonj.work.Work;
 
 public class DistinctValuesClearWork implements Work {
