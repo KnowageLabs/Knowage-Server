@@ -390,44 +390,26 @@ public class UserUtilities {
 	}
 
 	public static boolean hasDeveloperRole(IEngUserProfile profile) {
-		Assert.assertNotNull(profile, "Object in input is null");
-		logger.debug("IN.user id = [" + ((UserProfile) profile).getUserId() + "]");
-		try {
-			IRoleDAO roleDAO = DAOFactory.getRoleDAO();
-			Collection<String> roles = ((UserProfile) profile).getRolesForUse();
-			for (String role : roles) {
-				Role r = roleDAO.loadByName(role);
-				String roleCode = r.getRoleTypeCD();
-				if (roleCode.equalsIgnoreCase(SpagoBIConstants.ROLE_TYPE_DEV) || roleCode.equalsIgnoreCase(SpagoBIConstants.ROLE_TYPE_TEST)) {
-					return true;
-				}
-			}
-			return false;
-		} catch (Exception e) {
-			throw new SpagoBIRuntimeException("Error while getting user's information", e);
-		}
+		return hasRoleType(profile, SpagoBIConstants.ROLE_TYPE_DEV);
 	}
 
 	public static boolean hasAdministratorRole(IEngUserProfile profile) {
-		Assert.assertNotNull(profile, "Object in input is null");
-		logger.debug("IN.user id = [" + ((UserProfile) profile).getUserId() + "]");
-		try {
-			IRoleDAO roleDAO = DAOFactory.getRoleDAO();
-			Collection<String> roles = ((UserProfile) profile).getRolesForUse();
-			for (String role : roles) {
-				Role r = roleDAO.loadByName(role);
-				String roleCode = r.getRoleTypeCD();
-				if (roleCode.equalsIgnoreCase(SpagoBIConstants.ADMIN_ROLE_TYPE) || roleCode.equalsIgnoreCase(SpagoBIConstants.ROLE_TYPE_MODEL_ADMIN)) {
-					return true;
-				}
-			}
-			return false;
-		} catch (Exception e) {
-			throw new SpagoBIRuntimeException("Error while getting user's information", e);
-		}
+		return hasRoleType(profile, SpagoBIConstants.ADMIN_ROLE_TYPE);
 	}
 
 	public static boolean hasUserRole(IEngUserProfile profile) {
+		return hasRoleType(profile, SpagoBIConstants.ROLE_TYPE_USER);
+	}
+
+	public static boolean hasTesterRole(IEngUserProfile profile) {
+		return hasRoleType(profile, SpagoBIConstants.ROLE_TYPE_TEST);
+	}
+
+	public static boolean hasModelAdminRole(IEngUserProfile profile) {
+		return hasRoleType(profile, SpagoBIConstants.ROLE_TYPE_MODEL_ADMIN);
+	}
+
+	private static boolean hasRoleType(IEngUserProfile profile, String roleType) {
 		Assert.assertNotNull(profile, "Object in input is null");
 		logger.debug("IN.user id = [" + ((UserProfile) profile).getUserId() + "]");
 		try {
@@ -436,7 +418,7 @@ public class UserUtilities {
 			for (String role : roles) {
 				Role r = roleDAO.loadByName(role);
 				String roleCode = r.getRoleTypeCD();
-				if (roleCode.equalsIgnoreCase(SpagoBIConstants.ROLE_TYPE_USER)) {
+				if (roleCode.equalsIgnoreCase(roleType)) {
 					return true;
 				}
 			}

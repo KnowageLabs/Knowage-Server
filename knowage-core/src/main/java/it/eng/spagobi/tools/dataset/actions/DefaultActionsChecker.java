@@ -21,9 +21,9 @@ import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.utilities.exceptions.ActionNotPermittedException;
 
-public class EmptyActionsChecker extends AbstractDatasetActionsChecker {
+public class DefaultActionsChecker extends AbstractDatasetActionsChecker {
 
-	public EmptyActionsChecker(UserProfile userProfile, IDataSet dataset) {
+	public DefaultActionsChecker(UserProfile userProfile, IDataSet dataset) {
 		super(userProfile, dataset);
 	}
 

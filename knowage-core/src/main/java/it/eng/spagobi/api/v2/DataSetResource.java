@@ -53,7 +53,6 @@ import javax.ws.rs.core.Response.Status;
 
 import org.apache.log4j.LogMF;
 import org.apache.log4j.Logger;
-import org.geotools.data.DataSourceException;
 import org.jasypt.encryption.pbe.PBEStringEncryptor;
 import org.jboss.resteasy.plugins.providers.html.View;
 import org.json.JSONArray;
@@ -91,12 +90,9 @@ import it.eng.spagobi.commons.utilities.UserUtilities;
 import it.eng.spagobi.services.rest.annotations.ManageAuthorization;
 import it.eng.spagobi.services.rest.annotations.UserConstraint;
 import it.eng.spagobi.services.serialization.JsonConverter;
-import it.eng.spagobi.tenant.Tenant;
-import it.eng.spagobi.tenant.TenantManager;
 import it.eng.spagobi.tools.catalogue.bo.MetaModel;
 import it.eng.spagobi.tools.catalogue.dao.IMetaModelsDAO;
 import it.eng.spagobi.tools.dataset.DatasetManagementAPI;
-import it.eng.spagobi.tools.dataset.bo.DataSetBasicInfo;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.bo.PreparedDataSet;
 import it.eng.spagobi.tools.dataset.bo.VersionedDataSet;
@@ -107,7 +103,6 @@ import it.eng.spagobi.tools.dataset.common.datawriter.CockpitJSONDataWriter;
 import it.eng.spagobi.tools.dataset.common.datawriter.IDataWriter;
 import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
 import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
-import it.eng.spagobi.tools.dataset.constants.DatasetFunctionsConfig;
 import it.eng.spagobi.tools.dataset.dao.DataSetFactory;
 import it.eng.spagobi.tools.dataset.dao.IDataSetDAO;
 import it.eng.spagobi.tools.dataset.dao.ISbiDataSetDAO;
@@ -131,11 +126,8 @@ import it.eng.spagobi.tools.dataset.persist.IPersistedManager;
 import it.eng.spagobi.tools.dataset.persist.PersistedHDFSManager;
 import it.eng.spagobi.tools.dataset.persist.PersistedTableManager;
 import it.eng.spagobi.tools.dataset.utils.DataSetUtilities;
-import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.tools.datasource.dao.IDataSourceDAO;
-import it.eng.spagobi.utilities.database.DataBaseException;
-import it.eng.spagobi.utilities.database.DataBaseFactory;
-import it.eng.spagobi.utilities.database.IDataBase;
+import it.eng.spagobi.utilities.exceptions.ActionNotPermittedException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRestServiceException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.exceptions.ValidationServiceException;
@@ -177,53 +169,6 @@ public class DataSetResource extends AbstractDataSetResource {
 	}
 
 	@GET
-	@Path("/availableFunctions/{dsId}")
-	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
-	@UserConstraint(functionalities = { CommunityFunctionalityConstants.SELF_SERVICE_DATASET_MANAGEMENT })
-	public String availableFunctions(@PathParam("dsId") String datasetId, @QueryParam("useCache") boolean useCache)
-			throws JSONException, DataBaseException, EMFUserError, DataSourceException {
-		logger.debug("IN");
-
-		ISbiDataSetDAO dsDAO = DAOFactory.getSbiDataSetDAO();
-
-		JSONObject jo = new JSONObject();
-
-		DatasetFunctionsConfig datasetFunctionsConfig = new DatasetFunctionsConfig();
-
-		if (useCache) {
-			IDataSourceDAO dataSourceDAO = DAOFactory.getDataSourceDAO();
-			IDataSource dataSource = dataSourceDAO.loadDataSourceWriteDefault();
-
-			if (dataSource == null)
-				throw new DataSourceException("No data source found for cache");
-
-			String dataBaseDialect = dataSource.getDialectName();
-			List<String> availableFunctions = datasetFunctionsConfig.getAvailableFunctions(dataBaseDialect);
-			jo.put("availableFunctions", availableFunctions);
-
-			List<String> nullIfFunction = datasetFunctionsConfig.getNullifFunction(dataBaseDialect);
-			jo.put("nullifFunction", nullIfFunction);
-
-		} else {
-			Tenant tenantManager = TenantManager.getTenant();
-			SbiDataSet sbiDataSet = dsDAO.loadSbiDataSetByIdAndOrganiz(Integer.valueOf(datasetId),
-					tenantManager.getName());
-			IDataSet iDataSet = DataSetFactory.toDataSet(sbiDataSet);
-			IDataBase database = DataBaseFactory.getDataBase(iDataSet.getDataSource());
-			String dataBaseDialect = database.getDatabaseDialect().getValue();
-
-			List<String> availableFunctions = datasetFunctionsConfig.getAvailableFunctions(dataBaseDialect);
-			jo.put("availableFunctions", availableFunctions);
-
-			List<String> nullIfFunction = datasetFunctionsConfig.getNullifFunction(dataBaseDialect);
-			jo.put("nullifFunction", nullIfFunction);
-		}
-
-		logger.debug("OUT");
-		return jo.toString();
-	}
-
-	@GET
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
 	@UserConstraint(functionalities = { CommunityFunctionalityConstants.SELF_SERVICE_DATASET_MANAGEMENT })
 	public String getDataSets(@QueryParam("includeDerived") String includeDerived,
@@ -244,12 +189,19 @@ public class DataSetResource extends AbstractDataSetResource {
 		ISbiDataSetDAO dsDAO = DAOFactory.getSbiDataSetDAO();
 
 		List<SbiDataSet> dataSets = dsDAO.loadSbiDataSets();
-		List<SbiDataSet> toBeReturned = new ArrayList<SbiDataSet>();
+		List<SbiDataSet> toBeReturned = new ArrayList<>();
+		DatasetManagementAPI datasetManagementAPI = getDatasetManagementAPI();
 
 		for (SbiDataSet dataset : dataSets) {
 			IDataSet iDataSet = DataSetFactory.toDataSet(dataset);
-			if (DataSetUtilities.isExecutableByUser(iDataSet, getUserProfile()))
+
+			try {
+				datasetManagementAPI.canSee(iDataSet);
 				toBeReturned.add(dataset);
+			} catch (Exception e) {
+				logger.debug("Current user cannot see " + iDataSet.getLabel());
+			}
+
 		}
 
 		logger.debug("OUT");
@@ -259,25 +211,6 @@ public class DataSetResource extends AbstractDataSetResource {
 			String jsonString = JsonConverter.objectToJson(toBeReturned, toBeReturned.getClass());
 
 			return callback + "(" + jsonString + ")";
-		}
-	}
-
-	@GET
-	@Path("/basicinfo/all")
-	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
-	public Response getDatasetsBasicInfo() {
-		logger.debug("IN");
-		List<DataSetBasicInfo> toReturn = new ArrayList<>();
-		IDataSetDAO dsDAO = DAOFactory.getDataSetDAO();
-
-		try {
-			toReturn = dsDAO.loadDatasetsBasicInfo();
-			return Response.ok(toReturn).build();
-		} catch (Exception e) {
-			logger.error("Error while loading the datasets basic info", e);
-			throw new SpagoBIRuntimeException("Error while loading the datasets basic info", e);
-		} finally {
-			logger.debug("OUT");
 		}
 	}
 
@@ -374,7 +307,7 @@ public class DataSetResource extends AbstractDataSetResource {
 	@DELETE
 	@Path("/{label}")
 	@UserConstraint(functionalities = { CommunityFunctionalityConstants.SELF_SERVICE_DATASET_MANAGEMENT })
-	public Response deleteDataset(@PathParam("label") String label) {
+	public Response deleteDataset(@PathParam("label") String label) throws ActionNotPermittedException {
 		return super.deleteDataset(label);
 	}
 

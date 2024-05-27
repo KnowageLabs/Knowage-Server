@@ -496,7 +496,9 @@ public class DataSetResource extends AbstractDataSetResource {
 		IDataSet dataSet = getDataSetDAO().loadDataSetById(id);
 
 		try {
-			new DatasetManagementAPI(getUserProfile()).canLoadData(dataSet);
+			DatasetManagementAPI datasetManagementAPI = new DatasetManagementAPI(getUserProfile());
+			datasetManagementAPI.canSee(dataSet);
+			datasetManagementAPI.canLoadData(dataSet);
 		} catch (ActionNotPermittedException e) {
 			logger.error("User " + getUserProfile().getUserId() + " cannot export the dataset with label "
 					+ dataSet.getLabel());
@@ -534,14 +536,14 @@ public class DataSetResource extends AbstractDataSetResource {
 	@DELETE
 	@Path("/{label}")
 	@UserConstraint(functionalities = { CommunityFunctionalityConstants.SELF_SERVICE_DATASET_MANAGEMENT })
-	public Response deleteDataset(@PathParam("label") String label) {
+	public Response deleteDataset(@PathParam("label") String label) throws ActionNotPermittedException {
 		return super.deleteDataset(label);
 	}
 
 	@DELETE
 	@Path("/id/{id}")
 	@UserConstraint(functionalities = { CommunityFunctionalityConstants.SELF_SERVICE_DATASET_MANAGEMENT })
-	public Response deleteDatasetById(@PathParam("id") int id) {
+	public Response deleteDatasetById(@PathParam("id") int id) throws ActionNotPermittedException {
 		IDataSetDAO datasetDao = DAOFactory.getDataSetDAO();
 		IDataSet dataset = datasetDao.loadDataSetById(id);
 		String label = dataset.getLabel();
@@ -973,8 +975,7 @@ public class DataSetResource extends AbstractDataSetResource {
 				logger.debug("Read property " + PROPERTY_IS_MANDATORY_MEASURE + ": its value is ["
 						+ isMandatoryMeasureObj + "]");
 				String measureNature = (isMandatoryMeasureObj != null
-						&& Boolean.parseBoolean(isMandatoryMeasureObj.toString())) ? "mandatory_measure"
-								: "measure";
+						&& Boolean.parseBoolean(isMandatoryMeasureObj.toString())) ? "mandatory_measure" : "measure";
 				logger.debug("The nature of the measure is recognized as " + measureNature);
 				fieldMetaDataJSON.put("nature", measureNature);
 				String aggregationFunction = (String) fieldMetaData.getProperty(PROPERTY_AGGREGATION_FUNCTION);
@@ -1013,18 +1014,18 @@ public class DataSetResource extends AbstractDataSetResource {
 
 		// put first measures and only after attributes
 
-		for (Iterator iterator = measuresList.iterator(); iterator.hasNext();) {
-			JSONObject jsonObject = (JSONObject) iterator.next();
+		for (Iterator<JSONObject> iterator = measuresList.iterator(); iterator.hasNext();) {
+			JSONObject jsonObject = iterator.next();
 			fieldsMetaDataJSON.put(jsonObject);
 		}
 
-		for (Iterator iterator = attributesList.iterator(); iterator.hasNext();) {
-			JSONObject jsonObject = (JSONObject) iterator.next();
+		for (Iterator<JSONObject> iterator = attributesList.iterator(); iterator.hasNext();) {
+			JSONObject jsonObject = iterator.next();
 			fieldsMetaDataJSON.put(jsonObject);
 		}
 
-		for (Iterator iterator = spatialAttributesList.iterator(); iterator.hasNext();) {
-			JSONObject jsonObject = (JSONObject) iterator.next();
+		for (Iterator<JSONObject> iterator = spatialAttributesList.iterator(); iterator.hasNext();) {
+			JSONObject jsonObject = iterator.next();
 			fieldsMetaDataJSON.put(jsonObject);
 		}
 
@@ -1064,8 +1065,8 @@ public class DataSetResource extends AbstractDataSetResource {
 	public JSONArray writeParameters(List<JSONObject> paramsMeta) throws Exception {
 		JSONArray paramsMetaDataJSON = new JSONArray();
 
-		for (Iterator iterator = paramsMeta.iterator(); iterator.hasNext();) {
-			JSONObject jsonObject = (JSONObject) iterator.next();
+		for (Iterator<JSONObject> iterator = paramsMeta.iterator(); iterator.hasNext();) {
+			JSONObject jsonObject = iterator.next();
 			paramsMetaDataJSON.put(jsonObject);
 		}
 
@@ -1080,7 +1081,9 @@ public class DataSetResource extends AbstractDataSetResource {
 		logger.debug("IN");
 		try {
 			logger.debug("get dataset with label " + datasetLabel);
-			IDataSet dataSet = getDatasetManagementAPI().getDataSet(datasetLabel);
+			DatasetManagementAPI datasetManagementAPI = getDatasetManagementAPI();
+			IDataSet dataSet = datasetManagementAPI.getDataSet(datasetLabel);
+			datasetManagementAPI.canSee(dataSet);
 			ICache cache = CacheFactory.getCache(SpagoBICacheConfiguration.getInstance());
 			logger.debug("Delete from cache dataset references with signature " + dataSet.getSignature());
 			cache.delete(dataSet.getSignature(), true);

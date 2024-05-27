@@ -38,7 +38,7 @@ public class DatasetActionsCheckerFactory {
 			return new QbeDataSetActionsChecker(userProfile, dataSet);
 		}
 
-		return new EmptyActionsChecker(userProfile, dataSet);
+		return new DefaultActionsChecker(userProfile, dataSet);
 
 	}
 
