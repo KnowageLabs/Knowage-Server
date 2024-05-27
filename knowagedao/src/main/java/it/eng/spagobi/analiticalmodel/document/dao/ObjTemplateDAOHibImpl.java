@@ -472,8 +472,9 @@ public class ObjTemplateDAOHibImpl extends AbstractHibernateDAO implements IObjT
 
 					// save associations among dataset and documents
 					try {
+						
 						SpagoBiEngineDriver sbiDriver = SpagoBiEngineDriver.fromDriverName(driverName);
-						IEngineDriver driver = (IEngineDriver) Class.forName(sbiDriver).newInstance();
+						IEngineDriver driver = (IEngineDriver) Class.forName(sbiDriver.getDriverName()).newInstance();
 						ArrayList<String> datasetsAssociated = driver.getDatasetAssociated(templateContent);
 						if (datasetsAssociated != null) {
 							for (Iterator iterator = datasetsAssociated.iterator(); iterator.hasNext();) {

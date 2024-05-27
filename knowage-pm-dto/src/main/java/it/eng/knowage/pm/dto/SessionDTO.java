@@ -60,8 +60,6 @@ public class SessionDTO implements Serializable {
 		return ToStringBuilder.reflectionToString(this);
 	}
 	
-	public void writeObject(ObjectOutputStream aOutputStream) {
-		  throw new UnsupportedOperationException("Security violation : cannot serialize object to a stream");
-}
+	
 
 }

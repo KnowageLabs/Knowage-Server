@@ -912,7 +912,7 @@ public class BIObject implements Serializable, Cloneable, IDrivableBIResource<BI
 		this.biBIMetaModelParameter = drivers;
 	}
 	
-	public void writeObject(ObjectOutputStream aOutputStream) {
+	private final void writeObject(ObjectOutputStream aOutputStream) {
 		  throw new UnsupportedOperationException("Security violation : cannot serialize object to a stream");
 	}
 

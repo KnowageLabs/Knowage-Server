@@ -123,7 +123,7 @@ public class DistributionList implements Serializable {
 		this.documents = documents;
 	}
 	
-	public void writeObject(ObjectOutputStream aOutputStream) {
+	private final void writeObject(ObjectOutputStream aOutputStream) {
 		  throw new UnsupportedOperationException("Security violation : cannot serialize object to a stream");
 	}
 

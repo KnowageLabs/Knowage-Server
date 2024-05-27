@@ -803,7 +803,7 @@ public class Table implements RelationalModel, Serializable {
 		return comments.iterator();
 	}
 
-	public void writeObject(ObjectOutputStream aOutputStream) {
+	 private final void writeObject(ObjectOutputStream aOutputStream) {
 		  throw new UnsupportedOperationException("Security violation : cannot serialize object to a stream");
 	}
 

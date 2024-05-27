@@ -261,7 +261,7 @@ public class ObjTemplate implements Serializable, Cloneable {
 		return clone;
 	}
 
-	public void writeObject(ObjectOutputStream aOutputStream) {
+	private final void writeObject(ObjectOutputStream aOutputStream) {
 		  throw new UnsupportedOperationException("Security violation : cannot serialize object to a stream");
 	}
 

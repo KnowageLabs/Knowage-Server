@@ -116,7 +116,7 @@ public class SbiProgressThread implements java.io.Serializable {
 		this.executionRole = executionRole;
 	}
 	
-	public void writeObject(ObjectOutputStream aOutputStream) {
+	private final void writeObject(ObjectOutputStream aOutputStream) {
 		  throw new UnsupportedOperationException("Security violation : cannot serialize object to a stream");
 	}
 

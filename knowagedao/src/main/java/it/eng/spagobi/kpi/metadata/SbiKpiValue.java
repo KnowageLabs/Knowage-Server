@@ -154,7 +154,7 @@ public class SbiKpiValue extends SbiHibernateModel implements java.io.Serializab
 		this.manualNote = manualNote;
 	}
 
-	public void writeObject(ObjectOutputStream aOutputStream) {
+	private final void writeObject(ObjectOutputStream aOutputStream) {
 		  throw new UnsupportedOperationException("Security violation : cannot serialize object to a stream");
 	}
 

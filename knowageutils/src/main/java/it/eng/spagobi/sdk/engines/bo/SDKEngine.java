@@ -451,7 +451,7 @@ public class SDKEngine implements java.io.Serializable {
 		__hashCodeCalc = false;
 		return _hashCode;
 	}
-	public void writeObject(ObjectOutputStream aOutputStream) {
+	private final void writeObject(ObjectOutputStream aOutputStream) {
 		  throw new UnsupportedOperationException("Security violation : cannot serialize object to a stream");
 	}
 

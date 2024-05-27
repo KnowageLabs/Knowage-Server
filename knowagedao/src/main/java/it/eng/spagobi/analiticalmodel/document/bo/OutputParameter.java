@@ -137,7 +137,7 @@ public class OutputParameter implements Serializable {
 		this.isUserDefined = isUserDefined;
 	}
 
-	public void writeObject(ObjectOutputStream aOutputStream) {
+	private final void writeObject(ObjectOutputStream aOutputStream) {
 		  throw new UnsupportedOperationException("Security violation : cannot serialize object to a stream");
 	}
 

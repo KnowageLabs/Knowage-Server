@@ -134,7 +134,7 @@ public class SnapshotMainInfo implements Serializable {
 		this.dateCreation = dateCreation;
 	}
 	
-	public void writeObject(ObjectOutputStream aOutputStream) {
+	private final void writeObject(ObjectOutputStream aOutputStream) {
 		  throw new UnsupportedOperationException("Security violation : cannot serialize object to a stream");
 	}
 
