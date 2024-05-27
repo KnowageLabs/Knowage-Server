@@ -83,8 +83,6 @@ import it.eng.spagobi.commons.serializer.SerializerFactory;
 import it.eng.spagobi.commons.utilities.AuditLogUtilities;
 import it.eng.spagobi.commons.utilities.GeneralUtilities;
 import it.eng.spagobi.commons.utilities.UserUtilities;
-import it.eng.spagobi.commons.utilities.messages.IMessageBuilder;
-import it.eng.spagobi.commons.utilities.messages.MessageBuilderFactory;
 import it.eng.spagobi.engines.config.bo.Engine;
 import it.eng.spagobi.metamodel.MetaModelWrapper;
 import it.eng.spagobi.metamodel.SiblingsFileWrapper;
@@ -120,10 +118,6 @@ import it.eng.spagobi.tools.dataset.validation.ErrorField;
 import it.eng.spagobi.tools.dataset.validation.HierarchyLevel;
 import it.eng.spagobi.tools.dataset.validation.ValidationErrors;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
-import it.eng.spagobi.tools.notification.AbstractEvent;
-import it.eng.spagobi.tools.notification.DatasetNotificationEvent;
-import it.eng.spagobi.tools.notification.DatasetNotificationManager;
-import it.eng.spagobi.tools.notification.EventConstants;
 import it.eng.spagobi.user.UserProfileManager;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.exceptions.ActionNotPermittedException;
@@ -303,31 +297,12 @@ public class SelfServiceDataSetCRUD extends AbstractSpagoBIResource {
 			dsDAO.setUserID(((UserProfile) profile).getUserId().toString());
 			IDataSet ds = dsDAO.loadDataSetById(new Integer(id));
 
-			// Create DatasetNotificationEvent but wait to notify
-			DatasetNotificationEvent datasetEvent = null;
-			try {
-				datasetEvent = new DatasetNotificationEvent(EventConstants.DATASET_EVENT_DELETED_DATASET, "The dataset has been deleted", ds);
-				datasetEvent.retrieveEmailAddressesOfMapAuthors();
-			} catch (Exception e) {
-				logger.error("Error during creation of Dataset Events", e);
-			}
-
 			try {
 
 				// ATTENTION! This Delete Dataset Also if there are documents
 				// using it, this could lead to missing link in documents
 				dsDAO.deleteDataSetNoChecks(ds.getId());
 				deleteDatasetFile(ds);
-
-				// notify that dataset has been deleted
-				try {
-					DatasetNotificationManager dsNotificationManager = new DatasetNotificationManager();
-					if (datasetEvent != null) {
-						dsNotificationManager.handleEvent(datasetEvent);
-					}
-				} catch (Exception e) {
-					logger.error("Error during notification of Dataset Events", e);
-				}
 
 			} catch (Exception ex) {
 				if (ex.getMessage().startsWith("[deleteInUseDSError]")) {
@@ -453,9 +428,6 @@ public class SelfServiceDataSetCRUD extends AbstractSpagoBIResource {
 			} else {
 				// update ds
 				dao.modifyDataSet(dsNew);
-
-				// Notifications Management -----------------------------------
-				notificationManagement(selfServiceDataSetDTO, ds, dsNew);
 
 				updateAudit(request, profile, "DATA_SET.MODIFY", logParam, "OK");
 			}
@@ -633,99 +605,6 @@ public class SelfServiceDataSetCRUD extends AbstractSpagoBIResource {
 
 		return dataSet; // could return the original dataSet or a modified
 						// version
-
-	}
-
-	private void notificationManagement(SelfServiceDataSetDTO selfServiceDataSetDTO, IDataSet currentDataset, IDataSet updatedDataset) {
-
-		try {
-			// DatasetNotificationManager dsNotificationManager = new
-			// DatasetNotificationManager();
-			IMessageBuilder msgBuilder = MessageBuilderFactory.getMessageBuilder();
-
-			DatasetNotificationManager dsNotificationManager = new DatasetNotificationManager(msgBuilder);
-			List<AbstractEvent> datasetEvents = new ArrayList<>();
-
-			// File change check
-			boolean newFileUploaded = false;
-			if (selfServiceDataSetDTO.getFileUploaded() != null) {
-				newFileUploaded = Boolean.valueOf(selfServiceDataSetDTO.getFileUploaded());
-			}
-			if (newFileUploaded) {
-				DatasetNotificationEvent datasetEvent = new DatasetNotificationEvent(EventConstants.DATASET_EVENT_FILE_CHANGED,
-						"The dataset has changed his file", updatedDataset);
-				datasetEvents.add(datasetEvent);
-			}
-
-			// Metadata change check
-			boolean metadataChanged = checkMetadataChange(currentDataset, updatedDataset);
-			if (metadataChanged) {
-				// notify that metadata is changed
-				DatasetNotificationEvent datasetEvent = new DatasetNotificationEvent(EventConstants.DATASET_EVENT_METADATA_CHANGED,
-						"The dataset has changed his metadata", updatedDataset);
-				datasetEvents.add(datasetEvent);
-			}
-
-			// Licence change check
-			boolean licenceChanged = checkLicenceChange(currentDataset, updatedDataset);
-			if (licenceChanged) {
-				// notify that license is changed
-				DatasetNotificationEvent datasetEvent = new DatasetNotificationEvent(EventConstants.DATASET_EVENT_LICENCE_CHANGED,
-						"The dataset has changed his licence", updatedDataset);
-				datasetEvents.add(datasetEvent);
-
-			}
-
-			// Name change
-			boolean nameChanged = checkNameChange(currentDataset, updatedDataset);
-			if (nameChanged) {
-				// notify that name is changed
-				DatasetNotificationEvent datasetEvent = new DatasetNotificationEvent(EventConstants.DATASET_EVENT_NAME_CHANGED,
-						"The dataset has changed his name", updatedDataset);
-				datasetEvents.add(datasetEvent);
-			}
-
-			// Description change
-			boolean descriptionChanged = checkDescriptionChange(currentDataset, updatedDataset);
-			if (descriptionChanged) {
-				// notify that Description is changed
-				DatasetNotificationEvent datasetEvent = new DatasetNotificationEvent(EventConstants.DATASET_EVENT_DESCRIPTION_CHANGED,
-						"The dataset has changed his description", updatedDataset);
-				datasetEvents.add(datasetEvent);
-			}
-
-			boolean categoryChanged = checkCategoryChange(currentDataset, updatedDataset);
-			if (categoryChanged) {
-				// notify that Category is changed
-				DatasetNotificationEvent datasetEvent = new DatasetNotificationEvent(EventConstants.DATASET_EVENT_CATEGORY_CHANGED,
-						"The dataset has changed his category", updatedDataset);
-				datasetEvents.add(datasetEvent);
-			}
-
-			boolean scopeChanged = checkScopeChange(currentDataset, updatedDataset);
-			if (scopeChanged) {
-				// notify that Scope (Public/Private)
-				DatasetNotificationEvent datasetEvent = new DatasetNotificationEvent(EventConstants.DATASET_EVENT_SCOPE_CHANGED,
-						"The dataset has changed his scope", updatedDataset);
-				datasetEvents.add(datasetEvent);
-
-			}
-
-			// Sending notifications to Manager
-
-			if (!datasetEvents.isEmpty()) {
-				if (datasetEvents.size() == 1) {
-					dsNotificationManager.handleEvent(datasetEvents.get(0));
-				} else {
-					dsNotificationManager.handleMultipleEvents(datasetEvents);
-
-				}
-			}
-
-		} catch (Exception ex) {
-			logger.error("Error during notification of Dataset Events", ex);
-
-		}
 
 	}
 
