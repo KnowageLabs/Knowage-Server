@@ -125,6 +125,7 @@ import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.database.DataBaseException;
 import it.eng.spagobi.utilities.database.DataBaseFactory;
 import it.eng.spagobi.utilities.database.IDataBase;
+import it.eng.spagobi.utilities.exceptions.ActionNotPermittedException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 
@@ -1087,8 +1088,9 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 		try {
 			DatasetManagementAPI datasetManagementAPI = getDatasetManagementAPI();
 			IDataSet dataSet = datasetManagementAPI.getDataSet(label);
+			getDatasetManagementAPI().canSee(dataSet);
 			return serializeDataSet(dataSet, null);
-		} catch (Throwable t) {
+		} catch (Exception t) {
 			throw new SpagoBIServiceException(this.request.getPathInfo(),
 					"An unexpected error occured while executing service", t);
 		} finally {
@@ -1096,10 +1098,11 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 		}
 	}
 
-	protected Response deleteDataset(String label) {
+	protected Response deleteDataset(String label) throws ActionNotPermittedException {
 		IDataSetDAO datasetDao = DAOFactory.getDataSetDAO();
 		DatasetManagementAPI datasetManagementAPI = getDatasetManagementAPI();
 		IDataSet dataset = datasetManagementAPI.getDataSet(label);
+		getDatasetManagementAPI().canSee(dataset);
 
 		try {
 			datasetDao.deleteDataSet(dataset.getId());
@@ -1177,27 +1180,35 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 	}
 
 	protected Response execute(String label, String body) {
-		SDKDataSetParameter[] parameters = null;
+		try {
+			SDKDataSetParameter[] parameters = null;
 
-		if (request.getParameterMap() != null && request.getParameterMap().size() > 0) {
+			if (request.getParameterMap() != null && request.getParameterMap().size() > 0) {
 
-			parameters = new SDKDataSetParameter[request.getParameterMap().size()];
+				parameters = new SDKDataSetParameter[request.getParameterMap().size()];
 
-			int i = 0;
-			for (Iterator<String> iterator = request.getParameterMap().keySet().iterator(); iterator.hasNext();) {
-				String key = iterator.next();
-				String[] values = request.getParameterMap().get(key);
-				SDKDataSetParameter sdkDataSetParameter = new SDKDataSetParameter();
-				sdkDataSetParameter.setName(key);
-				sdkDataSetParameter.setValues(values);
-				parameters[i] = sdkDataSetParameter;
-				i++;
+				int i = 0;
+				for (Iterator<String> iterator = request.getParameterMap().keySet().iterator(); iterator.hasNext();) {
+					String key = iterator.next();
+					String[] values = request.getParameterMap().get(key);
+					SDKDataSetParameter sdkDataSetParameter = new SDKDataSetParameter();
+					sdkDataSetParameter.setName(key);
+					sdkDataSetParameter.setValues(values);
+					parameters[i] = sdkDataSetParameter;
+					i++;
+				}
 			}
+			return Response.ok(executeDataSet(label, parameters)).build();
+		} catch (Exception t) {
+			throw new SpagoBIServiceException(this.request.getPathInfo(),
+					"An unexpected error occured while executing service", t);
+		} finally {
+			LOGGER.debug("OUT");
 		}
-		return Response.ok(executeDataSet(label, parameters)).build();
+
 	}
 
-	protected String executeDataSet(String label, SDKDataSetParameter[] params) {
+	protected String executeDataSet(String label, SDKDataSetParameter[] params) throws ActionNotPermittedException {
 		LOGGER.debug("Executing dataset {}", label);
 
 		try {
@@ -1206,6 +1217,11 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 				return null;
 			}
 			IDataSet dataSet = DAOFactory.getDataSetDAO().loadDataSetByLabel(label);
+			DatasetManagementAPI datasetManagementAPI = getDatasetManagementAPI();
+
+			datasetManagementAPI.canSee(dataSet);
+			datasetManagementAPI.canLoadData(dataSet);
+
 			if (dataSet == null) {
 				LOGGER.warn("DataSet with label {} not existing.", label);
 				return null;
@@ -1241,6 +1257,8 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 
 			JSONDataWriter writer = new JSONDataWriter();
 			return (writer.write(dataSet.getDataStore())).toString();
+		} catch (ActionNotPermittedException e) {
+			throw e;
 		} catch (Exception e) {
 			LOGGER.error("Error while executing dataset", e);
 			throw new SpagoBIRuntimeException("Error while executing dataset", e);
