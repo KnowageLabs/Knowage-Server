@@ -319,7 +319,10 @@
 <!-- OWASP CSRFGuard filter mapping used to validate CSRF token-->
 <filter-mapping>
    <filter-name>CSRFGuard</filter-name>
-   <url-pattern>/*</url-pattern>
+   <url-pattern>/servlet/*</url-pattern>
+   <url-pattern>/restful-services/*</url-pattern>
+   <url-pattern>/stickyImg</url-pattern>
+   <url-pattern>/ChangePwdServlet</url-pattern>
 </filter-mapping>
 
 <!-- OWASP CSRFGuard servlet that serves dynamic token injection JavaScript (application can customize the URL pattern as required)-->
