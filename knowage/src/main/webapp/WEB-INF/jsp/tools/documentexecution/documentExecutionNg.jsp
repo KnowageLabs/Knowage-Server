@@ -185,11 +185,6 @@ if(executionRoleNames.size() > 0 && canExecuteDocument) {
         <script type="text/javascript" src="<%=urlBuilder.getResourceLink(request, "node_modules/ng-wysiwyg/dist/wysiwyg.min.js")%>"></script>  
         <link rel="stylesheet" type="text/css" href="<%=urlBuilder.getResourceLink(request, "node_modules/ng-wysiwyg/dist/editor.min.css")%>"> 
         
-         <!-- Wheel navigator -->
-        <script type="text/javascript" src="<%=urlBuilder.getResourceLink(request, "js/lib/wheelnav/raphael.min.js")%>""></script>
-	    <script type="text/javascript" src="<%=urlBuilder.getResourceLink(request, "js/lib/wheelnav/raphael.icons.min.js")%>"></script>
-	    <script type="text/javascript" src="<%=urlBuilder.getResourceLink(request, "js/lib/wheelnav/wheelnav.js")%>"></script>
-        
         <!--    breadCrumb -->
         <script type="text/javascript" src="<%=urlBuilder.getResourceLink(request, "js/src/angular_1.4/tools/commons/BreadCrumb.js")%>"></script>
         
@@ -212,7 +207,6 @@ if(executionRoleNames.size() > 0 && canExecuteDocument) {
     </head>
 
     <body class="kn-documentExecution" ng-app="documentExecutionModule" ng-controller="documentExecutionController" layout="row" ng-cloak >
-    <wheel-navigator ng-if="navigatorVisibility" navigator-style="navigatorStyle"></wheel-navigator>
         
         <!--
             Move these Java variables to the Javascript so they can eventually be attached to the scope of the controller
@@ -703,12 +697,6 @@ if(executionRoleNames.size() > 0 && canExecuteDocument) {
                 src="<%=urlBuilder.getResourceLink(request, "js/src/angular_1.4/tools/documentexecution/menuFunctions/infoMetadataService.js")%>"></script>
         <script type="text/javascript" 
                 src="<%=urlBuilder.getResourceLink(request, "js/src/angular_1.4/tools/documentexecution/documentExecution.js")%>"></script>
-        <script type="text/javascript" 
-        		src="<%=urlBuilder.getResourceLink(request, "js/src/angular_1.4/tools/documentexecution/wheelNavigator/ngWheelNavigator.js")%>"></script>
-        <script type="text/javascript" 
-                src="<%=urlBuilder.getResourceLink(request, "js/src/angular_1.4/tools/documentexecution/documentExecutionNote.js")%>"></script>
-        <script type="text/javascript" 
-                src="<%=urlBuilder.getResourceLink(request, "js/src/angular_1.4/tools/documentexecution/documentExecutionRank.js")%>"></script>
         <script type="text/javascript" 
                 src="<%=urlBuilder.getResourceLink(request, "js/src/angular_1.4/tools/documentexecution/publicExecutionUrl/publicExecutionUrl.js")%>"></script>
         
