@@ -16,6 +16,7 @@ You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 --%>
 
+<script src="/csrfguard.js"></script>
 
 <%@page import="it.eng.spagobi.commons.utilities.UserUtilities"%>
 <%@page import="org.json.JSONObject"%>

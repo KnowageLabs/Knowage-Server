@@ -300,6 +300,8 @@
 	</servlet>
 	-->
 
+	
+
 	<servlet>
 		<servlet-name>BirtReportServlet</servlet-name>
 		<servlet-class>it.eng.spagobi.engines.birt.BirtReportServlet</servlet-class>
