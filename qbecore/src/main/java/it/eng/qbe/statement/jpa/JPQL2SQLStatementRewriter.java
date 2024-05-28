@@ -17,7 +17,6 @@
  */
 package it.eng.qbe.statement.jpa;
 
-import java.beans.PropertyDescriptor;
 import java.lang.reflect.Field;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
@@ -194,15 +193,18 @@ public class JPQL2SQLStatementRewriter {
 		} catch (Exception e) {
 			throw new SpagoBIRuntimeException(e);
 		}
+		filterNameField.setAccessible(true);
+		parameterNameField.setAccessible(true);
 
 		/*
 		 * Get values of parameters managing multivalues value
 		 */
 		for (Object currParameter : collectedParameterSpecifications) {
 			try {
-				String filterName = (String) new PropertyDescriptor(filterNameField.getName(), clas).getReadMethod().invoke(currParameter);
-				String parameterName = (String) new PropertyDescriptor(parameterNameField.getName(), clas).getReadMethod().invoke(currParameter);
-				Object value = session.getLoadQueryInfluencers().getFilterParameterValue(filterName + '.' + parameterName);
+				String filterName = (String) filterNameField.get(currParameter);
+				String parameterName = (String) parameterNameField.get(currParameter);
+				Object value = session.getLoadQueryInfluencers()
+						.getFilterParameterValue(filterName + '.' + parameterName);
 
 				if (value instanceof Collection) {
 					Collection<?> coll = (Collection) value;
