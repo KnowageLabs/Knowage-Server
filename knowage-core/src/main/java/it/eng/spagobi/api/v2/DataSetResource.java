@@ -33,6 +33,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.ValidationException;
@@ -147,8 +148,23 @@ public class DataSetResource extends AbstractDataSetResource {
 		logger.debug("IN");
 
 		IDataSetDAO dsDAO = getDataSetDAO();
+		DatasetManagementAPI datasetManagementAPI = getDatasetManagementAPI();
 
-		List<IDataSet> toBeReturned = dsDAO.loadNotDerivedDataSets(getUserProfile());
+		// @formatter:off
+		List<IDataSet> toBeReturned = dsDAO.loadNotDerivedDataSets(getUserProfile())
+				.stream()
+				.filter(e -> {
+					boolean ret = false;
+					try {
+						datasetManagementAPI.canSee(e);
+						ret = true;
+					} catch (ActionNotPermittedException ex) {
+						// Ignore the dataset
+					}
+					return ret;
+				})
+				.collect(Collectors.toList());
+		// @formatter:off
 
 		try {
 			logger.debug("OUT");
