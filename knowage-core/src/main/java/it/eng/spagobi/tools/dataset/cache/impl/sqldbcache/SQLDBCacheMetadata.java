@@ -31,7 +31,7 @@ import java.util.stream.Collectors;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 
-import com.hazelcast.core.IMap;
+import com.hazelcast.map.IMap;
 
 import it.eng.spagobi.cache.dao.ICacheDAO;
 import it.eng.spagobi.cache.metadata.SbiCacheItem;

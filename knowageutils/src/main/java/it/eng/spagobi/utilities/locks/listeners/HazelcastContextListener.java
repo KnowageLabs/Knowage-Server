@@ -11,7 +11,7 @@ import javax.servlet.ServletContextListener;
 import org.apache.log4j.Logger;
 
 import com.hazelcast.core.Hazelcast;
-import com.hazelcast.core.IMap;
+import com.hazelcast.map.IMap;
 
 public class HazelcastContextListener implements ServletContextListener {
 

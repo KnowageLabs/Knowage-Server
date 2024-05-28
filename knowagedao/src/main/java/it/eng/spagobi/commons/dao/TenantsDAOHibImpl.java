@@ -35,7 +35,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 
-import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.log4j.Logger;
 import org.hibernate.Criteria;
 import org.hibernate.Hibernate;
@@ -79,6 +79,7 @@ import it.eng.spagobi.tools.scheduler.bo.CronExpression;
 import it.eng.spagobi.tools.scheduler.bo.Job;
 import it.eng.spagobi.tools.scheduler.bo.Trigger;
 import it.eng.spagobi.tools.scheduler.dao.ISchedulerDAO;
+import it.eng.spagobi.utilities.KnowageStringUtils;
 import it.eng.spagobi.utilities.assertion.Assert;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
@@ -986,7 +987,7 @@ public class TenantsDAOHibImpl extends AbstractHibernateDAO implements ITenantsD
 					}
 				}
 			}
-			StringEscapeUtils seu = new StringEscapeUtils();
+			KnowageStringUtils seu = new KnowageStringUtils();
 
 			str = "DELETE FROM QRTZ_CRON_TRIGGERS WHERE trigger_name IN (SELECT DISTINCT t.trigger_name "
 					+ "FROM QRTZ_TRIGGERS t WHERE t.JOB_GROUP LIKE '" + seu.escapeSql(aTenant.getName()) + "/%') "

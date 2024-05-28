@@ -45,7 +45,7 @@ import it.eng.spagobi.tools.dataset.common.datastore.IRecord;
 import it.eng.spagobi.tools.dataset.common.datastore.Record;
 import it.eng.spagobi.tools.dataset.common.metadata.FieldMetadata;
 import it.eng.spagobi.tools.dataset.common.metadata.MetaData;
-import it.eng.spagobi.utilities.StringUtils;
+import it.eng.spagobi.utilities.KnowageStringUtils;
 
 /**
  * @author Marco Cortella marco.cortella@eng.it
@@ -253,7 +253,7 @@ public class FileDatasetXlsDataReader extends AbstractDataReader {
 		}
 		for (int cellNum = row.getFirstCellNum(); cellNum < row.getLastCellNum(); cellNum++) {
 			Cell cell = row.getCell(cellNum);
-			if (cell != null && cell.getCellType() != CellType.BLANK && org.apache.commons.lang.StringUtils.isNotBlank(cell.toString())) {
+			if (cell != null && cell.getCellType() != CellType.BLANK && org.apache.commons.lang3.StringUtils.isNotBlank(cell.toString())) {
 				return false;
 			}
 		}
@@ -310,7 +310,7 @@ public class FileDatasetXlsDataReader extends AbstractDataReader {
 				valueField = "Column " + String.valueOf(c + 1);
 			}
 			FieldMetadata fieldMeta = new FieldMetadata();
-			String fieldName = StringUtils.escapeForSQLColumnName(valueField.toString());
+			String fieldName = KnowageStringUtils.escapeForSQLColumnName(valueField.toString());
 			fieldMeta.setName(fieldName);
 
 			dataStoreMeta.addFiedMeta(fieldMeta);
@@ -421,7 +421,7 @@ public class FileDatasetXlsDataReader extends AbstractDataReader {
 			break;
 
 		case STRING:
-			if (org.apache.commons.lang.StringUtils.isBlank(cell.getStringCellValue())) {
+			if (org.apache.commons.lang3.StringUtils.isBlank(cell.getStringCellValue())) {
 				valueField = "";
 			} else {
 				valueField = cell.getStringCellValue();

@@ -128,7 +128,6 @@ import it.eng.spagobi.tools.dataset.metasql.query.item.SimpleSelectionField;
 import it.eng.spagobi.tools.dataset.metasql.query.item.UnaryFilter;
 import it.eng.spagobi.tools.dataset.metasql.query.item.UnsatisfiedFilter;
 import it.eng.spagobi.tools.dataset.persist.IPersistedManager;
-import it.eng.spagobi.tools.dataset.persist.PersistedHDFSManager;
 import it.eng.spagobi.tools.dataset.persist.PersistedTableManager;
 import it.eng.spagobi.tools.dataset.utils.DataSetUtilities;
 import it.eng.spagobi.tools.datasource.dao.IDataSourceDAO;
@@ -187,6 +186,53 @@ public class DataSetResource extends AbstractDataSetResource {
 		} catch (SerializationException e) {
 			throw new SpagoBIRestServiceException(getLocale(), e);
 		}
+	}
+
+	@GET
+	@Path("/availableFunctions/{dsId}")
+	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
+	@UserConstraint(functionalities = { CommunityFunctionalityConstants.SELF_SERVICE_DATASET_MANAGEMENT })
+	public String availableFunctions(@PathParam("dsId") String datasetId, @QueryParam("useCache") boolean useCache)
+			throws JSONException, DataBaseException, EMFUserError, SpagoBIRuntimeException {
+		logger.debug("IN");
+
+		ISbiDataSetDAO dsDAO = DAOFactory.getSbiDataSetDAO();
+
+		JSONObject jo = new JSONObject();
+
+		DatasetFunctionsConfig datasetFunctionsConfig = new DatasetFunctionsConfig();
+
+		if (useCache) {
+			IDataSourceDAO dataSourceDAO = DAOFactory.getDataSourceDAO();
+			IDataSource dataSource = dataSourceDAO.loadDataSourceWriteDefault();
+
+			if (dataSource == null)
+				throw new SpagoBIRuntimeException("No data source found for cache");
+
+			String dataBaseDialect = dataSource.getDialectName();
+			List<String> availableFunctions = datasetFunctionsConfig.getAvailableFunctions(dataBaseDialect);
+			jo.put("availableFunctions", availableFunctions);
+
+			List<String> nullIfFunction = datasetFunctionsConfig.getNullifFunction(dataBaseDialect);
+			jo.put("nullifFunction", nullIfFunction);
+
+		} else {
+			Tenant tenantManager = TenantManager.getTenant();
+			SbiDataSet sbiDataSet = dsDAO.loadSbiDataSetByIdAndOrganiz(Integer.valueOf(datasetId),
+					tenantManager.getName());
+			IDataSet iDataSet = DataSetFactory.toDataSet(sbiDataSet);
+			IDataBase database = DataBaseFactory.getDataBase(iDataSet.getDataSource());
+			String dataBaseDialect = database.getDatabaseDialect().getValue();
+
+			List<String> availableFunctions = datasetFunctionsConfig.getAvailableFunctions(dataBaseDialect);
+			jo.put("availableFunctions", availableFunctions);
+
+			List<String> nullIfFunction = datasetFunctionsConfig.getNullifFunction(dataBaseDialect);
+			jo.put("nullifFunction", nullIfFunction);
+		}
+
+		logger.debug("OUT");
+		return jo.toString();
 	}
 
 	@GET
@@ -264,11 +310,6 @@ public class DataSetResource extends AbstractDataSetResource {
 
 		try {
 			DAOFactory.getDataSetDAO().insertDataSet(dataset);
-
-			if (dataset.isPersistedHDFS()) {
-				IPersistedManager ptm = new PersistedHDFSManager(getUserProfile());
-				ptm.persistDataSet(dataset);
-			}
 
 			if (dataset.isPersisted()) {
 				IPersistedManager ptm = new PersistedTableManager(getUserProfile());

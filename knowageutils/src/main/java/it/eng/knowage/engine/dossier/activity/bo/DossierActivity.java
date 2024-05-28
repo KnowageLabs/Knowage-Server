@@ -19,9 +19,8 @@ package it.eng.knowage.engine.dossier.activity.bo;
 
 import java.util.Date;
 
-import org.codehaus.jackson.map.annotate.JsonSerialize;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 public class DossierActivity {
 

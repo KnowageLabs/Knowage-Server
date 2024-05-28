@@ -37,6 +37,8 @@ import org.opengis.feature.simple.SimpleFeatureType;
 
 import it.eng.spago.base.SourceBean;
 import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.engines.georeport.dao.FeaturesProviderDAOFileImpl;
+import it.eng.spagobi.engines.georeport.dao.FeaturesProviderDAOWFSImpl;
 import it.eng.spagobi.engines.georeport.utils.LayerCache;
 import it.eng.spagobi.engines.georeport.utils.Monitor;
 import it.eng.spagobi.mapcatalogue.bo.GeoLayer;
@@ -144,9 +146,11 @@ public class geoUtils {
 					String source = geoLayer.getType().equals("File") ? geoLayer.getPathFile() : layerDef.getString("layer_url");
 
 					if (geoLayer.getType().equals("File")) {
-						outputFeatureCollection = DAOFactory.getFeaturesProviderFileDAO().getAllFeatures(source);
+						FeaturesProviderDAOFileImpl featuresProviderDAOFileImpl = new FeaturesProviderDAOFileImpl();
+						outputFeatureCollection = featuresProviderDAOFileImpl.getAllFeatures(source);
 					} else {
-						outputFeatureCollection = DAOFactory.getFeaturesProviderWFSDAO().getAllFeatures(source);
+						FeaturesProviderDAOWFSImpl featuresProviderDAOWFSImpl = new FeaturesProviderDAOWFSImpl();
+						outputFeatureCollection = featuresProviderDAOWFSImpl.getAllFeatures(source);
 					}
 					Assert.assertNotNull(outputFeatureCollection, "The feature source returned a null object");
 					logger.debug("GetTargetLayerAction.getFeature " + Monitor.elapsed("GetTargetLayerAction.getFeatures"));

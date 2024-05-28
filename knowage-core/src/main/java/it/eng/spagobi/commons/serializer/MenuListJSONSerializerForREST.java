@@ -22,8 +22,8 @@ import java.util.Locale;
 
 import javax.servlet.http.HttpSession;
 
-import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.text.StringEscapeUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -823,7 +823,7 @@ public class MenuListJSONSerializerForREST implements Serializer {
 					&& !childElem.getExternalApplicationUrl().isEmpty()) {
 				temp2.put(HREF,
 						"javascript:callExternalApp('"
-								+ StringEscapeUtils.escapeJavaScript(childElem.getExternalApplicationUrl()) + "', '"
+								+ StringEscapeUtils.escapeEcmaScript(childElem.getExternalApplicationUrl()) + "', '"
 								+ path + "')");
 				temp2.put(LINK_TYPE, "callExternalApp");
 				temp2.put(SRC, childElem.getExternalApplicationUrl());

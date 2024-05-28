@@ -31,7 +31,7 @@ import org.json.JSONException;
 
 import it.eng.spagobi.tools.dataset.metasql.query.DatabaseDialect;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
-import it.eng.spagobi.utilities.StringUtils;
+import it.eng.spagobi.utilities.KnowageStringUtils;
 
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
@@ -107,7 +107,7 @@ public abstract class AbstractDataBase implements IDataBase {
 				while (rs.next()) {
 					ResultSet tabCol = null;
 					String tableName = rs.getString(3);
-					if (StringUtils.matchesLikeNotLikeCriteria(tableName, tableNamePatternLike, tableNamePatternNotLike)) {
+					if (KnowageStringUtils.matchesLikeNotLikeCriteria(tableName, tableNamePatternLike, tableNamePatternNotLike)) {
 						String param1 = rs.getString(1);
 						String param2 = rs.getString(2);
 						try {

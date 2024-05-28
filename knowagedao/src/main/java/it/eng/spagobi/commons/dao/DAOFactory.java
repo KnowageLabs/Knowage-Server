@@ -58,8 +58,6 @@ import it.eng.spagobi.functions.dao.ICatalogFunctionDAO;
 import it.eng.spagobi.functions.dao.IFunctionInputColumnDAO;
 import it.eng.spagobi.functions.dao.IFunctionInputVariableDAO;
 import it.eng.spagobi.functions.dao.IFunctionOutputColumnDAO;
-import it.eng.spagobi.georeport.dao.IFeaturesProviderFileDAO;
-import it.eng.spagobi.georeport.dao.IFeaturesProviderWFSDAO;
 import it.eng.spagobi.hotlink.rememberme.dao.IRememberMeDAO;
 import it.eng.spagobi.i18n.dao.I18NMessagesDAO;
 import it.eng.spagobi.images.dao.IImagesDAO;
@@ -759,10 +757,10 @@ public class DAOFactory {
 	 *
 	 *
 	 */
-	public static IFeaturesProviderFileDAO getFeaturesProviderFileDAO() {
-		return (IFeaturesProviderFileDAO) createDAOInstance("IFeaturesProviderFileDAO");
-
-	}
+//	public static IFeaturesProviderFileDAO getFeaturesProviderFileDAO() {
+//		return (IFeaturesProviderFileDAO) createDAOInstance("IFeaturesProviderFileDAO");
+//
+//	}
 
 	/**
 	 * Gets the IFeaturesProviderWFSDAO dao.
@@ -771,9 +769,9 @@ public class DAOFactory {
 	 *
 	 *
 	 */
-	public static IFeaturesProviderWFSDAO getFeaturesProviderWFSDAO() {
-		return (IFeaturesProviderWFSDAO) createDAOInstance("IFeaturesProviderWFSDAO");
-	}
+//	public static IFeaturesProviderWFSDAO getFeaturesProviderWFSDAO() {
+//		return (IFeaturesProviderWFSDAO) createDAOInstance("IFeaturesProviderWFSDAO");
+//	}
 
 	/**
 	 * Gets the CrossNavigationDAO dao.

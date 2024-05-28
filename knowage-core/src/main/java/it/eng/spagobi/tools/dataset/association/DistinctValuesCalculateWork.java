@@ -51,7 +51,8 @@ import org.apache.log4j.Logger;
 
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.io.UnsafeOutput;
-import com.hazelcast.core.IMap;
+import com.hazelcast.map.IMap;
+
 import commonj.work.Work;
 
 public class DistinctValuesCalculateWork implements Work {

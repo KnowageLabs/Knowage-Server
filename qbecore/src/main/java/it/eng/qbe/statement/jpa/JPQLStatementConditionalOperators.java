@@ -22,7 +22,7 @@ import java.util.Map;
 
 import it.eng.qbe.query.CriteriaConstants;
 import it.eng.qbe.statement.IConditionalOperator;
-import it.eng.spagobi.utilities.StringUtils;
+import it.eng.spagobi.utilities.KnowageStringUtils;
 import it.eng.spagobi.utilities.assertion.Assert;
 
 /**
@@ -375,7 +375,7 @@ public class JPQLStatementConditionalOperators {
 
 			@Override
 			public String apply(String leftHandValue, String[] rightHandValues) {
-				String rightHandValue = StringUtils.join(rightHandValues, ",");
+				String rightHandValue = KnowageStringUtils.join(rightHandValues, ",");
 				return leftHandValue + " IN (" + rightHandValue + ")";
 			}
 
@@ -391,7 +391,7 @@ public class JPQLStatementConditionalOperators {
 
 			@Override
 			public String apply(String leftHandValue, String[] rightHandValues) {
-				String rightHandValue = StringUtils.join(rightHandValues, ",");
+				String rightHandValue = KnowageStringUtils.join(rightHandValues, ",");
 				return leftHandValue + " NOT IN (" + rightHandValue + ")";
 			}
 
