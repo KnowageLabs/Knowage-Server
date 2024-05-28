@@ -73,9 +73,9 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
  */
 public class QbeDataSet extends ConfigurableDataSet {
 
-	public static String DS_TYPE = "SbiQbeDataSet";
+	public static final String DS_TYPE = "SbiQbeDataSet";
 
-	private static Logger logger = Logger.getLogger(QbeDataSet.class);
+	private static final Logger LOGGER = Logger.getLogger(QbeDataSet.class);
 
 	public static final String QBE_DATA_SOURCE = "qbeDataSource";
 
@@ -108,7 +108,7 @@ public class QbeDataSet extends ConfigurableDataSet {
 			this.setJsonQuery((jsonConf.opt(QBE_JSON_QUERY) != null) ? jsonConf.get(QBE_JSON_QUERY).toString() : "");
 
 		} catch (Exception e) {
-			logger.error("Error while defining dataset configuration.  Error: " + e.getMessage());
+			LOGGER.error("Error while defining dataset configuration.  Error: " + e.getMessage());
 		}
 
 		setDatasourceInternal(dataSetConfig);
@@ -124,7 +124,7 @@ public class QbeDataSet extends ConfigurableDataSet {
 		this.ds = ds;
 	}
 
-	private void init() {
+	protected void init() {
 		if (ds == null) {
 			UserProfile profile = getUserProfile();
 			if (profile != null) {
@@ -135,6 +135,7 @@ public class QbeDataSet extends ConfigurableDataSet {
 			it.eng.qbe.datasource.IDataSource qbeDataSource = getQbeDataSource();
 			QueryCatalogue catalogue = getCatalogue(jsonQuery, qbeDataSource);
 			Query query = catalogue.getFirstQuery();
+			new TimeAggregationHandler(qbeDataSource).handleTimeFilters(query);
 			setQuery(query);
 			Query filteredQuery = filterQueryWithProfileAttributes(qbeDataSource, query);
 			initDs(qbeDataSource, filteredQuery);
@@ -170,9 +171,9 @@ public class QbeDataSet extends ConfigurableDataSet {
 	public void loadData(int offset, int fetchSize, int maxResults) {
 		init();
 		Query qbeQuery = (Query) query;
-		new TimeAggregationHandler(getQbeDataSource()).handleTimeFilters(qbeQuery);
 		Map<String, Map<String, String>> inlineFilteredSelectFields = qbeQuery.getInlineFilteredSelectFields();
 		if (inlineFilteredSelectFields != null && inlineFilteredSelectFields.size() > 0) {
+			// TODO : For federated dataset the call getQbeDataSource() will be a problem, see KNOWAGE-8470
 			initDs(getQbeDataSource(), qbeQuery);
 			ds.loadData(0, 0, -1);
 		} else {
@@ -205,8 +206,10 @@ public class QbeDataSet extends ConfigurableDataSet {
 		}
 
 		// keeping previous datamart retriever, if input map doesn't contain any
-		IQbeDataSetDatamartRetriever previousRetriever = (IQbeDataSetDatamartRetriever) this.params.get(SpagoBIConstants.DATAMART_RETRIEVER);
-		IQbeDataSetDatamartRetriever newRetriever = params == null ? null : (IQbeDataSetDatamartRetriever) params.get(SpagoBIConstants.DATAMART_RETRIEVER);
+		IQbeDataSetDatamartRetriever previousRetriever = (IQbeDataSetDatamartRetriever) this.params
+				.get(SpagoBIConstants.DATAMART_RETRIEVER);
+		IQbeDataSetDatamartRetriever newRetriever = params == null ? null
+				: (IQbeDataSetDatamartRetriever) params.get(SpagoBIConstants.DATAMART_RETRIEVER);
 
 		this.params = params;
 		if (this.params == null) {
@@ -289,16 +292,16 @@ public class QbeDataSet extends ConfigurableDataSet {
 
 	public it.eng.qbe.datasource.IDataSource getQbeDataSource() {
 
-		Map<String, Object> dataSourceProperties = new HashMap<String, Object>();
+		Map<String, Object> dataSourceProperties = new HashMap<>();
 
 		String modelName = getDatamarts();
-		List<String> modelNames = new ArrayList<String>();
+		List<String> modelNames = new ArrayList<>();
 		modelNames.add(modelName);
 		dataSourceProperties.put("datasource", dataSource);
 		dataSourceProperties.put("dblinkMap", new HashMap());
 
 		if (this.getSourceDataset() != null) {
-			List<IDataSet> dataSets = new ArrayList<IDataSet>();
+			List<IDataSet> dataSets = new ArrayList<>();
 			dataSets.add(this.getSourceDataset());
 			dataSourceProperties.put(EngineConstants.ENV_DATASETS, dataSets);
 		}
@@ -311,13 +314,15 @@ public class QbeDataSet extends ConfigurableDataSet {
 
 	}
 
-	public it.eng.qbe.datasource.IDataSource getDataSourceFromDataSet(Map<String, Object> dataSourceProperties, boolean useCache) {
+	public it.eng.qbe.datasource.IDataSource getDataSourceFromDataSet(Map<String, Object> dataSourceProperties,
+			boolean useCache) {
 
 		it.eng.qbe.datasource.IDataSource dataSource;
 		List<IDataSet> dataSets = (List<IDataSet>) dataSourceProperties.get(EngineConstants.ENV_DATASETS);
 		dataSourceProperties.remove(EngineConstants.ENV_DATASETS);
 
-		CompositeDataSourceConfiguration compositeConfiguration = new CompositeDataSourceConfiguration(DataSetDataSource.EMPTY_MODEL_NAME);
+		CompositeDataSourceConfiguration compositeConfiguration = new CompositeDataSourceConfiguration(
+				DataSetDataSource.EMPTY_MODEL_NAME);
 		Iterator<String> it = dataSourceProperties.keySet().iterator();
 		while (it.hasNext()) {
 			String propertyName = it.next();
@@ -325,7 +330,8 @@ public class QbeDataSet extends ConfigurableDataSet {
 		}
 
 		for (int i = 0; i < dataSets.size(); i++) {
-			DataSetDataSourceConfiguration c = new DataSetDataSourceConfiguration((dataSets.get(i)).getLabel(), dataSets.get(i));
+			DataSetDataSourceConfiguration c = new DataSetDataSourceConfiguration((dataSets.get(i)).getLabel(),
+					dataSets.get(i));
 			compositeConfiguration.addSubConfiguration(c);
 		}
 
@@ -334,10 +340,11 @@ public class QbeDataSet extends ConfigurableDataSet {
 		return dataSource;
 	}
 
-	private it.eng.qbe.datasource.IDataSource getORMDataSource(List<String> dataMartNames, Map<String, Object> dataSourceProperties, boolean useCache) {
+	private it.eng.qbe.datasource.IDataSource getORMDataSource(List<String> dataMartNames,
+			Map<String, Object> dataSourceProperties, boolean useCache) {
 
 		File modelJarFile = null;
-		List<File> modelJarFiles = new ArrayList<File>();
+		List<File> modelJarFiles = new ArrayList<>();
 		CompositeDataSourceConfiguration compositeConfiguration = new CompositeDataSourceConfiguration();
 		compositeConfiguration.loadDataSourceProperties().putAll(dataSourceProperties);
 
@@ -349,7 +356,7 @@ public class QbeDataSet extends ConfigurableDataSet {
 		modelJarFiles.add(modelJarFile);
 		compositeConfiguration.addSubConfiguration(new FileDataSourceConfiguration(dataMartNames.get(0), modelJarFile));
 
-		logger.debug("OUT: Finish to load the data source for the model names " + dataMartNames + "..");
+		LOGGER.debug("OUT: Finish to load the data source for the model names " + dataMartNames + "..");
 		return DriverManager.getDataSource(getDriverName(modelJarFile), compositeConfiguration, this.useCache);
 	}
 
@@ -357,7 +364,8 @@ public class QbeDataSet extends ConfigurableDataSet {
 		if (this.params == null || this.params.isEmpty()) {
 			return null;
 		}
-		IQbeDataSetDatamartRetriever retriever = (IQbeDataSetDatamartRetriever) this.params.get(SpagoBIConstants.DATAMART_RETRIEVER);
+		IQbeDataSetDatamartRetriever retriever = (IQbeDataSetDatamartRetriever) this.params
+				.get(SpagoBIConstants.DATAMART_RETRIEVER);
 		return retriever;
 	}
 
@@ -368,7 +376,7 @@ public class QbeDataSet extends ConfigurableDataSet {
 	 * @return jpa if the persistence provder is JPA o hibernate otherwise
 	 */
 	private static String getDriverName(File jarFile) {
-		logger.debug("IN: Check the driver name. Looking if " + jarFile + " is a jpa jar file..");
+		LOGGER.debug("IN: Check the driver name. Looking if " + jarFile + " is a jpa jar file..");
 		JarInputStream zis;
 		JarEntry zipEntry;
 		String dialectName = null;
@@ -378,7 +386,7 @@ public class QbeDataSet extends ConfigurableDataSet {
 			FileInputStream fis = new FileInputStream(jarFile);
 			zis = new JarInputStream(fis);
 			while ((zipEntry = zis.getNextJarEntry()) != null) {
-				logger.debug("Zip Entry is [" + zipEntry.getName() + "]");
+				LOGGER.debug("Zip Entry is [" + zipEntry.getName() + "]");
 				if (zipEntry.getName().equals("META-INF/persistence.xml")) {
 					isJpa = true;
 					break;
@@ -392,11 +400,11 @@ public class QbeDataSet extends ConfigurableDataSet {
 				dialectName = "hibernate";
 			}
 		} catch (Throwable t) {
-			logger.error("Impossible to read jar file [" + jarFile + "]", t);
+			LOGGER.error("Impossible to read jar file [" + jarFile + "]", t);
 			throw new SpagoBIRuntimeException("Impossible to read jar file [" + jarFile + "]", t);
 		}
 
-		logger.debug("OUT: " + jarFile + " has the dialect: " + dialectName);
+		LOGGER.debug("OUT: " + jarFile + " has the dialect: " + dialectName);
 		return dialectName;
 	}
 
@@ -414,7 +422,8 @@ public class QbeDataSet extends ConfigurableDataSet {
 
 			for (int i = 0; i < queriesJSON.length(); i++) {
 				queryJSON = queriesJSON.getJSONObject(i);
-				query = it.eng.qbe.query.serializer.SerializerFactory.getDeserializer("application/json").deserializeQuery(queryJSON, dataSource);
+				query = it.eng.qbe.query.serializer.SerializerFactory.getDeserializer("application/json")
+						.deserializeQuery(queryJSON, dataSource);
 				catalogue.addQuery(query);
 			}
 		} catch (Throwable e) {
@@ -457,7 +466,7 @@ public class QbeDataSet extends ConfigurableDataSet {
 			DatasetMetadataParser dsp = new DatasetMetadataParser();
 			metadata = dsp.xmlToMetadata(getDsMetadata());
 		} catch (Exception e) {
-			logger.error("Error loading the metadata", e);
+			LOGGER.error("Error loading the metadata", e);
 			throw new SpagoBIEngineRuntimeException("Error loading the metadata", e);
 		}
 		return metadata;

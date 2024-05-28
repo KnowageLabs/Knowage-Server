@@ -21,11 +21,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import org.apache.log4j.Logger;
 import org.json.JSONObject;
-import org.safehaus.uuid.UUID;
-import org.safehaus.uuid.UUIDGenerator;
 
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.base.SourceBeanException;
@@ -141,8 +140,7 @@ public class WhatIfDriver extends GenericDriver {
 		parameters.put("template", json);
 		// CREATE EXECUTION ID
 		String sbiExecutionId = null;
-		UUIDGenerator uuidGen = UUIDGenerator.getInstance();
-		UUID uuidObj = uuidGen.generateTimeBasedUUID();
+		UUID uuidObj = UUID.randomUUID();
 		sbiExecutionId = uuidObj.toString();
 		sbiExecutionId = sbiExecutionId.replaceAll("-", "");
 		parameters.put("SBI_EXECUTION_ID", sbiExecutionId);
@@ -178,8 +176,7 @@ public class WhatIfDriver extends GenericDriver {
 		parameters.put("mode", "edit");
 		// CREATE EXECUTION ID
 		String sbiExecutionId = null;
-		UUIDGenerator uuidGen = UUIDGenerator.getInstance();
-		UUID uuidObj = uuidGen.generateTimeBasedUUID();
+		UUID uuidObj = UUID.randomUUID();
 		sbiExecutionId = uuidObj.toString();
 		sbiExecutionId = sbiExecutionId.replaceAll("-", "");
 		parameters.put("SBI_EXECUTION_ID", sbiExecutionId);

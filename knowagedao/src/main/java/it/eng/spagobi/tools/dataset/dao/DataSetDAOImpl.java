@@ -1250,7 +1250,13 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 			Query query = session.createQuery(statement.toString());
 
 			for (Map.Entry<String, Object> entry : parameters.entrySet()) {
-				query.setParameter(entry.getKey(), entry.getValue());
+				String key = entry.getKey();
+				Object value = entry.getValue();
+				if (value instanceof Collection) {
+					query.setParameterList(key, (Collection) value);
+				} else {
+					query.setParameter(key, value);
+				}
 			}
 
 			results = executeQuery(query, session);
@@ -1265,29 +1271,6 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 		}
 
 		return results;
-	}
-
-	@Override
-	public List<DataSetBasicInfo> loadDatasetsBasicInfo() {
-		logger.debug("IN");
-		List<DataSetBasicInfo> toReturn = new ArrayList<>();
-		Session session = null;
-
-		try {
-			session = getSession();
-			toReturn = session.createQuery(
-					"select new it.eng.spagobi.tools.dataset.bo.DataSetBasicInfo(ds.id.dsId, ds.label, ds.name, ds.description, ds.owner, ds.scope.valueCd) from SbiDataSet ds where ds.active = ?")
-					.setBoolean(0, true).list();
-		} catch (Exception e) {
-			throw new SpagoBIDAOException("An unexpected error occured while loading datasets basic info", e);
-		} finally {
-			if (session != null && session.isOpen())
-				session.close();
-
-			logger.debug("OUT");
-		}
-
-		return toReturn;
 	}
 
 	// ========================================================================================

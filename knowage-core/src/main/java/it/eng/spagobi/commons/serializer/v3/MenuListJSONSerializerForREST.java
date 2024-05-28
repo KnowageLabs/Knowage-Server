@@ -118,8 +118,8 @@ public class MenuListJSONSerializerForREST implements Serializer {
 	private Set<Integer> technicalUserMenuIds = new HashSet<>();
 
 	/*
-	 * Menus that are available to non-administrator users but have the required functionality. The map contains the pair (label, id of the technical menu of which
-	 * it is a duplicate).
+	 * Menus that are available to non-administrator users but have the required functionality. The map contains the pair (label, id of the technical menu of
+	 * which it is a duplicate).
 	 */
 	private final Map<String, Integer> allowedMenuToNotDuplicate = new HashMap<>();
 
@@ -159,8 +159,8 @@ public class MenuListJSONSerializerForREST implements Serializer {
 
 		contextName = KnowageSystemConfiguration.getKnowageContext();
 		if (!(o instanceof List)) {
-			throw new SerializationException(MenuListJSONSerializerForREST.class.getSimpleName()
-					+ " is unable to serialize object of type: " + o.getClass().getName());
+			throw new SerializationException(
+					MenuListJSONSerializerForREST.class.getSimpleName() + " is unable to serialize object of type: " + o.getClass().getName());
 		}
 
 		try {
@@ -172,16 +172,13 @@ public class MenuListJSONSerializerForREST implements Serializer {
 				technicalUserMenuJSONArray = createTechnicalUserMenu(menuDefinitionFile, new JSONArray(), locale);
 			}
 
-			JSONArray commonUserFunctionalitiesMenuJSONArray = createCommonUserFunctionalitiesMenu(menuDefinitionFile,
-					technicalUserMenuJSONArray, locale);
+			JSONArray commonUserFunctionalitiesMenuJSONArray = createCommonUserFunctionalitiesMenu(menuDefinitionFile, technicalUserMenuJSONArray, locale);
 
 			JSONArray allowedUserFunctionalitiesMenuJSONArray = new JSONArray();
-			allowedUserFunctionalitiesMenuJSONArray = createAllowedUserFunctionalitiesMenu(menuDefinitionFile,
-					technicalUserMenuJSONArray, locale);
+			allowedUserFunctionalitiesMenuJSONArray = createAllowedUserFunctionalitiesMenu(menuDefinitionFile, technicalUserMenuJSONArray, locale);
 
 			List filteredMenuList = (List) o;
-			JSONArray dynamicUserFunctionalitiesMenuJSONArray = createDynamicUserFunctionalitiesMenu(filteredMenuList,
-					locale);
+			JSONArray dynamicUserFunctionalitiesMenuJSONArray = createDynamicUserFunctionalitiesMenu(filteredMenuList, locale);
 
 			JSONObject wholeMenu = new JSONObject();
 			/* STATIC */
@@ -202,39 +199,36 @@ public class MenuListJSONSerializerForREST implements Serializer {
 		return result;
 	}
 
-	private JSONArray createAllowedUserFunctionalitiesMenu(SourceBean menuDefinitionFile,
-			JSONArray technicalUserMenuJSONArray, Locale locale) throws JSONException, EMFInternalError, EMFUserError {
+	private JSONArray createAllowedUserFunctionalitiesMenu(SourceBean menuDefinitionFile, JSONArray technicalUserMenuJSONArray, Locale locale)
+			throws JSONException, EMFInternalError, EMFUserError {
 
 		logger.debug("IN");
 
-		JSONArray userMenu = createMenu(menuDefinitionFile, locale, technicalUserMenuJSONArray,
-				MenuType.ALLOWED_USER_FUNCTIONALITIES);
+		JSONArray userMenu = createMenu(menuDefinitionFile, locale, technicalUserMenuJSONArray, MenuType.ALLOWED_USER_FUNCTIONALITIES);
 
 		logger.debug("OUT");
 
 		return userMenu;
 	}
 
-	private JSONArray createCommonUserFunctionalitiesMenu(SourceBean menuDefinitionFile,
-			JSONArray technicalUserMenuJSONArray, Locale locale) throws JSONException, EMFInternalError, EMFUserError {
+	private JSONArray createCommonUserFunctionalitiesMenu(SourceBean menuDefinitionFile, JSONArray technicalUserMenuJSONArray, Locale locale)
+			throws JSONException, EMFInternalError, EMFUserError {
 
 		logger.debug("IN");
 
-		JSONArray commonUserFunctionalitiesMenu = createMenu(menuDefinitionFile, locale, technicalUserMenuJSONArray,
-				MenuType.COMMON_USER_FUNCTIONALITIES);
+		JSONArray commonUserFunctionalitiesMenu = createMenu(menuDefinitionFile, locale, technicalUserMenuJSONArray, MenuType.COMMON_USER_FUNCTIONALITIES);
 
 		logger.debug("OUT");
 
 		return commonUserFunctionalitiesMenu;
 	}
 
-	private JSONArray createTechnicalUserMenu(SourceBean menuDefinitionFile, JSONArray technicalUserMenuJSONArray,
-			Locale locale) throws JSONException, EMFInternalError, EMFUserError {
+	private JSONArray createTechnicalUserMenu(SourceBean menuDefinitionFile, JSONArray technicalUserMenuJSONArray, Locale locale)
+			throws JSONException, EMFInternalError, EMFUserError {
 
 		logger.debug("IN");
 
-		JSONArray technicalUserMenu = createMenu(menuDefinitionFile, locale, technicalUserMenuJSONArray,
-				MenuType.TECHNICAL_USER_FUNCTIONALITIES);
+		JSONArray technicalUserMenu = createMenu(menuDefinitionFile, locale, technicalUserMenuJSONArray, MenuType.TECHNICAL_USER_FUNCTIONALITIES);
 
 		logger.debug("OUT");
 
@@ -269,8 +263,7 @@ public class MenuListJSONSerializerForREST implements Serializer {
 
 						if (menuElem.getHasChildren()) {
 							List lstChildrenLev2 = menuElem.getLstChildren();
-							JSONArray tempMenuList2 = (JSONArray) getChildren(filteredMenuList, lstChildrenLev2, 1,
-									locale);
+							JSONArray tempMenuList2 = (JSONArray) getChildren(filteredMenuList, lstChildrenLev2, 1, locale);
 							temp.put(ITEMS, tempMenuList2);
 						}
 
@@ -292,8 +285,7 @@ public class MenuListJSONSerializerForREST implements Serializer {
 						}
 						temp.put(LABEL, text);
 
-						if (menuElem.getCode() != null && (menuElem.getCode().equals("doc_admin_angular")
-								|| menuElem.getCode().equals("doc_test_angular"))) {
+						if (menuElem.getCode() != null && (menuElem.getCode().equals("doc_admin_angular") || menuElem.getCode().equals("doc_test_angular"))) {
 							temp.put(TO, contextName + HREF_DOC_BROWSER_ANGULAR);
 						}
 
@@ -308,12 +300,10 @@ public class MenuListJSONSerializerForREST implements Serializer {
 
 						if (menuElem.getHasChildren()) {
 							List lstChildrenLev2 = menuElem.getLstChildren();
-							JSONArray tempMenuList = (JSONArray) getChildren(filteredMenuList, lstChildrenLev2, 1,
-									locale);
+							JSONArray tempMenuList = (JSONArray) getChildren(filteredMenuList, lstChildrenLev2, 1, locale);
 							temp.put(ITEMS, tempMenuList);
 						}
-						if (menuElem.getCode().equals("doc_test_angular")
-								&& UserUtilities.isAdministrator(this.getUserProfile())) {
+						if (menuElem.getCode().equals("doc_test_angular") && UserUtilities.isAdministrator(this.getUserProfile())) {
 							continue;
 						}
 
@@ -325,16 +315,15 @@ public class MenuListJSONSerializerForREST implements Serializer {
 		return menuUserList;
 	}
 
-	private JSONArray createMenu(SourceBean menuDefinitionFile, Locale locale, JSONArray technicalUserMenuJSONArray,
-			MenuType menuType) throws JSONException, EMFInternalError, EMFUserError {
+	private JSONArray createMenu(SourceBean menuDefinitionFile, Locale locale, JSONArray technicalUserMenuJSONArray, MenuType menuType)
+			throws JSONException, EMFInternalError, EMFUserError {
 		MessageBuilder messageBuilder = new MessageBuilder();
 		List attributeList = menuDefinitionFile.getAttributeAsList(menuType.name());
 		return buildMenuTreeBranch(locale, messageBuilder, attributeList, technicalUserMenuJSONArray, menuType);
 	}
 
-	private JSONArray buildMenuTreeBranch(Locale locale, MessageBuilder messageBuilder, List attributeList,
-			JSONArray technicalUserMenuJSONArray, MenuType menuType)
-			throws JSONException, EMFInternalError, EMFUserError {
+	private JSONArray buildMenuTreeBranch(Locale locale, MessageBuilder messageBuilder, List attributeList, JSONArray technicalUserMenuJSONArray,
+			MenuType menuType) throws JSONException, EMFInternalError, EMFUserError {
 		JSONArray tempMenuList = new JSONArray();
 		List funcs = (List) userProfile.getFunctionalities();
 
@@ -353,12 +342,10 @@ public class MenuListJSONSerializerForREST implements Serializer {
 
 						List itemsSBList = groupItemSB.getAttributeAsList(ITEM);
 
-						JSONArray children = createItemsArray(locale, messageBuilder, funcs, technicalUserMenuJSONArray,
-								itemsSBList, menuType);
+						JSONArray children = createItemsArray(locale, messageBuilder, funcs, technicalUserMenuJSONArray, itemsSBList, menuType);
 
 						if (children.length() > 0) {
-							JSONObject groupItemJSON = createMenuNodeAndRecordGroupMenu(locale, messageBuilder,
-									groupItemSB, menuType);
+							JSONObject groupItemJSON = createMenuNodeAndRecordGroupMenu(locale, messageBuilder, groupItemSB, menuType);
 							groupItemJSON.put(ITEMS, children);
 
 							tempMenuList.put(groupItemJSON);
@@ -366,16 +353,14 @@ public class MenuListJSONSerializerForREST implements Serializer {
 					} else if (isEnterpriseEdition() && groupItemSB.getAttribute("id").equals("8000")) {
 
 						List itemsSBList = groupItemSB.getAttributeAsList(ITEM);
-						JSONObject groupItemJSON = createMenuNodeAndRecordGroupMenu(locale, messageBuilder, groupItemSB,
-								menuType);
+						JSONObject groupItemJSON = createMenuNodeAndRecordGroupMenu(locale, messageBuilder, groupItemSB, menuType);
 
 						for (Object object : itemsSBList) {
 							SourceBean objectSB = (SourceBean) object;
 
 							if (objectSB.getAttribute("id").equals("8005")) {
 								JSONArray children = new JSONArray();
-								JSONObject licenseMenu = createMenuNodeAndRecordGroupMenu(locale, messageBuilder,
-										objectSB, menuType);
+								JSONObject licenseMenu = createMenuNodeAndRecordGroupMenu(locale, messageBuilder, objectSB, menuType);
 								children.put(licenseMenu);
 								groupItemJSON.put(ITEMS, children);
 								tempMenuList.put(groupItemJSON);
@@ -391,8 +376,7 @@ public class MenuListJSONSerializerForREST implements Serializer {
 		} else {
 			for (Object domain : attributeList) {
 				List itemsSBList = ((SourceBean) domain).getAttributeAsList(ITEM);
-				JSONArray children = createItemsArray(locale, messageBuilder, funcs, technicalUserMenuJSONArray,
-						itemsSBList, menuType);
+				JSONArray children = createItemsArray(locale, messageBuilder, funcs, technicalUserMenuJSONArray, itemsSBList, menuType);
 				tempMenuList = children;
 			}
 		}
@@ -400,9 +384,8 @@ public class MenuListJSONSerializerForREST implements Serializer {
 		return tempMenuList;
 	}
 
-	private JSONArray createItemsArray(Locale locale, MessageBuilder messageBuilder, List funcs,
-			JSONArray technicalUserMenuJSONArray, List itemsSBList, MenuType menuType)
-			throws JSONException, EMFInternalError, EMFUserError {
+	private JSONArray createItemsArray(Locale locale, MessageBuilder messageBuilder, List funcs, JSONArray technicalUserMenuJSONArray, List itemsSBList,
+			MenuType menuType) throws JSONException, EMFInternalError, EMFUserError {
 		JSONArray items = new JSONArray();
 		for (Object item : itemsSBList) {
 
@@ -467,8 +450,7 @@ public class MenuListJSONSerializerForREST implements Serializer {
 			ITenantsDAO tenantsDAO = DAOFactory.getTenantsDAO();
 			List<Integer> productTypeIds = tenantsDAO.loadSelectedProductTypesIds(organization);
 			IRoleDAO roleDAO = DAOFactory.getRoleDAO();
-			List<String> authorizationsWithDuplicates = roleDAO
-					.loadAllAuthorizationsNamesByProductTypes(productTypeIds);
+			List<String> authorizationsWithDuplicates = roleDAO.loadAllAuthorizationsNamesByProductTypes(productTypeIds);
 			Set<String> authorizations = ProductProfiler.filterAuthorizationsByProduct(authorizationsWithDuplicates);
 
 			Collection userRoles = userProfile.getRoles();
@@ -480,11 +462,9 @@ public class MenuListJSONSerializerForREST implements Serializer {
 					if (authorizations.contains(lic)) {
 
 						Role role = DAOFactory.getRoleDAO().loadByName((String) roleName);
-						List<SbiAuthorizationsRoles> associatedAuthRoles = DAOFactory.getRoleDAO()
-								.LoadAuthorizationsRolesAssociatedToRole(role.getId());
+						List<SbiAuthorizationsRoles> associatedAuthRoles = DAOFactory.getRoleDAO().LoadAuthorizationsRolesAssociatedToRole(role.getId());
 
-						isAuthorized = associatedAuthRoles.stream()
-								.anyMatch(x -> x.getSbiAuthorizations().getName().equals(lic));
+						isAuthorized = associatedAuthRoles.stream().anyMatch(x -> x.getSbiAuthorizations().getName().equals(lic));
 					}
 					if (isAuthorized)
 						break;
@@ -566,8 +546,8 @@ public class MenuListJSONSerializerForREST implements Serializer {
 
 	}
 
-	private boolean isInTechnicalUserMenu(JSONArray technicalUserMenuJSONArray, SourceBean itemSB,
-			MessageBuilder messageBuilder, Locale locale) throws JSONException {
+	private boolean isInTechnicalUserMenu(JSONArray technicalUserMenuJSONArray, SourceBean itemSB, MessageBuilder messageBuilder, Locale locale)
+			throws JSONException {
 
 		String strId = (String) itemSB.getAttribute(ID);
 		if (strId != null) {
@@ -588,8 +568,7 @@ public class MenuListJSONSerializerForREST implements Serializer {
 			if (isEnterpriseEdition()) {
 				if (requiredLicensesString.isEmpty()) {
 					try {
-						Class.forName("it.eng.knowage.tools.servermanager.importexport.ExporterMetadata", false,
-								this.getClass().getClassLoader());
+						Class.forName("it.eng.knowage.tools.servermanager.importexport.ExporterMetadata", false, this.getClass().getClassLoader());
 
 						isLicensed = !DocumentUtilities.getValidLicenses().isEmpty();
 					} catch (ClassNotFoundException e) {
@@ -636,16 +615,12 @@ public class MenuListJSONSerializerForREST implements Serializer {
 
 			case "my_account":
 				if (!UserUtilities.isTechnicalUser(this.getUserProfile())) {
-					String strMyAccountMenu = SingletonConfig.getInstance()
-							.getConfigValue("SPAGOBI.SECURITY.MY_ACCOUNT_MENU");
+					String strMyAccountMenu = SingletonConfig.getInstance().getConfigValue("SPAGOBI.SECURITY.MY_ACCOUNT_MENU");
 					boolean myAccountMenu = !"false".equalsIgnoreCase(strMyAccountMenu); // default value is true, for backward compatibility
 
-					String securityServiceSupplier = SingletonConfig.getInstance()
-							.getConfigValue("SPAGOBI.SECURITY.USER-PROFILE-FACTORY-CLASS.className");
-					boolean isInternalSecurityServiceSupplier = securityServiceSupplier
-							.equalsIgnoreCase(InternalSecurityServiceSupplierImpl.class.getName());
-					boolean isPublicUser = userProfile.getUserUniqueIdentifier().toString()
-							.equalsIgnoreCase(SpagoBIConstants.PUBLIC_USER_ID);
+					String securityServiceSupplier = SingletonConfig.getInstance().getConfigValue("SPAGOBI.SECURITY.USER-PROFILE-FACTORY-CLASS.className");
+					boolean isInternalSecurityServiceSupplier = securityServiceSupplier.equalsIgnoreCase(InternalSecurityServiceSupplierImpl.class.getName());
+					boolean isPublicUser = userProfile.getUserUniqueIdentifier().toString().equalsIgnoreCase(SpagoBIConstants.PUBLIC_USER_ID);
 					if (isInternalSecurityServiceSupplier && !isPublicUser && myAccountMenu) {
 						isSatisfied = true;
 					}
@@ -653,20 +628,20 @@ public class MenuListJSONSerializerForREST implements Serializer {
 				break;
 
 			case "public_user":
-				if (PublicProfile.isPublicUser(userProfile.getUserUniqueIdentifier().toString()) || userProfile
-						.getUserUniqueIdentifier().toString().equalsIgnoreCase(SpagoBIConstants.PUBLIC_USER_ID)) {
+				if (PublicProfile.isPublicUser(userProfile.getUserUniqueIdentifier().toString())
+						|| userProfile.getUserUniqueIdentifier().toString().equalsIgnoreCase(SpagoBIConstants.PUBLIC_USER_ID)) {
 					isSatisfied = true;
 				}
 				break;
 
-			case "silent_login":
-				boolean showLogoutOnSilentLogin = Boolean.valueOf(
-						SingletonConfig.getInstance().getConfigValue("SPAGOBI.HOME.SHOW_LOGOUT_ON_SILENT_LOGIN"));
-				boolean silentLogin = Boolean.TRUE
-						.equals(this.getHttpSession().getAttribute(SsoServiceInterface.SILENT_LOGIN));
+			case "logout_enabled":
+				boolean showLogoutOnSilentLogin = Boolean
+						.parseBoolean(SingletonConfig.getInstance().getConfigValue("SPAGOBI.HOME.SHOW_LOGOUT_ON_SILENT_LOGIN"));
+				boolean silentLogin = Boolean.TRUE.equals(this.getHttpSession().getAttribute(SsoServiceInterface.SILENT_LOGIN));
+				boolean isPublicUser = PublicProfile.isPublicUser(userProfile.getUserUniqueIdentifier().toString());
 				// we show/don't show the logout button in case of a silent login,
 				// according to configuration
-				if (!silentLogin || showLogoutOnSilentLogin) {
+				if (!isPublicUser && (!silentLogin || showLogoutOnSilentLogin)) {
 					isSatisfied = true;
 				}
 				break;
@@ -681,8 +656,8 @@ public class MenuListJSONSerializerForREST implements Serializer {
 		return isSatisfied;
 	}
 
-	private JSONObject createMenuNodeAndRecordGroupMenu(Locale locale, MessageBuilder messageBuilder, SourceBean itemSB,
-			MenuType menuType) throws JSONException {
+	private JSONObject createMenuNodeAndRecordGroupMenu(Locale locale, MessageBuilder messageBuilder, SourceBean itemSB, MenuType menuType)
+			throws JSONException {
 		JSONObject menu = createMenuNode(locale, messageBuilder, itemSB, menuType);
 
 //		if (menuType == MenuType.TECHNICAL_USER_FUNCTIONALITIES) {
@@ -696,8 +671,7 @@ public class MenuListJSONSerializerForREST implements Serializer {
 		return menu;
 	}
 
-	private JSONObject createMenuNode(Locale locale, MessageBuilder messageBuilder, SourceBean itemSB,
-			MenuType menuType) throws JSONException {
+	private JSONObject createMenuNode(Locale locale, MessageBuilder messageBuilder, SourceBean itemSB, MenuType menuType) throws JSONException {
 		JSONObject menu = new JSONObject();
 
 		List containedAttributes = itemSB.getContainedAttributes();
@@ -732,8 +706,7 @@ public class MenuListJSONSerializerForREST implements Serializer {
 	}
 
 	private boolean isAttributeToIgnore(SourceBeanAttribute attribute) {
-		return attribute.getKey().equals(REQUIRED_FUNCTIONALITY) || attribute.getKey().equals(CONDITION)
-				|| attribute.getKey().equals(ID);
+		return attribute.getKey().equals(REQUIRED_FUNCTIONALITY) || attribute.getKey().equals(CONDITION) || attribute.getKey().equals(ID);
 	}
 
 	private Object getChildren(List filteredMenuList, List children, int level, Locale locale) throws JSONException {
@@ -745,8 +718,7 @@ public class MenuListJSONSerializerForREST implements Serializer {
 		return tempMenuList;
 	}
 
-	private JSONArray createUserMenuElement(List filteredMenuList, Menu childElem, Locale locale, int level,
-			JSONArray tempMenuList) throws JSONException {
+	private JSONArray createUserMenuElement(List filteredMenuList, Menu childElem, Locale locale, int level, JSONArray tempMenuList) throws JSONException {
 		JSONObject temp2 = new JSONObject();
 
 		String path = MenuUtilities.getMenuPath(filteredMenuList, childElem, locale);
@@ -771,8 +743,7 @@ public class MenuListJSONSerializerForREST implements Serializer {
 					case "menu.group.ServerManager":
 					case "menu.CacheManagement":
 					case "menu.group.ImportExport":
-						Class.forName("it.eng.knowage.tools.servermanager.importexport.ExporterMetadata", false,
-								this.getClass().getClassLoader());
+						Class.forName("it.eng.knowage.tools.servermanager.importexport.ExporterMetadata", false, this.getClass().getClassLoader());
 						break;
 					}
 				} catch (ClassNotFoundException e) {
@@ -830,8 +801,7 @@ public class MenuListJSONSerializerForREST implements Serializer {
 				setPropertiesForStaticMenu(childElem, temp2, path);
 			} else if (StringUtils.isNotEmpty(childElem.getFunctionality())) {
 				setPropertiesForFunctionalityMenu(childElem, temp2, path);
-			} else if (childElem.getExternalApplicationUrl() != null
-					&& !childElem.getExternalApplicationUrl().isEmpty()) {
+			} else if (childElem.getExternalApplicationUrl() != null && !childElem.getExternalApplicationUrl().isEmpty()) {
 				setPropertiesForExternalAppMenu(childElem, temp2, path);
 			} else if (childElem.isAdminsMenu() && childElem.getUrl() != null) {
 				setPropertiesForAdminWithUrlMenu(childElem, locale, temp2, path);
@@ -900,8 +870,7 @@ public class MenuListJSONSerializerForREST implements Serializer {
 		return String.format("/%s/%s", enginePath, documentLabel);
 	}
 
-	private void setPropertiesForAdminWithUrlMenu(Menu childElem, Locale locale, JSONObject temp2, String path)
-			throws JSONException {
+	private void setPropertiesForAdminWithUrlMenu(Menu childElem, Locale locale, JSONObject temp2, String path) throws JSONException {
 		String url = childElem.getUrl();
 		url = url.replace(PLACEHOLDER_SPAGOBI_CONTEXT, contextName);
 		url = url.replace(PLACEHOLDER_SPAGO_ADAPTER_HTTP, GeneralUtilities.getSpagoAdapterHttpUrl());
@@ -915,8 +884,7 @@ public class MenuListJSONSerializerForREST implements Serializer {
 	}
 
 	private void setPropertiesForFunctionalityMenu(Menu childElem, JSONObject temp2, String path) throws JSONException {
-		temp2.put(TO,
-				StringEscapeUtils.escapeJavaScript(MenuHelper.findFunctionalityUrl(childElem, contextName)));
+		temp2.put(TO, StringEscapeUtils.escapeJavaScript(MenuHelper.findFunctionalityUrl(childElem, contextName)));
 	}
 
 	private void setPropertiesForStaticMenu(Menu childElem, JSONObject temp2, String path) throws JSONException {

@@ -46,7 +46,6 @@ import org.hibernate.Transaction;
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Restrictions;
 import org.json.JSONObject;
-import org.safehaus.uuid.UUIDGenerator;
 
 import it.eng.spago.error.EMFErrorSeverity;
 import it.eng.spago.error.EMFUserError;
@@ -377,7 +376,7 @@ public class TenantsDAOHibImpl extends AbstractHibernateDAO implements ITenantsD
 				startDate.set(Calendar.SECOND, 0);
 				startDate.set(Calendar.MILLISECOND, 0);
 
-				String nameTrig = "schedule_uuid_" + UUIDGenerator.getInstance().generateTimeBasedUUID().toString();
+				String nameTrig = "schedule_uuid_" + UUID.randomUUID().toString();
 
 				CronExpression cronExpression = new CronExpression("minute{numRepetition=5}");
 

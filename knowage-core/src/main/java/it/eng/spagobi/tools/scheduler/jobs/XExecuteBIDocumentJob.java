@@ -27,6 +27,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
@@ -41,8 +42,6 @@ import org.quartz.SchedulerException;
 import org.quartz.Trigger;
 import org.quartz.TriggerKey;
 import org.quartz.impl.StdSchedulerFactory;
-import org.safehaus.uuid.UUID;
-import org.safehaus.uuid.UUIDGenerator;
 
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
@@ -278,8 +277,7 @@ public class XExecuteBIDocumentJob extends AbstractSpagoBIJob implements Job {
 					DispatchContext dispatchContext = SchedulerUtilities.decodeDispatchContext(encodedDispatchContext);
 					if (dispatchContext.isUniqueMail()) {
 						uniqueMailForAll = true;
-						UUIDGenerator uuidGen = UUIDGenerator.getInstance();
-						UUID uuidLocal = uuidGen.generateTimeBasedUUID();
+						UUID uuidLocal = UUID.randomUUID();
 						String folderName = uuidLocal.toString();
 						tempFolderName = folderName.replace("-", "");
 						logger.debug("found unique mail case");

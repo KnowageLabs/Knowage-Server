@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,12 +11,39 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 package it.eng.spago.dispatching.httpchannel;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.Iterator;
+import java.util.List;
+
+import javax.portlet.ActionRequest;
+import javax.portlet.ActionResponse;
+import javax.portlet.GenericPortlet;
+import javax.portlet.PortletException;
+import javax.portlet.PortletRequest;
+import javax.portlet.PortletResponse;
+import javax.portlet.PortletSession;
+import javax.portlet.RenderRequest;
+import javax.portlet.RenderResponse;
+
+import org.apache.commons.fileupload.FileItem;
+import org.apache.commons.fileupload.FileItemFactory;
+import org.apache.commons.fileupload.disk.DiskFileItemFactory;
+import org.apache.commons.fileupload.portlet.PortletFileUpload;
+import org.apache.log4j.Logger;
+
+import com.jamonapi.Monitor;
+import com.jamonapi.MonitorFactory;
 
 import it.eng.spago.base.Constants;
 import it.eng.spago.base.PortletAccess;
@@ -49,33 +76,6 @@ import it.eng.spago.tracing.TracerSingleton;
 import it.eng.spago.util.ContextScooping;
 import it.eng.spago.util.PortletTracer;
 import it.eng.spago.util.Serializer;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.Iterator;
-import java.util.List;
-
-import javax.portlet.ActionRequest;
-import javax.portlet.ActionResponse;
-import javax.portlet.GenericPortlet;
-import javax.portlet.PortletException;
-import javax.portlet.PortletRequest;
-import javax.portlet.PortletResponse;
-import javax.portlet.PortletSession;
-import javax.portlet.RenderRequest;
-import javax.portlet.RenderResponse;
-
-import org.apache.commons.fileupload.FileItem;
-import org.apache.commons.fileupload.FileItemFactory;
-import org.apache.commons.fileupload.disk.DiskFileItemFactory;
-import org.apache.commons.fileupload.portlet.PortletFileUpload;
-import org.apache.log4j.Logger;
-
-import com.jamonapi.Monitor;
-import com.jamonapi.MonitorFactory;
 
 public class AdapterPortlet extends GenericPortlet {
 	public static final String NEW_SESSION = "NEW_SESSION";
@@ -123,6 +123,7 @@ public class AdapterPortlet extends GenericPortlet {
 
 	class StreamCreatorConfiguration implements IConfigurationCreator {
 
+		@Override
 		public InputStream getInputStream(String resourceName) {
 			InputStream resourcesStream = null;
 			if (resourceName.indexOf("://") != -1) {
@@ -139,6 +140,7 @@ public class AdapterPortlet extends GenericPortlet {
 			return resourcesStream;
 		}
 
+		@Override
 		public SourceBean createConfiguration(String configName) throws SourceBeanException {
 			SourceBean result = null;
 			InputStream resourcesStream = getInputStream(configName);
@@ -205,10 +207,12 @@ public class AdapterPortlet extends GenericPortlet {
 				// String responseContainerName = (String)request.getPortletSession().getAttribute(RESPONSE_CONTAINER_NAME);
 				// get from the session the previous response container
 				// ResponseContainer loopbackResponseContainer = (ResponseContainer)request.getPortletSession().getAttribute(responseContainerName);
-				ResponseContainer loopbackResponseContainer = (ResponseContainer) request.getPortletSession().getAttribute(Constants.RESPONSE_CONTAINER);
+				ResponseContainer loopbackResponseContainer = (ResponseContainer) request.getPortletSession()
+						.getAttribute(Constants.RESPONSE_CONTAINER);
 				// **************** END MODFIFICATION ZERBETTO 09-10-2006 ****************
 
-				TracerSingleton.log(Constants.NOME_MODULO, TracerSingleton.DEBUG, "AdapterPortlet::service: loop-back rilevato");
+				TracerSingleton.log(Constants.NOME_MODULO, TracerSingleton.DEBUG,
+						"AdapterPortlet::service: loop-back rilevato");
 				serviceRequest = loopbackResponseContainer.getLoopbackServiceRequest();
 				if (serviceRequest == null)
 					serviceRequest = new SourceBean(Constants.SERVICE_REQUEST);
@@ -268,8 +272,8 @@ public class AdapterPortlet extends GenericPortlet {
 			boolean isRequestedSessionIdValid = true;
 			PortletSession session = request.getPortletSession(true);
 			/*
-			 * if (session.isNew()) { String newSessionString = (String) (serviceRequest.getAttribute(NEW_SESSION)); isRequestedSessionIdValid =
-			 * ((newSessionString != null) && (newSessionString.equalsIgnoreCase("TRUE"))); } // if (session.isNew())
+			 * if (session.isNew()) { String newSessionString = (String) (serviceRequest.getAttribute(NEW_SESSION)); isRequestedSessionIdValid = ((newSessionString != null)
+			 * && (newSessionString.equalsIgnoreCase("TRUE"))); } // if (session.isNew())
 			 */
 			synchronized (session) {
 
@@ -307,7 +311,8 @@ public class AdapterPortlet extends GenericPortlet {
 
 			} // synchronized (session)
 			if (!isRequestedSessionIdValid) {
-				TracerSingleton.log(Constants.NOME_MODULO, TracerSingleton.WARNING, "AdapterPortlet::processAction: sessione scaduta !");
+				TracerSingleton.log(Constants.NOME_MODULO, TracerSingleton.WARNING,
+						"AdapterPortlet::processAction: sessione scaduta !");
 				SessionExpiredUtility.setSessionExpiredAction(serviceRequest);
 			} // if (!isRequestedSessionIdValid)
 
@@ -320,9 +325,10 @@ public class AdapterPortlet extends GenericPortlet {
 				channelType = Constants.WAP_CHANNEL;
 			requestContainer.setChannelType(channelType);
 
-			TracerSingleton.log(Constants.NOME_MODULO, TracerSingleton.DEBUG, "AdapterPortlet::processAction: requestContainer", requestContainer);
-			TracerSingleton.log(Constants.NOME_MODULO, TracerSingleton.DEBUG, "AdapterPortlet::processAction: sessionContainer",
-					requestContainer.getSessionContainer());
+			TracerSingleton.log(Constants.NOME_MODULO, TracerSingleton.DEBUG,
+					"AdapterPortlet::processAction: requestContainer", requestContainer);
+			TracerSingleton.log(Constants.NOME_MODULO, TracerSingleton.DEBUG,
+					"AdapterPortlet::processAction: sessionContainer", requestContainer.getSessionContainer());
 
 			responseContainer.setErrorHandler(emfErrorHandler);
 			SourceBean serviceResponse = new SourceBean(Constants.SERVICE_RESPONSE);
@@ -331,7 +337,8 @@ public class AdapterPortlet extends GenericPortlet {
 				Navigator.checkNavigation(requestContainer);
 			} // try
 			catch (NavigationException ne) {
-				TracerSingleton.log(Constants.NOME_MODULO, TracerSingleton.CRITICAL, "AdapterPortlet::processAction: ", ne);
+				TracerSingleton.log(Constants.NOME_MODULO, TracerSingleton.CRITICAL, "AdapterPortlet::processAction: ",
+						ne);
 				requestContainer.setServiceRequest(NavigationErrorUtility.getNavigationErrorServiceRequest());
 			} // catch (NavigationException ne)
 			serviceRequest = requestContainer.getServiceRequest();
@@ -339,7 +346,8 @@ public class AdapterPortlet extends GenericPortlet {
 			CoordinatorIFace coordinator = DispatcherManager.getCoordinator(requestContext);
 			Exception serviceException = null;
 			if (coordinator == null) {
-				TracerSingleton.log(Constants.NOME_MODULO, TracerSingleton.WARNING, "AdapterPortlet::processAction: coordinator nullo !");
+				TracerSingleton.log(Constants.NOME_MODULO, TracerSingleton.WARNING,
+						"AdapterPortlet::processAction: coordinator nullo !");
 				serviceException = new Exception("Coordinatore non trovato");
 				emfErrorHandler.addError(new EMFInternalError(EMFErrorSeverity.ERROR, "Coordinatore non trovato !"));
 			} // if (coordinator == null)
@@ -351,7 +359,8 @@ public class AdapterPortlet extends GenericPortlet {
 					coordinator.service(serviceRequest, serviceResponse);
 				} // try
 				catch (Exception ex) {
-					TracerSingleton.log(Constants.NOME_MODULO, TracerSingleton.CRITICAL, "AdapterPortlet::processAction:", ex);
+					TracerSingleton.log(Constants.NOME_MODULO, TracerSingleton.CRITICAL,
+							"AdapterPortlet::processAction:", ex);
 					serviceException = ex;
 					emfErrorHandler.addError(new EMFInternalError(EMFErrorSeverity.ERROR, ex));
 					responseContainer.setAttribute(PORTLET_EXCEPTION, serviceException);
@@ -367,13 +376,15 @@ public class AdapterPortlet extends GenericPortlet {
 			// } // synchronized (session)
 			// **************** END MODFIFICATION ZERBETTO 09-10-2006 ****************
 
-			TracerSingleton.log(Constants.NOME_MODULO, TracerSingleton.DEBUG, "AdapterPortlet::processAction: responseContainer", responseContainer);
-			TracerSingleton.log(Constants.NOME_MODULO, TracerSingleton.DEBUG, "AdapterPortlet::processAction: sessionContainer",
-					requestContainer.getSessionContainer());
+			TracerSingleton.log(Constants.NOME_MODULO, TracerSingleton.DEBUG,
+					"AdapterPortlet::processAction: responseContainer", responseContainer);
+			TracerSingleton.log(Constants.NOME_MODULO, TracerSingleton.DEBUG,
+					"AdapterPortlet::processAction: sessionContainer", requestContainer.getSessionContainer());
 
 			if (serializeSession) {
 				TracerSingleton.log(Constants.NOME_MODULO, TracerSingleton.DEBUG,
-						"AdapterPortlet::processAction: sessionContainer size [" + Serializer.serialize(requestContainer.getSessionContainer()).length + "]");
+						"AdapterPortlet::processAction: sessionContainer size ["
+								+ Serializer.serialize(requestContainer.getSessionContainer()).length + "]");
 			}
 
 			// **************** START MODFIFICATION ZERBETTO 09-10-2006 ****************
@@ -403,8 +414,8 @@ public class AdapterPortlet extends GenericPortlet {
 			// map.put(REQUEST_CONTAINER_NAME, requestContainerName);
 			// map.put(RESPONSE_CONTAINER_NAME, responseContainerName);
 			// }
-			session.setAttribute(Constants.REQUEST_CONTAINER, requestContainer);
-			session.setAttribute(Constants.RESPONSE_CONTAINER, responseContainer);
+			// TODO ML: session.setAttribute(Constants.REQUEST_CONTAINER, requestContainer);
+			// TODO ML: session.setAttribute(Constants.RESPONSE_CONTAINER, responseContainer);
 			// **************** END MODFIFICATION ZERBETTO 09-10-2006 ****************
 
 		} // try
@@ -452,7 +463,8 @@ public class AdapterPortlet extends GenericPortlet {
 	private void processFileField(final FileItem item, RequestContextIFace requestContext) throws Exception {
 		String uploadManagerName = (String) ConfigSingleton.getInstance().getAttribute("UPLOAD.UPLOAD-MANAGER.NAME");
 		if (uploadManagerName == null) {
-			TracerSingleton.log(Constants.NOME_MODULO, TracerSingleton.CRITICAL, "AdapterHTTP::processFileField: metodo di upload non selezionato");
+			TracerSingleton.log(Constants.NOME_MODULO, TracerSingleton.CRITICAL,
+					"AdapterHTTP::processFileField: metodo di upload non selezionato");
 		}
 
 		IUploadHandler uploadHandler = UploadFactory.getHandler(uploadManagerName);
@@ -462,7 +474,8 @@ public class AdapterPortlet extends GenericPortlet {
 		uploadHandler.upload(item);
 	}
 
-	private void handleSimpleForm(PortletRequest request, RequestContextIFace requestContext) throws SourceBeanException {
+	private void handleSimpleForm(PortletRequest request, RequestContextIFace requestContext)
+			throws SourceBeanException {
 		SourceBean serviceRequest = requestContext.getServiceRequest();
 		Enumeration names = request.getParameterNames();
 		while (names.hasMoreElements()) {
@@ -494,7 +507,8 @@ public class AdapterPortlet extends GenericPortlet {
 
 	public void doRenderService(RenderRequest request, RenderResponse response) {
 		// set into threadLocal variables the jsr 168 portlet object
-		PortletTracer.info(Constants.NOME_MODULO, "AdapterPortler", "doRenderService", " AdapterPortlet::doRenderService Invocato");
+		PortletTracer.info(Constants.NOME_MODULO, "AdapterPortler", "doRenderService",
+				" AdapterPortlet::doRenderService Invocato");
 		PortletSession portletSession = request.getPortletSession();
 		portletSession.setAttribute("PortalLocale", response.getLocale());
 		PortletAccess.setPortletConfig(getPortletConfig());
@@ -503,8 +517,8 @@ public class AdapterPortlet extends GenericPortlet {
 		// PortletAccess.setPortalLocale(response.getLocale());
 		// get portlet mode
 		String portletMode = request.getPortletMode().toString();
-		TracerSingleton.log(Constants.NOME_MODULO, TracerSingleton.DEBUG, "AdapterPortlet::doView: invocato per la portlet " + getPortletName()
-				+ " in modalita: " + portletMode);
+		TracerSingleton.log(Constants.NOME_MODULO, TracerSingleton.DEBUG,
+				"AdapterPortlet::doView: invocato per la portlet " + getPortletName() + " in modalita: " + portletMode);
 		PortletSession session = request.getPortletSession();
 		// get the name of the current request and reponse container which are contained into the session
 		// try to get the names from the attributes of the request (case of the loopback)
@@ -534,10 +548,10 @@ public class AdapterPortlet extends GenericPortlet {
 		// if request container is not null set into RequestContainer ThreadLocal variable
 		RequestContainer requestContainer = (RequestContainer) session.getAttribute(Constants.REQUEST_CONTAINER);
 		ResponseContainer responseContainer = (ResponseContainer) session.getAttribute(Constants.RESPONSE_CONTAINER);
-		TracerSingleton.log(Constants.NOME_MODULO, TracerSingleton.DEBUG, "AdapterPortlet::doView: request container retrieved from session: "
-				+ requestContainer);
-		TracerSingleton.log(Constants.NOME_MODULO, TracerSingleton.DEBUG, "AdapterPortlet::doView: response container retrieved from session: "
-				+ responseContainer);
+		TracerSingleton.log(Constants.NOME_MODULO, TracerSingleton.DEBUG,
+				"AdapterPortlet::doView: request container retrieved from session: " + requestContainer);
+		TracerSingleton.log(Constants.NOME_MODULO, TracerSingleton.DEBUG,
+				"AdapterPortlet::doView: response container retrieved from session: " + responseContainer);
 		// **************** END MODFIFICATION ZERBETTO 09-10-2006 ****************
 
 		if (requestContainer != null)
@@ -559,14 +573,16 @@ public class AdapterPortlet extends GenericPortlet {
 							"AdapterPortlet::doView: type of start service not find (ACTION/PAGE/JSP)");
 					// logger.debug("AdapterPortlet::doView: type of start service not find (ACTION/PAGE/JSP)");
 				}
-				if (!serviceType.equalsIgnoreCase(SERVICE_JSP) && !serviceType.equalsIgnoreCase(SERVICE_ACTION) && !serviceType.equalsIgnoreCase(SERVICE_PAGE)) {
+				if (!serviceType.equalsIgnoreCase(SERVICE_JSP) && !serviceType.equalsIgnoreCase(SERVICE_ACTION)
+						&& !serviceType.equalsIgnoreCase(SERVICE_PAGE)) {
 					TracerSingleton.log(Constants.NOME_MODULO, TracerSingleton.CRITICAL,
 							"AdapterPortlet::doView: type of start service unknow (ACTION/PAGE/JSP)");
 					// logger.debug("AdapterPortlet::doView: type of start service unknow (ACTION/PAGE/JSP)");
 					return;
 				}
 				if (serviceName == null) {
-					TracerSingleton.log(Constants.NOME_MODULO, TracerSingleton.CRITICAL, "AdapterPortlet::doView: name of start service not find");
+					TracerSingleton.log(Constants.NOME_MODULO, TracerSingleton.CRITICAL,
+							"AdapterPortlet::doView: name of start service not find");
 					// logger.debug("AdapterPortlet::doView: name of start service not find");
 					return;
 				}
@@ -604,8 +620,10 @@ public class AdapterPortlet extends GenericPortlet {
 						doRenderService(request, response);
 						return;
 					} catch (Exception e) {
-						TracerSingleton.log(Constants.NOME_MODULO, TracerSingleton.CRITICAL, "AdapterPortlet::doView: Error during the process of the "
-								+ serviceType + " service " + serviceName, e);
+						TracerSingleton.log(Constants.NOME_MODULO, TracerSingleton.CRITICAL,
+								"AdapterPortlet::doView: Error during the process of the " + serviceType + " service "
+										+ serviceName,
+								e);
 						// logger.debug("AdapterPortlet::doView: Error during the process of the "
 						// + serviceType + " service " + serviceName + " (see log file)");
 					}
@@ -614,7 +632,8 @@ public class AdapterPortlet extends GenericPortlet {
 			} else {
 				Exception serviceException = (Exception) responseContainer.getAttribute(PORTLET_EXCEPTION);
 				RequestContextIFace requestContext = new DefaultRequestContext(requestContainer, responseContainer);
-				PublisherConfiguration publisher = Publisher.getPublisherConfiguration(requestContext, serviceException);
+				PublisherConfiguration publisher = Publisher.getPublisherConfiguration(requestContext,
+						serviceException);
 				String publisherType = publisher.getType();
 				List resources = publisher.getResources();
 
@@ -658,11 +677,13 @@ public class AdapterPortlet extends GenericPortlet {
 						return;
 					} catch (Exception e) {
 						TracerSingleton.log(Constants.NOME_MODULO, TracerSingleton.MAJOR,
-								"AdapterPortlet::doRenderService: error during the execution of the loopback request", e);
+								"AdapterPortlet::doRenderService: error during the execution of the loopback request",
+								e);
 					}
 				}
 
-				if (publisherType.equalsIgnoreCase(Constants.LOOP_PUBLISHER_TYPE) || publisherType.equalsIgnoreCase(SERVLET_PUBLISHER_TYPE)
+				if (publisherType.equalsIgnoreCase(Constants.LOOP_PUBLISHER_TYPE)
+						|| publisherType.equalsIgnoreCase(SERVLET_PUBLISHER_TYPE)
 						|| publisherType.equalsIgnoreCase(JSP_PUBLISHER_TYPE)) {
 					Iterator iterator = resources.iterator();
 					SourceBean resourceSourceBean = null;
@@ -672,8 +693,8 @@ public class AdapterPortlet extends GenericPortlet {
 							break;
 					}
 					if (resourceSourceBean == null) {
-						TracerSingleton.log(Constants.NOME_MODULO, TracerSingleton.MAJOR, "AdapterPortlet::doView: no resources defined for mode "
-								+ portletMode);
+						TracerSingleton.log(Constants.NOME_MODULO, TracerSingleton.MAJOR,
+								"AdapterPortlet::doView: no resources defined for mode " + portletMode);
 					} else
 						resource = (String) resourceSourceBean.getAttribute("resource");
 
@@ -687,24 +708,27 @@ public class AdapterPortlet extends GenericPortlet {
 						router.route(getPortletContext(), request, response);
 					} // try
 					catch (Exception ex) {
-						TracerSingleton.log(Constants.NOME_MODULO, TracerSingleton.CRITICAL, "AdapterPortlet::doView: ", ex);
+						TracerSingleton.log(Constants.NOME_MODULO, TracerSingleton.CRITICAL, "AdapterPortlet::doView: ",
+								ex);
 					} // catch (Excpetion ex) try
 					finally {
 						// Allow better garbage collection
 						publisher.release();
 					}
 				} // if (publisherType.equalsIgnoreCase(Constants.LOOP_PUBLISHER_TYPE)
-					// || publisherType.equalsIgnoreCase(SERVLET_PUBLISHER_TYPE) ||
-					// publisherType.equalsIgnoreCase(JSP_PUBLISHER_TYPE))
+					 // || publisherType.equalsIgnoreCase(SERVLET_PUBLISHER_TYPE) ||
+					 // publisherType.equalsIgnoreCase(JSP_PUBLISHER_TYPE))
 				else {
 					response.setContentType(HTTP_CONTENT_TYPE);
-					Monitor renderingMonitor = MonitorFactory.start("view.portlet." + publisherType.toLowerCase() + "." + publisher.getName().toLowerCase());
+					Monitor renderingMonitor = MonitorFactory.start(
+							"view.portlet." + publisherType.toLowerCase() + "." + publisher.getName().toLowerCase());
 					try {
 						response.getWriter().print(PresentationRendering.render(responseContainer, resources));
 						response.getWriter().flush();
 					} // try
 					catch (Exception ex) {
-						TracerSingleton.log(Constants.NOME_MODULO, TracerSingleton.DEBUG, "AdapterPortlet::doView:eccezzione", ex);
+						TracerSingleton.log(Constants.NOME_MODULO, TracerSingleton.DEBUG,
+								"AdapterPortlet::doView:eccezzione", ex);
 					} // catch (Exception ex)
 					finally {
 						// Allow better garbage collection
@@ -713,13 +737,14 @@ public class AdapterPortlet extends GenericPortlet {
 						renderingMonitor.stop();
 					} // finally
 				} // if (publisherType.equalsIgnoreCase(AF_PUBLISHER_TYPE)
-					// || publisherType.equalsIgnoreCase(SERVLET_PUBLISHER_TYPE) ||
-					// publisherType.equalsIgnoreCase(JSP_PUBLISHER_TYPE)) else
+					 // || publisherType.equalsIgnoreCase(SERVLET_PUBLISHER_TYPE) ||
+					 // publisherType.equalsIgnoreCase(JSP_PUBLISHER_TYPE)) else
 			} // if (requestContainer == null && responseContainer == null) else
 		} // if ((isHttpResponseFreezed == null) ||
-			// (!isHttpResponseFreezed.getBoolean()))
+			 // (!isHttpResponseFreezed.getBoolean()))
 		else
-			TracerSingleton.log(Constants.NOME_MODULO, TracerSingleton.DEBUG, "AdapterPortlet::service: http response congelata");
+			TracerSingleton.log(Constants.NOME_MODULO, TracerSingleton.DEBUG,
+					"AdapterPortlet::service: http response congelata");
 	} // public void doRenderService(RenderRequest request, RenderResponse
 
 	// START MODIFICATIONS BY DAVIDE ZERBETTO September 10th 2007
@@ -747,7 +772,8 @@ public class AdapterPortlet extends GenericPortlet {
 				if (parameterType.equalsIgnoreCase("ABSOLUTE"))
 					inParameterValue = parameterValue;
 				else {
-					inParameterValue = ContextScooping.getScopedParameter(requestContainer, responseContainer, parameterValue, parameterScope, consequence);
+					inParameterValue = ContextScooping.getScopedParameter(requestContainer, responseContainer,
+							parameterValue, parameterScope, consequence);
 				}
 
 				if (inParameterValue == null)

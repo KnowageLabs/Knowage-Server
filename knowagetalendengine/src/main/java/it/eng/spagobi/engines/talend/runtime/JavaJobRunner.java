@@ -16,9 +16,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.UUID;
 
 import org.apache.log4j.Logger;
-import org.safehaus.uuid.UUIDGenerator;
 
 import it.eng.spagobi.engines.talend.TalendEngineConfig;
 import it.eng.spagobi.engines.talend.exception.ContextNotFoundException;
@@ -58,21 +58,24 @@ public class JavaJobRunner implements IJobRunner {
 	}
 
 	@Override
-	public void run(Job job, Map parameters) throws JobNotFoundException, ContextNotFoundException, JobExecutionException {
+	public void run(Job job, Map parameters)
+			throws JobNotFoundException, ContextNotFoundException, JobExecutionException {
 
 		File executableJobDir;
 		File tempDir;
 		String cmd;
 
 		try {
-			logger.debug("Starting run method with parameters: " + "project = [" + job.getProject() + "] ; " + "job name = [" + job.getName() + "] ; "
-					+ "context = [" + job.getContext() + "] ; " + "base dir = [" + runtimeRepository.getRootDir() + "].");
+			logger.debug("Starting run method with parameters: " + "project = [" + job.getProject() + "] ; "
+					+ "job name = [" + job.getName() + "] ; " + "context = [" + job.getContext() + "] ; "
+					+ "base dir = [" + runtimeRepository.getRootDir() + "].");
 
 			executableJobDir = runtimeRepository.getExecutableJobDir(job);
 			logger.debug("Job base folder is equals to [" + runtimeRepository.getExecutableJobDir(job) + "]");
 
 			if (!runtimeRepository.containsJob(job)) {
-				throw new JobNotFoundException("Job [" + runtimeRepository.getExecutableJobFile(job) + "] not found in repository");
+				throw new JobNotFoundException(
+						"Job [" + runtimeRepository.getExecutableJobFile(job) + "] not found in repository");
 			}
 			logger.debug("Job [" + job.getName() + "] succesfully found in repository");
 
@@ -92,7 +95,8 @@ public class JavaJobRunner implements IJobRunner {
 			executeCommand(cmd, job, parameters, filesToBeDeleted);
 
 		} catch (Throwable e) {
-			throw new JobExecutionException("An error occurred while starting up java command execution for job [" + job.getName() + "]", e);
+			throw new JobExecutionException(
+					"An error occurred while starting up java command execution for job [" + job.getName() + "]", e);
 		}
 	}
 
@@ -105,7 +109,8 @@ public class JavaJobRunner implements IJobRunner {
 		try {
 			wm = new WorkManager();
 			jrt = new TalendWork(cmd, null, runtimeRepository.getExecutableJobDir(job), filesToBeDeleted, parameters);
-			listener = new TalendWorkListener((AuditServiceProxy) parameters.get(EngineConstants.ENV_AUDIT_SERVICE_PROXY),
+			listener = new TalendWorkListener(
+					(AuditServiceProxy) parameters.get(EngineConstants.ENV_AUDIT_SERVICE_PROXY),
 					(EventServiceProxy) parameters.get(EngineConstants.ENV_EVENT_SERVICE_PROXY));
 			wm.run(jrt, listener);
 		} catch (Throwable t) {
@@ -120,7 +125,8 @@ public class JavaJobRunner implements IJobRunner {
 		String cmd = "java";
 		String classpath;
 
-		classpath = "." + File.separatorChar + tempDir.getName() + File.pathSeparator + TalendScriptAccessUtils.getClassPath(job, runtimeRepository);
+		classpath = "." + File.separatorChar + tempDir.getName() + File.pathSeparator
+				+ TalendScriptAccessUtils.getClassPath(job, runtimeRepository);
 
 		String javaInstallDir = config.getJavaInstallDir();
 		if (config.getJavaInstallDir() != null) {
@@ -129,9 +135,12 @@ public class JavaJobRunner implements IJobRunner {
 			cmd = javaInstallDir + File.separatorChar + javaBinDir + File.separatorChar + javaCommand;
 		}
 
-		String xmsValue = (config.getJavaCommandOption("Xms") != null ? config.getJavaCommandOption("Xms") : DEFAULT_XMS_VALUE);
-		String xmxValue = (config.getJavaCommandOption("Xmx") != null ? config.getJavaCommandOption("Xmx") : DEFAULT_XMX_VALUE);
-		cmd += " -Xms" + xmsValue + "M -Xmx" + xmxValue + "M -cp " + classpath + " " + TalendScriptAccessUtils.getExecutableClass(job, isLocal);
+		String xmsValue = (config.getJavaCommandOption("Xms") != null ? config.getJavaCommandOption("Xms")
+				: DEFAULT_XMS_VALUE);
+		String xmxValue = (config.getJavaCommandOption("Xmx") != null ? config.getJavaCommandOption("Xmx")
+				: DEFAULT_XMX_VALUE);
+		cmd += " -Xms" + xmsValue + "M -Xmx" + xmxValue + "M -cp " + classpath + " "
+				+ TalendScriptAccessUtils.getExecutableClass(job, isLocal);
 
 		cmd = cmd + " --context=" + job.getContext();
 
@@ -141,7 +150,6 @@ public class JavaJobRunner implements IJobRunner {
 	private File getTempDir(Job job) {
 
 		File tempDir;
-		UUIDGenerator uuidGenerator;
 		String uuid;
 		String tempDirName;
 		String tempDirPath;
@@ -149,10 +157,10 @@ public class JavaJobRunner implements IJobRunner {
 		logger.debug("IN");
 
 		try {
-			uuidGenerator = UUIDGenerator.getInstance();
-			uuid = uuidGenerator.generateTimeBasedUUID().toString();
+			uuid = UUID.randomUUID().toString();
 			tempDirName = "tmp" + uuid;
-			tempDirPath = runtimeRepository.getExecutableJobDir(job).getAbsolutePath() + File.separatorChar + tempDirName;
+			tempDirPath = runtimeRepository.getExecutableJobDir(job).getAbsolutePath() + File.separatorChar
+					+ tempDirName;
 			tempDir = new File(tempDirPath);
 		} catch (Throwable t) {
 			throw new RuntimeException("An error ccurred while retriving temporary working folder");

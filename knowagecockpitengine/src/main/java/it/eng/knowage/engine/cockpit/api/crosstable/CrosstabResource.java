@@ -23,6 +23,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.POST;
@@ -37,7 +38,6 @@ import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.safehaus.uuid.UUIDGenerator;
 
 import com.jamonapi.Monitor;
 import com.jamonapi.MonitorFactory;
@@ -96,7 +96,7 @@ public class CrosstabResource extends AbstractCockpitEngineResource {
 
 	public enum OutputType {
 		JSON, HTML
-	};
+	}
 
 	private String temporaryTableName;
 
@@ -107,7 +107,8 @@ public class CrosstabResource extends AbstractCockpitEngineResource {
 	@Path("/")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
 	@UserConstraint(functionalities = { CommunityFunctionalityConstants.CREATE_COCKPIT_FUNCTIONALITY })
-	public String getSortedCrosstab(@QueryParam("crosstabDefinition") String crosstabDefinition, @QueryParam("datasetLabel") String datasetLabel) {
+	public String getSortedCrosstab(@QueryParam("crosstabDefinition") String crosstabDefinition,
+			@QueryParam("datasetLabel") String datasetLabel) {
 		logger.debug("IN");
 
 		// the sort options
@@ -128,7 +129,8 @@ public class CrosstabResource extends AbstractCockpitEngineResource {
 			measuresSortKeys = JSONUtils.toMap(measuresSortKeysJo);
 		} catch (Exception e) {
 			logger.error("Error getting the sort info from the request");
-			throw new SpagoBIServiceException(this.request.getPathInfo(), "An unexpected error occured while executing service", e);
+			throw new SpagoBIServiceException(this.request.getPathInfo(),
+					"An unexpected error occured while executing service", e);
 		}
 
 		Map<Integer, NodeComparator> columnsSortKeysMap = toComparatorMap(columnsSortKeys);
@@ -136,9 +138,11 @@ public class CrosstabResource extends AbstractCockpitEngineResource {
 		Map<Integer, NodeComparator> measuresSortKeysMap = toComparatorMap(measuresSortKeys);
 
 		try {
-			return createCrossTable(crosstabDefinition, datasetLabel, columnsSortKeysMap, rowsSortKeysMap, measuresSortKeysMap, myGlobalId);
+			return createCrossTable(crosstabDefinition, datasetLabel, columnsSortKeysMap, rowsSortKeysMap,
+					measuresSortKeysMap, myGlobalId);
 		} catch (Exception e) {
-			throw new SpagoBIServiceException(this.request.getPathInfo(), "An unexpected error occured while executing service", e);
+			throw new SpagoBIServiceException(this.request.getPathInfo(),
+					"An unexpected error occured while executing service", e);
 		} finally {
 			logger.debug("OUT");
 		}
@@ -173,7 +177,8 @@ public class CrosstabResource extends AbstractCockpitEngineResource {
 			}
 
 			JSONObject crosstabDefinitionJo = request.getJSONObject("crosstabDefinition");
-			JSONObject crosstabDefinitionConfigJo = crosstabDefinitionJo.optJSONObject(CrosstabSerializationConstants.CONFIG);
+			JSONObject crosstabDefinitionConfigJo = crosstabDefinitionJo
+					.optJSONObject(CrosstabSerializationConstants.CONFIG);
 			JSONObject crosstabStyleJo = (request.isNull("style")) ? new JSONObject() : request.getJSONObject("style");
 			JSONObject variables = request.optJSONObject("variables");
 			crosstabDefinitionConfigJo.put("style", crosstabStyleJo);
@@ -191,22 +196,25 @@ public class CrosstabResource extends AbstractCockpitEngineResource {
 			Map<Integer, NodeComparator> columnsSortKeysMap = toComparatorMap(columnsSortKeys);
 			Map<Integer, NodeComparator> rowsSortKeysMap = toComparatorMap(rowsSortKeys);
 			Map<Integer, NodeComparator> measuresSortKeysMap = toComparatorMap(measuresSortKeys);
-			CrosstabBuilder builder = new CrosstabBuilder(getLocale(), crosstabDefinitionJo, jsonData, request.getJSONObject("metadata"), variables);
+			CrosstabBuilder builder = new CrosstabBuilder(getLocale(), crosstabDefinitionJo, jsonData,
+					request.getJSONObject("metadata"), variables);
 
 			JSONObject ret = new JSONObject();
-			ret.put("htmlTable", builder.getSortedCrosstab(columnsSortKeysMap, rowsSortKeysMap, measuresSortKeysMap, myGlobalId));
+			ret.put("htmlTable",
+					builder.getSortedCrosstab(columnsSortKeysMap, rowsSortKeysMap, measuresSortKeysMap, myGlobalId));
 
 			return ret.toString();
 
 		} catch (Exception e) {
-			throw new SpagoBIServiceException(this.request.getPathInfo(), "An unexpected error occured while executing service", e);
+			throw new SpagoBIServiceException(this.request.getPathInfo(),
+					"An unexpected error occured while executing service", e);
 		} finally {
 			logger.debug("OUT");
 		}
 	}
 
 	private Map<Integer, NodeComparator> toComparatorMap(List<Map<String, Object>> sortKeyMap) {
-		Map<Integer, NodeComparator> sortKeys = new HashMap<Integer, NodeComparator>();
+		Map<Integer, NodeComparator> sortKeys = new HashMap<>();
 
 		for (int s = 0; s < sortKeyMap.size(); s++) {
 			Map<String, Object> sMap = sortKeyMap.get(s);
@@ -222,8 +230,9 @@ public class CrosstabResource extends AbstractCockpitEngineResource {
 		return sortKeys;
 	}
 
-	private String createCrossTable(String jsonData, String datasetLabel, Map<Integer, NodeComparator> columnsSortKeysMap,
-			Map<Integer, NodeComparator> rowsSortKeysMap, Map<Integer, NodeComparator> measuresSortKeysMap, Integer myGlobalId) {
+	private String createCrossTable(String jsonData, String datasetLabel,
+			Map<Integer, NodeComparator> columnsSortKeysMap, Map<Integer, NodeComparator> rowsSortKeysMap,
+			Map<Integer, NodeComparator> measuresSortKeysMap, Integer myGlobalId) {
 
 		CrossTab crossTab;
 		IDataStore valuesDataStore = null;
@@ -245,7 +254,8 @@ public class CrosstabResource extends AbstractCockpitEngineResource {
 			// a tempo pieno\",\"alias\":\"Femmine corsi a tempo pieno\",\"iconCls\":\"measure\",\"nature\":\"measure\",\"funct\":\"SUM\"}]}";
 			JSONObject crosstabDefinitionJSON = new JSONObject(jsonData);
 
-			logger.debug("Parameter [" + crosstabDefinitionJSON + "] is equals to [" + crosstabDefinitionJSON.toString() + "]");
+			logger.debug("Parameter [" + crosstabDefinitionJSON + "] is equals to [" + crosstabDefinitionJSON.toString()
+					+ "]");
 			logger.debug("Parameter [datasetLabel] is equals to [" + datasetLabel + "]");
 
 			IDataSetDAO dataSetDao = DAOFactory.getDataSetDAO();
@@ -256,14 +266,14 @@ public class CrosstabResource extends AbstractCockpitEngineResource {
 			IDataSetTableDescriptor descriptor = this.persistDataSet(dataset);
 
 			// build SQL query against temporary table
-			List<WhereField> whereFields = new ArrayList<WhereField>();
+			List<WhereField> whereFields = new ArrayList<>();
 
 			// List<WhereField> temp = getOptionalFilters(optionalFilters);
 			// whereFields.addAll(temp);
 
 			// deserialize crosstab definition
-			CrosstabJSONDeserializer crosstabJSONDeserializer = (CrosstabJSONDeserializer) CrosstabDeserializerFactory.getInstance()
-					.getDeserializer("application/json");
+			CrosstabJSONDeserializer crosstabJSONDeserializer = (CrosstabJSONDeserializer) CrosstabDeserializerFactory
+					.getInstance().getDeserializer("application/json");
 
 			crosstabDefinition = crosstabJSONDeserializer.deserialize(crosstabDefinitionJSON);
 
@@ -276,12 +286,13 @@ public class CrosstabResource extends AbstractCockpitEngineResource {
 			logger.debug("Executing query on temporary table : " + crosstabQuery);
 			valuesDataStore = this.executeCrosstabQuery(crosstabQuery, null, null, dataset);
 
-			LogMF.debug(logger, "Query on temporary table executed successfully; datastore obtained: {0}", valuesDataStore);
+			LogMF.debug(logger, "Query on temporary table executed successfully; datastore obtained: {0}",
+					valuesDataStore);
 			Assert.assertNotNull(valuesDataStore, "Datastore obatined is null!!");
 
 			/*
-			 * since the datastore, at this point, is a JDBC datastore, it does not contain information about measures/attributes, fields' name and alias...
-			 * therefore we adjust its metadata
+			 * since the datastore, at this point, is a JDBC datastore, it does not contain information about measures/attributes, fields' name and alias... therefore we
+			 * adjust its metadata
 			 */
 			this.adjustMetadata((DataStore) valuesDataStore, dataset, descriptor);
 			LogMF.debug(logger, "Adjusted metadata: {0}", valuesDataStore.getMetaData());
@@ -297,13 +308,16 @@ public class CrosstabResource extends AbstractCockpitEngineResource {
 				// load the crosstab for a crosstab widget (with headers, sum,
 				// ...)
 				if (crosstabDefinition.isStatic()) {
-					crossTab = new CrossTab(valuesDataStore, crosstabDefinition, null, columnsSortKeysMap, rowsSortKeysMap, measuresSortKeysMap, myGlobalId);
+					crossTab = new CrossTab(valuesDataStore, crosstabDefinition, null, columnsSortKeysMap,
+							rowsSortKeysMap, measuresSortKeysMap, myGlobalId);
 				} else {
-					crossTab = new CrossTab(valuesDataStore, crosstabDefinition, null, columnsSortKeysMap, rowsSortKeysMap, measuresSortKeysMap, myGlobalId);
+					crossTab = new CrossTab(valuesDataStore, crosstabDefinition, null, columnsSortKeysMap,
+							rowsSortKeysMap, measuresSortKeysMap, myGlobalId);
 				}
 			} else {
 				// load the crosstab data structure for all other widgets
-				crossTab = new CrossTab(valuesDataStore, crosstabDefinition, null, columnsSortKeysMap, rowsSortKeysMap, measuresSortKeysMap, myGlobalId);
+				crossTab = new CrossTab(valuesDataStore, crosstabDefinition, null, columnsSortKeysMap, rowsSortKeysMap,
+						measuresSortKeysMap, myGlobalId);
 			}
 
 			htmlCode = crossTab.getHTMLCrossTab(this.getLocale());//
@@ -324,19 +338,21 @@ public class CrosstabResource extends AbstractCockpitEngineResource {
 
 	public static List<WhereField> transformIntoWhereClauses(Map<String, List<String>> filters) throws JSONException {
 
-		List<WhereField> whereFields = new ArrayList<WhereField>();
+		List<WhereField> whereFields = new ArrayList<>();
 
 		Set<String> keys = filters.keySet();
 		Iterator<String> it = keys.iterator();
 		while (it.hasNext()) {
 			String aFilterName = it.next();
 			List<String> values = filters.get(aFilterName);
-			if (values != null && values.size() > 0) {
+			if (values != null && !values.isEmpty()) {
 				String operator = values.size() > 1 ? CriteriaConstants.IN : CriteriaConstants.EQUALS_TO;
-				Operand leftOperand = new Operand(new String[] { aFilterName }, null, AbstractStatement.OPERAND_TYPE_SIMPLE_FIELD, null, null);
+				Operand leftOperand = new Operand(new String[] { aFilterName }, null,
+						AbstractStatement.OPERAND_TYPE_SIMPLE_FIELD, null, null);
 				String[] valuesArray = values.toArray(new String[0]);
-				Operand rightOperand = new Operand(valuesArray, null, AbstractStatement.OPERAND_TYPE_STATIC, null, null);
-				WhereField whereField = new WhereField(UUIDGenerator.getInstance().generateRandomBasedUUID().toString(), aFilterName, false, leftOperand,
+				Operand rightOperand = new Operand(valuesArray, null, AbstractStatement.OPERAND_TYPE_STATIC, null,
+						null);
+				WhereField whereField = new WhereField(UUID.randomUUID().toString(), aFilterName, false, leftOperand,
 						operator, rightOperand, "AND", null);
 
 				whereFields.add(whereField);
@@ -348,7 +364,7 @@ public class CrosstabResource extends AbstractCockpitEngineResource {
 
 	public static List<WhereField> transformIntoWhereClauses(JSONObject optionalUserFilters) throws JSONException {
 		String[] fields = JSONObject.getNames(optionalUserFilters);
-		List<WhereField> whereFields = new ArrayList<WhereField>();
+		List<WhereField> whereFields = new ArrayList<>();
 		for (int i = 0; i < fields.length; i++) {
 			String fieldName = fields[i];
 			Object valuesObject = optionalUserFilters.get(fieldName);
@@ -360,21 +376,24 @@ public class CrosstabResource extends AbstractCockpitEngineResource {
 					String[] values = new String[1];
 					values[0] = fieldName;
 
-					Operand leftOperand = new Operand(values, fieldName, AbstractStatement.OPERAND_TYPE_SIMPLE_FIELD, values, values);
+					Operand leftOperand = new Operand(values, fieldName, AbstractStatement.OPERAND_TYPE_SIMPLE_FIELD,
+							values, values);
 
 					values = new String[valuesArray.length()];
 					for (int j = 0; j < valuesArray.length(); j++) {
 						values[j] = valuesArray.getString(j);
 					}
 
-					Operand rightOperand = new Operand(values, fieldName, AbstractStatement.OPERAND_TYPE_STATIC, values, values);
+					Operand rightOperand = new Operand(values, fieldName, AbstractStatement.OPERAND_TYPE_STATIC, values,
+							values);
 
 					String operator = "EQUALS TO";
 					if (valuesArray.length() > 1) {
 						operator = "IN";
 					}
 
-					whereFields.add(new WhereField("OptionalFilter" + i, "OptionalFilter" + i, false, leftOperand, operator, rightOperand, "AND", null));
+					whereFields.add(new WhereField("OptionalFilter" + i, "OptionalFilter" + i, false, leftOperand,
+							operator, rightOperand, "AND", null));
 				}
 			} else {
 				logger.debug("The values of the filter " + fieldName + " are not a JSONArray but " + valuesObject);
@@ -399,7 +418,7 @@ public class CrosstabResource extends AbstractCockpitEngineResource {
 		if (optionalUserFilters != null) {
 			return transformIntoWhereClauses(optionalUserFilters);
 		} else {
-			return new ArrayList<WhereField>();
+			return new ArrayList<>();
 		}
 	}
 
@@ -412,8 +431,8 @@ public class CrosstabResource extends AbstractCockpitEngineResource {
 	 * @param tableName          the temporary table name
 	 * @return the sql statement to query the temporary table
 	 */
-	protected String buildSqlStatement(CrosstabDefinition crosstabDefinition, IDataSetTableDescriptor descriptor, List<WhereField> filters,
-			IDataSource dataSource) {
+	protected String buildSqlStatement(CrosstabDefinition crosstabDefinition, IDataSetTableDescriptor descriptor,
+			List<WhereField> filters, IDataSource dataSource) {
 		return CrosstabQueryCreator.getCrosstabQuery(crosstabDefinition, descriptor, filters, dataSource);
 	}
 
@@ -432,14 +451,16 @@ public class CrosstabResource extends AbstractCockpitEngineResource {
 		logger.debug("Query executed succesfully");
 
 		Integer resultNumber = (Integer) dataStore.getMetaData().getProperty("resultNumber");
-		Assert.assertNotNull(resultNumber, "property [resultNumber] of the dataStore returned by queryTemporaryTable method of the class ["
-				+ TemporaryTableManager.class.getName() + "] cannot be null");
+		Assert.assertNotNull(resultNumber,
+				"property [resultNumber] of the dataStore returned by queryTemporaryTable method of the class ["
+						+ TemporaryTableManager.class.getName() + "] cannot be null");
 		logger.debug("Total records: " + resultNumber);
 
 		Integer maxSize = null; // QbeEngineConfig.getInstance().getResultLimit();
 		boolean overflow = maxSize != null && resultNumber >= maxSize;
 		if (overflow) {
-			logger.warn("Query results number [" + resultNumber + "] exceeds max result limit that is [" + maxSize + "]");
+			logger.warn(
+					"Query results number [" + resultNumber + "] exceeds max result limit that is [" + maxSize + "]");
 		}
 
 		return dataStore;
@@ -497,7 +518,8 @@ public class CrosstabResource extends AbstractCockpitEngineResource {
 		// if temporaryTableNameRadix is not specified on the environment,
 		// create a new name using the user profile
 		if (temporaryTableNameRoot == null) {
-			logger.debug("Temporary table name root not specified on the environment, creating a new one using user identifier ...");
+			logger.debug(
+					"Temporary table name root not specified on the environment, creating a new one using user identifier ...");
 			UserProfile userProfile = (UserProfile) getEnv().get(EngineConstants.ENV_USER_PROFILE);
 			temporaryTableNameRoot = userProfile.getUserId().toString();
 		}
@@ -535,7 +557,8 @@ public class CrosstabResource extends AbstractCockpitEngineResource {
 		if (dataset.hasBehaviour(SelectableFieldsBehaviour.ID)) {
 			logger.debug("Dataset has SelectableFieldsBehaviour.");
 			List<String> fields = getAllFields();
-			SelectableFieldsBehaviour selectableFieldsBehaviour = (SelectableFieldsBehaviour) dataset.getBehaviour(SelectableFieldsBehaviour.ID);
+			SelectableFieldsBehaviour selectableFieldsBehaviour = (SelectableFieldsBehaviour) dataset
+					.getBehaviour(SelectableFieldsBehaviour.ID);
 			logger.debug("Setting list of fields : " + fields);
 			selectableFieldsBehaviour.setSelectedFields(fields);
 		}
@@ -576,12 +599,11 @@ public class CrosstabResource extends AbstractCockpitEngineResource {
 			this.recordTemporaryTable(tableName, dataSource);
 
 			/**
-			 * Do not remove comments from the following line: we cannot change the dataset state, since we are only temporarily persisting the dataset, but the
-			 * dataset itself could change during next user interaction (example: the user is using Qbe and he will change the dataset itself). We will use
-			 * TemporaryTableManager to store this kind of information.
+			 * Do not remove comments from the following line: we cannot change the dataset state, since we are only temporarily persisting the dataset, but the dataset
+			 * itself could change during next user interaction (example: the user is using Qbe and he will change the dataset itself). We will use TemporaryTableManager to
+			 * store this kind of information.
 			 *
-			 * dataset.setDataSourceForReading(getEngineInstance(). getDataSourceForWriting()); dataset.setPersisted(true);
-			 * dataset.setPersistTableName(td.getTableName());
+			 * dataset.setDataSourceForReading(getEngineInstance(). getDataSourceForWriting()); dataset.setPersisted(true); dataset.setPersistTableName(td.getTableName());
 			 */
 
 			logger.debug("Dataset persisted");
@@ -601,7 +623,8 @@ public class CrosstabResource extends AbstractCockpitEngineResource {
 
 		UserProfile userProfile = (UserProfile) getEnv().get(EngineConstants.ENV_USER_PROFILE);
 
-		logger.debug("Querying dataset's flat/persistence table: user [" + userProfile.getUserId() + "] (SQL): [" + crosstabQuery + "]");
+		logger.debug("Querying dataset's flat/persistence table: user [" + userProfile.getUserId() + "] (SQL): ["
+				+ crosstabQuery + "]");
 
 		try {
 
@@ -665,7 +688,8 @@ public class CrosstabResource extends AbstractCockpitEngineResource {
 		return dataStore;
 	}
 
-	protected void adjustMetadata(DataStore dataStore, IDataSet dataset, IDataSetTableDescriptor descriptor, JSONArray fieldOptions) {
+	protected void adjustMetadata(DataStore dataStore, IDataSet dataset, IDataSetTableDescriptor descriptor,
+			JSONArray fieldOptions) {
 
 		IMetaData dataStoreMetadata = dataStore.getMetaData();
 		IMetaData dataSetMetadata = dataset.getMetadata();
@@ -700,12 +724,11 @@ public class CrosstabResource extends AbstractCockpitEngineResource {
 	}
 
 	public Map<String, List<String>> getFiltersOnDomainValues() {
-		return new HashMap<String, List<String>>();
+		return new HashMap<>();
 	}
 
 	public List<String> getAllFields() {
-		List<String> toReturn = new ArrayList<String>();
-		return toReturn;
+		return new ArrayList<>();
 	}
 
 	private void recordTemporaryTable(String tableName, IDataSource dataSource) {

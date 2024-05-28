@@ -72,7 +72,6 @@ import it.eng.knowage.monitor.IKnowageMonitor;
 import it.eng.knowage.monitor.KnowageMonitorFactory;
 import it.eng.spago.base.RequestContainer;
 import it.eng.spago.base.RequestContainerAccess;
-import it.eng.spago.error.EMFInternalError;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.analiticalmodel.document.BusinessModelOpenUtils;
@@ -108,7 +107,6 @@ import it.eng.spagobi.commons.services.DelegatedBasicListService;
 import it.eng.spagobi.commons.utilities.GeneralUtilities;
 import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
 import it.eng.spagobi.commons.utilities.messages.MessageBuilderFactory;
-import it.eng.spagobi.engines.config.bo.Engine;
 import it.eng.spagobi.services.rest.annotations.UserConstraint;
 import it.eng.spagobi.tools.catalogue.bo.MetaModel;
 import it.eng.spagobi.tools.catalogue.dao.IMetaModelsDAO;
@@ -137,7 +135,8 @@ public class DataSetResource {
 
 	private final Logger logger = Logger.getLogger(DataSetResource.class);
 
-	private static final DataSetResourceAction ACTION_DETAIL = new DataSetResourceAction("detaildataset", "Dataset detail");
+	private static final DataSetResourceAction ACTION_DETAIL = new DataSetResourceAction("detaildataset",
+			"Dataset detail");
 	private static final DataSetResourceAction ACTION_DELETE = new DataSetResourceAction("delete", "Delete dataset");
 	private static final DataSetResourceAction ACTION_LOAD_DATA = new DataSetResourceAction("loaddata", "Load data");
 	private static final DataSetResourceAction ACTION_GEO_REPORT = new DataSetResourceAction("georeport", "Show Map");
@@ -177,8 +176,22 @@ public class DataSetResource {
 
 		try {
 
-			List<IDataSet> dataSets = getDatasetManagementAPI().getDataSets();
-			Stream<IDataSet> stream = dataSets.stream().filter(e -> DataSetUtilities.isExecutableByUser(e, userProfile));
+			DatasetManagementAPI datasetManagementAPI = getDatasetManagementAPI();
+			List<IDataSet> dataSets = datasetManagementAPI.getDataSets();
+			// @formatter:off
+			Stream<IDataSet> stream = dataSets.stream()
+					.filter(e -> {
+						boolean ret = false;
+						try {
+							datasetManagementAPI.canSee(e);
+							ret = true;
+						} catch (ActionNotPermittedException ex) {
+							// Ignore the dataset
+						}
+						return ret;
+					})
+					.filter(e -> DataSetUtilities.isExecutableByUser(e, userProfile));
+			// @formatter:on
 
 			if (!ids.isEmpty()) {
 				stream = stream.filter(e -> ids.contains(e.getId()));
@@ -193,7 +206,8 @@ public class DataSetResource {
 		} catch (Exception ex) {
 			LogMF.error(logger, "Cannot get available datasets with typeDoc {0} and ids {1} for user {2}",
 					new Object[] { typeDoc, ids, userProfile.getUserName() });
-			throw new SpagoBIServiceException(this.request.getPathInfo(), "An unexpected error occured while executing service", ex);
+			throw new SpagoBIServiceException(this.request.getPathInfo(),
+					"An unexpected error occured while executing service", ex);
 		}
 
 		return response;
@@ -203,15 +217,17 @@ public class DataSetResource {
 	@Path("/catalog/")
 	@Produces(MediaType.APPLICATION_JSON)
 	@UserConstraint(functionalities = { CommunityFunctionalityConstants.SELF_SERVICE_DATASET_MANAGEMENT })
-	public DataSetResourceResponseRoot<DataSetMainDTO> getDataSetsPaginationOption(@QueryParam("typeDoc") String typeDoc,
-			@QueryParam("callback") String callback, @DefaultValue("-1") @QueryParam("offset") int offset,
-			@DefaultValue("-1") @QueryParam("fetchSize") int fetchSize, @QueryParam("filters") String _filters, @QueryParam("ordering") JSONObject ordering,
-			@QueryParam("tags") List<Integer> tags) {
+	public DataSetResourceResponseRoot<DataSetMainDTO> getDataSetsPaginationOption(
+			@QueryParam("typeDoc") String typeDoc, @QueryParam("callback") String callback,
+			@DefaultValue("-1") @QueryParam("offset") int offset,
+			@DefaultValue("-1") @QueryParam("fetchSize") int fetchSize, @QueryParam("filters") String _filters,
+			@QueryParam("ordering") JSONObject ordering, @QueryParam("tags") List<Integer> tags) {
 
 		IKnowageMonitor monitor = KnowageMonitorFactory.getInstance().start("knowage.datasets.catalog.list");
 
 		try {
 
+			DatasetManagementAPI datasetManagementAPI = getDatasetManagementAPI();
 			List<DataSetResourceFilter> filters = Collections.emptyList();
 
 			if (_filters != null) {
@@ -219,26 +235,12 @@ public class DataSetResource {
 				});
 			}
 
-			UserProfile userProfile = getUserProfile();
-
-			Engine qbeEngine = null;
-			try {
-				qbeEngine = ExecuteAdHocUtility.getQbeEngine();
-			} catch (SpagoBIRuntimeException r) {
-				// the qbe engine is not found
-				logger.info("Engine not found. ", r);
-			}
-
-			Engine geoEngine = null;
-			try {
-				geoEngine = ExecuteAdHocUtility.getGeoreportEngine();
-			} catch (SpagoBIRuntimeException r) {
-				// the geo engine is not found
-				logger.info("Engine not found. ", r);
-			}
-
-			List<DataSetMainDTO> dataSets = getListOfGenericDatasets(offset, fetchSize, filters, ordering, tags).stream().map(DataSetMainDTO::new)
+			// @formatter:off
+			List<DataSetMainDTO> dataSets = getListOfGenericDatasets(offset, fetchSize, filters, ordering, tags)
+					.stream()
+					.map(DataSetMainDTO::new)
 					.collect(toList());
+			// @formatter:off
 
 			monitor.stop();
 
@@ -246,7 +248,8 @@ public class DataSetResource {
 
 		} catch (Exception t) {
 			monitor.stop(t);
-			throw new SpagoBIServiceException(this.request.getPathInfo(), "An unexpected error occured while executing service", t);
+			throw new SpagoBIServiceException(this.request.getPathInfo(),
+					"An unexpected error occured while executing service", t);
 		}
 	}
 
@@ -254,13 +257,15 @@ public class DataSetResource {
 	@Path("/enterprise")
 	@Produces(MediaType.APPLICATION_JSON)
 	@UserConstraint(functionalities = { CommunityFunctionalityConstants.SELF_SERVICE_DATASET_MANAGEMENT })
-	public DataSetResourceResponseRoot<DataSetForWorkspaceDTO> getEnterpriseDataSet(@DefaultValue("-1") @QueryParam("offset") int offset,
+	public DataSetResourceResponseRoot<DataSetForWorkspaceDTO> getEnterpriseDataSet(
+			@DefaultValue("-1") @QueryParam("offset") int offset,
 			@DefaultValue("-1") @QueryParam("fetchSize") int fetchSize, @QueryParam("typeDoc") String typeDoc) {
 
 		IKnowageMonitor monitor = KnowageMonitorFactory.getInstance().start("knowage.datasets.enterprise.list");
 
 		try {
-			List<DataSetForWorkspaceDTO> dataSets = DAOFactory.getSbiDataSetDAO().loadEnterpriseDataSets(offset, fetchSize, getUserProfile()).stream()
+			List<DataSetForWorkspaceDTO> dataSets = DAOFactory.getSbiDataSetDAO()
+					.loadEnterpriseDataSets(offset, fetchSize, getUserProfile()).stream()
 					.map(DataSetForWorkspaceDTO::new).collect(toList());
 
 			dataSets = (List<DataSetForWorkspaceDTO>) putActions(dataSets, typeDoc);
@@ -270,7 +275,8 @@ public class DataSetResource {
 			return new DataSetResourceResponseRoot<>(dataSets);
 		} catch (Exception t) {
 			monitor.stop(t);
-			throw new SpagoBIServiceException(this.request.getPathInfo(), "An unexpected error occured while executing service", t);
+			throw new SpagoBIServiceException(this.request.getPathInfo(),
+					"An unexpected error occured while executing service", t);
 		}
 	}
 
@@ -278,13 +284,15 @@ public class DataSetResource {
 	@Path("/owned")
 	@Produces(MediaType.APPLICATION_JSON)
 	@UserConstraint(functionalities = { CommunityFunctionalityConstants.SELF_SERVICE_DATASET_MANAGEMENT })
-	public DataSetResourceResponseRoot<DataSetForWorkspaceDTO> getOwnedDataSet(@DefaultValue("-1") @QueryParam("offset") int offset,
+	public DataSetResourceResponseRoot<DataSetForWorkspaceDTO> getOwnedDataSet(
+			@DefaultValue("-1") @QueryParam("offset") int offset,
 			@DefaultValue("-1") @QueryParam("fetchSize") int fetchSize, @QueryParam("typeDoc") String typeDoc) {
 
 		IKnowageMonitor monitor = KnowageMonitorFactory.getInstance().start("knowage.datasets.owned.list");
 
 		try {
-			List<DataSetForWorkspaceDTO> dataSets = DAOFactory.getSbiDataSetDAO().loadDataSetsOwnedByUser(offset, fetchSize, getUserProfile(), true).stream()
+			List<DataSetForWorkspaceDTO> dataSets = DAOFactory.getSbiDataSetDAO()
+					.loadDataSetsOwnedByUser(offset, fetchSize, getUserProfile(), true).stream()
 					.map(DataSetForWorkspaceDTO::new).collect(toList());
 
 			dataSets = (List<DataSetForWorkspaceDTO>) putActions(dataSets, typeDoc);
@@ -295,7 +303,8 @@ public class DataSetResource {
 
 		} catch (Exception t) {
 			monitor.stop(t);
-			throw new SpagoBIServiceException(this.request.getPathInfo(), "An unexpected error occured while executing service", t);
+			throw new SpagoBIServiceException(this.request.getPathInfo(),
+					"An unexpected error occured while executing service", t);
 		}
 
 	}
@@ -304,13 +313,15 @@ public class DataSetResource {
 	@Path("/shared")
 	@Produces(MediaType.APPLICATION_JSON)
 	@UserConstraint(functionalities = { CommunityFunctionalityConstants.SELF_SERVICE_DATASET_MANAGEMENT })
-	public DataSetResourceResponseRoot<DataSetForWorkspaceDTO> getSharedDataSet(@DefaultValue("-1") @QueryParam("offset") int offset,
+	public DataSetResourceResponseRoot<DataSetForWorkspaceDTO> getSharedDataSet(
+			@DefaultValue("-1") @QueryParam("offset") int offset,
 			@DefaultValue("-1") @QueryParam("fetchSize") int fetchSize, @QueryParam("typeDoc") String typeDoc) {
 
 		IKnowageMonitor monitor = KnowageMonitorFactory.getInstance().start("knowage.datasets.shared.list");
 
 		try {
-			List<DataSetForWorkspaceDTO> dataSets = DAOFactory.getSbiDataSetDAO().loadDatasetsSharedWithUser(offset, fetchSize, getUserProfile(), true).stream()
+			List<DataSetForWorkspaceDTO> dataSets = DAOFactory.getSbiDataSetDAO()
+					.loadDatasetsSharedWithUser(offset, fetchSize, getUserProfile(), true).stream()
 					.map(DataSetForWorkspaceDTO::new).collect(toList());
 
 			dataSets = (List<DataSetForWorkspaceDTO>) putActions(dataSets, typeDoc);
@@ -320,7 +331,8 @@ public class DataSetResource {
 			return new DataSetResourceResponseRoot<>(dataSets);
 		} catch (Exception t) {
 			monitor.stop(t);
-			throw new SpagoBIServiceException(this.request.getPathInfo(), "An unexpected error occured while executing service", t);
+			throw new SpagoBIServiceException(this.request.getPathInfo(),
+					"An unexpected error occured while executing service", t);
 		}
 
 	}
@@ -329,13 +341,15 @@ public class DataSetResource {
 	@Path("/uncertified")
 	@Produces(MediaType.APPLICATION_JSON)
 	@UserConstraint(functionalities = { CommunityFunctionalityConstants.SELF_SERVICE_DATASET_MANAGEMENT })
-	public DataSetResourceResponseRoot<DataSetForWorkspaceDTO> getUncertifiedDataSet(@DefaultValue("-1") @QueryParam("offset") int offset,
+	public DataSetResourceResponseRoot<DataSetForWorkspaceDTO> getUncertifiedDataSet(
+			@DefaultValue("-1") @QueryParam("offset") int offset,
 			@DefaultValue("-1") @QueryParam("fetchSize") int fetchSize, @QueryParam("typeDoc") String typeDoc) {
 
 		IKnowageMonitor monitor = KnowageMonitorFactory.getInstance().start("knowage.datasets.uncertified.list");
 
 		try {
-			List<DataSetForWorkspaceDTO> dataSets = DAOFactory.getSbiDataSetDAO().loadDatasetOwnedAndShared(offset, fetchSize, getUserProfile()).stream()
+			List<DataSetForWorkspaceDTO> dataSets = DAOFactory.getSbiDataSetDAO()
+					.loadDatasetOwnedAndShared(offset, fetchSize, getUserProfile()).stream()
 					.map(DataSetForWorkspaceDTO::new).collect(toList());
 
 			dataSets = (List<DataSetForWorkspaceDTO>) putActions(dataSets, typeDoc);
@@ -345,7 +359,8 @@ public class DataSetResource {
 			return new DataSetResourceResponseRoot<>(dataSets);
 		} catch (Exception t) {
 			monitor.stop(t);
-			throw new SpagoBIServiceException(this.request.getPathInfo(), "An unexpected error occured while executing service", t);
+			throw new SpagoBIServiceException(this.request.getPathInfo(),
+					"An unexpected error occured while executing service", t);
 		}
 
 	}
@@ -354,15 +369,17 @@ public class DataSetResource {
 	@Path("/mydata")
 	@Produces(MediaType.APPLICATION_JSON)
 	@UserConstraint(functionalities = { CommunityFunctionalityConstants.SELF_SERVICE_DATASET_MANAGEMENT })
-	public DataSetResourceResponseRoot<DataSetForWorkspaceDTO> getMyDataDataSet(@DefaultValue("-1") @QueryParam("offset") int offset,
+	public DataSetResourceResponseRoot<DataSetForWorkspaceDTO> getMyDataDataSet(
+			@DefaultValue("-1") @QueryParam("offset") int offset,
 			@DefaultValue("-1") @QueryParam("fetchSize") int fetchSize, @QueryParam("typeDoc") String typeDoc) {
 
 		IKnowageMonitor monitor = KnowageMonitorFactory.getInstance().start("knowage.datasets.all.list");
 
 		try {
 			// TODO
-			List<DataSetForWorkspaceDTO> dataSets = DAOFactory.getSbiDataSetDAO().loadMyDataSets(offset, fetchSize, getUserProfile()).stream()
-					.map(DataSetForWorkspaceDTO::new).collect(toList());
+			List<DataSetForWorkspaceDTO> dataSets = DAOFactory.getSbiDataSetDAO()
+					.loadMyDataSets(offset, fetchSize, getUserProfile()).stream().map(DataSetForWorkspaceDTO::new)
+					.collect(toList());
 
 			dataSets = (List<DataSetForWorkspaceDTO>) putActions(dataSets, typeDoc);
 
@@ -372,7 +389,8 @@ public class DataSetResource {
 
 		} catch (Exception t) {
 			monitor.stop(t);
-			throw new SpagoBIServiceException(this.request.getPathInfo(), "An unexpected error occured while executing service", t);
+			throw new SpagoBIServiceException(this.request.getPathInfo(),
+					"An unexpected error occured while executing service", t);
 		}
 
 	}
@@ -385,14 +403,17 @@ public class DataSetResource {
 	@Path("/advanced")
 	@Produces(MediaType.APPLICATION_JSON)
 	@UserConstraint(functionalities = { CommunityFunctionalityConstants.SELF_SERVICE_DATASET_MANAGEMENT })
-	public DataSetResourceResponseRoot<DataSetForWorkspaceDTO> getAdvancedDataSets(@DefaultValue("-1") @QueryParam("offset") int offset,
+	public DataSetResourceResponseRoot<DataSetForWorkspaceDTO> getAdvancedDataSets(
+			@DefaultValue("-1") @QueryParam("offset") int offset,
 			@DefaultValue("-1") @QueryParam("fetchSize") int fetchSize, @QueryParam("typeDoc") String typeDoc) {
 
 		IKnowageMonitor monitor = KnowageMonitorFactory.getInstance().start("knowage.datasets.advanced.list");
 
 		try {
-			List<DataSetForWorkspaceDTO> dataSets = DAOFactory.getSbiDataSetDAO().loadMyDataSets(offset, fetchSize, getUserProfile()).stream()
-					.filter(e -> e.getType().equals(DataSetConstants.DS_PREPARED)).map(DataSetForWorkspaceDTO::new).collect(toList());
+			List<DataSetForWorkspaceDTO> dataSets = DAOFactory.getSbiDataSetDAO()
+					.loadMyDataSets(offset, fetchSize, getUserProfile()).stream()
+					.filter(e -> e.getType().equals(DataSetConstants.DS_PREPARED)).map(DataSetForWorkspaceDTO::new)
+					.collect(toList());
 
 			dataSets = (List<DataSetForWorkspaceDTO>) putActions(dataSets, typeDoc);
 
@@ -402,7 +423,8 @@ public class DataSetResource {
 
 		} catch (Exception t) {
 			monitor.stop(t);
-			throw new SpagoBIServiceException(this.request.getPathInfo(), "An unexpected error occured while executing service", t);
+			throw new SpagoBIServiceException(this.request.getPathInfo(),
+					"An unexpected error occured while executing service", t);
 		}
 
 	}
@@ -419,11 +441,13 @@ public class DataSetResource {
 
 		try {
 			final UserProfile userProfile = getUserProfile();
-			SbiDataSet dataSet = DAOFactory.getSbiDataSetDAO().loadSbiDataSetByIdAndOrganiz(dsId, userProfile.getOrganization());
+			SbiDataSet dataSet = DAOFactory.getSbiDataSetDAO().loadSbiDataSetByIdAndOrganiz(dsId,
+					userProfile.getOrganization());
 			return dataSet;
 
 		} catch (Exception t) {
-			throw new SpagoBIServiceException(this.request.getPathInfo(), "An unexpected error occured while executing service", t);
+			throw new SpagoBIServiceException(this.request.getPathInfo(),
+					"An unexpected error occured while executing service", t);
 		}
 
 	}
@@ -440,8 +464,8 @@ public class DataSetResource {
 		List<String> avroDataSets = new ArrayList<>();
 		try {
 			final UserProfile userProfile = getUserProfile();
-			java.nio.file.Path avroExportFolder = Paths.get(SpagoBIUtilities.getRootResourcePath(), userProfile.getOrganization(), "dataPreparation",
-					(String) userProfile.getUserId());
+			java.nio.file.Path avroExportFolder = Paths.get(SpagoBIUtilities.getRootResourcePath(),
+					userProfile.getOrganization(), "dataPreparation", (String) userProfile.getUserId());
 			File[] datasets = avroExportFolder.toFile().listFiles(File::isDirectory);
 			for (int i = 0; i < datasets.length; i++) {
 				boolean avroReady = new File(datasets[i], "ready").exists();
@@ -453,8 +477,10 @@ public class DataSetResource {
 				}
 				IDataSet datasetToCheck = DAOFactory.getDataSetDAO().loadDataSetById(idToCheck);
 				if (datasetToCheck != null) {
-					FileTime creationTime = (FileTime) Files.getAttribute(Paths.get(datasets[i].getCanonicalPath() + File.separator + "data"), "creationTime");
-					BasicFileAttributes attr = Files.readAttributes(Paths.get(datasets[i].getCanonicalPath() + File.separator + "data"),
+					FileTime creationTime = (FileTime) Files.getAttribute(
+							Paths.get(datasets[i].getCanonicalPath() + File.separator + "data"), "creationTime");
+					BasicFileAttributes attr = Files.readAttributes(
+							Paths.get(datasets[i].getCanonicalPath() + File.separator + "data"),
 							BasicFileAttributes.class);
 					Date fileDate = null;
 					if (attr.lastModifiedTime() != null) {
@@ -482,18 +508,22 @@ public class DataSetResource {
 	@Path("/for-dataprep")
 	@Produces(MediaType.APPLICATION_JSON)
 	@UserConstraint(functionalities = { CommunityFunctionalityConstants.SELF_SERVICE_DATASET_MANAGEMENT })
-	public DataSetResourceResponseRoot<DataSetForWorkspaceDTO> getDataSetsForDataPrep(@DefaultValue("-1") @QueryParam("offset") int offset,
+	public DataSetResourceResponseRoot<DataSetForWorkspaceDTO> getDataSetsForDataPrep(
+			@DefaultValue("-1") @QueryParam("offset") int offset,
 			@DefaultValue("-1") @QueryParam("fetchSize") int fetchSize) {
 		try {
-			List<DataSetForWorkspaceDTO> dataSets = DAOFactory.getSbiDataSetDAO().loadMyDataSets(offset, fetchSize, getUserProfile()).stream()
-					.filter(e -> (e.getParametersList() != null && e.getParametersList().size() == 0 && !e.getType().equals(DataSetConstants.DS_PREPARED)
+			List<DataSetForWorkspaceDTO> dataSets = DAOFactory.getSbiDataSetDAO()
+					.loadMyDataSets(offset, fetchSize, getUserProfile()).stream()
+					.filter(e -> (e.getParametersList() != null && e.getParametersList().isEmpty()
+							&& !e.getType().equals(DataSetConstants.DS_PREPARED)
 							&& !e.getType().equals(DataSetConstants.DS_QBE)))
 					.map(DataSetForWorkspaceDTO::new).collect(toList());
 
 			return new DataSetResourceResponseRoot<>(dataSets);
 
 		} catch (Exception t) {
-			throw new SpagoBIServiceException(this.request.getPathInfo(), "An unexpected error occured while executing service", t);
+			throw new SpagoBIServiceException(this.request.getPathInfo(),
+					"An unexpected error occured while executing service", t);
 		}
 	}
 
@@ -503,7 +533,6 @@ public class DataSetResource {
 	@UserConstraint(functionalities = { CommunityFunctionalityConstants.SELF_SERVICE_DATASET_MANAGEMENT })
 	public Response filters(@PathParam("dsLabel") String dsLabel) throws JSONException, IOException {
 
-		RequestContainer aRequestContainer = RequestContainerAccess.getRequestContainer(request);
 		JSONObject requestVal = RestUtilities.readBodyAsJSONObject(request);
 		String role = requestVal.getString("role");
 
@@ -600,7 +629,8 @@ public class DataSetResource {
 					DriversRuntimeLoader driversRuntimeLoader = DriversRuntimeLoaderFactory.getDriversRuntimeLoader();
 					List<BIMetaModelParameter> drivers = driversRuntimeLoader.getDatasetDrivers(dsId, role);
 
-					ArrayList<HashMap<String, Object>> qbeDrivers = metaUtils.getQbeDrivers(getUserProfile(), request.getLocale(), qbeDatamart);
+					ArrayList<HashMap<String, Object>> qbeDrivers = metaUtils.getQbeDrivers(getUserProfile(),
+							request.getLocale(), qbeDatamart);
 					if (qbeDrivers == null || qbeDrivers.isEmpty()) {
 						BIMetaModelParameter biObjectParameter;
 						List<ObjParuse> biParameterExecDependencies;
@@ -645,15 +675,16 @@ public class DataSetResource {
 
 							// get from cache, if available
 							LovResultCacheManager executionCacheManager = new LovResultCacheManager();
-							lovResult = executionCacheManager.getLovResultDum(profile, lovProvDet, dum.getDependencies(biObjectParameter, role), drivers, true,
-									request.getLocale());
+							lovResult = executionCacheManager.getLovResultDum(profile, lovProvDet,
+									dum.getDependencies(biObjectParameter, role), drivers, true, request.getLocale());
 
 							// get all the rows of the result
 							LovResultHandler lovResultHandler = new LovResultHandler(lovResult);
 							rows = lovResultHandler.getRows();
 
 						} catch (MissingLOVDependencyException mldaE) {
-							String localizedMessage = getLocalizedMessage("sbi.api.documentExecParameters.dependencyNotFill");
+							String localizedMessage = getLocalizedMessage(
+									"sbi.api.documentExecParameters.dependencyNotFill");
 							String msg = localizedMessage + ": " + mldaE.getDependsFrom();
 							throw new SpagoBIServiceException(SERVICE_NAME, msg);
 						} catch (Exception e) {
@@ -670,10 +701,12 @@ public class DataSetResource {
 								String columnfilter = (String) filtersJSON.get(SpagoBIConstants.COLUMN_FILTER);
 								String typeFilter = (String) filtersJSON.get(SpagoBIConstants.TYPE_FILTER);
 								String typeValueFilter = (String) filtersJSON.get(SpagoBIConstants.TYPE_VALUE_FILTER);
-								rows = DelegatedBasicListService.filterList(rows, valuefilter, typeValueFilter, columnfilter, typeFilter);
+								rows = DelegatedBasicListService.filterList(rows, valuefilter, typeValueFilter,
+										columnfilter, typeFilter);
 							}
 						} catch (JSONException e) {
-							throw new SpagoBIServiceException(SERVICE_NAME, "Impossible to read filter's configuration", e);
+							throw new SpagoBIServiceException(SERVICE_NAME, "Impossible to read filter's configuration",
+									e);
 						}
 						// END filtering the list by filtering toolbar
 
@@ -681,21 +714,25 @@ public class DataSetResource {
 						// DependenciesPostProcessingLov, i.e. scripts, java classes and
 						// fixed lists)
 						biParameterExecDependencies = dum.getDependencies(biObjectParameter, role);
-						if (lovProvDet instanceof DependenciesPostProcessingLov && selectedParameterValues != null && biParameterExecDependencies != null
-								&& biParameterExecDependencies.size() > 0) { // && contest != null && !contest.equals(MASSIVE_EXPORT)
-							rows = ((DependenciesPostProcessingLov) lovProvDet).processDependencies(rows, selectedParameterValues, biParameterExecDependencies);
+						if (lovProvDet instanceof DependenciesPostProcessingLov && selectedParameterValues != null
+								&& biParameterExecDependencies != null && !biParameterExecDependencies.isEmpty()) { // && contest != null && !contest.equals(MASSIVE_EXPORT)
+							rows = ((DependenciesPostProcessingLov) lovProvDet).processDependencies(rows,
+									selectedParameterValues, biParameterExecDependencies);
 						}
 						// END filtering for correlation
 
 						if (lovProvDet.getLovType() != null && lovProvDet.getLovType().contains("tree")) {
-							JSONArray valuesJSONArray = metaUtils.getChildrenForTreeLov(lovProvDet, rows, treeLovNodeLevel, treeLovNodeValue);
-							result = metaUtils.buildJsonResult("OK", "", null, valuesJSONArray, biparameterId).toString();
+							JSONArray valuesJSONArray = metaUtils.getChildrenForTreeLov(lovProvDet, rows,
+									treeLovNodeLevel, treeLovNodeValue);
+							result = metaUtils.buildJsonResult("OK", "", null, valuesJSONArray, biparameterId)
+									.toString();
 						} else {
 							valuesJSON = metaUtils.buildJSONForLOV(lovProvDet, rows, start, limit);
 							result = metaUtils.buildJsonResult("OK", "", valuesJSON, null, biparameterId).toString();
 						}
 					} else {
-						BusinessModelRuntime bum = new BusinessModelRuntime(UserProfileManager.getProfile(), request.getLocale());
+						BusinessModelRuntime bum = new BusinessModelRuntime(UserProfileManager.getProfile(),
+								request.getLocale());
 						if (selectedParameterValuesJSON != null) {
 							bum.refreshParametersMetamodelValues(selectedParameterValuesJSON, false, drivers);
 						}
@@ -713,28 +750,31 @@ public class DataSetResource {
 								break;
 							}
 						}
-						Assert.assertNotNull(biMetaModelParameter, "Impossible to find parameter [" + biparameterId + "]");
+						Assert.assertNotNull(biMetaModelParameter,
+								"Impossible to find parameter [" + biparameterId + "]");
 						// END get the relevant biobject parameter
 
 						lovProvDet = bum.getLovDetail(biMetaModelParameter);
 						// START get the lov result
 						String lovResult = null;
-						List<MetaModelParuse> biParameterExecDependencies = bum.getDependencies(biMetaModelParameter, role);
+						List<MetaModelParuse> biParameterExecDependencies = bum.getDependencies(biMetaModelParameter,
+								role);
 						try {
 							// get the result of the lov
 							IEngUserProfile profile = getUserProfile();
 
 							// get from cache, if available
 							LovResultCacheManager executionCacheManager = new LovResultCacheManager();
-							lovResult = executionCacheManager.getLovResultBum(profile, lovProvDet, biParameterExecDependencies, drivers, true,
-									request.getLocale());
+							lovResult = executionCacheManager.getLovResultBum(profile, lovProvDet,
+									biParameterExecDependencies, drivers, true, request.getLocale());
 
 							// get all the rows of the result
 							LovResultHandler lovResultHandler = new LovResultHandler(lovResult);
 							rows = lovResultHandler.getRows();
 
 						} catch (MissingLOVDependencyException mldaE) {
-							String localizedMessage = getLocalizedMessage("sbi.api.documentExecParameters.dependencyNotFill");
+							String localizedMessage = getLocalizedMessage(
+									"sbi.api.documentExecParameters.dependencyNotFill");
 							String msg = localizedMessage + ": " + mldaE.getDependsFrom();
 							throw new SpagoBIServiceException(SERVICE_NAME, msg);
 						} catch (Exception e) {
@@ -751,25 +791,30 @@ public class DataSetResource {
 								String columnfilter = (String) filtersJSON.get(SpagoBIConstants.COLUMN_FILTER);
 								String typeFilter = (String) filtersJSON.get(SpagoBIConstants.TYPE_FILTER);
 								String typeValueFilter = (String) filtersJSON.get(SpagoBIConstants.TYPE_VALUE_FILTER);
-								rows = DelegatedBasicListService.filterList(rows, valuefilter, typeValueFilter, columnfilter, typeFilter);
+								rows = DelegatedBasicListService.filterList(rows, valuefilter, typeValueFilter,
+										columnfilter, typeFilter);
 							}
 						} catch (JSONException e) {
-							throw new SpagoBIServiceException(SERVICE_NAME, "Impossible to read filter's configuration", e);
+							throw new SpagoBIServiceException(SERVICE_NAME, "Impossible to read filter's configuration",
+									e);
 						}
 						// END filtering the list by filtering toolbar
 
 						// START filtering for correlation (only for
 						// DependenciesPostProcessingLov, i.e. scripts, java classes and
 						// fixed lists)
-						if (lovProvDet instanceof DependenciesPostProcessingLov && selectedParameterValues != null && biParameterExecDependencies != null
-								&& biParameterExecDependencies.size() > 0) { // && contest != null && !contest.equals(MASSIVE_EXPORT)
-							rows = ((DependenciesPostProcessingLov) lovProvDet).processDependencies(rows, selectedParameterValues, biParameterExecDependencies);
+						if (lovProvDet instanceof DependenciesPostProcessingLov && selectedParameterValues != null
+								&& biParameterExecDependencies != null && !biParameterExecDependencies.isEmpty()) { // && contest != null && !contest.equals(MASSIVE_EXPORT)
+							rows = ((DependenciesPostProcessingLov) lovProvDet).processDependencies(rows,
+									selectedParameterValues, biParameterExecDependencies);
 						}
 						// END filtering for correlation
 
 						if (lovProvDet.getLovType() != null && lovProvDet.getLovType().contains("tree")) {
-							JSONArray valuesJSONArray = metaUtils.getChildrenForTreeLov(lovProvDet, rows, treeLovNodeLevel, treeLovNodeValue);
-							result = metaUtils.buildJsonResult("OK", "", null, valuesJSONArray, biparameterId).toString();
+							JSONArray valuesJSONArray = metaUtils.getChildrenForTreeLov(lovProvDet, rows,
+									treeLovNodeLevel, treeLovNodeValue);
+							result = metaUtils.buildJsonResult("OK", "", null, valuesJSONArray, biparameterId)
+									.toString();
 						} else {
 							valuesJSON = metaUtils.buildJSONForLOV(lovProvDet, rows, start, limit);
 							result = metaUtils.buildJsonResult("OK", "", valuesJSON, null, biparameterId).toString();
@@ -781,13 +826,16 @@ public class DataSetResource {
 
 			} catch (EMFUserError e1) {
 				// result = buildJsonResult("KO", e1.getMessage(), null,null).toString();
-				throw new SpagoBIServiceException(SERVICE_NAME, "Impossible to get document Execution Parameter EMFUserError", e1);
+				throw new SpagoBIServiceException(SERVICE_NAME,
+						"Impossible to get document Execution Parameter EMFUserError", e1);
 			}
 
 		} catch (IOException e2) {
-			throw new SpagoBIServiceException(SERVICE_NAME, "Impossible to get document Execution Parameter IOException", e2);
+			throw new SpagoBIServiceException(SERVICE_NAME,
+					"Impossible to get document Execution Parameter IOException", e2);
 		} catch (JSONException e2) {
-			throw new SpagoBIServiceException(SERVICE_NAME, "Impossible to get document Execution Parameter JSONException", e2);
+			throw new SpagoBIServiceException(SERVICE_NAME,
+					"Impossible to get document Execution Parameter JSONException", e2);
 		}
 
 		// return Response.ok(resultAsMap).build();
@@ -798,7 +846,7 @@ public class DataSetResource {
 	@Path("/{dsLabel}/admissibleValuesTree")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
 	public Response admissibleValuesTree(@Context HttpServletRequest req, @PathParam("dsLabel") String dsLabel)
-			throws EMFUserError, IOException, JSONException {
+			throws IOException, JSONException {
 
 		Map<String, Object> resultAsMap = new HashMap<>();
 
@@ -849,20 +897,21 @@ public class DataSetResource {
 				treeLovNodeLevel = new Integer(splittedNode[1]);
 			}
 
-			Map<String, Object> defaultValuesData = DocumentExecutionUtils.getLovDefaultValues(role, drivers, biObjectParameter, requestVal, treeLovNodeLevel,
-					treeLovNodeValue, req.getLocale());
+			Map<String, Object> defaultValuesData = DocumentExecutionUtils.getLovDefaultValues(role, drivers,
+					biObjectParameter, requestVal, treeLovNodeLevel, treeLovNodeValue, req.getLocale());
 
-			ArrayList<Map<String, Object>> result = (ArrayList<Map<String, Object>>) defaultValuesData.get(DocumentExecutionUtils.DEFAULT_VALUES);
+			ArrayList<Map<String, Object>> result = (ArrayList<Map<String, Object>>) defaultValuesData
+					.get(DocumentExecutionUtils.DEFAULT_VALUES);
 
-			if (result != null && result.size() > 0) {
+			if (result != null && !result.isEmpty()) {
 				resultAsMap.put("rows", result);
 			} else {
 				String qbeDatamart = getDatamartFromDataSet(ds);
 				MetaModel loadMetaModelByName = DAOFactory.getMetaModelsDAO().loadMetaModelByName(qbeDatamart);
 
-				List errorList = DocumentExecutionUtils.handleNormalExecutionError(this.getUserProfile(), datasetMetaModel, req,
-						this.getAttributeAsString("SBI_ENVIRONMENT"), role, biObjectParameter.getParameter().getModalityValue().getSelectionType(), null,
-						locale);
+				List errorList = DocumentExecutionUtils.handleNormalExecutionError(this.getUserProfile(),
+						datasetMetaModel, req, this.getAttributeAsString("SBI_ENVIRONMENT"), role,
+						biObjectParameter.getParameter().getModalityValue().getSelectionType(), null, locale);
 
 				resultAsMap.put("errors", errorList);
 			}
@@ -889,13 +938,13 @@ public class DataSetResource {
 	}
 
 	private void getParametersFromDataSet(Map<String, Object> ret, SbiDataSet ds) {
-		final List<HashMap<String, Object>> parametersArrayList = (List<HashMap<String, Object>>) ret.get("filterStatus");
+		final List<HashMap<String, Object>> parametersArrayList = (List<HashMap<String, Object>>) ret
+				.get("filterStatus");
 		for (DataSetParameterItem e : ds.getParametersList()) {
 			final Map<String, Object> metadata = new LinkedHashMap<>();
 
 			String name = e.getName();
 			String type = e.getType();
-			String defaultValue = e.getDefaultValue();
 			boolean multivalue = e.isMultivalue();
 
 			Map<String, Object> parameterAsMap = new LinkedHashMap<>();
@@ -921,7 +970,7 @@ public class DataSetResource {
 
 			metadata.put("colsMap", colPlaceholder2ColName);
 			metadata.put("descriptionColumn", "data");
-			metadata.put("invisibleColumns", Collections.EMPTY_LIST);
+			metadata.put("invisibleColumns", Collections.emptyList());
 			metadata.put("valueColumn", "data");
 			metadata.put("visibleColumns", Arrays.asList("data"));
 
@@ -938,8 +987,10 @@ public class DataSetResource {
 		return qbeDatamart;
 	}
 
-	private Response getDriversFromQbeDataSet(final String role, final Map<String, Object> resultAsMap, String businessModelName) {
-		final List<HashMap<String, Object>> parametersArrayList = (List<HashMap<String, Object>>) resultAsMap.get("filterStatus");
+	private Response getDriversFromQbeDataSet(final String role, final Map<String, Object> resultAsMap,
+			String businessModelName) {
+		final List<HashMap<String, Object>> parametersArrayList = (List<HashMap<String, Object>>) resultAsMap
+				.get("filterStatus");
 		final List<BusinessModelDriverRuntime> parameters = new ArrayList<>();
 		IMetaModelsDAO dao = DAOFactory.getMetaModelsDAO();
 		IParameterUseDAO parameterUseDAO = DAOFactory.getParameterUseDAO();
@@ -951,7 +1002,8 @@ public class DataSetResource {
 			// role = this.getUserProfile().getRoles().iterator().next().toString();
 			Locale locale = request.getLocale();
 			BusinessModelRuntime dum = new BusinessModelRuntime(this.getUserProfile(), locale);
-			parameters.addAll(BusinessModelOpenUtils.getParameters(businessModel, role, request.getLocale(), null, true, dum));
+			parameters.addAll(
+					BusinessModelOpenUtils.getParameters(businessModel, role, request.getLocale(), null, true, dum));
 		} catch (SpagoBIRestServiceException e) {
 			logger.debug(e.getCause(), e);
 			throw new SpagoBIRuntimeException(e.getMessage(), e);
@@ -1008,7 +1060,9 @@ public class DataSetResource {
 
 						String itemVal = valuesList.get(k);
 
-						String itemDescr = descriptionList.size() > k && descriptionList.get(k) != null ? descriptionList.get(k) : itemVal;
+						String itemDescr = descriptionList.size() > k && descriptionList.get(k) != null
+								? descriptionList.get(k)
+								: itemVal;
 
 						try {
 							// % character breaks decode method
@@ -1052,7 +1106,8 @@ public class DataSetResource {
 					}
 					paramValueLst.add(paramValues.toString());
 
-					String parDescrVal = paramDescriptionValues != null && paramDescriptionValues instanceof String ? paramDescriptionValues.toString()
+					String parDescrVal = paramDescriptionValues != null && paramDescriptionValues instanceof String
+							? paramDescriptionValues.toString()
 							: paramValues.toString();
 					if (!parDescrVal.contains("%")) {
 						try {
@@ -1091,7 +1146,8 @@ public class DataSetResource {
 				}
 
 				// hide the parameter if is mandatory and have one value in lov (no error parameter)
-				if (admissibleValues != null && admissibleValues.size() == 1 && objParameter.isMandatory() && !admissibleValues.get(0).containsKey("error")
+				if (admissibleValues != null && admissibleValues.size() == 1 && objParameter.isMandatory()
+						&& !admissibleValues.get(0).containsKey("error")
 						&& (objParameter.getDataDependencies() == null || objParameter.getDataDependencies().isEmpty())
 						&& (objParameter.getLovDependencies() == null || objParameter.getLovDependencies().isEmpty())) {
 					showParameterLov = false;
@@ -1110,7 +1166,8 @@ public class DataSetResource {
 			if (objParameter.getParType().equals("DATE_RANGE")) {
 				try {
 
-					ArrayList<HashMap<String, Object>> defaultValues = bmop.manageDataRange(businessModel, role, objParameter.getId());
+					ArrayList<HashMap<String, Object>> defaultValues = bmop.manageDataRange(businessModel, role,
+							objParameter.getId());
 					parameterAsMap.put("defaultValues", defaultValues);
 				} catch (SerializationException | EMFUserError | JSONException | IOException e) {
 					logger.debug("Filters DATE RANGE ERRORS ", e);
@@ -1121,12 +1178,15 @@ public class DataSetResource {
 			// convert the parameterValue from array of string in array of object
 			DefaultValuesList parameterValueList = new DefaultValuesList();
 			Object oVals = parameterAsMap.get("parameterValue");
-			Object oDescr = parameterAsMap.get("parameterDescription") != null ? parameterAsMap.get("parameterDescription") : new ArrayList<String>();
+			Object oDescr = parameterAsMap.get("parameterDescription") != null
+					? parameterAsMap.get("parameterDescription")
+					: new ArrayList<String>();
 
 			if (oVals != null) {
 				if (oVals instanceof List) {
 					// CROSS NAV : INPUT PARAM PARAMETER TARGET DOC IS STRING
-					if (oVals.toString().startsWith("[") && oVals.toString().endsWith("]") && parameterUse.getValueSelection().equals("man_in")) {
+					if (oVals.toString().startsWith("[") && oVals.toString().endsWith("]")
+							&& parameterUse.getValueSelection().equals("man_in")) {
 						List<String> valList = (ArrayList) oVals;
 						String stringResult = "";
 						for (int k = 0; k < valList.size(); k++) {
@@ -1177,7 +1237,9 @@ public class DataSetResource {
 				String parLab = objParameter.getDriver() != null && objParameter.getDriver().getParameter() != null
 						? objParameter.getDriver().getParameter().getLabel()
 						: "";
-				String useModLab = objParameter.getAnalyticalDriverExecModality() != null ? objParameter.getAnalyticalDriverExecModality().getLabel() : "";
+				String useModLab = objParameter.getAnalyticalDriverExecModality() != null
+						? objParameter.getAnalyticalDriverExecModality().getLabel()
+						: "";
 				String sessionKey = parLab + "_" + useModLab;
 
 				valueList = objParameter.getDefaultValues();
@@ -1249,7 +1311,8 @@ public class DataSetResource {
 
 			if (defaultValuesList != null) {
 				// Filter out null values
-				defaultValuesList.removeIf(e -> e.get("value") == JSONObject.NULL || e.get("description") == JSONObject.NULL);
+				defaultValuesList
+						.removeIf(e -> e.get("value") == JSONObject.NULL || e.get("description") == JSONObject.NULL);
 
 				// Fix JSON structure of admissible values
 				defaultValuesList.forEach(e -> {
@@ -1279,16 +1342,15 @@ public class DataSetResource {
 	}
 
 	private DatasetManagementAPI getDatasetManagementAPI() {
-		DatasetManagementAPI managementAPI = new DatasetManagementAPI(getUserProfile());
-		return managementAPI;
+		return new DatasetManagementAPI(getUserProfile());
 	}
 
 	private UserProfile getUserProfile() {
 		return UserProfileManager.getProfile();
 	}
 
-	protected List<SbiDataSet> getListOfGenericDatasets(int start, int limit, List<DataSetResourceFilter> filters, JSONObject ordering, List<Integer> tags)
-			throws JSONException, EMFUserError {
+	protected List<SbiDataSet> getListOfGenericDatasets(int start, int limit, List<DataSetResourceFilter> filters,
+			JSONObject ordering, List<Integer> tags) {
 
 		List<SbiDataSet> items = null;
 
@@ -1303,7 +1365,8 @@ public class DataSetResource {
 
 			if (filters != null) {
 				filters.forEach(filter -> {
-					daoFilter.add(ISbiDataSetDAO.createFilter(filter.getColumnFilter(), filter.getTypeFilter(), filter.getValueFilter()));
+					daoFilter.add(ISbiDataSetDAO.createFilter(filter.getColumnFilter(), filter.getTypeFilter(),
+							filter.getValueFilter()));
 				});
 			}
 
@@ -1327,7 +1390,8 @@ public class DataSetResource {
 		return items;
 	}
 
-	private List<? extends AbstractDataSetDTO> putActions(List<? extends AbstractDataSetDTO> ret, String typeDocWizard) throws EMFInternalError {
+	private List<? extends AbstractDataSetDTO> putActions(List<? extends AbstractDataSetDTO> ret,
+			String typeDocWizard) {
 
 		UserProfile userProfile = getUserProfile();
 
@@ -1346,7 +1410,8 @@ public class DataSetResource {
 
 	}
 
-	private void addActions(AbstractDataSetDTO dataset, String typeDocWizard, UserProfile userProfile, boolean isQBEEnginePresent, boolean isGeoEnginePresent) {
+	private void addActions(AbstractDataSetDTO dataset, String typeDocWizard, UserProfile userProfile,
+			boolean isQBEEnginePresent, boolean isGeoEnginePresent) {
 		try {
 			List<DataSetResourceAction> actions = dataset.getActions();
 			String currDataSetOwner = dataset.getOwner();
@@ -1366,8 +1431,8 @@ public class DataSetResource {
 
 			if (currDataSetType == null || !currDataSetType.equals(DataSetFactory.FEDERATED_DS_TYPE)) {
 				if (isQBEEnginePresent && (typeDocWizard == null || typeDocWizard.equalsIgnoreCase("REPORT"))) {
-					if (userProfile.getFunctionalities() != null
-							&& userProfile.getFunctionalities().contains(CommunityFunctionalityConstants.BUILD_QBE_QUERIES_FUNCTIONALITY)) {
+					if (userProfile.getFunctionalities() != null && userProfile.getFunctionalities()
+							.contains(CommunityFunctionalityConstants.BUILD_QBE_QUERIES_FUNCTIONALITY)) {
 						actions.add(ACTION_QBE);
 					}
 				}
@@ -1375,10 +1440,12 @@ public class DataSetResource {
 
 			try {
 				IDataSet actualDataset = DAOFactory.getDataSetDAO().loadDataSetById(dataset.getId());
-				new DatasetManagementAPI(getUserProfile()).canLoadData(actualDataset);
+				DatasetManagementAPI datasetManagementAPI = new DatasetManagementAPI(getUserProfile());
+				datasetManagementAPI.canLoadData(actualDataset);
 				actions.add(ACTION_LOAD_DATA);
 			} catch (ActionNotPermittedException e) {
-				logger.warn("User " + getUserProfile().getUserId() + " cannot load data for dataset with label " + dataset.getLabel());
+				logger.warn("User " + getUserProfile().getUserId() + " cannot load data for dataset with label "
+						+ dataset.getLabel());
 			}
 
 		} catch (Exception ex) {

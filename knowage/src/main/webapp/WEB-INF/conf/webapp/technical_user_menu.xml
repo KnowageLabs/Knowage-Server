@@ -109,7 +109,7 @@
 					functionality="ManageGlossaryTechnical"
 					url="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=glossaryTechnical" />				
 			<ITEM	title="#menu.timespan"
-					functionality="Timespan"
+					functionality="TimespanManagement"
 					url="${SPAGOBI_CONTEXT}/restful-services/publish?PUBLISHER=timespan" />	
 			<ITEM	title="#menu.calendar"
 					functionality="Calendar"

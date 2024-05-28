@@ -20,7 +20,7 @@
 		.service('channelMessaging', function() {
 		
 			this.sendMessage = function() {
-				window.parent.postMessage("close", "*");
+				window.parent.postMessage("close", location.origin);
 			}
 			
 		});

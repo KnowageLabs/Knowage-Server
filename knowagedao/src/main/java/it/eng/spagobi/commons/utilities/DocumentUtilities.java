@@ -45,13 +45,15 @@ public class DocumentUtilities {
 	 */
 	public static Map<String, License> getValidLicenses() {
 
-		Map<String, License> licenses = new HashMap<String, License>();
+		Map<String, License> licenses = new HashMap<>();
 		String message = "No class LicenseManager found.";
 		try {
 			String hostName = SpagoBIUtilities.getCurrentHostName();
 			Class<?> licenseManager = Class.forName("it.eng.knowage.tools.servermanager.utils.LicenseManager");
+			Method getInstanceMethod = licenseManager.getMethod("getInstance");
 			Method getLicensesMethod = licenseManager.getMethod("getLicenses", boolean.class, String.class);
-			licenses = (Map<String, License>) getLicensesMethod.invoke(null, true, hostName);
+			Object instance = getInstanceMethod.invoke(null);
+			licenses = (Map<String, License>) getLicensesMethod.invoke(instance, true, hostName);
 		} catch (IllegalAccessException e) {
 			logger.debug(message, e);
 		} catch (InvocationTargetException e) {

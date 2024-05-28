@@ -163,7 +163,8 @@ public class DataSetJSONSerializer implements Serializer {
 		JSONObject result = null;
 
 		if (!(o instanceof IDataSet)) {
-			throw new SerializationException("DataSetJSONSerializer is unable to serialize object of type: " + o.getClass().getName());
+			throw new SerializationException(
+					"DataSetJSONSerializer is unable to serialize object of type: " + o.getClass().getName());
 		}
 
 		try {
@@ -212,7 +213,8 @@ public class DataSetJSONSerializer implements Serializer {
 						jsonPar.put("type", type);
 						jsonPar.put("multiValue", multiValue);
 
-						Object defaultValueAsObject = ParameterManagerFactory.getInstance().defaultManager().fromBeToFe(type, defaultValue, multiValue);
+						Object defaultValueAsObject = ParameterManagerFactory.getInstance().defaultManager()
+								.fromBeToFe(type, defaultValue, multiValue);
 
 						jsonPar.put(ManageDatasets.DEFAULT_VALUE_PARAM, defaultValueAsObject);
 
@@ -344,7 +346,8 @@ public class DataSetJSONSerializer implements Serializer {
 						if (ckanFileType != null) {
 							result.put(CKAN_FILE_TYPE, ckanFileType);
 						}
-						String ckanCsvDelimiter = jsonConf.getString(CkanDataSetConstants.CKAN_CSV_FILE_DELIMITER_CHARACTER);
+						String ckanCsvDelimiter = jsonConf
+								.getString(CkanDataSetConstants.CKAN_CSV_FILE_DELIMITER_CHARACTER);
 						if (ckanCsvDelimiter != null) {
 							result.put(CKAN_CSV_FILE_DELIMITER_CHARACTER, ckanCsvDelimiter);
 						}
@@ -404,7 +407,8 @@ public class DataSetJSONSerializer implements Serializer {
 					// jsonConf.getString(DataSetConstants.QBE_SQL_QUERY));
 					result.put(QBE_JSON_QUERY, jsonConf.getString(DataSetConstants.QBE_JSON_QUERY));
 					result.put(QBE_DATA_SOURCE, jsonConf.getString(DataSetConstants.QBE_DATA_SOURCE));
-					Integer dataSourceId = DAOFactory.getDataSourceDAO().loadDataSourceByLabel(jsonConf.getString(DataSetConstants.QBE_DATA_SOURCE)).getDsId();
+					Integer dataSourceId = DAOFactory.getDataSourceDAO()
+							.loadDataSourceByLabel(jsonConf.getString(DataSetConstants.QBE_DATA_SOURCE)).getDsId();
 					result.put(QBE_DATA_SOURCE_ID, dataSourceId);
 					result.put(QBE_DATAMARTS, jsonConf.getString(DataSetConstants.QBE_DATAMARTS));
 				} else if (type.equalsIgnoreCase(DataSetConstants.DERIVED)) {
@@ -414,7 +418,8 @@ public class DataSetJSONSerializer implements Serializer {
 				} else if (type.equalsIgnoreCase(DataSetConstants.FEDERATED)) {
 					result.put(QBE_JSON_QUERY, jsonConf.getString(DataSetConstants.QBE_JSON_QUERY));
 					result.put(QBE_DATA_SOURCE, jsonConf.getString(DataSetConstants.QBE_DATA_SOURCE));
-					Integer dataSourceId = DAOFactory.getDataSourceDAO().loadDataSourceByLabel(jsonConf.getString(DataSetConstants.QBE_DATA_SOURCE)).getDsId();
+					Integer dataSourceId = DAOFactory.getDataSourceDAO()
+							.loadDataSourceByLabel(jsonConf.getString(DataSetConstants.QBE_DATA_SOURCE)).getDsId();
 					result.put(QBE_DATA_SOURCE_ID, dataSourceId);
 					result.put(FEDERATION_ID, ds.getDatasetFederation().getFederation_id());
 					result.put(FEDERATION_NAME, ds.getDatasetFederation().getName());
@@ -504,12 +509,14 @@ public class DataSetJSONSerializer implements Serializer {
 
 			UserProfile profile = UserProfileManager.getProfile();
 			try {
-				new DatasetManagementAPI(profile).canLoadData(ds);
+				DatasetManagementAPI datasetManagementAPI = new DatasetManagementAPI(profile);
+				datasetManagementAPI.canLoadData(ds);
 				result.put(CAN_LOAD_DATA, true);
 			} catch (ActionNotPermittedException e) {
 				logger.warn("User " + profile + " cannot preview the dataset with label " + ds.getLabel());
 				result.put(CAN_LOAD_DATA, false);
-				result.put(CANNOT_LOAD_DATA_MESSAGE, EngineMessageBundle.getMessage(e.getI18NCode(), "MessageFiles.messages", locale));
+				result.put(CANNOT_LOAD_DATA_MESSAGE,
+						EngineMessageBundle.getMessage(e.getI18NCode(), "MessageFiles.messages", locale));
 			}
 
 		} catch (Throwable t) {
@@ -517,7 +524,8 @@ public class DataSetJSONSerializer implements Serializer {
 			if (ds instanceof VersionedDataSet) {
 				ds = ((VersionedDataSet) ds).getWrappedDataset();
 			}
-			throw new SerializationException("An error occurred to dataset (" + ds.getLabel() + ") while serializing object: " + o, t);
+			throw new SerializationException(
+					"An error occurred to dataset (" + ds.getLabel() + ") while serializing object: " + o, t);
 		} finally {
 
 		}

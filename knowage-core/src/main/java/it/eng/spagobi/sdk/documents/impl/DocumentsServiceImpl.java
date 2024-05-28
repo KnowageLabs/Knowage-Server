@@ -32,6 +32,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.zip.ZipEntry;
@@ -43,8 +44,6 @@ import javax.activation.FileDataSource;
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.LogMF;
 import org.apache.log4j.Logger;
-import org.safehaus.uuid.UUID;
-import org.safehaus.uuid.UUIDGenerator;
 
 import it.eng.spago.base.RequestContainer;
 import it.eng.spago.base.ResponseContainer;
@@ -1182,8 +1181,7 @@ public class DocumentsServiceImpl extends AbstractSDKService implements Document
 		java.io.InputStream is = null;
 
 		try {
-			UUIDGenerator uuidGen = UUIDGenerator.getInstance();
-			UUID uuidObj = uuidGen.generateTimeBasedUUID();
+			UUID uuidObj = UUID.randomUUID();
 			String idCas = uuidObj.toString().replaceAll("-", "");
 			logger.debug("create temp file for jar");
 			String path = System.getProperty("java.io.tmpdir") + System.getProperty("file.separator") + idCas + ".jar";

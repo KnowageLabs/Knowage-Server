@@ -64,7 +64,6 @@ import it.eng.spago.event.IEventNotifier;
 import it.eng.spago.event.ServiceEndEvent;
 import it.eng.spago.event.ServiceStartEvent;
 import it.eng.spago.exception.EMFExceptionHandler;
-import it.eng.spago.navigation.LightNavigationManager;
 import it.eng.spago.navigation.Navigator;
 import it.eng.spago.presentation.Publisher;
 import it.eng.spago.presentation.PublisherConfiguration;
@@ -147,9 +146,11 @@ public class AdapterHTTP extends HttpServlet {
 	
 	private static HTTPUtilities httpUtils = new DefaultHTTPUtilities();
 
-	private void handleQueryStringField(HttpServletRequest request, SourceBean serviceReq, String queryStringFieldName) throws SourceBeanException {
+	private void handleQueryStringField(HttpServletRequest request, SourceBean serviceReq, String queryStringFieldName)
+			throws SourceBeanException {
 
-		String queryString = queryStringFieldName.substring(queryStringFieldName.indexOf("{") + 1, queryStringFieldName.indexOf("}"));
+		String queryString = queryStringFieldName.substring(queryStringFieldName.indexOf("{") + 1,
+				queryStringFieldName.indexOf("}"));
 
 		StringTokenizer st = new StringTokenizer(queryString, "&", false);
 
@@ -184,20 +185,24 @@ public class AdapterHTTP extends HttpServlet {
 		String path = ((String) requestContainer.getAttribute(HTTP_REQUEST_SERVLET_PATH)).toUpperCase();
 		try {
 			if (path.endsWith(Constants.ACTION_URL_PATTERN)) {
-				serviceRequest.setAttribute(Constants.ACTION_NAME, path.substring(1, path.length() - Constants.ACTION_URL_PATTERN.length()));
+				serviceRequest.setAttribute(Constants.ACTION_NAME,
+						path.substring(1, path.length() - Constants.ACTION_URL_PATTERN.length()));
 			} else if (path.endsWith(Constants.PAGE_URL_PATTERN)) {
-				serviceRequest.setAttribute(Constants.PAGE, path.substring(1, path.length() - Constants.PAGE_URL_PATTERN.length()));
+				serviceRequest.setAttribute(Constants.PAGE,
+						path.substring(1, path.length() - Constants.PAGE_URL_PATTERN.length()));
 			}
 		} catch (SourceBeanException ex) {
 			TracerSingleton.log(Constants.NOME_MODULO, TracerSingleton.WARNING, "AdapterHTTP::handleServiceName: ", ex);
 		}
 	}
 
-	private void handleSuspendResume(SourceBean serviceRequest, RequestContainer requestContainer) throws SourceBeanException {
+	private void handleSuspendResume(SourceBean serviceRequest, RequestContainer requestContainer)
+			throws SourceBeanException {
 		String deleteSuspendResumeId = (String) serviceRequest.getAttribute("DELETE_SUSPEND_RESUME_ID");
 		if ((deleteSuspendResumeId != null) && (deleteSuspendResumeId.trim().length() > 0)) {
-			TracerSingleton.log(Constants.NOME_MODULO, TracerSingleton.INFORMATION, "AdapterHTTP::service: DELETE_SUSPEND_RESUME_ID [" + deleteSuspendResumeId
-					+ "] FOUND IN SERVICE REQUEST : DELETE SUSPEND RESUME CONTAINERS");
+			TracerSingleton.log(Constants.NOME_MODULO, TracerSingleton.INFORMATION,
+					"AdapterHTTP::service: DELETE_SUSPEND_RESUME_ID [" + deleteSuspendResumeId
+							+ "] FOUND IN SERVICE REQUEST : DELETE SUSPEND RESUME CONTAINERS");
 			SessionContainer aPermanentContainer = requestContainer.getSessionContainer().getPermanentContainer();
 			SourceBean suspendedResumeContainers = (SourceBean) aPermanentContainer.getAttribute(deleteSuspendResumeId);
 			/*
@@ -216,12 +221,14 @@ public class AdapterHTTP extends HttpServlet {
 		String suspendResumeId = (String) serviceRequest.getAttribute("SUSPEND_RESUME_ID");
 		if ((suspendResumeId != null) && (suspendResumeId.trim().length() > 0)) {
 			TracerSingleton.log(Constants.NOME_MODULO, TracerSingleton.INFORMATION,
-					"AdapterHTTP::service: SUSPEND_RESUME_ID [" + suspendResumeId + "] FOUND IN SERVICE REQUEST SUSPEND CURRENT SERVICE REQUEST");
+					"AdapterHTTP::service: SUSPEND_RESUME_ID [" + suspendResumeId
+							+ "] FOUND IN SERVICE REQUEST SUSPEND CURRENT SERVICE REQUEST");
 			SessionContainer aPermanentContainer = requestContainer.getSessionContainer().getPermanentContainer();
 			SourceBean suspendedResumeContainers = (SourceBean) aPermanentContainer.getAttribute(suspendResumeId);
 
 			if (suspendedResumeContainers == null) {
-				TracerSingleton.log(Constants.NOME_MODULO, TracerSingleton.WARNING, "AdapterHTTP::service: SUSPENDED-RESUME-CONTAINER NOT FOUND");
+				TracerSingleton.log(Constants.NOME_MODULO, TracerSingleton.WARNING,
+						"AdapterHTTP::service: SUSPENDED-RESUME-CONTAINER NOT FOUND");
 			} else if (suspendedResumeContainers.getAttribute(Constants.SERVICE_REQUEST) != null) {
 				TracerSingleton.log(Constants.NOME_MODULO, TracerSingleton.INFORMATION,
 						"AdapterHTTP::service: SUSPENDED-RESUME-CONTAINER CONTAINS ALREADY A SERVICE REQUEST OVERWRITE IT");
@@ -265,7 +272,8 @@ public class AdapterHTTP extends HttpServlet {
 		}
 	}
 
-	private void handleSimpleForm(HttpServletRequest request, RequestContextIFace requestContext) throws SourceBeanException {
+	private void handleSimpleForm(HttpServletRequest request, RequestContextIFace requestContext)
+			throws SourceBeanException {
 		SourceBean serviceRequest = requestContext.getServiceRequest();
 		Enumeration names = request.getParameterNames();
 		while (names.hasMoreElements()) {
@@ -302,9 +310,11 @@ public class AdapterHTTP extends HttpServlet {
 			// Retrieve LOOP responseContainer, if any
 			ResponseContainer loopbackResponseContainer = ResponseContainer.getResponseContainer();
 
+			// TODO ML
 			RequestContainer requestContainer = new RequestContainer();
 			RequestContainer.setRequestContainer(requestContainer);
 
+			// TODO ML
 			ResponseContainer responseContainer = new ResponseContainer();
 			ResponseContainer.setResponseContainer(responseContainer);
 
@@ -321,7 +331,8 @@ public class AdapterHTTP extends HttpServlet {
 
 			boolean loopback = (request.getAttribute(Constants.PUBLISHING_MODE_LOOPBACK) != null);
 			if (loopback) {
-				TracerSingleton.log(Constants.NOME_MODULO, TracerSingleton.DEBUG, "AdapterHTTP::service: loop-back rilevato");
+				TracerSingleton.log(Constants.NOME_MODULO, TracerSingleton.DEBUG,
+						"AdapterHTTP::service: loop-back rilevato");
 
 				// remove from the request the loopback attribute
 				request.removeAttribute(Constants.PUBLISHING_MODE_LOOPBACK);
@@ -365,10 +376,12 @@ public class AdapterHTTP extends HttpServlet {
 				emfErrorHandler = new EMFErrorHandler();
 			} // if (loopbackResponseContainer != null) else
 
-			// ***************** NAVIGATION CONTROL *******************************************************
-			serviceRequest = LightNavigationManager.controlLightNavigation(request, serviceRequest);
-			requestContainer.setServiceRequest(serviceRequest);
-			// ********************************************************************************************
+			// @formatter:off
+			// TODO ML: // ***************** NAVIGATION CONTROL *******************************************************
+			// TODO ML: serviceRequest = LightNavigationManager.controlLightNavigation(request, serviceRequest);
+			// TODO ML: requestContainer.setServiceRequest(serviceRequest);
+			// TODO ML: // ********************************************************************************************
+			// @formatter:on
 
 			Exception serviceException = null;
 			CoordinatorIFace coordinator = null;
@@ -385,13 +398,15 @@ public class AdapterHTTP extends HttpServlet {
 				requestContainer.setInternalRequest(request);
 				requestContainer.setInternalResponse(response);
 				requestContainer.setAdapterConfig(getServletConfig());
-				TracerSingleton.log(Constants.NOME_MODULO, TracerSingleton.DEBUG, "AdapterHTTP::service: requestContainer", requestContainer);
-				TracerSingleton.log(Constants.NOME_MODULO, TracerSingleton.DEBUG, "AdapterHTTP::service: sessionContainer",
-						requestContainer.getSessionContainer());
+				TracerSingleton.log(Constants.NOME_MODULO, TracerSingleton.DEBUG,
+						"AdapterHTTP::service: requestContainer", requestContainer);
+				TracerSingleton.log(Constants.NOME_MODULO, TracerSingleton.DEBUG,
+						"AdapterHTTP::service: sessionContainer", requestContainer.getSessionContainer());
 
 				SourceBean serviceResponse = new SourceBean(Constants.SERVICE_RESPONSE);
 				responseContainer.setServiceResponse(serviceResponse);
 
+				// TODO ML
 				checkSession(session, requestContext);
 				Navigator.checkNavigation(requestContainer);
 
@@ -403,9 +418,11 @@ public class AdapterHTTP extends HttpServlet {
 
 				coordinator = DispatcherManager.getCoordinator(requestContext);
 				if (coordinator == null) {
-					TracerSingleton.log(Constants.NOME_MODULO, TracerSingleton.WARNING, "AdapterHTTP::service: coordinator nullo !");
+					TracerSingleton.log(Constants.NOME_MODULO, TracerSingleton.WARNING,
+							"AdapterHTTP::service: coordinator nullo !");
 					serviceException = new Exception("Coordinatore non trovato");
-					emfErrorHandler.addError(new EMFInternalError(EMFErrorSeverity.ERROR, "Coordinatore non trovato !"));
+					emfErrorHandler
+							.addError(new EMFInternalError(EMFErrorSeverity.ERROR, "Coordinatore non trovato !"));
 				} // if (coordinator == null)
 				else {
 					((RequestContextIFace) coordinator).setRequestContext(requestContext);
@@ -429,15 +446,18 @@ public class AdapterHTTP extends HttpServlet {
 			// nel caso in cui sia attiva la persistenza della sessione
 			// forza la scrittura sul database
 			synchronized (session) {
-				session.setAttribute(Constants.REQUEST_CONTAINER, session.getAttribute(Constants.REQUEST_CONTAINER));
+				// TODO ML: session.setAttribute(Constants.REQUEST_CONTAINER, session.getAttribute(Constants.REQUEST_CONTAINER));
 			} // synchronized (session)
 
-			TracerSingleton.log(Constants.NOME_MODULO, TracerSingleton.DEBUG, "AdapterHTTP::service: responseContainer", responseContainer);
-			TracerSingleton.log(Constants.NOME_MODULO, TracerSingleton.DEBUG, "AdapterHTTP::service: sessionContainer", requestContainer.getSessionContainer());
+			TracerSingleton.log(Constants.NOME_MODULO, TracerSingleton.DEBUG, "AdapterHTTP::service: responseContainer",
+					responseContainer);
+			TracerSingleton.log(Constants.NOME_MODULO, TracerSingleton.DEBUG, "AdapterHTTP::service: sessionContainer",
+					requestContainer.getSessionContainer());
 
 			if (serializeSession) {
 				TracerSingleton.log(Constants.NOME_MODULO, TracerSingleton.DEBUG,
-						"AdapterHTTP::service: sessionContainer size [" + Serializer.serialize(requestContainer.getSessionContainer()).length + "]");
+						"AdapterHTTP::service: sessionContainer size ["
+								+ Serializer.serialize(requestContainer.getSessionContainer()).length + "]");
 			}
 
 			render(requestContext, serviceException);
@@ -446,6 +466,7 @@ public class AdapterHTTP extends HttpServlet {
 			TracerSingleton.log(Constants.NOME_MODULO, TracerSingleton.CRITICAL, "AdapterHTTP::service: ", ex);
 		} // catch (Excpetion ex) try
 		finally {
+			// TODO ML
 			RequestContainer.delRequestContainer();
 			ResponseContainer.delResponseContainer();
 			if (monitor != null) {
@@ -458,12 +479,13 @@ public class AdapterHTTP extends HttpServlet {
 
 		} // finally
 	} // public void service(HttpServletRequest request, HttpServletResponse
-		// response) throws IOException, ServletException
+		 // response) throws IOException, ServletException
 
 	private void processFileField(final FileItem item, RequestContextIFace requestContext) throws Exception {
 		String uploadManagerName = (String) ConfigSingleton.getInstance().getAttribute("UPLOAD.UPLOAD-MANAGER.NAME");
 		if (uploadManagerName == null) {
-			TracerSingleton.log(Constants.NOME_MODULO, TracerSingleton.CRITICAL, "AdapterHTTP::processFileField: metodo di upload non selezionato");
+			TracerSingleton.log(Constants.NOME_MODULO, TracerSingleton.CRITICAL,
+					"AdapterHTTP::processFileField: metodo di upload non selezionato");
 		}
 
 		IUploadHandler uploadHandler = UploadFactory.getHandler(uploadManagerName);
@@ -486,7 +508,8 @@ public class AdapterHTTP extends HttpServlet {
 			isRequiredNewSession = newSessionRequestAttr != null && newSessionRequestAttr.equalsIgnoreCase("TRUE"); // Zerbetto on 25-02-2008
 		} // if (session.isNew())
 		synchronized (session) {
-			RequestContainer parentRequestContainer = (RequestContainer) session.getAttribute(Constants.REQUEST_CONTAINER);
+			RequestContainer parentRequestContainer = (RequestContainer) session
+					.getAttribute(Constants.REQUEST_CONTAINER);
 			if (!Navigator.isNavigatorEnabled()) {
 				if (parentRequestContainer == null)
 					requestContainer.setSessionContainer(new SessionContainer(true));
@@ -500,15 +523,16 @@ public class AdapterHTTP extends HttpServlet {
 					requestContainer.setParent(parentRequestContainer);
 				} // if (parentRequestContainer == null) else
 			} // if (!Navigator.isNavigatorEnabled())
-			session.setAttribute(Constants.REQUEST_CONTAINER, requestContainer);
+				 // TODO ML: session.setAttribute(Constants.REQUEST_CONTAINER, requestContainer);
 		} // synchronized (session)
 		if (!isRequestedSessionIdValid) {
 			if (!isRequiredNewSession) { // Zerbetto on 25-02-2008
-				TracerSingleton.log(Constants.NOME_MODULO, TracerSingleton.WARNING, "AdapterHTTP::service: sessione scaduta !");
+				TracerSingleton.log(Constants.NOME_MODULO, TracerSingleton.WARNING,
+						"AdapterHTTP::service: sessione scaduta !");
 				throw new SessionExpiredException(EMFErrorSeverity.ERROR, "Expired Session");
 			} // Zerbetto on 25-02-2008
 		} // if (!isRequestedSessionIdValid)
-			// end modifications by Zerbetto on 25-02-2008: NEW_SESSION parameter can force a new session
+			 // end modifications by Zerbetto on 25-02-2008: NEW_SESSION parameter can force a new session
 	}
 
 	private void render(RequestContextIFace requestContext, Exception serviceException) throws Exception {
@@ -518,7 +542,8 @@ public class AdapterHTTP extends HttpServlet {
 		if ((isHttpResponseFreezed == null) || (!isHttpResponseFreezed.booleanValue())) {
 
 			// Retrieve publisher configuration for current service
-			PublisherConfiguration publisherConfig = Publisher.getPublisherConfiguration(requestContext, serviceException);
+			PublisherConfiguration publisherConfig = Publisher.getPublisherConfiguration(requestContext,
+					serviceException);
 
 			try {
 				// Retrieve renderer according to publisher type and channel type
@@ -538,9 +563,10 @@ public class AdapterHTTP extends HttpServlet {
 			}
 
 		} // if ((isHttpResponseFreezed == null) ||
-			// (!isHttpResponseFreezed.getBoolean()))
+			 // (!isHttpResponseFreezed.getBoolean()))
 		else
-			TracerSingleton.log(Constants.NOME_MODULO, TracerSingleton.DEBUG, "AdapterHTTP::service: http response congelata");
+			TracerSingleton.log(Constants.NOME_MODULO, TracerSingleton.DEBUG,
+					"AdapterHTTP::service: http response congelata");
 	}
 
 	private void setHttpRequestData(HttpServletRequest request, RequestContainer requestContainer) {
@@ -565,9 +591,12 @@ public class AdapterHTTP extends HttpServlet {
 		requestContainer.setAttribute(HTTP_REQUEST_SERVLET_PATH, request.getServletPath());
 		if (request.getUserPrincipal() != null)
 			requestContainer.setAttribute(HTTP_REQUEST_USER_PRINCIPAL, request.getUserPrincipal());
-		requestContainer.setAttribute(HTTP_REQUEST_REQUESTED_SESSION_ID_FROM_COOKIE, String.valueOf(request.isRequestedSessionIdFromCookie()));
-		requestContainer.setAttribute(HTTP_REQUEST_REQUESTED_SESSION_ID_FROM_URL, String.valueOf(request.isRequestedSessionIdFromURL()));
-		requestContainer.setAttribute(HTTP_REQUEST_REQUESTED_SESSION_ID_VALID, String.valueOf(request.isRequestedSessionIdValid()));
+		requestContainer.setAttribute(HTTP_REQUEST_REQUESTED_SESSION_ID_FROM_COOKIE,
+				String.valueOf(request.isRequestedSessionIdFromCookie()));
+		requestContainer.setAttribute(HTTP_REQUEST_REQUESTED_SESSION_ID_FROM_URL,
+				String.valueOf(request.isRequestedSessionIdFromURL()));
+		requestContainer.setAttribute(HTTP_REQUEST_REQUESTED_SESSION_ID_VALID,
+				String.valueOf(request.isRequestedSessionIdValid()));
 		requestContainer.setAttribute(HTTP_REQUEST_SECURE, String.valueOf(request.isSecure()));
 		Enumeration headerNames = request.getHeaderNames();
 		while (headerNames.hasMoreElements()) {

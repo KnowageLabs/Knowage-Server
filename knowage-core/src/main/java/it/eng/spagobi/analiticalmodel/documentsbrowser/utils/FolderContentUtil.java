@@ -73,8 +73,8 @@ public class FolderContentUtil {
 	public JSONObject getFolderContent(LowFunctionality folder, SourceBean request, SourceBean response,
 			HttpServletRequest httpRequest, SessionContainer sessCont) throws Exception {
 
-		List functionalities;
-		List objects;
+		List<LowFunctionality> functionalities;
+		List<BIObject> objects;
 		boolean isHome = false;
 		// Check if there is folder specified as home for the document browser (Property in SBI_CONFIG with label SPAGOBI.DOCUMENTBROWSER.HOME)
 		if (folder == null) {
@@ -96,10 +96,8 @@ public class FolderContentUtil {
 		// ------------------
 
 		// getting default folder (root)
-		// LowFunctionality rootFunct = DAOFactory.getLowFunctionalityDAO().loadRootLowFunctionality(false);
 		if (folder == null || String.valueOf(folder.getId()).equalsIgnoreCase(ROOT_NODE_ID)) {
 			folder = DAOFactory.getLowFunctionalityDAO().loadRootLowFunctionality(false);
-			// folder = DAOFactory.getLowFunctionalityDAO().loadLowFunctionalityByID(rootFunct.getId(), false);
 		}
 
 		SessionContainer permCont = sessCont.getPermanentContainer();
@@ -112,7 +110,7 @@ public class FolderContentUtil {
 		}
 
 		// Recursive view Management: Get all the documents inside a folder and his subfolders with a recursive visit
-		List allSubDocuments = null;
+		List<BIObject> allSubDocuments = null;
 		Config documentBrowserRecursiveConfig = DAOFactory.getSbiConfigDAO()
 				.loadConfigParametersByLabel("SPAGOBI.DOCUMENTBROWSER.RECURSIVE");
 		if (documentBrowserRecursiveConfig.isActive()) {
@@ -124,14 +122,12 @@ public class FolderContentUtil {
 		// ------------
 
 		// getting children documents
-		// LowFunctionality lowFunct = DAOFactory.getLowFunctionalityDAO().loadLowFunctionalityByID(functID, true);
-		// objects = lowFunct.getBiObjects();
 		if (allSubDocuments == null) {
-			List tmpObjects = DAOFactory.getBIObjectDAO().loadBIObjects(folder.getId(), profile, isHome);
-			objects = new ArrayList();
+			List<BIObject> tmpObjects = DAOFactory.getBIObjectDAO().loadBIObjects(folder.getId(), profile, isHome);
+			objects = new ArrayList<>();
 			if (tmpObjects != null) {
-				for (Iterator it = tmpObjects.iterator(); it.hasNext();) {
-					BIObject obj = (BIObject) it.next();
+				for (Iterator<BIObject> it = tmpObjects.iterator(); it.hasNext();) {
+					BIObject obj = it.next();
 					if (ObjectsAccessVerifier.canSee(obj, profile)) {
 						objects.add(obj);
 					}
@@ -148,12 +144,6 @@ public class FolderContentUtil {
 		DocumentsJSONDecorator.decorateDocuments(documentsJSON, profile, folder);
 
 		JSONObject documentsResponseJSON = createJSONResponseDocuments(documentsJSON);
-
-		// getting children folders
-		/*
-		 * if (isRoot) functionalities = DAOFactory.getLowFunctionalityDAO().loadUserFunctionalities(true, false, profile); else functionalities =
-		 * DAOFactory.getLowFunctionalityDAO().loadChildFunctionalities(Integer.valueOf(functID), false);
-		 */
 
 		functionalities = DAOFactory.getLowFunctionalityDAO().loadUserFunctionalities(folder.getId(), false, profile);
 
@@ -190,17 +180,17 @@ public class FolderContentUtil {
 	}
 
 	// Get All Documents inside a folder and his sub-folders with recursive visit
-	private List getAllSubDocuments(String functID, IEngUserProfile profile, Boolean isHome)
+	private List<BIObject> getAllSubDocuments(String functID, IEngUserProfile profile, Boolean isHome)
 			throws NumberFormatException, EMFUserError, EMFInternalError {
-		List allDocuments = new ArrayList();
+		List<BIObject> allDocuments = new ArrayList<>();
 
-		List tmpObjects;
+		List<BIObject> tmpObjects;
 
 		tmpObjects = DAOFactory.getBIObjectDAO().loadBIObjects(Integer.valueOf(functID), profile, isHome);
-		List objects = new ArrayList();
+		List<BIObject> objects = new ArrayList<>();
 		if (tmpObjects != null) {
-			for (Iterator it = tmpObjects.iterator(); it.hasNext();) {
-				BIObject obj = (BIObject) it.next();
+			for (Iterator<BIObject> it = tmpObjects.iterator(); it.hasNext();) {
+				BIObject obj = it.next();
 				if (ObjectsAccessVerifier.checkProfileVisibility(obj, profile))
 					objects.add(obj);
 			}
@@ -211,8 +201,8 @@ public class FolderContentUtil {
 		List<LowFunctionality> functionalities = DAOFactory.getLowFunctionalityDAO()
 				.loadUserFunctionalities(Integer.valueOf(functID), true, profile);
 		for (LowFunctionality functionality : functionalities) {
-			Set folderDocuments = new HashSet();
-			Set subDocuments = visitFolder(functionality.getId(), folderDocuments, profile);
+			Set<BIObject> folderDocuments = new HashSet<>();
+			Set<BIObject> subDocuments = visitFolder(functionality.getId(), folderDocuments, profile);
 			allDocuments.addAll(subDocuments);
 		}
 
@@ -220,15 +210,15 @@ public class FolderContentUtil {
 
 	}
 
-	public Set visitFolder(Integer functID, Set allDocuments, IEngUserProfile profile)
+	public Set<BIObject> visitFolder(Integer functID, Set<BIObject> allDocuments, IEngUserProfile profile)
 			throws EMFUserError, EMFInternalError, NumberFormatException {
-		List tmpObjects;
+		List<BIObject> tmpObjects;
 
-		tmpObjects = DAOFactory.getBIObjectDAO().loadBIObjects(Integer.valueOf(functID), profile, false);
-		List objects = new ArrayList();
+		tmpObjects = DAOFactory.getBIObjectDAO().loadBIObjects(functID, profile, false);
+		List<BIObject> objects = new ArrayList<>();
 		if (tmpObjects != null) {
-			for (Iterator it = tmpObjects.iterator(); it.hasNext();) {
-				BIObject obj = (BIObject) it.next();
+			for (Iterator<BIObject> it = tmpObjects.iterator(); it.hasNext();) {
+				BIObject obj = it.next();
 				if (ObjectsAccessVerifier.checkProfileVisibility(obj, profile))
 					objects.add(obj);
 			}
@@ -236,29 +226,15 @@ public class FolderContentUtil {
 
 		allDocuments.addAll(objects);
 
-		List<LowFunctionality> functionalities = DAOFactory.getLowFunctionalityDAO()
-				.loadUserFunctionalities(Integer.valueOf(functID), true, profile);
+		List<LowFunctionality> functionalities = DAOFactory.getLowFunctionalityDAO().loadUserFunctionalities(functID,
+				true, profile);
 		for (LowFunctionality functionality : functionalities) {
-			Set subDocuments = visitFolder(functionality.getId(), allDocuments, profile);
+			Set<BIObject> subDocuments = visitFolder(functionality.getId(), allDocuments, profile);
 			allDocuments.addAll(subDocuments);
 		}
 
 		return allDocuments;
 
-	}
-
-	/**
-	 * Creates a json array to display add button or not
-	 *
-	 * @param rows
-	 * @return
-	 * @throws JSONException
-	 */
-	private JSONObject createJSONResponseForAdd(boolean canCreate) throws JSONException {
-		JSONObject results;
-		results = new JSONObject();
-		results.put("can-add", Boolean.valueOf(canCreate));
-		return results;
 	}
 
 	/**
@@ -328,7 +304,7 @@ public class FolderContentUtil {
 	 */
 	public boolean checkRequiredFolder(String folderIdStr, IEngUserProfile profile) {
 		try {
-			int folderId = new Integer(folderIdStr);
+			int folderId = Integer.parseInt(folderIdStr);
 			logger.debug("Folder id is " + folderId);
 			LowFunctionality folder = DAOFactory.getLowFunctionalityDAO().loadLowFunctionalityByID(folderId, false);
 			logger.debug("Folder is " + folder);

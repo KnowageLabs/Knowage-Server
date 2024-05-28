@@ -26,7 +26,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
 import java.nio.file.Files;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Enumeration;
@@ -35,12 +34,12 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.UUID;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.naming.NamingException;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -62,10 +61,7 @@ import org.eclipse.emf.ecore.util.ECrossReferenceAdapter;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.safehaus.uuid.UUID;
-import org.safehaus.uuid.UUIDGenerator;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.NullNode;
@@ -192,7 +188,8 @@ public class MetaService extends AbstractSpagoBIResource {
 
 		try {
 			IMetaModelsDAO businessModelsDAO = DAOFactory.getMetaModelsDAO();
-			businessModelsDAO.setUserProfile((IEngUserProfile) req.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE));
+			businessModelsDAO
+					.setUserProfile((IEngUserProfile) req.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE));
 
 			EmfXmiSerializer serializer = new EmfXmiSerializer();
 			Content lastFileModelContent = businessModelsDAO.lastFileModelMeta(bmId);
@@ -214,7 +211,8 @@ public class MetaService extends AbstractSpagoBIResource {
 
 			return Response.ok(translatedModel.toString()).build();
 
-		} catch (Throwable t) {			logger.error("Impossibile to load the model", t);
+		} catch (Throwable t) {
+			logger.error("Impossibile to load the model", t);
 			throw new SpagoBIServiceException(req.getPathInfo(), t);
 		}
 	}
@@ -233,7 +231,8 @@ public class MetaService extends AbstractSpagoBIResource {
 			BusinessModel businessModel = model.getBusinessModels().get(0);
 
 			BusinessModelInitializer businessModelInitializer = new BusinessModelInitializer();
-			List<Pair<BusinessRelationship, Integer>> incorrectRelationships = businessModelInitializer.checkRelationshipsConstraints(businessModel);
+			List<Pair<BusinessRelationship, Integer>> incorrectRelationships = businessModelInitializer
+					.checkRelationshipsConstraints(businessModel);
 
 			JSONObject checksResult = new JSONObject();
 			JSONArray checksArray = new JSONArray();
@@ -293,7 +292,8 @@ public class MetaService extends AbstractSpagoBIResource {
 			serializer.serialize(model, filee);
 
 			IMetaModelsDAO businessModelsDAO = DAOFactory.getMetaModelsDAO();
-			businessModelsDAO.setUserProfile((IEngUserProfile) req.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE));
+			businessModelsDAO
+					.setUserProfile((IEngUserProfile) req.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE));
 			Content content = new Content();
 			byte[] bytes = filee.toByteArray();
 			content.setFileName(modelName + ".sbimodel");
@@ -337,7 +337,8 @@ public class MetaService extends AbstractSpagoBIResource {
 			applyBusinessClass(newBM, model);
 
 			JSONObject jsonModel = createJson(model);
-			JsonNode patch = JsonDiff.asJson(mapper.readTree(oldJsonModel.toString()), mapper.readTree(jsonModel.toString()));
+			JsonNode patch = JsonDiff.asJson(mapper.readTree(oldJsonModel.toString()),
+					mapper.readTree(jsonModel.toString()));
 
 			return Response.ok(patch.toString()).build();
 		} catch (IOException | JSONException e) {
@@ -350,7 +351,8 @@ public class MetaService extends AbstractSpagoBIResource {
 
 	@POST
 	@Path("moveBusinessClass")
-	public String moveBusinessClass(@Context HttpServletRequest req) throws IOException, JSONException, SpagoBIException {
+	public String moveBusinessClass(@Context HttpServletRequest req)
+			throws IOException, JSONException, SpagoBIException {
 		JSONObject jsonRoot = RestUtilities.readBodyAsJSONObject(req);
 		Model model = (Model) req.getSession().getAttribute(EMF_MODEL);
 		setProfileDialectThreadLocal(model);
@@ -407,7 +409,8 @@ public class MetaService extends AbstractSpagoBIResource {
 			applyRelationships(rel, bm);
 
 			JSONObject jsonModel = createJson(model);
-			JsonNode patch = JsonDiff.asJson(mapper.readTree(oldJsonModel.toString()), mapper.readTree(jsonModel.toString()));
+			JsonNode patch = JsonDiff.asJson(mapper.readTree(oldJsonModel.toString()),
+					mapper.readTree(jsonModel.toString()));
 
 			return Response.ok(patch.toString()).build();
 		} catch (IOException | JSONException e) {
@@ -434,7 +437,8 @@ public class MetaService extends AbstractSpagoBIResource {
 			applyDiff(jsonRoot, model);
 			JSONObject jsonModel = createJson(model);
 			ObjectMapper mapper = new ObjectMapper();
-			JsonNode patch = JsonDiff.asJson(mapper.readTree(oldJsonModel.toString()), mapper.readTree(jsonModel.toString()));
+			JsonNode patch = JsonDiff.asJson(mapper.readTree(oldJsonModel.toString()),
+					mapper.readTree(jsonModel.toString()));
 
 			return Response.ok(patch.toString()).build();
 		} catch (IOException | JSONException e) {
@@ -575,14 +579,15 @@ public class MetaService extends AbstractSpagoBIResource {
 
 			// Adding join relationships to BusinessView
 			for (BusinessViewInnerJoinRelationshipDescriptor businessViewInnerJoinRelationshipDescriptor : innerJoinRelationshipDescriptors) {
-				BusinessViewInnerJoinRelationship innerJoinRelationship = businessModelInitializer.addBusinessViewInnerJoinRelationship(bm,
-						businessViewInnerJoinRelationshipDescriptor);
+				BusinessViewInnerJoinRelationship innerJoinRelationship = businessModelInitializer
+						.addBusinessViewInnerJoinRelationship(bm, businessViewInnerJoinRelationshipDescriptor);
 				bw.getJoinRelationships().add(innerJoinRelationship);
 			}
 
 			JSONObject jsonModel = createJson(model);
 			ObjectMapper mapper = new ObjectMapper();
-			JsonNode patch = JsonDiff.asJson(mapper.readTree(oldJsonModel.toString()), mapper.readTree(jsonModel.toString()));
+			JsonNode patch = JsonDiff.asJson(mapper.readTree(oldJsonModel.toString()),
+					mapper.readTree(jsonModel.toString()));
 
 			return Response.ok(patch.toString()).build();
 		} catch (IOException | JSONException e) {
@@ -626,7 +631,8 @@ public class MetaService extends AbstractSpagoBIResource {
 
 			JSONObject jsonModel = createJson(model);
 			ObjectMapper mapper = new ObjectMapper();
-			JsonNode patch = JsonDiff.asJson(mapper.readTree(oldJsonModel.toString()), mapper.readTree(jsonModel.toString()));
+			JsonNode patch = JsonDiff.asJson(mapper.readTree(oldJsonModel.toString()),
+					mapper.readTree(jsonModel.toString()));
 
 			return Response.ok(patch.toString()).build();
 		} catch (IOException | JSONException e) {
@@ -671,7 +677,8 @@ public class MetaService extends AbstractSpagoBIResource {
 
 			JSONObject jsonModel = createJson(model);
 			ObjectMapper mapper = new ObjectMapper();
-			JsonNode patch = JsonDiff.asJson(mapper.readTree(oldJsonModel.toString()), mapper.readTree(jsonModel.toString()));
+			JsonNode patch = JsonDiff.asJson(mapper.readTree(oldJsonModel.toString()),
+					mapper.readTree(jsonModel.toString()));
 
 			return Response.ok(patch.toString()).build();
 		} catch (IOException | JSONException e) {
@@ -756,7 +763,8 @@ public class MetaService extends AbstractSpagoBIResource {
 
 			logger.debug("Base Library directory: " + req.getServletContext().getRealPath(File.separator));
 
-			String libDir = req.getServletContext().getRealPath("") + File.separator + "WEB-INF" + File.separator + "lib" + File.separator;
+			String libDir = req.getServletContext().getRealPath("") + File.separator + "WEB-INF" + File.separator
+					+ "lib" + File.separator;
 			logger.debug("Library directory: " + libDir);
 
 			String filename = metaModel.getName() + ".jar";
@@ -772,7 +780,8 @@ public class MetaService extends AbstractSpagoBIResource {
 				logger.debug("Output directory: " + outDir);
 
 				try {
-					jpaMappingJarGenerator.generate(businessModel, outDir.toString(), isUpdatable, includeSources, new File(libDir), content.getFileModel());
+					jpaMappingJarGenerator.generate(businessModel, outDir.toString(), isUpdatable, includeSources,
+							new File(libDir), content.getFileModel());
 				} catch (GenerationException e) {
 					logger.error("Error while generating JPA jar file", e);
 					errors.addErrorKey("metaWeb.generation.generic.error");
@@ -783,7 +792,8 @@ public class MetaService extends AbstractSpagoBIResource {
 				content.setCreationUser(getUserProfile().getUserName().toString());
 				if (!errors.hasErrors()) {
 					logger.debug("Datamart compilation of model classes is OK");
-					String tmpDirJarFile = outDir + File.separator + model.getBusinessModels().get(0).getName() + File.separator + "dist";
+					String tmpDirJarFile = outDir + File.separator + model.getBusinessModels().get(0).getName()
+							+ File.separator + "dist";
 					logger.debug("Temporary directory jar file: " + tmpDirJarFile);
 					InputStream inputStream = new FileInputStream(tmpDirJarFile + File.separator + filename);
 					byte[] bytes = IOUtils.toByteArray(inputStream);
@@ -818,7 +828,8 @@ public class MetaService extends AbstractSpagoBIResource {
 
 	@POST
 	@Path("/setCalculatedField")
-	public Response setCalculatedBM(@Context HttpServletRequest req) throws IOException, JSONException, SpagoBIException {
+	public Response setCalculatedBM(@Context HttpServletRequest req)
+			throws IOException, JSONException, SpagoBIException {
 		JsonNode patch = null;
 		try {
 			JSONObject jsonRoot = RestUtilities.readBodyAsJSONObject(req);
@@ -856,7 +867,8 @@ public class MetaService extends AbstractSpagoBIResource {
 				BusinessModelInitializer businessModelInitializer = new BusinessModelInitializer();
 				if (editMode) {
 					String uniquename = jsonData.getString("uniquename");
-					businessModelInitializer.editCalculatedColumn(sourceBcs.getCalculatedBusinessColumn(uniquename), cfd);
+					businessModelInitializer.editCalculatedColumn(sourceBcs.getCalculatedBusinessColumn(uniquename),
+							cfd);
 				} else {
 					businessModelInitializer.addCalculatedColumn(cfd);
 				}
@@ -878,7 +890,8 @@ public class MetaService extends AbstractSpagoBIResource {
 
 	@POST
 	@Path("/deleteCalculatedField")
-	public Response deleteCalculatedField(@Context HttpServletRequest req) throws IOException, JSONException, SpagoBIException {
+	public Response deleteCalculatedField(@Context HttpServletRequest req)
+			throws IOException, JSONException, SpagoBIException {
 		JsonNode patch = null;
 		try {
 			JSONObject jsonRoot = RestUtilities.readBodyAsJSONObject(req);
@@ -926,7 +939,8 @@ public class MetaService extends AbstractSpagoBIResource {
 
 	@POST
 	@Path("/deleteBusinessClass")
-	public Response deleteBusinessClass(@Context HttpServletRequest req) throws IOException, JSONException, SpagoBIException {
+	public Response deleteBusinessClass(@Context HttpServletRequest req)
+			throws IOException, JSONException, SpagoBIException {
 
 		JSONObject jsonRoot = RestUtilities.readBodyAsJSONObject(req);
 		Model model = (Model) req.getSession().getAttribute(EMF_MODEL);
@@ -941,7 +955,8 @@ public class MetaService extends AbstractSpagoBIResource {
 
 		JSONObject jsonModel = createJson(model);
 		ObjectMapper mapper = new ObjectMapper();
-		JsonNode patch = JsonDiff.asJson(mapper.readTree(oldJsonModel.toString()), mapper.readTree(jsonModel.toString()));
+		JsonNode patch = JsonDiff.asJson(mapper.readTree(oldJsonModel.toString()),
+				mapper.readTree(jsonModel.toString()));
 
 		return Response.ok(patch.toString()).build();
 
@@ -949,7 +964,8 @@ public class MetaService extends AbstractSpagoBIResource {
 
 	@POST
 	@Path("/deleteBusinessRelation")
-	public String deleteBusinessRelation(@Context HttpServletRequest req) throws IOException, JSONException, SpagoBIException {
+	public String deleteBusinessRelation(@Context HttpServletRequest req)
+			throws IOException, JSONException, SpagoBIException {
 
 		JSONObject jsonRoot = RestUtilities.readBodyAsJSONObject(req);
 		Model model = (Model) req.getSession().getAttribute(EMF_MODEL);
@@ -972,7 +988,8 @@ public class MetaService extends AbstractSpagoBIResource {
 				String brSourceTableName = businessRelationship.getSourceTable().getUniqueName();
 				String brDestinationTableName = businessRelationship.getDestinationTable().getUniqueName();
 				String brName = businessRelationship.getUniqueName();
-				if (brSourceTableName.equals(sourceTableName) && brDestinationTableName.equals(destinationTableName) && brName.equals(relName)) {
+				if (brSourceTableName.equals(sourceTableName) && brDestinationTableName.equals(destinationTableName)
+						&& brName.equals(relName)) {
 					// found relationship to be removed
 					businessRelationshipToRemove = businessRelationship;
 					break;
@@ -992,7 +1009,8 @@ public class MetaService extends AbstractSpagoBIResource {
 
 	@POST
 	@Path("/deleteBusinessView")
-	public Response deleteBusinessView(@Context HttpServletRequest req) throws IOException, JSONException, SpagoBIException {
+	public Response deleteBusinessView(@Context HttpServletRequest req)
+			throws IOException, JSONException, SpagoBIException {
 		JSONObject jsonRoot = RestUtilities.readBodyAsJSONObject(req);
 		Model model = (Model) req.getSession().getAttribute(EMF_MODEL);
 		setProfileDialectThreadLocal(model);
@@ -1006,15 +1024,15 @@ public class MetaService extends AbstractSpagoBIResource {
 
 		JSONObject jsonModel = createJson(model);
 		ObjectMapper mapper = new ObjectMapper();
-		JsonNode patch = JsonDiff.asJson(mapper.readTree(oldJsonModel.toString()), mapper.readTree(jsonModel.toString()));
+		JsonNode patch = JsonDiff.asJson(mapper.readTree(oldJsonModel.toString()),
+				mapper.readTree(jsonModel.toString()));
 
 		return Response.ok(patch.toString()).build();
 	}
 
 	@GET
 	@Path("/updatePhysicalModel")
-	public Response updatePhysicalModel(@Context HttpServletRequest req)
-			throws ClassNotFoundException, NamingException, SQLException, JSONException, EMFUserError {
+	public Response updatePhysicalModel(@Context HttpServletRequest req) throws JSONException, EMFUserError {
 		PhysicalModelInitializer physicalModelInitializer = new PhysicalModelInitializer();
 		Model model = (Model) req.getSession().getAttribute(EMF_MODEL);
 		setProfileDialectThreadLocal(model);
@@ -1025,7 +1043,8 @@ public class MetaService extends AbstractSpagoBIResource {
 
 		String modelName = model.getName();
 		IMetaModelsDAO businessModelsDAO = DAOFactory.getMetaModelsDAO();
-		businessModelsDAO.setUserProfile((IEngUserProfile) req.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE));
+		businessModelsDAO
+				.setUserProfile((IEngUserProfile) req.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE));
 		IEngUserProfile profile = (IEngUserProfile) req.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
 		if (profile != null) {
 			UserProfile userProfile = (UserProfile) profile;
@@ -1038,12 +1057,16 @@ public class MetaService extends AbstractSpagoBIResource {
 		// PhysicalModel phyMod = model.getPhysicalModels().get(0);
 		// IDataSource dataSource = phyMod.getDataSource();
 
-		List<String> missingTables = physicalModelInitializer.getMissingTablesNames(dataSource, model.getPhysicalModels().get(0), metamodel);
-		List<String> missingColumns = physicalModelInitializer.getMissingColumnsNames(dataSource, model.getPhysicalModels().get(0), metamodel);
-		List<String> removingItems = physicalModelInitializer.getRemovedTablesAndColumnsNames(dataSource, model.getPhysicalModels().get(0), metamodel);
+		List<String> missingTables = physicalModelInitializer.getMissingTablesNames(dataSource,
+				model.getPhysicalModels().get(0), metamodel);
+		List<String> missingColumns = physicalModelInitializer.getMissingColumnsNames(dataSource,
+				model.getPhysicalModels().get(0), metamodel);
+		List<String> removingItems = physicalModelInitializer.getRemovedTablesAndColumnsNames(dataSource,
+				model.getPhysicalModels().get(0), metamodel);
 		JSONObject resp = new JSONObject();
 		resp.put("missingTables", new JSONArray(JsonConverter.objectToJson(missingTables, missingTables.getClass())));
-		resp.put("missingColumns", new JSONArray(JsonConverter.objectToJson(missingColumns, missingColumns.getClass())));
+		resp.put("missingColumns",
+				new JSONArray(JsonConverter.objectToJson(missingColumns, missingColumns.getClass())));
 		resp.put("removingItems", new JSONArray(JsonConverter.objectToJson(removingItems, removingItems.getClass())));
 		return Response.ok(resp.toString()).build();
 	}
@@ -1052,14 +1075,15 @@ public class MetaService extends AbstractSpagoBIResource {
 	@Path("/updatePhysicalModel")
 	@SuppressWarnings("unchecked")
 	public Response applyUpdatePhysicalModel(@Context HttpServletRequest req)
-			throws ClassNotFoundException, NamingException, SQLException, JSONException, IOException, EMFUserError {
+			throws JSONException, IOException, EMFUserError {
 		Model model = (Model) req.getSession().getAttribute(EMF_MODEL);
 		setProfileDialectThreadLocal(model);
 		JSONObject oldJsonModel = createJson(model);
 
 		String modelName = model.getName();
 		IMetaModelsDAO businessModelsDAO = DAOFactory.getMetaModelsDAO();
-		businessModelsDAO.setUserProfile((IEngUserProfile) req.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE));
+		businessModelsDAO
+				.setUserProfile((IEngUserProfile) req.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE));
 		IEngUserProfile profile = (IEngUserProfile) req.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
 		if (profile != null) {
 			UserProfile userProfile = (UserProfile) profile;
@@ -1079,7 +1103,7 @@ public class MetaService extends AbstractSpagoBIResource {
 		physicalModelInitializer.setCrossReferenceAdapter(crossReferenceAdapter);
 		physicalModelInitializer.setRootModel(model);
 		PhysicalModel originalPM = model.getPhysicalModels().get(0);
-		List<String> currTables = new ArrayList<String>();
+		List<String> currTables = new ArrayList<>();
 		for (PhysicalTable pt : originalPM.getTables()) {
 			currTables.add(pt.getName());
 		}
@@ -1090,14 +1114,16 @@ public class MetaService extends AbstractSpagoBIResource {
 
 		JSONObject jsonModel = createJson(model);
 		ObjectMapper mapper = new ObjectMapper();
-		JsonNode patch = JsonDiff.asJson(mapper.readTree(oldJsonModel.toString()), mapper.readTree(jsonModel.toString()));
+		JsonNode patch = JsonDiff.asJson(mapper.readTree(oldJsonModel.toString()),
+				mapper.readTree(jsonModel.toString()));
 
 		return Response.ok(patch.toString()).build();
 	}
 
 	@POST
 	@Path("/createBusinessColumn")
-	public Response createBusinessColumn(@Context HttpServletRequest req) throws JsonProcessingException, SpagoBIException, IOException, JSONException {
+	public Response createBusinessColumn(@Context HttpServletRequest req)
+			throws SpagoBIException, IOException, JSONException {
 		JSONObject jsonRoot = RestUtilities.readBodyAsJSONObject(req);
 		Model model = (Model) req.getSession().getAttribute(EMF_MODEL);
 		setProfileDialectThreadLocal(model);
@@ -1125,7 +1151,8 @@ public class MetaService extends AbstractSpagoBIResource {
 		String physicalTableName = json.getString("physicalTableName");
 		String physicalColumnName = json.getString("physicalColumnName");
 		String businessModelUniqueName = json.getString("businessModelUniqueName");
-		PhysicalColumn physicalColumn = model.getPhysicalModels().get(0).getTable(physicalTableName).getColumn(physicalColumnName);
+		PhysicalColumn physicalColumn = model.getPhysicalModels().get(0).getTable(physicalTableName)
+				.getColumn(physicalColumnName);
 		BusinessColumnSet currBM = model.getBusinessModels().get(0).getTableByUniqueName(businessModelUniqueName);
 		BusinessModelInitializer businessModelInitializer = new BusinessModelInitializer();
 		businessModelInitializer.addColumn(physicalColumn, currBM);
@@ -1139,13 +1166,15 @@ public class MetaService extends AbstractSpagoBIResource {
 	 */
 	private String getPatch(JSONObject oldJsonModel, JSONObject jsonModel) throws IOException {
 		ObjectMapper mapper = new ObjectMapper();
-		JsonNode patch = JsonDiff.asJson(mapper.readTree(oldJsonModel.toString()), mapper.readTree(jsonModel.toString()));
+		JsonNode patch = JsonDiff.asJson(mapper.readTree(oldJsonModel.toString()),
+				mapper.readTree(jsonModel.toString()));
 		return patch.toString();
 	}
 
 	@POST
 	@Path("/moveBusinessColumn")
-	public String moveBusinessColumn(@Context HttpServletRequest req) throws JsonProcessingException, SpagoBIException, IOException, JSONException {
+	public String moveBusinessColumn(@Context HttpServletRequest req)
+			throws SpagoBIException, IOException, JSONException {
 		JSONObject jsonRoot = RestUtilities.readBodyAsJSONObject(req);
 		Model model = (Model) req.getSession().getAttribute(EMF_MODEL);
 		setProfileDialectThreadLocal(model);
@@ -1180,7 +1209,8 @@ public class MetaService extends AbstractSpagoBIResource {
 
 	@POST
 	@Path("/deleteBusinessColumn")
-	public Response deleteBusinessColumn(@Context HttpServletRequest req) throws JsonProcessingException, SpagoBIException, IOException, JSONException {
+	public Response deleteBusinessColumn(@Context HttpServletRequest req)
+			throws SpagoBIException, IOException, JSONException {
 		JSONObject jsonRoot = RestUtilities.readBodyAsJSONObject(req);
 		Model model = (Model) req.getSession().getAttribute(EMF_MODEL);
 		setProfileDialectThreadLocal(model);
@@ -1198,7 +1228,8 @@ public class MetaService extends AbstractSpagoBIResource {
 			JSONObject jsonObject = new JSONObject();
 			JSONArray jsonArray = new JSONArray();
 			JSONObject jsonObjectMessage = new JSONObject();
-			jsonObjectMessage.put("message", "Cannot delete column used as identifier, please unset it as identifier first");
+			jsonObjectMessage.put("message",
+					"Cannot delete column used as identifier, please unset it as identifier first");
 			jsonArray.put(jsonObjectMessage);
 			jsonObject.put("errors", jsonArray);
 			return Response.status(Response.Status.BAD_REQUEST).entity(jsonObject.toString()).build();
@@ -1225,7 +1256,8 @@ public class MetaService extends AbstractSpagoBIResource {
 			JSONObject jsonObject = new JSONObject();
 			JSONArray jsonArray = new JSONArray();
 			JSONObject jsonObjectMessage = new JSONObject();
-			jsonObjectMessage.put("message", "Cannot delete column used in a business relationship, please remove the relationship first");
+			jsonObjectMessage.put("message",
+					"Cannot delete column used in a business relationship, please remove the relationship first");
 			jsonArray.put(jsonObjectMessage);
 			jsonObject.put("errors", jsonArray);
 			return Response.status(Response.Status.BAD_REQUEST).entity(jsonObject.toString()).build();
@@ -1236,14 +1268,16 @@ public class MetaService extends AbstractSpagoBIResource {
 
 		JSONObject jsonModel = createJson(model);
 		ObjectMapper mapper = new ObjectMapper();
-		JsonNode patch = JsonDiff.asJson(mapper.readTree(oldJsonModel.toString()), mapper.readTree(jsonModel.toString()));
+		JsonNode patch = JsonDiff.asJson(mapper.readTree(oldJsonModel.toString()),
+				mapper.readTree(jsonModel.toString()));
 
 		return Response.ok(patch.toString()).build();
 	}
 
 	@POST
 	@Path("/alterTemporalHierarchy")
-	public Response alterTemporalHierarchy(@Context HttpServletRequest req) throws JsonProcessingException, SpagoBIException, IOException, JSONException {
+	public Response alterTemporalHierarchy(@Context HttpServletRequest req)
+			throws SpagoBIException, IOException, JSONException {
 		JSONObject jsonRoot = RestUtilities.readBodyAsJSONObject(req);
 		Model model = (Model) req.getSession().getAttribute(EMF_MODEL);
 		JSONObject oldJsonModel = createJson(model);
@@ -1254,7 +1288,7 @@ public class MetaService extends AbstractSpagoBIResource {
 		JSONArray hierarchy = json.getJSONArray("hierarchy");
 
 		OlapModelInitializer omInit = new OlapModelInitializer();
-		if (model.getOlapModels().size() == 0) {
+		if (model.getOlapModels().isEmpty()) {
 			omInit.setRootModel(model);
 			omInit.initialize(model.getName());
 		}
@@ -1301,14 +1335,17 @@ public class MetaService extends AbstractSpagoBIResource {
 					JSONObject tmplev = levels.getJSONObject(l);
 					HierarchyLevelDescriptor levelDescriptor = new HierarchyLevelDescriptor();
 					levelDescriptor.setName(tmplev.getString("name"));
-					levelDescriptor.setBusinessColumn(currBM.getSimpleBusinessColumnByUniqueName(tmplev.getJSONObject("column").getString("uniqueName")));
+					levelDescriptor.setBusinessColumn(currBM.getSimpleBusinessColumnByUniqueName(
+							tmplev.getJSONObject("column").getString("uniqueName")));
 					if (tmplev.has("leveltype")) {
 						levelDescriptor.setLevelType(tmplev.getString("leveltype"));
 					} else if (tmplev.has("properties")) {
 						for (int pr = 0; pr < tmplev.getJSONArray("properties").length(); pr++) {
 							JSONObject tmpPro = tmplev.getJSONArray("properties").getJSONObject(pr);
 							if (tmpPro.has(OlapModelPropertiesFromFileInitializer.LEVEL_TYPE)) {
-								levelDescriptor.setLevelType(tmpPro.getJSONObject(OlapModelPropertiesFromFileInitializer.LEVEL_TYPE).getString("value"));
+								levelDescriptor.setLevelType(
+										tmpPro.getJSONObject(OlapModelPropertiesFromFileInitializer.LEVEL_TYPE)
+												.getString("value"));
 							}
 						}
 					}
@@ -1322,7 +1359,8 @@ public class MetaService extends AbstractSpagoBIResource {
 
 		JSONObject jsonModel = createJson(model);
 		ObjectMapper mapper = new ObjectMapper();
-		JsonNode patch = JsonDiff.asJson(mapper.readTree(oldJsonModel.toString()), mapper.readTree(jsonModel.toString()));
+		JsonNode patch = JsonDiff.asJson(mapper.readTree(oldJsonModel.toString()),
+				mapper.readTree(jsonModel.toString()));
 
 		return Response.ok(patch.toString()).build();
 	}
@@ -1365,7 +1403,7 @@ public class MetaService extends AbstractSpagoBIResource {
 		bt.setModel(bm);
 		bm.getBusinessTables().add(bt);
 		bt.setName(name);
-		bt.setUniqueName(name.toLowerCase().replaceAll(" ", "_"));
+		bt.setUniqueName(name.toLowerCase().replace(" ", "_"));
 		bt.setDescription(description);
 		bt.setPhysicalTable(pt);
 		bt.setDescription(description);
@@ -1406,7 +1444,8 @@ public class MetaService extends AbstractSpagoBIResource {
 
 	private Model getModelWeb(String modelName, HttpServletRequest req) {
 		IMetaModelsDAO businessModelsDAO = DAOFactory.getMetaModelsDAO();
-		businessModelsDAO.setUserProfile((IEngUserProfile) req.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE));
+		businessModelsDAO
+				.setUserProfile((IEngUserProfile) req.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE));
 		Content metaModelContent = businessModelsDAO.loadActiveMetaModelWebContentByName(modelName);
 		ByteArrayInputStream bis = new ByteArrayInputStream(metaModelContent.getFileModel());
 		EmfXmiSerializer serializer = new EmfXmiSerializer();
@@ -1479,7 +1518,7 @@ public class MetaService extends AbstractSpagoBIResource {
 		// br.setPhysicalForeignKey(null);
 	}
 
-	private void applyDiff(JSONObject jsonRoot, Model model) throws SpagoBIException, JsonProcessingException, IOException, JSONException {
+	private void applyDiff(JSONObject jsonRoot, Model model) throws SpagoBIException, IOException, JSONException {
 		if (jsonRoot.has("diff")) {
 			ObjectMapper mapper = new ObjectMapper();
 
@@ -1533,9 +1572,11 @@ public class MetaService extends AbstractSpagoBIResource {
 	}
 
 	private boolean toSkip(String path, String operation) {
-		if (path.equals("/datasourceId") || path.equals("/modelName") || path.equals("/physicalModels") || path.equals("/businessModels")
-				|| path.contains("/physicalColumn/") || path.contains("/simpleBusinessColumns")
-				|| (path.contains("relationships") && !operation.equals("remove")) || path.contains("referencedColumns")) {
+		if (path.equals("/datasourceId") || path.equals("/modelName") || path.equals("/physicalModels")
+				|| path.equals("/businessModels") || path.contains("/physicalColumn/")
+				|| path.contains("/simpleBusinessColumns")
+				|| (path.contains("relationships") && !operation.equals("remove"))
+				|| path.contains("referencedColumns")) {
 			logger.debug("skipping " + path);
 			return true;
 		}
@@ -1622,15 +1663,16 @@ public class MetaService extends AbstractSpagoBIResource {
 	/**
 	 * Used to convert a path coming from a frontend jsonDiff in a path as expected by jxpath. Frontend model is something like {physicalModels:[...],
 	 * businessModels:[...]} and it has to be converted to backend model structure that is something like
-	 * {businessModels:[tables:[...]],businessModels:[businessTables:[...]]} Furthermore jsonDiff is zero-based numbering but jxpath is 1-based numbering
-	 * Another difference is that jsonDiff's notation used to select a property of a nth element of a collection is "parent/n/property" but jxpath does same
-	 * selection in this way "parent[n]/property"
+	 * {businessModels:[tables:[...]],businessModels:[businessTables:[...]]} Furthermore jsonDiff is zero-based numbering but jxpath is 1-based numbering Another
+	 * difference is that jsonDiff's notation used to select a property of a nth element of a collection is "parent/n/property" but jxpath does same selection in
+	 * this way "parent[n]/property"
 	 *
 	 * @param path
 	 * @return path cleaned
 	 */
 	private String cleanPath(String path) {
-		path = path.replaceAll("^/physicalModels", "/businessModels/0/tables").replaceAll("^/businessModels", "/businessModels/0/businessTables");
+		path = path.replaceAll("^/physicalModels", "/businessModels/0/tables").replaceAll("^/businessModels",
+				"/businessModels/0/businessTables");
 
 		/*
 		 * This regular expression will clean the path for editing properties of a model to have something compatible with the xpath expression. I.e:
@@ -1654,7 +1696,7 @@ public class MetaService extends AbstractSpagoBIResource {
 		Matcher m = p.matcher(path);
 		StringBuffer s = new StringBuffer();
 		while (m.find()) {
-			m.appendReplacement(s, "[" + String.valueOf(1 + Integer.parseInt(m.group(2))) + "]");
+			m.appendReplacement(s, "[" + (1 + Integer.parseInt(m.group(2))) + "]");
 		}
 		m.appendTail(s);
 		return s.toString();
@@ -1673,7 +1715,8 @@ public class MetaService extends AbstractSpagoBIResource {
 		}
 
 		JSONArray businessModelJson = new JSONArray();
-		Iterator<BusinessTable> businessModelsIterator = model.getBusinessModels().get(0).getBusinessTables().iterator();
+		Iterator<BusinessTable> businessModelsIterator = model.getBusinessModels().get(0).getBusinessTables()
+				.iterator();
 		while (businessModelsIterator.hasNext()) {
 			BusinessTable curr = businessModelsIterator.next();
 			String tabelName = curr.getPhysicalTable().getName();
@@ -1732,8 +1775,10 @@ public class MetaService extends AbstractSpagoBIResource {
 
 		Integer dsId = json.getInt("datasourceId");
 		String modelName = json.optString("modelName", DEFAULT_MODEL_NAME);
-		List<String> physicalModels = (List<String>) JsonConverter.jsonToObject(json.getString("physicalModels"), List.class);
-		List<String> businessModels = (List<String>) JsonConverter.jsonToObject(json.getString("businessModels"), List.class);
+		List<String> physicalModels = (List<String>) JsonConverter.jsonToObject(json.getString("physicalModels"),
+				List.class);
+		List<String> businessModels = (List<String>) JsonConverter.jsonToObject(json.getString("businessModels"),
+				List.class);
 
 		Model model = ModelFactory.eINSTANCE.createModel();
 		model.setName(modelName);
@@ -1742,7 +1787,7 @@ public class MetaService extends AbstractSpagoBIResource {
 		physicalModelInitializer.setRootModel(model);
 		PhysicalModel physicalModel = physicalModelInitializer.initialize(dsId, physicalModels);
 
-		List<PhysicalTable> physicalTableToIncludeInBusinessModel = new ArrayList<PhysicalTable>();
+		List<PhysicalTable> physicalTableToIncludeInBusinessModel = new ArrayList<>();
 		for (int i = 0; i < businessModels.size(); i++) {
 			physicalTableToIncludeInBusinessModel.add(physicalModel.getTable(businessModels.get(i)));
 		}
@@ -1762,8 +1807,7 @@ public class MetaService extends AbstractSpagoBIResource {
 		java.io.InputStream is = null;
 
 		try {
-			UUIDGenerator uuidGen = UUIDGenerator.getInstance();
-			UUID uuidObj = uuidGen.generateTimeBasedUUID();
+			UUID uuidObj = UUID.randomUUID();
 			String idCas = uuidObj.toString().replaceAll("-", "");
 			logger.debug("create temp file for jar");
 			String path = System.getProperty("java.io.tmpdir") + System.getProperty("file.separator") + idCas + ".jar";

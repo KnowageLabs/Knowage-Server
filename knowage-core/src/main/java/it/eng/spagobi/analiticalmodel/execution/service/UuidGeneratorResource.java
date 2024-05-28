@@ -18,13 +18,13 @@
 
 package it.eng.spagobi.analiticalmodel.execution.service;
 
+import java.util.UUID;
+
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.safehaus.uuid.UUID;
-import org.safehaus.uuid.UUIDGenerator;
 
 import it.eng.spagobi.api.AbstractSpagoBIResource;
 
@@ -42,8 +42,7 @@ public class UuidGeneratorResource extends AbstractSpagoBIResource {
 
 		executionId = null;
 		try {
-			UUIDGenerator uuidGen = UUIDGenerator.getInstance();
-			UUID uuidObj = uuidGen.generateTimeBasedUUID();
+			UUID uuidObj = UUID.randomUUID();
 			executionId = uuidObj.toString();
 			executionId = executionId.replaceAll("-", "");
 		} finally {

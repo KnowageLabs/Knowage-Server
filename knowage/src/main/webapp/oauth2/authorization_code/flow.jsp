@@ -90,14 +90,20 @@ String code = request.getParameter("code");
         		}
         		
         		var lastRedirectUri = window.location.href.split('?')[0];
-        		var extraParameters = popSavedExtraQueryParameters();
+        		var extraParameters = getSavedExtraQueryParameters();
         		
             	var args = new URLSearchParams({
             		PAGE : "LoginPage",
             		NEW_SESSION : "TRUE",
                     access_token: access_token
                 });
-                window.location = lastRedirectUri + "?" + args + "&" + extraParameters;
+            	
+            	var newRedirectUri = lastRedirectUri + "?" + args;
+            	if (extraParameters) {
+            		newRedirectUri += "&" + extraParameters;
+            	}
+            	
+                window.location = newRedirectUri;
 
             } else {
             	saveExtraQueryParameters();
@@ -139,23 +145,25 @@ String code = request.getParameter("code");
                 args.delete('PAGE');
                 args.delete('NEW_SESSION');
                 args.delete('ACTION_NAME');
+                args.delete('LIGHT_NAVIGATOR_DISABLED');
         	}
-        	// storing extra-query-parameters for later usage (when user is redirected into knowage)
-        	window.sessionStorage.setItem("extra-query-parameters", args);
+        	if (args.size > 0) {
+        		// storing extra-query-parameters (combined with previous ones) for later usage (when user is redirected into knowage)
+        		var previousExtraParameters = getSavedExtraQueryParameters();
+        		if (!previousExtraParameters) {
+        			window.sessionStorage.setItem("extra-query-parameters", args);
+        		} else {
+            		let combined = new URLSearchParams({
+              		  ...Object.fromEntries(new URLSearchParams(previousExtraParameters)),
+              		  ...Object.fromEntries(args)
+              		});
+              		window.sessionStorage.setItem("extra-query-parameters", combined);
+        		}
+        	}
         }
         
         function getSavedExtraQueryParameters() {
         	return window.sessionStorage.getItem("extra-query-parameters");
-        }
-        
-        function removeSavedExtraQueryParameters() {
-        	window.sessionStorage.removeItem("extra-query-parameters");
-        }
-        
-        function popSavedExtraQueryParameters() {
-        	var toReturn = getSavedExtraQueryParameters();
-        	removeSavedExtraQueryParameters();
-        	return toReturn;
         }
         
     </script>

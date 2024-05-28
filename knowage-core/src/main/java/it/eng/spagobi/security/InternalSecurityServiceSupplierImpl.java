@@ -170,7 +170,7 @@ public class InternalSecurityServiceSupplierImpl implements ISecurityServiceSupp
 		}
 
 		profile.setRoles(roleStr);
-		profile.setAttributes(attributes);
+		profile.getAttributes().putAll(attributes);
 		LOGGER.debug("OUT");
 		return profile;
 

@@ -40,8 +40,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Locale.Builder;
 import java.util.Map;
-import java.util.PropertyResourceBundle;
 import java.util.ResourceBundle;
+import java.util.UUID;
 import java.util.jar.JarFile;
 import java.util.zip.ZipEntry;
 
@@ -49,8 +49,6 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
-import org.safehaus.uuid.UUID;
-import org.safehaus.uuid.UUIDGenerator;
 
 import com.jamonapi.Monitor;
 import com.jamonapi.MonitorFactory;
@@ -104,46 +102,34 @@ public class JasperReportEngineInstance extends AbstractEngineInstance {
 	File libDir;
 	File workingDir;
 
-	private DataSetServiceProxy dsProxy;
+	private final DataSetServiceProxy dsProxy;
 	public static final String JS_FILE_ZIP = "JS_File";
 	public static final String JS_DIR = "JS_dir";
 	public static final String JS_EXT_ZIP = ".zip";
 
-	private static transient Logger logger = Logger.getLogger(JasperReportEngineInstance.class);
+	private static final Logger LOGGER = Logger.getLogger(JasperReportEngineInstance.class);
 
 	public JasperReportEngineInstance(JasperReportEngineTemplate template, Map env, DataSetServiceProxy dsProxy) {
 		super(env);
-		Assert.assertNotNull(env, "[env] parameter cannot be null in order to properly initialize a new JasperReportEngineInstance");
+		Assert.assertNotNull(env,
+				"[env] parameter cannot be null in order to properly initialize a new JasperReportEngineInstance");
 		this.template = template;
-		Assert.assertNotNull(env, "[template] parameter cannot be null in order to properly initialize a new JasperReportEngineInstance");
+		Assert.assertNotNull(env,
+				"[template] parameter cannot be null in order to properly initialize a new JasperReportEngineInstance");
 		this.dsProxy = dsProxy;
 	}
 
 	public void runReport(File file, HttpServletRequest httpServletRequest) {
-		logger.debug("IN");
-		OutputStream out;
-
-		out = null;
-		try {
-			out = new FileOutputStream(file);
+		LOGGER.debug("IN");
+		try (OutputStream out = new FileOutputStream(file)) {
 			runReport(out, httpServletRequest);
 		} catch (Throwable t1) {
 			throw new JasperReportEngineRuntimeException("Impossible to run report", t1);
-		} finally {
-			logger.debug("OUT");
-			try {
-				if (out != null) {
-					out.flush();
-					out.close();
-				}
-			} catch (Throwable t2) {
-				throw new JasperReportEngineRuntimeException("Impossible to close output stream", t2);
-			}
 		}
 	}
 
 	private void runReport(OutputStream out, HttpServletRequest httpServletRequest) {
-		logger.debug("IN");
+		LOGGER.debug("IN");
 		Monitor monitor = MonitorFactory.start("JasperReportRunner.service");
 		String prefixDirTemplate = null;
 		Connection connection = null;
@@ -154,10 +140,10 @@ public class JasperReportEngineInstance extends AbstractEngineInstance {
 			setJRBuiltinParameters();
 
 			prefixDirTemplate = (String) getEnv().get("prefixName");
-			logger.debug("prefixDirTemplate:" + prefixDirTemplate);
+			LOGGER.debug("prefixDirTemplate:" + prefixDirTemplate);
 			InputStream is = template.open(getCacheDir(prefixDirTemplate));
 
-			logger.debug("Getting Jasper Design from template file ...");
+			LOGGER.debug("Getting Jasper Design from template file ...");
 			JasperDesign jasperDesign = JRXmlLoader.load(is);
 
 			// get datasets
@@ -170,31 +156,32 @@ public class JasperReportEngineInstance extends AbstractEngineInstance {
 				IDataSet dataset = this.dsProxy.getDataSetByLabel(datasetName);
 
 				if (dataset != null) {
-					logger.debug("Found SpagoBI dataset " + datasetName);
+					LOGGER.debug("Found SpagoBI dataset " + datasetName);
 					// get parameter of type JRDataSource
 					for (int y = 0; y < jasperDesign.getParametersList().size(); y++) {
 						JRParameter parameter = jasperDesign.getParametersList().get(y);
 						String paramName = parameter.getName();
-						if (parameter.getValueClassName().equals("net.sf.jasperreports.engine.JRDataSource") && paramName.equals(datasetName)) {// &&
-																																				// parameter.getName().equals(dataset.getLabel()
+						if (parameter.getValueClassName().equals("net.sf.jasperreports.engine.JRDataSource")
+								&& paramName.equals(datasetName)) {// &&
+																	// parameter.getName().equals(dataset.getLabel()
 							// set dataset query value
 							dataset.loadData();
 							IDataStore dstore = dataset.getDataStore();
 							JRSpagoBIDataStoreDataSource dataSource = new JRSpagoBIDataStoreDataSource(dstore);
 
 							getEnv().put(paramName, dataSource);
-							logger.debug("set parameter" + paramName + " value");
+							LOGGER.debug("set parameter" + paramName + " value");
 						}
 					}
 				}
 			}
 
-			logger.debug("Compiling template file ...");
+			LOGGER.debug("Compiling template file ...");
 			Monitor monitorCompileTemplate = MonitorFactory.start("JasperReportRunner.compileTemplate");
 			JasperReport report = JasperCompileManager.compileReport(jasperDesign);
 
 			monitorCompileTemplate.stop();
-			logger.debug("Template file compiled succesfully");
+			LOGGER.debug("Template file compiled succesfully");
 
 			adaptReportParams(report);
 			setupLocale();
@@ -203,47 +190,49 @@ public class JasperReportEngineInstance extends AbstractEngineInstance {
 			File[] compiledSubreports = compileSubreports();
 			monitorSubReport.stop();
 			ClassLoader previous = Thread.currentThread().getContextClassLoader();
-			ClassLoader current = URLClassLoader.newInstance(new URL[] { getCacheDir(prefixDirTemplate).toURI().toURL() }, previous);
+			ClassLoader current = URLClassLoader
+					.newInstance(new URL[] { getCacheDir(prefixDirTemplate).toURI().toURL() }, previous);
 			Thread.currentThread().setContextClassLoader(current);
 
-			logger.debug("Filling report ...");
+			LOGGER.debug("Filling report ...");
 			Monitor monitorFillingReport = MonitorFactory.start("JasperReportRunner.FillingReport");
 			JasperPrint jasperPrint = null;
 			if (getDataSet() != null) {
-				logger.debug("... using dataset [" + getDataSet().getName() + "]");
+				LOGGER.debug("... using dataset [" + getDataSet().getName() + "]");
 				getDataSet().setParamsMap(getEnv());
 				getDataSet().loadData();
 				for (int i = 0; i < getDataSet().getDataStore().getMetaData().getFieldCount(); i++) {
-					logger.debug("Dataset column [" + (i + 1) + "] name is equal to [" + getDataSet().getDataStore().getMetaData().getFieldAlias(i) + "]");
+					LOGGER.debug("Dataset column [" + (i + 1) + "] name is equal to ["
+							+ getDataSet().getDataStore().getMetaData().getFieldAlias(i) + "]");
 				}
 
 				JRSpagoBIDataStoreDataSource dataSource = new JRSpagoBIDataStoreDataSource(getDataSet().getDataStore());
 				jasperPrint = JasperFillManager.fillReport(report, getEnv(), dataSource);
 			} else {
-				logger.debug("... using datasource [" + getDataSource().getLabel() + "]");
+				LOGGER.debug("... using datasource [" + getDataSource().getLabel() + "]");
 				connection = getConnection();
 				jasperPrint = JasperFillManager.fillReport(report, getEnv(), connection);
 			}
 
 			monitorFillingReport.stop();
-			logger.debug("Report filled succesfully");
+			LOGGER.debug("Report filled succesfully");
 
-			logger.debug("Exporting report ...");
+			LOGGER.debug("Exporting report ...");
 			Monitor monitorExportReport = MonitorFactory.start("JasperReportRunner.ExportReport");
 
 			if (outputType.equalsIgnoreCase("html")) {
 				exporter.setParameter(JRHtmlExporterParameter.IS_USING_IMAGES_TO_ALIGN, Boolean.FALSE);
 				exporter.setParameter(JRHtmlExporterParameter.BETWEEN_PAGES_HTML, "");
-				HashMap m_imagesMap = new HashMap();
-				UUIDGenerator uuidGen = UUIDGenerator.getInstance();
-				UUID uuid_local = uuidGen.generateTimeBasedUUID();
-				String mapName = uuid_local.toString();
-				httpServletRequest.getSession().setAttribute(mapName, m_imagesMap);
-				exporter.setParameter(JRHtmlExporterParameter.IMAGES_MAP, m_imagesMap);
-				exporter.setParameter(JRHtmlExporterParameter.IMAGES_URI, "JRImageServlet?mapname=" + mapName + "&image=");
+				HashMap mImagesMap = new HashMap();
+				UUID uuid = UUID.randomUUID();
+				String mapName = uuid.toString();
+				httpServletRequest.getSession().setAttribute(mapName, mImagesMap);
+				exporter.setParameter(JRHtmlExporterParameter.IMAGES_MAP, mImagesMap);
+				exporter.setParameter(JRHtmlExporterParameter.IMAGES_URI,
+						"JRImageServlet?mapname=" + mapName + "&image=");
 			} else if (outputType.equalsIgnoreCase("txt")) {
-				exporter.setParameter(JRTextExporterParameter.PAGE_HEIGHT, new Integer(100));
-				exporter.setParameter(JRTextExporterParameter.PAGE_WIDTH, new Integer(100));
+				exporter.setParameter(JRTextExporterParameter.PAGE_HEIGHT, 100);
+				exporter.setParameter(JRTextExporterParameter.PAGE_WIDTH, 100);
 			} else if (outputType.equalsIgnoreCase("JPG")) {
 				exporter.setParameter(JRImageExporterParameter.JASPER_REPORT, report);
 			} else if (outputType.equalsIgnoreCase("JPGBASE64")) {
@@ -255,7 +244,7 @@ public class JasperReportEngineInstance extends AbstractEngineInstance {
 			exporter.exportReport();
 
 			monitorExportReport.stop();
-			logger.debug("Report exported succesfully");
+			LOGGER.debug("Report exported succesfully");
 
 		} catch (Throwable e) {
 			throw new JasperReportEngineRuntimeException("Impossible to run report", e);
@@ -265,7 +254,7 @@ public class JasperReportEngineInstance extends AbstractEngineInstance {
 					connection.close();
 				}
 			} catch (SQLException sqle) {
-				logger.error("Error closing connection", sqle);
+				LOGGER.error("Error closing connection", sqle);
 			}
 			try {
 				File tmpDir = getCacheDir(prefixDirTemplate);
@@ -273,13 +262,13 @@ public class JasperReportEngineInstance extends AbstractEngineInstance {
 				if (files.length == 0) {
 					SpagoBIAccessUtils util = new SpagoBIAccessUtils();
 					util.deleteDirectory(tmpDir);
-					logger.debug("Delating temporary directory: " + tmpDir);
+					LOGGER.debug("Delating temporary directory: " + tmpDir);
 				}
 			} catch (Throwable t) {
-				logger.error("Error while deleting cache dir content", t);
+				LOGGER.error("Error while deleting cache dir content", t);
 			}
 			monitor.stop();
-			logger.debug("OUT");
+			LOGGER.debug("OUT");
 
 		}
 
@@ -290,10 +279,12 @@ public class JasperReportEngineInstance extends AbstractEngineInstance {
 
 	private void setJRProperties() {
 		System.setProperty(JR_PROPERTY_COMPILE_DIR, getWorkingDir().getAbsolutePath());
-		logger.debug("Set [" + JR_PROPERTY_COMPILE_DIR + "] property to value [" + System.getProperty(JR_PROPERTY_COMPILE_DIR) + "]");
+		LOGGER.debug("Set [" + JR_PROPERTY_COMPILE_DIR + "] property to value ["
+				+ System.getProperty(JR_PROPERTY_COMPILE_DIR) + "]");
 
 		System.setProperty(JR_PROPERTY_CLASSPATH, buildJRClasspathValue());
-		logger.debug("Set [" + JR_PROPERTY_CLASSPATH + "] property to value [" + System.getProperty(JR_PROPERTY_CLASSPATH) + "]");
+		LOGGER.debug("Set [" + JR_PROPERTY_CLASSPATH + "] property to value ["
+				+ System.getProperty(JR_PROPERTY_CLASSPATH) + "]");
 	}
 
 	public void setJRBuiltinParameters() {
@@ -309,7 +300,7 @@ public class JasperReportEngineInstance extends AbstractEngineInstance {
 
 		// Create the virtualizer
 		if (isVirtualizationEnabled()) {
-			logger.debug("Virtualization of fill process is active");
+			LOGGER.debug("Virtualization of fill process is active");
 			getEnv().put(JRParameter.REPORT_VIRTUALIZER, getVirtualizer());
 		}
 	}
@@ -335,11 +326,11 @@ public class JasperReportEngineInstance extends AbstractEngineInstance {
 	 * @return the classpath used by JasperReprorts Engine (by default equals to WEB-INF/lib)
 	 */
 	private String buildJRClasspathValue() {
-		logger.debug("IN");
+		LOGGER.debug("IN");
 		String getJRClasspathValue = null;
 
-		logger.debug("Reading jar files from lib-dir...");
-		StringBuffer jasperReportClassPathStringBuffer = new StringBuffer();
+		LOGGER.debug("Reading jar files from lib-dir...");
+		StringBuilder jasperReportClassPathStringBuffer = new StringBuilder();
 
 		String fileToAppend = null;
 		if (getLibDir().isDirectory()) {
@@ -349,7 +340,7 @@ public class JasperReportEngineInstance extends AbstractEngineInstance {
 				if (!namefile.endsWith("jar"))
 					continue; // the inclusion of txt files causes problems
 				fileToAppend = libDir + System.getProperty("file.separator") + jarFiles[i];
-				logger.debug("Appending jar file [" + fileToAppend + "] to JasperReports classpath");
+				LOGGER.debug("Appending jar file [" + fileToAppend + "] to JasperReports classpath");
 				jasperReportClassPathStringBuffer.append(fileToAppend);
 				jasperReportClassPathStringBuffer.append(System.getProperty("path.separator"));
 			}
@@ -357,12 +348,12 @@ public class JasperReportEngineInstance extends AbstractEngineInstance {
 
 		getJRClasspathValue = jasperReportClassPathStringBuffer.toString();
 		getJRClasspathValue = getJRClasspathValue.substring(0, getJRClasspathValue.length() - 1);
-		logger.debug("OUT");
+		LOGGER.debug("OUT");
 		return getJRClasspathValue;
 	}
 
 	void setupLocale() {
-		logger.debug("IN");
+		LOGGER.debug("IN");
 		Locale locale;
 		String language;
 		String country;
@@ -373,7 +364,7 @@ public class JasperReportEngineInstance extends AbstractEngineInstance {
 
 		if (language != null && country != null) {
 
-			logger.debug("Internazionalization in " + language);
+			LOGGER.debug("Internazionalization in " + language);
 			Builder builder = new Builder().setLanguage(language).setRegion(country);
 			String script = (String) getEnv().get("SBI_SCRIPT");
 			if (org.apache.commons.lang.StringUtils.isNotBlank(script)) {
@@ -383,26 +374,26 @@ public class JasperReportEngineInstance extends AbstractEngineInstance {
 			getEnv().put("REPORT_LOCALE", locale);
 
 			if (!template.isPropertiesLoaded()) {
-				logger.debug("Properties are loaded");
+				LOGGER.debug("Properties are loaded");
 				File resourceDir = JasperReportEngine.getConfig().getEngineResourceDir();
 
-				logger.debug("Root dir of ResourceClassLoader has been set to [" + resourceDir.getAbsolutePath() + "]");
+				LOGGER.debug("Root dir of ResourceClassLoader has been set to [" + resourceDir.getAbsolutePath() + "]");
 
 				ClassLoader previous = Thread.currentThread().getContextClassLoader();
 				ResourceClassLoader dcl = new ResourceClassLoader(resourceDir.getAbsolutePath(), previous);
 				try {
-					resourceBoundle = PropertyResourceBundle.getBundle("messages", locale, dcl);
+					resourceBoundle = ResourceBundle.getBundle("messages", locale, dcl);
 					getEnv().put("REPORT_RESOURCE_BUNDLE", resourceBoundle);
 				} catch (Exception e) {
-					logger.warn("could not find properties message", e);
+					LOGGER.warn("could not find properties message", e);
 				}
 			}
 		}
-		logger.debug("OUT");
+		LOGGER.debug("OUT");
 	}
 
 	void storeLocale(File pathMasterID) {
-		logger.debug("IN");
+		LOGGER.debug("IN");
 		Locale locale;
 		String language;
 		String country;
@@ -415,7 +406,7 @@ public class JasperReportEngineInstance extends AbstractEngineInstance {
 
 		if (language != null && country != null) {
 
-			logger.debug("Internazionalization in " + language);
+			LOGGER.debug("Internazionalization in " + language);
 			locale = new Locale(language, country, "");
 
 			File resourceDir = JasperReportEngine.getConfig().getEngineResourceDir();
@@ -426,9 +417,11 @@ public class JasperReportEngineInstance extends AbstractEngineInstance {
 
 			messagePropertiesName += "_" + country;
 
-			File source = new File(resourceDir + System.getProperty("file.separator") + messagePropertiesName + ".properties");
+			File source = new File(
+					resourceDir + System.getProperty("file.separator") + messagePropertiesName + ".properties");
 			if (source.exists() && !source.isDirectory() && source.length() != 0) {
-				File target = new File(pathMasterID + System.getProperty("file.separator") + messagePropertiesName + ".properties");
+				File target = new File(
+						pathMasterID + System.getProperty("file.separator") + messagePropertiesName + ".properties");
 				try {
 					Files.copy(source.toPath(), target.toPath(), REPLACE_EXISTING);
 				} catch (IOException e) {
@@ -436,18 +429,18 @@ public class JasperReportEngineInstance extends AbstractEngineInstance {
 					logger.error("Files.copy",e);
 				}
 			}
-			logger.debug("Properties are copied to [" + pathMasterID + "]");
+			LOGGER.debug("Properties are copied to [" + pathMasterID + "]");
 		}
 	}
 
 	Map adaptReportParams(JasperReport report) {
-		logger.debug("IN");
+		LOGGER.debug("IN");
 
 		String dateformat = (String) getEnv().get("dateformat");
 		if (dateformat != null) {
-			dateformat = dateformat.replaceAll("D", "d");
-			dateformat = dateformat.replaceAll("m", "M");
-			dateformat = dateformat.replaceAll("Y", "y");
+			dateformat = dateformat.replace("D", "d");
+			dateformat = dateformat.replace("m", "M");
+			dateformat = dateformat.replace("Y", "y");
 		}
 
 		JRParameter[] reportParameters = report.getParameters();
@@ -455,7 +448,7 @@ public class JasperReportEngineInstance extends AbstractEngineInstance {
 		for (int i = 0; i < reportParameters.length; i++) {
 			JRParameter parameter = reportParameters[i];
 
-			logger.debug("Examining parameter with name [" + parameter.getName() + "] ...");
+			LOGGER.debug("Examining parameter with name [" + parameter.getName() + "] ...");
 
 			String paramValueString = null;
 
@@ -464,30 +457,33 @@ public class JasperReportEngineInstance extends AbstractEngineInstance {
 			}
 
 			if (paramValueString == null) {
-				logger.debug("No value found for parameter with name [" + parameter.getName() + "]");
+				LOGGER.debug("No value found for parameter with name [" + parameter.getName() + "]");
 			} else {
-				logger.debug("Value found for parameter with name [" + parameter.getName() + "] is [" + paramValueString + "]");
+				LOGGER.debug("Value found for parameter with name [" + parameter.getName() + "] is [" + paramValueString
+						+ "]");
 				/*
-				 * The ParameterConverter converts a single value. Multi-value parameters are assumed to contains values that are String type. If they are not
-				 * Strings (list of dates, list of numbers, ...) the converter will not work.
+				 * The ParameterConverter converts a single value. Multi-value parameters are assumed to contains values that are String type. If they are not Strings (list of
+				 * dates, list of numbers, ...) the converter will not work.
 				 */
 				if (decoder.isMultiValues(paramValueString)) {
-					logger.debug("Value found for parameter with name [" + parameter.getName() + "] is [" + paramValueString + "] and it is multivalue. "
-							+ "Cannot adapt parameter nature");
+					LOGGER.debug("Value found for parameter with name [" + parameter.getName() + "] is ["
+							+ paramValueString + "] and it is multivalue. " + "Cannot adapt parameter nature");
 					continue;
 				}
 				Class aReportParameterClass = parameter.getValueClass();
-				Object newValue = ParameterConverter.convertParameter(aReportParameterClass, paramValueString, dateformat);
+				Object newValue = ParameterConverter.convertParameter(aReportParameterClass, paramValueString,
+						dateformat);
 				if (newValue == null)
 					newValue = paramValueString;
 
 				if (!(newValue instanceof String)) {
-					logger.debug("Updating parameter with name [" + parameter.getName() + "] to a " + newValue.getClass().getName() + ".");
+					LOGGER.debug("Updating parameter with name [" + parameter.getName() + "] to a "
+							+ newValue.getClass().getName() + ".");
 					getEnv().put(parameter.getName(), newValue);
 				}
 			}
 		}
-		logger.debug("OUT");
+		LOGGER.debug("OUT");
 		return getEnv();
 	}
 
@@ -539,8 +535,8 @@ public class JasperReportEngineInstance extends AbstractEngineInstance {
 	private Map<String, SubreportMeta> getSubreportsMeta() {
 		Map<String, SubreportMeta> subreportsMeta;
 
-		logger.debug("IN");
-		subreportsMeta = new HashMap<String, SubreportMeta>();
+		LOGGER.debug("IN");
+		subreportsMeta = new HashMap<>();
 
 		try {
 
@@ -558,14 +554,14 @@ public class JasperReportEngineInstance extends AbstractEngineInstance {
 					subreportMeta.setTemplateFingerprint(subreportIds);
 					// subreportMeta.setTemplateType( (String)params.get("subrpt." + subreportKey + ".flgTempStd") );
 					subreportsMeta.put(subreportKey, subreportMeta);
-					logger.debug("JasperReports subreport id : " + getEnv().get(parName));
+					LOGGER.debug("JasperReports subreport id : " + getEnv().get(parName));
 				}
 			}
 
 		} catch (Throwable t) {
-			logger.error("Error while extracting subreports meta", t);
+			LOGGER.error("Error while extracting subreports meta", t);
 		} finally {
-			logger.debug("OUT");
+			LOGGER.debug("OUT");
 		}
 
 		return subreportsMeta;
@@ -576,13 +572,13 @@ public class JasperReportEngineInstance extends AbstractEngineInstance {
 
 		File[] files = null;
 
-		logger.debug("IN");
+		LOGGER.debug("IN");
 		try {
 			Map<String, SubreportMeta> subreportsMeta = getSubreportsMeta();
 			int subreportNum = subreportsMeta.keySet().size();
 
 			files = new File[subreportNum];
-			logger.debug("Subreports number is equal to [" + subreportNum + "]");
+			LOGGER.debug("Subreports number is equal to [" + subreportNum + "]");
 
 			Iterator it = subreportsMeta.keySet().iterator();
 			int i = 0;
@@ -591,41 +587,42 @@ public class JasperReportEngineInstance extends AbstractEngineInstance {
 				String masterIds = (String) getEnv().get("prefixName");
 
 				// check if the subreport is cached into file system
-				File subreportCacheDir = getCacheDir(masterIds + System.getProperty("file.separator") + subreportMeta.getTemplateFingerprint());
-				logger.debug("dirTemplate is equal to [" + subreportCacheDir + "]");
+				File subreportCacheDir = getCacheDir(
+						masterIds + System.getProperty("file.separator") + subreportMeta.getTemplateFingerprint());
+				LOGGER.debug("dirTemplate is equal to [" + subreportCacheDir + "]");
 
-				File[] compiledJRFiles = subreportCacheDir.listFiles(new FilenameFilter() {
-					@Override
-					public boolean accept(File dir, String name) {
-						logger.debug("scan dir [" + name + "]");
-						return name.endsWith(".jasper");
-					}
+				File[] compiledJRFiles = subreportCacheDir.listFiles((FilenameFilter) (dir, name) -> {
+					LOGGER.debug("scan dir [" + name + "]");
+					return name.endsWith(".jasper");
 				});
-				logger.debug("found [" + compiledJRFiles.length + "] compiled files");
+				LOGGER.debug("found [" + compiledJRFiles.length + "] compiled files");
 				if (compiledJRFiles.length > 1) {
-					throw new RuntimeException("More then one compiled file found in directory [" + subreportCacheDir + "]");
+					throw new RuntimeException(
+							"More then one compiled file found in directory [" + subreportCacheDir + "]");
 				}
 
 				if (compiledJRFiles.length == 1) {
-					logger.debug("template [" + subreportMeta.getTemplateFingerprint() + "] alredy exists");
+					LOGGER.debug("template [" + subreportMeta.getTemplateFingerprint() + "] alredy exists");
 					files[i] = compiledJRFiles[0];
 				} else {
-					logger.debug("template [" + subreportMeta.getTemplateFingerprint() + "] does not exists yet");
+					LOGGER.debug("template [" + subreportMeta.getTemplateFingerprint() + "] does not exists yet");
 
-					File destDir = getCacheDir(masterIds + System.getProperty("file.separator") + subreportMeta.getTemplateFingerprint());
-					// File destDir = getCacheDir(masterIds);
+					File destDir = getCacheDir(
+							masterIds + System.getProperty("file.separator") + subreportMeta.getTemplateFingerprint());
 					storeLocale(getCacheDir(masterIds));
 
-					logger.debug("destDir number is equal to [" + destDir + "]");
+					LOGGER.debug("destDir number is equal to [" + destDir + "]");
 
 					// File or directory does not exist, create a new file compiled!
 					// put "true" to the parameter that not permits the validation on parameters of the subreport.
-					ContentServiceProxy contentServiceProxy = (ContentServiceProxy) getEnv().get(EngineConstants.ENV_CONTENT_SERVICE_PROXY);
+					ContentServiceProxy contentServiceProxy = (ContentServiceProxy) getEnv()
+							.get(EngineConstants.ENV_CONTENT_SERVICE_PROXY);
 					HashMap requestParameters = new HashMap();
 					requestParameters.put("SBI_READ_ONLY_TEMPLATE", "true");
-					Content template = contentServiceProxy.readTemplate(subreportMeta.getDocumentId(), requestParameters);
+					Content template = contentServiceProxy.readTemplate(subreportMeta.getDocumentId(),
+							requestParameters);
 					template.getFileName();
-					logger.debug("Read the template.(subreport)" + template.getFileName());
+					LOGGER.debug("Read the template.(subreport)" + template.getFileName());
 					InputStream is = null;
 					Base64.Decoder bASE64Decoder = Base64.getDecoder();
 					byte[] templateContent = bASE64Decoder.decode(template.getContent());
@@ -644,29 +641,31 @@ public class JasperReportEngineInstance extends AbstractEngineInstance {
 
 					if (flgTemplateStandard.equalsIgnoreCase("false")) {
 						File fileZip = new File(destDir, this.JS_FILE_ZIP + i + JS_EXT_ZIP);
-						FileOutputStream foZip = new FileOutputStream(fileZip);
-						foZip.write(templateContent);
-						foZip.close();
+						try (FileOutputStream foZip = new FileOutputStream(fileZip)) {
+							foZip.write(templateContent);
+						}
 						util.unzip(fileZip, destDir);
-						JarFile zipFile = new JarFile(fileZip);
-						Enumeration totalZipEntries = zipFile.entries();
-						File jarFile = null;
-						while (totalZipEntries.hasMoreElements()) {
-							ZipEntry entry = (ZipEntry) totalZipEntries.nextElement();
-							if (entry.getName().endsWith(".jar")) {
-								// set classloader with jar
-								jarFile = new File(destDir + entry.getName());
-								ClassLoader previous = Thread.currentThread().getContextClassLoader();
-								DynamicClassLoader dcl = new DynamicClassLoader(jarFile, previous);
-								// ClassLoader current = URLClassLoader.newInstance(new URL[]{jarFile.toURI().toURL()}, previous);
-								Thread.currentThread().setContextClassLoader(dcl);
-							}
-							if (entry.getName().endsWith(".jrxml")) {
-								// set InputStream with jrxml
-								File jrxmlFile = new File(destDir + System.getProperty("file.separator") + entry.getName());
-								InputStream isJrxml = new FileInputStream(jrxmlFile);
-								templateContent = util.getByteArrayFromInputStream(isJrxml);
-								is = new java.io.ByteArrayInputStream(templateContent);
+						try (JarFile zipFile = new JarFile(fileZip)) {
+							Enumeration totalZipEntries = zipFile.entries();
+							File jarFile = null;
+							while (totalZipEntries.hasMoreElements()) {
+								ZipEntry entry = (ZipEntry) totalZipEntries.nextElement();
+								if (entry.getName().endsWith(".jar")) {
+									// set classloader with jar
+									jarFile = new File(destDir + entry.getName());
+									ClassLoader previous = Thread.currentThread().getContextClassLoader();
+									DynamicClassLoader dcl = new DynamicClassLoader(jarFile, previous);
+									// ClassLoader current = URLClassLoader.newInstance(new URL[]{jarFile.toURI().toURL()}, previous);
+									Thread.currentThread().setContextClassLoader(dcl);
+								}
+								if (entry.getName().endsWith(".jrxml")) {
+									// set InputStream with jrxml
+									File jrxmlFile = new File(
+											destDir + System.getProperty("file.separator") + entry.getName());
+									InputStream isJrxml = new FileInputStream(jrxmlFile);
+									templateContent = util.getByteArrayFromInputStream(isJrxml);
+									is = new java.io.ByteArrayInputStream(templateContent);
+								}
 							}
 						}
 					}
@@ -679,16 +678,16 @@ public class JasperReportEngineInstance extends AbstractEngineInstance {
 					int indPoint = template.getFileName().indexOf('.');
 					files[i] = new File(destDir, template.getFileName().substring(0, indPoint) + ".jasper");
 					// files[i] = new File(destDir, jasperDesign.getName() + ".jasper");
-					logger.debug("Compiling template file: " + files[i]);
+					LOGGER.debug("Compiling template file: " + files[i]);
 
 					FileOutputStream fos = null;
 					try {
 						fos = new FileOutputStream(files[i]);
 					} catch (FileNotFoundException e) {
-						logger.error("Internal error in compiling subreport method", e);
+						LOGGER.error("Internal error in compiling subreport method", e);
 					}
 					JasperCompileManager.compileReportToStream(is, fos);
-					logger.debug("Template file compiled  succesfully");
+					LOGGER.debug("Template file compiled  succesfully");
 				}
 				i++;
 			}
@@ -697,15 +696,15 @@ public class JasperReportEngineInstance extends AbstractEngineInstance {
 			for (int j = 0; j < files.length; j++) {
 				// adds the subreport's folder to the classpath
 				urls[j] = files[j].getParentFile().toURI().toURL();
-				logger.debug("Added url [" + files[j].getParentFile().toURI().toURL() + "] to classloader");
+				LOGGER.debug("Added url [" + files[j].getParentFile().toURI().toURL() + "] to classloader");
 			}
 			ClassLoader previous = Thread.currentThread().getContextClassLoader();
 			ClassLoader current = URLClassLoader.newInstance(urls, previous);
 			Thread.currentThread().setContextClassLoader(current);
 		} catch (Throwable t) {
-			logger.error("Error while ccompiling subreports", t);
+			LOGGER.error("Error while ccompiling subreports", t);
 		} finally {
-			logger.debug("OUT");
+			LOGGER.debug("OUT");
 		}
 
 		return files;
@@ -776,13 +775,13 @@ public class JasperReportEngineInstance extends AbstractEngineInstance {
 					schema = (String) userProfile.getUserAttribute(attrname);
 			}
 		} catch (Throwable t1) {
-			logger.error("Impossible to manage properly multiSchema attribute", t1);
+			LOGGER.error("Impossible to manage properly multiSchema attribute", t1);
 		}
 
 		try {
 			conn = getDataSource().getConnection();
 		} catch (Throwable t2) {
-			logger.error("Cannot retrieve connection for schema [" + schema + "]", t2);
+			LOGGER.error("Cannot retrieve connection for schema [" + schema + "]", t2);
 		}
 
 		return conn;

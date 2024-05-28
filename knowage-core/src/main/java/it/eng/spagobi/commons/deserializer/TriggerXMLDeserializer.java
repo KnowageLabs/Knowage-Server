@@ -24,11 +24,11 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import org.apache.log4j.Logger;
 import org.joda.time.format.DateTimeFormatter;
 import org.joda.time.format.ISODateTimeFormat;
-import org.safehaus.uuid.UUIDGenerator;
 
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.base.SourceBeanAttribute;
@@ -45,42 +45,42 @@ public class TriggerXMLDeserializer implements Deserializer {
 
 	public static final String PROPERTY_CONSUMER = "consumer";
 
-	public static String TRIGGER_NAME = "triggerName";
-	public static String TRIGGER_GROUP = "triggerGroup";
-	public static String TRIGGER_DESCRIPTION = "triggerDescription";
+	public static final String TRIGGER_NAME = "triggerName";
+	public static final String TRIGGER_GROUP = "triggerGroup";
+	public static final String TRIGGER_DESCRIPTION = "triggerDescription";
 
 	/**
 	 * @deprecated {@link #TRIGGER_ZONED_START_TIME} may be prefered
 	 */
 	@Deprecated
-	public static String TRIGGER_START_DATE = "startDate";
+	public static final String TRIGGER_START_DATE = "startDate";
 	/**
 	 * @deprecated {@link #TRIGGER_ZONED_START_TIME} may be prefered
 	 */
 	@Deprecated
-	public static String TRIGGER_START_TIME = "startTime";
+	public static final String TRIGGER_START_TIME = "startTime";
 	/**
 	 * @deprecated {@link #TRIGGER_ZONED_END_TIME} may be prefered
 	 */
 	@Deprecated
-	public static String TRIGGER_END_DATE = "endDate";
+	public static final String TRIGGER_END_DATE = "endDate";
 	/**
 	 * @deprecated {@link #TRIGGER_ZONED_END_TIME} may be prefered
 	 */
 	@Deprecated
-	public static String TRIGGER_END_TIME = "endTime";
-	public static String TRIGGER_RUN_IMMEDIATELY = "runImmediately";
+	public static final String TRIGGER_END_TIME = "endTime";
+	public static final String TRIGGER_RUN_IMMEDIATELY = "runImmediately";
 
-	public static String JOB_NAME = "jobName";
-	public static String JOB_GROUP = "jobGroup";
-	public static String JOB_PARAMETERS = "PARAMETERS";
+	public static final String JOB_NAME = "jobName";
+	public static final String JOB_GROUP = "jobGroup";
+	public static final String JOB_PARAMETERS = "PARAMETERS";
 
-	public static String CRON_STRING = "chronString";
+	public static final String CRON_STRING = "chronString";
 
-	public static String TRIGGER_ZONED_START_TIME = "zonedStartTime";
-	public static String TRIGGER_ZONED_END_TIME = "zonedEndTime";
+	public static final String TRIGGER_ZONED_START_TIME = "zonedStartTime";
+	public static final String TRIGGER_ZONED_END_TIME = "zonedEndTime";
 
-	private static Logger logger = Logger.getLogger(TriggerXMLDeserializer.class);
+	private static final Logger LOGGER = Logger.getLogger(TriggerXMLDeserializer.class);
 
 	@Override
 	public Object deserialize(Object o, Class clazz) throws DeserializationException {
@@ -102,7 +102,7 @@ public class TriggerXMLDeserializer implements Deserializer {
 
 		Map<String, String> jobParameters;
 
-		logger.debug("IN");
+		LOGGER.debug("IN");
 
 		trigger = null;
 
@@ -116,17 +116,17 @@ public class TriggerXMLDeserializer implements Deserializer {
 			} else if (o instanceof String) {
 				xml = SourceBean.fromXMLString((String) o);
 			} else {
-				throw new DeserializationException("Impossible to deserialize from an object of type [" + o.getClass().getName() + "]");
+				throw new DeserializationException(
+						"Impossible to deserialize from an object of type [" + o.getClass().getName() + "]");
 			}
 
 			boolean runImmediately = deserializeRunImmediatelyAttribute(xml);
 			if (runImmediately) {
-				triggerName = "schedule_uuid_" + UUIDGenerator.getInstance().generateTimeBasedUUID().toString();
+				triggerName = "schedule_uuid_" + UUID.randomUUID().toString();
 				triggerGroupName = null;
 				triggerDescription = null;
 				startTime = null;
 				endTime = null;
-				// cronString = null;
 				cronString = (String) xml.getAttribute(CRON_STRING);
 				jobName = (String) xml.getAttribute(JOB_NAME);
 				jobGroup = (String) xml.getAttribute(JOB_GROUP);
@@ -179,7 +179,7 @@ public class TriggerXMLDeserializer implements Deserializer {
 		} catch (Throwable t) {
 			throw new DeserializationException("An error occurred while deserializing object: " + o, t);
 		} finally {
-			logger.debug("OUT");
+			LOGGER.debug("OUT");
 		}
 
 		return trigger;
@@ -215,7 +215,8 @@ public class TriggerXMLDeserializer implements Deserializer {
 			String startDay;
 			String startMonth;
 			String startYear;
-			if (DateUtils.isValidFormat(startDateStr, "dd/MM/yyyy") || DateUtils.isValidFormat(startDateStr, "dd/MM/yy")) {
+			if (DateUtils.isValidFormat(startDateStr, "dd/MM/yyyy")
+					|| DateUtils.isValidFormat(startDateStr, "dd/MM/yy")) {
 				splitterDate = startDateStr.split("/");
 				startDay = splitterDate[0];
 				startMonth = splitterDate[1];
@@ -229,13 +230,14 @@ public class TriggerXMLDeserializer implements Deserializer {
 				return null;
 			}
 
-			calendar = new GregorianCalendar(new Integer(startYear).intValue(), new Integer(startMonth).intValue() - 1, new Integer(startDay).intValue());
+			calendar = new GregorianCalendar(Integer.parseInt(startYear), Integer.parseInt(startMonth) - 1,
+					Integer.parseInt(startDay));
 			String startTimeStr = (String) xml.getAttribute(TRIGGER_START_TIME);
 			if (startTimeStr != null) {
 				String startHour = startTimeStr.substring(0, 2);
 				String startMinute = startTimeStr.substring(3, 5);
-				calendar.set(calendar.HOUR_OF_DAY, new Integer(startHour).intValue());
-				calendar.set(calendar.MINUTE, new Integer(startMinute).intValue());
+				calendar.set(Calendar.HOUR_OF_DAY, Integer.parseInt(startHour));
+				calendar.set(Calendar.MINUTE, Integer.parseInt(startMinute));
 			}
 		}
 
@@ -271,14 +273,15 @@ public class TriggerXMLDeserializer implements Deserializer {
 				return null;
 			}
 
-			calendar = new GregorianCalendar(new Integer(endYear).intValue(), new Integer(endMonth).intValue() - 1, new Integer(endDay).intValue());
+			calendar = new GregorianCalendar(Integer.parseInt(endYear), Integer.parseInt(endMonth) - 1,
+					Integer.parseInt(endDay));
 
 			String endTimeStr = (String) xml.getAttribute(TRIGGER_END_TIME);
 			if (endTimeStr != null) {
 				String endHour = endTimeStr.substring(0, 2);
 				String endMinute = endTimeStr.substring(3, 5);
-				calendar.set(calendar.HOUR_OF_DAY, new Integer(endHour).intValue());
-				calendar.set(calendar.MINUTE, new Integer(endMinute).intValue());
+				calendar.set(Calendar.HOUR_OF_DAY, Integer.parseInt(endHour));
+				calendar.set(Calendar.MINUTE, Integer.parseInt(endMinute));
 			}
 		}
 
@@ -304,7 +307,7 @@ public class TriggerXMLDeserializer implements Deserializer {
 	}
 
 	private Map<String, String> deserializeParametersAttribute(SourceBean xml) {
-		Map<String, String> parameters = new HashMap<String, String>();
+		Map<String, String> parameters = new HashMap<>();
 
 		SourceBean jobParameters = (SourceBean) xml.getAttribute(JOB_PARAMETERS);
 

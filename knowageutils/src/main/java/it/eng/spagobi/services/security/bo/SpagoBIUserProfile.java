@@ -19,10 +19,14 @@
 package it.eng.spagobi.services.security.bo;
 
 import java.io.Serializable;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class SpagoBIUserProfile implements Serializable {
-	private Map attributes;
+
+	private static final long serialVersionUID = 4628667082032801018L;
+
+	private final Map<String, Object> attributes = new LinkedHashMap<>();
 
 	private String[] functions;
 
@@ -41,9 +45,9 @@ public class SpagoBIUserProfile implements Serializable {
 	public SpagoBIUserProfile() {
 	}
 
-	public SpagoBIUserProfile(Map attributes, String[] functions, Boolean isSuperadmin, String organization,
-			String[] roles, String uniqueIdentifier, String userId, String userName) {
-		this.attributes = attributes;
+	public SpagoBIUserProfile(Map<String, Object> attributes, String[] functions, Boolean isSuperadmin,
+			String organization, String[] roles, String uniqueIdentifier, String userId, String userName) {
+		this.attributes.putAll(attributes);
 		this.functions = functions;
 		this.isSuperadmin = isSuperadmin;
 		this.organization = organization;
@@ -58,17 +62,8 @@ public class SpagoBIUserProfile implements Serializable {
 	 *
 	 * @return attributes
 	 */
-	public Map getAttributes() {
+	public Map<String, Object> getAttributes() {
 		return attributes;
-	}
-
-	/**
-	 * Sets the attributes value for this SpagoBIUserProfile.
-	 *
-	 * @param attributes
-	 */
-	public void setAttributes(Map attributes) {
-		this.attributes = attributes;
 	}
 
 	/**

@@ -30,6 +30,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.UUID;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -47,8 +48,6 @@ import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Property;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.Transformers;
-import org.safehaus.uuid.UUID;
-import org.safehaus.uuid.UUIDGenerator;
 
 import com.jamonapi.Monitor;
 import com.jamonapi.MonitorFactory;
@@ -1071,8 +1070,7 @@ public class BIObjectDAOHibImpl extends AbstractHibernateDAO implements IBIObjec
 			hibBIObject.setParametersRegion(obj.getParametersRegion());
 
 			// uuid generation
-			UUIDGenerator uuidGenerator = UUIDGenerator.getInstance();
-			UUID uuidObj = uuidGenerator.generateTimeBasedUUID();
+			UUID uuidObj = UUID.randomUUID();
 			String uuid = uuidObj.toString();
 			hibBIObject.setUuid(uuid);
 			if (obj.getPreviewFile() != null && !"".equals(obj.getPreviewFile())) {

@@ -17,11 +17,11 @@
  */
 package it.eng.spagobi.images;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
+import java.util.EnumMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -35,7 +35,6 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.MultivaluedMap;
 
 import org.apache.clerezza.jaxrs.utils.form.FormFile;
 import org.apache.clerezza.jaxrs.utils.form.MultiPartBody;
@@ -47,6 +46,7 @@ import org.json.JSONObject;
 import it.eng.spago.security.IEngUserProfile;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 import it.eng.spagobi.analiticalmodel.document.bo.ObjTemplate;
+import it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO;
 import it.eng.spagobi.commons.constants.CommunityFunctionalityConstants;
 import it.eng.spagobi.commons.constants.SpagoBIConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
@@ -62,7 +62,7 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIServiceException;
 @Path("/1.0/images")
 public class ImagesService {
 
-	private static transient Logger logger = Logger.getLogger(ImagesService.class);
+	private static final Logger LOGGER = Logger.getLogger(ImagesService.class);
 
 	@GET
 	@Path("/listImages")
@@ -79,7 +79,8 @@ public class ImagesService {
 			JSONObject ret = new JSONObject();
 			JSONArray images = new JSONArray();
 			for (SbiImages imageDB : dao.listImages(name, descr, sort)) {
-				Date lastMod = imageDB.getCommonInfo().getTimeUp() != null ? imageDB.getCommonInfo().getTimeUp() : imageDB.getCommonInfo().getTimeIn();
+				Date lastMod = imageDB.getCommonInfo().getTimeUp() != null ? imageDB.getCommonInfo().getTimeUp()
+						: imageDB.getCommonInfo().getTimeIn();
 				String url = "/1.0/images/getImage?IMAGES_ID=" + imageDB.getImageId();
 				JSONObject o = new JSONObject();
 				o.put("name", imageDB.getName());
@@ -93,8 +94,9 @@ public class ImagesService {
 			ret.put("data", images);
 			return ret.toString();
 		} catch (Throwable t) {
-			logger.error("An unexpected error occured while executing service \"listImages\"", t);
-			throw new SpagoBIServiceException(req.getPathInfo(), "An unexpected error occured while executing service \"listImages\"", t);
+			LOGGER.error("An unexpected error occured while executing service \"listImages\"", t);
+			throw new SpagoBIServiceException(req.getPathInfo(),
+					"An unexpected error occured while executing service \"listImages\"", t);
 		}
 	}
 
@@ -119,8 +121,9 @@ public class ImagesService {
 			}
 			flushFileToResponse(resp, contentType, content);
 		} catch (Throwable t) {
-			logger.error("An unexpected error occured while executing service \"getImage\"", t);
-			throw new SpagoBIServiceException(req.getPathInfo(), "An unexpected error occured while executing service \"getImage\"", t);
+			LOGGER.error("An unexpected error occured while executing service \"getImage\"", t);
+			throw new SpagoBIServiceException(req.getPathInfo(),
+					"An unexpected error occured while executing service \"getImage\"", t);
 		}
 	}
 
@@ -173,7 +176,7 @@ public class ImagesService {
 				}
 			}
 		} catch (Throwable t) {
-			logger.error("An unexpected error occured while executing service \"addImage\"", t);
+			LOGGER.error("An unexpected error occured while executing service \"addImage\"", t);
 			msg = "An unexpected error occured while executing service \"addImage\"";
 			throw new SpagoBIRuntimeException(msg);
 		}
@@ -189,34 +192,23 @@ public class ImagesService {
 		}
 	}
 
-//	public boolean isValidJSON(final String json) {
-//		boolean valid = false;
-//		try {
-//			final JsonParser parser = new ObjectMapper().getJsonFactory().createJsonParser(json);
-//			while (parser.nextToken() != null) {
-//			}
-//			valid = true;
-//		} catch (JsonParseException jpe) {
-//			logger.debug("Parsed String is not a valid JSON: " + json);
-//		} catch (IOException ioe) {
-//			ioe.printStackTrace();
-//		}
-//
-//		return valid;
-//	}
-
 	private String checkIfImageIsInUse(Integer imageId) {
-		logger.debug("IN");
+		LOGGER.debug("IN");
 
 		String toReturn = null;
 
 		try {
-			List biObjects = DAOFactory.getBIObjectDAO().loadBIObjects(SpagoBIConstants.DOCUMENT_COMPOSITE_TYPE, null, null);
+			List<BIObject> biObjects = new ArrayList<>();
+
+			IBIObjectDAO biObjectDAO = DAOFactory.getBIObjectDAO();
+
+			biObjects.addAll(biObjectDAO.loadBIObjects(SpagoBIConstants.DOCUMENT_COMPOSITE_TYPE, null, null));
+
+			biObjects.addAll(biObjectDAO.loadBIObjects(SpagoBIConstants.DASHBOARD_TYPE, null, null));
 
 			// check with string, is enough
-			for (Iterator iterator = biObjects.iterator(); iterator.hasNext();) {
-				BIObject object = (BIObject) iterator.next();
-				boolean foundInObj = false;
+			for (Iterator<BIObject> iterator = biObjects.iterator(); iterator.hasNext();) {
+				BIObject object = iterator.next();
 				ObjTemplate template = object.getActiveTemplate();
 				if (template != null) {
 					byte[] templateContentBytes = template.getContent();
@@ -225,9 +217,7 @@ public class ImagesService {
 						if (templateContent.indexOf("\"imgId\":" + imageId) != -1) {
 							if (toReturn == null) {
 								toReturn = object.getName();
-								foundInObj = true;
 							} else {
-								foundInObj = true;
 								toReturn += ", " + object.getName();
 							}
 						}
@@ -235,56 +225,12 @@ public class ImagesService {
 				}
 			}
 
-			// check with json, too complicated
-			// for (Iterator iterator = biObjects.iterator(); iterator.hasNext();) {
-			// BIObject object = (BIObject) iterator.next();
-			// boolean foundInObj = false;
-			// ObjTemplate template = object.getActiveTemplate();
-			// byte[] templateContentBytes = template.getContent();
-			// if (templateContentBytes != null) {
-			// String templateContent = new String(templateContentBytes);
-			// // to check if is a XML or JSON (other map templates are XML)
-			// if (!templateContent.trim().startsWith("<")) {
-			// if (isValidJSON(templateContent)) {
-			// JSONObject templateJSONObject = JSONUtils.toJSONObject(templateContent);
-			// if (templateJSONObject.has("widgets")) {
-			// JSONArray widgets = templateJSONObject.getJSONArray("widgets");
-			// for (int index = 0; index < widgets.length() && foundInObj == false; index++) {
-			// Object object2 = widgets.get(index);
-			// if (object2 instanceof JSONObject) {
-			// JSONObject widget = (JSONObject) object2;
-			// if (widget.has("type") && widget.getString("type").equals("image")) {
-			// if (widget.has("content")) {
-			// JSONObject content = widget.getJSONObject("content");
-			// if (content.has("imgId")) {
-			// String idS = content.getString("imgId");
-			// Integer id = Integer.valueOf(idS);
-			// if (id.equals(imageId)) {
-			// if (toReturn == null) {
-			// toReturn = object.getLabel();
-			// foundInObj = true;
-			// } else {
-			// foundInObj = true;
-			// toReturn += ", " + object.getLabel();
-			// }
-			// }
-			// }
-			// }
-			// }
-			// }
-			// }
-			// }
-			// }
-			// }
-			// }
-			// }
-
 		} catch (Exception e) {
-			logger.error("Error in checking if image is used in other cockpits template", e);
+			LOGGER.error("Error in checking if image is used in other cockpits template", e);
 
 		}
 
-		logger.debug("OUT");
+		LOGGER.debug("OUT");
 		return toReturn;
 	}
 
@@ -293,7 +239,7 @@ public class ImagesService {
 	@Produces(MediaType.APPLICATION_JSON)
 	@UserConstraint(functionalities = { CommunityFunctionalityConstants.IMAGES_MANAGEMENT })
 	public String deleteImage(@Context HttpServletRequest req) {
-		logger.debug("IN");
+		LOGGER.debug("IN");
 		String msg = "sbi.cockpit.widgets.image.imageWidgetDesigner.deleteOK";
 		boolean success = true;
 		try {
@@ -307,18 +253,19 @@ public class ImagesService {
 
 				String labelInUSe = checkIfImageIsInUse(id);
 				if (labelInUSe != null) {
-					logger.error("Cannot delete image because it is in use in " + labelInUSe);
+					LOGGER.error("Cannot delete image because it is in use in " + labelInUSe);
 					msg = "Cannot delete image because it is in use in documents " + labelInUSe;
 					success = false;
 				} else {
 					IImagesDAO dao = DAOFactory.getImagesDAO();
-					IEngUserProfile profile = (IEngUserProfile) req.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
+					IEngUserProfile profile = (IEngUserProfile) req.getSession()
+							.getAttribute(IEngUserProfile.ENG_USER_PROFILE);
 					dao.setUserProfile(profile);
 					dao.deleteImage(id);
 				}
 			}
 		} catch (Throwable t) {
-			logger.error("An unexpected error occured while executing service \"deleteImage\"", t);
+			LOGGER.error("An unexpected error occured while executing service \"deleteImage\"", t);
 			msg = "An unexpected error occured while executing service \"deleteImage\"";
 			success = false;
 		}
@@ -326,52 +273,25 @@ public class ImagesService {
 			JSONObject ret = new JSONObject();
 			ret.put("success", success);
 			ret.put("msg", msg);
-			logger.debug("OUT");
+			LOGGER.debug("OUT");
 			return ret.toString();
 		} catch (JSONException e) {
-			logger.debug("OUT");
+			LOGGER.debug("OUT");
 			return "{\"success\":false,\"msg\":\"JSON Error\"}";
 		}
 	}
 
-	/**
-	 * header sample { Content-Type=[image/png], Content-Disposition=[form-data; name="file"; filename="filename.extension"] }
-	 **/
-	private String getFileName(MultivaluedMap<String, String> header) {
-
-		String[] contentDisposition = header.getFirst("Content-Disposition").split(";");
-
-		for (String filename : contentDisposition) {
-			if ((filename.trim().startsWith("filename"))) {
-
-				String[] name = filename.split("=");
-
-				String fn = name[1];
-
-				if (fn.contains(File.separator)) {
-					int beginIndex = fn.lastIndexOf(File.separator) + 1;
-					if (beginIndex < fn.length()) {
-						fn = fn.substring(beginIndex);
-					}
-				}
-
-				String finalFileName = fn.trim().replaceAll("\"", "");
-				return finalFileName;
-			}
-		}
-		return "unknown";
-	}
-
-	private static void flushFileToResponse(HttpServletResponse response, String contentType, byte[] content) throws IOException {
+	private static void flushFileToResponse(HttpServletResponse response, String contentType, byte[] content)
+			throws IOException {
 		response.reset(); // Some JSF component library or some Filter might have set some headers in the buffer beforehand. We want to get rid of them, else it
-							// may collide.
+							 // may collide.
 		response.setContentType(contentType); // Check http://www.w3schools.com/media/media_mimeref.asp for all types. Use if necessary
-												// ServletContext#getMimeType() for auto-detection based on filename.
+												 // ServletContext#getMimeType() for auto-detection based on filename.
 		response.setContentLength(content.length); // Set it with the file size. This header is optional. It will work if it's omitted, but the download
-													// progress will be unknown.
+													 // progress will be unknown.
 		response.setHeader("Content-Disposition", "inline; filename=\"fileName\""); // The Save As popup magic is done here. You can give it any file name you
-																					// want, this only won't work in MSIE, it will use current request URL as
-																					// file name instead.
+																					 // want, this only won't work in MSIE, it will use current request URL as
+																					 // file name instead.
 		OutputStream output = response.getOutputStream();
 		output.write(content);
 		response.flushBuffer();
@@ -380,16 +300,14 @@ public class ImagesService {
 	private Map<OrderBy, Direction> getOrderMap(String parameter) {
 		if (parameter != null) {
 			try {
-				Map<OrderBy, Direction> map = new HashMap<OrderBy, Direction>();
+				EnumMap<OrderBy, Direction> map = new EnumMap<>(OrderBy.class);
 				JSONArray arr = new JSONArray(parameter);
 				for (int i = 0; i < arr.length(); i++) {
 					JSONObject s = arr.getJSONObject(i);
-					try {
-						OrderBy field = OrderBy.valueOf(s.getString("property"));
-						Direction dir = Direction.valueOf(s.getString("direction"));
-						map.put(field, dir);
-					} catch (Exception e) {
-					}
+
+					OrderBy field = OrderBy.valueOf(s.getString("property"));
+					Direction dir = Direction.valueOf(s.getString("direction"));
+					map.put(field, dir);
 				}
 				return map;
 			} catch (JSONException e) {

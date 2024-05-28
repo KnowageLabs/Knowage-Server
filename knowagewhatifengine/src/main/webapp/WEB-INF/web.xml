@@ -8,8 +8,11 @@
 		                    http://xmlns.jcp.org/xml/ns/javaee/web-app_4_0.xsd"
 		version="4.0" >
 
+	<distributable/>
+
 	<display-name>knowagewhatifengine</display-name>
 	<description>Knowage What-If engine</description>
+	<distributable/>
 
 	<!-- 
 		Logger Setup Filter.

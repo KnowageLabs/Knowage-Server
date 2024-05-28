@@ -17,15 +17,13 @@
  */
 package it.eng.spagobi.engines.commonj.runtime;
 
-
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import org.apache.log4j.Logger;
-import org.safehaus.uuid.UUID;
-import org.safehaus.uuid.UUIDGenerator;
 
 import it.eng.spago.base.SourceBean;
 import it.eng.spagobi.utilities.assertion.Assert;
@@ -33,6 +31,7 @@ import it.eng.spagobi.utilities.engines.SpagoBIEngineException;
 
 /**
  * contiene le configurazioni del WORK quando le legge da template
+ *
  * @author bernabei
  *
  */
@@ -52,12 +51,12 @@ public class CommonjWork {
 	private String command;
 	private String commandEnvironment;
 
-	/** parameters set in template*/
+	/** parameters set in template */
 	private List<String> cmdParameters;
 	private List<String> analyticalParameters;
 	private List<String> classpathParameters;
 
-	/** map of analyticalDriver from SpagoBIDocument*/
+	/** map of analyticalDriver from SpagoBIDocument */
 	private Map sbiParametersMap;
 
 	public CommonjWork(SourceBean template) throws SpagoBIEngineException {
@@ -66,16 +65,15 @@ public class CommonjWork {
 		LOGGER.debug("OUT");
 	}
 
-
 	/**
 	 * Instantiates a new work.
 	 *
-	 * @param name the name
+	 * @param name      the name
 	 * @param className the className
 	 */
 	public CommonjWork(String name, String className) {
 		this.workName = name;
-		this.className= className;
+		this.className = className;
 	}
 
 	public void load(SourceBean template) throws it.eng.spagobi.engines.commonj.exception.TemplateParseException {
@@ -84,20 +82,21 @@ public class CommonjWork {
 
 		Assert.assertNotNull(template, "Input parameter [template] cannot be null");
 
-		workSB = (SourceBean)template.getAttribute("WORK");
+		workSB = (SourceBean) template.getAttribute("WORK");
 		Assert.assertNotNull(workSB, "template cannot be null");
 
-		workName = (String)workSB.getAttribute("workName");
-		if(workName == null) {
+		workName = (String) workSB.getAttribute("workName");
+		if (workName == null) {
 			LOGGER.error("Missing  work name in document template");
-			throw new it.eng.spagobi.engines.commonj.exception.TemplateParseException(template, "Missing  work name in document template");
+			throw new it.eng.spagobi.engines.commonj.exception.TemplateParseException(template,
+					"Missing  work name in document template");
 		}
 
-
-		className = (String)workSB.getAttribute("className");
-		if(className == null) {
+		className = (String) workSB.getAttribute("className");
+		if (className == null) {
 			LOGGER.error("Missing class specification in document template");
-			throw new it.eng.spagobi.engines.commonj.exception.CommonjEngineException("Missing class specification in document template");
+			throw new it.eng.spagobi.engines.commonj.exception.CommonjEngineException(
+					"Missing class specification in document template");
 		}
 
 		cmdParameters = new ArrayList<>();
@@ -105,44 +104,38 @@ public class CommonjWork {
 		classpathParameters = new ArrayList<>();
 
 		// check for parameters, in particular cmd and cmd_env
-		SourceBean parametersSB=(SourceBean)workSB.getAttribute("PARAMETERS");
-		if(parametersSB!=null){
-			List parameterList=parametersSB.getAttributeAsList("PARAMETER");
-			if(parameterList!=null){
+		SourceBean parametersSB = (SourceBean) workSB.getAttribute("PARAMETERS");
+		if (parametersSB != null) {
+			List parameterList = parametersSB.getAttributeAsList("PARAMETER");
+			if (parameterList != null) {
 				for (Iterator iterator = parameterList.iterator(); iterator.hasNext();) {
 					SourceBean parameter = (SourceBean) iterator.next();
-					String name=(String)parameter.getAttribute("name");
-					String value=(String)parameter.getAttribute("value");
+					String name = (String) parameter.getAttribute("name");
+					String value = (String) parameter.getAttribute("value");
 
 					// if it is the command name
-					if(name.equalsIgnoreCase(COMMAND)){
-						LOGGER.debug("command parameter "+value);
-						command=value;
+					if (name.equalsIgnoreCase(COMMAND)) {
+						LOGGER.debug("command parameter " + value);
+						command = value;
+					} else // if it is the command environment
+					if (name.equalsIgnoreCase(COMMAND_ENVIRONMENT)) {
+						LOGGER.debug("command environment parameter" + value);
+						commandEnvironment = value;
+					} else {
+						LOGGER.debug("general parameter" + value);
+						// if it is a spagobi Analytical driver url name
+						if (name.equalsIgnoreCase(SBI_ANALYTICAL_DRIVER)) {
+							analyticalParameters.add(value);
+						}
+						// if it is a classpath variable
+						else if (name.equalsIgnoreCase(CLASSPATH)) {
+							classpathParameters.add(value);
+						} else if (name.equalsIgnoreCase(CMD_PAR)) {
+							// else it is a command parameter name = value
+							cmdParameters.add(value);
+						}
+
 					}
-					else // if it is the command environment
-						if(name.equalsIgnoreCase(COMMAND_ENVIRONMENT)){
-							LOGGER.debug("command environment parameter"+value);
-							commandEnvironment=value;
-						}
-						else{
-							LOGGER.debug("general parameter"+value);
-							// if it is a spagobi Analytical driver url name
-							if(name.equalsIgnoreCase(SBI_ANALYTICAL_DRIVER)){
-								analyticalParameters.add(value);
-							}
-							// if it is a classpath variable
-							else if(name.equalsIgnoreCase(CLASSPATH)){
-								classpathParameters.add(value);
-							}
-							else if(name.equalsIgnoreCase(CMD_PAR)){
-								// else it is a command parameter name = value
-								cmdParameters.add(value);
-							}
-
-
-
-
-						}
 
 				}
 
@@ -150,7 +143,6 @@ public class CommonjWork {
 		}
 		LOGGER.debug("OUT");
 	}
-
 
 	/**
 	 * Gets the name.
@@ -170,38 +162,29 @@ public class CommonjWork {
 		this.workName = name;
 	}
 
-
-
 	public String getClassName() {
 		return className;
 	}
-
 
 	public void setClassName(String className) {
 		this.className = className;
 	}
 
-
-
 	public String getCommand() {
 		return command;
 	}
-
 
 	public void setCommand(String command) {
 		this.command = command;
 	}
 
-
 	public String getCommandEnvironment() {
 		return commandEnvironment;
 	}
 
-
 	public void setCommandEnvironment(String commandEnvironment) {
 		this.commandEnvironment = commandEnvironment;
 	}
-
 
 	/**
 	 * To xml.
@@ -212,30 +195,28 @@ public class CommonjWork {
 		StringBuilder buffer = new StringBuilder();
 		buffer.append("<COMMONJ>");
 		buffer.append("<WORK");
-		if(workName != null && !workName.trim().equalsIgnoreCase("")) buffer.append(" workName=" + workName);
-		if(className != null && !className.trim().equalsIgnoreCase("")) buffer.append(" className=" + className);
+		if (workName != null && !workName.trim().equalsIgnoreCase(""))
+			buffer.append(" workName=" + workName);
+		if (className != null && !className.trim().equalsIgnoreCase(""))
+			buffer.append(" className=" + className);
 		buffer.append("/>");
 		buffer.append("</COMMONJ>");
 
 		return buffer.toString();
 	}
 
-
-
-
-
 	public String getPId() {
 		return pId;
 	}
 
-	/** calculate work pid,
+	/**
+	 * calculate work pid,
 	 *
 	 */
 
 	public String calculatePId() {
 
-		UUIDGenerator uuidGen  = UUIDGenerator.getInstance();
-		UUID uuidObj = uuidGen.generateTimeBasedUUID();
+		UUID uuidObj = UUID.randomUUID();
 		String executionId = uuidObj.toString();
 		pId = executionId;
 		return executionId;
@@ -246,36 +227,29 @@ public class CommonjWork {
 		return sbiParametersMap;
 	}
 
-
 	public void setSbiParametersMap(Map sbiParametersMap) {
 		this.sbiParametersMap = sbiParametersMap;
 	}
-
 
 	public List<String> getAnalyticalParameters() {
 		return analyticalParameters;
 	}
 
-
 	public void setAnalyticalParameters(List<String> analyticalParameters) {
 		this.analyticalParameters = analyticalParameters;
 	}
-
 
 	public List<String> getClasspathParameters() {
 		return classpathParameters;
 	}
 
-
 	public void setClasspathParameters(List<String> classpathParameters) {
 		this.classpathParameters = classpathParameters;
 	}
 
-
 	public void setCmdParameters(List<String> cmdParameters) {
 		this.cmdParameters = cmdParameters;
 	}
-
 
 	public List<String> getCmdParameters() {
 		return cmdParameters;

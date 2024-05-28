@@ -18,18 +18,26 @@
  */
 package it.eng.spagobi.tools.dataset.common.datareader;
 
+<<<<<<< HEAD
 import it.eng.spagobi.tools.dataset.common.datastore.*;
+=======
+import java.util.List;
+import java.util.Map;
+
+import org.apache.log4j.Logger;
+
+import it.eng.spagobi.tools.dataset.common.datastore.DataStore;
+import it.eng.spagobi.tools.dataset.common.datastore.Field;
+import it.eng.spagobi.tools.dataset.common.datastore.IDataStore;
+import it.eng.spagobi.tools.dataset.common.datastore.IField;
+import it.eng.spagobi.tools.dataset.common.datastore.IRecord;
+>>>>>>> upstream/master
 import it.eng.spagobi.tools.dataset.common.datastore.Record;
 import it.eng.spagobi.tools.dataset.common.metadata.FieldMetadata;
 import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData;
 import it.eng.spagobi.tools.dataset.common.metadata.IMetaData;
 import it.eng.spagobi.tools.dataset.common.metadata.MetaData;
 import it.eng.spagobi.utilities.Helper;
-import org.apache.log4j.Logger;
-
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
 
 public class FacetSolrDataReader extends SolrDataReader {
 

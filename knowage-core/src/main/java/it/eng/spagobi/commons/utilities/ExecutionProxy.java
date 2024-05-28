@@ -30,6 +30,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.UUID;
 
 import org.apache.commons.httpclient.Header;
 import org.apache.commons.httpclient.HttpClient;
@@ -39,8 +40,6 @@ import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.safehaus.uuid.UUID;
-import org.safehaus.uuid.UUIDGenerator;
 
 import it.eng.spago.base.RequestContainer;
 import it.eng.spago.base.ResponseContainer;
@@ -273,8 +272,7 @@ public class ExecutionProxy {
 
 			// adding SBI_EXECUTION_ID parameter
 			if (!mapPars.containsKey("SBI_EXECUTION_ID")) {
-				UUIDGenerator uuidGen = UUIDGenerator.getInstance();
-				UUID uuidObj = uuidGen.generateTimeBasedUUID();
+				UUID uuidObj = UUID.randomUUID();
 				String executionId = uuidObj.toString();
 				executionId = executionId.replaceAll("-", "");
 				mapPars.put("SBI_EXECUTION_ID", executionId);
