@@ -20,10 +20,15 @@ package it.eng.spagobi.commons.metadata;
 import java.util.HashSet;
 import java.util.Set;
 
-public class SbiTenant extends SbiHibernateModel {
+import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Size;
 
+public class SbiTenant extends SbiHibernateModel {
+    
 	private Integer id;
-	private String name;
+	@Pattern(regexp="^[a-zA-Z0-9_]*$")
+	@Size(max=50)
+	private String name; 
 	private String theme;
 	private Set<SbiOrganizationDatasource> sbiOrganizationDatasources = new HashSet<>(0);
 	private Set<SbiOrganizationProductType> sbiOrganizationProductType = new HashSet<>(0);

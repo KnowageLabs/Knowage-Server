@@ -18,11 +18,17 @@
 
 package it.eng.spagobi.tenant;
 
+import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Size;
+
 /**
  * @author Davide Zerbetto (davide.zerbetto@eng.it)
  */
 public class Tenant {
 
+
+   @Pattern(regexp="^[a-zA-Z0-9_]*$")
+   @Size(max=50)
 	private String name = null;
 	
 	public Tenant(String name) {
