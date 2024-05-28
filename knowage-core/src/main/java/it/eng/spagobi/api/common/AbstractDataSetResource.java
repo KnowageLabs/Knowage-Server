@@ -1194,7 +1194,7 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 			throw new SpagoBIServiceException(this.request.getPathInfo(),
 					"An unexpected error occured while executing service", t);
 		} finally {
-			LOGGER.debug("OUT");
+			logger.debug("OUT");
 		}
 
 	}
