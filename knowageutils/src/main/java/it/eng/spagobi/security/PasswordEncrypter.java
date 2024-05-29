@@ -41,8 +41,9 @@ public class PasswordEncrypter {
 		// Access algorithms from the provider by calls like javax.crypto.Cipher
 		Cipher cipher = null;
 		
-		try {
-			cipher = Cipher.getInstance("AES/CTR/NoPadding");			
+		try { 
+			//cipher = Cipher.getInstance("AES/CTR/NoPadding"); // RSA/ECB/PKCS5Padding			 
+			cipher = Cipher.getInstance("RSA/ECB/PKCS5Padding"); // 			 
 			// Cipher.getInstance("AES/CTR/NoPadding", "SunJCE") is not recommended,
 			// otherwise, applications are tied to specific providers that may not be available on other Java implementations.
 			
