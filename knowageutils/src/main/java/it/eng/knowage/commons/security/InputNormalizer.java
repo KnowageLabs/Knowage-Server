@@ -23,11 +23,7 @@ public class InputNormalizer {
 	
 	
 	
-	public static void main (String[] args) {
-		
-		String test = "prova/../../../appo.js";
-		System.out.println("[[" + normalizePath(test)+ "]]");
-	}
+
 	
 
 }
