@@ -90,6 +90,7 @@ public class AbstractDocumentExecutionWork extends DossierExecutionClient implem
 	IProgressThreadDAO progressThreadDAO;
 	protected AbstractDossierTemplate dossierTemplate = null;
 	protected JSONObject jsonObjectTemplate = new JSONObject();
+	
 
 	@Override
 	public void run() {
@@ -688,12 +689,15 @@ public class AbstractDocumentExecutionWork extends DossierExecutionClient implem
 											currValue2AsString = currValue2AsString.substring(1,
 													currValue2AsString.length() - 1);
 										}
-
-										paramValue.put("value", URLEncoder.encode(currValue2AsString,
-												StandardCharsets.UTF_8.toString()));
+										
+										paramValue.put("value", 
+												DefaultEncoder.getInstance().encodeForHTML(currValue2AsString));
+												//URLEncoder.encode(currValue2AsString,
+												//StandardCharsets.UTF_8.toString()));
 										paramValue.put("description",
-												URLEncoder.encode(templateParameter.getUrlNameDescription(),
-														StandardCharsets.UTF_8.toString()));
+												DefaultEncoder.getInstance().encodeForHTML(templateParameter.getUrlNameDescription()));
+												//URLEncoder.encode(templateParameter.getUrlNameDescription(),
+												//		StandardCharsets.UTF_8.toString()));
 
 										paramValueArray.put(paramValue);
 									}

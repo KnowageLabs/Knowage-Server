@@ -698,7 +698,8 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 								? paramDescriptionValues.toString()
 								: paramValues.toString();
 						if (!parDescrVal.contains("%")) {
-							parDescrVal = URLDecoder.decode(parDescrVal.replace("+", "%2B"), UTF_8.name());
+							parDescrVal = esapiEncoder.decodeFromURL(parDescrVal.replace("+", "%2B")) ;
+									//URLDecoder.decode(parDescrVal.replace("+", "%2B"), UTF_8.name());
 						}
 						paramDescrLst.add(parDescrVal);
 

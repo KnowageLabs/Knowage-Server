@@ -685,7 +685,8 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 					} else if (paramValues instanceof String) {
 						// % character breaks decode method
 						if (!((String) paramValues).contains("%")) {
-							paramValues = URLDecoder.decode(((String) paramValues).replace("+", "%2B"), UTF_8.name());
+							//paramValues = URLDecoder.decode(((String) paramValues).replace("+", "%2B"), UTF_8.name());
+							paramValues = esapiEncoder.decodeFromURL(((String) paramValues).replace("+", "%2B"));
 						}
 						paramValueLst.add(paramValues.toString());
 
