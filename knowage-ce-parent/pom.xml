@@ -72,8 +72,8 @@
 		<!-- For eclipse plugin -->
 		<m2e.jpa.activation>false</m2e.jpa.activation>
 		<m2e.jsf.activation>false</m2e.jsf.activation>
-		<maven.compiler.source>1.8</maven.compiler.source>
-		<maven.compiler.target>1.8</maven.compiler.target>
+		<maven.compiler.source>17</maven.compiler.source>
+		<maven.compiler.target>17</maven.compiler.target>
 		<mpir.skip>true</mpir.skip>
 		<ojdbc.version>12.2.0.1</ojdbc.version>
 		<owasp-java-html-sanitizer.version>20220608.1</owasp-java-html-sanitizer.version>
