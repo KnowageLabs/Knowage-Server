@@ -56,15 +56,7 @@ if (profile != null) {
 
 // invalidate http session
 session.invalidate();
-String sessionCookieName = request.getServletContext().getSessionCookieConfig().getName();
-if (sessionCookieName == null) {
-	sessionCookieName = "JSESSIONID";
-}
-Cookie cookie = new Cookie(sessionCookieName, "");
-cookie.setHttpOnly(true);
-cookie.setPath(KnowageSystemConfiguration.getKnowageContext());
-cookie.setMaxAge(0);
-response.addCookie(cookie);
+
 
 //Check if SSO is active
 

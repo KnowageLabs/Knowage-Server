@@ -33,6 +33,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.ValidationException;
@@ -96,7 +97,6 @@ import it.eng.spagobi.tenant.TenantManager;
 import it.eng.spagobi.tools.catalogue.bo.MetaModel;
 import it.eng.spagobi.tools.catalogue.dao.IMetaModelsDAO;
 import it.eng.spagobi.tools.dataset.DatasetManagementAPI;
-import it.eng.spagobi.tools.dataset.bo.DataSetBasicInfo;
 import it.eng.spagobi.tools.dataset.bo.IDataSet;
 import it.eng.spagobi.tools.dataset.bo.PreparedDataSet;
 import it.eng.spagobi.tools.dataset.bo.VersionedDataSet;
@@ -136,6 +136,7 @@ import it.eng.spagobi.tools.datasource.dao.IDataSourceDAO;
 import it.eng.spagobi.utilities.database.DataBaseException;
 import it.eng.spagobi.utilities.database.DataBaseFactory;
 import it.eng.spagobi.utilities.database.IDataBase;
+import it.eng.spagobi.utilities.exceptions.ActionNotPermittedException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRestServiceException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 import it.eng.spagobi.utilities.exceptions.ValidationServiceException;
@@ -155,8 +156,23 @@ public class DataSetResource extends AbstractDataSetResource {
 		logger.debug("IN");
 
 		IDataSetDAO dsDAO = getDataSetDAO();
+		DatasetManagementAPI datasetManagementAPI = getDatasetManagementAPI();
 
-		List<IDataSet> toBeReturned = dsDAO.loadNotDerivedDataSets(getUserProfile());
+		// @formatter:off
+		List<IDataSet> toBeReturned = dsDAO.loadNotDerivedDataSets(getUserProfile())
+				.stream()
+				.filter(e -> {
+					boolean ret = false;
+					try {
+						datasetManagementAPI.canSee(e);
+						ret = true;
+					} catch (ActionNotPermittedException ex) {
+						// Ignore the dataset
+					}
+					return ret;
+				})
+				.collect(Collectors.toList());
+		// @formatter:off
 
 		try {
 			logger.debug("OUT");
@@ -244,12 +260,19 @@ public class DataSetResource extends AbstractDataSetResource {
 		ISbiDataSetDAO dsDAO = DAOFactory.getSbiDataSetDAO();
 
 		List<SbiDataSet> dataSets = dsDAO.loadSbiDataSets();
-		List<SbiDataSet> toBeReturned = new ArrayList<SbiDataSet>();
+		List<SbiDataSet> toBeReturned = new ArrayList<>();
+		DatasetManagementAPI datasetManagementAPI = getDatasetManagementAPI();
 
 		for (SbiDataSet dataset : dataSets) {
 			IDataSet iDataSet = DataSetFactory.toDataSet(dataset);
-			if (DataSetUtilities.isExecutableByUser(iDataSet, getUserProfile()))
+
+			try {
+				datasetManagementAPI.canSee(iDataSet);
 				toBeReturned.add(dataset);
+			} catch (Exception e) {
+				logger.debug("Current user cannot see " + iDataSet.getLabel());
+			}
+
 		}
 
 		logger.debug("OUT");
@@ -259,25 +282,6 @@ public class DataSetResource extends AbstractDataSetResource {
 			String jsonString = JsonConverter.objectToJson(toBeReturned, toBeReturned.getClass());
 
 			return callback + "(" + jsonString + ")";
-		}
-	}
-
-	@GET
-	@Path("/basicinfo/all")
-	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
-	public Response getDatasetsBasicInfo() {
-		logger.debug("IN");
-		List<DataSetBasicInfo> toReturn = new ArrayList<>();
-		IDataSetDAO dsDAO = DAOFactory.getDataSetDAO();
-
-		try {
-			toReturn = dsDAO.loadDatasetsBasicInfo();
-			return Response.ok(toReturn).build();
-		} catch (Exception e) {
-			logger.error("Error while loading the datasets basic info", e);
-			throw new SpagoBIRuntimeException("Error while loading the datasets basic info", e);
-		} finally {
-			logger.debug("OUT");
 		}
 	}
 
@@ -374,7 +378,7 @@ public class DataSetResource extends AbstractDataSetResource {
 	@DELETE
 	@Path("/{label}")
 	@UserConstraint(functionalities = { CommunityFunctionalityConstants.SELF_SERVICE_DATASET_MANAGEMENT })
-	public Response deleteDataset(@PathParam("label") String label) {
+	public Response deleteDataset(@PathParam("label") String label) throws ActionNotPermittedException {
 		return super.deleteDataset(label);
 	}
 
