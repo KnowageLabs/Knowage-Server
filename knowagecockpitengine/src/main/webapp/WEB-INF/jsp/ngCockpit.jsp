@@ -48,7 +48,7 @@ angular.module("cockpitModule").factory("cockpitModule_properties",function(){
 		STARTING_SELECTIONS:[],
 		STARTING_FILTERS:[],
 		CURRENT_SHEET: <%=initialSheet%>,
-		FOLDER_ID: "<%=folderId%>",
+		FOLDER_ID: "<%= StringEscapeUtils.escapeJavaScript(folderId)%>",
 		EXPORT_MODE: <%=exportMode%>,
 		INITIALIZED_WIDGETS : [],
 		DIRTY_WIDGETS : [],
