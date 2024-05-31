@@ -17,7 +17,9 @@
  */
 package it.eng.spagobi.engines.jasperreport.services;
 
-import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
@@ -93,8 +95,8 @@ public class JasperReportEngineStartAction extends AbstractEngineStartServlet {
 			template = new JasperReportEngineTemplate(servletIOManager.getTemplateName(),
 					servletIOManager.getTemplate(false));
 
-			File reportOutputDir = JasperReportEngine.getConfig().getReportOutputDir();
-			File reportFile = File.createTempFile("report", "." + outputType, reportOutputDir);
+			Path reportOutputDir = JasperReportEngine.getConfig().getReportOutputDir();
+			Path reportFile = reportOutputDir.resolve(Paths.get("report" + "." + outputType).normalize());
 			DataSetServiceProxy proxyDataset = servletIOManager.getDataSetServiceProxy();
 
 			engineInstance = JasperReportEngine.createInstance(template, servletIOManager.getEnv(), proxyDataset);
@@ -102,13 +104,13 @@ public class JasperReportEngineStartAction extends AbstractEngineStartServlet {
 			servletIOManager.getHttpSession().setAttribute(engineInstance.getId(), engineInstance);
 			engineInstance.setOutputType(outputType);
 
-			engineInstance.runReport(reportFile, servletIOManager.getRequest());
+			engineInstance.runReport(reportFile.toFile(), servletIOManager.getRequest());
 
-			servletIOManager.writeBackToClient(200, reportFile, true, "report." + outputType,
+			servletIOManager.writeBackToClient(200, reportFile.toFile(), true, "report." + outputType,
 					JasperReportEngine.getConfig().getMIMEType(outputType));
 
 			// instant cleaning
-			reportFile.delete();
+			Files.delete(reportOutputDir);
 
 			servletIOManager.auditServiceEndEvent();
 		} catch (Throwable t) {

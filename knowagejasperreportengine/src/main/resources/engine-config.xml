@@ -1,19 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ENGINE-CONFIGURATION>
-	
-	<!-- ====================================================================================== -->
-	<!--  General settings 																		--> 
-	<!-- ====================================================================================== -->
-	<!--  
-		tmpdir = base directory used as temporary storing area for generated reports. 
-		The path must be write in unix form (only with / folder separator and without 
-		any drive letter at the beginning, example: /folder/folder/folder).
-		If the path start with / it will be considered an absolute path, otherwise if it start with 
-		another letter or symbol it will be considered relative to the folder of the jasper report application 
-	-->
-	<!-- ====================================================================================== -->
-	<GENERALSETTINGS tmpdir="tmpdir"/>
-
 
 	<!-- ====================================================================================== -->
 	<!--  SSO settings 																	--> 
