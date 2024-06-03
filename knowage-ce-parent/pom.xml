@@ -54,7 +54,7 @@
 	</distributionManagement>
 	
 	<properties>
-		<apache.poi>4.1.2</apache.poi>
+		<apache.poi>5.2.5</apache.poi>
 		<checkstyle-maven-plugin.version>3.3.1</checkstyle-maven-plugin.version>
 		<checkstyle.config.location>${project.basedir}/../checkstyle/checkstyle.xml</checkstyle.config.location>
 		<checkstyle.header.file>${project.basedir}/../LICENSE</checkstyle.header.file>

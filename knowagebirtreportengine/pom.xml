@@ -65,6 +65,14 @@
 					<artifactId>org.apache.commons.codec</artifactId>
 					<groupId>org.eclipse.birt.runtime.3_7_1</groupId>
 				</exclusion>
+				<exclusion>
+					 <groupId>xml-apis</groupId>
+					 <artifactId>xml-apis</artifactId>
+				</exclusion>
+				<exclusion>
+					  <groupId>org.apache.xmlbeans</groupId>
+					  <artifactId>xmlbeans</artifactId>
+				</exclusion>
 			</exclusions>
 		</dependency>
 		<dependency>

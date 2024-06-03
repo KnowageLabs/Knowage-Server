@@ -72,6 +72,14 @@
 					<artifactId>jflex</artifactId>
 					<groupId>de.jflex</groupId>
 				</exclusion>
+				<exclusion>
+					 <groupId>xml-apis</groupId>
+					 <artifactId>xml-apis</artifactId>
+				</exclusion>
+				<exclusion>
+					 <groupId>xml-apis</groupId>
+					 <artifactId>xml-apis-ext</artifactId>
+				</exclusion>
 			</exclusions>
 		</dependency>
 		<!-- pivot4j-0.9 is not compatible with managed poi (from knowage-ce-parent/pom.xml), 
@@ -89,7 +97,13 @@
 		<dependency>
 			<groupId>org.apache.poi</groupId>
 			<artifactId>poi-ooxml</artifactId>
-			<version>3.10-beta2</version>
+			<version>5.2.5</version>
+			<exclusions>
+				<exclusion>
+					 <groupId>org.apache.xmlbeans</groupId>
+					 <artifactId>xmlbeans</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>de.jflex</groupId>
@@ -124,6 +138,10 @@
 				<exclusion>
 					<artifactId>log4j</artifactId>
 					<groupId>log4j</groupId>
+				</exclusion>
+				<exclusion>
+					 <groupId>xml-apis</groupId>
+					 <artifactId>xml-apis</artifactId>
 				</exclusion>
 			</exclusions>
 		</dependency>

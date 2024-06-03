@@ -40,6 +40,12 @@
 			<artifactId>dom4j</artifactId>
 			<version>1.6.1</version>
 			<scope>compile</scope>
+			<exclusions>
+				<exclusion>
+					 <groupId>xml-apis</groupId>
+					 <artifactId>xml-apis</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>javax.servlet</groupId>

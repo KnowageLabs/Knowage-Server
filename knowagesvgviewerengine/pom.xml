@@ -53,8 +53,22 @@
 		<dependency>
 			<groupId>org.apache.xmlgraphics</groupId>
 			<artifactId>batik-transcoder</artifactId>
-			<version>1.7</version>
+			<version>1.17</version>
 			<scope>compile</scope>
+			<exclusions>
+				<exclusion>
+					 <groupId>xml-apis</groupId>
+					 <artifactId>xml-apis</artifactId>
+				</exclusion>
+				<exclusion>
+					 <groupId>xml-apis</groupId>
+					 <artifactId>xml-apis-ext</artifactId>
+				</exclusion>
+				<exclusion>
+	                <groupId>org.w3c</groupId>
+	                <artifactId>dom</artifactId>
+	            </exclusion>
+			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>javax.servlet</groupId>

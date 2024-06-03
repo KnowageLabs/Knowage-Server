@@ -102,6 +102,10 @@
 					<artifactId>log4j</artifactId>
 					<groupId>log4j</groupId>
 				</exclusion>
+				<exclusion>
+					 <groupId>xml-apis</groupId>
+					 <artifactId>xml-apis</artifactId>
+				</exclusion>
 			</exclusions>
 		</dependency>
 		<dependency>
@@ -139,6 +143,10 @@
 				<exclusion>
 					<artifactId>log4j</artifactId>
 					<groupId>log4j</groupId>
+				</exclusion>
+				<exclusion>
+					 <groupId>xml-apis</groupId>
+					 <artifactId>xml-apis</artifactId>
 				</exclusion>
 			</exclusions>
 		</dependency>
@@ -218,6 +226,12 @@
 			<artifactId>poi-ooxml</artifactId>
 			<version>${apache.poi}</version>
 			<scope>compile</scope>
+			<exclusions>
+				<exclusion>
+					 <groupId>org.apache.xmlbeans</groupId>
+					 <artifactId>xmlbeans</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>com.jayway.jsonpath</groupId>
@@ -418,13 +432,13 @@
 		<dependency>
 			<groupId>xerces</groupId>
 			<artifactId>xercesImpl</artifactId>
-			<version>2.11.0</version>
-		</dependency>
-		<dependency>
-			<groupId>xml-apis</groupId>
-			<artifactId>xml-apis</artifactId>
-			<version>1.4.01</version>
-			<scope>runtime</scope>
+			<version>2.12.2</version>
+			<exclusions>
+				<exclusion>
+					<groupId>xml-apis</groupId>
+					<artifactId>xml-apis</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>joda-time</groupId>
