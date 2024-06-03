@@ -35,8 +35,10 @@ import org.opengis.feature.Property;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 
+import it.eng.knowage.commons.security.PathTraversalChecker;
 import it.eng.spago.base.SourceBean;
 import it.eng.spagobi.commons.dao.DAOFactory;
+import it.eng.spagobi.commons.utilities.SpagoBIUtilities;
 import it.eng.spagobi.engines.georeport.utils.LayerCache;
 import it.eng.spagobi.engines.georeport.utils.Monitor;
 import it.eng.spagobi.mapcatalogue.bo.GeoLayer;
@@ -77,7 +79,8 @@ public class geoUtils {
 			SourceBean sbRow = (SourceBean) iterator.next();
 			String name = sbRow.getAttribute(NAME) != null ? sbRow.getAttribute(NAME).toString() : null;
 			if (fieldName.equalsIgnoreCase(name)) {
-				String dsFieldType = sbRow.getAttribute(FIELD_TYPE) != null ? sbRow.getAttribute(FIELD_TYPE).toString() : null;
+				String dsFieldType = sbRow.getAttribute(FIELD_TYPE) != null ? sbRow.getAttribute(FIELD_TYPE).toString()
+						: null;
 				if (dsFieldType.equalsIgnoreCase("MEASURE")) {
 					toReturn = IFieldMetaData.FieldType.MEASURE;
 				} else if (dsFieldType.equalsIgnoreCase("ATTRIBUTE")) {
@@ -141,25 +144,31 @@ public class geoUtils {
 					// load targetLayer features with geoTools
 					Monitor.start("GetTargetLayerAction.getFeatures");
 					JSONObject layerDef = new JSONObject(new String(geoLayer.getLayerDef()));
-					String source = geoLayer.getType().equals("File") ? geoLayer.getPathFile() : layerDef.getString("layer_url");
+					String source = geoLayer.getType().equals("File") ? geoLayer.getPathFile()
+							: layerDef.getString("layer_url");
 
 					if (geoLayer.getType().equals("File")) {
+						PathTraversalChecker.get(SpagoBIUtilities.getResourcePath(), source);
+
 						outputFeatureCollection = DAOFactory.getFeaturesProviderFileDAO().getAllFeatures(source);
 					} else {
 						outputFeatureCollection = DAOFactory.getFeaturesProviderWFSDAO().getAllFeatures(source);
 					}
 					Assert.assertNotNull(outputFeatureCollection, "The feature source returned a null object");
-					logger.debug("GetTargetLayerAction.getFeature " + Monitor.elapsed("GetTargetLayerAction.getFeatures"));
+					logger.debug(
+							"GetTargetLayerAction.getFeature " + Monitor.elapsed("GetTargetLayerAction.getFeatures"));
 
 					LayerCache.cache.put(layerName, outputFeatureCollection);
 				} catch (Throwable t2) {
-					logger.error("Impossible to load features from layer [" + layerName + "]. Check the file syntax.", t2);
+					logger.error("Impossible to load features from layer [" + layerName + "]. Check the file syntax.",
+							t2);
 
 					Throwable root = t2;
 					while (root.getCause() != null)
 						root = root.getCause();
 
-					String message = "Impossible to load features from layer [" + layerName + "].  Check the file syntax. ";
+					String message = "Impossible to load features from layer [" + layerName
+							+ "].  Check the file syntax. ";
 
 					JSONObject resObj = new JSONObject();
 					resObj.put("status", "non ok");
@@ -171,7 +180,7 @@ public class geoUtils {
 				logger.debug("Layer [" + FEATURE_SOURCE_TYPE + "] is in cache");
 			}
 
-			List<SimpleFeature> list = new ArrayList<SimpleFeature>();
+			List<SimpleFeature> list = new ArrayList<>();
 			if (noDataset) {
 				FeatureIterator it = outputFeatureCollection.features();
 				while (it.hasNext()) {
@@ -180,7 +189,7 @@ public class geoUtils {
 				}
 			} else {
 				JSONArray featuresIdJSON = new JSONArray(featureIds);
-				Map<String, String> idIndex = new HashMap<String, String>();
+				Map<String, String> idIndex = new HashMap<>();
 				for (int i = 0; i < featuresIdJSON.length(); i++) {
 					String s = featuresIdJSON.getString(i);
 					idIndex.put(s, s);
@@ -201,7 +210,8 @@ public class geoUtils {
 				}
 			}
 
-			FeatureCollection<SimpleFeatureType, SimpleFeature> filteredOutputFeatureCollection = DataUtilities.collection(list);
+			FeatureCollection<SimpleFeatureType, SimpleFeature> filteredOutputFeatureCollection = DataUtilities
+					.collection(list);
 
 			Monitor.start("GetTargetLayerAction.flushResponse");
 			FeatureJSON featureJSON = new FeatureJSON();
