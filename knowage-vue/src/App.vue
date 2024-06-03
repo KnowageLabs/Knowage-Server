@@ -152,7 +152,7 @@ export default defineComponent({
           const parametersRegex = /\${(nonce|client_id|redirect_uri|session_state)}/gm;
           url = url.replace(parametersRegex, (match, parameter) => encodeURIComponent(window.sessionStorage.getItem(parameter)));
           await this.$http
-            .get(url)
+            .get(url, { withCredentials: true })
             .then((response) => {
               if (response.status === 302) {
                 const headerLocation = new URL(response.headers.location);
