@@ -426,7 +426,7 @@ public class JasperReportEngineInstance extends AbstractEngineInstance {
 					Files.copy(source.toPath(), target.toPath(), REPLACE_EXISTING);
 				} catch (IOException e) {
 					//e.printStackTrace();
-					logger.error("Files.copy",e);
+					LOGGER.error("Files.copy",e);
 				}
 			}
 			LOGGER.debug("Properties are copied to [" + pathMasterID + "]");
