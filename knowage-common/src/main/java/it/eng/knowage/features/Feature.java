@@ -20,16 +20,23 @@ package it.eng.knowage.features;
 public enum Feature {
 
 	// knowage.feature.editFunctionsCatalog represents the feature that allows users to insert or modify Python/R functions from their catalog
-	EDIT_FUNCTIONS_CATALOG("knowage.feature.editFunctionsCatalog");
+	EDIT_FUNCTIONS_CATALOG("knowage.feature.editFunctionsCatalog", "KNOWAGE_FEATURE_EDITFUNCTIONSCATALOG");
 
-	private Feature(String fullName) {
-		this.fullName = fullName;
+	private Feature(String systemPropertyName, String envVariableName) {
+		this.systemPropertyName = systemPropertyName;
+		this.envVariableName = envVariableName;
 	}
 
-	private String fullName;
+	private String systemPropertyName;
 
-	public String getFullName() {
-		return fullName;
+	private String envVariableName;
+
+	public String getSystemPropertyName() {
+		return systemPropertyName;
+	}
+
+	public String getEnvVariableName() {
+		return envVariableName;
 	}
 
 }

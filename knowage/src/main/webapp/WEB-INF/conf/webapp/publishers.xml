@@ -9,15 +9,6 @@
    	 	</RENDERING>
   	</PUBLISHER>
   	
-  	
-  	<PUBLISHER name="ChangeLanguagePublisher">
-    	<RENDERING channel="HTTP" mode="" type="JAVA">
-      		<RESOURCES>
-        		<ITEM PROG="0" resource="it.eng.spagobi.commons.presentation.ChangeLanguagePublisher"/>
-      		</RESOURCES>
-   	 	</RENDERING>
-  	</PUBLISHER>
-  	
   	<PUBLISHER name="LoginPublisher">
     	<RENDERING channel="HTTP" mode="FORWARD" type="JSP">
       		<RESOURCES>

@@ -17,11 +17,12 @@
 */
 package it.eng.spagobi.engines.jasperreport;
 
-import it.eng.spagobi.services.proxy.DataSetServiceProxy;
-
+import java.io.IOException;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
+
+import it.eng.spagobi.services.proxy.DataSetServiceProxy;
 
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
@@ -45,25 +46,25 @@ public class JasperReportEngine {
 	/**
 	 * Creates the instance.
 	 *
-	 * @param template
-	 *            the template
-	 * @param env
-	 *            the env
+	 * @param template the template
+	 * @param env      the env
 	 *
 	 * @return the geo report engine instance
+	 * @throws IOException
 	 */
-	public static JasperReportEngineInstance createInstance(JasperReportEngineTemplate template, Map env, DataSetServiceProxy dsProxy) {
+	public static JasperReportEngineInstance createInstance(JasperReportEngineTemplate template, Map env,
+			DataSetServiceProxy dsProxy) throws IOException {
 		JasperReportEngineInstance engineInstance = null;
 		logger.debug("IN");
 		engineInstance = new JasperReportEngineInstance(template, env, dsProxy);
 
-		if (JasperReportEngine.getConfig().isVirtualizationEbabled() == true) {
+		if (JasperReportEngine.getConfig().isVirtualizationEbabled()) {
 			engineInstance.setVirtualizationEnabled(true);
 			engineInstance.setVirtualizer(JasperReportEngine.getConfig().getVirtualizer());
 		}
 		engineInstance.setLibDir(JasperReportEngine.getConfig().getLibDir());
 
-		engineInstance.setWorkingDir(JasperReportEngine.getConfig().getTempDir());
+		engineInstance.setWorkingDir(JasperReportEngine.getConfig().getTempDir().toFile());
 
 		String outputType = (String) env.get("outputType");
 		engineInstance.setExporter(JasperReportEngine.getConfig().getExporter(outputType));

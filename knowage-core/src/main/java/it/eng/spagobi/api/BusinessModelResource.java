@@ -665,7 +665,7 @@ public class BusinessModelResource {
 							}
 
 						} catch (EncodingException e) {
-							logger.debug("An error occured while decoding parameter with value[" + itemVal + "]" + e);
+							LOGGER.debug("An error occured while decoding parameter with value[" + itemVal + "]" + e);
 
 						}
 					}
@@ -676,7 +676,7 @@ public class BusinessModelResource {
 
 							paramValues = esapiEncoder.decodeFromURL((String) paramValues);
 						} catch (EncodingException e) {
-							logger.debug(e.getCause(), e);
+							LOGGER.debug(e.getCause(), e);
 
 							throw new SpagoBIRuntimeException(e.getMessage(), e);
 						}
@@ -691,7 +691,7 @@ public class BusinessModelResource {
 
 							parDescrVal = esapiEncoder.decodeFromURL(parDescrVal);
 						} catch (EncodingException e) {
-							logger.debug(e.getCause(), e);
+							LOGGER.debug(e.getCause(), e);
 
 							throw new SpagoBIRuntimeException(e.getMessage(), e);
 						}

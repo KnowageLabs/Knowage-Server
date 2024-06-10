@@ -52,7 +52,7 @@ public class parser extends java_cup.runtime.lr_parser {
 	}
 
 	/** Production table. */
-	protected static final short _production_table[][] = unpackFromStrings(
+	protected static final short[][] _production_table = unpackFromStrings(
 			new String[] { "\000\027\000\002\002\004\000\002\002\004\000\002\002"
 					+ "\003\000\002\002\004\000\002\003\003\000\002\004\005"
 					+ "\000\002\004\006\000\002\004\005\000\002\004\006\000"

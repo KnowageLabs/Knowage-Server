@@ -80,9 +80,6 @@ import org.eclipse.birt.report.utility.DataExtractionParameterUtil;
 
 import org.owasp.esapi.HTTPUtilities;
 import org.owasp.esapi.reference.DefaultHTTPUtilities;
-import org.safehaus.uuid.UUID;
-import org.safehaus.uuid.UUIDGenerator;
-
 
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.error.EMFInternalError;

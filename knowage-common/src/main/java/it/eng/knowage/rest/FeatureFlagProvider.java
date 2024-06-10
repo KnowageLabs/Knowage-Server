@@ -70,10 +70,9 @@ public class FeatureFlagProvider implements ContainerRequestFilter {
 	private boolean isFeatureEnabled(FeatureFlag annotation) {
 
 		Feature feature = annotation.value();
-		String name = feature.getFullName();
 
-		String fromProperty = System.getProperty(name);
-		String fromEnv = System.getenv(name);
+		String fromProperty = System.getProperty(feature.getSystemPropertyName());
+		String fromEnv = System.getenv(feature.getEnvVariableName());
 
 		return Optional.ofNullable(fromProperty).map(Boolean::parseBoolean).orElse(Optional.ofNullable(fromEnv).map(Boolean::parseBoolean).orElse(true));
 

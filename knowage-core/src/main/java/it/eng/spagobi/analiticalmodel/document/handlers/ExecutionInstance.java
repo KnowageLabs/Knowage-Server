@@ -42,8 +42,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import org.owasp.esapi.reference.DefaultEncoder;
-import org.safehaus.uuid.UUID;
-import org.safehaus.uuid.UUIDGenerator;
+
 
 
 import com.jamonapi.Monitor;

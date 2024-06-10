@@ -12,8 +12,7 @@
 	<MAPPING business_type="ACTION" business_name="CREATE_MASTER_MENU" publisher_name="MenuRefresh"/>	
 	<MAPPING business_type="ACTION" business_name="MOVE_UP_MENU" publisher_name="MenuRefresh"/>		
 	<MAPPING business_type="ACTION" business_name="MOVE_DOWN_MENU" publisher_name="MenuRefresh"/>				
-	<MAPPING business_type="ACTION" business_name="MENU_BEFORE_EXEC" publisher_name="MenuBeforeExecLoopPublisher"/>			
-    <MAPPING business_type="ACTION" business_name="CHANGE_LANGUAGE" publisher_name="ChangeLanguagePublisher"/>      				
+	<MAPPING business_type="ACTION" business_name="MENU_BEFORE_EXEC" publisher_name="MenuBeforeExecLoopPublisher"/>    				
 	<!-- <MAPPING business_type="ACTION" business_name="CHANGE_THEME" publisher_name="userhome"/>-->    				
 </PRESENTATION>
 

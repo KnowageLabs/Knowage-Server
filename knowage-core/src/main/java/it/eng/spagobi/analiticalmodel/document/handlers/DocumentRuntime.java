@@ -13,13 +13,11 @@ import java.util.UUID;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
-<<<<<<< HEAD
+
 import org.owasp.esapi.errors.EncodingException;
 import org.owasp.esapi.reference.DefaultEncoder;
-import org.safehaus.uuid.UUID;
-import org.safehaus.uuid.UUIDGenerator;
-=======
->>>>>>> upstream/master
+
+
 
 import com.jamonapi.Monitor;
 import com.jamonapi.MonitorFactory;
@@ -96,7 +94,7 @@ public class DocumentRuntime extends AbstractBIResourceRuntime<BIObjectParameter
 
 
 	public String getExecutionUrl(BIObject obj, String executionModality, String role) throws EncodingException {
-		logger.debug("IN");
+		LOGGER.debug("IN");
 		Monitor getExecutionUrlMonitor = MonitorFactory.start("Knowage.DocumentRuntime.getExecutionUrl");
 
 		String url = null;
@@ -165,8 +163,8 @@ public class DocumentRuntime extends AbstractBIResourceRuntime<BIObjectParameter
 								try {
 									value = esapiEncoder.encodeForURL(value);
 								} catch (EncodingException e) {
-									logger.warn("UTF-8 encoding is not supported!!!", e);
-									logger.warn("Using system encoding...");
+									LOGGER.warn("UTF-8 encoding is not supported!!!", e);
+									LOGGER.warn("Using system encoding...");
 									value = esapiEncoder.encodeForURL(value);
 
 								}

@@ -17,15 +17,20 @@
 */
 package it.eng.spagobi.engines.jasperreport;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
+import org.apache.log4j.Logger;
+
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.configuration.ConfigSingleton;
 import it.eng.spagobi.engines.jasperreport.exporters.JRImageBase64Exporter;
 import it.eng.spagobi.engines.jasperreport.exporters.JRJpegExporter;
 import it.eng.spagobi.services.common.EnginConf;
 import it.eng.spagobi.utilities.assertion.Assert;
-
-import java.io.File;
-
 import net.sf.jasperreports.engine.JRExporter;
 import net.sf.jasperreports.engine.JRVirtualizer;
 import net.sf.jasperreports.engine.export.JExcelApiExporter;
@@ -39,8 +44,6 @@ import net.sf.jasperreports.engine.export.ooxml.JRXlsxExporter;
 import net.sf.jasperreports.engine.fill.JRSwapFileVirtualizer;
 import net.sf.jasperreports.engine.util.JRSwapFile;
 
-import org.apache.log4j.Logger;
-
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
  */
@@ -48,7 +51,7 @@ public class JasperReportEngineConfig {
 
 	private EnginConf engineConfig;
 
-	private static transient Logger logger = Logger.getLogger(JasperReportEngineConfig.class);
+	private static final Logger LOGGER = Logger.getLogger(JasperReportEngineConfig.class);
 
 	// -- singleton pattern --------------------------------------------
 	private static JasperReportEngineConfig instance;
@@ -68,7 +71,7 @@ public class JasperReportEngineConfig {
 
 	// -- JasperReportEngine Conf Access methods ------------------------
 
-	private File getwebappRootDir() {
+	private File getWebAppRootDir() {
 		File webinfDir = new File(ConfigSingleton.getRootPath());
 		return webinfDir.getParentFile();
 	}
@@ -76,7 +79,7 @@ public class JasperReportEngineConfig {
 	public File getLibDir() {
 		File libDir;
 
-		libDir = new File(getwebappRootDir(), "WEB-INF");
+		libDir = new File(getWebAppRootDir(), "WEB-INF");
 		libDir = new File(libDir, "lib");
 
 		return libDir;
@@ -89,7 +92,7 @@ public class JasperReportEngineConfig {
 		if (getEngineConfig().getResourcePath() != null) {
 			resourceDir = new File(getEngineConfig().getResourcePath(), "jasper_messages");
 		} else {
-			resourceDir = new File(getwebappRootDir(), "resources");
+			resourceDir = new File(getWebAppRootDir(), "resources");
 			resourceDir = new File(resourceDir, "jasper_messages");
 		}
 		resourceDir.mkdirs();
@@ -97,36 +100,21 @@ public class JasperReportEngineConfig {
 		return resourceDir;
 	}
 
-	public File getTempDir() {
+	public Path getTempDir() throws IOException {
 
-		File tempDir;
+		Path tempDir = Files.createTempDirectory("knowage-jasper");
 
-		String configuredTempDir = (String) getConfigSourceBean().getAttribute("GENERALSETTINGS.tmpdir");
-		logger.debug("Configured temp dir is [" + configuredTempDir + "]");
-		File configuredTempDirFile = new File(configuredTempDir);
-
-		if (configuredTempDirFile.isAbsolute()) {
-			tempDir = configuredTempDirFile;
-		} else {
-			logger.debug("Configured temp dir is recognized as relative");
-			String javaIoTmpDir = System.getProperty("java.io.tmpdir");
-			logger.debug("java.io.tmpdir is [" + javaIoTmpDir + "]");
-			tempDir = new File(javaIoTmpDir, configuredTempDir);
-		}
-
-		logger.debug("Temporary directory is [" + tempDir.getAbsolutePath() + "]");
-
-		tempDir.mkdirs();
+		LOGGER.debug("Temporary directory is [" + tempDir + "]");
 
 		return tempDir;
 	}
 
-	public File getReportOutputDir() {
-		File reportOutputDir;
+	public Path getReportOutputDir() throws IOException {
+		Path reportOutputDir;
 
-		reportOutputDir = new File(getTempDir(), "reports");
-		reportOutputDir.mkdirs();
-		reportOutputDir.mkdirs();
+		reportOutputDir = getTempDir().resolve("reports");
+
+		Files.createDirectories(reportOutputDir);
 
 		return reportOutputDir;
 	}
@@ -139,7 +127,7 @@ public class JasperReportEngineConfig {
 		return isVirtualizationActive;
 	}
 
-	public JRVirtualizer getVirtualizer() {
+	public JRVirtualizer getVirtualizer() throws IOException {
 
 		JRSwapFileVirtualizer virtualizer;
 		int maxSize = 2;
@@ -149,27 +137,24 @@ public class JasperReportEngineConfig {
 			maxSize = Integer.parseInt(maxSizeStr);
 		}
 
-		File virtualizationDir;
+		Path virtualizationDir;
 		String virtualizationDirPath = (String) getConfigSourceBean().getAttribute("VIRTUALIZER.dir");
 		virtualizationDir = null;
 
 		if (virtualizationDirPath == null) {
-			virtualizationDir = new File(getTempDir(), "virtualization");
+			virtualizationDir = getTempDir().resolve("virtualization");
 		} else {
-			if (!virtualizationDirPath.startsWith("/")) {
-				virtualizationDir = new File(getTempDir(), virtualizationDirPath);
-			} else {
-				virtualizationDir = new File(virtualizationDirPath);
-			}
+			virtualizationDir = getTempDir().resolve(Paths.get(virtualizationDirPath).normalize());
 		}
 
-		virtualizationDir = new File(virtualizationDir, "jrcache");
-		virtualizationDir.mkdirs();
+		virtualizationDir = virtualizationDir.resolve("jrcache");
 
-		logger.debug("Max page cached during virtualization process: " + maxSize);
-		logger.debug("Dir used as storing area during virtualization: " + virtualizationDir);
+		Files.createDirectories(virtualizationDir);
 
-		JRSwapFile swapFile = new JRSwapFile(virtualizationDir.getAbsolutePath(), maxSize, maxSize);
+		LOGGER.debug("Max page cached during virtualization process: " + maxSize);
+		LOGGER.debug("Dir used as storing area during virtualization: " + virtualizationDir);
+
+		JRSwapFile swapFile = new JRSwapFile(virtualizationDir.toString(), maxSize, maxSize);
 		virtualizer = new JRSwapFileVirtualizer(maxSize, swapFile);
 		virtualizer.setReadOnly(false);
 
@@ -181,7 +166,8 @@ public class JasperReportEngineConfig {
 
 		Assert.assertNotNull(format, "Input parameter [format] cennot be null");
 
-		SourceBean exporterConfig = (SourceBean) getConfigSourceBean().getFilteredSourceBeanAttribute("EXPORTERS.EXPORTER", "format", format);
+		SourceBean exporterConfig = (SourceBean) getConfigSourceBean()
+				.getFilteredSourceBeanAttribute("EXPORTERS.EXPORTER", "format", format);
 		if (exporterConfig != null) {
 			String exporterClassName = (String) exporterConfig.getAttribute("class");
 			if (exporterClassName != null) {
@@ -224,7 +210,8 @@ public class JasperReportEngineConfig {
 
 	public String getMIMEType(String format) {
 		String mimeType = null;
-		SourceBean exporterConfig = (SourceBean) getConfigSourceBean().getFilteredSourceBeanAttribute("EXPORTERS.EXPORTER", "format", format);
+		SourceBean exporterConfig = (SourceBean) getConfigSourceBean()
+				.getFilteredSourceBeanAttribute("EXPORTERS.EXPORTER", "format", format);
 		if (exporterConfig != null) {
 			mimeType = (String) exporterConfig.getAttribute("mime");
 		}

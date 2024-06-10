@@ -193,10 +193,10 @@
 		<logger name="it.eng.knowage.functionscatalog.utils.CatalogFunctionDataProxy" level="warn" additivity="false">
 			<AppenderRef ref="KNOWAGE_CORE" />
 		</logger>
-		<logger name="it.eng.knowage.encryption.DecryptionDataStoreTransformer" level="warn" additivity="false">
+		<logger name="it.eng.knowage.encryption.DecryptionDataStoreTransformer" level="error" additivity="false">
 			<AppenderRef ref="KNOWAGE_CORE" />
 		</logger>
-		<logger name="it.eng.knowage.encryption.DataEncryptionInitializer" level="warn" additivity="false">
+		<logger name="it.eng.knowage.encryption.DataEncryptionInitializer" level="error" additivity="false">
 			<AppenderRef ref="KNOWAGE_CORE" />
 		</logger>
 		<logger name="privacymanager.wrapper.PrivacyManagerAPIImpl" level="warn" additivity="false">
@@ -205,10 +205,10 @@
 		<logger name="it.eng.knowage.privacymanager.PrivacyManagerDataStoreTransformer" level="warn" additivity="false">
 			<AppenderRef ref="KNOWAGE_CORE" />
 		</logger>
-		<logger name="it.eng.knowage.privacymanager.PMConfiguration" level="debug" additivity="false">
+		<logger name="it.eng.knowage.privacymanager.PMConfiguration" level="error" additivity="false">
 			<AppenderRef ref="KNOWAGE_CORE" />
 		</logger>
-		<logger name="it.eng.knowage.privacymanager.EventBuilderUtils" level="debug" additivity="false">
+		<logger name="it.eng.knowage.privacymanager.EventBuilderUtils" level="error" additivity="false">
 			<AppenderRef ref="KNOWAGE_CORE" />
 		</logger>
 		<Root level="error">
