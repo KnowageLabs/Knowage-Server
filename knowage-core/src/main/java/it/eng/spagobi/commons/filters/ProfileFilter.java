@@ -108,7 +108,7 @@ public class ProfileFilter implements Filter {
 				}
 				SessionContainer sessionContainer = requestContainer.getSessionContainer();
 				SessionContainer permanentSession = sessionContainer.getPermanentContainer();
-				IEngUserProfile profile = (IEngUserProfile) session.getAttribute(IEngUserProfile.ENG_USER_PROFILE);
+				IEngUserProfile profile = (IEngUserProfile) permanentSession.getAttribute(IEngUserProfile.ENG_USER_PROFILE);
 
 				if (profile == null) {
 					// only in case current session has no profile object, evaluate public user scenario

@@ -52,16 +52,16 @@
 			
 		<CONFIG></CONFIG>
 	</ACTION>
-	
+
+	<!-- WARNING : Replaced by it.eng.spagobi.engines.qbe.api.ExportResource -->
+	<!-- 
 	<ACTION name="EXPORT_RESULT_ACTION" 
 			class="it.eng.spagobi.engines.qbe.services.core.ExportResultAction"  
 			scope="REQUEST">
 			
 		<CONFIG></CONFIG>
 	</ACTION>
-
-	
-
+	 -->
 
 	<ACTION name="GET_ANALYSIS_META_ACTION" 
 			class="it.eng.spagobi.engines.qbe.services.core.GetAnalysisMetaAction"  
