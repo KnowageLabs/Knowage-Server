@@ -23,7 +23,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Vector;
 
 import org.apache.log4j.Logger;
 import org.apache.poi.hssf.usermodel.HSSFDataFormat;
@@ -87,17 +86,16 @@ public class QbeXLSExporter {
 	public static final String ADDITIONAL_DATA_FIELDS_OPTIONS_SCALE_FACTOR = "measureScaleFactor";
 
 	private Locale locale;
-	private Map<String, Object> properties;
+	private final Map<String, Object> properties;
 
 	IDataStore dataStore = null;
-	Vector extractedFields = null;
-	Map<Integer, CellStyle> decimalFormats = new HashMap<Integer, CellStyle>();
+	List<Field> extractedFields = null;
+	Map<Integer, CellStyle> decimalFormats = new HashMap<>();
 
 	public QbeXLSExporter(IDataStore dataStore, Locale locale) {
-		super();
 		this.dataStore = dataStore;
 		this.locale = locale;
-		this.properties = new HashMap<String, Object>();
+		this.properties = new HashMap<>();
 	}
 
 	public IDataStore getDataStore() {
@@ -109,8 +107,7 @@ public class QbeXLSExporter {
 	}
 
 	public QbeXLSExporter() {
-		super();
-		this.properties = new HashMap<String, Object>();
+		this.properties = new HashMap<>();
 	}
 
 	public void setProperty(String propertyName, Object propertyValue) {
@@ -152,7 +149,8 @@ public class QbeXLSExporter {
 	 *
 	 * @return ...
 	 */
-	private CellStyle[] fillSheetHeader(Sheet sheet, Workbook workbook, CreationHelper createHelper, int beginRowHeaderData, int beginColumnHeaderData) {
+	private CellStyle[] fillSheetHeader(Sheet sheet, Workbook workbook, CreationHelper createHelper,
+			int beginRowHeaderData, int beginColumnHeaderData) {
 
 		CellStyle[] cellTypes;
 
@@ -174,11 +172,12 @@ public class QbeXLSExporter {
 				IFieldMetaData fieldMetaData = dataStoreMetaData.getFieldMeta(j);
 				String format = (String) fieldMetaData.getProperty("format");
 				String alias = fieldMetaData.getAlias();
-				String scaleFactorHeader = (String) fieldMetaData.getProperty(ADDITIONAL_DATA_FIELDS_OPTIONS_SCALE_FACTOR);
+				String scaleFactorHeader = (String) fieldMetaData
+						.getProperty(ADDITIONAL_DATA_FIELDS_OPTIONS_SCALE_FACTOR);
 
 				String header;
 				if (extractedFields != null && j < extractedFields.size() && extractedFields.get(j) != null) {
-					Field field = (Field) extractedFields.get(j);
+					Field field = extractedFields.get(j);
 					fieldName = field.getAlias();
 					if (field.getPattern() != null) {
 						format = field.getPattern();
@@ -308,14 +307,16 @@ public class QbeXLSExporter {
 
 		String cellColor = (String) this.getProperty(PROPERTY_CELL_COLOR);
 		logger.debug("Cell color : " + cellColor);
-		short cellColorIndex = cellColor != null ? IndexedColors.valueOf(cellColor).getIndex() : IndexedColors.valueOf(DEFAULT_CELL_COLOR).getIndex();
+		short cellColorIndex = cellColor != null ? IndexedColors.valueOf(cellColor).getIndex()
+				: IndexedColors.valueOf(DEFAULT_CELL_COLOR).getIndex();
 		font.setColor(cellColorIndex);
 
 		cellStyle.setFont(font);
 		return cellStyle;
 	}
 
-	public void fillSheetData(Sheet sheet, Workbook wb, CreationHelper createHelper, CellStyle[] cellTypes, int beginRowData, int beginColumnData) {
+	public void fillSheetData(Sheet sheet, Workbook wb, CreationHelper createHelper, CellStyle[] cellTypes,
+			int beginRowData, int beginColumnData) {
 		CellStyle dCellStyle = this.buildCellStyle(sheet);
 		Iterator it = dataStore.iterator();
 		int rownum = beginRowData;
@@ -349,7 +350,8 @@ public class QbeXLSExporter {
 					if (Integer.class.isAssignableFrom(c) || Short.class.isAssignableFrom(c)) {
 						logger.debug("Column [" + (fieldIndex + 1) + "] type is equal to [" + "INTEGER" + "]");
 						IFieldMetaData fieldMetaData = d.getFieldMeta(fieldIndex);
-						String scaleFactor = (String) fieldMetaData.getProperty(ADDITIONAL_DATA_FIELDS_OPTIONS_SCALE_FACTOR);
+						String scaleFactor = (String) fieldMetaData
+								.getProperty(ADDITIONAL_DATA_FIELDS_OPTIONS_SCALE_FACTOR);
 						Number val = (Number) f.getValue();
 						Double doubleValue = MeasureScaleFactorOption.applyScaleFactor(val.doubleValue(), scaleFactor);
 						cell.setCellValue(doubleValue);
@@ -367,7 +369,8 @@ public class QbeXLSExporter {
 						}
 						Number val = (Number) f.getValue();
 						Double value = val.doubleValue();
-						String scaleFactor = (String) fieldMetaData.getProperty(ADDITIONAL_DATA_FIELDS_OPTIONS_SCALE_FACTOR);
+						String scaleFactor = (String) fieldMetaData
+								.getProperty(ADDITIONAL_DATA_FIELDS_OPTIONS_SCALE_FACTOR);
 						cell.setCellValue(MeasureScaleFactorOption.applyScaleFactor(value, scaleFactor));
 						cell.setCellType(this.getCellTypeNumeric());
 						cell.setCellStyle((cellTypes[fieldIndex] != null) ? cellTypes[fieldIndex] : cs);
@@ -398,8 +401,8 @@ public class QbeXLSExporter {
 		}
 	}
 
-	public void setExtractedFields(Vector extractedFields) {
-		this.extractedFields = extractedFields;
+	public void setExtractedFields(List<Field> extractedFields2) {
+		this.extractedFields = extractedFields2;
 	}
 
 	private CellStyle getDecimalNumberFormat(int j, Sheet sheet, CreationHelper createHelper, CellStyle dCellStyle) {

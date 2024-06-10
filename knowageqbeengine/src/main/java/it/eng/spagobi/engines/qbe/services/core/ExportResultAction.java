@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,7 +11,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -27,7 +27,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Vector;
 
 import org.apache.log4j.Logger;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -91,7 +90,7 @@ public class ExportResultAction extends AbstractQbeEngineAction {
 		String jpaQueryStr = null;
 		String sqlQuery = null;
 		SQLFieldsReader fieldsReader = null;
-		Vector extractedFields = null;
+		List<Field> extractedFields = null;
 		Map params = null;
 		TemplateBuilder templateBuilder = null;
 		String templateContent = null;
@@ -109,8 +108,8 @@ public class ExportResultAction extends AbstractQbeEngineAction {
 			responseType = getAttributeAsString(RESPONSE_TYPE);
 			logger.debug(RESPONSE_TYPE + ": " + responseType);
 
-			Assert.assertNotNull(getEngineInstance(),
-					"It's not possible to execute " + this.getActionName() + " service before having properly created an instance of EngineInstance class");
+			Assert.assertNotNull(getEngineInstance(), "It's not possible to execute " + this.getActionName()
+					+ " service before having properly created an instance of EngineInstance class");
 
 			transaction = (getEngineInstance().getDataSource()).getTransaction();
 			transaction.open();
@@ -124,15 +123,19 @@ public class ExportResultAction extends AbstractQbeEngineAction {
 
 				Assert.assertNotNull(getEngineInstance().getActiveQuery(),
 						"Query object cannot be null in oder to execute " + this.getActionName() + " service");
-				Assert.assertTrue(getEngineInstance().getActiveQuery().isEmpty() == false,
+				Assert.assertTrue(!getEngineInstance().getActiveQuery().isEmpty(),
 						"Query object cannot be empty in oder to execute " + this.getActionName() + " service");
 
-				Assert.assertNotNull(mimeType, "Input parameter [" + MIME_TYPE + "] cannot be null in oder to execute " + this.getActionName() + " service");
-				Assert.assertTrue(MimeUtils.isValidMimeType(mimeType) == true, "[" + mimeType + "] is not a valid value for " + MIME_TYPE + " parameter");
+				Assert.assertNotNull(mimeType, "Input parameter [" + MIME_TYPE + "] cannot be null in oder to execute "
+						+ this.getActionName() + " service");
+				Assert.assertTrue(MimeUtils.isValidMimeType(mimeType),
+						"[" + mimeType + "] is not a valid value for " + MIME_TYPE + " parameter");
 
-				Assert.assertNotNull(responseType,
-						"Input parameter [" + RESPONSE_TYPE + "] cannot be null in oder to execute " + this.getActionName() + " service");
-				Assert.assertTrue(RESPONSE_TYPE_INLINE.equalsIgnoreCase(responseType) || RESPONSE_TYPE_ATTACHMENT.equalsIgnoreCase(responseType),
+				Assert.assertNotNull(responseType, "Input parameter [" + RESPONSE_TYPE
+						+ "] cannot be null in oder to execute " + this.getActionName() + " service");
+				Assert.assertTrue(
+						RESPONSE_TYPE_INLINE.equalsIgnoreCase(responseType)
+								|| RESPONSE_TYPE_ATTACHMENT.equalsIgnoreCase(responseType),
 						"[" + responseType + "] is not a valid value for " + RESPONSE_TYPE + " parameter");
 
 				statement = getEngineInstance().getDataSource().createStatement(getEngineInstance().getActiveQuery());
@@ -149,13 +152,15 @@ public class ExportResultAction extends AbstractQbeEngineAction {
 				// case of FormEngine
 
 				sqlQuery = this.getAttributeFromSessionAsString(ExecuteDetailQueryAction.LAST_DETAIL_QUERY);
-				Assert.assertNotNull(sqlQuery, "The detail query was not found, maybe you have not execute the detail query yet.");
+				Assert.assertNotNull(sqlQuery,
+						"The detail query was not found, maybe you have not execute the detail query yet.");
 			}
 			logger.debug("Executable SQL query: [" + sqlQuery + "]");
 
 			logger.debug("Exctracting fields ...");
 
-			IDataSource dataSource = (IDataSource) getEngineInstance().getDataSource().getConfiguration().loadDataSourceProperties().get("datasource");
+			IDataSource dataSource = (IDataSource) getEngineInstance().getDataSource().getConfiguration()
+					.loadDataSourceProperties().get("datasource");
 			connection = dataSource.getConnection();
 
 			fieldsReader = new SQLFieldsReader(sqlQuery, connection);
@@ -170,8 +175,8 @@ public class ExportResultAction extends AbstractQbeEngineAction {
 			logger.debug("Fields extracted succesfully");
 
 			Assert.assertTrue(
-					getEngineInstance().getActiveQuery().getSimpleSelectFields(true).size()
-							+ getEngineInstance().getActiveQuery().getInLineCalculatedSelectFields(true).size() == extractedFields.size(),
+					getEngineInstance().getActiveQuery().getSimpleSelectFields(true).size() + getEngineInstance()
+							.getActiveQuery().getInLineCalculatedSelectFields(true).size() == extractedFields.size(),
 					"The number of fields extracted from query resultset cannot be different from the number of fields specified into the query select clause");
 
 			decorateExtractedFields(extractedFields);
@@ -193,14 +198,16 @@ public class ExportResultAction extends AbstractQbeEngineAction {
 			}
 
 		} catch (Throwable t) {
-			throw SpagoBIEngineServiceExceptionHandler.getInstance().getWrappedException(getActionName(), getEngineInstance(), t);
+			throw SpagoBIEngineServiceExceptionHandler.getInstance().getWrappedException(getActionName(),
+					getEngineInstance(), t);
 		} finally {
 
 			try {
 				// closing session will close also all connection created into this section
 				transaction.close();
 			} catch (Exception e) {
-				logger.warn("Impossible to close the connection used to execute the report in " + getActionName() + " service", e);
+				logger.warn("Impossible to close the connection used to execute the report in " + getActionName()
+						+ " service", e);
 			}
 
 			if (reportFile != null && reportFile.exists()) {
@@ -215,8 +222,8 @@ public class ExportResultAction extends AbstractQbeEngineAction {
 		logger.debug("OUT");
 	}
 
-	private void exportIntoCSV(boolean writeBackResponseInline, String mimeType, String fileExtension, ITransaction transaction, String sqlQuery)
-			throws IOException, SpagoBIEngineException {
+	private void exportIntoCSV(boolean writeBackResponseInline, String mimeType, String fileExtension,
+			ITransaction transaction, String sqlQuery) throws IOException, SpagoBIEngineException {
 		File csvFile = null;
 		try {
 			csvFile = File.createTempFile("csv", ".csv");
@@ -224,7 +231,8 @@ public class ExportResultAction extends AbstractQbeEngineAction {
 			Connection connection = null;
 			try {
 
-				IDataSource dataSource = (IDataSource) getEngineInstance().getDataSource().getConfiguration().loadDataSourceProperties().get("datasource");
+				IDataSource dataSource = (IDataSource) getEngineInstance().getDataSource().getConfiguration()
+						.loadDataSourceProperties().get("datasource");
 				connection = dataSource.getConnection();
 			} catch (Exception e) {
 				logger.debug("Query execution aborted because of an internal exception");
@@ -243,7 +251,8 @@ public class ExportResultAction extends AbstractQbeEngineAction {
 		}
 	}
 
-	private void exportIntoXLS(boolean writeBackResponseInline, String mimeType, IStatement statement, String sqlQuery, Vector extractedFields)
+	private void exportIntoXLS(boolean writeBackResponseInline, String mimeType, IStatement statement, String sqlQuery,
+			List<Field> extractedFields)
 			throws EMFInternalError, IOException, FileNotFoundException, SpagoBIEngineException {
 		IDataStore dataStore = getDataStore(statement, sqlQuery);
 		Locale locale = (Locale) getEngineInstance().getEnv().get(EngineConstants.ENV_LOCALE);
@@ -272,7 +281,8 @@ public class ExportResultAction extends AbstractQbeEngineAction {
 		}
 	}
 
-	private void exportIntoXLSX(boolean writeBackResponseInline, String mimeType, IStatement statement, String sqlQuery, Vector extractedFields)
+	private void exportIntoXLSX(boolean writeBackResponseInline, String mimeType, IStatement statement, String sqlQuery,
+			List<Field> extractedFields)
 			throws EMFInternalError, IOException, FileNotFoundException, SpagoBIEngineException {
 		IDataStore dataStore = getDataStore(statement, sqlQuery);
 
@@ -339,7 +349,8 @@ public class ExportResultAction extends AbstractQbeEngineAction {
 			JDBCDataSet dataset = new JDBCDataSet();
 			IDataSource datasource = (IDataSource) this.getEnv().get(EngineConstants.ENV_DATASOURCE);
 			dataset.setDataSource(datasource);
-			dataset.setUserProfileAttributes(UserProfileUtils.getProfileAttributes((UserProfile) this.getEnv().get(EngineConstants.ENV_USER_PROFILE)));
+			dataset.setUserProfileAttributes(UserProfileUtils
+					.getProfileAttributes((UserProfile) this.getEnv().get(EngineConstants.ENV_USER_PROFILE)));
 			dataset.setQuery(sqlQuery);
 			logger.debug("Executing query ...");
 			dataset.loadData();
@@ -376,13 +387,13 @@ public class ExportResultAction extends AbstractQbeEngineAction {
 	 */
 	private void setJasperClasspath() {
 		// get the classpath used by JasperReprorts Engine (by default equals to WEB-INF/lib)
-		String webinflibPath = ConfigSingleton.getInstance().getRootPath() + System.getProperty("file.separator") + "WEB-INF"
-				+ System.getProperty("file.separator") + "lib";
+		String webinflibPath = ConfigSingleton.getInstance().getRootPath() + System.getProperty("file.separator")
+				+ "WEB-INF" + System.getProperty("file.separator") + "lib";
 		// logger.debug("JasperReports lib-dir is [" + this.getClass().getName()+ "]");
 
 		// get all jar file names in the jasper classpath
 		// logger.debug("Reading jar files from lib-dir...");
-		StringBuffer jasperReportClassPathStringBuffer = new StringBuffer();
+		StringBuilder jasperReportClassPathStringBuffer = new StringBuilder();
 		File f = new File(webinflibPath);
 		String fileToAppend = null;
 
