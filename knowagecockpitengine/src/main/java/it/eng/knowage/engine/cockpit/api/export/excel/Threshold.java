@@ -3,6 +3,7 @@ package it.eng.knowage.engine.cockpit.api.export.excel;
 import java.awt.Color;
 
 import org.apache.poi.xssf.usermodel.XSSFColor;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTColor;
 
 public class Threshold {
 
