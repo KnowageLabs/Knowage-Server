@@ -33,13 +33,13 @@ import it.eng.spagobi.services.common.EnginConf;
 import it.eng.spagobi.utilities.assertion.Assert;
 import net.sf.jasperreports.engine.JRExporter;
 import net.sf.jasperreports.engine.JRVirtualizer;
-import net.sf.jasperreports.engine.export.JExcelApiExporter;
+import net.sf.jasperreports.engine.export.HtmlExporter;
 import net.sf.jasperreports.engine.export.JRCsvExporter;
-import net.sf.jasperreports.engine.export.JRHtmlExporter;
 import net.sf.jasperreports.engine.export.JRPdfExporter;
 import net.sf.jasperreports.engine.export.JRRtfExporter;
 import net.sf.jasperreports.engine.export.JRTextExporter;
 import net.sf.jasperreports.engine.export.JRXmlExporter;
+import net.sf.jasperreports.engine.export.JRXlsExporter;
 import net.sf.jasperreports.engine.export.ooxml.JRXlsxExporter;
 import net.sf.jasperreports.engine.fill.JRSwapFileVirtualizer;
 import net.sf.jasperreports.engine.util.JRSwapFile;
@@ -184,9 +184,9 @@ public class JasperReportEngineConfig {
 			if (format.equalsIgnoreCase("csv"))
 				exporter = new JRCsvExporter();
 			else if (format.equalsIgnoreCase("html"))
-				exporter = new JRHtmlExporter();
+				exporter = new HtmlExporter();
 			else if (format.equalsIgnoreCase("xls"))
-				exporter = new JExcelApiExporter(); // exporter = new JRXlsExporter();
+				exporter = new JRXlsExporter(); // JExcelApiExporter() deprecated
 			else if (format.equalsIgnoreCase("xlsx"))
 				exporter = new JRXlsxExporter();
 			else if (format.equalsIgnoreCase("rtf"))
@@ -202,7 +202,7 @@ public class JasperReportEngineConfig {
 			else if (format.equalsIgnoreCase("JPGBASE64"))
 				exporter = new JRImageBase64Exporter();
 			else
-				exporter = new JRHtmlExporter();
+				exporter = new HtmlExporter();
 		}
 
 		return exporter;
