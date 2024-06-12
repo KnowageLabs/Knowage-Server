@@ -23,6 +23,8 @@ public interface IDatasetActionsChecker {
 
 	void canSee() throws ActionNotPermittedException;
 
+	void canSeeContent() throws ActionNotPermittedException;
+
 	void canLoadData() throws ActionNotPermittedException;
 
 	void canEdit() throws ActionNotPermittedException;
