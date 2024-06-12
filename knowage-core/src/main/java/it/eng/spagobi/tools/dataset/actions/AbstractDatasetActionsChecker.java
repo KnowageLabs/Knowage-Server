@@ -20,6 +20,9 @@ package it.eng.spagobi.tools.dataset.actions;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.commons.bo.Domain;
 import it.eng.spagobi.commons.bo.UserProfile;
@@ -33,10 +36,12 @@ import it.eng.spagobi.utilities.exceptions.ActionNotPermittedException;
 
 public abstract class AbstractDatasetActionsChecker implements IDatasetActionsChecker {
 
+	private static final Logger LOGGER = LogManager.getLogger(AbstractDatasetActionsChecker.class);
+
 	private final UserProfile userProfile;
 	private final IDataSet dataset;
 
-	public AbstractDatasetActionsChecker(UserProfile userProfile, IDataSet dataset) {
+	protected AbstractDatasetActionsChecker(UserProfile userProfile, IDataSet dataset) {
 		this.userProfile = userProfile;
 		this.dataset = dataset;
 	}
@@ -87,6 +92,18 @@ public abstract class AbstractDatasetActionsChecker implements IDatasetActionsCh
 		boolean isScopeTechnical = scopeTechnical.getValueCd().equals(currentScope);
 		boolean isScopeUser = scopeUser.getValueCd().equals(currentScope);
 		boolean inVisibleCategories = categories.contains(currentCategory);
+
+		LOGGER.debug("Checking if user can see data");
+		LOGGER.debug("Is Admin? {}", isAdmin);
+		LOGGER.debug("Is Developer? {}", isDeveloper);
+		LOGGER.debug("Is User? {}", isUser);
+		LOGGER.debug("Is Tester? {}", isTester);
+		LOGGER.debug("Is ModelAdministrator? {}", isModelAdministrator);
+		LOGGER.debug("Is Scope Enterprise? {}", isScopeEnterprise);
+		LOGGER.debug("Is Scope Technical? {}", isScopeTechnical);
+		LOGGER.debug("Is Scope User? {}", isScopeUser);
+		LOGGER.debug("In Visible Categories? {}", inVisibleCategories);
+		LOGGER.debug("Dataset categories for user: {}", categories);
 
 		if (isAdmin) {
 			// All dataset
