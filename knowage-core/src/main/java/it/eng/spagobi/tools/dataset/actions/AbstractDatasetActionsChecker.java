@@ -94,6 +94,7 @@ public abstract class AbstractDatasetActionsChecker implements IDatasetActionsCh
 		boolean inVisibleCategories = categories.contains(currentCategory);
 
 		LOGGER.debug("Checking if user can see data");
+		LOGGER.debug("Is dataset owned? {}", owned);
 		LOGGER.debug("Is Admin? {}", isAdmin);
 		LOGGER.debug("Is Developer? {}", isDeveloper);
 		LOGGER.debug("Is User? {}", isUser);
