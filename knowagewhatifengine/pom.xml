@@ -87,7 +87,7 @@
 		<dependency>
 			<groupId>org.apache.poi</groupId>
 			<artifactId>poi</artifactId>
-			<version>3.10-beta2</version>
+			<version>5.2.5</version>
 		</dependency>
 		<!-- Provides support for Graylog in log4j2 -->
 		<dependency>
@@ -98,12 +98,6 @@
 			<groupId>org.apache.poi</groupId>
 			<artifactId>poi-ooxml</artifactId>
 			<version>5.2.5</version>
-			<exclusions>
-				<exclusion>
-					 <groupId>org.apache.xmlbeans</groupId>
-					 <artifactId>xmlbeans</artifactId>
-				</exclusion>
-			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>de.jflex</groupId>

@@ -15,9 +15,11 @@
 	<name>knowage-common</name>
 	<description>Common classes for all KNOWAGE artifacts</description>
 	
+	<!-- 
 	<properties>
 		<java.version>1.8</java.version>
 	</properties>
+	--> 
 	
 	<dependencies>
 		<dependency>

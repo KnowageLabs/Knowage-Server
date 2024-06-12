@@ -15,11 +15,13 @@
 	<name>knowage-api</name>
 	<description>API knowage microservice project</description>
 	
+	<!-- 
 	<properties>
 		<java.version>1.8</java.version>
 		<maven.build.timestamp.format>yyyy/MM/dd</maven.build.timestamp.format>
 		<timestamp>${maven.build.timestamp}</timestamp>
 	</properties>
+	-->
 	
 	<dependencyManagement>
 		<dependencies>

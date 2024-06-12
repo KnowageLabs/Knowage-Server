@@ -15,12 +15,14 @@
 	<name>knowage-spring-boot-api-common</name>
 	<description>Data preparation API for Enterprise Edition</description>
 	
+	<!--
 	<properties>
 		<java.version>1.8</java.version>
 		<log4j.version>2.17.1</log4j.version>
 		<maven.build.timestamp.format>yyyy/MM/dd</maven.build.timestamp.format>
 		<timestamp>${maven.build.timestamp}</timestamp>
 	</properties>
+	-->
 	
 	<dependencyManagement>
 		<dependencies>
