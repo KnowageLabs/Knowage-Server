@@ -544,12 +544,12 @@ public class Util {
 		newSheet.setDisplayZeros(sheetToCopy.isDisplayZeros());
 		newSheet.setPrintGridlines(sheetToCopy.isPrintGridlines());
 		newSheet.setRightToLeft(sheetToCopy.isRightToLeft());
-		newSheet.setZoom(1, 1);
+		newSheet.setZoom(100); // Sheet.setZoom(int numerator, int denominator) Deprecated
 		copyPrintTitle(newSheet, sheetToCopy);
 	}
 
 	private static void copyPrintTitle(Sheet newSheet, Sheet sheetToCopy) {
-		int nbNames = sheetToCopy.getWorkbook().getNumberOfNames();
+		List<? extends Name> listNames = sheetToCopy.getWorkbook().getAllNames();
 		Name name = null;
 		String formula = null;
 
@@ -564,8 +564,9 @@ public class Util {
 		int colB = -1;
 		int colE = -1;
 
-		for (int i = 0; i < nbNames; i++) {
-			name = sheetToCopy.getWorkbook().getNameAt(i);
+		for (int i = 0; i < listNames.size(); i++) {
+			name = listNames.get(i); // Workbook.getNameAt(int) Deprecated because new projects should avoid accessing named ranges by index
+			
 			if (name.getSheetIndex() == sheetToCopy.getWorkbook().getSheetIndex(sheetToCopy)) {
 				if (name.getNameName().equals("Print_Titles") || name.getNameName().equals(XSSFName.BUILTIN_PRINT_TITLE)) {
 					formula = name.getRefersToFormula();
@@ -622,8 +623,12 @@ public class Util {
 							rowE = Integer.parseInt(rowEs);
 						}
 					}
-
-					newSheet.getWorkbook().setRepeatingRowsAndColumns(newSheet.getWorkbook().getSheetIndex(newSheet), colB, colE, rowB - 1, rowE - 1);
+					
+//					newSheet.getWorkbook().setRepeatingRowsAndColumns(newSheet.getWorkbook().getSheetIndex(newSheet), colB, colE, rowB - 1, rowE - 1);
+					String columnsRange = colB + ":" + colE;
+					String rowsRange = (rowB - 1) + ":" + (rowE - 1);
+					newSheet.setRepeatingColumns(CellRangeAddress.valueOf(columnsRange));
+					newSheet.setRepeatingRows(CellRangeAddress.valueOf(rowsRange));
 				}
 			}
 		}
