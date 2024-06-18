@@ -1081,8 +1081,8 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 		logger.debug("IN");
 		try {
 			DatasetManagementAPI datasetManagementAPI = getDatasetManagementAPI();
-			IDataSet dataSet = datasetManagementAPI.getDataSet(label);
-			getDatasetManagementAPI().canSee(dataSet);
+			IDataSet dataSet = DAOFactory.getDataSetDAO().loadDataSetByLabel(label);
+			datasetManagementAPI.canSee(dataSet);
 			return serializeDataSet(dataSet, null);
 		} catch (Exception t) {
 			throw new SpagoBIServiceException(this.request.getPathInfo(),
@@ -1210,8 +1210,7 @@ public abstract class AbstractDataSetResource extends AbstractSpagoBIResource {
 			IDataSet dataSet = DAOFactory.getDataSetDAO().loadDataSetByLabel(label);
 			DatasetManagementAPI datasetManagementAPI = getDatasetManagementAPI();
 
-			datasetManagementAPI.canSee(dataSet);
-			datasetManagementAPI.canLoadData(dataSet);
+			datasetManagementAPI.canSeeContent(dataSet);
 
 			if (dataSet == null) {
 				logger.warn("DataSet with label [" + label + "] not existing.");

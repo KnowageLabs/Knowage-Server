@@ -84,7 +84,7 @@ const router = createRouter({
 
 router.beforeEach((to, from, next) => {
     //if (localStorage.getItem('locale')) loadLanguageAsync(localStorage.getItem('locale')).then(() => next())
-    const checkRequired = !('/' == to.fullPath && '/' == from.fullPath)
+    const checkRequired = !('/' == to.path && '/' == from.path)
     const loggedIn = localStorage.getItem('token')
 
     const validRoutes = ['registry', 'document-composite', 'report', 'office-doc', 'olap', 'map', 'report', '/kpi/', 'dossier', 'etl']
