@@ -66,6 +66,9 @@ public class SbiChecks extends SbiHibernateModel {
 		return this.checkId;
 	}
 
+	public void changeCheckId(Integer checkId) {
+		this.setCheckId(checkId);
+	}
 	/**
 	 * Sets the check id.
 	 *

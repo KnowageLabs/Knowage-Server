@@ -152,6 +152,20 @@
 		<dispatcher>REQUEST</dispatcher>
 		<dispatcher>FORWARD</dispatcher>
 	</filter-mapping>
+	
+			<!--  ANTI CSRF FILTER -->
+	<filter>
+      <filter-name>KnowageAntiCsrfFilter</filter-name> 
+      <filter-class>it.eng.spagobi.security.utils.AntiCsrfFilter</filter-class> 
+     </filter>
+     
+     <filter-mapping>
+		<filter-name>KnowageAntiCsrfFilter</filter-name>
+		<url-pattern>/BirtReportServlet</url-pattern>
+		<url-pattern>/servlet/AdapterHTTP</url-pattern>
+		<dispatcher>REQUEST</dispatcher>
+		<dispatcher>FORWARD</dispatcher>
+	</filter-mapping>
 	<servlet>
 		<servlet-name>EngineTestServlet</servlet-name>
 		<servlet-class>it.eng.spagobi.utilities.engines.EngineTestServlet</servlet-class>

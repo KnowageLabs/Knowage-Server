@@ -53,6 +53,20 @@
 		<filter-class>it.eng.spagobi.commons.filters.SpagoBICoreCheckSessionFilter</filter-class>
 	</filter>
 	
+	<!--  ANTI CSRF FILTER -->
+	<filter>
+      <filter-name>KnowageAntiCsrfFilter</filter-name> 
+      <filter-class>it.eng.spagobi.security.utils.AntiCsrfFilter</filter-class> 
+     </filter>
+     
+     <filter-mapping>
+		<filter-name>KnowageAntiCsrfFilter</filter-name>
+		<url-pattern>/BirtReportServlet</url-pattern>
+		<url-pattern>/servlet/AdapterHTTP</url-pattern>
+		<dispatcher>REQUEST</dispatcher>
+		<dispatcher>FORWARD</dispatcher>
+	</filter-mapping>
+	
 	<!--
 	<servlet>
 		<servlet-name>jersey-serlvet</servlet-name>
@@ -293,47 +307,9 @@
 		<async-supported>true</async-supported>
 	</servlet>
 
-    <!-- OWASP CRSF -->
-<!-- OWASP CSRFGuard context listener used to read CSRF configuration -->
-<listener>
-   <listener-class>org.owasp.csrfguard.CsrfGuardServletContextListener</listener-class>
-</listener>
 
-<!-- OWASP CSRFGuard session listener used to generate per-session CSRF token -->
-<listener>
-   <listener-class>org.owasp.csrfguard.CsrfGuardHttpSessionListener</listener-class>
-</listener>
 
-<!-- OWASP CSRFGuard per-application configuration property file location-->
-<context-param>
-   <param-name>Owasp.CsrfGuard.Config</param-name>
-   <param-value>/resources/crsfguard.properties</param-value>
-</context-param>
 
-<!-- OWASP CSRFGuard filter used to validate CSRF token-->
-<filter>
-   <filter-name>CSRFGuard</filter-name>
-   <filter-class>org.owasp.csrfguard.CsrfGuardFilter</filter-class>
-</filter>
-
-<!-- OWASP CSRFGuard filter mapping used to validate CSRF token-->
-<filter-mapping>
-   <filter-name>CSRFGuard</filter-name>
-   <url-pattern>/servlet/*</url-pattern>
-   <url-pattern>/restful-services/*</url-pattern>
-   <url-pattern>/stickyImg</url-pattern>
-   <url-pattern>/ChangePwdServlet</url-pattern>
-</filter-mapping>
-
-<!-- OWASP CSRFGuard servlet that serves dynamic token injection JavaScript (application can customize the URL pattern as required)-->
-<servlet>
-   <servlet-name>JavaScriptServlet</servlet-name>
-   <servlet-class>org.owasp.csrfguard.servlet.JavaScriptServlet</servlet-class>
-</servlet>
-<servlet-mapping>
-   <servlet-name>JavaScriptServlet</servlet-name>
-   <url-pattern>/csrfguard.js</url-pattern>
-</servlet-mapping>
 
 	<servlet-mapping>
 		<servlet-name>cometd</servlet-name>

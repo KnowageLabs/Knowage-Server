@@ -148,7 +148,7 @@ public class SbiDashboardTheme extends SbiHibernateModel {
 	/**
 	 * @param id the id to set
 	 */
-	private void setId(UUID id) {
+	public void setId(UUID id) {
 		this.id = id;
 	}
 

@@ -105,6 +105,9 @@ public class SbiGlWord extends SbiHibernateModel {
 		this.wordId = wordId;
 	}
 
+	public void changeWordId(Integer wordId) {
+		this.wordId = wordId;
+	}
 	/**
 	 * @return the word
 	 */

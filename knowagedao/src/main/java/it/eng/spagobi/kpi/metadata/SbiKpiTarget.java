@@ -16,6 +16,14 @@ public class SbiKpiTarget extends SbiHibernateModel {
 
 	private Set<SbiKpiTargetValue> sbiKpiTargetValues = new HashSet<>(0);
 
+	public SbiKpiTarget() {
+		super();
+	}
+	
+	public SbiKpiTarget(Integer targetId) {
+		super();
+		this.setTargetId(targetId);
+	}
 	/**
 	 * @return the targetId
 	 */

@@ -44,6 +44,14 @@ public class SbiMetaModelContent extends SbiHibernateModel {
 	private String dimension = null;
 
 	private String creationUser = null;
+	
+	public SbiMetaModelContent() {
+		super();
+	}
+	public SbiMetaModelContent(Integer id) {
+		super();
+		this.id = id;
+	}
 
 	public Integer getId() {
 		return id;

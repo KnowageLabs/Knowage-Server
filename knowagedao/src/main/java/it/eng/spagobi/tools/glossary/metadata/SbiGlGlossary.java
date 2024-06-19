@@ -60,6 +60,11 @@ public class SbiGlGlossary extends SbiHibernateModel {
 	private void setGlossaryId(Integer glossaryId) {
 		this.glossaryId = glossaryId;
 	}
+	
+	public void changeGlossaryId(Integer glossaryId) {
+		this.glossaryId = glossaryId;
+	}
+	
 
 	/**
 	 * @return the glossaryCd

@@ -45,6 +45,11 @@ public class SbiKpiRuleOutput extends SbiHibernateModel implements java.io.Seria
 
 	public SbiKpiRuleOutput() {
 	}
+	
+	public SbiKpiRuleOutput(Integer id) {
+		super();
+		this.id = id;
+	}
 
 	/**
 	 * @return the id

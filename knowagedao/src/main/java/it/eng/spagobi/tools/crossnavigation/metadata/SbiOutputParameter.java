@@ -37,6 +37,16 @@ public class SbiOutputParameter extends SbiHibernateModel {
 	private SbiDomains parameterType;
 	private Boolean isUserDefined;
 
+	
+	public SbiOutputParameter() {
+		super();
+	}
+
+	public SbiOutputParameter(Integer id) {
+		super();
+		this.setId(id);
+	}
+
 	/**
 	 * @return the id
 	 */
@@ -44,6 +54,9 @@ public class SbiOutputParameter extends SbiHibernateModel {
 		return id;
 	}
 
+	public void changeId(Integer id) {
+		this.setId(id);
+	}
 	/**
 	 * @param id
 	 *            the id to set

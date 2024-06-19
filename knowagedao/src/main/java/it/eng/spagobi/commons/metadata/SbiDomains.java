@@ -68,6 +68,7 @@ public class SbiDomains extends SbiHibernateModel {
 		this.valueId = valueId;
 	}
 
+
 	/**
 	 * Gets the domain cd.
 	 *

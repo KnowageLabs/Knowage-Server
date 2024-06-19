@@ -88,6 +88,10 @@ public class SbiGeoLayers extends SbiHibernateModel {
 	private void setLayerId(int layerId) {
 		this.layerId = layerId;
 	}
+	
+	public void changeLayerId(int layerId) {
+		this.layerId = layerId;
+	}
 
 	public byte[] getLayerDef() {
 		return layerDef;

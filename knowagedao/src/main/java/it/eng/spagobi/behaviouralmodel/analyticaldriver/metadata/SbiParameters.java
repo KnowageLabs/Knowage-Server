@@ -74,6 +74,9 @@ public class SbiParameters extends SbiHibernateModel {
 		return this.parId;
 	}
 
+	public void changeParId(Integer parId) {
+		this.setParId(parId);
+	}
 	/**
 	 * Sets the par id.
 	 *

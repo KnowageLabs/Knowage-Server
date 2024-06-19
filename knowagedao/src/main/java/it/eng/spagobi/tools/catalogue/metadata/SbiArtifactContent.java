@@ -44,6 +44,13 @@ public class SbiArtifactContent extends SbiHibernateModel {
 	
 	private String creationUser = null;
 
+	public SbiArtifactContent() {
+		super();
+	}
+	public SbiArtifactContent(Integer id) {
+		super();
+		this.id = id;
+	}
 	public Integer getId() {
 		return id;
 	}

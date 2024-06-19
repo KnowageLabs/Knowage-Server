@@ -39,6 +39,8 @@
 			<param-value>UTF-8</param-value>
 		</init-param>
 	</filter>
+	
+	
 	<filter>
 		<filter-name>SpagoBIAccessFilter</filter-name>
 		<filter-class>it.eng.spagobi.utilities.filters.SpagoBIAccessFilter</filter-class>
@@ -130,6 +132,20 @@
 	</filter-mapping>
 	<filter-mapping>
 		<filter-name>SpagoBIAccessFilter</filter-name>
+		<url-pattern>/servlet/AdapterHTTP</url-pattern>
+		<dispatcher>REQUEST</dispatcher>
+		<dispatcher>FORWARD</dispatcher>
+	</filter-mapping>
+	
+			<!--  ANTI CSRF FILTER -->
+	<filter>
+      <filter-name>KnowageAntiCsrfFilter</filter-name> 
+      <filter-class>it.eng.spagobi.security.utils.AntiCsrfFilter</filter-class> 
+     </filter>
+     
+     <filter-mapping>
+		<filter-name>KnowageAntiCsrfFilter</filter-name>
+		<url-pattern>/BirtReportServlet</url-pattern>
 		<url-pattern>/servlet/AdapterHTTP</url-pattern>
 		<dispatcher>REQUEST</dispatcher>
 		<dispatcher>FORWARD</dispatcher>

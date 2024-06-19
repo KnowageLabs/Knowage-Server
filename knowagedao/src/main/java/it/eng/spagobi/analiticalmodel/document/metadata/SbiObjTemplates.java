@@ -34,6 +34,14 @@ public class SbiObjTemplates extends SbiHibernateModel {
 	private String dimension = null;
 	private String creationUser = null;
 
+	public SbiObjTemplates() {
+		super();
+	}
+	
+	public SbiObjTemplates(Integer objTempId) {
+		super();
+		this.objTempId = objTempId;
+	}
 	/**
 	 * Gets the dimension.
 	 *

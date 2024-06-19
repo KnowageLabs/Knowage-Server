@@ -35,6 +35,15 @@ public class SbiSubObjects  extends SbiHibernateModel {
     private Date creationDate;
     private Date lastChangeDate;
 	
+    public SbiSubObjects() {
+    	super();
+    }
+    
+    public SbiSubObjects(Integer subObjId) {
+    	super();
+    	this.subObjId = subObjId;
+    }
+    
     /**
      * Gets the sub obj id.
      * 
