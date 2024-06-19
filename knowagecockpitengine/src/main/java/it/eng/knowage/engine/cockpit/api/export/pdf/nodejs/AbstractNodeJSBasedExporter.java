@@ -169,121 +169,11 @@ public abstract class AbstractNodeJSBasedExporter {
 	}
 
 	protected int getSheetHeight() {
-		try {
-			int sheetHeight = Integer.parseInt(renderOptions.getDimensions().getHeight());
-			switch (engineLabel) {
-			case "knowagechartengine":
-				break;
-			case "knowagecockpitengine":
-				JSONArray sheets = template.getJSONArray("sheets");
-				int sheetLabelHeigth = (sheets.length() > 0) ? 48 : 0;
-				for (int sheetIndex = 0; sheetIndex < sheets.length(); sheetIndex++) {
-					JSONObject sheet = (JSONObject) sheets.get(sheetIndex);
-					if (sheet.has("widgets")) {
-						JSONArray widgets = sheet.getJSONArray("widgets");
-						for (int widgetIndex = 0; widgetIndex < widgets.length(); widgetIndex++) {
-							JSONObject widget = (JSONObject) widgets.get(widgetIndex);
-							int row = widget.getInt("row");
-							int sizeY = widget.getInt("sizeY");
-							int widgetHeight = (row + sizeY) * 30 + sheetLabelHeigth; // scaling by cockpitModule_gridsterOptions.rowHeight
-							sheetHeight = Math.max(sheetHeight, widgetHeight);
-						}
-					}
-				}
-				break;
-			case "knowagedashboardengine":
-				JSONArray sheetsNew = template.getJSONArray("sheets");
-				int sheetLabelHeigthNew = (sheetsNew.length() > 0) ? 48 : 0;
-				for (int sheetIndex = 0; sheetIndex < sheetsNew.length(); sheetIndex++) {
-					JSONObject sheet = (JSONObject) sheetsNew.get(sheetIndex);
-					if (sheet.has("widgets")) {
-						if (sheet.get("widgets") instanceof JSONArray) {
-							JSONArray widgets = sheet.getJSONArray("widgets");
-							for (int widgetIndex = 0; widgetIndex < widgets.length(); widgetIndex++) {
-								JSONObject widget = (JSONObject) widgets.get(widgetIndex);
-								int row = widget.getInt("x");
-								int sizeY = widget.getInt("y");
-								int widgetHeight = (row + sizeY) * 30 + sheetLabelHeigthNew; // scaling by cockpitModule_gridsterOptions.rowWidth
-								sheetHeight = Math.max(sheetHeight, widgetHeight);
-							}
-						} else {
-							JSONObject widget = sheet.getJSONObject("widgets");
-							JSONArray widgetLG = widget.getJSONArray("lg");
-							for (int widgetIndex = 0; widgetIndex < widgetLG.length(); widgetIndex++) {
-								JSONObject widgetToAnalyze = (JSONObject) widgetLG.get(widgetIndex);
-								int row = widgetToAnalyze.getInt("x");
-								int sizeY = widgetToAnalyze.getInt("y");
-								int widgetHeight = (row + sizeY) * 30 + sheetLabelHeigthNew; // scaling by cockpitModule_gridsterOptions.rowWidth
-								sheetHeight = Math.max(sheetHeight, widgetHeight);
-							}
-						}
-					}
-				}
-				break;
-			}
-			return sheetHeight;
-		} catch (JSONException e) {
-			throw new SpagoBIRuntimeException("Invalid template for document with id [" + documentId + "]", e);
-		}
+		return 1080;
 	}
 
 	protected int getSheetWidth() {
-		try {
-			int sheetWidth = Integer.parseInt(renderOptions.getDimensions().getWidth());
-			switch (engineLabel) {
-			case "knowagechartengine":
-				break;
-			case "knowagecockpitengine":
-				JSONArray sheets = template.getJSONArray("sheets");
-				int sheetLabelHeigth = (sheets.length() > 0) ? 48 : 0;
-				for (int sheetIndex = 0; sheetIndex < sheets.length(); sheetIndex++) {
-					JSONObject sheet = (JSONObject) sheets.get(sheetIndex);
-					if (sheet.has("widgets")) {
-						JSONArray widgets = sheet.getJSONArray("widgets");
-						for (int widgetIndex = 0; widgetIndex < widgets.length(); widgetIndex++) {
-							JSONObject widget = (JSONObject) widgets.get(widgetIndex);
-							int row = widget.getInt("row");
-							int sizeX = widget.getInt("sizeX");
-							int widgetWidth = (row + sizeX) * 30 + sheetLabelHeigth; // scaling by cockpitModule_gridsterOptions.rowWidth
-							sheetWidth = Math.max(sheetWidth, widgetWidth);
-						}
-					}
-				}
-				break;
-			case "knowagedashboardengine":
-				JSONArray sheetsNew = template.getJSONArray("sheets");
-				int sheetLabelHeigthNew = (sheetsNew.length() > 0) ? 48 : 0;
-				for (int sheetIndex = 0; sheetIndex < sheetsNew.length(); sheetIndex++) {
-					JSONObject sheet = (JSONObject) sheetsNew.get(sheetIndex);
-					if (sheet.has("widgets")) {
-						if (sheet.get("widgets") instanceof JSONArray) {
-							JSONArray widgets = sheet.getJSONArray("widgets");
-							for (int widgetIndex = 0; widgetIndex < widgets.length(); widgetIndex++) {
-								JSONObject widget = (JSONObject) widgets.get(widgetIndex);
-								int row = widget.getInt("x");
-								int sizeY = widget.getInt("y");
-								int widgetWidth = (row + sizeY) * 30 + sheetLabelHeigthNew; // scaling by cockpitModule_gridsterOptions.rowWidth
-								sheetWidth = Math.max(sheetWidth, widgetWidth);
-							}
-						} else {
-							JSONObject widget = sheet.getJSONObject("widgets");
-							JSONArray widgetLG = widget.getJSONArray("lg");
-							for (int widgetIndex = 0; widgetIndex < widgetLG.length(); widgetIndex++) {
-								JSONObject widgetToAnalyze = (JSONObject) widgetLG.get(widgetIndex);
-								int row = widgetToAnalyze.getInt("x");
-								int sizeY = widgetToAnalyze.getInt("y");
-								int widgetWidth = (row + sizeY) * 30 + sheetLabelHeigthNew; // scaling by cockpitModule_gridsterOptions.rowWidth
-								sheetWidth = Math.max(sheetWidth, widgetWidth);
-							}
-						}
-					}
-				}
-				break;
-			}
-			return sheetWidth;
-		} catch (JSONException e) {
-			throw new SpagoBIRuntimeException("Invalid template for document with id [" + documentId + "]", e);
-		}
+		return 1920;
 	}
 
 	protected double getDeviceScaleFactor(BIObject document) {
@@ -301,8 +191,8 @@ public abstract class AbstractNodeJSBasedExporter {
 			String name = document.getName();
 			String description = document.getDescription();
 			if (name == null || description == null) {
-				throw new SpagoBIRuntimeException(
-					"Unable to get name [" + name + "] or description [" + description + "] for document with id [" + documentId + "]");
+				throw new SpagoBIRuntimeException("Unable to get name [" + name + "] or description [" + description
+						+ "] for document with id [" + documentId + "]");
 			}
 			toReturn = new FrontpageDetails(name, description, new Date());
 		}
