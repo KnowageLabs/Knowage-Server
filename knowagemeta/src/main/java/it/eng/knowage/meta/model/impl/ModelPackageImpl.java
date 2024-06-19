@@ -175,6 +175,7 @@ public class ModelPackageImpl extends EPackageImpl implements ModelPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EClass getModelObject() {
 		return modelObjectEClass;
 	}
@@ -184,6 +185,7 @@ public class ModelPackageImpl extends EPackageImpl implements ModelPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EAttribute getModelObject_Id() {
 		return (EAttribute)modelObjectEClass.getEStructuralFeatures().get(0);
 	}
@@ -193,6 +195,7 @@ public class ModelPackageImpl extends EPackageImpl implements ModelPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EAttribute getModelObject_Name() {
 		return (EAttribute)modelObjectEClass.getEStructuralFeatures().get(1);
 	}
@@ -202,6 +205,7 @@ public class ModelPackageImpl extends EPackageImpl implements ModelPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EAttribute getModelObject_UniqueName() {
 		return (EAttribute)modelObjectEClass.getEStructuralFeatures().get(2);
 	}
@@ -211,6 +215,7 @@ public class ModelPackageImpl extends EPackageImpl implements ModelPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EAttribute getModelObject_Description() {
 		return (EAttribute)modelObjectEClass.getEStructuralFeatures().get(3);
 	}
@@ -220,6 +225,7 @@ public class ModelPackageImpl extends EPackageImpl implements ModelPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EReference getModelObject_Properties() {
 		return (EReference)modelObjectEClass.getEStructuralFeatures().get(4);
 	}
@@ -229,6 +235,7 @@ public class ModelPackageImpl extends EPackageImpl implements ModelPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EClass getModelPropertyType() {
 		return modelPropertyTypeEClass;
 	}
@@ -238,6 +245,7 @@ public class ModelPackageImpl extends EPackageImpl implements ModelPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EAttribute getModelPropertyType_Id() {
 		return (EAttribute)modelPropertyTypeEClass.getEStructuralFeatures().get(0);
 	}
@@ -247,6 +255,7 @@ public class ModelPackageImpl extends EPackageImpl implements ModelPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EAttribute getModelPropertyType_Name() {
 		return (EAttribute)modelPropertyTypeEClass.getEStructuralFeatures().get(1);
 	}
@@ -256,6 +265,7 @@ public class ModelPackageImpl extends EPackageImpl implements ModelPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EAttribute getModelPropertyType_Description() {
 		return (EAttribute)modelPropertyTypeEClass.getEStructuralFeatures().get(2);
 	}
@@ -265,6 +275,7 @@ public class ModelPackageImpl extends EPackageImpl implements ModelPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EReference getModelPropertyType_Category() {
 		return (EReference)modelPropertyTypeEClass.getEStructuralFeatures().get(3);
 	}
@@ -274,6 +285,7 @@ public class ModelPackageImpl extends EPackageImpl implements ModelPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EAttribute getModelPropertyType_DefaultValue() {
 		return (EAttribute)modelPropertyTypeEClass.getEStructuralFeatures().get(5);
 	}
@@ -283,6 +295,7 @@ public class ModelPackageImpl extends EPackageImpl implements ModelPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EAttribute getModelPropertyType_AdmissibleValues() {
 		return (EAttribute)modelPropertyTypeEClass.getEStructuralFeatures().get(4);
 	}
@@ -292,6 +305,7 @@ public class ModelPackageImpl extends EPackageImpl implements ModelPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EClass getModelPropertyCategory() {
 		return modelPropertyCategoryEClass;
 	}
@@ -301,6 +315,7 @@ public class ModelPackageImpl extends EPackageImpl implements ModelPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EAttribute getModelPropertyCategory_Name() {
 		return (EAttribute)modelPropertyCategoryEClass.getEStructuralFeatures().get(0);
 	}
@@ -310,6 +325,7 @@ public class ModelPackageImpl extends EPackageImpl implements ModelPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EAttribute getModelPropertyCategory_Description() {
 		return (EAttribute)modelPropertyCategoryEClass.getEStructuralFeatures().get(4);
 	}
@@ -319,6 +335,7 @@ public class ModelPackageImpl extends EPackageImpl implements ModelPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EReference getModelPropertyCategory_ParentCategory() {
 		return (EReference)modelPropertyCategoryEClass.getEStructuralFeatures().get(1);
 	}
@@ -328,6 +345,7 @@ public class ModelPackageImpl extends EPackageImpl implements ModelPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EReference getModelPropertyCategory_SubCategories() {
 		return (EReference)modelPropertyCategoryEClass.getEStructuralFeatures().get(2);
 	}
@@ -337,6 +355,7 @@ public class ModelPackageImpl extends EPackageImpl implements ModelPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EReference getModelPropertyCategory_PropertyTypes() {
 		return (EReference)modelPropertyCategoryEClass.getEStructuralFeatures().get(3);
 	}
@@ -346,6 +365,7 @@ public class ModelPackageImpl extends EPackageImpl implements ModelPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EClass getModelProperty() {
 		return modelPropertyEClass;
 	}
@@ -355,6 +375,7 @@ public class ModelPackageImpl extends EPackageImpl implements ModelPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EReference getModelProperty_PropertyType() {
 		return (EReference)modelPropertyEClass.getEStructuralFeatures().get(0);
 	}
@@ -364,6 +385,7 @@ public class ModelPackageImpl extends EPackageImpl implements ModelPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EAttribute getModelProperty_Value() {
 		return (EAttribute)modelPropertyEClass.getEStructuralFeatures().get(1);
 	}
@@ -373,6 +395,7 @@ public class ModelPackageImpl extends EPackageImpl implements ModelPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EClass getModelPropertyMapEntry() {
 		return modelPropertyMapEntryEClass;
 	}
@@ -382,6 +405,7 @@ public class ModelPackageImpl extends EPackageImpl implements ModelPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EAttribute getModelPropertyMapEntry_Key() {
 		return (EAttribute)modelPropertyMapEntryEClass.getEStructuralFeatures().get(0);
 	}
@@ -391,6 +415,7 @@ public class ModelPackageImpl extends EPackageImpl implements ModelPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EReference getModelPropertyMapEntry_Value() {
 		return (EReference)modelPropertyMapEntryEClass.getEStructuralFeatures().get(1);
 	}
@@ -400,6 +425,7 @@ public class ModelPackageImpl extends EPackageImpl implements ModelPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EClass getModel() {
 		return modelEClass;
 	}
@@ -409,6 +435,7 @@ public class ModelPackageImpl extends EPackageImpl implements ModelPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EReference getModel_PhysicalModels() {
 		return (EReference)modelEClass.getEStructuralFeatures().get(0);
 	}
@@ -418,6 +445,7 @@ public class ModelPackageImpl extends EPackageImpl implements ModelPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EReference getModel_BusinessModels() {
 		return (EReference)modelEClass.getEStructuralFeatures().get(1);
 	}
@@ -427,6 +455,7 @@ public class ModelPackageImpl extends EPackageImpl implements ModelPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EReference getModel_OlapModels() {
 		return (EReference)modelEClass.getEStructuralFeatures().get(2);
 	}
@@ -436,6 +465,7 @@ public class ModelPackageImpl extends EPackageImpl implements ModelPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EReference getModel_PropertyTypes() {
 		return (EReference)modelEClass.getEStructuralFeatures().get(3);
 	}
@@ -445,6 +475,7 @@ public class ModelPackageImpl extends EPackageImpl implements ModelPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EReference getModel_PropertyCategories() {
 		return (EReference)modelEClass.getEStructuralFeatures().get(4);
 	}
@@ -454,6 +485,7 @@ public class ModelPackageImpl extends EPackageImpl implements ModelPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public ModelFactory getModelFactory() {
 		return (ModelFactory)getEFactoryInstance();
 	}

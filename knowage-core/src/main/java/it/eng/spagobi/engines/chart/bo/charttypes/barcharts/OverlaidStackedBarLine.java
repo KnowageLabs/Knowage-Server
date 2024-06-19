@@ -72,12 +72,13 @@ public class OverlaidStackedBarLine extends LinkableBar {
 
 	private static transient Logger logger=Logger.getLogger(OverlaidStackedBarLine.class);
 
+	@Override
 	public DatasetMap calculateValue() throws Exception {
 
 		seriesNames=new Vector();
 		seriesCaptions=new LinkedHashMap();
-		categoriesTooltip=new HashMap<String, String>();
-		seriesTooltip=new HashMap<String, String>();
+		categoriesTooltip=new HashMap<>();
+		seriesTooltip=new HashMap<>();
 		// I must identify different series
 
 		String res=DataSetAccessFunctions.getDataSetResultFromId(profile, getData(),parametersObject);
@@ -253,6 +254,7 @@ public class OverlaidStackedBarLine extends LinkableBar {
 
 	}
 
+	@Override
 	public void configureChart(SourceBean content) {
 		super.configureChart(content);
 
@@ -315,6 +317,7 @@ public class OverlaidStackedBarLine extends LinkableBar {
 
 	}
 
+	@Override
 	public JFreeChart createChart(DatasetMap datasets) {
 
 		// create the first renderer...

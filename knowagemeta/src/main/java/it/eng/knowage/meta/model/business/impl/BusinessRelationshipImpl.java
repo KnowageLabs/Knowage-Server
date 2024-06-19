@@ -277,7 +277,7 @@ public class BusinessRelationshipImpl extends ModelObjectImpl implements Busines
 	@Override
 	public EList<BusinessColumn> getSourceColumns() {
 		if (sourceColumns == null) {
-			sourceColumns = new EObjectResolvingEList<BusinessColumn>(BusinessColumn.class, this, BusinessModelPackage.BUSINESS_RELATIONSHIP__SOURCE_COLUMNS);
+			sourceColumns = new EObjectResolvingEList<>(BusinessColumn.class, this, BusinessModelPackage.BUSINESS_RELATIONSHIP__SOURCE_COLUMNS);
 		}
 		return sourceColumns;
 	}
@@ -290,7 +290,7 @@ public class BusinessRelationshipImpl extends ModelObjectImpl implements Busines
 	@Override
 	public EList<BusinessColumn> getDestinationColumns() {
 		if (destinationColumns == null) {
-			destinationColumns = new EObjectResolvingEList<BusinessColumn>(BusinessColumn.class, this,
+			destinationColumns = new EObjectResolvingEList<>(BusinessColumn.class, this,
 					BusinessModelPackage.BUSINESS_RELATIONSHIP__DESTINATION_COLUMNS);
 		}
 		return destinationColumns;
@@ -519,7 +519,7 @@ public class BusinessRelationshipImpl extends ModelObjectImpl implements Busines
 	@Override
 	public List<SimpleBusinessColumn> getDestinationSimpleBusinessColumns() {
 		EList<BusinessColumn> destinationColumns = getDestinationColumns();
-		List<SimpleBusinessColumn> destinationSimpleColumns = new ArrayList<SimpleBusinessColumn>();
+		List<SimpleBusinessColumn> destinationSimpleColumns = new ArrayList<>();
 		for (BusinessColumn column : destinationColumns) {
 			if (column instanceof SimpleBusinessColumn) {
 				destinationSimpleColumns.add((SimpleBusinessColumn) column);
@@ -531,7 +531,7 @@ public class BusinessRelationshipImpl extends ModelObjectImpl implements Busines
 	@Override
 	public List<SimpleBusinessColumn> getSourceSimpleBusinessColumns() {
 		EList<BusinessColumn> sourceColumns = getSourceColumns();
-		List<SimpleBusinessColumn> sourceSimpleColumns = new ArrayList<SimpleBusinessColumn>();
+		List<SimpleBusinessColumn> sourceSimpleColumns = new ArrayList<>();
 		for (BusinessColumn column : sourceColumns) {
 			if (column instanceof SimpleBusinessColumn) {
 				sourceSimpleColumns.add((SimpleBusinessColumn) column);

@@ -41,6 +41,7 @@ public class ListFeaturesModule  extends AbstractBasicListModule {
 	 * 
 	 * @throws Exception the exception
 	 */
+	@Override
 	public ListIFace getList(SourceBean request, SourceBean response) throws Exception {
 		return DelegatedHibernateConnectionListService.getList(this, request, response);
 	} 

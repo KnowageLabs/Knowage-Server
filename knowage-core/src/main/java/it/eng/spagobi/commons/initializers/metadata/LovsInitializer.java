@@ -23,13 +23,8 @@ import java.util.List;
 import org.apache.log4j.Logger;
 import org.hibernate.Query;
 import org.hibernate.Session;
-import org.hibernate.Transaction;
-
 import it.eng.spago.base.SourceBean;
-import it.eng.spago.init.InitializerIFace;
 import it.eng.spagobi.behaviouralmodel.lov.metadata.SbiLov;
-import it.eng.spagobi.commons.dao.AbstractHibernateDAO;
-import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.metadata.SbiDomains;
 import it.eng.spagobi.commons.metadata.SbiTenant;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
@@ -47,6 +42,7 @@ public class LovsInitializer extends SpagoBIInitializer {
 		configurationFileName = "it/eng/spagobi/commons/initializers/metadata/config/lovs.xml";
 	}
 	
+	@Override
 	public void init(SourceBean config, Session hibernateSession) {
 		logger.debug("IN");
 		try {

@@ -28,7 +28,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.ListIterator;
 import java.util.List;
-import java.util.Map;
 import java.util.StringTokenizer;
 import java.util.Collection;
 
@@ -37,9 +36,7 @@ import org.hibernate.dialect.Dialect;
 import org.hibernate.impl.FilterImpl;
 import org.hibernate.type.Type;
 import org.hibernate.param.DynamicFilterParameterSpecification;
-import org.hibernate.param.CollectionFilterKeyParameterSpecification;
 import org.hibernate.engine.JoinSequence;
-import org.hibernate.engine.SessionFactoryImplementor;
 import org.hibernate.engine.LoadQueryInfluencers;
 import org.hibernate.hql.antlr.SqlTokenTypes;
 import org.hibernate.hql.ast.HqlSqlWalker;
@@ -129,6 +126,7 @@ public class JoinProcessor implements SqlTokenTypes {
 			JoinSequence join = fromElement.getJoinSequence();
 			join.setSelector(
 					new JoinSequence.Selector() {
+						@Override
 						public boolean includeSubclasses(String alias) {
 							// The uber-rule here is that we need to include  subclass joins if
 							// the FromElement is in any way dereferenced by a property from

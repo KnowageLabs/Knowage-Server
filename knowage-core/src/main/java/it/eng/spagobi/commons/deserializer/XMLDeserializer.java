@@ -40,6 +40,7 @@ public class XMLDeserializer implements Deserializer {
 		mappings.put( Trigger.class, new TriggerXMLDeserializer() );
 	}
 
+	@Override
 	public Object deserialize(Object o, Class clazz) throws DeserializationException {
 		Object result = null;	
 		

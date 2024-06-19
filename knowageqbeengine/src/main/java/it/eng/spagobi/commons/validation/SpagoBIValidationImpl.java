@@ -106,6 +106,7 @@ public class SpagoBIValidationImpl implements ValidationEngineIFace {
 	 * 
 	 * @throws Exception if an exception occurs.
 	 */
+	@Override
 	public boolean validate(String serviceType, String serviceName, RequestContextIFace context)  {
 		RequestContainer requestContainer = context.getRequestContainer();
 		ResponseContainer responseContainer = context.getResponseContainer();
@@ -267,6 +268,7 @@ public class SpagoBIValidationImpl implements ValidationEngineIFace {
 	 * 
 	 * @return A boolean value saying if validator is blocking or not.
 	 */
+	@Override
 	public boolean isBlocking() {
 		String isBlocking = (String) _validationStructure
 				.getAttribute("blocking");

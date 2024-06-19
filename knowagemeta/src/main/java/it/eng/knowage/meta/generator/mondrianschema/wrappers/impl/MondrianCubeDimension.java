@@ -18,7 +18,6 @@
 package it.eng.knowage.meta.generator.mondrianschema.wrappers.impl;
 
 import it.eng.knowage.meta.generator.mondrianschema.wrappers.IMondrianCubeDimesion;
-import it.eng.knowage.meta.model.business.BusinessColumn;
 import it.eng.knowage.meta.model.business.BusinessRelationship;
 import it.eng.knowage.meta.model.business.SimpleBusinessColumn;
 import it.eng.knowage.meta.model.olap.Cube;

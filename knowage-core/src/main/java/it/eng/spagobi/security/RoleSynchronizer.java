@@ -18,7 +18,6 @@
 
 package it.eng.spagobi.security;
 
-import it.eng.spago.base.SourceBean;
 import it.eng.spago.dbaccess.Utils;
 import it.eng.spago.dbaccess.sql.DataConnection;
 import it.eng.spago.dbaccess.sql.SQLCommand;

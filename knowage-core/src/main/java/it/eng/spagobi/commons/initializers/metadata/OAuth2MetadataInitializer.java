@@ -29,7 +29,7 @@ public class OAuth2MetadataInitializer extends MetadataInitializer {
 	public OAuth2MetadataInitializer() {
 		targetComponentName = "SpagoBI Metadata Database";
 
-		metadataInitializers = new ArrayList<SpagoBIInitializer>();
+		metadataInitializers = new ArrayList<>();
 		metadataInitializers.add(new TenantsInitializer());
 		metadataInitializers.add(new OAuth2TenantInitializer());
 		metadataInitializers.add(new DomainsInitializer());

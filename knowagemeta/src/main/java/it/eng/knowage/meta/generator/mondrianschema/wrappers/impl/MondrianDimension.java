@@ -62,7 +62,7 @@ public class MondrianDimension implements IMondrianDimension {
 	 */
 	@Override
 	public List<IMondrianHierarchy> getHierarchies() {
-		List<IMondrianHierarchy> hierarchies = new ArrayList<IMondrianHierarchy>();
+		List<IMondrianHierarchy> hierarchies = new ArrayList<>();
 		for (Hierarchy hierarchy : dimension.getHierarchies()) {
 			MondrianHierarchy mondrianHierarchy = new MondrianHierarchy(hierarchy);
 			hierarchies.add(mondrianHierarchy);

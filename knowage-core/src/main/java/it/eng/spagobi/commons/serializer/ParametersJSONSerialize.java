@@ -36,6 +36,7 @@ public class ParametersJSONSerialize implements Serializer {
 	public static final String TEMPORALFLAG = "TEMPORALFLAG";
 	public static final String INPUTTYPECD = "INPUTTYPECD";
 
+	@Override
 	public Object serialize(Object o, Locale locale) throws SerializationException {
 
 		JSONObject result = null;

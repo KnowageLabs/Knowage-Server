@@ -201,7 +201,7 @@ public class SparkLine extends TargetCharts{
 			}
 		}
 		// average
-		avg = avg/(double)count;
+		avg = avg/count;
 
 		// calculate min and max between thresholds!
 		boolean isFirst2 = true;
@@ -246,6 +246,7 @@ public class SparkLine extends TargetCharts{
 
 		plot.getRenderer().setSeriesPaint(0, Color.BLACK); 
 		XYLineAndShapeRenderer renderer = new XYLineAndShapeRenderer(true, false) { 
+			@Override
 			public boolean getItemShapeVisible(int _series, int item) { 
 				TimeSeriesDataItem tsdi=timeSeries.getDataItem(item);
 				if(tsdi==null)return false;
@@ -344,7 +345,7 @@ public class SparkLine extends TargetCharts{
 			}
 
 		}
-		avg = avg/(double)count;
+		avg = avg/count;
 
 
 		//plot.getRangeAxis().setRange(new Range(min-2, max+2));
@@ -374,10 +375,12 @@ public class SparkLine extends TargetCharts{
 
 
 		XYLineAndShapeRenderer renderer = new XYLineAndShapeRenderer(true, false) { 
+			@Override
 			public boolean getItemShapeVisible(int _series, int item) { 
 				return (false); 
 			} 
 
+			@Override
 			public Paint getItemPaint(int row, int column) {
 				return color;
 			}
@@ -409,6 +412,7 @@ public class SparkLine extends TargetCharts{
 
 
 		XYLineAndShapeRenderer renderer = new XYLineAndShapeRenderer(true, false) { 
+			@Override
 			public boolean getItemShapeVisible(int _series, int item) { 
 				return (true); 
 			} 
@@ -444,7 +448,7 @@ public class SparkLine extends TargetCharts{
 			}
 			Double currentValue=(Double)item.getValue();
 			// get the color of the last element
-			TreeSet<Double> orderedThresholds=new TreeSet<Double>(thresholds.keySet());
+			TreeSet<Double> orderedThresholds=new TreeSet<>(thresholds.keySet());
 			Double thresholdGiveColor=null;		
 			// if dealing with targets, begin from first target and go to on till the current value is major
 			if(useTargets){

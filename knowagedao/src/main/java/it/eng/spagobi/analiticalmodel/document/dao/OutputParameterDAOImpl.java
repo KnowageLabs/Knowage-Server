@@ -107,7 +107,7 @@ public class OutputParameterDAOImpl extends AbstractHibernateDAO implements IOut
 	public void removeParameter(Integer id, Session aSession) throws EMFUserError {
 		ICrossNavigationDAO crossNavigationDao = DAOFactory.getCrossNavigationDAO();
 		List<SbiCrossNavigationPar> cnParToRemove = crossNavigationDao.listNavigationsByOutputParameters(id, aSession);
-		List<Integer> crossNavigation = new ArrayList<Integer>();
+		List<Integer> crossNavigation = new ArrayList<>();
 		// Delete FROM CROSS_NAVIFATION_PAR
 		for (SbiCrossNavigationPar cn : cnParToRemove) {
 			aSession.delete(cn);

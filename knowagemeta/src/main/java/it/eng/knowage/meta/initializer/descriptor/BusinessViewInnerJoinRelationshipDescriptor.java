@@ -43,9 +43,9 @@ public class BusinessViewInnerJoinRelationshipDescriptor {
 			java.util.List<PhysicalColumn> destinationCol, int cardinality, String relationshipName) {
 		sourceTable = source;
 		destinationTable = destination;
-		sourceColumns = new ArrayList<PhysicalColumn>();
+		sourceColumns = new ArrayList<>();
 		sourceColumns.addAll(sourceCol);
-		destinationColumns = new ArrayList<PhysicalColumn>();
+		destinationColumns = new ArrayList<>();
 		destinationColumns.addAll(destinationCol);
 		relationCardinality = cardinality;
 		this.relationshipName = relationshipName;

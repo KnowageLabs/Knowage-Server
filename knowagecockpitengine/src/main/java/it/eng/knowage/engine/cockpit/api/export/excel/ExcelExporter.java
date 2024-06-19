@@ -45,20 +45,14 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
-import org.apache.poi.ss.usermodel.ClientAnchor;
 import org.apache.poi.ss.usermodel.CreationHelper;
-import org.apache.poi.ss.usermodel.Drawing;
-import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.HorizontalAlignment;
-import org.apache.poi.ss.usermodel.Picture;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.VerticalAlignment;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.WorkbookUtil;
-import org.apache.poi.util.Units;
-import org.apache.poi.xssf.streaming.SXSSFSheet;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -113,13 +107,13 @@ public class ExcelExporter extends AbstractFormatExporter {
 		super(userUniqueIdentifier, new JSONObject());
 		this.isSingleWidgetExport = false;
 		this.requestURL = requestURL;
-		this.properties = new HashMap<String, Object>();
+		this.properties = new HashMap<>();
 	}
 
 	public ExcelExporter(String userUniqueIdentifier, JSONObject body) {
 		super(userUniqueIdentifier, body);
 		this.isSingleWidgetExport = body.optBoolean("exportWidget");
-		this.properties = new HashMap<String, Object>();
+		this.properties = new HashMap<>();
 	}
 	
 	public void setProperty(String propertyName, Object propertyValue) {

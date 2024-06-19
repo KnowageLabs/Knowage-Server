@@ -67,7 +67,7 @@ public class TestJPA {
 		String query = " SELECT t_0.storeCost, t_0.storeId.storeCountry FROM  SalesFact1998 t_0 WHERE t_0.storeId.storeCountry='USA' AND  t_0.promotionId=t_0.promotionId";
 		Query q = em.createQuery(query);
 
-		List<String> queryParameters = new ArrayList<String>();
+		List<String> queryParameters = new ArrayList<>();
 		queryParameters.add("USA");
 		EJBQueryImpl qi = (EJBQueryImpl) q;
 		String sqlQueryString = qi.getDatabaseQuery().getSQLString();

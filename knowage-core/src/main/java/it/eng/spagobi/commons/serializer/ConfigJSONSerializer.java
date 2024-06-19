@@ -65,6 +65,7 @@ public class ConfigJSONSerializer implements Serializer {
 	public static final String CATEGORY = "CATEGORY";
 	
 	
+	@Override
 	public Object serialize(Object o, Locale locale) throws SerializationException {
 		JSONObject  result = null;
 		

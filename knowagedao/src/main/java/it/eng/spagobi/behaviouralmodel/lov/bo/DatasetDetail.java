@@ -308,7 +308,7 @@ public class DatasetDetail extends DependenciesPostProcessingLov implements ILov
 		IDataSet dataset = DAOFactory.getDataSetDAO().loadDataSetById(new Integer(getDatasetId()));
 		Map<String, String> params = getParametersNameToValueMap(biObjectParameters);
 		if (params == null) {
-			dataset.setParamsMap(new HashMap<String, String>());
+			dataset.setParamsMap(new HashMap<>());
 		} else {
 			dataset.setParamsMap(params);
 		}

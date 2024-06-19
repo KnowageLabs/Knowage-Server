@@ -457,12 +457,12 @@ abstract class AbstractExportJob implements Job {
 			// calculate scale
 			float scale = 1;
 			if (pictHeightPx > rowsHeightPx) {
-				float tmpscale = rowsHeightPx / (float) pictHeightPx;
+				float tmpscale = rowsHeightPx / pictHeightPx;
 				if (tmpscale < scale)
 					scale = tmpscale;
 			}
 			if (pictWidthPx > colsWidthPx) {
-				float tmpscale = colsWidthPx / (float) pictWidthPx;
+				float tmpscale = colsWidthPx / pictWidthPx;
 				if (tmpscale < scale)
 					scale = tmpscale;
 			}

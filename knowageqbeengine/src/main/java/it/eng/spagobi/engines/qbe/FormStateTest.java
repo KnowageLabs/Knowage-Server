@@ -78,7 +78,7 @@ public class FormStateTest {
 			IFormStateLoader formViewerStateLoader;
 			formViewerStateLoader = FormStateLoaderFactory.getInstance().getLoader(encodingFormatVersion);
 
-			formStateJSON = (JSONObject) formViewerStateLoader.load(formStateString);
+			formStateJSON = formViewerStateLoader.load(formStateString);
 		}
 
 		QbeJSONTemplateParser.addAdditionalInfo(formStateJSON);

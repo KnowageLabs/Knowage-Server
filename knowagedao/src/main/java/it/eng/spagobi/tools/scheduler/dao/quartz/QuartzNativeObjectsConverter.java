@@ -268,7 +268,7 @@ public class QuartzNativeObjectsConverter {
 	}
 
 	public static Map<String, String> convertParametersFromNativeObject(org.quartz.JobDataMap quartzParameters) {
-		Map<String, String> spagobiParameters = new HashMap<String, String>();
+		Map<String, String> spagobiParameters = new HashMap<>();
 
 		Set<String> parameterNames = quartzParameters.keySet();
 		for (String parameterName : parameterNames) {

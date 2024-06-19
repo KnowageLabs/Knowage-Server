@@ -328,7 +328,7 @@ public class ModelPropertyTypeImpl extends EObjectImpl implements ModelPropertyT
 	@Override
 	public EList<String> getAdmissibleValues() {
 		if (admissibleValues == null) {
-			admissibleValues = new EDataTypeUniqueEList<String>(String.class, this, ModelPackage.MODEL_PROPERTY_TYPE__ADMISSIBLE_VALUES);
+			admissibleValues = new EDataTypeUniqueEList<>(String.class, this, ModelPackage.MODEL_PROPERTY_TYPE__ADMISSIBLE_VALUES);
 		}
 		return admissibleValues;
 	}

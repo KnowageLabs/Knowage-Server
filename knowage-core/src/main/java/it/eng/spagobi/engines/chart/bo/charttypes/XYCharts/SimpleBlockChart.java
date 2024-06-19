@@ -84,6 +84,7 @@ public class SimpleBlockChart extends XYCharts {
 	public static final String BLOCK_HEIGHT = "block_height";
 	public static final String BLOCK_WIDTH = "block_width";
 
+	@Override
 	public void configureChart(SourceBean content) {
 		logger.debug("IN");
 		super.configureChart(content);
@@ -196,6 +197,7 @@ public class SimpleBlockChart extends XYCharts {
 
 
 
+	@Override
 	public DatasetMap calculateValue() throws Exception {
 		logger.debug("IN");
 		String res=DataSetAccessFunctions.getDataSetResultFromId(profile, getData(),parametersObject);
@@ -283,6 +285,7 @@ public class SimpleBlockChart extends XYCharts {
 	 * 
 	 * @return A chart instance.
 	 */
+	@Override
 	public JFreeChart createChart(DatasetMap datasets) {
 		logger.debug("IN");
 		XYZDataset dataset=(XYZDataset)datasets.getDatasets().get("1");

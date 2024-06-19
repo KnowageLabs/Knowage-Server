@@ -10,7 +10,7 @@ public class Cardinality implements Serializable {
 	private int ruleVersion;
 	private String ruleName;
 	private String measureName;
-	private Map<String, Boolean> attributes = new HashMap<String, Boolean>();
+	private Map<String, Boolean> attributes = new HashMap<>();
 
 	public Cardinality() {
 	}

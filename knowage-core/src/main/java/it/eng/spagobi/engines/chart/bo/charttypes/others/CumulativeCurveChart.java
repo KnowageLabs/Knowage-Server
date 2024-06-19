@@ -56,6 +56,7 @@ public class CumulativeCurveChart extends BarCharts{
 	private static transient Logger logger=Logger.getLogger(CumulativeCurveChart.class);
 	SortOrder sortOrder=SortOrder.ASCENDING;
 	
+	@Override
 	public DatasetMap calculateValue() throws Exception {
 
 		logger.debug("IN");
@@ -114,6 +115,7 @@ public class CumulativeCurveChart extends BarCharts{
 
 	}
 
+	@Override
 	public void configureChart(SourceBean content) {
 		super.configureChart(content);
 		confParameters = new HashMap();
@@ -152,6 +154,7 @@ public class CumulativeCurveChart extends BarCharts{
 
 	}
 
+	@Override
 	public JFreeChart createChart(DatasetMap datasetMap) {
 		CategoryDataset datasetValue=(CategoryDataset)datasetMap.getDatasets().get("1");
 		CategoryDataset datasetCumulative=(CategoryDataset)datasetMap.getDatasets().get("2");

@@ -64,8 +64,8 @@ public class PageResource extends AbstractChartEngineResource {
 	 *
 	 */
 	static {
-		pages = new HashMap<String, JSONObject>();
-		urls = new HashMap<String, String>();
+		pages = new HashMap<>();
+		urls = new HashMap<>();
 
 		try {
 			pages.put("execute", new JSONObject("{name: 'execute', description: 'the georeport execution page', parameters: []}"));

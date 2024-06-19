@@ -17,8 +17,6 @@
  */
 package it.eng.spagobi.rest.validation;
 
-import java.util.Map;
-
 import javax.ws.rs.core.MultivaluedMap;
 
 import org.json.JSONArray;

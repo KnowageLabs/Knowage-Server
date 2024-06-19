@@ -20,7 +20,6 @@ package it.eng.spagobi.engines.chart.bo.charttypes.utils;
 
 import org.jfree.chart.LegendItemCollection;
 import org.jfree.chart.plot.dial.DialPlot;
-import org.jfree.data.general.ValueDataset;
 
 
 /** 
@@ -43,7 +42,8 @@ public class MyDialPlot extends DialPlot {
      *
      * @return The legend items for the dial plot (possibly <code>null</code>).
      */
-     public LegendItemCollection getLegendItems() {
+     @Override
+	public LegendItemCollection getLegendItems() {
     	return this.legendItems;
      }
 

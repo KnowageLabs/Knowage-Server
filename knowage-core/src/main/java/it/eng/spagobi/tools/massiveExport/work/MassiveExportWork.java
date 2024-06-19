@@ -164,10 +164,10 @@ public class MassiveExportWork implements Work {
 		}
 		logger.debug("Export File extension: " + fileExtension);
 
-		filesToZip = new ArrayList<File>();
+		filesToZip = new ArrayList<>();
 
 		// map used to recover real name to put inside zip
-		Map<String, String> randomNamesToName = new HashMap<String, String>();
+		Map<String, String> randomNamesToName = new HashMap<>();
 
 		for (BIObject document : documents) {
 
@@ -313,7 +313,7 @@ public class MassiveExportWork implements Work {
 		try {
 			DocumentMetadataProperty objMetaDataAndContent = null;
 			List<ObjMetadata> allMetas = metaDao.loadAllObjMetadata();
-			Map<Integer, ObjMetacontent> values = new HashMap<Integer, ObjMetacontent>();
+			Map<Integer, ObjMetacontent> values = new HashMap<>();
 
 			List list = metaContentDAO.loadObjOrSubObjMetacontents(obj.getId(), null);
 			for (Iterator iterator = list.iterator(); iterator.hasNext();) {

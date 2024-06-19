@@ -41,7 +41,7 @@ public class HierarchyDescriptor {
 		allMemberName = "";
 		hasAll = true;
 		defaultHierarchy = false;
-		levels = new ArrayList<HierarchyLevelDescriptor>();
+		levels = new ArrayList<>();
 	}
 
 	/**

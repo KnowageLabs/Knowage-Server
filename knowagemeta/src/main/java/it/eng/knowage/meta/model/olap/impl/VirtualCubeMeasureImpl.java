@@ -102,6 +102,7 @@ public class VirtualCubeMeasureImpl extends ModelObjectImpl implements VirtualCu
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public VirtualCube getVirtualCube() {
 		if (virtualCube != null && virtualCube.eIsProxy()) {
 			InternalEObject oldVirtualCube = (InternalEObject)virtualCube;
@@ -143,6 +144,7 @@ public class VirtualCubeMeasureImpl extends ModelObjectImpl implements VirtualCu
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public void setVirtualCube(VirtualCube newVirtualCube) {
 		if (newVirtualCube != virtualCube) {
 			NotificationChain msgs = null;
@@ -162,6 +164,7 @@ public class VirtualCubeMeasureImpl extends ModelObjectImpl implements VirtualCu
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public Cube getCube() {
 		if (cube != null && cube.eIsProxy()) {
 			InternalEObject oldCube = (InternalEObject)cube;
@@ -188,6 +191,7 @@ public class VirtualCubeMeasureImpl extends ModelObjectImpl implements VirtualCu
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public void setCube(Cube newCube) {
 		Cube oldCube = cube;
 		cube = newCube;
@@ -200,6 +204,7 @@ public class VirtualCubeMeasureImpl extends ModelObjectImpl implements VirtualCu
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public Measure getMeasure() {
 		if (measure != null && measure.eIsProxy()) {
 			InternalEObject oldMeasure = (InternalEObject)measure;
@@ -226,6 +231,7 @@ public class VirtualCubeMeasureImpl extends ModelObjectImpl implements VirtualCu
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public void setMeasure(Measure newMeasure) {
 		Measure oldMeasure = measure;
 		measure = newMeasure;

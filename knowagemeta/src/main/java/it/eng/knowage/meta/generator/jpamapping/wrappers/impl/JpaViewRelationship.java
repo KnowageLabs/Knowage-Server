@@ -37,6 +37,7 @@ import org.slf4j.LoggerFactory;
  * @author Andrea Gioia (andrea.gioia@eng.it)
  *
  */
+@Deprecated
 public class JpaViewRelationship extends AbstractJpaRelationship {
 
 	BusinessViewInnerJoinRelationship businessInnerRelationship;
@@ -56,10 +57,12 @@ public class JpaViewRelationship extends AbstractJpaRelationship {
 		this.bidirectional = true;
 	}
 	
+	@Override
 	public boolean isSourceRole() {
 		return businessInnerRelationship.getSourceTable().equals( jpaTable.getPhysicalTable() );
 	}
 	
+	@Override
 	public boolean isDestinationRole() {
 		return businessInnerRelationship.getDestinationTable().equals( jpaTable.getPhysicalTable() );
 	}
@@ -116,6 +119,7 @@ public class JpaViewRelationship extends AbstractJpaRelationship {
 	/**
 	 * The inner relationship can have join reference between PhisicalTable only
 	 */
+	@Override
 	public AbstractJpaTable getReferencedTable(){
 		logger.debug("IN");
 		
@@ -123,13 +127,13 @@ public class JpaViewRelationship extends AbstractJpaRelationship {
 		
 		if ( isSourceRole() ) {			
 			if (businessInnerRelationship.getDestinationTable() instanceof PhysicalTable){
-				return new JpaViewInnerTable(businessView,(PhysicalTable)businessInnerRelationship.getDestinationTable()); 
+				return new JpaViewInnerTable(businessView,businessInnerRelationship.getDestinationTable()); 
 			}else {
 				logger.error("businessInnerRelationship.getDestinationTable() IS not a PhysicalTable......");
 			}
 		} else {
 			if (businessInnerRelationship.getSourceTable() instanceof PhysicalTable){
-				return new JpaViewInnerTable(businessView,(PhysicalTable)businessInnerRelationship.getSourceTable()); 
+				return new JpaViewInnerTable(businessView,businessInnerRelationship.getSourceTable()); 
 			}else {
 				logger.error("businessInnerRelationship.getSourceTable() IS not a PhysicalTable......");
 			}

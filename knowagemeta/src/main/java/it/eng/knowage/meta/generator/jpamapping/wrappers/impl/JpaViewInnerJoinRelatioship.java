@@ -60,7 +60,7 @@ public class JpaViewInnerJoinRelatioship {
 		List<PhysicalColumn> columns;
 		JpaViewInnerTable innerSourceTable;
 		
-		sourceColumns = new ArrayList<IJpaColumn>();
+		sourceColumns = new ArrayList<>();
 		columns = joinRelationship.getSourceColumns();
 		innerSourceTable = (JpaViewInnerTable)getSourceTable();
 		for(PhysicalColumn physicalColumn: columns) {
@@ -81,7 +81,7 @@ public class JpaViewInnerJoinRelatioship {
 		List<PhysicalColumn> columns;
 		JpaViewInnerTable innerDestinationTable;
 		
-		destinationColumns = new ArrayList<IJpaColumn>();
+		destinationColumns = new ArrayList<>();
 		columns = joinRelationship.getDestinationColumns();
 		innerDestinationTable = (JpaViewInnerTable)getDestinationTable();
 		for(PhysicalColumn physicalColumn: columns) {

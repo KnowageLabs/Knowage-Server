@@ -44,7 +44,7 @@ public class ValidationErrors {
 	Map<Integer,List<ErrorField>> errorsMap;
 	
 	public ValidationErrors(){
-		errorsMap = new HashMap<Integer,List<ErrorField>>();
+		errorsMap = new HashMap<>();
 	}
 	
 	/*
@@ -53,7 +53,7 @@ public class ValidationErrors {
 	public void addError(Integer rowNumber ,Integer columnNumber, IField field, String errorDescription){
 		List <ErrorField> errorsOnRecord = errorsMap.get(rowNumber);
 		if (errorsOnRecord == null){
-			errorsOnRecord = new ArrayList<ErrorField>();
+			errorsOnRecord = new ArrayList<>();
 			ErrorField errorField = new ErrorField(columnNumber, field, errorDescription);
 			errorsOnRecord.add(errorField);
 			errorsMap.put(rowNumber, errorsOnRecord);
@@ -87,7 +87,7 @@ public class ValidationErrors {
 	 * get errors on Column
 	 */
 	public List<ErrorField> getErrorsOnColumn(Integer columnNumber){
-		List<ErrorField> errorsOnColumn = new ArrayList<ErrorField>();
+		List<ErrorField> errorsOnColumn = new ArrayList<>();
 		for (Map.Entry<Integer, List<ErrorField>> entry : errorsMap.entrySet())
 		{
 		    logger.debug("Error Field : columnIndex = "+entry.getKey() + " / errorField" + entry.getValue());

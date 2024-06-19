@@ -89,12 +89,12 @@ public class JpaViewOuterRelationship {
 	
 	public List<String> getSourceColumns() {
 		List<IJpaColumn> sourceColumns;
-		List<PhysicalColumn> columns = new ArrayList<PhysicalColumn>();
+		List<PhysicalColumn> columns = new ArrayList<>();
 		List<SimpleBusinessColumn> businessColumns;
 		
- 		List<String> columnsNames = new ArrayList<String>();
+ 		List<String> columnsNames = new ArrayList<>();
 		
-		sourceColumns = new ArrayList<IJpaColumn>();
+		sourceColumns = new ArrayList<>();
 		businessColumns = businessRelationship.getSourceSimpleBusinessColumns();
 		for (SimpleBusinessColumn businessColumn : businessColumns){
 			columns.add(businessColumn.getPhysicalColumn());
@@ -144,11 +144,11 @@ public class JpaViewOuterRelationship {
 		List<PhysicalColumn> columns = new ArrayList();
 		List<SimpleBusinessColumn> businessColumns;
 		List<IJpaTable> innerTables;
- 		List<String> columnsNames = new ArrayList<String>();
+ 		List<String> columnsNames = new ArrayList<>();
 
 		
  		
-		destinationColumns = new ArrayList<IJpaColumn>();
+		destinationColumns = new ArrayList<>();
 		businessColumns = businessRelationship.getDestinationSimpleBusinessColumns();
 		for (SimpleBusinessColumn businessColumn : businessColumns){
 			columns.add(businessColumn.getPhysicalColumn());

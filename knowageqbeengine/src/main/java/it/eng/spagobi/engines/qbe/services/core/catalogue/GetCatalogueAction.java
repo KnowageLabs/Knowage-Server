@@ -46,6 +46,7 @@ import org.json.JSONObject;
 public class GetCatalogueAction extends AbstractQbeEngineAction {	
 	
 	public static final String SERVICE_NAME = "GET_CATALOGUE_ACTION";
+	@Override
 	public String getActionName(){return SERVICE_NAME;}
 	
 	
@@ -57,6 +58,7 @@ public class GetCatalogueAction extends AbstractQbeEngineAction {
    
     
 	
+	@Override
 	public void service(SourceBean request, SourceBean response)  {				
 		
 		JSONArray result;

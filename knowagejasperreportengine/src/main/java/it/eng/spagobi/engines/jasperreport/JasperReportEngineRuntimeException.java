@@ -51,7 +51,8 @@ public class JasperReportEngineRuntimeException extends SpagoBIEngineRuntimeExce
     	super(message, ex);
     }
     
-    public JasperReportEngineInstance getEngineInstance() {
+    @Override
+	public JasperReportEngineInstance getEngineInstance() {
 		return engineInstance;
 	}
 

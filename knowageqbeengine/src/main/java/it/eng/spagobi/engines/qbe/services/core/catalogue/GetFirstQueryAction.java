@@ -40,15 +40,18 @@ import org.json.JSONObject;
  * 
  * @deprecated use GetQueryAction?SEARCH_TYPE=byType&SEARCH_FILTER=first
  */
+@Deprecated
 public class GetFirstQueryAction extends AbstractQbeEngineAction {
 	
 	public static final String SERVICE_NAME = "GET_FIRST_QUERY_ACTION";
+	@Override
 	public String getActionName(){return SERVICE_NAME;}
 
 	/** Logger component. */
     public static transient Logger logger = Logger.getLogger(GetFirstQueryAction.class);
     
 	
+	@Override
 	public void service(SourceBean request, SourceBean response) {
 		
 		logger.debug("IN");

@@ -23,7 +23,6 @@ import it.eng.spago.base.SessionContainer;
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.base.SourceBeanException;
 import it.eng.spago.dispatching.module.AbstractHttpModule;
-import it.eng.spago.dispatching.module.AbstractModule;
 import it.eng.spago.error.EMFErrorHandler;
 import it.eng.spago.error.EMFErrorSeverity;
 import it.eng.spago.error.EMFInternalError;
@@ -69,6 +68,7 @@ public class DetailFeatureModule extends AbstractHttpModule {
 	 * 
 	 * @throws Exception the exception
 	 */
+	@Override
 	public void service(SourceBean serviceRequest, SourceBean serviceResponse) throws Exception {		
 
 		String message = (String) serviceRequest.getAttribute("MESSAGEDET");

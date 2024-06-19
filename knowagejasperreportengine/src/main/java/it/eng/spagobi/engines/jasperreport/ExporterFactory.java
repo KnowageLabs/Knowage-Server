@@ -25,6 +25,7 @@ import it.eng.spagobi.services.common.EnginConf;
  * 
  * @deprecated
  */
+@Deprecated
 public class ExporterFactory {	
 	
 	/**

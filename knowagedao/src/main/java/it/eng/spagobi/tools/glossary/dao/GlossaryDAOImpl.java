@@ -243,9 +243,9 @@ public class GlossaryDAOImpl extends AbstractHibernateDAO implements IGlossaryDA
 				// glo.setGlossaryNm(glo.getGlossaryNm()+"-copy");
 				// Integer newGlossId =insertGlossary(glo);
 
-				Map<Integer, Integer> newID = new HashMap<Integer, Integer>();
+				Map<Integer, Integer> newID = new HashMap<>();
 
-				List<SbiGlContents> toClone = new ArrayList<SbiGlContents>();
+				List<SbiGlContents> toClone = new ArrayList<>();
 				// add first level child
 				toClone.addAll(listContentsByGlossaryIdAndParentId(glossaryId, null));
 
@@ -352,7 +352,7 @@ public class GlossaryDAOImpl extends AbstractHibernateDAO implements IGlossaryDA
 					// Map<Integer,SbiGlContents> cont = new
 					// HashMap<Integer,SbiGlContents>();
 
-					Map<String, JSONObject> map = new HashMap<String, JSONObject>();
+					Map<String, JSONObject> map = new HashMap<>();
 
 					for (SbiGlWlist wl : wordl) {
 						// cont.put(wl.getContent().getContentId(),
@@ -515,7 +515,7 @@ public class GlossaryDAOImpl extends AbstractHibernateDAO implements IGlossaryDA
 					}
 				} else {
 					// check if have word references
-					Set<Integer> wordIds = new HashSet<Integer>();
+					Set<Integer> wordIds = new HashSet<>();
 					listWlistWord(contentId).forEach(x -> wordIds.add(x.getWordId()));
 
 					logger.debug("Deleting from GlWlist where content.contentId=" + contentId);
@@ -647,9 +647,9 @@ public class GlossaryDAOImpl extends AbstractHibernateDAO implements IGlossaryDA
 
 				if (objLink != null) {
 					doUpdate = true;
-					Set<SbiGlReferences> references = new HashSet<SbiGlReferences>();
+					Set<SbiGlReferences> references = new HashSet<>();
 					if (word.getReferences() == null) {
-						word.setReferences(new HashSet<SbiGlReferences>());
+						word.setReferences(new HashSet<>());
 					}
 
 					for (SbiGlWord w : objLink) {
@@ -717,9 +717,9 @@ public class GlossaryDAOImpl extends AbstractHibernateDAO implements IGlossaryDA
 				}
 
 				if (objAttr != null) {
-					Set<SbiUdpValue> SbiUdpValue = new HashSet<SbiUdpValue>();
+					Set<SbiUdpValue> SbiUdpValue = new HashSet<>();
 					if (word.getAttributes() == null) {
-						word.setAttributes(new HashSet<SbiUdpValue>());
+						word.setAttributes(new HashSet<>());
 					}
 
 					doUpdate = true;
@@ -1156,7 +1156,7 @@ public class GlossaryDAOImpl extends AbstractHibernateDAO implements IGlossaryDA
 			@Override
 			public Map<String, Object> execute(Session session) throws JSONException {
 				try {
-					Map<String, Object> map = new HashMap<String, Object>();
+					Map<String, Object> map = new HashMap<>();
 					String tmpSearch = "";
 					Integer tmpPage = null;
 					Integer tmp_item_count = null;
@@ -1186,7 +1186,7 @@ public class GlossaryDAOImpl extends AbstractHibernateDAO implements IGlossaryDA
 							|| (item.compareTo("document") == 0
 									&& (type.compareTo("search") == 0 || type.compareTo("pagination") == 0 || type.compareTo("reset") == 0))
 							|| ((type.compareTo("click") == 0 || type.compareTo("reset") == 0) && item.compareTo("word") == 0)) {
-						List<SbiObjects> doclist = new ArrayList<SbiObjects>();
+						List<SbiObjects> doclist = new ArrayList<>();
 
 						tmpSearch = elem.getJSONObject("document").getString("search");
 						tmpPage = elem.getJSONObject("document").getInt("page");
@@ -1236,8 +1236,8 @@ public class GlossaryDAOImpl extends AbstractHibernateDAO implements IGlossaryDA
 							|| (item.compareTo("dataset") == 0
 									&& (type.compareTo("search") == 0 || type.compareTo("pagination") == 0 || type.compareTo("reset") == 0))
 							|| ((type.compareTo("click") == 0 || type.compareTo("reset") == 0) && item.compareTo("word") == 0)) {
-						List<Object[]> objlist = new ArrayList<Object[]>();
-						List<SbiDataSet> dslist = new ArrayList<SbiDataSet>();
+						List<Object[]> objlist = new ArrayList<>();
+						List<SbiDataSet> dslist = new ArrayList<>();
 						Integer gloIdd = null;
 						String addGloToQueryy = "";
 						if (elem.getJSONObject("dataset").has("GLOSSARY_ID")) {
@@ -1301,7 +1301,7 @@ public class GlossaryDAOImpl extends AbstractHibernateDAO implements IGlossaryDA
 							|| (item.compareTo("bness_cls") == 0
 									&& (type.compareTo("search") == 0 || type.compareTo("pagination") == 0 || type.compareTo("reset") == 0))
 							|| ((type.compareTo("click") == 0 || type.compareTo("reset") == 0) && item.compareTo("word") == 0)) {
-						List<SbiMetaBc> bness_cls_list = new ArrayList<SbiMetaBc>();
+						List<SbiMetaBc> bness_cls_list = new ArrayList<>();
 						Integer gloIdd = null;
 						String addGloToQueryy = "";
 						if (elem.getJSONObject("bness_cls").has("GLOSSARY_ID")) {
@@ -1355,7 +1355,7 @@ public class GlossaryDAOImpl extends AbstractHibernateDAO implements IGlossaryDA
 							|| (item.compareTo("table") == 0
 									&& (type.compareTo("search") == 0 || type.compareTo("pagination") == 0 || type.compareTo("reset") == 0))
 							|| ((type.compareTo("click") == 0 || type.compareTo("reset") == 0) && item.compareTo("word") == 0)) {
-						List<SbiMetaTable> table_list = new ArrayList<SbiMetaTable>();
+						List<SbiMetaTable> table_list = new ArrayList<>();
 						Integer gloIdd = null;
 						String addGloToQueryy = "";
 						if (elem.getJSONObject("table").has("GLOSSARY_ID")) {
@@ -1404,11 +1404,11 @@ public class GlossaryDAOImpl extends AbstractHibernateDAO implements IGlossaryDA
 					if (type.compareTo("reset") == 0 || !((type.compareTo("search") == 0 || type.compareTo("pagination") == 0) && item.compareTo("word") != 0)
 							&& ((item.compareTo("word") == 0 && (type.compareTo("search") == 0 || type.compareTo("pagination") == 0))
 									|| type.compareTo("all") == 0 || type.compareTo("click") == 0 && item.compareTo("word") != 0)) {
-						List<SbiGlWord> wordList = new ArrayList<SbiGlWord>();
-						List<SbiGlWord> DocWordList = new ArrayList<SbiGlWord>();
-						List<SbiGlWord> DataSetWordList = new ArrayList<SbiGlWord>();
-						List<SbiGlWord> BnessClsList = new ArrayList<SbiGlWord>();
-						List<SbiGlWord> TableList = new ArrayList<SbiGlWord>();
+						List<SbiGlWord> wordList = new ArrayList<>();
+						List<SbiGlWord> DocWordList = new ArrayList<>();
+						List<SbiGlWord> DataSetWordList = new ArrayList<>();
+						List<SbiGlWord> BnessClsList = new ArrayList<>();
+						List<SbiGlWord> TableList = new ArrayList<>();
 						v = null;
 						int sizeD = elem.getJSONObject("document").getJSONArray("selected").length();
 						int sizeDS = elem.getJSONObject("dataset").getJSONArray("selected").length();
@@ -1527,7 +1527,7 @@ public class GlossaryDAOImpl extends AbstractHibernateDAO implements IGlossaryDA
 							v = wordCount(tmpSearch, gloId);
 						} else {
 
-							Set<SbiGlWord> wordSet = new HashSet<SbiGlWord>();
+							Set<SbiGlWord> wordSet = new HashSet<>();
 							wordSet.addAll(DataSetWordList);
 							wordSet.addAll(DocWordList);
 							wordSet.addAll(BnessClsList);

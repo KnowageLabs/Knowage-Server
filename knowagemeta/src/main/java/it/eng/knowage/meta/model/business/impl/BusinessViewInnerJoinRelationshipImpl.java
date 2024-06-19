@@ -247,7 +247,7 @@ public class BusinessViewInnerJoinRelationshipImpl extends ModelObjectImpl imple
 	@Override
 	public EList<PhysicalColumn> getSourceColumns() {
 		if (sourceColumns == null) {
-			sourceColumns = new EObjectResolvingEList<PhysicalColumn>(PhysicalColumn.class, this,
+			sourceColumns = new EObjectResolvingEList<>(PhysicalColumn.class, this,
 					BusinessModelPackage.BUSINESS_VIEW_INNER_JOIN_RELATIONSHIP__SOURCE_COLUMNS);
 		}
 		return sourceColumns;
@@ -261,7 +261,7 @@ public class BusinessViewInnerJoinRelationshipImpl extends ModelObjectImpl imple
 	@Override
 	public EList<PhysicalColumn> getDestinationColumns() {
 		if (destinationColumns == null) {
-			destinationColumns = new EObjectResolvingEList<PhysicalColumn>(PhysicalColumn.class, this,
+			destinationColumns = new EObjectResolvingEList<>(PhysicalColumn.class, this,
 					BusinessModelPackage.BUSINESS_VIEW_INNER_JOIN_RELATIONSHIP__DESTINATION_COLUMNS);
 		}
 		return destinationColumns;

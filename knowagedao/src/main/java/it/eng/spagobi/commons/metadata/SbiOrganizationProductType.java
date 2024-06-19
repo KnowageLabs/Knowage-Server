@@ -18,8 +18,6 @@
 package it.eng.spagobi.commons.metadata;
 
 
-import it.eng.spagobi.engines.config.metadata.SbiEngines;
-
 import java.util.Date;
 
 

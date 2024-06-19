@@ -35,6 +35,7 @@ public class UdpValueJSONSerializer  implements Serializer{
 	public static final String BEGIN_TS = "beginTs";
 	public static final String END_TS = "endTs";
 	
+	@Override
 	public Object serialize(Object o, Locale locale)
 			throws SerializationException {
 		JSONObject  result = null;

@@ -77,6 +77,7 @@ public class DynamicForwardPublisher implements PublisherDispatcherIFace {
 	 * @return A string representing the name of the correct publisher, which will
 	 * call the correct jsp reference.
 	 */
+	@Override
 	public String getPublisherName(RequestContainer request,
 			ResponseContainer response) {
 

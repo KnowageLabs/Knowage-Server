@@ -33,7 +33,8 @@ public class LoginPublisher extends GenericPublisher {
      * @see it.eng.spago.presentation.PublisherDispatcherIFace#getPublisherName(it.eng.spago.base.RequestContainer,
      *      it.eng.spago.base.ResponseContainer)
      */
-    public String getPublisherName(RequestContainer requestContainer, ResponseContainer responseContainer) {
+    @Override
+	public String getPublisherName(RequestContainer requestContainer, ResponseContainer responseContainer) {
 	logger.debug("IN");
 
 	SourceBean serviceResp = responseContainer.getServiceResponse();

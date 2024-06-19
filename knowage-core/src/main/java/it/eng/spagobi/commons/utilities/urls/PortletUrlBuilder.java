@@ -41,6 +41,7 @@ public class PortletUrlBuilder implements IUrlBuilder{
 	/* (non-Javadoc)
 	 * @see it.eng.spagobi.commons.utilities.urls.IUrlBuilder#getUrl(javax.servlet.http.HttpServletRequest, java.util.Map)
 	 */
+	@Override
 	public String getUrl(HttpServletRequest aHttpServletRequest, Map parameters) {
 		logger.debug("IN");
 		String url = getActionUrl(aHttpServletRequest, parameters);
@@ -105,6 +106,7 @@ public class PortletUrlBuilder implements IUrlBuilder{
 	/* (non-Javadoc)
 	 * @see it.eng.spagobi.commons.utilities.urls.IUrlBuilder#getResourceLink(javax.servlet.http.HttpServletRequest, java.lang.String)
 	 */
+	@Override
 	public String getResourceLink(HttpServletRequest aHttpServletRequest, String originalUrl){
 		logger.debug("IN");
 		RenderRequest renderRequest =(RenderRequest)aHttpServletRequest.getAttribute("javax.portlet.request");
@@ -123,6 +125,7 @@ public class PortletUrlBuilder implements IUrlBuilder{
 	
 	
 	
+	@Override
 	public String getResourceLinkByTheme(HttpServletRequest aHttpServletRequest, String originalUrl, String theme){
 		logger.debug("IN");
 		ConfigSingleton config = ConfigSingleton.getInstance();

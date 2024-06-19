@@ -28,6 +28,7 @@ public class DefaultEventPresentationHandler implements
 	/* (non-Javadoc)
 	 * @see it.eng.spagobi.events.handlers.IEventPresentationHandler#loadEventInfo(it.eng.spagobi.events.bo.EventLog, it.eng.spago.base.SourceBean)
 	 */
+	@Override
 	public void loadEventInfo(EventLog event, SourceBean response) throws SourceBeanException, EMFUserError {
 		response.setAttribute("firedEvent", event);
 	}
