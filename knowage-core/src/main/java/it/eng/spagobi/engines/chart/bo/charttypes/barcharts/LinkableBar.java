@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,21 +11,12 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-
 package it.eng.spagobi.engines.chart.bo.charttypes.barcharts;
-
-import it.eng.spago.base.SourceBean;
-import it.eng.spagobi.commons.constants.SpagoBIConstants;
-import it.eng.spagobi.engines.chart.bo.charttypes.ILinkableChart;
-import it.eng.spagobi.engines.chart.bo.charttypes.utils.DrillParameter;
-import it.eng.spagobi.engines.chart.bo.charttypes.utils.FilterZeroStandardCategoryItemLabelGenerator;
-import it.eng.spagobi.engines.chart.bo.charttypes.utils.MyCategoryUrlGenerator;
-import it.eng.spagobi.engines.chart.utils.DatasetMap;
 
 import java.awt.Color;
 import java.awt.Font;
@@ -47,148 +38,149 @@ import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.chart.title.TextTitle;
 import org.jfree.data.category.CategoryDataset;
 
-/**   @author Giulio Gavardi
- *     giulio.gavardi@eng.it
- */
+import it.eng.spago.base.SourceBean;
+import it.eng.spagobi.commons.constants.SpagoBIConstants;
+import it.eng.spagobi.engines.chart.bo.charttypes.ILinkableChart;
+import it.eng.spagobi.engines.chart.bo.charttypes.utils.DrillParameter;
+import it.eng.spagobi.engines.chart.bo.charttypes.utils.FilterZeroStandardCategoryItemLabelGenerator;
+import it.eng.spagobi.engines.chart.bo.charttypes.utils.MyCategoryUrlGenerator;
+import it.eng.spagobi.engines.chart.utils.DatasetMap;
 
+/**
+ * @author Giulio Gavardi giulio.gavardi@eng.it
+ */
 
 public class LinkableBar extends BarCharts implements ILinkableChart {
 
-	String rootUrl=null;
-	String mode="";
-	String drillLabel="";
-	HashMap<String, DrillParameter> drillParametersMap=null;
-	String categoryUrlName="";
-	String serieUrlname="";
-	boolean horizontalView=false; //false is vertical, true is horizontal
-	boolean horizontalViewConfigured=false;
+	private static final Logger LOGGER = Logger.getLogger(LinkableBar.class);
+
+	String rootUrl = null;
+	String mode = "";
+	String drillLabel = "";
+	HashMap<String, DrillParameter> drillParametersMap = null;
+	String categoryUrlName = "";
+	String serieUrlname = "";
+	boolean horizontalView = false; // false is vertical, true is horizontal
+	boolean horizontalViewConfigured = false;
 	/** Orientation of the chart: horizontal, vertical */
 	public static final String ORIENTATION = "orientation";
 	String drillDocTitle = null;
 	String target = "self";
 
-	private static transient Logger logger=Logger.getLogger(LinkableBar.class);
-
-
+	@Override
 	public void configureChart(SourceBean content) {
-		logger.debug("IN");
+		LOGGER.debug("IN");
 		super.configureChart(content);
 
-		if(confParameters.get(ORIENTATION)!=null){	
-			String orientation=(String)confParameters.get(ORIENTATION);
-			if(orientation.equalsIgnoreCase("vertical")){
-				horizontalViewConfigured=true;
-				horizontalView=false;
-			}
-			else if(orientation.equalsIgnoreCase("horizontal")){
-				horizontalViewConfigured=true;
-				horizontalView=true;
+		if (confParameters.get(ORIENTATION) != null) {
+			String orientation = (String) confParameters.get(ORIENTATION);
+			if (orientation.equalsIgnoreCase("vertical")) {
+				horizontalViewConfigured = true;
+				horizontalView = false;
+			} else if (orientation.equalsIgnoreCase("horizontal")) {
+				horizontalViewConfigured = true;
+				horizontalView = true;
 			}
 		}
 
-		SourceBean drillSB = (SourceBean)content.getAttribute("DRILL");
-		if(drillSB==null){
-			drillSB = (SourceBean)content.getAttribute("CONF.DRILL");
+		SourceBean drillSB = (SourceBean) content.getAttribute("DRILL");
+		if (drillSB == null) {
+			drillSB = (SourceBean) content.getAttribute("CONF.DRILL");
 		}
-		if(drillSB!=null){
-			String lab=(String)drillSB.getAttribute("document");
-			if(lab!=null) drillLabel=lab;
-			else{
-				logger.error("Drill label not found");
+		if (drillSB != null) {
+			String lab = (String) drillSB.getAttribute("document");
+			if (lab != null)
+				drillLabel = lab;
+			else {
+				LOGGER.error("Drill label not found");
 			}
 
-			List parameters =drillSB.getAttributeAsList("PARAM");
-			if(parameters!=null){
-				drillParametersMap=new HashMap<String, DrillParameter>();
+			List parameters = drillSB.getAttributeAsList("PARAM");
+			if (parameters != null) {
+				drillParametersMap = new HashMap<>();
 
 				for (Iterator iterator = parameters.iterator(); iterator.hasNext();) {
 					SourceBean att = (SourceBean) iterator.next();
-					String name=(String)att.getAttribute("name");
-					String type=(String)att.getAttribute("type");
-					String value=(String)att.getAttribute("value");
+					String name = (String) att.getAttribute("name");
+					String type = (String) att.getAttribute("type");
+					String value = (String) att.getAttribute("value");
 
 					// default is relative
-					if(type!=null && type.equalsIgnoreCase("absolute"))
-						type="absolute";
+					if (type != null && type.equalsIgnoreCase("absolute"))
+						type = "absolute";
 					else
-						type="relative";
+						type = "relative";
 
-					if(name.equalsIgnoreCase("seriesurlname"))serieUrlname=value;
-					else if(name.equalsIgnoreCase("target")){
-						if(value!=null && value.equalsIgnoreCase("tab")){
+					if (name.equalsIgnoreCase("seriesurlname"))
+						serieUrlname = value;
+					else if (name.equalsIgnoreCase("target")) {
+						if (value != null && value.equalsIgnoreCase("tab")) {
 							setTarget("tab");
-						}else{
+						} else {
 							setTarget("self");
 						}
-					}else if(name.equalsIgnoreCase("title")){
-						if(value!=null && !value.equals("")){
+					} else if (name.equalsIgnoreCase("title")) {
+						if (value != null && !value.equals("")) {
 							setDrillDocTitle(value);
 						}
-					}
-					else if(name.equalsIgnoreCase("categoryurlname"))categoryUrlName=value;
-					else{
-						if(this.getParametersObject().get(name)!=null){
-							value=(String)getParametersObject().get(name);
+					} else if (name.equalsIgnoreCase("categoryurlname"))
+						categoryUrlName = value;
+					else {
+						if (this.getParametersObject().get(name) != null) {
+							value = (String) getParametersObject().get(name);
 						}
 
-						DrillParameter drillPar=new DrillParameter(name,type,value);
+						DrillParameter drillPar = new DrillParameter(name, type, value);
 						drillParametersMap.put(name, drillPar);
 					}
 				}
-				//}
 			}
 		}
-		logger.debug("OUT");	
+		LOGGER.debug("OUT");
 	}
-
-
-
 
 	/**
 	 * Inherited by IChart.
-	 * 
+	 *
 	 * @param chartTitle the chart title
-	 * @param dataset the dataset
-	 * 
+	 * @param dataset    the dataset
+	 *
 	 * @return the j free chart
 	 */
 
-
-
+	@Override
 	public JFreeChart createChart(DatasetMap datasets) {
-		logger.debug("IN");
-		CategoryDataset dataset=(CategoryDataset)datasets.getDatasets().get("1");
+		LOGGER.debug("IN");
+		CategoryDataset dataset = (CategoryDataset) datasets.getDatasets().get("1");
 
 		CategoryAxis categoryAxis = new CategoryAxis(categoryLabel);
 		ValueAxis valueAxis = new NumberAxis(valueLabel);
-		if(rangeIntegerValues==true){
-			valueAxis.setStandardTickUnits(NumberAxis.createIntegerTickUnits());	
+		if (rangeIntegerValues) {
+			valueAxis.setStandardTickUnits(NumberAxis.createIntegerTickUnits());
 		}
 
 		org.jfree.chart.renderer.category.BarRenderer renderer = new org.jfree.chart.renderer.category.BarRenderer();
 
 		renderer.setToolTipGenerator(new StandardCategoryToolTipGenerator());
-//		renderer.setBaseItemLabelFont(new Font(styleValueLabels.getFontName(), Font.PLAIN, styleValueLabels.getSize()));
-//		renderer.setBaseItemLabelPaint(styleValueLabels.getColor());
 
-		if(showValueLabels){
+		if (showValueLabels) {
 			renderer.setBaseItemLabelsVisible(true);
-			renderer.setBaseItemLabelGenerator(new FilterZeroStandardCategoryItemLabelGenerator());			
-			renderer.setBaseItemLabelFont(new Font(styleValueLabels.getFontName(), Font.PLAIN, styleValueLabels.getSize()));
+			renderer.setBaseItemLabelGenerator(new FilterZeroStandardCategoryItemLabelGenerator());
+			renderer.setBaseItemLabelFont(
+					new Font(styleValueLabels.getFontName(), Font.PLAIN, styleValueLabels.getSize()));
 			renderer.setBaseItemLabelPaint(styleValueLabels.getColor());
-		}		
+		}
 
-
-		if(maxBarWidth!=null){
+		if (maxBarWidth != null) {
 			renderer.setMaximumBarWidth(maxBarWidth.doubleValue());
 		}
 
-		boolean document_composition=false;
-		if(mode.equalsIgnoreCase(SpagoBIConstants.DOCUMENT_COMPOSITION))document_composition=true;
+		boolean documentComposition = false;
+		if (mode.equalsIgnoreCase(SpagoBIConstants.DOCUMENT_COMPOSITION))
+			documentComposition = true;
 
-
-		MyCategoryUrlGenerator mycatUrl=new MyCategoryUrlGenerator(rootUrl);
-		mycatUrl.setDocument_composition(document_composition);
+		MyCategoryUrlGenerator mycatUrl = new MyCategoryUrlGenerator(rootUrl);
+		mycatUrl.setDocument_composition(documentComposition);
 		mycatUrl.setCategoryUrlLabel(categoryUrlName);
 		mycatUrl.setSerieUrlLabel(serieUrlname);
 		mycatUrl.setDrillDocTitle(drillDocTitle);
@@ -196,28 +188,20 @@ public class LinkableBar extends BarCharts implements ILinkableChart {
 
 		renderer.setItemURLGenerator(mycatUrl);
 
-		/*		}
-		else{
-			renderer.setItemURLGenerator(new StandardCategoryURLGenerator(rootUrl));
-		}*/
-
-		CategoryPlot plot = new CategoryPlot((CategoryDataset)dataset, categoryAxis, valueAxis, renderer);
+		CategoryPlot plot = new CategoryPlot(dataset, categoryAxis, valueAxis, renderer);
 		plot.setOrientation(PlotOrientation.VERTICAL);
-		if(horizontalView)
-		{
+		if (horizontalView) {
 			plot.setOrientation(PlotOrientation.HORIZONTAL);
 		}
 
 		JFreeChart chart = new JFreeChart(name, JFreeChart.DEFAULT_TITLE_FONT, plot, legend);
 
-		TextTitle title =setStyleTitle(name, styleTitle);
+		TextTitle title = setStyleTitle(name, styleTitle);
 		chart.setTitle(title);
-		if(subName!= null && !subName.equals("")){
-			TextTitle subTitle =setStyleTitle(subName, styleSubTitle);
+		if (subName != null && !subName.equals("")) {
+			TextTitle subTitle = setStyleTitle(subName, styleSubTitle);
 			chart.addSubtitle(subTitle);
 		}
-
-
 
 		// NOW DO SOME OPTIONAL CUSTOMISATION OF THE CHART...
 
@@ -225,7 +209,6 @@ public class LinkableBar extends BarCharts implements ILinkableChart {
 		chart.setBackgroundPaint(color);
 
 		// get a reference to the plot for further customisation...
-		//CategoryPlot plot = (CategoryPlot) chart.getPlot();
 		plot.setDomainGridlinePaint(Color.white);
 		plot.setDomainGridlinesVisible(true);
 		plot.setRangeGridlinePaint(Color.white);
@@ -241,248 +224,220 @@ public class LinkableBar extends BarCharts implements ILinkableChart {
 		rangeAxis.setTickLabelPaint(styleXaxesLabels.getColor());
 		rangeAxis.setNumberFormatOverride(nf);
 
-
-
-		if(rangeAxisLocation != null) {
-			if(rangeAxisLocation.equalsIgnoreCase("BOTTOM_OR_LEFT")) {
+		if (rangeAxisLocation != null) {
+			if (rangeAxisLocation.equalsIgnoreCase("BOTTOM_OR_LEFT")) {
 				plot.setRangeAxisLocation(0, AxisLocation.BOTTOM_OR_LEFT);
-			} else if(rangeAxisLocation.equalsIgnoreCase("BOTTOM_OR_RIGHT")) {
+			} else if (rangeAxisLocation.equalsIgnoreCase("BOTTOM_OR_RIGHT")) {
 				plot.setRangeAxisLocation(0, AxisLocation.BOTTOM_OR_RIGHT);
-			}else if(rangeAxisLocation.equalsIgnoreCase("TOP_OR_RIGHT")) {
+			} else if (rangeAxisLocation.equalsIgnoreCase("TOP_OR_RIGHT")) {
 				plot.setRangeAxisLocation(0, AxisLocation.TOP_OR_RIGHT);
-			} else if(rangeAxisLocation.equalsIgnoreCase("TOP_OR_LEFT")) {
+			} else if (rangeAxisLocation.equalsIgnoreCase("TOP_OR_LEFT")) {
 				plot.setRangeAxisLocation(0, AxisLocation.TOP_OR_LEFT);
 			}
 		}
 
 		// disable bar outlines...
-		//BarRenderer renderer = (BarRenderer) plot.getRenderer();
 		renderer.setDrawBarOutline(false);
 
+		int seriesN = dataset.getRowCount();
 
-		/*	if(currentSeries!=null && colorMap!=null){
-			//for each serie selected
-			int j=0;	
-			for (Iterator iterator = currentSeries.iterator(); iterator.hasNext();) {
-				String s = (String) iterator.next();
-				Integer position=(Integer)seriesNumber.get(s);
-				// check if for that position a value is defined
-				if(colorMap.get("color"+position.toString())!=null){
-					Color col= (Color)colorMap.get("color"+position);
-					renderer.setSeriesPaint(j, col);
-				}
-				j++;
-			}  // close for on series
-		} // close case series selcted and color defined
-		else{
-			if(colorMap!=null){ // if series not selected check color each one
-
-				for (Iterator iterator = colorMap.keySet().iterator(); iterator.hasNext();) {
-					String key = (String) iterator.next();
-					Color col= (Color)colorMap.get(key);
-					String keyNum=key.substring(5, key.length());
-					int num=Integer.valueOf(keyNum).intValue();
-					num=num-1;
-					renderer.setSeriesPaint(num, col);
-				}
-			}
-		}*/
-
-		int seriesN=dataset.getRowCount();
-		
-		if(orderColorVector != null && orderColorVector.size()>0){
-			logger.debug("color serie by SERIES_ORDER_COLORS template specification");
+		if (orderColorVector != null && !orderColorVector.isEmpty()) {
+			LOGGER.debug("color serie by SERIES_ORDER_COLORS template specification");
 			for (int i = 0; i < seriesN; i++) {
-				if( orderColorVector.get(i)!= null){
+				if (orderColorVector.get(i) != null) {
 					Color color = orderColorVector.get(i);
 					renderer.setSeriesPaint(i, color);
-				}		
-			}	
-		}		
-		else 
-		if(colorMap!=null){
+				}
+			}
+		} else if (colorMap != null) {
 			for (int i = 0; i < seriesN; i++) {
-				String serieName=(String)dataset.getRowKey(i);
-				Color color=(Color)colorMap.get(serieName);
-				if(color!=null){
+				String serieName = (String) dataset.getRowKey(i);
+				Color color = (Color) colorMap.get(serieName);
+				if (color != null) {
 					renderer.setSeriesPaint(i, color);
-				}	
+				}
 			}
 		}
 
-
 		CategoryAxis domainAxis = plot.getDomainAxis();
-		domainAxis.setCategoryLabelPositions(
-				CategoryLabelPositions.createUpRotationLabelPositions(
-						Math.PI / 6.0));
+		domainAxis.setCategoryLabelPositions(CategoryLabelPositions.createUpRotationLabelPositions(Math.PI / 6.0));
 		domainAxis.setLabelFont(new Font(styleYaxesLabels.getFontName(), Font.PLAIN, styleYaxesLabels.getSize()));
 		domainAxis.setLabelPaint(styleYaxesLabels.getColor());
 		domainAxis.setTickLabelFont(new Font(styleYaxesLabels.getFontName(), Font.PLAIN, styleYaxesLabels.getSize()));
 		domainAxis.setTickLabelPaint(styleYaxesLabels.getColor());
 
-		if(legend==true) drawLegend(chart);
+		if (legend)
+			drawLegend(chart);
 
-		logger.debug("OUT");
+		LOGGER.debug("OUT");
 		return chart;
 
 	}
 
-
-
 	/**
 	 * Gets document parameters and return a string in the form &param1=value1&param2=value2 ...
-	 * 
+	 *
 	 * @param drillParameters the drill parameters
-	 * 
+	 *
 	 * @return the document_ parameters
 	 */
 
-	public String getDocument_Parameters(HashMap<String, DrillParameter> _drillParametersMap) { 
-		logger.debug("IN");
-		String document_parameter="";
-		if(_drillParametersMap!=null){
-			for (Iterator iterator = _drillParametersMap.keySet().iterator(); iterator.hasNext();) {
-				String name = (String) iterator.next();
-				DrillParameter drillPar=(DrillParameter)_drillParametersMap.get(name);
-				String value=drillPar.getValue();
-				if(name!=null && !name.equals("") && value!=null && !value.equals("")){
-					document_parameter+="%26"+name+"%3D"+value;
-					//document_parameter+="&"+name+"="+value;
+	@Override
+	public String getDocument_Parameters(HashMap<String, DrillParameter> drillParametersMap) {
+		LOGGER.debug("IN");
+		String documentParameter = "";
+		if (drillParametersMap != null) {
+			for (Iterator<String> iterator = drillParametersMap.keySet().iterator(); iterator.hasNext();) {
+				String name = iterator.next();
+				DrillParameter drillPar = drillParametersMap.get(name);
+				String value = drillPar.getValue();
+				if (name != null && !name.equals("") && value != null && !value.equals("")) {
+					documentParameter += "%26" + name + "%3D" + value;
 				}
 			}
-		} 
-		logger.debug("OUT");
-		return document_parameter;
+		}
+		LOGGER.debug("OUT");
+		return documentParameter;
 	}
 
-
-
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 *
 	 * @see it.eng.spagobi.engines.chart.bo.charttypes.ILinkableChart#getRootUrl()
 	 */
+	@Override
 	public String getRootUrl() {
 		return rootUrl;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 *
 	 * @see it.eng.spagobi.engines.chart.bo.charttypes.ILinkableChart#setRootUrl(java.lang.String)
 	 */
+	@Override
 	public void setRootUrl(String rootUrl) {
 		this.rootUrl = rootUrl;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 *
 	 * @see it.eng.spagobi.engines.chart.bo.ChartImpl#isLinkable()
 	 */
-	public boolean isLinkable(){
+	@Override
+	public boolean isLinkable() {
 		return true;
 	}
 
-
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 *
 	 * @see it.eng.spagobi.engines.chart.bo.charttypes.ILinkableChart#getMode()
 	 */
+	@Override
 	public String getMode() {
 		return mode;
 	}
 
-
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 *
 	 * @see it.eng.spagobi.engines.chart.bo.charttypes.ILinkableChart#setMode(java.lang.String)
 	 */
+	@Override
 	public void setMode(String mode) {
 		this.mode = mode;
 	}
 
-
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 *
 	 * @see it.eng.spagobi.engines.chart.bo.charttypes.ILinkableChart#getDrillLabel()
 	 */
+	@Override
 	public String getDrillLabel() {
 		return drillLabel;
 	}
 
-
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 *
 	 * @see it.eng.spagobi.engines.chart.bo.charttypes.ILinkableChart#setDrillLabel(java.lang.String)
 	 */
+	@Override
 	public void setDrillLabel(String drillLabel) {
 		this.drillLabel = drillLabel;
 	}
 
-
+	@Override
 	public HashMap<String, DrillParameter> getDrillParametersMap() {
 		return drillParametersMap;
 	}
 
-
-	public void setDrillParametersMap(
-			HashMap<String, DrillParameter> drillParametersMap) {
+	@Override
+	public void setDrillParametersMap(HashMap<String, DrillParameter> drillParametersMap) {
 		this.drillParametersMap = drillParametersMap;
 	}
 
-
-
-
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 *
 	 * @see it.eng.spagobi.engines.chart.bo.charttypes.ILinkableChart#getCategoryUrlName()
 	 */
+	@Override
 	public String getCategoryUrlName() {
 		return categoryUrlName;
 	}
 
-
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 *
 	 * @see it.eng.spagobi.engines.chart.bo.charttypes.ILinkableChart#setCategoryUrlName(java.lang.String)
 	 */
+	@Override
 	public void setCategoryUrlName(String categoryUrlName) {
 		this.categoryUrlName = categoryUrlName;
 	}
 
-
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 *
 	 * @see it.eng.spagobi.engines.chart.bo.charttypes.ILinkableChart#getSerieUrlname()
 	 */
+	@Override
 	public String getSerieUrlname() {
 		return serieUrlname;
 	}
 
-
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 *
 	 * @see it.eng.spagobi.engines.chart.bo.charttypes.ILinkableChart#setSerieUrlname(java.lang.String)
 	 */
+	@Override
 	public void setSerieUrlname(String serieUrlname) {
 		this.serieUrlname = serieUrlname;
 	}
 
-
-
-
+	@Override
 	public String getDrillDocTitle() {
 		return drillDocTitle;
 	}
 
-
-
-
+	@Override
 	public void setDrillDocTitle(String drillDocTitle) {
 		this.drillDocTitle = drillDocTitle;
 	}
 
-
-
-
+	@Override
 	public String getTarget() {
 		return target;
 	}
 
-
-
-
+	@Override
 	public void setTarget(String target) {
 		this.target = target;
 	}
-
-
 
 }

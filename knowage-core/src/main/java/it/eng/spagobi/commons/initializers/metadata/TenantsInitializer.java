@@ -43,9 +43,9 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
  */
 public class TenantsInitializer extends SpagoBIInitializer {
 
-	private static String TENANTS_CONFIG_TAG_NAME = "TENANTS";
-	private static String TENANT_CONFIG_TAG_NAME = "TENANT";
-	private static String TENANT_CONFIG_NAME_ATTRIBUTE = "name";
+	private static final String TENANTS_CONFIG_TAG_NAME = "TENANTS";
+	private static final String TENANT_CONFIG_TAG_NAME = "TENANT";
+	private static final String TENANT_CONFIG_NAME_ATTRIBUTE = "name";
 
 	@Override
 	protected SourceBean getConfiguration() throws Exception {
@@ -97,7 +97,7 @@ public class TenantsInitializer extends SpagoBIInitializer {
 
 	private List<String> getConfiguredTenants() throws Exception {
 		logger.debug("IN");
-		List<String> toReturn = new ArrayList<String>();
+		List<String> toReturn = new ArrayList<>();
 		SourceBean configuration = this.getConfiguration();
 		List tenantsSB = configuration.getAttributeAsList(TENANT_CONFIG_TAG_NAME);
 		if (tenantsSB == null || tenantsSB.isEmpty()) {
@@ -187,7 +187,8 @@ public class TenantsInitializer extends SpagoBIInitializer {
 					SbiTenant aTenant = findTenant(hibernateSession, tenantName);
 					SbiProductType aProductType = findProductType(hibernateSession, productTypeName);
 					if (aProductType != null) {
-						SbiOrganizationProductType association = findOrganizationProductType(hibernateSession, tenantName, productTypeName);
+						SbiOrganizationProductType association = findOrganizationProductType(hibernateSession,
+								tenantName, productTypeName);
 						if (association == null) {
 							association = new SbiOrganizationProductType();
 							association.setSbiProductType(aProductType);

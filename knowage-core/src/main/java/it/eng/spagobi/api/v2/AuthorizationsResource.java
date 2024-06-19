@@ -35,6 +35,7 @@ import it.eng.spagobi.commons.bo.RoleMetaModelCategory;
 import it.eng.spagobi.commons.constants.CommunityFunctionalityConstants;
 import it.eng.spagobi.commons.dao.DAOFactory;
 import it.eng.spagobi.commons.dao.IRoleDAO;
+import it.eng.spagobi.commons.metadata.SbiAuthorizations;
 import it.eng.spagobi.services.rest.annotations.UserConstraint;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRestServiceException;
 
@@ -43,21 +44,18 @@ public class AuthorizationsResource extends AbstractSpagoBIResource {
 
 	private static final Logger LOGGER = LogManager.getLogger(AuthorizationsResource.class);
 
-	private final String charset = "; charset=UTF-8";
-
 	@GET
 	@UserConstraint(functionalities = { CommunityFunctionalityConstants.PROFILE_MANAGEMENT })
 	@Path("/")
-	@Produces(MediaType.APPLICATION_JSON + charset)
+	@Produces(MediaType.APPLICATION_JSON)
 	public Response getAuthorizations() {
 		IRoleDAO rolesDao = null;
-		List fullList = null;
 
 		try {
 
 			rolesDao = DAOFactory.getRoleDAO();
 			rolesDao.setUserProfile(getUserProfile());
-			fullList = rolesDao.loadAllAuthorizations();
+			List<SbiAuthorizations> fullList = rolesDao.loadAllAuthorizations();
 			return Response.ok(fullList).build();
 		} catch (Exception e) {
 			LOGGER.error("Error with loading resource", e);
@@ -68,10 +66,10 @@ public class AuthorizationsResource extends AbstractSpagoBIResource {
 	@GET
 	@UserConstraint(functionalities = { CommunityFunctionalityConstants.PROFILE_MANAGEMENT })
 	@Path("/metaCategories/{id}")
-	@Produces(MediaType.APPLICATION_JSON + charset)
+	@Produces(MediaType.APPLICATION_JSON)
 	public Response getMetaModelCat(@PathParam("id") Integer id) {
 		IRoleDAO rolesDao = null;
-		List<RoleMetaModelCategory> categories = new ArrayList<RoleMetaModelCategory>();
+		List<RoleMetaModelCategory> categories = new ArrayList<>();
 
 		try {
 

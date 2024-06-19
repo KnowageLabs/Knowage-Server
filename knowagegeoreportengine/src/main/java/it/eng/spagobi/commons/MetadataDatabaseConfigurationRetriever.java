@@ -39,9 +39,6 @@ public class MetadataDatabaseConfigurationRetriever implements IConfigurationRet
 
 	private static Logger logger = Logger.getLogger(MetadataDatabaseConfigurationRetriever.class);
 
-	public MetadataDatabaseConfigurationRetriever() {
-	}
-
 	@Override
 	public String get(String key) {
 		String toReturn = null;
@@ -52,7 +49,8 @@ public class MetadataDatabaseConfigurationRetriever implements IConfigurationRet
 				toReturn = config.getValueCheck();
 			}
 		} catch (Exception e) {
-			throw new SpagoBIRuntimeException("An error occurred while getting configuration with label [" + key + "]", e);
+			throw new SpagoBIRuntimeException("An error occurred while getting configuration with label [" + key + "]",
+					e);
 		}
 
 		if (toReturn == null) {
@@ -63,14 +61,13 @@ public class MetadataDatabaseConfigurationRetriever implements IConfigurationRet
 		return toReturn;
 	}
 
-
 	@Override
 	public List<IConfiguration> getByCategory(String category) {
 		try {
 			IConfigDAO configsDao = DAOFactory.getSbiConfigDAO();
 			configsDao.setUserProfile(UserProfileManager.getProfile());
 			List<Config> returnedVals = configsDao.loadConfigParametersByCategory(category);
-			return new ArrayList<IConfiguration>(returnedVals);
+			return new ArrayList<>(returnedVals);
 		} catch (Exception e) {
 			logger.error("Error while getting the list of configs", e);
 			throw new SpagoBIRuntimeException("Error while getting the list of configs", e);

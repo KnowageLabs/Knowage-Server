@@ -116,18 +116,19 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 	@GET
 	@Path("/correctRolesForExecution")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
-	public Response getCorrectRolesForExecution(@QueryParam("typeCode") String typeCode, @QueryParam("id") Integer id, @QueryParam("label") String label) {
+	public Response getCorrectRolesForExecution(@QueryParam("typeCode") String typeCode, @QueryParam("id") Integer id,
+			@QueryParam("label") String label) {
 		LOGGER.debug("IN");
 
 		UserProfile userProfile = UserProfileManager.getProfile();
 
-		List<String> correctRoles = new ArrayList<String>();
+		List<String> correctRoles = new ArrayList<>();
 		try {
 
-			List<String> userRoles = new ArrayList<String>();
-			userProfile.getRolesForUse().forEach(x -> userRoles.add((String) x));
+			List<String> userRoles = new ArrayList<>();
+			userProfile.getRolesForUse().forEach(userRoles::add);
 
-			if (userRoles.size() > 0) {
+			if (!userRoles.isEmpty()) {
 
 				ICategoryDAO categoryDao = DAOFactory.getCategoryDAO();
 
@@ -138,7 +139,7 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 					correctRoles = userRoles;
 
 					List<BIMetaModelParameter> drivers = model.getDrivers();
-					if (correctRoles.size() > 0 && drivers.size() > 0) {
+					if (!correctRoles.isEmpty() && !drivers.isEmpty()) {
 						List<String> rolesByModel = getModelRoles(userProfile, model);
 						correctRoles.retainAll(rolesByModel);
 					}
@@ -146,19 +147,23 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 
 					IDataSet dataset = null;
 					if (DATASET.equals(typeCode)) {
-						dataset = id != null ? DAOFactory.getDataSetDAO().loadDataSetById(id) : DAOFactory.getDataSetDAO().loadDataSetByLabel(label);
+						dataset = id != null ? DAOFactory.getDataSetDAO().loadDataSetById(id)
+								: DAOFactory.getDataSetDAO().loadDataSetByLabel(label);
 						Integer categoryId = dataset.getCategoryId();
 						correctRoles = manageRolesByCategory(userRoles, categoryDao, categoryId);
 					} else {
-						FederationDefinition federationDefinition = DAOFactory.getFedetatedDatasetDAO().loadFederationDefinition(id);
+						FederationDefinition federationDefinition = DAOFactory.getFedetatedDatasetDAO()
+								.loadFederationDefinition(id);
 						Set<IDataSet> fedSourceDatasets = federationDefinition.getSourceDatasets();
 						correctRoles = userRoles;
 						for (IDataSet federatedDataset : fedSourceDatasets) {
-							correctRoles = manageRolesByCategory(correctRoles, categoryDao, federatedDataset.getCategoryId());
+							correctRoles = manageRolesByCategory(correctRoles, categoryDao,
+									federatedDataset.getCategoryId());
 						}
 					}
 				} else if (QBE_DATASET.equals(typeCode)) {
-					IDataSet dataset = id != null ? DAOFactory.getDataSetDAO().loadDataSetById(id) : DAOFactory.getDataSetDAO().loadDataSetByLabel(label);
+					IDataSet dataset = id != null ? DAOFactory.getDataSetDAO().loadDataSetById(id)
+							: DAOFactory.getDataSetDAO().loadDataSetByLabel(label);
 
 					String conf = dataset.getConfiguration();
 					try {
@@ -170,7 +175,7 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 						correctRoles = userRoles;
 
 						List<BIMetaModelParameter> drivers = model.getDrivers();
-						if (correctRoles.size() > 0 && drivers.size() > 0) {
+						if (!correctRoles.isEmpty() && !drivers.isEmpty()) {
 							List<String> rolesByModel = getModelRoles(userProfile, model);
 							correctRoles.retainAll(rolesByModel);
 						}
@@ -180,14 +185,15 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 					}
 
 				} else if (DOCUMENT.equals(typeCode)) {
-					BIObject biobj = id != null ? DAOFactory.getBIObjectDAO().loadBIObjectById(id) : DAOFactory.getBIObjectDAO().loadBIObjectByLabel(label);
+					BIObject biobj = id != null ? DAOFactory.getBIObjectDAO().loadBIObjectById(id)
+							: DAOFactory.getBIObjectDAO().loadBIObjectByLabel(label);
 
 					checkExecRightsByProducts(biobj);
 
 					correctRoles = id != null ? ObjectsAccessVerifier.getCorrectRolesForExecution(id, userProfile)
 							: ObjectsAccessVerifier.getCorrectRolesForExecution(label, userProfile);
 
-					if (biobj.getDrivers().size() == 0 && correctRoles.size() > 0) {
+					if (biobj.getDrivers().isEmpty() && !correctRoles.isEmpty()) {
 						correctRoles = Arrays.asList(correctRoles.get(0));
 					}
 				}
@@ -212,7 +218,8 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 	 * @return
 	 * @throws EMFUserError
 	 */
-	private List<String> manageRolesByCategory(List<String> roles, ICategoryDAO categoryDao, Integer categoryId) throws EMFUserError {
+	private List<String> manageRolesByCategory(List<String> roles, ICategoryDAO categoryDao, Integer categoryId)
+			throws EMFUserError {
 		List<String> correctRoles;
 		if (categoryId != null) {
 			List<String> rolesByCategory = getRolesByCategory(categoryDao, categoryId);
@@ -225,12 +232,12 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 	}
 
 	private List<String> getRolesByCategory(ICategoryDAO categoryDao, Integer categoryId) throws EMFUserError {
-		List<String> rolesByCategory = categoryDao.getRolesByCategory(categoryId).stream().map(SbiExtRoles::getName).collect(Collectors.toList());
-		return rolesByCategory;
+		return categoryDao.getRolesByCategory(categoryId).stream().map(SbiExtRoles::getName)
+				.collect(Collectors.toList());
 	}
 
 	private List<String> getModelRoles(UserProfile userProfile, MetaModel model) throws EMFInternalError {
-		List<String> modelsRoles = new ArrayList<String>();
+		List<String> modelsRoles = new ArrayList<>();
 		List<BIMetaModelParameter> drivers = model.getDrivers();
 
 		for (BIMetaModelParameter biMetaModelParameter : drivers) {
@@ -244,7 +251,9 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 						modelsRoles.add(String.valueOf(role));
 					}
 				} catch (Exception e) {
-					LOGGER.debug("Role {} is not valid for model [{}] execution. It will be not added to the available roles list.", role, model.getName());
+					LOGGER.debug(
+							"Role {} is not valid for model [{}] execution. It will be not added to the available roles list.",
+							role, model.getName());
 				}
 
 			}
@@ -252,7 +261,7 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 		return modelsRoles;
 	}
 
-	private void checkExecRightsByProducts(BIObject biobj) throws EMFUserError {
+	private void checkExecRightsByProducts(BIObject biobj) {
 
 		if (!ProductProfiler.canExecuteDocument(biobj)) {
 			throw new SpagoBIRuntimeException("This document cannot be executed within the current product");
