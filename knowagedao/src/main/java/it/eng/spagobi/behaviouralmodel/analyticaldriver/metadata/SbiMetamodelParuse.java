@@ -35,6 +35,10 @@ public class SbiMetamodelParuse extends SbiHibernateModel {
 	private void setId(Integer id) {
 		this.id = id;
 	}
+	
+	public void changeId(Integer id) {
+		this.id = id;
+	}
 
 	public SbiParuse getSbiParuse() {
 		return sbiParuse;

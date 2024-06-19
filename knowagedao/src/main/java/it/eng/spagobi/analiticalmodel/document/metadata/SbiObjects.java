@@ -181,6 +181,10 @@ public class SbiObjects extends SbiHibernateModel {
 	private void setBiobjId(Integer biobjId) {
 		this.biobjId = biobjId;
 	}
+	
+	public void changeBiobjId(Integer biobjId) {
+		this.biobjId = biobjId;
+	}
 
 	/**
 	 * Gets the sbi engines.

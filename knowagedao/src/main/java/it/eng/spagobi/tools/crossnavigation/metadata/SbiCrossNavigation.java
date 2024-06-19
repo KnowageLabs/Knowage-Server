@@ -53,6 +53,8 @@ public class SbiCrossNavigation extends SbiHibernateModel {
 	 */
 	private void setId(Integer id) {
 		this.id = id;
+	}private void changeId(Integer id) {
+		this.id = id;
 	}
 
 	/**

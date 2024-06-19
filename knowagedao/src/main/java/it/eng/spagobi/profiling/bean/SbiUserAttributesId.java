@@ -58,6 +58,10 @@ public class SbiUserAttributesId implements java.io.Serializable {
 	private void setAttributeId(int attributeId) {
 		this.attributeId = attributeId;
 	}
+	
+	public void changeAttributeId(int attributeId) {
+		this.attributeId = attributeId;
+	}
 
 	public boolean equals(Object other) {
 		if ((this == other))

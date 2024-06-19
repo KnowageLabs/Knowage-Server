@@ -48,6 +48,10 @@ public class SbiTimespan extends SbiHibernateModel {
 	private void setId(Integer id) {
 		this.id = id;
 	}
+	
+	public void changeId(Integer id) {
+		this.id = id;
+	}
 
 	/**
 	 * @return the name

@@ -136,6 +136,10 @@ public class SbiObjPar  extends SbiHibernateModel {
 	private void setObjParId(Integer objParId) {
 		this.objParId = objParId;
 	}
+	
+	public void changeObjParId(Integer objParId) {
+		this.objParId = objParId;
+	}
 
 	/**
 	 * Gets the parurl nm.

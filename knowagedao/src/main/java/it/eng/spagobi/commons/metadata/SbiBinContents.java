@@ -48,6 +48,10 @@ public class SbiBinContents  extends SbiHibernateModel {
 		this.id = id;
 	}
 	
+	public void changeId(Integer id) {
+		this.id = id;
+	}
+	
 	/**
 	 * Gets the content.
 	 * 
