@@ -19,11 +19,17 @@
 package it.eng.knowage.rest;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
+import java.util.Objects;
+import java.util.Properties;
+import java.util.stream.Stream;
 
 import javax.annotation.Priority;
 import javax.ws.rs.Priorities;
@@ -36,18 +42,22 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.ext.Provider;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import it.eng.knowage.features.Feature;
 import it.eng.knowage.rest.annotation.FeatureFlag;
 
-/**
- *
- */
 @Provider
 @Priority(Priorities.AUTHORIZATION)
 public class FeatureFlagProvider implements ContainerRequestFilter {
 
+	private static final Logger LOGGER = LogManager.getLogger(FeatureFlagProvider.class);
+
 	@Context
 	private ResourceInfo resourceInfo;
+
+	private final Properties properties = new Properties();
 
 	@Override
 	public void filter(ContainerRequestContext requestContext) throws IOException {
@@ -62,7 +72,8 @@ public class FeatureFlagProvider implements ContainerRequestFilter {
 
 			response.put("errors", messages);
 
-			requestContext.abortWith(Response.status(Status.FORBIDDEN).type(MediaType.APPLICATION_JSON).entity(response).build());
+			requestContext.abortWith(
+					Response.status(Status.FORBIDDEN).type(MediaType.APPLICATION_JSON).entity(response).build());
 		}
 
 	}
@@ -71,10 +82,44 @@ public class FeatureFlagProvider implements ContainerRequestFilter {
 
 		Feature feature = annotation.value();
 
-		String fromProperty = System.getProperty(feature.getSystemPropertyName());
+		loadProperty();
+
+		String fromPropertyFile = properties.getProperty(feature.getSystemPropertyName());
+		String fromSysProp = System.getProperty(feature.getSystemPropertyName());
 		String fromEnv = System.getenv(feature.getEnvVariableName());
 
-		return Optional.ofNullable(fromProperty).map(Boolean::parseBoolean).orElse(Optional.ofNullable(fromEnv).map(Boolean::parseBoolean).orElse(true));
+		// @formatter:off
+		return Stream.of(fromPropertyFile, fromSysProp, fromEnv)
+				.filter(Objects::nonNull)
+				.findFirst()
+				.map(Boolean::parseBoolean)
+				.orElse(true);
+		// @formatter:on
+
+	}
+
+	private void loadProperty() {
+
+		// TODO : Leggere il valore da JNDI usando la chiave "java:comp/env/resource_path"
+		// TODO : Usare java.nio.Paths per fare il fare il parsing del valore come java.nio.Path
+		// TODO : Usare il metodo java.nio.Path.resolve() per andare dalla cartella resources al file feature-list.properties dentro alla cartella ../knowage
+
+		String featurePropertyFilePathAsString = ???;
+
+		if (Objects.nonNull(featurePropertyFilePathAsString)) {
+			Path featurePropertyFilePath = Paths.get(featurePropertyFilePathAsString);
+
+			if (Files.exists(featurePropertyFilePath)) {
+				try (InputStream is = Files.newInputStream(featurePropertyFilePath)) {
+					properties.load(is);
+				} catch (IOException e) {
+					LOGGER.warn("Error reading {} as feature property file. Ignoring the file!",
+							featurePropertyFilePath, e);
+				}
+			} else {
+				LOGGER.warn("Feature property file at {} doesn't exists!", featurePropertyFilePath);
+			}
+		}
 
 	}
 }
