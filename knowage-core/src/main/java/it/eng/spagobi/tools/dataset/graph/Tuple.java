@@ -22,11 +22,11 @@ public final class Tuple {
 	private final List<Object> values;
 
 	public Tuple() {
-		values = new ArrayList<Object>();
+		values = new ArrayList<>();
 	}
 
 	public Tuple(int n) {
-		values = new ArrayList<Object>(n);
+		values = new ArrayList<>(n);
 	}
 
 	public Tuple(List<?> values) {
@@ -85,7 +85,9 @@ public final class Tuple {
 				tuple.append(valueDelimiter);
 			}
 			String value = values.get(i) == null ? null : getProperValueString(values.get(i));
-			String delimiter = value != null && value.startsWith(stringDelimiter) && value.endsWith(stringDelimiter) ? "" : stringDelimiter;
+			String delimiter = value != null && value.startsWith(stringDelimiter) && value.endsWith(stringDelimiter)
+					? ""
+					: stringDelimiter;
 			tuple.append(delimiter);
 			tuple.append(value != null ? value : "NULL");
 			tuple.append(delimiter);
@@ -107,8 +109,10 @@ public final class Tuple {
 				tuple.append(valueDelimiter);
 			}
 			String value = values.get(i) == null ? null : getProperValueString(values.get(i));
-			value = value.replaceAll(",", "&comma;");
-			String delimiter = value != null && value.startsWith(stringDelimiter) && value.endsWith(stringDelimiter) ? "" : stringDelimiter;
+			value = value.replace(",", "&comma;");
+			String delimiter = value != null && value.startsWith(stringDelimiter) && value.endsWith(stringDelimiter)
+					? ""
+					: stringDelimiter;
 			tuple.append(delimiter);
 			tuple.append(value != null ? value : "NULL");
 			tuple.append(delimiter);

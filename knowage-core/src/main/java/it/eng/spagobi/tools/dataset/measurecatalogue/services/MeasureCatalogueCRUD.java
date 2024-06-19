@@ -63,7 +63,7 @@ import it.eng.spagobi.tools.dataset.measurecatalogue.materializer.exception.NoCo
 
 @Path("/measures")
 public class MeasureCatalogueCRUD {
-	public static transient Logger logger = Logger.getLogger(MeasureCatalogueCRUD.class);
+	private static final Logger LOGGER = Logger.getLogger(MeasureCatalogueCRUD.class);
 	private static String noCommonDimensionsRuntimeException = "error.mesage.description.measure.join.no.common.dimension";
 	private static String noCompleteCommonDimensionsRuntimeException = "error.mesage.description.measure.join.no.complete.common.dimension";
 
@@ -72,8 +72,8 @@ public class MeasureCatalogueCRUD {
 	@UserConstraint(functionalities = { CommunityFunctionalityConstants.MEASURES_CATALOGUE_MANAGEMENT })
 	public String getAllMeasures(@Context HttpServletRequest req) {
 		IEngUserProfile profile = (IEngUserProfile) req.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
-		String measures = MeasureCatalogueSingleton.getMeasureCatologue().toString(((UserProfile) profile).getUserId().toString(),
-				UserUtilities.isAdministrator(profile));
+		String measures = MeasureCatalogueSingleton.getMeasureCatologue()
+				.toString(((UserProfile) profile).getUserId().toString(), UserUtilities.isAdministrator(profile));
 		return measures;
 	}
 
@@ -84,33 +84,34 @@ public class MeasureCatalogueCRUD {
 	@UserConstraint(functionalities = { CommunityFunctionalityConstants.MEASURES_CATALOGUE_MANAGEMENT })
 	public String join(@Context HttpServletRequest req, MultivaluedMap<String, String> form) {
 
-		logger.debug("IN");
+		LOGGER.debug("IN");
 
 		IDataStore dataStore;
-		logger.debug("Loading measure catalogue ...");
+		LOGGER.debug("Loading measure catalogue ...");
 		MeasureCatalogue catalogue = MeasureCatalogueSingleton.getMeasureCatologue();
-		logger.debug("Measure catalogue succesfully loaded");
+		LOGGER.debug("Measure catalogue succesfully loaded");
 
 		IEngUserProfile profile = (IEngUserProfile) req.getSession().getAttribute(IEngUserProfile.ENG_USER_PROFILE);
 		List<String> labels = form.get("labels");
-		List<MeasureCatalogueMeasure> measures = new ArrayList<MeasureCatalogueMeasure>();
+		List<MeasureCatalogueMeasure> measures = new ArrayList<>();
 		for (int i = 0; i < labels.size(); i++) {
 			MeasureCatalogueMeasure aMeasure = catalogue.getMeasureByLabel(labels.get(i));
 			if (aMeasure != null) {
 				if (!aMeasure.isVisibleToUser(profile)) {
-					logger.error("The measure " + aMeasure.getAlias() + " of the dataset " + aMeasure.getDsName() + " is not visible for the user "
-							+ ((UserProfile) profile).getUserId().toString());
+					LOGGER.error("The measure " + aMeasure.getAlias() + " of the dataset " + aMeasure.getDsName()
+							+ " is not visible for the user " + ((UserProfile) profile).getUserId().toString());
 					throw new MeasureCatalogueMeasureNotVisibleException(aMeasure);
 				} else {
-					logger.debug("The measure [" + aMeasure.getAlias() + "] of the dataset [" + aMeasure.getDsName() + "] whose label is equal to ["
-							+ aMeasure.getDsId() + "] is visible for the user " + ((UserProfile) profile).getUserId().toString()
+					LOGGER.debug("The measure [" + aMeasure.getAlias() + "] of the dataset [" + aMeasure.getDsName()
+							+ "] whose label is equal to [" + aMeasure.getDsId() + "] is visible for the user "
+							+ ((UserProfile) profile).getUserId().toString()
 							+ " and so will be joined in the final dataset");
 					measures.add(aMeasure);
 				}
 			}
 		}
 
-		logger.debug("Creating joined dataset ...");
+		LOGGER.debug("Creating joined dataset ...");
 		InMemoryMaterializer imm = new InMemoryMaterializer();
 		try {
 			dataStore = imm.joinMeasures(measures);
@@ -119,16 +120,17 @@ public class MeasureCatalogueCRUD {
 		} catch (NoCompleteCommonDimensionsRuntimeException e) {
 			return (ExceptionUtilities.serializeException(noCompleteCommonDimensionsRuntimeException, null));
 		}
-		logger.debug("Joined dataset succesfully created. It contains [" + dataStore.getRecordsCount() + "] records");
+		LOGGER.debug("Joined dataset succesfully created. It contains [" + dataStore.getRecordsCount() + "] records");
 
 		if (dataStore.getRecordsCount() == 0) {
 			String joinedDatasetStr = "";
 			for (MeasureCatalogueMeasure measure : measures)
 				joinedDatasetStr += measure.getDsName() + "(" + measure.getDsId() + "); ";
-			throw new RuntimeException("There is no join between datasets [" + joinedDatasetStr + "] that contain the selected measures");
+			throw new RuntimeException(
+					"There is no join between datasets [" + joinedDatasetStr + "] that contain the selected measures");
 		}
 
-		logger.debug("Serializing joined dataset ...");
+		LOGGER.debug("Serializing joined dataset ...");
 
 		JSONDataWriter dataSetWriter = new JSONDataWriter();
 		JSONObject dataStroreJSON = (JSONObject) dataSetWriter.write(dataStore);
@@ -137,7 +139,7 @@ public class MeasureCatalogueCRUD {
 		try {
 			metaData = dataStroreJSON.getJSONObject("metaData");
 			JSONArray fieldsMetaJSON = metaData.getJSONArray("fields");
-			List<IFieldMetaData> geoRefFieldMeta = new ArrayList<IFieldMetaData>();
+			List<IFieldMetaData> geoRefFieldMeta = new ArrayList<>();
 			for (int i = 0; i < dataStore.getMetaData().getFieldCount(); i++) {
 				IFieldMetaData fieldMeta = dataStore.getMetaData().getFieldMeta(i);
 				JSONObject fieldMetaJSON = fieldsMetaJSON.getJSONObject(i + 1);
@@ -161,11 +163,13 @@ public class MeasureCatalogueCRUD {
 				fieldMetaJSON.put("dataset", fieldMeta.getProperty("dataset"));
 			}
 
-			if (geoRefFieldMeta.size() == 0) {
-				throw new RuntimeException("Internal server error: generated dataset have no reference to geographical dimension");
+			if (geoRefFieldMeta.isEmpty()) {
+				throw new RuntimeException(
+						"Internal server error: generated dataset have no reference to geographical dimension");
 			}
 			if (geoRefFieldMeta.size() > 1) {
-				throw new RuntimeException("Internal server error: generated dataset have more than one reference to geographical dimension");
+				throw new RuntimeException(
+						"Internal server error: generated dataset have more than one reference to geographical dimension");
 			}
 
 			metaData.put("geoId", geoRefFieldMeta.get(0).getName());
@@ -176,9 +180,9 @@ public class MeasureCatalogueCRUD {
 			t.printStackTrace();
 		}
 
-		logger.debug("Joined dataset succesfully serialized");
+		LOGGER.debug("Joined dataset succesfully serialized");
 
-		logger.debug("OUT");
+		LOGGER.debug("OUT");
 
 		return dataStroreJSON.toString();
 	}

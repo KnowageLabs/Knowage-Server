@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,11 +11,18 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package it.eng.spagobi.tools.dataset.cache;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Properties;
+
+import org.apache.log4j.Logger;
 
 import it.eng.spago.base.SourceBean;
 import it.eng.spago.configuration.ConfigSingleton;
@@ -25,20 +32,15 @@ import it.eng.spagobi.commons.dao.IConfigDAO;
 import it.eng.spagobi.tools.dataset.cache.impl.sqldbcache.SQLDBCacheConfiguration;
 import it.eng.spagobi.tools.datasource.bo.IDataSource;
 import it.eng.spagobi.tools.datasource.dao.IDataSourceDAO;
-import it.eng.spagobi.utilities.exceptions.ConfigurationException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
-import org.apache.log4j.Logger;
-
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Properties;
 
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
  *
  */
 public class SpagoBICacheConfiguration {
+
+	private static final Logger LOGGER = Logger.getLogger(SpagoBICacheConfiguration.class);
 
 	public static final String CACHE_NAME_PREFIX_CONFIG = "SPAGOBI.CACHE.NAMEPREFIX";
 	public static final String CACHE_SPACE_AVAILABLE_CONFIG = "SPAGOBI.CACHE.SPACE_AVAILABLE";
@@ -47,8 +49,6 @@ public class SpagoBICacheConfiguration {
 	public static final String CACHE_SCHEDULING_FULL_CLEAN = "SPAGOBI.CACHE.SCHEDULING_FULL_CLEAN";
 	public static final String CACHE_DATABASE_SCHEMA = "SPAGOBI.CACHE.DATABASE_SCHEMA";
 	public static final String CACHE_LIMIT_FOR_STORE_CONFIG = "SPAGOBI.CACHE.LIMIT_FOR_STORE";
-
-	private static transient Logger logger = Logger.getLogger(SpagoBICacheConfiguration.class);
 
 	public static ICacheConfiguration getInstance() throws Exception {
 		SQLDBCacheConfiguration cacheConfiguration = new SQLDBCacheConfiguration();
@@ -65,13 +65,13 @@ public class SpagoBICacheConfiguration {
 	}
 
 	private static IDataSource getCacheDataSource() throws Exception {
-			IDataSourceDAO dataSourceDAO = DAOFactory.getDataSourceDAO();
-			IDataSource dataSource = dataSourceDAO.loadDataSourceWriteDefault();
-			if (dataSource == null) {
-				throw new Exception(
-						"Cannot configure cache: Data source for writing is not defined. Please select one in the data sources definition panel.");
-			}
-			return dataSource;
+		IDataSourceDAO dataSourceDAO = DAOFactory.getDataSourceDAO();
+		IDataSource dataSource = dataSourceDAO.loadDataSourceWriteDefault();
+		if (dataSource == null) {
+			throw new Exception(
+					"Cannot configure cache: Data source for writing is not defined. Please select one in the data sources definition panel.");
+		}
+		return dataSource;
 	}
 
 	private static String getTableNamePrefix() {
@@ -79,7 +79,8 @@ public class SpagoBICacheConfiguration {
 			String tableNamePrefix = getSpagoBIConfigurationProperty(CACHE_NAME_PREFIX_CONFIG);
 			return tableNamePrefix;
 		} catch (Throwable t) {
-			throw new SpagoBIRuntimeException("An unexpected exception occured while loading cache configuration property", t);
+			throw new SpagoBIRuntimeException(
+					"An unexpected exception occured while loading cache configuration property", t);
 		}
 	}
 
@@ -92,7 +93,8 @@ public class SpagoBICacheConfiguration {
 			}
 			return cacheSpaceAvailable;
 		} catch (Throwable t) {
-			throw new SpagoBIRuntimeException("An unexpected exception occured while loading cache configuration property", t);
+			throw new SpagoBIRuntimeException(
+					"An unexpected exception occured while loading cache configuration property", t);
 		}
 	}
 
@@ -105,7 +107,8 @@ public class SpagoBICacheConfiguration {
 			}
 			return cachePercentageToClean;
 		} catch (Throwable t) {
-			throw new SpagoBIRuntimeException("An unexpected exception occured while loading cache configuration property", t);
+			throw new SpagoBIRuntimeException(
+					"An unexpected exception occured while loading cache configuration property", t);
 		}
 	}
 
@@ -118,7 +121,8 @@ public class SpagoBICacheConfiguration {
 			}
 			return cacheDsLastAccessTtl;
 		} catch (Throwable t) {
-			throw new SpagoBIRuntimeException("An unexpected exception occured while loading cache configuration property", t);
+			throw new SpagoBIRuntimeException(
+					"An unexpected exception occured while loading cache configuration property", t);
 		}
 	}
 
@@ -131,7 +135,8 @@ public class SpagoBICacheConfiguration {
 			}
 			return cacheSchedulingFullClean;
 		} catch (Throwable t) {
-			throw new SpagoBIRuntimeException("An unexpected exception occured while loading cache configuration property", t);
+			throw new SpagoBIRuntimeException(
+					"An unexpected exception occured while loading cache configuration property", t);
 		}
 	}
 
@@ -144,7 +149,8 @@ public class SpagoBICacheConfiguration {
 			}
 			return cacheDatabaseSchema;
 		} catch (Throwable t) {
-			throw new SpagoBIRuntimeException("An unexpected exception occured while loading cache configuration property", t);
+			throw new SpagoBIRuntimeException(
+					"An unexpected exception occured while loading cache configuration property", t);
 		}
 	}
 
@@ -157,7 +163,8 @@ public class SpagoBICacheConfiguration {
 			}
 			return cachePercentageToStore;
 		} catch (Throwable t) {
-			throw new SpagoBIRuntimeException("An unexpected exception occured while loading cache configuration property", t);
+			throw new SpagoBIRuntimeException(
+					"An unexpected exception occured while loading cache configuration property", t);
 		}
 	}
 
@@ -171,7 +178,8 @@ public class SpagoBICacheConfiguration {
 			}
 			return propertyValue;
 		} catch (Throwable t) {
-			throw new SpagoBIRuntimeException("An unexpected exception occured while loading spagobi property [" + propertyName + "]", t);
+			throw new SpagoBIRuntimeException(
+					"An unexpected exception occured while loading spagobi property [" + propertyName + "]", t);
 		}
 	}
 
@@ -194,7 +202,7 @@ public class SpagoBICacheConfiguration {
 	private static final String TYPE_TAG = "TYPE";
 
 	public static void initCacheConfiguration() {
-		logger.trace("IN");
+		LOGGER.trace("IN");
 		try {
 			SourceBean configSB = (SourceBean) ConfigSingleton.getInstance().getAttribute(CACHE_CONFIG_TAG);
 			if (configSB == null) {
@@ -203,17 +211,19 @@ public class SpagoBICacheConfiguration {
 
 			SourceBean typesSB = (SourceBean) configSB.getAttribute(DATA_TYPES_TAG);
 			if (typesSB == null) {
-				throw new CacheException("Impossible to find configuration block [" + CACHE_CONFIG_TAG + "." + DATA_TYPES_TAG + "]");
+				throw new CacheException(
+						"Impossible to find configuration block [" + CACHE_CONFIG_TAG + "." + DATA_TYPES_TAG + "]");
 			}
 
 			List<SourceBean> typesList = typesSB.getAttributeAsList(TYPE_TAG);
 			if (typesSB == null) {
-				throw new CacheException("Impossible to find configuration blocks [" + CACHE_CONFIG_TAG + "." + DATA_TYPES_TAG + "." + TYPE_TAG + "]");
+				throw new CacheException("Impossible to find configuration blocks [" + CACHE_CONFIG_TAG + "."
+						+ DATA_TYPES_TAG + "." + TYPE_TAG + "]");
 			}
 
-			logger.trace("Initializing types' default dimension");
-			logger.trace("Types' default dimension configuration block is equal to " + typesList.toString());
-			dimensionTypes = new ArrayList<Properties>();
+			LOGGER.trace("Initializing types' default dimension");
+			LOGGER.trace("Types' default dimension configuration block is equal to " + typesList.toString());
+			dimensionTypes = new ArrayList<>();
 			for (SourceBean type : typesList) {
 				String name = (String) type.getAttribute("name");
 				String bytes = (String) type.getAttribute("bytes");
@@ -225,14 +235,15 @@ public class SpagoBICacheConfiguration {
 				if (bytes != null) {
 					props.setProperty("bytes", bytes);
 				}
-				logger.trace("Type [" + name + "] defualt dimension is equal to [" + bytes + "]");
+				LOGGER.trace("Type [" + name + "] defualt dimension is equal to [" + bytes + "]");
 				dimensionTypes.add(props);
 			}
-			logger.trace("Types' default dimension succesfully initialized");
+			LOGGER.trace("Types' default dimension succesfully initialized");
 		} catch (Throwable t) {
-			throw new RuntimeException("An error occured while loading geo dimension levels' properties from file engine-config.xml", t);
+			throw new RuntimeException(
+					"An error occured while loading geo dimension levels' properties from file engine-config.xml", t);
 		} finally {
-			logger.debug("OUT");
+			LOGGER.debug("OUT");
 		}
 	}
 

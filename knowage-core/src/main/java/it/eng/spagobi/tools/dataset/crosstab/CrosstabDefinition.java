@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,14 +11,11 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package it.eng.spagobi.tools.dataset.crosstab;
-
-import it.eng.spago.configuration.ConfigSingleton;
-
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -31,19 +28,19 @@ import org.json.JSONObject;
  * @author Marco Cortella (marco.cortella@eng.it)
  *
  */
-public class CrosstabDefinition  {
-	
+public class CrosstabDefinition {
+
 	public static CrosstabDefinition EMPTY_CROSSTAB;
-	
+
 	static {
 		EMPTY_CROSSTAB = new CrosstabDefinition();
-		EMPTY_CROSSTAB.setColumns(new ArrayList<CrosstabDefinition.Column>());
-		EMPTY_CROSSTAB.setRows(new ArrayList<CrosstabDefinition.Row>());
-		EMPTY_CROSSTAB.setMeasures(new ArrayList<Measure>());
+		EMPTY_CROSSTAB.setColumns(new ArrayList<>());
+		EMPTY_CROSSTAB.setRows(new ArrayList<>());
+		EMPTY_CROSSTAB.setMeasures(new ArrayList<>());
 		EMPTY_CROSSTAB.setConfig(new JSONObject());
 		EMPTY_CROSSTAB.setCalculatedFields(new JSONArray());
 	}
-	
+
 	private int cellLimit;
 	private List<Row> rows = null;
 	private List<Column> columns = null;
@@ -52,13 +49,13 @@ public class CrosstabDefinition  {
 	private JSONArray calculatedFields = null;
 	private JSONObject additionalData = null;
 	private boolean isStatic = true;
-	
+
 	public CrosstabDefinition() {
-		//cellLimit = new Integer((String) ConfigSingleton.getInstance().getAttribute("QBE.QBE-CROSSTAB-CELLS-LIMIT.value")) ;
-		cellLimit = new Integer("1000") ;
+		// cellLimit = new Integer((String) ConfigSingleton.getInstance().getAttribute("QBE.QBE-CROSSTAB-CELLS-LIMIT.value")) ;
+		cellLimit = new Integer("1000");
 
 	}
-	
+
 	public int getCellLimit() {
 		return cellLimit;
 	}
@@ -66,7 +63,7 @@ public class CrosstabDefinition  {
 	public void setCellLimit(int cellLimit) {
 		this.cellLimit = cellLimit;
 	}
-	
+
 	public List<Row> getRows() {
 		return rows;
 	}
@@ -111,38 +108,43 @@ public class CrosstabDefinition  {
 		String value = config.optString(CrosstabSerializationConstants.MEASURESON);
 		if (value != null) {
 			return value.equalsIgnoreCase("rows");
-		} else return false;
+		} else
+			return false;
 	}
-	
+
 	public boolean isMeasuresOnColumns() {
 		String value = config.optString(CrosstabSerializationConstants.MEASURESON);
 		if (value != null) {
 			return value.equalsIgnoreCase("columns");
-		} else return true;
+		} else
+			return true;
 	}
-	
+
 	public class Row extends Attribute {
-		
+
 		public Row(String entityId, String alias, String iconCls, String nature, String values) {
 			super(entityId, alias, iconCls, nature, values);
 		}
+
 		public Row(Attribute attribute) {
-			super(attribute.getEntityId(), attribute.getAlias(), attribute.getIconCls(), attribute.getNature(), attribute.getValues());
+			super(attribute.getEntityId(), attribute.getAlias(), attribute.getIconCls(), attribute.getNature(),
+					attribute.getValues());
 		}
 	}
-	
+
 	public class Column extends Attribute {
 		public Column(String entityId, String alias, String iconCls, String nature, String values) {
 			super(entityId, alias, iconCls, nature, values);
 		}
+
 		public Column(Attribute attribute) {
-			super(attribute.getEntityId(), attribute.getAlias(), attribute.getIconCls(), attribute.getNature(), attribute.getValues());
+			super(attribute.getEntityId(), attribute.getAlias(), attribute.getIconCls(), attribute.getNature(),
+					attribute.getValues());
 		}
 	}
 
-	
 	public List<Attribute> getFiltersOnDomainValues() {
-		List<Attribute> toReturn = new ArrayList<Attribute>();
+		List<Attribute> toReturn = new ArrayList<>();
 		List<Row> rows = getRows();
 		Iterator<Row> rowsIt = rows.iterator();
 		while (rowsIt.hasNext()) {
@@ -152,7 +154,7 @@ public class CrosstabDefinition  {
 				toReturn.add(row);
 			}
 		}
-		
+
 		List<Column> columns = getColumns();
 		Iterator<Column> columnsIt = columns.iterator();
 		while (columnsIt.hasNext()) {
@@ -166,9 +168,8 @@ public class CrosstabDefinition  {
 		return toReturn;
 	}
 
-	
 	public List<Field> getAllFields() {
-		List<Field> toReturn = new ArrayList<Field>();
+		List<Field> toReturn = new ArrayList<>();
 		toReturn.addAll(getColumns());
 		toReturn.addAll(getRows());
 		toReturn.addAll(getMeasures());
@@ -182,19 +183,19 @@ public class CrosstabDefinition  {
 	public void setAdditionalData(JSONObject additionalData) {
 		this.additionalData = additionalData;
 	}
-	
+
 	/**
-	 * 
+	 *
 	 * @return true if the component is a pivot table (not a chart)
 	 */
-	public boolean isPivotTable(){
-		String type =  config.optString("type");
-		if(type!=null && type.equals(CrosstabSerializationConstants.PIVOT)){
+	public boolean isPivotTable() {
+		String type = config.optString("type");
+		if (type != null && type.equals(CrosstabSerializationConstants.PIVOT)) {
 			return true;
 		}
 		return false;
 	}
-	
+
 	public boolean isStatic() {
 		return isStatic;
 	}
@@ -202,5 +203,5 @@ public class CrosstabDefinition  {
 	public void setStatic(boolean isStatic) {
 		this.isStatic = isStatic;
 	}
-	
+
 }

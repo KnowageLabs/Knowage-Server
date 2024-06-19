@@ -45,16 +45,16 @@ public class CrossTab {
 
 	private static final Logger LOGGER = Logger.getLogger(CrossTab.class);
 
-	private Node columnsRoot;
-	private Node rowsRoot;
+	private final Node columnsRoot;
+	private final Node rowsRoot;
 	String[][] dataMatrix;
-	private JSONObject config;
-	private List<MeasureInfo> measures;
-	private CrosstabDefinition crosstabDefinition;
+	private final JSONObject config;
+	private final List<MeasureInfo> measures;
+	private final CrosstabDefinition crosstabDefinition;
 	private List<String> rowHeadersTitles;
 	private List<String[]> rowsSum; // sum calculate for the rows (summ the row 1.. )
 	private List<String[]> columnsSum; // sum calculate for the rows (summ the row 1.. )
-	private boolean measuresOnRow;
+	private final boolean measuresOnRow;
 
 	private static final String PATH_SEPARATOR = "_S_";
 	private static final String DATA_MATRIX_NA = "NA";
@@ -86,7 +86,7 @@ public class CrossTab {
 			this.value = value;
 		}
 
-		private String value;
+		private final String value;
 
 		public String getValue() {
 			return this.value;
@@ -94,8 +94,8 @@ public class CrossTab {
 
 	}
 
-	private List<CellType> celltypeOfColumns;
-	private List<CellType> celltypeOfRows;
+	private final List<CellType> celltypeOfColumns;
+	private final List<CellType> celltypeOfRows;
 
 	/**
 	 * Builds the crossTab (headers structure and data)
@@ -125,9 +125,9 @@ public class CrossTab {
 //		}
 //
 
-		List<String> rowCordinates = new ArrayList<String>();
-		List<String> columnCordinates = new ArrayList<String>();
-		List<String> data = new ArrayList<String>();
+		List<String> rowCordinates = new ArrayList<>();
+		List<String> columnCordinates = new ArrayList<>();
+		List<String> data = new ArrayList<>();
 
 		columnsRoot = new Node(Node.CROSSTAB_NODE_COLUMN_ROOT);
 		rowsRoot = new Node(Node.CROSSTAB_NODE_ROW_ROOT);
@@ -135,7 +135,8 @@ public class CrossTab {
 		int cellCount = 0;
 		int actualRows = 0;
 		int actualColumns = 0;
-		for (index = 0; index < valuesDataStore.getRecordsCount() && (cellLimit <= 0 || cellCount < cellLimit); index++) {
+		for (index = 0; index < valuesDataStore.getRecordsCount()
+				&& (cellLimit <= 0 || cellCount < cellLimit); index++) {
 			valueRecord = valuesDataStore.getRecordAt(index);
 
 			boolean columnInserted = addRecord(columnsRoot, valueRecord, 0, columnsCount);
@@ -183,7 +184,7 @@ public class CrossTab {
 				} else {
 					valueStr = value.toString();
 				}
-				rowPath = rowPath + PATH_SEPARATOR + valueStr.toString();
+				rowPath = rowPath + PATH_SEPARATOR + valueStr;
 			}
 
 			for (int i = valueRecord.getFields().size() - measuresCount; i < valueRecord.getFields().size(); i++) {
@@ -202,11 +203,11 @@ public class CrossTab {
 			addMeasuresToTree(rowsRoot, crosstabDefinition.getMeasures());
 		}
 		config.put("columnsOverflow", columnsOverflow);
-		dataMatrix = getDataMatrix(columnsSpecification, rowsSpecification, columnCordinates, rowCordinates, data, measuresOnColumns, measuresCount,
-				columnsRoot.getLeafsNumber());
+		dataMatrix = getDataMatrix(columnsSpecification, rowsSpecification, columnCordinates, rowCordinates, data,
+				measuresOnColumns, measuresCount, columnsRoot.getLeafsNumber());
 
 		// put measures' info into measures variable
-		measures = new ArrayList<CrossTab.MeasureInfo>();
+		measures = new ArrayList<>();
 		IMetaData meta = valuesDataStore.getMetaData();
 		for (int i = meta.getFieldCount() - measuresCount; i < meta.getFieldCount(); i++) {
 			// the field number i contains the measure number (i - <number of dimensions>)
@@ -216,8 +217,8 @@ public class CrossTab {
 			measures.add(getMeasureInfo(fieldMeta, relevantMeasure));
 		}
 
-		celltypeOfColumns = new ArrayList<CrossTab.CellType>();
-		celltypeOfRows = new ArrayList<CrossTab.CellType>();
+		celltypeOfColumns = new ArrayList<>();
+		celltypeOfRows = new ArrayList<>();
 
 		for (int i = 0; i < dataMatrix.length; i++) {
 			celltypeOfRows.add(CellType.DATA);
@@ -319,16 +320,18 @@ public class CrossTab {
 	 * @param measuresLength:       the number of the measures
 	 * @return the matrix that represent the data
 	 */
-	private String[][] getDataMatrix(List<String> columnsSpecification, List<String> rowsSpecification, List<String> columnCordinates,
-			List<String> rowCordinates, List<String> data, boolean measuresOnColumns, int measuresLength, int columnsN) {
+	private String[][] getDataMatrix(List<String> columnsSpecification, List<String> rowsSpecification,
+			List<String> columnCordinates, List<String> rowCordinates, List<String> data, boolean measuresOnColumns,
+			int measuresLength, int columnsN) {
 		String[][] dataMatrix;
-		int x, y;
+		int x;
+		int y;
 		int rowsN;
 
 		if (measuresOnColumns) {
-			rowsN = (rowsSpecification.size() > 0 ? rowsSpecification.size() : 1);
+			rowsN = (!rowsSpecification.isEmpty() ? rowsSpecification.size() : 1);
 		} else {
-			rowsN = (rowsSpecification.size() > 0 ? rowsSpecification.size() : 1) * measuresLength;
+			rowsN = (!rowsSpecification.isEmpty() ? rowsSpecification.size() : 1) * measuresLength;
 		}
 
 		dataMatrix = new String[rowsN][columnsN];
@@ -343,7 +346,7 @@ public class CrossTab {
 		if (measuresOnColumns) {
 			for (int i = 0; i < data.size(); i = i + measuresLength) {
 				for (int j = 0; j < measuresLength; j++) {
-					if (rowsSpecification.size() > 0) {
+					if (!rowsSpecification.isEmpty()) {
 						x = rowsSpecification.indexOf(rowCordinates.get(i + j));
 						if (x < 0) {
 							continue; // elements not found because crosstab is too big and it was truncated
@@ -351,7 +354,7 @@ public class CrossTab {
 					} else {
 						x = 0; // crosstab with no attributes on rows
 					}
-					if (columnsSpecification.size() > 0) {
+					if (!columnsSpecification.isEmpty()) {
 						y = columnsSpecification.indexOf(columnCordinates.get(i + j));
 						if (y < 0) {
 							continue; // elements not found because crosstab is too big and it was truncated
@@ -367,7 +370,7 @@ public class CrossTab {
 		} else {
 			for (int i = 0; i < data.size(); i = i + measuresLength) {
 				for (int j = 0; j < measuresLength; j++) {
-					if (rowsSpecification.size() > 0) {
+					if (!rowsSpecification.isEmpty()) {
 						x = rowsSpecification.indexOf(rowCordinates.get(i + j));
 						if (x < 0) {
 							continue; // elements not found because crosstab is too big and it was truncated
@@ -376,7 +379,7 @@ public class CrossTab {
 						x = 0; // crosstab with no attributes on rows
 					}
 
-					if (columnsSpecification.size() > 0) {
+					if (!columnsSpecification.isEmpty()) {
 						y = columnsSpecification.indexOf(columnCordinates.get(i + j));
 						if (y < 0) {
 							continue; // elements not found because crosstab is too big and it was truncated
@@ -403,7 +406,7 @@ public class CrossTab {
 	 * @param measures
 	 */
 	private void addMeasuresToTree(Node root, List<Measure> measures) {
-		List<Node> measuresNodes = new ArrayList<Node>();
+		List<Node> measuresNodes = new ArrayList<>();
 		for (int i = 0; i < measures.size(); i++) {
 			measuresNodes.add(new Node(measures.get(i).getAlias()));
 		}
@@ -413,7 +416,7 @@ public class CrossTab {
 
 	// It's ok that the list of the measures is the same for every leaf
 	private void addMeasuresToLeafs(Node node, List<Node> measuresNodes) {
-		if (node.getChilds().size() == 0) {
+		if (node.getChilds().isEmpty()) {
 			for (int i = 0; i < measuresNodes.size(); i++) {
 				Node n = measuresNodes.get(i).clone();
 				node.addChild(n);
@@ -432,7 +435,7 @@ public class CrossTab {
 	 * @return list with all the path from the node n to the leafs
 	 */
 	private List<String> getLeafsPathList(Node n) {
-		List<String> toReturn = new ArrayList<String>();
+		List<String> toReturn = new ArrayList<>();
 		for (int i = 0; i < n.getChilds().size(); i++) {
 			toReturn.addAll(visit(n.getChilds().get(i), PATH_SEPARATOR));
 		}
@@ -440,8 +443,8 @@ public class CrossTab {
 	}
 
 	private List<String> visit(Node n, String prefix) {
-		List<String> toReturn = new ArrayList<String>();
-		if (n.getChilds().size() == 0) {
+		List<String> toReturn = new ArrayList<>();
+		if (n.getChilds().isEmpty()) {
 			if (prefix.equals(PATH_SEPARATOR)) {
 				toReturn.add(prefix + (n.getValue()));
 			} else {
@@ -492,18 +495,20 @@ public class CrossTab {
 		}
 
 		String fieldName = measure.getAlias(); // the measure name is not the name (or alias) of the field coming with the datastore
-												// since it is something like SUM(col_0_0_) (see how crosstab datastore query is created)
+												 // since it is something like SUM(col_0_0_) (see how crosstab datastore query is created)
 
 		if (Number.class.isAssignableFrom(clazz)) {
 
 			// BigInteger, Integer, Long, Short, Byte
-			if (Integer.class.isAssignableFrom(clazz) || BigInteger.class.isAssignableFrom(clazz) || Long.class.isAssignableFrom(clazz)
-					|| Short.class.isAssignableFrom(clazz) || Byte.class.isAssignableFrom(clazz)) {
+			if (Integer.class.isAssignableFrom(clazz) || BigInteger.class.isAssignableFrom(clazz)
+					|| Long.class.isAssignableFrom(clazz) || Short.class.isAssignableFrom(clazz)
+					|| Byte.class.isAssignableFrom(clazz)) {
 				return new MeasureInfo(fieldName, measure.getEntityId(), "int", null);
 			} else {
 				String decimalPrecision = (String) fieldMeta.getProperty(IFieldMetaData.DECIMALPRECISION);
 				if (decimalPrecision != null) {
-					return new MeasureInfo(fieldName, measure.getEntityId(), "float", "{decimalPrecision:" + decimalPrecision + "}");
+					return new MeasureInfo(fieldName, measure.getEntityId(), "float",
+							"{decimalPrecision:" + decimalPrecision + "}");
 				} else {
 					return new MeasureInfo(fieldName, measure.getEntityId(), "float", null);
 				}
@@ -520,8 +525,8 @@ public class CrossTab {
 
 	/**
 	 * Add to the root (columnRoot or rowRoot) a path from the root to a leaf. A record contains both the columns definition and the rows definition: (it may be
-	 * something like that: C1 C2 C3 R1 R2 M1 M1, where Ci represent a column, Ri represent a row, Mi a measure). So for take a column path (C1 C2 C3), we need
-	 * need a start and end position in the record (in this case 0,3)
+	 * something like that: C1 C2 C3 R1 R2 M1 M1, where Ci represent a column, Ri represent a row, Mi a measure). So for take a column path (C1 C2 C3), we need need
+	 * a start and end position in the record (in this case 0,3)
 	 *
 	 * @param root:         the node in witch add the record
 	 * @param record
@@ -534,7 +539,7 @@ public class CrossTab {
 		Node node;
 		Node nodeToCheck = root;
 		int nodePosition;
-		List<IField> valueFields = new ArrayList<IField>();
+		List<IField> valueFields = new ArrayList<>();
 
 		valueFields = valueRecord.getFields();
 

@@ -65,7 +65,7 @@ import it.eng.spagobi.utilities.parameters.ParametersUtilities;
 
 public class OuterAssociativityManager extends AbstractAssociativityManager {
 
-	protected static Logger logger = Logger.getLogger(OuterAssociativityManager.class);
+	private static final Logger LOGGER = Logger.getLogger(OuterAssociativityManager.class);
 
 	public OuterAssociativityManager(Config config, UserProfile userProfile) throws Exception {
 		init(config, userProfile);
@@ -76,7 +76,7 @@ public class OuterAssociativityManager extends AbstractAssociativityManager {
 		try {
 			for (String v1 : graph.vertexSet()) {
 				IAssociativeDatasetContainer container = associativeDatasetContainers.get(v1);
-				result.getDatasetToEdgeGroup().put(v1, new HashSet<EdgeGroup>());
+				result.getDatasetToEdgeGroup().put(v1, new HashSet<>());
 				for (String v2 : graph.vertexSet()) {
 					if (!v1.equals(v2)) {
 						Set<LabeledEdge<String>> edges = graph.getAllEdges(v1, v2);
@@ -86,7 +86,7 @@ public class OuterAssociativityManager extends AbstractAssociativityManager {
 								List<String> columnNames = getColumnNames(edge.getLabel(), v1);
 								columnNames.addAll(getColumnNames(edge.getLabel(), v2));
 								if (ParametersUtilities.containsParameter(columnNames)) {
-									addEdgeGroup(v1, new ParametricLabeledEdge<String>(edge), container);
+									addEdgeGroup(v1, new ParametricLabeledEdge<>(edge), container);
 									edgesWithoutParameters.remove(edge);
 								}
 							}
@@ -104,9 +104,10 @@ public class OuterAssociativityManager extends AbstractAssociativityManager {
 
 	@Override
 	protected void calculateDatasets(String dataset, EdgeGroup fromEdgeGroup, SimpleFilter filter) throws Exception {
-		Assert.assertTrue(!documentsAndExcludedDatasets.contains(dataset), "Dataset [" + dataset + "] cannot be processed.");
+		Assert.assertTrue(!documentsAndExcludedDatasets.contains(dataset),
+				"Dataset [" + dataset + "] cannot be processed.");
 
-		logger.debug("Clean containers and groups -> set to unresolved");
+		LOGGER.debug("Clean containers and groups -> set to unresolved");
 		AssociativeLogicUtils.unresolveDatasetContainers(associativeDatasetContainers.values());
 
 		Set<String> totalChildren = new HashSet<>();
@@ -115,7 +116,8 @@ public class OuterAssociativityManager extends AbstractAssociativityManager {
 
 		if (datasetFilters.get(dataset) != null) {
 
-			List<SimpleFilter> filtersList = this.calculateMinMaxFilters(datasetFilters.get(dataset), datasetFilters.get(dataset), userProfile);
+			List<SimpleFilter> filtersList = this.calculateMinMaxFilters(datasetFilters.get(dataset),
+					datasetFilters.get(dataset), userProfile);
 
 			for (SimpleFilter filterInDataset : filtersList) {
 
@@ -127,13 +129,12 @@ public class OuterAssociativityManager extends AbstractAssociativityManager {
 
 			container.addFilter(filter);
 		}
-//		logger.debug("1. For each associative group of the primary dataset " + container.getDataSet().getLabel() + "do the following:");
 		Iterator<EdgeGroup> iterator = container.getGroups().iterator();
 		while (iterator.hasNext()) {
 			EdgeGroup group = iterator.next();
 
 			List<String> columnNames = getColumnNames(group.getOrderedEdgeNames(), dataset);
-			logger.debug("a. Calculate the distinct values for columns " + columnNames);
+			LOGGER.debug("a. Calculate the distinct values for columns " + columnNames);
 			Assert.assertTrue(!columnNames.isEmpty(), "Impossible to obtain column names for association " + group);
 			if (ParametersUtilities.containsParameter(columnNames) && columnNames.size() != 1) {
 				throw new IllegalEdgeGroupException("Columns " + columnNames
@@ -146,11 +147,13 @@ public class OuterAssociativityManager extends AbstractAssociativityManager {
 				Set<Tuple> distinctValues = container.getTupleOfValues(columnNames);
 				if (!distinctValues.isEmpty()) {
 
-					logger.debug("b. Setting distinct values " + distinctValues + " as the only compatible values for the associative group " + group);
+					LOGGER.debug("b. Setting distinct values " + distinctValues
+							+ " as the only compatible values for the associative group " + group);
 					group.addValues(distinctValues);
 					result.addValues(group, distinctValues);
 
-					logger.debug("d. For each dataset involved in the current associative group, inserting it among the ones to be filtered");
+					LOGGER.debug(
+							"d. For each dataset involved in the current associative group, inserting it among the ones to be filtered");
 					Set<String> children = result.getEdgeGroupToDataset().get(group);
 
 					for (String child : children) {
@@ -162,23 +165,24 @@ public class OuterAssociativityManager extends AbstractAssociativityManager {
 					}
 					totalChildren.addAll(children);
 
-					logger.debug("e. Setting all the children dataset as processed");
-					logger.debug("f. Declaring the dataset as resolved");
+					LOGGER.debug("e. Setting all the children dataset as processed");
+					LOGGER.debug("f. Declaring the dataset as resolved");
 					resolveDatasets(children);
 				}
 			}
 
-			logger.debug("f. Declaring the associative group as resolved");
+			LOGGER.debug("f. Declaring the associative group as resolved");
 			group.resolve();
 		}
 
 		while (!getUnresolvedGroups(totalChildren).isEmpty()) {
 
-			logger.debug("3. Calculating all the unresolved associative groups related only to dataset contained in " + totalChildren);
+			LOGGER.debug("3. Calculating all the unresolved associative groups related only to dataset contained in "
+					+ totalChildren);
 			Set<EdgeGroup> groups = getUnresolvedGroups(totalChildren);
 			totalChildren.clear();
 
-			logger.debug("4. For each associative group previously calculated:");
+			LOGGER.debug("4. For each associative group previously calculated:");
 			iterator = groups.iterator();
 			while (iterator.hasNext()) {
 				EdgeGroup group = iterator.next();
@@ -187,10 +191,11 @@ public class OuterAssociativityManager extends AbstractAssociativityManager {
 					container = associativeDatasetContainers.get(childDataset);
 					if (container.isResolved()) {
 
-						logger.debug("i. Calculating distinct values for the associative group " + group + ", orderedEdgeNames " + group.getOrderedEdgeNames()
-								+ " in dataset " + childDataset);
+						LOGGER.debug("i. Calculating distinct values for the associative group " + group
+								+ ", orderedEdgeNames " + group.getOrderedEdgeNames() + " in dataset " + childDataset);
 						List<String> columnNames = getColumnNames(group.getOrderedEdgeNames(), childDataset);
-						Assert.assertTrue(!columnNames.isEmpty(), "Impossible to obtain column names for association " + group);
+						Assert.assertTrue(!columnNames.isEmpty(),
+								"Impossible to obtain column names for association " + group);
 						if (ParametersUtilities.containsParameter(columnNames) && columnNames.size() != 1) {
 							throw new IllegalEdgeGroupException("Columns " + columnNames
 									+ " contain at least one parameter and more than one association. \nThis is a illegal state for an associative group.");
@@ -201,7 +206,7 @@ public class OuterAssociativityManager extends AbstractAssociativityManager {
 							if (!distinctValues.isEmpty()) {
 								if (columnNames != null && !columnNames.isEmpty()) {
 									for (String column : columnNames) {
-										logger.debug("Columns involved: " + column);
+										LOGGER.debug("Columns involved: " + column);
 									}
 								}
 								boolean exitNull = false;
@@ -219,7 +224,8 @@ public class OuterAssociativityManager extends AbstractAssociativityManager {
 								}
 								if (exitNull)
 									continue;
-								logger.debug("ii-b. Adding values " + distinctValues + " among the compatible ones for the current associative group");
+								LOGGER.debug("ii-b. Adding values " + distinctValues
+										+ " among the compatible ones for the current associative group");
 								group.addValues(distinctValues);
 								result.addValues(group, distinctValues);
 							}
@@ -237,7 +243,8 @@ public class OuterAssociativityManager extends AbstractAssociativityManager {
 				group.resolve();
 			}
 
-			logger.debug("5. Finishing to work on associative groups. Setting all the processed datasets " + totalChildren + " as resolved");
+			LOGGER.debug("5. Finishing to work on associative groups. Setting all the processed datasets "
+					+ totalChildren + " as resolved");
 			resolveDatasets(totalChildren);
 		}
 	}
@@ -265,9 +272,10 @@ public class OuterAssociativityManager extends AbstractAssociativityManager {
 	}
 
 	// FIXME
-	public List<SimpleFilter> calculateMinMaxFilters(List<SimpleFilter> filters, List<SimpleFilter> likeFilters, UserProfile userprofile) throws JSONException {
+	public List<SimpleFilter> calculateMinMaxFilters(List<SimpleFilter> filters, List<SimpleFilter> likeFilters,
+			UserProfile userprofile) throws JSONException {
 
-		logger.debug("IN");
+		LOGGER.debug("IN");
 
 		List<SimpleFilter> newFilters = new ArrayList<>(filters);
 
@@ -284,20 +292,22 @@ public class OuterAssociativityManager extends AbstractAssociativityManager {
 
 				if (SimpleFilterOperator.EQUALS_TO_MIN.equals(operator)) {
 
-					logger.debug("Min filter found at index [" + i + "]");
+					LOGGER.debug("Min filter found at index [" + i + "]");
 					minMaxFilterIndexes.add(i);
 
 					String columnName = ((SingleProjectionSimpleFilter) filter).getProjection().getName();
-					Projection projection = new Projection(AggregationFunctions.MIN_FUNCTION, ((SimpleFilter) filter).getDataset(), columnName);
+					Projection projection = new Projection(AggregationFunctions.MIN_FUNCTION,
+							((SimpleFilter) filter).getDataset(), columnName);
 					minMaxProjections.add(projection);
 
 				} else if (SimpleFilterOperator.EQUALS_TO_MAX.equals(operator)) {
 
-					logger.debug("Max filter found at index [" + i + "]");
+					LOGGER.debug("Max filter found at index [" + i + "]");
 					minMaxFilterIndexes.add(i);
 
 					String columnName = ((SingleProjectionSimpleFilter) filter).getProjection().getName();
-					Projection projection = new Projection(AggregationFunctions.MAX_FUNCTION, ((SimpleFilter) filter).getDataset(), columnName, columnName);
+					Projection projection = new Projection(AggregationFunctions.MAX_FUNCTION,
+							((SimpleFilter) filter).getDataset(), columnName, columnName);
 					minMaxProjections.add(projection);
 
 				} else {
@@ -308,10 +318,10 @@ public class OuterAssociativityManager extends AbstractAssociativityManager {
 			}
 		}
 
-		if (minMaxFilterIndexes.size() > 0) {
-			logger.debug("MIN/MAX filter found");
+		if (!minMaxFilterIndexes.isEmpty()) {
+			LOGGER.debug("MIN/MAX filter found");
 
-			logger.debug("MIN/MAX filter values calculated");
+			LOGGER.debug("MIN/MAX filter values calculated");
 
 			for (int i = 0; i < minMaxProjections.size(); i++) {
 				Projection projection = minMaxProjections.get(i);
@@ -323,60 +333,65 @@ public class OuterAssociativityManager extends AbstractAssociativityManager {
 
 				Filter where = getWhereFilter(noMinMaxFilters, likeFiltersArray);
 
-				IDataStore dataStore = getSummaryRowDataStore(projection.getDataset(), true, datasetParameters.get(projection.getDataset().getLabel()),
-						projection, where, -1, userprofile);
+				IDataStore dataStore = getSummaryRowDataStore(projection.getDataset(), true,
+						datasetParameters.get(projection.getDataset().getLabel()), projection, where, -1, userprofile);
 				if (dataStore == null) {
 					String errorMessage2 = "Error in getting min and max filters values";
-					logger.error(errorMessage2);
+					LOGGER.error(errorMessage2);
 					throw new SpagoBIRuntimeException(errorMessage2);
 				}
 				List values = dataStore.getFieldValues(i);
 				if (values == null) {
-					logger.error(errorMessage);
+					LOGGER.error(errorMessage);
 					throw new SpagoBIRuntimeException(errorMessage);
 				} else {
-					Projection projectionWithoutAggregation = new Projection(projection.getDataset(), projection.getName(), alias);
+					Projection projectionWithoutAggregation = new Projection(projection.getDataset(),
+							projection.getName(), alias);
 					if (values.isEmpty()) {
-						logger.warn(errorMessage + ", put NULL");
-						newFilters.set(index, new NullaryFilter(projectionWithoutAggregation, SimpleFilterOperator.IS_NULL));
+						LOGGER.warn(errorMessage + ", put NULL");
+						newFilters.set(index,
+								new NullaryFilter(projectionWithoutAggregation, SimpleFilterOperator.IS_NULL));
 					} else {
 						Object value = values.get(0);
-						logger.debug("MIN/MAX value for field [" + alias + "] is equal to [" + value + "]");
-						newFilters.set(index, new UnaryFilter(projectionWithoutAggregation, SimpleFilterOperator.EQUALS_TO, value));
+						LOGGER.debug("MIN/MAX value for field [" + alias + "] is equal to [" + value + "]");
+						newFilters.set(index,
+								new UnaryFilter(projectionWithoutAggregation, SimpleFilterOperator.EQUALS_TO, value));
 					}
 				}
 			}
 		}
 
-		logger.debug("OUT");
+		LOGGER.debug("OUT");
 		return newFilters;
 	}
 
-	private IDataStore getSummaryRowDataStore(IDataSet dataSet, boolean isNearRealtime, Map<String, String> parametersValues, Projection projections,
-			Filter filter, int maxRowCount, UserProfile userprofile) throws JSONException {
+	private IDataStore getSummaryRowDataStore(IDataSet dataSet, boolean isNearRealtime,
+			Map<String, String> parametersValues, Projection projections, Filter filter, int maxRowCount,
+			UserProfile userprofile) throws JSONException {
 		dataSet.setParametersMap(parametersValues);
 		dataSet.resolveParameters();
 
-		List<AbstractSelectionField> listProj = new ArrayList<AbstractSelectionField>();
+		List<AbstractSelectionField> listProj = new ArrayList<>();
 		listProj.add(projections);
 
-		IDatasetEvaluationStrategy strategy = DatasetEvaluationStrategyFactory.get(dataSet.getEvaluationStrategy(isNearRealtime), dataSet, userprofile);
+		IDatasetEvaluationStrategy strategy = DatasetEvaluationStrategyFactory
+				.get(dataSet.getEvaluationStrategy(isNearRealtime), dataSet, userprofile);
 		return strategy.executeSummaryRowQuery(listProj, filter, maxRowCount);
 	}
 
 	public Filter getWhereFilter(List<Filter> filters, List<SimpleFilter> likeFilters) {
 		Filter where = null;
-		if (filters.size() > 0) {
+		if (!filters.isEmpty()) {
 			if (filters.size() == 1 && filters.get(0) instanceof UnsatisfiedFilter) {
 				where = filters.get(0);
 			} else {
 				AndFilter andFilter = new AndFilter(filters);
-				if (likeFilters.size() > 0) {
+				if (!likeFilters.isEmpty()) {
 					andFilter.and(new OrFilter(likeFilters));
 				}
 				where = andFilter;
 			}
-		} else if (likeFilters.size() > 0) {
+		} else if (!likeFilters.isEmpty()) {
 			where = new OrFilter(likeFilters);
 		}
 		return where;

@@ -48,7 +48,7 @@ import it.eng.spagobi.tools.dataset.common.metadata.IFieldMetaData.FieldType;
 import it.eng.spagobi.user.UserProfileManager;
 import it.eng.spagobi.utilities.assertion.Assert;
 
-public class geoUtils {
+public class GeoUtils {
 	public static final String COLUMNLIST = "COLUMNLIST";
 	public static final String COLUMN = "COLUMN";
 	public static final String COLUMNS = "COLUMNS";
@@ -65,7 +65,7 @@ public class geoUtils {
 	public static final String LAYER_URL = "layerUrl";
 	public static final String NO_DATASET = "noDataset";
 
-	private static Logger logger = Logger.getLogger(geoUtils.class);
+	private static Logger logger = Logger.getLogger(GeoUtils.class);
 
 	public static FieldType getDsFieldType(String xml, String fieldName) throws Exception {
 		FieldType toReturn = IFieldMetaData.FieldType.ATTRIBUTE;
@@ -97,7 +97,7 @@ public class geoUtils {
 		String layerName = req.getString(LAYER_NAME);
 		String layerCol = req.optString(LAYER_JOIN_COLUMNS);
 		String featureIds = req.optString(FEATURE_IDS);
-		Boolean noDataset = req.optBoolean(geoUtils.NO_DATASET);
+		Boolean noDataset = req.optBoolean(GeoUtils.NO_DATASET);
 
 		try {
 			Monitor.start("GetTargetLayerAction.doService");

@@ -32,13 +32,12 @@ import org.json.JSONObject;
  */
 public class CrosstabDefinition {
 
-	public static CrosstabDefinition EMPTY_CROSSTAB;
+	public static final CrosstabDefinition EMPTY_CROSSTAB = new CrosstabDefinition();
 
 	static {
-		EMPTY_CROSSTAB = new CrosstabDefinition();
-		EMPTY_CROSSTAB.setColumns(new ArrayList<CrosstabDefinition.Column>());
-		EMPTY_CROSSTAB.setRows(new ArrayList<CrosstabDefinition.Row>());
-		EMPTY_CROSSTAB.setMeasures(new ArrayList<Measure>());
+		EMPTY_CROSSTAB.setColumns(new ArrayList<>());
+		EMPTY_CROSSTAB.setRows(new ArrayList<>());
+		EMPTY_CROSSTAB.setMeasures(new ArrayList<>());
 		EMPTY_CROSSTAB.setConfig(new JSONObject());
 		EMPTY_CROSSTAB.setCalculatedFields(new JSONArray());
 	}
@@ -53,9 +52,6 @@ public class CrosstabDefinition {
 	private boolean isStatic = true;
 
 	public CrosstabDefinition() {
-		// cellLimit = new Integer((String)
-		// ConfigSingleton.getInstance().getAttribute("QBE.QBE-CROSSTAB-CELLS-LIMIT.value"))
-		// ;
 	}
 
 	public int getCellLimit() {
@@ -133,19 +129,21 @@ public class CrosstabDefinition {
 	public class Row extends Attribute {
 
 		public Row(Attribute attribute) {
-			super(attribute.getEntityId(), attribute.getAlias(), attribute.getSortingId(), attribute.getIconCls(), attribute.getNature(), attribute.getValues(), attribute.getVariable(), attribute.getConfig());
+			super(attribute.getEntityId(), attribute.getAlias(), attribute.getSortingId(), attribute.getIconCls(),
+					attribute.getNature(), attribute.getValues(), attribute.getVariable(), attribute.getConfig());
 		}
 	}
 
 	public class Column extends Attribute {
 
 		public Column(Attribute attribute) {
-			super(attribute.getEntityId(), attribute.getAlias(), attribute.getSortingId(), attribute.getIconCls(), attribute.getNature(), attribute.getValues(), attribute.getVariable(), attribute.getConfig());
+			super(attribute.getEntityId(), attribute.getAlias(), attribute.getSortingId(), attribute.getIconCls(),
+					attribute.getNature(), attribute.getValues(), attribute.getVariable(), attribute.getConfig());
 		}
 	}
 
 	public List<Attribute> getFiltersOnDomainValues() {
-		List<Attribute> toReturn = new ArrayList<Attribute>();
+		List<Attribute> toReturn = new ArrayList<>();
 		List<Row> rows = getRows();
 		Iterator<Row> rowsIt = rows.iterator();
 		while (rowsIt.hasNext()) {
@@ -170,7 +168,7 @@ public class CrosstabDefinition {
 	}
 
 	public List<Field> getAllFields() {
-		List<Field> toReturn = new ArrayList<Field>();
+		List<Field> toReturn = new ArrayList<>();
 		toReturn.addAll(getColumns());
 		toReturn.addAll(getRows());
 		toReturn.addAll(getMeasures());

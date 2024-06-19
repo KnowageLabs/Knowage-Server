@@ -56,7 +56,7 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 @Path("/federateddataset")
 public class RestFederationDefinition extends AbstractSpagoBIResource {
 
-	private static Logger logger = Logger.getLogger(RestFederationDefinition.class);
+	private static final Logger LOGGER = Logger.getLogger(RestFederationDefinition.class);
 
 	public static final String DATASET_ID = "id";
 	public static final String VERSION_NUM = "versionNum";
@@ -75,11 +75,11 @@ public class RestFederationDefinition extends AbstractSpagoBIResource {
 
 			List<FederationDefinition> listOfFederations = federDsDao.loadNotDegeneratedFederatedDataSets();
 			if (listOfFederations == null) {
-				listOfFederations = new ArrayList<FederationDefinition>();
+				listOfFederations = new ArrayList<>();
 			}
 			return listOfFederations;
 		} catch (EMFUserError e) {
-			logger.error("Error while loading federations", e);
+			LOGGER.error("Error while loading federations", e);
 			throw new SpagoBIRuntimeException("Error while loading federations", e);
 		}
 	}
@@ -95,7 +95,7 @@ public class RestFederationDefinition extends AbstractSpagoBIResource {
 			federationDefinition = fdsDAO.loadFederationDefinition(id);
 			return federationDefinition;
 		} catch (EMFUserError e) {
-			logger.error("Error while getting federation by id", e);
+			LOGGER.error("Error while getting federation by id", e);
 			throw new SpagoBIRuntimeException("Error getting federation by id", e);
 		}
 	}
@@ -110,14 +110,14 @@ public class RestFederationDefinition extends AbstractSpagoBIResource {
 	@Path("/post")
 	public Integer insertFederation(@Valid FederatedDatasetDefinitionDTO requestDTO) {
 		try {
-			logger.debug("Saving the federation");
+			LOGGER.debug("Saving the federation");
 			FederationDefinition fdsNew = recoverFederatedDatasetDetails(requestDTO);
-			logger.debug("The federation definition label is " + fdsNew.getLabel());
+			LOGGER.debug("The federation definition label is " + fdsNew.getLabel());
 
 			Integer id = insertFederationDefinition(fdsNew);
 
-			logger.debug("Saving OK");
-			logger.debug("OUT");
+			LOGGER.debug("Saving OK");
+			LOGGER.debug("OUT");
 			return id;
 		} catch (Exception e) {
 
@@ -127,18 +127,18 @@ public class RestFederationDefinition extends AbstractSpagoBIResource {
 			if (state.equals("23000")) {
 
 				if (sqle.contains("LABEL")) {
-					logger.error("Duplicate key entry while saving federation", e);
+					LOGGER.error("Duplicate key entry while saving federation", e);
 					throw new SpagoBIRuntimeException("There is already a federation with same label", e);
 				} else if (sqle.contains("NAME")) {
-					logger.error("Duplicate key endtry while saving federation", e);
+					LOGGER.error("Duplicate key endtry while saving federation", e);
 					throw new SpagoBIRuntimeException("There is already a federation with same name!", e);
 				}
 
-				logger.error("Duplicate key endtry while saving federation", e);
+				LOGGER.error("Duplicate key endtry while saving federation", e);
 				throw new SpagoBIRuntimeException("There is already a federation with same label and/or name!", e);
 
 			} else {
-				logger.error("Error saving federation", e);
+				LOGGER.error("Error saving federation", e);
 				throw new SpagoBIRuntimeException("Error saving federation", e);
 			}
 
@@ -149,22 +149,22 @@ public class RestFederationDefinition extends AbstractSpagoBIResource {
 	@Path("/{id}")
 	public Integer modifyFederation(@PathParam("id") Integer id, @Valid FederatedDatasetDefinitionDTO requestDTO) {
 		try {
-			logger.debug("Editing the federation");
+			LOGGER.debug("Editing the federation");
 			FederationDefinition fdsNew = recoverFederatedDatasetDetails(requestDTO);
 
 			fdsNew.setFederation_id(id);
 
-			logger.debug("The federation definition label is " + fdsNew.getLabel());
-			logger.debug("The federation definition ID is " + fdsNew.getFederation_id());
+			LOGGER.debug("The federation definition label is " + fdsNew.getLabel());
+			LOGGER.debug("The federation definition ID is " + fdsNew.getFederation_id());
 
 			ISbiFederationDefinitionDAO federatedDatasetDao = DAOFactory.getFedetatedDatasetDAO();
 			id = federatedDatasetDao.modifyFederation(fdsNew);
 
-			logger.debug("Saving OK");
-			logger.debug("OUT");
+			LOGGER.debug("Saving OK");
+			LOGGER.debug("OUT");
 			return id;
 		} catch (Exception e) {
-			logger.error("Error saving federation", e);
+			LOGGER.error("Error saving federation", e);
 			throw new SpagoBIRuntimeException("Error saving federation", e);
 		}
 	}
@@ -176,7 +176,7 @@ public class RestFederationDefinition extends AbstractSpagoBIResource {
 	 * @throws EMFUserError
 	 */
 	public int insertFederationDefinition(FederationDefinition federation) throws EMFUserError {
-		logger.debug("The federation definition label is " + federation.getLabel());
+		LOGGER.debug("The federation definition label is " + federation.getLabel());
 
 		ISbiFederationDefinitionDAO federatedDatasetDao = DAOFactory.getFedetatedDatasetDAO();
 		return federatedDatasetDao.saveSbiFederationDefinition(federation);
@@ -196,17 +196,18 @@ public class RestFederationDefinition extends AbstractSpagoBIResource {
 		Integer federationId = null;
 		try {
 			federationId = requestDTO.getFederationId();
-			logger.debug("Loading the federation with id " + federationId);
+			LOGGER.debug("Loading the federation with id " + federationId);
 			ISbiFederationDefinitionDAO federatedDatasetDao = DAOFactory.getFedetatedDatasetDAO();
 			FederationDefinition federation = federatedDatasetDao.loadFederationDefinition(federationId);
-			logger.debug("retrived federaion. the label is " + federation.getLabel());
+			LOGGER.debug("retrived federaion. the label is " + federation.getLabel());
 
-			JSONObject federationSerialized = (JSONObject) SerializerFactory.getSerializer("application/json").serialize(federation, request.getLocale());
+			JSONObject federationSerialized = (JSONObject) SerializerFactory.getSerializer("application/json")
+					.serialize(federation, request.getLocale());
 
-			logger.debug("Sending serialization of federation definition " + federation.getLabel());
+			LOGGER.debug("Sending serialization of federation definition " + federation.getLabel());
 			return federationSerialized.toString();
 		} catch (Exception e) {
-			logger.error("Error retriving federation with id " + String.valueOf(federationId), e);
+			LOGGER.error("Error retriving federation with id " + String.valueOf(federationId), e);
 			throw new SpagoBIRuntimeException("Error retriving federation with id " + String.valueOf(federationId), e);
 		}
 	}
@@ -235,8 +236,8 @@ public class RestFederationDefinition extends AbstractSpagoBIResource {
 
 	private Set<IDataSet> deserializeDatasets(String relationships) {
 
-		Set<String> datasetNames = new HashSet<String>();
-		Set<IDataSet> datasets = new HashSet<IDataSet>();
+		Set<String> datasetNames = new HashSet<>();
+		Set<IDataSet> datasets = new HashSet<>();
 
 		// loading the datasets
 		try {
@@ -255,7 +256,7 @@ public class RestFederationDefinition extends AbstractSpagoBIResource {
 			}
 
 		} catch (JSONException e) {
-			logger.error("Error loading the datset");
+			LOGGER.error("Error loading the datset");
 			throw new SpagoBIRuntimeException("Error loading linked datasets", e);
 		}
 

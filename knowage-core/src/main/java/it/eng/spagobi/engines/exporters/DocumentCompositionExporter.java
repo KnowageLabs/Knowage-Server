@@ -47,9 +47,9 @@ import it.eng.spagobi.engines.chart.utils.ExportHighCharts;
 import it.eng.spagobi.engines.config.bo.Engine;
 import it.eng.spagobi.engines.documentcomposition.configuration.DocumentCompositionConfiguration;
 import it.eng.spagobi.engines.documentcomposition.configuration.DocumentCompositionConfiguration.Document;
-import it.eng.spagobi.engines.documentcomposition.exporterUtils.CurrentConfigurationDocComp;
-import it.eng.spagobi.engines.documentcomposition.exporterUtils.DocumentContainer;
-import it.eng.spagobi.engines.documentcomposition.exporterUtils.PdfCreator;
+import it.eng.spagobi.engines.documentcomposition.exporter.utils.CurrentConfigurationDocComp;
+import it.eng.spagobi.engines.documentcomposition.exporter.utils.DocumentContainer;
+import it.eng.spagobi.engines.documentcomposition.exporter.utils.PdfCreator;
 import it.eng.spagobi.utilities.ParametersDecoder;
 
 public class DocumentCompositionExporter {

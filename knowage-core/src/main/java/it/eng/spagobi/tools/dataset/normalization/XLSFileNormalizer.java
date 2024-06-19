@@ -44,15 +44,16 @@ public class XLSFileNormalizer {
 	private String skipRows;
 	private String limitRows;
 	private String xslSheetNumber;
-	private String levelName;
+	private final String levelName;
 	private int numberOfColumns = 0;
 
-	private static transient Logger logger = Logger.getLogger(XLSFileNormalizer.class);
+	private static final Logger LOGGER = Logger.getLogger(XLSFileNormalizer.class);
 
 	private String newColumnName;
 	private String newColumnType;
 
-	public XLSFileNormalizer(File datasetFile, Map<Object, Object> levelSiblingsValue, String columnNameOnFile, String levelName) {
+	public XLSFileNormalizer(File datasetFile, Map<Object, Object> levelSiblingsValue, String columnNameOnFile,
+			String levelName) {
 		this.datasetFile = datasetFile;
 		this.levelSiblingsValue = levelSiblingsValue;
 		this.columnNameOnFile = columnNameOnFile;
@@ -70,7 +71,7 @@ public class XLSFileNormalizer {
 			int initialRow = 0;
 			if ((skipRows != null) && (!skipRows.isEmpty())) {
 				initialRow = Integer.parseInt(skipRows);
-				logger.debug("Skipping first " + skipRows + " rows");
+				LOGGER.debug("Skipping first " + skipRows + " rows");
 
 			}
 			int rowsLimit;
@@ -127,7 +128,7 @@ public class XLSFileNormalizer {
 			outputDataStream.close();
 
 		} catch (IOException e) {
-			logger.error("IOException in XLSFileNormalizer: " + e.getMessage());
+			LOGGER.error("IOException in XLSFileNormalizer: " + e.getMessage());
 			throw new RuntimeException("IOException in XLSFileNormalizer", e);
 		}
 
@@ -161,7 +162,7 @@ public class XLSFileNormalizer {
 					Integer valueFieldInteger = Integer.parseInt(valueField);
 					levelValue = levelSiblingsValue.get(valueFieldInteger);
 				} catch (Exception ex) {
-					logger.debug("Cannot cast " + valueField + " to Integer");
+					LOGGER.debug("Cannot cast " + valueField + " to Integer");
 				}
 
 				// else try searching valueField as a Double
@@ -170,11 +171,11 @@ public class XLSFileNormalizer {
 						Double valueFieldDouble = Double.parseDouble(valueField);
 						levelValue = levelSiblingsValue.get(valueFieldDouble);
 					} catch (Exception ex) {
-						logger.debug("Cannot cast " + valueField + " to Double");
+						LOGGER.debug("Cannot cast " + valueField + " to Double");
 					}
 
 					if (levelValue == null) {
-						logger.error("Value corresponding to " + valueField + " not found on level values");
+						LOGGER.error("Value corresponding to " + valueField + " not found on level values");
 					}
 				}
 			}
@@ -217,7 +218,7 @@ public class XLSFileNormalizer {
 	 */
 	private void addColumnHeader(HSSFRow row) {
 		// Get all existing columns names
-		List<String> columnsNames = new ArrayList<String>();
+		List<String> columnsNames = new ArrayList<>();
 		int cells = row.getPhysicalNumberOfCells();
 		this.setNumberOfColumns(cells);
 
@@ -256,7 +257,7 @@ public class XLSFileNormalizer {
 	 */
 	private int getColumnPosition(String columnName, HSSFRow row) {
 		int cells = row.getPhysicalNumberOfCells();
-		logger.debug("\nROW " + row.getRowNum() + " has " + cells + " cell(s).");
+		LOGGER.debug("\nROW " + row.getRowNum() + " has " + cells + " cell(s).");
 		for (int c = 0; c < cells; c++) {
 			// get single cell
 			HSSFCell cell = row.getCell(c);
@@ -286,7 +287,7 @@ public class XLSFileNormalizer {
 
 		switch (cell.getCellType()) {
 		case FORMULA:
-			valueField = cell.getCellFormula().toString();
+			valueField = cell.getCellFormula();
 			break;
 
 		case NUMERIC:
@@ -320,7 +321,7 @@ public class XLSFileNormalizer {
 
 			int sheetNumber = Integer.parseInt(xslSheetNumber) - 1;
 			if (sheetNumber > numberOfSheets) {
-				logger.error("Wrong sheet number, using first sheet as default");
+				LOGGER.error("Wrong sheet number, using first sheet as default");
 				// if not specified take first sheet
 				sheet = workbook.getSheetAt(0);
 			}

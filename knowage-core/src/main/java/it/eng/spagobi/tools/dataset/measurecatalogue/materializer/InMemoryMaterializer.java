@@ -50,8 +50,8 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 public class InMemoryMaterializer implements IMaterializer {
 
-	private IAggregationFunction aggreationFunction = AggregationFunctions.SUM_FUNCTION;
-	private static Logger logger = Logger.getLogger(InMemoryMaterializer.class);
+	private final IAggregationFunction aggreationFunction = AggregationFunctions.SUM_FUNCTION;
+	private static final Logger LOGGER = Logger.getLogger(InMemoryMaterializer.class);
 
 	/**
 	 * Execute the joins between measures
@@ -62,48 +62,35 @@ public class InMemoryMaterializer implements IMaterializer {
 		// STEP1: gets the common dimensions
 		List<List<MeasureCatalogueDimension>> commonDimensions = getCommonDimensions(measures);
 
-		if (commonDimensions.size() == 0 || commonDimensions.get(0).size() == 0) {
-			logger.error("Impossible to join measures. No common dimensions found");
+		if (commonDimensions.isEmpty() || commonDimensions.get(0).isEmpty()) {
+			LOGGER.error("Impossible to join measures. No common dimensions found");
 			throw new NoCommonDimensionsRuntimeException("No common dimensions found");
 		}
 
 		Map<HierarchyWrapper, Integer> minHierarchyLeveMap = buildMinHierarchyLeveMap(commonDimensions);
 
-		List<List<MeasureCatalogueDimension>> commonDimensionsFilterd = new ArrayList<List<MeasureCatalogueDimension>>();
+		List<List<MeasureCatalogueDimension>> commonDimensionsFilterd = new ArrayList<>();
 		for (int i = 0; i < commonDimensions.size(); i++) {
 			commonDimensionsFilterd.add(filterHierarchies(commonDimensions.get(i), minHierarchyLeveMap));
 		}
 
-		if (commonDimensionsFilterd.size() == 0 || commonDimensionsFilterd.get(0).size() == 0) {
-			logger.error("Impossible to join measures. No complete hierarchies found");
+		if (commonDimensionsFilterd.isEmpty() || commonDimensionsFilterd.get(0).isEmpty()) {
+			LOGGER.error("Impossible to join measures. No complete hierarchies found");
 			throw new NoCompleteCommonDimensionsRuntimeException("No complete hierarchies found");
 		}
 
-		List<InMemoryAggregator> rolledUpMeasures = new ArrayList<InMemoryAggregator>();
+		List<InMemoryAggregator> rolledUpMeasures = new ArrayList<>();
 		for (int i = 0; i < commonDimensions.size(); i++) {
 			InMemoryAggregator groupped = groupBy(measures.get(i), commonDimensionsFilterd.get(i), aggreationFunction);
 			if (groupped == null) {
-				logger.debug("The result of the groupping of the measure [alias: " + measures.get(i).getAlias() + ", dataset label"
-						+ measures.get(i).getDataSet().getLabel() + "is empty");
+				LOGGER.debug("The result of the groupping of the measure [alias: " + measures.get(i).getAlias()
+						+ ", dataset label" + measures.get(i).getDataSet().getLabel() + "is empty");
 			}
 			rolledUpMeasures.add(groupped);
 		}
 
 		return joinAggreteMeasures(rolledUpMeasures);
 	}
-
-	// private List<InMemoryAggregator> rollUpMeasures(MeasureCatalogueMeasure measure1, MeasureCatalogueMeasure measure2, List<MeasureCatalogueDimension>
-	// commonDimensions1, List<MeasureCatalogueDimension> commonDimensions2){
-	// List<InMemoryAggregator> resultSets = new ArrayList<InMemoryAggregator>();
-	//
-	// InMemoryAggregator groupMeasure1 = groupBy(measure1, commonDimensions1, aggreationFunction);
-	// InMemoryAggregator groupMeasure2 = groupBy(measure2, commonDimensions2, aggreationFunction);
-	//
-	// resultSets.add(groupMeasure1);
-	// resultSets.add(groupMeasure2);
-	//
-	// return resultSets;
-	// }
 
 	/**
 	 *
@@ -113,12 +100,12 @@ public class InMemoryMaterializer implements IMaterializer {
 	private List<List<MeasureCatalogueDimension>> getCommonDimensions(List<MeasureCatalogueMeasure> measures) {
 
 		/**
-		 * 1) Take the first measure 2) for each dimension of the first measure check if it exist in all the other measures 2a) if it exists add it in the map
-		 * to return (the arry to return contains one array for measure. The array contains the dimensions for each measure. we use an array for each dimension
-		 * because we are interested also in the level of the hierarchy of the dimension)
+		 * 1) Take the first measure 2) for each dimension of the first measure check if it exist in all the other measures 2a) if it exists add it in the map to return
+		 * (the arry to return contains one array for measure. The array contains the dimensions for each measure. we use an array for each dimension because we are
+		 * interested also in the level of the hierarchy of the dimension)
 		 */
 
-		List<List<MeasureCatalogueDimension>> commonDimensions = new ArrayList<List<MeasureCatalogueDimension>>();
+		List<List<MeasureCatalogueDimension>> commonDimensions = new ArrayList<>();
 
 		// Temp array with the common dimensions.
 		List<MeasureCatalogueDimension> measureDimensionsCommonTemp;
@@ -129,7 +116,7 @@ public class InMemoryMaterializer implements IMaterializer {
 
 			// init the array to return
 			for (int i = 0; i < measures.size(); i++) {
-				commonDimensions.add(new ArrayList<MeasureCatalogueDimension>());
+				commonDimensions.add(new ArrayList<>());
 			}
 
 			Set<MeasureCatalogueDimension> measure1Dimensions = (measures.get(0).getDatasetDimension());
@@ -137,12 +124,13 @@ public class InMemoryMaterializer implements IMaterializer {
 			for (Iterator<MeasureCatalogueDimension> iterator1 = measure1Dimensions.iterator(); iterator1.hasNext();) {
 				MeasureCatalogueDimension dimension1 = iterator1.next();
 				int dimensionIncommon = 1;// one because there is the dimension in the firts measure
-				measureDimensionsCommonTemp = new ArrayList<MeasureCatalogueDimension>();
+				measureDimensionsCommonTemp = new ArrayList<>();
 				measureDimensionsCommonTemp.add(dimension1);
 				// we check if the dimension of the measure 1 is contained in the other measures
 				for (int i = 1; i < measures.size(); i++) {
 					Set<MeasureCatalogueDimension> measureiDimensions = (measures.get(i).getDatasetDimension());
-					for (Iterator<MeasureCatalogueDimension> iterator2 = measureiDimensions.iterator(); iterator2.hasNext();) {
+					for (Iterator<MeasureCatalogueDimension> iterator2 = measureiDimensions.iterator(); iterator2
+							.hasNext();) {
 						MeasureCatalogueDimension dimensioni = iterator2.next();
 						// we take all the levels of the same hierarchy
 						if (dimension1.getHierarchy() != null && dimensioni.getHierarchy() != null
@@ -175,12 +163,13 @@ public class InMemoryMaterializer implements IMaterializer {
 	 * @param dimensions
 	 * @return
 	 */
-	private List<MeasureCatalogueDimension> filterHierarchies(List<MeasureCatalogueDimension> dimensions, Map<HierarchyWrapper, Integer> minHierarchyLeveMap) {
+	private List<MeasureCatalogueDimension> filterHierarchies(List<MeasureCatalogueDimension> dimensions,
+			Map<HierarchyWrapper, Integer> minHierarchyLeveMap) {
 		int minLevel;
 		// map with the hiearchy and the list of levels
-		Map<HierarchyWrapper, List<Integer>> hierarchiesLevels = new HashMap<HierarchyWrapper, List<Integer>>();
-		Map<HierarchyWrapper, Boolean> hierarchiesLevelsValid = new HashMap<HierarchyWrapper, Boolean>();
-		List<MeasureCatalogueDimension> filteredDimensions = new ArrayList<MeasureCatalogueDimension>();
+		Map<HierarchyWrapper, List<Integer>> hierarchiesLevels = new HashMap<>();
+		Map<HierarchyWrapper, Boolean> hierarchiesLevelsValid = new HashMap<>();
+		List<MeasureCatalogueDimension> filteredDimensions = new ArrayList<>();
 
 		// create the map with the hierarchies and levels
 		for (Iterator<MeasureCatalogueDimension> iterator1 = dimensions.iterator(); iterator1.hasNext();) {
@@ -188,7 +177,7 @@ public class InMemoryMaterializer implements IMaterializer {
 			HierarchyWrapper hierarchy = dimension.getHierarchy();
 			List<Integer> hierarchyPositions = hierarchiesLevels.get(hierarchy);
 			if (hierarchyPositions == null) {
-				hierarchyPositions = new ArrayList<Integer>();
+				hierarchyPositions = new ArrayList<>();
 			}
 			hierarchyPositions.add(dimension.getHierarchyLevelPosition());
 			hierarchiesLevels.put(hierarchy, hierarchyPositions);
@@ -201,7 +190,7 @@ public class InMemoryMaterializer implements IMaterializer {
 			Collections.sort(hierarchyPositions);
 			hierarchiesLevelsValid.put(hierarchy, true);
 
-			if (hierarchyPositions.size() >= 1) {
+			if (!hierarchyPositions.isEmpty()) {
 				minLevel = minHierarchyLeveMap.get(hierarchy);
 				for (int i = 0; i < hierarchyPositions.size(); i++) {
 
@@ -218,7 +207,7 @@ public class InMemoryMaterializer implements IMaterializer {
 			if (hierarchiesLevelsValid.get(dimensions.get(i).getHierarchy())) {
 				filteredDimensions.add(dimensions.get(i));
 			} else {
-				logger.debug("The hierarchy " + dimensions.get(i).getHierarchy().getName() + " is not complete");
+				LOGGER.debug("The hierarchy " + dimensions.get(i).getHierarchy().getName() + " is not complete");
 			}
 		}
 
@@ -233,16 +222,17 @@ public class InMemoryMaterializer implements IMaterializer {
 	 * @param commonDimensionsFormMeasures
 	 * @return
 	 */
-	private Map<HierarchyWrapper, Integer> buildMinHierarchyLeveMap(List<List<MeasureCatalogueDimension>> commonDimensionsFormMeasures) {
+	private Map<HierarchyWrapper, Integer> buildMinHierarchyLeveMap(
+			List<List<MeasureCatalogueDimension>> commonDimensionsFormMeasures) {
 		MeasureCatalogueDimension dimension;
 		HierarchyWrapper hierarchy;
 		Integer minLevelForHierarchy;
 		Integer minLevelForHierarchyTemp;
 
 		// map with the hiearchy and the list of levels
-		Map<HierarchyWrapper, Integer> minHierarchyLeveMap = new HashMap<HierarchyWrapper, Integer>();
+		Map<HierarchyWrapper, Integer> minHierarchyLeveMap = new HashMap<>();
 
-		if (commonDimensionsFormMeasures != null && commonDimensionsFormMeasures.size() > 0) {
+		if (commonDimensionsFormMeasures != null && !commonDimensionsFormMeasures.isEmpty()) {
 			int commonDimensionNumber = commonDimensionsFormMeasures.get(0).size();
 
 			// for each dimension in common we should find the min level in the hierarcy
@@ -272,19 +262,17 @@ public class InMemoryMaterializer implements IMaterializer {
 	 * @param aggreationFunction
 	 * @return
 	 */
-	private InMemoryAggregator groupBy(MeasureCatalogueMeasure measure, List<MeasureCatalogueDimension> commonDimensions,
-			IAggregationFunction aggreationFunction) {
+	private InMemoryAggregator groupBy(MeasureCatalogueMeasure measure,
+			List<MeasureCatalogueDimension> commonDimensions, IAggregationFunction aggreationFunction) {
 		IDataSet dataSet;
 		IDataStore dataStore;
-		List<Integer> hierarchiesColumnsIndexInDataSet = new ArrayList<Integer>();// columns of the datastore that contains data of the dimensions
+		List<Integer> hierarchiesColumnsIndexInDataSet = new ArrayList<>();// columns of the datastore that contains data of the dimensions
 		int measureColumnIndex = -1;
 		InMemoryAggregator inMemoryAggregator = null;
 
-		// List<IRecord> aggregatedRecords;
-		// IMetaData aggregatedDataSourceMetadata;
-		List<IFieldMetaData> newDataStoreFieldMetaData = new ArrayList<IFieldMetaData>();
-		Map<MeasureCatalogueDimension, IFieldMetaData> mapDimensionsFields = new HashMap<MeasureCatalogueDimension, IFieldMetaData>();
-		Map<IFieldMetaData, MeasureCatalogueDimension> mapFieldsDimensions = new HashMap<IFieldMetaData, MeasureCatalogueDimension>();
+		List<IFieldMetaData> newDataStoreFieldMetaData = new ArrayList<>();
+		Map<MeasureCatalogueDimension, IFieldMetaData> mapDimensionsFields = new HashMap<>();
+		Map<IFieldMetaData, MeasureCatalogueDimension> mapFieldsDimensions = new HashMap<>();
 
 		// execute dataset
 		dataSet = measure.getDataSet();
@@ -302,7 +290,7 @@ public class InMemoryMaterializer implements IMaterializer {
 			if (alias.equals(measure.getColumnName())) {
 				measureColumnIndex = i;
 				newDataStoreFieldMetaData.add(fmd);
-			} else if (commonDimensions != null && commonDimensions.size() > 0) {
+			} else if (commonDimensions != null && !commonDimensions.isEmpty()) {
 				// get the indexes of the hierarchies columns in the dataset (by alias)
 				for (Iterator iterator = commonDimensions.iterator(); iterator.hasNext();) {
 					MeasureCatalogueDimension dimension = (MeasureCatalogueDimension) iterator.next();
@@ -334,14 +322,16 @@ public class InMemoryMaterializer implements IMaterializer {
 					break;
 				} else if (j == recordLength - 1) {
 					// it's impossible that the dataset does not contains the measure
-					logger.error("No measure found in the dataset" + dataSet.getLabel() + ". It should contains " + measure.getAlias());
-					throw new SpagoBIRuntimeException("No measure found in the dataset" + dataSet.getLabel() + ". It should contains " + measure.getAlias());
+					LOGGER.error("No measure found in the dataset" + dataSet.getLabel() + ". It should contains "
+							+ measure.getAlias());
+					throw new SpagoBIRuntimeException("No measure found in the dataset" + dataSet.getLabel()
+							+ ". It should contains " + measure.getAlias());
 
 				}
 			}
 
-			inMemoryAggregator = new InMemoryAggregator(aggreationFunction, measurePosition, newDataStoreFieldMetaData, mapDimensionsFields,
-					mapFieldsDimensions, dataSet);
+			inMemoryAggregator = new InMemoryAggregator(aggreationFunction, measurePosition, newDataStoreFieldMetaData,
+					mapDimensionsFields, mapFieldsDimensions, dataSet);
 
 			// scan the datastore
 			for (int i = 0; i < dataStore.getRecordsCount(); i++) {
@@ -392,17 +382,18 @@ public class InMemoryMaterializer implements IMaterializer {
 	 * @param rolledUpMeasures2
 	 * @return
 	 */
-	private InMemoryAggregator joinMeasures(InMemoryAggregator joinedAggregator, InMemoryAggregator rolledUpMeasures2, IDataStore dataStore) {
+	private InMemoryAggregator joinMeasures(InMemoryAggregator joinedAggregator, InMemoryAggregator rolledUpMeasures2,
+			IDataStore dataStore) {
 
 		List<IRecord> joinedRecords = joinedAggregator.getAggregatedRecords();
 		List<IRecord> records2 = rolledUpMeasures2.getAggregatedRecords();
-		List<IRecord> newJoinedRecords = new ArrayList<IRecord>();
+		List<IRecord> newJoinedRecords = new ArrayList<>();
 
 		// maps the position of the columns of the second datastore with the ones of the first datastore
-		Map<Integer, Integer> records2to1DiemnsionMap = new HashMap<Integer, Integer>();
+		Map<Integer, Integer> records2to1DiemnsionMap = new HashMap<>();
 
 		// position of the measures of records 2
-		List<Integer> record2MeasurePosition = new ArrayList<Integer>();
+		List<Integer> record2MeasurePosition = new ArrayList<>();
 
 		for (int i = 0; i < rolledUpMeasures2.getFiledsMetadata().size(); i++) {
 			IFieldMetaData field2 = rolledUpMeasures2.getFiledsMetadata().get(i);
@@ -413,10 +404,12 @@ public class InMemoryMaterializer implements IMaterializer {
 
 		for (int i = 0; i < rolledUpMeasures2.getFiledsMetadata().size(); i++) {
 			IFieldMetaData field2 = rolledUpMeasures2.getFiledsMetadata().get(i);
-			if (field2.getFieldType().equals(FieldType.ATTRIBUTE) || field2.getFieldType().equals(FieldType.SPATIAL_ATTRIBUTE)) {
+			if (field2.getFieldType().equals(FieldType.ATTRIBUTE)
+					|| field2.getFieldType().equals(FieldType.SPATIAL_ATTRIBUTE)) {
 				for (int j = 0; j < joinedAggregator.getFiledsMetadata().size(); j++) {
 					IFieldMetaData field1 = joinedAggregator.getFiledsMetadata().get(j);
-					if (field1.getFieldType().equals(FieldType.ATTRIBUTE) || field2.getFieldType().equals(FieldType.SPATIAL_ATTRIBUTE)) {
+					if (field1.getFieldType().equals(FieldType.ATTRIBUTE)
+							|| field2.getFieldType().equals(FieldType.SPATIAL_ATTRIBUTE)) {
 						if (joinedAggregator.getDimension(field1).equals(rolledUpMeasures2.getDimension(field2))) {
 							records2to1DiemnsionMap.put(i, j);
 							break;
@@ -429,7 +422,8 @@ public class InMemoryMaterializer implements IMaterializer {
 		joinedAggregator.setFiledsMetadata(buildJoinedFieldMetdata(joinedAggregator, rolledUpMeasures2));
 
 		for (int i = 0; i < joinedRecords.size(); i++) {
-			IRecord joinedrecord = join(joinedRecords.get(i), records2, dataStore, records2to1DiemnsionMap, record2MeasurePosition);
+			IRecord joinedrecord = join(joinedRecords.get(i), records2, dataStore, records2to1DiemnsionMap,
+					record2MeasurePosition);
 			if (joinedrecord != null) {
 				newJoinedRecords.add(joinedrecord);
 			}
@@ -439,8 +433,9 @@ public class InMemoryMaterializer implements IMaterializer {
 		return joinedAggregator;
 	}
 
-	private List<IFieldMetaData> buildJoinedFieldMetdata(InMemoryAggregator rolledUpMeasures1, InMemoryAggregator rolledUpMeasures2) {
-		List<IFieldMetaData> fieldsMetadata = new ArrayList<IFieldMetaData>();
+	private List<IFieldMetaData> buildJoinedFieldMetdata(InMemoryAggregator rolledUpMeasures1,
+			InMemoryAggregator rolledUpMeasures2) {
+		List<IFieldMetaData> fieldsMetadata = new ArrayList<>();
 
 		// gets the fields metadata of records1
 		for (int i = 0; i < rolledUpMeasures1.getFiledsMetadata().size(); i++) {
@@ -491,7 +486,8 @@ public class InMemoryMaterializer implements IMaterializer {
 		return fieldsMetadata;
 	}
 
-	private IMetaData buildJoinedDataStoreMetdata(InMemoryAggregator rolledUpMeasures1, InMemoryAggregator rolledUpMeasures2) {
+	private IMetaData buildJoinedDataStoreMetdata(InMemoryAggregator rolledUpMeasures1,
+			InMemoryAggregator rolledUpMeasures2) {
 		IMetaData metadata = new MetaData();
 
 		// gets the fields metadata of records1
@@ -529,8 +525,8 @@ public class InMemoryMaterializer implements IMaterializer {
 	}
 
 	/**
-	 * If the dimensions of the record1 and a record of the datastore of the second measure match than execute the join. The records are grouped by the
-	 * dimensions so there can be only a match between the record1
+	 * If the dimensions of the record1 and a record of the datastore of the second measure match than execute the join. The records are grouped by the dimensions
+	 * so there can be only a match between the record1
 	 *
 	 * @param record1
 	 * @param list2Records
@@ -539,8 +535,8 @@ public class InMemoryMaterializer implements IMaterializer {
 	 * @param record2MeasurePosition
 	 * @return
 	 */
-	private IRecord join(IRecord record1, List<IRecord> list2Records, IDataStore dataStore, Map<Integer, Integer> records2to1DiemnsionMap,
-			List<Integer> record2MeasurePosition) {
+	private IRecord join(IRecord record1, List<IRecord> list2Records, IDataStore dataStore,
+			Map<Integer, Integer> records2to1DiemnsionMap, List<Integer> record2MeasurePosition) {
 		IRecord joinedRecord = new Record(dataStore);
 
 		for (int i = 0; i < list2Records.size(); i++) {
@@ -603,13 +599,14 @@ public class InMemoryMaterializer implements IMaterializer {
 		private List<List<Object>> recordsMeasuresValues;// for each record a list with the values of the measures
 		private int measureColumnIndex;// index of the measure in the record
 
-		public InMemoryAggregator(IAggregationFunction aggreationFunction, int measureColumnIndex, List<IFieldMetaData> newDataStoreFieldMetaData,
-				Map<MeasureCatalogueDimension, IFieldMetaData> mapDimensionsFields, Map<IFieldMetaData, MeasureCatalogueDimension> mapFieldsDimensions,
-				IDataSet dataSet) {
+		public InMemoryAggregator(IAggregationFunction aggreationFunction, int measureColumnIndex,
+				List<IFieldMetaData> newDataStoreFieldMetaData,
+				Map<MeasureCatalogueDimension, IFieldMetaData> mapDimensionsFields,
+				Map<IFieldMetaData, MeasureCatalogueDimension> mapFieldsDimensions, IDataSet dataSet) {
 			this.aggreationFunction = aggreationFunction;
 			this.measureColumnIndex = measureColumnIndex;
-			records = new ArrayList<IRecord>();
-			recordsMeasuresValues = new ArrayList<List<Object>>();
+			records = new ArrayList<>();
+			recordsMeasuresValues = new ArrayList<>();
 			filedsMetadata = newDataStoreFieldMetaData;
 			this.mapDimensionsFields = mapDimensionsFields;
 			this.mapFieldsDimensions = mapFieldsDimensions;
@@ -617,7 +614,7 @@ public class InMemoryMaterializer implements IMaterializer {
 		}
 
 		public InMemoryAggregator() {
-		};
+		}
 
 		public void addRecord(IRecord recordToAdd) {
 
@@ -642,7 +639,7 @@ public class InMemoryMaterializer implements IMaterializer {
 
 			if (!recordFound) {
 				records.add(recordToAdd);
-				List<Object> recordsMeasuresValue = new ArrayList<Object>();
+				List<Object> recordsMeasuresValue = new ArrayList<>();
 				recordsMeasuresValue.add(recordToAdd.getFieldAt(measureColumnIndex).getValue());
 				recordsMeasuresValues.add(recordsMeasuresValue);
 			}
@@ -656,7 +653,7 @@ public class InMemoryMaterializer implements IMaterializer {
 						List<Object> recordsMeasuresValue = recordsMeasuresValues.get(i);
 						value = (Double) executeSum(recordsMeasuresValue);
 						value = value / recordsMeasuresValue.size();
-					} else {// if(aggreationFunction.equals( AggregationFunctions.SUM_FUNCTION)){
+					} else {
 						List<Object> recordsMeasuresValue = recordsMeasuresValues.get(i);
 						value = (Double) executeSum(recordsMeasuresValue);
 					}
@@ -680,7 +677,7 @@ public class InMemoryMaterializer implements IMaterializer {
 						try {
 							sum = sum + new Double("" + valueString);
 						} catch (Exception e) {
-							logger.debug("Error parsing teh value" + valueString, e);
+							LOGGER.debug("Error parsing teh value" + valueString, e);
 						}
 					}
 				}
@@ -722,20 +719,23 @@ public class InMemoryMaterializer implements IMaterializer {
 		 * @param measure2
 		 * @return
 		 */
-		private List<List<MeasureCatalogueDimension>> getCommonDimensions(MeasureCatalogueMeasure measure1, MeasureCatalogueMeasure measure2) {
+		private List<List<MeasureCatalogueDimension>> getCommonDimensions(MeasureCatalogueMeasure measure1,
+				MeasureCatalogueMeasure measure2) {
 
-			List<MeasureCatalogueDimension> measure1DimensionsCommon = new ArrayList<MeasureCatalogueDimension>();
-			List<MeasureCatalogueDimension> measure2DimensionsCommon = new ArrayList<MeasureCatalogueDimension>();
+			List<MeasureCatalogueDimension> measure1DimensionsCommon = new ArrayList<>();
+			List<MeasureCatalogueDimension> measure2DimensionsCommon = new ArrayList<>();
 
-			List<List<MeasureCatalogueDimension>> measureDimensionsCommon = new ArrayList<List<MeasureCatalogueDimension>>();
+			List<List<MeasureCatalogueDimension>> measureDimensionsCommon = new ArrayList<>();
 
 			Set<MeasureCatalogueDimension> measure1Dimensions = (measure1.getDatasetDimension());
 			Set<MeasureCatalogueDimension> measure2Dimensions = (measure2.getDatasetDimension());
 
 			if (measure1Dimensions != null && measure2Dimensions != null) {
-				for (Iterator<MeasureCatalogueDimension> iterator1 = measure1Dimensions.iterator(); iterator1.hasNext();) {
+				for (Iterator<MeasureCatalogueDimension> iterator1 = measure1Dimensions.iterator(); iterator1
+						.hasNext();) {
 					MeasureCatalogueDimension dimension1 = iterator1.next();
-					for (Iterator<MeasureCatalogueDimension> iterator2 = measure2Dimensions.iterator(); iterator2.hasNext();) {
+					for (Iterator<MeasureCatalogueDimension> iterator2 = measure2Dimensions.iterator(); iterator2
+							.hasNext();) {
 						MeasureCatalogueDimension dimension2 = iterator2.next();
 						if (dimension1.getHierarchy() != null && dimension2.getHierarchy() != null
 								&& dimension1.getHierarchy().equals(dimension2.getHierarchy())
@@ -768,10 +768,10 @@ public class InMemoryMaterializer implements IMaterializer {
 		List<IRecord> records2 = rolledUpMeasures2.getAggregatedRecords();
 
 		// maps the position of the columns of the second datastore with the ones of the first datastore
-		Map<Integer, Integer> records2to1DiemnsionMap = new HashMap<Integer, Integer>();
+		Map<Integer, Integer> records2to1DiemnsionMap = new HashMap<>();
 
 		// position of the measures of records 2
-		List<Integer> record2MeasurePosition = new ArrayList<Integer>();
+		List<Integer> record2MeasurePosition = new ArrayList<>();
 
 		for (int i = 0; i < rolledUpMeasures2.getFiledsMetadata().size(); i++) {
 			IFieldMetaData field2 = rolledUpMeasures2.getFiledsMetadata().get(i);
@@ -782,10 +782,12 @@ public class InMemoryMaterializer implements IMaterializer {
 
 		for (int i = 0; i < rolledUpMeasures2.getFiledsMetadata().size(); i++) {
 			IFieldMetaData field2 = rolledUpMeasures2.getFiledsMetadata().get(i);
-			if (field2.getFieldType().equals(FieldType.ATTRIBUTE) || field2.getFieldType().equals(FieldType.SPATIAL_ATTRIBUTE)) {
+			if (field2.getFieldType().equals(FieldType.ATTRIBUTE)
+					|| field2.getFieldType().equals(FieldType.SPATIAL_ATTRIBUTE)) {
 				for (int j = 0; j < rolledUpMeasures1.getFiledsMetadata().size(); j++) {
 					IFieldMetaData field1 = rolledUpMeasures1.getFiledsMetadata().get(j);
-					if (field1.getFieldType().equals(FieldType.ATTRIBUTE) || field2.getFieldType().equals(FieldType.SPATIAL_ATTRIBUTE)) {
+					if (field1.getFieldType().equals(FieldType.ATTRIBUTE)
+							|| field2.getFieldType().equals(FieldType.SPATIAL_ATTRIBUTE)) {
 						if (rolledUpMeasures1.getDimension(field1).equals(rolledUpMeasures2.getDimension(field2))) {
 							records2to1DiemnsionMap.put(i, j);
 							break;
@@ -798,7 +800,8 @@ public class InMemoryMaterializer implements IMaterializer {
 		dataStore.setMetaData(buildJoinedDataStoreMetdata(rolledUpMeasures1, rolledUpMeasures2));
 
 		for (int i = 0; i < records1.size(); i++) {
-			IRecord joinedrecord = join(records1.get(i), records2, dataStore, records2to1DiemnsionMap, record2MeasurePosition);
+			IRecord joinedrecord = join(records1.get(i), records2, dataStore, records2to1DiemnsionMap,
+					record2MeasurePosition);
 			if (joinedrecord != null) {
 				dataStore.appendRecord(joinedrecord);
 			}

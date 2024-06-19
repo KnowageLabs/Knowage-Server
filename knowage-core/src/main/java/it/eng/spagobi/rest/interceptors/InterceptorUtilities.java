@@ -20,6 +20,7 @@ package it.eng.spagobi.rest.interceptors;
 
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 
 import javax.ws.rs.core.MultivaluedMap;
 
@@ -36,9 +37,10 @@ public class InterceptorUtilities {
 	 * @param multiMap
 	 * @return
 	 */
-	public static HashMap<String, String> fromMultivaluedMapToHashMap(MultivaluedMap<String, String> multiMap) {
-		HashMap<String, String> map = new HashMap<String, String>();
-		String key, value;
+	public static Map<String, String> fromMultivaluedMapToHashMap(MultivaluedMap<String, String> multiMap) {
+		Map<String, String> map = new HashMap<>();
+		String key;
+		String value;
 
 		if (multiMap != null) {
 			Iterator<String> it = multiMap.keySet().iterator();

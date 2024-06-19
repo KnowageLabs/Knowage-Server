@@ -76,21 +76,6 @@ public class ConsoleDriver extends GenericDriver {
 	}
 
 	/**
-	 * Returns a map of parameters which will be send in the request to the engine application.
-	 *
-	 * @param analyticalDocumentSubObject SubObject to execute
-	 * @param profile                     Profile of the user
-	 * @param roleName                    the name of the execution role
-	 * @param analyticalDocument          the object
-	 *
-	 * @return Map The map of the execution call parameters
-	 */
-	@Override
-	public Map getParameterMap(Object analyticalDocument, Object analyticalDocumentSubObject, IEngUserProfile profile, String roleName) {
-		return super.getParameterMap(analyticalDocument, analyticalDocumentSubObject, profile, roleName);
-	}
-
-	/**
 	 * Function not implemented. Thid method should not be called
 	 *
 	 * @param biobject The BIOBject to edit
@@ -101,7 +86,8 @@ public class ConsoleDriver extends GenericDriver {
 	 * @throws InvalidOperationRequest the invalid operation request
 	 */
 	@Override
-	public EngineURL getEditDocumentTemplateBuildUrl(Object biobject, IEngUserProfile profile) throws InvalidOperationRequest {
+	public EngineURL getEditDocumentTemplateBuildUrl(Object biobject, IEngUserProfile profile)
+			throws InvalidOperationRequest {
 		logger.warn("Function not implemented");
 		throw new InvalidOperationRequest();
 	}
@@ -117,7 +103,8 @@ public class ConsoleDriver extends GenericDriver {
 	 * @throws InvalidOperationRequest the invalid operation request
 	 */
 	@Override
-	public EngineURL getNewDocumentTemplateBuildUrl(Object biobject, IEngUserProfile profile) throws InvalidOperationRequest {
+	public EngineURL getNewDocumentTemplateBuildUrl(Object biobject, IEngUserProfile profile)
+			throws InvalidOperationRequest {
 		logger.warn("Function not implemented");
 		throw new InvalidOperationRequest();
 	}
@@ -137,7 +124,8 @@ public class ConsoleDriver extends GenericDriver {
 			parameters.put(PARAM_MODALITY, "VIEW");
 			parameters.put(PARAM_NEW_SESSION, "TRUE");
 		} catch (Throwable t) {
-			throw new RuntimeException("Impossible to guess from template extension the engine startup service to call");
+			throw new RuntimeException(
+					"Impossible to guess from template extension the engine startup service to call");
 		} finally {
 			logger.debug("OUT");
 		}
@@ -160,7 +148,8 @@ public class ConsoleDriver extends GenericDriver {
 			template = templateDAO.getBIObjectActiveTemplate(biObject.getId());
 			Assert.assertNotNull(template, "Loaded template cannot be null");
 
-			logger.debug("Active template [" + template.getName() + "] of document [" + biObject.getLabel() + "] loaded succesfully");
+			logger.debug("Active template [" + template.getName() + "] of document [" + biObject.getLabel()
+					+ "] loaded succesfully");
 		} catch (Throwable t) {
 			throw new RuntimeException("Impossible to load template for document [" + biObject.getLabel() + "]", t);
 		} finally {
@@ -203,7 +192,7 @@ public class ConsoleDriver extends GenericDriver {
 	public ArrayList<String> getDatasetAssociated(byte[] contentTemplate) throws JSONException {
 		logger.debug("IN");
 
-		ArrayList<String> datasetsLabel = new ArrayList<String>();
+		ArrayList<String> datasetsLabel = new ArrayList<>();
 		JSONObject templateContent = getTemplateAsJsonObject(contentTemplate);
 
 		// get datasets from template
