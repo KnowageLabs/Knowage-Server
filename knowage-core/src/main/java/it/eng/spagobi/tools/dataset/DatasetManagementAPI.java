@@ -993,6 +993,10 @@ public class DatasetManagementAPI {
 		DatasetActionsCheckerFactory.getDatasetActionsChecker(getUserProfile(), dataSet).canSee();
 	}
 
+	public void canSeeContent(IDataSet dataSet) throws ActionNotPermittedException {
+		DatasetActionsCheckerFactory.getDatasetActionsChecker(getUserProfile(), dataSet).canSeeContent();
+	}
+
 	public void canLoadData(IDataSet dataSet) throws ActionNotPermittedException {
 		DatasetActionsCheckerFactory.getDatasetActionsChecker(getUserProfile(), dataSet).canLoadData();
 	}

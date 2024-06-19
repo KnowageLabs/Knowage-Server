@@ -26,8 +26,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 
 import it.eng.spago.base.RequestContainer;
-import it.eng.spago.base.RequestContainerAccess;
-import it.eng.spago.base.RequestContainerPortletAccess;
 import it.eng.spago.base.SessionContainer;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spago.message.MessageBundle;
@@ -320,17 +318,7 @@ public class MessageBuilder implements IMessageBuilder, IEngineMessageBuilder {
 		logger.debug("IN");
 		String sbiMode = null;
 		if (request != null) {
-			RequestContainer aRequestContainer = null;
-			aRequestContainer = RequestContainerPortletAccess.getRequestContainer(request);
-			if (aRequestContainer == null) {
-				aRequestContainer = RequestContainerAccess.getRequestContainer(request);
-			}
-			String channelType = aRequestContainer.getChannelType();
-			if ("PORTLET".equalsIgnoreCase(channelType)) {
-				sbiMode = "PORTLET";
-			} else {
-				sbiMode = "WEB";
-			}
+			sbiMode = "WEB";
 		} else {
 			sbiMode = SingletonConfig.getInstance().getConfigValue("SPAGOBI.SPAGOBI-MODE.mode");
 			if (sbiMode == null) {

@@ -73,8 +73,6 @@ public class ExportResource extends AbstractQbeEngineResource {
 	@GET
 	@Path("/registry/csv")
 	public Response registryAsCsv() {
-		final String fileExtension = "csv";
-
 		Response ret = null;
 		ITransaction transaction = null;
 		IStatement statement = null;
@@ -108,7 +106,7 @@ public class ExportResource extends AbstractQbeEngineResource {
 			// @formatter:off
 			ret = Response.ok(retVal)
 					.header("Content-Length", tempFile.length())
-					.header("Content-Disposition", String.format("attachment; filename=\"%s.%s\"", id, fileExtension))
+					.header("Content-Disposition", String.format("attachment; filename=\"%s.%s\"", id, "csv"))
 					.build();
 			// @formatter:on
 			} catch (ClassNotFoundException | NamingException | SQLException | SpagoBIEngineException | IOException e) {
@@ -127,8 +125,6 @@ public class ExportResource extends AbstractQbeEngineResource {
 	@GET
 	@Path("/registry/spreadsheet")
 	public Response registryAsSpreadsheet() {
-		final String fileExtension = "xslx";
-
 		Response ret = null;
 		ITransaction transaction = null;
 		IStatement statement = null;
@@ -162,7 +158,7 @@ public class ExportResource extends AbstractQbeEngineResource {
 			// @formatter:off
 			ret = Response.ok(retVal)
 					.header("Content-Length", tempFile.length())
-					.header("Content-Disposition", String.format("attachment; filename=\"%s.%s\"", id, fileExtension))
+					.header("Content-Disposition", String.format("attachment; filename=\"%s.%s\"", id, "xslx"))
 					.build();
 			// @formatter:on
 			} catch (ClassNotFoundException | NamingException | SQLException | SpagoBIEngineException | IOException
