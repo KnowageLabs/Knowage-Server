@@ -79,11 +79,11 @@
 			<groupId>biz.paluch.logging</groupId>
 			<artifactId>logstash-gelf</artifactId>
 		</dependency>
-				<dependency>
-           <groupId>org.owasp</groupId>
-           <artifactId>csrfguard</artifactId>
-           <version>3.0.0</version>
-         </dependency>
+		<dependency>
+			<groupId>org.owasp</groupId>
+			<artifactId>csrfguard</artifactId>
+			<version>3.0.0</version>
+		</dependency>
 	</dependencies>
 	
 	<build>
@@ -122,20 +122,6 @@
 						<configuration>
 							<attachClasses>true</attachClasses>
 							<classesClassifier>classes</classesClassifier>
-							<warSourceExcludes>js/src/**</warSourceExcludes>
-							<webResources>
-								<resource>
-									<directory>src/main/webapp</directory>
-									<filtering>true</filtering>
-									<includes>
-										<include>**/angularImport.jsp</include>
-									</includes>
-								</resource>
-								<resource>
-									<directory>src/main/webapp/js/src</directory>
-									<targetPath>js/src-${project.version}</targetPath>
-								</resource>
-							</webResources>
 						</configuration>
 					</plugin>
 				</plugins>
