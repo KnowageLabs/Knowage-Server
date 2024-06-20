@@ -35,7 +35,7 @@ public abstract class AbstractUpdatingAlgotithmsDataManager extends AbstractSqlS
 
 	public String executeUpdate(Member[] members, double prop, Connection connection, Integer version) throws Exception {
 		// list of the coordinates for the members
-		List<IMemberCoordinates> memberCordinates = new ArrayList<IMemberCoordinates>();
+		List<IMemberCoordinates> memberCordinates = new ArrayList<>();
 
 		// init the query with the update set statement
 		StringBuffer query = new StringBuffer();

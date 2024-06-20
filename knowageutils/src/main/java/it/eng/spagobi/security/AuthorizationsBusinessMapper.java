@@ -66,7 +66,7 @@ public class AuthorizationsBusinessMapper {
 					_mapActions.put(actStr.toUpperCase(), businessProcessNames);
 				} else {
 					// Action not present, create a new List for this Action and put the businessProcess
-					List<String> businessProcessNames = new ArrayList<String>();
+					List<String> businessProcessNames = new ArrayList<>();
 					businessProcessNames.add(businessProcessName);
 					_mapActions.put(actStr.toUpperCase(), businessProcessNames);
 				}

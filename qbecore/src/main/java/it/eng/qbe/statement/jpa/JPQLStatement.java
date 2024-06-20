@@ -67,7 +67,7 @@ public class JPQLStatement extends AbstractStatement {
 		// one map of entity aliases for each queries (master query +
 		// subqueries)
 		// each map is indexed by the query id
-		Map<String, Map<String, String>> entityAliasesMaps = new HashMap<String, Map<String, String>>();
+		Map<String, Map<String, String>> entityAliasesMaps = new HashMap<>();
 
 		queryStr = compose(getQuery(), entityAliasesMaps, false);
 
@@ -110,7 +110,7 @@ public class JPQLStatement extends AbstractStatement {
 		Assert.assertTrue(!query.isEmpty(), "Input query cannot be empty (i.e. with no selected fields)");
 
 		// let's start with the query at hand
-		entityAliasesMaps.put(query.getId(), new LinkedHashMap<String, String>());
+		entityAliasesMaps.put(query.getId(), new LinkedHashMap<>());
 
 		// JPQLBusinessViewUtility viewsUtility = new
 		// JPQLBusinessViewUtility(this);
@@ -168,10 +168,10 @@ public class JPQLStatement extends AbstractStatement {
 		// one map of entity aliases for each queries (master query +
 		// subqueries)
 		// each map is indexed by the query id
-		entityAliasesMaps = new HashMap<String, Map<String, String>>();
+		entityAliasesMaps = new HashMap<>();
 
 		// let's start with the query at hand
-		entityAliasesMaps.put(getQuery().getId(), new HashMap<String, String>());
+		entityAliasesMaps.put(getQuery().getId(), new HashMap<>());
 
 		JPQLStatementSelectClause.build(this, getQuery(), entityAliasesMaps);
 		JPQLStatementWhereClause.build(this, getQuery(), entityAliasesMaps);

@@ -55,10 +55,12 @@ public class EqualPartitioningOnLeafsAllocationAlgorithm extends AbstractAllocat
 		return "SpagoBIWhatIfEngine/it.eng.spagobi.engines.whatif.model.transform.EqualPartitioningOnLeafsAllocationAlgorithm";
 	}
 
+	@Override
 	public String getName() {
 		return NAME;
 	}
 
+	@Override
 	public void setProperties(Map<String, Object> properties) {
 		if (properties != null) {
 			this.ei = (WhatIfEngineInstance) properties.get(ENGINEINSTANCE_PROPERTY);
@@ -104,14 +106,17 @@ public class EqualPartitioningOnLeafsAllocationAlgorithm extends AbstractAllocat
 		return dataManager;
 	}
 
+	@Override
 	public boolean canOverridePrevious() {
 		return true;
 	}
 
+	@Override
 	public boolean isInMemory() {
 		return true;
 	}
 
+	@Override
 	public boolean isPersistent() {
 		return true;
 	}

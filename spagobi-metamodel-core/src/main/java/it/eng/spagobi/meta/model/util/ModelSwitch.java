@@ -9,7 +9,6 @@
 **/
 package it.eng.spagobi.meta.model.util;
 
-import it.eng.spagobi.meta.model.*;
 import it.eng.spagobi.meta.model.Model;
 import it.eng.spagobi.meta.model.ModelObject;
 import it.eng.spagobi.meta.model.ModelPackage;

@@ -19,8 +19,6 @@ package it.eng.spagobi.utilities.service;
 
 import java.io.IOException;
 
-import it.eng.spagobi.utilities.engines.SpagoBIEngineException;
-
 /**
  * @author Andrea Gioia (andrea.gioia@eng.it)
  *

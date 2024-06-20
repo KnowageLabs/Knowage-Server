@@ -71,6 +71,7 @@ public class FilterIOManager {
 	/**
 	 * @deprecated 
 	 */
+	@Deprecated
 	public HttpSession getSession() {
     	return ((HttpServletRequest)getRequest()).getSession();
     }
@@ -78,6 +79,7 @@ public class FilterIOManager {
 	/**
 	 * @deprecated 
 	 */
+	@Deprecated
 	public Object getFromSession(String key) {
 		return getSession().getAttribute(key);
 	}
@@ -85,6 +87,7 @@ public class FilterIOManager {
 	/**
 	 * @deprecated 
 	 */
+	@Deprecated
 	public void setInSession(String key, Object value) {
 		getSession().setAttribute(key, value);
 	}
@@ -96,7 +99,7 @@ public class FilterIOManager {
 		
 		sessionContainer = new SpagoBIHttpSessionContainer( getSession() );	
 		
-		executionId = (String)getRequest().getParameter(EXECUTION_ID);
+		executionId = getRequest().getParameter(EXECUTION_ID);
 		contextRetriveStrategy = new ExecutionContextRetrieverStrategy( executionId );
 		
 		setContextManager( new ContextManager(sessionContainer, contextRetriveStrategy) );

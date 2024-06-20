@@ -47,7 +47,7 @@ public class NodeFilter implements Comparable<NodeFilter> {
 		this.name = m.getCaption();
 		this.visible = false;
 		this.collapsed = false;
-		this.children = new ArrayList<NodeFilter>();
+		this.children = new ArrayList<>();
 		this.leaf = m.getChildMemberCount() == 0;
 
 		if (m != null) {
@@ -75,7 +75,7 @@ public class NodeFilter implements Comparable<NodeFilter> {
 		this.uniqueName = m.getUniqueName();
 		this.name = m.getCaption();
 		this.collapsed = false;
-		this.children = new ArrayList<NodeFilter>();
+		this.children = new ArrayList<>();
 		this.leaf = m.getChildMemberCount() == 0;
 
 		int curDepth = m.getDepth();

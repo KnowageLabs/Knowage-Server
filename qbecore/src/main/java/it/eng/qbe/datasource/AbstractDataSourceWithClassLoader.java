@@ -57,41 +57,50 @@ public abstract class AbstractDataSourceWithClassLoader implements IDataSource{
 		this.wrappedDataSource = wrappedDataSource;
 	}
 	
+	@Override
 	public String getName() {
 		return wrappedDataSource.getName();
 	}
 
+	@Override
 	public IDataSourceConfiguration getConfiguration() {
 		return wrappedDataSource.getConfiguration();
 	}
 
+	@Override
 	public IModelStructure getModelStructure() {
 		Thread.currentThread().setContextClassLoader(myClassLoader);
 		return wrappedDataSource.getModelStructure();
 	}
 
+	@Override
 	public IModelAccessModality getModelAccessModality() {
 		return wrappedDataSource.getModelAccessModality();
 	}
 
+	@Override
 	public void setDataMartModelAccessModality(
 			IModelAccessModality modelAccessModality) {
 		wrappedDataSource.setDataMartModelAccessModality(modelAccessModality);
 		
 	}
 
+	@Override
 	public IModelProperties getModelI18NProperties(Locale locale) {
 		return wrappedDataSource.getModelI18NProperties(locale);
 	}
 
+	@Override
 	public boolean isOpen() {
 		return wrappedDataSource.isOpen();
 	}
 
+	@Override
 	public void close() {
 		wrappedDataSource.close();
 	}
 
+	@Override
 	public IStatement createStatement(Query query) {
 		Thread.currentThread().setContextClassLoader(myClassLoader);
 		return wrappedDataSource.createStatement(query);

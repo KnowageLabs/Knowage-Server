@@ -25,11 +25,11 @@ import static org.junit.Assert.assertNotEquals;
 public class LabeledEdgeTest {
 	@Test
 	public void testEquals() {
-		assertEquals(new LabeledEdge<String>("x", "y", "label"), new LabeledEdge<String>("x", "y", "label"));
-		assertEquals(new LabeledEdge<String>("x", "y", "label"), new LabeledEdge<String>("y", "x", "label"));
+		assertEquals(new LabeledEdge<>("x", "y", "label"), new LabeledEdge<>("x", "y", "label"));
+		assertEquals(new LabeledEdge<>("x", "y", "label"), new LabeledEdge<>("y", "x", "label"));
 		
-		assertNotEquals(new LabeledEdge<String>("x", "y", "label"), new LabeledEdge<String>("z", "y", "label"));
-		assertNotEquals(new LabeledEdge<String>("x", "y", "label"), new LabeledEdge<String>("x", "z", "label"));
-		assertNotEquals(new LabeledEdge<String>("x", "y", "label"), new LabeledEdge<String>("x", "z", "tag"));
+		assertNotEquals(new LabeledEdge<>("x", "y", "label"), new LabeledEdge<>("z", "y", "label"));
+		assertNotEquals(new LabeledEdge<>("x", "y", "label"), new LabeledEdge<>("x", "z", "label"));
+		assertNotEquals(new LabeledEdge<>("x", "y", "label"), new LabeledEdge<>("x", "z", "tag"));
 	}
 }

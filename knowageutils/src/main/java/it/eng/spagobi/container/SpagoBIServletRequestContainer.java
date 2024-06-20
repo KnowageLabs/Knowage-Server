@@ -52,18 +52,22 @@ private static Logger logger = Logger.getLogger(SpagoBIRequestContainer.class);
 		this.request = request;
 	}
 	
+	@Override
 	public Object get(String key) {
 		return getRequest().getParameter(key);
 	}
 
+	@Override
 	public List getKeys() {
 		return Collections.list( getRequest().getParameterNames() );
 	}
 
+	@Override
 	public void remove(String key) {
 		throw new UnsupportedOperationException ("Impossible to write in a ReadOnlyContainer");	
 	}
 
+	@Override
 	public void set(String key, Object value) {
 		throw new UnsupportedOperationException ("Impossible to write in a ReadOnlyContainer");	
 	}

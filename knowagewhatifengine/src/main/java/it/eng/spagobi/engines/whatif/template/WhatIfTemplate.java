@@ -48,11 +48,11 @@ public class WhatIfTemplate {
 	private IDataSource standAloneConnection;
 	private Map<String, String> xmlaServerProperties;
 	private SpagoBICrossNavigationConfig crossNavigation;
-	List<TargetClickable> targetsClickable = new ArrayList<TargetClickable>();
+	List<TargetClickable> targetsClickable = new ArrayList<>();
 	private final List<CalculatedField> calculatedFields = new ArrayList<>();
 
 	public WhatIfTemplate() {
-		properties = new HashMap<String, Object>();
+		properties = new HashMap<>();
 	}
 
 	public void setProperty(String pName, Object pValue) {

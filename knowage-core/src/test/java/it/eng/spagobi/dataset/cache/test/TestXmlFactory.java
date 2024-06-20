@@ -64,7 +64,7 @@ public class TestXmlFactory {
 
 		JSONObject jsonObject = getJsonObjectFromXml(xmlFileAbsolutePath);
 		JSONArray jsonDatasets = jsonObject.getJSONObject("test").getJSONArray(dataset);
-		List<IDataSource> dataSourceList = new ArrayList<IDataSource>();
+		List<IDataSource> dataSourceList = new ArrayList<>();
 		for (int i = 0; i < jsonDatasets.length(); i++) {
 			JSONObject jsonDataset = jsonDatasets.getJSONObject(i);
 			String label = jsonDataset.getString("text");
@@ -145,7 +145,7 @@ public class TestXmlFactory {
 		JSONObject jsonObject = getJsonObjectFromXml(xmlFileAbsolutePath);
 		JSONArray fields = jsonObject.getJSONObject("test").getJSONObject("table").getJSONArray("field");
 
-		Map<String, String> map = new HashMap<String, String>();
+		Map<String, String> map = new HashMap<>();
 		for (int i = 0; i < fields.length(); i++) {
 			JSONObject field = fields.getJSONObject(i);
 			map.put(field.getString("text"), field.getString(type));

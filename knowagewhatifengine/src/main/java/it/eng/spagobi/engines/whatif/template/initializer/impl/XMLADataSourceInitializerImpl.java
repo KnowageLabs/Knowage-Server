@@ -41,7 +41,7 @@ public class XMLADataSourceInitializerImpl extends AbstractInitializer {
 	@Override
 	public void init(SourceBean template, WhatIfTemplate toReturn) {
 		List<SourceBeanAttribute> xmlaConnectionProperties;
-		Map<String, String> xmlaConnectionPropertiesMap = new HashMap<String, String>();
+		Map<String, String> xmlaConnectionPropertiesMap = new HashMap<>();
 		SourceBeanAttribute aXmlaConnectionProperty;
 		String name;
 		String value;

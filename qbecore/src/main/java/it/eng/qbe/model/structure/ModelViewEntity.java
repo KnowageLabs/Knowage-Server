@@ -280,7 +280,7 @@ public class ModelViewEntity extends ModelEntity {
 		this.modelName = modelName;
 
 		entities = new ArrayList<>();
-		subEntities = new HashMap<String,IModelEntity>();
+		subEntities = new HashMap<>();
 
 		Set<String> innerEntityUniqueNames = view.getInnerEntityUniqueNames();
 		for(String innerEntityUniqueName : innerEntityUniqueNames) {

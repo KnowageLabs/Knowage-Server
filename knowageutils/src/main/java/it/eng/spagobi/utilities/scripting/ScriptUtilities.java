@@ -74,7 +74,7 @@ public class ScriptUtilities {
 		ScriptEngineManager mgr = new ScriptEngineManager();
 		List<ScriptEngineFactory> factories = mgr.getEngineFactories();
 
-		Map<String,String> names=new HashMap<String,String>();
+		Map<String,String> names=new HashMap<>();
 		for (ScriptEngineFactory factory: factories) {
 			String engName1 = factory.getEngineName(); 
 			String engVersion=factory.getEngineVersion();

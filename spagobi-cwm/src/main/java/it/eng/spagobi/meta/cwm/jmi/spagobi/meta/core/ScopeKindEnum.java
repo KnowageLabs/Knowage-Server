@@ -48,7 +48,8 @@ public final class ScopeKindEnum
 
 
 
-  public List refTypeName()
+  @Override
+public List refTypeName()
   {
     return typeName;
   }
@@ -56,7 +57,8 @@ public final class ScopeKindEnum
 
 
 
-  public String toString()
+  @Override
+public String toString()
   {
     return literalName;
   }
@@ -64,7 +66,8 @@ public final class ScopeKindEnum
 
 
 
-  public int hashCode()
+  @Override
+public int hashCode()
   {
     return literalName.hashCode();
   }
@@ -74,7 +77,8 @@ public final class ScopeKindEnum
 
 
 
-  public boolean equals(Object o)
+  @Override
+public boolean equals(Object o)
   {
     if ((o instanceof ScopeKindEnum)) return o == this;
     if ((o instanceof ScopeKind)) return o.toString().equals(literalName);

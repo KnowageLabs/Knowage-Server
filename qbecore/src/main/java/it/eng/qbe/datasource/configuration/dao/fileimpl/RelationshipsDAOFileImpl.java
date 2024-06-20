@@ -33,9 +33,7 @@ import org.json.JSONObject;
 
 import it.eng.qbe.datasource.configuration.dao.IRelationshipsDAO;
 import it.eng.qbe.model.structure.IModelRelationshipDescriptor;
-import it.eng.qbe.model.structure.IModelViewEntityDescriptor;
 import it.eng.qbe.model.structure.ModelRelationshipDescriptor;
-import it.eng.qbe.model.structure.ModelViewEntityDescriptor;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 /**
@@ -57,11 +55,12 @@ public class RelationshipsDAOFileImpl implements IRelationshipsDAO{
 	/* (non-Javadoc)
 	 * @see it.eng.qbe.datasource.configuration.dao.IRelationshipsDAO#loadModelRelationships()
 	 */
+	@Override
 	public List<IModelRelationshipDescriptor> loadModelRelationships() {
 		List<IModelRelationshipDescriptor> relationship; 
 		JSONObject relationshipsConfJSON = null;
 		
-		relationship = new ArrayList<IModelRelationshipDescriptor>();
+		relationship = new ArrayList<>();
 		
 		JarFile jarFile = null;
 		try {
@@ -125,6 +124,7 @@ public class RelationshipsDAOFileImpl implements IRelationshipsDAO{
 	/* (non-Javadoc)
 	 * @see it.eng.qbe.datasource.configuration.dao.IRelationshipsDAO#saveModelViews(java.util.List)
 	 */
+	@Override
 	public void saveModelViews(List<JSONObject> relationships) {
 		throw new SpagoBIRuntimeException("saveModelViews method not supported");
 	}

@@ -54,7 +54,7 @@ import it.eng.knowage.resourcemanager.resource.dto.FolderDTO;
 @ActiveProfiles("test")
 public class ResourceManagerResourceTest {
 
-	static List<String> allList = new ArrayList<String>();
+	static List<String> allList = new ArrayList<>();
 	private static final Logger LOGGER = Logger.getLogger(ResourceManagerResourceTest.class);
 
 	@Autowired

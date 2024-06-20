@@ -35,7 +35,7 @@ public class DB2TypeTranslator implements INativeDBTypeable{
 	private static final int MAX_CHAR_SIZE = 254;
 	private static Map<String, String> db2TypeMapping;
 	static{
-		db2TypeMapping = new HashMap<String, String>();
+		db2TypeMapping = new HashMap<>();
 		db2TypeMapping.put("java.lang.Integer", "INTEGER");//no param
 		db2TypeMapping.put("java.lang.String", "CHAR");// (n)n<32672  CHAR(n) n<=254
 		//db2TypeMapping.put("java.lang.String4001", "CLOB");
@@ -48,6 +48,7 @@ public class DB2TypeTranslator implements INativeDBTypeable{
 		db2TypeMapping.put("java.math.BigDecimal", "DECIMAL");//DECIMAL(p,s)
 	}
 	
+	@Override
 	@SuppressWarnings("rawtypes")
 	public String getNativeTypeString(String typeJavaName, Map properties) {
 		logger.debug("Translating java type "+typeJavaName+" with properties "+properties);

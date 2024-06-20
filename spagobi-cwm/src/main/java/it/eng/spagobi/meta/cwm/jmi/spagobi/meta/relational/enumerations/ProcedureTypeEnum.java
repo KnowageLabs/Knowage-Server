@@ -49,7 +49,8 @@ public final class ProcedureTypeEnum
 
 
 
-  public List refTypeName()
+  @Override
+public List refTypeName()
   {
     return typeName;
   }
@@ -57,7 +58,8 @@ public final class ProcedureTypeEnum
 
 
 
-  public String toString()
+  @Override
+public String toString()
   {
     return literalName;
   }
@@ -65,7 +67,8 @@ public final class ProcedureTypeEnum
 
 
 
-  public int hashCode()
+  @Override
+public int hashCode()
   {
     return literalName.hashCode();
   }
@@ -75,7 +78,8 @@ public final class ProcedureTypeEnum
 
 
 
-  public boolean equals(Object o)
+  @Override
+public boolean equals(Object o)
   {
     if ((o instanceof ProcedureTypeEnum)) return o == this;
     if ((o instanceof ProcedureType)) return o.toString().equals(literalName);

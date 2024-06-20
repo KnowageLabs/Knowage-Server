@@ -38,14 +38,17 @@ public class HttpServletRequestContainer extends AbstractContainer {
 		this.request = request;
 	}
 
+	@Override
 	public boolean containsProperty(String propertyName) {
 		return getProperty(propertyName) != null;
 	}
 
+	@Override
 	public Object getProperty(String propertyName) {
 		return getRequest().getParameter( propertyName );
 	}
 
+	@Override
 	public void setProperty(String propertyName, Object propertyValue) {
 		// TODO rise an unsupported operation exception		
 	}

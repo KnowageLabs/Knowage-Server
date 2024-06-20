@@ -103,8 +103,8 @@ public abstract class AbstractStatementClause implements IStatementClause {
 		newExpression = cf.getExpression();
 
 		entityAliases = (Map) entityAliasesMaps.get(query.getId());
-		fieldQueryNames = new ArrayList<String>();
-		fieldExpressionNames = new ArrayList<String>();
+		fieldQueryNames = new ArrayList<>();
+		fieldExpressionNames = new ArrayList<>();
 
 		try {
 			StatementTockenizer tokenizer = new StatementTockenizer(cf.getExpression());
@@ -252,7 +252,7 @@ public abstract class AbstractStatementClause implements IStatementClause {
 			if (s == null || s.trim().length() == 0)
 				return expr;
 			JSONArray slotsJSON = new JSONArray(s);
-			List<Slot> slots = new ArrayList<Slot>();
+			List<Slot> slots = new ArrayList<>();
 			for (int i = 0; i < slotsJSON.length(); i++) {
 				Slot slot = (Slot) SerializationManager.deserialize(slotsJSON.get(i), "application/json", Slot.class);
 				slots.add(slot);

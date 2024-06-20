@@ -312,7 +312,7 @@ public class DataStore implements IDataStore {
 	public Map<Integer, Set<String>> getFieldsDistinctValuesAsString(final List<Integer> fieldIndexes) {
 		Map<Integer, Set<String>> results = new HashMap<>(fieldIndexes.size());
 		for (Integer fieldIndex : fieldIndexes) {
-			results.put(fieldIndex, new HashSet<String>());
+			results.put(fieldIndex, new HashSet<>());
 		}
 
 		Iterator<IRecord> it = iterator();

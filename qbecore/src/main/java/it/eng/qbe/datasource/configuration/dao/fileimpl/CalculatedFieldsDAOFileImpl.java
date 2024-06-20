@@ -97,7 +97,7 @@ public class CalculatedFieldsDAOFileImpl implements ICalculatedFieldsDAO {
 		File calculatedFieldsFile;
 		Map<String, List<ModelCalculatedField>> calculatedFiledsMap;
 
-		calculatedFiledsMap = new HashMap<String, List<ModelCalculatedField>>();
+		calculatedFiledsMap = new HashMap<>();
 
 		calculatedFieldsFile = getMetaCalculatedFieldsFile();
 		loadCalculatedFieldsFromFile(calculatedFieldsFile, calculatedFiledsMap);
@@ -217,7 +217,7 @@ public class CalculatedFieldsDAOFileImpl implements ICalculatedFieldsDAO {
 
 	private List<ModelCalculatedField.Slot> loadSlots(Node calculatedFieldNode) {
 
-		List<ModelCalculatedField.Slot> slots = new ArrayList<ModelCalculatedField.Slot>();
+		List<ModelCalculatedField.Slot> slots = new ArrayList<>();
 
 		Node slotBlock = calculatedFieldNode.selectSingleNode(SLOTS_TAG);
 		if (slotBlock != null) {

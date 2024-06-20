@@ -266,7 +266,7 @@ public class OrionContextSubscriber {
 	 */
 	protected String getSubscriptionRequestBody() throws JSONException, MalformedURLException, URISyntaxException {
 
-		List<String> attrs = new ArrayList<String>();
+		List<String> attrs = new ArrayList<>();
 		for (JSONPathAttribute attr : dataReader.getJsonPathAttributes()) {
 			attrs.add(attr.getName());
 		}

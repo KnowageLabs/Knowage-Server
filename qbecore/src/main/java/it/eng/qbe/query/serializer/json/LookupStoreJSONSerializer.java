@@ -39,6 +39,7 @@ import org.json.JSONObject;
  * @author Andrea Gioia (andrea.gioia@eng.it)
  * @deprecated Use JSONDataWriter instead
  */
+@Deprecated
 public class LookupStoreJSONSerializer {
 	
 	public static final String TOTAL_PROPERTY = "results";

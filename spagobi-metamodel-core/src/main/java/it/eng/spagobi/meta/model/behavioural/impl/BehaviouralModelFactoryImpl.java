@@ -9,7 +9,6 @@
 **/
 package it.eng.spagobi.meta.model.behavioural.impl;
 
-import it.eng.spagobi.meta.model.behavioural.*;
 import it.eng.spagobi.meta.model.behavioural.BehaviouralModel;
 import it.eng.spagobi.meta.model.behavioural.BehaviouralModelFactory;
 import it.eng.spagobi.meta.model.behavioural.BehaviouralModelPackage;
@@ -75,6 +74,7 @@ public class BehaviouralModelFactoryImpl extends EFactoryImpl implements Behavio
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public BehaviouralModel createBehaviouralModel() {
 		BehaviouralModelImpl behaviouralModel = new BehaviouralModelImpl();
 		return behaviouralModel;
@@ -85,6 +85,7 @@ public class BehaviouralModelFactoryImpl extends EFactoryImpl implements Behavio
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public BehaviouralModelPackage getBehaviouralModelPackage() {
 		return (BehaviouralModelPackage)getEPackage();
 	}

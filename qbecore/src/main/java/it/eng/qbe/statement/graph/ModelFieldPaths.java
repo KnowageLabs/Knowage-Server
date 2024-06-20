@@ -44,7 +44,7 @@ public class ModelFieldPaths {
 	public ModelFieldPaths(IQueryField queryField, IModelField field, Set<GraphPath<IModelEntity, Relationship>> paths ){
 		this(field, queryField);
 
-		choices = new HashSet<PathChoice>();
+		choices = new HashSet<>();
 		if(paths!=null){
 			Iterator<GraphPath<IModelEntity, Relationship>> pathsiter = paths.iterator();
 			while (pathsiter.hasNext()) {

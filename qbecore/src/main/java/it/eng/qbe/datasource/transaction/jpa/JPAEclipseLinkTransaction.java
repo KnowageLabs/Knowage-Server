@@ -35,6 +35,7 @@ public class JPAEclipseLinkTransaction  implements ITransaction{
 	/* (non-Javadoc)
 	 * @see it.eng.qbe.datasource.transaction.ITransaction#getSQLConnection()
 	 */
+	@Override
 	public java.sql.Connection getSQLConnection(){
 		java.sql.Connection connection = dataSource.getEntityManager().unwrap(java.sql.Connection.class);
 		return connection;
@@ -43,6 +44,7 @@ public class JPAEclipseLinkTransaction  implements ITransaction{
 	/* (non-Javadoc)
 	 * @see it.eng.qbe.datasource.transaction.ITransaction#open()
 	 */
+	@Override
 	public void open(){
 		dataSource.getEntityManager().getTransaction().begin();
 	}
@@ -50,6 +52,7 @@ public class JPAEclipseLinkTransaction  implements ITransaction{
 	/* (non-Javadoc)
 	 * @see it.eng.qbe.datasource.transaction.ITransaction#close()
 	 */
+	@Override
 	public void close(){
 		dataSource.getEntityManager().getTransaction().commit();
 	}

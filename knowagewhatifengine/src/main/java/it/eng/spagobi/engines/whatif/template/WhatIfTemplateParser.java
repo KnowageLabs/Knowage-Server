@@ -39,10 +39,11 @@ public class WhatIfTemplateParser implements IWhatIfTemplateParser {
 	}
 
 	private WhatIfTemplateParser() {
-		parsers = new HashMap<String, IWhatIfTemplateParser>();
+		parsers = new HashMap<>();
 		parsers.put(SourceBean.class.getName(), new WhatIfXMLTemplateParser());
 	}
 
+	@Override
 	public WhatIfTemplate parse(Object template) {
 		WhatIfTemplate qbeTemplate;
 		IWhatIfTemplateParser parser;

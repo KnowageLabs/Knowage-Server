@@ -53,6 +53,7 @@ public class StandardJPAHibernateImplDataSourceTestCase extends AbstractDataSour
 		doTests();
 	}
 	
+	@Override
 	public void doTests() {
 		super.doTests();
 		// add custom tests here
@@ -65,6 +66,8 @@ public class StandardJPAHibernateImplDataSourceTestCase extends AbstractDataSour
 		assertTrue(dataSource instanceof JPADataSource);
 	}
 	
+	@Override
 	public void doTestLabelLocalization() {}
+	@Override
 	public void doTestTooltipLocalization() {}
 }

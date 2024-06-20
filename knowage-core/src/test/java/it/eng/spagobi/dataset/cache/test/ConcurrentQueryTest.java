@@ -66,12 +66,12 @@ public class ConcurrentQueryTest {
 		dataSource.setDefaultTransactionIsolation(Connection.TRANSACTION_READ_UNCOMMITTED);
 		// dataSource.setInitialSize(100);
 
-		tasks = new ArrayList<ConcurrentQuery>();
+		tasks = new ArrayList<>();
 		executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors() * SCALE_FACTOR);
 
 		values = getPlainValues(null);
 
-		results = new HashSet<String>();
+		results = new HashSet<>();
 	}
 
 	@AfterClass
@@ -142,7 +142,7 @@ public class ConcurrentQueryTest {
 			}
 
 			ResultSet rs = statement.executeQuery();
-			Set<String> results = new HashSet<String>();
+			Set<String> results = new HashSet<>();
 			while (rs.next()) {
 				results.add(rs.getString(1));
 			}

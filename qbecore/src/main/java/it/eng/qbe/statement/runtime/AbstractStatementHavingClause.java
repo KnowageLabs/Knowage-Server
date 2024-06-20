@@ -37,6 +37,7 @@ public abstract class AbstractStatementHavingClause extends AbstractStatementFil
 
 	public static final String HAVING = "HAVING";
 	
+	@Override
 	public String buildClause(Query query, Map<String, Map<String, String>> entityAliasesMaps) {
 		
 		StringBuffer buffer = new StringBuffer();
@@ -55,7 +56,7 @@ public abstract class AbstractStatementHavingClause extends AbstractStatementFil
 					String havingClauseElement;
 					
 					IConditionalOperator conditionalOperator = null;
-					conditionalOperator = (IConditionalOperator)JPQLStatementConditionalOperators.getOperator( havingField.getOperator() );
+					conditionalOperator = JPQLStatementConditionalOperators.getOperator( havingField.getOperator() );
 					Assert.assertNotNull(conditionalOperator, "Unsopported operator " + havingField.getOperator() + " used in query definition");
 
 					havingClauseElement =  buildInLineCalculatedFieldClause(havingField.getOperator(), havingField.getLeftOperand(), havingField.isPromptable(), havingField.getRightOperand(), query, entityAliasesMaps, conditionalOperator);

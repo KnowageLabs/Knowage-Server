@@ -17,7 +17,6 @@
  */
 package it.eng.qbe.statement;
 
-import it.eng.spagobi.utilities.exceptions.SpagoBIException;
 import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 /**

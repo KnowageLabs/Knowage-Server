@@ -17,7 +17,6 @@
  */
 package it.eng.spagobi.security.hmacfilter;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 
 import javax.servlet.Filter;

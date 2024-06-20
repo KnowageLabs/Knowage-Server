@@ -50,7 +50,7 @@ public class StatementTockenizer extends StringTokenizer {
 	}
 
 	private void getAllTockens() {
-		tockens = new ArrayList<String>();
+		tockens = new ArrayList<>();
 		while (super.hasMoreTokens()) {
 			parseTocken(super.nextToken());
 		}

@@ -20,7 +20,6 @@ package it.eng.spagobi.dataset.cache.impl.sqldbcache.test.mysql;
 import org.apache.log4j.Logger;
 
 import it.eng.spagobi.dataset.cache.impl.sqldbcache.test.AbstractSQLDBCacheMetadatTest;
-import it.eng.spagobi.dataset.cache.impl.sqldbcache.test.AbstractSQLDBCacheTest;
 import it.eng.spagobi.dataset.cache.test.TestConstants;
 import it.eng.spagobi.dataset.cache.test.TestDataSourceFactory;
 
@@ -40,6 +39,7 @@ public class MySqlSQLDBCacheMetadataTest extends AbstractSQLDBCacheMetadatTest {
 	}
 	
 	//Generic tests imported from parent class	
+	@Override
 	public void testGetRequiredMemory(){
 		super.testGetRequiredMemory();
 	}

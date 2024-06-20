@@ -9,7 +9,6 @@
 **/
 package it.eng.spagobi.meta.model.business.impl;
 
-import it.eng.spagobi.meta.model.business.*;
 import it.eng.spagobi.meta.model.business.BusinessColumn;
 import it.eng.spagobi.meta.model.business.BusinessColumnSet;
 import it.eng.spagobi.meta.model.business.BusinessDomain;
@@ -95,6 +94,7 @@ public class BusinessModelFactoryImpl extends EFactoryImpl implements BusinessMo
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public BusinessModel createBusinessModel() {
 		BusinessModelImpl businessModel = new BusinessModelImpl();
 		return businessModel;
@@ -105,6 +105,7 @@ public class BusinessModelFactoryImpl extends EFactoryImpl implements BusinessMo
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public BusinessTable createBusinessTable() {
 		BusinessTableImpl businessTable = new BusinessTableImpl();
 		return businessTable;
@@ -115,6 +116,7 @@ public class BusinessModelFactoryImpl extends EFactoryImpl implements BusinessMo
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public BusinessColumn createBusinessColumn() {
 		BusinessColumnImpl businessColumn = new BusinessColumnImpl();
 		return businessColumn;
@@ -125,6 +127,7 @@ public class BusinessModelFactoryImpl extends EFactoryImpl implements BusinessMo
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public BusinessColumnSet createBusinessColumnSet() {
 		BusinessColumnSetImpl businessColumnSet = new BusinessColumnSetImpl();
 		return businessColumnSet;
@@ -135,6 +138,7 @@ public class BusinessModelFactoryImpl extends EFactoryImpl implements BusinessMo
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public BusinessRelationship createBusinessRelationship() {
 		BusinessRelationshipImpl businessRelationship = new BusinessRelationshipImpl();
 		return businessRelationship;
@@ -145,6 +149,7 @@ public class BusinessModelFactoryImpl extends EFactoryImpl implements BusinessMo
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public BusinessView createBusinessView() {
 		BusinessViewImpl businessView = new BusinessViewImpl();
 		return businessView;
@@ -155,6 +160,7 @@ public class BusinessModelFactoryImpl extends EFactoryImpl implements BusinessMo
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public BusinessDomain createBusinessDomain() {
 		BusinessDomainImpl businessDomain = new BusinessDomainImpl();
 		return businessDomain;
@@ -165,6 +171,7 @@ public class BusinessModelFactoryImpl extends EFactoryImpl implements BusinessMo
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public BusinessIdentifier createBusinessIdentifier() {
 		BusinessIdentifierImpl businessIdentifier = new BusinessIdentifierImpl();
 		return businessIdentifier;
@@ -175,6 +182,7 @@ public class BusinessModelFactoryImpl extends EFactoryImpl implements BusinessMo
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public BusinessViewInnerJoinRelationship createBusinessViewInnerJoinRelationship() {
 		BusinessViewInnerJoinRelationshipImpl businessViewInnerJoinRelationship = new BusinessViewInnerJoinRelationshipImpl();
 		return businessViewInnerJoinRelationship;
@@ -185,6 +193,7 @@ public class BusinessModelFactoryImpl extends EFactoryImpl implements BusinessMo
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public SimpleBusinessColumn createSimpleBusinessColumn() {
 		SimpleBusinessColumnImpl simpleBusinessColumn = new SimpleBusinessColumnImpl();
 		return simpleBusinessColumn;
@@ -195,6 +204,7 @@ public class BusinessModelFactoryImpl extends EFactoryImpl implements BusinessMo
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public CalculatedBusinessColumn createCalculatedBusinessColumn() {
 		CalculatedBusinessColumnImpl calculatedBusinessColumn = new CalculatedBusinessColumnImpl();
 		return calculatedBusinessColumn;
@@ -205,6 +215,7 @@ public class BusinessModelFactoryImpl extends EFactoryImpl implements BusinessMo
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public BusinessModelPackage getBusinessModelPackage() {
 		return (BusinessModelPackage)getEPackage();
 	}

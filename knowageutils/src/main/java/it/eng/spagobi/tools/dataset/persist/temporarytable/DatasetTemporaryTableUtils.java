@@ -56,7 +56,7 @@ public class DatasetTemporaryTableUtils {
 		String sqlQuery = null;
 
 		if (selectedFields == null) {
-			selectedFields = new ArrayList<String>();
+			selectedFields = new ArrayList<>();
 		}
 
 		try {

@@ -3,8 +3,6 @@
  */
 package org.hibernate.dialect;
 
-import org.hibernate.dialect.Dialect;
-
 /**
  * @author Dragan Pirkovic
  *

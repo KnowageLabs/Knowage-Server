@@ -88,6 +88,7 @@ public class DefaultResourceLocator implements IResourceLocator {
 		return fileURL;
 	}
 
+	@Override
 	public File getFile(String fileRelativePath) {
 		File toreturn;
 
@@ -165,6 +166,7 @@ public class DefaultResourceLocator implements IResourceLocator {
 		return getProperty(key, null);
 	}
 
+	@Override
 	public Object getProperty(String key, Object defaultValue) {
 		Object propertyValue;
 
@@ -174,18 +176,22 @@ public class DefaultResourceLocator implements IResourceLocator {
 		return propertyValue;
 	}
 
+	@Override
 	public String getPropertyAsString(String key) {
 		return getPropertyAsString(key, null);
 	}
 
+	@Override
 	public String getPropertyAsString(String key, String defaultValue) {
-		return (String)settings.getProperty(key, defaultValue);
+		return settings.getProperty(key, defaultValue);
 	}
 
+	@Override
 	public Integer getPropertyAsInteger(String key) {
 		return getPropertyAsInteger(key, null);
 	}
 
+	@Override
 	public Integer getPropertyAsInteger(String key, Integer defaultValue) {
 		Integer propertyValue;
 

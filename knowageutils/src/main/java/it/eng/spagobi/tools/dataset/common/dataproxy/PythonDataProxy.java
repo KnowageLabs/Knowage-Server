@@ -84,7 +84,7 @@ public class PythonDataProxy extends AbstractDataProxy {
 
 		this.address = address;
 		this.method = HttpMethod.valueOf("Post");
-		this.requestHeaders = new HashMap<String, String>(requestHeaders);
+		this.requestHeaders = new HashMap<>(requestHeaders);
 		this.requestHeaders.put("Content-Type", "application/json");
 		this.requestBody = buildBodyAsJson(pythonScript, dataframeName, parameters);
 		this.offsetParam = offsetParam;
@@ -102,7 +102,7 @@ public class PythonDataProxy extends AbstractDataProxy {
 			json.put("script", jwtToken);
 			json.put("df_name", dataframeName);
 			if (parameters != null) {
-				ArrayList<JSONObject> parametersList = new ArrayList<JSONObject>();
+				ArrayList<JSONObject> parametersList = new ArrayList<>();
 				int start = 1, end = parameters.indexOf('}'), i = 1;
 				while (end != -1) {
 					String param = parameters.substring(start, end + 1);
@@ -172,7 +172,7 @@ public class PythonDataProxy extends AbstractDataProxy {
 	}
 
 	protected List<NameValuePair> getQuery() {
-		List<NameValuePair> res = new ArrayList<NameValuePair>(3);
+		List<NameValuePair> res = new ArrayList<>(3);
 		if (offsetParam != null) {
 			if (offset != OFFSET_NOT_DEFINED) {
 				res.add(new NameValuePair(offsetParam, Integer.toString(offset)));

@@ -136,7 +136,7 @@ public abstract class AbstractBaseHttpAction extends AbstractHttpAction {
 		HashMap<String, Object> attributesMap;
 		Iterator it;
 
-		attributesMap = new HashMap<String, Object>();
+		attributesMap = new HashMap<>();
 		attributeNames = getSpagoBIRequestContainer().getKeys();
 
 		it = attributeNames.iterator();
@@ -157,7 +157,7 @@ public abstract class AbstractBaseHttpAction extends AbstractHttpAction {
 		LinkedHashMap<String, Object> attributesMap;
 		Iterator it;
 
-		attributesMap = new LinkedHashMap<String, Object>();
+		attributesMap = new LinkedHashMap<>();
 		attributeNames = getSpagoBIRequestContainer().getKeys();
 
 		it = attributeNames.iterator();

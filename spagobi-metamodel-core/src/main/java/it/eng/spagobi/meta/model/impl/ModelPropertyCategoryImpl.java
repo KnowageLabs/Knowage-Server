@@ -138,6 +138,7 @@ public class ModelPropertyCategoryImpl extends EObjectImpl implements ModelPrope
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public String getName() {
 		return name;
 	}
@@ -147,6 +148,7 @@ public class ModelPropertyCategoryImpl extends EObjectImpl implements ModelPrope
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public void setName(String newName) {
 		String oldName = name;
 		name = newName;
@@ -159,6 +161,7 @@ public class ModelPropertyCategoryImpl extends EObjectImpl implements ModelPrope
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public String getDescription() {
 		return description;
 	}
@@ -168,6 +171,7 @@ public class ModelPropertyCategoryImpl extends EObjectImpl implements ModelPrope
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public void setDescription(String newDescription) {
 		String oldDescription = description;
 		description = newDescription;
@@ -180,6 +184,7 @@ public class ModelPropertyCategoryImpl extends EObjectImpl implements ModelPrope
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public ModelPropertyCategory getParentCategory() {
 		if (parentCategory != null && parentCategory.eIsProxy()) {
 			InternalEObject oldParentCategory = (InternalEObject)parentCategory;
@@ -206,6 +211,7 @@ public class ModelPropertyCategoryImpl extends EObjectImpl implements ModelPrope
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public void setParentCategory(ModelPropertyCategory newParentCategory) {
 		ModelPropertyCategory oldParentCategory = parentCategory;
 		parentCategory = newParentCategory;
@@ -218,9 +224,10 @@ public class ModelPropertyCategoryImpl extends EObjectImpl implements ModelPrope
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EList<ModelPropertyCategory> getSubCategories() {
 		if (subCategories == null) {
-			subCategories = new EObjectResolvingEList<ModelPropertyCategory>(ModelPropertyCategory.class, this, ModelPackage.MODEL_PROPERTY_CATEGORY__SUB_CATEGORIES);
+			subCategories = new EObjectResolvingEList<>(ModelPropertyCategory.class, this, ModelPackage.MODEL_PROPERTY_CATEGORY__SUB_CATEGORIES);
 		}
 		return subCategories;
 	}
@@ -230,9 +237,10 @@ public class ModelPropertyCategoryImpl extends EObjectImpl implements ModelPrope
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public EList<ModelPropertyType> getPropertyTypes() {
 		if (propertyTypes == null) {
-			propertyTypes = new EObjectWithInverseResolvingEList<ModelPropertyType>(ModelPropertyType.class, this, ModelPackage.MODEL_PROPERTY_CATEGORY__PROPERTY_TYPES, ModelPackage.MODEL_PROPERTY_TYPE__CATEGORY);
+			propertyTypes = new EObjectWithInverseResolvingEList<>(ModelPropertyType.class, this, ModelPackage.MODEL_PROPERTY_CATEGORY__PROPERTY_TYPES, ModelPackage.MODEL_PROPERTY_TYPE__CATEGORY);
 		}
 		return propertyTypes;
 	}

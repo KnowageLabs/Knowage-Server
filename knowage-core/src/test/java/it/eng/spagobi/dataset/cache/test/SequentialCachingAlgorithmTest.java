@@ -84,32 +84,32 @@ public class SequentialCachingAlgorithmTest {
 	 */
 	@Before
 	public void setUp() throws Exception {
-		associationValues = new HashMap<String, Set<String>>();
+		associationValues = new HashMap<>();
 
-		datasets = new HashMap<String, Map<String, String>>();
-		Map<String, String> d1 = new HashMap<String, String>();
+		datasets = new HashMap<>();
+		Map<String, String> d1 = new HashMap<>();
 		d1.put("GENDER", "gender");
 		d1.put("EDUCATION", "education");
 		d1.put("STATE", "state_province");
 		datasets.put(D1, d1);
-		Map<String, String> d2 = new HashMap<String, String>();
+		Map<String, String> d2 = new HashMap<>();
 		d2.put("GENDER", "gender");
 		datasets.put(D2, d2);
-		Map<String, String> d3 = new HashMap<String, String>();
+		Map<String, String> d3 = new HashMap<>();
 		d3.put("EDUCATION", "education");
 		d3.put("STATE", "state");
 		datasets.put(D3, d3);
 
-		associations = new HashMap<String, Set<String>>();
-		Set<String> a1 = new HashSet<String>();
+		associations = new HashMap<>();
+		Set<String> a1 = new HashSet<>();
 		a1.add(D1);
 		a1.add(D2);
 		associations.put("GENDER", a1);
-		Set<String> a2 = new HashSet<String>();
+		Set<String> a2 = new HashSet<>();
 		a2.add(D1);
 		a2.add(D3);
 		associations.put("EDUCATION", a2);
-		Set<String> a3 = new HashSet<String>();
+		Set<String> a3 = new HashSet<>();
 		a3.add(D1);
 		a3.add(D3);
 		associations.put("STATE", a3);
@@ -160,14 +160,14 @@ public class SequentialCachingAlgorithmTest {
 	@SuppressWarnings("unchecked")
 	private void calculateDatasets(String dataset, String fromAssociation, String filter) throws Exception {
 
-		Map<String, String> datasetAssociation = new HashMap<String, String>(datasets.get(dataset));
+		Map<String, String> datasetAssociation = new HashMap<>(datasets.get(dataset));
 		// no need to iterate over the incoming association
 		datasetAssociation.remove(fromAssociation);
 		// iterate over all the associations
 		for (String association : datasetAssociation.keySet()) {
 			String columnName = datasetAssociation.get(association);
 			String query = "SELECT DISTINCT " + columnName + " FROM " + dataset + " WHERE " + filter;
-			Set<String> distinctValues = new HashSet<String>();
+			Set<String> distinctValues = new HashSet<>();
 			ResultSet rs = stmt.executeQuery(query);
 			while (rs.next()) {
 				distinctValues.add(rs.getString(columnName));
@@ -194,12 +194,12 @@ public class SequentialCachingAlgorithmTest {
 
 		// -------------------------------------------------
 		// Fill the set of values for the GENDER associations
-		Set<String> gender_d1 = new HashSet<String>();
+		Set<String> gender_d1 = new HashSet<>();
 		rs_d1 = stmt.executeQuery("SELECT DISTINCT gender FROM " + D1);
 		while (rs_d1.next()) {
 			gender_d1.add(rs_d1.getString("gender"));
 		}
-		Set<String> gender_d3 = new HashSet<String>();
+		Set<String> gender_d3 = new HashSet<>();
 		rs_d2 = stmt.executeQuery("SELECT DISTINCT gender FROM " + D2);
 		while (rs_d2.next()) {
 			gender_d3.add(rs_d2.getString("gender"));
@@ -210,12 +210,12 @@ public class SequentialCachingAlgorithmTest {
 
 		// -------------------------------------------------
 		// Fill the set of values for the EDUCATION associations
-		Set<String> education_d1 = new HashSet<String>();
+		Set<String> education_d1 = new HashSet<>();
 		rs_d1 = stmt.executeQuery("SELECT DISTINCT education FROM " + D1);
 		while (rs_d1.next()) {
 			education_d1.add(rs_d1.getString("education"));
 		}
-		Set<String> education_d3 = new HashSet<String>();
+		Set<String> education_d3 = new HashSet<>();
 		rs_d3 = stmt.executeQuery("SELECT DISTINCT education FROM " + D3);
 		while (rs_d3.next()) {
 			education_d3.add(rs_d3.getString("education"));
@@ -226,12 +226,12 @@ public class SequentialCachingAlgorithmTest {
 
 		// -------------------------------------------------
 		// Fill the set of values for the STATE associations
-		Set<String> state_d1 = new HashSet<String>();
+		Set<String> state_d1 = new HashSet<>();
 		rs_d1 = stmt.executeQuery("SELECT DISTINCT state_province FROM " + D1);
 		while (rs_d1.next()) {
 			state_d1.add(rs_d1.getString("state_province"));
 		}
-		Set<String> state_d3 = new HashSet<String>();
+		Set<String> state_d3 = new HashSet<>();
 		rs_d3 = stmt.executeQuery("SELECT DISTINCT state_province FROM " + D3);
 		while (rs_d3.next()) {
 			state_d3.add(rs_d3.getString("state_province"));

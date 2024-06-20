@@ -55,6 +55,7 @@ public class StandardJPAELinkImplDataSourceTestCase extends AbstractDataSourceTe
 	}
 	
 	
+	@Override
 	public void doTests() {
 		super.doTests();
 		

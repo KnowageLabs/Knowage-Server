@@ -42,7 +42,7 @@ import it.eng.spagobi.utilities.assertion.Assert;
  * @author Antonella Giachino
  */
 public class InLineFunctionsDAOFileImpl implements IInLineFunctionsDAO {
-	HashMap<String, InLineFunction> mapInLineFunctions = new HashMap<String, InLineFunction>();
+	HashMap<String, InLineFunction> mapInLineFunctions = new HashMap<>();
 
 	public static transient Logger logger = Logger.getLogger(ViewsDAOFileImpl.class);
 

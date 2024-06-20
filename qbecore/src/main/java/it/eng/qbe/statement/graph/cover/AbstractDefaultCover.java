@@ -37,43 +37,47 @@ import org.jgrapht.GraphPath;
 
 public abstract class AbstractDefaultCover implements IDefaultCoverGraph {
 
+	@Override
 	public void applyDefault(Set<ModelFieldPaths> ambiguousModelField,  Graph<IModelEntity, Relationship> rootEntitiesGraph, Set<IModelEntity> entities){
 		Map<IModelEntity, Set<GraphPath<IModelEntity, Relationship>>> defaultConnections =   getConnectingRelatiosnhips(rootEntitiesGraph, entities);	
 		applyDefault(defaultConnections, ambiguousModelField);
 	}
 	
+	@Override
 	public void applyDefault(Set<ModelFieldPaths> ambiguousModelField,   QueryGraph monimumGraph, Set<IModelEntity> entities){
 		Map<IModelEntity, Set<GraphPath<IModelEntity, Relationship>>> defaultConnections =   getConnectingRelatiosnhips( monimumGraph, entities);	
 		applyDefault(defaultConnections, ambiguousModelField);
 	}
 
+	@Override
 	public void applyDefault(Map<IModelEntity, Set<GraphPath<IModelEntity, Relationship>>> defaultConnections, Set<ModelFieldPaths> ambiguousModelField){			
 		applyDefault(defaultConnections, ambiguousModelField, false);
 	}
 	
 	
+	@Override
 	public void applyDefault(Map<IModelEntity, Set<GraphPath<IModelEntity, Relationship>>> defaultConnections, Set<ModelFieldPaths> ambiguousModelField, boolean withSubpaths){			
 		if(ambiguousModelField!=null && defaultConnections!=null){
 			Iterator<ModelFieldPaths> mfpIter = ambiguousModelField.iterator();
 			//for each ambiguous field
 			while (mfpIter.hasNext()) {
-				ModelFieldPaths modelFieldPaths = (ModelFieldPaths) mfpIter.next();
+				ModelFieldPaths modelFieldPaths = mfpIter.next();
 				IModelEntity entity = modelFieldPaths.getModelEntity();
 				if(modelFieldPaths.getChoices()!=null){
 					
 					Iterator<PathChoice> amfpChoicesIter =modelFieldPaths.getChoices().iterator();
-					List<PathChoice> activePaths = new ArrayList<PathChoice>();
+					List<PathChoice> activePaths = new ArrayList<>();
 					
 					//iterate on the choices to active them
 					while (amfpChoicesIter.hasNext()) {
-						PathChoice pathChoice = (PathChoice) amfpChoicesIter.next();
+						PathChoice pathChoice = amfpChoicesIter.next();
 						Set<GraphPath<IModelEntity, Relationship>> shortest = defaultConnections.get(entity);
 						if(shortest!=null){
 							Iterator<GraphPath<IModelEntity, Relationship>> pathIter = shortest.iterator();
 							
 							//check if the choice is contained in the shortestPath
 							while (pathIter.hasNext()) {
-								GraphPath<IModelEntity, Relationship> graphPath = (GraphPath<IModelEntity, Relationship>) pathIter.next();
+								GraphPath<IModelEntity, Relationship> graphPath = pathIter.next();
 								boolean activeChoice = pathChoice.isTheSamePath(graphPath);
 								if(activeChoice){
 									activePaths.add(pathChoice);
@@ -110,6 +114,7 @@ public abstract class AbstractDefaultCover implements IDefaultCoverGraph {
 	
 	public abstract Map<IModelEntity, Set<GraphPath<IModelEntity, Relationship>>>  getConnectingRelatiosnhips( Graph<IModelEntity, Relationship> rootEntitiesGraph, Set<IModelEntity> entities);
 		
+	@Override
 	public abstract QueryGraph  getCoverGraph( Graph<IModelEntity, Relationship> rootEntitiesGraph, Set<IModelEntity> entities);
 	
 	

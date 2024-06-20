@@ -35,27 +35,27 @@ public class EdgeGroupTest {
 
 	@Before
 	public void setUp() {
-		LabeledEdge<String> le1 = new LabeledEdge<String>("x", "y", "A1");
-		LabeledEdge<String> le2 = new LabeledEdge<String>("x", "y", "A5");
-		LabeledEdge<String> le3 = new LabeledEdge<String>("x", "z", "A5");
-		LabeledEdge<String> le4 = new LabeledEdge<String>("x", "y", "A6");
+		LabeledEdge<String> le1 = new LabeledEdge<>("x", "y", "A1");
+		LabeledEdge<String> le2 = new LabeledEdge<>("x", "y", "A5");
+		LabeledEdge<String> le3 = new LabeledEdge<>("x", "z", "A5");
+		LabeledEdge<String> le4 = new LabeledEdge<>("x", "y", "A6");
 
-		Set<LabeledEdge<String>> set1 = new HashSet<LabeledEdge<String>>();
+		Set<LabeledEdge<String>> set1 = new HashSet<>();
 		set1.add(le1);
 		set1.add(le2);
 		eg1 = new EdgeGroup(set1);
 
-		Set<LabeledEdge<String>> set2 = new HashSet<LabeledEdge<String>>();
+		Set<LabeledEdge<String>> set2 = new HashSet<>();
 		set2.add(le1);
 		set2.add(le3);
 		eg2 = new EdgeGroup(set2);
 
-		Set<LabeledEdge<String>> set3 = new HashSet<LabeledEdge<String>>();
+		Set<LabeledEdge<String>> set3 = new HashSet<>();
 		set3.add(le1);
 		set3.add(le4);
 		eg3 = new EdgeGroup(set3);
 
-		Set<LabeledEdge<String>> set4 = new HashSet<LabeledEdge<String>>();
+		Set<LabeledEdge<String>> set4 = new HashSet<>();
 		set4.add(le2);
 		set4.add(le1);
 		eg4 = new EdgeGroup(set4);

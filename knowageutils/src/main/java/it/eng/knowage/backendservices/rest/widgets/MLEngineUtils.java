@@ -47,7 +47,7 @@ public abstract class MLEngineUtils {
 		JSONArray newDataframe = new JSONArray();
 		try {
 			oldDataset = new JSONObject(knowageDs);
-			Map<String, String> columnNames = new HashMap<String, String>();
+			Map<String, String> columnNames = new HashMap<>();
 			JSONObject metaData = oldDataset.getJSONObject("metaData");
 			JSONArray fields = (JSONArray) metaData.get("fields");
 			for (int i = 1; i < fields.length(); i++) {

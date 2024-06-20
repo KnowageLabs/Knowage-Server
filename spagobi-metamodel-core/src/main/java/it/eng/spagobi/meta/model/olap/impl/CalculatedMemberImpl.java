@@ -85,6 +85,7 @@ public class CalculatedMemberImpl extends ModelObjectImpl implements CalculatedM
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public Cube getCube() {
 		if (cube != null && cube.eIsProxy()) {
 			InternalEObject oldCube = (InternalEObject)cube;
@@ -126,6 +127,7 @@ public class CalculatedMemberImpl extends ModelObjectImpl implements CalculatedM
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public void setCube(Cube newCube) {
 		if (newCube != cube) {
 			NotificationChain msgs = null;
@@ -145,6 +147,7 @@ public class CalculatedMemberImpl extends ModelObjectImpl implements CalculatedM
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public Hierarchy getHierarchy() {
 		if (hierarchy != null && hierarchy.eIsProxy()) {
 			InternalEObject oldHierarchy = (InternalEObject)hierarchy;
@@ -171,6 +174,7 @@ public class CalculatedMemberImpl extends ModelObjectImpl implements CalculatedM
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
 	public void setHierarchy(Hierarchy newHierarchy) {
 		Hierarchy oldHierarchy = hierarchy;
 		hierarchy = newHierarchy;

@@ -62,7 +62,7 @@ public class AliasesInitializerImpl extends AbstractInitializer {
 
 	private void initModelAliases(SourceBean aliasesSB, SbiAliases aliases) {
 		logger.debug("IN. loading the aliases");
-		List<SbiAlias> aliasesFound = new ArrayList<SbiAlias>();
+		List<SbiAlias> aliasesFound = new ArrayList<>();
 
 		List<SourceBean> aliasesBeans = aliasesSB.getAttributeAsList(DIMENSION_TAG);
 		if (aliasesBeans != null && aliasesBeans.size() > 0) {

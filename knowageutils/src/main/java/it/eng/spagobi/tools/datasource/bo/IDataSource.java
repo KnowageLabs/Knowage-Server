@@ -24,7 +24,6 @@ import java.util.Set;
 import javax.naming.NamingException;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 import it.eng.spago.security.IEngUserProfile;

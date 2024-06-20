@@ -28,7 +28,7 @@ import java.util.Map;
 import org.apache.log4j.Logger;
 
 public class HiveQLStatement extends SQLStatement{
-	private Map<String,String> fieldAliasMap = new HashMap<String, String>();
+	private Map<String,String> fieldAliasMap = new HashMap<>();
 	
 	public static transient Logger logger = Logger.getLogger(HiveQLStatement.class);
 	

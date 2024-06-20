@@ -9,11 +9,8 @@
 **/
 package it.eng.spagobi.meta.model.olap;
 
-import java.util.List;
-
 import it.eng.spagobi.meta.model.ModelObject;
 
-import it.eng.spagobi.meta.model.business.BusinessColumn;
 import it.eng.spagobi.meta.model.business.BusinessColumnSet;
 
 import org.eclipse.emf.common.util.EList;

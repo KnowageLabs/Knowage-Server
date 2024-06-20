@@ -34,7 +34,7 @@ import it.eng.spagobi.utilities.Helper;
  */
 public class DataStoreListenerOperator {
 
-	private final Map<String, IDataSetListener> listeners = new HashMap<String, IDataSetListener>();
+	private final Map<String, IDataSetListener> listeners = new HashMap<>();
 
 	private IDataSet dataSet;
 
@@ -61,7 +61,7 @@ public class DataStoreListenerOperator {
 	private List<ListenerResult> fireListeners(DataStoreChangedEvent event) {
 		Helper.checkNotNull(event, "event");
 
-		List<ListenerResult> res = new ArrayList<ListenerResult>();
+		List<ListenerResult> res = new ArrayList<>();
 		for (IDataSetListener l : listeners.values()) {
 			try {
 				l.dataStoreChanged(event);

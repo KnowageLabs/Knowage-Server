@@ -166,7 +166,7 @@ class MondrianOlap4jMember extends MondrianOlap4jMetadataElement implements Memb
 
 	@Override
 	public List<Member> getAncestorMembers() {
-		final List<Member> list = new ArrayList<Member>();
+		final List<Member> list = new ArrayList<>();
 		MondrianOlap4jMember m = getParentMember();
 		while (m != null) {
 			list.add(m);

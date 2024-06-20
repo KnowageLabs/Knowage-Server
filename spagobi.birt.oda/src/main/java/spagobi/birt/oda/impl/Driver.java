@@ -18,7 +18,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import spagobi.birt.oda.impl.server.Connection;
-import spagobi.birt.oda.impl.server.DataSetMetaData;
 
 
 /**
@@ -32,6 +31,7 @@ public class Driver implements IDriver
 	/*
 	 * @see org.eclipse.datatools.connectivity.oda.IDriver#getConnection(java.lang.String)
 	 */
+	@Override
 	public IConnection getConnection( String dataSourceType ) throws OdaException
 	{
         // assumes that this driver supports only one type of data source,
@@ -42,6 +42,7 @@ public class Driver implements IDriver
 	/*
 	 * @see org.eclipse.datatools.connectivity.oda.IDriver#setLogConfiguration(org.eclipse.datatools.connectivity.oda.LogConfiguration)
 	 */
+	@Override
 	public void setLogConfiguration( LogConfiguration logConfig ) throws OdaException
 	{
 		// do nothing; assumes simple driver has no logging
@@ -50,6 +51,7 @@ public class Driver implements IDriver
 	/*
 	 * @see org.eclipse.datatools.connectivity.oda.IDriver#getMaxConnections()
 	 */
+	@Override
 	public int getMaxConnections() throws OdaException
 	{
 		return 0;	// no limit
@@ -58,6 +60,7 @@ public class Driver implements IDriver
 	/*
 	 * @see org.eclipse.datatools.connectivity.oda.IDriver#setAppContext(java.lang.Object)
 	 */
+	@Override
 	public void setAppContext( Object context ) throws OdaException
 	{
 	    // do nothing; assumes no support for pass-through context

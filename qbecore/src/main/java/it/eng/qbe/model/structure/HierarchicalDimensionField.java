@@ -32,7 +32,7 @@ public class HierarchicalDimensionField extends ModelField {
 	public HierarchicalDimensionField(String name, String entity) {
 		setName(name);
 		setEntity(entity);
-		setHierarchies(new ArrayList<Hierarchy>());
+		setHierarchies(new ArrayList<>());
 	}
 
 	/**

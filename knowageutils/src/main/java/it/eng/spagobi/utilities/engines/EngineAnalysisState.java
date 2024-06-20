@@ -43,6 +43,7 @@ public abstract class EngineAnalysisState implements IEngineAnalysisState {
 	/* (non-Javadoc)
 	 * @see it.eng.spagobi.utilities.engines.IEngineAnalysisState#getProperty(java.lang.Object)
 	 */
+	@Override
 	public Object getProperty(Object pName) {
 		return properties.get( pName ); 
 	}
@@ -50,6 +51,7 @@ public abstract class EngineAnalysisState implements IEngineAnalysisState {
 	/* (non-Javadoc)
 	 * @see it.eng.spagobi.utilities.engines.IEngineAnalysisState#setProperty(java.lang.Object, java.lang.Object)
 	 */
+	@Override
 	public void setProperty(Object pName, Object pValue) {
 		properties.put( pName, pValue ); 
 	}
@@ -57,6 +59,7 @@ public abstract class EngineAnalysisState implements IEngineAnalysisState {
 	/* (non-Javadoc)
 	 * @see it.eng.spagobi.utilities.engines.IEngineAnalysisState#containsProperty(java.lang.Object)
 	 */
+	@Override
 	public boolean containsProperty(Object pName) {
 		return properties.containsKey( pName ); 
 	}
@@ -64,10 +67,12 @@ public abstract class EngineAnalysisState implements IEngineAnalysisState {
 	/* (non-Javadoc)
 	 * @see it.eng.spagobi.utilities.engines.IEngineAnalysisState#propertyNameSet()
 	 */
+	@Override
 	public Set propertyNameSet() {
 		return properties.keySet(); 
 	}
 	
+	@Override
 	public String toString() {
 		StringBuffer buffer = null;
 		Iterator it = null;

@@ -76,6 +76,7 @@ public class JDBCSharedConnectionDataProxy extends AbstractDataProxy {
 	 * @param dataReader The data reader to be used
 	 * @return the data store
 	 */
+	@Override
 	public IDataStore load(IDataReader dataReader) {
 		
 		IDataStore dataStore;
@@ -173,10 +174,12 @@ public class JDBCSharedConnectionDataProxy extends AbstractDataProxy {
 	}
 
 
+	@Override
 	public String getStatement() {
 		return statement;
 	}
 
+	@Override
 	public void setStatement(String statement) {
 		this.statement = statement;
 	}

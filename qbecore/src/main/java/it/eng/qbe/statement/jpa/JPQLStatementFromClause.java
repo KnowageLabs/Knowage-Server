@@ -67,10 +67,10 @@ public class JPQLStatementFromClause extends AbstractStatementFromClause {
 	public String buildClause(final QueryGraph queryGraph, Map<String, String> queryEntityAliases, Map entityAliasesMaps) {
 
 		List<String> fromClauseElements = new ArrayList<>();
-		List<String> joinStatments = new ArrayList<String>();
+		List<String> joinStatments = new ArrayList<>();
 
 		Set<IModelEntity> vertexSet = queryGraph.vertexSet();
-		List<IModelEntity> vertexList = new ArrayList<IModelEntity>(vertexSet);
+		List<IModelEntity> vertexList = new ArrayList<>(vertexSet);
 
 		/*
 		 * Order vertex by counting the in and out relationships, where the vertex with
@@ -95,8 +95,8 @@ public class JPQLStatementFromClause extends AbstractStatementFromClause {
 
 	List<String> recursionEntryPoint(QueryGraph queryGraph, List<IModelEntity> vertexList, Map<String, String> queryEntityAliases, Map entityAliasesMaps) {
 
-		List<String> ret = new ArrayList<String>();
-		Set<Relationship> traversedRelationships = new HashSet<Relationship>();
+		List<String> ret = new ArrayList<>();
+		Set<Relationship> traversedRelationships = new HashSet<>();
 		IModelEntity iModelEntity = vertexList.get(0);
 		String name = iModelEntity.getName();
 		String alias = getAlias(entityAliasesMaps, queryEntityAliases, iModelEntity);
@@ -111,10 +111,10 @@ public class JPQLStatementFromClause extends AbstractStatementFromClause {
 	}
 
 	private List<String> recursion(QueryGraph queryGraph, Set<Relationship> traversedRelationships, IModelEntity previousEntity, Map<String, String> queryEntityAliases, Map entityAliasesMaps) {
-		List<String> ret = new ArrayList<String>();
+		List<String> ret = new ArrayList<>();
 
 		// edgesOf() return an unmodifiable set
-		Set<Relationship> edgesOf = new HashSet<Relationship>(queryGraph.edgesOf(previousEntity));
+		Set<Relationship> edgesOf = new HashSet<>(queryGraph.edgesOf(previousEntity));
 
 		// Remove already traversed relationship
 		edgesOf.removeAll(traversedRelationships);

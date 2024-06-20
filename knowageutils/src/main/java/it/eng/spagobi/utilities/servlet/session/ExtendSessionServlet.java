@@ -33,7 +33,8 @@ import javax.servlet.http.HttpServletResponse;
  */
 public class ExtendSessionServlet extends HttpServlet {
 	
-    public void service(HttpServletRequest request, HttpServletResponse response)
+    @Override
+	public void service(HttpServletRequest request, HttpServletResponse response)
     	throws IOException, ServletException {
     	request.getSession(false);
     	response.setContentType("text/plain");

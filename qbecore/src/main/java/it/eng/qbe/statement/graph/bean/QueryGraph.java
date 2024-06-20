@@ -40,7 +40,7 @@ public class QueryGraph extends DirectedMultigraph<IModelEntity, Relationship> {
 
 	public QueryGraph(Class<? extends Relationship> edgeClass) {
 		super(edgeClass);
-		connections = new ArrayList<Relationship>();
+		connections = new ArrayList<>();
 	}
 
 	@Override

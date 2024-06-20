@@ -36,7 +36,7 @@ public class OracleTypeTranslator implements INativeDBTypeable{
 	
 	private static Map<String, String> oracleTypeMapping;
 	static{
-		oracleTypeMapping = new HashMap<String, String>();
+		oracleTypeMapping = new HashMap<>();
 		oracleTypeMapping.put("java.lang.Integer", "NUMBER");
 		oracleTypeMapping.put("java.lang.String", "CHAR");
 		oracleTypeMapping.put("java.lang.String4001", "CLOB");
@@ -51,6 +51,7 @@ public class OracleTypeTranslator implements INativeDBTypeable{
 	}
 	
 
+	@Override
 	@SuppressWarnings("rawtypes")
 	public String getNativeTypeString(String typeJavaName, Map properties) {
 		logger.debug("Translating java type "+typeJavaName+" with properties "+properties);

@@ -19,7 +19,7 @@ import junit.framework.TestCase;
 
 public class AbstractCachePerfTest extends TestCase {
 
-	protected static List<ICache> caches = new ArrayList<ICache>();
+	protected static List<ICache> caches = new ArrayList<>();
 	protected JDBCDataSet[] sqlDatasets;
 	protected List<IDataSource> dataSourceReadings;
 	protected List<IDataSource> dataSourceWritings;

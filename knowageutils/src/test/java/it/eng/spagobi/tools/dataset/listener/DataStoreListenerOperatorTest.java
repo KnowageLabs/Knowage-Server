@@ -72,14 +72,14 @@ public class DataStoreListenerOperatorTest extends TestCase {
 		List<IRecord> records = getRecords(new String[] { "1", "2", "3" }, new String[] { "3", "2", "3" }, new String[] { "2", "1", "3" });
 		store.setRecords(records);
 
-		assertEvent(null, store, records, new ArrayList<IRecord>(0), new ArrayList<IRecord>(0), -1);
+		assertEvent(null, store, records, new ArrayList<>(0), new ArrayList<>(0), -1);
 
 		// 2
 		DataStore store2 = new DataStore();
 		List<IRecord> records2 = getRecords(new String[] { "1", "10", "15" }, new String[] { "3", "2", "3" }, new String[] { "2", "A", "3" });
 		store2.setRecords(records2);
 		List<IRecord> updated = getRecords(new String[] { "1", "10", "15" }, new String[] { "2", "A", "3" });
-		assertEvent(store, store2, new ArrayList<IRecord>(0), updated, new ArrayList<IRecord>(0), 0);
+		assertEvent(store, store2, new ArrayList<>(0), updated, new ArrayList<>(0), 0);
 
 		// 3
 		DataStore store3 = new DataStore();
@@ -109,7 +109,7 @@ public class DataStoreListenerOperatorTest extends TestCase {
 	}
 
 	private static List<IRecord> getRecords(String[]... recs) {
-		List<IRecord> res = new ArrayList<IRecord>(recs.length);
+		List<IRecord> res = new ArrayList<>(recs.length);
 		for (String[] recV : recs) {
 			Record rec = new Record();
 			rec.setFields(getFields(recV));
@@ -121,7 +121,7 @@ public class DataStoreListenerOperatorTest extends TestCase {
 	}
 
 	private static List<IField> getFields(String... values) {
-		List<IField> res = new ArrayList<IField>(values.length);
+		List<IField> res = new ArrayList<>(values.length);
 		for (String v : values) {
 			Field f = new Field();
 			f.setValue(v);
