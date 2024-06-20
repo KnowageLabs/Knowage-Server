@@ -41,10 +41,10 @@ public class SbiCatalogFunction extends SbiHibernateModel {
 		return this.functionUuid;
 	}
 
-	private void setFunctionUuid(String functionUuid) {
+	public void setFunctionUuid(String functionUuid) {
 		this.functionUuid = functionUuid;
 	}
-	
+
 	public void changeFunctionUuid(String functionUuid) {
 		this.functionUuid = functionUuid;
 	}

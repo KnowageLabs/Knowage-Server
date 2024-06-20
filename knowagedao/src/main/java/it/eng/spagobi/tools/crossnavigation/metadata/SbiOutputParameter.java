@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- * 
+ *
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,7 +11,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -25,7 +25,7 @@ public class SbiOutputParameter extends SbiHibernateModel {
 
 	private static final long serialVersionUID = -5492568111739841068L;
 	/**
-	 * 
+	 *
 	 */
 	private Integer id;
 	private Integer biobjId;
@@ -37,13 +37,10 @@ public class SbiOutputParameter extends SbiHibernateModel {
 	private SbiDomains parameterType;
 	private Boolean isUserDefined;
 
-	
 	public SbiOutputParameter() {
-		super();
 	}
 
 	public SbiOutputParameter(Integer id) {
-		super();
 		this.setId(id);
 	}
 
@@ -57,11 +54,11 @@ public class SbiOutputParameter extends SbiHibernateModel {
 	public void changeId(Integer id) {
 		this.setId(id);
 	}
+
 	/**
-	 * @param id
-	 *            the id to set
+	 * @param id the id to set
 	 */
-	private void setId(Integer id) {
+	public void setId(Integer id) {
 		this.id = id;
 	}
 
@@ -73,8 +70,7 @@ public class SbiOutputParameter extends SbiHibernateModel {
 	}
 
 	/**
-	 * @param label
-	 *            the label to set
+	 * @param label the label to set
 	 */
 	public void setLabel(String label) {
 		this.label = label;
@@ -88,8 +84,7 @@ public class SbiOutputParameter extends SbiHibernateModel {
 	}
 
 	/**
-	 * @param biobjId
-	 *            the biobjId to set
+	 * @param biobjId the biobjId to set
 	 */
 	public void setBiobjId(Integer biobjId) {
 		this.biobjId = biobjId;
@@ -103,8 +98,7 @@ public class SbiOutputParameter extends SbiHibernateModel {
 	}
 
 	/**
-	 * @param biobj
-	 *            the biobj to set
+	 * @param biobj the biobj to set
 	 */
 	public void setSbiObject(SbiObjects sbiObject) {
 		this.sbiObject = sbiObject;
@@ -118,8 +112,7 @@ public class SbiOutputParameter extends SbiHibernateModel {
 	}
 
 	/**
-	 * @param parameterTypeId
-	 *            the parameterTypeId to set
+	 * @param parameterTypeId the parameterTypeId to set
 	 */
 	public void setParameterTypeId(Integer parameterTypeId) {
 		this.parameterTypeId = parameterTypeId;
@@ -133,8 +126,7 @@ public class SbiOutputParameter extends SbiHibernateModel {
 	}
 
 	/**
-	 * @param parameterType
-	 *            the parameterType to set
+	 * @param parameterType the parameterType to set
 	 */
 	public void setParameterType(SbiDomains parameterType) {
 		this.parameterType = parameterType;
@@ -148,8 +140,7 @@ public class SbiOutputParameter extends SbiHibernateModel {
 	}
 
 	/**
-	 * @param formatCode
-	 *            the formatCode to set
+	 * @param formatCode the formatCode to set
 	 */
 	public void setFormatCode(String formatCode) {
 		this.formatCode = formatCode;
@@ -163,8 +154,7 @@ public class SbiOutputParameter extends SbiHibernateModel {
 	}
 
 	/**
-	 * @param formatValue
-	 *            the formatValue to set
+	 * @param formatValue the formatValue to set
 	 */
 	public void setFormatValue(String formatValue) {
 		this.formatValue = formatValue;

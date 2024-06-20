@@ -48,12 +48,13 @@ public class SbiCrossNavigation extends SbiHibernateModel {
 	}
 
 	/**
-	 * @param id
-	 *            the id to set
+	 * @param id the id to set
 	 */
-	private void setId(Integer id) {
+	public void setId(Integer id) {
 		this.id = id;
-	}private void changeId(Integer id) {
+	}
+
+	public void changeId(Integer id) {
 		this.id = id;
 	}
 
@@ -65,8 +66,7 @@ public class SbiCrossNavigation extends SbiHibernateModel {
 	}
 
 	/**
-	 * @param name
-	 *            the name to set
+	 * @param name the name to set
 	 */
 	public void setName(String name) {
 		this.name = name;
@@ -80,8 +80,7 @@ public class SbiCrossNavigation extends SbiHibernateModel {
 	}
 
 	/**
-	 * @param description
-	 *            the description to set
+	 * @param description the description to set
 	 */
 	public void setDescription(String description) {
 		this.description = description;
@@ -95,8 +94,7 @@ public class SbiCrossNavigation extends SbiHibernateModel {
 	}
 
 	/**
-	 * @param breadcrumb
-	 *            the breadcrumb to set
+	 * @param breadcrumb the breadcrumb to set
 	 */
 	public void setBreadcrumb(String breadcrumb) {
 		this.breadcrumb = breadcrumb;
@@ -118,8 +116,7 @@ public class SbiCrossNavigation extends SbiHibernateModel {
 	}
 
 	/**
-	 * @param newRecord
-	 *            the newRecord to set
+	 * @param newRecord the newRecord to set
 	 */
 	public void setNewRecord(boolean newRecord) {
 		this.newRecord = newRecord;
@@ -133,8 +130,7 @@ public class SbiCrossNavigation extends SbiHibernateModel {
 	}
 
 	/**
-	 * @param parameters
-	 *            the parameters to set
+	 * @param parameters the parameters to set
 	 */
 	public void setSbiCrossNavigationPars(Set<SbiCrossNavigationPar> sbiCrossNavigationPars) {
 		this.sbiCrossNavigationPars = sbiCrossNavigationPars;
