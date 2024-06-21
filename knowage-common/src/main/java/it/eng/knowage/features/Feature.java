@@ -21,8 +21,8 @@ public enum Feature {
 
 	// knowage.feature.editFunctionsCatalog represents the feature that allows users to insert or modify Python/R functions from their catalog
 	EDIT_FUNCTIONS_CATALOG("knowage.feature.editFunctionsCatalog", "KNOWAGE_FEATURE_EDITFUNCTIONSCATALOG"),
-	NEW_DATASOURCE("knowage.feature.newDataSource", "KNOWAGE_FEATURE_NEWDATASOURCE"),
-	NEW_DOCUMENT("knowage.feature.newDocument", "KNOWAGE_FEATURE_NEWDOCUMENT");
+	EDIT_DATASOURCE("knowage.feature.editDataSource", "KNOWAGE_FEATURE_EDITDATASOURCE"),
+	EDIT_DOCUMENT("knowage.feature.editDocument", "KNOWAGE_FEATURE_EDITDOCUMENT");
 
 	Feature(String systemPropertyName, String envVariableName) {
 		this.systemPropertyName = systemPropertyName;
