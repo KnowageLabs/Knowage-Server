@@ -19,7 +19,6 @@ package it.eng.qbe.model.properties.initializer;
 
 import it.eng.qbe.datasource.IDataSource;
 import it.eng.qbe.datasource.hibernate.IHibernateDataSource;
-import it.eng.qbe.datasource.jpa.IJpaDataSource;
 import it.eng.qbe.datasource.jpa.JPADataSource;
 
 

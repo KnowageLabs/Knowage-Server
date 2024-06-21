@@ -699,5 +699,8 @@ class CrossNavigationParameters {
 	public void setIsInput(Boolean isInput) {
 		this.isInput = isInput;
 	}
+	
+	
+	private static final String pippo = "pluto"; 
 
 }

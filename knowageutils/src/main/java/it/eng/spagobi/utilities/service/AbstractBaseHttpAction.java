@@ -279,14 +279,8 @@ public abstract class AbstractBaseHttpAction extends AbstractHttpAction {
 	}
 
 	public void writeBackToClient(byte[] bytes, IStreamEncoder encoder, boolean inline, String contentName, String contentType) throws IOException {
-		InputStream is = null;
-		try {
-			is = new ByteArrayInputStream(bytes);
+		try (InputStream is = new ByteArrayInputStream(bytes)) {
 			writeBackToClient(is, encoder, inline, contentName, contentType);
-		} finally {
-			if (is != null) {
-				is.close();
-			}
 		}
 	}
 

@@ -419,7 +419,7 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 					}
 
 					// deletes all relations with the business class
-					Integer intDsId = Integer.valueOf(datasetId);
+					Integer intDsId = datasetId;
 					List<SbiMetaDsBc> lstBcs = DAOFactory.getSbiDsBcDAO().loadBcByDsIdAndTenant(intDsId,
 							sbiDataSet.getId().getOrganization());
 					for (SbiMetaDsBc dsBc : lstBcs) {
@@ -1646,7 +1646,7 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 
 					List<IDataSet> oldDsVersion = new ArrayList();
 
-					if (Integer.valueOf(sbiDatasetVersion.getId().getVersionNum()) != null) {
+					if (sbiDatasetVersion.getId().getVersionNum() != null) {
 						Integer dsId = sbiDatasetVersion.getId().getDsId();
 						Query hibQuery = session.createQuery("from SbiDataSet h where h.active = ? and h.id.dsId = ?");
 						hibQuery.setBoolean(0, false);
@@ -2051,7 +2051,7 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 					IDataSet ds = DataSetFactory.toDataSet(hibDataSet, this.getUserProfile());
 					List<IDataSet> oldDsVersion = new ArrayList();
 
-					if (Integer.valueOf(hibDataSet.getId().getDsId()) != null) {
+					if (hibDataSet.getId().getDsId() != null) {
 						Integer dsId = hibDataSet.getId().getDsId();
 						Query hibQuery = session.createQuery("from SbiDataSet h where h.active = ? and h.id.dsId = ?");
 						hibQuery.setBoolean(0, false);
@@ -2156,7 +2156,7 @@ public class DataSetDAOImpl extends AbstractHibernateDAO implements IDataSetDAO 
 					IDataSet ds = DataSetFactory.toDataSet(hibDataSet, this.getUserProfile());
 					List<IDataSet> oldDsVersion = new ArrayList();
 
-					if (Integer.valueOf(hibDataSet.getId().getDsId()) != null) {
+					if (hibDataSet.getId().getDsId() != null) {
 						Integer dsId = hibDataSet.getId().getDsId();
 						Query hibQuery = session.createQuery(
 								"from SbiDataSet h where h.active = ? and h.id.dsId = ?  and h.owner = ?  ");

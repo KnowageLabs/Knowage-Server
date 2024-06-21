@@ -360,7 +360,7 @@ public class CombinedCategoryBar extends LinkableBar {
 					serieScale = Integer.valueOf(serieScaleS);
 				} catch (Exception e) {
 					LOGGER.error("Not correct numebr scale; setting default 1");
-					serieScale = Integer.valueOf(1);
+					serieScale = 1;
 				}
 
 				if (serieScale.equals(2)) {
