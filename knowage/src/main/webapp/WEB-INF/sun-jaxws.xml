@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<endpoints xmlns="http://java.sun.com/xml/ns/jax-ws/ri/runtime" version="2.0">
+
+	<endpoint
+		name="SecurityService"
+		implementation="it.eng.spagobi.services.security.service.SecurityServiceImpl"
+		url-pattern="/services/SecurityService" />
+
+	<endpoint
+		name="ArtifactService"
+		implementation="it.eng.spagobi.services.artifact.service.ArtifactServiceImpl"
+		url-pattern="/services/ArtifactService" />
+
+	<endpoint
+		name="AuditService"
+		implementation="it.eng.spagobi.services.audit.service.AuditServiceImpl"
+		url-pattern="/services/AuditService" />
+
+	<endpoint
+		name="ContentService"
+		implementation="it.eng.spagobi.services.content.service.ContentServiceImpl"
+		url-pattern="/services/ContentService" />
+
+	<endpoint
+		name="DataSetService"
+		implementation="it.eng.spagobi.services.dataset.service.DataSetServiceImpl"
+		url-pattern="/services/DataSetService" />
+
+	<endpoint
+		name="DataSourceService"
+		implementation="it.eng.spagobi.services.datasource.service.DataSourceServiceImpl"
+		url-pattern="/services/DataSourceService" />
+
+	<endpoint
+		name="EventService"
+		implementation="it.eng.spagobi.services.event.service.EventServiceImpl"
+		url-pattern="/services/EventService" />
+
+	<endpoint
+		name="MetamodelService"
+		implementation="it.eng.spagobi.services.metamodel.service.MetamodelServiceImpl"
+		url-pattern="/services/MetamodelService" />
+
+	<endpoint
+		name="SchedulerService"
+		implementation="it.eng.spagobi.services.scheduler.service.SchedulerServiceImpl"
+		url-pattern="/services/SchedulerService" />
+
+	<endpoint
+		name="SbiDocumentService"
+		implementation="it.eng.spagobi.services.sbidocument.service.SbiDocumentServiceImpl"
+		url-pattern="/services/SbiDocumentService" />
+
+	<endpoint
+		name="DocumentExecuteService"
+		implementation="it.eng.spagobi.services.execute.service.DocumentExecuteServiceImpl"
+		url-pattern="/services/DocumentExecuteService" />
+
+</endpoints>
