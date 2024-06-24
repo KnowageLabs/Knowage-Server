@@ -72,6 +72,8 @@ import com.jamonapi.Monitor;
 import com.jamonapi.MonitorFactory;
 
 import edu.emory.mathcs.backport.java.util.Collections;
+import it.eng.knowage.features.Feature;
+import it.eng.knowage.rest.annotation.FeatureFlag;
 import it.eng.spago.base.RequestContainer;
 import it.eng.spago.base.RequestContainerAccess;
 import it.eng.spago.base.SessionContainer;
