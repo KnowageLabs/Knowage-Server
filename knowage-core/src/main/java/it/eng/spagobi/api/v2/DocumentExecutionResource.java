@@ -169,6 +169,7 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 	@POST
 	@Path("/url")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
+	@FeatureFlag(Feature.EDIT_DOCUMENT)
 	public Response getDocumentExecutionURL(@Context HttpServletRequest req) throws IOException, JSONException {
 
 		LOGGER.debug("IN");
@@ -501,6 +502,7 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 	@POST
 	@Path("/filters")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
+	@FeatureFlag(Feature.EDIT_DOCUMENT)
 	public Response getDocumentExecutionFilters(@Context HttpServletRequest req)
 			throws DocumentExecutionException, EMFUserError, IOException, JSONException {
 
@@ -1200,6 +1202,7 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 	@POST
 	@Path("/admissibleValuesTree")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
+	@FeatureFlag(Feature.EDIT_DOCUMENT)
 	public Response getParameterValuesV2(@Context HttpServletRequest req)
 			throws EMFUserError, IOException, JSONException {
 		return getParameterValues(req);
@@ -1312,6 +1315,7 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 	@POST
 	@Path("/canHavePublicExecutionUrl")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
+	@FeatureFlag(Feature.EDIT_DOCUMENT)
 	public Response canHavePublicExecutionUrl(@Context HttpServletRequest req) {
 		LOGGER.debug("IN");
 
@@ -1364,6 +1368,7 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 	@Path("/uploadfilemetadata")
 	@UserConstraint(functionalities = { CommunityFunctionalityConstants.DOCUMENT_METADATA_MANAGEMENT })
 	@Consumes({ MediaType.MULTIPART_FORM_DATA, MediaType.APPLICATION_JSON })
+	@FeatureFlag(Feature.EDIT_DOCUMENT)
 	public Response uploadFile(MultiPartBody input) {
 
 		byte[] bytes = null;
