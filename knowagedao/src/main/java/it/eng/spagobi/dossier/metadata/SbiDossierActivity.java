@@ -35,7 +35,10 @@ public class SbiDossierActivity extends SbiHibernateModel {
 	private byte[] pptV2BinContent;
 
 	public SbiDossierActivity(Integer id) {
-		this.id=id;
+		this.id = id;
+	}
+
+	public SbiDossierActivity() {
 	}
 
 	public String getConfigContent() {
