@@ -17,12 +17,12 @@
  */
 package it.eng.spagobi.tools.dataset.graph;
 
+import org.apache.commons.lang.StringUtils;
+
 import java.util.HashSet;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
-
-import org.apache.commons.lang.StringUtils;
 
 public class EdgeGroup {
 
@@ -32,11 +32,11 @@ public class EdgeGroup {
 	private boolean resolved = false;
 
 	public EdgeGroup(Set<LabeledEdge<String>> edges) {
-		this.edgeNames = new HashSet<>(edges.size());
+		this.edgeNames = new HashSet<String>(edges.size());
 		for (LabeledEdge<String> edge : edges) {
 			edgeNames.add(edge.getLabel());
 		}
-		SortedSet<String> orderedEdgeNames = new TreeSet<>(edgeNames);
+		SortedSet<String> orderedEdgeNames = new TreeSet<String>(edgeNames);
 		this.orderedEdgeNames = StringUtils.join(orderedEdgeNames.iterator(), ",");
 	}
 

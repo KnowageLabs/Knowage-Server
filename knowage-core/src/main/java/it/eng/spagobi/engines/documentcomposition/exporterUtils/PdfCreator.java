@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package it.eng.spagobi.engines.documentcomposition.exporter.utils;
+package it.eng.spagobi.engines.documentcomposition.exporterUtils;
 
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;

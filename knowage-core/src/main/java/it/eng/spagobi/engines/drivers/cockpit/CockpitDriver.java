@@ -34,16 +34,16 @@ import it.eng.spagobi.engines.drivers.generic.GenericDriver;
 
 public class CockpitDriver extends GenericDriver {
 
-	private static final Logger LOGGER = Logger.getLogger(CockpitDriver.class);
+	private static Logger logger = Logger.getLogger(CockpitDriver.class);
 
 	@Override
 	public ArrayList<String> getDatasetAssociated(byte[] contentTemplate) throws JSONException {
-		LOGGER.debug("IN");
+		logger.debug("IN");
 
-		ArrayList<String> datasetsLabels = new ArrayList<>();
+		ArrayList<String> datasetsLabels = new ArrayList<String>();
 		JSONObject templateContent = getTemplateAsJsonObject(contentTemplate);
 		if (templateContent == null) {
-			LOGGER.error("Template content non returned. Impossible get associated dataset. Check the template!");
+			logger.error("Template content non returned. Impossible get associated dataset. Check the template!");
 			return datasetsLabels;
 		}
 
@@ -70,18 +70,18 @@ public class CockpitDriver extends GenericDriver {
 			datasetsLabels.add(dsLabel);
 		}
 
-		LOGGER.debug("OUT");
+		logger.debug("OUT");
 		return datasetsLabels;
 	}
 
 	@Override
 	public ArrayList<String> getFunctionsAssociated(byte[] contentTemplate) throws JSONException {
-		LOGGER.debug("IN");
+		logger.debug("IN");
 
-		ArrayList<String> functionUuids = new ArrayList<>();
+		ArrayList<String> functionUuids = new ArrayList<String>();
 		JSONObject templateContent = getTemplateAsJsonObject(contentTemplate);
 		if (templateContent == null) {
-			LOGGER.error("Template content non returned. Impossible get associated functions. Check the template!");
+			logger.error("Template content non returned. Impossible get associated functions. Check the template!");
 			return functionUuids;
 		}
 
@@ -96,15 +96,13 @@ public class CockpitDriver extends GenericDriver {
 					JSONArray columnSelectedOfDataset = new JSONArray();
 					try {
 						if (widget.has("content")) {
-							columnSelectedOfDataset = widget.getJSONObject("content")
-									.optJSONArray("columnSelectedOfDataset");
+							columnSelectedOfDataset = widget.getJSONObject("content").optJSONArray("columnSelectedOfDataset");
 						} else {
 							// case chart widget
 							columnSelectedOfDataset = widget.optJSONArray("columnSelectedOfDatasetAggregations");
 						}
 					} catch (JSONException e) {
-						LOGGER.error("Something went wrong while getting functions associated to widget: " + widgetId,
-								e);
+						logger.error("Something went wrong while getting functions associated to widget: " + widgetId, e);
 						// if something went wrong the template is malformed, just skip
 					}
 					// loop on dataset columns and look for function ids
@@ -120,23 +118,22 @@ public class CockpitDriver extends GenericDriver {
 					}
 				}
 			} catch (Exception e) {
-				LOGGER.info("Old template version. New sanitification is required.");
+				logger.info("Old template version. New sanitification is required.");
 			}
 		}
 
-		LOGGER.debug("OUT");
+		logger.debug("OUT");
 		return functionUuids;
 	}
 
 	@Override
-	public EngineURL getNewDocumentTemplateBuildUrl(Object biobject, IEngUserProfile profile)
-			throws InvalidOperationRequest {
-		LOGGER.debug("IN");
+	public EngineURL getNewDocumentTemplateBuildUrl(Object biobject, IEngUserProfile profile) throws InvalidOperationRequest {
+		logger.debug("IN");
 		BIObject obj = null;
 		try {
 			obj = (BIObject) biobject;
 		} catch (ClassCastException cce) {
-			LOGGER.error("The input object is not a BIObject type", cce);
+			logger.error("The input object is not a BIObject type", cce);
 			return null;
 		}
 		Engine engine = obj.getEngine();
@@ -146,20 +143,20 @@ public class CockpitDriver extends GenericDriver {
 		parameters.put("document", documentId);
 		applySecurity(parameters, profile);
 		EngineURL engineURL = new EngineURL(url.replace("/execute", "/edit"), parameters);
-		LOGGER.debug("OUT");
+		logger.debug("OUT");
 		return engineURL;
+		// return new EngineURL("pippo.jsp", new HashMap<>());
 	}
 
 	@Override
-	public EngineURL getEditDocumentTemplateBuildUrl(Object biobject, IEngUserProfile profile)
-			throws InvalidOperationRequest {
+	public EngineURL getEditDocumentTemplateBuildUrl(Object biobject, IEngUserProfile profile) throws InvalidOperationRequest {
 		// TODO Auto-generated method stub
-		LOGGER.debug("IN");
+		logger.debug("IN");
 		BIObject obj = null;
 		try {
 			obj = (BIObject) biobject;
 		} catch (ClassCastException cce) {
-			LOGGER.error("The input object is not a BIObject type", cce);
+			logger.error("The input object is not a BIObject type", cce);
 			return null;
 		}
 		Engine engine = obj.getEngine();
@@ -169,7 +166,7 @@ public class CockpitDriver extends GenericDriver {
 		parameters.put("document", documentId);
 		applySecurity(parameters, profile);
 		EngineURL engineURL = new EngineURL(url.replace("/execute", "/edit"), parameters);
-		LOGGER.debug("OUT");
+		logger.debug("OUT");
 		return engineURL;
 	}
 }

@@ -38,7 +38,7 @@ import it.eng.spagobi.tools.dataset.service.ManageDatasets;
 
 public class DataSetSupplier {
 
-	private static final Logger LOGGER = Logger.getLogger(DataSetSupplier.class);
+	private static Logger logger = Logger.getLogger(DataSetSupplier.class);
 
 	/**
 	 * Gets the data set.
@@ -53,9 +53,9 @@ public class DataSetSupplier {
 		BIObject obj;
 		IDataSet dataSet;
 
-		LOGGER.debug("IN");
+		logger.debug("IN");
 
-		LOGGER.debug("Requested the datasource associated to document [" + documentId + "]");
+		logger.debug("Requested the datasource associated to document [" + documentId + "]");
 
 		if (documentId == null) {
 			return null;
@@ -65,12 +65,12 @@ public class DataSetSupplier {
 		try {
 			obj = DAOFactory.getBIObjectDAO().loadBIObjectById(Integer.valueOf(documentId));
 			if (obj == null) {
-				LOGGER.warn("The object with id " + documentId + " deoes not exist on database.");
+				logger.warn("The object with id " + documentId + " deoes not exist on database.");
 				return null;
 			}
 
 			if (obj.getDataSetId() == null) {
-				LOGGER.warn("Dataset is not configured for this document:" + documentId);
+				logger.warn("Dataset is not configured for this document:" + documentId);
 				return null;
 			}
 
@@ -78,16 +78,16 @@ public class DataSetSupplier {
 			dao.setUserProfile(profile);
 			dataSet = dao.loadDataSetById(obj.getDataSetId());
 			if (dataSet == null) {
-				LOGGER.warn("The dataSet with id " + obj.getDataSetId() + " deoes not exist on database.");
+				logger.warn("The dataSet with id " + obj.getDataSetId() + " deoes not exist on database.");
 				return null;
 			}
 
 			datasetConfig = dataSet.toSpagoBiDataSet();
 
 		} catch (Exception e) {
-			LOGGER.error("The dataset is not correctly returned", e);
+			logger.error("The dataset is not correctly returned", e);
 		} finally {
-			LOGGER.debug("OUT");
+			logger.debug("OUT");
 		}
 
 		return datasetConfig;
@@ -104,7 +104,7 @@ public class DataSetSupplier {
 		SpagoBiDataSet datasetConfig = null;
 		IDataSet ds = null;
 
-		LOGGER.debug("IN");
+		logger.debug("IN");
 
 		try {
 			IDataSetDAO dsDao = DAOFactory.getDataSetDAO();
@@ -113,10 +113,10 @@ public class DataSetSupplier {
 			if (ds != null) {
 				datasetConfig = ds.toSpagoBiDataSet();
 			} else {
-				LOGGER.debug("Dataset with label [" + label + "] not found");
+				logger.debug("Dataset with label [" + label + "] not found");
 			}
 		} finally {
-			LOGGER.debug("OUT");
+			logger.debug("OUT");
 		}
 
 		return datasetConfig;
@@ -133,7 +133,7 @@ public class DataSetSupplier {
 		SpagoBiDataSet datasetConfig = null;
 		IDataSet ds = null;
 
-		LOGGER.debug("IN");
+		logger.debug("IN");
 
 		try {
 			IDataSetDAO dsDao = DAOFactory.getDataSetDAO();
@@ -142,10 +142,10 @@ public class DataSetSupplier {
 			if (ds != null) {
 				datasetConfig = ds.toSpagoBiDataSet();
 			} else {
-				LOGGER.debug("Dataset with label [" + label + "] not found");
+				logger.debug("Dataset with label [" + label + "] not found");
 			}
 		} finally {
-			LOGGER.debug("OUT");
+			logger.debug("OUT");
 		}
 
 		return datasetConfig;
@@ -158,17 +158,17 @@ public class DataSetSupplier {
 	 */
 	public SpagoBiDataSet[] getAllDataSet() {
 		SpagoBiDataSet[] dataSetsConfig = null;
-
+		;
 		List datasets;
 		ArrayList tmpList;
 
-		LOGGER.debug("IN");
+		logger.debug("IN");
 
 		// gets all data source from database
 		try {
 			datasets = DAOFactory.getDataSetDAO().loadDataSets();
 			if (datasets == null) {
-				LOGGER.warn("There are no datasets defined on the database.");
+				logger.warn("There are no datasets defined on the database.");
 				return null;
 			}
 
@@ -183,9 +183,9 @@ public class DataSetSupplier {
 			dataSetsConfig = (SpagoBiDataSet[]) tmpList.toArray(new SpagoBiDataSet[tmpList.size()]);
 
 		} catch (Exception e) {
-			LOGGER.error("The data sources are not correctly returned", e);
+			logger.error("The data sources are not correctly returned", e);
 		} finally {
-			LOGGER.debug("OUT");
+			logger.debug("OUT");
 		}
 
 		return dataSetsConfig;
@@ -194,7 +194,7 @@ public class DataSetSupplier {
 	public SpagoBiDataSet saveDataSet(SpagoBiDataSet datasetConfig, IEngUserProfile profile, HttpSession session) {
 		SpagoBiDataSet toReturn = null;
 
-		LOGGER.debug("IN");
+		logger.debug("IN");
 		try {
 			String userId = ((UserProfile) profile).getUserId().toString();
 			IDataSet dataSet = DataSetFactory.getDataSet(datasetConfig, userId, session);
@@ -203,14 +203,14 @@ public class DataSetSupplier {
 			ManageDatasets md = new ManageDatasets();
 			md.setProfile(profile);
 
-			md.insertPersistenceAndScheduling(dataSet, new HashMap<>());
+			md.insertPersistenceAndScheduling(dataSet, new HashMap<String, String>());
 
 			toReturn = dataSet.toSpagoBiDataSet();
 
 		} catch (Exception e) {
-			LOGGER.error("Error while saving dataset", e);
+			logger.error("Error while saving dataset", e);
 		} finally {
-			LOGGER.debug("OUT");
+			logger.debug("OUT");
 		}
 
 		return toReturn;

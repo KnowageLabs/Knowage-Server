@@ -1,7 +1,7 @@
 /*
  * Knowage, Open Source Business Intelligence suite
  * Copyright (C) 2016 Engineering Ingegneria Informatica S.p.A.
- *
+ * 
  * Knowage is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -11,7 +11,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- *
+ * 
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -35,8 +35,7 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 public class GeoLayerJSONDeserializer {
 
-	private static final Logger LOGGER = Logger.getLogger(GeoLayerJSONDeserializer.class);
-
+	private static Logger logger = Logger.getLogger(GeoLayerJSONSerializer.class);
 	private static final String ID = "layerId";
 	private static final String NAME = "name";
 	private static final String LABEL = "label";
@@ -44,6 +43,7 @@ public class GeoLayerJSONDeserializer {
 	private static final String TYPE = "type";
 	private static final String IS_BASE_LAYER = "baseLayer";
 	private static final String PATHFILE = "pathFile";
+	private static final String LAYERDEF = "layerDef";
 	private static final String LAYERLABEL = "layerLabel";
 	private static final String LAYERNAME = "layerName";
 	private static final String LAYERIDENTIFY = "layerIdentify";
@@ -62,6 +62,7 @@ public class GeoLayerJSONDeserializer {
 			if (properties != null) {
 				GeoLayer layer = new GeoLayer();
 				JSONObject filebody = new JSONObject();
+				JSONObject rolesJSON = new JSONObject();
 				for (int i = 0; i < properties.length; i++) {
 					try {
 						if (properties[i].equals(ID)) {
@@ -97,7 +98,7 @@ public class GeoLayerJSONDeserializer {
 						} else if (properties[i].equals(LAYERORDER)) {
 							layer.setLayerOrder(new Integer(serialized.getString(properties[i])));
 						} else if (properties[i].equals(PROPERTIES)) {
-							List<String> prop = new ArrayList<>();
+							List<String> prop = new ArrayList<String>();
 							JSONArray arr = serialized.getJSONArray(properties[i]);
 							for (int j = 0; j < arr.length(); j++) {
 								JSONObject obj = new JSONObject(arr.get(j).toString());
@@ -106,8 +107,7 @@ public class GeoLayerJSONDeserializer {
 							}
 							layer.setProperties(prop);
 						} else if (properties[i].equals(GEOCATEGORY)) {
-							if (serialized.getString(properties[i]).equals("")
-									|| serialized.getString(properties[i]).equals("null")
+							if (serialized.getString(properties[i]) == "" || serialized.getString(properties[i]).equals("null")
 									|| serialized.getString(properties[i]).isEmpty()) {
 								layer.setCategory_id(null);
 							} else {
@@ -133,20 +133,22 @@ public class GeoLayerJSONDeserializer {
 						} else {
 
 							filebody.put(properties[i], serialized.get(properties[i]));
+							// rolesJSON.put(properties[i], serialized.get(properties[i]));
 						}
 					} catch (JSONException e) {
-						LOGGER.error("Error deserializing the layer.", e);
+						logger.error("Error deserializing the layer.", e);
 						throw new SpagoBIRuntimeException("Error deserializing the layer.", e);
 					}
 
 				}
-				LOGGER.debug("Layer deserialized. Label: " + layer.getLabel());
+				logger.debug("Layer deserialized. Label: " + layer.getLabel());
 				layer.setFilebody(filebody.toString().getBytes());
+				// layer.setRoles(rolesJSON.toString());
 				return layer;
 			}
 		}
 
-		LOGGER.debug("Impossible to deserialize layer. No field found");
+		logger.debug("Impossible to deserialize layer. No field found");
 		return null;
 	}
 }

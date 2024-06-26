@@ -49,7 +49,7 @@ public class SvgViewerDriver extends GenericDriver {
 
 	@Override
 	public ArrayList<String> getDatasetAssociated(byte[] contentTemplate) throws JSONException {
-		ArrayList<String> associatedDatasets = new ArrayList<>();
+		ArrayList<String> associatedDatasets = new ArrayList<String>();
 
 		SourceBean templateSB = null;
 		try {
@@ -75,6 +75,7 @@ public class SvgViewerDriver extends GenericDriver {
 			String dsLabel = (String) memberSB.getAttribute("measure_dataset");
 			logger.debug("Insert relation for dataset with label [" + dsLabel + "]");
 
+//			VersionedDataSet ds = ((VersionedDataSet) DAOFactory.getDataSetDAO().loadDataSetByLabel(dsLabel));
 			// insert only relations with new ds
 			associatedDatasets.add(dsLabel);
 		}

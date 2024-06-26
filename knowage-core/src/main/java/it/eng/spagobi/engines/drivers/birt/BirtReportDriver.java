@@ -19,7 +19,6 @@
 package it.eng.spagobi.engines.drivers.birt;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
@@ -44,7 +43,7 @@ import it.eng.spagobi.engines.drivers.exceptions.InvalidOperationRequest;
  * Driver Implementation (IEngineDriver Interface) for Birt Report Engine.
  */
 public class BirtReportDriver extends AbstractEngineDriver implements IEngineDriver {
-	private static final Logger LOGGER = Logger.getLogger(BirtReportDriver.class);
+	private static Logger logger = Logger.getLogger(BirtReportDriver.class);
 
 	/**
 	 * Returns a map of parameters which will be send in the request to the engine application.
@@ -57,13 +56,13 @@ public class BirtReportDriver extends AbstractEngineDriver implements IEngineDri
 	 */
 	@Override
 	public Map getParameterMap(Object biobject, IEngUserProfile profile, String roleName) {
-		LOGGER.debug("IN");
+		logger.debug("IN");
 		Map map = new Hashtable();
 		try {
 			BIObject biobj = (BIObject) biobject;
 			map = getMap(biobj);
 		} catch (ClassCastException cce) {
-			LOGGER.error("The parameter is not a BIObject type", cce);
+			logger.error("The parameter is not a BIObject type", cce);
 		}
 		map = applySecurity(map, profile);
 		return map;
@@ -85,12 +84,12 @@ public class BirtReportDriver extends AbstractEngineDriver implements IEngineDri
 	}
 
 	private Map getMap(BIObject biobj) {
-		LOGGER.debug("IN");
-		Map pars = new HashMap();
+		logger.debug("IN");
+		Map pars = new Hashtable();
 
 		String documentId = biobj.getId().toString();
 		pars.put("document", documentId);
-		LOGGER.debug("Add document parameter:" + documentId);
+		logger.debug("Add document parameter:" + documentId);
 
 		String documentName = biobj.getName();
 		pars.put("documentName", documentName);
@@ -102,7 +101,7 @@ public class BirtReportDriver extends AbstractEngineDriver implements IEngineDri
 		pars.put("dateformat", format);
 		pars = addBIParameters(biobj, pars);
 		pars = addBIParameterDescriptions(biobj, pars);
-		LOGGER.debug("OUT");
+		logger.debug("OUT");
 		return pars;
 	}
 
@@ -114,10 +113,10 @@ public class BirtReportDriver extends AbstractEngineDriver implements IEngineDri
 	 * @return Map The map of the execution call parameters
 	 */
 	private Map addBIParameters(BIObject biobj, Map pars) {
-		LOGGER.debug("IN");
+		logger.debug("IN");
 		if (biobj == null) {
-			LOGGER.warn("BIObject parameter null");
-			LOGGER.debug("OUT");
+			logger.warn("BIObject parameter null");
+			logger.debug("OUT");
 			return pars;
 		}
 
@@ -125,22 +124,25 @@ public class BirtReportDriver extends AbstractEngineDriver implements IEngineDri
 		if (biobj.getDrivers() != null) {
 			BIObjectParameter biobjPar = null;
 			String value = null;
-			for (Iterator<BIObjectParameter> it = biobj.getDrivers().iterator(); it.hasNext();) {
+			for (Iterator it = biobj.getDrivers().iterator(); it.hasNext();) {
 				try {
-					biobjPar = it.next();
+					biobjPar = (BIObjectParameter) it.next();
+					/*
+					 * value = (String) biobjPar.getParameterValues().get(0); pars.put(biobjPar.getParameterUrlName(), value);
+					 */
 					value = parValuesEncoder.encode(biobjPar);
-					LOGGER.debug("Parameter [" + biobjPar.getParameterUrlName() + "value is equal to [" + value + "]");
+					logger.debug("Parameter [" + biobjPar.getParameterUrlName() + "value is equal to [" + value + "]");
 					if (biobjPar.getParameterUrlName() != null && value != null) {
 						pars.put(biobjPar.getParameterUrlName(), value);
 					}
 
 				} catch (Exception e) {
-					LOGGER.debug("OUT");
-					LOGGER.warn("Error while processing a BIParameter", e);
+					logger.debug("OUT");
+					logger.warn("Error while processing a BIParameter", e);
 				}
 			}
 		}
-		LOGGER.debug("OUT");
+		logger.debug("OUT");
 		return pars;
 	}
 
@@ -155,9 +157,8 @@ public class BirtReportDriver extends AbstractEngineDriver implements IEngineDri
 	 * @throws InvalidOperationRequest the invalid operation request
 	 */
 	@Override
-	public EngineURL getEditDocumentTemplateBuildUrl(Object biobject, IEngUserProfile profile)
-			throws InvalidOperationRequest {
-		LOGGER.warn("Function not implemented");
+	public EngineURL getEditDocumentTemplateBuildUrl(Object biobject, IEngUserProfile profile) throws InvalidOperationRequest {
+		logger.warn("Function not implemented");
 		throw new InvalidOperationRequest();
 	}
 
@@ -172,18 +173,17 @@ public class BirtReportDriver extends AbstractEngineDriver implements IEngineDri
 	 * @throws InvalidOperationRequest the invalid operation request
 	 */
 	@Override
-	public EngineURL getNewDocumentTemplateBuildUrl(Object biobject, IEngUserProfile profile)
-			throws InvalidOperationRequest {
-		LOGGER.warn("Function not implemented");
+	public EngineURL getNewDocumentTemplateBuildUrl(Object biobject, IEngUserProfile profile) throws InvalidOperationRequest {
+		logger.warn("Function not implemented");
 		throw new InvalidOperationRequest();
 	}
 
 	@Override
 	public ArrayList<String> getDatasetAssociated(byte[] contentTemplate) throws JSONException {
 
-		LOGGER.debug("IN");
+		logger.debug("IN");
 
-		ArrayList<String> datasetsLabels = new ArrayList<>();
+		ArrayList<String> datasetsLabels = new ArrayList<String>();
 		SourceBean templateContent = getTemplateAsSourceBean(contentTemplate);
 
 		// get datasets from template
@@ -191,16 +191,15 @@ public class BirtReportDriver extends AbstractEngineDriver implements IEngineDri
 		SourceBean datasets = (SourceBean) templateContent.getAttribute("data-sets");
 		if (datasets != null) {
 			ArrayList<SourceBean> datasetsBI = (ArrayList<SourceBean>) datasets.getAttributeAsList("oda-data-set");
-			for (Iterator<SourceBean> iterator = datasetsBI.iterator(); iterator.hasNext();) {
-				SourceBean odaDataSet = iterator.next();
-				ArrayList<SourceBean> properties = (ArrayList<SourceBean>) odaDataSet
-						.getAttributeAsList("xml-property");
-				for (Iterator<SourceBean> iterator2 = properties.iterator(); iterator2.hasNext();) {
-					SourceBean property = iterator2.next();
+			for (Iterator iterator = datasetsBI.iterator(); iterator.hasNext();) {
+				SourceBean odaDataSet = (SourceBean) iterator.next();
+				ArrayList<SourceBean> properties = (ArrayList<SourceBean>) odaDataSet.getAttributeAsList("xml-property");
+				for (Iterator iterator2 = properties.iterator(); iterator2.hasNext();) {
+					SourceBean property = (SourceBean) iterator2.next();
 					String name = (String) property.getAttribute("name");
 					if (name != null && name.equalsIgnoreCase("queryText")) {
 						String datasetName = property.getCharacters();
-						LOGGER.debug("Found SpagoBI dataset with label: " + datasetName);
+						logger.debug("Found SpagoBI dataset with label: " + datasetName);
 						datasetsLabels.add(name);
 					}
 
@@ -208,10 +207,10 @@ public class BirtReportDriver extends AbstractEngineDriver implements IEngineDri
 			}
 
 		} else {
-			LOGGER.debug("No dataset specified in Birt template");
+			logger.debug("No dataset specified in Birt template");
 		}
 
-		LOGGER.debug("OUT");
+		logger.debug("OUT");
 		return datasetsLabels;
 
 	}

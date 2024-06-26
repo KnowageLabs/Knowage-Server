@@ -17,8 +17,8 @@
  */
 package it.eng.spagobi.engines.georeport.api.restfull;
 
-import static it.eng.spagobi.engines.georeport.api.restfull.GeoUtils.getDsFieldType;
-import static it.eng.spagobi.engines.georeport.api.restfull.GeoUtils.targetLayerAction;
+import static it.eng.spagobi.engines.georeport.api.restfull.geoUtils.getDsFieldType;
+import static it.eng.spagobi.engines.georeport.api.restfull.geoUtils.targetLayerAction;
 import it.eng.spagobi.commons.bo.UserProfile;
 import it.eng.spagobi.commons.dao.DAOConfig;
 import it.eng.spagobi.engines.georeport.GeoReportEngineInstance;
@@ -131,12 +131,12 @@ public class GeoResource extends AbstractChartEngineResource {
 	public String getTargetLayer(@Context HttpServletRequest req) throws IOException, JSONException {
 		JSONObject requestVal = RestUtilities.readBodyAsJSONObject(req);
 
-		// Boolean featureSourceType = requestVal.has(GeoUtils.FEATURE_SOURCE_TYPE);
-		// Boolean featureSource = requestVal.has(GeoUtils.FEATURE_SOURCE);
-		Boolean layerName = requestVal.has(GeoUtils.LAYER_NAME);
-		Boolean layerjoinCol = requestVal.has(GeoUtils.LAYER_JOIN_COLUMNS);
-		Boolean featureIds = requestVal.has(GeoUtils.FEATURE_IDS);
-		Boolean noDataset = requestVal.optBoolean(GeoUtils.NO_DATASET);
+		// Boolean featureSourceType = requestVal.has(geoUtils.FEATURE_SOURCE_TYPE);
+		// Boolean featureSource = requestVal.has(geoUtils.FEATURE_SOURCE);
+		Boolean layerName = requestVal.has(geoUtils.LAYER_NAME);
+		Boolean layerjoinCol = requestVal.has(geoUtils.LAYER_JOIN_COLUMNS);
+		Boolean featureIds = requestVal.has(geoUtils.FEATURE_IDS);
+		Boolean noDataset = requestVal.optBoolean(geoUtils.NO_DATASET);
 
 		if (layerName && ((layerjoinCol && featureIds) || noDataset)) {
 			return targetLayerAction(requestVal);
@@ -145,17 +145,17 @@ public class GeoResource extends AbstractChartEngineResource {
 			JSONArray ja = new JSONArray();
 			if (!layerName) {
 				JSONObject jotmp = new JSONObject();
-				jotmp.put("message", "Required " + GeoUtils.LAYER_NAME);
+				jotmp.put("message", "Required " + geoUtils.LAYER_NAME);
 				ja.put(jotmp);
 			}
 			if (!layerjoinCol) {
 				JSONObject jotmp = new JSONObject();
-				jotmp.put("message", "Required " + GeoUtils.LAYER_JOIN_COLUMNS);
+				jotmp.put("message", "Required " + geoUtils.LAYER_JOIN_COLUMNS);
 				ja.put(jotmp);
 			}
 			if (!featureIds) {
 				JSONObject jotmp = new JSONObject();
-				jotmp.put("message", "Required " + GeoUtils.FEATURE_IDS);
+				jotmp.put("message", "Required " + geoUtils.FEATURE_IDS);
 				ja.put(jotmp);
 			}
 

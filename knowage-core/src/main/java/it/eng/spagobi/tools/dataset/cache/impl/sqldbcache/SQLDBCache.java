@@ -118,7 +118,7 @@ public class SQLDBCache implements ICache {
 
 	@Override
 	public boolean contains(List<IDataSet> dataSets) {
-		return !getNotContained(dataSets).isEmpty();
+		return getNotContained(dataSets).size() > 0;
 	}
 
 	/*
@@ -129,7 +129,7 @@ public class SQLDBCache implements ICache {
 
 	@Override
 	public List<IDataSet> getNotContained(List<IDataSet> dataSets) {
-		List<IDataSet> notContainedDataSets = new ArrayList<>();
+		List<IDataSet> notContainedDataSets = new ArrayList<IDataSet>();
 		for (IDataSet dataSet : dataSets) {
 			if (!contains(dataSet)) {
 				notContainedDataSets.add(dataSet);
@@ -160,8 +160,7 @@ public class SQLDBCache implements ICache {
 				try {
 					dataSetSignature = dataSet.getSignature();
 				} catch (ParametersNotValorizedException p) {
-					logger.warn("Error on getting signature for dataset [ " + dataSet.getLabel() + " ]. Error: "
-							+ p.getMessage());
+					logger.warn("Error on getting signature for dataset [ " + dataSet.getLabel() + " ]. Error: " + p.getMessage());
 					return null; // doesn't cache data
 				}
 				dataStore = get(dataSetSignature);
@@ -198,8 +197,7 @@ public class SQLDBCache implements ICache {
 		IDataStore dataStore = null;
 		String hashedSignature = isHash ? signature : Helper.sha256(signature);
 
-		IMap mapLocks = DistributedLockFactory.getDistributedMap(SpagoBIConstants.DISTRIBUTED_MAP_INSTANCE_NAME,
-				SpagoBIConstants.DISTRIBUTED_MAP_FOR_CACHE);
+		IMap mapLocks = DistributedLockFactory.getDistributedMap(SpagoBIConstants.DISTRIBUTED_MAP_INSTANCE_NAME, SpagoBIConstants.DISTRIBUTED_MAP_FOR_CACHE);
 		try {
 			if (mapLocks.tryLock(hashedSignature, getTimeout(), TimeUnit.SECONDS, getLeaseTime(), TimeUnit.SECONDS)) {
 				try {
@@ -224,12 +222,10 @@ public class SQLDBCache implements ICache {
 					mapLocks.unlock(hashedSignature);
 				}
 			} else {
-				logger.debug("Impossible to acquire the lock for dataset [" + signature
-						+ "]. Timeout. Returning a null datastore.");
+				logger.debug("Impossible to acquire the lock for dataset [" + signature + "]. Timeout. Returning a null datastore.");
 			}
 		} catch (InterruptedException e) {
-			logger.debug("The current thread has failed to release the lock for dataset [" + hashedSignature
-					+ "] in time. Returning a null datastore.", e);
+			logger.debug("The current thread has failed to release the lock for dataset [" + hashedSignature + "] in time. Returning a null datastore.", e);
 		}
 
 		logger.debug("OUT");
@@ -237,18 +233,16 @@ public class SQLDBCache implements ICache {
 	}
 
 	@Override
-	public IDataStore get(UserProfile userProfile, IDataSet dataSet, List<AbstractSelectionField> projections,
-			Filter filter, List<AbstractSelectionField> groups, List<Sorting> sortings,
-			List<List<AbstractSelectionField>> summaryRowProjections, int offset, int fetchSize, int maxRowCount,
-			Set<String> indexes) throws DataBaseException {
+	public IDataStore get(UserProfile userProfile, IDataSet dataSet, List<AbstractSelectionField> projections, Filter filter,
+			List<AbstractSelectionField> groups, List<Sorting> sortings, List<List<AbstractSelectionField>> summaryRowProjections, int offset, int fetchSize,
+			int maxRowCount, Set<String> indexes) throws DataBaseException {
 		logger.debug("IN");
 		Assert.assertNotNull(dataSet, "Dataset cannot be null");
 		Assert.assertNotNull(userProfile, "User profile cannot be null");
 		IDataStore dataStore;
 		try {
 			dataSet.setUserProfile(userProfile);
-			dataStore = getInternal(dataSet, projections, filter, groups, sortings, summaryRowProjections, offset,
-					fetchSize, maxRowCount, indexes);
+			dataStore = getInternal(dataSet, projections, filter, groups, sortings, summaryRowProjections, offset, fetchSize, maxRowCount, indexes);
 		} finally {
 			logger.debug("OUT");
 		}
@@ -256,10 +250,9 @@ public class SQLDBCache implements ICache {
 		return dataStore;
 	}
 
-	private IDataStore getInternal(IDataSet dataSet, List<AbstractSelectionField> projections, Filter filter,
-			List<AbstractSelectionField> groups, List<Sorting> sortings,
-			List<List<AbstractSelectionField>> summaryRowProjections, int offset, int fetchSize, int maxRowCount,
-			Set<String> indexes) throws DataBaseException {
+	private IDataStore getInternal(IDataSet dataSet, List<AbstractSelectionField> projections, Filter filter, List<AbstractSelectionField> groups,
+			List<Sorting> sortings, List<List<AbstractSelectionField>> summaryRowProjections, int offset, int fetchSize, int maxRowCount, Set<String> indexes)
+			throws DataBaseException {
 		logger.debug("IN");
 
 		try {
@@ -268,8 +261,8 @@ public class SQLDBCache implements ICache {
 				logger.debug("Not found resultSet with signature [" + resultsetSignature + "] inside the Cache");
 				return null;
 			}
-			return queryStandardCachedDataset(dataSet, resultsetSignature, projections, filter, groups, sortings,
-					summaryRowProjections, offset, fetchSize, maxRowCount, indexes);
+			return queryStandardCachedDataset(dataSet, resultsetSignature, projections, filter, groups, sortings, summaryRowProjections, offset, fetchSize,
+					maxRowCount, indexes);
 
 		} finally {
 			logger.debug("OUT");
@@ -278,51 +271,43 @@ public class SQLDBCache implements ICache {
 	}
 
 	@SuppressWarnings("unchecked")
-	private IDataStore queryStandardCachedDataset(IDataSet dataSet, String resultsetSignature,
-			List<AbstractSelectionField> projections, Filter filter, List<AbstractSelectionField> groups,
-			List<Sorting> sortings, List<List<AbstractSelectionField>> summaryRowProjections, int offset, int fetchSize,
-			int maxRowCount, Set<String> indexes) {
+	private IDataStore queryStandardCachedDataset(IDataSet dataSet, String resultsetSignature, List<AbstractSelectionField> projections, Filter filter,
+			List<AbstractSelectionField> groups, List<Sorting> sortings, List<List<AbstractSelectionField>> summaryRowProjections, int offset, int fetchSize,
+			int maxRowCount, Set<String> indexes) throws DataBaseException {
 
 		IDataStore toReturn = null;
 
 		String hashedSignature = Helper.sha256(resultsetSignature);
 		Monitor timing = MonitorFactory.start("Knowage.SQLDBCache.queryStandardCachedDataset:gettingMap");
-		IMap mapLocks = DistributedLockFactory.getDistributedMap(SpagoBIConstants.DISTRIBUTED_MAP_INSTANCE_NAME,
-				SpagoBIConstants.DISTRIBUTED_MAP_FOR_CACHE);
+		IMap mapLocks = DistributedLockFactory.getDistributedMap(SpagoBIConstants.DISTRIBUTED_MAP_INSTANCE_NAME, SpagoBIConstants.DISTRIBUTED_MAP_FOR_CACHE);
 		timing.stop();
 		try {
-			timing = MonitorFactory
-					.start("Knowage.SQLDBCache.queryStandardCachedDataset:gettingLock[" + hashedSignature + "]");
+			timing = MonitorFactory.start("Knowage.SQLDBCache.queryStandardCachedDataset:gettingLock[" + hashedSignature + "]");
 			if (mapLocks.tryLock(hashedSignature, getTimeout(), TimeUnit.SECONDS, getLeaseTime(), TimeUnit.SECONDS)) {
 				timing.stop();
 
 				cacheMetadata.updateAllCacheItems(getDataSource());
 
 				try {
-					timing = MonitorFactory
-							.start("Knowage.SQLDBCache.queryStandardCachedDataset:usingLock[" + hashedSignature + "]");
+					timing = MonitorFactory.start("Knowage.SQLDBCache.queryStandardCachedDataset:usingLock[" + hashedSignature + "]");
 					if (getMetadata().containsCacheItem(resultsetSignature)) {
-						logger.debug("Found dataset with signature [" + resultsetSignature + "] and hash ["
-								+ hashedSignature + "] inside the cache");
+						logger.debug("Found dataset with signature [" + resultsetSignature + "] and hash [" + hashedSignature + "] inside the cache");
 
 						CacheItem cacheItem = getMetadata().getCacheItem(resultsetSignature);
 						cacheItem.setLastUsedDate(new Date());
 						getMetadata().updateCacheItem(cacheItem); // update DB information about this cacheItem
 
 						String tableName = cacheItem.getTable();
-						logger.debug("Found resultSet with signature [" + resultsetSignature
-								+ "] inside the Cache, table used [" + tableName + "]");
+						logger.debug("Found resultSet with signature [" + resultsetSignature + "] inside the Cache, table used [" + tableName + "]");
 
 						FlatDataSet flatDataSet = new FlatDataSet();
 						flatDataSet.setDataSource(dataSource);
 						flatDataSet.setTableName(tableName);
 						flatDataSet.setMetadata(dataSet.getMetadata());
 
-						IDatasetEvaluationStrategy strategy = DatasetEvaluationStrategyFactory
-								.get(DatasetEvaluationStrategyType.FLAT, flatDataSet, null);
+						IDatasetEvaluationStrategy strategy = DatasetEvaluationStrategyFactory.get(DatasetEvaluationStrategyType.FLAT, flatDataSet, null);
 
-						toReturn = strategy.executeQuery(projections, filter, groups, sortings, summaryRowProjections,
-								offset, fetchSize, maxRowCount, indexes);
+						toReturn = strategy.executeQuery(projections, filter, groups, sortings, summaryRowProjections, offset, fetchSize, maxRowCount, indexes);
 						toReturn.setCacheDate(cacheItem.getCreationDate());
 
 						/* CHECK IF INDEXES EXIST OR CREATE THEM */
@@ -330,22 +315,20 @@ public class SQLDBCache implements ICache {
 							Iterator<String> it = indexes.iterator();
 							while (it.hasNext()) {
 								String currInd = it.next();
-								Set<String> currIndSet = new HashSet<>();
+								Set<String> currIndSet = new HashSet<String>();
 								currIndSet.add(currInd);
 
 								PersistedTableManager persistedTableManager = new PersistedTableManager();
 								persistedTableManager.setTableName(tableName);
-								persistedTableManager
-										.setDialect(DatabaseDialect.get(getDataSource().getHibDialectClass()));
+								persistedTableManager.setDialect(DatabaseDialect.get(getDataSource().getHibDialectClass()));
 								persistedTableManager.setRowCountColumIncluded(false);
 
 								int queryTimeout;
 								try {
-									queryTimeout = Integer.parseInt(SingletonConfig.getInstance()
-											.getConfigValue("SPAGOBI.CACHE.CREATE_AND_PERSIST_TABLE.TIMEOUT"));
+									queryTimeout = Integer
+											.parseInt(SingletonConfig.getInstance().getConfigValue("SPAGOBI.CACHE.CREATE_AND_PERSIST_TABLE.TIMEOUT"));
 								} catch (NumberFormatException nfe) {
-									logger.debug(
-											"The value of SPAGOBI.CACHE.CREATE_AND_PERSIST_TABLE.TIMEOUT config must be an integer");
+									logger.debug("The value of SPAGOBI.CACHE.CREATE_AND_PERSIST_TABLE.TIMEOUT config must be an integer");
 									queryTimeout = -1;
 								}
 
@@ -358,8 +341,7 @@ public class SQLDBCache implements ICache {
 						}
 
 					} else {
-						logger.debug("Cannot find dataset with signature [" + resultsetSignature + "] and hash ["
-								+ hashedSignature + "] inside the cache");
+						logger.debug("Cannot find dataset with signature [" + resultsetSignature + "] and hash [" + hashedSignature + "] inside the cache");
 					}
 				} finally {
 					timing.stop();
@@ -367,12 +349,10 @@ public class SQLDBCache implements ICache {
 				}
 			} else {
 				timing.stop();
-				logger.debug("Impossible to acquire the lock for dataset [" + hashedSignature
-						+ "]. Timeout. Returning a null datastore.");
+				logger.debug("Impossible to acquire the lock for dataset [" + hashedSignature + "]. Timeout. Returning a null datastore.");
 			}
 		} catch (InterruptedException e) {
-			logger.debug("The current thread has failed to release the lock for dataset [" + hashedSignature
-					+ "] in time. Returning a null datastore.", e);
+			logger.debug("The current thread has failed to release the lock for dataset [" + hashedSignature + "] in time. Returning a null datastore.", e);
 		}
 		logger.debug("OUT");
 		return toReturn;
@@ -409,24 +389,20 @@ public class SQLDBCache implements ICache {
 		String signature = dataSet.getSignature();
 		String hashedSignature = Helper.sha256(signature);
 		Monitor timing = MonitorFactory.start("Knowage.SQLDBCache.putWithIterator:gettingMap");
-		IMap mapLocks = DistributedLockFactory.getDistributedMap(SpagoBIConstants.DISTRIBUTED_MAP_INSTANCE_NAME,
-				SpagoBIConstants.DISTRIBUTED_MAP_FOR_CACHE);
+		IMap mapLocks = DistributedLockFactory.getDistributedMap(SpagoBIConstants.DISTRIBUTED_MAP_INSTANCE_NAME, SpagoBIConstants.DISTRIBUTED_MAP_FOR_CACHE);
 		timing.stop();
 		try {
 			timing = MonitorFactory.start("Knowage.SQLDBCache.putWithIterator:gettingLock[" + hashedSignature + "]");
 			if (mapLocks.tryLock(hashedSignature, getTimeout(), TimeUnit.SECONDS, getLeaseTime(), TimeUnit.SECONDS)) {
 				timing.stop();
 				try {
-					timing = MonitorFactory
-							.start("Knowage.SQLDBCache.putWithIterator:usingLock[" + hashedSignature + "]");
+					timing = MonitorFactory.start("Knowage.SQLDBCache.putWithIterator:usingLock[" + hashedSignature + "]");
 					cacheMetadata.updateAllCacheItems(getDataSource());
 
 					// check again it is not already inserted
 					if (!cacheMetadata.containsCacheItem(signature)) {
-						String tableName = PersistedTableManager
-								.generateRandomTableName(cacheMetadata.getTableNamePrefix());
-						int queryTimeout = Integer.parseInt(SingletonConfig.getInstance()
-								.getConfigValue("SPAGOBI.CACHE.CREATE_AND_PERSIST_TABLE.TIMEOUT"));
+						String tableName = PersistedTableManager.generateRandomTableName(cacheMetadata.getTableNamePrefix());
+						int queryTimeout = Integer.parseInt(SingletonConfig.getInstance().getConfigValue("SPAGOBI.CACHE.CREATE_AND_PERSIST_TABLE.TIMEOUT"));
 						logger.debug("Configured query timeout is " + queryTimeout + "ms");
 						PersistedTableManager persistedTableManager = new PersistedTableManager();
 						persistedTableManager.setTableName(tableName);
@@ -440,11 +416,9 @@ public class SQLDBCache implements ICache {
 						persistedTableManager.createIndexesOnTable(dataSet, getDataSource(), tableName, columns);
 
 						cacheMetadata.addCacheItem(dataSet.getName(), signature, tableName,
-								DatabaseUtilities.getUsedMemorySize(DataBaseFactory.getCacheDataBase(getDataSource()),
-										"cache", tableName));
+								DatabaseUtilities.getUsedMemorySize(DataBaseFactory.getCacheDataBase(getDataSource()), "cache", tableName));
 
-						if (getMetadata().isCleaningEnabled()
-								&& getMetadata().getAvailableMemory().compareTo(new BigDecimal(0)) < 0) {
+						if (getMetadata().isCleaningEnabled() && getMetadata().getAvailableMemory().compareTo(new BigDecimal(0)) < 0) {
 							deleteToQuota();
 						}
 
@@ -460,9 +434,7 @@ public class SQLDBCache implements ICache {
 				logger.debug("Impossible to acquire the lock for dataset [" + hashedSignature + "]. Timeout.");
 			}
 		} catch (InterruptedException e) {
-			logger.debug(
-					"The current thread has failed to release the lock for dataset [" + hashedSignature + "] in time.",
-					e);
+			logger.debug("The current thread has failed to release the lock for dataset [" + hashedSignature + "] in time.", e);
 		}
 		logger.debug("OUT");
 	}
@@ -475,23 +447,20 @@ public class SQLDBCache implements ICache {
 
 	@Override
 	@Deprecated
-	public long put(IDataSet dataSet, IDataStore dataStore, boolean forceUpdate, Set<String> columns)
-			throws DataBaseException {
+	public long put(IDataSet dataSet, IDataStore dataStore, boolean forceUpdate, Set<String> columns) throws DataBaseException {
 		logger.trace("IN");
 
 		if (dataStore.getMetaData().getFieldCount() == 0) {
 			logger.debug("Dataset hasn't fields. The Dataset will not persisted.");
 			return 0;
 		}
-		logger.debug(
-				"Dataset has #" + dataStore.getMetaData().getFieldCount() + "  fields. The Dataset will be persisted.");
+		logger.debug("Dataset has #" + dataStore.getMetaData().getFieldCount() + "  fields. The Dataset will be persisted.");
 
 		String signature = dataSet.getSignature();
 		String hashedSignature = Helper.sha256(signature);
 		long timeSpent = 0;
 		Monitor timing = MonitorFactory.start("Knowage.SQLDBCache.put:gettingMap");
-		IMap mapLocks = DistributedLockFactory.getDistributedMap(SpagoBIConstants.DISTRIBUTED_MAP_INSTANCE_NAME,
-				SpagoBIConstants.DISTRIBUTED_MAP_FOR_CACHE);
+		IMap mapLocks = DistributedLockFactory.getDistributedMap(SpagoBIConstants.DISTRIBUTED_MAP_INSTANCE_NAME, SpagoBIConstants.DISTRIBUTED_MAP_FOR_CACHE);
 		timing.stop();
 		try {
 			timing = MonitorFactory.start("Knowage.SQLDBCache.put:gettingLock[" + hashedSignature + "]");
@@ -506,17 +475,13 @@ public class SQLDBCache implements ICache {
 					// check again it is not already inserted
 					SQLDBCacheMetadata metadata = getMetadata();
 					if (metadata.containsCacheItem(signature)) {
-						logger.debug("Cache item already inserted for dataset with label " + dataSet.getLabel()
-								+ " and signature " + dataSet.getSignature());
+						logger.debug("Cache item already inserted for dataset with label " + dataSet.getLabel() + " and signature " + dataSet.getSignature());
 					}
-					Monitor timingMemory = MonitorFactory
-							.start("Knowage.SQLDBCache.put:calculateRequiredMemory[" + hashedSignature + "]");
+					Monitor timingMemory = MonitorFactory.start("Knowage.SQLDBCache.put:calculateRequiredMemory[" + hashedSignature + "]");
 					BigDecimal requiredMemory = metadata.getRequiredMemory(dataStore);
 					timingMemory.stop();
-					timingMemory = MonitorFactory
-							.start("Knowage.SQLDBCache.put:calculateTotalMemory[" + hashedSignature + "]");
-					BigDecimal maxUsableMemory = metadata.getTotalMemory()
-							.multiply(new BigDecimal(metadata.getCachePercentageToStore()))
+					timingMemory = MonitorFactory.start("Knowage.SQLDBCache.put:calculateTotalMemory[" + hashedSignature + "]");
+					BigDecimal maxUsableMemory = metadata.getTotalMemory().multiply(new BigDecimal(metadata.getCachePercentageToStore()))
 							.divide(new BigDecimal(100), RoundingMode.FLOOR);
 					timingMemory.stop();
 
@@ -530,7 +495,7 @@ public class SQLDBCache implements ICache {
 							long start = System.currentTimeMillis();
 							String tableName = persistStoreInCache(dataSet, dataStore);
 							timeSpent = System.currentTimeMillis() - start;
-							Map<String, Object> properties = new HashMap<>();
+							Map<String, Object> properties = new HashMap<String, Object>();
 							if (dataSet instanceof VersionedDataSet) {
 								dataSet = ((VersionedDataSet) dataSet).getWrappedDataset();
 							}
@@ -543,14 +508,12 @@ public class SQLDBCache implements ICache {
 							metadata.addCacheItem(name, signature, properties, tableName, dataStore);
 
 						} else {
-							throw new CacheException("Store is to big to be persisted in cache."
-									+ " Store estimated dimension is [" + requiredMemory + "]"
+							throw new CacheException("Store is to big to be persisted in cache." + " Store estimated dimension is [" + requiredMemory + "]"
 									+ " while cache available space is [" + metadata.getAvailableMemory() + "]."
 									+ " Increase cache size or execute the dataset disabling cache.");
 						}
 					} else {
-						throw new CacheException("Store is to big to be persisted in cache."
-								+ " Store estimated dimension is [" + requiredMemory + "]"
+						throw new CacheException("Store is to big to be persisted in cache." + " Store estimated dimension is [" + requiredMemory + "]"
 								+ " while the maximum dimension allowed is [" + maxUsableMemory + "]."
 								+ " Increase cache size or execute the dataset disabling cache.");
 					}
@@ -563,9 +526,7 @@ public class SQLDBCache implements ICache {
 				logger.debug("Impossible to acquire the lock for dataset [" + hashedSignature + "]. Timeout.");
 			}
 		} catch (InterruptedException e) {
-			logger.debug(
-					"The current thread has failed to release the lock for dataset [" + hashedSignature + "] in time.",
-					e);
+			logger.debug("The current thread has failed to release the lock for dataset [" + hashedSignature + "] in time.", e);
 		}
 		logger.debug("OUT");
 		return timeSpent;
@@ -576,8 +537,7 @@ public class SQLDBCache implements ICache {
 		try {
 			int queryTimeout;
 			try {
-				queryTimeout = Integer.parseInt(
-						SingletonConfig.getInstance().getConfigValue("SPAGOBI.CACHE.CREATE_AND_PERSIST_TABLE.TIMEOUT"));
+				queryTimeout = Integer.parseInt(SingletonConfig.getInstance().getConfigValue("SPAGOBI.CACHE.CREATE_AND_PERSIST_TABLE.TIMEOUT"));
 			} catch (NumberFormatException nfe) {
 				logger.debug("The value of SPAGOBI.CACHE.CREATE_AND_PERSIST_TABLE.TIMEOUT config must be an integer");
 				queryTimeout = -1;
@@ -608,8 +568,7 @@ public class SQLDBCache implements ICache {
 		try {
 			int queryTimeout;
 			try {
-				queryTimeout = Integer.parseInt(
-						SingletonConfig.getInstance().getConfigValue("SPAGOBI.CACHE.CREATE_AND_PERSIST_TABLE.TIMEOUT"));
+				queryTimeout = Integer.parseInt(SingletonConfig.getInstance().getConfigValue("SPAGOBI.CACHE.CREATE_AND_PERSIST_TABLE.TIMEOUT"));
 			} catch (NumberFormatException nfe) {
 				logger.debug("The value of SPAGOBI.CACHE.CREATE_AND_PERSIST_TABLE.TIMEOUT config must be an integer");
 				queryTimeout = -1;
@@ -641,8 +600,7 @@ public class SQLDBCache implements ICache {
 		try {
 			int queryTimeout;
 			try {
-				queryTimeout = Integer.parseInt(
-						SingletonConfig.getInstance().getConfigValue("SPAGOBI.CACHE.CREATE_AND_PERSIST_TABLE.TIMEOUT"));
+				queryTimeout = Integer.parseInt(SingletonConfig.getInstance().getConfigValue("SPAGOBI.CACHE.CREATE_AND_PERSIST_TABLE.TIMEOUT"));
 			} catch (NumberFormatException nfe) {
 				logger.debug("The value of SPAGOBI.CACHE.CREATE_AND_PERSIST_TABLE.TIMEOUT config must be an integer");
 				queryTimeout = -1;
@@ -723,8 +681,7 @@ public class SQLDBCache implements ICache {
 			if (t instanceof CacheException)
 				throw (CacheException) t;
 			else
-				throw new CacheException(
-						"An unexpected error occure while deleting dataset [" + signature + "] from cache", t);
+				throw new CacheException("An unexpected error occure while deleting dataset [" + signature + "] from cache", t);
 		} finally {
 			logger.debug("OUT");
 		}
@@ -742,8 +699,7 @@ public class SQLDBCache implements ICache {
 			hashedSignature = Helper.sha256(signature);
 			logger.debug("Delete dataset with signature [" + signature + "] and hash [" + hashedSignature + "]");
 		}
-		IMap mapLocks = DistributedLockFactory.getDistributedMap(SpagoBIConstants.DISTRIBUTED_MAP_INSTANCE_NAME,
-				SpagoBIConstants.DISTRIBUTED_MAP_FOR_CACHE);
+		IMap mapLocks = DistributedLockFactory.getDistributedMap(SpagoBIConstants.DISTRIBUTED_MAP_INSTANCE_NAME, SpagoBIConstants.DISTRIBUTED_MAP_FOR_CACHE);
 		try {
 			if (mapLocks.tryLock(hashedSignature, getTimeout(), TimeUnit.SECONDS, getLeaseTime(), TimeUnit.SECONDS)) {
 				try {
@@ -752,8 +708,7 @@ public class SQLDBCache implements ICache {
 						String tableName = getMetadata().getCacheItem(signature, isHash).getTable();
 						persistedTableManager.dropTableIfExists(getDataSource(), tableName);
 						getMetadata().removeCacheItem(signature, isHash);
-						logger.debug("Removed table " + tableName
-								+ " from [SQLDBCache] corresponding to the result Set: " + signature);
+						logger.debug("Removed table " + tableName + " from [SQLDBCache] corresponding to the result Set: " + signature);
 						logger.debug("Deleted");
 
 						return true;
@@ -765,12 +720,10 @@ public class SQLDBCache implements ICache {
 					mapLocks.unlock(hashedSignature);
 				}
 			} else {
-				logger.debug("Impossible to acquire the lock for dataset [" + hashedSignature
-						+ "]. Timeout. Returning false.");
+				logger.debug("Impossible to acquire the lock for dataset [" + hashedSignature + "]. Timeout. Returning false.");
 			}
 		} catch (InterruptedException e) {
-			logger.debug("The current thread has failed to release the lock for dataset [" + hashedSignature
-					+ "] in time. Returning a null datastore.", e);
+			logger.debug("The current thread has failed to release the lock for dataset [" + hashedSignature + "] in time. Returning a null datastore.", e);
 		}
 		logger.debug("OUT");
 		return false;
@@ -792,8 +745,7 @@ public class SQLDBCache implements ICache {
 			for (CacheItem item : items) {
 				long elapsedTime = (System.currentTimeMillis() - item.getLastUsedDate().getTime()) / 1000;
 				if (elapsedTime > getMetadata().getCacheDsLastAccessTtl()) {
-					logger.debug("FORCE REMOVE: The table with name " + item.getTable()
-							+ " is old and is going be to be removed");
+					logger.debug("FORCE REMOVE: The table with name " + item.getTable() + " is old and is going be to be removed");
 					delete(item.getSignature(), true);
 				}
 			}
@@ -876,6 +828,8 @@ public class SQLDBCache implements ICache {
 		for (String signature : signatures) {
 			delete(signature, true);
 		}
+		// Delete any other cache tables, even if not recorded as cache item
+		// eraseExistingTables(getMetadata().getTableNamePrefix().toUpperCase());
 		logger.debug("[SQLDBCache] All tables removed, Cache cleaned ");
 	}
 
@@ -923,8 +877,7 @@ public class SQLDBCache implements ICache {
 	public static long getTimeout() {
 		long lockTimeout;
 		try {
-			lockTimeout = Long
-					.parseLong(SingletonConfig.getInstance().getConfigValue("SPAGOBI.CACHE.HAZELCAST.TIMEOUT"));
+			lockTimeout = Long.parseLong(SingletonConfig.getInstance().getConfigValue("SPAGOBI.CACHE.HAZELCAST.TIMEOUT"));
 		} catch (NumberFormatException nfe) {
 			logger.debug("The value of SPAGOBI.CACHE.HAZELCAST.TIMEOUT config must be an integer");
 			logger.debug("Setting lock timeout to default value [" + DEFAULT_HAZELCAST_TIMEOUT + "]");
@@ -936,8 +889,7 @@ public class SQLDBCache implements ICache {
 	public static long getLeaseTime() {
 		long lockLeaseTime;
 		try {
-			lockLeaseTime = Long
-					.parseLong(SingletonConfig.getInstance().getConfigValue("SPAGOBI.CACHE.HAZELCAST.LEASETIME"));
+			lockLeaseTime = Long.parseLong(SingletonConfig.getInstance().getConfigValue("SPAGOBI.CACHE.HAZELCAST.LEASETIME"));
 		} catch (NumberFormatException nfe) {
 			logger.debug("The value of SPAGOBI.CACHE.HAZELCAST.LEASETIME config must be an integer");
 			logger.debug("Setting lock timeout to default value [" + DEFAULT_HAZELCAST_LEASETIME + "]");
@@ -949,12 +901,10 @@ public class SQLDBCache implements ICache {
 	@Override
 	public void update(String hashedSignature, IDataStore dataStore) {
 		logger.trace("IN");
-		logger.debug(
-				"Dataset has #" + dataStore.getMetaData().getFieldCount() + "  fields. The Dataset will be persisted.");
+		logger.debug("Dataset has #" + dataStore.getMetaData().getFieldCount() + "  fields. The Dataset will be persisted.");
 
 		Monitor timing = MonitorFactory.start("Knowage.SQLDBCache.put:gettingMap");
-		IMap mapLocks = DistributedLockFactory.getDistributedMap(SpagoBIConstants.DISTRIBUTED_MAP_INSTANCE_NAME,
-				SpagoBIConstants.DISTRIBUTED_MAP_FOR_CACHE);
+		IMap mapLocks = DistributedLockFactory.getDistributedMap(SpagoBIConstants.DISTRIBUTED_MAP_INSTANCE_NAME, SpagoBIConstants.DISTRIBUTED_MAP_FOR_CACHE);
 		timing.stop();
 		try {
 			timing = MonitorFactory.start("Knowage.SQLDBCache.put:gettingLock[" + hashedSignature + "]");
@@ -979,9 +929,7 @@ public class SQLDBCache implements ICache {
 				logger.debug("Impossible to acquire the lock for dataset [" + hashedSignature + "]. Timeout.");
 			}
 		} catch (InterruptedException e) {
-			logger.debug(
-					"The current thread has failed to release the lock for dataset [" + hashedSignature + "] in time.",
-					e);
+			logger.debug("The current thread has failed to release the lock for dataset [" + hashedSignature + "] in time.", e);
 		} finally {
 			logger.debug("OUT");
 		}

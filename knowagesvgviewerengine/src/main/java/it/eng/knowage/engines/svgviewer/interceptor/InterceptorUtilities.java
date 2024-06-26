@@ -26,16 +26,18 @@ import javax.ws.rs.core.MultivaluedMap;
 
 public class InterceptorUtilities {
 
+
+
+
 	/**
 	 * Trasforms a MultivaluedMap in a HashMap
-	 *
+	 * 
 	 * @param multiMap
 	 * @return
 	 */
-	public static Map<String, String> fromMultivaluedMapToHashMap(MultivaluedMap<String, String> multiMap) {
-		HashMap<String, String> map = new HashMap<>();
-		String key;
-		String value;
+	public static HashMap<String, String> fromMultivaluedMapToHashMap(MultivaluedMap<String, String> multiMap) {
+		HashMap<String, String> map = new HashMap<String, String>();
+		String key, value;
 
 		if (multiMap != null) {
 			Iterator<String> it = multiMap.keySet().iterator();
@@ -51,13 +53,12 @@ public class InterceptorUtilities {
 
 	/**
 	 * Get the content of a map of object and for every value apply the toString. If the value is an array it iterate in all the entries
-	 *
+	 * 
 	 * @param stringMap
 	 * @param genericMap
 	 */
 	public static void addGenericMap(Map<String, String> stringMap, Map genericMap) {
-		Object key;
-		Object value;
+		Object key, value;
 		Object[] valueArray;
 		StringBuilder valueString;
 		if (genericMap != null) {
@@ -85,5 +86,8 @@ public class InterceptorUtilities {
 			}
 		}
 	}
+
+
+
 
 }

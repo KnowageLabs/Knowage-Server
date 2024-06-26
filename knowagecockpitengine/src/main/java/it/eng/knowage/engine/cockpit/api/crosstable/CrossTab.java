@@ -1479,15 +1479,15 @@ public class CrossTab {
 	 * occurence of A.1 is at row 3 and the second in row 7 the leafs with id A.1 has this list [3,7]
 	 *
 	 * @param nodes
-	 * @param nodeValue
+	 * @param NodeValue
 	 * @return
 	 */
-	private Node mergeNodes(List<Node> nodes, String nodeValue) {
+	private Node mergeNodes(List<Node> nodes, String NodeValue) {
 		Assert.assertNotNull(nodes, "We need at least a node to merge");
 		Assert.assertTrue(!nodes.isEmpty(), "We need at least a node to merge");
 		int index;
 		List<Node> commonChildNode;
-		Node newNode = new Node(nodeValue);
+		Node newNode = new Node(NodeValue);
 		newNode.setCellType(CellType.CF);
 		List<Node> newchilds = new ArrayList<>();
 		if (!nodes.isEmpty()) {

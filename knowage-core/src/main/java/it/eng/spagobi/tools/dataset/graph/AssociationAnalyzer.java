@@ -18,16 +18,15 @@
 
 package it.eng.spagobi.tools.dataset.graph;
 
+import it.eng.spagobi.tools.dataset.common.association.Association;
+import it.eng.spagobi.tools.dataset.common.association.Association.Field;
+import org.jgrapht.graph.ClassBasedEdgeFactory;
+import org.jgrapht.graph.Pseudograph;
+
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import org.jgrapht.graph.ClassBasedEdgeFactory;
-import org.jgrapht.graph.Pseudograph;
-
-import it.eng.spagobi.tools.dataset.common.association.Association;
-import it.eng.spagobi.tools.dataset.common.association.Association.Field;
 
 /**
  * @author Francesco Lucchi (francesco.lucchi@eng.it)
@@ -41,10 +40,9 @@ public class AssociationAnalyzer {
 
 	public AssociationAnalyzer(Collection<Association> associations) {
 		this.associations = associations;
-		this.datasetToAssociationToColumnMap = new HashMap<>();
-		this.graph = new Pseudograph<>(
-				new ClassBasedEdgeFactory<>(
-						(Class<LabeledEdge<String>>) (Object) LabeledEdge.class));
+		this.datasetToAssociationToColumnMap = new HashMap<String, Map<String, String>>();
+		this.graph = new Pseudograph<String, LabeledEdge<String>>(
+				new ClassBasedEdgeFactory<String, LabeledEdge<String>>((Class<LabeledEdge<String>>) (Object) LabeledEdge.class));
 	}
 
 	public void process() {
@@ -66,7 +64,7 @@ public class AssociationAnalyzer {
 				if (datasetToAssociationToColumnMap.containsKey(datasetLabel)) {
 					associationToColumnMap = datasetToAssociationToColumnMap.get(datasetLabel);
 				} else {
-					associationToColumnMap = new HashMap<>();
+					associationToColumnMap = new HashMap<String, String>();
 					datasetToAssociationToColumnMap.put(datasetLabel, associationToColumnMap);
 				}
 				associationToColumnMap.put(associationId, field.getFieldName());
@@ -80,7 +78,7 @@ public class AssociationAnalyzer {
 					Field targetField = associationFields.get(j);
 
 					String target = targetField.getLabel();
-					LabeledEdge<String> labeledEdge = new LabeledEdge<>(source, target, associationId);
+					LabeledEdge<String> labeledEdge = new LabeledEdge<String>(source, target, associationId);
 					graph.addEdge(source, target, labeledEdge);
 				}
 			}
