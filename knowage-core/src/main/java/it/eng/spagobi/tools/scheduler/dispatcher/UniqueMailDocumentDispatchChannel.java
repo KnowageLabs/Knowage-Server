@@ -641,10 +641,13 @@ public class UniqueMailDocumentDispatchChannel implements IDocumentDispatchChann
 		int offset = 0;
 		int numRead = 0;
 
-		try (InputStream is = new FileInputStream(file)) {
+		InputStream is = new FileInputStream(file);
+		try {
 			while (offset < bytes.length && (numRead = is.read(bytes, offset, bytes.length - offset)) >= 0) {
 				offset += numRead;
 			}
+		} finally {
+			is.close();
 		}
 
 		return bytes;

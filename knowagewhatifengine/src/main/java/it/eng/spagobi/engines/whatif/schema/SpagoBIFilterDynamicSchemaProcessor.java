@@ -145,7 +145,7 @@ public class SpagoBIFilterDynamicSchemaProcessor extends LocalizingDynamicSchema
 	 */
 	private String substituteProfileValues(String originalSchema, Util.PropertyList connectInfo) throws Exception {
 		String modifiedSchema = originalSchema;
-		indexProgression = 0;
+		indexProgression = Integer.valueOf(0);
 		String att = findProfileAttributeInSchema(originalSchema);
 		while (att != null) {
 			// if value is null I put null, if instead there is no the attribute
@@ -174,7 +174,7 @@ public class SpagoBIFilterDynamicSchemaProcessor extends LocalizingDynamicSchema
 	 */
 	private String substituteParameterValues(String originalSchema, Util.PropertyList connectInfo) throws Exception {
 		String modifiedSchema = originalSchema;
-		indexProgression = 0;
+		indexProgression = Integer.valueOf(0);
 		String att = findParameterInSchema(originalSchema);
 		while (att != null) {
 			// if value is null I put null, if instead there is no the attribute

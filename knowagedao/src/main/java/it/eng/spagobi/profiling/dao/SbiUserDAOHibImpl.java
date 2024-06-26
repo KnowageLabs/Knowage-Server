@@ -827,7 +827,7 @@ public class SbiUserDAOHibImpl extends AbstractHibernateDAO implements ISbiUserD
 		try {
 			SbiUser user = getSbiUserByUserId(userId);
 			if (user != null) {
-				return user.getId();
+				return Integer.valueOf(user.getId());
 			}
 		} catch (HibernateException he) {
 			throw new SpagoBIRuntimeException("Error while checking if user identifier is already in use", he);

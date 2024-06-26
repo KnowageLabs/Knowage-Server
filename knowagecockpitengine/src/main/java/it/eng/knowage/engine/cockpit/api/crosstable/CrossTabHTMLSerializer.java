@@ -966,7 +966,7 @@ public class CrossTabHTMLSerializer {
 									if (cellTypeValue.equalsIgnoreCase("data")) {
 										nPartialLevels = 0; // reset partialLevels count for new row
 									}
-									rowCord = getRowCordContent(crossTab, nPartialLevels, posRow);
+									rowCord = getRowCordContent(crossTab, nPartialLevels, Integer.valueOf(posRow));
 								}
 
 							} else {

@@ -164,9 +164,9 @@ public class TimeBlockChart extends BlockCharts {
 				Minute minute = activity.getMinutes();
 				for (int i = 0; i < activity.getDuration(); i++) {
 					// convert from hour to number axis (da sessantesimi a centesimi!)
-					Integer hour = minute.getHourValue();
-					Integer minuteValue = minute.getMinute();
-					Double doubleMinuteValue = (double) (minuteValue.intValue());
+					Integer hour = Integer.valueOf(minute.getHourValue());
+					Integer minuteValue = Integer.valueOf(minute.getMinute());
+					Double doubleMinuteValue = Double.valueOf((minuteValue.intValue()));
 					// minuteValue : 60 = x :100
 					double convertedMinuteValue = (doubleMinuteValue * 100) / 60.0;
 					double convertedMinuteValueCent = convertedMinuteValue / 100;

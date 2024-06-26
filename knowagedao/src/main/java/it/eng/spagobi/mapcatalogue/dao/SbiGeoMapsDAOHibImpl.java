@@ -212,7 +212,7 @@ public class SbiGeoMapsDAOHibImpl extends AbstractHibernateDAO implements ISbiGe
 			// inserts the svg file into sbi_binary_contents
 			SbiBinContents hibBinContents = null;
 
-			Integer binId = aMap.getBinId();
+			Integer binId = Integer.valueOf(aMap.getBinId());
 			if (binId != null && binId > new Integer("0")) {
 				hibBinContents = (SbiBinContents) tmpSession.load(SbiBinContents.class, binId);
 				hibBinContents.setContent(content);

@@ -70,7 +70,8 @@ public abstract class PDFCreator {
 	private static final SimpleDateFormat DEFAULT_DATE_FORMATTER = new SimpleDateFormat(DEFAULT_DATE_FORMAT);
 
 	private static void createPDF(List<InputStream> inputImages, Path output) throws IOException {
-		try (PDDocument document = new PDDocument()) {
+		PDDocument document = new PDDocument();
+		try {
 			for (InputStream is : inputImages) {
 				BufferedImage bimg = ImageIO.read(is);
 				float width = bimg.getWidth();
@@ -84,6 +85,8 @@ public abstract class PDFCreator {
 				}
 			}
 			document.save(output.toFile());
+		} finally {
+			document.close();
 		}
 	}
 

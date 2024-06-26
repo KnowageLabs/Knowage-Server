@@ -551,7 +551,7 @@ public class DataSetFactory {
 				// set tags
 				ds.setTags(sbiDataSet.getTags());
 
-				versionDS = new VersionedDataSet(ds, sbiDataSet.getId().getVersionNum(),
+				versionDS = new VersionedDataSet(ds, Integer.valueOf(sbiDataSet.getId().getVersionNum()),
 						sbiDataSet.isActive());
 
 				ds.setScopeId((sbiDataSet.getScope() == null) ? null : sbiDataSet.getScope().getValueId());
@@ -1216,7 +1216,7 @@ public class DataSetFactory {
 				ds.setOwner(sbiDataSet.getOwner());
 				ds.setUserIn(sbiDataSet.getCommonInfo().getUserIn());
 				ds.setDateIn(sbiDataSet.getCommonInfo().getTimeIn());
-				versionDS = new VersionedDataSet(ds, sbiDataSet.getId().getVersionNum(),
+				versionDS = new VersionedDataSet(ds, Integer.valueOf(sbiDataSet.getId().getVersionNum()),
 						sbiDataSet.isActive());
 
 				ds.setScopeId((sbiDataSet.getScope() == null) ? null : sbiDataSet.getScope().getValueId());

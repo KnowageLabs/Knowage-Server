@@ -146,8 +146,9 @@ public class SQLDBCacheMetadata implements ICacheMetadata {
 	public Integer getAvailableMemoryAsPercentage() throws DataBaseException {
 		Integer toReturn = 0;
 		BigDecimal spaceAvailable = getAvailableMemory();
-		toReturn = ((spaceAvailable.multiply(new BigDecimal(100)).divide(getTotalMemory(), RoundingMode.HALF_UP))
-				.intValue());
+		toReturn = Integer
+				.valueOf(((spaceAvailable.multiply(new BigDecimal(100)).divide(getTotalMemory(), RoundingMode.HALF_UP))
+						.intValue()));
 		return toReturn;
 	}
 
