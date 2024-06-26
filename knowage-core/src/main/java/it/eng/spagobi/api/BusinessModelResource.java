@@ -162,6 +162,9 @@ public class BusinessModelResource {
 		JSONObject filtersJSON = null;
 		Map<String, Object> selectedParameterValues;
 		JSONObject valuesJSON;
+		// String contest;
+
+		// ExecutionInstance executionInstance;
 
 		List rows;
 
@@ -184,6 +187,7 @@ public class BusinessModelResource {
 			if (requestVal.opt(FILTERS) != null) {
 				filtersJSON = (JSONObject) requestVal.opt(FILTERS);
 			}
+			// contest = (String) requestVal.opt(CONTEST);
 			if (requestVal.opt(NODE) != null) {
 				treeLovNodeValue = (String) requestVal.opt(NODE);
 				if (treeLovNodeValue.contains("lovroot")) {
@@ -234,6 +238,18 @@ public class BusinessModelResource {
 					Assert.assertNotNull(biObjectParameter, "Impossible to find parameter [" + biparameterId + "]");
 					// END get the relevant biobject parameter
 
+					// Date Range managing
+					// try {
+					// Parameter parameter = biObjectParameter.getParameter();
+					// if (DateRangeDAOUtilities.isDateRange(parameter)) {
+					// valuesJSON = manageDataRange(biObjectParameter, role, req);
+					// result = buildJsonResult("OK", "", valuesJSON, null, biparameterId).toString();
+					// return result;
+					// }
+					// } catch (Exception e) {
+					// throw new SpagoBIServiceException(SERVICE_NAME, "Error on loading date range combobox values", e);
+					// }
+
 					lovProvDet = dum.getLovDetail(biObjectParameter);
 					// START get the lov result
 					String lovResult = null;
@@ -282,7 +298,7 @@ public class BusinessModelResource {
 					// fixed lists)
 					biParameterExecDependencies = dum.getDependencies(biObjectParameter, role);
 					if (lovProvDet instanceof DependenciesPostProcessingLov && selectedParameterValues != null
-							&& biParameterExecDependencies != null && !biParameterExecDependencies.isEmpty()) {
+							&& biParameterExecDependencies != null && !biParameterExecDependencies.isEmpty()) { // && contest != null && !contest.equals(MASSIVE_EXPORT)
 						rows = ((DependenciesPostProcessingLov) lovProvDet).processDependencies(rows,
 								selectedParameterValues, biParameterExecDependencies);
 					}
@@ -367,7 +383,7 @@ public class BusinessModelResource {
 					// DependenciesPostProcessingLov, i.e. scripts, java classes and
 					// fixed lists)
 					if (lovProvDet instanceof DependenciesPostProcessingLov && selectedParameterValues != null
-							&& biParameterExecDependencies != null && !biParameterExecDependencies.isEmpty()) {
+							&& biParameterExecDependencies != null && !biParameterExecDependencies.isEmpty()) { // && contest != null && !contest.equals(MASSIVE_EXPORT)
 						rows = ((DependenciesPostProcessingLov) lovProvDet).processDependencies(rows,
 								selectedParameterValues, biParameterExecDependencies);
 					}
@@ -385,6 +401,7 @@ public class BusinessModelResource {
 				}
 
 			} catch (EMFUserError e1) {
+				// result = buildJsonResult("KO", e1.getMessage(), null,null).toString();
 				throw new SpagoBIServiceException(SERVICE_NAME,
 						"Impossible to get document Execution Parameter EMFUserError", e1);
 			}
@@ -397,6 +414,7 @@ public class BusinessModelResource {
 					"Impossible to get document Execution Parameter JSONException", e2);
 		}
 
+		// return Response.ok(resultAsMap).build();
 		return result;
 	}
 
@@ -404,7 +422,7 @@ public class BusinessModelResource {
 	@Path("/{qbeDatamart}/admissibleValuesTree")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
 	public Response admissibleValuesTree(@Context HttpServletRequest req, @PathParam("qbeDatamart") String qbeDatamart)
-			throws IOException, JSONException {
+			throws EMFUserError, IOException, JSONException {
 
 		Map<String, Object> resultAsMap = new HashMap<>();
 
@@ -520,7 +538,7 @@ public class BusinessModelResource {
 
 			metadata.put("colsMap", colPlaceholder2ColName);
 			metadata.put("descriptionColumn", "data");
-			metadata.put("invisibleColumns", Collections.emptyList());
+			metadata.put("invisibleColumns", Collections.EMPTY_LIST);
 			metadata.put("valueColumn", "data");
 			metadata.put("visibleColumns", Arrays.asList("data"));
 
@@ -549,6 +567,7 @@ public class BusinessModelResource {
 		MetaModel businessModel = dao.loadMetaModelForExecutionByNameAndRole(businessModelName, role, false);
 		BusinessModelOpenParameters bmop = new BusinessModelOpenParameters();
 		try {
+			// role = this.getUserProfile().getRoles().iterator().next().toString();
 			Locale locale = request.getLocale();
 			BusinessModelRuntime dum = new BusinessModelRuntime(this.getUserProfile(), locale);
 			parameters.addAll(
@@ -604,6 +623,7 @@ public class BusinessModelResource {
 						descriptionList = new ArrayList<>();
 					}
 
+					// String item = null;
 					for (int k = 0; k < valuesList.size(); k++) {
 
 						String itemVal = valuesList.get(k);
@@ -779,6 +799,8 @@ public class BusinessModelResource {
 				DefaultValuesList valueList = null;
 				// check if the parameter is really valorized (for example if it isn't an empty list)
 				List lstValues = (List) parameterAsMap.get("parameterValue");
+				// if (lstValues.size() == 0)
+				// jsonCrossParameters.remove(objParameter.getId());
 
 				String parLab = objParameter.getDriver() != null && objParameter.getDriver().getParameter() != null
 						? objParameter.getDriver().getParameter().getLabel()
@@ -812,6 +834,14 @@ public class BusinessModelResource {
 						return ret;
 					}).collect(Collectors.toList());
 				}
+
+				// if (jsonCrossParameters.isNull(objParameter.getId())
+				// // && !sessionParametersMap.containsKey(objParameter.getId())) {
+				// && !sessionParametersMap.containsKey(sessionKey)) {
+				// if (valueList != null) {
+				// parameterAsMap.put("parameterValue", valueList);
+				// }
+				// }
 
 				// in every case fill default values!
 				parameterAsMap.put("driverDefaultValue", valueList);

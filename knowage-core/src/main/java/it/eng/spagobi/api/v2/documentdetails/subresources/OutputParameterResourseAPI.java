@@ -12,12 +12,11 @@ import java.util.List;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 import it.eng.spagobi.analiticalmodel.document.bo.OutputParameter;
 import it.eng.spagobi.commons.dao.DAOFactory;
-import it.eng.spagobi.tools.crossnavigation.metadata.SbiCrossNavigationPar;
 
 public class OutputParameterResourseAPI {
 
 	public boolean isUsedInCrossNavigations(OutputParameter outputParameter) {
-		List<OutputParameter> list = new ArrayList<>();
+		List<OutputParameter> list = new ArrayList<OutputParameter>();
 		list.add(outputParameter);
 		return foundRelatedCrossNavs(list);
 	}
@@ -29,10 +28,9 @@ public class OutputParameterResourseAPI {
 	private boolean foundRelatedCrossNavs(List<OutputParameter> outputParameters) {
 		for (OutputParameter outputParameter : outputParameters) {
 
-			List<SbiCrossNavigationPar> crossNavigationsFound = DAOFactory.getCrossNavigationDAO()
-					.listNavigationsByOutputParameters(outputParameter.getId());
+			List crossNavigationsFound = DAOFactory.getCrossNavigationDAO().listNavigationsByOutputParameters(outputParameter.getId());
 
-			if (!crossNavigationsFound.isEmpty())
+			if (crossNavigationsFound.size() > 0)
 				return true;
 		}
 

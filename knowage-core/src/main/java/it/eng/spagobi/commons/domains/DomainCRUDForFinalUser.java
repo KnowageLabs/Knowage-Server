@@ -54,15 +54,13 @@ public class DomainCRUDForFinalUser extends DomainCRUD {
 	@Path("/ds-categories")
 	@Produces(MediaType.APPLICATION_JSON + charset)
 	public String getDataSetCategoriesByUser(@Context HttpServletRequest req) {
-		Set<Domain> categories = new HashSet<>();
+		Set<Domain> categories = new HashSet<Domain>();
 		try {
 			categories = UserUtilities.getDataSetCategoriesByUser(getUserProfile());
 			return translate(categories, getLocale(req)).toString();
 		} catch (Exception e) {
 			logger.error("Impossible to get role dataset categories for user [" + getUserProfile() + "]", e);
-			throw new SpagoBIRestServiceException(
-					"Impossible to get role dataset categories for user [" + getUserProfile() + "]",
-					buildLocaleFromSession(), e);
+			throw new SpagoBIRestServiceException("Impossible to get role dataset categories for user [" + getUserProfile() + "]", buildLocaleFromSession(), e);
 		}
 	}
 
@@ -70,15 +68,13 @@ public class DomainCRUDForFinalUser extends DomainCRUD {
 	@Path("/bm-categories")
 	@Produces(MediaType.APPLICATION_JSON + charset)
 	public String getBusinessModelsCategoriesByUser(@Context HttpServletRequest req) {
-		Set<Domain> categories = new HashSet<>();
+		Set<Domain> categories = new HashSet<Domain>();
 		try {
 			categories = UserUtilities.getBusinessModelsCategoriesByUser(getUserProfile());
 			return translate(categories, getLocale(req)).toString();
 		} catch (Exception e) {
 			logger.error("Impossible to get role models categories for user [" + getUserProfile() + "]", e);
-			throw new SpagoBIRestServiceException(
-					"Impossible to get role models categories for user [" + getUserProfile() + "]",
-					buildLocaleFromSession(), e);
+			throw new SpagoBIRestServiceException("Impossible to get role models categories for user [" + getUserProfile() + "]", buildLocaleFromSession(), e);
 		}
 	}
 }

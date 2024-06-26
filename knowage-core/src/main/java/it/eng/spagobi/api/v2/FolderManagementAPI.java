@@ -18,15 +18,14 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 public class FolderManagementAPI extends AbstractSpagoBIResource {
 	protected static Logger logger = Logger.getLogger(FolderManagementAPI.class);
 
-	public List<LowFunctionality> getFolders(Boolean recoverBIObjects, String permissionOnFolder, String dateFilter,
-			String status) {
+	public List<LowFunctionality> getFolders(Boolean recoverBIObjects, String permissionOnFolder, String dateFilter, String status) {
 
-		List<LowFunctionality> folders = new ArrayList<>();
+		List<LowFunctionality> folders = new ArrayList<LowFunctionality>();
 		try {
 			UserProfile profile = getUserProfile();
 			ILowFunctionalityDAO dao = DAOFactory.getLowFunctionalityDAO();
 			dao.setUserProfile(profile);
-			List<LowFunctionality> allFolders = null;
+			List<LowFunctionality> allFolders = new ArrayList<>();
 			String filterByDate = dateFilter != null && !dateFilter.equals("undefined") ? dateFilter : null;
 			String filterByStatus = status != null && !status.equals("undefined") ? status : null;
 
@@ -38,8 +37,7 @@ public class FolderManagementAPI extends AbstractSpagoBIResource {
 
 			if (permissionOnFolder != null && !permissionOnFolder.isEmpty()) {
 				for (LowFunctionality lf : allFolders) {
-					if (ObjectsAccessVerifier.canSee(lf, profile)
-							&& checkPermissionOnFolder(permissionOnFolder, lf, profile)) {
+					if (ObjectsAccessVerifier.canSee(lf, profile) && checkPermissionOnFolder(permissionOnFolder, lf, profile)) {
 						folders.add(lf);
 					}
 				}
@@ -61,8 +59,7 @@ public class FolderManagementAPI extends AbstractSpagoBIResource {
 		return folders;
 	}
 
-	public String getFoldersAsString(Boolean recoverBIObjects, String permissionOnFolder, String dateFilter,
-			String status) {
+	public String getFoldersAsString(Boolean recoverBIObjects, String permissionOnFolder, String dateFilter, String status) {
 		List<LowFunctionality> folders = getFolders(recoverBIObjects, permissionOnFolder, dateFilter, status);
 		return JsonConverter.objectToJson(folders, folders.getClass());
 	}
@@ -83,8 +80,6 @@ public class FolderManagementAPI extends AbstractSpagoBIResource {
 		case SpagoBIConstants.PERMISSION_ON_FOLDER_TO_CREATE:
 			result = ObjectsAccessVerifier.canCreate(lf, profile);
 			break;
-		default:
-			result = false;
 		}
 
 		return result;

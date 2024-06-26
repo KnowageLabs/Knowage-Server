@@ -38,7 +38,7 @@ import it.eng.spagobi.tools.scheduler.bo.Job;
  *
  */
 public class JobJSONSerializer implements Serializer {
-	private static final Logger LOGGER = Logger.getLogger(JobJSONSerializer.class);
+	private static transient Logger logger = Logger.getLogger(JobJSONSerializer.class);
 
 	public static final String JOB_NAME = "jobName";
 	public static final String JOB_GROUP = "jobGroup";
@@ -59,8 +59,7 @@ public class JobJSONSerializer implements Serializer {
 		JSONObject result = null;
 
 		if (!(o instanceof Job)) {
-			throw new SerializationException(
-					"JobJSONSerializer is unable to serialize object of type: " + o.getClass().getName());
+			throw new SerializationException("JobJSONSerializer is unable to serialize object of type: " + o.getClass().getName());
 		}
 		try {
 			Job job = (Job) o;
@@ -113,7 +112,7 @@ public class JobJSONSerializer implements Serializer {
 					aDocumentJSON.put("name", documentLabel); // wrongly called name it is label,
 					aDocumentJSON.put("nameTitle", documentName); // real name for tab title
 
-					StringBuilder parametersCondensedString = new StringBuilder();
+					StringBuffer parametersCondensedString = new StringBuffer();
 
 					JSONArray documentParametersJSON = new JSONArray();
 					// search document parameters
@@ -129,7 +128,7 @@ public class JobJSONSerializer implements Serializer {
 					}
 
 					// retrieve loadAtRuntime parameters (for document parameters using Analitical Drivers)
-					Map<String, String> loadAtRuntimeParameters = new HashMap<>();
+					Map<String, String> loadAtRuntimeParameters = new HashMap<String, String>();
 					String documentLoadAtRuntimeParameters = parameters.get(internalDocumentName + "_loadAtRuntime");
 
 					if ((documentLoadAtRuntimeParameters != null) && (!documentLoadAtRuntimeParameters.isEmpty())) {
@@ -138,8 +137,7 @@ public class JobJSONSerializer implements Serializer {
 							String loadAtRuntime = loadAtRuntimeArray[count];
 							int parameterUrlNameIndex = loadAtRuntime.lastIndexOf("(");
 							String parameterUrlName = loadAtRuntime.substring(0, parameterUrlNameIndex);
-							String userAndRole = loadAtRuntime.substring(parameterUrlNameIndex + 1,
-									loadAtRuntime.length() - 1);
+							String userAndRole = loadAtRuntime.substring(parameterUrlNameIndex + 1, loadAtRuntime.length() - 1);
 							loadAtRuntimeParameters.put(parameterUrlName, userAndRole);
 
 							JSONObject jsonPar = new JSONObject();
@@ -158,7 +156,7 @@ public class JobJSONSerializer implements Serializer {
 
 					// retrieve formula parameters
 					// ------------------------------------------------
-					Map<String, String> useFormulaParameters = new HashMap<>();
+					Map<String, String> useFormulaParameters = new HashMap<String, String>();
 					String documentFormulaParameters = parameters.get(internalDocumentName + "_useFormula");
 					if ((documentFormulaParameters != null) && (!documentFormulaParameters.isEmpty())) {
 						String[] useFormulaArray = documentFormulaParameters.split(";");

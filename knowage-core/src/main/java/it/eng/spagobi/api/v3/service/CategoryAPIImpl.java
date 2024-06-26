@@ -46,7 +46,7 @@ import it.eng.spagobi.utilities.exceptions.SpagoBIRuntimeException;
 
 public class CategoryAPIImpl implements CategoryAPI {
 
-	private static final Logger LOGGER = Logger.getLogger(CategoryAPIImpl.class);
+	private final Logger logger = Logger.getLogger(CategoryAPIImpl.class);
 
 	@Override
 	public int getNumberOfCategoryUsages(SbiCategory cat) {
@@ -124,7 +124,7 @@ public class CategoryAPIImpl implements CategoryAPI {
 	@Override
 	public List<MetaModel> getMetaModelsUsedByCategory(Integer catId) {
 		IMetaModelsDAO dsMeta = DAOFactory.getMetaModelsDAO();
-		List<Integer> catList = new ArrayList<>();
+		List<Integer> catList = new ArrayList<Integer>();
 		catList.add(catId);
 		return dsMeta.loadMetaModelByCategories(catList);
 	}
