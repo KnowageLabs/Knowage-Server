@@ -33,6 +33,8 @@ import javax.ws.rs.QueryParam;
 
 import org.apache.log4j.Logger;
 
+import it.eng.knowage.features.Feature;
+import it.eng.knowage.rest.annotation.FeatureFlag;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spagobi.analiticalmodel.document.bo.BIObject;
 import it.eng.spagobi.analiticalmodel.document.dao.IBIObjectDAO;
@@ -84,6 +86,7 @@ public class DocumentResource extends AbstractSpagoBIResource {
 	@Consumes("application/json")
 	@Produces("application/json")
 	@UserConstraint(functionalities = { CommunityFunctionalityConstants.DOCUMENT_MANAGEMENT_DEV })
+	@FeatureFlag(Feature.EDIT_DOCUMENT)
 	public BIObject insertDocument(@Valid BIObject document) {
 		logger.debug("IN");
 		IBIObjectDAO documentDao = null;
@@ -121,6 +124,7 @@ public class DocumentResource extends AbstractSpagoBIResource {
 	@Consumes("application/json")
 	@Produces("application/json")
 	@UserConstraint(functionalities = { CommunityFunctionalityConstants.DOCUMENT_MANAGEMENT_DEV })
+	@FeatureFlag(Feature.EDIT_DOCUMENT)
 	public BIObject updateDocument(@PathParam("id") Integer id, @Valid BIObject document) {
 		logger.debug("IN");
 		IBIObjectDAO documentDao = null;

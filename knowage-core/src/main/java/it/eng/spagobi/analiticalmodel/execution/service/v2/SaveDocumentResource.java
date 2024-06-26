@@ -36,6 +36,8 @@ import org.apache.log4j.Logger;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import it.eng.knowage.features.Feature;
+import it.eng.knowage.rest.annotation.FeatureFlag;
 import it.eng.spago.error.EMFInternalError;
 import it.eng.spago.error.EMFUserError;
 import it.eng.spago.security.IEngUserProfile;
@@ -85,6 +87,7 @@ public class SaveDocumentResource extends AbstractSpagoBIResource {
 	@POST
 	@Path("/")
 	@Produces(MediaType.APPLICATION_JSON)
+	@FeatureFlag(Feature.EDIT_DOCUMENT)
 	public Response saveDocument(@Valid SaveDocumentDTO saveDocumentDTO) {
 		LOGGER.debug("IN");
 		LOGGER.debug("saveDocumentDTO: " + saveDocumentDTO);

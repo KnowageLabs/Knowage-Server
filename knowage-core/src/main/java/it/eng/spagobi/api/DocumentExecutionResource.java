@@ -71,6 +71,8 @@ import com.jamonapi.Monitor;
 import com.jamonapi.MonitorFactory;
 
 import it.eng.knowage.commons.security.PathTraversalChecker;
+import it.eng.knowage.features.Feature;
+import it.eng.knowage.rest.annotation.FeatureFlag;
 import it.eng.spago.base.RequestContainer;
 import it.eng.spago.base.RequestContainerAccess;
 import it.eng.spago.base.SessionContainer;
@@ -184,6 +186,7 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 	@POST
 	@Path("/url")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
+	@FeatureFlag(Feature.EDIT_DOCUMENT)
 	public Response getDocumentExecutionURL(@Context HttpServletRequest req) throws IOException, JSONException {
 
 		LOGGER.debug("IN");
@@ -548,6 +551,7 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 	@POST
 	@Path("/filters")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
+	@FeatureFlag(Feature.EDIT_DOCUMENT)
 	public Response getDocumentExecutionFilters(@Context HttpServletRequest req)
 			throws EMFUserError, IOException, JSONException, EncodingException {
 
@@ -1122,6 +1126,7 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 	// @QueryParam("mode") String mode, @QueryParam("treeLovNode") String treeLovNode,
 	// // @QueryParam("treeLovNode") Integer treeLovNodeLevel,
 	// @Context HttpServletRequest req) throws EMFUserError {
+	@FeatureFlag(Feature.EDIT_DOCUMENT)
 	public Response getParameterValues(@Context HttpServletRequest req)
 			throws EMFUserError, IOException, JSONException {
 
@@ -1227,6 +1232,7 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 	@POST
 	@Path("/canHavePublicExecutionUrl")
 	@Produces(MediaType.APPLICATION_JSON + "; charset=UTF-8")
+	@FeatureFlag(Feature.EDIT_DOCUMENT)
 	public Response canHavePublicExecutionUrl(@Context HttpServletRequest req) {
 		LOGGER.debug("IN");
 
@@ -1275,6 +1281,7 @@ public class DocumentExecutionResource extends AbstractSpagoBIResource {
 	@Path("/uploadfilemetadata")
 	@UserConstraint(functionalities = { CommunityFunctionalityConstants.DOCUMENT_METADATA_MANAGEMENT })
 	@Consumes({ MediaType.MULTIPART_FORM_DATA, MediaType.APPLICATION_JSON })
+	@FeatureFlag(Feature.EDIT_DOCUMENT)
 	public Response uploadFile(MultiPartBody input) {
 
 		byte[] bytes = null;
